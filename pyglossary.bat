@@ -1,0 +1,1 @@
+start src\pyglossary.pyw %*

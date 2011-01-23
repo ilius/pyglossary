@@ -1,0 +1,134 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+##  ui_main.py 
+##
+##  Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
+##  This file is part of PyGlossary project, http://sourceforge.net/projects/pyglossary/
+##
+##  This program is a free software; you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation; either version 3, or (at your option)
+##  any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License along
+##  with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
+##  If not, see <http://www.gnu.org/licenses/gpl.txt>.
+
+import os, sys, getopt
+from glossary import confPath, VERSION
+from ui_cmd import COMMAND, printAsError, help, parseFormatOptionsStr
+#from text_utils import printAsError ## No red color, plain
+
+use_psyco_file = '%s_use_psyco'%confPath
+psyco_found = None
+
+
+ui_list = ('gtk', 'tk', 'qt')
+
+#print('PyGlossary %s'%VERSION)
+
+if os.path.isfile(use_psyco_file):
+  try:
+    import psyco
+  except ImportError:
+    print('Warning: module "psyco" not found. It could speed up execution.')
+    psyco_found = False
+  else:
+    psyco.full()
+    print('Using module "psyco" to speed up execution.')
+    psyco_found = True
+
+path = ''
+ui_type = '' ## Command line
+
+try:
+  (options, arguments) = getopt.gnu_getopt(
+    sys.argv[1:],
+    'vhu:r:w:',
+    ['version', 'help', 'ui=', 'read-options=', 'write-options=', 'read-format=', 'write-format=', 'reverse']
+  )
+except getopt.GetoptError:
+  printAsError(sys.exc_info()[1])
+  print 'try: %s --help'%COMMAND
+  sys.exit(1)
+
+if len(arguments)<1:
+  ui_type = 'auto' ## Open GUI, not command line usage
+  ipath = opath = ''
+else:
+  ipath = arguments[0]
+  if len(arguments)>1:
+    opath = arguments[1]
+  else:
+    opath = ''
+
+read_format = ''
+write_format = ''
+read_options = {}
+write_options = {}
+reverse = False
+
+for (opt, opt_arg) in options:
+  if opt in ('-v', '--version'):
+    print('PyGlossary %s'%VERSION)
+    sys.exit(0)
+  elif opt in ('-h', '--help'):
+    help()
+    sys.exit(0)
+  elif opt in ('-u', '--ui'):
+    if opt_arg in ui_list:
+      ui_type = opt_arg
+    else:
+      printAsError('invalid ui type %s'%opt_arg)
+  elif opt in ('-r', '--read-options'):
+    read_options = parseFormatOptionsStr(opt_arg)
+  elif opt in ('-w', '--write-options'):
+    write_options = parseFormatOptionsStr(opt_arg)
+  elif opt == '--read-format':
+    read_format = opt_arg
+  elif opt == '--write-format':
+    write_format = opt_arg
+  elif opt == '--reverse':
+    reverse = True
+
+## FIXME
+## -v  (verbose or version?)
+## -r  (reverse or read-options)
+
+if not (reverse or opath or ui_type):## FIXME
+  ui_type = 'auto'
+
+if ui_type:
+  if ui_type=='auto':
+    ui_module = None
+    for ui_type2 in ui_list:
+      try:
+        ui_module = __import__('ui_%s'%ui_type2)
+      except ImportError:
+        pass
+      else:
+        break
+    if ui_module==None:
+      printAsError('no user interface module found!')
+      sys.exit(1)
+  else:
+    ui_module = __import__('ui_%s'%ui_type)
+  sys.exit(ui_module.UI(ipath).run())
+else:
+  import ui_cmd
+  sys.exit(ui_cmd.UI(text='Loading: ').run(
+    ipath,
+    opath=opath,
+    read_format=read_format,
+    write_format=write_format, 
+    read_options=read_options,
+    write_options=write_options, 
+    reverse=reverse
+  ))
+
+
