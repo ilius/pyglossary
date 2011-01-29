@@ -11,7 +11,7 @@ writeOptions = ()
 infoKeys = ('dbname', 'author', 'inputlang', 'version',
             'outputlang', 'copyright', 'description')
 
-def read(glos, filename):
+def read(glos, filename, options={}):
   fp = open(filename, 'rb')
   glos.data = []
   xdbText = fp.read()

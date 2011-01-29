@@ -7,7 +7,7 @@ extentions = ('.xml',)
 readOptions = ()
 writeOptions = ()
 
-def read(glos, filename, zeroFill=True):
+def read(glos, filename, zeroFill=True, options={}):
   glos.data=[]
   xml = fa_edit(file(filename).read())
   words=0

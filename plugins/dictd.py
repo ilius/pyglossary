@@ -60,7 +60,7 @@ database %s
 '''%(title, fname, dictPostfix, fname))
   
 
-def read(glos, filename):
+def read(glos, filename, options={}):
   if filename.endswith('.index'):
     filename = filename[:-6]
   idxStr = open(filename+'.index', 'rb').read()

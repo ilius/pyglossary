@@ -16,7 +16,7 @@ infoKeys = ('bookname', 'author', 'email', 'website', 'description',
             'copyright', 'sourceLang', 'targetLang', 'charset')
 
 
-def read(glos, filename):
+def read(glos, filename, options={}):
   if filename.endswith('.ifo'):
     filename = filename[:-4]
   ifoStr = open(filename+'.ifo', 'rb').read()

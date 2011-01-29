@@ -13,7 +13,7 @@ writeOptions = ()
 infoKeys = ('dbname', 'author', 'version', 'direction', 'origLang', 'destLang',
             'license', 'category', 'description')
 
-def read(glos, filename):
+def read(glos, filename, options={}):
   from sqlite3 import connect
   
   ## ???????? name OR dbname ????????????????????

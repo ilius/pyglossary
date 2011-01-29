@@ -7,7 +7,7 @@ extentions = ('.test', '.tst')
 readOptions = ()
 writeOptions = ()
 
-def read(glos, filename): # glos is a Glossary object, filename is a string
+def read(glos, filename, options={}): # glos is a Glossary object, filename is a string
   print 'reading from format %s using plugin'%format
   glos.data = []
   count = 100 # get number of entries from input file(depending on your format)

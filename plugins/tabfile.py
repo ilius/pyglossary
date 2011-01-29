@@ -10,7 +10,7 @@ extentions = ('.txt', '.tab', '.dic')
 readOptions = ()
 writeOptions = ()
 
-def read(glos, filename):
+def read(glos, filename, options={}):
   fp = open(filename)
   glos.data = []
   while True:

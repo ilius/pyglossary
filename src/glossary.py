@@ -300,7 +300,7 @@ class Glossary:
         #  os.remove(filename)
         printAsError('Unknown extension "%s" for read support!'%ext)
         return False
-    getattr(self, 'read%s'%format).__call__(filename)
+    getattr(self, 'read%s'%format).__call__(filename, options=options)
     
     (filename_nox, ext) = splitext(filename)
     if ext.lower() in self.formatsExt[format]:

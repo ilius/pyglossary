@@ -2376,9 +2376,9 @@ def read_ext(glos, filename):
   glos.setInfo('charset'     ,_babylon.Babylon_charset(db)    )
 
 
-def read(glos, filename, appendAlternatives=True):
+def read(glos, filename, appendAlternatives=True, options={}):
   glos.data = []
-  db = BGL(filename)
+  db = BGL(filename, **options)
   if not db.open():
     raise 'can not open BGL file "%s"'%filename
   if not db.read():

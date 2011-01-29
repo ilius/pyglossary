@@ -175,7 +175,7 @@ def pmdDecomile(pmd):
         uni+=sub[0]
         break
 
-def read(glos, filename):## not tested ## FIXME
+def read(glos, filename, options={}):## not tested ## FIXME
   initCwd = os.getcwd()
   os.chdir(filename)
   indLines = open('index').read().split('\n')[3:]

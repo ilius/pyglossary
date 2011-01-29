@@ -10,7 +10,7 @@ extentions = ('.po',)
 readOptions = ()
 writeOptions = ()
 
-def read(glos, filename):
+def read(glos, filename, options={}):
   fp = open(filename, 'rb')
   word = ''
   defi = ''

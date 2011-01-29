@@ -11,7 +11,7 @@ readOptions = ()
 writeOptions = ()
 
 
-def read(glos, filename, dicIndex=16):
+def read(glos, filename, dicIndex=16, options={}):
   os.chdir(filename)
   try:
     fp = open(str(dicIndex))

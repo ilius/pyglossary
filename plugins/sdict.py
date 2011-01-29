@@ -201,7 +201,7 @@ class SDictionary:
     return self.read_unit(self.header.articles_offset + pointer)
 
 
-def read(glos, filename, encoding='utf-8'):
+def read(glos, filename, encoding='utf-8', options={}):
   ## Binary Glossary for "Sdictionary" (http://sdict.org)
   ## It has extention '.dct' 
   sd = SDictionary(filename, encoding)
