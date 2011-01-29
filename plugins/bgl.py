@@ -1967,13 +1967,36 @@ class BGL:
       strip_cnt += 1
     
     return [ main_word, strip_cnt ]
+  
+  def findDefinitionTrailingFields(self, defi):
+    """Find the beginning of the definition trailing fields.
+    
+    Return value is the index of the first chars of the field set,
+    or -1 if the field set is not found.
+    
+    Normally '\x14' should signal the beginning of the definition fields,
+    but some articles may contain this characters inside, so we get false match.
+    As a workaround we may check the following chars. If '\x14' is followed 
+    by space, we assume this is part of the article and continue search.
+    Unfortunately this does no help in many cases...
+    """
+    b = 0
+    while True:
+      i = defi.find('\x14', b)
+      if i == -1:
+        return -1
+      if i + 1 < len(defi) and defi[i+1] == ' ':
+        b = i + 1
+        continue
+      else:
+        return i
     
   def processEntryDefinition(self, defi, raw_key):
     fields = self.DefinitionFields()
     if self.noControlSequenceInDefi:
       d0 = -1
     else:
-      d0 = defi.find('\x14')
+      d0 = self.findDefinitionTrailingFields(defi)
     if d0 != -1:
       fields.defi = defi[:d0]
       self.processEntryDefinitionTrailingFields(defi, raw_key, d0, fields)
