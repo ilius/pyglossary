@@ -96,8 +96,9 @@ class UI:
     'color_font_out','color_font_err','color_font_edit','color_font_dbe',\
     'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs']## Reverse Options
   prefSavePath=[confPath,  '%s%src.py'%(srcDir,os.sep)]
-  def __init__(self, text=''):
+  def __init__(self, text='', enableProgressBar=True):
     self.ptext=text
+    self.enableProgressBar=enableProgressBar
     self.reverseStop=False
     self.pref={}
     self.pref_load()
@@ -122,7 +123,8 @@ class UI:
       pb.ETA()
     ]
     ## SyntaxError(invalid syntax) with python3 with unicode(u'█') argument ## FIXME
-    self.pbar = pb.ProgressBar(widgets=self.widgets, maxval=1.0, update_step=0.5)
+    self.pbar = pb.ProgressBar(widgets=self.widgets, maxval=1.0, update_step=0.5, \
+      quiet=not self.enableProgressBar)
     rot.pbar = self.pbar
   def r_start(self, *args):
     self.rWords = self.glosR.takeOutputWords()

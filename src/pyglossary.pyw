@@ -58,7 +58,9 @@ try:
   (options, arguments) = getopt.gnu_getopt(
     sys.argv[1:],
     'vhu:r:w:',
-    ['version', 'help', 'ui=', 'read-options=', 'write-options=', 'read-format=', 'write-format=', 'reverse']
+    ['version', 'help', 'ui=', 'read-options=', 'write-options=', 'read-format=', 'write-format=', 'reverse',\
+      'no-progress-bar'
+    ]
   )
 except getopt.GetoptError:
   printAsError(sys.exc_info()[1])
@@ -80,6 +82,8 @@ write_format = ''
 read_options = {}
 write_options = {}
 reverse = False
+# only for command line UI
+enable_progress_bar = True
 
 for (opt, opt_arg) in options:
   if opt in ('-v', '--version'):
@@ -103,6 +107,8 @@ for (opt, opt_arg) in options:
     write_format = opt_arg
   elif opt == '--reverse':
     reverse = True
+  elif opt == '--no-progress-bar':
+    enable_progress_bar = False
 
 ## FIXME
 ## -v  (verbose or version?)
@@ -113,7 +119,7 @@ if ui_type == 'cmd' and not ipath and not (reverse or opath or write_format):
 
 if ui_type == 'cmd':
   import ui_cmd
-  sys.exit(ui_cmd.UI(text='Loading: ').run(
+  sys.exit(ui_cmd.UI(text='Loading: ', enableProgressBar=enable_progress_bar).run(
     ipath,
     opath=opath,
     read_format=read_format,
