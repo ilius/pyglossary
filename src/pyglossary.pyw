@@ -44,7 +44,15 @@ if os.path.isfile(use_psyco_file):
     psyco_found = True
 
 path = ''
-ui_type = '' ## Command line
+"""Interface type
+Possible values:
+cmd - command line mode
+gtk - GTK GUI
+tk - TK GUI
+qt - QT GUI
+auto - use the first available GUI
+"""
+ui_type = 'cmd'
 
 try:
   (options, arguments) = getopt.gnu_getopt(
@@ -100,10 +108,21 @@ for (opt, opt_arg) in options:
 ## -v  (verbose or version?)
 ## -r  (reverse or read-options)
 
-if not (reverse or opath or ui_type):## FIXME
+if ui_type == 'cmd' and not ipath and not (reverse or opath or write_format):
   ui_type = 'auto'
 
-if ui_type:
+if ui_type == 'cmd':
+  import ui_cmd
+  sys.exit(ui_cmd.UI(text='Loading: ').run(
+    ipath,
+    opath=opath,
+    read_format=read_format,
+    write_format=write_format, 
+    read_options=read_options,
+    write_options=write_options, 
+    reverse=reverse
+  ))
+else:
   if ui_type=='auto':
     ui_module = None
     for ui_type2 in ui_list:
@@ -119,16 +138,3 @@ if ui_type:
   else:
     ui_module = __import__('ui_%s'%ui_type)
   sys.exit(ui_module.UI(ipath).run())
-else:
-  import ui_cmd
-  sys.exit(ui_cmd.UI(text='Loading: ').run(
-    ipath,
-    opath=opath,
-    read_format=read_format,
-    write_format=write_format, 
-    read_options=read_options,
-    write_options=write_options, 
-    reverse=reverse
-  ))
-
-
