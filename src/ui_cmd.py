@@ -23,13 +23,20 @@ from glossary import *
 import progressbar as pb
 
 
-startRed	= '\x1b[31m'
-endFormat	= '\x1b[0;0;0m'
+if os.sep=='\\': ## Operating system is Windows
+  startRed = ''
+  endFormat = ''
+  startBold = ''
+  startUnderline = ''
+  endFormat = ''
+else:
+  startRed	= '\x1b[31m'
+  endFormat	= '\x1b[0;0;0m'
 
-startBold	= '\x1b[1m'		# Start Bold		#len=4
-startUnderline	= '\x1b[4m'		# Start Underline	#len=4
-endFormat	= '\x1b[0;0;0m'		# End Format		#len=8
-#redOnGray	= '\x1b[0;1;31;47m'
+  startBold	= '\x1b[1m'		# Start Bold		#len=4
+  startUnderline	= '\x1b[4m'		# Start Underline	#len=4
+  endFormat	= '\x1b[0;0;0m'		# End Format		#len=8
+  #redOnGray	= '\x1b[0;1;31;47m'
 
 def printAsError(text='An error occured!', exit=False):
   sys.stderr.write('%s%s%s\n'%(startRed, text, endFormat))
@@ -155,7 +162,7 @@ class UI:
   def pref_load(self, *args):
     fp=open('%s%src.py'%(srcDir,os.sep))
     exec(fp.read())
-    if save==0:
+    if save==0 and os.path.exists(self.prefSavePath[0]): # save is defined in rc.py
       try:
         fp=open(self.prefSavePath[0])
       except:
