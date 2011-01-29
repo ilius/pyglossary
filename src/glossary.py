@@ -250,56 +250,56 @@ class Glossary:
     ext = splitext(filename)[1]
     ext = ext.lower()
     if ext in ('.gz', '.bz2', '.zip'):
-        if ext=='.bz2':
-          (output, error) = subprocess.Popen(
-            ['bzip2', '-dk', filename],
-            stdout=subprocess.PIPE
-          ).communicate()
-          ## -k ==> keep original bz2 file
-          ## bunzip2 ~= bzip2 -d
-          if error:
-            printAsError('%s\nfail to decompress file "%s"'%(error, filename))
-            return False
-          else:
-            filename = filename[:-4]
-            ext = splitext(filename)[1]
-            delFile = True
-        elif ext=='.gz':
-          (output, error) = subprocess.Popen(
-            ['gzip', '-dc', filename],
-            stdout=subprocess.PIPE
-          ).communicate()
-          ## -c ==> write to stdout (because we want to keep original gz file)
-          ## gunzip ~= gzip -d
-          if error:
-            printAsError('%s\nfail to decompress file "%s"'%(error, filename))
-            return False
-          else:
-            filename = filename[:-3]
-            open(filename, 'w').write(output)
-            ext = splitext(filename)[1]
-            delFile = True
-        elif ext=='.zip':
-          (output, error) = subprocess.Popen(
-            ['unzip', filename, '-d', os.path.dirname(filename)],
-            stdout=subprocess.PIPE
-          ).communicate()
-          if error:
-            printAsError('%s\nfail to decompress file "%s"'%(error, filename))
-            return False
-          else:
-            filename = filename[:-4]
-            ext = splitext(filename)[1]
-            delFile = True
+      if ext=='.bz2':
+        (output, error) = subprocess.Popen(
+          ['bzip2', '-dk', filename],
+          stdout=subprocess.PIPE
+        ).communicate()
+        ## -k ==> keep original bz2 file
+        ## bunzip2 ~= bzip2 -d
+        if error:
+          printAsError('%s\nfail to decompress file "%s"'%(error, filename))
+          return False
+        else:
+          filename = filename[:-4]
+          ext = splitext(filename)[1]
+          delFile = True
+      elif ext=='.gz':
+        (output, error) = subprocess.Popen(
+          ['gzip', '-dc', filename],
+          stdout=subprocess.PIPE
+        ).communicate()
+        ## -c ==> write to stdout (because we want to keep original gz file)
+        ## gunzip ~= gzip -d
+        if error:
+          printAsError('%s\nfail to decompress file "%s"'%(error, filename))
+          return False
+        else:
+          filename = filename[:-3]
+          open(filename, 'w').write(output)
+          ext = splitext(filename)[1]
+          delFile = True
+      elif ext=='.zip':
+        (output, error) = subprocess.Popen(
+          ['unzip', filename, '-d', os.path.dirname(filename)],
+          stdout=subprocess.PIPE
+        ).communicate()
+        if error:
+          printAsError('%s\nfail to decompress file "%s"'%(error, filename))
+          return False
+        else:
+          filename = filename[:-4]
+          ext = splitext(filename)[1]
+          delFile = True
     if format=='':
       for key in Glossary.formatsExt.keys():
         if ext in Glossary.formatsExt[key]:
           format = key
       if format=='':
-          #if delFile:
-          #  os.remove(filename)
-          printAsError('Unknown extention "%s" for read support!'%ext)
-          return False
+        #if delFile:
+        #  os.remove(filename)
+        printAsError('Unknown extension "%s" for read support!'%ext)
+        return False
     getattr(self, 'read%s'%format).__call__(filename)
     
     (filename_nox, ext) = splitext(filename)
