@@ -364,7 +364,7 @@ class BGL:
   but we can detect it.
   
   A few words about how definitions are encoded. If all chars of the 
-  definitions, fall into the target charset, Babylon use that charset to encode
+  definition fall into the target charset, Babylon use that charset to encode
   the definition. If at least one char does not fall into the target charset,
   Babylon use utf-8 encoding, wrapping the definition into <charset c=U> and
   </charset> tags.
@@ -430,6 +430,31 @@ class BGL:
   is cp950 I built a C++ utility that worked on the data extracted from .bgl
   dictionary. I used WideCharToMultiByte function for conversion. The C++
   utility confirmed the cp932 and cp950 encodings, I got 100% match.
+  
+  Dictionary properties
+  =====================
+  
+  Dictionary (or glossary) properties are textual data like glossary name, 
+  glossary author name, glossary author e-mail, copyright message and
+  glossary description. Most of the dictionaries have these properties set.
+  Since they contain textual data we need to know the encoding.
+  There may be other properties not listed here. I've enumerated only those that
+  are available in Babylon Glossary builder.
+  
+  Playing with Babylon builder allows us detect how encoding is selected.
+  If global utf-8 flag is set, utf-8 encoding is used for all properties.
+  Otherwise the target encoding is used, that is the encoding corresponding to
+  the target language. The chars that cannot be represented in the target encoding 
+  are replaced with question marks.
+  
+  Using this algorithm to decode dictionary properties you may encounter that
+  some of them are decoded incorrectly. For example, it is clear that the property
+  is in cp1251 encoding while the algorithm says we must use cp1252, and we get 
+  garbage after decoding. That is OK, the algorithm is correct. You may install 
+  that dictionary in Babylon and check dictionary properties. It shows the same
+  garbage. Unfortunately, we cannot detect correct encoding in this case
+  automatically. We may add a parameter the will overwrite the selected encoding,
+  so the user may fix the encoding if needed.
   """
   languageProps = [
     BabylonLanguage(
@@ -1167,18 +1192,17 @@ class BGL:
       self.file.seek(0)
     
     #######
-    self.title = self.toUtf8(self.title, self.defaultEncoding)
-    self.author = self.toUtf8(self.author, self.defaultEncoding)
-    self.email = self.toUtf8(self.email, self.defaultEncoding)
-    self.copyright = self.toUtf8(self.copyright, self.defaultEncoding)
-    self.description = self.toUtf8(self.description, self.defaultEncoding)
+    self.title = self.toUtf8(self.title, self.targetEncoding)
+    self.author = self.toUtf8(self.author, self.targetEncoding)
+    self.email = self.toUtf8(self.email, self.targetEncoding)
+    self.copyright = self.toUtf8(self.copyright, self.targetEncoding)
+    self.description = self.toUtf8(self.description, self.targetEncoding)
     # self.purchaseLicenseMsg - unicode
     # self.licenseExpiredMsg  - unicode
     # self.purchaseAddress    - unicode
     # self.title_wide         - unicode
     # self.author_wide        - unicode
     # self.contractions ?
-    # remove resource directory if it's empty
 
     if self.verbose>0:
       print 'numEntries = {0}'.format(self.numEntries)
@@ -1201,6 +1225,7 @@ class BGL:
       print 'lastUpdated = {0}'.format(self.lastUpdated)
     self.numBlocks = 0
     
+    # remove resource directory if it's empty
     if len(os.listdir(self.resPath))==0:
       try:
         os.rmdir(self.resPath)
@@ -1456,7 +1481,7 @@ class BGL:
       """
       The length of the substring match in a term.
       For example, if your glossary contains the term "Dog" and the substring length is 2,
-      search of the substrings "Do" or "og" will retrive the term dog.
+      search of the substrings "Do" or "og" will retrieve the term dog.
       Use substring length 0 for exact match.
       """
       length = binStrToInt(block.data[pos:])
@@ -1525,6 +1550,7 @@ class BGL:
     else:
       self.targetEncoding = 'cp1252'
       
+    # not used
     if self.defaultEncodingOverwrite != None:
       self.defaultEncoding = self.defaultEncodingOverwrite
     elif self.defaultCharset != '':
@@ -1741,14 +1767,18 @@ class BGL:
       alts.remove(key)
     return [True, pos, list(alts)]
     
-  def toUtf8(self, s, charset, mode='replace'):
-    if charset=='':
-      return s
-    return s.decode(charset, mode).encode('utf8')
+  def toUtf8(self, text, encoding):
+    if self.strictStringConvertion:
+      try:
+        u_text = text.decode(encoding)
+      except UnicodeError:
+        self.msg_log_file_write('toUtf8({0}):\nconversion error:\n{1}'\
+        .format(text, ExcMessage()))
+        u_text = text.decode(encoding, 'ignore')
+    else:
+      u_text = text.decode(encoding, 'ignore')
+    return u_text.encode('utf-8')
     
-  def toUtf8Strict(self, s, charset):
-    return s.decode(charset, 'strict').encode('utf8')
-  
   def replace_html_entries(self, text):
     # &ldash;
     # &#0147;
