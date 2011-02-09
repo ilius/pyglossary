@@ -1259,12 +1259,17 @@ class BGL:
     Type 2 block is an embedded file (mostly Image or HTML).
     pass_num - pass number, may be 1 or 2
     On the first pass self.sourceEncoding is not defined and we cannot decode file names.
-    That is why the second pass is needed. The second pass means is costly, it 
+    That is why the second pass is needed. The second pass is costly, it 
     apparently increases total processing time. We should avoid the second pass if possible.
-    Most of the dictionaries do not have valuable resources, and those that do uses 
+    Most of the dictionaries do not have valuable resources, and those that do, use
     file names consisting only of ASCII characters. We may process these resources
     on the second pass. If all files have been processed on the first pass,
     the second pass is not needed.
+    
+    All dictionaries I've processed so far use only ASCII chars in file names.
+    Babylon glossary builder replaces names of files, like links to images, 
+    with what looks like a hash code of the file name, for example "8FFC5C68.png".
+    
     Return value: True if the resource was successfully processed,
       False - second pass is needed.
     """
