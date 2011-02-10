@@ -7,13 +7,12 @@ extentions = ('.ifo',)
 readOptions = ()
 writeOptions = ()
 
-import sys, os
+import sys, os, re
 sys.path.append('/usr/share/pyglossary/src')
 
 from text_utils import intToBinStr, binStrToInt, runDictzip, printAsError
 
-infoKeys = ('bookname', 'author', 'email', 'website', 'description',
-            'copyright', 'sourceLang', 'targetLang', 'charset')
+infoKeys = ('bookname', 'author', 'email', 'website', 'description', 'date')
 
 
 def read(glos, filename, options={}):
@@ -77,33 +76,41 @@ def write(glos, filename, dictZip=True, richText=True):
   elif filename[-1]==os.sep:
     if not os.path.isdir(filename):
       os.makedirs(filename)
-    filename = path_join(filename, path_split(filename)[-1])
+    filename = os.path.join(filename, os.path.split(filename[:-1])[-1])
   elif os.path.isdir(filename):
-    filename = path_join(filename, path_split(filename)[-1])
+    filename = os.path.join(filename, os.path.split(filename)[-1])
+  # filename now contains full file path without extension
   dictMark = 0
   idxStr = ''
   dictStr = ''
   for item in g.data:
     (word, defi) = item
-    if richText:
-      defi = defi.replace('\n', '<BR>')
     lm = len(defi)
     idxStr += (word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(lm, 4))
     dictMark += lm
     dictStr += defi
-  open(filename+'.dict', 'wb').write(dictStr)
-  open(filename+'.idx', 'wb').write(idxStr)
-  ifoStr = '''StarDict\'s dict ifo file\nversion=2.4.2
+  with open(filename+'.dict', 'wb') as f:
+    f.write(dictStr)
+  with open(filename+'.idx', 'wb') as f:
+    f.write(idxStr)
+  ifoStr = '''StarDict\'s dict ifo file\nversion=3.0.0
+bookname=%s
 wordcount=%d
 idxfilesize=%d
-bookname=%s
 sametypesequence=%s
-'''%(len(g.data), len(idxStr), g.getInfo('name'), ('h' if richText else 'm'))
+'''%(new_lines_2_space(g.getInfo('name')), len(g.data), len(idxStr), ('h' if richText else 'm'))
   for key in infoKeys:
+    if key in ('bookname', 'wordcount', 'idxfilesize', 'sametypesequence'):
+      continue
     value = g.getInfo(key)
-    if value!='':
-      ifoStr += '%s=%s\n'%(key, value)
-  open(filename+'.ifo', 'wb').write(ifoStr)
+    if value == '':
+      continue
+    if key == 'description':
+      ifoStr += '{0}={1}\n'.format(key, new_line_2_br(value))
+    else:
+      ifoStr += '{0}={1}\n'.format(key, new_lines_2_space(value))
+  with open(filename+'.ifo', 'wb') as f:
+    f.write(ifoStr)
   if dictZip:
     runDictzip(filename)
 
@@ -240,3 +247,9 @@ def stardict_strcmp(s1, s2):
     return strcmp(s1, s2)
   else:
     return a
+
+def new_lines_2_space(text):
+  return re.sub("[\n\r]+", ' ', text)
+
+def new_line_2_br(text):
+  return re.sub("\n\r?|\r\n?", "<br>", text)
