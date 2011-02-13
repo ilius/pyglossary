@@ -34,7 +34,7 @@ endFormat	= '\x1b[0;0;0m'		# End Format		#len=8
 startRed	= '\x1b[31m'
 
 #use_psyco_file='%s%suse_psyco'%(srcDir,os.sep)
-use_psyco_file='%s%s.pyglossary_use_psyco'%(confDir,os.sep)
+use_psyco_file='%s_use_psyco'%confPath
 psyco_found=None
 
 noneItem = 'Not Selected'
@@ -56,7 +56,7 @@ class QVirtualFile(object):
 
 
 class UI(qt.QWidget):
-  def __init__(self):
+  def __init__(self, ipath):
     qt.QWidget.__init__(self)
     self.setWindowTitle('PyGlossary (Qt)')
     self.setWindowIcon(qt.QIcon(join(srcDir, 'pyglossary.png')))
@@ -71,22 +71,4 @@ class UI(qt.QWidget):
     self.fcd_dir = join(homeDir, 'Desktop')
     ######################
     vbox = qt.QVBoxLayout()
-    
-    
-    
-    
     self.setLayout(vbox)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
