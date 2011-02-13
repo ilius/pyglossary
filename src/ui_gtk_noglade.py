@@ -1544,7 +1544,6 @@ PyGlossary is licensed by the GNU General Public License''')
       return True
   def dbe_ro_clicked(self, *args):
     ro = self.checkb_db_ro.get_active()
-    self.glosE.data[self.db_ind][2] = ro
     self.entry_dbe.set_editable(not ro)
     self.textview_dbe.set_editable(not ro)
   dbe_prev  = lambda self, *args: self.dbe_goto(self.db_ind-1)
@@ -1600,8 +1599,7 @@ PyGlossary is licensed by the GNU General Public License''')
     #print 'Setting text "%s"'%d[1]
     self.buffer_dbe.set_text(d[1])
     self.treeview.set_cursor(n_ind)
-    #self.checkb_db_ro.set_active(d[2]) ## read only
-    if save:#and not self.glosE.data[self.db_ind][2]: ## read only
+    if save:
       self.glosE.data[p_ind] = p_data
       self.treestore[p_ind][0] = p_data[0]
   def dbe_info_goto(self, n_ind, save=True):
@@ -1628,8 +1626,7 @@ PyGlossary is licensed by the GNU General Public License''')
     self.entry_dbe_info.set_text(inf[0])
     self.buffer_dbe_info.set_text(inf[1])
     self.treeview_info.set_cursor(n_ind)
-    #self.checkb_db_ro.set_active(d[2]) ## read only
-    if save:#and not self.glosE.data[self.db_ind][2]: ## read only
+    if save:
       self.glosE.info[p_ind] = p_info
       self.treestore_info[p_ind][0] = p_info[0]
   def dbe_new_w(self, *args):## new Word after selected
@@ -1765,7 +1762,7 @@ PyGlossary is licensed by the GNU General Public License''')
     w = self.entry_dbe.get_text()
     i = self.db_ind
     g = self.glosE
-    g.data[i] = (w, g.data[i][1])
+    g.data[i] = (w, g.data[i][1]) + g.data[i][2:]
     self.treestore[i][0] = w
   def entry_dbe_info_activate(self, *args):
     k = self.entry_dbe_info.get_text()
