@@ -98,7 +98,7 @@ def read(glos, filename, options={}):
 
 
 
-def write(glos, filename, sort=True, dictZip=True, install=True):## FIXME
+def write(glos, filename, sort=True, dictZip=True, install=True, options={}):## FIXME
   if sort:
     glos = glos.copy()
     glos.data.sort()

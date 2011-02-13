@@ -45,7 +45,7 @@ def read(glos, filename, options={}):
     glos.data.append((word, defi))
 
 
-def write(glos, filename, writeInfo=True):
+def write(glos, filename, writeInfo=True, options={}):
   return glos.writeTxt(sep=('\t', '\n'),
                        filename=filename,
                        writeInfo=writeInfo,

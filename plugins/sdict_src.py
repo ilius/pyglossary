@@ -10,7 +10,7 @@ extentions = ('.sdct',)
 readOptions = ()
 writeOptions = ()
 
-def write(glos, filename, writeInfo=True, newline='\n'):
+def write(glos, filename, writeInfo=True, newline='\n', options={}):
   ## Source Glossary for "Sdictionary" (http://sdict.org)
   ## It has extention '.sdct' 
   head=''

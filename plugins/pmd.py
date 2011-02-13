@@ -192,7 +192,7 @@ def read(glos, filename, options={}):## not tested ## FIXME
       glos.data.append((word, defi))
   os.chdir(initCwd)
 
-def write(glos, filename, writeInfo=True):
+def write(glos, filename, writeInfo=True, options={}):
   initCwd = os.getcwd()
   if not os.path.isdir(filename):
     os.mkdir(filename)

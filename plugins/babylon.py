@@ -9,7 +9,7 @@ writeOptions = ()
 
 from text_utils import recodeToWinArabic
 
-def write(glos, filename, writeInfo=True, newline='', encoding='utf8'):
+def write(glos, filename, writeInfo=True, newline='', encoding='utf8', options={}):
   ## Source Glossary for "Babylon Builder".
   ## It has extention '.gls' or '.babylon'. But not '.bgl'.
   ## It is a (unicode) text file. Not binary like bgl files.

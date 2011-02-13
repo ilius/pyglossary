@@ -46,7 +46,7 @@ def read_2(glos, filename):
   import alchemy
   return alchemy.readSqlite(glos, filename)
 
-def write(glos, filename):
+def write(glos, filename, options={}):
   lines = glos.getSqlLines()
   fp = open(filename, 'wb')
   fp.write('\n'.join(lines))
