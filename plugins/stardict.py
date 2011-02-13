@@ -127,9 +127,12 @@ sametypesequence=%s
   if dictZip:
     runDictzip(filename)
   resPath = os.path.join(os.path.dirname(filename), 'res')
-  copy_resources(glos.resPath, resPath)
+  resOverwrite = False
+  if 'res-overwrite' in options:
+    resOverwrite = options['res-overwrite']
+  copy_resources(glos.resPath, resPath, resOverwrite)
 
-def copy_resources(fromPath, toPath):
+def copy_resources(fromPath, toPath, overwrite):
   """Copy resource files from fromPath to toPath.
   """
   fromPath = os.path.abspath(fromPath)
@@ -140,10 +143,12 @@ def copy_resources(fromPath, toPath):
     return
   if len(os.listdir(fromPath))==0:
     return
+  if overwrite:
+    shutil.rmtree(toPath)
   if os.path.exists(toPath):
     if len(os.listdir(toPath)) > 0:
       printAsError('Output resource directory is not empty: "{0}". Resources will not be copied! '
-        'Clean the output directory before running the converter.'\
+        'Clean the output directory before running the converter or pass option: --write-options=res-overwrite=True.'\
         .format(toPath))
       return
     os.rmdir(toPath)
