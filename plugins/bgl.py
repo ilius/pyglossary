@@ -2441,7 +2441,7 @@ def read_ext(glos, filename):
   glos.setInfo('charset'     ,_babylon.Babylon_charset(db)    )
 
 
-def read(glos, filename, appendAlternatives=True, options={}):
+def read(glos, filename, options={}):
   glos.data = []
   db = BGL(filename, **options)
   if not db.open():
@@ -2460,10 +2460,7 @@ def read(glos, filename, appendAlternatives=True, options={}):
     if not db.readEntry(entry):
       printAsError('No enough entries found!')
       break
-    if appendAlternatives:
-      for alt in entry.alts:####??????????????? What do with alternates?
-        entry.word += ' | '+alt #@3
-    glos.data.append((entry.word, entry.defi))
+    glos.data.append((entry.word, entry.defi, {'alts': entry.alts}))
     if ui != None and i%k==0:
       rat = float(i)/n
       ui.progress(rat)
