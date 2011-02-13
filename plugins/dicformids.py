@@ -11,7 +11,7 @@ readOptions = ()
 writeOptions = ()
 
 
-def write(glos, filename, writeInfo=True):
+def write(glos, filename, writeInfo=True, options={}):
   initCwd = os.getcwd()
   #'DictionaryForMIDs'
   indexFileMaxSize=30000

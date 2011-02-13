@@ -2526,7 +2526,7 @@ def createBglInfoBlock(num, value):
   return block
 
 
-def write(glos, filename, writeInfo=True):## output BGL file can't be opened with Babylon! 
+def write(glos, filename, writeInfo=True, options={}):## output BGL file can't be opened with Babylon! 
   import gzip
   f = open(filename, 'wb')
   gz_pos = 71 ## position of gz header

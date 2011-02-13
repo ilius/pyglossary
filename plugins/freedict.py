@@ -9,7 +9,7 @@ description = 'FreeDict (tei)'
 extentions = ('.tei',)
 readOptions = ()
 
-def write(glos, filename):
+def write(glos, filename, options={}):
   fp = open(filename, 'wb')
   fp.write('<?xml version="1.0" encoding="UTF-8"?>\n'+
   '<!DOCTYPE TEI.2 PUBLIC "-//TEI P3//DTD Main Document Type//EN"\n'

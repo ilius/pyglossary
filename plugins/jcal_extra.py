@@ -38,7 +38,7 @@ def read(glos, filename, zeroFill=True, options={}):
   print('%s words found.'%len(glos.data))
   return True
 
-def write(glos, filename):
+def write(glos, filename, options={}):
   year = glos.getInfo('year')
   if year=='':
     year='1387'

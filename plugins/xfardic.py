@@ -65,7 +65,7 @@ def read_2(glos, filename):
 
 
 
-def write(glos, filename):
+def write(glos, filename, options={}):
   fp = open(filename, 'wb')
   fp.write('<?xml version="1.0" encoding="utf-8" ?>\n<words>\n<xfardic>')
   for item in Glossary.infoKeysXfardic:

@@ -10,7 +10,7 @@ extentions = ('.sql',)
 readOptions = ()
 writeOptions = ()
 
-def write(glos, filename):
+def write(glos, filename, options={}):
   from xml.sax.saxutils import XMLGenerator
   from xml.sax.xmlreader import AttributesNSImpl
   open(filename, 'wb').write('\n'.join(self.getSqlLines()))

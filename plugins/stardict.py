@@ -68,7 +68,7 @@ def read(glos, filename, options={}):
   if len(wrongSorted)>0:
     print('Warning: wrong sorting count: %d'%len(wrongSorted))
 
-def write(glos, filename, dictZip=True, richText=True):
+def write(glos, filename, dictZip=True, richText=True, options={}):
   g = glos.copy()
   g.data.sort(stardict_strcmp, lambda x: x[0])
   if filename[-4:].lower()=='.ifo':

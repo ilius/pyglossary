@@ -48,7 +48,7 @@ def read(glos, filename, options={}):
         word += eval(line)
         
 
-def write(glos, filename):
+def write(glos, filename, options={}):
   fp = open(filename, 'wb')
   fp.write('#\nmsgid ""\nmsgstr ""\n')
   for inf in glos.infoKeys():

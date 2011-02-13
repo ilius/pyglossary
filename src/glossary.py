@@ -372,7 +372,7 @@ class Glossary:
       #filename = path_join(filename, path_split(self.filename)[1]+ext)
       filename = path_join(filename, self.filename+ext)
     print 'filename=%s'%filename
-    getattr(self, 'write%s'%format).__call__(filename)
+    getattr(self, 'write%s'%format).__call__(filename, options=options)
     if zipExt:
       try:
         os.remove('%s%s'%(filename, zipExt))
@@ -404,7 +404,7 @@ class Glossary:
           printAsError('%s\nfail to compress file "%s"'%(error, filename))
         os.chdir(initCwd)
 
-  def writeTxt(self, sep, filename='', writeInfo=True, rplList=[], ext='.txt', head=''):
+  def writeTxt(self, sep, filename='', writeInfo=True, rplList=[], ext='.txt', head='', options={}):
     if not filename:
       filename = self.filename + ext
     txt = head
@@ -443,7 +443,7 @@ class Glossary:
 
 
 
-  def writeDict(self, filename='', writeInfo=False):
+  def writeDict(self, filename='', writeInfo=False, options={}):
     ## Used in '/usr/share/dict/' for some dictionarys such as 'ding'.
     self.writeTxt((' :: ', '\n'), filename, writeInfo,
                   (('\n', '\\n'),), '.dict')

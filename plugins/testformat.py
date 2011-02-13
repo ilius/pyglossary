@@ -24,7 +24,7 @@ def read(glos, filename, options={}): # glos is a Glossary object, filename is a
   return True  # reading input file was succesfull
 
 
-def write(glos, filename): # glos is a Glossary object, filename is a string
+def write(glos, filename, options={}): # glos is a Glossary object, filename is a string
   print 'writing to format %s using plugin'%format
   count = len(glos.data)
   for i in range(count):

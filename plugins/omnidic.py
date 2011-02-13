@@ -32,7 +32,7 @@ def read(glos, filename, dicIndex=16, options={}):
   os.chdir(initCwd)
 
 
-def write(glos, filename, dicIndex=16):
+def write(glos, filename, dicIndex=16, options={}):
   if not isinstance(dicIndex, int):
     raise TypeError, 'Invalid argument to function writeOmnidic: filename=%s'%filename
   if not os.path.isdir(filename):
