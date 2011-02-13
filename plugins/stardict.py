@@ -84,7 +84,7 @@ def write(glos, filename, dictZip=True, richText=True):
   idxStr = ''
   dictStr = ''
   for item in g.data:
-    (word, defi) = item
+    (word, defi) = item[:2]
     lm = len(defi)
     idxStr += (word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(lm, 4))
     dictMark += lm

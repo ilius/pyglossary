@@ -50,7 +50,7 @@ def write(glos, filename, dicIndex=16):
     indexFp.write(glos.data[100*i][0]+'#'+glos.data[100*i+99][0]+'#'+fileName+'\n')
     fp = open(fileName, 'wb')
     for j in xrange(99):
-      (w,m)=glos.data[100*i+j]
+      (w,m)=glos.data[100*i+j][:2]
       m = m.replace('\n', '  ') ### ????????????????????????????????????
       fp.write('%s#%s\n'%(w,m))
     fp.write('%s#%s\n'%tuple(glos.data[100*i+99][:2]))
