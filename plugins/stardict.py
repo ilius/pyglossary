@@ -7,7 +7,7 @@ extentions = ('.ifo',)
 readOptions = ()
 writeOptions = ()
 
-import sys, os, re
+import sys, os, re, shutil
 sys.path.append('/usr/share/pyglossary/src')
 
 from text_utils import intToBinStr, binStrToInt, runDictzip, printAsError
@@ -126,7 +126,29 @@ sametypesequence=%s
     f.write(ifoStr)
   if dictZip:
     runDictzip(filename)
+  resPath = os.path.join(os.path.dirname(filename), 'res')
+  copy_resources(glos.resPath, resPath)
 
+def copy_resources(fromPath, toPath):
+  """Copy resource files from fromPath to toPath.
+  """
+  fromPath = os.path.abspath(fromPath)
+  toPath = os.path.abspath(toPath)
+  if fromPath == toPath:
+    return
+  if not os.path.isdir(fromPath):
+    return
+  if len(os.listdir(fromPath))==0:
+    return
+  if os.path.exists(toPath):
+    if len(os.listdir(toPath)) > 0:
+      printAsError('Output resource directory is not empty: "{0}". Resources will not be copied! '
+        'Clean the output directory before running the converter.'\
+        .format(toPath))
+      return
+    os.rmdir(toPath)
+  shutil.copytree(fromPath, toPath)
+  
 def read_ext(glos, filename):
   ## This method uses module provided by dictconv, but dictconv is very slow for reading from stardict db!
   ## therefore this method in not used by GUI now.
