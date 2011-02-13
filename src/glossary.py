@@ -165,8 +165,10 @@ class Glossary:
   def __init__(self, info=[], data=[], resPath=''):
     self.info = []
     self.setInfos(info, True)
-    # a list if tuples: ('key', 'definition') or ('key', 'definition', [ alternates] )
+    # a list if tuples: ('key', 'definition') or ('key', 'definition', dict() )
     # in general we should assume the tuple may be of arbitrary length >= 2
+    # known dictionary keys:
+    #   data[i][2]['alts'] - list of alternates, filled by bgl reader
     self.data = data
     #####
     self.filename = ''
