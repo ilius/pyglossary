@@ -109,7 +109,7 @@ def write(glos, filename, sort=True, dictZip=True, install=True):## FIXME
   dictFd = open(filename+'.dict', 'wb')
   dictMark = 0
   for item in glos.data:
-    (word, defi) = item
+    (word, defi) = item[:2]
     lm = len(defi)
     indexFd.write(word + '\t' + intToIndexStr(dictMark) + '\t' + intToIndexStr(lm) + '\n')## FIXME
     dictFd.write(defi)

@@ -165,8 +165,9 @@ class Glossary:
   def __init__(self, info=[], data=[], resPath=''):
     self.info = []
     self.setInfos(info, True)
+    # a list if tuples: ('key', 'definition') or ('key', 'definition', [ alternates] )
+    # in general we should assume the tuple may be of arbitrary length >= 2
     self.data = data
-    self.hasAlternates =  False ## ????
     #####
     self.filename = ''
     self.resPath = resPath
@@ -233,17 +234,15 @@ class Glossary:
   def removeTags(self, tags):
     n = len(self.data)
     for i in xrange(n):
-      self.data[i] = (self.data[i][0], removeTextTags(self.data[i][1], tags))
+      self.data[i] = (self.data[i][0], removeTextTags(self.data[i][1], tags)) + self.data[i][2:]
 
   def lowercase(self):
     for i in xrange(len(self.data)):
-      ##self.data[i][0] = self.data[i][0].lower()
-      self.data[i] = (self.data[i][0].lower(), self.data[i][1])
+      self.data[i] = (self.data[i][0].lower(), self.data[i][1]) + self.data[i][2:]
 
   def capitalize(self):
     for i in xrange(len(self.data)):
-      ##self.data[i][0] = self.data[i][0].capitalize()
-      self.data[i] = (self.data[i][0].capitalize(), self.data[i][1])
+      self.data[i] = (self.data[i][0].capitalize(), self.data[i][1]) + self.data[i][2:]
 
   def read(self, filename, format='', options={}):
     delFile=False
@@ -403,9 +402,6 @@ class Glossary:
           printAsError('%s\nfail to compress file "%s"'%(error, filename))
         os.chdir(initCwd)
 
-  def mergeAlternatesIntoWords(self):## FIXME
-    pass
-
   def writeTxt(self, sep, filename='', writeInfo=True, rplList=[], ext='.txt', head=''):
     if not filename:
       filename = self.filename + ext
@@ -425,7 +421,7 @@ class Glossary:
         #    myRaise(__file__)
         #    printAsError('Error on writing info line for "%s"'%t[0])
     for item in self.data:
-      (word, defi)=item
+      (word, defi) = item[:2]
       if word.startswith('#'):
         continue
       for rpl in rplList:
@@ -439,9 +435,8 @@ class Glossary:
         continue
     if filename==None:
       return txt
-    fp = open(filename, 'wb')
-    fp.write(txt)
-    fp.close()
+    with open(filename, 'wb') as fp:
+      fp.write(txt)
     return True
 
 
@@ -454,7 +449,7 @@ class Glossary:
 
   def printTabfile(self):
     for item in self.data:
-      (word, defi)=item
+      (word, defi) = item[:2]
       defi = defi.replace('\n', '\\n')
       try:
         print(word+'\t'+defi)
@@ -477,10 +472,11 @@ class Glossary:
   getOutputList = lambda self: [x[1] for x in self.data]
 
   def simpleSwap(self):
+    # loosing item[2:]
     return Glossary(self.info[:], [ (item[1], item[0]) for item in self.data ])
 
-  def attach(self, other):# only simplicity attach two glossarys(or more that others be as a list).
-  # no ordering. Use when you splited input words to two(or many) parts after ordering.
+  def attach(self, other):# only simplicity attach two glossaries (or more that others be as a list).
+  # no ordering. Use when you split input words to two(or many) parts after ordering.
     try:
       other.data, other.info
     except:
@@ -560,7 +556,7 @@ class Glossary:
     defs = opt['includeDefs']
     outRel = []
     for item in self.data:
-      (word, defi)=item[:]
+      (word, defi) = item[:2]
       defiParts = defi.split(sep)
       if defi.find(st)==-1:
         continue
@@ -849,7 +845,7 @@ class Glossary:
       for rpl in replaceList:
         for i in xrange(len(self.data)):
            if self.data[i][1].find(rpl[0])>-1:
-             self.data[i] = (self.data[i][0], self.data[i][1].replace(rpl[0], rpl[1]))
+             self.data[i] = (self.data[i][0], self.data[i][1].replace(rpl[0], rpl[1])) + self.data[i][2:]
     else:
       num=0
       for rpl in replaceList:
@@ -933,7 +929,7 @@ class Glossary:
   def utf8ReplaceErrors(self):
     errors = 0
     for i in xrange(len(self.data)):
-      (w, m) = self.data[i]
+      (w, m) = self.data[i][:2]
       w = w.replace('\x00', '')
       m = m.replace('\x00', '')
       try:
@@ -946,7 +942,7 @@ class Glossary:
       except UnicodeDecodeError:
         w = w.decode('utf-8', 'replace').encode('utf-8')
         errors += 1
-      self.data[i] = (w, m)
+      self.data[i] = (w, m) + self.data[i][2:]
     for i in xrange(len(self.info)):
       (w, m) = self.info[i]
       w = w.replace('\x00', '')
@@ -991,14 +987,14 @@ class Glossary:
       m = m.strip()
       if m.endswith(','):
         m = m[:-1]
-      d[i] = (w, m)
+      d[i] = (w, m) + d[i][2:]
 
   def faEdit(self):
     RLM = '\xe2\x80\x8f'
     for i in range(len(self.data)):
-      (w, m) = self.data[i]
+      (w, m) = self.data[i][:2]
       ## m = '\n'.join([RLM+line for line in m.split('\n')]) ## for GoldenDict
-      self.data[i] = (faEditStr(w), faEditStr(m))
+      self.data[i] = (faEditStr(w), faEditStr(m)) + self.data[i][2:]
     for i in range(len(self.info)):
       (w, m) = self.info[i]
       self.info[i] = (faEditStr(w), faEditStr(m))

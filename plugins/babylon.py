@@ -21,12 +21,12 @@ def write(glos, filename, writeInfo=True, newline='', encoding='utf8'):
     g = glos.copy()
     if encoding in winArabic:
       for i in xrange(len(g.data)):
-        g.data[i] = (recodeToWinArabic(g.data[i][0]), recodeToWinArabic(g.data[i][1]))
+        g.data[i] = (recodeToWinArabic(g.data[i][0]), recodeToWinArabic(g.data[i][1])) + g.data[i][2:]
       if newline=='':
         newline='\r\n'
     else:
       for i in xrange(len(g.data)):
-        g.data[i]=(g.data[i][0].decode('utf8').encode(encoding), g.data[i][1].decode('utf8').encode(encoding))
+        g.data[i]=(g.data[i][0].decode('utf8').encode(encoding), g.data[i][1].decode('utf8').encode(encoding)) + g.data[i][2:]
   if newline=='':
     newline='\n'
   head=''
