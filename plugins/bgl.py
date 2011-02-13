@@ -35,6 +35,9 @@ from text_utils import printAsError, printAsWarning, myRaise, binStrToInt, ExcMe
   isASCII, isControlChar, name2codepoint
 import pyglossary_gregorian as gregorian
 
+# use this variable to vary verbosity of output for non-class members
+# see verbose parameter of BGL.__init__
+gVerbose = 0
 
 if os.sep=='/': ## Operating system is Unix-like
   tmpDir  = '/tmp'
@@ -109,7 +112,8 @@ class BGLGzipFile(gzip.GzipFile):
     crc32 = read32(self.fileobj)
     isize = read32(self.fileobj)  # may exceed 2GB
     if crc32 != self.crc:
-      print "CRC check failed %s != %s" % (hex(crc32), hex(self.crc))
+      if gVerbose >= 2:
+        print "CRC check failed %s != %s" % (hex(crc32), hex(self.crc))
     elif isize != (self.size & 0xffffffffL):
       raise IOError, "Incorrect length of data produced"
 
@@ -189,7 +193,8 @@ def replace_html_entry(m):
         &csdot; despite other references like &amp; are replaced with corresponding 
         characters.
         """
-        printAsWarning("unknown html entity {0}".format(text))
+        if gVerbose >= 2:
+          printAsWarning("unknown html entity {0}".format(text))
         res = text
   else:
     raise ArgumentError()
@@ -273,7 +278,7 @@ class BGL:
     """Fields of entry definition
     
     Entry definition consists of a number of fields.
-    The most importain of them are:
+    The most important of them are:
     defi - the main definition, mandatory, comes first.
     part of speech
     title
@@ -903,7 +908,9 @@ class BGL:
     strictStringConvertion = False,
     collectMetadata2 = False,
     ):
+    global gVerbose
     self.verbose = verbose
+    gVerbose = verbose
     self.filename = filename
     self.title = 'Untitled'
     self.author = ''
@@ -2438,48 +2445,31 @@ def read(glos, filename, appendAlternatives=True, options={}):
   glos.data = []
   db = BGL(filename, **options)
   if not db.open():
-    raise 'can not open BGL file "%s"'%filename
+    raise 'can not open BGL file "{0}"'.format(filename)
   if not db.read():
-    raise 'can not read BGL file "%s"'%filename
+    raise 'can not read BGL file "{0}"'.format(filename)
   n = db.numEntries
   ui = glos.ui
   if not isinstance(n, int):
     ui = None
   entry = BGL.Entry()
-  #altd = {} ## alternates dict #@2
-  if ui==None:
-    for i in xrange(n):
-      if not db.readEntry(entry):
-        printAsError('No enough entries found!')
-        break
-      if appendAlternatives:
-        for alt in entry.alts:####??????????????? What do with alternates?
-          entry.word += ' | '+alt #@3
-      glos.data.append((entry.word, entry.defi))
-  else:
+  if ui != None:
     ui.progressStart()
-    k = 2000
-    for i in xrange(n):
-      if not db.readEntry(entry):
-        printAsError('No enough entries found!')
-        break
-      if appendAlternatives:
-        for alt in entry.alts:####??????????????? What do with alternates?
-          #glos.data.append(('~'+alt, 'See "%s"'%entry.word)) ## method @1
-          #try: #@2
-          #  altd[alt] += '\n%s'%entry.word #@2
-          #except KeyError: #@2
-          #  altd[alt] = 'See:\n%s'%entry.word #@2
-          entry.word += ' | '+alt #@3
-      glos.data.append((entry.word, entry.defi))
-      if i%k==0:
-        rat = float(i)/n
-        ui.progress(rat)
+  k = 2000
+  for i in xrange(n):
+    if not db.readEntry(entry):
+      printAsError('No enough entries found!')
+      break
+    if appendAlternatives:
+      for alt in entry.alts:####??????????????? What do with alternates?
+        entry.word += ' | '+alt #@3
+    glos.data.append((entry.word, entry.defi))
+    if ui != None and i%k==0:
+      rat = float(i)/n
+      ui.progress(rat)
+  if ui != None:
     ui.progressEnd()
   db.close()
-  ## Merge repeted alternates ???????????????????????????
-  #for word in altd.keys(): #@2
-  #  glos.data.append(('~'+word, altd[word])) #@2
   ##############################################
   glos.setInfo('title'                ,db.title)
   glos.setInfo('author'               ,db.author)
