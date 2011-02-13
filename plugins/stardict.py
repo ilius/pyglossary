@@ -83,8 +83,12 @@ def write(glos, filename, dictZip=True, richText=True):
   dictMark = 0
   idxStr = ''
   dictStr = ''
-  for item in g.data:
+  alternates = [] # contains tuples ('alternate', index-of-word)
+  for i in xrange(len(g.data)):
+    item = g.data[i]
     (word, defi) = item[:2]
+    if len(item) > 2 and 'alts' in item[2]:
+      alternates += [(x, i) for x in item[2]['alts']]
     lm = len(defi)
     idxStr += (word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(lm, 4))
     dictMark += lm
@@ -93,12 +97,21 @@ def write(glos, filename, dictZip=True, richText=True):
     f.write(dictStr)
   with open(filename+'.idx', 'wb') as f:
     f.write(idxStr)
+  if len(alternates) > 0:
+    alternates.sort(stardict_strcmp, lambda x: x[0])
+    synStr = ''
+    for item in alternates:
+      synStr += (item[0] + '\x00' + intToBinStr(item[1], 4))
+    with open(filename+'.syn', 'wb') as f:
+      f.write(synStr)
   ifoStr = '''StarDict\'s dict ifo file\nversion=3.0.0
 bookname=%s
 wordcount=%d
 idxfilesize=%d
 sametypesequence=%s
 '''%(new_lines_2_space(g.getInfo('name')), len(g.data), len(idxStr), ('h' if richText else 'm'))
+  if len(alternates) > 0:
+    ifoStr += 'synwordcount={0}\n'.format(len(alternates))
   for key in infoKeys:
     if key in ('bookname', 'wordcount', 'idxfilesize', 'sametypesequence'):
       continue
