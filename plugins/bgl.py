@@ -4,7 +4,7 @@
 ##
 ##  Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
 ##  This file is part of PyGlossary project, http://sourceforge.net/projects/pyglossary/
-##  Thanks to Raul Fernandes <rgfbr@yahoo.com.br> and Karl Grill for reverse enginearing
+##  Thanks to Raul Fernandes <rgfbr@yahoo.com.br> and Karl Grill for reverse engineering
 ##
 ##  This program is a free software; you can redistribute it and/or modify
 ##  it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ if os.sep=='/': ## Operating system is Unix-like
 elif os.sep=='\\': ## Operating system is ms-windows
   tmpDir  = os.getenv('TEMP')
 else:
-  raise RuntimeError('Unknown path seperator(os.sep=="%s") ! What is your operating system?'%os.sep)
+  raise RuntimeError('Unknown path separator(os.sep=="%s") ! What is your operating system?'%os.sep)
 
 
 class MetaData:
@@ -125,7 +125,7 @@ class BGLGzipFile(gzip.GzipFile):
       if self._new_member:
         return True
       # It is possible that we've read all data of the current member, 
-      # but have not tried to read further. Thus end of member has not beed encountered.
+      # but have not tried to read further. Thus end of member has not been encountered.
       # Read one byte further and check if we encounter end of the member.
       else:
         buf = self.read(1)
@@ -292,6 +292,9 @@ class BGL:
       self.title = None
       self.u_title = None
       self.utf8_title = None
+      self.title_trans = None
+      self.u_title_trans = None
+      self.utf8_title_trans = None
       self.encoding = None # encoding of the definition
       self.singleEncoding = True # true if the definition was encoded with a single encoding
       self.type_6 = None
@@ -1230,6 +1233,13 @@ class BGL:
       print 'creationTime = {0}'.format(self.creationTime)
       print 'middleUpdated = {0}'.format(self.middleUpdated) ## ???????????????
       print 'lastUpdated = {0}'.format(self.lastUpdated)
+      print
+      print 'title = {0}'.format(self.title)
+      print 'author = {0}'.format(self.author)
+      print 'email = {0}'.format(self.email)
+      print 'copyright = {0}'.format(self.copyright)
+      print 'description = {0}'.format(self.description)
+    
     self.numBlocks = 0
     
     # remove resource directory if it's empty
@@ -2064,6 +2074,13 @@ class BGL:
     if fields.part_of_speech != None:
       fields.part_of_speech_str = self.partOfSpeech[fields.part_of_speech]
     
+    if fields.title_trans != None:
+      # sourceEncoding or targetEncoding ?
+      [fields.utf8_title_trans, singleEncoding] = self.decode_charset_tags(fields.title_trans, self.sourceEncoding)
+      fields.utf8_title_trans = self.replace_html_entries(fields.utf8_title_trans)
+      fields.utf8_title_trans = self.remove_control_chars(fields.utf8_title_trans)
+      fields.u_title_trans = fields.utf8_title_trans.decode('utf-8')
+      
     self.processEntryDefinition_statistics(fields, defi, raw_key)
     
     defi_format = ''
@@ -2078,6 +2095,8 @@ class BGL:
           defi_format += ' '
         defi_format += fields.utf8_title
       defi_format += '<br>\n'
+    if fields.utf8_title_trans != None:
+      defi_format += fields.utf8_title_trans + "<br>\n"
     if fields.utf8_defi != None:
       defi_format += fields.utf8_defi
     # test encoding
@@ -2101,12 +2120,17 @@ class BGL:
       if not isASCII(fields.u_defi):
         self.metadata2.isDefiASCII = False
     if fields.title != None:
-      self.dump_file_write_text('\n' + 'title = ')
+      self.dump_file_write_text('\n' + 'title: ')
       self.dump_file_write_data(fields.title)
     if fields.part_of_speech != None:
       self.decoded_dump_file_write(u'\npart of speech: ' + self.partOfSpeech[fields.part_of_speech].decode('utf8'))
     if fields.u_title != None:
       self.decoded_dump_file_write(u'\ndefi title: ' + fields.u_title)
+    if fields.title_trans != None:
+      self.dump_file_write_text('\n' + 'defi title trans: ')
+      self.dump_file_write_data(fields.title_trans)
+    if fields.u_title_trans != None:
+      self.decoded_dump_file_write(u'\ndefi title trans: ' + fields.u_title_trans)
     if fields.u_defi != None:
       self.decoded_dump_file_write(u'\ndefi: ' + fields.u_defi)
   
@@ -2198,6 +2222,7 @@ class BGL:
           return
         i += Len
       elif defi[i] == '\x28': # '\x28' <two bytes - length><html text>
+        # title with transcription?
         if i + 2 >= len(defi):
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x28'.format(defi, raw_key))
@@ -2213,6 +2238,7 @@ class BGL:
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x28'.format(defi, raw_key))
           return
+        fields.title_trans = defi[i:i+Len]
         i += Len
       elif 0x40 <= ord(defi[i]) <= 0x4f: # [\x41-\x4f] <one byte> <text>
       #elif ord(defi[i]) in [ 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x48, 0x49, 0x4f ]: # tested values
