@@ -585,9 +585,10 @@ def isControlChar(y):
     return True
   return False
     
-def isASCII(data):
+def isASCII(data, exclude = []):
   for i in range(len(data)):
-    if ord(data[i]) >= 128:
+    c = ord(data[i])
+    if c >= 128 and c not in exclude:
       return False
   return True
 

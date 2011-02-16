@@ -295,6 +295,14 @@ class BGL:
       self.title_trans = None
       self.u_title_trans = None
       self.utf8_title_trans = None
+      self.transcription_50 = None
+      self.u_transcription_50 = None
+      self.utf8_transcription_50 = None
+      self.transcription_50_code = None
+      self.transcription_60 = None
+      self.u_transcription_60 = None
+      self.utf8_transcription_60 = None
+      self.transcription_60_code = None
       self.encoding = None # encoding of the definition
       self.singleEncoding = True # true if the definition was encoded with a single encoding
       self.type_6 = None
@@ -2080,6 +2088,37 @@ class BGL:
       fields.utf8_title_trans = self.replace_html_entries(fields.utf8_title_trans)
       fields.utf8_title_trans = self.remove_control_chars(fields.utf8_title_trans)
       fields.u_title_trans = fields.utf8_title_trans.decode('utf-8')
+    
+    if fields.transcription_50 != None:
+      if fields.transcription_50_code == 0x10:
+        # contains values like this (char codes):
+        # 00 18 00 19 00 1A 00 1B 00 1C 00 1D 00 1E 00 40 00 07
+        # this is not utf-16
+        # what is this?
+        pass
+      elif fields.transcription_50_code == 0x1b:
+        [fields.utf8_transcription_50, singleEncoding] = self.decode_charset_tags(fields.transcription_50, self.sourceEncoding)
+        fields.utf8_transcription_50 = self.replace_html_entries(fields.utf8_transcription_50)
+        fields.utf8_transcription_50 = self.remove_control_chars(fields.utf8_transcription_50)
+        fields.u_transcription_50 = fields.utf8_transcription_50.decode('utf-8')
+      elif fields.transcription_50_code == 0x18:
+        # incomplete text like:
+        # t c=T>02D0;</charset>g<charset c=T>0259;</charset>- 
+        # This defi normally contains fields.transcription_60 in this case.
+        pass
+      else:
+        self.msg_log_file_write('processEntryDefinition({0})\n'
+          'key = ({1}):\ndefi field 50, unknown code: 0x{2:x}'.format(defi, raw_key, fields.transcription_50_code))
+      
+    if fields.transcription_60 != None:
+      if fields.transcription_60_code == 0x1b:
+        [fields.utf8_transcription_60, singleEncoding] = self.decode_charset_tags(fields.transcription_60, self.sourceEncoding)
+        fields.utf8_transcription_60 = self.replace_html_entries(fields.utf8_transcription_60)
+        fields.utf8_transcription_60 = self.remove_control_chars(fields.utf8_transcription_60)
+        fields.u_transcription_60 = fields.utf8_transcription_60.decode('utf-8')
+      else:
+        self.msg_log_file_write('processEntryDefinition({0})\n'
+          'key = ({1}):\ndefi field 60, unknown code: 0x{2:x}'.format(defi, raw_key, fields.transcription_60_code))
       
     self.processEntryDefinition_statistics(fields, defi, raw_key)
     
@@ -2097,6 +2136,10 @@ class BGL:
       defi_format += '<br>\n'
     if fields.utf8_title_trans != None:
       defi_format += fields.utf8_title_trans + "<br>\n"
+    if fields.utf8_transcription_50 != None:
+      defi_format += '[{0}]<br>\n'.format(fields.utf8_transcription_50)
+    if fields.utf8_transcription_60 != None:
+      defi_format += '[{0}]<br>\n'.format(fields.utf8_transcription_60)
     if fields.utf8_defi != None:
       defi_format += fields.utf8_defi
     # test encoding
@@ -2123,6 +2166,7 @@ class BGL:
       self.dump_file_write_text('\n' + 'title: ')
       self.dump_file_write_data(fields.title)
     if fields.part_of_speech != None:
+      self.dump_file_write_text('\n' + 'part of speech {0}'.format(fields.part_of_speech))
       self.decoded_dump_file_write(u'\npart of speech: ' + self.partOfSpeech[fields.part_of_speech].decode('utf8'))
     if fields.u_title != None:
       self.decoded_dump_file_write(u'\ndefi title: ' + fields.u_title)
@@ -2131,6 +2175,16 @@ class BGL:
       self.dump_file_write_data(fields.title_trans)
     if fields.u_title_trans != None:
       self.decoded_dump_file_write(u'\ndefi title trans: ' + fields.u_title_trans)
+    if fields.transcription_50 != None:
+      self.dump_file_write_text('\n' + 'defi transcription_50 ({0:x}): '.format(fields.transcription_50_code))
+      self.dump_file_write_data(fields.transcription_50)
+    if fields.u_transcription_50 != None:
+      self.decoded_dump_file_write(u'\ndefi transcription_50: ' + fields.u_transcription_50)
+    if fields.transcription_60 != None:
+      self.dump_file_write_text('\n' + 'defi transcription_60 ({0:x}): '.format(fields.transcription_60_code))
+      self.dump_file_write_data(fields.transcription_60)
+    if fields.u_transcription_60 != None:
+      self.decoded_dump_file_write(u'\ndefi transcription_60: ' + fields.u_transcription_60)
     if fields.u_defi != None:
       self.decoded_dump_file_write(u'\ndefi: ' + fields.u_defi)
   
@@ -2241,21 +2295,28 @@ class BGL:
         fields.title_trans = defi[i:i+Len]
         i += Len
       elif 0x40 <= ord(defi[i]) <= 0x4f: # [\x41-\x4f] <one byte> <text>
-      #elif ord(defi[i]) in [ 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x48, 0x49, 0x4f ]: # tested values
+        # often contains digits as text:
+        # 56
+        # &#0230;lps - key Alps
+        # 48@i
+        # has no apparent influence on the article
+        code = ord(defi[i])
         Len = ord(defi[i]) - 0x3F
         if i+2+Len > len(defi):
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x40+'.format(defi, raw_key))
           return
-        #s = 'type 0x41 ({0})\n{1}\n'.format(raw_key, defi[i:i+4])
-        #self.msg_log_file_write(s)
         i += 2
+        text = defi[i:i+Len]
+        self.dump_file_write_text('\n' + 'defi field {0:x}: '.format(code))
+        self.dump_file_write_data(text)
         i += Len
       elif defi[i] == '\x50': # \x50 <one byte> <one byte - length><data>
         if i + 2 >= len(defi):
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x50'.format(defi, raw_key))
           return
+        fields.transcription_50_code = ord(defi[i+1])
         Len = ord(defi[i+2])
         i += 3
         if Len == 0:
@@ -2266,12 +2327,14 @@ class BGL:
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x50'.format(defi, raw_key))
           return
+        fields.transcription_50 = defi[i:i+Len]
         i += Len
       elif defi[i] == '\x60': # '\x60' <one byte> <two bytes - length> <text>
         if i + 4 > len(defi):
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x60'.format(defi, raw_key))
           return
+        fields.transcription_60_code = ord(defi[i+1])
         i += 2
         Len = binStrToInt(defi[i:i+2])
         i += 2
@@ -2283,6 +2346,7 @@ class BGL:
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x60'.format(defi, raw_key))
           return
+        fields.transcription_60 = defi[i:i+Len]
         i += Len
       else:
         self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
