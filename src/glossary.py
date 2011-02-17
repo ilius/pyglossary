@@ -32,7 +32,7 @@ You should have received a copy of the GNU General Public License along with thi
 
 homePage = 'http://sourceforge.net/projects/pyglossary'
 
-import os, sys, platform, time, subprocess, shutil
+import os, sys, platform, time, subprocess, shutil, re
 from os.path import splitext, isdir
 from os.path import split as path_split
 from os.path import join as path_join
@@ -967,23 +967,19 @@ class Glossary:
     d = self.data
     n = len(d)
     for i in range(n):
-      w = removeTextTags(d[i][0].strip(), self.ui.pref['tags'])
+      # key must not contain tags, at least in bgl dictionary ???
+      w = d[i][0].strip()
       m = d[i][1].strip()\
-                 .replace('\r\n', '\n')\
                  .replace('♦  ', '♦ ')
-                      
-      for j in range(20):
-        m = m.replace('\n\n\n', '\n\n')\
-             .replace(' \n', '\n')\
-             .replace('\n ', '\n')
+      
+      m = re.sub("[\r\n]+", "\n", m)
+      m = re.sub(" *\n *", "\n", m)
 
       for j in range(3):
-        for ch in (',', '.', ';'):
+        for ch in ',.;':
           m = replacePostSpaceChar(m, ch)
 
-      m = m.replace('♦\n♦', '♦')\
-           .replace('♦\n\n♦', '♦')\
-           .replace('♦\n\n\n♦', '♦')
+      m = re.sub('♦\n+♦', '♦', m)
       if m.endswith('<p'):
         m = m[:-2]
       m = m.strip()
