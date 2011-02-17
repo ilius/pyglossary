@@ -305,7 +305,10 @@ class BGL:
       self.transcription_60_code = None
       self.encoding = None # encoding of the definition
       self.singleEncoding = True # true if the definition was encoded with a single encoding
-      self.type_6 = None
+      self.field_1a = None
+      self.field_13 = None
+      self.field_07 = None
+      self.field_06 = None
         
   class GzipWithCheck:
     """gzip.GzipFile with check. It checks that unpacked data match what was packed.
@@ -2187,6 +2190,17 @@ class BGL:
       self.decoded_dump_file_write(u'\ndefi transcription_60: ' + fields.u_transcription_60)
     if fields.u_defi != None:
       self.decoded_dump_file_write(u'\ndefi: ' + fields.u_defi)
+    if fields.field_1a != None:
+      self.dump_file_write_text('\n' + 'defi field_1a: ')
+      self.dump_file_write_data(fields.field_1a)
+    if fields.field_13 != None:
+      self.dump_file_write_text('\n' + 'defi field_13: ')
+      self.dump_file_write_data(fields.field_13)
+    if fields.field_07 != None:
+      self.dump_file_write_text('\n' + 'defi field_07: ')
+      self.dump_file_write_data(fields.field_07)
+    if fields.field_06 != None:
+      self.dump_file_write_text('\n' + 'defi field_06: {0}'.format(fields.field_06))
   
   # d0 - index of the '\x14 char in defi
   # d0 may be the last char of the string
@@ -2216,27 +2230,31 @@ class BGL:
           fields.part_of_speech = x - 0x30
         i = i+2
       elif defi[i] == '\x06': # \x06<one byte>
-        if fields.type_6 != None:
+        if fields.field_06 != None:
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\nduplicate type 6'.format(defi, raw_key))
         if i+1 >= len(defi):
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ndefi ends after \\x06'.format(defi, raw_key))
           return
-        #self.definitionType6Sample(ord(c), raw_key)
-        #fields.type_6 = c
+        fields.field_06 = ord(defi[i+1])
         i += 2
       elif defi[i] == '\x07': # \x07<two bytes>
+        # Found in 4 Hebrew dictionaries. I do not understand.
         if i+3 > len(defi):
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x07'.format(defi, raw_key))
           return
+        fields.field_07 = defi[i+1:i+3]
         i += 3
-      elif defi[i] == '\x13': # \x13 03 06 0D C7 ??????
+      elif defi[i] == '\x13':
+        # This field was found in 13 dictionary. All of them contain byte sequence 03 06 0D C7.
+        # In all cases the key was Endeavor$543715$.
         if i + 5 > len(defi):
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x13'.format(defi, raw_key))
           return
+        fields.field_13 = defi[i+1:i+5]
         i += 5
       elif defi[i] == '\x18': # \x18<one byte - title length><entry title>
         if fields.title != None:
@@ -2260,6 +2278,7 @@ class BGL:
         fields.title = defi[i:i+Len]
         i += Len
       elif defi[i] == '\x1A': # '\x1A'<one byte - length><text>
+        # found only in Hebrew dictionaries, I do not understand.
         if i + 1 >= len(defi):
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x1A'.format(defi, raw_key))
@@ -2274,6 +2293,7 @@ class BGL:
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x1A'.format(defi, raw_key))
           return
+        fields.field_1a = defi[i:i+Len]
         i += Len
       elif defi[i] == '\x28': # '\x28' <two bytes - length><html text>
         # title with transcription?
