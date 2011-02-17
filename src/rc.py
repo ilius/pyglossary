@@ -7,7 +7,7 @@ sort=True
 lower=False
 utf8_check = True
 
-remove_tags=True
+remove_tags=False
 ## TagName : RemoveBetween
 tags={
 'i'	:0,
