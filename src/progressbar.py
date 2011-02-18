@@ -235,10 +235,9 @@ class ProgressBar(object):
   - start_time: first time update() method of ProgressBar was called
   - seconds_elapsed: seconds elapsed since start_time
   - percentage(): percentage of the progress (this is a method)
-  - quiet: if true, do everything but print progress
   """
-  def __init__(self, maxval=100.0, widgets=default_widgets, update_step=0.1, term_width=None, fd=sys.stderr,
-    quiet=False):
+  def __init__(self, maxval=100.0, widgets=default_widgets, update_step=0.1,
+               term_width=None, fd=sys.stderr):
     assert maxval > 0
     self.maxval = maxval
     self.widgets = widgets
@@ -267,7 +266,6 @@ class ProgressBar(object):
     self.prev_percentage = -1
     self.start_time = None
     self.seconds_elapsed = 0
-    self.quiet = quiet
 
   def handle_resize(self, signum, frame):
     (h, w) = array('h', ioctl(self.fd, termios.TIOCGWINSZ, '\0'*8))[:2]
@@ -317,12 +315,10 @@ class ProgressBar(object):
     self.seconds_elapsed = time.time() - self.start_time
     self.prev_percentage = self.percentage()
     if value != self.maxval:
-      if not self.quiet:
-        self.fd.write(self._format_line() + '\r')
+      self.fd.write(self._format_line() + '\r')
     else:
       self.finished = True
-      if not self.quiet:
-        self.fd.write(self._format_line() + '\n')
+      self.fd.write(self._format_line() + '\n')
 
   def start(self):
     """Start measuring time, and prints the bar at 0%.

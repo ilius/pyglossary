@@ -89,6 +89,14 @@ def parseFormatOptionsStr(st):
     opt[key] = value
   return opt
 
+class NullObj:
+  def __getattr__(self, attr):
+    return self
+  def __setattr__(self, attr, value):
+    pass
+  def __call__(self, *args, **kwargs):
+    pass
+
 class UI:
   prefKeys=['save','newline','auto_update','auto_set_for','auto_set_out','sort','lower',\
     'utf8_check','remove_tags','tags','wrap_out','wrap_err',  'wrap_edit','wrap_dbe',\
@@ -98,12 +106,14 @@ class UI:
   prefSavePath=[confPath,  '%s%src.py'%(srcDir,os.sep)]
   def __init__(self, text='', enableProgressBar=True):
     self.ptext=text
-    self.enableProgressBar=enableProgressBar
     self.reverseStop=False
     self.pref={}
     self.pref_load()
     #print self.pref
-    self.progressBuild()
+    if enableProgressBar:
+      self.progressBuild()
+    else:
+      self.pbar = NullObj()
   def setText(self, text):
     self.pbar.widgets[0]=text
   def progressStart(self):
@@ -115,7 +125,7 @@ class UI:
     print
   def progressBuild(self):
     rot = pb.RotatingMarker()
-    self.widgets = [
+    widgets = [
       self.ptext,
       pb.Bar(marker=u'█', right=rot),
       pb.Percentage(),
@@ -123,8 +133,7 @@ class UI:
       pb.ETA()
     ]
     ## SyntaxError(invalid syntax) with python3 with unicode(u'█') argument ## FIXME
-    self.pbar = pb.ProgressBar(widgets=self.widgets, maxval=1.0, update_step=0.5, \
-      quiet=not self.enableProgressBar)
+    self.pbar = pb.ProgressBar(widgets=widgets, maxval=1.0, update_step=0.5)
     rot.pbar = self.pbar
   def r_start(self, *args):
     self.rWords = self.glosR.takeOutputWords()
@@ -214,8 +223,8 @@ class UI:
       if reverse:
         print('Reversing to file "%s"'%opath)
         self.setText('')
-        self.pbar.update_step=0.1
-        self.pref['savePath']=opath
+        self.pbar.update_step = 0.1
+        self.pref['savePath'] = opath
         self.glosR = g
         self.r_start()
       else:
