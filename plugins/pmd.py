@@ -5,7 +5,7 @@ format = 'Pmd'
 description = 'PMD'
 extentions = ('.pmd',)
 readOptions = ()
-writeOptions = ()
+writeOptions = ('writeInfo',)
 
 import sys, os
 
@@ -175,7 +175,7 @@ def pmdDecomile(pmd):
         uni+=sub[0]
         break
 
-def read(glos, filename, options={}):## not tested ## FIXME
+def read(glos, filename):## not tested ## FIXME
   initCwd = os.getcwd()
   os.chdir(filename)
   indLines = open('index').read().split('\n')[3:]
@@ -192,7 +192,7 @@ def read(glos, filename, options={}):## not tested ## FIXME
       glos.data.append((word, defi))
   os.chdir(initCwd)
 
-def write(glos, filename, writeInfo=True, options={}):
+def write(glos, filename, writeInfo=True):
   initCwd = os.getcwd()
   if not os.path.isdir(filename):
     os.mkdir(filename)

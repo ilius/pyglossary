@@ -7,7 +7,7 @@ extentions = ('.xml',)
 readOptions = ()
 writeOptions = ()
 
-def read(glos, filename, zeroFill=True, options={}):
+def read(glos, filename, zeroFill=True):
   glos.data=[]
   xml = fa_edit(file(filename).read())
   words=0
@@ -38,7 +38,7 @@ def read(glos, filename, zeroFill=True, options={}):
   print('%s words found.'%len(glos.data))
   return True
 
-def write(glos, filename, options={}):
+def write(glos, filename):
   year = glos.getInfo('year')
   if year=='':
     year='1387'

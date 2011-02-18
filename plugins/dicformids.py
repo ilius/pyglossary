@@ -8,10 +8,10 @@ format = 'Dicformids'
 description = 'DictionaryForMIDs'
 extentions = ('.mids',)
 readOptions = ()
-writeOptions = ()
+writeOptions = ('writeInfo',)
 
 
-def write(glos, filename, writeInfo=True, options={}):
+def write(glos, filename, writeInfo=True):
   initCwd = os.getcwd()
   #'DictionaryForMIDs'
   indexFileMaxSize=30000

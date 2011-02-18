@@ -11,7 +11,7 @@ readOptions = ()
 writeOptions = ()
 
 
-def write(glos, filename, archive='tar.bz2', sep=os.sep, options={}):
+def write(glos, filename, archive='tar.bz2', sep=os.sep):
   if os.path.exists(filename):
     if os.path.isdir(filename):
       if os.listdir(filename)!=[]:

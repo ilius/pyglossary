@@ -216,7 +216,7 @@ class UI:
     g = Glossary()
     print('Reading file "%s"'%ipath)
     g.ui = self
-    if g.read(ipath, format=read_format, options=read_options)!=False:
+    if g.read(ipath, format=read_format, **read_options)!=False:
       ##When glossary reader uses progressbar, progressbar must be rebuilded:
       self.progressBuild()
       g.uiEdit()
@@ -230,7 +230,7 @@ class UI:
       else:
         print('Writing to file "%s"'%opath)
         self.setText('Writing: ')
-        if g.write(opath, format=write_format, options=write_options)!=False:
+        if g.write(opath, format=write_format, **write_options)!=False:
           print('done')
           return 0
         else:

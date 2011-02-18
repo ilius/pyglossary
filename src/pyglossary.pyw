@@ -95,12 +95,24 @@ else:## run the commnad line interface
   opath = arguments[1]
 
 
-read_format = ''
-write_format = ''
-read_options = {}
-write_options = {}
+read_format = '' ## only used in ui_cmd for now
+write_format = '' ## only used in ui_cmd for now
+read_options = {} ## only used in ui_cmd for now
+write_options = {} ## only used in ui_cmd for now
+reverse = False ## only used in ui_cmd for now
 ui_options = {}
-reverse = False
+
+
+'''
+  examples for read and write options:
+  --read-options testOption=stringValue
+  --read-options enableFoo=True
+  --read-options fooList=[1,2,3]
+  --read-options 'fooList=[1, 2, 3]'
+  --read-options 'testOption=stringValue; enableFoo=True; fooList=[1, 2, 3]'
+  --read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
+'''
+
 
 for (opt, opt_arg) in options:
   if opt in ('-v', '--version'):
