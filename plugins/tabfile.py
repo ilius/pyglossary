@@ -8,9 +8,9 @@ format = 'Tabfile'
 description = 'Tabfile (txt, dic)'
 extentions = ('.txt', '.tab', '.dic')
 readOptions = ()
-writeOptions = ()
+writeOptions = ('writeInfo',)
 
-def read(glos, filename, options={}):
+def read(glos, filename):
   fp = open(filename)
   glos.data = []
   while True:
@@ -45,7 +45,7 @@ def read(glos, filename, options={}):
     glos.data.append((word, defi))
 
 
-def write(glos, filename, writeInfo=True, options={}):
+def write(glos, filename, writeInfo=True):
   return glos.writeTxt(sep=('\t', '\n'),
                        filename=filename,
                        writeInfo=writeInfo,

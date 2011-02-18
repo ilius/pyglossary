@@ -154,11 +154,13 @@ class Glossary:
         readFormats.append(format)
         readExt.append(ext)
         readDesc.append(desc)
+        formatsReadOptions[format] = mod.readOptions
       if hasattr(mod, 'write'):
         exec('write%s = mod.write'%format)
         writeFormats.append(format)
         writeExt.append(ext)
         writeDesc.append(desc)
+        formatsWriteOptions[format] = mod.writeOptions
       del f, mod, format, ext, desc
 
 
@@ -246,7 +248,7 @@ class Glossary:
     for i in xrange(len(self.data)):
       self.data[i] = (self.data[i][0].capitalize(), self.data[i][1]) + self.data[i][2:]
 
-  def read(self, filename, format='', options={}):
+  def read(self, filename, format='', **options):
     delFile=False
     ext = splitext(filename)[1]
     ext = ext.lower()
@@ -301,7 +303,12 @@ class Glossary:
         #  os.remove(filename)
         printAsError('Unknown extension "%s" for read support!'%ext)
         return False
-    getattr(self, 'read%s'%format).__call__(filename, options=options)
+    validOptionKeys = self.formatsReadOptions[format]
+    for key in options.keys():
+      if not key in validOptionKeys:
+        printAsError('Invalid read option "%s" given for %s format'%(key, format))
+        del options[key]
+    getattr(self, 'read%s'%format).__call__(filename, **options)
     
     (filename_nox, ext) = splitext(filename)
     if ext.lower() in self.formatsExt[format]:
@@ -315,7 +322,7 @@ class Glossary:
     return True
 
 
-  def write(self, filename, format='', options={}):
+  def write(self, filename, format='', **options):
     if not filename:
       printAsError('Invalid filename %r'%filename)
       return False
@@ -371,8 +378,13 @@ class Glossary:
     if isdir(filename):
       #filename = path_join(filename, path_split(self.filename)[1]+ext)
       filename = path_join(filename, self.filename+ext)
+    validOptionKeys = self.formatsWriteOptions[format]
+    for key in options.keys():
+      if not key in validOptionKeys:
+        printAsError('Invalid write option "%s" given for %s format'%(key, format))
+        del options[key]
     print 'filename=%s'%filename
-    getattr(self, 'write%s'%format).__call__(filename, options=options)
+    getattr(self, 'write%s'%format).__call__(filename, **options)
     if zipExt:
       try:
         os.remove('%s%s'%(filename, zipExt))
@@ -404,7 +416,7 @@ class Glossary:
           printAsError('%s\nfail to compress file "%s"'%(error, filename))
         os.chdir(initCwd)
 
-  def writeTxt(self, sep, filename='', writeInfo=True, rplList=[], ext='.txt', head='', options={}):
+  def writeTxt(self, sep, filename='', writeInfo=True, rplList=[], ext='.txt', head=''):
     if not filename:
       filename = self.filename + ext
     txt = head
@@ -443,7 +455,7 @@ class Glossary:
 
 
 
-  def writeDict(self, filename='', writeInfo=False, options={}):
+  def writeDict(self, filename='', writeInfo=False):
     ## Used in '/usr/share/dict/' for some dictionarys such as 'ding'.
     self.writeTxt((' :: ', '\n'), filename, writeInfo,
                   (('\n', '\\n'),), '.dict')

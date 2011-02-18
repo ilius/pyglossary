@@ -13,7 +13,7 @@ writeOptions = ()
 infoKeys = ('dbname', 'author', 'version', 'direction', 'origLang', 'destLang',
             'license', 'category', 'description')
 
-def read(glos, filename, options={}):
+def read(glos, filename):
   from sqlite3 import connect
   
   ## ???????? name OR dbname ????????????????????
@@ -46,7 +46,7 @@ def read_2(glos, filename):
   import alchemy
   return alchemy.readSqlite(glos, filename)
 
-def write(glos, filename, options={}):
+def write(glos, filename):
   lines = glos.getSqlLines()
   fp = open(filename, 'wb')
   fp.write('\n'.join(lines))

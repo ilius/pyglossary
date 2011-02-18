@@ -15,7 +15,7 @@ from text_utils import intToBinStr, binStrToInt, runDictzip, printAsError
 infoKeys = ('bookname', 'author', 'email', 'website', 'description', 'date')
 
 
-def read(glos, filename, options={}):
+def read(glos, filename):
   if filename.endswith('.ifo'):
     filename = filename[:-4]
   ifoStr = open(filename+'.ifo', 'rb').read()
@@ -68,7 +68,7 @@ def read(glos, filename, options={}):
   if len(wrongSorted)>0:
     print('Warning: wrong sorting count: %d'%len(wrongSorted))
 
-def write(glos, filename, dictZip=True, richText=True, options={}):
+def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
   g = glos.copy()
   g.data.sort(stardict_strcmp, lambda x: x[0])
   if filename[-4:].lower()=='.ifo':
@@ -126,11 +126,11 @@ sametypesequence=%s
     f.write(ifoStr)
   if dictZip:
     runDictzip(filename)
-  resPath = os.path.join(os.path.dirname(filename), 'res')
-  resOverwrite = False
-  if 'res-overwrite' in options:
-    resOverwrite = options['res-overwrite']
-  copy_resources(glos.resPath, resPath, resOverwrite)
+  copy_resources(
+    glos.resPath,
+    os.path.join(os.path.dirname(filename), 'res'),
+    resOverwrite
+  )
 
 def copy_resources(fromPath, toPath, overwrite):
   """Copy resource files from fromPath to toPath.
@@ -249,47 +249,33 @@ def write_ext(glos, filename, sort=True, dictZip=True):
       filename = filename[:-4]
       runDictzip(filename)
 
-# ISUPPER macro in glib library gstrfuncs.c file
-def glib_ISUPPER(c):
-  return ord(c) >= ord('A') and ord(c) <= ord('Z')
-  
-# TOLOWER macro in glib library gstrfuncs.c file
-def glib_TOLOWER(c):
-  if glib_ISUPPER(c):
-    return chr((ord(c) - ord('A')) + ord('a'))
-  else:
-    return c
-  
-# g_ascii_strcasecmp function in glib library gstrfuncs.c file
-def glib_ascii_strcasecmp(s1, s2):
-  commonLen = min(len(s1), len(s2))
-  for i in xrange(commonLen):
-    c1 = ord(glib_TOLOWER(s1[i]))
-    c2 = ord(glib_TOLOWER(s2[i]))
-    if c1 != c2:
-      return c1 - c2
-  return len(s1) - len(s2)
 
-def strcmp(s1, s2):
-  commonLen = min(len(s1), len(s2))
-  for i in xrange(commonLen):
-    c1 = ord(s1[i])
-    c2 = ord(s2[i])
-    if c1 != c2:
-      return c1 - c2
-  return len(s1) - len(s2)
-
-# use this function to sort index items in StarDict dictionary
-# s1 and s2 must be utf-8 encoded strings
 def stardict_strcmp(s1, s2):
-  a = glib_ascii_strcasecmp(s1, s2)
-  if a == 0:
-    return strcmp(s1, s2)
+  '''
+    use this function to sort index items in StarDict dictionary
+    s1 and s2 must be utf-8 encoded strings
+    g_ascii_strcasecmp function (in glib library gstrfuncs.c file) merge into this function
+
+    strcmp should just return 0, +1 or -1, like Python's cmp function
+    the term cmp (comparison) is not about number of diffrences
+    and also the cmp argument to list.sort(), just uses sign (so +N and +1 are the same)
+  '''
+  commonLen = min(len(s1), len(s2))
+  for i in xrange(commonLen):
+    c1 = ord(s1[i].lower())
+    c2 = ord(s2[i].lower())
+    if c1 != c2:
+      return cmp(c1, c2)
+  lenCmp = cmp(len(s1), len(s2))
+  if lenCmp==0:
+    return cmp(s1, s2)
   else:
-    return a
+    return lenCmp
+
 
 def new_lines_2_space(text):
   return re.sub("[\n\r]+", ' ', text)
 
 def new_line_2_br(text):
   return re.sub("\n\r?|\r\n?", "<br>", text)
+

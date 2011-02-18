@@ -8,7 +8,7 @@ format = 'Dictd'
 description = 'DICTD dictionary server (.index)'
 extentions = ('.index',)
 readOptions = ()
-writeOptions = ()
+writeOptions = ('sort', 'dictZip', 'install')
 
 from text_utils import chBaseIntToList, runDictzip
 import shutil
@@ -60,7 +60,7 @@ database %s
 '''%(title, fname, dictPostfix, fname))
   
 
-def read(glos, filename, options={}):
+def read(glos, filename):
   if filename.endswith('.index'):
     filename = filename[:-6]
   idxStr = open(filename+'.index', 'rb').read()
@@ -98,7 +98,7 @@ def read(glos, filename, options={}):
 
 
 
-def write(glos, filename, sort=True, dictZip=True, install=True, options={}):## FIXME
+def write(glos, filename, sort=True, dictZip=True, install=True):## FIXME
   if sort:
     glos = glos.copy()
     glos.data.sort()

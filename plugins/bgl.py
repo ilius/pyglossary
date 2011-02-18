@@ -26,8 +26,17 @@ enable = True
 format = 'Bgl'
 description = 'Babylon (bgl)'
 extentions = ('.bgl')
-readOptions = ()
+readOptions = (
+  'resPath', 'verbose', 'defaultEncodingOverwrite', 'sourceEncodingOverwrite', 'targetEncodingOverwrite',
+  'msgLogPath', 'rawDumpPath', 'decodedDumpPath', 'unpackedGzipPath', 'searchCharSamples',
+  'charSamplesPath', 'testMode', 'noControlSequenceInDefi', 'strictStringConvertion',
+  'collectMetadata2'
+)
 writeOptions = ()
+
+## FIXME: document type of read/write options (that would be speficied in command line)
+
+
 
 import gzip, re, htmlentitydefs, xml.sax.saxutils, pickle
 
@@ -901,27 +910,27 @@ class BGL:
   )
 
   def __init__(self, filename, 
-    # resource path - where to extract embedded files
-    resPath=None, 
-    ## 0: print nothing
-    ## 1: minimal info (for user)
-    ## 2: extra info (for user)
-    ## 3: debugging (for developer)
-    verbose=1, 
-    defaultEncodingOverwrite = None, 
-    sourceEncodingOverwrite = None, 
-    targetEncodingOverwrite = None,
-    msgLogPath = None, 
-    rawDumpPath = None, 
-    decodedDumpPath = None, 
-    unpackedGzipPath = None,
-    searchCharSamples = False,
-    charSamplesPath = None,
-    testMode = False, # extra checking, may skip some steps
-    noControlSequenceInDefi = False,
-    strictStringConvertion = False,
-    collectMetadata2 = False,
-    ):
+                    # resource path - where to extract embedded files
+                    resPath=None, 
+                    ## 0: print nothing
+                    ## 1: minimal info (for user)
+                    ## 2: extra info (for user)
+                    ## 3: debugging (for developer)
+                    verbose=1, 
+                    defaultEncodingOverwrite = None, 
+                    sourceEncodingOverwrite = None, 
+                    targetEncodingOverwrite = None,
+                    msgLogPath = None, 
+                    rawDumpPath = None, 
+                    decodedDumpPath = None, 
+                    unpackedGzipPath = None,
+                    searchCharSamples = False,
+                    charSamplesPath = None,
+                    testMode = False, # extra checking, may skip some steps
+                    noControlSequenceInDefi = False,
+                    strictStringConvertion = False,
+                    collectMetadata2 = False,
+                    ):
     global gVerbose
     self.verbose = verbose
     gVerbose = verbose
@@ -2551,7 +2560,7 @@ def read_ext(glos, filename):
   glos.setInfo('charset'     ,_babylon.Babylon_charset(db)    )
 
 
-def read(glos, filename, options={}):
+def read(glos, filename, **options):
   glos.data = []
   db = BGL(filename, **options)
   if not db.open():
@@ -2636,7 +2645,7 @@ def createBglInfoBlock(num, value):
   return block
 
 
-def write(glos, filename, writeInfo=True, options={}):## output BGL file can't be opened with Babylon! 
+def write(glos, filename, writeInfo=True):## output BGL file can't be opened with Babylon! 
   import gzip
   f = open(filename, 'wb')
   gz_pos = 71 ## position of gz header

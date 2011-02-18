@@ -28,7 +28,7 @@ def clean(text):
 
 ##################################
 
-def read(glos, filename, options={}):
+def read(glos, filename):
   print 'Loading XML tree...'
   tm0 = time.time()
   tree = XML(file(filename).read())
