@@ -30,29 +30,29 @@ fi
 
 
 if [ "$1" = mdicbuilder ] ; then
-swig -python -c++ -lstl.i mdicbuilder.i
-g++ -fpic -I/usr/include/python2.5 -I/usr/lib/python2.5/config -c mdicbuilder.h mdicbuilder.cpp mdicbuilder_wrap.cxx
-gcc -shared -o _mdicbuilder.so mdicbuilder.o mdicbuilder_wrap.o /usr/lib/libstdc++.so.6.0.* -lsqlite3
+  swig -python -c++ -lstl.i mdicbuilder.i
+  g++ -fpic -I/usr/include/python2.5 -I/usr/lib/python2.5/config -c mdicbuilder.h mdicbuilder.cpp mdicbuilder_wrap.cxx
+  gcc -shared -o _mdicbuilder.so mdicbuilder.o mdicbuilder_wrap.o /usr/lib/libstdc++.so.6.0.* -lsqlite3
 
-mv _mdicbuilder.so ..
+  mv _mdicbuilder.so ..
 fi
 
 
 
 if [ "$1" = stardictbuilder ] ; then
-swig -python -c++ -lstl.i -lstd_vector.i -lstd_string.i stardictbuilder.i
-g++ -fpic -I/usr/include/python2.5 -I/usr/lib/python2.5/config -c stardictbuilder.h stardictbuilder.cpp stardictbuilder_wrap.cxx
-gcc -shared -o _stardictbuilder.so stardictbuilder.o stardictbuilder_wrap.o /usr/lib/libstdc++.so.6.0.*
+  swig -python -c++ -lstl.i -lstd_vector.i -lstd_string.i stardictbuilder.i
+  g++ -fpic -I/usr/include/python2.5 -I/usr/lib/python2.5/config -c stardictbuilder.h stardictbuilder.cpp stardictbuilder_wrap.cxx
+  gcc -shared -o _stardictbuilder.so stardictbuilder.o stardictbuilder_wrap.o /usr/lib/libstdc++.so.6.0.*
 
-mv _stardictbuilder.so ..
+  mv _stardictbuilder.so ..
 fi
 
 if [ "$1" = stardict ] ; then
-swig -python -c++ -lstl.i -lstd_vector.i -lstd_string.i stardict.i
-g++ -fpic -I/usr/include/python2.5 -I/usr/lib/python2.5/config -c stardict.h stardict.cpp stardict_wrap.cxx
-gcc -shared -o _stardict.so stardict.o stardict_wrap.o /usr/lib/libstdc++.so.6.0.* -lz
+  swig -python -c++ -lstl.i -lstd_vector.i -lstd_string.i stardict.i
+  g++ -fpic -I/usr/include/python2.5 -I/usr/lib/python2.5/config -c stardict.h stardict.cpp stardict_wrap.cxx
+  gcc -shared -o _stardict.so stardict.o stardict_wrap.o /usr/lib/libstdc++.so.6.0.* -lz
 
-mv _stardict.so ..
+  mv _stardict.so ..
 fi
 
 #swig -python -c++ -lstl.i -lstd_vector.i -lstd_string.i vector.i
