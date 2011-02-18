@@ -122,7 +122,7 @@ class UI(Tix.Frame):
     'color_font_out','color_font_err','color_font_edit','color_font_dbe',\
     'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs']## Reverse Options
   prefSavePath = [confPath,  '%s%src.py'%(srcDir,os.sep)]
-  def __init__(self, path=''):
+  def __init__(self, path='', **options):
     #global sys
     master = Tix.Tk()
     Tix.Frame.__init__(self, master)

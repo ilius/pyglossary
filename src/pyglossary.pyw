@@ -24,6 +24,14 @@ from glossary import confPath, VERSION
 from ui_cmd import COMMAND, printAsError, help, parseFormatOptionsStr
 #from text_utils import printAsError ## No red color, plain
 
+
+def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
+  parts = text.split('-')
+  parts[0] = parts[0].lower()
+  for i in range(1, len(parts)):
+    parts[i] = parts[i].capitalize()
+  return ''.join(parts)
+
 use_psyco_file = '%s_use_psyco'%confPath
 psyco_found = None
 
@@ -54,13 +62,17 @@ auto - use the first available GUI
 """
 ui_type = 'cmd'
 
+available_options = ['version', 'help', 'ui=', 'read-options=', 'write-options=', 
+                     'read-format=', 'write-format=', 'reverse', 'no-progress-bar']
+
+## FIXME: load ui-dependent available options from ui modules (for example ui_cmd.available_options)
+## the only problem is that it has to "import gtk" before it get the "ui_gtk.available_options"
+
 try:
   (options, arguments) = getopt.gnu_getopt(
     sys.argv[1:],
     'vhu:r:w:',
-    ['version', 'help', 'ui=', 'read-options=', 'write-options=', 'read-format=', 'write-format=', 'reverse',\
-      'no-progress-bar'
-    ]
+    available_options
   )
 except getopt.GetoptError:
   printAsError(sys.exc_info()[1])
@@ -81,6 +93,7 @@ read_format = ''
 write_format = ''
 read_options = {}
 write_options = {}
+ui_options = {}
 reverse = False
 # only for command line UI
 enable_progress_bar = True
@@ -107,8 +120,9 @@ for (opt, opt_arg) in options:
     write_format = opt_arg
   elif opt == '--reverse':
     reverse = True
-  elif opt == '--no-progress-bar':
-    enable_progress_bar = False
+  elif opt.startswith('--'):
+    ui_options[dashToCamelCase(opt[2:])] = opt_arg ## opt_arg is not None, UI just ignores None value
+
 
 ## FIXME
 ## -v  (verbose or version?)
@@ -119,7 +133,7 @@ if ui_type == 'cmd' and not ipath and not (reverse or opath or write_format):
 
 if ui_type == 'cmd':
   import ui_cmd
-  sys.exit(ui_cmd.UI(text='Loading: ', enableProgressBar=enable_progress_bar).run(
+  sys.exit(ui_cmd.UI(text='Loading: ', **ui_options).run(
     ipath,
     opath=opath,
     read_format=read_format,
@@ -143,4 +157,6 @@ else:
       sys.exit(1)
   else:
     ui_module = __import__('ui_%s'%ui_type)
-  sys.exit(ui_module.UI(ipath).run())
+  sys.exit(ui_module.UI(ipath, **ui_options).run())
+  ## don't forget to append "**options" at every UI.__init__ arguments
+

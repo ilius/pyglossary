@@ -56,7 +56,7 @@ class QVirtualFile(object):
 
 
 class UI(qt.QWidget):
-  def __init__(self, ipath):
+  def __init__(self, ipath, **options):
     qt.QWidget.__init__(self)
     self.setWindowTitle('PyGlossary (Qt)')
     self.setWindowIcon(qt.QIcon(join(srcDir, 'pyglossary.png')))

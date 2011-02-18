@@ -107,7 +107,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
       #except:
       #  print(name)
         #sys.exit(1)
-  def __init__(self, editPath=''):
+  def __init__(self, editPath='', **options):
     #self.xml= gtk.glade.XML('%s%sglade%smaindialog.glade'%(srcDir,os.sep,os.sep))
     self.xml= gtk.glade.XML(os.path.join(srcDir,'glade','maindialog.glade'))
     self.d = self.xml.get_widget('maindialog')
