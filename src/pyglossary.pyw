@@ -51,20 +51,13 @@ if os.path.isfile(use_psyco_file):
     print('Using module "psyco" to speed up execution.')
     psyco_found = True
 
-path = ''
-"""Interface type
-Possible values:
-cmd - command line mode
-gtk - GTK GUI
-tk - TK GUI
-qt - QT GUI
-auto - use the first available GUI
-"""
-ui_type = 'cmd'
+
+
 
 available_options = ['version', 'help', 'ui=', 'read-options=', 'write-options=', 
                      'read-format=', 'write-format=', 'reverse', 'no-progress-bar']
 
+## no-progress-bar only for command line UI
 ## FIXME: load ui-dependent available options from ui modules (for example ui_cmd.available_options)
 ## the only problem is that it has to "import gtk" before it get the "ui_gtk.available_options"
 
@@ -79,15 +72,28 @@ except getopt.GetoptError:
   print 'try: %s --help'%COMMAND
   sys.exit(1)
 
-if len(arguments)<1:
-  ui_type = 'auto' ## Open GUI, not command line usage
+"""
+ui_type: User interface type
+Possible values:
+  cmd - Command line interface, this ui will automatically selecetd if you give both input and output file
+  gtk - GTK interface
+  tk - Tkinter interface
+  qt - Qt interface
+  auto - Use the first available UI
+"""
+
+ui_type = 'auto'
+
+if len(arguments)<1:## open GUI
   ipath = opath = ''
-else:
+elif len(arguments)==1:## open GUI, in edit mode (if gui support, like DB Editor in ui_gtk)
   ipath = arguments[0]
-  if len(arguments)>1:
-    opath = arguments[1]
-  else:
-    opath = ''
+  opath = ''
+else:## run the commnad line interface
+  ui_type = 'cmd'
+  ipath = arguments[0]
+  opath = arguments[1]
+
 
 read_format = ''
 write_format = ''
@@ -95,8 +101,6 @@ read_options = {}
 write_options = {}
 ui_options = {}
 reverse = False
-# only for command line UI
-enable_progress_bar = True
 
 for (opt, opt_arg) in options:
   if opt in ('-v', '--version'):
@@ -128,12 +132,10 @@ for (opt, opt_arg) in options:
 ## -v  (verbose or version?)
 ## -r  (reverse or read-options)
 
-if ui_type == 'cmd' and not ipath and not (reverse or opath or write_format):
-  ui_type = 'auto'
 
 if ui_type == 'cmd':
   import ui_cmd
-  sys.exit(ui_cmd.UI(text='Loading: ', **ui_options).run(
+  sys.exit(ui_cmd.UI(**ui_options).run(
     ipath,
     opath=opath,
     read_format=read_format,

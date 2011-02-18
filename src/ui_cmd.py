@@ -104,10 +104,10 @@ class UI:
     'color_font_out','color_font_err','color_font_edit','color_font_dbe',\
     'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs']## Reverse Options
   prefSavePath=[confPath,  '%s%src.py'%(srcDir,os.sep)]
-  def __init__(self, text='', noProgressBar=None, **options):
-    self.ptext=text
-    self.reverseStop=False
-    self.pref={}
+  def __init__(self, text='Loading: ', noProgressBar=None, **options):
+    self.ptext = text
+    self.reverseStop = False
+    self.pref = {}
     self.pref_load()
     #print self.pref
     if noProgressBar is None:
