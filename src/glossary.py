@@ -956,7 +956,21 @@ class Glossary:
       except UnicodeDecodeError:
         w = w.decode('utf-8', 'replace').encode('utf-8')
         errors += 1
-      self.data[i] = (w, m) + self.data[i][2:]
+      if len(self.data[i]) >= 3:
+        d = self.data[i][2]
+        if 'alts' in d:
+          a = d['alts']
+          for i in xrange(len(a)):
+            a[i] = a[i].replace('\x00', '')
+            try:
+              a[i].decode('utf-8')
+            except UnicodeDecodeError:
+              a[i] = a[i].decode('utf-8', 'replace').encode('utf-8')
+              errors += 1
+        d = [d]
+      else:
+        d = []
+      self.data[i] = [w, m] + d + list(self.data[i][3:])
     for i in xrange(len(self.info)):
       (w, m) = self.info[i]
       w = w.replace('\x00', '')
@@ -1009,6 +1023,21 @@ class Glossary:
       if m.endswith(','):
         m = m[:-1]
       d[i] = (w, m) + d[i][2:]
+    # remove items with empty keys and definitions
+    d2 = []
+    for item in d:
+      if not item[0] or not item[1]:
+        continue
+      if len(item) >= 3:
+        if 'alts' in item[2]:
+          a = item[2]['alts']
+          a2 = []
+          for s in a:
+            if s:
+              a2.append(s)
+          item[2]['alts'] = a2
+      d2.append(item)
+    self.data[:] = d = d2
 
   def faEdit(self):
     RLM = '\xe2\x80\x8f'
