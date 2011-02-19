@@ -987,9 +987,20 @@ class Glossary:
       m = re.sub("[\r\n]+", "\n", m)
       m = re.sub(" *\n *", "\n", m)
 
+      """
+      This code may correct snippets like:
+      - First sentence .Second sentence. -> First sentence. Second sentence.
+      - First clause ,second clause. -> First clause, second clause.
+      But there are cases when this code have undesirable effects
+      ( '<' represented as '&lt;' in HTML markup):
+      - <Adj.> -> < Adj. >
+      - <fig.> -> < fig. >
+      """
+      """
       for j in range(3):
         for ch in ',.;':
           m = replacePostSpaceChar(m, ch)
+      """
 
       m = re.sub('♦\n+♦', '♦', m)
       if m.endswith('<p'):
@@ -1023,6 +1034,10 @@ class Glossary:
     self.clean()
     if p['utf8_check']:
       self.utf8ReplaceErrors()
-    
 
-
+  def dump(self, dataPath):
+    "Dump data into the file for debugging"
+    with open(dataPath, 'wb') as f:
+      for item in g.data:
+        f.write('key = ' + item[0] + '\n')
+        f.write('defi = ' + item[1] + '\n\n')
