@@ -21,7 +21,7 @@ import string, re, sys, os, subprocess, htmlentitydefs, time
 ##from  xml.etree.ElementTree import XML, tostring  ## used for xml2dict
 
 startRed	= '\x1b[31m'
-endFormat	= '\x1b[0;0;0m'		# End Format		#len=8
+endFormat	= '\x1b[0;0;0m'	# len=8
 
 ## ascii spacial characters.
 schAs=["\n", ",", ".", "[", "]", "(", ")", '-', '+', '=', '/', '\\',
@@ -30,8 +30,8 @@ schAs=["\n", ",", ".", "[", "]", "(", ")", '-', '+', '=', '/', '\\',
 digitsFa=['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹']
 
 ## persian spacial characters.
-schFa=[
-'\xd8\x9b', '\xd8\x9f','\xe2\x80\xa6','\xc2\xab','\xc2\xbb','\xd9\x80','\xd9\x94','\xd8\x8c' ,'\xe2\x80\x93','\xe2\x80\x9c','\xe2\x80\x9d','\xe2\x80\x8c']
+schFa=['\xd8\x9b', '\xd8\x9f','\xe2\x80\xa6','\xc2\xab','\xc2\xbb','\xd9\x80','\xd9\x94',
+       '\xd8\x8c' ,'\xe2\x80\x93','\xe2\x80\x9c','\xe2\x80\x9d','\xe2\x80\x8c']
 commaFa='\xd8\x8c'
 
 ## other unicode spacial characters.
@@ -39,9 +39,9 @@ schUn=['\xee\x80\x8a','\xee\x80\x8c']
 
 #for ch in schFa + schUn :
 #  print(ch)
-sch = schAs+schFa+schUn+list(string.whitespace)+list(string.digits)+digitsFa
+sch = schAs + schFa + schUn + list(string.whitespace) + list(string.digits) + digitsFa
 
-"""
+'''
 myPrint = sys.stdout.write
 
 def textProgress(n=100, t=0.1):
@@ -51,58 +51,58 @@ def textProgress(n=100, t=0.1):
   myPrint('\b\b\b')
 
 def locate(lst, val):
- n=len(lst)
- if n==0:
-  return
- if val < lst[0]:
-  return -0.5
- if val == lst[0]:
-  return 0
- if val == lst[-1]:
-  return n-1
- if val > lst[-1]:
-  return n-0.5
- si=0 # start index
- ei=n # end index
- while ei-si>1:
-  mi=(ei+si)/2 # middle index
-  if lst[mi] == val :
-   return mi
-  elif lst[mi] > val :
-   ei=mi
-   continue
-  else:
-   si=mi
-   continue
- if ei-si==1:
-  return si+0.5
+  n = len(lst)
+  if n==0:
+    return
+  if val < lst[0]:
+    return -0.5
+  if val == lst[0]:
+    return 0
+  if val == lst[-1]:
+    return n-1
+  if val > lst[-1]:
+    return n-0.5
+  si = 0 # start index
+  ei = n # end index
+  while ei-si>1:
+    mi = (ei+si)/2 # middle index
+    if lst[mi] == val :
+      return mi
+    elif lst[mi] > val :
+      ei=mi
+      continue
+    else:
+      si=mi
+      continue
+  if ei-si==1:
+    return si+0.5
 
 def locate2(lst, val, ind=1):
- n=len(lst)
- if n==0:
-  return
- if val<lst[0][ind]:
-  return -0.5
- if val==lst[0][ind]:
-  return 0
- if val==lst[-1][ind]:
-  return n-1
- if val>lst[-1][ind]:
-  return n-0.5
- si=0
- ei=n
- while ei-si>1:
-  mi=(ei+si)/2
-  if lst[mi][ind]==val:
-   return mi
-  elif lst[mi][ind]>val:
-   ei=mi
-   continue
-  else:
-   si=mi
-   continue
- if ei-si==1:
-  return si+0.5
+  n = len(lst)
+  if n==0:
+    return
+  if val<lst[0][ind]:
+    return -0.5
+  if val==lst[0][ind]:
+    return 0
+  if val==lst[-1][ind]:
+    return n-1
+  if val>lst[-1][ind]:
+    return n-0.5
+  si = 0
+  ei = n
+  while ei-si>1:
+    mi = (ei+si)/2
+    if lst[mi][ind]==val:
+      return mi
+    elif lst[mi][ind]>val:
+      ei = mi
+      continue
+    else:
+      si = mi
+    continue
+  if ei-si==1:
+    return si+0.5
 
 def xml2dict(xmlText):
   from  xml.etree.ElementTree import XML, tostring
@@ -114,7 +114,7 @@ def xml2dict(xmlText):
       elemElems=xml2dict()
     except:
       pass
-"""
+'''
 
 def printAsError(text='An error occured!', exit=False):
   sys.stderr.write('%s\n'%text)
@@ -136,31 +136,24 @@ def excMessage():
   i = sys.exc_info()
   return '{0}: {1}'.format(i[0].__name__, i[1])
 
+def formatHMS(h, m, s):
+  if h==0:
+    if m==0:
+      return '%.2d'%s
+    else:
+      return '%.2d:%.2d'%(m, s)
+  else:
+    return '%.2d:%.2d:%.2d'%(h, m, s)
+
 def timeHMS(seconds):
-  (h, m, s)=time.gmtime(int(seconds))[3:6]
-  if h==0:
-    if m==0:
-      return '%.2d'%s
-    else:
-      return '%.2d:%.2d'%(m, s)
-  else:
-    return '%.2d:%.2d:%.2d'%(h, m, s)
+  (h, m, s) = time.gmtime(int(seconds))[3:6]
+  return formatHMS(h, m, s)
 
-def timeHMS2(seconds):
-  x = int(seconds)
-  s = x % 60
-  x = (x - s)/60
-  m = x % 60
-  x = (x - m)/60
-  h = x
-  if h==0:
-    if m==0:
-      return '%.2d'%s
-    else:
-      return '%.2d:%.2d'%(m, s)
-  else:
-    return '%.2d:%.2d:%.2d'%(h, m, s)
-
+def relTimeHMS(seconds):
+  (days, s) = divmod(int(seconds), 24*3600)
+  (m, s) = divmod(s, 60)
+  (h, m) = divmod(m, 60)
+  return formatHMS(h, m, s)
 
 def addDefaultOptions(opt, defOpt, escapeList=[None,'Unknown','unknown']):
   # Two varable opt(meaning options) and defOpt(meaning defaults options) have dict type.
@@ -176,12 +169,12 @@ def addDefaultOptions(opt, defOpt, escapeList=[None,'Unknown','unknown']):
 def mergeLists(lists):
   if not isinstance(lists, (list, tuple)):
     raise TypeError('bad type given to mergeLists: %s'%type(lists))
-  """
+  '''
   for i in xrange(len(lists)):
     item = lists[i]
     if not isinstance(item, (list, tuple)):
       raise TypeError, 'argument give to mergeLists() at index %d is: \'%s\' ,bad type: \'%s\'' % (i, item, type(item))
-  """
+  '''
   if len(lists)==0:
     return []
   elif len(lists)==1:
@@ -190,7 +183,7 @@ def mergeLists(lists):
     else:
       return lists[0]
   else:
-    return lists[0]+mergeLists(lists[1:])
+    return lists[0] + mergeLists(lists[1:])
 
 def findAll(st, sub):
   ind = []
@@ -212,7 +205,7 @@ def findAll(st, sub):
     return []
   return ind
 
-"""
+'''
 def sortby(lst, n, reverse=False):
   nlist = [(x[n], x) for x in lst]
   nlist.sort(None, None, reverse)
@@ -224,7 +217,7 @@ def sortby_inplace(lst, n, reverse=False):
   lst.sort(None, None, reverse)
   lst[:] = [val for (key, val) in lst]
   return
-"""
+'''
 
 def checkOrder(lst):
  wrong = []
@@ -270,7 +263,7 @@ def findWords(st0, opt={}):
      word = st[si[i]+1:si[i+1]]
      if word.strip()=='':
        continue
-     if 'word' in opt.keys():
+     if opt.has_key('word'):
        if word != opt['word']:
          continue
      if len(word) < opt['minLen']:
@@ -282,7 +275,7 @@ def findWords(st0, opt={}):
            en = True
        if en:
          continue
-     ind.append( [ si[i]+1 , si[i+1] ] )
+     ind.append((si[i]+1, si[i+1]))
    return ind
 
 def takeStrWords(st, opt={}):
@@ -290,7 +283,7 @@ def takeStrWords(st, opt={}):
    # and returns them as a list of strings.
    defOpt = {'minLen':3, 'noEn':True, 'sort':True, 'noRepeat':True}
    addDefaultOptions(opt, defOpt)
-   words = [ st[i:j] for [i,j] in findWords(st, opt) ]
+   words = [st[i:j] for i, j in findWords(st, opt)]
    # 'sort' and 'noRepeat' options will not be used in findWords()
    if opt['sort']:
      words.sort()
@@ -300,9 +293,9 @@ def takeStrWords(st, opt={}):
 
 def takeFileWords(filePath, opt={'minLen':3, 'sort':True, 'noRepeat':True}):
   try:
-    fp = open(filePath,'r')
+    fp = open(filePath, 'rb')
   except:
-    print('Can not open file',filePath)
+    print('Can not open file', filePath)
   return takeStrWords(fp.read(), opt)
 
 
@@ -412,57 +405,62 @@ def relation(word, phrase, opt={}):## FIXME
     #del pRel
   return rel
 
-def charDigToInt(ch):
+'''
+def hexDigitToInt(ch):
   if not isinstance(ch, basestring):
-    raise RuntimeError('bad argument given to charDigToInt: "%s" must be a one length string.'%ch)
+    raise TypeError('bad argument "%s": must be a one length string.'%ch)
   elif len(ch)!=1:
-    raise RuntimeError('bad argument given to charDigToInt: "%s" must be a one length string.'%ch)
+    raise ValueError('bad argument "%s": must be a one length string.'%ch)
   elif '0'<=ch<='9':
-    return ord(ch)-48 #int(ch)
+    return ord(ch)-48 ## int(ch)
   elif 'a'<=ch<='z':
     return ord(ch)-87
   elif 'A'<=ch<='Z':
     return ord(ch)-55
   else:
-    raise RuntimeError('bad argument given to charDigToInt: "%s"'%ch)
-    
+    raise ValueError('bad argument "%s": must be alphanumeric character'%ch)
 
-def intToBinStr0(n, stLen=0):
+def intToBinStr_0(n, stLen=0):
   if not isinstance(stLen, int):
     raise TypeError('bad type second argument given to intToBinStr: "%s"'%type(stLen))
-  h=hex(n)
+  h = hex(n)
   if h[-1]=='L':
     h = h[2:-1]
   else:
     h = h[2:]
   if len(h)%2==1:
-    h='0'+h
+    h = '0'+h
   bs = ''
-  for i in xrange(0, int(len(h)), 2):
-    bs += chr( 16*charDigToInt(h[i]) + charDigToInt(h[i+1]) )
-  bsl = len(bs)
-  if bsl<stLen:
-    bs = '\x00'*(stLen-bsl) + bs
-  return bs
+  for i in range(0, int(len(h)), 2):
+    bs += chr( 16*hexDigitToInt(h[i]) + hexDigitToInt(h[i+1]) )
+  return bs.rjust(stLen, '\x00')
+'''
 
-def intToBinStr(n, stLen=0):
+def intToBinStr(n, stLen=0):## 6 times faster than intToBinStr_0
   bs = ''
   while n>0:
     bs = chr(n & 255) + bs
     n = n >> 8
-  bsl = len(bs)
-  if bsl<stLen:
-    bs = '\x00'*(stLen-bsl) + bs
-  return bs
+  return bs.rjust(stLen, '\x00')
 
-
-def binStrToInt(bs):
+'''
+def binStrToInt_0(bs):
   l = len(bs)
   return sum([ ord(bs[i]) * (256**(l-1-i)) for i in xrange(l) ])
+'''
+
+def binStrToInt(bs):## 6 times faster than binStrToInt_0
+  n = 0
+  for c in bs:
+    n = (n << 8) + ord(c)
+  return n
+
 
 
 def chBaseIntToStr(number, base):
-    """intToStr( number, base ) -- reverse function to int(str,base) and long(str,base)"""
+    '''
+      reverse function of int(str, base) and long(str, base)
+    '''
     if not 2 <= base <= 36:
       raise ValueError('base must be in 2..36')
     abc = string.digits + string.letters
@@ -491,14 +489,11 @@ def chBaseIntToList(number, base):
 
 def recodeToWinArabic(s):
   u = s.decode('utf8', 'replace')
-  replaceList=[(u'ی',u'ي'),(u'ک',u'ك'),(u'ٔ',u'ء'),('\xef\xbf\xbd','')]+[(unichr(i),unichr(i+144)) for i in xrange(1632,1642)]
+  replaceList = [(u'ی',u'ي'), (u'ک',u'ك'), (u'ٔ',u'ء'), ('\xef\xbf\xbd','')] + \
+                [(unichr(i), unichr(i+144)) for i in xrange(1632, 1642)]
   for item in replaceList:
     u = u.replace(item[0], item[1])
-  try:
-    return u.encode('windows-1256', 'replace')
-  except:
-    printAsError('can not encode string "%s" into windows-1256(arabic windows)'%s)
-    return ''
+  return u.encode('windows-1256', 'replace')
 
 
 
@@ -540,7 +535,6 @@ def faEditStr(st):
          , '،')
 
 
-
 def my_url_show(link):
   for path in ('/usr/bin/gnome-www-browser','/usr/bin/firefox','/usr/bin/iceweasel','/usr/bin/konqueror'):
     if os.path.isfile(path):
@@ -576,12 +570,13 @@ def runDictzip(filename):
   #if out!='':
   #  print('dictzip error: %s'%out.replace('\n', ' '))
 
-# y - char code
+
 def isControlChar(y):
-  if y < 32 and y != ord('\t') and y != ord('\n') and y != ord('\r') and y != ord('\v'):
+  # y: char code
+  if y < 32 and chr(y) not in '\t\n\r\v':
     return True
   # according to ISO-8859-1
-  if 128 <= y and y <= 159:
+  if 128 <= y <= 159:
     return True
   return False
     
@@ -639,8 +634,7 @@ html_entity2str = {
   'clubs': '♣'
 }
 
-"""Use build_name2codepoint_dict function to update this dictionary
-"""
+## Use build_name2codepoint_dict function to update this dictionary
 name2codepoint = {
   'aring':       0x00c5, # Å
   'gt':          0x003e, # >
@@ -846,14 +840,22 @@ name2codepoint = {
 }
 
 def build_name2codepoint_dict():
-  """Builds name to codepoint dictionary
-  
-  name2str - name to utf-8 string dictionary
-  """
+  '''
+    Builds name to codepoint dictionary
+    copy and paste the output to the name2codepoint dictionary
+    name2str - name to utf-8 string dictionary
+  '''
   name2str = html_entity2str
   for k, v in htmlentitydefs.name2codepoint.iteritems():
     name2str[k.lower()] = unichr(v).encode('utf-8')
+  for key in sorted(name2str.keys()):
+    value = name2str[key]
+    print '  {0: <14s} 0x{1:0>4x}, # {2}'.format(
+      "'" + key + "':",
+      ord(value.decode('utf-8')),
+      value,
+    )
 
-  for k, v in name2str.iteritems():
-    print "  {0: <14s} 0x{1:0>4x}, # {2}".format("'" + k + "':", ord(v.decode('utf-8')), v)
+if __name__=='__main__':
+  build_name2codepoint_dict()
 
