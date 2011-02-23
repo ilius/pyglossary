@@ -226,6 +226,23 @@ def replace_dingbat(m):
   ch = m.group(0)
   code = ord(ch) + (0x2776-0x8c)
   return unichr(code)
+
+def new_line_escape_string_callback(m):
+  ch = m.group(0)
+  if ch == '\n':
+    return '\\n'
+  if ch == '\r':
+    return '\\r'
+  if ch == '\\':
+    return '\\\\'
+  return ch
+
+def new_line_escape_string(text):
+  """convert text to c-escaped string:
+  \ -> \\
+  new line -> \n or \r
+  """
+  return re.sub("[\\r\\n\\\\]", new_line_escape_string_callback, text)
   
 class BGL:
   class Block:
@@ -921,6 +938,10 @@ class BGL:
     noControlSequenceInDefi = False,
     strictStringConvertion = False,
     collectMetadata2 = False,
+    # restrict program output
+    # escape line breaks in values so that each property occupies exactly one line
+    # useful for automated output analysis
+    oneLineOutput = False,
     ):
     global gVerbose
     self.verbose = verbose
@@ -974,6 +995,7 @@ class BGL:
     self.charSamplesPath = charSamplesPath
     self.samples_dump_file = None
     self.unpackedGzipPath = unpackedGzipPath
+    self.oneLineOutput = oneLineOutput
     # apply to unicode string
     self.strip_slash_alt_key_pat = re.compile(r'(^|\s)/(\w)', re.U)
     # apply to unicode string
@@ -1245,11 +1267,11 @@ class BGL:
       print 'middleUpdated = {0}'.format(self.middleUpdated) ## ???????????????
       print 'lastUpdated = {0}'.format(self.lastUpdated)
       print
-      print 'title = {0}'.format(self.title)
-      print 'author = {0}'.format(self.author)
-      print 'email = {0}'.format(self.email)
-      print 'copyright = {0}'.format(self.copyright)
-      print 'description = {0}'.format(self.description)
+      print 'title = {0}'.format(self.oneLineValue(self.title))
+      print 'author = {0}'.format(self.oneLineValue(self.author))
+      print 'email = {0}'.format(self.oneLineValue(self.email))
+      print 'copyright = {0}'.format(self.oneLineValue(self.copyright))
+      print 'description = {0}'.format(self.oneLineValue(self.description))
     
     self.numBlocks = 0
     
@@ -2487,6 +2509,12 @@ class BGL:
         self.target_chars_arr[x] = True
         res.append(i)
     return res
+  
+  def oneLineValue(self, text):
+    if self.oneLineOutput:
+      return new_line_escape_string(text)
+    else:
+      text
   
 def read_ext(glos, filename):
   try:
