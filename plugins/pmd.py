@@ -157,13 +157,11 @@ def pmdEnConv(uni):#gets an unicode(utf-16) string
     elif '0'<=c<='9':
       pmd += chr(ord(c)+40)
     else:
-      found=False
       for i in pmdChars.keys():
         if pmdChars[i]==c:
           pmd += chr(i)
-          found=True
           break
-      if not found:
+      else:
         print('no PMD coding for "%s"'%c)
   return pmd
 

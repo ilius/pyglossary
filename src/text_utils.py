@@ -132,7 +132,7 @@ def myRaise(File=None):
     sys.stderr.write('File "%s", line %s: %s: %s'%(File, i[2].tb_lineno, i[0].__name__, i[1]))
 
 # return a message string describing the current exception
-def ExcMessage():
+def excMessage():
   i = sys.exc_info()
   return '{0}: {1}'.format(i[0].__name__, i[1])
 

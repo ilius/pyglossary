@@ -40,7 +40,7 @@ writeOptions = ()
 
 import gzip, re, htmlentitydefs, xml.sax.saxutils, pickle
 
-from text_utils import printAsError, printAsWarning, myRaise, binStrToInt, ExcMessage, \
+from text_utils import printAsError, printAsWarning, myRaise, binStrToInt, excMessage, \
   isASCII, isControlChar, name2codepoint
 import pyglossary_gregorian as gregorian
 
@@ -1837,7 +1837,7 @@ class BGL:
         u_text = text.decode(encoding)
       except UnicodeError:
         self.msg_log_file_write('toUtf8({0}):\nconversion error:\n{1}'\
-        .format(text, ExcMessage()))
+        .format(text, excMessage()))
         u_text = text.decode(encoding, 'ignore')
     else:
       u_text = text.decode(encoding, 'ignore')
@@ -1884,7 +1884,7 @@ class BGL:
               self.msg_log_file_write('decode_charset_tags({0})\n'
                 'fragment({1})\n'
                 'conversion error:\n{2}'\
-                .format(text, text2, ExcMessage()))
+                .format(text, text2, excMessage()))
               u_text = text2.decode(encoding, 'replace')
           else:
             u_text = text2.decode(encoding, 'replace')
@@ -1968,7 +1968,7 @@ class BGL:
         u_main_word = main_word.decode(self.sourceEncoding)
       except UnicodeError:
         self.msg_log_file_write('processEntryKey({0}):\nconversion error:\n{1}'\
-        .format(word, ExcMessage()))
+        .format(word, excMessage()))
         u_main_word = main_word.decode(self.sourceEncoding, 'ignore')
     else:
       u_main_word = main_word.decode(self.sourceEncoding, 'ignore')
@@ -1988,7 +1988,7 @@ class BGL:
         u_main_word = main_word.decode(self.sourceEncoding)
       except UnicodeError:
         self.msg_log_file_write('processEntryAlternativeKey({0})\nkey = {1}:\nconversion error:\n{2}'\
-        .format(raw_word, raw_key, ExcMessage()))
+        .format(raw_word, raw_key, excMessage()))
         u_main_word = main_word.decode(self.sourceEncoding, 'ignore')
     else:
       u_main_word = main_word.decode(self.sourceEncoding, 'ignore')
