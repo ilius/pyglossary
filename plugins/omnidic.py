@@ -7,11 +7,11 @@ enable = True
 format = 'Omnidic'
 description = 'Omnidic'
 extentions = ('.omni', '.omnidic')
-readOptions = ()
+readOptions = ('dicIndex',)
 writeOptions = ()
 
 
-def read(glos, filename, dicIndex=16, options={}):
+def read(glos, filename, dicIndex=16):
   os.chdir(filename)
   try:
     fp = open(str(dicIndex))
@@ -32,7 +32,7 @@ def read(glos, filename, dicIndex=16, options={}):
   os.chdir(initCwd)
 
 
-def write(glos, filename, dicIndex=16, options={}):
+def write(glos, filename, dicIndex=16):
   if not isinstance(dicIndex, int):
     raise TypeError, 'Invalid argument to function writeOmnidic: filename=%s'%filename
   if not os.path.isdir(filename):

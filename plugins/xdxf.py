@@ -10,7 +10,7 @@ extentions = ('.xdxf', '.xml')
 readOptions = ()
 writeOptions = ()
 
-def read(glos, filename, options={}):
+def read(glos, filename):
   ##<!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
   from xml.etree.ElementTree import XML, tostring
   fp = open(filename, 'rb')

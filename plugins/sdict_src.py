@@ -8,9 +8,9 @@ format = 'SdictSrc'
 description = 'Sdictionary Source (sdct)'
 extentions = ('.sdct',)
 readOptions = ()
-writeOptions = ()
+writeOptions = ('writeInfo', 'newline')
 
-def write(glos, filename, writeInfo=True, newline='\n', options={}):
+def write(glos, filename, writeInfo=True, newline='\n'):
   ## Source Glossary for "Sdictionary" (http://sdict.org)
   ## It has extention '.sdct' 
   head=''

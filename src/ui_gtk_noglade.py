@@ -100,7 +100,7 @@ PyGlossary is licensed by the GNU General Public License''')
   def about_close(self, *args):
     self.about.hide()
     return True
-  def __init__(self, editPath=''):
+  def __init__(self, editPath='', **options):
     gtk.Dialog.__init__(self)
     try:
       self.set_icon_from_file('%s%spyglossary.png'%(srcDir,os.sep))

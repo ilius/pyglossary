@@ -26,7 +26,7 @@ enable = True
 format = 'Sdict'
 description = 'Sdictionary (dct)'
 extentions = ('.dct',)
-readOptions = ()
+readOptions = ('encoding',)
 writeOptions = ()
 
 import zlib, bz2, time, marshal, os, os.path
@@ -201,7 +201,7 @@ class SDictionary:
     return self.read_unit(self.header.articles_offset + pointer)
 
 
-def read(glos, filename, encoding='utf-8', options={}):
+def read(glos, filename, encoding='utf-8'):
   ## Binary Glossary for "Sdictionary" (http://sdict.org)
   ## It has extention '.dct' 
   sd = SDictionary(filename, encoding)

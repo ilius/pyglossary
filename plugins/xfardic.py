@@ -11,7 +11,7 @@ writeOptions = ()
 infoKeys = ('dbname', 'author', 'inputlang', 'version',
             'outputlang', 'copyright', 'description')
 
-def read(glos, filename, options={}):
+def read(glos, filename):
   fp = open(filename, 'rb')
   glos.data = []
   xdbText = fp.read()
@@ -65,7 +65,7 @@ def read_2(glos, filename):
 
 
 
-def write(glos, filename, options={}):
+def write(glos, filename):
   fp = open(filename, 'wb')
   fp.write('<?xml version="1.0" encoding="utf-8" ?>\n<words>\n<xfardic>')
   for item in Glossary.infoKeysXfardic:

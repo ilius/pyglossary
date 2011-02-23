@@ -26,8 +26,17 @@ enable = True
 format = 'Bgl'
 description = 'Babylon (bgl)'
 extentions = ('.bgl')
-readOptions = ()
+readOptions = (
+  'resPath', 'verbose', 'defaultEncodingOverwrite', 'sourceEncodingOverwrite', 'targetEncodingOverwrite',
+  'msgLogPath', 'rawDumpPath', 'decodedDumpPath', 'unpackedGzipPath', 'searchCharSamples',
+  'charSamplesPath', 'testMode', 'noControlSequenceInDefi', 'strictStringConvertion',
+  'collectMetadata2', 'oneLineOutput'
+)
 writeOptions = ()
+
+## FIXME: document type of read/write options (that would be speficied in command line)
+
+
 
 import gzip, re, htmlentitydefs, xml.sax.saxutils, pickle
 
@@ -917,7 +926,8 @@ class BGL:
     None,           # 0x47
   )
 
-  def __init__(self, filename, 
+  def __init__(self, 
+    filename, 
     # resource path - where to extract embedded files
     resPath=None, 
     ## 0: print nothing
@@ -2579,7 +2589,7 @@ def read_ext(glos, filename):
   glos.setInfo('charset'     ,_babylon.Babylon_charset(db)    )
 
 
-def read(glos, filename, options={}):
+def read(glos, filename, **options):
   glos.data = []
   db = BGL(filename, **options)
   if not db.open():
@@ -2664,7 +2674,7 @@ def createBglInfoBlock(num, value):
   return block
 
 
-def write(glos, filename, writeInfo=True, options={}):## output BGL file can't be opened with Babylon! 
+def write(glos, filename, writeInfo=True):## output BGL file can't be opened with Babylon! 
   import gzip
   f = open(filename, 'wb')
   gz_pos = 71 ## position of gz header

@@ -10,7 +10,7 @@ extentions = ('.po',)
 readOptions = ()
 writeOptions = ()
 
-def read(glos, filename, options={}):
+def read(glos, filename):
   fp = open(filename, 'rb')
   word = ''
   defi = ''
@@ -48,7 +48,7 @@ def read(glos, filename, options={}):
         word += eval(line)
         
 
-def write(glos, filename, options={}):
+def write(glos, filename):
   fp = open(filename, 'wb')
   fp.write('#\nmsgid ""\nmsgstr ""\n')
   for inf in glos.infoKeys():

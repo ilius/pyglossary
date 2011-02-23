@@ -24,6 +24,14 @@ from glossary import confPath, VERSION
 from ui_cmd import COMMAND, printAsError, help, parseFormatOptionsStr
 #from text_utils import printAsError ## No red color, plain
 
+
+def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
+  parts = text.split('-')
+  parts[0] = parts[0].lower()
+  for i in range(1, len(parts)):
+    parts[i] = parts[i].capitalize()
+  return ''.join(parts)
+
 use_psyco_file = '%s_use_psyco'%confPath
 psyco_found = None
 
@@ -43,47 +51,68 @@ if os.path.isfile(use_psyco_file):
     print('Using module "psyco" to speed up execution.')
     psyco_found = True
 
-path = ''
-"""Interface type
-Possible values:
-cmd - command line mode
-gtk - GTK GUI
-tk - TK GUI
-qt - QT GUI
-auto - use the first available GUI
-"""
-ui_type = 'cmd'
+
+
+
+available_options = ['version', 'help', 'ui=', 'read-options=', 'write-options=', 
+                     'read-format=', 'write-format=', 'reverse', 'no-progress-bar']
+
+## no-progress-bar only for command line UI
+## FIXME: load ui-dependent available options from ui modules (for example ui_cmd.available_options)
+## the only problem is that it has to "import gtk" before it get the "ui_gtk.available_options"
 
 try:
   (options, arguments) = getopt.gnu_getopt(
     sys.argv[1:],
     'vhu:r:w:',
-    ['version', 'help', 'ui=', 'read-options=', 'write-options=', 'read-format=', 'write-format=', 'reverse',\
-      'no-progress-bar'
-    ]
+    available_options
   )
 except getopt.GetoptError:
   printAsError(sys.exc_info()[1])
   print 'try: %s --help'%COMMAND
   sys.exit(1)
 
-if len(arguments)<1:
-  ui_type = 'auto' ## Open GUI, not command line usage
-  ipath = opath = ''
-else:
-  ipath = arguments[0]
-  if len(arguments)>1:
-    opath = arguments[1]
-  else:
-    opath = ''
+"""
+ui_type: User interface type
+Possible values:
+  cmd - Command line interface, this ui will automatically selecetd if you give both input and output file
+  gtk - GTK interface
+  tk - Tkinter interface
+  qt - Qt interface
+  auto - Use the first available UI
+"""
 
-read_format = ''
-write_format = ''
-read_options = {}
-write_options = {}
-reverse = False
-# only for command line UI
-enable_progress_bar = True
+ui_type = 'auto'
+
+if len(arguments)<1:## open GUI
+  ipath = opath = ''
+elif len(arguments)==1:## open GUI, in edit mode (if gui support, like DB Editor in ui_gtk)
+  ipath = arguments[0]
+  opath = ''
+else:## run the commnad line interface
+  ui_type = 'cmd'
+  ipath = arguments[0]
+  opath = arguments[1]
+
+
+read_format = '' ## only used in ui_cmd for now
+write_format = '' ## only used in ui_cmd for now
+read_options = {} ## only used in ui_cmd for now
+write_options = {} ## only used in ui_cmd for now
+reverse = False ## only used in ui_cmd for now
+ui_options = {}
+
+
+'''
+  examples for read and write options:
+  --read-options testOption=stringValue
+  --read-options enableFoo=True
+  --read-options fooList=[1,2,3]
+  --read-options 'fooList=[1, 2, 3]'
+  --read-options 'testOption=stringValue; enableFoo=True; fooList=[1, 2, 3]'
+  --read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
+'''
+
 
 for (opt, opt_arg) in options:
   if opt in ('-v', '--version'):
@@ -107,19 +136,18 @@ for (opt, opt_arg) in options:
     write_format = opt_arg
   elif opt == '--reverse':
     reverse = True
-  elif opt == '--no-progress-bar':
-    enable_progress_bar = False
+  elif opt.startswith('--'):
+    ui_options[dashToCamelCase(opt[2:])] = opt_arg ## opt_arg is not None, UI just ignores None value
+
 
 ## FIXME
 ## -v  (verbose or version?)
 ## -r  (reverse or read-options)
 
-if ui_type == 'cmd' and not ipath and not (reverse or opath or write_format):
-  ui_type = 'auto'
 
 if ui_type == 'cmd':
   import ui_cmd
-  sys.exit(ui_cmd.UI(text='Loading: ', enableProgressBar=enable_progress_bar).run(
+  sys.exit(ui_cmd.UI(**ui_options).run(
     ipath,
     opath=opath,
     read_format=read_format,
@@ -143,4 +171,6 @@ else:
       sys.exit(1)
   else:
     ui_module = __import__('ui_%s'%ui_type)
-  sys.exit(ui_module.UI(ipath).run())
+  sys.exit(ui_module.UI(ipath, **ui_options).run())
+  ## don't forget to append "**options" at every UI.__init__ arguments
+
