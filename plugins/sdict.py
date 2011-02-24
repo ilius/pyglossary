@@ -3,9 +3,8 @@
 ##   sdict.py
 ##   Loader engine for AXMASoft's open dictionary format
 ##
-##   Copyright (C) 2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
-##   Copyright (C) 2006-2008 Igor Tkach
-##         Was part of SDict Viewer (http://sdictviewer.sf.net)
+##   Copyright (C) 2010-2001 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
+##   Copyright (C) 2006-2008 Igor Tkach (part of SDict Viewer http://sdictviewer.sf.net)
 ##
 ##   This program is a free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License as published by
@@ -24,18 +23,13 @@ from formats_common import *
 
 enable = True
 format = 'Sdict'
-description = 'Sdictionary (dct)'
+description = 'Sdictionary Binary(dct)'
 extentions = ('.dct',)
 readOptions = ('encoding',)
 writeOptions = ()
 
-import zlib, bz2, time, marshal, os, os.path
+import zlib, bz2
 from struct import unpack
-#from sdictviewer.dictutil import SkippedWord, WordLookup
-
-settings_dir  = ".sdictviewer"
-index_cache_dir = os.path.join(os.path.expanduser("~"),  settings_dir, "index_cache")
-INDEXING_THRESHOLD = 1000
 
 
 class GzipCompression:
@@ -46,13 +40,13 @@ class GzipCompression:
 
 class Bzip2Compression:
   def __str__(self):
-    return "bzip2"
+    return 'bzip2'
   def decompress(self, string):
     return bz2.decompress(string)
 
 class NoCompression:
   def __str__(self):
-    return "no compression"
+    return 'no compression'
   def decompress(self, string):
     return string
 
@@ -73,10 +67,9 @@ read_short = lambda raw: unpack('<H', raw)[0]
 read_byte = lambda raw: unpack('<B', raw)[0]
 
 class FormatElement:
-  def __init__(self, offset, length, elementType=None):
+  def __init__(self, offset, length):
     self.offset = offset
     self.length = length
-    self.elementType = elementType
 
 class Header:
   f_signature = FormatElement(0x0, 4)
@@ -84,31 +77,31 @@ class Header:
   f_output_lang = FormatElement(0x7, 3)
   f_compression = FormatElement(0xa, 1)
   f_num_of_words = FormatElement(0xb, 4)
-  f_length_of_short_index=FormatElement(0xf, 4)
-  f_title=FormatElement(0x13, 4)
-  f_copyright=FormatElement(0x17, 4)
-  f_version=FormatElement(0x1b, 4)
-  f_short_index=FormatElement(0x1f, 4)
-  f_full_index=FormatElement(0x23, 4)
-  f_articles=FormatElement(0x27, 4)
+  f_length_of_short_index = FormatElement(0xf, 4)
+  f_title = FormatElement(0x13, 4)
+  f_copyright = FormatElement(0x17, 4)
+  f_version = FormatElement(0x1b, 4)
+  f_short_index = FormatElement(0x1f, 4)
+  f_full_index = FormatElement(0x23, 4)
+  f_articles = FormatElement(0x27, 4)
    
-  def parse(self, str):
-    self.signature = read_str(str, self.f_signature)
+  def parse(self, st):
+    self.signature = read_str(st, self.f_signature)
     if self.signature != 'sdct':
       raise DictFormatError, "Not a valid sdict dictionary"
-    self.word_lang = read_str(str, self.f_input_lang)
-    self.article_lang = read_str(str, self.f_output_lang)
-    self.short_index_length = read_int(str, self.f_length_of_short_index)
-    comp_and_index_levels_byte = read_byte(read_raw(str, self.f_compression))
-    self.compressionType = comp_and_index_levels_byte & int("00001111", 2)
+    self.word_lang = read_str(st, self.f_input_lang)
+    self.article_lang = read_str(st, self.f_output_lang)
+    self.short_index_length = read_int(st, self.f_length_of_short_index)
+    comp_and_index_levels_byte = read_byte(read_raw(st, self.f_compression))
+    self.compressionType = comp_and_index_levels_byte & 0b1111
     self.short_index_depth = comp_and_index_levels_byte >> 4
-    self.num_of_words = read_int(str, self.f_num_of_words)
-    self.title_offset = read_int(str, self.f_title)
-    self.copyright_offset = read_int(str, self.f_copyright)
-    self.version_offset = read_int(str, self.f_version)
-    self.articles_offset = read_int(str, self.f_articles)
-    self.short_index_offset = read_int(str, self.f_short_index)
-    self.full_index_offset = read_int(str, self.f_full_index)
+    self.num_of_words = read_int(st, self.f_num_of_words)
+    self.title_offset = read_int(st, self.f_title)
+    self.copyright_offset = read_int(st, self.f_copyright)
+    self.version_offset = read_int(st, self.f_version)
+    self.articles_offset = read_int(st, self.f_articles)
+    self.short_index_offset = read_int(st, self.f_short_index)
+    self.full_index_offset = read_int(st, self.f_full_index)
 
 
 class SDictionary:
@@ -158,7 +151,7 @@ class SDictionary:
         # If Python is built without wide unicode support (which is the case on Maemo)
         # it may not be possible to use some unicode chars. It seems best to ignore such index items
         # The rest of the dictionary should be usable.
-        print 'Failed to decode short index item %s, will ignore: %s'%(i, ve)
+        printAsError('Failed to decode short index item %s, will ignore: %s'%(i, ve))
         continue
       pointer_start = entry_start+s_index_depth*4
       pointer = unpack('<I',short_index_str[pointer_start:pointer_start+4])[0]
@@ -193,7 +186,7 @@ class SDictionary:
       return next_word, word, article_pointer
     except Exception, e:
       if pointer >= self.header.articles_offset:
-        print 'Warning: attempt to read word from illegal position in dict file'
+        printAsError('Warning: attempt to read word from illegal position in dict file')
         return None
       print e
 
@@ -202,8 +195,6 @@ class SDictionary:
 
 
 def read(glos, filename, encoding='utf-8'):
-  ## Binary Glossary for "Sdictionary" (http://sdict.org)
-  ## It has extention '.dct' 
   sd = SDictionary(filename, encoding)
   sd.load()
   ##########
