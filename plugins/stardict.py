@@ -250,28 +250,68 @@ def write_ext(glos, filename, sort=True, dictZip=True):
       runDictzip(filename)
 
 
+def isAsciiUpper(c):
+  "imitate ISUPPER macro of glib library gstrfuncs.c file"
+  return ord(c) >= ord('A') and ord(c) <= ord('Z')
+  
+def asciiLower(c):
+  """imitate TOLOWER macro of glib library gstrfuncs.c file
+  
+  This function converts upper case Latin letters to corresponding lower case letters,
+  other chars are not changed.
+  
+  c must be non-Unicode string of length 1.
+  You may apply this function to individual bytes of non-Unicode string.
+  The following encodings are allowed: single byte encoding like koi8-r, cp1250, cp1251, cp1252, etc, 
+  and utf-8 encoding.
+  
+  Attention! Python Standard Library provides str.lower() method.
+  It is not a correct replacement for this function. 
+  For non-unicode string str.lower() is locale dependent, it not only converts Latin 
+  letters to lower case, but also locale specific letters will be converted.
+  """
+  if isAsciiUpper(c):
+    return chr((ord(c) - ord('A')) + ord('a'))
+  else:
+    return c
+  
+def ascii_strcasecmp(s1, s2):
+  "imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file"
+  commonLen = min(len(s1), len(s2))
+  for i in xrange(commonLen):
+    c1 = ord(asciiLower(s1[i]))
+    c2 = ord(asciiLower(s2[i]))
+    if c1 != c2:
+      return c1 - c2
+  return len(s1) - len(s2)
+
+def strcmp(s1, s2):
+  """imitate strcmp of standard C library
+  
+  Attention! You may have a temptation to replace this function with built-in cmp() function.
+  Hold on! Most probably these two function behave identically now, but cmp does not 
+  document how it compares strings. There is no guaranty it will not be changed in future.
+  Since we need predictable sorting order in StarDict dictionary, we need to preserve 
+  this function despite the fact there are other ways to implement it.
+  """
+  commonLen = min(len(s1), len(s2))
+  for i in xrange(commonLen):
+    c1 = ord(s1[i])
+    c2 = ord(s2[i])
+    if c1 != c2:
+      return c1 - c2
+  return len(s1) - len(s2)
+
 def stardict_strcmp(s1, s2):
   '''
     use this function to sort index items in StarDict dictionary
     s1 and s2 must be utf-8 encoded strings
-    g_ascii_strcasecmp function (in glib library gstrfuncs.c file) merge into this function
-
-    strcmp should just return 0, +1 or -1, like Python's cmp function
-    the term cmp (comparison) is not about number of diffrences
-    and also the cmp argument to list.sort(), just uses sign (so +N and +1 are the same)
   '''
-  commonLen = min(len(s1), len(s2))
-  for i in xrange(commonLen):
-    c1 = ord(s1[i].lower())
-    c2 = ord(s2[i].lower())
-    if c1 != c2:
-      return cmp(c1, c2)
-  lenCmp = cmp(len(s1), len(s2))
-  if lenCmp==0:
-    return cmp(s1, s2)
+  a = ascii_strcasecmp(s1, s2)
+  if a == 0:
+    return strcmp(s1, s2)
   else:
-    return lenCmp
-
+    return a
 
 def new_lines_2_space(text):
   return re.sub("[\n\r]+", ' ', text)
