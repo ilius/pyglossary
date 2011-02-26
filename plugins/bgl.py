@@ -2523,7 +2523,7 @@ class BGL:
     if self.oneLineOutput:
       return new_line_escape_string(text)
     else:
-      text
+      return text
   
 def read_ext(glos, filename):
   try:
