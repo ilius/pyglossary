@@ -209,26 +209,6 @@ def replace_html_entry(m):
     raise ArgumentError()
   return xml.sax.saxutils.escape(res)
 
-def replace_babylon_char_ref(m):
-  """Replace the charset tag with the corresponding character
-  
-  for <charset c="t">0a2;</charset> input text
-  m.group(1) = 0a2
-  Escape the result string again. Only <, >, & characters are escaped.
-  Use this as a replace function of re.sub.
-  """
-  #text = m.group(0)
-  scode = m.group(1)
-  res = None
-  try:
-    code = int(scode, 16)
-    if code <= 0:
-      raise ValueError()
-    res = unichr(code).encode('utf-8')
-  except (ValueError, OverflowError):
-    res = unichr(0xFFFD).encode('utf-8') # replacement character
-  return xml.sax.saxutils.escape(res)
-
 def replace_dingbat(m):
   """replace chars \u008c-\u0095 with \u2776-\u277f
   """
@@ -1854,8 +1834,9 @@ class BGL:
     """Decode html text taking into account charset tags and default encoding.
     
     Return value: [utf8-text, defaultEncodingOnly]
-    The second parameter is true if the text contains parts encoded with 
-    non-default encoding.
+    The second parameter is false if the text contains parts encoded with 
+    non-default encoding (babylon character references '<CHARSET c="T">00E6;</CHARSET>'
+    do not count).
     """
     pat = re.compile("(<charset\\s+c\\=['\"]?(\\w)['\"]?>|</charset>)", re.I)
     parts = re.split(pat, text)
@@ -1867,15 +1848,22 @@ class BGL:
         encoding = encodings[-1] if len(encodings) > 0 else defaultEncoding
         text2 = parts[i]
         if encoding == 'babylon-reference':
-          m = re.match('([0-9a-fA-F]+);?', text2)
-          if m:
-            utf8_text += replace_babylon_char_ref(m)
-          else:
-            self.msg_log_file_write('decode_charset_tags({0})\n'
-              'invalid <charset c=t> character reference ({1})\n'
-              .format(text, text2))
-            u_text = text2.decode(defaultEncoding, 'replace')
-            utf8_text += u_text.encode('utf-8')
+          refs = text2.split(';')
+          for j in xrange(len(refs)):
+            ref = refs[j]
+            if ref == '':
+              if j != len(refs)-1:
+                self.msg_log_file_write('decode_charset_tags({0})\n'
+                  'blank <charset c=t> character reference ({1})\n'
+                  .format(text, text2))
+              continue
+            if not re.match('^[0-9a-fA-F]{4}$', ref):
+              self.msg_log_file_write('decode_charset_tags({0})\n'
+                'invalid <charset c=t> character reference ({1})\n'
+                .format(text, text2))
+              continue
+            code = int(ref, 16)
+            utf8_text += unichr(code).encode('utf-8')
         else:
           if self.strictStringConvertion:
             try:
