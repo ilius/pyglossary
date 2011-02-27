@@ -587,6 +587,12 @@ def isASCII(data, exclude = []):
       return False
   return True
 
+def printByteStr(text):
+  out = ''
+  for c in text:
+    out += '{0:0>2x}'.format(ord(c)) + ' '
+  return out
+
 html_entity2str = {
   'ldash': '–',
   'acirc': 'â',
