@@ -41,7 +41,7 @@ writeOptions = ()
 import gzip, re, htmlentitydefs, xml.sax.saxutils, pickle
 
 from text_utils import printAsError, printAsWarning, myRaise, binStrToInt, excMessage, \
-  isASCII, isControlChar, name2codepoint
+  isASCII, isControlChar, name2codepoint, printByteStr
 import pyglossary_gregorian as gregorian
 
 # use this variable to vary verbosity of output for non-class members
@@ -2047,8 +2047,15 @@ class BGL:
         i = d1
         continue
       if d1+1 < len(word) and word[d1+1] != ' ':
-        self.msg_log_file_write('stripDollarIndexes({0}):\n'
-          'second $ is followed by non-space'.format(word))
+        """ Examples:
+        make do$4$/make /do
+        potere$1$<BR><BR>See also <a href='file://ITAL-ENG POTERE 1249-1250.pdf'>notes...</A>
+        volere$1$<BR><BR>See also <a href='file://ITAL-ENG VOLERE 1469-1470.pdf'>notes...</A>
+        Ihre$1$Ihres
+        """
+        #self.msg_log_file_write('stripDollarIndexes({0}):\n'
+          #'second $ is followed by non-space'.format(word))
+        pass
       main_word += word[i:d0]
       i = d1+1
       strip_cnt += 1
@@ -2218,8 +2225,7 @@ class BGL:
       self.dump_file_write_text('\n' + 'defi field_1a: ')
       self.dump_file_write_data(fields.field_1a)
     if fields.field_13 != None:
-      self.dump_file_write_text('\n' + 'defi field_13: ')
-      self.dump_file_write_data(fields.field_13)
+      self.dump_file_write_text('\n' + 'defi field_13 bytes: ' + printByteStr(fields.field_13))
     if fields.field_07 != None:
       self.dump_file_write_text('\n' + 'defi field_07: ')
       self.dump_file_write_data(fields.field_07)
@@ -2271,15 +2277,28 @@ class BGL:
           return
         fields.field_07 = defi[i+1:i+3]
         i += 3
-      elif defi[i] == '\x13':
-        # This field was found in 13 dictionary. All of them contain byte sequence 03 06 0D C7.
-        # In all cases the key was Endeavor$543715$.
-        if i + 5 > len(defi):
+      elif defi[i] == '\x13': # '\x13'<one byte - length><data>
+        # known values:
+        # 03 06 0D C7
+        # 04 00 00 00 44
+        # ...
+        # 04 00 00 00 5F
+        if i + 1 >= len(defi):
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\ntoo few data after \\x13'.format(defi, raw_key))
           return
-        fields.field_13 = defi[i+1:i+5]
-        i += 5
+        Len = ord(defi[i+1])
+        i += 2
+        if Len == 0:
+          self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+            'key = ({1}):\nblank data after \\x13'.format(defi, raw_key))
+          continue
+        if i+Len > len(defi):
+          self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+            'key = ({1}):\ntoo few data after \\x13'.format(defi, raw_key))
+          return
+        fields.field_13 = defi[i:i+Len]
+        i += Len
       elif defi[i] == '\x18': # \x18<one byte - title length><entry title>
         if fields.title != None:
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
