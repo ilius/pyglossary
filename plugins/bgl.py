@@ -1899,10 +1899,15 @@ class BGL:
             encodings.append(self.sourceEncoding)
           elif c == 'e':
             encodings.append(self.sourceEncoding)
+          elif c == 'g':
+            # gbk or gb18030 encoding (not enough data to make distinction)
+            encodings.append('gbk')
           else:
             self.msg_log_file_write('decode_charset_tags({0})\n'
               'unknown charset code = {1}\n'\
               .format(text, c))
+            # add any encoding to prevent 'unbalanced </charset> tag' error
+            encodings.append(defaultEncoding)
       else:
         # c attribute of charset tag if the previous tag was charset
         pass
