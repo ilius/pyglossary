@@ -960,17 +960,20 @@ class Glossary:
         d = self.data[i][2]
         if 'alts' in d:
           a = d['alts']
-          for i in xrange(len(a)):
-            a[i] = a[i].replace('\x00', '')
+          for j in xrange(len(a)):
+            a[j] = a[j].replace('\x00', '')
             try:
-              a[i].decode('utf-8')
+              a[j].decode('utf-8')
             except UnicodeDecodeError:
-              a[i] = a[i].decode('utf-8', 'replace').encode('utf-8')
+              a[j] = a[j].decode('utf-8', 'replace').encode('utf-8')
               errors += 1
         d = [d]
       else:
         d = []
-      self.data[i] = [w, m] + d + list(self.data[i][3:])
+      a = [w, m]
+      a.extend(d)
+      a.extend(self.data[i][3:])
+      self.data[i] = a
     for i in xrange(len(self.info)):
       (w, m) = self.info[i]
       w = w.replace('\x00', '')
