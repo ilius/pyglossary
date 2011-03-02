@@ -1,7 +1,0 @@
-#!/bin/bash
-cd `dirname "$0"`
-for EXT in '~' '.pyc' '.pyo' '.o' '.cxx' '.gch' ; do
-  find . -name "*$EXT" -exec rm '{}' \;
-done
-cd -
-
