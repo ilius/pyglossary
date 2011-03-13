@@ -96,7 +96,7 @@ class MetaData2:
     overwritten encoding (they start with <charset c=U>).
     DefiProcessedCnt - total number of definitions processed
     DefiUtf8Cnt - number of definitions in utf8 encoding
-    DefiASCIICnt - number of definitions containing only ASCII chars    
+    DefiASCIICnt - number of definitions containing only ASCII chars
     """
     self.DefiProcessedCnt = 0
     self.DefiUtf8Cnt = 0
@@ -1249,6 +1249,10 @@ class BGL:
       print 'sourceCharset = {0}'.format(self.sourceCharset)
       print 'targetCharset = {0}'.format(self.targetCharset)
       print
+      print 'defaultEncoding = {0}'.format(self.defaultEncoding)
+      print 'sourceEncoding = {0}'.format(self.sourceEncoding)
+      print 'targetEncoding = {0}'.format(self.targetEncoding)
+      print
       print 'sourceLang = {0}'.format(self.sourceLang)
       print 'targetLang = {0}'.format(self.targetLang)
       print
@@ -1932,22 +1936,6 @@ class BGL:
     """
     return re.sub("[\r\n]+", "\n", text)
     
-  def replace_dingbats(self, text):
-    """
-    In babylon 0x8b - 0x95 codepoints are displayed as (code - 0x8b) interger in black cyrcle
-    They may be replaced with unicode chars: U+24FF, U+2776 - U+277F
-    code point names:
-    0 - Negative circled digit zero,
-    1 - Dingbat negative circled digit one,
-    ...
-    10 - Dingbat negative circled digit ten
-    See http://www.alanwood.net/demos/wingdings.html
-    """
-    u_text = text.decode('utf-8')
-    u_text = re.sub(u"[\u008c-\u0095]", replace_dingbat, u_text)
-    u_text = u_text.replace(u"\u008b", u"\u24ff")
-    return u_text.encode('utf-8')
-    
   def processEntryKey(self, word):
     """Return entry key in utf-8 encoding
     """
@@ -2101,7 +2089,6 @@ class BGL:
       fields.encoding = self.targetEncoding
     fields.utf8_defi = self.fixImgLinks(fields.utf8_defi)
     fields.utf8_defi = self.replace_html_entries(fields.utf8_defi)
-    fields.utf8_defi = self.replace_dingbats(fields.utf8_defi)
     fields.utf8_defi = self.remove_control_chars(fields.utf8_defi)
     fields.utf8_defi = self.normalize_new_lines(fields.utf8_defi)
     fields.utf8_defi = fields.utf8_defi.strip()
