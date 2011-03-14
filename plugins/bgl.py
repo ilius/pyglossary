@@ -101,6 +101,8 @@ class MetaData2:
     self.DefiProcessedCnt = 0
     self.DefiUtf8Cnt = 0
     self.DefiASCIICnt = 0
+    # encoding -> [ 0 ] * 257
+    self.CharRefs = dict()
 
 class BGLGzipFile(gzip.GzipFile):
   """gzip.GzipFile class without CRC check.
@@ -1833,6 +1835,62 @@ class BGL:
     # &#x010b;
     pat_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.I)
     return re.sub(pat_entry, replace_html_entry, text)
+  
+  def char_references_statistics(self, text, encoding):
+    # &#0147;
+    # &#x010b;
+    pat = re.compile("(&#\\w+;)", re.I)
+    parts = re.split(pat, text)
+    if self.metadata2 != None:
+      if encoding not in self.metadata2.CharRefs:
+        self.metadata2.CharRefs[encoding] = [0] * 257
+      CharRefs = self.metadata2.CharRefs[encoding]
+    for i in xrange(len(parts)):
+      if i % 2 != 1:
+        continue
+      # reference
+      text2 = parts[i]
+      try:
+        if text2[:3].lower() == "&#x":
+          code = int(text2[3:-1], 16)
+        else:
+          code = int(text2[2:-1])
+        if code <= 0:
+          raise ValueError()
+      except (ValueError, OverflowError):
+        code = -1
+      if code < 0:
+        continue
+      if self.metadata2 != None:
+        if code >= 256:
+          CharRefs[256] += 1
+        else:
+          CharRefs[code] += 1
+        
+  def replace_ascii_char_refs(self, text, encoding):
+    # &#0147;
+    # &#x010b;
+    pat = re.compile("(&#\\w+;)", re.I)
+    parts = re.split(pat, text)
+    for i in xrange(len(parts)):
+      if i % 2 != 1:
+        continue
+      # reference
+      text2 = parts[i]
+      try:
+        if text2[:3].lower() == "&#x":
+          code = int(text2[3:-1], 16)
+        else:
+          code = int(text2[2:-1])
+        if code <= 0:
+          raise ValueError()
+      except (ValueError, OverflowError):
+        code = -1
+      if code < 128 or code > 255:
+        continue
+      # no need to escape '<', '>', '&'
+      parts[i] = chr(code)
+    return "".join(parts)
     
   def decode_charset_tags(self, text, defaultEncoding):
     """Decode html text taking into account charset tags and default encoding.
@@ -1869,6 +1927,9 @@ class BGL:
             code = int(ref, 16)
             utf8_text += unichr(code).encode('utf-8')
         else:
+          self.char_references_statistics(text2, encoding)
+          if encoding == 'cp1252':
+            text2 = self.replace_ascii_char_refs(text2, encoding)
           if self.strictStringConvertion:
             try:
               u_text = text2.decode(encoding)
