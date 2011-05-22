@@ -314,6 +314,8 @@ class BGL:
       self.encoding = None # encoding of the definition
       self.singleEncoding = True # true if the definition was encoded with a single encoding
       self.field_1a = None
+      self.utf8_field_1a = None
+      self.u_field_1a = None
       self.field_13 = None
       self.field_07 = None
       self.field_06 = None
@@ -878,31 +880,46 @@ class BGL:
   partOfSpeech = (
     # Use None for codes we have not seen yet
     # Use '' for codes we've seen but part of speech is unknown
-    'n.',           # Noun           0x30
-    'adj.',         # Adjective      0x31
-    'v.',           # Verb           0x32
-    'adv.',         # Adverb         0x33
-    'interj.',      # Interjection   0x34
-    'pron.',        # Pronoun        0x35
-    'prep.',        # Preposition    0x36
-    'conj.',        # Conjunction    0x37
-    'suff.',        # Suffix         0x38
-    'pref.',        # Prefix         0x39
-    'art.',         # Article        0x3A
+    'noun',         # 0x30
+    'adjective',    # 0x31
+    'verb',         # 0x32
+    'adverb',       # 0x33
+    'interjection', # 0x34
+    'pronoun',      # 0x35
+    'preposition',  # 0x36
+    'conjunction',  # 0x37
+    'suffix',       # 0x38
+    'prefix',       # 0x39
+    'article',      # 0x3A
     '',             #                0x3B in Babylon Italian-English.BGL, 
                     #                     Babylon Spanish-English.BGL, 
                     #                     no indication of the part of speech
-    'ר"ת',          #                0x3C # in Babylon Hebrew Thesaurus.BGL
-    'ת\'/ש"ע',      # 0x3D
-    'ת\'/ש"ע',      # 0x3E
-    'ת\'/ש"ע',      # 0x3F
-    'נ\'',          # 0x40  in Babylon Hebrew Thesaurus.BGL
-    'זו"נ',         # 0x41
-    'ז\'',          # 0x42  in Babylon Hebrew Thesaurus.BGL
-    '',             # 0x43        in Terus Russian-Hebrew Hebrew-Russian/Terus_Heb_Rus.BGL
-                    #             no indication of the part of speech
-    '',             # 0x44        in Terus Russian-Hebrew Hebrew-Russian/Terus_Heb_Rus.BGL
-                    #             no indication of the part of speech
+    'abbreviation', # 0x3C
+    # (short form: 'ר"ת')
+    # (full form: "ר"ת: ראשי תיבות")
+    
+# "ת'" 
+    # adjective
+    #(full form: "ת': תואר")
+    
+# "ש"ע"
+    # noun
+    # (full form: "ש"ע: שם עצם")
+    
+    'masculine noun and adjective', # 0x3D
+    'feminine noun and adjective',  # 0x3E
+    'masculine and feminine noun and adjective', # 0x3F
+    'feminine noun', # 0x40
+    # (short form: "נ\'")
+    # (full form: "נ': נקבה")
+    'masculine and feminine noun', # noun that may be used as masculine and feminine 0x41
+    # (short form: "זו"נ")
+    # (full form: "זו"נ: זכר ונקבה") 
+    'masculine noun', # 0x42
+    # (short form: 'ז\'')
+    # (full form: "ז': זכר")
+    'numeral',      # 0x43
+    'participle',   # 0x44
     None,           # 0x45
     None,           # 0x46
     None,           # 0x47
@@ -2191,7 +2208,7 @@ class BGL:
       else:
         self.msg_log_file_write('processEntryDefinition({0})\n'
           'key = ({1}):\ndefi field 50, unknown code: 0x{2:x}'.format(defi, raw_key, fields.transcription_50_code))
-      
+    
     if fields.transcription_60 != None:
       if fields.transcription_60_code == 0x1b:
         [fields.utf8_transcription_60, singleEncoding] = self.decode_charset_tags(fields.transcription_60, self.sourceEncoding)
@@ -2201,6 +2218,10 @@ class BGL:
       else:
         self.msg_log_file_write('processEntryDefinition({0})\n'
           'key = ({1}):\ndefi field 60, unknown code: 0x{2:x}'.format(defi, raw_key, fields.transcription_60_code))
+      
+    if fields.field_1a != None:
+      [fields.utf8_field_1a, singleEncoding] = self.decode_charset_tags(fields.field_1a, self.sourceEncoding)
+      fields.u_field_1a = fields.utf8_field_1a.decode('utf-8')
       
     self.processEntryDefinition_statistics(fields, defi, raw_key)
     
@@ -2244,12 +2265,12 @@ class BGL:
     if self.metadata2 != None and self.metadata2.isDefiASCII:
       if not isASCII(fields.u_defi):
         self.metadata2.isDefiASCII = False
-    if fields.title != None:
-      self.dump_file_write_text('\n' + 'title: ')
-      self.dump_file_write_data(fields.title)
     if fields.part_of_speech != None:
-      self.dump_file_write_text('\n' + 'part of speech {0}'.format(fields.part_of_speech))
-      self.decoded_dump_file_write(u'\npart of speech: ' + self.partOfSpeech[fields.part_of_speech].decode('utf8'))
+      self.dump_file_write_text('\n' + 'part of speech: 0x{0:x}'.format(fields.part_of_speech+0x30))
+      self.decoded_dump_file_write(u'\npart of speech: 0x{0:x}'.format(fields.part_of_speech+0x30))
+    if fields.title != None:
+      self.dump_file_write_text('\n' + 'defi title: ')
+      self.dump_file_write_data(fields.title)
     if fields.u_title != None:
       self.decoded_dump_file_write(u'\ndefi title: ' + fields.u_title)
     if fields.title_trans != None:
@@ -2272,18 +2293,23 @@ class BGL:
     if fields.field_1a != None:
       self.dump_file_write_text('\n' + 'defi field_1a: ')
       self.dump_file_write_data(fields.field_1a)
+    if fields.u_field_1a != None:
+      self.decoded_dump_file_write(u'\ndefi field_1a: ' + fields.u_field_1a)
     if fields.field_13 != None:
       self.dump_file_write_text('\n' + 'defi field_13 bytes: ' + printByteStr(fields.field_13))
+      self.decoded_dump_file_write(u'\ndefi field_13 bytes: ' + printByteStr(fields.field_13).decode('utf-8'))
     if fields.field_07 != None:
       self.dump_file_write_text('\n' + 'defi field_07: ')
       self.dump_file_write_data(fields.field_07)
+      self.decoded_dump_file_write(u'\ndefi field_07 bytes: ' + printByteStr(fields.field_07).decode('utf-8'))
     if fields.field_06 != None:
       self.dump_file_write_text('\n' + 'defi field_06: {0}'.format(fields.field_06))
+      self.decoded_dump_file_write(u'\ndefi field_06: {0}'.format(fields.field_06))
   
   # d0 - index of the '\x14 char in defi
   # d0 may be the last char of the string
   # entry definition structure:
-  # <main definition>['\x14'['\x02'<part of speech code, 1 byte>]['\x18'<1 byte><entry title>]]
+  # <main definition>['\x14'[<one char - field code><field data, arbitrary length>]*]
   def processEntryDefinitionTrailingFields(self, defi, raw_key, d0, fields):
     i = d0 + 1
     while i < len(defi):
@@ -2304,8 +2330,7 @@ class BGL:
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
             'key = ({1}):\nunknown part of speech. Char code = {2:#X}'.format(defi, raw_key, x))
           return
-        if self.partOfSpeech[x - 0x30] != '':
-          fields.part_of_speech = x - 0x30
+        fields.part_of_speech = x - 0x30
         i = i+2
       elif defi[i] == '\x06': # \x06<one byte>
         if fields.field_06 != None:
