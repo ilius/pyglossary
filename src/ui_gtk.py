@@ -785,7 +785,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
     self.dbe_save_as('')
   def dbe_open(self, arg=None):
     format = ''
-    if arg:
+    if isinstance(arg, basestring):
       self.path = arg
       self.fcd_format = ''
     else:
