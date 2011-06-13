@@ -135,6 +135,8 @@ sametypesequence=%s
 def copy_resources(fromPath, toPath, overwrite):
   """Copy resource files from fromPath to toPath.
   """
+  if not fromPath:
+    return
   fromPath = os.path.abspath(fromPath)
   toPath = os.path.abspath(toPath)
   if fromPath == toPath:
