@@ -5,7 +5,7 @@ format = 'Stardict'
 description = 'StarDict (ifo)'
 extentions = ('.ifo',)
 readOptions = ()
-writeOptions = ()
+writeOptions = ( 'resOverwrite' )
 
 import sys, os, re, shutil
 sys.path.append('/usr/share/pyglossary/src')
@@ -145,7 +145,7 @@ def copy_resources(fromPath, toPath, overwrite):
     return
   if len(os.listdir(fromPath))==0:
     return
-  if overwrite:
+  if overwrite and os.path.exists(toPath):
     shutil.rmtree(toPath)
   if os.path.exists(toPath):
     if len(os.listdir(toPath)) > 0:
