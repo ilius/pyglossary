@@ -30,7 +30,7 @@ readOptions = (
   'resPath', 'verbose', 'defaultEncodingOverwrite', 'sourceEncodingOverwrite', 'targetEncodingOverwrite',
   'msgLogPath', 'rawDumpPath', 'decodedDumpPath', 'unpackedGzipPath', 'searchCharSamples',
   'charSamplesPath', 'testMode', 'noControlSequenceInDefi', 'strictStringConvertion',
-  'collectMetadata2', 'oneLineOutput', 'processHtmlInKey'
+  'collectMetadata2', 'oneLineOutput', 'processHtmlInKey', 'keyRStripChars'
 )
 writeOptions = ()
 
@@ -970,6 +970,9 @@ class BGL:
     # - resolve character references
     # - strip HTML tags
     processHtmlInKey = False,
+    # a string of characters that will be stripped from the end of the key (and alternate)
+    # see string.rstrip function
+    keyRStripChars = None,
     ):
     global gVerbose
     self.verbose = verbose
@@ -1025,6 +1028,7 @@ class BGL:
     self.unpackedGzipPath = unpackedGzipPath
     self.oneLineOutput = oneLineOutput
     self.processHtmlInKey = processHtmlInKey
+    self.keyRStripChars = keyRStripChars
     # apply to unicode string
     self.strip_slash_alt_key_pat = re.compile(r'(^|\s)/(\w)', re.U)
     # apply to unicode string
@@ -2074,7 +2078,8 @@ class BGL:
             #+ 'new      text: ' + utf8_main_word + '\n'
     utf8_main_word = self.remove_control_chars(utf8_main_word)
     utf8_main_word = self.replace_new_lines(utf8_main_word)
-    utf8_main_word = utf8_main_word.strip()
+    utf8_main_word = utf8_main_word.lstrip()
+    utf8_main_word = utf8_main_word.rstrip(self.keyRStripChars)
     return utf8_main_word
 
   def processEntryAlternativeKey(self, raw_word, raw_key):
@@ -2105,7 +2110,8 @@ class BGL:
             #+ 'new      text: ' + utf8_main_word + '\n'
     utf8_main_word = self.remove_control_chars(utf8_main_word)
     utf8_main_word = self.replace_new_lines(utf8_main_word)
-    utf8_main_word = utf8_main_word.strip()
+    utf8_main_word = utf8_main_word.lstrip()
+    utf8_main_word = utf8_main_word.rstrip(self.keyRStripChars)
     return utf8_main_word
   
   def stripDollarIndexes(self, word):
