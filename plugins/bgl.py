@@ -30,11 +30,11 @@ readOptions = (
   'resPath', 'verbose', 'defaultEncodingOverwrite', 'sourceEncodingOverwrite', 'targetEncodingOverwrite',
   'msgLogPath', 'rawDumpPath', 'decodedDumpPath', 'unpackedGzipPath', 'searchCharSamples',
   'charSamplesPath', 'testMode', 'noControlSequenceInDefi', 'strictStringConvertion',
-  'collectMetadata2'
+  'collectMetadata2', 'oneLineOutput', 'processHtmlInKey'
 )
 writeOptions = ()
 
-## FIXME: document type of read/write options (that would be speficied in command line)
+## FIXME: document type of read/write options (that would be specified in command line)
 
 
 
@@ -130,7 +130,7 @@ class BGLGzipFile(gzip.GzipFile):
 
   def isNewMember(self):
     # self.extrasize == 0 iff read buffer is empty
-    # self.tell() != 0 - this is not begining of the file, nothing is read yet.
+    # self.tell() != 0 - this is not beginning of the file, nothing is read yet.
     if self.extrasize == 0 and self.tell() != 0:
       # We've read the previous member completely.
       if self._new_member:
@@ -166,11 +166,10 @@ class BabylonLanguage:
 class ArgumentError(Exception):
   pass
 
-def replace_html_entry(m):
+def replace_html_entry_no_escape(m):
   """Replace character entity with the corresponding character
   
   Return the original string if conversion fails.
-  Escape the result string again. Only <, >, & characters are escaped.
   Use this as a replace function of re.sub.
   """
   text = m.group(0)
@@ -209,8 +208,19 @@ def replace_html_entry(m):
         res = text
   else:
     raise ArgumentError()
-  return xml.sax.saxutils.escape(res)
+  return res
 
+def replace_html_entry(m):
+  """Same as replace_html_entry_no_escape, but escapes result string
+  
+  Only <, >, & characters are escaped.
+  """
+  res = replace_html_entry_no_escape(m)
+  if m.group(0) == res: # conversion failed
+    return res
+  else:
+    return xml.sax.saxutils.escape(res)
+  
 def replace_dingbat(m):
   """replace chars \u008c-\u0095 with \u2776-\u277f
   """
@@ -950,6 +960,16 @@ class BGL:
     # escape line breaks in values so that each property occupies exactly one line
     # useful for automated output analysis
     oneLineOutput = False,
+    # process keys and alternates as HTML
+    # Babylon does not interpret keys and alternates as HTML text,
+    # however you may encounter many keys containing character references and html tags.
+    # That is clearly a bug of the dictionary. 
+    # We must be very careful processing HTML tags in keys, not damage normal keys.
+    # This option should be disabled by default, enabled explicitly by user.
+    # Namely this option does the following:
+    # - resolve character references
+    # - strip HTML tags
+    processHtmlInKey = False,
     ):
     global gVerbose
     self.verbose = verbose
@@ -1004,6 +1024,7 @@ class BGL:
     self.samples_dump_file = None
     self.unpackedGzipPath = unpackedGzipPath
     self.oneLineOutput = oneLineOutput
+    self.processHtmlInKey = processHtmlInKey
     # apply to unicode string
     self.strip_slash_alt_key_pat = re.compile(r'(^|\s)/(\w)', re.U)
     # apply to unicode string
@@ -1853,6 +1874,16 @@ class BGL:
     pat_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.I)
     return re.sub(pat_entry, replace_html_entry, text)
   
+  def replace_html_entries_in_keys(self, text):
+    # &ldash;
+    # &#0147;
+    # &#x010b;
+    pat_entry = re.compile("(?:&#x|&#|&)(\\w+);", re.I)
+    return re.sub(pat_entry, replace_html_entry_no_escape, text)
+  
+  def strip_html_tags(self, text):
+    return re.sub("(?:<[/a-zA-Z].*?(?:>|$))+", ' ', text)
+    
   def char_references_statistics(self, text, encoding):
     # &#0147;
     # &#x010b;
@@ -2034,6 +2065,13 @@ class BGL:
       
     self.decoded_dump_file_write(u'\n\nkey: ' + u_main_word)
     utf8_main_word = u_main_word.encode('utf-8')
+    if self.processHtmlInKey:
+      #utf8_main_word_orig = utf8_main_word
+      utf8_main_word = self.strip_html_tags(utf8_main_word)
+      utf8_main_word = self.replace_html_entries_in_keys(utf8_main_word)
+      #if(re.match('.*[&<>].*', utf8_main_word_orig)):
+        #print 'original text: ' + utf8_main_word_orig + '\n' \
+            #+ 'new      text: ' + utf8_main_word + '\n'
     utf8_main_word = self.remove_control_chars(utf8_main_word)
     utf8_main_word = self.replace_new_lines(utf8_main_word)
     utf8_main_word = utf8_main_word.strip()
@@ -2058,6 +2096,13 @@ class BGL:
     self.decoded_dump_file_write(u'\nalt: ' + u_main_word)
     
     utf8_main_word = u_main_word.encode('utf-8')
+    if self.processHtmlInKey:
+      #utf8_main_word_orig = utf8_main_word
+      utf8_main_word = self.strip_html_tags(utf8_main_word)
+      utf8_main_word = self.replace_html_entries_in_keys(utf8_main_word)
+      #if(re.match('.*[&<>].*', utf8_main_word_orig)):
+        #print 'original text: ' + utf8_main_word_orig + '\n' \
+            #+ 'new      text: ' + utf8_main_word + '\n'
     utf8_main_word = self.remove_control_chars(utf8_main_word)
     utf8_main_word = self.replace_new_lines(utf8_main_word)
     utf8_main_word = utf8_main_word.strip()
