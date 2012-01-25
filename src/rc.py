@@ -5,7 +5,6 @@ auto_set_for = True
 auto_set_out = True
 sort = True
 lower = False
-utf8_check = True
 
 remove_tags = False
 ## TagName : RemoveBetween
@@ -35,6 +34,9 @@ tags = {
     'k': 0,
     'K': 0,
 }
+
+utf8_check = True
+enable_alts = True
 
 wrap_out = True
 wrap_err = True

@@ -7,6 +7,7 @@ extentions = ('.xdb', '.xml')
 readOptions = ()
 writeOptions = ()
 
+from xml.sax.saxutils import escape, unescape
 
 infoKeys = ('dbname', 'author', 'inputlang', 'version',
             'outputlang', 'copyright', 'description')
@@ -22,7 +23,7 @@ def read(glos, filename):
       continue
     inf0 += (len(item)+2)
     inf1 = xdbText.find('</'+item+'>', inf0)
-    inf = xdbText[inf0:inf1]
+    inf = unescape(xdbText[inf0:inf1])
     glos.setInfo(item, inf)
     i = inf1
   while True:######################################################
@@ -33,8 +34,8 @@ def read(glos, filename):
     in1 = xdbText.find('</in>', in0)
     out0= xdbText.find('<out>', in1) + 5
     out1= xdbText.find('</out>', out0)
-    word = xdbText[in0:in1]
-    defi = xdbText[out0:out1]
+    word = unescape(xdbText[in0:in1])
+    defi = unescape(xdbText[out0:out1])
     glos.data.append((word, defi))
     #i = out1
     i = xdbText.find('</word>', out1) + 7    
@@ -68,11 +69,20 @@ def read_2(glos, filename):
 def write(glos, filename):
   fp = open(filename, 'wb')
   fp.write('<?xml version="1.0" encoding="utf-8" ?>\n<words>\n<xfardic>')
-  for item in Glossary.infoKeysXfardic:
+  for item in infoKeys:
     fp.write('<'+item+'>'+str(glos.getInfo(item))+'</'+item+'>')
   fp.write('</xfardic>\n')
   for item in glos.data:
-    fp.write("<word><in>"+item[0]+"</in><out>"+ item[1]+"</out></word>\n")
+    #fp.write("<word><in>"+item[0]+"</in><out>"+ item[1]+"</out></word>\n")
+    fp.write('<word>\n  <in>%s</in>\n'%escape(item[0]))
+    try:
+      alts = item[2]['alts']
+    except:
+      pass
+    else:
+      for alt in alts:
+        fp.write('  <alt>%s</alt>\n'%escape(alt))
+    fp.write('  <out>%s</out>\n</word>\n'%escape(item[1]))
   fp.write("</words>\n")
   fp.close()
 

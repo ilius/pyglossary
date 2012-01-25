@@ -22,6 +22,7 @@
 import shutil
 from text_utils import urlToPath, click_website
 from glossary import *
+from ui_base import UIBase
 import gtk, gtk.glade
 
 
@@ -56,12 +57,7 @@ class BufferFile:
     isatty = lambda self: 1
 
 
-class UI(gtk.Dialog):
-  prefKeys=['save','auto_update','auto_set_for','auto_set_out','sort','lower',\
-    'utf8_check','remove_tags','tags','wrap_out','wrap_err',  'wrap_edit','wrap_dbe',\
-    'color_bg_out','color_bg_err','color_bg_edit','color_bg_dbe',\
-    'color_font_out','color_font_err','color_font_edit','color_font_dbe',\
-    'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs']## 'newline' # Reverse Options
+class UI(gtk.Dialog, UIBase):
   def write(self, tag):
     pass
   def about_init(self):
@@ -1801,7 +1797,6 @@ PyGlossary is licensed by the GNU General Public License''')
       self.cb_psyco.set_active(True)
     else:
       self.cb_psyco.set_active(False)
-    self.prefSavePath = [confPath,  '%s%src.py'%(srcDir,os.sep)]
     self.pref_load()
     self.pref_update_var()
     self.pref_rev_update_gui()
