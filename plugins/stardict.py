@@ -1,13 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from formats_common import *
+
 enable = True
 format = 'Stardict'
 description = 'StarDict (ifo)'
 extentions = ('.ifo',)
 readOptions = ()
-writeOptions = ( 'resOverwrite' )
+writeOptions = ('resOverwrite',)
+supportsAlternates = True
 
 import sys, os, re, shutil
+from os.path import isfile
 sys.path.append('/usr/share/pyglossary/src')
 
 from text_utils import intToBinStr, binStrToInt, runDictzip, printAsError
@@ -38,35 +42,52 @@ def read(glos, filename):
     glos.setInfo(line[:ind].strip(), line[ind+1:].strip())
   glos.data = []
   word = ''
-  sumLen = 0
+  sumLen0 = 0
   i = 0
   wrongSorted = []
-  ##############################  IMPORTANT PART ############################
-  while i < len(idxStr):
-    if idxStr[i]=='\x00':
-      sumLen2 = binStrToInt(idxStr[i+1:i+5])
-      if sumLen2 != sumLen:
-        wrongSorted.append(word)
-      sumLen = sumLen2
-      defiLen = binStrToInt(idxStr[i+5:i+9])
-      #defi = dictStr[sumLen:sumLen+defiLen].replace('<BR>', '\n')\
-      #                                     .replace('<br>', '\n')
-      dictFd.seek(sumLen)
-      defi = dictFd.read(defiLen).replace('<BR>', '\n')\
-                                 .replace('<br>', '\n')
-      word = word.replace('<BR>', '\\n')\
-                 .replace('<br>', '\\n')
-      glos.data.append((word, defi))
-      sumLen += defiLen
-      word = ''
-      i += 9
-    else:
-      word += idxStr[i]
-      i += 1
-  dictFd.close()
-  ############################################################################
+  ########### Loading idx file (IMPORTANT PART)
+  ## %3 to %5 faster than older method (wihout str.find)
+  wi = 0
+  while True:
+    i = idxStr.find('\x00', wi)
+    if i < 0:
+      break
+    word = idxStr[wi:i].replace('<BR>', '\\n').replace('<br>', '\\n')
+    sumLen = binStrToInt(idxStr[i+1:i+5])
+    if sumLen != sumLen0:
+      wrongSorted.append(word)
+      sumLen0 = sumLen
+    defiLen = binStrToInt(idxStr[i+5:i+9])
+    dictFd.seek(sumLen)
+    defi = dictFd.read(defiLen).replace('<BR>', '\n').replace('<br>', '\n')
+    glos.data.append((word, defi, {}))
+    sumLen0 += defiLen
+    wi = i + 9
+  #########################
   if len(wrongSorted)>0:
     print('Warning: wrong sorting count: %d'%len(wrongSorted))
+  ####### Loading syn file
+  if isfile(filename+'.syn'):
+    synStr = open(filename+'.syn', 'rb').read()
+    wi = 0
+    while True:
+      i = synStr.find('\x00', wi)
+      if i < 0:
+        break
+      alt = synStr[wi:i]
+      wIndex = binStrToInt(synStr[i+1:i+5])
+      try:
+        item = glos.data[wIndex]
+      except IndexError:
+        print 'invalid word index %s in syn file'%wIndex
+      else:
+        try:
+          item[2]['alts'].append(alt)
+        except KeyError:
+          item[2]['alts'] = [alt]
+      wi = i + 5
+    
+
 
 def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
   g = glos.copy()
@@ -97,7 +118,8 @@ def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
     f.write(dictStr)
   with open(filename+'.idx', 'wb') as f:
     f.write(idxStr)
-  if len(alternates) > 0:
+  #from pprint import pformat; open(filename+'-alternates', 'w').write(pformat(alternates))
+  if alternates:
     alternates.sort(stardict_strcmp, lambda x: x[0])
     synStr = ''
     for item in alternates:
@@ -110,7 +132,7 @@ wordcount=%d
 idxfilesize=%d
 sametypesequence=%s
 '''%(new_lines_2_space(g.getInfo('name')), len(g.data), len(idxStr), ('h' if richText else 'm'))
-  if len(alternates) > 0:
+  if alternates:
     ifoStr += 'synwordcount={0}\n'.format(len(alternates))
   for key in infoKeys:
     if key in ('bookname', 'wordcount', 'idxfilesize', 'sametypesequence'):

@@ -24,6 +24,15 @@ def read(glos, filename):
       continue
     word = line[:fti]
     defi = line[fti+1:]#.replace('\\n', '\n')#.replace('<BR>', '\n').replace('\\t', '\t')
+    ###
+    if glos.getPref('enable_alts', True):
+      wordParts = [p.strip() for p in word.split('|')]
+      word = wordParts[0]
+      alts = wordParts[1:]
+      del wordParts
+    else:
+      alts = []
+    ###
     for i in xrange(128):
       c = chr(i)
       if not c in defi:
@@ -42,7 +51,11 @@ def read(glos, filename):
             break
         glos.setInfo(word, defi)
         continue
-    glos.data.append((word, defi))
+    glos.data.append((
+      word,
+      defi,
+      {'alts': alts},
+    ))
 
 
 def write(glos, filename, writeInfo=True):

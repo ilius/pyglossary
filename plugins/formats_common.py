@@ -4,6 +4,7 @@ description = 'Unknown'
 extentions = ()
 readOptions = ()
 writeOptions = ()
+supportsAlternates = False
 
 import sys, os
 sys.path.append('/usr/share/pyglossary/src')

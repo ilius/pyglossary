@@ -33,6 +33,7 @@ readOptions = (
   'collectMetadata2', 'oneLineOutput', 'processHtmlInKey', 'keyRStripChars'
 )
 writeOptions = ()
+supportsAlternates = True
 
 ## FIXME: document type of read/write options (that would be specified in command line)
 

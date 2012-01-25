@@ -19,6 +19,7 @@
 
 
 from glossary import *
+from ui_base import UIBase
 from os.path import join
 
 from PyQt4 import QtGui as qt
@@ -55,7 +56,7 @@ class QVirtualFile(object):
   fileno = lambda self: None
 
 
-class UI(qt.QWidget):
+class UI(qt.QWidget, UIBase):
   def __init__(self, ipath, **options):
     qt.QWidget.__init__(self)
     self.setWindowTitle('PyGlossary (Qt)')

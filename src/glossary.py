@@ -19,7 +19,7 @@
 ##  with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ##  If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-VERSION = '2010.05.29'
+VERSION = '2012.01.25'
 
 licenseText='''PyGlossary - A tool for workig with dictionary databases
 Copyright © 2008-2010 Saeed Rasooli
@@ -438,10 +438,18 @@ class Glossary:
       (word, defi) = item[:2]
       if word.startswith('#'):
         continue
+      if self.getPref('enable_alts', True):
+        try:
+          alts = item[2]['alts']
+        except:
+          pass
+        else:
+          if alts:
+            word = '|'.join([word] + alts)
       for rpl in rplList:
         defi = defi.replace(rpl[0], rpl[1])
       try:
-        line = word+sep[0]+defi+sep[1]
+        line = word + sep[0] + defi + sep[1]
         txt += line
       except:
         myRaise(__file__)
@@ -1066,6 +1074,12 @@ class Glossary:
     self.clean()
     if p['utf8_check']:
       self.utf8ReplaceErrors()
+
+  def getPref(self, name, default):
+    if self.ui:
+      return self.ui.pref.get(name, default)
+    else:
+      return default
 
   def dump(self, dataPath):
     "Dump data into the file for debugging"
