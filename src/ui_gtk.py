@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-##   ui_gtk.py 
+##   ui_gtk.py
 ##
 ##   Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
 ##   Thanks to 'Pier Carteri' <m3tr0@dei.unipd.it> for program Py_Shell.py
@@ -45,7 +45,7 @@ class BufferFile:
     self.mode = mode
   ## Write text into the buffer and apply self.tag
   def write(self, text):
-    #text = text.replace('\x00', '')  
+    #text = text.replace('\x00', '')
     iter=self.buffer.get_end_iter()
     self.buffer.insert_with_tags(iter, text, self.tag)
     if self.mode=='stdout':
@@ -122,13 +122,13 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
       'combobox_i','combobox_o','checkb_o_det','combobox_r_i','checkb_i_ext',\
       'entry_r_i','entry_r_o','combobox_sr','progressbar','textview_edit',\
       'label_convert','label_reverse','combobox_mode','textview_merge','button_conv'])
-    
+
     """## changing colors
     self.textview_err.modify_base(0, gtk.gdk.Color(10000, 0, 0))#textview bg color
     #self.textview_err.modify_base(1, gtk.gdk.Color(-1, 0, 0))#selected text bg color, when deselect window!
     self.textview_err.modify_text(0, gtk.gdk.Color(-1, -1, -1))#normal text color
     #self.textview_err.modify_text(1, gtk.gdk.Color(-1, -1, -1))#selected test color, when deselect window!
-    # modify_bg modify_fg 
+    # modify_bg modify_fg
     self.textview_out.modify_base(0, gtk.gdk.Color(0, 10000, 0))#textview bg color
     self.textview_out.modify_text(0, gtk.gdk.Color(-1, -1, -1))#normal text color
     """
@@ -489,7 +489,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
       if path[:7]=='file://':
         path = urlToPath(path)
         self.entry_o.set_text(path)
-    #if True:#format==None:   
+    #if True:#format==None:
     path = self.entry_o.get_text()
     (name, ext) = os.path.splitext(path)
     if ext.lower() in ('.gz','.bz2','.zip'):
@@ -561,7 +561,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
       if ext in Glossary.readExt[i]:
         self.combobox_r_i.set_active(i)
         self.entry_r_o.set_text(name+'-reversed.txt')
-        return      
+        return
   def r_load(self, *args):
     iPath = self.entry_r_i.get_text()
     formatD = self.combobox_r_i.get_active_text()
@@ -706,7 +706,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
           gtk.main_iteration_do(False)
       self.editor_buffer.insert(self.editor_buffer.get_end_iter(), text[i:])
 
-    
+
   def editor_save(self, *args):
     exit = self.editor_save_as(self.editor_path)
     if exit==True:
@@ -912,7 +912,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
       (self.buffer_dbe.get_start_iter(),self.buffer_dbe.get_end_iter()))
     n = len(self.glosE.data)
     if 0 <= n_ind < n:
-      pass 
+      pass
     elif n_ind == n:
       n_ind = 0
     elif -n < n_ind < 0:
@@ -924,7 +924,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
     try:
       d = self.glosE.data[n_ind]
     except IndexError:
-      return      
+      return
     self.entry_dbe.set_text(d[0])
     try:
       self.entry_db_index.set_text(str(n_ind))### ????????????????????????????????????
@@ -943,7 +943,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
       (self.buffer_dbe_info.get_start_iter(),self.buffer_dbe_info.get_end_iter()))
     n = len(self.glosE.info)
     """if 0 <= n_ind < n:
-      pass 
+      pass
     elif n_ind == n:
       n_ind = 0
     elif -n < n_ind < 0:
@@ -987,7 +987,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
     for i in xrange(n+1, len(self.glosE.data)):
       #self.treestore[i]=[self.glosE.data[i][0], str(i)]
       self.treestore[i][1]=str(i)
-  def dbe_new_we(self, *args):## new Word at the End 
+  def dbe_new_we(self, *args):## new Word at the End
     n = len(self.glosE.data)
     word = 'word%s'%n
     self.glosE.data.append((word, ''))
@@ -1173,7 +1173,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
     for key in self.prefKeys:
       self.pref[key] = eval(key)
     self.combobox_save.set_active(self.pref['save'])
-    self.cb_auto_update.set_active(self.pref['auto_update']) 
+    self.cb_auto_update.set_active(self.pref['auto_update'])
     for i in xrange(len(self.newlineItems)):
       if self.pref['newline']==eval('"'+self.newlineItems[i]+'"'):
         self.combobox_newline.set_active(i)

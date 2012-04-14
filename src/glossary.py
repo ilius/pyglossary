@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-##  glossary.py 
+##  glossary.py
 ##
 ##  Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
 ##  This file is part of PyGlossary project, http://sourceforge.net/projects/pyglossary/
@@ -309,7 +309,7 @@ class Glossary:
         printAsError('Invalid read option "%s" given for %s format'%(key, format))
         del options[key]
     getattr(self, 'read%s'%format).__call__(filename, **options)
-    
+
     (filename_nox, ext) = splitext(filename)
     if ext.lower() in self.formatsExt[format]:
       filename = filename_nox
@@ -564,7 +564,7 @@ class Glossary:
 
 
   def __add__(self, other):
-    return self.merge(other) 
+    return self.merge(other)
 
 
   def searchWordInDef(self, st, opt):
@@ -762,7 +762,7 @@ class Glossary:
          if autoSaveStep>0:
            saveFile.write('%s\t%s\n'%(word, defi))
          else:
-          revG.data.append((word, defi)) 
+          revG.data.append((word, defi))
        if autoSaveStep>0 and i==n-1:
          saveFile.close()
     if autoSaveStep==0:
@@ -853,7 +853,7 @@ class Glossary:
          if autoSaveStep>0:
            saveFile.write('%s\t%s\n'%new)
          else:
-          revG.data.append(new) 
+          revG.data.append(new)
        if autoSaveStep>0 and i==n-1:
          saveFile.close()
     if autoSaveStep==0:
@@ -1008,7 +1008,7 @@ class Glossary:
       w = d[i][0].strip()
       m = d[i][1].strip()\
                  .replace('♦  ', '♦ ')
-      
+
       m = re.sub("[\r\n]+", "\n", m)
       m = re.sub(" *\n *", "\n", m)
 

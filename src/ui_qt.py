@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-##   ui_tk.py 
+##   ui_tk.py
 ##
 ##   Copyright © 2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
 ##

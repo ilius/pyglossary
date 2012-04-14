@@ -46,7 +46,7 @@ def read(glos, filename):
         defi += eval(line)
       else:
         word += eval(line)
-        
+
 
 def write(glos, filename):
   fp = open(filename, 'wb')

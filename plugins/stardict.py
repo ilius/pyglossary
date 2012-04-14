@@ -26,7 +26,7 @@ def read(glos, filename):
   idxStr = open(filename+'.idx', 'rb').read()
   if os.path.isfile(filename+'.dict.dz'):
     import gzip
-    #dictStr = gzip.open(filename+'.dict.dz').read() 
+    #dictStr = gzip.open(filename+'.dict.dz').read()
     dictFd = gzip.open(filename+'.dict.dz')
   else:
     #dictStr = open(filename+'.dict', 'rb').read()
@@ -86,7 +86,7 @@ def read(glos, filename):
         except KeyError:
           item[2]['alts'] = [alt]
       wi = i + 5
-    
+
 
 
 def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
@@ -177,7 +177,7 @@ def copy_resources(fromPath, toPath, overwrite):
       return
     os.rmdir(toPath)
   shutil.copytree(fromPath, toPath)
-  
+
 def read_ext(glos, filename):
   ## This method uses module provided by dictconv, but dictconv is very slow for reading from stardict db!
   ## therefore this method in not used by GUI now.
@@ -277,28 +277,28 @@ def write_ext(glos, filename, sort=True, dictZip=True):
 def isAsciiUpper(c):
   "imitate ISUPPER macro of glib library gstrfuncs.c file"
   return ord(c) >= ord('A') and ord(c) <= ord('Z')
-  
+
 def asciiLower(c):
   """imitate TOLOWER macro of glib library gstrfuncs.c file
-  
+
   This function converts upper case Latin letters to corresponding lower case letters,
   other chars are not changed.
-  
+
   c must be non-Unicode string of length 1.
   You may apply this function to individual bytes of non-Unicode string.
-  The following encodings are allowed: single byte encoding like koi8-r, cp1250, cp1251, cp1252, etc, 
+  The following encodings are allowed: single byte encoding like koi8-r, cp1250, cp1251, cp1252, etc,
   and utf-8 encoding.
-  
+
   Attention! Python Standard Library provides str.lower() method.
-  It is not a correct replacement for this function. 
-  For non-unicode string str.lower() is locale dependent, it not only converts Latin 
+  It is not a correct replacement for this function.
+  For non-unicode string str.lower() is locale dependent, it not only converts Latin
   letters to lower case, but also locale specific letters will be converted.
   """
   if isAsciiUpper(c):
     return chr((ord(c) - ord('A')) + ord('a'))
   else:
     return c
-  
+
 def ascii_strcasecmp(s1, s2):
   "imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file"
   commonLen = min(len(s1), len(s2))
@@ -311,11 +311,11 @@ def ascii_strcasecmp(s1, s2):
 
 def strcmp(s1, s2):
   """imitate strcmp of standard C library
-  
+
   Attention! You may have a temptation to replace this function with built-in cmp() function.
-  Hold on! Most probably these two function behave identically now, but cmp does not 
+  Hold on! Most probably these two function behave identically now, but cmp does not
   document how it compares strings. There is no guaranty it will not be changed in future.
-  Since we need predictable sorting order in StarDict dictionary, we need to preserve 
+  Since we need predictable sorting order in StarDict dictionary, we need to preserve
   this function despite the fact there are other ways to implement it.
   """
   commonLen = min(len(s1), len(s2))

@@ -84,7 +84,7 @@ class Header:
   f_short_index = FormatElement(0x1f, 4)
   f_full_index = FormatElement(0x23, 4)
   f_articles = FormatElement(0x27, 4)
-   
+
   def parse(self, st):
     self.signature = read_str(st, self.f_signature)
     if self.signature != 'sdct':
@@ -204,4 +204,4 @@ def read(glos, filename, encoding='utf-8'):
   ##########
   glos.data = list(sd.__iter__())
 
-   
+

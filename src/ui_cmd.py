@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-##   ui_cmd.py 
+##   ui_cmd.py
 ##
 ##  Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
 ##  This file is part of PyGlossary project, http://sourceforge.net/projects/pyglossary/
@@ -180,7 +180,7 @@ class UI(UIBase):
     return True
   def yesNoQuestion(self, msg, yesDefault=True):## FIXME
     return True
-  def run(self, ipath, opath='', read_format='', write_format='', 
+  def run(self, ipath, opath='', read_format='', write_format='',
           read_options={}, write_options={}, reverse=False):
     if read_format:
       read_format = read_format.capitalize()

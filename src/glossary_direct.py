@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-##  glossary.py 
+##  glossary.py
 ##
 ##  Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
 ##  Thanks to 'Mehdi Bayazee' and 'carp3(Pedram Azimaie)' for program bgl2xdb.py
@@ -74,5 +74,5 @@ else:
 
 #class DGlossary(Glossary):
 #  def convert(
-  
-  
+
+

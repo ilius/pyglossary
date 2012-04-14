@@ -12,7 +12,7 @@ writeOptions = ('writeInfo', 'newline')
 
 def write(glos, filename, writeInfo=True, newline='\n'):
   ## Source Glossary for "Sdictionary" (http://sdict.org)
-  ## It has extention '.sdct' 
+  ## It has extention '.sdct'
   head=''
   if writeInfo:
     head += '<header>\n'

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-##  bgl.py 
+##  bgl.py
 ##
 ##  Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
 ##  This file is part of PyGlossary project, http://sourceforge.net/projects/pyglossary/
@@ -85,7 +85,7 @@ class MetaDataRange:
 
 class MetaData2:
   """Second pass metadata.
-  
+
   We need to scan all definitions in order to collect these statistical data.
   """
   def __init__(self):
@@ -93,7 +93,7 @@ class MetaData2:
     self.defiTrailingFields = [ 0 ] * 256
     self.isDefiASCII = True # true if all definitions contain only ASCII chars
     """
-    We apply a number of tests to each definition, excluding those with 
+    We apply a number of tests to each definition, excluding those with
     overwritten encoding (they start with <charset c=U>).
     DefiProcessedCnt - total number of definitions processed
     DefiUtf8Cnt - number of definitions in utf8 encoding
@@ -107,8 +107,8 @@ class MetaData2:
 
 class BGLGzipFile(gzip.GzipFile):
   """gzip.GzipFile class without CRC check.
-  
-  We redefined one method - _read_eof. 
+
+  We redefined one method - _read_eof.
   It prints a warning when CRC code does not match.
   The original method raises an exception in this case.
   Some dictionaries do not use CRC code, it is set to 0.
@@ -136,7 +136,7 @@ class BGLGzipFile(gzip.GzipFile):
       # We've read the previous member completely.
       if self._new_member:
         return True
-      # It is possible that we've read all data of the current member, 
+      # It is possible that we've read all data of the current member,
       # but have not tried to read further. Thus end of member has not been encountered.
       # Read one byte further and check if we encounter end of the member.
       else:
@@ -149,10 +149,10 @@ class BGLGzipFile(gzip.GzipFile):
 
 class BabylonLanguage:
   """Babylon language properties.
-  
-  language - bab:SourceLanguage, bab:TargetLanguage .gpr tags 
+
+  language - bab:SourceLanguage, bab:TargetLanguage .gpr tags
     (English, French, Japanese)
-  charset - bab:SourceCharset, bab:TargetCharset .gpr tags 
+  charset - bab:SourceCharset, bab:TargetCharset .gpr tags
     (Latin, Arabic, Cyrillic)
   encoding - Windows code page
     (cp1250, cp1251, cp1252)
@@ -169,7 +169,7 @@ class ArgumentError(Exception):
 
 def replace_html_entry_no_escape(m):
   """Replace character entity with the corresponding character
-  
+
   Return the original string if conversion fails.
   Use this as a replace function of re.sub.
   """
@@ -201,7 +201,7 @@ def replace_html_entry_no_escape(m):
         This not just a typo. These entries repeat over and over again.
         Perhaps they had meaning in the source dictionary that was converted to Babylon,
         but now the meaning is lost. Babylon does render them as is, that is, for example,
-        &csdot; despite other references like &amp; are replaced with corresponding 
+        &csdot; despite other references like &amp; are replaced with corresponding
         characters.
         """
         if gVerbose >= 2:
@@ -213,7 +213,7 @@ def replace_html_entry_no_escape(m):
 
 def replace_html_entry(m):
   """Same as replace_html_entry_no_escape, but escapes result string
-  
+
   Only <, >, & characters are escaped.
   """
   res = replace_html_entry_no_escape(m)
@@ -221,7 +221,7 @@ def replace_html_entry(m):
     return res
   else:
     return xml.sax.saxutils.escape(res)
-  
+
 def replace_dingbat(m):
   """replace chars \u008c-\u0095 with \u2776-\u277f
   """
@@ -245,7 +245,7 @@ def new_line_escape_string(text):
   new line -> \n or \r
   """
   return re.sub("[\\r\\n\\\\]", new_line_escape_string_callback, text)
-  
+
 class BGL:
   class Block:
     def __init__(self):
@@ -255,16 +255,16 @@ class BGL:
       self.offset=-1
     def __str__(self):
       return 'Block Type=%s, length=%s, len(data)=%s'%(self.Type, self.length, len(self.data))
-  
+
   class Entry:
     def __init__(self):
       self.word=''
       self.defi=''
       self.alts=[]
-  
+
   class FileOffS(file):
     """A file class with an offset.
-    
+
     This class provides an interface to a part of a file starting at specified offset and
     ending at the end of the file, making it appear an independent file.
     offset parameter of the constructor specifies the offset of the first byte of the
@@ -292,10 +292,10 @@ class BGL:
         raise ValueError('FileOffS.seek: bad whence=={0}'.format(w))
     def tell(self):
       return file.tell(self)-self.of
-  
+
   class DefinitionFields:
     """Fields of entry definition
-    
+
     Entry definition consists of a number of fields.
     The most important of them are:
     defi - the main definition, mandatory, comes first.
@@ -330,13 +330,13 @@ class BGL:
       self.field_13 = None
       self.field_07 = None
       self.field_06 = None
-        
+
   class GzipWithCheck:
     """gzip.GzipFile with check. It checks that unpacked data match what was packed.
     """
     def __init__(self, gzipFile, unpackedPath, db):
       """constructor
-      
+
       gzipFile - gzip file - archive
       unpackedPath - path of a file containing original data, for testing.
       db - reference to BGL class instance, used for logging.
@@ -379,118 +379,118 @@ class BGL:
       else:
         self.file.flush()
         self.unpacked_file.flush()
-  
+
   ##############################################################################
   """language properties
-  
-  In this short note we describe how Babylon select encoding for key words, 
+
+  In this short note we describe how Babylon select encoding for key words,
   alternates and definitions.
   There are source and target encodings. The source encoding is used to encode
   keys and alternates, the target encoding is used to encode definitions.
   The source encoding is selected based on the source language of the
-  dictionary, the target encoding is tied to the target language. 
-  Babylon Glossary Builder allows you to specify source and target languages. 
-  If you open a Builder project (a file with .gpr extension) in a text editor, 
+  dictionary, the target encoding is tied to the target language.
+  Babylon Glossary Builder allows you to specify source and target languages.
+  If you open a Builder project (a file with .gpr extension) in a text editor,
   you should find the following elements:
   <bab:SourceCharset>Latin</bab:SourceCharset>
   <bab:SourceLanguage>English</bab:SourceLanguage>
   <bab:TargetCharset>Latin</bab:TargetCharset>
   <bab:TargetLanguage>English</bab:TargetLanguage>
   Here bab:SourceLanguage is the source language that you select in the builder
-  wizard, bab:SourceCharset - is the corresponding charset. 
+  wizard, bab:SourceCharset - is the corresponding charset.
   bab:TargetLanguage - target language, bab:TargetCharset - corresponding
   charset.
-  Unfortunately, builder does not tell us what encoding corresponds to charset, 
+  Unfortunately, builder does not tell us what encoding corresponds to charset,
   but we can detect it.
-  
-  A few words about how definitions are encoded. If all chars of the 
+
+  A few words about how definitions are encoded. If all chars of the
   definition fall into the target charset, Babylon use that charset to encode
   the definition. If at least one char does not fall into the target charset,
   Babylon use utf-8 encoding, wrapping the definition into <charset c=U> and
   </charset> tags.
-  You can make Babylon use utf-8 encoding for the whole dictionary, in that case 
-  all definitions, keys and alternates are encoded with utf-8. See Babylon 
+  You can make Babylon use utf-8 encoding for the whole dictionary, in that case
+  all definitions, keys and alternates are encoded with utf-8. See Babylon
   Glossary Builder wizard, Glossary Properties tab, Advanced button, Use UTF-8
   encoding check box. Definitions are not augmented with extra mackup in this
   case, that is you'll not find charset tags in definitions.
-  
-  How you can tell what encoding was used for the particular definition in 
+
+  How you can tell what encoding was used for the particular definition in
   .bgl file? You need to check the following conditions.
-  
+
   Block type 3, code 0x11. If 0x8000 bit is set, the whole dictionary use
   utf-8 encoding.
-  
+
   If the definition starts with <charset c=U>, that definition uses utf-8
   encoding.
-  
+
   Otherwise you need to consult the target encoding.
-  
-  Block type 3, code 0x1b. That field normally contains 1 byte code of the 
+
+  Block type 3, code 0x1b. That field normally contains 1 byte code of the
   target encoding. Codes fill the range of 0x41 to 0x4e. Babylon Builder
-  generate codes 0x42 - 0x4e. How to generate code 0x41? 
-  Occasionally you may encounter the field value is four zero bytes. In this 
+  generate codes 0x42 - 0x4e. How to generate code 0x41?
+  Occasionally you may encounter the field value is four zero bytes. In this
   case, I guess, the default encoding for the target language is used.
-  
-  Block type 3, code 0x08. That field contains 4-bytes code of the target 
+
+  Block type 3, code 0x08. That field contains 4-bytes code of the target
   language. The first three bytes are always zero, the last byte is the code.
-  Playing with Babylon Glossary builder we can find language codes corresponding 
+  Playing with Babylon Glossary builder we can find language codes corresponding
   to target language. The language codes fill the range of 0 to 0x3d.
-  
+
   How to detect the target encoding? Here is the technique I've used.
-  - Create a babylon glossary source file ( a file with .gls extension) with 
+  - Create a babylon glossary source file ( a file with .gls extension) with
     the following contents. Start the file with utf-8 BOM for the builder
     to recognize the utf-8 encoding. Use unicode code point code as key,
-    and a single unicode chars encoding in utf-8 as definition. Create keys 
+    and a single unicode chars encoding in utf-8 as definition. Create keys
     for all code points in the range 32 - 0x10000, or you may use wider range.
     We do not use code points in the range 0-31, since they are control chars.
     You should skip the following three chars: & < >. Since the definition
     is supposed to contain html, these chars are be replaced by &amp; &lt;
-    &gt; respectively. You should skip the char $ as well, it has special 
-    meaning in definitions (?). Skip all code point that cannot encoded in 
+    &gt; respectively. You should skip the char $ as well, it has special
+    meaning in definitions (?). Skip all code point that cannot encoded in
     utf-8 (not all code points in the range 32-0x10000 represent valid chars).
   - Now that you have a glossary source file, process it with builder selecting
     the desired target language. Make sure the "use utf-8" option is no set.
     You'll get a .bgl file.
   - Process the generated .bgl file with pyglossary. Skip all definitions that
     start with <charset c=U> tag. Try to decode definitions using different
-    encodings and match the result with the real value (key - code point char 
+    encodings and match the result with the real value (key - code point char
     code). Thus you'll find the encoding having the best match.
-    
+
     For example, you may do the following.
-    Loop over all available encodings, loop over all definitions in the 
+    Loop over all available encodings, loop over all definitions in the
     dictionary. Count the number of definitions that does not start with
-    charset tag - total. Among them count the number of definitions that were 
-    correctly decoded - success. The encoding where total == success, is 
+    charset tag - total. Among them count the number of definitions that were
+    correctly decoded - success. The encoding where total == success, is
     the target encoding.
-  
-  There are a few problems I encountered. It looks like python does not 
-  correctly implement cp932 and cp950 encodings. For Japanese charset I 
+
+  There are a few problems I encountered. It looks like python does not
+  correctly implement cp932 and cp950 encodings. For Japanese charset I
   got 99.12% match, and for Traditional Chinese charset I got even less -
   66.97%. To conform my guess that Japanese is cp932 and Traditional Chinese
   is cp950 I built a C++ utility that worked on the data extracted from .bgl
   dictionary. I used WideCharToMultiByte function for conversion. The C++
   utility confirmed the cp932 and cp950 encodings, I got 100% match.
-  
+
   Dictionary properties
   =====================
-  
-  Dictionary (or glossary) properties are textual data like glossary name, 
+
+  Dictionary (or glossary) properties are textual data like glossary name,
   glossary author name, glossary author e-mail, copyright message and
   glossary description. Most of the dictionaries have these properties set.
   Since they contain textual data we need to know the encoding.
   There may be other properties not listed here. I've enumerated only those that
   are available in Babylon Glossary builder.
-  
+
   Playing with Babylon builder allows us detect how encoding is selected.
   If global utf-8 flag is set, utf-8 encoding is used for all properties.
   Otherwise the target encoding is used, that is the encoding corresponding to
-  the target language. The chars that cannot be represented in the target encoding 
+  the target language. The chars that cannot be represented in the target encoding
   are replaced with question marks.
-  
+
   Using this algorithm to decode dictionary properties you may encounter that
   some of them are decoded incorrectly. For example, it is clear that the property
-  is in cp1251 encoding while the algorithm says we must use cp1252, and we get 
-  garbage after decoding. That is OK, the algorithm is correct. You may install 
+  is in cp1251 encoding while the algorithm says we must use cp1252, and we get
+  garbage after decoding. That is OK, the algorithm is correct. You may install
   that dictionary in Babylon and check dictionary properties. It shows the same
   garbage. Unfortunately, we cannot detect correct encoding in this case
   automatically. We may add a parameter the will overwrite the selected encoding,
@@ -498,380 +498,380 @@ class BGL:
   """
   languageProps = [
     BabylonLanguage(
-      language = 'English', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'English',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x00
     ),
     BabylonLanguage(
-      language = 'French', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'French',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x01
     ),
     BabylonLanguage(
-      language = 'Italian', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Italian',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x02
     ),
     BabylonLanguage(
-      language = 'Spanish', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Spanish',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x03
     ),
     BabylonLanguage(
-      language = 'Dutch', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Dutch',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x04
     ),
     BabylonLanguage(
-      language = 'Portuguese', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Portuguese',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x05
     ),
     BabylonLanguage(
-      language = 'German', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'German',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x06
     ),
     BabylonLanguage(
-      language = 'Russian', 
-      charset = 'Cyrillic', 
-      encoding = 'cp1251', 
+      language = 'Russian',
+      charset = 'Cyrillic',
+      encoding = 'cp1251',
       code = 0x07
     ),
     BabylonLanguage(
-      language = 'Japanese', 
-      charset = 'Japanese', 
-      encoding = 'cp932', 
+      language = 'Japanese',
+      charset = 'Japanese',
+      encoding = 'cp932',
       code = 0x08
     ),
     BabylonLanguage(
-      language = 'Chinese (T)', 
-      charset = 'Traditional Chinese', 
-      encoding = 'cp950', 
+      language = 'Chinese (T)',
+      charset = 'Traditional Chinese',
+      encoding = 'cp950',
       code = 0x09
     ),
     BabylonLanguage(
-      language = 'Chinese (S)', 
-      charset = 'Simplified Chinese', 
-      encoding = 'cp936', 
+      language = 'Chinese (S)',
+      charset = 'Simplified Chinese',
+      encoding = 'cp936',
       code = 0x0a
     ),
     BabylonLanguage(
-      language = 'Greek', 
-      charset = 'Greek', 
-      encoding = 'cp1253', 
+      language = 'Greek',
+      charset = 'Greek',
+      encoding = 'cp1253',
       code = 0x0b
     ),
     BabylonLanguage(
-      language = 'Korean', 
-      charset = 'Korean', 
-      encoding = 'cp949', 
+      language = 'Korean',
+      charset = 'Korean',
+      encoding = 'cp949',
       code = 0x0c
     ),
     BabylonLanguage(
-      language = 'Turkish', 
-      charset = 'Turkish', 
-      encoding = 'cp1254', 
+      language = 'Turkish',
+      charset = 'Turkish',
+      encoding = 'cp1254',
       code = 0x0d
     ),
     BabylonLanguage(
-      language = 'Hebrew', 
-      charset = 'Hebrew', 
-      encoding = 'cp1255', 
+      language = 'Hebrew',
+      charset = 'Hebrew',
+      encoding = 'cp1255',
       code = 0x0e
     ),
     BabylonLanguage(
-      language = 'Arabic', 
-      charset = 'Arabic', 
-      encoding = 'cp1256', 
+      language = 'Arabic',
+      charset = 'Arabic',
+      encoding = 'cp1256',
       code = 0x0f
     ),
     BabylonLanguage(
-      language = 'Thai', 
-      charset = 'Thai', 
-      encoding = 'cp874', 
+      language = 'Thai',
+      charset = 'Thai',
+      encoding = 'cp874',
       code = 0x10
     ),
     BabylonLanguage(
-      language = 'Other', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Other',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x11
     ),
     BabylonLanguage(
-      language = 'Other Simplified Chinese dialects', 
-      charset = 'Simplified Chinese', 
-      encoding = 'cp936', 
+      language = 'Other Simplified Chinese dialects',
+      charset = 'Simplified Chinese',
+      encoding = 'cp936',
       code = 0x12
     ),
     BabylonLanguage(
-      language = 'Other Traditional Chinese dialects', 
-      charset = 'Traditional Chinese', 
-      encoding = 'cp950', 
+      language = 'Other Traditional Chinese dialects',
+      charset = 'Traditional Chinese',
+      encoding = 'cp950',
       code = 0x13
     ),
     BabylonLanguage(
-      language = 'Other Eastern-European languages', 
-      charset = 'Eastern European', 
-      encoding = 'cp1250', 
+      language = 'Other Eastern-European languages',
+      charset = 'Eastern European',
+      encoding = 'cp1250',
       code = 0x14
     ),
     BabylonLanguage(
-      language = 'Other Western-European languages', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Other Western-European languages',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x15
     ),
     BabylonLanguage(
-      language = 'Other Russian languages', 
-      charset = 'Cyrillic', 
-      encoding = 'cp1251', 
+      language = 'Other Russian languages',
+      charset = 'Cyrillic',
+      encoding = 'cp1251',
       code = 0x16
     ),
     BabylonLanguage(
-      language = 'Other Japanese languages', 
-      charset = 'Japanese', 
-      encoding = 'cp932', 
+      language = 'Other Japanese languages',
+      charset = 'Japanese',
+      encoding = 'cp932',
       code = 0x17
     ),
     BabylonLanguage(
-      language = 'Other Baltic languages', 
-      charset = 'Baltic', 
-      encoding = 'cp1257', 
+      language = 'Other Baltic languages',
+      charset = 'Baltic',
+      encoding = 'cp1257',
       code = 0x18
     ),
     BabylonLanguage(
-      language = 'Other Greek languages', 
-      charset = 'Greek', 
-      encoding = 'cp1253', 
+      language = 'Other Greek languages',
+      charset = 'Greek',
+      encoding = 'cp1253',
       code = 0x19
     ),
     BabylonLanguage(
-      language = 'Other Korean dialects', 
-      charset = 'Korean', 
-      encoding = 'cp949', 
+      language = 'Other Korean dialects',
+      charset = 'Korean',
+      encoding = 'cp949',
       code = 0x1a
     ),
     BabylonLanguage(
-      language = 'Other Turkish dialects', 
-      charset = 'Turkish', 
-      encoding = 'cp1254', 
+      language = 'Other Turkish dialects',
+      charset = 'Turkish',
+      encoding = 'cp1254',
       code = 0x1b
     ),
     BabylonLanguage(
-      language = 'Other Thai dialects', 
-      charset = 'Thai', 
-      encoding = 'cp874', 
+      language = 'Other Thai dialects',
+      charset = 'Thai',
+      encoding = 'cp874',
       code = 0x1c
     ),
     BabylonLanguage(
-      language = 'Polish', 
-      charset = 'Eastern European', 
-      encoding = 'cp1250', 
+      language = 'Polish',
+      charset = 'Eastern European',
+      encoding = 'cp1250',
       code = 0x1d
     ),
     BabylonLanguage(
-      language = 'Hungarian', 
-      charset = 'Eastern European', 
-      encoding = 'cp1250', 
+      language = 'Hungarian',
+      charset = 'Eastern European',
+      encoding = 'cp1250',
       code = 0x1e
     ),
     BabylonLanguage(
-      language = 'Czech', 
-      charset = 'Eastern European', 
-      encoding = 'cp1250', 
+      language = 'Czech',
+      charset = 'Eastern European',
+      encoding = 'cp1250',
       code = 0x1f
     ),
     BabylonLanguage(
-      language = 'Lithuanian', 
-      charset = 'Baltic', 
-      encoding = 'cp1257', 
+      language = 'Lithuanian',
+      charset = 'Baltic',
+      encoding = 'cp1257',
       code = 0x20
     ),
     BabylonLanguage(
-      language = 'Latvian', 
-      charset = 'Baltic', 
-      encoding = 'cp1257', 
+      language = 'Latvian',
+      charset = 'Baltic',
+      encoding = 'cp1257',
       code = 0x21
     ),
     BabylonLanguage(
-      language = 'Catalan', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Catalan',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x22
     ),
     BabylonLanguage(
-      language = 'Croatian', 
-      charset = 'Eastern European', 
-      encoding = 'cp1250', 
+      language = 'Croatian',
+      charset = 'Eastern European',
+      encoding = 'cp1250',
       code = 0x23
     ),
     BabylonLanguage(
-      language = 'Serbian', 
-      charset = 'Eastern European', 
-      encoding = 'cp1250', 
+      language = 'Serbian',
+      charset = 'Eastern European',
+      encoding = 'cp1250',
       code = 0x24
     ),
     BabylonLanguage(
-      language = 'Slovak', 
-      charset = 'Eastern European', 
-      encoding = 'cp1250', 
+      language = 'Slovak',
+      charset = 'Eastern European',
+      encoding = 'cp1250',
       code = 0x25
     ),
     BabylonLanguage(
-      language = 'Albanian', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Albanian',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x26
     ),
     BabylonLanguage(
-      language = 'Urdu', 
-      charset = 'Arabic', 
-      encoding = 'cp1256', 
+      language = 'Urdu',
+      charset = 'Arabic',
+      encoding = 'cp1256',
       code = 0x27
     ),
     BabylonLanguage(
-      language = 'Slovenian', 
-      charset = 'Eastern European', 
-      encoding = 'cp1250', 
+      language = 'Slovenian',
+      charset = 'Eastern European',
+      encoding = 'cp1250',
       code = 0x28
     ),
     BabylonLanguage(
-      language = 'Estonian', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Estonian',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x29
     ),
     BabylonLanguage(
-      language = 'Bulgarian', 
-      charset = 'Eastern European', 
-      encoding = 'cp1250', 
+      language = 'Bulgarian',
+      charset = 'Eastern European',
+      encoding = 'cp1250',
       code = 0x2a
     ),
     BabylonLanguage(
-      language = 'Danish', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Danish',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x2b
     ),
     BabylonLanguage(
-      language = 'Finnish', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Finnish',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x2c
     ),
     BabylonLanguage(
-      language = 'Icelandic', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Icelandic',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x2d
     ),
     BabylonLanguage(
-      language = 'Norwegian', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Norwegian',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x2e
     ),
     BabylonLanguage(
-      language = 'Romanian', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Romanian',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x2f
     ),
     BabylonLanguage(
-      language = 'Swedish', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Swedish',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x30
     ),
     BabylonLanguage(
-      language = 'Ukranian', 
-      charset = 'Cyrillic', 
-      encoding = 'cp1251', 
+      language = 'Ukranian',
+      charset = 'Cyrillic',
+      encoding = 'cp1251',
       code = 0x31
     ),
     BabylonLanguage(
-      language = 'Belarusian', 
-      charset = 'Cyrillic', 
-      encoding = 'cp1251', 
+      language = 'Belarusian',
+      charset = 'Cyrillic',
+      encoding = 'cp1251',
       code = 0x32
     ),
     BabylonLanguage(
-      language = 'Farsi', 
-      charset = 'Arabic', 
-      encoding = 'cp1256', 
+      language = 'Farsi',
+      charset = 'Arabic',
+      encoding = 'cp1256',
       code = 0x33
     ),
     BabylonLanguage(
-      language = 'Basque', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Basque',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x34
     ),
     BabylonLanguage(
-      language = 'Macedonian', 
-      charset = 'Eastern European', 
-      encoding = 'cp1250', 
+      language = 'Macedonian',
+      charset = 'Eastern European',
+      encoding = 'cp1250',
       code = 0x35
     ),
     BabylonLanguage(
-      language = 'Afrikaans', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Afrikaans',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x36
     ),
     BabylonLanguage(
       # Babylon Glossary Builder spells this language 'Faeroese'
-      language = 'Faroese', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Faroese',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x37
     ),
     BabylonLanguage(
-      language = 'Latin', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Latin',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x38
     ),
     BabylonLanguage(
-      language = 'Esperanto', 
-      charset = 'Turkish', 
-      encoding = 'cp1254', 
+      language = 'Esperanto',
+      charset = 'Turkish',
+      encoding = 'cp1254',
       code = 0x39
     ),
     BabylonLanguage(
-      language = 'Tamazight', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Tamazight',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x3a
     ),
     BabylonLanguage(
-      language = 'Armenian', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Armenian',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x3b
     ),
     BabylonLanguage(
-      language = 'Hindi', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Hindi',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x3c
     ),
     BabylonLanguage(
-      language = 'Somali', 
-      charset = 'Latin', 
-      encoding = 'cp1252', 
+      language = 'Somali',
+      charset = 'Latin',
+      encoding = 'cp1252',
       code = 0x3d
     ),
   ]
-  
+
   charsets = (
     'cp1252',       # Default                0x41
     'cp1252',       # Latin                  0x42
@@ -902,21 +902,21 @@ class BGL:
     'suffix',       # 0x38
     'prefix',       # 0x39
     'article',      # 0x3A
-    '',             #                0x3B in Babylon Italian-English.BGL, 
-                    #                     Babylon Spanish-English.BGL, 
+    '',             #                0x3B in Babylon Italian-English.BGL,
+                    #                     Babylon Spanish-English.BGL,
                     #                     no indication of the part of speech
     'abbreviation', # 0x3C
     # (short form: 'ר"ת')
     # (full form: "ר"ת: ראשי תיבות")
-    
-# "ת'" 
+
+# "ת'"
     # adjective
     #(full form: "ת': תואר")
-    
+
 # "ש"ע"
     # noun
     # (full form: "ש"ע: שם עצם")
-    
+
     'masculine noun and adjective', # 0x3D
     'feminine noun and adjective',  # 0x3E
     'masculine and feminine noun and adjective', # 0x3F
@@ -925,7 +925,7 @@ class BGL:
     # (full form: "נ': נקבה")
     'masculine and feminine noun', # noun that may be used as masculine and feminine 0x41
     # (short form: "זו"נ")
-    # (full form: "זו"נ: זכר ונקבה") 
+    # (full form: "זו"נ: זכר ונקבה")
     'masculine noun', # 0x42
     # (short form: 'ז\'')
     # (full form: "ז': זכר")
@@ -936,20 +936,21 @@ class BGL:
     None,           # 0x47
   )
 
-  def __init__(self, filename, 
+  def __init__(self,
+    filename,
     # resource path - where to extract embedded files
-    resPath=None, 
+    resPath=None,
     ## 0: print nothing
     ## 1: minimal info (for user)
     ## 2: extra info (for user)
     ## 3: debugging (for developer)
-    verbose=1, 
-    defaultEncodingOverwrite = None, 
-    sourceEncodingOverwrite = None, 
+    verbose=1,
+    defaultEncodingOverwrite = None,
+    sourceEncodingOverwrite = None,
     targetEncodingOverwrite = None,
-    msgLogPath = None, 
-    rawDumpPath = None, 
-    decodedDumpPath = None, 
+    msgLogPath = None,
+    rawDumpPath = None,
+    decodedDumpPath = None,
     unpackedGzipPath = None,
     searchCharSamples = False,
     charSamplesPath = None,
@@ -964,7 +965,7 @@ class BGL:
     # process keys and alternates as HTML
     # Babylon does not interpret keys and alternates as HTML text,
     # however you may encounter many keys containing character references and html tags.
-    # That is clearly a bug of the dictionary. 
+    # That is clearly a bug of the dictionary.
     # We must be very careful processing HTML tags in keys, not damage normal keys.
     # This option should be disabled by default, enabled explicitly by user.
     # Namely this option does the following:
@@ -1016,7 +1017,7 @@ class BGL:
     self.testMode = testMode
     self.noControlSequenceInDefi = noControlSequenceInDefi
     self.strictStringConvertion = strictStringConvertion
-    self.target_chars_arr = ([ False ] * 256) if searchCharSamples else None 
+    self.target_chars_arr = ([ False ] * 256) if searchCharSamples else None
     self.metadata2 = MetaData2() if collectMetadata2 else None
     self.rawDumpPath = rawDumpPath
     self.dump_file = None
@@ -1040,15 +1041,15 @@ class BGL:
     self.gzip_offset = None
     # must be a in RRGGBB format
     self.partOfSpeechColor = '007000'
-    
+
     self.resPath = self.createResDir(resPath)
     if self.verbose >=4:
       print 'Resource path: {0}'.format(resPath)
     self.resFiles = []
-  
+
   def createResDir(self, resPath):
     if resPath==None:
-      # resPath is not specified. 
+      # resPath is not specified.
       # Try directories like:
       # self.filename + "_files"
       # self.filename + "_files_0"
@@ -1083,13 +1084,13 @@ class BGL:
           printAsWarning("{0} is not a directory".format(resPath))
           resPath = self.createResDirInTemp()
     return resPath
-    
+
   def createResDirInTemp(self):
     resPath = os.path.join(tmpDir, os.path.basename(self.filename) + '_files') + os.sep
     if not os.path.isdir(resPath):
       os.mkdir(resPath)
     return resPath
-  
+
   # open .bgl file, read signature, find and open gzipped content
   # self.file - ungzipped content
   def open(self, writeGz=False):
@@ -1132,22 +1133,22 @@ class BGL:
     if self.charSamplesPath != None:
       self.samples_dump_file = open(self.charSamplesPath, 'wb')
     return True
-    
+
   def isEndOfDictData(self):
     """Test for end of dictionary data.
-    
-    A bgl file stores dictionary data as a gzip compressed block. 
+
+    A bgl file stores dictionary data as a gzip compressed block.
     In other words, a bgl file stores a gzip data file inside.
-    A gzip file consists of a series of "members". 
+    A gzip file consists of a series of "members".
     gzip data block in bgl consists of one member (I guess).
     Testing for block type returned by self.readBlock is not a reliable way to detect the end of gzip member.
     For example, consider 'Airport Code Dictionary.BGL' dictionary.
-    To reliably test for end of gzip member block we must use a number of 
+    To reliably test for end of gzip member block we must use a number of
     undocumented variables of gzip.GzipFile class.
     self.file._new_member - true if the current member has been completely read from the input file
     self.file.extrasize - size of buffered data
     self.file.offset - offset in the input file
-    
+
     after reading one gzip member current position in the input file is set to the first byte after gzip data
     We may get this offset: self.file_bgl.tell()
     The last 4 bytes of gzip block contains the size of the original (uncompressed) input data modulo 2^32
@@ -1156,7 +1157,7 @@ class BGL:
       return self.file.file.isNewMember()
     else:
       return self.file.isNewMember()
-    
+
   def close(self):
     if self.file != None:
       self.file.close()
@@ -1177,7 +1178,7 @@ class BGL:
     if self.samples_dump_file != None:
       self.samples_dump_file.close()
       self.samples_dump_file = None
-  
+
   # returns False if error
   def readBlock(self, block):
     block.offset = self.file.tell()
@@ -1208,7 +1209,7 @@ class BGL:
     else:
       block.data = ''
     return True
-  
+
   # return -1 if error
   def readBytes(self, bytes):
     val=0
@@ -1224,7 +1225,7 @@ class BGL:
       printAsError('readBytes: to read bytes = {0} , actually read bytes = {1}'.format(bytes, len(buf)))
       return -1
     return binStrToInt(buf)
-    
+
   # read meta information about the dictionary: author, description, source and target languages, etc
   # (articles are not read)
   def read(self):
@@ -1254,7 +1255,7 @@ class BGL:
     self.file.seek(0)
     ################
     self.detect_encoding()
-    
+
     if deferred_block2_num > 0:
       # process deferred type 2 blocks
       if self.verbose>1:
@@ -1267,7 +1268,7 @@ class BGL:
         if block.Type==2:
           self.read_type_2(block, 2)
       self.file.seek(0)
-    
+
     #######
     self.title = self.toUtf8(self.title, self.targetEncoding)
     self.author = self.toUtf8(self.author, self.targetEncoding)
@@ -1310,9 +1311,9 @@ class BGL:
       print 'email = {0}'.format(self.oneLineValue(self.email))
       print 'copyright = {0}'.format(self.oneLineValue(self.copyright))
       print 'description = {0}'.format(self.oneLineValue(self.description))
-    
+
     self.numBlocks = 0
-    
+
     # remove resource directory if it's empty
     if len(os.listdir(self.resPath))==0:
       try:
@@ -1323,7 +1324,7 @@ class BGL:
 
   def read_type_0(self, block):
     x = ord(block.data[0])
-    
+
     if x==2:
       # this number is vary close to self.bgl_numEntries, but does not always equal to the number of entries
       # see self.read_type_3, x == 12 as well
@@ -1340,24 +1341,24 @@ class BGL:
       self.unknownBlock(block)
       return False
     return True
-  
+
   def read_type_2(self, block, pass_num):
     """Process type 2 block
-    
+
     Type 2 block is an embedded file (mostly Image or HTML).
     pass_num - pass number, may be 1 or 2
     On the first pass self.sourceEncoding is not defined and we cannot decode file names.
-    That is why the second pass is needed. The second pass is costly, it 
+    That is why the second pass is needed. The second pass is costly, it
     apparently increases total processing time. We should avoid the second pass if possible.
     Most of the dictionaries do not have valuable resources, and those that do, use
     file names consisting only of ASCII characters. We may process these resources
     on the second pass. If all files have been processed on the first pass,
     the second pass is not needed.
-    
+
     All dictionaries I've processed so far use only ASCII chars in file names.
-    Babylon glossary builder replaces names of files, like links to images, 
+    Babylon glossary builder replaces names of files, like links to images,
     with what looks like a hash code of the file name, for example "8FFC5C68.png".
-    
+
     Return value: True if the resource was successfully processed,
       False - second pass is needed.
     """
@@ -1366,7 +1367,7 @@ class BGL:
     cont='' ## Embedded file content
     pos = 0
     ## name:
-    Len = ord(block.data[pos]) 
+    Len = ord(block.data[pos])
     pos+=1
     if pos+Len > len(block.data):
       printAsWarning('read_type_2: name too long')
@@ -1393,7 +1394,7 @@ class BGL:
       f.write(cont)
     self.resFiles.append(name)
     return True
-        
+
   def read_type_3(self, block):
     x = binStrToInt(block.data[0:2])
     pos=2
@@ -1450,7 +1451,7 @@ class BGL:
       # when false, the encoding is set according to the source and target alphabet
       self.option_utf8_encoding = (flags & 0x8000) != 0
       # Determines whether the glossary offers spelling alternatives for searched terms
-      spelling_alternatives = (flags & 0x10000) == 0 
+      spelling_alternatives = (flags & 0x10000) == 0
       # defines if the search for terms in this glossary is case sensitive
       # see code 0x20 as well
       case_sensitive = (flags & 0x1000) != 0
@@ -1488,18 +1489,18 @@ class BGL:
       0x31 - case sensitive search is enabled
       see code 0x11 as well
       """
-      if len(block.data) > pos: 
+      if len(block.data) > pos:
         value = ord(block.data[pos])
     elif x==0x2c:
-      # contains a value like this: 
+      # contains a value like this:
       # In order to view this glossary, you must purchase a license.
       # <br /><a href="http://www.babylon.com/redirects/purchase.cgi?type=170&trid=BPCWHAR">Click here</a> to purchase.
       msg = self.read_type_3_message(block)
       if msg != None:
         self.purchaseLicenseMsg = msg
     elif x==0x2d:
-      # contains a value like this: 
-      # Your license for this glossary has expired. 
+      # contains a value like this:
+      # Your license for this glossary has expired.
       # In order to view this glossary, you must have a valid license. <br><a href="http://www.babylon.com/redirects/purchase.cgi?type=130&trid=BPCBRTBR">Renew</a> your license today.
       msg = self.read_type_3_message(block)
       if msg != None:
@@ -1546,7 +1547,7 @@ class BGL:
       Glossary manual file
       additional information about the dictionary
       in .txt format this may be short info like this:
-      
+
       Biology Glossary
       Author name: Hafez Divandari
       Author email: hafezdivandari@gmail.com
@@ -1554,12 +1555,12 @@ class BGL:
       A functional glossary for translating
       English biological articles to fluent Farsi
       ===========================================
-      Copyright (c) 2009 All rights reserved.      
-      
+      Copyright (c) 2009 All rights reserved.
+
       in .pdf format this may be a quite large document (about 30 pages),
-      an introduction into the dictionary. It describing structure of an article, 
+      an introduction into the dictionary. It describing structure of an article,
       editors, how to use the dictionary.
-      
+
       format <file extension> '\x00' <file contents>
       file extension may be: '.txt', '.pdf'
       """
@@ -1593,7 +1594,7 @@ class BGL:
   # <4 byte len1> \x00 \x00 <message in utf-16>
   # len1 - length of message in 2-byte chars
   #
-  # return value: 
+  # return value:
   # uncode message if success, None otherwise
   def read_type_3_message(self, block):
     x = binStrToInt(block.data[0:2])
@@ -1617,7 +1618,7 @@ class BGL:
     else:
       printAsWarning('read_type_3_message: x = {0}. unknown value y = {1}'.format(x, y))
     return None
-    
+
   def detect_encoding(self):
     """ assign self.sourceEncoding and self.targetEncoding
     """
@@ -1631,7 +1632,7 @@ class BGL:
       self.sourceEncoding = self.languageProps[self.sourceLangCode].encoding
     else:
       self.sourceEncoding = 'cp1252'
-    
+
     if self.targetEncodingOverwrite != None:
       self.targetEncoding = self.targetEncodingOverwrite
     elif self.option_utf8_encoding != None and self.option_utf8_encoding:
@@ -1642,7 +1643,7 @@ class BGL:
       self.targetEncoding = self.languageProps[self.targetLangCode].encoding
     else:
       self.targetEncoding = 'cp1252'
-      
+
     # not used
     if self.defaultEncodingOverwrite != None:
       self.defaultEncoding = self.defaultEncodingOverwrite
@@ -1650,7 +1651,7 @@ class BGL:
       self.defaultEncoding = self.defaultCharset
     else:
       self.defaultEncoding = 'cp1252'
-      
+
   def dump_blocks(self, dumpPath):
     self.file.seek(0)
     metaData = MetaData()
@@ -1668,12 +1669,12 @@ class BGL:
       if not self.readBlock(block):
         break
       self.numBlocks += 1
-      
+
       if block.Type in (1,7,10,11,13):
         self.numEntries += 1
       elif block.Type==2: ## Embedded File (mostly Image or HTML)
         metaData.numFiles += 1
-      
+
       if block.Type in (1,2,7,10,11,13):
         if range_type == block.Type:
           range_count += 1
@@ -1708,18 +1709,18 @@ class BGL:
       pickle.dump(metaData, f)
 
     self.file.seek(0)
-  
+
   def dump_metadata2(self, dumpPath):
     if self.metadata2 == None:
       return
     with open(dumpPath, 'wb') as f:
       pickle.dump(self.metadata2, f)
-    
+
   def unknownBlock(self, block):
     pass
     #print 'Block: type=%s,  data_length=%s,  number=%s'\
     #  %(block.Type, len(block.data), self.numBlocks)
-  
+
   # return True if an entry has been read
   def readEntry(self, entry):
     if self.file==None:
@@ -1744,13 +1745,13 @@ class BGL:
           continue
         entry.word = word
         entry.defi = defi
-        entry.alts = alts      
+        entry.alts = alts
         return True
     return False
-  
+
   def readEntry_word(self, block, pos):
     """Read word part of entry.
-    
+
     Return value is a list.
     [False, None, None, None] if error
     [True, pos, word, raw_key] if OK
@@ -1789,7 +1790,7 @@ class BGL:
     pos += Len
     self.wordLenMax = max(self.wordLenMax, len(word))
     return [True, pos, word, raw_key]
-    
+
   def readEntry_defi(self, block, pos, raw_key):
     Err = [False, None, None, None]
     if block.Type == 11:
@@ -1816,10 +1817,10 @@ class BGL:
     self.dump_file_write_data(raw_defi)
     defi = self.processEntryDefinition(raw_defi, raw_key)
     self.defiLenMax = max(self.defiLenMax, len(raw_defi))
-    
+
     pos += Len
     return [True, pos, defi, raw_defi]
-  
+
   def readEntry_alts(self, block, pos, raw_key, key):
     Err = [False, None, None]
     # use set instead of list to prevent duplicates
@@ -1859,7 +1860,7 @@ class BGL:
     if key in alts:
       alts.remove(key)
     return [True, pos, list(alts)]
-    
+
   def toUtf8(self, text, encoding):
     if self.strictStringConvertion:
       try:
@@ -1871,24 +1872,24 @@ class BGL:
     else:
       u_text = text.decode(encoding, 'ignore')
     return u_text.encode('utf-8')
-    
+
   def replace_html_entries(self, text):
     # &ldash;
     # &#0147;
     # &#x010b;
     pat_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.I)
     return re.sub(pat_entry, replace_html_entry, text)
-  
+
   def replace_html_entries_in_keys(self, text):
     # &ldash;
     # &#0147;
     # &#x010b;
     pat_entry = re.compile("(?:&#x|&#|&)(\\w+);", re.I)
     return re.sub(pat_entry, replace_html_entry_no_escape, text)
-  
+
   def strip_html_tags(self, text):
     return re.sub("(?:<[/a-zA-Z].*?(?:>|$))+", ' ', text)
-    
+
   def char_references_statistics(self, text, encoding):
     # &#0147;
     # &#x010b;
@@ -1919,7 +1920,7 @@ class BGL:
           CharRefs[256] += 1
         else:
           CharRefs[code] += 1
-        
+
   def replace_ascii_char_refs(self, text, encoding):
     # &#0147;
     # &#x010b;
@@ -1944,12 +1945,12 @@ class BGL:
       # no need to escape '<', '>', '&'
       parts[i] = chr(code)
     return "".join(parts)
-    
+
   def decode_charset_tags(self, text, defaultEncoding):
     """Decode html text taking into account charset tags and default encoding.
-    
+
     Return value: [utf8-text, defaultEncodingOnly]
-    The second parameter is false if the text contains parts encoded with 
+    The second parameter is false if the text contains parts encoded with
     non-default encoding (babylon character references '<CHARSET c="T">00E6;</CHARSET>'
     do not count).
     """
@@ -2034,22 +2035,22 @@ class BGL:
         'unclosed <charset...> tag\n'\
         .format(text))
     return [utf8_text, defaultEncodingOnly]
-  
+
   def remove_control_chars(self, text):
     # \x09 - tab
     # \x0a - line feed
     # \x0b - vertical tab
     # \x0d - carriage return
     return re.sub("[\x00-\x08\x0c\x0e-\x1f]", '', text)
-  
+
   def replace_new_lines(self, text):
     return re.sub("[\r\n]+", ' ', text)
-    
+
   def normalize_new_lines(self, text):
     """convert new lines to unix style and remove consecutive new lines
     """
     return re.sub("[\r\n]+", "\n", text)
-    
+
   def processEntryKey(self, word):
     """Return entry key in utf-8 encoding
     """
@@ -2067,7 +2068,7 @@ class BGL:
         u_main_word = main_word.decode(self.sourceEncoding, 'ignore')
     else:
       u_main_word = main_word.decode(self.sourceEncoding, 'ignore')
-      
+
     self.decoded_dump_file_write(u'\n\nkey: ' + u_main_word)
     utf8_main_word = u_main_word.encode('utf-8')
     if self.processHtmlInKey:
@@ -2095,12 +2096,12 @@ class BGL:
         u_main_word = main_word.decode(self.sourceEncoding, 'ignore')
     else:
       u_main_word = main_word.decode(self.sourceEncoding, 'ignore')
-    
+
     # strip '/' before words
     u_main_word = re.sub(self.strip_slash_alt_key_pat, r'\1\2', u_main_word)
-    
+
     self.decoded_dump_file_write(u'\nalt: ' + u_main_word)
-    
+
     utf8_main_word = u_main_word.encode('utf-8')
     if self.processHtmlInKey:
       #utf8_main_word_orig = utf8_main_word
@@ -2114,7 +2115,7 @@ class BGL:
     utf8_main_word = utf8_main_word.lstrip()
     utf8_main_word = utf8_main_word.rstrip(self.keyRStripChars)
     return utf8_main_word
-  
+
   def stripDollarIndexes(self, word):
     i = 0
     main_word = ''
@@ -2141,7 +2142,7 @@ class BGL:
         extremidade-$$$-$$$-linha
         .FIRM$$$$$$$$$$$$$
         etc
-        
+
         summary: we must remove any sequence of dollar signs longer than 1 chars
         """
         #self.msg_log_file_write('stripDollarIndexes({0}):\n'
@@ -2177,18 +2178,18 @@ class BGL:
       main_word += word[i:d0]
       i = d1+1
       strip_cnt += 1
-    
+
     return [ main_word, strip_cnt ]
-  
+
   def findDefinitionTrailingFields(self, defi):
     """Find the beginning of the definition trailing fields.
-    
+
     Return value is the index of the first chars of the field set,
     or -1 if the field set is not found.
-    
+
     Normally '\x14' should signal the beginning of the definition fields,
     but some articles may contain this characters inside, so we get false match.
-    As a workaround we may check the following chars. If '\x14' is followed 
+    As a workaround we may check the following chars. If '\x14' is followed
     by space, we assume this is part of the article and continue search.
     Unfortunately this does no help in many cases...
     """
@@ -2202,7 +2203,7 @@ class BGL:
         continue
       else:
         return i
-    
+
   def processEntryDefinition(self, defi, raw_key):
     fields = self.DefinitionFields()
     if self.noControlSequenceInDefi:
@@ -2223,23 +2224,23 @@ class BGL:
     fields.utf8_defi = self.normalize_new_lines(fields.utf8_defi)
     fields.utf8_defi = fields.utf8_defi.strip()
     fields.u_defi = fields.utf8_defi.decode('utf-8')
-    
+
     if fields.title != None:
       [fields.utf8_title, singleEncoding] = self.decode_charset_tags(fields.title, self.sourceEncoding)
       fields.utf8_title = self.replace_html_entries(fields.utf8_title)
       fields.utf8_title = self.remove_control_chars(fields.utf8_title)
       fields.u_title = fields.utf8_title.decode('utf-8')
-    
+
     if fields.part_of_speech != None:
       fields.part_of_speech_str = self.partOfSpeech[fields.part_of_speech]
-    
+
     if fields.title_trans != None:
       # sourceEncoding or targetEncoding ?
       [fields.utf8_title_trans, singleEncoding] = self.decode_charset_tags(fields.title_trans, self.sourceEncoding)
       fields.utf8_title_trans = self.replace_html_entries(fields.utf8_title_trans)
       fields.utf8_title_trans = self.remove_control_chars(fields.utf8_title_trans)
       fields.u_title_trans = fields.utf8_title_trans.decode('utf-8')
-    
+
     if fields.transcription_50 != None:
       if fields.transcription_50_code == 0x10:
         # contains values like this (char codes):
@@ -2254,13 +2255,13 @@ class BGL:
         fields.u_transcription_50 = fields.utf8_transcription_50.decode('utf-8')
       elif fields.transcription_50_code == 0x18:
         # incomplete text like:
-        # t c=T>02D0;</charset>g<charset c=T>0259;</charset>- 
+        # t c=T>02D0;</charset>g<charset c=T>0259;</charset>-
         # This defi normally contains fields.transcription_60 in this case.
         pass
       else:
         self.msg_log_file_write('processEntryDefinition({0})\n'
           'key = ({1}):\ndefi field 50, unknown code: 0x{2:x}'.format(defi, raw_key, fields.transcription_50_code))
-    
+
     if fields.transcription_60 != None:
       if fields.transcription_60_code == 0x1b:
         [fields.utf8_transcription_60, singleEncoding] = self.decode_charset_tags(fields.transcription_60, self.sourceEncoding)
@@ -2270,13 +2271,13 @@ class BGL:
       else:
         self.msg_log_file_write('processEntryDefinition({0})\n'
           'key = ({1}):\ndefi field 60, unknown code: 0x{2:x}'.format(defi, raw_key, fields.transcription_60_code))
-      
+
     if fields.field_1a != None:
       [fields.utf8_field_1a, singleEncoding] = self.decode_charset_tags(fields.field_1a, self.sourceEncoding)
       fields.u_field_1a = fields.utf8_field_1a.decode('utf-8')
-      
+
     self.processEntryDefinition_statistics(fields, defi, raw_key)
-    
+
     defi_format = ''
     if fields.part_of_speech_str != None or fields.utf8_title != None:
       if fields.part_of_speech_str != None:
@@ -2300,7 +2301,7 @@ class BGL:
     # test encoding
     defi_format.decode('utf-8')
     return defi_format
-  
+
   def processEntryDefinition_statistics(self, fields, defi, raw_key):
     if fields.singleEncoding:
       self.findAndPrintCharSamples(fields.defi, 'defi, key = ' + raw_key, fields.encoding)
@@ -2357,7 +2358,7 @@ class BGL:
     if fields.field_06 != None:
       self.dump_file_write_text('\n' + 'defi field_06: {0}'.format(fields.field_06))
       self.decoded_dump_file_write(u'\ndefi field_06: {0}'.format(fields.field_06))
-  
+
   # d0 - index of the '\x14 char in defi
   # d0 may be the last char of the string
   # entry definition structure:
@@ -2367,7 +2368,7 @@ class BGL:
     while i < len(defi):
       if self.metadata2 != None:
         self.metadata2.defiTrailingFields[ord(defi[i])] += 1
-      
+
       if defi[i] == '\x02': # part of speech # '\x02' <one char - part of speech>
         if fields.part_of_speech != None:
           self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
@@ -2540,10 +2541,10 @@ class BGL:
         self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
           'key = ({1}):\nunknown control char. Char code = {2:#X}'.format(defi, raw_key, ord(defi[i])))
         return
-    
+
   def fixImgLinks(self, text):
     """Fix img tag links
-    
+
     src attribute value of image tag is often enclosed in \x1e - \x1f characters.
     For example, <IMG border='0' src='\x1e6B6C56EC.png\x1f' width='9' height='8'>.
     Naturally the control characters are not part of the image source name.
@@ -2553,7 +2554,7 @@ class BGL:
     all of them, irrespective of context.
     """
     return text.replace('\x1e', '').replace('\x1f', '')
-    
+
   def __del__(self):
     #if self.verbose>2:
       #print 'wordLenMax = %s'%self.wordLenMax
@@ -2567,7 +2568,7 @@ class BGL:
   def dump_file_write_text(self, text):
     if self.dump_file != None:
       self.dump_file.write(text)
-  
+
   # write data to dump file unambiguously representing control chars
   # escape '\' with '\\'
   # print control chars as '\xhh'
@@ -2576,7 +2577,7 @@ class BGL:
     # self.dump_file.write(text.encode('string_escape'))
     if self.dump_file != None:
       self.dump_file.write(text)
-  
+
   # write text into the decoded_dump_file
   # text - must be a unicode string
   def decoded_dump_file_write(self, text):
@@ -2585,7 +2586,7 @@ class BGL:
       return
     if self.decoded_dump_file != None:
       self.decoded_dump_file.write(text.encode('utf8'))
-  
+
   def msg_log_file_write(self, text):
     if self.msg_log_file != None:
       offset = self.msg_log_file.tell()
@@ -2598,7 +2599,7 @@ class BGL:
       self.msg_log_file.write(text+'\n')
     else:
       sys.stdout.write(text +'\n')
-      
+
   def samples_file_write(self, text):
     if self.samples_dump_file != None:
       offset = self.samples_dump_file.tell()
@@ -2631,11 +2632,11 @@ class BGL:
     offsets_str = ' '.join(['{0}'.format(el) for el in offsets])
     self.samples_file_write('charSample({0})\noffsets = {1}\nmarked = {2}\norig = {3}\n'\
     .format(hint, offsets_str, res, data))
-  
+
   def findCharSamples(self, data):
     """Find samples of chars in data.
-    
-    Search for chars in data that have not been marked so far in 
+
+    Search for chars in data that have not been marked so far in
     the target_chars_arr array, mark new chars.
     Returns a list of offsets in data string.
     May return an empty list.
@@ -2655,13 +2656,13 @@ class BGL:
         self.target_chars_arr[x] = True
         res.append(i)
     return res
-  
+
   def oneLineValue(self, text):
     if self.oneLineOutput:
       return new_line_escape_string(text)
     else:
       return text
-  
+
 def read_ext(glos, filename):
   try:
     import _babylon
@@ -2810,7 +2811,7 @@ def createBglInfoBlock(num, value):
   return block
 
 
-def write(glos, filename, writeInfo=True):## output BGL file can't be opened with Babylon! 
+def write(glos, filename, writeInfo=True):## output BGL file can't be opened with Babylon!
   import gzip
   f = open(filename, 'wb')
   gz_pos = 71 ## position of gz header
@@ -2835,7 +2836,7 @@ def write(glos, filename, writeInfo=True):## output BGL file can't be opened wit
       num = bglInfo[key]
       f.write(createBglInfoBlock(num, value))
     ########## ?????????????????????????????????????????????????????????????
-    f.write('\x00\x07\x00\x00\x00\x00') ## setting sourceLang to English(0)  
+    f.write('\x00\x07\x00\x00\x00\x00') ## setting sourceLang to English(0)
     f.write('\x00\x08\x00\x00\x00\x33') ## setting targetLang to Farsi(51)
     f.write('\x00\x1a\x41') ## setting sourceCharset to Default(0, 65)  ## has not UTF-8  !!!!!!!
     f.write('\x00\x1b\x4d') ## setting targetCharset to Arabic(12, 77)  ## has not UTF-8  !!!!!!!

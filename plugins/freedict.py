@@ -18,8 +18,8 @@ def write(glos, filename):
   '    <respStmt><resp>converted with</resp><name>PyGlossary</name></respStmt>\n  </titleStmt>\n'+
   '  <publicationStmt><p>freedict.de</p></publicationStmt>\n'+
   '  <sourceDesc><p>%s</p></sourceDesc>\n</fileDesc>\n</teiHeader>\n<text><body>'%filename)
-  
-  
+
+
   fp.write('''<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TEI.2 PUBLIC "-//TEI P3//DTD Main Document Type//EN"
 "/usr/share/sgml/tei-3/tei2.dtd" [
@@ -36,7 +36,7 @@ def write(glos, filename):
 </fileDesc>
 </teiHeader>
 <text><body>'''%(glos.getInfo('title'), filename))
-  
+
   for item in glos.data:
     fp.write('''<entry>
 <form><orth>%s</orth></form>
