@@ -15,7 +15,7 @@ infoKeys = ('dbname', 'author', 'version', 'direction', 'origLang', 'destLang',
 
 def read(glos, filename):
   from sqlite3 import connect
-  
+
   ## ???????? name OR dbname ????????????????????
   glos.data=[]
   con = connect(filename)
@@ -36,7 +36,7 @@ def read(glos, filename):
       m = x[2].encode('utf8')
     except:
       printAsError('error while encoding word %s'%x[0])
-    else: 
+    else:
       glos.data.append([w,m])
   cur.close()
   con.close()

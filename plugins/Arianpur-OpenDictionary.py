@@ -80,6 +80,6 @@ def read(glos, filename):
   return True
 
 
-  
+
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-##   ui_tk.py 
+##   ui_tk.py
 ##
 ##   Copyright © 2009-2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
 ##
@@ -112,7 +112,7 @@ class ProgressBar(Tix.Frame):
     #self.canvas.move(self.label, width/2, self.height/2)#??????????
     #self.canvas.scale(self.label, 0, 0, float(width)/self.width, 1)#???????????
     self.canvas.update_idletasks()
-    
+
 
 
 class UI(Tix.Frame):
@@ -286,11 +286,11 @@ class UI(Tix.Frame):
     aboutB = Tix.Button(frame3, text='About', command=self.about_clicked,
                         bg='#e000e0', activebackground='#f030f0')
     aboutB.pack(side='right')
-    closeB = Tix.Button(frame3, text='Close', command=self.quit, 
+    closeB = Tix.Button(frame3, text='Close', command=self.quit,
                         bg='#ff0000', activebackground='#ff5050')
     closeB.pack(side='right')
     applyB = Tix.Button(frame3, text='Apply', command=self.apply_clicked,\
-                        bg='#00e000', activebackground='#22f022') 
+                        bg='#00e000', activebackground='#22f022')
     ## 'underline=0' arg in Tix.Button not affect keyboard shortcut?????????????
     applyB.pack(side='right')
     frame3.pack(fill='x')
@@ -322,7 +322,7 @@ class UI(Tix.Frame):
     #entry.bind_all('<KeyPress>', self.entry_r_i_changed)
     self.entry_r_i = entry
     ##
-    button = Tix.Button(frame, text='Browse', command=self.r_browse_i, 
+    button = Tix.Button(frame, text='Browse', command=self.r_browse_i,
                         bg='#f0f000', activebackground='#f6f622')
     button.pack(side='left')
     ##
@@ -341,7 +341,7 @@ class UI(Tix.Frame):
     #entry.bind_all('<KeyPress>', self.entry_r_i_changed)
     self.entry_r_o = entry
     ##
-    button = Tix.Button(frame, text='Browse', command=self.r_browse_o, 
+    button = Tix.Button(frame, text='Browse', command=self.r_browse_o,
                         bg='#f0f000', activebackground='#f6f622')
     button.pack(side='left')
     ##
@@ -381,7 +381,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
     closeB = Tix.Button(frame, text='Close', command=about.destroy,
                         bg='#ff0000', activebackground='#ff5050')
     closeB.pack(side='right')
-    licenseB = Tix.Button(frame, text='License', 
+    licenseB = Tix.Button(frame, text='License',
                           command=self.about_license_clicked,
                           bg='#f0f000', activebackground='#f6f622')
     licenseB.pack(side='right')
@@ -397,7 +397,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
     msg1.pack(fill='x', expand=True)
     ###########
     frame = Tix.Frame(about)
-    closeB = Tix.Button(frame, text='Close', 
+    closeB = Tix.Button(frame, text='Close',
                         command=about.destroy,
                         bg='#ff0000', activebackground='#ff5050')
     closeB.pack(side='right')
@@ -455,7 +455,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
     #char = event.keysym
     pathI = self.entry_i.get()
     if self.pathI != pathI:
-      formatD = self.combobox_i.get() 
+      formatD = self.combobox_i.get()
       if len(pathI)>7:
         if pathI[:7]=='file://':
           pathI=urlToPath(pathI)
@@ -590,7 +590,7 @@ PyGlossary is licensed by the GNU General Public License version 3 (or later)'''
     self.running=False
     return True
   def run(self):
-    self.mainloop() 
+    self.mainloop()
   def progress(self, rat, text=''):
     self.pbar.updateProgress(rat*100, None, text)
     ##self.pbar.value = rat*100

@@ -29,7 +29,7 @@ g.checkUnicode()
 
 #words = g.takeOutputWords()
 #wordsFile = open(wordsFilePath, "w")
-#print len(words),"words found. writing to file..." 
+#print len(words),"words found. writing to file..."
 #wordsFile.write( string.join(words,"\n") )
 #del wordsFile
 

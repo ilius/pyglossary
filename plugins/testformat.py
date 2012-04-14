@@ -39,5 +39,5 @@ def write(glos, filename): # glos is a Glossary object, filename is a string
   # (if an info key not exists, getInfo returns empty string '')
   # and then write info to the output file(depending on your format)
   return True  # writing output file was succesfull
-  
+
 

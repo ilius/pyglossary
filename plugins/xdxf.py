@@ -45,7 +45,7 @@ def read(glos, filename):
         defi=defi[:-1]
       while defi[0]=='\n':
         defi=defi[1:]
-    wordLen=len(word) 
+    wordLen=len(word)
     if maxWordLen<len(word):
       maxWordLen=len(word)
     glos.data.append((word, defi))

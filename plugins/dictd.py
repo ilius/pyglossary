@@ -58,7 +58,7 @@ database %s
   index /usr/share/dictd/%s.index
 }
 '''%(title, fname, dictPostfix, fname))
-  
+
 
 def read(glos, filename):
   if filename.endswith('.index'):
@@ -66,7 +66,7 @@ def read(glos, filename):
   idxStr = open(filename+'.index', 'rb').read()
   if os.path.isfile(filename+'.dict.dz'):
     import gzip
-    dictStr = gzip.open(filename+'.dict.dz').read()  
+    dictStr = gzip.open(filename+'.dict.dz').read()
   else:
     dictStr = open(filename+'.dict', 'rb').read()
   ## read info from header of dict file ## FIXME

@@ -302,7 +302,7 @@ class ProgressBar(object):
   def _need_update(self):
     #return int(self.percentage()) != int(self.prev_percentage)
     return int(self.percentage()/self.update_step)!=int(self.prev_percentage/self.update_step)
-    
+
 
   def update(self, value):
     "Updates the progress bar to a new value."
@@ -339,7 +339,7 @@ class ProgressBar(object):
     self.update(self.maxval)
     if self.signal_set:
       signal.signal(signal.SIGWINCH, signal.SIG_DFL)
-    
+
 if __name__=='__main__':
   def example1():
     widgets = ['Test: ',Bar(),' ',RotatingMarker(),Percentage(),' ',ETA()]

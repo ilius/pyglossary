@@ -36,10 +36,10 @@ words = g.takeOutputWords({'minLen':4, 'noEn':True})
 #for i in range(len(words)):
 #  word = words[i][0]
   #if word[:2]==vav and not word in vavCor:
-   # del words[i] 
+   # del words[i]
 
 wordsFile = open(dicPath[:-4]+"-words.txt", "w")
-print len(words),"words found. writing to file..." 
+print len(words),"words found. writing to file..."
 wordsFile.write( '\n'.join(words)+'\n')
 wordsFile.close()
 

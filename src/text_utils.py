@@ -1,6 +1,6 @@
 #!/usr/bin/python2.5
 # -*- coding: utf-8 -*-
-##   text_utils.py 
+##   text_utils.py
 ##
 ##   Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
 ##
@@ -157,7 +157,7 @@ def relTimeHMS(seconds):
 
 def addDefaultOptions(opt, defOpt, escapeList=[None,'Unknown','unknown']):
   # Two varable opt(meaning options) and defOpt(meaning defaults options) have dict type.
-  # this function sets options to defaults if they have not defined 
+  # this function sets options to defaults if they have not defined
   # or have special values (in escapeList)
   # modifies opt variable an reuturns nothing
   for item in defOpt.keys():
@@ -238,7 +238,7 @@ def removeRepeats(lst):
   return lstR
 
 def addWord(word, allWords):
-    if len(allWords)==0: 
+    if len(allWords)==0:
       return [word]
     i=locate(allWords,word)
     ii=int(i+1)
@@ -579,7 +579,7 @@ def isControlChar(y):
   if 128 <= y <= 159:
     return True
   return False
-    
+
 def isASCII(data, exclude = []):
   for i in range(len(data)):
     c = ord(data[i])

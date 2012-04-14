@@ -38,7 +38,7 @@ def read(glos, filename):
     defi = unescape(xdbText[out0:out1])
     glos.data.append((word, defi))
     #i = out1
-    i = xdbText.find('</word>', out1) + 7    
+    i = xdbText.find('</word>', out1) + 7
 
 
 

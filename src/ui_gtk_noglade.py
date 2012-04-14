@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-##   ui_gtk_noglade.py 
+##   ui_gtk_noglade.py
 ##
 ##   Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
 ##   Thanks to 'Pier Carteri' <m3tr0@dei.unipd.it> for program Py_Shell.py
@@ -165,7 +165,7 @@ PyGlossary is licensed by the GNU General Public License''')
     lab = gtk.Label('_Convert')
     lab.set_use_underline(True)
     notebook.append_page(swin_conv, lab)
-    #vbox_read = 
+    #vbox_read =
     hbox = gtk.HBox()
     label1 = gtk.Label('<b>Read from format:</b>')
     label1.set_use_markup(True)
@@ -296,7 +296,7 @@ PyGlossary is licensed by the GNU General Public License''')
     lab = gtk.Label('_Reverse')
     lab.set_use_underline(True)
     notebook.append_page(swin_rev, lab)
-    ########################    
+    ########################
     hbox = gtk.HBox()
     label1 = gtk.Label('<b>Read from format:</b>')
     label1.set_use_markup(True)
@@ -684,23 +684,23 @@ PyGlossary is licensed by the GNU General Public License''')
     exp.add(hbox)
     vbox_pref.pack_start(exp, 0, 0)
     #################################################
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     self.about_init()
     signals={}##{'browse1':self.browse1}
     for attr in dir(self):
@@ -716,7 +716,7 @@ PyGlossary is licensed by the GNU General Public License''')
     #self.textview_err.modify_base(1, gtk.gdk.Color(-1, 0, 0))#selected text bg color, when deselect window!
     self.textview_err.modify_text(0, gtk.gdk.Color(-1, -1, -1))#normal text color
     #self.textview_err.modify_text(1, gtk.gdk.Color(-1, -1, -1))#selected test color, when deselect window!
-    # modify_bg modify_fg 
+    # modify_bg modify_fg
     self.textview_out.modify_base(0, gtk.gdk.Color(0, 10000, 0))#textview bg color
     self.textview_out.modify_text(0, gtk.gdk.Color(-1, -1, -1))#normal text color
     """
@@ -846,7 +846,7 @@ PyGlossary is licensed by the GNU General Public License''')
       print('Preferences updated')
   def close_button_clicked(self, *args):
     if self.running:
-      #d = gtk.MessageDialog(self, type=gtk.MESSAGE_WARNING, 
+      #d = gtk.MessageDialog(self, type=gtk.MESSAGE_WARNING,
       d = gtk.Dialog()
       hb = gtk.HBox()
       hb.pack_start(gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING, gtk.ICON_SIZE_DIALOG), 0, 0)
@@ -1096,7 +1096,7 @@ PyGlossary is licensed by the GNU General Public License''')
       if path[:7]=='file://':
         path = urlToPath(path)
         self.entry_o.set_text(path)
-    if True:#format==None:   
+    if True:#format==None:
       path = self.entry_o.get_text()
       (name, ext) = os.path.splitext(path)
       if ext.lower() in ('.gz','.bz2','.zip'):
@@ -1160,7 +1160,7 @@ PyGlossary is licensed by the GNU General Public License''')
         if ext in Glossary.readExt[i]:
           self.combobox_r_i.set_active(i)
           self.entry_r_o.set_text(name+'-reversed.txt')
-          return      
+          return
   def r_load(self, *args):
     iPath = self.entry_r_i.get_text()
     formatD = self.combobox_r_i.get_active_text()
@@ -1576,7 +1576,7 @@ PyGlossary is licensed by the GNU General Public License''')
       (self.buffer_dbe.get_start_iter(),self.buffer_dbe.get_end_iter()))
     n = len(self.glosE.data)
     if 0 <= n_ind < n:
-      pass 
+      pass
     elif n_ind == n:
       n_ind = 0
     elif -n < n_ind < 0:
@@ -1588,7 +1588,7 @@ PyGlossary is licensed by the GNU General Public License''')
     try:
       d = self.glosE.data[n_ind]
     except IndexError:
-      return      
+      return
     self.entry_dbe.set_text(d[0])
     try:
       self.entry_db_index.set_text(str(n_ind))### ????????????????????????????????????
@@ -1607,7 +1607,7 @@ PyGlossary is licensed by the GNU General Public License''')
       (self.buffer_dbe_info.get_start_iter(),self.buffer_dbe_info.get_end_iter()))
     n = len(self.glosE.info)
     """if 0 <= n_ind < n:
-      pass 
+      pass
     elif n_ind == n:
       n_ind = 0
     elif -n < n_ind < 0:
@@ -1647,7 +1647,7 @@ PyGlossary is licensed by the GNU General Public License''')
     for i in range(n+1, len(self.glosE.data)):
       #self.treestore[i]=[self.glosE.data[i][0], str(i)]
       self.treestore[i][1]=str(i)
-  def dbe_new_we(self, *args):## new Word at the End 
+  def dbe_new_we(self, *args):## new Word at the End
     n = len(self.glosE.data)
     word = 'word%s'%n
     self.glosE.data.append((word, ''))
@@ -1813,7 +1813,7 @@ PyGlossary is licensed by the GNU General Public License''')
     for key in self.prefKeys:
       self.pref[key] = eval(key)
     self.combobox_save.set_active(self.pref['save'])
-    self.cb_auto_update.set_active(self.pref['auto_update']) 
+    self.cb_auto_update.set_active(self.pref['auto_update'])
     #for i in range(len(self.newlineItems)):
     #  exec('eq=(self.pref["newline"]=="%s")'%self.newlineItems[i])
     #  if eq:
