@@ -4,7 +4,7 @@
 from formats_common import *
 
 enable = True
-format = 'Mdic'
+format = 'MtuxMdic'
 description = 'SQLite(MDic m2, Sib sdb)'
 extentions = ('.m2', '.sdb')
 readOptions = ()
