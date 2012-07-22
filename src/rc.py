@@ -9,6 +9,10 @@ lower = False
 remove_tags = False
 ## TagName : RemoveBetween
 tags = {
+    'link': 0,
+    'LINK': 0,
+    'span': 0,
+    'SPAN': 0,
     'font': 0,
     'FONT': 0,
     'table': 0,
