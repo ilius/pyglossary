@@ -12,8 +12,11 @@ writeOptions = ()
 
 def read(glos, filename):
     glos.data = []
-    for section in open(filename).read().split('</>'):
-        lines = section.strip().replace('\r\n', '\n').split('\n')
+    text = open(filename).read()
+    text = text.replace('\r\n', '\n')
+    text = text.replace('entry://', 'bword://')
+    for section in text.split('</>'):
+        lines = section.strip().split('\n')
         if len(lines) < 2:
             continue
         glos.data.append((
@@ -27,7 +30,9 @@ def write(glos, filename):
         ('\r\n', '\r\n</>\r\n'),
         filename=filename,
         writeInfo=False,
-        rplList=[],
+        rplList=[
+            ('bword://', 'entry://'),
+        ],
         ext='.mtxt',
         head='',
     )
