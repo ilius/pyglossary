@@ -46,13 +46,6 @@ def read_2(glos, filename):
   import alchemy
   return alchemy.readSqlite(glos, filename)
 
-def write(glos, filename):
-  lines = glos.getSqlLines()
-  fp = open(filename, 'wb')
-  fp.write('\n'.join(lines))
-  fp.close()
-  return True
-
 def write_ext(glos, filename):
   ## This method uses binary module "_mdicbuilder"
   ## but this binary module is deleted from package PyGlossary, and not used by GUI now.
@@ -109,7 +102,7 @@ def write_3(glos, filename):
   exir.writeSqlite_ex(glos, filename)
   return True
 
-def writeMdic(glos, filename):
+def write(glos, filename):
   from sqlite3 import connect
   if os.path.exists(filename):
     os.remove(filename)
