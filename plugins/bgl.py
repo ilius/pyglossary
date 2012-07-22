@@ -42,7 +42,7 @@ supportsAlternates = True
 import gzip, re, htmlentitydefs, xml.sax.saxutils, pickle
 
 from text_utils import printAsError, printAsWarning, myRaise, binStrToInt, excMessage, \
-  isASCII, isControlChar, name2codepoint, printByteStr
+  isASCII, isControlChar, name2codepoint, printByteStr, intToBinStr
 import pyglossary_gregorian as gregorian
 
 # use this variable to vary verbosity of output for non-class members
@@ -2811,6 +2811,7 @@ def createBglInfoBlock(num, value):
   return block
 
 
+'''
 def write(glos, filename, writeInfo=True):## output BGL file can't be opened with Babylon!
   import gzip
   f = open(filename, 'wb')
@@ -2841,6 +2842,8 @@ def write(glos, filename, writeInfo=True):## output BGL file can't be opened wit
     f.write('\x00\x1a\x41') ## setting sourceCharset to Default(0, 65)  ## has not UTF-8  !!!!!!!
     f.write('\x00\x1b\x4d') ## setting targetCharset to Arabic(12, 77)  ## has not UTF-8  !!!!!!!
   f.close()
+'''
+
 
 try:
   import psyco
