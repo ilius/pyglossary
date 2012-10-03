@@ -56,6 +56,8 @@ def write_xml(glos, filename):
     for item in glos.data:
         # strip double quotes and html tags
         title = re.sub('<[^<]+?>|"|[<>]', '', item[0])
+        if not title:
+            continue
         # id contains no white space
         id = title.replace(' ','_')
         # check entry id duplicates
