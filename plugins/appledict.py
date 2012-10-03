@@ -10,13 +10,16 @@ writeOptions = ()
 from BeautifulSoup import BeautifulSoup
 
 import os
+import re
 
 def write_plist(glos, filename):
     f = open(filename, 'w')
-
+    basename = os.path.splitext(os.path.basename(filename))[0]
+    # identifier must be unique
+    # use file base name
+    identifier = basename.replace(' ','')
     # strip html tags
     copyright = BeautifulSoup(glos.getInfo('copyright')).text
-    print copyright
 
     f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n'
@@ -26,9 +29,11 @@ def write_plist(glos, filename):
     f.write('    <key>CFBundleDevelopmentRegion</key>\n'
             '    <string>English</string>\n')
     f.write('    <key>CFBundleIdentifier</key>\n'
-            '    <string>com.apple.dictionary.PyGlossary</string>')
-    f.write('    <key>CFBundleName</key>\n'
+            '    <string>com.babylon.%s</string>\n' % identifier)
+    f.write('    <key>CFBundleDisplayName</key>\n'
             '    <string>%s</string>\n' % glos.getInfo('name'))
+    f.write('    <key>CFBundleName</key>\n'
+            '    <string>%s</string>\n' % basename)
     f.write('    <key>CFBundleShortVersionString</key>\n'
             '    <string>1.0</string>\n')
     f.write((u'    <key>DCSDictionaryCopyright</key>\n'
@@ -49,8 +54,8 @@ def write_xml(glos, filename):
     # write entries
     entry_ids= []
     for item in glos.data:
-        # strip double quotes
-        title = item[0].replace("\"","")
+        # strip double quotes and html tags
+        title = re.sub('<[^<]+?>|"|[<>]', '', item[0])
         # id contains no white space
         id = title.replace(' ','_')
         # check entry id duplicates
@@ -67,12 +72,14 @@ def write_xml(glos, filename):
         f.write('<d:entry id="%(id)s" d:title="%(title)s">\n'%{'id':id, 'title':title})
 
         # index values
+        #   title as index
         f.write('    <d:index d:value="%s"/>\n'%title)
+        #   alternative items as index also
         for alt in alts:
             if alt != title:
                 f.write('    <d:index d:value="%s"/>\n'%alt)
 
-        # header necessary to display properly
+        # nice header to display
         f.write('<h1>%s</h1>\n'%title)
 
         # xhtml is stict
@@ -111,9 +118,9 @@ def write_makefile(fname):
     f = open(os.path.join(os.path.dirname(fname),"Makefile"), "w")
     f.write("""
 DICT_NAME       =   "%(dict_name)s"
-DICT_SRC_PATH   =   %(dict_name)s.xml
-CSS_PATH        =   %(dict_name)s.css
-PLIST_PATH      =   %(dict_name)s.plist
+DICT_SRC_PATH   =   "%(dict_name)s.xml"
+CSS_PATH        =   "%(dict_name)s.css"
+PLIST_PATH      =   "%(dict_name)s.plist"
 
 
 # The DICT_BUILD_TOOL_DIR value is used also in "build_dict.sh" script.
