@@ -13,10 +13,9 @@ HOWTOs
 ------------
 Convert Babylon (bgl) to Mac OS X dictionary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's assume the Babylon dict is at ``~/Documents/Duden_Synonym.BGL``::
-
-    python src/convert_appledict.py ~/Documents/Duden_Synonym.BGL Duden_Synonym
-    cd Duden_Synonym
+Let's assume the Babylon dict is at ``~/Documents/Duden_Synonym/Duden_Synonym.BGL``::
+    cd ~/Documents/Duden_Synonym/
+    ~/Software/pyglossary/pyglossary.sh --read-options=resPath=OtherResources Duden_Synonym.BGL Duden_Synonym.xml
     make
     make install
 
