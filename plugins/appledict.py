@@ -153,11 +153,11 @@ clean:
 """ % {"dict_name" :  os.path.basename(fname)})
 
 def write(glos, fname):
-
-    write_plist(glos, fname + '.plist')
-    write_xml(glos, fname + '.xml')
-    write_css(fname + '.css')
-    write_makefile(fname)
+    basename = os.path.splitext(fname)[0]
+    write_plist(glos, basename + '.plist')
+    write_xml(glos, basename + '.xml')
+    write_css(basename + '.css')
+    write_makefile(basename)
 
 if __name__ == '__main__':
     import sys, os.path
