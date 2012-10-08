@@ -74,11 +74,29 @@ class ProgressBar(Tix.Frame):
     self.labelFormat = labelFormat
     self.value = value
     Tix.Frame.__init__(self, master, relief=appearance, bd=bd)
-    self.canvas = Tix.Canvas(self, height=height, width=width, bd=0,
-                             highlightthickness=0, background=background)
-    self.scale = self.canvas.create_rectangle(0, 0, width, height, fill=fillColor)
-    self.label = self.canvas.create_text(width/2, height/2, text='', anchor='c',
-                                         fill=labelColor, font=self.labelFont)
+    self.canvas = Tix.Canvas(
+      self,
+      height=height,
+      width=width,
+      bd=0,
+      highlightthickness=0,
+      background=background,
+    )
+    self.scale = self.canvas.create_rectangle(
+      0,
+      0,
+      width,
+      height,
+      fill=fillColor,
+    )
+    self.label = self.canvas.create_text(
+      width/2,
+      height/2,
+      text='',
+      anchor='c',
+      fill=labelColor,
+      font=self.labelFont,
+    )
     self.update()
     self.bind('<Configure>', self.update)
     self.canvas.pack(side='top', fill='x', expand='no')
@@ -98,7 +116,13 @@ class ProgressBar(Tix.Frame):
     width = int(self.winfo_width())
     #width = self.width
     if self.orientation == 'horizontal':
-      self.canvas.coords(self.scale, 0, 0, float(value)/self.max*width, self.height)
+      self.canvas.coords(
+        self.scale,
+        0,
+        0,
+        float(value)/self.max*width,
+        self.height,
+      )
     else:
       self.canvas.coords(self.scale, 0, self.height-(float(value)/self.max*self.height),
                          width, self.height)
@@ -186,10 +210,22 @@ class UI(Tix.Frame):
     entry.bind_all('<KeyPress>', self.entry_changed)
     self.entry_i = entry
     ##
-    button = Tix.Button(frame, text='Browse', command=self.browse_i, bg='#f0f000', activebackground='#f6f622')
+    button = Tix.Button(
+      frame,
+      text='Browse',
+      command=self.browse_i,
+      bg='#f0f000',
+      activebackground='#f6f622',
+    )
     button.pack(side='left')
     ##
-    button = Tix.Button(frame, text='Load', command=self.load, bg='#7777ff', activebackground='#9999ff')
+    button = Tix.Button(
+      frame,
+      text='Load',
+      command=self.load,
+      bg='#7777ff',
+      activebackground='#9999ff',
+    )
     button.pack(side='left')
     ###
     frame.pack(fill='x')
@@ -225,12 +261,22 @@ class UI(Tix.Frame):
     #entry.bind_all('<KeyPress>', self.entry_changed)
     self.entry_o = entry
     ##
-    button = Tix.Button(frame, text='Browse', command=self.browse_o,
-                        bg='#f0f000', activebackground='#f6f622')
+    button = Tix.Button(
+      frame,
+      text='Browse',
+      command=self.browse_o,
+      bg='#f0f000',
+      activebackground='#f6f622',
+    )
     button.pack(side='left')
     ##
-    button = Tix.Button(frame, text='Convert', command=self.convert,
-                        bg='#00e000', activebackground='#22f022')
+    button = Tix.Button(
+      frame,
+      text='Convert',
+      command=self.convert,
+      bg='#00e000',
+      activebackground='#22f022',
+    )
     button.pack(side='left')
     ###
     frame.pack(fill='x')
@@ -258,9 +304,15 @@ class UI(Tix.Frame):
     print('Console:')
     ##############
     frame2 = Tix.Frame(self)
-    clearB = Tix.Button(frame2, text='Clear', command=self.console_clear,
-      bg='black', fg='#ffff00', activebackground='#333333',
-      activeforeground='#ffff00')
+    clearB = Tix.Button(
+      frame2,
+      text='Clear',
+      command=self.console_clear,
+      bg='black',
+      fg='#ffff00',
+      activebackground='#333333',
+      activeforeground='#ffff00',
+    )
     clearB.pack(side='left')
     ####
     checkVar = Tix.IntVar()
@@ -283,14 +335,29 @@ class UI(Tix.Frame):
     #lbox.pack(fill='x')
     ##############
     frame3 = Tix.Frame(self)
-    aboutB = Tix.Button(frame3, text='About', command=self.about_clicked,
-                        bg='#e000e0', activebackground='#f030f0')
+    aboutB = Tix.Button(
+      frame3,
+      text='About',
+      command=self.about_clicked,
+      bg='#e000e0',
+      activebackground='#f030f0',
+    )
     aboutB.pack(side='right')
-    closeB = Tix.Button(frame3, text='Close', command=self.quit,
-                        bg='#ff0000', activebackground='#ff5050')
+    closeB = Tix.Button(
+      frame3,
+      text='Close',
+      command=self.quit,
+      bg='#ff0000',
+      activebackground='#ff5050',
+    )
     closeB.pack(side='right')
-    applyB = Tix.Button(frame3, text='Apply', command=self.apply_clicked,\
-                        bg='#00e000', activebackground='#22f022')
+    applyB = Tix.Button(
+      frame3,
+      text='Apply',
+      command=self.apply_clicked,
+      bg='#00e000',
+      activebackground='#22f022',
+    )
     ## 'underline=0' arg in Tix.Button not affect keyboard shortcut?????????????
     applyB.pack(side='right')
     frame3.pack(fill='x')
@@ -322,11 +389,21 @@ class UI(Tix.Frame):
     #entry.bind_all('<KeyPress>', self.entry_r_i_changed)
     self.entry_r_i = entry
     ##
-    button = Tix.Button(frame, text='Browse', command=self.r_browse_i,
-                        bg='#f0f000', activebackground='#f6f622')
+    button = Tix.Button(
+      frame,
+      text='Browse',
+      command=self.r_browse_i,
+      bg='#f0f000',
+      activebackground='#f6f622',
+    )
     button.pack(side='left')
     ##
-    button = Tix.Button(frame, text='Load', command=self.r_load, bg='#7777ff')
+    button = Tix.Button(
+      frame,
+      text='Load',
+      command=self.r_load,
+      bg='#7777ff',
+    )
     button.pack(side='left')
     ###
     frame.pack(fill='x')
@@ -341,8 +418,13 @@ class UI(Tix.Frame):
     #entry.bind_all('<KeyPress>', self.entry_r_i_changed)
     self.entry_r_o = entry
     ##
-    button = Tix.Button(frame, text='Browse', command=self.r_browse_o,
-                        bg='#f0f000', activebackground='#f6f622')
+    button = Tix.Button(
+      frame,
+      text='Browse',
+      command=self.r_browse_o,
+      bg='#f0f000',
+      activebackground='#f6f622',
+    )
     button.pack(side='left')
     ##
     frame.pack(fill='x')
@@ -357,30 +439,57 @@ class UI(Tix.Frame):
     about.resizable(False, False)
     about.wm_iconbitmap('@%s%spyglossary.xbm'%(srcDir,os.sep))
     ###
-    msg1=Tix.Message(about, width=350, text='PyGlossary %s (Tkinter)'%VERSION,\
-      font=('DejaVu Sans', 13, 'bold'))
+    msg1=Tix.Message(
+      about,
+      width=350,
+      text='PyGlossary %s (Tkinter)'%VERSION,
+      font=('DejaVu Sans', 13, 'bold'),
+    )
     msg1.pack(fill='x', expand=True)
     ###
-    msg2 = Tix.Message(about, width=350, text=aboutText,\
-      font=('DejaVu Sans', 9, 'bold'), justify=Tix.CENTER)
+    msg2 = Tix.Message(
+      about,
+      width=350,
+      text=aboutText,
+      font=('DejaVu Sans', 9, 'bold'),
+      justify=Tix.CENTER,
+    )
     msg2.pack(fill='x', expand=True)
     ###
-    msg3=Tix.Message(about, width=350, text=homePage,\
-      font=('DejaVu Sans', 8, 'bold'), fg='#3333ff')
+    msg3 = Tix.Message(
+      about,
+      width=350,
+      text=homePage,
+      font=('DejaVu Sans', 8, 'bold'),
+      fg='#3333ff',
+    )
     msg3.pack(fill='x', expand=True)
     ###
-    msg4=Tix.Message(about, width=350,
-      text='Install PyGTK to have a better interface!',\
-      font=('DejaVu Sans', 8, 'bold'), fg='#00aa00')
+    msg4 = Tix.Message(
+      about,
+      width=350,
+      text='Install PyGTK to have a better interface!',
+      font=('DejaVu Sans', 8, 'bold'),
+      fg='#00aa00',
+    )
     msg4.pack(fill='x', expand=True)
     ###########
     frame = Tix.Frame(about)
-    closeB = Tix.Button(frame, text='Close', command=about.destroy,
-                        bg='#ff0000', activebackground='#ff5050')
+    closeB = Tix.Button(
+      frame,
+      text='Close',
+      command=about.destroy,
+      bg='#ff0000',
+      activebackground='#ff5050',
+    )
     closeB.pack(side='right')
-    licenseB = Tix.Button(frame, text='License',
-                          command=self.about_license_clicked,
-                          bg='#f0f000', activebackground='#f6f622')
+    licenseB = Tix.Button(
+      frame,
+      text='License',
+      command=self.about_license_clicked,
+      bg='#f0f000',
+      activebackground='#f6f622',
+    )
     licenseB.pack(side='right')
     frame.pack(fill='x')
   def about_license_clicked(self):
@@ -389,14 +498,22 @@ class UI(Tix.Frame):
     about.resizable(False, False)
     about.wm_iconbitmap('@%s%spyglossary.xbm'%(srcDir,os.sep))
     ###
-    msg1=Tix.Message(about, width=420, text=licenseText,
-                     font=('DejaVu Sans', 9, 'bold'))
+    msg1 = Tix.Message(
+      about,
+      width=420,
+      text=licenseText,
+      font=('DejaVu Sans', 9, 'bold'),
+    )
     msg1.pack(fill='x', expand=True)
     ###########
     frame = Tix.Frame(about)
-    closeB = Tix.Button(frame, text='Close',
-                        command=about.destroy,
-                        bg='#ff0000', activebackground='#ff5050')
+    closeB = Tix.Button(
+      frame,
+      text='Close',
+      command=about.destroy,
+      bg='#ff0000',
+      activebackground='#ff5050',
+    )
     closeB.pack(side='right')
     frame.pack(fill='x')
   def quit(self):
@@ -532,10 +649,13 @@ class UI(Tix.Frame):
     else:'''
     ex = self.glos.read(iPath, format=format)
     if ex:
-      print('reading %s file: "%s"  done.\n%d words found.'\
-        %(format,iPath,len(self.glos.data)))
+      print('reading %s file: "%s"  done.\n%d words found.'%(
+        format,
+        iPath,
+        len(self.glos.data),
+      ))
     else:
-      print('reading %s file: "%s"  failed.'%(format,iPath))
+      print('reading %s file: "%s"  failed.'%(format, iPath))
       return False
     #self.iFormat = format
     self.iPath = iPath
@@ -546,7 +666,7 @@ class UI(Tix.Frame):
       print('time left = %3f  seconds'%(time.time()-t0))
       for x in self.glos.info:
         print('%s="%s"'%(x[0],x[1]))
-    self.glos.replaceInDefinitions((('ي','ی'),('ك','ک')))
+    self.glos.replaceInDefinitions((('ي','ی'),('ك','ک')))## FIXME
     return True
   def convert(self):
     if len(self.glos.data)==0:
@@ -562,9 +682,9 @@ class UI(Tix.Frame):
     print('Converting to %s, please wait...'%formatD)
     #while gtk.events_pending():#??????????
     #  gtk.main_iteration_do(False)
-    self.running=True
+    self.running = True
     format = Glossary.descFormat[formatD]
-    t0=time.time()
+    t0 = time.time()
     '''
     if format=='Stardict':
         if self.xml.get_widget('checkb_o_ext').get_active():
@@ -584,7 +704,7 @@ class UI(Tix.Frame):
     print('writing %s file: "%s" done.'%(format,oPath))
     if self.checkb_o_det.get():#???????
       print('time left = %3f  seconds'%(time.time()-t0))
-    self.running=False
+    self.running = False
     return True
   def run(self):
     self.mainloop()
@@ -603,7 +723,7 @@ class UI(Tix.Frame):
     exec(fp.read())
     if save==0:
       try:
-        fp=open(self.prefSavePath[0])
+        fp = open(self.prefSavePath[0])
       except:
         myRaise(__file__)
       else:

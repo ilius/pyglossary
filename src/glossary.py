@@ -24,9 +24,7 @@ VERSION = '2012.01.25'
 homePage = 'http://sourceforge.net/projects/pyglossary'
 
 import os, sys, platform, time, subprocess, shutil, re
-from os.path import splitext, isdir
-from os.path import split as path_split
-from os.path import join as path_join
+from os.path import split, join, splitext, isdir
 
 from text_utils import myRaise, printAsError, faEditStr, replacePostSpaceChar, removeTextTags,\
                        takeStrWords, findWords, findAll, addDefaultOptions
@@ -48,20 +46,20 @@ if not srcDir:
 rootDir = os.path.dirname(srcDir)
 
 
-aboutText = open(path_join(rootDir, 'about')).read()
-licenseText = open(path_join(rootDir, 'license')).read()
+aboutText = open(join(rootDir, 'about')).read()
+licenseText = open(join(rootDir, 'license')).read()
 
 
 if sys.version_info[:2] == (2, 5): ## ???????????????????????
-  libDir = path_join(rootDir, 'dependencies', 'py2.5-lib')
+  libDir = join(rootDir, 'dependencies', 'py2.5-lib')
   if isdir(libDir):
     sys.path.append(libDir)
   ########
-  libDir = path_join(rootDir, 'lib')
+  libDir = join(rootDir, 'lib')
   if isdir(libDir):
     sys.path.append(libDir)
 
-plugDir = path_join(rootDir, 'plugins')
+plugDir = join(rootDir, 'plugins')
 if isdir(plugDir):
   sys.path.append(plugDir)
 else:
@@ -311,7 +309,7 @@ class Glossary:
       filename = filename_nox
     self.filename = filename
     if self.getInfo('name') == '':
-      self.setInfo('name', path_split(filename)[1])
+      self.setInfo('name', split(filename)[1])
 
     if delFile:
       os.remove(filename)
@@ -372,8 +370,8 @@ class Glossary:
       printAsError('Unable to detect write format!')
       return False
     if isdir(filename):
-      #filename = path_join(filename, path_split(self.filename)[1]+ext)
-      filename = path_join(filename, self.filename+ext)
+      #filename = join(filename, split(self.filename)[1]+ext)
+      filename = join(filename, self.filename+ext)
     validOptionKeys = self.formatsWriteOptions[format]
     for key in options.keys():
       if not key in validOptionKeys:
@@ -401,7 +399,7 @@ class Glossary:
         if error:
           printAsError('%s\nfail to compress file "%s"'%(error, filename))
       elif zipExt=='.zip':
-        (dirn, name) = path_split(filename)
+        (dirn, name) = split(filename)
         initCwd = os.getcwd()
         os.chdir(dirn)
         (output, error) = subprocess.Popen(
