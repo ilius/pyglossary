@@ -21,15 +21,6 @@
 
 VERSION = '2012.01.25'
 
-licenseText='''PyGlossary - A tool for workig with dictionary databases
-Copyright © 2008-2010 Saeed Rasooli
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License,  or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program. Or on Debian systems, from /usr/share/common-licenses/GPL. If not, see <http://www.gnu.org/licenses/gpl.txt>.'''
-
-
 homePage = 'http://sourceforge.net/projects/pyglossary'
 
 import os, sys, platform, time, subprocess, shutil, re
@@ -55,6 +46,11 @@ if not srcDir:
   srcDir = '/usr/share/pyglossary/src'
 
 rootDir = os.path.dirname(srcDir)
+
+
+aboutText = open(path_join(rootDir, 'about')).read()
+licenseText = open(path_join(rootDir, 'license')).read()
+
 
 if sys.version_info[:2] == (2, 5): ## ???????????????????????
   libDir = path_join(rootDir, 'dependencies', 'py2.5-lib')

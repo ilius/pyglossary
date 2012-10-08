@@ -69,10 +69,7 @@ class UI(UIBase):
     			'Karl Grill (C++ code for BGL)',
     			'Mehdi Bayazee <bayazee@gmail.com> (Program bgl2x.py)',
     			'Nilton Volpato (Program python-progressbar)'])
-    about.set_comments(
-'''A tool for workig with dictionary databases
-Copyleft © 2008-2009 Saeed Rasooli
-PyGlossary is licensed by the GNU General Public License version 3 (or later)''')
+    about.set_comments(aboutText)
     #about.set_license('PyGlossary is licensed by GNU General Public License version 3 (or later)')
     vbox = about.get_children()[0].get_children()[0]
     try:
