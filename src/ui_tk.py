@@ -361,10 +361,7 @@ class UI(Tix.Frame):
       font=('DejaVu Sans', 13, 'bold'))
     msg1.pack(fill='x', expand=True)
     ###
-    msg2 = Tix.Message(about, width=350, text=\
-'''A tool for workig with dictionary databases
-Copyleft © 2008-2009 Saeed Rasooli
-PyGlossary is licensed by the GNU General Public License version 3 (or later)''',\
+    msg2 = Tix.Message(about, width=350, text=aboutText,\
       font=('DejaVu Sans', 9, 'bold'), justify=Tix.CENTER)
     msg2.pack(fill='x', expand=True)
     ###
