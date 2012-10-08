@@ -49,6 +49,7 @@ rootDir = os.path.dirname(srcDir)
 aboutText = open(join(rootDir, 'about')).read()
 licenseText = open(join(rootDir, 'license')).read()
 
+logo = join(srcDir, 'pyglossary.png')
 
 if sys.version_info[:2] == (2, 5): ## ???????????????????????
   libDir = join(rootDir, 'dependencies', 'py2.5-lib')
@@ -226,7 +227,7 @@ class Glossary:
       self.setInfo(t[0], t[1])
     if setAll:
       for key in self.infoKeys():
-        if self.getInfo(key)=='':
+        if not self.getInfo(key):
           self.setInfo(key, '')
 
   def removeTags(self, tags):
@@ -288,11 +289,11 @@ class Glossary:
           filename = filename[:-4]
           ext = splitext(filename)[1]
           delFile = True
-    if format=='':
+    if not format:
       for key in Glossary.formatsExt.keys():
         if ext in Glossary.formatsExt[key]:
           format = key
-      if format=='':
+      if not format:
         #if delFile:
         #  os.remove(filename)
         printAsError('Unknown extension "%s" for read support!'%ext)
@@ -528,7 +529,7 @@ class Glossary:
     return new
 
 
-  def deepMerge(self, other, sep="\n"):#merge two optional glossarys nicly. no repets in words of result glossary
+  def deepMerge(self, other, sep='\n'):#merge two optional glossarys nicly. no repets in words of result glossary
     try:
       other.data, other.info
     except:
@@ -686,7 +687,7 @@ class Glossary:
     else:
       raise TypeError, 'Argumant wordsArg to function reverseDic is not valid!'
     autoSaveStep = opt['autoSaveStep']
-    if opt['savePath']=='':
+    if not opt['savePath']:
       opt['savePath'] = self.getInfo('name')+'.txt'
     revG = Glossary(self.info[:])
     revG.setInfo('name', self.getInfo('name')+'_reversed')
@@ -697,13 +698,13 @@ class Glossary:
     #div = 0
     #mod = 0
     #total = int(wNum/steps)
-    """
+    '''
     if c==0:
       print('Number of input words:', wNum)
       print('Reversing glossary...')
     else:
       print('continue reversing from index %d ...'%c)
-    """
+    '''
     t0 = time.time()
     if ui==None:
       print('passed ratio         time:  passed       remain          total       process')
@@ -720,7 +721,7 @@ class Glossary:
          return
        else:
          self.i = i
-       """
+       '''
        if mod == steps:
          mod = 0 ; div += 1
          t = time.time()
@@ -738,7 +739,7 @@ class Glossary:
              gtk.main_iteration_do(False)
        else:
          mod += 1
-       """
+       '''
        if autoSaveStep>0 and i%autoSaveStep==0 and i>0:
          saveFile.close()
          saveFile = open(savePath, 'ab')
@@ -802,7 +803,7 @@ class Glossary:
     else:
       raise TypeError, 'Argumant wordsArg to function reverseDic is not valid!'
     autoSaveStep = opt['autoSaveStep']
-    if opt['savePath']=='':
+    if not opt['savePath']:
       opt['savePath']=self.getInfo('name')+'.txt'
     savePath = opt['savePath']
     if c > 0:
@@ -877,19 +878,29 @@ class Glossary:
    phg = Glossary(self.info[:]) # phonetic glossary
    phg.setInfo('name', self.getInfo('name')+'_phonetic')
    for item in self.data:
-     word=item[0]
-     defi=item[1]
-     if defi[0]!="/":
+     word = item[0]
+     defi = item[1]
+     if defi[0] != '/':
        continue
      #### Now set the phonetic to the `ph` variable.
-     ph=""
-     sep=["/ adj", "/ v", "/ n", "/ adv", "/adj", "/v", "/n", "/adv", "/ n","/ the"]
-     for s in sep:
+     ph = ''
+     for s in (
+      '/ adj',
+      '/ v',
+      '/ n',
+      '/ adv',
+      '/adj',
+      '/v',
+      '/n',
+      '/adv',
+      '/ n',
+      '/ the',
+     ):
        i = defi.find(s,2,85)
        if i==-1:
          continue
        else:
-         ph=defi[:i+1]
+         ph = defi[:i+1]
          break
      ph = ph.replace(';', '\t')\
             .replace(',', '\t')\
@@ -905,7 +916,7 @@ class Glossary:
      #      .replace('/', '')
      #      .replace('\\n ', '\\n')
      #      .replace('\\n  ', '\\n')
-     if ph != "":
+     if ph != '':
        phg.data.append((word, ph))
    return phg
 
@@ -925,7 +936,7 @@ class Glossary:
       info = self.info
     for item in info:
       inf = "'" + item[1].replace("'", '"')\
-                         .replace("\x00", '')\
+                         .replace('\x00', '')\
                          .replace('\n', newline) + "'"
       infoList.append(inf)
       infoDefLine += '%s char(%d), '%(item[0], len(inf))
@@ -938,8 +949,8 @@ class Glossary:
       w = self.data[i][0].replace('\'', '"').replace('\n', newline)
       m = self.data[i][1].replace('\'', '"').replace('\n', newline)
       lines.append("INSERT INTO word VALUES(%d,'%s','%s');"%(i+1, w, m))
-    lines.append("CREATE INDEX wnameidx ON word(wname);")
-    #lines.append("COMMIT;")
+    lines.append('CREATE INDEX wnameidx ON word(wname);')
+    #lines.append('COMMIT;')
     return lines
 
   def utf8ReplaceErrors(self):
@@ -1003,10 +1014,10 @@ class Glossary:
       m = d[i][1].strip()\
                  .replace('♦  ', '♦ ')
 
-      m = re.sub("[\r\n]+", "\n", m)
-      m = re.sub(" *\n *", "\n", m)
+      m = re.sub('[\r\n]+', '\n', m)
+      m = re.sub(' *\n *', '\n', m)
 
-      """
+      '''
       This code may correct snippets like:
       - First sentence .Second sentence. -> First sentence. Second sentence.
       - First clause ,second clause. -> First clause, second clause.
@@ -1014,12 +1025,12 @@ class Glossary:
       ( '<' represented as '&lt;' in HTML markup):
       - <Adj.> -> < Adj. >
       - <fig.> -> < fig. >
-      """
-      """
+      '''
+      '''
       for j in range(3):
         for ch in ',.;':
           m = replacePostSpaceChar(m, ch)
-      """
+      '''
 
       m = re.sub('♦\n+♦', '♦', m)
       if m.endswith('<p'):
@@ -1076,7 +1087,7 @@ class Glossary:
       return default
 
   def dump(self, dataPath):
-    "Dump data into the file for debugging"
+    'Dump data into the file for debugging'
     with open(dataPath, 'wb') as f:
       for item in g.data:
         f.write('key = ' + item[0] + '\n')
