@@ -31,10 +31,11 @@ def myRaise(__file__):
   printAsError('File interface_gtk.py line %s: %s: %s'%(i[2].tb_lineno, i[0].__name__, i[1]))
 
 
-#use_psyco_file='%s%suse_psyco'%(srcDir,os.sep)
-use_psyco_file='%s_use_psyco'%confPath
+#use_psyco_file = join(srcDir, 'use_psyco')
+use_psyco_file = '%s_use_psyco'%confPath
 psyco_found = None
 
+gtk.window_set_default_icon_from_file(logo)
 
 ## Thanks to 'Pier Carteri' <m3tr0@dei.unipd.it> for program Py_Shell.py
 class BufferFile:
@@ -85,8 +86,7 @@ class UI(UIBase):
     about.connect('delete-event', self.about_close)
     buttons = about.get_children()[0].get_children()[1].get_children()## List of buttons of about dialogs
     buttons[2].connect('clicked', self.about_close) ## Fix the PyGTK bug that Close button does not work!
-    about.set_icon_from_file('%s%spyglossary.png'%(srcDir,os.sep))
-    about.set_logo(gtk.gdk.pixbuf_new_from_file('%s%spyglossary.png'%(srcDir,os.sep)))
+    about.set_logo(gtk.gdk.pixbuf_new_from_file(logo))
     self.about = about
   def about_clicked(self, widget):
     self.about.show()
@@ -96,29 +96,24 @@ class UI(UIBase):
   def def_widgets(self, names):
     for name in names:
       #try:
-      exec('self.%s=self.xml.get_widget("%s")'%(name,name))
+      exec('self.%s = self.xml.get_widget("%s")'%(name,name))
       #except:
       #  print(name)
         #sys.exit(1)
   def __init__(self, editPath='', **options):
-    #self.xml= gtk.glade.XML('%s%sglade%smaindialog.glade'%(srcDir,os.sep,os.sep))
     self.xml= gtk.glade.XML(os.path.join(srcDir,'glade','maindialog.glade'))
     self.d = self.xml.get_widget('maindialog')
     self.d.connect('delete-event', self.close_button_clicked)
-    try:
-      self.d.set_icon_from_file('%s%spyglossary.png'%(srcDir,os.sep))
-    except:
-      pass
     self.about_init()
     signals={}##{'browse1':self.browse1}
     for attr in dir(self):
       signals[attr] = getattr(self, attr)
     self.xml.signal_autoconnect(signals)
-    self.def_widgets(['quitdialog', 'textview_out','textview_err','maindialog',\
+    self.def_widgets(('quitdialog', 'textview_out','textview_err','maindialog',\
       'vpaned1','notebook1','entry_i','entry_o',\
       'combobox_i','combobox_o','checkb_o_det','combobox_r_i','checkb_i_ext',\
       'entry_r_i','entry_r_o','combobox_sr','progressbar','textview_edit',\
-      'label_convert','label_reverse','combobox_mode','textview_merge','button_conv'])
+      'label_convert','label_reverse','combobox_mode','textview_merge','button_conv'))
 
     """## changing colors
     self.textview_err.modify_base(0, gtk.gdk.Color(10000, 0, 0))#textview bg color
@@ -143,8 +138,8 @@ class UI(UIBase):
     #self.checkb_i_ext.set_active(0)
     #self.xml.get_widget('checkb_o_ext').set_active(1)
     self.dbe_init()
-    self.editor_path=''
-    self.tabIndex=0
+    self.editor_path = ''
+    self.tabIndex = 0
     self.fcd_dir = ''
     ###################################
     t_table = gtk.TextTagTable()
@@ -175,31 +170,31 @@ class UI(UIBase):
     b = self.merge_buffer
     lines = b.get_text(b.get_start_iter(),b.get_end_iter()).split('\n')
     for i in xrange(len(lines)):
-      if len(lines[i])>7:
+      if len(lines[i]) > 7:
         if lines[i][:7]=='file://':
           lines[i] = urlToPath(lines[i])
-    #if lines[-1]=='':
+    #if not lines[-1]:
     #  lines.pop(-1)
     b.set_text('\n'.join(lines))
     sys.stderr = stderr
-  def show_msg(self,key,icon="error",buttons="close"):
+  def show_msg(self, key, icon="error", buttons="close"):
     ## From program pySQLiteGUI writen by 'Milad Rastian'
     ## Show message dialog
     msgicon = 0
     msgbuttons = 0
     if icon=="error":
-      msgicon=gtk.MESSAGE_ERROR
+      msgicon = gtk.MESSAGE_ERROR
     elif icon=="info":
-      msgicon=gtk.MESSAGE_INFO
+      msgicon = gtk.MESSAGE_INFO
     elif icon=="question":
-      msgicon=gtk.MESSAGE_QUESTION
+      msgicon = gtk.MESSAGE_QUESTION
     elif icon=="warning":
-      msgicon=gtk.MESSAGE_WARNING
+      msgicon = gtk.MESSAGE_WARNING
     if buttons=="close":
-      msgbuttons=gtk.BUTTONS_CLOSE
+      msgbuttons = gtk.BUTTONS_CLOSE
     elif buttons=="yesno":
-      msgbuttons=gtk.BUTTONS_YES_NO
-    msgWindow=gtk.MessageDialog(None, 0, msgicon, msgbuttons, ERRORS[key][0] )
+      msgbuttons = gtk.BUTTONS_YES_NO
+    msgWindow = gtk.MessageDialog(None, 0, msgicon, msgbuttons, ERRORS[key][0] )
     msgWindow.format_secondary_text(ERRORS[key][1])
     response = msgWindow.run()
     msgWindow.destroy()
@@ -292,7 +287,7 @@ class UI(UIBase):
       self.path = ''
   def load(self, *args):
     iPath = self.entry_i.get_text()
-    if iPath=='':
+    if not iPath:
       printAsError('Input file path is empty!');return
     formatD = self.combobox_i.get_active_text()
     if formatD==None:
@@ -334,7 +329,7 @@ class UI(UIBase):
   def load_m(self, *args):
     b = self.merge_buffer
     text = b.get_text(b.get_start_iter(),b.get_end_iter())
-    if text=='':
+    if not text:
       return
     paths = text.split('\n')
     n = len(paths)
@@ -343,7 +338,7 @@ class UI(UIBase):
     mode=self.combobox_mode.get_active()
     for i in xrange(n):
       path = paths[i]
-      if path=='':
+      if not path:
         continue
       g = Glossary()
       self.ptext = ' of file %s from %s files'%(i+1,n)
@@ -378,7 +373,7 @@ class UI(UIBase):
         'or just click "Apply" instead.')
       return False
     oPath = self.entry_o.get_text()
-    if oPath=='':
+    if not oPath:
       printAsError('Output file path is empty!');return
     formatD = self.combobox_o.get_active_text()
     if formatD in (None,''):
@@ -449,7 +444,7 @@ class UI(UIBase):
       pathI = self.entry_i.get_text()
       pathO = self.entry_o.get_text()
       formatOD = self.combobox_o.get_active_text()
-      if formatOD != None and pathO=='' and '.' in pathI:
+      if formatOD and not pathO and '.' in pathI:
         extO = Glossary.descExt[formatOD]
         pathO = os.path.splitext(pathI)[0] + extO
         self.entry_o.set_text(pathO)
@@ -473,13 +468,13 @@ class UI(UIBase):
       #pathI = self.entry_i.get_text()
       formatOD = self.combobox_o.get_active_text()
       pathO    = self.entry_o.get_text()
-      if formatOD != None and pathO=='' and '.' in pathI:
+      if formatOD and not pathO and '.' in pathI:
         extO = Glossary.descExt[formatOD]
         pathO = os.path.splitext(pathI)[0] + extO
         self.entry_o.set_text(pathO)
   def entry_o_changed(self,*args):
     path = self.entry_o.get_text()
-    if path=='':
+    if not path:
       return
     #format = self.combobox_o.get_active_text()
     if len(path)>7:
@@ -503,7 +498,7 @@ class UI(UIBase):
     fcd.run()
     filelist = fcd.fd.get_filenames()
     text=self.merge_buffer.get_text(self.merge_buffer.get_start_iter(),self.merge_buffer.get_end_iter())
-    if text!='':
+    if text:
       text += '\n'
     text += '\n'.join(filelist)
     self.merge_buffer.set_text(text)
@@ -562,7 +557,7 @@ class UI(UIBase):
   def r_load(self, *args):
     iPath = self.entry_r_i.get_text()
     formatD = self.combobox_r_i.get_active_text()
-    if iPath=='':
+    if not iPath:
       printAsError('Input file path is empty!');return False
     if formatD in (None,''):
       printAsError('Input format is empty!');return
@@ -605,7 +600,7 @@ class UI(UIBase):
     #  printAsError('Input glossary has no word! Be sure to click "Load" before "Start", or just click "Apply" instead.')
     #  return
     oPath = self.entry_r_o.get_text()
-    if oPath=='':
+    if not oPath:
       printAsError('Output file path is empty!');return
     self.progress(0.0, 'Starting....')
     self.pref_rev_update_var()
@@ -748,7 +743,6 @@ class UI(UIBase):
     self.treeview.append_column(col)
     self.treeview.append_column(col2)
     ###
-    self.dbe_info_dialog.set_icon_from_file('%s%spyglossary.png'%(srcDir,os.sep))
     table2 = gtk.TextTagTable()
     tag2 = gtk.TextTag('info')
     table2.add(tag2)
@@ -1158,8 +1152,7 @@ class UI(UIBase):
     self.pref_update_var()
     self.pref_rev_update_gui()
   def pref_load(self, *args):
-    fp = open('%s%src.py'%(srcDir,os.sep))
-    exec(fp.read())
+    exec(open(join(srcDir, 'rc.py')).read())
     if save==0:
       try:
         fp = open(self.prefSavePath[0])
@@ -1294,7 +1287,7 @@ else:\n\
     f = open(fifoPath)
     msg=f.readline()
     while msg!='end':
-      if msg=='':
+      if not msg:
         pass
       else:
         if '\n' in msg:
@@ -1320,7 +1313,7 @@ class FileChooserDialog:
   def __init__(self, main, path='', combo_items=[], action='open', multiple=False):
     self.main = main
     (stderr, sys.stderr) = (sys.stderr, sys.__stderr__)
-    self.xml= gtk.glade.XML('%s%sglade%sfilechooserdialog.glade'%(srcDir,os.sep,os.sep))
+    self.xml = gtk.glade.XML(join(srcDir, 'glade', 'filechooserdialog.glade'))
     sys.stderr = stderr
     self.fd = self.xml.get_widget("filechooserdialog")
     self.fd.set_action(action)
@@ -1330,7 +1323,7 @@ class FileChooserDialog:
     for attr in dir(self):
       signals[attr] = getattr(self, attr)
     self.xml.signal_autoconnect(signals)
-    if path=='':
+    if not path:
       try:
         path = main.fcd_dir
       except:

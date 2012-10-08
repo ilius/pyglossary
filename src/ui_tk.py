@@ -31,9 +31,9 @@ endFormat	= '\x1b[0;0;0m'		# End Format		#len=8
 #redOnGray	= '\x1b[0;1;31;47m'
 startRed	= '\x1b[31m'
 
-#use_psyco_file='%s%suse_psyco'%(srcDir,os.sep)
-use_psyco_file='%s_use_psyco'%confPath
-psyco_found=None
+#use_psyco_file = '%s%suse_psyco'%(srcDir,os.sep)
+use_psyco_file = '%s_use_psyco'%confPath
+psyco_found = None
 
 noneItem = 'Not Selected'
 
@@ -115,23 +115,29 @@ class ProgressBar(Tix.Frame):
     # Adjust the rectangle
     width = int(self.winfo_width())
     #width = self.width
+    ratio = float(value)/self.max
     if self.orientation == 'horizontal':
       self.canvas.coords(
         self.scale,
         0,
         0,
-        float(value)/self.max*width,
+        width * ratio,
         self.height,
       )
     else:
-      self.canvas.coords(self.scale, 0, self.height-(float(value)/self.max*self.height),
-                         width, self.height)
+      self.canvas.coords(
+        self.scale,
+        0,
+        self.height * (1 - ratio),
+        width,
+        self.height,
+      )
     # Now update the colors
     self.canvas.itemconfig(self.scale, fill=self.fillColor)
     self.canvas.itemconfig(self.label, fill=self.labelColor)
     # And update the label
-    if labelText=='':
-      labelText = self.labelFormat % int((float(value) / float(self.max)) * 100.0)
+    if not labelText:
+      labelText = self.labelFormat % int(ratio * 100)
     self.canvas.itemconfig(self.label, text=labelText)
     #self.canvas.move(self.label, width/2, self.height/2)#??????????
     #self.canvas.scale(self.label, 0, 0, float(width)/self.width, 1)#???????????
@@ -559,7 +565,7 @@ class UI(Tix.Frame):
       pathI = self.entry_i.get()
       pathO = self.entry_o.get()
       formatOD = self.combobox_o.get()
-      if formatOD != None and pathO=='' and '.' in pathI:
+      if formatOD != None and not pathO and '.' in pathI:
         extO=Glossary.descExt[formatOD]
         pathO=''.join(os.path.splitext(pathI)[:-1])+extO
         #self.entry_o.delete(0, 'end')
@@ -587,7 +593,7 @@ class UI(Tix.Frame):
         #pathI = self.entry_i.get()
         formatOD = self.combobox_o.get()
         pathO    = self.entry_o.get()
-        if formatOD != noneItem and pathO=='' and '.' in pathI:
+        if formatOD != noneItem and not pathO and '.' in pathI:
           extO=Glossary.descExt[formatOD]
           pathO=''.join(os.path.splitext(pathI)[:-1])+extO
           self.entry_o.delete(0, 'end')
@@ -627,7 +633,7 @@ class UI(Tix.Frame):
       self.fcd_dir = os.path.dirname(path)#????????
   def load(self):
     iPath = self.entry_i.get()
-    if iPath=='':
+    if not iPath:
       printAsError('Input file path is empty!');return
     formatD = self.combobox_i.get()
     if formatD==noneItem:
@@ -666,7 +672,6 @@ class UI(Tix.Frame):
       print('time left = %3f  seconds'%(time.time()-t0))
       for x in self.glos.info:
         print('%s="%s"'%(x[0],x[1]))
-    self.glos.replaceInDefinitions((('ي','ی'),('ك','ک')))## FIXME
     return True
   def convert(self):
     if len(self.glos.data)==0:
@@ -674,7 +679,7 @@ class UI(Tix.Frame):
         'or just click "Apply" instead.')
       return False
     oPath = self.entry_o.get()
-    if oPath=='':
+    if not oPath:
       printAsError('Output file path is empty!');return
     formatD = self.combobox_o.get()
     if formatD in (noneItem,''):
@@ -719,8 +724,7 @@ class UI(Tix.Frame):
   def r_finished(self):
     pass
   def pref_load(self, *args):
-    fp=open('%s%src.py'%(srcDir,os.sep))
-    exec(fp.read())
+    exec(open(join(srcDir, 'rc.py')).read())
     if save==0:
       try:
         fp = open(self.prefSavePath[0])
