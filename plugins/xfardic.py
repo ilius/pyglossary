@@ -3,9 +3,9 @@
 enable = True
 format = 'Xfardic'
 description = 'xFarDic (xdb)'
-extentions = ('.xdb', '.xml')
-readOptions = ()
-writeOptions = ()
+extentions = ['.xdb', '.xml']
+readOptions = []
+writeOptions = []
 
 from xml.sax.saxutils import escape, unescape
 

@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'Dictd'
 description = 'DICTD dictionary server (.index)'
-extentions = ('.index',)
-readOptions = ()
-writeOptions = ('sort', 'dictZip', 'install')
+extentions = ['.index']
+readOptions = []
+writeOptions = ['sort', 'dictZip', 'install']
 
 from text_utils import chBaseIntToList, runDictzip
 import shutil

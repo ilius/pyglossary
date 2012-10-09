@@ -25,14 +25,14 @@ from formats_common import *
 enable = True
 format = 'Bgl'
 description = 'Babylon (bgl)'
-extentions = ('.bgl')
-readOptions = (
+extentions = ['.bgl']
+readOptions = [
   'resPath', 'verbose', 'defaultEncodingOverwrite', 'sourceEncodingOverwrite', 'targetEncodingOverwrite',
   'msgLogPath', 'rawDumpPath', 'decodedDumpPath', 'unpackedGzipPath', 'searchCharSamples',
   'charSamplesPath', 'testMode', 'noControlSequenceInDefi', 'strictStringConvertion',
   'collectMetadata2', 'oneLineOutput', 'processHtmlInKey', 'keyRStripChars'
-)
-writeOptions = ()
+]
+writeOptions = []
 supportsAlternates = True
 
 ## FIXME: document type of read/write options (that would be specified in command line)

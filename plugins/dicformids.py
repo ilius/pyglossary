@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'Dicformids'
 description = 'DictionaryForMIDs'
-extentions = ('.mids',)
-readOptions = ()
-writeOptions = ('writeInfo',)
+extentions = ['.mids']
+readOptions = []
+writeOptions = ['writeInfo']
 
 
 def write(glos, filename, writeInfo=True):

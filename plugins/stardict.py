@@ -5,9 +5,9 @@ from formats_common import *
 enable = True
 format = 'Stardict'
 description = 'StarDict (ifo)'
-extentions = ('.ifo',)
-readOptions = ()
-writeOptions = ('resOverwrite',)
+extentions = ['.ifo']
+readOptions = []
+writeOptions = ['resOverwrite']
 supportsAlternates = True
 
 import sys, os, re, shutil

@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'Omnidic'
 description = 'Omnidic'
-extentions = ('.omni', '.omnidic')
-readOptions = ('dicIndex',)
-writeOptions = ()
+extentions = ['.omni', '.omnidic']
+readOptions = ['dicIndex']
+writeOptions = []
 
 
 def read(glos, filename, dicIndex=16):

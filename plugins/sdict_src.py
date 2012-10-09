@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'SdictSrc'
 description = 'Sdictionary Source (sdct)'
-extentions = ('.sdct',)
-readOptions = ()
-writeOptions = ('writeInfo', 'newline')
+extentions = ['.sdct']
+readOptions = []
+writeOptions = ['writeInfo', 'newline']
 
 def write(glos, filename, writeInfo=True, newline='\n'):
   ## Source Glossary for "Sdictionary" (http://sdict.org)

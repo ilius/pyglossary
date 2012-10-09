@@ -1,9 +1,9 @@
 enable = False
 format = 'Unknown'
 description = 'Unknown'
-extentions = ()
-readOptions = ()
-writeOptions = ()
+extentions = []
+readOptions = []
+writeOptions = []
 supportsAlternates = False
 
 import sys, os

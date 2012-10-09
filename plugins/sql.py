@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'Sql'
 description = 'SQL'
-extentions = ('.sql',)
-readOptions = ()
-writeOptions = ()
+extentions = ['.sql']
+readOptions = []
+writeOptions = []
 
 def write(glos, filename):
   from xml.sax.saxutils import XMLGenerator
