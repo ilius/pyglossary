@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'Xdxf'
 description = 'XDXF'
-extentions = ('.xdxf', '.xml')
-readOptions = ()
-writeOptions = ()
+extentions = ['.xdxf', '.xml']
+readOptions = []
+writeOptions = []
 
 def read(glos, filename):
   ##<!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">

@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'GettextPo'
 description = 'Gettext Source (po)'
-extentions = ('.po',)
-readOptions = ()
-writeOptions = ()
+extentions = ['.po',]
+readOptions = []
+writeOptions = []
 
 def read(glos, filename):
   fp = open(filename, 'rb')

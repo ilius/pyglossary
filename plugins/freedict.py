@@ -6,8 +6,8 @@ from formats_common import *
 enable = True
 format = 'Freedict'
 description = 'FreeDict (tei)'
-extentions = ('.tei',)
-readOptions = ()
+extentions = ['.tei']
+readOptions = []
 
 def write(glos, filename):
   fp = open(filename, 'wb')

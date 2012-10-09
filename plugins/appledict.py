@@ -3,9 +3,9 @@
 enable = True
 format = 'AppleDict'
 description = 'AppleDict Source (xml)'
-extentions = ('.xml')
-readOptions = ()
-writeOptions = ()
+extentions = ['.xml']
+readOptions = []
+writeOptions = []
 
 from BeautifulSoup import BeautifulSoup
 

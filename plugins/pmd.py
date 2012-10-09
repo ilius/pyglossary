@@ -3,9 +3,9 @@
 enable = True
 format = 'Pmd'
 description = 'PMD'
-extentions = ('.pmd',)
-readOptions = ()
-writeOptions = ('writeInfo',)
+extentions = ['.pmd']
+readOptions = []
+writeOptions = ['writeInfo']
 
 import sys, os
 

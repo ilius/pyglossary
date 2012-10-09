@@ -24,9 +24,9 @@ from formats_common import *
 enable = True
 format = 'Sdict'
 description = 'Sdictionary Binary(dct)'
-extentions = ('.dct',)
-readOptions = ('encoding',)
-writeOptions = ()
+extentions = ['.dct']
+readOptions = ['encoding']
+writeOptions = []
 
 import zlib, bz2
 from struct import unpack

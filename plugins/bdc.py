@@ -3,7 +3,7 @@
 enable = False
 format = 'Bdc'
 description = 'Babylon (bdc)'
-extentions = ('.bdc')
-readOptions = ()
-writeOptions = ()
+extentions = ['.bdc']
+readOptions = []
+writeOptions = []
 

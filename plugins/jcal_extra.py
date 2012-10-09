@@ -3,9 +3,9 @@
 enable = False
 format = 'JcalExtra'
 description = 'JCalendar Extra Days'
-extentions = ('.xml',)
-readOptions = ()
-writeOptions = ()
+extentions = ['.xml']
+readOptions = []
+writeOptions = []
 
 def read(glos, filename, zeroFill=True):
   glos.data=[]

@@ -3,9 +3,9 @@
 enable = True
 format = 'Babylon'
 description = 'Babylon Source (gls)'
-extentions = ('.gls', '.babylon')
-readOptions = ()
-writeOptions = ('writeInfo', 'newline', 'encoding')
+extentions = ['.gls', '.babylon']
+readOptions = []
+writeOptions = ['writeInfo', 'newline', 'encoding']
 
 from text_utils import recodeToWinArabic
 

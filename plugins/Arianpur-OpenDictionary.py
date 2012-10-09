@@ -3,9 +3,9 @@
 enable = True
 format = 'Arianpur'
 description = 'Arianpur OpenDictionary (.xml)'
-extentions = ('.xml',)
-readOptions = ()
-writeOptions = ()
+extentions = ['.xml']
+readOptions = []
+writeOptions = []
 
 ##################################
 

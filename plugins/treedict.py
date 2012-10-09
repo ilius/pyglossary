@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'Treedict'
 description = 'TreeDict'
-extentions = ('.tree', '.treedict')
-readOptions = ()
-writeOptions = ()
+extentions = ['.tree', '.treedict']
+readOptions = []
+writeOptions = []
 
 
 def write(glos, filename, archive='tar.bz2', sep=os.sep):

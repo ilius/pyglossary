@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'OctopusMdicSrc'
 description = 'Octopus MDic Source'
-extentions = ('.mtxt')
-readOptions = ()
-writeOptions = ()
+extentions = ['.mtxt']
+readOptions = []
+writeOptions = []
 
 def read(glos, filename):
     glos.data = []

@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'Tabfile'
 description = 'Tabfile (txt, dic)'
-extentions = ('.txt', '.tab', '.dic')
-readOptions = ()
-writeOptions = ('writeInfo',)
+extentions = ['.txt', '.tab', '.dic']
+readOptions = []
+writeOptions = ['writeInfo']
 
 def read(glos, filename):
   fp = open(filename)

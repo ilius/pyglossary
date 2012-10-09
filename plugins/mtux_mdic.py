@@ -6,9 +6,9 @@ from formats_common import *
 enable = True
 format = 'MtuxMdic'
 description = 'SQLite(MDic m2, Sib sdb)'
-extentions = ('.m2', '.sdb')
-readOptions = ()
-writeOptions = ()
+extentions = ['.m2', '.sdb']
+readOptions = []
+writeOptions = []
 
 infoKeys = ('dbname', 'author', 'version', 'direction', 'origLang', 'destLang',
             'license', 'category', 'description')
