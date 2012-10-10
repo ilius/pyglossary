@@ -1,21 +1,20 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-##   ui_tk.py
+## ui_qk.py
 ##
-##   Copyright © 2010 Saeed Rasooli <saeed.gnu@gmail.com>  (ilius)
+## Copyright © 2010 Saeed Rasooli <saeed.gnu@gmail.com>    (ilius)
 ##
-##   This program is a free software; you can redistribute it and/or modify
-##   it under the terms of the GNU General Public License as published by
-##   the Free Software Foundation; either version 3, or (at your option)
-##   any later version.
+## This program is a free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3, or (at your option)
+## any later version.
 ##
-##   You can get a copy of GNU General Public License along this program
-##   But you can always get it from http://www.gnu.org/licenses/gpl.txt
+## You can get a copy of GNU General Public License along this program
+## But you can always get it from http://www.gnu.org/licenses/gpl.txt
 ##
-##   This program is distributed in the hope that it will be useful,
-##   but WITHOUT ANY WARRANTY; without even the implied warranty of
-##   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-##   GNU General Public License for more details.
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the
+## GNU General Public License for more details.
 
 
 from glossary import *
@@ -41,35 +40,36 @@ psyco_found=None
 noneItem = 'Not Selected'
 
 class QVirtualFile(object):
-  def __init__(self, qtext, mode):
-    self.qtext = qtext
-    self.mode = mode
-  def write(self, text):
-    self.qtext.insertPlainText(text)
-    if self.mode=='stdout':
-      stdout_saved.write(text)
-    elif self.mode=='stderr':
-      stderr_saved.write(startRed+text+endFormat)
-  writelines = lambda self, l: map(self.write, l)
-  flush = lambda self: None
-  isatty = lambda self: 1
-  fileno = lambda self: None
+    def __init__(self, qtext, mode):
+        self.qtext = qtext
+        self.mode = mode
+    def write(self, text):
+        self.qtext.insertPlainText(text)
+        if self.mode=='stdout':
+            stdout_saved.write(text)
+        elif self.mode=='stderr':
+            stderr_saved.write(startRed+text+endFormat)
+    writelines = lambda self, l: map(self.write, l)
+    flush = lambda self: None
+    isatty = lambda self: 1
+    fileno = lambda self: None
 
 
 class UI(qt.QWidget, UIBase):
-  def __init__(self, ipath, **options):
-    qt.QWidget.__init__(self)
-    self.setWindowTitle('PyGlossary (Qt)')
-    self.setWindowIcon(qt.QIcon(join(srcDir, 'pyglossary.png')))
-    ######################
-    self.running = False
-    self.glos = Glossary()
-    self.glos.ui = self
-    self.pref = {}
-    self.pref_load()
-    self.pathI = ''
-    self.pathO = ''
-    self.fcd_dir = join(homeDir, 'Desktop')
-    ######################
-    vbox = qt.QVBoxLayout()
-    self.setLayout(vbox)
+    def __init__(self, ipath, **options):
+        qt.QWidget.__init__(self)
+        self.setWindowTitle('PyGlossary (Qt)')
+        self.setWindowIcon(qt.QIcon(join(srcDir, 'pyglossary.png')))
+        ######################
+        self.running = False
+        self.glos = Glossary()
+        self.glos.ui = self
+        self.pref = {}
+        self.pref_load()
+        self.pathI = ''
+        self.pathO = ''
+        self.fcd_dir = join(homeDir, 'Desktop')
+        ######################
+        vbox = qt.QVBoxLayout()
+        self.setLayout(vbox)
+
