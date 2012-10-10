@@ -412,46 +412,32 @@ class Glossary:
     def writeTxt(self, sep, filename='', writeInfo=True, rplList=[], ext='.txt', head=''):
         if not filename:
             filename = self.filename + ext
-        txt = head
+        fp = open(filename, 'wb')
+        fp.write(head)
         if writeInfo:
-            for t in self.info:
-                #??????????????????????????
-                inf = t[1]
+            for key, desc in self.info:
                 for rpl in rplList:
-                    inf = inf.replace(rpl[0], rpl[1])
-                txt += ('##' + t[0] + sep[0] + inf + sep[1])
-                #inf = self.getInfo(t[0])
-                #if inf!='':
-                #    try:
-                #        txt+=('##' + t[0] + sep[0] + inf + sep[1])
-                #    except:
-                #        myRaise(__file__)
-                #        printAsError('Error on writing info line for "%s"'%t[0])
+                    desc = desc.replace(rpl[0], rpl[1])
+                fp.write('##' + key + sep[0] + desc + sep[1])
+        fp.flush()
         for item in self.data:
             (word, defi) = item[:2]
-            if word.startswith('#'):
+            if word.startswith('#'):## FIXME
                 continue
             if self.getPref('enable_alts', True):
                 try:
                     alts = item[2]['alts']
-                except:
+                except IndexError, KeyError:
                     pass
                 else:
                     if alts:
-                        word = '|'.join([word] + alts)
+                        if not word in alts:
+                            alts.insert(0, word)
+                        word = '|'.join(alts)
             for rpl in rplList:
                 defi = defi.replace(rpl[0], rpl[1])
-            try:
-                line = word + sep[0] + defi + sep[1]
-                txt += line
-            except:
-                myRaise(__file__)
-                printAsError('Error on writing line for word "%s"'%word)
-                continue
-        if filename==None:
-            return txt
-        with open(filename, 'wb') as fp:
-            fp.write(txt)
+            fp.write(word + sep[0] + defi + sep[1])
+        fp.close()        
         return True
 
 
@@ -530,14 +516,18 @@ class Glossary:
                 return self.merge(other[0]).merge(other[1:])
             else:
                 raise TypeError, 'bad argument given to merge! other="%s"'%other
-        newName = '"%s" merged with "%s"'%( self.getInfo('name') , other.getInfo('name') )
+        newName = '"%s" merged with "%s"'%(
+            self.getInfo('name'),
+            other.getInfo('name'),
+        )
         new = Glossary([('name', newName)])
         new.data = self.data + other.data
         new.data.sort()
         return new
 
 
-    def deepMerge(self, other, sep='\n'):#merge two optional glossarys nicly. no repets in words of result glossary
+    def deepMerge(self, other, sep='\n'):
+        ## merge two optional glossarys nicly. no repets in words of result glossary
         try:
             other.data, other.info
         except:
@@ -555,7 +545,7 @@ class Glossary:
         data.sort(lambda t1, t2: cmp(t1[0], t2[0]))
         n = len(data)
         i = 0
-        while i<len(data)-1:
+        while i < len(data)-1:
             if data[i][0] == data[i+1][0]:
                 if data[i][1] != data[i+1][1]:
                     data[i] = (
@@ -565,7 +555,7 @@ class Glossary:
                 data.pop(i+1)
             else:
                 i += 1
-        new.data=data
+        new.data = data
         return new
 
 
@@ -575,14 +565,13 @@ class Glossary:
 
     def searchWordInDef(self, st, opt):
         #seachs word 'st' in meanings(definitions) of the glossary 'self'
-        defOpt = {
-            'minRel':0.0,
-            'maxNum':100,
-            'sep':commaFa,
-            'matchWord':True,
-            'showRel':'Percent',
-        }
-        opt = addDefaultOptions(opt, defOpt)
+        opt = addDefaultOptions(opt, {
+            'minRel': 0.0,
+            'maxNum': 100,
+            'sep': commaFa,
+            'matchWord': True,
+            'showRel': 'Percent',
+        })
         sep = opt['sep']
         matchWord = opt['matchWord']
         maxNum = opt['maxNum']
@@ -598,7 +587,7 @@ class Glossary:
             for part in defiParts:
                 for ch in sch:
                     part = part.replace(ch, ' ')
-                pRel = 0 # part relationship
+                pRel = 0 # part relation
                 if matchWord:
                     pNum = 0
                     partWords = takeStrWords(part)
@@ -608,21 +597,21 @@ class Glossary:
                     for pw in partWords:
                         if pw == st:
                             pNum += 1
-                    pRel = float(pNum)/pLen ## part relationship
+                    pRel = float(pNum)/pLen ## part relation
                 else:
                     pLen = len(part.replace(' ', ''))
                     if pLen==0:
                         continue
                     pNum = len(findAll(part, st))*len(st)
-                    pRel=float(pNum)/pLen ## part relationship
+                    pRel = float(pNum)/pLen ## part relation
                 if pRel > rel:
                     rel = pRel
             if rel <= minRel:
                 continue
             if defs:
-                outRel.append((word,rel,defi))
+                outRel.append((word, rel, defi))
             else:
-                outRel.append((word,rel))
+                outRel.append((word, rel))
         #sortby_inplace(outRel, 1, True)##???
         outRel.sort(key=1, reverse=True)
         n = len(outRel)
@@ -650,7 +639,7 @@ class Glossary:
                     out.append('%s\\n%s'%(w,m))
             return out
         for j in xrange(n):
-            numP=num
+            numP = num
             (w, num) = outRel[j]
             onePer = int(1.0/num)
             if onePer == 1.0:
@@ -668,7 +657,7 @@ class Glossary:
 
 
     def reverseDic(self, wordsArg=None, opt={}):
-        defOpt = {
+        opt = addDefaultOptions(opt, {
             'matchWord': True,
             'showRel': 'None',
             'includeDefs': False,
@@ -676,8 +665,7 @@ class Glossary:
             'reportStep': 300,
             'autoSaveStep': 1000, ## set this to zero to disable auto saving.
             'savePath': '',
-        }
-        opt = addDefaultOptions(opt, defOpt)
+        })
         self.stoped = False
         ui = self.ui
         try:
@@ -694,7 +682,7 @@ class Glossary:
             ui.progress(0.0, 'Starting...')
         elif c>0:
             saveFile = open(savePath, 'ab')
-        if wordsArg==None:
+        if wordsArg is None:
             words = self.takeOutputWords()
         elif isinstance(wordsArg, file):
             words = wordsArg.read().split('\n')
@@ -724,7 +712,7 @@ class Glossary:
             print('continue reversing from index %d ...'%c)
         '''
         t0 = time.time()
-        if ui==None:
+        if not ui:
             print('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
         n = len(words)
         for i in xrange(c, n):
@@ -746,7 +734,15 @@ class Glossary:
                 dt = t-t0
                 tRem = (total-div)*dt/div ## (n-i)*dt/n
                 rat = float(i)/n
-                if ui==None:
+                if ui:
+                    ############# FIXME
+                    #ui.progressbar.set_text(
+                        '%d/%d words completed (%%%2f) remaining %d seconds'%(i,n,rat*100,tRem)
+                    )
+                    ui.progressbar.update(rat)
+                    while gtk.events_pending():
+                        gtk.main_iteration_do(False)
+                else:
                     print('%4d / %4d\t%8s\t%8s\t%8s\t%s'%(
                         div,
                         total,
@@ -755,14 +751,6 @@ class Glossary:
                         timeHMS(dt + tRem),
                         sys.argv[0],
                     ))
-                else:
-                    ############# FIXME
-                    #ui.progressbar.set_text(
-                        '%d/%d words completed (%%%2f) remaining %d seconds'%(i,n,rat*100,tRem)
-                    )
-                    ui.progressbar.update(rat)
-                    while gtk.events_pending():
-                        gtk.main_iteration_do(False)
             else:
                 mod += 1
             '''
@@ -796,7 +784,7 @@ class Glossary:
     def reverseDic_ext(self, wordsArg=None, opt={}):
         from _reverse_dic import search
         tabStr = self.writeTabfile(filename=None)
-        defOpt = {
+        opt = addDefaultOptions(opt, {
             'matchWord': True,
             'showRel': 'None',
             'background': False,
@@ -804,8 +792,7 @@ class Glossary:
             'autoSaveStep': 1000, ## set this to zero to disable auto saving.
             'savePath': '',
             'sep': commaFa,
-        }
-        opt = addDefaultOptions(opt, defOpt)
+        })
         self.stoped = False
         ui = self.ui
         try:
@@ -817,7 +804,7 @@ class Glossary:
             return
         elif c == 0:
             ui.progress(0, 'Starting....')
-        if wordsArg==None:
+        if wordsArg is None:
             words = self.takeOutputWords()
         elif isinstance(wordsArg, file):
             words = [w[:-1] for w in wordsArg.readlines()]
@@ -853,7 +840,7 @@ class Glossary:
         else:
             print('continue reversing from index %d ...'%c)
         t0 = time.time()
-        if ui==None:
+        if not ui:
             print('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
         n = len(words)
         for i in xrange(c, n):
@@ -869,7 +856,15 @@ class Glossary:
             if autoSaveStep>0 and i%autoSaveStep==0 and i>0:
                 saveFile.close()
                 saveFile = open(savePath, 'ab')
-            result = search(tabStr,word,opt['minRel'],opt['maxNum'],opt['sep'],opt['matchWord'],opt['showRel'])
+            result = search(
+                tabStr,
+                word,
+                opt['minRel'],
+                opt['maxNum'],
+                opt['sep'],
+                opt['matchWord'],
+                opt['showRel'],
+            )
             if len(result) > 0:
                 new = (word , result)
                 if autoSaveStep > 0:
@@ -891,11 +886,11 @@ class Glossary:
                     if self.data[i][1].find(rpl[0])>-1:
                         self.data[i][1] = self.data[i][1].replace(rpl[0], rpl[1])
         else:
-            num=0
+            num = 0
             for rpl in replaceList:
                 for j in xrange(len(self.data)):
                     # words indexes
-                    wdsIdx = findWords(self.data[j][1], {'word':rpl[0]})
+                    wdsIdx = findWords(self.data[j][1], {'word': rpl[0]})
                     for [i0,i1] in wdsIdx:
                         self.data[j][1] = self.data[j][1][:i0] + rpl[1] + self.data[j][1][i1:]
                         num += 1
@@ -907,7 +902,7 @@ class Glossary:
         for item in self.data:
             word = item[0]
             defi = item[1]
-            if defi[0] != '/':
+            if not defi.startswith('/'):
                 continue
             #### Now set the phonetic to the `ph` variable.
             ph = ''
@@ -959,7 +954,7 @@ class Glossary:
         #    infoList.append(inf)
         #    infoDefLine += '%s varchar(%d), '%(key, len(inf)+10)
         ######################
-        if info==None:
+        if not info:
             info = self.info
         for item in info:
             inf = "'" + item[1].replace("'", '"')\
