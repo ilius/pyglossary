@@ -5,12 +5,12 @@ Working on glossarys (dictionary databases) using python. Including editing glos
 
 Requirements
 ------------
+Mac OS X
+~~~~~~~~
 - BeautifulSoup required to sanitize html contents.
 
   ``sudo easy_install beautifulsoup``
 
-Mac OS X
-~~~~~~~~
 - GNU make as part of `Command Line Tools for Xcode  <http://developer.apple.com/downloads>`_.
 - Dictionary Development Kit as part of `Auxillary Tools for Xcode <http://developer.apple.com/downloads>`_. Extract to ``/Developer/Extras/Dictionary Development Kit``
 
