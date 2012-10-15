@@ -1,4 +1,22 @@
 # -*- coding: utf-8 -*-
+## appledict.py
+## Output to Apple Dictionary xml sources for Dictionary Development Kit.
+##
+## Copyright (C) 2012 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+##
+## This program is a free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, version 3 of the License.
+##
+## You can get a copy of GNU General Public License along this program
+## But you can always get it from http://www.gnu.org/licenses/gpl.txt
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+
+
 enable = True
 format = 'AppleDict'
 description = 'AppleDict Source (xml)'
@@ -68,7 +86,7 @@ def write_xml(glos, filename):
             alts = item[2]['alts']
         except:
             alts = []
-        
+
         # begin entry
         f.write('<d:entry id="%(id)s" d:title="%(title)s">\n'%{'id':id, 'title':title})
 
@@ -101,14 +119,14 @@ def write_css(fname):
     f.write("""
 @charset "UTF-8";
 @namespace d url(http://www.apple.com/DTDs/DictionaryService-1.0.rng);
- 
+
 d|entry {
 }
 
 h1  {
     font-size: 150%;
 }
- 
+
 h3  {
     font-size: 100%;
 }
