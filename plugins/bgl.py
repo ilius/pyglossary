@@ -2886,8 +2886,8 @@ def createBglBlock(word, mean, btype=1): ## btype is 1 or 10
     if n >= 256**2:
         printAsError('too long word, len(word)=%s'%n)
         return ''
-    bdata +=intToBinStr(n, 2)
-    bdata +=mean
+    bdata += intToBinStr(n, 2)
+    bdata += mean
     if len(bdata) < 12:
         block = chr((len(bdata)+4)*16+btype) + bdata
     else:
