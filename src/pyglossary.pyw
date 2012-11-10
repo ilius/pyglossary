@@ -84,7 +84,7 @@ except getopt.GetoptError:
 """
 ui_type: User interface type
 Possible values:
-    cmd - Command line interface, this ui will automatically selecetd if you give both input and output file
+    cmd - Command line interface, this ui will automatically selected if you give both input and output file
     gtk - GTK interface
     tk - Tkinter interface
     qt - Qt interface
