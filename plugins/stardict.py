@@ -9,7 +9,7 @@ readOptions = []
 writeOptions = ['resOverwrite']
 supportsAlternates = True
 
-import sys, os, re, shutil
+import sys, os, re, shutil, os.path
 from os.path import isfile
 sys.path.append('/usr/share/pyglossary/src')
 
@@ -91,8 +91,8 @@ def read(glos, filename):
 def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
     g = glos.copy()
     g.data.sort(stardict_strcmp, lambda x: x[0])
-    if filename[-4:].lower()=='.ifo':
-        filename=filename[:-4]
+    if os.path.splitext(filename)[1].lower() == '.ifo':
+        filename=os.path.splitext(filename)[0]
     elif filename[-1]==os.sep:
         if not os.path.isdir(filename):
             os.makedirs(filename)
@@ -109,29 +109,28 @@ def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
         (word, defi) = item[:2]
         if len(item) > 2 and 'alts' in item[2]:
             alternates += [(x, i) for x in item[2]['alts']]
-        lm = len(defi)
-        idxStr += (word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(lm, 4))
-        dictMark += lm
+        defiLen = len(defi)
+        idxStr += word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(defiLen, 4)
+        dictMark += defiLen
         dictStr += defi
     with open(filename+'.dict', 'wb') as f:
         f.write(dictStr)
     with open(filename+'.idx', 'wb') as f:
         f.write(idxStr)
-    #from pprint import pformat; open(filename+'-alternates', 'w').write(pformat(alternates))
-    if alternates:
+    if len(alternates) > 0:
         alternates.sort(stardict_strcmp, lambda x: x[0])
         synStr = ''
         for item in alternates:
-            synStr += (item[0] + '\x00' + intToBinStr(item[1], 4))
+            synStr += item[0] + '\x00' + intToBinStr(item[1], 4)
         with open(filename+'.syn', 'wb') as f:
             f.write(synStr)
-    ifoStr = '''StarDict\'s dict ifo file\nversion=3.0.0
-bookname=%s
-wordcount=%d
-idxfilesize=%d
-sametypesequence=%s
-'''%(new_lines_2_space(g.getInfo('name')), len(g.data), len(idxStr), ('h' if richText else 'm'))
-    if alternates:
+    ifoStr = "StarDict's dict ifo file\n" \
+        + "version=3.0.0\n" \
+        + "bookname={0}\n".format(new_lines_2_space(g.getInfo('name'))) \
+        + "wordcount={0}\n".format(len(g.data)) \
+        + "idxfilesize={0}\n".format(len(idxStr)) \
+        + "sametypesequence={0}\n".format('h' if richText else 'm')
+    if len(alternates) > 0:
         ifoStr += 'synwordcount={0}\n'.format(len(alternates))
     for key in infoKeys:
         if key in ('bookname', 'wordcount', 'idxfilesize', 'sametypesequence'):
