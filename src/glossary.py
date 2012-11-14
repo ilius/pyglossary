@@ -32,16 +32,10 @@ import warnings
 warnings.resetwarnings() ## ??????
 
 srcDir = ''
-if sys.argv[0]:
-    srcDir = os.path.dirname(sys.argv[0])
-'''
-if not srcDir:
-    if __file__:
-        srcDir = os.path.dirname(__file__)
-'''
+if __file__:
+    srcDir = os.path.dirname(os.path.realpath(__file__))
 if not srcDir:
     srcDir = '/usr/share/pyglossary/src'
-
 rootDir = os.path.dirname(srcDir)
 
 
@@ -109,13 +103,13 @@ class Glossary:
     formatsExt={}
     formatsReadOptions={}
     formatsWriteOptions={}
-    readExt = [formatsExt[f] for f in readFormats]
-    writeExt = [formatsExt[f] for f in writeFormats]
-    readDesc = [formatsDesc[f] for f in readFormats]
-    writeDesc = [formatsDesc[f] for f in writeFormats]
-    descFormat = dict([(formatsDesc[f], f) for f in formatsDesc.keys()])
-    descExt = dict([(formatsDesc[f], formatsExt[f][0]) for f in formatsDesc.keys()])
-    #extFormats=dict([ (formatsExt[f], f) for f in formatsExt.keys() ])
+    readExt = []
+    writeExt = []
+    readDesc = []
+    writeDesc = []
+    descFormat = {}
+    descExt = {}
+    # load plugins
     if plugDir:
         for f in os.listdir(plugDir):
             if f[-3:]!='.py':
@@ -165,7 +159,6 @@ class Glossary:
         # known dictionary keys:
         #     data[i][2]['alts'] - list of alternates, filled by bgl reader
         self.data = data
-        #####
         self.filename = ''
         self.resPath = resPath
         self.ui = None
