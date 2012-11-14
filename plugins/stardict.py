@@ -91,15 +91,36 @@ def read(glos, filename):
 def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
     g = glos.copy()
     g.data.sort(stardict_strcmp, lambda x: x[0])
+    
     if os.path.splitext(filename)[1].lower() == '.ifo':
-        filename=os.path.splitext(filename)[0]
+        fileBasePath=os.path.splitext(filename)[0]
     elif filename[-1]==os.sep:
         if not os.path.isdir(filename):
             os.makedirs(filename)
-        filename = os.path.join(filename, os.path.split(filename[:-1])[-1])
+        fileBasePath = os.path.join(filename, os.path.split(filename[:-1])[-1])
     elif os.path.isdir(filename):
-        filename = os.path.join(filename, os.path.split(filename)[-1])
-    # filename now contains full file path without extension
+        fileBasePath = os.path.join(filename, os.path.split(filename)[-1])
+    
+    writeWithSameTypeSequence(g, fileBasePath, 'h' if richText else 'm')
+    
+    if dictZip:
+        runDictzip(fileBasePath)
+    copy_resources(
+        glos.resPath,
+        os.path.join(os.path.dirname(fileBasePath), 'res'),
+        resOverwrite
+    )
+
+def writeWithSameTypeSequence(g, fileBasePath, articleFormat):        
+    """Build StarDict dictionary with sametypesequence option specified.
+    Every item definition consists of a single article.
+    All articles have the same format, specified in articleFormat parameter.
+    
+    Parameters:
+    g - glossary, g.data are sorted
+    fileBasePath - full file path without extension
+    articleFormat - format of article definition: h - html, m - plain text
+    """
     dictMark = 0
     idxStr = ''
     dictStr = ''
@@ -113,23 +134,28 @@ def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
         idxStr += word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(defiLen, 4)
         dictMark += defiLen
         dictStr += defi
-    with open(filename+'.dict', 'wb') as f:
+    with open(fileBasePath+'.dict', 'wb') as f:
         f.write(dictStr)
-    with open(filename+'.idx', 'wb') as f:
+    with open(fileBasePath+'.idx', 'wb') as f:
         f.write(idxStr)
+    indexFileSize = len(idxStr)
+    del idxStr, dictStr
+    
     if len(alternates) > 0:
         alternates.sort(stardict_strcmp, lambda x: x[0])
         synStr = ''
         for item in alternates:
             synStr += item[0] + '\x00' + intToBinStr(item[1], 4)
-        with open(filename+'.syn', 'wb') as f:
+        with open(fileBasePath+'.syn', 'wb') as f:
             f.write(synStr)
+        del synStr
+        
     ifoStr = "StarDict's dict ifo file\n" \
         + "version=3.0.0\n" \
         + "bookname={0}\n".format(new_lines_2_space(g.getInfo('name'))) \
         + "wordcount={0}\n".format(len(g.data)) \
-        + "idxfilesize={0}\n".format(len(idxStr)) \
-        + "sametypesequence={0}\n".format('h' if richText else 'm')
+        + "idxfilesize={0}\n".format(indexFileSize) \
+        + "sametypesequence={0}\n".format(articleFormat)
     if len(alternates) > 0:
         ifoStr += 'synwordcount={0}\n'.format(len(alternates))
     for key in infoKeys:
@@ -142,16 +168,10 @@ def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
             ifoStr += '{0}={1}\n'.format(key, new_line_2_br(value))
         else:
             ifoStr += '{0}={1}\n'.format(key, new_lines_2_space(value))
-    with open(filename+'.ifo', 'wb') as f:
+    with open(fileBasePath+'.ifo', 'wb') as f:
         f.write(ifoStr)
-    if dictZip:
-        runDictzip(filename)
-    copy_resources(
-        glos.resPath,
-        os.path.join(os.path.dirname(filename), 'res'),
-        resOverwrite
-    )
-
+    del ifoStr
+    
 def copy_resources(fromPath, toPath, overwrite):
     '''Copy resource files from fromPath to toPath.
     '''
