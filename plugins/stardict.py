@@ -101,7 +101,10 @@ def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
     elif os.path.isdir(filename):
         fileBasePath = os.path.join(filename, os.path.split(filename)[-1])
     
-    writeWithSameTypeSequence(g, fileBasePath, 'h' if richText else 'm')
+    if GlossaryHasAdditionalDefinitions(g):
+        writeGeneral(g, fileBasePath, 'h' if richText else 'm')
+    else:
+        writeWithSameTypeSequence(g, fileBasePath, 'h' if richText else 'm')
     
     if dictZip:
         runDictzip(fileBasePath)
@@ -111,7 +114,7 @@ def write(glos, filename, dictZip=True, richText=True, resOverwrite=False):
         resOverwrite
     )
 
-def writeWithSameTypeSequence(g, fileBasePath, articleFormat):        
+def writeWithSameTypeSequence(g, fileBasePath, articleFormat):
     """Build StarDict dictionary with sametypesequence option specified.
     Every item definition consists of a single article.
     All articles have the same format, specified in articleFormat parameter.
@@ -127,13 +130,13 @@ def writeWithSameTypeSequence(g, fileBasePath, articleFormat):
     alternates = [] # contains tuples ('alternate', index-of-word)
     for i in xrange(len(g.data)):
         item = g.data[i]
-        (word, defi) = item[:2]
+        word, defi = item[:2]
         if len(item) > 2 and 'alts' in item[2]:
             alternates += [(x, i) for x in item[2]['alts']]
+        dictStr += defi
         defiLen = len(defi)
         idxStr += word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(defiLen, 4)
         dictMark += defiLen
-        dictStr += defi
     with open(fileBasePath+'.dict', 'wb') as f:
         f.write(dictStr)
     with open(fileBasePath+'.idx', 'wb') as f:
@@ -141,6 +144,52 @@ def writeWithSameTypeSequence(g, fileBasePath, articleFormat):
     indexFileSize = len(idxStr)
     del idxStr, dictStr
     
+    writeAlternates(alternates, fileBasePath)
+    writeIfo(g, fileBasePath, indexFileSize, len(alternates), articleFormat)
+
+def writeGeneral(g, fileBasePath, articleFormat):
+    """Build StarDict dictionary in general case.
+    Every item definition may consist of an arbitrary number of articles.
+    sametypesequence option is not used.
+    
+    Parameters:
+    g - glossary, g.data are sorted
+    fileBasePath - full file path without extension
+    articleFormat - format of article definition: h - html, m - plain text
+    """
+    assert len(articleFormat) == 1
+    dictMark = 0
+    idxStr = ''
+    dictStr = ''
+    alternates = [] # contains tuples ('alternate', index-of-word)
+    for i in xrange(len(g.data)):
+        item = g.data[i]
+        word, defi = item[:2]
+        if len(item) > 2 and 'alts' in item[2]:
+            alternates += [(x, i) for x in item[2]['alts']]
+        dictStr += articleFormat
+        dictStr += defi + '\x00'
+        dataLen = 1 + len(defi) + 1
+        if len(item) > 2 and 'defis' in item[2]:
+            for defi in item[2]['defis']:
+                dictStr += articleFormat
+                dictStr += defi + '\x00'
+                dataLen += 1 + len(defi) + 1
+        idxStr += word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(dataLen, 4)
+        dictMark += dataLen
+    with open(fileBasePath+'.dict', 'wb') as f:
+        f.write(dictStr)
+    with open(fileBasePath+'.idx', 'wb') as f:
+        f.write(idxStr)
+    indexFileSize = len(idxStr)
+    del idxStr, dictStr
+    
+    writeAlternates(alternates, fileBasePath)
+    writeIfo(g, fileBasePath, indexFileSize, len(alternates))
+
+def writeAlternates(alternates, fileBasePath):
+    """Build .syn file
+    """
     if len(alternates) > 0:
         alternates.sort(stardict_strcmp, lambda x: x[0])
         synStr = ''
@@ -149,15 +198,19 @@ def writeWithSameTypeSequence(g, fileBasePath, articleFormat):
         with open(fileBasePath+'.syn', 'wb') as f:
             f.write(synStr)
         del synStr
-        
+
+def writeIfo(g, fileBasePath, indexFileSize, synwordcount, sametypesequence = None):
+    """Build .ifo file
+    """
     ifoStr = "StarDict's dict ifo file\n" \
         + "version=3.0.0\n" \
         + "bookname={0}\n".format(new_lines_2_space(g.getInfo('name'))) \
         + "wordcount={0}\n".format(len(g.data)) \
-        + "idxfilesize={0}\n".format(indexFileSize) \
-        + "sametypesequence={0}\n".format(articleFormat)
-    if len(alternates) > 0:
-        ifoStr += 'synwordcount={0}\n'.format(len(alternates))
+        + "idxfilesize={0}\n".format(indexFileSize)
+    if sametypesequence != None:
+        ifoStr += "sametypesequence={0}\n".format(sametypesequence)
+    if synwordcount > 0:
+        ifoStr += 'synwordcount={0}\n'.format(synwordcount)
     for key in infoKeys:
         if key in ('bookname', 'wordcount', 'idxfilesize', 'sametypesequence'):
             continue
@@ -198,6 +251,16 @@ Clean the output directory before running the converter or pass option: --write-
         os.rmdir(toPath)
     shutil.copytree(fromPath, toPath)
 
+def GlossaryHasAdditionalDefinitions(glos):
+    """Search for additional definitions in the glossary.
+    We need to know if the glossary contains additional definitions 
+    to make the decision on the format of the StarDict dictionary.
+    """
+    for rec in glos.data:
+        if len(rec) > 2 and 'defis' in rec[2]:
+            return True
+    return False
+    
 def read_ext(glos, filename):
     ## This method uses module provided by dictconv, but dictconv is very slow for reading from stardict db!
     ## therefore this method in not used by GUI now.
