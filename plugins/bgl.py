@@ -2785,7 +2785,7 @@ def read(glos, filename, **options):
         if not db.readEntry(entry):
             printAsError('No enough entries found!')
             break
-        glos.data.append((entry.word, entry.defi, {'alts': entry.alts}))
+        glos.data.append((entry.word, entry.defi, {'alts': entry.alts, 'defiFormat': 'h'}))
         if ui and i%k==0:
             rat = float(i)/n
             ui.progress(rat)

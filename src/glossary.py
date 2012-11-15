@@ -121,6 +121,9 @@ class Glossary:
             in the example.
             You may merge additional definition with the main definition if the target dictionary 
             format does not support several definitions per word.
+        data[i][2]['defis'][j][0] - definition data
+        data[i][2]['defis'][j][1] - definition format. See 'defiFormat' option below.
+        data[i][2]['defiFormat'] - format of the definition: 'h' - html, 'm' - plain text
     """
     data = []
     # load plugins
