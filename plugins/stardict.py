@@ -23,6 +23,7 @@ class StarDictReader:
             self.fileBasePath = os.path.splitext(filename)[0]
         else:
             self.fileBasePath = filename
+        self.fileBasePath = os.path.realpath(self.fileBasePath)
     
     def run(self):
         self.glos.data = []
@@ -44,6 +45,7 @@ class StarDictReader:
         self.readDictFile(sametypesequence)
         self.readSynFile()
         self.assignGlossaryData()
+        self.readResources()
         
     def readIfoFile(self):
         """.ifo file is a text file in utf-8 encoding
@@ -256,7 +258,16 @@ class StarDictReader:
             if len(rec[4]) > 0:
                 d['alts'] = rec[4]
             self.glos.data.append((rec[0], rec[3][0][0], d))
-
+    
+    def readResources(self):
+        baseDirPath = os.path.dirname(self.fileBasePath)
+        resDirPath = os.path.join(baseDirPath, 'res')
+        if os.path.isdir(resDirPath):
+            self.glos.resPath = resDirPath
+        else:
+            resDbFilePath = os.path.join(baseDirPath, 'res.rifo')
+            if os.path.isfile(resDbFilePath):
+                print("StarDict resource database is not supported. Skipping.")
     
 class StarDictWriter:
     def __init__(self, glos, filename):
@@ -269,6 +280,7 @@ class StarDictWriter:
             self.fileBasePath = os.path.join(filename, os.path.split(filename[:-1])[-1])
         elif os.path.isdir(filename):
             self.fileBasePath = os.path.join(filename, os.path.split(filename)[-1])
+        self.fileBasePath = os.path.realpath(self.fileBasePath)
             
     def run(self, dictZip, resOverwrite):
         self.glos.data.sort(stardict_strcmp, lambda x: x[0])
