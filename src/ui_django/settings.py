@@ -2,7 +2,7 @@
 # Django settings for pyglossary project.
 
 import os, string
-from os import dirname
+from os.path import dirname
 from os.path import join
 
 DJ_ROOT_DIR = dirname(__file__)
