@@ -32,16 +32,10 @@ import warnings
 warnings.resetwarnings() ## ??????
 
 srcDir = ''
-if sys.argv[0]:
-    srcDir = os.path.dirname(sys.argv[0])
-'''
-if not srcDir:
-    if __file__:
-        srcDir = os.path.dirname(__file__)
-'''
+if __file__:
+    srcDir = os.path.dirname(os.path.realpath(__file__))
 if not srcDir:
     srcDir = '/usr/share/pyglossary/src'
-
 rootDir = os.path.dirname(srcDir)
 
 
@@ -109,13 +103,30 @@ class Glossary:
     formatsExt={}
     formatsReadOptions={}
     formatsWriteOptions={}
-    readExt = [formatsExt[f] for f in readFormats]
-    writeExt = [formatsExt[f] for f in writeFormats]
-    readDesc = [formatsDesc[f] for f in readFormats]
-    writeDesc = [formatsDesc[f] for f in writeFormats]
-    descFormat = dict([(formatsDesc[f], f) for f in formatsDesc.keys()])
-    descExt = dict([(formatsDesc[f], formatsExt[f][0]) for f in formatsDesc.keys()])
-    #extFormats=dict([ (formatsExt[f], f) for f in formatsExt.keys() ])
+    readExt = []
+    writeExt = []
+    readDesc = []
+    writeDesc = []
+    descFormat = {}
+    descExt = {}
+    """
+    a list if tuples: ('key', 'definition') or ('key', 'definition', dict() )
+    in general we should assume the tuple may be of arbitrary length >= 2
+    known dictionary keys:
+        data[i][2]['alts'] - list of alternates, filled by bgl reader
+        data[i][2]['defis'] - list of alternative definitions. 
+            For example, run (eng.) may be 1. verb, 2. noun, 3. adjective.
+            self.data[i][1] contains the main definition of the word, the verb, in the example.
+            While additional definitions goes to self.data[i][2]['defis'] list, noun and adjective,
+            in the example.
+            You may merge additional definition with the main definition if the target dictionary 
+            format does not support several definitions per word.
+        data[i][2]['defis'][j][0] - definition data
+        data[i][2]['defis'][j][1] - definition format. See 'defiFormat' option below.
+        data[i][2]['defiFormat'] - format of the definition: 'h' - html, 'm' - plain text
+    """
+    data = []
+    # load plugins
     if plugDir:
         for f in os.listdir(plugDir):
             if f[-3:]!='.py':
@@ -160,12 +171,7 @@ class Glossary:
     def __init__(self, info=[], data=[], resPath=''):
         self.info = []
         self.setInfos(info, True)
-        # a list if tuples: ('key', 'definition') or ('key', 'definition', dict() )
-        # in general we should assume the tuple may be of arbitrary length >= 2
-        # known dictionary keys:
-        #     data[i][2]['alts'] - list of alternates, filled by bgl reader
         self.data = data
-        #####
         self.filename = ''
         self.resPath = resPath
         self.ui = None

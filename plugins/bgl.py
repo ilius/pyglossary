@@ -2766,68 +2766,6 @@ class BGL:
         else:
             return text
 
-def read_ext(glos, filename):
-    try:
-        import _babylon
-        #from _babylon import Babylon_readEntry, bgl_entry_headword_get, bgl_entry_definition_get
-        from _babylon import Babylon_readEntry as readEntry
-        from _babylon import Babylon_swigregister as swigregister
-        from _babylon import Babylon_bgl_entry_definition_get as entry_definition_get
-        from _babylon import Babylon_bgl_entry_headword_get as entry_headword_get
-        #from _babylon import Babylon_bgl_entry_alternates_get as entry_alternates_get
-    except ImportError:
-        myRaise(__file__)
-        printAsError('Binary module "_babylon" can not be imported! Using internal BGL reader')
-        return glos.readBgl(filename)
-    glos.data = []
-    db = _babylon.new_Babylon(filename)
-    _babylon.Babylon_swigregister(db)
-    if not _babylon.Babylon_open(db):
-        raise IOError('can not open BGL file "%s"'%filename)
-    if not _babylon.Babylon_read(db):
-        raise IOError('can not read BGL file "%s"'%filename)
-    n = _babylon.Babylon_numEntries(db)
-    swigregister(n)
-    ## could not determine numEntries as int when defined as "uint" in C++ codes
-    ## I changed it to "int"
-    ui = glos.ui
-    if not isinstance(n, int):
-        ui = None
-    if ui:
-        ui.progressStart()
-        k = 2000
-        for i in xrange(n):
-            entry = readEntry(db)
-            swigregister(entry)
-            w = entry_headword_get(db, entry)
-            m = entry_definition_get(db, entry).replace('<BR>', '\n')\
-                                               .replace('<br>', '\n')
-            glos.data.append([w, m])
-            if i%k==0:
-                ui.progress(float(i)/n)
-        #ui.progress(1.0, 'Loading Completed')
-        ui.progressEnd()
-    else:
-        while True:
-            entry = readEntry(db)
-            swigregister(entry)
-            w = entry_headword_get(db, entry)
-            m = entry_definition_get(db, entry).replace('<BR>', '\n')\
-                                               .replace('<br>', '\n')
-            if not (w or m):
-                break
-            else:
-                glos.data.append([w, m])
-    glos.setInfo('title', _babylon.Babylon_title(db))
-    glos.setInfo('author', _babylon.Babylon_author(db))
-    glos.setInfo('email', _babylon.Babylon_email(db))
-    glos.setInfo('description', _babylon.Babylon_description(db))
-    glos.setInfo('copyright', _babylon.Babylon_copyright(db))
-    glos.setInfo('sourceLang', _babylon.Babylon_sourceLang(db))
-    glos.setInfo('targetLang', _babylon.Babylon_targetLang(db))
-    glos.setInfo('charset', _babylon.Babylon_charset(db))
-
-
 def read(glos, filename, **options):
     glos.data = []
     db = BGL(filename, **options)
@@ -2847,7 +2785,7 @@ def read(glos, filename, **options):
         if not db.readEntry(entry):
             printAsError('No enough entries found!')
             break
-        glos.data.append((entry.word, entry.defi, {'alts': entry.alts}))
+        glos.data.append((entry.word, entry.defi, {'alts': entry.alts, 'defiFormat': 'h'}))
         if ui and i%k==0:
             rat = float(i)/n
             ui.progress(rat)
@@ -2873,6 +2811,7 @@ def read(glos, filename, **options):
     glos.resPath = db.resPath
 
 
+<<<<<<< HEAD
 def createBglBlock(word, mean, btype=1): ## btype is 1 or 10
     bdata = ''
     n = len(word)
@@ -2948,10 +2887,11 @@ def write(glos, filename, writeInfo=True):## output BGL file can't be opened wit
 '''
 
 
+=======
+>>>>>>> 3a35a3163b97edfdbd3359f7a9a2a25e80f179b3
 try:
     import psyco
 except:
     pass
 else:
     psyco.bind(BGL)
-
