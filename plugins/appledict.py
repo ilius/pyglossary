@@ -62,6 +62,11 @@ def write_plist(glos, filename):
     f.close()
 
 def write_xml(glos, filename):
+    # progress bar
+    ui = glos.ui
+    if ui:
+        ui.progressStart()
+
     f = open(filename, 'w')
 
     # write header
@@ -70,7 +75,8 @@ def write_xml(glos, filename):
 
     # write entries
     entry_ids= []
-    for item in glos.data:
+    total = len(glos.data)
+    for index,item in enumerate(glos.data):
         # strip double quotes and html tags
         title = re.sub('<[^<]+?>|"|[<>]', '', item[0])
         if not title:
@@ -110,9 +116,15 @@ def write_xml(glos, filename):
         # end entry
         f.write('\n</d:entry>\n')
 
+        if index%1000==0 and ui:
+            ui.progress(1.0*index/total)
     # end dictionary
     f.write('</d:dictionary>\n')
     f.close()
+
+    # end progress bar
+    if ui:
+        ui.progressEnd()
 
 def write_css(fname):
     f = open(fname, "w")
