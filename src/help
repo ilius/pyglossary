@@ -1,0 +1,44 @@
+PyGlossary is a tool for working with dictionary databases (glossaries)
+%SBUsage:%EF
+  %SBPyGTK%EF Interface:
+     To open PyGlossary window:
+       %SB%CMD%EF
+     To directly open a glossary for edit:
+       %CMD %SUINPUT_FILE%EF
+     PyGTK is the default interface, so no need to use option "--ui=gtk"
+     If PyGTK not found (was not installed), then PyGlossary will fallback
+     to Tkinter interface.
+  %SBTkinter%EF Interface:
+     %CMD --ui=tk
+  %SBCommand Line%EF Interface:
+     To show this help:
+       %CMD --help
+     To show program version:
+       %CMD --version
+     To Convert:
+       %CMD %SUINPUT_FILE%EF %SUOUTPUT_FILE%EF
+     To Reverse:
+       %CMD %SUINPUT_FILE%EF [%SUOUTPUT_FILE%EF] --reverse
+   Input and output files formats will be detected from extensions. Except that
+      you explicitly specify input or output format, for example:
+        %CMD mydic.utf8 mydic.ifo --read-format=tabfile
+        %CMD mydic.utf8 mydic.ifo --read-format tabfile
+        %CMD mydic.ifo mydic.utf8 --write-format=tabfile
+        %CMD mydic.ifo mydic.utf8 --write-format tabfile
+   See a list of supported formats (with their associated extensions) at the end
+      of this help
+   Command line arguments and options (and arguments for options)
+      is parsed with GNU getopt method
+   You can also just type extension of output file instead of full path, if you
+     want to create with the same input file name with another extension
+     for example:
+       %CMD mydic.ifo txt
+     instead of:
+       %CMD mydic.ifo mydic.txt
+   Compressing with gz, bz2 and zip is supported, just append these 
+     extension to the file name, for example:
+       %CMD mydic.ifo mydic.txt.gz
+     or
+       %CMD mydic.ifo txt.gz
+   And if the input file has these extensions (gz, bz2, zip), it will be
+     extracted before loading
