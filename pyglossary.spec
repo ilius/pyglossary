@@ -38,5 +38,6 @@ rm -rf %{buildroot}
 %{_datadir}/applications/fedora-pyglossary.desktop
 %{_datadir}/pixmaps/pyglossary.png
 %{_datadir}/pyglossary/
+%{_datadir}/doc/pyglossary/
 %{python_sitelib}/pyglossary/
 %{python_sitelib}/pyglossary-%{version}-py2.7.egg-info
