@@ -4,14 +4,16 @@ try:
 except ImportError:
 	py2exe = None
 
-import glob 
+import glob, os
 from pyglossary.glossary import VERSION
+
 from distutils.core import setup
-from distutils.command.build_scripts import build_scripts as build_scripts_class
+from distutils.dep_util import newer
+from distutils.command.build_scripts \
+         import build_scripts as distutils_build_scripts
 
 class build_scripts(distutils_build_scripts):
     description = "copy scripts to build directory"
-
     def run(self):
         self.mkpath(self.build_dir)
         for script in self.scripts:
@@ -45,20 +47,20 @@ else:
 setup(
 	name         = 'pyglossary',
 	version      = VERSION,
-	cmdclass = { 'build_scripts': build_scripts },
-	description  = 'Working on glossarys (dictionary databases) using python.',
+	cmdclass     = { 'build_scripts': build_scripts },
+	description  = 'Working on glossaries (dictionary databases) using python.',
 	author       = 'Saeed Rasooli',
 	author_email = 'saeed.gnu@gmail.com',
 	license      = 'GPLv3',
 	url          = 'https://github.com/ilius/pyglossary',
-	scripts      = scripts,
-	packages     = ["pyglossary","pyglossary.plugins"],
-	data_files   = [("share/pyglossary",["about","license","help"]),
-	                ("share/pyglossary/glade",[glob.glob("glade/*")]),
-	                ("share/pyglossary/ui",[glob.glob("ui/*")])),
-	                ("share/pyglossary/django",[glob.glob("django/*")]),
-	                ("share/pixmaps",["res/pyglossary.png"])]
-	requires     = dependencies,
-
+	scripts      = ["pyglossary.pyw"],
+	packages     = ["pyglossary"],
+	data_files   = [("share/pyglossary",["about","license","help","rc.py"]),
+	                ("share/pyglossary/glade",glob.glob("glade/*")),
+	                ("share/pyglossary/ui",glob.glob("ui/*")),
+	                ("share/pyglossary/django",glob.glob("django/*"))
+	                ("share/pyglossary/res",glob.glob("res/*")),
+	                ("share/pyglossary/plugins",glob.glob("plugins/*")),
+	                ("share/pixmaps",["res/pyglossary.png"])],
 	**py2exeoptions
 )
