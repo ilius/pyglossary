@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=PyGlossary
+GenericName=Working on glossaries (dictionary databases) using python
+Comment=Working on glossaries
+Exec=pyglossary
+Terminal=false
+Type=Application
+StartupNotify=true
+Icon=pyglossary
+Categories=Utility;
+X-GNOME-FullName=Working on glossaries

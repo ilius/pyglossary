@@ -55,10 +55,11 @@ setup(
 	url          = 'https://github.com/ilius/pyglossary',
 	scripts      = ["pyglossary.pyw"],
 	packages     = ["pyglossary"],
-	data_files   = [("share/pyglossary",["about","license","help","rc.py"]),
+	data_files   = [("share/applications",["pyglossary.desktop"]),
+	                ("share/pyglossary",["about","license","help","rc.py"]),
 	                ("share/pyglossary/glade",glob.glob("glade/*")),
 	                ("share/pyglossary/ui",glob.glob("ui/*")),
-	                ("share/pyglossary/django",glob.glob("django/*"))
+	                ("share/pyglossary/django",glob.glob("django/*")),
 	                ("share/pyglossary/res",glob.glob("res/*")),
 	                ("share/pyglossary/plugins",glob.glob("plugins/*")),
 	                ("share/pixmaps",["res/pyglossary.png"])],
