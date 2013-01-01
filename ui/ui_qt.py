@@ -17,8 +17,8 @@
 ## GNU General Public License for more details.
 
 
-from pyglossary.glossary import *
-from pyglossary.ui.base import UIBase
+from glossary import *
+from base import *
 from os.path import join
 
 from PyQt4 import QtGui as qt

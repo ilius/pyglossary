@@ -21,7 +21,7 @@
 import shutil, sys, os
 from pyglossary.text_utils import urlToPath, click_website, printAsError, myRaise, startRed, endFormat
 from pyglossary.glossary import *
-from pyglossary.ui.base import UIBase
+from base import *
 import gtk, gtk.glade
 
 
@@ -102,7 +102,7 @@ class UI(UIBase):
             #    print(name)
                 #sys.exit(1)
     def __init__(self, editPath='', **options):
-        self.xml= gtk.glade.XML(os.path.join(rootDir,'glade','maindialog.glade'))
+        self.xml= gtk.glade.XML(os.path.join(rootDir,'ui','glade','maindialog.glade'))
         self.d = self.xml.get_widget('maindialog')
         self.d.connect('delete-event', self.close_button_clicked)
         self.about_init()

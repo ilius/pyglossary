@@ -20,11 +20,16 @@
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import os, sys, getopt, __builtin__
-from pyglossary.glossary import confPath, VERSION, SHARE_PATH
+from pyglossary.glossary import confPath, VERSION
 #from pyglossary.text_utils import printAsError ## No red color, plain
+from os.path import dirname, join
 
-sys.path.insert(0, SHARE_PATH)
-from ui.cmd import COMMAND, printAsError, help, parseFormatOptionsStr
+try:
+    import ui
+except ImportError:
+    sys.path.append(join(dirname(dirname(__file__)), 'share', 'pyglossary', 'ui'))
+
+from ui_cmd import COMMAND, printAsError, help, parseFormatOptionsStr
 
 
 def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
@@ -38,7 +43,7 @@ use_psyco_file = '%s_use_psyco'%confPath
 psyco_found = None
 
 
-ui_list = ('gtk_', 'tk', 'qt')
+ui_list = ('gtk', 'tk', 'qt')
 
 #print('PyGlossary %s'%VERSION)
 
@@ -154,7 +159,7 @@ for (opt, opt_arg) in options:
 
 
 if ui_type == 'cmd':
-    import ui.cmd as ui_cmd
+    import ui_cmd
     sys.exit(ui_cmd.UI(**ui_options).run(
         ipath,
         opath=opath,
@@ -169,8 +174,7 @@ else:
         ui_module = None
         for ui_type2 in ui_list:
             try:
-                _temp = __import__('ui.%s' % ui_type2)
-                ui_module = eval("_temp.%s" % ui_type2)
+                ui_module = getattr(__import__('ui.ui_%s'%ui_type2), 'ui_%s'%ui_type2)
             except ImportError:
                 pass
             else:
@@ -179,8 +183,7 @@ else:
             printAsError('no user interface module found!')
             sys.exit(1)
     else:
-        _temp = __import__('ui.%s' % ui_type)
-        ui_module = eval("_temp.ui.%s" % ui_type)
+        ui_module = getattr(__import__('ui.ui_%s'%ui_type), 'ui_%s'%ui_type)
     sys.exit(ui_module.UI(ipath, **ui_options).run())
     ## don't forget to append "**options" at every UI.__init__ arguments
 
