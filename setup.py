@@ -10,23 +10,11 @@ import os
 from os.path import join
 
 from distutils.core import setup
-from distutils.dep_util import newer
-#from distutils.command.build_scripts import build_scripts
 from distutils.command.install import install
 
 from pyglossary.glossary import VERSION
 
 relRootDir = 'share/pyglossary'
-
-#class my_build_scripts(build_scripts):
-#    def run(self):
-#        self.mkpath(self.build_dir)
-#        for script in self.scripts:
-#            newpath = os.path.join(self.build_dir, os.path.basename(script))
-#            if newpath.lower().endswith('.py'): newpath = newpath[:-3]
-#            elif newpath.lower().endswith('.pyw'): newpath = newpath[:-4]
-#            if newer(script, newpath) or self.force:
-#                self.copy_file(script, newpath)
 
 
 class my_install(install):
@@ -97,7 +85,6 @@ setup(
 	name = 'pyglossary', 
 	version = VERSION, 
 	cmdclass = {
-	    #'build_scripts': my_build_scripts, 
 	    'install': my_install, 
     }, 
 	description = 'A tool for workig with dictionary databases', 
