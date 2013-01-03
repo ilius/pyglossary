@@ -58,7 +58,7 @@ setup(
 	packages     = ['pyglossary'],
 	data_files   = [('share/pyglossary',
 	                        ['about','license','help']),
-	                ('share/pyglossary/ui',glob.glob('ui/*')),
+	                ('share/pyglossary/ui',glob.glob('ui/*.py')),
 	                ('share/pyglossary/ui/glade',glob.glob('ui/glade/*')),
 	                ('share/pyglossary/res',glob.glob('res/*')),
 	                ('share/doc/pyglossary',['doc/bgl_structure.svgz']),
