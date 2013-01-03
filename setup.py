@@ -39,60 +39,84 @@ class my_install(install):
             os.chmod(binPath, 0755)
 
 
-data_files = [(relRootDir,
-	                        ['about', 'license', 'help', 'pyglossary.pyw']),
-	                (relRootDir+'/ui',glob.glob('ui/*.py')),
-	                (relRootDir+'/ui/glade',glob.glob('ui/glade/*')),
-	                (relRootDir+'/res',glob.glob('res/*')),
-	                ('share/doc/pyglossary',['doc/bgl_structure.svgz']),
-	                ('share/doc/pyglossary/non-gui_examples',
-	                        glob.glob('doc/non-gui_examples/*')),
-	                ('share/applications',['pyglossary.desktop']),
-	                ('share/pixmaps',['res/pyglossary.png'])]
+data_files = [
+    (relRootDir, [
+        'about',
+        'license',
+        'help',
+        'pyglossary.pyw',
+    ]), 
+    (relRootDir+'/ui', glob.glob('ui/*.py')), 
+    (relRootDir+'/ui/glade', glob.glob('ui/glade/*')), 
+    (relRootDir+'/res', glob.glob('res/*')), 
+    ('share/doc/pyglossary', ['doc/bgl_structure.svgz']), 
+    ('share/doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')), 
+    ('share/applications', ['pyglossary.desktop']), 
+    ('share/pixmaps', ['res/pyglossary.png']),
+]
 
 if py2exe:
 	py2exeoptions = {
-		'windows': [ {
-			'script': 'pyglossary.pyw',
-			'icon_resources': [(1, 'res/pyglossary.ico')]
-		} ],
-		'zipfile': None,
+		'windows': [
+		    {
+			    'script': 'pyglossary.pyw', 
+			    'icon_resources': [
+			        (1, 'res/pyglossary.ico'),
+		        ],
+		    }
+		], 
+		'zipfile': None, 
 		'options': {
 			'py2exe': {
-				'packages': ('pyglossary')
-			}
-		}
+				'packages': (
+				    'pyglossary',
+			    ),
+			},
+		},
 	}
-	data_files = [('', ['about','license','help']),
-	                ('ui',glob.glob('ui/*.py')),
-	                ('ui/glade',glob.glob('ui/glade/*')),
-	                ('res',glob.glob('res/*')),
-	                ('plugins',glob.glob('pyglossary/plugins/*')),
-	                ('doc/pyglossary',['doc/bgl_structure.svgz']),
-	                ('doc/pyglossary/non-gui_examples',
-	                        glob.glob('doc/non-gui_examples/*'))]
+	data_files = [
+	    ('', [
+	        'about',
+	        'license',
+	        'help',
+        ]), 
+        ('ui', glob.glob('ui/*.py')), 
+        ('ui/glade', glob.glob('ui/glade/*')), 
+        ('res', glob.glob('res/*')), 
+        ('plugins', glob.glob('pyglossary/plugins/*')), 
+        ('doc/pyglossary', [
+            'doc/bgl_structure.svgz',
+        ]), 
+        ('doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')),
+    ]
 else:
 	py2exeoptions = {}
 
 
 setup(
-	name         = 'pyglossary',
-	version      = VERSION,
-	cmdclass     = {
-	    #'build_scripts': my_build_scripts,
-	    'install': my_install,
-    },
-	description  = 'Working on glossaries (dictionary databases) using python.',
-	author       = 'Saeed Rasooli',
-	author_email = 'saeed.gnu@gmail.com',
-	license      = 'GPLv3',
-	url          = 'https://github.com/ilius/pyglossary',
-	scripts      = [
-	    #'pyglossary.pyw'
-	],
-	packages     = ['pyglossary'],
-	package_data = {'pyglossary': ['plugins/*.py']},
-	data_files   = data_files,
+	name = 'pyglossary', 
+	version = VERSION, 
+	cmdclass = {
+	    #'build_scripts': my_build_scripts, 
+	    'install': my_install, 
+    }, 
+	description = 'Working on glossaries (dictionary databases) using python.', 
+	author = 'Saeed Rasooli', 
+	author_email = 'saeed.gnu@gmail.com', 
+	license = 'GPLv3', 
+	url = 'https://github.com/ilius/pyglossary', 
+	scripts = [
+	    #'pyglossary.pyw',
+	], 
+	packages = [
+	    'pyglossary',
+    ], 
+	package_data = {
+	    'pyglossary': [
+	        'plugins/*.py',
+        ],
+    }, 
+	data_files = data_files, 
 	**py2exeoptions
 )
 
