@@ -24,11 +24,6 @@ from pyglossary.glossary import confPath, VERSION
 #from pyglossary.text_utils import printAsError ## No red color, plain
 from os.path import dirname, join, realpath
 
-try:
-    import ui
-except ImportError:
-    sys.path.insert(0, join(dirname(dirname(realpath(__file__))), 'share', 'pyglossary'))
-
 from ui.ui_cmd import COMMAND, printAsError, help, parseFormatOptionsStr
 
 
