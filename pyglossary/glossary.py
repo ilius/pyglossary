@@ -32,7 +32,8 @@ import warnings
 warnings.resetwarnings() ## ??????
 
 _myDir = dirname(__file__)
-
+if not isdir(_myDir):
+   _myDir = dirname(dirname(_myDir))
 
 
 plugDir = join(_myDir, 'plugins')

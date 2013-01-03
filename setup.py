@@ -52,6 +52,7 @@ if py2exe:
 	                ('ui',glob.glob('ui/*.py')),
 	                ('ui/glade',glob.glob('ui/glade/*')),
 	                ('res',glob.glob('res/*')),
+	                ('plugins',glob.glob('pyglossary/plugins/*')),
 	                ('doc/pyglossary',['doc/bgl_structure.svgz']),
 	                ('doc/pyglossary/non-gui_examples',
 	                        glob.glob('doc/non-gui_examples/*'))]
