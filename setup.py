@@ -23,7 +23,18 @@ class build_scripts(distutils_build_scripts):
             elif newpath.lower().endswith('.pyw'): newpath = newpath[:-4]
             if newer(script, newpath) or self.force:
                 self.copy_file(script, newpath)
-					
+                
+data_files = [('share/pyglossary',
+	                        ['about','license','help']),
+	                ('share/pyglossary/ui',glob.glob('ui/*.py')),
+	                ('share/pyglossary/ui/glade',glob.glob('ui/glade/*')),
+	                ('share/pyglossary/res',glob.glob('res/*')),
+	                ('share/doc/pyglossary',['doc/bgl_structure.svgz']),
+	                ('share/doc/pyglossary/non-gui_examples',
+	                        glob.glob('doc/non-gui_examples/*')),
+	                ('share/applications',['pyglossary.desktop']),
+	                ('share/pixmaps',['res/pyglossary.png'])]
+
 if py2exe:
 	py2exeoptions = {
 		'windows': [ {
@@ -33,14 +44,17 @@ if py2exe:
 		'zipfile': None,
 		'options': {
 			'py2exe': {
-				'compressed': 1,
-				'optimize': 2,
-				'ascii': 1,
-				'bundle_files': 3,
-				'packages': ['pyglossary','BeautifulSoup'],
+				'packages': ('pyglossary')
 			}
 		}
 	}
+	data_files = [('', ['about','license','help']),
+	                ('ui',glob.glob('ui/*.py')),
+	                ('ui/glade',glob.glob('ui/glade/*')),
+	                ('res',glob.glob('res/*')),
+	                ('doc/pyglossary',['doc/bgl_structure.svgz']),
+	                ('doc/pyglossary/non-gui_examples',
+	                        glob.glob('doc/non-gui_examples/*'))]
 else:
 	py2exeoptions = {}
 
@@ -57,15 +71,7 @@ setup(
 	scripts      = ['pyglossary.pyw'],
 	packages     = ['pyglossary'],
 	package_data = {'pyglossary': ['plugins/*.py']},
-	data_files   = [('share/pyglossary',
-	                        ['about','license','help']),
-	                ('share/pyglossary/ui',glob.glob('ui/*.py')),
-	                ('share/pyglossary/ui/glade',glob.glob('ui/glade/*')),
-	                ('share/pyglossary/res',glob.glob('res/*')),
-	                ('share/doc/pyglossary',['doc/bgl_structure.svgz']),
-	                ('share/doc/pyglossary/non-gui_examples',
-	                        glob.glob('doc/non-gui_examples/*')),
-	                ('share/applications',['pyglossary.desktop']),
-	                ('share/pixmaps',['res/pyglossary.png'])],
+	data_files   = data_files,
 	**py2exeoptions
 )
+
