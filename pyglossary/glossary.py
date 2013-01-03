@@ -18,7 +18,7 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-VERSION = '2012.01.25'
+VERSION = '2013.01.03'
 
 homePage = 'http://sourceforge.net/projects/pyglossary'
 
