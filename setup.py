@@ -56,6 +56,7 @@ setup(
 	url          = 'https://github.com/ilius/pyglossary',
 	scripts      = ['pyglossary.pyw'],
 	packages     = ['pyglossary'],
+	package_data = {'pyglossary': ['plugins/*.py']},
 	data_files   = [('share/pyglossary',
 	                        ['about','license','help']),
 	                ('share/pyglossary/ui',glob.glob('ui/*.py')),

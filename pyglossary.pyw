@@ -27,7 +27,7 @@ from os.path import dirname, join
 try:
     import ui
 except ImportError:
-    sys.path.insert(0, join(dirname(dirname(__file__)), 'share', 'pyglossary', 'ui'))
+    sys.path.insert(0, join(dirname(dirname(__file__)), 'share', 'pyglossary'))
 
 from ui.ui_cmd import COMMAND, printAsError, help, parseFormatOptionsStr
 
