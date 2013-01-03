@@ -100,7 +100,7 @@ setup(
 	    #'build_scripts': my_build_scripts, 
 	    'install': my_install, 
     }, 
-	description = 'Working on glossaries (dictionary databases) using python.', 
+	description = 'A tool for workig with dictionary databases', 
 	author = 'Saeed Rasooli', 
 	author_email = 'saeed.gnu@gmail.com', 
 	license = 'GPLv3', 
