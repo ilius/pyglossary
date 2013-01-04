@@ -153,7 +153,7 @@ class UI(Tix.Frame):
         'color_bg_out','color_bg_err','color_bg_edit','color_bg_dbe',\
         'color_font_out','color_font_err','color_font_edit','color_font_dbe',\
         'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs']## Reverse Options
-    prefSavePath = [confPath, '%s%src.py'%(srcDir, os.sep)]
+    prefSavePath = [confPath, join(srcDir, 'ui','rc.py')]
     def __init__(self, path='', **options):
         #global sys
         master = Tix.Tk()
@@ -726,7 +726,7 @@ class UI(Tix.Frame):
     def r_finished(self):
         pass
     def pref_load(self, *args):
-        exec(open(join(srcDir, 'rc.py')).read())
+        exec(open(join(srcDir, 'ui','rc.py')).read())
         if save==0:
             try:
                 fp = open(self.prefSavePath[0])
@@ -754,6 +754,7 @@ if __name__=='__main__':
         path = sys.argv[1]
     else:
         path = ''
-    ui = UI(path)
+    ui = TkInterface(path)
     ui.run()
+
 
