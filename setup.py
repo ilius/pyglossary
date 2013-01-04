@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
 
 try:
-	import py2exe
+    import py2exe
 except ImportError:
-	py2exe = None
+    py2exe = None
 
 import glob
 import os
@@ -44,30 +44,30 @@ data_files = [
 ]
 
 if py2exe:
-	py2exeoptions = {
-		'windows': [
-		    {
-			    'script': 'pyglossary.pyw', 
-			    'icon_resources': [
-			        (1, 'res/pyglossary.ico'),
-		        ],
-		    }
-		], 
-		'zipfile': None, 
-		'options': {
-			'py2exe': {
-				'packages': [
-				    'pyglossary',
-				    'Tkinter', 'tkFileDialog', 'Tix',
-			    ],
-			},
-		},
-	}
-	data_files = [
-	    ('', [
-	        'about',
-	        'license',
-	        'help',
+    py2exeoptions = {
+        'windows': [
+            {
+                'script': 'pyglossary.pyw', 
+                'icon_resources': [
+                    (1, 'res/pyglossary.ico'),
+                ],
+            }
+        ], 
+        'zipfile': None, 
+        'options': {
+            'py2exe': {
+                'packages': [
+                    'pyglossary',
+                    'Tkinter', 'tkFileDialog', 'Tix',
+                ],
+            },
+        },
+    }
+    data_files = [
+        ('', [
+            'about',
+            'license',
+            'help',
             'pyglossary.pyw',
         ]), 
         ('ui', glob.glob('ui/*.py')), 
@@ -80,32 +80,32 @@ if py2exe:
         ('doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')),
     ]
 else:
-	py2exeoptions = {}
+    py2exeoptions = {}
 
 
 setup(
-	name = 'pyglossary', 
-	version = VERSION, 
-	cmdclass = {
-	    'install': my_install, 
+    name = 'pyglossary', 
+    version = VERSION, 
+    cmdclass = {
+        'install': my_install, 
     }, 
-	description = 'A tool for workig with dictionary databases', 
-	author = 'Saeed Rasooli', 
-	author_email = 'saeed.gnu@gmail.com', 
-	license = 'GPLv3', 
-	url = 'https://github.com/ilius/pyglossary', 
-	scripts = [
-	    #'pyglossary.pyw',
-	], 
-	packages = [
-	    'pyglossary',
+    description = 'A tool for workig with dictionary databases', 
+    author = 'Saeed Rasooli', 
+    author_email = 'saeed.gnu@gmail.com', 
+    license = 'GPLv3', 
+    url = 'https://github.com/ilius/pyglossary', 
+    scripts = [
+        #'pyglossary.pyw',
     ], 
-	package_data = {
-	    'pyglossary': [
-	        'plugins/*.py',
+    packages = [
+        'pyglossary',
+    ], 
+    package_data = {
+        'pyglossary': [
+            'plugins/*.py',
         ],
     }, 
-	data_files = data_files, 
-	**py2exeoptions
+    data_files = data_files, 
+    **py2exeoptions
 )
 
