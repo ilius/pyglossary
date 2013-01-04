@@ -2,13 +2,11 @@ from os.path import realpath, dirname, join, isdir
 import sys
 
 srcDir = ''
-if __file__:
-    srcDir = dirname(realpath(__file__))
-    rootDir = dirname(srcDir)
+
+if hasattr(sys, 'frozen'):
+   rootDir = dirname(sys.executable)
+   srcDir = join(rootDir, 'ui')
 else:
-    #rootDir = '/usr/share/pyglossary'
-    rootDir = dirname(sys.executable)
-    srcDir = join(rootDir, 'ui')
-
-
+   srcDir = dirname(realpath(__file__))
+   rootDir = dirname(srcDir)
 
