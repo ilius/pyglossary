@@ -4,13 +4,11 @@ import sys
 srcDir = ''
 if __file__:
     srcDir = dirname(realpath(__file__))
-if not srcDir:
-    srcDir = '/usr/share/pyglossary'
-if not isdir(srcDir):
-    srcDir = rootDir = dirname(sys.executable)
-else:
     rootDir = dirname(srcDir)
-
+else:
+    #rootDir = '/usr/share/pyglossary'
+    rootDir = dirname(sys.executable)
+    srcDir = join(rootDir, 'ui')
 
 
 

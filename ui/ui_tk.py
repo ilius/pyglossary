@@ -153,7 +153,7 @@ class UI(Tix.Frame):
         'color_bg_out','color_bg_err','color_bg_edit','color_bg_dbe',\
         'color_font_out','color_font_err','color_font_edit','color_font_dbe',\
         'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs']## Reverse Options
-    prefSavePath = [confPath, join(srcDir, 'ui','rc.py')]
+    prefSavePath = [confPath, join(srcDir, 'rc.py')]
     def __init__(self, path='', **options):
         #global sys
         master = Tix.Tk()
@@ -445,7 +445,7 @@ class UI(Tix.Frame):
         about = Tix.Toplevel(width=600)## bg='#0f0' does not work
         about.title('About PyGlossary')
         about.resizable(False, False)
-        about.wm_iconbitmap('@%s%spyglossary.xbm'%(srcDir,os.sep))
+        about.wm_iconbitmap('@%s%s'%xbmLogo)
         ###
         msg1=Tix.Message(
             about,
@@ -726,7 +726,7 @@ class UI(Tix.Frame):
     def r_finished(self):
         pass
     def pref_load(self, *args):
-        exec(open(join(srcDir, 'ui','rc.py')).read())
+        exec(open(join(srcDir, 'rc.py')).read())
         if save==0:
             try:
                 fp = open(self.prefSavePath[0])
