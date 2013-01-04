@@ -1,12 +1,12 @@
 #!/usr/bin/env python2
 
 try:
-	import py2exe
+    import py2exe
 except ImportError:
-	py2exe = None
+    py2exe = None
 
 import glob, os, sys
-from os.path import join
+from os.path import join, dirname
 
 from distutils.core import setup
 from distutils.command.install import install
@@ -28,10 +28,10 @@ class my_install(install):
 
 data_files = [
     (relRootDir, [
-        'about',
-        'license',
-        'help',
-        'pyglossary.pyw',
+        'about', 
+        'license', 
+        'help', 
+        'pyglossary.pyw', 
     ]), 
     (relRootDir+'/ui', glob.glob('ui/*.py')), 
     (relRootDir+'/ui/glade', glob.glob('ui/glade/*')), 
@@ -39,7 +39,7 @@ data_files = [
     ('share/doc/pyglossary', ['doc/bgl_structure.svgz']), 
     ('share/doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')), 
     ('share/applications', ['pyglossary.desktop']), 
-    ('share/pixmaps', ['res/pyglossary.png']),
+    ('share/pixmaps', ['res/pyglossary.png']), 
 ]
 
 def files(folder):
@@ -47,62 +47,68 @@ def files(folder):
         if os.path.isfile(path):
             yield path
 if py2exe:
-	py2exeoptions = {
-		'windows': [
-		    {
-			    'script': 'pyglossary.pyw', 
-			    'icon_resources': [
-			        (1, 'res/pyglossary.ico'),
-		        ],
-		    }
-		], 
-		'zipfile': None, 
-		'options': {'py2exe': {
-                      'packages': ['pyglossary','BeautifulSoup','Tkinter',
-                                   'xml','ui'],
-		  },
-		},
-	}
-	data_files = [
-        ('tcl/tix8.1', files(join(sys.prefix,'tcl','tix8.4.3'))),
-        ('tcl/tix8.1/bitmaps', files(join(sys.prefix,'tcl','tix8.4.3','bitmaps'))),
-        ('tcl/tix8.1/pref', files(join(sys.prefix,'tcl','tix8.4.3','pref'))),
-        ('', ['about','license','help']), 
+    py2exeoptions = {
+        'windows': [
+            {
+                'script': 'pyglossary.pyw', 
+                'icon_resources': [
+                    (1, 'res/pyglossary.ico'), 
+                ], 
+            },
+        ], 
+        'zipfile': None, 
+        'options': {
+            'py2exe': {
+                'packages': [
+                    'pyglossary',
+                    'BeautifulSoup',
+                    'Tkinter', 
+                    'xml',
+                    'ui',
+                ], 
+            }, 
+        }, 
+    }
+    data_files = [
+        ('tcl/tix8.1', files(join(sys.prefix, 'tcl', 'tix8.4.3'))), 
+        ('tcl/tix8.1/bitmaps', files(join(sys.prefix, 'tcl', 'tix8.4.3', 'bitmaps'))), 
+        ('tcl/tix8.1/pref', files(join(sys.prefix, 'tcl', 'tix8.4.3', 'pref'))), 
+        ('', ['about', 'license', 'help']), 
         ('ui', glob.glob('ui/*.py')), 
         ('ui/glade', glob.glob('ui/glade/*')), 
         ('res', glob.glob('res/*')), 
         ('plugins', glob.glob('pyglossary/plugins/*')), 
-        ('doc/pyglossary', ['doc/bgl_structure.svgz',]), 
-        ('doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')),
+        ('doc/pyglossary', ['doc/bgl_structure.svgz', ]), 
+        ('doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')), 
     ]
 else:
-	py2exeoptions = {}
+    py2exeoptions = {}
 
 
 setup(
-	name = 'pyglossary', 
-	version = VERSION, 
-	cmdclass = {
-	    'install': my_install, 
+    name = 'pyglossary', 
+    version = VERSION, 
+    cmdclass = {
+        'install': my_install, 
     }, 
-	description = 'A tool for workig with dictionary databases', 
-	author = 'Saeed Rasooli', 
-	author_email = 'saeed.gnu@gmail.com', 
-	license = 'GPLv3', 
-	url = 'https://github.com/ilius/pyglossary', 
-	scripts = [
-	    #'pyglossary.pyw',
-	], 
-	packages = [
-	    'pyglossary',
+    description = 'A tool for workig with dictionary databases', 
+    author = 'Saeed Rasooli', 
+    author_email = 'saeed.gnu@gmail.com', 
+    license = 'GPLv3', 
+    url = 'https://github.com/ilius/pyglossary', 
+    scripts = [
+        #'pyglossary.pyw', 
     ], 
-	package_data = {
-	    'pyglossary': [
-	        'plugins/*.py',
-        ],
+    packages = [
+        'pyglossary', 
+    ], 
+    package_data = {
+        'pyglossary': [
+            'plugins/*.py', 
+        ], 
     }, 
-	data_files = data_files, 
-	**py2exeoptions
+    data_files = data_files, 
+    **py2exeoptions
 )
 
 
