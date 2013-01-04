@@ -61,9 +61,9 @@ if py2exe:
             'py2exe': {
                 'packages': [
                     'pyglossary',
-                    'ui',
-                    'BeautifulSoup',
-                    'xml',
+                    'ui.ui_tk',
+                    #'BeautifulSoup',
+                    #'xml',
                     'Tkinter',
                     'tkFileDialog',
                     'Tix',
