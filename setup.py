@@ -6,8 +6,9 @@ except ImportError:
     py2exe = None
 
 import glob
+import sys
 import os
-from os.path import join
+from os.path import join, dirname
 
 from distutils.core import setup
 from distutils.command.install import install
@@ -44,6 +45,7 @@ data_files = [
 ]
 
 if py2exe:
+    #sys.path.append(dirname(__file__))
     py2exeoptions = {
         'windows': [
             {
@@ -59,6 +61,7 @@ if py2exe:
                 'packages': [
                     'pyglossary',
                     'Tkinter', 'tkFileDialog', 'Tix',
+                    #'ui',
                 ],
             },
         },

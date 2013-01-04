@@ -26,6 +26,12 @@ from os.path import dirname, join, realpath
 
 from ui.ui_cmd import COMMAND, printAsError, help, parseFormatOptionsStr
 
+def myRaise(File=None):
+    i = sys.exc_info()
+    if File==None:
+        sys.stderr.write('line %s: %s: %s'%(i[2].tb_lineno, i[0].__name__, i[1]))
+    else:
+        sys.stderr.write('File "%s", line %s: %s: %s'%(File, i[2].tb_lineno, i[0].__name__, i[1]))
 
 def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
     parts = text.split('-')
@@ -152,6 +158,13 @@ for (opt, opt_arg) in options:
 ## -v (verbose or version?)
 ## -r (reverse or read-options)
 
+sys.stderr.write('sys.path = %s\n\n'%sys.path)
+## sys.argv == ['I:\\dist\\pyglossary.ex']
+## __file__ is not defined
+#print '__file__ = %s'%__file__
+#print
+#for fname in os.listdir(dirname(__file__)):
+#    print fname
 
 if ui_type == 'cmd':
     import ui_cmd
@@ -171,7 +184,7 @@ else:
             try:
                 ui_module = getattr(__import__('ui.ui_%s'%ui_type2), 'ui_%s'%ui_type2)
             except ImportError:
-                pass
+                myRaise()
             else:
                 break
         if ui_module==None:
