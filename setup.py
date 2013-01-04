@@ -61,10 +61,12 @@ if py2exe:
             'py2exe': {
                 'packages': [
                     'pyglossary',
-                    'BeautifulSoup',
-                    'Tkinter', 
-                    'xml',
                     'ui',
+                    'BeautifulSoup',
+                    'xml',
+                    'Tkinter',
+                    'tkFileDialog',
+                    'Tix',
                 ], 
             }, 
         }, 
