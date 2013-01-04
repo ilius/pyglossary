@@ -72,25 +72,4 @@ def write(glos, filename, writeInfo=True):
         ext='.txt',
     )
 
-def write_2(glos, filename):
-    from xml.sax.saxutils import XMLGenerator
-    from xml.sax.xmlreader import AttributesNSImpl
-    fp = open(filename, 'wb')
-    xmlFile = XMLGenerator(fp, 'utf-8')
-    attrs = AttributesNSImpl({}, {})
-    for item in glos.data:
-        """
-        try:
-            tmpXmlFile.characters(item[1])
-        except:
-            myRaise(__file__)
-            printAsError('While writing xdb. an error on word "%s"'%item[0])
-            continue
-        """
-        xmlFile.characters(unicode(item[0]))
-        xmlFile.characters(u'\t')
-        xmlFile.characters(unicode(item[1]))
-        #xmlFile.characters(u'\n')
-    xmlFile.endDocument()
-    fp.close()
 

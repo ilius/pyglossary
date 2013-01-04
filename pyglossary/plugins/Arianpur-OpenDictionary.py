@@ -8,7 +8,6 @@ writeOptions = []
 
 ##################################
 
-from xml.etree.ElementTree import XML
 import time
 
 phoneticColor = '909090'
@@ -28,6 +27,7 @@ def clean(text):
 ##################################
 
 def read(glos, filename):
+    from xml.etree.ElementTree import XML
     print 'Loading XML tree...'
     tm0 = time.time()
     tree = XML(file(filename).read())
