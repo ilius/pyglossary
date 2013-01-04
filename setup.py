@@ -56,9 +56,10 @@ if py2exe:
 		'zipfile': None, 
 		'options': {
 			'py2exe': {
-				'packages': (
+				'packages': [
 				    'pyglossary',
-			    ),
+				    'Tkinter', 'tkFileDialog', 'Tix',
+			    ],
 			},
 		},
 	}
@@ -67,6 +68,7 @@ if py2exe:
 	        'about',
 	        'license',
 	        'help',
+            'pyglossary.pyw',
         ]), 
         ('ui', glob.glob('ui/*.py')), 
         ('ui/glade', glob.glob('ui/glade/*')), 
