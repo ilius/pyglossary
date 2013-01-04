@@ -200,7 +200,7 @@ class UI(Tix.Frame):
         label.pack(side='left')
         ##
         comboVar = tk.StringVar()
-        combo = tk.OptionMenu(frame, comboVar, Glossary.readDesc)
+        combo = tk.OptionMenu(frame, comboVar, *Glossary.readDesc)
         #comboVar.set(Glossary.readDesc[0])
         comboVar.set(noneItem)
         combo.pack(side='left')
@@ -250,7 +250,7 @@ class UI(Tix.Frame):
         label.pack(side='left')
         ##
         comboVar = tk.StringVar()
-        combo = tk.OptionMenu(frame, comboVar, Glossary.writeDesc)
+        combo = tk.OptionMenu(frame, comboVar, *Glossary.writeDesc)
         #comboVar.set(Glossary.writeDesc[0])
         comboVar.set(noneItem)
         combo.pack(side='left')
@@ -379,7 +379,7 @@ class UI(Tix.Frame):
         label.pack(side='left')
         ##
         comboVar = tk.StringVar()
-        combo = tk.OptionMenu(frame, comboVar, Glossary.readDesc)
+        combo = tk.OptionMenu(frame, comboVar, *Glossary.readDesc)
         #comboVar.set(Glossary.readDesc[0])
         comboVar.set(noneItem)
         combo.pack(side='left')
