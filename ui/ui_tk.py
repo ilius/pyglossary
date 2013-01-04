@@ -754,6 +754,6 @@ if __name__=='__main__':
         path = sys.argv[1]
     else:
         path = ''
-    ui = TkInterface(path)
+    ui = UI(path)
     ui.run()
 
