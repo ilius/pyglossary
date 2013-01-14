@@ -19,9 +19,9 @@
 ## GNU General Public License for more details.
 
 import shutil, sys, os
-from text_utils import urlToPath, click_website, printAsError, myRaise, startRed, endFormat
-from glossary import *
-from ui_base import UIBase
+from pyglossary.text_utils import urlToPath, click_website, printAsError, myRaise, startRed, endFormat
+from pyglossary.glossary import *
+from base import *
 import gtk, gtk.glade
 
 
@@ -102,7 +102,7 @@ class UI(UIBase):
             #    print(name)
                 #sys.exit(1)
     def __init__(self, editPath='', **options):
-        self.xml= gtk.glade.XML(os.path.join(srcDir,'glade','maindialog.glade'))
+        self.xml= gtk.glade.XML(os.path.join(rootDir,'ui','glade','maindialog.glade'))
         self.d = self.xml.get_widget('maindialog')
         self.d.connect('delete-event', self.close_button_clicked)
         self.about_init()
@@ -1324,7 +1324,7 @@ class FileChooserDialog:
     def __init__(self, main, path='', combo_items=[], action='open', multiple=False):
         self.main = main
         (stderr, sys.stderr) = (sys.stderr, sys.__stderr__)
-        self.xml = gtk.glade.XML(join(srcDir, 'glade', 'filechooserdialog.glade'))
+        self.xml = gtk.glade.XML(join(rootDir, 'glade', 'filechooserdialog.glade'))
         sys.stderr = stderr
         self.fd = self.xml.get_widget('filechooserdialog')
         self.fd.set_action(action)

@@ -18,7 +18,7 @@
 
 
 from glossary import *
-from ui_base import UIBase
+from base import *
 from os.path import join
 
 from PyQt4 import QtGui as qt

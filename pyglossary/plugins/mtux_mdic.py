@@ -51,7 +51,7 @@ def read(glos, filename):
     return True
 
 def read_2(glos, filename):
-    import alchemy
+    import pyglossary.alchemy as alchemy
     return alchemy.readSqlite(glos, filename)
 
 def write_ext(glos, filename):
@@ -106,11 +106,11 @@ def write_ext(glos, filename):
 
 
 def write_2(glos, filename):
-    import alchemy
+    import pyglossary.alchemy as alchemy
     alchemy.writeSqlite(glos, filename)
 
 def write_3(glos, filename):
-    import exir
+    import pyglossary.exir as exir
     exir.writeSqlite_ex(glos, filename)
     return True
 

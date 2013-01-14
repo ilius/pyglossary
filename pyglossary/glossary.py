@@ -18,12 +18,12 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-VERSION = '2012.01.25'
+VERSION = '2013.01.03'
 
 homePage = 'http://sourceforge.net/projects/pyglossary'
 
 import os, sys, platform, time, subprocess, shutil, re
-from os.path import split, join, splitext, isdir
+from os.path import split, join, splitext, isdir, dirname
 
 from text_utils import myRaise, printAsError, faEditStr, replacePostSpaceChar, removeTextTags,\
                        takeStrWords, findWords, findAll, addDefaultOptions
@@ -31,29 +31,12 @@ from text_utils import myRaise, printAsError, faEditStr, replacePostSpaceChar, r
 import warnings
 warnings.resetwarnings() ## ??????
 
-srcDir = ''
-if __file__:
-    srcDir = os.path.dirname(os.path.realpath(__file__))
-if not srcDir:
-    srcDir = '/usr/share/pyglossary/src'
-rootDir = os.path.dirname(srcDir)
+_myDir = dirname(__file__)
+if not isdir(_myDir):
+   _myDir = dirname(dirname(_myDir))
 
 
-aboutText = open(join(rootDir, 'about')).read()
-licenseText = open(join(rootDir, 'license')).read()
-
-logo = join(srcDir, 'pyglossary.png')
-
-if sys.version_info[:2] == (2, 5): ## ???????????????????????
-    libDir = join(rootDir, 'dependencies', 'py2.5-lib')
-    if isdir(libDir):
-        sys.path.append(libDir)
-    ########
-    libDir = join(rootDir, 'lib')
-    if isdir(libDir):
-        sys.path.append(libDir)
-
-plugDir = join(rootDir, 'plugins')
+plugDir = join(_myDir, 'plugins')
 if isdir(plugDir):
     sys.path.append(plugDir)
 else:
@@ -283,7 +266,7 @@ class Glossary:
                     delFile = True
             elif ext=='.zip':
                 (output, error) = subprocess.Popen(
-                    ['unzip', filename, '-d', os.path.dirname(filename)],
+                    ['unzip', filename, '-d', dirname(filename)],
                     stdout=subprocess.PIPE
                 ).communicate()
                 if error:

@@ -17,7 +17,8 @@
 ## GNU General Public License for more details.
 
 
-from glossary import *
+from pyglossary.glossary import *
+from base import *
 from os.path import join
 
 import Tkinter as tk
@@ -36,6 +37,8 @@ psyco_found = None
 
 noneItem = 'Not Selected'
 
+
+xbmLogo = join(rootDir, 'res', 'pyglossary.xbm')
 
 class TkTextFile(object):
     def __init__(self, tktext, mode):
@@ -150,7 +153,7 @@ class UI(Tix.Frame):
         'color_bg_out','color_bg_err','color_bg_edit','color_bg_dbe',\
         'color_font_out','color_font_err','color_font_edit','color_font_dbe',\
         'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs']## Reverse Options
-    prefSavePath = [confPath, '%s%src.py'%(srcDir, os.sep)]
+    prefSavePath = [confPath, join(srcDir, 'rc.py')]
     def __init__(self, path='', **options):
         #global sys
         master = Tix.Tk()
@@ -158,9 +161,9 @@ class UI(Tix.Frame):
         master.title('PyGlossary (Tkinter)')
         master.resizable(True, False)
         ########
-        #icon = Tix.BitmapImage(file='%s%spyglossary.xbm'%(srcDir,os.sep))
+        #icon = Tix.BitmapImage(file=xbmLogo)
         #master.wm_iconbitmap(icon)
-        #master.wm_iconbitmap('%s%spyglossary.xbm'%(srcDir,os.sep))
+        #master.wm_iconbitmap(xbmLogo)
         #bit = Tix.PhotoImage(file='%s%spyglossary.gif'%(srcDir,os.sep), format='gif')
         #lb = Tix.Label(None,image=bit)
         #lb.grid()
@@ -171,7 +174,7 @@ class UI(Tix.Frame):
         #for x in dir(master):
         #    if 'wm_' in x:
         #        print x
-        master.wm_iconbitmap('@%s%spyglossary.xbm'%(srcDir,os.sep))
+        master.wm_iconbitmap('@%s'%xbmLogo)
         ########
         self.pack(fill='x')
         #master.bind('<Configure>', self.resized)
@@ -442,7 +445,7 @@ class UI(Tix.Frame):
         about = Tix.Toplevel(width=600)## bg='#0f0' does not work
         about.title('About PyGlossary')
         about.resizable(False, False)
-        about.wm_iconbitmap('@%s%spyglossary.xbm'%(srcDir,os.sep))
+        about.wm_iconbitmap('@%s%s'%xbmLogo)
         ###
         msg1=Tix.Message(
             about,
@@ -501,7 +504,7 @@ class UI(Tix.Frame):
         about = Tix.Toplevel()## bg='#0f0' does not work
         about.title('PyGlossary License')
         about.resizable(False, False)
-        about.wm_iconbitmap('@%s%spyglossary.xbm'%(srcDir,os.sep))
+        about.wm_iconbitmap('@%s'%xbmLogo)
         ###
         msg1 = Tix.Message(
             about,
@@ -751,6 +754,7 @@ if __name__=='__main__':
         path = sys.argv[1]
     else:
         path = ''
-    ui = TkInterface(path)
+    ui = UI(path)
     ui.run()
+
 

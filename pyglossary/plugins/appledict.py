@@ -24,12 +24,12 @@ extentions = ['.xml']
 readOptions = []
 writeOptions = []
 
-from BeautifulSoup import BeautifulSoup
 
 import os
 import re
 
 def write_plist(glos, filename):
+    from BeautifulSoup import BeautifulSoup
     f = open(filename, 'w')
     basename = os.path.splitext(os.path.basename(filename))[0]
     # identifier must be unique
@@ -62,6 +62,7 @@ def write_plist(glos, filename):
     f.close()
 
 def write_xml(glos, filename):
+    from BeautifulSoup import BeautifulSoup
     # progress bar
     ui = glos.ui
     if ui:

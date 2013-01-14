@@ -19,11 +19,19 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-import os, sys, getopt
-from glossary import confPath, VERSION
-from ui_cmd import COMMAND, printAsError, help, parseFormatOptionsStr
-#from text_utils import printAsError ## No red color, plain
+import os, sys, getopt, __builtin__
+from pyglossary.glossary import confPath, VERSION
+#from pyglossary.text_utils import printAsError ## No red color, plain
+from os.path import dirname, join, realpath
 
+from ui.ui_cmd import COMMAND, printAsError, help, parseFormatOptionsStr
+
+def myRaise(File=None):
+    i = sys.exc_info()
+    if File==None:
+        sys.stderr.write('line %s: %s: %s'%(i[2].tb_lineno, i[0].__name__, i[1]))
+    else:
+        sys.stderr.write('File "%s", line %s: %s: %s'%(File, i[2].tb_lineno, i[0].__name__, i[1]))
 
 def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
     parts = text.split('-')
@@ -50,9 +58,6 @@ if os.path.isfile(use_psyco_file):
         psyco.full()
         print('Using module "psyco" to speed up execution.')
         psyco_found = True
-
-
-
 
 available_options = [
     'version',
@@ -153,6 +158,13 @@ for (opt, opt_arg) in options:
 ## -v (verbose or version?)
 ## -r (reverse or read-options)
 
+sys.stderr.write('sys.path = %s\n\n'%sys.path)
+## sys.argv == ['I:\\dist\\pyglossary.ex']
+## __file__ is not defined
+#print '__file__ = %s'%__file__
+#print
+#for fname in os.listdir(dirname(__file__)):
+#    print fname
 
 if ui_type == 'cmd':
     import ui_cmd
@@ -170,16 +182,16 @@ else:
         ui_module = None
         for ui_type2 in ui_list:
             try:
-                ui_module = __import__('ui_%s'%ui_type2)
+                ui_module = getattr(__import__('ui.ui_%s'%ui_type2), 'ui_%s'%ui_type2)
             except ImportError:
-                pass
+                myRaise()
             else:
                 break
         if ui_module==None:
             printAsError('no user interface module found!')
             sys.exit(1)
     else:
-        ui_module = __import__('ui_%s'%ui_type)
+        ui_module = getattr(__import__('ui.ui_%s'%ui_type), 'ui_%s'%ui_type)
     sys.exit(ui_module.UI(ipath, **ui_options).run())
     ## don't forget to append "**options" at every UI.__init__ arguments
 
