@@ -1324,7 +1324,7 @@ class FileChooserDialog:
     def __init__(self, main, path='', combo_items=[], action='open', multiple=False):
         self.main = main
         (stderr, sys.stderr) = (sys.stderr, sys.__stderr__)
-        self.xml = gtk.glade.XML(join(rootDir, 'glade', 'filechooserdialog.glade'))
+        self.xml = gtk.glade.XML(join(rootDir, 'ui', 'glade', 'filechooserdialog.glade'))
         sys.stderr = stderr
         self.fd = self.xml.get_widget('filechooserdialog')
         self.fd.set_action(action)
