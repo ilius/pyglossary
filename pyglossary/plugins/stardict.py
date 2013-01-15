@@ -12,7 +12,7 @@ supportsAlternates = True
 import sys, os, re, shutil, os.path
 sys.path.append('/usr/share/pyglossary/src')
 
-from text_utils import intToBinStr, binStrToInt, runDictzip, printAsError
+from pyglossary.text_utils import intToBinStr, binStrToInt, runDictzip, printAsError
 
 infoKeys = ('bookname', 'author', 'email', 'website', 'description', 'date')
 

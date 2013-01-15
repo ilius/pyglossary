@@ -13,7 +13,7 @@ writeOptions = [
     'install',
 ]
 
-from text_utils import chBaseIntToList, runDictzip
+from pyglossary.text_utils import chBaseIntToList, runDictzip
 import shutil
 
 b64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'

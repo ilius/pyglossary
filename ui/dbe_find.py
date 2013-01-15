@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import gtk
@@ -91,11 +92,8 @@ class DbEditorFindDialog(gtk.Dialog):
 
 ## Warn when replacing in all entries, and show number of occurrences
 
-
-
-
 if __name__=='__main__':
-    from glossary import Glossary
+    from pyglossary.glossary import Glossary
     glos = Glossary()
     DbEditorFindDialog(glos).run()
 

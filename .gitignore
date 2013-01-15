@@ -1,2 +1,12 @@
 *~
-*.pyc
+*.py[oc]
+.cache
+.cdtproject
+.cproject
+.project
+.pydevproject
+config/IBSng.conf
+.metadata
+.settings
+build
+dist

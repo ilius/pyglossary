@@ -17,7 +17,12 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from glossary import *
+from paths import srcDir, rootDir
+from pyglossary.glossary import *
+
+logo = join(rootDir, 'res', 'pyglossary.png')
+aboutText = open(join(rootDir, 'about')).read()
+licenseText = open(join(rootDir, 'license')).read()
 
 class UIBase:
     prefSavePath = [confPath, '%s%src.py'%(srcDir,os.sep)]

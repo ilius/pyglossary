@@ -20,8 +20,8 @@
 
 from os.path import join
 
-from glossary import *
-from ui_base import UIBase
+from pyglossary.glossary import *
+from base import *
 import progressbar as pb
 
 

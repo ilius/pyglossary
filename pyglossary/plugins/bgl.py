@@ -53,11 +53,11 @@ supportsAlternates = True
 
 
 
-import gzip, re, htmlentitydefs, xml.sax.saxutils, pickle
+import gzip, re, htmlentitydefs, pickle
 
-from text_utils import printAsError, printAsWarning, myRaise, binStrToInt, excMessage, \
-    isASCII, isControlChar, name2codepoint, printByteStr, intToBinStr
-import pyglossary_gregorian as gregorian
+from pyglossary.text_utils import printAsError, printAsWarning, myRaise, binStrToInt, excMessage, \
+    isASCII, isControlChar, name2codepoint, printByteStr, intToBinStr, escape
+import pyglossary.gregorian as gregorian
 
 # use this variable to vary verbosity of output for non-class members
 # see verbose parameter of BGL.__init__
@@ -241,7 +241,7 @@ def replace_html_entry(m):
     if m.group(0) == res: # conversion failed
         return res
     else:
-        return xml.sax.saxutils.escape(res)
+        return escape(res)
 
 def replace_dingbat(m):
     '''replace chars \u008c-\u0095 with \u2776-\u277f
@@ -2330,7 +2330,7 @@ class BGL:
             if fields.part_of_speech_str:
                 defi_format += '<font color="#{0}">{1}</font>'.format(
                     self.partOfSpeechColor,
-                    xml.sax.saxutils.escape(fields.part_of_speech_str),
+                    escape(fields.part_of_speech_str),
                 )
             if fields.utf8_title:
                 if defi_format:

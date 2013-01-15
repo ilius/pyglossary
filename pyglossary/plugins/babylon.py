@@ -14,7 +14,7 @@ writeOptions = [
     'encoding',
 ]
 
-from text_utils import recodeToWinArabic
+from pyglossary.text_utils import recodeToWinArabic
 
 def write(glos, filename, writeInfo=True, newline='', encoding=''):
     g = glos

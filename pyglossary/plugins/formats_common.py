@@ -13,5 +13,5 @@ from os.path import splitext
 from os.path import split as path_split
 from os.path import join as path_join
 
-from text_utils import myRaise, printAsError
+from pyglossary.text_utils import myRaise, printAsError
 
