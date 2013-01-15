@@ -158,13 +158,6 @@ for (opt, opt_arg) in options:
 ## -v (verbose or version?)
 ## -r (reverse or read-options)
 
-sys.stderr.write('sys.path = %s\n\n'%sys.path)
-## sys.argv == ['I:\\dist\\pyglossary.ex']
-## __file__ is not defined
-#print '__file__ = %s'%__file__
-#print
-#for fname in os.listdir(dirname(__file__)):
-#    print fname
 
 if ui_type == 'cmd':
     import ui_cmd
@@ -184,7 +177,7 @@ else:
             try:
                 ui_module = getattr(__import__('ui.ui_%s'%ui_type2), 'ui_%s'%ui_type2)
             except ImportError:
-                myRaise()
+                myRaise()## FIXME
             else:
                 break
         if ui_module==None:

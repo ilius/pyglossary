@@ -28,18 +28,18 @@ class my_install(install):
 
 data_files = [
     (relRootDir, [
-        'about', 
-        'license', 
-        'help', 
-        'pyglossary.pyw', 
-    ]), 
-    (relRootDir+'/ui', glob.glob('ui/*.py')), 
-    (relRootDir+'/ui/glade', glob.glob('ui/glade/*')), 
-    (relRootDir+'/res', glob.glob('res/*')), 
-    ('share/doc/pyglossary', ['doc/bgl_structure.svgz']), 
-    ('share/doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')), 
-    ('share/applications', ['pyglossary.desktop']), 
-    ('share/pixmaps', ['res/pyglossary.png']), 
+        'about',
+        'license',
+        'help',
+        'pyglossary.pyw',
+    ]),
+    (relRootDir+'/ui', glob.glob('ui/*.py')),
+    (relRootDir+'/ui/glade', glob.glob('ui/glade/*')),
+    (relRootDir+'/res', glob.glob('res/*')),
+    ('share/doc/pyglossary', ['doc/bgl_structure.svgz']),
+    ('share/doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')),
+    ('share/applications', ['pyglossary.desktop']),
+    ('share/pixmaps', ['res/pyglossary.png']),
 ]
 
 def files(folder):
@@ -48,68 +48,71 @@ def files(folder):
             yield path
 if py2exe:
     py2exeoptions = {
+        'script_args': ['py2exe'],
+        'bundle_files': 1,
         'windows': [
             {
-                'script': 'pyglossary.pyw', 
+                'script': 'pyglossary.pyw',
                 'icon_resources': [
-                    (1, 'res/pyglossary.ico'), 
-                ], 
+                    (1, 'res/pyglossary.ico'),
+                ],
             },
-        ], 
-        'zipfile': None, 
+        ],
+        'zipfile': None,
         'options': {
             'py2exe': {
                 'packages': [
                     'pyglossary',
                     'ui.ui_tk',
+                    #'ui.ui_gtk',
                     #'BeautifulSoup',
                     #'xml',
-                    'Tkinter',
-                    'tkFileDialog',
-                    'Tix',
-                ], 
-            }, 
-        }, 
+                    'Tkinter', 'tkFileDialog', 'Tix',
+                    #'gtk', 'glib', 'gobject',
+                ],
+            },
+        },
     }
     data_files = [
-        ('tcl/tix8.1', files(join(sys.prefix, 'tcl', 'tix8.4.3'))), 
-        ('tcl/tix8.1/bitmaps', files(join(sys.prefix, 'tcl', 'tix8.4.3', 'bitmaps'))), 
-        ('tcl/tix8.1/pref', files(join(sys.prefix, 'tcl', 'tix8.4.3', 'pref'))), 
-        ('', ['about', 'license', 'help']), 
-        ('ui', glob.glob('ui/*.py')), 
-        ('ui/glade', glob.glob('ui/glade/*')), 
-        ('res', glob.glob('res/*')), 
-        ('plugins', glob.glob('pyglossary/plugins/*')), 
-        ('doc/pyglossary', ['doc/bgl_structure.svgz', ]), 
-        ('doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')), 
+        ('tcl/tix8.1', files(join(sys.prefix, 'tcl', 'tix8.4.3'))),
+        ('tcl/tix8.1/bitmaps', files(join(sys.prefix, 'tcl', 'tix8.4.3', 'bitmaps'))),
+        ('tcl/tix8.1/pref', files(join(sys.prefix, 'tcl', 'tix8.4.3', 'pref'))),
+        ('tcl/tcl8.1/init.tcl', [join(sys.prefix, 'tcl', 'tix8.4.3', 'init.tcl')]),
+        ('', ['about', 'license', 'help']),
+        ('ui', glob.glob('ui/*.py')),
+        ('ui/glade', glob.glob('ui/glade/*')),
+        ('res', glob.glob('res/*')),
+        ('plugins', glob.glob('pyglossary/plugins/*')),
+        ('doc/pyglossary', ['doc/bgl_structure.svgz', ]),
+        ('doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')),
     ]
 else:
     py2exeoptions = {}
 
 
 setup(
-    name = 'pyglossary', 
-    version = VERSION, 
+    name = 'pyglossary',
+    version = VERSION,
     cmdclass = {
-        'install': my_install, 
-    }, 
-    description = 'A tool for workig with dictionary databases', 
-    author = 'Saeed Rasooli', 
-    author_email = 'saeed.gnu@gmail.com', 
-    license = 'GPLv3', 
-    url = 'https://github.com/ilius/pyglossary', 
+        'install': my_install,
+    },
+    description = 'A tool for workig with dictionary databases',
+    author = 'Saeed Rasooli',
+    author_email = 'saeed.gnu@gmail.com',
+    license = 'GPLv3',
+    url = 'https://github.com/ilius/pyglossary',
     scripts = [
-        #'pyglossary.pyw', 
-    ], 
+        #'pyglossary.pyw',
+    ],
     packages = [
-        'pyglossary', 
-    ], 
+        'pyglossary',
+    ],
     package_data = {
         'pyglossary': [
-            'plugins/*.py', 
-        ], 
-    }, 
-    data_files = data_files, 
+            'plugins/*.py',
+        ],
+    },
+    data_files = data_files,
     **py2exeoptions
 )
 
