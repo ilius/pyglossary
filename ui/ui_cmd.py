@@ -192,11 +192,11 @@ class UI(UIBase):
     def run(self, ipath, opath='', read_format='', write_format='',
                   read_options={}, write_options={}, reverse=False):
         if read_format:
-            read_format = read_format.capitalize()
+            #read_format = read_format.capitalize()
             if not read_format in Glossary.readFormats:
                 printAsError('invalid read format %s'%read_format)
         if write_format:
-            write_format = write_format.capitalize()
+            #write_format = write_format.capitalize()
             if not write_format in Glossary.writeFormats:
                 printAsError('invalid write format %s'%write_format)
                 print 'try: %s --help'%COMMAND

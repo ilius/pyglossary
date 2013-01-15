@@ -1,4 +1,22 @@
 # -*- coding: utf-8 -*-
+## appledict.py
+## Output to Apple Dictionary xml sources for Dictionary Development Kit.
+##
+## Copyright (C) 2012 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+##
+## This program is a free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, version 3 of the License.
+##
+## You can get a copy of GNU General Public License along this program
+## But you can always get it from http://www.gnu.org/licenses/gpl.txt
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+
+
 enable = True
 format = 'AppleDict'
 description = 'AppleDict Source (xml)'
@@ -45,6 +63,11 @@ def write_plist(glos, filename):
 
 def write_xml(glos, filename):
     from BeautifulSoup import BeautifulSoup
+    # progress bar
+    ui = glos.ui
+    if ui:
+        ui.progressStart()
+
     f = open(filename, 'w')
 
     # write header
@@ -53,7 +76,8 @@ def write_xml(glos, filename):
 
     # write entries
     entry_ids= []
-    for item in glos.data:
+    total = len(glos.data)
+    for index,item in enumerate(glos.data):
         # strip double quotes and html tags
         title = re.sub('<[^<]+?>|"|[<>]', '', item[0])
         if not title:
@@ -69,7 +93,7 @@ def write_xml(glos, filename):
             alts = item[2]['alts']
         except:
             alts = []
-        
+
         # begin entry
         f.write('<d:entry id="%(id)s" d:title="%(title)s">\n'%{'id':id, 'title':title})
 
@@ -93,23 +117,29 @@ def write_xml(glos, filename):
         # end entry
         f.write('\n</d:entry>\n')
 
+        if index%1000==0 and ui:
+            ui.progress(1.0*index/total)
     # end dictionary
     f.write('</d:dictionary>\n')
     f.close()
+
+    # end progress bar
+    if ui:
+        ui.progressEnd()
 
 def write_css(fname):
     f = open(fname, "w")
     f.write("""
 @charset "UTF-8";
 @namespace d url(http://www.apple.com/DTDs/DictionaryService-1.0.rng);
- 
+
 d|entry {
 }
 
 h1  {
     font-size: 150%;
 }
- 
+
 h3  {
     font-size: 100%;
 }
