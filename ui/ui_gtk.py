@@ -66,11 +66,7 @@ class UI(UIBase):
         about = gtk.AboutDialog()
         about.set_name('PyGlossary')
         about.set_version(VERSION)
-        about.set_authors([	'Saeed Rasooli <saeed.gnu@gmail.com> (Maintainer & Supporter)',
-        			'Raul Fernandes <rgfbr@yahoo.com.br> (C++ code for BGL)',
-        			'Karl Grill (C++ code for BGL)',
-        			'Mehdi Bayazee <bayazee@gmail.com> (Program bgl2x.py)',
-        			'Nilton Volpato (Program python-progressbar)'])
+        about.set_authors(authors)
         about.set_comments(aboutText)
         #about.set_license('PyGlossary is licensed by GNU General Public License version 3 (or later)')
         vbox = about.get_children()[0].get_children()[0]
