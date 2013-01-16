@@ -64,7 +64,7 @@ COMMAND = 'pyglossary'
 
 
 def help():
-    text = open('%s%shelp'%(srcDir, os.sep)).read()\
+    text = open(join(rootDir, 'help')).read()\
         .replace('%CMD',COMMAND)\
         .replace('%SB',startBold)\
         .replace('%SU',startUnderline)\
