@@ -23,6 +23,8 @@ from pyglossary.glossary import *
 logo = join(rootDir, 'res', 'pyglossary.png')
 aboutText = open(join(rootDir, 'about')).read()
 licenseText = open(join(rootDir, 'license')).read()
+authors = open(join(rootDir, 'AUTHORS')).read().split('\n')
+
 
 class UIBase:
     prefSavePath = [confPath, '%s%src.py'%(srcDir,os.sep)]
