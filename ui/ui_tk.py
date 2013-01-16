@@ -445,7 +445,7 @@ class UI(Tix.Frame):
         about = Tix.Toplevel(width=600)## bg='#0f0' does not work
         about.title('About PyGlossary')
         about.resizable(False, False)
-        about.wm_iconbitmap('@%s%s'%xbmLogo)
+        about.wm_iconbitmap('@%s'%xbmLogo)
         ###
         msg1=Tix.Message(
             about,
