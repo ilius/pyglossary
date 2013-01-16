@@ -447,7 +447,7 @@ class UI(Tix.Frame):
         about.resizable(False, False)
         about.wm_iconbitmap('@%s'%xbmLogo)
         ###
-        msg1=Tix.Message(
+        msg1 = Tix.Message(
             about,
             width=350,
             text='PyGlossary %s (Tkinter)'%VERSION,
@@ -483,6 +483,50 @@ class UI(Tix.Frame):
         msg4.pack(fill='x', expand=True)
         ###########
         frame = Tix.Frame(about)
+        ###
+        button = Tix.Button(
+            frame,
+            text='Close',
+            command=about.destroy,
+            bg='#ff0000',
+            activebackground='#ff5050',
+        )
+        button.pack(side='right')
+        ###
+        button = Tix.Button(
+            frame,
+            text='License',
+            command=self.about_license_clicked,
+            bg='#00e000',
+            activebackground='#22f022',
+        )
+        button.pack(side='right')
+        ###
+        button = Tix.Button(
+            frame,
+            text='Credits',
+            command=self.about_credits_clicked,
+            bg='#0000ff',
+            activebackground='#5050ff',
+        )
+        button.pack(side='right')
+        ###
+        frame.pack(fill='x')
+    def about_credits_clicked(self):
+        about = Tix.Toplevel()## bg='#0f0' does not work
+        about.title('Credits')
+        about.resizable(False, False)
+        about.wm_iconbitmap('@%s'%xbmLogo)
+        ###
+        msg1 = Tix.Message(
+            about,
+            width=500,
+            text='\n'.join(authors),
+            font=('DejaVu Sans', 9, 'bold'),
+        )
+        msg1.pack(fill='x', expand=True)
+        ###########
+        frame = Tix.Frame(about)
         closeB = Tix.Button(
             frame,
             text='Close',
@@ -491,18 +535,10 @@ class UI(Tix.Frame):
             activebackground='#ff5050',
         )
         closeB.pack(side='right')
-        licenseB = Tix.Button(
-            frame,
-            text='License',
-            command=self.about_license_clicked,
-            bg='#f0f000',
-            activebackground='#f6f622',
-        )
-        licenseB.pack(side='right')
         frame.pack(fill='x')
     def about_license_clicked(self):
         about = Tix.Toplevel()## bg='#0f0' does not work
-        about.title('PyGlossary License')
+        about.title('License')
         about.resizable(False, False)
         about.wm_iconbitmap('@%s'%xbmLogo)
         ###
