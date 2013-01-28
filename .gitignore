@@ -5,7 +5,6 @@
 .cproject
 .project
 .pydevproject
-config/IBSng.conf
 .metadata
 .settings
 build
