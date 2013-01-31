@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+## http://www.octopus-studio.com/download.en.htm
 
 from formats_common import *
 
