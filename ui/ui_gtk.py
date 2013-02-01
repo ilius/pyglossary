@@ -97,7 +97,7 @@ class UI(UIBase):
             #except:
             #    print(name)
                 #sys.exit(1)
-    def __init__(self, editPath='', **options):
+    def __init__(self, **options):
         self.xml= gtk.glade.XML(os.path.join(rootDir,'ui','glade','maindialog.glade'))
         self.d = self.xml.get_widget('maindialog')
         self.d.connect('delete-event', self.close_button_clicked)
@@ -156,12 +156,14 @@ class UI(UIBase):
         ####################
         #self.d.show_all()
         #self.d.vbox.do_realize()
+    def run(self, editPath=None, read_options={}):
         if editPath:
             self.notebook1.set_current_page(3)
             print('Opening file "%s" for edit. please wait...'%editPath)
             while gtk.events_pending():
                 gtk.main_iteration_do(False)
-            self.dbe_open(editPath)
+            self.dbe_open(editPath, **read_options)
+        gtk.main()
     def textview_merge_changed(self, *args):
         (stderr, sys.stderr) = (sys.stderr, sys.__stderr__)
         b = self.merge_buffer
@@ -241,7 +243,6 @@ class UI(UIBase):
     #def maindialog_resized(self, *args):
     #    self.vpaned1.set_position(185)
     #    print(args)
-    run = lambda self: gtk.main()
     #ok_clicked=lambda self, *args: pass
     def apply_clicked(self, *args):
         i = self.tabIndex
@@ -783,7 +784,7 @@ class UI(UIBase):
         self.db_format = ''
         self.dbe_goto(0, save=False)
         self.dbe_save_as('')
-    def dbe_open(self, arg=None):
+    def dbe_open(self, arg=None, **read_options):
         format = ''
         if isinstance(arg, basestring):
             self.path = arg
@@ -805,10 +806,10 @@ class UI(UIBase):
         self.set_cursor(gtk.gdk.WATCH)
         t0 = time.time()
         if self.fcd_format in ('Auto (by extention)', ''):
-            self.glosE.read(self.dbe_path)
+            self.glosE.read(self.dbe_path, **read_options)
         else:
             format = Glossary.descFormat[self.fcd_format]
-            self.glosE.read(self.dbe_path, format=format)
+            self.glosE.read(self.dbe_path, format=format, **read_options)
         self.assert_quit = True
         self.glosE.uiEdit()
         if self.checkb_o_det.get_active():

@@ -158,7 +158,6 @@ for (opt, opt_arg) in options:
 ## -v (verbose or version?)
 ## -r (reverse or read-options)
 
-
 if ui_type == 'cmd':
     from ui import ui_cmd
     sys.exit(ui_cmd.UI(**ui_options).run(
@@ -185,6 +184,9 @@ else:
             sys.exit(1)
     else:
         ui_module = getattr(__import__('ui.ui_%s'%ui_type), 'ui_%s'%ui_type)
-    sys.exit(ui_module.UI(ipath, **ui_options).run())
+    sys.exit(ui_module.UI(**ui_options).run(
+        editPath=ipath,
+        read_options=read_options,
+    ))
     ## don't forget to append "**options" at every UI.__init__ arguments
 
