@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-## ui_main.py 
+## ui_main.py
 ##
 ## Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>    (ilius)
 ## This file is part of PyGlossary project, http://sourceforge.net/projects/pyglossary/
@@ -64,7 +64,7 @@ available_options = [
     'help',
     'ui=',
     'read-options=',
-    'write-options=', 
+    'write-options=',
     'read-format=',
     'write-format=',
     'reverse',
@@ -160,14 +160,14 @@ for (opt, opt_arg) in options:
 
 
 if ui_type == 'cmd':
-    import ui_cmd
+    from ui import ui_cmd
     sys.exit(ui_cmd.UI(**ui_options).run(
         ipath,
         opath=opath,
         read_format=read_format,
-        write_format=write_format, 
+        write_format=write_format,
         read_options=read_options,
-        write_options=write_options, 
+        write_options=write_options,
         reverse=reverse,
     ))
 else:
