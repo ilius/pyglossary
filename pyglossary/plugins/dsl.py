@@ -1,0 +1,140 @@
+# -*- coding: utf-8 -*-
+## dsl.py
+## Read ABBYY Lingvo DSL dictionary format
+##
+## Copyright (C) 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+##
+## This program is a free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, version 3 of the License.
+##
+## You can get a copy of GNU General Public License along this program
+## But you can always get it from http://www.gnu.org/licenses/gpl.txt
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+
+
+import codecs
+import re
+
+enable = True
+format = 'ABBYYLingvoDSL'
+description = 'ABBYY Lingvo DSL (dsl)'
+extentions = ['.dsl']
+readOptions = ['encoding','audio']
+writeOptions = []
+def _clean_tags(line, audio):
+    # remove {{...}} blocks
+    line = re.sub('\{\{[^}]*\}\}','', line)
+
+    # remove trn tags
+    line = re.sub('\[\/?!?tr[ns]\]', '', line)
+    # remove lang tags
+    line = re.sub('\[\/?lang[^\]]*\]', '', line)
+    # remove com tags
+    line = re.sub('\[/?com\]', '', line)
+    # remove t tags
+    line = re.sub('\[/?t\]', '<!-- T -->', line)
+    # remove m tags
+    line = re.sub('\[/?m\d*\]', '', line)
+    # remove * tags
+    line = re.sub('\[/?\*\]', '', line)
+    # remove ref tags
+    line = re.sub('\[/?ref[^]]*\]', '', line)
+
+    # remove <<>>, which is used to cross reference
+    line = re.sub('<<|>>', '', line)
+
+    line = re.sub("\[(/?)'\]", '<\g<1>u>', line)
+    line = re.sub('\[(/?)b\]', '<\g<1>b>', line)
+    line = re.sub('\[(/?)i\]', '<\g<1>i>', line)
+    line = re.sub('\[(/?)u\]', '<\g<1>u>', line)
+    line = re.sub('\[(/?)sup\]', '<\g<1>sup>', line)
+    line = re.sub('\[(/?)sub\]', '<\g<1>sub>', line)
+
+    line = re.sub('\[ex\]', '<span style="color:royalblue">', line)
+    line = re.sub('\[/ex\]', '</span>', line)
+
+    line = re.sub('\[p\]', '<span style="">', line)
+    line = re.sub('\[/p\]', '</span>', line)
+
+    line = re.sub('\[c\]', '<span style="color:green">', line)
+    line = re.sub('\[c (\w+)\]', '<span style="color:\g<1>">', line)
+    line = re.sub('\[/c\]', ' </span>', line)
+
+    # sound file
+    if audio:
+        sound_tag = '<object type="audio/x-wav" data="\g<1>\g<2>" width="40" height="40">' \
+                    '<param name="autoplay" value="false" />' \
+                    '</object>'
+    else:
+        sound_tag = ''
+    line = re.sub('\[s\]([^[]*?)(wav|mp3)\s*\[/s\]', sound_tag, line)
+
+    # image file
+    line = re.sub('\[s\]([^[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]',
+                  '<img src="\g<1>\g<2>" alt="\g<1>\g<2>" />', line)
+
+    # \[...\]
+    line = re.sub('\\\\(\[|\])', '\g<1>', line)
+    return line
+
+def read(glos, fname, **options):
+    encoding = options.get('encoding', 'utf-8')
+    audio = (options.get('audio', 'no') == 'yes')
+
+    f = codecs.open(fname, 'r', encoding)
+
+    current_key = ''
+    current_key_alters = []
+    current_text = []
+    line_type = 'header'
+
+    glos.data = []
+    for line in f:
+        line = line.encode('utf-8').rstrip()
+        if not line:
+            continue
+        # header
+        if line.startswith('#'):
+            if line.startswith('#NAME'):
+                glos.setInfo('title', line[6:])
+            elif line.startswith('#INDEX_LANGUAGE'):
+                glos.setInfo('sourceLang', line[16:])
+            elif line.startswith('#CONTENTS_LANGUAGE'):
+                glos.setInfo('targetLang', line[20:])
+            line_type = 'header'
+        # title word(s)
+        elif line[0] not in ['\t', ' ']:
+            # alternative titles
+            if line_type == 'title':
+                current_key_alters += [line]
+            # previous line type is text -> start new title
+            else:
+                # append previous entry
+                if line_type == 'text':
+                    glos.data += [(current_key, '\n'.join(current_text), {'alts' : current_key_alters})]
+                # start new entry
+                current_key = line
+                current_key_alters = []
+                current_text = []
+            line_type = 'title'
+        # texts
+        else:
+            # indent level
+            m = re.search('\[m(\d)\]', line)
+            if m:
+                indent = int(m.groups()[0])
+            else:
+                indent = 0
+            line = _clean_tags(line, audio)
+            current_text += ['<div style="margin-left:%dem">'%(indent) + line.lstrip() + '</div>']
+            line_type = 'text'
+    # last entry
+    if line_type == 'text':
+        glos.data += [(current_key, '\n'.join(current_text), {'alts' : current_key_alters})]
+
+    return glos
