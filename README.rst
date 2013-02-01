@@ -21,7 +21,7 @@ Convert Babylon (bgl) to Mac OS X dictionary
 Let's assume the Babylon dict is at ``~/Documents/Duden_Synonym/Duden_Synonym.BGL``::
 
     cd ~/Documents/Duden_Synonym/
-    ~/Software/pyglossary/pyglossary.sh --read-options=resPath=OtherResources Duden_Synonym.BGL Duden_Synonym.xml
+    ~/Software/pyglossary/pyglossary.pyw --read-options=resPath=OtherResources Duden_Synonym.BGL Duden_Synonym.xml
     make
     make install
 
@@ -35,7 +35,7 @@ Let's assume the MDict dict is at ``~/Documents/Duden-Oxford/Duden-Oxford DEED v
 - Run the following command::
   
     cd ~/Documents/Duden-Oxford/
-    ~/Software/pyglossary/pyglossary.sh "Duden-Oxford DEED ver.20110408.mtxt" "Duden-Oxford DEED ver.20110408.xml"
+    ~/Software/pyglossary/pyglossary.pyw "Duden-Oxford DEED ver.20110408.mtxt" "Duden-Oxford DEED ver.20110408.xml"
     make
     make install
 
