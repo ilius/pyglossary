@@ -49,9 +49,14 @@ Let's assume the MDict dict is at ``~/Downloads/oald8/oald8.mdx``, along with th
 
   cd ~/Downloads/oald8/
   ~/Software/pyglossary/pyglossary.pyw --read-options=resPath=OtherResources oald8.mdx oald8.xml
+
 This extracts dictionary into ``oald8.xml`` and data resources into folder ``OtherResources``.
-Hyperlinks use relative path::
+Hyperlinks use relative path. ::
+
   sed -i "" 's:src="/:src=":g' oald8.xml
-Convert audio file from SPX format to WAV format::
+
+Convert audio file from SPX format to WAV format. ::
+
   find OtherResources -name "*.spx" -execdir sh -c 'spx={};speexdec $spx  ${spx%.*}.wav' \;
   sed -i "" 's|sound://\([/_a-zA-Z0-9]*\).spx|\1.wav|g' oald8.xml
+
