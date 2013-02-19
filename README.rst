@@ -60,3 +60,10 @@ Convert audio file from SPX format to WAV format. ::
   find OtherResources -name "*.spx" -execdir sh -c 'spx={};speexdec $spx  ${spx%.*}.wav' \;
   sed -i "" 's|sound://\([/_a-zA-Z0-9]*\).spx|\1.wav|g' oald8.xml
 
+Compile and install. ::
+  
+  make
+  make install
+
+Launch Dictionary.app and test.
+
