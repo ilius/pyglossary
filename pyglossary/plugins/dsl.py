@@ -44,10 +44,10 @@ def _clean_tags(line, audio):
     line = re.sub('\[/?\*\]', '', line)
     # remove ref tags
     line = re.sub('\[/?ref[^]]*\]', '', line)
+    # remove url tags
+    line = re.sub('\[url\].*?\[/url\]', '', line)
 
-    # remove <<>>, which is used to cross reference
-    line = re.sub('<<|>>', '', line)
-
+    # text formats
     line = re.sub("\[(/?)'\]", '<\g<1>u>', line)
     line = re.sub('\[(/?)b\]', '<\g<1>b>', line)
     line = re.sub('\[(/?)i\]', '<\g<1>i>', line)
@@ -55,15 +55,21 @@ def _clean_tags(line, audio):
     line = re.sub('\[(/?)sup\]', '<\g<1>sup>', line)
     line = re.sub('\[(/?)sub\]', '<\g<1>sub>', line)
 
-    line = re.sub('\[ex\]', '<span style="color:royalblue">', line)
-    line = re.sub('\[/ex\]', '</span>', line)
-
-    line = re.sub('\[p\]', '<span style="">', line)
-    line = re.sub('\[/p\]', '</span>', line)
-
+    # color
     line = re.sub('\[c\]', '<span style="color:green">', line)
     line = re.sub('\[c (\w+)\]', '<span style="color:\g<1>">', line)
     line = re.sub('\[/c\]', ' </span>', line)
+
+    # example zone
+    line = re.sub('\[ex\]', '<span style="color:royalblue">', line)
+    line = re.sub('\[/ex\]', '</span>', line)
+
+    # abbrev. label
+    line = re.sub('\[p\]', '<span style="">', line)
+    line = re.sub('\[/p\]', '</span>', line)
+
+    # cross reference
+    line = re.sub('<<(.*?)>>', '<a href="bword://\g<1>">\g<1></a>', line)
 
     # sound file
     if audio:
@@ -76,7 +82,7 @@ def _clean_tags(line, audio):
 
     # image file
     line = re.sub('\[s\]([^[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]',
-                  '<img src="\g<1>\g<2>" alt="\g<1>\g<2>" />', line)
+                  '<img align="top" src="\g<1>\g<2>" alt="\g<1>\g<2>" />', line)
 
     # \[...\]
     line = re.sub('\\\\(\[|\])', '\g<1>', line)
@@ -92,6 +98,7 @@ def read(glos, fname, **options):
     current_key_alters = []
     current_text = []
     line_type = 'header'
+    unfinished_line = ''
 
     glos.data = []
     for line in f:
@@ -121,6 +128,7 @@ def read(glos, fname, **options):
                 current_key = line
                 current_key_alters = []
                 current_text = []
+                unfinished_line = ''
             line_type = 'title'
         # texts
         else:
@@ -130,9 +138,26 @@ def read(glos, fname, **options):
                 indent = int(m.groups()[0])
             else:
                 indent = 0
-            line = _clean_tags(line, audio)
-            current_text += ['<div style="margin-left:%dem">'%(indent) + line.lstrip() + '</div>']
+            # remove m tags
+            line = re.sub('\[/?m\d*\]', '', line)
+
             line_type = 'text'
+            line = unfinished_line + line.lstrip()
+
+            # number of tags
+            tags_open  = re.findall('(?<!\\\\)\[[cuib]', line)
+            tags_close = re.findall('\[/[cuib]\]', line)
+            if len(tags_open) != len(tags_close):
+                unfinished_line = line
+                continue
+            else:
+                unfinished_line = ''
+
+            # convert DSL tags to HTML tags
+            line = _clean_tags(line, audio)
+            #current_text += ['<br />' + '&#160;' * indent + line.lstrip()]
+            current_text += ['<div style="margin-left:%dem">'%(indent) + line + '</div>']
+
     # last entry
     if line_type == 'text':
         glos.data += [(current_key, '\n'.join(current_text), {'alts' : current_key_alters})]
