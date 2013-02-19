@@ -29,7 +29,10 @@ import os
 import re
 
 def write_plist(glos, filename):
-    from BeautifulSoup import BeautifulSoup
+    try:
+        from bs4 import BeautifulSoup
+    except:
+        from BeautifulSoup import BeautifulSoup
     f = open(filename, 'w')
     basename = os.path.splitext(os.path.basename(filename))[0]
     # identifier must be unique
@@ -62,7 +65,10 @@ def write_plist(glos, filename):
     f.close()
 
 def write_xml(glos, filename):
-    from BeautifulSoup import BeautifulSoup
+    try:
+        from bs4 import BeautifulSoup
+    except:
+        from BeautifulSoup import BeautifulSoup
     # progress bar
     ui = glos.ui
     if ui:
@@ -82,8 +88,9 @@ def write_xml(glos, filename):
         title = re.sub('<[^<]+?>|"|[<>]', '', item[0])
         if not title:
             continue
-        # id contains no white space
-        id = title.replace(' ','_')
+        # id contains no & sign
+        id = title.replace('&', '-')
+
         # check entry id duplicates
         while id in entry_ids:
             id = id + '_'
@@ -95,7 +102,7 @@ def write_xml(glos, filename):
             alts = []
 
         # begin entry
-        f.write('<d:entry id="%(id)s" d:title="%(title)s">\n'%{'id':id, 'title':title})
+        f.write('<d:entry id="%(id)s" d:title="%(title)s">\n'%{'id':id, 'title':title.replace('&', '&amp;')})
 
         # index values
         #   title as index
@@ -106,12 +113,11 @@ def write_xml(glos, filename):
                 f.write('    <d:index d:value="%s"/>\n'%alt)
 
         # nice header to display
-        f.write('<h1>%s</h1>\n'%title)
-
+        content = ('<h1>%s</h1>\n'%title) + item[1]
         # xhtml is stict
-        content = item[1]
         soup  = BeautifulSoup(content)
-        content = soup.prettify()
+        content = str(soup)
+        content = content.replace('&nbsp;', '&#160;')
         f.write(content)
 
         # end entry
