@@ -45,7 +45,7 @@ Convert Octopus Mdict to Mac OS X dictionary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Let's assume the MDict dict is at ``~/Downloads/oald8/oald8.mdx``, along with the image/audio resources file ``oald8.mdd``.
 
-- Run the following command::
+Run the following commands: ::
 
   cd ~/Downloads/oald8/
   ~/Software/pyglossary/pyglossary.pyw --read-options=resPath=OtherResources oald8.mdx oald8.xml
