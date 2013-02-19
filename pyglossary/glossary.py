@@ -97,12 +97,12 @@ class Glossary:
     in general we should assume the tuple may be of arbitrary length >= 2
     known dictionary keys:
         data[i][2]['alts'] - list of alternates, filled by bgl reader
-        data[i][2]['defis'] - list of alternative definitions. 
+        data[i][2]['defis'] - list of alternative definitions.
             For example, run (eng.) may be 1. verb, 2. noun, 3. adjective.
             self.data[i][1] contains the main definition of the word, the verb, in the example.
             While additional definitions goes to self.data[i][2]['defis'] list, noun and adjective,
             in the example.
-            You may merge additional definition with the main definition if the target dictionary 
+            You may merge additional definition with the main definition if the target dictionary
             format does not support several definitions per word.
         data[i][2]['defis'][j][0] - definition data
         data[i][2]['defis'][j][1] - definition format. See 'defiFormat' option below.
@@ -426,7 +426,7 @@ class Glossary:
             for rpl in rplList:
                 defi = defi.replace(rpl[0], rpl[1])
             fp.write(word + sep[0] + defi + sep[1])
-        fp.close()        
+        fp.close()
         return True
 
 
