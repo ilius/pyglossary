@@ -7,9 +7,9 @@ Requirements
 ------------
 Mac OS X
 ~~~~~~~~
-- BeautifulSoup required to sanitize html contents.
+- BeautifulSoup4 required to sanitize html contents.
 
-  ``sudo easy_install beautifulsoup``
+  ``sudo easy_install beautifulsoup4``
 
 - GNU make as part of `Command Line Tools for Xcode  <http://developer.apple.com/downloads>`_.
 - Dictionary Development Kit as part of `Auxillary Tools for Xcode <http://developer.apple.com/downloads>`_. Extract to ``/Developer/Extras/Dictionary Development Kit``
@@ -40,3 +40,18 @@ Let's assume the MDict dict is at ``~/Documents/Duden-Oxford/Duden-Oxford DEED v
     make install
 
 Launch Dictionary.app and test.
+
+Convert Octopus Mdict to Mac OS X dictionary
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Let's assume the MDict dict is at ``~/Downloads/oald8/oald8.mdx``, along with the image/audio resources file ``oald8.mdd``.
+
+- Run the following command::
+
+  cd ~/Downloads/oald8/
+  ~/Software/pyglossary/pyglossary.pyw --read-options=resPath=OtherResources oald8.mdx oald8.xml
+This extracts dictionary into ``oald8.xml`` and data resources into folder ``OtherResources``.
+Hyperlinks use relative path::
+  sed -i "" 's:src="/:src=":g' oald8.xml
+Convert audio file from SPX format to WAV format::
+  find OtherResources -name "*.spx" -execdir sh -c 'spx={};speexdec $spx  ${spx%.*}.wav' \;
+  sed -i "" 's|sound://\([/_a-zA-Z0-9]*\).spx|\1.wav|g' oald8.xml
