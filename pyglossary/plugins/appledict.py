@@ -33,7 +33,7 @@ def write_plist(glos, filename):
         from bs4 import BeautifulSoup
     except:
         from BeautifulSoup import BeautifulSoup
-    f = open(filename, 'w')
+    f = open(filename, 'wb')
     basename = os.path.splitext(os.path.basename(filename))[0]
     # identifier must be unique
     # use file base name
@@ -74,7 +74,7 @@ def write_xml(glos, filename):
     if ui:
         ui.progressStart()
 
-    f = open(filename, 'w')
+    f = open(filename, 'wb')
 
     # write header
     f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -85,7 +85,7 @@ def write_xml(glos, filename):
     total = len(glos.data)
     for index,item in enumerate(glos.data):
         # strip double quotes and html tags
-        title = re.sub('<[^<]+?>|"|[<>]', '', item[0])
+        title = re.sub('<[^<]+?>|"|[<>]|\xef\xbb\xbf', '', item[0])
         if not title:
             continue
         # id contains no & sign
