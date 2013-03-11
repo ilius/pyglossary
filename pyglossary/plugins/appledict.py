@@ -22,7 +22,7 @@ format = 'AppleDict'
 description = 'AppleDict Source (xml)'
 extentions = ['.xml']
 readOptions = []
-writeOptions = []
+writeOptions = ['cleanHTML']
 
 
 import os
@@ -64,11 +64,14 @@ def write_plist(glos, filename):
             '</plist>\n')
     f.close()
 
-def write_xml(glos, filename):
+def write_xml(glos, filename, cleanHTML):
     try:
         from bs4 import BeautifulSoup
     except:
-        from BeautifulSoup import BeautifulSoup
+        try:
+            from BeautifulSoup import BeautifulSoup
+        except:
+            cleanHTML = False
     # progress bar
     ui = glos.ui
     if ui:
@@ -81,8 +84,11 @@ def write_xml(glos, filename):
             '<d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\n')
 
     # write entries
-    entry_ids= []
+    entry_ids = set([])
     total = len(glos.data)
+    close_tag = re.compile('<(BR|HR)>', re.IGNORECASE)
+    nonprintable = re.compile('[\x00-\x07\x0e-\x1f]')
+    img_tag = re.compile('<IMG (.*?)>',re.IGNORECASE)
     for index,item in enumerate(glos.data):
         # strip double quotes and html tags
         title = re.sub('<[^<]+?>|"|[<>]|\xef\xbb\xbf', '', item[0])
@@ -94,7 +100,7 @@ def write_xml(glos, filename):
         # check entry id duplicates
         while id in entry_ids:
             id = id + '_'
-        entry_ids.append(id)
+        entry_ids.add(id)
         # get alternatives list
         try:
             alts = item[2]['alts']
@@ -114,10 +120,15 @@ def write_xml(glos, filename):
 
         # nice header to display
         content = ('<h1>%s</h1>\n'%title) + item[1]
-        # xhtml is stict
-        soup  = BeautifulSoup(content)
-        content = str(soup)
+        # xhtml is strict
+        if cleanHTML:
+            soup  = BeautifulSoup(content)
+            content = str(soup)
+        else:
+            content = close_tag.sub('<\g<1> />', content)
+            content = img_tag.sub('<img \g<1>/>', content)
         content = content.replace('&nbsp;', '&#160;')
+        content = nonprintable.sub('', content)
         f.write(content)
 
         # end entry
@@ -190,10 +201,10 @@ clean:
 	$(RM) -rf $(DICT_DEV_KIT_OBJ_DIR)
 """ % {"dict_name" :  os.path.basename(fname)})
 
-def write(glos, fname):
+def write(glos, fname, cleanHTML="yes"):
     basename = os.path.splitext(fname)[0]
     write_plist(glos, basename + '.plist')
-    write_xml(glos, basename + '.xml')
+    write_xml(glos, basename + '.xml', cleanHTML=="yes")
     write_css(basename + '.css')
     write_makefile(basename)
 
