@@ -2,6 +2,7 @@ PyGlossary
 ==========
 
 Working on glossarys (dictionary databases) using python. Including editing glossarys and converting theme between many formats. The support matrix is, 
+
 +----------------------------+--------------+------+-------+
 | Format                     |   Extension  | Read | Write |
 +============================+==============+======+=======+
