@@ -27,7 +27,7 @@ readOptions = ['resPath', 'encoding', 'substyle']
 writeOptions = []
 
 def read(glos, filename, **options):
-    mdx = MDX(filename, options.get('encoding', 'GBK'), options.get('substyle', True))
+    mdx = MDX(filename, options.get('encoding', ''), options.get('substyle', True))
     glos.setInfo('title', mdx.header.get('Title', os.path.basename(filename)))
     glos.setInfo('description', mdx.header.get('Description', ''))
     glos.data = []
