@@ -10,8 +10,6 @@ Working on glossarys (dictionary databases) using python. Including editing glos
 +----------------------------+--------------+------+-------+
 | AppleDict Source           |     .xml     |      |   X   |
 +----------------------------+--------------+------+-------+
-| Arianpur OpenDictionary    |     .xml     |  X   |       |
-+----------------------------+--------------+------+-------+
 | Babylon                    |     .bgl     |  X   |       |
 +----------------------------+--------------+------+-------+
 | Babylon Source             |     .gls     |      |   X   |
@@ -47,7 +45,7 @@ Working on glossarys (dictionary databases) using python. Including editing glos
 +----------------------------+--------------+------+-------+
 | TreeDict                   |              |      |   X   |
 +----------------------------+--------------+------+-------+
-| XDXF                       |              |  X   |       |
+| XDXF                       |     .xdxf    |  X   |       |
 +----------------------------+--------------+------+-------+
 | xFarDic                    |     .xdb     |  X   |   X   |
 +----------------------------+--------------+------+-------+
