@@ -144,8 +144,9 @@ def read(glos, fname, **options):
             line_type = 'text'
             line = unfinished_line + line.lstrip()
 
-            # number of tags
-            tags_open  = re.findall('(?<!\\\\)\[[cuib]', line)
+            # some ill formated source may have tags spanned into multiple lines
+            # try to match opening and closing tags
+            tags_open  = re.findall('(?<!\\\\)\[(c |[cuib]\])', line)
             tags_close = re.findall('\[/[cuib]\]', line)
             if len(tags_open) != len(tags_close):
                 unfinished_line = line
