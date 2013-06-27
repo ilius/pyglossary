@@ -37,7 +37,9 @@ def _clean_tags(line, audio):
     # remove com tags
     line = re.sub('\[/?com\]', '', line)
     # remove t tags
-    line = re.sub('\[/?t\]', '<!-- T -->', line)
+    line = re.sub('\[t\]', '<!-- T --><span style=\"font-family:\'Helvetica\'\">', line)
+    line = re.sub('\[/t\]', '</span><!-- T -->', line)
+
     # remove m tags
     line = re.sub('\[/?m\d*\]', '', line)
     # remove * tags
