@@ -46,6 +46,29 @@ def _clean_tags(line, audio):
     line = re.sub('\[/?ref[^]]*\]', '', line)
     # remove url tags
     line = re.sub('\[url\].*?\[/url\]', '', line)
+    
+    #fix unclosed tag like [b]...[c]...[/b]...[/c]
+    #change it to [b]...[c]...[/c][/b][c]...[/c]
+    import string
+    import copy
+    tags = ['b','\'','c','i','sup','sub','ex','p']
+    #for tags like:[p]n[/c][/i][/p], these line need scan again
+    change = True
+    while change == True:
+        origin = line
+        for tag in tags:
+            temp = copy.deepcopy(tags)
+            temp.remove(tag)
+            include_tag = string.join(temp,'|')
+            search_expression = '\['+ tag +'\](?P<content>[^\[\]]*)(?P<wrongTag>\[/('+ include_tag +')\])'
+            replace_expression = '[' + tag + ']' + '\g<content>' + '[/' + tag + ']' + '\g<wrongTag>' + '[' + tag + ']'
+            line = re.sub(search_expression,replace_expression,line)
+        if line == origin:
+            change = False
+        else:
+            change = True
+
+    print 'clean' + line
 
     # text formats
     line = re.sub("\[(/?)'\]", '<\g<1>u>', line)
@@ -61,11 +84,11 @@ def _clean_tags(line, audio):
     line = re.sub('\[/c\]', ' </span>', line)
 
     # example zone
-    line = re.sub('\[ex\]', '<span style="color:royalblue">', line)
+    line = re.sub('\[ex\]', '<span style="color:steelblue">', line)
     line = re.sub('\[/ex\]', '</span>', line)
 
     # abbrev. label
-    line = re.sub('\[p\]', '<span style="">', line)
+    line = re.sub('\[p\]', '<span style="color:green">', line)
     line = re.sub('\[/p\]', '</span>', line)
 
     # cross reference
