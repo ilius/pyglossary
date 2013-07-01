@@ -36,8 +36,8 @@ def write(glos, filename): ## glos is a Glossary object, filename is a string
     descriptin = glos.getInfo('descriptin')
     author = glos.getInfo('author')
     copyright = glos.getInfo('copyright')
-    ## (if an info key not exists, getInfo returns empty string '')
-    ## and then write info to the output file(depending on your format)
+    ## if an info key doesn't exist, getInfo returns empty string
+    ## now write info to the output file (depending on your output format)
     return True ## writing output file was succesfull
 
 
