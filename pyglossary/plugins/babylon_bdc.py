@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 enable = False
-format = 'Bdc'
+format = 'BabylonBdc'
 description = 'Babylon (bdc)'
 extentions = ['.bdc']
 readOptions = []

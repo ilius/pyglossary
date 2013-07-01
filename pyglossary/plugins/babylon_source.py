@@ -4,7 +4,7 @@
 ## A plain text file. Not binary like BGL files.
 
 enable = True
-format = 'Babylon'
+format = 'BabylonSource'
 description = 'Babylon Source (gls)'
 extentions = ['.gls', '.babylon']
 readOptions = []
