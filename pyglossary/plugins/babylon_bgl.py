@@ -23,7 +23,7 @@
 from formats_common import *
 
 enable = True
-format = 'Bgl'
+format = 'BabylonBgl'
 description = 'Babylon (bgl)'
 extentions = ['.bgl']
 readOptions = [
