@@ -3,7 +3,7 @@
 from formats_common import *
 
 enable = True
-format = 'SdictSrc'
+format = 'SdictSource'
 description = 'Sdictionary Source (sdct)'
 extentions = ['.sdct']
 readOptions = []
