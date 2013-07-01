@@ -4,8 +4,8 @@
 from formats_common import *
 
 enable = True
-format = 'OctopusMdicSource'
-description = 'Octopus MDic Source'
+format = 'OctopusMdictSource'
+description = 'Octopus MDict Source'
 extentions = ['.mtxt']
 readOptions = []
 writeOptions = []

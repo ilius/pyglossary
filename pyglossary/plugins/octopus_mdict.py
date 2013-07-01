@@ -20,8 +20,8 @@ from readmdict import MDX, MDD
 import os
 
 enable = True
-format = 'OctopusMdic'
-description = 'Octopus MDic'
+format = 'OctopusMdict'
+description = 'Octopus MDict'
 extentions = ['.mdx']
 readOptions = ['resPath', 'encoding', 'substyle']
 writeOptions = []
