@@ -1,5 +1,0 @@
-#!/bin/bash
-cd "`dirname \"$0\"`"
-rm *.pyc *~ *.o *.cxx *.gch *.so babylon.py stardict.py 2> /dev/null
-cd -
-

@@ -1,6 +1,0 @@
-pyglossary/src/lib-src
-These files are modified C/C++ sources that was used in PyGlossary (as binary modules)
-Unless these binary modules are removed in recent versions (because they was not needed so much,
-and because of platform-dependence). If you want to use them and you have to compile yourself and copy binary modules
-(with name "_babylon.so", "_stardict.so" and "_stardictbuilder.so") and to folder "pyglossary/lib".
-
