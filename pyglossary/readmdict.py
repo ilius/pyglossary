@@ -280,10 +280,10 @@ class MDict(object):
 class MDD(MDict):
     """
     MDict resource file format (*.MDD) reader.
-    >>> mdx = MDX('example.mdx')
-    >>> len(mdx)
+    >>> mdd = MDD('example.mdd')
+    >>> len(mdd)
     208
-    >>> for filename,content in mdx.items():
+    >>> for filename,content in mdd.items():
     ... print filename, content[:10]
     """
     def __init__(self, fname):
@@ -550,7 +550,7 @@ if __name__ == '__main__':
             if not os.path.exists(datafolder):
                 os.makedirs(datafolder)
             for key,value in mdd.items():
-                fname = ''.join([datafolder, key.replace('\\', os.path.sep)]);
+                fname = ''.join([datafolder, key.replace('\\', os.path.sep).decode('utf-8')]);
                 if not os.path.exists(os.path.dirname(fname)):
                     os.makedirs(os.path.dirname(fname))
                 f = open(fname, 'wb')
