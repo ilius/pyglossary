@@ -3,8 +3,8 @@
 from formats_common import *
 
 enable = True
-format = 'Dictd'
-description = 'DICTD dictionary server (.index)'
+format = 'DictOrg'
+description = 'DICT.org file format (.index)'
 extentions = ['.index']
 readOptions = []
 writeOptions = [
