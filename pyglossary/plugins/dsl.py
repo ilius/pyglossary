@@ -158,30 +158,8 @@ def read(glos, fname, **options):
             elif line.startswith('#CONTENTS_LANGUAGE'):
                 glos.setInfo('targetLang', line[20:])
             line_type = 'header'
-        # title word(s)
-        elif line[0] not in ['\t', ' ']:
-            # alternative titles
-            if line_type == 'title':
-                current_key_alters.append(line)
-            # previous line type is text -> start new title
-            else:
-                # append previous entry
-                if line_type == 'text':
-                    glos.data.append((
-                        current_key,
-                        '\n'.join(current_text),
-                        {
-                            'alts' : current_key_alters,
-                        },
-                    ))
-                # start new entry
-                current_key = line
-                current_key_alters = []
-                current_text = []
-                unfinished_line = ''
-            line_type = 'title'
         # texts
-        else:
+        elif line[0] in ['\t', ' ']:
             # indent level
             m = re.search('\[m(\d)\]', line)
             if m:
@@ -209,6 +187,28 @@ def read(glos, fname, **options):
             #line = '<br />' + '&#160;' * indent + line.lstrip()
             line = '<div style="margin-left:%dem">%s</div>'%(indent, line)
             current_text.append(line)
+        # title word(s)
+        else:
+            # alternative titles
+            if line_type == 'title':
+                current_key_alters.append(line)
+            # previous line type is text -> start new title
+            else:
+                # append previous entry
+                if line_type == 'text':
+                    glos.data.append((
+                        current_key,
+                        '\n'.join(current_text),
+                        {
+                            'alts' : current_key_alters,
+                        },
+                    ))
+                # start new entry
+                current_key = line
+                current_key_alters = []
+                current_text = []
+                unfinished_line = ''
+            line_type = 'title'
 
     # last entry
     if line_type == 'text':
