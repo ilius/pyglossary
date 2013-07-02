@@ -3,6 +3,7 @@
 ## Read ABBYY Lingvo DSL dictionary format
 ##
 ## Copyright (C) 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+## Copyright (C) 2013 Saeed Rasooli <saeed.gnu@gmail.com>
 ##
 ## This program is a free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -54,7 +55,7 @@ def _clean_tags(line, audio):
     # remove url tags
     line = re.sub('\[url\].*?\[/url\]', '', line)
     
-    #fix unclosed tag like [b]...[c]...[/b]...[/c]
+    #fix unclosed tags like [b]...[c]...[/b]...[/c]
     #change it to [b]...[c]...[/c][/b][c]...[/c]
     tags = (
         'b',
@@ -88,7 +89,7 @@ def _clean_tags(line, audio):
     #print 'clean' + line
 
     # text formats
-    line = re.sub("\[(/?)'\]", '<\g<1>u>', line)
+    line = re.sub('\[(/?)\'\]', '<\g<1>u>', line)
     line = re.sub('\[(/?)b\]', '<\g<1>b>', line)
     line = re.sub('\[(/?)i\]', '<\g<1>i>', line)
     line = re.sub('\[(/?)u\]', '<\g<1>u>', line)
@@ -144,8 +145,8 @@ def read(glos, fname, **options):
 
     glos.data = []
     
-    f = codecs.open(fname, 'r', encoding)
-    for line in f:
+    fp = codecs.open(fname, 'r', encoding)
+    for line in fp:
         line = line.encode('utf-8').rstrip()
         if not line:
             continue
@@ -159,12 +160,12 @@ def read(glos, fname, **options):
                 glos.setInfo('targetLang', line[20:])
             line_type = 'header'
         # texts
-        elif line[0] in ['\t', ' ']:
+        elif line.startswith(' ') or line.startswith('\t'):
             # indent level
             m = re.search('\[m(\d)\]', line)
-            if m:
+            try:
                 indent = int(m.groups()[0])
-            else:
+            except IndexError:
                 indent = 0
             # remove m tags
             line = re.sub('\[/?m\d*\]', '', line)
@@ -179,8 +180,8 @@ def read(glos, fname, **options):
             if len(tags_open) != len(tags_close):
                 unfinished_line = line
                 continue
-            else:
-                unfinished_line = ''
+
+            unfinished_line = ''
 
             # convert DSL tags to HTML tags
             line = _clean_tags(line, audio)
@@ -200,7 +201,7 @@ def read(glos, fname, **options):
                         current_key,
                         '\n'.join(current_text),
                         {
-                            'alts' : current_key_alters,
+                            'alts': current_key_alters,
                         },
                     ))
                 # start new entry
@@ -209,16 +210,15 @@ def read(glos, fname, **options):
                 current_text = []
                 unfinished_line = ''
             line_type = 'title'
-
+    fp.close()
+    
     # last entry
     if line_type == 'text':
         glos.data.append((
             current_key,
             '\n'.join(current_text),
             {
-                'alts' : current_key_alters,
+                'alts': current_key_alters,
             }
         ))
-
-    return glos
 
