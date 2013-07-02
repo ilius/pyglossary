@@ -16,16 +16,21 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ## GNU General Public License for more details.
 
-
-import codecs
-import re
+from formats_common import *
 
 enable = True
 format = 'ABBYYLingvoDSL'
 description = 'ABBYY Lingvo DSL (dsl)'
 extentions = ['.dsl']
-readOptions = ['encoding','audio']
+readOptions = ['encoding', 'audio']
 writeOptions = []
+
+
+import codecs
+import re
+from copy import deepcopy
+
+
 def _clean_tags(line, audio):
     # remove {{...}} blocks
     line = re.sub('\{\{[^}]*\}\}','', line)
@@ -51,26 +56,36 @@ def _clean_tags(line, audio):
     
     #fix unclosed tag like [b]...[c]...[/b]...[/c]
     #change it to [b]...[c]...[/c][/b][c]...[/c]
-    import string
-    import copy
-    tags = ['b','\'','c','i','sup','sub','ex','p']
-    #for tags like:[p]n[/c][/i][/p], these line need scan again
-    change = True
-    while change == True:
-        origin = line
+    tags = (
+        'b',
+        '\'',
+        'c',
+        'i',
+        'sup',
+        'sub',
+        'ex',
+        'p',
+    )
+    #for tags like:[p]n[/c][/i][/p], the line needs scan again
+    while True:
+        prevLine = line
         for tag in tags:
-            temp = copy.deepcopy(tags)
-            temp.remove(tag)
-            include_tag = string.join(temp,'|')
-            search_expression = '\['+ tag +'\](?P<content>[^\[\]]*)(?P<wrongTag>\[/('+ include_tag +')\])'
-            replace_expression = '[' + tag + ']' + '\g<content>' + '[/' + tag + ']' + '\g<wrongTag>' + '[' + tag + ']'
-            line = re.sub(search_expression,replace_expression,line)
-        if line == origin:
-            change = False
-        else:
-            change = True
+            otherTags = deepcopy(tags)
+            otherTags.remove(tag)
+            searchExpression = '\[%s\](?P<content>[^\[\]]*)(?P<wrongTag>\[/(%s)\])'%(
+                tag,
+                '|'.join(otherTags),
+            )
+            replaceExpression = '[%s]\g<content>[/%s]\g<wrongTag>[%s]'%(
+                tag,
+                tag,
+                tag,
+            )
+            line = re.sub(searchExpression, replaceExpression, line)
+        if line == prevLine:
+            break
 
-    print 'clean' + line
+    #print 'clean' + line
 
     # text formats
     line = re.sub("\[(/?)'\]", '<\g<1>u>', line)
@@ -106,8 +121,11 @@ def _clean_tags(line, audio):
     line = re.sub('\[s\]([^[]*?)(wav|mp3)\s*\[/s\]', sound_tag, line)
 
     # image file
-    line = re.sub('\[s\]([^[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]',
-                  '<img align="top" src="\g<1>\g<2>" alt="\g<1>\g<2>" />', line)
+    line = re.sub(
+        '\[s\]([^[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]',
+        '<img align="top" src="\g<1>\g<2>" alt="\g<1>\g<2>" />',
+        line,
+    )
 
     # \[...\]
     line = re.sub('\\\\(\[|\])', '\g<1>', line)
@@ -117,7 +135,6 @@ def read(glos, fname, **options):
     encoding = options.get('encoding', 'utf-8')
     audio = (options.get('audio', 'no') == 'yes')
 
-    f = codecs.open(fname, 'r', encoding)
 
     current_key = ''
     current_key_alters = []
@@ -126,6 +143,8 @@ def read(glos, fname, **options):
     unfinished_line = ''
 
     glos.data = []
+    
+    f = codecs.open(fname, 'r', encoding)
     for line in f:
         line = line.encode('utf-8').rstrip()
         if not line:
@@ -143,12 +162,18 @@ def read(glos, fname, **options):
         elif line[0] not in ['\t', ' ']:
             # alternative titles
             if line_type == 'title':
-                current_key_alters += [line]
+                current_key_alters.append(line)
             # previous line type is text -> start new title
             else:
                 # append previous entry
                 if line_type == 'text':
-                    glos.data += [(current_key, '\n'.join(current_text), {'alts' : current_key_alters})]
+                    glos.data.append((
+                        current_key,
+                        '\n'.join(current_text),
+                        {
+                            'alts' : current_key_alters,
+                        },
+                    ))
                 # start new entry
                 current_key = line
                 current_key_alters = []
@@ -181,11 +206,19 @@ def read(glos, fname, **options):
 
             # convert DSL tags to HTML tags
             line = _clean_tags(line, audio)
-            #current_text += ['<br />' + '&#160;' * indent + line.lstrip()]
-            current_text += ['<div style="margin-left:%dem">'%(indent) + line + '</div>']
+            #line = '<br />' + '&#160;' * indent + line.lstrip()
+            line = '<div style="margin-left:%dem">%s</div>'%(indent, line)
+            current_text.append(line)
 
     # last entry
     if line_type == 'text':
-        glos.data += [(current_key, '\n'.join(current_text), {'alts' : current_key_alters})]
+        glos.data.append((
+            current_key,
+            '\n'.join(current_text),
+            {
+                'alts' : current_key_alters,
+            }
+        ))
 
     return glos
+
