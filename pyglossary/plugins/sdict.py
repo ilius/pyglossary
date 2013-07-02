@@ -104,10 +104,10 @@ class Header:
 
 
 class SDictionary:
-    def __init__(self, filename, encoding="utf-8"):
+    def __init__(self, filename, encoding='utf-8'):
         self.encoding = encoding
         self.filename = filename
-        self.file = open(filename, "rb");
+        self.file = open(filename, 'rb');
         self.header = Header()
         self.header.parse(self.file.read(43))
         self.compression = compressions[self.header.compressionType]
