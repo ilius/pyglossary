@@ -29,7 +29,6 @@ writeOptions = []
 
 import codecs
 import re
-from copy import deepcopy
 
 
 def _clean_tags(line, audio):
@@ -71,7 +70,7 @@ def _clean_tags(line, audio):
     while True:
         prevLine = line
         for tag in tags:
-            otherTags = deepcopy(tags)
+            otherTags = list(tags)
             otherTags.remove(tag)
             searchExpression = '\[%s\](?P<content>[^\[\]]*)(?P<wrongTag>\[/(%s)\])'%(
                 tag,
@@ -163,10 +162,12 @@ def read(glos, fname, **options):
         elif line.startswith(' ') or line.startswith('\t'):
             # indent level
             m = re.search('\[m(\d)\]', line)
-            try:
-                indent = int(m.groups()[0])
-            except IndexError:
-                indent = 0
+            indent = 0
+            if m:
+                try:
+                    indent = int(m.groups()[0])
+                except IndexError:
+                    pass
             # remove m tags
             line = re.sub('\[/?m\d*\]', '', line)
 
