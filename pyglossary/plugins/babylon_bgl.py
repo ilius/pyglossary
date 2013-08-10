@@ -2770,9 +2770,9 @@ def read(glos, filename, **options):
     glos.data = []
     db = BGL(filename, **options)
     if not db.open():
-        raise 'can not open BGL file "{0}"'.format(filename)
+        raise IOError('can not open BGL file "{0}"'.format(filename))
     if not db.read():
-        raise 'can not read BGL file "{0}"'.format(filename)
+        raise IOError('can not read BGL file "{0}"'.format(filename))
     n = db.numEntries
     ui = glos.ui
     if not isinstance(n, int):
