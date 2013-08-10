@@ -74,18 +74,18 @@ get_ext = lambda path: splitext(path)[1].lower()
 
 
 class Glossary:
-    infoKeysAlias=(## Should be change according to a plugin???
+    infoKeysAlias = (## Should be changed according to a plugin???
         ('name', 'title' , 'dbname' , 'bookname'),
         ('sourceLang', 'inputlang' , 'origlang'),
         ('targetLang', 'outputlang', 'destlang'),
-        ('copyright', 'license')
+        ('copyright', 'license'),
     )
-    readFormats=[]
-    writeFormats=[]
-    formatsDesc={}
-    formatsExt={}
-    formatsReadOptions={}
-    formatsWriteOptions={}
+    readFormats = []
+    writeFormats = []
+    formatsDesc = {}
+    formatsExt = {}
+    formatsReadOptions = {}
+    formatsWriteOptions = {}
     readExt = []
     writeExt = []
     readDesc = []
@@ -169,7 +169,7 @@ class Glossary:
         return g
 
     def infoKeys(self):
-        return [ t[0] for t in self.info ]
+        return [t[0] for t in self.info]
 
     #def formatInfoKeys(self, format):## FIXME
 
@@ -178,13 +178,13 @@ class Glossary:
         for group in Glossary.infoKeysAlias:
             if not isinstance(group, (list, tuple)):
                 raise TypeError, 'group=%s'%group
-            if (key in group) or (lkey in group):
+            if key in group or lkey in group:
                 for skey in group:
                     for t in self.info:
-                        if t[0]==skey:
+                        if t[0] == skey:
                             return t[1]
         for t in self.info:
-            if t[0]==key or t[0].lower()==lkey:
+            if t[0].lower() == lkey:
                 return t[1]
         return ''
 
@@ -193,21 +193,21 @@ class Glossary:
         for group in Glossary.infoKeysAlias:
             if not isinstance(group, (list, tuple)):
                 raise TypeError, 'group=%s'%group
-            if (key in group) or (lkey in group):
+            if key in group or lkey in group:
                 skey=group[0]
                 for i in xrange(len(self.info)):
                     if self.info[i][0]==skey:
-                        self.info[i]=(self.info[i][0],value)
+                        self.info[i] = (self.info[i][0], value)
                         return
                 for i in xrange(len(self.info)):
                     if self.info[i][0] in group:
-                        self.info[i]=(self.info[i][0],value)
+                        self.info[i] = (self.info[i][0], value)
                         return
         for i in xrange(len(self.info)):
             if self.info[i][0]==key or self.info[i][0].lower()==lkey:
-                    self.info[i]=(self.info[i][0],value)
+                    self.info[i] = (self.info[i][0], value)
                     return
-        self.info.append([key,value])
+        self.info.append([key, value])
 
     def setInfos(self, info, setAll=False):
         for t in info:
@@ -220,7 +220,10 @@ class Glossary:
     def removeTags(self, tags):
         n = len(self.data)
         for i in xrange(n):
-            self.data[i] = (self.data[i][0], removeTextTags(self.data[i][1], tags)) + self.data[i][2:]
+            self.data[i] = (
+                self.data[i][0],
+                removeTextTags(self.data[i][1], tags),
+            ) + self.data[i][2:]
 
     def lowercase(self):
         for i in xrange(len(self.data)):
@@ -238,7 +241,7 @@ class Glossary:
             if ext=='.bz2':
                 (output, error) = subprocess.Popen(
                     ['bzip2', '-dk', filename],
-                    stdout=subprocess.PIPE
+                    stdout=subprocess.PIPE,
                 ).communicate()
                 ## -k ==> keep original bz2 file
                 ## bunzip2 ~= bzip2 -d
@@ -252,7 +255,7 @@ class Glossary:
             elif ext=='.gz':
                 (output, error) = subprocess.Popen(
                     ['gzip', '-dc', filename],
-                    stdout=subprocess.PIPE
+                    stdout=subprocess.PIPE,
                 ).communicate()
                 ## -c ==> write to stdout (because we want to keep original gz file)
                 ## gunzip ~= gzip -d
@@ -267,7 +270,7 @@ class Glossary:
             elif ext=='.zip':
                 (output, error) = subprocess.Popen(
                     ['unzip', filename, '-d', dirname(filename)],
-                    stdout=subprocess.PIPE
+                    stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
                     printAsError('%s\nfail to decompress file "%s"'%(error, filename))
@@ -375,14 +378,14 @@ class Glossary:
             if zipExt=='.gz':
                 (output, error) = subprocess.Popen(
                     ['gzip', filename],
-                    stdout=subprocess.PIPE
+                    stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
                     printAsError('%s\nfail to compress file "%s"'%(error, filename))
             elif zipExt=='.bz2':
                 (output, error) = subprocess.Popen(
                     ['bzip2', filename],
-                    stdout=subprocess.PIPE
+                    stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
                     printAsError('%s\nfail to compress file "%s"'%(error, filename))
@@ -392,7 +395,7 @@ class Glossary:
                 os.chdir(dirn)
                 (output, error) = subprocess.Popen(
                     ['zip', filename+'.zip', name, '-m'],
-                    stdout=subprocess.PIPE
+                    stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
                     printAsError('%s\nfail to compress file "%s"'%(error, filename))
@@ -449,19 +452,19 @@ class Glossary:
             (word, defi) = item[:2]
             defi = defi.replace('\n', '\\n')
             try:
-                print(word+'\t'+defi)
+                print(word + '\t' + defi)
             except:
                 myRaise(__file__)
 
 
     ###################################################################
-    takeWords = lambda self: [ item[0] for item in self.data ]
+    takeWords = lambda self: [item[0] for item in self.data]
 
 
     def takeOutputWords(self, opt={}):
-        words=takeStrWords(' '.join([item[1] for item in self.data]), opt)
+        words = takeStrWords(' '.join([item[1] for item in self.data]), opt)
         words.sort()
-        words=removeRepeats(words)
+        words = removeRepeats(words)
         return words
 
     getInputList = lambda self: [x[0] for x in self.data]
@@ -470,7 +473,13 @@ class Glossary:
 
     def simpleSwap(self):
         # loosing item[2:]
-        return Glossary(self.info[:], [ (item[1], item[0]) for item in self.data ])
+        return Glossary(
+            self.info[:],
+            [
+                (item[1], item[0])
+                for item in self.data
+            ],
+        )
 
     def attach(self, other):# only simplicity attach two glossaries (or more that others be as a list).
     # no ordering. Use when you split input words to two(or many) parts after ordering.
@@ -509,7 +518,9 @@ class Glossary:
             self.getInfo('name'),
             other.getInfo('name'),
         )
-        new = Glossary([('name', newName)])
+        new = Glossary([
+            ('name', newName),
+        ])
         new.data = self.data + other.data
         new.data.sort()
         return new
@@ -764,105 +775,6 @@ class Glossary:
             if autoSaveStep>0 and i==n-1:
                 saveFile.close()
         if autoSaveStep==0:
-            revG.writeTabfile(opt['savePath'])
-        ui.r_finished()
-        ui.progressEnd()
-        return True
-
-
-    def reverseDic_ext(self, wordsArg=None, opt={}):
-        from _reverse_dic import search
-        tabStr = self.writeTabfile(filename=None)
-        opt = addDefaultOptions(opt, {
-            'matchWord': True,
-            'showRel': 'None',
-            'background': False,
-            'reportStep': 300,
-            'autoSaveStep': 1000, ## set this to zero to disable auto saving.
-            'savePath': '',
-            'sep': commaFa,
-        })
-        self.stoped = False
-        ui = self.ui
-        try:
-            c = self.continueFrom
-        except AttributeError:
-            c = 0
-        if c == -1:
-            print('c=%s'%c)
-            return
-        elif c == 0:
-            ui.progress(0, 'Starting....')
-        if wordsArg is None:
-            words = self.takeOutputWords()
-        elif isinstance(wordsArg, file):
-            words = [w[:-1] for w in wordsArg.readlines()]
-        elif isinstance(wordsArg, (list, tuple)):
-            words = wordsArg[:]
-        elif isinstance(wordsArg, basestring):
-            fp = open(wordsArg)
-            words = [w[:-1] for w in fp.readlines()]
-            fp.close()
-        else:
-            raise TypeError, 'Argumant wordsArg to function reverseDic is not valid!'
-        autoSaveStep = opt['autoSaveStep']
-        if not opt['savePath']:
-            opt['savePath']=self.getInfo('name')+'.txt'
-        savePath = opt['savePath']
-        if c > 0:
-            saveFile = open(savePath, 'ab')
-        else:
-            saveFile = open(savePath, 'wb')
-            ui.progressStart()
-        revG = Glossary(self.info[:])
-        revG.setInfo('name', self.getInfo('name') + '_reversed')
-        revG.setInfo('inputlang' , self.getInfo('outputlang'))
-        revG.setInfo('outputlang', self.getInfo('inputlang'))
-        wNum = len(words)
-        #steps = opt['reportStep']
-        #div = 0
-        #mod = 0
-        #total = int(wNum/steps)
-        if c == 0:
-            print('Number of input words:', wNum)
-            print('Reversing glossary...')
-        else:
-            print('continue reversing from index %d ...'%c)
-        t0 = time.time()
-        if not ui:
-            print('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
-        n = len(words)
-        for i in xrange(c, n):
-            word = words[i]
-            rat = float(i+1)/n
-            ui.progress(rat, '%d / %d words completed'%(i,n))
-            if ui.reverseStop:
-                saveFile.close()
-                self.continueFrom = i
-                self.stoped = True
-                #thread.exit_thread()
-                return
-            if autoSaveStep>0 and i%autoSaveStep==0 and i>0:
-                saveFile.close()
-                saveFile = open(savePath, 'ab')
-            result = search(
-                tabStr,
-                word,
-                opt['minRel'],
-                opt['maxNum'],
-                opt['sep'],
-                opt['matchWord'],
-                opt['showRel'],
-            )
-            if len(result) > 0:
-                new = (word , result)
-                if autoSaveStep > 0:
-                    saveFile.write('%s\t%s\n'%new)
-                else:
-                    revG.data.append(new)
-            if autoSaveStep > 0 and i==n-1:
-                saveFile.close()
-        if autoSaveStep == 0:
             revG.writeTabfile(opt['savePath'])
         ui.r_finished()
         ui.progressEnd()
