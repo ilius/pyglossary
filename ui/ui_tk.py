@@ -750,6 +750,7 @@ class UI(Tix.Frame):
         self.running = False
         return True
     def run(self, editPath=None, read_options={}):
+        ## editPath and read_options are for DB Editor, which is not implemented yet
         self.mainloop()
     def progress(self, rat, text=''):
         self.pbar.updateProgress(rat*100, None, text)
