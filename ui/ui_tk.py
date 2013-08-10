@@ -749,7 +749,7 @@ class UI(Tix.Frame):
             print('time left = %3f seconds'%(time.time()-t0))
         self.running = False
         return True
-    def run(self):
+    def run(self, editPath=None, read_options={}):
         self.mainloop()
     def progress(self, rat, text=''):
         self.pbar.updateProgress(rat*100, None, text)
