@@ -18,6 +18,7 @@
 
 import string, re, sys, os, subprocess, htmlentitydefs, time
 ##from xml.etree.ElementTree import XML, tostring ## used for xml2dict
+from math import log, ceil
 
 startRed = '\x1b[31m'
 endFormat = '\x1b[0;0;0m' ## len=8
@@ -458,57 +459,49 @@ def relation(word, phrase, opt={}):## FIXME
         #del pRel
     return rel
 
-'''
-def hexDigitToInt(ch):
-    if not isinstance(ch, basestring):
-        raise TypeError('bad argument "%s": must be a one length string.'%ch)
-    elif len(ch) != 1:
-        raise ValueError('bad argument "%s": must be a one length string.'%ch)
-    elif '0' <= ch <= '9':
-        return ord(ch)-48 ## int(ch)
-    elif 'a'<=ch<='z':
-        return ord(ch)-87
-    elif 'A'<=ch<='Z':
-        return ord(ch)-55
-    else:
-        raise ValueError('bad argument "%s": must be alphanumeric character'%ch)
+###############################################
 
-def intToBinStr_0(n, stLen=0):
-    if not isinstance(stLen, int):
-        raise TypeError('bad type second argument given to intToBinStr: "%s"'%type(stLen))
-    h = hex(n)
-    if h[-1]=='L':
-        h = h[2:-1]
-    else:
-        h = h[2:]
-    if len(h)%2==1:
-        h = '0'+h
-    bs = ''
-    for i in range(0, int(len(h)), 2):
-        bs += chr( 16*hexDigitToInt(h[i]) + hexDigitToInt(h[i+1]) )
-    return bs.rjust(stLen, '\x00')
-'''
-
+## Python 2.x:
 def intToBinStr(n, stLen=0):## 6 times faster than intToBinStr_0
     bs = ''
     while n>0:
-        bs = chr(n & 255) + bs
-        n = n >> 8
+        bs = chr(n & 0xff) + bs
+        n >>= 8
     return bs.rjust(stLen, '\x00')
 
-'''
-def binStrToInt_0(bs):
-    l = len(bs)
-    return sum([ ord(bs[i]) * (256**(l-1-i)) for i in xrange(l) ])
-'''
-
-def binStrToInt(bs):## 6 times faster than binStrToInt_0
+## Python 2.x:
+def binStrToInt(bs):
     n = 0
     for c in bs:
         n = (n << 8) + ord(c)
     return n
 
 
+'''
+## Python 3.x:
+def intToBinStr(n, stLen=0):
+    bs = b''
+    while n>0:
+        bs = bytes([n & 255]) + bs
+        n >>= 8
+    return bs.rjust(stLen, b'\x00')
+
+## Python 3.x:
+intToBinStr = lambda n, stLen=0: bytes((
+    (n >> (i<<3)) & 0xff for i in range(int(ceil(log(n, 256)))-1, -1, -1)
+)).rjust(stLen, b'\x00')
+
+
+## Python 3.x:
+def binStrToInt(bs):
+    n = 0
+    for c in bs:
+        n = (n << 8) + c
+    return n
+'''
+
+
+###############################################
 
 def chBaseIntToStr(number, base):
     '''
