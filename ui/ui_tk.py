@@ -18,6 +18,7 @@
 
 
 from pyglossary.glossary import *
+from pyglossary.text_utils import toStr
 from base import *
 from os.path import join
 
@@ -600,8 +601,8 @@ class UI(Tix.Frame):
         else:
             self.xml.get_widget('checkb_o_ext').hide()'''
         if self.pref['auto_set_out']:#format==None:
-            pathI = self.entry_i.get()
-            pathO = self.entry_o.get()
+            pathI = toStr(self.entry_i.get())
+            pathO = toStr(self.entry_o.get())
             formatOD = self.combobox_o.get()
             if formatOD != None and not pathO and '.' in pathI:
                 extO=Glossary.descExt[formatOD]
@@ -611,7 +612,7 @@ class UI(Tix.Frame):
     def entry_changed(self, event=None):
         #print 'entry_changed'
         #char = event.keysym
-        pathI = self.entry_i.get()
+        pathI = toStr(self.entry_i.get())
         if self.pathI != pathI:
             formatD = self.combobox_i.get()
             if len(pathI)>7:
@@ -630,7 +631,7 @@ class UI(Tix.Frame):
             if self.pref['auto_set_out']:#format==noneItem:
                 #pathI = self.entry_i.get()
                 formatOD = self.combobox_o.get()
-                pathO = self.entry_o.get()
+                pathO = toStr(self.entry_o.get())
                 if formatOD != noneItem and not pathO and '.' in pathI:
                     extO=Glossary.descExt[formatOD]
                     pathO=''.join(os.path.splitext(pathI)[:-1])+extO
@@ -638,7 +639,7 @@ class UI(Tix.Frame):
                     self.entry_o.insert(0, pathO)
             self.pathI = pathI
         ##############################################
-        pathO = self.entry_o.get()
+        pathO = toStr(self.entry_o.get())
         if self.pathO!=pathO:
             formatD = self.combobox_o.get()
             if len(pathO)>7:
@@ -670,7 +671,7 @@ class UI(Tix.Frame):
             self.entry_changed()
             self.fcd_dir = os.path.dirname(path)#????????
     def load(self):
-        iPath = self.entry_i.get()
+        iPath = toStr(self.entry_i.get())
         if not iPath:
             printAsError('Input file path is empty!');return
         formatD = self.combobox_i.get()
@@ -716,7 +717,7 @@ class UI(Tix.Frame):
             printAsError('Input glossary has no word! Be sure to click "Load" before "Convert", '+\
                 'or just click "Apply" instead.')
             return False
-        oPath = self.entry_o.get()
+        oPath = toStr(self.entry_o.get())
         if not oPath:
             printAsError('Output file path is empty!');return
         formatD = self.combobox_o.get()
