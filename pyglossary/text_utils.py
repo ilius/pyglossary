@@ -154,6 +154,9 @@ def myRaise(File=None):
     else:
         sys.stderr.write('File "%s", line %s: %s: %s'%(File, i[2].tb_lineno, i[0].__name__, i[1]))
 
+toStr = lambda s: s.encode('utf8') if isinstance(s, unicode) else str(s)
+toUnicode = lambda s: s if isinstance(s, unicode) else str(s).decode('utf8')
+
 #from xml.sax.saxutils import escape, unescape
 def escape(data, entities={}):
     """Escape &, <, and > in a string of data.
