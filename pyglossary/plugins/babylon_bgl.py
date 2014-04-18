@@ -71,7 +71,7 @@ else:
     raise RuntimeError('Unknown path separator(os.sep=="%s") ! What is your operating system?'%os.sep)
 
 
-def decodeBinTime(binStr):
+def decodeBglBinTime(binStr):
     jd1970 = gregorian.to_jd(1970, 1, 1)
     djd, hm = divmod(binStrToInt(binStr), 24*60)
     year, month, day = gregorian.jd_to(djd + jd1970)
@@ -1480,7 +1480,7 @@ class BGL:
             # see code 0x20 as well
             case_sensitive = (flags & 0x1000) != 0
         elif x==0x14:## Creation Time
-            self.creationTime = decodeBinTime(block.data[2:])
+            self.creationTime = decodeBglBinTime(block.data[2:])
         elif x==0x1a:
             value = ord(block.data[2])
             if value >= 0x41:
@@ -1498,7 +1498,7 @@ class BGL:
                 else:
                     printAsWarning('read_type_3: unknown targetCharset {0}'.format(value))
         elif x==0x1c:## Middle Updated ## ???????????????
-            self.middleUpdated = decodeBinTime(block.data[2:])
+            self.middleUpdated = decodeBglBinTime(block.data[2:])
         elif x==0x20:
             '''
             0x30 - case sensitive search is disabled
@@ -1539,7 +1539,7 @@ class BGL:
             if msg:
                 self.author_wide = msg
         elif x==0x33:## Last Updated
-            self.lastUpdated = decodeBinTime(block.data[2:])
+            self.lastUpdated = decodeBglBinTime(block.data[2:])
         elif x==0x3b: # contractions
             # contains a value like this:
             # V-0#Verb|V-0.0#|V-0.1#Infinitive|V-0.1.1#|V-1.0#|V-1.1#|V-1.1.1#Present Simple|V-1.1.2#Present Simple (3rd pers. sing.)|V-2.0#|V-2.1#|V-2.1.1#Past Simple|V-3.0#|V-3.1#|V-3.1.1#Present Participle|V-4.0#|V-4.1#|V-4.1.1#Past Participle|V-5.0#|V-5.1#|V-5.1.1#Future|V2-0#|V2-0.0#|V2-0.1#Infinitive|V2-0.1.1#|V2-1.0#|V2-1.1#|V2-1.1.1#Present Simple (1st pers. sing.)|V2-1.1.2#Present Simple (2nd pers. sing. & plural forms)|V2-1.1.3#Present Simple (3rd pers. sing.)|V2-2.0#|V2-2.1#|V2-2.1.1#Past Simple (1st & 3rd pers. sing.)|V2-2.1.2#Past Simple (2nd pers. sing. & plural forms)|V2-3.0#|V2-3.1#|V2-3.1.1#Present Participle|V2-4.0#|V2-4.1#|V2-4.1.1#Past Participle|V2-5.0#|V2-5.1#|V2-5.1.1#Future||N-0#Noun|N-1.0#|N-1.1#|N-1.1.1#Singular|N-2.0#|N-2.1#|N-2.1.1#Plural|N4-1.0#|N4-1.1#|N4-1.1.1#Singular Masc.|N4-1.1.2#Singular Fem.|N4-2.0#|N4-2.1#|N4-2.1.1#Plural Masc.|N4-2.1.2#Plural Fem.||ADJ-0#Adjective|ADJ-1.0#|ADJ-1.1#|ADJ-1.1.1#Adjective|ADJ-1.1.2#Comparative|ADJ-1.1.3#Superlative||
