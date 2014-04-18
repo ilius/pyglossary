@@ -1228,6 +1228,8 @@ class BGL:
                     .format(self.numBlocks, length, self.file.tell())
                 block.data = ''
                 return False
+            #else:
+            #    open('block-%s.%s'%(self.numBlocks, block.Type), 'w').write(block.data)
         else:
             block.data = ''
         return True
