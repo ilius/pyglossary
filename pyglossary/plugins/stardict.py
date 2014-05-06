@@ -9,8 +9,12 @@ readOptions = []
 writeOptions = ['resOverwrite']
 supportsAlternates = True
 
-import sys, os, re, shutil, os.path
+import sys
 sys.path.append('/usr/share/pyglossary/src')
+
+import os, re, shutil
+import os.path
+from os.path import join, split, splitext, isfile, isdir
 
 from pyglossary.text_utils import intToBinStr, binStrToInt, runDictzip, printAsError
 
@@ -19,8 +23,8 @@ infoKeys = ('bookname', 'author', 'email', 'website', 'description', 'date')
 class StarDictReader:
     def __init__(self, glos, filename):
         self.glos = glos
-        if os.path.splitext(filename)[1].lower() == '.ifo':
-            self.fileBasePath = os.path.splitext(filename)[0]
+        if splitext(filename)[1].lower() == '.ifo':
+            self.fileBasePath = splitext(filename)[0]
         else:
             self.fileBasePath = filename
         self.fileBasePath = os.path.realpath(self.fileBasePath)
@@ -63,7 +67,7 @@ class StarDictReader:
             self.glos.setInfo(line[:ind].strip(), line[ind+1:].strip())
     
     def readIdxFile(self):
-        if os.path.isfile(self.fileBasePath+'.idx.gz'):
+        if isfile(self.fileBasePath+'.idx.gz'):
             import gzip
             with gzip.open(self.fileBasePath+'.idx.gz') as f:
                 idxStr = f.read()
@@ -90,7 +94,7 @@ class StarDictReader:
             self.indexData.append([word, offset, size, [], []])
         
     def readDictFile(self, sametypesequence):
-        if os.path.isfile(self.fileBasePath+'.dict.dz'):
+        if isfile(self.fileBasePath+'.dict.dz'):
             import gzip
             dictFd = gzip.open(self.fileBasePath+'.dict.dz')
         else:
@@ -123,7 +127,7 @@ class StarDictReader:
         dictFd.close()
 
     def readSynFile(self):
-        if not os.path.isfile(self.fileBasePath+'.syn'):
+        if not isfile(self.fileBasePath+'.syn'):
             return
         with open(self.fileBasePath+'.syn', 'rb') as f:
             synStr = f.read()
@@ -261,27 +265,32 @@ class StarDictReader:
     
     def readResources(self):
         baseDirPath = os.path.dirname(self.fileBasePath)
-        resDirPath = os.path.join(baseDirPath, 'res')
-        if os.path.isdir(resDirPath):
+        resDirPath = join(baseDirPath, 'res')
+        if isdir(resDirPath):
             self.glos.resPath = resDirPath
         else:
-            resDbFilePath = os.path.join(baseDirPath, 'res.rifo')
-            if os.path.isfile(resDbFilePath):
+            resDbFilePath = join(baseDirPath, 'res.rifo')
+            if isfile(resDbFilePath):
                 print("StarDict resource database is not supported. Skipping.")
     
 class StarDictWriter:
     def __init__(self, glos, filename):
-        self.glos = glos.copy()
-        if os.path.splitext(filename)[1].lower() == '.ifo':
-            self.fileBasePath=os.path.splitext(filename)[0]
-        elif filename[-1]==os.sep:
-            if not os.path.isdir(filename):
+        self.glos = glos.copy()        
+        fileBasePath = ''
+        ###
+        if splitext(filename)[1].lower() == '.ifo':
+            fileBasePath = splitext(filename)[0]
+        elif filename.endswith(os.sep):
+            if not isdir(filename):
                 os.makedirs(filename)
-            self.fileBasePath = os.path.join(filename, os.path.split(filename[:-1])[-1])
-        elif os.path.isdir(filename):
-            self.fileBasePath = os.path.join(filename, os.path.split(filename)[-1])
-        self.fileBasePath = os.path.realpath(self.fileBasePath)
-            
+            fileBasePath = join(filename, split(filename[:-1])[-1])
+        elif isdir(filename):
+            fileBasePath = join(filename, split(filename)[-1])
+        ###
+        if fileBasePath:
+            fileBasePath = os.path.realpath(fileBasePath)
+        self.fileBasePath = fileBasePath
+
     def run(self, dictZip, resOverwrite):
         self.glos.data.sort(stardict_strcmp, lambda x: x[0])
         
@@ -298,7 +307,7 @@ class StarDictWriter:
             runDictzip(self.fileBasePath)
         self.copyResources(
             self.glos.resPath,
-            os.path.join(os.path.dirname(self.fileBasePath), 'res'),
+            join(os.path.dirname(self.fileBasePath), 'res'),
             resOverwrite
         )
 
@@ -423,7 +432,7 @@ class StarDictWriter:
         toPath = os.path.abspath(toPath)
         if fromPath == toPath:
             return
-        if not os.path.isdir(fromPath):
+        if not isdir(fromPath):
             return
         if len(os.listdir(fromPath))==0:
             return
