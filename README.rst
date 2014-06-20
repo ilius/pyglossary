@@ -68,7 +68,7 @@ Convert Babylon (bgl) to Mac OS X dictionary
 Let's assume the Babylon dict is at ``~/Documents/Duden_Synonym/Duden_Synonym.BGL``::
 
     cd ~/Documents/Duden_Synonym/
-    ~/Software/pyglossary/pyglossary.pyw --read-options=resPath=OtherResources --write-format=AppleDict Duden_Synonym.BGL Duden_Synonym.xml
+    python ~/Software/pyglossary/pyglossary.pyw --read-options=resPath=OtherResources --write-format=AppleDict Duden_Synonym.BGL Duden_Synonym.xml
     make
     make install
 
@@ -82,7 +82,7 @@ Let's assume the MDict dict is at ``~/Documents/Duden-Oxford/Duden-Oxford DEED v
 - Run the following command::
   
     cd ~/Documents/Duden-Oxford/
-    ~/Software/pyglossary/pyglossary.pyw "Duden-Oxford DEED ver.20110408.mtxt" "Duden-Oxford DEED ver.20110408.xml"
+    python ~/Software/pyglossary/pyglossary.pyw "Duden-Oxford DEED ver.20110408.mtxt" "Duden-Oxford DEED ver.20110408.xml"
     make
     make install
 
@@ -95,7 +95,7 @@ Let's assume the MDict dict is at ``~/Downloads/oald8/oald8.mdx``, along with th
 Run the following commands: ::
 
   cd ~/Downloads/oald8/
-  ~/Software/pyglossary/pyglossary.pyw --read-options=resPath=OtherResources --write-format=AppleDict oald8.mdx oald8.xml
+  python ~/Software/pyglossary/pyglossary.pyw --read-options=resPath=OtherResources --write-format=AppleDict oald8.mdx oald8.xml
 
 This extracts dictionary into ``oald8.xml`` and data resources into folder ``OtherResources``.
 Hyperlinks use relative path. ::
