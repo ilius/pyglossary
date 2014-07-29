@@ -36,8 +36,11 @@ data_files = [
     (relRootDir+'/ui', glob.glob('ui/*.py')),
     (relRootDir+'/ui/glade', glob.glob('ui/glade/*')),
     (relRootDir+'/res', glob.glob('res/*')),
-    ('share/doc/pyglossary', ['doc/bgl_structure.svgz']),
+    ('share/doc/pyglossary', []),
     ('share/doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')),
+    ('share/doc/pyglossary/Babylon', glob.glob('doc/Babylon/*')),
+    ('share/doc/pyglossary/DSL', glob.glob('doc/DSL/*')),
+    ('share/doc/pyglossary/Octopus MDict', glob.glob('doc/Octopus MDict/*')),
     ('share/applications', ['pyglossary.desktop']),
     ('share/pixmaps', ['res/pyglossary.png']),
 ]
