@@ -3,6 +3,8 @@
 ## Source Glossary for "Babylon Builder".
 ## A plain text file. Not binary like BGL files.
 
+from formats_common import *
+
 enable = True
 format = 'BabylonSource'
 description = 'Babylon Source (gls)'
