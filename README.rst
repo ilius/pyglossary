@@ -54,9 +54,9 @@ Requirements
 ------------
 Mac OS X
 ~~~~~~~~
-- BeautifulSoup4 required to sanitize html contents.
+- BeautifulSoup4(with html5lib as backend) required to sanitize html contents.
 
-  ``sudo easy_install beautifulsoup4``
+  ``sudo easy_install beautifulsoup4 html5lib``
 
 - GNU make as part of `Command Line Tools for Xcode  <http://developer.apple.com/downloads>`_.
 - Dictionary Development Kit as part of `Auxillary Tools for Xcode <http://developer.apple.com/downloads>`_. Extract to ``/Developer/Extras/Dictionary Development Kit``
