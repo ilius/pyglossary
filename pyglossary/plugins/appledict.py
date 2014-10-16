@@ -122,7 +122,7 @@ def write_xml(glos, filename, cleanHTML):
         content = ('<h1>%s</h1>\n'%title) + item[1]
         # xhtml is strict
         if cleanHTML:
-            soup  = BeautifulSoup(content)
+            soup  = BeautifulSoup(content, from_encoding='utf8')
             content = str(soup)
         else:
             content = close_tag.sub('<\g<1> />', content)
