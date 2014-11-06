@@ -747,7 +747,7 @@ class UI(UIBase):
         table.add(tag)
         self.buffer_dbe = gtk.TextBuffer(table)
         self.textview_dbe.set_buffer(self.buffer_dbe)
-        self.treestore = gtk.ListStore(str,str)
+        self.treestore = gtk.ListStore(str, int)
         self.treeview.set_model(self.treestore)
         self.cell = gtk.CellRendererText()
         self.cell2 = gtk.CellRendererText()
@@ -992,7 +992,7 @@ class UI(UIBase):
         n = len(self.glosE.data)
         word = 'word%s'%n
         self.glosE.data.append((word, ''))
-        self.treestore.append((word, str(n)))
+        self.treestore.append((word, n))
         self.dbe_goto(n)
         self.entry_dbe.select_region(0, -1)
         self.entry_dbe.do_focus(self.entry_dbe, 0)
