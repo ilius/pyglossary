@@ -911,7 +911,7 @@ class UI(UIBase):
             self.dbe_update()
             return
         if save:
-            p_data = (self.entry_dbe.get_text(), buffer_get_text(self.buffer_dbe.get_text))
+            p_data = (self.entry_dbe.get_text(), buffer_get_text(self.buffer_dbe))
         n = len(self.glosE.data)
         if 0 <= n_ind < n:
             pass
