@@ -24,6 +24,8 @@ extentions = ['.xml']
 readOptions = []
 writeOptions = ['cleanHTML']
 
+import sys
+sys.setrecursionlimit(10000)
 
 import os
 import re
