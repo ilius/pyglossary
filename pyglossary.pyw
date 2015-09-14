@@ -72,7 +72,6 @@ if os.path.isfile(use_psyco_file):
 
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument(
-    '-v',
     '--version',
     action='version',
     version='PyGlossary %s'%VERSION,
