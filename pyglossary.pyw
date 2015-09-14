@@ -74,9 +74,8 @@ parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument(
     '-v',
     '--version',
-    dest='version',
-    action='store_true',
-    help='Shows the program version',
+    action='version',
+    version='PyGlossary %s'%VERSION,
 )
 parser.add_argument(
     '-h',
@@ -153,10 +152,6 @@ args = parser.parse_args()
 #print args ; sys.exit(0)
 
 
-
-if args.version:
-    print('PyGlossary %s'%VERSION)
-    sys.exit(0)
 
 if args.help:
     help()
