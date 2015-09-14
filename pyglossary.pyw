@@ -19,7 +19,9 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-import os, sys, getopt, __builtin__
+import os, sys
+import argparse
+import __builtin__
 from pyglossary.glossary import confPath, VERSION
 #from pyglossary.text_utils import printAsError ## No red color, plain
 from os.path import dirname, join, realpath
@@ -59,63 +61,110 @@ if os.path.isfile(use_psyco_file):
         print('Using module "psyco" to speed up execution.')
         psyco_found = True
 
-available_options = [
-    'version',
-    'help',
-    'ui=',
-    'read-options=',
-    'write-options=',
-    'read-format=',
-    'write-format=',
-    'reverse',
-    'no-progress-bar',
-]
 
 ## no-progress-bar only for command line UI
 ## FIXME: load ui-dependent available options from ui modules (for example ui_cmd.available_options)
 ## the only problem is that it has to "import gtk" before it get the "ui_gtk.available_options"
 
-try:
-    (options, arguments) = getopt.gnu_getopt(
-        sys.argv[1:],
-        'vhu:r:w:',
-        available_options,
-    )
-except getopt.GetoptError:
-    printAsError(sys.exc_info()[1])
-    print 'try: %s --help'%COMMAND
-    sys.exit(1)
+## FIXME
+## -v (verbose or version?)
+## -r (reverse or read-options)
 
-"""
-ui_type: User interface type
-Possible values:
-    cmd - Command line interface, this ui will automatically selected if you give both input and output file
-    gtk - GTK interface
-    tk - Tkinter interface
-    qt - Qt interface
-    auto - Use the first available UI
-"""
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument(
+    '-v',
+    '--version',
+    dest='version',
+    action='store_true',
+    help='Shows the program version',
+)
+parser.add_argument(
+    '-h',
+    '--help',
+    dest='help',
+    action='store_true',
+)
+parser.add_argument(
+    '-u',
+    '--ui',
+    dest='ui_type',
+    default='auto',
+    choices=(
+        'cmd',
+        'gtk',
+        'tk',
+        #'qt',
+        'auto',
+    ),
+)
+parser.add_argument(
+    '-r',
+    '--read-options',
+    dest='read_options',
+    default='',
+)
+parser.add_argument(
+    '-w',
+    '--write-options',
+    dest='write_options',
+    default='',
+)
+parser.add_argument(
+    #'-',
+    '--read-format',
+    dest='read_format',
+)
+parser.add_argument(
+    #'-',
+    '--write-format',
+    dest='write_format',
+    action='store',
+)
+parser.add_argument(
+    #'-',
+    '--reverse',
+    dest='reverse',
+    action='store_true',
+)
+parser.add_argument(
+    #'-',
+    '--no-progress-bar',
+    dest='noProgressBar',
+    action='store_true',
+)
 
-ui_type = 'auto'
+parser.add_argument(
+    'ipath',
+    action='store',
+    default='',
+    nargs='?',
+)
 
-if len(arguments)<1:## open GUI
-    ipath = opath = ''
-elif len(arguments)==1:## open GUI, in edit mode (if gui support, like DB Editor in ui_gtk)
-    ipath = arguments[0]
-    opath = ''
-else:## run the commnad line interface
-    ui_type = 'cmd'
-    ipath = arguments[0]
-    opath = arguments[1]
+parser.add_argument(
+    'opath',
+    action='store',
+    default='',
+    nargs='?',
+)
 
 
-read_format = '' ## only used in ui_cmd for now
-write_format = '' ## only used in ui_cmd for now
-read_options = {} ## only used in ui_cmd for now
-write_options = {} ## only used in ui_cmd for now
-reverse = False ## only used in ui_cmd for now
-ui_options = {}
 
+args = parser.parse_args()
+#print args ; sys.exit(0)
+
+
+
+if args.version:
+    print('PyGlossary %s'%VERSION)
+    sys.exit(0)
+
+if args.help:
+    help()
+    sys.exit(0)
+
+## only used in ui_cmd for now
+read_options = parseFormatOptionsStr(args.read_options)
+write_options = parseFormatOptionsStr(args.write_options)
 
 '''
     examples for read and write options:
@@ -128,46 +177,57 @@ ui_options = {}
 '''
 
 
-for (opt, opt_arg) in options:
-    if opt in ('-v', '--version'):
-        print('PyGlossary %s'%VERSION)
-        sys.exit(0)
-    elif opt in ('-h', '--help'):
-        help()
-        sys.exit(0)
-    elif opt in ('-u', '--ui'):
-        if opt_arg in ui_list:
-            ui_type = opt_arg
-        else:
-            printAsError('invalid ui type %s'%opt_arg)
-    elif opt in ('-r', '--read-options'):
-        read_options = parseFormatOptionsStr(opt_arg)
-    elif opt in ('-w', '--write-options'):
-        write_options = parseFormatOptionsStr(opt_arg)
-    elif opt == '--read-format':
-        read_format = opt_arg
-    elif opt == '--write-format':
-        write_format = opt_arg
-    elif opt == '--reverse':
-        reverse = True
-    elif opt.startswith('--'):
-        ui_options[dashToCamelCase(opt[2:])] = opt_arg ## opt_arg is not None, UI just ignores None value
-
 
 ## FIXME
-## -v (verbose or version?)
-## -r (reverse or read-options)
+ui_options_params = (
+    'noProgressBar',
+)
+
+ui_options = {}
+for param in ui_options_params:
+    ui_options[param] = getattr(args, param, None)
+
+
+"""
+ui_type: User interface type
+Possible values:
+    cmd - Command line interface, this ui will automatically selected if you give both input and output file
+    gtk - GTK interface
+    tk - Tkinter interface
+    qt - Qt interface
+    auto - Use the first available UI
+"""
+ui_type = args.ui_type
+
+#if len(arguments)<1:## open GUI
+#    ipath = opath = ''
+#elif len(arguments)==1:## open GUI, in edit mode (if gui support, like DB Editor in ui_gtk)
+#    ipath = arguments[0]
+#    opath = ''
+#else:## run the commnad line interface
+#    ui_type = 'cmd'
+#    ipath = arguments[0]
+#    opath = arguments[1]
+
+
+if args.ipath:
+    if args.opath:
+        ui_type = 'cmd' ## silently? FIXME
+else:
+    if ui_type == 'cmd':
+        printAsError('no input file given, try --help')
+        exit(1)
 
 if ui_type == 'cmd':
     from ui import ui_cmd
     sys.exit(ui_cmd.UI(**ui_options).run(
-        ipath,
-        opath=opath,
-        read_format=read_format,
-        write_format=write_format,
+        args.ipath,
+        opath=args.opath,
+        read_format=args.read_format,
+        write_format=args.write_format,
         read_options=read_options,
         write_options=write_options,
-        reverse=reverse,
+        reverse=args.reverse,
     ))
 else:
     if ui_type=='auto':
@@ -185,7 +245,7 @@ else:
     else:
         ui_module = getattr(__import__('ui.ui_%s'%ui_type), 'ui_%s'%ui_type)
     sys.exit(ui_module.UI(**ui_options).run(
-        editPath=ipath,
+        editPath=args.ipath,
         read_options=read_options,
     ))
     ## don't forget to append "**options" at every UI.__init__ arguments
