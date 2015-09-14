@@ -79,6 +79,10 @@ def help():
 
 
 def parseFormatOptionsStr(st):
+    st = st.strip()
+    if not st:
+        return {}
+    ###
     opt = {}
     parts = st.split(';')
     for part in parts:
