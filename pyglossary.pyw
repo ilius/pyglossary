@@ -80,6 +80,7 @@ parser.add_argument(
     type=int,
     choices=(0, 1, 2, 3),
     required=False,
+    default=2,
 )
 parser.add_argument(
     '--version',
