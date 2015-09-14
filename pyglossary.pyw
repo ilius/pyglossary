@@ -186,6 +186,7 @@ write_options = parseFormatOptionsStr(args.write_options)
 ## FIXME
 ui_options_params = (
     'noProgressBar',
+    'verbosity',
 )
 
 ui_options = {}
