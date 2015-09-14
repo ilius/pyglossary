@@ -866,7 +866,7 @@ class Glossary:
         ######################
         infoDefLine = infoDefLine[:-2] + ');'
         lines.append(infoDefLine)
-        lines.append("CREATE TABLE word ('s_id' INTEGER PRIMARY KEY NOT NULL, 'wname' TEXT, 'wmean' TEXT);")
+        lines.append("CREATE TABLE word (s_id INTEGER PRIMARY KEY NOT NULL, wname TEXT, wmean TEXT);")
         lines.append('INSERT INTO dbinfo VALUES(%s);'%(','.join(infoList)))
         for i in xrange(len(self.data)):
             w = self.data[i][0].replace('\'', '"').replace('\n', newline)
