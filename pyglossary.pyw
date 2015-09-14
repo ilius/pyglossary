@@ -71,6 +71,16 @@ if os.path.isfile(use_psyco_file):
 ## -r (reverse or read-options)
 
 parser = argparse.ArgumentParser(add_help=False)
+
+parser.add_argument(
+    '-v',
+    '--verbosity',
+    action='store',
+    dest='verbosity',
+    type=int,
+    choices=(0, 1, 2, 3),
+    required=False,
+)
 parser.add_argument(
     '--version',
     action='version',
