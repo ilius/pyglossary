@@ -187,7 +187,7 @@ class SDictionary:
             if pointer >= self.header.articles_offset:
                 printAsError('Warning: attempt to read word from illegal position in dict file')
                 return None
-            print e
+            print(e)
 
     def read_article(self, pointer):
         return self.read_unit(self.header.articles_offset + pointer)

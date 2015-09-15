@@ -114,7 +114,7 @@ class UI(UIBase):
         self.reverseStop = False
         self.pref = {}
         self.pref_load()
-        #print self.pref
+        #print(self.pref)
         if noProgressBar is None:
             self.progressBuild()
         else:
@@ -127,7 +127,7 @@ class UI(UIBase):
         self.pbar.update(rat)
     def progressEnd(self):
         self.pbar.finish()
-        print
+        print()
     def progressBuild(self):
         rot = pb.RotatingMarker()
         ## SyntaxError(invalid syntax) with python3 with unicode(u'█') argument ## FIXME
@@ -203,7 +203,7 @@ class UI(UIBase):
             #write_format = write_format.capitalize()
             if not write_format in Glossary.writeFormats:
                 printAsError('invalid write format %s'%write_format)
-                print 'try: %s --help'%COMMAND
+                print('try: %s --help'%COMMAND)
                 return 1
         if not opath:
             if reverse:
@@ -213,13 +213,13 @@ class UI(UIBase):
                     ext = Glossary.formatsExt[write_format]
                 except KeyError:
                     printAsError('invalid write format %s'%write_format)
-                    print 'try: %s --help'%COMMAND
+                    print('try: %s --help'%COMMAND)
                     return 1
                 else:
                     opath = os.path.splitext(ipath)[0] + ext
             else:
                 printAsError('neither output file nor output format is given')
-                print 'try: %s --help'%COMMAND
+                print('try: %s --help'%COMMAND)
                 return 1
         g = Glossary()
         print('Reading file "%s"'%ipath)

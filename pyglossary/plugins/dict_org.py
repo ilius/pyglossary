@@ -39,7 +39,7 @@ def indexStrToInt(st):
     return n
 
 def installToDictd(filename, title=''):## filename is without extention (neither .index or .dict or .dict.dz)
-    print 'Installing %r to DICTD server'%filename
+    print('Installing %r to DICTD server'%filename)
     shutil.copy(filename + '.index', '/usr/share/dictd')
     if os.path.isfile(filename + '.dict.dz'):
         dictPostfix = '.dict.dz'

@@ -7,11 +7,11 @@ from subprocess import Glossary
 
 try:
   import psyco
-  print 'Using module "psyco" to reduce execution time.'
+  print('Using module "psyco" to reduce execution time.')
   psyco.bind(Glossary)
   usePsyco=True
 except:
-  print 'Warning: module "psyco" not found.'
+  print('Warning: module "psyco" not found.')
 
 
 t0 = time.time()
@@ -35,5 +35,5 @@ g.checkUnicode()
 g2 = g.reverseDic(wordsFilePath1, {'matchWord':True})
 g2.writeTabfile(dicPath[:-4]+'_reversed2.txt')
 
-print 'About %d seconds left.'%(time.time()-t0)
+print('About %d seconds left.'%(time.time()-t0))
 

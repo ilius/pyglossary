@@ -5,10 +5,10 @@ from glossary import Glossary
 import time
 try:
   import psyco
-  print 'Using module "psyco" to reduce execution time.'
+  print('Using module "psyco" to reduce execution time.')
   usePsyco=True
 except:
-  print 'Warning: module "psyco" not found'
+  print('Warning: module "psyco" not found')
   usePsyco=False
 
 t0 = time.time()
@@ -39,10 +39,10 @@ words = g.takeOutputWords({'minLen':4, 'noEn':True})
    # del words[i]
 
 wordsFile = open(dicPath[:-4]+"-words.txt", "w")
-print len(words),"words found. writing to file..."
+print(len(words),"words found. writing to file...")
 wordsFile.write( '\n'.join(words)+'\n')
 wordsFile.close()
 
-print  '%f  seconds left.' %(time.time()-t0)
+print('%f  seconds left.' %(time.time()-t0))
 
 

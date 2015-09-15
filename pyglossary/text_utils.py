@@ -145,7 +145,7 @@ def printAsError(text='An error occured!', exit=False):
         sys.exit(1)
 
 def printAsWarning(text):
-    print text
+    print(text)
 
 def myRaise(File=None):
     i = sys.exc_info()
@@ -407,7 +407,7 @@ def removeTextTags(st, tags):
             else:
                 st = st[:i1] + st[i2+1:i3] + st[i4:]
                 i0 = i1 + i3 - i2 + 1 # is +1 needed???????
-            #print i0, i1, i2, i3
+            #print(i0, i1, i2, i3)
             st = st.replace('<%s>'%tag, '').replace('</%s>'%tag, '')
     return st
 
@@ -912,11 +912,11 @@ def build_name2codepoint_dict():
         name2str[k.lower()] = unichr(v).encode('utf-8')
     for key in sorted(name2str.keys()):
         value = name2str[key]
-        print "    '{0}': 0x{1:0>4x}, # {2}".format(
+        print("    '{0}': 0x{1:0>4x}, # {2}".format(
             key,
             ord(value.decode('utf-8')),
             value,
-        )
+        ))
 
 if __name__=='__main__':
     build_name2codepoint_dict()

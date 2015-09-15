@@ -28,7 +28,7 @@ try:
     HAVE_LZO = True
 except:
     HAVE_LZO = False
-    print "LZO compression support is not available"
+    print("LZO compression support is not available")
 
 
 def _unescape_entities(text):
@@ -141,7 +141,7 @@ class MDict(object):
                 key_list += self._split_key_block(key_block_compressed[start+8:end])
             elif key_block_type == '\x01\x00\x00\x00':
                 if not HAVE_LZO:
-                    print "LZO compression is not supported"
+                    print("LZO compression is not supported")
                     break
                 # 4 bytes as adler32 checksum
                 adler32 = unpack('>I', key_block_compressed[start+4:start+8])[0]
@@ -258,7 +258,7 @@ class MDict(object):
             assert(num_key_blocks == len(key_block_info_list))
         except:
             key_block_info_list = []
-            print "Cannot Decode Key Block Info Section. Try Brutal Force."
+            print("Cannot Decode Key Block Info Section. Try Brutal Force.")
 
         # read key block
         key_block_compressed = f.read(key_block_size)
@@ -284,7 +284,7 @@ class MDD(MDict):
     >>> len(mdd)
     208
     >>> for filename,content in mdd.items():
-    ... print filename, content[:10]
+    ... print(filename, content[:10])
     """
     def __init__(self, fname):
         MDict.__init__(self, fname, encoding='UTF-16')
@@ -325,7 +325,7 @@ class MDD(MDict):
                 record_block = record_block_compressed[8:]
             elif record_block_type == '\x01\x00\x00\x00':
                 if not HAVE_LZO:
-                    print "LZO compression is not supported"
+                    print("LZO compression is not supported")
                     break
                 # 4 bytes as adler32 checksum
                 adler32 = unpack('>I', record_block_compressed[4:8])[0]
@@ -367,7 +367,7 @@ class MDX(MDict):
     >>> len(mdx)
     42481
     >>> for key,value in mdx.items():
-    ... print key, value[:10]
+    ... print(key, value[:10])
     """
     def __init__(self, fname, encoding='', substyle=False):
         MDict.__init__(self, fname, encoding)
@@ -425,7 +425,7 @@ class MDX(MDict):
             # lzo compression
             elif record_block_type == '\x01\x00\x00\x00':
                 if not HAVE_LZO:
-                    print "LZO compression is not supported"
+                    print("LZO compression is not supported")
                     break
                 # 4 bytes as adler32 checksum
                 adler32 = unpack('>I', record_block_compressed[4:8])[0]
@@ -493,7 +493,7 @@ if __name__ == '__main__':
         args.extract = True
 
     if not os.path.exists(args.filename):
-        print "Please specify a valid MDX/MDD file"
+        print("Please specify a valid MDX/MDD file")
 
     base,ext = os.path.splitext(args.filename)
 
@@ -504,10 +504,10 @@ if __name__ == '__main__':
             fname = args.filename.encode('utf-8')
         else:
             fname = args.filename
-        print '========', fname, '========'
-        print '  Number of Entries :', len(mdx)
+        print('========', fname, '========')
+        print('  Number of Entries :', len(mdx))
         for key,value in mdx.header.items():
-            print ' ', key, ':', value
+            print(' ', key, ':', value)
     else:
         mdx = None
 
@@ -519,10 +519,10 @@ if __name__ == '__main__':
             fname = mdd_filename.encode('utf-8')
         else:
             fname = mdd_filename
-        print '========', fname, '========'
-        print '  Number of Entries :', len(mdd)
+        print('========', fname, '========')
+        print('  Number of Entries :', len(mdd))
         for key,value in mdd.header.items():
-            print ' ', key, ':', value
+            print(' ', key, ':', value)
     else:
         mdd = None
 

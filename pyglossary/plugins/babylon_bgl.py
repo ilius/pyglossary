@@ -146,7 +146,7 @@ class BGLGzipFile(gzip.GzipFile):
         isize = read32(self.fileobj) ## may exceed 2GB
         if crc32 != self.crc:
             if gVerbose >= 2:
-                print 'CRC check failed %s != %s' % (hex(crc32), hex(self.crc))
+                print('CRC check failed %s != %s' % (hex(crc32), hex(self.crc)))
         elif isize != (self.size & 0xffffffffL):
             raise IOError, 'Incorrect length of data produced'
 
@@ -1066,7 +1066,7 @@ class BGL:
 
         self.resPath = self.createResDir(resPath)
         if self.verbose >= 4:
-            print 'Resource path: {0}'.format(resPath)
+            print('Resource path: {0}'.format(resPath))
         self.resFiles = []
 
     def createResDir(self, resPath):
@@ -1124,7 +1124,7 @@ class BGL:
                 return False
             self.gzip_offset = i = binStrToInt(buf[4:6])
             if self.verbose>3:
-                print 'Position of gz header: i={0}'.format(i)
+                print('Position of gz header: i={0}'.format(i))
             if i<6:
                 return False
             self.writeGz = writeGz
@@ -1224,8 +1224,8 @@ class BGL:
             except:#??????????????????
                 ##???????? struct.error: unpack requires a string argument of length 4
                 myRaise(__file__)
-                print 'readBlock: read failed: self.numBlocks = {0}, length = {1}, self.file.tell() = {2}'\
-                    .format(self.numBlocks, length, self.file.tell())
+                print('readBlock: read failed: self.numBlocks = {0}, length = {1}, self.file.tell() = {2}'\
+                    .format(self.numBlocks, length, self.file.tell()))
                 block.data = ''
                 return False
             #else:
@@ -1283,7 +1283,7 @@ class BGL:
         if deferred_block2_num > 0:
             # process deferred type 2 blocks
             if self.verbose>1:
-                print 'processing type 2 blocks, second pass'
+                print('processing type 2 blocks, second pass')
             while not self.isEndOfDictData():
                 if not self.readBlock(block):
                     break
@@ -1307,34 +1307,34 @@ class BGL:
         # self.contractions ?
 
         if self.verbose>0:
-            print 'numEntries = {0}'.format(self.numEntries)
+            print('numEntries = {0}'.format(self.numEntries))
             if self.bgl_numEntries!=self.numEntries:
                 # There are a number of cases when these numbers do not match.
                 # The dictionary is OK, and these is no doubt that we might missed an entry.
                 # self.bgl_numEntries may be less than the number of entries we've read.
-                print 'bgl_numEntries = {0} (!!!!!!!!!)'.format(self.bgl_numEntries)
+                print('bgl_numEntries = {0} (!!!!!!!!!)'.format(self.bgl_numEntries))
             if self.verbose>1:
-                print 'numBlocks = {0}'.format(self.numBlocks)
-            print 'defaultCharset = {0}'.format(self.defaultCharset)
-            print 'sourceCharset = {0}'.format(self.sourceCharset)
-            print 'targetCharset = {0}'.format(self.targetCharset)
-            print
-            print 'defaultEncoding = {0}'.format(self.defaultEncoding)
-            print 'sourceEncoding = {0}'.format(self.sourceEncoding)
-            print 'targetEncoding = {0}'.format(self.targetEncoding)
-            print
-            print 'sourceLang = {0}'.format(self.sourceLang)
-            print 'targetLang = {0}'.format(self.targetLang)
-            print
-            print 'creationTime = {0}'.format(self.creationTime)
-            print 'middleUpdated = {0}'.format(self.middleUpdated) ## ???????????????
-            print 'lastUpdated = {0}'.format(self.lastUpdated)
-            print
-            print 'title = {0}'.format(self.oneLineValue(self.title))
-            print 'author = {0}'.format(self.oneLineValue(self.author))
-            print 'email = {0}'.format(self.oneLineValue(self.email))
-            print 'copyright = {0}'.format(self.oneLineValue(self.copyright))
-            print 'description = {0}'.format(self.oneLineValue(self.description))
+                print('numBlocks = {0}'.format(self.numBlocks))
+            print('defaultCharset = {0}'.format(self.defaultCharset))
+            print('sourceCharset = {0}'.format(self.sourceCharset))
+            print('targetCharset = {0}'.format(self.targetCharset))
+            print()
+            print('defaultEncoding = {0}'.format(self.defaultEncoding))
+            print('sourceEncoding = {0}'.format(self.sourceEncoding))
+            print('targetEncoding = {0}'.format(self.targetEncoding))
+            print()
+            print('sourceLang = {0}'.format(self.sourceLang))
+            print('targetLang = {0}'.format(self.targetLang))
+            print()
+            print('creationTime = {0}'.format(self.creationTime))
+            print('middleUpdated = {0}'.format(self.middleUpdated)) ## ???????????????
+            print('lastUpdated = {0}'.format(self.lastUpdated))
+            print()
+            print('title = {0}'.format(self.oneLineValue(self.title)))
+            print('author = {0}'.format(self.oneLineValue(self.author)))
+            print('email = {0}'.format(self.oneLineValue(self.email)))
+            print('copyright = {0}'.format(self.oneLineValue(self.copyright)))
+            print('description = {0}'.format(self.oneLineValue(self.description)))
 
         self.numBlocks = 0
 
@@ -1400,7 +1400,7 @@ class BGL:
         pos += Len
         if name in ('C2EEF3F6.html', '8EAF66FD.bmp'):
             if self.verbose>1 and pass_num == 1:
-                print 'Skipping non-useful file "{0}"'.format(name)
+                print('Skipping non-useful file "{0}"'.format(name))
             return True
         if isASCII(name):
             if pass_num > 1:
@@ -1595,8 +1595,8 @@ class BGL:
             self.unknownBlock(block)
             return False
         return True
-            # print 'Unknown info type x=%s, block.Type=%s, len(block.data)=%s'%\
-                # (x, block.Type, len(block.data))
+            # print('Unknown info type x=%s, block.Type=%s, len(block.data)=%s'%\
+                # (x, block.Type, len(block.data)))
             #open('%s-block.%s.%s'%(self.numBlocks, x, block.Type), 'w').write(block.data)
 
     # block type = 3
@@ -1679,8 +1679,8 @@ class BGL:
         range_count = 0
         block = self.Block()
         while not self.isEndOfDictData():
-            #print 'readBlock offset {0:#X}'.format(self.file.unpacked_file.tell())
-            #print 'readBlock offset {0:#X}'.format(self.file.tell())
+            #print('readBlock offset {0:#X}'.format(self.file.unpacked_file.tell()))
+            #print('readBlock offset {0:#X}'.format(self.file.tell()))
             if not self.readBlock(block):
                 break
             self.numBlocks += 1
@@ -1733,8 +1733,8 @@ class BGL:
 
     def unknownBlock(self, block):
         pass
-        #print 'Block: type=%s, data_length=%s, number=%s'\
-        #    %(block.Type, len(block.data), self.numBlocks)
+        #print('Block: type=%s, data_length=%s, number=%s'\
+        #    %(block.Type, len(block.data), self.numBlocks))
 
     # return True if an entry has been read
     def readEntry(self, entry):
@@ -2103,8 +2103,8 @@ class BGL:
             utf8_main_word = self.strip_html_tags(utf8_main_word)
             utf8_main_word = self.replace_html_entries_in_keys(utf8_main_word)
             #if(re.match('.*[&<>].*', utf8_main_word_orig)):
-                #print 'original text: ' + utf8_main_word_orig + '\n' \
-                        #+ 'new      text: ' + utf8_main_word + '\n'
+                #print('original text: ' + utf8_main_word_orig + '\n' \
+                        #+ 'new      text: ' + utf8_main_word + '\n')
         utf8_main_word = self.remove_control_chars(utf8_main_word)
         utf8_main_word = self.replace_new_lines(utf8_main_word)
         utf8_main_word = utf8_main_word.lstrip()
@@ -2137,8 +2137,8 @@ class BGL:
             utf8_main_word = self.strip_html_tags(utf8_main_word)
             utf8_main_word = self.replace_html_entries_in_keys(utf8_main_word)
             #if(re.match('.*[&<>].*', utf8_main_word_orig)):
-                #print 'original text: ' + utf8_main_word_orig + '\n' \
-                        #+ 'new      text: ' + utf8_main_word + '\n'
+                #print('original text: ' + utf8_main_word_orig + '\n' \
+                        #+ 'new      text: ' + utf8_main_word + '\n')
         utf8_main_word = self.remove_control_chars(utf8_main_word)
         utf8_main_word = self.replace_new_lines(utf8_main_word)
         utf8_main_word = utf8_main_word.lstrip()
@@ -2660,8 +2660,8 @@ class BGL:
 
     def __del__(self):
         #if self.verbose>2:
-            #print 'wordLenMax = %s'%self.wordLenMax
-            #print 'defiLenMax = %s'%self.defiLenMax
+            #print('wordLenMax = %s'%self.wordLenMax)
+            #print('defiLenMax = %s'%self.defiLenMax)
         if self.file:
             self.file.close()
         if self.writeGz:

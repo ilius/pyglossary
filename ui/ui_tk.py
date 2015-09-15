@@ -174,7 +174,7 @@ class UI(Tix.Frame):
         #help(master.wm_iconbitmap)
         #for x in dir(master):
         #    if 'wm_' in x:
-        #        print x
+        #        print(x)
         master.wm_iconbitmap('@%s'%xbmLogo)
         ########
         self.pack(fill='x')
@@ -569,7 +569,7 @@ class UI(Tix.Frame):
             self.convert()
     def resized(self, event):
         dh = self.master.winfo_height() - self.winfo_height()
-        print dh, self.consoleH
+        print(dh, self.consoleH)
         #if dh > 20:
         #    self.consoleH += 1
         #    self.console['height'] = self.consoleH
@@ -577,9 +577,9 @@ class UI(Tix.Frame):
         #    self.console.grid()
         #for x in dir(self):
         #    if 'info' in x:
-        #        print x
+        #        print(x)
     def combobox_o_changed(self, event):
-        #print self.combobox_o.get()
+        #print(self.combobox_o.get())
         formatD = self.combobox_o.get()
         if formatD==noneItem:
             return
@@ -610,7 +610,7 @@ class UI(Tix.Frame):
                 #self.entry_o.delete(0, 'end')
                 self.entry_o.insert(0, pathO)
     def entry_changed(self, event=None):
-        #print 'entry_changed'
+        #print('entry_changed')
         #char = event.keysym
         pathI = toStr(self.entry_i.get())
         if self.pathI != pathI:
