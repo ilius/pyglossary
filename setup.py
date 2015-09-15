@@ -21,7 +21,7 @@ class my_install(install):
         install.run(self)
         if os.sep == '/':
             binPath = join(self.install_scripts, 'pyglossary')
-            print 'creating script file "%s"'%binPath
+            print('creating script file "%s"'%binPath)
             open(binPath, 'w').write(join(self.install_data, relRootDir, 'pyglossary.pyw'))
             os.chmod(binPath, 0755)
 

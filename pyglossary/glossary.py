@@ -368,7 +368,7 @@ class Glossary:
             if not key in validOptionKeys:
                 printAsError('Invalid write option "%s" given for %s format'%(key, format))
                 del options[key]
-        print 'filename=%s'%filename
+        print('filename=%s'%filename)
         getattr(self, 'write%s'%format).__call__(filename, **options)
         if zipExt:
             try:

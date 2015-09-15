@@ -8,7 +8,7 @@ readOptions = []
 writeOptions = []
 
 def read(glos, filename): ## glos is a Glossary object, filename is a string
-    print 'reading from format %s using plugin'%format
+    print('reading from format %s using plugin'%format)
     glos.data = []
     count = 100 ## get number of entries from input file(depending on your format)
     for i in range(count):
@@ -25,7 +25,7 @@ def read(glos, filename): ## glos is a Glossary object, filename is a string
 
 
 def write(glos, filename): ## glos is a Glossary object, filename is a string
-    print 'writing to format %s using plugin'%format
+    print('writing to format %s using plugin'%format)
     count = len(glos.data)
     for i in range(count):
         word = glos.data[i][0]

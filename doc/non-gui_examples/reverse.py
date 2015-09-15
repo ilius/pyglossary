@@ -5,10 +5,10 @@ from glossary import Glossary
 import text_utils, time
 try:
   import psyco
-  print 'Using module "psyco" to reduce execution time.'
+  print('Using module "psyco" to reduce execution time.')
   psyco.bind(Glossary)
 except:
-  print 'Warning: module "psyco" not found.'
+  print('Warning: module "psyco" not found.')
 
 
 t0 = time.time()
@@ -29,7 +29,7 @@ g.checkUnicode()
 
 #words = g.takeOutputWords()
 #wordsFile = open(wordsFilePath, "w")
-#print len(words),"words found. writing to file..."
+#print("%s words found. writing to file..."%len(words))
 #wordsFile.write( string.join(words,"\n") )
 #del wordsFile
 
@@ -37,4 +37,4 @@ wordsFile = open(wordsFilePath, "r")
 
 g2 = g.reverseDic(wordsFile, {'matchWord':True})
 g2.writeTabfile()
-print 'About',int(time.time()-t0) ,'seconds left.'
+print('About',int(time.time()-t0) ,'seconds left.')
