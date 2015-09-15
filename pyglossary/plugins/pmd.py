@@ -76,17 +76,17 @@ def pmdCompile(uni):
         if enStack!=u'':
             pmd += pmdEnConv(enStack)
             enStack = u''
-        if not ch in faSubs.keys():
+        if not ch in faSubs:
             pmd += pmdEnConv(ch)
             continue
         stickPrev = False
         stickNext = False
-        if uni[i] in faSubs.keys():
-            if i>0 and uni[i-1] in faSubs.keys() and faSubs[uni[i]][1]>1:
+        if uni[i] in faSubs:
+            if i>0 and uni[i-1] in faSubs and faSubs[uni[i]][1]>1:
                 if faSubs[uni[i-1]][1]>3:
                     stickPrev = True
             if i<n-1:
-                if uni[i+1] in faSubs.keys() and faSubs[uni[i]][1]>3:
+                if uni[i+1] in faSubs and faSubs[uni[i]][1]>3:
                     if faSubs[uni[i+1]][1]>1:
                         stickNext=True
         first = faSubs[ch][3]
