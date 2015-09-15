@@ -218,7 +218,7 @@ def addDefaultOptions(opt, defOpt, escapeList=[None,'Unknown','unknown']):
     # or have special values (in escapeList)
     # modifies opt variable an reuturns nothing
     for item in defOpt.keys():
-        if item in opt.keys():
+        if item in opt:
             if not opt[item] in escapeList:
                 continue
         opt[item] = defOpt[item]
@@ -908,7 +908,7 @@ def build_name2codepoint_dict():
         name2str - name to utf-8 string dictionary
     '''
     name2str = html_entity2str
-    for k, v in htmlentitydefs.name2codepoint.iteritems():
+    for k, v in htmlentitydefs.name2codepoint.items():
         name2str[k.lower()] = unichr(v).encode('utf-8')
     for key in sorted(name2str.keys()):
         value = name2str[key]
