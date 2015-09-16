@@ -146,7 +146,7 @@ class SDictionary:
                     if uchar_code == 0:
                         break
                     short_word += unichr(uchar_code)
-            except ValueError, ve:
+            except ValueError as ve:
                 # If Python is built without wide unicode support (which is the case on Maemo)
                 # it may not be possible to use some unicode chars. It seems best to ignore such index items
                 # The rest of the dictionary should be usable.
@@ -183,7 +183,7 @@ class SDictionary:
             article_pointer = unpack('<I', s[4:])[0]
             word = f.read(next_word - 8) if next_word else None
             return next_word, word, article_pointer
-        except Exception, e:
+        except Exception as e:
             if pointer >= self.header.articles_offset:
                 printAsError('Warning: attempt to read word from illegal position in dict file')
                 return None
