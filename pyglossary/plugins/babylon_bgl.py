@@ -147,7 +147,7 @@ class BGLGzipFile(gzip.GzipFile):
         if crc32 != self.crc:
             if gVerbose >= 2:
                 print('CRC check failed %s != %s' % (hex(crc32), hex(self.crc)))
-        elif isize != (self.size & 0xffffffffL):
+        elif isize != (self.size & 0xffffffff):
             raise IOError, 'Incorrect length of data produced'
 
     def isNewMember(self):
