@@ -177,7 +177,7 @@ class Glossary:
         lkey = str(key).lower()
         for group in Glossary.infoKeysAlias:
             if not isinstance(group, (list, tuple)):
-                raise TypeError, 'group=%s'%group
+                raise TypeError('group=%s'%group)
             if key in group or lkey in group:
                 for skey in group:
                     for t in self.info:
@@ -192,7 +192,7 @@ class Glossary:
         lkey = str(key).lower()
         for group in Glossary.infoKeysAlias:
             if not isinstance(group, (list, tuple)):
-                raise TypeError, 'group=%s'%group
+                raise TypeError('group=%s'%group)
             if key in group or lkey in group:
                 skey=group[0]
                 for i in xrange(len(self.info)):
@@ -512,7 +512,7 @@ class Glossary:
                     return self.merge(other[0])
                 return self.merge(other[0]).merge(other[1:])
             else:
-                raise TypeError, 'bad argument given to merge! other="%s"'%other
+                raise TypeError('bad argument given to merge! other="%s"'%other)
         newName = '"%s" merged with "%s"'%(
             self.getInfo('name'),
             other.getInfo('name'),
@@ -537,7 +537,7 @@ class Glossary:
                     return self.deepMerge(other[0])
                 return self.deepMerge(other[0]).deepMerge(other[1:])
             else:
-                raise TypeError, 'bad argument given to deepMerge! other="%s"'%other
+                raise TypeError('bad argument given to deepMerge! other="%s"'%other)
         newName = '"%s" deep merged with "%s"'%( self.getInfo('name') , other.getInfo('name') )
         new = Glossary([('name', newName)])
         data = self.data + other.data
