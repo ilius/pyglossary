@@ -24,7 +24,7 @@ def read(glos, filename):
     while description.endswith('\n'):
         description = description[:-1]
     glos.setInfo('name', full_name)
-    glos.setInfo('description',description)
+    glos.setInfo('description', description)
     maxWordLen=0
     for item in xdxf[2:]:
         if len(item)==2:

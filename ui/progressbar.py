@@ -134,7 +134,7 @@ class FileTransferSpeed(ProgressBarWidget):
     'Widget for showing the transfer speed (useful for file transfers).'
     def __init__(self):
         self.fmt = '%6.2f %s'
-        self.units = ['B','K','M','G','T','P']
+        self.units = ['B', 'K', 'M', 'G', 'T', 'P']
     def update(self):
         pbar = self.pbar
         if pbar.seconds_elapsed < 2e-6:#== 0:
@@ -258,7 +258,7 @@ class ProgressBar(object):
         self.signal_set = False
         if term_width is None:
             try:
-                self.handle_resize(None,None)
+                self.handle_resize(None, None)
                 signal.signal(signal.SIGWINCH, self.handle_resize)
                 self.signal_set = True
             except:

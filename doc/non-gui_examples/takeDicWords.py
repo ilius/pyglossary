@@ -17,7 +17,7 @@ dicPath = sys.argv[1]
 g = Glossary()
 g.read(dicPath)
 if usePsyco:
-  psyco.bind(Glossary,100)
+  psyco.bind(Glossary, 100)
 
 words = g.takeOutputWords({'minLen':4, 'noEn':True})
 
@@ -39,7 +39,7 @@ words = g.takeOutputWords({'minLen':4, 'noEn':True})
    # del words[i]
 
 wordsFile = open(dicPath[:-4]+"-words.txt", "w")
-print(len(words),"words found. writing to file...")
+print(len(words), "words found. writing to file...")
 wordsFile.write( '\n'.join(words)+'\n')
 wordsFile.close()
 

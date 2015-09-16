@@ -93,12 +93,12 @@ class UI(UIBase):
     def def_widgets(self, names):
         for name in names:
             #try:
-            exec('self.%s = self.xml.get_widget("%s")'%(name,name))
+            exec('self.%s = self.xml.get_widget("%s")'%(name, name))
             #except:
             #    print(name)
                 #sys.exit(1)
     def __init__(self, **options):
-        self.xml= gtk.glade.XML(os.path.join(rootDir,'ui','glade','maindialog.glade'))
+        self.xml= gtk.glade.XML(os.path.join(rootDir, 'ui', 'glade', 'maindialog.glade'))
         self.d = self.xml.get_widget('maindialog')
         self.d.connect('delete-event', self.close_button_clicked)
         self.about_init()
@@ -106,11 +106,11 @@ class UI(UIBase):
         for attr in dir(self):
             signals[attr] = getattr(self, attr)
         self.xml.signal_autoconnect(signals)
-        self.def_widgets(('quitdialog', 'textview_out','textview_err','maindialog',\
-            'vpaned1','notebook1','entry_i','entry_o',\
-            'combobox_i','combobox_o','checkb_o_det','combobox_r_i','checkb_i_ext',\
-            'entry_r_i','entry_r_o','combobox_sr','progressbar','textview_edit',\
-            'label_convert','label_reverse','combobox_mode','textview_merge','button_conv'))
+        self.def_widgets(('quitdialog', 'textview_out', 'textview_err', 'maindialog',\
+            'vpaned1', 'notebook1', 'entry_i', 'entry_o',\
+            'combobox_i', 'combobox_o', 'checkb_o_det', 'combobox_r_i', 'checkb_i_ext',\
+            'entry_r_i', 'entry_r_o', 'combobox_sr', 'progressbar', 'textview_edit',\
+            'label_convert', 'label_reverse', 'combobox_mode', 'textview_merge', 'button_conv'))
 
         '''## changing colors
         self.textview_err.modify_base(0, gtk.gdk.Color(10000, 0, 0))#textview bg color
@@ -321,7 +321,7 @@ class UI(UIBase):
                 len(self.glos.data),
             ))
         else:
-            print('reading %s file: "%s" failed.'%(format,iPath))
+            print('reading %s file: "%s" failed.'%(format, iPath))
             return False
         #self.iFormat = format
         self.iPath = iPath
@@ -348,7 +348,7 @@ class UI(UIBase):
             if not path:
                 continue
             g = Glossary()
-            self.ptext = ' of file %s from %s files'%(i+1,n)
+            self.ptext = ' of file %s from %s files'%(i+1, n)
             g.ui = self
             print('Loading "%s" ...'%path)
             g.read(path)
@@ -406,7 +406,7 @@ class UI(UIBase):
             self.glos.write(oPath, format=format)
         #self.oFormat = format
         self.oPath = oPath
-        print('writing %s file: "%s" done.'%(format,oPath))
+        print('writing %s file: "%s" done.'%(format, oPath))
         if self.checkb_o_det.get_active():
             print('time left = %3f seconds'%(time.time()-t0))
         self.assert_quit=False
@@ -465,7 +465,7 @@ class UI(UIBase):
         if self.pref['auto_set_for']:## not format:
             pathI = self.entry_i.get_text()
             (name, ext) = os.path.splitext(pathI)
-            if ext.lower() in ('.gz','.bz2','.zip'):
+            if ext.lower() in ('.gz', '.bz2', '.zip'):
                 ext = os.path.splitext(name)[1].lower()
             for i in xrange(len(Glossary.readExt)):
                 if ext in Glossary.readExt[i]:
@@ -491,7 +491,7 @@ class UI(UIBase):
         #if True:## not format:
         path = self.entry_o.get_text()
         (name, ext) = os.path.splitext(path)
-        if ext.lower() in ('.gz','.bz2','.zip'):
+        if ext.lower() in ('.gz', '.bz2', '.zip'):
             ext = os.path.splitext(name)[1].lower()
         for i in xrange(len(Glossary.writeExt)):
             if ext in Glossary.writeExt[i]:
@@ -553,7 +553,7 @@ class UI(UIBase):
         #if True:## not format:
         path = self.entry_r_i.get_text()
         (name, ext) = os.path.splitext(path)
-        if ext.lower() in ('.gz','.bz2','.zip'):
+        if ext.lower() in ('.gz', '.bz2', '.zip'):
             (name, ext) = os.path.splitext(name)
             ext = ext.lower()
         for i in xrange(len(Glossary.readExt)):
@@ -580,7 +580,7 @@ class UI(UIBase):
         if self.checkb_o_det.get_active():
             print('time left = %3f seconds'%(time.time()-t0))
             for x in self.glos.info:
-                print('%s="%s"'%(x[0],x[1]))
+                print('%s="%s"'%(x[0], x[1]))
         #self.glosR.faEdit()
         self.glosR.ui = self
         self.glosR.uiEdit()
@@ -734,14 +734,14 @@ class UI(UIBase):
             self.editor_path = self.path
             self.fcd_dir = os.path.dirname(self.path)
             self.path = ''
-        open(self.editor_path,'w').write(buffer_get_text(self.editor_buffer))
+        open(self.editor_path, 'w').write(buffer_get_text(self.editor_buffer))
         self.assert_quit = False
         return True
     ################################################################################
     ################################# DB Editor ####################################
     def dbe_init(self, *args):
-        self.def_widgets(['entry_dbe','checkb_db_ro','entry_db_index','textview_dbe',
-            'treeview','dbe_info_dialog','entry_dbe_info','textview_dbe_info','treeview_info'])
+        self.def_widgets(['entry_dbe', 'checkb_db_ro', 'entry_db_index', 'textview_dbe',
+            'treeview', 'dbe_info_dialog', 'entry_dbe_info', 'textview_dbe_info', 'treeview_info'])
         table = gtk.TextTagTable()
         tag = gtk.TextTag('definition')
         table.add(tag)
@@ -751,8 +751,8 @@ class UI(UIBase):
         self.treeview.set_model(self.treestore)
         self.cell = gtk.CellRendererText()
         self.cell2 = gtk.CellRendererText()
-        col = gtk.TreeViewColumn('Word',self.cell,text=0)
-        col2 = gtk.TreeViewColumn('Index',self.cell2,text=1)
+        col = gtk.TreeViewColumn('Word', self.cell, text=0)
+        col2 = gtk.TreeViewColumn('Index', self.cell2, text=1)
         col.set_resizable(True)
         self.treeview.append_column(col)
         self.treeview.append_column(col2)
@@ -766,7 +766,7 @@ class UI(UIBase):
         self.treeview_info.set_model(self.treestore_info)
         self.cell = gtk.CellRendererText()
         self.cell2 = gtk.CellRendererText()
-        col = gtk.TreeViewColumn('Key', self.cell,text=0)
+        col = gtk.TreeViewColumn('Key', self.cell, text=0)
         col.set_resizable(True)
         self.treeview_info.append_column(col)
         self.ptext = ''
@@ -1015,7 +1015,7 @@ class UI(UIBase):
         else:
             self.treestore[ind][1] = ind
             self.dbe_goto(ind, False)
-            for i in xrange(ind+1, min(ind+30,n-1)):
+            for i in xrange(ind+1, min(ind+30, n-1)):
                 try:
                     self.treestore[i][1] = i
                 except IndexError:
@@ -1142,15 +1142,15 @@ class UI(UIBase):
         return True
     def pref_init(self, *args):
         self.pref={}
-        self.def_widgets(['combobox_save','combobox_newline','cb_psyco','checkb_autofor','checkb_autoout',\
-            'cb_auto_update','cb_c_sort','cb_rm_tags','checkb_lower','checkb_utf8','checkb_defs'])
+        self.def_widgets(['combobox_save', 'combobox_newline', 'cb_psyco', 'checkb_autofor', 'checkb_autoout',\
+            'cb_auto_update', 'cb_c_sort', 'cb_rm_tags', 'checkb_lower', 'checkb_utf8', 'checkb_defs'])
         self.combobox_save.set_active(0)
         self.newlineItems = ('\\n', '\\r\\n', '\\n\\r')
         self.showRelItems = ['None', 'Percent At First', 'Percent']
         for item in self.showRelItems:
             self.combobox_sr.append_text(item)
-        for name in ('out','err','edit','dbe'):
-            self.def_widgets(['cb_wrap_%s'%name,'colorpicker_bg_%s'%name,'colorpicker_font_%s'%name])
+        for name in ('out', 'err', 'edit', 'dbe'):
+            self.def_widgets(['cb_wrap_%s'%name, 'colorpicker_bg_%s'%name, 'colorpicker_font_%s'%name])
         self.pref['auto_update'] = self.cb_auto_update.get_active()
         if os.path.isfile(use_psyco_file):
             self.cb_psyco.set_active(True)
@@ -1182,12 +1182,12 @@ class UI(UIBase):
         self.checkb_lower.set_active(self.pref['lower'])
         self.cb_rm_tags.set_active(self.pref['remove_tags'])
         self.checkb_utf8.set_active(self.pref['utf8_check'])
-        for name in ('out','err','edit','dbe'):
+        for name in ('out', 'err', 'edit', 'dbe'):
             eval('self.cb_wrap_%s'%name).set_active(self.pref['wrap_%s'%name])
-        for name in ('out','err','edit','dbe'):
+        for name in ('out', 'err', 'edit', 'dbe'):
             color=self.pref['color_bg_%s'%name]
             eval('self.colorpicker_bg_%s'%name).set_color(gtk.gdk.Color(*color))
-        for name in ('out','err','edit','dbe'):
+        for name in ('out', 'err', 'edit', 'dbe'):
             color=self.pref['color_font_%s'%name]
             eval('self.colorpicker_font_%s'%name).set_color(gtk.gdk.Color(*color))
         return True
@@ -1195,7 +1195,7 @@ class UI(UIBase):
         self.pref['auto_update'] = self.xml.get_widget('cb_auto_update').get_active()
         k = self.combobox_newline.get_active()
         self.pref['newline'] = self.newlineItems[k]
-        for name in ('out','err','edit','dbe'):
+        for name in ('out', 'err', 'edit', 'dbe'):
             exec('\
 self.pref["wrap_%s"]=self.cb_wrap_%s.get_active()\n\
 if self.pref["wrap_%s"]:\n\
@@ -1203,10 +1203,10 @@ if self.pref["wrap_%s"]:\n\
 else:\n\
     self.textview_%s.set_wrap_mode(gtk.WRAP_NONE)'%((name,)*5))
             col=eval('self.colorpicker_bg_%s'%name).get_property('color')
-            exec('self.textview_%s.modify_base(0, gtk.gdk.Color(%s, %s, %s))'%(name,col.red,col.green,col.blue))
+            exec('self.textview_%s.modify_base(0, gtk.gdk.Color(%s, %s, %s))'%(name, col.red, col.green, col.blue))
             exec('self.pref["color_bg_%s"]=(col.red,col.green,col.blue)'%name)
             exec('col=self.colorpicker_font_%s.get_property(\'color\')'%name)
-            exec('self.textview_%s.modify_text(0, gtk.gdk.Color(%s, %s, %s))'%(name,col.red,col.green,col.blue))
+            exec('self.textview_%s.modify_text(0, gtk.gdk.Color(%s, %s, %s))'%(name, col.red, col.green, col.blue))
             exec('self.pref["color_font_%s"]=(col.red,col.green,col.blue)'%name)
         self.pref['auto_set_for']=self.checkb_autofor.get_active()
         self.pref['auto_set_out']=self.checkb_autoout.get_active()

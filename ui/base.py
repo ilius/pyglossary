@@ -27,7 +27,7 @@ authors = open(join(rootDir, 'AUTHORS')).read().split('\n')
 
 
 class UIBase:
-    prefSavePath = [confPath, '%s%src.py'%(srcDir,os.sep)]
+    prefSavePath = [confPath, '%s%src.py'%(srcDir, os.sep)]
     prefKeys = (
         'save', 'newline', 'auto_update',
         'auto_set_for', 'auto_set_out', 'sort', 'lower',

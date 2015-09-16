@@ -1267,7 +1267,7 @@ class BGL:
             #defi = ''
             if block.Type==0:
                 self.read_type_0(block)
-            elif block.Type in (1,7,10,11,13):
+            elif block.Type in (1, 7, 10, 11, 13):
                 self.numEntries += 1
             elif block.Type==2:
                 if not self.read_type_2(block, 1):

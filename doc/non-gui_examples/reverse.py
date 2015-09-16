@@ -37,4 +37,4 @@ wordsFile = open(wordsFilePath, "r")
 
 g2 = g.reverseDic(wordsFile, {'matchWord':True})
 g2.writeTabfile()
-print('About',int(time.time()-t0) ,'seconds left.')
+print('About', int(time.time()-t0), 'seconds left.')

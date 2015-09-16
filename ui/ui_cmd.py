@@ -65,10 +65,10 @@ COMMAND = 'pyglossary'
 
 def help():
     text = open(join(rootDir, 'help')).read()\
-        .replace('%CMD',COMMAND)\
-        .replace('%SB',startBold)\
-        .replace('%SU',startUnderline)\
-        .replace('%EF',endFormat)
+        .replace('%CMD', COMMAND)\
+        .replace('%SB', startBold)\
+        .replace('%SU', startUnderline)\
+        .replace('%EF', endFormat)
     text += '\n%sSupported input formats:%s'%(startBold, endFormat)
     for f in Glossary.readFormats:
         text += '\n  %s'%Glossary.formatsDesc[f]
