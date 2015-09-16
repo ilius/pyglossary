@@ -153,7 +153,7 @@ class StarDictReader:
     def parseDefiBlockCompact(self, data, sametypesequence, word):
         """Parse definition block when sametypesequence option is specified.
         """
-        assert type(sametypesequence) == str
+        assert isinstance(sametypesequence, str)
         assert len(sametypesequence) > 0
         dataFileCorruptedError = "Data file is corrupted. Word \"{0}\"".format(word)
         res = []
@@ -362,14 +362,14 @@ class StarDictWriter:
                     articleFormat = 'm'
             else:
                 articleFormat = 'm'
-            assert type(articleFormat) == str and len(articleFormat) == 1
+            assert isinstance(articleFormat, str) and len(articleFormat) == 1
             dictStr += articleFormat
             dictStr += defi + '\x00'
             dataLen = 1 + len(defi) + 1
             if len(item) > 2 and 'defis' in item[2]:
                 for rec in item[2]['defis']:
                     defi, t = rec[:2]
-                    assert type(t) == str and len(t) == 1
+                    assert isinstance(t, str) and len(t) == 1
                     dictStr += t
                     dictStr += defi + '\x00'
                     dataLen += 1 + len(defi) + 1

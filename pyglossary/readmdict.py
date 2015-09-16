@@ -500,7 +500,7 @@ if __name__ == '__main__':
     # read mdx file
     if ext.lower() == os.path.extsep + 'mdx':
         mdx = MDX(args.filename, args.encoding, args.substyle)
-        if type(args.filename) is unicode:
+        if isinstance(args.filename, unicode):
             fname = args.filename.encode('utf-8')
         else:
             fname = args.filename
@@ -515,7 +515,7 @@ if __name__ == '__main__':
     mdd_filename = ''.join([base, os.path.extsep, 'mdd'])
     if (os.path.exists(mdd_filename)):
         mdd = MDD(mdd_filename)
-        if type(mdd_filename) is unicode:
+        if isinstance(mdd_filename, unicode):
             fname = mdd_filename.encode('utf-8')
         else:
             fname = mdd_filename
