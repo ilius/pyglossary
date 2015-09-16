@@ -83,11 +83,11 @@ class ProgressBarWidget(object):
     def __str__(self):
         return self.update()
     def __add__(self, other):
-        if type(other)==unicode:
+        if isinstance(other, unicode):
             return str(self) + other.encode('utf-8')
         return str(self) + str(other)
     def __radd__(self, other):
-        if type(other)==unicode:
+        if isinstance(other, unicode):
             return other.encode('utf-8') + str(self)
         return str(other) + str(self)
 

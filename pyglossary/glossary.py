@@ -462,8 +462,7 @@ class Glossary:
 
 
     def takeOutputWords(self, opt={}):
-        words = takeStrWords(' '.join([item[1] for item in self.data]), opt)
-        words.sort()
+        words = sorted(takeStrWords(' '.join([item[1] for item in self.data]), opt))
         words = removeRepeats(words)
         return words
 
