@@ -23,7 +23,7 @@ class my_install(install):
             binPath = join(self.install_scripts, 'pyglossary')
             print('creating script file "%s"'%binPath)
             open(binPath, 'w').write(join(self.install_data, relRootDir, 'pyglossary.pyw'))
-            os.chmod(binPath, 0755)
+            os.chmod(binPath, 0o755)
 
 
 data_files = [
