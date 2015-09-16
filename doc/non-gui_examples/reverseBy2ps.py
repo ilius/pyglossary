@@ -27,7 +27,7 @@ if usePsyco:
   psCode += 'import psyco\npsyco.bind(Glossary)\n'
 psCode += 'g = Glossary()\ng.readTabfile(\'%s\')\ng.checkUnicode()\n'%(dicPath)
 psCode += 'g2 = g.reverseDic(\'%s\', {\'matchWord\':True})\ng2.writeTabfile()\n' %(wordsFilePath2)
-ps = Popen(['python','-c',psCode])
+ps = Popen(['python', '-c', psCode])
 
 g = Glossary()
 g.readTabfile(dicPath)

@@ -39,7 +39,7 @@ def write_plist(glos, filename):
     basename = os.path.splitext(os.path.basename(filename))[0]
     # identifier must be unique
     # use file base name
-    identifier = basename.replace(' ','')
+    identifier = basename.replace(' ', '')
     # strip html tags
     copyright = BeautifulSoup(glos.getInfo('copyright')).text
 
@@ -90,8 +90,8 @@ def write_xml(glos, filename, cleanHTML):
     total = len(glos.data)
     close_tag = re.compile('<(BR|HR)>', re.IGNORECASE)
     nonprintable = re.compile('[\x00-\x07\x0e-\x1f]')
-    img_tag = re.compile('<IMG (.*?)>',re.IGNORECASE)
-    for index,item in enumerate(glos.data):
+    img_tag = re.compile('<IMG (.*?)>', re.IGNORECASE)
+    for index, item in enumerate(glos.data):
         # strip double quotes and html tags
         title = re.sub('<[^<]+?>|"|[<>]|\xef\xbb\xbf', '', item[0])
         if not title:
@@ -166,7 +166,7 @@ h3  {
     f.close()
 
 def write_makefile(fname):
-    f = open(os.path.join(os.path.dirname(fname),"Makefile"), "w")
+    f = open(os.path.join(os.path.dirname(fname), "Makefile"), "w")
     f.write("""
 DICT_NAME       =   "%(dict_name)s"
 DICT_SRC_PATH   =   "%(dict_name)s.xml"

@@ -571,7 +571,7 @@ def write_ext(glos, filename, sort=True, dictZip=True):
     db = _stardictbuilder.new_StarDictBuilder(filename)
     _stardictbuilder.StarDictBuilder_swigregister(db)
     for item in g.data:
-        _stardictbuilder.StarDictBuilder_addHeadword(db,item[0],item[1], '')
+        _stardictbuilder.StarDictBuilder_addHeadword(db, item[0], item[1], '')
     _stardictbuilder.StarDictBuilder_setTitle(db, g.getInfo('name'))
     _stardictbuilder.StarDictBuilder_setAuthor(db, g.getInfo('author'))
     _stardictbuilder.StarDictBuilder_setLicense(db, g.getInfo('license'))

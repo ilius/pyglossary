@@ -153,7 +153,7 @@ class SDictionary:
                 printAsError('Failed to decode short index item %s, will ignore: %s'%(i, ve))
                 continue
             pointer_start = entry_start+s_index_depth*4
-            pointer = unpack('<I',short_index_str[pointer_start:pointer_start+4])[0]
+            pointer = unpack('<I', short_index_str[pointer_start:pointer_start+4])[0]
             short_index[len(short_word)][short_word] = pointer
         return short_index
 

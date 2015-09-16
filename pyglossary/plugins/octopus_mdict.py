@@ -31,11 +31,11 @@ def read(glos, filename, **options):
     glos.setInfo('title', mdx.header.get('Title', os.path.basename(filename)))
     glos.setInfo('description', mdx.header.get('Description', ''))
     glos.data = []
-    for key,value in mdx.items():
+    for key, value in mdx.items():
         glos.data.append((key, value, ))
 
     # find companion mdd file
-    base,ext = os.path.splitext(filename)
+    base, ext = os.path.splitext(filename)
     mdd_filename = ''.join([base, os.path.extsep, 'mdd'])
     if (os.path.exists(mdd_filename)):
         mdd = MDD(mdd_filename)
@@ -43,7 +43,7 @@ def read(glos, filename, **options):
         datafolder = options.get('resPath', base + '_files')
         if not os.path.exists(datafolder):
             os.makedirs(datafolder)
-        for key,value in mdd.items():
+        for key, value in mdd.items():
             fname = ''.join([datafolder, key.replace('\\', os.path.sep)]);
             if not os.path.exists(os.path.dirname(fname)):
                 os.makedirs(os.path.dirname(fname))

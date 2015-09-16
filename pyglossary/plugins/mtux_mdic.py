@@ -45,7 +45,7 @@ def read(glos, filename):
         except:
             printAsError('error while encoding word %s'%x[0])
         else:
-            glos.data.append([w,m])
+            glos.data.append([w, m])
     cur.close()
     con.close()
     return True

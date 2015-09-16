@@ -38,7 +38,7 @@ schAs = [
     '*', '@', '#',
 ]
 
-digitsFa = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹']
+digitsFa = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹']
 
 ## persian spacial characters.
 schFa = [
@@ -49,7 +49,7 @@ schFa = [
     '\xc2\xbb',
     '\xd9\x80',
     '\xd9\x94',
-    '\xd8\x8c' ,
+    '\xd8\x8c',
     '\xe2\x80\x93',
     '\xe2\x80\x9c',
     '\xe2\x80\x9d',
@@ -58,7 +58,7 @@ schFa = [
 commaFa = '\xd8\x8c'
 
 ## other unicode spacial characters.
-schUn = ['\xee\x80\x8a','\xee\x80\x8c']
+schUn = ['\xee\x80\x8a', '\xee\x80\x8c']
 
 #for ch in schFa + schUn :
 #    print(ch)
@@ -212,7 +212,7 @@ def relTimeHMS(seconds):
     (h, m) = divmod(m, 60)
     return formatHMS(h, m, s)
 
-def addDefaultOptions(opt, defOpt, escapeList=[None,'Unknown','unknown']):
+def addDefaultOptions(opt, defOpt, escapeList=[None, 'Unknown', 'unknown']):
     # Two varable opt(meaning options) and defOpt(meaning defaults options) have dict type.
     # this function sets options to defaults if they have not defined
     # or have special values (in escapeList)
@@ -289,7 +289,7 @@ def removeRepeats(lst):
     if n==0:
         return []
     lstR=[lst[0]]
-    for i in xrange(1,n):
+    for i in xrange(1, n):
         if lst[i] != lst[i-1]:
             lstR.append(lst[i])
     return lstR
@@ -297,7 +297,7 @@ def removeRepeats(lst):
 def addWord(word, allWords):
         if len(allWords)==0:
             return [word]
-        i = locate(allWords,word)
+        i = locate(allWords, word)
         ii = int(i+1)
         if ii-i == 0.5:
             allWords.insert(ii, word)
@@ -311,7 +311,7 @@ def findWords(st0, opt={}):
     st = st0[:]
     ind = []
     for ch in sch:
-        st = st.replace(ch,' '*len(ch))
+        st = st.replace(ch, ' '*len(ch))
     if len(st)!=len(st0):
         print('Error in function text_utlis.findWord. string length has been changed!')
         return []
@@ -452,7 +452,7 @@ def relation(word, phrase, opt={}):## FIXME
                     pNum += 1
             pRel = float(pNum)/pLen ## part relation
         else:
-            pLen = len(part.replace(' ',''))
+            pLen = len(part.replace(' ', ''))
             if pLen==0:
                 continue
             pNum = len(findAll(part, st)*len(st))
@@ -539,10 +539,10 @@ def chBaseIntToList(number, base):
 def recodeToWinArabic(s):
     u = s.decode('utf8', 'replace')
     replaceList = [
-        (u'ی',u'ي'),
-        (u'ک',u'ك'),
-        (u'ٔ',u'ء'),
-        ('\xef\xbf\xbd',''),
+        (u'ی', u'ي'),
+        (u'ک', u'ك'),
+        (u'ٔ', u'ء'),
+        ('\xef\xbf\xbd', ''),
     ] + [(unichr(i), unichr(i+144)) for i in xrange(1632, 1642)]
     for item in replaceList:
         u = u.replace(item[0], item[1])

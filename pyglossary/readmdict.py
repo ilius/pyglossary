@@ -63,7 +63,7 @@ class MDict(object):
         """
         Return an iterator over dictionary keys.
         """
-        return (key_value for key_id,key_value in self._key_list)
+        return (key_value for key_id, key_value in self._key_list)
 
     def _read_number(self, f):
         return unpack(self._number_format, f.read(self._number_width))[0]
@@ -381,7 +381,7 @@ class MDX(MDict):
     def _substitute_stylesheet(self, txt):
         # substitute stylesheet definition
         txt_list = re.split('`\d+`', txt)
-        txt_tag  = re.findall('`\d+`',txt)
+        txt_tag  = re.findall('`\d+`', txt)
         txt_styled = txt_list[0]
         for  j, p in enumerate(txt_list[1:]):
             style = self._stylesheet[txt_tag[j][1:-1]]
@@ -495,7 +495,7 @@ if __name__ == '__main__':
     if not os.path.exists(args.filename):
         print("Please specify a valid MDX/MDD file")
 
-    base,ext = os.path.splitext(args.filename)
+    base, ext = os.path.splitext(args.filename)
 
     # read mdx file
     if ext.lower() == os.path.extsep + 'mdx':
@@ -506,7 +506,7 @@ if __name__ == '__main__':
             fname = args.filename
         print('========', fname, '========')
         print('  Number of Entries :', len(mdx))
-        for key,value in mdx.header.items():
+        for key, value in mdx.header.items():
             print(' ', key, ':', value)
     else:
         mdx = None
@@ -521,7 +521,7 @@ if __name__ == '__main__':
             fname = mdd_filename
         print('========', fname, '========')
         print('  Number of Entries :', len(mdd))
-        for key,value in mdd.header.items():
+        for key, value in mdd.header.items():
             print(' ', key, ':', value)
     else:
         mdd = None
@@ -531,7 +531,7 @@ if __name__ == '__main__':
         if mdx:
             output_fname = ''.join([base, os.path.extsep, 'txt'])
             f = open(output_fname, 'wb')
-            for key,value in mdx.items():
+            for key, value in mdx.items():
                 f.write(key)
                 f.write('\r\n')
                 f.write(value)
@@ -549,7 +549,7 @@ if __name__ == '__main__':
             datafolder = os.path.join(os.path.dirname(args.filename), args.datafolder)
             if not os.path.exists(datafolder):
                 os.makedirs(datafolder)
-            for key,value in mdd.items():
+            for key, value in mdd.items():
                 fname = ''.join([datafolder, key.replace('\\', os.path.sep).decode('utf-8')]);
                 if not os.path.exists(os.path.dirname(fname)):
                     os.makedirs(os.path.dirname(fname))

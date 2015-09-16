@@ -149,10 +149,10 @@ class ProgressBar(Tix.Frame):
 
 
 class UI(Tix.Frame):
-    prefKeys = ['newline','auto_update','auto_set_for','auto_set_out','sort','lower',\
-        'utf8_check','remove_tags','tags','wrap_out','wrap_err','wrap_edit','wrap_dbe',\
-        'color_bg_out','color_bg_err','color_bg_edit','color_bg_dbe',\
-        'color_font_out','color_font_err','color_font_edit','color_font_dbe',\
+    prefKeys = ['newline', 'auto_update', 'auto_set_for', 'auto_set_out', 'sort', 'lower',\
+        'utf8_check', 'remove_tags', 'tags', 'wrap_out', 'wrap_err', 'wrap_edit', 'wrap_dbe',\
+        'color_bg_out', 'color_bg_err', 'color_bg_edit', 'color_bg_dbe',\
+        'color_font_out', 'color_font_err', 'color_font_edit', 'color_font_dbe',\
         'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs']## Reverse Options
     prefSavePath = [confPath, join(srcDir, 'rc.py')]
     def __init__(self, path='', **options):
@@ -622,7 +622,7 @@ class UI(Tix.Frame):
                     self.entry_i.insert(0, pathI)
             if self.pref['auto_set_for']:#format==noneItem:
                 ext = os.path.splitext(pathI)[-1].lower()
-                if ext in ('.gz','.bz2','.zip'):
+                if ext in ('.gz', '.bz2', '.zip'):
                     ext = os.path.splitext(pathI[:-len(ext)])[-1].lower()
                 for i in xrange(len(Glossary.readExt)):
                     if ext in Glossary.readExt[i]:
@@ -649,7 +649,7 @@ class UI(Tix.Frame):
                     self.entry_o.insert(0, pathO)
             if self.pref['auto_set_for']:#format==noneItem:
                 ext = os.path.splitext(pathO)[-1].lower()
-                if ext in ('.gz','.bz2','.zip'):
+                if ext in ('.gz', '.bz2', '.zip'):
                     ext = os.path.splitext(pathO[:-len(ext)])[-1].lower()
                 for i in xrange(len(Glossary.writeExt)):
                     if ext in Glossary.writeExt[i]:
@@ -710,7 +710,7 @@ class UI(Tix.Frame):
         if self.checkb_o_det.get():#?????????
             print('time left = %3f seconds'%(time.time()-t0))
             for x in self.glos.info:
-                print('%s="%s"'%(x[0],x[1]))
+                print('%s="%s"'%(x[0], x[1]))
         return True
     def convert(self):
         if len(self.glos.data)==0:
@@ -721,7 +721,7 @@ class UI(Tix.Frame):
         if not oPath:
             printAsError('Output file path is empty!');return
         formatD = self.combobox_o.get()
-        if formatD in (noneItem,''):
+        if formatD in (noneItem, ''):
             printAsError('Output format is empty!');return
         print('Converting to %s, please wait...'%formatD)
         #while gtk.events_pending():#??????????
@@ -745,7 +745,7 @@ class UI(Tix.Frame):
         self.glos.write(oPath, format=format)
         #self.oFormat = format
         self.oPath = oPath
-        print('writing %s file: "%s" done.'%(format,oPath))
+        print('writing %s file: "%s" done.'%(format, oPath))
         if self.checkb_o_det.get():#???????
             print('time left = %3f seconds'%(time.time()-t0))
         self.running = False

@@ -59,8 +59,8 @@ def read_2(glos, filename):
     for elem in xdb[0]:
         et = tostring(elem)
         i0 = et.find('<')
-        i1 = et.find('>',i0+1)
-        i2 = et.find('<',i1+1)
+        i1 = et.find('>', i0+1)
+        i2 = et.find('<', i1+1)
         glos.info[et[i0:i1]] = et[i1+1:i2]
     for elem in xdb[1:]:
         try:
@@ -69,7 +69,7 @@ def read_2(glos, filename):
             myRaise(__file__)
             printAsError(tostring(elem))
             continue
-        glos.data += [[ w[4:-5] , m[5:-6] ]]
+        glos.data += [[ w[4:-5], m[5:-6] ]]
 
 
 

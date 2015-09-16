@@ -75,8 +75,8 @@ get_ext = lambda path: splitext(path)[1].lower()
 
 class Glossary:
     infoKeysAlias = (## Should be changed according to a plugin???
-        ('name', 'title' , 'dbname' , 'bookname'),
-        ('sourceLang', 'inputlang' , 'origlang'),
+        ('name', 'title', 'dbname', 'bookname'),
+        ('sourceLang', 'inputlang', 'origlang'),
         ('targetLang', 'outputlang', 'destlang'),
         ('copyright', 'license'),
     )
@@ -538,7 +538,7 @@ class Glossary:
                 return self.deepMerge(other[0]).deepMerge(other[1:])
             else:
                 raise TypeError('bad argument given to deepMerge! other="%s"'%other)
-        newName = '"%s" deep merged with "%s"'%( self.getInfo('name') , other.getInfo('name') )
+        newName = '"%s" deep merged with "%s"'%( self.getInfo('name'), other.getInfo('name') )
         new = Glossary([('name', newName)])
         data = self.data + other.data
         data.sort(lambda t1, t2: cmp(t1[0], t2[0]))
@@ -633,9 +633,9 @@ class Glossary:
                     if num == numP:
                         out.append('%s\\n%s'%(w, m))
                     else:
-                        out.append('%s(%%%d)\\n%s'%(w, 100*num , m))
+                        out.append('%s(%%%d)\\n%s'%(w, 100*num, m))
                 else:
-                    out.append('%s\\n%s'%(w,m))
+                    out.append('%s\\n%s'%(w, m))
             return out
         for j in xrange(n):
             numP = num
@@ -696,7 +696,7 @@ class Glossary:
             opt['savePath'] = self.getInfo('name')+'.txt'
         revG = Glossary(self.info[:])
         revG.setInfo('name', self.getInfo('name')+'_reversed')
-        revG.setInfo('inputlang' , self.getInfo('outputlang'))
+        revG.setInfo('inputlang', self.getInfo('outputlang'))
         revG.setInfo('outputlang', self.getInfo('inputlang'))
         wNum = len(words)
         #steps = opt['reportStep']
@@ -717,7 +717,7 @@ class Glossary:
         for i in xrange(c, n):
             word = words[i]
             rat = float(i+1)/n
-            ui.progress(rat, '%d / %d words completed'%(i,n))
+            ui.progress(rat, '%d / %d words completed'%(i, n))
             if ui.reverseStop:
                 saveFile.close() ## if with KeyboardInterrupt it will be closed ??????????????
                 self.continueFrom = i
@@ -791,7 +791,7 @@ class Glossary:
                 for j in xrange(len(self.data)):
                     # words indexes
                     wdsIdx = findWords(self.data[j][1], {'word': rpl[0]})
-                    for [i0,i1] in wdsIdx:
+                    for [i0, i1] in wdsIdx:
                         self.data[j][1] = self.data[j][1][:i0] + rpl[1] + self.data[j][1][i1:]
                         num += 1
             return num
@@ -818,7 +818,7 @@ class Glossary:
                 '/ n',
                 '/ the',
             ):
-                i = defi.find(s,2,85)
+                i = defi.find(s, 2, 85)
                 if i==-1:
                     continue
                 else:
