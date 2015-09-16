@@ -320,7 +320,7 @@ def findWords(st0, opt={}):
         word = st[si[i]+1:si[i+1]]
         if word.strip()=='':
             continue
-        if opt.has_key('word'):
+        if 'word' in opt:
             if word != opt['word']:
                 continue
         if len(word) < opt['minLen']:
