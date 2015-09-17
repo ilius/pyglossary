@@ -20,7 +20,7 @@
 
 VERSION = '2013.01.03'
 
-homePage = 'http://sourceforge.net/projects/pyglossary'
+homePage = 'http://github.com/ilius/pyglossary'
 
 import os, sys, platform, time, subprocess, shutil, re
 from os.path import split, join, splitext, isdir, dirname
