@@ -54,19 +54,19 @@ Supported format table:
 
 Requirements
 ----------------------
-GNU/Linux
-~~~~~~~~
 
-PyGTK, which is pre-installed in most of desktop distributions, plus Glade2 (will be removed later)
+**GNU/Linux**
 
-- Debian: `sudo apt-get install python-gtk2 python-glade2`
-- openSUSE: `sudo zypper install python-gtk`
-- Fedora: `sudo yum install pygtk2 glade2`
-- Archlinux: `sudo pacman -S pygtk`
+- PyGTK, which is pre-installed in most of desktop distributions, plus Glade2 (will be removed later)
 
---------
-Mac OS X
-~~~~~~~~
+  + Debian: `sudo apt-get install python-gtk2 python-glade2`
+  + openSUSE: `sudo zypper install python-gtk`
+  + Fedora: `sudo yum install pygtk2 glade2`
+  + Archlinux: `sudo pacman -S pygtk`
+
+
+**Mac OS X**
+
 - BeautifulSoup4(with html5lib as backend) required to sanitize html contents.
 
   ``sudo easy_install beautifulsoup4 html5lib``
