@@ -181,8 +181,7 @@ class UI(Tix.Frame):
         #master.bind('<Configure>', self.resized)
         ######################
         self.running = False
-        self.glos = Glossary()
-        self.glos.ui = self
+        self.glos = Glossary(ui=self)
         self.pref = {}
         self.pref_load()
         self.pathI = ''
@@ -240,8 +239,7 @@ class UI(Tix.Frame):
         frame.pack(fill='x')
         ######################################
         self.running = False
-        self.glos = Glossary()
-        self.glos.ui = self
+        self.glos = Glossary(ui=self)
         self.pref = {}
         self.pref_load()
         ######################

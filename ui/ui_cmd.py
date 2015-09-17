@@ -221,9 +221,8 @@ class UI(UIBase):
                 printAsError('neither output file nor output format is given')
                 print('try: %s --help'%COMMAND)
                 return 1
-        g = Glossary()
+        g = Glossary(ui=self)
         print('Reading file "%s"'%ipath)
-        g.ui = self
         if g.read(ipath, format=read_format, **read_options)!=False:
             ## When glossary reader uses progressbar, progressbar must be rebuilded:
             self.progressBuild()

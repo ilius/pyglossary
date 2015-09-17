@@ -151,13 +151,13 @@ class Glossary:
             del f, mod, format, ext, desc
 
 
-    def __init__(self, info=[], data=[], resPath=''):
+    def __init__(self, info=[], data=[], ui=None, resPath=''):
         self.info = []
         self.setInfos(info, True)
         self.data = data
         self.filename = ''
+        self.ui = ui
         self.resPath = resPath
-        self.ui = None
 
     __str__ = lambda self: 'glossary.Glossary'
 
