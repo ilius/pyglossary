@@ -20,6 +20,7 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from os.path import join
 from formats_common import *
 
 enable = True
@@ -1134,7 +1135,7 @@ class BGL:
                     f2 = open(self.dataFile, 'wb')
                 except IOError:
                     myRaise(__file__)
-                    self.dataFile = tmpDir + os.sep + os.path.split(self.m_filename)[-1] + '-data.gz'
+                    self.dataFile = join(tmpDir, os.path.split(self.m_filename)[-1] + '-data.gz')
                     f2 = open(self.dataFile, 'wb')
                 f.seek(i)
                 f2.write(f.read())
