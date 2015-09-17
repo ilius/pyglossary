@@ -151,22 +151,24 @@ class Glossary:
             del f, mod, format, ext, desc
 
 
-    def __init__(self, info=[], data=[], ui=None, resPath=''):
+    def __init__(self, info=[], data=[], ui=None, filename='', resPath=''):
         self.info = []
         self.setInfos(info, True)
         self.data = data
-        self.filename = ''
         self.ui = ui
+        self.filename = filename
         self.resPath = resPath
 
     __str__ = lambda self: 'glossary.Glossary'
 
     def copy(self):
-        g = Glossary(self.info[:], self.data[:])
-        g.filename = self.filename
-        g.resPath = self.resPath
-        g.ui = self.ui ## ???
-        return g
+        return Glossary(
+            info = self.info[:],
+            data = self.data[:],
+            ui = self.ui ## FIXME
+            filename = self.filename,
+            resPath = self.resPath,
+        )
 
     def infoKeys(self):
         return [t[0] for t in self.info]
@@ -473,9 +475,9 @@ class Glossary:
     def simpleSwap(self):
         # loosing item[2:]
         return Glossary(
-            self.info[:],
-            [
-                (item[1], item[0])
+            info = self.info[:],
+            data = [
+                (item[1], item[0]) \
                 for item in self.data
             ],
         )
@@ -494,12 +496,14 @@ class Glossary:
             else:
                 return self
         newName = '"%s" attached to "%s"'%(self.getInfo('name'), other.getInfo('name') )
-        ng = Glossary(
-            [('name', newName)],
-            self.data + other.data,
+        newGloss = Glossary(
+            info = [
+                ('name', newName),
+            ],
+            data = self.data + other.data,
         )
         ## here attach and set info of two glossary ## FIXME
-        return ng
+        return newGloss
 
     def merge(self, other):
         try:
@@ -517,12 +521,13 @@ class Glossary:
             self.getInfo('name'),
             other.getInfo('name'),
         )
-        new = Glossary([
-            ('name', newName),
-        ])
-        new.data = self.data + other.data
-        new.data.sort()
-        return new
+        newGloss = Glossary(
+            info = [
+                ('name', newName),
+            ],
+            data = sorted(self.data + other.data),
+        )
+        return newGloss
 
 
     def deepMerge(self, other, sep='\n'):
@@ -539,9 +544,10 @@ class Glossary:
             else:
                 raise TypeError('bad argument given to deepMerge! other="%s"'%other)
         newName = '"%s" deep merged with "%s"'%( self.getInfo('name'), other.getInfo('name') )
-        new = Glossary([('name', newName)])
-        data = self.data + other.data
-        data.sort(lambda t1, t2: cmp(t1[0], t2[0]))
+        data = sorted(
+            self.data + other.data,
+            key = lambda x: x[0],## why? FIXME
+        )
         n = len(data)
         i = 0
         while i < len(data)-1:
@@ -554,8 +560,12 @@ class Glossary:
                 data.pop(i+1)
             else:
                 i += 1
-        new.data = data
-        return new
+        return Glossary(
+            info = [
+                ('name', newName),
+            ],
+            data = data,
+        )
 
 
     def __add__(self, other):
@@ -694,7 +704,9 @@ class Glossary:
         autoSaveStep = opt['autoSaveStep']
         if not opt['savePath']:
             opt['savePath'] = self.getInfo('name')+'.txt'
-        revG = Glossary(self.info[:])
+        revG = Glossary(
+            info = self.info[:],
+        )
         revG.setInfo('name', self.getInfo('name')+'_reversed')
         revG.setInfo('inputlang', self.getInfo('outputlang'))
         revG.setInfo('outputlang', self.getInfo('inputlang'))
