@@ -57,20 +57,19 @@ Requirements
 Mac OS X
 - BeautifulSoup4(with html5lib as backend) required to sanitize html contents.
 
-``sudo easy_install beautifulsoup4 html5lib``
+  ``sudo easy_install beautifulsoup4 html5lib``
 
 - GNU make as part of `Command Line Tools for Xcode  <http://developer.apple.com/downloads>`_.
-- Dictionary Development Kit as part of `Auxillary Tools for Xcode <http://developer.apple.com/downloads>`_.
-Extract to ``/Developer/Extras/Dictionary Development Kit``
+- Dictionary Development Kit as part of `Auxillary Tools for Xcode <http://developer.apple.com/downloads>`_. Extract to ``/Developer/Extras/Dictionary Development Kit``
 
 ~~~~~~~~
 GNU/Linux
 ~~~~~~~~
 PyGTK, which is pre-installed in most of desktop distributions, plus Glade2 (will be removed later)
-- Debian: ``sudo apt-get install python-gtk2 python-glade2``
-- openSUSE: ``sudo zypper install python-gtk``
-- Fedora: ``sudo yum install pygtk2 glade2``
-- Archlinux: ``sudo pacman -S pygtk``
+- Debian: `sudo apt-get install python-gtk2 python-glade2`
+- openSUSE: `sudo zypper install python-gtk`
+- Fedora: `sudo yum install pygtk2 glade2`
+- Archlinux: `sudo pacman -S pygtk`
 
 
 HOWTOs
