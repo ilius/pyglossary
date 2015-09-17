@@ -761,18 +761,6 @@ class UI(Tix.Frame):
         self.pbar.updateProgress(100)
     def r_finished(self):
         pass
-    def pref_load(self, *args):
-        exec(open(join(srcDir, 'rc.py')).read())
-        if save==0:
-            try:
-                fp = open(self.prefSavePath[0])
-            except:
-                myRaise(__file__)
-            else:
-                exec(fp.read())
-        for key in self.prefKeys:
-            self.pref[key] = eval(key)
-        return True
     def console_clear(self, event=None):
         self.console.delete('1.0', 'end')
         print('Console:')

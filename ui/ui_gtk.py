@@ -1156,16 +1156,8 @@ class UI(UIBase):
         self.pref_update_var()
         self.pref_rev_update_gui()
     def pref_load(self, *args):
-        exec(open(join(srcDir, 'rc.py')).read())
-        if save==0:
-            try:
-                fp = open(self.prefSavePath[0])
-            except:
-                myRaise(__file__)
-            else:
-                exec(fp.read())
-        for key in self.prefKeys:
-            self.pref[key] = eval(key)
+        if not UIBase.pref_load(self, *args):
+            return False
         self.combobox_save.set_active(self.pref['save'])
         self.cb_auto_update.set_active(self.pref['auto_update'])
         for i in xrange(len(self.newlineItems)):
