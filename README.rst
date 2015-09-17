@@ -56,7 +56,9 @@ Requirements
 ----------------------
 GNU/Linux
 ~~~~~~~~
+
 PyGTK, which is pre-installed in most of desktop distributions, plus Glade2 (will be removed later)
+
 - Debian: `sudo apt-get install python-gtk2 python-glade2`
 - openSUSE: `sudo zypper install python-gtk`
 - Fedora: `sudo yum install pygtk2 glade2`
