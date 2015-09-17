@@ -29,14 +29,36 @@ authors = open(join(rootDir, 'AUTHORS')).read().split('\n')
 class UIBase:
     prefSavePath = [confPath, '%s%src.py'%(srcDir, os.sep)]
     prefKeys = (
-        'save', 'newline', 'auto_update',
-        'auto_set_for', 'auto_set_out', 'sort', 'lower',
-        'remove_tags', 'tags', 'utf8_check',
+        'save',
+        'newline',
+        'auto_update',
+        'auto_set_for',
+        'auto_set_out',
+        'sort',
+        'lower',
+        'remove_tags',
+        'tags',
+        'utf8_check',
         'enable_alts',
-        'wrap_out', 'wrap_err', 'wrap_edit', 'wrap_dbe',
-        'color_bg_out', 'color_bg_err', 'color_bg_edit', 'color_bg_dbe',
-        'color_font_out', 'color_font_err', 'color_font_edit', 'color_font_dbe',
-        'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs',## Reverse Options
+        'wrap_out',
+        'wrap_err',
+        'wrap_edit',
+        'wrap_dbe',
+        'color_bg_out',
+        'color_bg_err',
+        'color_bg_edit',
+        'color_bg_dbe',
+        'color_font_out',
+        'color_font_err',
+        'color_font_edit',
+        'color_font_dbe',
+        ## Reverse Options:
+        'matchWord',
+        'showRel',
+        'autoSaveStep',
+        'minRel',
+        'maxNum',
+        'includeDefs',
     )
 
 
