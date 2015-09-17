@@ -17,6 +17,8 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from os.path import join
+
 from paths import srcDir, rootDir
 from pyglossary.glossary import *
 
@@ -27,7 +29,10 @@ authors = open(join(rootDir, 'AUTHORS')).read().split('\n')
 
 
 class UIBase:
-    prefSavePath = [confPath, '%s%src.py'%(srcDir, os.sep)]
+    prefSavePath = [
+        confPath,
+        join(srcDir, 'rc.py')
+    ]
     prefKeys = (
         'save',
         'newline',

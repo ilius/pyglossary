@@ -104,7 +104,7 @@ def pmdCompile(uni):
         del stickPrev, stickNext, first
     """
     if missing!=[]:
-        fp = open('%s%smissing.txt'%(homeDir, os.sep), 'a')
+        fp = open(join(homeDir, 'missing.txt'), 'a')
         for ch in missing:
             print(ch.encode('utf-8'))
             #fp.write('%s\n'%ch.encode('utf-8'))

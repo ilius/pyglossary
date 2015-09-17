@@ -32,7 +32,7 @@ endFormat	= '\x1b[0;0;0m'		# End Format		#len=8
 #redOnGray	= '\x1b[0;1;31;47m'
 startRed	= '\x1b[31m'
 
-#use_psyco_file = '%s%suse_psyco'%(srcDir,os.sep)
+#use_psyco_file = join(srcDir, 'use_psyco')
 use_psyco_file = '%s_use_psyco'%confPath
 psyco_found = None
 
@@ -165,7 +165,7 @@ class UI(Tix.Frame):
         #icon = Tix.BitmapImage(file=xbmLogo)
         #master.wm_iconbitmap(icon)
         #master.wm_iconbitmap(xbmLogo)
-        #bit = Tix.PhotoImage(file='%s%spyglossary.gif'%(srcDir,os.sep), format='gif')
+        #bit = Tix.PhotoImage(file=join(srcDir, 'pyglossary.gif'), format='gif')
         #lb = Tix.Label(None,image=bit)
         #lb.grid()
         #master.iconwindow(icon, 'pyglossary')
