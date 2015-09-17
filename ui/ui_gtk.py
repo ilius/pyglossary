@@ -124,8 +124,7 @@ class UI(UIBase):
         self.quitdialog.connect('delete-event', self.quitdialog_close)
         self.assert_quit = False
         self.path = ''
-        self.glos=Glossary()
-        self.glos.ui = self
+        self.glos = Glossary(ui=self)
         for f in Glossary.readFormats:
             self.combobox_i.append_text(Glossary.formatsDesc[f])
             self.combobox_r_i.append_text(Glossary.formatsDesc[f])
@@ -347,9 +346,8 @@ class UI(UIBase):
             path = paths[i]
             if not path:
                 continue
-            g = Glossary()
+            g = Glossary(ui=self)
             self.ptext = ' of file %s from %s files'%(i+1, n)
-            g.ui = self
             print('Loading "%s" ...'%path)
             g.read(path)
             g.uiEdit()
@@ -572,7 +570,7 @@ class UI(UIBase):
             return False
         print('Reading from %s, please wait...'%formatD)
         format = Glossary.descFormat[formatD]
-        self.glosR = Glossary()
+        self.glosR = Glossary(ui=self)
         while gtk.events_pending():
             gtk.main_iteration_do(False)
         t0 = time.time()
@@ -582,7 +580,6 @@ class UI(UIBase):
             for x in self.glos.info:
                 print('%s="%s"'%(x[0], x[1]))
         #self.glosR.faEdit()
-        self.glosR.ui = self
         self.glosR.uiEdit()
         #self.riFormat = format
         #self.riPath = iPath
@@ -776,7 +773,7 @@ class UI(UIBase):
         #ag.connect_by_path('gtk.keysym.Control_L', self.dbe_open)
         self.info_i = -1
     def dbe_new(self, *args):
-        self.glosE = Glossary()
+        self.glosE = Glossary(ui=self)
         self.glosE.data.append(('##name', ''))
         self.treestore.clear()
         self.treestore.append(('##name', 0))
@@ -799,8 +796,7 @@ class UI(UIBase):
         self.dbe_path = self.path
         self.fcd_dir = os.path.dirname(self.path)
         self.path = ''
-        self.glosE = Glossary()
-        self.glosE.ui = self
+        self.glosE = Glossary(ui=self)
         while gtk.events_pending():
             gtk.main_iteration_do(False)
         self.set_cursor(gtk.gdk.WATCH)
