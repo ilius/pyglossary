@@ -60,6 +60,18 @@ class UIBase:
         'maxNum',
         'includeDefs',
     )
+    def pref_load(self, *args):
+        exec(open(join(srcDir, 'rc.py')).read())
+        if save==0 and os.path.exists(self.prefSavePath[0]): # save is defined in rc.py
+            try:
+                fp = open(self.prefSavePath[0])
+            except:
+                myRaise(__file__)
+            else:
+                exec(fp.read())
+        for key in self.prefKeys:
+            self.pref[key] = eval(key)
+        return True
 
 
 

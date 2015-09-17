@@ -178,19 +178,6 @@ class UI(UIBase):
     def r_finished(self, *args):
         self.glosR.continueFrom=0
         print('Reversing completed.')
-    def pref_load(self, *args):
-        fp = open(join(srcDir, 'rc.py'))
-        exec(fp.read())
-        if save==0 and os.path.exists(self.prefSavePath[0]): # save is defined in rc.py
-            try:
-                fp=open(self.prefSavePath[0])
-            except:
-                cmdRaise()
-            else:
-                exec(fp.read())
-        for key in self.prefKeys:
-            self.pref[key] = eval(key)
-        return True
     def yesNoQuestion(self, msg, yesDefault=True):## FIXME
         return True
     def run(self, ipath, opath='', read_format='', write_format='',
