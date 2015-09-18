@@ -3,7 +3,21 @@ PyGlossary
 
 PyGlossary is a tool for converting, modifying and workig with dictionary files aka glossaries, with various formats used by different dictionary applications
 
-Supported format table:
+
+
+Screenshots
+-------------------------------
+
+
+.. image:: http://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-gtk.png
+   :scale: 20%
+   :alt: pyglossary-linux-gtk.png
+   :align: left
+
+   
+
+Supported formats
+-------------------------------
 
 +----------------------------+--------------+------+-------+
 | Format                     |   Extension  | Read | Write |
@@ -129,4 +143,3 @@ Compile and install. ::
   make install
 
 Launch Dictionary.app and test.
-
