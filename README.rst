@@ -9,10 +9,9 @@ Screenshots
 -------------------------------
 
 
-.. image:: http://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-gtk.png
-   :scale: 20%
+.. image:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-gtk.png
+   :width: 100 px
    :alt: pyglossary-linux-gtk.png
-   :align: left
 
    
 
