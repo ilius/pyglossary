@@ -1,3 +1,6 @@
+verbosity = 2
+noProgressBar = False ## in command line
+
 save = 0
 newline = '\n'
 auto_update = True

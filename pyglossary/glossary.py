@@ -165,7 +165,7 @@ class Glossary:
         return Glossary(
             info = self.info[:],
             data = self.data[:],
-            ui = self.ui ## FIXME
+            ui = self.ui, ## FIXME
             filename = self.filename,
             resPath = self.resPath,
         )

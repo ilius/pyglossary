@@ -148,13 +148,7 @@ class ProgressBar(Tix.Frame):
 
 
 
-class UI(Tix.Frame):
-    prefKeys = ['newline', 'auto_update', 'auto_set_for', 'auto_set_out', 'sort', 'lower',\
-        'utf8_check', 'remove_tags', 'tags', 'wrap_out', 'wrap_err', 'wrap_edit', 'wrap_dbe',\
-        'color_bg_out', 'color_bg_err', 'color_bg_edit', 'color_bg_dbe',\
-        'color_font_out', 'color_font_err', 'color_font_edit', 'color_font_dbe',\
-        'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs']## Reverse Options
-    prefSavePath = [confPath, join(srcDir, 'rc.py')]
+class UI(Tix.Frame, UIBase):
     def __init__(self, path='', **options):
         #global sys
         master = Tix.Tk()
@@ -241,7 +235,7 @@ class UI(Tix.Frame):
         self.running = False
         self.glos = Glossary(ui=self)
         self.pref = {}
-        self.pref_load()
+        self.pref_load(**options)
         ######################
         frame = Tix.Frame(convertFrame)
         ##

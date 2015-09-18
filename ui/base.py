@@ -34,6 +34,7 @@ class UIBase:
         join(srcDir, 'rc.py')
     ]
     prefKeys = (
+        'noProgressBar',## command line
         'save',
         'newline',
         'auto_update',
@@ -65,7 +66,7 @@ class UIBase:
         'maxNum',
         'includeDefs',
     )
-    def pref_load(self, *args):
+    def pref_load(self, **options):
         exec(open(join(srcDir, 'rc.py')).read())
         if save==0 and os.path.exists(self.prefSavePath[0]): # save is defined in rc.py
             try:
@@ -76,6 +77,9 @@ class UIBase:
                 exec(fp.read())
         for key in self.prefKeys:
             self.pref[key] = eval(key)
+        for key, value in options.items():
+            if key in self.prefKeys:
+                self.pref[key] = value
         return True
 
 

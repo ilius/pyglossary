@@ -113,12 +113,12 @@ class UI(UIBase):
         self.ptext = text
         self.reverseStop = False
         self.pref = {}
-        self.pref_load()
+        self.pref_load(**options)
         #print(self.pref)
-        if noProgressBar is None:
-            self.progressBuild()
-        else:
+        if self.pref['noProgressBar']:
             self.pbar = NullObj()
+        else:
+            self.progressBuild()
     def setText(self, text):
         self.pbar.widgets[0]=text
     def progressStart(self):
