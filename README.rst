@@ -107,6 +107,7 @@ As shown in the screenshots, there are multiple User Interface types, ie. multip
 
 
 **Other requirements for Mac OS X**
+
 If you want to convert glossaries into AppleDict format on Mac OS X, here is what you need:
 
 - BeautifulSoup4(with html5lib as backend) required to sanitize html contents.
