@@ -98,6 +98,7 @@ class UI(UIBase):
             #    print(name)
                 #sys.exit(1)
     def __init__(self, **options):
+        #UIBase.__init__(self, **options)
         self.xml= gtk.glade.XML(os.path.join(rootDir, 'ui', 'glade', 'maindialog.glade'))
         self.d = self.xml.get_widget('maindialog')
         self.d.connect('delete-event', self.close_button_clicked)
@@ -147,7 +148,7 @@ class UI(UIBase):
         self.combobox_mode.set_active(2)
         ####################################
         self.reverseStop = False
-        self.pref_init()
+        self.pref_init(**options)
         #thread.start_new_thread(UI.progressListen,(self,))
         #################### Comment folowing two line to see the output in the terminal
         self.redirectStdOut()
@@ -1136,7 +1137,7 @@ class UI(UIBase):
                     pass
         self.dbe_info_dialog.hide()
         return True
-    def pref_init(self, *args):
+    def pref_init(self, **options):
         self.pref={}
         self.def_widgets(['combobox_save', 'combobox_newline', 'cb_psyco', 'checkb_autofor', 'checkb_autoout',\
             'cb_auto_update', 'cb_c_sort', 'cb_rm_tags', 'checkb_lower', 'checkb_utf8', 'checkb_defs'])
@@ -1152,11 +1153,11 @@ class UI(UIBase):
             self.cb_psyco.set_active(True)
         else:
             self.cb_psyco.set_active(False)
-        self.pref_load()
+        self.pref_load(**options)
         self.pref_update_var()
         self.pref_rev_update_gui()
-    def pref_load(self, *args):
-        if not UIBase.pref_load(self, *args):
+    def pref_load(self, **options):
+        if not UIBase.pref_load(self, **options):
             return False
         self.combobox_save.set_active(self.pref['save'])
         self.cb_auto_update.set_active(self.pref['auto_update'])
