@@ -8,12 +8,22 @@ PyGlossary is a tool for converting, modifying and workig with dictionary files 
 Screenshots
 -------------------------------
 
-
-.. image:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-gtk.png
-   :width: 100 px
+.. figure:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-gtk.png
    :alt: pyglossary-linux-gtk.png
+Linux - Gtk-based intreface
 
-   
+----------------
+
+.. figure:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-tkinter.png
+   :alt: pyglossary-linux-tkinter.png
+Linux - Tkinter-based interface
+
+----------------
+
+.. figure:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-cmd-small.png
+   :alt: pyglossary-linux-cmd-small.png
+Linux - command line interface
+
 
 Supported formats
 -------------------------------
