@@ -104,6 +104,14 @@ As shown in the screenshots, there are multiple User Interface types, ie. multip
   You may have to give ``--no-progress-bar`` option in Windows when converting glossaries (becouse the progress bar does not work properly in Windows command window)
 
 
+When you run the program without any command line arguments or options, PyGlossary tries to find PyGTK, if it's installed, opens the Gtk-based interface, if it's not, tries to find Tkinter and open the Tkinter-based interface. And raises and error if neither are installed.
+
+But you can explicitly determine the user interface type using ``--ui``, for example:
+
+  ``python2.7 pyglossary.pyw --ui=gtk``
+
+  ``python2.7 pyglossary.pyw --ui=tk``
+
 
 
 **Other requirements for Mac OS X**
