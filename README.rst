@@ -10,18 +10,21 @@ Screenshots
 
 .. figure:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-gtk.png
    :alt: pyglossary-linux-gtk.png
+
 Linux - Gtk-based intreface
 
 ----------------
 
 .. figure:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-tkinter.png
    :alt: pyglossary-linux-tkinter.png
+
 Linux - Tkinter-based interface
 
 ----------------
 
 .. figure:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-cmd-small.png
    :alt: pyglossary-linux-cmd-small.png
+
 Linux - command line interface
 
 
@@ -77,18 +80,34 @@ Supported formats
 
 Requirements
 ----------------------
+PyGlossary uses **Python 2.7**, and works in practically all operating systems. While primarilly design for *GNU/Linux*, it works on *Windows*, *Mac OS X* and other Unix-based operating systems.
 
-**GNU/Linux**
+As shown in the screenshots, there are multiple User Interface types, ie. multiple ways to use the program.
 
-- PyGTK, which is pre-installed in most of desktop distributions, plus Glade2 (will be removed later)
+- **Gtk-based interface**, the best one, use PyGTK and Glade (Glade will be removed later). You can install it on (although PyGTK is pre-installed in most of desktop Linux distributions):
 
-  + Debian: ``sudo apt-get install python-gtk2 python-glade2``
-  + openSUSE: ``sudo zypper install python-gtk``
-  + Fedora: ``sudo yum install pygtk2 glade2``
-  + Archlinux: ``sudo pacman -S pygtk``
+  + Debian: ``apt-get install python-gtk2 python-glade2``
+  + openSUSE: ``zypper install python-gtk``
+  + Fedora: ``yum install pygtk2 glade2``
+  + Archlinux: ``pacman -S pygtk``
+- **Tkinter-based interface**, works in the lack of Gtk. Specially on Windows where Tkinter library is installed with the Python itself. You can also install it on:
+
+  + Debian: ``apt-get install python-tk tix``
+  + openSUSE: ``zypper install tkinter tix``
+  + Fedora: ``yum install tkinter tix``
+  + Mac OS X: read https://www.python.org/download/mac/tcltk/
+
+- **Command-line interface**, works in all operating systems without any specific requirements, just type:
+
+  ``python2.7 pyglossary.pyw --help``
+
+  You may have to give ``--no-progress-bar`` option in Windows when converting glossaries (becouse the progress bar does not work properly in Windows command window)
 
 
-**Mac OS X**
+
+
+**Other requirements for Mac OS X**
+If you want to convert glossaries into AppleDict format on Mac OS X, here is what you need:
 
 - BeautifulSoup4(with html5lib as backend) required to sanitize html contents.
 
