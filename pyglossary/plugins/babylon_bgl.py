@@ -967,7 +967,7 @@ class BGL:
         ## 1: minimal info (for user)
         ## 2: extra info (for user)
         ## 3: debugging (for developer)
-        verbose=1,
+        verbose=0,
         defaultEncodingOverwrite = None,
         sourceEncodingOverwrite = None,
         targetEncodingOverwrite = None,
@@ -1066,7 +1066,7 @@ class BGL:
         self.partOfSpeechColor = '007000'
 
         self.resPath = self.createResDir(resPath)
-        if self.verbose >= 4:
+        if self.verbose > 2:
             print('Resource path: {0}'.format(resPath))
         self.resFiles = []
 
@@ -1124,7 +1124,7 @@ class BGL:
             if len(buf)<6 or not buf[:4] in ('\x12\x34\x00\x01', '\x12\x34\x00\x02'):
                 return False
             self.gzip_offset = i = binStrToInt(buf[4:6])
-            if self.verbose>3:
+            if self.verbose > 2:
                 print('Position of gz header: i={0}'.format(i))
             if i<6:
                 return False
@@ -1283,7 +1283,7 @@ class BGL:
 
         if deferred_block2_num > 0:
             # process deferred type 2 blocks
-            if self.verbose>1:
+            if self.verbose > 2:
                 print('processing type 2 blocks, second pass')
             while not self.isEndOfDictData():
                 if not self.readBlock(block):
@@ -1307,15 +1307,16 @@ class BGL:
         # self.author_wide - unicode
         # self.contractions ?
 
-        if self.verbose>0:
+        if self.verbose > 1:
             print('numEntries = {0}'.format(self.numEntries))
             if self.bgl_numEntries!=self.numEntries:
                 # There are a number of cases when these numbers do not match.
                 # The dictionary is OK, and these is no doubt that we might missed an entry.
                 # self.bgl_numEntries may be less than the number of entries we've read.
                 print('bgl_numEntries = {0} (!!!!!!!!!)'.format(self.bgl_numEntries))
-            if self.verbose>1:
-                print('numBlocks = {0}'.format(self.numBlocks))
+        if self.verbose > 2:
+            print('numBlocks = {0}'.format(self.numBlocks))
+        if self.verbose > 1:
             print('defaultCharset = {0}'.format(self.defaultCharset))
             print('sourceCharset = {0}'.format(self.sourceCharset))
             print('targetCharset = {0}'.format(self.targetCharset))
@@ -1331,6 +1332,7 @@ class BGL:
             print('middleUpdated = {0}'.format(self.middleUpdated)) ## ???????????????
             print('lastUpdated = {0}'.format(self.lastUpdated))
             print('')
+        if self.verbose > 1:
             print('title = {0}'.format(self.oneLineValue(self.title)))
             print('author = {0}'.format(self.oneLineValue(self.author)))
             print('email = {0}'.format(self.oneLineValue(self.email)))
@@ -1362,7 +1364,7 @@ class BGL:
                     self.defaultCharset = self.charsets[value]
                 else:
                     printAsWarning('read_type_0: unknown defaultCharset {0}'.format(value))
-        elif self.verbose > 3:
+        elif self.verbose > 2:
             self.unknownBlock(block)
             return False
         return True
@@ -1400,7 +1402,7 @@ class BGL:
         name += block.data[pos:pos+Len]
         pos += Len
         if name in ('C2EEF3F6.html', '8EAF66FD.bmp'):
-            if self.verbose>1 and pass_num == 1:
+            if self.verbose > 1 and pass_num == 1:
                 print('Skipping non-useful file "{0}"'.format(name))
             return True
         if isASCII(name):
@@ -1592,7 +1594,7 @@ class BGL:
             Use substring length 0 for exact match.
             '''
             length = binStrToInt(block.data[pos:])
-        elif self.verbose>3:
+        elif self.verbose > 2:
             self.unknownBlock(block)
             return False
         return True
@@ -2660,7 +2662,7 @@ class BGL:
         return text.replace('\x1e', '').replace('\x1f', '')
 
     def __del__(self):
-        #if self.verbose>2:
+        #if self.verbose > 2:
             #print('wordLenMax = %s'%self.wordLenMax)
             #print('defiLenMax = %s'%self.defiLenMax)
         if self.file:
