@@ -366,7 +366,7 @@ if __name__=='__main__':
             time.sleep(0.1)
             pbar.update(i/1000.0)
         pbar.finish()
-        print()
+        print('')
     example1()
 
 

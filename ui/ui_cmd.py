@@ -127,7 +127,7 @@ class UI(UIBase):
         self.pbar.update(rat)
     def progressEnd(self):
         self.pbar.finish()
-        print()
+        print('')
     def progressBuild(self):
         rot = pb.RotatingMarker()
         ## SyntaxError(invalid syntax) with python3 with unicode(u'█') argument ## FIXME
