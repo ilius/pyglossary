@@ -168,7 +168,7 @@ Convert audio file from SPX format to WAV format. You need package
     find OtherResources -name "*.spx" -execdir sh -c 'spx={};speexdec $spx  ${spx%.*}.wav' \;
     sed -i "" 's|sound://\([/_a-zA-Z0-9]*\).spx|\1.wav|g' oald8.xml
 
-But be warned that the decoded WAVE audio can assume \~5 times more disk
+But be warned that the decoded WAVE audio can consume \~5 times more disk
 space!
 
 Compile and install. :
