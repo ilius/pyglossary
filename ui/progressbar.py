@@ -50,13 +50,9 @@ automatically supports features like auto-resizing when available.
 # 2005-06-02: v0.5 rewrite
 # 2004-??-??: v0.1 first version
 
-import sys, time
+import sys
+import time
 from array import array
-try:
-    from fcntl import ioctl
-    import termios
-except ImportError:
-    log.exception('')
 import signal
 
 import logging
@@ -272,6 +268,8 @@ class ProgressBar(object):
         self.seconds_elapsed = 0
 
     def handle_resize(self, signum, frame):
+        from fcntl import ioctl
+        import termios
         (h, w) = array('h', ioctl(self.fd, termios.TIOCGWINSZ, '\0'*8))[:2]
         self.term_width = w
 
