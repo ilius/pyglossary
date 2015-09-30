@@ -14,12 +14,12 @@ def write(glos, filename, archive='tar.bz2', sep=os.sep):
     if os.path.exists(filename):
         if os.path.isdir(filename):
             if os.listdir(filename)!=[]:
-                print('Warning: directory "%s" is not empty.')
+                log.warn('Warning: directory "%s" is not empty.')
         else:
             raise IOError('"%s" is not a directory')
     for item in glos.data:
         if item[0]=='':
-            printAsError('empty word')
+            log.error('empty word')
             continue
         chars = list(item[0])
         try:
@@ -33,7 +33,7 @@ def write(glos, filename, archive='tar.bz2', sep=os.sep):
                 sep.join(chars),
             ), 'wb').write(item[1])
         except:
-            print(item[1])
+            log.exception()
     if archive:
         if archive=='tar.gz':
             (output, error) = subprocess.Popen(
@@ -51,7 +51,7 @@ def write(glos, filename, archive='tar.bz2', sep=os.sep):
                 stdout=subprocess.PIPE
             ).communicate()
         else:
-            printAsError('Undefined archive format: "%s"'%archive)
+            log.error('Undefined archive format: "%s"'%archive)
         try:
             shutil.rmtree(filename, ignore_errors=True)
         except:

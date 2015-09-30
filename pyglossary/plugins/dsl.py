@@ -85,7 +85,7 @@ def _clean_tags(line, audio):
         if line == prevLine:
             break
 
-    #print('clean' + line)
+    #log.debug('clean' + line)
 
     # text formats
     line = re.sub('\[(/?)\'\]', '<\g<1>u>', line)

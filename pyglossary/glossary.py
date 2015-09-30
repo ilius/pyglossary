@@ -24,12 +24,16 @@ homePage = 'http://github.com/ilius/pyglossary'
 
 import os, sys, platform, time, subprocess, shutil, re
 from os.path import split, join, splitext, isdir, dirname
+import logging
 
-from text_utils import myRaise, printAsError, faEditStr, replacePostSpaceChar, removeTextTags,\
+import core
+from text_utils import faEditStr, replacePostSpaceChar, removeTextTags,\
                        takeStrWords, findWords, findAll, addDefaultOptions
 
 import warnings
 warnings.resetwarnings() ## ??????
+
+log = logging.getLogger('root')
 
 _myDir = dirname(__file__)
 if not isdir(_myDir):
@@ -40,7 +44,7 @@ plugDir = join(_myDir, 'plugins')
 if isdir(plugDir):
     sys.path.append(plugDir)
 else:
-    printAsError('invalid plugin directory %r'%plugDir)
+    log.error('invalid plugin directory %r'%plugDir)
     plugDir = ''
 
 
@@ -121,7 +125,7 @@ class Glossary:
                     continue
             except AttributeError:
                 continue
-            #print('loading plugin module %s'%modName)
+            #log.debug('loading plugin module %s'%modName)
             format = mod.format
             ext = mod.extentions
             if isinstance(ext, basestring):
@@ -248,7 +252,7 @@ class Glossary:
                 ## -k ==> keep original bz2 file
                 ## bunzip2 ~= bzip2 -d
                 if error:
-                    printAsError('%s\nfail to decompress file "%s"'%(error, filename))
+                    log.error('%s\nfail to decompress file "%s"'%(error, filename))
                     return False
                 else:
                     filename = filename[:-4]
@@ -262,7 +266,7 @@ class Glossary:
                 ## -c ==> write to stdout (because we want to keep original gz file)
                 ## gunzip ~= gzip -d
                 if error:
-                    printAsError('%s\nfail to decompress file "%s"'%(error, filename))
+                    log.error('%s\nfail to decompress file "%s"'%(error, filename))
                     return False
                 else:
                     filename = filename[:-3]
@@ -275,7 +279,7 @@ class Glossary:
                     stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
-                    printAsError('%s\nfail to decompress file "%s"'%(error, filename))
+                    log.error('%s\nfail to decompress file "%s"'%(error, filename))
                     return False
                 else:
                     filename = filename[:-4]
@@ -288,12 +292,12 @@ class Glossary:
             if not format:
                 #if delFile:
                 #    os.remove(filename)
-                printAsError('Unknown extension "%s" for read support!'%ext)
+                log.error('Unknown extension "%s" for read support!'%ext)
                 return False
         validOptionKeys = self.formatsReadOptions[format]
         for key in options.keys():
             if not key in validOptionKeys:
-                printAsError('Invalid read option "%s" given for %s format'%(key, format))
+                log.error('Invalid read option "%s" given for %s format'%(key, format))
                 del options[key]
         getattr(self, 'read%s'%format).__call__(filename, **options)
 
@@ -311,7 +315,7 @@ class Glossary:
 
     def write(self, filename, format='', **options):
         if not filename:
-            printAsError('Invalid filename %r'%filename)
+            log.error('Invalid filename %r'%filename)
             return False
         ext = ''
         (filename_nox, fext) = splitext(filename)
@@ -327,8 +331,8 @@ class Glossary:
             try:
                 ext = Glossary.formatsExt[format][0]
             except KeyError:
-                myRaise()
-                format = '' ## ?????
+                log.exception('no file extention found for file format %s'%format)
+                format = '' ## FIXME
         if not format:
             items = Glossary.formatsExt.items()
             for (fmt, extList) in items:
@@ -360,7 +364,7 @@ class Glossary:
                         format = fmt
                         ext = fext
         if not format:
-            printAsError('Unable to detect write format!')
+            log.error('Unable to detect write format!')
             return False
         if isdir(filename):
             #filename = join(filename, split(self.filename)[1]+ext)
@@ -368,9 +372,9 @@ class Glossary:
         validOptionKeys = self.formatsWriteOptions[format]
         for key in options.keys():
             if not key in validOptionKeys:
-                printAsError('Invalid write option "%s" given for %s format'%(key, format))
+                log.error('Invalid write option "%s" given for %s format'%(key, format))
                 del options[key]
-        print('filename=%s'%filename)
+        log.info('filename=%s'%filename)
         getattr(self, 'write%s'%format).__call__(filename, **options)
         if zipExt:
             try:
@@ -383,14 +387,14 @@ class Glossary:
                     stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
-                    printAsError('%s\nfail to compress file "%s"'%(error, filename))
+                    log.error('%s\nfail to compress file "%s"'%(error, filename))
             elif zipExt=='.bz2':
                 (output, error) = subprocess.Popen(
                     ['bzip2', filename],
                     stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
-                    printAsError('%s\nfail to compress file "%s"'%(error, filename))
+                    log.error('%s\nfail to compress file "%s"'%(error, filename))
             elif zipExt=='.zip':
                 (dirn, name) = split(filename)
                 initCwd = os.getcwd()
@@ -400,7 +404,7 @@ class Glossary:
                     stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
-                    printAsError('%s\nfail to compress file "%s"'%(error, filename))
+                    log.error('%s\nfail to compress file "%s"'%(error, filename))
                 os.chdir(initCwd)
 
     def writeTxt(self, sep, filename='', writeInfo=True, rplList=[], ext='.txt', head=''):
@@ -456,7 +460,7 @@ class Glossary:
             try:
                 print(word + '\t' + defi)
             except:
-                myRaise(__file__)
+                log.exception('')
 
 
     ###################################################################
@@ -683,7 +687,7 @@ class Glossary:
             c = 0
         savePath = opt['savePath']
         if c == -1:
-            print('c=%s'%c)
+            log.debug('c=%s'%c)
             return
         elif c==0:
             saveFile = open(savePath, 'wb')
@@ -717,14 +721,14 @@ class Glossary:
         #total = int(wNum/steps)
         '''
         if c==0:
-            print('Number of input words:', wNum)
-            print('Reversing glossary...')
+            log.info('Number of input words:', wNum)
+            log.info('Reversing glossary...')
         else:
-            print('continue reversing from index %d ...'%c)
+            log.info('continue reversing from index %d ...'%c)
         '''
         t0 = time.time()
         if not ui:
-            print('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
+            log.info('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
         n = len(words)
         for i in xrange(c, n):
             word = words[i]
@@ -754,7 +758,7 @@ class Glossary:
                     while gtk.events_pending():
                         gtk.main_iteration_do(False)
                 else:
-                    print('%4d / %4d\t%8s\t%8s\t%8s\t%s'%(
+                    log.info('%4d / %4d\t%8s\t%8s\t%8s\t%s'%(
                         div,
                         total,
                         timeHMS(dt),
@@ -777,7 +781,7 @@ class Glossary:
                         defi = ', '.join(result) + '.'
                 except:
                     open('result', 'wb').write(str(result))
-                    myRaise(__file__)
+                    log.exception('')
                     return False
                 if autoSaveStep>0:
                     saveFile.write('%s\t%s\n'%(word, defi))
@@ -937,7 +941,7 @@ class Glossary:
                 errors += 1
             self.info[i] = (w, m)
         if errors:
-            printAsError('There was %s number of invalid utf8 strings, invalid characters are replaced with "�"'%errors)
+            log.error('There was %s number of invalid utf8 strings, invalid characters are replaced with "�"'%errors)
 
     def clean(self):
         d = self.data

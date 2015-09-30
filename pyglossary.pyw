@@ -23,17 +23,57 @@ import os, sys
 import argparse
 import __builtin__
 from pyglossary.glossary import confPath, VERSION
-#from pyglossary.text_utils import printAsError ## No red color, plain
 from os.path import dirname, join, realpath
+import logging
+import traceback
 
-from ui.ui_cmd import COMMAND, printAsError, help, parseFormatOptionsStr
+from pyglossary import core ## essential
+from ui.ui_cmd import COMMAND, help, parseFormatOptionsStr
+from ui.ui_cmd import startRed, endFormat
 
-def myRaise(File=None):
-    i = sys.exc_info()
-    if File==None:
-        sys.stderr.write('line %s: %s: %s'%(i[2].tb_lineno, i[0].__name__, i[1]))
-    else:
-        sys.stderr.write('File "%s", line %s: %s: %s'%(File, i[2].tb_lineno, i[0].__name__, i[1]))
+log = logging.getLogger('root')
+
+##############################
+
+def my_excepthook(_type, value, tback):
+    tback_text = ''.join(traceback.format_exception(_type, value, tback))
+    log.critical(tback_text)
+sys.excepthook = my_excepthook
+
+##############################
+
+class StdLogHandler(logging.Handler):
+    def __init__(self, noColor=False):
+        logging.Handler.__init__(self)
+        self.noColor = noColor
+    def emit(self, record):
+        msg = record.getMessage()
+        ###
+        if record.exc_info:
+            _type, value, tback = record.exc_info
+            tback_text = ''.join(traceback.format_exception(_type, value, tback))
+            if not msg:
+                msg = 'unhandled exception:'
+            msg += '\n'
+            msg += tback_text
+        ###
+        if record.levelname in ('CRITICAL', 'ERROR'):
+            if not self.noColor:
+                msg = startRed + msg + endFormat
+            fp = sys.stderr
+        else:
+            fp = sys.stdout
+        ###
+        fp.write(msg + '\n')
+        fp.flush()
+    #def exception(self, msg):
+    #    if not self.noColor:
+    #        msg = startRed + msg + endFormat
+    #    sys.stderr.write(msg + '\n')
+    #    sys.stderr.flush()
+
+
+################################################################
 
 def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
     parts = text.split('-')
@@ -45,20 +85,19 @@ def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
 use_psyco_file = '%s_use_psyco'%confPath
 psyco_found = None
 
-
 ui_list = ('gtk', 'tk', 'qt')
 
-#print('PyGlossary %s'%VERSION)
+#log.info('PyGlossary %s'%VERSION)
 
 if os.path.isfile(use_psyco_file):
     try:
         import psyco
     except ImportError:
-        print('Warning: module "psyco" not found. It could speed up execution.')
+        log.warn('Warning: module "psyco" not found. It could speed up execution.')
         psyco_found = False
     else:
         psyco.full()
-        print('Using module "psyco" to speed up execution.')
+        log.info('Using module "psyco" to speed up execution.')
         psyco_found = True
 
 
@@ -78,9 +117,9 @@ parser.add_argument(
     action='store',
     dest='verbosity',
     type=int,
-    choices=(0, 1, 2, 3),
+    choices=(0, 1, 2, 3, 4),
     required=False,
-    #default=2,
+    default=3,## FIXME
 )
 parser.add_argument(
     '--version',
@@ -141,14 +180,18 @@ parser.add_argument(
     dest='noProgressBar',
     action='store_true',
 )
-
+parser.add_argument(
+    #'-',
+    '--no-color',
+    dest='noColor',
+    action='store_true',
+)
 parser.add_argument(
     'ipath',
     action='store',
     default='',
     nargs='?',
 )
-
 parser.add_argument(
     'opath',
     action='store',
@@ -159,13 +202,26 @@ parser.add_argument(
 
 
 args = parser.parse_args()
-#print(args) ; sys.exit(0)
+#log.debug(args) ; sys.exit(0)
+
 
 
 
 if args.help:
     help()
     sys.exit(0)
+
+verbosity = args.verbosity
+log.setVerbosity(verbosity)
+
+
+if os.sep != '/':
+    args.noColor = True
+
+log.addHandler(
+    StdLogHandler(noColor=args.noColor),
+)
+
 
 ## only used in ui_cmd for now
 read_options = parseFormatOptionsStr(args.read_options)
@@ -186,7 +242,7 @@ write_options = parseFormatOptionsStr(args.write_options)
 ## FIXME
 ui_options_params = (
     'noProgressBar',
-    'verbosity',
+    #'verbosity',
 )
 
 ui_options = {}
@@ -223,9 +279,10 @@ if args.ipath:
         ui_type = 'cmd' ## silently? FIXME
 else:
     if ui_type == 'cmd':
-        printAsError('no input file given, try --help')
+        log.error('no input file given, try --help')
         exit(1)
 
+#try:
 if ui_type == 'cmd':
     from ui import ui_cmd
     sys.exit(ui_cmd.UI(**ui_options).run(
@@ -237,24 +294,27 @@ if ui_type == 'cmd':
         write_options=write_options,
         reverse=args.reverse,
     ))
+if ui_type=='auto':
+    ui_module = None
+    for ui_type2 in ui_list:
+        try:
+            ui_module = getattr(__import__('ui.ui_%s'%ui_type2), 'ui_%s'%ui_type2)
+        except ImportError:
+            log.exception('error while importing UI module:')## FIXME
+        else:
+            break
+    if ui_module==None:
+        log.error('no user interface module found!')
+        sys.exit(1)
 else:
-    if ui_type=='auto':
-        ui_module = None
-        for ui_type2 in ui_list:
-            try:
-                ui_module = getattr(__import__('ui.ui_%s'%ui_type2), 'ui_%s'%ui_type2)
-            except ImportError:
-                myRaise()## FIXME
-            else:
-                break
-        if ui_module==None:
-            printAsError('no user interface module found!')
-            sys.exit(1)
-    else:
-        ui_module = getattr(__import__('ui.ui_%s'%ui_type), 'ui_%s'%ui_type)
-    sys.exit(ui_module.UI(**ui_options).run(
-        editPath=args.ipath,
-        read_options=read_options,
-    ))
-    ## don't forget to append "**options" at every UI.__init__ arguments
+    ui_module = getattr(__import__('ui.ui_%s'%ui_type), 'ui_%s'%ui_type)
+sys.exit(ui_module.UI(**ui_options).run(
+    editPath=args.ipath,
+    read_options=read_options,
+))
+## don't forget to append "**options" at every UI.__init__ arguments
+#except Exception as e:
+#    log.exception('')
+
+
 

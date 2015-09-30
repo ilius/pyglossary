@@ -50,18 +50,17 @@ automatically supports features like auto-resizing when available.
 # 2005-06-02: v0.5 rewrite
 # 2004-??-??: v0.1 first version
 
-def myRaise():
-    i = sys.exc_info()
-    print('File "%s" line %s: %s: %s'%(__file__, i[2].tb_lineno, i[0].__name__, i[1]))
-
 import sys, time
 from array import array
 try:
     from fcntl import ioctl
     import termios
 except ImportError:
-    myRaise()
+    log.exception('')
 import signal
+
+import logging
+log = logging.getLogger('root')
 
 
 class ProgressBarWidget(object):
@@ -247,7 +246,7 @@ class ProgressBar(object):
         self.maxval = maxval
         self.widgets = widgets
         for w in self.widgets:
-            #print( type(w) is ProgressBarWidget )
+            #log.debug( type(w) is ProgressBarWidget )
             #if type(w)!=str:
             try:
                 w.pbar = self
