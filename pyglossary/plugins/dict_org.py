@@ -39,14 +39,14 @@ def indexStrToInt(st):
     return n
 
 def installToDictd(filename, title=''):## filename is without extention (neither .index or .dict or .dict.dz)
-    print('Installing %r to DICTD server'%filename)
+    log.info('Installing %r to DICTD server'%filename)
     shutil.copy(filename + '.index', '/usr/share/dictd')
     if os.path.isfile(filename + '.dict.dz'):
         dictPostfix = '.dict.dz'
     elif os.path.isfile(filename + '.dict'):
         dictPostfix = '.dict'
     else:
-        printAsError('No .dict file, could not install dictd file %r'%filename)
+        log.error('No .dict file, could not install dictd file %r'%filename)
         return False
     shutil.copy(filename + dictPostfix, '/usr/share/dictd')
 
@@ -97,7 +97,7 @@ def read(glos, filename):
         sumLen += defiLen
     ############################################################################
     if len(wrongSorted)>0:
-        print('Warning: wrong sorting count: %d'%len(wrongSorted))
+        log.warn('Warning: wrong sorting count: %d'%len(wrongSorted))
 
 
 

@@ -16,7 +16,7 @@ import os, re, shutil
 import os.path
 from os.path import join, split, splitext, isfile, isdir
 
-from pyglossary.text_utils import intToBinStr, binStrToInt, runDictzip, printAsError
+from pyglossary.text_utils import intToBinStr, binStrToInt, runDictzip
 
 infoKeys = ('bookname', 'author', 'email', 'website', 'description', 'date')
 
@@ -62,7 +62,7 @@ class StarDictReader:
                 continue
             ind = line.find('=')
             if ind==-1:
-                #printAsError('Invalid ifo file line: {0}'.format(line))
+                #log.error('Invalid ifo file line: {0}'.format(line))
                 continue
             self.glos.setInfo(line[:ind].strip(), line[ind+1:].strip())
     
@@ -80,12 +80,12 @@ class StarDictReader:
             beg = i
             i = idxStr.find('\x00', beg)
             if i < 0:
-                printAsError("Index file is corrupted.")
+                log.error("Index file is corrupted.")
                 break
             word = idxStr[beg:i]
             i += 1
             if i + 8 > len(idxStr):
-                printAsError("Index file is corrupted")
+                log.error("Index file is corrupted")
                 break
             offset = binStrToInt(idxStr[i:i+4])
             i += 4
@@ -103,12 +103,12 @@ class StarDictReader:
         for rec in self.indexData:
             dictFd.seek(rec[1])
             if dictFd.tell() != rec[1]:
-                printAsError("Unable to read definition for word \"{0}\"".format(rec[0]))
+                log.error("Unable to read definition for word \"{0}\"".format(rec[0]))
                 rec[0] = None
                 continue
             data = dictFd.read(rec[2])
             if len(data) != rec[2]:
-                printAsError("Unable to read definition for word \"{0}\"".format(rec[0]))
+                log.error("Unable to read definition for word \"{0}\"".format(rec[0]))
                 rec[0] = None
                 continue
             if sametypesequence:
@@ -136,17 +136,17 @@ class StarDictReader:
             beg = i
             i = synStr.find('\x00', beg)
             if i < 0:
-                printAsError("Synonym file is corrupted.")
+                log.error("Synonym file is corrupted.")
                 break
             word = synStr[beg:i]
             i += 1
             if i + 4 > len(synStr):
-                printAsError("Synonym file is corrupted.")
+                log.error("Synonym file is corrupted.")
                 break
             index = binStrToInt(synStr[i:i+4])
             i += 4
             if index >= len(self.indexData):
-                printAsError("Corrupted synonym file. Word \"{0}\" references invalid item.".format(word))
+                log.error("Corrupted synonym file. Word \"{0}\" references invalid item.".format(word))
                 continue
             self.indexData[index][4].append(word)
 
@@ -160,37 +160,37 @@ class StarDictReader:
         i = 0
         for t in sametypesequence[:-1]:
             if i >= len(data):
-                printAsError(dataFileCorruptedError)
+                log.error(dataFileCorruptedError)
                 return None
             if isAsciiLower(t):
                 beg = i
                 i = data.find('\x00', beg)
                 if i < 0:
-                    printAsError(dataFileCorruptedError)
+                    log.error(dataFileCorruptedError)
                     return None
                 res.append((data[beg:i], t))
                 i += 1
             else:
                 assert isAsciiUpper(t)
                 if i + 4 > len(data):
-                    printAsError(dataFileCorruptedError)
+                    log.error(dataFileCorruptedError)
                     return None
                 size = binStrToInt(data[i:i+4])
                 i += 4
                 if i + size > len(data):
-                    printAsError(dataFileCorruptedError)
+                    log.error(dataFileCorruptedError)
                     return None
                 res.append((data[i:i+size], t))
                 i += size
         
         if i >= len(data):
-            printAsError(dataFileCorruptedError)
+            log.error(dataFileCorruptedError)
             return None
         t = sametypesequence[-1]
         if isAsciiLower(t):
             i2 = data.find('\x00', i)
             if i2 >= 0:
-                printAsError(dataFileCorruptedError)
+                log.error(dataFileCorruptedError)
                 return None
             res.append((data[i:], t))
         else:
@@ -208,26 +208,26 @@ class StarDictReader:
         while i < len(data):
             t = data[i]
             if not isAsciiAlpha(t):
-                printAsError(dataFileCorruptedError)
+                log.error(dataFileCorruptedError)
                 return None
             i += 1
             if isAsciiLower(t):
                 beg = i
                 i = data.find('\x00', beg)
                 if i < 0:
-                    printAsError(dataFileCorruptedError)
+                    log.error(dataFileCorruptedError)
                     return None
                 res.append((data[beg:i], t))
                 i += 1
             else:
                 assert isAsciiUpper(t)
                 if i + 4 > len(data):
-                    printAsError(dataFileCorruptedError)
+                    log.error(dataFileCorruptedError)
                     return None
                 size = binStrToInt(data[i:i+4])
                 i += 4
                 if i + size > len(data):
-                    printAsError(dataFileCorruptedError)
+                    log.error(dataFileCorruptedError)
                     return None
                 res.append((data[i:i+size], t))
                 i += size
@@ -244,7 +244,7 @@ class StarDictReader:
             elif rec[1] in 'gh':
                 res.append((rec[0], 'h'))
             else:
-                print("Definition format {0} is not supported. Skipping.".format(rec[1]))
+                log.warn("Definition format {0} is not supported. Skipping.".format(rec[1]))
         return res
         
     def assignGlossaryData(self):
@@ -271,7 +271,7 @@ class StarDictReader:
         else:
             resDbFilePath = join(baseDirPath, 'res.rifo')
             if isfile(resDbFilePath):
-                print("StarDict resource database is not supported. Skipping.")
+                log.warn("StarDict resource database is not supported. Skipping.")
     
 class StarDictWriter:
     def __init__(self, glos, filename):
@@ -440,7 +440,7 @@ class StarDictWriter:
             shutil.rmtree(toPath)
         if os.path.exists(toPath):
             if len(os.listdir(toPath)) > 0:
-                printAsError(
+                log.error(
     '''Output resource directory is not empty: "{0}". Resources will not be copied!
     Clean the output directory before running the converter or pass option: --write-options=res-overwrite=True.'''\
     .format(toPath)
@@ -483,7 +483,7 @@ def verifySameTypeSequence(s):
         return True
     for t in s:
         if not isAsciiAlpha(t):
-            printAsError("Invalid sametypesequence option")
+            log.error("Invalid sametypesequence option")
             return False
     return True
 
@@ -531,7 +531,7 @@ def read_ext(glos, filename):
         word = _stardict.StarDict_vector_get_item(db, lst, i)
         words.append(word)
         if i%100==0:
-            print(i)
+            log.debug(i)
             while gtk.events_pending():
                 gtk.main_iteration_do(False)
     '''
@@ -565,7 +565,7 @@ def write_ext(glos, filename, sort=True, dictZip=True):
     try:
         import _stardictbuilder
     except ImportError:
-        printAsError('Binary module "_stardictbuilder" can not be imported! '+\
+        log.error('Binary module "_stardictbuilder" can not be imported! '+\
             'Using internal StarDict builder')
         return g.writeStardict(filename, sort=False)
     db = _stardictbuilder.new_StarDictBuilder(filename)

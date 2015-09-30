@@ -15,7 +15,7 @@ def read(glos, filename, dicIndex=16):
     try:
         fp = open(str(dicIndex))
     except:
-        printAsError('bad index: %s'%dicIndex)
+        log.error('bad index: %s'%dicIndex)
         return False
     for f in [l.split('#')[-1] for l in fp.read().split('\n')]:
         if f=='':

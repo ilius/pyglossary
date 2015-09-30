@@ -37,7 +37,7 @@ def read(glos, filename):
             msgstr = False
         elif line.startswith('msgstr '):
             if msgstr:
-                printAsError('msgid omitted!')
+                log.error('msgid omitted!')
             defi = eval(line[7:])
             msgstr = True
         else:

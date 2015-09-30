@@ -72,7 +72,7 @@ class UIBase:
             try:
                 fp = open(self.prefSavePath[0])
             except:
-                myRaise(__file__)
+                log.exception('error while loading save file %s'%self.prefSavePath[0])
             else:
                 exec(fp.read())
         for key in self.prefKeys:

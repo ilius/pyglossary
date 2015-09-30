@@ -20,6 +20,9 @@
 from struct import pack, unpack
 import re
 
+import logging
+log = logging.getLogger('root')
+
 # zlib compression is used for engine version >=2.0
 import zlib
 # LZO compression is used for engine version < 2.0
@@ -28,7 +31,7 @@ try:
     HAVE_LZO = True
 except:
     HAVE_LZO = False
-    print("LZO compression support is not available")
+    log.warn("LZO compression support is not available")
 
 
 def _unescape_entities(text):
@@ -141,7 +144,7 @@ class MDict(object):
                 key_list += self._split_key_block(key_block_compressed[start+8:end])
             elif key_block_type == '\x01\x00\x00\x00':
                 if not HAVE_LZO:
-                    print("LZO compression is not supported")
+                    log.error("LZO compression is not supported")
                     break
                 # 4 bytes as adler32 checksum
                 adler32 = unpack('>I', key_block_compressed[start+4:start+8])[0]
@@ -258,7 +261,7 @@ class MDict(object):
             assert(num_key_blocks == len(key_block_info_list))
         except:
             key_block_info_list = []
-            print("Cannot Decode Key Block Info Section. Try Brutal Force.")
+            log.exception('Cannot Decode Key Block Info Section. Try Brutal Force.')
 
         # read key block
         key_block_compressed = f.read(key_block_size)
@@ -283,7 +286,7 @@ class MDD(MDict):
     >>> mdd = MDD('example.mdd')
     >>> len(mdd)
     208
-    >>> for filename,content in mdd.items():
+    >>> for filename, content in mdd.items():
     ... print(filename, content[:10])
     """
     def __init__(self, fname):
@@ -325,7 +328,7 @@ class MDD(MDict):
                 record_block = record_block_compressed[8:]
             elif record_block_type == '\x01\x00\x00\x00':
                 if not HAVE_LZO:
-                    print("LZO compression is not supported")
+                    log.error("LZO compression is not supported")
                     break
                 # 4 bytes as adler32 checksum
                 adler32 = unpack('>I', record_block_compressed[4:8])[0]
@@ -366,7 +369,7 @@ class MDX(MDict):
     >>> mdx = MDX('example.mdx')
     >>> len(mdx)
     42481
-    >>> for key,value in mdx.items():
+    >>> for key, value in mdx.items():
     ... print(key, value[:10])
     """
     def __init__(self, fname, encoding='', substyle=False):
@@ -425,7 +428,7 @@ class MDX(MDict):
             # lzo compression
             elif record_block_type == '\x01\x00\x00\x00':
                 if not HAVE_LZO:
-                    print("LZO compression is not supported")
+                    log.error("LZO compression is not supported")
                     break
                 # 4 bytes as adler32 checksum
                 adler32 = unpack('>I', record_block_compressed[4:8])[0]
@@ -493,7 +496,7 @@ if __name__ == '__main__':
         args.extract = True
 
     if not os.path.exists(args.filename):
-        print("Please specify a valid MDX/MDD file")
+        log.error("Please specify a valid MDX/MDD file")
 
     base, ext = os.path.splitext(args.filename)
 
@@ -504,10 +507,10 @@ if __name__ == '__main__':
             fname = args.filename.encode('utf-8')
         else:
             fname = args.filename
-        print('========', fname, '========')
-        print('  Number of Entries :', len(mdx))
+        log.info('filename: %s'%fname)
+        log.info('number of Entries: %s'%len(mdx))
         for key, value in mdx.header.items():
-            print(' ', key, ':', value)
+            log.debug('%s: %s'%(key, value))
     else:
         mdx = None
 
@@ -519,10 +522,10 @@ if __name__ == '__main__':
             fname = mdd_filename.encode('utf-8')
         else:
             fname = mdd_filename
-        print('========', fname, '========')
-        print('  Number of Entries :', len(mdd))
-        for key, value in mdd.header.items():
-            print(' ', key, ':', value)
+        log.info('filename: %s'%fname)
+        log.info('number of Entries: %s'%len(mdx))
+        for key, value in mdx.header.items():
+            log.debug('%s: %s'%(key, value))
     else:
         mdd = None
 

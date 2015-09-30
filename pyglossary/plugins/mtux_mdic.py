@@ -43,7 +43,7 @@ def read(glos, filename):
             w = x[1].encode('utf8')
             m = x[2].encode('utf8')
         except:
-            printAsError('error while encoding word %s'%x[0])
+            log.error('error while encoding word %s'%x[0])
         else:
             glos.data.append([w, m])
     cur.close()
@@ -133,8 +133,8 @@ def write(glos, filename):
             try:
                 con.execute(sqlLines[i])
             except:
-                myRaise(__file__)
-                printAsError('Error while executing: '+sqlLines[i])
+                log.exception('error executing sqlite query:')
+                log.error('Error while executing: '+sqlLines[i])
                 continue
             if i%k==0:
                 rat = float(i)/n
@@ -145,8 +145,8 @@ def write(glos, filename):
             try:
                 cur.execute(sqlLines[i])
             except:
-                myRaise(__file__)
-                printAsError('Error while executing: '+sqlLines[i])
+                log.exception('error executing sqlite query:')
+                log.error('Error while executing: '+sqlLines[i])
                 continue
     cur.close()
     con.close()

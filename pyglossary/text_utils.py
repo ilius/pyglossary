@@ -19,6 +19,12 @@
 import string, re, sys, os, subprocess, htmlentitydefs, time
 ##from xml.etree.ElementTree import XML, tostring ## used for xml2dict
 from math import log, ceil
+import logging
+
+import core
+
+log = logging.getLogger('root')
+
 
 startRed = '\x1b[31m'
 endFormat = '\x1b[0;0;0m' ## len=8
@@ -60,8 +66,6 @@ commaFa = '\xd8\x8c'
 ## other unicode spacial characters.
 schUn = ['\xee\x80\x8a', '\xee\x80\x8c']
 
-#for ch in schFa + schUn :
-#    print(ch)
 sch = schAs + schFa + schUn + list(string.whitespace) + list(string.digits) + digitsFa
 
 '''
@@ -139,20 +143,6 @@ def xml2dict(xmlText):
             pass
 '''
 
-def printAsError(text='An error occured!', exit=False):
-    sys.stderr.write('%s\n'%text)
-    if exit:
-        sys.exit(1)
-
-def printAsWarning(text):
-    print(text)
-
-def myRaise(File=None):
-    i = sys.exc_info()
-    if File==None:
-        sys.stderr.write('line %s: %s: %s'%(i[2].tb_lineno, i[0].__name__, i[1]))
-    else:
-        sys.stderr.write('File "%s", line %s: %s: %s'%(File, i[2].tb_lineno, i[0].__name__, i[1]))
 
 toStr = lambda s: s.encode('utf8') if isinstance(s, unicode) else str(s)
 toUnicode = lambda s: s if isinstance(s, unicode) else str(s).decode('utf8')
@@ -258,7 +248,7 @@ def findAll(st, sub):
             ind += findAll(st, item)
         ind.sort()
     else:
-        print('Invailed second argument to function findAll!')
+        log.error('Invailed second argument to function findAll!')
         return []
     return ind
 
@@ -313,7 +303,7 @@ def findWords(st0, opt={}):
     for ch in sch:
         st = st.replace(ch, ' '*len(ch))
     if len(st)!=len(st0):
-        print('Error in function text_utlis.findWord. string length has been changed!')
+        log.error('Error in function text_utlis.findWord. string length has been changed!')
         return []
     si = [-1] + findAll(st, ' ') + [len(st)] # separatior indexes
     for i in xrange(len(si)-1):
@@ -352,7 +342,7 @@ def takeFileWords(filePath, opt={'minLen':3, 'sort':True, 'noRepeat':True}):
     try:
         fp = open(filePath, 'rb')
     except:
-        print('Can not open file', filePath)
+        log.exception('error while opening file "%s"'%filePath)
     return takeStrWords(fp.read(), opt)
 
 
@@ -395,7 +385,7 @@ def removeTextTags(st, tags):
                 st = st[:i1] + st[i2+1:]
                 i0 = i1 + 1
                 #if tag=='A':
-                #    printAsError('tag "A" closing not found!')
+                #    log.error('tag "A" closing not found!')
                 continue
             i4 = i3 + tl + 3 # i3 + len('</%s>'%tag) # must not +1
             if removeBetween:
@@ -407,7 +397,7 @@ def removeTextTags(st, tags):
             else:
                 st = st[:i1] + st[i2+1:i3] + st[i4:]
                 i0 = i1 + i3 - i2 + 1 # is +1 needed???????
-            #print(i0, i1, i2, i3)
+            #log.debug('%s %s %s %s'%(i0, i1, i2, i3))
             st = st.replace('<%s>'%tag, '').replace('</%s>'%tag, '')
     return st
 
@@ -620,11 +610,11 @@ def runDictzip(filename):
     ).communicate()
     #out = p3[1].read()
     #err = p3[2].read()
-    #print('dictzip command: "%s"'%dictzipCmd)
+    #log.debug('dictzip command: "%s"'%dictzipCmd)
     #if err:
-    #    printAsError('dictzip error: %s'%err.replace('\n', ' '))
+    #    log.error('dictzip error: %s'%err.replace('\n', ' '))
     #if out!='':
-    #    print('dictzip error: %s'%out.replace('\n', ' '))
+    #    log.error('dictzip error: %s'%out.replace('\n', ' '))
 
 
 def isControlChar(y):
@@ -643,7 +633,7 @@ def isASCII(data, exclude=[]):
             return False
     return True
 
-def printByteStr(text):
+def formatByteStr(text):
     out = ''
     for c in text:
         out += '{0:0>2x}'.format(ord(c)) + ' '
@@ -912,7 +902,7 @@ def build_name2codepoint_dict():
         name2str[k.lower()] = unichr(v).encode('utf-8')
     for key in sorted(name2str.keys()):
         value = name2str[key]
-        print("    '{0}': 0x{1:0>4x}, # {2}".format(
+        log.info("    '{0}': 0x{1:0>4x}, # {2}".format(
             key,
             ord(value.decode('utf-8')),
             value,

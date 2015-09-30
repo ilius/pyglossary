@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from formats_common import *
+
 enable = True
 format = 'Pmd'
 description = 'PMD'
@@ -106,7 +108,7 @@ def pmdCompile(uni):
     if missing!=[]:
         fp = open(join(homeDir, 'missing.txt'), 'a')
         for ch in missing:
-            print(ch.encode('utf-8'))
+            log.debug(ch.encode('utf-8'))
             #fp.write('%s\n'%ch.encode('utf-8'))
     """
     return pmd
@@ -194,7 +196,7 @@ def pmdEnConv(uni): #gets an unicode(utf-16) string
                     pmd += chr(i)
                     break
             else:
-                print('no PMD coding for "%s"'%c)
+                log.debug('no PMD coding for "%s"'%c)
     return pmd
 
 def pmdDecomile(pmd):
@@ -216,7 +218,7 @@ def read(glos, filename):## not tested ## FIXME
         for part in pmd.split('\x00'):
             sepInd = part.find('\x09')
             if sepInd==-1:
-                printAsError('error on reading PMD database part %s'%i)
+                log.error('error on reading PMD database part %s'%i)
                 continue
             word = part[:sepInd]
             defi = part[sepInd+1:]

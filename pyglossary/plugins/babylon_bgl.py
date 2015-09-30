@@ -29,7 +29,6 @@ description = 'Babylon (bgl)'
 extentions = ['.bgl']
 readOptions = [
     'resPath',
-    'verbose',
     'defaultEncodingOverwrite',
     'sourceEncodingOverwrite',
     'targetEncodingOverwrite',
@@ -56,13 +55,10 @@ supportsAlternates = True
 
 import gzip, re, htmlentitydefs, pickle
 
-from pyglossary.text_utils import printAsError, printAsWarning, myRaise, binStrToInt, excMessage, \
-    isASCII, isControlChar, name2codepoint, printByteStr, intToBinStr, escape
+from pyglossary.text_utils import binStrToInt, excMessage, \
+    isASCII, isControlChar, name2codepoint, formatByteStr, intToBinStr, escape
 import pyglossary.gregorian as gregorian
 
-# use this variable to vary verbosity of output for non-class members
-# see verbose parameter of BGL.__init__
-gVerbose = 0
 
 if os.sep=='/': ## Operating system is Unix-like
     tmpDir = '/tmp'
@@ -146,8 +142,7 @@ class BGLGzipFile(gzip.GzipFile):
         crc32 = read32(self.fileobj)
         isize = read32(self.fileobj) ## may exceed 2GB
         if crc32 != self.crc:
-            if gVerbose >= 2:
-                print('CRC check failed %s != %s' % (hex(crc32), hex(self.crc)))
+            log.warn('CRC check failed %s != %s' % (hex(crc32), hex(self.crc)))
         elif isize != (self.size & 0xffffffff):
             raise IOError('Incorrect length of data produced')
 
@@ -226,8 +221,7 @@ def replace_html_entry_no_escape(m):
                 &csdot; despite other references like &amp; are replaced with corresponding
                 characters.
                 '''
-                if gVerbose >= 2:
-                    printAsWarning('unknown html entity {0}'.format(text))
+                log.warn('unknown html entity {0}'.format(text))
                 res = text
     else:
         raise ArgumentError()
@@ -967,7 +961,6 @@ class BGL:
         ## 1: minimal info (for user)
         ## 2: extra info (for user)
         ## 3: debugging (for developer)
-        verbose=0,
         defaultEncodingOverwrite = None,
         sourceEncodingOverwrite = None,
         targetEncodingOverwrite = None,
@@ -999,9 +992,6 @@ class BGL:
         # see string.rstrip function
         keyRStripChars = None,
     ):
-        global gVerbose
-        self.verbose = verbose
-        gVerbose = verbose
         self.filename = filename
         self.title = 'Untitled'
         self.author = ''
@@ -1066,8 +1056,7 @@ class BGL:
         self.partOfSpeechColor = '007000'
 
         self.resPath = self.createResDir(resPath)
-        if self.verbose > 2:
-            print('Resource path: {0}'.format(resPath))
+        log.info('Resource path: {0}'.format(resPath))
         self.resFiles = []
 
     def createResDir(self, resPath):
@@ -1093,18 +1082,18 @@ class BGL:
                 try:
                     os.mkdir(resPath)
                 except IOError:
-                    myRaise(__file__)
+                    log.exception('error while creating resource directory "%s"'%resPath)
                     resPath = self.createResDirInTemp()
         else:
             if not os.path.exists(resPath):
                 try:
                     os.mkdir(resPath)
                 except IOError:
-                    myRaise(__file__)
+                    log.exception('error while creating resource directory "%s"'%resPath)
                     resPath = self.createResDirInTemp()
             else:
                 if not os.path.isdir(resPath):
-                    printAsWarning('{0} is not a directory'.format(resPath))
+                    log.error('{0} is not a directory'.format(resPath))
                     resPath = self.createResDirInTemp()
         return resPath
 
@@ -1112,6 +1101,7 @@ class BGL:
         resPath = os.path.join(tmpDir, os.path.basename(self.filename) + '_files') + os.sep
         if not os.path.isdir(resPath):
             os.mkdir(resPath)
+        log.warn('using temp resource directory "%s"'%resPath)
         return resPath
 
     # open .bgl file, read signature, find and open gzipped content
@@ -1124,8 +1114,7 @@ class BGL:
             if len(buf)<6 or not buf[:4] in ('\x12\x34\x00\x01', '\x12\x34\x00\x02'):
                 return False
             self.gzip_offset = i = binStrToInt(buf[4:6])
-            if self.verbose > 2:
-                print('Position of gz header: i={0}'.format(i))
+            log.debug('Position of gz header: i={0}'.format(i))
             if i<6:
                 return False
             self.writeGz = writeGz
@@ -1134,7 +1123,7 @@ class BGL:
                 try:
                     f2 = open(self.dataFile, 'wb')
                 except IOError:
-                    myRaise(__file__)
+                    log.exception('error while opening gzip data file')
                     self.dataFile = join(tmpDir, os.path.split(self.m_filename)[-1] + '-data.gz')
                     f2 = open(self.dataFile, 'wb')
                 f.seek(i)
@@ -1207,14 +1196,14 @@ class BGL:
         block.offset = self.file.tell()
         length = self.readBytes(1)
         if length==-1:
-            printAsError('readBlock: length = -1')
+            log.error('readBlock: length = -1')
             return False
         block.Type = length & 0xf
         length >>= 4
         if length < 4:
             length = self.readBytes(length+1)
             if length == -1:
-                printAsError('readBlock: length = -1')
+                log.error('readBlock: length = -1')
                 return False
         else:
             length -= 4
@@ -1222,11 +1211,16 @@ class BGL:
         if length > 0:
             try:
                 block.data = self.file.read(length)
-            except:#??????????????????
-                ##???????? struct.error: unpack requires a string argument of length 4
-                myRaise(__file__)
-                print('readBlock: read failed: self.numBlocks = {0}, length = {1}, self.file.tell() = {2}'\
-                    .format(self.numBlocks, length, self.file.tell()))
+            except:
+                ## struct.error: unpack requires a string argument of length 4
+                ## FIXME
+                log.exception(
+                    'failed to read block data: numBlocks={0}, length={1}, filePos={2}'.format(
+                        self.numBlocks,
+                        length,
+                        self.file.tell(),
+                    )
+                )
                 block.data = ''
                 return False
             #else:
@@ -1239,15 +1233,15 @@ class BGL:
     def readBytes(self, bytes):
         val=0
         if bytes<1 or bytes>4:
-            printAsError('readBytes: invalid argument bytes {0}'.format(bytes))
+            log.error('readBytes: invalid argument bytes {0}'.format(bytes))
             return -1
         self.file.flush()
         buf = self.file.read(bytes)
         if len(buf)==0:
-            printAsError('readBytes: end of file: len(buf)==0')
+            log.error('readBytes: end of file: len(buf)==0')
             return -1
         if len(buf)!=bytes:
-            printAsError('readBytes: to read bytes = {0} , actually read bytes = {1}'.format(bytes, len(buf)))
+            log.error('readBytes: to read bytes = {0} , actually read bytes = {1}'.format(bytes, len(buf)))
             return -1
         return binStrToInt(buf)
 
@@ -1276,15 +1270,18 @@ class BGL:
             elif block.Type==3:
                 self.read_type_3(block)
             else:## Unknown block.Type
-                self.unknownBlock(block)
+                log.debug('Unkown Block Type "%s", data_length=%s, number=%s'%(
+                    block.Type,
+                    len(block.data),
+                    self.numBlocks,
+                ))
         self.file.seek(0)
         ################
         self.detect_encoding()
 
         if deferred_block2_num > 0:
             # process deferred type 2 blocks
-            if self.verbose > 2:
-                print('processing type 2 blocks, second pass')
+            log.debug('processing type 2 blocks, second pass')
             while not self.isEndOfDictData():
                 if not self.readBlock(block):
                     break
@@ -1307,37 +1304,29 @@ class BGL:
         # self.author_wide - unicode
         # self.contractions ?
 
-        if self.verbose > 1:
-            print('numEntries = {0}'.format(self.numEntries))
-            if self.bgl_numEntries!=self.numEntries:
-                # There are a number of cases when these numbers do not match.
-                # The dictionary is OK, and these is no doubt that we might missed an entry.
-                # self.bgl_numEntries may be less than the number of entries we've read.
-                print('bgl_numEntries = {0} (!!!!!!!!!)'.format(self.bgl_numEntries))
-        if self.verbose > 2:
-            print('numBlocks = {0}'.format(self.numBlocks))
-        if self.verbose > 1:
-            print('defaultCharset = {0}'.format(self.defaultCharset))
-            print('sourceCharset = {0}'.format(self.sourceCharset))
-            print('targetCharset = {0}'.format(self.targetCharset))
-            print('')
-            print('defaultEncoding = {0}'.format(self.defaultEncoding))
-            print('sourceEncoding = {0}'.format(self.sourceEncoding))
-            print('targetEncoding = {0}'.format(self.targetEncoding))
-            print('')
-            print('sourceLang = {0}'.format(self.sourceLang))
-            print('targetLang = {0}'.format(self.targetLang))
-            print('')
-            print('creationTime = {0}'.format(self.creationTime))
-            print('middleUpdated = {0}'.format(self.middleUpdated)) ## ???????????????
-            print('lastUpdated = {0}'.format(self.lastUpdated))
-            print('')
-        if self.verbose > 1:
-            print('title = {0}'.format(self.oneLineValue(self.title)))
-            print('author = {0}'.format(self.oneLineValue(self.author)))
-            print('email = {0}'.format(self.oneLineValue(self.email)))
-            print('copyright = {0}'.format(self.oneLineValue(self.copyright)))
-            print('description = {0}'.format(self.oneLineValue(self.description)))
+        log.debug('numEntries = {0}'.format(self.numEntries))
+        if self.bgl_numEntries!=self.numEntries:
+            # There are a number of cases when these numbers do not match.
+            # The dictionary is OK, and these is no doubt that we might missed an entry.
+            # self.bgl_numEntries may be less than the number of entries we've read.
+            log.warn('bgl_numEntries = {0}, numEntries={1}'.format(self.bgl_numEntries, self.numEntries))
+        log.debug('numBlocks = {0}'.format(self.numBlocks))
+        log.debug('defaultCharset = {0}'.format(self.defaultCharset))
+        log.debug('sourceCharset = {0}'.format(self.sourceCharset))
+        log.debug('targetCharset = {0}\n'.format(self.targetCharset))
+        log.debug('defaultEncoding = {0}'.format(self.defaultEncoding))
+        log.debug('sourceEncoding = {0}'.format(self.sourceEncoding))
+        log.debug('targetEncoding = {0}\n'.format(self.targetEncoding))
+        log.debug('sourceLang = {0}'.format(self.sourceLang))
+        log.debug('targetLang = {0}\n'.format(self.targetLang))
+        log.info('creationTime = {0}'.format(self.creationTime))
+        log.debug('middleUpdated = {0}'.format(self.middleUpdated)) ## ???????????????
+        log.info('lastUpdated = {0}\n'.format(self.lastUpdated))
+        log.info('title = {0}'.format(self.oneLineValue(self.title)))
+        log.info('author = {0}'.format(self.oneLineValue(self.author)))
+        log.info('email = {0}'.format(self.oneLineValue(self.email)))
+        log.info('copyright = {0}'.format(self.oneLineValue(self.copyright)))
+        log.info('description = {0}'.format(self.oneLineValue(self.description)))
 
         self.numBlocks = 0
 
@@ -1346,7 +1335,7 @@ class BGL:
             try:
                 os.rmdir(self.resPath)
             except:
-                myRaise(__file__)
+                log.exception('error creating resource directory "%s"'%self.resPath)
         return True
 
     def read_type_0(self, block):
@@ -1363,8 +1352,8 @@ class BGL:
                 if value < len(self.charsets):
                     self.defaultCharset = self.charsets[value]
                 else:
-                    printAsWarning('read_type_0: unknown defaultCharset {0}'.format(value))
-        elif self.verbose > 2:
+                    log.warn('read_type_0: unknown defaultCharset {0}'.format(value))
+        else:
             self.unknownBlock(block)
             return False
         return True
@@ -1397,13 +1386,13 @@ class BGL:
         Len = ord(block.data[pos])
         pos+=1
         if pos+Len > len(block.data):
-            printAsWarning('read_type_2: name too long')
+            log.warn('read_type_2: name too long')
             return True
         name += block.data[pos:pos+Len]
         pos += Len
         if name in ('C2EEF3F6.html', '8EAF66FD.bmp'):
-            if self.verbose > 1 and pass_num == 1:
-                print('Skipping non-useful file "{0}"'.format(name))
+            if pass_num == 1:
+                log.info('Skipping non-useful file "{0}"'.format(name))
             return True
         if isASCII(name):
             if pass_num > 1:
@@ -1444,14 +1433,14 @@ class BGL:
             if value < len(self.languageProps):
                 self.sourceLang = self.languageProps[value].language
             else:
-                printAsWarning('read_type_3: unknown sourceLangCode = {0}'.format(value))
+                log.warn('read_type_3: unknown sourceLangCode = {0}'.format(value))
         elif x==0x08:
             value = binStrToInt(block.data[pos:])
             self.targetLangCode = value
             if value < len(self.languageProps):
                 self.targetLang = self.languageProps[value].language
             else:
-                printAsWarning('read_type_3: unknown targetLangCode = {0}'.format(value))
+                log.warn('read_type_3: unknown targetLangCode = {0}'.format(value))
         elif x==0x09:
             # Glossary description
             self.description = block.data[pos:]
@@ -1491,7 +1480,7 @@ class BGL:
                 if value < len(self.charsets):
                     self.sourceCharset = self.charsets[value]
                 else:
-                    printAsWarning('read_type_3: unknown sourceCharset {0}'.format(value))
+                    log.warn('read_type_3: unknown sourceCharset {0}'.format(value))
         elif x==0x1b:
             value = ord(block.data[2])
             if value >= 0x41:
@@ -1499,7 +1488,7 @@ class BGL:
                 if value < len(self.charsets):
                     self.targetCharset = self.charsets[value]
                 else:
-                    printAsWarning('read_type_3: unknown targetCharset {0}'.format(value))
+                    log.warn('read_type_3: unknown targetCharset {0}'.format(value))
         elif x==0x1c:## Middle Updated ## ???????????????
             self.middleUpdated = decodeBglBinTime(block.data[2:])
         elif x==0x20:
@@ -1582,7 +1571,7 @@ class BGL:
             if len(block.data) > pos:
                 i = block.data.find('\x00', pos)
                 if i == -1:
-                    printAsWarning('read_type_3: no file extension')
+                    log.warn('read_type_3: no file extension')
                 else:
                     self.aboutExt = block.data[pos:i]
                     self.aboutContents = block.data[i+1:]
@@ -1594,13 +1583,12 @@ class BGL:
             Use substring length 0 for exact match.
             '''
             length = binStrToInt(block.data[pos:])
-        elif self.verbose > 2:
-            self.unknownBlock(block)
-            return False
-        return True
-            # print('Unknown info type x=%s, block.Type=%s, len(block.data)=%s'%\
-                # (x, block.Type, len(block.data)))
+        else:
+            log.debug('Unknown info type x=%s, block.Type=%s, len(block.data)=%s'%(x, block.Type, len(block.data)))
             #open('%s-block.%s.%s'%(self.numBlocks, x, block.Type), 'w').write(block.data)
+            return False
+
+        return True
 
     # block type = 3
     # block format: <2 byte code1><2 byte code2>
@@ -1618,7 +1606,7 @@ class BGL:
         pos += 2
         if y == 0:
             if len(block.data) != pos:
-                printAsWarning('read_type_3_message: x = {0}. unexpected block size = {1}'.format(
+                log.warn('read_type_3_message: x = {0}. unexpected block size = {1}'.format(
                     x,
                     len(block.data),
                 ))
@@ -1628,13 +1616,13 @@ class BGL:
             a = binStrToInt(block.data[pos:pos+2])
             pos += 2
             if a != 0:
-                printAsWarning('read_type_3_message: x = {0}. a = {1} != 0'.format(x, a))
+                log.warn('read_type_3_message: x = {0}. a = {1} != 0'.format(x, a))
             if 2*z != len(block.data)-pos:
-                printAsWarning('read_type_3_message: x = {0}. z = {1} does not match block size'.format(x, a))
+                log.warn('read_type_3_message: x = {0}. z = {1} does not match block size'.format(x, a))
             else:
                 return block.data[pos:].decode('utf16')
         else:
-            printAsWarning('read_type_3_message: x = {0}. unknown value y = {1}'.format(x, y))
+            log.warn('read_type_3_message: x = {0}. unknown value y = {1}'.format(x, y))
         return None
 
     def detect_encoding(self):
@@ -1682,8 +1670,8 @@ class BGL:
         range_count = 0
         block = self.Block()
         while not self.isEndOfDictData():
-            #print('readBlock offset {0:#X}'.format(self.file.unpacked_file.tell()))
-            #print('readBlock offset {0:#X}'.format(self.file.tell()))
+            #log.debug('readBlock offset {0:#X}'.format(self.file.unpacked_file.tell()))
+            #log.debug('readBlock offset {0:#X}'.format(self.file.tell()))
             if not self.readBlock(block):
                 break
             self.numBlocks += 1
@@ -1735,9 +1723,11 @@ class BGL:
             pickle.dump(self.metadata2, f)
 
     def unknownBlock(self, block):
-        pass
-        #print('Block: type=%s, data_length=%s, number=%s'\
-        #    %(block.Type, len(block.data), self.numBlocks))
+        log.debug('Unkown Block: type=%s, data_length=%s, number=%s'%(
+            block.Type,
+            len(block.data),
+            self.numBlocks,
+        ))
 
     # return True if an entry has been read
     def readEntry(self, entry):
@@ -1777,20 +1767,20 @@ class BGL:
         Err = [False, None, None, None]
         if block.Type == 11:
             if pos + 5 > len(block.data):
-                printAsError('readEntry[{0:#X}]: reading word size: pos + 5 > len(block.data)'\
+                log.error('readEntry[{0:#X}]: reading word size: pos + 5 > len(block.data)'\
                     .format(block.offset))
                 return Err
             Len = binStrToInt(block.data[pos:pos+5])
             pos += 5
         else:
             if pos + 1 > len(block.data):
-                printAsError('readEntry[{0:#X}]: reading word size: pos + 1 > len(block.data)'\
+                log.error('readEntry[{0:#X}]: reading word size: pos + 1 > len(block.data)'\
                     .format(block.offset))
                 return Err
             Len = ord(block.data[pos])
             pos += 1
         if pos + Len > len(block.data):
-            printAsError('readEntry[{0:#X}]: reading word: pos + Len > len(block.data)'\
+            log.error('readEntry[{0:#X}]: reading word: pos + Len > len(block.data)'\
                 .format(block.offset))
             return Err
         raw_key = block.data[pos:pos+Len]
@@ -1813,7 +1803,7 @@ class BGL:
         Err = [False, None, None, None]
         if block.Type == 11:
             if pos + 8 > len(block.data):
-                printAsError('readEntry[{0:#X}]: reading defi size: pos + 8 > len(block.data)'\
+                log.error('readEntry[{0:#X}]: reading defi size: pos + 8 > len(block.data)'\
                     .format(block.offset))
                 return Err
             pos += 4 # binStrToInt(block.data[pos:pos+4]) - may be 0, 1
@@ -1821,13 +1811,13 @@ class BGL:
             pos += 4
         else:
             if pos + 2 > len(block.data):
-                printAsError('readEntry[{0:#X}]: reading defi size: pos + 2 > len(block.data)'\
+                log.error('readEntry[{0:#X}]: reading defi size: pos + 2 > len(block.data)'\
                     .format(block.offset))
                 return Err
             Len = binStrToInt(block.data[pos:pos+2])
             pos += 2
         if pos + Len > len(block.data):
-            printAsError('readEntry[{0:#X}]: reading defi: pos + Len > len(block.data)'\
+            log.error('readEntry[{0:#X}]: reading defi: pos + Len > len(block.data)'\
                 .format(block.offset))
             return Err
         raw_defi = block.data[pos:pos+Len]
@@ -1846,7 +1836,7 @@ class BGL:
         while pos < len(block.data):
             if block.Type == 11:
                 if pos + 4 > len(block.data):
-                    printAsError('readEntry[{0:#X}]: reading alt size: pos + 4 > len(block.data)'\
+                    log.error('readEntry[{0:#X}]: reading alt size: pos + 4 > len(block.data)'\
                         .format(block.offset))
                     return Err
                 Len = binStrToInt(block.data[pos:pos+4])
@@ -1854,18 +1844,18 @@ class BGL:
                 if Len == 0:
                     if pos + Len != len(block.data):
                         # no evidence
-                        printAsWarning('readEntry[{0:#X}]: reading alt size: pos + Len != len(block.data)'\
+                        log.warn('readEntry[{0:#X}]: reading alt size: pos + Len != len(block.data)'\
                             .format(block.offset))
                     break
             else:
                 if pos + 1 > len(block.data):
-                    printAsError('readEntry[{0:#X}]: reading alt size: pos + 1 > len(block.data)'\
+                    log.error('readEntry[{0:#X}]: reading alt size: pos + 1 > len(block.data)'\
                         .format(block.offset))
                     return Err
                 Len = ord(block.data[pos])
                 pos += 1
             if pos + Len > len(block.data):
-                printAsError('readEntry[{0:#X}]: reading alt: pos + Len > len(block.data)'\
+                log.error('readEntry[{0:#X}]: reading alt: pos + Len > len(block.data)'\
                     .format(block.offset))
                 return Err
             raw_alt = block.data[pos:pos+Len]
@@ -1884,7 +1874,7 @@ class BGL:
             try:
                 u_text = text.decode(encoding)
             except UnicodeError:
-                self.msg_log_file_write('toUtf8({0}):\nconversion error:\n{1}'\
+                log.debug('toUtf8({0}):\nconversion error:\n{1}'\
                     .format(text, excMessage()))
                 u_text = text.decode(encoding, 'ignore')
         else:
@@ -1987,12 +1977,12 @@ class BGL:
                         ref = refs[j]
                         if not ref:
                             if j != len(refs)-1:
-                                self.msg_log_file_write('decode_charset_tags({0})\n'
+                                log.debug('decode_charset_tags({0})\n'
                                     'blank <charset c=t> character reference ({1})\n'
                                     .format(text, text2))
                             continue
                         if not re.match('^[0-9a-fA-F]{4}$', ref):
-                            self.msg_log_file_write(
+                            log.debug(
                                 'decode_charset_tags({0})\n'
                                 'invalid <charset c=t> character reference ({1})\n'
                                 .format(text, text2)
@@ -2008,7 +1998,7 @@ class BGL:
                         try:
                             u_text = text2.decode(encoding)
                         except UnicodeError:
-                            self.msg_log_file_write(
+                            log.debug(
                                 'decode_charset_tags({0})\n'
                                 'fragment({1})\n'
                                 'conversion error:\n{2}'
@@ -2026,7 +2016,7 @@ class BGL:
                     if len(encodings) > 0:
                         del encodings[-1]
                     else:
-                        self.msg_log_file_write(
+                        log.debug(
                             'decode_charset_tags({0})\n'
                             'unbalanced </charset> tag\n'
                             .format(text)
@@ -2046,7 +2036,7 @@ class BGL:
                         # gbk or gb18030 encoding (not enough data to make distinction)
                         encodings.append('gbk')
                     else:
-                        self.msg_log_file_write(
+                        log.debug(
                             'decode_charset_tags({0})\n'
                             'unknown charset code = {1}\n'
                             .format(text, c)
@@ -2057,7 +2047,7 @@ class BGL:
                 # c attribute of charset tag if the previous tag was charset
                 pass
         if len(encodings) > 0:
-            self.msg_log_file_write(
+            log.debug(
                 'decode_charset_tags({0})\n'
                 'unclosed <charset...> tag\n'
                 .format(text)
@@ -2084,14 +2074,14 @@ class BGL:
         '''
         main_word, strip_cnt = self.stripDollarIndexes(word)
         if strip_cnt > 1:
-            self.msg_log_file_write('processEntryKey({0}):\nnumber of dollar indexes = {1}'\
+            log.debug('processEntryKey({0}):\nnumber of dollar indexes = {1}'\
                 .format(word, strip_cnt))
         # convert to unicode
         if self.strictStringConvertion:
             try:
                 u_main_word = main_word.decode(self.sourceEncoding)
             except UnicodeError:
-                self.msg_log_file_write(
+                log.debug(
                     'processEntryKey({0}):\nconversion error:\n{1}'
                     .format(word, excMessage())
                 )
@@ -2106,7 +2096,7 @@ class BGL:
             utf8_main_word = self.strip_html_tags(utf8_main_word)
             utf8_main_word = self.replace_html_entries_in_keys(utf8_main_word)
             #if(re.match('.*[&<>].*', utf8_main_word_orig)):
-                #print('original text: ' + utf8_main_word_orig + '\n' \
+                #log.debug('original text: ' + utf8_main_word_orig + '\n' \
                         #+ 'new      text: ' + utf8_main_word + '\n')
         utf8_main_word = self.remove_control_chars(utf8_main_word)
         utf8_main_word = self.replace_new_lines(utf8_main_word)
@@ -2121,7 +2111,7 @@ class BGL:
             try:
                 u_main_word = main_word.decode(self.sourceEncoding)
             except UnicodeError:
-                self.msg_log_file_write(
+                log.debug(
                     'processEntryAlternativeKey({0})\nkey = {1}:\nconversion error:\n{2}'
                     .format(raw_word, raw_key, excMessage())
                 )
@@ -2140,7 +2130,7 @@ class BGL:
             utf8_main_word = self.strip_html_tags(utf8_main_word)
             utf8_main_word = self.replace_html_entries_in_keys(utf8_main_word)
             #if(re.match('.*[&<>].*', utf8_main_word_orig)):
-                #print('original text: ' + utf8_main_word_orig + '\n' \
+                #log.debug('original text: ' + utf8_main_word_orig + '\n' \
                         #+ 'new      text: ' + utf8_main_word + '\n')
         utf8_main_word = self.remove_control_chars(utf8_main_word)
         utf8_main_word = self.replace_new_lines(utf8_main_word)
@@ -2160,7 +2150,7 @@ class BGL:
                 break
             d1 = word.find('$', d0+1)
             if d1 == -1:
-                #self.msg_log_file_write('stripDollarIndexes({0}):\n'
+                #log.debug('stripDollarIndexes({0}):\n'
                     #'paired $ is not found'.format(word))
                 main_word += word[i:]
                 break
@@ -2177,7 +2167,7 @@ class BGL:
 
                 summary: we must remove any sequence of dollar signs longer than 1 chars
                 '''
-                #self.msg_log_file_write('stripDollarIndexes({0}):\n'
+                #log.debug('stripDollarIndexes({0}):\n'
                     #'found $$'.format(word))
                 main_word += word[i:d0]
                 i = d1 + 1
@@ -2189,7 +2179,7 @@ class BGL:
             ok = True
             for x in word[d0+1:d1]:
                 if x not in '0123456789':
-                    #self.msg_log_file_write('stripDollarIndexes({0}):\n'
+                    #log.debug('stripDollarIndexes({0}):\n'
                         #'non-digit between $$'.format(word))
                     ok = False
                     break
@@ -2204,7 +2194,7 @@ class BGL:
                 volere$1$<BR><BR>See also <a href='file://ITAL-ENG VOLERE 1469-1470.pdf'>notes...</A>
                 Ihre$1$Ihres
                 '''
-                #self.msg_log_file_write('stripDollarIndexes({0}):\n'
+                #log.debug('stripDollarIndexes({0}):\n'
                     #'second $ is followed by non-space'.format(word))
                 pass
             main_word += word[i:d0]
@@ -2297,7 +2287,7 @@ class BGL:
                 # This defi normally contains fields.transcription_60 in this case.
                 pass
             else:
-                self.msg_log_file_write('processEntryDefinition({0})\n'
+                log.debug('processEntryDefinition({0})\n'
                     'key = ({1}):\ndefi field 50, unknown code: 0x{2:x}'.format(
                         defi,
                         raw_key,
@@ -2314,7 +2304,7 @@ class BGL:
                 fields.utf8_transcription_60 = self.remove_control_chars(fields.utf8_transcription_60)
                 fields.u_transcription_60 = fields.utf8_transcription_60.decode('utf-8')
             else:
-                self.msg_log_file_write('processEntryDefinition({0})\n'
+                log.debug('processEntryDefinition({0})\n'
                     'key = ({1}):\ndefi field 60, unknown code: 0x{2:x}'.format(
                         defi,
                         raw_key,
@@ -2407,12 +2397,12 @@ class BGL:
         if fields.u_field_1a:
             self.decoded_dump_file_write(u'\ndefi field_1a: ' + fields.u_field_1a)
         if fields.field_13:
-            self.dump_file_write_text('\ndefi field_13 bytes: ' + printByteStr(fields.field_13))
-            self.decoded_dump_file_write(u'\ndefi field_13 bytes: ' + printByteStr(fields.field_13).decode('utf-8'))
+            self.dump_file_write_text('\ndefi field_13 bytes: ' + formatByteStr(fields.field_13))
+            self.decoded_dump_file_write(u'\ndefi field_13 bytes: ' + formatByteStr(fields.field_13).decode('utf-8'))
         if fields.field_07:
             self.dump_file_write_text('\ndefi field_07: ')
             self.dump_file_write_data(fields.field_07)
-            self.decoded_dump_file_write(u'\ndefi field_07 bytes: ' + printByteStr(fields.field_07).decode('utf-8'))
+            self.decoded_dump_file_write(u'\ndefi field_07 bytes: ' + formatByteStr(fields.field_07).decode('utf-8'))
         if fields.field_06:
             self.dump_file_write_text('\ndefi field_06: {0}'.format(fields.field_06))
             self.decoded_dump_file_write(u'\ndefi field_06: {0}'.format(fields.field_06))
@@ -2429,13 +2419,13 @@ class BGL:
 
             if defi[i] == '\x02': # part of speech # '\x02' <one char - part of speech>
                 if fields.part_of_speech:
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\nduplicate part of speech item'
                         .format(defi, raw_key)
                     )
                 if i+1 >= len(defi):
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ndefi ends after \\x02'
                         .format(defi, raw_key)
@@ -2444,7 +2434,7 @@ class BGL:
                 c = defi[i+1]
                 x = ord(c)
                 if not (0x30 <= x and x < 0x30 + len(self.partOfSpeech) and self.partOfSpeech[x - 0x30] ):
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\nunknown part of speech. Char code = {2:#X}'
                         .format(defi, raw_key, x)
@@ -2454,13 +2444,13 @@ class BGL:
                 i += 2
             elif defi[i] == '\x06': # \x06<one byte>
                 if fields.field_06:
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\nduplicate type 6'
                         .format(defi, raw_key)
                     )
                 if i+1 >= len(defi):
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ndefi ends after \\x06'
                         .format(defi, raw_key)
@@ -2471,7 +2461,7 @@ class BGL:
             elif defi[i] == '\x07': # \x07<two bytes>
                 # Found in 4 Hebrew dictionaries. I do not understand.
                 if i+3 > len(defi):
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x07'
                         .format(defi, raw_key)
@@ -2486,7 +2476,7 @@ class BGL:
                 # ...
                 # 04 00 00 00 5F
                 if i + 1 >= len(defi):
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x13'
                         .format(defi, raw_key)
@@ -2495,14 +2485,14 @@ class BGL:
                 Len = ord(defi[i+1])
                 i += 2
                 if Len == 0:
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\nblank data after \\x13'
                         .format(defi, raw_key)
                     )
                     continue
                 if i+Len > len(defi):
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x13'
                         .format(defi, raw_key)
@@ -2512,13 +2502,13 @@ class BGL:
                 i += Len
             elif defi[i] == '\x18': # \x18<one byte - title length><entry title>
                 if fields.title:
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\nduplicate entry title item'
                         .format(defi, raw_key)
                     )
                 if i+1 >= len(defi):
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ndefi ends after \\x18'
                         .format(defi, raw_key)
@@ -2528,11 +2518,11 @@ class BGL:
                 Len = ord(defi[i])
                 i += 1
                 if Len == 0:
-                    #self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    #log.debug('processEntryDefinitionTrailingFields({0})\n'
                         #'key = ({1}):\nblank entry title'.format(defi, raw_key))
                     continue
                 if i + Len > len(defi):
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntitle is too long'
                         .format(defi, raw_key)
@@ -2543,7 +2533,7 @@ class BGL:
             elif defi[i] == '\x1A': # '\x1A'<one byte - length><text>
                 # found only in Hebrew dictionaries, I do not understand.
                 if i + 1 >= len(defi):
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x1A'
                         .format(defi, raw_key)
@@ -2552,14 +2542,14 @@ class BGL:
                 Len = ord(defi[i+1])
                 i += 2
                 if Len == 0:
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\nblank data after \\x1A'
                         .format(defi, raw_key)
                     )
                     continue
                 if i+Len > len(defi):
-                    self.msg_log_file_write(
+                    log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x1A'
                         .format(defi, raw_key)
@@ -2570,18 +2560,18 @@ class BGL:
             elif defi[i] == '\x28': # '\x28' <two bytes - length><html text>
                 # title with transcription?
                 if i + 2 >= len(defi):
-                    self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x28'.format(defi, raw_key))
                     return
                 i += 1
                 Len = binStrToInt(defi[i:i+2])
                 i += 2
                 if Len == 0:
-                    self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\nblank data after \\x28'.format(defi, raw_key))
                     continue
                 if i+Len > len(defi):
-                    self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x28'.format(defi, raw_key))
                     return
                 fields.title_trans = defi[i:i+Len]
@@ -2595,7 +2585,7 @@ class BGL:
                 code = ord(defi[i])
                 Len = ord(defi[i]) - 0x3f
                 if i+2+Len > len(defi):
-                    self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x40+'.format(defi, raw_key))
                     return
                 i += 2
@@ -2605,25 +2595,25 @@ class BGL:
                 i += Len
             elif defi[i] == '\x50': # \x50 <one byte> <one byte - length><data>
                 if i + 2 >= len(defi):
-                    self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x50'.format(defi, raw_key))
                     return
                 fields.transcription_50_code = ord(defi[i+1])
                 Len = ord(defi[i+2])
                 i += 3
                 if Len == 0:
-                    self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\nblank data after \\x50'.format(defi, raw_key))
                     continue
                 if i+Len > len(defi):
-                    self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x50'.format(defi, raw_key))
                     return
                 fields.transcription_50 = defi[i:i+Len]
                 i += Len
             elif defi[i] == '\x60': # '\x60' <one byte> <two bytes - length> <text>
                 if i + 4 > len(defi):
-                    self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x60'.format(defi, raw_key))
                     return
                 fields.transcription_60_code = ord(defi[i+1])
@@ -2631,17 +2621,17 @@ class BGL:
                 Len = binStrToInt(defi[i:i+2])
                 i += 2
                 if Len == 0:
-                    self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\nblank data after \\x60'.format(defi, raw_key))
                     continue
                 if i+Len > len(defi):
-                    self.msg_log_file_write('processEntryDefinitionTrailingFields({0})\n'
+                    log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x60'.format(defi, raw_key))
                     return
                 fields.transcription_60 = defi[i:i+Len]
                 i += Len
             else:
-                self.msg_log_file_write(
+                log.debug(
                     'processEntryDefinitionTrailingFields({0})\n'
                     'key = ({1}):\nunknown control char. Char code = {2:#X}'
                     .format(defi, raw_key, ord(defi[i]))
@@ -2662,16 +2652,15 @@ class BGL:
         return text.replace('\x1e', '').replace('\x1f', '')
 
     def __del__(self):
-        #if self.verbose > 2:
-            #print('wordLenMax = %s'%self.wordLenMax)
-            #print('defiLenMax = %s'%self.defiLenMax)
+        #log.debug('wordLenMax = %s'%self.wordLenMax)
+        #log.debug('defiLenMax = %s'%self.defiLenMax)
         if self.file:
             self.file.close()
         if self.writeGz:
             os.remove(self.dataFile)
 
     # write text to dump file as is
-    def dump_file_write_text(self, text):
+    def dump_file_write_text(self, text):## FIXME
         if self.dump_file:
             self.dump_file.write(text)
 
@@ -2688,7 +2677,7 @@ class BGL:
     # text - must be a unicode string
     def decoded_dump_file_write(self, text):
         if not isinstance(text, unicode):
-            printAsError('decoded_dump_file_write({0}): text is not a unicode string'.format(text))
+            log.error('decoded_dump_file_write({0}): text is not a unicode string'.format(text))
             return
         if self.decoded_dump_file:
             self.decoded_dump_file.write(text.encode('utf8'))
@@ -2704,7 +2693,7 @@ class BGL:
             self.msg_log_file.write('\noffset = {0:#X}\n'.format(offset))
             self.msg_log_file.write(text+'\n')
         else:
-            print(text)
+            log.debug(text)
 
     def samples_file_write(self, text):
         if self.samples_dump_file:
@@ -2712,7 +2701,7 @@ class BGL:
             self.samples_dump_file.write('\noffset = {0:#X}\n'.format(offset))
             self.samples_dump_file.write(text+'\n')
         else:
-            print(text)
+            log.debug(text)
 
     # search for new chars in data
     # if new chars are found, mark them with a special sequence in the text
@@ -2751,10 +2740,10 @@ class BGL:
         '''
         res = []
         if not isinstance(data, str):
-            printAsError('findCharSamples: data is not a string')
+            log.error('findCharSamples: data is not a string')
             return res
         if not self.target_chars_arr:
-            printAsError('findCharSamples: self.target_chars_arr == None')
+            log.error('findCharSamples: self.target_chars_arr == None')
             return res
         for i in range(len(data)):
             x = ord(data[i])
@@ -2788,7 +2777,7 @@ def read(glos, filename, **options):
     k = 2000
     for i in xrange(n):
         if not db.readEntry(entry):
-            printAsError('No enough entries found!')
+            log.error('No enough entries found!')
             break
         glos.data.append((entry.word, entry.defi, {'alts': entry.alts, 'defiFormat': 'h'}))
         if ui and i%k==0:

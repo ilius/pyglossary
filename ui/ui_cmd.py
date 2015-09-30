@@ -40,23 +40,6 @@ else:
     endFormat = '\x1b[0;0;0m' ## End Format ## len=8
     #redOnGray = '\x1b[0;1;31;47m'
 
-def printAsError(text='An error occured!', exit=False):
-    sys.stderr.write('%s%s%s\n'%(startRed, text, endFormat))
-    if exit:
-        sys.exit(1)
-
-def cmdRaise():
-    i = sys.exc_info()
-    printAsError(
-        startRed +
-        'File %s line %s: %s: %s'%(
-            __file__,
-            i[2].tb_lineno,
-            i[0].__name__,
-            i[1]
-        ) +
-        endFormat
-    )
 
 COMMAND = 'pyglossary'
 #COMMAND = sys.argv[0]
@@ -89,7 +72,7 @@ def parseFormatOptionsStr(st):
         try:
             (key, value) = part.split('=')
         except ValueError:
-            printAsError('bad option syntax: %s'%part)
+            log.error('bad option syntax: %s'%part)
             continue
         key = key.strip()
         value = value.strip()
@@ -114,7 +97,7 @@ class UI(UIBase):
         self.reverseStop = False
         self.pref = {}
         self.pref_load(**options)
-        #print(self.pref)
+        #log.debug(self.pref)
         if self.pref['noProgressBar']:
             self.pbar = NullObj()
         else:
@@ -145,8 +128,8 @@ class UI(UIBase):
         rot.pbar = self.pbar
     def r_start(self, *args):
         self.rWords = self.glosR.takeOutputWords()
-        print('Number of input words:', len(self.rWords))
-        print('Reversing glossary... (Press Ctrl+C to stop)')
+        log.info('Number of input words:', len(self.rWords))
+        log.info('Reversing glossary... (Press Ctrl+C to stop)')
         try:
             self.glosR.reverseDic(self.rWords, self.pref)
         except KeyboardInterrupt:
@@ -156,7 +139,7 @@ class UI(UIBase):
         self.glosR.continueFrom = self.glosR.i
         self.glosR.stoped = True
         self.reverseStop = True
-        print('Stoped! Press Enter to resume, and press Ctrl+C to quit.')
+        log.info('Stoped! Press Enter to resume, and press Ctrl+C to quit.')
         try:
             raw_input()
         except KeyboardInterrupt:
@@ -167,17 +150,17 @@ class UI(UIBase):
         if self.glosR.stoped==True:
             ## update reverse configuration?
             self.reverseStop = False
-            print('Continue reversing from index %d ...'%self.glosR.continueFrom)
+            log.info('Continue reversing from index %d ...'%self.glosR.continueFrom)
             try:
                 self.glosR.reverseDic(self.rWords, self.pref)
             except KeyboardInterrupt:
                 self.r_stop()
         else:
-            print('self.glosR.stoped=%s'%self.glosR.stoped)
-            print('Not stoped yet. Wait many seconds and press "Resume" again...')
+            log.info('self.glosR.stoped=%s'%self.glosR.stoped)
+            log.info('Not stoped yet. Wait many seconds and press "Resume" again...')
     def r_finished(self, *args):
         self.glosR.continueFrom=0
-        print('Reversing completed.')
+        log.info('Reversing completed.')
     def yesNoQuestion(self, msg, yesDefault=True):## FIXME
         return True
     def run(self, ipath, opath='', read_format='', write_format='',
@@ -185,12 +168,12 @@ class UI(UIBase):
         if read_format:
             #read_format = read_format.capitalize()
             if not read_format in Glossary.readFormats:
-                printAsError('invalid read format %s'%read_format)
+                log.error('invalid read format %s'%read_format)
         if write_format:
             #write_format = write_format.capitalize()
             if not write_format in Glossary.writeFormats:
-                printAsError('invalid write format %s'%write_format)
-                print('try: %s --help'%COMMAND)
+                log.error('invalid write format %s'%write_format)
+                log.error('try: %s --help'%COMMAND)
                 return 1
         if not opath:
             if reverse:
@@ -199,39 +182,39 @@ class UI(UIBase):
                 try:
                     ext = Glossary.formatsExt[write_format]
                 except KeyError:
-                    printAsError('invalid write format %s'%write_format)
-                    print('try: %s --help'%COMMAND)
+                    log.error('invalid write format %s'%write_format)
+                    log.error('try: %s --help'%COMMAND)
                     return 1
                 else:
                     opath = os.path.splitext(ipath)[0] + ext
             else:
-                printAsError('neither output file nor output format is given')
-                print('try: %s --help'%COMMAND)
+                log.error('neither output file nor output format is given')
+                log.error('try: %s --help'%COMMAND)
                 return 1
         g = Glossary(ui=self)
-        print('Reading file "%s"'%ipath)
+        log.info('Reading file "%s"'%ipath)
         if g.read(ipath, format=read_format, **read_options)!=False:
             ## When glossary reader uses progressbar, progressbar must be rebuilded:
             self.progressBuild()
             g.uiEdit()
             if reverse:
-                print('Reversing to file "%s"'%opath)
+                log.info('Reversing to file "%s"'%opath)
                 self.setText('')
                 self.pbar.update_step = 0.1
                 self.pref['savePath'] = opath
                 self.glosR = g
                 self.r_start()
             else:
-                print('Writing to file "%s"'%opath)
+                log.info('Writing to file "%s"'%opath)
                 self.setText('Writing: ')
                 if g.write(opath, format=write_format, **write_options)!=False:
-                    print('done')
+                    log.info('done')
                     return 0
                 else:
-                    printAsError('writing output file was failed!')
+                    log.error('writing output file was failed!')
                     return 1
         else:
-            printAsError('reading input file was failed!')
+            log.error('reading input file was failed!')
             return 1
         return 0
 

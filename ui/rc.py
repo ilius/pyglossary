@@ -1,4 +1,4 @@
-verbosity = 2
+#verbosity = 2
 noProgressBar = False ## in command line
 
 save = 0
