@@ -324,13 +324,13 @@ class UI(UIBase):
     def load(self, *args):
         iPath = self.entry_i.get_text()
         if not iPath:
-            log.error('Input file path is empty!');return
+            log.critical('Input file path is empty!');return
         formatD = self.combobox_i.get_active_text()
         if formatD:
             format = Glossary.descFormat[formatD]
             log.info('Reading from %s, please wait...'%formatD)
         else:
-            #log.error('Input format is empty!');return
+            #log.critical('Input format is empty!');return
             format = ''
             log.info('Please wait...')
         while gtk.events_pending():
@@ -412,10 +412,10 @@ class UI(UIBase):
             return False
         oPath = self.entry_o.get_text()
         if not oPath:
-            log.error('Output file path is empty!');return
+            log.critical('Output file path is empty!');return
         formatD = self.combobox_o.get_active_text()
         if not formatD:
-            log.error('Output format is empty!');return
+            log.critical('Output format is empty!');return
         log.info('Converting to %s, please wait...'%formatD)
         while gtk.events_pending():
             gtk.main_iteration_do(False)
@@ -596,10 +596,10 @@ class UI(UIBase):
         iPath = self.entry_r_i.get_text()
         formatD = self.combobox_r_i.get_active_text()
         if not iPath:
-            log.error('Input file path is empty!')
+            log.critical('Input file path is empty!')
             return False
         if not formatD:
-            log.error('Input format is empty!')
+            log.critical('Input format is empty!')
             return False
         log.info('Reading from %s, please wait...'%formatD)
         format = Glossary.descFormat[formatD]
@@ -645,7 +645,7 @@ class UI(UIBase):
         #    return
         oPath = self.entry_r_o.get_text()
         if not oPath:
-            log.error('Output file path is empty!');return
+            log.critical('Output file path is empty!');return
         self.progress(0.0, 'Starting....')
         self.pref_rev_update_var()
         self.pref['savePath']=oPath
