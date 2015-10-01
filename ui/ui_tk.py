@@ -708,10 +708,10 @@ class UI(Tix.Frame, UIBase):
     def load(self):
         iPath = toStr(self.entry_i.get())
         if not iPath:
-            log.error('Input file path is empty!');return
+            log.critical('Input file path is empty!');return
         formatD = self.combobox_i.get()
         if formatD==noneItem:
-            #log.error('Input format is empty!');return
+            #log.critical('Input format is empty!');return
             format=''
             log.info('Please wait...')
         else:
@@ -735,7 +735,7 @@ class UI(Tix.Frame, UIBase):
                 len(self.glos.data),
             ))
         else:
-            log.error('reading %s file: "%s" failed.'%(format, iPath))
+            log.critical('reading %s file: "%s" failed.'%(format, iPath))
             return False
         #self.iFormat = format
         self.iPath = iPath
@@ -753,10 +753,10 @@ class UI(Tix.Frame, UIBase):
             return False
         oPath = toStr(self.entry_o.get())
         if not oPath:
-            log.error('Output file path is empty!');return
+            log.critical('Output file path is empty!');return
         formatD = self.combobox_o.get()
         if formatD in (noneItem, ''):
-            log.error('Output format is empty!');return
+            log.critical('Output format is empty!');return
         log.info('Converting to %s, please wait...'%formatD)
         #while gtk.events_pending():#??????????
         #    gtk.main_iteration_do(False)
