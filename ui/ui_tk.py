@@ -347,11 +347,19 @@ class UI(Tix.Frame, UIBase):
         )
         clearB.pack(side='left')
         ####
-        checkVar = Tix.IntVar()
-        check = Tix.Checkbutton(frame2, variable=checkVar, text='Details')
-        check.pack(side='left')
-        checkVar.set(1)
-        self.checkb_o_det = checkVar
+        label = Tix.Label(frame2, text='Verbosity')
+        label.pack(side='left')
+        ##
+        comboVar = tk.StringVar()
+        combo = tk.OptionMenu(
+            frame2,
+            comboVar,
+            0, 1, 2, 3, 4,
+        )
+        comboVar.set(log.getVerbosity())
+        comboVar.trace('w', self.verbosityChanged)
+        combo.pack(side='left')
+        self.verbosityCombo = comboVar
         #####
         pbar = ProgressBar(frame2, width=400)
         pbar.pack(side='left', fill='x', expand=True)
@@ -465,6 +473,10 @@ class UI(Tix.Frame, UIBase):
             self.entry_i.insert(0, path)
             self.entry_changed()
             self.load()
+    def verbosityChanged(self, index, value, op):
+        log.setVerbosity(
+            int(self.verbosityCombo.get())
+        )
     def about_clicked(self):
         about = Tix.Toplevel(width=600)## bg='#0f0' does not work
         about.title('About PyGlossary')
@@ -730,10 +742,9 @@ class UI(Tix.Frame, UIBase):
         #self.button_conv.set_sensitive(True)
         self.glos.uiEdit()
         self.progress(1.0, 'Loading Comleted')
-        if self.checkb_o_det.get():#?????????
-            log.info('time left = %3f seconds'%(time.time()-t0))
-            for x in self.glos.info:
-                log.info('%s="%s"'%(x[0], x[1]))
+        log.info('time left = %3f seconds'%(time.time()-t0))
+        for x in self.glos.info:
+            log.info('%s="%s"'%(x[0], x[1]))
         return True
     def convert(self):
         if len(self.glos.data)==0:
@@ -769,8 +780,7 @@ class UI(Tix.Frame, UIBase):
         #self.oFormat = format
         self.oPath = oPath
         log.info('writing %s file: "%s" done.'%(format, oPath))
-        if self.checkb_o_det.get():#???????
-            log.info('time left = %3f seconds'%(time.time()-t0))
+        log.info('time left = %3f seconds'%(time.time()-t0))
         self.running = False
         return True
     def run(self, editPath=None, read_options={}):
