@@ -238,6 +238,16 @@ class UI(UIBase):
         )
         self.textview_out.get_buffer().set_text('Output console:\n')
         self.textview_err.get_buffer().set_text('Error console:\n')
+        #####
+        self.checkb_o_det.connect('toggled', self.detailsCheckChanged)
+        self.detailsCheckChanged()
+    def detailsCheckChanged(self, widget=None):
+        if self.checkb_o_det.get_active():
+            verbosity = 4
+        else:
+            verbosity = 2
+        print('verbosity=%s'%verbosity)
+        log.setVerbosity(verbosity)
     '''
     def redirectStdOut(self):
         t_table_out = gtk.TextTagTable()
@@ -360,10 +370,9 @@ class UI(UIBase):
         self.button_conv.set_sensitive(True)
         self.glos.uiEdit()
         self.progress(1.0, 'Loading Comleted')
-        if self.checkb_o_det.get_active():
-            log.debug('time left = %3f seconds'%(time.time()-t0))
-            for x in self.glos.info:
-                log.info('%s="%s"'%(x[0], x[1]))
+        log.debug('time left = %3f seconds'%(time.time()-t0))
+        for x in self.glos.info:
+            log.info('%s="%s"'%(x[0], x[1]))
         return True
     def load_m(self, *args):
         b = self.merge_buffer
@@ -438,8 +447,7 @@ class UI(UIBase):
         #self.oFormat = format
         self.oPath = oPath
         log.info('writing %s file: "%s" done.'%(format, oPath))
-        if self.checkb_o_det.get_active():
-            log.debug('time left = %3f seconds'%(time.time()-t0))
+        log.debug('time left = %3f seconds'%(time.time()-t0))
         self.assert_quit=False
         return True
 
@@ -608,10 +616,9 @@ class UI(UIBase):
             gtk.main_iteration_do(False)
         t0 = time.time()
         self.glosR.read(iPath, format=format)
-        if self.checkb_o_det.get_active():
-            log.debug('time left = %3f seconds'%(time.time()-t0))
-            for x in self.glos.info:
-                log.info('%s="%s"'%(x[0], x[1]))
+        log.debug('time left = %3f seconds'%(time.time()-t0))
+        for x in self.glos.info:
+            log.info('%s="%s"'%(x[0], x[1]))
         #self.glosR.faEdit()
         self.glosR.uiEdit()
         #self.riFormat = format
@@ -841,10 +848,9 @@ class UI(UIBase):
             self.glosE.read(self.dbe_path, format=format, **read_options)
         self.assert_quit = True
         self.glosE.uiEdit()
-        if self.checkb_o_det.get_active():
-            log.debug('time left = %3f seconds'%(time.time()-t0))
-            for x in self.glos.info:
-                log.info('%s="%s"'%(x[0], x[1]))
+        log.debug('time left = %3f seconds'%(time.time()-t0))
+        for x in self.glos.info:
+            log.info('%s="%s"'%(x[0], x[1]))
         self.fcd_format = ''
         self.db_ind = None
         d = self.glosE.data
@@ -1027,8 +1033,7 @@ class UI(UIBase):
     def dbe_del_w(self, *args):
         n = len(self.glosE.data)
         ind = self.db_ind
-        #if self.checkb_o_det.get_active():
-        #    log.debug('Deleting index %s word "%s"'%(ind,    self.glosE.data[ind][0]))
+        log.debug('Deleting index %s word "%s"'%(ind,    self.glosE.data[ind][0]))
         try:
             self.glosE.data.pop(ind)
         except IndexError:
