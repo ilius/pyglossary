@@ -96,6 +96,7 @@ class Glossary:
     writeDesc = []
     descFormat = {}
     descExt = {}
+    extFormat = {}
     """
     a list if tuples: ('key', 'definition') or ('key', 'definition', dict() )
     in general we should assume the tuple may be of arbitrary length >= 2
@@ -138,6 +139,8 @@ class Glossary:
                 desc = '%s (%s)'%(format, ext[0])
             descFormat[desc] = format
             descExt[desc] = ext[0]
+            for oneExt in ext:
+                extFormat[oneExt] = format
             formatsExt[format] = ext
             formatsDesc[format] = desc
             if hasattr(mod, 'read'):
