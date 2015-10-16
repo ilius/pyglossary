@@ -90,7 +90,7 @@ ie. multiple ways to use the program.
 When you run the program without any command line arguments or options,
 PyGlossary tries to find PyGTK, if it's installed, opens the Gtk-based
 interface, if it's not, tries to find Tkinter and open the Tkinter-based
-interface. And raises and error if neither are installed.
+interface. And exits with an error if neither are installed.
 
 But you can explicitly determine the user interface type using `--ui`,
 for example:
