@@ -85,7 +85,12 @@ def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
 use_psyco_file = '%s_use_psyco'%confPath
 psyco_found = None
 
-ui_list = ('gtk', 'tk', 'qt')
+ui_list = (
+    'gtk',
+    'gtk_new',
+    'tk',
+    'qt',
+)
 
 #log.info('PyGlossary %s'%VERSION)
 
@@ -140,6 +145,7 @@ parser.add_argument(
     choices=(
         'cmd',
         'gtk',
+        'gtk_new',
         'tk',
         #'qt',
         'auto',
