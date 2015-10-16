@@ -406,6 +406,7 @@ class Glossary:
                 if error:
                     log.error('%s\nfail to compress file "%s"'%(error, filename))
                 os.chdir(initCwd)
+        return True
 
     def writeTxt(self, sep, filename='', writeInfo=True, rplList=[], ext='.txt', head=''):
         if not filename:
