@@ -28,7 +28,7 @@ licenseText = open(join(rootDir, 'license')).read()
 authors = open(join(rootDir, 'AUTHORS')).read().split('\n')
 
 
-class UIBase:
+class UIBase(object):
     prefSavePath = [
         confPath,
         join(srcDir, 'rc.py')
