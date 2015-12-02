@@ -56,8 +56,8 @@ Requirements
 ------------
 
 PyGlossary uses **Python 2.7**, and works in practically all operating
-systems. While primarilly design for *GNU/Linux*, it works on *Windows*,
-*Mac OS X* and other Unix-based operating systems.
+systems. While primarilly designed for *GNU/Linux*, it works on *Windows*,
+*Mac OS X* and other Unix-based operating systems as well.
 
 As shown in the screenshots, there are multiple User Interface types,
 ie. multiple ways to use the program.
