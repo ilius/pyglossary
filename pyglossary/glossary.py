@@ -876,6 +876,7 @@ class Glossary:
 
     def getSqlLines(self, filename='', info=None, newline='\\n'):
         lines = []
+        newline = '<br>'
         infoDefLine = 'CREATE TABLE dbinfo ('
         infoList = []
         #######################
@@ -888,22 +889,24 @@ class Glossary:
         if not info:
             info = self.info
         for item in info:
-            inf = "'" + item[1].replace("'", '"')\
+            inf = "'" + item[1].replace("'", '\'\'')\
                                .replace('\x00', '')\
+                               .replace('\r', '')\
                                .replace('\n', newline) + "'"
             infoList.append(inf)
             infoDefLine += '%s char(%d), '%(item[0], len(inf))
         ######################
         infoDefLine = infoDefLine[:-2] + ');'
         lines.append(infoDefLine)
-        lines.append("CREATE TABLE word (s_id INTEGER PRIMARY KEY NOT NULL, wname TEXT, wmean TEXT);")
+        lines.append("CREATE TABLE word ('id' INTEGER PRIMARY KEY NOT NULL, 'w' TEXT, 'm' TEXT);")
+        lines.append("BEGIN TRANSACTION;");
         lines.append('INSERT INTO dbinfo VALUES(%s);'%(','.join(infoList)))
         for i, item in enumerate(self.data):
-            w = item[0].replace('\'', '"').replace('\n', newline)
-            m = item[1].replace('\'', '"').replace('\n', newline)
+            w = item[0].replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
+            m = item[1].replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
             lines.append("INSERT INTO word VALUES(%d,'%s','%s');"%(i+1, w, m))
-        lines.append('CREATE INDEX wnameidx ON word(wname);')
-        #lines.append('COMMIT;')
+        lines.append('END TRANSACTION;')
+        lines.append('CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);')
         return lines
 
     def utf8ReplaceErrors(self):
