@@ -11,6 +11,9 @@ from os.path import join, dirname
 from distutils.core import setup
 from distutils.command.install import install
 
+import logging
+log = logging.getLogger('root')
+
 from pyglossary.glossary import VERSION
 
 relRootDir = 'share/pyglossary'
@@ -22,6 +25,13 @@ class my_install(install):
         if os.sep == '/':
             binPath = join(self.install_scripts, 'pyglossary')
             log.info('creating script file "%s"'%binPath)
+            try: os.makedirs(self.install_scripts)
+            except OSError as exc:
+                if exc.errno == errno.EEXIST \
+                   and os.path.isdir(self.install_scripts):
+                    pass
+                else:
+                    raise
             open(binPath, 'w').write(join(self.install_data, relRootDir, 'pyglossary.pyw'))
             os.chmod(binPath, 0o755)
 
