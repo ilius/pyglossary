@@ -887,9 +887,9 @@ class Glossary:
         lines.append(infoDefLine)
         lines.append("CREATE TABLE word (s_id INTEGER PRIMARY KEY NOT NULL, wname TEXT, wmean TEXT);")
         lines.append('INSERT INTO dbinfo VALUES(%s);'%(','.join(infoList)))
-        for i in xrange(len(self.data)):
-            w = self.data[i][0].replace('\'', '"').replace('\n', newline)
-            m = self.data[i][1].replace('\'', '"').replace('\n', newline)
+        for i, item in enumerate(self.data):
+            w = item[0].replace('\'', '"').replace('\n', newline)
+            m = item[1].replace('\'', '"').replace('\n', newline)
             lines.append("INSERT INTO word VALUES(%d,'%s','%s');"%(i+1, w, m))
         lines.append('CREATE INDEX wnameidx ON word(wname);')
         #lines.append('COMMIT;')
