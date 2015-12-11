@@ -28,7 +28,7 @@ class StarDictReader:
         else:
             self.fileBasePath = filename
         self.fileBasePath = os.path.realpath(self.fileBasePath)
-    
+
     def run(self):
         self.glos.data = []
         self.readIfoFile()
@@ -50,7 +50,7 @@ class StarDictReader:
         self.readSynFile()
         self.assignGlossaryData()
         self.readResources()
-        
+
     def readIfoFile(self):
         """.ifo file is a text file in utf-8 encoding
         """
@@ -65,7 +65,7 @@ class StarDictReader:
                 #log.error('Invalid ifo file line: {0}'.format(line))
                 continue
             self.glos.setInfo(line[:ind].strip(), line[ind+1:].strip())
-    
+
     def readIdxFile(self):
         if isfile(self.fileBasePath+'.idx.gz'):
             import gzip
@@ -92,14 +92,14 @@ class StarDictReader:
             size = binStrToInt(idxStr[i:i+4])
             i += 4
             self.indexData.append([word, offset, size, [], []])
-        
+
     def readDictFile(self, sametypesequence):
         if isfile(self.fileBasePath+'.dict.dz'):
             import gzip
             dictFd = gzip.open(self.fileBasePath+'.dict.dz')
         else:
             dictFd = open(self.fileBasePath+'.dict', 'rb')
-        
+
         for rec in self.indexData:
             dictFd.seek(rec[1])
             if dictFd.tell() != rec[1]:
@@ -123,7 +123,7 @@ class StarDictReader:
                 rec[0] = None
                 continue
             rec[3] = res
-            
+
         dictFd.close()
 
     def readSynFile(self):
@@ -182,7 +182,7 @@ class StarDictReader:
                     return None
                 res.append((data[i:i+size], t))
                 i += size
-        
+
         if i >= len(data):
             log.error(dataFileCorruptedError)
             return None
@@ -196,7 +196,7 @@ class StarDictReader:
         else:
             assert isAsciiUpper(t)
             res.append((data[i:], t))
-        
+
         return res
 
     def parseDefiBlockGeneral(self, data, word):
@@ -241,12 +241,12 @@ class StarDictReader:
         for rec in defis:
             if rec[1] in 'mty':
                 res.append((rec[0], 'm'))
-            elif rec[1] in 'gh':
+            elif rec[1] in 'ghx':
                 res.append((rec[0], 'h'))
             else:
                 log.warn("Definition format {0} is not supported. Skipping.".format(rec[1]))
         return res
-        
+
     def assignGlossaryData(self):
         '''Fill glos.data array with data extracted from StarDict dictionary
         '''
@@ -262,7 +262,7 @@ class StarDictReader:
             if len(rec[4]) > 0:
                 d['alts'] = rec[4]
             self.glos.data.append((rec[0], rec[3][0][0], d))
-    
+
     def readResources(self):
         baseDirPath = os.path.dirname(self.fileBasePath)
         resDirPath = join(baseDirPath, 'res')
@@ -272,10 +272,10 @@ class StarDictReader:
             resDbFilePath = join(baseDirPath, 'res.rifo')
             if isfile(resDbFilePath):
                 log.warn("StarDict resource database is not supported. Skipping.")
-    
+
 class StarDictWriter:
     def __init__(self, glos, filename):
-        self.glos = glos.copy()        
+        self.glos = glos.copy()
         fileBasePath = ''
         ###
         if splitext(filename)[1].lower() == '.ifo':
@@ -293,7 +293,7 @@ class StarDictWriter:
 
     def run(self, dictZip, resOverwrite):
         self.glos.data.sort(stardict_strcmp, lambda x: x[0])
-        
+
         if self.GlossaryHasAdditionalDefinitions():
             self.writeGeneral()
         else:
@@ -302,7 +302,7 @@ class StarDictWriter:
                 self.writeGeneral()
             else:
                 self.writeCompact(articleFormat)
-        
+
         if dictZip:
             runDictzip(self.fileBasePath)
         self.copyResources(
@@ -315,7 +315,7 @@ class StarDictWriter:
         """Build StarDict dictionary with sametypesequence option specified.
         Every item definition consists of a single article.
         All articles have the same format, specified in articleFormat parameter.
-        
+
         Parameters:
         articleFormat - format of article definition: h - html, m - plain text
         """
@@ -338,7 +338,7 @@ class StarDictWriter:
             f.write(idxStr)
         indexFileSize = len(idxStr)
         del idxStr, dictStr
-        
+
         self.writeSynFile(alternates)
         self.writeIfoFile(indexFileSize, len(alternates), articleFormat)
 
@@ -381,7 +381,7 @@ class StarDictWriter:
             f.write(idxStr)
         indexFileSize = len(idxStr)
         del idxStr, dictStr
-        
+
         self.writeSynFile(alternates)
         self.writeIfoFile(indexFileSize, len(alternates))
 
@@ -422,7 +422,7 @@ class StarDictWriter:
         with open(self.fileBasePath+'.ifo', 'wb') as f:
             f.write(ifoStr)
         del ifoStr
-        
+
     def copyResources(self, fromPath, toPath, overwrite):
         '''Copy resource files from fromPath to toPath.
         '''
@@ -451,14 +451,14 @@ class StarDictWriter:
 
     def GlossaryHasAdditionalDefinitions(self):
         """Search for additional definitions in the glossary.
-        We need to know if the glossary contains additional definitions 
+        We need to know if the glossary contains additional definitions
         to make the decision on the format of the StarDict dictionary.
         """
         for rec in self.glos.data:
             if len(rec) > 2 and 'defis' in rec[2]:
                 return True
         return False
-        
+
     def DetectMainDefinitionFormat(self):
         """Scan main definitions of the glossary. Return format common to all definitions: h or m.
         If definitions has different formats return None.
@@ -476,7 +476,7 @@ class StarDictWriter:
             if articleFormat != f:
                 return None
         return articleFormat
-        
+
 
 def verifySameTypeSequence(s):
     if not s:
@@ -611,7 +611,7 @@ def isAsciiAlpha(c):
 
 def isAsciiLower(c):
     return ord(c) >= ord('a') and ord(c) <= ord('z')
-    
+
 def isAsciiUpper(c):
     'imitate ISUPPER macro of glib library gstrfuncs.c file'
     return ord(c) >= ord('A') and ord(c) <= ord('Z')
