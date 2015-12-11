@@ -32,7 +32,9 @@ class my_install(install):
                     raise OSError(
                         "installation path already exists but is not a directory: %s" %
                         self.install_scripts)
-            open(binPath, 'w').write(join(self.install_data, relRootDir, 'pyglossary.pyw'))
+            open(binPath, 'w').write(
+                join(self.install_data, relRootDir, 'pyglossary.pyw') +
+                ' "$@"')  # pass options from command line
             os.chmod(binPath, 0o755)
 
 
