@@ -6,7 +6,7 @@ except ImportError:
     py2exe = None
 
 import glob, os, sys
-from os.path import join, dirname
+from os.path import join, dirname, exists, isdir
 
 from distutils.core import setup
 from distutils.command.install import install
@@ -24,14 +24,14 @@ class my_install(install):
         install.run(self)
         if os.sep == '/':
             binPath = join(self.install_scripts, 'pyglossary')
-            log.info('creating script file "%s"'%binPath)
-            try: os.makedirs(self.install_scripts)
-            except OSError as exc:
-                if exc.errno == errno.EEXIST \
-                   and os.path.isdir(self.install_scripts):
-                    pass
-                else:
-                    raise
+            log.info('creating script file "%s"' % binPath)
+            if not exists(self.install_scripts):
+                os.makedirs(self.install_scripts)  # let it fail on wrong permissions.
+            else:
+                if not isdir(self.install_scripts):
+                    raise OSError(
+                        "installation path already exists but is not a directory: %s" %
+                        self.install_scripts)
             open(binPath, 'w').write(join(self.install_data, relRootDir, 'pyglossary.pyw'))
             os.chmod(binPath, 0o755)
 
