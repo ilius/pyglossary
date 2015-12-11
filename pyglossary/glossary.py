@@ -429,7 +429,7 @@ class Glossary:
             if self.getPref('enable_alts', True):
                 try:
                     alts = item[2]['alts']
-                except IndexError as KeyError:
+                except (IndexError, KeyError):
                     pass
                 else:
                     if alts:
