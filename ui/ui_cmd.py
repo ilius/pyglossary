@@ -180,8 +180,8 @@ class UI(UIBase):
                 opath = os.path.splitext(ipath)[0] + '-reversed.txt'
             elif write_format:
                 try:
-                    ext = Glossary.formatsExt[write_format]
-                except KeyError:
+                    ext = Glossary.formatsExt[write_format][0]
+                except (KeyError, IndexError):
                     log.error('invalid write format %s'%write_format)
                     log.error('try: %s --help'%COMMAND)
                     return 1
