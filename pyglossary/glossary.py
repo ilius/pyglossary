@@ -20,16 +20,20 @@
 
 VERSION = '2013.01.03'
 
-homePage = 'http://sourceforge.net/projects/pyglossary'
+homePage = 'http://github.com/ilius/pyglossary'
 
 import os, sys, platform, time, subprocess, shutil, re
 from os.path import split, join, splitext, isdir, dirname
+import logging
 
-from text_utils import myRaise, printAsError, faEditStr, replacePostSpaceChar, removeTextTags,\
+import core
+from text_utils import faEditStr, replacePostSpaceChar, removeTextTags,\
                        takeStrWords, findWords, findAll, addDefaultOptions
 
 import warnings
 warnings.resetwarnings() ## ??????
+
+log = logging.getLogger('root')
 
 _myDir = dirname(__file__)
 if not isdir(_myDir):
@@ -40,7 +44,7 @@ plugDir = join(_myDir, 'plugins')
 if isdir(plugDir):
     sys.path.append(plugDir)
 else:
-    printAsError('invalid plugin directory %r'%plugDir)
+    log.error('invalid plugin directory %r'%plugDir)
     plugDir = ''
 
 
@@ -75,8 +79,8 @@ get_ext = lambda path: splitext(path)[1].lower()
 
 class Glossary:
     infoKeysAlias = (## Should be changed according to a plugin???
-        ('name', 'title' , 'dbname' , 'bookname'),
-        ('sourceLang', 'inputlang' , 'origlang'),
+        ('name', 'title', 'dbname', 'bookname'),
+        ('sourceLang', 'inputlang', 'origlang'),
         ('targetLang', 'outputlang', 'destlang'),
         ('copyright', 'license'),
     )
@@ -92,6 +96,7 @@ class Glossary:
     writeDesc = []
     descFormat = {}
     descExt = {}
+    extFormat = {}
     """
     a list if tuples: ('key', 'definition') or ('key', 'definition', dict() )
     in general we should assume the tuple may be of arbitrary length >= 2
@@ -121,7 +126,7 @@ class Glossary:
                     continue
             except AttributeError:
                 continue
-            #print('loading plugin module %s'%modName)
+            #log.debug('loading plugin module %s'%modName)
             format = mod.format
             ext = mod.extentions
             if isinstance(ext, basestring):
@@ -134,6 +139,8 @@ class Glossary:
                 desc = '%s (%s)'%(format, ext[0])
             descFormat[desc] = format
             descExt[desc] = ext[0]
+            for oneExt in ext:
+                extFormat[oneExt] = format
             formatsExt[format] = ext
             formatsDesc[format] = desc
             if hasattr(mod, 'read'):
@@ -151,22 +158,24 @@ class Glossary:
             del f, mod, format, ext, desc
 
 
-    def __init__(self, info=[], data=[], resPath=''):
+    def __init__(self, info=[], data=[], ui=None, filename='', resPath=''):
         self.info = []
         self.setInfos(info, True)
         self.data = data
-        self.filename = ''
+        self.ui = ui
+        self.filename = filename
         self.resPath = resPath
-        self.ui = None
 
     __str__ = lambda self: 'glossary.Glossary'
 
     def copy(self):
-        g = Glossary(self.info[:], self.data[:])
-        g.filename = self.filename
-        g.resPath = self.resPath
-        g.ui = self.ui ## ???
-        return g
+        return Glossary(
+            info = self.info[:],
+            data = self.data[:],
+            ui = self.ui, ## FIXME
+            filename = self.filename,
+            resPath = self.resPath,
+        )
 
     def infoKeys(self):
         return [t[0] for t in self.info]
@@ -177,7 +186,7 @@ class Glossary:
         lkey = str(key).lower()
         for group in Glossary.infoKeysAlias:
             if not isinstance(group, (list, tuple)):
-                raise TypeError, 'group=%s'%group
+                raise TypeError('group=%s'%group)
             if key in group or lkey in group:
                 for skey in group:
                     for t in self.info:
@@ -192,7 +201,7 @@ class Glossary:
         lkey = str(key).lower()
         for group in Glossary.infoKeysAlias:
             if not isinstance(group, (list, tuple)):
-                raise TypeError, 'group=%s'%group
+                raise TypeError('group=%s'%group)
             if key in group or lkey in group:
                 skey=group[0]
                 for i in xrange(len(self.info)):
@@ -246,7 +255,7 @@ class Glossary:
                 ## -k ==> keep original bz2 file
                 ## bunzip2 ~= bzip2 -d
                 if error:
-                    printAsError('%s\nfail to decompress file "%s"'%(error, filename))
+                    log.error('%s\nfail to decompress file "%s"'%(error, filename))
                     return False
                 else:
                     filename = filename[:-4]
@@ -260,7 +269,7 @@ class Glossary:
                 ## -c ==> write to stdout (because we want to keep original gz file)
                 ## gunzip ~= gzip -d
                 if error:
-                    printAsError('%s\nfail to decompress file "%s"'%(error, filename))
+                    log.error('%s\nfail to decompress file "%s"'%(error, filename))
                     return False
                 else:
                     filename = filename[:-3]
@@ -273,7 +282,7 @@ class Glossary:
                     stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
-                    printAsError('%s\nfail to decompress file "%s"'%(error, filename))
+                    log.error('%s\nfail to decompress file "%s"'%(error, filename))
                     return False
                 else:
                     filename = filename[:-4]
@@ -286,12 +295,12 @@ class Glossary:
             if not format:
                 #if delFile:
                 #    os.remove(filename)
-                printAsError('Unknown extension "%s" for read support!'%ext)
+                log.error('Unknown extension "%s" for read support!'%ext)
                 return False
         validOptionKeys = self.formatsReadOptions[format]
         for key in options.keys():
             if not key in validOptionKeys:
-                printAsError('Invalid read option "%s" given for %s format'%(key, format))
+                log.error('Invalid read option "%s" given for %s format'%(key, format))
                 del options[key]
         getattr(self, 'read%s'%format).__call__(filename, **options)
 
@@ -309,7 +318,7 @@ class Glossary:
 
     def write(self, filename, format='', **options):
         if not filename:
-            printAsError('Invalid filename %r'%filename)
+            log.error('Invalid filename %r'%filename)
             return False
         ext = ''
         (filename_nox, fext) = splitext(filename)
@@ -325,8 +334,8 @@ class Glossary:
             try:
                 ext = Glossary.formatsExt[format][0]
             except KeyError:
-                myRaise()
-                format = '' ## ?????
+                log.exception('no file extention found for file format %s'%format)
+                format = '' ## FIXME
         if not format:
             items = Glossary.formatsExt.items()
             for (fmt, extList) in items:
@@ -358,7 +367,7 @@ class Glossary:
                         format = fmt
                         ext = fext
         if not format:
-            printAsError('Unable to detect write format!')
+            log.error('Unable to detect write format!')
             return False
         if isdir(filename):
             #filename = join(filename, split(self.filename)[1]+ext)
@@ -366,9 +375,9 @@ class Glossary:
         validOptionKeys = self.formatsWriteOptions[format]
         for key in options.keys():
             if not key in validOptionKeys:
-                printAsError('Invalid write option "%s" given for %s format'%(key, format))
+                log.error('Invalid write option "%s" given for %s format'%(key, format))
                 del options[key]
-        print 'filename=%s'%filename
+        log.info('filename=%s'%filename)
         getattr(self, 'write%s'%format).__call__(filename, **options)
         if zipExt:
             try:
@@ -381,14 +390,14 @@ class Glossary:
                     stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
-                    printAsError('%s\nfail to compress file "%s"'%(error, filename))
+                    log.error('%s\nfail to compress file "%s"'%(error, filename))
             elif zipExt=='.bz2':
                 (output, error) = subprocess.Popen(
                     ['bzip2', filename],
                     stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
-                    printAsError('%s\nfail to compress file "%s"'%(error, filename))
+                    log.error('%s\nfail to compress file "%s"'%(error, filename))
             elif zipExt=='.zip':
                 (dirn, name) = split(filename)
                 initCwd = os.getcwd()
@@ -398,8 +407,9 @@ class Glossary:
                     stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
-                    printAsError('%s\nfail to compress file "%s"'%(error, filename))
+                    log.error('%s\nfail to compress file "%s"'%(error, filename))
                 os.chdir(initCwd)
+        return True
 
     def writeTxt(self, sep, filename='', writeInfo=True, rplList=[], ext='.txt', head=''):
         if not filename:
@@ -419,7 +429,7 @@ class Glossary:
             if self.getPref('enable_alts', True):
                 try:
                     alts = item[2]['alts']
-                except IndexError, KeyError:
+                except (IndexError, KeyError):
                     pass
                 else:
                     if alts:
@@ -454,7 +464,7 @@ class Glossary:
             try:
                 print(word + '\t' + defi)
             except:
-                myRaise(__file__)
+                log.exception('')
 
 
     ###################################################################
@@ -462,8 +472,7 @@ class Glossary:
 
 
     def takeOutputWords(self, opt={}):
-        words = takeStrWords(' '.join([item[1] for item in self.data]), opt)
-        words.sort()
+        words = sorted(takeStrWords(' '.join([item[1] for item in self.data]), opt))
         words = removeRepeats(words)
         return words
 
@@ -474,9 +483,9 @@ class Glossary:
     def simpleSwap(self):
         # loosing item[2:]
         return Glossary(
-            self.info[:],
-            [
-                (item[1], item[0])
+            info = self.info[:],
+            data = [
+                (item[1], item[0]) \
                 for item in self.data
             ],
         )
@@ -495,12 +504,14 @@ class Glossary:
             else:
                 return self
         newName = '"%s" attached to "%s"'%(self.getInfo('name'), other.getInfo('name') )
-        ng = Glossary(
-            [('name', newName)],
-            self.data + other.data,
+        newGloss = Glossary(
+            info = [
+                ('name', newName),
+            ],
+            data = self.data + other.data,
         )
         ## here attach and set info of two glossary ## FIXME
-        return ng
+        return newGloss
 
     def merge(self, other):
         try:
@@ -513,17 +524,18 @@ class Glossary:
                     return self.merge(other[0])
                 return self.merge(other[0]).merge(other[1:])
             else:
-                raise TypeError, 'bad argument given to merge! other="%s"'%other
+                raise TypeError('bad argument given to merge! other="%s"'%other)
         newName = '"%s" merged with "%s"'%(
             self.getInfo('name'),
             other.getInfo('name'),
         )
-        new = Glossary([
-            ('name', newName),
-        ])
-        new.data = self.data + other.data
-        new.data.sort()
-        return new
+        newGloss = Glossary(
+            info = [
+                ('name', newName),
+            ],
+            data = sorted(self.data + other.data),
+        )
+        return newGloss
 
 
     def deepMerge(self, other, sep='\n'):
@@ -538,11 +550,12 @@ class Glossary:
                     return self.deepMerge(other[0])
                 return self.deepMerge(other[0]).deepMerge(other[1:])
             else:
-                raise TypeError, 'bad argument given to deepMerge! other="%s"'%other
-        newName = '"%s" deep merged with "%s"'%( self.getInfo('name') , other.getInfo('name') )
-        new = Glossary([('name', newName)])
-        data = self.data + other.data
-        data.sort(lambda t1, t2: cmp(t1[0], t2[0]))
+                raise TypeError('bad argument given to deepMerge! other="%s"'%other)
+        newName = '"%s" deep merged with "%s"'%( self.getInfo('name'), other.getInfo('name') )
+        data = sorted(
+            self.data + other.data,
+            key = lambda x: x[0],## why? FIXME
+        )
         n = len(data)
         i = 0
         while i < len(data)-1:
@@ -555,8 +568,12 @@ class Glossary:
                 data.pop(i+1)
             else:
                 i += 1
-        new.data = data
-        return new
+        return Glossary(
+            info = [
+                ('name', newName),
+            ],
+            data = data,
+        )
 
 
     def __add__(self, other):
@@ -634,9 +651,9 @@ class Glossary:
                     if num == numP:
                         out.append('%s\\n%s'%(w, m))
                     else:
-                        out.append('%s(%%%d)\\n%s'%(w, 100*num , m))
+                        out.append('%s(%%%d)\\n%s'%(w, 100*num, m))
                 else:
-                    out.append('%s\\n%s'%(w,m))
+                    out.append('%s\\n%s'%(w, m))
             return out
         for j in xrange(n):
             numP = num
@@ -674,7 +691,7 @@ class Glossary:
             c = 0
         savePath = opt['savePath']
         if c == -1:
-            print('c=%s'%c)
+            log.debug('c=%s'%c)
             return
         elif c==0:
             saveFile = open(savePath, 'wb')
@@ -695,9 +712,11 @@ class Glossary:
         autoSaveStep = opt['autoSaveStep']
         if not opt['savePath']:
             opt['savePath'] = self.getInfo('name')+'.txt'
-        revG = Glossary(self.info[:])
+        revG = Glossary(
+            info = self.info[:],
+        )
         revG.setInfo('name', self.getInfo('name')+'_reversed')
-        revG.setInfo('inputlang' , self.getInfo('outputlang'))
+        revG.setInfo('inputlang', self.getInfo('outputlang'))
         revG.setInfo('outputlang', self.getInfo('inputlang'))
         wNum = len(words)
         #steps = opt['reportStep']
@@ -706,19 +725,19 @@ class Glossary:
         #total = int(wNum/steps)
         '''
         if c==0:
-            print('Number of input words:', wNum)
-            print('Reversing glossary...')
+            log.info('Number of input words:', wNum)
+            log.info('Reversing glossary...')
         else:
-            print('continue reversing from index %d ...'%c)
+            log.info('continue reversing from index %d ...'%c)
         '''
         t0 = time.time()
         if not ui:
-            print('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
+            log.info('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
         n = len(words)
         for i in xrange(c, n):
             word = words[i]
             rat = float(i+1)/n
-            ui.progress(rat, '%d / %d words completed'%(i,n))
+            ui.progress(rat, '%d / %d words completed'%(i, n))
             if ui.reverseStop:
                 saveFile.close() ## if with KeyboardInterrupt it will be closed ??????????????
                 self.continueFrom = i
@@ -743,7 +762,7 @@ class Glossary:
                     while gtk.events_pending():
                         gtk.main_iteration_do(False)
                 else:
-                    print('%4d / %4d\t%8s\t%8s\t%8s\t%s'%(
+                    log.info('%4d / %4d\t%8s\t%8s\t%8s\t%s'%(
                         div,
                         total,
                         timeHMS(dt),
@@ -766,7 +785,7 @@ class Glossary:
                         defi = ', '.join(result) + '.'
                 except:
                     open('result', 'wb').write(str(result))
-                    myRaise(__file__)
+                    log.exception('')
                     return False
                 if autoSaveStep>0:
                     saveFile.write('%s\t%s\n'%(word, defi))
@@ -792,7 +811,7 @@ class Glossary:
                 for j in xrange(len(self.data)):
                     # words indexes
                     wdsIdx = findWords(self.data[j][1], {'word': rpl[0]})
-                    for [i0,i1] in wdsIdx:
+                    for [i0, i1] in wdsIdx:
                         self.data[j][1] = self.data[j][1][:i0] + rpl[1] + self.data[j][1][i1:]
                         num += 1
             return num
@@ -819,7 +838,7 @@ class Glossary:
                 '/ n',
                 '/ the',
             ):
-                i = defi.find(s,2,85)
+                i = defi.find(s, 2, 85)
                 if i==-1:
                     continue
                 else:
@@ -866,11 +885,11 @@ class Glossary:
         ######################
         infoDefLine = infoDefLine[:-2] + ');'
         lines.append(infoDefLine)
-        lines.append("CREATE TABLE word ('s_id' INTEGER PRIMARY KEY NOT NULL, 'wname' TEXT, 'wmean' TEXT);")
+        lines.append("CREATE TABLE word (s_id INTEGER PRIMARY KEY NOT NULL, wname TEXT, wmean TEXT);")
         lines.append('INSERT INTO dbinfo VALUES(%s);'%(','.join(infoList)))
-        for i in xrange(len(self.data)):
-            w = self.data[i][0].replace('\'', '"').replace('\n', newline)
-            m = self.data[i][1].replace('\'', '"').replace('\n', newline)
+        for i, item in enumerate(self.data):
+            w = item[0].replace('\'', '"').replace('\n', newline)
+            m = item[1].replace('\'', '"').replace('\n', newline)
             lines.append("INSERT INTO word VALUES(%d,'%s','%s');"%(i+1, w, m))
         lines.append('CREATE INDEX wnameidx ON word(wname);')
         #lines.append('COMMIT;')
@@ -926,7 +945,7 @@ class Glossary:
                 errors += 1
             self.info[i] = (w, m)
         if errors:
-            printAsError('There was %s number of invalid utf8 strings, invalid characters are replaced with "�"'%errors)
+            log.error('There was %s number of invalid utf8 strings, invalid characters are replaced with "�"'%errors)
 
     def clean(self):
         d = self.data

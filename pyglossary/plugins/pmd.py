@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from formats_common import *
+
 enable = True
 format = 'Pmd'
 description = 'PMD'
@@ -12,7 +14,7 @@ import sys, os
 faSubs = {
     u'،': (u'،', 1, 'fa_colon', 0x22),
     u'ـ': (u'ـ', 1, 'fa_underline', 0xde), ## 0xde
-    u'‌' : (u'‌', 1, 'virtual space', None), ## None
+    u'‌': (u'‌', 1, 'virtual space', None), ## None
     u'ی': (u'ﯼ', 4, 'fa_yeh', 0xd6),
     u'ى': (u'ﯼ', 4, 'fa_yeh2', 0xd6), ## u'\u0649' (arabic yeh, but without dots!)
     u'ا': (u'ﺍ', 2, 'alif', 0x66),
@@ -76,17 +78,17 @@ def pmdCompile(uni):
         if enStack!=u'':
             pmd += pmdEnConv(enStack)
             enStack = u''
-        if not ch in faSubs.keys():
+        if not ch in faSubs:
             pmd += pmdEnConv(ch)
             continue
         stickPrev = False
         stickNext = False
-        if uni[i] in faSubs.keys():
-            if i>0 and uni[i-1] in faSubs.keys() and faSubs[uni[i]][1]>1:
+        if uni[i] in faSubs:
+            if i>0 and uni[i-1] in faSubs and faSubs[uni[i]][1]>1:
                 if faSubs[uni[i-1]][1]>3:
                     stickPrev = True
             if i<n-1:
-                if uni[i+1] in faSubs.keys() and faSubs[uni[i]][1]>3:
+                if uni[i+1] in faSubs and faSubs[uni[i]][1]>3:
                     if faSubs[uni[i+1]][1]>1:
                         stickNext=True
         first = faSubs[ch][3]
@@ -104,9 +106,9 @@ def pmdCompile(uni):
         del stickPrev, stickNext, first
     """
     if missing!=[]:
-        fp = open('%s%smissing.txt'%(homeDir, os.sep), 'a')
+        fp = open(join(homeDir, 'missing.txt'), 'a')
         for ch in missing:
-            print(ch.encode('utf-8'))
+            log.debug(ch.encode('utf-8'))
             #fp.write('%s\n'%ch.encode('utf-8'))
     """
     return pmd
@@ -117,7 +119,7 @@ pmdChars = {
     0: '',
     1: ' ',
     2: '~',
-    3 : '`',
+    3: '`',
     4: '!',
     5: '@',
     6: '#',
@@ -194,7 +196,7 @@ def pmdEnConv(uni): #gets an unicode(utf-16) string
                     pmd += chr(i)
                     break
             else:
-                print('no PMD coding for "%s"'%c)
+                log.debug('no PMD coding for "%s"'%c)
     return pmd
 
 def pmdDecomile(pmd):
@@ -216,7 +218,7 @@ def read(glos, filename):## not tested ## FIXME
         for part in pmd.split('\x00'):
             sepInd = part.find('\x09')
             if sepInd==-1:
-                printAsError('error on reading PMD database part %s'%i)
+                log.error('error on reading PMD database part %s'%i)
                 continue
             word = part[:sepInd]
             defi = part[sepInd+1:]

@@ -21,7 +21,7 @@ def read(glos, filename):
         line = line.strip()## This also removed tailing newline
         fti = line.find('\t') # first tab's index
         if fti==-1:
-            printAsError('Warning: line beganing "%s" has no tab!' %line[:10])
+            log.error('Warning: line beganing "%s" has no tab!' %line[:10])
             continue
         word = line[:fti]
         defi = line[fti+1:]#.replace('\\n', '\n')#.replace('<BR>', '\n').replace('\\t', '\t')

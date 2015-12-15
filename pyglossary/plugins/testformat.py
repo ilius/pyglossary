@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from formats_common import *
+
 enable = False
 format = 'Test'
 description = 'Test Format File(.test)'
@@ -8,14 +10,14 @@ readOptions = []
 writeOptions = []
 
 def read(glos, filename): ## glos is a Glossary object, filename is a string
-    print 'reading from format %s using plugin'%format
+    log.info('reading from format %s using plugin'%format)
     glos.data = []
     count = 100 ## get number of entries from input file(depending on your format)
     for i in range(count):
         ## here get word and meaning from file(depending on your format)
         word = 'word_%s'%i
         mean = 'meaning %s'%i
-        glos.data.append([word,mean])
+        glos.data.append([word, mean])
     ## here read info from file and set to Glossary object
     glos.setInfo('name', 'Test')
     glos.setInfo('descriptin', 'Test glossary craeted by a PyGlossary plugin')
@@ -25,7 +27,7 @@ def read(glos, filename): ## glos is a Glossary object, filename is a string
 
 
 def write(glos, filename): ## glos is a Glossary object, filename is a string
-    print 'writing to format %s using plugin'%format
+    log.info('writing to format %s using plugin'%format)
     count = len(glos.data)
     for i in range(count):
         word = glos.data[i][0]

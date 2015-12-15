@@ -21,10 +21,14 @@ from pyglossary.glossary import *
 from pyglossary.text_utils import toStr
 from base import *
 from os.path import join
+import logging
+import traceback
 
 import Tkinter as tk
 import tkFileDialog
 import Tix
+
+log = logging.getLogger('root')
 
 #startBold	= '\x1b[1m'		# Start Bold		#len=4
 #startUnderline	= '\x1b[4m'		# Start Underline	#len=4
@@ -32,7 +36,7 @@ endFormat	= '\x1b[0;0;0m'		# End Format		#len=8
 #redOnGray	= '\x1b[0;1;31;47m'
 startRed	= '\x1b[31m'
 
-#use_psyco_file = '%s%suse_psyco'%(srcDir,os.sep)
+#use_psyco_file = join(srcDir, 'use_psyco')
 use_psyco_file = '%s_use_psyco'%confPath
 psyco_found = None
 
@@ -41,19 +45,49 @@ noneItem = 'Not Selected'
 
 xbmLogo = join(rootDir, 'res', 'pyglossary.xbm')
 
-class TkTextFile(object):
-    def __init__(self, tktext, mode):
+
+class TkTextLogHandler(logging.Handler):
+    def __init__(self, tktext):
+        logging.Handler.__init__(self)
+        #####
+        tktext.tag_config('CRITICAL', foreground='#ff0000')
+        tktext.tag_config('ERROR', foreground='#ff0000')
+        tktext.tag_config('WARNING', foreground='#ffff00')
+        tktext.tag_config('INFO', foreground='#00ff00')
+        tktext.tag_config('DEBUG', foreground='#ffffff')
+        ###
         self.tktext = tktext
-        self.mode = mode
-    def write(self, text):
-        self.tktext.insert('end', text, self.mode)
-        if self.mode=='stdout':
-            sys.__stdout__.write(text)
-        elif self.mode=='stderr':
-            sys.__stderr__.write(startRed+text+endFormat)
-    writelines = lambda self, l: map(self.write, l)
-    flush = lambda self: None
-    isatty = lambda self: 1
+    def emit(self, record):
+        msg = record.getMessage()
+        ###
+        if record.exc_info:
+            _type, value, tback = record.exc_info
+            tback_text = ''.join(traceback.format_exception(_type, value, tback))
+            if msg:
+                msg += '\n'
+            msg += tback_text
+        ###
+        self.tktext.insert(
+            'end',
+            msg + '\n',
+            record.levelname,
+        )
+
+
+### Monkey-patch Tkinter
+## http://stackoverflow.com/questions/5191830/python-exception-logging
+def CallWrapper__call__(self, *args):
+    '''
+        Apply first function SUBST to arguments, than FUNC.
+    '''
+    if self.subst:
+        args = self.subst(*args)
+    try:
+        return self.func(*args)
+    except:
+        log.exception('Exception in Tkinter callback:')
+tk.CallWrapper.__call__ = CallWrapper__call__
+
 
 class ProgressBar(Tix.Frame):
     #### This comes from John Grayson's book "Python and Tkinter programming"
@@ -148,13 +182,7 @@ class ProgressBar(Tix.Frame):
 
 
 
-class UI(Tix.Frame):
-    prefKeys = ['newline','auto_update','auto_set_for','auto_set_out','sort','lower',\
-        'utf8_check','remove_tags','tags','wrap_out','wrap_err','wrap_edit','wrap_dbe',\
-        'color_bg_out','color_bg_err','color_bg_edit','color_bg_dbe',\
-        'color_font_out','color_font_err','color_font_edit','color_font_dbe',\
-        'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs']## Reverse Options
-    prefSavePath = [confPath, join(srcDir, 'rc.py')]
+class UI(Tix.Frame, UIBase):
     def __init__(self, path='', **options):
         #global sys
         master = Tix.Tk()
@@ -165,7 +193,7 @@ class UI(Tix.Frame):
         #icon = Tix.BitmapImage(file=xbmLogo)
         #master.wm_iconbitmap(icon)
         #master.wm_iconbitmap(xbmLogo)
-        #bit = Tix.PhotoImage(file='%s%spyglossary.gif'%(srcDir,os.sep), format='gif')
+        #bit = Tix.PhotoImage(file=join(srcDir, 'pyglossary.gif'), format='gif')
         #lb = Tix.Label(None,image=bit)
         #lb.grid()
         #master.iconwindow(icon, 'pyglossary')
@@ -174,15 +202,14 @@ class UI(Tix.Frame):
         #help(master.wm_iconbitmap)
         #for x in dir(master):
         #    if 'wm_' in x:
-        #        print x
+        #        log.debug(x)
         master.wm_iconbitmap('@%s'%xbmLogo)
         ########
         self.pack(fill='x')
         #master.bind('<Configure>', self.resized)
         ######################
         self.running = False
-        self.glos = Glossary()
-        self.glos.ui = self
+        self.glos = Glossary(ui=self)
         self.pref = {}
         self.pref_load()
         self.pathI = ''
@@ -240,10 +267,9 @@ class UI(Tix.Frame):
         frame.pack(fill='x')
         ######################################
         self.running = False
-        self.glos = Glossary()
-        self.glos.ui = self
+        self.glos = Glossary(ui=self)
         self.pref = {}
-        self.pref_load()
+        self.pref_load(**options)
         ######################
         frame = Tix.Frame(convertFrame)
         ##
@@ -292,26 +318,23 @@ class UI(Tix.Frame):
         ######
         convertFrame.pack(fill='x')
         vpaned.add(notebook)
-        ######
+        #################
         console = Tix.Text(vpaned, height=15, background='#000000')
-        console.tag_config('stderr', foreground='#ff0000')
-        console.tag_config('stdout', foreground='#00aa00')
         #self.consoleH = 15
         #sbar = Tix.Scrollbar(vpaned, orien=Tix.VERTICAL, command=console.yview)
         #sbar.grid ( row=0, column=1)
         #console['yscrollcommand'] = sbar.set
         #console.grid()
         console.pack(fill='both', expand=True)
-        self.console = console
+        log.addHandler(
+            TkTextLogHandler(console),
+        )
+        console.insert('end', 'Console:\n')
+        ####
         vpaned.add(console)
         vpaned.pack(fill='both', expand=True)
-        ######
-        self.stdout = TkTextFile(console, 'stdout')
-        self.stderr = TkTextFile(console, 'stderr')
-        sys.stdout = self.stdout
-        sys.stderr = self.stderr
-        print('Console:')
-        ##############
+        self.console = console
+        ##################
         frame2 = Tix.Frame(self)
         clearB = Tix.Button(
             frame2,
@@ -324,11 +347,19 @@ class UI(Tix.Frame):
         )
         clearB.pack(side='left')
         ####
-        checkVar = Tix.IntVar()
-        check = Tix.Checkbutton(frame2, variable=checkVar, text='Details')
-        check.pack(side='left')
-        checkVar.set(1)
-        self.checkb_o_det = checkVar
+        label = Tix.Label(frame2, text='Verbosity')
+        label.pack(side='left')
+        ##
+        comboVar = tk.StringVar()
+        combo = tk.OptionMenu(
+            frame2,
+            comboVar,
+            0, 1, 2, 3, 4,
+        )
+        comboVar.set(log.getVerbosity())
+        comboVar.trace('w', self.verbosityChanged)
+        combo.pack(side='left')
+        self.verbosityCombo = comboVar
         #####
         pbar = ProgressBar(frame2, width=400)
         pbar.pack(side='left', fill='x', expand=True)
@@ -442,6 +473,10 @@ class UI(Tix.Frame):
             self.entry_i.insert(0, path)
             self.entry_changed()
             self.load()
+    def verbosityChanged(self, index, value, op):
+        log.setVerbosity(
+            int(self.verbosityCombo.get())
+        )
     def about_clicked(self):
         about = Tix.Toplevel(width=600)## bg='#0f0' does not work
         about.title('About PyGlossary')
@@ -569,7 +604,7 @@ class UI(Tix.Frame):
             self.convert()
     def resized(self, event):
         dh = self.master.winfo_height() - self.winfo_height()
-        print dh, self.consoleH
+        #log.debug(dh, self.consoleH)
         #if dh > 20:
         #    self.consoleH += 1
         #    self.console['height'] = self.consoleH
@@ -577,9 +612,9 @@ class UI(Tix.Frame):
         #    self.console.grid()
         #for x in dir(self):
         #    if 'info' in x:
-        #        print x
+        #        log.debug(x)
     def combobox_o_changed(self, event):
-        #print self.combobox_o.get()
+        #log.debug(self.combobox_o.get())
         formatD = self.combobox_o.get()
         if formatD==noneItem:
             return
@@ -610,7 +645,7 @@ class UI(Tix.Frame):
                 #self.entry_o.delete(0, 'end')
                 self.entry_o.insert(0, pathO)
     def entry_changed(self, event=None):
-        #print 'entry_changed'
+        #log.debug('entry_changed')
         #char = event.keysym
         pathI = toStr(self.entry_i.get())
         if self.pathI != pathI:
@@ -622,7 +657,7 @@ class UI(Tix.Frame):
                     self.entry_i.insert(0, pathI)
             if self.pref['auto_set_for']:#format==noneItem:
                 ext = os.path.splitext(pathI)[-1].lower()
-                if ext in ('.gz','.bz2','.zip'):
+                if ext in ('.gz', '.bz2', '.zip'):
                     ext = os.path.splitext(pathI[:-len(ext)])[-1].lower()
                 for i in xrange(len(Glossary.readExt)):
                     if ext in Glossary.readExt[i]:
@@ -649,7 +684,7 @@ class UI(Tix.Frame):
                     self.entry_o.insert(0, pathO)
             if self.pref['auto_set_for']:#format==noneItem:
                 ext = os.path.splitext(pathO)[-1].lower()
-                if ext in ('.gz','.bz2','.zip'):
+                if ext in ('.gz', '.bz2', '.zip'):
                     ext = os.path.splitext(pathO[:-len(ext)])[-1].lower()
                 for i in xrange(len(Glossary.writeExt)):
                     if ext in Glossary.writeExt[i]:
@@ -673,15 +708,15 @@ class UI(Tix.Frame):
     def load(self):
         iPath = toStr(self.entry_i.get())
         if not iPath:
-            printAsError('Input file path is empty!');return
+            log.critical('Input file path is empty!');return
         formatD = self.combobox_i.get()
         if formatD==noneItem:
-            #printAsError('Input format is empty!');return
+            #log.critical('Input format is empty!');return
             format=''
-            print('Please wait...')
+            log.info('Please wait...')
         else:
             format = Glossary.descFormat[formatD]
-            print('Reading from %s, please wait...'%formatD)
+            log.info('Reading from %s, please wait...'%formatD)
         #while gtk.events_pending():#??????????????
         #    gtk.main_iteration_do(False)
         t0=time.time()
@@ -694,36 +729,35 @@ class UI(Tix.Frame):
         else:'''
         ex = self.glos.read(iPath, format=format)
         if ex:
-            print('reading %s file: "%s" done.\n%d words found.'%(
+            log.info('reading %s file: "%s" done.\n%d words found.'%(
                 format,
                 iPath,
                 len(self.glos.data),
             ))
         else:
-            print('reading %s file: "%s" failed.'%(format, iPath))
+            log.critical('reading %s file: "%s" failed.'%(format, iPath))
             return False
         #self.iFormat = format
         self.iPath = iPath
         #self.button_conv.set_sensitive(True)
         self.glos.uiEdit()
         self.progress(1.0, 'Loading Comleted')
-        if self.checkb_o_det.get():#?????????
-            print('time left = %3f seconds'%(time.time()-t0))
-            for x in self.glos.info:
-                print('%s="%s"'%(x[0],x[1]))
+        log.info('time left = %3f seconds'%(time.time()-t0))
+        for x in self.glos.info:
+            log.info('%s="%s"'%(x[0], x[1]))
         return True
     def convert(self):
         if len(self.glos.data)==0:
-            printAsError('Input glossary has no word! Be sure to click "Load" before "Convert", '+\
+            log.error('Input glossary has no word! Be sure to click "Load" before "Convert", '+\
                 'or just click "Apply" instead.')
             return False
         oPath = toStr(self.entry_o.get())
         if not oPath:
-            printAsError('Output file path is empty!');return
+            log.critical('Output file path is empty!');return
         formatD = self.combobox_o.get()
-        if formatD in (noneItem,''):
-            printAsError('Output format is empty!');return
-        print('Converting to %s, please wait...'%formatD)
+        if formatD in (noneItem, ''):
+            log.critical('Output format is empty!');return
+        log.info('Converting to %s, please wait...'%formatD)
         #while gtk.events_pending():#??????????
         #    gtk.main_iteration_do(False)
         self.running = True
@@ -745,9 +779,8 @@ class UI(Tix.Frame):
         self.glos.write(oPath, format=format)
         #self.oFormat = format
         self.oPath = oPath
-        print('writing %s file: "%s" done.'%(format,oPath))
-        if self.checkb_o_det.get():#???????
-            print('time left = %3f seconds'%(time.time()-t0))
+        log.info('writing %s file: "%s" done.'%(format, oPath))
+        log.info('time left = %3f seconds'%(time.time()-t0))
         self.running = False
         return True
     def run(self, editPath=None, read_options={}):
@@ -763,21 +796,9 @@ class UI(Tix.Frame):
         self.pbar.updateProgress(100)
     def r_finished(self):
         pass
-    def pref_load(self, *args):
-        exec(open(join(srcDir, 'rc.py')).read())
-        if save==0:
-            try:
-                fp = open(self.prefSavePath[0])
-            except:
-                myRaise(__file__)
-            else:
-                exec(fp.read())
-        for key in self.prefKeys:
-            self.pref[key] = eval(key)
-        return True
     def console_clear(self, event=None):
         self.console.delete('1.0', 'end')
-        print('Console:')
+        self.console.insert('end', 'Console:\n')
     def r_browse_i(self):
         pass
     def r_browse_o(self):

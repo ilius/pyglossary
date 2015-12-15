@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from formats_common import *
+
 enable = True
 format = 'Xfardic'
 description = 'xFarDic (xdb)'
@@ -59,17 +61,17 @@ def read_2(glos, filename):
     for elem in xdb[0]:
         et = tostring(elem)
         i0 = et.find('<')
-        i1 = et.find('>',i0+1)
-        i2 = et.find('<',i1+1)
+        i1 = et.find('>', i0+1)
+        i2 = et.find('<', i1+1)
         glos.info[et[i0:i1]] = et[i1+1:i2]
     for elem in xdb[1:]:
         try:
             w, m = tostring(elem[0]), tostring(elem[1])
         except:
-            myRaise(__file__)
-            printAsError(tostring(elem))
+            log.exception(tostring(elem))
+            log.error()
             continue
-        glos.data += [[ w[4:-5] , m[5:-6] ]]
+        glos.data += [[ w[4:-5], m[5:-6] ]]
 
 
 
@@ -111,8 +113,7 @@ def write_2(glos, filename):
         try:
             tmpXmlFile.characters(item[1])
         except:
-            myRaise(__file__)
-            printAsError('While writing xdb file, an error on word "%s"'%item[0])
+            log.exception('While writing xdb file, an error on word "%s":'%item[0])
             continue
         fp.startElement(u'word', attrs)
         fp.startElement(u'in', attrs)

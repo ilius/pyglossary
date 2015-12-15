@@ -17,6 +17,8 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from os.path import join
+
 from paths import srcDir, rootDir
 from pyglossary.glossary import *
 
@@ -26,18 +28,59 @@ licenseText = open(join(rootDir, 'license')).read()
 authors = open(join(rootDir, 'AUTHORS')).read().split('\n')
 
 
-class UIBase:
-    prefSavePath = [confPath, '%s%src.py'%(srcDir,os.sep)]
+class UIBase(object):
+    prefSavePath = [
+        confPath,
+        join(srcDir, 'rc.py')
+    ]
     prefKeys = (
-        'save', 'newline', 'auto_update',
-        'auto_set_for', 'auto_set_out', 'sort', 'lower',
-        'remove_tags', 'tags', 'utf8_check',
+        'noProgressBar',## command line
+        'save',
+        'newline',
+        'auto_update',
+        'auto_set_for',
+        'auto_set_out',
+        'sort',
+        'lower',
+        'remove_tags',
+        'tags',
+        'utf8_check',
         'enable_alts',
-        'wrap_out', 'wrap_err', 'wrap_edit', 'wrap_dbe',
-        'color_bg_out', 'color_bg_err', 'color_bg_edit', 'color_bg_dbe',
-        'color_font_out', 'color_font_err', 'color_font_edit', 'color_font_dbe',
-        'matchWord', 'showRel', 'autoSaveStep', 'minRel', 'maxNum', 'includeDefs',## Reverse Options
+        'wrap_out',
+        'wrap_err',
+        'wrap_edit',
+        'wrap_dbe',
+        'color_bg_out',
+        'color_bg_err',
+        'color_bg_edit',
+        'color_bg_dbe',
+        'color_font_out',
+        'color_font_err',
+        'color_font_edit',
+        'color_font_dbe',
+        ## Reverse Options:
+        'matchWord',
+        'showRel',
+        'autoSaveStep',
+        'minRel',
+        'maxNum',
+        'includeDefs',
     )
+    def pref_load(self, **options):
+        exec(open(join(srcDir, 'rc.py')).read())
+        if save==0 and os.path.exists(self.prefSavePath[0]): # save is defined in rc.py
+            try:
+                fp = open(self.prefSavePath[0])
+            except:
+                log.exception('error while loading save file %s'%self.prefSavePath[0])
+            else:
+                exec(fp.read())
+        for key in self.prefKeys:
+            self.pref[key] = eval(key)
+        for key, value in options.items():
+            if key in self.prefKeys:
+                self.pref[key] = value
+        return True
 
 
 

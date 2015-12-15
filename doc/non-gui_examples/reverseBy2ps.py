@@ -7,11 +7,11 @@ from subprocess import Glossary
 
 try:
   import psyco
-  print 'Using module "psyco" to reduce execution time.'
+  print('Using module "psyco" to reduce execution time.')
   psyco.bind(Glossary)
   usePsyco=True
 except:
-  print 'Warning: module "psyco" not found.'
+  print('Warning: module "psyco" not found.')
 
 
 t0 = time.time()
@@ -27,7 +27,7 @@ if usePsyco:
   psCode += 'import psyco\npsyco.bind(Glossary)\n'
 psCode += 'g = Glossary()\ng.readTabfile(\'%s\')\ng.checkUnicode()\n'%(dicPath)
 psCode += 'g2 = g.reverseDic(\'%s\', {\'matchWord\':True})\ng2.writeTabfile()\n' %(wordsFilePath2)
-ps = Popen(['python','-c',psCode])
+ps = Popen(['python', '-c', psCode])
 
 g = Glossary()
 g.readTabfile(dicPath)
@@ -35,5 +35,5 @@ g.checkUnicode()
 g2 = g.reverseDic(wordsFilePath1, {'matchWord':True})
 g2.writeTabfile(dicPath[:-4]+'_reversed2.txt')
 
-print 'About %d seconds left.'%(time.time()-t0)
+print('About %d seconds left.'%(time.time()-t0))
 

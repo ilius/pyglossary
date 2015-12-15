@@ -50,18 +50,13 @@ automatically supports features like auto-resizing when available.
 # 2005-06-02: v0.5 rewrite
 # 2004-??-??: v0.1 first version
 
-def myRaise():
-    i = sys.exc_info()
-    print('File "%s" line %s: %s: %s'%(__file__, i[2].tb_lineno, i[0].__name__, i[1]))
-
-import sys, time
+import sys
+import time
 from array import array
-try:
-    from fcntl import ioctl
-    import termios
-except ImportError:
-    myRaise()
 import signal
+
+import logging
+log = logging.getLogger('root')
 
 
 class ProgressBarWidget(object):
@@ -83,11 +78,11 @@ class ProgressBarWidget(object):
     def __str__(self):
         return self.update()
     def __add__(self, other):
-        if type(other)==unicode:
+        if isinstance(other, unicode):
             return str(self) + other.encode('utf-8')
         return str(self) + str(other)
     def __radd__(self, other):
-        if type(other)==unicode:
+        if isinstance(other, unicode):
             return other.encode('utf-8') + str(self)
         return str(other) + str(self)
 
@@ -134,7 +129,7 @@ class FileTransferSpeed(ProgressBarWidget):
     'Widget for showing the transfer speed (useful for file transfers).'
     def __init__(self):
         self.fmt = '%6.2f %s'
-        self.units = ['B','K','M','G','T','P']
+        self.units = ['B', 'K', 'M', 'G', 'T', 'P']
     def update(self):
         pbar = self.pbar
         if pbar.seconds_elapsed < 2e-6:#== 0:
@@ -247,7 +242,7 @@ class ProgressBar(object):
         self.maxval = maxval
         self.widgets = widgets
         for w in self.widgets:
-            #print( type(w) is ProgressBarWidget )
+            #log.debug( type(w) is ProgressBarWidget )
             #if type(w)!=str:
             try:
                 w.pbar = self
@@ -258,7 +253,7 @@ class ProgressBar(object):
         self.signal_set = False
         if term_width is None:
             try:
-                self.handle_resize(None,None)
+                self.handle_resize(None, None)
                 signal.signal(signal.SIGWINCH, self.handle_resize)
                 self.signal_set = True
             except:
@@ -273,8 +268,14 @@ class ProgressBar(object):
         self.seconds_elapsed = 0
 
     def handle_resize(self, signum, frame):
-        (h, w) = array('h', ioctl(self.fd, termios.TIOCGWINSZ, '\0'*8))[:2]
-        self.term_width = w
+        try:
+            from fcntl import ioctl
+            import termios
+        except:
+            pass
+        else:
+            h, w = array('h', ioctl(self.fd, termios.TIOCGWINSZ, '\0'*8))[:2]
+            self.term_width = w
 
     def percentage(self):
         'Returns the percentage of the progress.'
@@ -366,7 +367,7 @@ if __name__=='__main__':
             time.sleep(0.1)
             pbar.update(i/1000.0)
         pbar.finish()
-        print
+        print('')
     example1()
 
 

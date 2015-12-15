@@ -1,3 +1,6 @@
+#verbosity = 2
+noProgressBar = False ## in command line
+
 save = 0
 newline = '\n'
 auto_update = True
@@ -17,8 +20,8 @@ tags = {
     'FONT': 0,
     'table': 0,
     'TABLE': 0,
-    'sup'   :0,
-    'SUP'   :0,
+    'sup': 0,
+    'SUP': 0,
     'tr': 0,
     'TR': 0,
     'td': 0,

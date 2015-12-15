@@ -33,7 +33,6 @@ endFormat	= '\x1b[0;0;0m'		# End Format		#len=8
 #redOnGray	= '\x1b[0;1;31;47m'
 startRed	= '\x1b[31m'
 
-#use_psyco_file='%s%suse_psyco'%(srcDir,os.sep)
 use_psyco_file='%s_use_psyco'%confPath
 psyco_found=None
 
@@ -62,8 +61,7 @@ class UI(qt.QWidget, UIBase):
         self.setWindowIcon(qt.QIcon(join(srcDir, 'pyglossary.png')))
         ######################
         self.running = False
-        self.glos = Glossary()
-        self.glos.ui = self
+        self.glos = Glossary(ui=self)
         self.pref = {}
         self.pref_load()
         self.pathI = ''

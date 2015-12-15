@@ -1,7 +1,35 @@
 PyGlossary
 ==========
 
-Working on glossarys (dictionary databases) using python. Including editing glossarys and converting theme between many formats. The support matrix is, 
+PyGlossary is a tool for converting, modifying and workig with dictionary files aka glossaries, with various formats used by different dictionary applications
+
+
+
+Screenshots
+-------------------------------
+
+.. figure:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-gtk.png
+   :alt: pyglossary-linux-gtk.png
+
+Linux - Gtk-based intreface
+
+----------------
+
+.. figure:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-tkinter.png
+   :alt: pyglossary-linux-tkinter.png
+
+Linux - Tkinter-based interface
+
+----------------
+
+.. figure:: https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-cmd-small.png
+   :alt: pyglossary-linux-cmd-small.png
+
+Linux - command line interface
+
+
+Supported formats
+-------------------------------
 
 +----------------------------+--------------+------+-------+
 | Format                     |   Extension  | Read | Write |
@@ -37,7 +65,7 @@ Working on glossarys (dictionary databases) using python. Including editing glos
 +----------------------------+--------------+------+-------+
 | Sdictionary Source         |     .sdct    |      |   X   |
 +----------------------------+--------------+------+-------+
-| SQL                        |              |      |   X   |
+| SQL                        |     .sql     |      |   X   |
 +----------------------------+--------------+------+-------+
 | StarDict                   |     .ifo     |  X   |   X   |
 +----------------------------+--------------+------+-------+
@@ -51,15 +79,52 @@ Working on glossarys (dictionary databases) using python. Including editing glos
 +----------------------------+--------------+------+-------+
 
 Requirements
-------------
-Mac OS X
-~~~~~~~~
+----------------------
+PyGlossary uses **Python 2.7**, and works in practically all operating systems. While primarilly design for *GNU/Linux*, it works on *Windows*, *Mac OS X* and other Unix-based operating systems.
+
+As shown in the screenshots, there are multiple User Interface types, ie. multiple ways to use the program.
+
+- **Gtk-based interface**, the best one, use PyGTK and Glade (Glade will be removed later). You can install it on (although PyGTK is pre-installed in most of desktop Linux distributions):
+
+  + Debian: ``apt-get install python-gtk2 python-glade2``
+  + openSUSE: ``zypper install python-gtk``
+  + Fedora: ``yum install pygtk2 glade2``
+  + Archlinux: ``pacman -S pygtk``
+- **Tkinter-based interface**, works in the lack of Gtk. Specially on Windows where Tkinter library is installed with the Python itself. You can also install it on:
+
+  + Debian: ``apt-get install python-tk tix``
+  + openSUSE: ``zypper install tkinter tix``
+  + Fedora: ``yum install tkinter tix``
+  + Mac OS X: read https://www.python.org/download/mac/tcltk/
+
+- **Command-line interface**, works in all operating systems without any specific requirements, just type:
+
+  ``python2.7 pyglossary.pyw --help``
+
+  You may have to give ``--no-progress-bar`` option in Windows when converting glossaries (becouse the progress bar does not work properly in Windows command window)
+
+
+When you run the program without any command line arguments or options, PyGlossary tries to find PyGTK, if it's installed, opens the Gtk-based interface, if it's not, tries to find Tkinter and open the Tkinter-based interface. And raises and error if neither are installed.
+
+But you can explicitly determine the user interface type using ``--ui``, for example:
+
+  ``python2.7 pyglossary.pyw --ui=gtk``
+
+  ``python2.7 pyglossary.pyw --ui=tk``
+
+
+
+**Other requirements for Mac OS X**
+
+If you want to convert glossaries into AppleDict format on Mac OS X, here is what you need:
+
 - BeautifulSoup4(with html5lib as backend) required to sanitize html contents.
 
   ``sudo easy_install beautifulsoup4 html5lib``
 
 - GNU make as part of `Command Line Tools for Xcode  <http://developer.apple.com/downloads>`_.
 - Dictionary Development Kit as part of `Auxillary Tools for Xcode <http://developer.apple.com/downloads>`_. Extract to ``/Developer/Extras/Dictionary Development Kit``
+
 
 HOWTOs
 ------------
@@ -115,4 +180,3 @@ Compile and install. ::
   make install
 
 Launch Dictionary.app and test.
-

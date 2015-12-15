@@ -19,16 +19,15 @@
 ## GNU General Public License for more details.
 
 import shutil, sys, os
-from pyglossary.text_utils import urlToPath, click_website, printAsError, myRaise, startRed, endFormat
+import logging
+import traceback
+
+from pyglossary.text_utils import urlToPath, click_website, startRed, endFormat
 from pyglossary.glossary import *
 from base import *
 import gtk, gtk.glade
 
-
-def myRaise(__file__):
-    i = sys.exc_info()
-    printAsError('File interface_gtk.py line %s: %s: %s'%(i[2].tb_lineno, i[0].__name__, i[1]))
-
+log = logging.getLogger('root')
 
 #use_psyco_file = join(srcDir, 'use_psyco')
 use_psyco_file = '%s_use_psyco'%confPath
@@ -38,25 +37,48 @@ gtk.window_set_default_icon_from_file(logo)
 
 buffer_get_text = lambda b: b.get_text(b.get_start_iter(), b.get_end_iter())
 
-## Thanks to 'Pier Carteri' <m3tr0@dei.unipd.it> for program Py_Shell.py
-class BufferFile:
-    ## Implements a file-like object for redirect the stream to the buffer
-    def __init__(self, buff, tag, mode='stdout'):
-        self.buffer = buff
-        self.tag = tag
-        self.mode = mode
-    ## Write text into the buffer and apply self.tag
-    def write(self, text):
-        #text = text.replace('\x00', '')
-        iter=self.buffer.get_end_iter()
-        self.buffer.insert_with_tags(iter, text, self.tag)
-        if self.mode=='stdout':
-            sys.__stdout__.write(text)
-        elif self.mode=='stderr':
-            sys.__stderr__.write(startRed + text + endFormat)
-    writelines = lambda self, l: map(self.write, l)
-    flush = lambda self: None
-    isatty = lambda self: False
+
+class GtkTextviewLogHandler(logging.Handler):
+    def __init__(self, treeview_dict):
+        logging.Handler.__init__(self)
+        #####
+        self.buffers = {}
+        for levelname in (
+            'CRITICAL',
+            'ERROR',
+            'WARNING',
+            'INFO',
+            'DEBUG',
+        ):
+            textview = treeview_dict[levelname]
+            ###
+            buff = textview.get_buffer()
+            buff.get_tag_table().add(gtk.TextTag(levelname))
+            ###
+            self.buffers[levelname] = buff
+    def emit(self, record):
+        #print('GtkTextviewLogHandler.emit', record.levelname, record.getMessage(), record.exc_info)
+        msg = record.getMessage()
+        #msg = msg.replace('\x00', '')
+        ###
+        if record.exc_info:
+            _type, value, tback = record.exc_info
+            tback_text = ''.join(traceback.format_exception(_type, value, tback))
+            if msg:
+                msg += '\n'
+            msg += tback_text
+        ###
+        buff = self.buffers[record.levelname]
+        ###
+        buff.insert_with_tags_by_name(
+            buff.get_end_iter(),
+            msg + '\n',
+            record.levelname,
+        )
+
+
+
+
 
 
 class UI(UIBase):
@@ -93,12 +115,13 @@ class UI(UIBase):
     def def_widgets(self, names):
         for name in names:
             #try:
-            exec('self.%s = self.xml.get_widget("%s")'%(name,name))
+            exec('self.%s = self.xml.get_widget("%s")'%(name, name))
             #except:
-            #    print(name)
+            #    log.debug(name)
                 #sys.exit(1)
     def __init__(self, **options):
-        self.xml= gtk.glade.XML(os.path.join(rootDir,'ui','glade','maindialog.glade'))
+        #UIBase.__init__(self, **options)
+        self.xml= gtk.glade.XML(os.path.join(rootDir, 'ui', 'glade', 'maindialog.glade'))
         self.d = self.xml.get_widget('maindialog')
         self.d.connect('delete-event', self.close_button_clicked)
         self.about_init()
@@ -106,11 +129,11 @@ class UI(UIBase):
         for attr in dir(self):
             signals[attr] = getattr(self, attr)
         self.xml.signal_autoconnect(signals)
-        self.def_widgets(('quitdialog', 'textview_out','textview_err','maindialog',\
-            'vpaned1','notebook1','entry_i','entry_o',\
-            'combobox_i','combobox_o','checkb_o_det','combobox_r_i','checkb_i_ext',\
-            'entry_r_i','entry_r_o','combobox_sr','progressbar','textview_edit',\
-            'label_convert','label_reverse','combobox_mode','textview_merge','button_conv'))
+        self.def_widgets(('quitdialog', 'textview_out', 'textview_err', 'maindialog',\
+            'vpaned1', 'notebook1', 'entry_i', 'entry_o',\
+            'combobox_i', 'combobox_o', 'checkb_o_det', 'combobox_r_i', 'checkb_i_ext',\
+            'entry_r_i', 'entry_r_o', 'combobox_sr', 'progressbar', 'textview_edit',\
+            'label_convert', 'label_reverse', 'combobox_mode', 'textview_merge', 'button_conv'))
 
         '''## changing colors
         self.textview_err.modify_base(0, gtk.gdk.Color(10000, 0, 0))#textview bg color
@@ -124,8 +147,7 @@ class UI(UIBase):
         self.quitdialog.connect('delete-event', self.quitdialog_close)
         self.assert_quit = False
         self.path = ''
-        self.glos=Glossary()
-        self.glos.ui = self
+        self.glos = Glossary(ui=self)
         for f in Glossary.readFormats:
             self.combobox_i.append_text(Glossary.formatsDesc[f])
             self.combobox_r_i.append_text(Glossary.formatsDesc[f])
@@ -148,18 +170,17 @@ class UI(UIBase):
         self.combobox_mode.set_active(2)
         ####################################
         self.reverseStop = False
-        self.pref_init()
+        self.pref_init(**options)
         #thread.start_new_thread(UI.progressListen,(self,))
         #################### Comment folowing two line to see the output in the terminal
-        self.redirectStdOut()
-        self.redirectStdErr()
+        self.setupLogging()
         ####################
         #self.d.show_all()
         #self.d.vbox.do_realize()
     def run(self, editPath=None, read_options={}):
         if editPath:
             self.notebook1.set_current_page(3)
-            print('Opening file "%s" for edit. please wait...'%editPath)
+            log.info('Opening file "%s" for edit. please wait...'%editPath)
             while gtk.events_pending():
                 gtk.main_iteration_do(False)
             self.dbe_open(editPath, **read_options)
@@ -204,8 +225,30 @@ class UI(UIBase):
         response = msgWindow.run()
         msgWindow.destroy()
         return response
-################ Redirecting standart output and standard error #################
-############## Using program Py_Shell.py writen by Pier Carteri #################
+######################################################################
+    def setupLogging(self):
+        log.addHandler(
+            GtkTextviewLogHandler({
+                'CRITICAL': self.textview_err,
+                'ERROR': self.textview_err,
+                'WARNING': self.textview_out,
+                'INFO': self.textview_out,
+                'DEBUG': self.textview_out,
+            })
+        )
+        self.textview_out.get_buffer().set_text('Output console:\n')
+        self.textview_err.get_buffer().set_text('Error console:\n')
+        #####
+        self.checkb_o_det.connect('toggled', self.detailsCheckChanged)
+        self.detailsCheckChanged()
+    def detailsCheckChanged(self, widget=None):
+        if self.checkb_o_det.get_active():
+            verbosity = 4
+        else:
+            verbosity = 2
+        print('verbosity=%s'%verbosity)
+        log.setVerbosity(verbosity)
+    '''
     def redirectStdOut(self):
         t_table_out = gtk.TextTagTable()
         tag_out = gtk.TextTag('output')
@@ -214,7 +257,6 @@ class UI(UIBase):
         self.textview_out.set_buffer(self.buffer_out)
         self.dummy_out = BufferFile(self.buffer_out, tag_out, 'stdout')
         sys.stdout = self.dummy_out
-        print('Output console:')
     def redirectStdErr(self):
         t_table_err = gtk.TextTagTable()
         tag_err = gtk.TextTag('error')
@@ -223,7 +265,6 @@ class UI(UIBase):
         self.textview_err.set_buffer(self.buffer_err)
         self.dummy_err = BufferFile(self.buffer_err, tag_err, 'stderr')
         sys.stderr = self.dummy_err
-        printAsError('Error console:')
     def redirectStdOutErrToOne(self):
         t_table_rev = gtk.TextTagTable()
         tag_out = gtk.TextTag('output')
@@ -239,10 +280,11 @@ class UI(UIBase):
     def restoreStdOutErr(self):
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
+    '''
 #################################################################################
     #def maindialog_resized(self, *args):
     #    self.vpaned1.set_position(185)
-    #    print(args)
+    #    log.debug(args)
     #ok_clicked=lambda self, *args: pass
     def apply_clicked(self, *args):
         i = self.tabIndex
@@ -256,9 +298,9 @@ class UI(UIBase):
             self.dbe_update()
         elif i==4:
             self.pref_update_var()
-            print('Preferences updated')
+            log.info('Preferences updated')
             self.pref_save()
-            print('Preferences saved')
+            log.info('Preferences saved')
     def close_button_clicked(self, *args):
         if self.assert_quit:
             self.quitdialog.show()
@@ -272,7 +314,7 @@ class UI(UIBase):
     def quit(self, *args):
         self.pref_update_var()
         self.pref_save()
-        print('Preferences saved')
+        log.info('Preferences saved')
         #sys.exit(0)
         gtk.main_quit()
     #def help_clicked(self, *args):
@@ -292,15 +334,15 @@ class UI(UIBase):
     def load(self, *args):
         iPath = self.entry_i.get_text()
         if not iPath:
-            printAsError('Input file path is empty!');return
+            log.critical('Input file path is empty!');return
         formatD = self.combobox_i.get_active_text()
         if formatD:
             format = Glossary.descFormat[formatD]
-            print('Reading from %s, please wait...'%formatD)
+            log.info('Reading from %s, please wait...'%formatD)
         else:
-            #printAsError('Input format is empty!');return
+            #log.critical('Input format is empty!');return
             format = ''
-            print('Please wait...')
+            log.info('Please wait...')
         while gtk.events_pending():
             gtk.main_iteration_do(False)
         t0 = time.time()
@@ -315,23 +357,22 @@ class UI(UIBase):
         else:
             ex = self.glos.read(iPath, format=format)
         if ex:
-            print('reading %s file: "%s" done.\n%d words found.'%(
+            log.info('reading %s file: "%s" done.\n%d words found.'%(
                 format,
                 iPath,
                 len(self.glos.data),
             ))
         else:
-            print('reading %s file: "%s" failed.'%(format,iPath))
+            log.info('reading %s file: "%s" failed.'%(format, iPath))
             return False
         #self.iFormat = format
         self.iPath = iPath
         self.button_conv.set_sensitive(True)
         self.glos.uiEdit()
         self.progress(1.0, 'Loading Comleted')
-        if self.checkb_o_det.get_active():
-            print('time left = %3f seconds'%(time.time()-t0))
-            for x in self.glos.info:
-                print('%s="%s"'%(x[0], x[1]))
+        log.debug('time left = %3f seconds'%(time.time()-t0))
+        for x in self.glos.info:
+            log.info('%s="%s"'%(x[0], x[1]))
         return True
     def load_m(self, *args):
         b = self.merge_buffer
@@ -347,13 +388,12 @@ class UI(UIBase):
             path = paths[i]
             if not path:
                 continue
-            g = Glossary()
-            self.ptext = ' of file %s from %s files'%(i+1,n)
-            g.ui = self
-            print('Loading "%s" ...'%path)
+            g = Glossary(ui=self)
+            self.ptext = ' of file %s from %s files'%(i+1, n)
+            log.info('Loading "%s" ...'%path)
             g.read(path)
             g.uiEdit()
-            print('%s words found'%len(g.data))
+            log.info('%s words found'%len(g.data))
             if mode==0:
                 self.glos = self.glos.attach(g)
             elif mode==1:
@@ -372,20 +412,20 @@ class UI(UIBase):
         self.glos.ui = self
     def convert_clicked(self, *args):
         #if self.assert_quit:
-        #    printAsError('Can not convert glossary, because another operation is running. '+\
+        #    log.error('Can not convert glossary, because another operation is running. '+\
         #        'Please open a new PyGlossary window, or wait until that operation be completed.')
         #    return False
         if len(self.glos.data)==0:
-            printAsError('Input glossary has no word! Be sure to click "Load" before "Convert", '+\
+            log.error('Input glossary has no word! Be sure to click "Load" before "Convert", '+\
                 'or just click "Apply" instead.')
             return False
         oPath = self.entry_o.get_text()
         if not oPath:
-            printAsError('Output file path is empty!');return
+            log.critical('Output file path is empty!');return
         formatD = self.combobox_o.get_active_text()
         if not formatD:
-            printAsError('Output format is empty!');return
-        print('Converting to %s, please wait...'%formatD)
+            log.critical('Output format is empty!');return
+        log.info('Converting to %s, please wait...'%formatD)
         while gtk.events_pending():
             gtk.main_iteration_do(False)
         self.assert_quit=True
@@ -406,9 +446,8 @@ class UI(UIBase):
             self.glos.write(oPath, format=format)
         #self.oFormat = format
         self.oPath = oPath
-        print('writing %s file: "%s" done.'%(format,oPath))
-        if self.checkb_o_det.get_active():
-            print('time left = %3f seconds'%(time.time()-t0))
+        log.info('writing %s file: "%s" done.'%(format, oPath))
+        log.debug('time left = %3f seconds'%(time.time()-t0))
         self.assert_quit=False
         return True
 
@@ -465,7 +504,7 @@ class UI(UIBase):
         if self.pref['auto_set_for']:## not format:
             pathI = self.entry_i.get_text()
             (name, ext) = os.path.splitext(pathI)
-            if ext.lower() in ('.gz','.bz2','.zip'):
+            if ext.lower() in ('.gz', '.bz2', '.zip'):
                 ext = os.path.splitext(name)[1].lower()
             for i in xrange(len(Glossary.readExt)):
                 if ext in Glossary.readExt[i]:
@@ -491,7 +530,7 @@ class UI(UIBase):
         #if True:## not format:
         path = self.entry_o.get_text()
         (name, ext) = os.path.splitext(path)
-        if ext.lower() in ('.gz','.bz2','.zip'):
+        if ext.lower() in ('.gz', '.bz2', '.zip'):
             ext = os.path.splitext(name)[1].lower()
         for i in xrange(len(Glossary.writeExt)):
             if ext in Glossary.writeExt[i]:
@@ -553,7 +592,7 @@ class UI(UIBase):
         #if True:## not format:
         path = self.entry_r_i.get_text()
         (name, ext) = os.path.splitext(path)
-        if ext.lower() in ('.gz','.bz2','.zip'):
+        if ext.lower() in ('.gz', '.bz2', '.zip'):
             (name, ext) = os.path.splitext(name)
             ext = ext.lower()
         for i in xrange(len(Glossary.readExt)):
@@ -565,28 +604,26 @@ class UI(UIBase):
         iPath = self.entry_r_i.get_text()
         formatD = self.combobox_r_i.get_active_text()
         if not iPath:
-            printAsError('Input file path is empty!')
+            log.critical('Input file path is empty!')
             return False
         if not formatD:
-            printAsError('Input format is empty!')
+            log.critical('Input format is empty!')
             return False
-        print('Reading from %s, please wait...'%formatD)
+        log.info('Reading from %s, please wait...'%formatD)
         format = Glossary.descFormat[formatD]
-        self.glosR = Glossary()
+        self.glosR = Glossary(ui=self)
         while gtk.events_pending():
             gtk.main_iteration_do(False)
         t0 = time.time()
         self.glosR.read(iPath, format=format)
-        if self.checkb_o_det.get_active():
-            print('time left = %3f seconds'%(time.time()-t0))
-            for x in self.glos.info:
-                print('%s="%s"'%(x[0],x[1]))
+        log.debug('time left = %3f seconds'%(time.time()-t0))
+        for x in self.glos.info:
+            log.info('%s="%s"'%(x[0], x[1]))
         #self.glosR.faEdit()
-        self.glosR.ui = self
         self.glosR.uiEdit()
         #self.riFormat = format
         #self.riPath = iPath
-        print('reading %s file: "%s" done.\n%d words found.'%(
+        log.info('reading %s file: "%s" done.\n%d words found.'%(
             formatD,
             iPath,
             len(self.glosR.data),
@@ -611,11 +648,11 @@ class UI(UIBase):
             if not self.r_load():
                 return False
         #if len(self.glosR.data)==0:
-        #    printAsError('Input glossary has no word! Be sure to click "Load" before "Start", or just click "Apply" instead.')
+        #    log.error('Input glossary has no word! Be sure to click "Load" before "Start", or just click "Apply" instead.')
         #    return
         oPath = self.entry_r_o.get_text()
         if not oPath:
-            printAsError('Output file path is empty!');return
+            log.critical('Output file path is empty!');return
         self.progress(0.0, 'Starting....')
         self.pref_rev_update_var()
         self.pref['savePath']=oPath
@@ -632,8 +669,8 @@ class UI(UIBase):
         self.xml.get_widget('button_r_load').set_sensitive(False)
         self.xml.get_widget('button_r_o').set_sensitive(False)
         self.xml.get_widget('vbox_options').set_sensitive(False)
-        print('Number of input words:', len(self.rWords))
-        print('Reversing glossary...')
+        log.info('Number of input words:', len(self.rWords))
+        log.info('Reversing glossary...')
         self.glosR.reverseDic(self.rWords, self.pref)
         while True:## FIXME
         #while not self.reverseStop:
@@ -652,15 +689,15 @@ class UI(UIBase):
             self.xml.get_widget('image_r_d').set_from_stock('gtk-media-pause', 'button')
             self.xml.get_widget('label_r_d').set_text('Stop')
             self.xml.get_widget('vbox_options').set_sensitive(False)
-            print('continue reversing from index %d ...'%self.glosR.continueFrom)
+            log.info('continue reversing from index %d ...'%self.glosR.continueFrom)
             self.glosR.reverseDic(self.rWords, self.pref)
             while True:## FIXME
             #while not self.reverseStop:
                 while gtk.events_pending():
                     gtk.main_iteration_do(False)
         else:
-            print('self.glosR.stoped=%s'%self.glosR.stoped)
-            print('Not stoped yet. Wait many seconds and press "Resume" again...')
+            log.debug('self.glosR.stoped=%s'%self.glosR.stoped)
+            log.info('Not stoped yet. Wait many seconds and press "Resume" again...')
     def r_finished(self, *args):
         self.glosR.continueFrom=0
         self.assert_quit=False
@@ -673,7 +710,7 @@ class UI(UIBase):
         self.xml.get_widget('button_r_o').set_sensitive(True)
         self.xml.get_widget('vbox_options').set_sensitive(True)
         self.progressbar.set_text('Reversing completed')
-        print('Reversing completed.')
+        log.info('Reversing completed.')
         #thread.exit_thread() # ???????????????????????????
         ## A PROBLEM: CPU is busy even when reversing completed!
 
@@ -716,10 +753,10 @@ class UI(UIBase):
     def editor_save(self, *args):
         exit = self.editor_save_as(self.editor_path)
         if exit==True:
-            print('File saved: "%s"'%self.editor_path)
+            log.info('File saved: "%s"'%self.editor_path)
             return True
         elif exit==False:
-            print('File not saved: "%s"'%self.editor_path)
+            log.info('File not saved: "%s"'%self.editor_path)
             return False
         else:
             return exit
@@ -734,14 +771,14 @@ class UI(UIBase):
             self.editor_path = self.path
             self.fcd_dir = os.path.dirname(self.path)
             self.path = ''
-        open(self.editor_path,'w').write(buffer_get_text(self.editor_buffer))
+        open(self.editor_path, 'w').write(buffer_get_text(self.editor_buffer))
         self.assert_quit = False
         return True
     ################################################################################
     ################################# DB Editor ####################################
     def dbe_init(self, *args):
-        self.def_widgets(['entry_dbe','checkb_db_ro','entry_db_index','textview_dbe',
-            'treeview','dbe_info_dialog','entry_dbe_info','textview_dbe_info','treeview_info'])
+        self.def_widgets(['entry_dbe', 'checkb_db_ro', 'entry_db_index', 'textview_dbe',
+            'treeview', 'dbe_info_dialog', 'entry_dbe_info', 'textview_dbe_info', 'treeview_info'])
         table = gtk.TextTagTable()
         tag = gtk.TextTag('definition')
         table.add(tag)
@@ -751,8 +788,8 @@ class UI(UIBase):
         self.treeview.set_model(self.treestore)
         self.cell = gtk.CellRendererText()
         self.cell2 = gtk.CellRendererText()
-        col = gtk.TreeViewColumn('Word',self.cell,text=0)
-        col2 = gtk.TreeViewColumn('Index',self.cell2,text=1)
+        col = gtk.TreeViewColumn('Word', self.cell, text=0)
+        col2 = gtk.TreeViewColumn('Index', self.cell2, text=1)
         col.set_resizable(True)
         self.treeview.append_column(col)
         self.treeview.append_column(col2)
@@ -766,17 +803,17 @@ class UI(UIBase):
         self.treeview_info.set_model(self.treestore_info)
         self.cell = gtk.CellRendererText()
         self.cell2 = gtk.CellRendererText()
-        col = gtk.TreeViewColumn('Key', self.cell,text=0)
+        col = gtk.TreeViewColumn('Key', self.cell, text=0)
         col.set_resizable(True)
         self.treeview_info.append_column(col)
         self.ptext = ''
         #self.vbox4 = self.xml.get_widget('vbox4')
         #ag = gtk.AccelGroup()
-        #print(dir(gtk.keysyms))
+        #log.debug(dir(gtk.keysyms))
         #ag.connect_by_path('gtk.keysym.Control_L', self.dbe_open)
         self.info_i = -1
     def dbe_new(self, *args):
-        self.glosE = Glossary()
+        self.glosE = Glossary(ui=self)
         self.glosE.data.append(('##name', ''))
         self.treestore.clear()
         self.treestore.append(('##name', 0))
@@ -799,8 +836,7 @@ class UI(UIBase):
         self.dbe_path = self.path
         self.fcd_dir = os.path.dirname(self.path)
         self.path = ''
-        self.glosE = Glossary()
-        self.glosE.ui = self
+        self.glosE = Glossary(ui=self)
         while gtk.events_pending():
             gtk.main_iteration_do(False)
         self.set_cursor(gtk.gdk.WATCH)
@@ -812,10 +848,9 @@ class UI(UIBase):
             self.glosE.read(self.dbe_path, format=format, **read_options)
         self.assert_quit = True
         self.glosE.uiEdit()
-        if self.checkb_o_det.get_active():
-            print('time left = %3f seconds'%(time.time()-t0))
-            for x in self.glos.info:
-                print('%s="%s"'%(x[0], x[1]))
+        log.debug('time left = %3f seconds'%(time.time()-t0))
+        for x in self.glos.info:
+            log.info('%s="%s"'%(x[0], x[1]))
         self.fcd_format = ''
         self.db_ind = None
         d = self.glosE.data
@@ -852,7 +887,7 @@ class UI(UIBase):
         else:
             os.remove(self.dbe_path)
             os.rename(self.dbe_path+'~', self.dbe_path)
-            printAsError('Saving file "%s" failed! Backup file restored instaed.'%self.dbe_path)
+            log.error('Saving file "%s" failed! Backup file restored instaed.'%self.dbe_path)
     def dbe_save_as(self, *args):
         #self.glosE.data[self.db_ind] = (self.entry_dbe.get_text(),self.buffer_dbe.get_text())
         self.dbe_update()
@@ -877,7 +912,7 @@ class UI(UIBase):
                 ex = self.glosE.write(path, format=format)
             self.dbe_path = path
         if ex != False:
-            print('DB file "%s" saved'%self.dbe_path)
+            log.info('DB file "%s" saved'%self.dbe_path)
             self.assert_quit = False
             self.db_format = format
             return True
@@ -894,7 +929,7 @@ class UI(UIBase):
         try:
             n_ind=int(ind)
         except:
-            printAsError('bad index: "%s"'%ind)
+            log.error('bad index: "%s"'%ind)
             return False
         self.dbe_goto(n_ind)
     def dbe_update(self):
@@ -920,7 +955,7 @@ class UI(UIBase):
         elif -n < n_ind < 0:
             n_ind += n
         else:
-            printAsError('index out of range: "%s"'%n_ind)
+            log.error('index out of range: "%s"'%n_ind)
             return False
         self.db_ind = n_ind
         try:
@@ -932,7 +967,7 @@ class UI(UIBase):
             self.entry_db_index.set_text(str(n_ind))### ????????????????????????????????????
         except:
             pass
-        #print 'Setting text "%s"'%d[1]
+        #log.debug('Setting text "%s"'%d[1])
         self.buffer_dbe.set_text(d[1])
         self.treeview.set_cursor(n_ind)
         if save:
@@ -950,13 +985,13 @@ class UI(UIBase):
         elif -n < n_ind < 0:
             n_ind += n
         else:
-            printAsError('index out of range: "%s"'%n_ind)
+            log.error('index out of range: "%s"'%n_ind)
             return False'''
         self.info_i = n_ind
         try:
             inf = self.glosE.info[n_ind]
         except:
-            #myRaise(__file__)
+            #log.exception('info does not exist:')
             return
         self.entry_dbe_info.set_text(inf[0])
         self.buffer_dbe_info.set_text(inf[1])
@@ -971,8 +1006,7 @@ class UI(UIBase):
             try:
                 n = cur[0] + 1
             except:
-                printAsError('can not get index of treeview curser!')
-                myRaise(__file__)
+                log.exception('could not get index of treeview curser:')
                 return False
         else:
             n = 0
@@ -999,12 +1033,11 @@ class UI(UIBase):
     def dbe_del_w(self, *args):
         n = len(self.glosE.data)
         ind = self.db_ind
-        #if self.checkb_o_det.get_active():
-        #    print('Deleting index %s word "%s"'%(ind,    self.glosE.data[ind][0]))
+        log.debug('Deleting index %s word "%s"'%(ind,    self.glosE.data[ind][0]))
         try:
             self.glosE.data.pop(ind)
         except IndexError:
-            myRaise(__file__)
+            log.exception('data record %s not found'%ind)
             return
         #del self.glosE.data[ind]
         del self.treestore[ind]
@@ -1015,7 +1048,7 @@ class UI(UIBase):
         else:
             self.treestore[ind][1] = ind
             self.dbe_goto(ind, False)
-            for i in xrange(ind+1, min(ind+30,n-1)):
+            for i in xrange(ind+1, min(ind+30, n-1)):
                 try:
                     self.treestore[i][1] = i
                 except IndexError:
@@ -1034,8 +1067,7 @@ class UI(UIBase):
         try:
             i = self.treeview.get_cursor()[0][0]
         except:
-            printAsError('can not get index of treeview curser!')
-            myRaise(__file__)
+            log.exception('could not get index of treeview curser!')
             return False
         #self.dbe_update()
         self.dbe_goto(i)
@@ -1043,7 +1075,7 @@ class UI(UIBase):
         try:
             i = self.treeview_info.get_cursor()[0][0]
         except:
-            printAsError('can not get index of treeview_info curser!')
+            log.error('can not get index of treeview_info curser!')
         else:
             self.dbe_info_goto(i)
     def dbe_info_move_back(self, *args):
@@ -1075,7 +1107,7 @@ class UI(UIBase):
         try:
             g.info.pop(i)
         except:
-            myRaise(__file__)
+            log.exception('info does not exist:')
             return
         del s[i]
         if i>n-2:
@@ -1119,14 +1151,14 @@ class UI(UIBase):
             return
         self.dbe_update()
         if len(self.glosE.data)!=len(self.treestore):
-            print(len(self.glosE.data), len(self.treestore))
+            log.info(len(self.glosE.data), len(self.treestore))
         self.glosE.data.sort()
         for i in xrange(len(self.glosE.data)):
             self.treestore[i]=[self.glosE.data[i][0], str(i)]
         self.dbe_goto(self.db_ind, False)
     def dbe_info_clicked(self, *args):
         self.dbe_info_dialog.show()
-        #print(self.glosE.info)
+        #log.debug(self.glosE.info)
     def dbe_info_close(self, *args):
         if self.info_i!=-1:
             try:
@@ -1140,36 +1172,28 @@ class UI(UIBase):
                     pass
         self.dbe_info_dialog.hide()
         return True
-    def pref_init(self, *args):
+    def pref_init(self, **options):
         self.pref={}
-        self.def_widgets(['combobox_save','combobox_newline','cb_psyco','checkb_autofor','checkb_autoout',\
-            'cb_auto_update','cb_c_sort','cb_rm_tags','checkb_lower','checkb_utf8','checkb_defs'])
+        self.def_widgets(['combobox_save', 'combobox_newline', 'cb_psyco', 'checkb_autofor', 'checkb_autoout',\
+            'cb_auto_update', 'cb_c_sort', 'cb_rm_tags', 'checkb_lower', 'checkb_utf8', 'checkb_defs'])
         self.combobox_save.set_active(0)
         self.newlineItems = ('\\n', '\\r\\n', '\\n\\r')
         self.showRelItems = ['None', 'Percent At First', 'Percent']
         for item in self.showRelItems:
             self.combobox_sr.append_text(item)
-        for name in ('out','err','edit','dbe'):
-            self.def_widgets(['cb_wrap_%s'%name,'colorpicker_bg_%s'%name,'colorpicker_font_%s'%name])
+        for name in ('out', 'err', 'edit', 'dbe'):
+            self.def_widgets(['cb_wrap_%s'%name, 'colorpicker_bg_%s'%name, 'colorpicker_font_%s'%name])
         self.pref['auto_update'] = self.cb_auto_update.get_active()
         if os.path.isfile(use_psyco_file):
             self.cb_psyco.set_active(True)
         else:
             self.cb_psyco.set_active(False)
-        self.pref_load()
+        self.pref_load(**options)
         self.pref_update_var()
         self.pref_rev_update_gui()
-    def pref_load(self, *args):
-        exec(open(join(srcDir, 'rc.py')).read())
-        if save==0:
-            try:
-                fp = open(self.prefSavePath[0])
-            except:
-                myRaise(__file__)
-            else:
-                exec(fp.read())
-        for key in self.prefKeys:
-            self.pref[key] = eval(key)
+    def pref_load(self, **options):
+        if not UIBase.pref_load(self, **options):
+            return False
         self.combobox_save.set_active(self.pref['save'])
         self.cb_auto_update.set_active(self.pref['auto_update'])
         for i in xrange(len(self.newlineItems)):
@@ -1182,12 +1206,12 @@ class UI(UIBase):
         self.checkb_lower.set_active(self.pref['lower'])
         self.cb_rm_tags.set_active(self.pref['remove_tags'])
         self.checkb_utf8.set_active(self.pref['utf8_check'])
-        for name in ('out','err','edit','dbe'):
+        for name in ('out', 'err', 'edit', 'dbe'):
             eval('self.cb_wrap_%s'%name).set_active(self.pref['wrap_%s'%name])
-        for name in ('out','err','edit','dbe'):
+        for name in ('out', 'err', 'edit', 'dbe'):
             color=self.pref['color_bg_%s'%name]
             eval('self.colorpicker_bg_%s'%name).set_color(gtk.gdk.Color(*color))
-        for name in ('out','err','edit','dbe'):
+        for name in ('out', 'err', 'edit', 'dbe'):
             color=self.pref['color_font_%s'%name]
             eval('self.colorpicker_font_%s'%name).set_color(gtk.gdk.Color(*color))
         return True
@@ -1195,7 +1219,7 @@ class UI(UIBase):
         self.pref['auto_update'] = self.xml.get_widget('cb_auto_update').get_active()
         k = self.combobox_newline.get_active()
         self.pref['newline'] = self.newlineItems[k]
-        for name in ('out','err','edit','dbe'):
+        for name in ('out', 'err', 'edit', 'dbe'):
             exec('\
 self.pref["wrap_%s"]=self.cb_wrap_%s.get_active()\n\
 if self.pref["wrap_%s"]:\n\
@@ -1203,10 +1227,10 @@ if self.pref["wrap_%s"]:\n\
 else:\n\
     self.textview_%s.set_wrap_mode(gtk.WRAP_NONE)'%((name,)*5))
             col=eval('self.colorpicker_bg_%s'%name).get_property('color')
-            exec('self.textview_%s.modify_base(0, gtk.gdk.Color(%s, %s, %s))'%(name,col.red,col.green,col.blue))
+            exec('self.textview_%s.modify_base(0, gtk.gdk.Color(%s, %s, %s))'%(name, col.red, col.green, col.blue))
             exec('self.pref["color_bg_%s"]=(col.red,col.green,col.blue)'%name)
             exec('col=self.colorpicker_font_%s.get_property(\'color\')'%name)
-            exec('self.textview_%s.modify_text(0, gtk.gdk.Color(%s, %s, %s))'%(name,col.red,col.green,col.blue))
+            exec('self.textview_%s.modify_text(0, gtk.gdk.Color(%s, %s, %s))'%(name, col.red, col.green, col.blue))
             exec('self.pref["color_font_%s"]=(col.red,col.green,col.blue)'%name)
         self.pref['auto_set_for']=self.checkb_autofor.get_active()
         self.pref['auto_set_out']=self.checkb_autoout.get_active()
@@ -1239,17 +1263,17 @@ else:\n\
             try:
                 fp = open(self.prefSavePath[0], 'w')
             except:
-                myRaise(__file__)
+                log.exception('error while opening save file %s'%self.prefSavePath[0])
                 return
         elif self.pref['save']==1:
             try:
                 fp = open(self.prefSavePath[1], 'w')
             except IOError:
-                myRaise(__file__)
+                log.exception('error while opening save file %s'%self.prefSavePath[1])
                 try:
                     fp = open(self.prefSavePath[0], 'w')
                 except:
-                    myRaise(__file__)
+                    log.exception('error while opening save file %s'%self.prefSavePath[0])
                     return
                 self.pref['save']=0
         else:
