@@ -30,6 +30,23 @@ sys.setrecursionlimit(10000)
 
 import os
 import re
+import hashlib
+
+def truncate(text, length=449):
+    """
+    trunct a string to given length
+    :param str text:
+    :return: truncated text
+    :rtype: str
+    """
+    content = re.sub('(\t|\n|\r)', ' ', text)
+    if (len(text)>length):
+        # find the next space after max_len chars (do not break inside a word)
+        pos = content[:length].rfind(' ')
+        if pos == -1:
+            pos = length
+        text = text[:pos]
+    return text
 
 def write_plist(glos, filename):
     try:
@@ -97,8 +114,8 @@ def write_xml(glos, filename, cleanHTML):
         title = re.sub('<[^<]+?>|"|[<>]|\xef\xbb\xbf', '', item[0])
         if not title:
             continue
-        # id contains no & sign
-        id = title.replace('&', '-')
+        # use MD5 hash of title string as id
+        id = hashlib.md5(title).hexdigest()
 
         # check entry id duplicates
         while id in entry_ids:
@@ -111,15 +128,15 @@ def write_xml(glos, filename, cleanHTML):
             alts = []
 
         # begin entry
-        f.write('<d:entry id="%(id)s" d:title="%(title)s">\n'%{'id':id, 'title':title.replace('&', '&amp;')})
+        f.write('<d:entry id="%(id)s" d:title="%(title)s">\n'%{'id':id, 'title':truncate(title.replace('&', '&amp;'), 1126)})
 
         # index values
         #   title as index
-        f.write('    <d:index d:value="%s"/>\n'%title)
+        f.write('    <d:index d:value="%s"/>\n'%truncate(title))
         #   alternative items as index also
         for alt in alts:
             if alt != title:
-                f.write('    <d:index d:value="%s"/>\n'%alt)
+                f.write('    <d:index d:value="%s"/>\n'%truncate(alt))
 
         # nice header to display
         content = ('<h1>%s</h1>\n'%title) + item[1]
