@@ -58,7 +58,7 @@ def write_plist(glos, filename):
 
     template = pkgutil.get_data(__name__, 'project_templates/Info.plist')
 
-    basename = os.path.splitext(os.path.basename(filename))[0]
+    basename = os.path.splitext(filename)[0]
     # identifier must be unique
     # use file base name
     identifier = basename.replace(' ', '')
@@ -159,19 +159,19 @@ def write_css(fname):
     with open(fname, 'w') as f:
         f.write(css)
 
-def write_makefile(fname):
+def write_makefile(dict_name):
     template = pkgutil.get_data(__name__, 'project_templates/Makefile')
-    dict_name = os.path.basename(fname)
-    with open(os.path.join(os.path.dirname(fname), 'Makefile'), 'w') as f:
+    with open('Makefile', 'w') as f:
         f.write(template % {'dict_name': dict_name})
 
-def write(glos, fname, cleanHTML="yes"):
-    basename = os.path.splitext(fname)[0]
+def write(glos, fpath, cleanHTML="yes"):
+    basename = os.path.splitext(fpath)[0]
+    dict_name = os.path.split(basename)[1]
     with chdir(basename, create=True):
-        write_plist(glos, basename + '.plist')
-        write_xml(glos, basename + '.xml', cleanHTML=="yes")
-        write_css(basename + '.css')
-        write_makefile(basename)
+        write_plist(glos, dict_name + '.plist')
+        write_xml(glos, dict_name + '.xml', cleanHTML=="yes")
+        write_css(dict_name + '.css')
+        write_makefile(dict_name)
 
 if __name__ == '__main__':
     import sys, os.path
