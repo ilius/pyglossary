@@ -16,6 +16,8 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ## GNU General Public License for more details.
 
+import pkgutil
+
 from formats_common import *
 
 enable = True
@@ -53,36 +55,24 @@ def write_plist(glos, filename):
         from bs4 import BeautifulSoup
     except:
         from BeautifulSoup import BeautifulSoup
-    f = open(filename, 'wb')
+
+    template = pkgutil.get_data(__name__, 'project_templates/Info.plist')
+
     basename = os.path.splitext(os.path.basename(filename))[0]
     # identifier must be unique
     # use file base name
     identifier = basename.replace(' ', '')
     # strip html tags
-    copyright = BeautifulSoup(glos.getInfo('copyright')).text
+    copyright = (u'%s' % BeautifulSoup(glos.getInfo('copyright')).text).encode('utf-8')
 
-    f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
-            '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n'
-            '<plist version="1.0">\n'
-            '<dict>\n')
-
-    f.write('    <key>CFBundleDevelopmentRegion</key>\n'
-            '    <string>English</string>\n')
-    f.write('    <key>CFBundleIdentifier</key>\n'
-            '    <string>com.babylon.%s</string>\n' % identifier)
-    f.write('    <key>CFBundleDisplayName</key>\n'
-            '    <string>%s</string>\n' % glos.getInfo('name'))
-    f.write('    <key>CFBundleName</key>\n'
-            '    <string>%s</string>\n' % basename)
-    f.write('    <key>CFBundleShortVersionString</key>\n'
-            '    <string>1.0</string>\n')
-    f.write((u'    <key>DCSDictionaryCopyright</key>\n'
-             u'    <string>%s.</string>\n' % copyright).encode('utf8'))
-    f.write('    <key>DCSDictionaryManufacturerName</key>\n'
-            '    <string>%s.</string>\n' % glos.getInfo('author'))
-    f.write('</dict>\n'
-            '</plist>\n')
-    f.close()
+    with open(filename, 'wb') as f:
+        f.write(template % {
+            "CFBundleIdentifier": identifier,
+            "CFBundleDisplayName": glos.getInfo('name'),
+            "CFBundleName": basename,
+            "DCSDictionaryCopyright": copyright,
+            "DCSDictionaryManufacturerName": glos.getInfo('author')
+        })
 
 def write_xml(glos, filename, cleanHTML):
     try:
@@ -165,61 +155,15 @@ def write_xml(glos, filename, cleanHTML):
         ui.progressEnd()
 
 def write_css(fname):
-    f = open(fname, "w")
-    f.write("""
-@charset "UTF-8";
-@namespace d url(http://www.apple.com/DTDs/DictionaryService-1.0.rng);
-
-d|entry {
-}
-
-h1  {
-    font-size: 150%;
-}
-
-h3  {
-    font-size: 100%;
-}
-""")
-    f.close()
+    css = pkgutil.get_data(__name__, 'project_templates/Dictionary.css')
+    with open(fname, 'w') as f:
+        f.write(css)
 
 def write_makefile(fname):
-    f = open(os.path.join(os.path.dirname(fname), "Makefile"), "w")
-    f.write("""
-DICT_NAME       =   "%(dict_name)s"
-DICT_SRC_PATH   =   "%(dict_name)s.xml"
-CSS_PATH        =   "%(dict_name)s.css"
-PLIST_PATH      =   "%(dict_name)s.plist"
-
-
-# The DICT_BUILD_TOOL_DIR value is used also in "build_dict.sh" script.
-# You need to set it when you invoke the script directly.
-
-DICT_BUILD_TOOL_DIR =   "/Developer/Extras/Dictionary Development Kit"
-DICT_BUILD_TOOL_BIN =   "$(DICT_BUILD_TOOL_DIR)/bin"
-
-DICT_DEV_KIT_OBJ_DIR    =   ./objects
-export  DICT_DEV_KIT_OBJ_DIR
-
-DESTINATION_FOLDER  =   ~/Library/Dictionaries
-RM          =   /bin/rm
-
-all:
-	"$(DICT_BUILD_TOOL_BIN)/build_dict.sh" $(DICT_BUILD_OPTS) $(DICT_NAME) $(DICT_SRC_PATH) $(CSS_PATH) $(PLIST_PATH)
-	echo "Done."
-
-
-install:
-	echo "Installing into $(DESTINATION_FOLDER)".
-	mkdir -p $(DESTINATION_FOLDER)
-	ditto --noextattr --norsrc $(DICT_DEV_KIT_OBJ_DIR)/$(DICT_NAME).dictionary  $(DESTINATION_FOLDER)/$(DICT_NAME).dictionary
-	touch $(DESTINATION_FOLDER)
-	echo "Done."
-	echo "To test the new dictionary, try Dictionary.app."
-
-clean:
-	$(RM) -rf $(DICT_DEV_KIT_OBJ_DIR)
-""" % {"dict_name" :  os.path.basename(fname)})
+    template = pkgutil.get_data(__name__, 'project_templates/Makefile')
+    dict_name = os.path.basename(fname)
+    with open(os.path.join(os.path.dirname(fname), 'Makefile'), 'w') as f:
+        f.write(template % {'dict_name': dict_name})
 
 def write(glos, fname, cleanHTML="yes"):
     basename = os.path.splitext(fname)[0]

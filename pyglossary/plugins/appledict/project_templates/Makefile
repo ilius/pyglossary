@@ -8,10 +8,10 @@
 
 # You need to edit these values.
 
-DICT_NAME		=	"My Dictionary"
-DICT_SRC_PATH		=	MyDictionary.xml
-CSS_PATH		=	MyDictionary.css
-PLIST_PATH		=	MyInfo.plist
+DICT_NAME		=	"%(dict_name)s"
+DICT_SRC_PATH		=	"%(dict_name)s.xml"
+CSS_PATH		=	"%(dict_name)s.css"
+PLIST_PATH		=	"%(dict_name)s.plist"
 
 DICT_BUILD_OPTS		=
 # Suppress adding supplementary key.
