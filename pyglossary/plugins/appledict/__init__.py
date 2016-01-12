@@ -25,7 +25,10 @@ format = 'AppleDict'
 description = 'AppleDict Source (xml)'
 extentions = ['.xml']
 readOptions = []
-writeOptions = ['cleanHTML']
+writeOptions = [
+    'cleanHTML',
+    'css',
+]
 
 import sys
 sys.setrecursionlimit(10000)
@@ -154,8 +157,12 @@ def write_xml(glos, filename, cleanHTML):
     if ui:
         ui.progressEnd()
 
-def write_css(fname):
-    css = pkgutil.get_data(__name__, 'project_templates/Dictionary.css')
+def write_css(fname, css_file):
+    if css_file:
+        with open(css_file, 'r') as f:
+            css = f.read()
+    else:
+        css = pkgutil.get_data(__name__, 'project_templates/Dictionary.css')
     with open(fname, 'w') as f:
         f.write(css)
 
@@ -164,13 +171,16 @@ def write_makefile(dict_name):
     with open('Makefile', 'w') as f:
         f.write(template % {'dict_name': dict_name})
 
-def write(glos, fpath, cleanHTML="yes"):
+def write(glos, fpath, cleanHTML="yes", css=None):
     basename = os.path.splitext(fpath)[0]
     dict_name = os.path.split(basename)[1]
+    # before chdir
+    if css:
+        css = os.path.abspath(os.path.join(os.getcwd(), css))
     with chdir(basename, create=True):
         write_plist(glos, dict_name + '.plist')
         write_xml(glos, dict_name + '.xml', cleanHTML=="yes")
-        write_css(dict_name + '.css')
+        write_css(dict_name + '.css', css)
         write_makefile(dict_name)
 
 if __name__ == '__main__':
