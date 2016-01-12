@@ -11,13 +11,3 @@ h1	{
 h3	{
 	font-size: 100%;
 }
-
-span.column {
-	display: block;
-	border: solid 2px #c0c0c0;
-	margin-left: 2em;
-	margin-right: 2em;
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
-	padding: 0.5em;
-}

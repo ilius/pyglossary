@@ -5,31 +5,16 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.apple.dictionary.MySample</string>
+	<string>%(CFBundleIdentifier)s</string>
+	<key>CFBundleDisplayName</key>
+	<string>%(CFBundleDisplayName)s</string>
 	<key>CFBundleName</key>
-	<string>MyDictionary</string>
+	<string>%(CFBundleName)s</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>DCSDictionaryCopyright</key>
-	<string>Copyright © 2007 Apple Inc.</string>
+	<string>%(DCSDictionaryCopyright)s.</string>
 	<key>DCSDictionaryManufacturerName</key>
-	<string>Apple Inc.</string>
-	<key>DCSDictionaryFrontMatterReferenceID</key>
-	<string>front_back_matter</string>
-	<key>DCSDictionaryPrefsHTML</key>
-	<string>MyDictionary_prefs.html</string>
-	<key>DCSDictionaryXSL</key>
-	<string>MyDictionary.xsl</string>
-	<key>DCSDictionaryDefaultPrefs</key>
-	<dict>
-		<key>pronunciation</key>
-		<string>0</string>
-		<key>display-column</key>
-		<string>1</string>
-		<key>display-picture</key>
-		<string>1</string>
-		<key>version</key>
-		<string>1</string>
-	</dict>
+	<string>%(DCSDictionaryManufacturerName)s.</string>
 </dict>
 </plist>
