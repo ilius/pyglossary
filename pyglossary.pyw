@@ -22,89 +22,26 @@
 import os, sys
 import argparse
 import __builtin__
-from pyglossary.glossary import confPath, VERSION
 from os.path import dirname, join, realpath
 import logging
 import traceback
 
 from pyglossary import core ## essential
-from ui.ui_cmd import COMMAND, help, parseFormatOptionsStr
-from ui.ui_cmd import startRed, endFormat
+from pyglossary import VERSION
+from pyglossary.text_utils import startRed, endFormat
 
-log = logging.getLogger('root')
-
-##############################
-
-def my_excepthook(_type, value, tback):
-    tback_text = ''.join(traceback.format_exception(_type, value, tback))
-    log.critical(tback_text)
-sys.excepthook = my_excepthook
-
-##############################
-
-class StdLogHandler(logging.Handler):
-    def __init__(self, noColor=False):
-        logging.Handler.__init__(self)
-        self.noColor = noColor
-    def emit(self, record):
-        msg = record.getMessage()
-        ###
-        if record.exc_info:
-            _type, value, tback = record.exc_info
-            tback_text = ''.join(traceback.format_exception(_type, value, tback))
-            if not msg:
-                msg = 'unhandled exception:'
-            msg += '\n'
-            msg += tback_text
-        ###
-        if record.levelname in ('CRITICAL', 'ERROR'):
-            if not self.noColor:
-                msg = startRed + msg + endFormat
-            fp = sys.stderr
-        else:
-            fp = sys.stdout
-        ###
-        fp.write(msg + '\n')
-        fp.flush()
-    #def exception(self, msg):
-    #    if not self.noColor:
-    #        msg = startRed + msg + endFormat
-    #    sys.stderr.write(msg + '\n')
-    #    sys.stderr.flush()
-
-
-################################################################
-
-def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
-    parts = text.split('-')
-    parts[0] = parts[0].lower()
-    for i in range(1, len(parts)):
-        parts[i] = parts[i].capitalize()
-    return ''.join(parts)
-
-use_psyco_file = '%s_use_psyco'%confPath
-psyco_found = None
-
-ui_list = (
-    'gtk',
-    'gtk_new',
-    'tk',
-    'qt',
-)
-
-#log.info('PyGlossary %s'%VERSION)
-
-if os.path.isfile(use_psyco_file):
-    try:
-        import psyco
-    except ImportError:
-        log.warn('Warning: module "psyco" not found. It could speed up execution.')
-        psyco_found = False
-    else:
-        psyco.full()
-        log.info('Using module "psyco" to speed up execution.')
-        psyco_found = True
-
+# the first thing to do is to set up logger.
+# other modules also using logger 'root', so it's essential to set it up prior
+# to importing anything else; with exception to pyglossary.core which sets up
+# logger class, and so should be done before actually initializing logger.
+# verbosity level may be given on command line, so we have to parse arguments
+# before setting up logger.
+# once more:
+# - import system modules like os, sys, argparse etc and pyglossary.core
+# - parse args
+# - set up logger
+# - import submodules
+# - other code
 
 ## no-progress-bar only for command line UI
 ## FIXME: load ui-dependent available options from ui modules (for example ui_cmd.available_options)
@@ -205,28 +142,101 @@ parser.add_argument(
     nargs='?',
 )
 
-
-
 args = parser.parse_args()
 #log.debug(args) ; sys.exit(0)
 
 
+class StdLogHandler(logging.Handler):
+    def __init__(self, noColor=False):
+        logging.Handler.__init__(self)
+        self.noColor = noColor
+    def emit(self, record):
+        msg = record.getMessage()
+        ###
+        if record.exc_info:
+            _type, value, tback = record.exc_info
+            tback_text = ''.join(traceback.format_exception(_type, value, tback))
+            if not msg:
+                msg = 'unhandled exception:'
+            msg += '\n'
+            msg += tback_text
+        ###
+        if record.levelname in ('CRITICAL', 'ERROR'):
+            if not self.noColor:
+                msg = startRed + msg + endFormat
+            fp = sys.stderr
+        else:
+            fp = sys.stdout
+        ###
+        fp.write(msg + '\n')
+        fp.flush()
+    #def exception(self, msg):
+    #    if not self.noColor:
+    #        msg = startRed + msg + endFormat
+    #    sys.stderr.write(msg + '\n')
+    #    sys.stderr.flush()
+
+
+log = logging.getLogger('root')
+log.setVerbosity(args.verbosity)
+log.addHandler(
+    StdLogHandler(noColor=args.noColor),
+)
+
+
+# with the logger setted up, we can import other pyglossary modules, so they
+# can do some loggging in right way.
+
+from pyglossary.glossary import confPath
+from ui.ui_cmd import COMMAND, help, parseFormatOptionsStr
+
+##############################
+
+def my_excepthook(_type, value, tback):
+    tback_text = ''.join(traceback.format_exception(_type, value, tback))
+    log.critical(tback_text)
+sys.excepthook = my_excepthook
+
+##############################
+
+def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
+    parts = text.split('-')
+    parts[0] = parts[0].lower()
+    for i in range(1, len(parts)):
+        parts[i] = parts[i].capitalize()
+    return ''.join(parts)
+
+use_psyco_file = '%s_use_psyco'%confPath
+psyco_found = None
+
+ui_list = (
+    'gtk',
+    'gtk_new',
+    'tk',
+    'qt',
+)
+
+#log.info('PyGlossary %s'%VERSION)
+
+if os.path.isfile(use_psyco_file):
+    try:
+        import psyco
+    except ImportError:
+        log.warn('Warning: module "psyco" not found. It could speed up execution.')
+        psyco_found = False
+    else:
+        psyco.full()
+        log.info('Using module "psyco" to speed up execution.')
+        psyco_found = True
 
 
 if args.help:
     help()
     sys.exit(0)
 
-verbosity = args.verbosity
-log.setVerbosity(verbosity)
-
 
 if os.sep != '/':
     args.noColor = True
-
-log.addHandler(
-    StdLogHandler(noColor=args.noColor),
-)
 
 
 ## only used in ui_cmd for now

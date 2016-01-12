@@ -18,7 +18,7 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-VERSION = '2013.01.03'
+from . import VERSION
 
 homePage = 'http://github.com/ilius/pyglossary'
 
