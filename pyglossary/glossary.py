@@ -25,6 +25,7 @@ homePage = 'http://github.com/ilius/pyglossary'
 import os, sys, platform, time, subprocess, shutil, re
 from os.path import split, join, splitext, isdir, dirname
 import logging
+import pkgutil
 
 import core
 from text_utils import faEditStr, replacePostSpaceChar, removeTextTags,\
@@ -34,19 +35,6 @@ import warnings
 warnings.resetwarnings() ## ??????
 
 log = logging.getLogger('root')
-
-_myDir = dirname(__file__)
-if not isdir(_myDir):
-   _myDir = dirname(dirname(_myDir))
-
-
-plugDir = join(_myDir, 'plugins')
-if isdir(plugDir):
-    sys.path.append(plugDir)
-else:
-    log.error('invalid plugin directory %r'%plugDir)
-    plugDir = ''
-
 
 psys = platform.system()
 
@@ -114,48 +102,71 @@ class Glossary:
         data[i][2]['defiFormat'] - format of the definition: 'h' - html, 'm' - plain text
     """
     data = []
-    # load plugins
-    if plugDir:
-        for f in os.listdir(plugDir):
-            if f[-3:]!='.py':
-                continue
-            modName = f[:-3]
-            mod = __import__(modName)
-            try:
-                if not mod.enable:
-                    continue
-            except AttributeError:
-                continue
-            #log.debug('loading plugin module %s'%modName)
-            format = mod.format
-            ext = mod.extentions
-            if isinstance(ext, basestring):
-                ext = (ext,)
-            elif not isinstance(ext, tuple):
-                ext = tuple(ext)
-            try:
-                desc = mod.description
-            except AttributeError:
-                desc = '%s (%s)'%(format, ext[0])
-            descFormat[desc] = format
-            descExt[desc] = ext[0]
-            for oneExt in ext:
-                extFormat[oneExt] = format
-            formatsExt[format] = ext
-            formatsDesc[format] = desc
-            if hasattr(mod, 'read'):
-                exec('read%s = mod.read'%format)
-                readFormats.append(format)
-                readExt.append(ext)
-                readDesc.append(desc)
-                formatsReadOptions[format] = mod.readOptions
-            if hasattr(mod, 'write'):
-                exec('write%s = mod.write'%format)
-                writeFormats.append(format)
-                writeExt.append(ext)
-                writeDesc.append(desc)
-                formatsWriteOptions[format] = mod.writeOptions
-            del f, mod, format, ext, desc
+
+    @classmethod
+    def load_plugins(cls, directory):
+        """executed on startup.  as name implies, loads plugins from directory."""
+        log.debug("loading plugins from directory: %r" % directory)
+        if not isdir(directory):
+            log.error('invalid plugin directory: %r' % directory)
+            return
+
+        sys.path.append(directory)
+        for _, plugin, _ in pkgutil.iter_modules([directory]):
+            cls.load_plugin(plugin)
+
+    @classmethod
+    def load_plugin(cls, plugin_name):
+        log.debug('loading plugin %s' % plugin_name)
+        try:
+            plugin = __import__(plugin_name)
+        except (ImportError, SyntaxError) as e:
+            log.error("error while importing plugin %s" % plugin_name, exc_info=1)
+            return
+
+        if (not hasattr(plugin, 'enable')) or (not plugin.enable):
+            log.debug("plugin disabled or not a plugin: %s.  skipping..." % plugin_name)
+            return
+
+        format = plugin.format
+
+        extentions = plugin.extentions
+        # FIXME: deprecate non-tuple values in plugin.extentions
+        if isinstance(extentions, basestring):
+            extentions = (extentions,)
+        elif not isinstance(extentions, tuple):
+            extentions = tuple(extentions)
+
+        if hasattr(plugin, 'description'):
+            desc = plugin.description
+        else:
+            desc = '%s (%s)' % (format, extentions[0])
+
+        cls.descFormat[desc] = format
+        cls.descExt[desc] = extentions[0]
+        for ext in extentions:
+            cls.extFormat[ext] = format
+        cls.formatsExt[format] = extentions
+        cls.formatsDesc[format] = desc
+
+        if hasattr(plugin, 'read'):
+            exec('cls.read%s = plugin.read' % format)  # FIXME: OMG WTF
+            cls.readFormats.append(format)
+            cls.readExt.append(extentions)
+            cls.readDesc.append(desc)
+            cls.formatsReadOptions[format] = plugin.readOptions \
+                if hasattr(plugin, 'readOptions') else []
+
+        if hasattr(plugin, 'write'):
+            exec('cls.write%s = plugin.write' % format)
+            cls.writeFormats.append(format)
+            cls.writeExt.append(extentions)
+            cls.writeDesc.append(desc)
+            cls.formatsWriteOptions[format] = plugin.writeOptions \
+                if hasattr(plugin, 'writeOptions') else []
+
+        log.debug("plugin loaded OK: %s" % plugin_name)
+        return plugin
 
 
     def __init__(self, info=[], data=[], ui=None, filename='', resPath=''):
@@ -1035,3 +1046,4 @@ class Glossary:
                 f.write('key = ' + item[0] + '\n')
                 f.write('defi = ' + item[1] + '\n\n')
 
+Glossary.load_plugins(join(dirname(__file__), 'plugins'))
