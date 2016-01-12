@@ -167,10 +167,11 @@ def write_makefile(fname):
 
 def write(glos, fname, cleanHTML="yes"):
     basename = os.path.splitext(fname)[0]
-    write_plist(glos, basename + '.plist')
-    write_xml(glos, basename + '.xml', cleanHTML=="yes")
-    write_css(basename + '.css')
-    write_makefile(basename)
+    with chdir(basename, create=True):
+        write_plist(glos, basename + '.plist')
+        write_xml(glos, basename + '.xml', cleanHTML=="yes")
+        write_css(basename + '.css')
+        write_makefile(basename)
 
 if __name__ == '__main__':
     import sys, os.path
