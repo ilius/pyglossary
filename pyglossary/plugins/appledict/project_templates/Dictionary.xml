@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	This is a sample dictionary source file.
+	It can be built using Dictionary Development Kit.
+-->
+<d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+<d:entry id="dictionary_application" d:title="Dictionary application">
+	<d:index d:value="Dictionary application"/>
+	<h1>Dictionary application </h1>
+	<p>
+		An application to look up dictionary on Mac OS X.<br/>
+	</p>
+	<span class="column">
+		The Dictionary application first appeared in Tiger.
+	</span>
+	<span class="picture">
+		It's application icon looks like below.<br/>
+		<img src="Images/dictionary.png" alt="Dictionary.app Icon"/>
+	</span>
+</d:entry>
+<d:entry id="make_1" d:title="make">
+	<d:index d:value="make"/>
+	<d:index d:value="makes"/>
+	<d:index d:value="made" d:title="made (make)"/>
+	<d:index d:value="making"/>
+	<d:index d:value="make it" d:parental-control="1" d:anchor="xpointer(//*[@id='make_it'])"/>
+	<div d:priority="2"><h1>make</h1></div>
+	<span class="syntax">
+		<span d:pr="US">| māk |</span>
+		<span d:pr="US_IPA">| meɪk |</span>
+		<span d:pr="UK_IPA">| meɪk |</span>
+	</span>
+	<div>
+		<ol>
+			<li>
+				Form by putting parts together or combining substances; construct; create; produce 
+				<span d:priority="2"> : <i>Mother made her a beautiful dress</i>
+				</span>
+				.
+			</li>
+			<li>
+				Cause to be or become
+				<span d:priority="2"> : <i>The news made me happy</i>
+				</span>
+				.
+			</li>
+		</ol>
+	</div>
+	<div d:parental-control="1" d:priority="2">
+		<h3>PHRASES</h3>
+		<div id="make_it"><b>make it</b> : succeed in something; survive.</div>
+		<h4><a href="x-dictionary:r:make_up_ones_mind"><b>make up one's mind</b></a></h4>
+	</div>
+</d:entry>
+<d:entry id="make_up_ones_mind" d:title="make up one's mind" d:parental-control="1">
+	<d:index d:value="make up one's mind"/>
+	<h1>make up one's mind</h1>
+	<ul>
+		<li>
+		make a decision.
+		</li>
+	</ul>
+</d:entry>
+<d:entry id="front_back_matter" d:title="Front/Back Matter">
+	<h1><b>My Dictionary</b></h1>
+	<h2>Front/Back Matter</h2>
+	<div>
+		This is a front matter page of the sample dictionary.<br/><br/>
+	</div>
+	<div>
+		<b>To see</b> this page,
+		<ol>
+			<li>Open "Go" menu.</li>
+			<li>Choose "Front/Back Matter" menu item. 
+			If it has sub-menu items, choose one of them.</li>
+		</ol>
+	</div>
+	<div>
+		<b>To prepare</b> the menu item, do the followings.
+		<ol>
+			<li>Prepare this page source as an entry.</li>
+			<li>Add "DCSDictionaryFrontMatterReferenceID" key and its value to the plist of the dictionary.
+			The value should be the string of this page entry id. </li>
+		</ol>
+	</div>
+	<br/>
+</d:entry>
+</d:dictionary>
