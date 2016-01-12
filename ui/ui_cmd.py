@@ -46,18 +46,43 @@ COMMAND = 'pyglossary'
 
 
 
+def formats_table(formats, header):
+    names = []
+    descriptions = []
+    extentions = []
+    for f in formats:
+        names.append(f)
+        descriptions.append(Glossary.formatsDesc[f])
+        extentions.append(Glossary.formatsExt[f])
+    extentions = map(' '.join, extentions)
+
+    maxlen = lambda s, seq: max(len(s), max(map(len, seq)))
+    names_max = maxlen('name', names)
+    descriptions_max = maxlen('description', descriptions)
+    extentions_max = maxlen('extentions', extentions)
+
+    s = '\n%s%s%s\n' % (startBold, header, endFormat)
+    s += ' | '.join(['name'.center(names_max),
+                     'description'.center(descriptions_max),
+                     'extentions'.center(extentions_max)]) + '\n'
+    s += '-+-'.join(['-' * names_max,
+                     '-' * descriptions_max,
+                     '-' * extentions_max])+ '\n'
+    for i in xrange(len(names)):  # formats may be lazy, but `names' is a list
+        s += ' | '.join([names[i].ljust(names_max),
+                         descriptions[i].ljust(descriptions_max),
+                         extentions[i].ljust(extentions_max)]) + '\n'
+    return s
+
+
 def help():
     text = open(join(rootDir, 'help')).read()\
         .replace('%CMD', COMMAND)\
         .replace('%SB', startBold)\
         .replace('%SU', startUnderline)\
         .replace('%EF', endFormat)
-    text += '\n%sSupported input formats:%s'%(startBold, endFormat)
-    for f in Glossary.readFormats:
-        text += '\n  %s'%Glossary.formatsDesc[f]
-    text += '\n%sSupported output formats:%s'%(startBold, endFormat)
-    for f in Glossary.writeFormats:
-        text += '\n  %s'%Glossary.formatsDesc[f]
+    text += formats_table(Glossary.readFormats, 'Supported input formats:')
+    text += formats_table(Glossary.writeFormats, 'Supported output formats:')
     print(text)
 
 
