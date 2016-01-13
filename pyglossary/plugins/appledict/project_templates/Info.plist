@@ -16,5 +16,11 @@
 	<string>%(DCSDictionaryCopyright)s.</string>
 	<key>DCSDictionaryManufacturerName</key>
 	<string>%(DCSDictionaryManufacturerName)s.</string>
+	<key>DCSDictionaryXSL</key>
+	<string>%(DCSDictionaryXSL)s</string>
+	<key>DCSDictionaryDefaultPrefs</key>
+	<dict>
+		%(DCSDictionaryDefaultPrefs)s
+	</dict>
 </dict>
 </plist>

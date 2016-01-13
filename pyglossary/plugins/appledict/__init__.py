@@ -17,6 +17,7 @@
 ## GNU General Public License for more details.
 
 import pkgutil
+import shutil
 
 from formats_common import *
 
@@ -28,7 +29,10 @@ readOptions = []
 writeOptions = [
     'cleanHTML',
     'css',
+    'xsl',
 ]
+
+OtherResources = 'OtherResources'
 
 import sys
 sys.setrecursionlimit(10000)
@@ -53,7 +57,13 @@ def truncate(text, length=449):
         text = text[:pos]
     return text
 
-def write_plist(glos, filename):
+def write_xsl(xsl):
+    if not xsl:
+        return
+    with chdir(OtherResources, create=True):
+        shutil.copyfile(xsl, os.path.basename(xsl))
+
+def write_plist(glos, filename, xsl=None):
     try:
         from bs4 import BeautifulSoup
     except:
@@ -68,13 +78,17 @@ def write_plist(glos, filename):
     # strip html tags
     copyright = (u'%s' % BeautifulSoup(glos.getInfo('copyright')).text).encode('utf-8')
 
+    # if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
+    # present in Info.plist, Dictionary.app will crash.
     with open(filename, 'wb') as f:
         f.write(template % {
             "CFBundleIdentifier": identifier,
             "CFBundleDisplayName": glos.getInfo('name'),
             "CFBundleName": basename,
             "DCSDictionaryCopyright": copyright,
-            "DCSDictionaryManufacturerName": glos.getInfo('author')
+            "DCSDictionaryManufacturerName": glos.getInfo('author'),
+            "DCSDictionaryXSL": (os.path.basename(xsl) if xsl else ""),
+            "DCSDictionaryDefaultPrefs": "",
         })
 
 def write_xml(glos, filename, cleanHTML):
@@ -171,17 +185,20 @@ def write_makefile(dict_name):
     with open('Makefile', 'w') as f:
         f.write(template % {'dict_name': dict_name})
 
-def write(glos, fpath, cleanHTML="yes", css=None):
+def write(glos, fpath, cleanHTML="yes", css=None, xsl=None):
     basename = os.path.splitext(fpath)[0]
     dict_name = os.path.split(basename)[1]
     # before chdir
     if css:
         css = os.path.abspath(os.path.join(os.getcwd(), css))
+    if xsl:
+        xsl = os.path.abspath(os.path.join(os.getcwd(), xsl))
     with chdir(basename, create=True):
-        write_plist(glos, dict_name + '.plist')
+        write_plist(glos, dict_name + '.plist', xsl=xsl)
         write_xml(glos, dict_name + '.xml', cleanHTML=="yes")
         write_css(dict_name + '.css', css)
         write_makefile(dict_name)
+        write_xsl(xsl)
 
 if __name__ == '__main__':
     import sys, os.path
