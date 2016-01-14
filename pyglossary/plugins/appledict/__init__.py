@@ -32,6 +32,7 @@ writeOptions = [
     'xsl',
     'defaultPrefs',
     'prefsHTML',
+    'frontBackMatter',
 ]
 
 OtherResources = 'OtherResources'
@@ -87,7 +88,7 @@ def format_default_prefs(defaultPrefs):
     return "\n".join("\t\t<key>%s</key>\n\t\t<string>%s</string>" % i
                      for i in sorted(defaultPrefs.iteritems())).strip()
 
-def write_plist(glos, filename, xsl=None, defaultPrefs=None, prefsHTML=None):
+def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
     try:
         from bs4 import BeautifulSoup
     except:
@@ -114,9 +115,12 @@ def write_plist(glos, filename, xsl=None, defaultPrefs=None, prefsHTML=None):
             "DCSDictionaryXSL": (os.path.basename(xsl) if xsl else ""),
             "DCSDictionaryDefaultPrefs": format_default_prefs(defaultPrefs),
             "DCSDictionaryPrefsHTML": (os.path.basename(prefsHTML) if prefsHTML else ""),
+            "DCSDictionaryFrontMatterReferenceID":
+                ("<key>DCSDictionaryFrontMatterReferenceID</key>\n"
+                 "\t<string>front_back_matter</string>" if frontBackMatter else ""),
         })
 
-def write_xml(glos, filename, cleanHTML):
+def write_xml(glos, filename, cleanHTML, frontBackMatter):
     try:
         from bs4 import BeautifulSoup
     except:
@@ -134,6 +138,10 @@ def write_xml(glos, filename, cleanHTML):
     # write header
     f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\n')
+
+    if frontBackMatter:
+        with open(frontBackMatter, 'r') as front_back_matter:
+            f.write(front_back_matter.read())
 
     # write entries
     entry_ids = set([])
@@ -216,16 +224,17 @@ def write_prefsHTML(prefsHTML_file):
     with chdir(OtherResources, create=True):
         shutil.copyfile(prefsHTML_file, os.path.basename(prefsHTML_file))
 
-def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None):
+def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None, frontBackMatter=None):
     basename = os.path.splitext(fpath)[0]
     dict_name = os.path.split(basename)[1]
     # before chdir
     css = abspath_or_None(css)
     xsl = abspath_or_None(xsl)
     prefsHTML = abspath_or_None(prefsHTML)
+    frontBackMatter = abspath_or_None(frontBackMatter)
     with chdir(basename, create=True):
-        write_plist(glos, dict_name + '.plist', xsl=xsl, defaultPrefs=defaultPrefs, prefsHTML=prefsHTML)
-        write_xml(glos, dict_name + '.xml', cleanHTML=="yes")
+        write_plist(glos, dict_name + '.plist', xsl=xsl, defaultPrefs=defaultPrefs, prefsHTML=prefsHTML, frontBackMatter=frontBackMatter)
+        write_xml(glos, dict_name + '.xml', cleanHTML=="yes", frontBackMatter=frontBackMatter)
         write_css(dict_name + '.css', css)
         write_makefile(dict_name)
         write_xsl(xsl)
