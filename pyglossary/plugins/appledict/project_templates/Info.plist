@@ -22,5 +22,7 @@
 	<dict>
 		%(DCSDictionaryDefaultPrefs)s
 	</dict>
+	<key>DCSDictionaryPrefsHTML</key>
+	<string>%(DCSDictionaryPrefsHTML)s</string>
 </dict>
 </plist>

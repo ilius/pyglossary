@@ -30,6 +30,8 @@ writeOptions = [
     'cleanHTML',
     'css',
     'xsl',
+    'defaultPrefs',
+    'prefsHTML',
 ]
 
 OtherResources = 'OtherResources'
@@ -57,13 +59,35 @@ def truncate(text, length=449):
         text = text[:pos]
     return text
 
+def abspath_or_None(path):
+    return os.path.abspath(os.path.expanduser(path)) if path else None
+
 def write_xsl(xsl):
     if not xsl:
         return
     with chdir(OtherResources, create=True):
         shutil.copyfile(xsl, os.path.basename(xsl))
 
-def write_plist(glos, filename, xsl=None):
+def format_default_prefs(defaultPrefs):
+    """
+    :type defaultPrefs: dict or None
+
+    as by 14th of Jan 2016, it is highly recommended that prefs should contain
+    {'version': '1'}, otherwise Dictionary.app does not keep user changes
+    between restarts.
+    """
+    if not defaultPrefs:
+        return ""
+    if not isinstance(defaultPrefs, dict):
+        raise TypeError("defaultPrefs not a dictionary: %r" % defaultPrefs)
+    if str(defaultPrefs.get('version', None)) != '1':
+        from pyglossary.glossary import log
+        log.error("default prefs does not contain {'version': '1'}.  prefs "
+                  "will not be persistent between Dictionary.app restarts.")
+    return "\n".join("\t\t<key>%s</key>\n\t\t<string>%s</string>" % i
+                     for i in sorted(defaultPrefs.iteritems())).strip()
+
+def write_plist(glos, filename, xsl=None, defaultPrefs=None, prefsHTML=None):
     try:
         from bs4 import BeautifulSoup
     except:
@@ -88,7 +112,8 @@ def write_plist(glos, filename, xsl=None):
             "DCSDictionaryCopyright": copyright,
             "DCSDictionaryManufacturerName": glos.getInfo('author'),
             "DCSDictionaryXSL": (os.path.basename(xsl) if xsl else ""),
-            "DCSDictionaryDefaultPrefs": "",
+            "DCSDictionaryDefaultPrefs": format_default_prefs(defaultPrefs),
+            "DCSDictionaryPrefsHTML": (os.path.basename(prefsHTML) if prefsHTML else ""),
         })
 
 def write_xml(glos, filename, cleanHTML):
@@ -185,20 +210,26 @@ def write_makefile(dict_name):
     with open('Makefile', 'w') as f:
         f.write(template % {'dict_name': dict_name})
 
-def write(glos, fpath, cleanHTML="yes", css=None, xsl=None):
+def write_prefsHTML(prefsHTML_file):
+    if not prefsHTML_file:
+        return
+    with chdir(OtherResources, create=True):
+        shutil.copyfile(prefsHTML_file, os.path.basename(prefsHTML_file))
+
+def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None):
     basename = os.path.splitext(fpath)[0]
     dict_name = os.path.split(basename)[1]
     # before chdir
-    if css:
-        css = os.path.abspath(os.path.join(os.getcwd(), css))
-    if xsl:
-        xsl = os.path.abspath(os.path.join(os.getcwd(), xsl))
+    css = abspath_or_None(css)
+    xsl = abspath_or_None(xsl)
+    prefsHTML = abspath_or_None(prefsHTML)
     with chdir(basename, create=True):
-        write_plist(glos, dict_name + '.plist', xsl=xsl)
+        write_plist(glos, dict_name + '.plist', xsl=xsl, defaultPrefs=defaultPrefs, prefsHTML=prefsHTML)
         write_xml(glos, dict_name + '.xml', cleanHTML=="yes")
         write_css(dict_name + '.css', css)
         write_makefile(dict_name)
         write_xsl(xsl)
+        write_prefsHTML(prefsHTML)
 
 if __name__ == '__main__':
     import sys, os.path
