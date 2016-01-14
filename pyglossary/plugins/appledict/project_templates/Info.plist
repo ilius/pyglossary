@@ -24,5 +24,6 @@
 	</dict>
 	<key>DCSDictionaryPrefsHTML</key>
 	<string>%(DCSDictionaryPrefsHTML)s</string>
+	%(DCSDictionaryFrontMatterReferenceID)s
 </dict>
 </plist>
