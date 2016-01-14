@@ -33,6 +33,7 @@ writeOptions = [
     'defaultPrefs',
     'prefsHTML',
     'frontBackMatter',
+    'OtherResources',
 ]
 
 OtherResources = 'OtherResources'
@@ -224,7 +225,35 @@ def write_prefsHTML(prefsHTML_file):
     with chdir(OtherResources, create=True):
         shutil.copyfile(prefsHTML_file, os.path.basename(prefsHTML_file))
 
-def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None, frontBackMatter=None):
+def write_resources(paths):
+    """copy files and directories 'paths' to 'OtherResources'.
+    each item of 'paths' must be an absolute path.
+    """
+    if not paths:
+        return
+    with chdir(OtherResources, create=True):
+        # cannot just shutil.copytree as it will fail with error if
+        # destination exists, but we want to merge instead.
+        for path in paths:
+            name = os.path.split(path)[1]
+            if os.path.isdir(path):
+                shutil.copytree(path, name)
+            else:
+                shutil.copy2(path, name)
+
+def safe_listdir_set(path):
+    """
+    :rtype: set
+    """
+    if not path:
+        return set()
+    if not os.path.isdir(path):
+        from pyglossary.glossary import log
+        log.error("resource path is not a directory: %r" % path)
+        return set()
+    return set(map(lambda node: os.path.join(path, node), os.listdir(path)))
+
+def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None, frontBackMatter=None, OtherResources=None):
     """write glossary to Apple dictionary .xml and supporting files.
 
     :type glos: pyglossary.glossary.Glossary
@@ -255,6 +284,10 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
     <d:entry id="front_back_matter" d:title="Your Front/Back Matter Title">
         your front/back matter entry content
     </d:entry>
+
+    :type OtherResources: str or None
+    :param OtherResources: path to 'OtherResources' directory.  Apple
+    recommending store images in 'OtherResources/Images'.
     """
     basename = os.path.splitext(fpath)[0]
     dict_name = os.path.split(basename)[1]
@@ -263,6 +296,13 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
     xsl = abspath_or_None(xsl)
     prefsHTML = abspath_or_None(prefsHTML)
     frontBackMatter = abspath_or_None(frontBackMatter)
+    glos.resPath = abspath_or_None(glos.resPath)
+    OtherResources = abspath_or_None(OtherResources)
+
+    # to avoid copying css, prefs or something like that.
+    res = safe_listdir_set(glos.resPath).union(safe_listdir_set(OtherResources))
+    res -= {css, xsl, prefsHTML, frontBackMatter}
+
     with chdir(basename, create=True):
         write_plist(glos, dict_name + '.plist', xsl=xsl, defaultPrefs=defaultPrefs, prefsHTML=prefsHTML, frontBackMatter=frontBackMatter)
         write_xml(glos, dict_name + '.xml', cleanHTML=="yes", frontBackMatter=frontBackMatter)
@@ -270,6 +310,7 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
         write_makefile(dict_name)
         write_xsl(xsl)
         write_prefsHTML(prefsHTML)
+        write_resources(res)
 
 if __name__ == '__main__':
     import sys, os.path
