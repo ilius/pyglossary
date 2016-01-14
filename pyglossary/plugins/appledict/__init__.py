@@ -225,6 +225,37 @@ def write_prefsHTML(prefsHTML_file):
         shutil.copyfile(prefsHTML_file, os.path.basename(prefsHTML_file))
 
 def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None, frontBackMatter=None):
+    """write glossary to Apple dictionary .xml and supporting files.
+
+    :type glos: pyglossary.glossary.Glossary
+    :type fpath: str
+
+    :type cleanHTML: str
+    :param cleanHTML: pass "yes" to use BeautifulSoup parser.
+
+    :type css: str or None
+    :param css: path to custom .css file
+
+    :type xsl: str or None
+    :param xsl: path to custom XSL transformations file.
+
+    :type defaultPrefs: dict or None
+    :param defaultPrefs: Default prefs in python dictionary literal format,
+    i.e. {'key1': 'value1', "key2": "value2", ...}.  All keys and values must
+    be quoted strings; not allowed characters (e.g. single/double quotes,
+    equal sign '=', semicolon) must be escaped as hex code according to
+    python string literal rules.
+
+    :type prefsHTML: str or None
+    :param prefsHTML: path to XHTML file with user interface for dictionary's
+    preferences.  refer to Apple's documentation for details.
+
+    :type frontBackMatter: str or None
+    :param frontBackMatter: path to XML file with top-level tag
+    <d:entry id="front_back_matter" d:title="Your Front/Back Matter Title">
+        your front/back matter entry content
+    </d:entry>
+    """
     basename = os.path.splitext(fpath)[0]
     dict_name = os.path.split(basename)[1]
     # before chdir
