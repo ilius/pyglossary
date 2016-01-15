@@ -91,11 +91,11 @@ img_tag = re.compile('<IMG (.*?)>', re.IGNORECASE)
 
 def format_clean_content(title, body, BeautifulSoup):
     # nice header to display
-    content = ('<h1>%s</h1>\n'%title) + body
+    content = '<h1>%s</h1>%s' % (title, body)
     # xhtml is strict
     if BeautifulSoup:
-        soup  = BeautifulSoup.BeautifulSoup(content, from_encoding='utf8')
-        content = str(soup)
+        soup  = BeautifulSoup.BeautifulSoup(content, from_encoding='utf-8')
+        content = ''.join(map(str, soup.body.contents))
     else:
         content = close_tag.sub('<\g<1> />', content)
         content = img_tag.sub('<img \g<1>/>', content)
