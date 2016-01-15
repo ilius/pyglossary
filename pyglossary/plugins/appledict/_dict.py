@@ -16,8 +16,8 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ## GNU General Public License for more details.
 
-import hashlib
 import re
+import string
 
 from . import _normalize
 
@@ -44,19 +44,28 @@ def get_beautiful_soup():
             return None
     return BeautifulSoup
 
+digs = string.digits + string.letters
+
+def base36(x):
+    """
+    simplified version of int2base
+    http://stackoverflow.com/questions/2267362/convert-integer-to-a-string-in-a-given-numeric-base-in-python#2267446
+    """
+    digits = []
+    while x:
+        digits.append(digs[x % 36])
+        x /= 36
+    digits.reverse()
+    return ''.join(digits)
+
 def id_generator():
     # closure
-    entry_ids = set([])
+    cnt = [1]
 
-    def generate_id(title):
-        # use MD5 hash of title string as id
-        id = '_' + hashlib.md5(title).hexdigest()
-
-        # check entry id duplicates
-        while id in entry_ids:
-            id += '_'
-        entry_ids.add(id)
-        return id
+    def generate_id():
+        s = '_%s' % base36(cnt[0])
+        cnt[0] += 1
+        return s
 
     return generate_id
 
@@ -110,7 +119,7 @@ def write_entries(glos, f, cleanHTML):
         if not title:
             continue
 
-        id = generate_id(title)
+        id = generate_id()
 
         begin_entry = '<d:entry id="%(id)s" d:title=%(title)s>\n' % {
             'id': id,
