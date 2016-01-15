@@ -80,7 +80,10 @@ def indexes_generator():
         indexes = set(indexes)
         s = ''
         for idx in indexes:
-            s += '<d:index d:value=%s/>' % BeautifulSoup.dammit.EntitySubstitution.substitute_xml(idx, True)
+            if BeautifulSoup:
+                s += '<d:index d:value=%s/>' % BeautifulSoup.dammit.EntitySubstitution.substitute_xml(idx, True)
+            else:
+                s += '<d:index d:value="%s"/>' % idx.replace('>', '&gt;')
         return s
     return generate_indexes
 
@@ -94,8 +97,9 @@ def format_clean_content(title, body, BeautifulSoup):
     content = '<h1>%s</h1>%s' % (title, body)
     # xhtml is strict
     if BeautifulSoup:
-        soup  = BeautifulSoup.BeautifulSoup(content, from_encoding='utf-8')
-        content = ''.join(map(str, soup.body.contents))
+        soup = BeautifulSoup.BeautifulSoup(content, from_encoding='utf-8')
+        b = soup.body  # difference between 'lxml' and 'html.parser'
+        content = ''.join(map(str, (b if b else soup).contents))
     else:
         content = close_tag.sub('<\g<1> />', content)
         content = img_tag.sub('<img \g<1>/>', content)
@@ -106,6 +110,12 @@ def format_clean_content(title, body, BeautifulSoup):
 def write_entries(glos, f, cleanHTML):
     if cleanHTML:
         BeautifulSoup = get_beautiful_soup()
+        if not BeautifulSoup:
+            import logging
+            log = logging.getLogger('root')
+            log.warn('cleanHTML option passed but BeautifulSoup not found.  '
+                     'to fix this run `easy_install beautifulsoup4` or '
+                     '`pip2 install beautifulsoup4`.')
     else:
         BeautifulSoup = None
 
@@ -120,10 +130,14 @@ def write_entries(glos, f, cleanHTML):
             continue
 
         id = generate_id()
+        if BeautifulSoup:
+            norm_long = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(_normalize.title_long(title), True)
+        else:
+            norm_long = '"%s"' % _normalize.title_long(title)
 
         begin_entry = '<d:entry id="%(id)s" d:title=%(title)s>\n' % {
             'id': id,
-            'title': BeautifulSoup.dammit.EntitySubstitution.substitute_xml(_normalize.title_long(title), True),
+            'title': norm_long,
         }
         f.write(begin_entry)
 

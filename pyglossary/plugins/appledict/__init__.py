@@ -25,7 +25,7 @@ import pkgutil
 import shutil
 
 from formats_common import *
-from ._dict import write_xml
+from ._dict import write_xml, get_beautiful_soup
 
 enable = True
 format = 'AppleDict'
@@ -73,10 +73,7 @@ def format_default_prefs(defaultPrefs):
                      for i in sorted(defaultPrefs.iteritems())).strip()
 
 def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
-    try:
-        from bs4 import BeautifulSoup
-    except:
-        from BeautifulSoup import BeautifulSoup
+    bs4 = get_beautiful_soup()
 
     template = pkgutil.get_data(__name__, 'project_templates/Info.plist')
 
@@ -84,8 +81,12 @@ def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
     # identifier must be unique
     # use file base name
     identifier = basename.replace(' ', '')
-    # strip html tags
-    copyright = (u'%s' % BeautifulSoup(glos.getInfo('copyright')).text).encode('utf-8')
+
+    if bs4:
+        # strip html tags
+        copyright = (u'%s' % bs4.BeautifulSoup(glos.getInfo('copyright')).text).encode('utf-8')
+    else:
+        copyright = glos.getInfo('copyright')
 
     # if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
     # present in Info.plist, Dictionary.app will crash.
