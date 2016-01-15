@@ -19,21 +19,7 @@
 import hashlib
 import re
 
-def truncate(text, length=449):
-    """
-    trunct a string to given length
-    :param str text:
-    :return: truncated text
-    :rtype: str
-    """
-    content = re.sub('(\t|\n|\r)', ' ', text)
-    if (len(text)>length):
-        # find the next space after max_len chars (do not break inside a word)
-        pos = content[:length].rfind(' ')
-        if pos == -1:
-            pos = length
-        text = text[:pos]
-    return text
+from . import _normalize
 
 def dictionary_begin(glos, f, frontBackMatter):
     # progress bar
@@ -50,10 +36,10 @@ def dictionary_begin(glos, f, frontBackMatter):
 
 def get_beautiful_soup():
     try:
-        from bs4 import BeautifulSoup
+        import bs4 as BeautifulSoup
     except:
         try:
-            from BeautifulSoup import BeautifulSoup
+            import BeautifulSoup
         except:
             return None
     return BeautifulSoup
@@ -76,12 +62,16 @@ def id_generator():
 
 def indexes_generator():
     # it will be factory that atcs according to glossary language
-    def generate_indexes(title, alts):
-        s = '    <d:index d:value="%s"/>\n'%truncate(title)
-        #   alternative items as index also
+    def generate_indexes(title, alts, BeautifulSoup):
+        indexes = [_normalize.title_long(title), _normalize.title_short(title)]
         for alt in alts:
-            if alt != title:
-                s += '    <d:index d:value="%s"/>\n'%truncate(alt)
+            normal = _normalize.title(alt, BeautifulSoup)
+            indexes.append(_normalize.title_long(normal))
+            indexes.append(_normalize.title_short(normal))
+        indexes = set(indexes)
+        s = ''
+        for idx in indexes:
+            s += '<d:index d:value=%s/>' % BeautifulSoup.dammit.EntitySubstitution.substitute_xml(idx, True)
         return s
     return generate_indexes
 
@@ -95,7 +85,7 @@ def format_clean_content(title, body, BeautifulSoup):
     content = ('<h1>%s</h1>\n'%title) + body
     # xhtml is strict
     if BeautifulSoup:
-        soup  = BeautifulSoup(content, from_encoding='utf8')
+        soup  = BeautifulSoup.BeautifulSoup(content, from_encoding='utf8')
         content = str(soup)
     else:
         content = close_tag.sub('<\g<1> />', content)
@@ -103,14 +93,6 @@ def format_clean_content(title, body, BeautifulSoup):
     content = content.replace('&nbsp;', '&#160;')
     content = nonprintable.sub('', content)
     return content
-
-
-title_re = re.compile('<[^<]+?>|"|[<>]|\xef\xbb\xbf')
-
-def normilize_title(title):
-    """strip double quotes and html tags."""
-    return title_re.sub('', title)
-
 
 def write_entries(glos, f, cleanHTML):
     if cleanHTML:
@@ -124,15 +106,15 @@ def write_entries(glos, f, cleanHTML):
     total = float(len(glos.data))
 
     for i, item in enumerate(glos.data):
-        title = normilize_title(item[0])
+        title = _normalize.title(item[0], BeautifulSoup)
         if not title:
             continue
 
         id = generate_id(title)
 
-        begin_entry = '<d:entry id="%(id)s" d:title="%(title)s">\n' % {
+        begin_entry = '<d:entry id="%(id)s" d:title=%(title)s>\n' % {
             'id': id,
-            'title': truncate(title.replace('&', '&amp;'), 1126)
+            'title': BeautifulSoup.dammit.EntitySubstitution.substitute_xml(_normalize.title_long(title), True),
         }
         f.write(begin_entry)
 
@@ -142,7 +124,7 @@ def write_entries(glos, f, cleanHTML):
         except:
             alts = []
 
-        indexes = generate_indexes(title, alts)
+        indexes = generate_indexes(title, alts, BeautifulSoup)
         f.write(indexes)
 
         content = format_clean_content(title, item[1], BeautifulSoup)
