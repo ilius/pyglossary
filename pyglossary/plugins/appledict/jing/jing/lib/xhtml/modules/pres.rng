@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<define name="hr">
+  <element name="hr">
+    <ref name="hr.attlist"/>
+  </element>
+</define>
+
+<define name="hr.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="Block.class" combine="choice">
+  <ref name="hr"/>
+</define>
+
+<define name="b">
+  <element name="b">
+    <ref name="b.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="b.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="big">
+  <element name="big">
+    <ref name="big.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="big.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="i">
+  <element name="i">
+    <ref name="i.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="i.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="small">
+  <element name="small">
+    <ref name="small.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="small.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="sub">
+  <element name="sub">
+    <ref name="sub.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="sub.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="sup">
+  <element name="sup">
+    <ref name="sup.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="sup.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="tt">
+  <element name="tt">
+    <ref name="tt.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="tt.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="Inline.class" combine="choice">
+  <choice>
+    <ref name="b"/>
+    <ref name="big"/>
+    <ref name="i"/>
+    <ref name="small"/>
+    <ref name="sub"/>
+    <ref name="sup"/>
+    <ref name="tt"/>
+  </choice>
+</define>
+
+</grammar>

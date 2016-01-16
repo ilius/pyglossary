@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Link Module -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<define name="link">
+  <element name="link">
+    <ref name="link.attlist"/>
+  </element>
+</define>
+
+<define name="link.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="charset">
+      <ref name="Charset.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="href">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="hreflang">
+      <ref name="LanguageCode.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="type">
+      <ref name="ContentType.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="rel">
+      <ref name="LinkTypes.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="rev">
+      <ref name="LinkTypes.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="media">
+      <ref name="MediaDesc.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="head.content" combine="interleave">
+  <zeroOrMore>
+    <ref name="link"/>
+  </zeroOrMore>
+</define>
+
+</grammar>

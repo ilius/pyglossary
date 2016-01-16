@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Iframe Module -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<define name="iframe">
+  <element name="iframe">
+    <ref name="iframe.attlist"/>
+    <ref name="Flow.model"/>
+  </element>
+</define>
+
+<define name="iframe.attlist">
+  <ref name="Core.attrib"/>
+  <optional>
+    <attribute name="longdesc">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="src">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="frameborder">
+      <choice>
+        <value>1</value>
+        <value>0</value>
+      </choice>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="width">
+      <ref name="Length.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="height">
+      <ref name="Length.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="marginwidth">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="marginheight">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="scrolling">
+      <choice>
+        <value>yes</value>
+        <value>no</value>
+        <value>auto</value>
+      </choice>
+    </attribute>
+  </optional>
+</define>
+
+<define name="Inline.class" combine="choice">
+  <ref name="iframe"/>
+</define>
+
+</grammar>

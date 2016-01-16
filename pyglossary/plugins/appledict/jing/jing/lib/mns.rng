@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="http://www.thaiopensource.com/ns/mns" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="rules">
+      <optional>
+        <ref name="schemaType"/>
+      </optional>
+      <optional>
+        <attribute name="startMode">
+          <ref name="mode"/>
+        </attribute>
+      </optional>
+      <interleave>
+        <zeroOrMore>
+          <choice>
+            <ref name="validate"/>
+            <ref name="lax"/>
+          </choice>
+        </zeroOrMore>
+        <ref name="foreign"/>
+      </interleave>
+    </element>
+  </start>
+  <define name="validate">
+    <choice>
+      <element name="validate">
+        <ref name="validateModel"/>
+        <optional>
+          <ref name="useModeAtt"/>
+        </optional>
+        <optional>
+          <attribute name="prune">
+            <ref name="elementsOrAttributes"/>
+          </attribute>
+        </optional>
+        <interleave>
+          <group>
+            <zeroOrMore>
+              <ref name="cover"/>
+            </zeroOrMore>
+            <zeroOrMore>
+              <ref name="context"/>
+            </zeroOrMore>
+          </group>
+          <ref name="foreign"/>
+        </interleave>
+      </element>
+      <element name="validateAttributes">
+        <ref name="validateModel"/>
+        <ref name="foreign"/>
+      </element>
+    </choice>
+  </define>
+  <define name="cover">
+    <element name="cover">
+      <ref name="nsAtt"/>
+      <ref name="foreign"/>
+    </element>
+  </define>
+  <define name="context">
+    <element name="context">
+      <optional>
+        <ref name="useModeAtt"/>
+      </optional>
+      <optional>
+        <ref name="nsAtt"/>
+      </optional>
+      <interleave>
+        <oneOrMore>
+          <choice>
+            <ref name="rootContext"/>
+            <ref name="elementContext"/>
+          </choice>
+        </oneOrMore>
+        <ref name="foreign"/>
+      </interleave>
+    </element>
+  </define>
+  <define name="rootContext">
+    <element name="root">
+      <optional>
+        <ref name="nsAtt"/>
+      </optional>
+      <interleave>
+        <ref name="elementContext"/>
+        <ref name="foreign"/>
+      </interleave>
+    </element>
+  </define>
+  <define name="elementContext">
+    <element name="element">
+      <optional>
+        <ref name="nsAtt"/>
+      </optional>
+      <attribute name="name">
+        <data type="NCName"/>
+      </attribute>
+      <interleave>
+        <optional>
+          <ref name="elementContext"/>
+        </optional>
+        <ref name="foreign"/>
+      </interleave>
+    </element>
+  </define>
+  <define name="lax">
+    <element name="lax">
+      <optional>
+        <attribute name="allow">
+          <ref name="elementsOrAttributes"/>
+        </attribute>
+      </optional>
+      <optional>
+        <ref name="inModesAtt"/>
+      </optional>
+      <ref name="foreign"/>
+    </element>
+  </define>
+  <define name="validateModel">
+    <ref name="nsAtt"/>
+    <attribute name="schema">
+      <data type="anyURI"/>
+    </attribute>
+    <optional>
+      <ref name="schemaType"/>
+    </optional>
+    <optional>
+      <ref name="inModesAtt"/>
+    </optional>
+  </define>
+  <define name="nsAtt">
+    <attribute name="ns">
+      <data type="anyURI"/>
+    </attribute>
+  </define>
+  <define name="schemaType">
+    <attribute name="schemaType">
+      <ref name="mediaType"/>
+    </attribute>
+  </define>
+  <define name="mediaType">
+    <data type="string"/>
+  </define>
+  <define name="useModeAtt">
+    <attribute name="useMode">
+      <ref name="mode"/>
+    </attribute>
+  </define>
+  <define name="inModesAtt">
+    <attribute name="inModes">
+      <list>
+        <oneOrMore>
+          <ref name="mode"/>
+        </oneOrMore>
+      </list>
+    </attribute>
+  </define>
+  <define name="mode">
+    <choice>
+      <data type="NCName"/>
+      <value>#default</value>
+    </choice>
+  </define>
+  <define name="elementsOrAttributes">
+    <list>
+      <choice>
+        <group>
+          <value>elements</value>
+          <value>attributes</value>
+        </group>
+        <group>
+          <value>attributes</value>
+          <value>elements</value>
+        </group>
+        <value>elements</value>
+        <value>attributes</value>
+        <empty/>
+      </choice>
+    </list>
+  </define>
+  <define name="foreign">
+    <zeroOrMore>
+      <choice>
+        <attribute>
+          <anyName>
+            <except>
+              <nsName/>
+              <nsName ns=""/>
+            </except>
+          </anyName>
+        </attribute>
+        <element>
+          <anyName>
+            <except>
+              <nsName/>
+            </except>
+          </anyName>
+          <ref name="anything"/>
+        </element>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="anything">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <attribute>
+          <anyName/>
+        </attribute>
+        <element>
+          <anyName/>
+          <ref name="anything"/>
+        </element>
+      </choice>
+    </zeroOrMore>
+  </define>
+</grammar>

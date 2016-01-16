@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Checks exclusions applying to basic-table module.
+  This schema is intended to be used in addition to xhtml.rng.
+-->
+<grammar ns="http://www.w3.org/1999/xhtml" xmlns="http://relaxng.org/ns/structure/1.0">
+  <start>
+    <ref name="normalElement"/>
+  </start>
+  <define name="normalElement">
+    <element>
+      <anyName>
+        <except>
+          <name>table</name>
+        </except>
+      </anyName>
+      <ref name="normalContent"/>
+    </element>
+  </define>
+  <define name="normalContent">
+    <zeroOrMore>
+      <choice>
+        <ref name="normalElement"/>
+        <ref name="tableElement"/>
+        <ref name="anyAttribute"/>
+        <text/>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="tableElement">
+    <element name="table">
+      <ref name="tableContent"/>
+    </element>
+  </define>
+  <define name="tableContent">
+    <zeroOrMore>
+      <choice>
+        <element>
+          <anyName>
+            <except>
+              <name>table</name>
+            </except>
+          </anyName>
+          <ref name="tableContent"/>
+        </element>
+        <ref name="anyAttribute"/>
+        <text/>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="anyAttribute">
+    <attribute>
+      <anyName/>
+    </attribute>
+  </define>
+</grammar>

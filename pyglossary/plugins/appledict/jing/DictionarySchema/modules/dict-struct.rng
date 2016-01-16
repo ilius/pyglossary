@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Dictionary Structure Module -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+
+<start>
+	<ref name="dictionary"/>
+</start>
+
+<define name="entry">
+	<element name="entry" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+		<ref name="entry.attlist"/>
+		<zeroOrMore>
+			<ref name="index"/>
+		</zeroOrMore>
+		<ref name="Flow.model"/>
+	</element>
+</define>
+
+<define name="entry.attlist">
+	<ref name="id.attrib"/>
+	<optional>
+		<ref name="parental-control.attrib"/>
+	</optional>
+	<optional>
+		<attribute name="title" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+			<text/>
+		</attribute>
+	</optional>
+</define>
+
+<define name="index">
+	<element name="index" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+		<ref name="index.attlist"/>
+	</element>
+</define>
+
+<define name="index.attlist">
+	<attribute name="value" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+		<text/>
+	</attribute>
+	<optional>
+		<attribute name="title" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+			<text/>
+		</attribute>
+	</optional>
+	<optional>
+		<ref name="parental-control.attrib"/>
+	</optional>
+	<optional>
+		<ref name="priority.attrib"/>
+	</optional>
+	<optional>
+		<attribute name="anchor" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+			<text/>
+		</attribute>
+	</optional>
+	<optional>
+		<attribute name="yomi" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+			<text/>
+		</attribute>
+	</optional>
+
+</define>
+
+<define name="dictionary">
+	<element name="dictionary" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+		<zeroOrMore>
+			<ref name="style"/>
+		</zeroOrMore>
+		<ref name="dictionary.attlist"/>
+		<oneOrMore>
+			<ref name="entry"/>
+		</oneOrMore>
+	</element>
+</define>
+
+<define name="dictionary.attlist">
+	<ref name="XHTML.version.attrib"/>
+	<ref name="I18n.attrib"/>
+</define>
+
+<define name="XHTML.version.attrib">
+	<optional>
+		<attribute name="version">
+			<ref name="FPI.datatype"/>
+		</attribute>
+	</optional>
+</define>
+
+<!-- add new attribute for div,span -->
+<define name="priority.attrib">
+	<attribute name="priority" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+		<ref name="Number.datatype"/>
+	</attribute>
+</define>
+
+<define name="parental-control.attrib">
+	<attribute name="parental-control" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+		<value>1</value>
+	</attribute>
+</define>
+
+<define name="pr.attrib">
+	<attribute name="pr" ns="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+		<text/>
+	</attribute>
+</define>
+
+
+<!-- Add attribute for XHTML -->
+
+<define name="div.attlist" combine="interleave">
+	<optional>
+		<ref name="priority.attrib"/>
+	</optional>
+	<optional>
+		<ref name="parental-control.attrib"/>
+	</optional>
+	<optional>
+		<ref name="pr.attrib"/>
+	</optional>
+</define>
+
+<define name="span.attlist" combine="interleave">
+	<optional>
+		<ref name="priority.attrib"/>
+	</optional>
+	<optional>
+		<ref name="parental-control.attrib"/>
+	</optional>
+	<optional>
+		<ref name="pr.attrib"/>
+	</optional>
+</define>
+
+
+</grammar>

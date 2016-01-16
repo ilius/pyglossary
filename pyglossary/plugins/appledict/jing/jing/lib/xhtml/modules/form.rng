@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Forms Module -->
+<!-- Unlike the DTD implementation, this builds on the basic-form module --><grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<include href="basic-form.rng">
+
+  <define name="select">
+    <element name="select">
+      <ref name="select.attlist"/>
+      <oneOrMore>
+	<choice>
+	  <ref name="option"/>
+	  <ref name="optgroup"/>
+	</choice>
+      </oneOrMore>
+    </element>
+  </define>
+
+</include>
+
+<define name="form.attlist" combine="interleave">
+  <optional>
+    <attribute name="accept-charset">
+      <ref name="Charsets.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="accept">
+      <ref name="ContentTypes.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="input.attlist" combine="interleave">
+  <optional>
+    <attribute name="disabled">
+      <value>disabled</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="readonly">
+      <value>readonly</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="alt"/>
+  </optional>
+  <optional>
+    <attribute name="tabindex">
+      <ref name="Number.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="accept">
+      <ref name="ContentTypes.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="InputType.class" combine="choice">
+  <choice>
+    <value>image</value>
+    <value>button</value>
+  </choice>
+</define>
+
+<define name="select.attlist" combine="interleave">
+  <optional>
+    <attribute name="disabled">
+      <value>disabled</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="tabindex">
+      <ref name="Number.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="option.attlist" combine="interleave">
+  <optional>
+    <attribute name="disabled">
+      <value>disabled</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="label">
+      <ref name="Text.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="optgroup">
+  <element name="optgroup">
+    <ref name="optgroup.attlist"/>
+    <oneOrMore>
+      <ref name="option"/>
+    </oneOrMore>
+  </element>
+</define>
+
+<define name="optgroup.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="disabled">
+      <value>disabled</value>
+    </attribute>
+  </optional>
+  <attribute name="label">
+    <ref name="Text.datatype"/>
+  </attribute>
+</define>
+
+<define name="textarea.attlist" combine="interleave">
+  <optional>
+    <attribute name="disabled">
+      <value>disabled</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="readonly">
+      <value>readonly</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="tabindex">
+      <ref name="Number.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="fieldset">
+  <element name="fieldset">
+    <ref name="fieldset.attlist"/>
+    <ref name="legend"/>
+    <ref name="Flow.model"/>
+  </element>
+</define>
+
+<define name="fieldset.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="button">
+  <element name="button">
+    <ref name="button.attlist"/>
+    <ref name="Flow.model"/>
+  </element>
+</define>
+
+<define name="button.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="name"/>
+  </optional>
+  <optional>
+    <attribute name="value"/>
+  </optional>
+  <optional>
+    <attribute name="type">
+      <choice>
+        <value>button</value>
+        <value>submit</value>
+        <value>reset</value>
+      </choice>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="disabled">
+      <value>disabled</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="tabindex">
+      <ref name="Number.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="accesskey">
+      <ref name="Character.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="legend">
+  <element name="legend">
+    <ref name="legend.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="legend.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="accesskey">
+      <ref name="Character.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="Form.class" combine="choice">
+  <ref name="fieldset"/>
+</define>
+
+<define name="Formctrl.class" combine="choice">
+  <ref name="button"/>
+</define>
+
+</grammar>
