@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Checks exclusions applying to form and basic-form modules.
+  This schema is intended to be used in addition to xhtml.rng.
+-->
+<grammar ns="http://www.w3.org/1999/xhtml" xmlns="http://relaxng.org/ns/structure/1.0">
+  <start>
+    <ref name="normalElement"/>
+  </start>
+  <define name="normalElement">
+    <element>
+      <anyName>
+        <except>
+          <name>form</name>
+          <name>label</name>
+          <name>button</name>
+        </except>
+      </anyName>
+      <ref name="normalContent"/>
+    </element>
+  </define>
+  <define name="normalContent">
+    <zeroOrMore>
+      <choice>
+        <ref name="normalElement"/>
+        <ref name="formElement"/>
+        <ref name="labelElement"/>
+        <ref name="buttonElement"/>
+        <ref name="anyAttribute"/>
+        <text/>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="formElement">
+    <element name="form">
+      <ref name="formContent"/>
+    </element>
+  </define>
+  <define name="formContent">
+    <zeroOrMore>
+      <choice>
+        <element>
+          <anyName>
+            <except>
+              <name>form</name>
+              <name>label</name>
+              <name>button</name>
+            </except>
+          </anyName>
+          <ref name="formContent"/>
+        </element>
+        <ref name="labelElement"/>
+        <ref name="buttonElement"/>
+        <ref name="anyAttribute"/>
+        <text/>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="labelElement">
+    <element name="label">
+      <ref name="labelContent"/>
+    </element>
+  </define>
+  <define name="labelContent">
+    <zeroOrMore>
+      <choice>
+        <element>
+          <anyName>
+            <except>
+              <name>form</name>
+              <name>label</name>
+              <name>button</name>
+            </except>
+          </anyName>
+          <ref name="labelContent"/>
+        </element>
+        <ref name="buttonElement"/>
+        <ref name="anyAttribute"/>
+        <text/>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="buttonElement">
+    <element name="button">
+      <ref name="buttonContent"/>
+    </element>
+  </define>
+  <define name="buttonContent">
+    <zeroOrMore>
+      <choice>
+        <element>
+          <anyName>
+            <except>
+              <name>a</name>
+              <name>input</name>
+              <name>select</name>
+              <name>textarea</name>
+              <name>label</name>
+              <name>button</name>
+              <name>form</name>
+              <name>isindex</name>
+              <name>fieldset</name>
+              <name>iframe</name>
+            </except>
+          </anyName>
+          <ref name="buttonContent"/>
+        </element>
+        <ref name="anyAttribute"/>
+        <text/>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="anyAttribute">
+    <attribute>
+      <anyName/>
+    </attribute>
+  </define>
+</grammar>

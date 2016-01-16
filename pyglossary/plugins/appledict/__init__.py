@@ -40,6 +40,7 @@ writeOptions = [
     'prefsHTML',
     'frontBackMatter',
     'OtherResources',
+    'jing',
 ]
 
 OtherResources = 'OtherResources'
@@ -153,7 +154,7 @@ def safe_listdir_set(path):
         return set()
     return set(map(lambda node: os.path.join(path, node), os.listdir(path)))
 
-def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None, frontBackMatter=None, OtherResources=None):
+def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None, frontBackMatter=None, OtherResources=None, jing=None):
     """write glossary to Apple dictionary .xml and supporting files.
 
     :type glos: pyglossary.glossary.Glossary
@@ -188,6 +189,9 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
     :type OtherResources: str or None
     :param OtherResources: path to 'OtherResources' directory.  Apple
     recommending store images in 'OtherResources/Images'.
+
+    :type jing: str or None
+    :param jing: pass "yes" to run Jing check on generated XML.
     """
     basename = os.path.splitext(fpath)[0]
     dict_name = os.path.split(basename)[1]
@@ -211,6 +215,9 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
         write_xsl(xsl)
         write_prefsHTML(prefsHTML)
         write_resources(res)
+        if jing == "yes":
+            from .jing import run
+            run(dict_name + '.xml')
 
 if __name__ == '__main__':
     import sys, os.path

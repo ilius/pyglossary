@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         ns="http://www.xml.gr.jp/xmlns/relaxCore"
+         datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+   <start>
+      <ref name="module.label"/>
+   </start>
+   <include href="relaxCoreDatatypes.rng"/>
+   <div>
+      <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+         
+         <documentation>The overall structure of RELAX modules</documentation>
+      
+      </annotation>
+      <define name="module.label">
+         <element name="module">
+            <ref name="module.role"/>
+            <group>
+               <optional>
+                  <ref name="annotation.label"/>
+               </optional>
+               <optional>
+                  <ref name="interface.label"/>
+               </optional>
+               <zeroOrMore>
+                  <choice>
+                     <ref name="clause.label"/>
+                     <ref name="rule.label"/>
+                     <ref name="divInModule.label"/>
+                     <ref name="include.label"/>
+                  </choice>
+               </zeroOrMore>
+            </group>
+         </element>
+      </define>
+      <define name="module.role">
+         <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+            
+            <documentation>Namespace declarations cannot be controlled by
+	       RELAX Core.  Wait for RELAX modularization.</documentation>
+         
+         </annotation>
+         <optional>
+            <attribute name="moduleVersion">
+               <data type="string"/>
+            </attribute>
+         </optional>
+         <optional>
+            <attribute name="relaxCoreVersion">
+               <data type="string"/>
+            </attribute>
+         </optional>
+         <optional>
+            <attribute name="targetNamespace">
+               <data type="anyURI"/>
+            </attribute>
+         </optional>
+      </define>
+      <define name="interface.label">
+         <element name="interface">
+            <ref name="interface.role"/>
+            <group>
+               <optional>
+                  <ref name="annotation.label"/>
+               </optional>
+               <zeroOrMore>
+                  <choice>
+                     <ref name="export.label"/>
+                     <ref name="divInInterface.label"/>
+                  </choice>
+               </zeroOrMore>
+            </group>
+         </element>
+      </define>
+      <define name="interface.role">
+         <empty/>
+      </define>
+      <define name="clause.label">
+         <choice>
+            <ref name="tag.label"/>
+            <ref name="attPool.label"/>
+         </choice>
+      </define>
+      <define name="rule.label">
+         <choice>
+            <ref name="elementRule.label"/>
+            <ref name="hedgeRule.label"/>
+         </choice>
+      </define>
+      <define name="divInModule.label">
+         <element name="div">
+            <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+                  
+               <documentation>div elements in modules</documentation>
+               
+            </annotation>
+            <group>
+               <optional>
+                  <ref name="annotation.label"/>
+               </optional>
+               <zeroOrMore>
+                  <choice>
+                     <ref name="rule.label"/>
+                     <ref name="clause.label"/>
+                     <ref name="divInModule.label"/>
+                     <ref name="include.label"/>
+                  </choice>
+               </zeroOrMore>
+            </group>
+         </element>
+      </define>
+   </div>
+   <div>
+      <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+         
+         <documentation>Interface</documentation>
+      
+      </annotation>
+      <define name="export.label">
+         <element name="export">
+            <ref name="export.role"/>
+            <optional>
+               <ref name="annotation.label"/>
+            </optional>
+         </element>
+      </define>
+      <define name="export.role">
+         <attribute name="label">
+            <data type="NMTOKEN"/>
+         </attribute>
+      </define>
+      <define name="divInInterface.label">
+         <element name="div">
+            <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+                  
+               <documentation>div elements in interfaces</documentation>
+               
+            </annotation>
+            <group>
+               <optional>
+                  <ref name="annotation.label"/>
+               </optional>
+               <zeroOrMore>
+                  <choice>
+                     <ref name="export.label"/>
+                     <ref name="divInInterface.label"/>
+                  </choice>
+               </zeroOrMore>
+            </group>
+         </element>
+      </define>
+   </div>
+   <div>
+      <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+         
+         <documentation>Include</documentation>
+      
+      </annotation>
+      <define name="include.label">
+         <element name="include">
+            <ref name="include.role"/>
+            <optional>
+               <ref name="annotation.label"/>
+            </optional>
+         </element>
+      </define>
+      <define name="include.role">
+         <optional>
+            <attribute name="moduleLocation">
+               <data type="anyURI"/>
+            </attribute>
+         </optional>
+      </define>
+   </div>
+   <div>
+      <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+         
+         <documentation>Hedge Models</documentation>
+      
+      </annotation>
+      <define name="particle.label">
+         <choice>
+            <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+               
+               <documentation>This is used to describe element hedge models.
+	It is also used as subordinates of &lt;sequence&gt;,
+	&lt;choice&gt;, and &lt;mixed&gt;.
+	</documentation>
+            
+            </annotation>
+            <choice>
+               <ref name="refWithLabel.label"/>
+               <ref name="hedgeRef.label"/>
+               <ref name="choice.label"/>
+               <ref name="sequence.label"/>
+               <ref name="element.label"/>
+               <ref name="none.label"/>
+               <ref name="empty.label"/>
+            </choice>
+         </choice>
+      </define>
+      <define name="hedgeModel.label">
+         <choice>
+            <ref name="particle.label"/>
+            <ref name="mixed.label"/>
+         </choice>
+      </define>
+      <define name="repeatable.role">
+         <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+            
+            <documentation>This is used to specify the "occurs" attribute,
+	which is shared by several elements.</documentation>
+         
+         </annotation>
+         <optional>
+            <attribute name="occurs">
+               <choice>
+                  <value type="string">?</value>
+                  <value type="string">*</value>
+                  <value type="string">+</value>
+               </choice>
+            </attribute>
+         </optional>
+      </define>
+      <define name="hedgeRef.label">
+         <element name="hedgeRef">
+            <ref name="hedgeRef.role"/>
+         </element>
+      </define>
+      <define name="hedgeRef.role">
+         <ref name="repeatable.role"/>
+         <attribute name="label">
+            <data type="NCName"/>
+         </attribute>
+      </define>
+      <define name="refWithLabel.label">
+         <element name="ref">
+            <ref name="repeatable.role"/>
+            <attribute name="label">
+               <data type="NCName"/>
+            </attribute>
+         </element>
+      </define>
+      <define name="empty.label">
+         <element name="empty">
+            <ref name="empty.role"/>
+         </element>
+      </define>
+      <define name="empty.role">
+         <empty/>
+      </define>
+      <define name="choice.label">
+         <element name="choice">
+            <ref name="choice.role"/>
+            <zeroOrMore>
+               <ref name="particle.label"/>
+            </zeroOrMore>
+         </element>
+      </define>
+      <define name="choice.role">
+         <ref name="repeatable.role"/>
+      </define>
+      <define name="sequence.label">
+         <element name="sequence">
+            <ref name="sequence.role"/>
+            <zeroOrMore>
+               <ref name="particle.label"/>
+            </zeroOrMore>
+         </element>
+      </define>
+      <define name="sequence.role">
+         <ref name="repeatable.role"/>
+      </define>
+      <define name="none.label">
+         <element name="none">
+            <ref name="none.role"/>
+         </element>
+      </define>
+      <define name="none.role">
+         <empty/>
+      </define>
+      <define name="mixed.label">
+         <element name="mixed">
+            <ref name="mixed.role"/>
+            <ref name="particle.label"/>
+         </element>
+      </define>
+      <define name="mixed.role">
+         <empty/>
+      </define>
+      <define name="element.label">
+         <choice>
+            <element name="element">
+               <ref name="repeatable.role"/>
+               <attribute name="name">
+                  <data type="NCName"/>
+               </attribute>
+               <attribute name="label">
+                  <data type="NCName"/>
+               </attribute>
+               <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+                  
+                  <documentation>with the label attribute</documentation>
+               
+               </annotation>
+               <group>
+                  <optional>
+                     <ref name="annotation.label"/>
+                  </optional>
+                  <zeroOrMore>
+                     <ref name="facet.label"/>
+                  </zeroOrMore>
+               </group>
+            </element>
+            <element name="element">
+               <ref name="repeatable.role"/>
+               <attribute name="name">
+                  <data type="NCName"/>
+               </attribute>
+               <attribute name="type">
+                  <data type="NCName"/>
+               </attribute>
+               <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+                  
+                  <documentation>with the type attribute</documentation>
+               
+               </annotation>
+               <group>
+                  <optional>
+                     <ref name="annotation.label"/>
+                  </optional>
+                  <zeroOrMore>
+                     <ref name="facet.label"/>
+                  </zeroOrMore>
+               </group>
+            </element>
+         </choice>
+      </define>
+   </div>
+   <div>
+      <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+         
+         <documentation>Rules</documentation>
+      
+      </annotation>
+      <define name="elementRule.label">
+         <choice>
+            <element name="elementRule">
+               <attribute name="role">
+                  <data type="NCName"/>
+               </attribute>
+               <optional>
+                  <attribute name="label">
+                     <data type="NCName"/>
+                  </attribute>
+               </optional>
+               <attribute name="type">
+                  <data type="NCName"/>
+               </attribute>
+               <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+                  
+                  <documentation>without embedded tag or attPool elements</documentation>
+                  
+                  <documentation>with the type attribute</documentation>
+               
+               </annotation>
+               <optional>
+                  <ref name="annotation.label"/>
+               </optional>
+            </element>
+            <element name="elementRule">
+               <attribute name="label">
+                  <data type="NCName"/>
+               </attribute>
+               <attribute name="type">
+                  <data type="NCName"/>
+               </attribute>
+               <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+                  
+                  <documentation>with embedded tag or attPool elements</documentation>
+                  
+                  <documentation>with the type attribute</documentation>
+               
+               </annotation>
+               <group>
+                  <optional>
+                     <ref name="annotation.label"/>
+                  </optional>
+                  <choice>
+                     <oneOrMore>
+                        <ref name="tagInRule.label"/>
+                     </oneOrMore>
+                     <oneOrMore>
+                        <ref name="attPoolInRule.label"/>
+                     </oneOrMore>
+                  </choice>
+               </group>
+            </element>
+            <element name="elementRule">
+               <attribute name="role">
+                  <data type="NCName"/>
+               </attribute>
+               <optional>
+                  <attribute name="label">
+                     <data type="NCName"/>
+                  </attribute>
+               </optional>
+               <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+                  
+                  <documentation>without embedded tag or attPool elements</documentation>
+                  
+                  <documentation>with a hedge model</documentation>
+               
+               </annotation>
+               <group>
+                  <optional>
+                     <ref name="annotation.label"/>
+                  </optional>
+                  <ref name="hedgeModel.label"/>
+               </group>
+            </element>
+            <element name="elementRule">
+               <attribute name="label">
+                  <data type="NCName"/>
+               </attribute>
+               <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+                  
+                  <documentation>with embedded tag or attPool elements</documentation>
+                  
+                  <documentation>with a hedge model</documentation>
+               
+               </annotation>
+               <group>
+                  <optional>
+                     <ref name="annotation.label"/>
+                  </optional>
+                  <choice>
+                     <oneOrMore>
+                        <ref name="tagInRule.label"/>
+                     </oneOrMore>
+                     <oneOrMore>
+                        <ref name="attPoolInRule.label"/>
+                     </oneOrMore>
+                  </choice>
+                  <ref name="hedgeModel.label"/>
+               </group>
+            </element>
+         </choice>
+      </define>
+      <define name="hedgeRule.label">
+         <element name="hedgeRule">
+            <ref name="hedgeRule.role"/>
+            <group>
+               <optional>
+                  <ref name="annotation.label"/>
+               </optional>
+               <ref name="hedgeModel.label"/>
+            </group>
+         </element>
+      </define>
+      <define name="hedgeRule.role">
+         <attribute name="label">
+            <data type="NCName"/>
+         </attribute>
+      </define>
+   </div>
+   <div>
+      <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+         
+         <documentation>Clauses</documentation>
+      
+      </annotation>
+      <define name="clauseBody.label">
+         <group>
+            <optional>
+               <ref name="annotation.label"/>
+            </optional>
+            <zeroOrMore>
+               <ref name="refWithRole.label"/>
+            </zeroOrMore>
+            <zeroOrMore>
+               <ref name="attribute.label"/>
+            </zeroOrMore>
+         </group>
+      </define>
+      <define name="tag.label">
+         <element name="tag">
+            <ref name="tag.role"/>
+            <ref name="clauseBody.label"/>
+         </element>
+      </define>
+      <define name="tag.role">
+         <optional>
+            <attribute name="role">
+               <data type="NCName"/>
+            </attribute>
+         </optional>
+         <attribute name="name">
+            <data type="NCName"/>
+         </attribute>
+      </define>
+      <define name="tagInRule.label">
+         <element name="tag">
+            <attribute name="name">
+               <data type="NCName"/>
+            </attribute>
+            <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+                  
+               <documentation>tag elements embedded in	elementRules</documentation>
+               
+            </annotation>
+            <ref name="clauseBody.label"/>
+         </element>
+      </define>
+      <define name="attPool.label">
+         <element name="attPool">
+            <ref name="attPool.role"/>
+            <ref name="clauseBody.label"/>
+         </element>
+      </define>
+      <define name="attPool.role">
+         <attribute name="role">
+            <data type="NCName"/>
+         </attribute>
+      </define>
+      <define name="attPoolInRule.label">
+         <element name="attPool">
+            <annotation xmlns="http://www.xml.gr.jp/xmlns/relaxCore">
+                  
+               <documentation>attPool elements embedded in elementRules</documentation>
+               
+            </annotation>
+            <ref name="clauseBody.label"/>
+         </element>
+      </define>
+      <define name="refWithRole.label">
+         <element name="ref">
+            <attribute name="role">
+               <data type="NCName"/>
+            </attribute>
+         </element>
+      </define>
+      <define name="attribute.label">
+         <element name="attribute">
+            <ref name="attribute.role"/>
+            <group>
+               <optional>
+                  <ref name="annotation.label"/>
+               </optional>
+               <zeroOrMore>
+                  <ref name="facet.label"/>
+               </zeroOrMore>
+            </group>
+         </element>
+      </define>
+      <define name="attribute.role">
+         <attribute name="name">
+            <data type="NMTOKEN"/>
+         </attribute>
+         <optional>
+            <attribute name="type">
+               <data type="NCName"/>
+            </attribute>
+         </optional>
+         <optional>
+            <attribute name="required">
+               <value>true</value>
+            </attribute>
+         </optional>
+      </define>
+   </div>
+</grammar>

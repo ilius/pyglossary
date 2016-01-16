@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Tables Module -->
+<!-- This builds on the basic tables module, unlike with the DTD
+implementation. -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<include href="basic-table.rng">
+
+  <define name="table">
+    <element name="table">
+      <ref name="table.attlist"/>
+      <optional>
+	<ref name="caption"/>
+      </optional>
+      <choice>
+	<zeroOrMore>
+	  <ref name="col"/>
+	</zeroOrMore>
+	<zeroOrMore>
+	  <ref name="colgroup"/>
+	</zeroOrMore>
+      </choice>
+      <choice>
+	<group>
+	  <optional>
+	    <ref name="thead"/>
+	  </optional>
+	  <optional>
+	    <ref name="tfoot"/>
+	  </optional>
+	  <oneOrMore>
+	    <ref name="tbody"/>
+	  </oneOrMore>
+	</group>
+	<oneOrMore>
+	  <ref name="tr"/>
+	</oneOrMore>
+      </choice>
+    </element>
+  </define>
+
+  <define name="th">
+    <element name="th">
+      <ref name="th.attlist"/>
+      <ref name="Flow.model"/>
+    </element>
+  </define>
+
+  <define name="td">
+    <element name="td">
+      <ref name="td.attlist"/>
+      <ref name="Flow.model"/>
+    </element>
+  </define>
+
+  <define name="CellHAlign.attrib">
+    <optional>
+      <attribute name="align">
+	<choice>
+	  <value>left</value>
+	  <value>center</value>
+	  <value>right</value>
+	  <value>justify</value>
+	  <value>char</value>
+	</choice>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="char">
+	<ref name="Character.datatype"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="charoff">
+	<ref name="Length.datatype"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="CellVAlign.attrib">
+    <optional>
+      <attribute name="valign">
+	<choice>
+	  <value>top</value>
+	  <value>middle</value>
+	  <value>bottom</value>
+	  <value>baseline</value>
+	</choice>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="scope.attrib">
+    <optional>
+      <attribute name="scope">
+	<choice>
+	  <value>row</value>
+	  <value>col</value>
+	  <value>rowgroup</value>
+	  <value>colgroup</value>
+	</choice>
+      </attribute>
+    </optional>
+  </define>
+
+</include>
+
+<define name="table.attlist" combine="interleave">
+  <optional>
+    <attribute name="width">
+      <ref name="Length.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="border">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+  <ref name="frame.attrib"/>
+  <ref name="rules.attrib"/>
+  <optional>
+    <attribute name="cellspacing">
+      <ref name="Length.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="cellpadding">
+      <ref name="Length.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="col">
+  <element name="col">
+    <ref name="col.attlist"/>
+  </element>
+</define>
+
+<define name="col.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="span">
+      <ref name="Number.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="width">
+      <ref name="MultiLength.datatype"/>
+    </attribute>
+  </optional>
+  <ref name="CellHAlign.attrib"/>
+  <ref name="CellVAlign.attrib"/>
+</define>
+
+<define name="colgroup">
+  <element name="colgroup">
+    <ref name="colgroup.attlist"/>
+    <zeroOrMore>
+      <ref name="col"/>
+    </zeroOrMore>
+  </element>
+</define>
+
+<define name="colgroup.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="span">
+      <ref name="Number.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="width">
+      <ref name="MultiLength.datatype"/>
+    </attribute>
+  </optional>
+  <ref name="CellHAlign.attrib"/>
+  <ref name="CellVAlign.attrib"/>
+</define>
+
+<define name="tbody">
+  <element name="tbody">
+    <ref name="tbody.attlist"/>
+    <oneOrMore>
+      <ref name="tr"/>
+    </oneOrMore>
+  </element>
+</define>
+
+<define name="tbody.attlist">
+  <ref name="Common.attrib"/>
+  <ref name="CellHAlign.attrib"/>
+  <ref name="CellVAlign.attrib"/>
+</define>
+
+<define name="thead">
+  <element name="thead">
+    <ref name="thead.attlist"/>
+    <oneOrMore>
+      <ref name="tr"/>
+    </oneOrMore>
+  </element>
+</define>
+
+<define name="thead.attlist">
+  <ref name="Common.attrib"/>
+  <ref name="CellHAlign.attrib"/>
+  <ref name="CellVAlign.attrib"/>
+</define>
+
+<define name="tfoot">
+  <element name="tfoot">
+    <ref name="tfoot.attlist"/>
+    <oneOrMore>
+      <ref name="tr"/>
+    </oneOrMore>
+  </element>
+</define>
+
+<define name="tfoot.attlist">
+  <ref name="Common.attrib"/>
+  <ref name="CellHAlign.attrib"/>
+  <ref name="CellVAlign.attrib"/>
+</define>
+
+<define name="frame.attrib">
+  <optional>
+    <attribute name="frame">
+      <choice>
+        <value>void</value>
+        <value>above</value>
+        <value>below</value>
+        <value>hsides</value>
+        <value>lhs</value>
+        <value>rhs</value>
+        <value>vsides</value>
+        <value>box</value>
+        <value>border</value>
+      </choice>
+    </attribute>
+  </optional>
+</define>
+
+<define name="rules.attrib">
+  <optional>
+    <attribute name="rules">
+      <choice>
+        <value>none</value>
+        <value>groups</value>
+        <value>rows</value>
+        <value>cols</value>
+        <value>all</value>
+      </choice>
+    </attribute>
+  </optional>
+</define>
+
+</grammar>
