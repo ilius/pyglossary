@@ -7,6 +7,7 @@ except ImportError:
 
 import glob, os, sys
 from os.path import join, dirname, exists, isdir
+import re
 
 from distutils.core import setup
 from distutils.command.install import install
@@ -126,6 +127,14 @@ setup(
     package_data = {
         'pyglossary': [
             'plugins/*.py',
+        ] + [
+            # safest way found so far to include every resource of plugins
+            # producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
+            re.sub(r'^.*?pyglossary%s(?=plugins)' % os.sep, '', join(dirpath, f))
+            for top in glob.glob(join(dirname(__file__), 'pyglossary', 'plugins'))
+            for dirpath, _, files in os.walk(top)
+            for f in files
+            if not (f.endswith('.pyc') or f.endswith('.pyo'))
         ],
     },
     data_files = data_files,
