@@ -4,6 +4,7 @@
 ##
 ## Copyright (C) 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
 ## Copyright (C) 2013 Saeed Rasooli <saeed.gnu@gmail.com>
+## Copyright (C) 2016 Ratijas <ratijas.t@me.com>
 ##
 ## This program is a free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -17,6 +18,10 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ## GNU General Public License for more details.
 
+import codecs
+import re
+from xml.sax.saxutils import escape, quoteattr
+
 from formats_common import *
 
 enable = True
@@ -28,57 +33,143 @@ writeOptions = []
 
 __all__ = ['read']
 
-import codecs
-import re
-from xml.sax.saxutils import escape, quoteattr
-
 def make_a_href(s):
     return '<a href=%s>%s</a>' % (quoteattr(s), escape(s))
 
 def ref_sub(x):
     return make_a_href(x.groups()[0])
 
-def _clean_tags(line, audio):
-    # remove {{...}} blocks
-    line = re.sub('\{\{[^}]*\}\}', '', line)
+# order matters, a lot.
+shortcuts = [
+    # canonical: m > * > ex > i > c
+    (r'[c][i][*][ex](.*?)[/ex][/*][/i][/c]', r'[*][ex][i][c]\g<1>[/c][/i][/ex][/*]'),
+    (r'[i][c][*][ex](.*?)[/ex][/*][/c][/i]', r'[*][ex][i][c]\g<1>[/c][/i][/ex][/*]'),
+    (r'[c][i][ex](.*?)[/ex][/i][/c]', r'[ex][i][c]\g<1>[/c][/i][/ex]'),
+    (r'[i][c][ex](.*?)[/ex][/c][/i]', r'[ex][i][c]\g<1>[/c][/i][/ex]'),
+    (r'[ex][*](.*?)[/*][/ex]', r'[*][ex]\g<1>[/ex][/*]'),
+    # shortcuts
+    (r'[c][i](.*?)[/i][/c]', r'<i style="color:green">\g<1></i>'),
+    (r'[i][c](.*?)[/c][/i]', r'<i style="color:green">\g<1></i>'),
+    (r'[m(\d)][ex](.*?)[/ex][/m]', r'<div class="ex" style="margin-left:\g<1>em;color:steelblue">\g<2></div>'),
+    (r'[m(\d)][*][ex](.*?)[/ex][/*][/m]',
+     r'<div class="sec ex" style="margin-left:\g<1>em;color:steelblue">\g<2></div>'),
+    (r'[*][ex](.*?)[/ex][/*]', r'<span class="sec ex" style="color:steelblue">\g<1></span>'),
+]
+shortcuts = [(re.compile(repl.replace('[', r'\[').replace('*]', r'\*]')), sub)
+             for (repl, sub) in shortcuts]
 
+def apply_shortcuts(line):
+    for repl, sub in shortcuts:
+        line = re.sub(repl, sub, line)
+    return line
+
+# precompiled regexs
+
+re_brackets_blocks = re.compile(r'\{\{[^}]*\}\}')
+re_lang_open = re.compile(r'\[lang[^\]]*\]')
+re_m_open = re.compile(r'(?<!\\)\[m\d\]')
+re_c_open_color = re.compile(r'\[c (\w+)\]')
+re_sound = re.compile(r'\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]')
+re_img = re.compile(r'\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]')
+re_m = re.compile(r'\[m(\d)\](.*?)\[/m\]')
+
+def _clean_tags(line, audio):
+    r"""
+    WARNING! shortcuts may apply:
+        [m2][*][ex]{}[/ex][/*][/m] => <div class="sec ex" style="margin-left:2em;color:steelblue">{}</div>
+    [m{}] => <div style="margin-left:{}em">
+    [*]   => <span class="sec">
+    [ex]  => <span class="ex" style="color:steelblue">
+    [c]   => <span style="color:green">
+    [p]   => <i class="p" style="color:green">
+
+    [']   => <u>
+    [b]   => <b>
+    [i]   => <i>
+    [u]   => <u>
+    [sup] => <sup>
+    [sub] => <sub>
+
+    [ref]   \
+    [url]    } => <a href={}>{}</a>
+    <<...>> /
+
+    [s] =>  <object type="audio/x-wav" data="{}" width="40" height="40">
+                <param name="autoplay" value="false" />
+            </object>
+    [s] =>  <img align="top" src="{}" alt="{}" />
+
+    [t] => <!-- T --><span style="font-family:'Helvetica'">
+
+    {{...}}   \
+    [trn]      |
+    [!trn]     |
+    [trs]      } => remove
+    [!trs]     |
+    [lang ...] |
+    [com]     /
+    """
+    # remove {{...}} blocks
+    line = re_brackets_blocks.sub('', line)
     # remove trn tags
-    line = re.sub('\[\/?!?tr[ns]\]', '', line)
+    # re_trn = re.compile('\[\/?!?tr[ns]\]')
+    line = line \
+        .replace('[trn]', '') \
+        .replace('[/trn]', '') \
+        .replace('[trs]', '') \
+        .replace('[/trs]', '') \
+        .replace('[!trn]', '') \
+        .replace('[/!trn]', '') \
+        .replace('[!trs]', '') \
+        .replace('[/!trs]', '')
+
     # remove lang tags
-    line = re.sub('\[\/?lang[^\]]*\]', '', line)
+    line = re_lang_open.sub('', line).replace('[/lang]', '')
     # remove com tags
-    line = re.sub('\[/?com\]', '', line)
+    line = line.replace('[com]', '').replace('[/com]', '')
     # remove t tags
-    line = re.sub('\[t\]', '<!-- T --><span style=\"font-family:\'Helvetica\'\">', line)
-    line = re.sub('\[/t\]', '</span><!-- T -->', line)
+    line = line.replace('[t]', '''<!-- T --><span style="font-family:'Helvetica'">''')
+    line = line.replace('[/t]', '</span><!-- T -->')
 
     line = fix_misplaced_dsl_tags(line)
 
-    #log.debug('clean' + line)
+    # paragraph, part one: before shortcuts.
+    line = line.replace('[m]', '[m1]')
+    # if line somewhere contains '[m_]' tag like
+    # "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
+    # then leave it alone.  only wrap in '[m1]' when no 'm' tag found at all.
+    if not re_m_open.search(line):
+        line = '[m1]%s[/m]' % line
+
+    line = apply_shortcuts(line)
+
+    # paragraph, part two: if any not shourcuted [m] left?
+    line = re_m.sub('<div style="margin-left:\g<1>em">\g<2></div>', line)
 
     # text formats
-    line = re.sub('\[(/?)\'\]', '<\g<1>u>', line)
-    line = re.sub('\[(/?)b\]', '<\g<1>b>', line)
-    line = re.sub('\[(/?)i\]', '<\g<1>i>', line)
-    line = re.sub('\[(/?)u\]', '<\g<1>u>', line)
-    line = re.sub('\[(/?)sup\]', '<\g<1>sup>', line)
-    line = re.sub('\[(/?)sub\]', '<\g<1>sub>', line)
+
+    line = line.replace("[']", '<u>').replace("[/']", '</u>')
+    line = line.replace('[b]', '<b>').replace('[/b]', '</b>')
+    line = line.replace('[i]', '<i>').replace('[/i]', '</i>')
+    line = line.replace('[u]', '<u>').replace('[/u]', '</u>')
+    line = line.replace('[sup]', '<sup>').replace('[/sup]', '</sup>')
+    line = line.replace('[sub]', '<sub>').replace('[/sub]', '</sub>')
 
     # color
-    line = re.sub('\[c\]', '<span style="color:green">', line)
-    line = re.sub('\[c (\w+)\]', '<span style="color:\g<1>">', line)
-    line = re.sub('\[/c\]', '</span>', line)
+    line = line.replace('[c]', '<span style="color:green">')
+    line = re_c_open_color.sub('<span style="color:\g<1>">', line)
+    line = line.replace('[/c]', '</span>')
 
     # example zone
-    line = re.sub('\[ex\]', '<span class="ex" style="color:steelblue">', line)
-    line = re.sub('\[/ex\]', '</span>', line)
+    line = line.replace('[ex]', '<span class="ex" style="color:steelblue">')
+    line = line.replace('[/ex]', '</span>')
 
     # secondary zone
     line = line.replace('[*]', '<span class="sec">').replace('[/*]', '</span>')
 
     # abbrev. label
-    line = re.sub('\[p\]', '<i class="p" style="color:green">', line)
-    line = re.sub('\[/p\]', '</i>', line)
+    line = line.replace('[p]', '<i class="p" style="color:green">')
+    line = line.replace('[/p]', '</i>')
 
     # cross reference
     line = line.replace('[ref]', '<<').replace('[/ref]', '>>')
@@ -92,27 +183,41 @@ def _clean_tags(line, audio):
                     '</object>'
     else:
         sound_tag = ''
-    line = re.sub('\[s\]([^[]*?)(wav|mp3)\s*\[/s\]', sound_tag, line)
+    line = re_sound.sub(sound_tag, line)
 
     # image file
-    line = re.sub(
-        '\[s\]([^[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]',
+    line = re_img.sub(
         '<img align="top" src="\g<1>\g<2>" alt="\g<1>\g<2>" />',
         line,
     )
-    line = line.replace('[m]', '[m1]')
-    # if line somewhere contains '[m_]' tag like
-    # """[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ..."""
-    # then leave it alone.  only wrap in '[m1]' when no 'm' tag found at all.
-    if not re.search(r'(?<!\\)\[m\d\]', line):
-        line = '[m1]%s[/m]' % line
-    line = re.sub(r'\[m(\d)\](.*?)\[/m\]', '<div style="margin-left:\g<1>em">\g<2></div>', line)
 
     # \[...\]
-    line = re.sub('\\\\(\[|\])', '\g<1>', line)
+    line = line.replace(r'\[', '[').replace(r'\]', ']')
     return line
 
-def fix_misplaced_dsl_tags(line, tags=(
+misplaced_dsl_tags_cache = {}
+# keys are frozenset `tags`
+# values are dicts where
+#   keys are `tag`
+#   values are 2-tuple (compiled_re, replacement)
+re_open_close_tag_cache = {}
+# key are frozenset `tags`
+# values are set of compiled_re
+
+def add_to_dsl_tags_cache(tags):
+    a = {}
+    b = set()
+    for tag in tags:
+        a[tag] = (
+            re.compile(r'\[%s\](?P<content>[^\[\]]*)(?P<wrongTag>\[/(%s)\])' %
+                       (tag, '|'.join(set(tags) - {tag}))),
+            '[{0}]\g<content>[/{0}]\g<wrongTag>[{0}]'.format(tag)
+        )
+        b.add(re.compile(r'\[%s]\[/%s\]' % (tag, tag)))
+    misplaced_dsl_tags_cache[tags] = a
+    re_open_close_tag_cache[tags] = b
+
+def fix_misplaced_dsl_tags(line, tags=frozenset({
         'b',
         '\'',
         'c',
@@ -122,31 +227,25 @@ def fix_misplaced_dsl_tags(line, tags=(
         'ex',
         'p',
         r'\*'
-)):
+})):
     """
     fix unclosed tags like [b]...[c]...[/b]...[/c]
     change it to [b]...[c]...[/c][/b][c]...[/c]
     """
+    if tags not in misplaced_dsl_tags_cache:
+        add_to_dsl_tags_cache(tags)
+    cache_misplaced = misplaced_dsl_tags_cache[tags]
+    cache_empty = re_open_close_tag_cache[tags]
+
     # for tags like:[p]n[/c][/i][/p], the line needs scan again
     prevLine = ''
     while prevLine != line:
         prevLine = line
-        for tag in tags:
-            otherTags = list(tags)
-            otherTags.remove(tag)
-            searchExpression = '\[%s\](?P<content>[^\[\]]*)(?P<wrongTag>\[/(%s)\])' % (
-                tag,
-                '|'.join(otherTags),
-            )
-            replaceExpression = '[%s]\g<content>[/%s]\g<wrongTag>[%s]' % (
-                tag,
-                tag,
-                tag,
-            )
-            line = re.sub(searchExpression, replaceExpression, line)
+        for (searchExpression, replaceExpression) in cache_misplaced.itervalues():
+            line = searchExpression.sub(replaceExpression, line)
         # empty tags may appear as a result of replaces above: [b][i][/i][/b]
-        for tag in tags:
-            line = re.sub(r'\[%s]\[/%s\]' % (tag, tag), '', line)
+        for tag_re in cache_empty:
+            line = tag_re.sub('', line)
 
     return line
 
