@@ -45,8 +45,6 @@ def _clean_tags(line, audio):
     line = re.sub('\[t\]', '<!-- T --><span style=\"font-family:\'Helvetica\'\">', line)
     line = re.sub('\[/t\]', '</span><!-- T -->', line)
 
-    # remove m tags
-    line = re.sub('\[/?m\d*\]', '', line)
     # remove * tags
     line = re.sub('\[/?\*\]', '', line)
     # remove ref tags
@@ -126,6 +124,13 @@ def _clean_tags(line, audio):
         '<img align="top" src="\g<1>\g<2>" alt="\g<1>\g<2>" />',
         line,
     )
+    line = line.replace('[m]', '[m1]')
+    # if line somewhere contains '[m_]' tag like
+    # """[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ..."""
+    # then leave it alone.  only wrap in '[m1]' when no 'm' tag found at all.
+    if not re.search(r'(?<!\\)\[m\d\]', line):
+        line = '[m1]%s[/m]' % line
+    line = re.sub(r'\[m(\d)\](.*?)\[/m\]', '<div style="margin-left:\g<1>em">\g<2></div>', line)
 
     # \[...\]
     line = re.sub('\\\\(\[|\])', '\g<1>', line)
@@ -160,17 +165,6 @@ def read(glos, fname, **options):
             line_type = 'header'
         # texts
         elif line.startswith(' ') or line.startswith('\t'):
-            # indent level
-            m = re.search('\[m(\d)\]', line)
-            indent = 0
-            if m:
-                try:
-                    indent = int(m.groups()[0])
-                except IndexError:
-                    pass
-            # remove m tags
-            line = re.sub('\[/?m\d*\]', '', line)
-
             line_type = 'text'
             line = unfinished_line + line.lstrip()
 
@@ -186,8 +180,6 @@ def read(glos, fname, **options):
 
             # convert DSL tags to HTML tags
             line = _clean_tags(line, audio)
-            #line = '<br />' + '&#160;' * indent + line.lstrip()
-            line = '<div style="margin-left:%dem">%s</div>'%(indent, line)
             current_text.append(line)
         # title word(s)
         else:
@@ -198,6 +190,9 @@ def read(glos, fname, **options):
             else:
                 # append previous entry
                 if line_type == 'text':
+                    if unfinished_line:
+                        # line may be skipped if ill formated
+                        current_text.append(_clean_tags(unfinished_line, audio))
                     glos.data.append((
                         current_key,
                         '\n'.join(current_text),
