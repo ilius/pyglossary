@@ -52,40 +52,7 @@ def _clean_tags(line, audio):
     line = re.sub('\[t\]', '<!-- T --><span style=\"font-family:\'Helvetica\'\">', line)
     line = re.sub('\[/t\]', '</span><!-- T -->', line)
 
-    #fix unclosed tags like [b]...[c]...[/b]...[/c]
-    #change it to [b]...[c]...[/c][/b][c]...[/c]
-    tags = (
-        'b',
-        '\'',
-        'c',
-        'i',
-        'sup',
-        'sub',
-        'ex',
-        'p',
-        r'\*'
-    )
-    #for tags like:[p]n[/c][/i][/p], the line needs scan again
-    while True:
-        prevLine = line
-        for tag in tags:
-            otherTags = list(tags)
-            otherTags.remove(tag)
-            searchExpression = '\[%s\](?P<content>[^\[\]]*)(?P<wrongTag>\[/(%s)\])'%(
-                tag,
-                '|'.join(otherTags),
-            )
-            replaceExpression = '[%s]\g<content>[/%s]\g<wrongTag>[%s]'%(
-                tag,
-                tag,
-                tag,
-            )
-            line = re.sub(searchExpression, replaceExpression, line)
-        # empty tags may appear as a result of replaces above: [b][i][/i][/b]
-        for tag in tags:
-            line = re.sub(r'\[%s]\[/%s\]' % (tag, tag), '', line)
-        if line == prevLine:
-            break
+    line = fix_misplaced_dsl_tags(line)
 
     #log.debug('clean' + line)
 
@@ -143,6 +110,44 @@ def _clean_tags(line, audio):
 
     # \[...\]
     line = re.sub('\\\\(\[|\])', '\g<1>', line)
+    return line
+
+def fix_misplaced_dsl_tags(line, tags=(
+        'b',
+        '\'',
+        'c',
+        'i',
+        'sup',
+        'sub',
+        'ex',
+        'p',
+        r'\*'
+)):
+    """
+    fix unclosed tags like [b]...[c]...[/b]...[/c]
+    change it to [b]...[c]...[/c][/b][c]...[/c]
+    """
+    # for tags like:[p]n[/c][/i][/p], the line needs scan again
+    prevLine = ''
+    while prevLine != line:
+        prevLine = line
+        for tag in tags:
+            otherTags = list(tags)
+            otherTags.remove(tag)
+            searchExpression = '\[%s\](?P<content>[^\[\]]*)(?P<wrongTag>\[/(%s)\])' % (
+                tag,
+                '|'.join(otherTags),
+            )
+            replaceExpression = '[%s]\g<content>[/%s]\g<wrongTag>[%s]' % (
+                tag,
+                tag,
+                tag,
+            )
+            line = re.sub(searchExpression, replaceExpression, line)
+        # empty tags may appear as a result of replaces above: [b][i][/i][/b]
+        for tag in tags:
+            line = re.sub(r'\[%s]\[/%s\]' % (tag, tag), '', line)
+
     return line
 
 def read(glos, fname, **options):
