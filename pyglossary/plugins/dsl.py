@@ -26,10 +26,17 @@ extentions = ['.dsl']
 readOptions = ['encoding', 'audio']
 writeOptions = []
 
+__all__ = ['read']
 
 import codecs
 import re
+from xml.sax.saxutils import escape, quoteattr
 
+def make_a_href(s):
+    return '<a href=%s>%s</a>' % (quoteattr(s), escape(s))
+
+def ref_sub(x):
+    return make_a_href(x.groups()[0])
 
 def _clean_tags(line, audio):
     # remove {{...}} blocks
@@ -45,13 +52,6 @@ def _clean_tags(line, audio):
     line = re.sub('\[t\]', '<!-- T --><span style=\"font-family:\'Helvetica\'\">', line)
     line = re.sub('\[/t\]', '</span><!-- T -->', line)
 
-    # remove * tags
-    line = re.sub('\[/?\*\]', '', line)
-    # remove ref tags
-    line = re.sub('\[/?ref[^]]*\]', '', line)
-    # remove url tags
-    line = re.sub('\[url\].*?\[/url\]', '', line)
-    
     #fix unclosed tags like [b]...[c]...[/b]...[/c]
     #change it to [b]...[c]...[/c][/b][c]...[/c]
     tags = (
@@ -63,6 +63,7 @@ def _clean_tags(line, audio):
         'sub',
         'ex',
         'p',
+        r'\*'
     )
     #for tags like:[p]n[/c][/i][/p], the line needs scan again
     while True:
@@ -80,6 +81,9 @@ def _clean_tags(line, audio):
                 tag,
             )
             line = re.sub(searchExpression, replaceExpression, line)
+        # empty tags may appear as a result of replaces above: [b][i][/i][/b]
+        for tag in tags:
+            line = re.sub(r'\[%s]\[/%s\]' % (tag, tag), '', line)
         if line == prevLine:
             break
 
@@ -96,18 +100,23 @@ def _clean_tags(line, audio):
     # color
     line = re.sub('\[c\]', '<span style="color:green">', line)
     line = re.sub('\[c (\w+)\]', '<span style="color:\g<1>">', line)
-    line = re.sub('\[/c\]', ' </span>', line)
+    line = re.sub('\[/c\]', '</span>', line)
 
     # example zone
-    line = re.sub('\[ex\]', '<span style="color:steelblue">', line)
+    line = re.sub('\[ex\]', '<span class="ex" style="color:steelblue">', line)
     line = re.sub('\[/ex\]', '</span>', line)
 
+    # secondary zone
+    line = line.replace('[*]', '<span class="sec">').replace('[/*]', '</span>')
+
     # abbrev. label
-    line = re.sub('\[p\]', '<span style="color:green">', line)
-    line = re.sub('\[/p\]', '</span>', line)
+    line = re.sub('\[p\]', '<i class="p" style="color:green">', line)
+    line = re.sub('\[/p\]', '</i>', line)
 
     # cross reference
-    line = re.sub('<<(.*?)>>', '<a href="bword://\g<1>">\g<1></a>', line)
+    line = line.replace('[ref]', '<<').replace('[/ref]', '>>')
+    line = line.replace('[url]', '<<').replace('[/url]', '>>')
+    line = re.sub('<<(.*?)>>', ref_sub, line)
 
     # sound file
     if audio:
