@@ -17,12 +17,19 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+# optimized version.  chached everything that was possible.
+
 import re
 
 from .stash import Stash
 
 BRACKET_L = '\0\1'
 BRACKET_R = '\0\2'
+
+# precompiled regexs
+re_m_tag_with_content = re.compile(r'(\[m\d\])(.*?)(\[/m\])')
+re_non_escaped_bracket = re.compile(r'(?<!\\)\[')
+_startswith_tag_cache = {}
 
 
 class PerfectDSLParser(object):
@@ -52,7 +59,42 @@ class PerfectDSLParser(object):
                      second is its extension for opening tag,
                      e.g.: ('c', r' (\w+)'), ('m', r'\d')
         """
-        self.tags = frozenset({t if isinstance(t, tuple) else (t, '') for t in tags})
+        tags_ = set()
+        for tag, ext in (t if isinstance(t, tuple) else (t, '') for t in tags):
+            tag_open_re = r'\[%s%s\]' % (tag, ext)
+            tag_close_re = r'\[/%s\]' % tag
+            tag_close_s = '[/%s]' % tag
+            tags_.add((tag, ext, tag_open_re, tag_close_re, tag_close_s))
+        self.tags = frozenset(tags_)
+
+        non_open = r'[^\[]'
+
+        # see description in `parse` docstring.
+        self.case_1 = {}
+        self.case_2 = {}
+        self.case_3 = {}
+        self.case_4 = {}
+        self.case_5 = {}
+
+        for tag, _, tag_open_re, tag_close_re, _ in self.tags:
+            self.case_1[tag] = re.compile(
+                r'(?:%(non_open)s)*(%(tag_close_re)s)' %
+                {'non_open': non_open, 'tag_close_re': tag_close_re})
+
+            self.case_2[tag] = re.compile(
+                r'(%(tag_open_re)s)(?:%(non_open)s)*$' %
+                {'tag_open_re': tag_open_re, 'non_open': non_open})
+
+            others = '|'.join(t[0] for t in self.tags if t[0] != tag)
+            self.case_3[tag] = re.compile(
+                r'(?P<self>%(tag_open_re)s)(?P<txt>(?:%(non_open)s)*)(?P<other>\[/(?:%(others)s)\])' %
+                {'tag_open_re': tag_open_re, 'non_open': non_open, 'others': others})
+
+            self.case_4[tag] = re.compile(r'%s%s' % (tag_open_re, tag_close_re))
+
+            self.case_5[tag] = re.compile(
+                r'%s(?:%s)+%s' % (tag_open_re, non_open, tag_close_re))
+
         self.stash = Stash('dsl')
 
     def parse(self, line):
@@ -81,7 +123,8 @@ class PerfectDSLParser(object):
         line = self.put_brackets_away(line, self.tags)
         paragraphs, m_tags = self.split_line_by_paragraphs(line)
         # paragraphs does not contain valid [m_]...[/m] tags.  invadid standalone tags will be removed by parser.
-        paragraphs = map(self._parse_paragraph, paragraphs)
+        paragraphs = map(lambda s: self._parse_paragraph(s) if s.strip() else s,
+                         paragraphs)
         line = self.join_paragraphs(paragraphs, m_tags)
         return self.bring_brackets_back(line)
 
@@ -92,10 +135,13 @@ class PerfectDSLParser(object):
         :rtype: str
         """
         clean_line = ''
-        openings = '|'.join('%s%s' % _ for _ in tags)
-        closings = '|'.join(_[0] for _ in tags)
-        startswith_tag = re.compile(r'(?:(?:%s)|/(?:%s))\]' % (openings, closings))
-        for i, chunk in enumerate(re.split(r'(?<!\\)\[', line)):
+        startswith_tag = _startswith_tag_cache.get(tags, None)
+        if startswith_tag is None:
+            openings = '|'.join('%s%s' % (_[0], _[1]) for _ in tags)
+            closings = '|'.join(_[0] for _ in tags)
+            startswith_tag = re.compile(r'(?:(?:%s)|/(?:%s))\]' % (openings, closings))
+            _startswith_tag_cache[tags] = startswith_tag
+        for i, chunk in enumerate(re_non_escaped_bracket.split(line)):
             if i != 0:
                 m = startswith_tag.match(chunk)
                 if m:
@@ -127,7 +173,7 @@ class PerfectDSLParser(object):
         paragraphs = []
         m_tags = []
         last_pos = 0
-        for i, m in enumerate(re.finditer(r'(\[m\d\])(.*?)(\[/m\])', line)):
+        for i, m in enumerate(re_m_tag_with_content.finditer(line)):
             paragraphs.extend((line[last_pos:m.start()], m.group(2)))
             m_tags.extend((m.group(1), m.group(3)))
             last_pos = m.end()
@@ -157,34 +203,24 @@ class PerfectDSLParser(object):
         prev_line = ''
         while prev_line != para:
             prev_line = para
-            for tag, ext in tags:
-                tag_open_re = r'\[%s%s\]' % (tag, ext)
-                tag_close_re = r'\[/%s\]' % tag
-                tag_close_s = '[/%s]' % tag
+            for tag, ext, tag_open_re, tag_close_re, tag_close_s in tags:
 
                 # case 1.
                 # XXX: no way str.startswith, `tag` may itself be a regex
-                m = re.match(r'(?:%(non_open)s)*(%(tag_close_re)s)' %
-                             {'non_open': non_open, 'tag_close_re': tag_close_re}, para)
+                m = self.case_1[tag].match(para)
                 if m:
                     para = '%s%s' % (para[:m.start(1)], para[m.end():])
 
                 # case 2.
-                m = re.search(r'(%(tag_open_re)s)(?:%(non_open)s)*$' %
-                              {'tag_open_re': tag_open_re, 'non_open': non_open}, para)
+                m = self.case_2[tag].search(para)
                 if m:
                     para = '%s%s' % (para[:m.start()], para[m.end(1):])
-                    # para += tag_close_s
-                    # para = stash.save(para, m.start(), None)
 
                 # case 3.
-                closings = '|'.join(t for t, _ in tags if t != tag)
-
                 # keep propagating with current tag
                 m = True
                 while m:
-                    m = re.search(r'(?P<self>%(tag_open_re)s)(?P<txt>(?:%(non_open)s)*)(?P<other>\[/(?:%(others)s)\])' %
-                                  {'tag_open_re': tag_open_re, 'non_open': non_open, 'others': closings}, para)
+                    m = self.case_3[tag].search(para)
                     if m:
                         opening = m.group('self')
                         txt = m.group('txt')
@@ -200,12 +236,12 @@ class PerfectDSLParser(object):
                             para = stash.save(para, m.start(), o_start + len(tag_close_s))
 
                 # case 4.
-                m = re.search(r'%s%s' % (tag_open_re, tag_close_re), para)
+                m = self.case_4[tag].search(para)
                 if m:
                     para = '%s%s' % (para[:m.start()], para[m.end():])
 
                 # case 5.
-                m = re.search(r'%s(?:%s)+%s' % (tag_open_re, non_open, tag_close_re), para)
+                m = self.case_5[tag].search(para)
                 if m:
                     para = stash.save(para, m.start(), m.end())
 
@@ -213,6 +249,16 @@ class PerfectDSLParser(object):
 
 
 def parse(line, tags=None):
+    """parse DSL markup.
+
+    WARNING!
+    `parse` function is not optimal because it creates new parser instance on each call.
+    consider cache one [per thread] instance of PerfectDSLParser in your code.
+    """
+    import warnings
+    warnings.warn("""`parse` function is not optimal because it creates new parser instance on each call.
+consider cache one [per thread] instance of PerfectDSLParser in your code.\
+""")
     if tags:
         parser = PerfectDSLParser(tags)
     else:
