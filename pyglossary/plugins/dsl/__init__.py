@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## dsl.py
+## dsl/__init__.py
 ## Read ABBYY Lingvo DSL dictionary format
 ##
 ## Copyright (C) 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
