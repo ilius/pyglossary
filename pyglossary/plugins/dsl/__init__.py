@@ -23,6 +23,7 @@ import re
 from xml.sax.saxutils import escape, quoteattr
 
 from formats_common import *
+from . import perfect_dsl
 
 enable = True
 format = 'ABBYYLingvoDSL'
@@ -72,6 +73,9 @@ re_c_open_color = re.compile(r'\[c (\w+)\]')
 re_sound = re.compile(r'\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]')
 re_img = re.compile(r'\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]')
 re_m = re.compile(r'\[m(\d)\](.*?)\[/m\]')
+
+# single instance of parser.  it's save as long as this script's not going multithread.
+_parse = perfect_dsl.PerfectDSLParser().parse
 
 def _clean_tags(line, audio):
     r"""
@@ -131,7 +135,7 @@ def _clean_tags(line, audio):
     line = line.replace('[t]', '''<!-- T --><span style="font-family:'Helvetica'">''')
     line = line.replace('[/t]', '</span><!-- T -->')
 
-    line = fix_misplaced_dsl_tags(line)
+    line = _parse(line)
 
     # paragraph, part one: before shortcuts.
     line = line.replace('[m]', '[m1]')
@@ -193,60 +197,6 @@ def _clean_tags(line, audio):
 
     # \[...\]
     line = line.replace(r'\[', '[').replace(r'\]', ']')
-    return line
-
-misplaced_dsl_tags_cache = {}
-# keys are frozenset `tags`
-# values are dicts where
-#   keys are `tag`
-#   values are 2-tuple (compiled_re, replacement)
-re_open_close_tag_cache = {}
-# key are frozenset `tags`
-# values are set of compiled_re
-
-def add_to_dsl_tags_cache(tags):
-    a = {}
-    b = set()
-    for tag in tags:
-        a[tag] = (
-            re.compile(r'\[%s\](?P<content>[^\[\]]*)(?P<wrongTag>\[/(%s)\])' %
-                       (tag, '|'.join(set(tags) - {tag}))),
-            '[{0}]\g<content>[/{0}]\g<wrongTag>[{0}]'.format(tag)
-        )
-        b.add(re.compile(r'\[%s]\[/%s\]' % (tag, tag)))
-    misplaced_dsl_tags_cache[tags] = a
-    re_open_close_tag_cache[tags] = b
-
-def fix_misplaced_dsl_tags(line, tags=frozenset({
-        'b',
-        '\'',
-        'c',
-        'i',
-        'sup',
-        'sub',
-        'ex',
-        'p',
-        r'\*'
-})):
-    """
-    fix unclosed tags like [b]...[c]...[/b]...[/c]
-    change it to [b]...[c]...[/c][/b][c]...[/c]
-    """
-    if tags not in misplaced_dsl_tags_cache:
-        add_to_dsl_tags_cache(tags)
-    cache_misplaced = misplaced_dsl_tags_cache[tags]
-    cache_empty = re_open_close_tag_cache[tags]
-
-    # for tags like:[p]n[/c][/i][/p], the line needs scan again
-    prevLine = ''
-    while prevLine != line:
-        prevLine = line
-        for (searchExpression, replaceExpression) in cache_misplaced.itervalues():
-            line = searchExpression.sub(replaceExpression, line)
-        # empty tags may appear as a result of replaces above: [b][i][/i][/b]
-        for tag_re in cache_empty:
-            line = tag_re.sub('', line)
-
     return line
 
 def read(glos, fname, **options):
@@ -330,4 +280,3 @@ def read(glos, fname, **options):
                 'alts': current_key_alters,
             }
         ))
-
