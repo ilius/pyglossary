@@ -263,7 +263,6 @@ yīlún
 
 class PutBracketsAwayTestCase(unittest.TestCase):
     def setUp(self):
-        self.tests = []
         tags = frozenset({
             'b',
             '\'',
@@ -276,7 +275,8 @@ class PutBracketsAwayTestCase(unittest.TestCase):
             r'\*',
             ('m', '\d'),
         })
-        self.tags = {t if isinstance(t, tuple) else (t, '') for t in tags}
+        parser = PerfectDSLParser(tags)
+        self.tags = parser.tags
 
     def testStandaloneLeftEscapedAtTheBeginning(self):
         before = "[..."
