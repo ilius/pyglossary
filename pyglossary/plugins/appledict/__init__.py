@@ -41,6 +41,7 @@ writeOptions = [
     'frontBackMatter',
     'OtherResources',
     'jing',
+    'indexes',
 ]
 
 OtherResources = 'OtherResources'
@@ -154,7 +155,7 @@ def safe_listdir_set(path):
         return set()
     return set(map(lambda node: os.path.join(path, node), os.listdir(path)))
 
-def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None, frontBackMatter=None, OtherResources=None, jing=None):
+def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None, frontBackMatter=None, OtherResources=None, jing=None, indexes=None):
     """write glossary to Apple dictionary .xml and supporting files.
 
     :type glos: pyglossary.glossary.Glossary
@@ -192,6 +193,12 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
 
     :type jing: str or None
     :param jing: pass "yes" to run Jing check on generated XML.
+
+    :type indexes: str or None
+    :param indexes: Dictionary.app is dummy and by default it don't know
+    how to perform flexible search.  we can help it by manually providing
+    additional indexes to dictionary entries.
+    # for now no languages supported yet.
     """
     basename = os.path.splitext(fpath)[0]
     dict_name = os.path.split(basename)[1]
@@ -209,7 +216,7 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
 
     with chdir(basename, create=True):
         write_plist(glos, dict_name + '.plist', xsl=xsl, defaultPrefs=defaultPrefs, prefsHTML=prefsHTML, frontBackMatter=frontBackMatter)
-        write_xml(glos, dict_name + '.xml', cleanHTML=="yes", frontBackMatter=frontBackMatter)
+        write_xml(glos, dict_name + '.xml', cleanHTML=="yes", frontBackMatter=frontBackMatter, indexes=indexes)
         write_css(dict_name + '.css', css)
         write_makefile(dict_name)
         write_xsl(xsl)

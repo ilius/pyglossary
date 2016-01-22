@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## appledict/_appledict.py
+## appledict/_dict.py
 ## Output to Apple Dictionary xml sources for Dictionary Development Kit.
 ##
 ## Copyright (C) 2012 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
@@ -70,21 +70,60 @@ def id_generator():
 
     return generate_id
 
-def indexes_generator():
-    # it will be factory that atcs according to glossary language
+def indexes_generator(indexes_lang):
+    """
+    factory that acts according to glossary language
+
+    :param indexes_lang: str
+    """
+    indexer = None
+    """Callable[[str], Sequence[str]]"""
+    if indexes_lang:
+        from . import indexes as idxs
+        indexer = idxs.languages.get(indexes_lang, None)
+        if not indexer:
+            msg = "extended indexes not supported for the specified language: %s.\n"\
+                  "following languages avaible: %s." %\
+                  (indexes_lang, ', '.join(idxs.languages.keys()))
+            from pyglossary.glossary import log
+            log.error(msg)
+            raise ValueError(msg)
+
     def generate_indexes(title, alts, BeautifulSoup):
-        indexes = [_normalize.title_long(title), _normalize.title_short(title)]
-        for alt in alts:
-            normal = _normalize.title(alt, BeautifulSoup)
-            indexes.append(_normalize.title_long(normal))
-            indexes.append(_normalize.title_short(normal))
-        indexes = set(indexes)
-        s = ''
-        for idx in indexes:
-            if BeautifulSoup:
-                s += '<d:index d:value=%s/>' % BeautifulSoup.dammit.EntitySubstitution.substitute_xml(idx, True)
-            else:
-                s += '<d:index d:value="%s"/>' % idx.replace('>', '&gt;')
+        titles = [title]
+        titles.extend(alts)
+
+        if BeautifulSoup:
+            quoted_title = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(title, True)
+        else:
+            quoted_title = '"%s"' % title.replace('>', '&gt;').replace('"', "&quot;")
+
+        if indexer:
+            indexer_titles = set()
+            for title in titles:
+                indexer_titles.update(indexer(title))
+            titles = indexer_titles
+
+        indexes = set()
+        for idx in titles:
+            normal = _normalize.title(idx, BeautifulSoup)
+            indexes.add(_normalize.title_long(normal))
+            indexes.add(_normalize.title_short(normal))
+        indexes.discard(title)
+
+        indexes = filter(lambda s: s.strip(), indexes)  # skip empty titles.  everything could happen.
+
+        s = '<d:index d:value=%s/>' % quoted_title
+        if BeautifulSoup:
+            for idx in indexes:
+                s += '<d:index d:value=%s d:title=%s/>' % (
+                    BeautifulSoup.dammit.EntitySubstitution.substitute_xml(idx, True),
+                    quoted_title)
+        else:
+            for idx in indexes:
+                s += '<d:index d:value="%s" d:title=%s/>' % (
+                    idx.replace('>', '&gt;').replace('"', "&quot;"),
+                    quoted_title)
         return s
     return generate_indexes
 
@@ -184,7 +223,10 @@ def format_clean_content(title, body, BeautifulSoup):
     content = nonprintable.sub('', content)
     return content
 
-def write_entries(glos, f, cleanHTML):
+def write_entries(glos, f, cleanHTML, indexes):
+    """
+    :param indexes: str | None
+    """
     if cleanHTML:
         BeautifulSoup = get_beautiful_soup()
         if not BeautifulSoup:
@@ -198,23 +240,23 @@ def write_entries(glos, f, cleanHTML):
 
     # write entries
     generate_id = id_generator()
-    generate_indexes = indexes_generator()
+    generate_indexes = indexes_generator(indexes)
     total = float(len(glos.data))
 
     for i, item in enumerate(glos.data):
-        title = _normalize.title(item[0], BeautifulSoup)
-        if not title:
+        long_title = _normalize.title_long(_normalize.title(item[0], BeautifulSoup))
+        if not long_title:
             continue
 
         id = generate_id()
         if BeautifulSoup:
-            norm_long = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(_normalize.title_long(title), True)
+            title_attr = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(long_title, True)
         else:
-            norm_long = '"%s"' % _normalize.title_long(title)
+            title_attr = '"%s"' % long_title
 
         begin_entry = '<d:entry id="%(id)s" d:title=%(title)s>\n' % {
             'id': id,
-            'title': norm_long,
+            'title': title_attr,
         }
         f.write(begin_entry)
 
@@ -224,10 +266,10 @@ def write_entries(glos, f, cleanHTML):
         except:
             alts = []
 
-        indexes = generate_indexes(title, alts, BeautifulSoup)
+        indexes = generate_indexes(long_title, alts, BeautifulSoup)
         f.write(indexes)
 
-        content = format_clean_content(title, item[1], BeautifulSoup)
+        content = format_clean_content(long_title, item[1], BeautifulSoup)
         f.write(content)
 
         end_entry = '\n</d:entry>\n'
@@ -243,8 +285,8 @@ def dictionary_end(glos, f):
     if glos.ui:
         glos.ui.progressEnd()
 
-def write_xml(glos, filename, cleanHTML, frontBackMatter):
+def write_xml(glos, filename, cleanHTML, frontBackMatter, indexes):
     with open(filename, 'wb') as f:
         dictionary_begin(glos, f, frontBackMatter)
-        write_entries(glos, f, cleanHTML)
+        write_entries(glos, f, cleanHTML, indexes)
         dictionary_end(glos, f)
