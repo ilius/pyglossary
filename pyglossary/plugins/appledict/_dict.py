@@ -18,6 +18,7 @@
 
 import re
 import string
+from xml.sax.saxutils import unescape, quoteattr
 
 from . import _normalize
 
@@ -92,15 +93,91 @@ close_tag = re.compile('<(BR|HR)>', re.IGNORECASE)
 nonprintable = re.compile('[\x00-\x07\x0e-\x1f]')
 img_tag = re.compile('<IMG (.*?)>', re.IGNORECASE)
 
+em0_9_re = re.compile(r'<div style="margin-left:(\d)em">')
+em0_9_sub = r'<div class="m\1">'
+
+em0_9_ex_re = re.compile(r'<div class="ex" style="margin-left:(\d)em;color:steelblue">')
+em0_9_ex_sub = r'<div class="m\1 ex">'
+
+href_re = re.compile(r'''href=(["'])(.*?)\1''')
+href_sub = (lambda x:
+            x.group()
+            if x.groups()[1].startswith('http') else
+            'href=%s' % quoteattr('x-dictionary:d:' +
+                                  unescape(x.groups()[1], {'&quot;': '"'})))
+
+is_green = lambda x: 'color:green' in x.get('style', '')
+margin_re = re.compile('margin-left:(\d)em')
+
+
+def remove_style(tag, line):
+    s = ''.join(tag['style'].replace(line, '').split(';'))
+    if s:
+        tag['style'] = s
+    else:
+        del tag['style']
+
+
 def format_clean_content(title, body, BeautifulSoup):
-    # nice header to display
-    content = '<h1>%s</h1>%s' % (title, body)
+    # heavily integrated with output of dsl reader plugin!
+
+    # class="sec" => d:priority="2"
+    # style="color:steelblue" => class="ex"
+    # class="p" style="color:green" => class="p"
+    # style="color:green" => class="c"
+    # style="margin-left:{}em" => class="m{}"
+
     # xhtml is strict
     if BeautifulSoup:
-        soup = BeautifulSoup.BeautifulSoup(content, from_encoding='utf-8')
-        b = soup.body  # difference between 'lxml' and 'html.parser'
-        content = ''.join(map(str, (b if b else soup).contents))
+        soup = BeautifulSoup.BeautifulSoup(body, from_encoding='utf-8')
+        # difference between 'lxml' and 'html.parser'
+        if soup.body:
+            soup = soup.body
+
+        for tag in soup(class_='sec'):
+            tag['class'].remove('sec')
+            if not tag['class']:
+                del tag['class']
+            tag['d:priority'] = "2"
+        for tag in soup(lambda x: 'color:steelblue' in x.get('style', '')):
+            remove_style(tag, 'color:steelblue')
+            if 'ex' not in tag.get('class', []):
+                tag['class'] = tag.get('class', []) + ['ex']
+        for tag in soup(is_green):
+            remove_style(tag, 'color:green')
+            if 'p' not in tag.get('class', ''):
+                tag['class'] = tag.get('class', []) + ['c']
+        for tag in soup(True):
+            if 'style' in tag.attrs:
+                m = margin_re.search(tag['style'])
+                if m:
+                    remove_style(tag, m.group(0))
+                    tag['class'] = tag.get('class', []) + ['m' + m.group(1)]
+        for tag in soup.select('[href]'):
+            href = tag['href']
+            if not (href.startswith('http:') or href.startswith('https:')):
+                tag['href'] = 'x-dictionary:d:%s' % href
+
+        h1 = BeautifulSoup.Tag(name='h1')
+        h1.string = title
+        soup.insert(0, h1)
+        # hence the name BeautifulSoup
+        content = ''.join(map(str, soup.contents))
     else:
+        # somewhat analogue to what BeautifulSoup suppose to do
+        body = em0_9_re.sub(em0_9_sub, body)
+        body = em0_9_ex_re.sub(em0_9_ex_sub, body)
+        body = href_re.sub(href_sub, body)
+
+        body = body \
+            .replace('<i style="color:green">', '<i class="c">') \
+            .replace('<i class="p" style="color:green">', '<i class="p">') \
+            .replace('<span class="ex" style="color:steelblue">', '<span class="ex">') \
+            .replace('<span class="sec ex" style="color:steelblue">', '<span class="sec ex">') \
+            .replace('<u>', '<span class="u">').replace('</u>', '</span>')
+
+        # nice header to display
+        content = '<h1>%s</h1>%s' % (title, body)
         content = close_tag.sub('<\g<1> />', content)
         content = img_tag.sub('<img \g<1>/>', content)
     content = content.replace('&nbsp;', '&#160;')

@@ -11,3 +11,35 @@ h1	{
 h3	{
 	font-size: 100%;
 }
+
+.ex, .m0, .m1, .m2, .m3, .m4, .m5, .m6, .m7, .m8, .m9 {
+	display: block;
+}
+
+.m0 { margin-left: 0em; }
+.m1 { margin-left: 1em; }
+.m2 { margin-left: 2em; }
+.m3 { margin-left: 3em; }
+.m4 { margin-left: 4em; }
+.m5 { margin-left: 5em; }
+.m6 { margin-left: 6em; }
+.m7 { margin-left: 7em; }
+.m8 { margin-left: 8em; }
+.m9 { margin-left: 9em; }
+
+.c {
+	color: green;
+}
+
+.p {
+	font-style: italic;
+	color: green;
+}
+
+.ex {
+	color: #666;
+}
+
+.u {
+	text-decoration: underline;
+}
