@@ -908,6 +908,11 @@ def build_name2codepoint_dict():
             value,
         ))
 
+wrapped_in_quotes_re = re.compile(r'^(\'|")(.*)(\1)$')
+
+def unwrap_quotes(s):
+    return wrapped_in_quotes_re.sub(r'\2', s)
+
 if __name__=='__main__':
     build_name2codepoint_dict()
 
