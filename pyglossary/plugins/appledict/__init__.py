@@ -214,7 +214,7 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
     res = safe_listdir_set(glos.resPath).union(safe_listdir_set(OtherResources))
     res -= {css, xsl, prefsHTML, frontBackMatter}
 
-    with chdir(basename, create=True):
+    with chdir(basename, create=True, clear=True):
         write_plist(glos, dict_name + '.plist', xsl=xsl, defaultPrefs=defaultPrefs, prefsHTML=prefsHTML, frontBackMatter=frontBackMatter)
         write_xml(glos, dict_name + '.xml', cleanHTML=="yes", frontBackMatter=frontBackMatter, indexes=indexes)
         write_css(dict_name + '.css', css)
