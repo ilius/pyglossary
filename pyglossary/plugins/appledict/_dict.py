@@ -276,7 +276,7 @@ def write_entries(glos, f, cleanHTML, indexes):
         end_entry = '\n</d:entry>\n'
         buffer += end_entry
 
-        if i % 1000 == 0 and glos.ui:
+        if i % 10 == 0 and glos.ui:
             glos.ui.progress(i / total)
     f.write(buffer)
 
