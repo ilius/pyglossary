@@ -242,6 +242,7 @@ def write_entries(glos, f, cleanHTML, indexes):
     generate_id = id_generator()
     generate_indexes = indexes_generator(indexes)
     total = float(len(glos.data))
+    buffer = ''
 
     for i, item in enumerate(glos.data):
         long_title = _normalize.title_long(_normalize.title(item[0], BeautifulSoup))
@@ -258,7 +259,7 @@ def write_entries(glos, f, cleanHTML, indexes):
             'id': id,
             'title': title_attr,
         }
-        f.write(begin_entry)
+        buffer += begin_entry
 
         # get alternatives list
         try:
@@ -267,16 +268,17 @@ def write_entries(glos, f, cleanHTML, indexes):
             alts = []
 
         indexes = generate_indexes(long_title, alts, BeautifulSoup)
-        f.write(indexes)
+        buffer += indexes
 
         content = format_clean_content(long_title, item[1], BeautifulSoup)
-        f.write(content)
+        buffer += content
 
         end_entry = '\n</d:entry>\n'
-        f.write(end_entry)
+        buffer += end_entry
 
         if i % 1000 == 0 and glos.ui:
             glos.ui.progress(i / total)
+    f.write(buffer)
 
 def dictionary_end(glos, f):
     f.write('</d:dictionary>\n')
