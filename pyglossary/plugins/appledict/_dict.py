@@ -199,7 +199,7 @@ def format_clean_content(title, body, BeautifulSoup):
         h1.string = title
         soup.insert(0, h1)
         # hence the name BeautifulSoup
-        content = ''.join(map(lambda x: x.encode('utf-8'), soup.contents))
+        content = soup.encode_contents()
     else:
         # somewhat analogue to what BeautifulSoup suppose to do
         body = em0_9_re.sub(em0_9_sub, body)
