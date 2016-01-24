@@ -55,6 +55,8 @@ shortcuts = [
     (r'[m(\d)][*][ex](.*?)[/ex][/*][/m]',
      r'<div class="sec ex" style="margin-left:\g<1>em;color:steelblue">\g<2></div>'),
     (r'[*][ex](.*?)[/ex][/*]', r'<span class="sec ex" style="color:steelblue">\g<1></span>'),
+    (r'[m1](?:-{2,})[/m]', '<hr/>'),
+    (r'[m(\d)](?:-{2,})[/m]', r'<hr style="margin-left:\g<1>em"/>'),
 ]
 shortcuts = [(re.compile(repl.replace('[', r'\[').replace('*]', r'\*]')), sub)
              for (repl, sub) in shortcuts]
