@@ -77,7 +77,7 @@ def indexes_generator(indexes_lang):
     :param indexes_lang: str
     """
     indexer = None
-    """Callable[[str], Sequence[str]]"""
+    """Callable[[Sequence[str], str], Sequence[str]]"""
     if indexes_lang:
         from . import indexes as idxs
         indexer = idxs.languages.get(indexes_lang, None)
@@ -89,9 +89,9 @@ def indexes_generator(indexes_lang):
             log.error(msg)
             raise ValueError(msg)
 
-    def generate_indexes(title, alts, BeautifulSoup):
-        titles = [title]
-        titles.extend(alts)
+    def generate_indexes(title, alts, content, BeautifulSoup):
+        indexes = [title]
+        indexes.extend(alts)
 
         if BeautifulSoup:
             quoted_title = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(title, True)
@@ -99,28 +99,26 @@ def indexes_generator(indexes_lang):
             quoted_title = '"%s"' % title.replace('>', '&gt;').replace('"', "&quot;")
 
         if indexer:
-            indexer_titles = set()
-            for title in titles:
-                indexer_titles.update(indexer(title))
-            titles = indexer_titles
+            indexes = set(indexer(indexes, content))
 
-        indexes = set()
-        for idx in titles:
+        normal_indexes = set()
+        for idx in indexes:
             normal = _normalize.title(idx, BeautifulSoup)
-            indexes.add(_normalize.title_long(normal))
-            indexes.add(_normalize.title_short(normal))
-        indexes.discard(title)
+            normal_indexes.add(_normalize.title_long(normal))
+            normal_indexes.add(_normalize.title_short(normal))
+        normal_indexes.discard(title)
 
-        indexes = filter(lambda s: s.strip(), indexes)  # skip empty titles.  everything could happen.
+        normal_indexes = filter(lambda s: s.strip(), normal_indexes)
+        # skip empty titles.  everything could happen.
 
         s = '<d:index d:value=%s/>' % quoted_title
         if BeautifulSoup:
-            for idx in indexes:
+            for idx in normal_indexes:
                 s += '<d:index d:value=%s d:title=%s/>' % (
                     BeautifulSoup.dammit.EntitySubstitution.substitute_xml(idx, True),
                     quoted_title)
         else:
-            for idx in indexes:
+            for idx in normal_indexes:
                 s += '<d:index d:value="%s" d:title=%s/>' % (
                     idx.replace('>', '&gt;').replace('"', "&quot;"),
                     quoted_title)
@@ -259,7 +257,6 @@ def write_entries(glos, f, cleanHTML, indexes):
             'id': id,
             'title': title_attr,
         }
-        buffer += begin_entry
 
         # get alternatives list
         try:
@@ -267,13 +264,15 @@ def write_entries(glos, f, cleanHTML, indexes):
         except:
             alts = []
 
-        indexes = generate_indexes(long_title, alts, BeautifulSoup)
-        buffer += indexes
-
         content = format_clean_content(long_title, item[1], BeautifulSoup)
-        buffer += content
+
+        indexes = generate_indexes(long_title, alts, content, BeautifulSoup)
 
         end_entry = '\n</d:entry>\n'
+
+        buffer += begin_entry
+        buffer += indexes
+        buffer += content
         buffer += end_entry
 
         if i % 10 == 0 and glos.ui:
