@@ -17,7 +17,6 @@
 # GNU General Public License for more details.
 
 import os
-import sys
 import pkgutil
 
 from pyglossary.glossary import log
@@ -26,10 +25,16 @@ __all__ = ['languages', 'log']
 
 languages = {}
 """
-Dict[str, Callable[[str], Sequence[str]]]
+Dict[str, Callable[[Sequence[str], str], Sequence[str]]]
 
 submodules must register languages by adding (language name -> function)
 pairs to the mapping.
+
+function must follow signature bellow:
+    :param titles: flat iterable of title and altenrative titles
+    :param content: cleaned entry content
+    :return: iterable of indexes (str).
+
 use
 ```
     from . import languages

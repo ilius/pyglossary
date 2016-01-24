@@ -30,15 +30,21 @@ else:
     morphy = pymorphy2.MorphAnalyzer()
 
 
-def ru(title):
+def ru(titles, _):
     """
     gives a set of all declines, cases and other froms of word `title`.
     note that it works only if title is one word.
 
-    :type title: str
+    :type titles: Sequence[str]
     :rtype: Set[str]
     """
+    indexes = set()
+    for title in titles:
+        indexes.update(_ru(title))
+    return indexes
 
+
+def _ru(title):
     # feature: put dot at the end to match only this word
     a = {title, title + "."}
 
