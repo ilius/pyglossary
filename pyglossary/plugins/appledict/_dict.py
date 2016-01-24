@@ -277,6 +277,9 @@ def write_entries(glos, f, cleanHTML, indexes):
 
         if i % 10 == 0 and glos.ui:
             glos.ui.progress(i / total)
+        if i % 1000 == 0:
+            f.write(buffer)
+            buffer = ''
     f.write(buffer)
 
 def dictionary_end(glos, f):
