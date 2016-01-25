@@ -248,39 +248,6 @@ class UI(UIBase):
             verbosity = 2
         print('verbosity=%s'%verbosity)
         log.setVerbosity(verbosity)
-    '''
-    def redirectStdOut(self):
-        t_table_out = gtk.TextTagTable()
-        tag_out = gtk.TextTag('output')
-        t_table_out.add(tag_out)
-        self.buffer_out = gtk.TextBuffer(t_table_out)
-        self.textview_out.set_buffer(self.buffer_out)
-        self.dummy_out = BufferFile(self.buffer_out, tag_out, 'stdout')
-        sys.stdout = self.dummy_out
-    def redirectStdErr(self):
-        t_table_err = gtk.TextTagTable()
-        tag_err = gtk.TextTag('error')
-        t_table_err.add(tag_err)
-        self.buffer_err = gtk.TextBuffer(t_table_err)
-        self.textview_err.set_buffer(self.buffer_err)
-        self.dummy_err = BufferFile(self.buffer_err, tag_err, 'stderr')
-        sys.stderr = self.dummy_err
-    def redirectStdOutErrToOne(self):
-        t_table_rev = gtk.TextTagTable()
-        tag_out = gtk.TextTag('output')
-        t_table_rev.add(tag_out)
-        tag_err = gtk.TextTag('error')
-        t_table_rev.add(tag_err)
-        self.buffer_rev = gtk.TextBuffer(t_table_rev)
-        self.textview_rev.set_buffer(self.buffer_rev)
-        self.dummy_rev_out = BufferFile(self.buffer_rev, tag_out)
-        sys.stdout = self.dummy_rev_out
-        self.dummy_rev_err = BufferFile(self.buffer_rev, tag_err)
-        sys.stderr = self.dummy_rev_err
-    def restoreStdOutErr(self):
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-    '''
 #################################################################################
     #def maindialog_resized(self, *args):
     #    self.vpaned1.set_position(185)
