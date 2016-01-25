@@ -236,8 +236,8 @@ class UI(UIBase):
                 'DEBUG': self.textview_out,
             })
         )
-        self.textview_out.get_buffer().set_text('Output console:\n')
-        self.textview_err.get_buffer().set_text('Error console:\n')
+        self.clear_output()
+        self.clear_errors()
         #####
         self.checkb_o_det.connect('toggled', self.detailsCheckChanged)
         self.detailsCheckChanged()
@@ -566,8 +566,8 @@ class UI(UIBase):
             #pass
         #else:
         #    pass
-    clear_output=lambda self, *args: self.buffer_out.set_text('Output console:\n')
-    clear_errors=lambda self, *args: self.buffer_err.set_text('Error console:\n')
+    clear_output = lambda self, *args: self.textview_out.get_buffer().set_text('Output console:\n')
+    clear_errors = lambda self, *args: self.textview_err.get_buffer().set_text('Error console:\n')
     #######################################################
     ################################# Reverse tab:
     def r_browse_i(self, *args):
