@@ -163,6 +163,7 @@ def format_clean_content(title, body, BeautifulSoup):
     # class="p" style="color:green" => class="p"
     # style="color:green" => class="c"
     # style="margin-left:{}em" => class="m{}"
+    # <s> => <del>
 
     # xhtml is strict
     if BeautifulSoup:
@@ -194,6 +195,11 @@ def format_clean_content(title, body, BeautifulSoup):
             href = tag['href']
             if not (href.startswith('http:') or href.startswith('https:')):
                 tag['href'] = 'x-dictionary:d:%s' % href
+        for tag in soup('u'):
+            tag.name = 'span'
+            tag['class'] = tag.get('class', []) + ['u']
+        for tag in soup('s'):
+            tag.name = 'del'
 
         h1 = BeautifulSoup.Tag(name='h1')
         h1.string = title
@@ -211,7 +217,8 @@ def format_clean_content(title, body, BeautifulSoup):
             .replace('<i class="p" style="color:green">', '<i class="p">') \
             .replace('<span class="ex" style="color:steelblue">', '<span class="ex">') \
             .replace('<span class="sec ex" style="color:steelblue">', '<span class="sec ex">') \
-            .replace('<u>', '<span class="u">').replace('</u>', '</span>')
+            .replace('<u>', '<span class="u">').replace('</u>', '</span>') \
+            .replace('<s>', '<del>').replace('</s>', '</del>')
 
         # nice header to display
         content = '<h1>%s</h1>%s' % (title, body)
