@@ -1,24 +1,24 @@
 PyGlossary is a tool for working with dictionary databases (glossaries)
-%SBUsage:%EF
-  %SBPyGTK%EF Interface:
+<b>Usage:</b>
+  <b>PyGTK</b> Interface:
      To open PyGlossary window:
-       %SB%CMD%EF
+       <b>%CMD</b>
      To directly open a glossary for edit:
-       %CMD %SUINPUT_FILE%EF
+       %CMD <u>INPUT_FILE</u>
      PyGTK is the default interface, so no need to use option "--ui=gtk"
      If PyGTK not found (was not installed), then PyGlossary will fallback
      to Tkinter interface.
-  %SBTkinter%EF Interface:
+  <b>Tkinter</b> Interface:
      %CMD --ui=tk
-  %SBCommand Line%EF Interface:
+  <b>Command Line</b> Interface:
      To show this help:
        %CMD --help
      To show program version:
        %CMD --version
      To Convert:
-       %CMD %SUINPUT_FILE%EF %SUOUTPUT_FILE%EF
+       %CMD <u>INPUT_FILE</u> <u>OUTPUT_FILE</u>
      To Reverse:
-       %CMD %SUINPUT_FILE%EF [%SUOUTPUT_FILE%EF] --reverse
+       %CMD <u>INPUT_FILE</u> [<u>OUTPUT_FILE</u>] --reverse
    Input and output files formats will be detected from extensions. Except that
       you explicitly specify input or output format, for example:
         %CMD mydic.utf8 mydic.ifo --read-format=tabfile
