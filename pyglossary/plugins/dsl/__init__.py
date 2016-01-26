@@ -34,11 +34,50 @@ writeOptions = []
 
 __all__ = ['read']
 
+# {{{
+# modified to work around codepoints that are not supported by `unichr`.
+# http://effbot.org/zone/re-sub.htm#unescape-html
+# January 15, 2003 | Fredrik Lundh
+import re, htmlentitydefs
+
+##
+# Removes HTML or XML character references and entities from a text string.
+#
+# @param text The HTML (or XML) source text.
+# @return The plain text, as a Unicode string, if necessary.
+
+def unescape(text):
+    def fixup(m):
+        text = m.group(0)
+        if text[:2] == "&#":
+            # character reference
+            try:
+                if text[:3] == "&#x":
+                    i = int(text[3:-1], 16)
+                else:
+                    i = int(text[2:-1])
+            except ValueError:
+                pass
+            else:
+                try:
+                    return unichr(i)
+                except ValueError:
+                    return ("\\U%08x" % i).decode('unicode-escape').encode('utf-8')
+        else:
+            # named entity
+            try:
+                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+            except KeyError:
+                pass
+        return text # leave as is
+    return re.sub("&#?\w+;", fixup, text)
+# }}}
+
 def make_a_href(s):
     return '<a href=%s>%s</a>' % (quoteattr(s), escape(s))
 
 def ref_sub(x):
-    return make_a_href(x.groups()[0])
+    return make_a_href(unescape(x.groups()[0]))
 
 # order matters, a lot.
 shortcuts = [
