@@ -17,6 +17,7 @@
 # GNU General Public License for more details.
 
 from . import languages, log
+from pyglossary.text_utils import toStr, toUnicode
 
 try:
     import pymorphy2
@@ -39,19 +40,29 @@ def ru(titles, _):
     :rtype: Set[str]
     """
     indexes = set()
-    for title in titles:
-        indexes.update(_ru(title))
-    return indexes
+    indexes_norm = set()
+    for title in map(toUnicode, titles):
+        # in-place modification
+        _ru(title, indexes, indexes_norm)
+    return map(toStr, indexes)
 
 
-def _ru(title):
+def _ru(title, a, a_norm):
+    # uppercase abbreviature
+    if title.isupper():
+        return
+
+    title_norm = normalize(title)
+
     # feature: put dot at the end to match only this word
-    a = {title, title + "."}
+    a.add(title)
+    a.add(title + ".")
+    a_norm.add(title_norm)
 
     # decline only one-word titles
     if len(title.split()) == 1:
 
-        normal_forms = morphy.parse(title.decode('utf-8'))
+        normal_forms = morphy.parse(title)
 
         if len(normal_forms) > 0:
 
@@ -59,14 +70,20 @@ def _ru(title):
             normal_form = normal_forms[0]
 
             for x in normal_form.lexeme:
-                word = x.word.encode('utf-8')
+                word = x.word
                 # Apple Dictionary Services see no difference between
                 # 'й' and 'и', 'ё' and 'е', so we're trying to avoid
                 # "* Duplicate index. Skipped..." warning.
-                word = word.replace('й', 'и').replace('ё', 'е')
-                a.add(word)
+                # new: return indexes with original letters but check for
+                # occurence against "normal forms".
+                word_norm = normalize(word)
+                if word_norm not in a_norm:
+                    a.add(word)
+                    a_norm.add(word_norm)
 
-    return a
+
+def normalize(word):
+    return word.lower().replace(u'й', u'и').replace(u'ё', u'е').replace(u'-', u' ')
 
 
 languages['ru'] = ru
