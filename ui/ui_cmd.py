@@ -76,12 +76,15 @@ def formats_table(formats, header):
 
 
 def help():
+    import string
     text = open(join(rootDir, 'help')).read()\
-        .replace('%CMD', COMMAND)\
         .replace('<b>', startBold)\
         .replace('<u>', startUnderline)\
         .replace('</b>', endFormat)\
         .replace('</u>', endFormat)
+    text = string.Template(text).substitute(
+        CMD=COMMAND,
+    )
     text += formats_table(Glossary.readFormats, 'Supported input formats:')
     text += formats_table(Glossary.writeFormats, 'Supported output formats:')
     print(text)

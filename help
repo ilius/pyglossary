@@ -2,29 +2,29 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
 <b>Usage:</b>
   <b>PyGTK</b> Interface:
      To open PyGlossary window:
-       <b>%CMD</b>
+       <b>${CMD}</b>
      To directly open a glossary for edit:
-       %CMD <u>INPUT_FILE</u>
+       ${CMD} <u>INPUT_FILE</u>
      PyGTK is the default interface, so no need to use option "--ui=gtk"
      If PyGTK not found (was not installed), then PyGlossary will fallback
      to Tkinter interface.
   <b>Tkinter</b> Interface:
-     %CMD --ui=tk
+     ${CMD} --ui=tk
   <b>Command Line</b> Interface:
      To show this help:
-       %CMD --help
+       ${CMD} --help
      To show program version:
-       %CMD --version
+       ${CMD} --version
      To Convert:
-       %CMD <u>INPUT_FILE</u> <u>OUTPUT_FILE</u>
+       ${CMD} <u>INPUT_FILE</u> <u>OUTPUT_FILE</u>
      To Reverse:
-       %CMD <u>INPUT_FILE</u> [<u>OUTPUT_FILE</u>] --reverse
+       ${CMD} <u>INPUT_FILE</u> [<u>OUTPUT_FILE</u>] --reverse
    Input and output files formats will be detected from extensions. Except that
       you explicitly specify input or output format, for example:
-        %CMD mydic.utf8 mydic.ifo --read-format=tabfile
-        %CMD mydic.utf8 mydic.ifo --read-format tabfile
-        %CMD mydic.ifo mydic.utf8 --write-format=tabfile
-        %CMD mydic.ifo mydic.utf8 --write-format tabfile
+        ${CMD} mydic.utf8 mydic.ifo --read-format=tabfile
+        ${CMD} mydic.utf8 mydic.ifo --read-format tabfile
+        ${CMD} mydic.ifo mydic.utf8 --write-format=tabfile
+        ${CMD} mydic.ifo mydic.utf8 --write-format tabfile
    See a list of supported formats (with their associated extensions) at the end
       of this help
    Command line arguments and options (and arguments for options)
@@ -32,13 +32,13 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
    You can also just type extension of output file instead of full path, if you
      want to create with the same input file name with another extension
      for example:
-       %CMD mydic.ifo txt
+       ${CMD} mydic.ifo txt
      instead of:
-       %CMD mydic.ifo mydic.txt
+       ${CMD} mydic.ifo mydic.txt
    Compressing with gz, bz2 and zip is supported, just append these 
      extension to the file name, for example:
-       %CMD mydic.ifo mydic.txt.gz
+       ${CMD} mydic.ifo mydic.txt.gz
      or
-       %CMD mydic.ifo txt.gz
+       ${CMD} mydic.ifo txt.gz
    And if the input file has these extensions (gz, bz2, zip), it will be
      extracted before loading
