@@ -78,9 +78,10 @@ def formats_table(formats, header):
 def help():
     text = open(join(rootDir, 'help')).read()\
         .replace('%CMD', COMMAND)\
-        .replace('%SB', startBold)\
-        .replace('%SU', startUnderline)\
-        .replace('%EF', endFormat)
+        .replace('<b>', startBold)\
+        .replace('<u>', startUnderline)\
+        .replace('</b>', endFormat)\
+        .replace('</u>', endFormat)
     text += formats_table(Glossary.readFormats, 'Supported input formats:')
     text += formats_table(Glossary.writeFormats, 'Supported output formats:')
     print(text)
