@@ -23,7 +23,7 @@ from . import VERSION
 homePage = 'http://github.com/ilius/pyglossary'
 
 import os, sys, platform, time, subprocess, shutil, re
-from os.path import split, join, splitext, isdir, dirname
+from os.path import split, join, splitext, isdir, dirname, basename
 import logging
 import pkgutil
 
@@ -381,8 +381,8 @@ class Glossary:
             log.error('Unable to detect write format!')
             return False
         if isdir(filename):
-            #filename = join(filename, split(self.filename)[1]+ext)
-            filename = join(filename, self.filename+ext)
+            # write to directory, use filename (not filepath) of input file.
+            filename = join(filename, basename(self.filename)+ext)
         validOptionKeys = self.formatsWriteOptions[format]
         for key in options.keys():
             if not key in validOptionKeys:
