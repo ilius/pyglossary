@@ -60,15 +60,12 @@ def base36(x):
     return ''.join(digits)
 
 def id_generator():
-    # closure
-    cnt = [1]
+    cnt = 1
 
-    def generate_id():
-        s = '_%s' % base36(cnt[0])
-        cnt[0] += 1
-        return s
-
-    return generate_id
+    while 1:
+        s = '_%s' % base36(cnt)
+        yield s
+        cnt += 1
 
 def indexes_generator(indexes_lang):
     """
@@ -254,7 +251,7 @@ def write_entries(glos, f, cleanHTML, indexes):
         if not long_title:
             continue
 
-        id = generate_id()
+        id = next(generate_id)
         if BeautifulSoup:
             title_attr = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(long_title, True)
         else:
