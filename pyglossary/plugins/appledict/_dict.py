@@ -108,7 +108,7 @@ def indexes_generator(indexes_lang):
         normal_indexes = filter(lambda s: s.strip(), normal_indexes)
         # skip empty titles.  everything could happen.
 
-        s = '<d:index d:value=%s/>' % quoted_title
+        s = '<d:index d:value=%s d:title=%s/>' % (quoted_title, quoted_title)
         if BeautifulSoup:
             for idx in normal_indexes:
                 s += '<d:index d:value=%s d:title=%s/>' % (
