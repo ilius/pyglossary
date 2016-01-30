@@ -9,12 +9,25 @@ extentions = ['.xdxf', '.xml']
 readOptions = []
 writeOptions = []
 
+XML = None
+tostring = None
+
+
 def read(glos, filename):
     ##<!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
-    from xml.etree.ElementTree import XML, tostring
-    fp = open(filename, 'rb')
-    xdxf = XML(fp.read())
-    fp.close()
+    from xml.etree.ElementTree import XML as _XML, tostring as _tostring
+    global XML, tostring
+    XML = _XML
+    tostring = _tostring
+
+    with open(filename, 'rb') as f:
+        xdxf = XML(f.read())
+
+    read_metadata(glos, xdxf)
+    read_xdxf(glos, xdxf)
+
+
+def read_metadata(glos, xdxf):
     full_name = tostring(xdxf[0]).replace('<full_name>', '')\
                                  .replace('</full_name>', '')
     description = tostring(xdxf[1]).replace('<description>', '')\
@@ -25,28 +38,28 @@ def read(glos, filename):
         description = description[:-1]
     glos.setInfo('name', full_name)
     glos.setInfo('description', description)
-    maxWordLen=0
+
+
+def read_xdxf(glos, xdxf):
     for item in xdxf[2:]:
-        if len(item)==2:
-            defi = tostring(item[1]).replace('<tr>', '').replace('</tr>', '\n')
-            word = tostring(item[0]).replace('<k>', '').replace('</k>', '')
-        elif len(item)==1:
-            itemStr=tostring(item[0])
-            ki = itemStr.find('</k>')
-            defi = itemStr[ki+4:]
-            word = itemStr[:ki].replace('<k>', '')
-        #else:
-        #    log.debug(word, len(item))
-        while word[-1]=='\n':
-            word=word[:-1]
-        if defi!='':
-            while defi[-1]=='\n':
-                defi=defi[:-1]
-            while defi[0]=='\n':
-                defi=defi[1:]
-        wordLen = len(word)
-        if maxWordLen < len(word):
-            maxWordLen = len(word)
+        word, defi = xdxf_title_defi(item)
         glos.data.append((word, defi))
 
 
+def xdxf_title_defi(item):
+    if len(item)==2:
+        defi = tostring(item[1]).replace('<tr>', '').replace('</tr>', '\n')
+        word = tostring(item[0]).replace('<k>', '').replace('</k>', '')
+    elif len(item)==1:
+        itemStr=tostring(item[0])
+        ki = itemStr.find('</k>')
+        defi = itemStr[ki+4:]
+        word = itemStr[:ki].replace('<k>', '')
+    while word[-1]=='\n':
+        word=word[:-1]
+    if defi!='':
+        while defi[-1]=='\n':
+            defi=defi[:-1]
+        while defi[0]=='\n':
+            defi=defi[1:]
+    return word, defi
