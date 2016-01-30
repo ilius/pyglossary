@@ -32,10 +32,8 @@ def read_metadata(glos, xdxf):
                                  .replace('</full_name>', '')
     description = tostring(xdxf[1]).replace('<description>', '')\
                                    .replace('</description>', '')
-    while full_name.endswith('\n'):
-        full_name = full_name[:-1]
-    while description.endswith('\n'):
-        description = description[:-1]
+    full_name = full_name.strip()
+    description = description.strip()
     glos.setInfo('name', full_name)
     glos.setInfo('description', description)
 
@@ -47,19 +45,14 @@ def read_xdxf(glos, xdxf):
 
 
 def xdxf_title_defi(item):
-    if len(item)==2:
+    if len(item) == 2:
         defi = tostring(item[1]).replace('<tr>', '').replace('</tr>', '\n')
         word = tostring(item[0]).replace('<k>', '').replace('</k>', '')
-    elif len(item)==1:
-        itemStr=tostring(item[0])
+    elif len(item) == 1:
+        itemStr = tostring(item[0])
         ki = itemStr.find('</k>')
-        defi = itemStr[ki+4:]
+        defi = itemStr[ki + 4:]
         word = itemStr[:ki].replace('<k>', '')
-    while word[-1]=='\n':
-        word=word[:-1]
-    if defi!='':
-        while defi[-1]=='\n':
-            defi=defi[:-1]
-        while defi[0]=='\n':
-            defi=defi[1:]
+    word = word.strip()
+    defi = defi.strip()
     return word, defi
