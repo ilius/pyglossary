@@ -240,10 +240,17 @@ def _clean_tags(line, audio):
     line = line.replace(r'\[', '[').replace(r'\]', ']')
     return line
 
+wrapped_in_quotes_re = re.compile(r'^(\'|")(.*)(\1)$')
+
+def unwrap_quotes(s):
+    return wrapped_in_quotes_re.sub(r'\2', s)
+
 def read(glos, fname, **options):
     encoding = options.get('encoding', 'utf-8')
     audio = (options.get('audio', 'no') == 'yes')
 
+    def setInfo(key, value):
+        glos.setInfo(key, unwrap_quotes(value))
 
     current_key = ''
     current_key_alters = []
@@ -261,11 +268,11 @@ def read(glos, fname, **options):
         # header
         if line.startswith('#'):
             if line.startswith('#NAME'):
-                glos.setInfo('title', line[6:])
+                setInfo('title', line[6:])
             elif line.startswith('#INDEX_LANGUAGE'):
-                glos.setInfo('sourceLang', line[16:])
+                setInfo('sourceLang', line[16:])
             elif line.startswith('#CONTENTS_LANGUAGE'):
-                glos.setInfo('targetLang', line[20:])
+                setInfo('targetLang', line[20:])
             line_type = 'header'
         # texts
         elif line.startswith(' ') or line.startswith('\t'):
