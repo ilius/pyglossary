@@ -28,8 +28,9 @@ import logging
 import pkgutil
 
 import core
-from text_utils import faEditStr, replacePostSpaceChar, removeTextTags,\
-                       takeStrWords, findWords, findAll, addDefaultOptions
+from text_utils import (faEditStr, replacePostSpaceChar, removeTextTags,
+                        takeStrWords, findWords, findAll, addDefaultOptions,
+                        unwrap_quotes)
 
 import warnings
 warnings.resetwarnings() ## ??????
@@ -210,6 +211,7 @@ class Glossary:
 
     def setInfo(self, key, value):
         lkey = str(key).lower()
+        value = unwrap_quotes(value)
         for group in Glossary.infoKeysAlias:
             if not isinstance(group, (list, tuple)):
                 raise TypeError('group=%s'%group)
