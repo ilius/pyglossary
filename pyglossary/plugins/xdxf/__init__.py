@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from itertools import combinations
+from os import path
+from lxml import etree
+
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 from pyglossary.text_utils import toStr
 from formats_common import *
@@ -15,6 +22,7 @@ writeOptions = []
 etree = None
 XML = None
 tostring = None
+transform = None
 
 
 def import_xml_stuff():
@@ -172,3 +180,33 @@ def _mktitle(title_element, include_opts=()):
                 else:
                     title = c.tail
     return toStr(title.strip())
+
+
+def xdxf_init():
+    """
+    call this only once, before `xdxf_to_html`.
+    """
+    global transform
+
+    import_xml_stuff()
+
+    xsl = path.join(path.dirname(__file__), 'xdxf.xsl')
+    with open(xsl, 'r') as f:
+        xslt_root_txt = f.read()
+
+    xslt_root = etree.XML(xslt_root_txt)
+    transform = etree.XSLT(xslt_root)
+
+
+def xdxf_to_html(xdxf_text):
+    """
+    make sure to call `xdxf_init()` first.
+
+    :param xdxf_text: xdxf formatted string
+    :return: html formatted string
+    """
+    xdxf_txt = '<ar>%s</ar>' % xdxf_text
+    f = StringIO(xdxf_txt)
+    doc = etree.parse(f)
+    result_tree = transform(doc)
+    return tostring(result_tree, encoding='utf-8')
