@@ -42,7 +42,7 @@ class StarDictReader:
         indexData[i][2] - definition block size in dict file
         indexData[i][3] - list of definitions
         indexData[i][3][0] - definition data
-        indexData[i][3][1] - definition type - 'h' or 'm'
+        indexData[i][3][1] - definition type - 'h', 'm' or 'x'
         indexData[i][4] - list of synonyms (strings)
         """
         self.readIdxFile()
@@ -241,8 +241,10 @@ class StarDictReader:
         for rec in defis:
             if rec[1] in 'mty':
                 res.append((rec[0], 'm'))
-            elif rec[1] in 'ghx':
+            elif rec[1] in 'gh':
                 res.append((rec[0], 'h'))
+            elif rec[1] in 'x':
+                res.append((rec[0], 'x'))
             else:
                 log.warn("Definition format {0} is not supported. Skipping.".format(rec[1]))
         return res
