@@ -1,0 +1,39 @@
+<!-- XHTML -->
+<!-- This corresponds to the union of transitional and frameset. -->
+
+<grammar ns="http://www.w3.org/1999/xhtml"
+         xmlns="http://relaxng.org/ns/structure/1.0">
+
+<include href="modules/datatypes.rng"/>
+<include href="modules/attribs.rng"/>
+<!-- <include href="modules/struct.rng"/> -->
+<include href="modules/frames.rng"/>
+<include href="modules/text.rng"/>
+<include href="modules/hypertext.rng"/>
+<include href="modules/list.rng"/>
+<include href="modules/image.rng"/>
+<include href="modules/ssismap.rng"/>
+<include href="modules/base.rng"/>
+<include href="modules/link.rng"/>
+<include href="modules/meta.rng"/>
+<include href="modules/param.rng"/>
+<include href="modules/object.rng"/>
+<include href="modules/bdo.rng"/>
+<include href="modules/pres.rng"/>
+<include href="modules/edit.rng"/>
+<include href="modules/applet.rng"/>
+<!-- <include href="modules/basic-form.rng"/> -->
+<include href="modules/form.rng"/>
+<include href="modules/style.rng"/>
+<include href="modules/script.rng"/>
+<!-- <include href="modules/basic-table.rng"/> -->
+<include href="modules/table.rng"/>
+<include href="modules/csismap.rng"/>
+<include href="modules/events.rng"/>
+<include href="modules/inlstyle.rng"/>
+<include href="modules/target.rng"/>
+<include href="modules/iframe.rng"/>
+<include href="modules/nameident.rng"/>
+<include href="modules/legacy.rng"/>
+
+</grammar>

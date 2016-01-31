@@ -1,0 +1,34 @@
+<!-- Dictionary Schema + XHTML Strict -->
+
+<grammar ns="http://www.w3.org/1999/xhtml"
+         xmlns="http://relaxng.org/ns/structure/1.0">
+
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/datatypes.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/attribs.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/text.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/hypertext.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/list.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/image.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/ssismap.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/base.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/link.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/meta.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/param.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/object.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/bdo.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/pres.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/edit.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/applet.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/form.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/style.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/script.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/table.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/csismap.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/events.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/inlstyle.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/target.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/iframe.rng"/>
+<include href="http://thaiopensource.com/relaxng/xhtml/modules/nameident.rng"/>
+<include href="modules/dict-struct.rng"/>
+
+</grammar>

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         ns="http://www.xml.gr.jp/xmlns/relaxCore"
+         datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+   <define name="minBound.label">
+      <choice>
+         <ref name="minInclusive.label"/>
+         <ref name="minExclusive.label"/>
+      </choice>
+   </define>
+   <define name="maxBound.label">
+      <choice>
+         <ref name="maxInclusive.label"/>
+         <ref name="maxExclusive.label"/>
+      </choice>
+   </define>
+   <define name="bounds.label">
+      <choice>
+         <ref name="minBound.label"/>
+         <ref name="maxBound.label"/>
+      </choice>
+   </define>
+   <define name="numeric.label">
+      <choice>
+         <ref name="precision.label"/>
+         <ref name="scale.label"/>
+      </choice>
+   </define>
+   <define name="ordered.label">
+      <choice>
+         <ref name="bounds.label"/>
+         <ref name="numeric.label"/>
+      </choice>
+   </define>
+   <define name="unordered.label">
+      <choice>
+         <ref name="pattern.label"/>
+         <ref name="enumeration.label"/>
+         <ref name="length.label"/>
+         <ref name="maxLength.label"/>
+         <ref name="minLength.label"/>
+         <ref name="encoding.label"/>
+         <ref name="period.label"/>
+         <ref name="duration.label"/>
+      </choice>
+   </define>
+   <define name="facet.label">
+      <choice>
+         <ref name="ordered.label"/>
+         <ref name="unordered.label"/>
+      </choice>
+   </define>
+   <define name="facetModel.label">
+      <optional>
+         <ref name="annotation.label"/>
+      </optional>
+   </define>
+   <define name="facetAttrs.role">
+      <attribute name="value">
+         <text/>
+      </attribute>
+   </define>
+   <define name="maxExclusive.label">
+      <element name="maxExclusive">
+         <ref name="maxExclusive.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="maxExclusive.role">
+      <ref name="facetAttrs.role"/>
+   </define>
+   <define name="minExclusive.label">
+      <element name="minExclusive">
+         <ref name="minExclusive.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="minExclusive.role">
+      <ref name="facetAttrs.role"/>
+   </define>
+   <define name="maxInclusive.label">
+      <element name="maxInclusive">
+         <ref name="maxInclusive.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="maxInclusive.role">
+      <ref name="facetAttrs.role"/>
+   </define>
+   <define name="minInclusive.label">
+      <element name="minInclusive">
+         <ref name="minInclusive.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="minInclusive.role">
+      <ref name="facetAttrs.role"/>
+   </define>
+   <define name="precision.label">
+      <element name="precision">
+         <ref name="precision.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="precision.role">
+      <attribute name="value">
+         <data type="positiveInteger"/>
+      </attribute>
+   </define>
+   <define name="scale.label">
+      <element name="scale">
+         <ref name="scale.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="scale.role">
+      <attribute name="value">
+         <data type="nonNegativeInteger"/>
+      </attribute>
+   </define>
+   <define name="length.label">
+      <element name="length">
+         <ref name="length.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="length.role">
+      <attribute name="value">
+         <data type="nonNegativeInteger"/>
+      </attribute>
+   </define>
+   <define name="minLength.label">
+      <element name="minLength">
+         <ref name="minLength.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="minLength.role">
+      <attribute name="value">
+         <data type="nonNegativeInteger"/>
+      </attribute>
+   </define>
+   <define name="maxLength.label">
+      <element name="maxLength">
+         <ref name="maxLength.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="maxLength.role">
+      <attribute name="value">
+         <data type="nonNegativeInteger"/>
+      </attribute>
+   </define>
+   <define name="enumeration.label">
+      <element name="enumeration">
+         <ref name="enumeration.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="enumeration.role">
+      <ref name="facetAttrs.role"/>
+   </define>
+   <define name="pattern.label">
+      <element name="pattern">
+         <ref name="pattern.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="pattern.role">
+      <ref name="facetAttrs.role"/>
+   </define>
+   <define name="encoding.label">
+      <element name="encoding">
+         <ref name="encoding.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="encoding.role">
+      <attribute name="value">
+         <choice>
+            <value type="NMTOKEN">hex</value>
+            <value type="NMTOKEN">base64</value>
+         </choice>
+      </attribute>
+   </define>
+   <define name="period.label">
+      <element name="period">
+         <ref name="period.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="period.role">
+      <attribute name="value">
+         <data type="duration"/>
+      </attribute>
+   </define>
+   <define name="duration.label">
+      <element name="duration">
+         <ref name="duration.role"/>
+         <ref name="facetModel.label"/>
+      </element>
+   </define>
+   <define name="duration.role">
+      <ref name="facetAttrs.role"/>
+   </define>
+   <define name="annotation.label">
+      <element name="annotation">
+         <ref name="annotation.role"/>
+         <zeroOrMore>
+            <choice>
+               <ref name="appinfo.label"/>
+               <ref name="documentation.label"/>
+            </choice>
+         </zeroOrMore>
+      </element>
+   </define>
+   <define name="annotation.role">
+      <empty/>
+   </define>
+   <define name="appinfo.label">
+      <element name="appinfo">
+         <ref name="appinfo.role"/>
+         <text/>
+      </element>
+   </define>
+   <define name="appinfo.role">
+      <optional>
+         <attribute name="source">
+            <data type="string"/>
+         </attribute>
+      </optional>
+   </define>
+   <define name="documentation.label">
+      <element name="documentation">
+         <ref name="documentation.role"/>
+         <text/>
+      </element>
+   </define>
+   <define name="documentation.role">
+      <optional>
+         <attribute name="source">
+            <data type="string"/>
+         </attribute>
+      </optional>
+      <optional>
+         <attribute name="xml:lang">
+            <data type="string"/>
+         </attribute>
+      </optional>
+   </define>
+</grammar>
