@@ -20,6 +20,8 @@ import re
 import string
 from xml.sax.saxutils import unescape, quoteattr
 
+import xdxf
+
 from . import _normalize
 
 def dictionary_begin(glos, f, frontBackMatter):
@@ -154,6 +156,10 @@ def remove_style(tag, line):
 
 def format_clean_content(title, body, BeautifulSoup):
     # heavily integrated with output of dsl reader plugin!
+    # and with xdxf also.
+    """
+    :param title: str | None
+    """
 
     # class="sec" => d:priority="2"
     # style="color:steelblue" => class="ex"
@@ -198,9 +204,10 @@ def format_clean_content(title, body, BeautifulSoup):
         for tag in soup('s'):
             tag.name = 'del'
 
-        h1 = BeautifulSoup.Tag(name='h1')
-        h1.string = title
-        soup.insert(0, h1)
+        if title:
+            h1 = BeautifulSoup.Tag(name='h1')
+            h1.string = title
+            soup.insert(0, h1)
         # hence the name BeautifulSoup
         content = soup.encode_contents()
     else:
@@ -218,7 +225,7 @@ def format_clean_content(title, body, BeautifulSoup):
             .replace('<s>', '<del>').replace('</s>', '</del>')
 
         # nice header to display
-        content = '<h1>%s</h1>%s' % (title, body)
+        content = '<h1>%s</h1>%s' % (title, body) if title else body
         content = close_tag.sub('<\g<1> />', content)
         content = img_tag.sub('<img \g<1>/>', content)
     content = content.replace('&nbsp;', '&#160;')
@@ -246,6 +253,8 @@ def write_entries(glos, f, cleanHTML, indexes):
     total = float(len(glos.data))
     buffer = ''
 
+    xdxf.xdxf_init()
+
     for i, item in enumerate(glos.data):
         long_title = _normalize.title_long(_normalize.title(item[0], BeautifulSoup))
         if not long_title:
@@ -263,12 +272,16 @@ def write_entries(glos, f, cleanHTML, indexes):
         }
 
         # get alternatives list
-        try:
-            alts = item[2]['alts']
-        except:
-            alts = []
+        extra = item[2] if len(item) > 2 else {}
+        alts = extra.get('alts', [])
+        format = extra.get('defiFormat', 'h')
 
-        content = format_clean_content(long_title, item[1], BeautifulSoup)
+        if format == 'x':
+            content = xdxf.xdxf_to_html(item[1])
+            content = format_clean_content(None, content, BeautifulSoup)
+        else:
+            content = item[1]
+            content = format_clean_content(long_title, content, BeautifulSoup)
 
         indexes = generate_indexes(long_title, alts, content, BeautifulSoup)
 

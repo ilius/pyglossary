@@ -12,10 +12,11 @@ h3	{
 	font-size: 100%;
 }
 
-.ex, .m0, .m1, .m2, .m3, .m4, .m5, .m6, .m7, .m8, .m9 {
+.ex, .m, .m0, .m1, .m2, .m3, .m4, .m5, .m6, .m7, .m8, .m9 {
 	display: block;
 }
 
+.m  { margin-left: 0em; }
 .m0 { margin-left: 0em; }
 .m1 { margin-left: 1em; }
 .m2 { margin-left: 2em; }
@@ -42,4 +43,36 @@ h3	{
 
 .u {
 	text-decoration: underline;
+}
+
+/* xdxf support */
+.k {
+	color: black;
+	font-weight: bold;
+	display: block;
+}
+.tr {
+	color: black;
+}
+.abr {
+	color: #008000;
+	font-style: italic;
+}
+.hideextra .extra {
+	display: none;
+}
+.stress {
+	color: #FF0000;
+}
+.kref {
+	color: #000080;
+	text-decoration: none;
+}
+.pr {
+	color: #000080;
+	white-space: nowrap;
+	text-decoration: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 1ex;
 }
