@@ -99,7 +99,8 @@ class Glossary:
             format does not support several definitions per word.
         data[i][2]['defis'][j][0] - definition data
         data[i][2]['defis'][j][1] - definition format. See 'defiFormat' option below.
-        data[i][2]['defiFormat'] - format of the definition: 'h' - html, 'm' - plain text
+        data[i][2]['defiFormat'] - format of the definition: 'h' - html, 'm' - plain text, 'x' - xdxf,
+                                    use xdxf.xdxf_to_html to convert
     """
     data = []
 
