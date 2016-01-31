@@ -1,4 +1,24 @@
 # -*- coding: utf-8 -*-
+# xdxf/__init__.py
+"""xdxf file format reader and utils to convert xdxf to html."""
+#
+# Copyright (C) 2016 Ratijas <ratijas.t@me.com>
+#
+# some parts of this file include code from:
+# Aard Dictionary Tools <http://aarddict.org>.
+# Copyright (C) 2008-2009  Igor Tkach
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 of the License.
+#
+# You can get a copy of GNU General Public License along this program
+# But you can always get it from http://www.gnu.org/licenses/gpl.txt
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 
 from itertools import combinations
 from os import path
