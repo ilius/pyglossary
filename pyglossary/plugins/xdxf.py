@@ -2,7 +2,7 @@
 
 from itertools import combinations
 
-from text_utils import toStr
+from pyglossary.text_utils import toStr
 from formats_common import *
 
 enable = True
@@ -60,9 +60,10 @@ def read(glos, filename):
     with open(filename, 'rb') as f:
         xdxf = XML(f.read())
 
-    if xdxf[0].tag == 'meta_info':
+    if len(xdxf) == 2:
         # new format
-        pass
+        read_metadata_new(glos, xdxf)
+        read_xdxf_new(glos, xdxf)
     else:
         # old format
         read_metadata_old(glos, xdxf)
@@ -82,6 +83,26 @@ def read_xdxf_old(glos, xdxf):
     add_articles(glos, xdxf.iterfind('ar'))
 
 
+def read_metadata_new(glos, xdxf):
+    meta_info = xdxf.find('meta_info')
+    if meta_info is None:
+        raise ValueError('meta_info not found')
+
+    title = meta_info.find('full_title').text
+    if not title:
+        title = meta_info.find('title').text
+    description = meta_info.find('description').text
+
+    if title:
+        glos.setInfo('name', title)
+    if description:
+        glos.setInfo('description', description)
+
+
+def read_xdxf_new(glos, xdxf):
+    add_articles(glos, xdxf.find('lexicon').iterfind('ar'))
+
+
 def add_articles(glos, articles):
     """
 
@@ -94,7 +115,7 @@ def add_articles(glos, articles):
             item.tail = None
             defi = tostring(item, encoding='utf-8')
             # <ar>...</ar>
-            defi = defi[4:-5]
+            defi = defi[4:-5].strip()
             glos.data.append((word, defi, {'alts': alts, 'defiFormat': 'x'}))
 
 
