@@ -1,0 +1,167 @@
+# Based on
+# http://www.ascc.net/xml/schematron/schematron1-5.dtd, version of 2002/08/16
+
+# This version has the 1.6 feature that sch:key element with @match 
+# is allowed under sch:schema. This is not part of 1.5 proper.
+
+default namespace sch = "http://www.ascc.net/xml/schematron"
+namespace local = ""
+
+start = schema
+
+# Element declarations
+schema =
+  element schema {
+    attribute id { xsd:ID }?,
+    attribute fpi { fpi }?,
+    attribute ns { uri }?,
+    attribute schemaVersion { non-empty-string }?,
+    attribute defaultPhase { xsd:IDREF }?,
+    attribute icon { non-empty-string }?,
+    attribute version { non-empty-string }?,
+    (foreign
+     & (title?,
+        ns*,
+        p*,
+        (phase | key-with-match)*,
+        pattern+,
+        p*,
+        diagnostics?))
+  }
+active =
+  element active {
+    attribute pattern { xsd:IDREF },
+    (foreign & (text | dir | emph | span)*)
+  }
+assert =
+  element assert {
+    attribute test { expr },
+    attribute role { role }?,
+    attribute id { xsd:ID }?,
+    attribute diagnostics { xsd:IDREFS }?,
+    attribute icon { uri }?,
+    attribute subject { path }?,
+    (foreign & (text | name | emph | dir | span)*)
+  }
+dir =
+  element dir {
+    attribute value { "ltr" | "rtl" }?,
+    (foreign & text)
+  }
+emph = element emph { text }
+extends =
+  element extends {
+    attribute rule { xsd:IDREF },
+    foreign-empty
+  }
+diagnostic =
+  element diagnostic {
+    attribute id { xsd:ID },
+    attribute icon { uri }?,
+    (foreign & (text | value-of | emph | dir | span)*)
+  }
+diagnostics = element diagnostics { foreign & diagnostic* }
+key =
+  element key {
+    attribute name { xsd:NMTOKEN },
+    attribute path { path },
+    attribute icon { uri }?,
+    foreign-empty
+  }
+key-with-match =
+  element key {
+    attribute match { path },
+    attribute name { xsd:NMTOKEN },
+    attribute path { path },
+    attribute icon { uri }?,
+    foreign-empty
+  }
+name =
+  element name {
+    attribute path { path }?,
+    foreign-empty
+  }
+ns =
+  element ns {
+    attribute uri { uri },
+    attribute prefix { xsd:NMTOKEN }?,
+    foreign-empty
+  }
+p =
+  element p {
+    attribute id { xsd:ID }?,
+    attribute class { non-empty-string }?,
+    attribute icon { uri }?,
+    (foreign & (text | dir | emph | span)*)
+  }
+pattern =
+  element pattern {
+    attribute name { non-empty-string },
+    attribute see { uri }?,
+    attribute id { xsd:ID }?,
+    attribute icon { uri }?,
+    (foreign & (p*, rule*))
+  }
+phase =
+  element phase {
+    attribute id { xsd:ID },
+    attribute fpi { fpi }?,
+    attribute icon { uri }?,
+    (foreign & (p*, active*))
+  }
+report =
+  element report {
+    attribute test { expr },
+    attribute role { role }?,
+    attribute id { xsd:ID }?,
+    attribute diagnostics { xsd:IDREFS }?,
+    attribute icon { uri }?,
+    attribute subject { path }?,
+    (foreign & (text | name | emph | dir | span)*)
+  }
+rule =
+  element rule {
+    attribute role { role }?,
+    attribute id { xsd:ID }?,
+    (foreign
+     & ((attribute abstract { "true" }, (assert | report | extends)+)
+        | (attribute context { path },
+           attribute abstract { "false" }?,
+           (assert | report | key | extends)+)))
+  }
+span =
+  element span {
+    attribute class { non-empty-string }?,
+    (foreign & text)
+  }
+title = element title { (text | dir)* }
+value-of =
+  element value-of {
+    attribute select { path },
+    foreign-empty
+  }
+
+foreign = foreign-attributes, foreign-element*
+
+foreign-empty = foreign-attributes
+
+foreign-attributes = attribute * - local:* { text }*
+foreign-element =
+  element * - sch:* {
+    (attribute * { text }
+     | foreign-element
+     | schema
+     | text)*
+  }
+
+# Data types
+
+uri = xsd:anyURI
+path = string
+expr = string
+fpi = string
+lang = xsd:language
+
+role = xsd:NCName
+
+non-empty-string = xsd:token { minLength = "1" }
