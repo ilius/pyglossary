@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Object Module -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<define name="object">
+  <element name="object">
+    <ref name="object.attlist"/>
+    <!-- No restrictions on mixed content in TREX. -->
+    <zeroOrMore>
+      <ref name="param"/>
+    </zeroOrMore>
+    <ref name="Flow.model"/>
+  </element>
+</define>
+
+<define name="object.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="declare">
+      <value>declare</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="classid">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="codebase">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="data">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="type">
+      <ref name="ContentType.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="codetype">
+      <ref name="ContentType.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="archive">
+      <ref name="URIs.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="standby">
+      <ref name="Text.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="height">
+      <ref name="Length.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="width">
+      <ref name="Length.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="name"/>
+  </optional>
+  <optional>
+    <attribute name="tabindex">
+      <ref name="Number.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="Inline.class" combine="choice">
+  <ref name="object"/>
+</define>
+
+</grammar>

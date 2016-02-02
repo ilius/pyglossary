@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Checks exclusions applying to "a" and "pre" elements.
+  This schema is intended to be used in addition to xhtml.rng.
+-->
+<grammar ns="http://www.w3.org/1999/xhtml" xmlns="http://relaxng.org/ns/structure/1.0">
+  <start>
+    <ref name="normalElement"/>
+  </start>
+  <define name="normalElement">
+    <element>
+      <anyName>
+        <except>
+          <name>a</name>
+          <name>pre</name>
+        </except>
+      </anyName>
+      <ref name="normalContent"/>
+    </element>
+  </define>
+  <define name="normalContent">
+    <zeroOrMore>
+      <choice>
+        <ref name="normalElement"/>
+        <ref name="aElement"/>
+        <ref name="preElement"/>
+        <ref name="anyAttribute"/>
+        <text/>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="aElement">
+    <element name="a">
+      <ref name="aContent"/>
+    </element>
+  </define>
+  <define name="aContent">
+    <zeroOrMore>
+      <choice>
+        <element>
+          <anyName>
+            <except>
+              <name>a</name>
+              <name>pre</name>
+            </except>
+          </anyName>
+          <ref name="aContent"/>
+        </element>
+        <ref name="anyAttribute"/>
+        <text/>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="preElement">
+    <element name="pre">
+      <ref name="preContent"/>
+    </element>
+  </define>
+  <define name="preContent">
+    <zeroOrMore>
+      <choice>
+        <element>
+          <anyName>
+            <except>
+              <name>a</name>
+              <name>pre</name>
+              <name>img</name>
+              <name>object</name>
+              <name>applet</name>
+              <name>big</name>
+              <name>small</name>
+              <name>sub</name>
+              <name>sup</name>
+              <name>font</name>
+              <name>basefont</name>
+            </except>
+          </anyName>
+          <ref name="preContent"/>
+        </element>
+        <ref name="aPreElement"/>
+        <ref name="anyAttribute"/>
+        <text/>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="aPreElement">
+    <element name="a">
+      <ref name="aPreContent"/>
+    </element>
+  </define>
+  <define name="aPreContent">
+    <zeroOrMore>
+      <choice>
+        <element>
+          <anyName>
+            <except>
+              <name>a</name>
+              <name>pre</name>
+              <name>img</name>
+              <name>object</name>
+              <name>applet</name>
+              <name>big</name>
+              <name>small</name>
+              <name>sub</name>
+              <name>sup</name>
+              <name>font</name>
+              <name>basefont</name>
+            </except>
+          </anyName>
+          <ref name="aPreContent"/>
+        </element>
+        <ref name="anyAttribute"/>
+        <text/>
+      </choice>
+    </zeroOrMore>
+  </define>
+  <define name="anyAttribute">
+    <attribute>
+      <anyName/>
+    </attribute>
+  </define>
+</grammar>

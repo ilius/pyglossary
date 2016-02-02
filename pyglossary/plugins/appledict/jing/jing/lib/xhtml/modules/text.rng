@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Text Module -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<define name="br">
+  <element name="br">
+    <ref name="br.attlist"/>
+    <empty/>
+  </element>
+</define>
+
+<define name="br.attlist">
+  <ref name="Core.attrib"/>
+</define>
+
+<define name="span">
+  <element name="span">
+    <ref name="span.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="span.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="abbr">
+  <element name="abbr">
+    <ref name="abbr.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="abbr.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="acronym">
+  <element name="acronym">
+    <ref name="acronym.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="acronym.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="cite">
+  <element name="cite">
+    <ref name="cite.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="cite.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="code">
+  <element name="code">
+    <ref name="code.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="code.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="dfn">
+  <element name="dfn">
+    <ref name="dfn.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="dfn.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="em">
+  <element name="em">
+    <ref name="em.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="em.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="kbd">
+  <element name="kbd">
+    <ref name="kbd.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="kbd.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="q">
+  <element name="q">
+    <ref name="q.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="q.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="cite">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="samp">
+  <element name="samp">
+    <ref name="samp.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="samp.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="strong">
+  <element name="strong">
+    <ref name="strong.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="strong.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="var">
+  <element name="var">
+    <ref name="var.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="var.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="div">
+  <element name="div">
+    <ref name="div.attlist"/>
+    <ref name="Flow.model"/>
+  </element>
+</define>
+
+<define name="div.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="p">
+  <element name="p">
+    <ref name="p.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="p.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="address">
+  <element name="address">
+    <ref name="address.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="address.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="blockquote">
+  <element name="blockquote">
+    <ref name="blockquote.attlist"/>
+    <ref name="Block.model"/>
+  </element>
+</define>
+
+<define name="blockquote.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="cite">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="pre">
+  <element name="pre">
+    <ref name="pre.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="pre.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="xml:space">
+      <value>preserve</value>
+    </attribute>
+  </optional>
+</define>
+
+<define name="h1">
+  <element name="h1">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define>
+ 
+<define name="h2">
+  <element name="h2">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define>
+ 
+<define name="h3">
+  <element name="h3">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define>
+ 
+<define name="h4">
+  <element name="h4">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define>
+ 
+<define name="h5">
+  <element name="h5">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define>
+
+<define name="h6">
+  <element name="h6">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define>
+
+<define name="Heading.attrib">
+  <ref name="Common.attrib"/>
+</define>
+ 
+<define name="Heading.content">
+  <ref name="Inline.model"/>
+</define>
+
+<define name="Heading.class">
+  <choice>
+    <ref name="h1"/>
+    <ref name="h2"/>
+    <ref name="h3"/>
+    <ref name="h4"/>
+    <ref name="h5"/>
+    <ref name="h6"/>
+  </choice>
+</define>
+
+<define name="Block.class">
+  <choice>
+    <ref name="address"/>
+    <ref name="blockquote"/>
+    <ref name="div"/>
+    <ref name="p"/>
+    <ref name="pre"/>
+    <ref name="Heading.class"/>
+  </choice>
+</define>
+
+<define name="Inline.class">
+  <choice>
+    <ref name="abbr"/>
+    <ref name="acronym"/>
+    <ref name="br"/>
+    <ref name="cite"/>
+    <ref name="code"/>
+    <ref name="dfn"/>
+    <ref name="em"/>
+    <ref name="kbd"/>
+    <ref name="q"/>
+    <ref name="samp"/>
+    <ref name="span"/>
+    <ref name="strong"/>
+    <ref name="var"/>
+  </choice>
+</define>
+
+<define name="Inline.model">
+  <zeroOrMore>
+    <choice>
+      <text/>
+      <ref name="Inline.class"/>
+    </choice>
+  </zeroOrMore>
+</define>
+
+<!-- This is redefined by the legacy module to include inlines. -->
+<define name="Block.mix">
+  <ref name="Block.class"/>
+</define>
+
+<define name="Block.model">
+  <oneOrMore>
+    <ref name="Block.mix"/>
+  </oneOrMore>
+</define>
+
+<define name="Flow.model">
+  <zeroOrMore>
+    <choice>
+      <text/>
+      <ref name="Inline.class"/>
+      <ref name="Block.class"/>
+    </choice>
+  </zeroOrMore>
+</define>
+
+</grammar>
