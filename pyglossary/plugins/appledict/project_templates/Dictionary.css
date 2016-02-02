@@ -28,6 +28,9 @@ h3	{
 .m8 { margin-left: 8em; }
 .m9 { margin-left: 9em; }
 
+.ex + br,
+.k + br { display: none; }
+
 .c {
 	color: green;
 }
