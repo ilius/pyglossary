@@ -105,4 +105,22 @@
     </xsl:choose>
   </xsl:template>
 
+  <!-- http://stackoverflow.com/questions/3309746/how-to-convert-newline-into-br-with-xslt -->
+  <xsl:template match="text()" name="insertBreaks">
+    <xsl:param name="pText" select="."/>
+
+    <xsl:choose>
+      <xsl:when test="not(contains($pText, '&#xA;'))">
+        <xsl:copy-of select="$pText"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="substring-before($pText, '&#xA;')"/>
+        <br/>
+        <xsl:call-template name="insertBreaks">
+          <xsl:with-param name="pText" select=
+                  "substring-after($pText, '&#xA;')"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 </xsl:stylesheet>
