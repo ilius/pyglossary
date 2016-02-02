@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Structure Module -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<start>
+  <ref name="html"/>
+</start>
+
+<define name="title">
+  <element name="title">
+    <ref name="title.attlist"/>
+    <text/>
+  </element>
+</define>
+
+<define name="title.attlist">
+  <ref name="I18n.attrib"/>
+</define>
+
+<define name="head">
+  <element name="head">
+    <ref name="head.attlist"/>
+    <ref name="head.content"/>
+  </element>
+</define>
+
+<define name="head.attlist">
+  <ref name="I18n.attrib"/>
+  <ref name="profile.attlist"/>
+</define>
+
+<define name="head.content">
+  <ref name="title"/>
+</define>
+
+<define name="profile.attlist">
+  <optional>
+    <attribute name="profile">
+      <ref name="URI.datatype"/>
+    </attribute>     
+  </optional>
+</define>
+
+<define name="body">
+  <element name="body">
+    <ref name="body.attlist"/>
+    <ref name="Block.model"/>
+  </element>
+</define>
+
+<define name="body.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="html">
+  <element name="html">
+    <ref name="html.attlist"/>
+    <ref name="head"/>
+    <ref name="body"/>
+  </element>
+</define>
+
+<define name="html.attlist">
+  <ref name="XHTML.version.attrib"/>
+  <ref name="I18n.attrib"/>
+</define>
+
+<define name="XHTML.version.attrib">
+  <optional>
+    <attribute name="version">
+      <ref name="FPI.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+</grammar>

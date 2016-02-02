@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Hypertext Module -->
+<!-- Depends on text module. -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<define name="a">
+  <element name="a">
+    <ref name="a.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="a.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="href">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="charset">
+      <ref name="Charset.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="type">
+      <ref name="ContentType.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="hreflang">
+      <ref name="LanguageCode.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="rel">
+      <ref name="LinkTypes.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="rev">
+      <ref name="LinkTypes.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="accesskey">
+      <ref name="Character.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="tabindex">
+      <ref name="Number.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="Inline.class" combine="choice">
+  <ref name="a"/>
+</define>
+
+</grammar>

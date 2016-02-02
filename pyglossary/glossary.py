@@ -170,7 +170,11 @@ class Glossary:
         return plugin
 
 
-    def __init__(self, info=[], data=[], ui=None, filename='', resPath=''):
+    def __init__(self, info=None, data=None, ui=None, filename='', resPath=''):
+        if info is None:
+            info = []
+        if data is None:
+            data = []
         self.info = []
         self.setInfos(info, True)
         self.data = data
@@ -423,7 +427,9 @@ class Glossary:
                 os.chdir(initCwd)
         return True
 
-    def writeTxt(self, sep, filename='', writeInfo=True, rplList=[], ext='.txt', head=''):
+    def writeTxt(self, sep, filename='', writeInfo=True, rplList=None, ext='.txt', head=''):
+        if rplList is None:
+            rplList = []
         if not filename:
             filename = self.filename + ext
         fp = open(filename, 'wb')
@@ -483,7 +489,9 @@ class Glossary:
     takeWords = lambda self: [item[0] for item in self.data]
 
 
-    def takeOutputWords(self, opt={}):
+    def takeOutputWords(self, opt=None):
+        if opt is None:
+            opt = {}
         words = sorted(takeStrWords(' '.join([item[1] for item in self.data]), opt))
         words = removeRepeats(words)
         return words
@@ -685,7 +693,9 @@ class Glossary:
         return out
 
 
-    def reverseDic(self, wordsArg=None, opt={}):
+    def reverseDic(self, wordsArg=None, opt=None):
+        if opt is None:
+            opt = {}
         opt = addDefaultOptions(opt, {
             'matchWord': True,
             'showRel': 'None',

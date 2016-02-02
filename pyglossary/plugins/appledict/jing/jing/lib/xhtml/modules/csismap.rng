@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Client-side Image Map Module -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<define name="area">
+  <element name="area">
+    <ref name="area.attlist"/>
+  </element>
+</define>
+
+<define name="area.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="href">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+  <ref name="shape.attrib"/>
+  <ref name="coords.attrib"/>
+  <optional>
+    <attribute name="nohref">
+      <value>nohref</value>
+    </attribute>
+  </optional>
+  <attribute name="alt">
+    <ref name="Text.datatype"/>
+  </attribute>
+  <optional>
+    <attribute name="tabindex">
+      <ref name="Number.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="accesskey">
+      <ref name="Character.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="map">
+  <element name="map">
+    <ref name="map.attlist"/>
+    <oneOrMore>
+      <choice>
+        <!-- This does not use Block.mix
+             because loose.dtd doesn't use %Flow; -->
+        <ref name="Block.class"/>
+        <ref name="area"/>
+      </choice>
+    </oneOrMore>
+  </element>
+</define>
+
+<define name="map.attlist">
+  <ref name="CommonIdRequired.attrib"/>
+</define>
+
+<define name="a.attlist" combine="interleave">
+  <ref name="shape.attrib"/>
+  <ref name="coords.attrib"/>
+</define>
+
+<define name="img.attlist" combine="interleave">
+  <ref name="usemap.attlist"/>
+</define>
+
+<define name="object.attlist" combine="interleave">
+  <ref name="usemap.attlist"/>
+</define>
+
+<define name="usemap.attlist">
+  <optional>
+    <attribute name="usemap">
+      <ref name="IDREF.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="shape.attrib">
+  <optional>
+    <attribute name="shape">
+      <choice>
+        <value>rect</value>
+        <value>circle</value>
+        <value>poly</value>
+        <value>default</value>
+      </choice>
+    </attribute>
+  </optional>
+</define>
+
+<define name="coords.attrib">
+  <optional>
+    <attribute name="coords"/>
+  </optional>
+</define>
+
+<define name="Inline.class" combine="choice">
+  <ref name="map"/>
+</define>
+
+</grammar>

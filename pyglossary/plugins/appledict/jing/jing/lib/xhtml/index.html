@@ -1,0 +1,108 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Modularization of XHTML in RELAX NG</title>
+</head>
+<body>
+<h1>Modularization of XHTML in RELAX NG</h1>
+
+<p>This directory contains an implementataion in RELAX NG of the
+modularization of XHTML specified by the <a
+href="http://www.w3.org/TR/2001/REC-xhtml-modularization-20010410"
+>Modularization of XHTML Recommendation</a>.</p>
+
+<p>The RELAX NG schema has not been mechanically derived from the DTDs.
+Rather, it has been hand-crafted so as to produce a good quality RELAX NG
+schema.  However, it may well contain bugs.</p>
+
+<p>The <a href="modules"><code>modules</code></a> directory contains
+all the modules; <a
+href="xhtml-basic.rng"><code>xhtml-basic.rng</code></a> uses the
+modules to implement <a href="http://www.w3.org/TR/xhtml-basic/">XHTML
+Basic</a>; <a
+href="xhtml-strict.rng"><code>xhtml-strict.rng</code></a> uses the
+modules to implement <a href="http://www.w3.org/TR/xhtml1/">XHTML
+1.0</a> strict; <a href="xhtml.rng"><code>xhtml.rng</code></a> uses
+the modules to implement the union of <a
+href="http://www.w3.org/TR/xhtml1/">XHTML 1.0</a> transitional and <a
+href="http://www.w3.org/TR/xhtml1/">XHTML 1.0</a> frameset.  You can
+<a href="http://www.thaiopensource.com/download">download</a>
+everything as part of the main Jing distribution.  To create a custom
+version of XHTML, simply copy <code>xhtml.rng</code> and delete the
+inclusions of the modules that you do not want.</p>
+
+<p>The biggest difference between the RELAX NG implementation and the
+DTD implementation is that the RELAX NG implementation does not
+require you to create a model module specific to the combination of
+XHTML modules you are using. Instead, simply include the modules you
+want. The modules take care of redefining the content models
+appropriately.</p>
+
+<p>Note also the following differences:</p>
+
+<ul>
+
+<li>The frames module is used instead of the struct module, rather
+than in addition to it.</li>
+
+<li>In the frames module, the <code>frameset</code> element does not
+restrict the optional <code>noframes</code> element to follow all the
+other child elements. XHTML Modularization is inconsistent with both
+HTML 4.0 and XHTML 1.0 here.</li>
+
+<li>In the basic tables abstract module, the <code>table</code>
+element does not have a <code>width</code> attribute.  The XHTML Rec is
+ambiguous here: the abstract module has the attribute, but the DTD
+does not.</li>
+
+<li>The object and applet modules takes advantage of RELAX NG's
+absence of restrictions on mixed content to enforce the requirement
+that <code>param</code>s precede other content.</li>
+
+<li>The forms module takes advantage of RELAX NG's absence of
+restrictions on mixed content to enforce the requirement that any
+<code>legend</code> precedes other content.</li>
+
+<li>The RELAX NG schema does not enforce exclusions. The HTML 4 DTD
+uses exclusions in several places, for example, to disallow an
+<code>a</code> element from having an <code>a</code> element as a
+descendant. It is not possible to represent this constraint in XML
+DTDs. XHTML Modularization takes the approach of partially
+representing this restriction by, for example, disallowing an
+<code>a</code> element from having an <code>a</code> element as a
+<em>child</em>, without disallowing it from having an <code>a</code>
+element as a non-immediate descendant.  This partial restriction has a
+substantial cost in increasing the complexity and reducing the
+modularity of the schemas. This implementation adopts a different
+approach. The <a href="exclude"><code>exclude</code></a> directory
+contains separate, independent RELAX NG schemas that enforce
+exclusions.  To check use of exclusions, a document should be
+validated against each of these schemas that is applicable <strong>in
+addition to</strong> being validated against the RELAX NG XHTML schema
+proper. The available schemas are as follows:
+
+<dl>
+
+<dt><a href="exclude/basic.rng"><code>exclude/basic.rng</code></a></dt>
+<dd>checks the exclusions relating to <code>a</code> and
+<code>pre</code> elements</dd>
+
+<dt><a
+href="exclude/basic-table.rng"><code>exclude/basic-table.rng</code></a></dt>
+
+<dd>checks the exclusions relating to basic tables module (i.e.
+checks that <code>table</code> elements are not nested)</dd>
+
+<dt><a href="exclude/form.rng"><code>exclude/form.rng</code></a></dt>
+
+<dd>checks the exclusions relating to forms and basic forms modules</dd>
+
+</dl>
+
+</li>
+
+</ul>
+
+<address><a href="mailto:jjc@jclark.com">James Clark</a></address>
+
+</body>
+</html>

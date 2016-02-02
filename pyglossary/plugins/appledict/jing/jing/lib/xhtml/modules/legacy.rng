@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Legacy Module -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<define name="lang.attrib" combine="interleave">
+  <optional>
+    <attribute name="lang">
+      <ref name="LanguageCode.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="basefont">
+  <element name="basefont">
+    <ref name="basefont.attlist"/>
+  </element>
+</define>
+
+<define name="basefont.attlist">
+  <ref name="id.attrib"/>
+  <ref name="Font.attrib"/>
+</define>
+
+<define name="center">
+  <element name="center">
+    <ref name="center.attlist"/>
+    <ref name="Flow.model"/>
+  </element>
+</define>
+
+<define name="center.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="font">
+  <element name="font">
+    <ref name="font.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="font.attlist">
+  <ref name="Core.attrib"/>
+  <ref name="I18n.attrib"/>
+  <ref name="Font.attrib"/>
+</define>
+
+<define name="Font.attrib">
+  <optional>
+    <attribute name="size"/>
+  </optional>
+  <optional>
+    <attribute name="color">
+      <ref name="Color.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="face"/>
+  </optional>
+</define>
+
+<define name="s">
+  <element name="s">
+    <ref name="s.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="s.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="strike">
+  <element name="strike">
+    <ref name="strike.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="strike.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="u">
+  <element name="u">
+    <ref name="u.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="u.attlist">
+  <ref name="Common.attrib"/>
+</define>
+
+<define name="dir">
+  <element name="dir">
+    <ref name="dir.attlist"/>
+    <oneOrMore>
+      <ref name="li.noblock"/>
+    </oneOrMore>
+  </element>
+</define>
+
+<define name="dir.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="compact">
+      <value>compact</value>
+    </attribute>
+  </optional>
+</define>
+
+<define name="menu">
+  <element name="menu">
+    <ref name="menu.attlist"/>
+    <oneOrMore>
+      <ref name="li.noblock"/>
+    </oneOrMore>
+  </element>
+</define>
+
+<define name="menu.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="compact">
+      <value>compact</value>
+    </attribute>
+  </optional>
+</define>
+
+<define name="li.noblock">
+  <element name="li">
+    <ref name="li.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="isindex">
+  <element name="isindex">
+    <ref name="isindex.attlist"/>
+  </element>
+</define>
+
+<define name="isindex.attlist">
+  <ref name="Core.attrib"/>
+  <ref name="I18n.attrib"/>
+  <optional>
+    <attribute name="prompt">
+      <ref name="Text.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="applet.attlist" combine="interleave">
+  <optional>
+    <attribute name="align">
+      <choice>
+	<value>top</value>
+	<value>middle</value>
+	<value>bottom</value>
+	<value>left</value>
+	<value>right</value>
+      </choice>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="hspace">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="vspace">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="body.attlist" combine="interleave">
+  <optional>
+    <attribute name="background">
+      <ref name="URI.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="bgcolor">
+      <ref name="Color.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="text">
+      <ref name="Color.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="link">
+      <ref name="Color.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="vlink">
+      <ref name="Color.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="alink">
+      <ref name="Color.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="br.attlist" combine="interleave">
+  <optional>
+    <attribute name="clear">
+      <choice>
+	<value>left</value>
+	<value>all</value>
+	<value>right</value>
+	<value>none</value>
+      </choice>
+    </attribute>
+  </optional>
+</define>
+
+<define name="caption.attlist" combine="interleave">
+  <ref name="align.attrib"/>
+</define>
+
+<define name="div.attlist" combine="interleave">
+  <ref name="align.attrib"/>
+</define>
+
+<!-- Not in the CR, but surely an error. -->
+
+<define name="dl.attlist" combine="interleave">
+  <optional>
+    <attribute name="compact">
+      <value>compact</value>
+    </attribute>
+  </optional>
+</define>
+
+<define name="Heading.attrib" combine="interleave">
+  <ref name="align.attrib"/>
+</define>
+
+<define name="hr.attlist" combine="interleave">
+  <optional>
+    <attribute name="align">
+      <choice>
+	<value>left</value>
+	<value>center</value>
+	<value>right</value>
+      </choice>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="noshade">
+      <value>noshade</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="size">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="width">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="img.attlist" combine="interleave">
+  <optional>
+    <attribute name="align">
+      <choice>
+	<value>top</value>
+	<value>middle</value>
+	<value>bottom</value>
+	<value>left</value>
+	<value>right</value>
+      </choice>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="border">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="hspace">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="vspace">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="input.attlist" combine="interleave">
+  <ref name="align.attrib"/>
+</define>
+
+<define name="legend.attlist" combine="interleave">
+  <optional>
+    <attribute name="align">
+      <choice>
+	<value>top</value>
+	<value>bottom</value>
+	<value>left</value>
+	<value>right</value>
+      </choice>
+    </attribute>
+  </optional>
+</define>
+
+<define name="li.attlist" combine="interleave">
+  <optional>
+    <attribute name="type"/>
+  </optional>
+  <optional>
+    <attribute name="value"/>
+  </optional>
+</define>
+
+<define name="object.attlist" combine="interleave">
+  <optional>
+    <attribute name="align">
+      <choice>
+	<value>top</value>
+	<value>middle</value>
+	<value>bottom</value>
+	<value>left</value>
+	<value>right</value>
+      </choice>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="border">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="hspace">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="vspace">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="ol.attlist" combine="interleave">
+  <optional>
+    <attribute name="type"/>
+  </optional>
+  <optional>
+    <attribute name="compact">
+      <value>compact</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="start"/>
+  </optional>
+</define>
+
+<define name="p.attlist" combine="interleave">
+  <ref name="align.attrib"/>
+</define>
+
+<define name="pre.attlist" combine="interleave">
+  <optional>
+    <attribute name="width">
+      <ref name="Length.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="script.attlist" combine="interleave">
+  <optional>
+    <attribute name="language">
+      <ref name="ContentType.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="table.attlist" combine="interleave">
+  <ref name="align.attrib"/>
+  <optional>
+    <attribute name="bgcolor">
+      <ref name="Color.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="tr.attlist" combine="interleave">
+  <optional>
+    <attribute name="bgcolor">
+      <ref name="Color.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="Cell.attrib" combine="interleave">
+  <optional>
+    <attribute name="nowrap">
+      <value>nowrap</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="bgcolor">
+      <ref name="Color.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="width">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="height">
+      <ref name="Pixels.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+<define name="ul.attlist" combine="interleave">
+  <optional>
+    <attribute name="type"/>
+  </optional>
+  <optional>
+    <attribute name="compact">
+      <value>compact</value>
+    </attribute>
+  </optional>
+</define>
+
+<define name="align.attrib">
+  <optional>
+    <attribute name="align">
+      <choice>
+	<value>left</value>
+	<value>all</value>
+	<value>right</value>
+	<value>none</value>
+      </choice>
+    </attribute>
+  </optional>
+</define>
+
+<define name="Color.datatype">
+  <text/>
+</define>
+
+<define name="Inline.class" combine="choice">
+  <choice>
+    <ref name="font"/>
+    <ref name="basefont"/>
+    <ref name="s"/>
+    <ref name="strike"/>
+    <ref name="u"/>
+  </choice>
+</define>
+
+<define name="Block.class" combine="choice">
+  <choice>
+    <ref name="center"/>
+    <ref name="isindex"/>
+  </choice>
+</define>
+
+<define name="List.class" combine="choice">
+  <choice>
+    <ref name="dir"/>
+    <ref name="menu"/>
+  </choice>
+</define>
+
+<define name="head.content" combine="interleave">
+  <optional>
+    <ref name="isindex"/>
+  </optional>
+</define>
+
+<define name="Block.mix" combine="choice">
+  <choice>
+    <text/>
+    <ref name="Inline.class"/>
+  </choice>
+</define>
+
+<!-- With the legacy module and the frames modules, the html
+     element can contain either body or frameset. -->
+<define name="frameset" combine="choice">
+  <ref name="body"/>
+</define>
+
+</grammar>

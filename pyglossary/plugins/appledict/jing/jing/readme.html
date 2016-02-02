@@ -1,0 +1,76 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Jing version 20091111</title>
+</head>
+<body>
+<h1>Jing version 20091111</h1>
+
+<p>Copyright &#169; 2001, 2002, 2003, 2008 Thai Open Source Software Center
+Ltd.  Jing can be freely copied subject to these <a
+href="doc/copying.html">conditions</a>.</p>
+
+<p>This directory contains version 20091111 of Jing, a validator for
+RELAX NG and other schema languages.</p>
+
+<p>The directory <code>bin</code> contains <code>jing.jar</code>,
+which contains the code for Jing, ready to use with a Java runtime.
+For more information on how to use Jing, see this
+<a href="doc/jing.html">document</a>.</p>
+
+<p>Apart from <code>jing.jar</code>, the <code>bin</code> directory
+contains some third-party jar files, which are used for XML parsing
+(under a pre-1.4 JRE that does not provide the Java XML parsing
+extension) and for validating with <a
+href="doc/jing-other.html">schema languages other than RELAX
+NG</a>:</p>
+
+<dl>
+
+<dt><code>saxon.jar</code></dt>
+
+<dd>Comes from the <a href="http://saxon.sourceforge.net/">Saxon</a>
+6.5.5 distribution. Used for Schematron 1.5 validation.</dd>
+
+<dt><code>xercesImpl.jar</code></dt>
+<dt><code>xml-apis.jar</code></dt>
+
+<dd>Come from
+the <a href="http://xerces.apache.org/xerces2-j/">Xerces2 Java</a>
+2.9.1 distribution. Used for W3C XML Schema validation and for XML
+parsing. Xerces2 Java is under the Apache License Version 2.0, which requires
+the following notice:
+<pre>
+   Apache Xerces Java
+   Copyright 1999-2007 The Apache Software Foundation
+
+   This product includes software developed at
+   The Apache Software Foundation (http://www.apache.org/).
+
+   Portions of this software were originally based on the following:
+     - software copyright (c) 1999, IBM Corporation., http://www.ibm.com.
+     - software copyright (c) 1999, Sun Microsystems., http://www.sun.com.
+     - voluntary contributions made by Paul Eng on behalf of the 
+       Apache Software Foundation that were originally developed at iClick, Inc.,
+       software copyright (c) 1999.</pre>
+</dd>
+
+<dt><code>isorelax.jar</code></dt>
+
+<dd>Comes from <a
+href="http://sourceforge.net/projects/iso-relax/">ISO RELAX</a>
+2004/11/11 distribution.  Provides a bridge to validators that use the
+JARV interface.</dd>
+
+</dl>
+
+<p>The file <code>src.zip</code> contains the Java source code. This
+is for reference purposes, and doesn't contain the supporting files,
+such as build scripts and test cases, that are needed for working
+conveniently with the source code. If you want to make changes to
+Jing, you
+should <a href="http://code.google.com/p/jing-trang/source/checkout">check
+out</a> the source code and supporting files from the project's
+Subversion repository.</p>
+
+</body>
+</html>

@@ -148,13 +148,15 @@ toStr = lambda s: s.encode('utf8') if isinstance(s, unicode) else str(s)
 toUnicode = lambda s: s if isinstance(s, unicode) else str(s).decode('utf8')
 
 #from xml.sax.saxutils import escape, unescape
-def escape(data, entities={}):
+def escape(data, entities=None):
     """Escape &, <, and > in a string of data.
 
     You can escape other strings of data by passing a dictionary as
     the optional entities parameter.  The keys and values must all be
     strings; each key will be replaced with its corresponding value.
     """
+    if entities is None:
+        entities = {}
 
     # must do ampersand first
     data = data.replace("&", "&amp;")
@@ -164,13 +166,16 @@ def escape(data, entities={}):
         data = __dict_replace(data, entities)
     return data
 
-def unescape(data, entities={}):
+def unescape(data, entities=None):
     """Unescape &amp;, &lt;, and &gt; in a string of data.
 
     You can unescape other strings of data by passing a dictionary as
     the optional entities parameter.  The keys and values must all be
     strings; each key will be replaced with its corresponding value.
     """
+    if entities is None:
+        entities = {}
+
     data = data.replace("&lt;", "<")
     data = data.replace("&gt;", ">")
     if entities:
@@ -202,7 +207,9 @@ def relTimeHMS(seconds):
     (h, m) = divmod(m, 60)
     return formatHMS(h, m, s)
 
-def addDefaultOptions(opt, defOpt, escapeList=[None, 'Unknown', 'unknown']):
+def addDefaultOptions(opt, defOpt, escapeList=None):
+    if escapeList is None:
+        escapeList = [None, 'Unknown', 'unknown']
     # Two varable opt(meaning options) and defOpt(meaning defaults options) have dict type.
     # this function sets options to defaults if they have not defined
     # or have special values (in escapeList)
@@ -293,7 +300,9 @@ def addWord(word, allWords):
             allWords.insert(ii, word)
         return allWords
 
-def findWords(st0, opt={}):
+def findWords(st0, opt=None):
+    if opt is None:
+        opt = {}
     # take all words of a text
     # and returns their indexes as a list.
     defOpt = {'minLen':3, 'noEn':True}
@@ -325,7 +334,9 @@ def findWords(st0, opt={}):
         ind.append((si[i]+1, si[i+1]))
     return ind
 
-def takeStrWords(st, opt={}):
+def takeStrWords(st, opt=None):
+    if opt is None:
+        opt = {}
     ## take all words of a text
     ## and returns them as a list of strings.
     defOpt = {'minLen':3, 'noEn':True, 'sort':True, 'noRepeat':True}
@@ -338,7 +349,13 @@ def takeStrWords(st, opt={}):
         words = removeRepeats(words)
     return words
 
-def takeFileWords(filePath, opt={'minLen':3, 'sort':True, 'noRepeat':True}):
+def takeFileWords(filePath, opt=None):
+    if opt is None:
+        opt = {
+            'minLen': 3,
+            'sort': True,
+            'noRepeat': True,
+        }
     try:
         fp = open(filePath, 'rb')
     except:
@@ -420,7 +437,9 @@ def replaceInFileAs2Files(inF, fromF, toF, outName):
     del text, outF
 
 
-def relation(word, phrase, opt={}):## FIXME
+def relation(word, phrase, opt=None):## FIXME
+    if opt is None:
+        opt = {}
     defOpt={'sep':commaFa, 'matchWord':True}
     addDefaultOptions(opt, defOpt)
     if phrase.find(word)==-1:
@@ -626,7 +645,9 @@ def isControlChar(y):
         return True
     return False
 
-def isASCII(data, exclude=[]):
+def isASCII(data, exclude=None):
+    if exclude is None:
+        exclude = []
     for c in data:
         co = ord(c)
         if co >= 128 and co not in exclude:

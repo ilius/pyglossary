@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Bi-directional Module -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+<define name="bdo">
+  <element name="bdo">
+    <ref name="bdo.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define>
+
+<define name="bdo.attlist">
+  <ref name="Core.attrib"/>
+  <ref name="lang.attrib"/>
+  <ref name="dir.attrib"/>
+</define>
+
+<define name="dir.attrib">
+  <attribute name="dir">
+    <choice>
+      <value>ltr</value>
+      <value>rtl</value>
+    </choice>
+  </attribute>
+</define>
+
+<define name="I18n.attrib" combine="interleave">
+  <optional>
+    <ref name="dir.attrib"/>
+  </optional>
+</define>
+
+<define name="Inline.class" combine="choice">
+  <ref name="bdo"/>
+</define>
+
+</grammar>
