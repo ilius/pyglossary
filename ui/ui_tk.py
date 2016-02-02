@@ -783,7 +783,9 @@ class UI(Tix.Frame, UIBase):
         log.info('time left = %3f seconds'%(time.time()-t0))
         self.running = False
         return True
-    def run(self, editPath=None, read_options={}):
+    def run(self, editPath=None, read_options=None):
+        if read_options is None:
+            read_options = {}
         ## editPath and read_options are for DB Editor, which is not implemented yet
         self.mainloop()
     def progress(self, rat, text=''):

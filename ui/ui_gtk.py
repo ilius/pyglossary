@@ -177,7 +177,9 @@ class UI(UIBase):
         ####################
         #self.d.show_all()
         #self.d.vbox.do_realize()
-    def run(self, editPath=None, read_options={}):
+    def run(self, editPath=None, read_options=None):
+        if read_options is None:
+            read_options = {}
         if editPath:
             self.notebook1.set_current_page(3)
             log.info('Opening file "%s" for edit. please wait...'%editPath)
@@ -1309,7 +1311,9 @@ else:\n\
 
 
 class FileChooserDialog:
-    def __init__(self, main, path='', combo_items=[], action='open', multiple=False):
+    def __init__(self, main, path='', combo_items=None, action='open', multiple=False):
+        if combo_items is None:
+            combo_items = []
         self.main = main
         (stderr, sys.stderr) = (sys.stderr, sys.__stderr__)
         self.xml = gtk.glade.XML(join(rootDir, 'ui', 'glade', 'filechooserdialog.glade'))

@@ -369,7 +369,9 @@ class UI(gtk.Dialog, UIBase):
         #self.verbosityComboChanged()
         ################################################################
         self.vbox.show_all()
-    def run(self, editPath=None, read_options={}):
+    def run(self, editPath=None, read_options=None):
+        if read_options is None:
+            read_options = {}
         #if editPath:
             #self.notebook.set_current_page(3)
             #log.info('Opening file "%s" for edit. please wait...'%editPath)
