@@ -16,6 +16,9 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ## GNU General Public License for more details.
 
+import logging
+log = logging.getLogger('root')
+
 import re
 import string
 from xml.sax.saxutils import unescape, quoteattr
@@ -239,8 +242,6 @@ def write_entries(glos, f, cleanHTML, indexes):
     if cleanHTML:
         BeautifulSoup = get_beautiful_soup()
         if not BeautifulSoup:
-            import logging
-            log = logging.getLogger('root')
             log.warn('cleanHTML option passed but BeautifulSoup not found.  '
                      'to fix this run `easy_install beautifulsoup4` or '
                      '`pip2 install beautifulsoup4`.')
