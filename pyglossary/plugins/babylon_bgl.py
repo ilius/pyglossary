@@ -102,21 +102,21 @@ class MetaDataRange:
         self.count = count
 
 class MetaData2:
-    '''Second pass metadata.
-
-    We need to scan all definitions in order to collect these statistical data.
-    '''
+    """
+        Second pass metadata.
+        We need to scan all definitions in order to collect these statistical data.
+    """
     def __init__(self):
         # defiTrailingFields[i] - number of fields with code i found
         self.defiTrailingFields = [0] * 256
         self.isDefiASCII = True # true if all definitions contain only ASCII chars
-        '''
-        We apply a number of tests to each definition, excluding those with
-        overwritten encoding (they start with <charset c=U>).
-        DefiProcessedCnt - total number of definitions processed
-        DefiUtf8Cnt - number of definitions in utf8 encoding
-        DefiASCIICnt - number of definitions containing only ASCII chars
-        '''
+        """
+            We apply a number of tests to each definition, excluding those with
+            overwritten encoding (they start with <charset c=U>).
+            DefiProcessedCnt - total number of definitions processed
+            DefiUtf8Cnt - number of definitions in utf8 encoding
+            DefiASCIICnt - number of definitions containing only ASCII chars
+        """
         self.DefiProcessedCnt = 0
         self.DefiUtf8Cnt = 0
         self.DefiASCIICnt = 0
@@ -124,13 +124,14 @@ class MetaData2:
         self.CharRefs = dict()
 
 class BGLGzipFile(gzip.GzipFile):
-    '''gzip.GzipFile class without CRC check.
+    """
+        gzip.GzipFile class without CRC check.
 
-    We redefined one method - _read_eof.
-    It prints a warning when CRC code does not match.
-    The original method raises an exception in this case.
-    Some dictionaries do not use CRC code, it is set to 0.
-    '''
+        We redefined one method - _read_eof.
+        It prints a warning when CRC code does not match.
+        The original method raises an exception in this case.
+        Some dictionaries do not use CRC code, it is set to 0.
+    """
     def _read_eof(self):
         from gzip import read32
         # We've read to the end of the file, so we have to rewind in order
@@ -165,16 +166,17 @@ class BGLGzipFile(gzip.GzipFile):
 
 
 class BabylonLanguage:
-    '''Babylon language properties.
+    """
+        Babylon language properties.
 
-    language - bab:SourceLanguage, bab:TargetLanguage .gpr tags
-        (English, French, Japanese)
-    charset - bab:SourceCharset, bab:TargetCharset .gpr tags
-        (Latin, Arabic, Cyrillic)
-    encoding - Windows code page
-        (cp1250, cp1251, cp1252)
-    code - value of the type 3, code in .bgl file
-    '''
+        language - bab:SourceLanguage, bab:TargetLanguage .gpr tags
+            (English, French, Japanese)
+        charset - bab:SourceCharset, bab:TargetCharset .gpr tags
+            (Latin, Arabic, Cyrillic)
+        encoding - Windows code page
+            (cp1250, cp1251, cp1252)
+        code - value of the type 3, code in .bgl file
+    """
     def __init__(self, language, charset, encoding, code):
         self.language = language
         self.charset = charset
@@ -185,11 +187,12 @@ class ArgumentError(Exception):
     pass
 
 def replace_html_entry_no_escape(m):
-    '''Replace character entity with the corresponding character
+    """
+        Replace character entity with the corresponding character
 
-    Return the original string if conversion fails.
-    Use this as a replace function of re.sub.
-    '''
+        Return the original string if conversion fails.
+        Use this as a replace function of re.sub.
+    """
     text = m.group(0)
     name = m.group(1)
     res = None
@@ -213,14 +216,15 @@ def replace_html_entry_no_escape(m):
             try:
                 res = unichr(name2codepoint[name.lower()]).encode('utf-8')
             except KeyError:
-                '''Babylon dictionaries contain a lot of non-standard entity references,
-                for example, csdot, fllig, nsm, cancer, thlig, tsdot, upslur...
-                This not just a typo. These entries repeat over and over again.
-                Perhaps they had meaning in the source dictionary that was converted to Babylon,
-                but now the meaning is lost. Babylon does render them as is, that is, for example,
-                &csdot; despite other references like &amp; are replaced with corresponding
-                characters.
-                '''
+                """
+                    Babylon dictionaries contain a lot of non-standard entity references,
+                    for example, csdot, fllig, nsm, cancer, thlig, tsdot, upslur...
+                    This not just a typo. These entries repeat over and over again.
+                    Perhaps they had meaning in the source dictionary that was converted to Babylon,
+                    but now the meaning is lost. Babylon does render them as is, that is, for example,
+                    &csdot; despite other references like &amp; are replaced with corresponding
+                    characters.
+                """
                 log.warn('unknown html entity {0}'.format(text))
                 res = text
     else:
@@ -228,10 +232,11 @@ def replace_html_entry_no_escape(m):
     return res
 
 def replace_html_entry(m):
-    '''Same as replace_html_entry_no_escape, but escapes result string
+    """
+        Same as replace_html_entry_no_escape, but escapes result string
 
-    Only <, >, & characters are escaped.
-    '''
+        Only <, >, & characters are escaped.
+    """
     res = replace_html_entry_no_escape(m)
     if m.group(0) == res: # conversion failed
         return res
@@ -239,8 +244,9 @@ def replace_html_entry(m):
         return escape(res)
 
 def replace_dingbat(m):
-    '''replace chars \u008c-\u0095 with \u2776-\u277f
-    '''
+    """
+        replace chars \u008c-\u0095 with \u2776-\u277f
+    """
     ch = m.group(0)
     code = ord(ch) + (0x2776-0x8c)
     return unichr(code)
@@ -256,10 +262,11 @@ def new_line_escape_string_callback(m):
     return ch
 
 def new_line_escape_string(text):
-    '''convert text to c-escaped string:
-    \ -> \\
-    new line -> \n or \r
-    '''
+    """
+        convert text to c-escaped string:
+        \ -> \\
+        new line -> \n or \r
+    """
     return re.sub('[\\r\\n\\\\]', new_line_escape_string_callback, text)
 
 class BGL:
@@ -279,13 +286,14 @@ class BGL:
             self.alts = []
 
     class FileOffS(file):
-        '''A file class with an offset.
+        """
+            A file class with an offset.
 
-        This class provides an interface to a part of a file starting at specified offset and
-        ending at the end of the file, making it appear an independent file.
-        offset parameter of the constructor specifies the offset of the first byte of the
-        modeled file.
-        '''
+            This class provides an interface to a part of a file starting at specified offset and
+            ending at the end of the file, making it appear an independent file.
+            offset parameter of the constructor specifies the offset of the first byte of the
+            modeled file.
+        """
         def __init__(self, filename, offset=0):
             file.__init__(self, filename, 'rb')
             self.of = offset
@@ -310,14 +318,15 @@ class BGL:
             return file.tell(self)-self.of
 
     class DefinitionFields:
-        '''Fields of entry definition
+        """
+            Fields of entry definition
 
-        Entry definition consists of a number of fields.
-        The most important of them are:
-        defi - the main definition, mandatory, comes first.
-        part of speech
-        title
-        '''
+            Entry definition consists of a number of fields.
+            The most important of them are:
+            defi - the main definition, mandatory, comes first.
+            part of speech
+            title
+        """
         def __init__(self):
             self.defi = None # main definition part of defi, raw
             self.u_defi = None # main part of definition, unicode
@@ -348,15 +357,17 @@ class BGL:
             self.field_06 = None
 
     class GzipWithCheck:
-        '''gzip.GzipFile with check. It checks that unpacked data match what was packed.
-        '''
+        """
+            gzip.GzipFile with check. It checks that unpacked data match what was packed.
+        """
         def __init__(self, gzipFile, unpackedPath, db):
-            '''constructor
+            """
+                constructor
 
-            gzipFile - gzip file - archive
-            unpackedPath - path of a file containing original data, for testing.
-            db - reference to BGL class instance, used for logging.
-            '''
+                gzipFile - gzip file - archive
+                unpackedPath - path of a file containing original data, for testing.
+                db - reference to BGL class instance, used for logging.
+            """
             self.file = BGLGzipFile(fileobj=gzipFile)
             self.unpacked_file = open(unpackedPath, 'rb')
             self.db = db
@@ -397,7 +408,8 @@ class BGL:
                 self.unpacked_file.flush()
 
     ##############################################################################
-    '''language properties
+    """
+    language properties
 
     In this short note we describe how Babylon select encoding for key words,
     alternates and definitions.
@@ -511,7 +523,7 @@ class BGL:
     garbage. Unfortunately, we cannot detect correct encoding in this case
     automatically. We may add a parameter the will overwrite the selected encoding,
     so the user may fix the encoding if needed.
-    '''
+    """
     languageProps = [
         BabylonLanguage(
             language = 'English',
@@ -1147,24 +1159,25 @@ class BGL:
         return True
 
     def isEndOfDictData(self):
-        '''Test for end of dictionary data.
+        """
+            Test for end of dictionary data.
 
-        A bgl file stores dictionary data as a gzip compressed block.
-        In other words, a bgl file stores a gzip data file inside.
-        A gzip file consists of a series of "members".
-        gzip data block in bgl consists of one member (I guess).
-        Testing for block type returned by self.readBlock is not a reliable way to detect the end of gzip member.
-        For example, consider 'Airport Code Dictionary.BGL' dictionary.
-        To reliably test for end of gzip member block we must use a number of
-        undocumented variables of gzip.GzipFile class.
-        self.file._new_member - true if the current member has been completely read from the input file
-        self.file.extrasize - size of buffered data
-        self.file.offset - offset in the input file
+            A bgl file stores dictionary data as a gzip compressed block.
+            In other words, a bgl file stores a gzip data file inside.
+            A gzip file consists of a series of "members".
+            gzip data block in bgl consists of one member (I guess).
+            Testing for block type returned by self.readBlock is not a reliable way to detect the end of gzip member.
+            For example, consider 'Airport Code Dictionary.BGL' dictionary.
+            To reliably test for end of gzip member block we must use a number of
+            undocumented variables of gzip.GzipFile class.
+            self.file._new_member - true if the current member has been completely read from the input file
+            self.file.extrasize - size of buffered data
+            self.file.offset - offset in the input file
 
-        after reading one gzip member current position in the input file is set to the first byte after gzip data
-        We may get this offset: self.file_bgl.tell()
-        The last 4 bytes of gzip block contains the size of the original (uncompressed) input data modulo 2^32
-        '''
+            after reading one gzip member current position in the input file is set to the first byte after gzip data
+            We may get this offset: self.file_bgl.tell()
+            The last 4 bytes of gzip block contains the size of the original (uncompressed) input data modulo 2^32
+        """
         if isinstance(self.file, self.GzipWithCheck):
             return self.file.file.isNewMember()
         else:
@@ -1359,25 +1372,26 @@ class BGL:
         return True
 
     def read_type_2(self, block, pass_num):
-        '''Process type 2 block
+        """
+            Process type 2 block
 
-        Type 2 block is an embedded file (mostly Image or HTML).
-        pass_num - pass number, may be 1 or 2
-        On the first pass self.sourceEncoding is not defined and we cannot decode file names.
-        That is why the second pass is needed. The second pass is costly, it
-        apparently increases total processing time. We should avoid the second pass if possible.
-        Most of the dictionaries do not have valuable resources, and those that do, use
-        file names consisting only of ASCII characters. We may process these resources
-        on the second pass. If all files have been processed on the first pass,
-        the second pass is not needed.
+            Type 2 block is an embedded file (mostly Image or HTML).
+            pass_num - pass number, may be 1 or 2
+            On the first pass self.sourceEncoding is not defined and we cannot decode file names.
+            That is why the second pass is needed. The second pass is costly, it
+            apparently increases total processing time. We should avoid the second pass if possible.
+            Most of the dictionaries do not have valuable resources, and those that do, use
+            file names consisting only of ASCII characters. We may process these resources
+            on the second pass. If all files have been processed on the first pass,
+            the second pass is not needed.
 
-        All dictionaries I've processed so far use only ASCII chars in file names.
-        Babylon glossary builder replaces names of files, like links to images,
-        with what looks like a hash code of the file name, for example "8FFC5C68.png".
+            All dictionaries I've processed so far use only ASCII chars in file names.
+            Babylon glossary builder replaces names of files, like links to images,
+            with what looks like a hash code of the file name, for example "8FFC5C68.png".
 
-        Return value: True if the resource was successfully processed,
-            False - second pass is needed.
-        '''
+            Return value: True if the resource was successfully processed,
+                False - second pass is needed.
+        """
         ## Embedded File (mostly Image or HTML)
         name = '' ## Embedded file name
         cont = '' ## Embedded file content
@@ -1445,23 +1459,20 @@ class BGL:
             # Glossary description
             self.description = block.data[pos:]
         elif x==0x0a:
-            '''
-            value = 0 - browsing disabled
-            value = 1 - browsing enabled
-            '''
+            ## value = 0 - browsing disabled
+            ## value = 1 - browsing enabled
             value = ord(block.data[pos])
             browsing_enabled = value != 0
         elif x==0x0b:
-            '''Glossary icon
-            '''
+            ## Glossary icon
+            pass
         elif x==0x0c:
             # this does not always matches the number of entries in the dictionary,
             # but it's close to it.
             # the difference is usually +- 1 or 2, in rare cases may be 9, 29 and more
             self.bgl_numEntries = binStrToInt(block.data[pos:])
         elif x==0x11:
-            '''A flag field.
-            '''
+            ## A flag field.
             flags = binStrToInt(block.data[pos:])
             # when this flag is set utf8 encoding is used for all articles
             # when false, the encoding is set according to the source and target alphabet
@@ -1492,11 +1503,9 @@ class BGL:
         elif x==0x1c:## Middle Updated ## ???????????????
             self.middleUpdated = decodeBglBinTime(block.data[2:])
         elif x==0x20:
-            '''
-            0x30 - case sensitive search is disabled
-            0x31 - case sensitive search is enabled
-            see code 0x11 as well
-            '''
+            ## 0x30 - case sensitive search is disabled
+            ## 0x31 - case sensitive search is enabled
+            ## see code 0x11 as well
             if len(block.data) > pos:
                 value = ord(block.data[pos])
         elif x==0x2c:
@@ -1547,27 +1556,27 @@ class BGL:
             # Tahoma
             self.fontName = block.data[pos:]
         elif x==0x41:
-            '''
-            Glossary manual file
-            additional information about the dictionary
-            in .txt format this may be short info like this:
+            """
+                Glossary manual file
+                additional information about the dictionary
+                in .txt format this may be short info like this:
 
-            Biology Glossary
-            Author name: Hafez Divandari
-            Author email: hafezdivandari@gmail.com
-            ===========================================
-            A functional glossary for translating
-            English biological articles to fluent Farsi
-            ===========================================
-            Copyright (c) 2009 All rights reserved.
+                Biology Glossary
+                Author name: Hafez Divandari
+                Author email: hafezdivandari@gmail.com
+                ===========================================
+                A functional glossary for translating
+                English biological articles to fluent Farsi
+                ===========================================
+                Copyright (c) 2009 All rights reserved.
 
-            in .pdf format this may be a quite large document (about 30 pages),
-            an introduction into the dictionary. It describing structure of an article,
-            editors, how to use the dictionary.
+                in .pdf format this may be a quite large document (about 30 pages),
+                an introduction into the dictionary. It describing structure of an article,
+                editors, how to use the dictionary.
 
-            format <file extension> '\x00' <file contents>
-            file extension may be: '.txt', '.pdf'
-            '''
+                format <file extension> '\x00' <file contents>
+                file extension may be: '.txt', '.pdf'
+            """
             if len(block.data) > pos:
                 i = block.data.find('\x00', pos)
                 if i == -1:
@@ -1576,12 +1585,12 @@ class BGL:
                     self.aboutExt = block.data[pos:i]
                     self.aboutContents = block.data[i+1:]
         elif x==0x43:
-            '''
-            The length of the substring match in a term.
-            For example, if your glossary contains the term "Dog" and the substring length is 2,
-            search of the substrings "Do" or "og" will retrieve the term dog.
-            Use substring length 0 for exact match.
-            '''
+            """
+                The length of the substring match in a term.
+                For example, if your glossary contains the term "Dog" and the substring length is 2,
+                search of the substrings "Do" or "og" will retrieve the term dog.
+                Use substring length 0 for exact match.
+            """
             length = binStrToInt(block.data[pos:])
         else:
             log.debug('Unknown info type x=%s, block.Type=%s, len(block.data)=%s'%(x, block.Type, len(block.data)))
@@ -1626,8 +1635,9 @@ class BGL:
         return None
 
     def detect_encoding(self):
-        ''' assign self.sourceEncoding and self.targetEncoding
-        '''
+        """
+            assign self.sourceEncoding and self.targetEncoding
+        """
         if self.sourceEncodingOverwrite:
             self.sourceEncoding = self.sourceEncodingOverwrite
         elif self.option_utf8_encoding and self.option_utf8_encoding:
@@ -1758,12 +1768,13 @@ class BGL:
         return False
 
     def readEntry_word(self, block, pos):
-        '''Read word part of entry.
+        """
+            Read word part of entry.
 
-        Return value is a list.
-        [False, None, None, None] if error
-        [True, pos, word, raw_key] if OK
-        '''
+            Return value is a list.
+            [False, None, None, None] if error
+            [True, pos, word, raw_key] if OK
+        """
         Err = [False, None, None, None]
         if block.Type == 11:
             if pos + 5 > len(block.data):
@@ -1787,14 +1798,15 @@ class BGL:
         self.dump_file_write_text('\n\nblock type = %s\nkey = '%block.Type)
         self.dump_file_write_data(raw_key)
         word = self.processEntryKey(raw_key)
-        '''Entry keys may contain html text, for example,
-        ante<font face'Lucida Sans Unicode'>&lt; meridiem
-        arm und reich c=t&gt;2003;</charset></font>und<font face='Lucida Sans Unicode'>
-        etc.
-        Babylon does not process keys as html, it display them as is.
-        Html in keys is the problem of that particular dictionary.
-        We should not process keys as html, since Babylon do not process them as such.
-        '''
+        """
+            Entry keys may contain html text, for example,
+            ante<font face'Lucida Sans Unicode'>&lt; meridiem
+            arm und reich c=t&gt;2003;</charset></font>und<font face='Lucida Sans Unicode'>
+            etc.
+            Babylon does not process keys as html, it display them as is.
+            Html in keys is the problem of that particular dictionary.
+            We should not process keys as html, since Babylon do not process them as such.
+        """
         pos += Len
         self.wordLenMax = max(self.wordLenMax, len(word))
         return True, pos, word, raw_key
@@ -1955,13 +1967,14 @@ class BGL:
         return ''.join(parts)
 
     def decode_charset_tags(self, text, defaultEncoding):
-        '''Decode html text taking into account charset tags and default encoding.
+        """
+            Decode html text taking into account charset tags and default encoding.
 
-        Return value: [utf8-text, defaultEncodingOnly]
-        The second parameter is false if the text contains parts encoded with
-        non-default encoding (babylon character references '<CHARSET c="T">00E6;</CHARSET>'
-        do not count).
-        '''
+            Return value: [utf8-text, defaultEncodingOnly]
+            The second parameter is false if the text contains parts encoded with
+            non-default encoding (babylon character references '<CHARSET c="T">00E6;</CHARSET>'
+            do not count).
+        """
         pat = re.compile('(<charset\\s+c\\=[\'\"]?(\\w)[\'\"]?>|</charset>)', re.I)
         parts = re.split(pat, text)
         utf8_text = ''
@@ -2065,13 +2078,15 @@ class BGL:
         return re.sub('[\r\n]+', ' ', text)
 
     def normalize_new_lines(self, text):
-        '''convert new lines to unix style and remove consecutive new lines
-        '''
+        """
+            convert new lines to unix style and remove consecutive new lines
+        """
         return re.sub('[\r\n]+', '\n', text)
 
     def processEntryKey(self, word):
-        '''Return entry key in utf-8 encoding
-        '''
+        """
+            Return entry key in utf-8 encoding
+        """
         main_word, strip_cnt = self.stripDollarIndexes(word)
         if strip_cnt > 1:
             log.debug('processEntryKey({0}):\nnumber of dollar indexes = {1}'\
@@ -2155,18 +2170,18 @@ class BGL:
                 main_word += word[i:]
                 break
             if d1 == d0+1:
-                '''
-                You may find keys (or alternative keys) like these:
-                sur l'arbre$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-                obscurantiste$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-                They all end on a sequence of '$', key length including dollars is always 60 chars.
-                You may find keys like these:
-                extremidade-$$$-$$$-linha
-                .FIRM$$$$$$$$$$$$$
-                etc
+                """
+                    You may find keys (or alternative keys) like these:
+                    sur l'arbre$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+                    obscurantiste$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+                    They all end on a sequence of '$', key length including dollars is always 60 chars.
+                    You may find keys like these:
+                    extremidade-$$$-$$$-linha
+                    .FIRM$$$$$$$$$$$$$
+                    etc
 
-                summary: we must remove any sequence of dollar signs longer than 1 chars
-                '''
+                    summary: we must remove any sequence of dollar signs longer than 1 chars
+                """
                 #log.debug('stripDollarIndexes({0}):\n'
                     #'found $$'.format(word))
                 main_word += word[i:d0]
@@ -2188,12 +2203,13 @@ class BGL:
                 i = d1
                 continue
             if d1+1 < len(word) and word[d1+1] != ' ':
-                ''' Examples:
-                make do$4$/make /do
-                potere$1$<BR><BR>See also <a href='file://ITAL-ENG POTERE 1249-1250.pdf'>notes...</A>
-                volere$1$<BR><BR>See also <a href='file://ITAL-ENG VOLERE 1469-1470.pdf'>notes...</A>
-                Ihre$1$Ihres
-                '''
+                """
+                    Examples:
+                    make do$4$/make /do
+                    potere$1$<BR><BR>See also <a href='file://ITAL-ENG POTERE 1249-1250.pdf'>notes...</A>
+                    volere$1$<BR><BR>See also <a href='file://ITAL-ENG VOLERE 1469-1470.pdf'>notes...</A>
+                    Ihre$1$Ihres
+                """
                 #log.debug('stripDollarIndexes({0}):\n'
                     #'second $ is followed by non-space'.format(word))
                 pass
@@ -2204,17 +2220,18 @@ class BGL:
         return main_word, strip_cnt
 
     def findDefinitionTrailingFields(self, defi):
-        '''Find the beginning of the definition trailing fields.
+        """
+            Find the beginning of the definition trailing fields.
 
-        Return value is the index of the first chars of the field set,
-        or -1 if the field set is not found.
+            Return value is the index of the first chars of the field set,
+            or -1 if the field set is not found.
 
-        Normally '\x14' should signal the beginning of the definition fields,
-        but some articles may contain this characters inside, so we get false match.
-        As a workaround we may check the following chars. If '\x14' is followed
-        by space, we assume this is part of the article and continue search.
-        Unfortunately this does no help in many cases...
-        '''
+            Normally '\x14' should signal the beginning of the definition fields,
+            but some articles may contain this characters inside, so we get false match.
+            As a workaround we may check the following chars. If '\x14' is followed
+            by space, we assume this is part of the article and continue search.
+            Unfortunately this does no help in many cases...
+        """
         b = 0
         while True:
             i = defi.find('\x14', b)
@@ -2639,16 +2656,17 @@ class BGL:
                 return
 
     def fixImgLinks(self, text):
-        '''Fix img tag links
+        """
+            Fix img tag links
 
-        src attribute value of image tag is often enclosed in \x1e - \x1f characters.
-        For example, <IMG border='0' src='\x1e6B6C56EC.png\x1f' width='9' height='8'>.
-        Naturally the control characters are not part of the image source name.
-        They may be used to quickly find all names of resources.
-        This function strips all such characters.
-        Control characters \x1e and \x1f are useless in html text, so we may safely remove
-        all of them, irrespective of context.
-        '''
+            src attribute value of image tag is often enclosed in \x1e - \x1f characters.
+            For example, <IMG border='0' src='\x1e6B6C56EC.png\x1f' width='9' height='8'>.
+            Naturally the control characters are not part of the image source name.
+            They may be used to quickly find all names of resources.
+            This function strips all such characters.
+            Control characters \x1e and \x1f are useless in html text, so we may safely remove
+            all of them, irrespective of context.
+        """
         return text.replace('\x1e', '').replace('\x1f', '')
 
     def __del__(self):
@@ -2731,13 +2749,14 @@ class BGL:
         )
 
     def findCharSamples(self, data):
-        '''Find samples of chars in data.
+        """
+            Find samples of chars in data.
 
-        Search for chars in data that have not been marked so far in
-        the target_chars_arr array, mark new chars.
-        Returns a list of offsets in data string.
-        May return an empty list.
-        '''
+            Search for chars in data that have not been marked so far in
+            the target_chars_arr array, mark new chars.
+            Returns a list of offsets in data string.
+            May return an empty list.
+        """
         res = []
         if not isinstance(data, str):
             log.error('findCharSamples: data is not a string')
