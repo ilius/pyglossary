@@ -106,8 +106,8 @@ class Glossary:
 
     @classmethod
     def loadPlugins(cls, directory):
-        """executed on startup.  as name implies, loads plugins from directory."""
-        log.debug("loading plugins from directory: %r" % directory)
+        '''executed on startup.  as name implies, loads plugins from directory.'''
+        log.debug('loading plugins from directory: %r' % directory)
         if not isdir(directory):
             log.error('invalid plugin directory: %r' % directory)
             return
@@ -122,11 +122,11 @@ class Glossary:
         try:
             plugin = __import__(pluginName)
         except (ImportError, SyntaxError) as e:
-            log.error("error while importing plugin %s" % pluginName, exc_info=1)
+            log.error('error while importing plugin %s' % pluginName, exc_info=1)
             return
 
         if (not hasattr(plugin, 'enable')) or (not plugin.enable):
-            log.debug("plugin disabled or not a plugin: %s.  skipping..." % pluginName)
+            log.debug('plugin disabled or not a plugin: %s.  skipping...' % pluginName)
             return
 
         format = plugin.format
@@ -166,7 +166,7 @@ class Glossary:
             cls.formatsWriteOptions[format] = plugin.writeOptions \
                 if hasattr(plugin, 'writeOptions') else []
 
-        log.debug("plugin loaded OK: %s" % pluginName)
+        log.debug('plugin loaded OK: %s' % pluginName)
         return plugin
 
 
@@ -854,22 +854,22 @@ class Glossary:
         if not info:
             info = self.info
         for item in info:
-            inf = "'" + item[1].replace("'", '\'\'')\
+            inf = '\'' + item[1].replace('\'', '\'\'')\
                                .replace('\x00', '')\
                                .replace('\r', '')\
-                               .replace('\n', newline) + "'"
+                               .replace('\n', newline) + '\''
             infoList.append(inf)
             infoDefLine += '%s char(%d), '%(item[0], len(inf))
         ######################
         infoDefLine = infoDefLine[:-2] + ');'
         lines.append(infoDefLine)
-        lines.append("CREATE TABLE word ('id' INTEGER PRIMARY KEY NOT NULL, 'w' TEXT, 'm' TEXT);")
-        lines.append("BEGIN TRANSACTION;");
+        lines.append('CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, \'w\' TEXT, \'m\' TEXT);')
+        lines.append('BEGIN TRANSACTION;');
         lines.append('INSERT INTO dbinfo VALUES(%s);'%(','.join(infoList)))
         for i, item in enumerate(self.data):
             w = item[0].replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
             m = item[1].replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
-            lines.append("INSERT INTO word VALUES(%d,'%s','%s');"%(i+1, w, m))
+            lines.append('INSERT INTO word VALUES(%d, \'%s\', \'%s\');'%(i+1, w, m))
         lines.append('END TRANSACTION;')
         lines.append('CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);')
         return lines
