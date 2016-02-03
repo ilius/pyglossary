@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ## glossary.py
 ##
-## Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+## Copyright © 2008-2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 ## This file is part of PyGlossary project, http://sourceforge.net/projects/pyglossary/
 ##
 ## This program is a free software; you can redistribute it and/or modify
