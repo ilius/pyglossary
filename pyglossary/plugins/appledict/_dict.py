@@ -38,10 +38,10 @@ def dictionary_begin(glos, f, frontBackMatter):
 def get_beautiful_soup():
     try:
         import bs4 as BeautifulSoup
-    except:
+    except ImportError:
         try:
             import BeautifulSoup
-        except:
+        except ImportError:
             return None
     return BeautifulSoup
 
@@ -265,7 +265,7 @@ def write_entries(glos, f, cleanHTML, indexes):
         # get alternatives list
         try:
             alts = item[2]['alts']
-        except:
+        except (KeyError, IndexError):
             alts = []
 
         content = format_clean_content(long_title, item[1], BeautifulSoup)
