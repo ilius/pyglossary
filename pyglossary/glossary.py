@@ -106,7 +106,7 @@ class Glossary:
 
     @classmethod
     def loadPlugins(cls, directory):
-        '''executed on startup.  as name implies, loads plugins from directory.'''
+        """executed on startup.  as name implies, loads plugins from directory."""
         log.debug('loading plugins from directory: %r' % directory)
         if not isdir(directory):
             log.error('invalid plugin directory: %r' % directory)
@@ -745,13 +745,13 @@ class Glossary:
         #div = 0
         #mod = 0
         #total = int(wNum/steps)
-        '''
+        """
         if c==0:
             log.info('Number of input words:', wNum)
             log.info('Reversing glossary...')
         else:
             log.info('continue reversing from index %d ...'%c)
-        '''
+        """
         t0 = time.time()
         if not ui:
             log.info('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
@@ -768,7 +768,7 @@ class Glossary:
                 return
             else:
                 self.i = i
-            '''
+            """
             if mod == steps:
                 mod = 0 ; div += 1
                 t = time.time()
@@ -794,7 +794,7 @@ class Glossary:
                     ))
             else:
                 mod += 1
-            '''
+            """
             if autoSaveStep>0 and i%autoSaveStep==0 and i>0:
                 saveFile.close()
                 saveFile = open(savePath, 'ab')
@@ -938,7 +938,7 @@ class Glossary:
             m = re.sub('[\r\n]+', '\n', m)
             m = re.sub(' *\n *', '\n', m)
 
-            '''
+            """
             This code may correct snippets like:
             - First sentence .Second sentence. -> First sentence. Second sentence.
             - First clause ,second clause. -> First clause, second clause.
@@ -946,12 +946,12 @@ class Glossary:
             ( '<' represented as '&lt;' in HTML markup):
             - <Adj.> -> < Adj. >
             - <fig.> -> < fig. >
-            '''
-            '''
+            """
+            """
             for j in range(3):
                 for ch in ',.;':
                     m = replacePostSpaceChar(m, ch)
-            '''
+            """
 
             m = re.sub('♦\n+♦', '♦', m)
             if m.endswith('<p'):
