@@ -838,52 +838,6 @@ class Glossary:
                         num += 1
             return num
 
-    def takePhonetic_oxford_gb(self):
-        phg = Glossary(self.info[:]) ## phonetic glossary
-        phg.setInfo('name', self.getInfo('name') + '_phonetic')
-        for item in self.data:
-            word = item[0]
-            defi = item[1]
-            if not defi.startswith('/'):
-                continue
-            #### Now set the phonetic to the `ph` variable.
-            ph = ''
-            for s in (
-                '/ adj',
-                '/ v',
-                '/ n',
-                '/ adv',
-                '/adj',
-                '/v',
-                '/n',
-                '/adv',
-                '/ n',
-                '/ the',
-            ):
-                i = defi.find(s, 2, 85)
-                if i==-1:
-                    continue
-                else:
-                    ph = defi[:i+1]
-                    break
-            ph = ph.replace(';', '\t')\
-                   .replace(',', '\t')\
-                   .replace('     ', '\t')\
-                   .replace('    ', '\t')\
-                   .replace('  ', '\t')\
-                   .replace('//', '/')\
-                   .replace('\t/\t', '\t')\
-                   .replace('<i>US</i>\t', '\tUS: ')\
-                   .replace('<i>US</i>', '\tUS: ')\
-                   .replace('\t\t\t', '\t')\
-                   .replace('\t\t', '\t')\
-            #      .replace('/', '')
-            #      .replace('\\n ', '\\n')
-            #      .replace('\\n ', '\\n')
-            if ph != '':
-                phg.data.append((word, ph))
-        return phg
-
 
     def getSqlLines(self, filename='', info=None, newline='\\n'):
         lines = []
