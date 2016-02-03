@@ -2,7 +2,7 @@
 ## glossary.py
 ##
 ## Copyright © 2008-2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-## This file is part of PyGlossary project, http://sourceforge.net/projects/pyglossary/
+## This file is part of PyGlossary project, http://github.com/ilius/pyglossary
 ##
 ## This program is a free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
