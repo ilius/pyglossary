@@ -320,9 +320,9 @@ class Glossary:
                 del options[key]
         getattr(self, 'read%s'%format).__call__(filename, **options)
 
-        (filename_nox, ext) = splitext(filename)
+        (filenameNoExt, ext) = splitext(filename)
         if ext.lower() in self.formatsExt[format]:
-            filename = filename_nox
+            filename = filenameNoExt
         self.filename = filename
         if self.getInfo('name') == '':
             self.setInfo('name', split(filename)[1])
@@ -337,15 +337,15 @@ class Glossary:
             log.error('Invalid filename %r'%filename)
             return False
         ext = ''
-        (filename_nox, fext) = splitext(filename)
+        (filenameNoExt, fext) = splitext(filename)
         fext = fext.lower()
         if fext in ('.gz', '.bz2', '.zip'):
             zipExt = fext
-            filename = filename_nox
+            filename = filenameNoExt
             fext = splitext(filename)[1].lower()
         else:
             zipExt = ''
-        del filename_nox
+        del filenameNoExt
         if format:
             try:
                 ext = Glossary.formatsExt[format][0]
