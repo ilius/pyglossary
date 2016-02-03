@@ -131,11 +131,11 @@ class UI(UIBase):
         self.xml.signal_autoconnect(signals)
         self.def_widgets(('quitdialog', 'textview_out', 'textview_err', 'maindialog',\
             'vpaned1', 'notebook1', 'entry_i', 'entry_o',\
-            'combobox_i', 'combobox_o', 'checkb_o_det', 'combobox_r_i', 'checkb_i_ext',\
+            'combobox_i', 'combobox_o', 'checkb_o_det', 'combobox_r_i',\
             'entry_r_i', 'entry_r_o', 'combobox_sr', 'progressbar', 'textview_edit',\
             'label_convert', 'label_reverse', 'combobox_mode', 'textview_merge', 'button_conv'))
 
-        '''## changing colors
+        """## changing colors
         self.textview_err.modify_base(0, gtk.gdk.Color(10000, 0, 0))#textview bg color
         #self.textview_err.modify_base(1, gtk.gdk.Color(-1, 0, 0))#selected text bg color, when deselect window!
         self.textview_err.modify_text(0, gtk.gdk.Color(-1, -1, -1))#normal text color
@@ -143,7 +143,7 @@ class UI(UIBase):
         # modify_bg modify_fg
         self.textview_out.modify_base(0, gtk.gdk.Color(0, 10000, 0))#textview bg color
         self.textview_out.modify_text(0, gtk.gdk.Color(-1, -1, -1))#normal text color
-        '''
+        """
         self.quitdialog.connect('delete-event', self.quitdialog_close)
         self.assert_quit = False
         self.path = ''
@@ -154,8 +154,6 @@ class UI(UIBase):
         for f in Glossary.writeFormats:
             self.combobox_o.append_text(Glossary.formatsDesc[f])
         self.combobox_sr.set_active(0)
-        #self.checkb_i_ext.set_active(0)
-        #self.xml.get_widget('checkb_o_ext').set_active(1)
         self.dbe_init()
         self.editor_path = ''
         self.tabIndex = 0
@@ -318,11 +316,6 @@ class UI(UIBase):
         if format=='Omnidic':
             dicIndex = self.xml.get_widget('spinbutton_omnidic_i').get_value_as_int()
             ex = self.glos.readOmnidic(iPath, dicIndex=dicIndex)
-        elif self.checkb_i_ext.get_active():
-            if format=='Stardict':
-                ex = self.glos.readStardict_ext(iPath)
-            elif format=='Bgl':
-                ex = self.glos.readBgl_ext(iPath)
         else:
             ex = self.glos.read(iPath, format=format)
         if ex:
@@ -400,12 +393,7 @@ class UI(UIBase):
         self.assert_quit=True
         format = Glossary.descFormat[formatD]
         t0=time.time()
-        if format=='Stardict':
-            if self.xml.get_widget('checkb_o_ext').get_active():
-                self.glos.writeStardict_ext(oPath)
-            else:
-                self.glos.writeStardict(oPath)
-        elif format=='Omnidic':
+        if format=='Omnidic':
             dicIndex=self.xml.get_widget('spinbutton_omnidic_o').get_value_as_int()
             self.glos.writeOmnidic(oPath, dicIndex=dicIndex)
         elif format=='Babylon':
@@ -422,13 +410,7 @@ class UI(UIBase):
 
     def combobox_i_changed(self, *args):
         formatD = self.combobox_i.get_active_text()
-        #'''
         format = Glossary.descFormat[formatD]
-        if format=='Stardict' or format=='Bgl':
-            self.checkb_i_ext.show()
-        else:
-            self.checkb_i_ext.hide()
-        #'''
         if format=='Omnidic':
             self.xml.get_widget('label_omnidic_i').show()
             self.xml.get_widget('spinbutton_omnidic_i').show()
@@ -451,10 +433,6 @@ class UI(UIBase):
         else:
             self.xml.get_widget('label_enc').hide()
             self.xml.get_widget('comboentry_enc').hide()
-        if format=='Stardict':
-            self.xml.get_widget('checkb_o_ext').show()
-        else:
-            self.xml.get_widget('checkb_o_ext').hide()
         if self.pref['auto_set_out']:## not format:
             pathI = self.entry_i.get_text()
             pathO = self.entry_o.get_text()
@@ -947,7 +925,7 @@ class UI(UIBase):
         if save:
             p_info = (self.entry_dbe_info.get_text(), buffer_get_text(self.buffer_dbe_info))
         n = len(self.glosE.info)
-        '''if 0 <= n_ind < n:
+        """if 0 <= n_ind < n:
             pass
         elif n_ind == n:
             n_ind = 0
@@ -955,7 +933,7 @@ class UI(UIBase):
             n_ind += n
         else:
             log.error('index out of range: "%s"'%n_ind)
-            return False'''
+            return False"""
         self.info_i = n_ind
         try:
             inf = self.glosE.info[n_ind]

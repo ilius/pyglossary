@@ -77,9 +77,9 @@ class TkTextLogHandler(logging.Handler):
 ### Monkey-patch Tkinter
 ## http://stackoverflow.com/questions/5191830/python-exception-logging
 def CallWrapper__call__(self, *args):
-    '''
+    """
         Apply first function SUBST to arguments, than FUNC.
-    '''
+    """
     if self.subst:
         args = self.subst(*args)
     try:
@@ -619,7 +619,8 @@ class UI(Tix.Frame, UIBase):
         if formatD==noneItem:
             return
         format = Glossary.descFormat[formatD]
-        '''if format=='Omnidic':
+        """
+        if format=='Omnidic':
             self.xml.get_widget('label_omnidic_o').show()
             self.xml.get_widget('spinbutton_omnidic_o').show()
         else:
@@ -631,10 +632,7 @@ class UI(Tix.Frame, UIBase):
         else:
             self.xml.get_widget('label_enc').hide()
             self.xml.get_widget('comboentry_enc').hide()
-        if format=='Stardict':
-            self.xml.get_widget('checkb_o_ext').show()
-        else:
-            self.xml.get_widget('checkb_o_ext').hide()'''
+        """
         if self.pref['auto_set_out']:#format==None:
             pathI = toStr(self.entry_i.get())
             pathO = toStr(self.entry_o.get())
@@ -720,13 +718,13 @@ class UI(Tix.Frame, UIBase):
         #while gtk.events_pending():#??????????????
         #    gtk.main_iteration_do(False)
         t0=time.time()
-        '''
+        """
         if formatD[:7]=='Omnidic':
             dicIndex=self.xml.get_widget('spinbutton_omnidic_i').get_value_as_int()
             ex = self.glos.readOmnidic(iPath, dicIndex=dicIndex)
         elif formatD[:8]=='StarDict' and self.checkb_i_ext.get_active():
             ex = self.glos.readStardict_ext(iPath)
-        else:'''
+        else:"""
         ex = self.glos.read(iPath, format=format)
         if ex:
             log.info('reading %s file: "%s" done.\n%d words found.'%(
@@ -763,19 +761,14 @@ class UI(Tix.Frame, UIBase):
         self.running = True
         format = Glossary.descFormat[formatD]
         t0 = time.time()
-        '''
-        if format=='Stardict':
-            if self.xml.get_widget('checkb_o_ext').get_active():
-                self.glos.writeStardict(oPath)
-            else:
-                self.glos.writeStardict_int(oPath)
-        elif format=='Omnidic':
+        """
+        if format=='Omnidic':
             dicIndex=self.xml.get_widget('spinbutton_omnidic_o').get_value_as_int()
             self.glos.writeOmnidic(oPath, dicIndex=dicIndex)
         elif format=='Babylon':
             encoding = self.xml.get_widget('comboentry_enc').get_active_text()
             self.glos.writeBabylon(oPath, encoding=encoding)
-        else:'''##???????????????????????
+        else:"""##???????????????????????
         self.glos.write(oPath, format=format)
         #self.oFormat = format
         self.oPath = oPath

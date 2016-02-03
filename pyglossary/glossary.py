@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 ## glossary.py
 ##
-## Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-## This file is part of PyGlossary project, http://sourceforge.net/projects/pyglossary/
+## Copyright © 2008-2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+## This file is part of PyGlossary project, http://github.com/ilius/pyglossary
 ##
 ## This program is a free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -105,28 +105,28 @@ class Glossary:
     data = []
 
     @classmethod
-    def load_plugins(cls, directory):
+    def loadPlugins(cls, directory):
         """executed on startup.  as name implies, loads plugins from directory."""
-        log.debug("loading plugins from directory: %r" % directory)
+        log.debug('loading plugins from directory: %r' % directory)
         if not isdir(directory):
             log.error('invalid plugin directory: %r' % directory)
             return
 
         sys.path.append(directory)
         for _, plugin, _ in pkgutil.iter_modules([directory]):
-            cls.load_plugin(plugin)
+            cls.loadPlugin(plugin)
 
     @classmethod
-    def load_plugin(cls, plugin_name):
-        log.debug('loading plugin %s' % plugin_name)
+    def loadPlugin(cls, pluginName):
+        log.debug('loading plugin %s' % pluginName)
         try:
-            plugin = __import__(plugin_name)
+            plugin = __import__(pluginName)
         except (ImportError, SyntaxError) as e:
-            log.error("error while importing plugin %s" % plugin_name, exc_info=1)
+            log.error('error while importing plugin %s' % pluginName, exc_info=1)
             return
 
         if (not hasattr(plugin, 'enable')) or (not plugin.enable):
-            log.debug("plugin disabled or not a plugin: %s.  skipping..." % plugin_name)
+            log.debug('plugin disabled or not a plugin: %s.  skipping...' % pluginName)
             return
 
         format = plugin.format
@@ -166,7 +166,7 @@ class Glossary:
             cls.formatsWriteOptions[format] = plugin.writeOptions \
                 if hasattr(plugin, 'writeOptions') else []
 
-        log.debug("plugin loaded OK: %s" % plugin_name)
+        log.debug('plugin loaded OK: %s' % pluginName)
         return plugin
 
 
@@ -320,9 +320,9 @@ class Glossary:
                 del options[key]
         getattr(self, 'read%s'%format).__call__(filename, **options)
 
-        (filename_nox, ext) = splitext(filename)
+        (filenameNoExt, ext) = splitext(filename)
         if ext.lower() in self.formatsExt[format]:
-            filename = filename_nox
+            filename = filenameNoExt
         self.filename = filename
         if self.getInfo('name') == '':
             self.setInfo('name', split(filename)[1])
@@ -337,15 +337,15 @@ class Glossary:
             log.error('Invalid filename %r'%filename)
             return False
         ext = ''
-        (filename_nox, fext) = splitext(filename)
+        (filenameNoExt, fext) = splitext(filename)
         fext = fext.lower()
         if fext in ('.gz', '.bz2', '.zip'):
             zipExt = fext
-            filename = filename_nox
+            filename = filenameNoExt
             fext = splitext(filename)[1].lower()
         else:
             zipExt = ''
-        del filename_nox
+        del filenameNoExt
         if format:
             try:
                 ext = Glossary.formatsExt[format][0]
@@ -481,7 +481,7 @@ class Glossary:
             defi = defi.replace('\n', '\\n')
             try:
                 print(word + '\t' + defi)
-            except:
+            except Exception:
                 log.exception('')
 
 
@@ -514,7 +514,7 @@ class Glossary:
     # no ordering. Use when you split input words to two(or many) parts after ordering.
         try:
             other.data, other.info
-        except:
+        except AttributeError:
             if isinstance(other, (list, tuple)):
                 if len(other)==0:
                     return self
@@ -536,7 +536,7 @@ class Glossary:
     def merge(self, other):
         try:
             other.data, other.info
-        except:
+        except AttributeError:
             if isinstance(other, (list, tuple)):
                 if len(other)==0:
                     return self
@@ -562,7 +562,7 @@ class Glossary:
         ## merge two optional glossarys nicly. no repets in words of result glossary
         try:
             other.data, other.info
-        except:
+        except AttributeError:
             if isinstance(other, (list, tuple)):
                 if len(other)==0:
                     return self
@@ -745,13 +745,13 @@ class Glossary:
         #div = 0
         #mod = 0
         #total = int(wNum/steps)
-        '''
+        """
         if c==0:
             log.info('Number of input words:', wNum)
             log.info('Reversing glossary...')
         else:
             log.info('continue reversing from index %d ...'%c)
-        '''
+        """
         t0 = time.time()
         if not ui:
             log.info('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
@@ -768,7 +768,7 @@ class Glossary:
                 return
             else:
                 self.i = i
-            '''
+            """
             if mod == steps:
                 mod = 0 ; div += 1
                 t = time.time()
@@ -794,7 +794,7 @@ class Glossary:
                     ))
             else:
                 mod += 1
-            '''
+            """
             if autoSaveStep>0 and i%autoSaveStep==0 and i>0:
                 saveFile.close()
                 saveFile = open(savePath, 'ab')
@@ -805,7 +805,7 @@ class Glossary:
                         defi = '\\n\\n'.join(result)
                     else:
                         defi = ', '.join(result) + '.'
-                except:
+                except Exception:
                     open('result', 'wb').write(str(result))
                     log.exception('')
                     return False
@@ -838,52 +838,6 @@ class Glossary:
                         num += 1
             return num
 
-    def takePhonetic_oxford_gb(self):
-        phg = Glossary(self.info[:]) ## phonetic glossary
-        phg.setInfo('name', self.getInfo('name') + '_phonetic')
-        for item in self.data:
-            word = item[0]
-            defi = item[1]
-            if not defi.startswith('/'):
-                continue
-            #### Now set the phonetic to the `ph` variable.
-            ph = ''
-            for s in (
-                '/ adj',
-                '/ v',
-                '/ n',
-                '/ adv',
-                '/adj',
-                '/v',
-                '/n',
-                '/adv',
-                '/ n',
-                '/ the',
-            ):
-                i = defi.find(s, 2, 85)
-                if i==-1:
-                    continue
-                else:
-                    ph = defi[:i+1]
-                    break
-            ph = ph.replace(';', '\t')\
-                   .replace(',', '\t')\
-                   .replace('     ', '\t')\
-                   .replace('    ', '\t')\
-                   .replace('  ', '\t')\
-                   .replace('//', '/')\
-                   .replace('\t/\t', '\t')\
-                   .replace('<i>US</i>\t', '\tUS: ')\
-                   .replace('<i>US</i>', '\tUS: ')\
-                   .replace('\t\t\t', '\t')\
-                   .replace('\t\t', '\t')\
-            #      .replace('/', '')
-            #      .replace('\\n ', '\\n')
-            #      .replace('\\n ', '\\n')
-            if ph != '':
-                phg.data.append((word, ph))
-        return phg
-
 
     def getSqlLines(self, filename='', info=None, newline='\\n'):
         lines = []
@@ -900,22 +854,22 @@ class Glossary:
         if not info:
             info = self.info
         for item in info:
-            inf = "'" + item[1].replace("'", '\'\'')\
+            inf = '\'' + item[1].replace('\'', '\'\'')\
                                .replace('\x00', '')\
                                .replace('\r', '')\
-                               .replace('\n', newline) + "'"
+                               .replace('\n', newline) + '\''
             infoList.append(inf)
             infoDefLine += '%s char(%d), '%(item[0], len(inf))
         ######################
         infoDefLine = infoDefLine[:-2] + ');'
         lines.append(infoDefLine)
-        lines.append("CREATE TABLE word ('id' INTEGER PRIMARY KEY NOT NULL, 'w' TEXT, 'm' TEXT);")
-        lines.append("BEGIN TRANSACTION;");
+        lines.append('CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, \'w\' TEXT, \'m\' TEXT);')
+        lines.append('BEGIN TRANSACTION;');
         lines.append('INSERT INTO dbinfo VALUES(%s);'%(','.join(infoList)))
         for i, item in enumerate(self.data):
             w = item[0].replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
             m = item[1].replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
-            lines.append("INSERT INTO word VALUES(%d,'%s','%s');"%(i+1, w, m))
+            lines.append('INSERT INTO word VALUES(%d, \'%s\', \'%s\');'%(i+1, w, m))
         lines.append('END TRANSACTION;')
         lines.append('CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);')
         return lines
@@ -984,7 +938,7 @@ class Glossary:
             m = re.sub('[\r\n]+', '\n', m)
             m = re.sub(' *\n *', '\n', m)
 
-            '''
+            """
             This code may correct snippets like:
             - First sentence .Second sentence. -> First sentence. Second sentence.
             - First clause ,second clause. -> First clause, second clause.
@@ -992,12 +946,12 @@ class Glossary:
             ( '<' represented as '&lt;' in HTML markup):
             - <Adj.> -> < Adj. >
             - <fig.> -> < fig. >
-            '''
-            '''
+            """
+            """
             for j in range(3):
                 for ch in ',.;':
                     m = replacePostSpaceChar(m, ch)
-            '''
+            """
 
             m = re.sub('♦\n+♦', '♦', m)
             if m.endswith('<p'):
@@ -1060,4 +1014,4 @@ class Glossary:
                 f.write('key = ' + item[0] + '\n')
                 f.write('defi = ' + item[1] + '\n\n')
 
-Glossary.load_plugins(join(dirname(__file__), 'plugins'))
+Glossary.loadPlugins(join(dirname(__file__), 'plugins'))

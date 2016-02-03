@@ -16,6 +16,9 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ## GNU General Public License for more details.
 
+import logging
+log = logging.getLogger('root')
+
 import re
 import string
 from xml.sax.saxutils import unescape, quoteattr
@@ -40,10 +43,10 @@ def dictionary_begin(glos, f, frontBackMatter):
 def get_beautiful_soup():
     try:
         import bs4 as BeautifulSoup
-    except:
+    except ImportError:
         try:
             import BeautifulSoup
-        except:
+        except ImportError:
             return None
     return BeautifulSoup
 
@@ -239,8 +242,6 @@ def write_entries(glos, f, cleanHTML, indexes):
     if cleanHTML:
         BeautifulSoup = get_beautiful_soup()
         if not BeautifulSoup:
-            import logging
-            log = logging.getLogger('root')
             log.warn('cleanHTML option passed but BeautifulSoup not found.  '
                      'to fix this run `easy_install beautifulsoup4` or '
                      '`pip2 install beautifulsoup4`.')
@@ -251,7 +252,7 @@ def write_entries(glos, f, cleanHTML, indexes):
     generate_id = id_generator()
     generate_indexes = indexes_generator(indexes)
     total = float(len(glos.data))
-    buffer = ''
+    _buffer = ''
 
     xdxf.xdxf_init()
 
@@ -260,14 +261,14 @@ def write_entries(glos, f, cleanHTML, indexes):
         if not long_title:
             continue
 
-        id = next(generate_id)
+        _id = next(generate_id)
         if BeautifulSoup:
             title_attr = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(long_title, True)
         else:
             title_attr = '"%s"' % long_title
 
         begin_entry = '<d:entry id="%(id)s" d:title=%(title)s>\n' % {
-            'id': id,
+            'id': _id,
             'title': title_attr,
         }
 
@@ -287,17 +288,17 @@ def write_entries(glos, f, cleanHTML, indexes):
 
         end_entry = '\n</d:entry>\n'
 
-        buffer += begin_entry
-        buffer += indexes
-        buffer += content
-        buffer += end_entry
+        _buffer += begin_entry
+        _buffer += indexes
+        _buffer += content
+        _buffer += end_entry
 
         if i % 10 == 0 and glos.ui:
             glos.ui.progress(i / total)
         if i % 1000 == 0:
-            f.write(buffer)
-            buffer = ''
-    f.write(buffer)
+            f.write(_buffer)
+            _buffer = ''
+    f.write(_buffer)
 
 def dictionary_end(glos, f):
     f.write('</d:dictionary>\n')

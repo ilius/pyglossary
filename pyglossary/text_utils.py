@@ -68,81 +68,6 @@ schUn = ['\xee\x80\x8a', '\xee\x80\x8c']
 
 sch = schAs + schFa + schUn + list(string.whitespace) + list(string.digits) + digitsFa
 
-'''
-myPrint = sys.stdout.write
-
-def textProgress(n=100, t=0.1):
-    import time
-    for i in xrange(n):
-        myPrint('\b\b\b\b##%3d'%(i+1));time.sleep(t)
-    myPrint('\b\b\b')
-
-def locate(lst, val):
-    n = len(lst)
-    if n==0:
-        return
-    if val < lst[0]:
-        return -0.5
-    if val == lst[0]:
-        return 0
-    if val == lst[-1]:
-        return n-1
-    if val > lst[-1]:
-        return n-0.5
-    si = 0 # start index
-    ei = n # end index
-    while ei-si>1:
-        mi = (ei+si)/2 # middle index
-        if lst[mi] == val :
-            return mi
-        elif lst[mi] > val :
-            ei=mi
-            continue
-        else:
-            si=mi
-            continue
-    if ei-si==1:
-        return si+0.5
-
-def locate2(lst, val, ind=1):
-    n = len(lst)
-    if n==0:
-        return
-    if val<lst[0][ind]:
-        return -0.5
-    if val==lst[0][ind]:
-        return 0
-    if val==lst[-1][ind]:
-        return n-1
-    if val>lst[-1][ind]:
-        return n-0.5
-    si = 0
-    ei = n
-    while ei-si>1:
-        mi = (ei+si)/2
-        if lst[mi][ind]==val:
-            return mi
-        elif lst[mi][ind]>val:
-            ei = mi
-            continue
-        else:
-            si = mi
-        continue
-    if ei-si==1:
-        return si+0.5
-
-def xml2dict(xmlText):
-    from xml.etree.ElementTree import XML, tostring
-    xmlElems = XML(xmlText)
-    for elem in xmlElems:
-        elemText=tostring(elem)
-        try:
-            elem[0]
-            elemElems=xml2dict()
-        except:
-            pass
-'''
-
 
 toStr = lambda s: s.encode('utf8') if isinstance(s, unicode) else str(s)
 toUnicode = lambda s: s if isinstance(s, unicode) else str(s).decode('utf8')
@@ -223,12 +148,12 @@ def addDefaultOptions(opt, defOpt, escapeList=None):
 def mergeLists(lists):
     if not isinstance(lists, (list, tuple)):
         raise TypeError('bad type given to mergeLists: %s'%type(lists))
-    '''
+    """
     for i in xrange(len(lists)):
         item = lists[i]
         if not isinstance(item, (list, tuple)):
             raise TypeError('argument give to mergeLists() at index %d is: \'%s\' ,bad type: \'%s\'' % (i, item, type(item)))
-    '''
+    """
     if len(lists)==0:
         return []
     elif len(lists)==1:
@@ -258,20 +183,6 @@ def findAll(st, sub):
         log.error('Invailed second argument to function findAll!')
         return []
     return ind
-
-'''
-def sortby(lst, n, reverse=False):
-    nlist = [(x[n], x) for x in lst]
-    nlist.sort(None, None, reverse)
-    return [val for (key, val) in nlist]
-
-
-def sortby_inplace(lst, n, reverse=False):
-    lst[:] = [(x[n], x) for x in lst]
-    lst.sort(None, None, reverse)
-    lst[:] = [val for (key, val) in lst]
-    return
-'''
 
 def checkOrder(lst):
     wrong = []
@@ -489,36 +400,13 @@ def binStrToInt(bs):
     return n
 
 
-'''
-## Python 3.x:
-def intToBinStr(n, stLen=0):
-    bs = b''
-    while n>0:
-        bs = bytes([n & 255]) + bs
-        n >>= 8
-    return bs.rjust(stLen, b'\x00')
-
-## Python 3.x:
-intToBinStr = lambda n, stLen=0: bytes((
-    (n >> (i<<3)) & 0xff for i in range(int(ceil(log(n, 256)))-1, -1, -1)
-)).rjust(stLen, b'\x00')
-
-
-## Python 3.x:
-def binStrToInt(bs):
-    n = 0
-    for c in bs:
-        n = (n << 8) + c
-    return n
-'''
-
 
 ###############################################
 
 def chBaseIntToStr(number, base):
-    '''
+    """
         reverse function of int(str, base) and long(str, base)
-    '''
+    """
     if not 2 <= base <= 36:
         raise ValueError('base must be in 2..36')
     abc = string.digits + string.letters
@@ -913,11 +801,11 @@ name2codepoint = {
 }
 
 def build_name2codepoint_dict():
-    '''
+    """
         Builds name to codepoint dictionary
         copy and paste the output to the name2codepoint dictionary
         name2str - name to utf-8 string dictionary
-    '''
+    """
     name2str = html_entity2str
     for k, v in htmlentitydefs.name2codepoint.items():
         name2str[k.lower()] = unichr(v).encode('utf-8')
