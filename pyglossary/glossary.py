@@ -481,7 +481,7 @@ class Glossary:
             defi = defi.replace('\n', '\\n')
             try:
                 print(word + '\t' + defi)
-            except:
+            except Exception:
                 log.exception('')
 
 
@@ -514,7 +514,7 @@ class Glossary:
     # no ordering. Use when you split input words to two(or many) parts after ordering.
         try:
             other.data, other.info
-        except:
+        except AttributeError:
             if isinstance(other, (list, tuple)):
                 if len(other)==0:
                     return self
@@ -536,7 +536,7 @@ class Glossary:
     def merge(self, other):
         try:
             other.data, other.info
-        except:
+        except AttributeError:
             if isinstance(other, (list, tuple)):
                 if len(other)==0:
                     return self
@@ -562,7 +562,7 @@ class Glossary:
         ## merge two optional glossarys nicly. no repets in words of result glossary
         try:
             other.data, other.info
-        except:
+        except AttributeError:
             if isinstance(other, (list, tuple)):
                 if len(other)==0:
                     return self
@@ -805,7 +805,7 @@ class Glossary:
                         defi = '\\n\\n'.join(result)
                     else:
                         defi = ', '.join(result) + '.'
-                except:
+                except Exception:
                     open('result', 'wb').write(str(result))
                     log.exception('')
                     return False
