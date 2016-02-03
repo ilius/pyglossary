@@ -35,15 +35,16 @@ class StarDictReader:
         sametypesequence = self.glos.getInfo('sametypesequence')
         if not verifySameTypeSequence(sametypesequence):
             return
-        """indexData format
-        indexData[i] - i-th record in index file
-        indexData[i][0] - word (string)
-        indexData[i][1] - definition block offset in dict file
-        indexData[i][2] - definition block size in dict file
-        indexData[i][3] - list of definitions
-        indexData[i][3][0] - definition data
-        indexData[i][3][1] - definition type - 'h', 'm' or 'x'
-        indexData[i][4] - list of synonyms (strings)
+        """
+            indexData format
+            indexData[i] - i-th record in index file
+            indexData[i][0] - word (string)
+            indexData[i][1] - definition block offset in dict file
+            indexData[i][2] - definition block size in dict file
+            indexData[i][3] - list of definitions
+            indexData[i][3][0] - definition data
+            indexData[i][3][1] - definition type - 'h' or 'm'
+            indexData[i][4] - list of synonyms (strings)
         """
         self.readIdxFile()
         self.readDictFile(sametypesequence)
@@ -52,7 +53,8 @@ class StarDictReader:
         self.readResources()
 
     def readIfoFile(self):
-        """.ifo file is a text file in utf-8 encoding
+        """
+            .ifo file is a text file in utf-8 encoding
         """
         with open(self.fileBasePath+'.ifo', 'rb') as f:
             ifoStr = f.read()
@@ -151,7 +153,8 @@ class StarDictReader:
             self.indexData[index][4].append(word)
 
     def parseDefiBlockCompact(self, data, sametypesequence, word):
-        """Parse definition block when sametypesequence option is specified.
+        """
+            Parse definition block when sametypesequence option is specified.
         """
         assert isinstance(sametypesequence, str)
         assert len(sametypesequence) > 0
@@ -200,7 +203,8 @@ class StarDictReader:
         return res
 
     def parseDefiBlockGeneral(self, data, word):
-        """Parse definition block when sametypesequence option is not specified.
+        """
+            Parse definition block when sametypesequence option is not specified.
         """
         dataFileCorruptedError = "Data file is corrupted. Word \"{0}\"".format(word)
         res = []
@@ -234,8 +238,9 @@ class StarDictReader:
         return res
 
     def convertDefinitionsToPyglossaryFormat(self, defis):
-        """Convert definitions extracted from StarDict dictionary to format supported by pyglossary.
-        Skip unsupported definition.
+        """
+            Convert definitions extracted from StarDict dictionary to format supported by pyglossary.
+            Skip unsupported definition.
         """
         res = []
         for rec in defis:
@@ -250,8 +255,9 @@ class StarDictReader:
         return res
 
     def assignGlossaryData(self):
-        '''Fill glos.data array with data extracted from StarDict dictionary
-        '''
+        """
+            Fill glos.data array with data extracted from StarDict dictionary
+        """
         self.glos.data = []
         for rec in self.indexData:
             if not rec[0]:
@@ -314,12 +320,13 @@ class StarDictWriter:
         )
 
     def writeCompact(self, articleFormat):
-        """Build StarDict dictionary with sametypesequence option specified.
-        Every item definition consists of a single article.
-        All articles have the same format, specified in articleFormat parameter.
+        """
+            Build StarDict dictionary with sametypesequence option specified.
+            Every item definition consists of a single article.
+            All articles have the same format, specified in articleFormat parameter.
 
-        Parameters:
-        articleFormat - format of article definition: h - html, m - plain text
+            Parameters:
+            articleFormat - format of article definition: h - html, m - plain text
         """
         dictMark = 0
         idxStr = ''
@@ -345,9 +352,10 @@ class StarDictWriter:
         self.writeIfoFile(indexFileSize, len(alternates), articleFormat)
 
     def writeGeneral(self):
-        """Build StarDict dictionary in general case.
-        Every item definition may consist of an arbitrary number of articles.
-        sametypesequence option is not used.
+        """
+            Build StarDict dictionary in general case.
+            Every item definition may consist of an arbitrary number of articles.
+            sametypesequence option is not used.
         """
         dictMark = 0
         idxStr = ''
@@ -388,7 +396,8 @@ class StarDictWriter:
         self.writeIfoFile(indexFileSize, len(alternates))
 
     def writeSynFile(self, alternates):
-        """Build .syn file
+        """
+            Build .syn file
         """
         if len(alternates) > 0:
             alternates.sort(stardict_strcmp, lambda x: x[0])
@@ -400,7 +409,8 @@ class StarDictWriter:
             del synStr
 
     def writeIfoFile(self, indexFileSize, synwordcount, sametypesequence = None):
-        """Build .ifo file
+        """
+            Build .ifo file
         """
         ifoStr = "StarDict's dict ifo file\n" \
             + "version=3.0.0\n" \
@@ -426,8 +436,9 @@ class StarDictWriter:
         del ifoStr
 
     def copyResources(self, fromPath, toPath, overwrite):
-        '''Copy resource files from fromPath to toPath.
-        '''
+        """
+            Copy resource files from fromPath to toPath.
+        """
         if not fromPath:
             return
         fromPath = os.path.abspath(fromPath)
@@ -443,18 +454,19 @@ class StarDictWriter:
         if os.path.exists(toPath):
             if len(os.listdir(toPath)) > 0:
                 log.error(
-    '''Output resource directory is not empty: "{0}". Resources will not be copied!
-    Clean the output directory before running the converter or pass option: --write-options=res-overwrite=True.'''\
-    .format(toPath)
+'''Output resource directory is not empty: "{0}". Resources will not be copied!
+Clean the output directory before running the converter or pass option: --write-options=res-overwrite=True.'''\
+.format(toPath)
                 )
                 return
             os.rmdir(toPath)
         shutil.copytree(fromPath, toPath)
 
     def GlossaryHasAdditionalDefinitions(self):
-        """Search for additional definitions in the glossary.
-        We need to know if the glossary contains additional definitions
-        to make the decision on the format of the StarDict dictionary.
+        """
+            Search for additional definitions in the glossary.
+            We need to know if the glossary contains additional definitions
+            to make the decision on the format of the StarDict dictionary.
         """
         for rec in self.glos.data:
             if len(rec) > 2 and 'defis' in rec[2]:
@@ -462,8 +474,9 @@ class StarDictWriter:
         return False
 
     def DetectMainDefinitionFormat(self):
-        """Scan main definitions of the glossary. Return format common to all definitions: h or m.
-        If definitions has different formats return None.
+        """
+            Scan main definitions of the glossary. Return format common to all definitions: h or m.
+            If definitions has different formats return None.
         """
         articleFormat = None
         for rec in self.glos.data:
@@ -512,7 +525,7 @@ def read_ext(glos, filename):
     ## geting words:
     idxStr = open(filename[:-4]+'.idx').read()
     words=[]
-    #''' # get words list by python codes.
+    # get words list by python codes.
     word=''
     i=0
     while i < len(idxStr):
@@ -524,19 +537,7 @@ def read_ext(glos, filename):
         else:
             word += idxStr[i]
             i += 1
-    ''' # get words list using _stardict module.
-    lst = _stardict.StarDict_dump(db) ## don't know how to get std::vector items
-    _stardict.PySwigIterator_swigregister(lst)
-    num = _stardict.StarDict_vector_get_size(db, lst)
-    _stardict.PySwigIterator_swigregister(num)
-    for i in xrange(num):
-        word = _stardict.StarDict_vector_get_item(db, lst, i)
-        words.append(word)
-        if i%100==0:
-            log.debug(i)
-            while gtk.events_pending():
-                gtk.main_iteration_do(False)
-    '''
+
     ui = glos.ui
     n = len(words)
     i=0
@@ -593,8 +594,9 @@ def write_ext(glos, filename, sort=True, dictZip=True):
             runDictzip(filename)
 
 def splitStringIntoLines(s):
-    """Split string s into lines.
-    Accept any line separator: '\r\n', '\r', '\n'
+    """
+        Split string s into lines.
+        Accept any line separator: '\r\n', '\r', '\n'
     """
     res = []
     beg = 0
@@ -615,25 +617,28 @@ def isAsciiLower(c):
     return ord(c) >= ord('a') and ord(c) <= ord('z')
 
 def isAsciiUpper(c):
-    'imitate ISUPPER macro of glib library gstrfuncs.c file'
+    """
+        imitate ISUPPER macro of glib library gstrfuncs.c file
+    """
     return ord(c) >= ord('A') and ord(c) <= ord('Z')
 
 def asciiLower(c):
-    '''imitate TOLOWER macro of glib library gstrfuncs.c file
+    """
+        imitate TOLOWER macro of glib library gstrfuncs.c file
 
-    This function converts upper case Latin letters to corresponding lower case letters,
-    other chars are not changed.
+        This function converts upper case Latin letters to corresponding lower case letters,
+        other chars are not changed.
 
-    c must be non-Unicode string of length 1.
-    You may apply this function to individual bytes of non-Unicode string.
-    The following encodings are allowed: single byte encoding like koi8-r, cp1250, cp1251, cp1252, etc,
-    and utf-8 encoding.
+        c must be non-Unicode string of length 1.
+        You may apply this function to individual bytes of non-Unicode string.
+        The following encodings are allowed: single byte encoding like koi8-r, cp1250, cp1251, cp1252, etc,
+        and utf-8 encoding.
 
-    Attention! Python Standard Library provides str.lower() method.
-    It is not a correct replacement for this function.
-    For non-unicode string str.lower() is locale dependent, it not only converts Latin
-    letters to lower case, but also locale specific letters will be converted.
-    '''
+        Attention! Python Standard Library provides str.lower() method.
+        It is not a correct replacement for this function.
+        For non-unicode string str.lower() is locale dependent, it not only converts Latin
+        letters to lower case, but also locale specific letters will be converted.
+    """
     if isAsciiUpper(c):
         return chr((ord(c) - ord('A')) + ord('a'))
     else:
@@ -650,14 +655,15 @@ def ascii_strcasecmp(s1, s2):
     return len(s1) - len(s2)
 
 def strcmp(s1, s2):
-    '''imitate strcmp of standard C library
+    """
+        imitate strcmp of standard C library
 
-    Attention! You may have a temptation to replace this function with built-in cmp() function.
-    Hold on! Most probably these two function behave identically now, but cmp does not
-    document how it compares strings. There is no guaranty it will not be changed in future.
-    Since we need predictable sorting order in StarDict dictionary, we need to preserve
-    this function despite the fact there are other ways to implement it.
-    '''
+        Attention! You may have a temptation to replace this function with built-in cmp() function.
+        Hold on! Most probably these two function behave identically now, but cmp does not
+        document how it compares strings. There is no guaranty it will not be changed in future.
+        Since we need predictable sorting order in StarDict dictionary, we need to preserve
+        this function despite the fact there are other ways to implement it.
+    """
     commonLen = min(len(s1), len(s2))
     for i in xrange(commonLen):
         c1 = ord(s1[i])
@@ -667,10 +673,10 @@ def strcmp(s1, s2):
     return len(s1) - len(s2)
 
 def stardict_strcmp(s1, s2):
-    '''
+    """
         use this function to sort index items in StarDict dictionary
         s1 and s2 must be utf-8 encoded strings
-    '''
+    """
     a = ascii_strcasecmp(s1, s2)
     if a == 0:
         return strcmp(s1, s2)
