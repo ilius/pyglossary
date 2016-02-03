@@ -20,25 +20,26 @@
 ## If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
 
-'''Text progressbar library for python.
+"""
+    Text progressbar library for python.
 
-This library provides a text mode progressbar. This is tipically used
-to display the progress of a long running operation, providing a
-visual clue that processing is underway.
+    This library provides a text mode progressbar. This is tipically used
+    to display the progress of a long running operation, providing a
+    visual clue that processing is underway.
 
-The ProgressBar class manages the progress, and the format of the line
-is given by a number of widgets. A widget is an object that may
-display diferently depending on the state of the progress. There are
-three types of widget:
-- a string, which always shows itself;
-- a ProgressBarWidget, which may return a diferent value every time
-it's update method is called; and
-- a ProgressBarWidgetHFill, which is like ProgressBarWidget, except it
-expands to fill the remaining width of the line.
+    The ProgressBar class manages the progress, and the format of the line
+    is given by a number of widgets. A widget is an object that may
+    display diferently depending on the state of the progress. There are
+    three types of widget:
+    - a string, which always shows itself;
+    - a ProgressBarWidget, which may return a diferent value every time
+    it's update method is called; and
+    - a ProgressBarWidgetHFill, which is like ProgressBarWidget, except it
+    expands to fill the remaining width of the line.
 
-The progressbar module is very easy to use, yet very powerful. And
-automatically supports features like auto-resizing when available.
-'''
+    The progressbar module is very easy to use, yet very powerful. And
+    automatically supports features like auto-resizing when available.
+"""
 
 # Changelog
 #
@@ -60,20 +61,23 @@ log = logging.getLogger('root')
 
 
 class ProgressBarWidget(object):
-    '''This is an element of ProgressBar formatting.
+    """
+        This is an element of ProgressBar formatting.
 
-    The ProgressBar object will call it's update value when an update
-    is needed. It's size may change between call, but the results will
-    not be good if the size changes drastically and repeatedly.
-    '''
+        The ProgressBar object will call it's update value when an update
+        is needed. It's size may change between call, but the results will
+        not be good if the size changes drastically and repeatedly.
+    """
     def update(self):
-        '''Returns the string representing the widget.
+        """
+            Returns the string representing the widget.
 
-        The parameter pbar is a reference to the calling ProgressBar,
-        where one can access attributes of the class for knowing how
-        the update must be made.
+            The parameter pbar is a reference to the calling ProgressBar,
+            where one can access attributes of the class for knowing how
+            the update must be made.
 
-        At least this function must be overriden.'''
+            At least this function must be overriden.
+        """
         pass
     def __str__(self):
         return self.update()
@@ -88,23 +92,26 @@ class ProgressBarWidget(object):
 
 
 class ProgressBarWidgetHFill(object):
-    '''This is a variable width element of ProgressBar formatting.
+    """
+        This is a variable width element of ProgressBar formatting.
 
-    The ProgressBar object will call it's update value, informing the
-    width this object must the made. This is like TeX \\hfill, it will
-    expand to fill the line. You can use more than one in the same
-    line, and they will all have the same width, and together will
-    fill the line.
-    '''
+        The ProgressBar object will call it's update value, informing the
+        width this object must the made. This is like TeX \\hfill, it will
+        expand to fill the line. You can use more than one in the same
+        line, and they will all have the same width, and together will
+        fill the line.
+    """
     def update(self, width):
-        '''Returns the string representing the widget.
+        """
+            Returns the string representing the widget.
 
-        The parameter pbar is a reference to the calling ProgressBar,
-        where one can access attributes of the class for knowing how
-        the update must be made. The parameter width is the total
-        horizontal width the widget must have.
+            The parameter pbar is a reference to the calling ProgressBar,
+            where one can access attributes of the class for knowing how
+            the update must be made. The parameter width is the total
+            horizontal width the widget must have.
 
-        At least this function must be overriden.'''
+            At least this function must be overriden.
+        """
         pass
 
 
@@ -201,35 +208,36 @@ class ReverseBar(Bar):
 
 default_widgets = [Percentage(), ' ', Bar()]
 class ProgressBar(object):
-    '''This is the ProgressBar class, it updates and prints the bar.
+    """
+        This is the ProgressBar class, it updates and prints the bar.
 
-    The term_width parameter may be an integer. Or None, in which case
-    it will try to guess it, if it fails it will default to 80 columns.
+        The term_width parameter may be an integer. Or None, in which case
+        it will try to guess it, if it fails it will default to 80 columns.
 
-    The simple use is like this:
-    >>> pbar = ProgressBar().start()
-    >>> for i in xrange(100):
-    ...    # do something
-    ...    pbar.update(i+1)
-    ...
-    >>> pbar.finish()
+        The simple use is like this:
+        >>> pbar = ProgressBar().start()
+        >>> for i in xrange(100):
+        ...    # do something
+        ...    pbar.update(i+1)
+        ...
+        >>> pbar.finish()
 
-    But anything you want to do is possible (well, almost anything).
-    You can supply different widgets of any type in any order. And you
-    can even write your own widgets! There are many widgets already
-    shipped and you should experiment with them.
+        But anything you want to do is possible (well, almost anything).
+        You can supply different widgets of any type in any order. And you
+        can even write your own widgets! There are many widgets already
+        shipped and you should experiment with them.
 
-    When implementing a widget update method you may access any
-    attribute or function of the ProgressBar object calling the
-    widget's update method. The most important attributes you would
-    like to access are:
-    - currval: current value of the progress, 0 <= currval <= maxval
-    - maxval: maximum (and final) value of the progress
-    - finished: True if the bar is have finished (reached 100%), False o/w
-    - start_time: first time update() method of ProgressBar was called
-    - seconds_elapsed: seconds elapsed since start_time
-    - percentage(): percentage of the progress (this is a method)
-    '''
+        When implementing a widget update method you may access any
+        attribute or function of the ProgressBar object calling the
+        widget's update method. The most important attributes you would
+        like to access are:
+        - currval: current value of the progress, 0 <= currval <= maxval
+        - maxval: maximum (and final) value of the progress
+        - finished: True if the bar is have finished (reached 100%), False o/w
+        - start_time: first time update() method of ProgressBar was called
+        - seconds_elapsed: seconds elapsed since start_time
+        - percentage(): percentage of the progress (this is a method)
+    """
     def __init__(
         self,
         maxval=100.0,
@@ -327,21 +335,24 @@ class ProgressBar(object):
             self.fd.write(self._format_line() + '\n')
 
     def start(self):
-        '''Start measuring time, and prints the bar at 0%.
+        """
+            Start measuring time, and prints the bar at 0%.
 
-        It returns self so you can use it like this:
-        >>> pbar = ProgressBar().start()
-        >>> for i in xrange(100):
-        ...    # do something
-        ...    pbar.update(i+1)
-        ...
-        >>> pbar.finish()
-        '''
+            It returns self so you can use it like this:
+            >>> pbar = ProgressBar().start()
+            >>> for i in xrange(100):
+            ...    # do something
+            ...    pbar.update(i+1)
+            ...
+            >>> pbar.finish()
+        """
         self.update(0)
         return self
 
     def finish(self):
-        '''Used to tell the progress is finished.'''
+        """
+            Used to tell the progress is finished.
+        """
         self.update(self.maxval)
         if self.signal_set:
             signal.signal(signal.SIGWINCH, signal.SIG_DFL)
