@@ -243,7 +243,7 @@ if os.sep != '/':
 read_options = parseFormatOptionsStr(args.read_options)
 write_options = parseFormatOptionsStr(args.write_options)
 
-'''
+"""
     examples for read and write options:
     --read-options testOption=stringValue
     --read-options enableFoo=True
@@ -251,7 +251,7 @@ write_options = parseFormatOptionsStr(args.write_options)
     --read-options 'fooList=[1, 2, 3]'
     --read-options 'testOption=stringValue; enableFoo=True; fooList=[1, 2, 3]'
     --read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
-'''
+"""
 
 
 
