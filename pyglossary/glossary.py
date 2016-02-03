@@ -117,16 +117,16 @@ class Glossary:
             cls.loadPlugin(plugin)
 
     @classmethod
-    def loadPlugin(cls, plugin_name):
-        log.debug('loading plugin %s' % plugin_name)
+    def loadPlugin(cls, pluginName):
+        log.debug('loading plugin %s' % pluginName)
         try:
-            plugin = __import__(plugin_name)
+            plugin = __import__(pluginName)
         except (ImportError, SyntaxError) as e:
-            log.error("error while importing plugin %s" % plugin_name, exc_info=1)
+            log.error("error while importing plugin %s" % pluginName, exc_info=1)
             return
 
         if (not hasattr(plugin, 'enable')) or (not plugin.enable):
-            log.debug("plugin disabled or not a plugin: %s.  skipping..." % plugin_name)
+            log.debug("plugin disabled or not a plugin: %s.  skipping..." % pluginName)
             return
 
         format = plugin.format
@@ -166,7 +166,7 @@ class Glossary:
             cls.formatsWriteOptions[format] = plugin.writeOptions \
                 if hasattr(plugin, 'writeOptions') else []
 
-        log.debug("plugin loaded OK: %s" % plugin_name)
+        log.debug("plugin loaded OK: %s" % pluginName)
         return plugin
 
 
