@@ -148,12 +148,12 @@ def addDefaultOptions(opt, defOpt, escapeList=None):
 def mergeLists(lists):
     if not isinstance(lists, (list, tuple)):
         raise TypeError('bad type given to mergeLists: %s'%type(lists))
-    '''
+    """
     for i in xrange(len(lists)):
         item = lists[i]
         if not isinstance(item, (list, tuple)):
             raise TypeError('argument give to mergeLists() at index %d is: \'%s\' ,bad type: \'%s\'' % (i, item, type(item)))
-    '''
+    """
     if len(lists)==0:
         return []
     elif len(lists)==1:
@@ -404,9 +404,9 @@ def binStrToInt(bs):
 ###############################################
 
 def chBaseIntToStr(number, base):
-    '''
+    """
         reverse function of int(str, base) and long(str, base)
-    '''
+    """
     if not 2 <= base <= 36:
         raise ValueError('base must be in 2..36')
     abc = string.digits + string.letters
@@ -801,11 +801,11 @@ name2codepoint = {
 }
 
 def build_name2codepoint_dict():
-    '''
+    """
         Builds name to codepoint dictionary
         copy and paste the output to the name2codepoint dictionary
         name2str - name to utf-8 string dictionary
-    '''
+    """
     name2str = html_entity2str
     for k, v in htmlentitydefs.name2codepoint.items():
         name2str[k.lower()] = unichr(v).encode('utf-8')
