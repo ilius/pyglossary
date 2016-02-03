@@ -105,7 +105,7 @@ class Glossary:
     data = []
 
     @classmethod
-    def load_plugins(cls, directory):
+    def loadPlugins(cls, directory):
         """executed on startup.  as name implies, loads plugins from directory."""
         log.debug("loading plugins from directory: %r" % directory)
         if not isdir(directory):
@@ -114,10 +114,10 @@ class Glossary:
 
         sys.path.append(directory)
         for _, plugin, _ in pkgutil.iter_modules([directory]):
-            cls.load_plugin(plugin)
+            cls.loadPlugin(plugin)
 
     @classmethod
-    def load_plugin(cls, plugin_name):
+    def loadPlugin(cls, plugin_name):
         log.debug('loading plugin %s' % plugin_name)
         try:
             plugin = __import__(plugin_name)
@@ -1060,4 +1060,4 @@ class Glossary:
                 f.write('key = ' + item[0] + '\n')
                 f.write('defi = ' + item[1] + '\n\n')
 
-Glossary.load_plugins(join(dirname(__file__), 'plugins'))
+Glossary.loadPlugins(join(dirname(__file__), 'plugins'))
