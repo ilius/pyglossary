@@ -260,14 +260,14 @@ def write_entries(glos, f, cleanHTML, indexes):
         if not long_title:
             continue
 
-        id = next(generate_id)
+        _id = next(generate_id)
         if BeautifulSoup:
             title_attr = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(long_title, True)
         else:
             title_attr = '"%s"' % long_title
 
         begin_entry = '<d:entry id="%(id)s" d:title=%(title)s>\n' % {
-            'id': id,
+            'id': _id,
             'title': title_attr,
         }
 
