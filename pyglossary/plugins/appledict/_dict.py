@@ -40,10 +40,10 @@ def dictionary_begin(glos, f, frontBackMatter):
 def get_beautiful_soup():
     try:
         import bs4 as BeautifulSoup
-    except:
+    except ImportError:
         try:
             import BeautifulSoup
-        except:
+        except ImportError:
             return None
     return BeautifulSoup
 
