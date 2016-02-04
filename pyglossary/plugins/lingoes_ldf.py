@@ -43,6 +43,7 @@ def read(glos, filename):
             defi,
             {
                 'alts': alts,
+                'defiFormat': 'h',## FIXME move to glos.defaultDefiFormat
             },
         ))
 
