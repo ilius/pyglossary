@@ -17,6 +17,7 @@ from os.path import join as path_join
 import logging
 
 from pyglossary import core
+from pyglossary.file_utils import FileLineWrapper
 
 log = logging.getLogger('root')
 
