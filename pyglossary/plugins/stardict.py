@@ -260,6 +260,16 @@ class StarDictReader:
         """
         self.glos.data = []
         for rec in self.indexData:
+            """
+                rec[0] - word (string)
+                rec[1] - definition block offset in dict file
+                rec[2] - definition block size in dict file
+                rec[3] - list of definitions
+                rec[3][j][0] - definition data
+                rec[3][j][1] - definition type - 'h', 'm' or 'x'
+                rec[4] - list of synonyms (strings)
+            """
+
             if not rec[0]:
                 continue
             if len(rec[3]) == 0:
