@@ -222,29 +222,24 @@ class UI(UIBase):
                 return 1
         g = Glossary(ui=self)
         log.info('Reading file "%s"'%ipath)
-        if g.read(ipath, format=read_format, **read_options)!=False:
-            ## When glossary reader uses progressbar, progressbar must be rebuilded:
-            self.progressBuild()
-            g.uiEdit()
-            if reverse:
-                log.info('Reversing to file "%s"'%opath)
-                self.setText('')
-                self.pbar.update_step = 0.1
-                self.pref['savePath'] = opath
-                self.glosR = g
-                self.r_start()
-            else:
-                log.info('Writing to file "%s"'%opath)
-                self.setText('Writing: ')
-                if g.write(opath, format=write_format, **write_options)!=False:
-                    log.info('done')
-                    return 0
-                else:
-                    log.error('writing output file was failed!')
-                    return 1
-        else:
+        if not g.read(ipath, format=read_format, **read_options):
             log.error('reading input file was failed!')
             return 1
+        ## When glossary reader uses progressbar, progressbar must be rebuilded:
+        self.progressBuild()
+        g.uiEdit()
+        if reverse:
+            log.info('Reversing to file "%s"'%opath)
+            self.setText('')
+            self.pbar.update_step = 0.1
+            self.pref['savePath'] = opath
+            self.glosR = g
+            self.r_start()
+        else:
+            log.info('Writing to file "%s"'%opath)
+            self.setText('Writing: ')
+            if not g.write(opath, format=write_format, **write_options):
+                log.error('writing output file was failed!')
+                return 1
+            log.info('done')
         return 0
-
-
