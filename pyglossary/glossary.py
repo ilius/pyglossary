@@ -70,7 +70,7 @@ class Glossary:
 
 self.data:
 
-    `data` is a list if tuples: ('key', 'definition') or ('key', 'definition', dict())
+    `data` is a list of tuples: ('key', 'definition') or ('key', 'definition', dict())
     in general we should assume the tuple may be of arbitrary length >= 2
 
     Possible dictionary keys:
