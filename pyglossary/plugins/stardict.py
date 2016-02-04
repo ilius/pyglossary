@@ -42,8 +42,8 @@ class StarDictReader:
             indexData[i][1] - definition block offset in dict file
             indexData[i][2] - definition block size in dict file
             indexData[i][3] - list of definitions
-            indexData[i][3][0] - definition data
-            indexData[i][3][1] - definition type - 'h' or 'm'
+            indexData[i][3][j][0] - definition data
+            indexData[i][3][j][1] - definition type - 'h', 'm' or 'x'
             indexData[i][4] - list of synonyms (strings)
         """
         self.readIdxFile()
