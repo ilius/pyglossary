@@ -66,6 +66,35 @@ get_ext = lambda path: splitext(path)[1].lower()
 
 
 class Glossary:
+    """
+
+self.data:
+
+    `data` is a list if tuples: ('key', 'definition') or ('key', 'definition', dict())
+    in general we should assume the tuple may be of arbitrary length >= 2
+
+    Possible dictionary keys:
+
+    data[i][2]['alts'] - list of alternates, filled by bgl reader
+
+    data[i][2]['defis'] - list of alternative definitions.
+        For example, run (eng.) may be 1. verb, 2. noun, 3. adjective.
+        self.data[i][1] contains the main definition of the word, the verb, in the example.
+        While additional definitions goes to self.data[i][2]['defis'] list, noun and adjective,
+        in the example.
+        You may merge additional definition with the main definition if the target dictionary
+        format does not support several definitions per word.
+    data[i][2]['defis'][j][0] - definition data
+    data[i][2]['defis'][j][1] - definition format. See 'defiFormat' option below.
+
+    data[i][2]['defiFormat'] - format of the definition:
+        'm': plain text
+        'h': html
+        'x': xdxf
+        use xdxf.xdxf_to_html to convert
+
+    """
+
     infoKeysAlias = (## Should be changed according to a plugin???
         ('name', 'title', 'dbname', 'bookname'),
         ('sourceLang', 'inputlang', 'origlang'),
@@ -85,24 +114,6 @@ class Glossary:
     descFormat = {}
     descExt = {}
     extFormat = {}
-    """
-    a list if tuples: ('key', 'definition') or ('key', 'definition', dict() )
-    in general we should assume the tuple may be of arbitrary length >= 2
-    known dictionary keys:
-        data[i][2]['alts'] - list of alternates, filled by bgl reader
-        data[i][2]['defis'] - list of alternative definitions.
-            For example, run (eng.) may be 1. verb, 2. noun, 3. adjective.
-            self.data[i][1] contains the main definition of the word, the verb, in the example.
-            While additional definitions goes to self.data[i][2]['defis'] list, noun and adjective,
-            in the example.
-            You may merge additional definition with the main definition if the target dictionary
-            format does not support several definitions per word.
-        data[i][2]['defis'][j][0] - definition data
-        data[i][2]['defis'][j][1] - definition format. See 'defiFormat' option below.
-        data[i][2]['defiFormat'] - format of the definition: 'h' - html, 'm' - plain text, 'x' - xdxf,
-                                    use xdxf.xdxf_to_html to convert
-    """
-    data = []
 
     @classmethod
     def loadPlugins(cls, directory):
