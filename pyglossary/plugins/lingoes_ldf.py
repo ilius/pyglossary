@@ -33,10 +33,17 @@ def read(glos, filename):
         word = lineStack[0]
         defi = '\n'.join(lineStack[1:])
         defi = defi.replace('<br/>', '\n') ## FIXME
+
+        wordParts = [p.strip() for p in word.split('|')]
+        word = wordParts[0]
+        alts = wordParts[1:]
+
         glos.data.append((
             word,
             defi,
-            #{'alts': []},
+            {
+                'alts': alts,
+            },
         ))
 
     for line in fileObj:
