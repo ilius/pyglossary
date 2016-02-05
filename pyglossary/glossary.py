@@ -255,6 +255,14 @@ class Glossary:
 
         return entry
 
+    def resetIter(self):
+        """
+            resets entry index
+            after this, next() will return the first entry
+            and you can start over by `for entry in glos:`
+        """
+        self._entryIndex = 0
+
     def iterEntryBuckets(self, size):
         bucket = []
         for entry in self:
