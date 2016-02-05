@@ -30,24 +30,25 @@ supportsAlternates = True
 import csv
 
 def read(glos, filename):
-    glos.data = []
+    glos.clear()
     with open(filename, 'rb') as csvfile:
         reader = csv.reader(
             csvfile,
             dialect='excel',
         )
-        for row in spamreader:
+        for row in reader:
+            word = row[0]
+            defi = row[1]
             try:
                 alts = row[2].split(',')
-            except:
-                alts = {}
-            glos.data.append((
-                row[0],
-                row[1],
-                {
-                    'alts': alts,
-                },
-            ))
+            except IndexError:
+                pass
+            else:
+                word = [word] + alts
+            glos.addEntry(
+                word,
+                defi,
+            )
 
 def write(glos, filename):
     with open(filename, 'wb') as csvfile:
@@ -56,16 +57,20 @@ def write(glos, filename):
             dialect='excel',
             quoting=csv.QUOTE_ALL,## FIXME
         )
-        for item in glos.data:
-            row = list(item[:2])
-            try:
-                alts = item[2]['alts']
-            except (IndexError, KeyError):## FIXME
-                pass
-            else:
-                row.append(
-                    ','.join(alts)
-                )
+        for entry in glos:
+            words = entry.getWords()
+            if not words:
+                continue
+            word, alts = words[0], words[1:]
+            defi = entry.getDefi()
+
+            row = [
+                words[0],
+                defi,
+            ]
+            if alts:
+                row.append(','.join(alts))
+            
             writer.writerow(row)
 
 

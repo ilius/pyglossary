@@ -72,6 +72,8 @@ sch = schAs + schFa + schUn + list(string.whitespace) + list(string.digits) + di
 toStr = lambda s: s.encode('utf8') if isinstance(s, unicode) else str(s)
 toUnicode = lambda s: s if isinstance(s, unicode) else str(s).decode('utf8')
 
+fixUtf8 = lambda st: st.replace('\x00', '').decode('utf-8', 'replace').encode('utf-8')
+
 #from xml.sax.saxutils import escape, unescape
 def escape(data, entities=None):
     """Escape &, <, and > in a string of data.

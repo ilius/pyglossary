@@ -32,9 +32,9 @@ def read(glos, filename, **options):
     mdx = MDX(filename, options.get('encoding', ''), options.get('substyle', True))
     glos.setInfo('title', mdx.header.get('Title', os.path.basename(filename)))
     glos.setInfo('description', mdx.header.get('Description', ''))
-    glos.data = []
-    for key, value in mdx.items():
-        glos.data.append((key, value, ))
+    glos.clear()
+    for word, defi in mdx.items():
+        glos.addEntry(word, defi)
 
     # find companion mdd file
     base, ext = os.path.splitext(filename)

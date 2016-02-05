@@ -22,6 +22,7 @@ infoKeys = [
 ]
 
 def read(glos, filename):
+    glos.setDefaultDefiFormat('h')
     fileObj = FileLineWrapper(open(filename))
     lineStack = []
     def addDataEntry(lineStack):
@@ -34,18 +35,12 @@ def read(glos, filename):
         defi = '\n'.join(lineStack[1:])
         defi = defi.replace('<br/>', '\n') ## FIXME
 
-        wordParts = [p.strip() for p in word.split('|')]
-        word = wordParts[0]
-        alts = wordParts[1:]
+        word = [p.strip() for p in word.split('|')]
 
-        glos.data.append((
+        glos.addEntry(
             word,
             defi,
-            {
-                'alts': alts,
-                'defiFormat': 'h',## FIXME move to glos.defaultDefiFormat
-            },
-        ))
+        )
 
     for line in fileObj:
         line = line.strip()

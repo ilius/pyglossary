@@ -11,7 +11,7 @@ readOptions = []
 writeOptions = []
 
 def read(glos, filename):
-    glos.data = []
+    glos.clear()
     text = open(filename).read()
     text = text.replace('\r\n', '\n')
     text = text.replace('entry://', 'bword://')
@@ -19,10 +19,12 @@ def read(glos, filename):
         lines = section.strip().split('\n')
         if len(lines) < 2:
             continue
-        glos.data.append((
-            lines[0],
-            '\n'.join(lines[1:]),
-        ))
+        word = lines[0]
+        defi = '\n'.join(lines[1:])
+        glos.addEntry(
+            word,
+            defi,
+        )
 
 
 def write(glos, filename):

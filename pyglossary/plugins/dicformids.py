@@ -17,20 +17,20 @@ def write(glos, filename):
     if not os.path.isdir(filename):
         os.mkdir(filename)
     os.chdir(filename)
-    n = len(glos.data)
+    n = len(glos)
     index = [None]*n
     dicMaxSize = 0
     k = 1
     indFp = open('index%s1.csv'%language1FilePostfix, 'wb')
     dicFp = open('directory%s1.csv'%language1FilePostfix, 'wb')
-    for i in xrange(n):
+    for i, entry in enumerate(glos):
         if i%200==0 and i>0:
             #dicFp.close()
             dicSize = dicFp.tell()
             if dicSize > dicMaxSize:
                 dicMaxSize = dicSize
             dicFp = open('directory%s%d.csv'%(language1FilePostfix, i/200), 'wb')
-        w, m = glos.data[i][:2]
+        w, m = entry.getWord(), entry.getDefi()
         dicLine = '%s\t%s\n'%(w, m)
         dicFp.write(dicLine)
         if i%200==0:

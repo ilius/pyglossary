@@ -251,13 +251,20 @@ def write_entries(glos, f, cleanHTML, indexes):
     # write entries
     generate_id = id_generator()
     generate_indexes = indexes_generator(indexes)
-    total = float(len(glos.data))
+    total = float(len(glos))
     _buffer = ''
 
     xdxf.xdxf_init()
 
-    for i, item in enumerate(glos.data):
-        long_title = _normalize.title_long(_normalize.title(item[0], BeautifulSoup))
+    glos.setDefaultDefiFormat('h')
+
+    for i, entry in enumerate(glos):
+        words = entry.getWords()
+        word, alts = words[0], words[1:]
+        defi = entry.getDefi()
+        format = entry.getDefiFormat()
+        
+        long_title = _normalize.title_long(_normalize.title(word, BeautifulSoup))
         if not long_title:
             continue
 
@@ -272,16 +279,11 @@ def write_entries(glos, f, cleanHTML, indexes):
             'title': title_attr,
         }
 
-        # get alternatives list
-        extra = item[2] if len(item) > 2 else {}
-        alts = extra.get('alts', [])
-        format = extra.get('defiFormat', 'h')
-
         if format == 'x':
-            content = xdxf.xdxf_to_html(item[1])
+            content = xdxf.xdxf_to_html(defi)
             content = format_clean_content(None, content, BeautifulSoup)
         else:
-            content = item[1]
+            content = defi
             content = format_clean_content(long_title, content, BeautifulSoup)
 
         indexes = generate_indexes(long_title, alts, content, BeautifulSoup)

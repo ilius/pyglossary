@@ -26,10 +26,22 @@ import os, sys, platform, time, subprocess, shutil, re
 from os.path import split, join, splitext, isdir, dirname, basename
 import logging
 import pkgutil
+import string
+from collections import Counter
 
 import core
-from text_utils import faEditStr, replacePostSpaceChar, removeTextTags,\
-                       takeStrWords, findWords, findAll, addDefaultOptions
+from entry import Entry
+from entry_filters import *
+
+from text_utils import (
+    fixUtf8,
+    replacePostSpaceChar,
+    removeTextTags,
+    takeStrWords,
+    findWords,
+    findAll,
+    addDefaultOptions,
+)
 
 import warnings
 warnings.resetwarnings() ## ??????
@@ -67,31 +79,13 @@ get_ext = lambda path: splitext(path)[1].lower()
 
 class Glossary:
     """
-
-self.data:
-
-    `data` is a list if tuples: ('key', 'definition') or ('key', 'definition', dict())
-    in general we should assume the tuple may be of arbitrary length >= 2
-
-    Possible dictionary keys:
-
-    data[i][2]['alts'] - list of alternates, filled by bgl reader
-
-    data[i][2]['defis'] - list of alternative definitions.
-        For example, run (eng.) may be 1. verb, 2. noun, 3. adjective.
-        self.data[i][1] contains the main definition of the word, the verb, in the example.
-        While additional definitions goes to self.data[i][2]['defis'] list, noun and adjective,
-        in the example.
-        You may merge additional definition with the main definition if the target dictionary
-        format does not support several definitions per word.
-    data[i][2]['defis'][j][0] - definition data
-    data[i][2]['defis'][j][1] - definition format. See 'defiFormat' option below.
-
-    data[i][2]['defiFormat'] - format of the definition:
-        'm': plain text
-        'h': html
-        'x': xdxf
-        use xdxf.xdxf_to_html to convert
+    Direct access to glos.data is droped
+    Use `glos.addEntry(word, defi, [defiFormat])`
+        where both word and defi can be list (including alternates) or string
+    See help(glos.addEntry)
+    
+    Use `for entry in glos:` to iterate over entries (glossary data)
+    See help(pyglossary.entry.Entry) for details
 
     """
 
@@ -180,32 +174,128 @@ self.data:
         log.debug('plugin loaded OK: %s' % pluginName)
         return plugin
 
+    def clear(self):
+        self.info = []
 
-    def __init__(self, info=None, data=None, ui=None, filename='', resPath=''):
+        self._data = []
+        self._entryIndex = 0
+
+        self.filename = ''
+        self.resPath = ''
+        self._defaultDefiFormat = 'm'
+
+    def __init__(self, info=None, ui=None, filename='', resPath=''):
         if info is None:
             info = []
-        if data is None:
-            data = []
         self.info = []
         self.setInfos(info, True)
-        self.data = data
+
+        self._data = []
+        '''
+        self._data is a list of tuples with length 2 or 3:
+            (word, definition)
+            (word, definition, defiFormat)
+            where both word and definition can be a string, or list (containing alternates)
+
+            defiFormat: format of the definition:
+                'm': plain text
+                'h': html
+                'x': xdxf
+        '''
+        self._entryIndex = 0
+
         self.ui = ui
         self.filename = filename
         self.resPath = resPath
+        self._defaultDefiFormat = 'm'
+
+        self.entryFilters = [
+            StripEntryFilter(self),
+            NonEmptyWordFilter(self),
+            FixUnicodeFilter(self),
+            LowerWordFilter(self),
+            LangEntryFilter(self),
+            CleanEntryFilter(self),
+            NonEmptyWordFilter(self),
+            NonEmptyDefiFilter(self),
+        ]
+
+
 
     __str__ = lambda self: 'glossary.Glossary'
 
+    def addEntryObj(self, entry):
+        self._data.append(entry.getRaw())
+
+    def addEntry(self, word, defi, defiFormat=None):
+        if defiFormat == self._defaultDefiFormat:
+            defiFormat = None
+
+        self.addEntryObj(Entry(word, defi, defiFormat))
+
+    def nextEntry(self):
+        try:
+            rawEntry = self._data[self._entryIndex]
+        except IndexError:
+            raise StopIteration
+
+        entry = Entry.fromRaw(
+            rawEntry,
+            defaultDefiFormat=self._defaultDefiFormat
+        )
+        self._entryIndex += 1
+        
+        for entryFilter in self.entryFilters:
+            entry = entryFilter.run(entry)
+            if not entry:
+                return
+
+        return entry
+
+    def iterEntryBuckets(self, size):
+        bucket = []
+        for entry in self:
+            if len(bucket) >= size:
+                yield bucket
+                bucket = []
+            bucket.append(entry)
+        yield bucket
+
+    def setDefaultDefiFormat(self, defiFormat):
+        self._defaultDefiFormat = defiFormat
+
+    def getDefaultDefiFormat(self):
+        return self._defaultDefiFormat
+
+    def __iter__(self):
+        while True:
+            entry = self.nextEntry()
+            if not entry:
+                continue
+            yield entry
+
+    __len__ = lambda self: len(self._data)
+
     def copy(self):
-        return Glossary(
+        newGlos = Glossary(
             info = self.info[:],
-            data = self.data[:],
             ui = self.ui, ## FIXME
             filename = self.filename,
             resPath = self.resPath,
         )
+        #newGlos.__Glossary_data = deepcopy(self._data)
+        for entry in self:
+            newGlos.addEntryObj(entry)
+        return newGlos
 
     def infoKeys(self):
         return [t[0] for t in self.info]
+
+    def getMostUsedDefiFormats(self, count=None):
+        return Counter([
+            entry.getDefiFormat() \
+            for entry in self
+        ]).most_common(count)
 
     #def formatInfoKeys(self, format):## FIXME
 
@@ -225,6 +315,10 @@ self.data:
         return ''
 
     def setInfo(self, key, value):
+        ## FIXME
+        key = fixUtf8(key)
+        value = fixUtf8(value)
+        
         lkey = str(key).lower()
         for group in Glossary.infoKeysAlias:
             if not isinstance(group, (list, tuple)):
@@ -253,21 +347,6 @@ self.data:
                 if not self.getInfo(key):
                     self.setInfo(key, '')
 
-    def removeTags(self, tags):
-        n = len(self.data)
-        for i in xrange(n):
-            self.data[i] = (
-                self.data[i][0],
-                removeTextTags(self.data[i][1], tags),
-            ) + self.data[i][2:]
-
-    def lowercase(self):
-        for i in xrange(len(self.data)):
-            self.data[i] = (self.data[i][0].lower(), self.data[i][1]) + self.data[i][2:]
-
-    def capitalize(self):
-        for i in xrange(len(self.data)):
-            self.data[i] = (self.data[i][0].capitalize(), self.data[i][1]) + self.data[i][2:]
 
     def read(self, filename, format='', **options):
         delFile=False
@@ -438,7 +517,16 @@ self.data:
                 os.chdir(initCwd)
         return True
 
-    def writeTxt(self, sep, filename='', writeInfo=True, rplList=None, ext='.txt', head=''):
+    def writeTxt(
+        self,
+        sep,
+        filename='',
+        writeInfo=True,
+        rplList=None,
+        ext='.txt',
+        head='',
+        entryFilterFunc=None,
+    ):
         if rplList is None:
             rplList = []
         if not filename:
@@ -451,20 +539,17 @@ self.data:
                     desc = desc.replace(rpl[0], rpl[1])
                 fp.write('##' + key + sep[0] + desc + sep[1])
         fp.flush()
-        for item in self.data:
-            (word, defi) = item[:2]
+        for entry in self:
+            if entryFilterFunc:
+                entry = entryFilterFunc(entry)
+                if not entry:
+                    continue
+            word = entry.getWord()
+            defi = entry.getDefi()
             if word.startswith('#'):## FIXME
                 continue
-            if self.getPref('enable_alts', True):
-                try:
-                    alts = item[2]['alts']
-                except (IndexError, KeyError):
-                    pass
-                else:
-                    if alts:
-                        if not word in alts:
-                            alts.insert(0, word)
-                        word = '|'.join(alts)
+            #if self.getPref('enable_alts', True):## FIXME
+
             for rpl in rplList:
                 defi = defi.replace(rpl[0], rpl[1])
             fp.write(word + sep[0] + defi + sep[1])
@@ -486,45 +571,37 @@ self.data:
         )
 
 
-    def printTabfile(self):
-        for item in self.data:
-            (word, defi) = item[:2]
-            defi = defi.replace('\n', '\\n')
-            try:
-                print(word + '\t' + defi)
-            except Exception:
-                log.exception('')
-
-
     ###################################################################
-    takeWords = lambda self: [item[0] for item in self.data]
+
+    def sortWords(self, key=None, reverse=False):
+        if key:
+            entryKey = lambda x: key(x[0])
+        else:
+            entryKey = lambda x: x[0]
+        self._data.sort(
+            key=entryKey,
+            reverse=reverse,
+        )
+
+    takeWords = lambda self: [item[0] for item in self._data]
 
 
     def takeOutputWords(self, opt=None):
         if opt is None:
             opt = {}
-        words = sorted(takeStrWords(' '.join([item[1] for item in self.data]), opt))
+        words = sorted(takeStrWords(' '.join([item[1] for item in self._data]), opt))
         words = removeRepeats(words)
         return words
 
-    getInputList = lambda self: [x[0] for x in self.data]
+    getInputList = lambda self: [x[0] for x in self._data]
 
-    getOutputList = lambda self: [x[1] for x in self.data]
-
-    def simpleSwap(self):
-        # loosing item[2:]
-        return Glossary(
-            info = self.info[:],
-            data = [
-                (item[1], item[0]) \
-                for item in self.data
-            ],
-        )
+    getOutputList = lambda self: [x[1] for x in self._data]
+        
 
     def attach(self, other):# only simplicity attach two glossaries (or more that others be as a list).
     # no ordering. Use when you split input words to two(or many) parts after ordering.
         try:
-            other.data, other.info
+            other._data, other.info
         except AttributeError:
             if isinstance(other, (list, tuple)):
                 if len(other)==0:
@@ -539,14 +616,14 @@ self.data:
             info = [
                 ('name', newName),
             ],
-            data = self.data + other.data,
         )
+        newGloss.__Glossary_data = self._data + other.__Glossary_data ## FIXME
         ## here attach and set info of two glossary ## FIXME
         return newGloss
 
     def merge(self, other):
         try:
-            other.data, other.info
+            other._data, other.info
         except AttributeError:
             if isinstance(other, (list, tuple)):
                 if len(other)==0:
@@ -564,15 +641,15 @@ self.data:
             info = [
                 ('name', newName),
             ],
-            data = sorted(self.data + other.data),
         )
+        newGloss.__Glossary_data = sorted(self._data + other.__Glossary_data) ## FIXME
         return newGloss
 
 
     def deepMerge(self, other, sep='\n'):
         ## merge two optional glossarys nicly. no repets in words of result glossary
         try:
-            other.data, other.info
+            other._data, other.info
         except AttributeError:
             if isinstance(other, (list, tuple)):
                 if len(other)==0:
@@ -584,7 +661,7 @@ self.data:
                 raise TypeError('bad argument given to deepMerge! other="%s"'%other)
         newName = '"%s" deep merged with "%s"'%( self.getInfo('name'), other.getInfo('name') )
         data = sorted(
-            self.data + other.data,
+            self._data + other.__Glossary_data,
             key = lambda x: x[0],## why? FIXME
         )
         n = len(data)
@@ -603,8 +680,8 @@ self.data:
             info = [
                 ('name', newName),
             ],
-            data = data,
         )
+        self._data = data
 
 
     def __add__(self, other):
@@ -626,7 +703,7 @@ self.data:
         minRel = opt['minRel']
         defs = opt['includeDefs']
         outRel = []
-        for item in self.data:
+        for item in self._data:
             (word, defi) = item[:2]
             defiParts = defi.split(sep)
             if defi.find(st) == -1:
@@ -823,7 +900,7 @@ self.data:
                 if autoSaveStep>0:
                     saveFile.write('%s\t%s\n'%(word, defi))
                 else:
-                    revG.data.append((word, defi))
+                    revG._data.append((word, defi))
             if autoSaveStep>0 and i==n-1:
                 saveFile.close()
         if autoSaveStep==0:
@@ -835,22 +912,22 @@ self.data:
     def replaceInDefinitions(self, replaceList, matchWord=False):
         if not matchWord:
             for rpl in replaceList:
-                for i in xrange(len(self.data)):
-                    if self.data[i][1].find(rpl[0])>-1:
-                        self.data[i][1] = self.data[i][1].replace(rpl[0], rpl[1])
+                for i in xrange(len(self._data)):
+                    if self._data[i][1].find(rpl[0])>-1:
+                        self._data[i][1] = self._data[i][1].replace(rpl[0], rpl[1])
         else:
             num = 0
             for rpl in replaceList:
-                for j in xrange(len(self.data)):
+                for j in xrange(len(self._data)):
                     # words indexes
-                    wdsIdx = findWords(self.data[j][1], {'word': rpl[0]})
+                    wdsIdx = findWords(self._data[j][1], {'word': rpl[0]})
                     for [i0, i1] in wdsIdx:
-                        self.data[j][1] = self.data[j][1][:i0] + rpl[1] + self.data[j][1][i1:]
+                        self._data[j][1] = self._data[j][1][:i0] + rpl[1] + self._data[j][1][i1:]
                         num += 1
             return num
 
 
-    def getSqlLines(self, filename='', info=None, newline='\\n'):
+    def getSqlLines(self, filename='', info=None, newline='\\n', transaction=False):
         lines = []
         newline = '<br>'
         infoDefLine = 'CREATE TABLE dbinfo ('
@@ -875,142 +952,25 @@ self.data:
         infoDefLine = infoDefLine[:-2] + ');'
         lines.append(infoDefLine)
         lines.append('CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, \'w\' TEXT, \'m\' TEXT);')
-        lines.append('BEGIN TRANSACTION;');
+        if transaction:
+            lines.append('BEGIN TRANSACTION;');
         lines.append('INSERT INTO dbinfo VALUES(%s);'%(','.join(infoList)))
-        for i, item in enumerate(self.data):
-            w = item[0].replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
-            m = item[1].replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
-            lines.append('INSERT INTO word VALUES(%d, \'%s\', \'%s\');'%(i+1, w, m))
-        lines.append('END TRANSACTION;')
+        for i, entry in enumerate(self):
+            word = entry.getWord()
+            defi = entry.getDefi()
+            word = word.replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
+            defi = defi.replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
+            lines.append('INSERT INTO word VALUES(%d, \'%s\', \'%s\');'%(i+1, word, defi))
+        if transaction:
+            lines.append('END TRANSACTION;')
         lines.append('CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);')
         return lines
 
-    def utf8ReplaceErrors(self):
-        errors = 0
-        for i in xrange(len(self.data)):
-            (w, m) = self.data[i][:2]
-            w = w.replace('\x00', '')
-            m = m.replace('\x00', '')
-            try:
-                m.decode('utf-8')
-            except UnicodeDecodeError:
-                m = m.decode('utf-8', 'replace').encode('utf-8')
-                errors += 1
-            try:
-                w.decode('utf-8')
-            except UnicodeDecodeError:
-                w = w.decode('utf-8', 'replace').encode('utf-8')
-                errors += 1
-            if len(self.data[i]) >= 3:
-                d = self.data[i][2]
-                if 'alts' in d:
-                    a = d['alts']
-                    for j in xrange(len(a)):
-                        a[j] = a[j].replace('\x00', '')
-                        try:
-                            a[j].decode('utf-8')
-                        except UnicodeDecodeError:
-                            a[j] = a[j].decode('utf-8', 'replace').encode('utf-8')
-                            errors += 1
-                d = [d]
-            else:
-                d = []
-            a = [w, m]
-            a.extend(d)
-            a.extend(self.data[i][3:])
-            self.data[i] = a
-        for i in xrange(len(self.info)):
-            (w, m) = self.info[i]
-            w = w.replace('\x00', '')
-            m = m.replace('\x00', '')
-            try:
-                m.decode('utf-8')
-            except UnicodeDecodeError:
-                m = m.decode('utf-8', 'replace').encode('utf-8')
-                errors += 1
-            try:
-                w.decode('utf-8')
-            except UnicodeDecodeError:
-                w = w.decode('utf-8', 'replace').encode('utf-8')
-                errors += 1
-            self.info[i] = (w, m)
-        if errors:
-            log.error('There was %s number of invalid utf8 strings, invalid characters are replaced with "�"'%errors)
 
-    def clean(self):
-        d = self.data
-        n = len(d)
-        for i in range(n):
-            # key must not contain tags, at least in bgl dictionary ???
-            w = d[i][0].strip()
-            m = d[i][1].strip()\
-                       .replace('♦  ', '♦ ')
-
-            m = re.sub('[\r\n]+', '\n', m)
-            m = re.sub(' *\n *', '\n', m)
-
-            """
-            This code may correct snippets like:
-            - First sentence .Second sentence. -> First sentence. Second sentence.
-            - First clause ,second clause. -> First clause, second clause.
-            But there are cases when this code have undesirable effects
-            ( '<' represented as '&lt;' in HTML markup):
-            - <Adj.> -> < Adj. >
-            - <fig.> -> < fig. >
-            """
-            """
-            for j in range(3):
-                for ch in ',.;':
-                    m = replacePostSpaceChar(m, ch)
-            """
-
-            m = re.sub('♦\n+♦', '♦', m)
-            if m.endswith('<p'):
-                m = m[:-2]
-            m = m.strip()
-            if m.endswith(','):
-                m = m[:-1]
-            d[i] = (w, m) + d[i][2:]
-        # remove items with empty keys and definitions
-        d2 = []
-        for item in d:
-            if not item[0] or not item[1]:
-                continue
-            if len(item) >= 3:
-                if 'alts' in item[2]:
-                    a = item[2]['alts']
-                    a2 = []
-                    for s in a:
-                        if s:
-                            a2.append(s)
-                    item[2]['alts'] = a2
-            d2.append(item)
-        self.data[:] = d = d2
-
-    def faEdit(self):
-        RLM = '\xe2\x80\x8f'
-        for i in range(len(self.data)):
-            (w, m) = self.data[i][:2]
-            ## m = '\n'.join([RLM+line for line in m.split('\n')]) ## for GoldenDict
-            self.data[i] = (faEditStr(w), faEditStr(m)) + self.data[i][2:]
-        for i in range(len(self.info)):
-            (w, m) = self.info[i]
-            self.info[i] = (faEditStr(w), faEditStr(m))
-
-    def uiEdit(self):
+    def uiEdit(self):## remove? FIXME
         p = self.ui.pref
         if p['sort']:
-            self.data.sort()
-        if p['lower']:
-            self.lowercase()
-        if p['remove_tags']:
-            self.removeTags(p['tags'])
-        langs = (self.getInfo('sourceLang') + self.getInfo('targetLang')).lower()
-        if 'persian' in langs or 'farsi' in langs:
-            self.faEdit()
-        self.clean()
-        if p['utf8_check']:
-            self.utf8ReplaceErrors()
+            self._data.sort()
 
     def getPref(self, name, default):
         if self.ui:
@@ -1021,8 +981,9 @@ self.data:
     def dump(self, dataPath):
         'Dump data into the file for debugging'
         with open(dataPath, 'wb') as f:
-            for item in g.data:
-                f.write('key = ' + item[0] + '\n')
-                f.write('defi = ' + item[1] + '\n\n')
+            for entry in self:
+                f.write('key = ' + entry.getWord() + '\n')
+                f.write('defi = ' + entry.getDefi() + '\n\n')
+
 
 Glossary.loadPlugins(join(dirname(__file__), 'plugins'))

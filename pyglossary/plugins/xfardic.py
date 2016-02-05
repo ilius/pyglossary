@@ -23,7 +23,7 @@ infoKeys = (
 
 def read(glos, filename):
     fp = open(filename, 'rb')
-    glos.data = []
+    glos.clear()
     xdbText = fp.read()
     i = 0
     for item in infoKeys:################## method should be changed
@@ -45,7 +45,7 @@ def read(glos, filename):
         out1= xdbText.find('</out>', out0)
         word = unescape(xdbText[in0:in1])
         defi = unescape(xdbText[out0:out1])
-        glos.data.append((word, defi))
+        glos.addEntry(word, defi)
         #i = out1
         i = xdbText.find('</word>', out1) + 7
 
@@ -54,7 +54,7 @@ def read(glos, filename):
 def read_2(glos, filename):
     from xml.etree.ElementTree import XML, tostring
     fp = open(filename, 'rb')
-    glos.data = []
+    glos.clear()
     glos.info = {}
     xdb = XML(fp.read())
     del fp
@@ -71,7 +71,9 @@ def read_2(glos, filename):
             log.exception(tostring(elem))
             log.error()
             continue
-        glos.data += [[ w[4:-5], m[5:-6] ]]
+        word = w[4:-5]
+        defi = m[5:-6]
+        glos.addEntry(word, defi)
 
 
 
@@ -81,17 +83,15 @@ def write(glos, filename):
     for item in infoKeys:
         fp.write('<'+item+'>'+str(glos.getInfo(item))+'</'+item+'>')
     fp.write('</xfardic>\n')
-    for item in glos.data:
-        #fp.write("<word><in>"+item[0]+"</in><out>"+ item[1]+"</out></word>\n")
-        fp.write('<word>\n    <in>%s</in>\n'%escape(item[0]))
-        try:
-            alts = item[2]['alts']
-        except:
-            pass
-        else:
-            for alt in alts:
-                fp.write('    <alt>%s</alt>\n'%escape(alt))
-        fp.write('    <out>%s</out>\n</word>\n'%escape(item[1]))
+    for entry in glos:
+        words = entry.getWords()
+        word, alts = words[0], words[1:]
+        defi = entry.getDefi()
+        #fp.write("<word><in>"+word+"</in><out>"+ defi+"</out></word>\n")
+        fp.write('<word>\n    <in>%s</in>\n'%escape(word))
+        for alt in alts:
+            fp.write('    <alt>%s</alt>\n'%escape(alt))
+        fp.write('    <out>%s</out>\n</word>\n'%escape(defi))
     fp.write("</words>\n")
     fp.close()
 
@@ -109,18 +109,20 @@ def write_2(glos, filename):
         fp.endElement(unicode(t[0]))
     fp.endElement(u'xfardic')
     fp.startElement(u'words', attrs)
-    for item in glos.data:
+    for entry in glos:
+        word = entry.getWord()
+        defi = entry.getDefi()
         try:
-            tmpXmlFile.characters(item[1])
+            tmpXmlFile.characters(defi)
         except:
-            log.exception('While writing xdb file, an error on word "%s":'%item[0])
+            log.exception('While writing xdb file, an error on word "%s":'%word)
             continue
         fp.startElement(u'word', attrs)
         fp.startElement(u'in', attrs)
-        fp.characters(unicode(item[0]))
+        fp.characters(unicode(word))
         fp.endElement(u'in')
         fp.startElement(u'out', attrs)
-        fp.characters(unicode(item[1]))
+        fp.characters(unicode(defi))
         fp.endElement(u'out')
     fp.endElement(u'words')
     fp.endDocument()

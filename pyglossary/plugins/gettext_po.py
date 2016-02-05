@@ -9,17 +9,21 @@ extentions = ['.po',]
 readOptions = []
 writeOptions = []
 
+def unquote(st):
+    if st.startswith('"') and st.endswith('"'):
+        st = st[1:-1]
+    return st
+
 def read(glos, filename):
     fp = open(filename, 'rb')
     word = ''
     defi = ''
     msgstr = False
-    glos.data = []
-    while True:
-        line = fp.readline()
+    glos.clear()
+    for line in fp:
         if not line:
             if word:
-                glos.data.append((word, defi))
+                glos.addEntry(word, defi)
                 word = ''
                 defi = ''
             break
@@ -30,29 +34,32 @@ def read(glos, filename):
             continue
         if line.startswith('msgid '):
             if word:
-                glos.data.append((word, defi))
+                glos.addEntry(word, defi)
                 word = ''
                 defi = ''
-            word = eval(line[6:])
+            word = unquote(line[6:])
             msgstr = False
         elif line.startswith('msgstr '):
             if msgstr:
                 log.error('msgid omitted!')
-            defi = eval(line[7:])
+            defi = unquote(line[7:])
             msgstr = True
         else:
             if msgstr:
-                defi += eval(line)
+                defi += unquote(line)
             else:
-                word += eval(line)
+                word += unquote(line)
+
 
 
 def write(glos, filename):
     fp = open(filename, 'wb')
     fp.write('#\nmsgid ""\nmsgstr ""\n')
     for inf in glos.infoKeys():
-        fp.write('"%s: %s\\n"'%(inf, glos.getInfo(inf)))
-    for item in glos.data:
-        fp.write('msgid "%s"\nmsgstr "%s"\n\n'%item[:2])
+        fp.write('"%s: %s\\n"\n'%(inf, glos.getInfo(inf)))
+    for entry in glos:
+        word = entry.getWord()
+        defi = entry.getDefi()
+        fp.write('msgid "%s"\nmsgstr "%s"\n\n'%(word, defi))
     fp.close()
 

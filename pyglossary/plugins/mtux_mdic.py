@@ -25,7 +25,7 @@ def read(glos, filename):
     from sqlite3 import connect
 
     ## ???????? name OR dbname ????????????????????
-    glos.data = []
+    glos.clear()
     con = connect(filename)
     cur = con.cursor()
     for key in infoKeys:
@@ -45,7 +45,7 @@ def read(glos, filename):
         except:
             log.error('error while encoding word %s'%x[0])
         else:
-            glos.data.append([w, m])
+            glos.addEntry(w, m)
     cur.close()
     con.close()
     return True
@@ -53,56 +53,6 @@ def read(glos, filename):
 def read_2(glos, filename):
     import pyglossary.alchemy as alchemy
     return alchemy.readSqlite(glos, filename)
-
-def write_ext(glos, filename):
-    ## This method uses binary module "_mdicbuilder"
-    ## but this binary module is deleted from package PyGlossary, and not used by GUI now.
-    ## If you want to use it, compile it yourglos, or get it from an older version of PyGlossary (version 2008.08.30)
-    import _mdicbuilder
-    from _mdicbuilder import MDicBuilder_addHeadword
-    if os.path.exists(filename):
-        os.remove(filename)
-    db = _mdicbuilder.new_MDicBuilder(filename)
-    _mdicbuilder.MDicBuilder_swigregister(db)
-    n = len(glos.data)
-    ui = glos.ui
-    if ui==None:
-        for i in xrange(n):
-            MDicBuilder_addHeadword(
-                db,
-                glos.data[i][0],
-                glos.data[i][1].replace('\n', '<BR>'),
-                '',
-            )
-    else:
-        ui.progressStart()
-        k = 1000
-        for i in xrange(n):
-            MDicBuilder_addHeadword(
-                db,
-                glos.data[i][0],
-                glos.data[i][1].replace('\n', '<BR>'),
-                '',
-            )
-            if i%k==0:
-                rat = float(i)/n
-                ui.progress(rat)
-        #ui.progress(1.0, 'Converting Completed')
-        ui.progressEnd()
-    _mdicbuilder.MDicBuilder_setTitle(db, glos.getInfo('name'))
-    _mdicbuilder.MDicBuilder_setAuthor(db, glos.getInfo('author'))
-    _mdicbuilder.MDicBuilder_setLicense(db, glos.getInfo('license'))
-    _mdicbuilder.MDicBuilder_setOrigLang(db, g.getInfo('origLang'))
-    _mdicbuilder.MDicBuilder_setDestLang(db, g.getInfo('destLang'))
-    _mdicbuilder.MDicBuilder_setDescription(db, glos.getInfo('description'))
-    _mdicbuilder.MDicBuilder_setComments(db, g.getInfo('comments'))
-    _mdicbuilder.MDicBuilder_setEmail(db, g.getInfo('email'))
-    _mdicbuilder.MDicBuilder_setWebsite(db, g.getInfo('website'))
-    _mdicbuilder.MDicBuilder_setVersion(db, g.getInfo('version'))
-    _mdicbuilder.MDicBuilder_setcreationTime(db, '')
-    _mdicbuilder.MDicBuilder_setLastUpdate(db, '')
-    _mdicbuilder.MDicBuilder_finish(db)
-
 
 
 def write_2(glos, filename):
@@ -123,6 +73,7 @@ def write(glos, filename):
     sqlLines = glos.getSqlLines(
         info=[(key, glos.getInfo(key)) for key in infoKeys],
         newline='<BR>',
+        transaction=False,
     )
     n = len(sqlLines)
     ui = glos.ui
