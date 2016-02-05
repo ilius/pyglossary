@@ -233,7 +233,10 @@ class Glossary:
 
         self.addEntryObj(Entry(word, defi, defiFormat))
 
-    def nextEntry(self):
+    def next(self):
+        """
+            returns the next entry
+        """
         try:
             rawEntry = self._data[self._entryIndex]
         except IndexError:
@@ -269,7 +272,7 @@ class Glossary:
 
     def __iter__(self):
         while True:
-            entry = self.nextEntry()
+            entry = self.next()
             if not entry:
                 continue
             yield entry
