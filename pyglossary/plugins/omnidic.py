@@ -48,20 +48,20 @@ def write(glos, filename, dicIndex=16):
             fileName = str(dicIndex) + str(i) + '99'
         indexFp.write(glos.data[100*i][0] + '#' + glos.data[100*i+99][0] + '#' + fileName + '\n')
         fp = open(fileName, 'wb')
-        for j in xrange(99):
+        for j in xrange(100):
             (w, m) = glos.data[100*i+j][:2]
-            m = m.replace('\n', '  ') ### ????????????????????????????????????
+            m = m.replace('\n', '  ') ### FIXME
             fp.write('%s#%s\n'%(w, m))
-        fp.write('%s#%s\n'%tuple(glos.data[100*i+99][:2]))
         fp.close(); del fp, fileName
     endNum = wordCount % 100
     if endNum > 0:
         fileName=str(dicIndex)+str(fileCountM1)+str(endNum-1)
         fp = open(fileName, 'wb')
         indexFp.write(glos.data[100*fileCountM1][0]+'#'+glos.data[100*fileCountM1+endNum-1][0]+'#'+fileName+'\n')
-        for j in xrange(endNum-1):
-            fp.write(glos.data[100*fileCountM1+j][0]+'#'+glos.data[100*fileCountM1+j][1]+'\n')
-        fp.write(glos.data[100*fileCountM1+endNum-1][0]+'#'+glos.data[100*fileCountM1+endNum-1][1])
+        for j in xrange(endNum):
+            (w, m) = glos.data[100*fileCountM1+j][:2]
+            m = m.replace('\n', '  ') ### FIXME
+            fp.write('%s#%s\n'%(w, m))
         fp.close(); del fp, fileName
         indexFp.close(); del indexFp
     os.chdir(initCwd)
