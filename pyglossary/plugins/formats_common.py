@@ -18,6 +18,7 @@ import logging
 
 from pyglossary import core
 from pyglossary.file_utils import FileLineWrapper
+from pyglossary.text_utils import toStr, toUnicode
 
 log = logging.getLogger('root')
 

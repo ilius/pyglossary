@@ -201,6 +201,7 @@ def read(glos, filename, encoding='utf-8'):
     glos.setInfo('version', sd.version)
     glos.setInfo('copyright', sd.copyright)
     ##########
-    glos.data = list(sd.__iter__())
+    for word, defi in sd:
+        glos.addEntry(word, defi)
 
 

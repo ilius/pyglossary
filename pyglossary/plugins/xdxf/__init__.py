@@ -83,7 +83,7 @@ def read(glos, filename):
     ##<!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
     import_xml_stuff()
 
-    glos.data = []
+    glos.clear()
 
     with open(filename, 'rb') as f:
         xdxf = XML(f.read())
@@ -137,6 +137,7 @@ def add_articles(glos, articles):
     :param articles: iterator on <ar> tags
     :return: None
     """
+    glos.setDefaultDefiFormat('x')
     for item in articles:
         word, alts = title_alts(titles(item))
         if word:
@@ -144,7 +145,10 @@ def add_articles(glos, articles):
             defi = tostring(item, encoding='utf-8')
             # <ar>...</ar>
             defi = defi[4:-5].strip()
-            glos.data.append((word, defi, {'alts': alts, 'defiFormat': 'x'}))
+            glos.addEntry(
+                [word] + alts,
+                defi,
+            )
 
 
 def titles(article):

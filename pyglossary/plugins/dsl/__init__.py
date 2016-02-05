@@ -258,7 +258,7 @@ def read(glos, fname, **options):
     line_type = 'header'
     unfinished_line = ''
 
-    glos.data = []
+    glos.clear()
     
     fp = codecs.open(fname, 'r', encoding)
     for line in fp:
@@ -304,13 +304,10 @@ def read(glos, fname, **options):
                     if unfinished_line:
                         # line may be skipped if ill formated
                         current_text.append(_clean_tags(unfinished_line, audio))
-                    glos.data.append((
-                        current_key,
+                    glos.addEntry(
+                        [current_key] + current_key_alters,
                         '\n'.join(current_text),
-                        {
-                            'alts': current_key_alters,
-                        },
-                    ))
+                    )
                 # start new entry
                 current_key = line
                 current_key_alters = []
@@ -321,10 +318,7 @@ def read(glos, fname, **options):
     
     # last entry
     if line_type == 'text':
-        glos.data.append((
-            current_key,
+        glos.addEntry(
+            [current_key] + current_key_alters,
             '\n'.join(current_text),
-            {
-                'alts': current_key_alters,
-            }
-        ))
+        )

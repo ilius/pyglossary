@@ -279,12 +279,6 @@ class BglReader:
         def __str__(self):
             return 'Block Type=%s, length=%s, len(data)=%s'%(self.Type, self.length, len(self.data))
 
-    class Entry:
-        def __init__(self):
-            self.word = ''
-            self.defi = ''
-            self.alts = []
-
     class FileOffS(file):
         """
             A file class with an offset.
@@ -1740,9 +1734,9 @@ class BglReader:
         ))
 
     # return True if an entry has been read
-    def readEntry(self, entry):
+    def readEntry(self):
         if not self.file:
-            return False
+            raise StopIteration
         block = self.Block()
         while not self.isEndOfDictData():
             if not self.readBlock(block):
@@ -1761,11 +1755,18 @@ class BglReader:
                 [res, pos, alts] = self.readEntry_alts(block, pos, raw_key, word)
                 if not res:
                     continue
-                entry.word = word
-                entry.defi = defi
-                entry.alts = alts
-                return True
-        return False
+
+                return (
+                    [word] + alts,
+                    defi,
+                )
+
+        raise StopIteration
+
+    def __iter__(self):
+        #for index in range(self.numEntries):
+        while True:## FIXME
+            yield self.readEntry()
 
     def readEntry_word(self, block, pos):
         """
@@ -1882,6 +1883,7 @@ class BglReader:
         return True, pos, list(alts)
 
     def toUtf8(self, text, encoding):
+        text = text.replace('\x00', '')
         if self.strictStringConvertion:
             try:
                 u_text = text.decode(encoding)
@@ -2779,8 +2781,28 @@ class BglReader:
         else:
             return text
 
+    def setGlossaryInfo(self, glos):
+        glos.setInfo('title', self.title)
+        glos.setInfo('author', self.author)
+        glos.setInfo('email', self.email)
+        glos.setInfo('description', self.description)
+        glos.setInfo('copyright', self.copyright)
+        glos.setInfo('sourceLang', self.sourceLang)
+        glos.setInfo('targetLang', self.targetLang)
+        glos.setInfo('bgl_defaultCharset', self.defaultCharset)
+        glos.setInfo('bgl_sourceCharset', self.sourceCharset)
+        glos.setInfo('bgl_targetCharset', self.targetCharset)
+        glos.setInfo('bgl_creationTime', self.creationTime)
+        glos.setInfo('bgl_middleUpdated', self.middleUpdated) ## ??????????
+        glos.setInfo('bgl_lastUpdated', self.lastUpdated) ## probably empty
+        glos.setInfo('sourceCharset', 'UTF-8')
+        glos.setInfo('targetCharset', 'UTF-8')
+        glos.resPath = self.resPath
+
+
 def read(glos, filename, **options):
-    glos.data = []
+    glos.clear()
+    glos.setDefaultDefiFormat('h')
     reader = BglReader(filename, **options)
     if not reader.open():
         raise IOError('can not open BGL file "{0}"'.format(filename))
@@ -2790,38 +2812,27 @@ def read(glos, filename, **options):
     ui = glos.ui
     if not isinstance(n, int):
         ui = None
-    entry = BglReader.Entry()
     if ui:
         ui.progressStart()
+
+    ##############################################
+
+    reader.setGlossaryInfo(glos)
+
+    ##############################################
     k = 2000
-    for i in xrange(n):
-        if not reader.readEntry(entry):
-            log.error('No enough entries found!')
-            break
-        glos.data.append((entry.word, entry.defi, {'alts': entry.alts, 'defiFormat': 'h'}))
-        if ui and i%k==0:
-            rat = float(i)/n
+    for index, (words, defis) in enumerate(reader):
+        glos.addEntry(
+            words,
+            defis,
+        )
+        if ui and index%k==0:
+            rat = float(index)/n
             ui.progress(rat)
     if ui:
         ui.progressEnd()
     reader.close()
-    ##############################################
-    glos.setInfo('title', reader.title)
-    glos.setInfo('author', reader.author)
-    glos.setInfo('email', reader.email)
-    glos.setInfo('description', reader.description)
-    glos.setInfo('copyright', reader.copyright)
-    glos.setInfo('sourceLang', reader.sourceLang)
-    glos.setInfo('targetLang', reader.targetLang)
-    glos.setInfo('bgl_defaultCharset', reader.defaultCharset)
-    glos.setInfo('bgl_sourceCharset', reader.sourceCharset)
-    glos.setInfo('bgl_targetCharset', reader.targetCharset)
-    glos.setInfo('bgl_creationTime', reader.creationTime)
-    glos.setInfo('bgl_middleUpdated', reader.middleUpdated) ## ??????????
-    glos.setInfo('bgl_lastUpdated', reader.lastUpdated) ## probably empty
-    glos.setInfo('sourceCharset', 'UTF-8')
-    glos.setInfo('targetCharset', 'UTF-8')
-    glos.resPath = reader.resPath
+
 
 
 try:

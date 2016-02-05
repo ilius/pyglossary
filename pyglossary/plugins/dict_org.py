@@ -73,7 +73,7 @@ def read(glos, filename):
     else:
         dictStr = open(filename+'.dict', 'rb').read()
     ## read info from header of dict file ## FIXME
-    glos.data = []
+    glos.clear()
     word = ''
     sumLen = 0
     wrongSorted = []
@@ -93,7 +93,7 @@ def read(glos, filename):
         defiLen = indexStrToInt(parts[2])
         defi = dictStr[sumLen:sumLen+defiLen].replace('<BR>', '\n')\
                                              .replace('<br>', '\n')
-        glos.data.append((word, defi))
+        glos.addEntry(word, defi)
         sumLen += defiLen
     ############################################################################
     if len(wrongSorted)>0:
@@ -104,15 +104,16 @@ def read(glos, filename):
 def write(glos, filename, sort=True, dictZip=True, install=True):## FIXME
     if sort:
         glos = glos.copy()
-        glos.data.sort()
+        glos.sortWords()
     (filename_nox, ext) = splitext(filename)
     if ext.lower()=='.index':
         filename = filename_nox
     indexFd = open(filename+'.index', 'wb')
     dictFd = open(filename+'.dict', 'wb')
     dictMark = 0
-    for item in glos.data:
-        (word, defi) = item[:2]
+    for entry in glos:
+        word = entry.getWord()
+        defi = entry.getDefi()
         lm = len(defi)
         indexFd.write(word + '\t' + intToIndexStr(dictMark) + '\t' + intToIndexStr(lm) + '\n')## FIXME
         dictFd.write(defi)

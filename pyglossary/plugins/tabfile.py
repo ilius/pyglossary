@@ -13,7 +13,7 @@ writeOptions = [
 
 def read(glos, filename):
     fp = open(filename)
-    glos.data = []
+    glos.clear()
     while True:
         line = fp.readline()
         if not line:
@@ -21,18 +21,13 @@ def read(glos, filename):
         line = line.strip()## This also removed tailing newline
         fti = line.find('\t') # first tab's index
         if fti==-1:
-            log.error('Warning: line beganing "%s" has no tab!' %line[:10])
+            log.error('Warning: line starting with "%s" has no tab!'%line[:10])
             continue
         word = line[:fti]
         defi = line[fti+1:]#.replace('\\n', '\n')#.replace('<BR>', '\n').replace('\\t', '\t')
         ###
         if glos.getPref('enable_alts', True):
-            wordParts = [p.strip() for p in word.split('|')]
-            word = wordParts[0]
-            alts = wordParts[1:]
-            del wordParts
-        else:
-            alts = []
+            word = word.split('|')
         ###
         for i in xrange(128):
             c = chr(i)
@@ -52,11 +47,10 @@ def read(glos, filename):
                         break
                 glos.setInfo(word, defi)
                 continue
-        glos.data.append((
+        glos.addEntry(
             word,
             defi,
-            {'alts': alts},
-        ))
+        )
 
 
 def write(glos, filename, writeInfo=True):

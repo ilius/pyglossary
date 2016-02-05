@@ -15,6 +15,7 @@ sys.path.append('/usr/share/pyglossary/src')
 import os, re, shutil
 import os.path
 from os.path import join, split, splitext, isfile, isdir
+from collections import Counter
 
 from pyglossary.text_utils import intToBinStr, binStrToInt, runDictzip
 
@@ -30,7 +31,7 @@ class StarDictReader:
         self.fileBasePath = os.path.realpath(self.fileBasePath)
 
     def run(self):
-        self.glos.data = []
+        self.glos.clear()
         self.readIfoFile()
         sametypesequence = self.glos.getInfo('sametypesequence')
         if not verifySameTypeSequence(sametypesequence):
@@ -41,15 +42,17 @@ class StarDictReader:
             indexData[i][0] - word (string)
             indexData[i][1] - definition block offset in dict file
             indexData[i][2] - definition block size in dict file
+            
+            REMOVE:
             indexData[i][3] - list of definitions
             indexData[i][3][j][0] - definition data
             indexData[i][3][j][1] - definition type - 'h', 'm' or 'x'
             indexData[i][4] - list of synonyms (strings)
         """
-        self.readIdxFile()
-        self.readDictFile(sametypesequence)
-        self.readSynFile()
-        self.assignGlossaryData()
+        indexData = self.readIdxFile()
+        synData = self.readSynFile(len(indexData))
+        self.readDictFile(indexData, synData, sametypesequence)
+
         self.readResources()
 
     def readIfoFile(self):
@@ -76,7 +79,7 @@ class StarDictReader:
         else:
             with open(self.fileBasePath+'.idx', 'rb') as f:
                 idxStr = f.read()
-        self.indexData = []
+        indexData = []
         i = 0
         while i < len(idxStr):
             beg = i
@@ -93,48 +96,82 @@ class StarDictReader:
             i += 4
             size = binStrToInt(idxStr[i:i+4])
             i += 4
-            self.indexData.append([word, offset, size, [], []])
+            indexData.append([word, offset, size])
 
-    def readDictFile(self, sametypesequence):
+        return indexData
+
+    def readDictFile(self, indexData, synData, sametypesequence):
         if isfile(self.fileBasePath+'.dict.dz'):
             import gzip
             dictFd = gzip.open(self.fileBasePath+'.dict.dz')
         else:
             dictFd = open(self.fileBasePath+'.dict', 'rb')
 
-        for rec in self.indexData:
-            dictFd.seek(rec[1])
-            if dictFd.tell() != rec[1]:
-                log.error("Unable to read definition for word \"{0}\"".format(rec[0]))
-                rec[0] = None
+        for index, (word, defi_offset, defi_size) in enumerate(indexData):
+            if not word:
                 continue
-            data = dictFd.read(rec[2])
-            if len(data) != rec[2]:
-                log.error("Unable to read definition for word \"{0}\"".format(rec[0]))
-                rec[0] = None
+
+            dictFd.seek(defi_offset)
+            if dictFd.tell() != defi_offset:
+                log.error("Unable to read definition for word \"{0}\"".format(word))
                 continue
+
+            data = dictFd.read(defi_size)
+
+            if len(data) != defi_size:
+                log.error("Unable to read definition for word \"{0}\"".format(word))
+                continue
+
             if sametypesequence:
-                res = self.parseDefiBlockCompact(data, sametypesequence, rec[0])
+                raw_defis = self.parseDefiBlockCompact(data, sametypesequence, word)
             else:
-                res = self.parseDefiBlockGeneral(data, rec[0])
-            if res == None:
-                rec[0] = None
+                raw_defis = self.parseDefiBlockGeneral(data, word)
+
+            if not raw_defis:
                 continue
-            res = self.convertDefinitionsToPyglossaryFormat(res)
-            if len(res) == 0:
-                rec[0] = None
-                continue
-            rec[3] = res
+
+            defis = []
+            defiFormats = []
+            for raw_defi in raw_defis:
+                defis.append(raw_defi[0])
+                defiFormats.append(
+                    {
+                        'm': 'm',
+                        't': 'm',
+                        'y': 'm',
+                        'g': 'h',
+                        'h': 'h',
+                        'x': 'x',
+                    }.get(raw_defi[1], '')
+                )
+
+            ## FIXME
+            defiFormat = defiFormats[0]
+            #defiFormat = Counter(defiFormats).most_common(1)[0][0]
+            
+            if not defiFormat:
+                log.warn("Definition format %s is not supported"%defiFormat)
+            
+            self.glos.addEntry(
+                [word] + synData.get(index, []),
+                defis,
+                defiFormat=defiFormat,
+            )
+
 
         dictFd.close()
 
-    def readSynFile(self):
+    def readSynFile(self, indexCount):
+        """
+            returns synData, a dict { wordIndex -> synWordsList }
+        """
         if not isfile(self.fileBasePath+'.syn'):
-            return
-        with open(self.fileBasePath+'.syn', 'rb') as f:
-            synStr = f.read()
+            return {}
+        synStr = open(self.fileBasePath+'.syn', 'rb').read()
+        synStrLen = len(synStr)
+        synData = {}
         i = 0
-        while i < len(synStr):
+        while i < synStrLen:
             beg = i
             i = synStr.find('\x00', beg)
             if i < 0:
@@ -147,10 +184,17 @@ class StarDictReader:
                 break
             index = binStrToInt(synStr[i:i+4])
             i += 4
-            if index >= len(self.indexData):
+            if index >= indexCount:
                 log.error("Corrupted synonym file. Word \"{0}\" references invalid item.".format(word))
                 continue
-            self.indexData[index][4].append(word)
+            
+            try:
+                synData[index].append(word)
+            except KeyError:
+                synData[index] = [word]
+
+        return synData
+
 
     def parseDefiBlockCompact(self, data, sametypesequence, word):
         """
@@ -237,50 +281,6 @@ class StarDictReader:
                 i += size
         return res
 
-    def convertDefinitionsToPyglossaryFormat(self, defis):
-        """
-            Convert definitions extracted from StarDict dictionary to format supported by pyglossary.
-            Skip unsupported definition.
-        """
-        res = []
-        for rec in defis:
-            if rec[1] in 'mty':
-                res.append((rec[0], 'm'))
-            elif rec[1] in 'gh':
-                res.append((rec[0], 'h'))
-            elif rec[1] in 'x':
-                res.append((rec[0], 'x'))
-            else:
-                log.warn("Definition format {0} is not supported. Skipping.".format(rec[1]))
-        return res
-
-    def assignGlossaryData(self):
-        """
-            Fill glos.data array with data extracted from StarDict dictionary
-        """
-        self.glos.data = []
-        for rec in self.indexData:
-            """
-                rec[0] - word (string)
-                rec[1] - definition block offset in dict file
-                rec[2] - definition block size in dict file
-                rec[3] - list of definitions
-                rec[3][j][0] - definition data
-                rec[3][j][1] - definition type - 'h', 'm' or 'x'
-                rec[4] - list of synonyms (strings)
-            """
-
-            if not rec[0]:
-                continue
-            if len(rec[3]) == 0:
-                continue
-            d = { 'defiFormat': rec[3][0][1] }
-            if len(rec[3]) > 1:
-                d['defis'] = rec[3][1:]
-            if len(rec[4]) > 0:
-                d['alts'] = rec[4]
-            self.glos.data.append((rec[0], rec[3][0][0], d))
-
     def readResources(self):
         baseDirPath = os.path.dirname(self.fileBasePath)
         resDirPath = join(baseDirPath, 'res')
@@ -310,16 +310,20 @@ class StarDictWriter:
         self.fileBasePath = fileBasePath
 
     def run(self, dictZip, resOverwrite):
-        self.glos.data.sort(stardict_strcmp, lambda x: x[0])
+        ## self.glos.data.sort(key=lambda x: stardictStrKey(x[0]))
+        ## no more direct access to glos.data
+        ## no support for cmp argument because it's not supported in Python 3
+        self.glos.sortWords(key=stardictStrKey)
 
-        if self.GlossaryHasAdditionalDefinitions():
-            self.writeGeneral()
-        else:
-            articleFormat = self.DetectMainDefinitionFormat()
-            if articleFormat == None:
-                self.writeGeneral()
-            else:
-                self.writeCompact(articleFormat)
+        self.writeGeneral()
+        #if self.glossaryHasAdditionalDefinitions():
+        #    self.writeGeneral()
+        #else:
+        #    defiFormat = self.detectMainDefinitionFormat()
+        #    if defiFormat == None:
+        #        self.writeGeneral()
+        #    else:
+        #        self.writeCompact(defiFormat)
 
         if dictZip:
             runDictzip(self.fileBasePath)
@@ -329,37 +333,37 @@ class StarDictWriter:
             resOverwrite
         )
 
-    def writeCompact(self, articleFormat):
-        """
-            Build StarDict dictionary with sametypesequence option specified.
-            Every item definition consists of a single article.
-            All articles have the same format, specified in articleFormat parameter.
-
-            Parameters:
-            articleFormat - format of article definition: h - html, m - plain text
-        """
-        dictMark = 0
-        idxStr = ''
-        dictStr = ''
-        alternates = [] # contains tuples ('alternate', index-of-word)
-        for i in xrange(len(self.glos.data)):
-            item = self.glos.data[i]
-            word, defi = item[:2]
-            if len(item) > 2 and 'alts' in item[2]:
-                alternates += [(x, i) for x in item[2]['alts']]
-            dictStr += defi
-            defiLen = len(defi)
-            idxStr += word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(defiLen, 4)
-            dictMark += defiLen
-        with open(self.fileBasePath+'.dict', 'wb') as f:
-            f.write(dictStr)
-        with open(self.fileBasePath+'.idx', 'wb') as f:
-            f.write(idxStr)
-        indexFileSize = len(idxStr)
-        del idxStr, dictStr
-
-        self.writeSynFile(alternates)
-        self.writeIfoFile(indexFileSize, len(alternates), articleFormat)
+#    def writeCompact(self, defiFormat):
+#        """
+#            Build StarDict dictionary with sametypesequence option specified.
+#            Every item definition consists of a single article.
+#            All articles have the same format, specified in defiFormat parameter.
+#
+#            Parameters:
+#            defiFormat - format of article definition: h - html, m - plain text
+#        """
+#        dictMark = 0
+#        idxStr = ''
+#        dictStr = ''
+#        alternates = [] # contains tuples ('alternate', index-of-word)
+#        for i, entry in enumerate(self.glos):
+#            words = entry.getWords()
+#            defi = entry.getDefi()
+#            for altWord in words[1:]:
+#                alternates.append((altWord, i))
+#            dictStr += defi
+#            defiLen = len(defi)
+#            idxStr += words[0] + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(defiLen, 4)
+#            dictMark += defiLen
+#        with open(self.fileBasePath+'.dict', 'wb') as f:
+#            f.write(dictStr)
+#        with open(self.fileBasePath+'.idx', 'wb') as f:
+#            f.write(idxStr)
+#        indexFileSize = len(idxStr)
+#        del idxStr, dictStr
+#
+#        self.writeSynFile(alternates)
+#        self.writeIfoFile(indexFileSize, len(alternates), defiFormat)
 
     def writeGeneral(self):
         """
@@ -368,39 +372,46 @@ class StarDictWriter:
             sametypesequence option is not used.
         """
         dictMark = 0
-        idxStr = ''
-        dictStr = ''
+        #idxStr = ''
+        #dictStr = ''
         alternates = [] # contains tuples ('alternate', index-of-word)
-        for i in xrange(len(self.glos.data)):
-            item = self.glos.data[i]
-            word, defi = item[:2]
-            if len(item) > 2 and 'alts' in item[2]:
-                alternates += [(x, i) for x in item[2]['alts']]
-            if len(item) > 2 and 'defiFormat' in item[2]:
-                articleFormat = item[2]['defiFormat']
-                if articleFormat not in 'mh':
-                    articleFormat = 'm'
-            else:
-                articleFormat = 'm'
-            assert isinstance(articleFormat, str) and len(articleFormat) == 1
-            dictStr += articleFormat
-            dictStr += defi + '\x00'
-            dataLen = 1 + len(defi) + 1
-            if len(item) > 2 and 'defis' in item[2]:
-                for rec in item[2]['defis']:
-                    defi, t = rec[:2]
-                    assert isinstance(t, str) and len(t) == 1
-                    dictStr += t
-                    dictStr += defi + '\x00'
-                    dataLen += 1 + len(defi) + 1
-            idxStr += word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(dataLen, 4)
+
+        dictFp = open(self.fileBasePath+'.dict', 'wb')
+        idxFp = open(self.fileBasePath+'.idx', 'wb')
+        indexFileSize = 0
+
+        for i, entry in enumerate(self.glos):
+
+            words = entry.getWords()## list
+            word = words[0]
+            defis = entry.getDefis()## list
+
+            defiFormat = entry.getDefiFormat()
+            if defiFormat not in ('m', 'h'):
+                defiFormat = 'm'
+            #assert isinstance(defiFormat, str) and len(defiFormat) == 1
+
+            dictBlock = ''
+            
+            for altWord in words[1:]:
+                alternates.append((altWord, i))
+
+            dictBlock += defiFormat + defis[0] + '\x00'
+
+            for altDefi in defis[1:]:
+                dictBlock += defiFormat + altDefi + '\x00'
+            
+            dictFp.write(dictBlock)
+            
+            dataLen = len(dictBlock)
+            idxBlock = word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(dataLen, 4)
+            idxFp.write(idxBlock)
+            
             dictMark += dataLen
-        with open(self.fileBasePath+'.dict', 'wb') as f:
-            f.write(dictStr)
-        with open(self.fileBasePath+'.idx', 'wb') as f:
-            f.write(idxStr)
-        indexFileSize = len(idxStr)
-        del idxStr, dictStr
+            indexFileSize += len(idxBlock)
+
+        dictFp.close()
+        idxFp.close()
 
         self.writeSynFile(alternates)
         self.writeIfoFile(indexFileSize, len(alternates))
@@ -410,7 +421,7 @@ class StarDictWriter:
             Build .syn file
         """
         if len(alternates) > 0:
-            alternates.sort(stardict_strcmp, lambda x: x[0])
+            alternates.sort(key=lambda x: stardictStrKey(x[0]))
             synStr = ''
             for item in alternates:
                 synStr += item[0] + '\x00' + intToBinStr(item[1], 4)
@@ -425,7 +436,7 @@ class StarDictWriter:
         ifoStr = "StarDict's dict ifo file\n" \
             + "version=3.0.0\n" \
             + "bookname={0}\n".format(new_lines_2_space(self.glos.getInfo('name'))) \
-            + "wordcount={0}\n".format(len(self.glos.data)) \
+            + "wordcount={0}\n".format(len(self.glos)) \
             + "idxfilesize={0}\n".format(indexFileSize)
         if sametypesequence != None:
             ifoStr += "sametypesequence={0}\n".format(sametypesequence)
@@ -472,36 +483,31 @@ Clean the output directory before running the converter or pass option: --write-
             os.rmdir(toPath)
         shutil.copytree(fromPath, toPath)
 
-    def GlossaryHasAdditionalDefinitions(self):
+    def glossaryHasAdditionalDefinitions(self):
         """
             Search for additional definitions in the glossary.
             We need to know if the glossary contains additional definitions
             to make the decision on the format of the StarDict dictionary.
         """
-        for rec in self.glos.data:
-            if len(rec) > 2 and 'defis' in rec[2]:
+        for entry in self.glos:
+            if len(entry.getDefis()) > 1:
                 return True
         return False
 
-    def DetectMainDefinitionFormat(self):
+    def detectMainDefinitionFormat(self):
         """
             Scan main definitions of the glossary. Return format common to all definitions: h or m.
             If definitions has different formats return None.
         """
-        articleFormat = None
-        for rec in self.glos.data:
-            if len(rec) > 2 and 'defiFormat' in rec[2]:
-                f = rec[2]['defiFormat']
-                if f not in 'hm':
-                    f = 'm'
-            else:
-                f = 'm'
-            if articleFormat == None:
-                articleFormat = f
-            if articleFormat != f:
-                return None
-        return articleFormat
-
+        self.glos.setDefaultDefiFormat('m')
+        formatsCount = self.glos.getMostUsedDefiFormats()
+        if not formatsCount:
+            return None
+        if len(formatsCount) > 1:## FIXME
+            return None
+        
+        return formatsCount[0]
+        
 
 def verifySameTypeSequence(s):
     if not s:
@@ -520,88 +526,6 @@ def write(glos, filename, dictZip=True, resOverwrite=False):
     writer = StarDictWriter(glos, filename)
     writer.run(dictZip, resOverwrite)
 
-def read_ext(glos, filename):
-    ## This method uses module provided by dictconv, but dictconv is very slow for reading from stardict db!
-    ## therefore this method in not used by GUI now.
-    ## and binary module "_stardict" is deleted.
-    ## If you want to use it, compile it yourglos, or get it from an older version of PyGlossary (version 2008.08.30)
-    glos.data = []
-    import _stardict
-    db = _stardict.new_StarDict(filename)
-    _stardict.PySwigIterator_swigregister(db)
-    glos.setInfo('title', _stardict.StarDict_bookname(db))
-    glos.setInfo('author', _stardict.StarDict_bookname(db))
-    glos.setInfo('title', _stardict.StarDict_bookname(db))
-    ## geting words:
-    idxStr = open(filename[:-4]+'.idx').read()
-    words=[]
-    # get words list by python codes.
-    word=''
-    i=0
-    while i < len(idxStr):
-        if idxStr[i]=='\x00':
-            if word!='':
-                words.append(word)
-                word = ''
-            i += 9
-        else:
-            word += idxStr[i]
-            i += 1
-
-    ui = glos.ui
-    n = len(words)
-    i=0
-    if ui==None:
-        for word in words:
-            defi = _stardict.StarDict_search(db, word).replace('<BR>', '\n')
-            glos.data.append((word, defi))
-    else:
-        ui.progressStart()
-        k = 1000
-        for i in xrange(n):
-            word = words[i]
-            defi = _stardict.StarDict_search(db, word).replace('<BR>', '\n')
-            glos.data.append((word, defi))
-            if i%k==0:
-                rat = float(i)/n
-                ui.progress(rat)
-        #ui.progress(1.0, 'Loading Completed')
-        ui.progressEnd()
-
-
-def write_ext(glos, filename, sort=True, dictZip=True):
-    if sort:
-        g = glos.copy()
-        g.data.sort()
-    else:
-        g = glos
-    try:
-        import _stardictbuilder
-    except ImportError:
-        log.error('Binary module "_stardictbuilder" can not be imported! '+\
-            'Using internal StarDict builder')
-        return g.writeStardict(filename, sort=False)
-    db = _stardictbuilder.new_StarDictBuilder(filename)
-    _stardictbuilder.StarDictBuilder_swigregister(db)
-    for item in g.data:
-        _stardictbuilder.StarDictBuilder_addHeadword(db, item[0], item[1], '')
-    _stardictbuilder.StarDictBuilder_setTitle(db, g.getInfo('name'))
-    _stardictbuilder.StarDictBuilder_setAuthor(db, g.getInfo('author'))
-    _stardictbuilder.StarDictBuilder_setLicense(db, g.getInfo('license'))
-    _stardictbuilder.StarDictBuilder_setOrigLang(db, g.getInfo('origLang'))
-    _stardictbuilder.StarDictBuilder_setDestLang(db, g.getInfo('destLang'))
-    _stardictbuilder.StarDictBuilder_setDescription(db, g.getInfo('description'))
-    _stardictbuilder.StarDictBuilder_setComments(db, g.getInfo('comments'))
-    _stardictbuilder.StarDictBuilder_setEmail(db, g.getInfo('email'))
-    _stardictbuilder.StarDictBuilder_setWebsite(db, g.getInfo('website'))
-    _stardictbuilder.StarDictBuilder_setVersion(db, g.getInfo('version'))
-    _stardictbuilder.StarDictBuilder_setcreationTime(db, '')
-    _stardictbuilder.StarDictBuilder_setLastUpdate(db, '')
-    _stardictbuilder.StarDictBuilder_finish(db)
-    if dictZip:
-        if filename[-4:]=='.ifo':
-            filename = filename[:-4]
-            runDictzip(filename)
 
 def splitStringIntoLines(s):
     """
@@ -664,6 +588,16 @@ def ascii_strcasecmp(s1, s2):
             return c1 - c2
     return len(s1) - len(s2)
 
+
+def strKey(st):
+    return [ord(c) for c in st]
+
+def strLowerKey(st):
+    return [ord(asciiLower(c)) for c in st]
+
+def stardictStrKey(st):
+    return strLowerKey(st) + strKey(st)
+
 def strcmp(s1, s2):
     """
         imitate strcmp of standard C library
@@ -674,24 +608,22 @@ def strcmp(s1, s2):
         Since we need predictable sorting order in StarDict dictionary, we need to preserve
         this function despite the fact there are other ways to implement it.
     """
-    commonLen = min(len(s1), len(s2))
-    for i in xrange(commonLen):
-        c1 = ord(s1[i])
-        c2 = ord(s2[i])
-        if c1 != c2:
-            return c1 - c2
-    return len(s1) - len(s2)
+    return cmp(
+        strKey(s1),
+        strKey(s2),
+    )
+
 
 def stardict_strcmp(s1, s2):
     """
         use this function to sort index items in StarDict dictionary
         s1 and s2 must be utf-8 encoded strings
     """
-    a = ascii_strcasecmp(s1, s2)
-    if a == 0:
-        return strcmp(s1, s2)
-    else:
-        return a
+    return cmp(
+        stardictStrKey(s1),
+        stardictStrKey(s2),
+    )
+
 
 def new_lines_2_space(text):
     return re.sub('[\n\r]+', ' ', text)

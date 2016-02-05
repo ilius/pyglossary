@@ -18,45 +18,49 @@ writeOptions = [
 
 from pyglossary.text_utils import recodeToWinArabic
 
+def entryRecodeToWinArabic(entry):
+    entry.editFuncWord(recodeToWinArabic)
+    entry.editFuncDefi(recodeToWinArabic)
+    return entry
+
 def write(glos, filename, writeInfo=True, newline='', encoding=''):
     g = glos
+    entryFilterFunc = None
     if encoding.lower() in ('', 'utf8', 'utf-8'):
         encoding = 'UTF-8'
-    else:
-        g = glos.copy()
-        if encoding.lower() in (
-            'arabic',
-            'windows-1256',
-            'windows-arabic',
-            'arabic-windows',
-            'arabic windows',
-            'windows arabic',
-        ):
-            encoding = 'Arabic'
-            for i in xrange(len(g.data)):
-                for j in 0, 1:
-                    g.data[i][j] = recodeToWinArabic(g.data[i][j])
-            if not newline:
-                newline='\r\n'
-        else:
-            for i in xrange(len(g.data)):
-                for j in 0, 1:
-                    g.data[i][j] = g.data[i][j].decode('utf8').encode(encoding)
+    elif encoding.lower() in (
+        'arabic',
+        'windows-1256',
+        'windows-arabic',
+        'arabic-windows',
+        'arabic windows',
+        'windows arabic',
+    ):
+        encoding = 'Arabic'
+        entryFilterFunc = entryRecodeToWinArabic
+        if not newline:
+            newline='\r\n'
+
     if not newline:
         newline = '\n'
+
     head = ''
     if writeInfo:
-        head += '### Glossary title:%s%s' %(g.getInfo('name'), newline)
-        head += '### Author:%s%s'%(g.getInfo('author'), newline)
-        head += '### Description:%s%s'%(g.getInfo('description'), newline)
-        head += '### Source language:%s%s'%(g.getInfo('inputlang'), newline)
-        head += '### Source alphabet:%s%s'%(encoding, newline)
-        head += '### Target language:%s%s'%(g.getInfo('outputlang'), newline)
-        head += '### Target alphabet:%s%s'%(encoding, newline)
-        head += '### Browsing enabled?Yes%s'%newline
-        head += '### Type of glossary:00000000%s'%newline
-        head += '### Case sensitive words?0%s'%newline
-        head += '%s### Glossary section:%s'%(newline, newline)
+        head += newline.join([
+            '### Glossary title:%s'%g.getInfo('name'),
+            '### Author:%s'%g.getInfo('author'),
+            '### Description:%s'%g.getInfo('description'),
+            '### Source language:%s'%g.getInfo('inputlang'),
+            '### Source alphabet:%s'%encoding,
+            '### Target language:%s'%g.getInfo('outputlang'),
+            '### Target alphabet:%s'%encoding,
+            '### Browsing enabled?Yes',
+            '### Type of glossary:00000000',
+            '### Case sensitive words?0'
+            '%s### Glossary section:',
+            '',
+        ])
+
     g.writeTxt(
         (newline, newline*2),
         filename=filename,
@@ -66,5 +70,6 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
         ),
         ext='.gls',
         head=head,
+        entryFilterFunc=entryFilterFunc,
     )
 

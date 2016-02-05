@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
+import subprocess
 
 enable = True
 format = 'Treedict'
@@ -17,23 +18,29 @@ def write(glos, filename, archive='tar.bz2', sep=os.sep):
                 log.warn('Warning: directory "%s" is not empty.')
         else:
             raise IOError('"%s" is not a directory')
-    for item in glos.data:
-        if item[0]=='':
-            log.error('empty word')
-            continue
-        chars = list(item[0])
-        try:
-            os.makedirs(filename + os.sep + sep.join(chars[:-1]))
-        except:
-            pass
-        try:
-            open('%s%s%s.m'%(
-                filename,
-                os.sep,
-                sep.join(chars),
-            ), 'wb').write(item[1])
-        except:
-            log.exception()
+    for entry in glos:
+        defi = entry.getDefi()
+        for word in entry.getWords():
+            if not word:
+                log.error('empty word')
+                continue
+            word = toUnicode(word)
+            chars = list(word)
+            try:
+                os.makedirs(filename + os.sep + sep.join(chars[:-1]))
+            except:
+                pass
+            try:
+                open(
+                    '%s%s%s.m'%(
+                        filename,
+                        os.sep,
+                        sep.join(chars),
+                    ),
+                    'ab',
+                ).write(defi)
+            except:
+                log.exception()
     if archive:
         if archive=='tar.gz':
             (output, error) = subprocess.Popen(

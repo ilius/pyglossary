@@ -11,13 +11,13 @@ writeOptions = []
 
 def read(glos, filename): ## glos is a Glossary object, filename is a string
     log.info('reading from format %s using plugin'%format)
-    glos.data = []
+    glos.clear()
     count = 100 ## get number of entries from input file(depending on your format)
     for i in range(count):
-        ## here get word and meaning from file(depending on your format)
+        ## here get word and definition from file(depending on your format)
         word = 'word_%s'%i
-        mean = 'meaning %s'%i
-        glos.data.append([word, mean])
+        defi = 'definition %s'%i
+        glos.addEntry(word, defi)
     ## here read info from file and set to Glossary object
     glos.setInfo('name', 'Test')
     glos.setInfo('descriptin', 'Test glossary craeted by a PyGlossary plugin')
@@ -28,11 +28,11 @@ def read(glos, filename): ## glos is a Glossary object, filename is a string
 
 def write(glos, filename): ## glos is a Glossary object, filename is a string
     log.info('writing to format %s using plugin'%format)
-    count = len(glos.data)
-    for i in range(count):
-        word = glos.data[i][0]
-        mean = glos.data[i][1]
-        ## here write word and mean to the output file (depending on your format)
+    #wordCount = len(glos) ## you probably won't need it
+    for entry in glos:
+        word = entry.getWord()
+        defi = entry.getDefi()
+        ## here write word and defi to the output file (depending on your format)
     ## here read info from Glossaey object
     name = glos.getInfo('name')
     descriptin = glos.getInfo('descriptin')

@@ -212,7 +212,7 @@ def read(glos, filename):## not tested ## FIXME
     os.chdir(filename)
     indLines = open('index').read().split('\n')[3:]
     n = len(indLines)-1
-    glos.data = []
+    glos.clear()
     for i in xrange(n):
         pmd = open(str(i)).read()
         for part in pmd.split('\x00'):
@@ -222,20 +222,27 @@ def read(glos, filename):## not tested ## FIXME
                 continue
             word = part[:sepInd]
             defi = part[sepInd+1:]
-            glos.data.append((word, defi))
+            glos.addEntry(word, defi)
     os.chdir(initCwd)
 
 def write(glos, filename):
+    ## FIXME must be migrated to Glossary structure
+    ## no more glos.data
+    ## must use `for entry in glos`
     initCwd = os.getcwd()
     if not os.path.isdir(filename):
         os.mkdir(filename)
     os.chdir(filename)
-    maxLen = max([len(x[0]+x[1]) for x in glos.data])
+    maxLen = max(
+        len(
+            entry.getWord() + entry.getDefi()
+        ) for entry in glos
+    )
     indexFp = open('index', 'wb')
-    n = len(glos.data)
-    indexFp.write('%s\n'%n)
-    s = 200
-    (d, m) = divmod(n, s)
+    wordCount = len(glos)
+    indexFp.write('%s\n'%wordCount)
+    size = 200
+    (d, m) = divmod(wordCount, size)
     if m > 0:
         k2 = d-1
     else:
@@ -246,7 +253,7 @@ def write(glos, filename):
     if ui:
         ui.progressStart()
     for k in xrange(k2):
-        i = k*s
+        i = k * size
         indexFp.write('%s\t%s\n'%(glos.data[i][0], i+1))
         fp = open(str(k), 'wb')
         for j in xrange(i, i+s):
@@ -261,7 +268,7 @@ def write(glos, filename):
     indexFp.write(glos.data[-1][0])
     indexFp.close()
     fp = open(str(d), 'wb')
-    for j in xrange(d*s, n):
+    for j in xrange(d*s, wordCount):
         fp.write('%s\x09%s\x00'%(
             glos.data[j][0],
             pmdCompile(glos.data[j][1].decode('utf-8')),
