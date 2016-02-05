@@ -264,6 +264,15 @@ class Glossary:
         self._entryIndex = 0
 
     def iterEntryBuckets(self, size):
+        """
+            iterate over buckets of entries, with size `size`
+            For example:
+                for bucket in glos.iterEntryBuckets(100):
+                    assert len(bucket) == 100
+                    for entry in bucket:
+                        print(entry.getWord())
+                    print('-----------------')
+        """
         bucket = []
         for entry in self:
             if len(bucket) >= size:
