@@ -269,7 +269,7 @@ def new_line_escape_string(text):
     """
     return re.sub('[\\r\\n\\\\]', new_line_escape_string_callback, text)
 
-class BGL:
+class BglReader:
     class Block:
         def __init__(self):
             self.data = ''
@@ -360,17 +360,17 @@ class BGL:
         """
             gzip.GzipFile with check. It checks that unpacked data match what was packed.
         """
-        def __init__(self, gzipFile, unpackedPath, db):
+        def __init__(self, gzipFile, unpackedPath, reader):
             """
                 constructor
 
                 gzipFile - gzip file - archive
                 unpackedPath - path of a file containing original data, for testing.
-                db - reference to BGL class instance, used for logging.
+                reader - reference to BglReader class instance, used for logging.
             """
             self.file = BGLGzipFile(fileobj=gzipFile)
             self.unpacked_file = open(unpackedPath, 'rb')
-            self.db = db
+            self.reader = reader
         def __del__(self):
             self.close()
         def close(self):
@@ -384,21 +384,21 @@ class BGL:
             buf1 = self.file.read(size)
             buf2 = self.unpacked_file.read(size)
             if buf1 != buf2:
-                self.db.msg_log_file_write('GzipWithCheck.read: !=: size = {2}, ({0}) ({1})'.format(buf1, buf2, size))
+                self.reader.msg_log_file_write('GzipWithCheck.read: !=: size = {2}, ({0}) ({1})'.format(buf1, buf2, size))
             #else:
-                #self.db.msg_log_file_write('GzipWithCheck.read: ==: size = {2}, ({0}) ({1})'.format(buf1, buf2, size))
+                #self.reader.msg_log_file_write('GzipWithCheck.read: ==: size = {2}, ({0}) ({1})'.format(buf1, buf2, size))
             return buf1
         def seek(self, offset, whence=os.SEEK_SET):
             self.file.seek(offset, whence)
             self.unpacked_file.seek(offset, whence)
-            #self.db.msg_log_file_write('GzipWithCheck.seek: offset = {0}, whence = {1}'.format(offset, whence))
+            #self.reader.msg_log_file_write('GzipWithCheck.seek: offset = {0}, whence = {1}'.format(offset, whence))
         def tell(self):
             pos1 = self.file.tell()
             pos2 = self.unpacked_file.tell()
             if pos1 != pos2:
-                self.db.msg_log_file_write('GzipWithCheck.tell: !=: {0} {1}'.format(pos1, pos2))
+                self.reader.msg_log_file_write('GzipWithCheck.tell: !=: {0} {1}'.format(pos1, pos2))
             #else:
-                #self.db.msg_log_file_write('GzipWithCheck.tell: ==: {0} {1}'.format(pos1, pos2))
+                #self.reader.msg_log_file_write('GzipWithCheck.tell: ==: {0} {1}'.format(pos1, pos2))
             return pos1
         def flush(self):
             if os.sep=='\\':
@@ -2781,21 +2781,21 @@ class BGL:
 
 def read(glos, filename, **options):
     glos.data = []
-    db = BGL(filename, **options)
-    if not db.open():
+    reader = BglReader(filename, **options)
+    if not reader.open():
         raise IOError('can not open BGL file "{0}"'.format(filename))
-    if not db.read():
+    if not reader.read():
         raise IOError('can not read BGL file "{0}"'.format(filename))
-    n = db.numEntries
+    n = reader.numEntries
     ui = glos.ui
     if not isinstance(n, int):
         ui = None
-    entry = BGL.Entry()
+    entry = BglReader.Entry()
     if ui:
         ui.progressStart()
     k = 2000
     for i in xrange(n):
-        if not db.readEntry(entry):
+        if not reader.readEntry(entry):
             log.error('No enough entries found!')
             break
         glos.data.append((entry.word, entry.defi, {'alts': entry.alts, 'defiFormat': 'h'}))
@@ -2804,24 +2804,24 @@ def read(glos, filename, **options):
             ui.progress(rat)
     if ui:
         ui.progressEnd()
-    db.close()
+    reader.close()
     ##############################################
-    glos.setInfo('title', db.title)
-    glos.setInfo('author', db.author)
-    glos.setInfo('email', db.email)
-    glos.setInfo('description', db.description)
-    glos.setInfo('copyright', db.copyright)
-    glos.setInfo('sourceLang', db.sourceLang)
-    glos.setInfo('targetLang', db.targetLang)
-    glos.setInfo('bgl_defaultCharset', db.defaultCharset)
-    glos.setInfo('bgl_sourceCharset', db.sourceCharset)
-    glos.setInfo('bgl_targetCharset', db.targetCharset)
-    glos.setInfo('bgl_creationTime', db.creationTime)
-    glos.setInfo('bgl_middleUpdated', db.middleUpdated) ## ??????????
-    glos.setInfo('bgl_lastUpdated', db.lastUpdated) ## probably empty
+    glos.setInfo('title', reader.title)
+    glos.setInfo('author', reader.author)
+    glos.setInfo('email', reader.email)
+    glos.setInfo('description', reader.description)
+    glos.setInfo('copyright', reader.copyright)
+    glos.setInfo('sourceLang', reader.sourceLang)
+    glos.setInfo('targetLang', reader.targetLang)
+    glos.setInfo('bgl_defaultCharset', reader.defaultCharset)
+    glos.setInfo('bgl_sourceCharset', reader.sourceCharset)
+    glos.setInfo('bgl_targetCharset', reader.targetCharset)
+    glos.setInfo('bgl_creationTime', reader.creationTime)
+    glos.setInfo('bgl_middleUpdated', reader.middleUpdated) ## ??????????
+    glos.setInfo('bgl_lastUpdated', reader.lastUpdated) ## probably empty
     glos.setInfo('sourceCharset', 'UTF-8')
     glos.setInfo('targetCharset', 'UTF-8')
-    glos.resPath = db.resPath
+    glos.resPath = reader.resPath
 
 
 try:
@@ -2829,4 +2829,4 @@ try:
 except:
     pass
 else:
-    psyco.bind(BGL)
+    psyco.bind(BglReader)
