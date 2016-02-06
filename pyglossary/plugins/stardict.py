@@ -21,6 +21,129 @@ from pyglossary.text_utils import intToBinStr, binStrToInt, runDictzip
 
 infoKeys = ('bookname', 'author', 'email', 'website', 'description', 'date')
 
+
+def isAsciiAlpha(c):
+    return (ord(c) >= ord('A') and ord(c) <= ord('Z')) or (ord(c) >= ord('a') and ord(c) <= ord('z'))
+
+def isAsciiLower(c):
+    return ord(c) >= ord('a') and ord(c) <= ord('z')
+
+def isAsciiUpper(c):
+    """
+        imitate ISUPPER macro of glib library gstrfuncs.c file
+    """
+    return ord(c) >= ord('A') and ord(c) <= ord('Z')
+
+def asciiLower(c):
+    """
+        imitate TOLOWER macro of glib library gstrfuncs.c file
+
+        This function converts upper case Latin letters to corresponding lower case letters,
+        other chars are not changed.
+
+        c must be non-Unicode string of length 1.
+        You may apply this function to individual bytes of non-Unicode string.
+        The following encodings are allowed: single byte encoding like koi8-r, cp1250, cp1251, cp1252, etc,
+        and utf-8 encoding.
+
+        Attention! Python Standard Library provides str.lower() method.
+        It is not a correct replacement for this function.
+        For non-unicode string str.lower() is locale dependent, it not only converts Latin
+        letters to lower case, but also locale specific letters will be converted.
+    """
+    if isAsciiUpper(c):
+        return chr((ord(c) - ord('A')) + ord('a'))
+    else:
+        return c
+
+def strKey(st):
+    return [ord(c) for c in st]
+
+def strLowerKey(st):
+    return [ord(asciiLower(c)) for c in st]
+
+def stardictStrKey(st):
+    return strLowerKey(st) + strKey(st)
+
+def ascii_strcasecmp(s1, s2):
+    """
+        imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file
+    """
+    commonLen = min(len(s1), len(s2))
+    for i in xrange(commonLen):
+        c1 = ord(asciiLower(s1[i]))
+        c2 = ord(asciiLower(s2[i]))
+        if c1 != c2:
+            return c1 - c2
+    return len(s1) - len(s2)
+
+def strcmp(s1, s2):
+    """
+        imitate strcmp of standard C library
+
+        Attention! You may have a temptation to replace this function with built-in cmp() function.
+        Hold on! Most probably these two function behave identically now, but cmp does not
+        document how it compares strings. There is no guaranty it will not be changed in future.
+        Since we need predictable sorting order in StarDict dictionary, we need to preserve
+        this function despite the fact there are other ways to implement it.
+    """
+    commonLen = min(len(s1), len(s2))
+    for i in xrange(commonLen):
+        c1 = ord(s1[i])
+        c2 = ord(s2[i])
+        if c1 != c2:
+            return c1 - c2
+    return len(s1) - len(s2)
+
+def stardict_strcmp(s1, s2):
+    """
+        use this function to sort index items in StarDict dictionary
+        s1 and s2 must be utf-8 encoded strings
+    """
+    a = ascii_strcasecmp(s1, s2)
+    if a == 0:
+        return strcmp(s1, s2)
+    else:
+        return a
+
+def stardict_strcmp_new(s1, s2):
+    """
+        For testing key function stardictStrKey
+        and making sure it's exactly the same as stardict_strcmp
+        
+        s1 and s2 must be utf-8 encoded strings
+    """
+    return cmp(
+        stardictStrKey(s1),
+        stardictStrKey(s2),
+    )
+
+
+def splitStringIntoLines(s):
+    """
+        Split string s into lines.
+        Accept any line separator: '\r\n', '\r', '\n'
+    """
+    res = []
+    beg = 0
+    end = 0
+    while end < len(s):
+        while end < len(s) and s[end] != '\r' and s[end] != '\n':
+            end += 1
+        res.append(s[beg:end])
+        if end+1 < len(s) and s[end] == '\r' and s[end+1] == '\n':
+            end += 1
+        beg = end = end + 1
+    return res
+
+def new_lines_2_space(text):
+    return re.sub('[\n\r]+', ' ', text)
+
+def new_line_2_br(text):
+    return re.sub('\n\r?|\r\n?', '<br>', text)
+
+
+
 class StarDictReader:
     def __init__(self, glos, filename):
         self.glos = glos
@@ -526,108 +649,4 @@ def write(glos, filename, dictZip=True, resOverwrite=False):
     writer = StarDictWriter(glos, filename)
     writer.run(dictZip, resOverwrite)
 
-
-def splitStringIntoLines(s):
-    """
-        Split string s into lines.
-        Accept any line separator: '\r\n', '\r', '\n'
-    """
-    res = []
-    beg = 0
-    end = 0
-    while end < len(s):
-        while end < len(s) and s[end] != '\r' and s[end] != '\n':
-            end += 1
-        res.append(s[beg:end])
-        if end+1 < len(s) and s[end] == '\r' and s[end+1] == '\n':
-            end += 1
-        beg = end = end + 1
-    return res
-
-def isAsciiAlpha(c):
-    return (ord(c) >= ord('A') and ord(c) <= ord('Z')) or (ord(c) >= ord('a') and ord(c) <= ord('z'))
-
-def isAsciiLower(c):
-    return ord(c) >= ord('a') and ord(c) <= ord('z')
-
-def isAsciiUpper(c):
-    """
-        imitate ISUPPER macro of glib library gstrfuncs.c file
-    """
-    return ord(c) >= ord('A') and ord(c) <= ord('Z')
-
-def asciiLower(c):
-    """
-        imitate TOLOWER macro of glib library gstrfuncs.c file
-
-        This function converts upper case Latin letters to corresponding lower case letters,
-        other chars are not changed.
-
-        c must be non-Unicode string of length 1.
-        You may apply this function to individual bytes of non-Unicode string.
-        The following encodings are allowed: single byte encoding like koi8-r, cp1250, cp1251, cp1252, etc,
-        and utf-8 encoding.
-
-        Attention! Python Standard Library provides str.lower() method.
-        It is not a correct replacement for this function.
-        For non-unicode string str.lower() is locale dependent, it not only converts Latin
-        letters to lower case, but also locale specific letters will be converted.
-    """
-    if isAsciiUpper(c):
-        return chr((ord(c) - ord('A')) + ord('a'))
-    else:
-        return c
-
-def ascii_strcasecmp(s1, s2):
-    'imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file'
-    commonLen = min(len(s1), len(s2))
-    for i in xrange(commonLen):
-        c1 = ord(asciiLower(s1[i]))
-        c2 = ord(asciiLower(s2[i]))
-        if c1 != c2:
-            return c1 - c2
-    return len(s1) - len(s2)
-
-
-def strKey(st):
-    return [ord(c) for c in st]
-
-def strLowerKey(st):
-    return [ord(asciiLower(c)) for c in st]
-
-def stardictStrKey(st):
-    return strLowerKey(st) + strKey(st)
-
-def strcmp(s1, s2):
-    """
-        imitate strcmp of standard C library
-
-        Attention! You may have a temptation to replace this function with built-in cmp() function.
-        Hold on! Most probably these two function behave identically now, but cmp does not
-        document how it compares strings. There is no guaranty it will not be changed in future.
-        Since we need predictable sorting order in StarDict dictionary, we need to preserve
-        this function despite the fact there are other ways to implement it.
-    """
-    return cmp(
-        strKey(s1),
-        strKey(s2),
-    )
-
-
-def stardict_strcmp(s1, s2):
-    """
-        use this function to sort index items in StarDict dictionary
-        s1 and s2 must be utf-8 encoded strings
-    """
-    return cmp(
-        stardictStrKey(s1),
-        stardictStrKey(s2),
-    )
-
-
-def new_lines_2_space(text):
-    return re.sub('[\n\r]+', ' ', text)
-
-def new_line_2_br(text):
-    return re.sub('\n\r?|\r\n?', '<br>', text)
 
