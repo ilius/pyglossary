@@ -16,6 +16,7 @@ import os, re, shutil
 import os.path
 from os.path import join, split, splitext, isfile, isdir
 from collections import Counter
+from functools import cmp_to_key
 
 from pyglossary.text_utils import intToBinStr, binStrToInt, runDictzip
 
@@ -433,10 +434,12 @@ class StarDictWriter:
         self.fileBasePath = fileBasePath
 
     def run(self, dictZip, resOverwrite):
-        ## self.glos.data.sort(key=lambda x: stardictStrKey(x[0]))
-        ## no more direct access to glos.data
+        ## no more direct access to glos.data, must use glos.sortWords for sorting
         ## no support for cmp argument because it's not supported in Python 3
-        self.glos.sortWords(key=stardictStrKey)
+        ## using my key function `stardictStrKey` might not be safe
+        #self.glos.sortWords(key=stardictStrKey)
+        ## the safest way in Python 3 is using functools.cmp_to_key
+        self.glos.sortWords(key=cmp_to_key(stardict_strcmp))
 
         self.writeGeneral()
         #if self.glossaryHasAdditionalDefinitions():
