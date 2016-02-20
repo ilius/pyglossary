@@ -209,17 +209,20 @@ class Glossary:
         self.resPath = resPath
         self._defaultDefiFormat = 'm'
 
-        self.entryFilters = [
-            StripEntryFilter(self),
-            NonEmptyWordFilter(self),
-            FixUnicodeFilter(self),
-            LowerWordFilter(self),
-            LangEntryFilter(self),
-            CleanEntryFilter(self),
-            NonEmptyWordFilter(self),
-            NonEmptyDefiFilter(self),
-        ]
+        self.entryFilters = []
+        self.entryFilters.append(StripEntryFilter(self))
+        self.entryFilters.append(NonEmptyWordFilter(self))
 
+        if self.ui.pref['utf8_check']:
+            self.entryFilters.append(FixUnicodeFilter(self))
+
+        if self.ui.pref['lower']:
+            self.entryFilters.append(LowerWordFilter(self))
+
+        self.entryFilters.append(LangEntryFilter(self))
+        self.entryFilters.append(CleanEntryFilter(self))
+        self.entryFilters.append(NonEmptyWordFilter(self))
+        self.entryFilters.append(NonEmptyDefiFilter(self))
 
 
     __str__ = lambda self: 'glossary.Glossary'
