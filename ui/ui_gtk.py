@@ -330,7 +330,6 @@ class UI(UIBase):
         #self.iFormat = format
         self.iPath = iPath
         self.button_conv.set_sensitive(True)
-        self.glos.uiEdit()
         self.progress(1.0, 'Loading Comleted')
         log.debug('time left = %3f seconds'%(time.time()-t0))
         for x in self.glos.info:
@@ -354,7 +353,6 @@ class UI(UIBase):
             self.ptext = ' of file %s from %s files'%(i+1, n)
             log.info('Loading "%s" ...'%path)
             g.read(path)
-            g.uiEdit()
             log.info('%s words found'%len(g.data))
             if mode==0:
                 self.glos = self.glos.attach(g)
@@ -566,8 +564,6 @@ class UI(UIBase):
         log.debug('time left = %3f seconds'%(time.time()-t0))
         for x in self.glos.info:
             log.info('%s="%s"'%(x[0], x[1]))
-        #self.glosR.faEdit()
-        self.glosR.uiEdit()
         #self.riFormat = format
         #self.riPath = iPath
         log.info('reading %s file: "%s" done.\n%d words found.'%(
@@ -794,7 +790,6 @@ class UI(UIBase):
             format = Glossary.descFormat[self.fcd_format]
             self.glosE.read(self.dbe_path, format=format, **read_options)
         self.assert_quit = True
-        self.glosE.uiEdit()
         log.debug('time left = %3f seconds'%(time.time()-t0))
         for x in self.glos.info:
             log.info('%s="%s"'%(x[0], x[1]))

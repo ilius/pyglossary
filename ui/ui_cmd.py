@@ -227,7 +227,6 @@ class UI(UIBase):
             return 1
         ## When glossary reader uses progressbar, progressbar must be rebuilded:
         self.progressBuild()
-        g.uiEdit()
         if reverse:
             log.info('Reversing to file "%s"'%opath)
             self.setText('')
