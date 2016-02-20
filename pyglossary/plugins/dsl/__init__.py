@@ -29,7 +29,7 @@ enable = True
 format = 'ABBYYLingvoDSL'
 description = 'ABBYY Lingvo DSL (dsl)'
 extentions = ['.dsl']
-readOptions = ['encoding', 'audio']
+readOptions = ['encoding', 'audio', 'onlyFixMarkUp']
 writeOptions = []
 
 __all__ = ['read']
@@ -241,6 +241,12 @@ def unwrap_quotes(s):
 def read(glos, fname, **options):
     encoding = options.get('encoding', 'utf-8')
     audio = (options.get('audio', 'no') == 'yes')
+    onlyFixMarkUp = (options.get('onlyFixMarkUp', 'no') == 'yes')
+    if onlyFixMarkUp:
+        def clean_tags(line, audio):
+            return _parse(line)
+    else:
+        clean_tags = _clean_tags
 
     def setInfo(key, value):
         glos.setInfo(key, unwrap_quotes(value))
@@ -283,7 +289,7 @@ def read(glos, fname, **options):
             unfinished_line = ''
 
             # convert DSL tags to HTML tags
-            line = _clean_tags(line, audio)
+            line = clean_tags(line, audio)
             current_text.append(line)
         # title word(s)
         else:
@@ -296,7 +302,7 @@ def read(glos, fname, **options):
                 if line_type == 'text':
                     if unfinished_line:
                         # line may be skipped if ill formated
-                        current_text.append(_clean_tags(unfinished_line, audio))
+                        current_text.append(clean_tags(unfinished_line, audio))
                     glos.addEntry(
                         [current_key] + current_key_alters,
                         '\n'.join(current_text),
