@@ -428,7 +428,6 @@ class UI(gtk.Dialog, UIBase):
                 return False
             #self.inFormat = inFormat
             #self.inPath = inPath
-            self.glos.uiEdit()
             #self.progress(1.0, 'Loading Comleted')
             log.debug('running time of read: %3f seconds'%(time.time()-t0))
             for x in self.glos.info:
