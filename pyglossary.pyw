@@ -125,6 +125,18 @@ parser.add_argument(
 )
 parser.add_argument(
     #'-',
+    '--sort',
+    dest='sort',
+    action='store_true',
+)
+parser.add_argument(
+    #'-',
+    '--no-sort',
+    dest='sort',
+    action='store_false',
+)
+parser.add_argument(
+    #'-',
     '--no-color',
     dest='noColor',
     action='store_true',
@@ -259,6 +271,7 @@ write_options = parseFormatOptionsStr(args.write_options)
 ui_options_params = (
     'noProgressBar',
     #'verbosity',
+    'sort',
 )
 
 ui_options = {}
