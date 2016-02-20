@@ -82,13 +82,6 @@ def ref_sub(x):
 # order matters, a lot.
 shortcuts = [
     # canonical: m > * > ex > i > c
-    (r'[c][i][*][ex](.*?)[/ex][/*][/i][/c]', r'[*][ex][i][c]\g<1>[/c][/i][/ex][/*]'),
-    (r'[i][c][*][ex](.*?)[/ex][/*][/c][/i]', r'[*][ex][i][c]\g<1>[/c][/i][/ex][/*]'),
-    (r'[c][i][ex](.*?)[/ex][/i][/c]', r'[ex][i][c]\g<1>[/c][/i][/ex]'),
-    (r'[i][c][ex](.*?)[/ex][/c][/i]', r'[ex][i][c]\g<1>[/c][/i][/ex]'),
-    (r'[ex][*](.*?)[/*][/ex]', r'[*][ex]\g<1>[/ex][/*]'),
-    # shortcuts
-    (r'[c][i](.*?)[/i][/c]', r'<i style="color:green">\g<1></i>'),
     (r'[i][c](.*?)[/c][/i]', r'<i style="color:green">\g<1></i>'),
     (r'[m(\d)][ex](.*?)[/ex][/m]', r'<div class="ex" style="margin-left:\g<1>em;color:steelblue">\g<2></div>'),
     (r'[m(\d)][*][ex](.*?)[/ex][/*][/m]',
