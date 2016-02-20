@@ -23,7 +23,7 @@ import re
 from xml.sax.saxutils import escape, quoteattr
 
 from formats_common import *
-from . import perfect_dsl
+from . import flawless_dsl
 
 enable = True
 format = 'ABBYYLingvoDSL'
@@ -116,7 +116,7 @@ re_img = re.compile(r'\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]')
 re_m = re.compile(r'\[m(\d)\](.*?)\[/m\]')
 
 # single instance of parser.  it's save as long as this script's not going multithread.
-_parse = perfect_dsl.PerfectDSLParser().parse
+_parse = flawless_dsl.FlawlessDSLParser().parse
 
 def _clean_tags(line, audio):
     r"""
