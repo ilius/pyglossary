@@ -94,7 +94,8 @@ def title(title, BeautifulSoup):
     """strip double quotes and html tags."""
     if BeautifulSoup:
         title = title.replace('\xef\xbb\xbf', '')
-        title = BeautifulSoup.BeautifulSoup(title, "html").get_text(strip=True).encode('utf-8')
+        if len(title) > 1:  # BeautifulSoup has a bug when markup <= 1 char length
+            title = BeautifulSoup.BeautifulSoup(title, "html").get_text(strip=True).encode('utf-8')
     else:
         title = _title_re.sub('', title)
         title = title.replace('&', '&amp;')
