@@ -452,7 +452,9 @@ class Glossary:
         return True
 
 
-    def write(self, filename, format='', **options):
+    def write(self, filename='', format='', **options):
+        if not filename:
+            filename = self.filename
         if not filename:
             log.error('Invalid filename %r'%filename)
             return False
