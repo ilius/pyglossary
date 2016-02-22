@@ -97,6 +97,8 @@ class Glossary:
     )
     readFormats = []
     writeFormats = []
+    readFunctions = {}
+    writeFunctions = {}
     formatsDesc = {}
     formatsExt = {}
     formatsReadOptions = {}
@@ -156,7 +158,7 @@ class Glossary:
         cls.formatsDesc[format] = desc
 
         if hasattr(plugin, 'read'):
-            exec('cls.read%s = plugin.read' % format)  # FIXME: OMG WTF
+            cls.readFunctions[format] = plugin.read
             cls.readFormats.append(format)
             cls.readExt.append(extentions)
             cls.readDesc.append(desc)
@@ -164,7 +166,7 @@ class Glossary:
                 if hasattr(plugin, 'readOptions') else []
 
         if hasattr(plugin, 'write'):
-            exec('cls.write%s = plugin.write' % format)
+            cls.writeFunctions[format] = plugin.write
             cls.writeFormats.append(format)
             cls.writeExt.append(extentions)
             cls.writeDesc.append(desc)
@@ -436,7 +438,7 @@ class Glossary:
             if not key in validOptionKeys:
                 log.error('Invalid read option "%s" given for %s format'%(key, format))
                 del options[key]
-        getattr(self, 'read%s'%format).__call__(filename, **options)
+        self.readFunctions[format].__call__(self, filename, **options)
 
         (filenameNoExt, ext) = splitext(filename)
         if ext.lower() in self.formatsExt[format]:
@@ -512,7 +514,8 @@ class Glossary:
                 log.error('Invalid write option "%s" given for %s format'%(key, format))
                 del options[key]
         log.info('filename=%s'%filename)
-        getattr(self, 'write%s'%format).__call__(filename, **options)
+        self.writeFunctions[format].__call__(self, filename, **options)
+
         if zipExt:
             try:
                 os.remove('%s%s'%(filename, zipExt))
