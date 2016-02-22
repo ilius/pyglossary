@@ -30,7 +30,6 @@ supportsAlternates = True
 import csv
 
 def read(glos, filename):
-    glos.clear()
     with open(filename, 'rb') as csvfile:
         reader = csv.reader(
             csvfile,

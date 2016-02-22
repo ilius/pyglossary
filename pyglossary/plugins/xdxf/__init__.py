@@ -83,8 +83,6 @@ def read(glos, filename):
     ##<!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
     import_xml_stuff()
 
-    glos.clear()
-
     with open(filename, 'rb') as f:
         xdxf = XML(f.read())
 

@@ -212,7 +212,6 @@ def read(glos, filename):## not tested ## FIXME
     os.chdir(filename)
     indLines = open('index').read().split('\n')[3:]
     n = len(indLines)-1
-    glos.clear()
     for i in xrange(n):
         pmd = open(str(i)).read()
         for part in pmd.split('\x00'):

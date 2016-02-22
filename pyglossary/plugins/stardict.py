@@ -155,7 +155,6 @@ class StarDictReader:
         self.fileBasePath = os.path.realpath(self.fileBasePath)
 
     def run(self):
-        self.glos.clear()
         self.readIfoFile()
         sametypesequence = self.glos.getInfo('sametypesequence')
         if not verifySameTypeSequence(sametypesequence):

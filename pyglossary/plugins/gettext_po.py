@@ -19,7 +19,6 @@ def read(glos, filename):
     word = ''
     defi = ''
     msgstr = False
-    glos.clear()
     for line in fp:
         if not line:
             if word:

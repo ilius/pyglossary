@@ -257,8 +257,6 @@ def read(glos, fname, **options):
     line_type = 'header'
     unfinished_line = ''
 
-    glos.clear()
-    
     fp = codecs.open(fname, 'r', encoding)
     for line in fp:
         line = line.encode('utf-8').rstrip()

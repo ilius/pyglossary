@@ -11,7 +11,6 @@ writeOptions = []
 
 def read(glos, filename): ## glos is a Glossary object, filename is a string
     log.info('reading from format %s using plugin'%format)
-    glos.clear()
     count = 100 ## get number of entries from input file(depending on your format)
     for i in range(count):
         ## here get word and definition from file(depending on your format)

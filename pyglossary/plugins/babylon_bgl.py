@@ -2801,7 +2801,6 @@ class BglReader:
 
 
 def read(glos, filename, **options):
-    glos.clear()
     glos.setDefaultDefiFormat('h')
     reader = BglReader(filename, **options)
     if not reader.open():

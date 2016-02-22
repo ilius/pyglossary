@@ -13,7 +13,6 @@ writeOptions = [
 
 def read(glos, filename):
     fp = open(filename)
-    glos.clear()
     while True:
         line = fp.readline()
         if not line:
