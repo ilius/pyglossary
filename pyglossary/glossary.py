@@ -954,7 +954,7 @@ class Glossary:
             return num
 
 
-    def getSqlLines(self, filename='', info=None, newline='\\n', transaction=False):
+    def getSqlLines(self, filename='', infoKeys=None, newline='\\n', transaction=False):
         lines = []
         newline = '<br>'
         infoDefLine = 'CREATE TABLE dbinfo ('
@@ -966,8 +966,8 @@ class Glossary:
         #    infoList.append(inf)
         #    infoDefLine += '%s varchar(%d), '%(key, len(inf)+10)
         ######################
-        if not info:
-            info = self.info
+        info = self.getInfos(keys=infoKeys)
+
         for item in info:
             inf = '\'' + item[1].replace('\'', '\'\'')\
                                .replace('\x00', '')\

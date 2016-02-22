@@ -71,7 +71,7 @@ def write(glos, filename):
     con = connect(filename)
     cur = con.cursor()
     sqlLines = glos.getSqlLines(
-        info=[(key, glos.getInfo(key)) for key in infoKeys],
+        infoKeys=infoKeys,
         newline='<BR>',
         transaction=False,
     )
