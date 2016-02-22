@@ -370,6 +370,10 @@ class Glossary:
                 if not self.getInfo(key):
                     self.setInfo(key, '')
 
+    def getInfos(self, keys=None):
+        if keys:
+            return [(key, self.getInfo(key)) for key in keys]
+        return list(self.info)
 
     def read(self, filename, format='', **options):
         delFile=False
