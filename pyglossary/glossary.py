@@ -162,16 +162,14 @@ class Glossary:
             cls.readFormats.append(format)
             cls.readExt.append(extentions)
             cls.readDesc.append(desc)
-            cls.formatsReadOptions[format] = plugin.readOptions \
-                if hasattr(plugin, 'readOptions') else []
+            cls.formatsReadOptions[format] = getattr(plugin, 'readOptions', [])
 
         if hasattr(plugin, 'write'):
             cls.writeFunctions[format] = plugin.write
             cls.writeFormats.append(format)
             cls.writeExt.append(extentions)
             cls.writeDesc.append(desc)
-            cls.formatsWriteOptions[format] = plugin.writeOptions \
-                if hasattr(plugin, 'writeOptions') else []
+            cls.formatsWriteOptions[format] = getattr(plugin, 'writeOptions', [])
 
         log.debug('plugin loaded OK: %s' % pluginName)
         return plugin
