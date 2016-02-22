@@ -140,6 +140,21 @@ parser.add_argument(
 )
 parser.add_argument(
     #'-',
+    '--utf8-check',
+    dest='utf8_check',
+    action='store_true',
+    default=None,
+)
+parser.add_argument(
+    #'-',
+    '--no-utf8-check',
+    dest='utf8_check',
+    action='store_false',
+    default=None,
+)
+
+parser.add_argument(
+    #'-',
     '--no-color',
     dest='noColor',
     action='store_true',
@@ -275,6 +290,7 @@ ui_options_params = (
     'noProgressBar',
     #'verbosity',
     'sort',
+    'utf8_check',
 )
 
 ui_options = {}
