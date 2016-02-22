@@ -587,7 +587,7 @@ class Glossary:
         fp.close()
         return True
 
-    def writeTabfile(self, filename, writeInfo=True):
+    def writeTabfile(self, filename='', writeInfo=True):
         self.writeTxt(
             sep=('\t', '\n'),
             filename=filename,
