@@ -587,7 +587,18 @@ class Glossary:
         fp.close()
         return True
 
-
+    def writeTabfile(self, filename, writeInfo=True):
+        self.writeTxt(
+            sep=('\t', '\n'),
+            filename=filename,
+            writeInfo=writeInfo,
+            rplList=(
+                ('\\', '\\\\'),
+                ('\n', '\\n'),
+                ('\t', '\\t'),
+            ),
+            ext='.txt',
+        )
 
     def writeDict(self, filename='', writeInfo=False):
         ## Used in '/usr/share/dict/' for some dictionarys such as 'ding'.

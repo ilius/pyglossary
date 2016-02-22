@@ -53,16 +53,9 @@ def read(glos, filename):
 
 
 def write(glos, filename, writeInfo=True):
-    return glos.writeTxt(
-        sep=('\t', '\n'),
-        filename=filename,
+    return glos.writeTabfile(
+        filename,
         writeInfo=writeInfo,
-        rplList=(
-            ('\\', '\\\\'),
-            ('\n', '\\n'),
-            ('\t', '\\t'),
-        ),
-        ext='.txt',
     )
 
 
