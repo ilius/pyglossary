@@ -1005,12 +1005,6 @@ class Glossary:
         else:
             return default
 
-    def dump(self, dataPath):
-        'Dump data into the file for debugging'
-        with open(dataPath, 'wb') as f:
-            for entry in self:
-                f.write('key = ' + entry.getWord() + '\n')
-                f.write('defi = ' + entry.getDefi() + '\n\n')
 
 
 Glossary.loadPlugins(join(dirname(__file__), 'plugins'))
