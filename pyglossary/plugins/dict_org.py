@@ -73,7 +73,6 @@ def read(glos, filename):
     else:
         dictStr = open(filename+'.dict', 'rb').read()
     ## read info from header of dict file ## FIXME
-    glos.clear()
     word = ''
     sumLen = 0
     wrongSorted = []

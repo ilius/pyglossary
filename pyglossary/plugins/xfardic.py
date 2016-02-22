@@ -23,7 +23,6 @@ infoKeys = (
 
 def read(glos, filename):
     fp = open(filename, 'rb')
-    glos.clear()
     xdbText = fp.read()
     i = 0
     for item in infoKeys:################## method should be changed
@@ -54,8 +53,6 @@ def read(glos, filename):
 def read_2(glos, filename):
     from xml.etree.ElementTree import XML, tostring
     fp = open(filename, 'rb')
-    glos.clear()
-    glos.info = {}
     xdb = XML(fp.read())
     del fp
     for elem in xdb[0]:

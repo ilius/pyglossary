@@ -376,6 +376,7 @@ class Glossary:
         return list(self.info)
 
     def read(self, filename, format='', **options):
+        self.clear()
         delFile=False
         ext = splitext(filename)[1]
         ext = ext.lower()
