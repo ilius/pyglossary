@@ -152,6 +152,22 @@ parser.add_argument(
     action='store_false',
     default=None,
 )
+parser.add_argument(
+    #'-',
+    '--lower',
+    dest='lower',
+    action='store_true',
+    default=None,
+    help='lowercase words before writing',
+)
+parser.add_argument(
+    #'-',
+    '--no-lower',
+    dest='lower',
+    action='store_false',
+    default=None,
+    help='don\'t lowercase words before writing',
+)
 
 parser.add_argument(
     #'-',
@@ -291,6 +307,7 @@ ui_options_params = (
     #'verbosity',
     'sort',
     'utf8_check',
+    'lower',
 )
 
 ui_options = {}
