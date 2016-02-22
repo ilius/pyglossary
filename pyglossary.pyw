@@ -122,18 +122,21 @@ parser.add_argument(
     '--no-progress-bar',
     dest='noProgressBar',
     action='store_true',
+    default=None,
 )
 parser.add_argument(
     #'-',
     '--sort',
     dest='sort',
     action='store_true',
+    default=None,
 )
 parser.add_argument(
     #'-',
     '--no-sort',
     dest='sort',
     action='store_false',
+    default=None,
 )
 parser.add_argument(
     #'-',
