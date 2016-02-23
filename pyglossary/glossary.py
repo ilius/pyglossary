@@ -210,13 +210,18 @@ class Glossary:
         self._defaultDefiFormat = 'm'
 
         self.entryFilters = []
+
+    def updateEntryFilters(self):
+        self.entryFilters = []
+        pref = getattr(self.ui, 'pref', {})
+
         self.entryFilters.append(StripEntryFilter(self))
         self.entryFilters.append(NonEmptyWordFilter(self))
 
-        if self.ui.pref['utf8_check']:
+        if pref.get('utf8_check', True):
             self.entryFilters.append(FixUnicodeFilter(self))
 
-        if self.ui.pref['lower']:
+        if pref.get('lower', True):
             self.entryFilters.append(LowerWordFilter(self))
 
         self.entryFilters.append(LangEntryFilter(self))
@@ -376,7 +381,7 @@ class Glossary:
         return list(self.info)
 
     def read(self, filename, format='', **options):
-        self.clear()
+        self.updateEntryFilters()
         delFile=False
         ext = splitext(filename)[1]
         ext = ext.lower()
