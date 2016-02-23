@@ -157,6 +157,7 @@ class UI(UIBase):
         self.editor_path = ''
         self.tabIndex = 0
         self.fcd_dir = ''
+        self.ptext = ''
         ###################################
         t_table = gtk.TextTagTable()
         tag = gtk.TextTag('filelist')
