@@ -154,7 +154,6 @@ class UI(UIBase):
         for f in Glossary.writeFormats:
             self.combobox_o.append_text(Glossary.formatsDesc[f])
         self.combobox_sr.set_active(0)
-        self.dbe_init()
         self.editor_path = ''
         self.tabIndex = 0
         self.fcd_dir = ''
@@ -176,14 +175,6 @@ class UI(UIBase):
         #self.d.show_all()
         #self.d.vbox.do_realize()
     def run(self, editPath=None, read_options=None):
-        if read_options is None:
-            read_options = {}
-        if editPath:
-            self.notebook1.set_current_page(3)
-            log.info('Opening file "%s" for edit. please wait...'%editPath)
-            while gtk.events_pending():
-                gtk.main_iteration_do(False)
-            self.dbe_open(editPath, **read_options)
         gtk.main()
     def textview_merge_changed(self, *args):
         (stderr, sys.stderr) = (sys.stderr, sys.__stderr__)
@@ -262,8 +253,6 @@ class UI(UIBase):
             if self.r_load():
                 self.r_start()
         elif i==3:
-            self.dbe_update()
-        elif i==4:
             self.pref_update_var()
             log.info('Preferences updated')
             self.pref_save()
@@ -722,403 +711,6 @@ class UI(UIBase):
         self.assert_quit = False
         return True
     ################################################################################
-    ################################# DB Editor ####################################
-    def dbe_init(self, *args):
-        self.def_widgets(['entry_dbe', 'checkb_db_ro', 'entry_db_index', 'textview_dbe',
-            'treeview', 'dbe_info_dialog', 'entry_dbe_info', 'textview_dbe_info', 'treeview_info'])
-        table = gtk.TextTagTable()
-        tag = gtk.TextTag('definition')
-        table.add(tag)
-        self.buffer_dbe = gtk.TextBuffer(table)
-        self.textview_dbe.set_buffer(self.buffer_dbe)
-        self.treestore = gtk.ListStore(str, int)
-        self.treeview.set_model(self.treestore)
-        self.cell = gtk.CellRendererText()
-        self.cell2 = gtk.CellRendererText()
-        col = gtk.TreeViewColumn('Word', self.cell, text=0)
-        col2 = gtk.TreeViewColumn('Index', self.cell2, text=1)
-        col.set_resizable(True)
-        self.treeview.append_column(col)
-        self.treeview.append_column(col2)
-        ###
-        table2 = gtk.TextTagTable()
-        tag2 = gtk.TextTag('info')
-        table2.add(tag2)
-        self.buffer_dbe_info = gtk.TextBuffer(table2)
-        self.textview_dbe_info.set_buffer(self.buffer_dbe_info)
-        self.treestore_info = gtk.ListStore(str)
-        self.treeview_info.set_model(self.treestore_info)
-        self.cell = gtk.CellRendererText()
-        self.cell2 = gtk.CellRendererText()
-        col = gtk.TreeViewColumn('Key', self.cell, text=0)
-        col.set_resizable(True)
-        self.treeview_info.append_column(col)
-        self.ptext = ''
-        #self.vbox4 = self.xml.get_widget('vbox4')
-        #ag = gtk.AccelGroup()
-        #log.debug(dir(gtk.keysyms))
-        #ag.connect_by_path('gtk.keysym.Control_L', self.dbe_open)
-        self.info_i = -1
-    def dbe_new(self, *args):
-        self.glosE = Glossary(ui=self)
-        self.glosE.data.append(('##name', ''))
-        self.treestore.clear()
-        self.treestore.append(('##name', 0))
-        self.db_ind = 0
-        self.db_format = ''
-        self.dbe_goto(0, save=False)
-        self.dbe_save_as('')
-    def dbe_open(self, arg=None, **read_options):
-        format = ''
-        if isinstance(arg, basestring):
-            self.path = arg
-            self.fcd_format = ''
-        else:
-            fcd = FileChooserDialog(self, combo_items=Glossary.readDesc, action='open')
-            fcd.hbox_format.show()
-            fcd.combobox.set_active(0)
-            fcd.run()
-            if not self.path:
-                return False
-        self.dbe_path = self.path
-        self.fcd_dir = os.path.dirname(self.path)
-        self.path = ''
-        self.glosE = Glossary(ui=self)
-        while gtk.events_pending():
-            gtk.main_iteration_do(False)
-        self.set_cursor(gtk.gdk.WATCH)
-        t0 = time.time()
-        if self.fcd_format in ('Auto (by extention)', ''):
-            self.glosE.read(self.dbe_path, **read_options)
-        else:
-            format = Glossary.descFormat[self.fcd_format]
-            self.glosE.read(self.dbe_path, format=format, **read_options)
-        self.assert_quit = True
-        self.glosE.uiEdit()
-        log.debug('time left = %3f seconds'%(time.time()-t0))
-        for x in self.glos.info:
-            log.info('%s="%s"'%(x[0], x[1]))
-        self.fcd_format = ''
-        self.db_ind = None
-        d = self.glosE.data
-        t = self.treestore
-        #self.entry_db_index.set_width_chars(len(str(len(d)))+1)#???????????? DOES NOT WORK
-        #self.entry_db_index.show()
-        t.clear()
-        for i in xrange(len(d)):
-            t.append((d[i][0], i))
-            ##d[i]=(x[0], x[1], True) ## read only
-        self.dbe_goto(0, save=False)
-        self.db_format = format
-        #########
-        t = self.treestore_info
-        t.clear()
-        for key in self.glosE.infoKeys():
-            t.append((key,))
-        #########
-        self.info_i=0
-        self.dbe_info_goto(0, save=False)
-        self.set_cursor(gtk.gdk.LEFT_PTR)
-    def set_cursor(self, cursor_type):
-        c = gtk.gdk.Cursor(cursor_type)
-        for w in (self.d, self.textview_out, self.textview_err, self.textview_dbe):
-            if not w.window:
-                pass #????????????????????????
-                #w.connect('realize', lambda obj: w.window.set_cursor(c))
-            else:
-                w.window.set_cursor(c)
-    def dbe_save(self, *args):
-        shutil.copy(self.dbe_path, self.dbe_path+'~')
-        if self.dbe_save_as(self.dbe_path):
-            os.remove(self.dbe_path+'~')
-        else:
-            os.remove(self.dbe_path)
-            os.rename(self.dbe_path+'~', self.dbe_path)
-            log.error('Saving file "%s" failed! Backup file restored instaed.'%self.dbe_path)
-    def dbe_save_as(self, *args):
-        #self.glosE.data[self.db_ind] = (self.entry_dbe.get_text(),self.buffer_dbe.get_text())
-        self.dbe_update()
-        format = self.db_format
-        if args[0] and format in Glossary.writeFormats + ['']:
-            self.dbe_path = args[0]
-            ex = self.glosE.write(self.dbe_path, format=format)
-        else:
-            fcd = FileChooserDialog(self, combo_items=Glossary.writeDesc, action='save')
-            fcd.hbox_format.show()
-            fcd.combobox.set_active(0)
-            fcd.run()
-            if not self.path:
-                return False
-            path = self.dbe_path = self.path
-            self.path = ''
-            self.fcd_dir = os.path.dirname(path)
-            if self.fcd_format=='Auto (by extention)':
-                ex = self.glosE.write(path)
-            else:
-                format = Glossary.descFormat[self.fcd_format]
-                ex = self.glosE.write(path, format=format)
-            self.dbe_path = path
-        if ex != False:
-            log.info('DB file "%s" saved'%self.dbe_path)
-            self.assert_quit = False
-            self.db_format = format
-            return True
-    def dbe_ro_clicked(self, *args):
-        ro = self.checkb_db_ro.get_active()
-        self.entry_dbe.set_editable(not ro)
-        self.textview_dbe.set_editable(not ro)
-    dbe_prev = lambda self, *args: self.dbe_goto(self.db_ind-1)
-    dbe_next = lambda self, *args: self.dbe_goto(self.db_ind+1)
-    dbe_first = lambda self, *args: self.dbe_goto(0)
-    dbe_last = lambda self, *args: self.dbe_goto(-1)
-    def dbe_goto_clicked(self, *args):
-        ind = self.entry_db_index.get_text()
-        try:
-            n_ind=int(ind)
-        except:
-            log.error('bad index: "%s"'%ind)
-            return False
-        self.dbe_goto(n_ind)
-    def dbe_update(self):
-        d = (self.entry_dbe.get_text(), buffer_get_text(self.buffer_dbe))
-        self.glosE.data[self.db_ind] = d
-        self.treestore[self.db_ind][0] = d[0]
-    def dbe_update_info(self):
-        d = (self.entry_dbe_info.get_text(), buffer_get_text(self.buffer_dbe_info))
-        self.glosE.info[self.info_i] = d
-        self.treestore_info[self.info_i][0] = d[0]
-    def dbe_goto(self, n_ind, save=True):
-        p_ind = self.db_ind
-        if n_ind==p_ind and save:
-            self.dbe_update()
-            return
-        if save:
-            p_data = (self.entry_dbe.get_text(), buffer_get_text(self.buffer_dbe))
-        n = len(self.glosE.data)
-        if 0 <= n_ind < n:
-            pass
-        elif n_ind == n:
-            n_ind = 0
-        elif -n < n_ind < 0:
-            n_ind += n
-        else:
-            log.error('index out of range: "%s"'%n_ind)
-            return False
-        self.db_ind = n_ind
-        try:
-            d = self.glosE.data[n_ind]
-        except IndexError:
-            return
-        self.entry_dbe.set_text(d[0])
-        try:
-            self.entry_db_index.set_text(str(n_ind))### ????????????????????????????????????
-        except:
-            pass
-        #log.debug('Setting text "%s"'%d[1])
-        self.buffer_dbe.set_text(d[1])
-        self.treeview.set_cursor(n_ind)
-        if save:
-            self.glosE.data[p_ind] = p_data
-            self.treestore[p_ind][0] = p_data[0]
-    def dbe_info_goto(self, n_ind, save=True):
-        p_ind = self.info_i
-        if save:
-            p_info = (self.entry_dbe_info.get_text(), buffer_get_text(self.buffer_dbe_info))
-        n = len(self.glosE.info)
-        """if 0 <= n_ind < n:
-            pass
-        elif n_ind == n:
-            n_ind = 0
-        elif -n < n_ind < 0:
-            n_ind += n
-        else:
-            log.error('index out of range: "%s"'%n_ind)
-            return False"""
-        self.info_i = n_ind
-        try:
-            inf = self.glosE.info[n_ind]
-        except:
-            #log.exception('info does not exist:')
-            return
-        self.entry_dbe_info.set_text(inf[0])
-        self.buffer_dbe_info.set_text(inf[1])
-        self.treeview_info.set_cursor(n_ind)
-        if save:
-            self.glosE.info[p_ind] = p_info
-            self.treestore_info[p_ind][0] = p_info[0]
-    def dbe_new_w(self, *args):## new Word after selected
-        n = len(self.glosE.data)
-        cur = self.treeview.get_cursor()[0]
-        if cur:
-            try:
-                n = cur[0] + 1
-            except:
-                log.exception('could not get index of treeview curser:')
-                return False
-        else:
-            n = 0
-        word = 'word%s'%n
-        self.glosE.data.insert(n, (word, ''))
-        self.treestore.insert(n, (word, str(n)))
-        self.dbe_goto(n)
-        self.entry_dbe.select_region(0, -1)
-        self.entry_dbe.do_focus(self.entry_dbe, 0)
-        ######???????????????????????
-        while gtk.events_pending():
-            gtk.main_iteration_do(False)
-        for i in xrange(n+1, len(self.glosE.data)):
-            #self.treestore[i]=[self.glosE.data[i][0], str(i)]
-            self.treestore[i][1]=str(i)
-    def dbe_new_we(self, *args):## new Word at the End
-        n = len(self.glosE.data)
-        word = 'word%s'%n
-        self.glosE.data.append((word, ''))
-        self.treestore.append((word, n))
-        self.dbe_goto(n)
-        self.entry_dbe.select_region(0, -1)
-        self.entry_dbe.do_focus(self.entry_dbe, 0)
-    def dbe_del_w(self, *args):
-        n = len(self.glosE.data)
-        ind = self.db_ind
-        log.debug('Deleting index %s word "%s"'%(ind,    self.glosE.data[ind][0]))
-        try:
-            self.glosE.data.pop(ind)
-        except IndexError:
-            log.exception('data record %s not found'%ind)
-            return
-        #del self.glosE.data[ind]
-        del self.treestore[ind]
-        if n==1:
-            return
-        if ind==n-1:
-            self.dbe_goto(n-2, False)
-        else:
-            self.treestore[ind][1] = ind
-            self.dbe_goto(ind, False)
-            for i in xrange(ind+1, min(ind+30, n-1)):
-                try:
-                    self.treestore[i][1] = i
-                except IndexError:
-                    break
-            while gtk.events_pending():
-                gtk.main_iteration_do(False)
-            for i in xrange(ind+1, n-1):
-                try:
-                    self.treestore[i][1] = i
-                except IndexError:
-                    break
-                if i%1000==0:
-                    while gtk.events_pending():
-                        gtk.main_iteration_do(False)
-    def treeview_changed(self, *args):
-        try:
-            i = self.treeview.get_cursor()[0][0]
-        except:
-            log.exception('could not get index of treeview curser!')
-            return False
-        #self.dbe_update()
-        self.dbe_goto(i)
-    def treeview_info_changed(self, *args):
-        try:
-            i = self.treeview_info.get_cursor()[0][0]
-        except:
-            log.error('can not get index of treeview_info curser!')
-        else:
-            self.dbe_info_goto(i)
-    def dbe_info_move_back(self, *args):
-        g = self.glosE
-        s = self.treestore_info
-        i = self.info_i
-        if i<1:
-            return
-        (g.info[i], g.info[i-1]) = (g.info[i-1], g.info[i])
-        (s[i], s[i-1] ) = (s[i-1], s[i] )
-        self.info_i = i-1
-        self.dbe_info_goto(self.info_i)
-    def dbe_info_move_next(self, *args):
-        g = self.glosE
-        s = self.treestore_info
-        i = self.info_i
-        n = len(g.info)
-        if i>n-2:
-            return
-        (g.info[i], g.info[i+1]) = (g.info[i+1], g.info[i])
-        (s[i], s[i+1] ) = (s[i+1], s[i] )
-        self.info_i = i+1
-        self.dbe_info_goto(self.info_i)
-    def dbe_info_del(self, *args):
-        g = self.glosE
-        s = self.treestore_info
-        i = self.info_i
-        n = len(g.info)
-        try:
-            g.info.pop(i)
-        except:
-            log.exception('info does not exist:')
-            return
-        del s[i]
-        if i>n-2:
-            self.info_i=n-2
-        if n==1:
-            self.entry_dbe_info.set_text('')
-            self.buffer_dbe_info.set_text('')
-            self.info_i = -1
-        else:
-            self.dbe_info_goto(self.info_i, save=False)
-    def dbe_info_new(self, *args):
-        g = self.glosE
-        n = len(g.info)
-        if n>0:
-            self.dbe_update_info()
-        else:
-            self.info_i = -1
-        i = self.info_i
-        nkey = 'key%s'%(i+1)
-        g.info.insert(i+1, (nkey, ''))
-        self.treestore_info.insert(i+1, (nkey,))
-        for j in xrange(i+1, n+1):
-            self.treestore_info[j][0] = g.info[j][0]
-        self.info_i += 1
-        self.dbe_info_goto(self.info_i, False)
-        self.entry_dbe_info.select_region(0, -1)
-        self.entry_dbe_info.do_focus(self.entry_dbe_info, 0)
-    def entry_dbe_activate(self, *args):
-        w = self.entry_dbe.get_text()
-        i = self.db_ind
-        g = self.glosE
-        g.data[i] = (w, g.data[i][1]) + g.data[i][2:]
-        self.treestore[i][0] = w
-    def entry_dbe_info_activate(self, *args):
-        k = self.entry_dbe_info.get_text()
-        i = self.info_i
-        self.glosE.info[i] = k
-        self.treestore_info[i][0] = k
-    def dbe_sort(self, *args):
-        if len(self.glosE.data)<2:
-            return
-        self.dbe_update()
-        if len(self.glosE.data)!=len(self.treestore):
-            log.info(len(self.glosE.data), len(self.treestore))
-        self.glosE.data.sort()
-        for i in xrange(len(self.glosE.data)):
-            self.treestore[i]=[self.glosE.data[i][0], str(i)]
-        self.dbe_goto(self.db_ind, False)
-    def dbe_info_clicked(self, *args):
-        self.dbe_info_dialog.show()
-        #log.debug(self.glosE.info)
-    def dbe_info_close(self, *args):
-        if self.info_i!=-1:
-            try:
-                self.glosE
-            except AttributeError:
-                pass
-            else:
-                try:
-                    self.glosE.info[self.info_i] = buffer_get_text(self.entry_dbe_info)
-                except:## IndexError
-                    pass
-        self.dbe_info_dialog.hide()
-        return True
     def pref_init(self, **options):
         self.pref={}
         self.def_widgets(['combobox_save', 'combobox_newline', 'cb_psyco', 'checkb_autofor', 'checkb_autoout',\
@@ -1128,7 +720,7 @@ class UI(UIBase):
         self.showRelItems = ['None', 'Percent At First', 'Percent']
         for item in self.showRelItems:
             self.combobox_sr.append_text(item)
-        for name in ('out', 'err', 'edit', 'dbe'):
+        for name in ('out', 'err', 'edit'):
             self.def_widgets(['cb_wrap_%s'%name, 'colorpicker_bg_%s'%name, 'colorpicker_font_%s'%name])
         self.pref['auto_update'] = self.cb_auto_update.get_active()
         if os.path.isfile(use_psyco_file):
@@ -1153,12 +745,12 @@ class UI(UIBase):
         self.checkb_lower.set_active(self.pref['lower'])
         self.cb_rm_tags.set_active(self.pref['remove_tags'])
         self.checkb_utf8.set_active(self.pref['utf8_check'])
-        for name in ('out', 'err', 'edit', 'dbe'):
+        for name in ('out', 'err', 'edit'):
             eval('self.cb_wrap_%s'%name).set_active(self.pref['wrap_%s'%name])
-        for name in ('out', 'err', 'edit', 'dbe'):
+        for name in ('out', 'err', 'edit'):
             color=self.pref['color_bg_%s'%name]
             eval('self.colorpicker_bg_%s'%name).set_color(gtk.gdk.Color(*color))
-        for name in ('out', 'err', 'edit', 'dbe'):
+        for name in ('out', 'err', 'edit'):
             color=self.pref['color_font_%s'%name]
             eval('self.colorpicker_font_%s'%name).set_color(gtk.gdk.Color(*color))
         return True
@@ -1166,7 +758,7 @@ class UI(UIBase):
         self.pref['auto_update'] = self.xml.get_widget('cb_auto_update').get_active()
         k = self.combobox_newline.get_active()
         self.pref['newline'] = self.newlineItems[k]
-        for name in ('out', 'err', 'edit', 'dbe'):
+        for name in ('out', 'err', 'edit'):
             exec('\
 self.pref["wrap_%s"]=self.cb_wrap_%s.get_active()\n\
 if self.pref["wrap_%s"]:\n\
