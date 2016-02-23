@@ -233,15 +233,17 @@ log.addHandler(
 # with the logger setted up, we can import other pyglossary modules, so they
 # can do some loggging in right way.
 
-from pyglossary.glossary import confPath
-from ui.ui_cmd import COMMAND, help, parseFormatOptionsStr
-
 ##############################
 
 def my_excepthook(_type, value, tback):
     tback_text = ''.join(traceback.format_exception(_type, value, tback))
     log.critical(tback_text)
 sys.excepthook = my_excepthook
+
+##############################
+
+from pyglossary.glossary import confPath
+from ui.ui_cmd import COMMAND, help, parseFormatOptionsStr
 
 ##############################
 
