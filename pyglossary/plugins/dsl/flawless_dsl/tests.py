@@ -408,6 +408,27 @@ yīlún
         before = after = "...[b],,,[/b]b"
         self.assertEqual(after, parse(before))
 
+    def testTagMInsideAnotherTag(self):
+        # tag order.
+        before = "[c][m1]...[/m][/c]"
+        after = "[m1][c]...[/c][/m]"
+        self.assertEqual(after, parse(before))
+
+    def testTagMInsideAnotherTagAfterText(self):
+        before = "[c]...[m1],,,[/m][/c]"
+        after = "[c]...[/c][m1][c],,,[/c][/m]"
+        self.assertEqual(after, parse(before))
+
+    def testTagMDeepInside(self):
+        before = "...[i],,,[b]+++[c green][/b]---[m1]```[/i][/c][/m]..."
+        after = "...[i],,,[b]+++[/b][c green]---[/c][/i][m1][i][c green]```[/c][/i][/m]..."
+        self.assertEqual(after, parse(before))
+
+    def testTagMInsideBroken(self):
+        before = "[m1][*]- [ref]...[/ref][/m][m1]- [ref],,,[/ref][/*][/m]"
+        after = "[m1][*]- [ref]...[/ref][/*][/m][m1][*]- [ref],,,[/ref][/*][/m]"
+        self.assertEqual(after, parse(before))
+
 
 if __name__ == '__main__':
     unittest.main()
