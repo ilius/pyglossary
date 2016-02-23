@@ -23,7 +23,9 @@ import os, sys
 import argparse
 import __builtin__
 from os.path import dirname, join, realpath
+from pprint import pformat
 import logging
+import inspect
 import traceback
 
 from pyglossary import core ## essential
@@ -190,6 +192,26 @@ parser.add_argument(
 
 args = parser.parse_args()
 #log.debug(args) ; sys.exit(0)
+
+def format_exception(exc_info=None, add_locals=False, add_globals=False):
+    if not exc_info:
+        exc_info = sys.exc_info()
+    _type, value, tback = exc_info
+    text = ''.join(traceback.format_exception(_type, value, tback))
+
+    if add_locals or add_globals:
+        try:
+            frame = inspect.getinnerframes(tback, context=0)[-1][0]
+        except IndexError:
+            pass
+        else:
+            if add_locals:
+                text += 'Traceback locals: %s\n'%pformat(frame.f_locals)
+            if add_globals:
+                text += 'Traceback globals: %s\n'%pformat(frame.f_globals)
+
+    return text
+
 
 
 class StdLogHandler(logging.Handler):
