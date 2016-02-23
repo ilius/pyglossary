@@ -223,7 +223,12 @@ class StdLogHandler(logging.Handler):
         ###
         if record.exc_info:
             _type, value, tback = record.exc_info
-            tback_text = ''.join(traceback.format_exception(_type, value, tback))
+            tback_text = format_exception(
+                exc_info = record.exc_info,
+                add_locals = (log.level <= logging.INFO),## FIXME
+                add_globals = False,
+            )
+
             if not msg:
                 msg = 'unhandled exception:'
             msg += '\n'
@@ -257,8 +262,12 @@ log.addHandler(
 
 ##############################
 
-def my_excepthook(_type, value, tback):
-    tback_text = ''.join(traceback.format_exception(_type, value, tback))
+def my_excepthook(*exc_info):
+    tback_text = format_exception(
+        exc_info = exc_info,
+        add_locals = (log.level <= logging.INFO),## FIXME
+        add_globals = False,
+    )
     log.critical(tback_text)
 sys.excepthook = my_excepthook
 
