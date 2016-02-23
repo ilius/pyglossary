@@ -18,6 +18,7 @@
 # GNU General Public License for more details.
 
 
+import copy
 import re
 
 from . import tag as _tag
@@ -32,7 +33,7 @@ def process_closing_tags(stack, tags):
     :param tags: Iterable[str]
     """
     index = len(stack) - 1
-    for tag in tags.copy():
+    for tag in copy.copy(tags):
         index_for_tag = _tag.index_of_layer_containing_tag(stack, tag)
         if index_for_tag is not None:
             index = min(index, index_for_tag)
@@ -190,6 +191,20 @@ class FlawlessDSLParser(object):
             if item_t is OPEN:
                 if _tag.was_opened(stack, item) and item.closing not in closings:
                     continue
+
+                if item.closing == 'm' and len(stack) >= 1:
+                    # close all layers.  [m*] tags can only appear at top layer.
+                    # note: do not reopen tags that were marked as closed already.
+                    to_open = set.union(set(),
+                                        *((t for t in l.tags if t.closing not in closings)
+                                          for l in stack))
+                    for i in range(len(stack)):
+                        _layer.close_layer(stack)
+                    # assert len(stack) == 1
+                    # assert not stack[0].tags
+                    _layer.Layer(stack)
+                    stack[-1].tags = to_open
+
                 elif state is CLOSE:
                     process_closing_tags(stack, closings)
 
