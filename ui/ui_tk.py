@@ -730,7 +730,7 @@ class UI(Tix.Frame, UIBase):
             log.info('reading %s file: "%s" done.\n%d words found.'%(
                 format,
                 iPath,
-                len(self.glos.data),
+                len(self.glos),
             ))
         else:
             log.critical('reading %s file: "%s" failed.'%(format, iPath))
@@ -745,7 +745,7 @@ class UI(Tix.Frame, UIBase):
             log.info('%s="%s"'%(x[0], x[1]))
         return True
     def convert(self):
-        if len(self.glos.data)==0:
+        if len(self.glos)==0:
             log.error('Input glossary has no word! Be sure to click "Load" before "Convert", '+\
                 'or just click "Apply" instead.')
             return False
