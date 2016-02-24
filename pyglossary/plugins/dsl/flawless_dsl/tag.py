@@ -26,7 +26,7 @@ Tag = namedtuple('Tag', ['opening', 'closing'])
 def __repr__(self):
     if self.opening == self.closing:
         return 'Tag(%r)' % self.opening
-    return 'Tag(%s, %s)' % self
+    return 'Tag(%r, %r)' % self
 
 Tag.__repr__ = __repr__
 del __repr__
