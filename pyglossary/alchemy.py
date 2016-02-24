@@ -29,11 +29,12 @@ def readSqlite(glos, filename=''):
             glos.setInfo(key, value)
     ##########
     result = connection.execute('select * from word')
-    d = []
     for row in result:
         ## type(row['wname']) == type(row['wmean']) == unicode
-        d.append((row['wname'].encode('utf8'), row['wmean'].encode('utf8')))
-    glos.data = d
+        glos.addEntry(
+            row['wname'].encode('utf8'),
+            row['wmean'].encode('utf8'),
+        )
     ##########
     connection.close()
     return True
@@ -93,13 +94,12 @@ def writeSqlite(glos, filename=''):
     ########
     metadata.create_all()
     ##########################
-    d = glos.data
-    n = len(d)
-    for i in xrange(n):
+    n = len(glos)
+    for entry in glos:
         #.decode('utf8'),
         word_table.insert().execute(
-            wname = d[i][0],
-            wmean = d[i][1]
+            wname = entry.getWord(),
+            wmean = entry.getDefi(),
         )
     ########
     info = {}
