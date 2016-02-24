@@ -421,7 +421,7 @@ class UI(gtk.Dialog, UIBase):
                 log.info('reading %s file: "%s" done.\n%d words found.'%(
                     inFormat,
                     inPath,
-                    len(self.glos.data),
+                    len(self.glos),
                 ))
             else:
                 log.error('reading %s file: "%s" failed.'%(inFormat, inPath))
