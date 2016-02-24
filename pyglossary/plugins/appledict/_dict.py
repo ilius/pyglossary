@@ -48,6 +48,9 @@ def get_beautiful_soup():
             import BeautifulSoup
         except ImportError:
             return None
+    if int(BeautifulSoup.__version__.split('.')[0]) < 4:
+        raise ImportError('BeautifulSoup is too old, required at least version 4, %r found.\n'
+                          'please run `pip2 install beautifulsoup4`.' % BeautifulSoup.__version__)
     return BeautifulSoup
 
 digs = string.digits + string.letters
