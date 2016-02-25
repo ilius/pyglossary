@@ -76,28 +76,13 @@ def write(glos, filename):
     )
     n = len(sqlLines)
     ui = glos.ui
-    if ui:
-        ui.progressStart()
-        k = 1000
-        for i in xrange(n):
-            try:
-                con.execute(sqlLines[i])
-            except:
-                log.exception('error executing sqlite query:')
-                log.error('Error while executing: '+sqlLines[i])
-                continue
-            if i%k==0:
-                rat = float(i)/n
-                ui.progress(rat)
-        ui.progressEnd()
-    else:
-        for i in xrange(n):
-            try:
-                cur.execute(sqlLines[i])
-            except:
-                log.exception('error executing sqlite query:')
-                log.error('Error while executing: '+sqlLines[i])
-                continue
+    for i in xrange(n):
+        try:
+            cur.execute(sqlLines[i])
+        except:
+            log.exception('error executing sqlite query:')
+            log.error('Error while executing: '+sqlLines[i])
+            continue
     cur.close()
     con.close()
     return True

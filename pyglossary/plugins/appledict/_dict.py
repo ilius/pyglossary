@@ -28,10 +28,6 @@ import xdxf
 from . import _normalize
 
 def dictionary_begin(glos, f, frontBackMatter):
-    # progress bar
-    if glos.ui:
-        glos.ui.progressStart()
-
     # write header
     f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\n')
@@ -254,7 +250,6 @@ def write_entries(glos, f, cleanHTML, indexes):
     # write entries
     generate_id = id_generator()
     generate_indexes = indexes_generator(indexes)
-    total = float(len(glos))
     _buffer = ''
 
     xdxf.xdxf_init()
@@ -298,8 +293,6 @@ def write_entries(glos, f, cleanHTML, indexes):
         _buffer += content
         _buffer += end_entry
 
-        if i % 10 == 0 and glos.ui:
-            glos.ui.progress(i / total)
         if i % 1000 == 0:
             f.write(_buffer)
             _buffer = ''
@@ -308,9 +301,6 @@ def write_entries(glos, f, cleanHTML, indexes):
 def dictionary_end(glos, f):
     f.write('</d:dictionary>\n')
 
-    # end progress bar
-    if glos.ui:
-        glos.ui.progressEnd()
 
 def write_xml(glos, filename, cleanHTML, frontBackMatter, indexes):
     with open(filename, 'wb') as f:

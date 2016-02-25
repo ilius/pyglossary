@@ -249,8 +249,6 @@ def write(glos, filename):
     indexFp.write('%s\n'%275) #???????
     indexFp.write('%s\n'%(d-1))
     ui = glos.ui
-    if ui:
-        ui.progressStart()
     for k in xrange(k2):
         i = k * size
         indexFp.write('%s\t%s\n'%(glos.data[i][0], i+1))
@@ -263,7 +261,6 @@ def write(glos, filename):
         fp.close()
         if ui:
             rat = float(k)/(k2+1)
-            ui.progress(rat)
     indexFp.write(glos.data[-1][0])
     indexFp.close()
     fp = open(str(d), 'wb')
@@ -273,7 +270,5 @@ def write(glos, filename):
             pmdCompile(glos.data[j][1].decode('utf-8')),
         ))
     fp.close()
-    if ui:
-        ui.progressEnd()
     os.chdir(initCwd)
 
