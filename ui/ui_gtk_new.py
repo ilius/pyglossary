@@ -418,10 +418,9 @@ class UI(gtk.Dialog, UIBase):
             log.info('Reading %s, please wait...'%inFormatDesc)
             succeed = self.glos.read(inPath, format=inFormat)
             if succeed:
-                log.info('reading %s file: "%s" done.\n%d words found.'%(
+                log.info('reading %s file: "%s" done'%(
                     inFormat,
                     inPath,
-                    len(self.glos),
                 ))
             else:
                 log.error('reading %s file: "%s" failed.'%(inFormat, inPath))

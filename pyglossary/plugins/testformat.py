@@ -27,7 +27,6 @@ def read(glos, filename): ## glos is a Glossary object, filename is a string
 
 def write(glos, filename): ## glos is a Glossary object, filename is a string
     log.info('writing to format %s using plugin'%format)
-    #wordCount = len(glos) ## you probably won't need it
     for entry in glos:
         word = entry.getWord()
         defi = entry.getDefi()

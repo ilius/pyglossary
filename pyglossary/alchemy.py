@@ -94,7 +94,6 @@ def writeSqlite(glos, filename=''):
     ########
     metadata.create_all()
     ##########################
-    n = len(glos)
     for entry in glos:
         #.decode('utf8'),
         word_table.insert().execute(

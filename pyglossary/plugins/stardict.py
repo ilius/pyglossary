@@ -484,6 +484,7 @@ class StarDictWriter:
 #            defiLen = len(defi)
 #            idxStr += words[0] + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(defiLen, 4)
 #            dictMark += defiLen
+#        wordCount = i + 1
 #        with open(self.fileBasePath+'.dict', 'wb') as f:
 #            f.write(dictStr)
 #        with open(self.fileBasePath+'.idx', 'wb') as f:
@@ -492,7 +493,7 @@ class StarDictWriter:
 #        del idxStr, dictStr
 #
 #        self.writeSynFile(alternates)
-#        self.writeIfoFile(indexFileSize, len(alternates), defiFormat)
+#        self.writeIfoFile(wordCount, indexFileSize, len(alternates), defiFormat)
 
     def writeGeneral(self):
         """
@@ -539,11 +540,12 @@ class StarDictWriter:
             dictMark += dataLen
             indexFileSize += len(idxBlock)
 
+        wordCount = i + 1
         dictFp.close()
         idxFp.close()
 
         self.writeSynFile(alternates)
-        self.writeIfoFile(indexFileSize, len(alternates))
+        self.writeIfoFile(wordCount, indexFileSize, len(alternates))
 
     def writeSynFile(self, alternates):
         """
@@ -558,14 +560,14 @@ class StarDictWriter:
                 f.write(synStr)
             del synStr
 
-    def writeIfoFile(self, indexFileSize, synwordcount, sametypesequence = None):
+    def writeIfoFile(self, wordCount, indexFileSize, synwordcount, sametypesequence=None):
         """
             Build .ifo file
         """
         ifoStr = "StarDict's dict ifo file\n" \
             + "version=3.0.0\n" \
             + "bookname={0}\n".format(newlinesToSpace(self.glos.getInfo('name'))) \
-            + "wordcount={0}\n".format(len(self.glos)) \
+            + "wordcount={0}\n".format(wordCount) \
             + "idxfilesize={0}\n".format(indexFileSize)
         if sametypesequence != None:
             ifoStr += "sametypesequence={0}\n".format(sametypesequence)

@@ -309,10 +309,9 @@ class UI(UIBase):
         else:
             ex = self.glos.read(iPath, format=format)
         if ex:
-            log.info('reading %s file: "%s" done.\n%d words found.'%(
+            log.info('reading %s file: "%s" done.'%(
                 format,
                 iPath,
-                len(self.glos),
             ))
         else:
             log.info('reading %s file: "%s" failed.'%(format, iPath))
@@ -345,7 +344,6 @@ class UI(UIBase):
             log.info('Loading "%s" ...'%path)
             g.read(path)
             g.uiEdit()
-            log.info('%s words found'%len(g))
             if mode==0:
                 self.glos = self.glos.attach(g)
             elif mode==1:
@@ -367,10 +365,6 @@ class UI(UIBase):
         #    log.error('Can not convert glossary, because another operation is running. '+\
         #        'Please open a new PyGlossary window, or wait until that operation be completed.')
         #    return False
-        if len(self.glos)==0:
-            log.error('Input glossary has no word! Be sure to click "Load" before "Convert", '+\
-                'or just click "Apply" instead.')
-            return False
         oPath = self.entry_o.get_text()
         if not oPath:
             log.critical('Output file path is empty!');return
@@ -560,10 +554,9 @@ class UI(UIBase):
         self.glosR.uiEdit()
         #self.riFormat = format
         #self.riPath = iPath
-        log.info('reading %s file: "%s" done.\n%d words found.'%(
+        log.info('reading %s file: "%s" done'%(
             formatD,
             iPath,
-            len(self.glosR),
         ))
         self.assert_quit = False
         return True
@@ -584,9 +577,6 @@ class UI(UIBase):
         except AttributeError:
             if not self.r_load():
                 return False
-        #if len(self.glosR)==0:
-        #    log.error('Input glossary has no word! Be sure to click "Load" before "Start", or just click "Apply" instead.')
-        #    return
         oPath = self.entry_r_o.get_text()
         if not oPath:
             log.critical('Output file path is empty!');return
