@@ -9,6 +9,74 @@ extentions = ['.mids']
 readOptions = []
 writeOptions = []
 
+import re
+from os.path import join
+from tabfile import Reader as TabfileReader
+
+class Reader(object):
+    def __init__(self, glos):
+        self._glos = glos
+        self._tabFileNames = []
+        self._tabFileReader = None
+    def open(self, dirname):
+        self._dirname = dirname
+        dicFiles = []
+        orderFileNames = []
+        for fname in os.listdir(dirname):
+            if not fname.startswith('directory'):
+                continue
+            try:
+                num = re.findall('\d+', fname)[-1]
+            except IndexError:
+                pass
+            else:
+                orderFileNames.append((num, fname))
+        orderFileNames.sort(
+            key=lambda x: x[0],
+            reverse=True,
+        )
+        self._tabFileNames = [x[1] for x in orderFileNames]
+        self.nextTabFile()
+
+    def __len__(self):## FIXME
+        raise NotImplementedError
+
+    __iter__ = lambda self: self
+    def next(self):
+        for _ in range(10):
+            try:
+                return self._tabFileReader.next()
+            except StopIteration:
+                self._tabFileReader.close()
+                self.nextTabFile()
+    def nextTabFile(self):
+        try:
+            tabFileName = self._tabFileNames.pop()
+        except IndexError:
+            raise StopIteration
+        self._tabFileReader = TabfileReader(self._glos, hasInfo=False)
+        self._tabFileReader.open(join(self._dirname, tabFileName))
+    def close(self):
+        if self._tabFileReader:
+            try:
+                self._tabFileReader.close()
+            except:
+                pass
+        self._tabFileReader = None
+        self._tabFileNames = []
+
+def read(glos, filename):
+    reader = Reader(glos)
+    reader.open(filename)
+    for entry in reader:
+        if not entry:
+            continue
+        glos.addEntryObj(entry)
+    reader.close()
+    return True
+
+
+
 
 def write(glos, filename):
     initCwd = os.getcwd()
