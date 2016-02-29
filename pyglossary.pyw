@@ -115,6 +115,22 @@ parser.add_argument(
 )
 parser.add_argument(
     #'-',
+    '--direct',
+    dest='direct',
+    action='store_true',
+    default=None,
+    help='if possible, convert directly without loading into memory',
+)
+parser.add_argument(
+    #'-',
+    '--indirect',
+    dest='direct',
+    action='store_false',
+    default=None,
+    help='disable `direct` mode, load full data into memory before writing, this is default',
+)
+parser.add_argument(
+    #'-',
     '--reverse',
     dest='reverse',
     action='store_true',
@@ -321,6 +337,10 @@ if os.sep != '/':
 ## only used in ui_cmd for now
 read_options = parseFormatOptionsStr(args.read_options)
 write_options = parseFormatOptionsStr(args.write_options)
+
+if args.direct != None:
+    read_options['direct'] = args.direct
+
 
 """
     examples for read and write options:
