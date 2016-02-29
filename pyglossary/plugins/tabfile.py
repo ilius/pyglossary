@@ -11,14 +11,19 @@ writeOptions = [
     'writeInfo',
 ]
 
+from pyglossary.file_utils import fileCountLines
 
 class Reader(object):
     def __init__(self, glos, hasInfo=True):
         self._glos = glos
+        self._filename = ''
         self._fp = None
         self._hasInfo = True
+        self._leadingLinesCount = 0
         self._pendingEntries = []
+        self._len = None
     def open(self, filename):
+        self._filename = filename
         self._fp = open(filename)
         if self._hasInfo:
             self._loadInfo()
@@ -30,6 +35,11 @@ class Reader(object):
         except:
             log.exception('error while closing tabfile')
         self._fp = None
+    def __len__(self):
+        if self._len is None:
+            log.warn('Try not to use len(reader) as it takes extra time')
+            self._len = fileCountLines(self._filename) - self._leadingLinesCount
+        return self._len
     __iter__ = lambda self: self
     def next(self):
         try:
@@ -46,6 +56,7 @@ class Reader(object):
 
     def _loadInfo(self):
         self._pendingEntries = []
+        self._leadingLinesCount = 0
         try:
             while True:
                 wordDefi = self._nextWordDefi()
@@ -55,6 +66,7 @@ class Reader(object):
                 if not word.startswith('#'):
                     self._pendingEntries.append(Entry(word, defi))
                     break
+                self._leadingLinesCount += 1
                 word = word.lstrip('#')
                 if not word:
                     continue
