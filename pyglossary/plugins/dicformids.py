@@ -78,7 +78,117 @@ def read(glos, filename):
 
 
 
+class Writer(object):
+    def __init__(self, glos):
+        self._glos = glos
+        self.linesPerDirectoryFile = 500 # 200
+        self.indexFileMaxSize = 32722 # 30000
+        self.directoryPostfix = ''
+        self.indexPostfix = 'Eng'
+        self.dirname = ''
+    def open(self, dirname):
+        self.dirname = dirname
+        if not os.path.isdir(dirname):
+            os.mkdir(dirname)
+
+    def writeGetIndexGen(self):
+        dicMaxSize = 0
+        wordCount = 0
+        for dicIndex, entryList in enumerate(self._glos.iterEntryBuckets(self.linesPerDirectoryFile)):
+            #assert len(entryList) == 200
+            dicFp = open(join(
+                self.dirname,
+                'directory%s%d.csv'%(
+                    self.directoryPostfix,
+                    dicIndex+1,
+                ),
+            ), 'wb')
+            for entry in entryList:
+                wordCount += 1
+                word = entry.getWord()
+                defi = entry.getDefi()
+                dicLine = '%s\t%s\n'%(word, defi)
+                dicPos = dicFp.tell()
+                dicFp.write(dicLine)
+                yield word, dicIndex+1, dicPos
+
+            dicMaxSize = max(dicMaxSize, dicFp.tell())
+            dicFp.close()
+        self.dicMaxSize = dicMaxSize
+        self.wordCount = wordCount
+
+    def writeProbs(self):
+        glos = self._glos
+        open(join(self.dirname, 'DictionaryForMIDs.properties'), 'wb').write('\n'.join([
+            '#DictionaryForMIDs property file',
+            'infoText=%s, author: %s'%(glos.getInfo('name'), glos.getInfo('author')),
+            'indexFileMaxSize=%s\n'%self.indexFileMaxSize,
+            'language1IndexNumberOfSourceEntries=%d'%self.wordCount,
+            'language1DictionaryUpdateClassName=de.kugihan.dictionaryformids.dictgen.DictionaryUpdate',
+            'indexCharEncoding=ISO-8859-1',
+            "dictionaryFileSeparationCharacter='\\t'",
+            'language2NormationClassName=de.kugihan.dictionaryformids.translation.Normation',
+            'language2DictionaryUpdateClassName=de.kugihan.dictionaryformids.dictgen.DictionaryUpdate',
+            'logLevel=0',
+            'language1FilePostfix=%s'%self.directoryPostfix,
+            'dictionaryCharEncoding=UTF-8',
+            'numberOfAvailableLanguages=2',
+            'language1IsSearchable=true',
+            'language2GenerateIndex=false',
+            'dictionaryFileMaxSize=%d'%(self.dicMaxSize+1),
+            'language2FilePostfix=fa',
+            'searchListFileMaxSize=20000',
+            'language2IsSearchable=false',
+            'fileEncodingFormat=plain_format1',
+            'language1HasSeparateDictionaryFile=true',
+            'searchListCharEncoding=ISO-8859-1',
+            "searchListFileSeparationCharacter='\t'",
+            "indexFileSeparationCharacter='\t'",
+            'language1DisplayText=%s'%glos.getInfo('inputlang'),
+            'language2HasSeparateDictionaryFile=false',
+            'dictionaryGenerationInputCharEncoding=UTF-8',
+            'language1GenerateIndex=true',
+            'language2DisplayText=%s'%glos.getInfo('outputlang'),
+            'language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEng',
+        ]))
+        #open(join(self.dirname, 'searchlist%s.csv'%self.directoryPostfix), 'wb') ### FIXME
+
+    def nextIndex(self):
+        try:
+            self.indexFp.close()
+        except AttributeError:
+            self.indexIndex = 0
+
+        self.indexIndex += 1
+        fname = 'index%s%d.csv'%(self.indexPostfix, self.indexIndex)
+        fpath = join(self.dirname, fname)
+        self.indexFp = open(fpath, 'wb')
+
+    def write(self):
+        self.nextIndex()
+        for word, dicIndex, dicPos in self.writeGetIndexGen():
+            indexLine = '%s\t%d-%d-B\n'%(
+                word,
+                dicIndex + 1,
+                dicPos,
+            )
+            if self.indexFp.tell() + len(indexLine) > self.indexFileMaxSize - 10:
+                self.nextIndex()
+            self.indexFp.write(indexLine)
+        self.indexFp.close()
+        self.writeProbs()
+
+    #def close(self):
+    #    pas
+
+
 def write(glos, filename):
+    writer = Writer(glos)
+    writer.open(filename)
+    writer.write()
+
+
+def write2(glos, filename):
     initCwd = os.getcwd()
     indexFileMaxSize = 30000
     language1FilePostfix = 'Eng'
