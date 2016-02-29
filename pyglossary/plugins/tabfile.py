@@ -13,13 +13,15 @@ writeOptions = [
 
 
 class Reader(object):
-    def __init__(self, glos):
+    def __init__(self, glos, hasInfo=True):
         self._glos = glos
         self._fp = None
+        self._hasInfo = True
         self._pendingEntries = []
     def open(self, filename):
         self._fp = open(filename)
-        self._loadInfo()
+        if self._hasInfo:
+            self._loadInfo()
     def close(self):
         if not self._fp:
             return
