@@ -926,6 +926,7 @@ class BglReader:
         'article', # 0x3A
         '', # 0x3B in Babylon Italian-English.BGL,
         # Babylon Spanish-English.BGL,
+        # Babylon_Chinese_S_English.BGL
         # no indication of the part of speech
         'abbreviation', # 0x3C
         # (short form: 'ר"ת')
