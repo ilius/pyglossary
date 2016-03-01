@@ -84,7 +84,7 @@ class Entry(object):
         if isinstance(self._word, basestring):
             self._word = func(self._word)
         else:
-            self._word = (
+            self._word = tuple(
                 func(st) for st in self._word
             )
 
@@ -97,7 +97,7 @@ class Entry(object):
         if isinstance(self._defi, basestring):
             self._defi = func(self._defi)
         else:
-            self._defi = (
+            self._defi = tuple(
                 func(st) for st in self._defi
             )
 
@@ -115,7 +115,7 @@ class Entry(object):
         if isinstance(self._word, basestring):
             self._word = self._word.replace(source, target)
         else:
-            self._word = (
+            self._word = tuple(
                 st.replace(source, target) for st in self._word
             )
 
@@ -126,7 +126,7 @@ class Entry(object):
         if isinstance(self._defi, basestring):
             self._defi = self._defi.replace(source, target)
         else:
-            self._defi = (
+            self._defi = tuple(
                 st.replace(source, target) for st in self._defi
             )
 
