@@ -69,20 +69,18 @@ def write(glos, filename):
         os.remove(filename)
     con = connect(filename)
     cur = con.cursor()
-    sqlLines = glos.getSqlLines(
+    for line in glos.iterSqlLines(
         infoKeys=infoKeys,
         newline='<BR>',
         transaction=False,
-    )
-    n = len(sqlLines)
-    ui = glos.ui
-    for i in xrange(n):
+    ):
         try:
-            cur.execute(sqlLines[i])
+            cur.execute(line)
         except:
             log.exception('error executing sqlite query:')
-            log.error('Error while executing: '+sqlLines[i])
+            log.error('Error while executing: '+line)
             continue
+    
     cur.close()
     con.close()
     return True

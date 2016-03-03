@@ -1044,8 +1044,7 @@ class Glossary:
             return num
 
 
-    def getSqlLines(self, filename='', infoKeys=None, newline='\\n', transaction=False):
-        lines = []
+    def iterSqlLines(self, filename='', infoKeys=None, newline='\\n', transaction=False):
         newline = '<br>'
         infoDefLine = 'CREATE TABLE dbinfo ('
         infoValues = []
@@ -1073,21 +1072,20 @@ class Glossary:
             infoDefLine += '%s char(%d), '%(key, len(value))
         ######################
         infoDefLine = infoDefLine[:-2] + ');'
-        lines.append(infoDefLine)
-        lines.append('CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, \'w\' TEXT, \'m\' TEXT);')
+        yield infoDefLine
+        yield 'CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, \'w\' TEXT, \'m\' TEXT);'
         if transaction:
-            lines.append('BEGIN TRANSACTION;');
-        lines.append('INSERT INTO dbinfo VALUES(%s);'%(','.join(infoValues)))
+            yield 'BEGIN TRANSACTION;';
+        yield 'INSERT INTO dbinfo VALUES(%s);'%(','.join(infoValues))
         for i, entry in enumerate(self):
             word = entry.getWord()
             defi = entry.getDefi()
             word = word.replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
             defi = defi.replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
-            lines.append('INSERT INTO word VALUES(%d, \'%s\', \'%s\');'%(i+1, word, defi))
+            yield 'INSERT INTO word VALUES(%d, \'%s\', \'%s\');'%(i+1, word, defi)
         if transaction:
-            lines.append('END TRANSACTION;')
-        lines.append('CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);')
-        return lines
+            yield 'END TRANSACTION;'
+        yield 'CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);'
 
 
     def uiEdit(self):## remove? FIXME

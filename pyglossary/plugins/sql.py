@@ -10,9 +10,12 @@ readOptions = []
 writeOptions = []
 
 def write(glos, filename):
-    open(filename, 'wb').write('\n'.join(glos.getSqlLines(
-        transaction=False,
-    )))
+    with open(filename, 'wb') as fp:
+        for line in glos.iterSqlLines(
+            transaction=False,
+        ):
+            fp.write(line + '\n')
+
 
 
 
