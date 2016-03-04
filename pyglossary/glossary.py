@@ -33,6 +33,7 @@ from collections import OrderedDict as odict
 import core
 from entry import Entry
 from entry_filters import *
+from sort_stream import hsortStream
 
 from text_utils import (
     fixUtf8,
@@ -211,7 +212,7 @@ class Glossary:
         self.info = odict()
 
         self._data = []
-        self._entryIndex = 0
+        self._gen = None
 
         self.filename = ''
         self.resPath = ''
@@ -240,14 +241,13 @@ class Glossary:
                 'h': html
                 'x': xdxf
         '''
-        self._entryIndex = 0
-
         self.ui = ui
         self.filename = filename
         self.resPath = resPath
         self._defaultDefiFormat = 'm'
 
         self.entryFilters = []
+        self._gen = None
 
     def updateEntryFilters(self):
         self.entryFilters = []
@@ -279,45 +279,40 @@ class Glossary:
 
         self.addEntryObj(Entry(word, defi, defiFormat))
 
+    def _loadedEntryGen(self):
+        for rawEntry in self._data:
+            yield Entry.fromRaw(
+                rawEntry,
+                defaultDefiFormat=self._defaultDefiFormat
+            )
+
+    def _readersEntryGen(self):
+        for reader in self._readers:
+            for entry in reader:
+                yield entry
+            reader.close()
+
+    def _applyEntryFiltersGen(self, gen):
+        for entry in gen:
+            if not entry:
+                continue
+            for entryFilter in self.entryFilters:
+                entry = entryFilter.run(entry)
+                if not entry:
+                    break
+            else:
+                yield entry
+
     def next(self):
         """
             returns the next entry
         """
-        try:
-            reader = self._readers[0]
-        except IndexError:
-            try:
-                rawEntry = self._data[self._entryIndex]
-            except IndexError:
-                raise StopIteration
+        if not self._gen:
+            log.error('Trying to iterate over a blank Glossary, must call `glos.read` first')
+            raise StopIteration
+        return self._gen.next()
 
-            entry = Entry.fromRaw(
-                rawEntry,
-                defaultDefiFormat=self._defaultDefiFormat
-            )
-            self._entryIndex += 1
-        else:
-            try:
-                entry = reader.next()
-            except StopIteration:
-                reader.close()
-                self._readers.pop(0)
-                return
-        
-        for entryFilter in self.entryFilters:
-            entry = entryFilter.run(entry)
-            if not entry:
-                return
-
-        return entry
-
-    def resetIter(self):
-        """
-            resets entry index
-            after this, next() will return the first entry
-            and you can start over by `for entry in glos:`
-        """
-        self._entryIndex = 0
+    __iter__ = lambda self: self
 
     def iterEntryBuckets(self, size):
         """
@@ -343,12 +338,6 @@ class Glossary:
     def getDefaultDefiFormat(self):
         return self._defaultDefiFormat
 
-    def __iter__(self):
-        while True:
-            entry = self.next()
-            if not entry:
-                continue
-            yield entry
 
     __len__ = lambda self: len(self._data) + sum(
         len(reader) for reader in self._readers
@@ -407,6 +396,7 @@ class Glossary:
 
     def read(self, filename, format='', direct=False, **options):
         self.updateEntryFilters()
+        pref = getattr(self.ui, 'pref', {})
         delFile=False
         ext = splitext(filename)[1]
         ext = ext.lower()
@@ -480,6 +470,7 @@ class Glossary:
         except KeyError:
             if direct:
                 log.warn('no `Reader` class found in %s plugin, falling back to indirect mode'%format)
+                direct = False
             result = self.readFunctions[format].__call__(
                 self,
                 filename,
@@ -489,6 +480,7 @@ class Glossary:
             #    return False
             if delFile:
                 os.remove(filename)
+            gen = self._loadedEntryGen()
         else:
             reader = Reader(self)
             reader.open(filename)
@@ -497,8 +489,20 @@ class Glossary:
                     'using Reader class from %s plugin for direct conversion without loading into memory'%format
                 )
                 self._readers.append(reader)
+                gen = self._readersEntryGen()
+                if pref.get('sort', False):
+                    cacheSize = pref.get('sort_cache_size', 1000)## FIXME
+                    log.info('stream sorting enabled, cache size: %s'%cacheSize)
+                    gen = hsortStream(
+                        gen,
+                        cacheSize,
+                        key=lambda entry: entry.getWords(),
+                    )
             else:
                 self.readFromReader(reader)
+                gen = self._loadedEntryGen()
+
+        self._gen = self._applyEntryFiltersGen(gen)
 
         return True
 

@@ -158,6 +158,14 @@ parser.add_argument(
 )
 parser.add_argument(
     #'-',
+    '--sort-cache-size',
+    dest='sort_cache_size',
+    type=int,
+    default=1000,
+)
+
+parser.add_argument(
+    #'-',
     '--utf8-check',
     dest='utf8_check',
     action='store_true',
@@ -359,6 +367,7 @@ ui_options_params = (
     'noProgressBar',
     #'verbosity',
     'sort',
+    'sort_cache_size',
     'utf8_check',
     'lower',
 )
@@ -369,6 +378,8 @@ for param in ui_options_params:
     if value is not None:
         ui_options[param] = value
 
+
+log.pretty(ui_options, 'ui_options =')
 
 """
 ui_type: User interface type

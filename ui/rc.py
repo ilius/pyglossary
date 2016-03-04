@@ -7,6 +7,7 @@ auto_update = True
 auto_set_for = True
 auto_set_out = True
 sort = True
+sort_cache_size = 1000
 lower = False
 
 remove_tags = False
