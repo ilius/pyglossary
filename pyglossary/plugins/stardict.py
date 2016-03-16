@@ -66,7 +66,7 @@ def strLowerKey(st):
 def stardictStrKeyMy(st):
     return strLowerKey(st) + strKey(st)
 
-def ascii_strcasecmp(s1, s2):
+def asciiStrCaseCmp(s1, s2):
     """
         imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file
     """
@@ -78,7 +78,7 @@ def ascii_strcasecmp(s1, s2):
             return c1 - c2
     return len(s1) - len(s2)
 
-def strcmp(s1, s2):
+def strCmp(s1, s2):
     """
         imitate strcmp of standard C library
 
@@ -96,21 +96,21 @@ def strcmp(s1, s2):
             return c1 - c2
     return len(s1) - len(s2)
 
-def stardict_strcmp(s1, s2):
+def stardictStrCmp(s1, s2):
     """
         use this function to sort index items in StarDict dictionary
         s1 and s2 must be utf-8 encoded strings
     """
-    a = ascii_strcasecmp(s1, s2)
+    a = asciiStrCaseCmp(s1, s2)
     if a == 0:
-        return strcmp(s1, s2)
+        return strCmp(s1, s2)
     else:
         return a
 
-def stardict_strcmp_new(s1, s2):
+def stardictStrCmpMy(s1, s2):
     """
         For testing key function stardictStrKey
-        and making sure it's exactly the same as stardict_strcmp
+        and making sure it's exactly the same as stardictStrCmp
         
         s1 and s2 must be utf-8 encoded strings
     """
@@ -121,7 +121,7 @@ def stardict_strcmp_new(s1, s2):
 
 ## using my key function `stardictStrKeyMy` might not be safe
 ## the safest way in Python 3 is using functools.cmp_to_key
-stardictStrKey = cmp_to_key(stardict_strcmp)
+stardictStrKey = cmp_to_key(stardictStrCmp)
 
 
 def splitStringIntoLines(s):
@@ -141,10 +141,10 @@ def splitStringIntoLines(s):
         beg = end = end + 1
     return res
 
-def new_lines_2_space(text):
+def newlinesToSpace(text):
     return re.sub('[\n\r]+', ' ', text)
 
-def new_line_2_br(text):
+def newlinesToBr(text):
     return re.sub('\n\r?|\r\n?', '<br>', text)
 
 
@@ -234,33 +234,33 @@ class StarDictReader:
         else:
             dictFd = open(self.fileBasePath+'.dict', 'rb')
 
-        for index, (word, defi_offset, defi_size) in enumerate(indexData):
+        for index, (word, defiOffset, defiSize) in enumerate(indexData):
             if not word:
                 continue
 
-            dictFd.seek(defi_offset)
-            if dictFd.tell() != defi_offset:
+            dictFd.seek(defiOffset)
+            if dictFd.tell() != defiOffset:
                 log.error("Unable to read definition for word \"{0}\"".format(word))
                 continue
 
-            data = dictFd.read(defi_size)
+            data = dictFd.read(defiSize)
 
-            if len(data) != defi_size:
+            if len(data) != defiSize:
                 log.error("Unable to read definition for word \"{0}\"".format(word))
                 continue
 
             if sametypesequence:
-                raw_defis = self.parseDefiBlockCompact(data, sametypesequence, word)
+                rawDefis = self.parseDefiBlockCompact(data, sametypesequence, word)
             else:
-                raw_defis = self.parseDefiBlockGeneral(data, word)
+                rawDefis = self.parseDefiBlockGeneral(data, word)
 
-            if not raw_defis:
+            if not rawDefis:
                 continue
 
             defis = []
             defiFormats = []
-            for raw_defi in raw_defis:
-                defis.append(raw_defi[0])
+            for rawDefi in rawDefis:
+                defis.append(rawDefi[0])
                 defiFormats.append(
                     {
                         'm': 'm',
@@ -269,7 +269,7 @@ class StarDictReader:
                         'g': 'h',
                         'h': 'h',
                         'x': 'x',
-                    }.get(raw_defi[1], '')
+                    }.get(rawDefi[1], '')
                 )
 
             ## FIXME
@@ -566,7 +566,7 @@ class StarDictWriter:
         """
         ifoStr = "StarDict's dict ifo file\n" \
             + "version=3.0.0\n" \
-            + "bookname={0}\n".format(new_lines_2_space(self.glos.getInfo('name'))) \
+            + "bookname={0}\n".format(newlinesToSpace(self.glos.getInfo('name'))) \
             + "wordcount={0}\n".format(len(self.glos)) \
             + "idxfilesize={0}\n".format(indexFileSize)
         if sametypesequence != None:
@@ -580,9 +580,9 @@ class StarDictWriter:
             if value == '':
                 continue
             if key == 'description':
-                ifoStr += '{0}={1}\n'.format(key, new_line_2_br(value))
+                ifoStr += '{0}={1}\n'.format(key, newlinesToBr(value))
             else:
-                ifoStr += '{0}={1}\n'.format(key, new_lines_2_space(value))
+                ifoStr += '{0}={1}\n'.format(key, newlinesToSpace(value))
         with open(self.fileBasePath+'.ifo', 'wb') as f:
             f.write(ifoStr)
         del ifoStr
