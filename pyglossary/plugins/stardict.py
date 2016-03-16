@@ -63,7 +63,7 @@ def strKey(st):
 def strLowerKey(st):
     return [ord(asciiLower(c)) for c in st]
 
-def stardictStrKey(st):
+def stardictStrKeyMy(st):
     return strLowerKey(st) + strKey(st)
 
 def ascii_strcasecmp(s1, s2):
@@ -115,9 +115,13 @@ def stardict_strcmp_new(s1, s2):
         s1 and s2 must be utf-8 encoded strings
     """
     return cmp(
-        stardictStrKey(s1),
-        stardictStrKey(s2),
+        stardictStrKeyMy(s1),
+        stardictStrKeyMy(s2),
     )
+
+## using my key function `stardictStrKeyMy` might not be safe
+## the safest way in Python 3 is using functools.cmp_to_key
+stardictStrKey = cmp_to_key(stardict_strcmp)
 
 
 def splitStringIntoLines(s):
@@ -435,10 +439,12 @@ class StarDictWriter:
     def run(self, dictZip, resOverwrite):
         ## no more direct access to glos.data, must use glos.sortWords for sorting
         ## no support for cmp argument because it's not supported in Python 3
-        ## using my key function `stardictStrKey` might not be safe
-        #self.glos.sortWords(key=stardictStrKey)
-        ## the safest way in Python 3 is using functools.cmp_to_key
-        self.glos.sortWords(key=cmp_to_key(stardict_strcmp))
+        ## key function's argument might be a list (word and alternates) or just a str (word)
+        self.glos.sortWords(
+            key = lambda arg: stardictStrKey(
+                arg[0] if isinstance(arg, (list, tuple)) else arg
+            ),
+        )
 
         self.writeGeneral()
         #if self.glossaryHasAdditionalDefinitions():
