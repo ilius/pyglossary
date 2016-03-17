@@ -439,11 +439,9 @@ class StarDictWriter:
     def run(self, dictZip, resOverwrite):
         ## no more direct access to glos.data, must use glos.sortWords for sorting
         ## no support for cmp argument because it's not supported in Python 3
-        ## key function's argument might be a list (word and alternates) or just a str (word)
+        ## key function's argument is a str (word)
         self.glos.sortWords(
-            key = lambda arg: stardictStrKey(
-                arg[0] if isinstance(arg, (list, tuple)) else arg
-            ),
+            key = stardictStrKey,
         )
 
         self.writeGeneral()

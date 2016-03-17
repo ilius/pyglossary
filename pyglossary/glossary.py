@@ -622,9 +622,12 @@ class Glossary:
 
     def sortWords(self, key=None, reverse=False):
         if key:
-            entryKey = lambda x: key(x[0])
+            entryKey = lambda x: key(
+                x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
+            )
         else:
-            entryKey = lambda x: x[0]
+            entryKey = lambda x: \
+                x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
         self._data.sort(
             key=entryKey,
             reverse=reverse,
