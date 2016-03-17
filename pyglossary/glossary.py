@@ -212,7 +212,7 @@ class Glossary:
         self.info = odict()
 
         self._data = []
-        self._gen = None
+        self._iter = None
 
         self.filename = ''
         self.resPath = ''
@@ -247,7 +247,10 @@ class Glossary:
         self._defaultDefiFormat = 'm'
 
         self.entryFilters = []
-        self._gen = None
+        self._iter = None
+
+        self._sort = False
+        self._sortKey = None
 
     def updateEntryFilters(self):
         self.entryFilters = []
@@ -303,16 +306,11 @@ class Glossary:
             else:
                 yield entry
 
-    def next(self):
-        """
-            returns the next entry
-        """
-        if not self._gen:
+    def __iter__(self):
+        if not self._iter:
             log.error('Trying to iterate over a blank Glossary, must call `glos.read` first')
-            raise StopIteration
-        return self._gen.next()
-
-    __iter__ = lambda self: self
+            return []
+        return self._iter
 
     def iterEntryBuckets(self, size):
         """
@@ -394,9 +392,31 @@ class Glossary:
 
         self.info[key] = value
 
-    def read(self, filename, format='', direct=False, **options):
+    def read(
+        self,
+        filename,
+        format='',
+        direct=False,
+        sort=None,
+        sortKey=None,
+        **options
+    ):
+        """
+            filename (str): name/path of input file
+            format (str): name of inout format, or '' to detect from file extention
+            direct (bool): enable direct mode
+            sort (bool): True (enable sorting), False (disable sorting), None (auto, get from UI)
+            sortKey (callable or None):
+                key function for sorting
+                takes a word as argument, which is str or list (with alternates)
+        """
         self.updateEntryFilters()
         pref = getattr(self.ui, 'pref', {})
+        if sort is None:
+            sort = pref.get('sort', False)
+        self._sort = sort
+        self._sortKey = sortKey
+        ###
         delFile=False
         ext = splitext(filename)[1]
         ext = ext.lower()
@@ -480,33 +500,28 @@ class Glossary:
             #    return False
             if delFile:
                 os.remove(filename)
-            gen = self._loadedEntryGen()
         else:
             reader = Reader(self)
             reader.open(filename)
             if direct:
+                self._readers.append(reader)
                 log.info(
                     'using Reader class from %s plugin for direct conversion without loading into memory'%format
                 )
-                self._readers.append(reader)
-                gen = self._readersEntryGen()
-                if pref.get('sort', False):
-                    cacheSize = pref.get('sort_cache_size', 1000)## FIXME
-                    log.info('stream sorting enabled, cache size: %s'%cacheSize)
-                    gen = hsortStream(
-                        gen,
-                        cacheSize,
-                        key=lambda entry: entry.getWords(),
-                    )
             else:
-                self.readFromReader(reader)
-                gen = self._loadedEntryGen()
+                self.loadReader(reader)
 
-        self._gen = self._applyEntryFiltersGen(gen)
+
+        if sort and not direct:
+            self.sortWords(key=sortKey)
+
+        self._updateGen(
+            direct=direct,
+        )
 
         return True
 
-    def readFromReader(self, reader):
+    def loadReader(self, reader):
         """
             iterates over `reader` object and loads the whole data into self._data
             must call `reader.open(filename)` before calling this function
@@ -517,6 +532,37 @@ class Glossary:
             self.addEntryObj(entry)
         reader.close()
         return True
+
+    def inactivateDirectMode(self):
+        for reader in self._readers:
+            self.loadReader(reader)
+        self._readers = []
+        self._updateGen(direct=False)
+
+    def _updateGen(self, direct=False):
+        """
+            direct: True (enable direct mode), False (disable direct mode)
+        """
+        pref = getattr(self.ui, 'pref', {})
+        if direct:
+            gen = self._readersEntryGen()
+            if self._sort:
+                sortKey = self._sortKey
+                cacheSize = pref.get('sort_cache_size', 1000)## FIXME
+                log.info('stream sorting enabled, cache size: %s'%cacheSize)
+                if sortKey:
+                    sortEntryKey = lambda entry: sortKey(entry.getWord())
+                else:
+                    sortEntryKey = lambda entry: entry.getWord()
+                gen = hsortStream(
+                    gen,
+                    cacheSize,
+                    key=sortEntryKey,
+                )
+        else:
+            gen = self._loadedEntryGen()
+
+        self._iter = self._applyEntryFiltersGen(gen)
 
     def write(self, filename='', format='', **options):
         if not filename:
@@ -692,6 +738,8 @@ class Glossary:
     ###################################################################
 
     def sortWords(self, key=None, reverse=False):
+        ## call `inactivateDirectMode` to load entries into memory FIXME
+        self.inactivateDirectMode()
         if key:
             entryKey = lambda x: key(
                 x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
