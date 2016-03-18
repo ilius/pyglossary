@@ -28,26 +28,61 @@ writeOptions = []
 supportsAlternates = True
 
 import csv
+from pyglossary.file_utils import fileCountLines
 
-def read(glos, filename):
-    with open(filename, 'rb') as csvfile:
-        reader = csv.reader(
-            csvfile,
+
+class Reader(object):
+    def __init__(self, glos):
+        self._glos = glos
+        self._filename = ''
+        self._fp = None
+        self._leadingLinesCount = 0
+        self._len = None
+        self._csvReader = None
+    def open(self, filename):
+        self._filename = filename
+        self._fp = open(filename, 'rb')
+        self._csvReader = csv.reader(
+            self._fp,
             dialect='excel',
         )
-        for row in reader:
+    def close(self):
+        if not self._fp:
+            return
+        try:
+            self._fp.close()
+        except:
+            log.exception('error while closing tabfile')
+        self._fp = None
+        self._csvReader = None
+    def __len__(self):
+        if self._len is None:
+            log.warn('Try not to use len(reader) as it takes extra time')
+            self._len = fileCountLines(self._filename) - self._leadingLinesCount
+        return self._len
+    __iter__ = lambda self: self
+    def next(self):
+        if not self._csvReader:
+            log.error('%s is not open, can not iterate'%self)
+            raise StopIteration
+        row = self._csvReader.next()
+        if not row:
+            return
+        try:
             word = row[0]
             defi = row[1]
-            try:
-                alts = row[2].split(',')
-            except IndexError:
-                pass
-            else:
-                word = [word] + alts
-            glos.addEntry(
-                word,
-                defi,
-            )
+        except IndexError:
+            log.error('invalid row: %r'%row)
+            return
+        try:
+            alts = row[2].split(',')
+        except IndexError:
+            pass
+        else:
+            word = [word] + alts
+        return Entry(word, defi)
+
+
 
 def write(glos, filename):
     with open(filename, 'wb') as csvfile:
