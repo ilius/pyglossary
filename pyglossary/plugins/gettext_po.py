@@ -47,7 +47,8 @@ def read(glos, filename):
                 defi += unescape(line)
             else:
                 word += unescape(line)
-
+    if word:
+        glos.addEntry(word, defi)
 
 
 def write(glos, filename):
