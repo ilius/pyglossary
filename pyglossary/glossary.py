@@ -184,7 +184,6 @@ class Glossary:
                 'close',
                 '__len__',
                 '__iter__',
-                'next',
             ):
                 if not hasattr(Reader, attr):
                     log.error('invalid Reader class in "%s" plugin, no "%s" method'%(
