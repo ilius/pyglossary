@@ -170,33 +170,46 @@ class Glossary:
         cls.formatsExt[format] = extentions
         cls.formatsDesc[format] = desc
 
-        if hasattr(plugin, 'read'):
+        ###################################################
+
+        hasReadSupport = False
+        try:
+            Reader = plugin.Reader
+        except AttributeError:
+            pass
+        else:
+            for attr in (
+                '__init__',
+                'open',
+                'close',
+                '__len__',
+                '__iter__',
+                'next',
+            ):
+                if not hasattr(Reader, attr):
+                    log.error('invalid Reader class in "%s" plugin, no "%s" method'%(
+                        format,
+                        attr,
+                    ))
+                    break
+            else:
+                cls.readerClasses[format] = Reader
+                hasReadSupport = True
+
+        try:
             cls.readFunctions[format] = plugin.read
+        except AttributeError:
+            pass
+        else:
+            hasReadSupport = True
+
+        if hasReadSupport:
             cls.readFormats.append(format)
             cls.readExt.append(extentions)
             cls.readDesc.append(desc)
             cls.formatsReadOptions[format] = getattr(plugin, 'readOptions', [])
-            try:
-                Reader = plugin.Reader
-            except AttributeError:
-                pass
-            else:
-                for attr in (
-                    '__init__',
-                    'open',
-                    'close',
-                    '__len__',
-                    '__iter__',
-                    'next',
-                ):
-                    if not hasattr(Reader, attr):
-                        log.error('invalid Reader class in "%s" plugin, no "%s" method'%(
-                            format,
-                            attr,
-                        ))
-                        break
-                else:
-                    cls.readerClasses[format] = Reader
+
+        ###################################################
 
         if hasattr(plugin, 'write'):
             cls.writeFunctions[format] = plugin.write
