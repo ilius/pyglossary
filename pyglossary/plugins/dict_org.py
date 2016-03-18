@@ -15,6 +15,7 @@ writeOptions = [
 
 from pyglossary.text_utils import chBaseIntToList, runDictzip
 import shutil
+import gzip
 
 b64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
@@ -63,40 +64,70 @@ database %s
 '''%(title, fname, dictPostfix, fname))
 
 
-def read(glos, filename):
-    if filename.endswith('.index'):
-        filename = filename[:-6]
-    idxStr = open(filename+'.index', 'rb').read()
-    if os.path.isfile(filename+'.dict.dz'):
-        import gzip
-        dictStr = gzip.open(filename+'.dict.dz').read()
-    else:
-        dictStr = open(filename+'.dict', 'rb').read()
-    ## read info from header of dict file ## FIXME
-    word = ''
-    sumLen = 0
-    wrongSorted = []
-    ############################## IMPORTANT PART ############################
-    for line in idxStr.split('\n'):
-        line = line.strip()
-        if not line:
-            continue
-        parts = line.split('\t')
-        assert len(parts)==3
-        word = parts[0].replace('<BR>', '\\n')\
-                        .replace('<br>', '\\n')
-        sumLen2 = indexStrToInt(parts[1])
-        if sumLen2 != sumLen:
-            wrongSorted.append(word)
-        sumLen = sumLen2
-        defiLen = indexStrToInt(parts[2])
-        defi = dictStr[sumLen:sumLen+defiLen].replace('<BR>', '\n')\
-                                             .replace('<br>', '\n')
-        glos.addEntry(word, defi)
-        sumLen += defiLen
-    ############################################################################
-    if len(wrongSorted)>0:
-        log.warn('Warning: wrong sorting count: %d'%len(wrongSorted))
+class Reader(object):
+    def __init__(self, glos):
+        self._glos = glos
+        self._filename = ''
+        self._indexFp = None
+        self._dictFp = None
+        self._leadingLinesCount = 0
+        self._len = None
+    def open(self, filename):
+        if filename.endswith('.index'):
+            filename = filename[:-6]
+        self._filename = filename
+        self._indexFp = open(filename+'.index', 'rb')
+        if os.path.isfile(filename+'.dict.dz'):
+            self._dictFp = gzip.open(filename+'.dict.dz')
+        else:
+            self._dictFp = open(filename+'.dict', 'rb')
+    def close(self):
+        try:
+            self._indexFp.close()
+        except:
+            log.exception('error while closing index file')
+        self._indexFp = None
+        try:
+            self._dictFp.close()
+        except:
+            log.exception('error while closing dict file')
+        self._dictFp = None
+    def __len__(self):
+        if self._len is None:
+            log.warn('Try not to use len(reader) as it takes extra time')
+            self._len = fileCountLines(self._filename+'.index') - self._leadingLinesCount
+        return self._len
+    __iter__ = lambda self: self
+    def __iter__(self):
+        if not self._indexFp:
+            log.error('reader is not open, can not iterate')
+            raise StopIteration
+        ## read info from header of dict file ## FIXME
+        word = ''
+        sumLen = 0
+        wrongSortedN = 0
+        ############################## IMPORTANT PART ############################
+        for line in self._indexFp:
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split('\t')
+            assert len(parts)==3
+            word = parts[0].replace('<BR>', '\\n')\
+                           .replace('<br>', '\\n')
+            sumLen2 = indexStrToInt(parts[1])
+            if sumLen2 != sumLen:
+                wrongSortedN += 1
+            sumLen = sumLen2
+            defiLen = indexStrToInt(parts[2])
+            self._dictFp.seek(sumLen)
+            defi = self._dictFp.read(defiLen)
+            defi = defi.replace('<BR>', '\n').replace('<br>', '\n')
+            sumLen += defiLen
+            yield Entry(word, defi)
+        ############################################################################
+        if wrongSortedN>0:
+            log.warn('Warning: wrong sorting count: %d'%wrongSortedN)
 
 
 
