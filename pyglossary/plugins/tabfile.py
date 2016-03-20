@@ -41,16 +41,7 @@ class Reader(TextGlossaryReader):
         if self._glos.getPref('enable_alts', True):
             word = word.split('|')
         ###
-        for i in xrange(128):
-            c = chr(i)
-            if not c in defi:
-                defi = defi.replace('\\\\n', c)\
-                            .replace('\\n', '\n')\
-                            .replace(c, '\\n')\
-                            .replace('\\\\t', c)\
-                            .replace('\\t', '\t')\
-                            .replace(c, '\\t')
-                break
+        defi = defi.decode('string_escape')## '\\n' -> '\n', '\\t' -> '\t'
         ###
         return word, defi
 
