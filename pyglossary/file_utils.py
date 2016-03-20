@@ -3,13 +3,14 @@ from itertools import (
     repeat,
 )
 
-def fileCountLines(filename):
+def fileCountLines(filename, newline='\n'):
+    newline = bytes(newline)## required? FIXME
     f = open(filename, 'rb')## or 'r'
     bufgen = takewhile(
         lambda x: x, (f.read(1024*1024) for _ in repeat(None))
     )
     return sum(
-        buf.count(b'\n') for buf in bufgen if buf
+        buf.count(newline) for buf in bufgen if buf
     )
 
 class FileLineWrapper(object):
