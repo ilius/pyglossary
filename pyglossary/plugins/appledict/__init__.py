@@ -52,7 +52,7 @@ def abspath_or_None(path):
 def write_xsl(xsl):
     if not xsl:
         return
-    with chdir(OtherResources, create=True):
+    with indir(OtherResources, create=True):
         shutil.copyfile(xsl, os.path.basename(xsl))
 
 def format_default_prefs(defaultPrefs):
@@ -124,7 +124,7 @@ def write_makefile(dict_name):
 def write_prefsHTML(prefsHTML_file):
     if not prefsHTML_file:
         return
-    with chdir(OtherResources, create=True):
+    with indir(OtherResources, create=True):
         shutil.copyfile(prefsHTML_file, os.path.basename(prefsHTML_file))
 
 def write_resources(paths):
@@ -133,7 +133,7 @@ def write_resources(paths):
     """
     if not paths:
         return
-    with chdir(OtherResources, create=True):
+    with indir(OtherResources, create=True):
         # cannot just shutil.copytree as it will fail with error if
         # destination exists, but we want to merge instead.
         for path in paths:
@@ -202,7 +202,7 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
     """
     basename = os.path.splitext(fpath)[0]
     dict_name = os.path.split(basename)[1]
-    # before chdir
+    # before chdir (outside indir block)
     css = abspath_or_None(css)
     xsl = abspath_or_None(xsl)
     prefsHTML = abspath_or_None(prefsHTML)
@@ -214,7 +214,7 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
     res = safe_listdir_set(glos.resPath).union(safe_listdir_set(OtherResources))
     res -= {css, xsl, prefsHTML, frontBackMatter}
 
-    with chdir(basename, create=True, clear=True):
+    with indir(basename, create=True, clear=True):
         write_plist(glos, dict_name + '.plist', xsl=xsl, defaultPrefs=defaultPrefs, prefsHTML=prefsHTML, frontBackMatter=frontBackMatter)
         write_xml(glos, dict_name + '.xml', cleanHTML=="yes", frontBackMatter=frontBackMatter, indexes=indexes)
         write_css(dict_name + '.css', css)

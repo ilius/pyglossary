@@ -1,12 +1,12 @@
 import os
 import shutil
 
-class chdir:
+class indir:
     """
     mkdir + chdir shortcut to use with `with` statement.
 
         >>> print(os.getcwd())  # -> "~/projects"
-        >>> with chdir('my_directory', create=True):
+        >>> with indir('my_directory', create=True):
         >>>     print(os.getcwd())  # -> "~/projects/my_directory"
         >>>     # do some work inside new 'my_directory'...
         >>> print(os.getcwd())  # -> "~/projects"
