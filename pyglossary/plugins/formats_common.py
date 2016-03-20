@@ -16,11 +16,12 @@ from os.path import split as path_split
 from os.path import join as path_join
 import logging
 
+log = logging.getLogger('root')
+
 from pyglossary import core
 from pyglossary.file_utils import FileLineWrapper
 from pyglossary.text_utils import toStr, toUnicode
 
-log = logging.getLogger('root')
 
 class chdir:
     """
