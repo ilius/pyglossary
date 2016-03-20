@@ -11,45 +11,65 @@ writeOptions = []
 
 from polib import escape as po_escape
 from polib import unescape as po_unescape
+from pyglossary.file_utils import fileCountLines
 
 
-
-def read(glos, filename):
-    fp = open(filename, 'rb')
-    word = ''
-    defi = ''
-    msgstr = False
-    for line in fp:
-        if not line:
-            if word:
-                glos.addEntry(word, defi)
-                word = ''
-                defi = ''
-            break
-        line = line.strip()
-        if not line:
-            continue
-        if line.startswith('#'):
-            continue
-        if line.startswith('msgid '):
-            if word:
-                glos.addEntry(word, defi)
-                word = ''
-                defi = ''
-            word = po_unescape(line[6:])
-            msgstr = False
-        elif line.startswith('msgstr '):
-            if msgstr:
-                log.error('msgid omitted!')
-            defi = po_unescape(line[7:])
-            msgstr = True
-        else:
-            if msgstr:
-                defi += po_unescape(line)
+class Reader(object):
+    def __init__(self, glos, hasInfo=True):
+        self._glos = glos
+        self._filename = ''
+        self._fp = None
+        self._len = None
+    def open(self, filename):
+        self._filename = filename
+        self._fp = open(filename)
+    def close(self):
+        if not self._fp:
+            return
+        try:
+            self._fp.close()
+        except:
+            log.exception('error while closing file "%s"'%self._filename)
+        self._fp = None
+    def __len__(self):
+        if self._len is None:
+            log.warn('Try not to use len(reader) as it takes extra time')
+            self._len = fileCountLines(
+                self._filename,
+                newline='\nmsgid',
+            )
+        return self._len
+    def __iter__(self):
+        word = ''
+        defi = ''
+        msgstr = False
+        for line in self._fp:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith('#'):
+                continue
+            if line.startswith('msgid '):
+                if word:
+                    yield Entry(word, defi)
+                    word = ''
+                    defi = ''
+                word = po_unescape(line[6:])
+                msgstr = False
+            elif line.startswith('msgstr '):
+                if msgstr:
+                    log.error('msgid omitted!')
+                defi = po_unescape(line[7:])
+                msgstr = True
             else:
-                word += po_unescape(line)
-    if word:
-        glos.addEntry(word, defi)
+                if msgstr:
+                    defi += po_unescape(line)
+                else:
+                    word += po_unescape(line)
+        if word:
+            yield Entry(word, defi)
+
+
 
 
 def write(glos, filename):
