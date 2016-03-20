@@ -21,7 +21,7 @@ class TextGlossaryReader(object):
         try:
             self._fp.close()
         except:
-            log.exception('error while closing tabfile')
+            log.exception('error while closing file "%s"'%self._filename)
         self._fp = None
     def loadInfo(self):
         self._pendingEntries = []
