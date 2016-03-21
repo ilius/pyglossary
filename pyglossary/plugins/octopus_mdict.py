@@ -20,6 +20,7 @@ from formats_common import *
 
 from pyglossary.plugin_lib.readmdict import MDX, MDD
 import os
+from os.path import splitext, isfile, isdir, extsep, basename, dirname
 
 enable = True
 format = 'OctopusMdict'
@@ -28,26 +29,69 @@ extentions = ['.mdx']
 readOptions = ['resPath', 'encoding', 'substyle']
 writeOptions = []
 
-def read(glos, filename, **options):
-    mdx = MDX(filename, options.get('encoding', ''), options.get('substyle', True))
-    glos.setInfo('title', mdx.header.get('Title', os.path.basename(filename)))
-    glos.setInfo('description', mdx.header.get('Description', ''))
-    for word, defi in mdx.items():
-        glos.addEntry(word, defi)
+class Reader(object):
+    def __init__(self, glos):
+        self._glos = glos
+        self.clear()
+    def clear(self):
+        self._filename = ''
+        self._encoding = ''
+        self._substyle = True
+        self._mdx = None
+        self._mdd = None
+        self._mddFilename = ''
+        self._dataDir = ''
+    def open(self, filename, **options):
+        self._filename = filename
+        self._encoding = options.get('encoding', '')
+        self._substyle = options.get('substyle', True)
+        self._mdx = MDX(filename, self._encoding, self._substyle)
+        ###
+        filenameNoExt, ext = splitext(self._filename)
+        self._dataDir = options.get('resPath', filenameNoExt + '_files')
+        mddFilename = ''.join([filenameNoExt, extsep, 'mdd'])
+        if isfile(mddFilename):
+            self._mdd = MDD(mddFilename)
+            self._mddFilename = mddFilename
+        ###
+        log.pretty(self._mdx.header, 'mdx.header=')
+        #for key, value in self._mdx.header.items():
+        #    key = key.lower()
+        #    self._glos.setInfo(key, value)
+        try:
+            title = self._mdx.header['Title']
+        except KeyError:
+            pass
+        else:
+            self._glos.setInfo('title', title)
+        self._glos.setInfo('description', self._mdx.header.get('Description', ''))
+        ###
+        try:
+            self.writeDataFiles()
+        except:
+            log.exception('error while saving MDict data files')
 
-    # find companion mdd file
-    base, ext = os.path.splitext(filename)
-    mdd_filename = ''.join([base, os.path.extsep, 'mdd'])
-    if (os.path.exists(mdd_filename)):
-        mdd = MDD(mdd_filename)
-        # write out optional data files
-        datafolder = options.get('resPath', base + '_files')
-        if not os.path.exists(datafolder):
-            os.makedirs(datafolder)
-        for key, value in mdd.items():
-            fname = ''.join([datafolder, key.replace('\\', os.path.sep)]);
-            if not os.path.exists(os.path.dirname(fname)):
-                os.makedirs(os.path.dirname(fname))
-            f = open(fname, 'wb')
+    def writeDataFiles(self):
+        if not self._mdd:
+            return
+        if not isdir(self._dataDir):
+            os.makedirs(self._dataDir)
+        for key, value in self._mdd.items():
+            fpath = ''.join([self._dataDir, key.replace('\\', os.path.sep)]);
+            if not isdir(dirname(fpath)):
+                os.makedirs(dirname(fpath))
+            log.debug('saving MDict data file: %s'%fpath)
+            f = open(fpath, 'wb')
             f.write(value)
             f.close()
+
+    def __iter__(self):
+        for word, defi in self._mdx.items():
+            yield Entry(word, defi)
+
+    __len__ = lambda self: len(self._mdx)
+
+    def close(self):
+        self.clear()
+
+
