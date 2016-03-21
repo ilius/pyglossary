@@ -2,7 +2,7 @@
 ## sdict.py
 ## Loader engine for AXMASoft's open dictionary format
 ##
-## Copyright (C) 2010-2012 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+## Copyright (C) 2010-2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 ## Copyright (C) 2006-2008 Igor Tkach (part of SDict Viewer http://sdictviewer.sf.net)
 ##
 ## This program is a free software; you can redistribute it and/or modify
@@ -103,36 +103,51 @@ class Header:
         self.full_index_offset = read_int(st, self.f_full_index)
 
 
-class SDictionary:
-    def __init__(self, filename, encoding='utf-8'):
-        self.encoding = encoding
-        self.filename = filename
-        self.file = open(filename, 'rb');
-        self.header = Header()
-        self.header.parse(self.file.read(43))
-        self.compression = compressions[self.header.compressionType]
-        self.title = self.read_unit(self.header.title_offset)
-        self.version = self.read_unit(self.header.version_offset)
-        self.copyright = self.read_unit(self.header.copyright_offset)
+class Reader(object):
+    def __init__(self, glos):
+        self._glos = glos
+        self.clear()
 
-    def read_unit(self, pos):
-        f = self.file
+    def clear(self):
+        self._file = None
+        self._filename = ''
+        self._encoding = ''
+        self._header = Header()
+
+    def open(self, filename, encoding='utf-8'):
+        self._file = open(filename, 'rb');
+        self._header.parse(self._file.read(43))
+        self._compression = compressions[self._header.compressionType]
+        ###
+        self.short_index = self.readShortIndex()
+        ###
+        self._glos.setInfo('name',  self.readUnit(self._header.title_offset))
+        self._glos.setInfo('version', self.readUnit(self._header.version_offset))
+        self._glos.setInfo('copyright', self.readUnit(self._header.copyright_offset))
+        ###
+        log.debug('SDict word count: %s'%len(self))## correct? FIXME
+
+    def close(self):
+        self._file.close()
+        self.clear()
+
+    __len__ = lambda self: self._header.num_of_words
+
+    def readUnit(self, pos):
+        f = self._file
         f.seek(pos);
         record_length= read_int(f.read(4))
         s = f.read(record_length)
-        s = self.compression.decompress(s)
+        s = self._compression.decompress(s)
         return s
 
-    def load(self):
-        self.short_index = self.read_short_index()
-
-    def read_short_index(self):
-        self.file.seek(self.header.short_index_offset)
-        s_index_depth = self.header.short_index_depth
+    def readShortIndex(self):
+        self._file.seek(self._header.short_index_offset)
+        s_index_depth = self._header.short_index_depth
         index_entry_len = (s_index_depth+1)*4
-        short_index_str = self.file.read(index_entry_len*self.header.short_index_length)
-        short_index_str = self.compression.decompress(short_index_str)
-        index_length = self.header.short_index_length
+        short_index_str = self._file.read(index_entry_len*self._header.short_index_length)
+        short_index_str = self._compression.decompress(short_index_str)
+        index_length = self._header.short_index_length
         short_index = [{} for i in xrange(s_index_depth+2)]
         depth_range = xrange(s_index_depth)
         for i in xrange(index_length):
@@ -158,25 +173,23 @@ class SDictionary:
         return short_index
 
     def __iter__(self):
-        pos = self.header.full_index_offset
-        read_item = self.read_full_index_item
+        pos = self._header.full_index_offset
         next_ptr = 0
         while True:
             pos += next_ptr
-            item = read_item(pos)
+            item = self.readFullIndexItem(pos)
             if item==None:
                 break
             (next_ptr, word, ptr) = item
             if word==None:
                 break
-            else:
-                yield (word, self.read_unit(self.header.articles_offset+ptr)\
-                    .replace('<BR>', '\n')\
-                    .replace('<br>', '\n'))
+            defi = self.readUnit(self._header.articles_offset + ptr)
+            defi = defi.replace('<BR>', '\n').replace('<br>', '\n')
+            yield Entry(word, defi)
 
-    def read_full_index_item(self, pointer):
+    def readFullIndexItem(self, pointer):
         try:
-            f = self.file
+            f = self._file
             f.seek(pointer)
             s = f.read(8)
             next_word = unpack('<H', s[:2])[0]
@@ -184,24 +197,14 @@ class SDictionary:
             word = f.read(next_word - 8) if next_word else None
             return next_word, word, article_pointer
         except Exception as e:
-            if pointer >= self.header.articles_offset:
+            if pointer >= self._header.articles_offset:
                 log.error('Warning: attempt to read word from illegal position in dict file')
                 return None
             log.exception()
 
-    def read_article(self, pointer):
-        return self.read_unit(self.header.articles_offset + pointer)
+    def readArticle(self, pointer):
+        return self.readUnit(self._header.articles_offset + pointer)
 
 
-def read(glos, filename, encoding='utf-8'):
-    sd = SDictionary(filename, encoding)
-    sd.load()
-    ##########
-    glos.setInfo('name', sd.title)
-    glos.setInfo('version', sd.version)
-    glos.setInfo('copyright', sd.copyright)
-    ##########
-    for word, defi in sd:
-        glos.addEntry(word, defi)
 
 
