@@ -22,56 +22,23 @@ infoKeys = (
 )
 
 def read(glos, filename):
-    fp = open(filename, 'rb')
-    xdbText = fp.read()
-    i = 0
-    for item in infoKeys:################## method should be changed
-        inf0 = xdbText.find('<'+item+'>', i)
-        if inf0==-1:
-            continue
-        inf0 += (len(item)+2)
-        inf1 = xdbText.find('</'+item+'>', inf0)
-        inf = unescape(xdbText[inf0:inf1])
-        glos.setInfo(item, inf)
-        i = inf1
-    while True:######################################################
-        i = xdbText.find('<word>', i)
-        if i==-1:
-            break
-        in0 = xdbText.find('<in>', i) + 4
-        in1 = xdbText.find('</in>', in0)
-        out0= xdbText.find('<out>', in1) + 5
-        out1= xdbText.find('</out>', out0)
-        word = unescape(xdbText[in0:in1])
-        defi = unescape(xdbText[out0:out1])
-        glos.addEntry(word, defi)
-        #i = out1
-        i = xdbText.find('</word>', out1) + 7
-
-
-
-def read_2(glos, filename):
     from xml.etree.ElementTree import XML, tostring
-    fp = open(filename, 'rb')
-    xdb = XML(fp.read())
-    del fp
-    for elem in xdb[0]:
-        et = tostring(elem)
-        i0 = et.find('<')
-        i1 = et.find('>', i0+1)
-        i2 = et.find('<', i1+1)
-        glos.info[et[i0:i1]] = et[i1+1:i2]
-    for elem in xdb[1:]:
-        try:
-            w, m = tostring(elem[0]), tostring(elem[1])
-        except:
-            log.exception(tostring(elem))
-            log.error()
-            continue
-        word = w[4:-5]
-        defi = m[5:-6]
-        glos.addEntry(word, defi)
-
+    xdb = XML(open(filename, 'rb').read())
+    for elem in xdb:
+        if elem.tag == 'xfardic':## first element
+            for infoElem in elem:
+                if infoElem.text:
+                    glos.setInfo(infoElem.tag, infoElem.text)
+        elif elem.tag == 'word':
+            word = elem[0].text
+            defi = elem[1].text
+            if not word:
+                continue
+            word = toStr(word)
+            defi = toStr(defi)
+            glos.addEntry(word, defi)
+        else:
+            log.error('unknown tag %s'%elem.tag)
 
 
 def write(glos, filename):
