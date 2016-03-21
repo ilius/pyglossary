@@ -5,24 +5,24 @@ class TextGlossaryReader(object):
     def __init__(self, glos, hasInfo=True):
         self._glos = glos
         self._filename = ''
-        self._fp = None
+        self._file = None
         self._hasInfo = True
         self._leadingLinesCount = 0
         self._pendingEntries = []
         self._len = None
     def open(self, filename):
         self._filename = filename
-        self._fp = open(filename)
+        self._file = open(filename)
         if self._hasInfo:
             self.loadInfo()
     def close(self):
-        if not self._fp:
+        if not self._file:
             return
         try:
-            self._fp.close()
+            self._file.close()
         except:
             log.exception('error while closing file "%s"'%self._filename)
-        self._fp = None
+        self._file = None
     def loadInfo(self):
         self._pendingEntries = []
         self._leadingLinesCount = 0

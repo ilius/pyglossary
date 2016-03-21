@@ -35,25 +35,25 @@ class Reader(object):
     def __init__(self, glos):
         self._glos = glos
         self._filename = ''
-        self._fp = None
+        self._file = None
         self._leadingLinesCount = 0
         self._len = None
         self._csvReader = None
     def open(self, filename):
         self._filename = filename
-        self._fp = open(filename, 'rb')
+        self._file = open(filename, 'rb')
         self._csvReader = csv.reader(
-            self._fp,
+            self._file,
             dialect='excel',
         )
     def close(self):
-        if not self._fp:
+        if not self._file:
             return
         try:
-            self._fp.close()
+            self._file.close()
         except:
             log.exception('error while closing tabfile')
-        self._fp = None
+        self._file = None
         self._csvReader = None
     def __len__(self):
         if self._len is None:

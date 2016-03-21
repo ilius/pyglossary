@@ -18,19 +18,19 @@ class Reader(object):
     def __init__(self, glos, hasInfo=True):
         self._glos = glos
         self._filename = ''
-        self._fp = None
+        self._file = None
         self._len = None
     def open(self, filename):
         self._filename = filename
-        self._fp = open(filename)
+        self._file = open(filename)
     def close(self):
-        if not self._fp:
+        if not self._file:
             return
         try:
-            self._fp.close()
+            self._file.close()
         except:
             log.exception('error while closing file "%s"'%self._filename)
-        self._fp = None
+        self._file = None
     def __len__(self):
         if self._len is None:
             log.warn('Try not to use len(reader) as it takes extra time')
@@ -43,7 +43,7 @@ class Reader(object):
         word = ''
         defi = ''
         msgstr = False
-        for line in self._fp:
+        for line in self._file:
             line = line.strip()
             if not line:
                 continue

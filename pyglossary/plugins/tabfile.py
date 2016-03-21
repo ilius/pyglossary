@@ -22,9 +22,9 @@ class Reader(TextGlossaryReader):
         return word.lstrip('#')
 
     def nextPair(self):
-        if not self._fp:
+        if not self._file:
             raise StopIteration
-        line = self._fp.readline()
+        line = self._file.readline()
         if not line:
             raise StopIteration
         line = line.strip()## This also removed tailing newline
