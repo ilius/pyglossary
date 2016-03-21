@@ -11,67 +11,60 @@ writeOptions = []
 
 
 def read(glos, filename, dicIndex=16):
-    initCwd = os.getcwd()
-    os.chdir(filename)
-    try:
-        fp = open(str(dicIndex))
-    except:
-        log.error('bad index: %s'%dicIndex)
-        return False
-    for f in [l.split('#')[-1] for l in fp.read().split('\n')]:
-        if f=='':
-            continue
-        for line in open(f).read().split('\n'):
-            if line=='':
-                pass
-            elif line[0]=='#':
-                pass
-            else:
-                parts = line.split('#')
-                word = parts[0]
-                defi = ''.join(parts[1:])
-                glos.addEntry(
-                    word,
-                    defi,
-                )
-    os.chdir(initCwd)
+    with indir(filename):
+        try:
+            fp = open(str(dicIndex))
+        except:
+            log.error('bad index: %s'%dicIndex)
+            return False
+        for f in [l.split('#')[-1] for l in fp.read().split('\n')]:
+            if f=='':
+                continue
+            for line in open(f).read().split('\n'):
+                if line=='':
+                    pass
+                elif line[0]=='#':
+                    pass
+                else:
+                    parts = line.split('#')
+                    word = parts[0]
+                    defi = ''.join(parts[1:])
+                    glos.addEntry(
+                        word,
+                        defi,
+                    )
 
 
 def write(glos, filename, dicIndex=16):
     if not isinstance(dicIndex, int):
         raise TypeError('Invalid argument to function writeOmnidic: filename=%s'%filename)
-    if not os.path.isdir(filename):
-        os.mkdir(filename)
-    initCwd = os.getcwd()
-    os.chdir(filename)
+    with indir(filename, create=True):
+        indexFp = open(str(dicIndex), 'wb')
 
-    indexFp = open(str(dicIndex), 'wb')
+        for bucketIndex, bucket in enumerate(glos.iterEntryBuckets(100)):
+            if bucketIndex==0:
+                bucketFilename = '%s99'%dicIndex
+            else:
+                bucketFilename = '%s%s'%(
+                    dicIndex,
+                    bucketIndex * 100 + len(bucket) - 1,
+                )
 
-    for bucketIndex, bucket in enumerate(glos.iterEntryBuckets(100)):
-        if bucketIndex==0:
-            bucketFilename = '%s99'%dicIndex
-        else:
-            bucketFilename = '%s%s'%(
-                dicIndex,
-                bucketIndex * 100 + len(bucket) - 1,
-            )
+            indexFp.write('%s#%s#%s\n'%(
+                bucket[0].getWord(),
+                bucket[-1].getWord(),
+                bucketFilename,
+            ))
 
-        indexFp.write('%s#%s#%s\n'%(
-            bucket[0].getWord(),
-            bucket[-1].getWord(),
-            bucketFilename,
-        ))
+            bucketFileObj = open(bucketFilename, 'wb')
+            for entry in bucket:
+                word = entry.getWord()
+                defi = entry.getDefi()
+                defi = defi.replace('\n', '  ') ## FIXME
+                bucketFileObj.write('%s#%s\n'%(word, defi))
+            bucketFileObj.close()
 
-        bucketFileObj = open(bucketFilename, 'wb')
-        for entry in bucket:
-            word = entry.getWord()
-            defi = entry.getDefi()
-            defi = defi.replace('\n', '  ') ## FIXME
-            bucketFileObj.write('%s#%s\n'%(word, defi))
-        bucketFileObj.close()
-
-    indexFp.close()
-    os.chdir(initCwd)
+        indexFp.close()
 
 
 def write2(glos, filename, dicIndex=16):
