@@ -28,6 +28,7 @@ import logging
 import pkgutil
 import string
 from collections import Counter
+from collections import OrderedDict as odict
 
 import core
 from entry import Entry
@@ -89,12 +90,22 @@ class Glossary:
 
     """
 
-    infoKeysAlias = (## Should be changed according to a plugin???
-        ('name', 'title', 'dbname', 'bookname'),
-        ('sourceLang', 'inputlang', 'origlang'),
-        ('targetLang', 'outputlang', 'destlang'),
-        ('copyright', 'license'),
-    )
+    ## Should be changed according to plugins? FIXME
+    infoKeysAliasDict = {
+        'title': 'name',
+        'bookname': 'name',
+        'dbname': 'name',
+        ##
+        'sourcelang': 'sourceLang',
+        'inputlang': 'sourceLang',
+        'origlang': 'sourceLang',
+        ##
+        'targetlang': 'targetLang',
+        'outputlang': 'targetLang',
+        'destlang': 'targetLang',
+        ##
+        'license': 'copyright',
+    }
     readFormats = []
     writeFormats = []
     readFunctions = {}
@@ -175,7 +186,7 @@ class Glossary:
         return plugin
 
     def clear(self):
-        self.info = []
+        self.info = odict()
 
         self._data = []
         self._entryIndex = 0
@@ -185,10 +196,14 @@ class Glossary:
         self._defaultDefiFormat = 'm'
 
     def __init__(self, info=None, ui=None, filename='', resPath=''):
-        if info is None:
-            info = []
-        self.info = []
-        self.setInfos(info, True)
+        """
+            info: OrderedDict instance, or None
+                  no need to copy OrderedDict instance, we will not reference to it
+        """
+        self.info = odict()
+        if info:
+            for key, value in info.items():
+                self.setInfo(key, value)
 
         self._data = []
         '''
@@ -306,7 +321,7 @@ class Glossary:
 
     def copy(self):
         newGlos = Glossary(
-            info = self.info[:],
+            info = self.info,## no need to copy
             ui = self.ui, ## FIXME
             filename = self.filename,
             resPath = self.resPath,
@@ -317,7 +332,7 @@ class Glossary:
         return newGlos
 
     def infoKeys(self):
-        return [t[0] for t in self.info]
+        return self.info.keys()
 
     def getMostUsedDefiFormats(self, count=None):
         return Counter([
@@ -328,57 +343,32 @@ class Glossary:
     #def formatInfoKeys(self, format):## FIXME
 
     def getInfo(self, key):
-        lkey = str(key).lower()
-        for group in Glossary.infoKeysAlias:
-            if not isinstance(group, (list, tuple)):
-                raise TypeError('group=%s'%group)
-            if key in group or lkey in group:
-                for skey in group:
-                    for t in self.info:
-                        if t[0] == skey:
-                            return t[1]
-        for t in self.info:
-            if t[0].lower() == lkey:
-                return t[1]
-        return ''
+        key = str(key)
 
+        try:
+            key = self.infoKeysAliasDict[key.lower()]
+        except KeyError:
+            #log.warn('uknown info key: %s'%key)## FIXME
+            pass
+
+        return self.info.get(key, '')## '' or None as defaul?## FIXME
+        
     def setInfo(self, key, value):
         ## FIXME
+        origKey = key
         key = fixUtf8(key)
         value = fixUtf8(value)
-        
-        lkey = str(key).lower()
-        for group in Glossary.infoKeysAlias:
-            if not isinstance(group, (list, tuple)):
-                raise TypeError('group=%s'%group)
-            if key in group or lkey in group:
-                skey=group[0]
-                for i in xrange(len(self.info)):
-                    if self.info[i][0]==skey:
-                        self.info[i] = (self.info[i][0], value)
-                        return
-                for i in xrange(len(self.info)):
-                    if self.info[i][0] in group:
-                        self.info[i] = (self.info[i][0], value)
-                        return
-        for i in xrange(len(self.info)):
-            if self.info[i][0]==key or self.info[i][0].lower()==lkey:
-                    self.info[i] = (self.info[i][0], value)
-                    return
-        self.info.append([key, value])
 
-    def setInfos(self, info, setAll=False):
-        for t in info:
-            self.setInfo(t[0], t[1])
-        if setAll:
-            for key in self.infoKeys():
-                if not self.getInfo(key):
-                    self.setInfo(key, '')
+        try:
+            key = self.infoKeysAliasDict[key.lower()]
+        except KeyError:
+            #log.warn('uknown info key: %s'%key)## FIXME
+            pass
 
-    def getInfos(self, keys=None):
-        if keys:
-            return [(key, self.getInfo(key)) for key in keys]
-        return list(self.info)
+        if origKey != key:
+            log.debug('setInfo: %s -> %s'%(origKey, key))
+
+        self.info[key] = value
 
     def read(self, filename, format='', **options):
         self.updateEntryFilters()
@@ -562,15 +552,23 @@ class Glossary:
         ext='.txt',
         head='',
         entryFilterFunc=None,
+        outInfoKeysAliasDict=None,
     ):
         if rplList is None:
             rplList = []
         if not filename:
             filename = self.filename + ext
+        if not outInfoKeysAliasDict:
+            outInfoKeysAliasDict = {}
+
         fp = open(filename, 'wb')
         fp.write(head)
         if writeInfo:
-            for key, desc in self.info:
+            for key, desc in self.info.items():
+                try:
+                    key = outInfoKeysAliasDict[key]
+                except KeyError:
+                    pass
                 for rpl in rplList:
                     desc = desc.replace(rpl[0], rpl[1])
                 fp.write('##' + key + sep[0] + desc + sep[1])
@@ -981,30 +979,36 @@ class Glossary:
         lines = []
         newline = '<br>'
         infoDefLine = 'CREATE TABLE dbinfo ('
-        infoList = []
+        infoValues = []
         #######################
-        #keys=('name', 'author', 'version', 'direction', 'origLang', 'destLang', 'license', 'category', 'description')
-        #for key in keys:
-        #    inf = "'" + self.getInfo(key).replace('\'', '"').replace('\n',newline) + "'"
-        #    infoList.append(inf)
-        #    infoDefLine += '%s varchar(%d), '%(key, len(inf)+10)
+        if not infoKeys:
+            infoKeys = [
+                'dbname',
+                'author',
+                'version',
+                'direction',
+                'origLang',
+                'destLang',
+                'license',
+                'category',
+                'description',
+            ]
         ######################
-        info = self.getInfos(keys=infoKeys)
-
-        for item in info:
-            inf = '\'' + item[1].replace('\'', '\'\'')\
+        for key in infoKeys:
+            value = self.getInfo(key)
+            value = value.replace('\'', '\'\'')\
                                .replace('\x00', '')\
                                .replace('\r', '')\
-                               .replace('\n', newline) + '\''
-            infoList.append(inf)
-            infoDefLine += '%s char(%d), '%(item[0], len(inf))
+                               .replace('\n', newline)
+            infoValues.append('\'' + value + '\'')
+            infoDefLine += '%s char(%d), '%(key, len(value))
         ######################
         infoDefLine = infoDefLine[:-2] + ');'
         lines.append(infoDefLine)
         lines.append('CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, \'w\' TEXT, \'m\' TEXT);')
         if transaction:
             lines.append('BEGIN TRANSACTION;');
-        lines.append('INSERT INTO dbinfo VALUES(%s);'%(','.join(infoList)))
+        lines.append('INSERT INTO dbinfo VALUES(%s);'%(','.join(infoValues)))
         for i, entry in enumerate(self):
             word = entry.getWord()
             defi = entry.getDefi()
