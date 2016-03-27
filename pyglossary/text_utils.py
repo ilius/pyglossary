@@ -74,41 +74,6 @@ toUnicode = lambda s: s if isinstance(s, unicode) else str(s).decode('utf8')
 
 fixUtf8 = lambda st: st.replace('\x00', '').decode('utf-8', 'replace').encode('utf-8')
 
-#from xml.sax.saxutils import escape, unescape
-def escape(data, entities=None):
-    """Escape &, <, and > in a string of data.
-
-    You can escape other strings of data by passing a dictionary as
-    the optional entities parameter.  The keys and values must all be
-    strings; each key will be replaced with its corresponding value.
-    """
-    if entities is None:
-        entities = {}
-
-    # must do ampersand first
-    data = data.replace("&", "&amp;")
-    data = data.replace(">", "&gt;")
-    data = data.replace("<", "&lt;")
-    if entities:
-        data = __dict_replace(data, entities)
-    return data
-
-def unescape(data, entities=None):
-    """Unescape &amp;, &lt;, and &gt; in a string of data.
-
-    You can unescape other strings of data by passing a dictionary as
-    the optional entities parameter.  The keys and values must all be
-    strings; each key will be replaced with its corresponding value.
-    """
-    if entities is None:
-        entities = {}
-
-    data = data.replace("&lt;", "<")
-    data = data.replace("&gt;", ">")
-    if entities:
-        data = __dict_replace(data, entities)
-    # must do ampersand last
-    return data.replace("&amp;", "&")
 
 # return a message string describing the current exception
 def excMessage():

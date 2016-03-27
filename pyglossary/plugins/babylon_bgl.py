@@ -56,7 +56,10 @@ supportsAlternates = True
 import gzip, re, htmlentitydefs, pickle
 
 from pyglossary.text_utils import binStrToInt, excMessage, \
-    isASCII, isControlChar, name2codepoint, formatByteStr, intToBinStr, escape
+    isASCII, isControlChar, name2codepoint, formatByteStr, intToBinStr
+
+from pyglossary.xml_utils import escape
+
 import pyglossary.gregorian as gregorian
 
 

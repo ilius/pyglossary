@@ -9,7 +9,7 @@ extentions = ['.xdb', '.xml']
 readOptions = []
 writeOptions = []
 
-from pyglossary.text_utils import escape, unescape
+from pyglossary.xml_utils import escape, unescape
 
 infoKeys = (
     'dbname',
