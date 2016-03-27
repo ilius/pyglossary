@@ -36,6 +36,8 @@ def read(glos, filename):
                 continue
             word = toStr(word)
             defi = toStr(defi)
+            word = xml_unescape(word)
+            defi = xml_unescape(defi)
             glos.addEntry(word, defi)
         else:
             log.error('unknown tag %s'%elem.tag)
