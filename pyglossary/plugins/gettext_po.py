@@ -9,7 +9,8 @@ extentions = ['.po',]
 readOptions = []
 writeOptions = []
 
-from polib import escape, unescape
+from polib import escape as po_escape
+from polib import unescape as po_unescape
 
 
 
@@ -35,18 +36,18 @@ def read(glos, filename):
                 glos.addEntry(word, defi)
                 word = ''
                 defi = ''
-            word = unescape(line[6:])
+            word = po_unescape(line[6:])
             msgstr = False
         elif line.startswith('msgstr '):
             if msgstr:
                 log.error('msgid omitted!')
-            defi = unescape(line[7:])
+            defi = po_unescape(line[7:])
             msgstr = True
         else:
             if msgstr:
-                defi += unescape(line)
+                defi += po_unescape(line)
             else:
-                word += unescape(line)
+                word += po_unescape(line)
     if word:
         glos.addEntry(word, defi)
 
@@ -60,8 +61,8 @@ def write(glos, filename):
         word = entry.getWord()
         defi = entry.getDefi()
         fp.write('msgid %s\nmsgstr %s\n\n'%(
-            escape(word),
-            escape(defi),
+            po_escape(word),
+            po_escape(defi),
         ))
     fp.close()
 
