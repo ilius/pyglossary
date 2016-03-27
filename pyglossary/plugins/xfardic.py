@@ -9,7 +9,7 @@ extentions = ['.xdb', '.xml']
 readOptions = []
 writeOptions = []
 
-from pyglossary.xml_utils import escape, unescape
+from pyglossary.xml_utils import xml_escape, xml_unescape
 
 infoKeys = (
     'dbname',
@@ -52,10 +52,10 @@ def write(glos, filename):
         word, alts = words[0], words[1:]
         defi = entry.getDefi()
         #fp.write("<word><in>"+word+"</in><out>"+ defi+"</out></word>\n")
-        fp.write('<word>\n    <in>%s</in>\n'%escape(word))
+        fp.write('<word>\n    <in>%s</in>\n'%xml_escape(word))
         for alt in alts:
-            fp.write('    <alt>%s</alt>\n'%escape(alt))
-        fp.write('    <out>%s</out>\n</word>\n'%escape(defi))
+            fp.write('    <alt>%s</alt>\n'%xml_escape(alt))
+        fp.write('    <out>%s</out>\n</word>\n'%xml_escape(defi))
     fp.write("</words>\n")
     fp.close()
 

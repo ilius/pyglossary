@@ -1,5 +1,7 @@
-#from xml.sax.saxutils import escape, unescape
-def escape(data, entities=None):
+#from xml.sax.saxutils import escape as xml_escape
+#from xml.sax.saxutils import unescape as xml_unescape
+
+def xml_escape(data, entities=None):
     """Escape &, <, and > in a string of data.
 
     You can escape other strings of data by passing a dictionary as
@@ -17,7 +19,7 @@ def escape(data, entities=None):
         data = __dict_replace(data, entities)
     return data
 
-def unescape(data, entities=None):
+def xml_unescape(data, entities=None):
     """Unescape &amp;, &lt;, and &gt; in a string of data.
 
     You can unescape other strings of data by passing a dictionary as

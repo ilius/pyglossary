@@ -58,7 +58,7 @@ import gzip, re, htmlentitydefs, pickle
 from pyglossary.text_utils import binStrToInt, excMessage, \
     isASCII, isControlChar, name2codepoint, formatByteStr, intToBinStr
 
-from pyglossary.xml_utils import escape
+from pyglossary.xml_utils import xml_escape
 
 import pyglossary.gregorian as gregorian
 
@@ -244,7 +244,7 @@ def replace_html_entry(m):
     if m.group(0) == res: # conversion failed
         return res
     else:
-        return escape(res)
+        return xml_escape(res)
 
 def replace_dingbat(m):
     """
@@ -2348,7 +2348,7 @@ class BglReader:
             if fields.part_of_speech_str:
                 defi_format += '<font color="#{0}">{1}</font>'.format(
                     self.partOfSpeechColor,
-                    escape(fields.part_of_speech_str),
+                    xml_escape(fields.part_of_speech_str),
                 )
             if fields.utf8_title:
                 if defi_format:
