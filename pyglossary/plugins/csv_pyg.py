@@ -38,6 +38,7 @@ class Reader(object):
         self._file = None
         self._leadingLinesCount = 0
         self._len = None
+        self._pos = -1
         self._csvReader = None
     def open(self, filename):
         self._filename = filename
@@ -65,7 +66,12 @@ class Reader(object):
         if not self._csvReader:
             log.error('%s is not open, can not iterate'%self)
             raise StopIteration
-        row = self._csvReader.next()
+        self._pos += 1
+        try:
+            row = self._csvReader.next()
+        except StopIteration as e:
+            self._len = self._pos
+            raise e
         if not row:
             return
         try:

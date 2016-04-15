@@ -43,6 +43,7 @@ class Reader(object):
         word = ''
         defi = ''
         msgstr = False
+        wordCount = 0
         for line in self._file:
             line = line.strip()
             if not line:
@@ -51,7 +52,7 @@ class Reader(object):
                 continue
             if line.startswith('msgid '):
                 if word:
-                    yield Entry(word, defi)
+                    yield Entry(word, defi) ; wordCount += 1
                     word = ''
                     defi = ''
                 word = po_unescape(line[6:])
@@ -67,9 +68,8 @@ class Reader(object):
                 else:
                     word += po_unescape(line)
         if word:
-            yield Entry(word, defi)
-
-
+            yield Entry(word, defi) ; wordCount += 1
+        self._len = wordCount
 
 
 def write(glos, filename):

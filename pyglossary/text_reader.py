@@ -1,6 +1,9 @@
 from pyglossary.file_utils import fileCountLines
 from pyglossary.entry import Entry
 
+import logging
+log = logging.getLogger('root')
+
 class TextGlossaryReader(object):
     def __init__(self, glos, hasInfo=True):
         self._glos = glos
@@ -10,6 +13,7 @@ class TextGlossaryReader(object):
         self._leadingLinesCount = 0
         self._pendingEntries = []
         self._len = None
+        self._pos = -1
     def open(self, filename):
         self._filename = filename
         self._file = open(filename)
@@ -43,12 +47,17 @@ class TextGlossaryReader(object):
         except StopIteration:
             pass
     def next(self):
+        self._pos += 1
         try:
             return self._pendingEntries.pop(0)
         except IndexError:
             pass
         ###
-        wordDefi = self.nextPair()
+        try:
+            wordDefi = self.nextPair()
+        except StopIteration as e:
+            self._len = self._pos
+            raise e
         if not wordDefi:
             return
         word, defi = wordDefi

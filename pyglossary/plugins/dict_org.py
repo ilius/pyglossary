@@ -106,6 +106,7 @@ class Reader(object):
         word = ''
         sumLen = 0
         wrongSortedN = 0
+        wordCount = 0
         ############################## IMPORTANT PART ############################
         for line in self._indexFp:
             line = line.strip()
@@ -124,11 +125,11 @@ class Reader(object):
             defi = self._dictFp.read(defiLen)
             defi = defi.replace('<BR>', '\n').replace('<br>', '\n')
             sumLen += defiLen
-            yield Entry(word, defi)
+            yield Entry(word, defi) ; wordCount += 1
         ############################################################################
         if wrongSortedN>0:
             log.warn('Warning: wrong sorting count: %d'%wrongSortedN)
-
+        self._len = wordCount
 
 
 def write(glos, filename, sort=True, dictZip=True, install=True):## FIXME
