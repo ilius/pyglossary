@@ -18,7 +18,7 @@
 
 from formats_common import *
 
-from pyglossary.readmdict import MDX, MDD
+from pyglossary.plugin_lib.readmdict import MDX, MDD
 import os
 
 enable = True
