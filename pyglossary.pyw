@@ -84,7 +84,6 @@ parser.add_argument(
     choices=(
         'cmd',
         'gtk',
-        'gtk_new',
         'tk',
         #'qt',
         'auto',
