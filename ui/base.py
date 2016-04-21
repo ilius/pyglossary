@@ -86,6 +86,8 @@ class UIBase(object):
                 log.exception('error while loading save file %s'%self.prefSavePath[0])
             else:
                 exec(fp.read(), None, data)
+            finally:
+                fp.close()
         for key in self.prefKeys:
             self.pref[key] = data[key]
         for key, value in options.items():
