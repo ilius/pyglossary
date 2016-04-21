@@ -85,7 +85,7 @@ def indexes_generator(indexes_lang):
         if not indexer:
             msg = "extended indexes not supported for the specified language: %s.\n"\
                   "following languages avaible: %s." %\
-                  (indexes_lang, ', '.join(idxs.languages.keys()))
+                  (indexes_lang, ', '.join(list(idxs.languages.keys())))
             from pyglossary.glossary import log
             log.error(msg)
             raise ValueError(msg)

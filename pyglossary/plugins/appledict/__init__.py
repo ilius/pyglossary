@@ -72,7 +72,7 @@ def format_default_prefs(defaultPrefs):
         log.error("default prefs does not contain {'version': '1'}.  prefs "
                   "will not be persistent between Dictionary.app restarts.")
     return "\n".join("\t\t<key>%s</key>\n\t\t<string>%s</string>" % i
-                     for i in sorted(defaultPrefs.iteritems())).strip()
+                     for i in sorted(defaultPrefs.items())).strip()
 
 def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
     bs4 = get_beautiful_soup()

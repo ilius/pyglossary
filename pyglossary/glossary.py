@@ -366,7 +366,7 @@ class Glossary:
         return newGlos
 
     def infoKeys(self):
-        return self.info.keys()
+        return list(self.info.keys())
 
     def getMostUsedDefiFormats(self, count=None):
         return Counter([
