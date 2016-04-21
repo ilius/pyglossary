@@ -76,6 +76,6 @@ def main():
         exit(1)
     try:
         run(sys.argv[1])
-    except JingTestError, e:
+    except JingTestError as e:
         log.fatal(str(e))
         exit(e.returncode)
