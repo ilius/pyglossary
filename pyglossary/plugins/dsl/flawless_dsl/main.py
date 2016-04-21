@@ -235,7 +235,7 @@ class FlawlessDSLParser(object):
         if state is CLOSE and closings:
             process_closing_tags(stack, closings)
         # shutdown unclosed tags
-        return ''.join(map(lambda l: l.text, stack))
+        return ''.join([l.text for l in stack])
 
 
     def put_brackets_away(self, line):

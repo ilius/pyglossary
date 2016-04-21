@@ -77,9 +77,9 @@ def close_tags(stack, tags, layer_index=-1):
 
         ordered_tags = tag.canonical_order(tags)
         layer.text = '[%s]%s[/%s]' % (
-            ']['.join(map(lambda x: x.opening, ordered_tags)),
+            ']['.join([x.opening for x in ordered_tags]),
             layer.text,
-            '][/'.join(map(lambda x: x.closing, reversed(ordered_tags))))
+            '][/'.join([x.closing for x in reversed(ordered_tags)]))
 
     # remove tags from layer
     layer.tags -= tags

@@ -48,7 +48,7 @@ class QVirtualFile(object):
             stdout_saved.write(text)
         elif self.mode=='stderr':
             stderr_saved.write(startRed+text+endFormat)
-    writelines = lambda self, l: map(self.write, l)
+    writelines = lambda self, l: list(map(self.write, l))
     flush = lambda self: None
     isatty = lambda self: 1
     fileno = lambda self: None

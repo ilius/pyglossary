@@ -54,9 +54,9 @@ def formats_table(formats, header):
         names.append(f)
         descriptions.append(Glossary.formatsDesc[f])
         extentions.append(Glossary.formatsExt[f])
-    extentions = map(' '.join, extentions)
+    extentions = list(map(' '.join, extentions))
 
-    maxlen = lambda s, seq: max(len(s), max(map(len, seq)))
+    maxlen = lambda s, seq: max(len(s), max(list(map(len, seq))))
     names_max = maxlen('name', names)
     descriptions_max = maxlen('description', descriptions)
     extentions_max = maxlen('extentions', extentions)

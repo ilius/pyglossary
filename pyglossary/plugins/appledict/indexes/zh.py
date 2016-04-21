@@ -75,11 +75,9 @@ def pinyin_indexes(content):
 
         # pinyin with diacritics replaced by tone numbers
         indexes.add('%s.' % color.utf(u' '.join(
-            map(lambda p: '%s%d' % (
+            ['%s%d' % (
                 color.lowercase_string_by_removing_pinyin_tones(p),
-                color.determine_tone(p)),
-                # for each sub word
-                py))))
+                color.determine_tone(p)) for p in py])))
     return indexes
 
 

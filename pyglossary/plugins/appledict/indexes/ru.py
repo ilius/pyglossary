@@ -44,7 +44,7 @@ def ru(titles, _):
     for title in map(toUnicode, titles):
         # in-place modification
         _ru(title, indexes, indexes_norm)
-    return map(toStr, indexes)
+    return list(map(toStr, indexes))
 
 
 def _ru(title, a, a_norm):
