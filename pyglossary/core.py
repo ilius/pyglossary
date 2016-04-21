@@ -10,6 +10,14 @@ class MyLogger(logging.Logger):
         logging.DEBUG,
         logging.NOTSET,
     )
+    levelNamesCap = [
+        'Critical',
+        'Error',
+        'Warning',
+        'Info',
+        'Debug',
+        'All',#'Not-Set',
+    ]
     def setVerbosity(self, verbosity):
         self.setLevel(self.levelsByVerbosity[verbosity])
         self._verbosity = verbosity

@@ -10,3 +10,4 @@ else:
    srcDir = dirname(realpath(__file__))
    rootDir = dirname(srcDir)
 
+resDir = join(rootDir, 'res')
