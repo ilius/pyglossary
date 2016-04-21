@@ -3,8 +3,6 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
   <b>PyGI (Gtk3)</b> Interface:
      To open PyGlossary window:
        <b>${CMD}</b>
-     To directly open a glossary for edit:
-       ${CMD} <u>INPUT_FILE</u>
      PyGI is the default interface, so no need to use option "--ui=gtk"
      If PyGI was not found (installed), then PyGlossary will fallback
      to Tkinter interface.
