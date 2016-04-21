@@ -1119,13 +1119,16 @@ class BglReader(object):
     def open(self, writeGz=False):
         with open(self.filename, 'rb') as f:
             if not f:
+                log.error('file pointer empty: %s'%f)
                 return False
             buf = f.read(6)
             if len(buf)<6 or not buf[:4] in ('\x12\x34\x00\x01', '\x12\x34\x00\x02'):
+                log.error('invalid header: %s'%buf[:6])
                 return False
             self.gzip_offset = i = binStrToInt(buf[4:6])
             log.debug('Position of gz header: i={0}'.format(i))
             if i<6:
+                log.error('invalid gzip header position: %s'%i)
                 return False
             self.writeGz = writeGz
             if writeGz:
