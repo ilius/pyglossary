@@ -21,8 +21,8 @@
 from os.path import join
 
 from pyglossary.glossary import *
-from base import *
-import progressbar as pb
+from .base import *
+from . import progressbar as pb
 
 
 if os.sep=='\\': ## Operating system is Windows

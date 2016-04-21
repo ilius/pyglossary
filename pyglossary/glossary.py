@@ -30,12 +30,12 @@ import string
 from collections import Counter
 from collections import OrderedDict as odict
 
-import core
-from entry import Entry
-from entry_filters import *
-from sort_stream import hsortStream
+from . import core
+from .entry import Entry
+from .entry_filters import *
+from .sort_stream import hsortStream
 
-from text_utils import (
+from .text_utils import (
     fixUtf8,
     replacePostSpaceChar,
     removeTextTags,

@@ -27,16 +27,16 @@ import traceback
 
 from pyglossary.text_utils import urlToPath, click_website, startRed, endFormat
 from pyglossary.glossary import *
-from base import *
+from .base import *
 from pyglossary import core
 
 import gi
 gi.require_version('Gtk', '3.0')
 
-from gtk3_utils import *
-from gtk3_utils.utils import *
-from gtk3_utils.dialog import MyDialog
-from gtk3_utils.resize_button import ResizeButton
+from .gtk3_utils import *
+from .gtk3_utils.utils import *
+from .gtk3_utils.dialog import MyDialog
+from .gtk3_utils.resize_button import ResizeButton
 
 #from gi.repository import GdkPixbuf
 

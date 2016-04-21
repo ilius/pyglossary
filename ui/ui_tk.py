@@ -19,7 +19,7 @@
 
 from pyglossary.glossary import *
 from pyglossary.text_utils import toStr
-from base import *
+from .base import *
 from os.path import join
 import logging
 import traceback

@@ -3,7 +3,7 @@
 import string
 import re
 
-from text_utils import (
+from .text_utils import (
     fixUtf8,
     faEditStr,
 )

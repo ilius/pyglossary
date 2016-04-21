@@ -21,7 +21,7 @@ import string, re, sys, os, subprocess, htmlentitydefs, time
 from math import log, ceil
 import logging
 
-import core
+from . import core
 
 log = logging.getLogger('root')
 

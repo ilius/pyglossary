@@ -19,7 +19,7 @@
 
 from os.path import join
 
-from paths import srcDir, rootDir
+from .paths import srcDir, rootDir
 from pyglossary.glossary import *
 
 logo = join(rootDir, 'res', 'pyglossary.png')

@@ -6,7 +6,7 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-import main
+from . import main
 
 
 log = logging.getLogger('root')
