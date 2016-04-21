@@ -324,7 +324,7 @@ if os.path.isfile(use_psyco_file):
     try:
         import psyco
     except ImportError:
-        log.warn('Warning: module "psyco" not found. It could speed up execution.')
+        log.warning('Warning: module "psyco" not found. It could speed up execution.')
         psyco_found = False
     else:
         psyco.full()

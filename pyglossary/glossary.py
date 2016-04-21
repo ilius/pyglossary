@@ -382,7 +382,7 @@ class Glossary(object):
         try:
             key = self.infoKeysAliasDict[key.lower()]
         except KeyError:
-            #log.warn('uknown info key: %s'%key)## FIXME
+            #log.warning('uknown info key: %s'%key)## FIXME
             pass
 
         return self.info.get(key, '')## '' or None as defaul?## FIXME
@@ -396,7 +396,7 @@ class Glossary(object):
         try:
             key = self.infoKeysAliasDict[key.lower()]
         except KeyError:
-            #log.warn('uknown info key: %s'%key)## FIXME
+            #log.warning('uknown info key: %s'%key)## FIXME
             pass
 
         if origKey != key:
@@ -501,7 +501,7 @@ class Glossary(object):
             Reader = self.readerClasses[format]
         except KeyError:
             if direct:
-                log.warn('no `Reader` class found in %s plugin, falling back to indirect mode'%format)
+                log.warning('no `Reader` class found in %s plugin, falling back to indirect mode'%format)
                 direct = False
             result = self.readFunctions[format].__call__(
                 self,

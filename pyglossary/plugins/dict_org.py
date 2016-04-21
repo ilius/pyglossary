@@ -94,7 +94,7 @@ class Reader(object):
         self._dictFp = None
     def __len__(self):
         if self._len is None:
-            log.warn('Try not to use len(reader) as it takes extra time')
+            log.warning('Try not to use len(reader) as it takes extra time')
             self._len = fileCountLines(self._filename+'.index') - self._leadingLinesCount
         return self._len
     __iter__ = lambda self: self
@@ -128,7 +128,7 @@ class Reader(object):
             yield Entry(word, defi) ; wordCount += 1
         ############################################################################
         if wrongSortedN>0:
-            log.warn('Warning: wrong sorting count: %d'%wrongSortedN)
+            log.warning('Warning: wrong sorting count: %d'%wrongSortedN)
         self._len = wordCount
 
 

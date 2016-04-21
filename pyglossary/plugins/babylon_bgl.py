@@ -146,7 +146,7 @@ class BGLGzipFile(gzip.GzipFile):
         crc32 = read32(self.fileobj)
         isize = read32(self.fileobj) ## may exceed 2GB
         if crc32 != self.crc:
-            log.warn('CRC check failed %s != %s' % (hex(crc32), hex(self.crc)))
+            log.warning('CRC check failed %s != %s' % (hex(crc32), hex(self.crc)))
         elif isize != (self.size & 0xffffffff):
             raise IOError('Incorrect length of data produced')
 
@@ -228,7 +228,7 @@ def replace_html_entry_no_escape(m):
                     &csdot; despite other references like &amp; are replaced with corresponding
                     characters.
                 """
-                log.warn('unknown html entity {0}'.format(text))
+                log.warning('unknown html entity {0}'.format(text))
                 res = text
     else:
         raise ArgumentError()
@@ -1111,7 +1111,7 @@ class BglReader(object):
         resPath = os.path.join(tmpDir, os.path.basename(self.filename) + '_files') + os.sep
         if not os.path.isdir(resPath):
             os.mkdir(resPath)
-        log.warn('using temp resource directory "%s"'%resPath)
+        log.warning('using temp resource directory "%s"'%resPath)
         return resPath
 
     # open .bgl file, read signature, find and open gzipped content
@@ -1320,7 +1320,7 @@ class BglReader(object):
             # There are a number of cases when these numbers do not match.
             # The dictionary is OK, and these is no doubt that we might missed an entry.
             # self.bgl_numEntries may be less than the number of entries we've read.
-            log.warn('bgl_numEntries = {0}, numEntries={1}'.format(self.bgl_numEntries, self.numEntries))
+            log.warning('bgl_numEntries = {0}, numEntries={1}'.format(self.bgl_numEntries, self.numEntries))
         log.debug('numBlocks = {0}'.format(self.numBlocks))
         log.debug('defaultCharset = {0}'.format(self.defaultCharset))
         log.debug('sourceCharset = {0}'.format(self.sourceCharset))
@@ -1363,7 +1363,7 @@ class BglReader(object):
                 if value < len(self.charsets):
                     self.defaultCharset = self.charsets[value]
                 else:
-                    log.warn('read_type_0: unknown defaultCharset {0}'.format(value))
+                    log.warning('read_type_0: unknown defaultCharset {0}'.format(value))
         else:
             self.unknownBlock(block)
             return False
@@ -1398,7 +1398,7 @@ class BglReader(object):
         Len = ord(block.data[pos])
         pos+=1
         if pos+Len > len(block.data):
-            log.warn('read_type_2: name too long')
+            log.warning('read_type_2: name too long')
             return True
         name += block.data[pos:pos+Len]
         pos += Len
@@ -1445,14 +1445,14 @@ class BglReader(object):
             if value < len(self.languageProps):
                 self.sourceLang = self.languageProps[value].language
             else:
-                log.warn('read_type_3: unknown sourceLangCode = {0}'.format(value))
+                log.warning('read_type_3: unknown sourceLangCode = {0}'.format(value))
         elif x==0x08:
             value = binStrToInt(block.data[pos:])
             self.targetLangCode = value
             if value < len(self.languageProps):
                 self.targetLang = self.languageProps[value].language
             else:
-                log.warn('read_type_3: unknown targetLangCode = {0}'.format(value))
+                log.warning('read_type_3: unknown targetLangCode = {0}'.format(value))
         elif x==0x09:
             # Glossary description
             self.description = block.data[pos:]
@@ -1489,7 +1489,7 @@ class BglReader(object):
                 if value < len(self.charsets):
                     self.sourceCharset = self.charsets[value]
                 else:
-                    log.warn('read_type_3: unknown sourceCharset {0}'.format(value))
+                    log.warning('read_type_3: unknown sourceCharset {0}'.format(value))
         elif x==0x1b:
             value = ord(block.data[2])
             if value >= 0x41:
@@ -1497,7 +1497,7 @@ class BglReader(object):
                 if value < len(self.charsets):
                     self.targetCharset = self.charsets[value]
                 else:
-                    log.warn('read_type_3: unknown targetCharset {0}'.format(value))
+                    log.warning('read_type_3: unknown targetCharset {0}'.format(value))
         elif x==0x1c:## Middle Updated ## ???????????????
             self.middleUpdated = decodeBglBinTime(block.data[2:])
         elif x==0x20:
@@ -1578,7 +1578,7 @@ class BglReader(object):
             if len(block.data) > pos:
                 i = block.data.find('\x00', pos)
                 if i == -1:
-                    log.warn('read_type_3: no file extension')
+                    log.warning('read_type_3: no file extension')
                 else:
                     self.aboutExt = block.data[pos:i]
                     self.aboutContents = block.data[i+1:]
@@ -1613,7 +1613,7 @@ class BglReader(object):
         pos += 2
         if y == 0:
             if len(block.data) != pos:
-                log.warn('read_type_3_message: x = {0}. unexpected block size = {1}'.format(
+                log.warning('read_type_3_message: x = {0}. unexpected block size = {1}'.format(
                     x,
                     len(block.data),
                 ))
@@ -1623,13 +1623,13 @@ class BglReader(object):
             a = binStrToInt(block.data[pos:pos+2])
             pos += 2
             if a != 0:
-                log.warn('read_type_3_message: x = {0}. a = {1} != 0'.format(x, a))
+                log.warning('read_type_3_message: x = {0}. a = {1} != 0'.format(x, a))
             if 2*z != len(block.data)-pos:
-                log.warn('read_type_3_message: x = {0}. z = {1} does not match block size'.format(x, a))
+                log.warning('read_type_3_message: x = {0}. z = {1} does not match block size'.format(x, a))
             else:
                 return block.data[pos:].decode('utf16')
         else:
-            log.warn('read_type_3_message: x = {0}. unknown value y = {1}'.format(x, y))
+            log.warning('read_type_3_message: x = {0}. unknown value y = {1}'.format(x, y))
         return None
 
     def detect_encoding(self):
@@ -1861,7 +1861,7 @@ class BglReader(object):
                 if Len == 0:
                     if pos + Len != len(block.data):
                         # no evidence
-                        log.warn('readEntry[{0:#X}]: reading alt size: pos + Len != len(block.data)'\
+                        log.warning('readEntry[{0:#X}]: reading alt size: pos + Len != len(block.data)'\
                             .format(block.offset))
                     break
             else:

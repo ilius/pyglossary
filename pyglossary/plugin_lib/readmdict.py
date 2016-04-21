@@ -31,7 +31,7 @@ try:
     HAVE_LZO = True
 except:
     HAVE_LZO = False
-    log.warn("LZO compression support is not available")
+    log.warning("LZO compression support is not available")
 
 
 def _unescape_entities(text):

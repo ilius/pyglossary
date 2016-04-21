@@ -241,7 +241,7 @@ def write_entries(glos, f, cleanHTML, indexes):
     if cleanHTML:
         BeautifulSoup = get_beautiful_soup()
         if not BeautifulSoup:
-            log.warn('cleanHTML option passed but BeautifulSoup not found.  '
+            log.warning('cleanHTML option passed but BeautifulSoup not found.  '
                      'to fix this run `easy_install beautifulsoup4` or '
                      '`pip2 install beautifulsoup4`.')
     else:

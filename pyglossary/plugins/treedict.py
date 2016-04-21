@@ -15,7 +15,7 @@ def write(glos, filename, archive='tar.bz2', sep=os.sep):
     if os.path.exists(filename):
         if os.path.isdir(filename):
             if os.listdir(filename)!=[]:
-                log.warn('Warning: directory "%s" is not empty.')
+                log.warning('Warning: directory "%s" is not empty.')
         else:
             raise IOError('"%s" is not a directory')
     for entry in glos:

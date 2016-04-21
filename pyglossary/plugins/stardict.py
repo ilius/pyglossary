@@ -277,7 +277,7 @@ class StarDictReader(object):
             #defiFormat = Counter(defiFormats).most_common(1)[0][0]
             
             if not defiFormat:
-                log.warn("Definition format %s is not supported"%defiFormat)
+                log.warning("Definition format %s is not supported"%defiFormat)
             
             self.glos.addEntry(
                 [word] + synData.get(index, []),
@@ -417,7 +417,7 @@ class StarDictReader(object):
         else:
             resDbFilePath = join(baseDirPath, 'res.rifo')
             if isfile(resDbFilePath):
-                log.warn("StarDict resource database is not supported. Skipping.")
+                log.warning("StarDict resource database is not supported. Skipping.")
 
 class StarDictWriter(object):
     def __init__(self, glos, filename):

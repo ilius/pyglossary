@@ -65,7 +65,7 @@ class TextGlossaryReader(object):
         return Entry(word, defi)
     def __len__(self):
         if self._len is None:
-            log.warn('Try not to use len(reader) as it takes extra time')
+            log.warning('Try not to use len(reader) as it takes extra time')
             self._len = fileCountLines(self._filename) - self._leadingLinesCount
         return self._len
     __iter__ = lambda self: self
