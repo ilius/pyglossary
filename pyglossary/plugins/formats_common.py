@@ -20,7 +20,7 @@ log = logging.getLogger('root')
 
 from pyglossary import core
 from pyglossary.file_utils import FileLineWrapper
-from pyglossary.text_utils import toStr, toUnicode
+from pyglossary.text_utils import toStr, toBytes
 from pyglossary.os_utils import indir
 from pyglossary.entry import Entry
 

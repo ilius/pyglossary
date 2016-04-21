@@ -24,7 +24,6 @@ def write(glos, filename, archive='tar.bz2', sep=os.sep):
             if not word:
                 log.error('empty word')
                 continue
-            word = toUnicode(word)
             chars = list(word)
             try:
                 os.makedirs(filename + os.sep + sep.join(chars[:-1]))

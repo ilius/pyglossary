@@ -1110,7 +1110,7 @@ class BglReader(object):
                 log.error('file pointer empty: %s'%f)
                 return False
             buf = f.read(6)
-            if len(buf)<6 or not buf[:4] in ('\x12\x34\x00\x01', '\x12\x34\x00\x02'):
+            if len(buf)<6 or not buf[:4] in (b'\x12\x34\x00\x01', b'\x12\x34\x00\x02'):
                 log.error('invalid header: %s'%buf[:6])
                 return False
             self.gzip_offset = i = binStrToInt(buf[4:6])

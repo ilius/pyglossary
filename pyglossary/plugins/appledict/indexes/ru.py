@@ -41,10 +41,10 @@ def ru(titles, _):
     """
     indexes = set()
     indexes_norm = set()
-    for title in map(toUnicode, titles):
+    for title in titles:
         # in-place modification
         _ru(title, indexes, indexes_norm)
-    return list(map(toStr, indexes))
+    return list(sorted(indexes))
 
 
 def _ru(title, a, a_norm):

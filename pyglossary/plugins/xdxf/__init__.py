@@ -29,7 +29,6 @@ try:
 except ImportError:
     from io import StringIO
 
-from pyglossary.text_utils import toStr
 from formats_common import *
 
 enable = True
@@ -202,7 +201,7 @@ def _mktitle(title_element, include_opts=()):
                     title += c.tail
                 else:
                     title = c.tail
-    return toStr(title.strip())
+    return title.strip()
 
 
 def xdxf_init():

@@ -35,8 +35,6 @@ def read(glos, filename):
             defi = elem[1].text
             if not word:
                 continue
-            word = toStr(word)
-            defi = toStr(defi)
             word = xml_unescape(word)
             defi = xml_unescape(defi)
             glos.addEntry(word, defi)

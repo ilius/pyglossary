@@ -68,11 +68,10 @@ schUn = ['\xee\x80\x8a', '\xee\x80\x8c']
 
 sch = schAs + schFa + schUn + list(string.whitespace) + list(string.digits) + digitsFa
 
+toBytes = lambda s: bytes(s, 'utf8') if isinstance(s, str) else bytes(s)
+toStr = lambda s: str(s, 'utf8') if isinstance(s, bytes) else str(s)
 
-toStr = lambda s: s.encode('utf8') if isinstance(s, str) else str(s)
-toUnicode = lambda s: s if isinstance(s, str) else str(s).decode('utf8')
-
-fixUtf8 = lambda st: st.replace('\x00', '').decode('utf-8', 'replace').encode('utf-8')
+fixUtf8 = lambda st: toBytes(st).replace(b'\x00', b'').decode('utf-8', 'replace')
 
 pattern_n_us = re.compile(r'((?<!\\)(?:\\\\)*)\\n')
 pattern_t_us = re.compile(r'((?<!\\)(?:\\\\)*)\\t')
@@ -400,9 +399,10 @@ def intToBinStr(n, stLen=0):## 6 times faster than intToBinStr_0
 
 ## Python 2.x:
 def binStrToInt(bs):
+    bs = toBytes(bs)
     n = 0
     for c in bs:
-        n = (n << 8) + ord(c)
+        n = (n << 8) + c
     return n
 
 

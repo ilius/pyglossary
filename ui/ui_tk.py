@@ -634,8 +634,8 @@ class UI(tkinter.tix.Frame, UIBase):
             self.xml.get_widget('comboentry_enc').hide()
         """
         if self.pref['auto_set_out']:#format==None:
-            pathI = toStr(self.entry_i.get())
-            pathO = toStr(self.entry_o.get())
+            pathI = self.entry_i.get()
+            pathO = self.entry_o.get()
             formatOD = self.combobox_o.get()
             if formatOD != None and not pathO and '.' in pathI:
                 extO=Glossary.descExt[formatOD]
@@ -645,7 +645,7 @@ class UI(tkinter.tix.Frame, UIBase):
     def entry_changed(self, event=None):
         #log.debug('entry_changed')
         #char = event.keysym
-        pathI = toStr(self.entry_i.get())
+        pathI = self.entry_i.get()
         if self.pathI != pathI:
             formatD = self.combobox_i.get()
             if len(pathI)>7:
@@ -664,7 +664,7 @@ class UI(tkinter.tix.Frame, UIBase):
             if self.pref['auto_set_out']:#format==noneItem:
                 #pathI = self.entry_i.get()
                 formatOD = self.combobox_o.get()
-                pathO = toStr(self.entry_o.get())
+                pathO = self.entry_o.get()
                 if formatOD != noneItem and not pathO and '.' in pathI:
                     extO=Glossary.descExt[formatOD]
                     pathO=''.join(os.path.splitext(pathI)[:-1])+extO
@@ -672,7 +672,7 @@ class UI(tkinter.tix.Frame, UIBase):
                     self.entry_o.insert(0, pathO)
             self.pathI = pathI
         ##############################################
-        pathO = toStr(self.entry_o.get())
+        pathO = self.entry_o.get()
         if self.pathO!=pathO:
             formatD = self.combobox_o.get()
             if len(pathO)>7:
@@ -704,7 +704,7 @@ class UI(tkinter.tix.Frame, UIBase):
             self.entry_changed()
             self.fcd_dir = os.path.dirname(path)#????????
     def load(self):
-        iPath = toStr(self.entry_i.get())
+        iPath = self.entry_i.get()
         if not iPath:
             log.critical('Input file path is empty!');return
         formatD = self.combobox_i.get()
@@ -744,7 +744,7 @@ class UI(tkinter.tix.Frame, UIBase):
             log.info('%s="%s"'%(x[0], x[1]))
         return True
     def convert(self):
-        oPath = toStr(self.entry_o.get())
+        oPath = self.entry_o.get()
         if not oPath:
             log.critical('Output file path is empty!');return
         formatD = self.combobox_o.get()
