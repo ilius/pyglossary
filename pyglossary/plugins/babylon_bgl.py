@@ -497,7 +497,7 @@ class BglReader(object):
     utility confirmed the cp932 and cp950 encodings, I got 100% match.
 
     Dictionary properties
-    =====================
+    ---------------------
 
     Dictionary (or glossary) properties are textual data like glossary name,
     glossary author name, glossary author e-mail, copyright message and
@@ -1565,10 +1565,10 @@ class BglReader(object):
                 Biology Glossary
                 Author name: Hafez Divandari
                 Author email: hafezdivandari@gmail.com
-                ===========================================
+                -------------------------------------------
                 A functional glossary for translating
                 English biological articles to fluent Farsi
-                ===========================================
+                -------------------------------------------
                 Copyright (c) 2009 All rights reserved.
 
                 in .pdf format this may be a quite large document (about 30 pages),
