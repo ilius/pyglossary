@@ -112,7 +112,7 @@ def parseFormatOptionsStr(st):
         opt[key] = value
     return opt
 
-class NullObj:
+class NullObj(object):
     def __getattr__(self, attr):
         return self
     def __setattr__(self, attr, value):

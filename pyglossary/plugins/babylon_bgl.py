@@ -78,7 +78,7 @@ def decodeBglBinTime(binStr):
     hour, minute = divmod(hm, 60)
     return '%.2d/%.2d/%.2d, %.2d:%.2d'%(year, month, day, hour, minute)
 
-class MetaData:
+class MetaData(object):
     def __init__(self):
         self.blocks = []
         self.numEntries = None
@@ -89,22 +89,22 @@ class MetaData:
         self.file_size = None
         self.bgl_header = None # data before gzip header
 
-class MetaDataBlock:
+class MetaDataBlock(object):
     def __init__(self, data, Type):
         self.data = data
         self.Type = Type
 
-class MetaDataStub:
+class MetaDataStub(object):
     def __init__(self, length, Type):
         self.length = length
         self.Type = Type
 
-class MetaDataRange:
+class MetaDataRange(object):
     def __init__(self, Type, count):
         self.Type = Type
         self.count = count
 
-class MetaData2:
+class MetaData2(object):
     """
         Second pass metadata.
         We need to scan all definitions in order to collect these statistical data.
@@ -168,7 +168,7 @@ class BGLGzipFile(gzip.GzipFile):
             return False
 
 
-class BabylonLanguage:
+class BabylonLanguage(object):
     """
         Babylon language properties.
 
@@ -272,8 +272,8 @@ def new_line_escape_string(text):
     """
     return re.sub('[\\r\\n\\\\]', new_line_escape_string_callback, text)
 
-class BglReader:
-    class Block:
+class BglReader(object):
+    class Block(object):
         def __init__(self):
             self.data = ''
             self.Type = ''
@@ -314,7 +314,7 @@ class BglReader:
         def tell(self):
             return file.tell(self)-self.of
 
-    class DefinitionFields:
+    class DefinitionFields(object):
         """
             Fields of entry definition
 
@@ -353,7 +353,7 @@ class BglReader:
             self.field_07 = None
             self.field_06 = None
 
-    class GzipWithCheck:
+    class GzipWithCheck(object):
         """
             gzip.GzipFile with check. It checks that unpacked data match what was packed.
         """

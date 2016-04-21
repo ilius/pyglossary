@@ -1,7 +1,7 @@
 import os
 import shutil
 
-class indir:
+class indir(object):
     """
     mkdir + chdir shortcut to use with `with` statement.
 

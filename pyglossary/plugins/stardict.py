@@ -149,7 +149,7 @@ def newlinesToBr(text):
 
 
 
-class StarDictReader:
+class StarDictReader(object):
     def __init__(self, glos, filename):
         self.glos = glos
         if splitext(filename)[1].lower() == '.ifo':
@@ -418,7 +418,7 @@ class StarDictReader:
             if isfile(resDbFilePath):
                 log.warn("StarDict resource database is not supported. Skipping.")
 
-class StarDictWriter:
+class StarDictWriter(object):
     def __init__(self, glos, filename):
         self.glos = glos.copy()
         fileBasePath = ''

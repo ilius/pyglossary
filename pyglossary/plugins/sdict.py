@@ -31,19 +31,19 @@ import zlib, bz2
 from struct import unpack
 
 
-class GzipCompression:
+class GzipCompression(object):
     def __str__(self):
         return 'gzip'
     def decompress(self, string):
         return zlib.decompress(string)
 
-class Bzip2Compression:
+class Bzip2Compression(object):
     def __str__(self):
         return 'bzip2'
     def decompress(self, string):
         return bz2.decompress(string)
 
-class NoCompression:
+class NoCompression(object):
     def __str__(self):
         return 'no compression'
     def decompress(self, string):
@@ -65,12 +65,12 @@ read_short = lambda raw: unpack('<H', raw)[0]
 
 read_byte = lambda raw: unpack('<B', raw)[0]
 
-class FormatElement:
+class FormatElement(object):
     def __init__(self, offset, length):
         self.offset = offset
         self.length = length
 
-class Header:
+class Header(object):
     f_signature = FormatElement(0x0, 4)
     f_input_lang = FormatElement(0x4, 3)
     f_output_lang = FormatElement(0x7, 3)

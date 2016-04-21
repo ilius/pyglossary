@@ -79,7 +79,7 @@ get_ext = lambda path: splitext(path)[1].lower()
 
 
 
-class Glossary:
+class Glossary(object):
     """
     Direct access to glos.data is droped
     Use `glos.addEntry(word, defi, [defiFormat])`
