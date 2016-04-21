@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import string
 
 class Entry(object):
     sep = '|'
@@ -105,8 +104,8 @@ class Entry(object):
         """
             strip whitespaces from all words and definitions
         """
-        self.editFuncWord(string.strip)
-        self.editFuncDefi(string.strip)
+        self.editFuncWord(str.strip)
+        self.editFuncDefi(str.strip)
 
     def replaceInWord(self, source, target):
         """
