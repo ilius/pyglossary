@@ -153,7 +153,7 @@ class Glossary(object):
 
         extentions = plugin.extentions
         # FIXME: deprecate non-tuple values in plugin.extentions
-        if isinstance(extentions, basestring):
+        if isinstance(extentions, str):
             extentions = (extentions,)
         elif not isinstance(extentions, tuple):
             extentions = tuple(extentions)
@@ -1000,7 +1000,7 @@ class Glossary(object):
             words = wordsArg.read().split('\n')
         elif isinstance(wordsArg, (list, tuple)):
             words = wordsArg[:]
-        elif isinstance(wordsArg, basestring):
+        elif isinstance(wordsArg, str):
             with open(wordsArg) as fp:
                 words = fp.read().split('\n')
         else:

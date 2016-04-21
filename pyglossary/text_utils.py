@@ -172,7 +172,7 @@ def mergeLists(lists):
 
 def findAll(st, sub):
     ind = []
-    if isinstance(sub, basestring):
+    if isinstance(sub, str):
         i = 0
         sbl = len(sub)
         while True:

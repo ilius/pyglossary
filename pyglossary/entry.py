@@ -40,7 +40,7 @@ class Entry(object):
                 and all the alternate words
                 seperated by '|'
         """
-        if isinstance(self._word, basestring):
+        if isinstance(self._word, str):
             return self._word
         else:
             return self.join(self._word)
@@ -49,7 +49,7 @@ class Entry(object):
         """
             returns list of the word and all the alternate words
         """
-        if isinstance(self._word, basestring):
+        if isinstance(self._word, str):
             return [self._word]
         else:
             return self._word
@@ -60,7 +60,7 @@ class Entry(object):
                 and all the alternate definitions
                 seperated by '|'
         """
-        if isinstance(self._defi, basestring):
+        if isinstance(self._defi, str):
             return self._defi
         else:
             return self.join(self._defi)
@@ -69,7 +69,7 @@ class Entry(object):
         """
             returns list of the definition and all the alternate definitions
         """
-        if isinstance(self._defi, basestring):
+        if isinstance(self._defi, str):
             return [self._defi]
         else:
             return self._defi
@@ -94,7 +94,7 @@ class Entry(object):
             `func` must accept only one string as argument
             and return the modified string
         """
-        if isinstance(self._word, basestring):
+        if isinstance(self._word, str):
             self._word = func(self._word)
         else:
             self._word = tuple(
@@ -107,7 +107,7 @@ class Entry(object):
             `func` must accept only one string as argument
             and return the modified string
         """
-        if isinstance(self._defi, basestring):
+        if isinstance(self._defi, str):
             self._defi = func(self._defi)
         else:
             self._defi = tuple(
@@ -125,7 +125,7 @@ class Entry(object):
         """
             replace string `source` with `target` in all words
         """
-        if isinstance(self._word, basestring):
+        if isinstance(self._word, str):
             self._word = self._word.replace(source, target)
         else:
             self._word = tuple(
@@ -136,7 +136,7 @@ class Entry(object):
         """
             replace string `source` with `target` in all definitions
         """
-        if isinstance(self._defi, basestring):
+        if isinstance(self._defi, str):
             self._defi = self._defi.replace(source, target)
         else:
             self._defi = tuple(
