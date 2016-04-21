@@ -8,9 +8,9 @@ dictionary applications
 Screenshots
 -----------
 
-![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-gtk.png)
+![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-gtk3.png)
 
-Linux - Gtk-based intreface
+Linux - (New) Gtk3-based intreface
 
 ------------------------------------------------------------------------
 
