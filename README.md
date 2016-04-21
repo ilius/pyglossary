@@ -64,12 +64,11 @@ ie. multiple ways to use the program.
 -   **Gtk-based interface**, the best one, use PyGTK and Glade (Glade
     will be removed later). You can install it on (although PyGTK is
     pre-installed in most of desktop Linux distributions):
-
     -   Debian: `apt-get install python-gtk2 python-glade2`
     -   openSUSE: `zypper install python-gtk`
     -   Fedora: `yum install pygtk2 glade2`
+    -   Archlinux: `pacman -S pygtk`
 
-    + Archlinux: `pacman -S pygtk`
 -   **Tkinter-based interface**, works in the lack of Gtk. Specially on
     Windows where Tkinter library is installed with the Python itself.
     You can also install it on:
@@ -77,6 +76,7 @@ ie. multiple ways to use the program.
     -   openSUSE: `zypper install tkinter tix`
     -   Fedora: `yum install tkinter tix`
     -   Mac OS X: read <https://www.python.org/download/mac/tcltk/>
+
 -   **Command-line interface**, works in all operating systems without
     any specific requirements, just type:
 
