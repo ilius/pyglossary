@@ -66,7 +66,7 @@ def base36(x):
 def id_generator():
     cnt = 1
 
-    while 1:
+    while True:
         s = '_%s' % base36(cnt)
         yield s
         cnt += 1
