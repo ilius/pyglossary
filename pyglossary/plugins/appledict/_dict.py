@@ -109,7 +109,7 @@ def indexes_generator(indexes_lang):
             normal_indexes.add(_normalize.title_short(normal))
         normal_indexes.discard(title)
 
-        normal_indexes = filter(lambda s: s.strip(), normal_indexes)
+        normal_indexes = [s for s in normal_indexes if s.strip()]
         # skip empty titles.  everything could happen.
 
         s = '<d:index d:value=%s d:title=%s/>' % (quoted_title, quoted_title)
