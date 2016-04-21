@@ -152,7 +152,7 @@ class Reader(object):
         depth_range = range(s_index_depth)
         for i in range(index_length):
             entry_start = start_index = i*index_entry_len
-            short_word = u''
+            short_word = ''
             try:
                 for j in depth_range:
                     #inlined unpack yields ~20% performance gain compared to calling read_int()
@@ -160,7 +160,7 @@ class Reader(object):
                     start_index+=4
                     if uchar_code == 0:
                         break
-                    short_word += unichr(uchar_code)
+                    short_word += chr(uchar_code)
             except ValueError as ve:
                 # If Python is built without wide unicode support (which is the case on Maemo)
                 # it may not be possible to use some unicode chars. It seems best to ignore such index items

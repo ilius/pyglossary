@@ -82,11 +82,11 @@ class ProgressBarWidget(object):
     def __str__(self):
         return self.update()
     def __add__(self, other):
-        if isinstance(other, unicode):
+        if isinstance(other, str):
             return str(self) + other.encode('utf-8')
         return str(self) + str(other)
     def __radd__(self, other):
-        if isinstance(other, unicode):
+        if isinstance(other, str):
             return other.encode('utf-8') + str(self)
         return str(other) + str(self)
 
@@ -182,7 +182,7 @@ class Bar(ProgressBarWidgetHFill):
         self.left = left
         self.right = right
     def _format_marker(self, pbar):
-        if type(self.marker) in (str, unicode):
+        if type(self.marker) in (str, str):
             return self.marker
         else:
             return self.marker.update(pbar)

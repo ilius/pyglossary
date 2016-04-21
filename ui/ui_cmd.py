@@ -147,7 +147,7 @@ class UI(UIBase):
         self.pbar = pb.ProgressBar(
             widgets=[
                 self.ptext,
-                pb.Bar(marker=u'█', right=rot),
+                pb.Bar(marker='█', right=rot),
                 pb.Percentage(),
                 '% ',
                 pb.ETA(),

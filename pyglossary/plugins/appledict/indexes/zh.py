@@ -71,10 +71,10 @@ def pinyin_indexes(content):
             return ()
 
         # just pinyin, with diacritics, separated by whitespace
-        indexes.add('%s.' % color.utf(u' '.join(py)))
+        indexes.add('%s.' % color.utf(' '.join(py)))
 
         # pinyin with diacritics replaced by tone numbers
-        indexes.add('%s.' % color.utf(u' '.join(
+        indexes.add('%s.' % color.utf(' '.join(
             ['%s%d' % (
                 color.lowercase_string_by_removing_pinyin_tones(p),
                 color.determine_tone(p)) for p in py])))

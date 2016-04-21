@@ -41,7 +41,7 @@ def readSqlite(glos, filename=''):
 
 
 class Word(object):
-    def __init__(self, s_id=0, wname=u'', wmean=u''):
+    def __init__(self, s_id=0, wname='', wmean=''):
         self.s_id = s_id
         self.wname = wname
         self.wmean = wmean

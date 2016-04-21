@@ -69,8 +69,8 @@ schUn = ['\xee\x80\x8a', '\xee\x80\x8c']
 sch = schAs + schFa + schUn + list(string.whitespace) + list(string.digits) + digitsFa
 
 
-toStr = lambda s: s.encode('utf8') if isinstance(s, unicode) else str(s)
-toUnicode = lambda s: s if isinstance(s, unicode) else str(s).decode('utf8')
+toStr = lambda s: s.encode('utf8') if isinstance(s, str) else str(s)
+toUnicode = lambda s: s if isinstance(s, str) else str(s).decode('utf8')
 
 fixUtf8 = lambda st: st.replace('\x00', '').decode('utf-8', 'replace').encode('utf-8')
 
@@ -442,11 +442,11 @@ def chBaseIntToList(number, base):
 def recodeToWinArabic(s):
     u = s.decode('utf8', 'replace')
     replaceList = [
-        (u'ی', u'ي'),
-        (u'ک', u'ك'),
-        (u'ٔ', u'ء'),
+        ('ی', 'ي'),
+        ('ک', 'ك'),
+        ('ٔ', 'ء'),
         ('\xef\xbf\xbd', ''),
-    ] + [(unichr(i), unichr(i+144)) for i in range(1632, 1642)]
+    ] + [(chr(i), chr(i+144)) for i in range(1632, 1642)]
     for item in replaceList:
         u = u.replace(item[0], item[1])
     return u.encode('windows-1256', 'replace')
@@ -814,7 +814,7 @@ def build_name2codepoint_dict():
     """
     name2str = html_entity2str
     for k, v in htmlentitydefs.name2codepoint.items():
-        name2str[k.lower()] = unichr(v).encode('utf-8')
+        name2str[k.lower()] = chr(v).encode('utf-8')
     for key in sorted(name2str.keys()):
         value = name2str[key]
         log.info("    '{0}': 0x{1:0>4x}, # {2}".format(

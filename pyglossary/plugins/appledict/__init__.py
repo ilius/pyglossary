@@ -86,7 +86,7 @@ def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
 
     if bs4:
         # strip html tags
-        copyright = (u'%s' % bs4.BeautifulSoup(glos.getInfo('copyright')).text).encode('utf-8')
+        copyright = ('%s' % bs4.BeautifulSoup(glos.getInfo('copyright')).text).encode('utf-8')
     else:
         copyright = glos.getInfo('copyright')
 

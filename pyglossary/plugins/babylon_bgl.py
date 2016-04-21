@@ -194,16 +194,16 @@ def replace_html_entry_no_escape(m):
                 code = int(name)
             if code <= 0:
                 raise ValueError()
-            res = unichr(code).encode('utf-8')
+            res = chr(code).encode('utf-8')
         except (ValueError, OverflowError):
-            res = unichr(0xFFFD).encode('utf-8') # replacement character
+            res = chr(0xFFFD).encode('utf-8') # replacement character
     elif text[0] == '&':
         # named entity
         try:
-            res = unichr(htmlentitydefs.name2codepoint[name]).encode('utf-8')
+            res = chr(htmlentitydefs.name2codepoint[name]).encode('utf-8')
         except KeyError:
             try:
-                res = unichr(name2codepoint[name.lower()]).encode('utf-8')
+                res = chr(name2codepoint[name.lower()]).encode('utf-8')
             except KeyError:
                 """
                     Babylon dictionaries contain a lot of non-standard entity references,
@@ -234,11 +234,11 @@ def replace_html_entry(m):
 
 def replace_dingbat(m):
     """
-        replace chars \u008c-\u0095 with \u2776-\u277f
+        replace chars \\u008c-\\u0095 with \\u2776-\\u277f
     """
     ch = m.group(0)
     code = ord(ch) + (0x2776-0x8c)
-    return unichr(code)
+    return chr(code)
 
 def new_line_escape_string_callback(m):
     ch = m.group(0)
@@ -1014,11 +1014,11 @@ class BglReader(object):
         self.middleUpdated = ''
         self.lastUpdated = ''
         # unicode msgs
-        self.purchaseLicenseMsg = u''
-        self.licenseExpiredMsg = u''
-        self.purchaseAddress = u''
-        self.title_wide = u'' # the same as title, but encoded in utf-16 originally
-        self.author_wide = u'' # the same as author, but encoded in utf-16 originally
+        self.purchaseLicenseMsg = ''
+        self.licenseExpiredMsg = ''
+        self.purchaseAddress = ''
+        self.title_wide = '' # the same as title, but encoded in utf-16 originally
+        self.author_wide = '' # the same as author, but encoded in utf-16 originally
         # non-unicode
         self.contractions = ''
         self.aboutExt = ''
@@ -1999,7 +1999,7 @@ class BglReader(object):
                             )
                             continue
                         code = int(ref, 16)
-                        utf8_text += unichr(code).encode('utf-8')
+                        utf8_text += chr(code).encode('utf-8')
                 else:
                     self.char_references_statistics(text2, encoding)
                     if encoding == 'cp1252':
@@ -2101,7 +2101,7 @@ class BglReader(object):
         else:
             u_main_word = main_word.decode(self.sourceEncoding, 'ignore')
 
-        self.decoded_dump_file_write(u'\n\nkey: ' + u_main_word)
+        self.decoded_dump_file_write('\n\nkey: ' + u_main_word)
         utf8_main_word = u_main_word.encode('utf-8')
         if self.processHtmlInKey:
             #utf8_main_word_orig = utf8_main_word
@@ -2134,7 +2134,7 @@ class BglReader(object):
         # strip '/' before words
         u_main_word = re.sub(self.strip_slash_alt_key_pat, r'\1\2', u_main_word)
 
-        self.decoded_dump_file_write(u'\nalt: ' + u_main_word)
+        self.decoded_dump_file_write('\nalt: ' + u_main_word)
 
         utf8_main_word = u_main_word.encode('utf-8')
         if self.processHtmlInKey:
@@ -2380,46 +2380,46 @@ class BglReader(object):
                 self.metadata2.isDefiASCII = False
         if fields.part_of_speech:
             self.dump_file_write_text('\npart of speech: 0x{0:x}'.format(fields.part_of_speech+0x30))
-            self.decoded_dump_file_write(u'\npart of speech: 0x{0:x}'.format(fields.part_of_speech+0x30))
+            self.decoded_dump_file_write('\npart of speech: 0x{0:x}'.format(fields.part_of_speech+0x30))
         if fields.title:
             self.dump_file_write_text('\ndefi title: ')
             self.dump_file_write_data(fields.title)
         if fields.u_title:
-            self.decoded_dump_file_write(u'\ndefi title: ' + fields.u_title)
+            self.decoded_dump_file_write('\ndefi title: ' + fields.u_title)
         if fields.title_trans:
             self.dump_file_write_text('\ndefi title trans: ')
             self.dump_file_write_data(fields.title_trans)
         if fields.u_title_trans:
-            self.decoded_dump_file_write(u'\ndefi title trans: ' + fields.u_title_trans)
+            self.decoded_dump_file_write('\ndefi title trans: ' + fields.u_title_trans)
         if fields.transcription_50:
             self.dump_file_write_text(
                 '\ndefi transcription_50 ({0:x}): '.format(fields.transcription_50_code)
             )
             self.dump_file_write_data(fields.transcription_50)
         if fields.u_transcription_50:
-            self.decoded_dump_file_write(u'\ndefi transcription_50: ' + fields.u_transcription_50)
+            self.decoded_dump_file_write('\ndefi transcription_50: ' + fields.u_transcription_50)
         if fields.transcription_60:
             self.dump_file_write_text('\ndefi transcription_60 ({0:x}): '.format(fields.transcription_60_code))
             self.dump_file_write_data(fields.transcription_60)
         if fields.u_transcription_60:
-            self.decoded_dump_file_write(u'\ndefi transcription_60: ' + fields.u_transcription_60)
+            self.decoded_dump_file_write('\ndefi transcription_60: ' + fields.u_transcription_60)
         if fields.u_defi:
-            self.decoded_dump_file_write(u'\ndefi: ' + fields.u_defi)
+            self.decoded_dump_file_write('\ndefi: ' + fields.u_defi)
         if fields.field_1a:
             self.dump_file_write_text('\ndefi field_1a: ')
             self.dump_file_write_data(fields.field_1a)
         if fields.u_field_1a:
-            self.decoded_dump_file_write(u'\ndefi field_1a: ' + fields.u_field_1a)
+            self.decoded_dump_file_write('\ndefi field_1a: ' + fields.u_field_1a)
         if fields.field_13:
             self.dump_file_write_text('\ndefi field_13 bytes: ' + formatByteStr(fields.field_13))
-            self.decoded_dump_file_write(u'\ndefi field_13 bytes: ' + formatByteStr(fields.field_13).decode('utf-8'))
+            self.decoded_dump_file_write('\ndefi field_13 bytes: ' + formatByteStr(fields.field_13).decode('utf-8'))
         if fields.field_07:
             self.dump_file_write_text('\ndefi field_07: ')
             self.dump_file_write_data(fields.field_07)
-            self.decoded_dump_file_write(u'\ndefi field_07 bytes: ' + formatByteStr(fields.field_07).decode('utf-8'))
+            self.decoded_dump_file_write('\ndefi field_07 bytes: ' + formatByteStr(fields.field_07).decode('utf-8'))
         if fields.field_06:
             self.dump_file_write_text('\ndefi field_06: {0}'.format(fields.field_06))
-            self.decoded_dump_file_write(u'\ndefi field_06: {0}'.format(fields.field_06))
+            self.decoded_dump_file_write('\ndefi field_06: {0}'.format(fields.field_06))
 
     # d0 - index of the '\x14 char in defi
     # d0 may be the last char of the string
@@ -2691,7 +2691,7 @@ class BglReader(object):
     # write text into the decoded_dump_file
     # text - must be a unicode string
     def decoded_dump_file_write(self, text):
-        if not isinstance(text, unicode):
+        if not isinstance(text, str):
             log.error('decoded_dump_file_write({0}): text is not a unicode string'.format(text))
             return
         if self.decoded_dump_file:

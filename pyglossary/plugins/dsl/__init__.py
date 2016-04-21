@@ -60,13 +60,13 @@ def unescape(text):
                 pass
             else:
                 try:
-                    return unichr(i)
+                    return chr(i)
                 except ValueError:
                     return ("\\U%08x" % i).decode('unicode-escape').encode('utf-8')
         else:
             # named entity
             try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+                text = chr(htmlentitydefs.name2codepoint[text[1:-1]])
             except KeyError:
                 pass
         return text # leave as is
