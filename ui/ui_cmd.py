@@ -171,7 +171,7 @@ class UI(UIBase):
         self.reverseStop = True
         log.info('Stoped! Press Enter to resume, and press Ctrl+C to quit.')
         try:
-            raw_input()
+            input()
         except KeyboardInterrupt:
             return 0
         else:

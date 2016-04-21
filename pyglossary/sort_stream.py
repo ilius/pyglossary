@@ -34,7 +34,7 @@ def hsortStream(stream, maxHeapSize, key=None):
 
 def stdinIntegerStream():
     while True:
-        line = raw_input(' Input item: ')
+        line = input(' Input item: ')
         if not line:
             break
         yield int(line)
