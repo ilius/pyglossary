@@ -53,7 +53,7 @@ supportsAlternates = True
 
 
 
-import gzip, re, htmlentitydefs, pickle
+import gzip, re, html.entities, pickle
 
 from pyglossary.text_utils import binStrToInt, excMessage, \
     isASCII, name2codepoint, formatByteStr
@@ -200,7 +200,7 @@ def replace_html_entry_no_escape(m):
     elif text[0] == '&':
         # named entity
         try:
-            res = chr(htmlentitydefs.name2codepoint[name]).encode('utf-8')
+            res = chr(html.entities.name2codepoint[name]).encode('utf-8')
         except KeyError:
             try:
                 res = chr(name2codepoint[name.lower()]).encode('utf-8')

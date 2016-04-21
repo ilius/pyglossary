@@ -16,7 +16,7 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ## GNU General Public License for more details.
 
-import string, re, sys, os, subprocess, htmlentitydefs, time
+import string, re, sys, os, subprocess, html.entities, time
 ##from xml.etree.ElementTree import XML, tostring ## used for xml2dict
 from math import log, ceil
 import logging
@@ -813,7 +813,7 @@ def build_name2codepoint_dict():
         name2str - name to utf-8 string dictionary
     """
     name2str = html_entity2str
-    for k, v in htmlentitydefs.name2codepoint.items():
+    for k, v in html.entities.name2codepoint.items():
         name2str[k.lower()] = chr(v).encode('utf-8')
     for key in sorted(name2str.keys()):
         value = name2str[key]

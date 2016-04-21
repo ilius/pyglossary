@@ -25,9 +25,9 @@ from os import path
 from lxml import etree
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 
 from pyglossary.text_utils import toStr
 from formats_common import *

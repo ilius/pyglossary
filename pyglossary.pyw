@@ -21,7 +21,7 @@
 
 import os, sys
 import argparse
-import __builtin__
+import builtins
 from os.path import dirname, join, realpath
 from pprint import pformat
 import logging

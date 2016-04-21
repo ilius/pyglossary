@@ -38,7 +38,7 @@ __all__ = ['read']
 # modified to work around codepoints that are not supported by `unichr`.
 # http://effbot.org/zone/re-sub.htm#unescape-html
 # January 15, 2003 | Fredrik Lundh
-import re, htmlentitydefs
+import re, html.entities
 
 ##
 # Removes HTML or XML character references and entities from a text string.
@@ -66,7 +66,7 @@ def unescape(text):
         else:
             # named entity
             try:
-                text = chr(htmlentitydefs.name2codepoint[text[1:-1]])
+                text = chr(html.entities.name2codepoint[text[1:-1]])
             except KeyError:
                 pass
         return text # leave as is
