@@ -61,13 +61,12 @@ systems. While primarilly designed for *GNU/Linux*, it works on *Windows*,
 As shown in the screenshots, there are multiple User Interface types,
 ie. multiple ways to use the program.
 
--   **Gtk-based interface**, the best one, use PyGTK and Glade (Glade
-    will be removed later). You can install it on (although PyGTK is
-    pre-installed in most of desktop Linux distributions):
-    -   Debian: `apt-get install python-gtk2 python-glade2`
-    -   openSUSE: `zypper install python-gtk`
-    -   Fedora: `yum install pygtk2 glade2`
-    -   Archlinux: `pacman -S pygtk`
+-   **Gtk3-based interface**, uses PyGI (Python Gobject Introspection)
+    You can install it on:
+    -   Debian: `apt-get install python-gi`
+    -   openSUSE: `zypper install python-gobject`
+    -   Fedora: `yum install python-gobject`
+    -   Archlinux: `pacman -S python2-gobject`
 
 -   **Tkinter-based interface**, works in the lack of Gtk. Specially on
     Windows where Tkinter library is installed with the Python itself.
@@ -87,7 +86,7 @@ ie. multiple ways to use the program.
     properly in Windows command window)
 
 When you run the program without any command line arguments or options,
-PyGlossary tries to find PyGTK, if it's installed, opens the Gtk-based
+PyGlossary tries to find PyGI, if it's installed, opens the Gtk3-based
 interface, if it's not, tries to find Tkinter and open the Tkinter-based
 interface. And exits with an error if neither are installed.
 
