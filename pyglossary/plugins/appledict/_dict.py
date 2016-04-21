@@ -49,7 +49,7 @@ def get_beautiful_soup():
                           'please run `pip2 install beautifulsoup4`.' % BeautifulSoup.__version__)
     return BeautifulSoup
 
-digs = string.digits + string.letters
+digs = string.digits + string.ascii_letters
 
 def base36(x):
     """

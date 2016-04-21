@@ -415,7 +415,7 @@ def chBaseIntToStr(number, base):
     """
     if not 2 <= base <= 36:
         raise ValueError('base must be in 2..36')
-    abc = string.digits + string.letters
+    abc = string.digits + string.ascii_letters
     result = ''
     if number < 0:
         number = -number
