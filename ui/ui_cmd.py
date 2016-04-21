@@ -77,8 +77,9 @@ def formats_table(formats, header):
 
 def help():
     import string
-    text = open(join(rootDir, 'help')).read()\
-        .replace('<b>', startBold)\
+    with open(join(rootDir, 'help')) as fp:
+        text = fp.read()
+    text = text.replace('<b>', startBold)\
         .replace('<u>', startUnderline)\
         .replace('</b>', endFormat)\
         .replace('</u>', endFormat)

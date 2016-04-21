@@ -997,7 +997,8 @@ class Glossary(object):
         elif isinstance(wordsArg, (list, tuple)):
             words = wordsArg[:]
         elif isinstance(wordsArg, basestring):
-            words = open(wordsArg).read().split('\n')
+            with open(wordsArg) as fp:
+                words = fp.read().split('\n')
         else:
             raise TypeError('Argumant wordsArg to function reverseDic is not valid!')
         autoSaveStep = opt['autoSaveStep']

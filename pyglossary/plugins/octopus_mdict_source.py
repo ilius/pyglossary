@@ -11,7 +11,8 @@ readOptions = []
 writeOptions = []
 
 def read(glos, filename):
-    text = open(filename).read()
+    with open(filename) as fp:
+        text = fp.read()
     text = text.replace('\r\n', '\n')
     text = text.replace('entry://', 'bword://')
     for section in text.split('</>'):

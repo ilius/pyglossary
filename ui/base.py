@@ -22,10 +22,14 @@ from os.path import join
 from .paths import srcDir, rootDir
 from pyglossary.glossary import *
 
+def fread(path):
+    with open(path) as fp:
+        return fp.read()
+
 logo = join(rootDir, 'res', 'pyglossary.png')
-aboutText = open(join(rootDir, 'about')).read()
-licenseText = open(join(rootDir, 'license')).read()
-authors = open(join(rootDir, 'AUTHORS')).read().split('\n')
+aboutText = fread(join(rootDir, 'about'))
+licenseText = fread(join(rootDir, 'license'))
+authors = fread(join(rootDir, 'AUTHORS')).split('\n')
 
 
 class UIBase(object):
@@ -68,7 +72,7 @@ class UIBase(object):
         'includeDefs',
     )
     def pref_load(self, **options):
-        rc_code = open(join(srcDir, 'rc.py')).read()
+        rc_code = fread(join(srcDir, 'rc.py'))
         data = {}
         exec(
             rc_code,

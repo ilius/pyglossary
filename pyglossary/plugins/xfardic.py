@@ -23,7 +23,8 @@ infoKeys = (
 
 def read(glos, filename):
     from xml.etree.ElementTree import XML, tostring
-    xdb = XML(open(filename, 'rb').read())
+    with open(filename, 'rb') as fp:
+        xdb = XML(fp.read())
     for elem in xdb:
         if elem.tag == 'xfardic':## first element
             for infoElem in elem:

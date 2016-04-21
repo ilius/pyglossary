@@ -294,7 +294,8 @@ class StarDictReader(object):
         """
         if not isfile(self.fileBasePath+'.syn'):
             return {}
-        synStr = open(self.fileBasePath+'.syn', 'rb').read()
+        with open(self.fileBasePath+'.syn', 'rb') as synFile:
+            synStr = synFile.read()
         synStrLen = len(synStr)
         synData = {}
         i = 0

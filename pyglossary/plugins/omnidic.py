@@ -20,19 +20,21 @@ def read(glos, filename, dicIndex=16):
         for f in [l.split('#')[-1] for l in fp.read().split('\n')]:
             if f=='':
                 continue
-            for line in open(f).read().split('\n'):
-                if line=='':
-                    pass
-                elif line[0]=='#':
-                    pass
-                else:
-                    parts = line.split('#')
-                    word = parts[0]
-                    defi = ''.join(parts[1:])
-                    glos.addEntry(
-                        word,
-                        defi,
-                    )
+            with open(f) as fp2:
+                for line in fp2:
+                    line = line.strip()
+                    if line=='':
+                        pass
+                    elif line[0]=='#':
+                        pass
+                    else:
+                        parts = line.split('#')
+                        word = parts[0]
+                        defi = ''.join(parts[1:])
+                        glos.addEntry(
+                            word,
+                            defi,
+                        )
 
 
 def write(glos, filename, dicIndex=16):
