@@ -71,7 +71,7 @@ def asciiStrCaseCmp(s1, s2):
         imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file
     """
     commonLen = min(len(s1), len(s2))
-    for i in xrange(commonLen):
+    for i in range(commonLen):
         c1 = ord(asciiLower(s1[i]))
         c2 = ord(asciiLower(s2[i]))
         if c1 != c2:
@@ -89,7 +89,7 @@ def strCmp(s1, s2):
         this function despite the fact there are other ways to implement it.
     """
     commonLen = min(len(s1), len(s2))
-    for i in xrange(commonLen):
+    for i in range(commonLen):
         c1 = ord(s1[i])
         c2 = ord(s2[i])
         if c1 != c2:

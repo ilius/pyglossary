@@ -160,7 +160,7 @@ def titles(article):
         n_opts = len([c for c in title_element if c.tag == 'opt'])
         if n_opts:
             for j in range(n_opts + 1):
-                for comb in combinations(range(n_opts), j):
+                for comb in combinations(list(range(n_opts)), j):
                     titles.append(_mktitle(title_element, comb))
         else:
             titles.append(_mktitle(title_element))

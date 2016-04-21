@@ -153,7 +153,7 @@ def findAll(st, sub):
 
 def checkOrder(lst):
     wrong = []
-    for i in xrange(len(lst)-1):
+    for i in range(len(lst)-1):
         if lst[i] == lst[i+1]:
             wrong.append(i)
     return wrong
@@ -164,7 +164,7 @@ def removeRepeats(lst):
     if n==0:
         return []
     lstR=[lst[0]]
-    for i in xrange(1, n):
+    for i in range(1, n):
         if lst[i] != lst[i-1]:
             lstR.append(lst[i])
     return lstR
@@ -193,7 +193,7 @@ def findWords(st0, opt=None):
         log.error('Error in function text_utlis.findWord. string length has been changed!')
         return []
     si = [-1] + findAll(st, ' ') + [len(st)] # separatior indexes
-    for i in xrange(len(si)-1):
+    for i in range(len(si)-1):
         word = st[si[i]+1:si[i+1]]
         if word.strip()=='':
             continue
@@ -302,7 +302,7 @@ def replaceInFileAs2Files(inF, fromF, toF, outName):
     lines2 = toF.readlines()
     n = min(len(lines1), len(lines2))
     rpl = []
-    for i in xrange(n):
+    for i in range(n):
         if lines1[i] != lines2[i]:
             rpl.append([ lines1[i][:-1], lines2[i][:-1] ])
     del lines1, lines2
@@ -407,7 +407,7 @@ def recodeToWinArabic(s):
         (u'ک', u'ك'),
         (u'ٔ', u'ء'),
         ('\xef\xbf\xbd', ''),
-    ] + [(unichr(i), unichr(i+144)) for i in xrange(1632, 1642)]
+    ] + [(unichr(i), unichr(i+144)) for i in range(1632, 1642)]
     for item in replaceList:
         u = u.replace(item[0], item[1])
     return u.encode('windows-1256', 'replace')

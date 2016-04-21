@@ -22,7 +22,7 @@ def binStrToInt(bs):
 
 def textProgress(n=100, t=0.1):
     import time
-    for i in xrange(n):
+    for i in range(n):
         sys.stdout.write('\b\b\b\b##%3d'%(i+1));time.sleep(t)
     sys.stdout.write('\b\b\b')
 

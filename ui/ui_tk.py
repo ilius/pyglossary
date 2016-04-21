@@ -657,7 +657,7 @@ class UI(Tix.Frame, UIBase):
                 ext = os.path.splitext(pathI)[-1].lower()
                 if ext in ('.gz', '.bz2', '.zip'):
                     ext = os.path.splitext(pathI[:-len(ext)])[-1].lower()
-                for i in xrange(len(Glossary.readExt)):
+                for i in range(len(Glossary.readExt)):
                     if ext in Glossary.readExt[i]:
                         self.combobox_i.set(Glossary.readDesc[i])
                         break
@@ -684,7 +684,7 @@ class UI(Tix.Frame, UIBase):
                 ext = os.path.splitext(pathO)[-1].lower()
                 if ext in ('.gz', '.bz2', '.zip'):
                     ext = os.path.splitext(pathO[:-len(ext)])[-1].lower()
-                for i in xrange(len(Glossary.writeExt)):
+                for i in range(len(Glossary.writeExt)):
                     if ext in Glossary.writeExt[i]:
                         self.combobox_o.set(Glossary.writeDesc[i])
                         break

@@ -373,7 +373,7 @@ if __name__=='__main__':
             update_step=0.2,
         )
         pbar.start()
-        for i in xrange(1000):
+        for i in range(1000):
             # do something
             time.sleep(0.1)
             pbar.update(i/1000.0)

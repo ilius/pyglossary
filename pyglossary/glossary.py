@@ -927,7 +927,7 @@ class Glossary:
         num = 0
         out = []
         if defs:
-            for j in xrange(n):
+            for j in range(n):
                 numP = num
                 (w, num, m) = outRel[j]
                 m = m.replace('\n', '\\n').replace('\t', '\\t')
@@ -944,7 +944,7 @@ class Glossary:
                 else:
                     out.append('%s\\n%s'%(w, m))
             return out
-        for j in xrange(n):
+        for j in range(n):
             numP = num
             (w, num) = outRel[j]
             onePer = int(1.0/num)
@@ -1025,7 +1025,7 @@ class Glossary:
         if not ui:
             log.info('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
         n = len(words)
-        for i in xrange(c, n):
+        for i in range(c, n):
             word = words[i]
             rat = float(i+1)/n
             ui.progress(rat, '%d / %d words completed'%(i, n))
@@ -1093,13 +1093,13 @@ class Glossary:
     def replaceInDefinitions(self, replaceList, matchWord=False):
         if not matchWord:
             for rpl in replaceList:
-                for i in xrange(len(self._data)):
+                for i in range(len(self._data)):
                     if self._data[i][1].find(rpl[0])>-1:
                         self._data[i][1] = self._data[i][1].replace(rpl[0], rpl[1])
         else:
             num = 0
             for rpl in replaceList:
-                for j in xrange(len(self._data)):
+                for j in range(len(self._data)):
                     # words indexes
                     wdsIdx = findWords(self._data[j][1], {'word': rpl[0]})
                     for [i0, i1] in wdsIdx:

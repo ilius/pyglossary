@@ -68,7 +68,7 @@ def formats_table(formats, header):
     s += '-+-'.join(['-' * names_max,
                      '-' * descriptions_max,
                      '-' * extentions_max])+ '\n'
-    for i in xrange(len(names)):  # formats may be lazy, but `names' is a list
+    for i in range(len(names)):  # formats may be lazy, but `names' is a list
         s += ' | '.join([names[i].ljust(names_max),
                          descriptions[i].ljust(descriptions_max),
                          extentions[i].ljust(extentions_max)]) + '\n'

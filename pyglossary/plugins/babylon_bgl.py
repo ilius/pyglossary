@@ -1925,7 +1925,7 @@ class BglReader:
             if encoding not in self.metadata2.CharRefs:
                 self.metadata2.CharRefs[encoding] = [0] * 257
             CharRefs = self.metadata2.CharRefs[encoding]
-        for i in xrange(len(parts)):
+        for i in range(len(parts)):
             if i % 2 != 1:
                 continue
             # reference
@@ -1952,7 +1952,7 @@ class BglReader:
         # &#x010b;
         pat = re.compile('(&#\\w+;)', re.I)
         parts = re.split(pat, text)
-        for i in xrange(len(parts)):
+        for i in range(len(parts)):
             if i % 2 != 1:
                 continue
             # reference
@@ -1986,13 +1986,13 @@ class BglReader:
         utf8_text = ''
         encodings = [] # stack of encodings
         defaultEncodingOnly = True
-        for i in xrange(len(parts)):
+        for i in range(len(parts)):
             if i % 3 == 0: # text block
                 encoding = encodings[-1] if len(encodings) > 0 else defaultEncoding
                 text2 = parts[i]
                 if encoding == 'babylon-reference':
                     refs = text2.split(';')
-                    for j in xrange(len(refs)):
+                    for j in range(len(refs)):
                         ref = refs[j]
                         if not ref:
                             if j != len(refs)-1:

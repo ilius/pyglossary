@@ -148,9 +148,9 @@ class Reader(object):
         short_index_str = self._file.read(index_entry_len*self._header.short_index_length)
         short_index_str = self._compression.decompress(short_index_str)
         index_length = self._header.short_index_length
-        short_index = [{} for i in xrange(s_index_depth+2)]
-        depth_range = xrange(s_index_depth)
-        for i in xrange(index_length):
+        short_index = [{} for i in range(s_index_depth+2)]
+        depth_range = range(s_index_depth)
+        for i in range(index_length):
             entry_start = start_index = i*index_entry_len
             short_word = u''
             try:
