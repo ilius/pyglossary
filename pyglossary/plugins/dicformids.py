@@ -42,10 +42,10 @@ class Reader(object):
         raise NotImplementedError
 
     __iter__ = lambda self: self
-    def next(self):
+    def __next__(self):
         for _ in range(10):
             try:
-                return self._tabFileReader.next()
+                return next(self._tabFileReader)
             except StopIteration:
                 self._tabFileReader.close()
                 self.nextTabFile()

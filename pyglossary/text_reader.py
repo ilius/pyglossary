@@ -46,7 +46,7 @@ class TextGlossaryReader(object):
                 self._glos.setInfo(word, defi)
         except StopIteration:
             pass
-    def next(self):
+    def __next__(self):
         self._pos += 1
         try:
             return self._pendingEntries.pop(0)

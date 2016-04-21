@@ -62,13 +62,13 @@ class Reader(object):
             self._len = fileCountLines(self._filename) - self._leadingLinesCount
         return self._len
     __iter__ = lambda self: self
-    def next(self):
+    def __next__(self):
         if not self._csvReader:
             log.error('%s is not open, can not iterate'%self)
             raise StopIteration
         self._pos += 1
         try:
-            row = self._csvReader.next()
+            row = next(self._csvReader)
         except StopIteration as e:
             self._len = self._pos
             raise e
