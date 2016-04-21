@@ -153,7 +153,7 @@ def safe_listdir_set(path):
         from pyglossary.glossary import log
         log.error("resource path is not a directory: %r" % path)
         return set()
-    return set([os.path.join(path, node) for node in os.listdir(path)])
+    return {os.path.join(path, node) for node in os.listdir(path)}
 
 def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None, frontBackMatter=None, OtherResources=None, jing=None, indexes=None):
     """write glossary to Apple dictionary .xml and supporting files.
