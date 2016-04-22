@@ -248,7 +248,7 @@ class StdLogHandler(logging.Handler):
             _type, value, tback = record.exc_info
             tback_text = format_exception(
                 exc_info = record.exc_info,
-                add_locals = (log.level <= logging.INFO),## FIXME
+                add_locals = (log.level <= logging.DEBUG),## FIXME
                 add_globals = False,
             )
 
@@ -288,7 +288,7 @@ log.addHandler(
 def my_excepthook(*exc_info):
     tback_text = format_exception(
         exc_info = exc_info,
-        add_locals = (log.level <= logging.INFO),## FIXME
+        add_locals = (log.level <= logging.DEBUG),## FIXME
         add_globals = False,
     )
     log.critical(tback_text)
