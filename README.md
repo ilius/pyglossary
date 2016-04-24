@@ -54,7 +54,7 @@ Supported formats
 Requirements
 ------------
 
-PyGlossary uses **Python 2.7**, and works in practically all operating
+PyGlossary uses **Python 3.x**, and works in practically all operating
 systems. While primarilly designed for *GNU/Linux*, it works on *Windows*,
 *Mac OS X* and other Unix-based operating systems as well.
 
@@ -79,7 +79,7 @@ ie. multiple ways to use the program.
 -   **Command-line interface**, works in all operating systems without
     any specific requirements, just type:
 
-    `python2.7 pyglossary.pyw --help`
+    `python3 pyglossary.pyw --help`
 
     You may have to give `--no-progress-bar` option in Windows when
     converting glossaries (becouse the progress bar does not work
@@ -93,9 +93,9 @@ interface. And exits with an error if neither are installed.
 But you can explicitly determine the user interface type using `--ui`,
 for example:
 
-> `python2.7 pyglossary.pyw --ui=gtk`
+> `python3 pyglossary.pyw --ui=gtk`
 >
-> `python2.7 pyglossary.pyw --ui=tk`
+> `python3 pyglossary.pyw --ui=tk`
 
 **Other requirements for Mac OS X**
 
