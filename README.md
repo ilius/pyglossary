@@ -41,7 +41,6 @@ Supported formats
 | Octopus MDic                  | .mdx          | X     |        |
 | Octopus MDic Source           | .txt          | X     | X      |
 | Omnidic                       |               | X     | X      |
-| PMD                           |               | X     | X      |
 | Sdictionary Binary            | .dct          | X     |        |
 | Sdictionary Source            | .sdct         |       | X      |
 | SQL                           | .sql          |       | X      |
