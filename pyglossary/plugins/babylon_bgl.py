@@ -20,6 +20,9 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+import io
+file = io.BufferedReader
+
 from os.path import join
 from formats_common import *
 
@@ -278,10 +281,14 @@ class BglReader(object):
             modeled file.
         """
         def __init__(self, filename, offset=0):
-            file.__init__(self, filename, 'rb')
+            fp = open(filename, 'rb')
+            file.__init__(self, fp)
+            self._fp = fp
             self.of = offset
             self.filesize = os.path.getsize(filename)
             file.seek(self, offset) ## OR self.seek(0)
+        def close(self):
+            self._fp.close()
         def seek(self, i, w=0):## position, whence
             if w==0:## relative to start of file
                 if i < 0:
