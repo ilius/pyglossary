@@ -63,10 +63,10 @@ ie. multiple ways to use the program.
 
 -   **Gtk3-based interface**, uses PyGI (Python Gobject Introspection)
     You can install it on:
-    -   Debian: `apt-get install python-gi`
-    -   openSUSE: `zypper install python-gobject`
-    -   Fedora: `yum install python-gobject`
-    -   Archlinux: `pacman -S python2-gobject`
+    -   Debian: `apt-get install python3-gi`
+    -   openSUSE: `zypper install python3-gobject`
+    -   Fedora: `yum install python3-gobject`
+    -   Archlinux: `pacman -S python-gobject`
 
 -   **Tkinter-based interface**, works in the lack of Gtk. Specially on
     Windows where Tkinter library is installed with the Python itself.
