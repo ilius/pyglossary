@@ -240,7 +240,7 @@ def replace_dingbat(m):
         replace chars \\u008c-\\u0095 with \\u2776-\\u277f
     """
     ch = m.group(0)
-    code = ord(ch) + (0x2776-0x8c)
+    code = ch + (0x2776-0x8c)
     return chr(code)
 
 def new_line_escape_string_callback(m):
@@ -264,7 +264,7 @@ def new_line_escape_string(text):
 class BglReader(object):
     class Block(object):
         def __init__(self):
-            self.data = ''
+            self.data = b''
             self.Type = ''
             # block offset in the gzip stream, for debugging
             self.offset = -1
@@ -1227,12 +1227,12 @@ class BglReader(object):
                         self.file.tell(),
                     )
                 )
-                block.data = ''
+                block.data = b''
                 return False
             #else:
             #    open('block-%s.%s'%(self.numBlocks, block.Type), 'w').write(block.data)
         else:
-            block.data = ''
+            block.data = b''
         return True
 
     # return -1 if error
@@ -1345,7 +1345,7 @@ class BglReader(object):
         return True
 
     def read_type_0(self, block):
-        x = ord(block.data[0])
+        x = block.data[0]
 
         if x==2:
             # this number is vary close to self.bgl_numEntries, but does not always equal to the number of entries
@@ -1390,12 +1390,12 @@ class BglReader(object):
         cont = '' ## Embedded file content
         pos = 0
         ## name:
-        Len = ord(block.data[pos])
+        Len = block.data[pos]
         pos+=1
         if pos+Len > len(block.data):
             log.warning('read_type_2: name too long')
             return True
-        name += block.data[pos:pos+Len]
+        name += toStr(block.data[pos:pos+Len])
         pos += Len
         if name in ('C2EEF3F6.html', '8EAF66FD.bmp'):
             if pass_num == 1:
@@ -1454,7 +1454,7 @@ class BglReader(object):
         elif x==0x0a:
             ## value = 0 - browsing disabled
             ## value = 1 - browsing enabled
-            value = ord(block.data[pos])
+            value = block.data[pos]
             browsing_enabled = value != 0
         elif x==0x0b:
             ## Glossary icon
@@ -1478,7 +1478,7 @@ class BglReader(object):
         elif x==0x14:## Creation Time
             self.creationTime = decodeBglBinTime(block.data[2:])
         elif x==0x1a:
-            value = ord(block.data[2])
+            value = block.data[2]
             if value >= 0x41:
                 value -= 0x41
                 if value < len(self.charsets):
@@ -1486,7 +1486,7 @@ class BglReader(object):
                 else:
                     log.warning('read_type_3: unknown sourceCharset {0}'.format(value))
         elif x==0x1b:
-            value = ord(block.data[2])
+            value = block.data[2]
             if value >= 0x41:
                 value -= 0x41
                 if value < len(self.charsets):
@@ -1500,7 +1500,7 @@ class BglReader(object):
             ## 0x31 - case sensitive search is enabled
             ## see code 0x11 as well
             if len(block.data) > pos:
-                value = ord(block.data[pos])
+                value = block.data[pos]
         elif x==0x2c:
             # contains a value like this:
             # In order to view this glossary, you must purchase a license.
@@ -1791,7 +1791,7 @@ class BglReader(object):
                 log.error('readEntry[{0:#X}]: reading word size: pos + 1 > len(block.data)'\
                     .format(block.offset))
                 return Err
-            Len = ord(block.data[pos])
+            Len = block.data[pos]
             pos += 1
         if pos + Len > len(block.data):
             log.error('readEntry[{0:#X}]: reading word: pos + Len > len(block.data)'\
@@ -1867,7 +1867,7 @@ class BglReader(object):
                     log.error('readEntry[{0:#X}]: reading alt size: pos + 1 > len(block.data)'\
                         .format(block.offset))
                     return Err
-                Len = ord(block.data[pos])
+                Len = block.data[pos]
                 pos += 1
             if pos + Len > len(block.data):
                 log.error('readEntry[{0:#X}]: reading alt: pos + Len > len(block.data)'\
@@ -1885,17 +1885,20 @@ class BglReader(object):
         return True, pos, list(sorted(alts))
 
     def toUtf8(self, text, encoding):
-        text = text.replace('\x00', '')
+        return text
+        '''
+        text = text.replace(b'\x00', b'')
         if self.strictStringConvertion:
             try:
-                u_text = text.decode(encoding)
+                b_text = bytes(text, encoding)
             except UnicodeError:
                 log.debug('toUtf8({0}):\nconversion error:\n{1}'\
                     .format(text, excMessage()))
-                u_text = text.decode(encoding, 'ignore')
+                b_text = bytes(text, encoding, 'ignore')
         else:
-            u_text = text.decode(encoding, 'ignore')
-        return u_text.encode('utf-8')
+            b_text = bytes(text, encoding, 'ignore')
+        return b_text.decode('utf-8')
+        '''
 
     def replace_html_entries(self, text):
         # &ldash;
@@ -1917,7 +1920,7 @@ class BglReader(object):
     def char_references_statistics(self, text, encoding):
         # &#0147;
         # &#x010b;
-        pat = re.compile('(&#\\w+;)', re.I)
+        pat = re.compile(b'(&#\\w+;)', re.I)
         parts = re.split(pat, text)
         if self.metadata2:
             if encoding not in self.metadata2.CharRefs:
@@ -1979,7 +1982,7 @@ class BglReader(object):
             non-default encoding (babylon character references '<CHARSET c="T">00E6;</CHARSET>'
             do not count).
         """
-        pat = re.compile('(<charset\\s+c\\=[\'\"]?(\\w)[\'\"]?>|</charset>)', re.I)
+        pat = re.compile(b'(<charset\\s+c\\=[\'\"]?(\\w)[\'\"]?>|</charset>)', re.I)
         parts = re.split(pat, text)
         utf8_text = ''
         encodings = [] # stack of encodings
@@ -2006,7 +2009,7 @@ class BglReader(object):
                             )
                             continue
                         code = int(ref, 16)
-                        utf8_text += chr(code).encode('utf-8')
+                        utf8_text += chr(code)
                 else:
                     self.char_references_statistics(text2, encoding)
                     if encoding == 'cp1252':
@@ -2024,7 +2027,7 @@ class BglReader(object):
                             u_text = text2.decode(encoding, 'replace')
                     else:
                         u_text = text2.decode(encoding, 'replace')
-                    utf8_text += u_text.encode('utf-8')
+                    utf8_text += u_text
                     if encoding != defaultEncoding:
                         defaultEncodingOnly = False
             elif i % 3 == 1: # <charset...> or </charset>
@@ -2109,7 +2112,7 @@ class BglReader(object):
             u_main_word = main_word.decode(self.sourceEncoding, 'ignore')
 
         self.decoded_dump_file_write('\n\nkey: ' + u_main_word)
-        utf8_main_word = u_main_word.encode('utf-8')
+        utf8_main_word = u_main_word
         if self.processHtmlInKey:
             #utf8_main_word_orig = utf8_main_word
             utf8_main_word = self.strip_html_tags(utf8_main_word)
@@ -2143,7 +2146,7 @@ class BglReader(object):
 
         self.decoded_dump_file_write('\nalt: ' + u_main_word)
 
-        utf8_main_word = u_main_word.encode('utf-8')
+        utf8_main_word = u_main_word
         if self.processHtmlInKey:
             #utf8_main_word_orig = utf8_main_word
             utf8_main_word = self.strip_html_tags(utf8_main_word)
@@ -2159,15 +2162,15 @@ class BglReader(object):
 
     def stripDollarIndexes(self, word):
         i = 0
-        main_word = ''
+        main_word = b''
         strip_cnt = 0 # number of sequences found
         # strip $<index>$ sequences
         while True:
-            d0 = word.find('$', i)
+            d0 = word.find(b'$', i)
             if d0 == -1:
                 main_word += word[i:]
                 break
-            d1 = word.find('$', d0+1)
+            d1 = word.find(b'$', d0+1)
             if d1 == -1:
                 #log.debug('stripDollarIndexes({0}):\n'
                     #'paired $ is not found'.format(word))
@@ -2190,7 +2193,7 @@ class BglReader(object):
                     #'found $$'.format(word))
                 main_word += word[i:d0]
                 i = d1 + 1
-                while i < len(word) and word[i] == '$':
+                while i < len(word) and word[i] == ord(b'$'):
                     i += 1
                 if i >= len(word):
                     break
@@ -2238,10 +2241,10 @@ class BglReader(object):
         """
         b = 0
         while True:
-            i = defi.find('\x14', b)
+            i = defi.find(b'\x14', b)
             if i == -1:
                 return -1
-            if i + 1 < len(defi) and defi[i+1] == ' ':
+            if i + 1 < len(defi) and defi[i+1] == b' ':
                 b = i + 1
                 continue
             else:
@@ -2266,7 +2269,7 @@ class BglReader(object):
         fields.utf8_defi = self.remove_control_chars(fields.utf8_defi)
         fields.utf8_defi = self.normalize_new_lines(fields.utf8_defi)
         fields.utf8_defi = fields.utf8_defi.strip()
-        fields.u_defi = fields.utf8_defi.decode('utf-8')
+        fields.u_defi = fields.utf8_defi ## FIXME
 
         if fields.title:
             fields.utf8_title, singleEncoding = self.decode_charset_tags(fields.title, self.sourceEncoding)
@@ -2361,15 +2364,13 @@ class BglReader(object):
             defi_format += '[{0}]<br>\n'.format(fields.utf8_transcription_60)
         if fields.utf8_defi:
             defi_format += fields.utf8_defi
-        # test encoding
-        defi_format.decode('utf-8')
         return defi_format
 
     def processEntryDefinition_statistics(self, fields, defi, raw_key):
         if fields.singleEncoding:
             self.findAndPrintCharSamples(
                 fields.defi,
-                'defi, key = ' + raw_key,
+                b'defi, key = ' + raw_key,
                 fields.encoding,
             )
             if self.metadata2:
@@ -2436,7 +2437,7 @@ class BglReader(object):
         i = d0 + 1
         while i < len(defi):
             if self.metadata2:
-                self.metadata2.defiTrailingFields[ord(defi[i])] += 1
+                self.metadata2.defiTrailingFields[defi[i]] += 1
 
             if defi[i] == '\x02': # part of speech # '\x02' <one char - part of speech>
                 if fields.part_of_speech:
@@ -2453,7 +2454,7 @@ class BglReader(object):
                     )
                     return
                 c = defi[i+1]
-                x = ord(c)
+                x = c
                 if not (0x30 <= x and x < 0x30 + len(self.partOfSpeech) and self.partOfSpeech[x - 0x30] ):
                     log.debug(
                         'processEntryDefinitionTrailingFields({0})\n'
@@ -2477,7 +2478,7 @@ class BglReader(object):
                         .format(defi, raw_key)
                     )
                     return
-                fields.field_06 = ord(defi[i+1])
+                fields.field_06 = defi[i+1]
                 i += 2
             elif defi[i] == '\x07': # \x07<two bytes>
                 # Found in 4 Hebrew dictionaries. I do not understand.
@@ -2503,7 +2504,7 @@ class BglReader(object):
                         .format(defi, raw_key)
                     )
                     return
-                Len = ord(defi[i+1])
+                Len = defi[i+1]
                 i += 2
                 if Len == 0:
                     log.debug(
@@ -2536,7 +2537,7 @@ class BglReader(object):
                     )
                     return
                 i += 1
-                Len = ord(defi[i])
+                Len = defi[i]
                 i += 1
                 if Len == 0:
                     #log.debug('processEntryDefinitionTrailingFields({0})\n'
@@ -2560,7 +2561,7 @@ class BglReader(object):
                         .format(defi, raw_key)
                     )
                     return
-                Len = ord(defi[i+1])
+                Len = defi[i+1]
                 i += 2
                 if Len == 0:
                     log.debug(
@@ -2597,14 +2598,14 @@ class BglReader(object):
                     return
                 fields.title_trans = defi[i:i+Len]
                 i += Len
-            elif 0x40 <= ord(defi[i]) <= 0x4f: # [\x41-\x4f] <one byte> <text>
+            elif 0x40 <= defi[i] <= 0x4f: # [\x41-\x4f] <one byte> <text>
                 # often contains digits as text:
                 # 56
                 # &#0230;lps - key Alps
                 # 48@i
                 # has no apparent influence on the article
-                code = ord(defi[i])
-                Len = ord(defi[i]) - 0x3f
+                code = defi[i]
+                Len = defi[i] - 0x3f
                 if i+2+Len > len(defi):
                     log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x40+'.format(defi, raw_key))
@@ -2619,8 +2620,8 @@ class BglReader(object):
                     log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x50'.format(defi, raw_key))
                     return
-                fields.transcription_50_code = ord(defi[i+1])
-                Len = ord(defi[i+2])
+                fields.transcription_50_code = defi[i+1]
+                Len = defi[i+2]
                 i += 3
                 if Len == 0:
                     log.debug('processEntryDefinitionTrailingFields({0})\n'
@@ -2637,7 +2638,7 @@ class BglReader(object):
                     log.debug('processEntryDefinitionTrailingFields({0})\n'
                         'key = ({1}):\ntoo few data after \\x60'.format(defi, raw_key))
                     return
-                fields.transcription_60_code = ord(defi[i+1])
+                fields.transcription_60_code = defi[i+1]
                 i += 2
                 Len = binStrToInt(defi[i:i+2])
                 i += 2
@@ -2655,7 +2656,7 @@ class BglReader(object):
                 log.debug(
                     'processEntryDefinitionTrailingFields({0})\n'
                     'key = ({1}):\nunknown control char. Char code = {2:#X}'
-                    .format(defi, raw_key, ord(defi[i]))
+                    .format(defi, raw_key, defi[i])
                 )
                 return
 
@@ -2740,7 +2741,7 @@ class BglReader(object):
         for o in offsets:
             j = o
             if utf8:
-                while ord(data[j]) & 0xc0 == 0x80:
+                while data[j] & 0xc0 == 0x80:
                     j -= 1
             res += data[i:j]
             res += '!!!--+!!!'
@@ -2769,7 +2770,7 @@ class BglReader(object):
             log.error('findCharSamples: self.target_chars_arr == None')
             return res
         for i in range(len(data)):
-            x = ord(data[i])
+            x = data[i]
             if x < 128:
                 continue
             if not self.target_chars_arr[x]:
