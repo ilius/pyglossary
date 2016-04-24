@@ -82,11 +82,11 @@ class ProgressBarWidget(object):
     def __str__(self):
         return self.update()
     def __add__(self, other):
-        if isinstance(other, str):
+        if isinstance(other, bytes):
             return str(self) + other.encode('utf-8')
         return str(self) + str(other)
     def __radd__(self, other):
-        if isinstance(other, str):
+        if isinstance(other, bytes):
             return other.encode('utf-8') + str(self)
         return str(other) + str(self)
 
@@ -187,6 +187,7 @@ class Bar(ProgressBarWidgetHFill):
         else:
             return self.marker.update(pbar)
     def update(self, width):
+        width = int(width)
         pbar = self.pbar
         percent = pbar.percentage()
         cwidth = width - len(self.left) - len(self.right)
