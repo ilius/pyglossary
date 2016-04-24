@@ -1758,7 +1758,10 @@ class BglReader(object):
     def __iter__(self):
         #for index in range(self.numEntries):
         while True:## FIXME
-            yield self.readEntry()
+            try:
+                yield self.readEntry()
+            except StopIteration:
+                break
 
     def readEntry_word(self, block, pos):
         """
