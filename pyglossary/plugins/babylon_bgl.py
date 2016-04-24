@@ -151,21 +151,7 @@ class BGLGzipFile(gzip.GzipFile):
             raise IOError('Incorrect length of data produced')
 
     def isNewMember(self):
-        # self.extrasize == 0 iff read buffer is empty
-        # self.tell() != 0 - this is not beginning of the file, nothing is read yet.
-        if self.extrasize == 0 and self.tell() != 0:
-            # We've read the previous member completely.
-            if self._new_member:
-                return True
-            # It is possible that we've read all data of the current member,
-            # but have not tried to read further. Thus end of member has not been encountered.
-            # Read one byte further and check if we encounter end of the member.
-            else:
-                buf = self.read(1)
-                self._unread(buf)
-                return self._new_member
-        else:
-            return False
+        return False
 
 
 class BabylonLanguage(object):
@@ -403,6 +389,8 @@ class BglReader(object):
             else:
                 self.file.flush()
                 self.unpacked_file.flush()
+        def isNewMember(self):
+            return self.file.isNewMember()
 
     ##############################################################################
     """
@@ -1179,10 +1167,7 @@ class BglReader(object):
             We may get this offset: self.file_bgl.tell()
             The last 4 bytes of gzip block contains the size of the original (uncompressed) input data modulo 2^32
         """
-        if isinstance(self.file, self.GzipWithCheck):
-            return self.file.file.isNewMember()
-        else:
-            return self.file.isNewMember()
+        return self.file.isNewMember()
 
     def close(self):
         if self.file:
@@ -1210,7 +1195,7 @@ class BglReader(object):
         block.offset = self.file.tell()
         length = self.readBytes(1)
         if length==-1:
-            log.error('readBlock: length = -1')
+            log.debug('readBlock: length = -1')
             return False
         block.Type = length & 0xf
         length >>= 4
@@ -1252,7 +1237,7 @@ class BglReader(object):
         self.file.flush()
         buf = self.file.read(bytes)
         if len(buf)==0:
-            log.error('readBytes: end of file: len(buf)==0')
+            log.debug('readBytes: end of file: len(buf)==0')
             return -1
         if len(buf)!=bytes:
             log.error('readBytes: to read bytes = {0} , actually read bytes = {1}'.format(bytes, len(buf)))
