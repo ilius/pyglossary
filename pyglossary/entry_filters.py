@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import string
 import re
 
 from .text_utils import (
@@ -65,7 +64,7 @@ class LowerWordFilter(EntryFilter):
     name = 'lower_word'
     desc = 'Lowercase Words'
     def run(self, entry):
-        entry.editFuncWord(string.lower)
+        entry.editFuncWord(str.lower)
         return entry
 
 
