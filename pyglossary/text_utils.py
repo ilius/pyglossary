@@ -176,7 +176,7 @@ def findAll(st, sub):
         i = 0
         sbl = len(sub)
         while True:
-            i = string.find(st, sub, i)
+            i = st.find(sub, i)
             if i==-1:
                 break
             ind.append(i)
