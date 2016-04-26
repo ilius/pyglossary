@@ -693,7 +693,7 @@ class Glossary(object):
         if not outInfoKeysAliasDict:
             outInfoKeysAliasDict = {}
 
-        fp = open(filename, 'w')
+        fp = open(filename, 'w', encoding='utf-8')
         fp.write(head)
         if writeInfo:
             for key, desc in self.info.items():

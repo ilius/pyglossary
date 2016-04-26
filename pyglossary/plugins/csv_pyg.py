@@ -42,7 +42,7 @@ class Reader(object):
         self._csvReader = None
     def open(self, filename):
         self._filename = filename
-        self._file = open(filename, 'rb')
+        self._file = open(filename, 'r', encoding='utf-8')
         self._csvReader = csv.reader(
             self._file,
             dialect='excel',
@@ -91,7 +91,7 @@ class Reader(object):
 
 
 def write(glos, filename):
-    with open(filename, 'wb') as csvfile:
+    with open(filename, 'w', encoding='utf-8') as csvfile:
         writer = csv.writer(
             csvfile,
             dialect='excel',

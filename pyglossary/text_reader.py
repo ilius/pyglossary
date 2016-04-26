@@ -16,7 +16,7 @@ class TextGlossaryReader(object):
         self._pos = -1
     def open(self, filename):
         self._filename = filename
-        self._file = open(filename)
+        self._file = open(filename, 'r', encoding='utf-8')
         if self._hasInfo:
             self.loadInfo()
     def close(self):
