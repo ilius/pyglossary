@@ -74,6 +74,45 @@ toUnicode = lambda s: s if isinstance(s, unicode) else str(s).decode('utf8')
 
 fixUtf8 = lambda st: st.replace('\x00', '').decode('utf-8', 'replace').encode('utf-8')
 
+pattern_n_us = re.compile(r'((?<!\\)(?:\\\\)*)\\n')
+pattern_t_us = re.compile(r'((?<!\\)(?:\\\\)*)\\t')
+pattern_bar_us = re.compile(r'((?<!\\)(?:\\\\)*)\\\|')
+pattern_bar_sp = re.compile(r'(?:(?<!\\)(?:\\\\)*)\|')
+
+def escapeNTB(st, bar=True):
+    """
+        scapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
+    """
+    st = st.replace(r'\\', r'\\\\')
+    st = st.replace('\t', r'\t')
+    st = st.replace('\n', r'\n')
+    if bar:
+        st = st.replace('|', r'\|')
+    return st
+
+def unescapeNTB(st, bar=False):
+    """
+        unscapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
+    """
+    st = re.sub(pattern_n_us, '\\1\n', st)
+    st = re.sub(pattern_t_us, '\\1\t', st)
+    if bar:
+        st = re.sub(pattern_bar_us, r'\1\|', st)
+    #st = re.sub(r'\\\\', r'\\', st)
+    st = st.replace('\\\\', '\\')## probably faster than re.sub
+    return st
+
+def splitByBarUnescapeNTB(st):
+    """
+        splits by '|' (and not '\\|') then unescapes Newline (\\n), Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
+        returns a list
+    """
+    return [
+        unescapeNTB(part, bar=True)
+        for part in re.split(pattern_bar_sp, st)
+    ]
+
+
 
 # return a message string describing the current exception
 def excMessage():

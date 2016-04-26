@@ -12,6 +12,7 @@ writeOptions = [
 ]
 
 from pyglossary.text_reader import TextGlossaryReader
+from pyglossary.text_utils import escapeNTB, unescapeNTB, splitByBarUnescapeNTB
 
 
 class Reader(TextGlossaryReader):
@@ -31,17 +32,19 @@ class Reader(TextGlossaryReader):
         if not line:
             return
         ###
-        fti = line.find('\t') # first tab's index
-        if fti==-1:
+        word, tab, defi = line.partition('\t')
+        if not tab:
             log.error('Warning: line starting with "%s" has no tab!'%line[:10])
             return
-        word = line[:fti]
-        defi = line[fti+1:]#.replace('\\n', '\n')#.replace('<BR>', '\n').replace('\\t', '\t')
         ###
         if self._glos.getPref('enable_alts', True):
-            word = word.split('|')
+            word = splitByBarUnescapeNTB(word)
+            if len(word)==1:
+                word = word[0]
+        else:
+            word = unescapeNTB(word, bar=True)
         ###
-        defi = defi.decode('string_escape')## '\\n' -> '\n', '\\t' -> '\t'
+        defi = unescapeNTB(defi)
         ###
         return word, defi
 
