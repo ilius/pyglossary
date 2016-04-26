@@ -17,10 +17,16 @@ from pyglossary.text_utils import escapeNTB, unescapeNTB, splitByBarUnescapeNTB
 
 class Reader(TextGlossaryReader):
     def isInfoWord(self, word):
-        return word.startswith('#')
+        if isinstance(word, str):
+            return word.startswith('#')
+        else:
+            return False
 
     def fixInfoWord(self, word):
-        return word.lstrip('#')
+        if isinstance(word, str):
+            return word.lstrip('#')
+        else:
+            return word
 
     def nextPair(self):
         if not self._file:
