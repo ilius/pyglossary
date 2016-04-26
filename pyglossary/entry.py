@@ -3,6 +3,10 @@
 
 class Entry(object):
     sep = '|'
+    join = lambda self, parts: self.sep.join([
+        part.replace(self.sep, '\\'+self.sep)
+        for part in parts
+    ])
     def __init__(self, word, defi, defiFormat=None):
         """
             word: string or a list of strings (including alternate words)
@@ -34,7 +38,7 @@ class Entry(object):
         if isinstance(self._word, basestring):
             return self._word
         else:
-            return self.sep.join(self._word)
+            return self.join(self._word)
 
     def getWords(self):
         """
@@ -54,7 +58,7 @@ class Entry(object):
         if isinstance(self._defi, basestring):
             return self._defi
         else:
-            return self.sep.join(self._defi)
+            return self.join(self._defi)
 
     def getDefis(self):
         """
