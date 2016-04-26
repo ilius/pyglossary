@@ -994,7 +994,7 @@ class BglReader(object):
         # - strip HTML tags
         processHtmlInKey = False,
         # a string of characters that will be stripped from the end of the key (and alternate)
-        # see string.rstrip function
+        # see str.rstrip function
         keyRStripChars = None,
     ):
         self.filename = filename
