@@ -682,6 +682,7 @@ class Glossary(object):
         rplList=None,
         ext='.txt',
         head='',
+        iterEntries=None,
         entryFilterFunc=None,
         outInfoKeysAliasDict=None,
     ):
@@ -704,7 +705,10 @@ class Glossary(object):
                     desc = desc.replace(rpl[0], rpl[1])
                 fp.write('##' + key + sep[0] + desc + sep[1])
         fp.flush()
-        for entry in self:
+
+        if not iterEntries:
+            iterEntries = self
+        for entry in iterEntries:
             if entryFilterFunc:
                 entry = entryFilterFunc(entry)
                 if not entry:

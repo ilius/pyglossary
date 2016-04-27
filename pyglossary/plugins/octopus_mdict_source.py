@@ -26,6 +26,19 @@ def read(glos, filename):
             defi,
         )
 
+def writeEntryGen(glos):
+    for entry in glos:
+        words = entry.getWords()
+        defis = entry.getDefis()
+
+        yield Entry(words[0], defis)
+
+        for alt in words[1:]:
+            yield Entry(
+                alt,
+                '@@@LINK=%s'%words[0],
+            )
+
 
 def write(glos, filename):
     glos.writeTxt(
@@ -37,6 +50,7 @@ def write(glos, filename):
         ],
         ext='.mtxt',
         head='',
+        iterEntries=writeEntryGen(glos),
     )
 
 
