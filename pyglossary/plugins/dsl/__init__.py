@@ -18,7 +18,6 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ## GNU General Public License for more details.
 
-import codecs
 import re
 from xml.sax.saxutils import escape, quoteattr
 
@@ -257,9 +256,9 @@ def read(glos, fname, **options):
     line_type = 'header'
     unfinished_line = ''
 
-    fp = codecs.open(fname, 'r', encoding)
+    fp = open(fname, 'r', encoding=encoding)
     for line in fp:
-        line = line.encode('utf-8').rstrip()
+        line = line.rstrip()
         if not line:
             continue
         # header
