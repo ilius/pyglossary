@@ -17,7 +17,7 @@ from pyglossary.text_utils import chBaseIntToList, runDictzip
 import shutil
 import gzip
 
-b64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+b64_chars = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
 def intToIndexStr(n, retry=0):
     chars = []
@@ -26,7 +26,7 @@ def intToIndexStr(n, retry=0):
         n >>= 6
         if n==0:
             break
-    return ''.join(reversed(chars))
+    return bytes(reversed(chars))
 
 def indexStrToInt(st):
     n = 0
@@ -112,10 +112,10 @@ class Reader(object):
             line = line.strip()
             if not line:
                 continue
-            parts = line.split('\t')
+            parts = line.split(b'\t')
             assert len(parts)==3
-            word = parts[0].replace('<BR>', '\\n')\
-                           .replace('<br>', '\\n')
+            word = parts[0].replace(b'<BR>', b'\\n')\
+                           .replace(b'<br>', b'\\n')
             sumLen2 = indexStrToInt(parts[1])
             if sumLen2 != sumLen:
                 wrongSortedN += 1
@@ -123,9 +123,9 @@ class Reader(object):
             defiLen = indexStrToInt(parts[2])
             self._dictFp.seek(sumLen)
             defi = self._dictFp.read(defiLen)
-            defi = defi.replace('<BR>', '\n').replace('<br>', '\n')
+            defi = defi.replace(b'<BR>', b'\n').replace(b'<br>', b'\n')
             sumLen += defiLen
-            yield Entry(word, defi) ; wordCount += 1
+            yield Entry(toStr(word), toStr(defi)) ; wordCount += 1
         ############################################################################
         if wrongSortedN>0:
             log.warning('Warning: wrong sorting count: %d'%wrongSortedN)
@@ -143,11 +143,11 @@ def write(glos, filename, sort=True, dictZip=True, install=True):## FIXME
     dictFd = open(filename+'.dict', 'wb')
     dictMark = 0
     for entry in glos:
-        word = entry.getWord()
-        defi = entry.getDefi()
+        word = toBytes(entry.getWord())
+        defi = toBytes(entry.getDefi())
         lm = len(defi)
-        indexFd.write(word + '\t' + intToIndexStr(dictMark) + '\t' + intToIndexStr(lm) + '\n')## FIXME
-        dictFd.write(defi)
+        indexFd.write(word + b'\t' + intToIndexStr(dictMark) + b'\t' + intToIndexStr(lm) + b'\n')## FIXME
+        dictFd.write(toBytes(defi))
         dictMark += lm
     indexFd.close()
     dictFd.close()
