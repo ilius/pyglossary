@@ -9,7 +9,7 @@ extentions = ['.tei']
 readOptions = []
 
 def write(glos, filename):
-    fp = open(filename, 'wb')
+    fp = open(filename, 'w')
 
     fp.write('''<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TEI.2 PUBLIC "-//TEI P3//DTD Main Document Type//EN"
