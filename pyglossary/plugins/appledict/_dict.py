@@ -26,6 +26,7 @@ from xml.sax.saxutils import unescape, quoteattr
 import xdxf
 
 from . import _normalize
+from pyglossary.text_utils import toStr
 
 def dictionary_begin(glos, f, frontBackMatter):
     # write header
@@ -46,7 +47,7 @@ def get_beautiful_soup():
             return None
     if int(BeautifulSoup.__version__.split('.')[0]) < 4:
         raise ImportError('BeautifulSoup is too old, required at least version 4, %r found.\n'
-                          'please run `pip2 install beautifulsoup4`.' % BeautifulSoup.__version__)
+                          'please run `pip3 install beautifulsoup4`.' % BeautifulSoup.__version__)
     return BeautifulSoup
 
 digs = string.digits + string.ascii_letters
@@ -59,7 +60,7 @@ def base36(x):
     digits = []
     while x:
         digits.append(digs[x % 36])
-        x /= 36
+        x //= 36
     digits.reverse()
     return ''.join(digits)
 
@@ -211,7 +212,7 @@ def format_clean_content(title, body, BeautifulSoup):
             h1.string = title
             soup.insert(0, h1)
         # hence the name BeautifulSoup
-        content = soup.encode_contents()
+        content = toStr(soup.encode_contents())
     else:
         # somewhat analogue to what BeautifulSoup suppose to do
         body = em0_9_re.sub(em0_9_sub, body)
@@ -243,7 +244,7 @@ def write_entries(glos, f, cleanHTML, indexes):
         if not BeautifulSoup:
             log.warning('cleanHTML option passed but BeautifulSoup not found.  '
                      'to fix this run `easy_install beautifulsoup4` or '
-                     '`pip2 install beautifulsoup4`.')
+                     '`pip3 install beautifulsoup4`.')
     else:
         BeautifulSoup = None
 
@@ -303,7 +304,7 @@ def dictionary_end(glos, f):
 
 
 def write_xml(glos, filename, cleanHTML, frontBackMatter, indexes):
-    with open(filename, 'wb') as f:
+    with open(filename, 'w') as f:
         dictionary_begin(glos, f, frontBackMatter)
         write_entries(glos, f, cleanHTML, indexes)
         dictionary_end(glos, f)

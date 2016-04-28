@@ -95,7 +95,7 @@ def title(title, BeautifulSoup):
     if BeautifulSoup:
         title = title.replace('\xef\xbb\xbf', '')
         if len(title) > 1:  # BeautifulSoup has a bug when markup <= 1 char length
-            title = BeautifulSoup.BeautifulSoup(title, "html").get_text(strip=True).encode('utf-8')
+            title = BeautifulSoup.BeautifulSoup(title, "html").get_text(strip=True)
     else:
         title = _title_re.sub('', title)
         title = title.replace('&', '&amp;')

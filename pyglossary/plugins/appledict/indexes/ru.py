@@ -24,7 +24,7 @@ try:
 except ImportError:
     log.error("""module pymorphy2 is required to build extended russian indexes.  \
 you can download it here: http://pymorphy2.readthedocs.org/en/latest/.  \
-or run `pip2 install pymorphy2`.
+or run `pip3 install pymorphy2`.
 """)
     raise
 else:

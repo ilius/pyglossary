@@ -77,7 +77,7 @@ def format_default_prefs(defaultPrefs):
 def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
     bs4 = get_beautiful_soup()
 
-    template = pkgutil.get_data(__name__, 'project_templates/Info.plist')
+    template = toStr(pkgutil.get_data(__name__, 'project_templates/Info.plist'))
 
     basename = os.path.splitext(filename)[0]
     # identifier must be unique
@@ -86,13 +86,13 @@ def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
 
     if bs4:
         # strip html tags
-        copyright = ('%s' % bs4.BeautifulSoup(glos.getInfo('copyright')).text).encode('utf-8')
+        copyright = ('%s' % bs4.BeautifulSoup(glos.getInfo('copyright')).text)
     else:
         copyright = glos.getInfo('copyright')
 
     # if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
     # present in Info.plist, Dictionary.app will crash.
-    with open(filename, 'wb') as f:
+    with open(filename, 'w') as f:
         f.write(template % {
             "CFBundleIdentifier": identifier,
             "CFBundleDisplayName": glos.getInfo('name'),
@@ -109,15 +109,15 @@ def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
 
 def write_css(fname, css_file):
     if css_file:
-        with open(css_file, 'r') as f:
+        with open(css_file, 'rb') as f:
             css = f.read()
     else:
         css = pkgutil.get_data(__name__, 'project_templates/Dictionary.css')
-    with open(fname, 'w') as f:
+    with open(fname, 'wb') as f:
         f.write(css)
 
 def write_makefile(dict_name):
-    template = pkgutil.get_data(__name__, 'project_templates/Makefile')
+    template = toStr(pkgutil.get_data(__name__, 'project_templates/Makefile'))
     with open('Makefile', 'w') as f:
         f.write(template % {'dict_name': dict_name})
 
