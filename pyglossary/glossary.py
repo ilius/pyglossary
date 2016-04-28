@@ -1160,7 +1160,7 @@ class Glossary(object):
     def uiEdit(self):## remove? FIXME
         p = self.ui.pref
         if p['sort']:
-            self._data.sort()
+            self.sortWords()
 
     def getPref(self, name, default):
         if self.ui:
