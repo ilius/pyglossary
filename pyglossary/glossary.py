@@ -514,7 +514,7 @@ class Glossary(object):
                 os.remove(filename)
         else:
             reader = Reader(self)
-            reader.open(filename)
+            reader.open(filename, **options)
             if direct:
                 self._readers.append(reader)
                 log.info(
