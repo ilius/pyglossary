@@ -119,39 +119,40 @@ class Writer(object):
 
     def writeProbs(self):
         glos = self._glos
-        open(join(self.dirname, 'DictionaryForMIDs.properties'), 'wb').write('\n'.join([
-            '#DictionaryForMIDs property file',
-            'infoText=%s, author: %s'%(glos.getInfo('name'), glos.getInfo('author')),
-            'indexFileMaxSize=%s\n'%self.indexFileMaxSize,
-            'language1IndexNumberOfSourceEntries=%d'%self.wordCount,
-            'language1DictionaryUpdateClassName=de.kugihan.dictionaryformids.dictgen.DictionaryUpdate',
-            'indexCharEncoding=ISO-8859-1',
-            "dictionaryFileSeparationCharacter='\\t'",
-            'language2NormationClassName=de.kugihan.dictionaryformids.translation.Normation',
-            'language2DictionaryUpdateClassName=de.kugihan.dictionaryformids.dictgen.DictionaryUpdate',
-            'logLevel=0',
-            'language1FilePostfix=%s'%self.directoryPostfix,
-            'dictionaryCharEncoding=UTF-8',
-            'numberOfAvailableLanguages=2',
-            'language1IsSearchable=true',
-            'language2GenerateIndex=false',
-            'dictionaryFileMaxSize=%d'%(self.dicMaxSize+1),
-            'language2FilePostfix=fa',
-            'searchListFileMaxSize=20000',
-            'language2IsSearchable=false',
-            'fileEncodingFormat=plain_format1',
-            'language1HasSeparateDictionaryFile=true',
-            'searchListCharEncoding=ISO-8859-1',
-            "searchListFileSeparationCharacter='\t'",
-            "indexFileSeparationCharacter='\t'",
-            'language1DisplayText=%s'%glos.getInfo('inputlang'),
-            'language2HasSeparateDictionaryFile=false',
-            'dictionaryGenerationInputCharEncoding=UTF-8',
-            'language1GenerateIndex=true',
-            'language2DisplayText=%s'%glos.getInfo('outputlang'),
-            'language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEng',
-        ]))
-        #open(join(self.dirname, 'searchlist%s.csv'%self.directoryPostfix), 'wb') ### FIXME
+        with open(join(self.dirname, 'DictionaryForMIDs.properties'), 'wb') as fp:
+            fp.write('\n'.join([
+'#DictionaryForMIDs property file',
+'infoText=%s, author: %s'%(glos.getInfo('name'), glos.getInfo('author')),
+'indexFileMaxSize=%s\n'%self.indexFileMaxSize,
+'language1IndexNumberOfSourceEntries=%d'%self.wordCount,
+'language1DictionaryUpdateClassName=de.kugihan.dictionaryformids.dictgen.DictionaryUpdate',
+'indexCharEncoding=ISO-8859-1',
+"dictionaryFileSeparationCharacter='\\t'",
+'language2NormationClassName=de.kugihan.dictionaryformids.translation.Normation',
+'language2DictionaryUpdateClassName=de.kugihan.dictionaryformids.dictgen.DictionaryUpdate',
+'logLevel=0',
+'language1FilePostfix=%s'%self.directoryPostfix,
+'dictionaryCharEncoding=UTF-8',
+'numberOfAvailableLanguages=2',
+'language1IsSearchable=true',
+'language2GenerateIndex=false',
+'dictionaryFileMaxSize=%d'%(self.dicMaxSize+1),
+'language2FilePostfix=fa',
+'searchListFileMaxSize=20000',
+'language2IsSearchable=false',
+'fileEncodingFormat=plain_format1',
+'language1HasSeparateDictionaryFile=true',
+'searchListCharEncoding=ISO-8859-1',
+"searchListFileSeparationCharacter='\t'",
+"indexFileSeparationCharacter='\t'",
+'language1DisplayText=%s'%glos.getInfo('inputlang'),
+'language2HasSeparateDictionaryFile=false',
+'dictionaryGenerationInputCharEncoding=UTF-8',
+'language1GenerateIndex=true',
+'language2DisplayText=%s'%glos.getInfo('outputlang'),
+'language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEng',
+            ]))
+            #open(join(self.dirname, 'searchlist%s.csv'%self.directoryPostfix), 'wb') ### FIXME
 
     def nextIndex(self):
         try:
