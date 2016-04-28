@@ -102,7 +102,7 @@ class Writer(object):
                     self.directoryPostfix,
                     dicIndex+1,
                 ),
-            ), 'wb')
+            ), 'w')
             for entry in entryList:
                 wordCount += 1
                 word = entry.getWord()
@@ -119,7 +119,7 @@ class Writer(object):
 
     def writeProbs(self):
         glos = self._glos
-        with open(join(self.dirname, 'DictionaryForMIDs.properties'), 'wb') as fp:
+        with open(join(self.dirname, 'DictionaryForMIDs.properties'), 'w') as fp:
             fp.write('\n'.join([
 '#DictionaryForMIDs property file',
 'infoText=%s, author: %s'%(glos.getInfo('name'), glos.getInfo('author')),
@@ -152,7 +152,7 @@ class Writer(object):
 'language2DisplayText=%s'%glos.getInfo('outputlang'),
 'language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEng',
             ]))
-            #open(join(self.dirname, 'searchlist%s.csv'%self.directoryPostfix), 'wb') ### FIXME
+            #open(join(self.dirname, 'searchlist%s.csv'%self.directoryPostfix), 'w') ### FIXME
 
     def nextIndex(self):
         try:
@@ -163,7 +163,7 @@ class Writer(object):
         self.indexIndex += 1
         fname = 'index%s%d.csv'%(self.indexPostfix, self.indexIndex)
         fpath = join(self.dirname, fname)
-        self.indexFp = open(fpath, 'wb')
+        self.indexFp = open(fpath, 'w')
 
     def write(self):
         self.nextIndex()
@@ -200,15 +200,15 @@ def write2(glos, filename):
     index = [None]*n
     dicMaxSize = 0
     k = 1
-    indFp = open('index%s1.csv'%language1FilePostfix, 'wb')
-    dicFp = open('directory%s1.csv'%language1FilePostfix, 'wb')
+    indFp = open('index%s1.csv'%language1FilePostfix, 'w')
+    dicFp = open('directory%s1.csv'%language1FilePostfix, 'w')
     for i, entry in enumerate(glos):
         if i%200==0 and i>0:
             #dicFp.close()
             dicSize = dicFp.tell()
             if dicSize > dicMaxSize:
                 dicMaxSize = dicSize
-            dicFp = open('directory%s%d.csv'%(language1FilePostfix, i/200), 'wb')
+            dicFp = open('directory%s%d.csv'%(language1FilePostfix, i/200), 'w')
         w, m = entry.getWord(), entry.getDefi()
         dicLine = '%s\t%s\n'%(w, m)
         dicFp.write(dicLine)
@@ -225,11 +225,11 @@ def write2(glos, filename):
         if size + len(indLine) > indexFileMaxSize - 10 :
             k += 1
             #indFp.close()
-            indFp = open('index%s%d.csv'%(language1FilePostfix, k), 'wb')
+            indFp = open('index%s%d.csv'%(language1FilePostfix, k), 'w')
         indFp.write(indLine)
     dicFp.close()
     indFp.close()
-    open('DictionaryForMIDs.properties', 'wb').write('\n'.join([
+    open('DictionaryForMIDs.properties', 'w').write('\n'.join([
         '#DictionaryForMIDs property file',
         'infoText=%s, author: %s'%(glos.getInfo('name'), glos.getInfo('author')),
         'indexFileMaxSize=%s\n'%indexFileMaxSize,
@@ -261,7 +261,7 @@ def write2(glos, filename):
         'language2DisplayText=%s'%glos.getInfo('outputlang'),
         'language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEng',
     ]))
-    #open('searchlist%s.csv'%language1FilePostfix, 'wb') ### FIXME
+    #open('searchlist%s.csv'%language1FilePostfix, 'w') ### FIXME
     os.chdir(initCwd)
 
 
