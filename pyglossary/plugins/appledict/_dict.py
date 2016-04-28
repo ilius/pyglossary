@@ -173,7 +173,7 @@ def format_clean_content(title, body, BeautifulSoup):
 
     # xhtml is strict
     if BeautifulSoup:
-        soup = BeautifulSoup.BeautifulSoup(body, from_encoding='utf-8')
+        soup = BeautifulSoup.BeautifulSoup(body, "lxml", from_encoding='utf-8')
         # difference between 'lxml' and 'html.parser'
         if soup.body:
             soup = soup.body
