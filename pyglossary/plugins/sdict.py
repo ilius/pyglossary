@@ -87,7 +87,7 @@ class Header(object):
     def parse(self, st):
         self.signature = read_str(st, self.f_signature)
         if self.signature != 'sdct':
-            raise DictFormatError('Not a valid sdict dictionary')
+            raise ValueError('Not a valid sdict dictionary')
         self.word_lang = read_str(st, self.f_input_lang)
         self.article_lang = read_str(st, self.f_output_lang)
         self.short_index_length = read_int(st, self.f_length_of_short_index)
