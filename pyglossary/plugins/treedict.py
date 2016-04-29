@@ -30,15 +30,14 @@ def write(glos, filename, archive='tar.bz2', sep=os.sep):
                 os.makedirs(filename + os.sep + sep.join(chars[:-1]))
             except:
                 pass
+            entryFname = '%s%s%s.m'%(
+                filename,
+                os.sep,
+                sep.join(chars),
+            )
             try:
-                open(
-                    '%s%s%s.m'%(
-                        filename,
-                        os.sep,
-                        sep.join(chars),
-                    ),
-                    'ab',
-                ).write(defi)
+                with open(entryFname, 'a') as entryFp:
+                    entryFp.write(defi)
             except:
                 log.exception('')
     if archive:
