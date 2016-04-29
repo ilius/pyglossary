@@ -392,11 +392,11 @@ def relation(word, phrase, opt=None):## FIXME
 
 ## Python 2.x:
 def intToBinStr(n, stLen=0):## 6 times faster than intToBinStr_0
-    bs = ''
+    bs = []
     while n>0:
-        bs = chr(n & 0xff) + bs
+        bs.insert(0, n & 0xff)
         n >>= 8
-    return bs.rjust(stLen, '\x00')
+    return bytes(bs).rjust(stLen, b'\x00')
 
 ## Python 2.x:
 def binStrToInt(bs):
