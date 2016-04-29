@@ -73,7 +73,7 @@ class Reader(object):
 
 
 def write(glos, filename):
-    fp = open(filename, 'wb')
+    fp = open(filename, 'w')
     fp.write('#\nmsgid ""\nmsgstr ""\n')
     for inf in glos.infoKeys():
         fp.write('"%s: %s\\n"\n'%(inf, glos.getInfo(inf)))
