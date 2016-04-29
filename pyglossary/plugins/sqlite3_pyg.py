@@ -3,9 +3,13 @@
 from formats_common import *
 
 enable = True
-format = 'MtuxMdic'
-description = 'SQLite(MDic m2, Sib sdb)'
-extentions = ['.m2', '.sdb']
+format = 'Sqlite3'
+description = 'SQLite 3'
+extentions = [
+    '.sqlite',
+    '.m2',## https://sourceforge.net/projects/mdic
+    '.sdb',## https://code.launchpad.net/sib
+]
 readOptions = []
 writeOptions = []
 
