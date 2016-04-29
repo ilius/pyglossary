@@ -39,7 +39,7 @@ except ImportError:
 
 # 2x3 compatible
 if sys.hexversion >= 0x03000000:
-    unicode = str
+    str, unicode = bytes, str
 
 
 def _unescape_entities(text):
@@ -592,7 +592,7 @@ class MDX(MDict):
                 i += 1
                 record = record_block[record_start-offset:record_end-offset]
                 # convert to utf-8
-                record = record.decode(self._encoding, errors='ignore').strip(u'\x00').encode('utf-8')
+                record = record.decode(self._encoding, errors='ignore').strip(unicode('\x00')).encode('utf-8')
                 # substitute styles
                 if self._substyle and self._stylesheet:
                     record = self._substitute_stylesheet(record)
@@ -639,11 +639,16 @@ if __name__ == '__main__':
 
     # use GUI to select file, default to extract
     if not args.filename:
-        import Tkinter
-        import tkFileDialog
-        root = Tkinter.Tk()
+        if sys.hexversion >= 0x03000000:
+            import tkinter as tk
+            import tkinter.filedialog as filedialog
+        else:
+            import Tkinter as tk
+            import tkFileDialog as filedialog
+
+        root = tk.Tk()
         root.withdraw()
-        args.filename = tkFileDialog.askopenfilename(parent=root)
+        args.filename = filedialog.askopenfilename(parent=root)
         args.extract = True
 
     if not os.path.exists(args.filename):
