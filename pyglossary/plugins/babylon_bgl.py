@@ -2200,7 +2200,7 @@ class BglReader(object):
                 continue
             ok = True
             for x in word[d0+1:d1]:
-                if x not in '0123456789':
+                if x not in b'0123456789':
                     #log.debug('stripDollarIndexes({0}):\n'
                         #'non-digit between $$'.format(word))
                     ok = False
