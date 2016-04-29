@@ -80,8 +80,8 @@ class Reader(object):
             ))
             for row in self._cur.fetchall():
                 try:
-                    word = row[1].encode('utf8')
-                    defi = row[2].encode('utf8')
+                    word = row[1]
+                    defi = row[2]
                 except:
                     log.exception('error while encoding row id=%s'%row[0])
                 else:
