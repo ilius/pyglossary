@@ -41,7 +41,7 @@ def write(glos, filename, dicIndex=16):
     if not isinstance(dicIndex, int):
         raise TypeError('Invalid argument to function writeOmnidic: filename=%s'%filename)
     with indir(filename, create=True):
-        indexFp = open(str(dicIndex), 'wb')
+        indexFp = open(str(dicIndex), 'w')
 
         for bucketIndex, bucket in enumerate(glos.iterEntryBuckets(100)):
             if bucketIndex==0:
@@ -58,7 +58,7 @@ def write(glos, filename, dicIndex=16):
                 bucketFilename,
             ))
 
-            bucketFileObj = open(bucketFilename, 'wb')
+            bucketFileObj = open(bucketFilename, 'w')
             for entry in bucket:
                 word = entry.getWord()
                 defi = entry.getDefi()
