@@ -200,7 +200,7 @@ class Reader(object):
             if pointer >= self._header.articles_offset:
                 log.error('Warning: attempt to read word from illegal position in dict file')
                 return None
-            log.exception()
+            log.exception('')
 
     def readArticle(self, pointer):
         return self.readUnit(self._header.articles_offset + pointer)

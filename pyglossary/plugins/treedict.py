@@ -40,7 +40,7 @@ def write(glos, filename, archive='tar.bz2', sep=os.sep):
                     'ab',
                 ).write(defi)
             except:
-                log.exception()
+                log.exception('')
     if archive:
         if archive=='tar.gz':
             (output, error) = subprocess.Popen(
