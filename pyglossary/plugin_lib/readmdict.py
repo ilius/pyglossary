@@ -17,6 +17,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+import logging
+log = logging.getLogger('root')
+
 from struct import pack, unpack
 from io import BytesIO
 import re
@@ -513,7 +516,12 @@ class MDX(MDict):
         txt_tag = re.findall('`\d+`', txt)
         txt_styled = txt_list[0]
         for j, p in enumerate(txt_list[1:]):
-            style = self._stylesheet[txt_tag[j][1:-1]]
+            key = txt_tag[j][1:-1]
+            try:
+                style = self._stylesheet[key]
+            except KeyError:
+                log.error('invalid stylesheet key "%s"'%key)
+                continue
             if p and p[-1] == '\n':
                 txt_styled = txt_styled + style[0] + p.rstrip() + style[1] + '\r\n'
             else:
