@@ -25,8 +25,8 @@ from io import BytesIO
 import re
 import sys
 
-from ripemd128 import ripemd128
-from pureSalsa20 import Salsa20
+from .ripemd128 import ripemd128
+from .pureSalsa20 import Salsa20
 
 # zlib compression is used for engine version >=2.0
 import zlib
