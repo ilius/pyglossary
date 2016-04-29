@@ -56,7 +56,7 @@ supportsAlternates = True
 import gzip, re, htmlentitydefs, pickle
 
 from pyglossary.text_utils import binStrToInt, excMessage, \
-    isASCII, isControlChar, name2codepoint, formatByteStr, intToBinStr
+    isASCII, name2codepoint, formatByteStr
 
 from pyglossary.xml_utils import xml_escape
 
