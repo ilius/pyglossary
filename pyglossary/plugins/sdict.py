@@ -57,7 +57,7 @@ compressions = [
 
 read_raw = lambda s, fe: s[fe.offset:fe.offset + fe.length]
 
-read_str = lambda s, fe: read_raw(s, fe).replace('\x00', '');
+read_str = lambda s, fe: read_raw(s, fe).replace(b'\x00', b'');
 
 read_int = lambda s, fe=None: unpack('<I', read_raw(s, fe) if fe else s)[0]
 
@@ -86,7 +86,7 @@ class Header(object):
 
     def parse(self, st):
         self.signature = read_str(st, self.f_signature)
-        if self.signature != 'sdct':
+        if self.signature != b'sdct':
             raise ValueError('Not a valid sdict dictionary')
         self.word_lang = read_str(st, self.f_input_lang)
         self.article_lang = read_str(st, self.f_output_lang)
@@ -183,7 +183,9 @@ class Reader(object):
             (next_ptr, word, ptr) = item
             if word==None:
                 break
+            word = toStr(word)
             defi = self.readUnit(self._header.articles_offset + ptr)
+            defi = toStr(defi)
             defi = defi.replace('<BR>', '\n').replace('<br>', '\n')
             yield Entry(word, defi)
 
