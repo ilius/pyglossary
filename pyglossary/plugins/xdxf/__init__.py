@@ -138,15 +138,16 @@ def add_articles(glos, articles):
     glos.setDefaultDefiFormat('x')
     for item in articles:
         word, alts = title_alts(titles(item))
-        if word:
-            item.tail = None
-            defi = tostring(item, encoding='utf-8')
-            # <ar>...</ar>
-            defi = defi[4:-5].strip()
-            glos.addEntry(
-                [word] + alts,
-                defi,
-            )
+        if not word:
+            continue
+        item.tail = None
+        defi = tostring(item, encoding='utf-8')
+        # <ar>...</ar>
+        defi = defi[4:-5].strip()
+        glos.addEntry(
+            [toStr(w) for w in [word] + alts],
+            toStr(defi),
+        )
 
 
 def titles(article):
