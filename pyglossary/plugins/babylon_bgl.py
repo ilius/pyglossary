@@ -1875,7 +1875,7 @@ class BglReader(object):
             pos += Len
         if key in alts:
             alts.remove(key)
-        return True, pos, list(alts)
+        return True, pos, list(sorted(alts))
 
     def toUtf8(self, text, encoding):
         text = text.replace('\x00', '')
