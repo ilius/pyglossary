@@ -18,12 +18,17 @@ class Entry(object):
         """
 
         ## memory optimization:
-        if isinstance(word, (tuple, list)):
+        if isinstance(word, list):
             if len(word) == 1:
                 word = word[0]
-        if isinstance(defi, (tuple, list)):
+        elif not isinstance(word, str):
+            raise TypeError('invalid word type %s'%type(word))
+
+        if isinstance(defi, list):
             if len(defi) == 1:
                 defi = defi[0]
+        elif not isinstance(defi, str):
+            raise TypeError('invalid defi type %s'%type(defi))
 
         self._word = word
         self._defi = defi
@@ -171,14 +176,21 @@ class Entry(object):
 
             creates and return an Entry object from `rawEntry` tuple
         """
+        word = rawEntry[0]
+        defi = rawEntry[1]
         try:
             defiFormat = rawEntry[2]
         except IndexError:
             defiFormat = defaultDefiFormat
 
+        if isinstance(word, tuple):
+            word = list(word)
+        if isinstance(defi, tuple):
+            defi = list(defi)
+
         return cls(
-            rawEntry[0],
-            rawEntry[1],
+            word,
+            defi,
             defiFormat = defiFormat,
         )
 
