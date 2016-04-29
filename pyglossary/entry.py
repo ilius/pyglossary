@@ -78,6 +78,11 @@ class Entry(object):
         """
         return self._defiFormat
 
+    def addAlt(self, alt):
+        words = self.getWords()
+        words.append(alt)
+        self._word = words
+
     def editFuncWord(self, func):
         """
             run function `func` on all the words
