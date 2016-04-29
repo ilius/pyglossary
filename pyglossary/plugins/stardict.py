@@ -24,16 +24,18 @@ infoKeys = ('bookname', 'author', 'email', 'website', 'description', 'date')
 
 
 def isAsciiAlpha(c):
-    return (ord(c) >= ord('A') and ord(c) <= ord('Z')) or (ord(c) >= ord('a') and ord(c) <= ord('z'))
+    """ c is int """
+    return (c >= ord('A') and c <= ord('Z')) or (c >= ord('a') and c <= ord('z'))
 
 def isAsciiLower(c):
-    return ord(c) >= ord('a') and ord(c) <= ord('z')
+    return c >= ord('a') and c <= ord('z')
 
 def isAsciiUpper(c):
     """
+        c is int
         imitate ISUPPER macro of glib library gstrfuncs.c file
     """
-    return ord(c) >= ord('A') and ord(c) <= ord('Z')
+    return c >= ord('A') and c <= ord('Z')
 
 def asciiLower(c):
     """
@@ -210,7 +212,7 @@ class StarDictReader(object):
         i = 0
         while i < len(idxStr):
             beg = i
-            i = idxStr.find('\x00', beg)
+            i = idxStr.find(b'\x00', beg)
             if i < 0:
                 log.error("Index file is corrupted.")
                 break
@@ -260,7 +262,8 @@ class StarDictReader(object):
             defis = []
             defiFormats = []
             for rawDefi in rawDefis:
-                defis.append(rawDefi[0])
+                _type = chr(rawDefi[1])
+                defis.append(toStr(rawDefi[0]))
                 defiFormats.append(
                     {
                         'm': 'm',
@@ -269,7 +272,7 @@ class StarDictReader(object):
                         'g': 'h',
                         'h': 'h',
                         'x': 'x',
-                    }.get(rawDefi[1], '')
+                    }.get(_type, '')
                 )
 
             ## FIXME
@@ -279,6 +282,8 @@ class StarDictReader(object):
             if not defiFormat:
                 log.warning("Definition format %s is not supported"%defiFormat)
             
+            word = toStr(word)
+
             self.glos.addEntry(
                 [word] + synData.get(index, []),
                 defis,
@@ -301,7 +306,7 @@ class StarDictReader(object):
         i = 0
         while i < synStrLen:
             beg = i
-            i = synStr.find('\x00', beg)
+            i = synStr.find(b'\x00', beg)
             if i < 0:
                 log.error("Synonym file is corrupted.")
                 break
@@ -316,6 +321,7 @@ class StarDictReader(object):
                 log.error("Corrupted synonym file. Word \"{0}\" references invalid item.".format(word))
                 continue
             
+            word = toStr(word)
             try:
                 synData[index].append(word)
             except KeyError:
@@ -328,7 +334,7 @@ class StarDictReader(object):
         """
             Parse definition block when sametypesequence option is specified.
         """
-        assert isinstance(sametypesequence, str)
+        sametypesequence = toBytes(sametypesequence)
         assert len(sametypesequence) > 0
         dataFileCorruptedError = "Data file is corrupted. Word \"{0}\"".format(word)
         res = []
@@ -389,7 +395,7 @@ class StarDictReader(object):
             i += 1
             if isAsciiLower(t):
                 beg = i
-                i = data.find('\x00', beg)
+                i = data.find(b'\x00', beg)
                 if i < 0:
                     log.error(dataFileCorruptedError)
                     return None
@@ -522,21 +528,21 @@ class StarDictWriter(object):
                 defiFormat = 'm'
             #assert isinstance(defiFormat, str) and len(defiFormat) == 1
 
-            dictBlock = ''
+            dictBlock = b''
             
             for altWord in words[1:]:
                 alternates.append((altWord, i))
 
-            dictBlock += defiFormat + defis[0] + '\x00'
+            dictBlock += toBytes(defiFormat + defis[0]) + b'\x00'
 
             for altDefi in defis[1:]:
-                dictBlock += defiFormat + altDefi + '\x00'
+                dictBlock += toBytes(defiFormat + altDefi) + b'\x00'
             
             dictFp.write(dictBlock)
             
             dataLen = len(dictBlock)
-            idxBlock = word + '\x00' + intToBinStr(dictMark, 4) + intToBinStr(dataLen, 4)
-            idxFp.write(idxBlock)
+            idxBlock = toBytes(word) + b'\x00' + intToBinStr(dictMark, 4) + intToBinStr(dataLen, 4)
+            idxFp.write(toBytes(idxBlock))
             
             dictMark += dataLen
             indexFileSize += len(idxBlock)
@@ -554,12 +560,12 @@ class StarDictWriter(object):
         """
         if len(alternates) > 0:
             alternates.sort(key=lambda x: stardictStrKey(x[0]))
-            synStr = ''
+            synBytes = b''
             for item in alternates:
-                synStr += item[0] + '\x00' + intToBinStr(item[1], 4)
+                synBytes += toBytes(item[0]) + b'\x00' + intToBinStr(item[1], 4)
             with open(self.fileBasePath+'.syn', 'wb') as f:
-                f.write(synStr)
-            del synStr
+                f.write(synBytes)
+            del synBytes
 
     def writeIfoFile(self, wordCount, indexFileSize, synwordcount, sametypesequence=None):
         """
@@ -585,7 +591,7 @@ class StarDictWriter(object):
             else:
                 ifoStr += '{0}={1}\n'.format(key, newlinesToSpace(value))
         with open(self.fileBasePath+'.ifo', 'wb') as f:
-            f.write(ifoStr)
+            f.write(toBytes(ifoStr))
         del ifoStr
 
     def copyResources(self, fromPath, toPath, overwrite):
