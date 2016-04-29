@@ -186,17 +186,17 @@ class StarDictReader(object):
         """
             .ifo file is a text file in utf-8 encoding
         """
-        with open(self.fileBasePath+'.ifo', 'rb') as f:
+        with open(self.fileBasePath+'.ifo', 'r') as f:
             ifoStr = f.read()
         for line in splitStringIntoLines(ifoStr):
             line = line.strip()
             if not line:
                 continue
-            ind = line.find('=')
-            if ind==-1:
+            key, eq, value = line.partition('=')
+            if not (key and value):
                 #log.error('Invalid ifo file line: {0}'.format(line))
                 continue
-            self.glos.setInfo(line[:ind].strip(), line[ind+1:].strip())
+            self.glos.setInfo(key, value)
 
     def readIdxFile(self):
         if isfile(self.fileBasePath+'.idx.gz'):
