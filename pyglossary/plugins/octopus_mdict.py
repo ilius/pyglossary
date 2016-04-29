@@ -59,12 +59,12 @@ class Reader(object):
         #    key = key.lower()
         #    self._glos.setInfo(key, value)
         try:
-            title = self._mdx.header['Title']
+            title = self._mdx.header[b'Title']
         except KeyError:
             pass
         else:
             self._glos.setInfo('title', title)
-        self._glos.setInfo('description', self._mdx.header.get('Description', ''))
+        self._glos.setInfo('description', self._mdx.header.get(b'Description', ''))
         ###
         try:
             self.writeDataFiles()
@@ -87,6 +87,8 @@ class Reader(object):
 
     def __iter__(self):
         for word, defi in self._mdx.items():
+            word = toStr(word)
+            defi = toStr(defi)
             yield Entry(word, defi)
 
     __len__ = lambda self: len(self._mdx)
