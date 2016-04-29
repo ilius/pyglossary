@@ -23,7 +23,7 @@ infoKeys = (
 
 def read(glos, filename):
     from xml.etree.ElementTree import XML, tostring
-    with open(filename, 'rb') as fp:
+    with open(filename, 'r') as fp:
         xdb = XML(fp.read())
     for elem in xdb:
         if elem.tag == 'xfardic':## first element
@@ -43,7 +43,7 @@ def read(glos, filename):
 
 
 def write(glos, filename):
-    fp = open(filename, 'wb')
+    fp = open(filename, 'w')
     fp.write('<?xml version="1.0" encoding="utf-8" ?>\n<words>\n<xfardic>')
     for item in infoKeys:
         fp.write('<'+item+'>'+str(glos.getInfo(item))+'</'+item+'>')
