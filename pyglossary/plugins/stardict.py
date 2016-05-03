@@ -39,6 +39,9 @@ def isAsciiUpper(c):
 
 def asciiLower(c):
     """
+        c is int
+        returns int (ascii character code)
+        
         imitate TOLOWER macro of glib library gstrfuncs.c file
 
         This function converts upper case Latin letters to corresponding lower case letters,
@@ -55,33 +58,33 @@ def asciiLower(c):
         letters to lower case, but also locale specific letters will be converted.
     """
     if isAsciiUpper(c):
-        return chr((ord(c) - ord('A')) + ord('a'))
+        return c - ord('A') + ord('a')
     else:
         return c
 
-def strKey(st):
-    return [ord(c) for c in st]
-
-def strLowerKey(st):
-    return [ord(asciiLower(c)) for c in st]
-
-def stardictStrKeyMy(st):
-    return strLowerKey(st) + strKey(st)
-
-def asciiStrCaseCmp(s1, s2):
+def stardictStrKeyMy(ba):
     """
+        ba is a bytes instance
+    """
+    assert isinstance(ba, bytes)
+    return ba.lower() + ba
+
+def asciiStrCaseCmp(ba1, ba2):
+    """
+        ba1 and ba2 are instances of bytes
         imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file
     """
-    commonLen = min(len(s1), len(s2))
+    commonLen = min(len(ba1), len(ba2))
     for i in range(commonLen):
-        c1 = ord(asciiLower(s1[i]))
-        c2 = ord(asciiLower(s2[i]))
+        c1 = asciiLower(ba1[i])
+        c2 = asciiLower(ba2[i])
         if c1 != c2:
             return c1 - c2
-    return len(s1) - len(s2)
+    return len(ba1) - len(ba2)
 
-def strCmp(s1, s2):
+def strCmp(ba1, ba2):
     """
+        ba1 and ba2 are instances of bytes
         imitate strcmp of standard C library
 
         Attention! You may have a temptation to replace this function with built-in cmp() function.
@@ -90,19 +93,21 @@ def strCmp(s1, s2):
         Since we need predictable sorting order in StarDict dictionary, we need to preserve
         this function despite the fact there are other ways to implement it.
     """
-    commonLen = min(len(s1), len(s2))
+    commonLen = min(len(ba1), len(ba2))
     for i in range(commonLen):
-        c1 = ord(s1[i])
-        c2 = ord(s2[i])
+        c1 = ba1[i]
+        c2 = ba2[i]
         if c1 != c2:
             return c1 - c2
-    return len(s1) - len(s2)
+    return len(ba1) - len(ba2)
 
 def stardictStrCmp(s1, s2):
     """
         use this function to sort index items in StarDict dictionary
         s1 and s2 must be utf-8 encoded strings
     """
+    s1 = toBytes(s1)
+    s2 = toBytes(s2)
     a = asciiStrCaseCmp(s1, s2)
     if a == 0:
         return strCmp(s1, s2)
@@ -116,6 +121,8 @@ def stardictStrCmpMy(s1, s2):
         
         s1 and s2 must be utf-8 encoded strings
     """
+    s1 = toBytes(s1)
+    s2 = toBytes(s2)
     return cmp(
         stardictStrKeyMy(s1),
         stardictStrKeyMy(s2),
