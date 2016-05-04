@@ -84,21 +84,6 @@ class LangEntryFilter(EntryFilter):
 
         return entry
 
-'''
-class MarkupConvertFilter(EntryFilter):
-    def removeTags(self, tags):
-        n = len(self._data)
-        for i in xrange(n):
-            self._data[i] = (
-                self._data[i][0],
-                removeTextTags(self._data[i][1], tags),
-            ) + self._data[i][2:]
-
-    def run(self, entry):
-        p = self.glos.ui.pref
-        if p['remove_tags']:
-            self.removeTags(p['tags'])
-'''
 
 class CleanEntryFilter(EntryFilter):## FIXME
     name = 'clean'
