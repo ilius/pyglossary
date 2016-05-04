@@ -13,7 +13,8 @@ writeOptions = [
     'install',
 ]
 
-from pyglossary.text_utils import chBaseIntToList, runDictzip
+from pyglossary.text_utils import runDictzip
+from pyglossary.math_utils import chBaseIntToList
 import shutil
 import gzip
 
