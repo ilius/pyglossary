@@ -8,10 +8,12 @@ format = 'Treedict'
 description = 'TreeDict'
 extentions = ['.tree', '.treedict']
 readOptions = []
-writeOptions = []
+writeOptions = [
+    'encoding',
+]
 
 
-def write(glos, filename, archive='tar.bz2', sep=os.sep):
+def write(glos, filename, encoding='utf-8', archive='tar.bz2', sep=os.sep):
     if os.path.exists(filename):
         if os.path.isdir(filename):
             if os.listdir(filename)!=[]:
@@ -35,7 +37,7 @@ def write(glos, filename, archive='tar.bz2', sep=os.sep):
                 sep.join(chars),
             )
             try:
-                with open(entryFname, 'a') as entryFp:
+                with open(entryFname, 'a', encoding=encoding) as entryFp:
                     entryFp.write(defi)
             except:
                 log.exception('')
