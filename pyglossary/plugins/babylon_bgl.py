@@ -58,8 +58,13 @@ supportsAlternates = True
 
 import gzip, re, html.entities, pickle
 
-from pyglossary.text_utils import binStrToInt, excMessage, \
-    isASCII, name2codepoint, formatByteStr
+from pyglossary.text_utils import (
+    binStrToInt,
+    excMessage,
+    isASCII,
+    name2codepoint,
+    formatByteStr,
+)
 
 from pyglossary.xml_utils import xml_escape
 
