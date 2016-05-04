@@ -24,9 +24,6 @@ import re
 
 import subprocess
 
-import html.entities
-##from xml.etree.ElementTree import XML, tostring ## used for xml2dict
-
 import logging
 log = logging.getLogger('root')
 
