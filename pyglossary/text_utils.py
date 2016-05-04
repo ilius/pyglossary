@@ -396,14 +396,6 @@ def urlToPath(url):
 
 replacePostSpaceChar = lambda st, ch: st.replace(' '+ch, ch).replace(ch, ch+' ').replace(ch+'  ', ch+' ')
 
-def faEditStr(st):
-    return replacePostSpaceChar(
-        st.replace('ي', 'ی')\
-           .replace('ك', 'ک')\
-           .replace('ۂ', 'هٔ')\
-           .replace('ہ', 'ه'),
-        '،')
-
 
 def my_url_show(link):
     for path in (

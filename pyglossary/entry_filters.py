@@ -4,7 +4,6 @@ import re
 
 from .text_utils import (
     fixUtf8,
-    faEditStr,
 )
 
 class EntryFilter(object):
@@ -72,6 +71,7 @@ class LangEntryFilter(EntryFilter):
     name = 'lang'
     desc = 'Language-dependent Filters'
     def run_fa(self, entry):
+        from pyglossary.persian_utils import faEditStr
         entry.editFuncWord(faEditStr)
         entry.editFuncDefi(faEditStr)
         #RLM = '\xe2\x80\x8f'
