@@ -56,7 +56,8 @@ supportsAlternates = True
 
 
 
-import gzip, re, html.entities, pickle
+import gzip
+import re
 
 from pyglossary.text_utils import (
     binStrToInt,
@@ -65,7 +66,6 @@ from pyglossary.text_utils import (
     formatByteStr,
 )
 
-from pyglossary.html_utils import name2codepoint
 from pyglossary.xml_utils import xml_escape
 
 import pyglossary.gregorian as gregorian
@@ -190,6 +190,9 @@ def replace_html_entry_no_escape(m):
         Return the original string if conversion fails.
         Use this as a replace function of re.sub.
     """
+    import html.entities
+    from pyglossary.html_utils import name2codepoint
+
     text = m.group(0)
     name = m.group(1)
     res = None
@@ -1667,6 +1670,7 @@ class BglReader(object):
             self.defaultEncoding = 'cp1252'
 
     def dump_blocks(self, dumpPath):
+        import pickle
         self.file.seek(0)
         metaData = MetaData()
         metaData.numFiles = 0
@@ -1725,6 +1729,7 @@ class BglReader(object):
         self.file.seek(0)
 
     def dump_metadata2(self, dumpPath):
+        import pickle
         if not self.metadata2:
             return
         with open(dumpPath, 'wb') as f:
