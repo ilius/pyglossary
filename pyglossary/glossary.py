@@ -38,7 +38,6 @@ from .sort_stream import hsortStream
 from .text_utils import (
     fixUtf8,
     takeStrWords,
-    findWords,
     findAll,
     addDefaultOptions,
 )
@@ -1093,23 +1092,6 @@ class Glossary(object):
         ui.r_finished()
         ui.progressEnd()
         return True
-
-    def replaceInDefinitions(self, replaceList, matchWord=False):
-        if not matchWord:
-            for rpl in replaceList:
-                for i in range(len(self._data)):
-                    if self._data[i][1].find(rpl[0])>-1:
-                        self._data[i][1] = self._data[i][1].replace(rpl[0], rpl[1])
-        else:
-            num = 0
-            for rpl in replaceList:
-                for j in range(len(self._data)):
-                    # words indexes
-                    wdsIdx = findWords(self._data[j][1], {'word': rpl[0]})
-                    for [i0, i1] in wdsIdx:
-                        self._data[j][1] = self._data[j][1][:i0] + rpl[1] + self._data[j][1][i1:]
-                        num += 1
-            return num
 
 
     def iterSqlLines(self, filename='', infoKeys=None, newline='\\n', transaction=False):
