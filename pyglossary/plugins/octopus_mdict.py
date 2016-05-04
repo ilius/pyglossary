@@ -18,7 +18,6 @@
 
 from formats_common import *
 
-from pyglossary.plugin_lib.readmdict import MDX, MDD
 import os
 from os.path import splitext, isfile, isdir, extsep, basename, dirname
 
@@ -42,6 +41,7 @@ class Reader(object):
         self._mddFilename = ''
         self._dataDir = ''
     def open(self, filename, **options):
+        from pyglossary.plugin_lib.readmdict import MDX, MDD
         self._filename = filename
         self._encoding = options.get('encoding', '')
         self._substyle = options.get('substyle', True)
