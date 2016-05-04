@@ -14,9 +14,9 @@ class TextGlossaryReader(object):
         self._pendingEntries = []
         self._len = None
         self._pos = -1
-    def open(self, filename):
+    def open(self, filename, encoding='utf-8'):
         self._filename = filename
-        self._file = open(filename, 'r', encoding='utf-8')
+        self._file = open(filename, 'r', encoding=encoding)
         if self._hasInfo:
             self.loadInfo()
     def close(self):

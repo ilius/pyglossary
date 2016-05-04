@@ -724,17 +724,17 @@ class Glossary(object):
         fp.close()
         return True
 
-    def writeTabfile(self, filename='', writeInfo=True):
+    def writeTabfile(self, filename='', **kwargs):
         self.writeTxt(
             sep=('\t', '\n'),
             filename=filename,
-            writeInfo=writeInfo,
             rplList=(
                 ('\\', '\\\\'),
                 ('\n', '\\n'),
                 ('\t', '\\t'),
             ),
             ext='.txt',
+            **kwargs
         )
 
     def writeDict(self, filename='', writeInfo=False):

@@ -6,8 +6,11 @@ enable = True
 format = 'Tabfile'
 description = 'Tabfile (txt, dic)'
 extentions = ['.txt', '.tab', '.dic']
-readOptions = []
+readOptions = [
+    'encoding',
+]
 writeOptions = [
+    'encoding',
     'writeInfo',
 ]
 
@@ -56,9 +59,10 @@ class Reader(TextGlossaryReader):
 
 
 
-def write(glos, filename, writeInfo=True):
+def write(glos, filename, encoding='utf-8', writeInfo=True):
     return glos.writeTabfile(
         filename,
+        encoding=encoding,
         writeInfo=writeInfo,
     )
 
