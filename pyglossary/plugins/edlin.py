@@ -31,10 +31,7 @@ writeOptions = [
 ]
 
 from os.path import join, exists, isdir, isfile
-from collections import OrderedDict as odict
-from hashlib import sha1
 
-from pyglossary.json_utils import dataToPrettyJson, jsonToOrderedData
 from pyglossary.text_utils import escapeNTB, unescapeNTB, splitByBarUnescapeNTB
 
 
@@ -58,6 +55,7 @@ class Reader(object):
         self._rootPath = None
         self._nextPath = None
     def open(self, filename, encoding='utf-8'):
+        from pyglossary.json_utils import jsonToOrderedData
         if isdir(filename):
             infoFname = join(filename, 'info.json')
         elif isfile(filename):
@@ -138,6 +136,7 @@ class Writer(object):
             return hash string for given entry
             don't call it twice for one entry, if you do you will get a different hash string
         """
+        from hashlib import sha1
         _hash = sha1(toBytes(entry.getWord())).hexdigest()[:8]
         if not _hash in self._hashSet:
             self._hashSet.add(_hash)
@@ -160,6 +159,9 @@ class Writer(object):
             ]))
 
     def write(self):
+        from collections import OrderedDict as odict
+        from pyglossary.json_utils import dataToPrettyJson
+
         glosIter = iter(self._glos)
         try:
             thisEntry = next(glosIter)
