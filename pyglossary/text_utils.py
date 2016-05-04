@@ -16,14 +16,22 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ## GNU General Public License for more details.
 
-import string, re, sys, os, subprocess, html.entities, time
+import string
+import sys
+import os
+import time
+import re
+
+import subprocess
+
+import html.entities
 ##from xml.etree.ElementTree import XML, tostring ## used for xml2dict
-from math import log, ceil
+
 import logging
+log = logging.getLogger('root')
+
 
 from . import core
-
-log = logging.getLogger('root')
 
 
 startRed = '\x1b[31m'
