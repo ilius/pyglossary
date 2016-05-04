@@ -256,6 +256,7 @@ def build_name2codepoint_dict():
         copy and paste the output to the name2codepoint dictionary
         name2str - name to utf-8 string dictionary
     """
+    import html.entities
     name2str = html_entity2str
     for k, v in html.entities.name2codepoint.items():
         name2str[k.lower()] = chr(v).encode('utf-8')
