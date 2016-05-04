@@ -37,8 +37,6 @@ from .sort_stream import hsortStream
 
 from .text_utils import (
     fixUtf8,
-    replacePostSpaceChar,
-    removeTextTags,
     takeStrWords,
     findWords,
     findAll,
