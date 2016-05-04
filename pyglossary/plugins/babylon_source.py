@@ -16,9 +16,8 @@ writeOptions = [
     'encoding',
 ]
 
-from pyglossary.text_utils import recodeToWinArabic
-
 def entryRecodeToWinArabic(entry):
+    from pyglossary.arabic_utils import recodeToWinArabic
     entry.editFuncWord(recodeToWinArabic)
     entry.editFuncDefi(recodeToWinArabic)
     return entry
