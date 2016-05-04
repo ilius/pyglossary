@@ -65,16 +65,6 @@ class Reader(object):
         self._tabFileReader = None
         self._tabFileNames = []
 
-def read(glos, filename):
-    reader = Reader(glos)
-    reader.open(filename)
-    for entry in reader:
-        if not entry:
-            continue
-        glos.addEntryObj(entry)
-    reader.close()
-    return True
-
 
 
 
