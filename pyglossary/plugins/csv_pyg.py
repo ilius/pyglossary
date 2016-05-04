@@ -23,8 +23,12 @@ enable = True
 format = 'Csv'
 description = 'CSV'
 extentions = ['.csv']
-readOptions = []
-writeOptions = []
+readOptions = [
+    'encoding',
+]
+writeOptions = [
+    'encoding',
+]
 supportsAlternates = True
 
 import csv
@@ -40,9 +44,9 @@ class Reader(object):
         self._len = None
         self._pos = -1
         self._csvReader = None
-    def open(self, filename):
+    def open(self, filename, encoding='utf-8'):
         self._filename = filename
-        self._file = open(filename, 'r', encoding='utf-8')
+        self._file = open(filename, 'r', encoding=encoding)
         self._csvReader = csv.reader(
             self._file,
             dialect='excel',
@@ -90,8 +94,8 @@ class Reader(object):
 
 
 
-def write(glos, filename):
-    with open(filename, 'w', encoding='utf-8') as csvfile:
+def write(glos, filename, encoding='utf-8'):
+    with open(filename, 'w', encoding=encoding) as csvfile:
         writer = csv.writer(
             csvfile,
             dialect='excel',
