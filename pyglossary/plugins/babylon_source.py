@@ -16,10 +16,10 @@ writeOptions = [
     'encoding',
 ]
 
-def entryRecodeToWinArabic(entry):
-    from pyglossary.arabic_utils import recodeToWinArabic
-    entry.editFuncWord(recodeToWinArabic)
-    entry.editFuncDefi(recodeToWinArabic)
+def entryCleanWinArabic(entry):
+    from pyglossary.arabic_utils import cleanWinArabicStr
+    entry.editFuncWord(cleanWinArabicStr)
+    entry.editFuncDefi(cleanWinArabicStr)
     return entry
 
 def write(glos, filename, writeInfo=True, newline='', encoding=''):
@@ -35,8 +35,8 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
         'arabic windows',
         'windows arabic',
     ):
-        encoding = 'Arabic'
-        entryFilterFunc = entryRecodeToWinArabic
+        encoding = 'windows-1256'
+        entryFilterFunc = entryCleanWinArabic
         if not newline:
             newline='\r\n'
 
@@ -70,5 +70,6 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
         ext='.gls',
         head=head,
         entryFilterFunc=entryFilterFunc,
+        encoding=encoding,
     )
 
