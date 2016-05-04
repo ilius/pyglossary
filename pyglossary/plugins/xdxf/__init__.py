@@ -24,10 +24,7 @@ from itertools import combinations
 from os import path
 from lxml import etree
 
-try:
-    from io import StringIO
-except ImportError:
-    from io import StringIO
+from io import StringIO
 
 from formats_common import *
 
