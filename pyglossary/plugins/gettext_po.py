@@ -9,10 +9,6 @@ extentions = ['.po',]
 readOptions = []
 writeOptions = []
 
-from polib import escape as po_escape
-from polib import unescape as po_unescape
-from pyglossary.file_utils import fileCountLines
-
 
 class Reader(object):
     def __init__(self, glos, hasInfo=True):
@@ -32,6 +28,7 @@ class Reader(object):
             log.exception('error while closing file "%s"'%self._filename)
         self._file = None
     def __len__(self):
+        from pyglossary.file_utils import fileCountLines
         if self._len is None:
             log.warning('Try not to use len(reader) as it takes extra time')
             self._len = fileCountLines(
@@ -40,6 +37,7 @@ class Reader(object):
             )
         return self._len
     def __iter__(self):
+        from polib import unescape as po_unescape
         word = ''
         defi = ''
         msgstr = False
@@ -73,6 +71,7 @@ class Reader(object):
 
 
 def write(glos, filename):
+    from polib import escape as po_escape
     fp = open(filename, 'w')
     fp.write('#\nmsgid ""\nmsgstr ""\n')
     for inf in glos.infoKeys():
