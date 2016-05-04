@@ -324,15 +324,15 @@ def relation(word, phrase, opt=None):## FIXME
 
 ###############################################
 
-## Python 2.x:
-def intToBinStr(n, stLen=0):## 6 times faster than intToBinStr_0
+## Python 3.x:
+def intToBinStr(n, stLen=0):
     bs = []
     while n>0:
         bs.insert(0, n & 0xff)
         n >>= 8
     return bytes(bs).rjust(stLen, b'\x00')
 
-## Python 2.x:
+## Python 3.x:
 def binStrToInt(bs):
     bs = toBytes(bs)
     n = 0
