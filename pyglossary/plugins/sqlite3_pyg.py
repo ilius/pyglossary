@@ -13,7 +13,6 @@ extentions = [
 readOptions = []
 writeOptions = []
 
-from sqlite3 import connect
 
 infoKeys = [
     'dbname',## name OR dbname? FIXME
@@ -38,6 +37,7 @@ class Reader(object):
         self._cur = None
         
     def open(self, filename):
+        from sqlite3 import connect
         self._filename = filename
         self._con = connect(filename)
         self._cur = self._con.cursor()
@@ -104,6 +104,7 @@ def write_3(glos, filename):
     return True
 
 def write(glos, filename):
+    from sqlite3 import connect
     if os.path.exists(filename):
         os.remove(filename)
     con = connect(filename)
