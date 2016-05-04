@@ -13,10 +13,6 @@ writeOptions = [
     'install',
 ]
 
-from pyglossary.text_utils import runDictzip
-from pyglossary.math_utils import chBaseIntToList
-import shutil
-import gzip
 
 b64_chars = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 b64_chars_ord = dict(zip(b64_chars, range(len(b64_chars))))
@@ -42,6 +38,7 @@ def indexStrToInt(st):
     return n
 
 def installToDictd(filename, title=''):## filename is without extention (neither .index or .dict or .dict.dz)
+    import shutil
     log.info('Installing %r to DICTD server'%filename)
     shutil.copy(filename + '.index', '/usr/share/dictd')
     if os.path.isfile(filename + '.dict.dz'):
@@ -75,6 +72,7 @@ class Reader(object):
         self._leadingLinesCount = 0
         self._len = None
     def open(self, filename):
+        import gzip
         if filename.endswith('.index'):
             filename = filename[:-6]
         self._filename = filename
@@ -135,6 +133,7 @@ class Reader(object):
 
 
 def write(glos, filename, sort=True, dictZip=True, install=True):## FIXME
+    from pyglossary.text_utils import runDictzip
     if sort:
         glos = glos.copy()
         glos.sortWords()
