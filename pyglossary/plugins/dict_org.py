@@ -19,6 +19,7 @@ import shutil
 import gzip
 
 b64_chars = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+b64_chars_ord = dict(zip(b64_chars, range(len(b64_chars))))
 
 def intToIndexStr(n, retry=0):
     chars = []
@@ -32,7 +33,7 @@ def intToIndexStr(n, retry=0):
 def indexStrToInt(st):
     n = 0
     for i, c in enumerate(reversed(list(st))):
-        k = b64_chars.find(c)
+        k = b64_chars_ord[c]
         assert 0 <= k < 64
         n |= (k << 6*i)
         ## += is safe
