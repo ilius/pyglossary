@@ -67,7 +67,7 @@ def brackets(s):
         { ( ... ) }
         { ... }
     """
-    if s.find('{') != -1:
+    if '{' in s:
         for exp, sub in _brackets_sub:
             s = exp.sub(sub, s)
     return spaces(s)

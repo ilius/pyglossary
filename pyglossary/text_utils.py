@@ -293,7 +293,7 @@ def relation(word, phrase, opt=None):## FIXME
         opt = {}
     defOpt={'sep':commaFa, 'matchWord':True}
     addDefaultOptions(opt, defOpt)
-    if phrase.find(word)==-1:
+    if not word in phrase:
         return 0.0
     phraseParts = phrase.split(opt['sep'])
     rel = 0.0 ## relation value of word to pharse(as a float number between 0 and 1

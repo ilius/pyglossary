@@ -889,7 +889,7 @@ class Glossary(object):
         for item in self._data:
             (word, defi) = item[:2]
             defiParts = defi.split(sep)
-            if defi.find(st) == -1:
+            if not st in defi:
                 continue
             rel = 0 ## relation value of word (as a float number between 0 and 1
             for part in defiParts:
