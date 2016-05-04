@@ -27,7 +27,6 @@ extentions = ['.dct']
 readOptions = ['encoding']
 writeOptions = []
 
-import zlib, bz2
 from struct import unpack
 
 
@@ -35,12 +34,14 @@ class GzipCompression(object):
     def __str__(self):
         return 'gzip'
     def decompress(self, string):
+        import zlib
         return zlib.decompress(string)
 
 class Bzip2Compression(object):
     def __str__(self):
         return 'bzip2'
     def decompress(self, string):
+        import bz2
         return bz2.decompress(string)
 
 class NoCompression(object):
