@@ -62,10 +62,10 @@ from pyglossary.text_utils import (
     binStrToInt,
     excMessage,
     isASCII,
-    name2codepoint,
     formatByteStr,
 )
 
+from pyglossary.html_utils import name2codepoint
 from pyglossary.xml_utils import xml_escape
 
 import pyglossary.gregorian as gregorian
