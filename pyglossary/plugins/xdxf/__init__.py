@@ -20,11 +20,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from itertools import combinations
 from os import path
-from lxml import etree
-
-from io import StringIO
 
 from formats_common import *
 
@@ -152,6 +148,7 @@ def titles(article):
     :param article: <ar> tag
     :return: (title (str) | None, alternative titles (set))
     """
+    from itertools import combinations
     titles = []
     for title_element in article.findall('k'):
         n_opts = len([c for c in title_element if c.tag == 'opt'])
@@ -224,6 +221,7 @@ def xdxf_to_html(xdxf_text):
     :param xdxf_text: xdxf formatted string
     :return: html formatted string
     """
+    from io import StringIO
     xdxf_txt = '<ar>%s</ar>' % xdxf_text
     f = StringIO(xdxf_txt)
     doc = etree.parse(f)
