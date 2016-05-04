@@ -1576,12 +1576,12 @@ class BglReader(object):
                 file extension may be: '.txt', '.pdf'
             """
             if len(block.data) > pos:
-                i = block.data.find('\x00', pos)
-                if i == -1:
-                    log.warning('read_type_3: no file extension')
+                aboutExt, _, aboutContents = block.data[pos:].partition('\x00')
+                if aboutExt:
+                    self.aboutExt = aboutExt
+                    self.aboutContents = aboutContents
                 else:
-                    self.aboutExt = block.data[pos:i]
-                    self.aboutContents = block.data[i+1:]
+                    log.warning('read_type_3: no file extension')
         elif x==0x43:
             """
                 The length of the substring match in a term.
