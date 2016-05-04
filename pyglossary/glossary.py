@@ -683,6 +683,7 @@ class Glossary(object):
         iterEntries=None,
         entryFilterFunc=None,
         outInfoKeysAliasDict=None,
+        encoding='utf-8',
     ):
         if rplList is None:
             rplList = []
@@ -691,7 +692,7 @@ class Glossary(object):
         if not outInfoKeysAliasDict:
             outInfoKeysAliasDict = {}
 
-        fp = open(filename, 'w', encoding='utf-8')
+        fp = open(filename, 'w', encoding=encoding)
         fp.write(head)
         if writeInfo:
             for key, desc in self.info.items():
