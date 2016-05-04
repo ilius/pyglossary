@@ -19,10 +19,7 @@
 import string
 import sys
 import os
-import time
 import re
-
-import subprocess
 
 import logging
 log = logging.getLogger('root')
@@ -133,6 +130,7 @@ def formatHMS(h, m, s):
         return '%.2d:%.2d:%.2d'%(h, m, s)
 
 def timeHMS(seconds):
+    import time
     (h, m, s) = time.gmtime(int(seconds))[3:6]
     return formatHMS(h, m, s)
 
@@ -370,6 +368,7 @@ replacePostSpaceChar = lambda st, ch: st.replace(' '+ch, ch).replace(ch, ch+' ')
 
 
 def my_url_show(link):
+    import subprocess
     for path in (
         '/usr/bin/gnome-www-browser',
         '/usr/bin/firefox',
@@ -392,6 +391,7 @@ def click_website(widget, link):
     my_url_show(link)
 
 def runDictzip(filename):
+    import subprocess
     dictzipCmd = '/usr/bin/dictzip' ## Save in pref ## FIXME
     if not os.path.isfile(dictzipCmd):
         return False
