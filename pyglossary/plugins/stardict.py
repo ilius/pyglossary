@@ -12,10 +12,10 @@ supportsAlternates = True
 import sys
 sys.path.append('/usr/share/pyglossary/src')
 
-import os, re, shutil
+import os
 import os.path
 from os.path import join, split, splitext, isfile, isdir
-from collections import Counter
+import re
 from functools import cmp_to_key
 
 from pyglossary.text_utils import intToBinStr, binStrToInt, runDictzip
@@ -237,6 +237,7 @@ class StarDictReader(object):
         return indexData
 
     def readDictFile(self, indexData, synData, sametypesequence):
+        #from collections import Counter
         if isfile(self.fileBasePath+'.dict.dz'):
             import gzip
             dictFd = gzip.open(self.fileBasePath+'.dict.dz')
@@ -605,6 +606,7 @@ class StarDictWriter(object):
         """
             Copy resource files from fromPath to toPath.
         """
+        import shutil
         if not fromPath:
             return
         fromPath = os.path.abspath(fromPath)
