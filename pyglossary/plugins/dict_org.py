@@ -50,7 +50,7 @@ def installToDictd(filename, title=''):## filename is without extention (neither
         return False
     shutil.copy(filename + dictPostfix, '/usr/share/dictd')
 
-    fname = path_split(filename)[1]
+    fname = split(filename)[1]
     if not title:
         title = fname
     open('/var/lib/dictd/db.list', 'ab').write('''

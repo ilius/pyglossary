@@ -10,8 +10,8 @@ supportsAlternates = False
 
 import sys, os
 from os.path import splitext
-from os.path import split as path_split
-from os.path import join as path_join
+from os.path import split
+from os.path import join
 import logging
 
 log = logging.getLogger('root')
