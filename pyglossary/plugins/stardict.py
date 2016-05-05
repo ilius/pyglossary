@@ -184,9 +184,11 @@ class StarDictReader(object):
                 line = line.strip()
                 if not line:
                     continue
+                if line == "StarDict's dict ifo file":
+                    continue
                 key, eq, value = line.partition('=')
                 if not (key and value):
-                    #log.error('Invalid ifo file line: {0}'.format(line))
+                    log.warning('Invalid ifo file line: {0}'.format(line))
                     continue
                 self.glos.setInfo(key, value)
 
