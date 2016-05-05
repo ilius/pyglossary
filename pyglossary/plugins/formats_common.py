@@ -9,9 +9,15 @@ writeOptions = []
 supportsAlternates = False
 
 import sys, os
-from os.path import splitext
-from os.path import split
-from os.path import join
+from os.path import (
+    join,
+    split,
+    splitext,
+    isfile,
+    isdir,
+    exists,
+)
+
 import logging
 
 log = logging.getLogger('root')

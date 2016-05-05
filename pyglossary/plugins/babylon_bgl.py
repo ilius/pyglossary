@@ -23,7 +23,6 @@
 import io
 file = io.BufferedReader
 
-from os.path import join
 from formats_common import *
 
 enable = True

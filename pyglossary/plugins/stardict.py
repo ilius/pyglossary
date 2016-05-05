@@ -15,7 +15,6 @@ import sys
 
 import os
 import os.path
-from os.path import join, split, splitext, isfile, isdir
 import re
 from functools import cmp_to_key
 

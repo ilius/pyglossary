@@ -30,7 +30,6 @@ writeOptions = [
     'encoding',
 ]
 
-from os.path import join, exists, isdir, isfile
 
 from pyglossary.text_utils import escapeNTB, unescapeNTB, splitByBarUnescapeNTB
 

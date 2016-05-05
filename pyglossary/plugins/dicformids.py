@@ -10,7 +10,6 @@ readOptions = []
 writeOptions = []
 
 import re
-from os.path import join
 from tabfile import Reader as TabfileReader
 
 class Reader(object):
