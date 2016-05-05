@@ -133,22 +133,6 @@ def stardictStrCmpMy(s1, s2):
 stardictStrKey = cmp_to_key(stardictStrCmp)
 
 
-def splitStringIntoLines(s):
-    """
-        Split string s into lines.
-        Accept any line separator: '\r\n', '\r', '\n'
-    """
-    res = []
-    beg = 0
-    end = 0
-    while end < len(s):
-        while end < len(s) and s[end] != '\r' and s[end] != '\n':
-            end += 1
-        res.append(s[beg:end])
-        if end+1 < len(s) and s[end] == '\r' and s[end+1] == '\n':
-            end += 1
-        beg = end = end + 1
-    return res
 
 def newlinesToSpace(text):
     return re.sub('[\n\r]+', ' ', text)
@@ -196,16 +180,15 @@ class StarDictReader(object):
             .ifo file is a text file in utf-8 encoding
         """
         with open(self.fileBasePath+'.ifo', 'r') as f:
-            ifoStr = f.read()
-        for line in splitStringIntoLines(ifoStr):
-            line = line.strip()
-            if not line:
-                continue
-            key, eq, value = line.partition('=')
-            if not (key and value):
-                #log.error('Invalid ifo file line: {0}'.format(line))
-                continue
-            self.glos.setInfo(key, value)
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                key, eq, value = line.partition('=')
+                if not (key and value):
+                    #log.error('Invalid ifo file line: {0}'.format(line))
+                    continue
+                self.glos.setInfo(key, value)
 
     def readIdxFile(self):
         if isfile(self.fileBasePath+'.idx.gz'):
