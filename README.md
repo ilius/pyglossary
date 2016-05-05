@@ -38,7 +38,7 @@ Supported formats
 | Editable Linked Entries       | .edlin        | X     | X      |
 | FreeDict                      | .tei          |       | X      |
 | Gettext Source                | .po           | X     | X      |
-| SQLite                        | .m2, .sdb     | X     | X      |
+| SQLite 3                      | .sqlite       | X     | X      |
 | Octopus MDic                  | .mdx          | X     |        |
 | Octopus MDic Source           | .txt          | X     | X      |
 | Omnidic                       |               | X     | X      |
