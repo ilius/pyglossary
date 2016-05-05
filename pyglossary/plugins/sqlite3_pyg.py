@@ -54,7 +54,7 @@ class Reader(object):
                 self._cur.execute('select %s from dbinfo'%key)
             except:
                 continue
-            value = self._cur.fetchone()[0].encode('utf8')
+            value = self._cur.fetchone()[0]
             if not value:
                 continue
             self._glos.setInfo(key, value)
