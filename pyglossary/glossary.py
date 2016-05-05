@@ -401,6 +401,28 @@ class Glossary(object):
 
         self.info[key] = value
 
+    def getExtraInfos(self, excludeKeys):
+        """
+            excludeKeys: a list of (basic) info keys to be excluded
+            returns an OrderedDict including the rest of info keys, with associated values
+        """
+        excludeKeySet = set()
+        for key in excludeKeys:
+            excludeKeySet.add(key)
+            try:
+                excludeKeySet.add(self.infoKeysAliasDict[key.lower()])
+            except KeyError:
+                pass
+
+        extra = odict()
+        for key, value in self.info.items():
+            if key in excludeKeySet:
+                continue
+            extra[key] = value
+
+        return extra
+
+
     def read(
         self,
         filename,
@@ -1094,7 +1116,14 @@ class Glossary(object):
         return True
 
 
-    def iterSqlLines(self, filename='', infoKeys=None, newline='\\n', transaction=False):
+    def iterSqlLines(
+        self,
+        filename='',
+        infoKeys=None,
+        addExtraInfo=True,
+        newline='\\n',
+        transaction=False,
+    ):
         newline = '<br>'
         infoDefLine = 'CREATE TABLE dbinfo ('
         infoValues = []
@@ -1123,10 +1152,24 @@ class Glossary(object):
         ######################
         infoDefLine = infoDefLine[:-2] + ');'
         yield infoDefLine
+
+        if addExtraInfo:
+            yield 'CREATE TABLE dbinfo_extra (\'id\' INTEGER PRIMARY KEY NOT NULL, \'name\' TEXT UNIQUE, \'value\' TEXT);'
+
         yield 'CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, \'w\' TEXT, \'m\' TEXT);'
         if transaction:
             yield 'BEGIN TRANSACTION;';
         yield 'INSERT INTO dbinfo VALUES(%s);'%(','.join(infoValues))
+
+        if addExtraInfo:
+            extraInfo = self.getExtraInfos(infoKeys)
+            for index, (key, value) in enumerate(extraInfo.items()):
+                yield 'INSERT INTO dbinfo_extra VALUES(%d, \'%s\', \'%s\');'%(
+                    index+1,
+                    key.replace('\'', '\'\''),
+                    value.replace('\'', '\'\''),
+                )
+
         for i, entry in enumerate(self):
             word = entry.getWord()
             defi = entry.getDefi()

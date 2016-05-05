@@ -59,6 +59,13 @@ class Reader(object):
                 continue
             self._glos.setInfo(key, value)
 
+        try:
+            for key, value in self._cur.execute('select name, value from dbinfo_extra order by id').fetchall():
+                self._glos.setInfo(key, value)
+        except Exception as e:
+            if not 'no such table' in str(e):
+                log.exception('error while loading dbinfo_extra')
+
     def __len__(self):
         self._cur.execute('select count(*) from word')
         return self._cur.fetchone()[0]
