@@ -12,7 +12,6 @@ writeOptions = [
 supportsAlternates = True
 
 import sys
-sys.path.append('/usr/share/pyglossary/src')
 
 import os
 import os.path
