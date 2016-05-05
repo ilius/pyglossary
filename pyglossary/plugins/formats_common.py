@@ -9,14 +9,15 @@ writeOptions = []
 supportsAlternates = False
 
 import sys, os
-sys.path.append('/usr/share/pyglossary')
-
 from os.path import splitext
 from os.path import split as path_split
 from os.path import join as path_join
 import logging
 
 log = logging.getLogger('root')
+
+from paths import rootDir
+sys.path.insert(0, rootDir)
 
 from pyglossary import core
 from pyglossary.file_utils import FileLineWrapper
