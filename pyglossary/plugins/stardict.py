@@ -6,7 +6,9 @@ format = 'Stardict'
 description = 'StarDict (ifo)'
 extentions = ['.ifo']
 readOptions = []
-writeOptions = ['resOverwrite']
+writeOptions = [
+    'resOverwrite',
+]
 supportsAlternates = True
 
 import sys
