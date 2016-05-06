@@ -9,7 +9,7 @@ extentions = ['.index']
 readOptions = []
 writeOptions = [
     'sort',
-    'dictZip',
+    'dictzip',
     'install',
 ]
 
@@ -132,7 +132,7 @@ class Reader(object):
         self._len = wordCount
 
 
-def write(glos, filename, sort=True, dictZip=True, install=True):## FIXME
+def write(glos, filename, sort=True, dictzip=True, install=True):## FIXME
     from pyglossary.text_utils import runDictzip
     if sort:
         glos = glos.copy()
@@ -156,7 +156,7 @@ def write(glos, filename, sort=True, dictZip=True, install=True):## FIXME
     #    value = glos.getInfo(key)
     #    if value!='':
     #        pass ## FIXME
-    if dictZip:
+    if dictzip:
         runDictzip(filename)
     if install:
         installToDictd(filename, glos.getInfo('name').replace(' ', '_'))
