@@ -31,6 +31,38 @@ infoKeys = (
 )
 
 
+def stardictStrCmp(s1, s2):
+    """
+        use this function to sort index items in StarDict dictionary
+        s1 and s2 must be utf-8 encoded strings
+    """
+    s1 = toBytes(s1)
+    s2 = toBytes(s2)
+    a = asciiStrCaseCmp(s1, s2)
+    if a == 0:
+        return strCmp(s1, s2)
+    else:
+        return a
+
+## using my key function `sortKeyMy` might not be safe
+## the safest way in Python 3 is using functools.cmp_to_key
+sortKey = cmp_to_key(stardictStrCmp)
+
+def stardictStrCmpMy(s1, s2):
+    """
+        For testing key function sortKey
+        and making sure it's exactly the same as stardictStrCmp
+        
+        s1 and s2 must be utf-8 encoded strings
+    """
+    s1 = toBytes(s1)
+    s2 = toBytes(s2)
+    return cmp(
+        sortKeyMy(s1),
+        sortKeyMy(s2),
+    )
+
+
 def isAsciiAlpha(c):
     """ c is int """
     return (c >= ord('A') and c <= ord('Z')) or (c >= ord('a') and c <= ord('z'))
@@ -70,7 +102,7 @@ def asciiLower(c):
     else:
         return c
 
-def stardictStrKeyMy(ba):
+def sortKeyMy(ba):
     """
         ba is a bytes instance
     """
@@ -109,36 +141,9 @@ def strCmp(ba1, ba2):
             return c1 - c2
     return len(ba1) - len(ba2)
 
-def stardictStrCmp(s1, s2):
-    """
-        use this function to sort index items in StarDict dictionary
-        s1 and s2 must be utf-8 encoded strings
-    """
-    s1 = toBytes(s1)
-    s2 = toBytes(s2)
-    a = asciiStrCaseCmp(s1, s2)
-    if a == 0:
-        return strCmp(s1, s2)
-    else:
-        return a
 
-def stardictStrCmpMy(s1, s2):
-    """
-        For testing key function stardictStrKey
-        and making sure it's exactly the same as stardictStrCmp
-        
-        s1 and s2 must be utf-8 encoded strings
-    """
-    s1 = toBytes(s1)
-    s2 = toBytes(s2)
-    return cmp(
-        stardictStrKeyMy(s1),
-        stardictStrKeyMy(s2),
-    )
 
-## using my key function `stardictStrKeyMy` might not be safe
-## the safest way in Python 3 is using functools.cmp_to_key
-stardictStrKey = cmp_to_key(stardictStrCmp)
+
 
 
 
@@ -449,7 +454,7 @@ class StarDictWriter(object):
         ## no support for cmp argument because it's not supported in Python 3
         ## key function's argument is a str (word)
         self.glos.sortWords(
-            key = stardictStrKey,
+            key = sortKey,
         )
 
         self.writeGeneral()
@@ -560,7 +565,7 @@ class StarDictWriter(object):
             Build .syn file
         """
         if len(alternates) > 0:
-            alternates.sort(key=lambda x: stardictStrKey(x[0]))
+            alternates.sort(key=lambda x: sortKey(x[0]))
             synBytes = b''
             for item in alternates:
                 synBytes += toBytes(item[0]) + b'\x00' + intToBinStr(item[1], 4)
