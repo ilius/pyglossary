@@ -224,7 +224,10 @@ def findWords(st0, opt=None):
         opt = {}
     # take all words of a text
     # and returns their indexes as a list.
-    defOpt = {'minLen':3, 'noEn':True}
+    defOpt = {
+        'minLen': 3,
+        'noEn': True,
+    }
     addDefaultOptions(opt, defOpt)
     st = st0[:]
     ind = []
@@ -258,7 +261,12 @@ def takeStrWords(st, opt=None):
         opt = {}
     ## take all words of a text
     ## and returns them as a list of strings.
-    defOpt = {'minLen':3, 'noEn':True, 'sort':True, 'noRepeat':True}
+    defOpt = {
+        'minLen': 3,
+        'noEn': True,
+        'sort': True,
+        'noRepeat': True,
+    }
     addDefaultOptions(opt, defOpt)
     words = [st[i:j] for i, j in findWords(st, opt)]
     ## 'sort' and 'noRepeat' options will not be used in findWords()
@@ -286,7 +294,10 @@ def takeFileWords(filePath, opt=None):
 def relation(word, phrase, opt=None):## FIXME
     if opt is None:
         opt = {}
-    defOpt={'sep':commaFa, 'matchWord':True}
+    defOpt = {
+        'sep': commaFa,
+        'matchWord': Truem
+    }
     addDefaultOptions(opt, defOpt)
     if not word in phrase:
         return 0.0
