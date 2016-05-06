@@ -7,8 +7,8 @@ description = 'StarDict (ifo)'
 extentions = ['.ifo']
 readOptions = []
 writeOptions = [
-    'dictzip',
-    'resOverwrite',
+    'dictzip',## bool
+    'resOverwrite',## bool
 ]
 supportsAlternates = True
 
