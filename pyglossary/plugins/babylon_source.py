@@ -11,9 +11,9 @@ description = 'Babylon Source (gls)'
 extentions = ['.gls', '.babylon']
 readOptions = []
 writeOptions = [
-    'writeInfo',
-    'newline',
-    'encoding',
+    'writeInfo',## bool
+    'newline',## str, or choice ('\r\n', '\n', or '\r')
+    'encoding',## str
 ]
 
 def entryCleanWinArabic(entry):
