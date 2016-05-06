@@ -445,6 +445,12 @@ class Glossary(object):
                 key function for sorting
                 takes a word as argument, which is str or list (with alternates)
         """
+        ## don't allow direct=False when there are readers (read is called before with direct=True)
+        if self._readers and not direct:
+            raise ValueError(
+                'there are already %s readers, you can not read with direct=False mode'%len(self._readers)
+            )
+
         self.updateEntryFilters()
         pref = getattr(self.ui, 'pref', {})
         if sort is None:
@@ -525,7 +531,6 @@ class Glossary(object):
         except KeyError:
             if direct:
                 log.warning('no `Reader` class found in %s plugin, falling back to indirect mode'%format)
-                direct = False
             result = self.readFunctions[format].__call__(
                 self,
                 filename,
@@ -547,12 +552,10 @@ class Glossary(object):
                 self.loadReader(reader)
 
 
-        if sort and not direct:
+        if sort and not self._readers:
             self.sortWords(key=sortKey)
 
-        self._updateGen(
-            direct=direct,
-        )
+        self._updateGen()
 
         return True
 
@@ -572,14 +575,17 @@ class Glossary(object):
         for reader in self._readers:
             self.loadReader(reader)
         self._readers = []
-        self._updateGen(direct=False)
+        self._updateGen()
 
-    def _updateGen(self, direct=False):
+    def _updateGen(self):
         """
-            direct: True (enable direct mode), False (disable direct mode)
+            updates self._iter
+            depending on:
+                1- Wheather or not direct mode is On (self._readers not empty) or Off (self._readers empty)
+                2- Wheather self._sort is True, and if it is, checks for self._sortKey and ui.pref['sort_cache_size']
         """
         pref = getattr(self.ui, 'pref', {})
-        if direct:
+        if self._readers:## direct mode
             gen = self._readersEntryGen()
             if self._sort:
                 sortKey = self._sortKey
