@@ -20,7 +20,14 @@ from functools import cmp_to_key
 
 from pyglossary.text_utils import intToBinStr, binStrToInt, runDictzip
 
-infoKeys = ('bookname', 'author', 'email', 'website', 'description', 'date')
+infoKeys = (
+    'bookname',
+    'author',
+    'email',
+    'website',
+    'description',
+    'date',
+)
 
 
 def isAsciiAlpha(c):
@@ -560,7 +567,13 @@ class StarDictWriter(object):
                 f.write(synBytes)
             del synBytes
 
-    def writeIfoFile(self, wordCount, indexFileSize, synwordcount, sametypesequence=None):
+    def writeIfoFile(
+        self,
+        wordCount,
+        indexFileSize,
+        synwordcount,
+        sametypesequence=None,
+    ):
         """
             Build .ifo file
         """
