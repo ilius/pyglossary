@@ -222,6 +222,7 @@ class Glossary(object):
         self.info = odict()
 
         self._data = []
+        self._readers = []
         self._iter = None
 
         self.filename = ''
