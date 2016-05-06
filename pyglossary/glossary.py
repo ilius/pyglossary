@@ -105,6 +105,7 @@ class Glossary(object):
         ##
         'license': 'copyright',
     }
+    plugins = {} ## format => pluginModule
     readFormats = []
     writeFormats = []
     readFunctions = {}
@@ -161,6 +162,7 @@ class Glossary(object):
         else:
             desc = '%s (%s)' % (format, extentions[0])
 
+        cls.plugins[format] = plugin
         cls.descFormat[desc] = format
         cls.descExt[desc] = extentions[0]
         for ext in extentions:
