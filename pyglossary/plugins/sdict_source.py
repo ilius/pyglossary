@@ -8,8 +8,8 @@ description = 'Sdictionary Source (sdct)'
 extentions = ['.sdct']
 readOptions = []
 writeOptions = [
-    'writeInfo',
-    'newline',
+    'writeInfo',## bool
+    'newline',## str, or choice ('\r\n', '\n', or '\r')
 ]
 
 def write(glos, filename, writeInfo=True, newline='\n'):

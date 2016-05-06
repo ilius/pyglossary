@@ -27,7 +27,7 @@ description = 'Editable Linked Entries'
 extentions = ['.edlin']
 readOptions = []
 writeOptions = [
-    'encoding',
+    'encoding',## str
 ]
 
 

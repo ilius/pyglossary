@@ -25,7 +25,11 @@ enable = True
 format = 'OctopusMdict'
 description = 'Octopus MDict'
 extentions = ['.mdx']
-readOptions = ['resPath', 'encoding', 'substyle']
+readOptions = [
+    'resPath',## str, directory path
+    'encoding',## str
+    'substyle',## bool
+]
 writeOptions = []
 
 class Reader(object):

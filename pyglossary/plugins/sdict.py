@@ -24,7 +24,9 @@ enable = True
 format = 'Sdict'
 description = 'Sdictionary Binary(dct)'
 extentions = ['.dct']
-readOptions = ['encoding']
+readOptions = [
+    'encoding',## str
+]
 writeOptions = []
 
 from struct import unpack

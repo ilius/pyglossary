@@ -9,7 +9,7 @@ description = 'TreeDict'
 extentions = ['.tree', '.treedict']
 readOptions = []
 writeOptions = [
-    'encoding',
+    'encoding',## str
 ]
 
 

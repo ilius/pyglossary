@@ -10,8 +10,8 @@ readOptions = [
     'encoding',
 ]
 writeOptions = [
-    'encoding',
-    'writeInfo',
+    'encoding',## str
+    'writeInfo',## bool
 ]
 
 from pyglossary.text_reader import TextGlossaryReader

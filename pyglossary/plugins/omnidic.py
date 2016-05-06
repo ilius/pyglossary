@@ -6,7 +6,9 @@ enable = True
 format = 'Omnidic'
 description = 'Omnidic'
 extentions = ['.omni', '.omnidic']
-readOptions = ['dicIndex']
+readOptions = [
+    'dicIndex', ## int
+]
 writeOptions = []
 
 
