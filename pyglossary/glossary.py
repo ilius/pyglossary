@@ -131,8 +131,8 @@ class Glossary(object):
             return
 
         sys.path.append(directory)
-        for _, plugin, _ in pkgutil.iter_modules([directory]):
-            cls.loadPlugin(plugin)
+        for _, pluginName, _ in pkgutil.iter_modules([directory]):
+            cls.loadPlugin(pluginName)
 
     @classmethod
     def loadPlugin(cls, pluginName):
