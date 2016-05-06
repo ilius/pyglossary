@@ -30,23 +30,23 @@ format = 'BabylonBgl'
 description = 'Babylon (bgl)'
 extentions = ['.bgl']
 readOptions = [
-    'resPath',
-    'defaultEncodingOverwrite',
-    'sourceEncodingOverwrite',
-    'targetEncodingOverwrite',
-    'msgLogPath',
-    'rawDumpPath',
-    'decodedDumpPath',
-    'unpackedGzipPath',
-    'searchCharSamples',
-    'charSamplesPath',
-    'testMode',
-    'noControlSequenceInDefi',
-    'strictStringConvertion',
-    'collectMetadata2',
-    'oneLineOutput',
-    'processHtmlInKey',
-    'keyRStripChars',
+    'resPath',## str, directory path
+    'defaultEncodingOverwrite',## str, encoding
+    'sourceEncodingOverwrite',## str, encoding
+    'targetEncodingOverwrite',## str, encoding
+    'msgLogPath',## str, file path
+    'rawDumpPath',## str, file path
+    'decodedDumpPath',## str, file path
+    'unpackedGzipPath',## str, file path
+    'searchCharSamples',## bool
+    'charSamplesPath',## str, file path
+    'testMode',## bool
+    'noControlSequenceInDefi',## bool
+    'strictStringConvertion',## bool
+    'collectMetadata2',## bool
+    'oneLineOutput',## bool
+    'processHtmlInKey',## bool
+    'keyRStripChars',## str, list of characters to strip (from right side)
 ]
 writeOptions = []
 supportsAlternates = True
