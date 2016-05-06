@@ -41,6 +41,7 @@ from .text_utils import (
     findAll,
     addDefaultOptions,
 )
+from .os_utils import indir
 
 import warnings
 warnings.resetwarnings() ## ??????
@@ -682,15 +683,13 @@ class Glossary(object):
                     log.error('%s\nfail to compress file "%s"'%(error, filename))
             elif zipExt=='.zip':
                 (dirn, name) = split(filename)
-                initCwd = os.getcwd()
-                os.chdir(dirn)
-                (output, error) = subprocess.Popen(
-                    ['zip', filename+'.zip', name, '-m'],
-                    stdout=subprocess.PIPE,
-                ).communicate()
-                if error:
-                    log.error('%s\nfail to compress file "%s"'%(error, filename))
-                os.chdir(initCwd)
+                with indir(dirn):
+                    (output, error) = subprocess.Popen(
+                        ['zip', filename+'.zip', name, '-m'],
+                        stdout=subprocess.PIPE,
+                    ).communicate()
+                    if error:
+                        log.error('%s\nfail to compress file "%s"'%(error, filename))
         return True
 
     def writeTxt(
