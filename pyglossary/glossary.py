@@ -656,7 +656,7 @@ class Glossary(object):
             # write to directory, use filename (not filepath) of input file.
             filename = join(filename, basename(self.filename)+ext)
         validOptionKeys = self.formatsWriteOptions[format]
-        for key in options.keys():
+        for key in list(options.keys()):
             if not key in validOptionKeys:
                 log.error('Invalid write option "%s" given for %s format'%(key, format))
                 del options[key]
