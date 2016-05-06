@@ -443,7 +443,7 @@ class StarDictWriter(object):
             fileBasePath = os.path.realpath(fileBasePath)
         self.fileBasePath = fileBasePath
 
-    def run(self, dictZip, resOverwrite):
+    def run(self, dictzip, resOverwrite):
         ## no more direct access to glos.data, must use glos.sortWords for sorting
         ## no support for cmp argument because it's not supported in Python 3
         ## key function's argument is a str (word)
@@ -461,7 +461,7 @@ class StarDictWriter(object):
         #    else:
         #        self.writeCompact(defiFormat)
 
-        if dictZip:
+        if dictzip:
             runDictzip(self.fileBasePath)
         self.copyResources(
             self.glos.resPath,
@@ -667,8 +667,8 @@ def read(glos, filename):
     reader = StarDictReader(glos, filename)
     reader.run()
 
-def write(glos, filename, dictZip=True, resOverwrite=False):
+def write(glos, filename, dictzip=True, resOverwrite=False):
     writer = StarDictWriter(glos, filename)
-    writer.run(dictZip, resOverwrite)
+    writer.run(dictzip, resOverwrite)
 
 
