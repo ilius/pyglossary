@@ -24,10 +24,10 @@ format = 'Csv'
 description = 'CSV'
 extentions = ['.csv']
 readOptions = [
-    'encoding',
+    'encoding',## str
 ]
 writeOptions = [
-    'encoding',
+    'encoding',## str
 ]
 supportsAlternates = True
 
