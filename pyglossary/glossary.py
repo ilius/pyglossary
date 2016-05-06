@@ -454,7 +454,7 @@ class Glossary(object):
         ext = ext.lower()
         if ext in ('.gz', '.bz2', '.zip'):
             if ext=='.bz2':
-                (output, error) = subprocess.Popen(
+                output, error = subprocess.Popen(
                     ['bzip2', '-dk', filename],
                     stdout=subprocess.PIPE,
                 ).communicate()
@@ -468,7 +468,7 @@ class Glossary(object):
                     ext = splitext(filename)[1]
                     delFile = True
             elif ext=='.gz':
-                (output, error) = subprocess.Popen(
+                output, error = subprocess.Popen(
                     ['gzip', '-dc', filename],
                     stdout=subprocess.PIPE,
                 ).communicate()
@@ -483,7 +483,7 @@ class Glossary(object):
                     ext = splitext(filename)[1]
                     delFile = True
             elif ext=='.zip':
-                (output, error) = subprocess.Popen(
+                output, error = subprocess.Popen(
                     ['unzip', filename, '-d', dirname(filename)],
                     stdout=subprocess.PIPE,
                 ).communicate()
@@ -603,7 +603,7 @@ class Glossary(object):
             log.error('Invalid filename %r'%filename)
             return False
         ext = ''
-        (filenameNoExt, fext) = splitext(filename)
+        filenameNoExt, fext = splitext(filename)
         fext = fext.lower()
         if fext in ('.gz', '.bz2', '.zip'):
             zipExt = fext
@@ -668,23 +668,23 @@ class Glossary(object):
             except OSError:
                 pass
             if zipExt=='.gz':
-                (output, error) = subprocess.Popen(
+                output, error = subprocess.Popen(
                     ['gzip', filename],
                     stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
                     log.error('%s\nfail to compress file "%s"'%(error, filename))
             elif zipExt=='.bz2':
-                (output, error) = subprocess.Popen(
+                output, error = subprocess.Popen(
                     ['bzip2', filename],
                     stdout=subprocess.PIPE,
                 ).communicate()
                 if error:
                     log.error('%s\nfail to compress file "%s"'%(error, filename))
             elif zipExt=='.zip':
-                (dirn, name) = split(filename)
+                dirn, name = split(filename)
                 with indir(dirn):
-                    (output, error) = subprocess.Popen(
+                    output, error = subprocess.Popen(
                         ['zip', filename+'.zip', name, '-m'],
                         stdout=subprocess.PIPE,
                     ).communicate()
@@ -908,7 +908,7 @@ class Glossary(object):
         defs = opt['includeDefs']
         outRel = []
         for item in self._data:
-            (word, defi) = item[:2]
+            word, defi = item[:2]
             defiParts = defi.split(sep)
             if not st in defi:
                 continue
@@ -952,7 +952,7 @@ class Glossary(object):
         if defs:
             for j in range(n):
                 numP = num
-                (w, num, m) = outRel[j]
+                w, num, m = outRel[j]
                 m = m.replace('\n', '\\n').replace('\t', '\\t')
                 onePer = int(1.0/num)
                 if onePer == 1.0:
@@ -969,7 +969,7 @@ class Glossary(object):
             return out
         for j in range(n):
             numP = num
-            (w, num) = outRel[j]
+            w, num = outRel[j]
             onePer = int(1.0/num)
             if onePer == 1.0:
                 out.append(w)
