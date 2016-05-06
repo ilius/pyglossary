@@ -661,7 +661,15 @@ class Glossary(object):
                 log.error('Invalid write option "%s" given for %s format'%(key, format))
                 del options[key]
         log.info('filename=%s'%filename)
-        self.writeFunctions[format].__call__(self, filename, **options)
+
+        try:
+            self.writeFunctions[format].__call__(self, filename, **options)
+        except Exception:
+            log.exception('exception while calling plugin\'s write function')
+            return False
+        finally:
+            self.clear()
+
 
         if archiveType:
             self.archiveOutDir(filename, archiveType)
