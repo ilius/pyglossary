@@ -606,11 +606,11 @@ class Glossary(object):
         filenameNoExt, fext = splitext(filename)
         fext = fext.lower()
         if fext in ('.gz', '.bz2', '.zip'):
-            zipExt = fext
+            archiveType = fext[1:]
             filename = filenameNoExt
             fext = splitext(filename)[1].lower()
         else:
-            zipExt = ''
+            archiveType = ''
         del filenameNoExt
         if format:
             try:
@@ -662,35 +662,44 @@ class Glossary(object):
         log.info('filename=%s'%filename)
         self.writeFunctions[format].__call__(self, filename, **options)
 
-        if zipExt:
-            try:
-                os.remove('%s%s'%(filename, zipExt))
-            except OSError:
-                pass
-            if zipExt=='.gz':
-                output, error = subprocess.Popen(
-                    ['gzip', filename],
-                    stdout=subprocess.PIPE,
-                ).communicate()
-                if error:
-                    log.error('%s\nfail to compress file "%s"'%(error, filename))
-            elif zipExt=='.bz2':
-                output, error = subprocess.Popen(
-                    ['bzip2', filename],
-                    stdout=subprocess.PIPE,
-                ).communicate()
-                if error:
-                    log.error('%s\nfail to compress file "%s"'%(error, filename))
-            elif zipExt=='.zip':
-                dirn, name = split(filename)
-                with indir(dirn):
-                    output, error = subprocess.Popen(
-                        ['zip', filename+'.zip', name, '-m'],
-                        stdout=subprocess.PIPE,
-                    ).communicate()
-                    if error:
-                        log.error('%s\nfail to compress file "%s"'%(error, filename))
+        if archiveType:
+            self.archiveOutDir(filename, archiveType)
+
         return True
+
+    def archiveOutDir(self, filename, archiveType):
+        """
+            filename is the existing file path
+            archiveType is the archive extention (without dot): 'gz', 'bz2', 'zip'
+        """
+        try:
+            os.remove('%s.%s'%(filename, archiveType))
+        except OSError:
+            pass
+        if archiveType=='gz':
+            output, error = subprocess.Popen(
+                ['gzip', filename],
+                stdout=subprocess.PIPE,
+            ).communicate()
+            if error:
+                log.error('%s\nfail to compress file "%s"'%(error, filename))
+        elif archiveType=='bz2':
+            output, error = subprocess.Popen(
+                ['bzip2', filename],
+                stdout=subprocess.PIPE,
+            ).communicate()
+            if error:
+                log.error('%s\nfail to compress file "%s"'%(error, filename))
+        elif archiveType=='zip':
+            dirn, name = split(filename)
+            with indir(dirn):
+                output, error = subprocess.Popen(
+                    ['zip', filename+'.zip', name, '-m'],
+                    stdout=subprocess.PIPE,
+                ).communicate()
+                if error:
+                    log.error('%s\nfail to compress file "%s"'%(error, filename))
+
 
     def writeTxt(
         self,
