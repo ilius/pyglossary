@@ -8,26 +8,33 @@ def hsortStream(stream, maxHeapSize, key=None):
         stream: a generator or iterable
         maxHeapSize: int, maximum size of heap
         key: a key function, as in `list.sort` method, or `sorted` function
+             if key is None, we consume less memory
+        
+        the sort is Stable (unlike normal heapsort) because we include the index (after item / output of key function)
     """
     hp = []
     if key:
         for index, item in enumerate(stream):
             if len(hp) >= maxHeapSize:
-                yield heappop(hp)[-1]
+                yield heappop(hp)[2]
             heappush(hp, (
-                key(item),
-                index,
-                item,
+                key(item),## for sorting order
+                index,## for sort being Stable
+                item,## for fetching result
             ))
         while hp:
-            yield heappop(hp)[-1]
-    else:
-        for item in stream:
+            yield heappop(hp)[2]
+    else:## consume less memory
+        for index, item in enumerate(stream):
             if len(hp) >= maxHeapSize:
-                yield heappop(hp)
-            heappush(hp, item)
+                yield heappop(hp)[0]
+            heappush(hp, (
+                item,## for sorting order, and fetching result
+                index,## for sort being Stable
+            ))
         while hp:
-            yield heappop(hp)
+            yield heappop(hp)[0]
+
 
 
 
