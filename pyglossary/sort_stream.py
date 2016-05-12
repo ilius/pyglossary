@@ -46,6 +46,12 @@ def stdinIntegerStream():
             break
         yield int(line)
 
+def stdinStringStream():
+    while True:
+        line = raw_input(' Input item: ')
+        if not line:
+            break
+        yield line
 
 def main():
     stream = stdinIntegerStream()
