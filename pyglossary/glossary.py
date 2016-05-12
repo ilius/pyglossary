@@ -322,7 +322,7 @@ class Glossary(object):
     def __iter__(self):
         if not self._iter:
             log.error('Trying to iterate over a blank Glossary, must call `glos.read` first')
-            return []
+            return iter([])
         return self._iter
 
     def iterEntryBuckets(self, size):
