@@ -523,6 +523,7 @@ class StarDictWriter(object):
         idxFp = open(self.fileBasePath+'.idx', 'wb')
         indexFileSize = 0
 
+        wordCount = 0
         for i, entry in enumerate(self.glos):
 
             words = entry.getWords()## list
@@ -553,7 +554,8 @@ class StarDictWriter(object):
             dictMark += dataLen
             indexFileSize += len(idxBlock)
 
-        wordCount = i + 1
+            wordCount += 1
+
         dictFp.close()
         idxFp.close()
 
