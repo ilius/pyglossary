@@ -358,18 +358,6 @@ class Glossary(object):
         len(reader) for reader in self._readers
     )
 
-    def copy(self):
-        newGlos = Glossary(
-            info = self.info,## no need to copy
-            ui = self.ui, ## FIXME
-            filename = self.filename,
-            resPath = self.resPath,
-        )
-        #newGlos.__Glossary_data = deepcopy(self._data)
-        for entry in self:
-            newGlos.addEntryObj(entry)
-        return newGlos
-
     def infoKeys(self):
         return list(self.info.keys())
 

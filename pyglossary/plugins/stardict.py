@@ -433,7 +433,7 @@ class StarDictReader(object):
 
 class StarDictWriter(object):
     def __init__(self, glos, filename):
-        self.glos = glos.copy()
+        self.glos = glos
         fileBasePath = ''
         ###
         if splitext(filename)[1].lower() == '.ifo':
