@@ -737,7 +737,6 @@ class UI(tix.Frame, UIBase):
         #self.iFormat = format
         self.iPath = iPath
         #self.button_conv.set_sensitive(True)
-        self.glos.uiEdit()
         self.progress(1.0, 'Loading Comleted')
         log.info('time left = %3f seconds'%(time.time()-t0))
         for x in self.glos.info:

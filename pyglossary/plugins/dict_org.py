@@ -8,10 +8,10 @@ description = 'DICT.org file format (.index)'
 extentions = ['.index']
 readOptions = []
 writeOptions = [
-    'sort',
     'dictzip',
     'install',
 ]
+sortOnWrite = DEFAULT_YES
 
 
 b64_chars = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
@@ -132,11 +132,8 @@ class Reader(object):
         self._len = wordCount
 
 
-def write(glos, filename, sort=True, dictzip=True, install=True):## FIXME
+def write(glos, filename, dictzip=True, install=True):## FIXME
     from pyglossary.text_utils import runDictzip
-    if sort:
-        glos = glos.copy()
-        glos.sortWords()
     (filename_nox, ext) = splitext(filename)
     if ext.lower()=='.index':
         filename = filename_nox

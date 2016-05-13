@@ -10,6 +10,8 @@ writeOptions = [
     'dictzip',## bool
     'resOverwrite',## bool
 ]
+sortOnWrite = ALWAYS
+## sortKey also is defined in line 51
 supportsAlternates = True
 
 import sys
@@ -450,13 +452,6 @@ class StarDictWriter(object):
         self.fileBasePath = fileBasePath
 
     def run(self, dictzip, resOverwrite):
-        ## no more direct access to glos.data, must use glos.sortWords for sorting
-        ## no support for cmp argument because it's not supported in Python 3
-        ## key function's argument is a str (word)
-        self.glos.sortWords(
-            key = sortKey,
-        )
-
         self.writeGeneral()
         #if self.glossaryHasAdditionalDefinitions():
         #    self.writeGeneral()

@@ -158,9 +158,9 @@ parser.add_argument(
 parser.add_argument(
     #'-',
     '--sort-cache-size',
-    dest='sort_cache_size',
+    dest='sortCacheSize',
     type=int,
-    default=1000,
+    default=None,
 )
 
 parser.add_argument(
@@ -365,10 +365,14 @@ if args.direct != None:
 ui_options_params = (
     'noProgressBar',
     #'verbosity',
-    'sort',
-    'sort_cache_size',
     'utf8_check',
     'lower',
+)
+
+common_write_params = (
+    'sort',
+    'sortCacheSize',
+    #'sort_alg',## FIXME
 )
 
 ui_options = {}
@@ -377,6 +381,10 @@ for param in ui_options_params:
     if value is not None:
         ui_options[param] = value
 
+for param in common_write_params:
+    value = getattr(args, param, None)
+    if value is not None:
+        write_options[param] = value
 
 log.pretty(ui_options, 'ui_options =')
 

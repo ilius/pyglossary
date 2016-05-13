@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from heapq import heappush, heappop
+from heapq import merge
+
+import logging
+log = logging.getLogger('root')
 
 
 def hsortStream(stream, maxHeapSize, key=None):
@@ -36,6 +40,12 @@ def hsortStream(stream, maxHeapSize, key=None):
             yield heappop(hp)[0]
 
 
+def hsortStreamList(streams, *args, **kwargs):
+    streams = [
+         hsortStream(stream, *args, **kwargs)
+         for stream in streams
+    ]
+    return merge(*tuple(streams))
 
 
 
@@ -53,10 +63,29 @@ def stdinStringStream():
             break
         yield line
 
+def randomChoiceGenerator(choices, count):
+    import random
+    for _ in range(count):
+        yield random.choice(choices)
+
+
+def test_hsortStreamList(count=10):
+    for item in hsortStreamList(
+        [
+            randomChoiceGenerator(range(0, 50), count),
+            randomChoiceGenerator(range(30, 50), count),
+            randomChoiceGenerator(range(10, 40), count),
+        ],
+        maxHeapSize=5,
+        key=None,
+    ):
+        print(item)
+
 def main():
-    stream = stdinIntegerStream()
-    for line in hsortStream(stream, 3):
-        print('------ Placed item: %s'%line)
+    test_hsortStreamList()
+    #stream = stdinIntegerStream()
+    #for line in hsortStream(stream, 3):
+    #    print('------ Placed item: %s'%line)
 
 if __name__=='__main__':
     main()

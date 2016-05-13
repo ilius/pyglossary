@@ -44,8 +44,6 @@ class UIBase(object):
         'auto_update',
         'auto_set_for',
         'auto_set_out',
-        'sort',
-        'sort_cache_size',
         'lower',
         'remove_tags',
         'tags',

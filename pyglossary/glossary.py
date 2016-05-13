@@ -30,10 +30,11 @@ import string
 from collections import Counter
 from collections import OrderedDict as odict
 
+from .flags import *
 from . import core
 from .entry import Entry
 from .entry_filters import *
-from .sort_stream import hsortStream
+from .sort_stream import hsortStreamList
 
 from .text_utils import (
     fixUtf8,
@@ -266,8 +267,8 @@ class Glossary(object):
         self.entryFilters = []
         self._iter = None
 
-        self._sort = False
         self._sortKey = None
+        self._sortCacheSize = 1000
 
     def updateEntryFilters(self):
         self.entryFilters = []
@@ -324,7 +325,7 @@ class Glossary(object):
                 yield entry
 
     def __iter__(self):
-        if not self._iter:
+        if self._iter is None:
             log.error('Trying to iterate over a blank Glossary, must call `glos.read` first')
             return iter([])
         return self._iter
@@ -424,18 +425,13 @@ class Glossary(object):
         filename,
         format='',
         direct=False,
-        sort=None,
-        sortKey=None,
         **options
     ):
         """
             filename (str): name/path of input file
             format (str): name of inout format, or '' to detect from file extention
             direct (bool): enable direct mode
-            sort (bool): True (enable sorting), False (disable sorting), None (auto, get from UI)
-            sortKey (callable or None):
-                key function for sorting
-                takes a word as argument, which is str or list (with alternates)
+
         """
         ## don't allow direct=False when there are readers (read is called before with direct=True)
         if self._readers and not direct:
@@ -444,11 +440,6 @@ class Glossary(object):
             )
 
         self.updateEntryFilters()
-        pref = getattr(self.ui, 'pref', {})
-        if sort is None:
-            sort = pref.get('sort', False)
-        self._sort = sort
-        self._sortKey = sortKey
         ###
         delFile=False
         ext = splitext(filename)[1]
@@ -543,11 +534,7 @@ class Glossary(object):
             else:
                 self.loadReader(reader)
 
-
-        if sort and not self._readers:
-            self.sortWords(key=sortKey)
-
-        self._updateGen()
+        self._updateIter()
 
         return True
 
@@ -563,41 +550,81 @@ class Glossary(object):
         reader.close()
         return True
 
-    def inactivateDirectMode(self):
+    def _inactivateDirectMode(self):
+        """
+            loads all of `self._readers` into `self._data`
+            closes readers
+            and sets self._readers to []
+        """
         for reader in self._readers:
             self.loadReader(reader)
         self._readers = []
-        self._updateGen()
 
-    def _updateGen(self):
+    def _updateIter(self, sort=False):
         """
             updates self._iter
             depending on:
                 1- Wheather or not direct mode is On (self._readers not empty) or Off (self._readers empty)
-                2- Wheather self._sort is True, and if it is, checks for self._sortKey and ui.pref['sort_cache_size']
+                2- Wheather sort is True, and if it is, checks for self._sortKey and self._sortCacheSize
         """
-        pref = getattr(self.ui, 'pref', {})
+        log.info('_updateIter: %s readers, %s loaded entries'%(len(self._readers), len(self._data)))
         if self._readers:## direct mode
-            gen = self._readersEntryGen()
-            if self._sort:
+            if sort:
                 sortKey = self._sortKey
-                cacheSize = pref.get('sort_cache_size', 1000)## FIXME
+                cacheSize = self._sortCacheSize
                 log.info('stream sorting enabled, cache size: %s'%cacheSize)
+                ## only sort by main word, or list of words + alternates? FIXME
                 if sortKey:
-                    sortEntryKey = lambda entry: sortKey(entry.getWord())
+                    sortEntryKey = lambda entry: sortKey(entry.getWords()[0])
                 else:
-                    sortEntryKey = lambda entry: entry.getWord()
-                gen = hsortStream(
-                    gen,
+                    sortEntryKey = lambda entry: entry.getWords()[0]
+                gen = hsortStreamList(
+                    self._readers,
                     cacheSize,
                     key=sortEntryKey,
                 )
+            else:
+                gen = self._readersEntryGen()
         else:
             gen = self._loadedEntryGen()
 
         self._iter = self._applyEntryFiltersGen(gen)
+        log.info('self._iter=%s'%self._iter)
 
-    def write(self, filename='', format='', **options):
+    def sortWords(self, key=None, cacheSize=None):
+        ## only sort by main word, or list of words + alternates? FIXME
+        if self._readers:
+            self._sortKey = key
+            if cacheSize:
+                self._sortCacheSize = cacheSize ## FIXME
+        else:
+            if key:
+                entryKey = lambda x: key(
+                    x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
+                )
+            else:
+                entryKey = lambda x: \
+                    x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
+            self._data.sort(
+                key=entryKey,
+            )
+        self._updateIter(sort=True)
+
+    def write(
+        self,
+        filename='',
+        format='',
+        sort=None,
+        sortKey=None,
+        sortCacheSize=1000,
+        **options
+    ):
+        """
+            sort (bool): True (enable sorting), False (disable sorting), None (auto, get from UI)
+            sortKey (callable or None):
+                key function for sorting
+                takes a word as argument, which is str or list (with alternates)
+        """
         if not filename:
             filename = self.filename
         if not filename:
@@ -662,6 +689,50 @@ class Glossary(object):
                 del options[key]
         log.info('filename=%s'%filename)
 
+        plugin = self.plugins[format]
+        sortOnWrite = plugin.sortOnWrite
+        if sortOnWrite == ALWAYS:
+            if not sort:
+                log.warning('writing %s requires sorting, ignoring user sort=False option')
+            if self._readers:
+                log.warning('writing to %s format requires full sort, falling back to indirect mode'%format)
+                self._inactivateDirectMode()
+                log.info('loaded %s entries'%len(self._data))
+            sort = True
+        elif sortOnWrite == DEFAULT_YES:
+            if sort is None:
+                sort = True
+        elif sortOnWrite == DEFAULT_NO:
+            if sort is None:
+                sort = False
+        elif sortOnWrite == NEVER:
+            if sort:
+                log.warning('plugin prevents sorting before write, ignoring user sort=True option')
+            sort = False
+
+        if sort:
+            if sortKey is None:
+                try:
+                    sortKey = plugin.sortKey
+                except AttributeError:
+                    pass
+                else:
+                    log.debug('using sort key function from %s plugin'%format)
+            elif sortOnWrite == ALWAYS:
+                try:
+                    sortKey = plugin.sortKey
+                except AttributeError:
+                    pass
+                else:
+                    log.warning('ignoring user-defined sort order, and using key function from %s plugin'%format)
+            self.sortWords(
+                key=sortKey,
+                cacheSize=sortCacheSize
+            )
+        else:
+            self._updateIter(sort=False)
+
+
         try:
             self.writeFunctions[format].__call__(self, filename, **options)
         except Exception:
@@ -669,7 +740,6 @@ class Glossary(object):
             return False
         finally:
             self.clear()
-
 
         if archiveType:
             self.archiveOutDir(filename, archiveType)
@@ -789,21 +859,6 @@ class Glossary(object):
 
 
     ###################################################################
-
-    def sortWords(self, key=None, reverse=False):
-        ## call `inactivateDirectMode` to load entries into memory FIXME
-        self.inactivateDirectMode()
-        if key:
-            entryKey = lambda x: key(
-                x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
-            )
-        else:
-            entryKey = lambda x: \
-                x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
-        self._data.sort(
-            key=entryKey,
-            reverse=reverse,
-        )
 
     takeWords = lambda self: [item[0] for item in self._data]
 
@@ -1197,11 +1252,6 @@ class Glossary(object):
             yield 'END TRANSACTION;'
         yield 'CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);'
 
-
-    def uiEdit(self):## remove? FIXME
-        p = self.ui.pref
-        if p['sort']:
-            self.sortWords()
 
     def getPref(self, name, default):
         if self.ui:
