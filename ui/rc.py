@@ -2,7 +2,7 @@
 noProgressBar = False ## in command line
 
 save = 0
-auto_set_for = True
+ui_autoSetFormat = True
 auto_set_out = True
 lower = False
 

@@ -653,7 +653,7 @@ class UI(tix.Frame, UIBase):
                     pathI=urlToPath(pathI)
                     self.entry_i.delete(0, 'end')
                     self.entry_i.insert(0, pathI)
-            if self.pref['auto_set_for']:#format==noneItem:
+            if self.pref['ui_autoSetFormat']:#format==noneItem:
                 ext = os.path.splitext(pathI)[-1].lower()
                 if ext in ('.gz', '.bz2', '.zip'):
                     ext = os.path.splitext(pathI[:-len(ext)])[-1].lower()
@@ -680,7 +680,7 @@ class UI(tix.Frame, UIBase):
                     pathO=urlToPath(pathO)
                     self.entry_o.delete(0, 'end')
                     self.entry_o.insert(0, pathO)
-            if self.pref['auto_set_for']:#format==noneItem:
+            if self.pref['ui_autoSetFormat']:#format==noneItem:
                 ext = os.path.splitext(pathO)[-1].lower()
                 if ext in ('.gz', '.bz2', '.zip'):
                     ext = os.path.splitext(pathO[:-len(ext)])[-1].lower()

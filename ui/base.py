@@ -40,7 +40,7 @@ class UIBase(object):
     prefKeys = (
         'noProgressBar',## command line
         'save',
-        'auto_set_for',
+        'ui_autoSetFormat',
         'auto_set_out',
         'lower',
         'utf8_check',
