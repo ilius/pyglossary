@@ -25,8 +25,8 @@ import logging
 import traceback
 
 import tkinter as tk
-import tkinter.filedialog
-import tkinter.tix
+from tkinter import filedialog
+from tkinter import tix
 
 log = logging.getLogger('root')
 
@@ -89,7 +89,7 @@ def CallWrapper__call__(self, *args):
 tk.CallWrapper.__call__ = CallWrapper__call__
 
 
-class ProgressBar(tkinter.tix.Frame):
+class ProgressBar(tix.Frame):
     #### This comes from John Grayson's book "Python and Tkinter programming"
     #### Edited by Saeed Rasooli
     def __init__(self, master=None, orientation='horizontal',
@@ -110,8 +110,8 @@ class ProgressBar(tkinter.tix.Frame):
         self.background = background
         self.labelFormat = labelFormat
         self.value = value
-        tkinter.tix.Frame.__init__(self, master, relief=appearance, bd=bd)
-        self.canvas = tkinter.tix.Canvas(
+        tix.Frame.__init__(self, master, relief=appearance, bd=bd)
+        self.canvas = tix.Canvas(
             self,
             height=height,
             width=width,
@@ -182,11 +182,11 @@ class ProgressBar(tkinter.tix.Frame):
 
 
 
-class UI(tkinter.tix.Frame, UIBase):
+class UI(tix.Frame, UIBase):
     def __init__(self, path='', **options):
         #global sys
-        master = tkinter.tix.Tk()
-        tkinter.tix.Frame.__init__(self, master)
+        master = tix.Tk()
+        tix.Frame.__init__(self, master)
         master.title('PyGlossary (Tkinter)')
         master.resizable(True, False)
         ########
@@ -217,14 +217,14 @@ class UI(tkinter.tix.Frame, UIBase):
         self.fcd_dir = join(homeDir, 'Desktop')
         ######################
         vpaned = tk.PanedWindow(self, orient=tk.VERTICAL)
-        notebook = tkinter.tix.NoteBook(vpaned)
+        notebook = tix.NoteBook(vpaned)
         notebook.add('tab1', label='Convert', underline=0)
         notebook.add('tab2', label='Reverse', underline=0)
-        convertFrame = tkinter.tix.Frame(notebook.tab1)
+        convertFrame = tix.Frame(notebook.tab1)
         ######################
-        frame = tkinter.tix.Frame(convertFrame)
+        frame = tix.Frame(convertFrame)
         ##
-        label = tkinter.tix.Label(frame, text='Read from format')
+        label = tix.Label(frame, text='Read from format')
         label.pack(side='left')
         ##
         comboVar = tk.StringVar()
@@ -236,17 +236,17 @@ class UI(tkinter.tix.Frame, UIBase):
         ##
         frame.pack(fill='x')
         ###################
-        frame = tkinter.tix.Frame(convertFrame)
+        frame = tix.Frame(convertFrame)
         ##
-        label = tkinter.tix.Label(frame, text='  Path:')
+        label = tix.Label(frame, text='  Path:')
         label.pack(side='left')
         ##
-        entry = tkinter.tix.Entry(frame)
+        entry = tix.Entry(frame)
         entry.pack(side='left', fill='x', expand=True)
         entry.bind_all('<KeyPress>', self.entry_changed)
         self.entry_i = entry
         ##
-        button = tkinter.tix.Button(
+        button = tix.Button(
             frame,
             text='Browse',
             command=self.browse_i,
@@ -255,7 +255,7 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         button.pack(side='left')
         ##
-        button = tkinter.tix.Button(
+        button = tix.Button(
             frame,
             text='Load',
             command=self.load,
@@ -271,9 +271,9 @@ class UI(tkinter.tix.Frame, UIBase):
         self.pref = {}
         self.pref_load(**options)
         ######################
-        frame = tkinter.tix.Frame(convertFrame)
+        frame = tix.Frame(convertFrame)
         ##
-        label = tkinter.tix.Label(frame, text='Write to format    ')
+        label = tix.Label(frame, text='Write to format    ')
         label.pack(side='left')
         ##
         comboVar = tk.StringVar()
@@ -286,17 +286,17 @@ class UI(tkinter.tix.Frame, UIBase):
         ##
         frame.pack(fill='x')
         ###################
-        frame = tkinter.tix.Frame(convertFrame)
+        frame = tix.Frame(convertFrame)
         ##
-        label = tkinter.tix.Label(frame, text='  Path:')
+        label = tix.Label(frame, text='  Path:')
         label.pack(side='left')
         ##
-        entry = tkinter.tix.Entry(frame)
+        entry = tix.Entry(frame)
         entry.pack(side='left', fill='x', expand=True)
         #entry.bind_all('<KeyPress>', self.entry_changed)
         self.entry_o = entry
         ##
-        button = tkinter.tix.Button(
+        button = tix.Button(
             frame,
             text='Browse',
             command=self.browse_o,
@@ -305,7 +305,7 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         button.pack(side='left')
         ##
-        button = tkinter.tix.Button(
+        button = tix.Button(
             frame,
             text='Convert',
             command=self.convert,
@@ -319,7 +319,7 @@ class UI(tkinter.tix.Frame, UIBase):
         convertFrame.pack(fill='x')
         vpaned.add(notebook)
         #################
-        console = tkinter.tix.Text(vpaned, height=15, background='#000000')
+        console = tix.Text(vpaned, height=15, background='#000000')
         #self.consoleH = 15
         #sbar = Tix.Scrollbar(vpaned, orien=Tix.VERTICAL, command=console.yview)
         #sbar.grid ( row=0, column=1)
@@ -335,8 +335,8 @@ class UI(tkinter.tix.Frame, UIBase):
         vpaned.pack(fill='both', expand=True)
         self.console = console
         ##################
-        frame2 = tkinter.tix.Frame(self)
-        clearB = tkinter.tix.Button(
+        frame2 = tix.Frame(self)
+        clearB = tix.Button(
             frame2,
             text='Clear',
             command=self.console_clear,
@@ -347,7 +347,7 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         clearB.pack(side='left')
         ####
-        label = tkinter.tix.Label(frame2, text='Verbosity')
+        label = tix.Label(frame2, text='Verbosity')
         label.pack(side='left')
         ##
         comboVar = tk.StringVar()
@@ -374,8 +374,8 @@ class UI(tkinter.tix.Frame, UIBase):
         #lbox.insert(0, 'aaaaaaaa', 'bbbbbbbbbbbbbbbbbbbb')
         #lbox.pack(fill='x')
         ##############
-        frame3 = tkinter.tix.Frame(self)
-        aboutB = tkinter.tix.Button(
+        frame3 = tix.Frame(self)
+        aboutB = tix.Button(
             frame3,
             text='About',
             command=self.about_clicked,
@@ -383,7 +383,7 @@ class UI(tkinter.tix.Frame, UIBase):
             #activebackground='#f030f0',
         )
         aboutB.pack(side='right')
-        closeB = tkinter.tix.Button(
+        closeB = tix.Button(
             frame3,
             text='Close',
             command=self.quit,
@@ -391,7 +391,7 @@ class UI(tkinter.tix.Frame, UIBase):
             #activebackground='#ff5050',
         )
         closeB.pack(side='right')
-        applyB = tkinter.tix.Button(
+        applyB = tix.Button(
             frame3,
             text='Apply',
             command=self.apply_clicked,
@@ -402,12 +402,12 @@ class UI(tkinter.tix.Frame, UIBase):
         applyB.pack(side='right')
         frame3.pack(fill='x')
         ############### Reverse Tab ####################
-        revFrame = tkinter.tix.Frame(notebook.tab2)
+        revFrame = tix.Frame(notebook.tab2)
         revFrame.pack(fill='x')
         ######################
-        frame = tkinter.tix.Frame(revFrame)
+        frame = tix.Frame(revFrame)
         ##
-        label = tkinter.tix.Label(frame, text='Read from format')
+        label = tix.Label(frame, text='Read from format')
         label.pack(side='left')
         ##
         comboVar = tk.StringVar()
@@ -419,17 +419,17 @@ class UI(tkinter.tix.Frame, UIBase):
         ##
         frame.pack(fill='x')
         ###################
-        frame = tkinter.tix.Frame(revFrame)
+        frame = tix.Frame(revFrame)
         ##
-        label = tkinter.tix.Label(frame, text='  Path:')
+        label = tix.Label(frame, text='  Path:')
         label.pack(side='left')
         ##
-        entry = tkinter.tix.Entry(frame)
+        entry = tix.Entry(frame)
         entry.pack(side='left', fill='x', expand=True)
         #entry.bind_all('<KeyPress>', self.entry_r_i_changed)
         self.entry_r_i = entry
         ##
-        button = tkinter.tix.Button(
+        button = tix.Button(
             frame,
             text='Browse',
             command=self.r_browse_i,
@@ -438,7 +438,7 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         button.pack(side='left')
         ##
-        button = tkinter.tix.Button(
+        button = tix.Button(
             frame,
             text='Load',
             command=self.r_load,
@@ -448,17 +448,17 @@ class UI(tkinter.tix.Frame, UIBase):
         ###
         frame.pack(fill='x')
         ###################
-        frame = tkinter.tix.Frame(revFrame)
+        frame = tix.Frame(revFrame)
         ##
-        label = tkinter.tix.Label(frame, text='Output Tabfile')
+        label = tix.Label(frame, text='Output Tabfile')
         label.pack(side='left')
         ###
-        entry = tkinter.tix.Entry(frame)
+        entry = tix.Entry(frame)
         entry.pack(side='left', fill='x', expand=True)
         #entry.bind_all('<KeyPress>', self.entry_r_i_changed)
         self.entry_r_o = entry
         ##
-        button = tkinter.tix.Button(
+        button = tix.Button(
             frame,
             text='Browse',
             command=self.r_browse_o,
@@ -478,12 +478,12 @@ class UI(tkinter.tix.Frame, UIBase):
             int(self.verbosityCombo.get())
         )
     def about_clicked(self):
-        about = tkinter.tix.Toplevel(width=600)## bg='#0f0' does not work
+        about = tix.Toplevel(width=600)## bg='#0f0' does not work
         about.title('About PyGlossary')
         about.resizable(False, False)
         about.wm_iconbitmap('@%s'%xbmLogo)
         ###
-        msg1 = tkinter.tix.Message(
+        msg1 = tix.Message(
             about,
             width=350,
             text='PyGlossary %s (Tkinter)'%VERSION,
@@ -491,16 +491,16 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         msg1.pack(fill='x', expand=True)
         ###
-        msg2 = tkinter.tix.Message(
+        msg2 = tix.Message(
             about,
             width=350,
             text=aboutText,
             font=('DejaVu Sans', 9, 'bold'),
-            justify=tkinter.tix.CENTER,
+            justify=tix.CENTER,
         )
         msg2.pack(fill='x', expand=True)
         ###
-        msg3 = tkinter.tix.Message(
+        msg3 = tix.Message(
             about,
             width=350,
             text=homePage,
@@ -509,7 +509,7 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         msg3.pack(fill='x', expand=True)
         ###
-        msg4 = tkinter.tix.Message(
+        msg4 = tix.Message(
             about,
             width=350,
             text='Install PyGTK to have a better interface!',
@@ -518,9 +518,9 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         msg4.pack(fill='x', expand=True)
         ###########
-        frame = tkinter.tix.Frame(about)
+        frame = tix.Frame(about)
         ###
-        button = tkinter.tix.Button(
+        button = tix.Button(
             frame,
             text='Close',
             command=about.destroy,
@@ -529,7 +529,7 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         button.pack(side='right')
         ###
-        button = tkinter.tix.Button(
+        button = tix.Button(
             frame,
             text='License',
             command=self.about_license_clicked,
@@ -538,7 +538,7 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         button.pack(side='right')
         ###
-        button = tkinter.tix.Button(
+        button = tix.Button(
             frame,
             text='Credits',
             command=self.about_credits_clicked,
@@ -549,12 +549,12 @@ class UI(tkinter.tix.Frame, UIBase):
         ###
         frame.pack(fill='x')
     def about_credits_clicked(self):
-        about = tkinter.tix.Toplevel()## bg='#0f0' does not work
+        about = tix.Toplevel()## bg='#0f0' does not work
         about.title('Credits')
         about.resizable(False, False)
         about.wm_iconbitmap('@%s'%xbmLogo)
         ###
-        msg1 = tkinter.tix.Message(
+        msg1 = tix.Message(
             about,
             width=500,
             text='\n'.join(authors),
@@ -562,8 +562,8 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         msg1.pack(fill='x', expand=True)
         ###########
-        frame = tkinter.tix.Frame(about)
-        closeB = tkinter.tix.Button(
+        frame = tix.Frame(about)
+        closeB = tix.Button(
             frame,
             text='Close',
             command=about.destroy,
@@ -573,12 +573,12 @@ class UI(tkinter.tix.Frame, UIBase):
         closeB.pack(side='right')
         frame.pack(fill='x')
     def about_license_clicked(self):
-        about = tkinter.tix.Toplevel()## bg='#0f0' does not work
+        about = tix.Toplevel()## bg='#0f0' does not work
         about.title('License')
         about.resizable(False, False)
         about.wm_iconbitmap('@%s'%xbmLogo)
         ###
-        msg1 = tkinter.tix.Message(
+        msg1 = tix.Message(
             about,
             width=420,
             text=licenseText,
@@ -586,8 +586,8 @@ class UI(tkinter.tix.Frame, UIBase):
         )
         msg1.pack(fill='x', expand=True)
         ###########
-        frame = tkinter.tix.Frame(about)
-        closeB = tkinter.tix.Button(
+        frame = tix.Frame(about)
+        closeB = tix.Button(
             frame,
             text='Close',
             command=about.destroy,
@@ -690,14 +690,14 @@ class UI(tkinter.tix.Frame, UIBase):
                         break
             self.pathO = pathO
     def browse_i(self):
-        path = tkinter.filedialog.askopenfilename(initialdir=self.fcd_dir)
+        path = filedialog.askopenfilename(initialdir=self.fcd_dir)
         if path:
             self.entry_i.delete(0, 'end')
             self.entry_i.insert(0, path)
             self.entry_changed()
             self.fcd_dir = os.path.dirname(path)#????????
     def browse_o(self):
-        path = tkinter.filedialog.asksaveasfilename()
+        path = filedialog.asksaveasfilename()
         if path:
             self.entry_o.delete(0, 'end')
             self.entry_o.insert(0, path)
