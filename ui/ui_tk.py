@@ -250,8 +250,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Browse',
             command=self.browse_i,
-            bg='#f0f000',
-            activebackground='#f6f622',
+            #bg='#f0f000',
+            #activebackground='#f6f622',
         )
         button.pack(side='left')
         ##
@@ -259,8 +259,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Load',
             command=self.load,
-            bg='#7777ff',
-            activebackground='#9999ff',
+            #bg='#7777ff',
+            #activebackground='#9999ff',
         )
         button.pack(side='left')
         ###
@@ -300,8 +300,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Browse',
             command=self.browse_o,
-            bg='#f0f000',
-            activebackground='#f6f622',
+            #bg='#f0f000',
+            #activebackground='#f6f622',
         )
         button.pack(side='left')
         ##
@@ -309,8 +309,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Convert',
             command=self.convert,
-            bg='#00e000',
-            activebackground='#22f022',
+            #bg='#00e000',
+            #activebackground='#22f022',
         )
         button.pack(side='left')
         ###
@@ -340,10 +340,10 @@ class UI(tkinter.tix.Frame, UIBase):
             frame2,
             text='Clear',
             command=self.console_clear,
-            bg='black',
-            fg='#ffff00',
-            activebackground='#333333',
-            activeforeground='#ffff00',
+            #bg='black',
+            #fg='#ffff00',
+            #activebackground='#333333',
+            #activeforeground='#ffff00',
         )
         clearB.pack(side='left')
         ####
@@ -379,24 +379,24 @@ class UI(tkinter.tix.Frame, UIBase):
             frame3,
             text='About',
             command=self.about_clicked,
-            bg='#e000e0',
-            activebackground='#f030f0',
+            #bg='#e000e0',
+            #activebackground='#f030f0',
         )
         aboutB.pack(side='right')
         closeB = tkinter.tix.Button(
             frame3,
             text='Close',
             command=self.quit,
-            bg='#ff0000',
-            activebackground='#ff5050',
+            #bg='#ff0000',
+            #activebackground='#ff5050',
         )
         closeB.pack(side='right')
         applyB = tkinter.tix.Button(
             frame3,
             text='Apply',
             command=self.apply_clicked,
-            bg='#00e000',
-            activebackground='#22f022',
+            #bg='#00e000',
+            #activebackground='#22f022',
         )
         ## 'underline=0' arg in Tix.Button not affect keyboard shortcut?????????????
         applyB.pack(side='right')
@@ -433,8 +433,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Browse',
             command=self.r_browse_i,
-            bg='#f0f000',
-            activebackground='#f6f622',
+            #bg='#f0f000',
+            #activebackground='#f6f622',
         )
         button.pack(side='left')
         ##
@@ -442,7 +442,7 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Load',
             command=self.r_load,
-            bg='#7777ff',
+            #bg='#7777ff',
         )
         button.pack(side='left')
         ###
@@ -462,8 +462,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Browse',
             command=self.r_browse_o,
-            bg='#f0f000',
-            activebackground='#f6f622',
+            #bg='#f0f000',
+            #activebackground='#f6f622',
         )
         button.pack(side='left')
         ##
@@ -524,8 +524,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Close',
             command=about.destroy,
-            bg='#ff0000',
-            activebackground='#ff5050',
+            #bg='#ff0000',
+            #activebackground='#ff5050',
         )
         button.pack(side='right')
         ###
@@ -533,8 +533,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='License',
             command=self.about_license_clicked,
-            bg='#00e000',
-            activebackground='#22f022',
+            #bg='#00e000',
+            #activebackground='#22f022',
         )
         button.pack(side='right')
         ###
@@ -542,8 +542,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Credits',
             command=self.about_credits_clicked,
-            bg='#0000ff',
-            activebackground='#5050ff',
+            #bg='#0000ff',
+            #activebackground='#5050ff',
         )
         button.pack(side='right')
         ###
@@ -567,8 +567,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Close',
             command=about.destroy,
-            bg='#ff0000',
-            activebackground='#ff5050',
+            #bg='#ff0000',
+            #activebackground='#ff5050',
         )
         closeB.pack(side='right')
         frame.pack(fill='x')
@@ -591,8 +591,8 @@ class UI(tkinter.tix.Frame, UIBase):
             frame,
             text='Close',
             command=about.destroy,
-            bg='#ff0000',
-            activebackground='#ff5050',
+            #bg='#ff0000',
+            #activebackground='#ff5050',
         )
         closeB.pack(side='right')
         frame.pack(fill='x')
