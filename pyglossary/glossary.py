@@ -967,18 +967,12 @@ class Glossary(object):
 
     def searchWordInDef(self, st, opt):
         #seachs word 'st' in meanings(definitions) of the glossary 'self'
-        opt = addDefaultOptions(opt, {
-            'minRel': 0.0,
-            'maxNum': 100,
-            'sep': commaFa,
-            'matchWord': True,
-            'showRel': 'Percent',
-        })
-        sep = opt['sep']
-        matchWord = opt['matchWord']
-        maxNum = opt['maxNum']
-        minRel = opt['minRel']
+        sep = opt.get('sep', commaFa)
+        matchWord = opt.get('matchWord', True)
+        maxNum = opt.get('maxNum', 100)
+        minRel = opt.get('minRel', 0.0)
         defs = opt['includeDefs']
+        showRel = opt.get('showRel', 'Percent')
         outRel = []
         for item in self._data:
             word, defi = item[:2]
@@ -1030,9 +1024,9 @@ class Glossary(object):
                 onePer = int(1.0/num)
                 if onePer == 1.0:
                     out.append('%s\\n%s'%(w, m))
-                elif opt['showRel'] == 'Percent':
+                elif showRel == 'Percent':
                     out.append('%s(%%%d)\\n%s'%(w, 100*num, m))
-                elif opt['showRel'] == 'Percent At First':
+                elif showRel == 'Percent At First':
                     if num == numP:
                         out.append('%s\\n%s'%(w, m))
                     else:
@@ -1046,9 +1040,9 @@ class Glossary(object):
             onePer = int(1.0/num)
             if onePer == 1.0:
                 out.append(w)
-            elif opt['showRel'] == 'Percent':
+            elif showRel == 'Percent':
                 out.append('%s(%%%d)'%(w, 100*num))
-            elif opt['showRel'] == 'Percent At First':
+            elif showRel == 'Percent At First':
                 if num == numP:
                     out.append(w)
                 else:
