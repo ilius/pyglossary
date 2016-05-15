@@ -43,7 +43,7 @@ class UIBase(object):
         'ui_autoSetFormat',
         'ui_autoSetOutputFileName',
         'lower',
-        'utf8_check',
+        'utf8Check',
         'enable_alts',
         ## Reverse Options:
         'matchWord',

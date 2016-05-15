@@ -6,7 +6,7 @@ ui_autoSetFormat = True
 ui_autoSetOutputFileName = True
 lower = False
 
-utf8_check = True
+utf8Check = True
 enable_alts = True
 
 

@@ -166,14 +166,14 @@ parser.add_argument(
 parser.add_argument(
     #'-',
     '--utf8-check',
-    dest='utf8_check',
+    dest='utf8Check',
     action='store_true',
     default=None,
 )
 parser.add_argument(
     #'-',
     '--no-utf8-check',
-    dest='utf8_check',
+    dest='utf8Check',
     action='store_false',
     default=None,
 )
@@ -365,7 +365,7 @@ if args.direct != None:
 ui_options_params = (
     'noProgressBar',
     #'verbosity',
-    'utf8_check',
+    'utf8Check',
     'lower',
 )
 
