@@ -128,13 +128,13 @@ def add_articles(glos, articles):
     :return: None
     """
     glos.setDefaultDefiFormat('x')
-    for item in articles:
-        item.tail = None
-        defi = tostring(item, encoding='utf-8')
+    for article in articles:
+        article.tail = None
+        defi = tostring(article, encoding='utf-8')
         # <ar>...</ar>
         defi = defi[4:-5].strip()
         glos.addEntry(
-            [toStr(w) for w in titles(item)],
+            [toStr(w) for w in titles(article)],
             toStr(defi),
         )
 
