@@ -129,15 +129,12 @@ def add_articles(glos, articles):
     """
     glos.setDefaultDefiFormat('x')
     for item in articles:
-        word, alts = title_alts(titles(item))
-        if not word:
-            continue
         item.tail = None
         defi = tostring(item, encoding='utf-8')
         # <ar>...</ar>
         defi = defi[4:-5].strip()
         glos.addEntry(
-            [toStr(w) for w in [word] + alts],
+            [toStr(w) for w in titles(item)],
             toStr(defi),
         )
 
@@ -160,18 +157,6 @@ def titles(article):
             titles.append(_mktitle(title_element))
 
     return titles
-
-
-def title_alts(titles):
-    if not titles:
-        return None, []
-
-    title = titles[0]
-
-    if len(titles) == 1:
-        return title, []
-
-    return title, list(set(titles[1:]) - {title})
 
 
 def _mktitle(title_element, include_opts=()):
