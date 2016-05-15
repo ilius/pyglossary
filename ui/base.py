@@ -41,7 +41,7 @@ class UIBase(object):
         'noProgressBar',## command line
         'save',
         'ui_autoSetFormat',
-        'auto_set_out',
+        'ui_autoSetOutputFileName',
         'lower',
         'utf8_check',
         'enable_alts',

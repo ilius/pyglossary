@@ -626,7 +626,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
             self.convertInputFormatCombo.setActive(inFormatNew)
 
         self.status('Select output file')        
-        if self.pref['auto_set_out']:
+        if self.pref['ui_autoSetOutputFileName']:
             outFormat = self.convertOutputFormatCombo.getActive()
             outPath = self.convertOutputEntry.get_text()
             if outFormat:
@@ -731,7 +731,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         if inFormatNew and self.pref['ui_autoSetFormat']:## and not inFormat:
             self.reverseInputFormatCombo.setActive(inFormatNew)
             
-        if self.pref['auto_set_out']:
+        if self.pref['ui_autoSetOutputFileName']:
             outExt = '.txt'
             outPath = self.reverseOutputEntry.get_text()
             if inFormatNew and not outPath:

@@ -3,7 +3,7 @@ noProgressBar = False ## in command line
 
 save = 0
 ui_autoSetFormat = True
-auto_set_out = True
+ui_autoSetOutputFileName = True
 lower = False
 
 utf8_check = True

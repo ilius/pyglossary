@@ -633,7 +633,7 @@ class UI(tix.Frame, UIBase):
             self.xml.get_widget('label_enc').hide()
             self.xml.get_widget('comboentry_enc').hide()
         """
-        if self.pref['auto_set_out']:#format==None:
+        if self.pref['ui_autoSetOutputFileName']:#format==None:
             pathI = self.entry_i.get()
             pathO = self.entry_o.get()
             formatOD = self.combobox_o.get()
@@ -661,7 +661,7 @@ class UI(tix.Frame, UIBase):
                     if ext in Glossary.readExt[i]:
                         self.combobox_i.set(Glossary.readDesc[i])
                         break
-            if self.pref['auto_set_out']:#format==noneItem:
+            if self.pref['ui_autoSetOutputFileName']:#format==noneItem:
                 #pathI = self.entry_i.get()
                 formatOD = self.combobox_o.get()
                 pathO = self.entry_o.get()
