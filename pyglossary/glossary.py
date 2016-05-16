@@ -567,7 +567,7 @@ class Glossary(object):
                 1- Wheather or not direct mode is On (self._readers not empty) or Off (self._readers empty)
                 2- Wheather sort is True, and if it is, checks for self._sortKey and self._sortCacheSize
         """
-        log.info('_updateIter: %s readers, %s loaded entries'%(len(self._readers), len(self._data)))
+        #log.debug('_updateIter: %s readers, %s loaded entries'%(len(self._readers), len(self._data)))
         if self._readers:## direct mode
             if sort:
                 sortKey = self._sortKey
@@ -589,7 +589,7 @@ class Glossary(object):
             gen = self._loadedEntryGen()
 
         self._iter = self._applyEntryFiltersGen(gen)
-        log.info('self._iter=%s'%self._iter)
+        #log.debug('self._iter=%s'%self._iter)
 
     def sortWords(self, key=None, cacheSize=None):
         ## only sort by main word, or list of words + alternates? FIXME
