@@ -158,7 +158,7 @@ class UI(UIBase):
         rot.pbar = self.pbar
     def r_start(self, *args):
         self.rWords = self.glosR.takeOutputWords()
-        log.info('Number of input words:', len(self.rWords))
+        log.info('Number of input words: %s'%len(self.rWords))
         log.info('Reversing glossary... (Press Ctrl+C to stop)')
         try:
             self.glosR.reverseDic(self.rWords, self.pref)

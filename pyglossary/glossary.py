@@ -30,6 +30,9 @@ import string
 from collections import Counter
 from collections import OrderedDict as odict
 
+import io
+file = io.BufferedReader
+
 from .flags import *
 from . import core
 from .entry import Entry
@@ -866,8 +869,8 @@ class Glossary(object):
     def takeOutputWords(self, opt=None):
         if opt is None:
             opt = {}
-        words = sorted(takeStrWords(' '.join([item[1] for item in self._data]), opt))
-        words = removeRepeats(words)
+        words = takeStrWords(' '.join([item[1] for item in self._data]), opt)
+        words = sorted(set(words))
         return words
 
     getInputList = lambda self: [x[0] for x in self._data]
@@ -966,8 +969,9 @@ class Glossary(object):
 
 
     def searchWordInDef(self, st, opt):
+        from .text_utils import sch
         #seachs word 'st' in meanings(definitions) of the glossary 'self'
-        sep = opt.get('sep', commaFa)
+        sep = opt.get('sep', ',')
         matchWord = opt.get('matchWord', True)
         maxNum = opt.get('maxNum', 100)
         minRel = opt.get('minRel', 0.0)
@@ -1009,7 +1013,10 @@ class Glossary(object):
             else:
                 outRel.append((word, rel))
         #sortby_inplace(outRel, 1, True)##???
-        outRel.sort(key=1, reverse=True)
+        outRel.sort(
+            key= lambda x: x[1],
+            reverse=True,
+        )
         n = len(outRel)
         if n > maxNum > 0:
             outRel = outRel[:maxNum]
@@ -1055,11 +1062,10 @@ class Glossary(object):
     def reverseDic(self, wordsArg=None, opt=None):
         if opt is None:
             opt = {}
-        opt = addDefaultOptions(opt, {
+        addDefaultOptions(opt, {
             'matchWord': True,
             'showRel': 'None',
             'includeDefs': False,
-            'background': False,
             'reportStep': 300,
             'autoSaveStep': 1000, ## set this to zero to disable auto saving.
             'savePath': '',
@@ -1075,11 +1081,11 @@ class Glossary(object):
             log.debug('c=%s'%c)
             return
         elif c==0:
-            saveFile = open(savePath, 'wb')
+            saveFile = open(savePath, 'w')
             ui.progressStart()
             ui.progress(0.0, 'Starting...')
         elif c>0:
-            saveFile = open(savePath, 'ab')
+            saveFile = open(savePath, 'a')
         if wordsArg is None:
             words = self.takeOutputWords()
         elif isinstance(wordsArg, file):
@@ -1095,7 +1101,7 @@ class Glossary(object):
         if not opt['savePath']:
             opt['savePath'] = self.getInfo('name')+'.txt'
         revG = Glossary(
-            info = self.info[:],
+            info = self.info.copy(),
         )
         revG.setInfo('name', self.getInfo('name')+'_reversed')
         revG.setInfo('inputlang', self.getInfo('outputlang'))
@@ -1157,7 +1163,7 @@ class Glossary(object):
             """
             if autoSaveStep>0 and i%autoSaveStep==0 and i>0:
                 saveFile.close()
-                saveFile = open(savePath, 'ab')
+                saveFile = open(savePath, 'a')
             result = self.searchWordInDef(word, opt)
             if len(result)>0:
                 try:
@@ -1166,7 +1172,7 @@ class Glossary(object):
                     else:
                         defi = ', '.join(result) + '.'
                 except Exception:
-                    open('result', 'wb').write(str(result))
+                    open('result', 'w').write(str(result))
                     log.exception('')
                     return False
                 if autoSaveStep>0:

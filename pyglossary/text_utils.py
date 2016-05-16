@@ -192,32 +192,6 @@ def findAll(st, sub):
         return []
     return ind
 
-def checkOrder(lst):
-    wrong = []
-    for i in range(len(lst)-1):
-        if lst[i] == lst[i+1]:
-            wrong.append(i)
-    return wrong
-
-def removeRepeats(lst):
-    ## gets a sorted list and removes any reapeated member. returns result.
-    n = len(lst)
-    if n==0:
-        return []
-    lstR=[lst[0]]
-    for i in range(1, n):
-        if lst[i] != lst[i-1]:
-            lstR.append(lst[i])
-    return lstR
-
-def addWord(word, allWords):
-        if len(allWords)==0:
-            return [word]
-        i = locate(allWords, word)
-        ii = int(i+1)
-        if ii-i == 0.5:
-            allWords.insert(ii, word)
-        return allWords
 
 def findWords(st0, opt=None):
     if opt is None:
@@ -264,23 +238,21 @@ def takeStrWords(st, opt=None):
     defOpt = {
         'minLen': 3,
         'noEn': True,
-        'sort': True,
         'noRepeat': True,
     }
     addDefaultOptions(opt, defOpt)
     words = [st[i:j] for i, j in findWords(st, opt)]
     ## 'sort' and 'noRepeat' options will not be used in findWords()
-    if opt['sort']:
-        words.sort()
     if opt['noRepeat']:
-        words = removeRepeats(words)
+        words = sorted(set(words))
+    else:
+        words.sort()
     return words
 
 def takeFileWords(filePath, opt=None):
     if opt is None:
         opt = {
             'minLen': 3,
-            'sort': True,
             'noRepeat': True,
         }
     try:
