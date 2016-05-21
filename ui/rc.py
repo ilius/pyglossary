@@ -11,9 +11,9 @@ enable_alts = True
 
 
 ## Reverse Options:
-matchWord = True
-showRel = 'None'
-autoSaveStep = 1000
-minRel = 0.3
-maxNum = -1
-includeDefs = True
+reverse_matchWord = True
+reverse_showRel = 'None'
+reverse_saveStep = 1000
+reverse_minRel = 0.3
+reverse_maxNum = -1
+reverse_includeDefs = True

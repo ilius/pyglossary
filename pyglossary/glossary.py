@@ -58,9 +58,6 @@ from .sort_stream import hsortStreamList
 
 from .text_utils import (
     fixUtf8,
-    takeStrWords,
-    findAll,
-    addDefaultOptions,
 )
 from .os_utils import indir
 
@@ -289,6 +286,8 @@ class Glossary(object):
 
         self._sortKey = None
         self._sortCacheSize = 1000
+        
+        self._paused = False
 
     def updateEntryFilters(self):
         self.entryFilters = []
@@ -445,6 +444,7 @@ class Glossary(object):
         else:
             return default
 
+    #################################################################################
 
     def read(
         self,
@@ -757,7 +757,7 @@ class Glossary(object):
         else:
             self._updateIter(sort=False)
 
-
+        log.info('Writing to file "%s"'%filename)
         try:
             self.writeFunctions[format].__call__(self, filename, **options)
         except Exception:
@@ -976,11 +976,8 @@ class Glossary(object):
             else:
                 return self
         newName = '"%s" attached to "%s"'%(self.getInfo('name'), other.getInfo('name') )
-        newGloss = Glossary(
-            info = [
-                ('name', newName),
-            ],
-        )
+        newGloss = Glossary()
+        newGloss.setInfo('name', newName)
         newGloss.__Glossary_data = self._data + other.__Glossary_data ## FIXME
         ## here attach and set info of two glossary ## FIXME
         return newGloss
@@ -1001,11 +998,7 @@ class Glossary(object):
             self.getInfo('name'),
             other.getInfo('name'),
         )
-        newGloss = Glossary(
-            info = [
-                ('name', newName),
-            ],
-        )
+        newGloss.setInfo('name', newName)
         newGloss.__Glossary_data = sorted(self._data + other.__Glossary_data) ## FIXME
         return newGloss
 
@@ -1040,59 +1033,95 @@ class Glossary(object):
                 data.pop(i+1)
             else:
                 i += 1
-        return Glossary(
-            info = [
-                ('name', newName),
-            ],
-        )
-        self._data = data
+        newGloss = Glossary()
+        newGloss.setInfo('name', newName)
+        newGloss._data = data
+        return newGloss
 
 
     def __add__(self, other):
         return self.merge(other)
 
+    ###############################################################################
 
-    def searchWordInDef(self, st, opt):
-        from .text_utils import sch
+    def getContinueFrom(self):
+        try:
+            continueFrom = self._continueFrom
+        except AttributeError:
+            return 0
+        if continueFrom < 0:
+            log.error('continueFrom = %s'%continueFrom)
+            continueFrom = 0
+        return continueFrom
+
+    def pause(self):
+        self._paused = True
+        return self.getContinueFrom()
+
+    def resume(self):
+        self._paused = False
+        return self.getContinueFrom()
+
+    def isPaused(self):
+        return self._paused
+
+    def progress(self, wordI, wordCount):
+        self._continueFrom = wordI
+        if ui:
+            ui.progress(
+                (wordI + 1) / wordCount,
+                '%d / %d completed'%(wordI, wordCount),
+            )
+
+    def finished(self):
+        self._continueFrom = 0
+        if ui:
+            ui.progressEnd()
+
+    ########################################
+
+    def searchWordInDef(
+        self,
+        st,
+        matchWord = True,
+        sepChars = '.,،',
+        maxNum = 100,
+        minRel = 0.0,
+        minWordLen = 3,
+        includeDefs = False,
+        showRel = 'Percent',
+    ):
         #seachs word 'st' in meanings(definitions) of the glossary 'self'
-        sep = opt.get('sep', ',')
-        matchWord = opt.get('matchWord', True)
-        maxNum = opt.get('maxNum', 100)
-        minRel = opt.get('minRel', 0.0)
-        defs = opt['includeDefs']
-        showRel = opt.get('showRel', 'Percent')
+        splitPattern = re.compile('|'.join([re.escape(x) for x in sepChars]), re.U)
+        wordPattern = re.compile('[\w]{%d,}'%minWordLen, re.U)
         outRel = []
         for item in self._data:
             word, defi = item[:2]
-            defiParts = defi.split(sep)
             if not st in defi:
                 continue
             rel = 0 ## relation value of word (as a float number between 0 and 1
-            for part in defiParts:
-                for ch in sch:
-                    part = part.replace(ch, ' ')
-                pRel = 0 # part relation
+            for part in re.split(splitPattern, defi):
+                if not part:
+                    continue
                 if matchWord:
-                    pNum = 0
-                    partWords = takeStrWords(part)
-                    pLen = len(partWords)
-                    if pLen==0:
+                    partWords = re.findall(
+                        wordPattern,
+                        part,
+                    )
+                    if not partWords:
                         continue
-                    for pw in partWords:
-                        if pw == st:
-                            pNum += 1
-                    pRel = float(pNum)/pLen ## part relation
+                    rel = max(
+                        rel,
+                        partWords.count(st) / len(partWords)
+                    )
                 else:
-                    pLen = len(part.replace(' ', ''))
-                    if pLen==0:
-                        continue
-                    pNum = len(findAll(part, st))*len(st)
-                    pRel = float(pNum)/pLen ## part relation
-                if pRel > rel:
-                    rel = pRel
+                    rel = max(
+                        rel,
+                        part.count(st) * len(st) / len(part)
+                    )
             if rel <= minRel:
                 continue
-            if defs:
+            if includeDefs:
                 outRel.append((word, rel, defi))
             else:
                 outRel.append((word, rel))
@@ -1107,7 +1136,7 @@ class Glossary(object):
             n = maxNum
         num = 0
         out = []
-        if defs:
+        if includeDefs:
             for j in range(n):
                 numP = num
                 w, num, m = outRel[j]
@@ -1143,132 +1172,84 @@ class Glossary(object):
         return out
 
 
-    def reverse(self, wordsArg=None, opt=None):
-        if opt is None:
-            opt = {}
-        addDefaultOptions(opt, {
-            'matchWord': True,
-            'showRel': 'None',
-            'includeDefs': False,
-            'reportStep': 300,
-            'autoSaveStep': 1000, ## set this to zero to disable auto saving.
-            'savePath': '',
-        })
-        self.stoped = False
+    def reverse(
+        self,
+        savePath = '',
+        words = None,
+        includeDefs = False,
+        reportStep = 300,
+        saveStep = 1000,## set this to zero to disable auto saving
+        **kwargs
+    ):
+        """
+            Potential keyword arguments:
+                words = None ## None, or list
+                reportStep = 300
+                saveStep = 1000
+                savePath = ''
+                matchWord = True
+                sepChars = '.,،'
+                maxNum = 100
+                minRel = 0.0
+                minWordLen = 3
+                includeDefs = False
+                showRel = 'None' ## allowed values: 'None' | 'Percent' | 'Percent At First'
+        """
+        if not savePath:
+            savePath = self.getInfo('name') + '.txt'
+
+        if saveStep < 2:
+            raise ValueError('saveStep must be more than 1')
+
+        log.info('Reversing to file "%s"'%savePath)
+
         ui = self.ui
-        try:
-            c = self.continueFrom
-        except AttributeError:
-            c = 0
-        savePath = opt['savePath']
-        if c == -1:
-            log.debug('c=%s'%c)
-            return
-        elif c==0:
-            saveFile = open(savePath, 'w')
-            ui.progressStart()
-            ui.progress(0.0, 'Starting...')
-        elif c>0:
-            saveFile = open(savePath, 'a')
-        if wordsArg is None:
+        continueFrom = self.resume()
+
+        appendMode = False        
+        if continueFrom == 0:
+            if ui:
+                ui.progressStart()
+                ui.progress(0.0, 'Starting...')
+        elif continueFrom > 0:
+            appendMode = True
+        
+        if words:
+            words = list(words)
+        else:
             words = self.takeOutputWords()
-        elif isinstance(wordsArg, file):
-            words = wordsArg.read().split('\n')
-        elif isinstance(wordsArg, (list, tuple)):
-            words = wordsArg[:]
-        elif isinstance(wordsArg, str):
-            with open(wordsArg) as fp:
-                words = fp.read().split('\n')
-        else:
-            raise TypeError('Argumant wordsArg to function reverse is not valid!')
-        autoSaveStep = opt['autoSaveStep']
-        if not opt['savePath']:
-            opt['savePath'] = self.getInfo('name')+'.txt'
-        revG = Glossary(
-            info = self.info.copy(),
-        )
-        revG.setInfo('name', self.getInfo('name')+'_reversed')
-        revG.setInfo('inputlang', self.getInfo('outputlang'))
-        revG.setInfo('outputlang', self.getInfo('inputlang'))
-        wNum = len(words)
-        #steps = opt['reportStep']
-        #div = 0
-        #mod = 0
-        #total = int(wNum/steps)
-        """
-        if c==0:
-            log.info('Number of input words:', wNum)
-            log.info('Reversing glossary...')
-        else:
-            log.info('continue reversing from index %d ...'%c)
-        """
-        t0 = time.time()
-        if not ui:
-            log.info('passed ratio\ttime:\tpassed\tremain\ttotal\tprocess')
-        n = len(words)
-        for i in range(c, n):
-            word = words[i]
-            rat = float(i+1)/n
-            ui.progress(rat, '%d / %d words completed'%(i, n))
-            if ui.reverseStop:
-                saveFile.close() ## if with KeyboardInterrupt it will be closed ??????????????
-                self.continueFrom = i
-                self.stoped = True
-                #thread.exit_thread()
-                return
-            else:
-                self.i = i
-            """
-            if mod == steps:
-                mod = 0 ; div += 1
-                t = time.time()
-                dt = t-t0
-                tRem = (total-div)*dt/div ## (n-i)*dt/n
-                rat = float(i)/n
-                if ui:
-                    ############# FIXME
-                    #ui.progressbar.set_text(
-                        '%d/%d words completed (%%%2f) remaining %d seconds'%(i,n,rat*100,tRem)
-                    )
-                    ui.progressbar.update(rat)
-                    while gtk.events_pending():
-                        gtk.main_iteration_do(False)
-                else:
-                    log.info('%4d / %4d\t%8s\t%8s\t%8s\t%s'%(
-                        div,
-                        total,
-                        timeHMS(dt),
-                        timeHMS(tRem),
-                        timeHMS(dt + tRem),
-                        sys.argv[0],
-                    ))
-            else:
-                mod += 1
-            """
-            if autoSaveStep>0 and i%autoSaveStep==0 and i>0:
-                saveFile.close()
-                saveFile = open(savePath, 'a')
-            result = self.searchWordInDef(word, opt)
-            if len(result)>0:
-                try:
-                    if opt['includeDefs']:
-                        defi = '\\n\\n'.join(result)
-                    else:
-                        defi = ', '.join(result) + '.'
-                except Exception:
-                    open('result', 'w').write(str(result))
-                    log.exception('')
+
+        wordCount = len(words)
+
+        with open(savePath, 'a' if appendMode else 'w') as saveFile:
+            for wordI in range(continueFrom, wordCount):
+                word = words[wordI]
+                self.progress(wordI, wordCount)
+
+                if self.isPaused():
+                    saveFile.close() ## if with KeyboardInterrupt it will be closed? FIXME
+                    #thread.exit_thread()
                     return False
-                if autoSaveStep>0:
+                if wordI % saveStep == 0 and wordI > 0:
+                    saveFile.flush()
+                result = self.searchWordInDef(
+                    word,
+                    includeDefs = includeDefs,
+                    **kwargs
+                )
+                if result:
+                    try:
+                        if includeDefs:
+                            defi = '\\n\\n'.join(result)
+                        else:
+                            defi = ', '.join(result) + '.'
+                    except Exception:
+                        log.exception('')
+                        log.pretty(result, 'result = ')
+                        return False
                     saveFile.write('%s\t%s\n'%(word, defi))
-                else:
-                    revG._data.append((word, defi))
-            if autoSaveStep>0 and i==n-1:
-                saveFile.close()
-        if autoSaveStep==0:
-            revG.writeTabfile(opt['savePath'])
-        ui.r_finished()
-        ui.progressEnd()
+
+        self.finished()
         return True
 
 

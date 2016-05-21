@@ -46,12 +46,12 @@ class UIBase(object):
         'utf8Check',
         'enable_alts',
         ## Reverse Options:
-        'matchWord',
-        'showRel',
-        'autoSaveStep',
-        'minRel',
-        'maxNum',
-        'includeDefs',
+        'reverse_matchWord',
+        'reverse_showRel',
+        'reverse_saveStep',
+        'reverse_minRel',
+        'reverse_maxNum',
+        'reverse_includeDefs',
     )
     def pref_load(self, **options):
         rc_code = fread(join(srcDir, 'rc.py'))

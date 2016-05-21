@@ -19,6 +19,7 @@
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 from os.path import join
+import time
 
 from pyglossary.glossary import *
 from .base import *
@@ -124,10 +125,10 @@ class NullObj(object):
 class UI(UIBase):
     def __init__(self, text='Loading: ', noProgressBar=None, **options):
         self.ptext = text
-        self.reverseStop = False
         self.pref = {}
         self.pref_load(**options)
         #log.debug(self.pref)
+        self.reverseKwArgs = {}
         if self.pref['noProgressBar']:
             self.pbar = NullObj()
         else:
@@ -156,45 +157,68 @@ class UI(UIBase):
             update_step=0.5,
         )
         rot.pbar = self.pbar
-    def r_start(self, *args):
-        self.rWords = self.glosR.takeOutputWords()
-        log.info('Number of input words: %s'%len(self.rWords))
+    def reverseStart(self, *args):
         log.info('Reversing glossary... (Press Ctrl+C to stop)')
+        for key in (
+            'words',
+            'matchWord',
+            'showRel',
+            'includeDefs',
+            'reportStep',
+            'saveStep',
+            'savePath',
+            'maxNum',
+            'minRel',
+            'minWordLen'
+        ):
+            try:
+                self.reverseKwArgs[key] = self.pref['reverse_' + key]
+            except KeyError:
+                pass
+        if self.reverseKwArgs:
+            log.pretty(self.reverseKwArgs, 'UI.reverseStart: reverseKwArgs = ')
         try:
-            self.glosR.reverse(self.rWords, self.pref)
+            self.glos.reverse(
+                **self.reverseKwArgs
+            )
         except KeyboardInterrupt:
-            self.r_stop()
-            ## if the file closeed ????
-    def r_stop(self, *args):
-        self.glosR.continueFrom = self.glosR.i
-        self.glosR.stoped = True
-        self.reverseStop = True
-        log.info('Stoped! Press Enter to resume, and press Ctrl+C to quit.')
+            self.reversePauseWait()
+            ## is the file closeed? FIXME
+    def reversePauseWait(self, *args):
+        self.glos.pause()
+        log.info('Waiting for Glossary to be paused ...')
+        while not self.glos.isPaused():
+            time.sleep(0.1)
+        log.info('Reverse is paused. Press Enter to resume, and press Ctrl+C to quit.')
         try:
             input()
         except KeyboardInterrupt:
             return 0
-        else:
-            self.r_resume()
-    def r_resume(self, *args):
-        if self.glosR.stoped==True:
-            ## update reverse configuration?
-            self.reverseStop = False
-            log.info('Continue reversing from index %d ...'%self.glosR.continueFrom)
-            try:
-                self.glosR.reverse(self.rWords, self.pref)
-            except KeyboardInterrupt:
-                self.r_stop()
-        else:
-            log.info('self.glosR.stoped=%s'%self.glosR.stoped)
-            log.info('Not stoped yet. Wait many seconds and press "Resume" again...')
-    def r_finished(self, *args):
-        self.glosR.continueFrom=0
-        log.info('Reversing completed.')
-    def yesNoQuestion(self, msg, yesDefault=True):## FIXME
-        return True
-    def run(self, ipath, opath='', readFormat='', writeFormat='',
-                  readOptions={}, writeOptions={}, reverse=False):
+        self.reverseResume()
+    def reverseResume(self, *args):
+        ## update reverse configuration?
+        log.info('Continue reversing from index %d ...'%self.glos.continueFrom)
+        try:
+            self.glos.reverse(
+                **self.reverseKwArgs
+            )
+        except KeyboardInterrupt:
+            self.reversePauseWait()
+    def run(
+        self,
+        ipath,
+        opath = '',
+        readFormat = '',
+        writeFormat = '',
+        readOptions = None,
+        writeOptions = None,
+        reverse = False,
+    ):
+        if not readOptions:
+            readOptions = {}
+        if not writeOptions:
+            writeOptions = {}
+
         if readFormat:
             #readFormat = readFormat.capitalize()
             if not readFormat in Glossary.readFormats:
@@ -207,7 +231,7 @@ class UI(UIBase):
                 return 1
         if not opath:
             if reverse:
-                opath = os.path.splitext(ipath)[0] + '-reversed.txt'
+                pass
             elif writeFormat:
                 try:
                     ext = Glossary.formatsExt[writeFormat][0]
@@ -221,7 +245,7 @@ class UI(UIBase):
                 log.error('neither output file nor output format is given')
                 log.error('try: %s --help'%COMMAND)
                 return 1
-        g = Glossary(ui=self)
+        g = self.glos = Glossary(ui=self)
         log.info('Reading file "%s"'%ipath)
         if not g.read(ipath, format=readFormat, **readOptions):
             log.error('reading input file was failed!')
@@ -229,14 +253,11 @@ class UI(UIBase):
         ## When glossary reader uses progressbar, progressbar must be rebuilded:
         self.progressBuild()
         if reverse:
-            log.info('Reversing to file "%s"'%opath)
-            self.setText('')
+            self.setText('Reversing: ')
             self.pbar.update_step = 0.1
-            self.pref['savePath'] = opath
-            self.glosR = g
-            self.r_start()
+            self.reverseKwArgs['savePath'] = opath
+            self.reverseStart()
         else:
-            log.info('Writing to file "%s"'%opath)
             self.setText('Writing: ')
             if not g.write(opath, format=writeFormat, **writeOptions):
                 log.error('writing output file was failed!')

@@ -783,8 +783,6 @@ class UI(tix.Frame, UIBase):
         self.pbar.updateProgress(0)
     def progressEnd(self):
         self.pbar.updateProgress(100)
-    def r_finished(self):
-        pass
     def console_clear(self, event=None):
         self.console.delete('1.0', 'end')
         self.console.insert('end', 'Console:\n')
