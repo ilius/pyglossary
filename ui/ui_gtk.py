@@ -42,10 +42,6 @@ from .gtk3_utils.resize_button import ResizeButton
 
 log = logging.getLogger('root')
 
-#use_psyco_file = join(srcDir, 'use_psyco')
-use_psyco_file = '%s_use_psyco'%confPath
-psyco_found = None
-
 gtk.Window.set_default_icon_from_file(logo)
 
 _ = str ## later replace with translator function

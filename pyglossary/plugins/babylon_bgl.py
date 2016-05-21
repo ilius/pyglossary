@@ -2845,10 +2845,3 @@ def read(glos, filename, **options):
     reader.close()
 
 
-
-try:
-    import psyco
-except:
-    pass
-else:
-    psyco.bind(BglReader)

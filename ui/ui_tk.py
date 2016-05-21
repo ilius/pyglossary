@@ -36,9 +36,6 @@ endFormat	= '\x1b[0;0;0m'		# End Format		#len=8
 #redOnGray	= '\x1b[0;1;31;47m'
 startRed	= '\x1b[31m'
 
-#use_psyco_file = join(srcDir, 'use_psyco')
-use_psyco_file = '%s_use_psyco'%confPath
-psyco_found = None
 
 noneItem = 'Not Selected'
 

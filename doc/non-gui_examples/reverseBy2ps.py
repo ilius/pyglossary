@@ -5,14 +5,6 @@ from glossary import *
 import text_utils, time
 from subprocess import Glossary
 
-try:
-  import psyco
-  print('Using module "psyco" to reduce execution time.')
-  psyco.bind(Glossary)
-  usePsyco=True
-except:
-  print('Warning: module "psyco" not found.')
-
 
 t0 = time.time()
 
@@ -23,8 +15,6 @@ wordsFilePath2 = dicPath[:-4]+'-words-2.txt'
 
 
 psCode = 'from glossary import *\nimport text_utils, time, sys\n'
-if usePsyco:
-  psCode += 'import psyco\npsyco.bind(Glossary)\n'
 psCode += 'g = Glossary()\ng.readTabfile(\'%s\')\ng.checkUnicode()\n'%(dicPath)
 psCode += 'g2 = g.reverse(\'%s\', {\'matchWord\':True})\ng2.writeTabfile()\n' %(wordsFilePath2)
 ps = Popen(['python', '-c', psCode])

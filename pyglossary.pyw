@@ -308,9 +308,6 @@ def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
         parts[i] = parts[i].capitalize()
     return ''.join(parts)
 
-use_psyco_file = '%s_use_psyco'%confPath
-psyco_found = None
-
 ui_list = (
     'gtk',
     'gtk_new',
@@ -319,17 +316,6 @@ ui_list = (
 )
 
 #log.info('PyGlossary %s'%VERSION)
-
-if os.path.isfile(use_psyco_file):
-    try:
-        import psyco
-    except ImportError:
-        log.warning('Warning: module "psyco" not found. It could speed up execution.')
-        psyco_found = False
-    else:
-        psyco.full()
-        log.info('Using module "psyco" to speed up execution.')
-        psyco_found = True
 
 
 if args.help:

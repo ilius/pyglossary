@@ -3,12 +3,6 @@ import sys
 sys.path.append('/usr/share/pyglossary/src')
 from glossary import Glossary
 import text_utils, time
-try:
-  import psyco
-  print('Using module "psyco" to reduce execution time.')
-  psyco.bind(Glossary)
-except:
-  print('Warning: module "psyco" not found.')
 
 
 t0 = time.time()
