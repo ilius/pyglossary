@@ -161,7 +161,7 @@ class UI(UIBase):
         log.info('Number of input words: %s'%len(self.rWords))
         log.info('Reversing glossary... (Press Ctrl+C to stop)')
         try:
-            self.glosR.reverseDic(self.rWords, self.pref)
+            self.glosR.reverse(self.rWords, self.pref)
         except KeyboardInterrupt:
             self.r_stop()
             ## if the file closeed ????
@@ -182,7 +182,7 @@ class UI(UIBase):
             self.reverseStop = False
             log.info('Continue reversing from index %d ...'%self.glosR.continueFrom)
             try:
-                self.glosR.reverseDic(self.rWords, self.pref)
+                self.glosR.reverse(self.rWords, self.pref)
             except KeyboardInterrupt:
                 self.r_stop()
         else:

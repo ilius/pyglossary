@@ -35,6 +35,6 @@ g.checkUnicode()
 
 wordsFile = open(wordsFilePath, "r")
 
-g2 = g.reverseDic(wordsFile, {'matchWord':True})
+g2 = g.reverse(wordsFile, {'matchWord':True})
 g2.writeTabfile()
 print('About', int(time.time()-t0), 'seconds left.')

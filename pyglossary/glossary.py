@@ -1059,7 +1059,7 @@ class Glossary(object):
         return out
 
 
-    def reverseDic(self, wordsArg=None, opt=None):
+    def reverse(self, wordsArg=None, opt=None):
         if opt is None:
             opt = {}
         addDefaultOptions(opt, {
@@ -1096,7 +1096,7 @@ class Glossary(object):
             with open(wordsArg) as fp:
                 words = fp.read().split('\n')
         else:
-            raise TypeError('Argumant wordsArg to function reverseDic is not valid!')
+            raise TypeError('Argumant wordsArg to function reverse is not valid!')
         autoSaveStep = opt['autoSaveStep']
         if not opt['savePath']:
             opt['savePath'] = self.getInfo('name')+'.txt'
