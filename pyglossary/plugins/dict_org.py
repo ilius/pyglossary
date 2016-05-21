@@ -149,10 +149,10 @@ def write(glos, filename, dictzip=True, install=True):## FIXME
         dictMark += lm
     indexFd.close()
     dictFd.close()
-    #for key in glos.infoKeys():
-    #    value = glos.getInfo(key)
-    #    if value!='':
-    #        pass ## FIXME
+    #for key, value in glos.iterInfo():
+    #    if not value:
+    #        continue
+    #    pass ## FIXME
     if dictzip:
         runDictzip(filename)
     if install:

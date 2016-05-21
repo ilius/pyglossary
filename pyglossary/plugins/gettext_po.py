@@ -74,8 +74,8 @@ def write(glos, filename):
     from polib import escape as po_escape
     fp = open(filename, 'w')
     fp.write('#\nmsgid ""\nmsgstr ""\n')
-    for inf in glos.infoKeys():
-        fp.write('"%s: %s\\n"\n'%(inf, glos.getInfo(inf)))
+    for key, value in glos.iterInfo():
+        fp.write('"%s: %s\\n"\n'%(key, value))
     for entry in glos:
         word = entry.getWord()
         defi = entry.getDefi()

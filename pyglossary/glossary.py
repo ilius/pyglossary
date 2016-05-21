@@ -237,7 +237,7 @@ class Glossary(object):
         return plugin
 
     def clear(self):
-        self.info = odict()
+        self._info = odict()
 
         self._data = []
 
@@ -256,7 +256,7 @@ class Glossary(object):
             info: OrderedDict instance, or None
                   no need to copy OrderedDict instance, we will not reference to it
         """
-        self.info = odict()
+        self._info = odict()
         if info:
             if not isinstance(info, (dict, odict)):
                 raise TypeError('Glossary: `info` has invalid type, dict or OrderedDict expected')
@@ -379,7 +379,7 @@ class Glossary(object):
     )
 
     def infoKeys(self):
-        return list(self.info.keys())
+        return list(self._info.keys())
 
     def getMostUsedDefiFormats(self, count=None):
         return Counter([
@@ -388,6 +388,8 @@ class Glossary(object):
         ]).most_common(count)
 
     #def formatInfoKeys(self, format):## FIXME
+
+    iterInfo = lambda self: self._info.items()
 
     def getInfo(self, key):
         key = str(key)
@@ -398,7 +400,7 @@ class Glossary(object):
             #log.warning('uknown info key: %s'%key)## FIXME
             pass
 
-        return self.info.get(key, '')## '' or None as defaul?## FIXME
+        return self._info.get(key, '')## '' or None as defaul?## FIXME
         
     def setInfo(self, key, value):
         ## FIXME
@@ -415,7 +417,7 @@ class Glossary(object):
         if origKey != key:
             log.debug('setInfo: %s -> %s'%(origKey, key))
 
-        self.info[key] = value
+        self._info[key] = value
 
     def getExtraInfos(self, excludeKeys):
         """
@@ -431,7 +433,7 @@ class Glossary(object):
                 pass
 
         extra = odict()
-        for key, value in self.info.items():
+        for key, value in self._info.items():
             if key in excludeKeySet:
                 continue
             extra[key] = value
@@ -830,7 +832,7 @@ class Glossary(object):
         fp = open(filename, 'w', encoding=encoding)
         fp.write(head)
         if writeInfo:
-            for key, desc in self.info.items():
+            for key, desc in self._info.items():
                 try:
                     key = outInfoKeysAliasDict[key]
                 except KeyError:

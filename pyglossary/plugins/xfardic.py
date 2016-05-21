@@ -69,10 +69,10 @@ def write_2(glos, filename):
     fp = XMLGenerator(xdbFp, 'utf-8')
     attrs = AttributesNSImpl({}, {})
     fp.startElement('xfardic', attrs)
-    for t in glos.info:
-        fp.startElement(str(t[0]), attrs)
-        fp.characters(str(t[1]))
-        fp.endElement(str(t[0]))
+    for key, value in glos.iterInfo():
+        fp.startElement(key, attrs)
+        fp.characters(value)
+        fp.endElement(key)
     fp.endElement('xfardic')
     fp.startElement('words', attrs)
     for entry in glos:

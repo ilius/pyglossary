@@ -739,8 +739,8 @@ class UI(tix.Frame, UIBase):
         #self.button_conv.set_sensitive(True)
         self.progress(1.0, 'Loading Comleted')
         log.info('time left = %3f seconds'%(time.time()-t0))
-        for x in self.glos.info:
-            log.info('%s="%s"'%(x[0], x[1]))
+        for key, value in self.glos.iterInfo():
+            log.info('%s="%s"'%(key, value))
         return True
     def convert(self):
         oPath = self.entry_o.get()

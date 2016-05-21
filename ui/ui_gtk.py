@@ -579,8 +579,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
             #self.inPath = inPath
             #self.progress(1.0, 'Loading Comleted')
             log.debug('running time of read: %3f seconds'%(time.time()-t0))
-            for x in self.glos.info:
-                log.info('%s="%s"'%(x[0], x[1]))
+            for key, value in self.glos.iterInfo():
+                log.info('%s="%s"'%(key, value))
 
             while gtk.events_pending():
                 gtk.main_iteration_do(False)

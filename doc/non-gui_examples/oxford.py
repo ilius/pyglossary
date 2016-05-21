@@ -1,5 +1,5 @@
 def takePhonetic_oxford_gb(glos):
-    phonGlos = Glossary(glos.info[:]) ## phonetic glossary
+    phonGlos = Glossary() ## phonetic glossary
     phonGlos.setInfo('name', glos.getInfo('name') + '_phonetic')
     for entry in glos:
         word = entry.getWord()
