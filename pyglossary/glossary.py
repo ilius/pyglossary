@@ -261,6 +261,8 @@ class Glossary(object):
         """
         self.info = odict()
         if info:
+            if not isinstance(info, (dict, odict)):
+                raise TypeError('Glossary: `info` has invalid type, dict or OrderedDict expected')
             for key, value in info.items():
                 self.setInfo(key, value)
 
