@@ -884,6 +884,69 @@ class Glossary(object):
             '.dict',
         )
 
+    def iterSqlLines(
+        self,
+        filename='',
+        infoKeys=None,
+        addExtraInfo=True,
+        newline='\\n',
+        transaction=False,
+    ):
+        newline = '<br>'
+        infoDefLine = 'CREATE TABLE dbinfo ('
+        infoValues = []
+        #######################
+        if not infoKeys:
+            infoKeys = [
+                'dbname',
+                'author',
+                'version',
+                'direction',
+                'origLang',
+                'destLang',
+                'license',
+                'category',
+                'description',
+            ]
+        ######################
+        for key in infoKeys:
+            value = self.getInfo(key)
+            value = value.replace('\'', '\'\'')\
+                               .replace('\x00', '')\
+                               .replace('\r', '')\
+                               .replace('\n', newline)
+            infoValues.append('\'' + value + '\'')
+            infoDefLine += '%s char(%d), '%(key, len(value))
+        ######################
+        infoDefLine = infoDefLine[:-2] + ');'
+        yield infoDefLine
+
+        if addExtraInfo:
+            yield 'CREATE TABLE dbinfo_extra (\'id\' INTEGER PRIMARY KEY NOT NULL, \'name\' TEXT UNIQUE, \'value\' TEXT);'
+
+        yield 'CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, \'w\' TEXT, \'m\' TEXT);'
+        if transaction:
+            yield 'BEGIN TRANSACTION;';
+        yield 'INSERT INTO dbinfo VALUES(%s);'%(','.join(infoValues))
+
+        if addExtraInfo:
+            extraInfo = self.getExtraInfos(infoKeys)
+            for index, (key, value) in enumerate(extraInfo.items()):
+                yield 'INSERT INTO dbinfo_extra VALUES(%d, \'%s\', \'%s\');'%(
+                    index+1,
+                    key.replace('\'', '\'\''),
+                    value.replace('\'', '\'\''),
+                )
+
+        for i, entry in enumerate(self):
+            word = entry.getWord()
+            defi = entry.getDefi()
+            word = word.replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
+            defi = defi.replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
+            yield 'INSERT INTO word VALUES(%d, \'%s\', \'%s\');'%(i+1, word, defi)
+        if transaction:
+            yield 'END TRANSACTION;'
+        yield 'CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);'
 
     ###################################################################
 
@@ -1208,70 +1271,6 @@ class Glossary(object):
         ui.progressEnd()
         return True
 
-
-    def iterSqlLines(
-        self,
-        filename='',
-        infoKeys=None,
-        addExtraInfo=True,
-        newline='\\n',
-        transaction=False,
-    ):
-        newline = '<br>'
-        infoDefLine = 'CREATE TABLE dbinfo ('
-        infoValues = []
-        #######################
-        if not infoKeys:
-            infoKeys = [
-                'dbname',
-                'author',
-                'version',
-                'direction',
-                'origLang',
-                'destLang',
-                'license',
-                'category',
-                'description',
-            ]
-        ######################
-        for key in infoKeys:
-            value = self.getInfo(key)
-            value = value.replace('\'', '\'\'')\
-                               .replace('\x00', '')\
-                               .replace('\r', '')\
-                               .replace('\n', newline)
-            infoValues.append('\'' + value + '\'')
-            infoDefLine += '%s char(%d), '%(key, len(value))
-        ######################
-        infoDefLine = infoDefLine[:-2] + ');'
-        yield infoDefLine
-
-        if addExtraInfo:
-            yield 'CREATE TABLE dbinfo_extra (\'id\' INTEGER PRIMARY KEY NOT NULL, \'name\' TEXT UNIQUE, \'value\' TEXT);'
-
-        yield 'CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, \'w\' TEXT, \'m\' TEXT);'
-        if transaction:
-            yield 'BEGIN TRANSACTION;';
-        yield 'INSERT INTO dbinfo VALUES(%s);'%(','.join(infoValues))
-
-        if addExtraInfo:
-            extraInfo = self.getExtraInfos(infoKeys)
-            for index, (key, value) in enumerate(extraInfo.items()):
-                yield 'INSERT INTO dbinfo_extra VALUES(%d, \'%s\', \'%s\');'%(
-                    index+1,
-                    key.replace('\'', '\'\''),
-                    value.replace('\'', '\'\''),
-                )
-
-        for i, entry in enumerate(self):
-            word = entry.getWord()
-            defi = entry.getDefi()
-            word = word.replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
-            defi = defi.replace('\'', '\'\'').replace('\r', '').replace('\n', newline)
-            yield 'INSERT INTO word VALUES(%d, \'%s\', \'%s\');'%(i+1, word, defi)
-        if transaction:
-            yield 'END TRANSACTION;'
-        yield 'CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);'
 
 
 
