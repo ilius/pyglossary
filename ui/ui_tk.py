@@ -19,6 +19,7 @@
 
 from pyglossary.core import homeDir
 from pyglossary.glossary import *
+from pyglossary.text_utils import urlToPath
 from .base import *
 from os.path import join
 import logging
