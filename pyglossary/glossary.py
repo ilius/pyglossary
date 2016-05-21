@@ -881,8 +881,6 @@ class Glossary(object):
 
     ###################################################################
 
-    takeWords = lambda self: [item[0] for item in self._data]
-
 
     def takeOutputWords(self, opt=None):
         if opt is None:
@@ -891,10 +889,6 @@ class Glossary(object):
         words = sorted(set(words))
         return words
 
-    getInputList = lambda self: [x[0] for x in self._data]
-
-    getOutputList = lambda self: [x[1] for x in self._data]
-        
 
     def attach(self, other):# only simplicity attach two glossaries (or more that others be as a list).
     # no ordering. Use when you split input words to two(or many) parts after ordering.
