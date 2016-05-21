@@ -462,8 +462,7 @@ class Glossary(object):
         self.updateEntryFilters()
         ###
         delFile=False
-        ext = splitext(filename)[1]
-        ext = ext.lower()
+        ext = get_ext(filename)
         if ext in ('.gz', '.bz2', '.zip'):
             if ext=='.bz2':
                 output, error = subprocess.Popen(
@@ -477,7 +476,7 @@ class Glossary(object):
                     return False
                 else:
                     filename = filename[:-4]
-                    ext = splitext(filename)[1]
+                    ext = get_ext(filename)
                     delFile = True
             elif ext=='.gz':
                 output, error = subprocess.Popen(
@@ -492,7 +491,7 @@ class Glossary(object):
                 else:
                     filename = filename[:-3]
                     open(filename, 'w').write(output)
-                    ext = splitext(filename)[1]
+                    ext = get_ext(filename)
                     delFile = True
             elif ext=='.zip':
                 output, error = subprocess.Popen(
@@ -504,7 +503,7 @@ class Glossary(object):
                     return False
                 else:
                     filename = filename[:-4]
-                    ext = splitext(filename)[1]
+                    ext = get_ext(filename)
                     delFile = True
         if not format:
             for key in Glossary.formatsExt.keys():
@@ -526,7 +525,7 @@ class Glossary(object):
             filenameNoExt = filename
 
         self.filename = filenameNoExt
-        if self.getInfo('name') == '':
+        if not self.getInfo('name'):
             self.setInfo('name', split(filename)[1])
         
         try:
@@ -656,7 +655,7 @@ class Glossary(object):
         if fext in ('.gz', '.bz2', '.zip'):
             archiveType = fext[1:]
             filename = filenameNoExt
-            fext = splitext(filename)[1].lower()
+            fext = get_ext(filename)
         else:
             archiveType = ''
         del filenameNoExt
@@ -798,6 +797,8 @@ class Glossary(object):
                 ).communicate()
                 if error:
                     log.error('%s\nfail to compress file "%s"'%(error, filename))
+
+    #################################################################################
 
 
     def writeTxt(
