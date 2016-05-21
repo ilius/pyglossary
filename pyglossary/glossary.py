@@ -22,11 +22,28 @@ from . import VERSION
 
 homePage = 'http://github.com/ilius/pyglossary'
 
-import os, sys, platform, time, subprocess, shutil, re
-from os.path import split, join, splitext, isdir, dirname, basename
 import logging
+log = logging.getLogger('root')
+
+import sys
+
+import os
+from os.path import (
+    split,
+    join,
+    splitext,
+    isdir,
+    dirname,
+    basename,
+)
+
+import platform
+import time
+import subprocess
+import shutil
+import re
+
 import pkgutil
-import string
 from collections import Counter
 from collections import OrderedDict as odict
 
@@ -47,20 +64,18 @@ from .text_utils import (
 )
 from .os_utils import indir
 
-import warnings
-warnings.resetwarnings() ## ??????
+#import warnings
+#warnings.resetwarnings()## what for? FIXME
 
-log = logging.getLogger('root')
 
-psys = platform.system()
-
+sysName = platform.system()
 
 if os.sep=='/': ## Operating system is Unix-Like
     homeDir = os.getenv('HOME')
     user = os.getenv('USER')
     tmpDir = '/tmp'
     ## os.name == 'posix' ## ????
-    if psys=='Darwin':## MacOS X
+    if sysName=='Darwin':## MacOS X
         confPath = homeDir + '/Library/Preferences/PyGlossary' ## OR '/Library/PyGlossary'
         ## os.environ['OSTYPE'] == 'darwin10.0'
         ## os.environ['MACHTYPE'] == 'x86_64-apple-darwin10.0'
