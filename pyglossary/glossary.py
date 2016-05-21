@@ -280,7 +280,7 @@ class Glossary(object):
         self.resPath = resPath
         self._defaultDefiFormat = 'm'
 
-        self.entryFilters = []
+        self._entryFilters = []
         self._iter = None
 
         self._sortKey = None
@@ -289,22 +289,22 @@ class Glossary(object):
         self._paused = False
 
     def updateEntryFilters(self):
-        self.entryFilters = []
+        self._entryFilters = []
         pref = getattr(self.ui, 'pref', {})
 
-        self.entryFilters.append(StripEntryFilter(self))
-        self.entryFilters.append(NonEmptyWordFilter(self))
+        self._entryFilters.append(StripEntryFilter(self))
+        self._entryFilters.append(NonEmptyWordFilter(self))
 
         if pref.get('utf8Check', True):
-            self.entryFilters.append(FixUnicodeFilter(self))
+            self._entryFilters.append(FixUnicodeFilter(self))
 
         if pref.get('lower', True):
-            self.entryFilters.append(LowerWordFilter(self))
+            self._entryFilters.append(LowerWordFilter(self))
 
-        self.entryFilters.append(LangEntryFilter(self))
-        self.entryFilters.append(CleanEntryFilter(self))
-        self.entryFilters.append(NonEmptyWordFilter(self))
-        self.entryFilters.append(NonEmptyDefiFilter(self))
+        self._entryFilters.append(LangEntryFilter(self))
+        self._entryFilters.append(CleanEntryFilter(self))
+        self._entryFilters.append(NonEmptyWordFilter(self))
+        self._entryFilters.append(NonEmptyDefiFilter(self))
 
 
     __str__ = lambda self: 'glossary.Glossary'
@@ -335,7 +335,7 @@ class Glossary(object):
         for entry in gen:
             if not entry:
                 continue
-            for entryFilter in self.entryFilters:
+            for entryFilter in self._entryFilters:
                 entry = entryFilter.run(entry)
                 if not entry:
                     break
