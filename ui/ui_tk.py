@@ -90,11 +90,23 @@ tk.CallWrapper.__call__ = CallWrapper__call__
 class ProgressBar(tix.Frame):
     #### This comes from John Grayson's book "Python and Tkinter programming"
     #### Edited by Saeed Rasooli
-    def __init__(self, master=None, orientation='horizontal',
-            min_=0, max_=100, width=100, height=18,
-            appearance='sunken', fillColor='blue', background='gray',
-            labelColor='yellow', labelFont='Verdana', labelFormat='%d%%',
-            value=0, bd=2):
+    def __init__(
+        self,
+        master=None,
+        orientation='horizontal',
+        min_=0,
+        max_=100,
+        width=100,
+        height=18,
+        appearance='sunken',
+        fillColor='blue',
+        background='gray',
+        labelColor='yellow',
+        labelFont='Verdana',
+        labelFormat='%d%%',
+        value=0,
+        bd=2,
+    ):
         # preserve various values
         self.master = master
         self.orientation = orientation
@@ -182,7 +194,11 @@ class ProgressBar(tix.Frame):
 
 class UI(tix.Frame, UIBase):
     def __init__(self, path='', **options):
-        #global sys
+        self.running = False
+        self.glos = Glossary(ui=self)
+        self.pref = {}
+        self.pref_load(**options)
+        #############################################
         master = tix.Tk()
         tix.Frame.__init__(self, master)
         master.title('PyGlossary (Tkinter)')
@@ -263,11 +279,6 @@ class UI(tix.Frame, UIBase):
         button.pack(side='left')
         ###
         frame.pack(fill='x')
-        ######################################
-        self.running = False
-        self.glos = Glossary(ui=self)
-        self.pref = {}
-        self.pref_load(**options)
         ######################
         frame = tix.Frame(convertFrame)
         ##
@@ -595,7 +606,6 @@ class UI(tix.Frame, UIBase):
         closeB.pack(side='right')
         frame.pack(fill='x')
     def quit(self):
-        #sys.exit(0)
         self.master.destroy()
     def apply_clicked(self):
         if self.load():
