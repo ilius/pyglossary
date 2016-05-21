@@ -882,12 +882,15 @@ class Glossary(object):
     ###################################################################
 
 
-    def takeOutputWords(self, opt=None):
-        if opt is None:
-            opt = {}
-        words = takeStrWords(' '.join([item[1] for item in self._data]), opt)
-        words = sorted(set(words))
-        return words
+    def takeOutputWords(self, minWordLen=3):
+        wordPattern = re.compile('[\w]{%d,}'%minWordLen, re.U)
+        words = set()
+        for entry in self:
+            words.update(re.findall(
+                wordPattern,
+                entry.getDefi(),
+            ))
+        return sorted(words)
 
 
     def attach(self, other):# only simplicity attach two glossaries (or more that others be as a list).
