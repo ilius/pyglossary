@@ -511,15 +511,15 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         self.vbox.show_all()
         ########
         self.status('Select input file')
-    def run(self, editPath=None, read_options=None):
-        if read_options is None:
-            read_options = {}
+    def run(self, editPath=None, readOptions=None):
+        if readOptions is None:
+            readOptions = {}
         #if editPath:
             #self.notebook.set_current_page(3)
             #log.info('Opening file "%s" for edit. please wait...'%editPath)
             #while gtk.events_pending():
             #    gtk.main_iteration_do(False)
-            #self.dbe_open(editPath, **read_options)
+            #self.dbe_open(editPath, **readOptions)
         gtk.Dialog.present(self)
         gtk.main()
     def onDeleteEvent(self, widget, event):

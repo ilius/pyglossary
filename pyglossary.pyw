@@ -92,24 +92,24 @@ parser.add_argument(
 parser.add_argument(
     '-r',
     '--read-options',
-    dest='read_options',
+    dest='readOptions',
     default='',
 )
 parser.add_argument(
     '-w',
     '--write-options',
-    dest='write_options',
+    dest='writeOptions',
     default='',
 )
 parser.add_argument(
     #'-',
     '--read-format',
-    dest='read_format',
+    dest='readFormat',
 )
 parser.add_argument(
     #'-',
     '--write-format',
-    dest='write_format',
+    dest='writeFormat',
     action='store',
 )
 parser.add_argument(
@@ -342,11 +342,11 @@ if os.sep != '/':
 
 
 ## only used in ui_cmd for now
-read_options = parseFormatOptionsStr(args.read_options)
-write_options = parseFormatOptionsStr(args.write_options)
+readOptions = parseFormatOptionsStr(args.readOptions)
+writeOptions = parseFormatOptionsStr(args.writeOptions)
 
 if args.direct != None:
-    read_options['direct'] = args.direct
+    readOptions['direct'] = args.direct
 
 
 """
@@ -384,7 +384,7 @@ for param in ui_options_params:
 for param in common_write_params:
     value = getattr(args, param, None)
     if value is not None:
-        write_options[param] = value
+        writeOptions[param] = value
 
 log.pretty(ui_options, 'ui_options =')
 
@@ -424,10 +424,10 @@ if ui_type == 'cmd':
     sys.exit(ui_cmd.UI(**ui_options).run(
         args.ipath,
         opath=args.opath,
-        read_format=args.read_format,
-        write_format=args.write_format,
-        read_options=read_options,
-        write_options=write_options,
+        readFormat=args.readFormat,
+        writeFormat=args.writeFormat,
+        readOptions=readOptions,
+        writeOptions=writeOptions,
         reverse=args.reverse,
     ))
 if ui_type=='auto':
@@ -446,7 +446,7 @@ else:
     ui_module = getattr(__import__('ui.ui_%s'%ui_type), 'ui_%s'%ui_type)
 sys.exit(ui_module.UI(**ui_options).run(
     editPath=args.ipath,
-    read_options=read_options,
+    readOptions=readOptions,
 ))
 ## don't forget to append "**options" at every UI.__init__ arguments
 #except Exception as e:

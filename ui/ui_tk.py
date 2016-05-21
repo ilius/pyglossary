@@ -770,10 +770,10 @@ class UI(tix.Frame, UIBase):
         log.info('time left = %3f seconds'%(time.time()-t0))
         self.running = False
         return True
-    def run(self, editPath=None, read_options=None):
-        if read_options is None:
-            read_options = {}
-        ## editPath and read_options are for DB Editor, which is not implemented yet
+    def run(self, editPath=None, readOptions=None):
+        if readOptions is None:
+            readOptions = {}
+        ## editPath and readOptions are for DB Editor, which is not implemented yet
         self.mainloop()
     def progress(self, rat, text=''):
         self.pbar.updateProgress(rat*100, None, text)

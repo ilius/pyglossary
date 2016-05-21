@@ -193,26 +193,26 @@ class UI(UIBase):
         log.info('Reversing completed.')
     def yesNoQuestion(self, msg, yesDefault=True):## FIXME
         return True
-    def run(self, ipath, opath='', read_format='', write_format='',
-                  read_options={}, write_options={}, reverse=False):
-        if read_format:
-            #read_format = read_format.capitalize()
-            if not read_format in Glossary.readFormats:
-                log.error('invalid read format %s'%read_format)
-        if write_format:
-            #write_format = write_format.capitalize()
-            if not write_format in Glossary.writeFormats:
-                log.error('invalid write format %s'%write_format)
+    def run(self, ipath, opath='', readFormat='', writeFormat='',
+                  readOptions={}, writeOptions={}, reverse=False):
+        if readFormat:
+            #readFormat = readFormat.capitalize()
+            if not readFormat in Glossary.readFormats:
+                log.error('invalid read format %s'%readFormat)
+        if writeFormat:
+            #writeFormat = writeFormat.capitalize()
+            if not writeFormat in Glossary.writeFormats:
+                log.error('invalid write format %s'%writeFormat)
                 log.error('try: %s --help'%COMMAND)
                 return 1
         if not opath:
             if reverse:
                 opath = os.path.splitext(ipath)[0] + '-reversed.txt'
-            elif write_format:
+            elif writeFormat:
                 try:
-                    ext = Glossary.formatsExt[write_format][0]
+                    ext = Glossary.formatsExt[writeFormat][0]
                 except (KeyError, IndexError):
-                    log.error('invalid write format %s'%write_format)
+                    log.error('invalid write format %s'%writeFormat)
                     log.error('try: %s --help'%COMMAND)
                     return 1
                 else:
@@ -223,7 +223,7 @@ class UI(UIBase):
                 return 1
         g = Glossary(ui=self)
         log.info('Reading file "%s"'%ipath)
-        if not g.read(ipath, format=read_format, **read_options):
+        if not g.read(ipath, format=readFormat, **readOptions):
             log.error('reading input file was failed!')
             return 1
         ## When glossary reader uses progressbar, progressbar must be rebuilded:
@@ -238,7 +238,7 @@ class UI(UIBase):
         else:
             log.info('Writing to file "%s"'%opath)
             self.setText('Writing: ')
-            if not g.write(opath, format=write_format, **write_options):
+            if not g.write(opath, format=writeFormat, **writeOptions):
                 log.error('writing output file was failed!')
                 return 1
             log.info('done')
