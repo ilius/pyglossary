@@ -246,7 +246,7 @@ class Glossary(object):
 
         self._iter = None
 
-        self.filename = ''
+        self._filename = ''
         self.resPath = ''
         self._defaultDefiFormat = 'm'
 
@@ -276,7 +276,7 @@ class Glossary(object):
                 'x': xdxf
         '''
         self.ui = ui
-        self.filename = filename
+        self._filename = filename
         self.resPath = resPath
         self._defaultDefiFormat = 'm'
 
@@ -531,7 +531,7 @@ class Glossary(object):
         if not ext.lower() in self.formatsExt[format]:
             filenameNoExt = filename
 
-        self.filename = filenameNoExt
+        self._filename = filenameNoExt
         if not self.getInfo('name'):
             self.setInfo('name', split(filename)[1])
         
@@ -652,7 +652,7 @@ class Glossary(object):
                 takes a word as argument, which is str or list (with alternates)
         """
         if not filename:
-            filename = self.filename
+            filename = self._filename
         if not filename:
             log.error('Invalid filename %r'%filename)
             return False
@@ -687,13 +687,13 @@ class Glossary(object):
                     if filename==fmt:
                         format = filename
                         ext = extList[0]
-                        filename = self.filename + ext
+                        filename = self._filename + ext
                         break
                     for e in extList:
                         if filename==e[1:] or filename==e:
                             format = fmt
                             ext = e
-                            filename = self.filename + ext
+                            filename = self._filename + ext
                             break
                     if format:
                         break
@@ -707,7 +707,7 @@ class Glossary(object):
             return False
         if isdir(filename):
             # write to directory, use filename (not filepath) of input file.
-            filename = join(filename, basename(self.filename)+ext)
+            filename = join(filename, basename(self._filename)+ext)
         validOptionKeys = self.formatsWriteOptions[format]
         for key in list(options.keys()):
             if not key in validOptionKeys:
@@ -824,7 +824,7 @@ class Glossary(object):
         if rplList is None:
             rplList = []
         if not filename:
-            filename = self.filename + ext
+            filename = self._filename + ext
         if not outInfoKeysAliasDict:
             outInfoKeysAliasDict = {}
 
