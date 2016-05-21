@@ -15,7 +15,7 @@ info_keys = (
 )
 
 
-def readSqlite(glos, filename=''):
+def readSqlite(glos, filename):
     engine = create_engine('sqlite:///' + filename)
     connection = engine.connect()
     ##########
@@ -62,10 +62,7 @@ class Info(object):
 
 
 
-def writeSqlite(glos, filename=''):
-    if filename=='':
-        #filename=self.getInfo('filename')+'.m2'
-        filename=glos.filename + '.m2'
+def writeSqlite(glos, filename):
     if os.path.exists(filename):
         os.remove(filename)
     engine = create_engine('sqlite:///' + filename)
