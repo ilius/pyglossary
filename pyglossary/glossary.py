@@ -439,6 +439,12 @@ class Glossary(object):
 
         return extra
 
+    def getPref(self, name, default):
+        if self.ui:
+            return self.ui.pref.get(name, default)
+        else:
+            return default
+
 
     def read(
         self,
@@ -1268,11 +1274,6 @@ class Glossary(object):
         yield 'CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);'
 
 
-    def getPref(self, name, default):
-        if self.ui:
-            return self.ui.pref.get(name, default)
-        else:
-            return default
 
 
 
