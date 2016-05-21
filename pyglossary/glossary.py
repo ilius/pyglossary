@@ -40,7 +40,6 @@ from os.path import (
 import platform
 import time
 import subprocess
-import shutil
 import re
 
 import pkgutil
