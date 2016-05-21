@@ -31,3 +31,28 @@ class indir(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         os.chdir(self.oldpwd)
         self.oldpwd = None
+
+
+def my_url_show(link):
+    import subprocess
+    for path in (
+        '/usr/bin/gnome-www-browser',
+        '/usr/bin/firefox',
+        '/usr/bin/iceweasel',
+        '/usr/bin/konqueror',
+    ):
+        if os.path.isfile(path):
+            subprocess.call([path, link])
+            break
+"""
+try:
+    from gnome import url_show
+except:
+    try:
+        from gnomevfs import url_show
+    except:
+        url_show = my_url_show
+"""
+def click_website(widget, link):
+    my_url_show(link)
+

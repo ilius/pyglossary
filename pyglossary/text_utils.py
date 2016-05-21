@@ -153,28 +153,7 @@ def urlToPath(url):
 replacePostSpaceChar = lambda st, ch: st.replace(' '+ch, ch).replace(ch, ch+' ').replace(ch+'  ', ch+' ')
 
 
-def my_url_show(link):
-    import subprocess
-    for path in (
-        '/usr/bin/gnome-www-browser',
-        '/usr/bin/firefox',
-        '/usr/bin/iceweasel',
-        '/usr/bin/konqueror',
-    ):
-        if os.path.isfile(path):
-            subprocess.call([path, link])
-            break
-"""
-try:
-    from gnome import url_show
-except:
-    try:
-        from gnomevfs import url_show
-    except:
-        url_show = my_url_show
-"""
-def click_website(widget, link):
-    my_url_show(link)
+
 
 def runDictzip(filename):
     import subprocess

@@ -25,7 +25,8 @@ from os.path import join, isfile, isabs, splitext
 import logging
 import traceback
 
-from pyglossary.text_utils import urlToPath, click_website, startRed, endFormat
+from pyglossary.text_utils import urlToPath, startRed, endFormat
+from pyglossary.os_utils import click_website
 from pyglossary.glossary import *
 from .base import *
 from pyglossary import core
