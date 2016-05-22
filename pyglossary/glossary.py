@@ -149,6 +149,7 @@ class Glossary(object):
         sys.path.append(directory)
         for _, pluginName, _ in pkgutil.iter_modules([directory]):
             cls.loadPlugin(pluginName)
+        sys.path.pop()
 
     @classmethod
     def loadPlugin(cls, pluginName):
