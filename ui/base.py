@@ -17,10 +17,15 @@
 ## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from os.path import join
+from os.path import join, isfile
 
-from .paths import srcDir, rootDir
+from pyglossary.core import (
+    rootConfJsonFile,
+    confJsonFile,
+    rootDir,
+)
 from pyglossary.glossary import *
+from pyglossary.json_utils import jsonToData
 
 def fread(path):
     with open(path) as fp:
@@ -33,13 +38,8 @@ authors = fread(join(rootDir, 'AUTHORS')).split('\n')
 
 
 class UIBase(object):
-    prefSavePath = [
-        confPath,
-        join(srcDir, 'rc.py')
-    ]
     prefKeys = (
         'noProgressBar',## command line
-        'save',
         'ui_autoSetFormat',
         'ui_autoSetOutputFileName',
         'lower',
@@ -54,27 +54,27 @@ class UIBase(object):
         'reverse_includeDefs',
     )
     def pref_load(self, **options):
-        rc_code = fread(join(srcDir, 'rc.py'))
-        data = {}
-        exec(
-            rc_code,
-            None,
-            data,
-        )
-        if data['save']==0 and os.path.exists(self.prefSavePath[0]): # save is defined in rc.py
+        data = jsonToData(fread(rootConfJsonFile))
+        if isfile(confJsonFile):
             try:
-                fp = open(self.prefSavePath[0])
-            except:
-                log.exception('error while loading save file %s'%self.prefSavePath[0])
+                userData = jsonToData(fread(confJsonFile))
+            except Exception:
+                log.exception('error while loading user config file "%s"'%confJsonFile)
             else:
-                exec(fp.read(), None, data)
-            finally:
-                fp.close()
+                data.update(userData)
+
         for key in self.prefKeys:
-            self.pref[key] = data[key]
+            try:
+                self.pref[key] = data.pop(key)
+            except KeyError:
+                pass
+        for key, value in data.items():
+            log.warning('unkown config key "%s"'%key)
+
         for key, value in options.items():
             if key in self.prefKeys:
                 self.pref[key] = value
+        
         return True
 
 

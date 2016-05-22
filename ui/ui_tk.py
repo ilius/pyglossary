@@ -17,6 +17,7 @@
 ## GNU General Public License for more details.
 
 
+from pyglossary.core import homeDir
 from pyglossary.glossary import *
 from pyglossary.text_utils import toStr
 from .base import *
@@ -190,7 +191,7 @@ class UI(tix.Frame, UIBase):
         #icon = Tix.BitmapImage(file=xbmLogo)
         #master.wm_iconbitmap(icon)
         #master.wm_iconbitmap(xbmLogo)
-        #bit = Tix.PhotoImage(file=join(srcDir, 'pyglossary.gif'), format='gif')
+        #bit = Tix.PhotoImage(file=join(uiDir, 'pyglossary.gif'), format='gif')
         #lb = Tix.Label(None,image=bit)
         #lb.grid()
         #master.iconwindow(icon, 'pyglossary')

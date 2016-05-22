@@ -1,13 +1,13 @@
 from os.path import realpath, dirname, join, isdir
 import sys
 
-srcDir = ''
+uiDir = ''
 
 if hasattr(sys, 'frozen'):
    rootDir = dirname(sys.executable)
-   srcDir = join(rootDir, 'ui')
+   uiDir = join(rootDir, 'ui')
 else:
-   srcDir = dirname(realpath(__file__))
-   rootDir = dirname(srcDir)
+   uiDir = dirname(realpath(__file__))
+   rootDir = dirname(uiDir)
 
 resDir = join(rootDir, 'res')

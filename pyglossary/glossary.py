@@ -37,7 +37,6 @@ from os.path import (
     basename,
 )
 
-import platform
 import time
 import subprocess
 import re
@@ -51,6 +50,7 @@ file = io.BufferedReader
 
 from .flags import *
 from . import core
+from .core import userPluginsDir
 from .entry import Entry
 from .entry_filters import *
 from .sort_stream import hsortStreamList
@@ -64,28 +64,6 @@ from .os_utils import indir
 #warnings.resetwarnings()## what for? FIXME
 
 
-sysName = platform.system()
-
-if os.sep=='/': ## Operating system is Unix-Like
-    homeDir = os.getenv('HOME')
-    user = os.getenv('USER')
-    tmpDir = '/tmp'
-    ## os.name == 'posix' ## ????
-    if sysName=='Darwin':## MacOS X
-        confPath = homeDir + '/Library/Preferences/PyGlossary' ## OR '/Library/PyGlossary'
-        ## os.environ['OSTYPE'] == 'darwin10.0'
-        ## os.environ['MACHTYPE'] == 'x86_64-apple-darwin10.0'
-        ## platform.dist() == ('', '', '')
-        ## platform.release() == '10.3.0'
-    else:## GNU/Linux, ...
-        confPath = homeDir + '/.pyglossary'
-elif os.sep=='\\': ## Operating system is Windows
-    homeDir = os.getenv('HOMEDRIVE') + os.getenv('HOMEPATH')
-    user = os.getenv('USERNAME')
-    tmpDir = os.getenv('TEMP')
-    confPath = os.getenv('APPDATA') + '\\' + 'PyGlossary'
-else:
-    raise RuntimeError('Unknown path seperator(os.sep=="%s"), unknown operating system!'%os.sep)
 
 get_ext = lambda path: splitext(path)[1].lower()
 
@@ -1180,3 +1158,5 @@ class Glossary(object):
 
 
 Glossary.loadPlugins(join(dirname(__file__), 'plugins'))
+Glossary.loadPlugins(userPluginsDir)
+

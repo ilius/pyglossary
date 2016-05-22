@@ -279,6 +279,7 @@ log.addHandler(
     StdLogHandler(noColor=args.noColor),
 )
 
+core.checkCreateConfDir()
 
 # with the logger setted up, we can import other pyglossary modules, so they
 # can do some loggging in right way.
@@ -296,7 +297,6 @@ sys.excepthook = my_excepthook
 
 ##############################
 
-from pyglossary.glossary import confPath
 from ui.ui_cmd import COMMAND, help, parseFormatOptionsStr
 
 ##############################

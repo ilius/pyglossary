@@ -1,6 +1,6 @@
 from . import *
 from os.path import isabs, join
-from ui.paths import *
+from pyglossary.core import resDir
 
 def set_tooltip(widget, text):
     try:
