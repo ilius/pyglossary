@@ -33,18 +33,20 @@ Supported formats
 | AppleDict Source                  | .xml          |       | X      |
 | Babylon                           | .bgl          | X     |        |
 | Babylon Source                    | .gls          |       | X      |
-| DictionaryForMIDs                 |               |       | X      |
+| CSV                               | .csv          | X     | X      |
+| DictionaryForMIDs                 |               | X     | X      |
 | DICTD dictionary server           | .index        | X     | X      |
 | Editable Linked List of Entries   | .edlin        | X     | X      |
 | FreeDict                          | .tei          |       | X      |
 | Gettext Source                    | .po           | X     | X      |
-| SQLite 3                          | .sqlite       | X     | X      |
-| Octopus MDic                      | .mdx          | X     |        |
-| Octopus MDic Source               | .txt          | X     | X      |
+| Lingoes Source (LDF)              | .ldf          | X     | X      |
+| Octopus MDict                     | .mdx          | X     |        |
+| Octopus MDict Source              | .txt          | X     | X      |
 | Omnidic                           |               | X     | X      |
 | Sdictionary Binary                | .dct          | X     |        |
 | Sdictionary Source                | .sdct         |       | X      |
 | SQL                               | .sql          |       | X      |
+| SQLite 3                          | .sqlite       | X     | X      |
 | StarDict                          | .ifo          | X     | X      |
 | Tabfile                           | .txt, .dic    | X     | X      |
 | TreeDict                          |               |       | X      |
