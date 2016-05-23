@@ -28,6 +28,7 @@ extentions = ['.edlin']
 readOptions = []
 writeOptions = [
     'encoding',## str
+    'havePrevLink',## bool
 ]
 
 
@@ -49,6 +50,7 @@ class Reader(object):
     def _clear(self):
         self._filename = ''
         self._encoding = 'utf-8'
+        self._havePrevLink = True
         self._len = None
         self._pos = -1
         self._rootPath = None
@@ -69,6 +71,7 @@ class Reader(object):
             infoJson = infoFp.read()
             info = jsonToOrderedData(infoJson)
             self._len = info.pop('wordCount')
+            self._havePrevLink = info.pop('havePrevLink')
             self._nextPath = self._rootPath = info.pop('root')
             for key, value in info.items():
                 self._glos.setInfo(key, value)
@@ -93,7 +96,11 @@ class Reader(object):
         self._pos += 1
         ###
         with open(join(self._filename, self._nextPath), 'r', encoding=self._encoding) as fp:
-            self._nextPath = fp.readline().rstrip()
+            header = fp.readline().rstrip()
+            if self._havePrevLink:
+                self._prevPath, self._nextPath = header.split(' ')
+            else:
+                self._nextPath = header
             word = fp.readline().rstrip()
             defi = fp.read().rstrip()
         ###
@@ -123,11 +130,12 @@ class Writer(object):
         self._hashSet = set()
         #self._len = None
         #self._pos = -1
-    def open(self, filename, encoding='utf-8'):
+    def open(self, filename, encoding='utf-8', havePrevLink=True):
         if exists(filename):
             raise ValueError('directory "%s" already exists'%filename)
         self._filename = filename
         self._encoding = encoding
+        self._havePrevLink = havePrevLink
 
     hashToPath = lambda self, h: h[:2] + '/' + h[2:]
     def getEntryHash(self, entry):
@@ -147,12 +155,18 @@ class Writer(object):
                 self._hashSet.add(tmp_hash)
                 return tmp_hash
             index += 1
-    def saveEntry(self, thisEntry, thisHash, nextHash):
+    def saveEntry(self, thisEntry, thisHash, prevHash, nextHash):
         dpath = join(self._filename, thisHash[:2])
         makeDir(dpath)
         with open(join(dpath, thisHash[2:]), 'w', encoding=self._encoding) as fp:
+            nextPath = self.hashToPath(nextHash) if nextHash else 'END'
+            if self._havePrevLink:
+                prevPath = self.hashToPath(prevHash) if prevHash else 'START'
+                header = prevPath + ' ' + nextPath
+            else:
+                header = nextPath
             fp.write('\n'.join([
-                self.hashToPath(nextHash) if nextHash else 'END',
+                header,
                 thisEntry.getWord(),
                 thisEntry.getDefi(),
             ]))
@@ -170,24 +184,27 @@ class Writer(object):
         os.makedirs(self._filename)
         count = 1
         rootHash = thisHash = self.getEntryHash(thisEntry)
+        prevHash = None
         for nextEntry in glosIter:
             nextHash = self.getEntryHash(nextEntry)
-            self.saveEntry(thisEntry, thisHash, nextHash)
+            self.saveEntry(thisEntry, thisHash, prevHash, nextHash)
             thisEntry = nextEntry
-            thisHash = nextHash
+            prevHash, thisHash = thisHash, nextHash
             count += 1
-        self.saveEntry(thisEntry, thisHash, None)
+        self.saveEntry(thisEntry, thisHash, prevHash, None)
         
         with open(join(self._filename, 'info.json'), 'w', encoding=self._encoding) as fp:
             info = odict()
             info['name'] = self._glos.getInfo('name')
             info['root'] = self.hashToPath(rootHash)
+            info['havePrevLink'] = self._havePrevLink
             info['wordCount'] = count
             #info['modified'] =
 
             for key, value in self._glos.getExtraInfos((
                 'name',
                 'root',
+                'havePrevLink',
                 'wordCount',
             )).items():
                 info[key] = value
