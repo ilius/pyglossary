@@ -185,23 +185,22 @@ class Writer(object):
             info['wordCount'] = count
             #info['modified'] =
 
-            origInfo = self._glos.info.copy()
-            for key in ('name', 'root', 'wordCount'):
-                try:
-                    del origInfo[key]
-                except KeyError:
-                    pass
-            info.update(origInfo)
+            for key, value in self._glos.getExtraInfos((
+                'name',
+                'root',
+                'wordCount',
+            )).items():
+                info[key] = value
 
             fp.write(dataToPrettyJson(info))
 
 
 
-def write(glos, filename, encoding='utf-8'):
+def write(glos, filename, **kwargs):
     writer = Writer(glos)
     writer.open(
         filename,
-        encoding=encoding,
+        **kwargs
     )
     writer.write()
     writer.close()
