@@ -27,29 +27,29 @@ Linux - command line interface
 Supported formats
 -----------------
 
-| Format                        | Extension     | Read  | Write  |
-|-------------------------------|---------------|-------|--------|
-| ABBYY Lingvo DSL              | .dsl          | X     |        |
-| AppleDict Source              | .xml          |       | X      |
-| Babylon                       | .bgl          | X     |        |
-| Babylon Source                | .gls          |       | X      |
-| DictionaryForMIDs             |               |       | X      |
-| DICTD dictionary server       | .index        | X     | X      |
-| Editable Linked Entries       | .edlin        | X     | X      |
-| FreeDict                      | .tei          |       | X      |
-| Gettext Source                | .po           | X     | X      |
-| SQLite 3                      | .sqlite       | X     | X      |
-| Octopus MDic                  | .mdx          | X     |        |
-| Octopus MDic Source           | .txt          | X     | X      |
-| Omnidic                       |               | X     | X      |
-| Sdictionary Binary            | .dct          | X     |        |
-| Sdictionary Source            | .sdct         |       | X      |
-| SQL                           | .sql          |       | X      |
-| StarDict                      | .ifo          | X     | X      |
-| Tabfile                       | .txt, .dic    | X     | X      |
-| TreeDict                      |               |       | X      |
-| XDXF                          | .xdxf         | X     |        |
-| xFarDic                       | .xdb          | X     | X      |
+| Format                            | Extension     | Read  | Write  |
+|-----------------------------------|---------------|-------|--------|
+| ABBYY Lingvo DSL                  | .dsl          | X     |        |
+| AppleDict Source                  | .xml          |       | X      |
+| Babylon                           | .bgl          | X     |        |
+| Babylon Source                    | .gls          |       | X      |
+| DictionaryForMIDs                 |               |       | X      |
+| DICTD dictionary server           | .index        | X     | X      |
+| Editable Linked Entries           | .edlin        | X     | X      |
+| FreeDict                          | .tei          |       | X      |
+| Gettext Source                    | .po           | X     | X      |
+| SQLite 3                          | .sqlite       | X     | X      |
+| Octopus MDic                      | .mdx          | X     |        |
+| Octopus MDic Source               | .txt          | X     | X      |
+| Omnidic                           |               | X     | X      |
+| Sdictionary Binary                | .dct          | X     |        |
+| Sdictionary Source                | .sdct         |       | X      |
+| SQL                               | .sql          |       | X      |
+| StarDict                          | .ifo          | X     | X      |
+| Tabfile                           | .txt, .dic    | X     | X      |
+| TreeDict                          |               |       | X      |
+| XDXF                              | .xdxf         | X     |        |
+| xFarDic                           | .xdb          | X     | X      |
 
 
 Requirements
