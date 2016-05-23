@@ -93,7 +93,7 @@ class Reader(object):
                 self._len = self._pos
             raise StopIteration
         ###
-        self._pos += 1
+        self._pos += 1 ## before or after reading word and defi (and skipping empty entry)? FIXME
         ###
         with open(join(self._filename, self._nextPath), 'r', encoding=self._encoding) as fp:
             header = fp.readline().rstrip()
@@ -101,8 +101,15 @@ class Reader(object):
                 self._prevPath, self._nextPath = header.split(' ')
             else:
                 self._nextPath = header
-            word = fp.readline().rstrip()
-            defi = fp.read().rstrip()
+            word = fp.readline()
+            if not word:
+                return
+            defi = fp.read()
+            if not defi:
+                log.warning('Edlin Reader: no definition for word "%s", skipping'%word)
+                return
+            word = word.rstrip()
+            defi = defi.rstrip()
         ###
         if self._glos.getPref('enable_alts', True):
             word = splitByBarUnescapeNTB(word)
