@@ -35,7 +35,7 @@ Supported formats
 | Babylon Source                    | .gls          |       | X      |
 | DictionaryForMIDs                 |               |       | X      |
 | DICTD dictionary server           | .index        | X     | X      |
-| Editable Linked Entries           | .edlin        | X     | X      |
+| Editable Linked List of Entries   | .edlin        | X     | X      |
 | FreeDict                          | .tei          |       | X      |
 | Gettext Source                    | .po           | X     | X      |
 | SQLite 3                          | .sqlite       | X     | X      |

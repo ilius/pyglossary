@@ -23,7 +23,7 @@ from formats_common import *
 
 enable = True
 format = 'Edlin'
-description = 'Editable Linked Entries'
+description = 'Editable Linked List of Entries'
 extentions = ['.edlin']
 readOptions = []
 writeOptions = [
