@@ -47,33 +47,48 @@ COMMAND = 'pyglossary'
 
 
 
-def formats_table(formats, header):
-    names = []
-    descriptions = []
-    extentions = []
-    for f in formats:
-        names.append(f)
-        descriptions.append(Glossary.formatsDesc[f])
-        extentions.append(Glossary.formatsExt[f])
-    extentions = list(map(' '.join, extentions))
+def getFormatsTable(names, header):
+    descriptions = [
+        Glossary.formatsDesc[name]
+        for name in names
+    ]
+    extentions = [
+        ' '.join(Glossary.formatsExt[name])
+        for name in names
+    ]
 
-    maxlen = lambda s, seq: max(len(s), max(list(map(len, seq))))
-    names_max = maxlen('name', names)
-    descriptions_max = maxlen('description', descriptions)
-    extentions_max = maxlen('extentions', extentions)
+    getColWidth = lambda subject, strings: max(len(subject), max(list(map(len, strings))))
+    nameWidth = getColWidth('Name', names)
+    descriptionWidth = getColWidth('Description', descriptions)
+    extentionsWidth = getColWidth('Extentions', extentions)
 
-    s = '\n%s%s%s\n' % (startBold, header, endFormat)
-    s += ' | '.join(['name'.center(names_max),
-                     'description'.center(descriptions_max),
-                     'extentions'.center(extentions_max)]) + '\n'
-    s += '-+-'.join(['-' * names_max,
-                     '-' * descriptions_max,
-                     '-' * extentions_max])+ '\n'
-    for i in range(len(names)):  # formats may be lazy, but `names' is a list
-        s += ' | '.join([names[i].ljust(names_max),
-                         descriptions[i].ljust(descriptions_max),
-                         extentions[i].ljust(extentions_max)]) + '\n'
-    return s
+    lines = ['\n']
+    lines.append('%s%s%s' % (startBold, header, endFormat))
+
+    lines.append(
+        ' | '.join([
+            'Name'.center(nameWidth),
+            'Description'.center(descriptionWidth),
+            'Extentions'.center(extentionsWidth)
+        ])
+    )
+    lines.append(
+        '-+-'.join([
+            '-' * nameWidth,
+            '-' * descriptionWidth,
+            '-' * extentionsWidth,
+        ])
+    )
+    for index, name in enumerate(names):
+        lines.append(
+            ' | '.join([
+                name.ljust(nameWidth),
+                descriptions[index].ljust(descriptionWidth),
+                extentions[index].ljust(extentionsWidth)
+            ])
+        )
+
+    return '\n'.join(lines)
 
 
 def help():
@@ -87,8 +102,8 @@ def help():
     text = string.Template(text).substitute(
         CMD=COMMAND,
     )
-    text += formats_table(Glossary.readFormats, 'Supported input formats:')
-    text += formats_table(Glossary.writeFormats, 'Supported output formats:')
+    text += getFormatsTable(Glossary.readFormats, 'Supported input formats:')
+    text += getFormatsTable(Glossary.writeFormats, 'Supported output formats:')
     print(text)
 
 
