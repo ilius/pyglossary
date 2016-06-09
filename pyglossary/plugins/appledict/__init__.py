@@ -241,8 +241,13 @@ if __name__ == '__main__':
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
-    glos.read(filename, format=informat, resPath=os.path.join(outdir, "OtherResources"))
-
-
-    glos.write(os.path.join(outdir, basename), format=outformat)
+    glos.convert(
+        filename,        
+        inputFormat=informat,
+        readOptions=dict(
+            resPath=os.path.join(outdir, "OtherResources"),
+        ),
+        outputFilename=os.path.join(outdir, basename),
+        outputFormat=outformat,
+    )
 
