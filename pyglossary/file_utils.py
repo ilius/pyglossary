@@ -3,8 +3,10 @@ from itertools import (
     repeat,
 )
 
+toBytes = lambda s: bytes(s, 'utf8') if isinstance(s, str) else bytes(s)
+
 def fileCountLines(filename, newline='\n'):
-    newline = bytes(newline)## required? FIXME
+    newline = toBytes(newline)## required? FIXME
     f = open(filename, 'rb')## or 'r'
     bufgen = takewhile(
         lambda x: x, (f.read(1024*1024) for _ in repeat(None))

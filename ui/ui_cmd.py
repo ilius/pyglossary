@@ -20,6 +20,7 @@
 
 from os.path import join
 import time
+import signal
 
 from pyglossary.glossary import *
 from .base import *
@@ -143,11 +144,18 @@ class UI(UIBase):
         self.pref = {}
         self.pref_load(**options)
         #log.debug(self.pref)
-        self.reverseKwArgs = {}
         if self.pref['noProgressBar']:
             self.pbar = NullObj()
         else:
             self.progressBuild()
+        self._toPause = False
+    def onSigInt(self, *args):
+        if self._toPause:
+            log.info('\nOperation Canceled')
+            sys.exit(0)
+        else:
+            self._toPause = True
+            log.info('\nPlease wait...')
     def setText(self, text):
         self.pbar.widgets[0]=text
     def progressStart(self):
@@ -172,8 +180,8 @@ class UI(UIBase):
             update_step=0.5,
         )
         rot.pbar = self.pbar
-    def reverseStart(self, *args):
-        log.info('Reversing glossary... (Press Ctrl+C to stop)')
+    def reverseLoop(self, *args, **kwargs):
+        reverseKwArgs = {}
         for key in (
             'words',
             'matchWord',
@@ -181,44 +189,25 @@ class UI(UIBase):
             'includeDefs',
             'reportStep',
             'saveStep',
-            'savePath',
             'maxNum',
             'minRel',
             'minWordLen'
         ):
             try:
-                self.reverseKwArgs[key] = self.pref['reverse_' + key]
+                reverseKwArgs[key] = self.pref['reverse_' + key]
             except KeyError:
                 pass
-        if self.reverseKwArgs:
-            log.pretty(self.reverseKwArgs, 'UI.reverseStart: reverseKwArgs = ')
-        try:
-            self.glos.reverse(
-                **self.reverseKwArgs
-            )
-        except KeyboardInterrupt:
-            self.reversePauseWait()
-            ## is the file closeed? FIXME
-    def reversePauseWait(self, *args):
-        self.glos.pause()
-        log.info('Waiting for Glossary to be paused ...')
-        while not self.glos.isPaused():
-            time.sleep(0.1)
-        log.info('Reverse is paused. Press Enter to resume, and press Ctrl+C to quit.')
-        try:
-            input()
-        except KeyboardInterrupt:
-            return 0
-        self.reverseResume()
-    def reverseResume(self, *args):
-        ## update reverse configuration?
-        log.info('Continue reversing from index %d ...'%self.glos.continueFrom)
-        try:
-            self.glos.reverse(
-                **self.reverseKwArgs
-            )
-        except KeyboardInterrupt:
-            self.reversePauseWait()
+        reverseKwArgs.update(kwargs)
+
+        #log.pretty(reverseKwArgs, 'reverseKwArgs = ')
+        if not self._toPause:
+            log.info('Reversing glossary... (Press Ctrl+C to pause/stop)')
+        for wordI in self.glos.reverse(**reverseKwArgs):
+            if self._toPause:
+                log.info('Reverse is paused. Press Enter to continue, and Ctrl+C to exit')
+                input()
+                self._toPause = False
+
     def run(
         self,
         ipath,
@@ -266,13 +255,13 @@ class UI(UIBase):
         ## When glossary reader uses progressbar, progressbar must be rebuilded:
         self.progressBuild()
         if reverse:
+            signal.signal(signal.SIGINT, self.onSigInt)## good place? FIXME
             if not glos.read(ipath, format=readFormat, **readOptions):
                 log.error('reading input file was failed!')
                 return False
             self.setText('Reversing: ')
             self.pbar.update_step = 0.1
-            self.reverseKwArgs['savePath'] = opath
-            self.reverseStart()
+            self.reverseLoop(savePath=opath)
         else:
             succeed = self.glos.convert(
                 ipath,
