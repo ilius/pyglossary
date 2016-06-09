@@ -731,7 +731,7 @@ class Glossary(object):
         plugin = self.plugins[format]
         sortOnWrite = plugin.sortOnWrite
         if sortOnWrite == ALWAYS:
-            if not sort:
+            if sort is False:
                 log.warning('writing %s requires sorting, ignoring user sort=False option'%format)
             if self._readers:
                 log.warning('writing to %s format requires full sort, falling back to indirect mode'%format)
