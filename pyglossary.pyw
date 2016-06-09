@@ -87,6 +87,7 @@ parser.add_argument(
         'tk',
         #'qt',
         'auto',
+        'none',
     ),
 )
 parser.add_argument(
@@ -297,6 +298,7 @@ sys.excepthook = my_excepthook
 
 ##############################
 
+from pyglossary.glossary import Glossary
 from ui.ui_cmd import COMMAND, help, parseFormatOptionsStr
 
 ##############################
@@ -398,7 +400,7 @@ ui_type = args.ui_type
 
 
 if args.inputFilename:
-    if args.outputFilename:
+    if args.outputFilename and ui_type != 'none':
         ui_type = 'cmd' ## silently? FIXME
 else:
     if ui_type == 'cmd':
@@ -406,7 +408,22 @@ else:
         exit(1)
 
 #try:
-if ui_type == 'cmd':
+if ui_type == 'none':
+    if args.reverse:
+        log.error('--reverse does not work with --ui=none')
+        sys.exit(1)
+    glos = Glossary()
+    glos.convert(
+        args.inputFilename,
+        inputFormat = args.inputFormat,
+        outputFilename = args.outputFilename,
+        outputFormat = args.outputFormat,
+        readOptions = readOptions,
+        writeOptions = writeOptions,
+        **convertOptions
+    )
+    sys.exit(0)
+elif ui_type == 'cmd':
     from ui import ui_cmd
     sys.exit(0 if ui_cmd.UI().run(
         args.inputFilename,
