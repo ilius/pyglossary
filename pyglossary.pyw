@@ -1,25 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-## ui_main.py
-##
-## Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>    (ilius)
-## This file is part of PyGlossary project, https://github.com/ilius/pyglossary
-##
-## This program is a free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3, or (at your option)
-## any later version.
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License along
-## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
-## If not, see <http://www.gnu.org/licenses/gpl.txt>.
+# ui_main.py
+#
+# Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com>    (ilius)
+# This file is part of PyGlossary project, https://github.com/ilius/pyglossary
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
+# If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-import os, sys
+import os
+import sys
 import argparse
 import builtins
 from os.path import dirname, join, realpath
@@ -28,7 +29,7 @@ import logging
 import inspect
 import traceback
 
-from pyglossary import core ## essential
+from pyglossary import core  # essential
 from pyglossary import VERSION
 from pyglossary.text_utils import startRed, endFormat
 
@@ -45,13 +46,15 @@ from pyglossary.text_utils import startRed, endFormat
 # - import submodules
 # - other code
 
-## no-progress-bar only for command line UI
-## FIXME: load ui-dependent available options from ui modules (for example ui_cmd.available_options)
-## the only problem is that it has to "import gtk" before it get the "ui_gtk.available_options"
+# no-progress-bar only for command line UI
+# FIXME: load ui-dependent available options from ui modules
+# (for example ui_cmd.available_options)
+# the only problem is that it has to "import gtk" before it get the
+# "ui_gtk.available_options"
 
-## FIXME
-## -v (verbose or version?)
-## -r (reverse or read-options)
+# FIXME
+# -v (verbose or version?)
+# -r (reverse or read-options)
 
 parser = argparse.ArgumentParser(add_help=False)
 
@@ -63,12 +66,12 @@ parser.add_argument(
     type=int,
     choices=(0, 1, 2, 3, 4),
     required=False,
-    default=3,## FIXME
+    default=3,  # FIXME
 )
 parser.add_argument(
     '--version',
     action='version',
-    version='PyGlossary %s'%VERSION,
+    version='PyGlossary %s' % VERSION,
 )
 parser.add_argument(
     '-h',
@@ -85,7 +88,7 @@ parser.add_argument(
         'cmd',
         'gtk',
         'tk',
-        #'qt',
+        # 'qt',
         'auto',
         'none',
     ),
@@ -103,18 +106,15 @@ parser.add_argument(
     default='',
 )
 parser.add_argument(
-    #'-',
     '--read-format',
     dest='inputFormat',
 )
 parser.add_argument(
-    #'-',
     '--write-format',
     dest='outputFormat',
     action='store',
 )
 parser.add_argument(
-    #'-',
     '--direct',
     dest='direct',
     action='store_true',
@@ -122,42 +122,37 @@ parser.add_argument(
     help='if possible, convert directly without loading into memory',
 )
 parser.add_argument(
-    #'-',
     '--indirect',
     dest='direct',
     action='store_false',
     default=None,
-    help='disable `direct` mode, load full data into memory before writing, this is default',
+    help='disable `direct` mode, load full data into memory before writing'
+         ', this is default',
 )
 parser.add_argument(
-    #'-',
     '--reverse',
     dest='reverse',
     action='store_true',
 )
 parser.add_argument(
-    #'-',
     '--no-progress-bar',
     dest='progressbar',
     action='store_false',
     default=None,
 )
 parser.add_argument(
-    #'-',
     '--sort',
     dest='sort',
     action='store_true',
     default=None,
 )
 parser.add_argument(
-    #'-',
     '--no-sort',
     dest='sort',
     action='store_false',
     default=None,
 )
 parser.add_argument(
-    #'-',
     '--sort-cache-size',
     dest='sortCacheSize',
     type=int,
@@ -165,21 +160,18 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    #'-',
     '--utf8-check',
     dest='utf8Check',
     action='store_true',
     default=None,
 )
 parser.add_argument(
-    #'-',
     '--no-utf8-check',
     dest='utf8Check',
     action='store_false',
     default=None,
 )
 parser.add_argument(
-    #'-',
     '--lower',
     dest='lower',
     action='store_true',
@@ -187,7 +179,6 @@ parser.add_argument(
     help='lowercase words before writing',
 )
 parser.add_argument(
-    #'-',
     '--no-lower',
     dest='lower',
     action='store_false',
@@ -196,7 +187,6 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    #'-',
     '--no-color',
     dest='noColor',
     action='store_true',
@@ -215,7 +205,7 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-#log.debug(args) ; sys.exit(0)
+
 
 def format_exception(exc_info=None, add_locals=False, add_globals=False):
     if not exc_info:
@@ -230,27 +220,27 @@ def format_exception(exc_info=None, add_locals=False, add_globals=False):
             pass
         else:
             if add_locals:
-                text += 'Traceback locals: %s\n'%pformat(frame.f_locals)
+                text += 'Traceback locals: %s\n' % pformat(frame.f_locals)
             if add_globals:
-                text += 'Traceback globals: %s\n'%pformat(frame.f_globals)
+                text += 'Traceback globals: %s\n' % pformat(frame.f_globals)
 
     return text
-
 
 
 class StdLogHandler(logging.Handler):
     def __init__(self, noColor=False):
         logging.Handler.__init__(self)
         self.noColor = noColor
+
     def emit(self, record):
         msg = record.getMessage()
         ###
         if record.exc_info:
             _type, value, tback = record.exc_info
             tback_text = format_exception(
-                exc_info = record.exc_info,
-                add_locals = (log.level <= logging.DEBUG),## FIXME
-                add_globals = False,
+                exc_info=record.exc_info,
+                add_locals=(log.level <= logging.DEBUG),  # FIXME
+                add_globals=False,
             )
 
             if not msg:
@@ -267,11 +257,11 @@ class StdLogHandler(logging.Handler):
         ###
         fp.write(msg + '\n')
         fp.flush()
-    #def exception(self, msg):
-    #    if not self.noColor:
-    #        msg = startRed + msg + endFormat
-    #    sys.stderr.write(msg + '\n')
-    #    sys.stderr.flush()
+#    def exception(self, msg):
+#        if not self.noColor:
+#            msg = startRed + msg + endFormat
+#        sys.stderr.write(msg + '\n')
+#        sys.stderr.flush()
 
 
 log = logging.getLogger('root')
@@ -287,11 +277,12 @@ core.checkCreateConfDir()
 
 ##############################
 
+
 def my_excepthook(*exc_info):
     tback_text = format_exception(
-        exc_info = exc_info,
-        add_locals = (log.level <= logging.DEBUG),## FIXME
-        add_globals = False,
+        exc_info=exc_info,
+        add_locals=(log.level <= logging.DEBUG),  # FIXME
+        add_globals=False,
     )
     log.critical(tback_text)
 sys.excepthook = my_excepthook
@@ -303,7 +294,8 @@ from ui.ui_cmd import COMMAND, help, parseFormatOptionsStr
 
 ##############################
 
-def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
+
+def dashToCamelCase(text):  # converts "hello-PYTHON-user" to "helloPythonUser"
     parts = text.split('-')
     parts[0] = parts[0].lower()
     for i in range(1, len(parts)):
@@ -316,7 +308,7 @@ ui_list = (
     'qt',
 )
 
-#log.info('PyGlossary %s'%VERSION)
+# log.info('PyGlossary %s'%VERSION)
 
 
 if args.help:
@@ -328,7 +320,7 @@ if os.sep != '/':
     args.noColor = True
 
 
-## only used in ui_cmd for now
+# only used in ui_cmd for now
 readOptions = parseFormatOptionsStr(args.readOptions)
 writeOptions = parseFormatOptionsStr(args.writeOptions)
 
@@ -343,11 +335,9 @@ writeOptions = parseFormatOptionsStr(args.writeOptions)
     --read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
 """
 
-
-
-## FIXME
+# FIXME
 prefOptionsKeys = (
-    #'verbosity',
+    # 'verbosity',
     'utf8Check',
     'lower',
 )
@@ -357,7 +347,7 @@ convertOptionsKeys = (
     'progressbar',
     'sort',
     'sortCacheSize',
-    #'sortKey',## or sortAlg FIXME
+    # 'sortKey',# or sortAlg FIXME
 )
 
 prefOptions = {}
@@ -380,7 +370,8 @@ log.pretty(convertOptions, 'convertOptions = ')
 """
 ui_type: User interface type
 Possible values:
-    cmd - Command line interface, this ui will automatically selected if you give both input and output file
+    cmd - Command line interface, this ui will automatically selected
+          if you give both input and output file
     gtk - GTK interface
     tk - Tkinter interface
     qt - Qt interface
@@ -388,26 +379,15 @@ Possible values:
 """
 ui_type = args.ui_type
 
-#if len(arguments)<1:## open GUI
-#    inputFilename = outputFilename = ''
-#elif len(arguments)==1:## open GUI, in edit mode (if gui support, like DB Editor in ui_gtk)
-#    inputFilename = arguments[0]
-#    outputFilename = ''
-#else:## run the commnad line interface
-#    ui_type = 'cmd'
-#    inputFilename = arguments[0]
-#    outputFilename = arguments[1]
-
 
 if args.inputFilename:
     if args.outputFilename and ui_type != 'none':
-        ui_type = 'cmd' ## silently? FIXME
+        ui_type = 'cmd'  # silently? FIXME
 else:
     if ui_type == 'cmd':
         log.error('no input file given, try --help')
         exit(1)
 
-#try:
 if ui_type == 'none':
     if args.reverse:
         log.error('--reverse does not work with --ui=none')
@@ -415,11 +395,11 @@ if ui_type == 'none':
     glos = Glossary()
     glos.convert(
         args.inputFilename,
-        inputFormat = args.inputFormat,
-        outputFilename = args.outputFilename,
-        outputFormat = args.outputFormat,
-        readOptions = readOptions,
-        writeOptions = writeOptions,
+        inputFormat=args.inputFormat,
+        outputFilename=args.outputFilename,
+        outputFormat=args.outputFormat,
+        readOptions=readOptions,
+        writeOptions=writeOptions,
         **convertOptions
     )
     sys.exit(0)
@@ -436,27 +416,28 @@ elif ui_type == 'cmd':
         writeOptions=writeOptions,
         convertOptions=convertOptions,
     ) else 1)
-if ui_type=='auto':
+if ui_type == 'auto':
     ui_module = None
     for ui_type2 in ui_list:
         try:
-            ui_module = getattr(__import__('ui.ui_%s'%ui_type2), 'ui_%s'%ui_type2)
+            ui_module = getattr(
+                __import__('ui.ui_%s' % ui_type2),
+                'ui_%s' % ui_type2,
+            )
         except ImportError:
-            log.exception('error while importing UI module:')## FIXME
+            log.exception('error while importing UI module:')  # FIXME
         else:
             break
-    if ui_module==None:
+    if ui_module is None:
         log.error('no user interface module found!')
         sys.exit(1)
 else:
-    ui_module = getattr(__import__('ui.ui_%s'%ui_type), 'ui_%s'%ui_type)
+    ui_module = getattr(
+        __import__('ui.ui_%s' % ui_type),
+        'ui_%s' % ui_type,
+    )
+
 sys.exit(0 if ui_module.UI(**prefOptions).run(
     editPath=args.inputFilename,
     readOptions=readOptions,
 ) else 1)
-## don't forget to append "**options" at every UI.__init__ arguments
-#except Exception as e:
-#    log.exception('')
-
-
-
