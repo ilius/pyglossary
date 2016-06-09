@@ -269,15 +269,6 @@ class UI(tix.Frame, UIBase):
         )
         button.pack(side='left')
         ##
-        button = tix.Button(
-            frame,
-            text='Load',
-            command=self.load,
-            #bg='#7777ff',
-            #activebackground='#9999ff',
-        )
-        button.pack(side='left')
-        ###
         frame.pack(fill='x')
         ######################
         frame = tix.Frame(convertFrame)
@@ -314,6 +305,15 @@ class UI(tix.Frame, UIBase):
         )
         button.pack(side='left')
         ##
+        frame.pack(fill='x')
+        #######
+        frame = tix.Frame(convertFrame)
+        label = tix.Label(frame, text=' '*15)
+        label.pack(
+            side='left',
+            fill='x',
+            expand=True,
+        )
         button = tix.Button(
             frame,
             text='Convert',
@@ -321,7 +321,11 @@ class UI(tix.Frame, UIBase):
             #bg='#00e000',
             #activebackground='#22f022',
         )
-        button.pack(side='left')
+        button.pack(
+            side='left',
+            fill='x',
+            expand=True,
+        )
         ###
         frame.pack(fill='x')
         ######
@@ -400,15 +404,6 @@ class UI(tix.Frame, UIBase):
             #activebackground='#ff5050',
         )
         closeB.pack(side='right')
-        applyB = tix.Button(
-            frame3,
-            text='Apply',
-            command=self.apply_clicked,
-            #bg='#00e000',
-            #activebackground='#22f022',
-        )
-        ## 'underline=0' arg in Tix.Button not affect keyboard shortcut?????????????
-        applyB.pack(side='right')
         frame3.pack(fill='x')
         ############### Reverse Tab ####################
         revFrame = tix.Frame(notebook.tab2)
@@ -711,76 +706,46 @@ class UI(tix.Frame, UIBase):
             self.entry_o.insert(0, path)
             self.entry_changed()
             self.fcd_dir = os.path.dirname(path)#????????
-    def load(self):
-        iPath = self.entry_i.get()
-        if not iPath:
-            log.critical('Input file path is empty!');return
-        formatD = self.combobox_i.get()
-        if formatD==noneItem:
-            #log.critical('Input format is empty!');return
-            format=''
-            log.info('Please wait...')
-        else:
-            format = Glossary.descFormat[formatD]
-            log.info('Reading from %s, please wait...'%formatD)
-        #while gtk.events_pending():#??????????????
-        #    gtk.main_iteration_do(False)
-        t0=time.time()
-        """
-        if formatD[:7]=='Omnidic':
-            dicIndex=self.xml.get_widget('spinbutton_omnidic_i').get_value_as_int()
-            succeed = self.glos.readOmnidic(iPath, dicIndex=dicIndex)
-        elif formatD[:8]=='StarDict' and self.checkb_i_ext.get_active():
-            succeed = self.glos.readStardict_ext(iPath)
-        else:"""
-        succeed = self.glos.read(
-            iPath,
-            format=format,
-        )
-        if succeed:
-            log.info('reading %s file: "%s" done'%(
-                format,
-                iPath,
-            ))
-        else:
-            log.critical('reading %s file: "%s" failed.'%(format, iPath))
-            return False
-        #self.iFormat = format
-        self.iPath = iPath
-        #self.button_conv.set_sensitive(True)
-        self.progress(1.0, 'Loading Comleted')
-        log.info('time left = %3f seconds'%(time.time()-t0))
-        for key, value in self.glos.iterInfo():
-            log.info('%s="%s"'%(key, value))
-        return True
     def convert(self):
-        oPath = self.entry_o.get()
-        if not oPath:
+        inPath = self.entry_i.get()
+        if not inPath:
+            log.critical('Input file path is empty!');return
+        inFormatDesc = self.combobox_i.get()
+        if inFormatDesc==noneItem:
+            #log.critical('Input format is empty!');return
+            inFormat = ''
+        else:
+            inFormat = Glossary.descFormat[inFormatDesc]
+
+        outPath = self.entry_o.get()
+        if not outPath:
             log.critical('Output file path is empty!');return
-        formatD = self.combobox_o.get()
-        if formatD in (noneItem, ''):
+        outFormatDesc = self.combobox_o.get()
+        if outFormatDesc in (noneItem, ''):
             log.critical('Output format is empty!');return
-        log.info('Converting to %s, please wait...'%formatD)
-        #while gtk.events_pending():#??????????
-        #    gtk.main_iteration_do(False)
+        outFormat = Glossary.descFormat[outFormatDesc]
+
         self.running = True
-        format = Glossary.descFormat[formatD]
-        t0 = time.time()
-        """
-        if format=='Omnidic':
-            dicIndex=self.xml.get_widget('spinbutton_omnidic_o').get_value_as_int()
-            self.glos.writeOmnidic(oPath, dicIndex=dicIndex)
-        elif format=='Babylon':
-            encoding = self.xml.get_widget('comboentry_enc').get_active_text()
-            self.glos.writeBabylon(oPath, encoding=encoding)
-        else:"""##???????????????????????
-        self.glos.write(oPath, format=format)
-        #self.oFormat = format
-        self.oPath = oPath
-        log.info('writing %s file: "%s" done.'%(format, oPath))
-        log.info('time left = %3f seconds'%(time.time()-t0))
-        self.running = False
-        return True
+
+        try:
+            succeed = self.glos.convert(
+                inPath,
+                inputFormat=inFormat,
+                outputFilename=outPath,
+                outputFormat=outFormat,
+            )
+        finally:
+            self.running = False
+
+        if succeed:
+            #self.status('Convert finished')
+            log.info('writing %s file: "%s" done.'%(outFormat, outPath))
+        else:
+            #self.status('Convert failed')
+            log.error('writing %s file: "%s" failed.'%(outFormat, outPath))
+
+        return succeed
+
     def run(self, editPath=None, readOptions=None):
         if readOptions is None:
             readOptions = {}
