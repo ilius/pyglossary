@@ -139,15 +139,10 @@ class NullObj(object):
         pass
 
 class UI(UIBase):
-    def __init__(self, text='Loading: ', noProgressBar=None, **options):
-        self.ptext = text
+    def __init__(self, **options):
         self.pref = {}
-        self.pref_load(**options)
         #log.debug(self.pref)
-        if self.pref['noProgressBar']:
-            self.pbar = NullObj()
-        else:
-            self.progressBuild()
+        self.pbar = NullObj()
         self._toPause = False
     def onSigInt(self, *args):
         if self._toPause:
@@ -158,19 +153,12 @@ class UI(UIBase):
             log.info('\nPlease wait...')
     def setText(self, text):
         self.pbar.widgets[0]=text
-    def progressStart(self):
-        self.pbar.start()
-    def progress(self, rat, text=''):
-        self.pbar.update(rat)
-    def progressEnd(self):
-        self.pbar.finish()
-        print('')
-    def progressBuild(self):
+    def progressInit(self, title):
         rot = pb.RotatingMarker()
         ## SyntaxError(invalid syntax) with python3 with unicode(u'█') argument ## FIXME
         self.pbar = pb.ProgressBar(
             widgets=[
-                self.ptext,
+                title,
                 pb.Bar(marker='█', right=rot),
                 pb.Percentage(),
                 '% ',
@@ -180,6 +168,8 @@ class UI(UIBase):
             update_step=0.5,
         )
         rot.pbar = self.pbar
+    def progress(self, rat, text=''):
+        self.pbar.update(rat)
     def reverseLoop(self, *args, **kwargs):
         reverseKwArgs = {}
         for key in (
@@ -210,41 +200,49 @@ class UI(UIBase):
 
     def run(
         self,
-        ipath,
-        opath = '',
-        readFormat = '',
-        writeFormat = '',
+        inputFilename,
+        outputFilename = '',
+        inputFormat = '',
+        outputFormat = '',
+        reverse = False,
+        prefOptions = None,
         readOptions = None,
         writeOptions = None,
-        reverse = False,
+        convertOptions = None,
     ):
+        if not prefOptions:
+            prefOptions = {}
         if not readOptions:
             readOptions = {}
         if not writeOptions:
             writeOptions = {}
+        if not convertOptions:
+            convertOptions = {}
 
-        if readFormat:
-            #readFormat = readFormat.capitalize()
-            if not readFormat in Glossary.readFormats:
-                log.error('invalid read format %s'%readFormat)
-        if writeFormat:
-            #writeFormat = writeFormat.capitalize()
-            if not writeFormat in Glossary.writeFormats:
-                log.error('invalid write format %s'%writeFormat)
+        self.pref_load(**prefOptions)
+
+        if inputFormat:
+            #inputFormat = inputFormat.capitalize()
+            if not inputFormat in Glossary.readFormats:
+                log.error('invalid read format %s'%inputFormat)
+        if outputFormat:
+            #outputFormat = outputFormat.capitalize()
+            if not outputFormat in Glossary.writeFormats:
+                log.error('invalid write format %s'%outputFormat)
                 log.error('try: %s --help'%COMMAND)
                 return 1
-        if not opath:
+        if not outputFilename:
             if reverse:
                 pass
-            elif writeFormat:
+            elif outputFormat:
                 try:
-                    ext = Glossary.formatsExt[writeFormat][0]
+                    ext = Glossary.formatsExt[outputFormat][0]
                 except (KeyError, IndexError):
-                    log.error('invalid write format %s'%writeFormat)
+                    log.error('invalid write format %s'%outputFormat)
                     log.error('try: %s --help'%COMMAND)
                     return 1
                 else:
-                    opath = os.path.splitext(ipath)[0] + ext
+                    outputFilename = os.path.splitext(inputFilename)[0] + ext
             else:
                 log.error('neither output file nor output format is given')
                 log.error('try: %s --help'%COMMAND)
@@ -252,31 +250,30 @@ class UI(UIBase):
 
 
         glos = self.glos = Glossary(ui=self)
-        ## When glossary reader uses progressbar, progressbar must be rebuilded:
-        self.progressBuild()
         if reverse:
             signal.signal(signal.SIGINT, self.onSigInt)## good place? FIXME
-            if not glos.read(ipath, format=readFormat, **readOptions):
+            if not glos.read(inputFilename, format=inputFormat, **readOptions):
                 log.error('reading input file was failed!')
                 return False
             self.setText('Reversing: ')
             self.pbar.update_step = 0.1
-            self.reverseLoop(savePath=opath)
+            self.reverseLoop(savePath=outputFilename)
         else:
             succeed = self.glos.convert(
-                ipath,
-                inputFormat=readFormat,
-                outputFilename=opath,
-                outputFormat=writeFormat,
+                inputFilename,
+                inputFormat=inputFormat,
+                outputFilename=outputFilename,
+                outputFormat=outputFormat,
                 readOptions=readOptions,
                 writeOptions=writeOptions,
+                **convertOptions
             )
             if succeed:
                 #self.status('Convert finished')
-                log.info('writing file "%s" done.'%(opath))
+                log.info('Writing file "%s" done.'%(outputFilename))
             else:
                 #self.status('Convert failed')
-                log.error('writing file "%s" failed.'%(opath))
+                log.error('Writing file "%s" failed.'%(outputFilename))
             return succeed
 
         return True

@@ -236,6 +236,7 @@ class Glossary(object):
         self._filename = ''
         self.resPath = ''
         self._defaultDefiFormat = 'm'
+        self._progressbar = True
 
     def __init__(self, info=None, ui=None, filename='', resPath=''):
         """
@@ -293,17 +294,39 @@ class Glossary(object):
         self.addEntryObj(Entry(word, defi, defiFormat))
 
     def _loadedEntryGen(self):
-        for rawEntry in self._data:
+        wordCount = len(self._data)
+        progressbar = self.ui and self._progressbar
+        if progressbar:
+            self.progressInit('Writing')
+        for index, rawEntry in enumerate(self._data):
             yield Entry.fromRaw(
                 rawEntry,
                 defaultDefiFormat=self._defaultDefiFormat
             )
+            if progressbar:
+                self.progress(index, wordCount)
 
     def _readersEntryGen(self):
         for reader in self._readers:
-            for entry in reader:
-                yield entry
-            reader.close()
+            wordCount = 0
+            progressbar = False
+            if self.ui and self._progressbar:
+                try:
+                    wordCount = len(reader)
+                except Exception:
+                    log.exception('')                
+                if wordCount:
+                    progressbar = True
+            if progressbar:
+                self.progressInit('Converting')
+            try:
+                for index, entry in enumerate(reader):
+                    yield entry
+                    if progressbar:
+                        self.progress(index, wordCount)
+            finally:
+                reader.close()
+
 
     def _applyEntryFiltersGen(self, gen):
         for entry in gen:
@@ -426,6 +449,7 @@ class Glossary(object):
         filename,
         format='',
         direct=False,
+        progressbar=True,
         **options
     ):
         """
@@ -508,6 +532,7 @@ class Glossary(object):
         self._filename = filenameNoExt
         if not self.getInfo('name'):
             self.setInfo('name', split(filename)[1])
+        self._progressbar = progressbar
         
         try:
             Reader = self.readerClasses[format]
@@ -543,11 +568,26 @@ class Glossary(object):
             iterates over `reader` object and loads the whole data into self._data
             must call `reader.open(filename)` before calling this function
         """
-        for entry in reader:
-            if not entry:
-                continue
-            self.addEntryObj(entry)
-        reader.close()
+        wordCount = 0
+        progressbar = False
+        if self.ui and self._progressbar:
+            try:
+                wordCount = len(reader)
+            except Exception:
+                log.exception('')                
+            if wordCount:
+                progressbar = True
+        if progressbar:
+            self.progressInit('Reading')
+        try:
+            for index, entry in enumerate(reader):
+                if entry:
+                    self.addEntryObj(entry)
+                if progressbar:
+                    self.progress(index, wordCount)
+        finally:
+            reader.close()
+
         return True
 
     def _inactivateDirectMode(self):
@@ -687,7 +727,6 @@ class Glossary(object):
             if not key in validOptionKeys:
                 log.error('Invalid write option "%s" given for %s format'%(key, format))
                 del options[key]
-        log.info('filename=%s'%filename)
 
         plugin = self.plugins[format]
         sortOnWrite = plugin.sortOnWrite
@@ -786,6 +825,7 @@ class Glossary(object):
         inputFilename,
         inputFormat='',
         direct=None,
+        progressbar=True,
         outputFilename='',
         outputFormat='',
         sort=None,
@@ -799,6 +839,8 @@ class Glossary(object):
         if not writeOptions:
             writeOptions = {}
 
+        log.debug('convert: direct=%s, progressbar=%s, sort=%s'%(direct, progressbar, sort))
+
         if direct is None:
             if sort is not True:
                 direct = True ## FIXME
@@ -807,9 +849,11 @@ class Glossary(object):
             inputFilename,
             format=inputFormat,
             direct=direct,
+            progressbar=progressbar,
             **readOptions
         ):
             return False
+        log.info('')
 
         if not self.write(
             filename=outputFilename,
@@ -820,6 +864,7 @@ class Glossary(object):
             **writeOptions
         ):
             return False
+        log.info('')
 
         return True
 
@@ -984,8 +1029,14 @@ class Glossary(object):
 
     ###############################################################################
 
-    def progress(self, wordI, wordCount):
+    def progressInit(self, *args):
         if self.ui:
+            self.ui.progressInit(*args)
+
+    def progress(self, wordI, wordCount):
+        #if wordI % 100 == 0:
+        #    log.debug('Glossary.progress: %s / %s'%(wordI, wordCount))
+        if self.ui and wordI % (wordCount//500) == 0:
             self.ui.progress(
                 (wordI + 1) / wordCount,
                 '%d / %d completed'%(wordI, wordCount),

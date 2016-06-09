@@ -378,6 +378,7 @@ class UI(tix.Frame, UIBase):
         pbar.pack(side='left', fill='x', expand=True)
         self.pbar = pbar
         frame2.pack(fill='x')
+        self.progressTitle = ''
         #############
         #vpaned.grid()
         #bottomFrame.grid()
@@ -751,14 +752,15 @@ class UI(tix.Frame, UIBase):
             readOptions = {}
         ## editPath and readOptions are for DB Editor, which is not implemented yet
         self.mainloop()
+    def progressInit(self, title):
+        self.progressTitle = title
     def progress(self, rat, text=''):
+        if not text:
+            text = '%%%d'%(rat*100)
+        text += ' - %s'%self.progressTitle
         self.pbar.updateProgress(rat*100, None, text)
         ##self.pbar.value = rat*100
         ##self.pbar.update()
-    def progressStart(self):
-        self.pbar.updateProgress(0)
-    def progressEnd(self):
-        self.pbar.updateProgress(100)
     def console_clear(self, event=None):
         self.console.delete('1.0', 'end')
         self.console.insert('end', 'Console:\n')

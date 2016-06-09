@@ -104,12 +104,12 @@ parser.add_argument(
 parser.add_argument(
     #'-',
     '--read-format',
-    dest='readFormat',
+    dest='inputFormat',
 )
 parser.add_argument(
     #'-',
     '--write-format',
-    dest='writeFormat',
+    dest='outputFormat',
     action='store',
 )
 parser.add_argument(
@@ -137,8 +137,8 @@ parser.add_argument(
 parser.add_argument(
     #'-',
     '--no-progress-bar',
-    dest='noProgressBar',
-    action='store_true',
+    dest='progressbar',
+    action='store_false',
     default=None,
 )
 parser.add_argument(
@@ -201,13 +201,13 @@ parser.add_argument(
     action='store_true',
 )
 parser.add_argument(
-    'ipath',
+    'inputFilename',
     action='store',
     default='',
     nargs='?',
 )
 parser.add_argument(
-    'opath',
+    'outputFilename',
     action='store',
     default='',
     nargs='?',
@@ -331,9 +331,6 @@ if os.sep != '/':
 readOptions = parseFormatOptionsStr(args.readOptions)
 writeOptions = parseFormatOptionsStr(args.writeOptions)
 
-if args.direct != None:
-    readOptions['direct'] = args.direct
-
 
 """
     examples for read and write options:
@@ -348,31 +345,36 @@ if args.direct != None:
 
 
 ## FIXME
-ui_options_params = (
-    'noProgressBar',
+prefOptionsKeys = (
     #'verbosity',
     'utf8Check',
     'lower',
 )
 
-common_write_params = (
+convertOptionsKeys = (
+    'direct',
+    'progressbar',
     'sort',
     'sortCacheSize',
-    #'sort_alg',## FIXME
+    #'sortKey',## or sortAlg FIXME
 )
 
-ui_options = {}
-for param in ui_options_params:
+prefOptions = {}
+for param in prefOptionsKeys:
     value = getattr(args, param, None)
     if value is not None:
-        ui_options[param] = value
+        prefOptions[param] = value
 
-for param in common_write_params:
+convertOptions = {}
+for param in convertOptionsKeys:
     value = getattr(args, param, None)
     if value is not None:
-        writeOptions[param] = value
+        convertOptions[param] = value
 
-log.pretty(ui_options, 'ui_options =')
+log.pretty(prefOptions, 'prefOptions = ')
+log.pretty(readOptions, 'readOptions = ')
+log.pretty(writeOptions, 'writeOptions = ')
+log.pretty(convertOptions, 'convertOptions = ')
 
 """
 ui_type: User interface type
@@ -386,18 +388,18 @@ Possible values:
 ui_type = args.ui_type
 
 #if len(arguments)<1:## open GUI
-#    ipath = opath = ''
+#    inputFilename = outputFilename = ''
 #elif len(arguments)==1:## open GUI, in edit mode (if gui support, like DB Editor in ui_gtk)
-#    ipath = arguments[0]
-#    opath = ''
+#    inputFilename = arguments[0]
+#    outputFilename = ''
 #else:## run the commnad line interface
 #    ui_type = 'cmd'
-#    ipath = arguments[0]
-#    opath = arguments[1]
+#    inputFilename = arguments[0]
+#    outputFilename = arguments[1]
 
 
-if args.ipath:
-    if args.opath:
+if args.inputFilename:
+    if args.outputFilename:
         ui_type = 'cmd' ## silently? FIXME
 else:
     if ui_type == 'cmd':
@@ -407,14 +409,16 @@ else:
 #try:
 if ui_type == 'cmd':
     from ui import ui_cmd
-    sys.exit(ui_cmd.UI(**ui_options).run(
-        args.ipath,
-        opath=args.opath,
-        readFormat=args.readFormat,
-        writeFormat=args.writeFormat,
+    sys.exit(ui_cmd.UI().run(
+        args.inputFilename,
+        outputFilename=args.outputFilename,
+        inputFormat=args.inputFormat,
+        outputFormat=args.outputFormat,
+        reverse=args.reverse,
+        prefOptions=prefOptions,
         readOptions=readOptions,
         writeOptions=writeOptions,
-        reverse=args.reverse,
+        convertOptions=convertOptions,
     ))
 if ui_type=='auto':
     ui_module = None
@@ -430,8 +434,8 @@ if ui_type=='auto':
         sys.exit(1)
 else:
     ui_module = getattr(__import__('ui.ui_%s'%ui_type), 'ui_%s'%ui_type)
-sys.exit(ui_module.UI(**ui_options).run(
-    editPath=args.ipath,
+sys.exit(ui_module.UI(**prefOptions).run(
+    editPath=args.inputFilename,
     readOptions=readOptions,
 ))
 ## don't forget to append "**options" at every UI.__init__ arguments

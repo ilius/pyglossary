@@ -454,7 +454,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         textview.get_buffer().set_text('Output & Error Console:\n')
         textview.set_editable(False)
         ################################################################
-        self.ptext = ''
+        self.progressTitle = ''
         self.progressBar = pbar = gtk.ProgressBar()
         pbar.set_fraction(0)
         #pbar.set_text(_('Progress Bar'))
@@ -555,7 +555,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
             gtk.main_iteration_do(False)
 
         self.convertButton.set_sensitive(False)
-        self.ptext = ' - Converting'
+        self.progressTitle = 'Converting'
         try:
             #if inFormat=='Omnidic':
             #    dicIndex = self.xml.get_widget('spinbutton_omnidic_i').get_value_as_int()
@@ -578,7 +578,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         finally:
             self.convertButton.set_sensitive(True)
             self.assert_quit = False
-            self.ptext = ''
+            self.progressTitle = ''
 
         return True
 
@@ -720,20 +720,16 @@ class UI(gtk.Dialog, MyDialog, UIBase):
     def reverseOutputEntryChanged(self, widget=None):
         pass
     
+    def progressInit(self, title):
+        self.progressTitle = title
 
-    def progressStart(self):
-        while gtk.events_pending():
-            gtk.main_iteration_do(False)
     def progress(self, rat, text=None):
         if not text:
-            text = '%%%d%s'%(rat*100, self.ptext)
+            text = '%%%d'%(rat*100)
+        text += ' - %s'%self.progressTitle
         self.progressBar.set_fraction(rat)
         #self.progressBar.set_text(text)## not working
         self.status(text)
-        while gtk.events_pending():
-            gtk.main_iteration_do(False)
-    def progressEnd(self):
-        self.progress(1.0)
         while gtk.events_pending():
             gtk.main_iteration_do(False)
 
