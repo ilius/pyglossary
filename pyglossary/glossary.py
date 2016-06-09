@@ -131,7 +131,7 @@ class Glossary(object):
 
     @classmethod
     def loadPlugin(cls, pluginName):
-        log.debug('loading plugin %s' % pluginName)
+        #log.debug('loading plugin %s' % pluginName)
         try:
             plugin = __import__(pluginName)
         except (ImportError, SyntaxError) as e:
@@ -211,7 +211,7 @@ class Glossary(object):
             cls.writeDesc.append(desc)
             cls.formatsWriteOptions[format] = getattr(plugin, 'writeOptions', [])
 
-        log.debug('plugin loaded OK: %s' % pluginName)
+        #log.debug('plugin loaded OK: %s' % pluginName)
         return plugin
 
     def clear(self):
