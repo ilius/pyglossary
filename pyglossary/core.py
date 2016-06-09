@@ -36,6 +36,9 @@ class MyLogger(logging.Logger):
     def pretty(self, data, header=''):
         self.debug(header + pformat(data))
 
+    isDebug = lambda self: self._verbosity >= 4
+
+
 
 sysName = platform.system()
 
