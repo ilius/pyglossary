@@ -784,6 +784,51 @@ class Glossary(object):
                 if error:
                     log.error('%s\nfail to compress file "%s"'%(error, filename))
 
+
+
+    def convert(
+        self,
+        inputFilename,
+        inputFormat='',
+        direct=None,
+        outputFilename='',
+        outputFormat='',
+        sort=None,
+        sortKey=None,
+        sortCacheSize=1000,
+        readOptions=None,
+        writeOptions=None,
+    ):
+        if not readOptions:
+            readOptions = {}
+        if not writeOptions:
+            writeOptions = {}
+
+        if direct is None:
+            if sort is not True:
+                direct = True ## FIXME
+
+        if not self.read(
+            inputFilename,
+            format=inputFormat,
+            direct=direct,
+            **readOptions
+        ):
+            return False
+
+        if not self.write(
+            filename=outputFilename,
+            format=outputFormat,
+            sort=sort,
+            sortKey=sortKey,
+            sortCacheSize=sortCacheSize,
+            **writeOptions
+        ):
+            return False
+
+        return True
+
+
     #################################################################################
 
 
