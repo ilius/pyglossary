@@ -260,22 +260,34 @@ class UI(UIBase):
                 log.error('neither output file nor output format is given')
                 log.error('try: %s --help'%COMMAND)
                 return 1
+
+
         glos = self.glos = Glossary(ui=self)
-        log.info('Reading file "%s"'%ipath)
-        if not glos.read(ipath, format=readFormat, **readOptions):
-            log.error('reading input file was failed!')
-            return 1
         ## When glossary reader uses progressbar, progressbar must be rebuilded:
         self.progressBuild()
         if reverse:
+            if not glos.read(ipath, format=readFormat, **readOptions):
+                log.error('reading input file was failed!')
+                return False
             self.setText('Reversing: ')
             self.pbar.update_step = 0.1
             self.reverseKwArgs['savePath'] = opath
             self.reverseStart()
         else:
-            self.setText('Writing: ')
-            if not glos.write(opath, format=writeFormat, **writeOptions):
-                log.error('writing output file was failed!')
-                return 1
-            log.info('done')
-        return 0
+            succeed = self.glos.convert(
+                ipath,
+                inputFormat=readFormat,
+                outputFilename=opath,
+                outputFormat=writeFormat,
+                readOptions=readOptions,
+                writeOptions=writeOptions,
+            )
+            if succeed:
+                #self.status('Convert finished')
+                log.info('writing file "%s" done.'%(opath))
+            else:
+                #self.status('Convert failed')
+                log.error('writing file "%s" failed.'%(opath))
+            return succeed
+
+        return True

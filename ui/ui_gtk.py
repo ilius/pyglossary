@@ -557,37 +557,19 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         self.convertButton.set_sensitive(False)
         self.ptext = ' - Converting'
         try:
-            t0 = time.time()
             #if inFormat=='Omnidic':
             #    dicIndex = self.xml.get_widget('spinbutton_omnidic_i').get_value_as_int()
             #    ex = self.glos.readOmnidic(inPath, dicIndex=dicIndex)
             #else:
-            log.info('Reading %s, please wait...'%inFormatDesc)
-            succeed = self.glos.read(inPath, format=inFormat)
-            if succeed:
-                log.info('reading %s file: "%s" done'%(
-                    inFormat,
-                    inPath,
-                ))
-            else:
-                log.error('reading %s file: "%s" failed.'%(inFormat, inPath))
-                return False
-            #self.inFormat = inFormat
-            #self.inPath = inPath
-            #self.progress(1.0, 'Loading Comleted')
-            log.debug('running time of read: %3f seconds'%(time.time()-t0))
-            for key, value in self.glos.iterInfo():
-                log.info('%s="%s"'%(key, value))
-
-            while gtk.events_pending():
-                gtk.main_iteration_do(False)
-
-            log.info('Writing %s, please wait...'%outFormatDesc)
-            succeed = self.glos.write(outPath, format=outFormat)
+            succeed = self.glos.convert(
+                inPath,
+                inputFormat=inFormat,
+                outputFilename=outPath,
+                outputFormat=outFormat,
+            )
             if succeed:
                 self.status('Convert finished')
                 log.info('writing %s file: "%s" done.'%(outFormat, outPath))
-                log.debug('running time of write: %3f seconds'%(time.time()-t0))
             else:
                 self.status('Convert failed')
                 log.error('writing %s file: "%s" failed.'%(outFormat, outPath))
