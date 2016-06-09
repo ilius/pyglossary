@@ -624,7 +624,7 @@ class StarDictWriter(object):
             if len(os.listdir(toPath)) > 0:
                 log.error(
 '''Output resource directory is not empty: "{0}". Resources will not be copied!
-Clean the output directory before running the converter or pass option: --write-options=res-overwrite=True.'''\
+Clear the output directory before running the converter or pass option: --write-options=res-overwrite=True'''\
 .format(toPath)
                 )
                 return
