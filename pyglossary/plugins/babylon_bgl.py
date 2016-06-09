@@ -3,7 +3,7 @@
 ##
 ## Copyright © 2008-2012 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 ## Copyright © 2011-2012 kubtek <kubtek@gmail.com>
-## This file is part of PyGlossary project, http://sourceforge.net/projects/pyglossary/
+## This file is part of PyGlossary project, https://github.com/ilius/pyglossary
 ## Thanks to Raul Fernandes <rgfbr@yahoo.com.br> and Karl Grill for reverse engineering
 ##
 ## This program is a free software; you can redistribute it and/or modify
