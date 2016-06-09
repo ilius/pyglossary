@@ -260,9 +260,9 @@ class UI(UIBase):
                 log.error('neither output file nor output format is given')
                 log.error('try: %s --help'%COMMAND)
                 return 1
-        g = self.glos = Glossary(ui=self)
+        glos = self.glos = Glossary(ui=self)
         log.info('Reading file "%s"'%ipath)
-        if not g.read(ipath, format=readFormat, **readOptions):
+        if not glos.read(ipath, format=readFormat, **readOptions):
             log.error('reading input file was failed!')
             return 1
         ## When glossary reader uses progressbar, progressbar must be rebuilded:
@@ -274,7 +274,7 @@ class UI(UIBase):
             self.reverseStart()
         else:
             self.setText('Writing: ')
-            if not g.write(opath, format=writeFormat, **writeOptions):
+            if not glos.write(opath, format=writeFormat, **writeOptions):
                 log.error('writing output file was failed!')
                 return 1
             log.info('done')

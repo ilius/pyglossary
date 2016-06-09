@@ -729,12 +729,15 @@ class UI(tix.Frame, UIBase):
         """
         if formatD[:7]=='Omnidic':
             dicIndex=self.xml.get_widget('spinbutton_omnidic_i').get_value_as_int()
-            ex = self.glos.readOmnidic(iPath, dicIndex=dicIndex)
+            succeed = self.glos.readOmnidic(iPath, dicIndex=dicIndex)
         elif formatD[:8]=='StarDict' and self.checkb_i_ext.get_active():
-            ex = self.glos.readStardict_ext(iPath)
+            succeed = self.glos.readStardict_ext(iPath)
         else:"""
-        ex = self.glos.read(iPath, format=format)
-        if ex:
+        succeed = self.glos.read(
+            iPath,
+            format=format,
+        )
+        if succeed:
             log.info('reading %s file: "%s" done'%(
                 format,
                 iPath,
