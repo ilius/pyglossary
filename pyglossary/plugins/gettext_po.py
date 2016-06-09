@@ -30,7 +30,7 @@ class Reader(object):
     def __len__(self):
         from pyglossary.file_utils import fileCountLines
         if self._len is None:
-            log.warning('Try not to use len(reader) as it takes extra time')
+            log.debug('Try not to use len(reader) as it takes extra time')
             self._len = fileCountLines(
                 self._filename,
                 newline='\nmsgid',
