@@ -501,7 +501,7 @@ class Glossary(object):
                 log.error('Unknown extension "%s" for read support!'%ext)
                 return False
         validOptionKeys = self.formatsReadOptions[format]
-        for key in options.keys():
+        for key in list(options.keys()):
             if not key in validOptionKeys:
                 log.error('Invalid read option "%s" given for %s format'%(key, format))
                 del options[key]
