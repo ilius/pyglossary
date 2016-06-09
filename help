@@ -23,6 +23,18 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         ${CMD} mydic.utf8 mydic.ifo --read-format tabfile
         ${CMD} mydic.ifo mydic.utf8 --write-format=tabfile
         ${CMD} mydic.ifo mydic.utf8 --write-format tabfile
+
+   <b>General options:</b>
+      <b>Verbosity:</b>
+          <b>-v0</b> or '--verbosity 0' for critical errors only
+          <b>-v1</b> or '--verbosity 1' for errors only
+          <b>-v2</b> or '--verbosity 2' for errors and warnings
+          <b>-v3</b> or '--verbosity 3' for errors, warnings and info
+          <b>-v4</b> or '--verbosity 4' for debug mode
+      Appearance:
+          --no-progress-bar and --no-color, useful for Windows (non-Unix) command line
+
+      
    See a list of supported formats (with their associated extensions) at the end
       of this help
    Command line arguments and options (and arguments for options)
