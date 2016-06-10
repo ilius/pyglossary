@@ -7,6 +7,24 @@ class Entry(object):
         part.replace(self.sep, '\\'+self.sep)
         for part in parts
     ])
+
+    @staticmethod
+    def getEntrySortKey(key=None):
+        if key:
+            return lambda entry: key(entry.getWords()[0])
+        else:
+            return lambda entry: entry.getWords()[0]
+
+    @staticmethod
+    def getRawEntrySortKey(key=None):
+        if key:
+            return lambda x: key(
+                x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
+            )
+        else:
+            return lambda x: \
+                x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
+
     def __init__(self, word, defi, defiFormat=None):
         """
             word: string or a list of strings (including alternate words)

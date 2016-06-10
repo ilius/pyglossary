@@ -614,14 +614,10 @@ class Glossary(object):
                 cacheSize = self._sortCacheSize
                 log.info('stream sorting enabled, cache size: %s'%cacheSize)
                 ## only sort by main word, or list of words + alternates? FIXME
-                if sortKey:
-                    sortEntryKey = lambda entry: sortKey(entry.getWords()[0])
-                else:
-                    sortEntryKey = lambda entry: entry.getWords()[0]
                 gen = hsortStreamList(
                     self._readers,
                     cacheSize,
-                    key=sortEntryKey,
+                    key=Entry.getEntrySortKey(sortKey),
                 )
             else:
                 gen = self._readersEntryGen()
@@ -638,15 +634,8 @@ class Glossary(object):
             if cacheSize:
                 self._sortCacheSize = cacheSize ## FIXME
         else:
-            if key:
-                entryKey = lambda x: key(
-                    x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
-                )
-            else:
-                entryKey = lambda x: \
-                    x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
             self._data.sort(
-                key=entryKey,
+                key=Entry.getRawEntrySortKey(key),
             )
         self._updateIter(sort=True)
 
