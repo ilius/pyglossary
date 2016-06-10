@@ -134,7 +134,7 @@ class Glossary(object):
         #log.debug('loading plugin %s' % pluginName)
         try:
             plugin = __import__(pluginName)
-        except (ImportError, SyntaxError) as e:
+        except Exception as e:
             log.exception('error while importing plugin %s' % pluginName)
             return
 
