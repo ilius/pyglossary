@@ -135,7 +135,7 @@ class Glossary(object):
         try:
             plugin = __import__(pluginName)
         except (ImportError, SyntaxError) as e:
-            log.error('error while importing plugin %s' % pluginName, exc_info=1)
+            log.exception('error while importing plugin %s' % pluginName)
             return
 
         if (not hasattr(plugin, 'enable')) or (not plugin.enable):
