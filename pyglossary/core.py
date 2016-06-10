@@ -1,4 +1,6 @@
 import logging
+import traceback
+import inspect
 from pprint import pformat
 import sys
 import os
@@ -43,10 +45,92 @@ class MyLogger(logging.Logger):
         return self.getVerbosity() >= 4
 
 
+def format_exception(exc_info=None, add_locals=False, add_globals=False):
+    if not exc_info:
+        exc_info = sys.exc_info()
+    _type, value, tback = exc_info
+    text = ''.join(traceback.format_exception(_type, value, tback))
+
+    if add_locals or add_globals:
+        try:
+            frame = inspect.getinnerframes(tback, context=0)[-1][0]
+        except IndexError:
+            pass
+        else:
+            if add_locals:
+                text += 'Traceback locals: %s\n' % pformat(frame.f_locals)
+            if add_globals:
+                text += 'Traceback globals: %s\n' % pformat(frame.f_globals)
+
+    return text
+
+
+class StdLogHandler(logging.Handler):
+    startRed = '\x1b[31m'
+    endFormat = '\x1b[0;0;0m' ## len=8
+
+    def __init__(self, noColor=False):
+        logging.Handler.__init__(self)
+        self.noColor = noColor
+
+    def emit(self, record):
+        msg = record.getMessage()
+        ###
+        if record.exc_info:
+            _type, value, tback = record.exc_info
+            tback_text = format_exception(
+                exc_info=record.exc_info,
+                add_locals=(log.level <= logging.DEBUG),  # FIXME
+                add_globals=False,
+            )
+
+            if not msg:
+                msg = 'unhandled exception:'
+            msg += '\n'
+            msg += tback_text
+        ###
+        if record.levelname in ('CRITICAL', 'ERROR'):
+            if not self.noColor:
+                msg = self.startRed + msg + self.endFormat
+            fp = sys.stderr
+        else:
+            fp = sys.stdout
+        ###
+        fp.write(msg + '\n')
+        fp.flush()
+#    def exception(self, msg):
+#        if not self.noColor:
+#            msg = self.startRed + msg + self.endFormat
+#        sys.stderr.write(msg + '\n')
+#        sys.stderr.flush()
+
+
+def checkCreateConfDir():
+    if not isdir(confDir):
+        if exists(confDir):## file, or anything other than directory
+            os.rename(confDir, confDir + '.bak')## sorry, we don't import old config
+        os.mkdir(confDir)
+    if not exists(userPluginsDir):
+        os.mkdir(userPluginsDir)
+    if not isfile(confJsonFile):
+        with open(rootConfJsonFile) as srcFp, open(confJsonFile, 'w') as userFp:
+            userFp.write(srcFp.read())
+
+
+# __________________________________________________________________________ #
+
+logging.setLoggerClass(MyLogger)
+log = logging.getLogger('root')
+
+sys.excepthook = lambda *exc_info: log.critical(
+    format_exception(
+        exc_info=exc_info,
+        add_locals=(log.level <= logging.DEBUG),  # FIXME
+        add_globals=False,
+    )
+)
 
 sysName = platform.system()
-
-
 
 if hasattr(sys, 'frozen'):
    rootDir = dirname(sys.executable)
@@ -85,22 +169,3 @@ else:
 confJsonFile = join(confDir, 'config.json')
 rootConfJsonFile = join(dataDir, 'config.json')
 userPluginsDir = join(confDir, 'plugins')
-
-
-def checkCreateConfDir():
-    if not isdir(confDir):
-        if exists(confDir):## file, or anything other than directory
-            os.rename(confDir, confDir + '.bak')## sorry, we don't import old config
-        os.mkdir(confDir)
-    if not exists(userPluginsDir):
-        os.mkdir(userPluginsDir)
-    if not isfile(confJsonFile):
-        with open(rootConfJsonFile) as srcFp, open(confJsonFile, 'w') as userFp:
-            userFp.write(srcFp.read())
-
-
-
-logging.setLoggerClass(MyLogger)
-
-
-

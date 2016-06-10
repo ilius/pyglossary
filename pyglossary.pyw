@@ -26,8 +26,6 @@ import builtins
 from os.path import dirname, join, realpath
 from pprint import pformat
 import logging
-import inspect
-import traceback
 
 from pyglossary import core  # essential
 from pyglossary import VERSION
@@ -206,86 +204,17 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-
-def format_exception(exc_info=None, add_locals=False, add_globals=False):
-    if not exc_info:
-        exc_info = sys.exc_info()
-    _type, value, tback = exc_info
-    text = ''.join(traceback.format_exception(_type, value, tback))
-
-    if add_locals or add_globals:
-        try:
-            frame = inspect.getinnerframes(tback, context=0)[-1][0]
-        except IndexError:
-            pass
-        else:
-            if add_locals:
-                text += 'Traceback locals: %s\n' % pformat(frame.f_locals)
-            if add_globals:
-                text += 'Traceback globals: %s\n' % pformat(frame.f_globals)
-
-    return text
-
-
-class StdLogHandler(logging.Handler):
-    def __init__(self, noColor=False):
-        logging.Handler.__init__(self)
-        self.noColor = noColor
-
-    def emit(self, record):
-        msg = record.getMessage()
-        ###
-        if record.exc_info:
-            _type, value, tback = record.exc_info
-            tback_text = format_exception(
-                exc_info=record.exc_info,
-                add_locals=(log.level <= logging.DEBUG),  # FIXME
-                add_globals=False,
-            )
-
-            if not msg:
-                msg = 'unhandled exception:'
-            msg += '\n'
-            msg += tback_text
-        ###
-        if record.levelname in ('CRITICAL', 'ERROR'):
-            if not self.noColor:
-                msg = startRed + msg + endFormat
-            fp = sys.stderr
-        else:
-            fp = sys.stdout
-        ###
-        fp.write(msg + '\n')
-        fp.flush()
-#    def exception(self, msg):
-#        if not self.noColor:
-#            msg = startRed + msg + endFormat
-#        sys.stderr.write(msg + '\n')
-#        sys.stderr.flush()
-
-
 log = logging.getLogger('root')
 log.setVerbosity(args.verbosity)
 log.addHandler(
-    StdLogHandler(noColor=args.noColor),
+    core.StdLogHandler(noColor=args.noColor),
 )
-
-core.checkCreateConfDir()
-
 # with the logger setted up, we can import other pyglossary modules, so they
 # can do some loggging in right way.
 
-##############################
 
+core.checkCreateConfDir()
 
-def my_excepthook(*exc_info):
-    tback_text = format_exception(
-        exc_info=exc_info,
-        add_locals=(log.level <= logging.DEBUG),  # FIXME
-        add_globals=False,
-    )
-    log.critical(tback_text)
-sys.excepthook = my_excepthook
 
 ##############################
 
