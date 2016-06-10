@@ -238,7 +238,7 @@ class Glossary(object):
         self._defaultDefiFormat = 'm'
         self._progressbar = True
 
-    def __init__(self, info=None, ui=None, filename='', resPath=''):
+    def __init__(self, info=None, ui=None):
         """
             info: OrderedDict instance, or None
                   no need to copy OrderedDict instance, we will not reference to it
