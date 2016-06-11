@@ -14,13 +14,9 @@ def cleanWinArabicStr(u):
     return u
 
 
-
 def recodeToWinArabic(u):
     """
         u is a utf-8 encoded string
     """
     u = cleanWinArabicStr(u)
     return u.encode('windows-1256', 'replace')
-
-
-
