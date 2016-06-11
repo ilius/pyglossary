@@ -1,6 +1,7 @@
 import os
 import shutil
 
+
 class indir(object):
     """
     mkdir + chdir shortcut to use with `with` statement.
@@ -53,6 +54,7 @@ except:
     except:
         url_show = my_url_show
 """
+
+
 def click_website(widget, link):
     my_url_show(link)
-
