@@ -4,6 +4,7 @@ from pyglossary.entry import Entry
 import logging
 log = logging.getLogger('root')
 
+
 class TextGlossaryReader(object):
     def __init__(self, glos, hasInfo=True):
         self._glos = glos
@@ -14,19 +15,22 @@ class TextGlossaryReader(object):
         self._pendingEntries = []
         self._len = None
         self._pos = -1
+
     def open(self, filename, encoding='utf-8'):
         self._filename = filename
         self._file = open(filename, 'r', encoding=encoding)
         if self._hasInfo:
             self.loadInfo()
+
     def close(self):
         if not self._file:
             return
         try:
             self._file.close()
         except:
-            log.exception('error while closing file "%s"'%self._filename)
+            log.exception('error while closing file "%s"' % self._filename)
         self._file = None
+
     def loadInfo(self):
         self._pendingEntries = []
         self._leadingLinesCount = 0
@@ -46,6 +50,7 @@ class TextGlossaryReader(object):
                 self._glos.setInfo(word, defi)
         except StopIteration:
             pass
+
     def __next__(self):
         self._pos += 1
         try:
@@ -63,12 +68,16 @@ class TextGlossaryReader(object):
         word, defi = wordDefi
         ###
         return Entry(word, defi)
+
     def __len__(self):
         if self._len is None:
             log.debug('Try not to use len(reader) as it takes extra time')
-            self._len = fileCountLines(self._filename) - self._leadingLinesCount
+            self._len = fileCountLines(self._filename) - \
+                self._leadingLinesCount
         return self._len
-    __iter__ = lambda self: self
+
+    def __iter__(self):
+        return self
 
     def isInfoWord(self, word):
         raise NotImplementedError
@@ -78,8 +87,3 @@ class TextGlossaryReader(object):
 
     def nextPair(self):
         raise NotImplementedError
-
-
-
-
-
