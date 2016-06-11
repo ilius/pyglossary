@@ -7,7 +7,3 @@ def chBaseIntToList(number, base):
         result = [rdigit] + result
         if number == 0:
             return result
-
-
-
-
