@@ -1,5 +1,6 @@
-#from xml.sax.saxutils import escape as xml_escape
-#from xml.sax.saxutils import unescape as xml_unescape
+# from xml.sax.saxutils import escape as xml_escape
+# from xml.sax.saxutils import unescape as xml_unescape
+
 
 def xml_escape(data, entities=None):
     """Escape &, <, and > in a string of data.
@@ -19,6 +20,7 @@ def xml_escape(data, entities=None):
         data = __dict_replace(data, entities)
     return data
 
+
 def xml_unescape(data, entities=None):
     """Unescape &amp;, &lt;, and &gt; in a string of data.
 
@@ -35,4 +37,3 @@ def xml_unescape(data, entities=None):
         data = __dict_replace(data, entities)
     # must do ampersand last
     return data.replace("&amp;", "&")
-
