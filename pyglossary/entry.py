@@ -3,10 +3,12 @@
 
 class Entry(object):
     sep = '|'
-    join = lambda self, parts: self.sep.join([
-        part.replace(self.sep, '\\'+self.sep)
-        for part in parts
-    ])
+
+    def join(self, parts):
+        return self.sep.join([
+            part.replace(self.sep, '\\'+self.sep)
+            for part in parts
+        ])
 
     @staticmethod
     def getEntrySortKey(key=None):
@@ -35,18 +37,18 @@ class Entry(object):
                 'x': xdxf
         """
 
-        ## memory optimization:
+        # memory optimization:
         if isinstance(word, list):
             if len(word) == 1:
                 word = word[0]
         elif not isinstance(word, str):
-            raise TypeError('invalid word type %s'%type(word))
+            raise TypeError('invalid word type %s' % type(word))
 
         if isinstance(defi, list):
             if len(defi) == 1:
                 defi = defi[0]
         elif not isinstance(defi, str):
-            raise TypeError('invalid defi type %s'%type(defi))
+            raise TypeError('invalid defi type %s' % type(defi))
 
         self._word = word
         self._defi = defi
@@ -71,7 +73,7 @@ class Entry(object):
             return [self._word]
         else:
             return self._word
- 
+
     def getDefi(self):
         """
             returns string of definition,
@@ -209,6 +211,5 @@ class Entry(object):
         return cls(
             word,
             defi,
-            defiFormat = defiFormat,
+            defiFormat=defiFormat,
         )
-
