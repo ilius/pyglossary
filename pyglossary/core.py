@@ -14,6 +14,7 @@ from os.path import (
 )
 import platform
 
+
 class MyLogger(logging.Logger):
     levelsByVerbosity = (
         logging.CRITICAL,
@@ -29,8 +30,9 @@ class MyLogger(logging.Logger):
         'Warning',
         'Info',
         'Debug',
-        'All',#'Not-Set',
+        'All',  # 'Not-Set',
     ]
+
     def setVerbosity(self, verbosity):
         self.setLevel(self.levelsByVerbosity[verbosity])
         self._verbosity = verbosity
@@ -67,7 +69,7 @@ def format_exception(exc_info=None, add_locals=False, add_globals=False):
 
 class StdLogHandler(logging.Handler):
     startRed = '\x1b[31m'
-    endFormat = '\x1b[0;0;0m' ## len=8
+    endFormat = '\x1b[0;0;0m'  # len=8
 
     def __init__(self, noColor=False):
         logging.Handler.__init__(self)
@@ -107,13 +109,14 @@ class StdLogHandler(logging.Handler):
 
 def checkCreateConfDir():
     if not isdir(confDir):
-        if exists(confDir):## file, or anything other than directory
-            os.rename(confDir, confDir + '.bak')## sorry, we don't import old config
+        if exists(confDir):  # file, or anything other than directory
+            os.rename(confDir, confDir + '.bak')  # we don't import old config
         os.mkdir(confDir)
     if not exists(userPluginsDir):
         os.mkdir(userPluginsDir)
     if not isfile(confJsonFile):
-        with open(rootConfJsonFile) as srcFp, open(confJsonFile, 'w') as userFp:
+        with open(rootConfJsonFile) as srcFp, \
+          open(confJsonFile, 'w') as userFp:
             userFp.write(srcFp.read())
 
 
@@ -133,11 +136,11 @@ sys.excepthook = lambda *exc_info: log.critical(
 sysName = platform.system()
 
 if hasattr(sys, 'frozen'):
-   rootDir = dirname(sys.executable)
-   uiDir = join(rootDir, 'ui')
+    rootDir = dirname(sys.executable)
+    uiDir = join(rootDir, 'ui')
 else:
-   uiDir = dirname(realpath(__file__))
-   rootDir = dirname(uiDir)
+    uiDir = dirname(realpath(__file__))
+    rootDir = dirname(uiDir)
 
 dataDir = rootDir
 if dataDir.endswith("dist-packages"):
@@ -145,26 +148,30 @@ if dataDir.endswith("dist-packages"):
 
 resDir = join(dataDir, 'res')
 
-if os.sep=='/': ## Operating system is Unix-Like
+if os.sep == '/':  # Operating system is Unix-Like
     homeDir = os.getenv('HOME')
     user = os.getenv('USER')
     tmpDir = '/tmp'
-    ## os.name == 'posix' ## ????
-    if sysName=='Darwin':## MacOS X
-        confDir = homeDir + '/Library/Preferences/PyGlossary' ## OR '/Library/PyGlossary'
-        ## os.environ['OSTYPE'] == 'darwin10.0'
-        ## os.environ['MACHTYPE'] == 'x86_64-apple-darwin10.0'
-        ## platform.dist() == ('', '', '')
-        ## platform.release() == '10.3.0'
-    else:## GNU/Linux, ...
+    # os.name == 'posix' # FIXME
+    if sysName == 'Darwin':  # MacOS X
+        confDir = homeDir + '/Library/Preferences/PyGlossary'
+        # or maybe: homeDir + '/Library/PyGlossary'
+        # os.environ['OSTYPE'] == 'darwin10.0'
+        # os.environ['MACHTYPE'] == 'x86_64-apple-darwin10.0'
+        # platform.dist() == ('', '', '')
+        # platform.release() == '10.3.0'
+    else:  # GNU/Linux, ...
         confDir = homeDir + '/.pyglossary'
-elif os.sep=='\\': ## Operating system is Windows
+elif os.sep == '\\':  # Operating system is Windows
     homeDir = os.getenv('HOMEDRIVE') + os.getenv('HOMEPATH')
     user = os.getenv('USERNAME')
     tmpDir = os.getenv('TEMP')
     confDir = os.getenv('APPDATA') + '\\' + 'PyGlossary'
 else:
-    raise RuntimeError('Unknown path seperator(os.sep=="%s"), unknown operating system!'%os.sep)
+    raise RuntimeError(
+        'Unknown path seperator(os.sep=="%s")' % os.sep +
+        ', unknown operating system!'
+    )
 
 confJsonFile = join(confDir, 'config.json')
 rootConfJsonFile = join(dataDir, 'config.json')
