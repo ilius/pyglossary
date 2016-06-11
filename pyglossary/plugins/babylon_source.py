@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-## Source Glossary for "Babylon Builder".
-## A plain text file. Not binary like BGL files.
+# Source Glossary for "Babylon Builder".
+# A plain text file. Not binary like BGL files.
 
 from formats_common import *
 
@@ -11,16 +11,18 @@ description = 'Babylon Source (gls)'
 extentions = ['.gls', '.babylon']
 readOptions = []
 writeOptions = [
-    'writeInfo',## bool
-    'newline',## str, or choice ('\r\n', '\n', or '\r')
-    'encoding',## str
+    'writeInfo',  # bool
+    'newline',  # str, or choice ('\r\n', '\n', or '\r')
+    'encoding',  # str
 ]
+
 
 def entryCleanWinArabic(entry):
     from pyglossary.arabic_utils import cleanWinArabicStr
     entry.editFuncWord(cleanWinArabicStr)
     entry.editFuncDefi(cleanWinArabicStr)
     return entry
+
 
 def write(glos, filename, writeInfo=True, newline='', encoding=''):
     g = glos
@@ -38,7 +40,7 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
         encoding = 'windows-1256'
         entryFilterFunc = entryCleanWinArabic
         if not newline:
-            newline='\r\n'
+            newline = '\r\n'
 
     if not newline:
         newline = '\n'
@@ -46,13 +48,13 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
     head = ''
     if writeInfo:
         head += '\n'.join([
-            '### Glossary title:%s'%g.getInfo('name'),
-            '### Author:%s'%g.getInfo('author'),
-            '### Description:%s'%g.getInfo('description'),
-            '### Source language:%s'%g.getInfo('inputlang'),
-            '### Source alphabet:%s'%encoding,
-            '### Target language:%s'%g.getInfo('outputlang'),
-            '### Target alphabet:%s'%encoding,
+            '### Glossary title:%s' % g.getInfo('name'),
+            '### Author:%s' % g.getInfo('author'),
+            '### Description:%s' % g.getInfo('description'),
+            '### Source language:%s' % g.getInfo('inputlang'),
+            '### Source alphabet:%s' % encoding,
+            '### Target language:%s' % g.getInfo('outputlang'),
+            '### Target alphabet:%s' % encoding,
             '### Browsing enabled?Yes',
             '### Type of glossary:00000000',
             '### Case sensitive words?0'
@@ -75,4 +77,3 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
         encoding=encoding,
         newline=newline,
     )
-
