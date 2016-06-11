@@ -24,13 +24,13 @@ def readSqlite(glos, filename):
     for key in info_keys:
         try:
             value = row[key]
-        except KeyError:## KeyError?????????
-            #if value!='':##???????????
+        except KeyError:  # KeyError? FIXME
+            # if value:  # FIXME
             glos.setInfo(key, value)
     ##########
     result = connection.execute('select * from word')
     for row in result:
-        ## type(row['wname']) == type(row['wmean']) == unicode
+        # type(row['wname']) == type(row['wmean']) == str
         glos.addEntry(
             row['wname'].encode('utf8'),
             row['wmean'].encode('utf8'),
@@ -48,8 +48,18 @@ class Word(object):
 
 
 class Info(object):
-    def __init__(self, dbname, author='', version='', direction='', origLang='',
-    destLang='', license='', category='', description=''):
+    def __init__(
+        self,
+        dbname,
+        author='',
+        version='',
+        direction='',
+        origLang='',
+        destLang='',
+        license='',
+        category='',
+        description='',
+    ):
         self.dbname = dbname
         self.author = author
         self.version = version
@@ -61,7 +71,6 @@ class Info(object):
         self.description = description
 
 
-
 def writeSqlite(glos, filename):
     if os.path.exists(filename):
         os.remove(filename)
@@ -69,14 +78,18 @@ def writeSqlite(glos, filename):
     metadata = MetaData()
     metadata.bind = engine
     ##########################
-    word_table = Table('word', metadata,
+    word_table = Table(
+        'word',
+        metadata,
         Column('s_id', Integer, primary_key=True),
         Column('wname', Text, nullable=False),
-        Column('wmean', Text)
+        Column('wmean', Text),
     )
     mapper(Word, word_table)
     ########
-    info_table = Table('dbinfo', metadata,
+    info_table = Table(
+        'dbinfo',
+        metadata,
         Column('dbname', Text, primary_key=True),
         Column('author', Text),
         Column('version', Text),
@@ -85,26 +98,21 @@ def writeSqlite(glos, filename):
         Column('destLang', Text),
         Column('license', Text),
         Column('category', Text),
-        Column('description', Text)
+        Column('description', Text),
     )
     mapper(Info, info_table)
     ########
     metadata.create_all()
     ##########################
     for entry in glos:
-        #.decode('utf8'),
         word_table.insert().execute(
-            wname = entry.getWord(),
-            wmean = entry.getDefi(),
+            wname=entry.getWord(),
+            wmean=entry.getDefi(),
         )
     ########
     info = {}
     for key in info_keys:
-        info[key] = glos.getInfo(key)#.decode('utf8')
+        info[key] = glos.getInfo(key)  # .decode('utf8')
     info_table.insert().execute(**info)
     ##########################
     return True
-
-
-
-
