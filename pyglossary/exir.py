@@ -1,7 +1,5 @@
 
-#import sqlalchemy
 from sqlalchemy import *
-#import elixir
 from elixir import *
 
 
@@ -17,7 +15,6 @@ setup_all()
 objectstore = SessionContext()
 
 
-
 def writeSqlite_ex(glos, filename=''):
     metadata = MetaData()
     metadata.bind = 'sqlite:///' + filename
@@ -27,6 +24,4 @@ def writeSqlite_ex(glos, filename=''):
     for i in range(n):
         Entry(s_id=i+1, wname=d[i][0], wmean=d[i][1])
     objectstore.flush()
-    #objectstore.clear()
-
-
+    # objectstore.clear()
