@@ -35,6 +35,7 @@ from os.path import (
     isdir,
     dirname,
     basename,
+    abspath,
 )
 
 import time
@@ -458,6 +459,8 @@ class Glossary(object):
             direct (bool): enable direct mode
 
         """
+        filename = abspath(filename)
+
         ## don't allow direct=False when there are readers (read is called before with direct=True)
         if self._readers and not direct:
             raise ValueError(
