@@ -8,6 +8,7 @@ description = 'FreeDict (tei)'
 extentions = ['.tei']
 readOptions = []
 
+
 def write(glos, filename):
     fp = open(filename, 'w')
 
@@ -26,7 +27,7 @@ def write(glos, filename):
 <sourceDesc><p>%s</p></sourceDesc>
 </fileDesc>
 </teiHeader>
-<text><body>'''%(glos.getInfo('title'), filename))
+<text><body>''' % (glos.getInfo('title'), filename))
 
     for entry in glos:
         word = entry.getWord()
@@ -35,7 +36,6 @@ def write(glos, filename):
 <form><orth>%s</orth></form>
 <gramgrp><pos>n</pos></gramgrp>
 <trans><tr>%s</tr></trans>
-</entry>'''%(word, defi))
+</entry>''' % (word, defi))
     fp.write('</body></text></tei.2>')
     fp.close()
-
