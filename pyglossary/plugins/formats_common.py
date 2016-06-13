@@ -1,14 +1,7 @@
 from formats_common import *
 
-enable = False
-format = 'Unknown'
-description = 'Unknown'
-extentions = []
-readOptions = []
-writeOptions = []
-supportsAlternates = False
-
-import sys, os
+import sys
+import os
 from os.path import (
     join,
     split,
@@ -26,9 +19,6 @@ from paths import rootDir
 sys.path.insert(0, rootDir)
 
 from pyglossary.flags import *
-sortOnWrite = DEFAULT_NO
-sortKey = None
-
 
 from pyglossary import core
 from pyglossary.file_utils import FileLineWrapper
@@ -36,4 +26,12 @@ from pyglossary.text_utils import toStr, toBytes
 from pyglossary.os_utils import indir
 from pyglossary.entry import Entry
 
-
+enable = False
+format = 'Unknown'
+description = 'Unknown'
+extentions = []
+readOptions = []
+writeOptions = []
+supportsAlternates = False
+sortOnWrite = DEFAULT_NO
+sortKey = None
