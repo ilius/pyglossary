@@ -57,7 +57,7 @@ def charsetInfoDecode(b_value):
 def aboutInfoDecode(b_value):
     if not b_value:
         return
-    aboutExt, _, aboutContents = b_value.partition('\x00')
+    aboutExt, _, aboutContents = b_value.partition(b'\x00')
     if not aboutExt:
         log.warning('read_type_3: about: no file extension')
         return
