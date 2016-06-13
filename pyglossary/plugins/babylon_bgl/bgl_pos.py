@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
-##
-## Copyright © 2008-2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-## Copyright © 2011-2012 kubtek <kubtek@gmail.com>
-## This file is part of PyGlossary project, http://github.com/ilius/pyglossary
-## Thanks to Raul Fernandes <rgfbr@yahoo.com.br> and Karl Grill for reverse engineering
-##
-## This program is a free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3, or (at your option)
-## any later version.
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License along
-## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
-## If not, see <http://www.gnu.org/licenses/gpl.txt>.
+#
+# Copyright © 2008-2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# Copyright © 2011-2012 kubtek <kubtek@gmail.com>
+# This file is part of PyGlossary project, http://github.com/ilius/pyglossary
+# Thanks to Raul Fernandes <rgfbr@yahoo.com.br> and Karl Grill
+#       for reverse engineering
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
+# If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 partOfSpeechByCode = {
     # Use None for codes we have not seen yet
@@ -33,19 +34,18 @@ partOfSpeechByCode = {
     0x38: 'suffix',
     0x39: 'prefix',
     0x3A: 'article',
-    0x3B: '',## in Babylon Italian-English.BGL,
+    0x3B: '',  # in Babylon Italian-English.BGL,
     # Babylon Spanish-English.BGL,
     # Babylon_Chinese_S_English.BGL
     # no indication of the part of speech
     0x3C: 'abbreviation',
     # (short form: 'ר"ת')
     # (full form: "ר"ת: ראשי תיבות")
-
-# "ת'"
+    # "ת'"
     # adjective
-    #(full form: "ת': תואר")
+    # (full form: "ת': תואר")
 
-# "ש"ע"
+    # "ש"ע"
     # noun
     # (full form: "ש"ע: שם עצם")
 
@@ -55,7 +55,8 @@ partOfSpeechByCode = {
     0x40: 'feminine noun',
     # (short form: "נ\'")
     # (full form: "נ': נקבה")
-    0x41: 'masculine and feminine noun', # noun that may be used as masculine and feminine
+    0x41: 'masculine and feminine noun',
+    # 0x41: noun that may be used as masculine and feminine
     # (short form: "זו"נ")
     # (full form: "זו"נ: זכר ונקבה")
     0x42: 'masculine noun',
