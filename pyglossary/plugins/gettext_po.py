@@ -5,7 +5,7 @@ from formats_common import *
 enable = True
 format = 'GettextPo'
 description = 'Gettext Source (po)'
-extentions = ['.po',]
+extentions = ['.po']
 readOptions = []
 writeOptions = []
 
@@ -16,17 +16,20 @@ class Reader(object):
         self._filename = ''
         self._file = None
         self._len = None
+
     def open(self, filename):
         self._filename = filename
         self._file = open(filename)
+
     def close(self):
         if not self._file:
             return
         try:
             self._file.close()
         except:
-            log.exception('error while closing file "%s"'%self._filename)
+            log.exception('error while closing file "%s"' % self._filename)
         self._file = None
+
     def __len__(self):
         from pyglossary.file_utils import fileCountLines
         if self._len is None:
@@ -36,6 +39,7 @@ class Reader(object):
                 newline='\nmsgid',
             )
         return self._len
+
     def __iter__(self):
         from polib import unescape as po_unescape
         word = ''
@@ -50,7 +54,8 @@ class Reader(object):
                 continue
             if line.startswith('msgid '):
                 if word:
-                    yield Entry(word, defi) ; wordCount += 1
+                    yield Entry(word, defi)
+                    wordCount += 1
                     word = ''
                     defi = ''
                 word = po_unescape(line[6:])
@@ -66,7 +71,8 @@ class Reader(object):
                 else:
                     word += po_unescape(line)
         if word:
-            yield Entry(word, defi) ; wordCount += 1
+            yield Entry(word, defi)
+            wordCount += 1
         self._len = wordCount
 
 
@@ -75,13 +81,12 @@ def write(glos, filename):
     fp = open(filename, 'w')
     fp.write('#\nmsgid ""\nmsgstr ""\n')
     for key, value in glos.iterInfo():
-        fp.write('"%s: %s\\n"\n'%(key, value))
+        fp.write('"%s: %s\\n"\n' % (key, value))
     for entry in glos:
         word = entry.getWord()
         defi = entry.getDefi()
-        fp.write('msgid %s\nmsgstr %s\n\n'%(
+        fp.write('msgid %s\nmsgstr %s\n\n' % (
             po_escape(word),
             po_escape(defi),
         ))
     fp.close()
-
