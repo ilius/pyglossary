@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
-## sdict.py
-## Loader engine for AXMASoft's open dictionary format
-##
-## Copyright (C) 2010-2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-## Copyright (C) 2006-2008 Igor Tkach (part of SDict Viewer http://sdictviewer.sf.net)
-##
-## This program is a free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, version 3 of the License.
-##
-## You can get a copy of GNU General Public License along this program
-## But you can always get it from http://www.gnu.org/licenses/gpl.txt
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-## GNU General Public License for more details.
+# sdict.py
+# Loader engine for AXMASoft's open dictionary format
+#
+# Copyright (C) 2010-2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# Copyright (C) 2006-2008 Igor Tkach, as part of SDict Viewer:
+#               http://sdictviewer.sf.net
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 of the License.
+#
+# You can get a copy of GNU General Public License along this program
+# But you can always get it from http://www.gnu.org/licenses/gpl.txt
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 
-#from __future__ import with_statement ## FIXME
+from struct import unpack
 from formats_common import *
 
 enable = True
@@ -25,32 +26,36 @@ format = 'Sdict'
 description = 'Sdictionary Binary(dct)'
 extentions = ['.dct']
 readOptions = [
-    'encoding',## str
+    'encoding',  # str
 ]
 writeOptions = []
-
-from struct import unpack
 
 
 class GzipCompression(object):
     def __str__(self):
         return 'gzip'
+
     def decompress(self, string):
         import zlib
         return zlib.decompress(string)
 
+
 class Bzip2Compression(object):
     def __str__(self):
         return 'bzip2'
+
     def decompress(self, string):
         import bz2
         return bz2.decompress(string)
 
+
 class NoCompression(object):
     def __str__(self):
         return 'no compression'
+
     def decompress(self, string):
         return string
+
 
 compressions = [
     NoCompression(),
@@ -58,20 +63,32 @@ compressions = [
     Bzip2Compression(),
 ]
 
-read_raw = lambda s, fe: s[fe.offset:fe.offset + fe.length]
 
-read_str = lambda s, fe: read_raw(s, fe).replace(b'\x00', b'');
+def read_raw(s, fe):
+    return s[fe.offset:fe.offset + fe.length]
 
-read_int = lambda s, fe=None: unpack('<I', read_raw(s, fe) if fe else s)[0]
 
-read_short = lambda raw: unpack('<H', raw)[0]
+def read_str(s, fe):
+    read_raw(s, fe).replace(b'\x00', b'')
 
-read_byte = lambda raw: unpack('<B', raw)[0]
+
+def read_int(s, fe=None):
+    return unpack('<I', read_raw(s, fe) if fe else s)[0]
+
+
+def read_short(raw):
+    return unpack('<H', raw)[0]
+
+
+def read_byte(raw):
+    return unpack('<B', raw)[0]
+
 
 class FormatElement(object):
     def __init__(self, offset, length):
         self.offset = offset
         self.length = length
+
 
 class Header(object):
     f_signature = FormatElement(0x0, 4)
@@ -94,7 +111,9 @@ class Header(object):
         self.word_lang = read_str(st, self.f_input_lang)
         self.article_lang = read_str(st, self.f_output_lang)
         self.short_index_length = read_int(st, self.f_length_of_short_index)
-        comp_and_index_levels_byte = read_byte(read_raw(st, self.f_compression))
+        comp_and_index_levels_byte = read_byte(
+            read_raw(st, self.f_compression)
+        )
         self.compressionType = comp_and_index_levels_byte & 0b1111
         self.short_index_depth = comp_and_index_levels_byte >> 4
         self.num_of_words = read_int(st, self.f_num_of_words)
@@ -118,37 +137,44 @@ class Reader(object):
         self._header = Header()
 
     def open(self, filename, encoding='utf-8'):
-        self._file = open(filename, 'rb');
+        self._file = open(filename, 'rb')
         self._header.parse(self._file.read(43))
         self._compression = compressions[self._header.compressionType]
-        ###
         self.short_index = self.readShortIndex()
-        ###
-        self._glos.setInfo('name',  self.readUnit(self._header.title_offset))
-        self._glos.setInfo('version', self.readUnit(self._header.version_offset))
-        self._glos.setInfo('copyright', self.readUnit(self._header.copyright_offset))
-        ###
-        log.debug('SDict word count: %s'%len(self))## correct? FIXME
+        self._glos.setInfo(
+            'name',
+            self.readUnit(self._header.title_offset),
+        )
+        self._glos.setInfo(
+            'version',
+            self.readUnit(self._header.version_offset)
+        )
+        self._glos.setInfo(
+            'copyright',
+            self.readUnit(self._header.copyright_offset),
+        )
+        log.debug('SDict word count: %s' % len(self))  # correct? FIXME
 
     def close(self):
         self._file.close()
         self.clear()
 
-    __len__ = lambda self: self._header.num_of_words
+    def __len__(self):
+        return self._header.num_of_words
 
     def readUnit(self, pos):
         f = self._file
-        f.seek(pos);
-        record_length= read_int(f.read(4))
-        s = f.read(record_length)
-        s = self._compression.decompress(s)
-        return s
+        f.seek(pos)
+        record_length = read_int(f.read(4))
+        return self._compression.decompress(f.read(record_length))
 
     def readShortIndex(self):
         self._file.seek(self._header.short_index_offset)
         s_index_depth = self._header.short_index_depth
         index_entry_len = (s_index_depth+1)*4
-        short_index_str = self._file.read(index_entry_len*self._header.short_index_length)
+        short_index_str = self._file.read(
+            index_entry_len * self._header.short_index_length
+        )
         short_index_str = self._compression.decompress(short_index_str)
         index_length = self._header.short_index_length
         short_index = [{} for i in range(s_index_depth+2)]
@@ -158,20 +184,31 @@ class Reader(object):
             short_word = ''
             try:
                 for j in depth_range:
-                    #inlined unpack yields ~20% performance gain compared to calling read_int()
-                    uchar_code = unpack('<I', short_index_str[start_index:start_index+4])[0]
-                    start_index+=4
+                    # inlined unpack yields ~20% performance gain
+                    # compared to calling read_int()
+                    uchar_code = unpack(
+                        '<I',
+                        short_index_str[start_index:start_index+4]
+                    )[0]
+                    start_index += 4
                     if uchar_code == 0:
                         break
                     short_word += chr(uchar_code)
             except ValueError as ve:
-                # If Python is built without wide unicode support (which is the case on Maemo)
-                # it may not be possible to use some unicode chars. It seems best to ignore such index items
+                # If Python is built without wide unicode support (which is
+                # the case on Maemo) it may not be possible to use some
+                # unicode chars. It seems best to ignore such index items
                 # The rest of the dictionary should be usable.
-                log.error('Failed to decode short index item %s, will ignore: %s'%(i, ve))
+                log.error(
+                    'Failed to decode short index item %s' % i +
+                    ', will ignore: %s' % ve
+                )
                 continue
             pointer_start = entry_start+s_index_depth*4
-            pointer = unpack('<I', short_index_str[pointer_start:pointer_start+4])[0]
+            pointer = unpack(
+                '<I',
+                short_index_str[pointer_start:pointer_start+4]
+            )[0]
             short_index[len(short_word)][short_word] = pointer
         return short_index
 
@@ -181,10 +218,10 @@ class Reader(object):
         while True:
             pos += next_ptr
             item = self.readFullIndexItem(pos)
-            if item==None:
+            if item is None:
                 break
             (next_ptr, word, ptr) = item
-            if word==None:
+            if word is None:
                 break
             word = toStr(word)
             defi = self.readUnit(self._header.articles_offset + ptr)
@@ -203,13 +240,12 @@ class Reader(object):
             return next_word, word, article_pointer
         except Exception as e:
             if pointer >= self._header.articles_offset:
-                log.error('Warning: attempt to read word from illegal position in dict file')
+                log.error(
+                    'Warning: attempt to read word from '
+                    'illegal position in dict file'
+                )
                 return None
             log.exception('')
 
     def readArticle(self, pointer):
         return self.readUnit(self._header.articles_offset + pointer)
-
-
-
-
