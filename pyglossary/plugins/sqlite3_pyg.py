@@ -7,15 +7,15 @@ format = 'Sqlite3'
 description = 'SQLite 3'
 extentions = [
     '.sqlite',
-    '.m2',## https://sourceforge.net/projects/mdic
-    '.sdb',## https://code.launchpad.net/sib
+    '.m2',  # https://sourceforge.net/projects/mdic
+    '.sdb',  # https://code.launchpad.net/sib
 ]
 readOptions = []
 writeOptions = []
 
 
 infoKeys = [
-    'dbname',## name OR dbname? FIXME
+    'dbname',  # name OR dbname? FIXME
     'author',
     'version',
     'direction',
@@ -26,6 +26,7 @@ infoKeys = [
     'description',
 ]
 
+
 class Reader(object):
     def __init__(self, glos):
         self._glos = glos
@@ -35,7 +36,7 @@ class Reader(object):
         self._filename = ''
         self._con = None
         self._cur = None
-        
+
     def open(self, filename):
         from sqlite3 import connect
         self._filename = filename
@@ -51,7 +52,7 @@ class Reader(object):
     def loadInfo(self):
         for key in infoKeys:
             try:
-                self._cur.execute('select %s from dbinfo'%key)
+                self._cur.execute('select %s from dbinfo' % key)
             except:
                 continue
             value = self._cur.fetchone()[0]
@@ -60,10 +61,12 @@ class Reader(object):
             self._glos.setInfo(key, value)
 
         try:
-            for key, value in self._cur.execute('select name, value from dbinfo_extra order by id').fetchall():
+            for key, value in self._cur.execute(
+                'select name, value from dbinfo_extra order by id'
+            ).fetchall():
                 self._glos.setInfo(key, value)
         except Exception as e:
-            if not 'no such table' in str(e):
+            if 'no such table' not in str(e):
                 log.exception('error while loading dbinfo_extra')
 
     def __len__(self):
@@ -85,30 +88,26 @@ class Reader(object):
         '''
         lastId = self.getLastId()
         for startId in range(0, lastId+1, limit):
-            self._cur.execute('select * from word where id between %s and %s order by id'%(
-                startId,
-                startId + limit - 1,
-            ))
+            self._cur.execute(
+                'select * from word where id between %s and %s order by id' % (
+                    startId,
+                    startId + limit - 1,
+                )
+            )
             for row in self._cur.fetchall():
                 try:
                     word = row[1]
                     defi = row[2]
                 except:
-                    log.exception('error while encoding row id=%s'%row[0])
+                    log.exception('error while encoding row id=%s' % row[0])
                 else:
                     yield Entry(word, defi)
-
-
 
 
 def write_2(glos, filename):
     import pyglossary.alchemy as alchemy
     alchemy.writeSqlite(glos, filename)
 
-def write_3(glos, filename):
-    import pyglossary.exir as exir
-    exir.writeSqlite_ex(glos, filename)
-    return True
 
 def write(glos, filename):
     from sqlite3 import connect
@@ -127,8 +126,7 @@ def write(glos, filename):
             log.exception('error executing sqlite query:')
             log.error('Error while executing: '+line)
             continue
-    
+
     cur.close()
     con.close()
     return True
-
