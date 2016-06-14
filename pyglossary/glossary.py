@@ -226,7 +226,10 @@ class Glossary(object):
             pass
         else:
             for reader in readers:
-                reader.close()
+                try:
+                    reader.close()
+                except Exception:
+                    log.exception('')
         self._readers = []
 
         self._iter = None
