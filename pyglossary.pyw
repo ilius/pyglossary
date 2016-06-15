@@ -409,7 +409,7 @@ else:
 #try:
 if ui_type == 'cmd':
     from ui import ui_cmd
-    sys.exit(ui_cmd.UI().run(
+    sys.exit(0 if ui_cmd.UI().run(
         args.inputFilename,
         outputFilename=args.outputFilename,
         inputFormat=args.inputFormat,
@@ -419,7 +419,7 @@ if ui_type == 'cmd':
         readOptions=readOptions,
         writeOptions=writeOptions,
         convertOptions=convertOptions,
-    ))
+    ) else 1)
 if ui_type=='auto':
     ui_module = None
     for ui_type2 in ui_list:
@@ -434,10 +434,10 @@ if ui_type=='auto':
         sys.exit(1)
 else:
     ui_module = getattr(__import__('ui.ui_%s'%ui_type), 'ui_%s'%ui_type)
-sys.exit(ui_module.UI(**prefOptions).run(
+sys.exit(0 if ui_module.UI(**prefOptions).run(
     editPath=args.inputFilename,
     readOptions=readOptions,
-))
+) else 1)
 ## don't forget to append "**options" at every UI.__init__ arguments
 #except Exception as e:
 #    log.exception('')
