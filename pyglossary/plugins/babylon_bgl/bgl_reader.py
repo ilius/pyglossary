@@ -1154,7 +1154,7 @@ class BglReader(object):
                 pass
             else:
                 log.debug('processDefi(%s)\n'
-                    'b_key = %s:\ndefi field 50, unknown code: 0x{2:x}'%(
+                    'b_key = %s:\ndefi field 50, unknown code: %#.2x'%(
                         b_defi,
                         b_key,
                         fields.code_transcription_50,
@@ -1170,7 +1170,7 @@ class BglReader(object):
                 fields.u_transcription_60 = removeControlChars(fields.u_transcription_60)
             else:
                 log.debug('processDefi(%s)\n'
-                    'b_key = %s:\ndefi field 60, unknown code: 0x{2:x}'%(
+                    'b_key = %s:\ndefi field 60, unknown code: %#.2x'%(
                         b_defi,
                         b_key,
                         fields.code_transcription_60,
@@ -1480,7 +1480,7 @@ class BglReader(object):
                 log.debug(
                     'collecting definition fields, b_defi = %r\n'%b_defi +
                     'b_key = %r:\n'%b_key +
-                    'unknown control char. Char code = {2:#X}'%b_defi[i]
+                    'unknown control char. Char code = %#.2x'%b_defi[i]
                 )
                 return
 
