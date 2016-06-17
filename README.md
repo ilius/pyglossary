@@ -8,19 +8,19 @@ dictionary applications
 Screenshots
 -----------
 
-![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-gtk3.png)
+![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/30-gtk-bgl-apple-nl-en.png)
 
 Linux - (New) Gtk3-based intreface
 
 ------------------------------------------------------------------------
 
-![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-tkinter.png)
+![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/30-tk-bgl-mdict-fr-zh.png)
 
 Linux - Tkinter-based interface
 
 ------------------------------------------------------------------------
 
-![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/pyglossary-linux-cmd-small.png)
+![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/30-cmd-bgl-txt-ru-de.png)
 
 Linux - command line interface
 
