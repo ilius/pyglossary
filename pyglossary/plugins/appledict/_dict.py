@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
-## appledict/_dict.py
-## Output to Apple Dictionary xml sources for Dictionary Development Kit.
-##
-## Copyright (C) 2012 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
-##
-## This program is a free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, version 3 of the License.
-##
-## You can get a copy of GNU General Public License along this program
-## But you can always get it from http://www.gnu.org/licenses/gpl.txt
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-## GNU General Public License for more details.
+# appledict/_dict.py
+# Output to Apple Dictionary xml sources for Dictionary Development Kit.
+#
+# Copyright (C) 2012 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 of the License.
+#
+# You can get a copy of GNU General Public License along this program
+# But you can always get it from http://www.gnu.org/licenses/gpl.txt
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 
 import logging
-log = logging.getLogger('root')
-
 import re
 import string
 from xml.sax.saxutils import unescape, quoteattr
@@ -28,14 +26,21 @@ import xdxf
 from . import _normalize
 from pyglossary.plugins.formats_common import log, toStr
 
+log = logging.getLogger('root')
+
+
 def dictionary_begin(glos, f, frontBackMatter):
     # write header
-    f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
-            '<d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\n')
+    f.write(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<d:dictionary xmlns="http://www.w3.org/1999/xhtml" '
+        'xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\n'
+    )
 
     if frontBackMatter:
         with open(frontBackMatter, 'r') as front_back_matter:
             f.write(front_back_matter.read())
+
 
 def get_beautiful_soup():
     try:
@@ -53,7 +58,9 @@ def get_beautiful_soup():
         )
     return BeautifulSoup
 
+
 digs = string.digits + string.ascii_letters
+
 
 def base36(x):
     """
@@ -67,6 +74,7 @@ def base36(x):
     digits.reverse()
     return ''.join(digits)
 
+
 def id_generator():
     cnt = 1
 
@@ -74,6 +82,7 @@ def id_generator():
         s = '_%s' % base36(cnt)
         yield s
         cnt += 1
+
 
 def indexes_generator(indexes_lang):
     """
@@ -141,13 +150,21 @@ em0_9_ex_re = re.compile(r'<div class="ex" style="margin-left:(\d)em;color:steel
 em0_9_ex_sub = r'<div class="m\1 ex">'
 
 href_re = re.compile(r'''href=(["'])(.*?)\1''')
-href_sub = (lambda x:
-            x.group()
-            if x.groups()[1].startswith('http') else
-            'href=%s' % quoteattr('x-dictionary:d:' +
-                                  unescape(x.groups()[1], {'&quot;': '"'})))
 
-is_green = lambda x: 'color:green' in x.get('style', '')
+
+def href_sub(x):
+    return x.group() if x.groups()[1].startswith('http') \
+        else 'href=%s' % quoteattr(
+            'x-dictionary:d:' + unescape(
+                x.groups()[1],
+                {'&quot;': '"'},
+            )
+        )
+
+
+def is_green(x):
+    return 'color:green' in x.get('style', '')
+
 margin_re = re.compile('margin-left:(\d)em')
 
 
@@ -237,6 +254,7 @@ def format_clean_content(title, body, BeautifulSoup):
     content = nonprintable.sub('', content)
     return content
 
+
 def write_entries(glos, f, cleanHTML, indexes):
     """
     :param indexes: str | None
@@ -260,12 +278,12 @@ def write_entries(glos, f, cleanHTML, indexes):
 
     glos.setDefaultDefiFormat('h')
 
-    for i, entry in enumerate(glos):
+    for entryI, entry in enumerate(glos):
         words = entry.getWords()
         word, alts = words[0], words[1:]
         defi = entry.getDefi()
         format = entry.getDefiFormat()
-        
+
         long_title = _normalize.title_long(_normalize.title(word, BeautifulSoup))
         if not long_title:
             continue
@@ -297,10 +315,11 @@ def write_entries(glos, f, cleanHTML, indexes):
         _buffer += content
         _buffer += end_entry
 
-        if i % 1000 == 0:
+        if entryI % 1000 == 0:
             f.write(_buffer)
             _buffer = ''
     f.write(_buffer)
+
 
 def dictionary_end(glos, f):
     f.write('</d:dictionary>\n')

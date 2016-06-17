@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # appledict/indexes/ru.py
-""" russian indexes based on pymorphy."""
 #
 # Copyright (C) 2016 Ratijas <ratijas.t@me.com>
 #
@@ -15,6 +14,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+Russian indexes based on pymorphy.
+"""
 
 from . import languages
 from pyglossary.plugins.formats_common import log

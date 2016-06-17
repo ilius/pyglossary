@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # appledict/indexes/__init__.py
-""" extended indexes generation with respect to source language."""
 #
 # Copyright (C) 2016 Ratijas <ratijas.t@me.com>
 #
@@ -15,6 +14,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+extended indexes generation with respect to source language.
+"""
 
 import os
 import pkgutil
@@ -49,4 +51,6 @@ for _, module, _ in pkgutil.iter_modules([here]):
     try:
         __import__('%s.%s' % (__name__, module))
     except ImportError:
-        log.error("error while importing indexes plugin %s" % module, exc_info=1)
+        log.exception(
+            "error while importing indexes plugin %s" % module
+        )

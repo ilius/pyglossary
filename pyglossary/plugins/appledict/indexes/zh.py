@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # appledict/indexes/zh.py
-""" chinese wildcard and pinyin indexes."""
 #
 # Copyright (C) 2016 Ratijas <ratijas.t@me.com>
 #
@@ -15,6 +14,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+Chinese wildcard and pinyin indexes.
+"""
 
 import re
 
@@ -51,6 +53,7 @@ def zh(titles, content):
 
     return indexes
 
+
 def pinyin_indexes(content):
     pinyin = find_pinyin(content)
     # assert type(pinyin) == unicode
@@ -64,7 +67,10 @@ def pinyin_indexes(content):
     for pinyin in re.split(r',|;', pinyin):
 
         # find all pinyin ranges, use them to rip pinyin out
-        py = [r._slice(pinyin) for r in color.ranges_of_pinyin_in_string(pinyin)]
+        py = [
+            r._slice(pinyin)
+            for r in color.ranges_of_pinyin_in_string(pinyin)
+        ]
 
         # maybe no pinyin here
         if not py:
@@ -82,7 +88,8 @@ def pinyin_indexes(content):
 
 
 def find_pinyin(content):
-    # assume that content is HTML and pinyin is inside second tag (first is <h1>)
+    # assume that content is HTML and pinyin is inside second tag
+    # (first is <h1>)
     soup = bs4.BeautifulSoup(content.splitlines()[0], "lxml")
     if soup.body:
         soup = soup.body

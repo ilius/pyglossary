@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
-## appledict/__init__.py
-## Output to Apple Dictionary xml sources for Dictionary Development Kit.
-##
-## Copyright (C) 2012 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
-##
-## This program is a free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, version 3 of the License.
-##
-## You can get a copy of GNU General Public License along this program
-## But you can always get it from http://www.gnu.org/licenses/gpl.txt
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-## GNU General Public License for more details.
+# appledict/__init__.py
+# Output to Apple Dictionary xml sources for Dictionary Development Kit.
+#
+# Copyright (C) 2012 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 of the License.
+#
+# You can get a copy of GNU General Public License along this program
+# But you can always get it from http://www.gnu.org/licenses/gpl.txt
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 
 import sys
-sys.setrecursionlimit(10000)
-
 import os
 import re
 import pkgutil
@@ -26,6 +24,8 @@ import shutil
 
 from pyglossary.plugins.formats_common import *
 from ._dict import write_xml, get_beautiful_soup
+
+sys.setrecursionlimit(10000)
 
 enable = True
 format = 'AppleDict'
@@ -46,14 +46,17 @@ writeOptions = [
 
 OtherResources = 'OtherResources'
 
+
 def abspath_or_None(path):
     return os.path.abspath(os.path.expanduser(path)) if path else None
+
 
 def write_xsl(xsl):
     if not xsl:
         return
     with indir(OtherResources, create=True):
         shutil.copyfile(xsl, os.path.basename(xsl))
+
 
 def format_default_prefs(defaultPrefs):
     """
@@ -73,10 +76,14 @@ def format_default_prefs(defaultPrefs):
     return "\n".join("\t\t<key>%s</key>\n\t\t<string>%s</string>" % i
                      for i in sorted(defaultPrefs.items())).strip()
 
+
 def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
     bs4 = get_beautiful_soup()
 
-    template = toStr(pkgutil.get_data(__name__, 'project_templates/Info.plist'))
+    template = toStr(pkgutil.get_data(
+        __name__,
+        'project_templates/Info.plist',
+    ))
 
     basename = os.path.splitext(filename)[0]
     # identifier must be unique
@@ -85,7 +92,10 @@ def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
 
     if bs4:
         # strip html tags
-        copyright = ('%s' % bs4.BeautifulSoup(glos.getInfo('copyright'), "lxml").text)
+        copyright = '%s' % bs4.BeautifulSoup(
+            glos.getInfo('copyright'),
+            "lxml"
+        ).text
     else:
         copyright = glos.getInfo('copyright')
 
@@ -100,11 +110,14 @@ def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
             "DCSDictionaryManufacturerName": glos.getInfo('author'),
             "DCSDictionaryXSL": (os.path.basename(xsl) if xsl else ""),
             "DCSDictionaryDefaultPrefs": format_default_prefs(defaultPrefs),
-            "DCSDictionaryPrefsHTML": (os.path.basename(prefsHTML) if prefsHTML else ""),
+            "DCSDictionaryPrefsHTML":
+                os.path.basename(prefsHTML) if prefsHTML else "",
             "DCSDictionaryFrontMatterReferenceID":
-                ("<key>DCSDictionaryFrontMatterReferenceID</key>\n"
-                 "\t<string>front_back_matter</string>" if frontBackMatter else ""),
+                "<key>DCSDictionaryFrontMatterReferenceID</key>\n"
+                "\t<string>front_back_matter</string>" if frontBackMatter
+                else "",
         })
+
 
 def write_css(fname, css_file):
     if css_file:
@@ -115,10 +128,12 @@ def write_css(fname, css_file):
     with open(fname, 'wb') as f:
         f.write(css)
 
+
 def write_makefile(dict_name):
     template = toStr(pkgutil.get_data(__name__, 'project_templates/Makefile'))
     with open('Makefile', 'w') as f:
         f.write(template % {'dict_name': dict_name})
+
 
 def write_prefsHTML(prefsHTML_file):
     if not prefsHTML_file:
@@ -126,8 +141,10 @@ def write_prefsHTML(prefsHTML_file):
     with indir(OtherResources, create=True):
         shutil.copyfile(prefsHTML_file, os.path.basename(prefsHTML_file))
 
+
 def write_resources(paths):
-    """copy files and directories 'paths' to 'OtherResources'.
+    """
+    copy files and directories 'paths' to 'OtherResources'.
     each item of 'paths' must be an absolute path.
     """
     if not paths:
@@ -142,6 +159,7 @@ def write_resources(paths):
             else:
                 shutil.copy2(path, name)
 
+
 def safe_listdir_set(path):
     """
     :rtype: set
@@ -153,8 +171,22 @@ def safe_listdir_set(path):
         return set()
     return {os.path.join(path, node) for node in os.listdir(path)}
 
-def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, prefsHTML=None, frontBackMatter=None, OtherResources=None, jing=None, indexes=None):
-    """write glossary to Apple dictionary .xml and supporting files.
+
+def write(
+    glos,
+    fpath,
+    cleanHTML="yes",
+    css=None,
+    xsl=None,
+    defaultPrefs=None,
+    prefsHTML=None,
+    frontBackMatter=None,
+    OtherResources=None,
+    jing=None,
+    indexes=None,
+):
+    """
+    write glossary to Apple dictionary .xml and supporting files.
 
     :type glos: pyglossary.glossary.Glossary
     :type fpath: str
@@ -209,12 +241,27 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
     OtherResources = abspath_or_None(OtherResources)
 
     # to avoid copying css, prefs or something like that.
-    res = safe_listdir_set(glos.resPath).union(safe_listdir_set(OtherResources))
+    res = safe_listdir_set(glos.resPath).union(
+        safe_listdir_set(OtherResources)
+    )
     res -= {css, xsl, prefsHTML, frontBackMatter}
 
     with indir(basename, create=True, clear=True):
-        write_plist(glos, dict_name + '.plist', xsl=xsl, defaultPrefs=defaultPrefs, prefsHTML=prefsHTML, frontBackMatter=frontBackMatter)
-        write_xml(glos, dict_name + '.xml', cleanHTML=="yes", frontBackMatter=frontBackMatter, indexes=indexes)
+        write_plist(
+            glos,
+            dict_name + '.plist',
+            xsl=xsl,
+            defaultPrefs=defaultPrefs,
+            prefsHTML=prefsHTML,
+            frontBackMatter=frontBackMatter,
+        )
+        write_xml(
+            glos,
+            dict_name + '.xml',
+            cleanHTML == "yes",
+            frontBackMatter=frontBackMatter,
+            indexes=indexes,
+        )
         write_css(dict_name + '.css', css)
         write_makefile(dict_name)
         write_xsl(xsl)
@@ -225,7 +272,8 @@ def write(glos, fpath, cleanHTML="yes", css=None, xsl=None, defaultPrefs=None, p
             run(dict_name + '.xml')
 
 if __name__ == '__main__':
-    import sys, os.path
+    import sys
+    import os.path
     import glossary as gl
     glos = gl.Glossary()
 
@@ -240,7 +288,7 @@ if __name__ == '__main__':
         os.mkdir(outdir)
 
     glos.convert(
-        filename,        
+        filename,
         inputFormat=informat,
         readOptions=dict(
             resPath=os.path.join(outdir, "OtherResources"),
@@ -248,4 +296,3 @@ if __name__ == '__main__':
         outputFilename=os.path.join(outdir, basename),
         outputFormat=outformat,
     )
-
