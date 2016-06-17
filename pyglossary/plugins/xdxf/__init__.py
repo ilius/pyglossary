@@ -72,7 +72,7 @@ def read(glos, filename):
         ...
     </xdxf>
     """
-    ##<!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
+    # <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
     import_xml_stuff()
 
     with open(filename, 'rb') as f:
