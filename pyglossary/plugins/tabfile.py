@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
+from pyglossary.text_reader import TextGlossaryReader
+from pyglossary.text_utils import escapeNTB, unescapeNTB, splitByBarUnescapeNTB
 
 enable = True
 format = 'Tabfile'
@@ -10,12 +12,9 @@ readOptions = [
     'encoding',
 ]
 writeOptions = [
-    'encoding',## str
-    'writeInfo',## bool
+    'encoding',  # str
+    'writeInfo',  # bool
 ]
-
-from pyglossary.text_reader import TextGlossaryReader
-from pyglossary.text_utils import escapeNTB, unescapeNTB, splitByBarUnescapeNTB
 
 
 class Reader(TextGlossaryReader):
@@ -37,18 +36,20 @@ class Reader(TextGlossaryReader):
         line = self._file.readline()
         if not line:
             raise StopIteration
-        line = line.strip()## This also removed tailing newline
+        line = line.strip()  # This also removes tailing newline
         if not line:
             return
         ###
         word, tab, defi = line.partition('\t')
         if not tab:
-            log.error('Warning: line starting with "%s" has no tab!'%line[:10])
+            log.error(
+                'Warning: line starting with "%s" has no tab!' % line[:10]
+            )
             return
         ###
         if self._glos.getPref('enable_alts', True):
             word = splitByBarUnescapeNTB(word)
-            if len(word)==1:
+            if len(word) == 1:
                 word = word[0]
         else:
             word = unescapeNTB(word, bar=True)
@@ -58,12 +59,9 @@ class Reader(TextGlossaryReader):
         return word, defi
 
 
-
 def write(glos, filename, encoding='utf-8', writeInfo=True):
     return glos.writeTabfile(
         filename,
         encoding=encoding,
         writeInfo=writeInfo,
     )
-
-
