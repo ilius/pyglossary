@@ -2,7 +2,7 @@
 # appledict/__init__.py
 # Output to Apple Dictionary xml sources for Dictionary Development Kit.
 #
-# Copyright (C) 2012 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+# Copyright (C) 2012-2015 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
