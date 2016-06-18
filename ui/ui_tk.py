@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
-## ui_tk.py
-##
-## Copyright © 2009-2010 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-##
-## This program is a free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3, or (at your option)
-## any later version.
-##
-## You can get a copy of GNU General Public License along this program
-## But you can always get it from http://www.gnu.org/licenses/gpl.txt
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-## GNU General Public License for more details.
+# ui_tk.py
+#
+# Copyright © 2009-2010 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# You can get a copy of GNU General Public License along this program
+# But you can always get it from http://www.gnu.org/licenses/gpl.txt
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 
 
 from pyglossary.core import homeDir
@@ -31,11 +31,11 @@ from tkinter import tix
 
 log = logging.getLogger('root')
 
-#startBold	= '\x1b[1m'		# Start Bold		#len=4
-#startUnderline	= '\x1b[4m'		# Start Underline	#len=4
-endFormat	= '\x1b[0;0;0m'		# End Format		#len=8
-#redOnGray	= '\x1b[0;1;31;47m'
-startRed	= '\x1b[31m'
+# startBold = '\x1b[1m'  # Start Bold #len=4
+# startUnderline = '\x1b[4m'  # Start Underline #len=4
+endFormat = '\x1b[0;0;0m'  # End Format #len=8
+# redOnGray = '\x1b[0;1;31;47m'
+startRed = '\x1b[31m'
 
 
 noneItem = 'Not Selected'
@@ -44,13 +44,13 @@ noneItem = 'Not Selected'
 bitmapLogo = join(rootDir, 'res', 'pyglossary.ico') if "nt" == os.name \
     else '@' + join(rootDir, 'res', 'pyglossary.xbm')
 
+
 def set_window_icon(window):
-    #window.wm_iconbitmap(bitmap=bitmapLogo)
+    # window.wm_iconbitmap(bitmap=bitmapLogo)
     window.iconphoto(
         True,
         tk.PhotoImage(file=join(rootDir, 'res', 'pyglossary.png')),
     )
-
 
 
 class TkTextLogHandler(logging.Handler):
@@ -64,12 +64,15 @@ class TkTextLogHandler(logging.Handler):
         tktext.tag_config('DEBUG', foreground='#ffffff')
         ###
         self.tktext = tktext
+
     def emit(self, record):
         msg = record.getMessage()
         ###
         if record.exc_info:
             _type, value, tback = record.exc_info
-            tback_text = ''.join(traceback.format_exception(_type, value, tback))
+            tback_text = ''.join(
+                traceback.format_exception(_type, value, tback)
+            )
             if msg:
                 msg += '\n'
             msg += tback_text
@@ -81,8 +84,8 @@ class TkTextLogHandler(logging.Handler):
         )
 
 
-### Monkey-patch Tkinter
-## http://stackoverflow.com/questions/5191830/python-exception-logging
+# Monkey-patch Tkinter
+# http://stackoverflow.com/questions/5191830/python-exception-logging
 def CallWrapper__call__(self, *args):
     """
         Apply first function SUBST to arguments, than FUNC.
@@ -97,8 +100,10 @@ tk.CallWrapper.__call__ = CallWrapper__call__
 
 
 class ProgressBar(tix.Frame):
-    #### This comes from John Grayson's book "Python and Tkinter programming"
-    #### Edited by Saeed Rasooli
+    """
+    This comes from John Grayson's book "Python and Tkinter programming"
+    Edited by Saeed Rasooli
+    """
     def __init__(
         self,
         master=None,
@@ -156,11 +161,13 @@ class ProgressBar(tix.Frame):
         self.update()
         self.bind('<Configure>', self.update)
         self.canvas.pack(side='top', fill='x', expand='no')
+
     def updateProgress(self, newVal, newMax=None, text=''):
         if newMax:
             self.max = newMax
         self.value = newVal
         self.update(None, text)
+
     def update(self, event=None, labelText=''):
         # Trim the values to be between min and max
         value = self.value
@@ -170,7 +177,7 @@ class ProgressBar(tix.Frame):
             value = self.min
         # Adjust the rectangle
         width = int(self.winfo_width())
-        #width = self.width
+        # width = self.width
         ratio = float(value)/self.max
         if self.orientation == 'horizontal':
             self.canvas.coords(
@@ -195,10 +202,10 @@ class ProgressBar(tix.Frame):
         if not labelText:
             labelText = self.labelFormat % int(ratio * 100)
         self.canvas.itemconfig(self.label, text=labelText)
-        #self.canvas.move(self.label, width/2, self.height/2)#??????????
-        #self.canvas.scale(self.label, 0, 0, float(width)/self.width, 1)#???????????
+        # FIXME:
+        # self.canvas.move(self.label, width/2, self.height/2)
+        # self.canvas.scale(self.label, 0, 0, float(width)/self.width, 1)
         self.canvas.update_idletasks()
-
 
 
 class UI(tix.Frame, UIBase):
@@ -216,7 +223,7 @@ class UI(tix.Frame, UIBase):
         set_window_icon(master)
         ########
         self.pack(fill='x')
-        #master.bind('<Configure>', self.resized)
+        # master.bind('<Configure>', self.resized)
         ######################
         self.running = False
         self.glos = Glossary(ui=self)
@@ -239,7 +246,7 @@ class UI(tix.Frame, UIBase):
         ##
         comboVar = tk.StringVar()
         combo = tk.OptionMenu(frame, comboVar, *Glossary.readDesc)
-        #comboVar.set(Glossary.readDesc[0])
+        # comboVar.set(Glossary.readDesc[0])
         comboVar.set(noneItem)
         combo.pack(side='left')
         self.combobox_i = comboVar
@@ -260,8 +267,8 @@ class UI(tix.Frame, UIBase):
             frame,
             text='Browse',
             command=self.browse_i,
-            #bg='#f0f000',
-            #activebackground='#f6f622',
+            # bg='#f0f000',
+            # activebackground='#f6f622',
         )
         button.pack(side='left')
         ##
@@ -274,7 +281,7 @@ class UI(tix.Frame, UIBase):
         ##
         comboVar = tk.StringVar()
         combo = tk.OptionMenu(frame, comboVar, *Glossary.writeDesc)
-        #comboVar.set(Glossary.writeDesc[0])
+        # comboVar.set(Glossary.writeDesc[0])
         comboVar.set(noneItem)
         combo.pack(side='left')
         combo.bind('<Configure>', self.combobox_o_changed)
@@ -289,15 +296,15 @@ class UI(tix.Frame, UIBase):
         ##
         entry = tix.Entry(frame)
         entry.pack(side='left', fill='x', expand=True)
-        #entry.bind_all('<KeyPress>', self.entry_changed)
+        # entry.bind_all('<KeyPress>', self.entry_changed)
         self.entry_o = entry
         ##
         button = tix.Button(
             frame,
             text='Browse',
             command=self.browse_o,
-            #bg='#f0f000',
-            #activebackground='#f6f622',
+            # bg='#f0f000',
+            # activebackground='#f6f622',
         )
         button.pack(side='left')
         ##
@@ -314,8 +321,8 @@ class UI(tix.Frame, UIBase):
             frame,
             text='Convert',
             command=self.convert,
-            #bg='#00e000',
-            #activebackground='#22f022',
+            # bg='#00e000',
+            # activebackground='#22f022',
         )
         button.pack(
             side='left',
@@ -329,11 +336,15 @@ class UI(tix.Frame, UIBase):
         vpaned.add(notebook)
         #################
         console = tix.Text(vpaned, height=15, background='#000000')
-        #self.consoleH = 15
-        #sbar = Tix.Scrollbar(vpaned, orien=Tix.VERTICAL, command=console.yview)
-        #sbar.grid ( row=0, column=1)
-        #console['yscrollcommand'] = sbar.set
-        #console.grid()
+        # self.consoleH = 15
+        # sbar = Tix.Scrollbar(
+        #    vpaned,
+        #    orien=Tix.VERTICAL,
+        #    command=console.yview
+        # )
+        # sbar.grid ( row=0, column=1)
+        # console['yscrollcommand'] = sbar.set
+        # console.grid()
         console.pack(fill='both', expand=True)
         log.addHandler(
             TkTextLogHandler(console),
@@ -349,10 +360,10 @@ class UI(tix.Frame, UIBase):
             frame2,
             text='Clear',
             command=self.console_clear,
-            #bg='black',
-            #fg='#ffff00',
-            #activebackground='#333333',
-            #activeforeground='#ffff00',
+            # bg='black',
+            # fg='#ffff00',
+            # activebackground='#333333',
+            # activeforeground='#ffff00',
         )
         clearB.pack(side='left')
         ####
@@ -376,33 +387,33 @@ class UI(tix.Frame, UIBase):
         frame2.pack(fill='x')
         self.progressTitle = ''
         #############
-        #vpaned.grid()
-        #bottomFrame.grid()
-        #self.grid()
+        # vpaned.grid()
+        # bottomFrame.grid()
+        # self.grid()
         #####################
-        #lbox = Tix.Listbox(convertFrame)
-        #lbox.insert(0, 'aaaaaaaa', 'bbbbbbbbbbbbbbbbbbbb')
-        #lbox.pack(fill='x')
+        # lbox = Tix.Listbox(convertFrame)
+        # lbox.insert(0, 'aaaaaaaa', 'bbbbbbbbbbbbbbbbbbbb')
+        # lbox.pack(fill='x')
         ##############
         frame3 = tix.Frame(self)
         aboutB = tix.Button(
             frame3,
             text='About',
             command=self.about_clicked,
-            #bg='#e000e0',
-            #activebackground='#f030f0',
+            # bg='#e000e0',
+            # activebackground='#f030f0',
         )
         aboutB.pack(side='right')
         closeB = tix.Button(
             frame3,
             text='Close',
             command=self.quit,
-            #bg='#ff0000',
-            #activebackground='#ff5050',
+            # bg='#ff0000',
+            # activebackground='#ff5050',
         )
         closeB.pack(side='right')
         frame3.pack(fill='x')
-        ############### Reverse Tab ####################
+        # __________________________ Reverse Tab __________________________ #
         revFrame = tix.Frame(notebook.tab2)
         revFrame.pack(fill='x')
         ######################
@@ -413,7 +424,7 @@ class UI(tix.Frame, UIBase):
         ##
         comboVar = tk.StringVar()
         combo = tk.OptionMenu(frame, comboVar, *Glossary.readDesc)
-        #comboVar.set(Glossary.readDesc[0])
+        # comboVar.set(Glossary.readDesc[0])
         comboVar.set(noneItem)
         combo.pack(side='left')
         self.combobox_r_i = comboVar
@@ -427,15 +438,15 @@ class UI(tix.Frame, UIBase):
         ##
         entry = tix.Entry(frame)
         entry.pack(side='left', fill='x', expand=True)
-        #entry.bind_all('<KeyPress>', self.entry_r_i_changed)
+        # entry.bind_all('<KeyPress>', self.entry_r_i_changed)
         self.entry_r_i = entry
         ##
         button = tix.Button(
             frame,
             text='Browse',
             command=self.r_browse_i,
-            #bg='#f0f000',
-            #activebackground='#f6f622',
+            # bg='#f0f000',
+            # activebackground='#f6f622',
         )
         button.pack(side='left')
         ##
@@ -443,7 +454,7 @@ class UI(tix.Frame, UIBase):
             frame,
             text='Load',
             command=self.r_load,
-            #bg='#7777ff',
+            # bg='#7777ff',
         )
         button.pack(side='left')
         ###
@@ -456,30 +467,32 @@ class UI(tix.Frame, UIBase):
         ###
         entry = tix.Entry(frame)
         entry.pack(side='left', fill='x', expand=True)
-        #entry.bind_all('<KeyPress>', self.entry_r_i_changed)
+        # entry.bind_all('<KeyPress>', self.entry_r_i_changed)
         self.entry_r_o = entry
         ##
         button = tix.Button(
             frame,
             text='Browse',
             command=self.r_browse_o,
-            #bg='#f0f000',
-            #activebackground='#f6f622',
+            # bg='#f0f000',
+            # activebackground='#f6f622',
         )
         button.pack(side='left')
         ##
         frame.pack(fill='x')
         ##############################
-        if path!='':
+        if path:
             self.entry_i.insert(0, path)
             self.entry_changed()
             self.load()
+
     def verbosityChanged(self, index, value, op):
         log.setVerbosity(
             int(self.verbosityCombo.get())
         )
+
     def about_clicked(self):
-        about = tix.Toplevel(width=600)## bg='#0f0' does not work
+        about = tix.Toplevel(width=600)  # bg='#0f0' does not work
         about.title('About PyGlossary')
         about.resizable(False, False)
         set_window_icon(about)
@@ -487,7 +500,7 @@ class UI(tix.Frame, UIBase):
         msg1 = tix.Message(
             about,
             width=350,
-            text='PyGlossary %s (Tkinter)'%VERSION,
+            text='PyGlossary %s (Tkinter)' % VERSION,
             font=('DejaVu Sans', 13, 'bold'),
         )
         msg1.pack(fill='x', expand=True)
@@ -525,8 +538,8 @@ class UI(tix.Frame, UIBase):
             frame,
             text='Close',
             command=about.destroy,
-            #bg='#ff0000',
-            #activebackground='#ff5050',
+            # bg='#ff0000',
+            # activebackground='#ff5050',
         )
         button.pack(side='right')
         ###
@@ -534,8 +547,8 @@ class UI(tix.Frame, UIBase):
             frame,
             text='License',
             command=self.about_license_clicked,
-            #bg='#00e000',
-            #activebackground='#22f022',
+            # bg='#00e000',
+            # activebackground='#22f022',
         )
         button.pack(side='right')
         ###
@@ -543,14 +556,15 @@ class UI(tix.Frame, UIBase):
             frame,
             text='Credits',
             command=self.about_credits_clicked,
-            #bg='#0000ff',
-            #activebackground='#5050ff',
+            # bg='#0000ff',
+            # activebackground='#5050ff',
         )
         button.pack(side='right')
         ###
         frame.pack(fill='x')
+
     def about_credits_clicked(self):
-        about = tix.Toplevel()## bg='#0f0' does not work
+        about = tix.Toplevel()  # bg='#0f0' does not work
         about.title('Credits')
         about.resizable(False, False)
         set_window_icon(about)
@@ -568,13 +582,14 @@ class UI(tix.Frame, UIBase):
             frame,
             text='Close',
             command=about.destroy,
-            #bg='#ff0000',
-            #activebackground='#ff5050',
+            # bg='#ff0000',
+            # activebackground='#ff5050',
         )
         closeB.pack(side='right')
         frame.pack(fill='x')
+
     def about_license_clicked(self):
-        about = tix.Toplevel()## bg='#0f0' does not work
+        about = tix.Toplevel()  # bg='#0f0' does not work
         about.title('License')
         about.resizable(False, False)
         set_window_icon(about)
@@ -592,31 +607,35 @@ class UI(tix.Frame, UIBase):
             frame,
             text='Close',
             command=about.destroy,
-            #bg='#ff0000',
-            #activebackground='#ff5050',
+            # bg='#ff0000',
+            # activebackground='#ff5050',
         )
         closeB.pack(side='right')
         frame.pack(fill='x')
+
     def quit(self):
         self.master.destroy()
+
     def apply_clicked(self):
         if self.load():
             self.convert()
+
     def resized(self, event):
         dh = self.master.winfo_height() - self.winfo_height()
-        #log.debug(dh, self.consoleH)
-        #if dh > 20:
+        # log.debug(dh, self.consoleH)
+        # if dh > 20:
         #    self.consoleH += 1
         #    self.console['height'] = self.consoleH
         #    self.console['width'] = int(self.console['width']) + 1
         #    self.console.grid()
-        #for x in dir(self):
+        # for x in dir(self):
         #    if 'info' in x:
         #        log.debug(x)
+
     def combobox_o_changed(self, event):
-        #log.debug(self.combobox_o.get())
+        # log.debug(self.combobox_o.get())
         formatD = self.combobox_o.get()
-        if formatD==noneItem:
+        if formatD == noneItem:
             return
         format = Glossary.descFormat[formatD]
         """
@@ -633,27 +652,36 @@ class UI(tix.Frame, UIBase):
             self.xml.get_widget('label_enc').hide()
             self.xml.get_widget('comboentry_enc').hide()
         """
-        if self.pref['ui_autoSetOutputFileName']:#format==None:
-            pathI = self.entry_i.get()
-            pathO = self.entry_o.get()
-            formatOD = self.combobox_o.get()
-            if formatOD != None and not pathO and '.' in pathI:
-                extO=Glossary.descExt[formatOD]
-                pathO=''.join(os.path.splitext(pathI)[:-1])+extO
-                #self.entry_o.delete(0, 'end')
-                self.entry_o.insert(0, pathO)
+        if not self.pref['ui_autoSetOutputFileName']:  # and format is None:
+            return
+
+        pathI = self.entry_i.get()
+        pathO = self.entry_o.get()
+        formatOD = self.combobox_o.get()
+
+        if formatOD is None:
+            return
+        if pathO:
+            return
+        if '.' not in pathI:
+            return
+
+        extO = Glossary.descExt[formatOD]
+        pathO = ''.join(os.path.splitext(pathI)[:-1])+extO
+        # self.entry_o.delete(0, 'end')
+        self.entry_o.insert(0, pathO)
+
     def entry_changed(self, event=None):
-        #log.debug('entry_changed')
-        #char = event.keysym
+        # log.debug('entry_changed')
+        # char = event.keysym
         pathI = self.entry_i.get()
         if self.pathI != pathI:
             formatD = self.combobox_i.get()
-            if len(pathI)>7:
-                if pathI[:7]=='file://':
-                    pathI=urlToPath(pathI)
-                    self.entry_i.delete(0, 'end')
-                    self.entry_i.insert(0, pathI)
-            if self.pref['ui_autoSetFormat']:#format==noneItem:
+            if pathI.startswith('file://'):
+                pathI = urlToPath(pathI)
+                self.entry_i.delete(0, 'end')
+                self.entry_i.insert(0, pathI)
+            if self.pref['ui_autoSetFormat']:  # format==noneItem:
                 ext = os.path.splitext(pathI)[-1].lower()
                 if ext in ('.gz', '.bz2', '.zip'):
                     ext = os.path.splitext(pathI[:-len(ext)])[-1].lower()
@@ -661,26 +689,25 @@ class UI(tix.Frame, UIBase):
                     if ext in Glossary.readExt[i]:
                         self.combobox_i.set(Glossary.readDesc[i])
                         break
-            if self.pref['ui_autoSetOutputFileName']:#format==noneItem:
-                #pathI = self.entry_i.get()
+            if self.pref['ui_autoSetOutputFileName']:  # format==noneItem:
+                # pathI = self.entry_i.get()
                 formatOD = self.combobox_o.get()
                 pathO = self.entry_o.get()
                 if formatOD != noneItem and not pathO and '.' in pathI:
-                    extO=Glossary.descExt[formatOD]
-                    pathO=''.join(os.path.splitext(pathI)[:-1])+extO
+                    extO = Glossary.descExt[formatOD]
+                    pathO = ''.join(os.path.splitext(pathI)[:-1]) + extO
                     self.entry_o.delete(0, 'end')
                     self.entry_o.insert(0, pathO)
             self.pathI = pathI
         ##############################################
         pathO = self.entry_o.get()
-        if self.pathO!=pathO:
+        if self.pathO != pathO:
             formatD = self.combobox_o.get()
-            if len(pathO)>7:
-                if pathO[:7]=='file://':
-                    pathO=urlToPath(pathO)
-                    self.entry_o.delete(0, 'end')
-                    self.entry_o.insert(0, pathO)
-            if self.pref['ui_autoSetFormat']:#format==noneItem:
+            if pathO.startswith('file://'):
+                pathO = urlToPath(pathO)
+                self.entry_o.delete(0, 'end')
+                self.entry_o.insert(0, pathO)
+            if self.pref['ui_autoSetFormat']:  # format==noneItem:
                 ext = os.path.splitext(pathO)[-1].lower()
                 if ext in ('.gz', '.bz2', '.zip'):
                     ext = os.path.splitext(pathO[:-len(ext)])[-1].lower()
@@ -689,37 +716,43 @@ class UI(tix.Frame, UIBase):
                         self.combobox_o.set(Glossary.writeDesc[i])
                         break
             self.pathO = pathO
+
     def browse_i(self):
         path = filedialog.askopenfilename(initialdir=self.fcd_dir)
         if path:
             self.entry_i.delete(0, 'end')
             self.entry_i.insert(0, path)
             self.entry_changed()
-            self.fcd_dir = os.path.dirname(path)#????????
+            self.fcd_dir = os.path.dirname(path)  # FIXME
+
     def browse_o(self):
         path = filedialog.asksaveasfilename()
         if path:
             self.entry_o.delete(0, 'end')
             self.entry_o.insert(0, path)
             self.entry_changed()
-            self.fcd_dir = os.path.dirname(path)#????????
+            self.fcd_dir = os.path.dirname(path)  # FIXME
+
     def convert(self):
         inPath = self.entry_i.get()
         if not inPath:
-            log.critical('Input file path is empty!');return
+            log.critical('Input file path is empty!')
+            return
         inFormatDesc = self.combobox_i.get()
-        if inFormatDesc==noneItem:
-            #log.critical('Input format is empty!');return
+        if inFormatDesc == noneItem:
+            # log.critical('Input format is empty!');return
             inFormat = ''
         else:
             inFormat = Glossary.descFormat[inFormatDesc]
 
         outPath = self.entry_o.get()
         if not outPath:
-            log.critical('Output file path is empty!');return
+            log.critical('Output file path is empty!')
+            return
         outFormatDesc = self.combobox_o.get()
         if outFormatDesc in (noneItem, ''):
-            log.critical('Output format is empty!');return
+            log.critical('Output format is empty!')
+            return
         outFormat = Glossary.descFormat[outFormatDesc]
 
         self.running = True
@@ -735,41 +768,48 @@ class UI(tix.Frame, UIBase):
             self.running = False
 
         if succeed:
-            #self.status('Convert finished')
-            log.info('writing %s file: "%s" done.'%(outFormat, outPath))
+            # self.status('Convert finished')
+            log.info('writing %s file: "%s" done.' % (outFormat, outPath))
         else:
-            #self.status('Convert failed')
-            log.error('writing %s file: "%s" failed.'%(outFormat, outPath))
+            # self.status('Convert failed')
+            log.error('writing %s file: "%s" failed.' % (outFormat, outPath))
 
         return succeed
 
     def run(self, editPath=None, readOptions=None):
         if readOptions is None:
             readOptions = {}
-        ## editPath and readOptions are for DB Editor, which is not implemented yet
+        # editPath and readOptions are for DB Editor
+        # which is not implemented
         self.mainloop()
+
     def progressInit(self, title):
         self.progressTitle = title
+
     def progress(self, rat, text=''):
         if not text:
-            text = '%%%d'%(rat*100)
-        text += ' - %s'%self.progressTitle
+            text = '%%%d' % (rat*100)
+        text += ' - %s' % self.progressTitle
         self.pbar.updateProgress(rat*100, None, text)
-        ##self.pbar.value = rat*100
-        ##self.pbar.update()
+        # self.pbar.value = rat*100
+        # self.pbar.update()
         self.master.update()
+
     def console_clear(self, event=None):
         self.console.delete('1.0', 'end')
         self.console.insert('end', 'Console:\n')
+
     def r_browse_i(self):
         pass
+
     def r_browse_o(self):
         pass
+
     def r_load(self):
         pass
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     import sys
     if len(sys.argv) > 1:
         path = sys.argv[1]
@@ -777,5 +817,3 @@ if __name__=='__main__':
         path = ''
     ui = UI(path)
     ui.run()
-
-
