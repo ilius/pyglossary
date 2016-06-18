@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # flawless_dsl/tag.py
 #
-""" internal stuff.  Tag class"""
-#
 # Copyright (C) 2016 Ratijas <ratijas.t@me.com>
 #
 # This program is a free software; you can redistribute it and/or modify
@@ -16,6 +14,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+internal stuff. Tag class
+"""
 
 
 from collections import namedtuple
@@ -23,13 +24,18 @@ from collections import namedtuple
 
 Tag = namedtuple('Tag', ['opening', 'closing'])
 
-def __repr__(self):
-    if self.opening == self.closing:
-        return 'Tag(%r)' % self.opening
-    return 'Tag(%r, %r)' % self
+Tag.__repr__ = lambda tag: \
+    'Tag(%r)' % tag.opening if tag.opening == tag.closing \
+    else 'Tag(%r, %r)' % tag
 
-Tag.__repr__ = __repr__
-del __repr__
+predefined = [
+    'm',
+    '*',
+    'ex',
+    'i',
+    'c',
+]
+
 
 def was_opened(stack, tag):
     """
@@ -46,8 +52,6 @@ def was_opened(stack, tag):
         return True
     return was_opened(stack[:-1], tag)
 
-
-predefined = ['m', '*', 'ex', 'i', 'c']
 
 def canonical_order(tags):
     """

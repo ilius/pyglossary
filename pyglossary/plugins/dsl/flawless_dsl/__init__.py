@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # flawless_dsl/__init__.py
 #
-""" only clean flawless DSL markup on output!"""
 #
 # Copyright (C) 2016 Ratijas <ratijas.t@me.com>
 #
@@ -16,6 +15,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+only clean flawless DSL markup on output!
+"""
 
 from . import layer
 from . import tag

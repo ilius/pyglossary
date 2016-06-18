@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # flawless_dsl/main.py
 #
-""" exposed API lives here."""
-#
 # Copyright (C) 2016 Ratijas <ratijas.t@me.com>
 #
 # This program is a free software; you can redistribute it and/or modify
@@ -16,6 +14,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+exposed API lives here.
+"""
 
 
 import copy
@@ -106,12 +107,14 @@ class FlawlessDSLParser(object):
                      e.g.: ('c', r' (\w+)'), ('m', r'\d')
         """
         tags_ = set()
-        for tag, ext_re in (t if isinstance(t, tuple) else (t, '') for t in tags):
+        for tag, ext_re in (
+            t if isinstance(t, tuple) else (t, '')
+            for t in tags
+        ):
             tag_re = re.escape(tag)
             tag_open_re = r'\[%s%s\]' % (tag_re, ext_re)
             tags_.add((tag, tag_re, ext_re, tag_open_re))
         self.tags = frozenset(tags_)
-
 
     def parse(self, line):
         r"""
@@ -126,16 +129,15 @@ class FlawlessDSLParser(object):
         line = self._parse(line)
         return self.bring_brackets_back(line)
 
-
     def _parse(self, line):
         items = self._split_line_by_tags(line)
         line = self._tags_and_text_loop(items)
         return line
 
-
     def _split_line_by_tags(self, line):
         """
-        split line into chunks, each chunk is whether opening / closing tag or text.
+        split line into chunks, each chunk is whether opening / closing
+        tag or text.
 
         return iterable of two-tuples. first element is item's type, one of:
         - OPEN, second element is Tag object
@@ -160,7 +162,8 @@ class FlawlessDSLParser(object):
                 break
 
             ptr = bracket
-            bracket = line.find(']', ptr + 2)  # at least two chars after opening bracket
+            # at least two chars after opening bracket:
+            bracket = line.find(']', ptr + 2)
             if line[ptr + 1] == '/':
                 yield CLOSE, line[ptr + 2:bracket]
             else:
@@ -173,13 +176,13 @@ class FlawlessDSLParser(object):
                     yield OPEN, _tag.Tag(tag, tag)
             ptr = bracket + 1
 
-
     @staticmethod
     def _tags_and_text_loop(tags_and_text):
         """
         parse chunks one by one.
 
-        :param tags_and_text: Iterable[['OPEN', Tag] | ['CLOSE', str] | ['TEXT', str]]
+        :param tags_and_text:
+            Iterable[['OPEN', Tag] | ['CLOSE', str] | ['TEXT', str]]
         :return: str
         """
         state = TEXT
@@ -189,15 +192,19 @@ class FlawlessDSLParser(object):
         for item_t, item in tags_and_text:
 
             if item_t is OPEN:
-                if _tag.was_opened(stack, item) and item.closing not in closings:
+                if _tag.was_opened(stack, item) and \
+                  item.closing not in closings:
                     continue
 
                 if item.closing == 'm' and len(stack) >= 1:
-                    # close all layers.  [m*] tags can only appear at top layer.
-                    # note: do not reopen tags that were marked as closed already.
-                    to_open = set.union(set(),
-                                        *((t for t in l.tags if t.closing not in closings)
-                                          for l in stack))
+                    # close all layers.  [m*] tags can only appear
+                    # at top layer.
+                    # note: do not reopen tags that were marked as
+                    # closed already.
+                    to_open = set.union(*(
+                        {t for t in l.tags if t.closing not in closings}
+                        for l in stack
+                    ))
                     for i in range(len(stack)):
                         _layer.close_layer(stack)
                     # assert len(stack) == 1
@@ -237,7 +244,6 @@ class FlawlessDSLParser(object):
         # shutdown unclosed tags
         return ''.join([l.text for l in stack])
 
-
     def put_brackets_away(self, line):
         """put away \[, \] and brackets that does not belong to any of given tags.
 
@@ -248,19 +254,26 @@ class FlawlessDSLParser(object):
         if startswith_tag is None:
             openings = '|'.join('%s%s' % (_[1], _[2]) for _ in self.tags)
             closings = '|'.join(_[1] for _ in self.tags)
-            startswith_tag = re.compile(r'(?:(?:%s)|/(?:%s))\]' % (openings, closings))
+            startswith_tag = re.compile(
+                r'(?:(?:%s)|/(?:%s))\]' % (openings, closings)
+            )
             _startswith_tag_cache[self.tags] = startswith_tag
         for i, chunk in enumerate(re_non_escaped_bracket.split(line)):
             if i != 0:
                 m = startswith_tag.match(chunk)
                 if m:
-                    clean_line += '[%s%s' % (m.group(), chunk[m.end():].replace('[', BRACKET_L).replace(']', BRACKET_R))
+                    clean_line += '[%s%s' % (
+                        m.group(),
+                        chunk[m.end():].replace('[', BRACKET_L)
+                        .replace(']', BRACKET_R)
+                    )
                 else:
-                    clean_line += BRACKET_L + chunk.replace('[', BRACKET_L).replace(']', BRACKET_R)
+                    clean_line += BRACKET_L + chunk.replace('[', BRACKET_L)\
+                        .replace(']', BRACKET_R)
             else:  # firsr chunk
-                clean_line += chunk.replace('[', BRACKET_L).replace(']', BRACKET_R)
+                clean_line += chunk.replace('[', BRACKET_L)\
+                    .replace(']', BRACKET_R)
         return clean_line
-
 
     @staticmethod
     def bring_brackets_back(line):
@@ -271,13 +284,17 @@ def parse(line, tags=None):
     """parse DSL markup.
 
     WARNING!
-    `parse` function is not optimal because it creates new parser instance on each call.
+    `parse` function is not optimal because it creates new parser instance
+    on each call.
     consider cache one [per thread] instance of FlawlessDSLParser in your code.
     """
     import warnings
-    warnings.warn("""`parse` function is not optimal because it creates new parser instance on each call.
-consider cache one [per thread] instance of FlawlessDSLParser in your code.\
-""")
+    warnings.warn(
+        '`parse` function is not optimal because it creates new parser '
+        'instance on each call.\n'
+        'consider cache one [per thread] instance of FlawlessDSLParser '
+        'in your code.'
+    )
     if tags:
         parser = FlawlessDSLParser(tags)
     else:

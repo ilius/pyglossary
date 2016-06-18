@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # flawless_dsl/tests.py
 #
-""" test everything."""
-#
 # Copyright (C) 2016 Ratijas <ratijas.t@me.com>
 #
 # This program is a free software; you can redistribute it and/or modify
@@ -16,6 +14,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+test everything.
+"""
 
 
 import unittest
@@ -232,7 +233,10 @@ class PutBracketsAwayTestCase(unittest.TestCase):
 
     def testMixed(self):
         before = r"[i]...\[on \]\[the] to[p][/i]"
-        after = r"[i]...\{L}on \{R}\{L}the{R} to[p][/i]".format(L=BRACKET_L, R=BRACKET_R)
+        after = r"[i]...\{L}on \{R}\{L}the{R} to[p][/i]".format(
+            L=BRACKET_L,
+            R=BRACKET_R,
+        )
         self.assertEqual(after, self.put_brackets_away(before))
 
     def testEverythingEscaped(self):

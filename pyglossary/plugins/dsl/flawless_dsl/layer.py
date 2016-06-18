@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # flawless_dsl/layer.py
 #
-""" internal stuff.  Layer class"""
-#
 # Copyright (C) 2016 Ratijas <ratijas.t@me.com>
 #
 # This program is a free software; you can redistribute it and/or modify
@@ -16,6 +14,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+internal stuff. Layer class
+"""
 
 from . import tag
 
