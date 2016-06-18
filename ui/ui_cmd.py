@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
-## ui_cmd.py
-##
-## Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-## This file is part of PyGlossary project, https://github.com/ilius/pyglossary
-##
-## This program is a free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3, or (at your option)
-## any later version.
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License along
-## with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
-## If not, see <http://www.gnu.org/licenses/gpl.txt>.
+# ui_cmd.py
+#
+# Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# This file is part of PyGlossary project, https://github.com/ilius/pyglossary
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
+# If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 from os.path import join
 import time
@@ -27,7 +27,7 @@ from .base import *
 from . import progressbar as pb
 
 
-if os.sep=='\\': ## Operating system is Windows
+if os.sep == '\\':  # Operating system is Windows
     startRed = ''
     endFormat = ''
     startBold = ''
@@ -37,15 +37,20 @@ else:
     startRed = '\x1b[31m'
     endFormat = '\x1b[0;0;0m'
 
-    startBold = '\x1b[1m' ## Start Bold ## len=4
-    startUnderline = '\x1b[4m' ## Start Underline ## len=4
-    endFormat = '\x1b[0;0;0m' ## End Format ## len=8
-    #redOnGray = '\x1b[0;1;31;47m'
+    startBold = '\x1b[1m'  # Start Bold # len=4
+    startUnderline = '\x1b[4m'  # Start Underline # len=4
+    endFormat = '\x1b[0;0;0m'  # End Format # len=8
+    # redOnGray = '\x1b[0;1;31;47m'
 
 
 COMMAND = 'pyglossary'
-#COMMAND = sys.argv[0]
+# COMMAND = sys.argv[0]
 
+
+def getColWidth(subject, strings):
+    return max(
+        len(x) for x in [subject] + strings
+    )
 
 
 def getFormatsTable(names, header):
@@ -58,7 +63,6 @@ def getFormatsTable(names, header):
         for name in names
     ]
 
-    getColWidth = lambda subject, strings: max(len(subject), max(list(map(len, strings))))
     nameWidth = getColWidth('Name', names)
     descriptionWidth = getColWidth('Description', descriptions)
     extentionsWidth = getColWidth('Extentions', extentions)
@@ -112,19 +116,20 @@ def parseFormatOptionsStr(st):
     st = st.strip()
     if not st:
         return {}
-    ###
+
     opt = {}
     parts = st.split(';')
     for part in parts:
         try:
             (key, value) = part.split('=')
         except ValueError:
-            log.error('bad option syntax: %s'%part)
+            log.error('bad option syntax: %s' % part)
             continue
         key = key.strip()
         value = value.strip()
+        # if it is string form of a number or boolean or tuple ...
         try:
-            newValue = eval(value) ## if it is string form of a number or boolean or tuple ...
+            newValue = eval(value)
         except:
             pass
         else:
@@ -140,20 +145,25 @@ def parseFormatOptionsStr(st):
         opt[key] = value
     return opt
 
+
 class NullObj(object):
     def __getattr__(self, attr):
         return self
+
     def __setattr__(self, attr, value):
         pass
+
     def __call__(self, *args, **kwargs):
         pass
+
 
 class UI(UIBase):
     def __init__(self, **options):
         self.pref = {}
-        #log.debug(self.pref)
+        # log.debug(self.pref)
         self.pbar = NullObj()
         self._toPause = False
+
     def onSigInt(self, *args):
         if self._toPause:
             log.info('\nOperation Canceled')
@@ -161,11 +171,12 @@ class UI(UIBase):
         else:
             self._toPause = True
             log.info('\nPlease wait...')
+
     def setText(self, text):
-        self.pbar.widgets[0]=text
+        self.pbar.widgets[0] = text
+
     def progressInit(self, title):
         rot = pb.RotatingMarker()
-        ## SyntaxError(invalid syntax) with python3 with unicode(u'█') argument ## FIXME
         self.pbar = pb.ProgressBar(
             widgets=[
                 title,
@@ -178,8 +189,10 @@ class UI(UIBase):
             update_step=0.5,
         )
         rot.pbar = self.pbar
+
     def progress(self, rat, text=''):
         self.pbar.update(rat)
+
     def reverseLoop(self, *args, **kwargs):
         reverseKwArgs = {}
         for key in (
@@ -199,26 +212,29 @@ class UI(UIBase):
                 pass
         reverseKwArgs.update(kwargs)
 
-        #log.pretty(reverseKwArgs, 'reverseKwArgs = ')
+        # log.pretty(reverseKwArgs, 'reverseKwArgs = ')
         if not self._toPause:
             log.info('Reversing glossary... (Press Ctrl+C to pause/stop)')
         for wordI in self.glos.reverse(**reverseKwArgs):
             if self._toPause:
-                log.info('Reverse is paused. Press Enter to continue, and Ctrl+C to exit')
+                log.info(
+                    'Reverse is paused.'
+                    ' Press Enter to continue, and Ctrl+C to exit'
+                )
                 input()
                 self._toPause = False
 
     def run(
         self,
         inputFilename,
-        outputFilename = '',
-        inputFormat = '',
-        outputFormat = '',
-        reverse = False,
-        prefOptions = None,
-        readOptions = None,
-        writeOptions = None,
-        convertOptions = None,
+        outputFilename='',
+        inputFormat='',
+        outputFormat='',
+        reverse=False,
+        prefOptions=None,
+        readOptions=None,
+        writeOptions=None,
+        convertOptions=None,
     ):
         if not prefOptions:
             prefOptions = {}
@@ -232,14 +248,14 @@ class UI(UIBase):
         self.pref_load(**prefOptions)
 
         if inputFormat:
-            #inputFormat = inputFormat.capitalize()
-            if not inputFormat in Glossary.readFormats:
-                log.error('invalid read format %s'%inputFormat)
+            # inputFormat = inputFormat.capitalize()
+            if inputFormat not in Glossary.readFormats:
+                log.error('invalid read format %s' % inputFormat)
         if outputFormat:
-            #outputFormat = outputFormat.capitalize()
-            if not outputFormat in Glossary.writeFormats:
-                log.error('invalid write format %s'%outputFormat)
-                log.error('try: %s --help'%COMMAND)
+            # outputFormat = outputFormat.capitalize()
+            if outputFormat not in Glossary.writeFormats:
+                log.error('invalid write format %s' % outputFormat)
+                log.error('try: %s --help' % COMMAND)
                 return 1
         if not outputFilename:
             if reverse:
@@ -248,20 +264,19 @@ class UI(UIBase):
                 try:
                     ext = Glossary.formatsExt[outputFormat][0]
                 except (KeyError, IndexError):
-                    log.error('invalid write format %s'%outputFormat)
-                    log.error('try: %s --help'%COMMAND)
+                    log.error('invalid write format %s' % outputFormat)
+                    log.error('try: %s --help' % COMMAND)
                     return 1
                 else:
                     outputFilename = os.path.splitext(inputFilename)[0] + ext
             else:
                 log.error('neither output file nor output format is given')
-                log.error('try: %s --help'%COMMAND)
+                log.error('try: %s --help' % COMMAND)
                 return 1
-
 
         glos = self.glos = Glossary(ui=self)
         if reverse:
-            signal.signal(signal.SIGINT, self.onSigInt)## good place? FIXME
+            signal.signal(signal.SIGINT, self.onSigInt)  # good place? FIXME
             readOptions['direct'] = False
             if not glos.read(
                 inputFilename,
@@ -284,11 +299,11 @@ class UI(UIBase):
                 **convertOptions
             )
             if succeed:
-                #self.status('Convert finished')
-                log.info('Writing file "%s" done.'%(outputFilename))
+                # self.status('Convert finished')
+                log.info('Writing file "%s" done.' % (outputFilename))
             else:
-                #self.status('Convert failed')
-                log.error('Writing file "%s" failed.'%(outputFilename))
+                # self.status('Convert failed')
+                log.error('Writing file "%s" failed.' % (outputFilename))
             return succeed
 
         return True
