@@ -2,6 +2,7 @@
 # flawless_dsl/layer.py
 #
 # Copyright (C) 2016 Ratijas <ratijas.t@me.com>
+# Copyright (C) 2016 Saeed Rasooli <saeed.gnu@gmail.com>
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
