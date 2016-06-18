@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
-## progressbar.py - Text progressbar library for python
-##
-## Copyright (C) 2006 Nilton Volpato <nilton.volpato@gmail.com> (until version 2.2)
-## Copyright (C) 2009-2010 Saeed Rasooli <saeed.gnu@gmail.com>
-##
-## This library is free software; you can redistribute it and/or
-## modify it under the terms of the GNU Lesser General Public
-## License as published by the Free Software Foundation; either
-## version 2.1 of the License, or (at your option) any later version.
-##
-## This library is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the GNU
-## Lesser General Public License for more details.
-##
-## You should have received a copy of the GNU Lesser General Public
-## License along with this library. Or on Debian systems, from:
-## /usr/share/common-licenses/LGPL
-## If not, see <http://www.gnu.org/licenses/lgpl.txt>.
+# progressbar.py - Text progressbar library for python
+#
+# Copyright (C) 2006 Nilton Volpato <nilton.volpato@gmail.com>
+#                    (until version 2.2)
+# Copyright (C) 2009-2010 Saeed Rasooli <saeed.gnu@gmail.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library. Or on Debian systems, from:
+# /usr/share/common-licenses/LGPL
+# If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
 
 """
@@ -43,7 +44,7 @@
 
 # Changelog
 #
-# 2009-??-??: used in PyGlossary project by Saeed Rasooli with some modifications
+# 2009-??-??: used in PyGlossary by Saeed Rasooli with some modifications
 # 2006-05-07: v2.2 fixed bug in windows
 # 2005-12-04: v2.1 autodetect terminal width, added start method
 # 2005-12-04: v2.0 everything is now a widget (wow!)
@@ -79,12 +80,15 @@ class ProgressBarWidget(object):
             At least this function must be overriden.
         """
         pass
+
     def __str__(self):
         return self.update()
+
     def __add__(self, other):
         if isinstance(other, bytes):
             return str(self) + other.encode('utf-8')
         return str(self) + str(other)
+
     def __radd__(self, other):
         if isinstance(other, bytes):
             return other.encode('utf-8') + str(self)
@@ -121,8 +125,10 @@ class ETA(ProgressBarWidget):
     """
     def __init__(self, text='ETA: '):
         self.text = text
+
     def format_time(self, seconds):
         return time.strftime('%H:%M:%S', time.gmtime(seconds))
+
     def update(self):
         pbar = self.pbar
         if pbar.currval == 0:
@@ -132,7 +138,8 @@ class ETA(ProgressBarWidget):
         else:
             elapsed = pbar.seconds_elapsed
             eta = elapsed * pbar.maxval / pbar.currval - elapsed
-            return '%s%s'%(self.text, self.format_time(eta))
+            return '%s%s' % (self.text, self.format_time(eta))
+
 
 class FileTransferSpeed(ProgressBarWidget):
     """
@@ -141,9 +148,10 @@ class FileTransferSpeed(ProgressBarWidget):
     def __init__(self):
         self.fmt = '%6.2f %s'
         self.units = ['B', 'K', 'M', 'G', 'T', 'P']
+
     def update(self):
         pbar = self.pbar
-        if pbar.seconds_elapsed < 2e-6:#== 0:
+        if pbar.seconds_elapsed < 2e-6:  # == 0:
             bps = 0.0
         else:
             bps = float(pbar.currval) / pbar.seconds_elapsed
@@ -154,26 +162,30 @@ class FileTransferSpeed(ProgressBarWidget):
             spd /= 1000
         return self.fmt % (spd, u+'/s')
 
+
 class RotatingMarker(ProgressBarWidget):
     """
         A rotating marker for filling the bar of progress.
     """
     def __init__(self, markers='|/-\\'):
-        ## Some cool exmaple for markers:
-        ## u'░▒▓█'
-        ## u'⬅⬉⬆⬈➡⬊⬇⬋' , u'⬌⬉⬆⬈⬌⬊⬇⬋', u'➚➙➘➙', u'➝➞➡➞'
-        ## u' ⚊⚌☰⚌⚊', u' ⚋⚊⚍⚌☱☰☱⚌⚍⚊⚋' ,
-        ## '<(|)>)|(', u'❘❙❚❙', u'❢❣❤❣'
+        # Some cool exmaple for markers:
+        # u'░▒▓█'
+        # u'⬅⬉⬆⬈➡⬊⬇⬋' , u'⬌⬉⬆⬈⬌⬊⬇⬋', u'➚➙➘➙', u'➝➞➡➞'
+        # u' ⚊⚌☰⚌⚊', u' ⚋⚊⚍⚌☱☰☱⚌⚍⚊⚋' ,
+        # '<(|)>)|(', u'❘❙❚❙', u'❢❣❤❣'
         self.markers = markers
         self.curmark = -1
+
     def __len__(self):
         return 1
+
     def update(self):
         pbar = self.pbar
         if pbar.finished:
             return self.markers[0]
-        self.curmark = (self.curmark + 1)%len(self.markers)
+        self.curmark = (self.curmark + 1) % len(self.markers)
         return self.markers[self.curmark]
+
 
 class Percentage(ProgressBarWidget):
     """
@@ -181,7 +193,8 @@ class Percentage(ProgressBarWidget):
     """
     def update(self):
         pbar = self.pbar
-        return '%5.1f'%pbar.percentage()
+        return '%5.1f' % pbar.percentage()
+
 
 class Bar(ProgressBarWidgetHFill):
     """
@@ -191,11 +204,13 @@ class Bar(ProgressBarWidgetHFill):
         self.marker = marker
         self.left = left
         self.right = right
+
     def _format_marker(self, pbar):
         if type(self.marker) in (str, str):
             return self.marker
         else:
             return self.marker.update(pbar)
+
     def update(self, width):
         width = int(width)
         pbar = self.pbar
@@ -205,6 +220,7 @@ class Bar(ProgressBarWidgetHFill):
         m = self._format_marker(pbar)
         bar = (self.left + (m*marked_width).ljust(cwidth) + self.right)
         return bar
+
 
 class ReverseBar(Bar):
     """
@@ -219,7 +235,7 @@ class ReverseBar(Bar):
         bar = (self.left + (m*marked_width).rjust(cwidth) + self.right)
         return bar
 
-default_widgets = [Percentage(), ' ', Bar()]
+
 class ProgressBar(object):
     """
         This is the ProgressBar class, it updates and prints the bar.
@@ -251,20 +267,26 @@ class ProgressBar(object):
         - seconds_elapsed: seconds elapsed since start_time
         - percentage(): percentage of the progress (this is a method)
     """
+    default_widgets = [Percentage(), ' ', Bar()]
+
     def __init__(
         self,
         maxval=100.0,
-        widgets=default_widgets,
+        widgets=None,
         update_step=0.1,
         term_width=None,
         fd=sys.stderr,
     ):
         assert maxval > 0
         self.maxval = maxval
+
+        if widgets is None:
+            widgets = self.default_widgets
         self.widgets = widgets
+
         for w in self.widgets:
-            #log.debug( type(w) is ProgressBarWidget )
-            #if type(w)!=str:
+            # log.debug( type(w) is ProgressBarWidget )
+            # if not isinstance(w, str):
             try:
                 w.pbar = self
             except:
@@ -314,7 +336,7 @@ class ProgressBar(object):
                 r.append(w)
                 hfill_inds.append(i)
                 num_hfill += 1
-            elif isinstance(w, str):## OR isinstance(w, (str, unicode))
+            elif isinstance(w, str):  # OR isinstance(w, (str, unicode))
                 r.append(w)
                 currwidth += len(w)
             else:
@@ -329,9 +351,9 @@ class ProgressBar(object):
         return ''.join(self._format_widgets()).ljust(self.term_width)
 
     def _need_update(self):
-        #return int(self.percentage()) != int(self.prev_percentage)
-        return int(self.percentage()/self.update_step)!=int(self.prev_percentage/self.update_step)
-
+        # return int(self.percentage()) != int(self.prev_percentage)
+        return int(self.percentage() / self.update_step) != \
+            int(self.prev_percentage / self.update_step)
 
     def update(self, value):
         """
@@ -374,10 +396,10 @@ class ProgressBar(object):
         if self.signal_set:
             signal.signal(signal.SIGWINCH, signal.SIG_DFL)
 
-if __name__=='__main__':
+if __name__ == '__main__':
     def example1():
         pbar = ProgressBar(
-            widgets = [
+            widgets=[
                 'Test: ',
                 Bar(),
                 ' ',
@@ -397,5 +419,3 @@ if __name__=='__main__':
         pbar.finish()
         print('')
     example1()
-
-
