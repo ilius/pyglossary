@@ -2,16 +2,18 @@ from . import *
 from os.path import isabs, join
 from pyglossary.core import resDir
 
+
 def set_tooltip(widget, text):
     try:
-        widget.set_tooltip_text(text)## PyGTK 2.12 or above
+        widget.set_tooltip_text(text)  # PyGTK 2.12 or above
     except AttributeError:
         try:
             widget.set_tooltip(gtk.Tooltips(), text)
         except:
             myRaise(__file__)
 
-def imageFromFile(path):## the file must exist
+
+def imageFromFile(path):  # the file must exist
     if not isabs(path):
         path = join(resDir, path)
     im = gtk.Image()
@@ -20,6 +22,3 @@ def imageFromFile(path):## the file must exist
     except:
         myRaise()
     return im
-
-
-
