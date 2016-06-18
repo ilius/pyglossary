@@ -32,11 +32,15 @@ class MyLogger(logging.Logger):
     def setVerbosity(self, verbosity):
         self.setLevel(self.levelsByVerbosity[verbosity])
         self._verbosity = verbosity
-    getVerbosity = lambda self: self._verbosity
+
+    def getVerbosity(self):
+        return getattr(self, '_verbosity', 3)  # FIXME
+
     def pretty(self, data, header=''):
         self.debug(header + pformat(data))
 
-    isDebug = lambda self: self._verbosity >= 4
+    def isDebug(self):
+        return self.getVerbosity() >= 4
 
 
 
