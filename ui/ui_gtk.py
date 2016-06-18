@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
-## ui_gtk_ng.py
-##
-## Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-## Thanks to 'Pier Carteri' <m3tr0@dei.unipd.it> for program Py_Shell.py
-## Thanks to 'Milad Rastian' for program pySQLiteGUI
-##
-## This program is a free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3, or (at your option)
-## any later version.
-##
-## You can get a copy of GNU General Public License along this program
-## But you can always get it from http://www.gnu.org/licenses/gpl.txt
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-## GNU General Public License for more details.
+# ui_gtk.py
+#
+# Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# Thanks to 'Pier Carteri' <m3tr0@dei.unipd.it> for program Py_Shell.py
+# Thanks to 'Milad Rastian' for program pySQLiteGUI
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# You can get a copy of GNU General Public License along this program
+# But you can always get it from http://www.gnu.org/licenses/gpl.txt
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 
 import shutil
 import sys
@@ -39,15 +39,16 @@ from .gtk3_utils.utils import *
 from .gtk3_utils.dialog import MyDialog
 from .gtk3_utils.resize_button import ResizeButton
 
-#from gi.repository import GdkPixbuf
+# from gi.repository import GdkPixbuf
 
 log = logging.getLogger('root')
 
 gtk.Window.set_default_icon_from_file(logo)
 
-_ = str ## later replace with translator function
+_ = str  # later replace with translator function
 
-pixDir = join(rootDir, 'res') ## FIXME
+pixDir = join(rootDir, 'res')  # FIXME
+
 
 def getCopressedFileExt(fpath):
     fname, ext = splitext(fpath.lower())
@@ -55,7 +56,14 @@ def getCopressedFileExt(fpath):
         fname, ext = splitext(fname)
     return ext
 
-buffer_get_text = lambda b: b.get_text(b.get_start_iter(), b.get_end_iter(), True)
+
+def buffer_get_text(b):
+    return b.get_text(
+        b.get_start_iter(),
+        b.get_end_iter(),
+        True,
+    )
+
 
 def pack(box, child, expand=False, fill=False, padding=0):
     if isinstance(box, gtk.Box):
@@ -63,9 +71,10 @@ def pack(box, child, expand=False, fill=False, padding=0):
     elif isinstance(box, gtk.CellLayout):
         box.pack_start(child, expand)
     else:
-        raise TypeError('pack: unkown type %s'%type(box))
+        raise TypeError('pack: unkown type %s' % type(box))
 
-def imageFromFile(path):## the file must exist
+
+def imageFromFile(path):  # the file must exist
     if not isabs(path):
         path = join(pixDir, path)
     im = gtk.Image()
@@ -80,39 +89,41 @@ class FormatComboBox(gtk.ComboBox):
     def __init__(self):
         gtk.ComboBox.__init__(self)
         self.model = gtk.ListStore(
-            str,## format name, hidden
-            #GdkPixbuf.Pixbuf,## icon
-            str,## format description, shown
+            str,  # format name, hidden
+            # GdkPixbuf.Pixbuf,# icon
+            str,  # format description, shown
         )
         self.set_model(self.model)
-        ###
+
         cell = gtk.CellRendererText()
         self.add_attribute(cell, 'text', 0)
-        ###
-        #cell = gtk.CellRendererPixbuf()
-        #pack(self, cell, False)
-        #self.add_attribute(cell, 'pixbuf', 1)
-        ###
+
+        # cell = gtk.CellRendererPixbuf()
+        # pack(self, cell, False)
+        # self.add_attribute(cell, 'pixbuf', 1)
+
         cell = gtk.CellRendererText()
         pack(self, cell, True)
         self.add_attribute(cell, 'text', 1)
+
     def addFormat(self, _format):
         self.get_model().append((
             _format,
-            #icon,
+            # icon,
             Glossary.formatsDesc[_format],
         ))
+
     def getActive(self):
         index = gtk.ComboBox.get_active(self)
         if index is None or index < 0:
             return ''
         return self.get_model()[index][0]
+
     def setActive(self, _format):
         for i, row in enumerate(self.get_model()):
             if row[0] == _format:
                 gtk.ComboBox.set_active(self, i)
                 return
-        
 
 
 class InputFormatComboBox(FormatComboBox):
@@ -121,6 +132,7 @@ class InputFormatComboBox(FormatComboBox):
         for _format in Glossary.readFormats:
             self.addFormat(_format)
 
+
 class OutputFormatComboBox(FormatComboBox):
     def __init__(self):
         FormatComboBox.__init__(self)
@@ -128,12 +140,10 @@ class OutputFormatComboBox(FormatComboBox):
             self.addFormat(_format)
 
 
-
-
 class GtkTextviewLogHandler(logging.Handler):
     def __init__(self, treeview_dict):
         logging.Handler.__init__(self)
-        #####
+
         self.buffers = {}
         for levelname in (
             'CRITICAL',
@@ -143,30 +153,34 @@ class GtkTextviewLogHandler(logging.Handler):
             'DEBUG',
         ):
             textview = treeview_dict[levelname]
-            ###
+
             buff = textview.get_buffer()
             tag = gtk.TextTag.new(levelname)
             buff.get_tag_table().add(tag)
-            ###
+
             self.buffers[levelname] = buff
+
     def getTag(self, levelname):
         return self.buffers[levelname].get_tag_table().lookup(levelname)
-    def setColor(self, levelname, color):## FIXME
+
+    def setColor(self, levelname, color):  # FIXME
         self.getTag(levelname).set_property('foreground-gdk', color)
+
     def emit(self, record):
-        #print('GtkTextviewLogHandler.emit', record.levelname, record.getMessage(), record.exc_info)
         msg = record.getMessage()
-        #msg = msg.replace('\x00', '')
-        ###
+        # msg = msg.replace('\x00', '')
+
         if record.exc_info:
             _type, value, tback = record.exc_info
-            tback_text = ''.join(traceback.format_exception(_type, value, tback))
+            tback_text = ''.join(
+                traceback.format_exception(_type, value, tback)
+            )
             if msg:
                 msg += '\n'
             msg += tback_text
-        ###
+
         buff = self.buffers[record.levelname]
-        ###
+
         buff.insert_with_tags_by_name(
             buff.get_end_iter(),
             msg + '\n',
@@ -186,73 +200,87 @@ class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
 
 
 class BrowseButton(gtk.Button):
-    def __init__(self, setFilePathFunc, label='Browse', actionSave=False, title='Select File'):
+    def __init__(
+        self,
+        setFilePathFunc,
+        label='Browse',
+        actionSave=False,
+        title='Select File',
+    ):
         gtk.Button.__init__(self)
-        ###
+
         self.set_label(label)
         self.set_image(gtk.Image.new_from_icon_name(
             'document-save' if actionSave else 'document-open',
             gtk.IconSize.BUTTON,
         ))
-        ###
+
         self.actionSave = actionSave
         self.setFilePathFunc = setFilePathFunc
         self.title = title
-        ###
+
         self.connect('clicked', self.onClick)
+
     def onClick(self, widget):
         fcd = gtk.FileChooserDialog(
             parent=self.get_toplevel(),
-            action=gtk.FileChooserAction.SAVE if self.actionSave else gtk.FileChooserAction.OPEN,
+            action=gtk.FileChooserAction.SAVE if self.actionSave
+            else gtk.FileChooserAction.OPEN,
             title=self.title,
         )
         fcd.add_button(gtk.STOCK_CANCEL, gtk.ResponseType.CANCEL)
         fcd.add_button(gtk.STOCK_OK, gtk.ResponseType.OK)
         fcd.connect('response', lambda w, e: fcd.hide())
-        fcd.connect('file-activated', lambda w: fcd.response(gtk.ResponseType.OK))
-        if fcd.run()==gtk.ResponseType.OK:
+        fcd.connect(
+            'file-activated',
+            lambda w: fcd.response(gtk.ResponseType.OK)
+        )
+        if fcd.run() == gtk.ResponseType.OK:
             self.setFilePathFunc(fcd.get_filename())
         fcd.destroy()
 
+
 class UI(gtk.Dialog, MyDialog, UIBase):
-    def write(self, tag):## FIXME
+    def write(self, tag):  # FIXME
         pass
+
     def status(self, msg):
-        #try:
+        # try:
         #    _id = self.statusMsgDict[msg]
-        #except KeyError:
+        # except KeyError:
         #    _id = self.statusMsgDict[msg] = self.statusNewId
         #    self.statusNewId += 1
         _id = self.statusBar.get_context_id(msg)
         self.statusBar.push(_id, msg)
+
     def __init__(self, **options):
         gtk.Dialog.__init__(self)
         self.set_title('PyGlossary (Gtk3)')
         self.resize(800, 800)
         self.connect('delete-event', self.onDeleteEvent)
         self.prefPages = []
-        #self.statusNewId = 0
-        #self.statusMsgDict = {}## message -> id
+        # self.statusNewId = 0
+        # self.statusMsgDict = {}## message -> id
         #####
         self.pref = {}
         self.pref_load(**options)
-        #log.pretty(self.pref, 'ui.pref=')
+        # log.pretty(self.pref, 'ui.pref=')
         #####
         self.assert_quit = False
         self.path = ''
         self.glos = Glossary(ui=self)
-        ##################### Tab 1 - Convert #############################
+        # ____________________ Tab 1 - Convert ____________________ #
         sizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
         ####
         vbox = gtk.VBox()
         vbox.label = _('Convert')
-        vbox.icon = '' ## '*.png'
+        vbox.icon = ''  # '*.png'
         self.prefPages.append(vbox)
         ######
         hbox = gtk.HBox(spacing=3)
         hbox.label = gtk.Label(label=_('Input Format')+':')
         pack(hbox, hbox.label)
-        sizeGroup.add_widget(hbox.label) 
+        sizeGroup.add_widget(hbox.label)
         hbox.label.set_property('xalign', 0)
         self.convertInputFormatCombo = InputFormatComboBox()
         pack(hbox, self.convertInputFormatCombo)
@@ -261,7 +289,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         hbox = gtk.HBox(spacing=3)
         hbox.label = gtk.Label(label=_('Input File')+':')
         pack(hbox, hbox.label)
-        sizeGroup.add_widget(hbox.label) 
+        sizeGroup.add_widget(hbox.label)
         hbox.label.set_property('xalign', 0)
         self.convertInputEntry = gtk.Entry()
         pack(hbox, self.convertInputEntry, 1, 1)
@@ -274,7 +302,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         pack(hbox, button)
         pack(vbox, hbox)
         ##
-        self.convertInputEntry.connect('changed', self.convertInputEntryChanged)
+        self.convertInputEntry.connect(
+            'changed',
+            self.convertInputEntryChanged,
+        )
         #####
         vbox.sep1 = gtk.Label(label='')
         vbox.sep1.show()
@@ -305,7 +336,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         pack(hbox, button)
         pack(vbox, hbox)
         ##
-        self.convertOutputEntry.connect('changed', self.convertOutputEntryChanged)
+        self.convertOutputEntry.connect(
+            'changed',
+            self.convertOutputEntryChanged,
+        )
         #####
         hbox = gtk.HBox(spacing=10)
         label = gtk.Label(label='')
@@ -315,20 +349,20 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         self.convertButton.connect('clicked', self.convertClicked)
         pack(hbox, self.convertButton, 1, 1, 10)
         pack(vbox, hbox, 0, 0, 15)
-        ##################### Tab 2 - Reverse #############################
+        # ____________________ Tab 2 - Reverse ____________________ #
         self.reverseStatus = ''
         ####
         sizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
         ####
         vbox = gtk.VBox()
         vbox.label = _('Reverse')
-        vbox.icon = '' ## '*.png'
-        #self.prefPages.append(vbox)
+        vbox.icon = ''  # '*.png'
+        # self.prefPages.append(vbox)
         ######
         hbox = gtk.HBox(spacing=3)
         hbox.label = gtk.Label(label=_('Input Format')+':')
         pack(hbox, hbox.label)
-        sizeGroup.add_widget(hbox.label) 
+        sizeGroup.add_widget(hbox.label)
         hbox.label.set_property('xalign', 0)
         self.reverseInputFormatCombo = InputFormatComboBox()
         pack(hbox, self.reverseInputFormatCombo)
@@ -337,7 +371,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         hbox = gtk.HBox(spacing=3)
         hbox.label = gtk.Label(label=_('Input File')+':')
         pack(hbox, hbox.label)
-        sizeGroup.add_widget(hbox.label) 
+        sizeGroup.add_widget(hbox.label)
         hbox.label.set_property('xalign', 0)
         self.reverseInputEntry = gtk.Entry()
         pack(hbox, self.reverseInputEntry, 1, 1)
@@ -350,7 +384,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         pack(hbox, button)
         pack(vbox, hbox)
         ##
-        self.reverseInputEntry.connect('changed', self.reverseInputEntryChanged)
+        self.reverseInputEntry.connect(
+            'changed',
+            self.reverseInputEntryChanged,
+        )
         #####
         vbox.sep1 = gtk.Label(label='')
         vbox.sep1.show()
@@ -372,7 +409,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         pack(hbox, button)
         pack(vbox, hbox)
         ##
-        self.reverseOutputEntry.connect('changed', self.reverseOutputEntryChanged)
+        self.reverseOutputEntry.connect(
+            'changed',
+            self.reverseOutputEntryChanged,
+        )
         #####
         hbox = gtk.HBox(spacing=3)
         label = gtk.Label(label='')
@@ -403,10 +443,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         ###
         pack(vbox, hbox, 0, 0, 5)
         #####
-        ###################################################################
+        # ____________________________________________________________ #
         notebook = gtk.Notebook()
         self.notebook = notebook
-        #####################################
+        #########
         for vbox in self.prefPages:
             l = gtk.Label(label=vbox.label)
             l.set_use_underline(True)
@@ -422,17 +462,17 @@ class UI(gtk.Dialog, MyDialog, UIBase):
             except AttributeError:
                 pass
         #######################
-        #notebook.set_property('homogeneous', True)## not in gtk3 FIXME
-        #notebook.set_property('tab-border', 5)## not in gtk3 FIXME
-        #notebook.set_property('tab-hborder', 15)## not in gtk3 FIXME
+        # notebook.set_property('homogeneous', True)  # not in gtk3 FIXME
+        # notebook.set_property('tab-border', 5)  # not in gtk3 FIXME
+        # notebook.set_property('tab-hborder', 15)  # not in gtk3 FIXME
         pack(self.vbox, notebook, 0, 0)
-        #for i in ui.prefPagesOrder:
+        # for i in ui.prefPagesOrder:
         #    try:
         #        j = prefPagesOrder[i]
         #    except IndexError:
         #        continue
         #    notebook.reorder_child(self.prefPages[i], j)
-        ###################################################################
+        # ____________________________________________________________ #
         self.consoleTextview = textview = gtk.TextView()
         swin = gtk.ScrolledWindow()
         swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
@@ -443,7 +483,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         handler = GtkSingleTextviewLogHandler(textview)
         log.addHandler(handler)
         ###
-        textview.override_background_color(gtk.StateFlags.NORMAL, gdk.RGBA(0, 0, 0, 1))
+        textview.override_background_color(
+            gtk.StateFlags.NORMAL,
+            gdk.RGBA(0, 0, 0, 1),
+        )
         ###
         handler.setColor('CRITICAL', gdk.color_parse('red'))
         handler.setColor('ERROR', gdk.color_parse('red'))
@@ -453,39 +496,39 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         ###
         textview.get_buffer().set_text('Output & Error Console:\n')
         textview.set_editable(False)
-        ################################################################
+        # ____________________________________________________________ #
         self.progressTitle = ''
         self.progressBar = pbar = gtk.ProgressBar()
         pbar.set_fraction(0)
-        #pbar.set_text(_('Progress Bar'))
-        #pbar.get_style_context()
-        #pbar.set_property('height-request', 20)
+        # pbar.set_text(_('Progress Bar'))
+        # pbar.get_style_context()
+        # pbar.set_property('height-request', 20)
         pack(self.vbox, pbar, 0, 0)
         ############
         hbox = gtk.HBox(spacing=5)
         clearButton = gtk.Button(
-            use_stock = gtk.STOCK_CLEAR,
-            always_show_image = True,
-            label = _('Clear'),
+            use_stock=gtk.STOCK_CLEAR,
+            always_show_image=True,
+            label=_('Clear'),
         )
         clearButton.show_all()
-        #image = gtk.Image()
-        #image.set_from_stock(gtk.STOCK_CLEAR, gtk.IconSize.MENU)
-        #clearButton.add(image)
+        # image = gtk.Image()
+        # image.set_from_stock(gtk.STOCK_CLEAR, gtk.IconSize.MENU)
+        # clearButton.add(image)
         clearButton.set_border_width(0)
         clearButton.connect('clicked', self.consoleClearButtonClicked)
         set_tooltip(clearButton, 'Clear Console')
         pack(hbox, clearButton, 0, 0)
         ####
-        #hbox.sepLabel1 = gtk.Label(label='')
-        #pack(hbox, hbox.sepLabel1, 1, 1)
+        # hbox.sepLabel1 = gtk.Label(label='')
+        # pack(hbox, hbox.sepLabel1, 1, 1)
         ######
         hbox.verbosityLabel = gtk.Label(label=_('Verbosity')+':')
         pack(hbox, hbox.verbosityLabel, 0, 0)
         ##
         self.verbosityCombo = combo = gtk.ComboBoxText()
         for level, levelName in enumerate(log.levelNamesCap):
-            combo.append_text('%s - %s'%(
+            combo.append_text('%s - %s' % (
                 level,
                 _(levelName)
             ))
@@ -494,8 +537,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         combo.connect('changed', self.verbosityComboChanged)
         pack(hbox, combo, 0, 0)
         ####
-        #hbox.sepLabel2 = gtk.Label(label='')
-        #pack(hbox, hbox.sepLabel2, 1, 1)
+        # hbox.sepLabel2 = gtk.Label(label='')
+        # pack(hbox, hbox.sepLabel2, 1, 1)
         ####
         self.statusBar = sbar = gtk.Statusbar()
         pack(hbox, self.statusBar, 1, 1)
@@ -504,52 +547,59 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         pack(hbox, hbox.resizeButton, 0, 0)
         ######
         pack(self.vbox, hbox, 0, 0)
-        ################################################################
+        # ____________________________________________________________ #
         self.vbox.show_all()
         ########
         self.status('Select input file')
+
     def run(self, editPath=None, readOptions=None):
         if readOptions is None:
             readOptions = {}
-        #if editPath:
-            #self.notebook.set_current_page(3)
-            #log.info('Opening file "%s" for edit. please wait...'%editPath)
-            #while gtk.events_pending():
-            #    gtk.main_iteration_do(False)
-            #self.dbe_open(editPath, **readOptions)
+        # if editPath:
+        #    self.notebook.set_current_page(3)
+        #    log.info('Opening file "%s" for edit. please wait...'%editPath)
+        #    while gtk.events_pending():
+        #        gtk.main_iteration_do(False)
+        #    self.dbe_open(editPath, **readOptions)
         gtk.Dialog.present(self)
         gtk.main()
+
     def onDeleteEvent(self, widget, event):
         self.destroy()
         gtk.main_quit()
+
     def consoleClearButtonClicked(self, widget=None):
         self.consoleTextview.get_buffer().set_text('')
+
     def verbosityComboChanged(self, widget=None):
-        verbosity = self.verbosityCombo.get_active()## or int(self.verbosityCombo.get_active_text())
+        verbosity = self.verbosityCombo.get_active()
+        # or int(self.verbosityCombo.get_active_text())
         log.setVerbosity(verbosity)
+
     def convertClicked(self, widget=None):
         inPath = self.convertInputEntry.get_text()
         if not inPath:
             self.status('Input file path is empty!')
-            log.critical('Input file path is empty!');return
+            log.critical('Input file path is empty!')
+            return
         inFormat = self.convertInputFormatCombo.getActive()
         if inFormat:
             inFormatDesc = Glossary.formatsDesc[inFormat]
         else:
             inFormatDesc = ''
-            #log.critical('Input format is empty!');return
+            # log.critical('Input format is empty!');return
 
         outPath = self.convertOutputEntry.get_text()
         if not outPath:
             self.status('Output file path is empty!')
-            log.critical('Output file path is empty!');return
+            log.critical('Output file path is empty!')
+            return
         outFormat = self.convertOutputFormatCombo.getActive()
         if outFormat:
             outFormatDesc = Glossary.formatsDesc[outFormat]
         else:
             outFormatDesc = ''
-            #log.critical('Output format is empty!');return
-            
+            # log.critical('Output format is empty!');return
 
         while gtk.events_pending():
             gtk.main_iteration_do(False)
@@ -557,10 +607,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
         self.convertButton.set_sensitive(False)
         self.progressTitle = 'Converting'
         try:
-            #if inFormat=='Omnidic':
-            #    dicIndex = self.xml.get_widget('spinbutton_omnidic_i').get_value_as_int()
+            # if inFormat=='Omnidic':
+            #    dicIndex = self.xml.get_widget('spinbutton_omnidic_i')\
+            #        .get_value_as_int()
             #    ex = self.glos.readOmnidic(inPath, dicIndex=dicIndex)
-            #else:
+            # else:
             succeed = self.glos.convert(
                 inPath,
                 inputFormat=inFormat,
@@ -569,10 +620,14 @@ class UI(gtk.Dialog, MyDialog, UIBase):
             )
             if succeed:
                 self.status('Convert finished')
-                log.info('writing %s file: "%s" done.'%(outFormat, outPath))
+                log.info(
+                    'writing %s file: "%s" done.' % (outFormat, outPath)
+                )
             else:
                 self.status('Convert failed')
-                log.error('writing %s file: "%s" failed.'%(outFormat, outPath))
+                log.error(
+                    'writing %s file: "%s" failed.' % (outFormat, outPath)
+                )
             return succeed
 
         finally:
@@ -582,51 +637,47 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
         return True
 
-
     def convertInputEntryChanged(self, widget=None):
         inPath = self.convertInputEntry.get_text()
         inFormat = self.convertInputFormatCombo.getActive()
-        if len(inPath) > 7:
-            if inPath[:7]=='file://':
-                inPath = urlToPath(inPath)
-                self.convertInputEntry.set_text(inPath)
-
+        if inPath.startswith('file://'):
+            inPath = urlToPath(inPath)
+            self.convertInputEntry.set_text(inPath)
 
         inExt = getCopressedFileExt(inPath)
         inFormatNew = Glossary.extFormat.get(inExt)
-        
+
         if not inFormatNew:
             return
 
         if not isfile(inPath):
             return
 
-        if self.pref['ui_autoSetFormat']:## and not inFormat:
+        if self.pref['ui_autoSetFormat']:  # and not inFormat:
             self.convertInputFormatCombo.setActive(inFormatNew)
 
-        self.status('Select output file')        
+        self.status('Select output file')
         if self.pref['ui_autoSetOutputFileName']:
             outFormat = self.convertOutputFormatCombo.getActive()
             outPath = self.convertOutputEntry.get_text()
             if outFormat:
                 if not outPath and '.' in inPath:
-                    outPath = splitext(inPath)[0] + Glossary.formatsExt[outFormat][0]
+                    outPath = splitext(inPath)[0] + \
+                        Glossary.formatsExt[outFormat][0]
                     self.convertOutputEntry.set_text(outPath)
                     self.status('Press "Convert"')
-
 
     def convertOutputEntryChanged(self, widget=None):
         outPath = self.convertOutputEntry.get_text()
         outFormat = self.convertOutputFormatCombo.getActive()
         if not outPath:
             return
-        #outFormat = self.combobox_o.get_active_text()
-        if len(outPath)>7:
-            if outPath[:7]=='file://':
-                outPath = urlToPath(outPath)
-                self.convertOutputEntry.set_text(outPath)
-        
-        if self.pref['ui_autoSetFormat']:## and not outFormat:
+        # outFormat = self.combobox_o.get_active_text()
+        if outPath.startswith('file://'):
+            outPath = urlToPath(outPath)
+            self.convertOutputEntry.set_text(outPath)
+
+        if self.pref['ui_autoSetFormat']:  # and not outFormat:
             outExt = getCopressedFileExt(outPath)
             try:
                 outFormatNew = Glossary.extFormat[outExt]
@@ -634,18 +685,17 @@ class UI(gtk.Dialog, MyDialog, UIBase):
                 pass
             else:
                 self.convertOutputFormatCombo.setActive(outFormatNew)
-    
+
         if self.convertOutputFormatCombo.getActive():
             self.status('Press "Convert"')
         else:
             self.status('Select output format')
-    
+
     def reverseLoad(self):
         pass
-    
+
     def reverseStartLoop(self):
         pass
-
 
     def reverseStart(self):
         if not self.reverseLoad():
@@ -695,44 +745,38 @@ class UI(gtk.Dialog, MyDialog, UIBase):
     def reverseStopClicked(self, widget=None):
         self.waitingDo(self.reverseStop)
 
-
     def reverseInputEntryChanged(self, widget=None):
         inPath = self.reverseInputEntry.get_text()
         inFormat = self.reverseInputFormatCombo.getActive()
-        if len(inPath) > 7:
-            if inPath[:7]=='file://':
-                inPath = urlToPath(inPath)
-                self.reverseInputEntry.set_text(inPath)
+        if inPath.startswith('file://'):
+            inPath = urlToPath(inPath)
+            self.reverseInputEntry.set_text(inPath)
 
         inExt = getCopressedFileExt(inPath)
         inFormatNew = Glossary.extFormat.get(inExt)
 
-        if inFormatNew and self.pref['ui_autoSetFormat']:## and not inFormat:
+        if inFormatNew and self.pref['ui_autoSetFormat']:  # and not inFormat:
             self.reverseInputFormatCombo.setActive(inFormatNew)
-            
+
         if self.pref['ui_autoSetOutputFileName']:
             outExt = '.txt'
             outPath = self.reverseOutputEntry.get_text()
             if inFormatNew and not outPath:
                 outPath = splitext(inPath)[0] + '-reversed' + outExt
                 self.reverseOutputEntry.set_text(outPath)
-    
+
     def reverseOutputEntryChanged(self, widget=None):
         pass
-    
+
     def progressInit(self, title):
         self.progressTitle = title
 
     def progress(self, rat, text=None):
         if not text:
-            text = '%%%d'%(rat*100)
-        text += ' - %s'%self.progressTitle
+            text = '%%%d' % (rat*100)
+        text += ' - %s' % self.progressTitle
         self.progressBar.set_fraction(rat)
-        #self.progressBar.set_text(text)## not working
+        # self.progressBar.set_text(text)  # not working
         self.status(text)
         while gtk.events_pending():
             gtk.main_iteration_do(False)
-
-
-
-
