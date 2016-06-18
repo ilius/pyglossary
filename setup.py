@@ -100,6 +100,7 @@ if py2exe:
         ('ui/glade', glob.glob('ui/glade/*')),
         ('res', glob.glob('res/*')),
         ('plugins', glob.glob('pyglossary/plugins/*')),
+        ('plugin_lib', glob.glob('pyglossary/plugin_lib/*')),
         ('doc/pyglossary', ['doc/bgl_structure.svgz', ]),
         ('doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')),
     ]
@@ -127,6 +128,7 @@ setup(
     package_data = {
         'pyglossary': [
             'plugins/*.py',
+            'plugin_lib/*.py',
         ] + [
             # safest way found so far to include every resource of plugins
             # producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
