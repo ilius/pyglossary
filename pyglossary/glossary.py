@@ -18,8 +18,6 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from . import VERSION
-
 import logging
 
 import sys
@@ -47,7 +45,7 @@ import io
 
 from .flags import *
 from . import core
-from .core import userPluginsDir
+from .core import VERSION, userPluginsDir
 from .entry import Entry
 from .entry_filters import *
 from .sort_stream import hsortStreamList

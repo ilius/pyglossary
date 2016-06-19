@@ -14,6 +14,7 @@ from os.path import (
 )
 import platform
 
+VERSION = '3.0.4'
 
 class MyLogger(logging.Logger):
     levelsByVerbosity = (

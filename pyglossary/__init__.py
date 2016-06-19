@@ -1,1 +1,4 @@
-__version__ = VERSION = '3.0.4'
+from .core import log, VERSION
+from .glossary import Glossary
+
+__version__ = VERSION
