@@ -46,6 +46,22 @@ class MyLogger(logging.Logger):
     def isDebug(self):
         return self.getVerbosity() >= 4
 
+def format_var_dict(dct, indent=4, max_width=80):
+    lines = []
+    pre = ' ' * indent
+    for key, value in dct.items():
+        line = pre + key + ' = ' + repr(value)
+        if len(line) > max_width:
+            line = line[:max_width-3] + '...'
+            try:
+                value_len = len(value)
+            except:
+                pass
+            else:
+                line += '\n' + pre + 'len(%s) = %s'%(key, value_len)
+        lines.append(line)
+    return '\n'.join(lines)
+
 
 def format_exception(exc_info=None, add_locals=False, add_globals=False):
     if not exc_info:
@@ -60,9 +76,13 @@ def format_exception(exc_info=None, add_locals=False, add_globals=False):
             pass
         else:
             if add_locals:
-                text += 'Traceback locals: %s\n' % pformat(frame.f_locals)
+                text += 'Traceback locals:\n%s\n' % format_var_dict(
+                    frame.f_locals,
+                )
             if add_globals:
-                text += 'Traceback globals: %s\n' % pformat(frame.f_globals)
+                text += 'Traceback globals:\n%s\n' % format_var_dict(
+                    frame.f_globals,
+                )
 
     return text
 
