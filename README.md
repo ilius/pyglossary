@@ -107,7 +107,7 @@ here is what you need:
 -   BeautifulSoup4(with html5lib as backend) required to sanitize
     html contents.
 
-    `sudo easy_install beautifulsoup4 html5lib`
+    `sudo easy_install3 beautifulsoup4 html5lib`
 
 -   GNU make as part of [Command Line Tools for
     Xcode](http://developer.apple.com/downloads).
