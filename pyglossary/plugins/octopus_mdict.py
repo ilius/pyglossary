@@ -92,10 +92,14 @@ class Reader(object):
         self._mdd = None
 
     def __iter__(self):
-        for word, defi in self._mdx.items():
-            word = toStr(word)
-            defi = toStr(defi)
-            yield Entry(word, defi)
+        if self._mdx is None:
+            log.error('trying to iterate on a closed MDX file')
+        else:
+            for word, defi in self._mdx.items():
+                word = toStr(word)
+                defi = toStr(defi)
+                yield Entry(word, defi)
+            self._mdx = None
 
     __len__ = lambda self: len(self._mdx)
 
