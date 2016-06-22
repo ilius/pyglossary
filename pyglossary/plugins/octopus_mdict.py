@@ -89,6 +89,7 @@ class Reader(object):
             f = open(fpath, 'wb')
             f.write(value)
             f.close()
+        self._mdd = None
 
     def __iter__(self):
         for word, defi in self._mdx.items():
