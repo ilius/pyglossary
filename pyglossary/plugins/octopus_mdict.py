@@ -101,7 +101,13 @@ class Reader(object):
                 yield Entry(word, defi)
             self._mdx = None
 
-    __len__ = lambda self: len(self._mdx)
+    def __len__(self):
+        if self._mdx is None:
+            log.error(
+                'OctopusMdict: called len(reader) while reader is not open'
+            )
+            return 0
+        return len(self._mdx)
 
     def close(self):
         self.clear()
