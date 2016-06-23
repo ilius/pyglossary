@@ -99,15 +99,23 @@ for example:
 >
 > `python3 pyglossary.pyw --ui=tk`
 
-**Other requirements for Mac OS X**
 
-If you want to convert glossaries into AppleDict format on Mac OS X,
-here is what you need:
+Format-specific Requirements
+----------------------------
 
--   BeautifulSoup4(with html5lib as backend) required to sanitize
-    html contents.
+-   **Writing to AppleDict**
 
     `sudo easy_install3 beautifulsoup4 html5lib`
+
+-   **Reading from Octopus Mdict (MDX)**
+
+    `sudo pip3 install python-lzo`
+
+
+**Other Requirements for Mac OS X**
+
+If you want to convert glossaries into AppleDict format on Mac OS X,
+you also need:
 
 -   GNU make as part of [Command Line Tools for
     Xcode](http://developer.apple.com/downloads).
