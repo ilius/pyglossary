@@ -103,6 +103,16 @@ class Entry(object):
         """
         return self._defiFormat
 
+    def setDefiFormat(self, defiFormat):
+        """
+            defiFormat:
+                'm': plain text
+                'h': html
+                'x': xdxf
+        """
+        self._defiFormat = defiFormat
+
+
     def addAlt(self, alt):
         words = self.getWords()
         words.append(alt)
