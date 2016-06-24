@@ -61,7 +61,10 @@ def aboutInfoDecode(b_value):
     if not aboutExt:
         log.warning('read_type_3: about: no file extension')
         return
-    return (aboutExt, aboutContents)
+    return {
+        'about_extension': aboutExt,
+        'about': aboutContents,
+    }
 
 def utf16InfoDecode(b_value):
     """
