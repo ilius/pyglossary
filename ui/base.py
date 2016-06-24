@@ -77,6 +77,9 @@ class UIBase(object):
         
         return True
 
+    def progressEnd(self):
+        self.progress(1.0)
+
 
 
 
