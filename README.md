@@ -143,12 +143,12 @@ Launch Dictionary.app and test.
 Let's assume the MDict dict is at
 `~/Documents/Duden-Oxford/Duden-Oxford DEED ver.20110408.mdx`.
 
--   Run the following command:
+Run the following command:
 
-        cd ~/Documents/Duden-Oxford/
-        python ~/Software/pyglossary/pyglossary.pyw "Duden-Oxford DEED ver.20110408.mdx" "Duden-Oxford DEED ver.20110408.xml"
-        make
-        make install
+    cd ~/Documents/Duden-Oxford/
+    python ~/Software/pyglossary/pyglossary.pyw --read-options=resPath=OtherResources --write-format=AppleDict "Duden-Oxford DEED ver.20110408.mdx" "Duden-Oxford DEED ver.20110408.xml"
+    make
+    make install
 
 Launch Dictionary.app and test.
 
