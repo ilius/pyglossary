@@ -143,13 +143,10 @@ Launch Dictionary.app and test.
 Let's assume the MDict dict is at
 `~/Documents/Duden-Oxford/Duden-Oxford DEED ver.20110408.mdx`.
 
--   Use [GetDict](http://ishare.iask.sina.com.cn/f/23046946.html) to
-    extract Mdict dictionary (.mdx). Choose "UTF-8 TXT" output format
-    and `Duden-Oxford DEED ver.20110408.mtxt` output file name.
 -   Run the following command:
 
         cd ~/Documents/Duden-Oxford/
-        python ~/Software/pyglossary/pyglossary.pyw "Duden-Oxford DEED ver.20110408.mtxt" "Duden-Oxford DEED ver.20110408.xml"
+        python ~/Software/pyglossary/pyglossary.pyw "Duden-Oxford DEED ver.20110408.mdx" "Duden-Oxford DEED ver.20110408.xml"
         make
         make install
 
