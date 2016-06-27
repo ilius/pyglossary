@@ -38,7 +38,7 @@ from os.path import (
     abspath,
 )
 
-import time
+from time import time as now
 import subprocess
 import re
 
@@ -840,6 +840,7 @@ class Glossary(object):
             if sort is not True:
                 direct = True ## FIXME
 
+        tm0 = now()
         if not self.read(
             inputFilename,
             format=inputFormat,
@@ -860,6 +861,7 @@ class Glossary(object):
         ):
             return False
         log.info('')
+        log.info('Running time of convert: %.1f seconds' % (now() - tm0))
 
         return True
 
