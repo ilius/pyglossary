@@ -52,8 +52,14 @@ import gzip
 import re
 from collections import OrderedDict as odict
 
-
-from pyglossary.plugin_lib.gzip_no_crc import GzipFile
+try:
+    from pyglossary.plugin_lib.gzip_no_crc import GzipFile
+except ImportError:
+    from gzip import GzipFile
+    log.warning(
+        'If things didn\'t work well with BGL files, '
+        'install Python 3.5 and try again'
+    )
 """
     GzipFile class without CRC check.
 
