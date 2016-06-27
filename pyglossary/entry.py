@@ -1,8 +1,18 @@
 # -*- coding: utf-8 -*-
+import re
 
 
 class Entry(object):
     sep = '|'
+    htmlPattern = re.compile(
+        '.*(' + '|'.join([
+            r'<br\s*/?\s*>',
+            r'<p[ >]',
+            r'<div[ >]',
+            r'<a href=',
+        ]) + ')',
+        re.S,
+    )
 
     def join(self, parts):
         return self.sep.join([
@@ -115,6 +125,12 @@ class Entry(object):
         """
         self._defiFormat = defiFormat
 
+    def detectDefiFormat(self):
+        if self._defiFormat != 'm':
+            return
+        defi = self.getDefi().lower()
+        if re.match(self.htmlPattern, defi):
+            self._defiFormat = 'h'
 
     def addAlt(self, alt):
         words = self.getWords()

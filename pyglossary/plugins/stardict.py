@@ -6,6 +6,7 @@ import os.path
 import re
 import gzip
 from time import time as now
+from collections import Counter
 
 from pyglossary.text_utils import (
     intToBinStr,
@@ -185,7 +186,6 @@ class Reader(object):
         return indexData
 
     def __iter__(self):
-        # from collections import Counter
         indexData = self._indexData
         synDict = self._synDict
         sametypesequence = self._sametypesequence
@@ -503,12 +503,15 @@ class Writer(object):
 
         t0 = now()
         wordCount = 0
+        defiFormatCounter = Counter()
         for entryI, entry in enumerate(self.glos):
             words = entry.getWords()  # list of strs
             word = words[0]  # str
             defis = entry.getDefis()  # list of strs
 
+            entry.detectDefiFormat()  # call no more than once
             defiFormat = entry.getDefiFormat()
+            defiFormatCounter[defiFormat] += 1
             if defiFormat not in ('m', 'h'):
                 defiFormat = 'm'
             assert isinstance(defiFormat, str) and len(defiFormat) == 1
@@ -539,6 +542,7 @@ class Writer(object):
         dictFile.close()
         idxFile.close()
         log.info('Writing dict file took %.2f seconds' % (now() - t0))
+        log.pretty(defiFormatCounter.most_common(), 'defiFormatsCount: ')
 
         self.writeSynFile(altIndexList)
         self.writeIfoFile(wordCount, indexFileSize, len(altIndexList))
