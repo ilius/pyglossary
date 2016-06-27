@@ -199,7 +199,7 @@ class UI(tix.Frame, UIBase):
         self.pref = {}
         self.pref_load(**options)
         #############################################
-        master = tix.Tk()
+        master = self.master = tix.Tk()
         tix.Frame.__init__(self, master)
         master.title('PyGlossary (Tkinter)')
         master.resizable(True, False)
@@ -761,6 +761,7 @@ class UI(tix.Frame, UIBase):
         self.pbar.updateProgress(rat*100, None, text)
         ##self.pbar.value = rat*100
         ##self.pbar.update()
+        self.master.update()
     def console_clear(self, event=None):
         self.console.delete('1.0', 'end')
         self.console.insert('end', 'Console:\n')
