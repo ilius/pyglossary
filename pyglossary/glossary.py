@@ -309,6 +309,8 @@ class Glossary(object):
             )
             if progressbar:
                 self.progress(index, wordCount)
+        if progressbar:
+            self.progressEnd()
 
     def _readersEntryGen(self):
         for reader in self._readers:
@@ -330,7 +332,8 @@ class Glossary(object):
                         self.progress(index, wordCount)
             finally:
                 reader.close()
-
+            if progressbar:
+                self.progressEnd()
 
     def _applyEntryFiltersGen(self, gen):
         for entry in gen:
@@ -593,6 +596,8 @@ class Glossary(object):
                     self.progress(index, wordCount)
         finally:
             reader.close()
+        if progressbar:
+            self.progressEnd()
 
         return True
 
