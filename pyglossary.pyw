@@ -310,7 +310,6 @@ def dashToCamelCase(text):## converts "hello-PYTHON-user" to "helloPythonUser"
 
 ui_list = (
     'gtk',
-    'gtk_new',
     'tk',
     'qt',
 )
