@@ -292,8 +292,8 @@ class Glossary(object):
         self._data.append(entry.getRaw())
 
     def addEntry(self, word, defi, defiFormat=None):
-        if defiFormat == self._defaultDefiFormat:
-            defiFormat = None
+        if not defiFormat:
+            defiFormat = self._defaultDefiFormat
 
         self.addEntryObj(Entry(word, defi, defiFormat))
 

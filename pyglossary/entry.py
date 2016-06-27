@@ -27,7 +27,7 @@ class Entry(object):
             return lambda x: \
                 x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
 
-    def __init__(self, word, defi, defiFormat=None):
+    def __init__(self, word, defi, defiFormat='m'):
         """
             word: string or a list of strings (including alternate words)
             defi: string or a list of strings (including alternate definitions)
@@ -49,6 +49,9 @@ class Entry(object):
                 defi = defi[0]
         elif not isinstance(defi, str):
             raise TypeError('invalid defi type %s' % type(defi))
+
+        if not defiFormat in ('m', 'h', 'x'):
+            raise ValueError('invalid defiFormat %r' % defiFormat)
 
         self._word = word
         self._defi = defi
@@ -198,7 +201,7 @@ class Entry(object):
             )
 
     @classmethod
-    def fromRaw(cls, rawEntry, defaultDefiFormat=None):
+    def fromRaw(cls, rawEntry, defaultDefiFormat='m'):
         """
             rawEntry can be (word, defi) or (word, defi, defiFormat)
             where both word and defi can be string or list of strings
