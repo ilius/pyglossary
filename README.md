@@ -73,9 +73,9 @@ ie. multiple ways to use the program.
 -   **Tkinter-based interface**, works in the lack of Gtk. Specially on
     Windows where Tkinter library is installed with the Python itself.
     You can also install it on:
-    -   Debian: `apt-get install python-tk tix`
-    -   openSUSE: `zypper install tkinter tix`
-    -   Fedora: `yum install tkinter tix`
+    -   Debian: `apt-get install python3-tk tix`
+    -   openSUSE: `zypper install python3-tk tix`
+    -   Fedora: `yum install python3-tkinter tix`
     -   Mac OS X: read <https://www.python.org/download/mac/tcltk/>
 
 -   **Command-line interface**, works in all operating systems without
