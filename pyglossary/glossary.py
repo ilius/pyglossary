@@ -771,6 +771,7 @@ class Glossary(object):
         else:
             self._updateIter(sort=False)
 
+        filename = abspath(filename)
         log.info('Writing to file "%s"'%filename)
         try:
             self.writeFunctions[format].__call__(self, filename, **options)
