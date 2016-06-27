@@ -41,7 +41,16 @@ startRed	= '\x1b[31m'
 noneItem = 'Not Selected'
 
 
-xbmLogo = join(rootDir, 'res', 'pyglossary.xbm')
+bitmapLogo = join(rootDir, 'res', 'pyglossary.ico') if "nt" == os.name \
+    else '@' + join(rootDir, 'res', 'pyglossary.xbm')
+
+def set_window_icon(window):
+    #window.wm_iconbitmap(bitmap=bitmapLogo)
+    window.iconphoto(
+        True,
+        tk.PhotoImage(file=join(rootDir, 'res', 'pyglossary.png')),
+    )
+
 
 
 class TkTextLogHandler(logging.Handler):
@@ -204,20 +213,7 @@ class UI(tix.Frame, UIBase):
         master.title('PyGlossary (Tkinter)')
         master.resizable(True, False)
         ########
-        #icon = Tix.BitmapImage(file=xbmLogo)
-        #master.wm_iconbitmap(icon)
-        #master.wm_iconbitmap(xbmLogo)
-        #bit = Tix.PhotoImage(file=join(uiDir, 'pyglossary.gif'), format='gif')
-        #lb = Tix.Label(None,image=bit)
-        #lb.grid()
-        #master.iconwindow(icon, 'pyglossary')
-        #master.wm_iconimage(bit)
-        #master.wm_iconname('dot')
-        #help(master.wm_iconbitmap)
-        #for x in dir(master):
-        #    if 'wm_' in x:
-        #        log.debug(x)
-        master.wm_iconbitmap('@%s'%xbmLogo)
+        set_window_icon(master)
         ########
         self.pack(fill='x')
         #master.bind('<Configure>', self.resized)
@@ -486,7 +482,7 @@ class UI(tix.Frame, UIBase):
         about = tix.Toplevel(width=600)## bg='#0f0' does not work
         about.title('About PyGlossary')
         about.resizable(False, False)
-        about.wm_iconbitmap('@%s'%xbmLogo)
+        set_window_icon(about)
         ###
         msg1 = tix.Message(
             about,
@@ -557,7 +553,7 @@ class UI(tix.Frame, UIBase):
         about = tix.Toplevel()## bg='#0f0' does not work
         about.title('Credits')
         about.resizable(False, False)
-        about.wm_iconbitmap('@%s'%xbmLogo)
+        set_window_icon(about)
         ###
         msg1 = tix.Message(
             about,
@@ -581,7 +577,7 @@ class UI(tix.Frame, UIBase):
         about = tix.Toplevel()## bg='#0f0' does not work
         about.title('License')
         about.resizable(False, False)
-        about.wm_iconbitmap('@%s'%xbmLogo)
+        set_window_icon(about)
         ###
         msg1 = tix.Message(
             about,
