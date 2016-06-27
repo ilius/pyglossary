@@ -1039,7 +1039,7 @@ class Glossary(object):
                 '%d / %d completed'%(wordI, wordCount),
             )
 
-    def finished(self):
+    def progressEnd(self):
         if self.ui:
             self.ui.progressEnd()
 
