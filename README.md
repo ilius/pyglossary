@@ -95,9 +95,11 @@ interface. And exits with an error if neither are installed.
 But you can explicitly determine the user interface type using `--ui`,
 for example:
 
-> `python3 pyglossary.pyw --ui=gtk`
->
-> `python3 pyglossary.pyw --ui=tk`
+    python3 pyglossary.pyw --ui=gtk
+
+Or
+
+    python3 pyglossary.pyw --ui=tk
 
 
 Format-specific Requirements
