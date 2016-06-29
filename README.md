@@ -107,7 +107,7 @@ Format-specific Requirements
 
 -   **Writing to AppleDict**
 
-    `sudo easy_install3 beautifulsoup4 html5lib`
+    `sudo pip3 beautifulsoup4 html5lib`
 
 -   **Reading from Octopus Mdict (MDX)**
 
