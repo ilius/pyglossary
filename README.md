@@ -105,6 +105,10 @@ Or
 Format-specific Requirements
 ----------------------------
 
+-   **Reading from XDXF**
+
+    `sudo pip3 lxml`
+
 -   **Writing to AppleDict**
 
     `sudo pip3 lxml beautifulsoup4 html5lib`
