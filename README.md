@@ -109,7 +109,7 @@ Format-specific Requirements
 
     `sudo pip3 beautifulsoup4 html5lib`
 
--   **Reading from Octopus Mdict (MDX)**
+-   **Reading from Octopus Mdict (MDX)** (required for some glossaries)
 
     `sudo pip3 install python-lzo`
 
