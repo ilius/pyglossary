@@ -920,7 +920,10 @@ class Glossary(object):
         )
         log.info('')
         if finalOutputFile:
+            log.info('Writing file "%s" done.' % finalOutputFile)
             log.info('Running time of convert: %.1f seconds' % (now() - tm0))
+        else:
+            log.error('Writing file "%s" failed.' % outputFilename)
 
         return finalOutputFile
 

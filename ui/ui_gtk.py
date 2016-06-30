@@ -612,23 +612,17 @@ class UI(gtk.Dialog, MyDialog, UIBase):
             #        .get_value_as_int()
             #    ex = self.glos.readOmnidic(inPath, dicIndex=dicIndex)
             # else:
-            succeed = self.glos.convert(
+            finalOutputFile = self.glos.convert(
                 inPath,
                 inputFormat=inFormat,
                 outputFilename=outPath,
                 outputFormat=outFormat,
             )
-            if succeed:
+            if finalOutputFile:
                 self.status('Convert finished')
-                log.info(
-                    'writing %s file: "%s" done.' % (outFormat, outPath)
-                )
             else:
                 self.status('Convert failed')
-                log.error(
-                    'writing %s file: "%s" failed.' % (outFormat, outPath)
-                )
-            return succeed
+            return bool(finalOutputFile)
 
         finally:
             self.convertButton.set_sensitive(True)

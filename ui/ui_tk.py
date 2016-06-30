@@ -210,7 +210,6 @@ class ProgressBar(tix.Frame):
 
 class UI(tix.Frame, UIBase):
     def __init__(self, path='', **options):
-        self.running = False
         self.glos = Glossary(ui=self)
         self.pref = {}
         self.pref_load(**options)
@@ -225,7 +224,6 @@ class UI(tix.Frame, UIBase):
         self.pack(fill='x')
         # master.bind('<Configure>', self.resized)
         ######################
-        self.running = False
         self.glos = Glossary(ui=self)
         self.pref = {}
         self.pref_load()
@@ -616,10 +614,6 @@ class UI(tix.Frame, UIBase):
     def quit(self):
         self.master.destroy()
 
-    def apply_clicked(self):
-        if self.load():
-            self.convert()
-
     def resized(self, event):
         dh = self.master.winfo_height() - self.winfo_height()
         # log.debug(dh, self.consoleH)
@@ -755,26 +749,17 @@ class UI(tix.Frame, UIBase):
             return
         outFormat = Glossary.descFormat[outFormatDesc]
 
-        self.running = True
-
-        try:
-            succeed = self.glos.convert(
-                inPath,
-                inputFormat=inFormat,
-                outputFilename=outPath,
-                outputFormat=outFormat,
-            )
-        finally:
-            self.running = False
-
-        if succeed:
+        finalOutputFile = self.glos.convert(
+            inPath,
+            inputFormat=inFormat,
+            outputFilename=outPath,
+            outputFormat=outFormat,
+        )
+        # if finalOutputFile:
             # self.status('Convert finished')
-            log.info('writing %s file: "%s" done.' % (outFormat, outPath))
-        else:
+        # else:
             # self.status('Convert failed')
-            log.error('writing %s file: "%s" failed.' % (outFormat, outPath))
-
-        return succeed
+        return bool(finalOutputFile)
 
     def run(self, editPath=None, readOptions=None):
         if readOptions is None:
