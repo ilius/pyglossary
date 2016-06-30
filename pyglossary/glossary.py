@@ -27,6 +27,7 @@ from os.path import (
     split,
     join,
     splitext,
+    isfile,
     isdir,
     dirname,
     basename,
@@ -688,12 +689,14 @@ class Glossary(object):
         sortKey (callable or None):
             key function for sorting
             takes a word as argument, which is str or list (with alternates)
+
+        returns absolute path of output file, or None if failed
         """
         if not filename:
             filename = self._filename
         if not filename:
             log.error('Invalid filename %r' % filename)
-            return False
+            return
         ext = ''
         filenameNoExt, fext = splitext(filename)
         fext = fext.lower()
@@ -744,7 +747,7 @@ class Glossary(object):
                         ext = fext
         if not format:
             log.error('Unable to detect write format!')
-            return False
+            return
         if isdir(filename):
             # write to directory, use filename (not filepath) of input file.
             filename = join(filename, basename(self._filename)+ext)
@@ -820,14 +823,14 @@ class Glossary(object):
             self.writeFunctions[format].__call__(self, filename, **options)
         except Exception:
             log.exception('exception while calling plugin\'s write function')
-            return False
+            return
         finally:
             self.clear()
 
         if archiveType:
-            self.archiveOutDir(filename, archiveType)
+            filename = self.archiveOutDir(filename, archiveType)
 
-        return True
+        return filename
 
     def archiveOutDir(self, filename, archiveType):
         """
@@ -864,6 +867,11 @@ class Glossary(object):
                         error + '\n' +
                         'failed to compress file "%s"' % filename
                     )
+        archiveFilename = '%s.%s' % (filename, archiveType)
+        if isfile(archiveFilename):
+            return archiveFilename
+        else:
+            return filename
 
     def convert(
         self,
@@ -879,6 +887,9 @@ class Glossary(object):
         readOptions=None,
         writeOptions=None,
     ):
+        """
+        returns absolute path of output file, or None if failed
+        """
         if not readOptions:
             readOptions = {}
         if not writeOptions:
@@ -896,22 +907,22 @@ class Glossary(object):
             progressbar=progressbar,
             **readOptions
         ):
-            return False
+            return
         log.info('')
 
-        if not self.write(
+        finalOutputFile = self.write(
             filename=outputFilename,
             format=outputFormat,
             sort=sort,
             sortKey=sortKey,
             sortCacheSize=sortCacheSize,
             **writeOptions
-        ):
-            return False
+        )
         log.info('')
-        log.info('Running time of convert: %.1f seconds' % (now() - tm0))
+        if finalOutputFile:
+            log.info('Running time of convert: %.1f seconds' % (now() - tm0))
 
-        return True
+        return finalOutputFile
 
     # ________________________________________________________________________#
 
