@@ -672,10 +672,74 @@ class Glossary(object):
             )
         self._updateIter(sort=True)
 
+    def _detectOutput(self, filename='', format=''):
+        """
+        returns (filename, format, archiveType) or None
+        """
+        archiveType = ''
+        if filename:
+            ext = ''
+            filenameNoExt, fext = splitext(filename)
+            fext = fext.lower()
+            if fext in ('.gz', '.bz2', '.zip'):
+                archiveType = fext[1:]
+                filename = filenameNoExt
+                fext = get_ext(filename)
+            if not format:
+                for fmt, extList in Glossary.formatsExt.items():
+                    for e in extList:
+                        if format == e[1:] or format == e:
+                            format = fmt
+                            ext = e
+                            break
+                    if format:
+                        break
+                if not format:
+                    for fmt, extList in Glossary.formatsExt.items():
+                        if filename == fmt:
+                            format = filename
+                            ext = extList[0]
+                            filename = self._filename + ext
+                            break
+                        for e in extList:
+                            if filename == e[1:] or filename == e:
+                                format = fmt
+                                ext = e
+                                filename = self._filename + ext
+                                break
+                        if format:
+                            break
+                if not format:
+                    for fmt, extList in Glossary.formatsExt.items():
+                        if fext in extList:
+                            format = fmt
+                            ext = fext
+            if not format:
+                log.error('Unable to detect write format!')
+                return
+
+        else:  # filename is empty
+            if not self._filename:
+                log.error('Invalid filename %r' % filename)
+                return
+            filename = self._filename  # no extension
+            if not format:
+                log.error('No filename nor format is given for output file')
+                return
+            try:
+                filename += Glossary.formatsExt[format][0]
+            except KeyError:
+                log.error('invalid write format')
+                return
+
+
+        return filename, format, archiveType
+
+
     def write(
         self,
-        filename='',
-        format='',
+        filename,
+        format,
         sort=None,
         sortKey=None,
         sortCacheSize=1000,
@@ -692,62 +756,6 @@ class Glossary(object):
 
         returns absolute path of output file, or None if failed
         """
-        if not filename:
-            filename = self._filename
-        if not filename:
-            log.error('Invalid filename %r' % filename)
-            return
-        ext = ''
-        filenameNoExt, fext = splitext(filename)
-        fext = fext.lower()
-        if fext in ('.gz', '.bz2', '.zip'):
-            archiveType = fext[1:]
-            filename = filenameNoExt
-            fext = get_ext(filename)
-        else:
-            archiveType = ''
-        del filenameNoExt
-        if format:
-            try:
-                ext = Glossary.formatsExt[format][0]
-            except KeyError:
-                log.exception(
-                    'no file extention found for file format %s' % format
-                )
-                format = ''  # FIXME
-        if not format:
-            items = Glossary.formatsExt.items()
-            for (fmt, extList) in items:
-                for e in extList:
-                    if format == e[1:] or format == e:
-                        format = fmt
-                        ext = e
-                        break
-                if format:
-                    break
-            if not format:
-                for (fmt, extList) in items:
-                    if filename == fmt:
-                        format = filename
-                        ext = extList[0]
-                        filename = self._filename + ext
-                        break
-                    for e in extList:
-                        if filename == e[1:] or filename == e:
-                            format = fmt
-                            ext = e
-                            filename = self._filename + ext
-                            break
-                    if format:
-                        break
-            if not format:
-                for (fmt, extList) in items:
-                    if fext in extList:
-                        format = fmt
-                        ext = fext
-        if not format:
-            log.error('Unable to detect write format!')
-            return
         if isdir(filename):
             # write to directory, use filename (not filepath) of input file.
             filename = join(filename, basename(self._filename)+ext)
@@ -827,9 +835,6 @@ class Glossary(object):
         finally:
             self.clear()
 
-        if archiveType:
-            filename = self.archiveOutDir(filename, archiveType)
-
         return filename
 
     def archiveOutDir(self, filename, archiveType):
@@ -895,6 +900,15 @@ class Glossary(object):
         if not writeOptions:
             writeOptions = {}
 
+        outputArgs = self._detectOutput(
+            filename=outputFilename,
+            format=outputFormat,
+        )
+        if not outputArgs:
+            log.error('Writing file "%s" failed.' % outputFilename)
+            return
+        outputFilename, outputFormat, archiveType = outputArgs
+
         if direct is None:
             if sort is not True:
                 direct = True  # FIXME
@@ -911,19 +925,23 @@ class Glossary(object):
         log.info('')
 
         finalOutputFile = self.write(
-            filename=outputFilename,
-            format=outputFormat,
+            outputFilename,
+            outputFormat,
             sort=sort,
             sortKey=sortKey,
             sortCacheSize=sortCacheSize,
             **writeOptions
         )
         log.info('')
-        if finalOutputFile:
-            log.info('Writing file "%s" done.' % finalOutputFile)
-            log.info('Running time of convert: %.1f seconds' % (now() - tm0))
-        else:
+        if not finalOutputFile:
             log.error('Writing file "%s" failed.' % outputFilename)
+            return
+
+        if archiveType:
+            finalOutputFile = self.archiveOutDir(finalOutputFile, archiveType)
+
+        log.info('Writing file "%s" done.' % finalOutputFile)
+        log.info('Running time of convert: %.1f seconds' % (now() - tm0))
 
         return finalOutputFile
 
