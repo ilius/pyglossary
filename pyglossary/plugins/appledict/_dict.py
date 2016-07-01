@@ -26,7 +26,7 @@ from xml.sax.saxutils import unescape, quoteattr
 import xdxf
 
 from . import _normalize
-from pyglossary.text_utils import toStr
+from pyglossary.plugins.formats_common import log, toStr
 
 def dictionary_begin(glos, f, frontBackMatter):
     # write header
@@ -87,7 +87,6 @@ def indexes_generator(indexes_lang):
             msg = "extended indexes not supported for the specified language: %s.\n"\
                   "following languages avaible: %s." %\
                   (indexes_lang, ', '.join(list(idxs.languages.keys())))
-            from pyglossary.glossary import log
             log.error(msg)
             raise ValueError(msg)
 

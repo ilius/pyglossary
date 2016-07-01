@@ -19,7 +19,7 @@
 import os
 import pkgutil
 
-from pyglossary.glossary import log
+from pyglossary.plugins.formats_common import log
 
 __all__ = ['languages', 'log']
 

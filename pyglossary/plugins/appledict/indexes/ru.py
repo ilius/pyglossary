@@ -16,8 +16,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from . import languages, log
-from pyglossary.text_utils import toStr, toUnicode
+from . import languages
+from pyglossary.plugins.formats_common import log
 
 try:
     import pymorphy2

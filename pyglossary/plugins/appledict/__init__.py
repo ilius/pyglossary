@@ -24,7 +24,7 @@ import re
 import pkgutil
 import shutil
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from ._dict import write_xml, get_beautiful_soup
 
 enable = True
@@ -68,7 +68,6 @@ def format_default_prefs(defaultPrefs):
     if not isinstance(defaultPrefs, dict):
         raise TypeError("defaultPrefs not a dictionary: %r" % defaultPrefs)
     if str(defaultPrefs.get('version', None)) != '1':
-        from pyglossary.glossary import log
         log.error("default prefs does not contain {'version': '1'}.  prefs "
                   "will not be persistent between Dictionary.app restarts.")
     return "\n".join("\t\t<key>%s</key>\n\t\t<string>%s</string>" % i
@@ -150,7 +149,6 @@ def safe_listdir_set(path):
     if not path:
         return set()
     if not os.path.isdir(path):
-        from pyglossary.glossary import log
         log.error("resource path is not a directory: %r" % path)
         return set()
     return {os.path.join(path, node) for node in os.listdir(path)}
