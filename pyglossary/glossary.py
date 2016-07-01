@@ -465,7 +465,7 @@ class Glossary(object):
     ):
         """
         filename (str): name/path of input file
-        format (str): name of inout format,
+        format (str): name of input format,
                       or '' to detect from file extention
         direct (bool): enable direct mode
         """
