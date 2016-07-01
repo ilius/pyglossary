@@ -252,7 +252,12 @@ class UI(UIBase):
         glos = self.glos = Glossary(ui=self)
         if reverse:
             signal.signal(signal.SIGINT, self.onSigInt)## good place? FIXME
-            if not glos.read(inputFilename, format=inputFormat, **readOptions):
+            readOptions['direct'] = False
+            if not glos.read(
+                inputFilename,
+                format=inputFormat,
+                **readOptions
+            ):
                 log.error('reading input file was failed!')
                 return False
             self.setText('Reversing: ')

@@ -11,9 +11,9 @@
 
 
     "reverse_matchWord": true,
-    "reverse_showRel": "None",
+    "reverse_showRel": "Percent",
     "reverse_saveStep": 1000,
     "reverse_minRel": 0.3,
     "reverse_maxNum": -1,
-    "reverse_includeDefs": true
+    "reverse_includeDefs": false
 }

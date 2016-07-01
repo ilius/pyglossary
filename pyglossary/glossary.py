@@ -1074,11 +1074,13 @@ class Glossary(object):
     def takeOutputWords(self, minWordLen=3):
         wordPattern = re.compile('[\w]{%d,}' % minWordLen, re.U)
         words = set()
+        progressbar, self._progressbar = self._progressbar, False
         for entry in self:
             words.update(re.findall(
                 wordPattern,
                 entry.getDefi(),
             ))
+        self._progressbar = progressbar
         return sorted(words)
 
     # ________________________________________________________________________#
@@ -1119,35 +1121,40 @@ class Glossary(object):
         wordPattern = re.compile('[\w]{%d,}' % minWordLen, re.U)
         outRel = []
         for item in self._data:
-            word, defi = item[:2]
+            words, defi = item[:2]
+            if isinstance(words, str):
+                words = [words]
+            if isinstance(defi, list):
+                defi = '\n'.join(defi)
             if st not in defi:
                 continue
-            rel = 0  # relation value of word (0 <= rel <= 1)
-            for part in re.split(splitPattern, defi):
-                if not part:
-                    continue
-                if matchWord:
-                    partWords = re.findall(
-                        wordPattern,
-                        part,
-                    )
-                    if not partWords:
+            for word in words:
+                rel = 0  # relation value of word (0 <= rel <= 1)
+                for part in re.split(splitPattern, defi):
+                    if not part:
                         continue
-                    rel = max(
-                        rel,
-                        partWords.count(st) / len(partWords)
-                    )
+                    if matchWord:
+                        partWords = re.findall(
+                            wordPattern,
+                            part,
+                        )
+                        if not partWords:
+                            continue
+                        rel = max(
+                            rel,
+                            partWords.count(st) / len(partWords)
+                        )
+                    else:
+                        rel = max(
+                            rel,
+                            part.count(st) * len(st) / len(part)
+                        )
+                if rel <= minRel:
+                    continue
+                if includeDefs:
+                    outRel.append((word, rel, defi))
                 else:
-                    rel = max(
-                        rel,
-                        part.count(st) * len(st) / len(part)
-                    )
-            if rel <= minRel:
-                continue
-            if includeDefs:
-                outRel.append((word, rel, defi))
-            else:
-                outRel.append((word, rel))
+                    outRel.append((word, rel))
         outRel.sort(
             key=lambda x: x[1],
             reverse=True,
@@ -1243,6 +1250,7 @@ class Glossary(object):
             'Reversing to file "%s"' % savePath +
             ', number of words: %s' % wordCount
         )
+        self.progressInit('Reversing')
         with open(savePath, 'w') as saveFile:
             for wordI in range(wordCount):
                 word = words[wordI]
@@ -1268,7 +1276,7 @@ class Glossary(object):
                     saveFile.write('%s\t%s\n' % (word, defi))
                 yield wordI
 
-        self.finished()
+        self.progressEnd()
         yield wordCount
 
 
