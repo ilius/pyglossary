@@ -24,7 +24,7 @@ from pyglossary.core import (
     confJsonFile,
     rootDir,
     dataDir,
-    resDir,
+    appResDir,
 )
 from pyglossary.glossary import *
 from pyglossary.json_utils import jsonToData
@@ -34,7 +34,7 @@ def fread(path):
     with open(path) as fp:
         return fp.read()
 
-logo = join(resDir, 'pyglossary.png')
+logo = join(appResDir, 'pyglossary.png')
 aboutText = fread(join(dataDir, 'about'))
 licenseText = fread(join(dataDir, 'license-dialog'))
 authors = fread(join(dataDir, 'AUTHORS')).split('\n')

@@ -1,6 +1,6 @@
 from . import *
 from os.path import isabs, join
-from pyglossary.core import resDir
+from pyglossary.core import appResDir
 
 
 def set_tooltip(widget, text):
@@ -15,7 +15,7 @@ def set_tooltip(widget, text):
 
 def imageFromFile(path):  # the file must exist
     if not isabs(path):
-        path = join(resDir, path)
+        path = join(appResDir, path)
     im = gtk.Image()
     try:
         im.set_from_file(path)

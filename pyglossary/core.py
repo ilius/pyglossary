@@ -167,7 +167,7 @@ dataDir = rootDir
 if dataDir.endswith("dist-packages"):
 	dataDir = dirname(sys.argv[0])
 
-resDir = join(dataDir, 'res')
+appResDir = join(dataDir, 'res')
 
 if os.sep == '/':  # Operating system is Unix-Like
     homeDir = os.getenv('HOME')

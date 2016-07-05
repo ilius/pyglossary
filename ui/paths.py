@@ -10,4 +10,4 @@ else:
     uiDir = dirname(realpath(__file__))
     rootDir = dirname(uiDir)
 
-resDir = join(rootDir, 'res')
+appResDir = join(rootDir, 'res')
