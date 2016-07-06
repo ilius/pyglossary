@@ -46,8 +46,9 @@ def installToDictd(filename, title=''):
     filename is without extention (neither .index or .dict or .dict.dz)
     """
     import shutil
+    targetDir = '/usr/share/dictd/'
     log.info('Installing %r to DICTD server' % filename)
-    shutil.copy(filename + '.index', '/usr/share/dictd')
+
     if os.path.isfile(filename + '.dict.dz'):
         dictPostfix = '.dict.dz'
     elif os.path.isfile(filename + '.dict'):
@@ -55,19 +56,25 @@ def installToDictd(filename, title=''):
     else:
         log.error('No .dict file, could not install dictd file %r' % filename)
         return False
-    shutil.copy(filename + dictPostfix, '/usr/share/dictd')
+
+    if not filename.startswith(targetDir):
+        shutil.copy(filename + '.index', targetDir)
+        shutil.copy(filename + dictPostfix, targetDir)
 
     fname = split(filename)[1]
     if not title:
         title = fname
     open('/var/lib/dictd/db.list', 'a').write('''
-
 database %s
 {
-    data /usr/share/dictd/%s%s
-    index /usr/share/dictd/%s.index
+  data %s
+  index %s
 }
-''' % (title, fname, dictPostfix, fname))
+''' % (
+    title,
+    join(targetDir, fname + dictPostfix),
+    join(targetDir, fname + '.index'),
+))
 
 
 class Reader(object):
