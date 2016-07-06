@@ -53,7 +53,7 @@ def installToDictd(filename, title=''):## filename is without extention (neither
     fname = split(filename)[1]
     if not title:
         title = fname
-    open('/var/lib/dictd/db.list', 'ab').write('''
+    open('/var/lib/dictd/db.list', 'a').write('''
 
 database %s
 {
