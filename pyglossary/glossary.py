@@ -1092,7 +1092,7 @@ class Glossary(object):
     def progress(self, wordI, wordCount):
         if self.ui and wordI % (wordCount//500) == 0:
             self.ui.progress(
-                (wordI + 1) / wordCount,
+                min(wordI + 1, wordCount) / wordCount,
                 '%d / %d completed' % (wordI, wordCount),
             )
 
