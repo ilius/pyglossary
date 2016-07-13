@@ -107,11 +107,11 @@ Format-specific Requirements
 
 -   **Reading from XDXF**
 
-    `sudo pip3 lxml`
+    `sudo pip3 install lxml`
 
 -   **Writing to AppleDict**
 
-    `sudo pip3 lxml beautifulsoup4 html5lib`
+    `sudo pip3 install lxml beautifulsoup4 html5lib`
 
 -   **Reading from Octopus Mdict (MDX)** (required for some glossaries)
 
