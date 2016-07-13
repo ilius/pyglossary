@@ -757,8 +757,7 @@ class Glossary(object):
         returns absolute path of output file, or None if failed
         """
         if isdir(filename):
-            # write to directory, use filename (not filepath) of input file.
-            filename = join(filename, basename(self._filename)+ext)
+            filename = join(filename, basename(self._filename))
         validOptionKeys = self.formatsWriteOptions[format]
         for key in list(options.keys()):
             if key not in validOptionKeys:

@@ -23,25 +23,13 @@ import re
 import string
 from xml.sax.saxutils import unescape, quoteattr
 
-import xdxf
+
 
 from . import _normalize
 from pyglossary.plugins.formats_common import log, toStr
 
 log = logging.getLogger('root')
 
-
-def dictionary_begin(glos, f, frontBackMatter):
-    # write header
-    f.write(
-        '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<d:dictionary xmlns="http://www.w3.org/1999/xhtml" '
-        'xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\n'
-    )
-
-    if frontBackMatter:
-        with open(frontBackMatter, 'r') as front_back_matter:
-            f.write(front_back_matter.read())
 
 
 def get_beautiful_soup():
@@ -257,78 +245,3 @@ def format_clean_content(title, body, BeautifulSoup):
     return content
 
 
-def write_entries(glos, f, cleanHTML, indexes):
-    """
-    :param indexes: str | None
-    """
-    if cleanHTML:
-        BeautifulSoup = get_beautiful_soup()
-        if not BeautifulSoup:
-            log.warning(
-                'cleanHTML option passed but BeautifulSoup not found.  ' +
-                'to fix this run `sudo pip3 install lxml beautifulsoup4 html5lib`'
-            )
-    else:
-        BeautifulSoup = None
-
-    # write entries
-    generate_id = id_generator()
-    generate_indexes = indexes_generator(indexes)
-    _buffer = ''
-
-    xdxf.xdxf_init()
-
-    glos.setDefaultDefiFormat('h')
-
-    for entryI, entry in enumerate(glos):
-        words = entry.getWords()
-        word, alts = words[0], words[1:]
-        defi = entry.getDefi()
-        format = entry.getDefiFormat()
-
-        long_title = _normalize.title_long(_normalize.title(word, BeautifulSoup))
-        if not long_title:
-            continue
-
-        _id = next(generate_id)
-        if BeautifulSoup:
-            title_attr = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(long_title, True)
-        else:
-            title_attr = '"%s"' % long_title
-
-        begin_entry = '<d:entry id="%(id)s" d:title=%(title)s>\n' % {
-            'id': _id,
-            'title': title_attr,
-        }
-
-        if format == 'x':
-            content = xdxf.xdxf_to_html(defi)
-            content = format_clean_content(None, content, BeautifulSoup)
-        else:
-            content = defi
-            content = format_clean_content(long_title, content, BeautifulSoup)
-
-        indexes = generate_indexes(long_title, alts, content, BeautifulSoup)
-
-        end_entry = '\n</d:entry>\n'
-
-        _buffer += begin_entry
-        _buffer += indexes
-        _buffer += content
-        _buffer += end_entry
-
-        if entryI % 1000 == 0:
-            f.write(_buffer)
-            _buffer = ''
-    f.write(_buffer)
-
-
-def dictionary_end(glos, f):
-    f.write('</d:dictionary>\n')
-
-
-def write_xml(glos, filename, cleanHTML, frontBackMatter, indexes):
-    with open(filename, 'w', encoding='utf8') as f:
-        dictionary_begin(glos, f, frontBackMatter)
-        write_entries(glos, f, cleanHTML, indexes)
-        dictionary_end(glos, f)
