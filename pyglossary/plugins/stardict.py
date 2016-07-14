@@ -79,7 +79,7 @@ def verifySameTypeSequence(s):
 
 class Reader(object):
     def __init__(self, glos):
-        self.glos = glos
+        self._glos = glos
         self.clear()
         """
         indexData format
@@ -120,7 +120,7 @@ class Reader(object):
             self._filename = filename
         self._filename = realpath(self._filename)
         self.readIfoFile()
-        sametypesequence = self.glos.getInfo('sametypesequence')
+        sametypesequence = self._glos.getInfo('sametypesequence')
         if not verifySameTypeSequence(sametypesequence):
             return False
         self._indexData = self.readIdxFile()
@@ -161,7 +161,7 @@ class Reader(object):
                 if not (key and value):
                     log.warning('Invalid ifo file line: %s' % line)
                     continue
-                self.glos.setInfo(key, value)
+                self._glos.setInfo(key, value)
 
     def readIdxFile(self):
         if isfile(self._filename+'.idx.gz'):
@@ -419,7 +419,7 @@ class Reader(object):
 
 class Writer(object):
     def __init__(self, glos):
-        self.glos = glos
+        self._glos = glos
 
     def write(
         self,
@@ -468,7 +468,7 @@ class Writer(object):
 #        idxBytes = b''
 #        dictStr = ''
 #        altIndexList = [] # contains tuples (b'alternate', wordIndex)
-#        for i, entry in enumerate(self.glos):
+#        for i, entry in enumerate(self._glos):
 #            words = entry.getWords()
 #            defi = entry.getDefi()
 #            for alt in words[1:]:
@@ -512,7 +512,7 @@ class Writer(object):
         defiFormatCounter = Counter()
         if not isdir(self._resDir):
             os.mkdir(self._resDir)
-        for entryI, entry in enumerate(self.glos):
+        for entryI, entry in enumerate(self._glos):
             if entry.isData():
                 entry.save(self._resDir)
                 continue
@@ -605,7 +605,7 @@ class Writer(object):
         """
         ifoStr = "StarDict's dict ifo file\n" \
             + 'version=3.0.0\n' \
-            + 'bookname=%s\n' % newlinesToSpace(self.glos.getInfo('name')) \
+            + 'bookname=%s\n' % newlinesToSpace(self._glos.getInfo('name')) \
             + 'wordcount=%s\n' % wordCount \
             + 'idxfilesize=%s\n' % indexFileSize
         if sametypesequence is not None:
@@ -620,7 +620,7 @@ class Writer(object):
                 'sametypesequence',
             ):
                 continue
-            value = self.glos.getInfo(key)
+            value = self._glos.getInfo(key)
             if value == '':
                 continue
             if key == 'description':
@@ -639,7 +639,7 @@ class Writer(object):
         We need to know if the glossary contains additional definitions
         to make the decision on the format of the StarDict dictionary.
         """
-        for entry in self.glos:
+        for entry in self._glos:
             if len(entry.getDefis()) > 1:
                 return True
         return False
@@ -651,8 +651,8 @@ class Writer(object):
 
         If definitions has different formats return None.
         """
-        self.glos.setDefaultDefiFormat('m')
-        formatsCount = self.glos.getMostUsedDefiFormats()
+        self._glos.setDefaultDefiFormat('m')
+        formatsCount = self._glos.getMostUsedDefiFormats()
         if not formatsCount:
             return None
         if len(formatsCount) > 1:  # FIXME
