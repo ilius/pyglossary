@@ -80,9 +80,7 @@ def replaceHtmlEntryNoEscapeCB(u_match):
                 other references like &amp; are replaced with corresponding
                 characters.
                 """
-                if u_text not in unkownHtmlEntries:
-                    log.debug('unknown html entity %s' % u_text)
-                    unkownHtmlEntries.add(u_text)
+                unkownHtmlEntries.add(u_text)
                 u_res = u_text
     else:
         raise ArgumentError()

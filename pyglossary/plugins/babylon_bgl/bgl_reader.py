@@ -63,6 +63,7 @@ from .bgl_text import (
     replaceAsciiCharRefs,
     fixImgLinks,
     stripDollarIndexes,
+    unkownHtmlEntries,
 )
 
 file = io.BufferedReader
@@ -508,6 +509,10 @@ class BglReader(object):
 
     def __del__(self):
         self.close()
+        while unkownHtmlEntries:
+            log.debug(
+                'BGL: unknown html entity: %s' % unkownHtmlEntries.pop()
+            )
 
     # returns False if error
     def readBlock(self, block):
