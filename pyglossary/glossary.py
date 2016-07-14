@@ -118,9 +118,9 @@ class Glossary(object):
         """
         executed on startup.  as name implies, loads plugins from directory
         """
-        log.debug('loading plugins from directory: %r' % directory)
+        log.debug('Loading plugins from directory: %r' % directory)
         if not isdir(directory):
-            log.error('invalid plugin directory: %r' % directory)
+            log.error('Invalid plugin directory: %r' % directory)
             return
 
         sys.path.append(directory)
@@ -133,11 +133,11 @@ class Glossary(object):
         try:
             plugin = __import__(pluginName)
         except Exception as e:
-            log.exception('error while importing plugin %s' % pluginName)
+            log.exception('Error while importing plugin %s' % pluginName)
             return
 
         if (not hasattr(plugin, 'enable')) or (not plugin.enable):
-            log.debug('plugin disabled or not a plugin: %s' % pluginName)
+            log.debug('Plugin disabled or not a plugin: %s' % pluginName)
             return
 
         format = plugin.format
@@ -177,7 +177,7 @@ class Glossary(object):
             ):
                 if not hasattr(Reader, attr):
                     log.error(
-                        'invalid Reader class in "%s" plugin' % format +
+                        'Invalid Reader class in "%s" plugin' % format +
                         ', no "%s" method' % attr
                     )
                     break
@@ -509,7 +509,7 @@ class Glossary(object):
                 if error:
                     log.error(
                         error + '\n' +
-                        'failed to decompress file "%s"' % filename
+                        'Failed to decompress file "%s"' % filename
                     )
                     return False
                 else:
@@ -526,7 +526,7 @@ class Glossary(object):
                 if error:
                     log.error(
                         error + '\n' +
-                        'failed to decompress file "%s"' % filename
+                        'Failed to decompress file "%s"' % filename
                     )
                     return False
                 else:
@@ -542,7 +542,7 @@ class Glossary(object):
                 if error:
                     log.error(
                         error + '\n' +
-                        'failed to decompress file "%s"' % filename
+                        'Failed to decompress file "%s"' % filename
                     )
                     return False
                 else:
@@ -581,7 +581,7 @@ class Glossary(object):
         except KeyError:
             if direct:
                 log.warning(
-                    'no `Reader` class found in %s plugin' % format +
+                    'No `Reader` class found in %s plugin' % format +
                     ', falling back to indirect mode'
                 )
             result = self.readFunctions[format].__call__(
@@ -599,7 +599,7 @@ class Glossary(object):
             if direct:
                 self._readers.append(reader)
                 log.info(
-                    'using Reader class from %s plugin' % format +
+                    'Using Reader class from %s plugin' % format +
                     ' for direct conversion without loading into memory'
                 )
             else:
@@ -661,7 +661,7 @@ class Glossary(object):
             if sort:
                 sortKey = self._sortKey
                 cacheSize = self._sortCacheSize
-                log.info('stream sorting enabled, cache size: %s' % cacheSize)
+                log.info('Stream sorting enabled, cache size: %s' % cacheSize)
                 # only sort by main word, or list of words + alternates? FIXME
                 gen = hsortStreamList(
                     self._readers,
@@ -744,7 +744,7 @@ class Glossary(object):
             try:
                 filename += Glossary.formatsExt[format][0]
             except KeyError:
-                log.error('invalid write format')
+                log.error('Invalid write format')
                 return
 
 
@@ -787,16 +787,16 @@ class Glossary(object):
         if sortOnWrite == ALWAYS:
             if sort is False:
                 log.warning(
-                    'writing %s requires sorting' % format +
+                    'Writing %s requires sorting' % format +
                     ', ignoring user sort=False option'
                 )
             if self._readers:
                 log.warning(
-                    'writing to %s format requires full sort' % format +
+                    'Writing to %s format requires full sort' % format +
                     ', falling back to indirect mode'
                 )
                 self._inactivateDirectMode()
-                log.info('loaded %s entries' % len(self._data))
+                log.info('Loaded %s entries' % len(self._data))
             sort = True
         elif sortOnWrite == DEFAULT_YES:
             if sort is None:
@@ -807,7 +807,7 @@ class Glossary(object):
         elif sortOnWrite == NEVER:
             if sort:
                 log.warning(
-                    'plugin prevents sorting before write' +
+                    'Plugin prevents sorting before write' +
                     ', ignoring user sort=True option'
                 )
             sort = False
@@ -820,7 +820,7 @@ class Glossary(object):
                     pass
                 else:
                     log.debug(
-                        'using sort key function from %s plugin' % format
+                        'Using sort key function from %s plugin' % format
                     )
             elif sortOnWrite == ALWAYS:
                 try:
@@ -829,7 +829,7 @@ class Glossary(object):
                     pass
                 else:
                     log.warning(
-                        'ignoring user-defined sort order, ' +
+                        'Ignoring user-defined sort order, ' +
                         'and using key function from %s plugin' % format
                     )
             self.sortWords(
@@ -844,7 +844,7 @@ class Glossary(object):
         try:
             self.writeFunctions[format].__call__(self, filename, **options)
         except Exception:
-            log.exception('exception while calling plugin\'s write function')
+            log.exception('Exception while calling plugin\'s write function')
             return
         finally:
             self.clear()
@@ -866,14 +866,20 @@ class Glossary(object):
                 stdout=subprocess.PIPE,
             ).communicate()
             if error:
-                log.error('%s\nfail to compress file "%s"' % (error, filename))
+                log.error(
+                    error + '\n' +
+                    'Failed to compress file "%s"' % filename
+                )
         elif archiveType == 'bz2':
             output, error = subprocess.Popen(
                 ['bzip2', filename],
                 stdout=subprocess.PIPE,
             ).communicate()
             if error:
-                log.error('%s\nfail to compress file "%s"' % (error, filename))
+                log.error(
+                    error + '\n' +
+                    'Failed to compress file "%s"' % filename
+                )
         elif archiveType == 'zip':
             dirn, name = split(filename)
             with indir(dirn):
@@ -884,7 +890,7 @@ class Glossary(object):
                 if error:
                     log.error(
                         error + '\n' +
-                        'failed to compress file "%s"' % filename
+                        'Failed to compress file "%s"' % filename
                     )
         archiveFilename = '%s.%s' % (filename, archiveType)
         if isfile(archiveFilename):
