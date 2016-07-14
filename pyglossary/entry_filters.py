@@ -79,6 +79,16 @@ class LowerWordFilter(EntryFilter):
         return entry
 
 
+class SkipDataEntryFilter(EntryFilter):
+    name = 'skip_resources'
+    desc = 'Skip Resources'
+
+    def run(self, entry):
+        if entry.isData():
+            return
+        return entry
+
+
 class LangEntryFilter(EntryFilter):
     name = 'lang'
     desc = 'Language-dependent Filters'

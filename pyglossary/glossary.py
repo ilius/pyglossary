@@ -274,6 +274,9 @@ class Glossary(object):
         self._entryFilters.append(StripEntryFilter(self))
         self._entryFilters.append(NonEmptyWordFilter(self))
 
+        if pref.get('skipResources', False):
+            self._entryFilters.append(SkipDataEntryFilter(self))
+
         if pref.get('utf8Check', True):
             self._entryFilters.append(FixUnicodeFilter(self))
 
