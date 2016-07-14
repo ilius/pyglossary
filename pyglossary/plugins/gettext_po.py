@@ -87,19 +87,18 @@ class Reader(object):
 
 def write(glos, filename, resources=True):
     from polib import escape as po_escape
-    fp = open(filename, 'w')
-    fp.write('#\nmsgid ""\nmsgstr ""\n')
-    for key, value in glos.iterInfo():
-        fp.write('"%s: %s\\n"\n' % (key, value))
-    for entry in glos:
-        if entry.isData():
-            if resources:
-                entry.save(filename + '_res')
-            continue
-        word = entry.getWord()
-        defi = entry.getDefi()
-        fp.write('msgid %s\nmsgstr %s\n\n' % (
-            po_escape(word),
-            po_escape(defi),
-        ))
-    fp.close()
+    with open(filename, 'w') as toFile:
+        toFile.write('#\nmsgid ""\nmsgstr ""\n')
+        for key, value in glos.iterInfo():
+            toFile.write('"%s: %s\\n"\n' % (key, value))
+        for entry in glos:
+            if entry.isData():
+                if resources:
+                    entry.save(filename + '_res')
+                continue
+            word = entry.getWord()
+            defi = entry.getDefi()
+            toFile.write('msgid %s\nmsgstr %s\n\n' % (
+                po_escape(word),
+                po_escape(defi),
+            ))
