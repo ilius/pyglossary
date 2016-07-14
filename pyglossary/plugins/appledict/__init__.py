@@ -180,11 +180,16 @@ def write(
     glos.setDefaultDefiFormat('h')
 
     myResDir = join(dirPath, 'OtherResources')
-    gResDir = abspath(glos.resPath)
+    if not isdir(myResDir):
+        os.mkdir(myResDir)
 
     with open(filePathBase + '.xml', 'w', encoding='utf8') as toFile:
         write_header(glos, toFile, frontBackMatter)
         for entryI, entry in enumerate(glos):
+            if glos.isData():
+                entry.save(myResDir)
+                continue
+
             words = entry.getWords()
             word, alts = words[0], words[1:]
             defi = entry.getDefi()
@@ -216,12 +221,6 @@ def write(
             )
 
         toFile.write('</d:dictionary>\n')
-
-    if gResDir != myResDir:
-        if not isdir(myResDir):
-            os.mkdir(myResDir)
-        for fname in os.listdir(gResDir):
-            shutil.copy(join(gResDir, fname), myResDir)
 
     if xsl:
         shutil.copy(xsl, myResDir)

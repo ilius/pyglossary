@@ -13,7 +13,7 @@ class TextGlossaryReader(object):
         self._hasInfo = True
         self._leadingLinesCount = 0
         self._pendingEntries = []
-        self._len = None
+        self._wordCount = None
         self._pos = -1
 
     def open(self, filename, encoding='utf-8'):
@@ -61,7 +61,7 @@ class TextGlossaryReader(object):
         try:
             wordDefi = self.nextPair()
         except StopIteration as e:
-            self._len = self._pos
+            self._wordCount = self._pos
             raise e
         if not wordDefi:
             return
@@ -70,11 +70,11 @@ class TextGlossaryReader(object):
         return Entry(word, defi)
 
     def __len__(self):
-        if self._len is None:
+        if self._wordCount is None:
             log.debug('Try not to use len(reader) as it takes extra time')
-            self._len = fileCountLines(self._filename) - \
+            self._wordCount = fileCountLines(self._filename) - \
                 self._leadingLinesCount
-        return self._len
+        return self._wordCount
 
     def __iter__(self):
         return self

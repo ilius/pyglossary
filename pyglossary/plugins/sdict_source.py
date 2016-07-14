@@ -12,10 +12,17 @@ readOptions = []
 writeOptions = [
     'writeInfo',  # bool
     'newline',  # str, or choice ('\r\n', '\n', or '\r')
+    'resources',  # bool
 ]
 
 
-def write(glos, filename, writeInfo=True, newline='\n'):
+def write(
+    glos,
+    filename,
+    writeInfo=True,
+    newline='\n',
+    resources=True,
+):
     head = ''
     if writeInfo:
         head += '<header>\n'
@@ -36,4 +43,5 @@ def write(glos, filename, writeInfo=True, newline='\n'):
         ext='.sdct',
         head=head,
         newline=newline,
+        resources=resources,
     )

@@ -7,38 +7,47 @@ format = 'GettextPo'
 description = 'Gettext Source (po)'
 extentions = ['.po']
 readOptions = []
-writeOptions = []
+writeOptions = [
+    'resources',  # bool
+]
 
 
 class Reader(object):
     def __init__(self, glos, hasInfo=True):
         self._glos = glos
+        self.clear()
+
+    def clear(self):
         self._filename = ''
         self._file = None
-        self._len = None
+        self._wordCount = None
+        self._resDir = ''
+        self._resFileNames = []
 
     def open(self, filename):
         self._filename = filename
         self._file = open(filename)
+        self._resDir = filename + '_res'
+        if isdir(self._resDir):
+            self._resFileNames = os.listdir(self._resDir)
+        else:
+            self._resDir = ''
+            self._resFileNames = []
 
     def close(self):
-        if not self._file:
-            return
-        try:
+        if self._file:
             self._file.close()
-        except:
-            log.exception('error while closing file "%s"' % self._filename)
-        self._file = None
+        self.clear()
 
     def __len__(self):
         from pyglossary.file_utils import fileCountLines
-        if self._len is None:
+        if self._wordCount is None:
             log.debug('Try not to use len(reader) as it takes extra time')
-            self._len = fileCountLines(
+            self._wordCount = fileCountLines(
                 self._filename,
                 newline='\nmsgid',
             )
-        return self._len
+        return self._wordCount
 
     def __iter__(self):
         from polib import unescape as po_unescape
@@ -73,16 +82,20 @@ class Reader(object):
         if word:
             yield Entry(word, defi)
             wordCount += 1
-        self._len = wordCount
+        self._wordCount = wordCount
 
 
-def write(glos, filename):
+def write(glos, filename, resources=True):
     from polib import escape as po_escape
     fp = open(filename, 'w')
     fp.write('#\nmsgid ""\nmsgstr ""\n')
     for key, value in glos.iterInfo():
         fp.write('"%s: %s\\n"\n' % (key, value))
     for entry in glos:
+        if entry.isData():
+            if resources:
+                entry.save(filename + '_res')
+            continue
         word = entry.getWord()
         defi = entry.getDefi()
         fp.write('msgid %s\nmsgstr %s\n\n' % (

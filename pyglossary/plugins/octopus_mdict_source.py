@@ -8,7 +8,9 @@ format = 'OctopusMdictSource'
 description = 'Octopus MDict Source'
 extentions = ['.mtxt']
 readOptions = []
-writeOptions = []
+writeOptions = [
+    'resources',  # bool
+]
 
 
 def read(glos, filename):
@@ -59,7 +61,11 @@ def writeEntryGen(glos):
             )
 
 
-def write(glos, filename):
+def write(
+    glos,
+    filename,
+    resources=True,
+):
     glos.writeTxt(
         '\n',
         '\n</>\n',
@@ -72,4 +78,5 @@ def write(glos, filename):
         head='',
         iterEntries=writeEntryGen(glos),
         newline='\r\n',
+        resources=resources,
     )

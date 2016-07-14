@@ -27,7 +27,6 @@ format = 'OctopusMdict'
 description = 'Octopus MDict'
 extentions = ['.mdx']
 readOptions = [
-    'resPath',  # str, directory path
     'encoding',  # str
     'substyle',  # bool
 ]
@@ -46,7 +45,6 @@ class Reader(object):
         self._mdx = None
         self._mdd = None
         self._mddFilename = ''
-        self._dataDir = ''
 
     def open(self, filename, **options):
         from pyglossary.plugin_lib.readmdict import MDX, MDD
@@ -56,7 +54,6 @@ class Reader(object):
         self._mdx = MDX(filename, self._encoding, self._substyle)
 
         filenameNoExt, ext = splitext(self._filename)
-        self._dataDir = options.get('resPath', filenameNoExt + '_files')
         mddFilename = ''.join([filenameNoExt, extsep, 'mdd'])
         if isfile(mddFilename):
             self._mdd = MDD(mddFilename)
@@ -77,27 +74,6 @@ class Reader(object):
             self._mdx.header.get(b'Description', ''),
         )
 
-        try:
-            self.writeDataFiles()
-        except:
-            log.exception('error while saving MDict data files')
-
-    def writeDataFiles(self):
-        if not self._mdd:
-            return
-        if not isdir(self._dataDir):
-            os.makedirs(self._dataDir)
-        for key, value in self._mdd.items():
-            key = toStr(key)
-            fpath = ''.join([self._dataDir, key.replace('\\', os.path.sep)])
-            if not isdir(dirname(fpath)):
-                os.makedirs(dirname(fpath))
-            log.debug('saving MDict data file: %s' % fpath)
-            f = open(fpath, 'wb')
-            f.write(value)
-            f.close()
-        self._mdd = None
-
     def __iter__(self):
         if self._mdx is None:
             log.error('trying to iterate on a closed MDX file')
@@ -107,6 +83,13 @@ class Reader(object):
                 defi = toStr(defi)
                 yield Entry(word, defi)
             self._mdx = None
+
+        if self._mdd:
+            for b_fname, b_data in self._mdd.items():
+                fname = toStr(b_fname)
+                fname = fname.replace('\\', os.sep).lstrip(os.sep)
+                yield self._glos.newDataEntry(fname, b_data)
+            self._mdd = None
 
     def __len__(self):
         if self._mdx is None:

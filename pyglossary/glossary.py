@@ -47,7 +47,7 @@ import io
 from .flags import *
 from . import core
 from .core import VERSION, userPluginsDir
-from .entry import Entry
+from .entry import Entry, DataEntry
 from .entry_filters import *
 from .sort_stream import hsortStreamList
 
@@ -234,7 +234,6 @@ class Glossary(object):
         self._sortCacheSize = 1000
 
         self._filename = ''
-        self.resPath = ''
         self._defaultDefiFormat = 'm'
         self._progressbar = True
 
@@ -452,6 +451,10 @@ class Glossary(object):
             return self.ui.pref.get(name, default)
         else:
             return default
+
+    def newDataEntry(self, fname, data):
+        inTmp = not self._readers
+        return DataEntry(fname, data, inTmp)
 
     # ________________________________________________________________________#
 
@@ -960,6 +963,7 @@ class Glossary(object):
         outInfoKeysAliasDict=None,
         encoding='utf-8',
         newline='\n',
+        resources=True,
     ):
         if rplList is None:
             rplList = []
@@ -981,9 +985,18 @@ class Glossary(object):
                 fp.write('##' + key + sep1 + desc + sep2)
         fp.flush()
 
+        myResDir = filename + '_res'
+        if not isdir(myResDir):
+            os.mkdir(myResDir)
+
         if not iterEntries:
             iterEntries = self
+
         for entry in iterEntries:
+            if entry.isData():
+                if resources:
+                    entry.save(myResDir)
+
             if entryFilterFunc:
                 entry = entryFilterFunc(entry)
                 if not entry:
@@ -998,6 +1011,8 @@ class Glossary(object):
                 defi = defi.replace(rpl[0], rpl[1])
             fp.write(word + sep1 + defi + sep2)
         fp.close()
+        if not os.listdir(myResDir):
+            os.rmdir(myResDir)
         return True
 
     def writeTabfile(self, filename='', **kwargs):
@@ -1093,6 +1108,9 @@ class Glossary(object):
                 )
 
         for i, entry in enumerate(self):
+            if entry.isData():
+                # FIXME
+                continue
             word = entry.getWord()
             defi = entry.getDefi()
             word = word.replace('\'', '\'\'')\

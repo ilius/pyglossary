@@ -2,7 +2,10 @@
 import sys
 
 import os
-import os.path
+from os.path import (
+    dirname,
+    realpath,
+)
 import re
 import gzip
 from time import time as now
@@ -23,7 +26,6 @@ extentions = ['.ifo']
 readOptions = []
 writeOptions = [
     'dictzip',  # bool
-    'resOverwrite',  # bool
 ]
 sortOnWrite = ALWAYS
 # sortKey also is defined in line 52
@@ -78,12 +80,7 @@ def verifySameTypeSequence(s):
 class Reader(object):
     def __init__(self, glos):
         self.glos = glos
-        self._filename = ''  # base file path, no extension
-        self._indexData = []
-        self._synDict = {}
-        self._sametypesequence = ''
-        self._dictFile = None
-        self._len = None
+        self.clear()
         """
         indexData format
         indexData[i] - i-th record in index file
@@ -101,43 +98,53 @@ class Reader(object):
             a dict { wordIndex -> altList }
         """
 
+    def close(self):
+        if self._dictFile:
+            self._dictFile.close()
+        self.clear()
+
+    def clear(self):
+        self._dictFile = None
+        self._filename = ''  # base file path, no extension
+        self._indexData = []
+        self._synDict = {}
+        self._sametypesequence = ''
+        self._resDir = ''
+        self._resFileNames = []
+        self._wordCount = None
+
     def open(self, filename):
         if splitext(filename)[1].lower() == '.ifo':
             self._filename = splitext(filename)[0]
         else:
             self._filename = filename
-        self._filename = os.path.realpath(self._filename)
+        self._filename = realpath(self._filename)
         self.readIfoFile()
         sametypesequence = self.glos.getInfo('sametypesequence')
         if not verifySameTypeSequence(sametypesequence):
             return False
         self._indexData = self.readIdxFile()
-        self._len = len(self._indexData)
+        self._wordCount = len(self._indexData)
         self._synDict = self.readSynFile()
         self._sametypesequence = sametypesequence
         if isfile(self._filename + '.dict.dz'):
             self._dictFile = gzip.open(self._filename+'.dict.dz', mode='rb')
         else:
             self._dictFile = open(self._filename+'.dict', mode='rb')
-
-        self.readResources()
+        self._resDir = join(dirname(self._filename), 'res')
+        if isdir(self._resDir):
+            self._resFileNames = os.listdir(self._resDir)
+        else:
+            self._resDir = ''
+            self._resFileNames = []
+        # self.readResources()
 
     def __len__(self):
-        if self._len is None:
+        if self._wordCount is None:
             raise RuntimeError(
                 'StarDict: len(reader) called while reader is not open'
             )
-        return self._len
-
-    def close(self):
-        if self._dictFile:
-            self._dictFile.close()
-        self._dictFile = None
-        self._filename = ''  # base file path, no extension
-        self._indexData = []
-        self._synDict = {}
-        self._sametypesequence = ''
-        self._len = None
+        return self._wordCount + len(self._resFileNames)
 
     def readIfoFile(self):
         """
@@ -272,6 +279,15 @@ class Reader(object):
                 defiFormat=defiFormat,
             )
 
+        if isdir(self._resDir):
+            for fname in os.listdir(self._resDir):
+                fpath = join(self._resDir, fname)
+                with open(fpath, 'rb') as fromFile:
+                    yield self._glos.newDataEntry(
+                        fname,
+                        fromFile.read(),
+                    )
+
     def readSynFile(self):
         """
         return synDict, a dict { wordIndex -> altList }
@@ -296,7 +312,7 @@ class Reader(object):
                 break
             wordIndex = binStrToInt(synBytes[pos:pos+4])
             pos += 4
-            if wordIndex >= self._len:
+            if wordIndex >= self._wordCount:
                 log.error(
                     'Corrupted synonym file. ' +
                     'Word "%s" references invalid item' % b_alt
@@ -392,17 +408,13 @@ class Reader(object):
                 i += size
         return res
 
-    def readResources(self):
-        baseDirPath = os.path.dirname(self._filename)
-        resPath = join(baseDirPath, 'res')
-        if isdir(resPath):
-            self.glos.resPath = resPath
-        else:
-            resInfoPath = join(baseDirPath, 'res.rifo')
-            if isfile(resInfoPath):
-                log.warning(
-                    'StarDict resource database is not supported. Skipping'
-                )
+    # def readResources(self):
+    #    if not isdir(self._resDir):
+    #        resInfoPath = join(baseDirPath, 'res.rifo')
+    #        if isfile(resInfoPath):
+    #            log.warning(
+    #                'StarDict resource database is not supported. Skipping'
+    #            )
 
 
 class Writer(object):
@@ -413,7 +425,6 @@ class Writer(object):
         self,
         filename,
         dictzip=True,
-        resOverwrite=False,
     ):
         fileBasePath = ''
         ##
@@ -427,8 +438,9 @@ class Writer(object):
             fileBasePath = join(filename, split(filename)[-1])
         ##
         if fileBasePath:
-            fileBasePath = os.path.realpath(fileBasePath)
+            fileBasePath = realpath(fileBasePath)
         self._filename = fileBasePath
+        self._resDir = join(dirname(self._filename), 'res')
 
         self.writeGeneral()
 #        if self.glossaryHasAdditionalDefinitions():
@@ -442,12 +454,6 @@ class Writer(object):
 
         if dictzip:
             runDictzip(self._filename)
-
-        self.copyResources(
-            self.glos.resPath,
-            join(os.path.dirname(self._filename), 'res'),
-            resOverwrite,
-        )
 
 #    def writeCompact(self, defiFormat):
 #        """
@@ -504,7 +510,12 @@ class Writer(object):
         t0 = now()
         wordCount = 0
         defiFormatCounter = Counter()
+        if not isdir(self._resDir):
+            os.mkdir(self._resDir)
         for entryI, entry in enumerate(self.glos):
+            if entry.isData():
+                entry.save(self._resDir)
+                continue
             words = entry.getWords()  # list of strs
             word = words[0]  # str
             defis = entry.getDefis()  # list of strs
@@ -541,6 +552,8 @@ class Writer(object):
 
         dictFile.close()
         idxFile.close()
+        if not os.listdir(self._resDir):
+            os.rmdir(self._resDir)
         log.info('Writing dict file took %.2f seconds' % (now() - t0))
         log.pretty(defiFormatCounter.most_common(), 'defiFormatsCount: ')
 
@@ -619,35 +632,6 @@ class Writer(object):
 
         with open(self._filename+'.ifo', 'w', encoding='utf-8') as ifoFile:
             ifoFile.write(ifoStr)
-
-    def copyResources(self, fromPath, toPath, overwrite):
-        """
-        Copy resource files from fromPath to toPath.
-        """
-        import shutil
-        if not fromPath:
-            return
-        fromPath = os.path.abspath(fromPath)
-        toPath = os.path.abspath(toPath)
-        if fromPath == toPath:
-            return
-        if not isdir(fromPath):
-            return
-        if len(os.listdir(fromPath)) == 0:
-            return
-        if overwrite and os.path.exists(toPath):
-            shutil.rmtree(toPath)
-        if os.path.exists(toPath):
-            if len(os.listdir(toPath)) > 0:
-                log.error(
-                    'Output resource directory is not empty: "%s"' % toPath +
-                    '. Resources will not be copied!\n' +
-                    'Clear the output directory before running the converter' +
-                    ' or pass option: --write-options=res-overwrite=True'
-                )
-                return
-            os.rmdir(toPath)
-        shutil.copytree(fromPath, toPath)
 
     def glossaryHasAdditionalDefinitions(self):
         """

@@ -135,6 +135,10 @@ class Writer(object):
                 ),
             ), 'w')
             for entry in entryList:
+                if entry.isData():
+                    # FIXME
+                    continue
+
                 wordCount += 1
                 word = entry.getWord()
                 defi = entry.getDefi()

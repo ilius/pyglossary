@@ -31,6 +31,7 @@ readOptions = [
 ]
 writeOptions = [
     'encoding',  # str
+    'resources',  # bool
 ]
 supportsAlternates = True
 
@@ -38,12 +39,17 @@ supportsAlternates = True
 class Reader(object):
     def __init__(self, glos):
         self._glos = glos
+        self.clear()
+
+    def clear(self):
         self._filename = ''
         self._file = None
         self._leadingLinesCount = 0
-        self._len = None
+        self._wordCount = None
         self._pos = -1
         self._csvReader = None
+        self._resDir = ''
+        self._resFileNames = []
 
     def open(self, filename, encoding='utf-8'):
         self._filename = filename
@@ -52,55 +58,68 @@ class Reader(object):
             self._file,
             dialect='excel',
         )
+        self._resDir = filename + '_res'
+        if isdir(self._resDir):
+            self._resFileNames = os.listdir(self._resDir)
+        else:
+            self._resDir = ''
+            self._resFileNames = []
 
     def close(self):
-        if not self._file:
-            return
-        try:
-            self._file.close()
-        except:
-            log.exception('error while closing tabfile')
-        self._file = None
-        self._csvReader = None
+        if self._file:
+            try:
+                self._file.close()
+            except:
+                log.exception('error while closing csv file')
+        self.clear()
 
     def __len__(self):
-        if self._len is None:
+        if self._wordCount is None:
             log.debug('Try not to use len(reader) as it takes extra time')
-            self._len = fileCountLines(self._filename) - \
+            self._wordCount = fileCountLines(self._filename) - \
                 self._leadingLinesCount
-        return self._len
+        return self._wordCount + len(self._resFileNames)
 
     def __iter__(self):
-        return self
-
-    def __next__(self):
         if not self._csvReader:
             log.error('%s is not open, can not iterate' % self)
             raise StopIteration
-        self._pos += 1
-        try:
-            row = next(self._csvReader)
-        except StopIteration as e:
-            self._len = self._pos
-            raise e
-        if not row:
-            return
-        try:
-            word = row[0]
-            defi = row[1]
-        except IndexError:
-            log.error('invalid row: %r' % row)
-            return
-        try:
-            alts = row[2].split(',')
-        except IndexError:
-            pass
-        else:
-            word = [word] + alts
-        return Entry(word, defi)
+
+        wordCount = 0
+        for row in self._csvReader:
+            wordCount += 1
+            if not row:
+                yield None  # update progressbar
+                continue
+            try:
+                word = row[0]
+                defi = row[1]
+            except IndexError:
+                log.error('invalid row: %r' % row)
+                yield None  # update progressbar
+                continue
+            try:
+                alts = row[2].split(',')
+            except IndexError:
+                pass
+            else:
+                word = [word] + alts
+            yield Entry(word, defi)
+        self._wordCount = wordCount
+
+        resDir = self._resDir
+        for fname in self._resFileNames:
+            with open(join(resDir, fname), 'rb') as fromFile:
+                yield self._glos.newDataEntry(
+                    fname,
+                    fromFile.read(),
+                )
 
 
-def write(glos, filename, encoding='utf-8'):
+def write(glos, filename, encoding='utf-8', resources=True):
+    resDir = filename + '_res'
+    if not isdir(resDir):
+        os.mkdir(resDir)
     with open(filename, 'w', encoding=encoding) as csvfile:
         writer = csv.writer(
             csvfile,
@@ -108,6 +127,11 @@ def write(glos, filename, encoding='utf-8'):
             quoting=csv.QUOTE_ALL,  # FIXME
         )
         for entry in glos:
+            if entry.isData():
+                if resources:
+                    entry.save(resDir)
+                continue
+
             words = entry.getWords()
             if not words:
                 continue
@@ -115,10 +139,13 @@ def write(glos, filename, encoding='utf-8'):
             defi = entry.getDefi()
 
             row = [
-                words[0],
+                word,
                 defi,
             ]
             if alts:
                 row.append(','.join(alts))
 
             writer.writerow(row)
+
+    if not os.listdir(resDir):
+        os.rmdir(resDir)

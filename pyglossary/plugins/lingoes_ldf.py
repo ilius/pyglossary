@@ -9,6 +9,7 @@ extentions = ['.ldf']
 readOptions = []
 writeOptions = [
     'newline',  # str, or choice ('\r\n', '\n', or '\r')
+    'resources',  # bool
 ]
 
 infoKeys = [
@@ -75,6 +76,7 @@ def write(
     glos,
     filename,
     newline='\n',
+    resources=True,
 ):
     g = glos
     head = '\n'.join([
@@ -96,4 +98,5 @@ def write(
         ext='.ldf',
         head=head,
         newline=newline,
+        resources=resources,
     )

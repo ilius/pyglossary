@@ -80,7 +80,6 @@ readOptions = [
     'defaultEncodingOverwrite',  # str, encoding
     'sourceEncodingOverwrite',  # str, encoding
     'targetEncodingOverwrite',  # str, encoding
-    'resPath',  # str, directory path
     'partOfSpeechColor',  # str, for example 'ff0000' for green
 
     'noControlSequenceInDefi',  # bool
@@ -300,69 +299,13 @@ class BglReader(object):
         self.gzipOffset = None
         # must be a in RRGGBB format
         self.partOfSpeechColor = '007000'
-        self.resFiles = []
         self.iconData = None
 
     def __len__(self):
         if self.numEntries is None:
             log.warning('len(reader) called while numEntries=None')
             return 0
-        return self.numEntries
-
-    def createResDir(self, resPath):
-        if not resPath:
-            # resPath is not specified.
-            # Try directories like:
-            # self._filename + '_files'
-            # self._filename + '_files_0'
-            # self._filename + '_files_1'
-            # self._filename + '_files_2'
-            # ...
-            # use the temp directory if we cannot write to the
-            # dictionary directory
-            i = -1
-            while True:
-                if i == -1:
-                    resPath = '%s_files%s' % (self._filename, os.sep)
-                else:
-                    resPath = '%s_files_%s%s' % (self._filename, i, os.sep)
-                if not exists(resPath) or isdir(resPath):
-                    break
-                i += 1
-            if not exists(resPath):
-                try:
-                    os.mkdir(resPath)
-                except IOError:
-                    log.exception(
-                        'error while creating resource directory "%s"'
-                        % resPath
-                    )
-                    resPath = self.createResDirInTemp()
-        else:
-            if not exists(resPath):
-                try:
-                    os.mkdir(resPath)
-                except IOError:
-                    log.exception(
-                        'error while creating resource directory "%s"'
-                        % resPath
-                    )
-                    resPath = self.createResDirInTemp()
-            else:
-                if not isdir(resPath):
-                    log.error('%s is not a directory' % resPath)
-                    resPath = self.createResDirInTemp()
-        return resPath
-
-    def createResDirInTemp(self):
-        resPath = join(
-            tmpDir,
-            os.path.basename(self._filename) + '_files'
-        ) + os.sep
-        if not isdir(resPath):
-            os.mkdir(resPath)
-        log.warning('using temp resource directory "%s"' % resPath)
-        return resPath
+        return self.numEntries + self.numResources
 
     # open .bgl file, read signature, find and open gzipped content
     # self.file - ungzipped content
@@ -372,7 +315,6 @@ class BglReader(object):
         defaultEncodingOverwrite=None,
         sourceEncodingOverwrite=None,
         targetEncodingOverwrite=None,
-        resPath=None,
         partOfSpeechColor=None,
         noControlSequenceInDefi=False,
         strictStringConvertion=False,
@@ -407,7 +349,6 @@ class BglReader(object):
         self.sourceEncodingOverwrite = sourceEncodingOverwrite
         self.targetEncodingOverwrite = targetEncodingOverwrite
 
-        self.resPath = self.createResDir(resPath)
         if partOfSpeechColor:
             self.partOfSpeechColor = partOfSpeechColor
 
@@ -419,9 +360,7 @@ class BglReader(object):
         if not self.openGzip():
             return False
 
-        if not self.readInfo():
-            return False
-
+        self.readInfo()
         self.setGlossaryInfo()
 
         return True
@@ -461,7 +400,7 @@ class BglReader(object):
         """
         self.numEntries = 0
         self.numBlocks = 0
-        deferred_block2_num = 0
+        self.numResources = 0
         block = Block()
         while not self.isEndOfDictData():
             if not self.readBlock(block):
@@ -474,8 +413,7 @@ class BglReader(object):
             elif block.type in (1, 7, 10, 11, 13):
                 self.numEntries += 1
             elif block.type == 2:
-                if not self.readType2(block, 1):
-                    deferred_block2_num += 1
+                self.numResources += 1
             elif block.type == 3:
                 self.readType3(block)
             else:  # Unknown block.type
@@ -485,22 +423,8 @@ class BglReader(object):
                     ', number = %s' % self.numBlocks
                 )
         self.file.seek(0)
-        ################
+
         self.detectEncoding()
-
-        if deferred_block2_num > 0:
-            # process deferred type 2 blocks
-            log.debug('processing type 2 blocks, second pass')
-            while not self.isEndOfDictData():
-                if not self.readBlock(block):
-                    break
-                if not block.data:
-                    continue
-                if block.type == 2:
-                    self.readType2(block, 2)
-            self.file.seek(0)
-
-        #######
 
         log.debug('numEntries = %s' % self.numEntries)
         if self.bgl_numEntries and self.bgl_numEntries != self.numEntries:
@@ -515,17 +439,6 @@ class BglReader(object):
             )
 
         self.numBlocks = 0
-
-        # remove resource directory if it's empty
-        if len(os.listdir(self.resPath)) == 0:
-            try:
-                os.rmdir(self.resPath)
-            except:
-                log.exception(
-                    'error creating resource directory "%s"' % self.resPath
-                )
-
-        return True
 
     def setGlossaryInfo(self):
         glos = self._glos
@@ -549,8 +462,6 @@ class BglReader(object):
         ###
         glos.setInfo('sourceCharset', 'UTF-8')
         glos.setInfo('targetCharset', 'UTF-8')
-        ###
-        glos.resPath = self.resPath
         ###
         for key, value in self.info.items():
             if key in {
@@ -669,7 +580,7 @@ class BglReader(object):
             return False
         return True
 
-    def readType2(self, block, pass_num):
+    def readType2(self, block):
         """
         Process type 2 block
 
@@ -691,39 +602,29 @@ class BglReader(object):
         with what looks like a hash code of the file name,
         for example "8FFC5C68.png".
 
-        Return value: True if the resource was successfully processed,
-            False - second pass is needed.
+        returns: DataEntry instance if the resource was successfully processed
+                 or None
         """
         # Embedded File (mostly Image or HTML)
         name = ''  # Embedded file name
-        cont = ''  # Embedded file content
         pos = 0
         # name:
         Len = block.data[pos]
         pos += 1
         if pos+Len > len(block.data):
             log.warning('reading block type 2: name too long')
-            return True
-        name += toStr(block.data[pos:pos+Len])
+            return
+        b_name = block.data[pos:pos+Len]
         pos += Len
-        if name in ('C2EEF3F6.html', '8EAF66FD.bmp'):
-            if pass_num == 1:
-                log.debug('Skipping non-useful file "%s"' % name)
-            return True
-        if isASCII(name):
-            if pass_num > 1:
-                return True  # processed on the first pass
-            # else decoding is not needed
-        else:
-            if pass_num == 1:
-                # cannot process now, sourceEncoding is undefined
-                return False
-            # else:
-            #    name = self.toUtf8(name, self.sourceEncoding)
-        with open(join(self.resPath, name), 'wb') as resFile:
-            resFile.write(block.data[pos:])
-        self.resFiles.append(name)
-        return True
+        b_data = block.data[pos:]
+        # if b_name in (b'C2EEF3F6.html', b'8EAF66FD.bmp'):
+        #    log.debug('Skipping non-useful file "%s"' % b_name)
+        #    return
+        u_name = b_name.decode(self.sourceEncoding)
+        return self._glos.newDataEntry(
+            u_name,
+            b_data,
+        )
 
     def readType3(self, block):
         """
@@ -816,15 +717,19 @@ class BglReader(object):
             ', data=%r' % block.data
         )
 
-    # return True if an entry has been read
-    def readEntry(self):
+    def __iter__(self):
+        return self
+
+    def __next__(self):
         if not self.file:
             raise StopIteration
         block = Block()
         while not self.isEndOfDictData():
             if not self.readBlock(block):
                 break
-            if block.data and block.type in (1, 7, 10, 11, 13):
+            if not block.data:
+                continue
+            if block.type in (1, 7, 10, 11, 13):
                 pos = 0
                 # word:
                 succeed, pos, u_word, b_word = self.readEntryWord(block, pos)
@@ -841,19 +746,15 @@ class BglReader(object):
                 if not succeed:
                     continue
 
-                return (
+                return Entry(
                     [u_word] + u_alts,
                     u_defi,
                 )
 
+            elif block.type == 2:
+                return self.readType2(block)
+
         raise StopIteration
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        u_words, u_defis = self.readEntry()
-        return Entry(u_words, u_defis)
 
     def readEntryWord(self, block, pos):
         """

@@ -30,6 +30,9 @@ def write(glos, filename):
 <text><body>''' % (glos.getInfo('title'), filename))
 
     for entry in glos:
+        if entry.isData():
+            # FIXME
+            continue
         word = entry.getWord()
         defi = entry.getDefi()
         fp.write('''<entry>

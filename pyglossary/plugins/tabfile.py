@@ -14,6 +14,7 @@ readOptions = [
 writeOptions = [
     'encoding',  # str
     'writeInfo',  # bool
+    'resources',  # bool
 ]
 
 
@@ -59,9 +60,16 @@ class Reader(TextGlossaryReader):
         return word, defi
 
 
-def write(glos, filename, encoding='utf-8', writeInfo=True):
+def write(
+    glos,
+    filename,
+    encoding='utf-8',
+    writeInfo=True,
+    resources=True,
+):
     return glos.writeTabfile(
         filename,
         encoding=encoding,
         writeInfo=writeInfo,
+        resources=resources,
     )

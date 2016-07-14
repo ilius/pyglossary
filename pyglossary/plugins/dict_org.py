@@ -163,6 +163,9 @@ def write(glos, filename, dictzip=True, install=True):  # FIXME
     dictFd = open(filename+'.dict', 'wb')
     dictMark = 0
     for entry in glos:
+        if entry.isData():
+            # does dictd support resources? and how? FIXME
+            continue
         word = toBytes(entry.getWord())
         defi = toBytes(entry.getDefi())
         lm = len(defi)
