@@ -227,7 +227,7 @@ class Reader(object):
             defi = self.readUnit(self._header.articles_offset + ptr)
             defi = toStr(defi)
             defi = defi.replace('<BR>', '\n').replace('<br>', '\n')
-            yield Entry(word, defi)
+            yield self._glos.newEntry(word, defi)
 
     def readFullIndexItem(self, pointer):
         try:

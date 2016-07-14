@@ -40,7 +40,7 @@ def read(glos, filename):
         # now that we know there are no more alternate forms of lastEntry
         if lastEntry:
             glos.addEntryObj(lastEntry)
-        entry = Entry(word, defi)
+        entry = self._glos.newEntry(word, defi)
         lastEntry = entry
 
     if lastEntry:
@@ -52,10 +52,10 @@ def writeEntryGen(glos):
         words = entry.getWords()
         defis = entry.getDefis()
 
-        yield Entry(words[0], defis)
+        yield glos.newEntry(words[0], defis)
 
         for alt in words[1:]:
-            yield Entry(
+            yield glos.newEntry(
                 alt,
                 '@@@LINK=%s' % words[0],
             )

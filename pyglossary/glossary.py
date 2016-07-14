@@ -294,11 +294,20 @@ class Glossary(object):
     def addEntryObj(self, entry):
         self._data.append(entry.getRaw())
 
-    def addEntry(self, word, defi, defiFormat=None):
+    def newEntry(self, word, defi, defiFormat=None):
+        """
+        create and return a new entry object
+        """
         if not defiFormat:
             defiFormat = self._defaultDefiFormat
 
-        self.addEntryObj(Entry(word, defi, defiFormat))
+        return Entry(word, defi, defiFormat)
+
+    def addEntry(self, word, defi, defiFormat=None):
+        """
+        create and add a new entry object to glossary
+        """
+        self.addEntryObj(self.newEntry(word, defi, defiFormat))
 
     def _loadedEntryGen(self):
         wordCount = len(self._data)

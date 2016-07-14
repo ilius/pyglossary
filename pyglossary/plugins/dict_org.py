@@ -145,7 +145,7 @@ class Reader(object):
             defi = self._dictFp.read(defiLen)
             defi = defi.replace(b'<BR>', b'\n').replace(b'<br>', b'\n')
             sumLen += defiLen
-            yield Entry(toStr(word), toStr(defi))
+            yield self._glos.newEntry(toStr(word), toStr(defi))
             wordCount += 1
         # ____________________________________________________ #
 

@@ -104,7 +104,7 @@ class Reader(object):
                 pass
             else:
                 word = [word] + alts
-            yield Entry(word, defi)
+            yield self._glos.newEntry(word, defi)
         self._wordCount = wordCount
 
         resDir = self._resDir

@@ -81,7 +81,7 @@ class Reader(object):
             for word, defi in self._mdx.items():
                 word = toStr(word)
                 defi = toStr(defi)
-                yield Entry(word, defi)
+                yield self._glos.newEntry(word, defi)
             self._mdx = None
 
         if self._mdd:

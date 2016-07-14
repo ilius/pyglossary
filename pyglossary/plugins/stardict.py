@@ -273,7 +273,7 @@ class Reader(object):
             if len(defis) == 1:
                 defis = defis[0]
 
-            yield Entry(
+            yield self._glos.newEntry(
                 word,
                 defis,
                 defiFormat=defiFormat,

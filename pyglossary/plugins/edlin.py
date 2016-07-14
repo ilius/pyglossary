@@ -141,7 +141,7 @@ class Reader(object):
                 word = unescapeNTB(word, bar=True)
 
             # defi = unescapeNTB(defi)
-            yield Entry(word, defi)
+            yield self._glos.newEntry(word, defi)
 
         if wordCount != self._wordCount:
             log.warning(

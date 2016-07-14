@@ -746,7 +746,7 @@ class BglReader(object):
                 if not succeed:
                     continue
 
-                return Entry(
+                return self._glos.newEntry(
                     [u_word] + u_alts,
                     u_defi,
                 )

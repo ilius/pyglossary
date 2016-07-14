@@ -96,7 +96,7 @@ class Reader(object):
                     yield None  # updates progressbar
                     continue
 
-                yield Entry(word, defi)
+                yield self._glos.newEntry(word, defi)
         log.info('Skipped %s special page files' % self._specialCount)
 
     def isSpecialByPath(self, fname):  # , d_prefix

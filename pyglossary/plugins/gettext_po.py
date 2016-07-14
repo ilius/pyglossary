@@ -63,7 +63,7 @@ class Reader(object):
                 continue
             if line.startswith('msgid '):
                 if word:
-                    yield Entry(word, defi)
+                    yield self._glos.newEntry(word, defi)
                     wordCount += 1
                     word = ''
                     defi = ''
@@ -80,7 +80,7 @@ class Reader(object):
                 else:
                     word += po_unescape(line)
         if word:
-            yield Entry(word, defi)
+            yield self._glos.newEntry(word, defi)
             wordCount += 1
         self._wordCount = wordCount
 

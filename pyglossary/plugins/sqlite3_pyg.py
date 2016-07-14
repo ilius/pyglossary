@@ -101,7 +101,7 @@ class Reader(object):
                 except:
                     log.exception('error while encoding row id=%s' % row[0])
                 else:
-                    yield Entry(word, defi)
+                    yield self._glos.newEntry(word, defi)
 
 
 def write_2(glos, filename):
