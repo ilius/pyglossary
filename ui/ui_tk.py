@@ -106,7 +106,7 @@ class ProgressBar(tix.Frame):
     """
     def __init__(
         self,
-        master=None,
+        rootWin=None,
         orientation='horizontal',
         min_=0,
         max_=100,
@@ -122,7 +122,7 @@ class ProgressBar(tix.Frame):
         bd=2,
     ):
         # preserve various values
-        self.master = master
+        self.rootWin = rootWin
         self.orientation = orientation
         self.min = min_
         self.max = max_
@@ -134,7 +134,7 @@ class ProgressBar(tix.Frame):
         self.background = background
         self.labelFormat = labelFormat
         self.value = value
-        tix.Frame.__init__(self, master, relief=appearance, bd=bd)
+        tix.Frame.__init__(self, rootWin, relief=appearance, bd=bd)
         self.canvas = tix.Canvas(
             self,
             height=height,
@@ -214,15 +214,15 @@ class UI(tix.Frame, UIBase):
         self.pref = {}
         self.pref_load(**options)
         #############################################
-        master = self.master = tix.Tk()
-        tix.Frame.__init__(self, master)
-        master.title('PyGlossary (Tkinter)')
-        master.resizable(True, False)
+        rootWin = self.rootWin = tix.Tk()
+        tix.Frame.__init__(self, rootWin)
+        rootWin.title('PyGlossary (Tkinter)')
+        rootWin.resizable(True, False)
         ########
-        set_window_icon(master)
+        set_window_icon(rootWin)
         ########
         self.pack(fill='x')
-        # master.bind('<Configure>', self.resized)
+        # rootWin.bind('<Configure>', self.resized)
         ######################
         self.glos = Glossary(ui=self)
         self.pref = {}
@@ -612,10 +612,10 @@ class UI(tix.Frame, UIBase):
         frame.pack(fill='x')
 
     def quit(self):
-        self.master.destroy()
+        self.rootWin.destroy()
 
     def resized(self, event):
-        dh = self.master.winfo_height() - self.winfo_height()
+        dh = self.rootWin.winfo_height() - self.winfo_height()
         # log.debug(dh, self.consoleH)
         # if dh > 20:
         #    self.consoleH += 1
@@ -778,7 +778,7 @@ class UI(tix.Frame, UIBase):
         self.pbar.updateProgress(rat*100, None, text)
         # self.pbar.value = rat*100
         # self.pbar.update()
-        self.master.update()
+        self.rootWin.update()
 
     def console_clear(self, event=None):
         self.console.delete('1.0', 'end')
