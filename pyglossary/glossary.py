@@ -773,7 +773,11 @@ class Glossary(object):
         """
         if isdir(filename):
             filename = join(filename, basename(self._filename))
-        validOptionKeys = self.formatsWriteOptions[format]
+        try:
+            validOptionKeys = self.formatsWriteOptions[format]
+        except KeyError:
+            log.critical('No write support for "%s" format' % format)
+            return
         for key in list(options.keys()):
             if key not in validOptionKeys:
                 log.error(
