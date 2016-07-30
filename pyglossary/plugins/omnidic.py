@@ -6,37 +6,8 @@ enable = True
 format = 'Omnidic'
 description = 'Omnidic'
 extentions = ['.omni', '.omnidic']
-readOptions = [
-    'dicIndex',  # int
-]
+readOptions = []
 writeOptions = []
-
-
-def read(glos, filename, dicIndex=16):
-    with indir(filename):
-        try:
-            fp = open(str(dicIndex))
-        except:
-            log.error('bad index: %s' % dicIndex)
-            return False
-        for f in [l.split('#')[-1] for l in fp.read().split('\n')]:
-            if not f:
-                continue
-            with open(f) as fp2:
-                for line in fp2:
-                    line = line.strip()
-                    if not line:
-                        pass
-                    elif line[0] == '#':
-                        pass
-                    else:
-                        parts = line.split('#')
-                        word = parts[0]
-                        defi = ''.join(parts[1:])
-                        glos.addEntry(
-                            word,
-                            defi,
-                        )
 
 
 def write(glos, filename, dicIndex=16):
