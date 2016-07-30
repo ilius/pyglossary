@@ -170,6 +170,8 @@ def _clean_tags(line, audio):
 
     line = _parse(line)
 
+    line = re.sub(r'\\$', '<br/>', line)
+
     # paragraph, part one: before shortcuts.
     line = line.replace('[m]', '[m1]')
     # if line somewhere contains '[m_]' tag like
