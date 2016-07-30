@@ -25,19 +25,19 @@ infoKeys = [
 def read(glos, filename):
     glos.setDefaultDefiFormat('h')
     fileObj = FileLineWrapper(open(filename))
-    lineStack = []
+    entryLines = []
 
-    def addDataEntry(lineStack):
-        if not lineStack:
+    def addDataEntry(entryLines):
+        if not entryLines:
             return
-        if len(lineStack) < 2:
+        if len(entryLines) < 2:
             log.error(
                 'invalid block near line %s' % fileObj.line +
                 ' in file %s' % filename
             )
             return
-        word = lineStack[0]
-        defi = '\n'.join(lineStack[1:])
+        word = entryLines[0]
+        defi = '\n'.join(entryLines[1:])
         defi = defi.replace('<br/>', '\n')  # FIXME
 
         word = [p.strip() for p in word.split('|')]
@@ -51,7 +51,7 @@ def read(glos, filename):
         line = line.strip()
         if not line.startswith('###'):
             if line:
-                lineStack.append(line)
+                entryLines.append(line)
             break
         parts = line[3:].split(':')
         if not parts:
@@ -64,12 +64,12 @@ def read(glos, filename):
     for line in fileObj:
         line = line.strip()
         if line:
-            lineStack.append(line)
+            entryLines.append(line)
         else:
-            addDataEntry(lineStack)
-            lineStack = []
+            addDataEntry(entryLines)
+            entryLines = []
 
-    addDataEntry(lineStack)
+    addDataEntry(entryLines)
 
 
 def write(
