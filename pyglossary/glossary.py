@@ -1032,12 +1032,12 @@ class Glossary(object):
         yield infoDefLine
 
         if addExtraInfo:
-            yield 'CREATE TABLE dbinfo_extra ('
-            '\'id\' INTEGER PRIMARY KEY NOT NULL, '
-            '\'name\' TEXT UNIQUE, \'value\' TEXT);'
+            yield 'CREATE TABLE dbinfo_extra (' + \
+                '\'id\' INTEGER PRIMARY KEY NOT NULL, ' + \
+                '\'name\' TEXT UNIQUE, \'value\' TEXT);'
 
-        yield 'CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, '
-        '\'w\' TEXT, \'m\' TEXT);'
+        yield 'CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, ' + \
+            '\'w\' TEXT, \'m\' TEXT);'
 
         if transaction:
             yield 'BEGIN TRANSACTION;'
