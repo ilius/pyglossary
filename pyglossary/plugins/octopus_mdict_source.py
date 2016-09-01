@@ -60,7 +60,8 @@ def writeEntryGen(glos):
 
 def write(glos, filename):
     glos.writeTxt(
-        ('\r\n', '\r\n</>\r\n'),
+        '\r\n',
+        '\r\n</>\r\n',
         filename=filename,
         writeInfo=False,
         rplList=[

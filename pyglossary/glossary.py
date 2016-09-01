@@ -919,7 +919,8 @@ class Glossary(object):
 
     def writeTxt(
         self,
-        sep,
+        sep1,
+        sep2,
         filename='',
         writeInfo=True,
         rplList=None,
@@ -947,7 +948,7 @@ class Glossary(object):
                     pass
                 for rpl in rplList:
                     desc = desc.replace(rpl[0], rpl[1])
-                fp.write('##' + key + sep[0] + desc + sep[1])
+                fp.write('##' + key + sep1 + desc + sep2)
         fp.flush()
 
         if not iterEntries:
@@ -965,13 +966,14 @@ class Glossary(object):
 
             for rpl in rplList:
                 defi = defi.replace(rpl[0], rpl[1])
-            fp.write(word + sep[0] + defi + sep[1])
+            fp.write(word + sep1 + defi + sep2)
         fp.close()
         return True
 
     def writeTabfile(self, filename='', **kwargs):
         self.writeTxt(
-            sep=('\t', '\n'),
+            '\t',
+            '\n',
             filename=filename,
             rplList=(
                 ('\\', '\\\\'),
@@ -985,7 +987,8 @@ class Glossary(object):
     def writeDict(self, filename='', writeInfo=False):
         # Used in '/usr/share/dict/' for some dictionarys such as 'ding'
         self.writeTxt(
-            (' :: ', '\n'),
+            ' :: ',
+            '\n',
             filename,
             writeInfo,
             (

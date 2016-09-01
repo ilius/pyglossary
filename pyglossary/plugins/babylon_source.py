@@ -61,7 +61,8 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
         ])
 
     g.writeTxt(
-        (newline, newline*2),
+        newline,
+        newline*2,
         filename=filename,
         writeInfo=False,
         rplList=(

@@ -25,7 +25,8 @@ def write(glos, filename, writeInfo=True, newline='\n'):
         head += 'a_lang = %s\n'%glos.getInfo('outputlang')
         head += '</header>\n#\n#\n#\n'
     glos.writeTxt(
-        ('___', newline),
+        '___',
+        newline,
         filename,
         writeInfo=False,
         rplList=(

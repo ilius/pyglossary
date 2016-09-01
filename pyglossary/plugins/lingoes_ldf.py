@@ -80,7 +80,8 @@ def write(glos, filename):
     ])
     head += '\n'
     g.writeTxt(
-        (newline, newline*2),
+        newline,
+        newline*2,
         filename=filename,
         writeInfo=False,
         rplList=(
