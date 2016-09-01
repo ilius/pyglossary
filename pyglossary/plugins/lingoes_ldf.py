@@ -10,7 +10,9 @@ format = 'LingoesLDF'
 description = 'Lingoes Source (LDF)'
 extentions = ['.ldf']
 readOptions = []
-writeOptions = []
+writeOptions = [
+    'newline',## str, or choice ('\r\n', '\n', or '\r')
+]
 
 infoKeys = [
     'title',
@@ -68,9 +70,12 @@ def read(glos, filename):
 
 
 
-def write(glos, filename):
+def write(
+    glos,
+    filename,
+    newline='\n',
+):
     g = glos
-    newline = '\n'
     head = '\n'.join([
         '###%s: %s'%(
             key.capitalize(),
