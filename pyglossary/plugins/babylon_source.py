@@ -45,7 +45,7 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
 
     head = ''
     if writeInfo:
-        head += newline.join([
+        head += '\n'.join([
             '### Glossary title:%s'%g.getInfo('name'),
             '### Author:%s'%g.getInfo('author'),
             '### Description:%s'%g.getInfo('description'),
@@ -61,8 +61,8 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
         ])
 
     g.writeTxt(
-        newline,
-        newline*2,
+        '\n',
+        '\n\n',
         filename=filename,
         writeInfo=False,
         rplList=(
@@ -72,5 +72,6 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
         head=head,
         entryFilterFunc=entryFilterFunc,
         encoding=encoding,
+        newline=newline,
     )
 

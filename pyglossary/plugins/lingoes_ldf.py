@@ -71,7 +71,7 @@ def read(glos, filename):
 def write(glos, filename):
     g = glos
     newline = '\n'
-    head = newline.join([
+    head = '\n'.join([
         '###%s: %s'%(
             key.capitalize(),
             g.getInfo(key),
@@ -80,8 +80,8 @@ def write(glos, filename):
     ])
     head += '\n'
     g.writeTxt(
-        newline,
-        newline*2,
+        '\n',
+        '\n\n',
         filename=filename,
         writeInfo=False,
         rplList=(
@@ -89,6 +89,7 @@ def write(glos, filename):
         ),
         ext='.ldf',
         head=head,
+        newline=newline,
     )
 
 

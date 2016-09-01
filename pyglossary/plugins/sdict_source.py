@@ -26,7 +26,7 @@ def write(glos, filename, writeInfo=True, newline='\n'):
         head += '</header>\n#\n#\n#\n'
     glos.writeTxt(
         '___',
-        newline,
+        '\n',
         filename,
         writeInfo=False,
         rplList=(
@@ -34,6 +34,7 @@ def write(glos, filename, writeInfo=True, newline='\n'):
         ),
         ext='.sdct',
         head=head,
+        newline=newline,
     )
 
 
