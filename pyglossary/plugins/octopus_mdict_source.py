@@ -60,8 +60,8 @@ def writeEntryGen(glos):
 
 def write(glos, filename):
     glos.writeTxt(
-        '\r\n',
-        '\r\n</>\r\n',
+        '\n',
+        '\n</>\n',
         filename=filename,
         writeInfo=False,
         rplList=[
@@ -70,6 +70,7 @@ def write(glos, filename):
         ext='.mtxt',
         head='',
         iterEntries=writeEntryGen(glos),
+        newline='\r\n',
     )
 
 
