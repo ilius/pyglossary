@@ -46,8 +46,11 @@ def get_beautiful_soup():
         except ImportError:
             return None
     if int(BeautifulSoup.__version__.split('.')[0]) < 4:
-        raise ImportError('BeautifulSoup is too old, required at least version 4, %r found.\n'
-                          'please run `pip3 install beautifulsoup4`.' % BeautifulSoup.__version__)
+        raise ImportError(
+            'BeautifulSoup is too old, required at least version 4, ' +
+            '%r found.\n' % BeautifulSoup.__version__ +
+            'Please run `sudo pip3 install lxml beautifulsoup4 html5lib`'
+        )
     return BeautifulSoup
 
 digs = string.digits + string.ascii_letters
@@ -241,9 +244,10 @@ def write_entries(glos, f, cleanHTML, indexes):
     if cleanHTML:
         BeautifulSoup = get_beautiful_soup()
         if not BeautifulSoup:
-            log.warning('cleanHTML option passed but BeautifulSoup not found.  '
-                     'to fix this run `easy_install beautifulsoup4` or '
-                     '`pip3 install beautifulsoup4`.')
+            log.warning(
+                'cleanHTML option passed but BeautifulSoup not found.  ' +
+                'to fix this run `sudo pip3 install lxml beautifulsoup4 html5lib`'
+            )
     else:
         BeautifulSoup = None
 
