@@ -377,8 +377,7 @@ class StarDictReader(object):
             return None
         t = sametypesequence[-1]
         if isAsciiLower(t):
-            i2 = data.find('\x00', i)
-            if i2 >= 0:
+            if 0 in data[i:]:
                 log.error(dataFileCorruptedError)
                 return None
             res.append((data[i:], t))
@@ -660,7 +659,7 @@ Clear the output directory before running the converter or pass option: --write-
 def verifySameTypeSequence(s):
     if not s:
         return True
-    for t in s:
+    for t in toBytes(s):
         if not isAsciiAlpha(t):
             log.error("Invalid sametypesequence option")
             return False
