@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           pyglossary
-Version:        2013.01.03
+Version:        3.0.3
 Release:        1%{?dist}
 Summary:        Working on glossaries (dictionary databases)
 
