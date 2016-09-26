@@ -84,7 +84,7 @@ ie. multiple ways to use the program.
     `python3 pyglossary.pyw --help`
 
     You may have to give `--no-progress-bar` option in Windows when
-    converting glossaries (becouse the progress bar does not work
+    converting glossaries (because the progress bar does not work
     properly in Windows command window)
 
 When you run the program without any command line arguments or options,
