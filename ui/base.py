@@ -33,7 +33,7 @@ def fread(path):
 
 logo = join(rootDir, 'res', 'pyglossary.png')
 aboutText = fread(join(rootDir, 'about'))
-licenseText = fread(join(rootDir, 'license'))
+licenseText = fread(join(rootDir, 'license-dialog'))
 authors = fread(join(rootDir, 'AUTHORS')).split('\n')
 
 
