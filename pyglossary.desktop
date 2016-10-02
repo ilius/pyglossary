@@ -8,5 +8,5 @@ Terminal=false
 Type=Application
 StartupNotify=true
 Icon=pyglossary
-Categories=utility;
+Categories=Education;
 X-GNOME-FullName=Glossary Converter
