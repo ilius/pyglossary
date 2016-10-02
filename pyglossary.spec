@@ -15,7 +15,7 @@ BuildArch:      noarch
 
 %description
 Working on glossaries (dictionary databases) using python. Including editing
-glossarys and converting theme between many formats such as: Tabfile StarDict
+glossaries and converting theme between many formats such as: Tabfile StarDict
 format xFarDic format "Babylon Builder" source format Omnidic format and etc.
 
 %prep
