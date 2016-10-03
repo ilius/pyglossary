@@ -42,7 +42,8 @@ class my_install(install):
 data_files = [
     (relRootDir, [
         'about',
-        'license',
+        'license.txt',
+        'license-dialog',
         'help',
         'pyglossary.pyw',
         'AUTHORS',
