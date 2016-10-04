@@ -1,7 +1,8 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%global __python /usr/bin/python3
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "import sys; from distutils.sysconfig import get_python_lib; sys.stdout.write(get_python_lib())")}
 
 Name:           pyglossary
-Version:        3.0.3
+Version:        master
 Release:        1%{?dist}
 Summary:        Working on glossaries (dictionary databases)
 
@@ -22,7 +23,7 @@ format xFarDic format "Babylon Builder" source format Omnidic format and etc.
 %setup -q
 
 %install
-python setup.py install --root=%{buildroot} --prefix=%{_prefix}
+python3 setup.py install --root=%{buildroot} --prefix=%{_prefix}
 
 desktop-file-install --vendor fedora                            \
         --dir %{buildroot}%{_datadir}/applications              \
@@ -38,5 +39,4 @@ rm -rf %{buildroot}
 %{_datadir}/pixmaps/pyglossary.png
 %{_datadir}/pyglossary/
 %{_datadir}/doc/pyglossary/
-%{python_sitelib}/pyglossary/
-%{python_sitelib}/pyglossary-%{version}-py2.7.egg-info
+%{python_sitelib}/pyglossary/*
