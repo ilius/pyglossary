@@ -53,9 +53,13 @@ import re
 from collections import OrderedDict as odict
 
 try:
-    from pyglossary.plugin_lib.gzip_no_crc import GzipFile
+    GzipFile = __import__(
+        'pyglossary.plugin_lib.py%d%d.gzip_no_crc' % sys.version_info[:2],
+        fromlist='GzipFile',
+    ).GzipFile
 except ImportError:
     from gzip import GzipFile
+    log.exception('')
     log.warning(
         'If things didn\'t work well with BGL files, '
         'install Python 3.5 and try again'
