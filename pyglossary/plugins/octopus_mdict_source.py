@@ -11,7 +11,7 @@ readOptions = []
 writeOptions = []
 
 def read(glos, filename):
-    with open(filename) as fp:
+    with open(filename, encoding='utf-8') as fp:
         text = fp.read()
     text = text.replace('\r\n', '\n')
     text = text.replace('entry://', 'bword://')
