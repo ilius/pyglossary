@@ -7,11 +7,17 @@ format = 'Sql'
 description = 'SQL'
 extentions = ['.sql']
 readOptions = []
-writeOptions = []
+writeOptions = [
+    'encoding',  # str
+]
 
 
-def write(glos, filename):
-    with open(filename, 'w', encoding='utf-8') as fp:
+def write(
+    glos,
+    filename,
+    encoding='utf-8',
+):
+    with open(filename, 'w', encoding=encoding) as fp:
         for line in glos.iterSqlLines(
             transaction=False,
         ):
