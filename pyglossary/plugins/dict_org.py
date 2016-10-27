@@ -9,8 +9,8 @@ description = 'DICT.org file format (.index)'
 extentions = ['.index']
 readOptions = []
 writeOptions = [
-    'dictzip',
-    'install',
+    'dictzip',  # bool
+    'install',  # bool
 ]
 sortOnWrite = DEFAULT_YES
 
