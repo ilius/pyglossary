@@ -124,9 +124,19 @@ def parseFormatOptionsStr(st):
         key = key.strip()
         value = value.strip()
         try:
-            value = eval(value) ## if it is string form of a number or boolean or tuple ...
+            newValue = eval(value) ## if it is string form of a number or boolean or tuple ...
         except:
             pass
+        else:
+            if isinstance(newValue, (
+                bool,
+                int,
+                float,
+                tuple,
+                list,
+                dict,
+            )):
+                value = newValue
         opt[key] = value
     return opt
 
