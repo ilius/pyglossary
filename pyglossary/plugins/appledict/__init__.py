@@ -39,14 +39,14 @@ description = 'AppleDict Source (xml)'
 extentions = ['.xml']
 readOptions = []
 writeOptions = [
-    'cleanHTML',
-    'css',
-    'xsl',
-    'defaultPrefs',
-    'prefsHTML',
-    'frontBackMatter',
-    'jing',
-    'indexes',
+    'cleanHTML',  # bool
+    'css',  # str or None
+    'xsl',  # str or None
+    'defaultPrefs',  # dict or None, FIXME
+    'prefsHTML',  # str or None
+    'frontBackMatter',  # str or None
+    'jing',  # str or None
+    'indexes',  # str or None
 ]
 
 
