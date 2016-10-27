@@ -40,7 +40,7 @@ def read(glos, filename):
         # now that we know there are no more alternate forms of lastEntry
         if lastEntry:
             glos.addEntryObj(lastEntry)
-        entry = self._glos.newEntry(word, defi)
+        entry = glos.newEntry(word, defi)
         lastEntry = entry
 
     if lastEntry:
