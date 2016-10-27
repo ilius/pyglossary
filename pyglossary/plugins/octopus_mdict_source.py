@@ -7,14 +7,20 @@ enable = True
 format = 'OctopusMdictSource'
 description = 'Octopus MDict Source'
 extentions = ['.mtxt']
-readOptions = []
+readOptions = [
+    'encoding',  # str
+]
 writeOptions = [
     'resources',  # bool
 ]
 
 
-def read(glos, filename):
-    with open(filename, encoding='utf-8') as fp:
+def read(
+    glos,
+    filename,
+    encoding='utf-8',
+):
+    with open(filename, encoding=encoding) as fp:
         text = fp.read()
     text = text.replace('\r\n', '\n')
     text = text.replace('entry://', 'bword://')
