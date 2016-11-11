@@ -16,7 +16,7 @@ sortOnWrite = DEFAULT_YES
 
 
 b64_chars = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-b64_chars_ord = dict(zip(b64_chars, range(len(b64_chars))))
+b64_chars_ord = {c: i for i, c in enumerate(b64_chars)}
 
 
 def intToIndexStr(n, retry=0):
