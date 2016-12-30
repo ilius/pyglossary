@@ -117,7 +117,7 @@ Format-specific Requirements
 
     `sudo pip3 install python-lzo`
 
--   **Reading from Babylon BGL**: Python 3.4 or 3.5 is recommended
+-   **Reading from Babylon BGL**: Python 3.4 to 3.6 is recommended
 
 
 **Other Requirements for Mac OS X**
