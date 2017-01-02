@@ -307,7 +307,7 @@ def dictionary_end(glos, f):
 
 
 def write_xml(glos, filename, cleanHTML, frontBackMatter, indexes):
-    with open(filename, 'w') as f:
+    with open(filename, 'w', encoding='utf8') as f:
         dictionary_begin(glos, f, frontBackMatter)
         write_entries(glos, f, cleanHTML, indexes)
         dictionary_end(glos, f)
