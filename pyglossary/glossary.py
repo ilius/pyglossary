@@ -1036,12 +1036,16 @@ class Glossary(object):
         yield infoDefLine
 
         if addExtraInfo:
-            yield 'CREATE TABLE dbinfo_extra (' + \
-                '\'id\' INTEGER PRIMARY KEY NOT NULL, ' + \
+            yield (
+                'CREATE TABLE dbinfo_extra (' +
+                '\'id\' INTEGER PRIMARY KEY NOT NULL, ' +
                 '\'name\' TEXT UNIQUE, \'value\' TEXT);'
+            )
 
-        yield 'CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, ' + \
+        yield (
+            'CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, ' +
             '\'w\' TEXT, \'m\' TEXT);'
+        )
 
         if transaction:
             yield 'BEGIN TRANSACTION;'
@@ -1050,12 +1054,14 @@ class Glossary(object):
         if addExtraInfo:
             extraInfo = self.getExtraInfos(infoKeys)
             for index, (key, value) in enumerate(extraInfo.items()):
-                yield 'INSERT INTO dbinfo_extra ' + \
+                yield (
+                    'INSERT INTO dbinfo_extra ' +
                     'VALUES(%d, \'%s\', \'%s\');' % (
                         index + 1,
                         key.replace('\'', '\'\''),
                         value.replace('\'', '\'\''),
                     )
+                )
 
         for i, entry in enumerate(self):
             word = entry.getWord()
