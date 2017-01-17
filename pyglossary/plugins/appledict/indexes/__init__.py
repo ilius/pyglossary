@@ -33,24 +33,24 @@ submodules must register languages by adding (language name -> function)
 pairs to the mapping.
 
 function must follow signature bellow:
-    :param titles: flat iterable of title and altenrative titles
-    :param content: cleaned entry content
-    :return: iterable of indexes (str).
+	:param titles: flat iterable of title and altenrative titles
+	:param content: cleaned entry content
+	:return: iterable of indexes (str).
 
 use
 ```
-    from . import languages
-    # or
-    from appledict.indexes import languages
+	from . import languages
+	# or
+	from appledict.indexes import languages
 ```
 """
 
 here = os.path.dirname(os.path.abspath(__file__))
 
 for _, module, _ in pkgutil.iter_modules([here]):
-    try:
-        __import__('%s.%s' % (__name__, module))
-    except ImportError:
-        log.exception(
-            "error while importing indexes plugin %s" % module
-        )
+	try:
+		__import__('%s.%s' % (__name__, module))
+	except ImportError:
+		log.exception(
+			"error while importing indexes plugin %s" % module
+		)

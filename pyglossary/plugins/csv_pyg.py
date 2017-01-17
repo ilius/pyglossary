@@ -27,125 +27,125 @@ format = 'Csv'
 description = 'CSV'
 extentions = ['.csv']
 readOptions = [
-    'encoding',  # str
+	'encoding',  # str
 ]
 writeOptions = [
-    'encoding',  # str
-    'resources',  # bool
+	'encoding',  # str
+	'resources',  # bool
 ]
 supportsAlternates = True
 
 
 class Reader(object):
-    def __init__(self, glos):
-        self._glos = glos
-        self.clear()
+	def __init__(self, glos):
+		self._glos = glos
+		self.clear()
 
-    def clear(self):
-        self._filename = ''
-        self._file = None
-        self._leadingLinesCount = 0
-        self._wordCount = None
-        self._pos = -1
-        self._csvReader = None
-        self._resDir = ''
-        self._resFileNames = []
+	def clear(self):
+		self._filename = ''
+		self._file = None
+		self._leadingLinesCount = 0
+		self._wordCount = None
+		self._pos = -1
+		self._csvReader = None
+		self._resDir = ''
+		self._resFileNames = []
 
-    def open(self, filename, encoding='utf-8'):
-        self._filename = filename
-        self._file = open(filename, 'r', encoding=encoding)
-        self._csvReader = csv.reader(
-            self._file,
-            dialect='excel',
-        )
-        self._resDir = filename + '_res'
-        if isdir(self._resDir):
-            self._resFileNames = os.listdir(self._resDir)
-        else:
-            self._resDir = ''
-            self._resFileNames = []
+	def open(self, filename, encoding='utf-8'):
+		self._filename = filename
+		self._file = open(filename, 'r', encoding=encoding)
+		self._csvReader = csv.reader(
+			self._file,
+			dialect='excel',
+		)
+		self._resDir = filename + '_res'
+		if isdir(self._resDir):
+			self._resFileNames = os.listdir(self._resDir)
+		else:
+			self._resDir = ''
+			self._resFileNames = []
 
-    def close(self):
-        if self._file:
-            try:
-                self._file.close()
-            except:
-                log.exception('error while closing csv file')
-        self.clear()
+	def close(self):
+		if self._file:
+			try:
+				self._file.close()
+			except:
+				log.exception('error while closing csv file')
+		self.clear()
 
-    def __len__(self):
-        if self._wordCount is None:
-            log.debug('Try not to use len(reader) as it takes extra time')
-            self._wordCount = fileCountLines(self._filename) - \
-                self._leadingLinesCount
-        return self._wordCount + len(self._resFileNames)
+	def __len__(self):
+		if self._wordCount is None:
+			log.debug('Try not to use len(reader) as it takes extra time')
+			self._wordCount = fileCountLines(self._filename) - \
+				self._leadingLinesCount
+		return self._wordCount + len(self._resFileNames)
 
-    def __iter__(self):
-        if not self._csvReader:
-            log.error('%s is not open, can not iterate' % self)
-            raise StopIteration
+	def __iter__(self):
+		if not self._csvReader:
+			log.error('%s is not open, can not iterate' % self)
+			raise StopIteration
 
-        wordCount = 0
-        for row in self._csvReader:
-            wordCount += 1
-            if not row:
-                yield None  # update progressbar
-                continue
-            try:
-                word = row[0]
-                defi = row[1]
-            except IndexError:
-                log.error('invalid row: %r' % row)
-                yield None  # update progressbar
-                continue
-            try:
-                alts = row[2].split(',')
-            except IndexError:
-                pass
-            else:
-                word = [word] + alts
-            yield self._glos.newEntry(word, defi)
-        self._wordCount = wordCount
+		wordCount = 0
+		for row in self._csvReader:
+			wordCount += 1
+			if not row:
+				yield None  # update progressbar
+				continue
+			try:
+				word = row[0]
+				defi = row[1]
+			except IndexError:
+				log.error('invalid row: %r' % row)
+				yield None  # update progressbar
+				continue
+			try:
+				alts = row[2].split(',')
+			except IndexError:
+				pass
+			else:
+				word = [word] + alts
+			yield self._glos.newEntry(word, defi)
+		self._wordCount = wordCount
 
-        resDir = self._resDir
-        for fname in self._resFileNames:
-            with open(join(resDir, fname), 'rb') as fromFile:
-                yield self._glos.newDataEntry(
-                    fname,
-                    fromFile.read(),
-                )
+		resDir = self._resDir
+		for fname in self._resFileNames:
+			with open(join(resDir, fname), 'rb') as fromFile:
+				yield self._glos.newDataEntry(
+					fname,
+					fromFile.read(),
+				)
 
 
 def write(glos, filename, encoding='utf-8', resources=True):
-    resDir = filename + '_res'
-    if not isdir(resDir):
-        os.mkdir(resDir)
-    with open(filename, 'w', encoding=encoding) as csvfile:
-        writer = csv.writer(
-            csvfile,
-            dialect='excel',
-            quoting=csv.QUOTE_ALL,  # FIXME
-        )
-        for entry in glos:
-            if entry.isData():
-                if resources:
-                    entry.save(resDir)
-                continue
+	resDir = filename + '_res'
+	if not isdir(resDir):
+		os.mkdir(resDir)
+	with open(filename, 'w', encoding=encoding) as csvfile:
+		writer = csv.writer(
+			csvfile,
+			dialect='excel',
+			quoting=csv.QUOTE_ALL,  # FIXME
+		)
+		for entry in glos:
+			if entry.isData():
+				if resources:
+					entry.save(resDir)
+				continue
 
-            words = entry.getWords()
-            if not words:
-                continue
-            word, alts = words[0], words[1:]
-            defi = entry.getDefi()
+			words = entry.getWords()
+			if not words:
+				continue
+			word, alts = words[0], words[1:]
+			defi = entry.getDefi()
 
-            row = [
-                word,
-                defi,
-            ]
-            if alts:
-                row.append(','.join(alts))
+			row = [
+				word,
+				defi,
+			]
+			if alts:
+				row.append(','.join(alts))
 
-            writer.writerow(row)
+			writer.writerow(row)
 
-    if not os.listdir(resDir):
-        os.rmdir(resDir)
+	if not os.listdir(resDir):
+		os.rmdir(resDir)

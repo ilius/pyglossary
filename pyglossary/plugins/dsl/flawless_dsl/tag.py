@@ -26,64 +26,64 @@ from collections import namedtuple
 Tag = namedtuple('Tag', ['opening', 'closing'])
 
 Tag.__repr__ = lambda tag: \
-    'Tag(%r)' % tag.opening if tag.opening == tag.closing \
-    else 'Tag(%r, %r)' % tag
+	'Tag(%r)' % tag.opening if tag.opening == tag.closing \
+	else 'Tag(%r, %r)' % tag
 
 predefined = [
-    'm',
-    '*',
-    'ex',
-    'i',
-    'c',
+	'm',
+	'*',
+	'ex',
+	'i',
+	'c',
 ]
 
 
 def was_opened(stack, tag):
-    """
-    check if tag was opened at some layer before.
+	"""
+	check if tag was opened at some layer before.
 
-    :param stack: Iterable[layer.Layer]
-    :param tag: tag.Tag
-    :return: bool
-    """
-    if not len(stack):
-        return False
-    layer = stack[-1]
-    if tag in layer:
-        return True
-    return was_opened(stack[:-1], tag)
+	:param stack: Iterable[layer.Layer]
+	:param tag: tag.Tag
+	:return: bool
+	"""
+	if not len(stack):
+		return False
+	layer = stack[-1]
+	if tag in layer:
+		return True
+	return was_opened(stack[:-1], tag)
 
 
 def canonical_order(tags):
-    """
-    arrange tags in canonical way, where (outermost to innermost):
-    m  >  *  >  ex  >  i  >  c
-    with all other tags follow them in alphabetical order.
+	"""
+	arrange tags in canonical way, where (outermost to innermost):
+	m  >  *  >  ex  >  i  >  c
+	with all other tags follow them in alphabetical order.
 
-    :param tags: Iterable[Tag]
-    :return: List
-    """
-    result = []
-    tags = list(tags)
-    for predef in predefined:
-        t = next((t for t in tags if t.closing == predef), None)
-        if t:
-            result.append(t)
-            tags.remove(t)
-    result.extend(sorted(tags, key=lambda x: x.opening))
-    return result
+	:param tags: Iterable[Tag]
+	:return: List
+	"""
+	result = []
+	tags = list(tags)
+	for predef in predefined:
+		t = next((t for t in tags if t.closing == predef), None)
+		if t:
+			result.append(t)
+			tags.remove(t)
+	result.extend(sorted(tags, key=lambda x: x.opening))
+	return result
 
 
 def index_of_layer_containing_tag(stack, tag):
-    """
-    return zero based index of layer with `tag` or None
+	"""
+	return zero based index of layer with `tag` or None
 
-    :param stack: Iterable[layer.Layer]
-    :param tag: str
-    :return: int | None
-    """
-    for i, layer in enumerate(reversed(stack)):
-        for t in layer.tags:
-            if t.closing == tag:
-                return len(stack) - i - 1
-    return None
+	:param stack: Iterable[layer.Layer]
+	:param tag: str
+	:return: int | None
+	"""
+	for i, layer in enumerate(reversed(stack)):
+		for t in layer.tags:
+			if t.closing == tag:
+				return len(stack) - i - 1
+	return None

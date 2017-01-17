@@ -22,6 +22,6 @@ only clean flawless DSL markup on output!
 from . import layer
 from . import tag
 from .main import (
-    FlawlessDSLParser,
-    parse,
+	FlawlessDSLParser,
+	parse,
 )

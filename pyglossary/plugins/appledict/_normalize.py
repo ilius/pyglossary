@@ -26,115 +26,115 @@ _title_short_re = re.compile(r'\[.*?\]')
 
 
 def spaces(s):
-    """
-    strip off leading and trailing whitespaces and
-    replace contiguous whitespaces with just one space.
-    """
-    return _spaces_re.sub(' ', s.strip())
+	"""
+	strip off leading and trailing whitespaces and
+	replace contiguous whitespaces with just one space.
+	"""
+	return _spaces_re.sub(' ', s.strip())
 
 
 _brackets_sub = (
-    (
-        re.compile(r'( *)\{( *)\\\[( *)'),  # { \[
-        r'\1\2\3[',
-    ),
-    (
-        re.compile(r'( *)\\\]( *)\}( *)'),  # \] }
-        r']\1\2\3',
-    ),
-    (
-        re.compile(r'( *)\{( *)\(( *)\}( *)'),  # { ( }
-        r'\1\2\3\4[',
-    ),
-    (
-        re.compile(r'( *)\{( *)\)( *)\}( *)'),  # { ) }
-        r']\1\2\3\4',
-    ),
-    (
-        re.compile(r'( *)\{( *)\(( *)'),  # { (
-        r'\1\2\3[',
-    ),
-    (
-        re.compile(r'( *)\)( *)\}( *)'),  # ) }
-        r']\1\2\3',
-    ),
-    (
-        re.compile(r'( *)\{( *)'),  # {
-        r'\1\2[',
-    ),
-    (
-        re.compile(r'( *)\}( *)'),  # }
-        r']\1\2',
-    ),
-    (
-        re.compile(r'{.*?}'),
-        r'',
-    ),
+	(
+		re.compile(r'( *)\{( *)\\\[( *)'),  # { \[
+		r'\1\2\3[',
+	),
+	(
+		re.compile(r'( *)\\\]( *)\}( *)'),  # \] }
+		r']\1\2\3',
+	),
+	(
+		re.compile(r'( *)\{( *)\(( *)\}( *)'),  # { ( }
+		r'\1\2\3\4[',
+	),
+	(
+		re.compile(r'( *)\{( *)\)( *)\}( *)'),  # { ) }
+		r']\1\2\3\4',
+	),
+	(
+		re.compile(r'( *)\{( *)\(( *)'),  # { (
+		r'\1\2\3[',
+	),
+	(
+		re.compile(r'( *)\)( *)\}( *)'),  # ) }
+		r']\1\2\3',
+	),
+	(
+		re.compile(r'( *)\{( *)'),  # {
+		r'\1\2[',
+	),
+	(
+		re.compile(r'( *)\}( *)'),  # }
+		r']\1\2',
+	),
+	(
+		re.compile(r'{.*?}'),
+		r'',
+	),
 )
 
 
 def brackets(s):
-    r"""
-    replace all crazy brackets with square ones [].
+	r"""
+	replace all crazy brackets with square ones [].
 
-    following combinations are to replace:
-        { \[ ... \] }
-        { ( } ... { ) }
-        { ( ... ) }
-        { ... }
-    """
-    if '{' in s:
-        for exp, sub in _brackets_sub:
-            s = exp.sub(sub, s)
-    return spaces(s)
+	following combinations are to replace:
+		{ \[ ... \] }
+		{ ( } ... { ) }
+		{ ( ... ) }
+		{ ... }
+	"""
+	if '{' in s:
+		for exp, sub in _brackets_sub:
+			s = exp.sub(sub, s)
+	return spaces(s)
 
 
 def truncate(text, length=449):
-    """
-    trunct a string to given length
-    :param str text:
-    :return: truncated text
-    :rtype: str
-    """
-    content = re.sub('(\t|\n|\r)', ' ', text)
-    if len(text) > length:
-        # find the next space after max_len chars (do not break inside a word)
-        pos = content[:length].rfind(' ')
-        if pos == -1:
-            pos = length
-        text = text[:pos]
-    return text
+	"""
+	trunct a string to given length
+	:param str text:
+	:return: truncated text
+	:rtype: str
+	"""
+	content = re.sub('(\t|\n|\r)', ' ', text)
+	if len(text) > length:
+		# find the next space after max_len chars (do not break inside a word)
+		pos = content[:length].rfind(' ')
+		if pos == -1:
+			pos = length
+		text = text[:pos]
+	return text
 
 
 def title(title, BeautifulSoup):
-    """
-    strip double quotes and html tags.
-    """
-    if BeautifulSoup:
-        title = title.replace('\xef\xbb\xbf', '')
-        if len(title) > 1:
-            # BeautifulSoup has a bug when markup <= 1 char length
-            title = BeautifulSoup.BeautifulSoup(
-                title,
-                "html",
-            ).get_text(strip=True)
-    else:
-        title = _title_re.sub('', title)
-        title = title.replace('&', '&amp;')
-    title = brackets(title)
-    title = truncate(title, 1126)
-    return title
+	"""
+	strip double quotes and html tags.
+	"""
+	if BeautifulSoup:
+		title = title.replace('\xef\xbb\xbf', '')
+		if len(title) > 1:
+			# BeautifulSoup has a bug when markup <= 1 char length
+			title = BeautifulSoup.BeautifulSoup(
+				title,
+				"html",
+			).get_text(strip=True)
+	else:
+		title = _title_re.sub('', title)
+		title = title.replace('&', '&amp;')
+	title = brackets(title)
+	title = truncate(title, 1126)
+	return title
 
 
 def title_long(s):
-    """
-    title_long('str[ing]') -> 'string'
-    """
-    return s.replace('[', '').replace(']', '')
+	"""
+	title_long('str[ing]') -> 'string'
+	"""
+	return s.replace('[', '').replace(']', '')
 
 
 def title_short(s):
-    """
-    title_short('str[ing]') -> 'str'
-    """
-    return spaces(_title_short_re.sub('', s))
+	"""
+	title_short('str[ing]') -> 'str'
+	"""
+	return spaces(_title_short_re.sub('', s))

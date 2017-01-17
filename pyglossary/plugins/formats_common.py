@@ -3,12 +3,12 @@ from formats_common import *
 import sys
 import os
 from os.path import (
-    join,
-    split,
-    splitext,
-    isfile,
-    isdir,
-    exists,
+	join,
+	split,
+	splitext,
+	isfile,
+	isdir,
+	exists,
 )
 
 import logging

@@ -37,44 +37,44 @@ noneItem = 'Not Selected'
 
 
 class QVirtualFile(object):
-    def __init__(self, qtext, mode):
-        self.qtext = qtext
-        self.mode = mode
+	def __init__(self, qtext, mode):
+		self.qtext = qtext
+		self.mode = mode
 
-    def write(self, text):
-        self.qtext.insertPlainText(text)
-        if self.mode == 'stdout':
-            stdout_saved.write(text)
-        elif self.mode == 'stderr':
-            stderr_saved.write(startRed+text+endFormat)
+	def write(self, text):
+		self.qtext.insertPlainText(text)
+		if self.mode == 'stdout':
+			stdout_saved.write(text)
+		elif self.mode == 'stderr':
+			stderr_saved.write(startRed+text+endFormat)
 
-    def writelines(self, lines):
-        for line in lines:
-            self.write(line)
+	def writelines(self, lines):
+		for line in lines:
+			self.write(line)
 
-    def flush(self):
-        pass
+	def flush(self):
+		pass
 
-    def isatty(self):
-        return 1
+	def isatty(self):
+		return 1
 
-    def fileno(self):
-        pass
+	def fileno(self):
+		pass
 
 
 class UI(qt.QWidget, UIBase):
-    def __init__(self, ipath, **options):
-        qt.QWidget.__init__(self)
-        self.setWindowTitle('PyGlossary (Qt)')
-        self.setWindowIcon(qt.QIcon(join(uiDir, 'pyglossary.png')))
-        ######################
-        self.running = False
-        self.glos = Glossary(ui=self)
-        self.pref = {}
-        self.pref_load()
-        self.pathI = ''
-        self.pathO = ''
-        self.fcd_dir = join(homeDir, 'Desktop')
-        ######################
-        vbox = qt.QVBoxLayout()
-        self.setLayout(vbox)
+	def __init__(self, ipath, **options):
+		qt.QWidget.__init__(self)
+		self.setWindowTitle('PyGlossary (Qt)')
+		self.setWindowIcon(qt.QIcon(join(uiDir, 'pyglossary.png')))
+		######################
+		self.running = False
+		self.glos = Glossary(ui=self)
+		self.pref = {}
+		self.pref_load()
+		self.pathI = ''
+		self.pathO = ''
+		self.fcd_dir = join(homeDir, 'Desktop')
+		######################
+		vbox = qt.QVBoxLayout()
+		self.setLayout(vbox)
