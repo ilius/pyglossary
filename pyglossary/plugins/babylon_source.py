@@ -56,7 +56,8 @@ def write(glos, filename, writeInfo=True, newline='', encoding=''):
             '### Browsing enabled?Yes',
             '### Type of glossary:00000000',
             '### Case sensitive words?0'
-            '%s### Glossary section:',
+            '',
+            '### Glossary section:',
             '',
         ])
 
