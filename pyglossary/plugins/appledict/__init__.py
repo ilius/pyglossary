@@ -91,7 +91,7 @@ def write_plist(glos, filename, xsl, defaultPrefs, prefsHTML, frontBackMatter):
 
     # if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
     # present in Info.plist, Dictionary.app will crash.
-    with open(filename, 'w') as f:
+    with open(filename, 'w', encoding="utf-8") as f:
         f.write(template % {
             "CFBundleIdentifier": identifier,
             "CFBundleDisplayName": glos.getInfo('name'),
