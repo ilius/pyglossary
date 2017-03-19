@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# W191: indentation contains tabs
+# E265: block comment should start with '# '
+# E261: at least two spaces before inline comment
+# E262: inline comment should start with '# '
+# E702: multiple statements on one line (semicolon)
+
+if [ -z $2 ] ; then
+	pep8 --ignore=W191,E265,E261,E262,E702 "$1" | grep --color=always -P ':\d*:' | less -RU
+else
+	pep8 --select "$@" | grep --color=always -P ':\d*:'
+fi
