@@ -738,6 +738,16 @@ class BglReader(object):
 			if block.type == 2:
 				return self.readType2(block)
 
+			elif block.type == 11:
+				succeed, u_word, u_alts, u_defi = self.readEntry_Type11(block)
+				if not succeed:
+					continue
+
+				return self._glos.newEntry(
+					[u_word] + u_alts,
+					u_defi,
+				)
+
 			elif block.type in (1, 7, 10, 11, 13):
 				pos = 0
 				# word:
@@ -779,27 +789,18 @@ class BglReader(object):
 				b_word is a bytes instance
 		"""
 		Err = (False, None, None, None)
-		if block.type == 11:
-			if pos + 5 > len(block.data):
-				log.error(
-					'reading block offset=%#.2x' % block.offset +
-					', reading word size: pos + 5 > len(block.data)'
-				)
-				return Err
-			Len = binStrToInt(block.data[pos:pos+5])
-			pos += 5
-		else:
-			if pos + 1 > len(block.data):
-				log.error(
-					'reading block offset=%#.2x' % block.offset +
-					', reading word size: pos + 1 > len(block.data)'
-				)
-				return Err
-			Len = block.data[pos]
-			pos += 1
+		if pos + 1 > len(block.data):
+			log.error(
+				'reading block offset=%#.2x' % block.offset +
+				', reading word size: pos + 1 > len(block.data)'
+			)
+			return Err
+		Len = block.data[pos]
+		pos += 1
 		if pos + Len > len(block.data):
 			log.error(
 				'reading block offset=%#.2x' % block.offset +
+				', block.type=%s' % block.type +
 				', reading word: pos + Len > len(block.data)'
 			)
 			return Err
@@ -821,7 +822,7 @@ class BglReader(object):
 		self.wordLenMax = max(self.wordLenMax, len(u_word))
 		return True, pos, u_word, b_word
 
-	def readEntryDefi(self, block, pos, b_key):
+	def readEntryDefi(self, block, pos, b_word):
 		"""
 		Read defi part of entry.
 
@@ -832,39 +833,29 @@ class BglReader(object):
 			b_defi is a bytes instance
 		"""
 		Err = (False, None, None, None)
-		if block.type == 11:
-			if pos + 8 > len(block.data):
-				log.error(
-					'reading block offset=%#.2x' % block.offset +
-					', reading defi size: pos + 8 > len(block.data)'
-				)
-				return Err
-			pos += 4  # binStrToInt(block.data[pos:pos+4]) - may be 0, 1
-			Len = binStrToInt(block.data[pos:pos+4])
-			pos += 4
-		else:
-			if pos + 2 > len(block.data):
-				log.error(
-					'reading block offset=%#.2x' % block.offset +
-					', reading defi size: pos + 2 > len(block.data)'
-				)
-				return Err
-			Len = binStrToInt(block.data[pos:pos+2])
-			pos += 2
+		if pos + 2 > len(block.data):
+			log.error(
+				'reading block offset=%#.2x' % block.offset +
+				', reading defi size: pos + 2 > len(block.data)'
+			)
+			return Err
+		Len = binStrToInt(block.data[pos:pos+2])
+		pos += 2
 		if pos + Len > len(block.data):
 			log.error(
 				'reading block offset=%#.2x' % block.offset +
+				', block.type=%s' % block.type +
 				', reading defi: pos + Len > len(block.data)'
 			)
 			return Err
 		b_defi = block.data[pos:pos+Len]
-		u_defi = self.processDefi(b_defi, b_key)
+		u_defi = self.processDefi(b_defi, b_word)
 		self.defiMaxBytes = max(self.defiMaxBytes, len(b_defi))
 
 		pos += Len
 		return True, pos, u_defi, b_defi
 
-	def readEntryAlts(self, block, pos, b_key, u_key):
+	def readEntryAlts(self, block, pos, b_word, u_word):
 		"""
 		returns:
 			(False, None, None) if error
@@ -875,47 +866,121 @@ class BglReader(object):
 		# use set instead of list to prevent duplicates
 		u_alts = set()
 		while pos < len(block.data):
-			if block.type == 11:
-				if pos + 4 > len(block.data):
-					log.error(
-						'reading block offset=%#.2x' % block.offset +
-						', reading alt size: pos + 4 > len(block.data)'
-					)
-					return Err
-				Len = binStrToInt(block.data[pos:pos+4])
-				pos += 4
-				if Len == 0:
-					if pos + Len != len(block.data):
-						# no evidence
-						log.warning(
-							'reading block offset=%#.2x' % block.offset +
-							', reading alt size: pos + Len != len(block.data)'
-						)
-					break
-			else:
-				if pos + 1 > len(block.data):
-					log.error(
-						'reading block offset=%#.2x' % block.offset +
-						', reading alt size: pos + 1 > len(block.data)'
-					)
-					return Err
-				Len = block.data[pos]
-				pos += 1
+			if pos + 1 > len(block.data):
+				log.error(
+					'reading block offset=%#.2x' % block.offset +
+					', reading alt size: pos + 1 > len(block.data)'
+				)
+				return Err
+			Len = block.data[pos]
+			pos += 1
 			if pos + Len > len(block.data):
 				log.error(
 					'reading block offset=%#.2x' % block.offset +
+					', block.type=%s' % block.type +
 					', reading alt: pos + Len > len(block.data)'
 				)
 				return Err
 			b_alt = block.data[pos:pos+Len]
-			u_alt = self.processAlternativeKey(b_alt, b_key)
+			u_alt = self.processAlternativeKey(b_alt, b_word)
 			# Like entry key, alt is not processed as html by babylon,
 			# so do we.
 			u_alts.add(u_alt)
 			pos += Len
-		if u_key in u_alts:
-			u_alts.remove(u_key)
+		if u_word in u_alts:
+			u_alts.remove(u_word)
 		return True, pos, list(sorted(u_alts))
+
+	def readEntry_Type11(self, block):
+		"""return (succeed, u_word, u_alts, u_defi)"""
+		Err = (False, None, None, None)
+		pos = 0
+
+		# reading headword
+		if pos + 5 > len(block.data):
+			log.error(
+				'reading block offset=%#.2x' % block.offset +
+				', reading word size: pos + 5 > len(block.data)'
+			)
+			return Err
+		wordLen = binStrToInt(block.data[pos:pos+5])
+		pos += 5
+		if pos + wordLen > len(block.data):
+			log.error(
+				'reading block offset=%#.2x' % block.offset +
+				', block.type=%s' % block.type +
+				', reading word: pos + wordLen > len(block.data)'
+			)
+			return Err
+		b_word = block.data[pos:pos+wordLen]
+		u_word = self.processKey(b_word)
+		pos += wordLen
+		self.wordLenMax = max(self.wordLenMax, len(u_word))
+
+		# reading alts and defi
+		if pos + 4 > len(block.data):
+			log.error(
+				'reading block offset=%#.2x' % block.offset +
+				', reading defi size: pos + 4 > len(block.data)'
+			)
+			return Err
+		altsCount = binStrToInt(block.data[pos:pos+4])
+		pos += 4
+
+		# reading alts
+		# use set instead of list to prevent duplicates
+		u_alts = set()
+		for altIndex in range(altsCount):
+			if pos + 4 > len(block.data):
+				log.error(
+					'reading block offset=%#.2x' % block.offset +
+					', reading alt size: pos + 4 > len(block.data)'
+				)
+				return Err
+			altLen = binStrToInt(block.data[pos:pos+4])
+			pos += 4
+			if altLen == 0:
+				if pos + altLen != len(block.data):
+					# no evidence
+					log.warning(
+						'reading block offset=%#.2x' % block.offset +
+						', reading alt size: pos + altLen != len(block.data)'
+					)
+				break
+			if pos + altLen > len(block.data):
+				log.error(
+					'reading block offset=%#.2x' % block.offset +
+					', block.type=%s' % block.type +
+					', reading alt: pos + altLen > len(block.data)'
+				)
+				return Err
+			b_alt = block.data[pos:pos+altLen]
+			u_alt = self.processAlternativeKey(b_alt, b_word)
+			# Like entry key, alt is not processed as html by babylon,
+			# so do we.
+			u_alts.add(u_alt)
+			pos += altLen
+		if u_word in u_alts:
+			u_alts.remove(u_word)
+		u_alts = list(sorted(u_alts))
+
+		# reading defi
+		defiLen = binStrToInt(block.data[pos:pos+4])
+		pos += 4
+		if pos + defiLen > len(block.data):
+			log.error(
+				'reading block offset=%#.2x' % block.offset +
+				', block.type=%s' % block.type +
+				', reading defi: pos + defiLen > len(block.data)'
+			)
+			return Err
+		b_defi = block.data[pos:pos+defiLen]
+		u_defi = self.processDefi(b_defi, b_word)
+		self.defiMaxBytes = max(self.defiMaxBytes, len(b_defi))
+		pos += defiLen
+
+
+		return True, u_word, u_alts, u_defi
 
 	def charReferencesStat(self, b_text, encoding):
 		pass
