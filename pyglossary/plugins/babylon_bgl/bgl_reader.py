@@ -734,30 +734,37 @@ class BglReader(object):
 				break
 			if not block.data:
 				continue
-			if block.type in (1, 7, 10, 11, 13):
+
+			if block.type == 2:
+				return self.readType2(block)
+
+			elif block.type in (1, 7, 10, 11, 13):
 				pos = 0
 				# word:
 				succeed, pos, u_word, b_word = self.readEntryWord(block, pos)
 				if not succeed:
 					continue
 				# defi:
-				succeed, pos, u_defi, b_defi = \
-					self.readEntryDefi(block, pos, b_word)
+				succeed, pos, u_defi, b_defi = self.readEntryDefi(
+					block,
+					pos,
+					b_word,
+				)
 				if not succeed:
 					continue
 				# now pos points to the first char after definition
-				succeed, pos, u_alts = \
-					self.readEntryAlts(block, pos, b_word, u_word)
+				succeed, pos, u_alts = self.readEntryAlts(
+					block,
+					pos,
+					b_word,
+					u_word,
+				)
 				if not succeed:
 					continue
-
 				return self._glos.newEntry(
 					[u_word] + u_alts,
 					u_defi,
 				)
-
-			elif block.type == 2:
-				return self.readType2(block)
 
 		raise StopIteration
 
