@@ -794,14 +794,24 @@ class BglReader(object):
                 succeed, pos, u_word, b_word = self.readEntryWord(block, pos)
                 if not succeed:
                     continue
-                ## defi:
-                succeed, pos, u_defi, b_defi = self.readEntryDefi(block, pos, b_word)
-                if not succeed:
-                    continue
-                # now pos points to the first char after definition
-                succeed, pos, u_alts = self.readEntryAlts(block, pos, b_word, u_word)
-                if not succeed:
-                    continue
+                if block.type == 11:
+                    ## alts:
+                    succeed, pos, u_alts = self.readEntryAlts(block, pos, b_word, u_word)
+                    if not succeed:
+                        continue
+                    ## defi:
+                    succeed, pos, u_defi, b_defi = self.readEntryDefi(block, pos, b_word)
+                    if not succeed:
+                        continue
+                else:
+                    ## defi:
+                    succeed, pos, u_defi, b_defi = self.readEntryDefi(block, pos, b_word)
+                    if not succeed:
+                        continue
+                    # now pos points to the first char after definition
+                    succeed, pos, u_alts = self.readEntryAlts(block, pos, b_word, u_word)
+                    if not succeed:
+                        continue
 
                 return (
                     [u_word] + u_alts,
@@ -870,10 +880,9 @@ class BglReader(object):
         """
         Err = (False, None, None, None)
         if block.type == 11:
-            if pos + 8 > len(block.data):
+            if pos + 4 > len(block.data):
                 log.error('reading block offset=%#.2x:: reading defi size: pos + 8 > len(block.data)'%block.offset)
                 return Err
-            pos += 4 # binStrToInt(block.data[pos:pos+4]) - may be 0, 1
             Len = binStrToInt(block.data[pos:pos+4])
             pos += 4
         else:
@@ -903,7 +912,15 @@ class BglReader(object):
         Err = (False, None, None)
         # use set instead of list to prevent duplicates
         u_alts = set()
-        while pos < len(block.data):
+        altsNum = 0
+        if block.type == 11:
+            if pos + 4 > len(block.data):
+                log.error('reading block offset=%#.2x:: reading alt size: pos + 4 > len(block.data)'%block.offset)
+                return Err
+            altsNum = binStrToInt(block.data[pos:pos+4])
+            pos += 4
+        nom = 0
+        while (pos < len(block.data) and (block.type != 11 or nom < altsNum)):
             if block.type == 11:
                 if pos + 4 > len(block.data):
                     log.error('reading block offset=%#.2x:: reading alt size: pos + 4 > len(block.data)'%block.offset)
@@ -929,6 +946,7 @@ class BglReader(object):
             # Like entry key, alt is not processed as html by babylon, so do we.
             u_alts.add(u_alt)
             pos += Len
+            nom += 1
         if u_key in u_alts:
             u_alts.remove(u_key)
         return True, pos, list(sorted(u_alts))
