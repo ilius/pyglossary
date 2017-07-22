@@ -35,7 +35,7 @@ def decodeBglBinTime(b_value):
 	djd, hm = divmod(binStrToInt(b_value), 24*60)
 	year, month, day = gregorian.jd_to(djd + jd1970)
 	hour, minute = divmod(hm, 60)
-	return '%.2d/%.2d/%.2d, %.2d:%.2d' % (year, month, day, hour, minute)
+	return "%.2d/%.2d/%.2d, %.2d:%.2d" % (year, month, day, hour, minute)
 
 
 def languageInfoDecode(b_value):
@@ -46,7 +46,7 @@ def languageInfoDecode(b_value):
 	try:
 		return languageByCode[intValue]
 	except IndexError:
-		log.warning('read_type_3: unknown language code = %s' % intValue)
+		log.warning("read_type_3: unknown language code = %s" % intValue)
 		return
 
 
@@ -55,19 +55,19 @@ def charsetInfoDecode(b_value):
 	try:
 		return charsetByCode[value]
 	except KeyError:
-		log.warning('read_type_3: unknown charset %s' % value)
+		log.warning("read_type_3: unknown charset %s" % value)
 
 
 def aboutInfoDecode(b_value):
 	if not b_value:
 		return
-	aboutExt, _, aboutContents = b_value.partition(b'\x00')
+	aboutExt, _, aboutContents = b_value.partition(b"\x00")
 	if not aboutExt:
-		log.warning('read_type_3: about: no file extension')
+		log.warning("read_type_3: about: no file extension")
 		return
 	return {
-		'about_extension': aboutExt,
-		'about': aboutContents,
+		"about_extension": aboutExt,
+		"about": aboutContents,
 	}
 
 
@@ -85,20 +85,20 @@ def utf16InfoDecode(b_value):
 	"""
 	if b_value[0] != 0:
 		log.warning(
-			'utf16InfoDecode: b_value=%s, null expected at 0' % list(b_value)
+			"utf16InfoDecode: b_value=%s, null expected at 0" % list(b_value)
 		)
 		return
 
 	if b_value[1] == 0:
 		if len(b_value) > 2:
 			log.warning(
-				'utf16InfoDecode: unexpected b_value size: %s' % len(b_value)
+				"utf16InfoDecode: unexpected b_value size: %s" % len(b_value)
 			)
 		return
 
 	elif b_value[1] > 1:
 		log.warning(
-			'utf16InfoDecode: b_value=%s, unexpected byte at 1' % list(b_value)
+			"utf16InfoDecode: b_value=%s, unexpected byte at 1" % list(b_value)
 		)
 		return
 
@@ -106,14 +106,14 @@ def utf16InfoDecode(b_value):
 	size = 2 * binStrToInt(b_value[2:6])
 	if tuple(b_value[6:8]) != (0, 0):
 		log.warning(
-			'utf16InfoDecode: b_value=%s, null expected at 6:8' % list(b_value)
+			"utf16InfoDecode: b_value=%s, null expected at 6:8" % list(b_value)
 		)
 	if size != len(b_value)-8:
 		log.warning(
-			'utf16InfoDecode: b_value=%s, size does not match' % list(b_value)
+			"utf16InfoDecode: b_value=%s, size does not match" % list(b_value)
 		)
 
-	return b_value[8:].decode('utf16')  # str
+	return b_value[8:].decode("utf16")  # str
 
 
 def flagsInfoDecode(b_value):
@@ -134,59 +134,59 @@ def flagsInfoDecode(b_value):
 	"""
 	flags = binStrToInt(b_value)
 	return {
-		'utf8Encoding': (flags & 0x8000 != 0),
-		'spellingAlternatives': (flags & 0x10000 == 0),
-		'caseSensitive': (flags & 0x1000 != 0),
+		"utf8Encoding": (flags & 0x8000 != 0),
+		"spellingAlternatives": (flags & 0x10000 == 0),
+		"caseSensitive": (flags & 0x1000 != 0),
 	}
 
 
 infoKeysByCode = {
-	0x01: 'title',  # glossary name
-	0x02: 'author',  # glossary author name, a list of '|'-separated values
-	0x03: 'email',  # glossary author e-mail
-	0x04: 'copyright',  # copyright message
-	0x07: 'sourceLang',
-	0x08: 'targetLang',
-	0x09: 'description',  # Glossary description
-	0x0a: 'browsingEnabled',  # 0: browsing disabled, 1: browsing enabled
-	0x0b: 'iconData',  # FIXME
-	0x0c: 'bgl_numEntries',
-	0x11: 'flags',  # the value is a dict
-	0x14: 'creationTime',
-	0x1a: 'sourceCharset',
-	0x1b: 'targetCharset',
-	0x1c: 'middleUpdated',
-	0x2c: 'purchaseLicenseMsg',
-	0x2d: 'licenseExpiredMsg',
-	0x2e: 'purchaseAddress',
-	0x30: 'titleWide',
-	0x31: 'authorWide',
-	0x33: 'lastUpdated',
-	0x3b: 'contractions',
-	0x3d: 'fontName',  # contains a value like "Arial Unicode MS" or "Tahoma"
-	0x41: 'about',  # (aboutExtention, aboutContents)
-	0x43: 'length',  # the length of the substring match in a term
+	0x01: "title",  # glossary name
+	0x02: "author",  # glossary author name, a list of "|"-separated values
+	0x03: "email",  # glossary author e-mail
+	0x04: "copyright",  # copyright message
+	0x07: "sourceLang",
+	0x08: "targetLang",
+	0x09: "description",  # Glossary description
+	0x0a: "browsingEnabled",  # 0: browsing disabled, 1: browsing enabled
+	0x0b: "iconData",  # FIXME
+	0x0c: "bgl_numEntries",
+	0x11: "flags",  # the value is a dict
+	0x14: "creationTime",
+	0x1a: "sourceCharset",
+	0x1b: "targetCharset",
+	0x1c: "middleUpdated",
+	0x2c: "purchaseLicenseMsg",
+	0x2d: "licenseExpiredMsg",
+	0x2e: "purchaseAddress",
+	0x30: "titleWide",
+	0x31: "authorWide",
+	0x33: "lastUpdated",
+	0x3b: "contractions",
+	0x3d: "fontName",  # contains a value like "Arial Unicode MS" or "Tahoma"
+	0x41: "about",  # (aboutExtention, aboutContents)
+	0x43: "length",  # the length of the substring match in a term
 }
 
 
 infoKeyDecodeMethods = {
-	'sourceLang': languageInfoDecode,
-	'targetLang': languageInfoDecode,
-	'browsingEnabled': lambda b_value: (b_value[0] != 0),
-	'bgl_numEntries': binStrToInt,
-	'creationTime': decodeBglBinTime,
-	'middleUpdated': decodeBglBinTime,
-	'lastUpdated': decodeBglBinTime,
-	'sourceCharset': charsetInfoDecode,
-	'targetCharset': charsetInfoDecode,
-	'about': aboutInfoDecode,
-	'length': binStrToInt,
-	'purchaseLicenseMsg': utf16InfoDecode,
-	'licenseExpiredMsg': utf16InfoDecode,
-	'licenseExpiredMsg': utf16InfoDecode,
-	'titleWide': utf16InfoDecode,
-	'authorWide': utf16InfoDecode,  # a list of '|'-separated values
-	'flags': flagsInfoDecode,
+	"sourceLang": languageInfoDecode,
+	"targetLang": languageInfoDecode,
+	"browsingEnabled": lambda b_value: (b_value[0] != 0),
+	"bgl_numEntries": binStrToInt,
+	"creationTime": decodeBglBinTime,
+	"middleUpdated": decodeBglBinTime,
+	"lastUpdated": decodeBglBinTime,
+	"sourceCharset": charsetInfoDecode,
+	"targetCharset": charsetInfoDecode,
+	"about": aboutInfoDecode,
+	"length": binStrToInt,
+	"purchaseLicenseMsg": utf16InfoDecode,
+	"licenseExpiredMsg": utf16InfoDecode,
+	"licenseExpiredMsg": utf16InfoDecode,
+	"titleWide": utf16InfoDecode,
+	"authorWide": utf16InfoDecode,  # a list of "|"-separated values
+	"flags": flagsInfoDecode,
 }
 
 """
@@ -203,7 +203,7 @@ length (0x43)
 contractions (0x3b):
 	contains a value like this:
 	V-0#Verb|V-0.0#|V-0.1#Infinitive|V-0.1.1#|V-1.0#|V-1.1#|V-1.1.1#Present Simple|V-1.1.2#Present Simple (3rd pers. sing.)|V-2.0#|V-2.1#|V-2.1.1#Past Simple|V-3.0#|V-3.1#|V-3.1.1#Present Participle|V-4.0#|V-4.1#|V-4.1.1#Past Participle|V-5.0#|V-5.1#|V-5.1.1#Future|V2-0#|V2-0.0#|V2-0.1#Infinitive|V2-0.1.1#|V2-1.0#|V2-1.1#|V2-1.1.1#Present Simple (1st pers. sing.)|V2-1.1.2#Present Simple (2nd pers. sing. & plural forms)|V2-1.1.3#Present Simple (3rd pers. sing.)|V2-2.0#|V2-2.1#|V2-2.1.1#Past Simple (1st & 3rd pers. sing.)|V2-2.1.2#Past Simple (2nd pers. sing. & plural forms)|V2-3.0#|V2-3.1#|V2-3.1.1#Present Participle|V2-4.0#|V2-4.1#|V2-4.1.1#Past Participle|V2-5.0#|V2-5.1#|V2-5.1.1#Future||N-0#Noun|N-1.0#|N-1.1#|N-1.1.1#Singular|N-2.0#|N-2.1#|N-2.1.1#Plural|N4-1.0#|N4-1.1#|N4-1.1.1#Singular Masc.|N4-1.1.2#Singular Fem.|N4-2.0#|N4-2.1#|N4-2.1.1#Plural Masc.|N4-2.1.2#Plural Fem.||ADJ-0#Adjective|ADJ-1.0#|ADJ-1.1#|ADJ-1.1.1#Adjective|ADJ-1.1.2#Comparative|ADJ-1.1.3#Superlative||
-	value format: (<contraction> '#' [<value>] '|')+
+	value format: (<contraction> "#" [<value>] "|")+
 	The value is in second language, that is for Babylon Russian-English.BGL
 		the value in russian,
 	for Babylon English-Spanish.BGL the value is spanish (I guess), etc.
@@ -224,8 +224,8 @@ Glossary manual file (0x41)
 	an introduction into the dictionary. It describing structure of an article,
 	editors, how to use the dictionary.
 
-	format <file extension> '\x00' <file contents>
-	file extension may be: '.txt', '.pdf'
+	format <file extension> "\x00" <file contents>
+	file extension may be: ".txt", ".pdf"
 
 purchaseLicenseMsg (0x2c):
 	contains a value like this:

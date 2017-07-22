@@ -27,13 +27,13 @@ from pyglossary.text_utils import (
 )
 
 enable = True
-format = 'Edlin'
-description = 'Editable Linked List of Entries'
-extentions = ['.edlin']
+format = "Edlin"
+description = "Editable Linked List of Entries"
+extentions = [".edlin"]
 readOptions = []
 writeOptions = [
-	'encoding',  # str
-	'havePrevLink',  # bool
+	"encoding",  # str
+	"havePrevLink",  # bool
 ]
 
 
@@ -51,71 +51,71 @@ class Reader(object):
 		self._clear()
 
 	def _clear(self):
-		self._filename = ''
-		self._encoding = 'utf-8'
+		self._filename = ""
+		self._encoding = "utf-8"
 		self._havePrevLink = True
 		self._wordCount = None
 		self._rootPath = None
-		self._resDir = ''
+		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self, filename, encoding='utf-8'):
+	def open(self, filename, encoding="utf-8"):
 		from pyglossary.json_utils import jsonToOrderedData
 		if isdir(filename):
-			infoFname = join(filename, 'info.json')
+			infoFname = join(filename, "info.json")
 		elif isfile(filename):
 			infoFname = filename
 			filename = dirname(filename)
 		else:
 			raise ValueError(
-				'error while opening "%s"' % filename +
-				': no such file or directory'
+				"error while opening %r" % filename +
+				": no such file or directory"
 			)
 		self._filename = filename
 		self._encoding = encoding
 
-		with open(infoFname, 'r', encoding=encoding) as infoFp:
+		with open(infoFname, "r", encoding=encoding) as infoFp:
 			infoJson = infoFp.read()
 			info = jsonToOrderedData(infoJson)
-			self._wordCount = info.pop('wordCount')
-			self._havePrevLink = info.pop('havePrevLink')
-			self._rootPath = info.pop('root')
+			self._wordCount = info.pop("wordCount")
+			self._havePrevLink = info.pop("havePrevLink")
+			self._rootPath = info.pop("root")
 			for key, value in info.items():
 				self._glos.setInfo(key, value)
 
-		self._resDir = join(filename, 'res')
+		self._resDir = join(filename, "res")
 		if isdir(self._resDir):
 			self._resFileNames = os.listdir(self._resDir)
 		else:
-			self._resDir = ''
+			self._resDir = ""
 			self._resFileNames = []
 
 	def __len__(self):
 		if self._wordCount is None:
-			log.error('called len() on a reader which is not open')
+			log.error("called len() on a reader which is not open")
 			return 0
 		return self._wordCount + len(self._resFileNames)
 
 	def __iter__(self):
 		if not self._rootPath:
-			log.error('iterating over a reader which is not open')
+			log.error("iterating over a reader which is not open")
 			raise StopIteration
 
 		wordCount = 0
 		nextPath = self._rootPath
-		while nextPath != 'END':
+		while nextPath != "END":
 			wordCount += 1
 			# before or after reading word and defi
 			# (and skipping empty entry)? FIXME
 
 			with open(
 				join(self._filename, nextPath),
-				'r',
+				"r",
 				encoding=self._encoding,
 			) as fromFile:
 				header = fromFile.readline().rstrip()
 				if self._havePrevLink:
-					self._prevPath, nextPath = header.split(' ')
+					self._prevPath, nextPath = header.split(" ")
 				else:
 					nextPath = header
 				word = fromFile.readline()
@@ -125,15 +125,15 @@ class Reader(object):
 				defi = fromFile.read()
 				if not defi:
 					log.warning(
-						'Edlin Reader: no definition for word "%s"' % word +
-						', skipping'
+						"Edlin Reader: no definition for word %r" % word +
+						", skipping"
 					)
 					yield None  # update progressbar
 					continue
 				word = word.rstrip()
 				defi = defi.rstrip()
 
-			if self._glos.getPref('enable_alts', True):
+			if self._glos.getPref("enable_alts", True):
 				word = splitByBarUnescapeNTB(word)
 				if len(word) == 1:
 					word = word[0]
@@ -145,14 +145,14 @@ class Reader(object):
 
 		if wordCount != self._wordCount:
 			log.warning(
-				'%s words found, ' % wordCount +
-				'wordCount in info.json was %s' % self._wordCount
+				"%s words found, " % wordCount +
+				"wordCount in info.json was %s" % self._wordCount
 			)
 			self._wordCount = wordCount
 
 		resDir = self._resDir
 		for fname in self._resFileNames:
-			with open(join(resDir, fname), 'rb') as fromFile:
+			with open(join(resDir, fname), "rb") as fromFile:
 				yield self._glos.newDataEntry(
 					fname,
 					fromFile.read(),
@@ -168,23 +168,23 @@ class Writer(object):
 		self._clear()
 
 	def _clear(self):
-		self._filename = ''
-		self._encoding = 'utf-8'
+		self._filename = ""
+		self._encoding = "utf-8"
 		self._hashSet = set()
 		# self._wordCount = None
 
-	def open(self, filename, encoding='utf-8', havePrevLink=True):
+	def open(self, filename, encoding="utf-8", havePrevLink=True):
 		if exists(filename):
-			raise ValueError('directory "%s" already exists' % filename)
+			raise ValueError("directory %r already exists" % filename)
 		self._filename = filename
 		self._encoding = encoding
 		self._havePrevLink = havePrevLink
-		self._resDir = join(filename, 'res')
+		self._resDir = join(filename, "res")
 		os.makedirs(filename)
 		os.mkdir(self._resDir)
 
 	def hashToPath(self, h):
-		return h[:2] + '/' + h[2:]
+		return h[:2] + "/" + h[2:]
 
 	def getEntryHash(self, entry):
 		"""
@@ -210,16 +210,16 @@ class Writer(object):
 		makeDir(dpath)
 		with open(
 			join(dpath, thisHash[2:]),
-			'w',
+			"w",
 			encoding=self._encoding,
 		) as toFile:
-			nextPath = self.hashToPath(nextHash) if nextHash else 'END'
+			nextPath = self.hashToPath(nextHash) if nextHash else "END"
 			if self._havePrevLink:
-				prevPath = self.hashToPath(prevHash) if prevHash else 'START'
-				header = prevPath + ' ' + nextPath
+				prevPath = self.hashToPath(prevHash) if prevHash else "START"
+				header = prevPath + " " + nextPath
 			else:
 				header = nextPath
-			toFile.write('\n'.join([
+			toFile.write("\n".join([
 				header,
 				thisEntry.getWord(),
 				thisEntry.getDefi(),
@@ -240,7 +240,7 @@ class Writer(object):
 		try:
 			thisEntry = next(glosIter)
 		except StopIteration:
-			raise ValueError('glossary is empty')
+			raise ValueError("glossary is empty")
 
 		count = 1
 		rootHash = thisHash = self.getEntryHash(thisEntry)
@@ -254,22 +254,22 @@ class Writer(object):
 		self.saveEntry(thisEntry, thisHash, prevHash, None)
 
 		with open(
-			join(self._filename, 'info.json'),
-			'w',
+			join(self._filename, "info.json"),
+			"w",
 			encoding=self._encoding,
 		) as toFile:
 			info = odict()
-			info['name'] = self._glos.getInfo('name')
-			info['root'] = self.hashToPath(rootHash)
-			info['havePrevLink'] = self._havePrevLink
-			info['wordCount'] = count
-			# info['modified'] =
+			info["name"] = self._glos.getInfo("name")
+			info["root"] = self.hashToPath(rootHash)
+			info["havePrevLink"] = self._havePrevLink
+			info["wordCount"] = count
+			# info["modified"] =
 
 			for key, value in self._glos.getExtraInfos((
-				'name',
-				'root',
-				'havePrevLink',
-				'wordCount',
+				"name",
+				"root",
+				"havePrevLink",
+				"wordCount",
 			)).items():
 				info[key] = value
 

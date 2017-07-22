@@ -28,7 +28,7 @@ from xml.sax.saxutils import unescape, quoteattr
 from . import _normalize
 from pyglossary.plugins.formats_common import log, toStr
 
-log = logging.getLogger('root')
+log = logging.getLogger("root")
 
 
 
@@ -40,11 +40,11 @@ def get_beautiful_soup():
 			import BeautifulSoup
 		except ImportError:
 			return None
-	if int(BeautifulSoup.__version__.split('.')[0]) < 4:
+	if int(BeautifulSoup.__version__.split(".")[0]) < 4:
 		raise ImportError(
-			'BeautifulSoup is too old, required at least version 4, ' +
-			'%r found.\n' % BeautifulSoup.__version__ +
-			'Please run `sudo pip3 install lxml beautifulsoup4 html5lib`'
+			"BeautifulSoup is too old, required at least version 4, " +
+			"%r found.\n" % BeautifulSoup.__version__ +
+			"Please run `sudo pip3 install lxml beautifulsoup4 html5lib`"
 		)
 	return BeautifulSoup
 
@@ -62,14 +62,14 @@ def base36(x):
 		digits.append(digs[x % 36])
 		x //= 36
 	digits.reverse()
-	return ''.join(digits)
+	return "".join(digits)
 
 
 def id_generator():
 	cnt = 1
 
 	while True:
-		s = '_%s' % base36(cnt)
+		s = "_%s" % base36(cnt)
 		yield s
 		cnt += 1
 
@@ -88,7 +88,7 @@ def indexes_generator(indexes_lang):
 		if not indexer:
 			msg = "extended indexes not supported for the specified language: %s.\n"\
 				  "following languages avaible: %s." %\
-				  (indexes_lang, ', '.join(list(idxs.languages.keys())))
+				  (indexes_lang, ", ".join(list(idxs.languages.keys())))
 			log.error(msg)
 			raise ValueError(msg)
 
@@ -99,7 +99,7 @@ def indexes_generator(indexes_lang):
 		if BeautifulSoup:
 			quoted_title = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(title, True)
 		else:
-			quoted_title = '"%s"' % title.replace('>', '&gt;').replace('"', "&quot;")
+			quoted_title = '"%s"' % title.replace(">", "&gt;").replace('"', "&quot;")
 
 		if indexer:
 			indexes = set(indexer(indexes, content))
@@ -114,24 +114,24 @@ def indexes_generator(indexes_lang):
 		normal_indexes = [s for s in normal_indexes if s.strip()]
 		# skip empty titles.  everything could happen.
 
-		s = '<d:index d:value=%s d:title=%s/>' % (quoted_title, quoted_title)
+		s = "<d:index d:value=%s d:title=%s/>" % (quoted_title, quoted_title)
 		if BeautifulSoup:
 			for idx in normal_indexes:
-				s += '<d:index d:value=%s d:title=%s/>' % (
+				s += "<d:index d:value=%s d:title=%s/>" % (
 					BeautifulSoup.dammit.EntitySubstitution.substitute_xml(idx, True),
 					quoted_title)
 		else:
 			for idx in normal_indexes:
 				s += '<d:index d:value="%s" d:title=%s/>' % (
-					idx.replace('>', '&gt;').replace('"', "&quot;"),
+					idx.replace(">", "&gt;").replace('"', "&quot;"),
 					quoted_title)
 		return s
 	return generate_indexes
 
 
-close_tag = re.compile('<(BR|HR)>', re.IGNORECASE)
-nonprintable = re.compile('[\x00-\x07\x0e-\x1f]')
-img_tag = re.compile('<IMG (.*?)>', re.IGNORECASE)
+close_tag = re.compile("<(BR|HR)>", re.IGNORECASE)
+nonprintable = re.compile("[\x00-\x07\x0e-\x1f]")
+img_tag = re.compile("<IMG (.*?)>", re.IGNORECASE)
 
 em0_9_re = re.compile(r'<div style="margin-left:(\d)em">')
 em0_9_sub = r'<div class="m\1">'
@@ -143,27 +143,27 @@ href_re = re.compile(r'''href=(["'])(.*?)\1''')
 
 
 def href_sub(x):
-	return x.group() if x.groups()[1].startswith('http') \
-		else 'href=%s' % quoteattr(
-			'x-dictionary:d:' + unescape(
+	return x.group() if x.groups()[1].startswith("http") \
+		else "href=%s" % quoteattr(
+			"x-dictionary:d:" + unescape(
 				x.groups()[1],
-				{'&quot;': '"'},
+				{"&quot;": '"'},
 			)
 		)
 
 
 def is_green(x):
-	return 'color:green' in x.get('style', '')
+	return "color:green" in x.get("style", "")
 
-margin_re = re.compile('margin-left:(\d)em')
+margin_re = re.compile("margin-left:(\d)em")
 
 
 def remove_style(tag, line):
-	s = ''.join(tag['style'].replace(line, '').split(';'))
+	s = "".join(tag["style"].replace(line, "").split(";"))
 	if s:
-		tag['style'] = s
+		tag["style"] = s
 	else:
-		del tag['style']
+		del tag["style"]
 
 
 def format_clean_content(title, body, BeautifulSoup):
@@ -182,42 +182,42 @@ def format_clean_content(title, body, BeautifulSoup):
 
 	# xhtml is strict
 	if BeautifulSoup:
-		soup = BeautifulSoup.BeautifulSoup(body, "lxml", from_encoding='utf-8')
-		# difference between 'lxml' and 'html.parser'
+		soup = BeautifulSoup.BeautifulSoup(body, "lxml", from_encoding="utf-8")
+		# difference between "lxml" and "html.parser"
 		if soup.body:
 			soup = soup.body
 
-		for tag in soup(class_='sec'):
-			tag['class'].remove('sec')
-			if not tag['class']:
-				del tag['class']
-			tag['d:priority'] = "2"
-		for tag in soup(lambda x: 'color:steelblue' in x.get('style', '')):
-			remove_style(tag, 'color:steelblue')
-			if 'ex' not in tag.get('class', []):
-				tag['class'] = tag.get('class', []) + ['ex']
+		for tag in soup(class_="sec"):
+			tag["class"].remove("sec")
+			if not tag["class"]:
+				del tag["class"]
+			tag["d:priority"] = "2"
+		for tag in soup(lambda x: "color:steelblue" in x.get("style", "")):
+			remove_style(tag, "color:steelblue")
+			if "ex" not in tag.get("class", []):
+				tag["class"] = tag.get("class", []) + ["ex"]
 		for tag in soup(is_green):
-			remove_style(tag, 'color:green')
-			if 'p' not in tag.get('class', ''):
-				tag['class'] = tag.get('class', []) + ['c']
+			remove_style(tag, "color:green")
+			if "p" not in tag.get("class", ""):
+				tag["class"] = tag.get("class", []) + ["c"]
 		for tag in soup(True):
-			if 'style' in tag.attrs:
-				m = margin_re.search(tag['style'])
+			if "style" in tag.attrs:
+				m = margin_re.search(tag["style"])
 				if m:
 					remove_style(tag, m.group(0))
-					tag['class'] = tag.get('class', []) + ['m' + m.group(1)]
-		for tag in soup.select('[href]'):
-			href = tag['href']
-			if not (href.startswith('http:') or href.startswith('https:')):
-				tag['href'] = 'x-dictionary:d:%s' % href
-		for tag in soup('u'):
-			tag.name = 'span'
-			tag['class'] = tag.get('class', []) + ['u']
-		for tag in soup('s'):
-			tag.name = 'del'
+					tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
+		for tag in soup.select("[href]"):
+			href = tag["href"]
+			if not (href.startswith("http:") or href.startswith("https:")):
+				tag["href"] = "x-dictionary:d:%s" % href
+		for tag in soup("u"):
+			tag.name = "span"
+			tag["class"] = tag.get("class", []) + ["u"]
+		for tag in soup("s"):
+			tag.name = "del"
 
 		if title:
-			h1 = BeautifulSoup.Tag(name='h1')
+			h1 = BeautifulSoup.Tag(name="h1")
 			h1.string = title
 			soup.insert(0, h1)
 		# hence the name BeautifulSoup
@@ -237,11 +237,11 @@ def format_clean_content(title, body, BeautifulSoup):
 			.replace('<s>', '<del>').replace('</s>', '</del>')
 
 		# nice header to display
-		content = '<h1>%s</h1>%s' % (title, body) if title else body
-		content = close_tag.sub('<\g<1> />', content)
-		content = img_tag.sub('<img \g<1>/>', content)
-	content = content.replace('&nbsp;', '&#160;')
-	content = nonprintable.sub('', content)
+		content = "<h1>%s</h1>%s" % (title, body) if title else body
+		content = close_tag.sub("<\g<1> />", content)
+		content = img_tag.sub("<img \g<1>/>", content)
+	content = content.replace("&nbsp;", "&#160;")
+	content = nonprintable.sub("", content)
 	return content
 
 

@@ -13,7 +13,7 @@ from os.path import (
 
 import logging
 
-log = logging.getLogger('root')
+log = logging.getLogger("root")
 
 from paths import rootDir
 sys.path.insert(0, rootDir)
@@ -26,8 +26,8 @@ from pyglossary.text_utils import toStr, toBytes
 from pyglossary.os_utils import indir
 
 enable = False
-format = 'Unknown'
-description = 'Unknown'
+format = "Unknown"
+description = "Unknown"
 extentions = []
 readOptions = []
 writeOptions = []

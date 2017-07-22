@@ -25,9 +25,9 @@ from pyglossary.plugins.formats_common import log
 from pyglossary.xml_utils import xml_escape
 
 
-u_pat_html_entry = re.compile('(?:&#x|&#|&)(\\w+);?', re.I)
-u_pat_html_entry_key = re.compile('(?:&#x|&#|&)(\\w+);', re.I)
-b_pat_ascii_char_ref = re.compile(b'(&#\\w+;)', re.I)
+u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.I)
+u_pat_html_entry_key = re.compile("(?:&#x|&#|&)(\\w+);", re.I)
+b_pat_ascii_char_ref = re.compile(b"(&#\\w+;)", re.I)
 
 unkownHtmlEntries = set()
 
@@ -49,10 +49,10 @@ def replaceHtmlEntryNoEscapeCB(u_match):
 		assert isinstance(u_text, str) and isinstance(u_name, str)
 
 	u_res = None
-	if u_text[:2] == '&#':
+	if u_text[:2] == "&#":
 		# character reference
 		try:
-			if u_text[:3].lower() == '&#x':
+			if u_text[:3].lower() == "&#x":
 				code = int(u_name, 16)
 			else:
 				code = int(u_name)
@@ -61,7 +61,7 @@ def replaceHtmlEntryNoEscapeCB(u_match):
 			u_res = chr(code)
 		except (ValueError, OverflowError):
 			u_res = chr(0xFFFD)  # replacement character
-	elif u_text[0] == '&':
+	elif u_text[0] == "&":
 		# named entity
 		try:
 			u_res = chr(html.entities.name2codepoint[u_name])
@@ -116,12 +116,12 @@ def escapeNewlinesCallback(u_match):
 	u_match: instance of _sre.SRE_Match
 	"""
 	ch = u_match.group(0)
-	if ch == '\n':
-		return '\\n'
-	if ch == '\r':
-		return '\\r'
-	if ch == '\\':
-		return '\\\\'
+	if ch == "\n":
+		return "\\n"
+	if ch == "\r":
+		return "\\r"
+	if ch == "\\":
+		return "\\\\"
 	return ch
 
 
@@ -160,7 +160,7 @@ def escapeNewlines(u_text):
 	if log.isDebug():
 		assert isinstance(u_text, str)
 	return re.sub(
-		'[\\r\\n\\\\]',
+		"[\\r\\n\\\\]",
 		escapeNewlinesCallback,
 		u_text,
 	)
@@ -170,8 +170,8 @@ def stripHtmlTags(u_text):
 	if log.isDebug():
 		assert isinstance(text, str)
 	return re.sub(
-		'(?:<[/a-zA-Z].*?(?:>|$))+',
-		' ',
+		"(?:<[/a-zA-Z].*?(?:>|$))+",
+		" ",
 		u_text,
 	)
 
@@ -184,8 +184,8 @@ def removeControlChars(u_text):
 	if log.isDebug():
 		assert isinstance(u_text, str)
 	return re.sub(
-		'[\x00-\x08\x0c\x0e-\x1f]',
-		'',
+		"[\x00-\x08\x0c\x0e-\x1f]",
+		"",
 		u_text,
 	)
 
@@ -194,8 +194,8 @@ def removeNewlines(u_text):
 	if log.isDebug():
 		assert isinstance(u_text, str)
 	return re.sub(
-		'[\r\n]+',
-		' ',
+		"[\r\n]+",
+		" ",
 		u_text,
 	)
 
@@ -207,8 +207,8 @@ def normalizeNewlines(u_text):
 	if log.isDebug():
 		assert isinstance(u_text, str)
 	return re.sub(
-		'[\r\n]+',
-		'\n',
+		"[\r\n]+",
+		"\n",
 		u_text,
 	)
 
@@ -224,7 +224,7 @@ def replaceAsciiCharRefs(b_text, encoding):
 			continue
 		# reference
 		try:
-			if b_part[:3].lower() == '&#x':
+			if b_part[:3].lower() == "&#x":
 				code = int(b_part[3:-1], 16)
 			else:
 				code = int(b_part[2:-1])
@@ -234,9 +234,9 @@ def replaceAsciiCharRefs(b_text, encoding):
 			code = -1
 		if code < 128 or code > 255:
 			continue
-		# no need to escape '<', '>', '&'
+		# no need to escape "<", ">", "&"
 		b_parts[i_part] = bytes([code])
-	return b''.join(b_parts)
+	return b"".join(b_parts)
 
 
 def fixImgLinks(u_text):
@@ -255,25 +255,25 @@ def fixImgLinks(u_text):
 	"""
 	if log.isDebug():
 		assert isinstance(u_text, str)
-	return u_text.replace('\x1e', '').replace('\x1f', '')
+	return u_text.replace("\x1e", "").replace("\x1f", "")
 
 
 def stripDollarIndexes(b_word):
 	if log.isDebug():
 		assert isinstance(b_word, bytes)
 	i = 0
-	b_word_main = b''
+	b_word_main = b""
 	strip_count = 0  # number of sequences found
 	# strip $<index>$ sequences
 	while True:
-		d0 = b_word.find(b'$', i)
+		d0 = b_word.find(b"$", i)
 		if d0 == -1:
 			b_word_main += b_word[i:]
 			break
-		d1 = b_word.find(b'$', d0+1)
+		d1 = b_word.find(b"$", d0+1)
 		if d1 == -1:
 			# log.debug(
-			#	'stripDollarIndexes(%s):\npaired $ is not found' % b_word
+			#	"stripDollarIndexes(%s):\npaired $ is not found" % b_word
 			# )
 			b_word_main += b_word[i:]
 			break
@@ -292,18 +292,18 @@ def stripDollarIndexes(b_word):
 			summary: we must remove any sequence of dollar signs longer
 			than 1 chars
 			"""
-			# log.debug('stripDollarIndexes(%s):\nfound $$'%b_word)
+			# log.debug("stripDollarIndexes(%s):\nfound $$"%b_word)
 			b_word_main += b_word[i:d0]
 			i = d1 + 1
-			while i < len(b_word) and b_word[i] == ord(b'$'):
+			while i < len(b_word) and b_word[i] == ord(b"$"):
 				i += 1
 			if i >= len(b_word):
 				break
 			continue
-		if b_word[d0+1:d1].strip(b'0123456789'):
+		if b_word[d0+1:d1].strip(b"0123456789"):
 			# if has at least one non-digit char
 			# log.debug(
-			#	'stripDollarIndexes(%s):\nnon-digit between $$'%b_word
+			#	"stripDollarIndexes(%s):\nnon-digit between $$'%b_word
 			# )
 			b_word_main += b_word[i:d1]
 			i = d1
@@ -319,8 +319,8 @@ def stripDollarIndexes(b_word):
 		Ihre$1$Ihres
 			"""
 			log.debug(
-				'stripDollarIndexes(%s):\n' % b_word +
-				'second $ is followed by non-space'
+				"stripDollarIndexes(%s):\n" % b_word +
+				"second $ is followed by non-space"
 			)
 			pass
 		b_word_main += b_word[i:d0]

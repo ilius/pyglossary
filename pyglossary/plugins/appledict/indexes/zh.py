@@ -43,10 +43,10 @@ def zh(titles, content):
 
 	for title in titles:
 		# feature: put dot at the end to match only this word
-		indexes.update({title, title + '。'})
+		indexes.update({title, title + "。"})
 
 		# remove all non hieroglyph
-		title = re.sub(r'[^\u4e00-\u9fff]', '', title)
+		title = re.sub(r"[^\u4e00-\u9fff]", "", title)
 		indexes.add(title)
 
 	indexes.update(pinyin_indexes(content))
@@ -58,13 +58,13 @@ def pinyin_indexes(content):
 	pinyin = find_pinyin(content)
 	# assert type(pinyin) == unicode
 
-	if not pinyin or pinyin == '_':
+	if not pinyin or pinyin == "_":
 		return ()
 
 	indexes = set()
 
 	# multiple pronunciations
-	for pinyin in re.split(r',|;', pinyin):
+	for pinyin in re.split(r",|;", pinyin):
 
 		# find all pinyin ranges, use them to rip pinyin out
 		py = [
@@ -77,11 +77,11 @@ def pinyin_indexes(content):
 			return ()
 
 		# just pinyin, with diacritics, separated by whitespace
-		indexes.add('%s.' % color.utf(' '.join(py)))
+		indexes.add("%s." % color.utf(" ".join(py)))
 
 		# pinyin with diacritics replaced by tone numbers
-		indexes.add('%s.' % color.utf(' '.join(
-			['%s%d' % (
+		indexes.add("%s." % color.utf(" ".join(
+			["%s%d" % (
 				color.lowercase_string_by_removing_pinyin_tones(p),
 				color.determine_tone(p)) for p in py])))
 	return indexes
@@ -102,4 +102,4 @@ def find_pinyin(content):
 	return pinyin.text
 
 
-languages['zh'] = zh
+languages["zh"] = zh

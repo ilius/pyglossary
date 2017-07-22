@@ -3,16 +3,16 @@
 from formats_common import *
 
 enable = True
-format = 'Freedict'
-description = 'FreeDict (tei)'
-extentions = ['.tei']
+format = "Freedict"
+description = "FreeDict (tei)"
+extentions = [".tei"]
 readOptions = []
 
 
 def write(glos, filename):
-	fp = open(filename, 'w')
+	fp = open(filename, "w")
 
-	fp.write('''<?xml version="1.0" encoding="UTF-8"?>
+	fp.write("""<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TEI.2 PUBLIC "-//TEI P3//DTD Main Document Type//EN"
 "/usr/share/sgml/tei-3/tei2.dtd" [
 <!ENTITY %% TEI.dictionaries "INCLUDE" > ]>
@@ -27,7 +27,7 @@ def write(glos, filename):
 <sourceDesc><p>%s</p></sourceDesc>
 </fileDesc>
 </teiHeader>
-<text><body>''' % (glos.getInfo('title'), filename))
+<text><body>""" % (glos.getInfo("title"), filename))
 
 	for entry in glos:
 		if entry.isData():
@@ -35,10 +35,10 @@ def write(glos, filename):
 			continue
 		word = entry.getWord()
 		defi = entry.getDefi()
-		fp.write('''<entry>
+		fp.write("""<entry>
 <form><orth>%s</orth></form>
 <gramgrp><pos>n</pos></gramgrp>
 <trans><tr>%s</tr></trans>
-</entry>''' % (word, defi))
-	fp.write('</body></text></tei.2>')
+</entry>""" % (word, defi))
+	fp.write("</body></text></tei.2>")
 	fp.close()

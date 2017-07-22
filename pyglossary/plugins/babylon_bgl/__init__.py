@@ -25,9 +25,9 @@ from .bgl_reader import BglReader as Reader
 from .bgl_reader import readOptions
 
 enable = True
-format = 'BabylonBgl'
-description = 'Babylon (bgl)'
-extentions = ['.bgl']
+format = "BabylonBgl"
+description = "Babylon (bgl)"
+extentions = [".bgl"]
 
 writeOptions = []
 supportsAlternates = True

@@ -6,14 +6,14 @@ from tabfile import Reader as TabfileReader
 from formats_common import *
 
 enable = True
-format = 'Dicformids'
-description = 'DictionaryForMIDs'
-extentions = ['.mids']
+format = "Dicformids"
+description = "DictionaryForMIDs"
+extentions = [".mids"]
 readOptions = []
 writeOptions = []
 
 
-PROP_TEMPLATE = '''#DictionaryForMIDs property file
+PROP_TEMPLATE = """#DictionaryForMIDs property file
 infoText=$name, author: $author
 indexFileMaxSize=$indexFileMaxSize\n
 language1IndexNumberOfSourceEntries=%wordCount
@@ -43,7 +43,7 @@ dictionaryGenerationInputCharEncoding=UTF-8
 language1GenerateIndex=true
 language2DisplayText=$outputlang
 language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEng
-'''
+"""
 
 
 class Reader(object):
@@ -57,10 +57,10 @@ class Reader(object):
 		dicFiles = []
 		orderFileNames = []
 		for fname in os.listdir(dirname):
-			if not fname.startswith('directory'):
+			if not fname.startswith("directory"):
 				continue
 			try:
-				num = re.findall('\d+', fname)[-1]
+				num = re.findall("\d+", fname)[-1]
 			except IndexError:
 				pass
 			else:
@@ -109,9 +109,9 @@ class Writer(object):
 		self._glos = glos
 		self.linesPerDirectoryFile = 500  # 200
 		self.indexFileMaxSize = 32722  # 30000
-		self.directoryPostfix = ''
-		self.indexPostfix = 'Eng'
-		self.dirname = ''
+		self.directoryPostfix = ""
+		self.indexPostfix = "Eng"
+		self.dirname = ""
 
 	def open(self, dirname):
 		self.dirname = dirname
@@ -129,11 +129,11 @@ class Writer(object):
 			# assert len(entryList) == 200
 			dicFp = open(join(
 				self.dirname,
-				'directory%s%d.csv' % (
+				"directory%s%d.csv" % (
 					self.directoryPostfix,
 					dicIndex+1,
 				),
-			), 'w')
+			), "w")
 			for entry in entryList:
 				if entry.isData():
 					# FIXME
@@ -142,7 +142,7 @@ class Writer(object):
 				wordCount += 1
 				word = entry.getWord()
 				defi = entry.getDefi()
-				dicLine = '%s\t%s\n' % (word, defi)
+				dicLine = "%s\t%s\n" % (word, defi)
 				dicPos = dicFp.tell()
 				dicFp.write(dicLine)
 				yield word, dicIndex+1, dicPos
@@ -156,23 +156,23 @@ class Writer(object):
 		glos = self._glos
 		with open(join(
 			self.dirname,
-			'DictionaryForMIDs.properties',
-		), 'w') as fp:
+			"DictionaryForMIDs.properties",
+		), "w") as fp:
 			fp.write(Template(PROP_TEMPLATE).substitute(
-				name=glos.getInfo('name'),
-				author=glos.getInfo('author'),
+				name=glos.getInfo("name"),
+				author=glos.getInfo("author"),
 				indexFileMaxSize=self.indexFileMaxSize,
 				wordCount=self.wordCount,
 				directoryPostfix=self.directoryPostfix,
 				dicMaxSize=self.dicMaxSize+1,
-				language2FilePostfix='fa',  # FIXME
-				inputlang=glos.getInfo('inputlang'),
-				outputlang=glos.getInfo('outputlang'),
+				language2FilePostfix="fa",  # FIXME
+				inputlang=glos.getInfo("inputlang"),
+				outputlang=glos.getInfo("outputlang"),
 			))
 #			open(join(
 #				self.dirname,
-#				'searchlist%s.csv'%self.directoryPostfix
-#			), 'w')  # FIXME
+#				"searchlist%s.csv"%self.directoryPostfix
+#			), "w")  # FIXME
 
 	def nextIndex(self):
 		try:
@@ -181,14 +181,14 @@ class Writer(object):
 			self.indexIndex = 0
 
 		self.indexIndex += 1
-		fname = 'index%s%d.csv' % (self.indexPostfix, self.indexIndex)
+		fname = "index%s%d.csv" % (self.indexPostfix, self.indexIndex)
 		fpath = join(self.dirname, fname)
-		self.indexFp = open(fpath, 'w')
+		self.indexFp = open(fpath, "w")
 
 	def write(self):
 		self.nextIndex()
 		for word, dicIndex, dicPos in self.writeGetIndexGen():
-			indexLine = '%s\t%d-%d-B\n' % (
+			indexLine = "%s\t%d-%d-B\n" % (
 				word,
 				dicIndex + 1,
 				dicPos,

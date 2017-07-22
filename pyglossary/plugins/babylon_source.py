@@ -6,15 +6,15 @@
 from formats_common import *
 
 enable = True
-format = 'BabylonSource'
-description = 'Babylon Source (gls)'
-extentions = ['.gls', '.babylon']
+format = "BabylonSource"
+description = "Babylon Source (gls)"
+extentions = [".gls", ".babylon"]
 readOptions = []
 writeOptions = [
-	'writeInfo',  # bool
-	'newline',  # str, or choice ('\r\n', '\n', or '\r')
-	'encoding',  # str
-	'resources',  # bool
+	"writeInfo",  # bool
+	"newline",  # str, or choice ("\r\n", "\n", or "\r")
+	"encoding",  # str
+	"resources",  # bool
 ]
 
 
@@ -29,57 +29,57 @@ def write(
 	glos,
 	filename,
 	writeInfo=True,
-	newline='',
-	encoding='',
+	newline="",
+	encoding="",
 	resources=True,
 ):
 	g = glos
 	entryFilterFunc = None
-	if encoding.lower() in ('', 'utf8', 'utf-8'):
-		encoding = 'UTF-8'
+	if encoding.lower() in ("", "utf8", "utf-8"):
+		encoding = "UTF-8"
 	elif encoding.lower() in (
-		'arabic',
-		'windows-1256',
-		'windows-arabic',
-		'arabic-windows',
-		'arabic windows',
-		'windows arabic',
+		"arabic",
+		"windows-1256",
+		"windows-arabic",
+		"arabic-windows",
+		"arabic windows",
+		"windows arabic",
 	):
-		encoding = 'windows-1256'
+		encoding = "windows-1256"
 		entryFilterFunc = entryCleanWinArabic
 		if not newline:
-			newline = '\r\n'
+			newline = "\r\n"
 
 	if not newline:
-		newline = '\n'
+		newline = "\n"
 
-	head = ''
+	head = ""
 	if writeInfo:
-		head += '\n'.join([
-			'### Glossary title:%s' % g.getInfo('name'),
-			'### Author:%s' % g.getInfo('author'),
-			'### Description:%s' % g.getInfo('description'),
-			'### Source language:%s' % g.getInfo('inputlang'),
-			'### Source alphabet:%s' % encoding,
-			'### Target language:%s' % g.getInfo('outputlang'),
-			'### Target alphabet:%s' % encoding,
-			'### Browsing enabled?Yes',
-			'### Type of glossary:00000000',
-			'### Case sensitive words?0'
-			'',
-			'### Glossary section:',
-			'',
+		head += "\n".join([
+			"### Glossary title:%s" % g.getInfo("name"),
+			"### Author:%s" % g.getInfo("author"),
+			"### Description:%s" % g.getInfo("description"),
+			"### Source language:%s" % g.getInfo("inputlang"),
+			"### Source alphabet:%s" % encoding,
+			"### Target language:%s" % g.getInfo("outputlang"),
+			"### Target alphabet:%s" % encoding,
+			"### Browsing enabled?Yes",
+			"### Type of glossary:00000000",
+			"### Case sensitive words?0"
+			"",
+			"### Glossary section:",
+			"",
 		])
 
 	g.writeTxt(
-		'\n',
-		'\n\n',
+		"\n",
+		"\n\n",
 		filename=filename,
 		writeInfo=False,
 		rplList=(
-			('\n', '<BR>'),
+			("\n", "<BR>"),
 		),
-		ext='.gls',
+		ext=".gls",
 		head=head,
 		entryFilterFunc=entryFilterFunc,
 		encoding=encoding,

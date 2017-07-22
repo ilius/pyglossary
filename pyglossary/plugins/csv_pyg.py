@@ -23,15 +23,15 @@ from pyglossary.file_utils import fileCountLines
 
 
 enable = True
-format = 'Csv'
-description = 'CSV'
-extentions = ['.csv']
+format = "Csv"
+description = "CSV"
+extentions = [".csv"]
 readOptions = [
-	'encoding',  # str
+	"encoding",  # str
 ]
 writeOptions = [
-	'encoding',  # str
-	'resources',  # bool
+	"encoding",  # str
+	"resources",  # bool
 ]
 supportsAlternates = True
 
@@ -42,27 +42,27 @@ class Reader(object):
 		self.clear()
 
 	def clear(self):
-		self._filename = ''
+		self._filename = ""
 		self._file = None
 		self._leadingLinesCount = 0
 		self._wordCount = None
 		self._pos = -1
 		self._csvReader = None
-		self._resDir = ''
+		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self, filename, encoding='utf-8'):
+	def open(self, filename, encoding="utf-8"):
 		self._filename = filename
-		self._file = open(filename, 'r', encoding=encoding)
+		self._file = open(filename, "r", encoding=encoding)
 		self._csvReader = csv.reader(
 			self._file,
-			dialect='excel',
+			dialect="excel",
 		)
-		self._resDir = filename + '_res'
+		self._resDir = filename + "_res"
 		if isdir(self._resDir):
 			self._resFileNames = os.listdir(self._resDir)
 		else:
-			self._resDir = ''
+			self._resDir = ""
 			self._resFileNames = []
 
 	def close(self):
@@ -70,19 +70,19 @@ class Reader(object):
 			try:
 				self._file.close()
 			except:
-				log.exception('error while closing csv file')
+				log.exception("error while closing csv file")
 		self.clear()
 
 	def __len__(self):
 		if self._wordCount is None:
-			log.debug('Try not to use len(reader) as it takes extra time')
+			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(self._filename) - \
 				self._leadingLinesCount
 		return self._wordCount + len(self._resFileNames)
 
 	def __iter__(self):
 		if not self._csvReader:
-			log.error('%s is not open, can not iterate' % self)
+			log.error("%s is not open, can not iterate" % self)
 			raise StopIteration
 
 		wordCount = 0
@@ -95,11 +95,11 @@ class Reader(object):
 				word = row[0]
 				defi = row[1]
 			except IndexError:
-				log.error('invalid row: %r' % row)
+				log.error("invalid row: %r" % row)
 				yield None  # update progressbar
 				continue
 			try:
-				alts = row[2].split(',')
+				alts = row[2].split(",")
 			except IndexError:
 				pass
 			else:
@@ -109,21 +109,21 @@ class Reader(object):
 
 		resDir = self._resDir
 		for fname in self._resFileNames:
-			with open(join(resDir, fname), 'rb') as fromFile:
+			with open(join(resDir, fname), "rb") as fromFile:
 				yield self._glos.newDataEntry(
 					fname,
 					fromFile.read(),
 				)
 
 
-def write(glos, filename, encoding='utf-8', resources=True):
-	resDir = filename + '_res'
+def write(glos, filename, encoding="utf-8", resources=True):
+	resDir = filename + "_res"
 	if not isdir(resDir):
 		os.mkdir(resDir)
-	with open(filename, 'w', encoding=encoding) as csvfile:
+	with open(filename, "w", encoding=encoding) as csvfile:
 		writer = csv.writer(
 			csvfile,
-			dialect='excel',
+			dialect="excel",
 			quoting=csv.QUOTE_ALL,  # FIXME
 		)
 		for entry in glos:
@@ -143,7 +143,7 @@ def write(glos, filename, encoding='utf-8', resources=True):
 				defi,
 			]
 			if alts:
-				row.append(','.join(alts))
+				row.append(",".join(alts))
 
 			writer.writerow(row)
 

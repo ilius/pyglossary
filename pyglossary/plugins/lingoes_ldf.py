@@ -5,44 +5,44 @@ from pyglossary.text_reader import TextGlossaryReader
 from pyglossary.file_utils import fileCountLines
 
 enable = True
-format = 'LingoesLDF'
-description = 'Lingoes Source (LDF)'
-extentions = ['.ldf']
+format = "LingoesLDF"
+description = "Lingoes Source (LDF)"
+extentions = [".ldf"]
 readOptions = []
 writeOptions = [
-	'newline',  # str, or choice ('\r\n', '\n', or '\r')
-	'resources',  # bool
+	"newline",  # str, or choice ("\r\n", "\n", or "\r")
+	"resources",  # bool
 ]
 
 infoKeys = [
-	'title',
-	'description',
-	'author',
-	'email',
-	'website',
-	'copyright',
+	"title",
+	"description",
+	"author",
+	"email",
+	"website",
+	"copyright",
 ]
 
 
 class Reader(TextGlossaryReader):
 	def __len__(self):
 		if self._wordCount is None:
-			log.debug('Try not to use len(reader) as it takes extra time')
+			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(
 				self._filename,
-				newline='\n\n',
+				newline="\n\n",
 			) - self._leadingLinesCount
 		return self._wordCount
 
 	def isInfoWord(self, word):
 		if isinstance(word, str):
-			return word.startswith('#')
+			return word.startswith("#")
 		else:
 			return False
 
 	def fixInfoWord(self, word):
 		if isinstance(word, str):
-			return word.lstrip('#')
+			return word.lstrip("#")
 		else:
 			return word
 
@@ -57,7 +57,7 @@ class Reader(TextGlossaryReader):
 			line = self._file.readline()
 			if not line:
 				raise StopIteration
-			line = line.rstrip('\n\r')  # FIXME
+			line = line.rstrip("\n\r")  # FIXME
 			if line:
 				entryLines.append(line)
 				continue
@@ -67,21 +67,21 @@ class Reader(TextGlossaryReader):
 				return
 			if len(entryLines) < 2:
 				log.error(
-					'invalid block near line %s' % fileObj.line +
-					' in file %s' % filename
+					"invalid block near line %s" % fileObj.line +
+					" in file %s" % filename
 				)
 				return
 			word = entryLines[0]
-			defi = '\n'.join(entryLines[1:])
-			defi = defi.replace('<br/>', '\n')  # FIXME
+			defi = "\n".join(entryLines[1:])
+			defi = defi.replace("<br/>", "\n")  # FIXME
 
-			word = [p.strip() for p in word.split('|')]
+			word = [p.strip() for p in word.split("|")]
 
 			return word, defi
 
 
 def read(glos, filename):
-	glos.setDefaultDefiFormat('h')
+	glos.setDefaultDefiFormat("h")
 	fileObj = FileLineWrapper(open(filename))
 	entryLines = []
 
@@ -90,15 +90,15 @@ def read(glos, filename):
 			return
 		if len(entryLines) < 2:
 			log.error(
-				'invalid block near line %s' % fileObj.line +
-				' in file %s' % filename
+				"invalid block near line %s" % fileObj.line +
+				" in file %s" % filename
 			)
 			return
 		word = entryLines[0]
-		defi = '\n'.join(entryLines[1:])
-		defi = defi.replace('<br/>', '\n')  # FIXME
+		defi = "\n".join(entryLines[1:])
+		defi = defi.replace("<br/>", "\n")  # FIXME
 
-		word = [p.strip() for p in word.split('|')]
+		word = [p.strip() for p in word.split("|")]
 
 		glos.addEntry(
 			word,
@@ -107,15 +107,15 @@ def read(glos, filename):
 
 	for line in fileObj:
 		line = line.strip()
-		if not line.startswith('###'):
+		if not line.startswith("###"):
 			if line:
 				entryLines.append(line)
 			break
-		parts = line[3:].split(':')
+		parts = line[3:].split(":")
 		if not parts:
 			continue
 		key = parts[0].lower()
-		value = ' '.join(parts[1:]).strip()
+		value = " ".join(parts[1:]).strip()
 		glos.setInfo(key, value)
 	# info lines finished
 
@@ -133,27 +133,27 @@ def read(glos, filename):
 def write(
 	glos,
 	filename,
-	newline='\n',
+	newline="\n",
 	resources=True,
 ):
 	g = glos
-	head = '\n'.join([
-		'###%s: %s' % (
+	head = "\n".join([
+		"###%s: %s" % (
 			key.capitalize(),
 			g.getInfo(key),
 		)
 		for key in infoKeys
 	])
-	head += '\n'
+	head += "\n"
 	g.writeTxt(
-		'\n',
-		'\n\n',
+		"\n",
+		"\n\n",
 		filename=filename,
 		writeInfo=False,
 		rplList=(
-			('\n', '<br/>'),
+			("\n", "<br/>"),
 		),
-		ext='.ldf',
+		ext=".ldf",
 		head=head,
 		newline=newline,
 		resources=resources,

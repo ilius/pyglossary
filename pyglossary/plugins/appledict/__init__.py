@@ -34,19 +34,19 @@ import xdxf
 sys.setrecursionlimit(10000)
 
 enable = True
-format = 'AppleDict'
-description = 'AppleDict Source (xml)'
-extentions = ['.xml']
+format = "AppleDict"
+description = "AppleDict Source (xml)"
+extentions = [".xml"]
 readOptions = []
 writeOptions = [
-	'cleanHTML',  # bool
-	'css',  # str or None
-	'xsl',  # str or None
-	'defaultPrefs',  # dict or None, FIXME
-	'prefsHTML',  # str or None
-	'frontBackMatter',  # str or None
-	'jing',  # str or None
-	'indexes',  # str or None
+	"cleanHTML",  # bool
+	"css",  # str or None
+	"xsl",  # str or None
+	"defaultPrefs",  # dict or None, FIXME
+	"prefsHTML",  # str or None
+	"frontBackMatter",  # str or None
+	"jing",  # str or None
+	"indexes",  # str or None
 ]
 
 
@@ -63,7 +63,7 @@ def write_header(glos, toFile, frontBackMatter):
 	)
 
 	if frontBackMatter:
-		with open(frontBackMatter, 'r') as front_back_matter:
+		with open(frontBackMatter, "r") as front_back_matter:
 			toFile.write(front_back_matter.read())
 
 
@@ -72,14 +72,14 @@ def format_default_prefs(defaultPrefs):
 	:type defaultPrefs: dict or None
 
 	as by 14th of Jan 2016, it is highly recommended that prefs should contain
-	{'version': '1'}, otherwise Dictionary.app does not keep user changes
+	{"version": "1"}, otherwise Dictionary.app does not keep user changes
 	between restarts.
 	"""
 	if not defaultPrefs:
 		return ""
 	if not isinstance(defaultPrefs, dict):
 		raise TypeError("defaultPrefs not a dictionary: %r" % defaultPrefs)
-	if str(defaultPrefs.get('version', None)) != '1':
+	if str(defaultPrefs.get("version", None)) != "1":
 		log.error("default prefs does not contain {'version': '1'}.  prefs "
 				  "will not be persistent between Dictionary.app restarts.")
 	return "\n".join("\t\t<key>%s</key>\n\t\t<string>%s</string>" % i
@@ -87,14 +87,14 @@ def format_default_prefs(defaultPrefs):
 
 
 def write_css(fname, css_file):
-	with open(fname, 'wb') as toFile:
+	with open(fname, "wb") as toFile:
 		if css_file:
-			with open(css_file, 'rb') as fromFile:
+			with open(css_file, "rb") as fromFile:
 				toFile.write(fromFile.read())
 		else:
 			toFile.write(pkgutil.get_data(
 				__name__,
-				'templates/Dictionary.css',
+				"templates/Dictionary.css",
 			))
 
 
@@ -127,9 +127,9 @@ def write(
 
 	:type defaultPrefs: dict or None
 	:param defaultPrefs: Default prefs in python dictionary literal format,
-	i.e. {'key1': 'value1', "key2": "value2", ...}.  All keys and values must
+	i.e. {"key1": "value1", "key2": "value2", ...}.  All keys and values must
 	be quoted strings; not allowed characters (e.g. single/double quotes,
-	equal sign '=', semicolon) must be escaped as hex code according to
+	equal sign "=", semicolon) must be escaped as hex code according to
 	python string literal rules.
 
 	:type prefsHTML: str or None
@@ -160,13 +160,13 @@ def write(
 		BeautifulSoup = get_beautiful_soup()
 		if not BeautifulSoup:
 			log.warning(
-				'cleanHTML option passed but BeautifulSoup not found.  ' +
-				'to fix this run `sudo pip3 install lxml beautifulsoup4 html5lib`'
+				"cleanHTML option passed but BeautifulSoup not found.  " +
+				"to fix this run `sudo pip3 install lxml beautifulsoup4 html5lib`"
 			)
 	else:
 		BeautifulSoup = None
 
-	fileNameBase = basename(dirPath).replace('.', '_')
+	fileNameBase = basename(dirPath).replace(".", "_")
 	filePathBase = join(dirPath, fileNameBase)
 	# before chdir (outside indir block)
 	css = abspath_or_None(css)
@@ -177,13 +177,13 @@ def write(
 	generate_id = id_generator()
 	generate_indexes = indexes_generator(indexes)
 
-	glos.setDefaultDefiFormat('h')
+	glos.setDefaultDefiFormat("h")
 
-	myResDir = join(dirPath, 'OtherResources')
+	myResDir = join(dirPath, "OtherResources")
 	if not isdir(myResDir):
 		os.mkdir(myResDir)
 
-	with open(filePathBase + '.xml', 'w', encoding='utf8') as toFile:
+	with open(filePathBase + ".xml", "w", encoding="utf8") as toFile:
 		write_header(glos, toFile, frontBackMatter)
 		for entryI, entry in enumerate(glos):
 			if glos.isData():
@@ -205,10 +205,10 @@ def write(
 				title_attr = BeautifulSoup.dammit.EntitySubstitution\
 					.substitute_xml(long_title, True)
 			else:
-				title_attr = '"%s"' % long_title
+				title_attr = str(long_title)
 
 			content_title = long_title
-			if entry.getDefiFormat() == 'x':
+			if entry.getDefiFormat() == "x":
 				defi = xdxf.xdxf_to_html(defi)
 				content_title = None
 			content = format_clean_content(content_title, defi, BeautifulSoup)
@@ -217,10 +217,10 @@ def write(
 				'<d:entry id="%s" d:title=%s>\n' % (_id, title_attr) +
 				generate_indexes(long_title, alts, content, BeautifulSoup) +
 				content +
-				'\n</d:entry>\n'
+				"\n</d:entry>\n"
 			)
 
-		toFile.write('</d:dictionary>\n')
+		toFile.write("</d:dictionary>\n")
 
 	if xsl:
 		shutil.copy(xsl, myResDir)
@@ -228,42 +228,42 @@ def write(
 	if prefsHTML:
 		shutil.copy(prefsHTML, myResDir)
 
-	write_css(filePathBase + '.css', css)
+	write_css(filePathBase + ".css", css)
 
-	with open(join(dirPath, 'Makefile'), 'w') as toFile:
+	with open(join(dirPath, "Makefile"), "w") as toFile:
 		toFile.write(
 			toStr(pkgutil.get_data(
 				__name__,
-				'templates/Makefile',
-			)) % {'dict_name': fileNameBase}
+				"templates/Makefile",
+			)) % {"dict_name": fileNameBase}
 		)
 
-	copyright = glos.getInfo('copyright')
+	copyright = glos.getInfo("copyright")
 	if BeautifulSoup:
 		# strip html tags
-		copyright = '%s' % BeautifulSoup.BeautifulSoup(
+		copyright = str(BeautifulSoup.BeautifulSoup(
 			copyright,
 			"lxml"
-		).text
+		).text)
 
 	# if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
 	# present in Info.plist, Dictionary.app will crash.
-	with open(filePathBase + '.plist', 'w', encoding="utf-8") as toFile:
+	with open(filePathBase + ".plist", "w", encoding="utf-8") as toFile:
 		toFile.write(
 			toStr(pkgutil.get_data(
 				__name__,
-				'templates/Info.plist',
+				"templates/Info.plist",
 			)) % {
 				"CFBundleIdentifier":
-					fileNameBase.replace(' ', ''),  # identifier must be unique
+					fileNameBase.replace(" ", ""),  # identifier must be unique
 				"CFBundleDisplayName":
-					glos.getInfo('name'),
+					glos.getInfo("name"),
 				"CFBundleName":
 					fileNameBase,
 				"DCSDictionaryCopyright":
 					copyright,
 				"DCSDictionaryManufacturerName":
-					glos.getInfo('author'),
+					glos.getInfo("author"),
 				"DCSDictionaryXSL":
 					basename(xsl) if xsl else "",
 				"DCSDictionaryDefaultPrefs":
@@ -279,4 +279,4 @@ def write(
 
 	if jing == "yes":
 		from .jing import run as jing_run
-		jing_run(filePathBase + '.xml')
+		jing_run(filePathBase + ".xml")

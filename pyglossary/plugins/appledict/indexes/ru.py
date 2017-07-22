@@ -74,7 +74,7 @@ def _ru(title, a, a_norm):
 			for x in normal_form.lexeme:
 				word = x.word
 				# Apple Dictionary Services see no difference between
-				# 'й' and 'и', 'ё' and 'е', so we're trying to avoid
+				# "й" and "и", "ё" and "е", so we're trying to avoid
 				# "* Duplicate index. Skipped..." warning.
 				# new: return indexes with original letters but check for
 				# occurence against "normal forms".
@@ -85,7 +85,7 @@ def _ru(title, a, a_norm):
 
 
 def normalize(word):
-	return word.lower().replace('й', 'и').replace('ё', 'е').replace('-', ' ')
+	return word.lower().replace("й", "и").replace("ё", "е").replace("-", " ")
 
 
-languages['ru'] = ru
+languages["ru"] = ru
