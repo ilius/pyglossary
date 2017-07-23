@@ -576,9 +576,19 @@ class Glossary(object):
 			self.setInfo('name', split(filename)[1])
 		self._progressbar = progressbar
 
-		try:
+		if format in self.readerClasses:
 			Reader = self.readerClasses[format]
-		except KeyError:
+			reader = Reader(self)
+			reader.open(filename, **options)
+			if direct:
+				self._readers.append(reader)
+				log.info(
+					'Using Reader class from %s plugin' % format +
+					' for direct conversion without loading into memory'
+				)
+			else:
+				self.loadReader(reader)
+		else:
 			if direct:
 				log.warning(
 					'No `Reader` class found in %s plugin' % format +
@@ -593,17 +603,6 @@ class Glossary(object):
 			#	return False
 			if delFile:
 				os.remove(filename)
-		else:
-			reader = Reader(self)
-			reader.open(filename, **options)
-			if direct:
-				self._readers.append(reader)
-				log.info(
-					'Using Reader class from %s plugin' % format +
-					' for direct conversion without loading into memory'
-				)
-			else:
-				self.loadReader(reader)
 
 		self._updateIter()
 
