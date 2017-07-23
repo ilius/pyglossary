@@ -244,25 +244,26 @@ class StarDictReader(object):
         else:
             dictFd = open(self.fileBasePath+'.dict', 'rb')
 
-        for index, (word, defiOffset, defiSize) in enumerate(indexData):
-            if not word:
+        for index, (rawWord, defiOffset, defiSize) in enumerate(indexData):
+            # rawWord is bytes
+            if not rawWord:
                 continue
 
             dictFd.seek(defiOffset)
             if dictFd.tell() != defiOffset:
-                log.error("Unable to read definition for word \"{0}\"".format(word))
+                log.error("Unable to read definition for word \"{0}\"".format(rawWord))
                 continue
 
             data = dictFd.read(defiSize)
 
             if len(data) != defiSize:
-                log.error("Unable to read definition for word \"{0}\"".format(word))
+                log.error("Unable to read definition for word \"{0}\"".format(rawWord))
                 continue
 
             if sametypesequence:
-                rawDefis = self.parseDefiBlockCompact(data, sametypesequence, word)
+                rawDefis = self.parseDefiBlockCompact(data, sametypesequence, rawWord)
             else:
-                rawDefis = self.parseDefiBlockGeneral(data, word)
+                rawDefis = self.parseDefiBlockGeneral(data, rawWord)
 
             if not rawDefis:
                 continue
@@ -290,7 +291,7 @@ class StarDictReader(object):
             if not defiFormat:
                 log.warning("Definition format %s is not supported"%defiFormat)
             
-            word = toStr(word)
+            word = toStr(rawWord)
 
             self.glos.addEntry(
                 [word] + synData.get(index, []),
@@ -338,13 +339,15 @@ class StarDictReader(object):
         return synData
 
 
-    def parseDefiBlockCompact(self, data, sametypesequence, word):
+    def parseDefiBlockCompact(self, data, sametypesequence, rawWord):
         """
             Parse definition block when sametypesequence option is specified.
         """
+        # data is bytes
+        # rawWord is bytes
         sametypesequence = toBytes(sametypesequence)
         assert len(sametypesequence) > 0
-        dataFileCorruptedError = "Data file is corrupted. Word \"{0}\"".format(word)
+        dataFileCorruptedError = "Data file is corrupted. Word \"{0}\"".format(rawWord)
         res = []
         i = 0
         for t in sametypesequence[:-1]:
@@ -353,7 +356,7 @@ class StarDictReader(object):
                 return None
             if isAsciiLower(t):
                 beg = i
-                i = data.find('\x00', beg)
+                i = data.find(b'\x00', beg)
                 if i < 0:
                     log.error(dataFileCorruptedError)
                     return None
@@ -387,11 +390,13 @@ class StarDictReader(object):
 
         return res
 
-    def parseDefiBlockGeneral(self, data, word):
+    def parseDefiBlockGeneral(self, data, rawWord):
         """
             Parse definition block when sametypesequence option is not specified.
         """
-        dataFileCorruptedError = "Data file is corrupted. Word \"{0}\"".format(word)
+        # data is bytes
+        # rawWord is bytes
+        dataFileCorruptedError = "Data file is corrupted. Word \"{0}\"".format(rawWord)
         res = []
         i = 0
         while i < len(data):
