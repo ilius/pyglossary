@@ -53,7 +53,6 @@ Supported formats
 | Sdictionary Binary                | .dct          | X     |        |
 | Sdictionary Source                | .sdct         |       | X      |
 | SQL                               | .sql          |       | X      |
-| SQLite 3                          | .sqlite       | X     | X      |
 | StarDict                          | .ifo          | X     | X      |
 | Tabfile                           | .txt, .dic    | X     | X      |
 | TreeDict                          |               |       | X      |
