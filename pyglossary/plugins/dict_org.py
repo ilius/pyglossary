@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
+from pyglossary.file_utils import fileCountLines
 
 enable = True
 format = 'DictOrg'
@@ -82,16 +83,18 @@ class Reader(object):
         else:
             self._dictFp = open(filename+'.dict', 'rb')
     def close(self):
-        try:
-            self._indexFp.close()
-        except:
-            log.exception('error while closing index file')
-        self._indexFp = None
-        try:
-            self._dictFp.close()
-        except:
-            log.exception('error while closing dict file')
-        self._dictFp = None
+        if self._indexFp is not None:
+            try:
+                self._indexFp.close()
+            except:
+                log.exception('error while closing index file')
+            self._indexFp = None
+        if self._dictFp is not None:
+            try:
+                self._dictFp.close()
+            except:
+                log.exception('error while closing dict file')
+            self._dictFp = None
     def __len__(self):
         if self._len is None:
             log.debug('Try not to use len(reader) as it takes extra time')
