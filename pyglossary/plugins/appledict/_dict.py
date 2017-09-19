@@ -143,13 +143,17 @@ href_re = re.compile(r'''href=(["'])(.*?)\1''')
 
 
 def href_sub(x):
-	return x.group() if x.groups()[1].startswith("http") \
-		else "href=%s" % quoteattr(
-			"x-dictionary:d:" + unescape(
-				x.groups()[1],
-				{"&quot;": '"'},
-			)
+	href = x.groups()[1]
+	if href.startswith("http"):
+		return x.group()
+	if href.startswith("bword://"):
+		href = href[len("bword://"):]
+	return "href=%s" % quoteattr(
+		"x-dictionary:d:" + unescape(
+			href,
+			{"&quot;": '"'},
 		)
+	)
 
 
 def is_green(x):
@@ -208,6 +212,8 @@ def format_clean_content(title, body, BeautifulSoup):
 					tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
 		for tag in soup.select("[href]"):
 			href = tag["href"]
+			if href.startswith("bword://"):
+				href = href[len("bword://"):]
 			if not (href.startswith("http:") or href.startswith("https:")):
 				tag["href"] = "x-dictionary:d:%s" % href
 		for tag in soup("u"):
