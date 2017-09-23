@@ -186,7 +186,7 @@ def write(
 	with open(filePathBase + ".xml", "w", encoding="utf8") as toFile:
 		write_header(glos, toFile, frontBackMatter)
 		for entryI, entry in enumerate(glos):
-			if glos.isData():
+			if entry.isData():
 				entry.save(myResDir)
 				continue
 
