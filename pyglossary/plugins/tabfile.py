@@ -5,29 +5,29 @@ from pyglossary.text_reader import TextGlossaryReader
 from pyglossary.text_utils import escapeNTB, unescapeNTB, splitByBarUnescapeNTB
 
 enable = True
-format = 'Tabfile'
-description = 'Tabfile (txt, dic)'
-extentions = ['.txt', '.tab', '.dic']
+format = "Tabfile"
+description = "Tabfile (txt, dic)"
+extentions = [".txt", ".tab", ".dic"]
 readOptions = [
-	'encoding',
+	"encoding",
 ]
 writeOptions = [
-	'encoding',  # str
-	'writeInfo',  # bool
-	'resources',  # bool
+	"encoding",  # str
+	"writeInfo",  # bool
+	"resources",  # bool
 ]
 
 
 class Reader(TextGlossaryReader):
 	def isInfoWord(self, word):
 		if isinstance(word, str):
-			return word.startswith('#')
+			return word.startswith("#")
 		else:
 			return False
 
 	def fixInfoWord(self, word):
 		if isinstance(word, str):
-			return word.lstrip('#')
+			return word.lstrip("#")
 		else:
 			return word
 
@@ -41,14 +41,14 @@ class Reader(TextGlossaryReader):
 		if not line:
 			return
 		###
-		word, tab, defi = line.partition('\t')
+		word, tab, defi = line.partition("\t")
 		if not tab:
 			log.error(
-				'Warning: line starting with "%s" has no tab!' % line[:10]
+				"Warning: line starting with \"%s\" has no tab!" % line[:10]
 			)
 			return
 		###
-		if self._glos.getPref('enable_alts', True):
+		if self._glos.getPref("enable_alts", True):
 			word = splitByBarUnescapeNTB(word)
 			if len(word) == 1:
 				word = word[0]
@@ -63,7 +63,7 @@ class Reader(TextGlossaryReader):
 def write(
 	glos,
 	filename,
-	encoding='utf-8',
+	encoding="utf-8",
 	writeInfo=True,
 	resources=True,
 ):

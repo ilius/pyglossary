@@ -57,8 +57,8 @@ from .text_utils import (
 from .os_utils import indir
 
 
-homePage = 'https://github.com/ilius/pyglossary'
-log = logging.getLogger('root')
+homePage = "https://github.com/ilius/pyglossary"
+log = logging.getLogger("root")
 
 file = io.BufferedReader
 
@@ -81,19 +81,19 @@ class Glossary(object):
 
 	# Should be changed according to plugins? FIXME
 	infoKeysAliasDict = {
-		'title': 'name',
-		'bookname': 'name',
-		'dbname': 'name',
+		"title": "name",
+		"bookname": "name",
+		"dbname": "name",
 		##
-		'sourcelang': 'sourceLang',
-		'inputlang': 'sourceLang',
-		'origlang': 'sourceLang',
+		"sourcelang": "sourceLang",
+		"inputlang": "sourceLang",
+		"origlang": "sourceLang",
 		##
-		'targetlang': 'targetLang',
-		'outputlang': 'targetLang',
-		'destlang': 'targetLang',
+		"targetlang": "targetLang",
+		"outputlang": "targetLang",
+		"destlang": "targetLang",
 		##
-		'license': 'copyright',
+		"license": "copyright",
 	}
 	plugins = {}  # format => pluginModule
 	readFormats = []
@@ -118,9 +118,9 @@ class Glossary(object):
 		"""
 		executed on startup.  as name implies, loads plugins from directory
 		"""
-		log.debug('Loading plugins from directory: %r' % directory)
+		log.debug("Loading plugins from directory: %r" % directory)
 		if not isdir(directory):
-			log.error('Invalid plugin directory: %r' % directory)
+			log.error("Invalid plugin directory: %r" % directory)
 			return
 
 		sys.path.append(directory)
@@ -133,11 +133,11 @@ class Glossary(object):
 		try:
 			plugin = __import__(pluginName)
 		except Exception as e:
-			log.exception('Error while importing plugin %s' % pluginName)
+			log.exception("Error while importing plugin %s" % pluginName)
 			return
 
-		if (not hasattr(plugin, 'enable')) or (not plugin.enable):
-			log.debug('Plugin disabled or not a plugin: %s' % pluginName)
+		if (not hasattr(plugin, "enable")) or (not plugin.enable):
+			log.debug("Plugin disabled or not a plugin: %s" % pluginName)
 			return
 
 		format = plugin.format
@@ -149,10 +149,10 @@ class Glossary(object):
 		elif not isinstance(extentions, tuple):
 			extentions = tuple(extentions)
 
-		if hasattr(plugin, 'description'):
+		if hasattr(plugin, "description"):
 			desc = plugin.description
 		else:
-			desc = '%s (%s)' % (format, extentions[0])
+			desc = "%s (%s)" % (format, extentions[0])
 
 		cls.plugins[format] = plugin
 		cls.descFormat[desc] = format
@@ -169,16 +169,16 @@ class Glossary(object):
 			pass
 		else:
 			for attr in (
-				'__init__',
-				'open',
-				'close',
-				'__len__',
-				'__iter__',
+				"__init__",
+				"open",
+				"close",
+				"__len__",
+				"__iter__",
 			):
 				if not hasattr(Reader, attr):
 					log.error(
-						'Invalid Reader class in "%s" plugin' % format +
-						', no "%s" method' % attr
+						"Invalid Reader class in \"%s\" plugin" % format +
+						", no \"%s\" method" % attr
 					)
 					break
 			else:
@@ -196,16 +196,16 @@ class Glossary(object):
 			cls.readFormats.append(format)
 			cls.readExt.append(extentions)
 			cls.readDesc.append(desc)
-			cls.formatsReadOptions[format] = getattr(plugin, 'readOptions', [])
+			cls.formatsReadOptions[format] = getattr(plugin, "readOptions", [])
 
-		if hasattr(plugin, 'write'):
+		if hasattr(plugin, "write"):
 			cls.writeFunctions[format] = plugin.write
 			cls.writeFormats.append(format)
 			cls.writeExt.append(extentions)
 			cls.writeDesc.append(desc)
 			cls.formatsWriteOptions[format] = getattr(
 				plugin,
-				'writeOptions',
+				"writeOptions",
 				[]
 			)
 
@@ -225,7 +225,7 @@ class Glossary(object):
 				try:
 					reader.close()
 				except Exception:
-					log.exception('')
+					log.exception("")
 		self._readers = []
 
 		self._iter = None
@@ -233,8 +233,8 @@ class Glossary(object):
 		self._sortKey = None
 		self._sortCacheSize = 1000
 
-		self._filename = ''
-		self._defaultDefiFormat = 'm'
+		self._filename = ""
+		self._defaultDefiFormat = "m"
 		self._progressbar = True
 
 	def __init__(self, info=None, ui=None):
@@ -247,13 +247,13 @@ class Glossary(object):
 		if info:
 			if not isinstance(info, (dict, odict)):
 				raise TypeError(
-					'Glossary: `info` has invalid type'
-					', dict or OrderedDict expected'
+					"Glossary: `info` has invalid type"
+					", dict or OrderedDict expected"
 				)
 			for key, value in info.items():
 				self.setInfo(key, value)
 
-		'''
+		"""
 		self._data is a list of tuples with length 2 or 3:
 			(word, definition)
 			(word, definition, defiFormat)
@@ -261,26 +261,26 @@ class Glossary(object):
 				(containing word and alternates)
 
 			defiFormat: format of the definition:
-				'm': plain text
-				'h': html
-				'x': xdxf
-		'''
+				"m": plain text
+				"h": html
+				"x": xdxf
+		"""
 		self.ui = ui
 
 	def updateEntryFilters(self):
 		self._entryFilters = []
-		pref = getattr(self.ui, 'pref', {})
+		pref = getattr(self.ui, "pref", {})
 
 		self._entryFilters.append(StripEntryFilter(self))
 		self._entryFilters.append(NonEmptyWordFilter(self))
 
-		if pref.get('skipResources', False):
+		if pref.get("skipResources", False):
 			self._entryFilters.append(SkipDataEntryFilter(self))
 
-		if pref.get('utf8Check', True):
+		if pref.get("utf8Check", True):
 			self._entryFilters.append(FixUnicodeFilter(self))
 
-		if pref.get('lower', True):
+		if pref.get("lower", True):
 			self._entryFilters.append(LowerWordFilter(self))
 
 		self._entryFilters.append(LangEntryFilter(self))
@@ -289,7 +289,7 @@ class Glossary(object):
 		self._entryFilters.append(NonEmptyDefiFilter(self))
 
 	def __str__(self):
-		return 'glossary.Glossary'
+		return "glossary.Glossary"
 
 	def addEntryObj(self, entry):
 		self._data.append(entry.getRaw())
@@ -313,7 +313,7 @@ class Glossary(object):
 		wordCount = len(self._data)
 		progressbar = self.ui and self._progressbar
 		if progressbar:
-			self.progressInit('Writing')
+			self.progressInit("Writing")
 		for index, rawEntry in enumerate(self._data):
 			yield Entry.fromRaw(
 				rawEntry,
@@ -332,11 +332,11 @@ class Glossary(object):
 				try:
 					wordCount = len(reader)
 				except Exception:
-					log.exception('')
+					log.exception("")
 				if wordCount:
 					progressbar = True
 			if progressbar:
-				self.progressInit('Converting')
+				self.progressInit("Converting")
 			try:
 				for index, entry in enumerate(reader):
 					yield entry
@@ -361,8 +361,8 @@ class Glossary(object):
 	def __iter__(self):
 		if self._iter is None:
 			log.error(
-				'Trying to iterate over a blank Glossary'
-				', must call `glos.read` first'
+				"Trying to iterate over a blank Glossary"
+				", must call `glos.read` first"
 			)
 			return iter([])
 		return self._iter
@@ -375,7 +375,7 @@ class Glossary(object):
 				assert len(bucket) == 100
 				for entry in bucket:
 					print(entry.getWord())
-				print('-----------------')
+				print("-----------------")
 		"""
 		bucket = []
 		for entry in self:
@@ -418,7 +418,7 @@ class Glossary(object):
 		except KeyError:
 			pass
 
-		return self._info.get(key, '')  # '' or None as default? FIXME
+		return self._info.get(key, "")  # "" or None as default? FIXME
 
 	def setInfo(self, key, value):
 		#  FIXME
@@ -432,7 +432,7 @@ class Glossary(object):
 			pass
 
 		if origKey != key:
-			log.debug('setInfo: %s -> %s' % (origKey, key))
+			log.debug("setInfo: %s -> %s" % (origKey, key))
 
 		self._info[key] = value
 
@@ -473,7 +473,7 @@ class Glossary(object):
 	def read(
 		self,
 		filename,
-		format='',
+		format="",
 		direct=False,
 		progressbar=True,
 		**options
@@ -481,7 +481,7 @@ class Glossary(object):
 		"""
 		filename (str): name/path of input file
 		format (str): name of input format,
-					  or '' to detect from file extention
+					  or "" to detect from file extention
 		direct (bool): enable direct mode
 		"""
 		filename = abspath(filename)
@@ -490,59 +490,59 @@ class Glossary(object):
 		# (read is called before with direct=True)
 		if self._readers and not direct:
 			raise ValueError(
-				'there are already %s readers' % len(self._readers) +
-				', you can not read with direct=False mode'
+				"there are already %s readers" % len(self._readers) +
+				", you can not read with direct=False mode"
 			)
 
 		self.updateEntryFilters()
 		###
 		delFile = False
 		ext = get_ext(filename)
-		if ext in ('.gz', '.bz2', '.zip'):
-			if ext == '.bz2':
+		if ext in (".gz", ".bz2", ".zip"):
+			if ext == ".bz2":
 				output, error = subprocess.Popen(
-					['bzip2', '-dk', filename],
+					["bzip2", "-dk", filename],
 					stdout=subprocess.PIPE,
 				).communicate()
 				# -k ==> keep original bz2 file
 				# bunzip2 ~= bzip2 -d
 				if error:
 					log.error(
-						error + '\n' +
-						'Failed to decompress file "%s"' % filename
+						error + "\n" +
+						"Failed to decompress file \"%s\"" % filename
 					)
 					return False
 				else:
 					filename = filename[:-4]
 					ext = get_ext(filename)
 					delFile = True
-			elif ext == '.gz':
+			elif ext == ".gz":
 				output, error = subprocess.Popen(
-					['gzip', '-dc', filename],
+					["gzip", "-dc", filename],
 					stdout=subprocess.PIPE,
 				).communicate()
 				# -c ==> write to stdout (we want to keep original gz file)
 				# gunzip ~= gzip -d
 				if error:
 					log.error(
-						error + '\n' +
-						'Failed to decompress file "%s"' % filename
+						error + "\n" +
+						"Failed to decompress file \"%s\"" % filename
 					)
 					return False
 				else:
 					filename = filename[:-3]
-					open(filename, 'w').write(output)
+					open(filename, "w").write(output)
 					ext = get_ext(filename)
 					delFile = True
-			elif ext == '.zip':
+			elif ext == ".zip":
 				output, error = subprocess.Popen(
-					['unzip', filename, '-d', dirname(filename)],
+					["unzip", filename, "-d", dirname(filename)],
 					stdout=subprocess.PIPE,
 				).communicate()
 				if error:
 					log.error(
-						error + '\n' +
-						'Failed to decompress file "%s"' % filename
+						error + "\n" +
+						"Failed to decompress file \"%s\"" % filename
 					)
 					return False
 				else:
@@ -556,14 +556,14 @@ class Glossary(object):
 			if not format:
 				# if delFile:
 				#	os.remove(filename)
-				log.error('Unknown extension "%s" for read support!' % ext)
+				log.error("Unknown extension \"%s\" for read support!" % ext)
 				return False
 		validOptionKeys = self.formatsReadOptions[format]
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
 				log.error(
-					'Invalid read option "%s" ' % key +
-					'given for %s format' % format
+					"Invalid read option \"%s\" " % key +
+					"given for %s format" % format
 				)
 				del options[key]
 
@@ -572,8 +572,8 @@ class Glossary(object):
 			filenameNoExt = filename
 
 		self._filename = filenameNoExt
-		if not self.getInfo('name'):
-			self.setInfo('name', split(filename)[1])
+		if not self.getInfo("name"):
+			self.setInfo("name", split(filename)[1])
 		self._progressbar = progressbar
 
 		if format in self.readerClasses:
@@ -583,16 +583,16 @@ class Glossary(object):
 			if direct:
 				self._readers.append(reader)
 				log.info(
-					'Using Reader class from %s plugin' % format +
-					' for direct conversion without loading into memory'
+					"Using Reader class from %s plugin" % format +
+					" for direct conversion without loading into memory"
 				)
 			else:
 				self.loadReader(reader)
 		else:
 			if direct:
 				log.warning(
-					'No `Reader` class found in %s plugin' % format +
-					', falling back to indirect mode'
+					"No `Reader` class found in %s plugin" % format +
+					", falling back to indirect mode"
 				)
 			result = self.readFunctions[format].__call__(
 				self,
@@ -619,11 +619,11 @@ class Glossary(object):
 			try:
 				wordCount = len(reader)
 			except Exception:
-				log.exception('')
+				log.exception("")
 			if wordCount:
 				progressbar = True
 		if progressbar:
-			self.progressInit('Reading')
+			self.progressInit("Reading")
 		try:
 			for index, entry in enumerate(reader):
 				if entry:
@@ -660,7 +660,7 @@ class Glossary(object):
 			if sort:
 				sortKey = self._sortKey
 				cacheSize = self._sortCacheSize
-				log.info('Stream sorting enabled, cache size: %s' % cacheSize)
+				log.info("Stream sorting enabled, cache size: %s" % cacheSize)
 				# only sort by main word, or list of words + alternates? FIXME
 				gen = hsortStreamList(
 					self._readers,
@@ -686,16 +686,16 @@ class Glossary(object):
 			)
 		self._updateIter(sort=True)
 
-	def _detectOutput(self, filename='', format=''):
+	def _detectOutput(self, filename="", format=""):
 		"""
 		returns (filename, format, archiveType) or None
 		"""
-		archiveType = ''
+		archiveType = ""
 		if filename:
-			ext = ''
+			ext = ""
 			filenameNoExt, fext = splitext(filename)
 			fext = fext.lower()
-			if fext in ('.gz', '.bz2', '.zip'):
+			if fext in (".gz", ".bz2", ".zip"):
 				archiveType = fext[1:]
 				filename = filenameNoExt
 				fext = get_ext(filename)
@@ -729,21 +729,21 @@ class Glossary(object):
 							format = fmt
 							ext = fext
 			if not format:
-				log.error('Unable to detect write format!')
+				log.error("Unable to detect write format!")
 				return
 
 		else:  # filename is empty
 			if not self._filename:
-				log.error('Invalid filename %r' % filename)
+				log.error("Invalid filename %r" % filename)
 				return
 			filename = self._filename  # no extension
 			if not format:
-				log.error('No filename nor format is given for output file')
+				log.error("No filename nor format is given for output file")
 				return
 			try:
 				filename += Glossary.formatsExt[format][0]
 			except KeyError:
-				log.error('Invalid write format')
+				log.error("Invalid write format")
 				return
 
 
@@ -775,13 +775,13 @@ class Glossary(object):
 		try:
 			validOptionKeys = self.formatsWriteOptions[format]
 		except KeyError:
-			log.critical('No write support for "%s" format' % format)
+			log.critical("No write support for \"%s\" format" % format)
 			return
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
 				log.error(
-					'Invalid write option "%s"' % key +
-					' given for %s format' % format
+					"Invalid write option \"%s\"" % key +
+					" given for %s format" % format
 				)
 				del options[key]
 
@@ -790,16 +790,16 @@ class Glossary(object):
 		if sortOnWrite == ALWAYS:
 			if sort is False:
 				log.warning(
-					'Writing %s requires sorting' % format +
-					', ignoring user sort=False option'
+					"Writing %s requires sorting" % format +
+					", ignoring user sort=False option"
 				)
 			if self._readers:
 				log.warning(
-					'Writing to %s format requires full sort' % format +
-					', falling back to indirect mode'
+					"Writing to %s format requires full sort" % format +
+					", falling back to indirect mode"
 				)
 				self._inactivateDirectMode()
-				log.info('Loaded %s entries' % len(self._data))
+				log.info("Loaded %s entries" % len(self._data))
 			sort = True
 		elif sortOnWrite == DEFAULT_YES:
 			if sort is None:
@@ -810,8 +810,8 @@ class Glossary(object):
 		elif sortOnWrite == NEVER:
 			if sort:
 				log.warning(
-					'Plugin prevents sorting before write' +
-					', ignoring user sort=True option'
+					"Plugin prevents sorting before write" +
+					", ignoring user sort=True option"
 				)
 			sort = False
 
@@ -823,7 +823,7 @@ class Glossary(object):
 					pass
 				else:
 					log.debug(
-						'Using sort key function from %s plugin' % format
+						"Using sort key function from %s plugin" % format
 					)
 			elif sortOnWrite == ALWAYS:
 				try:
@@ -832,8 +832,8 @@ class Glossary(object):
 					pass
 				else:
 					log.warning(
-						'Ignoring user-defined sort order, ' +
-						'and using key function from %s plugin' % format
+						"Ignoring user-defined sort order, " +
+						"and using key function from %s plugin" % format
 					)
 			self.sortWords(
 				key=sortKey,
@@ -843,11 +843,11 @@ class Glossary(object):
 			self._updateIter(sort=False)
 
 		filename = abspath(filename)
-		log.info('Writing to file "%s"' % filename)
+		log.info("Writing to file \"%s\"" % filename)
 		try:
 			self.writeFunctions[format].__call__(self, filename, **options)
 		except Exception:
-			log.exception('Exception while calling plugin\'s write function')
+			log.exception("Exception while calling plugin\'s write function")
 			return
 		finally:
 			self.clear()
@@ -857,45 +857,45 @@ class Glossary(object):
 	def archiveOutDir(self, filename, archiveType):
 		"""
 		filename is the existing file path
-		archiveType is the archive extention (without dot): 'gz', 'bz2', 'zip'
+		archiveType is the archive extention (without dot): "gz", "bz2", "zip"
 		"""
 		try:
-			os.remove('%s.%s' % (filename, archiveType))
+			os.remove("%s.%s" % (filename, archiveType))
 		except OSError:
 			pass
-		if archiveType == 'gz':
+		if archiveType == "gz":
 			output, error = subprocess.Popen(
-				['gzip', filename],
+				["gzip", filename],
 				stdout=subprocess.PIPE,
 			).communicate()
 			if error:
 				log.error(
-					error + '\n' +
-					'Failed to compress file "%s"' % filename
+					error + "\n" +
+					"Failed to compress file \"%s\"" % filename
 				)
-		elif archiveType == 'bz2':
+		elif archiveType == "bz2":
 			output, error = subprocess.Popen(
-				['bzip2', filename],
+				["bzip2", filename],
 				stdout=subprocess.PIPE,
 			).communicate()
 			if error:
 				log.error(
-					error + '\n' +
-					'Failed to compress file "%s"' % filename
+					error + "\n" +
+					"Failed to compress file \"%s\"" % filename
 				)
-		elif archiveType == 'zip':
+		elif archiveType == "zip":
 			dirn, name = split(filename)
 			with indir(dirn):
 				output, error = subprocess.Popen(
-					['zip', filename+'.zip', name, '-m'],
+					["zip", filename+".zip", name, "-m"],
 					stdout=subprocess.PIPE,
 				).communicate()
 				if error:
 					log.error(
-						error + '\n' +
-						'Failed to compress file "%s"' % filename
+						error + "\n" +
+						"Failed to compress file \"%s\"" % filename
 					)
-		archiveFilename = '%s.%s' % (filename, archiveType)
+		archiveFilename = "%s.%s" % (filename, archiveType)
 		if isfile(archiveFilename):
 			return archiveFilename
 		else:
@@ -904,11 +904,11 @@ class Glossary(object):
 	def convert(
 		self,
 		inputFilename,
-		inputFormat='',
+		inputFormat="",
 		direct=None,
 		progressbar=True,
-		outputFilename='',
-		outputFormat='',
+		outputFilename="",
+		outputFormat="",
 		sort=None,
 		sortKey=None,
 		sortCacheSize=1000,
@@ -928,7 +928,7 @@ class Glossary(object):
 			format=outputFormat,
 		)
 		if not outputArgs:
-			log.error('Writing file "%s" failed.' % outputFilename)
+			log.error("Writing file \"%s\" failed." % outputFilename)
 			return
 		outputFilename, outputFormat, archiveType = outputArgs
 
@@ -945,7 +945,7 @@ class Glossary(object):
 			**readOptions
 		):
 			return
-		log.info('')
+		log.info("")
 
 		finalOutputFile = self.write(
 			outputFilename,
@@ -955,16 +955,16 @@ class Glossary(object):
 			sortCacheSize=sortCacheSize,
 			**writeOptions
 		)
-		log.info('')
+		log.info("")
 		if not finalOutputFile:
-			log.error('Writing file "%s" failed.' % outputFilename)
+			log.error("Writing file \"%s\" failed." % outputFilename)
 			return
 
 		if archiveType:
 			finalOutputFile = self.archiveOutDir(finalOutputFile, archiveType)
 
-		log.info('Writing file "%s" done.' % finalOutputFile)
-		log.info('Running time of convert: %.1f seconds' % (now() - tm0))
+		log.info("Writing file \"%s\" done." % finalOutputFile)
+		log.info("Running time of convert: %.1f seconds" % (now() - tm0))
 
 		return finalOutputFile
 
@@ -974,16 +974,16 @@ class Glossary(object):
 		self,
 		sep1,
 		sep2,
-		filename='',
+		filename="",
 		writeInfo=True,
 		rplList=None,
-		ext='.txt',
-		head='',
+		ext=".txt",
+		head="",
 		iterEntries=None,
 		entryFilterFunc=None,
 		outInfoKeysAliasDict=None,
-		encoding='utf-8',
-		newline='\n',
+		encoding="utf-8",
+		newline="\n",
 		resources=True,
 	):
 		if rplList is None:
@@ -993,7 +993,7 @@ class Glossary(object):
 		if not outInfoKeysAliasDict:
 			outInfoKeysAliasDict = {}
 
-		fp = open(filename, 'w', encoding=encoding, newline=newline)
+		fp = open(filename, "w", encoding=encoding, newline=newline)
 		fp.write(head)
 		if writeInfo:
 			for key, desc in self._info.items():
@@ -1003,10 +1003,10 @@ class Glossary(object):
 					pass
 				for rpl in rplList:
 					desc = desc.replace(rpl[0], rpl[1])
-				fp.write('##' + key + sep1 + desc + sep2)
+				fp.write("##" + key + sep1 + desc + sep2)
 		fp.flush()
 
-		myResDir = filename + '_res'
+		myResDir = filename + "_res"
 		if not isdir(myResDir):
 			os.mkdir(myResDir)
 
@@ -1024,9 +1024,9 @@ class Glossary(object):
 					continue
 			word = entry.getWord()
 			defi = entry.getDefi()
-			if word.startswith('#'):  # FIXME
+			if word.startswith("#"):  # FIXME
 				continue
-			# if self.getPref('enable_alts', True):  # FIXME
+			# if self.getPref("enable_alts", True):  # FIXME
 
 			for rpl in rplList:
 				defi = defi.replace(rpl[0], rpl[1])
@@ -1036,95 +1036,95 @@ class Glossary(object):
 			os.rmdir(myResDir)
 		return True
 
-	def writeTabfile(self, filename='', **kwargs):
+	def writeTabfile(self, filename="", **kwargs):
 		self.writeTxt(
-			'\t',
-			'\n',
+			"\t",
+			"\n",
 			filename=filename,
 			rplList=(
-				('\\', '\\\\'),
-				('\n', '\\n'),
-				('\t', '\\t'),
+				("\\", "\\\\"),
+				("\n", "\\n"),
+				("\t", "\\t"),
 			),
-			ext='.txt',
+			ext=".txt",
 			**kwargs
 		)
 
-	def writeDict(self, filename='', writeInfo=False):
-		# Used in '/usr/share/dict/' for some dictionarys such as 'ding'
+	def writeDict(self, filename="", writeInfo=False):
+		# Used in "/usr/share/dict/" for some dictionarys such as "ding"
 		self.writeTxt(
-			' :: ',
-			'\n',
+			" :: ",
+			"\n",
 			filename,
 			writeInfo,
 			(
-				('\n', '\\n'),
+				("\n", "\\n"),
 			),
-			'.dict',
+			".dict",
 		)
 
 	def iterSqlLines(
 		self,
-		filename='',
+		filename="",
 		infoKeys=None,
 		addExtraInfo=True,
-		newline='\\n',
+		newline="\\n",
 		transaction=False,
 	):
-		newline = '<br>'
-		infoDefLine = 'CREATE TABLE dbinfo ('
+		newline = "<br>"
+		infoDefLine = "CREATE TABLE dbinfo ("
 		infoValues = []
 
 		if not infoKeys:
 			infoKeys = [
-				'dbname',
-				'author',
-				'version',
-				'direction',
-				'origLang',
-				'destLang',
-				'license',
-				'category',
-				'description',
+				"dbname",
+				"author",
+				"version",
+				"direction",
+				"origLang",
+				"destLang",
+				"license",
+				"category",
+				"description",
 			]
 
 		for key in infoKeys:
 			value = self.getInfo(key)
-			value = value.replace('\'', '\'\'')\
-						 .replace('\x00', '')\
-						 .replace('\r', '')\
-						 .replace('\n', newline)
-			infoValues.append('\'' + value + '\'')
-			infoDefLine += '%s char(%d), ' % (key, len(value))
+			value = value.replace("\'", "\'\'")\
+						 .replace("\x00", "")\
+						 .replace("\r", "")\
+						 .replace("\n", newline)
+			infoValues.append("\'" + value + "\'")
+			infoDefLine += "%s char(%d), " % (key, len(value))
 
-		infoDefLine = infoDefLine[:-2] + ');'
+		infoDefLine = infoDefLine[:-2] + ");"
 		yield infoDefLine
 
 		if addExtraInfo:
 			yield (
-				'CREATE TABLE dbinfo_extra (' +
-				'\'id\' INTEGER PRIMARY KEY NOT NULL, ' +
-				'\'name\' TEXT UNIQUE, \'value\' TEXT);'
+				"CREATE TABLE dbinfo_extra (" +
+				"\'id\' INTEGER PRIMARY KEY NOT NULL, " +
+				"\'name\' TEXT UNIQUE, \'value\' TEXT);"
 			)
 
 		yield (
-			'CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, ' +
-			'\'w\' TEXT, \'m\' TEXT);'
+			"CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, " +
+			"\'w\' TEXT, \'m\' TEXT);"
 		)
 
 		if transaction:
-			yield 'BEGIN TRANSACTION;'
-		yield 'INSERT INTO dbinfo VALUES(%s);' % (','.join(infoValues))
+			yield "BEGIN TRANSACTION;"
+		yield "INSERT INTO dbinfo VALUES(%s);" % (",".join(infoValues))
 
 		if addExtraInfo:
 			extraInfo = self.getExtraInfos(infoKeys)
 			for index, (key, value) in enumerate(extraInfo.items()):
 				yield (
-					'INSERT INTO dbinfo_extra ' +
-					'VALUES(%d, \'%s\', \'%s\');' % (
+					"INSERT INTO dbinfo_extra " +
+					"VALUES(%d, \'%s\', \'%s\');" % (
 						index + 1,
-						key.replace('\'', '\'\''),
-						value.replace('\'', '\'\''),
+						key.replace("\'", "\'\'"),
+						value.replace("\'", "\'\'"),
 					)
 				)
 
@@ -1134,23 +1134,23 @@ class Glossary(object):
 				continue
 			word = entry.getWord()
 			defi = entry.getDefi()
-			word = word.replace('\'', '\'\'')\
-				.replace('\r', '').replace('\n', newline)
-			defi = defi.replace('\'', '\'\'')\
-				.replace('\r', '').replace('\n', newline)
-			yield 'INSERT INTO word VALUES(%d, \'%s\', \'%s\');' % (
+			word = word.replace("\'", "\'\'")\
+				.replace("\r", "").replace("\n", newline)
+			defi = defi.replace("\'", "\'\'")\
+				.replace("\r", "").replace("\n", newline)
+			yield "INSERT INTO word VALUES(%d, \'%s\', \'%s\');" % (
 				i+1,
 				word,
 				defi,
 			)
 		if transaction:
-			yield 'END TRANSACTION;'
-		yield 'CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);'
+			yield "END TRANSACTION;"
+		yield "CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);"
 
 	# ________________________________________________________________________#
 
 	def takeOutputWords(self, minWordLen=3):
-		wordPattern = re.compile('[\w]{%d,}' % minWordLen, re.U)
+		wordPattern = re.compile("[\w]{%d,}" % minWordLen, re.U)
 		words = set()
 		progressbar, self._progressbar = self._progressbar, False
 		for entry in self:
@@ -1171,7 +1171,7 @@ class Glossary(object):
 		if self.ui and wordI % (wordCount//500 + 1) == 0:
 			self.ui.progress(
 				min(wordI + 1, wordCount) / wordCount,
-				'%d / %d completed' % (wordI, wordCount),
+				"%d / %d completed" % (wordI, wordCount),
 			)
 
 	def progressEnd(self):
@@ -1184,26 +1184,26 @@ class Glossary(object):
 		self,
 		st,
 		matchWord=True,
-		sepChars='.,،',
+		sepChars=".,،",
 		maxNum=100,
 		minRel=0.0,
 		minWordLen=3,
 		includeDefs=False,
-		showRel='Percent',
+		showRel="Percent",
 	):
-		# searches word 'st' in definitions of the glossary
+		# searches word "st" in definitions of the glossary
 		splitPattern = re.compile(
-			'|'.join([re.escape(x) for x in sepChars]),
+			"|".join([re.escape(x) for x in sepChars]),
 			re.U,
 		)
-		wordPattern = re.compile('[\w]{%d,}' % minWordLen, re.U)
+		wordPattern = re.compile("[\w]{%d,}" % minWordLen, re.U)
 		outRel = []
 		for item in self._data:
 			words, defi = item[:2]
 			if isinstance(words, str):
 				words = [words]
 			if isinstance(defi, list):
-				defi = '\n'.join(defi)
+				defi = "\n".join(defi)
 			if st not in defi:
 				continue
 			for word in words:
@@ -1247,19 +1247,19 @@ class Glossary(object):
 			for j in range(n):
 				numP = num
 				w, num, m = outRel[j]
-				m = m.replace('\n', '\\n').replace('\t', '\\t')
+				m = m.replace("\n", "\\n").replace("\t", "\\t")
 				onePer = int(1.0/num)
 				if onePer == 1.0:
-					out.append('%s\\n%s' % (w, m))
-				elif showRel == 'Percent':
-					out.append('%s(%%%d)\\n%s' % (w, 100*num, m))
-				elif showRel == 'Percent At First':
+					out.append("%s\\n%s" % (w, m))
+				elif showRel == "Percent":
+					out.append("%s(%%%d)\\n%s" % (w, 100*num, m))
+				elif showRel == "Percent At First":
 					if num == numP:
-						out.append('%s\\n%s' % (w, m))
+						out.append("%s\\n%s" % (w, m))
 					else:
-						out.append('%s(%%%d)\\n%s' % (w, 100*num, m))
+						out.append("%s(%%%d)\\n%s" % (w, 100*num, m))
 				else:
-					out.append('%s\\n%s' % (w, m))
+					out.append("%s\\n%s" % (w, m))
 			return out
 		for j in range(n):
 			numP = num
@@ -1267,20 +1267,20 @@ class Glossary(object):
 			onePer = int(1.0/num)
 			if onePer == 1.0:
 				out.append(w)
-			elif showRel == 'Percent':
-				out.append('%s(%%%d)' % (w, 100*num))
-			elif showRel == 'Percent At First':
+			elif showRel == "Percent":
+				out.append("%s(%%%d)" % (w, 100*num))
+			elif showRel == "Percent At First":
 				if num == numP:
 					out.append(w)
 				else:
-					out.append('%s(%%%d)' % (w, 100*num))
+					out.append("%s(%%%d)" % (w, 100*num))
 			else:
 				out.append(w)
 		return out
 
 	def reverse(
 		self,
-		savePath='',
+		savePath="",
 		words=None,
 		includeDefs=False,
 		reportStep=300,
@@ -1300,21 +1300,21 @@ class Glossary(object):
 			words = None ## None, or list
 			reportStep = 300
 			saveStep = 1000
-			savePath = ''
+			savePath = ""
 			matchWord = True
-			sepChars = '.,،'
+			sepChars = ".,،"
 			maxNum = 100
 			minRel = 0.0
 			minWordLen = 3
 			includeDefs = False
-			showRel = 'None'
-				allowed values: 'None', 'Percent', 'Percent At First'
+			showRel = "None"
+				allowed values: "None", "Percent", "Percent At First"
 		"""
 		if not savePath:
-			savePath = self.getInfo('name') + '.txt'
+			savePath = self.getInfo("name") + ".txt"
 
 		if saveStep < 2:
-			raise ValueError('saveStep must be more than 1')
+			raise ValueError("saveStep must be more than 1")
 
 		ui = self.ui
 
@@ -1325,11 +1325,11 @@ class Glossary(object):
 
 		wordCount = len(words)
 		log.info(
-			'Reversing to file "%s"' % savePath +
-			', number of words: %s' % wordCount
+			"Reversing to file \"%s\"" % savePath +
+			", number of words: %s" % wordCount
 		)
-		self.progressInit('Reversing')
-		with open(savePath, 'w') as saveFile:
+		self.progressInit("Reversing")
+		with open(savePath, "w") as saveFile:
 			for wordI in range(wordCount):
 				word = words[wordI]
 				self.progress(wordI, wordCount)
@@ -1344,19 +1344,19 @@ class Glossary(object):
 				if result:
 					try:
 						if includeDefs:
-							defi = '\\n\\n'.join(result)
+							defi = "\\n\\n".join(result)
 						else:
-							defi = ', '.join(result) + '.'
+							defi = ", ".join(result) + "."
 					except Exception:
-						log.exception('')
-						log.pretty(result, 'result = ')
+						log.exception("")
+						log.pretty(result, "result = ")
 						return
-					saveFile.write('%s\t%s\n' % (word, defi))
+					saveFile.write("%s\t%s\n" % (word, defi))
 				yield wordI
 
 		self.progressEnd()
 		yield wordCount
 
 
-Glossary.loadPlugins(join(dirname(__file__), 'plugins'))
+Glossary.loadPlugins(join(dirname(__file__), "plugins"))
 Glossary.loadPlugins(userPluginsDir)

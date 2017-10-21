@@ -5,7 +5,7 @@ from functools import cmp_to_key
 
 
 def toBytes(s):
-	return bytes(s, 'utf8') if isinstance(s, str) else bytes(s)
+	return bytes(s, "utf8") if isinstance(s, str) else bytes(s)
 
 
 def sortKeyBytes(ba):
@@ -78,11 +78,11 @@ def isAsciiAlpha(c):
 	"""
 	c is int
 	"""
-	return ord('A') <= c <= ord('Z') or ord('a') <= c <= ord('z')
+	return ord("A") <= c <= ord("Z") or ord("a") <= c <= ord("z")
 
 
 def isAsciiLower(c):
-	return ord('a') <= c <= ord('z')
+	return ord("a") <= c <= ord("z")
 
 
 def isAsciiUpper(c):
@@ -90,7 +90,7 @@ def isAsciiUpper(c):
 	c is int
 	imitate ISUPPER macro of glib library gstrfuncs.c file
 	"""
-	return ord('A') <= c <= ord('Z')
+	return ord("A") <= c <= ord("Z")
 
 
 def asciiLower(c):
@@ -114,7 +114,7 @@ def asciiLower(c):
 	converts Latin letters to lower case, but also locale specific letters
 	will be converted.
 	"""
-	return c - ord('A') + ord('a') if isAsciiUpper(c) else c
+	return c - ord("A") + ord("a") if isAsciiUpper(c) else c
 
 
 def getRandomBytes(avgLen, sigma):
@@ -131,7 +131,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 			try:
 				locale.setlocale(locale.LC_ALL, localeName)
 			except Exception as e:
-				if 'unsupported locale setting' not in str(e):
+				if "unsupported locale setting" not in str(e):
 					print(e)
 				continue
 			yield localeName
@@ -175,7 +175,7 @@ class SortRandomTest(unittest.TestCase):
 			try:
 				locale.setlocale(locale.LC_ALL, localeName)
 			except Exception as e:
-				if 'unsupported locale setting' not in str(e):
+				if "unsupported locale setting" not in str(e):
 					print(e)
 				continue
 			# print(localeName)
@@ -199,5 +199,5 @@ class SortRandomTest(unittest.TestCase):
 			)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	unittest.main()

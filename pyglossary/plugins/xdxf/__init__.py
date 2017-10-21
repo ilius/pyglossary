@@ -25,9 +25,9 @@ from os import path
 from formats_common import *
 
 enable = True
-format = 'Xdxf'
-description = 'XDXF'
-extentions = ['.xdxf', '.xml']
+format = "Xdxf"
+description = "XDXF"
+extentions = [".xdxf", ".xml"]
 readOptions = []
 writeOptions = []
 
@@ -75,7 +75,7 @@ def read(glos, filename):
 	# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 	import_xml_stuff()
 
-	with open(filename, 'rb') as f:
+	with open(filename, "rb") as f:
 		xdxf = XML(f.read())
 
 	if len(xdxf) == 2:
@@ -89,36 +89,36 @@ def read(glos, filename):
 
 
 def read_metadata_old(glos, xdxf):
-	full_name = xdxf.find('full_name').text
-	description = xdxf.find('description').text
+	full_name = xdxf.find("full_name").text
+	description = xdxf.find("description").text
 	if full_name:
-		glos.setInfo('name', full_name)
+		glos.setInfo("name", full_name)
 	if description:
-		glos.setInfo('description', description)
+		glos.setInfo("description", description)
 
 
 def read_xdxf_old(glos, xdxf):
-	add_articles(glos, xdxf.iterfind('ar'))
+	add_articles(glos, xdxf.iterfind("ar"))
 
 
 def read_metadata_new(glos, xdxf):
-	meta_info = xdxf.find('meta_info')
+	meta_info = xdxf.find("meta_info")
 	if meta_info is None:
-		raise ValueError('meta_info not found')
+		raise ValueError("meta_info not found")
 
-	title = meta_info.find('full_title').text
+	title = meta_info.find("full_title").text
 	if not title:
-		title = meta_info.find('title').text
-	description = meta_info.find('description').text
+		title = meta_info.find("title").text
+	description = meta_info.find("description").text
 
 	if title:
-		glos.setInfo('name', title)
+		glos.setInfo("name", title)
 	if description:
-		glos.setInfo('description', description)
+		glos.setInfo("description", description)
 
 
 def read_xdxf_new(glos, xdxf):
-	add_articles(glos, xdxf.find('lexicon').iterfind('ar'))
+	add_articles(glos, xdxf.find("lexicon").iterfind("ar"))
 
 
 def add_articles(glos, articles):
@@ -127,10 +127,10 @@ def add_articles(glos, articles):
 	:param articles: iterator on <ar> tags
 	:return: None
 	"""
-	glos.setDefaultDefiFormat('x')
+	glos.setDefaultDefiFormat("x")
 	for article in articles:
 		article.tail = None
-		defi = tostring(article, encoding='utf-8')
+		defi = tostring(article, encoding="utf-8")
 		# <ar>...</ar>
 		defi = defi[4:-5].strip()
 		glos.addEntry(
@@ -147,8 +147,8 @@ def titles(article):
 	"""
 	from itertools import combinations
 	titles = []
-	for title_element in article.findall('k'):
-		n_opts = len([c for c in title_element if c.tag == 'opt'])
+	for title_element in article.findall("k"):
+		n_opts = len([c for c in title_element if c.tag == "opt"])
 		if n_opts:
 			for j in range(n_opts + 1):
 				for comb in combinations(list(range(n_opts)), j):
@@ -163,12 +163,12 @@ def _mktitle(title_element, include_opts=()):
 	title = title_element.text
 	opt_i = -1
 	for c in title_element:
-		if c.tag == 'nu' and c.tail:
+		if c.tag == "nu" and c.tail:
 			if title:
 				title += c.tail
 			else:
 				title = c.tail
-		if c.tag == 'opt':
+		if c.tag == "opt":
 			opt_i += 1
 			if opt_i in include_opts:
 				if title:
@@ -191,8 +191,8 @@ def xdxf_init():
 
 	import_xml_stuff()
 
-	xsl = path.join(path.dirname(__file__), 'xdxf.xsl')
-	with open(xsl, 'r') as f:
+	xsl = path.join(path.dirname(__file__), "xdxf.xsl")
+	with open(xsl, "r") as f:
 		xslt_root_txt = f.read()
 
 	xslt_root = etree.XML(xslt_root_txt)
@@ -207,8 +207,8 @@ def xdxf_to_html(xdxf_text):
 	:return: html formatted string
 	"""
 	from io import StringIO
-	xdxf_txt = '<ar>%s</ar>' % xdxf_text
+	xdxf_txt = "<ar>%s</ar>" % xdxf_text
 	f = StringIO(xdxf_txt)
 	doc = etree.parse(f)
 	result_tree = transform(doc)
-	return tostring(result_tree, encoding='utf-8')
+	return tostring(result_tree, encoding="utf-8")

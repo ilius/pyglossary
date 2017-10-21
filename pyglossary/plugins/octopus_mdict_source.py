@@ -4,41 +4,41 @@
 from formats_common import *
 
 enable = True
-format = 'OctopusMdictSource'
-description = 'Octopus MDict Source'
-extentions = ['.mtxt']
+format = "OctopusMdictSource"
+description = "Octopus MDict Source"
+extentions = [".mtxt"]
 readOptions = [
-	'encoding',  # str
+	"encoding",  # str
 ]
 writeOptions = [
-	'resources',  # bool
+	"resources",  # bool
 ]
 
 
 def read(
 	glos,
 	filename,
-	encoding='utf-8',
+	encoding="utf-8",
 ):
 	with open(filename, encoding=encoding) as fp:
 		text = fp.read()
-	text = text.replace('\r\n', '\n')
-	text = text.replace('entry://', 'bword://')
+	text = text.replace("\r\n", "\n")
+	text = text.replace("entry://", "bword://")
 	lastEntry = None
-	for section in text.split('</>'):
-		lines = section.strip().split('\n')
+	for section in text.split("</>"):
+		lines = section.strip().split("\n")
 		if len(lines) < 2:
 			continue
 		word = lines[0]
-		defi = '\n'.join(lines[1:])
+		defi = "\n".join(lines[1:])
 
-		if defi.startswith('@@@LINK='):
+		if defi.startswith("@@@LINK="):
 			if not lastEntry:
-				log.error('alternate section not after a word: %s' % defi)
+				log.error("alternate section not after a word: %s" % defi)
 				continue
-			mainWord = defi.partition('=')[2]
+			mainWord = defi.partition("=")[2]
 			if lastEntry.getWords()[0] != mainWord:
-				log.error('alternate is not ride after word: %s' % defi)
+				log.error("alternate is not ride after word: %s" % defi)
 				continue
 			lastEntry.addAlt(word)
 			continue
@@ -63,7 +63,7 @@ def writeEntryGen(glos):
 		for alt in words[1:]:
 			yield glos.newEntry(
 				alt,
-				'@@@LINK=%s' % words[0],
+				"@@@LINK=%s" % words[0],
 			)
 
 
@@ -73,16 +73,16 @@ def write(
 	resources=True,
 ):
 	glos.writeTxt(
-		'\n',
-		'\n</>\n',
+		"\n",
+		"\n</>\n",
 		filename=filename,
 		writeInfo=False,
 		rplList=[
-			('bword://', 'entry://'),
+			("bword://", "entry://"),
 		],
-		ext='.mtxt',
-		head='',
+		ext=".mtxt",
+		head="",
 		iterEntries=writeEntryGen(glos),
-		newline='\r\n',
+		newline="\r\n",
 		resources=resources,
 	)

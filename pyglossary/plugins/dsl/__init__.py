@@ -26,13 +26,13 @@ from formats_common import *
 from . import flawless_dsl
 
 enable = True
-format = 'ABBYYLingvoDSL'
-description = 'ABBYY Lingvo DSL (dsl)'
-extentions = ['.dsl']
-readOptions = ['encoding', 'audio', 'onlyFixMarkUp']
+format = "ABBYYLingvoDSL"
+description = "ABBYY Lingvo DSL (dsl)"
+extentions = [".dsl"]
+readOptions = ["encoding", "audio", "onlyFixMarkUp"]
 writeOptions = []
 
-__all__ = ['read']
+__all__ = ["read"]
 
 # {{{
 # modified to work around codepoints that are not supported by `unichr`.
@@ -62,7 +62,7 @@ def unescape(text):
 					return chr(i)
 				except ValueError:
 					return ("\\U%08x" % i)\
-						.decode('unicode-escape').encode('utf-8')
+						.decode("unicode-escape").encode("utf-8")
 		else:
 			# named entity
 			try:
@@ -75,7 +75,7 @@ def unescape(text):
 
 
 def make_a_href(s):
-	return '<a href=%s>%s</a>' % (quoteattr(s), escape(s))
+	return "<a href=%s>%s</a>" % (quoteattr(s), escape(s))
 
 
 def ref_sub(x):
@@ -181,46 +181,46 @@ def _clean_tags(line, audio):
 	[com]     /
 	"""
 	# remove {{...}} blocks
-	line = re_brackets_blocks.sub('', line)
+	line = re_brackets_blocks.sub("", line)
 	# remove trn tags
-	# re_trn = re.compile('\[\/?!?tr[ns]\]')
+	# re_trn = re.compile("\[\/?!?tr[ns]\]")
 	line = line \
-		.replace('[trn]', '') \
-		.replace('[/trn]', '') \
-		.replace('[trs]', '') \
-		.replace('[/trs]', '') \
-		.replace('[!trn]', '') \
-		.replace('[/!trn]', '') \
-		.replace('[!trs]', '') \
-		.replace('[/!trs]', '')
+		.replace("[trn]", "") \
+		.replace("[/trn]", "") \
+		.replace("[trs]", "") \
+		.replace("[/trs]", "") \
+		.replace("[!trn]", "") \
+		.replace("[/!trn]", "") \
+		.replace("[!trs]", "") \
+		.replace("[/!trs]", "")
 
 	# remove lang tags
-	line = re_lang_open.sub('', line).replace('[/lang]', '')
+	line = re_lang_open.sub("", line).replace("[/lang]", "")
 	# remove com tags
-	line = line.replace('[com]', '').replace('[/com]', '')
+	line = line.replace("[com]", "").replace("[/com]", "")
 	# remove t tags
 	line = line.replace(
-		'[t]',
-		'<!-- T --><span style="font-family:\'Helvetica\'">'
+		"[t]",
+		"<!-- T --><span style=\"font-family:'Helvetica'\">"
 	)
-	line = line.replace('[/t]', '</span><!-- T -->')
+	line = line.replace("[/t]", "</span><!-- T -->")
 
 	line = _parse(line)
 
-	line = re.sub(r'\\$', '<br/>', line)
+	line = re.sub(r"\\$", "<br/>", line)
 
 	# paragraph, part one: before shortcuts.
-	line = line.replace('[m]', '[m1]')
-	# if line somewhere contains '[m_]' tag like
+	line = line.replace("[m]", "[m1]")
+	# if line somewhere contains "[m_]" tag like
 	# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
-	# then leave it alone.  only wrap in '[m1]' when no 'm' tag found at all.
+	# then leave it alone.  only wrap in "[m1]" when no "m" tag found at all.
 	if not re_m_open.search(line):
-		line = '[m1]%s[/m]' % line
+		line = "[m1]%s[/m]" % line
 
 	line = apply_shortcuts(line)
 
 	# paragraph, part two: if any not shourcuted [m] left?
-	line = re_m.sub('<div style="margin-left:\g<1>em">\g<2></div>', line)
+	line = re_m.sub(r'<div style="margin-left:\g<1>em">\g<2></div>', line)
 
 	# text formats
 
@@ -232,13 +232,13 @@ def _clean_tags(line, audio):
 	line = line.replace('[sub]', '<sub>').replace('[/sub]', '</sub>')
 
 	# color
-	line = line.replace('[c]', '<span style="color:green">')
-	line = re_c_open_color.sub('<span style="color:\g<1>">', line)
-	line = line.replace('[/c]', '</span>')
+	line = line.replace('[c]', r'<span style="color:green">')
+	line = re_c_open_color.sub(r'<span style="color:\g<1>">', line)
+	line = line.replace('[/c]', r'</span>')
 
 	# example zone
-	line = line.replace('[ex]', '<span class="ex" style="color:steelblue">')
-	line = line.replace('[/ex]', '</span>')
+	line = line.replace('[ex]', r'<span class="ex" style="color:steelblue">')
+	line = line.replace('[/ex]', r'</span>')
 
 	# secondary zone
 	line = line.replace('[*]', '<span class="sec">')\
@@ -255,17 +255,17 @@ def _clean_tags(line, audio):
 
 	# sound file
 	if audio:
-		sound_tag = '<object type="audio/x-wav" data="\g<1>\g<2>" ' \
+		sound_tag = r'<object type="audio/x-wav" data="\g<1>\g<2>" ' \
 			'width="40" height="40">' \
 			'<param name="autoplay" value="false" />' \
 			'</object>'
 	else:
-		sound_tag = ''
+		sound_tag = ""
 	line = re_sound.sub(sound_tag, line)
 
 	# image file
 	line = re_img.sub(
-		'<img align="top" src="\g<1>\g<2>" alt="\g<1>\g<2>" />',
+		r'<img align="top" src="\g<1>\g<2>" alt="\g<1>\g<2>" />',
 		line,
 	)
 
@@ -279,9 +279,9 @@ def unwrap_quotes(s):
 
 
 def read(glos, fname, **options):
-	encoding = options.get('encoding', 'utf-8')
-	audio = (options.get('audio', 'no') == 'yes')
-	onlyFixMarkUp = (options.get('onlyFixMarkUp', 'no') == 'yes')
+	encoding = options.get("encoding", "utf-8")
+	audio = (options.get("audio", "no") == "yes")
+	onlyFixMarkUp = (options.get("onlyFixMarkUp", "no") == "yes")
 	if onlyFixMarkUp:
 		def clean_tags(line, audio):
 			return _parse(line)
@@ -291,41 +291,41 @@ def read(glos, fname, **options):
 	def setInfo(key, value):
 		glos.setInfo(key, unwrap_quotes(value))
 
-	current_key = ''
+	current_key = ""
 	current_key_alters = []
 	current_text = []
-	line_type = 'header'
-	unfinished_line = ''
+	line_type = "header"
+	unfinished_line = ""
 
-	fp = open(fname, 'r', encoding=encoding)
+	fp = open(fname, "r", encoding=encoding)
 	for line in fp:
 		line = line.rstrip()
 		if not line:
 			continue
 		# header
-		if line.startswith('#'):
-			if line.startswith('#NAME'):
-				setInfo('title', line[6:])
-			elif line.startswith('#INDEX_LANGUAGE'):
-				setInfo('sourceLang', line[16:])
-			elif line.startswith('#CONTENTS_LANGUAGE'):
-				setInfo('targetLang', line[20:])
-			line_type = 'header'
+		if line.startswith("#"):
+			if line.startswith("#NAME"):
+				setInfo("title", line[6:])
+			elif line.startswith("#INDEX_LANGUAGE"):
+				setInfo("sourceLang", line[16:])
+			elif line.startswith("#CONTENTS_LANGUAGE"):
+				setInfo("targetLang", line[20:])
+			line_type = "header"
 		# texts
-		elif line.startswith(' ') or line.startswith('\t'):
-			line_type = 'text'
+		elif line.startswith(" ") or line.startswith("\t"):
+			line_type = "text"
 			line = unfinished_line + line.lstrip()
 
 			# some ill formated source may have tags spanned into
 			# multiple lines
 			# try to match opening and closing tags
-			tags_open = re.findall('(?<!\\\\)\[(c |[cuib]\])', line)
-			tags_close = re.findall('\[/[cuib]\]', line)
+			tags_open = re.findall(r'(?<!\\)\[(c |[cuib]\])', line)
+			tags_close = re.findall(r'\[/[cuib]\]', line)
 			if len(tags_open) != len(tags_close):
 				unfinished_line = line
 				continue
 
-			unfinished_line = ''
+			unfinished_line = ""
 
 			# convert DSL tags to HTML tags
 			line = clean_tags(line, audio)
@@ -333,30 +333,30 @@ def read(glos, fname, **options):
 		# title word(s)
 		else:
 			# alternative titles
-			if line_type == 'title':
+			if line_type == "title":
 				current_key_alters.append(line)
 			# previous line type is text -> start new title
 			else:
 				# append previous entry
-				if line_type == 'text':
+				if line_type == "text":
 					if unfinished_line:
 						# line may be skipped if ill formated
 						current_text.append(clean_tags(unfinished_line, audio))
 					glos.addEntry(
 						[current_key] + current_key_alters,
-						'\n'.join(current_text),
+						"\n".join(current_text),
 					)
 				# start new entry
 				current_key = line
 				current_key_alters = []
 				current_text = []
-				unfinished_line = ''
-			line_type = 'title'
+				unfinished_line = ""
+			line_type = "title"
 	fp.close()
 
 	# last entry
-	if line_type == 'text':
+	if line_type == "text":
 		glos.addEntry(
 			[current_key] + current_key_alters,
-			'\n'.join(current_text),
+			"\n".join(current_text),
 		)

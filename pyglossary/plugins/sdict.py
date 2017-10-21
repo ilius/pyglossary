@@ -22,18 +22,18 @@ from struct import unpack
 from formats_common import *
 
 enable = True
-format = 'Sdict'
-description = 'Sdictionary Binary(dct)'
-extentions = ['.dct']
+format = "Sdict"
+description = "Sdictionary Binary(dct)"
+extentions = [".dct"]
 readOptions = [
-	'encoding',  # str
+	"encoding",  # str
 ]
 writeOptions = []
 
 
 class GzipCompression(object):
 	def __str__(self):
-		return 'gzip'
+		return "gzip"
 
 	def decompress(self, string):
 		import zlib
@@ -42,7 +42,7 @@ class GzipCompression(object):
 
 class Bzip2Compression(object):
 	def __str__(self):
-		return 'bzip2'
+		return "bzip2"
 
 	def decompress(self, string):
 		import bz2
@@ -51,7 +51,7 @@ class Bzip2Compression(object):
 
 class NoCompression(object):
 	def __str__(self):
-		return 'no compression'
+		return "no compression"
 
 	def decompress(self, string):
 		return string
@@ -69,19 +69,19 @@ def read_raw(s, fe):
 
 
 def read_str(s, fe):
-	read_raw(s, fe).replace(b'\x00', b'')
+	read_raw(s, fe).replace(b"\x00", b"")
 
 
 def read_int(s, fe=None):
-	return unpack('<I', read_raw(s, fe) if fe else s)[0]
+	return unpack("<I", read_raw(s, fe) if fe else s)[0]
 
 
 def read_short(raw):
-	return unpack('<H', raw)[0]
+	return unpack("<H", raw)[0]
 
 
 def read_byte(raw):
-	return unpack('<B', raw)[0]
+	return unpack("<B", raw)[0]
 
 
 class FormatElement(object):
@@ -106,8 +106,8 @@ class Header(object):
 
 	def parse(self, st):
 		self.signature = read_str(st, self.f_signature)
-		if self.signature != b'sdct':
-			raise ValueError('Not a valid sdict dictionary')
+		if self.signature != b"sdct":
+			raise ValueError("Not a valid sdict dictionary")
 		self.word_lang = read_str(st, self.f_input_lang)
 		self.article_lang = read_str(st, self.f_output_lang)
 		self.short_index_length = read_int(st, self.f_length_of_short_index)
@@ -132,28 +132,28 @@ class Reader(object):
 
 	def clear(self):
 		self._file = None
-		self._filename = ''
-		self._encoding = ''
+		self._filename = ""
+		self._encoding = ""
 		self._header = Header()
 
-	def open(self, filename, encoding='utf-8'):
-		self._file = open(filename, 'rb')
+	def open(self, filename, encoding="utf-8"):
+		self._file = open(filename, "rb")
 		self._header.parse(self._file.read(43))
 		self._compression = compressions[self._header.compressionType]
 		self.short_index = self.readShortIndex()
 		self._glos.setInfo(
-			'name',
+			"name",
 			self.readUnit(self._header.title_offset),
 		)
 		self._glos.setInfo(
-			'version',
+			"version",
 			self.readUnit(self._header.version_offset)
 		)
 		self._glos.setInfo(
-			'copyright',
+			"copyright",
 			self.readUnit(self._header.copyright_offset),
 		)
-		log.debug('SDict word count: %s' % len(self))  # correct? FIXME
+		log.debug("SDict word count: %s" % len(self))  # correct? FIXME
 
 	def close(self):
 		self._file.close()
@@ -181,13 +181,13 @@ class Reader(object):
 		depth_range = range(s_index_depth)
 		for i in range(index_length):
 			entry_start = start_index = i*index_entry_len
-			short_word = ''
+			short_word = ""
 			try:
 				for j in depth_range:
 					# inlined unpack yields ~20% performance gain
 					# compared to calling read_int()
 					uchar_code = unpack(
-						'<I',
+						"<I",
 						short_index_str[start_index:start_index+4]
 					)[0]
 					start_index += 4
@@ -200,13 +200,13 @@ class Reader(object):
 				# unicode chars. It seems best to ignore such index items
 				# The rest of the dictionary should be usable.
 				log.error(
-					'Failed to decode short index item %s' % i +
-					', will ignore: %s' % ve
+					"Failed to decode short index item %s" % i +
+					", will ignore: %s" % ve
 				)
 				continue
 			pointer_start = entry_start+s_index_depth*4
 			pointer = unpack(
-				'<I',
+				"<I",
 				short_index_str[pointer_start:pointer_start+4]
 			)[0]
 			short_index[len(short_word)][short_word] = pointer
@@ -226,7 +226,7 @@ class Reader(object):
 			word = toStr(word)
 			defi = self.readUnit(self._header.articles_offset + ptr)
 			defi = toStr(defi)
-			defi = defi.replace('<BR>', '\n').replace('<br>', '\n')
+			defi = defi.replace("<BR>", "\n").replace("<br>", "\n")
 			yield self._glos.newEntry(word, defi)
 
 	def readFullIndexItem(self, pointer):
@@ -234,18 +234,18 @@ class Reader(object):
 			f = self._file
 			f.seek(pointer)
 			s = f.read(8)
-			next_word = unpack('<H', s[:2])[0]
-			article_pointer = unpack('<I', s[4:])[0]
+			next_word = unpack("<H", s[:2])[0]
+			article_pointer = unpack("<I", s[4:])[0]
 			word = f.read(next_word - 8) if next_word else None
 			return next_word, word, article_pointer
 		except Exception as e:
 			if pointer >= self._header.articles_offset:
 				log.error(
-					'Warning: attempt to read word from '
-					'illegal position in dict file'
+					"Warning: attempt to read word from "
+					"illegal position in dict file"
 				)
 				return None
-			log.exception('')
+			log.exception("")
 
 	def readArticle(self, pointer):
 		return self.readUnit(self._header.articles_offset + pointer)
