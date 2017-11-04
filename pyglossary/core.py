@@ -55,7 +55,11 @@ else:
    uiDir = dirname(realpath(__file__))
    rootDir = dirname(uiDir)
 
-resDir = join(rootDir, 'res')
+dataDir = rootDir
+if dataDir.endswith("dist-packages"):
+	dataDir = dirname(sys.argv[0])
+
+resDir = join(dataDir, 'res')
 
 if os.sep=='/': ## Operating system is Unix-Like
     homeDir = os.getenv('HOME')
@@ -79,7 +83,7 @@ else:
     raise RuntimeError('Unknown path seperator(os.sep=="%s"), unknown operating system!'%os.sep)
 
 confJsonFile = join(confDir, 'config.json')
-rootConfJsonFile = join(rootDir, 'config.json')
+rootConfJsonFile = join(dataDir, 'config.json')
 userPluginsDir = join(confDir, 'plugins')
 
 

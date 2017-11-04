@@ -23,6 +23,8 @@ from pyglossary.core import (
     rootConfJsonFile,
     confJsonFile,
     rootDir,
+    dataDir,
+    resDir,
 )
 from pyglossary.glossary import *
 from pyglossary.json_utils import jsonToData
@@ -31,10 +33,10 @@ def fread(path):
     with open(path) as fp:
         return fp.read()
 
-logo = join(rootDir, 'res', 'pyglossary.png')
-aboutText = fread(join(rootDir, 'about'))
-licenseText = fread(join(rootDir, 'license-dialog'))
-authors = fread(join(rootDir, 'AUTHORS')).split('\n')
+logo = join(resDir, 'pyglossary.png')
+aboutText = fread(join(dataDir, 'about'))
+licenseText = fread(join(dataDir, 'license-dialog'))
+authors = fread(join(dataDir, 'AUTHORS')).split('\n')
 
 
 class UIBase(object):
