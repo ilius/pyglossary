@@ -107,6 +107,12 @@ if py2exe:
         ('doc/pyglossary', ['doc/bgl_structure.svgz', ]),
         ('doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')),
     ]
+    for pyVer in ("34", "35", "36"):
+        relPath = 'plugin_lib/py%s' % pyVer
+        data_files = data_files.append((
+            relPath ,
+            glob.glob('pyglossary/' + relPath + "/*.py",
+        )))
 else:
     py2exeoptions = {}
 
@@ -132,6 +138,7 @@ setup(
         'pyglossary': [
             'plugins/*.py',
             'plugin_lib/*.py',
+            'plugin_lib/py*/*.py',
         ] + [
             # safest way found so far to include every resource of plugins
             # producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
