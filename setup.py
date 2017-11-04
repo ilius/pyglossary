@@ -50,6 +50,7 @@ data_files = [
     ]),
     (relRootDir+'/ui', glob.glob('ui/*.py')),
     (relRootDir+'/ui/glade', glob.glob('ui/glade/*')),
+    (relRootDir+'/ui/gtk3_utils', glob.glob('ui/gtk3_utils/*.py')),
     (relRootDir+'/res', glob.glob('res/*')),
     ('share/doc/pyglossary', []),
     ('share/doc/pyglossary/non-gui_examples', glob.glob('doc/non-gui_examples/*')),
