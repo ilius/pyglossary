@@ -47,6 +47,7 @@ data_files = [
         'help',
         'pyglossary.pyw',
         'AUTHORS',
+        'config.json',
     ]),
     (relRootDir+'/ui', glob.glob('ui/*.py')),
     (relRootDir+'/ui/glade', glob.glob('ui/glade/*')),
