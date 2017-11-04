@@ -96,7 +96,7 @@ if py2exe:
         ('tcl/tix8.1/bitmaps', files(join(sys.prefix, 'tcl', 'tix8.4.3', 'bitmaps'))),
         ('tcl/tix8.1/pref', files(join(sys.prefix, 'tcl', 'tix8.4.3', 'pref'))),
         ('tcl/tcl8.1/init.tcl', [join(sys.prefix, 'tcl', 'tix8.4.3', 'init.tcl')]),
-        ('', ['about', 'license', 'help']),
+        ('', ['about', 'license-dialog', 'help']),
         ('ui', glob.glob('ui/*.py')),
         ('ui/glade', glob.glob('ui/glade/*')),
         ('res', glob.glob('res/*')),
