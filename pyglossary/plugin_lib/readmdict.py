@@ -273,7 +273,7 @@ class MDict(object):
         #   0x00 - no encryption
         #   0x01 - encrypt record block
         #   0x02 - encrypt key info block
-        if header_tag[b'Encrypted'] == b'No':
+        if b'Encrypted' not in header_tag or header_tag[b'Encrypted'] == b'No':
             self._encrypt = 0
         elif header_tag[b'Encrypted'] == b'Yes':
             self._encrypt = 1
