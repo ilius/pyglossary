@@ -105,6 +105,7 @@ class Entry(object):
 			r'<p[ >]',
 			r'<div[ >]',
 			r'<a href=',
+			r'<sup[ >]',
 		]) + ')',
 		re.S,
 	)
