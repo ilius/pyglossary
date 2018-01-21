@@ -1282,7 +1282,7 @@ class Glossary(object):
                     except Exception:
                         log.exception('')
                         log.pretty(result, 'result = ')
-                        return False
+                        return
                     saveFile.write('%s\t%s\n' % (word, defi))
                 yield wordI
 
