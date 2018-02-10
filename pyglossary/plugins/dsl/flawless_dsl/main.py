@@ -68,12 +68,12 @@ OPEN = 1
 CLOSE = 2
 TEXT = 3
 
-BRACKET_L = '\0\1'
-BRACKET_R = '\0\2'
+BRACKET_L = "\0\1"
+BRACKET_R = "\0\2"
 
 # precompiled regexs
-re_m_tag_with_content = re.compile(r'(\[m\d\])(.*?)(\[/m\])')
-re_non_escaped_bracket = re.compile(r'(?<!\\)\[')
+re_m_tag_with_content = re.compile(r"(\[m\d\])(.*?)(\[/m\])")
+re_non_escaped_bracket = re.compile(r"(?<!\\)\[")
 _startswith_tag_cache = {}
 
 
@@ -83,37 +83,37 @@ class FlawlessDSLParser(object):
 	"""
 
 	def __init__(self, tags=frozenset({
-		('m', '\d'),
-		'*',
-		'ex',
-		'i',
-		('c', '(?: \w+)?'),
-		'p',
-		"'",
-		'b',
-		's',
-		'sup',
-		'sub',
-		'ref',
-		'url',
+		("m", "\d"),
+		"*",
+		"ex",
+		"i",
+		("c", "(?: \w+)?"),
+		"p",
+		"\"",
+		"b",
+		"s",
+		"sup",
+		"sub",
+		"ref",
+		"url",
 	})):
 		"""
 		:type tags: set[str | tuple[str]] | frozenset[str | tuple[str]]
 		:param tags: set (or any other iterable) of tags where each tag is a
 					 string or two-tuple.  if string, it is tag name without
 					 brackets, must be constant, i.e. non-save regex characters
-					 will be escaped, e.g.: 'i', 'sub', '*'.
-					 if 2-tuple, then first item is tag's base name, and
+					 will be escaped, e.g.: "i", "sub", "*".
+					 if 2-tuple, then first item is tag"s base name, and
 					 second is its extension for opening tag,
-					 e.g.: ('c', r' (\w+)'), ('m', r'\d')
+					 e.g.: ("c", r" (\w+)"), ("m", r"\d")
 		"""
 		tags_ = set()
 		for tag, ext_re in (
-			t if isinstance(t, tuple) else (t, '')
+			t if isinstance(t, tuple) else (t, "")
 			for t in tags
 		):
 			tag_re = re.escape(tag)
-			tag_open_re = r'\[%s%s\]' % (tag_re, ext_re)
+			tag_open_re = r"\[%s%s\]" % (tag_re, ext_re)
 			tags_.add((tag, tag_re, ext_re, tag_open_re))
 		self.tags = frozenset(tags_)
 
@@ -150,7 +150,7 @@ class FlawlessDSLParser(object):
 		"""
 		ptr = 0
 		while ptr < len(line):
-			bracket = line.find('[', ptr)
+			bracket = line.find("[", ptr)
 			if bracket != -1:
 				chunk = line[ptr:bracket]
 			else:
@@ -164,8 +164,8 @@ class FlawlessDSLParser(object):
 
 			ptr = bracket
 			# at least two chars after opening bracket:
-			bracket = line.find(']', ptr + 2)
-			if line[ptr + 1] == '/':
+			bracket = line.find("]", ptr + 2)
+			if line[ptr + 1] == "/":
 				yield CLOSE, line[ptr + 2:bracket]
 			else:
 				for tag, _, _, tag_open_re in self.tags:
@@ -183,7 +183,7 @@ class FlawlessDSLParser(object):
 		parse chunks one by one.
 
 		:param tags_and_text:
-			Iterable[['OPEN', Tag] | ['CLOSE', str] | ['TEXT', str]]
+			Iterable[["OPEN", Tag] | ["CLOSE", str] | ["TEXT", str]]
 		:return: str
 		"""
 		state = TEXT
@@ -197,7 +197,7 @@ class FlawlessDSLParser(object):
 				  item.closing not in closings:
 					continue
 
-				if item.closing == 'm' and len(stack) >= 1:
+				if item.closing == "m" and len(stack) >= 1:
 					# close all layers.  [m*] tags can only appear
 					# at top layer.
 					# note: do not reopen tags that were marked as
@@ -243,42 +243,42 @@ class FlawlessDSLParser(object):
 		if state is CLOSE and closings:
 			process_closing_tags(stack, closings)
 		# shutdown unclosed tags
-		return ''.join([l.text for l in stack])
+		return "".join([l.text for l in stack])
 
 	def put_brackets_away(self, line):
 		"""put away \[, \] and brackets that does not belong to any of given tags.
 
 		:rtype: str
 		"""
-		clean_line = ''
+		clean_line = ""
 		startswith_tag = _startswith_tag_cache.get(self.tags, None)
 		if startswith_tag is None:
-			openings = '|'.join('%s%s' % (_[1], _[2]) for _ in self.tags)
-			closings = '|'.join(_[1] for _ in self.tags)
+			openings = "|".join("%s%s" % (_[1], _[2]) for _ in self.tags)
+			closings = "|".join(_[1] for _ in self.tags)
 			startswith_tag = re.compile(
-				r'(?:(?:%s)|/(?:%s))\]' % (openings, closings)
+				r"(?:(?:%s)|/(?:%s))\]" % (openings, closings)
 			)
 			_startswith_tag_cache[self.tags] = startswith_tag
 		for i, chunk in enumerate(re_non_escaped_bracket.split(line)):
 			if i != 0:
 				m = startswith_tag.match(chunk)
 				if m:
-					clean_line += '[%s%s' % (
+					clean_line += "[%s%s" % (
 						m.group(),
-						chunk[m.end():].replace('[', BRACKET_L)
-						.replace(']', BRACKET_R)
+						chunk[m.end():].replace("[", BRACKET_L)
+						.replace("]", BRACKET_R)
 					)
 				else:
-					clean_line += BRACKET_L + chunk.replace('[', BRACKET_L)\
-						.replace(']', BRACKET_R)
+					clean_line += BRACKET_L + chunk.replace("[", BRACKET_L)\
+						.replace("]", BRACKET_R)
 			else:  # firsr chunk
-				clean_line += chunk.replace('[', BRACKET_L)\
-					.replace(']', BRACKET_R)
+				clean_line += chunk.replace("[", BRACKET_L)\
+					.replace("]", BRACKET_R)
 		return clean_line
 
 	@staticmethod
 	def bring_brackets_back(line):
-		return line.replace(BRACKET_L, '[').replace(BRACKET_R, ']')
+		return line.replace(BRACKET_L, "[").replace(BRACKET_R, "]")
 
 
 def parse(line, tags=None):
@@ -291,10 +291,10 @@ def parse(line, tags=None):
 	"""
 	import warnings
 	warnings.warn(
-		'`parse` function is not optimal because it creates new parser '
-		'instance on each call.\n'
-		'consider cache one [per thread] instance of FlawlessDSLParser '
-		'in your code.'
+		"`parse` function is not optimal because it creates new parser "
+		"instance on each call.\n"
+		"consider cache one [per thread] instance of FlawlessDSLParser "
+		"in your code."
 	)
 	if tags:
 		parser = FlawlessDSLParser(tags)

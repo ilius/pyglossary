@@ -19,10 +19,10 @@ class DataEntry(object): # or Resource? FIXME
 		assert isinstance(inTmp, bool)
 
 		if inTmp:
-			tmpPath = mktemp(prefix=fname + '_')
-			with open(tmpPath, 'wb') as toFile:
+			tmpPath = mktemp(prefix=fname + "_")
+			with open(tmpPath, "wb") as toFile:
 				toFile.write(data)
-			data = ''
+			data = ""
 		else:
 			tmpPath = None
 
@@ -35,7 +35,7 @@ class DataEntry(object): # or Resource? FIXME
 
 	def getData(self):
 		if self._tmpPath:
-			with open(self._tmpPath, 'rb') as fromFile:
+			with open(self._tmpPath, "rb") as fromFile:
 				return fromFile.read()
 		else:
 			return self._data
@@ -47,7 +47,7 @@ class DataEntry(object): # or Resource? FIXME
 		fdir = dirname(fpath)
 		if not exists(fdir):
 			os.makedirs(fdir)
-		with open(fpath, 'wb') as toFile:
+		with open(fpath, "wb") as toFile:
 			toFile.write(self.getData())
 		return fpath
 
@@ -58,13 +58,13 @@ class DataEntry(object): # or Resource? FIXME
 		return [self._fname]
 
 	def getDefi(self):
-		return 'File: %s' % self._fname  
+		return "File: %s" % self._fname  
 
 	def getDefis(self):
 		return [self.getDefi()]
 
 	def getDefiFormat(self):
-		return 'b' # 'm' or 'b' (binary) FIXME
+		return "b" # "m" or "b" (binary) FIXME
 
 	def setDefiFormat(self, defiFormat):
 		pass
@@ -98,21 +98,21 @@ class DataEntry(object): # or Resource? FIXME
 	def getRaw(self):
 		return (
 			self._fname,
-			'DATA',
+			"DATA",
 			self,
 		)
 
 
 class Entry(object):
-	sep = '|'
+	sep = "|"
 	htmlPattern = re.compile(
-		'.*(' + '|'.join([
-			r'<br\s*/?\s*>',
-			r'<p[ >]',
-			r'<div[ >]',
-			r'<a href=',
-			r'<sup[ >]',
-		]) + ')',
+		".*(" + "|".join([
+			r"<br\s*/?\s*>",
+			r"<p[ >]",
+			r"<div[ >]",
+			r"<a href=",
+			r"<sup[ >]",
+		]) + ")",
 		re.S,
 	)
 
@@ -121,7 +121,7 @@ class Entry(object):
 
 	def _join(self, parts):
 		return self.sep.join([
-			part.replace(self.sep, '\\'+self.sep)
+			part.replace(self.sep, "\\"+self.sep)
 			for part in parts
 		])
 
@@ -142,14 +142,14 @@ class Entry(object):
 			return lambda x: \
 				x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
 
-	def __init__(self, word, defi, defiFormat='m'):
+	def __init__(self, word, defi, defiFormat="m"):
 		"""
 			word: string or a list of strings (including alternate words)
 			defi: string or a list of strings (including alternate definitions)
 			defiFormat (optional): definition format:
-				'm': plain text
-				'h': html
-				'x': xdxf
+				"m": plain text
+				"h": html
+				"x": xdxf
 		"""
 
 		# memory optimization:
@@ -157,16 +157,16 @@ class Entry(object):
 			if len(word) == 1:
 				word = word[0]
 		elif not isinstance(word, str):
-			raise TypeError('invalid word type %s' % type(word))
+			raise TypeError("invalid word type %s" % type(word))
 
 		if isinstance(defi, list):
 			if len(defi) == 1:
 				defi = defi[0]
 		elif not isinstance(defi, str):
-			raise TypeError('invalid defi type %s' % type(defi))
+			raise TypeError("invalid defi type %s" % type(defi))
 
-		if not defiFormat in ('m', 'h', 'x'):
-			raise ValueError('invalid defiFormat %r' % defiFormat)
+		if not defiFormat in ("m", "h", "x"):
+			raise ValueError("invalid defiFormat %r" % defiFormat)
 
 		self._word = word
 		self._defi = defi
@@ -176,7 +176,7 @@ class Entry(object):
 		"""
 			returns string of word,
 				and all the alternate words
-				seperated by '|'
+				seperated by "|"
 		"""
 		if isinstance(self._word, str):
 			return self._word
@@ -196,7 +196,7 @@ class Entry(object):
 		"""
 			returns string of definition,
 				and all the alternate definitions
-				seperated by '|'
+				seperated by "|"
 		"""
 		if isinstance(self._defi, str):
 			return self._defi
@@ -215,27 +215,27 @@ class Entry(object):
 	def getDefiFormat(self):
 		"""
 			returns definition format:
-				'm': plain text
-				'h': html
-				'x': xdxf
+				"m": plain text
+				"h": html
+				"x": xdxf
 		"""
 		return self._defiFormat
 
 	def setDefiFormat(self, defiFormat):
 		"""
 			defiFormat:
-				'm': plain text
-				'h': html
-				'x': xdxf
+				"m": plain text
+				"h": html
+				"x": xdxf
 		"""
 		self._defiFormat = defiFormat
 
 	def detectDefiFormat(self):
-		if self._defiFormat != 'm':
+		if self._defiFormat != "m":
 			return
 		defi = self.getDefi().lower()
 		if re.match(self.htmlPattern, defi):
-			self._defiFormat = 'h'
+			self._defiFormat = "h"
 
 	def addAlt(self, alt):
 		words = self.getWords()
@@ -322,7 +322,7 @@ class Entry(object):
 			)
 
 	@classmethod
-	def fromRaw(cls, rawEntry, defaultDefiFormat='m'):
+	def fromRaw(cls, rawEntry, defaultDefiFormat="m"):
 		"""
 			rawEntry can be (word, defi) or (word, defi, defiFormat)
 			where both word and defi can be string or list of strings
@@ -332,7 +332,7 @@ class Entry(object):
 		"""
 		word = rawEntry[0]
 		defi = rawEntry[1]
-		if defi == 'DATA':
+		if defi == "DATA":
 			try:
 				dataEntry = rawEntry[2] # DataEntry instance
 			except IndexError:
