@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import re
 from tempfile import mktemp
+import os
 from os.path import (
 	join,
+	exists,
+	dirname,
 )
 
 
@@ -41,6 +44,9 @@ class DataEntry(object): # or Resource? FIXME
 		fname = self._fname
 		# fix filename depending on operating system? FIXME
 		fpath = join(directory, fname)
+		fdir = dirname(fpath)
+		if not exists(fdir):
+			os.makedirs(fdir)
 		with open(fpath, 'wb') as toFile:
 			toFile.write(self.getData())
 		return fpath
