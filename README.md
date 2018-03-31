@@ -10,7 +10,7 @@ Please send your donations through one of these cryptocurrencies:
 -	[Bitcoin](https://bchain.info/BTC/addr/1MhRK8jKDFJ8jbDgZjrSGBbUMdd1QxDFfM)
 -	[Litecoin](https://bchain.info/LTC/addr/LaBwMfwSErtvFvvtj3FGUmJ8W65f5ScF8X)
 -	[Vertcoin](https://bchain.info/VTC/addr/VvpnFsU14YWdpThAagRNdt6NoGCdTrTki6)
--	[Nano](https://www.nanode.co/account/xrb_3xabboxe6zrs7duyaes41ugdxngab44xrzgo3sywixby8pomi8hgf1yactjs)
+-	[Nano](https://www.nanode.co/account/xrb_1rdu4fkok7z3si8yij9xrxuqy99eqjibd9neawrbif1rcc6s48rhxfk3tmqf)
 
 Screenshots
 -----------
