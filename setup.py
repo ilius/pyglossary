@@ -109,7 +109,7 @@ if py2exe:
     ]
     for pyVer in ("34", "35", "36"):
         relPath = 'plugin_lib/py%s' % pyVer
-        data_files = data_files.append((
+        data_files.append((
             relPath ,
             glob.glob('pyglossary/' + relPath + "/*.py",
         )))
