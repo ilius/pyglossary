@@ -71,12 +71,13 @@ systems. While primarilly designed for *GNU/Linux*, it works on *Windows*,
 As shown in the screenshots, there are multiple User Interface types,
 ie. multiple ways to use the program.
 
--   **Gtk3-based interface**, uses PyGI (Python Gobject Introspection)
+-   **Gtk3-based interface**, uses [PyGI (Python Gobject Introspection)](http://pygobject.readthedocs.io/en/latest/getting_started.html)
     You can install it on:
-    -   Debian: `apt-get install python3-gi`
-    -   openSUSE: `zypper install python3-gobject`
-    -   Fedora: `yum install python3-gobject`
-    -   Archlinux: `pacman -S python-gobject`
+    -   Debian: `apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0`
+    -   openSUSE: `zypper install python3-gobject gtk3`
+    -   Fedora: `dnf install pygobject3 python3-gobject gtk3`
+    -   Archlinux: `pacman -S python2-gobject gtk3`
+    -   Mac OS X: `brew install pygobject3 gtk+3`
 
 -   **Tkinter-based interface**, works in the lack of Gtk. Specially on
     Windows where Tkinter library is installed with the Python itself.
