@@ -73,7 +73,7 @@ ie. multiple ways to use the program.
 
 -   **Gtk3-based interface**, uses [PyGI (Python Gobject Introspection)](http://pygobject.readthedocs.io/en/latest/getting_started.html)
     You can install it on:
-    -   Debian: `apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0`
+    -   Debian/Ubuntu: `apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0`
     -   openSUSE: `zypper install python3-gobject gtk3`
     -   Fedora: `dnf install pygobject3 python3-gobject gtk3`
     -   Archlinux: `pacman -S python2-gobject gtk3`
@@ -82,7 +82,7 @@ ie. multiple ways to use the program.
 -   **Tkinter-based interface**, works in the lack of Gtk. Specially on
     Windows where Tkinter library is installed with the Python itself.
     You can also install it on:
-    -   Debian: `apt-get install python3-tk tix`
+    -   Debian/Ubuntu: `apt-get install python3-tk tix`
     -   openSUSE: `zypper install python3-tk tix`
     -   Fedora: `yum install python3-tkinter tix`
     -   Mac OS X: read <https://www.python.org/download/mac/tcltk/>
