@@ -512,10 +512,14 @@ class Writer(object):
 		defiFormatCounter = Counter()
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
-		for entryI, entry in enumerate(self._glos):
+
+		entryI = -1
+		for entry in self._glos:
 			if entry.isData():
 				entry.save(self._resDir)
 				continue
+			entryI += 1
+
 			words = entry.getWords()  # list of strs
 			word = words[0]  # str
 			defis = entry.getDefis()  # list of strs
