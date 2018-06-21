@@ -309,7 +309,7 @@ def read(glos, fname, **options):
 			elif line.startswith("#INDEX_LANGUAGE"):
 				setInfo("sourceLang", line[16:])
 			elif line.startswith("#CONTENTS_LANGUAGE"):
-				setInfo("targetLang", line[20:])
+				setInfo("targetLang", line[19:])
 			line_type = "header"
 		# texts
 		elif line.startswith(" ") or line.startswith("\t"):
