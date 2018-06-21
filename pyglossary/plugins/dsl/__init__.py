@@ -304,11 +304,11 @@ def read(glos, fname, **options):
 			continue
 		# header
 		if line.startswith("#"):
-			if line.startswith("#NAME"):
+			if line.startswith("#NAME:"):
 				setInfo("title", line[6:])
-			elif line.startswith("#INDEX_LANGUAGE"):
+			elif line.startswith("#INDEX_LANGUAGE:"):
 				setInfo("sourceLang", line[16:])
-			elif line.startswith("#CONTENTS_LANGUAGE"):
+			elif line.startswith("#CONTENTS_LANGUAGE:"):
 				setInfo("targetLang", line[19:])
 			line_type = "header"
 		# texts
