@@ -123,7 +123,7 @@ shortcuts = [
 
 # precompiled regexs
 re_brackets_blocks = re.compile(r'\{\{[^}]*\}\}')
-re_lang_open = re.compile(r'\[lang[^\]]*\]')
+re_lang_open = re.compile(r'(?<!\\)\[lang[^\]]*\]')
 re_m_open = re.compile(r'(?<!\\)\[m\d\]')
 re_c_open_color = re.compile(r'\[c (\w+)\]')
 re_sound = re.compile(r'\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]')
