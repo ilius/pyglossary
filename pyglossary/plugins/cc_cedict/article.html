@@ -1,0 +1,26 @@
+{% macro colorize(syllables, tones) %}
+<div style="display: inline-block">
+    {% for syllable, tone in zip(syllables, tones) %}
+    <span style="color: {{COLORS[tone]}}">{{syllable}}</span>
+    {% endfor %}
+</div>
+{% endmacro %}
+<div style="border: 1px solid; padding: 5px">
+    <div>
+        <big>{{colorize(simp, tones)}}</big>
+	{% if trad != simp %}
+        &nbsp;/&nbsp;
+        {{colorize(trad, tones)}}
+	{% endif %}
+        <br>
+        <big>{{colorize(pinyin, tones)}}</big>
+    </div>
+    <div>
+        <ul>
+            {% for defn in defns %}
+            <li>{{defn}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+

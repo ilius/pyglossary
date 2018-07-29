@@ -37,6 +37,7 @@ Supported formats
 | AppleDict Source                  | .xml          |       | X      |
 | Babylon                           | .bgl          | X     |        |
 | Babylon Source                    | .gls          |       | X      |
+| CC-CEDICT                         |               | X     |        |
 | CSV                               | .csv          | X     | X      |
 | DictionaryForMIDs                 |               | X     | X      |
 | DICTD dictionary server           | .index        | X     | X      |
