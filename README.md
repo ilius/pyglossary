@@ -124,6 +124,9 @@ Format-specific Requirements
 
 -   **Reading from Babylon BGL**: Python 3.4 to 3.6 is recommended
 
+-   **Reading from CC-CEDICT**
+
+    `sudo pip3 install jinja2`
 
 **Other Requirements for Mac OS X**
 
