@@ -131,7 +131,7 @@ you also need:
 
 -   GNU make as part of [Command Line Tools for
     Xcode](http://developer.apple.com/downloads).
--   Dictionary Development Kit as part of [Auxillary Tools for
+-   Dictionary Development Kit as part of [Additional Tools for
     Xcode](http://developer.apple.com/downloads). Extract to
     `/Developer/Extras/Dictionary Development Kit`
 
