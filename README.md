@@ -73,6 +73,7 @@ ie. multiple ways to use the program.
     -   Fedora: `dnf install pygobject3 python3-gobject gtk3`
     -   Archlinux: `pacman -S python2-gobject gtk3`
     -   Mac OS X: `brew install pygobject3 gtk+3`
+    -   Nix / NixOS: `nix-shell -p gnome3.gobjectIntrospection python37Packages.pygobject3 python37Packages.pycairo`
 
 -   **Tkinter-based interface**, works in the lack of Gtk. Specially on
     Windows where Tkinter library is installed with the Python itself.
@@ -81,6 +82,7 @@ ie. multiple ways to use the program.
     -   openSUSE: `zypper install python3-tk tix`
     -   Fedora: `yum install python3-tkinter tix`
     -   Mac OS X: read <https://www.python.org/download/mac/tcltk/>
+    -   Nix / NixOS: `nix-shell -p python37Packages.tkinter tix`
 
 -   **Command-line interface**, works in all operating systems without
     any specific requirements, just type:
