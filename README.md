@@ -66,32 +66,32 @@ systems. While primarilly designed for *GNU/Linux*, it works on *Windows*,
 As shown in the screenshots, there are multiple User Interface types,
 ie. multiple ways to use the program.
 
--   **Gtk3-based interface**, uses [PyGI (Python Gobject Introspection)](http://pygobject.readthedocs.io/en/latest/getting_started.html)
-    You can install it on:
-    -   Debian/Ubuntu: `apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0`
-    -   openSUSE: `zypper install python3-gobject gtk3`
-    -   Fedora: `dnf install pygobject3 python3-gobject gtk3`
-    -   Archlinux: `pacman -S python2-gobject gtk3`
-    -   Mac OS X: `brew install pygobject3 gtk+3`
-    -   Nix / NixOS: `nix-shell -p gnome3.gobjectIntrospection python37Packages.pygobject3 python37Packages.pycairo`
+-	**Gtk3-based interface**, uses [PyGI (Python Gobject Introspection)](http://pygobject.readthedocs.io/en/latest/getting_started.html)
+	You can install it on:
+	-	Debian/Ubuntu: `apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0`
+	-	openSUSE: `zypper install python3-gobject gtk3`
+	-	Fedora: `dnf install pygobject3 python3-gobject gtk3`
+	-	Archlinux: `pacman -S python2-gobject gtk3`
+	-	Mac OS X: `brew install pygobject3 gtk+3`
+	-	Nix / NixOS: `nix-shell -p gnome3.gobjectIntrospection python37Packages.pygobject3 python37Packages.pycairo`
 
--   **Tkinter-based interface**, works in the lack of Gtk. Specially on
-    Windows where Tkinter library is installed with the Python itself.
-    You can also install it on:
-    -   Debian/Ubuntu: `apt-get install python3-tk tix`
-    -   openSUSE: `zypper install python3-tk tix`
-    -   Fedora: `yum install python3-tkinter tix`
-    -   Mac OS X: read <https://www.python.org/download/mac/tcltk/>
-    -   Nix / NixOS: `nix-shell -p python37Packages.tkinter tix`
+-	**Tkinter-based interface**, works in the lack of Gtk. Specially on
+	Windows where Tkinter library is installed with the Python itself.
+	You can also install it on:
+	-	Debian/Ubuntu: `apt-get install python3-tk tix`
+	-	openSUSE: `zypper install python3-tk tix`
+	-	Fedora: `yum install python3-tkinter tix`
+	-	Mac OS X: read <https://www.python.org/download/mac/tcltk/>
+	-	Nix / NixOS: `nix-shell -p python37Packages.tkinter tix`
 
--   **Command-line interface**, works in all operating systems without
-    any specific requirements, just type:
+-	**Command-line interface**, works in all operating systems without
+	any specific requirements, just type:
 
-    `python3 pyglossary.pyw --help`
+	`python3 pyglossary.pyw --help`
 
-    You may have to give `--no-progress-bar` option in Windows when
-    converting glossaries (because the progress bar does not work
-    properly in Windows command window)
+	You may have to give `--no-progress-bar` option in Windows when
+	converting glossaries (because the progress bar does not work
+	properly in Windows command window)
 
 When you run the program without any command line arguments or options,
 PyGlossary tries to find PyGI, if it's installed, opens the Gtk3-based
@@ -101,29 +101,29 @@ interface. And exits with an error if neither are installed.
 But you can explicitly determine the user interface type using `--ui`,
 for example:
 
-    python3 pyglossary.pyw --ui=gtk
+	python3 pyglossary.pyw --ui=gtk
 
 Or
 
-    python3 pyglossary.pyw --ui=tk
+	python3 pyglossary.pyw --ui=tk
 
 
 Format-specific Requirements
 ----------------------------
 
--   **Reading from XDXF**
+-	**Reading from XDXF**
 
-    `sudo pip3 install lxml`
+	`sudo pip3 install lxml`
 
--   **Writing to AppleDict**
+-	**Writing to AppleDict**
 
-    `sudo pip3 install lxml beautifulsoup4 html5lib`
+	`sudo pip3 install lxml beautifulsoup4 html5lib`
 
--   **Reading from Octopus Mdict (MDX)** (required for some glossaries)
+-	**Reading from Octopus Mdict (MDX)** (required for some glossaries)
 
-    `sudo pip3 install python-lzo`
+	`sudo pip3 install python-lzo`
 
--   **Reading from Babylon BGL**: Python 3.4 to 3.6 is recommended
+-	**Reading from Babylon BGL**: Python 3.4 to 3.6 is recommended
 
 
 **Other Requirements for Mac OS X**
@@ -131,11 +131,11 @@ Format-specific Requirements
 If you want to convert glossaries into AppleDict format on Mac OS X,
 you also need:
 
--   GNU make as part of [Command Line Tools for
-    Xcode](http://developer.apple.com/downloads).
--   Dictionary Development Kit as part of [Additional Tools for
-    Xcode](http://developer.apple.com/downloads). Extract to
-    `/Developer/Extras/Dictionary Development Kit`
+-	GNU make as part of [Command Line Tools for
+	Xcode](http://developer.apple.com/downloads).
+-	Dictionary Development Kit as part of [Additional Tools for
+	Xcode](http://developer.apple.com/downloads). Extract to
+	`/Developer/Extras/Dictionary Development Kit`
 
 
 HOWTOs
@@ -146,11 +146,11 @@ HOWTOs
 Let's assume the Babylon dict is at
 `~/Documents/Duden_Synonym/Duden_Synonym.BGL`:
 
-    cd ~/Documents/Duden_Synonym/
-    python3 ~/Software/pyglossary/pyglossary.pyw --write-format=AppleDict Duden_Synonym.BGL Duden_Synonym-apple
-    cd Duden_Synonym-apple
-    make
-    make install
+	cd ~/Documents/Duden_Synonym/
+	python3 ~/Software/pyglossary/pyglossary.pyw --write-format=AppleDict Duden_Synonym.BGL Duden_Synonym-apple
+	cd Duden_Synonym-apple
+	make
+	make install
 
 Launch Dictionary.app and test.
 
@@ -161,11 +161,11 @@ Let's assume the MDict dict is at
 
 Run the following command:
 
-    cd ~/Documents/Duden-Oxford/
-    python3 ~/Software/pyglossary/pyglossary.pyw --write-format=AppleDict "Duden-Oxford DEED ver.20110408.mdx" "Duden-Oxford DEED ver.20110408-apple"
-    cd "Duden-Oxford DEED ver.20110408-apple"
-    make
-    make install
+	cd ~/Documents/Duden-Oxford/
+	python3 ~/Software/pyglossary/pyglossary.pyw --write-format=AppleDict "Duden-Oxford DEED ver.20110408.mdx" "Duden-Oxford DEED ver.20110408-apple"
+	cd "Duden-Oxford DEED ver.20110408-apple"
+	make
+	make install
 
 Launch Dictionary.app and test.
 
@@ -175,27 +175,27 @@ with the image/audio resources file `oald8.mdd`.
 
 Run the following commands: :
 
-    cd ~/Downloads/oald8/
-    python3 ~/Software/pyglossary/pyglossary.pyw --write-format=AppleDict oald8.mdx oald8-apple
-    cd oald8-apple
+	cd ~/Downloads/oald8/
+	python3 ~/Software/pyglossary/pyglossary.pyw --write-format=AppleDict oald8.mdx oald8-apple
+	cd oald8-apple
 
 This extracts dictionary into `oald8.xml` and data resources into folder
 `OtherResources`. Hyperlinks use relative path. :
 
-    sed -i "" 's:src="/:src=":g' oald8.xml
+	sed -i "" 's:src="/:src=":g' oald8.xml
 
 Convert audio file from SPX format to WAV format. You need package
 `speex` from [MacPorts](https://www.macports.org) :
 
-    find OtherResources -name "*.spx" -execdir sh -c 'spx={};speexdec $spx  ${spx%.*}.wav' \;
-    sed -i "" 's|sound://\([/_a-zA-Z0-9]*\).spx|\1.wav|g' oald8.xml
+	find OtherResources -name "*.spx" -execdir sh -c 'spx={};speexdec $spx  ${spx%.*}.wav' \;
+	sed -i "" 's|sound://\([/_a-zA-Z0-9]*\).spx|\1.wav|g' oald8.xml
 
 But be warned that the decoded WAVE audio can consume \~5 times more disk
 space!
 
 Compile and install. :
 
-    make
-    make install
+	make
+	make install
 
 Launch Dictionary.app and test.
