@@ -647,7 +647,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		if not isfile(inPath):
 			return
 
-		if self.pref["ui_autoSetFormat"]:  # and not inFormat:
+		if self.pref["ui_autoSetFormat"] and not inFormat:
 			self.convertInputFormatCombo.setActive(inFormatNew)
 
 		self.status("Select output file")
@@ -671,7 +671,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			outPath = urlToPath(outPath)
 			self.convertOutputEntry.set_text(outPath)
 
-		if self.pref["ui_autoSetFormat"]:  # and not outFormat:
+		if self.pref["ui_autoSetFormat"] and not outFormat:
 			outExt = getCopressedFileExt(outPath)
 			try:
 				outFormatNew = Glossary.extFormat[outExt]
@@ -749,7 +749,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		inExt = getCopressedFileExt(inPath)
 		inFormatNew = Glossary.extFormat.get(inExt)
 
-		if inFormatNew and self.pref["ui_autoSetFormat"]:  # and not inFormat:
+		if inFormatNew and self.pref["ui_autoSetFormat"] and not inFormat:
 			self.reverseInputFormatCombo.setActive(inFormatNew)
 
 		if self.pref["ui_autoSetOutputFileName"]:
