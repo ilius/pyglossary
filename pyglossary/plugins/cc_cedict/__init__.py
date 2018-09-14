@@ -12,7 +12,7 @@ class Reader:
     def __init__(self, glos):
         self._glos = glos
         self.file = None
-        self.entries_left = 0
+        self.total_entries = self.entries_left = None
 
     def open(self, filename, encoding="utf-8"):
         if self.file is not None:
@@ -25,16 +25,17 @@ class Reader:
                 self.total_entries = self.entries_left = int(count)
                 break
         else:
+            self.close()
             raise RuntimeError("CC-CEDICT: could not find entry count")
 
     def close(self):
         if self.file is not None:
             self.file.close()
         self.file = None
-        self.entries_left = 0
+        self.total_entries = self.entries_left = None
 
     def __len__(self):
-        if self.file is None:
+        if self.total_entries is None:
             raise RuntimeError("CC-CEDICT: len(reader) called "\
                     "while reader is not open")
         return self.total_entries
