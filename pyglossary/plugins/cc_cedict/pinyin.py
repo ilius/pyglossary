@@ -7,7 +7,9 @@ TONES = { "a1":"ā", "a2":"á", "a3":"ǎ", "a4":"à",
           "o1":"ō", "o2":"ó", "o3":"ǒ", "o4":"ò",
           "u1":"ū", "u2":"ú", "u3":"ǔ", "u4":"ù",
           "v1":"ǖ", "v2":"ǘ", "v3":"ǚ", "v4":"ǜ" }
-          # using v for the umlauded u
+          # using v for the umlauted u
+
+VOWELS = ("a", "e", "o", "iu", "ui", "i", "u", "v")
 
 def convert(word):
     tone = word[-1]
@@ -16,13 +18,13 @@ def convert(word):
 
     if tone == "5":
         return pinyin, tone
-    elif tone not in "1234":
+    elif tone not in ("1", "2", "3", "4"):
         return word, ""
 
-    for vowel in "a e o iu ui i u v".split():
-        if pinyin.find(vowel) > -1:
+    for vowel in VOWELS:
+        if vowel in pinyin:
             vowel1 = vowel[-1]
-            result = pinyin.replace(vowel1, TONES[vowel1+tone])
+            result = pinyin.replace(vowel1, TONES[vowel1 + tone])
             break
 
     return result, tone
