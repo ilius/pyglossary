@@ -132,6 +132,9 @@ class Glossary(object):
 	def loadPlugin(cls, pluginName):
 		try:
 			plugin = __import__(pluginName)
+		except ModuleNotFoundError as e:
+			log.warning("Module %r not found, skipping plugin %r", e.name, pluginName)
+			return
 		except Exception as e:
 			log.exception("Error while importing plugin %s" % pluginName)
 			return
