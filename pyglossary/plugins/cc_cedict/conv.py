@@ -7,6 +7,17 @@ line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
 
 jinja_env = None
 
+script_dir = os.path.dirname(__file__)
+
+COLORS = {
+	"": "black",
+	"1": "red",
+	"2": "orange",
+	"3": "green",
+	"4": "blue",
+	"5": "black",
+}
+
 def load_jinja():
 	global jinja_env
 	try:
@@ -35,9 +46,6 @@ def make_entry(trad, simp, pinyin, eng):
 	article = render_article(trad, simp, pinyin, eng)
 	return names, article
 
-script_dir = os.path.dirname(__file__)
-
-COLORS = {"": "black", "1": "red", "2": "orange", "3": "green", "4": "blue", "5": "black"}
 def render_article(trad, simp, pinyin, eng):
 	if jinja_env is None:
 		load_jinja()
@@ -49,9 +57,15 @@ def render_article(trad, simp, pinyin, eng):
 		nice_syllable, tone = convert(syllable)
 		nice_pinyin.append(nice_syllable)
 		tones.append(tone)
-	args = dict(COLORS=COLORS, trad=trad, simp=simp,
-		pinyin=nice_pinyin, tones=tones, defns=eng)
 
 	template = jinja_env.get_template("article.html")
-	return template.render(zip=zip, **args)
+	return template.render(
+		zip=zip,
+		COLORS=COLORS,
+		trad=trad,
+		simp=simp,
+		pinyin=nice_pinyin,
+		tones=tones,
+		defns=eng,
+	)
 
