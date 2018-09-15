@@ -2,10 +2,24 @@ import re
 import os
 from .pinyin import convert
 from .summarize import summarize
-from .jinja2htmlcompress import HTMLCompress
-import jinja2
 
 line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
+
+jinja_env = None
+
+def load_jinja():
+	global jinja_env
+	try:
+		import jinja2
+	except ModuleNotFoundError as e:
+		e.msg += ", run `sudo pip3 install jinja2` to install"
+		raise e
+	from .jinja2htmlcompress import HTMLCompress
+	jinja_env = jinja2.Environment(
+		loader=jinja2.FileSystemLoader(script_dir),
+		extensions=[HTMLCompress],
+	)
+
 def parse_line(line):
 	line = line.strip()
 	match = line_reg.match(line)
@@ -22,11 +36,12 @@ def make_entry(trad, simp, pinyin, eng):
 	return names, article
 
 script_dir = os.path.dirname(__file__)
-jinja_env = jinja2.Environment(
-	loader=jinja2.FileSystemLoader(script_dir),
-	extensions=[HTMLCompress])
+
 COLORS = {"": "black", "1": "red", "2": "orange", "3": "green", "4": "blue", "5": "black"}
 def render_article(trad, simp, pinyin, eng):
+	if jinja_env is None:
+		load_jinja()
+
 	pinyin_tones = [convert(syl) for syl in pinyin.split()]
 	nice_pinyin = []
 	tones = []
