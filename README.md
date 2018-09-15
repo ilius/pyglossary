@@ -37,6 +37,7 @@ Supported formats
 | AppleDict Source                  | .xml          |       | X      |
 | Babylon                           | .bgl          | X     |        |
 | Babylon Source                    | .gls          |       | X      |
+| CC-CEDICT                         |               | X     |        |
 | CSV                               | .csv          | X     | X      |
 | DictionaryForMIDs                 |               | X     | X      |
 | DICTD dictionary server           | .index        | X     | X      |
@@ -125,6 +126,9 @@ Format-specific Requirements
 
 -	**Reading from Babylon BGL**: Python 3.4 to 3.6 is recommended
 
+-   **Reading from CC-CEDICT**
+
+    `sudo pip3 install jinja2`
 
 **Other Requirements for Mac OS X**
 
