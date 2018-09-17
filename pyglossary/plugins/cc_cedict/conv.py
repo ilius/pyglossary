@@ -18,6 +18,11 @@ COLORS = {
 	"5": "black",
 }
 
+try:
+	ModuleNotFoundError
+except NameError:
+	ModuleNotFoundError = ImportError
+
 def load_jinja():
 	global jinja_env
 	try:
