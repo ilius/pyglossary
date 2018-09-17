@@ -62,6 +62,11 @@ log = logging.getLogger("root")
 
 file = io.BufferedReader
 
+try:
+	ModuleNotFoundError
+except NameError:
+	ModuleNotFoundError = ImportError
+
 
 def get_ext(path):
 	return splitext(path)[1].lower()
