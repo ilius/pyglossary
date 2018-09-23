@@ -31,30 +31,30 @@ Linux - command line interface
 Supported formats
 -----------------
 
-| Format                            | Extension     | Read  | Write  |
-|-----------------------------------|---------------|-------|--------|
-| ABBYY Lingvo DSL                  | .dsl          | X     |        |
-| AppleDict Source                  | .xml          |       | X      |
-| Babylon                           | .bgl          | X     |        |
-| Babylon Source                    | .gls          |       | X      |
-| CC-CEDICT                         |               | X     |        |
-| CSV                               | .csv          | X     | X      |
-| DictionaryForMIDs                 |               | X     | X      |
-| DICTD dictionary server           | .index        | X     | X      |
-| Editable Linked List of Entries   | .edlin        | X     | X      |
-| FreeDict                          | .tei          |       | X      |
-| Gettext Source                    | .po           | X     | X      |
-| Lingoes Source (LDF)              | .ldf          | X     | X      |
-| Octopus MDict                     | .mdx          | X     |        |
-| Octopus MDict Source              | .txt          | X     | X      |
-| Omnidic                           |               |       | X      |
-| Sdictionary Binary                | .dct          | X     |        |
-| Sdictionary Source                | .sdct         |       | X      |
-| SQL                               | .sql          |       | X      |
-| StarDict                          | .ifo          | X     | X      |
-| Tabfile                           | .txt, .dic    | X     | X      |
-| TreeDict                          |               |       | X      |
-| XDXF                              | .xdxf         | X     |        |
+| Format                            | Extension     | Read  | Write |
+|-----------------------------------|---------------|-------|-------|
+| ABBYY Lingvo DSL                  | .dsl          |   ✔   |       |
+| AppleDict Source                  | .xml          |       |   ✔   |
+| Babylon                           | .bgl          |   ✔   |       |
+| Babylon Source                    | .gls          |       |   ✔   |
+| CC-CEDICT                         |               |   ✔   |       |
+| CSV                               | .csv          |   ✔   |   ✔   |
+| DictionaryForMIDs                 |               |   ✔   |   ✔   |
+| DICTD dictionary server           | .index        |   ✔   |   ✔   |
+| Editable Linked List of Entries   | .edlin        |   ✔   |   ✔   |
+| FreeDict                          | .tei          |       |   ✔   |
+| Gettext Source                    | .po           |   ✔   |   ✔   |
+| Lingoes Source (LDF)              | .ldf          |   ✔   |   ✔   |
+| Octopus MDict                     | .mdx          |   ✔   |       |
+| Octopus MDict Source              | .txt          |   ✔   |   ✔   |
+| Omnidic                           |               |       |   ✔   |
+| Sdictionary Binary                | .dct          |   ✔   |       |
+| Sdictionary Source                | .sdct         |       |   ✔   |
+| SQL                               | .sql          |       |   ✔   |
+| StarDict                          | .ifo          |   ✔   |   ✔   |
+| Tabfile                           | .txt, .dic    |   ✔   |   ✔   |
+| TreeDict                          |               |       |   ✔   |
+| XDXF                              | .xdxf         |   ✔   |       |
 
 
 Requirements
