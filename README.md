@@ -32,7 +32,7 @@ Supported formats
 -----------------
 
 | Format                            | Extension     | Read  | Write |
-|-----------------------------------|---------------|-------|-------|
+|-----------------------------------|---------------|:-----:|:-----:|
 | ABBYY Lingvo DSL                  | .dsl          |   ✔   |       |
 | AppleDict Source                  | .xml          |       |   ✔   |
 | Babylon                           | .bgl          |   ✔   |       |
