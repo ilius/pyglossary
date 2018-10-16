@@ -154,7 +154,7 @@ setup(
 			# safest way found so far to include every resource of plugins
 			# producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
 			re.sub(
-				r"^.*?pyglossary%s(?=plugins)" % os.sep,
+				r"^.*?pyglossary%s(?=plugins)" % ("\\\\" if os.sep == "\\" else os.sep),
 				"",
 				join(dirpath, f),
 			)
