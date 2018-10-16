@@ -9,3 +9,4 @@
 .settings
 build
 dist
+.mypy_cache/
