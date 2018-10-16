@@ -30,7 +30,7 @@ from pyglossary.glossary import *
 from pyglossary.json_utils import jsonToData
 
 def fread(path):
-	with open(path) as fp:
+	with open(path, encoding="utf-8") as fp:
 		return fp.read()
 
 logo = join(appResDir, 'pyglossary.png')
