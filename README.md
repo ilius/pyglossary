@@ -72,7 +72,9 @@ ie. multiple ways to use the program.
 	-	Debian/Ubuntu: `apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0`
 	-	openSUSE: `zypper install python3-gobject gtk3`
 	-	Fedora: `dnf install pygobject3 python3-gobject gtk3`
-	-	Archlinux: `pacman -S python2-gobject gtk3`
+	-	Archlinux:
+		* `pacman -S python-gobject gtk3`
+		* https://aur.archlinux.org/packages/pyglossary/
 	-	Mac OS X: `brew install pygobject3 gtk+3`
 	-	Nix / NixOS: `nix-shell -p gnome3.gobjectIntrospection python37Packages.pygobject3 python37Packages.pycairo`
 
