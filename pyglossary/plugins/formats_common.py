@@ -15,6 +15,8 @@ import logging
 
 log = logging.getLogger("root")
 
+from pprint import pformat
+
 from paths import rootDir
 sys.path.insert(0, rootDir)
 

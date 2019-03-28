@@ -558,8 +558,8 @@ class Writer(object):
 		idxFile.close()
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
-		log.info("Writing dict file took %.2f seconds" % (now() - t0))
-		log.pretty(defiFormatCounter.most_common(), "defiFormatsCount: ")
+		log.info("Writing dict file took %.2f seconds", now() - t0)
+		log.debug("defiFormatsCount = " + pformat(defiFormatCounter.most_common()))
 
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(wordCount, indexFileSize, len(altIndexList))

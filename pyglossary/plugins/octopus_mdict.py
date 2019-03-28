@@ -59,7 +59,7 @@ class Reader(object):
 			self._mdd = MDD(mddFilename)
 			self._mddFilename = mddFilename
 
-		log.pretty(self._mdx.header, "mdx.header=")
+		log.debug("mdx.header = " + pformat(self._mdx.header))
 		# for key, value in self._mdx.header.items():
 		#	key = key.lower()
 		#	self._glos.setInfo(key, value)
