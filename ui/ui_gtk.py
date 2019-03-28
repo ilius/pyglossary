@@ -264,7 +264,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		#####
 		self.pref = {}
 		self.pref_load(**options)
-		# log.pretty(self.pref, "ui.pref=")
 		#####
 		self.assert_quit = False
 		self.path = ""

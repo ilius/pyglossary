@@ -212,7 +212,6 @@ class UI(UIBase):
 				pass
 		reverseKwArgs.update(kwargs)
 
-		# log.pretty(reverseKwArgs, "reverseKwArgs = ")
 		if not self._toPause:
 			log.info("Reversing glossary... (Press Ctrl+C to pause/stop)")
 		for wordI in self.glos.reverse(**reverseKwArgs):
