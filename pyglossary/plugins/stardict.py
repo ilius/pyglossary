@@ -26,6 +26,7 @@ extentions = [".ifo"]
 readOptions = []
 writeOptions = [
 	"dictzip",  # bool
+	"sametypesequence",	# str
 ]
 sortOnWrite = ALWAYS
 # sortKey also is defined in line 52
@@ -425,6 +426,7 @@ class Writer(object):
 		self,
 		filename,
 		dictzip=True,
+		sametypesequence=None,
 	):
 		fileBasePath = ""
 		##
@@ -442,57 +444,86 @@ class Writer(object):
 		self._filename = fileBasePath
 		self._resDir = join(dirname(self._filename), "res")
 
-		self.writeGeneral()
+
+		if sametypesequence:
+			log.debug("Using the defined sametypesequence in writeoptions:"+sametypesequence)
+			self.writeCompact(sametypesequence) 
 #		if self.glossaryHasAdditionalDefinitions():
 #			self.writeGeneral()
-#		else:
+		else:
 #			defiFormat = self.detectMainDefinitionFormat()
 #			if defiFormat == None:
-#				self.writeGeneral()
+				self.writeGeneral()
 #			else:
 #				self.writeCompact(defiFormat)
 
 		if dictzip:
 			runDictzip(self._filename)
 
-#	def writeCompact(self, defiFormat):
-#		"""
-#		Build StarDict dictionary with sametypesequence option specified.
-#		Every item definition consists of a single article.
-#		All articles have the same format, specified in defiFormat parameter.
-#
-#		Parameters:
-#		defiFormat - format of article definition: h - html, m - plain text
-#		"""
-#		dictMark = 0
-#		idxBytes = b""
-#		dictStr = ""
-#		altIndexList = [] # contains tuples (b"alternate", wordIndex)
-#		for i, entry in enumerate(self._glos):
-#			words = entry.getWords()
-#			defi = entry.getDefi()
-#			for alt in words[1:]:
-#				altIndexList.append((alt.encode("utf-8"), i))
-#			dictStr += defi
-#			defiLen = len(defi)
-#			idxBytes += words[0] + b"\x00" + intToBinStr(dictMark, 4) + \
-#				intToBinStr(defiLen, 4)
-#			dictMark += defiLen
-#		wordCount = i + 1
-#		with open(self._filename+".dict", "wb") as dictFile:
-#			dictFile.write(dictStr)
-#		with open(self._filename+".idx", "wb") as idxFile:
-#			idxFile.write(idxBytes)
-#		indexFileSize = len(idxBytes)
-#		del idxBytes, dictStr
-#
-#		self.writeSynFile(altIndexList)
-#		self.writeIfoFile(
-#			wordCount,
-#			indexFileSize,
-#			len(altIndexList),
-#			defiFormat,
-#		)
+	def writeCompact(self, defiFormat):
+		"""
+		Build StarDict dictionary with sametypesequence option specified.
+		Every item definition consists of a single article.
+		All articles have the same format, specified in defiFormat parameter.
+
+		Parameters:
+		defiFormat - format of article definition: h - html, m - plain text
+		"""
+		dictMark = 0
+		altIndexList = []  # list of tuples (b"alternate", wordIndex)
+
+		dictFile = open(self._filename+".dict", "wb")
+		idxFile = open(self._filename+".idx", "wb")
+		indexFileSize = 0
+
+		t0 = now()
+		wordCount = 0
+		if not isdir(self._resDir):
+			os.mkdir(self._resDir)
+
+		entryI = -1
+		for entry in self._glos:
+			if entry.isData():
+				entry.save(self._resDir)
+				continue
+			entryI += 1
+
+			words = entry.getWords()  # list of strs
+			word = words[0]  # str
+			defis = entry.getDefis()  # list of strs
+
+			b_dictBlock = b""
+
+			for alt in words[1:]:
+				altIndexList.append((alt.encode("utf-8"), entryI))
+
+			b_dictBlock += (defis[0]).encode("utf-8")
+
+			for altDefi in defis[1:]:
+				b_dictBlock += b"\x00" + (altDefi).encode("utf-8")
+
+			dictFile.write(b_dictBlock)
+
+			blockLen = len(b_dictBlock)
+			b_idxBlock = word.encode("utf-8") + b"\x00" + \
+				intToBinStr(dictMark, 4) + \
+				intToBinStr(blockLen, 4)
+			idxFile.write(b_idxBlock)
+
+			dictMark += blockLen
+			indexFileSize += len(b_idxBlock)
+
+			wordCount += 1
+
+		dictFile.close()
+		idxFile.close()
+		if not os.listdir(self._resDir):
+			os.rmdir(self._resDir)
+		log.info("Writing dict file took %.2f seconds", now() - t0)
+		log.debug("defiFormat = " + pformat(defiFormat))
+
+		self.writeSynFile(altIndexList)
+		self.writeIfoFile(wordCount, indexFileSize, len(altIndexList),defiFormat)
 
 	def writeGeneral(self):
 		"""
