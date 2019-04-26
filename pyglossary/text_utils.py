@@ -165,7 +165,10 @@ def runDictzip(filename):
 	import subprocess
 	dictzipCmd = "/usr/bin/dictzip"  # Save in pref FIXME
 	if not os.path.isfile(dictzipCmd):
-		return False
+		dictzipCmd = "./dictzip.exe"	#For Windows
+		if not os.path.isfile(dictzipCmd):
+			return False
+	filename=os.path.basename(filename)
 	if filename[-4:] == ".ifo":
 		filename = filename[:-4]
 	(out, err) = subprocess.Popen(
