@@ -4,11 +4,6 @@ PyGlossary
 PyGlossary is a tool for converting dictionary files aka glossaries,
 from/to various formats used by different dictionary applications
 
-Donation
----------
-Please send your donations through one of these cryptocurrencies:
--	[Nano](https://www.nanode.co/account/xrb_1rdu4fkok7z3si8yij9xrxuqy99eqjibd9neawrbif1rcc6s48rhxfk3tmqf)
-
 Screenshots
 -----------
 
