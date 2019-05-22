@@ -36,7 +36,7 @@ except ImportError:
 	log.exception("")
 	log.warning(
 		"If things didn\'t work well with BGL files, "
-		"install Python 3.5 and try again"
+		"install Python 3.5 to 3.7 and try again"
 	)
 
 from pyglossary.text_utils import (
