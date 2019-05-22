@@ -156,6 +156,12 @@ sys.excepthook = lambda *exc_info: log.critical(
 
 sysName = platform.system()
 
+# can set env var WARNINGS to: "error", "ignore", "always", "default", "module", "once"
+if os.getenv("WARNINGS"):
+	import warnings
+	warnings.filterwarnings(os.getenv("WARNINGS"))
+
+
 if hasattr(sys, "frozen"):
 	rootDir = dirname(sys.executable)
 	uiDir = join(rootDir, "ui")
