@@ -85,6 +85,13 @@ def imageFromFile(path):  # the file must exist
 	return im
 
 
+def color_parse(colorStr):
+	rgba = gdk.RGBA()
+	if not rgba.parse(colorStr):
+		raise ValueError("bad color string %r" % colorStr)
+	return rgba.to_color()
+
+
 class FormatComboBox(gtk.ComboBox):
 	def __init__(self):
 		gtk.ComboBox.__init__(self)
@@ -96,6 +103,8 @@ class FormatComboBox(gtk.ComboBox):
 		self.set_model(self.model)
 
 		cell = gtk.CellRendererText()
+		cell.set_visible(False)
+		pack(self, cell)
 		self.add_attribute(cell, "text", 0)
 
 		# cell = gtk.CellRendererPixbuf()
@@ -223,7 +232,7 @@ class BrowseButton(gtk.Button):
 
 	def onClick(self, widget):
 		fcd = gtk.FileChooserDialog(
-			parent=self.get_toplevel(),
+			transient_for=self.get_toplevel(),
 			action=gtk.FileChooserAction.SAVE if self.actionSave
 			else gtk.FileChooserAction.OPEN,
 			title=self.title,
@@ -487,11 +496,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			gdk.RGBA(0, 0, 0, 1),
 		)
 		###
-		handler.setColor("CRITICAL", gdk.color_parse("red"))
-		handler.setColor("ERROR", gdk.color_parse("red"))
-		handler.setColor("WARNING", gdk.color_parse("yellow"))
-		handler.setColor("INFO", gdk.color_parse("white"))
-		handler.setColor("DEBUG", gdk.color_parse("white"))
+		handler.setColor("CRITICAL", color_parse("red"))
+		handler.setColor("ERROR", color_parse("red"))
+		handler.setColor("WARNING", color_parse("yellow"))
+		handler.setColor("INFO", color_parse("white"))
+		handler.setColor("DEBUG", color_parse("white"))
 		###
 		textview.get_buffer().set_text("Output & Error Console:\n")
 		textview.set_editable(False)
