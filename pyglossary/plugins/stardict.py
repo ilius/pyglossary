@@ -26,7 +26,7 @@ extentions = [".ifo"]
 readOptions = []
 writeOptions = [
 	"dictzip",  # bool
-	"sametypesequence",	# str
+	"sametypesequence",	# str, "h" for html, "m" for plain text
 ]
 sortOnWrite = ALWAYS
 # sortKey also is defined in line 52
@@ -446,14 +446,14 @@ class Writer(object):
 
 
 		if sametypesequence:
-			log.debug("Using the defined sametypesequence in writeoptions:"+sametypesequence)
-			self.writeCompact(sametypesequence) 
-#		if self.glossaryHasAdditionalDefinitions():
+			log.debug("Using write option sametypesequence=%s" % sametypesequence)
+			self.writeCompact(sametypesequence)
+#		elif self.glossaryHasAdditionalDefinitions():
 #			self.writeGeneral()
 		else:
 #			defiFormat = self.detectMainDefinitionFormat()
 #			if defiFormat == None:
-				self.writeGeneral()
+			self.writeGeneral()
 #			else:
 #				self.writeCompact(defiFormat)
 
