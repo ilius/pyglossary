@@ -598,7 +598,7 @@ class Glossary(object):
 				self.loadReader(reader)
 		else:
 			if direct:
-				log.warning(
+				log.debug(
 					"No `Reader` class found in %s plugin" % format +
 					", falling back to indirect mode"
 				)
