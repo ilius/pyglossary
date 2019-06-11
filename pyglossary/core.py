@@ -170,7 +170,7 @@ else:
 	rootDir = dirname(uiDir)
 
 dataDir = rootDir
-if dataDir.endswith("dist-packages"):
+if dataDir.endswith("dist-packages") or dataDir.endswith("site-packages"):
 	dataDir = dirname(sys.argv[0])
 
 appResDir = join(dataDir, "res")
