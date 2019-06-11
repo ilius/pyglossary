@@ -10,3 +10,10 @@
 build
 dist
 .mypy_cache/
+/bin
+/include
+/lib
+/share
+/activate
+/local
+
