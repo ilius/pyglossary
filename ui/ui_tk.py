@@ -41,15 +41,15 @@ startRed = "\x1b[31m"
 noneItem = "Not Selected"
 
 
-bitmapLogo = join(rootDir, "res", "pyglossary.ico") if "nt" == os.name \
-	else "@" + join(rootDir, "res", "pyglossary.xbm")
+bitmapLogo = join(dataDir, "res", "pyglossary.ico") if "nt" == os.name \
+	else "@" + join(dataDir, "res", "pyglossary.xbm")
 
 
 def set_window_icon(window):
 	# window.wm_iconbitmap(bitmap=bitmapLogo)
 	window.iconphoto(
 		True,
-		tk.PhotoImage(file=join(rootDir, "res", "pyglossary.png")),
+		tk.PhotoImage(file=join(dataDir, "res", "pyglossary.png")),
 	)
 
 

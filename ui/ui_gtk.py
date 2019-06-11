@@ -47,7 +47,7 @@ gtk.Window.set_default_icon_from_file(logo)
 
 _ = str  # later replace with translator function
 
-pixDir = join(rootDir, "res")  # FIXME
+pixDir = join(dataDir, "res")  # FIXME
 
 
 def getCopressedFileExt(fpath):
