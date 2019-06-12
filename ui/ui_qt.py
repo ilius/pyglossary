@@ -17,7 +17,7 @@
 # GNU General Public License for more details.
 
 
-from glossary import *
+from pyglossary.glossary import *
 from .base import *
 from os.path import join
 
