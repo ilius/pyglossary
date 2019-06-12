@@ -366,7 +366,7 @@ if ui_type == 'auto':
 		else:
 			break
 	if ui_module is None:
-		log.error('no user interface module found!')
+		log.error('no user interface module found! try "%s -h" to see command line usage' % sys.argv[0])
 		sys.exit(1)
 else:
 	ui_module = getattr(
