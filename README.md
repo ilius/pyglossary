@@ -117,15 +117,26 @@ Format-specific Requirements
 
 	`sudo pip3 install lxml beautifulsoup4 html5lib`
 
--	**Reading from Octopus Mdict (MDX)** (required for some glossaries)
-
-	`sudo pip3 install python-lzo`
-
--	**Reading from Babylon BGL**: Python 3.4 to 3.6 is recommended
+-	**Reading from Babylon BGL**: Python 3.4 to 3.7 is recommended
 
 -   **Reading from CC-CEDICT**
 
     `sudo pip3 install jinja2`
+
+-	**Reading from Octopus Mdict (MDX)**
+
+	+ **python-lzo**, required for **some** MDX glossaries
+
+		- First try converting your MDX file, and if failed (`AssertionError` probably), then you may need to install LZO library and Python binding:
+
+		- **On Linux**, make sure `liblzo2-dev` or `liblzo2-devel` is installed and then run `sudo pip3 install python-lzo`
+
+		- **On Windows**:
+			+ Open this page: https://www.lfd.uci.edu/~gohlke/pythonlibs/#python-lzo
+			+ If you are using Python 3.7 (32 bit) for example, click on `python_lzo‑1.12‑cp37‑cp37m‑win32.whl`
+			+ Open Start -> type Command -> right-click on Command Prompt -> Run as administrator
+			+ Run `pip install C:\....\python_lzo‑1.12‑cp37‑cp37m‑win32.whl` command, giving the path of downloaded file
+
 
 **Other Requirements for Mac OS X**
 
