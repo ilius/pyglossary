@@ -279,7 +279,7 @@ def unwrap_quotes(s):
 
 
 def read(glos, fname, **options):
-	encoding = options.get("encoding", "utf-8")
+	encoding = options.get("encoding")
 	audio = (options.get("audio", "no") == "yes")
 	onlyFixMarkUp = (options.get("onlyFixMarkUp", "no") == "yes")
 	if onlyFixMarkUp:
@@ -297,7 +297,24 @@ def read(glos, fname, **options):
 	line_type = "header"
 	unfinished_line = ""
 
+	if not encoding:
+		for testEncoding in ("utf-8", "utf-16"):
+			with open(fname, "r", encoding=testEncoding) as fp:
+				try:
+					for i in range(10):
+						fp.readline()
+				except UnicodeDecodeError:
+					log.info("Encoding of DSL file is not %s" % testEncoding)
+					continue
+				else:
+					log.info("Encoding of DSL file detected: %s" % testEncoding)
+					encoding = testEncoding
+					break
+		if not encoding:
+			raise ValueError("Could not detect encoding of DSL file, specify it by: --read-options encoding=ENCODING")
+
 	fp = open(fname, "r", encoding=encoding)
+
 	for line in fp:
 		line = line.rstrip()
 		if not line:
