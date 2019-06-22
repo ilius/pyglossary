@@ -28,6 +28,7 @@ Supported formats
 
 | Format                            | Extension     | Read  | Write |
 |-----------------------------------|---------------|:-----:|:-----:|
+| Aard 2 (slob)                     | .slob         |   ✔   |   ✔   |
 | ABBYY Lingvo DSL                  | .dsl          |   ✔   |       |
 | AppleDict Source                  | .xml          |       |   ✔   |
 | Babylon                           | .bgl          |   ✔   |       |
@@ -136,6 +137,11 @@ Format-specific Requirements
 			+ If you are using Python 3.7 (32 bit) for example, click on `python_lzo‑1.12‑cp37‑cp37m‑win32.whl`
 			+ Open Start -> type Command -> right-click on Command Prompt -> Run as administrator
 			+ Run `pip install C:\....\python_lzo‑1.12‑cp37‑cp37m‑win32.whl` command, giving the path of downloaded file
+
+
+-	**Reading or writing Aard 2 (.slob) files**
+	`sudo pip3 install PyICU`
+
 
 
 **Other Requirements for Mac OS X**
