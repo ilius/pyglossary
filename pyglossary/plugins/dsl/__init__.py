@@ -29,7 +29,11 @@ enable = True
 format = "ABBYYLingvoDSL"
 description = "ABBYY Lingvo DSL (dsl)"
 extentions = [".dsl"]
-readOptions = ["encoding", "audio", "onlyFixMarkUp"]
+readOptions = [
+	"encoding", # str
+	"audio", # str, values: "yes", "no"
+	"onlyFixMarkUp", # str, values: "yes", "no"
+]
 writeOptions = []
 
 __all__ = ["read"]
