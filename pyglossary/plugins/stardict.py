@@ -28,7 +28,7 @@ writeOptions = [
 	"dictzip",  # bool
 	"sametypesequence",	# str, "h" for html, "m" for plain text
 ]
-depends = []
+depends = {}
 sortOnWrite = ALWAYS
 # sortKey also is defined in line 52
 supportsAlternates = True

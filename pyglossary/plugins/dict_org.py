@@ -12,7 +12,7 @@ writeOptions = [
 	"dictzip",  # bool
 	"install",  # bool
 ]
-depends = []
+depends = {}
 sortOnWrite = DEFAULT_YES
 
 

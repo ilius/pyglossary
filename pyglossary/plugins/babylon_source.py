@@ -16,7 +16,7 @@ writeOptions = [
 	"encoding",  # str
 	"resources",  # bool
 ]
-depends = []
+depends = {}
 
 
 def entryCleanWinArabic(entry):

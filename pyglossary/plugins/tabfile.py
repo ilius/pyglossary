@@ -16,7 +16,7 @@ writeOptions = [
 	"writeInfo",  # bool
 	"resources",  # bool
 ]
-depends = []
+depends = {}
 
 
 class Reader(TextGlossaryReader):

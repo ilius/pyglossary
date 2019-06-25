@@ -110,6 +110,7 @@ class Glossary(object):
 	formatsExt = {}
 	formatsReadOptions = {}
 	formatsWriteOptions = {}
+	formatsDepends = {}
 	readExt = []
 	writeExt = []
 	readDesc = []
@@ -169,6 +170,11 @@ class Glossary(object):
 			cls.extFormat[ext] = format
 		cls.formatsExt[format] = extentions
 		cls.formatsDesc[format] = desc
+		cls.formatsDepends[format] = getattr(
+			plugin,
+			"depends",
+			{},
+		)
 
 		hasReadSupport = False
 		try:
@@ -214,7 +220,7 @@ class Glossary(object):
 			cls.formatsWriteOptions[format] = getattr(
 				plugin,
 				"writeOptions",
-				[]
+				[],
 			)
 
 		return plugin

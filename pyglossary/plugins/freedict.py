@@ -7,7 +7,7 @@ format = "Freedict"
 description = "FreeDict (tei)"
 extentions = [".tei"]
 readOptions = []
-depends = []
+depends = {}
 
 
 def write(glos, filename):

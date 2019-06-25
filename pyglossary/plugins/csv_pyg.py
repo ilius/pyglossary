@@ -33,7 +33,7 @@ writeOptions = [
 	"encoding",  # str
 	"resources",  # bool
 ]
-depends = []
+depends = {}
 supportsAlternates = True
 
 

@@ -11,7 +11,7 @@ description = "DictionaryForMIDs"
 extentions = [".mids"]
 readOptions = []
 writeOptions = []
-depends = []
+depends = {}
 
 
 PROP_TEMPLATE = """#DictionaryForMIDs property file

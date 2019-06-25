@@ -7,9 +7,9 @@ format = "CC-CEDICT"
 description = "CC-CEDICT"
 # this typo is part of the API used by PyGlossary; don't change it!
 extentions = [".u8"]
-depends = [
-	"jinja2",
-]
+depends = {
+	"jinja2": "jinja2",
+}
 
 entry_count_reg = re.compile(r"#! entries=(\d+)")
 class Reader:

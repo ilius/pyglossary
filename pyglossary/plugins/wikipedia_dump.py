@@ -17,7 +17,7 @@ readOptions = []
 writeOptions = [
 	"encoding",  # str
 ]
-depends = []
+depends = {}
 
 
 class Reader(object):

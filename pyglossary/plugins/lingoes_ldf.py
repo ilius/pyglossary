@@ -13,7 +13,7 @@ writeOptions = [
 	"newline",  # str, or choice ("\r\n", "\n", or "\r")
 	"resources",  # bool
 ]
-depends = []
+depends = {}
 
 infoKeys = [
 	"title",
