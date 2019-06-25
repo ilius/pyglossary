@@ -6,7 +6,7 @@ enable = True
 format = "CC-CEDICT"
 description = "CC-CEDICT"
 # this typo is part of the API used by PyGlossary; don't change it!
-extentions = (".u8",)
+extentions = [".u8"]
 
 entry_count_reg = re.compile(r"#! entries=(\d+)")
 class Reader:
