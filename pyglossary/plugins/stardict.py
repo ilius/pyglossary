@@ -30,8 +30,7 @@ writeOptions = [
 ]
 optionsProp = {
 	"dictzip": BoolOption(),
-	"sametypesequence": Option(
-		"str",
+	"sametypesequence": StrOption(
 		values=["h", "m"],
 	),
 }
