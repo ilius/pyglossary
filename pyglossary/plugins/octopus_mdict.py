@@ -31,6 +31,7 @@ readOptions = [
 	"substyle",  # bool
 ]
 writeOptions = []
+depends = []
 
 
 class Reader(object):

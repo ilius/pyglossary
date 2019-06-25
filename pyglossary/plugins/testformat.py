@@ -8,6 +8,7 @@ description = 'Test Format File(.test)'
 extentions = ['.test', '.tst']
 readOptions = []
 writeOptions = []
+depends = []
 
 
 def read(glos, filename):  # glos is a Glossary object, filename is a string

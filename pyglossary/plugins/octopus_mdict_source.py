@@ -15,6 +15,7 @@ readOptions = [
 writeOptions = [
 	"resources",  # bool
 ]
+depends = []
 
 
 def read(

@@ -10,6 +10,7 @@ readOptions = []
 writeOptions = [
 	'encoding',  # str
 ]
+depends = []
 
 
 def write(

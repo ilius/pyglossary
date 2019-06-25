@@ -33,6 +33,7 @@ description = "Unknown"
 extentions = []
 readOptions = []
 writeOptions = []
+depends = []
 supportsAlternates = False
 sortOnWrite = DEFAULT_NO
 sortKey = None

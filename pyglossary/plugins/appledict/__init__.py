@@ -48,6 +48,11 @@ writeOptions = [
 	"jing",  # str or None
 	"indexes",  # str or None
 ]
+depends = [
+	"lxml",
+	"beautifulsoup4",
+	"html5lib",
+]
 
 
 def abspath_or_None(path):

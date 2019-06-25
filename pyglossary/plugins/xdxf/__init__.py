@@ -30,6 +30,9 @@ description = "XDXF"
 extentions = [".xdxf", ".xml"]
 readOptions = []
 writeOptions = []
+depends = [
+	"lxml",
+]
 
 etree = None
 XML = None

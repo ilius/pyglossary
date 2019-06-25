@@ -35,6 +35,7 @@ writeOptions = [
 	"encoding",  # str
 	"havePrevLink",  # bool
 ]
+depends = []
 
 
 def makeDir(direc):

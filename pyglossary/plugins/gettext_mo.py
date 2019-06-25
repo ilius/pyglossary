@@ -8,3 +8,4 @@ description = "Gettext Binary (mo)"
 extentions = [".mo"]
 readOptions = []
 writeOptions = []
+depends = []

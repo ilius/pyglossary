@@ -29,6 +29,7 @@ readOptions = [
 	"encoding",  # str
 ]
 writeOptions = []
+depends = []
 
 
 class GzipCompression(object):

@@ -8,6 +8,7 @@ description = 'Omnidic'
 extentions = ['.omni', '.omnidic']
 readOptions = []
 writeOptions = []
+depends = []
 
 
 def write(glos, filename, dicIndex=16):

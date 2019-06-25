@@ -30,6 +30,7 @@ description = "Babylon (bgl)"
 extentions = [".bgl"]
 
 writeOptions = []
+depends = []
 supportsAlternates = True
 # progressbar = DEFAULT_YES
 

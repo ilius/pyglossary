@@ -12,6 +12,9 @@ writeOptions = [
 	"compression", # values: "bz2", "zlib", "lzma2"
 	"content_type", # empty means auto, examples: "text/plain; charset=utf-8"
 ]
+depends = [
+	"PyICU",
+]
 
 
 class Reader(object):

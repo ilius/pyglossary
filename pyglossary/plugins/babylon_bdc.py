@@ -7,4 +7,5 @@ description = "Babylon (bdc)"
 extentions = [".bdc"]
 readOptions = []
 writeOptions = []
+depends = []
 

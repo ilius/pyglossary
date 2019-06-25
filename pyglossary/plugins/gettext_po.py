@@ -10,6 +10,7 @@ readOptions = []
 writeOptions = [
 	"resources",  # bool
 ]
+depends = []
 
 
 class Reader(object):

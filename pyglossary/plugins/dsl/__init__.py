@@ -35,6 +35,7 @@ readOptions = [
 	"onlyFixMarkUp", # str, values: "yes", "no"
 ]
 writeOptions = []
+depends = []
 
 __all__ = ["read"]
 

@@ -11,6 +11,7 @@ readOptions = []
 writeOptions = [
 	"encoding",  # str
 ]
+depends = []
 
 
 def write(glos, filename, encoding="utf-8", archive="tar.bz2", sep=os.sep):
