@@ -12,6 +12,19 @@ writeOptions = [
 	"compression", # values: "bz2", "zlib", "lzma2"
 	"content_type", # empty means auto, examples: "text/plain; charset=utf-8"
 ]
+optionsProp = {
+	"compression": Option(
+		"str",
+		values=["bz2", "zlib", "lzma2"],
+		comment="Compression Algorithm",
+	),
+	"content_type": Option(
+		"str",
+		customValue=True,
+		values=["text/plain; charset=utf-8"],
+		comment="Content Type",
+	),
+}
 depends = {
 	"icu": "PyICU",
 }

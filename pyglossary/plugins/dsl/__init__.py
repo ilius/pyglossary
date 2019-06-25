@@ -31,10 +31,15 @@ description = "ABBYY Lingvo DSL (dsl)"
 extentions = [".dsl"]
 readOptions = [
 	"encoding", # str
-	"audio", # str, values: "yes", "no"
-	"onlyFixMarkUp", # str, values: "yes", "no"
+	"audio", # str, values: "yes", "no", FIXME: bool
+	"onlyFixMarkUp", # str, values: "yes", "no", FIXME: bool
 ]
 writeOptions = []
+optionsProp = {
+	"encoding": EncodingOption(),
+	"audio": StrOption(customValue=False, values=["", "no", "yes"]), # FIXME: BoolOption
+	"onlyFixMarkUp": StrOption(customValue=False, values=["", "no", "yes"]), # FIXME: BoolOption
+}
 depends = {}
 
 __all__ = ["read"]

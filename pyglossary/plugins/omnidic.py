@@ -8,6 +8,7 @@ description = 'Omnidic'
 extentions = ['.omni', '.omnidic']
 readOptions = []
 writeOptions = []
+optionsProp = {}
 depends = {}
 
 

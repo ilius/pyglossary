@@ -7,6 +7,8 @@ format = "Freedict"
 description = "FreeDict (tei)"
 extentions = [".tei"]
 readOptions = []
+writeOptions = []
+optionsProp = {}
 depends = {}
 
 

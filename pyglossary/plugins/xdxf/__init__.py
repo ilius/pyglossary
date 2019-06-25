@@ -30,6 +30,7 @@ description = "XDXF"
 extentions = [".xdxf", ".xml"]
 readOptions = []
 writeOptions = []
+optionsProp = {}
 depends = {
 	"lxml": "lxml",
 }

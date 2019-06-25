@@ -31,6 +31,10 @@ readOptions = [
 	"substyle",  # bool
 ]
 writeOptions = []
+optionsProp = {
+	"encoding": EncodingOption(),
+	"substyle": BoolOption(),
+}
 depends = {}
 
 

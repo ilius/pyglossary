@@ -33,6 +33,10 @@ writeOptions = [
 	"encoding",  # str
 	"resources",  # bool
 ]
+optionsProp = {
+	"encoding": EncodingOption(),
+	"resources": BoolOption(),
+}
 depends = {}
 supportsAlternates = True
 

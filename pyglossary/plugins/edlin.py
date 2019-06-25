@@ -35,6 +35,10 @@ writeOptions = [
 	"encoding",  # str
 	"havePrevLink",  # bool
 ]
+optionsProp = {
+	"encoding": EncodingOption(),
+	"havePrevLink": BoolOption(),
+}
 depends = {}
 
 

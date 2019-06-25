@@ -7,5 +7,6 @@ description = "Babylon (bdc)"
 extentions = [".bdc"]
 readOptions = []
 writeOptions = []
+optionsProp = {}
 depends = {}
 

@@ -28,6 +28,13 @@ writeOptions = [
 	"dictzip",  # bool
 	"sametypesequence",	# str, "h" for html, "m" for plain text
 ]
+optionsProp = {
+	"dictzip": BoolOption(),
+	"sametypesequence": Option(
+		"str",
+		values=["h", "m"],
+	),
+}
 depends = {}
 sortOnWrite = ALWAYS
 # sortKey also is defined in line 52

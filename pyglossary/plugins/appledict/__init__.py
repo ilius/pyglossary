@@ -40,14 +40,24 @@ extentions = [".xml"]
 readOptions = []
 writeOptions = [
 	"cleanHTML",  # bool
-	"css",  # str or None
-	"xsl",  # str or None
+	"css",  # str
+	"xsl",  # str
 	"defaultPrefs",  # dict or None, FIXME
-	"prefsHTML",  # str or None
-	"frontBackMatter",  # str or None
-	"jing",  # str or None
-	"indexes",  # str or None
+	"prefsHTML",  # str
+	"frontBackMatter",  # str
+	"jing",  # str, can be "yes", "no" or "". FIXME: change to bool
+	"indexes",  # str, FIXME: rename to indexes_lang?
 ]
+optionsProp = {
+	"cleanHTML": BoolOption(customValue=True),
+	"css": StrOption(customValue=True),
+	"xsl": StrOption(customValue=True),
+	# "defaultPrefs", Option("dict"), # FIXME
+	"prefsHTML": StrOption(customValue=True),
+	"frontBackMatter": StrOption(),
+	"jing": StrOption(customValue=False, values=["", "no", "yes"]), # FIXME: change to BoolOption
+	"indexes": StrOption(customValue=False, values=["ru", "zh"]),
+}
 depends = {
 	"lxml": "lxml",
 	"bs4": "beautifulsoup4",
@@ -107,13 +117,13 @@ def write(
 	glos,
 	dirPath,
 	cleanHTML=True,
-	css=None,
-	xsl=None,
+	css="",
+	xsl="",
 	defaultPrefs=None,
-	prefsHTML=None,
-	frontBackMatter=None,
-	jing=None,
-	indexes=None,
+	prefsHTML="",
+	frontBackMatter="",
+	jing="", # FIXME: False
+	indexes="",# FIXME: rename to indexes_lang?
 ):
 	"""
 	write glossary to Apple dictionary .xml and supporting files.
@@ -124,10 +134,10 @@ def write(
 	:type cleanHTML: str
 	:param cleanHTML: pass "yes" to use BeautifulSoup parser.
 
-	:type css: str or None
+	:type css: str
 	:param css: path to custom .css file
 
-	:type xsl: str or None
+	:type xsl: str
 	:param xsl: path to custom XSL transformations file.
 
 	:type defaultPrefs: dict or None
@@ -137,20 +147,21 @@ def write(
 	equal sign "=", semicolon) must be escaped as hex code according to
 	python string literal rules.
 
-	:type prefsHTML: str or None
+	:type prefsHTML: str
 	:param prefsHTML: path to XHTML file with user interface for dictionary's
 	preferences.  refer to Apple's documentation for details.
 
-	:type frontBackMatter: str or None
+	:type frontBackMatter: str
 	:param frontBackMatter: path to XML file with top-level tag
 	<d:entry id="front_back_matter" d:title="Your Front/Back Matter Title">
 		your front/back matter entry content
 	</d:entry>
 
-	:type jing: str or None
+	:type jing: str
 	:param jing: pass "yes" to run Jing check on generated XML.
 
-	:type indexes: str or None
+	# FIXME: rename to indexes_lang?
+	:type indexes: str
 	:param indexes: Dictionary.app is dummy and by default it don't know
 	how to perform flexible search.  we can help it by manually providing
 	additional indexes to dictionary entries.

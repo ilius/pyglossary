@@ -10,6 +10,9 @@ readOptions = []
 writeOptions = [
 	"resources",  # bool
 ]
+optionsProp = {
+	"resources": BoolOption(),
+}
 depends = {}
 
 

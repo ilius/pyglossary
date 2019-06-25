@@ -11,6 +11,7 @@ description = "DictionaryForMIDs"
 extentions = [".mids"]
 readOptions = []
 writeOptions = []
+optionsProp = {}
 depends = {}
 
 

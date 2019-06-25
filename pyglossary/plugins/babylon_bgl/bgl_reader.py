@@ -89,6 +89,18 @@ readOptions = [
 	"keyRStripChars",  # str, list of characters to strip (from right side)
 ] + sorted(debugReadOptions)
 
+optionsProp = {
+	"defaultEncodingOverwrite": EncodingOption(),
+	"sourceEncodingOverwrite": EncodingOption(),
+	"targetEncodingOverwrite": EncodingOption(),
+	"partOfSpeechColor": HtmlColorOption(),
+
+	"noControlSequenceInDefi": BoolOption(),
+	"strictStringConvertion": BoolOption(),
+	"processHtmlInKey": BoolOption(),
+	"keyRStripChars": StrOption(customValue=True),
+}
+
 
 if os.sep == "/":  # Operating system is Unix-like
 	tmpDir = "/tmp"

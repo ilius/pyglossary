@@ -16,6 +16,11 @@ writeOptions = [
 	"writeInfo",  # bool
 	"resources",  # bool
 ]
+optionsProp = {
+	"encoding": EncodingOption(),
+	"writeInfo": BoolOption(),
+	"resources": BoolOption(),
+}
 depends = {}
 
 

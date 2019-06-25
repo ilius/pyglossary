@@ -11,6 +11,9 @@ readOptions = []
 writeOptions = [
 	"encoding",  # str
 ]
+optionsProp = {
+	"encoding": EncodingOption(),
+}
 depends = {}
 
 

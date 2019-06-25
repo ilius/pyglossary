@@ -14,6 +14,11 @@ writeOptions = [
 	'newline',  # str, or choice ('\r\n', '\n', or '\r')
 	'resources',  # bool
 ]
+optionsProp = {
+	"writeInfo": BoolOption(),
+	"newline": NewlineOption(),
+	"resources": BoolOption(),
+}
 depends = {}
 
 

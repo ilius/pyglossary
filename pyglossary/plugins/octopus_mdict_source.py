@@ -15,6 +15,11 @@ readOptions = [
 writeOptions = [
 	"resources",  # bool
 ]
+optionsProp = {
+	"encoding": EncodingOption(),
+	"links": BoolOption(),
+	"resources": BoolOption(),
+}
 depends = {}
 
 

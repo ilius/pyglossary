@@ -16,6 +16,12 @@ writeOptions = [
 	"encoding",  # str
 	"resources",  # bool
 ]
+optionsProp = {
+	"writeInfo": BoolOption(),
+	"newline": NewlineOption(),
+	"encoding": EncodingOption(),
+	"resources": BoolOption(),
+}
 depends = {}
 
 

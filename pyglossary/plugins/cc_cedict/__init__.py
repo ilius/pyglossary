@@ -7,6 +7,9 @@ format = "CC-CEDICT"
 description = "CC-CEDICT"
 # this typo is part of the API used by PyGlossary; don't change it!
 extentions = [".u8"]
+readOptions = []
+writeOptions = []
+optionsProp = {}
 depends = {
 	"jinja2": "jinja2",
 }
