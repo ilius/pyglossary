@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ui_gtk.py
 #
-# Copyright © 2008-2010 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# Copyright © 2008-2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # Thanks to Pier Carteri <m3tr0@dei.unipd.it> for program Py_Shell.py
 # Thanks to Milad Rastian for program pySQLiteGUI
 #
@@ -30,6 +30,7 @@ from pyglossary.os_utils import click_website
 from pyglossary.glossary import *
 from .base import *
 from pyglossary import core
+from .dependency import checkFormatDepends
 
 import gi
 gi.require_version("Gtk", "3.0")
@@ -65,36 +66,10 @@ def buffer_get_text(b):
 	)
 
 
-def pack(box, child, expand=False, fill=False, padding=0):
-	if isinstance(box, gtk.Box):
-		box.pack_start(child, expand, fill, padding)
-	elif isinstance(box, gtk.CellLayout):
-		box.pack_start(child, expand)
-	else:
-		raise TypeError("pack: unkown type %s" % type(box))
-
-
-def imageFromFile(path):  # the file must exist
-	if not isabs(path):
-		path = join(pixDir, path)
-	im = gtk.Image()
-	try:
-		im.set_from_file(path)
-	except:
-		myRaise()
-	return im
-
-
-def color_parse(colorStr):
-	rgba = gdk.RGBA()
-	if not rgba.parse(colorStr):
-		raise ValueError("bad color string %r" % colorStr)
-	return rgba.to_color()
-
-
 class FormatComboBox(gtk.ComboBox):
-	def __init__(self):
+	def __init__(self, parent=None):
 		gtk.ComboBox.__init__(self)
+		self._parent = parent
 		self.model = gtk.ListStore(
 			str,  # format name, hidden
 			# GdkPixbuf.Pixbuf,# icon
@@ -115,6 +90,12 @@ class FormatComboBox(gtk.ComboBox):
 		pack(self, cell, True)
 		self.add_attribute(cell, "text", 1)
 
+		self.dependsButton = gtk.Button(label="Install dependencies")
+		self.dependsButton.pkgNames = []
+		self.dependsButton.connect("clicked", self.dependsButtonPressed)
+
+		self.connect("changed", self.onChanged)
+
 	def addFormat(self, _format):
 		self.get_model().append((
 			_format,
@@ -134,17 +115,41 @@ class FormatComboBox(gtk.ComboBox):
 				gtk.ComboBox.set_active(self, i)
 				return
 
+	def dependsButtonPressed(self, button):
+		formatName = self.getActive()
+		pkgNames = button.pkgNames
+		if not pkgNames:
+			print("All dependencies are stattisfied for " + formatName)
+			return
+		pkgNamesStr = " ".join(pkgNames)
+		msg = "\n".join([
+			"Run the following command:",
+			"sudo pip3 install " + pkgNamesStr,
+		])
+		showInfo(
+			msg,
+			title="Dependencies for " + formatName,
+			selectable=True,
+			parent=self._parent,
+		)
+		self.onChanged(self)
+
+	def onChanged(self, combo):
+		name = self.getActive()
+		uninstalled = checkFormatDepends(name)
+		self.dependsButton.pkgNames = uninstalled
+		self.dependsButton.set_visible(bool(uninstalled))
 
 class InputFormatComboBox(FormatComboBox):
-	def __init__(self):
-		FormatComboBox.__init__(self)
+	def __init__(self, **kwargs):
+		FormatComboBox.__init__(self, **kwargs)
 		for _format in Glossary.readFormats:
 			self.addFormat(_format)
 
 
 class OutputFormatComboBox(FormatComboBox):
-	def __init__(self):
-		FormatComboBox.__init__(self)
+	def __init__(self, **kwargs):
+		FormatComboBox.__init__(self, **kwargs)
 		for _format in Glossary.writeFormats:
 			self.addFormat(_format)
 
@@ -290,8 +295,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(hbox, hbox.label)
 		sizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
-		self.convertInputFormatCombo = InputFormatComboBox()
+		self.convertInputFormatCombo = InputFormatComboBox(parent=self)
 		pack(hbox, self.convertInputFormatCombo)
+		pack(hbox, gtk.Label(), 1, 1)
+		pack(hbox, self.convertInputFormatCombo.dependsButton)
 		pack(vbox, hbox)
 		###
 		hbox = gtk.HBox(spacing=3)
@@ -324,8 +331,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(hbox, hbox.label)
 		sizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
-		self.convertOutputFormatCombo = OutputFormatComboBox()
+		self.convertOutputFormatCombo = OutputFormatComboBox(parent=self)
 		pack(hbox, self.convertOutputFormatCombo)
+		pack(hbox, gtk.Label(), 1, 1)
+		pack(hbox, self.convertOutputFormatCombo.dependsButton)
 		pack(vbox, hbox)
 		###
 		hbox = gtk.HBox(spacing=3)
@@ -557,6 +566,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(self.vbox, hbox, 0, 0)
 		# ____________________________________________________________ #
 		self.vbox.show_all()
+		self.convertInputFormatCombo.dependsButton.hide()
+		self.convertOutputFormatCombo.dependsButton.hide()
 		########
 		self.status("Select input file")
 
