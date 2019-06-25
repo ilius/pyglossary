@@ -28,7 +28,7 @@ from . import flawless_dsl
 enable = True
 format = "ABBYYLingvoDSL"
 description = "ABBYY Lingvo DSL (dsl)"
-extentions = [".dsl"]
+extensions = [".dsl"]
 readOptions = [
 	"encoding", # str
 	"audio", # str, values: "yes", "no", FIXME: bool

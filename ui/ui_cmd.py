@@ -58,14 +58,14 @@ def getFormatsTable(names, header):
 		Glossary.formatsDesc[name]
 		for name in names
 	]
-	extentions = [
+	extensions = [
 		" ".join(Glossary.formatsExt[name])
 		for name in names
 	]
 
 	nameWidth = getColWidth("Name", names)
 	descriptionWidth = getColWidth("Description", descriptions)
-	extentionsWidth = getColWidth("Extentions", extentions)
+	extensionsWidth = getColWidth("Extensions", extensions)
 
 	lines = ["\n"]
 	lines.append("%s%s%s" % (startBold, header, endFormat))
@@ -74,14 +74,14 @@ def getFormatsTable(names, header):
 		" | ".join([
 			"Name".center(nameWidth),
 			"Description".center(descriptionWidth),
-			"Extentions".center(extentionsWidth)
+			"Extensions".center(extensionsWidth)
 		])
 	)
 	lines.append(
 		"-+-".join([
 			"-" * nameWidth,
 			"-" * descriptionWidth,
-			"-" * extentionsWidth,
+			"-" * extensionsWidth,
 		])
 	)
 	for index, name in enumerate(names):
@@ -89,7 +89,7 @@ def getFormatsTable(names, header):
 			" | ".join([
 				name.ljust(nameWidth),
 				descriptions[index].ljust(descriptionWidth),
-				extentions[index].ljust(extentionsWidth)
+				extensions[index].ljust(extensionsWidth)
 			])
 		)
 

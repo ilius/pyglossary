@@ -5,7 +5,7 @@ from formats_common import *
 enable = False
 format = "GettextMo"
 description = "Gettext Binary (mo)"
-extentions = [".mo"]
+extensions = [".mo"]
 readOptions = []
 writeOptions = []
 optionsProp = {}

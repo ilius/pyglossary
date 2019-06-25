@@ -25,7 +25,7 @@ from pyglossary.file_utils import fileCountLines
 enable = True
 format = "Csv"
 description = "CSV"
-extentions = [".csv"]
+extensions = [".csv"]
 readOptions = [
 	"encoding",  # str
 ]

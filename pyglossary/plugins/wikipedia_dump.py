@@ -12,7 +12,7 @@ from formats_common import *
 enable = True
 format = "WikipediaDump"
 description = "Wikipedia Dump(Static HTML)"
-extentions = [".wiki"]
+extensions = [".wiki"]
 readOptions = []
 writeOptions = [
 	"encoding",  # str
@@ -87,7 +87,7 @@ class Reader(object):
 				fname, ext = splitext(fname_html)
 				# fpathRel = join(dirpathRel, fname_html)
 				if ext != ".html":
-					log.warning("unkown article extention: %s" % fname_ext)
+					log.warning("unkown article extension: %s" % fname_ext)
 					continue
 				if self.isSpecialByPath(fname):  # , prefix
 					# log.debug("Skipping special page file: %s" % fpathRel)

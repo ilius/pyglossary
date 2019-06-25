@@ -8,7 +8,7 @@ from formats_common import *
 enable = True
 format = "BabylonSource"
 description = "Babylon Source (gls)"
-extentions = [".gls", ".babylon"]
+extensions = [".gls", ".babylon"]
 readOptions = []
 writeOptions = [
 	"writeInfo",  # bool

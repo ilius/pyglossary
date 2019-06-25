@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 # Source Glossary for "Sdictionary" (http://sdict.org)
-# It has extention '.sdct'
+# It has extension '.sdct'
 
 from formats_common import *
 
 enable = True
 format = 'SdictSource'
 description = 'Sdictionary Source (sdct)'
-extentions = ['.sdct']
+extensions = ['.sdct']
 readOptions = []
 writeOptions = [
 	'writeInfo',  # bool

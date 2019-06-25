@@ -151,24 +151,24 @@ class Glossary(object):
 
 		format = plugin.format
 
-		extentions = plugin.extentions
-		# FIXME: deprecate non-tuple values in plugin.extentions
-		if isinstance(extentions, str):
-			extentions = (extentions,)
-		elif not isinstance(extentions, tuple):
-			extentions = tuple(extentions)
+		extensions = plugin.extensions
+		# FIXME: deprecate non-tuple values in plugin.extensions
+		if isinstance(extensions, str):
+			extensions = (extensions,)
+		elif not isinstance(extensions, tuple):
+			extensions = tuple(extensions)
 
 		if hasattr(plugin, "description"):
 			desc = plugin.description
 		else:
-			desc = "%s (%s)" % (format, extentions[0])
+			desc = "%s (%s)" % (format, extensions[0])
 
 		cls.plugins[format] = plugin
 		cls.descFormat[desc] = format
-		cls.descExt[desc] = extentions[0]
-		for ext in extentions:
+		cls.descExt[desc] = extensions[0]
+		for ext in extensions:
 			cls.extFormat[ext] = format
-		cls.formatsExt[format] = extentions
+		cls.formatsExt[format] = extensions
 		cls.formatsDesc[format] = desc
 		cls.formatsDepends[format] = getattr(
 			plugin,
@@ -208,14 +208,14 @@ class Glossary(object):
 
 		if hasReadSupport:
 			cls.readFormats.append(format)
-			cls.readExt.append(extentions)
+			cls.readExt.append(extensions)
 			cls.readDesc.append(desc)
 			cls.formatsReadOptions[format] = getattr(plugin, "readOptions", [])
 
 		if hasattr(plugin, "write"):
 			cls.writeFunctions[format] = plugin.write
 			cls.writeFormats.append(format)
-			cls.writeExt.append(extentions)
+			cls.writeExt.append(extensions)
 			cls.writeDesc.append(desc)
 			cls.formatsWriteOptions[format] = getattr(
 				plugin,
@@ -495,7 +495,7 @@ class Glossary(object):
 		"""
 		filename (str): name/path of input file
 		format (str): name of input format,
-					  or "" to detect from file extention
+					  or "" to detect from file extension
 		direct (bool): enable direct mode
 		"""
 		filename = abspath(filename)
@@ -871,7 +871,7 @@ class Glossary(object):
 	def archiveOutDir(self, filename, archiveType):
 		"""
 		filename is the existing file path
-		archiveType is the archive extention (without dot): "gz", "bz2", "zip"
+		archiveType is the archive extension (without dot): "gz", "bz2", "zip"
 		"""
 		try:
 			os.remove("%s.%s" % (filename, archiveType))

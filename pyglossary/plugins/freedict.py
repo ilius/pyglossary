@@ -5,7 +5,7 @@ from formats_common import *
 enable = True
 format = "Freedict"
 description = "FreeDict (tei)"
-extentions = [".tei"]
+extensions = [".tei"]
 readOptions = []
 writeOptions = []
 optionsProp = {}

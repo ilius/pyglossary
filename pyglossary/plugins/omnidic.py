@@ -5,7 +5,7 @@ from formats_common import *
 enable = True
 format = 'Omnidic'
 description = 'Omnidic'
-extentions = ['.omni', '.omnidic']
+extensions = ['.omni', '.omnidic']
 readOptions = []
 writeOptions = []
 optionsProp = {}

@@ -5,7 +5,7 @@ from formats_common import *
 enable = True
 format = "GettextPo"
 description = "Gettext Source (po)"
-extentions = [".po"]
+extensions = [".po"]
 readOptions = []
 writeOptions = [
 	"resources",  # bool

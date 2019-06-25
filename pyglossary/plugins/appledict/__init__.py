@@ -36,7 +36,7 @@ sys.setrecursionlimit(10000)
 enable = True
 format = "AppleDict"
 description = "AppleDict Source (xml)"
-extentions = [".xml"]
+extensions = [".xml"]
 readOptions = []
 writeOptions = [
 	"cleanHTML",  # bool

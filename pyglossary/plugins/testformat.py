@@ -5,7 +5,7 @@ from formats_common import *
 enable = False
 format = 'Test'
 description = 'Test Format File(.test)'
-extentions = ['.test', '.tst']
+extensions = ['.test', '.tst']
 readOptions = []
 writeOptions = []
 

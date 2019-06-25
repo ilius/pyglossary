@@ -6,7 +6,7 @@ from pyglossary.file_utils import fileCountLines
 enable = True
 format = "DictOrg"
 description = "DICT.org file format (.index)"
-extentions = [".index"]
+extensions = [".index"]
 readOptions = []
 writeOptions = [
 	"dictzip",  # bool
@@ -45,7 +45,7 @@ def indexStrToInt(st):
 
 def installToDictd(filename, title=""):
 	"""
-	filename is without extention (neither .index or .dict or .dict.dz)
+	filename is without extension (neither .index or .dict or .dict.dz)
 	"""
 	import shutil
 	targetDir = "/usr/share/dictd/"

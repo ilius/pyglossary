@@ -7,7 +7,7 @@ from collections import OrderedDict
 enable = True
 format = "OctopusMdictSource"
 description = "Octopus MDict Source"
-extentions = [".mtxt"]
+extensions = [".mtxt"]
 readOptions = [
 	"encoding",  # str
 	"links", # bool, support for inconsecutive links, #68

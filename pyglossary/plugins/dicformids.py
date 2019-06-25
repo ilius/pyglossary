@@ -8,7 +8,7 @@ from formats_common import *
 enable = True
 format = "Dicformids"
 description = "DictionaryForMIDs"
-extentions = [".mids"]
+extensions = [".mids"]
 readOptions = []
 writeOptions = []
 optionsProp = {}

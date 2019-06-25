@@ -6,7 +6,7 @@ from pyglossary.entry import Entry
 enable = True
 format = 'Aard2Slob'
 description = 'Aard 2 (slob)'
-extentions = ['.slob']
+extensions = ['.slob']
 readOptions = []
 writeOptions = [
 	"compression", # values: "bz2", "zlib", "lzma2"

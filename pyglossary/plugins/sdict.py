@@ -24,7 +24,7 @@ from formats_common import *
 enable = True
 format = "Sdict"
 description = "Sdictionary Binary(dct)"
-extentions = [".dct"]
+extensions = [".dct"]
 readOptions = [
 	"encoding",  # str
 ]

@@ -5,7 +5,7 @@ from formats_common import *
 enable = True
 format = 'Sql'
 description = 'SQL'
-extentions = ['.sql']
+extensions = ['.sql']
 readOptions = []
 writeOptions = [
 	'encoding',  # str

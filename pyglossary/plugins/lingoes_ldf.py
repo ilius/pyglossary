@@ -7,7 +7,7 @@ from pyglossary.file_utils import fileCountLines
 enable = True
 format = "LingoesLDF"
 description = "Lingoes Source (LDF)"
-extentions = [".ldf"]
+extensions = [".ldf"]
 readOptions = []
 writeOptions = [
 	"newline",  # str, or choice ("\r\n", "\n", or "\r")

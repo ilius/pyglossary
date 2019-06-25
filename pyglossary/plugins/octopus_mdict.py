@@ -25,7 +25,7 @@ from os.path import splitext, isfile, isdir, extsep, basename, dirname
 enable = True
 format = "OctopusMdict"
 description = "Octopus MDict"
-extentions = [".mdx"]
+extensions = [".mdx"]
 readOptions = [
 	"encoding",  # str
 	"substyle",  # bool

@@ -164,7 +164,7 @@ infoKeysByCode = {
 	0x33: "lastUpdated",
 	0x3b: "contractions",
 	0x3d: "fontName",  # contains a value like "Arial Unicode MS" or "Tahoma"
-	0x41: "about",  # (aboutExtention, aboutContents)
+	0x41: "about",  # (aboutExtension, aboutContents)
 	0x43: "length",  # the length of the substring match in a term
 }
 

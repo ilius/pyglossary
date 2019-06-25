@@ -6,7 +6,7 @@ import subprocess
 enable = True
 format = "Treedict"
 description = "TreeDict"
-extentions = [".tree", ".treedict"]
+extensions = [".tree", ".treedict"]
 readOptions = []
 writeOptions = [
 	"encoding",  # str

@@ -31,7 +31,7 @@ from pyglossary.os_utils import indir
 enable = False
 format = "Unknown"
 description = "Unknown"
-extentions = [] # type: List[str]
+extensions = [] # type: List[str]
 readOptions = [] # type: List[str]
 writeOptions = [] # type: List[str]
 
