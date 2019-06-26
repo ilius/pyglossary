@@ -49,6 +49,19 @@ class StrOption(Option):
 		Option.__init__(self, "str", **kwargs)
 
 
+class IntOption(Option):
+	def __init__(self, **kwargs):
+		Option.__init__(self, "int", **kwargs)
+
+	def evaluate(self, raw: str) -> Tuple[int, bool]:
+		"returns (value, isValid)"
+		try:
+			value = int(raw)
+		except ValueError:
+			return raw, False
+		else:
+			return value, True
+
 class EncodingOption(Option):
 	def __init__(self, customValue=True, values=None, **kwargs):
 		if values is None:

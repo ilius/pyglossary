@@ -7,7 +7,7 @@ format = 'Omnidic'
 description = 'Omnidic'
 extensions = ['.omni', '.omnidic']
 optionsProp = {
-	"dicIndex": Option("int"),
+	"dicIndex": IntOption(),
 }
 depends = {}
 
