@@ -25,6 +25,12 @@ from os.path import join, isfile, isabs, splitext
 import logging
 import traceback
 
+from typing import (
+	List,
+	Dict,
+	Any,
+)
+
 from pyglossary.text_utils import urlToPath
 from pyglossary.os_utils import click_website
 from pyglossary.glossary import *
@@ -66,6 +72,189 @@ def buffer_get_text(b):
 	)
 
 
+class FormatOptionsDialog(gtk.Dialog):
+	def __init__(self, formatName: str, options: List[str], optionsValues: Dict[str, Any], parent=None):
+		gtk.Dialog.__init__(self, parent=parent)
+		optionsProp = Glossary.formatsOptionsProp[formatName]
+		self.optionsProp = optionsProp
+		##
+		self.connect("response", lambda w, e: self.hide())
+		dialog_add_button(
+			self,
+			"gtk-ok",
+			"_OK",
+			gtk.ResponseType.OK,
+		)
+		dialog_add_button(
+			self,
+			"gtk-cancel",
+			"_Cancel",
+			gtk.ResponseType.CANCEL,
+		)
+		###
+		treev = gtk.TreeView()
+		trees = gtk.ListStore(
+			bool, # enable
+			str, # name
+			str, # comment
+			str, # value
+		)
+		treev.set_headers_clickable(True)
+		treev.set_model(trees)
+		treev.connect("row-activated", self.rowActivated)
+		treev.connect("button-press-event", self.treeviewButtonPress)
+		###
+		self.treev = treev
+		#############
+		cell = gtk.CellRendererToggle()
+		#cell.set_property("activatable", True)
+		cell.connect("toggled", self.enableToggled)
+		col = gtk.TreeViewColumn(title="Enable", cell_renderer=cell)
+		col.add_attribute(cell, "active", 0)
+		#cell.set_active(False)
+		col.set_resizable(True)
+		col.set_property("expand", False)
+		treev.append_column(col)
+		###
+		col = gtk.TreeViewColumn(title="Name", cell_renderer=gtk.CellRendererText(), text=1)
+		col.set_property("expand", False)
+		treev.append_column(col)
+		###
+		col = gtk.TreeViewColumn(title="Comment", cell_renderer=gtk.CellRendererText(), text=2)
+		col.set_property("expand", False)
+		treev.append_column(col)
+		###
+		cell = gtk.CellRendererText(editable=True)
+		self.valueCell = cell
+		cell.connect("edited", self.valueEdited)
+		col = gtk.TreeViewColumn(title="Value", cell_renderer=cell, text=3)
+		col.set_property("expand", True)
+		treev.append_column(col)
+		#############
+		for name in options:
+			prop = optionsProp[name]
+			trees.append([
+				name in optionsValues, # enable
+				name, # name
+				prop.comment, # comment
+				optionsValues.get(name, ""), # value
+			])
+		############
+		pack(self.vbox, treev, 1, 1)
+		self.vbox.show_all()
+
+	def enableToggled(self, cell, path):
+		# enable is column 0
+		model = self.treev.get_model()
+		active = not cell.get_active()
+		itr = model.get_iter(path)
+		model.set_value(itr, 0, active)
+
+	def valueEdited(self, cell, path, newText):
+		# value is column 3
+		model = self.treev.get_model()
+		itr = model.get_iter(path)
+		optName = model.get_value(itr, 1)
+		prop = optionsProp[optName]
+		if not prop.customValue:
+			return
+		model.set_value(itr, 3, newText)
+
+	def rowActivated(self, treev, path, col):
+		self.showValuesPopup()
+
+	def treeviewButtonPress(self, treev, gevent):
+		if gevent.button != 1:
+			return False
+		pos_t = treev.get_path_at_pos(int(gevent.x), int(gevent.y))
+		if not pos_t:
+			return False
+		# pos_t == path, col, xRel, yRel
+		path = pos_t[0]
+		col = pos_t[1]
+		# cell = col.get_cells()[0]
+		if col.get_title() == "Value":
+			self.showValuesPopup()
+		return False
+
+	def valueItemActivate(self, item: gtk.MenuItem, itr: gtk.TreeIter):
+		# value is column 3
+		value = item.get_label()
+		model = self.treev.get_model()
+		model.set_value(itr, 3, value)
+		model.set_value(itr, 0, True) # enable it
+
+	def valueCustomOpenDialog(self, itr: gtk.TreeIter, optName: str):
+		model = self.treev.get_model()
+		prop = self.optionsProp[optName]
+		currentValue = model.get_value(itr, 3)
+		optDesc = optName
+		if prop.comment:
+			optDesc += " (%s)" % prop.comment
+		label = gtk.Label(label="Value for %s" % (optDesc,))
+		dialog = gtk.Dialog(parent=self, title="Option Value")
+		dialog.connect("response", lambda w, e: dialog.hide())
+		dialog_add_button(
+			dialog,
+			"gtk-ok",
+			"_OK",
+			gtk.ResponseType.OK,
+		)
+		dialog_add_button(
+			dialog,
+			"gtk-cancel",
+			"_Cancel",
+			gtk.ResponseType.CANCEL,
+		)
+		pack(dialog.vbox, label, 0, 0)
+		entry = gtk.Entry()
+		entry.connect("activate", lambda w: dialog.response(gtk.ResponseType.OK))
+		pack(dialog.vbox, entry, 0, 0)
+		dialog.vbox.show_all()
+		if dialog.run() != gtk.ResponseType.OK:
+			return
+		value = entry.get_text()
+		model.set_value(itr, 3, value)
+		model.set_value(itr, 0, True) # enable it
+
+	def valueItemCustomActivate(self, item: gtk.MenuItem, itr: gtk.TreeIter):
+		model = self.treev.get_model()
+		optName = model.get_value(itr, 1)
+		self.valueCustomOpenDialog(itr, optName)
+
+	def showValuesPopup(self):
+		model = self.treev.get_model()
+		path = self.treev.get_cursor()[0]
+		itr = model.get_iter(path)
+		optName = model.get_value(itr, 1)
+		prop = self.optionsProp[optName]
+		if not prop.values:
+			return
+		menu = gtk.Menu()
+		for value in prop.values:
+			item = gtk.MenuItem(value)
+			item.connect("activate", self.valueItemActivate, itr)
+			item.show()
+			menu.append(item)
+		if prop.customValue:
+			item = gtk.MenuItem("[Custom Value]")
+			item.connect("activate", self.valueItemCustomActivate, itr)
+			item.show()
+			menu.append(item)
+		etime = gtk.get_current_event_time()
+		menu.popup(None, None, None, None, 3, etime)
+
+	def getOptionsValues(self):
+		model = self.treev.get_model()
+		optionsValues = {}
+		for row in model:
+			if not row[0]: # not enable
+				continue
+			optionsValues[row[1]] = row[3]
+		return optionsValues
+
+
+
 class FormatComboBox(gtk.ComboBox):
 	def __init__(self, parent=None):
 		gtk.ComboBox.__init__(self)
@@ -90,11 +279,26 @@ class FormatComboBox(gtk.ComboBox):
 		pack(self, cell, True)
 		self.add_attribute(cell, "text", 1)
 
+		self.optionsValues = {}
+
+		self.optionsButton = gtk.Button(label="Options")
+		self.optionsButton.connect("clicked", self.optionsButtonClicked)
+
 		self.dependsButton = gtk.Button(label="Install dependencies")
 		self.dependsButton.pkgNames = []
-		self.dependsButton.connect("clicked", self.dependsButtonPressed)
+		self.dependsButton.connect("clicked", self.dependsButtonClicked)
 
 		self.connect("changed", self.onChanged)
+
+	def setOptionsValues(self, optionsValues: Dict[str, Any]):
+		self.optionsValues = optionsValues
+
+	def kind(self):
+		"returns 'r' or 'w'"
+		raise NotImplementedError
+
+	def getActiveOptions(self):
+		raise NotImplementedError
 
 	def addFormat(self, _format):
 		self.get_model().append((
@@ -115,7 +319,22 @@ class FormatComboBox(gtk.ComboBox):
 				gtk.ComboBox.set_active(self, i)
 				return
 
-	def dependsButtonPressed(self, button):
+	def optionsButtonClicked(self, button):
+		formatName = self.getActive()
+		options = self.getActiveOptions()
+		dialog = FormatOptionsDialog(
+			formatName,
+			options,
+			self.optionsValues,
+			parent=self._parent,
+		)
+		if dialog.run() != gtk.ResponseType.OK:
+			dialog.destroy()
+			return
+		self.optionsValues = dialog.getOptionsValues()
+		dialog.destroy()
+
+	def dependsButtonClicked(self, button):
 		formatName = self.getActive()
 		pkgNames = button.pkgNames
 		if not pkgNames:
@@ -136,9 +355,14 @@ class FormatComboBox(gtk.ComboBox):
 
 	def onChanged(self, combo):
 		name = self.getActive()
+
+		options = self.getActiveOptions()
+		self.optionsButton.set_visible(bool(options))
+
 		uninstalled = checkFormatDepends(name)
 		self.dependsButton.pkgNames = uninstalled
 		self.dependsButton.set_visible(bool(uninstalled))
+
 
 class InputFormatComboBox(FormatComboBox):
 	def __init__(self, **kwargs):
@@ -146,12 +370,26 @@ class InputFormatComboBox(FormatComboBox):
 		for _format in Glossary.readFormats:
 			self.addFormat(_format)
 
+	def kind(self):
+		"returns 'r' or 'w'"
+		return "r"
+
+	def getActiveOptions(self):
+		return Glossary.formatsReadOptions[self.getActive()]
+
 
 class OutputFormatComboBox(FormatComboBox):
 	def __init__(self, **kwargs):
 		FormatComboBox.__init__(self, **kwargs)
 		for _format in Glossary.writeFormats:
 			self.addFormat(_format)
+
+	def kind(self):
+		"returns 'r' or 'w'"
+		return "w"
+
+	def getActiveOptions(self):
+		return Glossary.formatsWriteOptions[self.getActive()]
 
 
 class GtkTextviewLogHandler(logging.Handler):
@@ -299,6 +537,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(hbox, self.convertInputFormatCombo)
 		pack(hbox, gtk.Label(), 1, 1)
 		pack(hbox, self.convertInputFormatCombo.dependsButton)
+		pack(hbox, self.convertInputFormatCombo.optionsButton)
 		pack(vbox, hbox)
 		###
 		hbox = gtk.HBox(spacing=3)
@@ -335,6 +574,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(hbox, self.convertOutputFormatCombo)
 		pack(hbox, gtk.Label(), 1, 1)
 		pack(hbox, self.convertOutputFormatCombo.dependsButton)
+		pack(hbox, self.convertOutputFormatCombo.optionsButton)
 		pack(vbox, hbox)
 		###
 		hbox = gtk.HBox(spacing=3)
@@ -568,12 +808,14 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.vbox.show_all()
 		self.convertInputFormatCombo.dependsButton.hide()
 		self.convertOutputFormatCombo.dependsButton.hide()
+		self.convertInputFormatCombo.optionsButton.hide()
+		self.convertOutputFormatCombo.optionsButton.hide()
 		########
 		self.status("Select input file")
 
 	def run(self, editPath=None, readOptions=None):
-		if readOptions is None:
-			readOptions = {}
+		if readOptions is not None:
+			self.convertInputFormatCombo.setOptionsValues(readOptions)
 		# if editPath:
 		#	self.notebook.set_current_page(3)
 		#	log.info("Opening file "%s" for edit. please wait..."%editPath)
@@ -636,6 +878,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 				inputFormat=inFormat,
 				outputFilename=outPath,
 				outputFormat=outFormat,
+				readOptions=self.convertInputFormatCombo.optionsValues,
+				writeOptions=self.convertOutputFormatCombo.optionsValues,
 			)
 			if finalOutputFile:
 				self.status("Convert finished")
