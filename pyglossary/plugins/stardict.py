@@ -697,11 +697,3 @@ class Writer(object):
 
 		return formatsCount[0]
 
-
-def write(glos, filename, dictzip=True, sametypesequence=""):
-	writer = Writer(glos)
-	writer.write(
-		filename,
-		dictzip=dictzip,
-		sametypesequence=sametypesequence,
-	)

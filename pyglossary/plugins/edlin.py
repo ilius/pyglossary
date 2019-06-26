@@ -275,13 +275,3 @@ class Writer(object):
 
 			toFile.write(dataToPrettyJson(info))
 
-
-def write(glos, filename, encoding="utf-8", havePrevLink=True):
-	writer = Writer(glos)
-	writer.open(
-		filename,
-		encoding=encoding,
-		havePrevLink=havePrevLink,
-	)
-	writer.write()
-	writer.close()

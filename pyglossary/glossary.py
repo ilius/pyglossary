@@ -106,6 +106,7 @@ class Glossary(object):
 	readFunctions = {}
 	readerClasses = {}
 	writeFunctions = {}
+	writerClasses = {}
 	formatsDesc = {}
 	formatsExt = {}
 	formatsReadOptions = {}
@@ -241,12 +242,21 @@ class Glossary(object):
 			cls.readExt.append(extensions)
 			cls.readDesc.append(desc)
 
-		if hasattr(plugin, "write"):
+		hasWriteSupport = False
+		if hasattr(plugin, "Writer"):
+			cls.writerClasses[format] = plugin.Writer
+			cls.formatsWriteOptions[format] = cls.getRWOptionsFromFunc(plugin.Writer.write, format)
+			hasWriteSupport = True
+
+		if not hasWriteSupport and hasattr(plugin, "write"):
 			cls.writeFunctions[format] = plugin.write
+			cls.formatsWriteOptions[format] = cls.getRWOptionsFromFunc(plugin.write, format)
+			hasWriteSupport = True
+
+		if hasWriteSupport:
 			cls.writeFormats.append(format)
 			cls.writeExt.append(extensions)
 			cls.writeDesc.append(desc)
-			cls.formatsWriteOptions[format] = cls.getRWOptionsFromFunc(plugin.write, format)
 
 		return plugin
 
@@ -884,7 +894,14 @@ class Glossary(object):
 		filename = abspath(filename)
 		log.info("Writing to file \"%s\"" % filename)
 		try:
-			self.writeFunctions[format].__call__(self, filename, **options)
+			if format in self.writerClasses:
+				writer = self.writerClasses[format].__call__(self)
+				writer.write(filename, **options)
+			elif format in self.writeFunctions:
+				self.writeFunctions[format].__call__(self, filename, **options)
+			else:
+				log.error("No write function or Writer class found for plugin %s" % format)
+				return
 		except Exception:
 			log.exception("Exception while calling plugin\'s write function")
 			return

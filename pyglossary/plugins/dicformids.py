@@ -204,8 +204,3 @@ class Writer(object):
 	# def close(self):
 	#	pass
 
-
-def write(glos, filename):
-	writer = Writer(glos)
-	writer.open(filename)
-	writer.write()
