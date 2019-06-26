@@ -136,27 +136,20 @@ class Glossary(object):
 		sys.path.pop()
 
 	@classmethod
-	def getFunctionKeywordArgs(cls, func):
+	def getRWOptionsFromFunc(cls, func, format):
 		import inspect
+		optionsProp = cls.formatsOptionsProp[format]
 		sig = inspect.signature(func)
-		names = []
+		optNames = []
 		for name, param in sig.parameters.items():
 			if param.default is inspect._empty:
 				if name not in ("self", "glos", "filename", "dirname", "kwargs"):
 					log.warning("empty default value for %s: %s" % (name, param.default))
 				continue # non-keyword argument
-			names.append(name)
-		return names
-
-	@classmethod
-	def getRWOptionsFromFunc(cls, func, format):
-		optionsProp = cls.formatsOptionsProp[format]
-		optNames = []
-		for name in cls.getFunctionKeywordArgs(func):
-			if name in optionsProp:
-				optNames.append(name)
-			else:
+			if name not in optionsProp:
 				log.warning("skipping option %s in plugin %s" % (name, format))
+				continue
+			optNames.append(name)
 		return optNames
 
 	@classmethod
