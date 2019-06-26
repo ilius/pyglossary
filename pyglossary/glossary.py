@@ -519,6 +519,69 @@ class Glossary(object):
 
 	# ________________________________________________________________________#
 
+	def parseInputFilename(self, filename, format=""):
+		delFile = False
+		ext = get_ext(filename)
+
+		if ext in (".gz", ".bz2", ".zip"):
+			if ext == ".bz2":
+				output, error = subprocess.Popen(
+					["bzip2", "-dk", filename],
+					stdout=subprocess.PIPE,
+				).communicate()
+				# -k ==> keep original bz2 file
+				# bunzip2 ~= bzip2 -d
+				if error:
+					log.error(
+						error + "\n" +
+						"Failed to decompress file \"%s\"" % filename
+					)
+					return False
+				else:
+					filename = filename[:-4]
+					ext = get_ext(filename)
+					delFile = True
+			elif ext == ".gz":
+				output, error = subprocess.Popen(
+					["gzip", "-dck", filename],
+					stdout=subprocess.PIPE,
+				).communicate()
+				# -k --keep : don't delete input files during compression or decompression.
+				# -c ==> write to stdout (we want to keep original gz file)
+				# gunzip ~= gzip -d
+				if error:
+					log.error(
+						error + "\n" +
+						"Failed to decompress file \"%s\"" % filename
+					)
+					return False
+				else:
+					filename = filename[:-3]
+					ext = get_ext(filename)
+					delFile = True
+			elif ext == ".zip":
+				output, error = subprocess.Popen(
+					["unzip", filename, "-d", dirname(filename)],
+					stdout=subprocess.PIPE,
+				).communicate()
+				if error:
+					log.error(
+						error + "\n" +
+						"Failed to decompress file \"%s\"" % filename
+					)
+					return False
+				else:
+					filename = filename[:-4]
+					ext = get_ext(filename)
+					delFile = True
+
+		if not format:
+			for key in Glossary.formatsExt.keys():
+				if ext in Glossary.formatsExt[key]:
+					format = key
+
+		return format, delFile
+
 	def read(
 		self,
 		filename,
@@ -545,68 +608,13 @@ class Glossary(object):
 
 		self.updateEntryFilters()
 		###
-		delFile = False
-		ext = get_ext(filename)
-		if ext in (".gz", ".bz2", ".zip"):
-			if ext == ".bz2":
-				output, error = subprocess.Popen(
-					["bzip2", "-dk", filename],
-					stdout=subprocess.PIPE,
-				).communicate()
-				# -k ==> keep original bz2 file
-				# bunzip2 ~= bzip2 -d
-				if error:
-					log.error(
-						error + "\n" +
-						"Failed to decompress file \"%s\"" % filename
-					)
-					return False
-				else:
-					filename = filename[:-4]
-					ext = get_ext(filename)
-					delFile = True
-			elif ext == ".gz":
-				output, error = subprocess.Popen(
-					["gzip", "-dc", filename],
-					stdout=subprocess.PIPE,
-				).communicate()
-				# -c ==> write to stdout (we want to keep original gz file)
-				# gunzip ~= gzip -d
-				if error:
-					log.error(
-						error + "\n" +
-						"Failed to decompress file \"%s\"" % filename
-					)
-					return False
-				else:
-					filename = filename[:-3]
-					open(filename, "w").write(output)
-					ext = get_ext(filename)
-					delFile = True
-			elif ext == ".zip":
-				output, error = subprocess.Popen(
-					["unzip", filename, "-d", dirname(filename)],
-					stdout=subprocess.PIPE,
-				).communicate()
-				if error:
-					log.error(
-						error + "\n" +
-						"Failed to decompress file \"%s\"" % filename
-					)
-					return False
-				else:
-					filename = filename[:-4]
-					ext = get_ext(filename)
-					delFile = True
+		format, delFile = self.parseInputFilename(filename, format=format)
 		if not format:
-			for key in Glossary.formatsExt.keys():
-				if ext in Glossary.formatsExt[key]:
-					format = key
-			if not format:
-				# if delFile:
-				#	os.remove(filename)
-				log.error("Unknown extension \"%s\" for read support!" % ext)
-				return False
+			# if delFile:
+			#	os.remove(filename)
+			log.error("Unknown extension \"%s\" for read support!" % ext)
+			return False
+
 		validOptionKeys = self.formatsReadOptions[format]
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
