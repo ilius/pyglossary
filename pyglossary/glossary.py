@@ -603,8 +603,6 @@ class Glossary(object):
 			)
 			# if not result:## FIXME
 			#	return False
-			if delFile:
-				os.remove(filename)
 
 		self._updateIter()
 
