@@ -30,11 +30,6 @@ enable = True
 format = "Edlin"
 description = "Editable Linked List of Entries"
 extensions = [".edlin"]
-readOptions = []
-writeOptions = [
-	"encoding",  # str
-	"havePrevLink",  # bool
-]
 optionsProp = {
 	"encoding": EncodingOption(),
 	"havePrevLink": BoolOption(),
@@ -281,11 +276,12 @@ class Writer(object):
 			toFile.write(dataToPrettyJson(info))
 
 
-def write(glos, filename, **kwargs):
+def write(glos, filename, encoding="utf-8", havePrevLink=True):
 	writer = Writer(glos)
 	writer.open(
 		filename,
-		**kwargs
+		encoding=encoding,
+		havePrevLink=havePrevLink,
 	)
 	writer.write()
 	writer.close()

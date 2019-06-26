@@ -8,13 +8,6 @@ enable = True
 format = "OctopusMdictSource"
 description = "Octopus MDict Source"
 extensions = [".mtxt"]
-readOptions = [
-	"encoding",  # str
-	"links", # bool, support for inconsecutive links, #68
-]
-writeOptions = [
-	"resources",  # bool
-]
 optionsProp = {
 	"encoding": EncodingOption(),
 	"links": BoolOption(),

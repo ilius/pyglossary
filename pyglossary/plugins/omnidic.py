@@ -6,9 +6,9 @@ enable = True
 format = 'Omnidic'
 description = 'Omnidic'
 extensions = ['.omni', '.omnidic']
-readOptions = []
-writeOptions = []
-optionsProp = {}
+optionsProp = {
+	"dicIndex": Option("int"),
+}
 depends = {}
 
 

@@ -26,11 +26,6 @@ enable = True
 format = "OctopusMdict"
 description = "Octopus MDict"
 extensions = [".mdx"]
-readOptions = [
-	"encoding",  # str
-	"substyle",  # bool
-]
-writeOptions = []
 optionsProp = {
 	"encoding": EncodingOption(),
 	"substyle": BoolOption(),
@@ -51,11 +46,11 @@ class Reader(object):
 		self._mdd = None
 		self._mddFilename = ""
 
-	def open(self, filename, **options):
+	def open(self, filename, encoding="", substyle=True):
 		from pyglossary.plugin_lib.readmdict import MDX, MDD
 		self._filename = filename
-		self._encoding = options.get("encoding", "")
-		self._substyle = options.get("substyle", True)
+		self._encoding = encoding
+		self._substyle = substyle
 		self._mdx = MDX(filename, self._encoding, self._substyle)
 
 		filenameNoExt, ext = splitext(self._filename)

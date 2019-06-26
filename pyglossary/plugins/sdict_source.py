@@ -8,12 +8,6 @@ enable = True
 format = 'SdictSource'
 description = 'Sdictionary Source (sdct)'
 extensions = ['.sdct']
-readOptions = []
-writeOptions = [
-	'writeInfo',  # bool
-	'newline',  # str, or choice ('\r\n', '\n', or '\r')
-	'resources',  # bool
-]
 optionsProp = {
 	"writeInfo": BoolOption(),
 	"newline": NewlineOption(),

@@ -13,10 +13,6 @@ enable = True
 format = "WikipediaDump"
 description = "Wikipedia Dump(Static HTML)"
 extensions = [".wiki"]
-readOptions = []
-writeOptions = [
-	"encoding",  # str
-]
 optionsProp = {
 	"encoding": EncodingOption(),
 }
@@ -37,10 +33,10 @@ class Reader(object):
 		# we can't recognize alternates unless we keep all data in memory
 		# or scan the whole directiry and read all files twice
 
-	def open(self, rootDir):
-		if not isdir(rootDir):
-			raise IOError("%s is not a directory" % rootDir)
-		self._rootDir = rootDir
+	def open(self, dirname):
+		if not isdir(dirname):
+			raise IOError("%s is not a directory" % dirname)
+		self._rootDir = dirname
 		self._articlesDir = join(self._rootDir, "articles")
 
 	def close(self):

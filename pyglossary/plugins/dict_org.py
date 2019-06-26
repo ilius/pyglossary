@@ -7,12 +7,10 @@ enable = True
 format = "DictOrg"
 description = "DICT.org file format (.index)"
 extensions = [".index"]
-readOptions = []
-writeOptions = [
-	"dictzip",  # bool
-	"install",  # bool
-]
-optionsProp = {}
+optionsProp = {
+	"dictzip": BoolOption(),
+	"install": BoolOption(),
+}
 depends = {}
 sortOnWrite = DEFAULT_YES
 

@@ -6,10 +6,6 @@ enable = True
 format = 'Sql'
 description = 'SQL'
 extensions = ['.sql']
-readOptions = []
-writeOptions = [
-	'encoding',  # str
-]
 optionsProp = {
 	"encoding": EncodingOption(),
 }

@@ -8,14 +8,6 @@ enable = True
 format = "Tabfile"
 description = "Tabfile (txt, dic)"
 extensions = [".txt", ".tab", ".dic"]
-readOptions = [
-	"encoding",
-]
-writeOptions = [
-	"encoding",  # str
-	"writeInfo",  # bool
-	"resources",  # bool
-]
 optionsProp = {
 	"encoding": EncodingOption(),
 	"writeInfo": BoolOption(),

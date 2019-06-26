@@ -1,14 +1,14 @@
 import re
-from formats_common import log
+from formats_common import *
 from . import conv
 
 enable = True
 format = "CC-CEDICT"
 description = "CC-CEDICT"
 extensions = [".u8"]
-readOptions = []
-writeOptions = []
-optionsProp = {}
+optionsProp = {
+	"encoding": EncodingOption(),
+}
 depends = {
 	"jinja2": "jinja2",
 }

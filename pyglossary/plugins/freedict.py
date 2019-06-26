@@ -6,8 +6,6 @@ enable = True
 format = "Freedict"
 description = "FreeDict (tei)"
 extensions = [".tei"]
-readOptions = []
-writeOptions = []
 optionsProp = {}
 depends = {}
 

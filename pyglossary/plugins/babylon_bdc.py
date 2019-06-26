@@ -5,8 +5,6 @@ enable = False
 format = "BabylonBdc"
 description = "Babylon (bdc)"
 extensions = [".bdc"]
-readOptions = []
-writeOptions = []
 optionsProp = {}
 depends = {}
 

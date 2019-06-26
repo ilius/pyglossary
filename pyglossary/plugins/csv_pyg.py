@@ -26,13 +26,6 @@ enable = True
 format = "Csv"
 description = "CSV"
 extensions = [".csv"]
-readOptions = [
-	"encoding",  # str
-]
-writeOptions = [
-	"encoding",  # str
-	"resources",  # bool
-]
 optionsProp = {
 	"encoding": EncodingOption(),
 	"resources": BoolOption(),

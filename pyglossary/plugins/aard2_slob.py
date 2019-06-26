@@ -7,11 +7,6 @@ enable = True
 format = 'Aard2Slob'
 description = 'Aard 2 (slob)'
 extensions = ['.slob']
-readOptions = []
-writeOptions = [
-	"compression", # values: "bz2", "zlib", "lzma2"
-	"content_type", # empty means auto, examples: "text/plain; charset=utf-8"
-]
 optionsProp = {
 	"compression": StrOption(
 		values=["bz2", "zlib", "lzma2"],
@@ -22,6 +17,7 @@ optionsProp = {
 		values=["text/plain; charset=utf-8"],
 		comment="Content Type",
 	),
+	"encoding": EncodingOption(),
 }
 depends = {
 	"icu": "PyICU",

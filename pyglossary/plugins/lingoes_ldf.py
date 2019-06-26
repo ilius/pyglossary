@@ -8,14 +8,10 @@ enable = True
 format = "LingoesLDF"
 description = "Lingoes Source (LDF)"
 extensions = [".ldf"]
-readOptions = []
-writeOptions = [
-	"newline",  # str, or choice ("\r\n", "\n", or "\r")
-	"resources",  # bool
-]
 optionsProp = {
 	"newline": NewlineOption(),
 	"resources": BoolOption(),
+	"encoding": EncodingOption(),
 }
 depends = {}
 

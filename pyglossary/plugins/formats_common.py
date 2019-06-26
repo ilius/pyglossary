@@ -32,8 +32,6 @@ enable = False
 format = "Unknown"
 description = "Unknown"
 extensions = [] # type: List[str]
-readOptions = [] # type: List[str]
-writeOptions = [] # type: List[str]
 
 # key is option/argument name, value is instance of Option
 optionsProp = {} # type: Dict[str, Option]

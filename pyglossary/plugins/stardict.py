@@ -23,11 +23,6 @@ enable = True
 format = "Stardict"
 description = "StarDict (ifo)"
 extensions = [".ifo"]
-readOptions = []
-writeOptions = [
-	"dictzip",  # bool
-	"sametypesequence",	# str, "h" for html, "m" for plain text
-]
 optionsProp = {
 	"dictzip": BoolOption(),
 	"sametypesequence": StrOption(
@@ -703,6 +698,10 @@ class Writer(object):
 		return formatsCount[0]
 
 
-def write(glos, filename, **kwargs):
+def write(glos, filename, dictzip=True, sametypesequence=None):
 	writer = Writer(glos)
-	writer.write(filename, **kwargs)
+	writer.write(
+		filename,
+		dictzip=dictzip,
+		sametypesequence=sametypesequence,
+	)

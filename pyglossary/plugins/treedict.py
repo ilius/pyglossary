@@ -7,12 +7,23 @@ enable = True
 format = "Treedict"
 description = "TreeDict"
 extensions = [".tree", ".treedict"]
-readOptions = []
-writeOptions = [
-	"encoding",  # str
-]
 optionsProp = {
 	"encoding": EncodingOption(),
+	"archive": StrOption(
+		customValue=False,
+		values=[
+			"tar.bz2",
+			"tar.gz",
+			"zip",
+		],
+	),
+	"sep": StrOption(
+		customValue=True,
+		values=[
+			"/",
+			"\\",
+		],
+	),
 }
 depends = {}
 

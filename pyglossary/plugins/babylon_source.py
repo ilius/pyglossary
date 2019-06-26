@@ -9,13 +9,6 @@ enable = True
 format = "BabylonSource"
 description = "Babylon Source (gls)"
 extensions = [".gls", ".babylon"]
-readOptions = []
-writeOptions = [
-	"writeInfo",  # bool
-	"newline",  # str, or choice ("\r\n", "\n", or "\r")
-	"encoding",  # str
-	"resources",  # bool
-]
 optionsProp = {
 	"writeInfo": BoolOption(),
 	"newline": NewlineOption(),

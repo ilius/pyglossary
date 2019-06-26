@@ -25,10 +25,6 @@ enable = True
 format = "Sdict"
 description = "Sdictionary Binary(dct)"
 extensions = [".dct"]
-readOptions = [
-	"encoding",  # str
-]
-writeOptions = []
 optionsProp = {
 	"encoding": EncodingOption(),
 }

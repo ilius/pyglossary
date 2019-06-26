@@ -6,10 +6,6 @@ enable = True
 format = "GettextPo"
 description = "Gettext Source (po)"
 extensions = [".po"]
-readOptions = []
-writeOptions = [
-	"resources",  # bool
-]
 optionsProp = {
 	"resources": BoolOption(),
 }

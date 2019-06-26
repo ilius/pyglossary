@@ -77,17 +77,6 @@ debugReadOptions = {
 	"rawDumpPath",  # str, file path
 	"unpackedGzipPath",  # str, file path
 }
-readOptions = [
-	"defaultEncodingOverwrite",  # str, encoding
-	"sourceEncodingOverwrite",  # str, encoding
-	"targetEncodingOverwrite",  # str, encoding
-	"partOfSpeechColor",  # str, for example "ff0000" for green
-
-	"noControlSequenceInDefi",  # bool
-	"strictStringConvertion",  # bool
-	"processHtmlInKey",  # bool
-	"keyRStripChars",  # str, list of characters to strip (from right side)
-] + sorted(debugReadOptions)
 
 optionsProp = {
 	"defaultEncodingOverwrite": EncodingOption(),
@@ -99,6 +88,15 @@ optionsProp = {
 	"strictStringConvertion": BoolOption(),
 	"processHtmlInKey": BoolOption(),
 	"keyRStripChars": StrOption(customValue=True),
+
+	# debug read options:
+	"searchCharSamples": BoolOption(),
+	"collectMetadata2": BoolOption(),
+	"writeGz": BoolOption(),
+	"charSamplesPath": StrOption(), # file path
+	"msgLogPath": StrOption(), # file path
+	"rawDumpPath": StrOption(), # file path
+	"unpackedGzipPath": StrOption(), # file path
 }
 
 

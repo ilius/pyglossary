@@ -9,8 +9,6 @@ enable = True
 format = "Dicformids"
 description = "DictionaryForMIDs"
 extensions = [".mids"]
-readOptions = []
-writeOptions = []
 optionsProp = {}
 depends = {}
 

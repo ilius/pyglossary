@@ -29,12 +29,6 @@ enable = True
 format = "ABBYYLingvoDSL"
 description = "ABBYY Lingvo DSL (dsl)"
 extensions = [".dsl"]
-readOptions = [
-	"encoding", # str
-	"audio", # str, values: "yes", "no", FIXME: bool
-	"onlyFixMarkUp", # str, values: "yes", "no", FIXME: bool
-]
-writeOptions = []
 optionsProp = {
 	"encoding": EncodingOption(),
 	"audio": StrOption(customValue=False, values=["", "no", "yes"]), # FIXME: BoolOption
@@ -288,10 +282,9 @@ def unwrap_quotes(s):
 	return wrapped_in_quotes_re.sub(r'\2', s)
 
 
-def read(glos, fname, **options):
-	encoding = options.get("encoding")
-	audio = (options.get("audio", "no") == "yes")
-	onlyFixMarkUp = (options.get("onlyFixMarkUp", "no") == "yes")
+def read(glos, filename, encoding="", audio="no", onlyFixMarkUp="no"):
+	audio = (audio == "yes")
+	onlyFixMarkUp = (onlyFixMarkUp == "yes")
 	if onlyFixMarkUp:
 		def clean_tags(line, audio):
 			return _parse(line)
@@ -309,7 +302,7 @@ def read(glos, fname, **options):
 
 	if not encoding:
 		for testEncoding in ("utf-8", "utf-16"):
-			with open(fname, "r", encoding=testEncoding) as fp:
+			with open(filename, "r", encoding=testEncoding) as fp:
 				try:
 					for i in range(10):
 						fp.readline()
@@ -323,7 +316,7 @@ def read(glos, fname, **options):
 		if not encoding:
 			raise ValueError("Could not detect encoding of DSL file, specify it by: --read-options encoding=ENCODING")
 
-	fp = open(fname, "r", encoding=encoding)
+	fp = open(filename, "r", encoding=encoding)
 
 	for line in fp:
 		line = line.rstrip()

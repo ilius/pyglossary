@@ -28,8 +28,6 @@ enable = True
 format = "Xdxf"
 description = "XDXF"
 extensions = [".xdxf", ".xml"]
-readOptions = []
-writeOptions = []
 optionsProp = {}
 depends = {
 	"lxml": "lxml",

@@ -6,7 +6,5 @@ enable = False
 format = "GettextMo"
 description = "Gettext Binary (mo)"
 extensions = [".mo"]
-readOptions = []
-writeOptions = []
 optionsProp = {}
 depends = {}

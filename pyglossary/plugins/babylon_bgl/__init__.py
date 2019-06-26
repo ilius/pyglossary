@@ -22,7 +22,7 @@
 
 from formats_common import *
 from .bgl_reader import BglReader as Reader
-from .bgl_reader import readOptions
+from .bgl_reader import optionsProp
 
 enable = True
 format = "BabylonBgl"

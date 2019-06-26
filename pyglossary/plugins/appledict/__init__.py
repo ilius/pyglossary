@@ -37,22 +37,12 @@ enable = True
 format = "AppleDict"
 description = "AppleDict Source (xml)"
 extensions = [".xml"]
-readOptions = []
-writeOptions = [
-	"cleanHTML",  # bool
-	"css",  # str
-	"xsl",  # str
-	"defaultPrefs",  # dict or None, FIXME
-	"prefsHTML",  # str
-	"frontBackMatter",  # str
-	"jing",  # str, can be "yes", "no" or "". FIXME: change to bool
-	"indexes",  # str, FIXME: rename to indexes_lang?
-]
+# FIXME: rename indexes arg/option to indexes_lang?
 optionsProp = {
 	"cleanHTML": BoolOption(customValue=True),
 	"css": StrOption(customValue=True),
 	"xsl": StrOption(customValue=True),
-	# "defaultPrefs", Option("dict"), # FIXME
+	"defaultPrefs": Option("dict"), # FIXME
 	"prefsHTML": StrOption(customValue=True),
 	"frontBackMatter": StrOption(),
 	"jing": StrOption(customValue=False, values=["", "no", "yes"]), # FIXME: change to BoolOption
@@ -115,7 +105,7 @@ def write_css(fname, css_file):
 
 def write(
 	glos,
-	dirPath,
+	dirname,
 	cleanHTML=True,
 	css="",
 	xsl="",
@@ -129,7 +119,7 @@ def write(
 	write glossary to Apple dictionary .xml and supporting files.
 
 	:type glos: pyglossary.glossary.Glossary
-	:type dirPath: str, directory path, must not have extension
+	:type dirname: str, directory path, must not have extension
 
 	:type cleanHTML: str
 	:param cleanHTML: pass "yes" to use BeautifulSoup parser.
@@ -167,8 +157,8 @@ def write(
 	additional indexes to dictionary entries.
 	# for now no languages supported yet.
 	"""
-	if not isdir(dirPath):
-		os.mkdir(dirPath)
+	if not isdir(dirname):
+		os.mkdir(dirname)
 
 	xdxf.xdxf_init()
 
@@ -182,8 +172,8 @@ def write(
 	else:
 		BeautifulSoup = None
 
-	fileNameBase = basename(dirPath).replace(".", "_")
-	filePathBase = join(dirPath, fileNameBase)
+	fileNameBase = basename(dirname).replace(".", "_")
+	filePathBase = join(dirname, fileNameBase)
 	# before chdir (outside indir block)
 	css = abspath_or_None(css)
 	xsl = abspath_or_None(xsl)
@@ -195,7 +185,7 @@ def write(
 
 	glos.setDefaultDefiFormat("h")
 
-	myResDir = join(dirPath, "OtherResources")
+	myResDir = join(dirname, "OtherResources")
 	if not isdir(myResDir):
 		os.mkdir(myResDir)
 
@@ -246,7 +236,7 @@ def write(
 
 	write_css(filePathBase + ".css", css)
 
-	with open(join(dirPath, "Makefile"), "w") as toFile:
+	with open(join(dirname, "Makefile"), "w") as toFile:
 		toFile.write(
 			toStr(pkgutil.get_data(
 				__name__,

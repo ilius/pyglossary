@@ -110,6 +110,7 @@ class Glossary(object):
 	formatsExt = {}
 	formatsReadOptions = {}
 	formatsWriteOptions = {}
+	formatsOptionsProp = {}
 	formatsDepends = {}
 	readExt = []
 	writeExt = []
@@ -133,6 +134,30 @@ class Glossary(object):
 		for _, pluginName, _ in pkgutil.iter_modules([directory]):
 			cls.loadPlugin(pluginName)
 		sys.path.pop()
+
+	@classmethod
+	def getFunctionKeywordArgs(cls, func):
+		import inspect
+		sig = inspect.signature(func)
+		names = []
+		for name, param in sig.parameters.items():
+			if param.default is inspect._empty:
+				if name not in ("self", "glos", "filename", "dirname", "kwargs"):
+					log.warning("empty default value for %s: %s" % (name, param.default))
+				continue # non-keyword argument
+			names.append(name)
+		return names
+
+	@classmethod
+	def getRWOptionsFromFunc(cls, func, format):
+		optionsProp = cls.formatsOptionsProp[format]
+		optNames = []
+		for name in cls.getFunctionKeywordArgs(func):
+			if name in optionsProp:
+				optNames.append(name)
+			else:
+				log.warning("skipping option %s in plugin %s" % (name, format))
+		return optNames
 
 	@classmethod
 	def loadPlugin(cls, pluginName):
@@ -170,6 +195,11 @@ class Glossary(object):
 			cls.extFormat[ext] = format
 		cls.formatsExt[format] = extensions
 		cls.formatsDesc[format] = desc
+		cls.formatsOptionsProp[format] = getattr(
+			plugin,
+			"optionsProp",
+			{},
+		)
 		cls.formatsDepends[format] = getattr(
 			plugin,
 			"depends",
@@ -198,6 +228,7 @@ class Glossary(object):
 			else:
 				cls.readerClasses[format] = Reader
 				hasReadSupport = True
+				cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(Reader.open, format)
 
 		try:
 			cls.readFunctions[format] = plugin.read
@@ -205,23 +236,19 @@ class Glossary(object):
 			pass
 		else:
 			hasReadSupport = True
+			cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(plugin.read, format)
 
 		if hasReadSupport:
 			cls.readFormats.append(format)
 			cls.readExt.append(extensions)
 			cls.readDesc.append(desc)
-			cls.formatsReadOptions[format] = getattr(plugin, "readOptions", [])
 
 		if hasattr(plugin, "write"):
 			cls.writeFunctions[format] = plugin.write
 			cls.writeFormats.append(format)
 			cls.writeExt.append(extensions)
 			cls.writeDesc.append(desc)
-			cls.formatsWriteOptions[format] = getattr(
-				plugin,
-				"writeOptions",
-				[],
-			)
+			cls.formatsWriteOptions[format] = cls.getRWOptionsFromFunc(plugin.write, format)
 
 		return plugin
 
