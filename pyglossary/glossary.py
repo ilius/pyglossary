@@ -261,7 +261,7 @@ class Glossary(object):
 		return plugin
 
 	@classmethod
-	def parseInputFilename(cls, filename, format=""):
+	def detectInputFormat(cls, filename, format=""):
 		if not format:
 			ext = get_ext(filename)
 			for key in Glossary.formatsExt.keys():
@@ -555,7 +555,7 @@ class Glossary(object):
 
 		self.updateEntryFilters()
 		###
-		format = self.parseInputFilename(filename, format=format)
+		format = self.detectInputFormat(filename, format=format)
 		if not format:
 			log.error("Unknown extension \"%s\" for read support!" % ext)
 			return False
