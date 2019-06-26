@@ -208,6 +208,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		)
 		pack(dialog.vbox, label, 0, 0)
 		entry = gtk.Entry()
+		entry.set_text(currentValue)
 		entry.connect("activate", lambda w: dialog.response(gtk.ResponseType.OK))
 		pack(dialog.vbox, entry, 0, 0)
 		dialog.vbox.show_all()
