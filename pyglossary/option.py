@@ -15,7 +15,7 @@ class Option(object):
 		"returns (value, isValid)"
 		return raw, True
 
-	def valueIsValid(self, value):
+	def validate(self, value):
 		if not self.customValue:
 			if not self.values:
 				print("--- invalid option: customValue=%r, values=%r" % (self.customValue, self.values))
