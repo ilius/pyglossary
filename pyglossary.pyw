@@ -308,7 +308,7 @@ if args.inputFilename:
 			sys.exit(1)
 		readOptionsProp = Glossary.formatsOptionsProp[inputFormat]
 		for optName, optValue in readOptions.items():
-			if optName not in readOptionsProp:
+			if optName not in Glossary.formatsReadOptions[inputFormat]:
 				log.error("Invalid option name %s for format %s" % (optName, inputFormat))
 				sys.exit(1)
 			prop = readOptionsProp[optName]
@@ -328,7 +328,7 @@ if args.inputFilename:
 			sys.exit(1)
 		writeOptionsProp = Glossary.formatsOptionsProp[outputFormat]
 		for optName, optValue in writeOptions.items():
-			if optName not in writeOptionsProp:
+			if optName not in Glossary.formatsWriteOptions[outputFormat]:
 				log.error("Invalid option name %s for format %s" % (optName, outputFormat))
 				sys.exit(1)
 			prop = writeOptionsProp[optName]
