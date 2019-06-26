@@ -112,33 +112,6 @@ def help():
 	print(text)
 
 
-optionValueFixDict = {
-	"true": True,
-	"false": False,
-	"yes": True,
-	"no": False,
-}
-
-def evalOptionValue(value):
-	if value in optionValueFixDict:
-		return optionValueFixDict[value]
-	# if it is string form of a number or boolean or tuple ...
-	try:
-		newValue = eval(value)
-	except:
-		pass
-	else:
-		if isinstance(newValue, (
-			bool,
-			int,
-			float,
-			tuple,
-			list,
-			dict,
-		)):
-			return newValue
-	return value
-
 def parseFormatOptionsStr(st):
 	st = st.strip()
 	if not st:
@@ -154,7 +127,6 @@ def parseFormatOptionsStr(st):
 			continue
 		key = key.strip()
 		value = value.strip()
-		value = evalOptionValue(value)
 		opt[key] = value
 	return opt
 

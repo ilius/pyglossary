@@ -260,7 +260,6 @@ if os.sep != '/':
 readOptions = parseFormatOptionsStr(args.readOptions)
 writeOptions = parseFormatOptionsStr(args.writeOptions)
 
-# FIXME: call Option.evaluate to fix boolean values in readOptions and writeOptions
 
 """
 	examples for read and write options:
@@ -300,10 +299,51 @@ for param in convertOptionsKeys:
 	if value is not None:
 		convertOptions[param] = value
 
+
+if args.inputFilename:
+	if readOptions:
+		inputFormat = Glossary.detectInputFormat(args.inputFilename, format=args.inputFormat)
+		if not inputFormat:
+			log.error("Could not detect format for input file %s" % args.inputFilename)
+			sys.exit(1)
+		readOptionsProp = Glossary.formatsOptionsProp[inputFormat]
+		for optName, optValue in readOptions.items():
+			if optName not in readOptionsProp:
+				log.error("Invalid option name %s for format %s" % (optName, inputFormat))
+				sys.exit(1)
+			prop = readOptionsProp[optName]
+			optValueNew, ok = prop.evaluate(optValue)
+			if not ok or not prop.validate(optValueNew):
+				log.error("Invalid option value %s=%r for format %s" % (optName, optValue, inputFormat))
+				sys.exit(1)
+			readOptions[optName] = optValueNew
+	if writeOptions:
+		_, outputFormat, _ = Glossary.detectOutputFormat(
+			filename=args.outputFilename,
+			format=args.outputFormat,
+			inputFilename=args.inputFilename,
+		)
+		if not outputFormat:
+			log.error("Could not detect format for output file %s" % args.outputFilename)
+			sys.exit(1)
+		writeOptionsProp = Glossary.formatsOptionsProp[outputFormat]
+		for optName, optValue in writeOptions.items():
+			if optName not in writeOptionsProp:
+				log.error("Invalid option name %s for format %s" % (optName, outputFormat))
+				sys.exit(1)
+			prop = writeOptionsProp[optName]
+			optValueNew, ok = prop.evaluate(optValue)
+			if not ok or not prop.validate(optValueNew):
+				log.error("Invalid option value %s=%r for format %s" % (optName, optValue, outputFormat))
+				sys.exit(1)
+			writeOptions[optName] = optValueNew
+
+
 log.pretty(prefOptions, 'prefOptions = ')
 log.pretty(readOptions, 'readOptions = ')
 log.pretty(writeOptions, 'writeOptions = ')
 log.pretty(convertOptions, 'convertOptions = ')
+
 
 """
 ui_type: User interface type
@@ -325,6 +365,7 @@ else:
 	if ui_type == 'cmd':
 		log.error('no input file given, try --help')
 		exit(1)
+
 
 if ui_type == 'none':
 	if args.reverse:
