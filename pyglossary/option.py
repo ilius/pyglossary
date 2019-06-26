@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from typing import List, Optional
+from typing import Tuple, List, Optional, Any
 
 class Option(object):
 	def __init__(self, typ: str, customValue: bool = False, values: Optional[List[str]] = None, comment: str = ""):
@@ -9,10 +9,27 @@ class Option(object):
 		self.customValue = customValue
 		self.comment = comment
 
+	def evaluate(self, raw: str) -> Tuple[Any, bool]:
+		"returns (value, isValid)"
+		return raw, True
+
 
 class BoolOption(Option):
 	def __init__(self, **kwargs):
-		Option.__init__(self, "bool", **kwargs)
+		Option.__init__(
+			self,
+			"bool",
+			customValue=False,
+			values=[False, True],
+			**kwargs,
+		)
+
+	def evaluate(self, raw: str) -> Tuple[bool, bool]:
+		if raw.lower() in ("yes", "true", "1"):
+			return True, True
+		if raw.lower() in ("no", "false", "0"):
+			return False, True
+		return None, False # not valid
 
 
 class StrOption(Option):

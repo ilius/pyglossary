@@ -155,13 +155,13 @@ class FormatOptionsDialog(gtk.Dialog):
 		model = self.treev.get_model()
 		itr = model.get_iter(path)
 		optName = model.get_value(itr, 1)
-		prop = optionsProp[optName]
+		prop = self.optionsProp[optName]
 		if not prop.customValue:
 			return
 		model.set_value(itr, 3, newText)
 
 	def rowActivated(self, treev, path, col):
-		self.showValuesPopup()
+		self.showValuesPopup(path)
 
 	def treeviewButtonPress(self, treev, gevent):
 		if gevent.button != 1:
@@ -174,7 +174,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		col = pos_t[1]
 		# cell = col.get_cells()[0]
 		if col.get_title() == "Value":
-			self.showValuesPopup()
+			self.showValuesPopup(path)
 		return False
 
 	def valueItemActivate(self, item: gtk.MenuItem, itr: gtk.TreeIter):
@@ -222,9 +222,8 @@ class FormatOptionsDialog(gtk.Dialog):
 		optName = model.get_value(itr, 1)
 		self.valueCustomOpenDialog(itr, optName)
 
-	def showValuesPopup(self):
+	def showValuesPopup(self, path):
 		model = self.treev.get_model()
-		path = self.treev.get_cursor()[0]
 		itr = model.get_iter(path)
 		optName = model.get_value(itr, 1)
 		prop = self.optionsProp[optName]
@@ -250,7 +249,13 @@ class FormatOptionsDialog(gtk.Dialog):
 		for row in model:
 			if not row[0]: # not enable
 				continue
-			optionsValues[row[1]] = row[3]
+			optName = row[1]
+			rawValue = row[3]
+			prop = self.optionsProp[optName]
+			value, isValid = prop.evaluate(rawValue)
+			if not isValid:
+				log.error("invalid option value %s = %s" % (optName, rawValue))
+			optionsValues[optName] = value
 		return optionsValues
 
 
@@ -867,19 +872,23 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 		self.convertButton.set_sensitive(False)
 		self.progressTitle = "Converting"
+		readOptions = self.convertInputFormatCombo.optionsValues
+		writeOptions = self.convertOutputFormatCombo.optionsValues
 		try:
 			# if inFormat=="Omnidic":
 			#	dicIndex = self.xml.get_widget("spinbutton_omnidic_i")\
 			#		.get_value_as_int()
 			#	ex = self.glos.readOmnidic(inPath, dicIndex=dicIndex)
 			# else:
+			log.debug("readOptions: %s" % readOptions)
+			log.debug("writeOptions: %s" % writeOptions)
 			finalOutputFile = self.glos.convert(
 				inPath,
 				inputFormat=inFormat,
 				outputFilename=outPath,
 				outputFormat=outFormat,
-				readOptions=self.convertInputFormatCombo.optionsValues,
-				writeOptions=self.convertOutputFormatCombo.optionsValues,
+				readOptions=readOptions,
+				writeOptions=writeOptions,
 			)
 			if finalOutputFile:
 				self.status("Convert finished")
