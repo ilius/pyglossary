@@ -260,6 +260,16 @@ class Glossary(object):
 
 		return plugin
 
+	@classmethod
+	def parseInputFilename(cls, filename, format=""):
+		if not format:
+			ext = get_ext(filename)
+			for key in Glossary.formatsExt.keys():
+				if ext in Glossary.formatsExt[key]:
+					format = key
+
+		return format
+
 	def clear(self):
 		self._info = odict()
 
@@ -518,15 +528,6 @@ class Glossary(object):
 		return DataEntry(fname, data, inTmp)
 
 	# ________________________________________________________________________#
-
-	def parseInputFilename(self, filename, format=""):
-		if not format:
-			ext = get_ext(filename)
-			for key in Glossary.formatsExt.keys():
-				if ext in Glossary.formatsExt[key]:
-					format = key
-
-		return format
 
 	def read(
 		self,
