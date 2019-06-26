@@ -686,7 +686,9 @@ class Glossary(object):
 			)
 		self._updateIter(sort=True)
 
-	def _detectOutput(self, filename="", format=""):
+
+	@classmethod
+	def detectOutputFormat(cls, filename="", format="", inputFilename=""):
 		"""
 		returns (filename, format, archiveType) or None
 		"""
@@ -711,15 +713,20 @@ class Glossary(object):
 				if not format:
 					for fmt, extList in Glossary.formatsExt.items():
 						if filename == fmt:
-							format = filename
-							ext = extList[0]
-							filename = self._filename + ext
-							break
+							if not inputFilename:
+								log.error("inputFilename is empty")
+							else:
+								format = filename
+								ext = extList[0]
+								filename = inputFilename + ext
+								break
 						for e in extList:
-							if filename == e[1:] or filename == e:
+							if not inputFilename:
+								log.error("inputFilename is empty")
+							elif filename == e[1:] or filename == e:
 								format = fmt
 								ext = e
-								filename = self._filename + ext
+								filename = inputFilename + ext
 								break
 						if format:
 							break
@@ -733,10 +740,10 @@ class Glossary(object):
 				return
 
 		else:  # filename is empty
-			if not self._filename:
+			if not inputFilename:
 				log.error("Invalid filename %r" % filename)
 				return
-			filename = self._filename  # no extension
+			filename = inputFilename  # no extension
 			if not format:
 				log.error("No filename nor format is given for output file")
 				return
@@ -930,9 +937,10 @@ class Glossary(object):
 		if not writeOptions:
 			writeOptions = {}
 
-		outputArgs = self._detectOutput(
+		outputArgs = self.detectOutputFormat(
 			filename=outputFilename,
 			format=outputFormat,
+			inputFilename=inputFilename,
 		)
 		if not outputArgs:
 			log.error("Writing file \"%s\" failed." % outputFilename)
