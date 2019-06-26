@@ -87,7 +87,7 @@ optionsProp = {
 	"noControlSequenceInDefi": BoolOption(),
 	"strictStringConvertion": BoolOption(),
 	"processHtmlInKey": BoolOption(),
-	"keyRStripChars": StrOption(customValue=True),
+	"keyRStripChars": StrOption(),
 
 	# debug read options:
 	"searchCharSamples": BoolOption(),
@@ -323,10 +323,10 @@ class BglReader(object):
 	def open(
 		self,
 		filename,
-		defaultEncodingOverwrite=None,
-		sourceEncodingOverwrite=None,
-		targetEncodingOverwrite=None,
-		partOfSpeechColor=None,
+		defaultEncodingOverwrite="",
+		sourceEncodingOverwrite="",
+		targetEncodingOverwrite="",
+		partOfSpeechColor="",
 		noControlSequenceInDefi=False,
 		strictStringConvertion=False,
 		# process keys and alternates as HTML
@@ -341,7 +341,7 @@ class BglReader(object):
 		processHtmlInKey=False,
 		# a string of characters that will be stripped from the end of the
 		# key (and alternate), see str.rstrip function
-		keyRStripChars=None,
+		keyRStripChars="",
 		**kwargs
 	):
 		if kwargs:
@@ -1135,7 +1135,8 @@ class BglReader(object):
 		u_word_main = removeControlChars(u_word_main)
 		u_word_main = removeNewlines(u_word_main)
 		u_word_main = u_word_main.lstrip()
-		u_word_main = u_word_main.rstrip(self.keyRStripChars)
+		if self.keyRStripChars:
+			u_word_main = u_word_main.rstrip(self.keyRStripChars)
 		return u_word_main
 
 	def processAlternativeKey(self, b_word, b_key):

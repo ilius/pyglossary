@@ -26,7 +26,7 @@ extensions = [".ifo"]
 optionsProp = {
 	"dictzip": BoolOption(),
 	"sametypesequence": StrOption(
-		values=["h", "m"],
+		values=["", "h", "m"],
 	),
 }
 depends = {}
@@ -428,7 +428,7 @@ class Writer(object):
 		self,
 		filename,
 		dictzip=True,
-		sametypesequence=None,
+		sametypesequence="",
 	):
 		fileBasePath = ""
 		##
@@ -635,7 +635,7 @@ class Writer(object):
 		wordCount,
 		indexFileSize,
 		synwordcount,
-		sametypesequence=None,
+		sametypesequence="",
 	):
 		"""
 		Build .ifo file
@@ -645,7 +645,7 @@ class Writer(object):
 			+ "bookname=%s\n" % newlinesToSpace(self._glos.getInfo("name")) \
 			+ "wordcount=%s\n" % wordCount \
 			+ "idxfilesize=%s\n" % indexFileSize
-		if sametypesequence is not None:
+		if sametypesequence:
 			ifoStr += "sametypesequence=%s\n" % sametypesequence
 		if synwordcount > 0:
 			ifoStr += "synwordcount=%s\n" % synwordcount
@@ -698,7 +698,7 @@ class Writer(object):
 		return formatsCount[0]
 
 
-def write(glos, filename, dictzip=True, sametypesequence=None):
+def write(glos, filename, dictzip=True, sametypesequence=""):
 	writer = Writer(glos)
 	writer.write(
 		filename,

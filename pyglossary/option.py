@@ -4,6 +4,8 @@ from typing import Tuple, List, Optional, Any
 
 class Option(object):
 	def __init__(self, typ: str, customValue: bool = False, values: Optional[List[str]] = None, comment: str = ""):
+		if values is None:
+			customValue = True # otherwise there would not be any valid value
 		self.typ = typ
 		self.values = values
 		self.customValue = customValue
@@ -13,6 +15,16 @@ class Option(object):
 		"returns (value, isValid)"
 		return raw, True
 
+	def valueIsValid(self, value):
+		if not self.customValue:
+			if not self.values:
+				print("--- invalid option: customValue=%r, values=%r" % (self.customValue, self.values))
+				return False
+			return value in self.values
+		if value is None:
+			return self.typ in ("dict", "list")
+		valueType = type(value).__name__
+		return self.typ == valueType
 
 class BoolOption(Option):
 	def __init__(self, **kwargs):

@@ -149,6 +149,9 @@ class Glossary(object):
 			if name not in optionsProp:
 				log.warning("skipping option %s in plugin %s" % (name, format))
 				continue
+			prop = optionsProp[name]
+			if not prop.valueIsValid(param.default):
+				log.warning("invalid default value for option: %s = %r  (option type: %s)" % (name, param.default, prop.typ))
 			optNames.append(name)
 		return optNames
 

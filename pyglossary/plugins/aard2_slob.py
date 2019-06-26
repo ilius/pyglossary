@@ -9,7 +9,7 @@ description = 'Aard 2 (slob)'
 extensions = ['.slob']
 optionsProp = {
 	"compression": StrOption(
-		values=["bz2", "zlib", "lzma2"],
+		values=["", "bz2", "zlib", "lzma2"],
 		comment="Compression Algorithm",
 	),
 	"content_type": StrOption(
@@ -67,7 +67,7 @@ class Reader(object):
 		return Entry(word, defi)
 
 
-def write(glos, filename, compression=None, content_type=""):
+def write(glos, filename, compression="", content_type=""):
 	from pyglossary.plugin_lib import slob
 	kwargs = {}
 	if compression:

@@ -40,13 +40,13 @@ extensions = [".xml"]
 # FIXME: rename indexes arg/option to indexes_lang?
 optionsProp = {
 	"cleanHTML": BoolOption(),
-	"css": StrOption(customValue=True),
-	"xsl": StrOption(customValue=True),
-	"defaultPrefs": Option("dict"), # FIXME
-	"prefsHTML": StrOption(customValue=True),
+	"css": StrOption(),
+	"xsl": StrOption(),
+	"defaultPrefs": Option("dict", customValue=True), # FIXME
+	"prefsHTML": StrOption(),
 	"frontBackMatter": StrOption(),
 	"jing": BoolOption(),
-	"indexes": StrOption(customValue=False, values=["ru", "zh"]),
+	"indexes": StrOption(customValue=False, values=["", "ru", "zh"]),
 }
 depends = {
 	"lxml": "lxml",
