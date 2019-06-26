@@ -39,13 +39,13 @@ description = "AppleDict Source (xml)"
 extensions = [".xml"]
 # FIXME: rename indexes arg/option to indexes_lang?
 optionsProp = {
-	"cleanHTML": BoolOption(customValue=True),
+	"cleanHTML": BoolOption(),
 	"css": StrOption(customValue=True),
 	"xsl": StrOption(customValue=True),
 	"defaultPrefs": Option("dict"), # FIXME
 	"prefsHTML": StrOption(customValue=True),
 	"frontBackMatter": StrOption(),
-	"jing": StrOption(customValue=False, values=["", "no", "yes"]), # FIXME: change to BoolOption
+	"jing": BoolOption(),
 	"indexes": StrOption(customValue=False, values=["ru", "zh"]),
 }
 depends = {
@@ -112,7 +112,7 @@ def write(
 	defaultPrefs=None,
 	prefsHTML="",
 	frontBackMatter="",
-	jing="", # FIXME: False
+	jing=False,
 	indexes="",# FIXME: rename to indexes_lang?
 ):
 	"""
@@ -121,8 +121,8 @@ def write(
 	:type glos: pyglossary.glossary.Glossary
 	:type dirname: str, directory path, must not have extension
 
-	:type cleanHTML: str
-	:param cleanHTML: pass "yes" to use BeautifulSoup parser.
+	:type cleanHTML: bool
+	:param cleanHTML: pass True to use BeautifulSoup parser.
 
 	:type css: str
 	:param css: path to custom .css file
@@ -147,8 +147,8 @@ def write(
 		your front/back matter entry content
 	</d:entry>
 
-	:type jing: str
-	:param jing: pass "yes" to run Jing check on generated XML.
+	:type jing: bool
+	:param jing: pass True to run Jing check on generated XML.
 
 	# FIXME: rename to indexes_lang?
 	:type indexes: str
@@ -283,6 +283,6 @@ def write(
 			}
 		)
 
-	if jing == "yes":
+	if jing:
 		from .jing import run as jing_run
 		jing_run(filePathBase + ".xml")

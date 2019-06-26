@@ -260,6 +260,7 @@ if os.sep != '/':
 readOptions = parseFormatOptionsStr(args.readOptions)
 writeOptions = parseFormatOptionsStr(args.writeOptions)
 
+# FIXME: call Option.evaluate to fix boolean values in readOptions and writeOptions
 
 """
 	examples for read and write options:

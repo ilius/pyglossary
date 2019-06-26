@@ -31,8 +31,8 @@ description = "ABBYY Lingvo DSL (dsl)"
 extensions = [".dsl"]
 optionsProp = {
 	"encoding": EncodingOption(),
-	"audio": StrOption(customValue=False, values=["", "no", "yes"]), # FIXME: BoolOption
-	"onlyFixMarkUp": StrOption(customValue=False, values=["", "no", "yes"]), # FIXME: BoolOption
+	"audio": BoolOption(),
+	"onlyFixMarkUp": BoolOption(),
 }
 depends = {}
 
@@ -282,9 +282,7 @@ def unwrap_quotes(s):
 	return wrapped_in_quotes_re.sub(r'\2', s)
 
 
-def read(glos, filename, encoding="", audio="no", onlyFixMarkUp="no"):
-	audio = (audio == "yes")
-	onlyFixMarkUp = (onlyFixMarkUp == "yes")
+def read(glos, filename, encoding="", audio=False, onlyFixMarkUp=False):
 	if onlyFixMarkUp:
 		def clean_tags(line, audio):
 			return _parse(line)
