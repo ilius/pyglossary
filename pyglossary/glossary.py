@@ -230,13 +230,15 @@ class Glossary(object):
 				hasReadSupport = True
 				cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(Reader.open, format)
 
-		try:
-			cls.readFunctions[format] = plugin.read
-		except AttributeError:
-			pass
-		else:
-			hasReadSupport = True
-			cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(plugin.read, format)
+		# ignore "read" function if "Reader" class is present
+		if not hasReadSupport:
+			try:
+				cls.readFunctions[format] = plugin.read
+			except AttributeError:
+				pass
+			else:
+				hasReadSupport = True
+				cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(plugin.read, format)
 
 		if hasReadSupport:
 			cls.readFormats.append(format)
