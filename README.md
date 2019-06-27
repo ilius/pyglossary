@@ -7,7 +7,7 @@ from/to various formats used by different dictionary applications
 Screenshots
 -----------
 
-![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/30-gtk-bgl-stardict-nl-en.png)
+![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-gtk-bgl-stardict-nl-en-dark.png)
 
 Linux - (New) Gtk3-based intreface
 
