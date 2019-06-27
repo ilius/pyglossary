@@ -86,7 +86,7 @@ ie. multiple ways to use the program.
 -	**Command-line interface**, works in all operating systems without
 	any specific requirements, just type:
 
-	`python3 pyglossary.pyw --help`
+	`python3 main.py --help`
 
 	You may have to give `--no-progress-bar` option in Windows when
 	converting glossaries (because the progress bar does not work
@@ -100,11 +100,11 @@ interface. And exits with an error if neither are installed.
 But you can explicitly determine the user interface type using `--ui`,
 for example:
 
-	python3 pyglossary.pyw --ui=gtk
+	python3 main.py --ui=gtk
 
 Or
 
-	python3 pyglossary.pyw --ui=tk
+	python3 main.py --ui=tk
 
 
 Format-specific Requirements
@@ -165,7 +165,7 @@ Let's assume the Babylon dict is at
 `~/Documents/Duden_Synonym/Duden_Synonym.BGL`:
 
 	cd ~/Documents/Duden_Synonym/
-	python3 ~/Software/pyglossary/pyglossary.pyw --write-format=AppleDict Duden_Synonym.BGL Duden_Synonym-apple
+	python3 ~/Software/pyglossary/main.py --write-format=AppleDict Duden_Synonym.BGL Duden_Synonym-apple
 	cd Duden_Synonym-apple
 	make
 	make install
@@ -180,7 +180,7 @@ Let's assume the MDict dict is at
 Run the following command:
 
 	cd ~/Documents/Duden-Oxford/
-	python3 ~/Software/pyglossary/pyglossary.pyw --write-format=AppleDict "Duden-Oxford DEED ver.20110408.mdx" "Duden-Oxford DEED ver.20110408-apple"
+	python3 ~/Software/pyglossary/main.py --write-format=AppleDict "Duden-Oxford DEED ver.20110408.mdx" "Duden-Oxford DEED ver.20110408-apple"
 	cd "Duden-Oxford DEED ver.20110408-apple"
 	make
 	make install
@@ -194,7 +194,7 @@ with the image/audio resources file `oald8.mdd`.
 Run the following commands: :
 
 	cd ~/Downloads/oald8/
-	python3 ~/Software/pyglossary/pyglossary.pyw --write-format=AppleDict oald8.mdx oald8-apple
+	python3 ~/Software/pyglossary/main.py --write-format=AppleDict oald8.mdx oald8-apple
 	cd oald8-apple
 
 This extracts dictionary into `oald8.xml` and data resources into folder

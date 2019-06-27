@@ -37,7 +37,7 @@ class my_install(install):
 						"but is not a directory: %s" % self.install_scripts
 					)
 			open(binPath, "w").write(
-				join(self.install_data, relRootDir, "pyglossary.pyw") +
+				join(self.install_data, relRootDir, "main.py") +
 				" \"$@\""  # pass options from command line
 			)
 			os.chmod(binPath, 0o755)
@@ -49,6 +49,7 @@ data_files = [
 		"license.txt",
 		"license-dialog",
 		"help",
+		"main.py",
 		"pyglossary.pyw",
 		"AUTHORS",
 		"config.json",
@@ -79,7 +80,7 @@ if py2exe:
 		"bundle_files": 1,
 		"windows": [
 			{
-				"script": "pyglossary.pyw",
+				"script": "main.py", # or pyglossary.pyw ?
 				"icon_resources": [
 					(1, "res/pyglossary.ico"),
 				],
@@ -140,7 +141,7 @@ setup(
 	license="GPLv3",
 	url="https://github.com/ilius/pyglossary",
 	scripts=[
-		# "pyglossary.pyw",
+		# "main.py",
 	],
 	packages=[
 		"pyglossary",
