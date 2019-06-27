@@ -90,7 +90,7 @@ def pinyin_indexes(content):
 def find_pinyin(content):
 	# assume that content is HTML and pinyin is inside second tag
 	# (first is <h1>)
-	soup = bs4.BeautifulSoup(content.splitlines()[0], "lxml")
+	soup = bs4.BeautifulSoup(content.splitlines()[0], features="lxml")
 	if soup.body:
 		soup = soup.body
 	children = soup.children

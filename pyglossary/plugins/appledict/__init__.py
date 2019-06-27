@@ -249,7 +249,7 @@ def write(
 		# strip html tags
 		copyright = str(BeautifulSoup.BeautifulSoup(
 			copyright,
-			"lxml"
+			features="lxml"
 		).text)
 
 	# if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
