@@ -937,8 +937,10 @@ class Glossary(object):
 		if not writeOptions:
 			writeOptions = {}
 
-		log.info("readOptions = %s" % readOptions)
-		log.info("writeOptions = %s" % writeOptions)
+		if readOptions:
+			log.info("readOptions = %s" % readOptions)
+		if writeOptions:
+			log.info("writeOptions = %s" % writeOptions)
 
 		outputArgs = self.detectOutputFormat(
 			filename=outputFilename,
