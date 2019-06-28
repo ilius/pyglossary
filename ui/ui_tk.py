@@ -42,9 +42,6 @@ endFormat = "\x1b[0;0;0m"  # End Format #len=8
 startRed = "\x1b[31m"
 
 
-noneItem = "Not Selected"
-
-
 bitmapLogo = join(dataDir, "res", "pyglossary.ico") if "nt" == os.name \
 	else "@" + join(dataDir, "res", "pyglossary.xbm")
 
@@ -327,7 +324,7 @@ class FormatOptionsButton(ttk.Button):
 
 	def buttonClicked(self):
 		formatD = self.formatVar.get()
-		if formatD == noneItem:
+		if not formatD:
 			return
 		format = Glossary.descFormat[formatD]
 		options = self.kindFormatsOptions[self.kind][format]
@@ -518,9 +515,12 @@ class UI(tix.Frame, UIBase):
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
-		combo = ttk.OptionMenu(frame, comboVar, *Glossary.readDesc)
-		# comboVar.set(Glossary.readDesc[0])
-		comboVar.set(noneItem)
+		combo = ttk.OptionMenu(
+			frame,
+			comboVar,
+			None, # default
+			*Glossary.readDesc,
+		)
 		combo.pack(side="left")
 		comboVar.trace("w", self.inputComboChanged)
 		self.combobox_i = comboVar
@@ -564,9 +564,12 @@ class UI(tix.Frame, UIBase):
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
-		combo = ttk.OptionMenu(frame, comboVar, *Glossary.writeDesc)
-		# comboVar.set(Glossary.writeDesc[0])
-		comboVar.set(noneItem)
+		combo = ttk.OptionMenu(
+			frame,
+			comboVar,
+			None, # default
+			*Glossary.writeDesc,
+		)
 		combo.pack(side="left")
 		comboVar.trace("w", self.outputComboChanged)
 		self.combobox_o = comboVar
@@ -665,9 +668,9 @@ class UI(tix.Frame, UIBase):
 		combo = ttk.OptionMenu(
 			frame2,
 			comboVar,
+			log.getVerbosity(), # default
 			0, 1, 2, 3, 4,
 		)
-		comboVar.set(log.getVerbosity())
 		comboVar.trace("w", self.verbosityChanged)
 		combo.pack(side="left")
 		self.verbosityCombo = comboVar
@@ -714,9 +717,12 @@ class UI(tix.Frame, UIBase):
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
-		combo = ttk.OptionMenu(frame, comboVar, *Glossary.readDesc)
-		# comboVar.set(Glossary.readDesc[0])
-		comboVar.set(noneItem)
+		combo = ttk.OptionMenu(
+			frame,
+			comboVar,
+			None, # default
+			*Glossary.readDesc,
+		)
 		combo.pack(side="left")
 		self.combobox_r_i = comboVar
 		##
@@ -928,7 +934,7 @@ class UI(tix.Frame, UIBase):
 
 	def inputComboChanged(self, *args):
 		formatD = self.combobox_i.get()
-		if formatD == noneItem:
+		if not formatD:
 			return
 		self.readOptions.clear() # reset the options, DO NOT re-assign
 		format = Glossary.descFormat[formatD]
@@ -941,7 +947,7 @@ class UI(tix.Frame, UIBase):
 	def outputComboChanged(self, *args):
 		# log.debug(self.combobox_o.get())
 		formatD = self.combobox_o.get()
-		if formatD == noneItem:
+		if not formatD:
 			return
 		self.writeOptions.clear() # reset the options, DO NOT re-assign
 		format = Glossary.descFormat[formatD]
@@ -980,7 +986,7 @@ class UI(tix.Frame, UIBase):
 				pathI = urlToPath(pathI)
 				self.entry_i.delete(0, "end")
 				self.entry_i.insert(0, pathI)
-			if self.pref["ui_autoSetFormat"]:  # format==noneItem:
+			if self.pref["ui_autoSetFormat"]:
 				ext = os.path.splitext(pathI)[-1].lower()
 				if ext in (".gz", ".bz2", ".zip"):
 					ext = os.path.splitext(pathI[:-len(ext)])[-1].lower()
@@ -988,11 +994,11 @@ class UI(tix.Frame, UIBase):
 					if ext in Glossary.readExt[i]:
 						self.combobox_i.set(Glossary.readDesc[i])
 						break
-			if self.pref["ui_autoSetOutputFileName"]:  # format==noneItem:
+			if self.pref["ui_autoSetOutputFileName"]:
 				# pathI = self.entry_i.get()
 				formatOD = self.combobox_o.get()
 				pathO = self.entry_o.get()
-				if formatOD != noneItem and not pathO and "." in pathI:
+				if formatOD and not pathO and "." in pathI:
 					extO = Glossary.descExt[formatOD]
 					pathO = "".join(os.path.splitext(pathI)[:-1]) + extO
 					self.entry_o.delete(0, "end")
@@ -1006,7 +1012,7 @@ class UI(tix.Frame, UIBase):
 				pathO = urlToPath(pathO)
 				self.entry_o.delete(0, "end")
 				self.entry_o.insert(0, pathO)
-			if self.pref["ui_autoSetFormat"]:  # format==noneItem:
+			if self.pref["ui_autoSetFormat"]:
 				ext = os.path.splitext(pathO)[-1].lower()
 				if ext in (".gz", ".bz2", ".zip"):
 					ext = os.path.splitext(pathO[:-len(ext)])[-1].lower()
@@ -1038,7 +1044,7 @@ class UI(tix.Frame, UIBase):
 			log.critical("Input file path is empty!")
 			return
 		inFormatDesc = self.combobox_i.get()
-		if inFormatDesc == noneItem:
+		if not inFormatDesc:
 			# log.critical("Input format is empty!");return
 			inFormat = ""
 		else:
@@ -1049,7 +1055,7 @@ class UI(tix.Frame, UIBase):
 			log.critical("Output file path is empty!")
 			return
 		outFormatDesc = self.combobox_o.get()
-		if outFormatDesc in (noneItem, ""):
+		if not outFormatDesc:
 			log.critical("Output format is empty!")
 			return
 		outFormat = Glossary.descFormat[outFormatDesc]
