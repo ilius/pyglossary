@@ -9,6 +9,7 @@ class TextGlossaryReader(object):
 	def __init__(self, glos, hasInfo=True):
 		self._glos = glos
 		self._filename = ''
+		self._encoding = None
 		self._file = None
 		self._hasInfo = True
 		self._leadingLinesCount = 0
@@ -18,6 +19,7 @@ class TextGlossaryReader(object):
 
 	def open(self, filename, encoding='utf-8'):
 		self._filename = filename
+		self._encoding = encoding
 		self._file = open(filename, 'r', encoding=encoding)
 		if self._hasInfo:
 			self.loadInfo()
