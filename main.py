@@ -340,8 +340,6 @@ if args.outputFilename and writeOptions:
 
 
 log.pretty(prefOptions, 'prefOptions = ')
-log.pretty(readOptions, 'readOptions = ')
-log.pretty(writeOptions, 'writeOptions = ')
 log.pretty(convertOptions, 'convertOptions = ')
 
 
