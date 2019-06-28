@@ -13,7 +13,7 @@ Linux - (New) Gtk3-based intreface
 
 ------------------------------------------------------------------------
 
-<img src="https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/30-tk-bgl-mdict-fr-zh-win7.png" height="450"/>
+<img src="https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-tk-bgl-mdict-fr-zh-win10.png" height="450"/>
 
 Windows - Tkinter-based interface
 
