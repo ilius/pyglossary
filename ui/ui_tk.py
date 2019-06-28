@@ -270,7 +270,7 @@ class FormatOptionsButton(ttk.Button):
 		self.values = values
 		self.formatVar = formatVar
 
-	def valueMenuItemCustomSelected(self, treev, format, optName, menu):
+	def valueMenuItemCustomSelected(self, treev, format, optName, menu=None):
 		value = treev.set(optName, "#4")
 
 		dialog = tix.Toplevel(master=treev) # bg="#0f0" does not work
@@ -321,8 +321,9 @@ class FormatOptionsButton(ttk.Button):
 		button.pack(side="right")
 		###
 		frame.pack(fill="x")
-	
-		menu.destroy()
+
+		if menu:	
+			menu.destroy()
 
 	def buttonClicked(self):
 		formatD = self.formatVar.get()
@@ -367,16 +368,33 @@ class FormatOptionsButton(ttk.Button):
 			if treev.column("Value", width=None) < col_w:
 				treev.column("Value", width=col_w)
 			menu.destroy()
-		def valueMenuPopup(event, optName):
-			menu = tk.Menu(master=treev, title=optName)
+		def valueCellClicked(event, optName):
 			prop = Glossary.formatsOptionsProp[format][optName]
-			if prop.values:
-				for value in prop.values:
-					value = str(value)
-					menu.add_command(
-						label=value,
-						command=lambda value=value: valueMenuItemSelected(optName, menu, value),
-					)
+			if not prop.values:
+				if prop.customValue:
+					self.valueMenuItemCustomSelected(treev, format, optName, None)
+				else:
+					log.error("invalid option %s, values=%s, customValue=%s" % (prop.values, prop.customValue))
+				return
+			if prop.typ == "bool":
+				rawValue = treev.set(optName, "#4")
+				if rawValue == "":
+					value = False
+				else:
+					value, isValid = prop.evaluate(rawValue)
+					if not isValid:
+						log.error("invalid %s = %r" % (optName, rawValue))
+						value = False
+				treev.set(optName, "#4", str(not value))
+				treev.set(optName, "#1", "1") # enable it
+				return
+			menu = tk.Menu(master=treev, title=optName, tearoff=False)
+			for value in prop.values:
+				value = str(value)
+				menu.add_command(
+					label=value,
+					command=lambda value=value: valueMenuItemSelected(optName, menu, value),
+				)
 			if prop.customValue:
 				menu.add_command(
 					label="[Custom Value]",
@@ -395,7 +413,7 @@ class FormatOptionsButton(ttk.Button):
 				treev.set(optName, col, 1-int(value))
 				return
 			if col == "#4":
-				valueMenuPopup(event, optName)
+				valueCellClicked(event, optName)
 		treev.bind(
 			"<Button-1>",
 			# "<<TreeviewSelect>>", # event.x and event.y are zero
