@@ -152,7 +152,10 @@ class Glossary(object):
 				continue
 			prop = optionsProp[name]
 			if not prop.validate(param.default):
-				log.warning("invalid default value for option: %s = %r  (option type: %s)" % (name, param.default, prop.typ))
+				log.warning("invalid default value for option: %s = %r" % (
+					name,
+					param.default,
+				))
 			optNames.append(name)
 		return optNames
 
@@ -225,7 +228,10 @@ class Glossary(object):
 			else:
 				cls.readerClasses[format] = Reader
 				hasReadSupport = True
-				cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(Reader.open, format)
+				cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(
+					Reader.open,
+					format,
+				)
 
 		# ignore "read" function if "Reader" class is present
 		if not hasReadSupport:
@@ -235,7 +241,10 @@ class Glossary(object):
 				pass
 			else:
 				hasReadSupport = True
-				cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(plugin.read, format)
+				cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(
+					plugin.read,
+					format,
+				)
 
 		if hasReadSupport:
 			cls.readFormats.append(format)
@@ -245,12 +254,18 @@ class Glossary(object):
 		hasWriteSupport = False
 		if hasattr(plugin, "Writer"):
 			cls.writerClasses[format] = plugin.Writer
-			cls.formatsWriteOptions[format] = cls.getRWOptionsFromFunc(plugin.Writer.write, format)
+			cls.formatsWriteOptions[format] = cls.getRWOptionsFromFunc(
+				plugin.Writer.write,
+				format,
+			)
 			hasWriteSupport = True
 
 		if not hasWriteSupport and hasattr(plugin, "write"):
 			cls.writeFunctions[format] = plugin.write
-			cls.formatsWriteOptions[format] = cls.getRWOptionsFromFunc(plugin.write, format)
+			cls.formatsWriteOptions[format] = cls.getRWOptionsFromFunc(
+				plugin.write,
+				format,
+			)
 			hasWriteSupport = True
 
 		if hasWriteSupport:
@@ -298,9 +313,9 @@ class Glossary(object):
 
 	def __init__(self, info=None, ui=None):
 		"""
-		info: OrderedDict instance, or None
-			  no need to copy OrderedDict instance,
-			  we will not reference to it
+		info:	OrderedDict instance, or None
+				no need to copy OrderedDict instance,
+				we will not reference to it
 		"""
 		self.clear()
 		if info:
@@ -538,10 +553,10 @@ class Glossary(object):
 		**options
 	):
 		"""
-		filename (str): name/path of input file
-		format (str): name of input format,
-					  or "" to detect from file extension
-		direct (bool): enable direct mode
+		filename (str):	name/path of input file
+		format (str):	name of input format,
+						or "" to detect from file extension
+		direct (bool):	enable direct mode
 		"""
 		filename = abspath(filename)
 
@@ -686,7 +701,6 @@ class Glossary(object):
 			)
 		self._updateIter(sort=True)
 
-
 	@classmethod
 	def detectOutputFormat(cls, filename="", format="", inputFilename=""):
 		"""
@@ -753,9 +767,7 @@ class Glossary(object):
 				log.error("Invalid write format")
 				return
 
-
 		return filename, format, archiveType
-
 
 	def write(
 		self,
@@ -901,7 +913,7 @@ class Glossary(object):
 			dirn, name = split(filename)
 			with indir(dirn):
 				output, error = subprocess.Popen(
-					["zip", filename+".zip", name, "-m"],
+					["zip", filename + ".zip", name, "-m"],
 					stdout=subprocess.PIPE,
 				).communicate()
 				if error:
@@ -1110,10 +1122,11 @@ class Glossary(object):
 
 		for key in infoKeys:
 			value = self.getInfo(key)
-			value = value.replace("\'", "\'\'")\
-						 .replace("\x00", "")\
-						 .replace("\r", "")\
-						 .replace("\n", newline)
+			value = value\
+				.replace("\'", "\'\'")\
+				.replace("\x00", "")\
+				.replace("\r", "")\
+				.replace("\n", newline)
 			infoValues.append("\'" + value + "\'")
 			infoDefLine += "%s char(%d), " % (key, len(value))
 
@@ -1159,7 +1172,7 @@ class Glossary(object):
 			defi = defi.replace("\'", "\'\'")\
 				.replace("\r", "").replace("\n", newline)
 			yield "INSERT INTO word VALUES(%d, \'%s\', \'%s\');" % (
-				i+1,
+				i + 1,
 				word,
 				defi,
 			)
@@ -1170,7 +1183,7 @@ class Glossary(object):
 	# ________________________________________________________________________#
 
 	def takeOutputWords(self, minWordLen=3):
-		wordPattern = re.compile("[\w]{%d,}" % minWordLen, re.U)
+		wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
 		words = set()
 		progressbar, self._progressbar = self._progressbar, False
 		for entry in self:
@@ -1188,7 +1201,7 @@ class Glossary(object):
 			self.ui.progressInit(*args)
 
 	def progress(self, wordI, wordCount):
-		if self.ui and wordI % (wordCount//500 + 1) == 0:
+		if self.ui and wordI % (wordCount // 500 + 1) == 0:
 			self.ui.progress(
 				min(wordI + 1, wordCount) / wordCount,
 				"%d / %d completed" % (wordI, wordCount),
@@ -1216,7 +1229,7 @@ class Glossary(object):
 			"|".join([re.escape(x) for x in sepChars]),
 			re.U,
 		)
-		wordPattern = re.compile("[\w]{%d,}" % minWordLen, re.U)
+		wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
 		outRel = []
 		for item in self._data:
 			words, defi = item[:2]
@@ -1268,32 +1281,32 @@ class Glossary(object):
 				numP = num
 				w, num, m = outRel[j]
 				m = m.replace("\n", "\\n").replace("\t", "\\t")
-				onePer = int(1.0/num)
+				onePer = int(1.0 / num)
 				if onePer == 1.0:
 					out.append("%s\\n%s" % (w, m))
 				elif showRel == "Percent":
-					out.append("%s(%%%d)\\n%s" % (w, 100*num, m))
+					out.append("%s(%%%d)\\n%s" % (w, 100 * num, m))
 				elif showRel == "Percent At First":
 					if num == numP:
 						out.append("%s\\n%s" % (w, m))
 					else:
-						out.append("%s(%%%d)\\n%s" % (w, 100*num, m))
+						out.append("%s(%%%d)\\n%s" % (w, 100 * num, m))
 				else:
 					out.append("%s\\n%s" % (w, m))
 			return out
 		for j in range(n):
 			numP = num
 			w, num = outRel[j]
-			onePer = int(1.0/num)
+			onePer = int(1.0 / num)
 			if onePer == 1.0:
 				out.append(w)
 			elif showRel == "Percent":
-				out.append("%s(%%%d)" % (w, 100*num))
+				out.append("%s(%%%d)" % (w, 100 * num))
 			elif showRel == "Percent At First":
 				if num == numP:
 					out.append(w)
 				else:
-					out.append("%s(%%%d)" % (w, 100*num))
+					out.append("%s(%%%d)" % (w, 100 * num))
 			else:
 				out.append(w)
 		return out
