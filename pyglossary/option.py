@@ -51,7 +51,7 @@ class BoolOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self, raw: str) -> Tuple[bool, bool]:
+	def evaluate(self, raw: str) -> Tuple[Optional[bool], bool]:
 		if raw.lower() in ("yes", "true", "1"):
 			return True, True
 		if raw.lower() in ("no", "false", "0"):
