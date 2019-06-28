@@ -39,13 +39,13 @@ description = "AppleDict Source (xml)"
 extensions = [".xml"]
 # FIXME: rename indexes arg/option to indexes_lang?
 optionsProp = {
-	"cleanHTML": BoolOption(),
-	"css": StrOption(),
-	"xsl": StrOption(),
+	"cleanHTML": BoolOption(comment="use BeautifulSoup parser"),
+	"css": StrOption(comment="custom .css file path"),
+	"xsl": StrOption(comment="custom XSL transformations file path"),
 	"defaultPrefs": Option("dict", customValue=True), # FIXME
-	"prefsHTML": StrOption(),
-	"frontBackMatter": StrOption(),
-	"jing": BoolOption(),
+	"prefsHTML": StrOption(comment="preferences XHTML file path"),
+	"frontBackMatter": StrOption(comment="XML file path with top-level tag"),
+	"jing": BoolOption(comment="run Jing check on generated XML"),
 	"indexes": StrOption(customValue=False, values=["", "ru", "zh"]),
 }
 depends = {
@@ -155,7 +155,6 @@ def write(
 	:param indexes: Dictionary.app is dummy and by default it don't know
 	how to perform flexible search.  we can help it by manually providing
 	additional indexes to dictionary entries.
-	# for now no languages supported yet.
 	"""
 	if not isdir(dirname):
 		os.mkdir(dirname)
