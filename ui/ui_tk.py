@@ -68,6 +68,10 @@ def decodeGeometry(gs):
 def encodeGeometry(x, y, w, h):
 	return "%sx%s+%s+%s" % (w, h, x, y)
 
+def encodeLocation(x, y):
+	return "+%s+%s" % (x, y)
+
+
 class TkTextLogHandler(logging.Handler):
 	def __init__(self, tktext):
 		logging.Handler.__init__(self)
@@ -243,7 +247,7 @@ class FormatOptionsButton(tix.Button):
 		self.kind = kind
 		self.kindFormatsOptions = {
 			"Read": Glossary.formatsReadOptions,
-			"Write": Glossary.formatsReadOptions,
+			"Write": Glossary.formatsWriteOptions,
 		}
 		self.values = values
 		self.formatVar = formatVar
@@ -426,6 +430,16 @@ class FormatOptionsButton(tix.Button):
 		button.pack(side="right")
 		###
 		frame.pack(fill="x")
+		###
+		# x, y, w, h = decodeGeometry(dialog.geometry())
+		w, h = 380, 250
+		# w and h are rough estimated width and height of `dialog`
+		px, py, pw, ph = decodeGeometry(self.winfo_toplevel().geometry())
+		# move dialog without changing the size
+		dialog.geometry(encodeLocation(
+			px + pw//2 - w//2,
+			py + ph//2 - h//2,
+		))
 
 
 class UI(tix.Frame, UIBase):
