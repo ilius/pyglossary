@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from typing import Tuple, List, Optional, Any
+from typing import Tuple, List, Dict, Optional, Any
 
 
 log = logging.getLogger("root")
@@ -73,6 +73,28 @@ class StrOption(Option):
 				return False
 			return value in self.values
 		return type(value).__name__ == "str"
+
+
+class DictOption(Option):
+	def __init__(self, **kwargs):
+		Option.__init__(
+			self,
+			"dict",
+			customValue=True,
+			**kwargs,
+		)
+
+	def evaluate(self, raw: str) -> Tuple[Optional[Dict], bool]:
+		import ast
+		if raw == "":
+			return None, True # valid
+		try:
+			value = ast.literal_eval(raw)
+		except SyntaxError:
+			return None, False # not valid
+		if type(value).__name__ != "dict":
+			return None, False # not valid
+		return value, True # valid
 
 
 class IntOption(Option):
