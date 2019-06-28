@@ -168,7 +168,7 @@ def escapeNewlines(u_text):
 
 def stripHtmlTags(u_text):
 	if log.isDebug():
-		assert isinstance(text, str)
+		assert isinstance(u_text, str)
 	return re.sub(
 		"(?:<[/a-zA-Z].*?(?:>|$))+",
 		" ",
