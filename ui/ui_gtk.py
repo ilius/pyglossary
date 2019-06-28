@@ -137,7 +137,7 @@ class FormatOptionsDialog(gtk.Dialog):
 				name in optionsValues, # enable
 				name, # name
 				prop.comment, # comment
-				optionsValues.get(name, ""), # value
+				str(optionsValues.get(name, "")), # value
 			])
 		############
 		pack(self.vbox, treev, 1, 1)
@@ -256,6 +256,7 @@ class FormatOptionsDialog(gtk.Dialog):
 			value, isValid = prop.evaluate(rawValue)
 			if not isValid:
 				log.error("invalid option value %s = %s" % (optName, rawValue))
+				continue
 			optionsValues[optName] = value
 		return optionsValues
 
@@ -361,6 +362,7 @@ class FormatComboBox(gtk.ComboBox):
 
 	def onChanged(self, combo):
 		name = self.getActive()
+		self.optionsValues.clear()
 
 		options = self.getActiveOptions()
 		self.optionsButton.set_visible(bool(options))
