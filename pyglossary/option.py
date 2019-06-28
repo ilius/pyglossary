@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import logging
 from typing import Tuple, List, Optional, Any
+
+
+log = logging.getLogger("root")
 
 
 class Option(object):
@@ -25,7 +29,7 @@ class Option(object):
 	def validate(self, value):
 		if not self.customValue:
 			if not self.values:
-				print("--- invalid option: customValue=%r, values=%r" % (
+				log.error("invalid option: customValue=%r, values=%r" % (
 					self.customValue,
 					self.values,
 				))
@@ -62,7 +66,7 @@ class StrOption(Option):
 	def validate(self, value):
 		if not self.customValue:
 			if not self.values:
-				print("--- invalid option: customValue=%r, values=%r" % (
+				log.error("invalid option: customValue=%r, values=%r" % (
 					self.customValue,
 					self.values,
 				))
