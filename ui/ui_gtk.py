@@ -129,6 +129,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		cell.connect("edited", self.valueEdited)
 		col = gtk.TreeViewColumn(title="Value", cell_renderer=cell, text=3)
 		col.set_property("expand", True)
+		col.set_min_width(200)
 		treev.append_column(col)
 		#############
 		for name in options:
