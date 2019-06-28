@@ -2,8 +2,15 @@
 
 from typing import Tuple, List, Optional, Any
 
+
 class Option(object):
-	def __init__(self, typ: str, customValue: bool = False, values: Optional[List[str]] = None, comment: str = ""):
+	def __init__(
+		self,
+		typ: str,
+		customValue: bool = False,
+		values: Optional[List[str]] = None,
+		comment: str = "",
+	):
 		if values is None:
 			customValue = True # otherwise there would not be any valid value
 		self.typ = typ
@@ -18,13 +25,17 @@ class Option(object):
 	def validate(self, value):
 		if not self.customValue:
 			if not self.values:
-				print("--- invalid option: customValue=%r, values=%r" % (self.customValue, self.values))
+				print("--- invalid option: customValue=%r, values=%r" % (
+					self.customValue,
+					self.values,
+				))
 				return False
 			return value in self.values
 		if value is None:
 			return self.typ in ("dict", "list")
 		valueType = type(value).__name__
 		return self.typ == valueType
+
 
 class BoolOption(Option):
 	def __init__(self, **kwargs):
@@ -51,7 +62,10 @@ class StrOption(Option):
 	def validate(self, value):
 		if not self.customValue:
 			if not self.values:
-				print("--- invalid option: customValue=%r, values=%r" % (self.customValue, self.values))
+				print("--- invalid option: customValue=%r, values=%r" % (
+					self.customValue,
+					self.values,
+				))
 				return False
 			return value in self.values
 		return type(value).__name__ == "str"
@@ -70,6 +84,7 @@ class IntOption(Option):
 		else:
 			return value, True
 
+
 class EncodingOption(Option):
 	def __init__(self, customValue=True, values=None, **kwargs):
 		if values is None:
@@ -84,6 +99,7 @@ class EncodingOption(Option):
 			values=values,
 			**kwargs
 		)
+
 
 class NewlineOption(Option):
 	def __init__(self, customValue=True, values=None, **kwargs):
@@ -106,5 +122,3 @@ class HtmlColorOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(self, "str", customValue=True, **kwargs)
 		# FIXME: use a specific type?
-
-
