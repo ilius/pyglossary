@@ -246,7 +246,7 @@ class ProgressBar(tix.Frame):
 
 
 
-class FormatOptionsButton(tix.Button):
+class FormatOptionsButton(ttk.Button):
 	def __init__(
 		self,
 		kind: Union["Read", "Write"],
@@ -254,7 +254,7 @@ class FormatOptionsButton(tix.Button):
 		formatVar: tk.StringVar,
 		master=None,
 	):
-		tix.Button.__init__(
+		ttk.Button.__init__(
 			self,
 			master=master,
 			text="Options",
@@ -290,10 +290,10 @@ class FormatOptionsButton(tix.Button):
 		
 		frame = tix.Frame(master=dialog)
 
-		label = tix.Label(master=frame, text="Value for " + optName)
+		label = ttk.Label(master=frame, text="Value for " + optName)
 		label.pack()
 
-		entry = tk.Entry(master=frame)
+		entry = ttk.Entry(master=frame)
 		entry.insert(0, value)
 		entry.pack(fill="x")
 
@@ -308,10 +308,10 @@ class FormatOptionsButton(tix.Button):
 
 		entry.bind("<Return>", okClicked)
 
-		label = tix.Label(master=frame)
+		label = ttk.Label(master=frame)
 		label.pack(fill="x")
 
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="Ok",
 			command=okClicked,
@@ -368,7 +368,7 @@ class FormatOptionsButton(tix.Button):
 				treev.column("Value", width=col_w)
 			menu.destroy()
 		def valueMenuPopup(event, optName):
-			menu = tk.Menu(master=treev, title=optName)
+			menu = ttk.Menu(master=treev, title=optName)
 			prop = Glossary.formatsOptionsProp[format][optName]
 			if prop.values:
 				for value in prop.values:
@@ -438,7 +438,7 @@ class FormatOptionsButton(tix.Button):
 					continue
 				self.values[optName] = value
 			dialog.destroy()
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="OK",
 			command=okClicked,
@@ -488,7 +488,7 @@ class UI(tix.Frame, UIBase):
 		self.pathO = ""
 		self.fcd_dir = join(homeDir, "Desktop")
 		######################
-		vpaned = tk.PanedWindow(self, orient=tk.VERTICAL)
+		vpaned = ttk.PanedWindow(self, orient=tk.VERTICAL)
 		notebook = tix.NoteBook(vpaned)
 		notebook.add("tab1", label="Convert", underline=0)
 		notebook.add("tab2", label="Reverse", underline=0)
@@ -496,11 +496,11 @@ class UI(tix.Frame, UIBase):
 		######################
 		frame = tix.Frame(convertFrame)
 		##
-		label = tix.Label(frame, text="Read from format")
+		label = ttk.Label(frame, text="Read from format")
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
-		combo = tk.OptionMenu(frame, comboVar, *Glossary.readDesc)
+		combo = ttk.OptionMenu(frame, comboVar, *Glossary.readDesc)
 		# comboVar.set(Glossary.readDesc[0])
 		comboVar.set(noneItem)
 		combo.pack(side="left")
@@ -521,7 +521,7 @@ class UI(tix.Frame, UIBase):
 		###################
 		frame = tix.Frame(convertFrame)
 		##
-		label = tix.Label(frame, text="  Path:")
+		label = ttk.Label(frame, text="  Path:")
 		label.pack(side="left")
 		##
 		entry = tix.Entry(frame)
@@ -529,7 +529,7 @@ class UI(tix.Frame, UIBase):
 		entry.bind_all("<KeyPress>", self.entry_changed)
 		self.entry_i = entry
 		##
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="Browse",
 			command=self.browse_i,
@@ -542,11 +542,11 @@ class UI(tix.Frame, UIBase):
 		######################
 		frame = tix.Frame(convertFrame)
 		##
-		label = tix.Label(frame, text="Write to format    ")
+		label = ttk.Label(frame, text="Write to format    ")
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
-		combo = tk.OptionMenu(frame, comboVar, *Glossary.writeDesc)
+		combo = ttk.OptionMenu(frame, comboVar, *Glossary.writeDesc)
 		# comboVar.set(Glossary.writeDesc[0])
 		comboVar.set(noneItem)
 		combo.pack(side="left")
@@ -564,7 +564,7 @@ class UI(tix.Frame, UIBase):
 		###################
 		frame = tix.Frame(convertFrame)
 		##
-		label = tix.Label(frame, text="  Path:")
+		label = ttk.Label(frame, text="  Path:")
 		label.pack(side="left")
 		##
 		entry = tix.Entry(frame)
@@ -572,7 +572,7 @@ class UI(tix.Frame, UIBase):
 		# entry.bind_all("<KeyPress>", self.entry_changed)
 		self.entry_o = entry
 		##
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="Browse",
 			command=self.browse_o,
@@ -584,13 +584,13 @@ class UI(tix.Frame, UIBase):
 		frame.pack(fill="x")
 		#######
 		frame = tix.Frame(convertFrame)
-		label = tix.Label(frame, text=" "*15)
+		label = ttk.Label(frame, text=" "*15)
 		label.pack(
 			side="left",
 			fill="x",
 			expand=True,
 		)
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="Convert",
 			command=self.convert,
@@ -629,7 +629,7 @@ class UI(tix.Frame, UIBase):
 		self.console = console
 		##################
 		frame2 = tix.Frame(self)
-		clearB = tix.Button(
+		clearB = ttk.Button(
 			frame2,
 			text="Clear",
 			command=self.console_clear,
@@ -640,11 +640,11 @@ class UI(tix.Frame, UIBase):
 		)
 		clearB.pack(side="left")
 		####
-		label = tix.Label(frame2, text="Verbosity")
+		label = ttk.Label(frame2, text="Verbosity")
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
-		combo = tk.OptionMenu(
+		combo = ttk.OptionMenu(
 			frame2,
 			comboVar,
 			0, 1, 2, 3, 4,
@@ -669,7 +669,7 @@ class UI(tix.Frame, UIBase):
 		# lbox.pack(fill="x")
 		##############
 		frame3 = tix.Frame(self)
-		aboutB = tix.Button(
+		aboutB = ttk.Button(
 			frame3,
 			text="About",
 			command=self.about_clicked,
@@ -677,7 +677,7 @@ class UI(tix.Frame, UIBase):
 			# activebackground="#f030f0",
 		)
 		aboutB.pack(side="right")
-		closeB = tix.Button(
+		closeB = ttk.Button(
 			frame3,
 			text="Close",
 			command=self.quit,
@@ -692,11 +692,11 @@ class UI(tix.Frame, UIBase):
 		######################
 		frame = tix.Frame(revFrame)
 		##
-		label = tix.Label(frame, text="Read from format")
+		label = ttk.Label(frame, text="Read from format")
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
-		combo = tk.OptionMenu(frame, comboVar, *Glossary.readDesc)
+		combo = ttk.OptionMenu(frame, comboVar, *Glossary.readDesc)
 		# comboVar.set(Glossary.readDesc[0])
 		comboVar.set(noneItem)
 		combo.pack(side="left")
@@ -706,7 +706,7 @@ class UI(tix.Frame, UIBase):
 		###################
 		frame = tix.Frame(revFrame)
 		##
-		label = tix.Label(frame, text="  Path:")
+		label = ttk.Label(frame, text="  Path:")
 		label.pack(side="left")
 		##
 		entry = tix.Entry(frame)
@@ -714,7 +714,7 @@ class UI(tix.Frame, UIBase):
 		# entry.bind_all("<KeyPress>", self.entry_r_i_changed)
 		self.entry_r_i = entry
 		##
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="Browse",
 			command=self.r_browse_i,
@@ -723,7 +723,7 @@ class UI(tix.Frame, UIBase):
 		)
 		button.pack(side="left")
 		##
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="Load",
 			command=self.r_load,
@@ -735,7 +735,7 @@ class UI(tix.Frame, UIBase):
 		###################
 		frame = tix.Frame(revFrame)
 		##
-		label = tix.Label(frame, text="Output Tabfile")
+		label = ttk.Label(frame, text="Output Tabfile")
 		label.pack(side="left")
 		###
 		entry = tix.Entry(frame)
@@ -743,7 +743,7 @@ class UI(tix.Frame, UIBase):
 		# entry.bind_all("<KeyPress>", self.entry_r_i_changed)
 		self.entry_r_o = entry
 		##
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="Browse",
 			command=self.r_browse_o,
@@ -814,7 +814,7 @@ class UI(tix.Frame, UIBase):
 		###########
 		frame = tix.Frame(about)
 		###
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="Close",
 			command=about.destroy,
@@ -823,7 +823,7 @@ class UI(tix.Frame, UIBase):
 		)
 		button.pack(side="right")
 		###
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="License",
 			command=self.about_license_clicked,
@@ -832,7 +832,7 @@ class UI(tix.Frame, UIBase):
 		)
 		button.pack(side="right")
 		###
-		button = tix.Button(
+		button = ttk.Button(
 			frame,
 			text="Credits",
 			command=self.about_credits_clicked,
@@ -858,7 +858,7 @@ class UI(tix.Frame, UIBase):
 		msg1.pack(fill="x", expand=True)
 		###########
 		frame = tix.Frame(about)
-		closeB = tix.Button(
+		closeB = ttk.Button(
 			frame,
 			text="Close",
 			command=about.destroy,
@@ -883,7 +883,7 @@ class UI(tix.Frame, UIBase):
 		msg1.pack(fill="x", expand=True)
 		###########
 		frame = tix.Frame(about)
-		closeB = tix.Button(
+		closeB = ttk.Button(
 			frame,
 			text="Close",
 			command=about.destroy,
