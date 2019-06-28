@@ -368,7 +368,7 @@ class FormatOptionsButton(ttk.Button):
 				treev.column("Value", width=col_w)
 			menu.destroy()
 		def valueMenuPopup(event, optName):
-			menu = ttk.Menu(master=treev, title=optName)
+			menu = tk.Menu(master=treev, title=optName)
 			prop = Glossary.formatsOptionsProp[format][optName]
 			if prop.values:
 				for value in prop.values:
