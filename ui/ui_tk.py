@@ -25,9 +25,13 @@ from os.path import join
 import logging
 import traceback
 
+from typing import Union, Dict
+
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import tix
+from tkinter import ttk
+from tkinter import font as tkFont
 
 log = logging.getLogger("root")
 
@@ -52,6 +56,17 @@ def set_window_icon(window):
 		tk.PhotoImage(file=join(dataDir, "res", "pyglossary.png")),
 	)
 
+def decodeGeometry(gs):
+	"""
+		example for gs: "253x252+30+684"
+		returns (x, y, w, h)
+	"""
+	p = gs.split("+")
+	w, h = p[0].split("x")
+	return (int(p[1]), int(p[2]), int(w), int(h))
+
+def encodeGeometry(x, y, w, h):
+	return "%sx%s+%s+%s" % (w, h, x, y)
 
 class TkTextLogHandler(logging.Handler):
 	def __init__(self, tktext):
@@ -208,6 +223,211 @@ class ProgressBar(tix.Frame):
 		self.canvas.update_idletasks()
 
 
+
+class FormatOptionsButton(tix.Button):
+	def __init__(
+		self,
+		kind: Union["Read", "Write"],
+		values: Dict,
+		formatVar: tk.StringVar,
+		master=None,
+	):
+		tix.Button.__init__(
+			self,
+			master=master,
+			text="Options",
+			command=self.buttonClicked,
+			# bg="#f0f000",
+			# activebackground="#f6f622",
+		)
+		self.kind = kind
+		self.kindFormatsOptions = {
+			"Read": Glossary.formatsReadOptions,
+			"Write": Glossary.formatsReadOptions,
+		}
+		self.values = values
+		self.formatVar = formatVar
+
+	def valueMenuItemCustomSelected(self, treev, format, optName, menu):
+		value = treev.set(optName, "#4")
+
+		dialog = tix.Toplevel(master=treev) # bg="#0f0" does not work
+		dialog.resizable(width=True, height=True)
+		dialog.title(optName)
+		set_window_icon(dialog)
+
+		px, py, pw, ph = decodeGeometry(treev.winfo_toplevel().geometry())
+		w = 300
+		h = 100
+		dialog.geometry(encodeGeometry(
+			px + pw//2 - w//2,
+			py + ph//2 - h//2,
+			w,
+			h,
+		))
+		
+		frame = tix.Frame(master=dialog)
+
+		label = tix.Label(master=frame, text="Value for " + optName)
+		label.pack()
+
+		entry = tk.Entry(master=frame)
+		entry.insert(0, value)
+		entry.pack(fill="x")
+
+		def okClicked(event=None):
+			value = entry.get()
+			treev.set(optName, "#4", value)
+			treev.set(optName, "#1", "1") # enable it
+			col_w = tkFont.Font().measure(value)
+			if treev.column("Value", width=None) < col_w:
+				treev.column("Value", width=col_w)
+			dialog.destroy()
+
+		entry.bind("<Return>", okClicked)
+
+		label = tix.Label(master=frame)
+		label.pack(fill="x")
+
+		button = tix.Button(
+			frame,
+			text="Ok",
+			command=okClicked,
+			# bg="#ff0000",
+			# activebackground="#ff5050",
+		)
+		button.pack(side="right")
+		###
+		frame.pack(fill="x")
+	
+		menu.destroy()
+
+	def buttonClicked(self):
+		formatD = self.formatVar.get()
+		if formatD == noneItem:
+			return
+		format = Glossary.descFormat[formatD]
+		options = self.kindFormatsOptions[self.kind][format]
+		optionsProp = Glossary.formatsOptionsProp[format]
+
+		dialog = tix.Toplevel()  # bg="#0f0" does not work
+		dialog.resizable(width=True, height=True)
+		dialog.title(self.kind + " Options")
+		set_window_icon(dialog)
+		###
+		cols = [
+			"Enable", # bool
+			"Name", # str
+			"Comment", # str
+			"Value", # str
+		]
+		treev = ttk.Treeview(
+			master=dialog,
+			columns=cols,
+			show="headings",
+		)
+		for col in cols:
+			treev.heading(
+				col,
+				text=col,
+				#command=lambda c=col: sortby(treev, c, 0),
+			)
+			# adjust the column's width to the header string
+			treev.column(
+				col,
+				width=tkFont.Font().measure(col.title()),
+			)
+		###
+		def valueMenuItemSelected(optName, menu, value):
+			treev.set(optName, "#4", value)
+			treev.set(optName, "#1", "1") # enable it
+			col_w = tkFont.Font().measure(value)
+			if treev.column("Value", width=None) < col_w:
+				treev.column("Value", width=col_w)
+			menu.destroy()
+		def valueMenuPopup(event, optName):
+			menu = tk.Menu(master=treev, title=optName)
+			prop = Glossary.formatsOptionsProp[format][optName]
+			if prop.values:
+				for value in prop.values:
+					value = str(value)
+					menu.add_command(
+						label=value,
+						command=lambda value=value: valueMenuItemSelected(optName, menu, value),
+					)
+			if prop.customValue:
+				menu.add_command(
+					label="[Custom Value]",
+					command=lambda: self.valueMenuItemCustomSelected(treev, format, optName, menu),
+				)
+			try:
+				menu.tk_popup(event.x_root, event.y_root, 0)
+			finally:
+				# make sure to release the grab (Tk 8.0a1 only)
+				menu.grab_release()
+		def treeClicked(event):
+			optName = treev.identify_row(event.y) # optName is rowId
+			col = treev.identify_column(event.x) # "#1" to "#4"
+			if col == "#1":
+				value = treev.set(optName, col)
+				treev.set(optName, col, 1-int(value))
+				return
+			if col == "#4":
+				valueMenuPopup(event, optName)
+		treev.bind(
+			"<Button-1>",
+			# "<<TreeviewSelect>>", # event.x and event.y are zero
+			treeClicked,
+		)
+		treev.pack(fill="x", expand=True)
+		###
+		for optName in options:
+			prop = optionsProp[optName]
+			row = [
+				int(optName in self.values),
+				optName,
+				prop.comment,
+				str(self.values.get(optName, "")),
+			]
+			treev.insert("", "end", values=row, iid=optName) # iid should be rowId
+			# adjust column's width if necessary to fit each value
+			for col_i, value in enumerate(row):
+				value = str(value)
+				if col_i == 3:
+					value = value.zfill(20) # to reserve window width, because it's hard to resize it later
+				col_w = tkFont.Font().measure(value)
+				if treev.column(cols[col_i], width=None) < col_w:
+					treev.column(cols[col_i], width=col_w)
+		###########
+		frame = tix.Frame(dialog)
+		###
+		def okClicked():
+			for optName in options:
+				enable = bool(int(treev.set(optName, "#1")))
+				if not enable:
+					if optName in self.values:
+						del self.values[optName]
+					continue
+				rawValue = treev.set(optName, "#4")
+				prop = optionsProp[optName]
+				value, isValid = prop.evaluate(rawValue)
+				if not isValid:
+					log.error("invalid option value %s = %s" % (optName, rawValue))
+					continue
+				self.values[optName] = value
+			dialog.destroy()
+		button = tix.Button(
+			frame,
+			text="OK",
+			command=okClicked,
+			# bg="#ff0000",
+			# activebackground="#ff5050",
+		)
+		button.pack(side="right")
+		###
+		frame.pack(fill="x")
+
+
 class UI(tix.Frame, UIBase):
 	def __init__(self, path="", **options):
 		self.glos = Glossary(ui=self)
@@ -247,7 +467,18 @@ class UI(tix.Frame, UIBase):
 		# comboVar.set(Glossary.readDesc[0])
 		comboVar.set(noneItem)
 		combo.pack(side="left")
+		comboVar.trace("w", self.inputComboChanged)
 		self.combobox_i = comboVar
+		##
+		self.readOptions = {} # type: Dict[str, Any]
+		self.writeOptions = {} # type: Dict[str, Any]
+		##
+		self.readOptionsButton = FormatOptionsButton(
+			"Read",
+			self.readOptions,
+			self.combobox_i,
+			master=frame,
+		)
 		##
 		frame.pack(fill="x")
 		###################
@@ -282,8 +513,15 @@ class UI(tix.Frame, UIBase):
 		# comboVar.set(Glossary.writeDesc[0])
 		comboVar.set(noneItem)
 		combo.pack(side="left")
-		combo.bind("<Configure>", self.combobox_o_changed)
+		comboVar.trace("w", self.outputComboChanged)
 		self.combobox_o = comboVar
+		##
+		self.writeOptionsButton = FormatOptionsButton(
+			"Write",
+			self.writeOptions,
+			self.combobox_o,
+			master=frame,
+		)
 		##
 		frame.pack(fill="x")
 		###################
@@ -492,7 +730,7 @@ class UI(tix.Frame, UIBase):
 	def about_clicked(self):
 		about = tix.Toplevel(width=600)  # bg="#0f0" does not work
 		about.title("About PyGlossary")
-		about.resizable(False, False)
+		about.resizable(width=False, height=False)
 		set_window_icon(about)
 		###
 		msg1 = tix.Message(
@@ -524,7 +762,7 @@ class UI(tix.Frame, UIBase):
 		msg4 = tix.Message(
 			about,
 			width=350,
-			text="Install PyGTK to have a better interface!",
+			text="Install Gtk3+PyGI to have a better interface!",
 			font=("DejaVu Sans", 8, "bold"),
 			fg="#00aa00",
 		)
@@ -564,7 +802,7 @@ class UI(tix.Frame, UIBase):
 	def about_credits_clicked(self):
 		about = tix.Toplevel()  # bg="#0f0" does not work
 		about.title("Credits")
-		about.resizable(False, False)
+		about.resizable(width=False, height=False)
 		set_window_icon(about)
 		###
 		msg1 = tix.Message(
@@ -589,7 +827,7 @@ class UI(tix.Frame, UIBase):
 	def about_license_clicked(self):
 		about = tix.Toplevel()  # bg="#0f0" does not work
 		about.title("License")
-		about.resizable(False, False)
+		about.resizable(width=False, height=False)
 		set_window_icon(about)
 		###
 		msg1 = tix.Message(
@@ -626,26 +864,31 @@ class UI(tix.Frame, UIBase):
 		#	if "info" in x:
 		#		log.debug(x)
 
-	def combobox_o_changed(self, event):
+	def inputComboChanged(self, *args):
+		formatD = self.combobox_i.get()
+		if formatD == noneItem:
+			return
+		self.readOptions.clear() # reset the options, DO NOT re-assign
+		format = Glossary.descFormat[formatD]
+		options = Glossary.formatsReadOptions[format]
+		if options:
+			self.readOptionsButton.pack(side="right")
+		else:
+			self.readOptionsButton.pack_forget()
+
+	def outputComboChanged(self, *args):
 		# log.debug(self.combobox_o.get())
 		formatD = self.combobox_o.get()
 		if formatD == noneItem:
 			return
+		self.writeOptions.clear() # reset the options, DO NOT re-assign
 		format = Glossary.descFormat[formatD]
-		"""
-		if format=="Omnidic":
-			self.xml.get_widget("label_omnidic_o").show()
-			self.xml.get_widget("spinbutton_omnidic_o").show()
+		options = Glossary.formatsWriteOptions[format]
+		if options:
+			self.writeOptionsButton.pack(side="right")
 		else:
-			self.xml.get_widget("label_omnidic_o").hide()
-			self.xml.get_widget("spinbutton_omnidic_o").hide()
-		if format=="Babylon":
-			self.xml.get_widget("label_enc").show()
-			self.xml.get_widget("comboentry_enc").show()
-		else:
-			self.xml.get_widget("label_enc").hide()
-			self.xml.get_widget("comboentry_enc").hide()
-		"""
+			self.writeOptionsButton.pack_forget()
+
 		if not self.pref["ui_autoSetOutputFileName"]:  # and format is None:
 			return
 
@@ -754,6 +997,8 @@ class UI(tix.Frame, UIBase):
 			inputFormat=inFormat,
 			outputFilename=outPath,
 			outputFormat=outFormat,
+			readOptions=self.readOptions,
+			writeOptions=self.writeOptions,
 		)
 		# if finalOutputFile:
 			# self.status("Convert finished")
