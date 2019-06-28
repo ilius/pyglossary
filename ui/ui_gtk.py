@@ -160,6 +160,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		if not prop.customValue:
 			return
 		model.set_value(itr, 3, newText)
+		model.set_value(itr, 0, True) # enable it
 
 	def rowActivated(self, treev, path, col):
 		self.showValuesPopup(path)
