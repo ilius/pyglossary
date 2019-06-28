@@ -48,6 +48,14 @@ class StrOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(self, "str", **kwargs)
 
+	def validate(self, value):
+		if not self.customValue:
+			if not self.values:
+				print("--- invalid option: customValue=%r, values=%r" % (self.customValue, self.values))
+				return False
+			return value in self.values
+		return type(value).__name__ == "str"
+
 
 class IntOption(Option):
 	def __init__(self, **kwargs):
