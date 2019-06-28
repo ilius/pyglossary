@@ -72,6 +72,24 @@ def encodeLocation(x, y):
 	return "+%s+%s" % (x, y)
 
 
+def centerWindow(win):
+	"""
+	centers a tkinter window
+	:param win: the root or Toplevel window to center
+	"""
+	win.update_idletasks()
+	width = win.winfo_width()
+	frm_width = win.winfo_rootx() - win.winfo_x()
+	win_width = width + 2 * frm_width
+	height = win.winfo_height()
+	titlebar_height = win.winfo_rooty() - win.winfo_y()
+	win_height = height + titlebar_height + frm_width
+	x = win.winfo_screenwidth() // 2 - win_width // 2
+	y = win.winfo_screenheight() // 2 - win_height // 2
+	win.geometry(encodeGeometry(x, y, width, height))
+	win.deiconify()
+
+
 class TkTextLogHandler(logging.Handler):
 	def __init__(self, tktext):
 		logging.Handler.__init__(self)
@@ -449,6 +467,11 @@ class UI(tix.Frame, UIBase):
 		self.pref_load(**options)
 		#############################################
 		rootWin = self.rootWin = tix.Tk()
+		# a hack that hides the window until we move it to the center of screen
+		if os.sep == "\\": # Windows
+			rootWin.attributes('-alpha', 0.0)
+		else: # Linux
+			rootWin.withdraw()
 		tix.Frame.__init__(self, rootWin)
 		rootWin.title("PyGlossary (Tkinter)")
 		rootWin.resizable(True, False)
@@ -730,6 +753,13 @@ class UI(tix.Frame, UIBase):
 		button.pack(side="left")
 		##
 		frame.pack(fill="x")
+		#############
+		centerWindow(rootWin)
+		# show the window again
+		if os.sep == "\\": # Windows
+			rootWin.attributes('-alpha', 1.0)
+		else: # Linux
+			rootWin.deiconify()
 		##############################
 		if path:
 			self.entry_i.insert(0, path)
