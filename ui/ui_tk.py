@@ -268,7 +268,7 @@ class FormatOptionsButton(ttk.Button):
 		self.formatVar = formatVar
 
 	def valueMenuItemCustomSelected(self, treev, format, optName, menu=None):
-		value = treev.set(optName, "#4")
+		value = treev.set(optName, self.valueCol)
 
 		dialog = tix.Toplevel(master=treev) # bg="#0f0" does not work
 		dialog.resizable(width=True, height=True)
@@ -296,7 +296,7 @@ class FormatOptionsButton(ttk.Button):
 
 		def okClicked(event=None):
 			value = entry.get()
-			treev.set(optName, "#4", value)
+			treev.set(optName, self.valueCol, value)
 			treev.set(optName, "#1", "1") # enable it
 			col_w = tkFont.Font().measure(value)
 			if treev.column("Value", width=None) < col_w:
@@ -335,11 +335,12 @@ class FormatOptionsButton(ttk.Button):
 		dialog.title(self.kind + " Options")
 		set_window_icon(dialog)
 		###
+		self.valueCol = "#3"
 		cols = [
 			"Enable", # bool
 			"Name", # str
-			"Comment", # str
 			"Value", # str
+			"Comment", # str
 		]
 		treev = ttk.Treeview(
 			master=dialog,
@@ -359,22 +360,25 @@ class FormatOptionsButton(ttk.Button):
 			)
 		###
 		def valueMenuItemSelected(optName, menu, value):
-			treev.set(optName, "#4", value)
+			treev.set(optName, self.valueCol, value)
 			treev.set(optName, "#1", "1") # enable it
 			col_w = tkFont.Font().measure(value)
 			if treev.column("Value", width=None) < col_w:
 				treev.column("Value", width=col_w)
 			menu.destroy()
 		def valueCellClicked(event, optName):
+			if not optName:
+				return
 			prop = Glossary.formatsOptionsProp[format][optName]
-			if not prop.values:
+			propValues = prop.values
+			if not propValues:
 				if prop.customValue:
 					self.valueMenuItemCustomSelected(treev, format, optName, None)
 				else:
-					log.error("invalid option %s, values=%s, customValue=%s" % (prop.values, prop.customValue))
+					log.error("invalid option %s, values=%s, customValue=%s" % (propValues, prop.customValue))
 				return
 			if prop.typ == "bool":
-				rawValue = treev.set(optName, "#4")
+				rawValue = treev.set(optName, self.valueCol)
 				if rawValue == "":
 					value = False
 				else:
@@ -382,21 +386,40 @@ class FormatOptionsButton(ttk.Button):
 					if not isValid:
 						log.error("invalid %s = %r" % (optName, rawValue))
 						value = False
-				treev.set(optName, "#4", str(not value))
+				treev.set(optName, self.valueCol, str(not value))
 				treev.set(optName, "#1", "1") # enable it
 				return
 			menu = tk.Menu(master=treev, title=optName, tearoff=False)
-			for value in prop.values:
-				value = str(value)
-				menu.add_command(
-					label=value,
-					command=lambda value=value: valueMenuItemSelected(optName, menu, value),
-				)
 			if prop.customValue:
 				menu.add_command(
 					label="[Custom Value]",
 					command=lambda: self.valueMenuItemCustomSelected(treev, format, optName, menu),
 				)
+			groupedValues = None
+			if len(propValues) > 10:
+				groupedValues = prop.groupValues()
+			if groupedValues:
+				for groupName, subValues in groupedValues.items():
+					if subValues is None:
+						menu.add_command(
+							label=str(value),
+							command=lambda value=value: valueMenuItemSelected(optName, menu, value),
+						)
+					else:
+						subMenu = tk.Menu(tearoff=False)
+						for subValue in subValues:
+							subMenu.add_command(
+								label=str(subValue),
+								command=lambda value=subValue: valueMenuItemSelected(optName, menu, value),
+							)
+						menu.add_cascade(label=groupName, menu=subMenu)
+			else:
+				for value in propValues:
+					value = str(value)
+					menu.add_command(
+						label=value,
+						command=lambda value=value: valueMenuItemSelected(optName, menu, value),
+					)
 			try:
 				menu.tk_popup(event.x_root, event.y_root, 0)
 			finally:
@@ -404,12 +427,12 @@ class FormatOptionsButton(ttk.Button):
 				menu.grab_release()
 		def treeClicked(event):
 			optName = treev.identify_row(event.y) # optName is rowId
-			col = treev.identify_column(event.x) # "#1" to "#4"
+			col = treev.identify_column(event.x) # "#1" to self.valueCol
 			if col == "#1":
 				value = treev.set(optName, col)
 				treev.set(optName, col, 1-int(value))
 				return
-			if col == "#4":
+			if col == self.valueCol:
 				valueCellClicked(event, optName)
 		treev.bind(
 			"<Button-1>",
@@ -423,8 +446,8 @@ class FormatOptionsButton(ttk.Button):
 			row = [
 				int(optName in self.values),
 				optName,
-				prop.comment,
 				str(self.values.get(optName, "")),
+				prop.comment,
 			]
 			treev.insert("", "end", values=row, iid=optName) # iid should be rowId
 			# adjust column's width if necessary to fit each value
@@ -445,7 +468,7 @@ class FormatOptionsButton(ttk.Button):
 					if optName in self.values:
 						del self.values[optName]
 					continue
-				rawValue = treev.set(optName, "#4")
+				rawValue = treev.set(optName, self.valueCol)
 				prop = optionsProp[optName]
 				value, isValid = prop.evaluate(rawValue)
 				if not isValid:
