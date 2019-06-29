@@ -112,24 +112,28 @@ class FormatOptionsDialog(gtk.Dialog):
 		col = gtk.TreeViewColumn(title="Enable", cell_renderer=cell)
 		col.add_attribute(cell, "active", 0)
 		#cell.set_active(False)
-		col.set_resizable(True)
 		col.set_property("expand", False)
+		col.set_resizable(True)
 		treev.append_column(col)
 		###
 		col = gtk.TreeViewColumn(title="Name", cell_renderer=gtk.CellRendererText(), text=1)
 		col.set_property("expand", False)
-		treev.append_column(col)
-		###
-		col = gtk.TreeViewColumn(title="Comment", cell_renderer=gtk.CellRendererText(), text=2)
-		col.set_property("expand", False)
+		col.set_resizable(True)
 		treev.append_column(col)
 		###
 		cell = gtk.CellRendererText(editable=True)
 		self.valueCell = cell
+		self.valueCol = 3
 		cell.connect("edited", self.valueEdited)
-		col = gtk.TreeViewColumn(title="Value", cell_renderer=cell, text=3)
+		col = gtk.TreeViewColumn(title="Value", cell_renderer=cell, text=self.valueCol)
 		col.set_property("expand", True)
+		col.set_resizable(True)
 		col.set_min_width(200)
+		treev.append_column(col)
+		###
+		col = gtk.TreeViewColumn(title="Comment", cell_renderer=gtk.CellRendererText(), text=2)
+		col.set_property("expand", False)
+		col.set_resizable(False)
 		treev.append_column(col)
 		#############
 		for name in options:
@@ -164,7 +168,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		prop = self.optionsProp[optName]
 		if not prop.customValue:
 			return
-		model.set_value(itr, 3, newText)
+		model.set_value(itr, self.valueCol, newText)
 		model.set_value(itr, 0, True) # enable it
 
 	def rowActivated(self, treev, path, col):
@@ -190,13 +194,13 @@ class FormatOptionsDialog(gtk.Dialog):
 		# value is column 3
 		value = item.get_label()
 		model = self.treev.get_model()
-		model.set_value(itr, 3, value)
+		model.set_value(itr, self.valueCol, value)
 		model.set_value(itr, 0, True) # enable it
 
 	def valueCustomOpenDialog(self, itr: gtk.TreeIter, optName: str):
 		model = self.treev.get_model()
 		prop = self.optionsProp[optName]
-		currentValue = model.get_value(itr, 3)
+		currentValue = model.get_value(itr, self.valueCol)
 		optDesc = optName
 		if prop.comment:
 			optDesc += " (%s)" % prop.comment
@@ -224,7 +228,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		if dialog.run() != gtk.ResponseType.OK:
 			return
 		value = entry.get_text()
-		model.set_value(itr, 3, value)
+		model.set_value(itr, self.valueCol, value)
 		model.set_value(itr, 0, True) # enable it
 
 	def valueItemCustomActivate(self, item: gtk.MenuItem, itr: gtk.TreeIter):
@@ -241,7 +245,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		optName = model.get_value(itr, 1)
 		prop = self.optionsProp[optName]
 		if prop.typ == "bool":
-			rawValue = model.get_value(itr, 3)
+			rawValue = model.get_value(itr, self.valueCol)
 			if rawValue == "":
 				value = False
 			else:
@@ -249,7 +253,7 @@ class FormatOptionsDialog(gtk.Dialog):
 				if not isValid:
 					log.error("invalid %s = %r" % (optName, rawValue))
 					value = False
-			model.set_value(itr, 3, str(not value))
+			model.set_value(itr, self.valueCol, str(not value))
 			model.set_value(itr, 0, True) # enable it
 			return True
 		propValues = prop.values
