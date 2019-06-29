@@ -337,6 +337,7 @@ class FormatComboBox(gtk.ComboBox):
 			self.optionsValues,
 			parent=self._parent,
 		)
+		dialog.set_title("Options for " + formatName)
 		if dialog.run() != gtk.ResponseType.OK:
 			dialog.destroy()
 			return
