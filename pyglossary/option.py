@@ -40,6 +40,9 @@ class Option(object):
 		valueType = type(value).__name__
 		return self.typ == valueType
 
+	def groupValues(self) -> Optional[Dict[str, Any]]:
+		return None
+
 
 class BoolOption(Option):
 	def __init__(self, **kwargs):
@@ -73,6 +76,9 @@ class StrOption(Option):
 				return False
 			return value in self.values
 		return type(value).__name__ == "str"
+
+	def groupValues(self) -> Optional[Dict[str, Any]]:
+		return None
 
 
 class IntOption(Option):
@@ -153,6 +159,30 @@ class EncodingOption(Option):
 			values = [
 				"utf-8",
 				"utf-16",
+				"windows-1250",
+				"windows-1251",
+				"windows-1252",
+				"windows-1253",
+				"windows-1254",
+				"windows-1255",
+				"windows-1256",
+				"windows-1257",
+				"windows-1258",
+				"mac_cyrillic",
+				"mac_greek",
+				"mac_iceland",
+				"mac_latin2",
+				"mac_roman",
+				"mac_turkish",
+				"cyrillic",
+				"arabic",
+				"greek",
+				"hebrew",
+				"latin2",
+				"latin3",
+				"latin4",
+				"latin5",
+				"latin6",
 			]
 		Option.__init__(
 			self,
@@ -161,6 +191,27 @@ class EncodingOption(Option):
 			values=values,
 			**kwargs
 		)
+
+	def groupValues(self) -> Optional[Dict[str, Any]]:
+		import re
+		from collections import OrderedDict
+		groups = OrderedDict() # type: Dict[str, List[str]]
+		others = [] # type: List[str]
+		for value in self.values:
+			cats = re.findall("^[a-z]+", value)
+			if not cats:
+				others.append(value)
+				continue
+			cat = cats[0]
+			if len(cat) == len(value):
+				others.append(value)
+				continue
+			if not cat in groups:
+				groups[cat] = []
+			groups[cat].append(value)
+		if others:
+			groups["other"] = others
+		return groups
 
 
 class NewlineOption(Option):

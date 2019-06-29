@@ -134,10 +134,15 @@ class FormatOptionsDialog(gtk.Dialog):
 		#############
 		for name in options:
 			prop = optionsProp[name]
+			comment = prop.typ
+			if prop.comment:
+				comment += ", " + prop.comment
+			if prop.typ == "str" and not prop.values:
+				comment += ", double-click to edit"
 			trees.append([
 				name in optionsValues, # enable
 				name, # name
-				prop.comment, # comment
+				comment, # comment
 				str(optionsValues.get(name, "")), # value
 			])
 		############
@@ -163,7 +168,9 @@ class FormatOptionsDialog(gtk.Dialog):
 		model.set_value(itr, 0, True) # enable it
 
 	def rowActivated(self, treev, path, col):
-		self.showValuesPopup(path)
+		# forceMenu=True because we can not enter edit mode
+		# if double-clicked on a cell other than Value
+		return self.valueCellClicked(path, forceMenu=True)
 
 	def treeviewButtonPress(self, treev, gevent):
 		if gevent.button != 1:
@@ -176,7 +183,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		col = pos_t[1]
 		# cell = col.get_cells()[0]
 		if col.get_title() == "Value":
-			self.showValuesPopup(path)
+			return self.valueCellClicked(path)
 		return False
 
 	def valueItemActivate(self, item: gtk.MenuItem, itr: gtk.TreeIter):
@@ -225,26 +232,66 @@ class FormatOptionsDialog(gtk.Dialog):
 		optName = model.get_value(itr, 1)
 		self.valueCustomOpenDialog(itr, optName)
 
-	def showValuesPopup(self, path):
+	def valueCellClicked(self, path, forceMenu=False) -> bool:
+		"""
+		returns True if event is handled, False if not handled (need to enter edit mode)
+		"""
 		model = self.treev.get_model()
 		itr = model.get_iter(path)
 		optName = model.get_value(itr, 1)
 		prop = self.optionsProp[optName]
-		if not prop.values:
-			return
+		if prop.typ == "bool":
+			rawValue = model.get_value(itr, 3)
+			if rawValue == "":
+				value = False
+			else:
+				value, isValid = prop.evaluate(rawValue)
+				if not isValid:
+					log.error("invalid %s = %r" % (optName, rawValue))
+					value = False
+			model.set_value(itr, 3, str(not value))
+			model.set_value(itr, 0, True) # enable it
+			return True
+		propValues = prop.values
+		if not propValues:
+			if forceMenu:
+				propValues = []
+			else:
+				return False
 		menu = gtk.Menu()
-		for value in prop.values:
-			item = gtk.MenuItem(value)
-			item.connect("activate", self.valueItemActivate, itr)
-			item.show()
-			menu.append(item)
 		if prop.customValue:
 			item = gtk.MenuItem("[Custom Value]")
 			item.connect("activate", self.valueItemCustomActivate, itr)
 			item.show()
 			menu.append(item)
+		groupedValues = None
+		if len(propValues) > 10:
+			groupedValues = prop.groupValues()
+		if groupedValues:
+			for groupName, values in groupedValues.items():
+				item = gtk.MenuItem()
+				item.set_label(groupName)
+				if values is None:
+					item.connect("activate", self.valueItemActivate, itr)
+				else:
+					subMenu = gtk.Menu()
+					for subValue in values:
+						subItem = gtk.MenuItem(label=str(subValue))
+						subItem.connect("activate", self.valueItemActivate, itr)
+						subItem.show()
+						subMenu.append(subItem)
+					item.set_submenu(subMenu)
+				item.show()
+				menu.append(item)
+		else:
+			for value in propValues:
+				item = gtk.MenuItem(value)
+				item.connect("activate", self.valueItemActivate, itr)
+				item.show()
+				menu.append(item)
 		etime = gtk.get_current_event_time()
 		menu.popup(None, None, None, None, 3, etime)
+		return True
 
 	def getOptionsValues(self):
 		model = self.treev.get_model()
