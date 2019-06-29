@@ -101,12 +101,12 @@ class IntOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(self, "int", **kwargs)
 
-	def evaluate(self, raw: str) -> Tuple[int, bool]:
+	def evaluate(self, raw: str) -> Tuple[Optional[int], bool]:
 		"returns (value, isValid)"
 		try:
 			value = int(raw)
 		except ValueError:
-			return raw, False
+			return None, False
 		else:
 			return value, True
 
