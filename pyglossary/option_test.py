@@ -137,5 +137,42 @@ class TestOptionValidateDict(unittest.TestCase):
 		self.caseEvalFail('{10, 20, 30}')
 
 
+class TestOptionValidateList(unittest.TestCase):
+	def caseOK(self, raw: str, value: Optional[Dict]):
+		opt = ListOption()
+		valueActual, ok = opt.evaluate(raw)
+		self.assertTrue(ok, "evaluate failed")
+		self.assertEqual(valueActual, value)
+		ok2 = opt.validate(valueActual)
+		self.assertEqual(ok2, True, "validate failed")
+
+	def caseEvalFail(self, raw: str):
+		opt = ListOption()
+		valueActual, ok = opt.evaluate(raw)
+		self.assertFalse(ok, "evaluale did not fail, valueActual=%r" % valueActual)
+		self.assertEqual(valueActual, None)
+
+	def test_list_ok(self):
+		self.caseOK("", None)
+		self.caseOK("[]", [])
+		self.caseOK('["a", "b"]', ["a", "b"])
+		self.caseOK("[1, 2, 3]", [1, 2, 3])
+		self.caseOK('["a", 2, 3.5]', ["a", 2, 3.5])
+
+	def test_list_syntaxErr(self):
+		self.caseEvalFail("123abc")
+		self.caseEvalFail('{')
+		self.caseEvalFail("(")
+		self.caseEvalFail('{"a": 1')
+		self.caseEvalFail('{"a": 1]')
+		self.caseEvalFail('][')
+
+	def test_list_notList(self):
+		self.caseEvalFail("123")
+		self.caseEvalFail('{10, 20, 30}')
+		self.caseEvalFail('{"a": 1}')
+		self.caseEvalFail('{"a": "b", "123":456}')
+
+
 if __name__ == "__main__":
 	unittest.main()

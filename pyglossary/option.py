@@ -125,6 +125,28 @@ class DictOption(Option):
 		return value, True # valid
 
 
+class ListOption(Option):
+	def __init__(self, **kwargs):
+		Option.__init__(
+			self,
+			"list",
+			customValue=True,
+			**kwargs,
+		)
+
+	def evaluate(self, raw: str) -> Tuple[Optional[List], bool]:
+		import ast
+		if raw == "":
+			return None, True # valid
+		try:
+			value = ast.literal_eval(raw)
+		except SyntaxError:
+			return None, False # not valid
+		if type(value).__name__ != "list":
+			return None, False # not valid
+		return value, True # valid
+
+
 class EncodingOption(Option):
 	def __init__(self, customValue=True, values=None, **kwargs):
 		if values is None:
