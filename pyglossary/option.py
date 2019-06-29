@@ -75,28 +75,6 @@ class StrOption(Option):
 		return type(value).__name__ == "str"
 
 
-class DictOption(Option):
-	def __init__(self, **kwargs):
-		Option.__init__(
-			self,
-			"dict",
-			customValue=True,
-			**kwargs,
-		)
-
-	def evaluate(self, raw: str) -> Tuple[Optional[Dict], bool]:
-		import ast
-		if raw == "":
-			return None, True # valid
-		try:
-			value = ast.literal_eval(raw)
-		except SyntaxError:
-			return None, False # not valid
-		if type(value).__name__ != "dict":
-			return None, False # not valid
-		return value, True # valid
-
-
 class IntOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(self, "int", **kwargs)
@@ -123,6 +101,28 @@ class FloatOption(Option):
 			return None, False
 		else:
 			return value, True
+
+
+class DictOption(Option):
+	def __init__(self, **kwargs):
+		Option.__init__(
+			self,
+			"dict",
+			customValue=True,
+			**kwargs,
+		)
+
+	def evaluate(self, raw: str) -> Tuple[Optional[Dict], bool]:
+		import ast
+		if raw == "":
+			return None, True # valid
+		try:
+			value = ast.literal_eval(raw)
+		except SyntaxError:
+			return None, False # not valid
+		if type(value).__name__ != "dict":
+			return None, False # not valid
+		return value, True # valid
 
 
 class EncodingOption(Option):
