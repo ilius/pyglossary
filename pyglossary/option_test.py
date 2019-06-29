@@ -5,7 +5,7 @@ from typing import Optional, Tuple, List, Any
 from pyglossary.option import *
 
 
-class TestOptionValidateIntBool(unittest.TestCase):
+class TestOptionValidateBoolNumber(unittest.TestCase):
 	def caseOK(self, cls, raw: str, value: Optional[bool]):
 		opt = cls()
 		valueActual, ok = opt.evaluate(raw)
@@ -57,6 +57,19 @@ class TestOptionValidateIntBool(unittest.TestCase):
 		self.caseFailed(IntOption, "abc", None)
 		self.caseFailed(IntOption, "12f", None)
 		self.caseFailed(IntOption, "fff", None)
+
+	def test_float_ok(self):
+		self.caseOK(FloatOption, "0", 0.0)
+		self.caseOK(FloatOption, "1", 1.0)
+		self.caseOK(FloatOption, "-1", -1.0)
+		self.caseOK(FloatOption, "1234", 1234.0)
+		self.caseOK(FloatOption, "1.5", 1.5)
+		self.caseOK(FloatOption, "-7.9", -7.9)
+
+	def test_float_failed(self):
+		self.caseFailed(FloatOption, "abc", None)
+		self.caseFailed(FloatOption, "12f", None)
+		self.caseFailed(FloatOption, "fff", None)
 
 
 class TestOptionValidateStr(unittest.TestCase):

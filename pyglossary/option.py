@@ -111,6 +111,20 @@ class IntOption(Option):
 			return value, True
 
 
+class FloatOption(Option):
+	def __init__(self, **kwargs):
+		Option.__init__(self, "float", **kwargs)
+
+	def evaluate(self, raw: float) -> Tuple[Optional[float], bool]:
+		"returns (value, isValid)"
+		try:
+			value = float(raw)
+		except ValueError:
+			return None, False
+		else:
+			return value, True
+
+
 class EncodingOption(Option):
 	def __init__(self, customValue=True, values=None, **kwargs):
 		if values is None:
