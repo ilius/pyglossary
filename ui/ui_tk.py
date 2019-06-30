@@ -389,7 +389,11 @@ class FormatOptionsButton(ttk.Button):
 				treev.set(optName, self.valueCol, str(not value))
 				treev.set(optName, "#1", "1") # enable it
 				return
-			menu = tk.Menu(master=treev, title=optName, tearoff=False)
+			menu = tk.Menu(
+				master=treev,
+				title=optName,
+				tearoff=False,
+			)
 			if prop.customValue:
 				menu.add_command(
 					label="[Custom Value]",
@@ -398,6 +402,7 @@ class FormatOptionsButton(ttk.Button):
 			groupedValues = None
 			if len(propValues) > 10:
 				groupedValues = prop.groupValues()
+			maxItemW = 0
 			if groupedValues:
 				for groupName, subValues in groupedValues.items():
 					if subValues is None:
@@ -405,6 +410,7 @@ class FormatOptionsButton(ttk.Button):
 							label=str(value),
 							command=lambda value=value: valueMenuItemSelected(optName, menu, value),
 						)
+						maxItemW = max(maxItemW, tkFont.Font().measure(str(value)))
 					else:
 						subMenu = tk.Menu(tearoff=False)
 						for subValue in subValues:
@@ -413,6 +419,7 @@ class FormatOptionsButton(ttk.Button):
 								command=lambda value=subValue: valueMenuItemSelected(optName, menu, value),
 							)
 						menu.add_cascade(label=groupName, menu=subMenu)
+						maxItemW = max(maxItemW, tkFont.Font().measure(groupName))
 			else:
 				for value in propValues:
 					value = str(value)
@@ -420,13 +427,23 @@ class FormatOptionsButton(ttk.Button):
 						label=value,
 						command=lambda value=value: valueMenuItemSelected(optName, menu, value),
 					)
+			menu.add_command(
+				label="[Close]",
+				command=lambda: menu.destroy(),
+			)
 			try:
-				menu.tk_popup(event.x_root, event.y_root, 0)
+				menu.tk_popup(
+					event.x_root + maxItemW//2 + 35,
+					event.y_root + 15,
+					0,
+				)
 			finally:
 				# make sure to release the grab (Tk 8.0a1 only)
 				menu.grab_release()
 		def treeClicked(event):
 			optName = treev.identify_row(event.y) # optName is rowId
+			if not optName:
+				return
 			col = treev.identify_column(event.x) # "#1" to self.valueCol
 			if col == "#1":
 				value = treev.set(optName, col)
