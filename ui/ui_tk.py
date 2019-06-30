@@ -275,6 +275,7 @@ class FormatOptionsButton(ttk.Button):
 		dialog.resizable(width=True, height=True)
 		dialog.title(optName)
 		set_window_icon(dialog)
+		dialog.bind('<Escape>', lambda e: dialog.destroy())
 
 		px, py, pw, ph = decodeGeometry(treev.winfo_toplevel().geometry())
 		w = 300
@@ -336,6 +337,7 @@ class FormatOptionsButton(ttk.Button):
 		dialog.resizable(width=True, height=True)
 		dialog.title(self.kind + " Options")
 		set_window_icon(dialog)
+		dialog.bind('<Escape>', lambda e: dialog.destroy())
 		###
 		self.valueCol = "#3"
 		cols = [
@@ -544,6 +546,7 @@ class UI(tix.Frame, UIBase):
 		rootWin.resizable(True, False)
 		########
 		set_window_icon(rootWin)
+		rootWin.bind('<Escape>', lambda e: rootWin.quit())
 		########
 		self.pack(fill="x")
 		# rootWin.bind("<Configure>", self.resized)
@@ -753,7 +756,7 @@ class UI(tix.Frame, UIBase):
 		closeB = ttk.Button(
 			frame3,
 			text="Close",
-			command=self.quit,
+			command=rootWin.quit,
 			# bg="#ff0000",
 			# activebackground="#ff5050",
 		)
@@ -852,6 +855,7 @@ class UI(tix.Frame, UIBase):
 		about.title("About PyGlossary")
 		about.resizable(width=False, height=False)
 		set_window_icon(about)
+		about.bind('<Escape>', lambda e: about.destroy())
 		###
 		msg1 = tix.Message(
 			about,
@@ -924,6 +928,7 @@ class UI(tix.Frame, UIBase):
 		about.title("Credits")
 		about.resizable(width=False, height=False)
 		set_window_icon(about)
+		about.bind('<Escape>', lambda e: about.destroy())
 		###
 		msg1 = tix.Message(
 			about,
@@ -949,6 +954,7 @@ class UI(tix.Frame, UIBase):
 		about.title("License")
 		about.resizable(width=False, height=False)
 		set_window_icon(about)
+		about.bind('<Escape>', lambda e: about.destroy())
 		###
 		msg1 = tix.Message(
 			about,
@@ -968,9 +974,6 @@ class UI(tix.Frame, UIBase):
 		)
 		closeB.pack(side="right")
 		frame.pack(fill="x")
-
-	def quit(self):
-		self.rootWin.destroy()
 
 	def resized(self, event):
 		dh = self.rootWin.winfo_height() - self.winfo_height()
