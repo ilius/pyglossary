@@ -266,6 +266,7 @@ class FormatOptionsButton(ttk.Button):
 		}
 		self.values = values
 		self.formatVar = formatVar
+		self.menu = None
 
 	def valueMenuItemCustomSelected(self, treev, format, optName, menu=None):
 		value = treev.set(optName, self.valueCol)
@@ -321,6 +322,7 @@ class FormatOptionsButton(ttk.Button):
 
 		if menu:	
 			menu.destroy()
+			self.menu = None
 
 	def buttonClicked(self):
 		formatD = self.formatVar.get()
@@ -366,6 +368,7 @@ class FormatOptionsButton(ttk.Button):
 			if treev.column("Value", width=None) < col_w:
 				treev.column("Value", width=col_w)
 			menu.destroy()
+			self.menu = None
 		def valueCellClicked(event, optName):
 			if not optName:
 				return
@@ -394,6 +397,7 @@ class FormatOptionsButton(ttk.Button):
 				title=optName,
 				tearoff=False,
 			)
+			self.menu = menu # to destroy it later
 			if prop.customValue:
 				menu.add_command(
 					label="[Custom Value]",
@@ -427,9 +431,12 @@ class FormatOptionsButton(ttk.Button):
 						label=value,
 						command=lambda value=value: valueMenuItemSelected(optName, menu, value),
 					)
+			def close():
+				menu.destroy()
+				self.menu = None
 			menu.add_command(
 				label="[Close]",
-				command=lambda: menu.destroy(),
+				command=close,
 			)
 			try:
 				menu.tk_popup(
@@ -441,6 +448,9 @@ class FormatOptionsButton(ttk.Button):
 				# make sure to release the grab (Tk 8.0a1 only)
 				menu.grab_release()
 		def treeClicked(event):
+			if self.menu:
+				self.menu.destroy()
+				self.menu = None
 			optName = treev.identify_row(event.y) # optName is rowId
 			if not optName:
 				return
