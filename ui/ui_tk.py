@@ -440,10 +440,11 @@ class FormatOptionsButton(ttk.Button):
 			)
 			try:
 				menu.tk_popup(
-					event.x_root + maxItemW//2 + 35,
-					event.y_root + 15,
-					0,
+					event.x_root,
+					event.y_root,
 				)
+				# do not pass the third argument (entry), so that the menu
+				# apears where the pointer is on its top-left corner
 			finally:
 				# make sure to release the grab (Tk 8.0a1 only)
 				menu.grab_release()
