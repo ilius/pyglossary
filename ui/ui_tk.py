@@ -451,6 +451,7 @@ class FormatOptionsButton(ttk.Button):
 			if self.menu:
 				self.menu.destroy()
 				self.menu = None
+				return
 			optName = treev.identify_row(event.y) # optName is rowId
 			if not optName:
 				return
