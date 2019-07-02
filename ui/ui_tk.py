@@ -269,6 +269,10 @@ class FormatOptionsButton(ttk.Button):
 		self.menu = None
 
 	def valueMenuItemCustomSelected(self, treev, format, optName, menu=None):
+		if menu:
+			menu.destroy()
+			self.menu = None
+
 		value = treev.set(optName, self.valueCol)
 
 		dialog = tix.Toplevel(master=treev) # bg="#0f0" does not work
@@ -320,10 +324,7 @@ class FormatOptionsButton(ttk.Button):
 		button.pack(side="right")
 		###
 		frame.pack(fill="x")
-
-		if menu:	
-			menu.destroy()
-			self.menu = None
+		dialog.focus()
 
 	def buttonClicked(self):
 		formatD = self.formatVar.get()
@@ -527,6 +528,7 @@ class FormatOptionsButton(ttk.Button):
 			px + pw//2 - w//2,
 			py + ph//2 - h//2,
 		))
+		dialog.focus()
 
 
 class UI(tix.Frame, UIBase):
