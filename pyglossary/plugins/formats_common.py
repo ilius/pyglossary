@@ -11,6 +11,16 @@ from os.path import (
 	exists,
 )
 
+from typing import (
+	Optional,
+	Any,
+	AnyStr,
+	Tuple,
+	List,
+	Dict,
+	Iterator,
+)
+
 import logging
 
 log = logging.getLogger("root")
@@ -27,6 +37,9 @@ from pyglossary.option import *
 from pyglossary.file_utils import FileLineWrapper
 from pyglossary.text_utils import toStr, toBytes
 from pyglossary.os_utils import indir
+from pyglossary.entry_base import BaseEntry
+
+from pyglossary.glossary_type import GlossaryType
 
 enable = False
 format = "Unknown"

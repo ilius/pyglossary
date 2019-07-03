@@ -19,7 +19,7 @@ b64_chars = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 b64_chars_ord = {c: i for i, c in enumerate(b64_chars)}
 
 
-def intToIndexStr(n, retry=0):
+def intToIndexStr(n: int) -> bytes:
 	chars = []
 	while True:
 		chars.append(b64_chars[n & 0x3f])
@@ -29,7 +29,7 @@ def intToIndexStr(n, retry=0):
 	return bytes(reversed(chars))
 
 
-def indexStrToInt(st):
+def indexStrToInt(st: str) -> int:
 	n = 0
 	for i, c in enumerate(reversed(list(st))):
 		k = b64_chars_ord[c]
@@ -41,21 +41,21 @@ def indexStrToInt(st):
 	return n
 
 
-def installToDictd(filename, title=""):
+def installToDictd(filename: str, title: str = "") -> None:
 	"""
 	filename is without extension (neither .index or .dict or .dict.dz)
 	"""
 	import shutil
 	targetDir = "/usr/share/dictd/"
-	log.info("Installing %r to DICTD server" % filename)
+	log.info("Installing %r to DICTD server", filename)
 
 	if os.path.isfile(filename + ".dict.dz"):
 		dictPostfix = ".dict.dz"
 	elif os.path.isfile(filename + ".dict"):
 		dictPostfix = ".dict"
 	else:
-		log.error("No .dict file, could not install dictd file %r" % filename)
-		return False
+		log.error("No .dict file, could not install dictd file %r", filename)
+		return
 
 	if not filename.startswith(targetDir):
 		shutil.copy(filename + ".index", targetDir)
@@ -78,7 +78,7 @@ database %s
 
 
 class Reader(object):
-	def __init__(self, glos):
+	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._filename = ""
 		self._indexFp = None
@@ -86,7 +86,7 @@ class Reader(object):
 		self._leadingLinesCount = 0
 		self._len = None
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		import gzip
 		if filename.endswith(".index"):
 			filename = filename[:-6]
@@ -97,7 +97,7 @@ class Reader(object):
 		else:
 			self._dictFp = open(filename+".dict", "rb")
 
-	def close(self):
+	def close(self) -> None:
 		if self._indexFp is not None:
 			try:
 				self._indexFp.close()
@@ -110,7 +110,7 @@ class Reader(object):
 			except:
 				log.exception("error while closing dict file")
 			self._dictFp = None
-	def __len__(self):
+	def __len__(self) -> int:
 		if self._len is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
 			self._len = fileCountLines(
@@ -118,7 +118,7 @@ class Reader(object):
 			) - self._leadingLinesCount
 		return self._len
 
-	def __iter__(self):
+	def __iter__(self) -> Iterator[BaseEntry]:
 		if not self._indexFp:
 			log.error("reader is not open, can not iterate")
 			raise StopIteration
@@ -150,11 +150,16 @@ class Reader(object):
 		# ____________________________________________________ #
 
 		if wrongSortedN > 0:
-			log.warning("Warning: wrong sorting count: %d" % wrongSortedN)
+			log.warning("Warning: wrong sorting count: %d", wrongSortedN)
 		self._len = wordCount
 
 
-def write(glos, filename, dictzip=True, install=True):  # FIXME
+def write(
+	glos: GlossaryType,
+	filename: str,
+	dictzip: bool = True,
+	install: bool = True,
+) -> None:
 	from pyglossary.text_utils import runDictzip
 	(filename_nox, ext) = splitext(filename)
 	if ext.lower() == ".index":

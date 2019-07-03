@@ -43,7 +43,7 @@ def read(
 			elif lastEntry and lastEntry.getWords()[0] == mainWord:
 				lastEntry.addAlt(word)
 			else:
-				log.error("alternate is not ride after word: %s" % defi)
+				log.error("alternate is not ride after word: %s", defi)
 			continue
 
 		entry = glos.newEntry(word, defi)

@@ -28,7 +28,13 @@ optionsProp = {
 depends = {}
 
 
-def write(glos, filename, encoding="utf-8", archive="tar.bz2", sep=os.sep):
+def write(
+	glos: GlossaryType,
+	filename: str,
+	encoding: str = "utf-8",
+	archive: str = "tar.bz2",
+	sep: str = os.sep,
+) -> None:
 	if os.path.exists(filename):
 		if os.path.isdir(filename):
 			if os.listdir(filename):
@@ -73,7 +79,7 @@ def write(glos, filename, encoding="utf-8", archive="tar.bz2", sep=os.sep):
 				stdout=subprocess.PIPE
 			).communicate()
 		else:
-			log.error("Undefined archive format: \"%s\"" % archive)
+			log.error("Undefined archive format: \"%s\"", archive)
 		try:
 			shutil.rmtree(filename, ignore_errors=True)
 		except:

@@ -23,36 +23,19 @@ import re
 import string
 from xml.sax.saxutils import unescape, quoteattr
 
+from typing import Callable
+from typing.re import Pattern
 
 
 from . import _normalize
-from pyglossary.plugins.formats_common import log, toStr
+from pyglossary.plugins.formats_common import *
 
 log = logging.getLogger("root")
-
-
-
-def get_beautiful_soup():
-	try:
-		import bs4 as BeautifulSoup
-	except ImportError:
-		try:
-			import BeautifulSoup
-		except ImportError:
-			return None
-	if int(BeautifulSoup.__version__.split(".")[0]) < 4:
-		raise ImportError(
-			"BeautifulSoup is too old, required at least version 4, " +
-			"%r found.\n" % BeautifulSoup.__version__ +
-			"Please run `sudo pip3 install lxml beautifulsoup4 html5lib`"
-		)
-	return BeautifulSoup
-
 
 digs = string.digits + string.ascii_letters
 
 
-def base36(x):
+def base36(x: int) -> str:
 	"""
 	simplified version of int2base
 	http://stackoverflow.com/questions/2267362/convert-integer-to-a-string-in-a-given-numeric-base-in-python#2267446
@@ -65,7 +48,7 @@ def base36(x):
 	return "".join(digits)
 
 
-def id_generator():
+def id_generator() -> Iterator[str]:
 	cnt = 1
 
 	while True:
@@ -74,11 +57,9 @@ def id_generator():
 		cnt += 1
 
 
-def indexes_generator(indexes_lang):
+def indexes_generator(indexes_lang: str) -> Callable[[str, List[str], str, Any], str]:
 	"""
 	factory that acts according to glossary language
-
-	:param indexes_lang: str
 	"""
 	indexer = None
 	"""Callable[[Sequence[str], str], Sequence[str]]"""
@@ -142,7 +123,7 @@ em0_9_ex_sub = r'<div class="m\1 ex">'
 href_re = re.compile(r'''href=(["'])(.*?)\1''')
 
 
-def href_sub(x):
+def href_sub(x: Pattern) -> str:
 	href = x.groups()[1]
 	if href.startswith("http"):
 		return x.group()
@@ -156,13 +137,13 @@ def href_sub(x):
 	)
 
 
-def is_green(x):
+def is_green(x: dict) -> bool:
 	return "color:green" in x.get("style", "")
 
 margin_re = re.compile("margin-left:(\d)em")
 
 
-def remove_style(tag, line):
+def remove_style(tag: dict, line: str) -> None:
 	s = "".join(tag["style"].replace(line, "").split(";"))
 	if s:
 		tag["style"] = s
@@ -170,7 +151,7 @@ def remove_style(tag, line):
 		del tag["style"]
 
 
-def format_clean_content(title, body, BeautifulSoup):
+def format_clean_content(title: Optional[str], body: str, BeautifulSoup: Any) -> str:
 	# heavily integrated with output of dsl reader plugin!
 	# and with xdxf also.
 	"""

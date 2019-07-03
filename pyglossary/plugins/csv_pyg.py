@@ -35,11 +35,11 @@ supportsAlternates = True
 
 
 class Reader(object):
-	def __init__(self, glos):
+	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self.clear()
 
-	def clear(self):
+	def clear(self) -> None:
 		self._filename = ""
 		self._file = None
 		self._leadingLinesCount = 0
@@ -49,7 +49,7 @@ class Reader(object):
 		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self, filename, encoding="utf-8"):
+	def open(self, filename: str, encoding: str = "utf-8") -> None:
 		self._filename = filename
 		self._file = open(filename, "r", encoding=encoding)
 		self._csvReader = csv.reader(
@@ -63,7 +63,7 @@ class Reader(object):
 			self._resDir = ""
 			self._resFileNames = []
 
-	def close(self):
+	def close(self) -> None:
 		if self._file:
 			try:
 				self._file.close()
@@ -71,16 +71,16 @@ class Reader(object):
 				log.exception("error while closing csv file")
 		self.clear()
 
-	def __len__(self):
+	def __len__(self) -> int:
 		if self._wordCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(self._filename) - \
 				self._leadingLinesCount
 		return self._wordCount + len(self._resFileNames)
 
-	def __iter__(self):
+	def __iter__(self) -> Iterator[BaseEntry]:
 		if not self._csvReader:
-			log.error("%s is not open, can not iterate" % self)
+			log.error("%s is not open, can not iterate", self)
 			raise StopIteration
 
 		wordCount = 0
@@ -93,7 +93,7 @@ class Reader(object):
 				word = row[0]
 				defi = row[1]
 			except IndexError:
-				log.error("invalid row: %r" % row)
+				log.error("invalid row: %r", row)
 				yield None  # update progressbar
 				continue
 			try:
@@ -114,7 +114,7 @@ class Reader(object):
 				)
 
 
-def write(glos, filename, encoding="utf-8", resources=True):
+def write(glos: GlossaryType, filename: str, encoding: str = "utf-8", resources: bool = True) -> None:
 	resDir = filename + "_res"
 	if not isdir(resDir):
 		os.mkdir(resDir)

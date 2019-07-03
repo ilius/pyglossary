@@ -1,5 +1,6 @@
 import os
 import shutil
+from typing import Any
 
 
 class indir(object):
@@ -13,7 +14,7 @@ class indir(object):
 		>>> print(os.getcwd())  # -> "~/projects"
 		>>> # automatically return to previous directory.
 	"""
-	def __init__(self, directory, create=False, clear=False):
+	def __init__(self, directory: str, create: bool = False, clear: bool = False):
 		self.oldpwd = None
 		self.dir = directory
 		self.create = create
@@ -34,7 +35,7 @@ class indir(object):
 		self.oldpwd = None
 
 
-def my_url_show(link):
+def my_url_show(link: str) -> None:
 	import subprocess
 	for path in (
 		'/usr/bin/gnome-www-browser',
@@ -56,5 +57,5 @@ except:
 """
 
 
-def click_website(widget, link):
+def click_website(widget: Any, link: str) -> None:
 	my_url_show(link)

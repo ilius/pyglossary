@@ -9,7 +9,9 @@ from os.path import (
 )
 
 
-class DataEntry(object): # or Resource? FIXME
+from .entry_base import BaseEntry
+
+class DataEntry(BaseEntry): # or Resource? FIXME
 	def isData(self):
 		return True
 
@@ -103,7 +105,7 @@ class DataEntry(object): # or Resource? FIXME
 		)
 
 
-class Entry(object):
+class Entry(BaseEntry):
 	sep = "|"
 	htmlPattern = re.compile(
 		".*(" + "|".join([

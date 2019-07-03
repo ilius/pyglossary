@@ -123,7 +123,7 @@ def parseFormatOptionsStr(st):
 		try:
 			(key, value) = part.split("=")
 		except ValueError:
-			log.error("bad option syntax: %s" % part)
+			log.error("bad option syntax: %s", part)
 			continue
 		key = key.strip()
 		value = value.strip()
@@ -234,12 +234,12 @@ class UI(UIBase):
 		if inputFormat:
 			# inputFormat = inputFormat.capitalize()
 			if inputFormat not in Glossary.readFormats:
-				log.error("invalid read format %s" % inputFormat)
+				log.error("invalid read format %s", inputFormat)
 		if outputFormat:
 			# outputFormat = outputFormat.capitalize()
 			if outputFormat not in Glossary.writeFormats:
-				log.error("invalid write format %s" % outputFormat)
-				log.error("try: %s --help" % COMMAND)
+				log.error("invalid write format %s", outputFormat)
+				log.error("try: %s --help", COMMAND)
 				return 1
 		if not outputFilename:
 			if reverse:
@@ -248,14 +248,14 @@ class UI(UIBase):
 				try:
 					ext = Glossary.formatsExt[outputFormat][0]
 				except (KeyError, IndexError):
-					log.error("invalid write format %s" % outputFormat)
-					log.error("try: %s --help" % COMMAND)
+					log.error("invalid write format %s", outputFormat)
+					log.error("try: %s --help", COMMAND)
 					return 1
 				else:
 					outputFilename = os.path.splitext(inputFilename)[0] + ext
 			else:
 				log.error("neither output file nor output format is given")
-				log.error("try: %s --help" % COMMAND)
+				log.error("try: %s --help", COMMAND)
 				return 1
 
 		glos = self.glos = Glossary(ui=self)

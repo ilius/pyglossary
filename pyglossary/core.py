@@ -14,6 +14,16 @@ from os.path import (
 )
 import platform
 
+from typing import (
+	Dict,
+	Tuple,
+	Any,
+	Optional,
+	Type,
+)
+
+from types import TracebackType
+
 VERSION = "3.2.1"
 
 class MyLogger(logging.Logger):
@@ -34,20 +44,20 @@ class MyLogger(logging.Logger):
 		"All",  # "Not-Set",
 	]
 
-	def setVerbosity(self, verbosity):
+	def setVerbosity(self, verbosity: int) -> None:
 		self.setLevel(self.levelsByVerbosity[verbosity])
 		self._verbosity = verbosity
 
-	def getVerbosity(self):
+	def getVerbosity(self) -> int:
 		return getattr(self, "_verbosity", 3)  # FIXME
 
-	def pretty(self, data, header=""):
+	def pretty(self, data: Any, header: str = "") -> None:
 		self.debug(header + pformat(data))
 
-	def isDebug(self):
+	def isDebug(self) -> bool:
 		return self.getVerbosity() >= 4
 
-def format_var_dict(dct, indent=4, max_width=80):
+def format_var_dict(dct: Dict[str, Any], indent: int = 4, max_width: int = 80) -> str:
 	lines = []
 	pre = " " * indent
 	for key, value in dct.items():
@@ -64,7 +74,11 @@ def format_var_dict(dct, indent=4, max_width=80):
 	return "\n".join(lines)
 
 
-def format_exception(exc_info=None, add_locals=False, add_globals=False):
+def format_exception(
+	exc_info: Optional[Tuple[Type, Exception, TracebackType]] = None,
+	add_locals: bool = False,
+	add_globals: bool = False,
+) -> str:
 	if not exc_info:
 		exc_info = sys.exc_info()
 	_type, value, tback = exc_info
@@ -92,11 +106,11 @@ class StdLogHandler(logging.Handler):
 	startRed = "\x1b[31m"
 	endFormat = "\x1b[0;0;0m"  # len=8
 
-	def __init__(self, noColor=False):
+	def __init__(self, noColor: bool = False):
 		logging.Handler.__init__(self)
 		self.noColor = noColor
 
-	def emit(self, record):
+	def emit(self, record: logging.LogRecord) -> None:
 		msg = record.getMessage()
 		###
 		if record.exc_info:
@@ -121,14 +135,15 @@ class StdLogHandler(logging.Handler):
 		###
 		fp.write(msg + "\n")
 		fp.flush()
-#	def exception(self, msg):
+
+#	def exception(self, msg: str) -> None:
 #		if not self.noColor:
 #			msg = self.startRed + msg + self.endFormat
 #		sys.stderr.write(msg + "\n")
 #		sys.stderr.flush()
 
 
-def checkCreateConfDir():
+def checkCreateConfDir() -> None:
 	if not isdir(confDir):
 		if exists(confDir):  # file, or anything other than directory
 			os.rename(confDir, confDir + ".bak")  # we do not import old config

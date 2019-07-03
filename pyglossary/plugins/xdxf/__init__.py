@@ -38,9 +38,17 @@ XML = None
 tostring = None
 transform = None
 
+try:
+	ModuleNotFoundError
+except NameError:
+	ModuleNotFoundError = ImportError
 
 def import_xml_stuff():
-	from lxml import etree as _etree
+	try:
+		from lxml import etree as _etree
+	except ModuleNotFoundError as e:
+		e.msg += ", run `sudo pip3 install lxml` to install"
+		raise e
 	global etree, XML, tostring
 	etree = _etree
 	XML = etree.XML

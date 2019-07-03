@@ -3,14 +3,20 @@ from itertools import (
 	repeat,
 )
 
+from typing import (
+	AnyStr,
+	Iterator
+)
+from io import IOBase
 
-def toBytes(s):
-	return bytes(s, 'utf8') if isinstance(s, str) else bytes(s)
+
+def toBytes(s: AnyStr) -> bytes:
+	return bytes(s, "utf8") if isinstance(s, str) else bytes(s)
 
 
-def fileCountLines(filename, newline='\n'):
+def fileCountLines(filename: str, newline: str = "\n"):
 	newline = toBytes(newline)  # required? FIXME
-	f = open(filename, 'rb')  # or 'r'
+	f = open(filename, "rb")  # or "r"
 	bufgen = takewhile(
 		lambda x: x, (f.read(1024*1024) for _ in repeat(None))
 	)
@@ -19,17 +25,18 @@ def fileCountLines(filename, newline='\n'):
 	)
 
 
+# TODO: make it sub-class of IOBase
 class FileLineWrapper(object):
-	def __init__(self, f):
+	def __init__(self, f: IOBase):
 		self.f = f
 		self.line = 0
 
-	def close(self):
-		return self.f.close()
+	def close(self) -> None:
+		self.f.close()
 
-	def readline(self):
+	def readline(self) -> str:
 		self.line += 1
 		return self.f.readline()
 
-	def __iter__(self):
+	def __iter__(self) -> Iterator[str]:
 		return iter(self.f)

@@ -33,27 +33,27 @@ def fread(path):
 	with open(path, encoding="utf-8") as fp:
 		return fp.read()
 
-logo = join(appResDir, 'pyglossary.png')
-aboutText = fread(join(dataDir, 'about'))
-licenseText = fread(join(dataDir, 'license-dialog'))
-authors = fread(join(dataDir, 'AUTHORS')).split('\n')
+logo = join(appResDir, "pyglossary.png")
+aboutText = fread(join(dataDir, "about"))
+licenseText = fread(join(dataDir, "license-dialog"))
+authors = fread(join(dataDir, "AUTHORS")).split("\n")
 
 
 class UIBase(object):
 	prefKeys = (
-		'noProgressBar',## command line
-		'ui_autoSetFormat',
-		'ui_autoSetOutputFileName',
-		'lower',
-		'utf8Check',
-		'enable_alts',
+		"noProgressBar",## command line
+		"ui_autoSetFormat",
+		"ui_autoSetOutputFileName",
+		"lower",
+		"utf8Check",
+		"enable_alts",
 		## Reverse Options:
-		'reverse_matchWord',
-		'reverse_showRel',
-		'reverse_saveStep',
-		'reverse_minRel',
-		'reverse_maxNum',
-		'reverse_includeDefs',
+		"reverse_matchWord",
+		"reverse_showRel",
+		"reverse_saveStep",
+		"reverse_minRel",
+		"reverse_maxNum",
+		"reverse_includeDefs",
 	)
 	def pref_load(self, **options):
 		data = jsonToData(fread(rootConfJsonFile))
@@ -61,7 +61,7 @@ class UIBase(object):
 			try:
 				userData = jsonToData(fread(confJsonFile))
 			except Exception:
-				log.exception('error while loading user config file "%s"'%confJsonFile)
+				log.exception("error while loading user config file \"%s\"", confJsonFile)
 			else:
 				data.update(userData)
 
@@ -71,7 +71,7 @@ class UIBase(object):
 			except KeyError:
 				pass
 		for key, value in data.items():
-			log.warning('unkown config key "%s"'%key)
+			log.warning("unkown config key \"%s\"", key)
 
 		for key, value in options.items():
 			if key in self.prefKeys:

@@ -3,11 +3,26 @@
 from heapq import heappush, heappop
 from heapq import merge
 
+from typing import (
+	TypeVar,
+	#Dict,
+	#Tuple,
+	List,
+	Sequence,
+	Any,
+	Optional,
+	Iterator,
+	Callable,
+)
+
+
 import logging
-log = logging.getLogger('root')
+log = logging.getLogger("root")
 
 
-def hsortStream(stream, maxHeapSize, key=None):
+T = TypeVar("T")
+
+def hsortStream(stream: Iterator[T], maxHeapSize: int, key: Optional[Callable[[T], Any]] = None) -> Iterator[T]:
 	"""
 		stream: a generator or iterable
 		maxHeapSize: int, maximum size of heap
@@ -41,7 +56,7 @@ def hsortStream(stream, maxHeapSize, key=None):
 			yield heappop(hp)[0]
 
 
-def hsortStreamList(streams, *args, **kwargs):
+def hsortStreamList(streams: Sequence[Iterator[T]], *args, **kwargs) -> Iterator[T]:
 	streams = [
 		 hsortStream(stream, *args, **kwargs)
 		 for stream in streams
@@ -51,7 +66,7 @@ def hsortStreamList(streams, *args, **kwargs):
 
 def stdinIntegerStream():
 	while True:
-		line = input(' Input item: ')
+		line = input(" Input item: ")
 		if not line:
 			break
 		yield int(line)
@@ -59,7 +74,7 @@ def stdinIntegerStream():
 
 def stdinStringStream():
 	while True:
-		line = raw_input(' Input item: ')
+		line = raw_input(" Input item: ")
 		if not line:
 			break
 		yield line
@@ -88,7 +103,7 @@ def main():
 	test_hsortStreamList()
 #	stream = stdinIntegerStream()
 #	for line in hsortStream(stream, 3):
-#		print('------ Placed item: %s'%line)
+#		print("------ Placed item: %s"%line)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	main()

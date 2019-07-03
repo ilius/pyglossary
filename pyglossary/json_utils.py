@@ -6,8 +6,23 @@ except ImportError:
 
 from collections import OrderedDict
 
+from typing import (
+	Union,
+	Dict,
+	List,
+	AnyStr,
+	Optional,
+)
+from types import ModuleType
 
-def dataToPrettyJson(data, ensure_ascii=False, sort_keys=False):
+JsonEncodable = Union[Dict, List]
+# OrderedDict is also subclass of Dict, issubclass(OrderedDict, Dict) == True
+
+def dataToPrettyJson(
+	data: JsonEncodable,
+	ensure_ascii: bool = False,
+	sort_keys: bool = False,
+):
 	return json.dumps(
 		data,
 		sort_keys=sort_keys,
@@ -16,7 +31,11 @@ def dataToPrettyJson(data, ensure_ascii=False, sort_keys=False):
 	)
 
 
-def dataToCompactJson(data, ensure_ascii=False, sort_keys=False):
+def dataToCompactJson(
+	data: JsonEncodable,
+	ensure_ascii: bool = False,
+	sort_keys: bool = False,
+) -> str:
 	return json.dumps(
 		data,
 		sort_keys=sort_keys,
@@ -25,10 +44,11 @@ def dataToCompactJson(data, ensure_ascii=False, sort_keys=False):
 	)
 
 
-jsonToData = json.loads
+def jsonToData(st: AnyStr) -> JsonEncodable:
+	return json.loads(st)
 
 
-def jsonToOrderedData(text):
+def jsonToOrderedData(text: str) -> OrderedDict:
 	return json.JSONDecoder(
 		object_pairs_hook=OrderedDict,
 	).decode(text)
@@ -36,7 +56,7 @@ def jsonToOrderedData(text):
 ###############################
 
 
-def loadJsonConf(module, confPath, decoders={}):
+def loadJsonConf(module: Union[ModuleType, str], confPath: str, decoders: Optional[Dict] = None) -> None:
 	from os.path import isfile
 	###
 	if not isfile(confPath):
@@ -57,28 +77,24 @@ def loadJsonConf(module, confPath, decoders={}):
 	if isinstance(module, str):
 		module = sys.modules[module]
 	for param, value in data.items():
-		try:
-			decoder = decoders[param]
-		except KeyError:
-			pass
-		else:
-			value = decoder(value)
+		if decoders:
+			decoder = decoders.get(param)
+			if decoder is not None:
+				value = decoder(value)
 		setattr(module, param, value)
 
 
-def saveJsonConf(module, confPath, params, encoders={}):
+def saveJsonConf(module: Union[ModuleType, str], confPath: str, params: str, encoders: Optional[Dict] = None) -> None:
 	if isinstance(module, str):
 		module = sys.modules[module]
 	###
 	data = OrderedDict()
 	for param in params:
 		value = getattr(module, param)
-		try:
-			encoder = encoders[param]
-		except KeyError:
-			pass
-		else:
-			value = encoder(value)
+		if encoders:
+			encoder = encoders.get(param)
+			if encoder is not None:
+				value = encoder(value)
 		data[param] = value
 	###
 	text = dataToPrettyJson(data)
@@ -89,7 +105,7 @@ def saveJsonConf(module, confPath, params, encoders={}):
 		return
 
 
-def loadModuleJsonConf(module):
+def loadModuleJsonConf(module: Union[ModuleType, str]) -> None:
 	if isinstance(module, str):
 		module = sys.modules[module]
 	###
@@ -114,7 +130,7 @@ def loadModuleJsonConf(module):
 	# should use module.confParams to restrict json keys? FIXME
 
 
-def saveModuleJsonConf(module):
+def saveModuleJsonConf(module: Union[ModuleType, str]) -> None:
 	if isinstance(module, str):
 		module = sys.modules[module]
 	###

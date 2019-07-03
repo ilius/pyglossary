@@ -57,6 +57,23 @@ depends = {
 	"html5lib": "html5lib",
 }
 
+BeautifulSoup = None
+
+def loadBeautifulSoup():
+	global BeautifulSoup
+	try:
+		import bs4 as BeautifulSoup
+	except:
+		try:
+			import BeautifulSoup
+		except:
+			return
+	if int(BeautifulSoup.__version__.split(".")[0]) < 4:
+		raise ImportError(
+			"BeautifulSoup is too old, required at least version 4, " +
+			"%r found.\n" % BeautifulSoup.__version__ +
+			"Please run `sudo pip3 install lxml beautifulsoup4 html5lib`"
+		)
 
 def abspath_or_None(path):
 	return os.path.abspath(os.path.expanduser(path)) if path else None
@@ -159,14 +176,17 @@ def write(
 	how to perform flexible search.  we can help it by manually providing
 	additional indexes to dictionary entries.
 	"""
-	if not isdir(dirname):
-		os.mkdir(dirname)
+	global BeautifulSoup
+
+	if not isdir(dirPath):
+		os.mkdir(dirPath)
 
 	xdxf.xdxf_init()
 
 	if cleanHTML:
-		BeautifulSoup = get_beautiful_soup()
-		if not BeautifulSoup:
+		if BeautifulSoup is None:
+			loadBeautifulSoup()
+		if BeautifulSoup is None:
 			log.warning(
 				"cleanHTML option passed but BeautifulSoup not found.  " +
 				"to fix this run `sudo pip3 install lxml beautifulsoup4 html5lib`"

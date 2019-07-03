@@ -18,7 +18,7 @@ optionsProp = {
 depends = {}
 
 
-def entryCleanWinArabic(entry):
+def entryCleanWinArabic(entry: BaseEntry) -> Optional[BaseEntry]:
 	from pyglossary.arabic_utils import cleanWinArabicStr
 	entry.editFuncWord(cleanWinArabicStr)
 	entry.editFuncDefi(cleanWinArabicStr)
@@ -26,13 +26,13 @@ def entryCleanWinArabic(entry):
 
 
 def write(
-	glos,
-	filename,
-	writeInfo=True,
-	newline="",
-	encoding="",
-	resources=True,
-):
+	glos: GlossaryType,
+	filename: str,
+	writeInfo: bool = True,
+	newline: str = "",
+	encoding: str = "",
+	resources: bool = True,
+) -> None:
 	g = glos
 	entryFilterFunc = None
 	if encoding.lower() in ("", "utf8", "utf-8"):

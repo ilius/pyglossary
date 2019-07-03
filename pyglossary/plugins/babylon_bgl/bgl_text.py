@@ -292,7 +292,7 @@ def stripDollarIndexes(b_word):
 			summary: we must remove any sequence of dollar signs longer
 			than 1 chars
 			"""
-			# log.debug("stripDollarIndexes(%s):\nfound $$"%b_word)
+			# log.debug("stripDollarIndexes(%s):\nfound $$", b_word)
 			b_word_main += b_word[i:d0]
 			i = d1 + 1
 			while i < len(b_word) and b_word[i] == ord(b"$"):
@@ -302,9 +302,7 @@ def stripDollarIndexes(b_word):
 			continue
 		if b_word[d0+1:d1].strip(b"0123456789"):
 			# if has at least one non-digit char
-			# log.debug(
-			#	"stripDollarIndexes(%s):\nnon-digit between $$'%b_word
-			# )
+			# log.debug("stripDollarIndexes(%s):\nnon-digit between $$', b_word)
 			b_word_main += b_word[i:d1]
 			i = d1
 			continue

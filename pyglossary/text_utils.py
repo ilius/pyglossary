@@ -22,6 +22,13 @@ import os
 import re
 import logging
 
+from typing import (
+	AnyStr,
+	List,
+	Union,
+	Optional,
+)
+
 from . import core
 
 log = logging.getLogger("root")
@@ -30,15 +37,15 @@ startRed = "\x1b[31m"
 endFormat = "\x1b[0;0;0m"  # len=8
 
 
-def toBytes(s):
+def toBytes(s: AnyStr) -> bytes:
 	return bytes(s, "utf8") if isinstance(s, str) else bytes(s)
 
 
-def toStr(s):
+def toStr(s: AnyStr) -> str:
 	return str(s, "utf8") if isinstance(s, bytes) else str(s)
 
 
-def fixUtf8(st):
+def fixUtf8(st: AnyStr) -> str:
 	return toBytes(st).replace(b"\x00", b"").decode("utf-8", "replace")
 
 pattern_n_us = re.compile(r"((?<!\\)(?:\\\\)*)\\n")
@@ -47,7 +54,7 @@ pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|")
 pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|")
 
 
-def escapeNTB(st, bar=True):
+def escapeNTB(st: str, bar: bool = True) -> str:
 	"""
 		scapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
 	"""
@@ -59,7 +66,7 @@ def escapeNTB(st, bar=True):
 	return st
 
 
-def unescapeNTB(st, bar=False):
+def unescapeNTB(st: str, bar: bool = False) -> str:
 	"""
 		unscapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
 	"""
@@ -72,7 +79,7 @@ def unescapeNTB(st, bar=False):
 	return st
 
 
-def splitByBarUnescapeNTB(st):
+def splitByBarUnescapeNTB(st: str) -> List[str]:
 	"""
 		splits by "|" (and not "\\|") then unescapes Newline (\\n),
 			Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
@@ -85,12 +92,12 @@ def splitByBarUnescapeNTB(st):
 
 
 # return a message string describing the current exception
-def excMessage():
+def excMessage() -> str:
 	i = sys.exc_info()
 	return "{0}: {1}".format(i[0].__name__, i[1])
 
 
-def formatHMS(h, m, s):
+def formatHMS(h: int, m: int, s: int) -> str:
 	if h == 0:
 		if m == 0:
 			return "%.2d" % s
@@ -100,13 +107,13 @@ def formatHMS(h, m, s):
 		return "%.2d:%.2d:%.2d" % (h, m, s)
 
 
-def timeHMS(seconds):
+def timeHMS(seconds: Union[int, float]) -> str:
 	import time
 	(h, m, s) = time.gmtime(int(seconds))[3:6]
 	return formatHMS(h, m, s)
 
 
-def relTimeHMS(seconds):
+def relTimeHMS(seconds: Union[int, float]) -> str:
 	(days, s) = divmod(int(seconds), 24*3600)
 	(m, s) = divmod(s, 60)
 	(h, m) = divmod(m, 60)
@@ -115,7 +122,7 @@ def relTimeHMS(seconds):
 # ___________________________________________ #
 
 
-def intToBinStr(n, stLen=0):
+def intToBinStr(n: int, stLen: int = 0) -> bytes:
 	bs = []
 	while n > 0:
 		bs.insert(0, n & 0xff)
@@ -123,7 +130,7 @@ def intToBinStr(n, stLen=0):
 	return bytes(bs).rjust(stLen, b"\x00")
 
 
-def binStrToInt(bs):
+def binStrToInt(bs: AnyStr) -> int:
 	bs = toBytes(bs)
 	n = 0
 	for c in bs:
@@ -133,7 +140,7 @@ def binStrToInt(bs):
 
 # ___________________________________________ #
 
-def urlToPath(url):
+def urlToPath(url: str) -> str:
 	if not url.startswith("file://"):
 		return url
 	path = url[7:]
@@ -157,11 +164,11 @@ def urlToPath(url):
 	return path2
 
 
-def replacePostSpaceChar(st, ch):
+def replacePostSpaceChar(st: str, ch: str) -> str:
 	return st.replace(" "+ch, ch).replace(ch, ch+" ").replace(ch+"  ", ch+" ")
 
 
-def runDictzip(filename):
+def runDictzip(filename: str) -> None:
 	import subprocess
 	dictzipCmd = "/usr/bin/dictzip"  # Save in pref FIXME
 	if not os.path.isfile(dictzipCmd):
@@ -174,14 +181,14 @@ def runDictzip(filename):
 	).communicate()
 #	out = p3[1].read()
 #	err = p3[2].read()
-#	log.debug("dictzip command: \"%s\""%dictzipCmd)
+#	log.debug("dictzip command: \"%s\"", dictzipCmd)
 #	if err:
-#		log.error("dictzip error: %s"%err.replace("\n", " "))
+#		log.error("dictzip error: %s", err.replace("\n", " "))
 #	if out:
-#		log.error("dictzip error: %s"%out.replace("\n", " "))
+#		log.error("dictzip error: %s", out.replace("\n", " "))
 
 
-def isControlChar(y):
+def isControlChar(y: int) -> bool:
 	# y: char code
 	if y < 32 and chr(y) not in "\t\n\r\v":
 		return True
@@ -191,7 +198,7 @@ def isControlChar(y):
 	return False
 
 
-def isASCII(data, exclude=None):
+def isASCII(data: str, exclude: Optional[List[str]] = None) -> bool:
 	if exclude is None:
 		exclude = []
 	for c in data:
@@ -201,7 +208,7 @@ def isASCII(data, exclude=None):
 	return True
 
 
-def formatByteStr(text):
+def formatByteStr(text: str) -> str:
 	out = ""
 	for c in text:
 		out += "{0:0>2x}".format(ord(c)) + " "

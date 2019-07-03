@@ -46,7 +46,7 @@ def languageInfoDecode(b_value):
 	try:
 		return languageByCode[intValue]
 	except IndexError:
-		log.warning("read_type_3: unknown language code = %s" % intValue)
+		log.warning("read_type_3: unknown language code = %s", intValue)
 		return
 
 
@@ -55,7 +55,7 @@ def charsetInfoDecode(b_value):
 	try:
 		return charsetByCode[value]
 	except KeyError:
-		log.warning("read_type_3: unknown charset %s" % value)
+		log.warning("read_type_3: unknown charset %s", value)
 
 
 def aboutInfoDecode(b_value):
@@ -85,20 +85,23 @@ def utf16InfoDecode(b_value):
 	"""
 	if b_value[0] != 0:
 		log.warning(
-			"utf16InfoDecode: b_value=%s, null expected at 0" % list(b_value)
+			"utf16InfoDecode: b_value=%s, null expected at 0",
+			b_value,
 		)
 		return
 
 	if b_value[1] == 0:
 		if len(b_value) > 2:
 			log.warning(
-				"utf16InfoDecode: unexpected b_value size: %s" % len(b_value)
+				"utf16InfoDecode: unexpected b_value size: %s",
+				len(b_value),
 			)
 		return
 
 	elif b_value[1] > 1:
 		log.warning(
-			"utf16InfoDecode: b_value=%s, unexpected byte at 1" % list(b_value)
+			"utf16InfoDecode: b_value=%s, unexpected byte at 1",
+			list(b_value),
 		)
 		return
 
@@ -106,11 +109,13 @@ def utf16InfoDecode(b_value):
 	size = 2 * binStrToInt(b_value[2:6])
 	if tuple(b_value[6:8]) != (0, 0):
 		log.warning(
-			"utf16InfoDecode: b_value=%s, null expected at 6:8" % list(b_value)
+			"utf16InfoDecode: b_value=%s, null expected at 6:8",
+			list(b_value),
 		)
 	if size != len(b_value)-8:
 		log.warning(
-			"utf16InfoDecode: b_value=%s, size does not match" % list(b_value)
+			"utf16InfoDecode: b_value=%s, size does not match",
+			list(b_value),
 		)
 
 	return b_value[8:].decode("utf16")  # str

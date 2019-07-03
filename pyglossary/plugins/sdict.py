@@ -153,7 +153,7 @@ class Reader(object):
 			"copyright",
 			self.readUnit(self._header.copyright_offset),
 		)
-		log.debug("SDict word count: %s" % len(self))  # correct? FIXME
+		log.debug("SDict word count: %s", len(self))  # correct? FIXME
 
 	def close(self):
 		self._file.close()

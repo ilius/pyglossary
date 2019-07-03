@@ -37,20 +37,20 @@ optionsProp = {
 depends = {}
 
 
-def makeDir(direc):
+def makeDir(direc: str) -> None:
 	if not isdir(direc):
 		os.makedirs(direc)
 
 
 class Reader(object):
-	def __init__(self, glos):
+	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._clear()
 
-	def close(self):
+	def close(self) -> None:
 		self._clear()
 
-	def _clear(self):
+	def _clear(self) -> None:
 		self._filename = ""
 		self._encoding = "utf-8"
 		self._havePrevLink = True
@@ -59,7 +59,7 @@ class Reader(object):
 		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self, filename, encoding="utf-8"):
+	def open(self, filename: str, encoding: str = "utf-8") -> None:
 		from pyglossary.json_utils import jsonToOrderedData
 		if isdir(filename):
 			infoFname = join(filename, "info.json")
@@ -90,13 +90,13 @@ class Reader(object):
 			self._resDir = ""
 			self._resFileNames = []
 
-	def __len__(self):
+	def __len__(self) -> int:
 		if self._wordCount is None:
 			log.error("called len() on a reader which is not open")
 			return 0
 		return self._wordCount + len(self._resFileNames)
 
-	def __iter__(self):
+	def __iter__(self) -> Iterator[BaseEntry]:
 		if not self._rootPath:
 			log.error("iterating over a reader which is not open")
 			raise StopIteration
@@ -160,20 +160,20 @@ class Reader(object):
 
 
 class Writer(object):
-	def __init__(self, glos):
+	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._clear()
 
-	def close(self):
+	def close(self) -> None:
 		self._clear()
 
-	def _clear(self):
+	def _clear(self) -> None:
 		self._filename = ""
 		self._encoding = "utf-8"
 		self._hashSet = set()
 		# self._wordCount = None
 
-	def open(self, filename, encoding="utf-8", havePrevLink=True):
+	def open(self, filename: str, encoding: str = "utf-8", havePrevLink: bool = True):
 		if exists(filename):
 			raise ValueError("directory %r already exists" % filename)
 		self._filename = filename
@@ -183,10 +183,10 @@ class Writer(object):
 		os.makedirs(filename)
 		os.mkdir(self._resDir)
 
-	def hashToPath(self, h):
+	def hashToPath(self, h: str) -> str:
 		return h[:2] + "/" + h[2:]
 
-	def getEntryHash(self, entry):
+	def getEntryHash(self, entry: BaseEntry) -> str:
 		"""
 		return hash string for given entry
 		don't call it twice for one entry, if you do you will get a
@@ -205,7 +205,7 @@ class Writer(object):
 				return tmp_hash
 			index += 1
 
-	def saveEntry(self, thisEntry, thisHash, prevHash, nextHash):
+	def saveEntry(self, thisEntry: BaseEntry, thisHash: str, prevHash: str, nextHash: str) -> None:
 		dpath = join(self._filename, thisHash[:2])
 		makeDir(dpath)
 		with open(
@@ -225,14 +225,14 @@ class Writer(object):
 				thisEntry.getDefi(),
 			]))
 
-	def _iterNonDataEntries(self):
+	def _iterNonDataEntries(self) -> Iterator[BaseEntry]:
 		for entry in self._glos:
 			if entry.isData():
 				entry.save(self._resDir)
 			else:
 				yield entry
 
-	def write(self):
+	def write(self) -> None:
 		from collections import OrderedDict as odict
 		from pyglossary.json_utils import dataToPrettyJson
 

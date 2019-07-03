@@ -20,30 +20,59 @@
 
 
 # Gregorian calendar:
-#   http://en.wikipedia.org/wiki/Gregorian_calendar
+# http://en.wikipedia.org/wiki/Gregorian_calendar
 
 from datetime import datetime
 
-name = 'gregorian'
-desc = 'Gregorian'
-origLang = 'en'
+from typing import (
+	Tuple,
+	Optional,
+)
 
-monthName = ('January', 'February', 'March', 'April', 'May', 'June',
-			 'July', 'August', 'September', 'October', 'November', 'December')
+name = "gregorian"
+desc = "Gregorian"
+origLang = "en"
 
-monthNameAb = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-			   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+monthName = (
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December",
+)
+
+monthNameAb = (
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"May",
+	"Jun",
+	"Jul",
+	"Aug",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec",
+)
 
 
-def getMonthName(m, y=None):
+def getMonthName(m: int, y: Optional[int] = None) -> str:
 	return monthName.__getitem__(m - 1)
 
 
-def getMonthNameAb(m, y=None):
+def getMonthNameAb(m, y: Optional[int] = None) -> str:
 	return monthNameAb.__getitem__(m - 1)
 
 
-def getMonthsInYear(y):
+def getMonthsInYear(y: int) -> int:
 	return 12
 
 
@@ -55,36 +84,41 @@ avgYearLen = 365.2425  # FIXME
 options = ()
 
 
-def save():
+def save() -> None:
 	pass
 
 
-def isLeap(y):
-	if y < 1:
-		y += 1
+def isLeap(y: int) -> bool:
 	return y % 4 == 0 and not (y % 100 == 0 and y % 400 != 0)
 
 
-def to_jd(year, month, day):
-	if year > 0:  # > 1.5x faster
+def to_jd(year: int, month: int, day: int) -> int:
+	if 0 < year < 10000:  # > 1.5x faster
 		return datetime(year, month, day).toordinal() + 1721425
 
-	# Python 2.x and 3.x:
 	if month <= 2:
 		tm = 0
 	elif isLeap(year):
 		tm = -1
 	else:
 		tm = -2
-	# Python >= 2.5:
-	# tm = 0 if month <= 2 else (-1 if isLeap(year) else -2)
-	return epoch - 1 + 365*(year-1) + (year-1)//4 - (year-1)//100 + \
-		(year-1)//400 + (367*month-362)//12 + tm + day
+
+	return (
+		epoch - 1
+		+ 365 * (year - 1)
+		+ (year - 1) // 4
+		- (year - 1) // 100
+		+ (year - 1) // 400
+		+ (367 * month - 362) // 12
+		+ tm
+		+ day
+	)
 
 
-def jd_to(jd):
+def jd_to(jd: int) -> Tuple[int, int, int]:
 	ordinal = int(jd) - 1721425
-	if ordinal > 0:  # > 4x faster
+	if 0 < ordinal < 3652060:  # > 4x faster
+		# datetime(9999, 12, 31).toordinal() == 3652059
 		dt = datetime.fromordinal(ordinal)
 		return (dt.year, dt.month, dt.day)
 
@@ -92,28 +126,36 @@ def jd_to(jd):
 	qc, dqc = divmod(jd - epoch, 146097)  # qc ~~ quadricent
 	cent, dcent = divmod(dqc, 36524)
 	quad, dquad = divmod(dcent, 1461)
-	yindex = dquad//365  # divmod(dquad, 365)[0]
-	year = qc*400 + cent*100 + quad*4 + yindex + (cent != 4 and yindex != 4)
+	yindex = dquad // 365  # divmod(dquad, 365)[0]
+	year = (
+		qc * 400
+		+ cent * 100
+		+ quad * 4
+		+ yindex
+		+ (cent != 4 and yindex != 4)
+	)
 	yearday = jd - to_jd(year, 1, 1)
-	# Python 2.x and 3.x:
+
 	if jd < to_jd(year, 3, 1):
 		leapadj = 0
 	elif isLeap(year):
 		leapadj = 1
 	else:
 		leapadj = 2
-	# Python >= 2.5:
-	# leapadj = 0 if jd < to_jd(year, 3, 1) else (1 if isLeap(year) else 2)
-	month = ((yearday+leapadj) * 12 + 373) // 367
+
+	month = ((yearday + leapadj) * 12 + 373) // 367
 	day = jd - to_jd(year, month, 1) + 1
 	return int(year), int(month), int(day)
 
 
-def getMonthLen(y, m):
+def getMonthLen(y: int, m: int) -> int:
 	if m == 12:
-		return to_jd(y+1, 1, 1) - to_jd(y, 12, 1)
+		return to_jd(y + 1, 1, 1) - to_jd(y, 12, 1)
 	else:
-		return to_jd(y, m+1, 1) - to_jd(y, m, 1)
+		return to_jd(y, m + 1, 1) - to_jd(y, m, 1)
 
-J0001 = to_jd(1, 1, 1)
-J1970 = to_jd(1970, 1, 1)
+
+J0001 = 1721426 # to_jd(1, 1, 1)
+J1970 = 2440588 # to_jd(1970, 1, 1)
+
+J0001_epoch = -62135621220

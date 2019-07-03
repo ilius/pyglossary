@@ -10,6 +10,7 @@ import re
 import gzip
 from time import time as now
 from collections import Counter
+#from typing_extensions import Literal
 
 from pyglossary.text_utils import (
 	intToBinStr,
@@ -44,34 +45,26 @@ infoKeys = (
 )
 
 
-def sortKeyBytes(b_word):
-	"""
-	b_word is a bytes instance
-	"""
-	assert isinstance(b_word, bytes)
+def sortKeyBytes(b_word: bytes) -> Tuple[bytes, bytes]:
 	return (
 		b_word.lower(),
 		b_word,
 	)
 
 
-def sortKey(word):
-	"""
-	word is a str instance
-	"""
-	assert isinstance(word, str)
+def sortKey(word: str) -> Tuple[bytes, bytes]:
 	return sortKeyBytes(word.encode("utf-8"))
 
 
-def newlinesToSpace(text):
+def newlinesToSpace(text: str) -> str:
 	return re.sub("[\n\r]+", " ", text)
 
 
-def newlinesToBr(text):
+def newlinesToBr(text: str) -> str:
 	return re.sub("\n\r?|\r\n?", "<br>", text)
 
 
-def verifySameTypeSequence(s):
+def verifySameTypeSequence(s: str) -> bool:
 	if not s:
 		return True
 	if not s.isalpha():
@@ -81,32 +74,31 @@ def verifySameTypeSequence(s):
 
 
 class Reader(object):
-	def __init__(self, glos):
+	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self.clear()
 		"""
 		indexData format
-		indexData[i] - i-th record in index file
+		indexData[i] - i-th record in index file, a tuple (previously a list) of length 3
 		indexData[i][0] - b_word (bytes)
-		indexData[i][1] - definition block offset in dict file
-		indexData[i][2] - definition block size in dict file
-
-		REMOVE:
-		indexData[i][3] - list of definitions
-		indexData[i][3][j][0] - definition data
-		indexData[i][3][j][1] - definition type - "h", "m" or "x"
-		indexData[i][4] - list of synonyms (strings)
+		indexData[i][1] - definition block offset in dict file (int)
+		indexData[i][2] - definition block size in dict file (int)
+		REMOVED:
+			indexData[i][3] - list of definitions
+			indexData[i][3][j][0] - definition data
+			indexData[i][3][j][1] - definition type - "h", "m" or "x"
+			indexData[i][4] - list of synonyms (strings)
 
 		synDict:
 			a dict { wordIndex -> altList }
 		"""
 
-	def close(self):
+	def close(self) -> None:
 		if self._dictFile:
 			self._dictFile.close()
 		self.clear()
 
-	def clear(self):
+	def clear(self) -> None:
 		self._dictFile = None
 		self._filename = ""  # base file path, no extension
 		self._indexData = []
@@ -116,7 +108,7 @@ class Reader(object):
 		self._resFileNames = []
 		self._wordCount = None
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		if splitext(filename)[1].lower() == ".ifo":
 			self._filename = splitext(filename)[0]
 		else:
@@ -142,14 +134,14 @@ class Reader(object):
 			self._resFileNames = []
 		# self.readResources()
 
-	def __len__(self):
+	def __len__(self) -> int:
 		if self._wordCount is None:
 			raise RuntimeError(
 				"StarDict: len(reader) called while reader is not open"
 			)
 		return self._wordCount + len(self._resFileNames)
 
-	def readIfoFile(self):
+	def readIfoFile(self) -> None:
 		"""
 		.ifo file is a text file in utf-8 encoding
 		"""
@@ -162,11 +154,11 @@ class Reader(object):
 					continue
 				key, eq, value = line.partition("=")
 				if not (key and value):
-					log.warning("Invalid ifo file line: %s" % line)
+					log.warning("Invalid ifo file line: %s", line)
 					continue
 				self._glos.setInfo(key, value)
 
-	def readIdxFile(self):
+	def readIdxFile(self) -> List[Tuple[bytes, int, int]]:
 		if isfile(self._filename+".idx.gz"):
 			with gzip.open(self._filename+".idx.gz") as idxFile:
 				idxBytes = idxFile.read()
@@ -191,18 +183,18 @@ class Reader(object):
 			pos += 4
 			size = binStrToInt(idxBytes[pos:pos+4])
 			pos += 4
-			indexData.append([b_word, offset, size])
+			indexData.append((b_word, offset, size))
 
 		return indexData
 
-	def __iter__(self):
+	def __iter__(self) -> Iterator[BaseEntry]:
 		indexData = self._indexData
 		synDict = self._synDict
 		sametypesequence = self._sametypesequence
 		dictFile = self._dictFile
 
 		if not dictFile:
-			log.error("%s is not open, can not iterate" % self)
+			log.error("%s is not open, can not iterate", self)
 			raise StopIteration
 
 		if not indexData:
@@ -215,17 +207,13 @@ class Reader(object):
 
 			dictFile.seek(defiOffset)
 			if dictFile.tell() != defiOffset:
-				log.error(
-					"Unable to read definition for word \"%s\"" % b_word
-				)
+				log.error("Unable to read definition for word \"%s\"", b_word)
 				continue
 
 			b_defiBlock = dictFile.read(defiSize)
 
 			if len(b_defiBlock) != defiSize:
-				log.error(
-					"Unable to read definition for word \"%s\"" % b_word
-				)
+				log.error("Unable to read definition for word \"%s\"", b_word)
 				continue
 
 			if sametypesequence:
@@ -237,7 +225,7 @@ class Reader(object):
 				defisData = self.parseDefiBlockGeneral(b_defiBlock)
 
 			if defisData is None:
-				log.error("Data file is corrupted. Word \"%s\"" % b_word)
+				log.error("Data file is corrupted. Word \"%s\"", b_word)
 				continue
 
 			# defisData is a list of (b_defi, defiFormatCode) tuples
@@ -262,9 +250,7 @@ class Reader(object):
 			# defiFormat = Counter(defiFormats).most_common(1)[0][0]
 
 			if not defiFormat:
-				log.warning(
-					"Definition format %s is not supported" % defiFormat
-				)
+				log.warning("Definition format %s is not supported", defiFormat)
 
 			word = b_word.decode("utf-8")
 			try:
@@ -291,7 +277,7 @@ class Reader(object):
 						fromFile.read(),
 					)
 
-	def readSynFile(self):
+	def readSynFile(self) -> Dict[int, List[str]]:
 		"""
 		return synDict, a dict { wordIndex -> altList }
 		"""
@@ -330,7 +316,7 @@ class Reader(object):
 
 		return synDict
 
-	def parseDefiBlockCompact(self, b_block, sametypesequence):
+	def parseDefiBlockCompact(self, b_block: bytes, sametypesequence: str) -> List[Tuple[bytes, int]]:
 		"""
 		Parse definition block when sametypesequence option is specified.
 
@@ -338,12 +324,11 @@ class Reader(object):
 			where b_defi is a bytes instance
 			and defiFormatCode is int, so: defiFormat = chr(defiFormatCode)
 		"""
-		assert isinstance(b_block, bytes)
-		sametypesequence = sametypesequence.encode("utf-8")
-		assert len(sametypesequence) > 0
+		b_sametypesequence = sametypesequence.encode("utf-8")
+		assert len(b_sametypesequence) > 0
 		res = []
 		i = 0
-		for t in sametypesequence[:-1]:
+		for t in b_sametypesequence[:-1]:
 			if i >= len(b_block):
 				return None
 			if bytes([t]).islower():
@@ -366,7 +351,7 @@ class Reader(object):
 
 		if i >= len(b_block):
 			return None
-		t = sametypesequence[-1]
+		t = b_sametypesequence[-1]
 		if bytes([t]).islower():
 			if 0 in b_block[i:]:
 				return None
@@ -377,7 +362,7 @@ class Reader(object):
 
 		return res
 
-	def parseDefiBlockGeneral(self, b_block):
+	def parseDefiBlockGeneral(self, b_block: bytes) -> List[Tuple[bytes, int]]:
 		"""
 		Parse definition block when sametypesequence option is not specified.
 
@@ -421,15 +406,15 @@ class Reader(object):
 
 
 class Writer(object):
-	def __init__(self, glos):
+	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 
 	def write(
 		self,
-		filename,
-		dictzip=True,
-		sametypesequence="",
-	):
+		filename: str,
+		dictzip: bool = True,
+		sametypesequence: str = "", # type: Literal["", "h", "m"]
+	) -> None:
 		fileBasePath = ""
 		##
 		if splitext(filename)[1].lower() == ".ifo":
@@ -527,7 +512,7 @@ class Writer(object):
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(wordCount, indexFileSize, len(altIndexList),defiFormat)
 
-	def writeGeneral(self):
+	def writeGeneral(self) -> None:
 		"""
 		Build StarDict dictionary in general case.
 		Every item definition may consist of an arbitrary number of articles.
@@ -562,7 +547,6 @@ class Writer(object):
 			defiFormatCounter[defiFormat] += 1
 			if defiFormat not in ("m", "h"):
 				defiFormat = "m"
-			assert isinstance(defiFormat, str) and len(defiFormat) == 1
 
 			b_dictBlock = b""
 
@@ -597,14 +581,14 @@ class Writer(object):
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(wordCount, indexFileSize, len(altIndexList))
 
-	def writeSynFile(self, altIndexList):
+	def writeSynFile(self, altIndexList: List[Tuple[bytes, int]]) -> None:
 		"""
 		Build .syn file
 		"""
 		if not altIndexList:
 			return
 
-		log.info("Sorting %s synonyms..." % len(altIndexList))
+		log.info("Sorting %s synonyms...", len(altIndexList))
 		t0 = now()
 
 		altIndexList.sort(
@@ -614,29 +598,31 @@ class Writer(object):
 		# 0.63 seconds with my new sort key
 		# 0.20 seconds without key function (default sort)
 
-		log.info("Sorting %s synonyms took %.2f seconds" % (
+		log.info(
+			"Sorting %s synonyms took %.2f seconds",
 			len(altIndexList),
 			now() - t0,
-		))
-		log.info("Writing %s synonyms..." % len(altIndexList))
+		)
+		log.info("Writing %s synonyms...", len(altIndexList))
 		t0 = now()
 		with open(self._filename+".syn", "wb") as synFile:
 			synFile.write(b"".join([
 				b_alt + b"\x00" + intToBinStr(wordIndex, 4)
 				for b_alt, wordIndex in altIndexList
 			]))
-		log.info("Writing %s synonyms took %.2f seconds" % (
+		log.info(
+			"Writing %s synonyms took %.2f seconds",
 			len(altIndexList),
 			now() - t0,
-		))
+		)
 
 	def writeIfoFile(
 		self,
-		wordCount,
-		indexFileSize,
-		synwordcount,
-		sametypesequence="",
-	):
+		wordCount: int,
+		indexFileSize: int,
+		synwordcount: int,
+		sametypesequence: str = "", # type: Literal["", "h", "m"]
+	) -> None:
 		"""
 		Build .ifo file
 		"""
@@ -670,7 +656,7 @@ class Writer(object):
 		with open(self._filename+".ifo", "w", encoding="utf-8") as ifoFile:
 			ifoFile.write(ifoStr)
 
-	def glossaryHasAdditionalDefinitions(self):
+	def glossaryHasAdditionalDefinitions(self) -> bool:
 		"""
 		Search for additional definitions in the glossary.
 		We need to know if the glossary contains additional definitions
@@ -681,7 +667,7 @@ class Writer(object):
 				return True
 		return False
 
-	def detectMainDefinitionFormat(self):
+	def detectMainDefinitionFormat(self) -> Optional[str]:
 		"""
 		Scan main definitions of the glossary.
 		Return format common to all definitions: "h" or "m"

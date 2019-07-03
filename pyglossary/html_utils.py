@@ -1,8 +1,10 @@
-import logging
-log = logging.getLogger('root')
+from typing import AnyStr
 
-def toStr(s):
-	return str(s, 'utf8') if isinstance(s, bytes) else str(s)
+import logging
+log = logging.getLogger("root")
+
+def toStr(s: AnyStr) -> str:
+	return str(s, "utf8") if isinstance(s, bytes) else str(s)
 
 html_entity2str = {
 	"ldash": "–",

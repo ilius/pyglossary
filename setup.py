@@ -26,7 +26,7 @@ class my_install(install):
 		install.run(self)
 		if os.sep == "/":
 			binPath = join(self.install_scripts, "pyglossary")
-			log.info("creating script file \"%s\"" % binPath)
+			log.info("creating script file \"%s\"", binPath)
 			if not exists(self.install_scripts):
 				os.makedirs(self.install_scripts)
 				# let it fail on wrong permissions.

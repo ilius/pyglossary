@@ -880,7 +880,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			self.convertInputFormatCombo.setOptionsValues(readOptions)
 		# if editPath:
 		#	self.notebook.set_current_page(3)
-		#	log.info("Opening file "%s" for edit. please wait..."%editPath)
+		#	log.info("Opening file \"%s\" for edit. please wait...", editPath)
 		#	while gtk.events_pending():
 		#		gtk.main_iteration_do(False)
 		#	self.dbe_open(editPath, **readOptions)

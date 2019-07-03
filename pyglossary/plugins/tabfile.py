@@ -17,19 +17,13 @@ depends = {}
 
 
 class Reader(TextGlossaryReader):
-	def isInfoWord(self, word):
-		if isinstance(word, str):
-			return word.startswith("#")
-		else:
-			return False
+	def isInfoWord(self, word: str) -> bool:
+		return word.startswith("#")
 
-	def fixInfoWord(self, word):
-		if isinstance(word, str):
-			return word.lstrip("#")
-		else:
-			return word
+	def fixInfoWord(self, word: str) -> str:
+		return word.lstrip("#")
 
-	def nextPair(self):
+	def nextPair(self) -> Tuple[str, str]:
 		if not self._file:
 			raise StopIteration
 		line = self._file.readline()
@@ -59,12 +53,12 @@ class Reader(TextGlossaryReader):
 
 
 def write(
-	glos,
-	filename,
-	encoding="utf-8",
-	writeInfo=True,
-	resources=True,
-):
+	glos: GlossaryType,
+	filename: str,
+	encoding: str = "utf-8",
+	writeInfo: bool = True,
+	resources: bool = True,
+) -> bool:
 	return glos.writeTabfile(
 		filename,
 		encoding=encoding,
