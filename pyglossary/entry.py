@@ -101,7 +101,6 @@ class DataEntry(BaseEntry): # or Resource? FIXME
 		return (
 			self._fname,
 			"DATA",
-			self,
 		)
 
 
