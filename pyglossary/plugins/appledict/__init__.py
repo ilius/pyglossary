@@ -178,8 +178,8 @@ def write(
 	"""
 	global BeautifulSoup
 
-	if not isdir(dirPath):
-		os.mkdir(dirPath)
+	if not isdir(dirname):
+		os.mkdir(dirname)
 
 	xdxf.xdxf_init()
 
