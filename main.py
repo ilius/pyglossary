@@ -339,8 +339,10 @@ if args.outputFilename and writeOptions:
 		writeOptions[optName] = optValueNew
 
 
-log.pretty(prefOptions, 'prefOptions = ')
-log.pretty(convertOptions, 'convertOptions = ')
+if prefOptions:
+	log.debug("prefOptions = %s", prefOptions)
+if convertOptions:
+	log.debug("convertOptions = %s", convertOptions)
 
 
 """

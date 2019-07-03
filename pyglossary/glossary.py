@@ -1395,7 +1395,7 @@ class Glossary(GlossaryType):
 							defi = ", ".join(result) + "."
 					except Exception:
 						log.exception("")
-						log.pretty(result, "result = ")
+						log.debug("result = %s", result)
 						return
 					saveFile.write("%s\t%s\n" % (word, defi))
 				yield wordI
