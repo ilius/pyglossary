@@ -1062,6 +1062,7 @@ class Glossary(GlossaryType):
 			if entry.isData():
 				if resources:
 					entry.save(myResDir)
+				continue
 
 			if entryFilterFunc:
 				entry = entryFilterFunc(entry)
