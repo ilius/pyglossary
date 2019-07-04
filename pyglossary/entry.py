@@ -9,7 +9,6 @@ from os.path import (
 )
 from typing import (
 	Optional,
-	Union,
 	Tuple,
 	List,
 	Dict,
@@ -18,18 +17,11 @@ from typing import (
 )
 
 
-from .entry_base import BaseEntry
-
-MultiStr = Union[str, List[str]]
-
-RawEntryType = Union[
-	Tuple[MultiStr, MultiStr],
-	Tuple[MultiStr, MultiStr, str],
-]
+from .entry_base import BaseEntry, MultiStr, RawEntryType
 
 
 class DataEntry(BaseEntry): # or Resource? FIXME
-	def isData(self):
+	def isData(self) -> bool:
 		return True
 
 	def __init__(self, fname: str, data: bytes, inTmp: bool = False) -> None:
@@ -77,13 +69,14 @@ class DataEntry(BaseEntry): # or Resource? FIXME
 		return [self._fname]
 
 	def getDefi(self) -> str:
-		return "File: %s" % self._fname  
+		return "File: %s" % self._fname
 
 	def getDefis(self) -> List[str]:
 		return [self.getDefi()]
 
-	def getDefiFormat(self):
-		return "b" # "m" or "b" (binary) FIXME
+	def getDefiFormat(self) -> str:
+		# TODO: type: Literal["b", "m"]
+		return "b"
 
 	def setDefiFormat(self, defiFormat):
 		pass
@@ -114,7 +107,7 @@ class DataEntry(BaseEntry): # or Resource? FIXME
 	def replace(self, source: str, target: str) -> None:
 		pass
 
-	def getRaw(self) -> Tuple[str, str]:
+	def getRaw(self) -> RawEntryType:
 		return (
 			self._fname,
 			"DATA",
@@ -139,20 +132,25 @@ class Entry(BaseEntry):
 
 	def _join(self, parts: List[str]) -> str:
 		return self.sep.join([
-			part.replace(self.sep, "\\"+self.sep)
+			part.replace(self.sep, "\\" + self.sep)
 			for part in parts
 		])
 
 	@staticmethod
-	def getEntrySortKey(key: Callable[[str], Any] = None) -> Callable[[BaseEntry], Any]:
+	def getEntrySortKey(
+		key: Optional[Callable[[str], Any]] = None,
+	) -> Callable[[BaseEntry], Any]:
 		if key:
 			return lambda entry: key(entry.getWords()[0])
 		else:
 			return lambda entry: entry.getWords()[0]
 
 	@staticmethod
-	def getRawEntrySortKey(key: Callable[[str], Any] = None) -> Callable[[Tuple], str]:
-		# here `x` is raw entity, meaning a tuple of form (word, defi) or (word, defi, defiFormat)
+	def getRawEntrySortKey(
+		key: Optional[Callable[[str], Any]] = None,
+	) -> Callable[[Tuple], str]:
+		# here `x` is raw entity, meaning a tuple of form (word, defi) or
+		# (word, defi, defiFormat)
 		# so x[0] is word(s), that can be a str (one word),
 		# or a list or tuple (one word with or more alternaties)
 		# FIXME: drop the case that x[0] is tuple
@@ -192,7 +190,7 @@ class Entry(BaseEntry):
 		elif not isinstance(defi, str):
 			raise TypeError("invalid defi type %s" % type(defi))
 
-		if not defiFormat in ("m", "h", "x"):
+		if defiFormat not in ("m", "h", "x"):
 			raise ValueError("invalid defiFormat %r" % defiFormat)
 
 		self._word = word
@@ -239,13 +237,14 @@ class Entry(BaseEntry):
 		else:
 			return self._defi
 
-	def getDefiFormat(self):
+	def getDefiFormat(self) -> str:
 		"""
 			returns definition format:
 				"m": plain text
 				"h": html
 				"x": xdxf
 		"""
+		# TODO: type: Literal["m", "h", "x"]
 		return self._defiFormat
 
 	def setDefiFormat(self, defiFormat) -> str:
@@ -264,7 +263,7 @@ class Entry(BaseEntry):
 		if re.match(self.htmlPattern, defi):
 			self._defiFormat = "h"
 
-	def addAlt(self, alt: str):
+	def addAlt(self, alt: str) -> None:
 		words = self.getWords()
 		words.append(alt)
 		self._word = words
