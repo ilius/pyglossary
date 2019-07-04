@@ -356,7 +356,7 @@ class EbookWriter(object):
 		keep=False,
 		group_by_prefix_length=2,
 		include_index_page=False,
-		compress=False,
+		compress=True,
 		apply_css="", # path to css file, or ""
 		cover_path="", # path to cover file, or ""
 	):
