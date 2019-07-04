@@ -55,7 +55,7 @@ def import_xml_stuff():
 	tostring = etree.tostring
 
 
-def read(glos, filename):
+def read(glos: GlossaryType, filename: str):
 	"""
 	new format
 	<xdxf ...>
@@ -98,7 +98,7 @@ def read(glos, filename):
 		read_xdxf_old(glos, xdxf)
 
 
-def read_metadata_old(glos, xdxf):
+def read_metadata_old(glos: GlossaryType, xdxf):
 	full_name = xdxf.find("full_name").text
 	description = xdxf.find("description").text
 	if full_name:
@@ -107,11 +107,11 @@ def read_metadata_old(glos, xdxf):
 		glos.setInfo("description", description)
 
 
-def read_xdxf_old(glos, xdxf):
+def read_xdxf_old(glos: GlossaryType, xdxf):
 	add_articles(glos, xdxf.iterfind("ar"))
 
 
-def read_metadata_new(glos, xdxf):
+def read_metadata_new(glos: GlossaryType, xdxf):
 	meta_info = xdxf.find("meta_info")
 	if meta_info is None:
 		raise ValueError("meta_info not found")
@@ -127,11 +127,11 @@ def read_metadata_new(glos, xdxf):
 		glos.setInfo("description", description)
 
 
-def read_xdxf_new(glos, xdxf):
+def read_xdxf_new(glos: GlossaryType, xdxf):
 	add_articles(glos, xdxf.find("lexicon").iterfind("ar"))
 
 
-def add_articles(glos, articles):
+def add_articles(glos: GlossaryType, articles):
 	"""
 
 	:param articles: iterator on <ar> tags

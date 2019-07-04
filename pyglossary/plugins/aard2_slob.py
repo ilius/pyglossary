@@ -67,7 +67,12 @@ class Reader(object):
 		return Entry(word, defi)
 
 
-def write(glos, filename, compression="", content_type=""):
+def write(
+	glos: GlossaryType,
+	filename: str,
+	compression: str = "",
+	content_type: str = "",
+):
 	from pyglossary.plugin_lib import slob
 	kwargs = {}
 	if compression:

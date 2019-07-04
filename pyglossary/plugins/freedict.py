@@ -10,7 +10,7 @@ optionsProp = {}
 depends = {}
 
 
-def write(glos, filename):
+def write(glos: GlossaryType, filename: str):
 	fp = open(filename, "w")
 
 	fp.write("""<?xml version="1.0" encoding="UTF-8"?>

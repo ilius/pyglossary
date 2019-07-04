@@ -282,7 +282,13 @@ def unwrap_quotes(s):
 	return wrapped_in_quotes_re.sub(r'\2', s)
 
 
-def read(glos, filename, encoding="", audio=False, onlyFixMarkUp=False):
+def read(
+	glos: GlossaryType,
+	filename: str,
+	encoding: str = "",
+	audio: bool = False,
+	onlyFixMarkUp: bool = False,
+):
 	if onlyFixMarkUp:
 		def clean_tags(line, audio):
 			return _parse(line)

@@ -12,7 +12,7 @@ optionsProp = {
 depends = {}
 
 
-def write(glos, filename, dicIndex=16):
+def write(glos: GlossaryType, filename: str, dicIndex=16):
 	if not isinstance(dicIndex, int):
 		raise TypeError(
 			'invalid dicIndex=%r, must be integer' % dicIndex

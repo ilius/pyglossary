@@ -81,7 +81,7 @@ class Reader(TextGlossaryReader):
 			return word, defi
 
 
-def read(glos, filename):
+def read(glos: GlossaryType, filename: str):
 	glos.setDefaultDefiFormat("h")
 	fileObj = FileLineWrapper(open(filename))
 	entryLines = []
@@ -132,10 +132,10 @@ def read(glos, filename):
 
 
 def write(
-	glos,
-	filename,
-	newline="\n",
-	resources=True,
+	glos: GlossaryType,
+	filename: str,
+	newline: str = "\n",
+	resources: str = True,
 ):
 	g = glos
 	head = "\n".join([

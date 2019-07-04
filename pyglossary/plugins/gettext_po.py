@@ -13,7 +13,7 @@ depends = {}
 
 
 class Reader(object):
-	def __init__(self, glos, hasInfo=True):
+	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self.clear()
 
@@ -85,7 +85,7 @@ class Reader(object):
 		self._wordCount = wordCount
 
 
-def write(glos, filename, resources=True):
+def write(glos: GlossaryType, filename: str, resources: bool = True):
 	from polib import escape as po_escape
 	with open(filename, "w") as toFile:
 		toFile.write("#\nmsgid ""\nmsgstr ""\n")

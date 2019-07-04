@@ -26,6 +26,8 @@ import re
 import pkgutil
 import shutil
 
+from typing import TextIO
+
 from pyglossary.plugins.formats_common import *
 from ._dict import *
 
@@ -79,7 +81,7 @@ def abspath_or_None(path):
 	return os.path.abspath(os.path.expanduser(path)) if path else None
 
 
-def write_header(glos, toFile, frontBackMatter):
+def write_header(glos: GlossaryType, toFile: TextIO, frontBackMatter: Optional[str]):
 	# write header
 	toFile.write(
 		'<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -124,16 +126,16 @@ def write_css(fname, css_file):
 
 
 def write(
-	glos,
-	dirname,
-	cleanHTML=True,
-	css="",
-	xsl="",
-	defaultPrefs=None,
-	prefsHTML="",
-	frontBackMatter="",
-	jing=False,
-	indexes="",# FIXME: rename to indexes_lang?
+	glos: GlossaryType,
+	dirname: str,
+	cleanHTML: bool = True,
+	css: str = "",
+	xsl: str = "",
+	defaultPrefs: Optional[Dict] = None,
+	prefsHTML: str = "",
+	frontBackMatter: str = "",
+	jing: bool = False,
+	indexes: str = "",# FIXME: rename to indexes_lang?
 ):
 	"""
 	write glossary to Apple dictionary .xml and supporting files.
