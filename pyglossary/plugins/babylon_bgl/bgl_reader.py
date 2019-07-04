@@ -474,14 +474,19 @@ class BglReader(object):
 		glos.setInfo("targetCharset", "UTF-8")
 		###
 		for key, value in self.info.items():
+			if value == "":
+				continue # TODO: a bool flag to add empty value infos?
 			if key in {
 				"creationTime",
 				"middleUpdated",
 				"lastUpdated",
+				"utf8Encoding",
+				"spellingAlternatives",
+				"caseSensitive",
 			}:
 				key = "bgl_" + key
 			try:
-				glos.setInfo(key, value)
+				glos.setInfo(key, str(value))
 			except:
 				log.exception("key = %s", key)
 
