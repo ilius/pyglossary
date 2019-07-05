@@ -1407,6 +1407,9 @@ class Glossary(GlossaryType):
 		self.progressEnd()
 		yield wordCount
 
+	@classmethod
+	def init(cls):
+		cls.loadPlugins(join(dirname(__file__), "plugins"))
+		cls.loadPlugins(userPluginsDir)
 
-Glossary.loadPlugins(join(dirname(__file__), "plugins"))
-Glossary.loadPlugins(userPluginsDir)
+Glossary.init()
