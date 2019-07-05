@@ -14,6 +14,7 @@ class Option(object):
 		customValue: bool = False,
 		values: Optional[List[str]] = None,
 		comment: str = "",
+		disabled: bool = False,
 	):
 		if values is None:
 			customValue = True # otherwise there would not be any valid value
@@ -21,6 +22,7 @@ class Option(object):
 		self.values = values
 		self.customValue = customValue
 		self.comment = comment
+		self.disabled = disabled
 
 	def evaluate(self, raw: str) -> Tuple[Any, bool]:
 		"returns (value, isValid)"

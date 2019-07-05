@@ -163,6 +163,9 @@ class Glossary(GlossaryType):
 				log.warning("skipping option %s in plugin %s" % (name, format))
 				continue
 			prop = optionsProp[name]
+			if prop.disabled:
+				log.debug("skipping disabled option %s in %s plugin", name, format)
+				continue
 			if not prop.validate(param.default):
 				log.warning("invalid default value for option: %s = %r" % (
 					name,
