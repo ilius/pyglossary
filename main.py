@@ -212,6 +212,9 @@ parser.add_argument(
 args = parser.parse_args()
 
 log = logging.getLogger('root')
+
+defaultVerbosity = log.getVerbosity()
+
 log.setVerbosity(args.verbosity)
 log.addHandler(
 	core.StdLogHandler(noColor=args.noColor),
@@ -227,6 +230,9 @@ core.checkCreateConfDir()
 
 from pyglossary.glossary import Glossary
 from ui.ui_cmd import COMMAND, help, parseFormatOptionsStr
+
+if args.verbosity != defaultVerbosity:
+	Glossary.init()
 
 ##############################
 
