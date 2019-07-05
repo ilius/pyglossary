@@ -438,7 +438,10 @@ class Glossary(GlossaryType):
 			if progressbar:
 				self.progressEnd()
 
-	def _applyEntryFiltersGen(self, gen: Iterator[BaseEntry]) -> Iterator[BaseEntry]:
+	def _applyEntryFiltersGen(
+		self,
+		gen: Iterator[BaseEntry],
+	) -> Iterator[BaseEntry]:
 		for entry in gen:
 			if not entry:
 				continue
@@ -706,7 +709,11 @@ class Glossary(GlossaryType):
 
 		self._iter = self._applyEntryFiltersGen(gen)
 
-	def sortWords(self, key: Optional[Callable[[str], Any]] = None, cacheSize: int = 0) -> None:
+	def sortWords(
+		self,
+		key: Optional[Callable[[str], Any]] = None,
+		cacheSize: int = 0,
+	) -> None:
 		# only sort by main word, or list of words + alternates? FIXME
 		if self._readers:
 			self._sortKey = key
@@ -719,7 +726,12 @@ class Glossary(GlossaryType):
 		self._updateIter(sort=True)
 
 	@classmethod
-	def detectOutputFormat(cls, filename: str = "", format: str = "", inputFilename: str = "") -> Optional[Tuple[str, str, str]]:
+	def detectOutputFormat(
+		cls,
+		filename: str = "",
+		format: str = "",
+		inputFilename: str = "",
+	) -> Optional[Tuple[str, str, str]]:
 		"""
 		returns (filename, format, archiveType) or None
 		"""
@@ -1418,5 +1430,6 @@ class Glossary(GlossaryType):
 		cls.writeDesc = []
 		cls.loadPlugins(join(dirname(__file__), "plugins"))
 		cls.loadPlugins(userPluginsDir)
+
 
 Glossary.init()
