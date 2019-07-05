@@ -113,8 +113,6 @@ class Glossary(GlossaryType):
 		"license": "copyright",
 	}
 	plugins = {}  # format => pluginModule
-	readFormats = []
-	writeFormats = []
 	readFunctions = {}
 	readerClasses = {}
 	writeFunctions = {}
@@ -125,13 +123,16 @@ class Glossary(GlossaryType):
 	formatsWriteOptions = {}
 	formatsOptionsProp = {}
 	formatsDepends = {}
+	descFormat = {}
+	descExt = {}
+	extFormat = {}
+
+	readFormats = []
+	writeFormats = []
 	readExt = []
 	writeExt = []
 	readDesc = []
 	writeDesc = []
-	descFormat = {}
-	descExt = {}
-	extFormat = {}
 
 	@classmethod
 	def loadPlugins(cls: ClassVar, directory: str) -> None:
@@ -1409,6 +1410,12 @@ class Glossary(GlossaryType):
 
 	@classmethod
 	def init(cls):
+		cls.readFormats = []
+		cls.writeFormats = []
+		cls.readExt = []
+		cls.writeExt = []
+		cls.readDesc = []
+		cls.writeDesc = []
 		cls.loadPlugins(join(dirname(__file__), "plugins"))
 		cls.loadPlugins(userPluginsDir)
 
