@@ -1,6 +1,16 @@
 @charset "UTF-8";
 @namespace d url(http://www.apple.com/DTDs/DictionaryService-1.0.rng);
 
+@media (prefers-color-scheme: dark) {
+	html {
+		-apple-color-filter: apple-invert-lightness();
+	}
+
+	img {
+		filter: invert(0%);
+	}
+}
+
 d|entry {
 }
 
