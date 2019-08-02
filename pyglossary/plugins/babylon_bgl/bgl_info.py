@@ -71,6 +71,14 @@ def aboutInfoDecode(b_value):
 	}
 
 
+def titleInfoDecode(b_value):
+	try:
+		return b_value.decode("utf-8")
+	except:
+		# what encoding can it have?
+		return str(b_value)
+
+
 def utf16InfoDecode(b_value):
 	"""
 		b_value is byte array
@@ -189,6 +197,7 @@ infoKeyDecodeMethods = {
 	"purchaseLicenseMsg": utf16InfoDecode,
 	"licenseExpiredMsg": utf16InfoDecode,
 	"licenseExpiredMsg": utf16InfoDecode,
+	"title": titleInfoDecode,
 	"titleWide": utf16InfoDecode,
 	"authorWide": utf16InfoDecode,  # a list of "|"-separated values
 	"flags": flagsInfoDecode,
