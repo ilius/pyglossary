@@ -79,6 +79,8 @@ def write(
 		kwargs["compression"] = compression
 	# must not pass compression=None to slob.create()
 	with slob.create(filename, **kwargs) as slobWriter:
+		name = glos.getInfo("name")
+		slobWriter.tag("label", toStr(name))
 		for entry in glos:
 			words = entry.getWords()
 			b_defi = entry.getDefi().encode("utf-8")
