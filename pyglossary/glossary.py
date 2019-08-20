@@ -432,6 +432,8 @@ class Glossary(GlossaryType):
 					log.exception("")
 				if wordCount:
 					progressbar = True
+				else:
+					log.warning("Progress Bar is disabled because input plugin does not support it")
 			if progressbar:
 				self.progressInit("Converting")
 			try:
