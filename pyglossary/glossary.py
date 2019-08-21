@@ -592,7 +592,7 @@ class Glossary(GlossaryType):
 		###
 		format = self.detectInputFormat(filename, format=format)
 		if not format:
-			log.error("Unknown extension \"%s\" for read support!", ext)
+			log.error("Could not detect input format from file name: \"%s\"", filename)
 			return False
 
 		validOptionKeys = self.formatsReadOptions[format]
