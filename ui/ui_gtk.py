@@ -477,8 +477,9 @@ class GtkTextviewLogHandler(logging.Handler):
 	def getTag(self, levelname):
 		return self.buffers[levelname].get_tag_table().lookup(levelname)
 
-	def setColor(self, levelname, color):  # FIXME
-		self.getTag(levelname).set_property("foreground-gdk", color)
+	def setColor(self, levelname: str, rgba: gdk.RGBA) -> None:
+		self.getTag(levelname).set_property("foreground-rgba", rgba)
+		# foreground-gdk is deprecated since Gtk 3.4
 
 	def emit(self, record):
 		msg = record.getMessage()
@@ -807,11 +808,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			gdk.RGBA(0, 0, 0, 1),
 		)
 		###
-		handler.setColor("CRITICAL", color_parse("red"))
-		handler.setColor("ERROR", color_parse("red"))
-		handler.setColor("WARNING", color_parse("yellow"))
-		handler.setColor("INFO", color_parse("white"))
-		handler.setColor("DEBUG", color_parse("white"))
+		handler.setColor("CRITICAL", rgba_parse("red"))
+		handler.setColor("ERROR", rgba_parse("red"))
+		handler.setColor("WARNING", rgba_parse("yellow"))
+		handler.setColor("INFO", rgba_parse("white"))
+		handler.setColor("DEBUG", rgba_parse("white"))
 		###
 		textview.get_buffer().set_text("Output & Error Console:\n")
 		textview.set_editable(False)

@@ -42,11 +42,15 @@ def imageFromIconName(iconName: str, size: int, nonStock=False) -> gtk.Image:
 		return gtk.Image.new_from_icon_name(iconName, size)
 
 
-def color_parse(colorStr):
+def rgba_parse(colorStr):
 	rgba = gdk.RGBA()
 	if not rgba.parse(colorStr):
 		raise ValueError("bad color string %r" % colorStr)
-	return rgba.to_color()
+	return rgba
+
+
+def color_parse(colorStr):
+	return rgba_parse(colorStr).to_color()
 
 
 def pack(box, child, expand=False, fill=False, padding=0):
