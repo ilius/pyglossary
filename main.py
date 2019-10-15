@@ -158,6 +158,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+	'--skip-resources',
+	dest='skipResources',
+	action='store_true',
+	default=None,
+	help='skip resources (images, audio, etc)',
+)
+parser.add_argument(
 	'--utf8-check',
 	dest='utf8Check',
 	action='store_true',
@@ -182,13 +189,6 @@ parser.add_argument(
 	action='store_false',
 	default=None,
 	help='don\'t lowercase words before writing',
-)
-parser.add_argument(
-	'--skip-resources',
-	dest='skipResources',
-	action='store_true',
-	default=None,
-	help='skip resources (images, audio, etc)',
 )
 
 parser.add_argument(
