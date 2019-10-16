@@ -108,10 +108,18 @@ Or
 	python3 main.py --ui=tk
 
 
-Format-specific Requirements
+Feature-specific Requirements
 ----------------------------
 
+-	**Using `--remove-html-all` flag**
+
+	`sudo pip3 install lxml beautifulsoup4`
+
 -	**Reading from XDXF**
+
+	`sudo pip3 install lxml`
+
+-	**Reading from AppleDict Binary (.dictionary)**
 
 	`sudo pip3 install lxml`
 
