@@ -18,7 +18,6 @@ from formats_common import *
 
 from struct import unpack
 from zlib import decompress
-import re
 
 enable = True
 format = "AppleDictBin"
@@ -96,14 +95,15 @@ class Reader(object):
 			while pos < len(buf):
 				chunkSize, = unpack("i", buf[pos:pos+4])
 				entryFull = buf[pos:pos+chunkSize].decode("utf-8")
-				word = re.search('d:title="(.*?)"', entryFull).group(1)
 				entryRoot = etree.fromstring(entryFull)
 				entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
 				if not entryElems:
 					continue
+				entryElem = entryElems[0]
+				word = entryElem.xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
 				defi = "".join([
 					etree.tostring(child).decode("utf8")
-					for child in entryElems[0].iterdescendants()
+					for child in entryElem.iterdescendants()
 				])
 				yield self._glos.newEntry(
 					word,
