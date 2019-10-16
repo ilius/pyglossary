@@ -32,7 +32,7 @@ from pyglossary import VERSION
 from pyglossary.text_utils import startRed, endFormat
 
 # the first thing to do is to set up logger.
-# other modules also using logger 'root', so it's essential to set it up prior
+# other modules also using logger "root", so it is essential to set it up prior
 # to importing anything else; with exception to pyglossary.core which sets up
 # logger class, and so should be done before actually initializing logger.
 # verbosity level may be given on command line, so we have to parse arguments
@@ -57,138 +57,138 @@ from pyglossary.text_utils import startRed, endFormat
 parser = argparse.ArgumentParser(add_help=False)
 
 parser.add_argument(
-	'-v',
-	'--verbosity',
-	action='store',
-	dest='verbosity',
+	"-v",
+	"--verbosity",
+	action="store",
+	dest="verbosity",
 	type=int,
 	choices=(0, 1, 2, 3, 4),
 	required=False,
 	default=3,  # FIXME
 )
 parser.add_argument(
-	'--version',
-	action='version',
-	version='PyGlossary %s' % VERSION,
+	"--version",
+	action="version",
+	version="PyGlossary %s" % VERSION,
 )
 parser.add_argument(
-	'-h',
-	'--help',
-	dest='help',
-	action='store_true',
+	"-h",
+	"--help",
+	dest="help",
+	action="store_true",
 )
 parser.add_argument(
-	'-u',
-	'--ui',
-	dest='ui_type',
-	default='auto',
+	"-u",
+	"--ui",
+	dest="ui_type",
+	default="auto",
 	choices=(
-		'cmd',
-		'gtk',
-		'tk',
-		# 'qt',
-		'auto',
-		'none',
+		"cmd",
+		"gtk",
+		"tk",
+		# "qt",
+		"auto",
+		"none",
 	),
 )
 parser.add_argument(
-	'-r',
-	'--read-options',
-	dest='readOptions',
-	default='',
+	"-r",
+	"--read-options",
+	dest="readOptions",
+	default="",
 )
 parser.add_argument(
-	'-w',
-	'--write-options',
-	dest='writeOptions',
-	default='',
+	"-w",
+	"--write-options",
+	dest="writeOptions",
+	default="",
 )
 parser.add_argument(
-	'--read-format',
-	dest='inputFormat',
+	"--read-format",
+	dest="inputFormat",
 )
 parser.add_argument(
-	'--write-format',
-	dest='outputFormat',
-	action='store',
+	"--write-format",
+	dest="outputFormat",
+	action="store",
 )
 parser.add_argument(
-	'--direct',
-	dest='direct',
-	action='store_true',
+	"--direct",
+	dest="direct",
+	action="store_true",
 	default=None,
-	help='if possible, convert directly without loading into memory',
+	help="if possible, convert directly without loading into memory",
 )
 parser.add_argument(
-	'--indirect',
-	dest='direct',
-	action='store_false',
+	"--indirect",
+	dest="direct",
+	action="store_false",
 	default=None,
-	help='disable `direct` mode, load full data into memory before writing'
-		 ', this is default',
+	help="disable `direct` mode, load full data into memory before writing"
+		 ", this is default",
 )
 parser.add_argument(
-	'--reverse',
-	dest='reverse',
-	action='store_true',
+	"--reverse",
+	dest="reverse",
+	action="store_true",
 )
 parser.add_argument(
-	'--no-progress-bar',
-	dest='progressbar',
-	action='store_false',
-	default=None,
-)
-parser.add_argument(
-	'--sort',
-	dest='sort',
-	action='store_true',
+	"--no-progress-bar",
+	dest="progressbar",
+	action="store_false",
 	default=None,
 )
 parser.add_argument(
-	'--no-sort',
-	dest='sort',
-	action='store_false',
+	"--sort",
+	dest="sort",
+	action="store_true",
 	default=None,
 )
 parser.add_argument(
-	'--sort-cache-size',
-	dest='sortCacheSize',
+	"--no-sort",
+	dest="sort",
+	action="store_false",
+	default=None,
+)
+parser.add_argument(
+	"--sort-cache-size",
+	dest="sortCacheSize",
 	type=int,
 	default=None,
 )
 
 parser.add_argument(
-	'--skip-resources',
-	dest='skipResources',
-	action='store_true',
+	"--skip-resources",
+	dest="skipResources",
+	action="store_true",
 	default=None,
-	help='skip resources (images, audio, etc)',
+	help="skip resources (images, audio, etc)",
 )
 parser.add_argument(
-	'--utf8-check',
-	dest='utf8Check',
-	action='store_true',
-	default=None,
-)
-parser.add_argument(
-	'--no-utf8-check',
-	dest='utf8Check',
-	action='store_false',
+	"--utf8-check",
+	dest="utf8Check",
+	action="store_true",
 	default=None,
 )
 parser.add_argument(
-	'--lower',
-	dest='lower',
-	action='store_true',
+	"--no-utf8-check",
+	dest="utf8Check",
+	action="store_false",
 	default=None,
-	help='lowercase words before writing',
 )
 parser.add_argument(
-	'--no-lower',
-	dest='lower',
-	action='store_false',
+	"--lower",
+	dest="lower",
+	action="store_true",
 	default=None,
-	help='don\'t lowercase words before writing',
+	help="lowercase words before writing",
+)
+parser.add_argument(
+	"--no-lower",
+	dest="lower",
+	action="store_false",
+	default=None,
+	help="do not lowercase words before writing",
 )
 parser.add_argument(
 	"--remove-html",
@@ -204,26 +204,26 @@ parser.add_argument(
 
 
 parser.add_argument(
-	'--no-color',
-	dest='noColor',
-	action='store_true',
+	"--no-color",
+	dest="noColor",
+	action="store_true",
 )
 parser.add_argument(
-	'inputFilename',
-	action='store',
-	default='',
-	nargs='?',
+	"inputFilename",
+	action="store",
+	default="",
+	nargs="?",
 )
 parser.add_argument(
-	'outputFilename',
-	action='store',
-	default='',
-	nargs='?',
+	"outputFilename",
+	action="store",
+	default="",
+	nargs="?",
 )
 
 args = parser.parse_args()
 
-log = logging.getLogger('root')
+log = logging.getLogger("root")
 
 defaultVerbosity = log.getVerbosity()
 
@@ -250,19 +250,19 @@ if args.verbosity != defaultVerbosity:
 
 
 def dashToCamelCase(text):  # converts "hello-PYTHON-user" to "helloPythonUser"
-	parts = text.split('-')
+	parts = text.split("-")
 	parts[0] = parts[0].lower()
 	for i in range(1, len(parts)):
 		parts[i] = parts[i].capitalize()
-	return ''.join(parts)
+	return "".join(parts)
 
 ui_list = (
-	'gtk',
-	'tk',
-	'qt',
+	"gtk",
+	"tk",
+	"qt",
 )
 
-# log.info('PyGlossary %s'%VERSION)
+# log.info("PyGlossary %s"%VERSION)
 
 
 if args.help:
@@ -270,7 +270,7 @@ if args.help:
 	sys.exit(0)
 
 
-if os.sep != '/':
+if os.sep != "/":
 	args.noColor = True
 
 
@@ -291,20 +291,20 @@ writeOptions = parseFormatOptionsStr(args.writeOptions)
 
 # FIXME
 prefOptionsKeys = (
-	# 'verbosity',
-	'utf8Check',
-	'lower',
-	'skipResources',
-	'remove_html',
-	'remove_html_all',
+	# "verbosity",
+	"utf8Check",
+	"lower",
+	"skipResources",
+	"remove_html",
+	"remove_html_all",
 )
 
 convertOptionsKeys = (
-	'direct',
-	'progressbar',
-	'sort',
-	'sortCacheSize',
-	# 'sortKey',# or sortAlg FIXME
+	"direct",
+	"progressbar",
+	"sort",
+	"sortCacheSize",
+	# "sortKey",# or sortAlg FIXME
 )
 
 prefOptions = {}
@@ -379,17 +379,17 @@ ui_type = args.ui_type
 
 
 if args.inputFilename:
-	if args.outputFilename and ui_type != 'none':
-		ui_type = 'cmd'  # silently? FIXME
+	if args.outputFilename and ui_type != "none":
+		ui_type = "cmd"  # silently? FIXME
 else:
-	if ui_type == 'cmd':
-		log.error('no input file given, try --help')
+	if ui_type == "cmd":
+		log.error("no input file given, try --help")
 		exit(1)
 
 
-if ui_type == 'none':
+if ui_type == "none":
 	if args.reverse:
-		log.error('--reverse does not work with --ui=none')
+		log.error("--reverse does not work with --ui=none")
 		sys.exit(1)
 	glos = Glossary()
 	glos.convert(
@@ -402,7 +402,7 @@ if ui_type == 'none':
 		**convertOptions
 	)
 	sys.exit(0)
-elif ui_type == 'cmd':
+elif ui_type == "cmd":
 	from ui import ui_cmd
 	sys.exit(0 if ui_cmd.UI().run(
 		args.inputFilename,
@@ -415,25 +415,25 @@ elif ui_type == 'cmd':
 		writeOptions=writeOptions,
 		convertOptions=convertOptions,
 	) else 1)
-if ui_type == 'auto':
+if ui_type == "auto":
 	ui_module = None
 	for ui_type2 in ui_list:
 		try:
 			ui_module = getattr(
-				__import__('ui.ui_%s' % ui_type2),
-				'ui_%s' % ui_type2,
+				__import__("ui.ui_%s" % ui_type2),
+				"ui_%s" % ui_type2,
 			)
 		except ImportError:
-			log.exception('error while importing UI module:')  # FIXME
+			log.exception("error while importing UI module:")  # FIXME
 		else:
 			break
 	if ui_module is None:
-		log.error('no user interface module found! try "%s -h" to see command line usage' % sys.argv[0])
+		log.error("no user interface module found! try \"%s -h\" to see command line usage" % sys.argv[0])
 		sys.exit(1)
 else:
 	ui_module = getattr(
-		__import__('ui.ui_%s' % ui_type),
-		'ui_%s' % ui_type,
+		__import__("ui.ui_%s" % ui_type),
+		"ui_%s" % ui_type,
 	)
 
 sys.exit(0 if ui_module.UI(**prefOptions).run(
