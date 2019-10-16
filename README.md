@@ -30,6 +30,7 @@ Supported formats
 |-----------------------------------|---------------|:-----:|:-----:|
 | Aard 2 (slob)                     | .slob         |   ✔   |   ✔   |
 | ABBYY Lingvo DSL                  | .dsl          |   ✔   |       |
+| AppleDict Binary (.dictionary)    | .dictionary   |   ✔   |       |
 | AppleDict Source                  | .xml          |       |   ✔   |
 | Babylon                           | .bgl          |   ✔   |       |
 | Babylon Source                    | .gls          |       |   ✔   |
