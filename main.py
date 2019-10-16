@@ -190,6 +190,18 @@ parser.add_argument(
 	default=None,
 	help='don\'t lowercase words before writing',
 )
+parser.add_argument(
+	"--remove-html",
+	dest="remove_html",
+	help="remove given html tags (comma-separated) from definitions",
+)
+parser.add_argument(
+	"--remove-html-all",
+	dest="remove_html_all",
+	action="store_true",
+	help="remove all html tags from definitions",
+)
+
 
 parser.add_argument(
 	'--no-color',
@@ -283,6 +295,8 @@ prefOptionsKeys = (
 	'utf8Check',
 	'lower',
 	'skipResources',
+	'remove_html',
+	'remove_html_all',
 )
 
 convertOptionsKeys = (

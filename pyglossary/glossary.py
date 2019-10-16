@@ -374,6 +374,12 @@ class Glossary(GlossaryType):
 		if pref.get("lower", True):
 			self._entryFilters.append(ef.LowerWordFilter(self))
 
+		if pref.get("remove_html_all", False):
+			self._entryFilters.append(ef.RemoveHtmlTagsAll(self))
+		elif pref.get("remove_html"):
+			tags = pref.get("remove_html").split(",")
+			self._entryFilters.append(ef.RemoveHtmlTags(self, tags))
+
 		self._entryFilters.append(ef.LangEntryFilter(self))
 		self._entryFilters.append(ef.CleanEntryFilter(self))
 		self._entryFilters.append(ef.NonEmptyWordFilter(self))

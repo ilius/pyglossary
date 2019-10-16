@@ -4,6 +4,7 @@ import re
 
 from typing import (
 	Optional,
+	List,
 )
 
 from .text_utils import (
@@ -84,6 +85,39 @@ class LowerWordFilter(EntryFilter):
 
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
 		entry.editFuncWord(str.lower)
+		return entry
+
+
+class RemoveHtmlTagsAll(EntryFilter):
+	name = "remove_html_all"
+
+	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+		from bs4 import BeautifulSoup
+
+		def fixStr(st: str) -> str:
+			return BeautifulSoup(st, "lxml").text
+
+		entry.editFuncDefi(fixStr)
+		return entry
+
+
+class RemoveHtmlTags(EntryFilter):
+	name = "remove_html"
+
+	def __init__(self, glos: Glossary, tags: List[str]):
+		self.glos = glos
+		self.tags = tags
+
+	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+		import re
+
+		def fixStr(st: str) -> str:
+			tagsRE = "|".join(self.tags)
+			pattern = f"<.?({tagsRE})[^>]*>"
+			st = re.sub(pattern, "", st)
+			return st
+
+		entry.editFuncDefi(fixStr)
 		return entry
 
 

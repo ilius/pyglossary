@@ -46,6 +46,8 @@ class UIBase(object):
 		"ui_autoSetOutputFileName",
 		"lower",
 		"utf8Check",
+		"remove_html",
+		"remove_html_all",
 		"enable_alts",
 		## Reverse Options:
 		"reverse_matchWord",
