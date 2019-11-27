@@ -415,7 +415,7 @@ class Writer(object):
 		dictzip: bool = True,
 		sametypesequence: str = "", # type: Literal["", "h", "m"]
 	) -> None:
-		fileBasePath = ""
+		fileBasePath = filename
 		##
 		if splitext(filename)[1].lower() == ".ifo":
 			fileBasePath = splitext(filename)[0]
