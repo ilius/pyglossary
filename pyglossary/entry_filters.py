@@ -69,6 +69,17 @@ class NonEmptyDefiFilter(EntryFilter):
 		return entry
 
 
+class RemoveEmptyAndDuplicateAltWords(EntryFilter):
+	name = "remove_empty_dup_alt_words"
+	desc = "Remove Empty and Duplicate Alternate Words"
+
+	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+		entry.removeEmptyAndDuplicateAltWords()
+		if not entry.getWords():
+			return
+		return entry
+
+
 class FixUnicodeFilter(EntryFilter):
 	name = "fix_unicode"
 	desc = "Fix Unicode"

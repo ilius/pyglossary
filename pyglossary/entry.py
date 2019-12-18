@@ -18,6 +18,7 @@ from typing import (
 
 
 from .entry_base import BaseEntry, MultiStr, RawEntryType
+from .iter_utils import unique_everseen
 
 
 class DataEntry(BaseEntry): # or Resource? FIXME
@@ -329,6 +330,14 @@ class Entry(BaseEntry):
 		"""
 		self.replaceInWord(source, target)
 		self.replaceInDefi(source, target)
+
+	def removeEmptyAndDuplicateAltWords(self):
+		words = self.getWords()
+		if len(words) == 1:
+			return
+		words = [word for word in words if word]
+		words = list(unique_everseen(words))
+		self._word = words
 
 	def getRaw(self) -> RawEntryType:
 		"""

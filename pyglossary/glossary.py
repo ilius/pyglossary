@@ -384,6 +384,7 @@ class Glossary(GlossaryType):
 		self._entryFilters.append(ef.CleanEntryFilter(self))
 		self._entryFilters.append(ef.NonEmptyWordFilter(self))
 		self._entryFilters.append(ef.NonEmptyDefiFilter(self))
+		self._entryFilters.append(ef.RemoveEmptyAndDuplicateAltWords(self))
 
 	def __str__(self) -> str:
 		return "glossary.Glossary"
