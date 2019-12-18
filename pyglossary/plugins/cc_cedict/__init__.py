@@ -42,23 +42,27 @@ class Reader:
 
 	def __len__(self):
 		if self.total_entries is None:
-			raise RuntimeError("CC-CEDICT: len(reader) called "\
-					"while reader is not open")
+			raise RuntimeError(
+				"CC-CEDICT: len(reader) called while reader is not open",
+			)
 		return self.total_entries
 
 	def __iter__(self):
 		if self.file is None:
-			raise RuntimeError("CC-CEDICT: tried to iterate over entries "\
-					"while reader is not open")
+			raise RuntimeError(
+				"CC-CEDICT: tried to iterate over entries " +
+				"while reader is not open"
+			)
 		for line in self.file:
-			if not line.startswith("#"):
-				if self.entries_left == 0:
-					log.warning("more entries than the header claimed?!")
-				self.entries_left -= 1
-				parts = conv.parse_line(line)
-				if parts is None:
-					log.warning("bad line: %s", line)
-					continue
-				names, article = conv.make_entry(*parts)
-				entry = self._glos.newEntry(names, article, defiFormat="h")
-				yield entry
+			if line.startswith("#"):
+				continue
+			if self.entries_left == 0:
+				log.warning("more entries than the header claimed?!")
+			self.entries_left -= 1
+			parts = conv.parse_line(line)
+			if parts is None:
+				log.warning("bad line: %s", line)
+				continue
+			names, article = conv.make_entry(*parts)
+			entry = self._glos.newEntry(names, article, defiFormat="h")
+			yield entry
