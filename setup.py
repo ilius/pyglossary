@@ -12,6 +12,7 @@ from os.path import join, dirname, exists, isdir
 import re
 import logging
 
+import setuptools
 from distutils.core import setup
 from distutils.command.install import install
 
@@ -128,6 +129,8 @@ if py2exe:
 else:
 	py2exeoptions = {}
 
+with open("README.md", "r") as fh:
+	long_description = fh.read()
 
 setup(
 	name="pyglossary",
@@ -136,6 +139,8 @@ setup(
 		"install": my_install,
 	},
 	description="A tool for workig with dictionary databases",
+	long_description_content_type="text/markdown",
+	long_description=long_description,
 	author="Saeed Rasooli",
 	author_email="saeed.gnu@gmail.com",
 	license="GPLv3",
