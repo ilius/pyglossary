@@ -57,9 +57,9 @@ Supported formats
 Requirements
 ------------
 
-PyGlossary uses **Python 3.x**, and works in practically all operating
-systems. While primarilly designed for *GNU/Linux*, it works on *Windows*,
-*Mac OS X* and other Unix-based operating systems as well.
+PyGlossary requires **Python 3.6 or higher**, and works in practically all
+modern operating systems. While primarilly designed for *GNU/Linux*, it works
+on *Windows*, *Mac OS X* and other Unix-based operating systems as well.
 
 As shown in the screenshots, there are multiple User Interface types,
 ie. multiple ways to use the program.
