@@ -143,7 +143,7 @@ setup(
 	long_description=long_description,
 	author="Saeed Rasooli",
 	author_email="saeed.gnu@gmail.com",
-	license="GPLv3",
+	license="GPLv3+",
 	url="https://github.com/ilius/pyglossary",
 	scripts=[
 		# "main.py",
