@@ -108,6 +108,9 @@ class DataEntry(BaseEntry): # or Resource? FIXME
 	def replace(self, source: str, target: str) -> None:
 		pass
 
+	def removeEmptyAndDuplicateAltWords(self):
+		pass
+
 	def getRaw(self) -> RawEntryType:
 		return (
 			self._fname,
