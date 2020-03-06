@@ -31,6 +31,7 @@ class Reader(object):
 		self._glos = glos
 		self._filename = ""
 		self._file = None
+		self._encoding = "utf-8"
 
 	def open(self, filename):
 		parts = filename.split(os.sep)
@@ -67,6 +68,23 @@ class Reader(object):
 			self._file.close()
 			self._file = None
 
+	def decode(self, st: bytes) -> str:
+		return st.decode(self._encoding, errors="replace")
+
+	def getChunkSize(self, buf, pos):
+		plus = buf[pos:pos+12].find(b"<d:entry")
+		if plus < 1:
+			return 0, 0
+		bs = buf[pos:pos+plus]
+		if plus < 4:
+			bs = b"\x00" * (4 - plus) + bs
+		try:
+			chunkSize, = unpack("i", bs)
+		except Exception as e:
+			log.error(f"{buf[pos:pos+100]}")
+			raise e
+		return chunkSize, plus
+
 	def __iter__(self):
 		file = self._file
 		limit = self._limit
@@ -79,7 +97,7 @@ class Reader(object):
 				# ~ zipp = f.read(bufSize)
 				# ~ try:
 					# ~ # print(zipp)
-					# ~ input(zipp.decode("utf-8"))
+					# ~ input(zipp.decode(self._encoding))
 					# ~ buf = decompress(zipp[8:])
 					# ~ # print(buf)
 					# ~ break
@@ -93,16 +111,33 @@ class Reader(object):
 
 			pos = 0
 			while pos < len(buf):
-				chunkSize, = unpack("i", buf[pos:pos+4])
-				entryFull = buf[pos:pos+chunkSize].decode("utf-8")
-				entryRoot = etree.fromstring(entryFull)
+				chunkSize, plus = self.getChunkSize(buf, pos)
+				pos += plus
+				if chunkSize == 0:
+					endI = buf[pos:].find(b"</d:entry>")
+					if endI == -1:
+						chunkSize = len(buf) - pos
+					else:
+						chunkSize = endI + 10
+				entryFull = self.decode(buf[pos:pos+chunkSize])
+				entryFull = entryFull.strip()
+				if not entryFull:
+					pos += chunkSize
+					continue
+				try:
+					entryRoot = etree.fromstring(entryFull)
+				except etree.XMLSyntaxError as e:
+					log.error(f"\n{buf[pos-plus:pos+100]}")
+					log.error(f"chunkSize={chunkSize}, plus={plus}, pos={pos}, len(buf)={len(buf)}")
+					log.error(f"entryFull={entryFull!r}")
+					raise e
 				entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
 				if not entryElems:
 					continue
 				entryElem = entryElems[0]
 				word = entryElem.xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
 				defi = "".join([
-					etree.tostring(child).decode("utf8")
+					self.decode(etree.tostring(child))
 					for child in entryElem.iterdescendants()
 				])
 				yield self._glos.newEntry(
