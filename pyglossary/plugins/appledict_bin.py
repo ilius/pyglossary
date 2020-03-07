@@ -42,11 +42,14 @@ class Reader(object):
 				if len(parts) > 2:
 					dbname = parts[-2]
 			else:
-				filename = join(filename, "Contents/Body.data")
+				filename = join(filename, "Contents/Resources/Body.data")
 		elif dbname == "Body.data" and len(parts) > 1:
 			dbname = parts[-2]
-			if len(parts) > 2 and dbname == "Contents":
-				dbname =  parts[-3]
+			if len(parts) > 2:
+				if dbname == "Contents":
+					dbname =  parts[-3]
+				elif dbname == "Resources" and len(parts) > 3:
+					dbname =  parts[-4]
 
 		if dbname.endswith(".dictionary"):
 			dbname = dbname[:-len(".dictionary")]
