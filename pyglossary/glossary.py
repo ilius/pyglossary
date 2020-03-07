@@ -414,7 +414,7 @@ class Glossary(GlossaryType):
 		if progressbar:
 			self.progressInit("Writing")
 		for index, rawEntry in enumerate(self._data):
-			if index % 100 == 0:
+			if index & 0x7f == 0: # 0x3f, 0x7f, 0xff
 				gc.collect()
 			yield Entry.fromRaw(
 				rawEntry,
@@ -673,7 +673,7 @@ class Glossary(GlossaryType):
 			self.progressInit("Reading")
 		try:
 			for index, entry in enumerate(reader):
-				if index % 100 == 0:
+				if index & 0x7f == 0: # 0x3f, 0x7f, 0xff
 					gc.collect()
 				if entry:
 					self.addEntryObj(entry)
