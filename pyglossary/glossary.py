@@ -43,6 +43,7 @@ from collections import Counter
 from collections import OrderedDict as odict
 
 import io
+import gc
 
 from typing import (
 	Dict,
@@ -413,6 +414,8 @@ class Glossary(GlossaryType):
 		if progressbar:
 			self.progressInit("Writing")
 		for index, rawEntry in enumerate(self._data):
+			if index % 100 == 0:
+				gc.collect()
 			yield Entry.fromRaw(
 				rawEntry,
 				defaultDefiFormat=self._defaultDefiFormat
@@ -670,6 +673,8 @@ class Glossary(GlossaryType):
 			self.progressInit("Reading")
 		try:
 			for index, entry in enumerate(reader):
+				if index % 100 == 0:
+					gc.collect()
 				if entry:
 					self.addEntryObj(entry)
 				if progressbar:
