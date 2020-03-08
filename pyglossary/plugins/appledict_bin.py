@@ -37,9 +37,11 @@ class Reader(object):
 		self._encoding = "utf-8"
 		self._buf = ""
 		self._html = False
+		self._defiFormat = "m"
 
 	def open(self, filename, html: bool = False):
 		self._html = html
+		self._defiFormat = "h" if html else "m"
 		parts = filename.split(os.sep)
 		dbname = parts[-1]
 		if isdir(filename):
@@ -132,7 +134,7 @@ class Reader(object):
 				for child in entryElems[0].iterdescendants()
 			])
 		pos += chunkSize
-		return self._glos.newEntry(word, defi), pos
+		return self._glos.newEntry(word, defi, defiFormat=self._defiFormat), pos
 
 	def __iter__(self):
 		file = self._file
