@@ -125,6 +125,7 @@ class Entry(BaseEntry):
 			r"<br\s*/?\s*>",
 			r"<p[ >]",
 			r"<div[ >]",
+			r"<span[ >]",
 			r"<a href=",
 			r"<sup[ >]",
 		]) + ")",
