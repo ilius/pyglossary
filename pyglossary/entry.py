@@ -172,6 +172,7 @@ class Entry(BaseEntry):
 		word: MultiStr,
 		defi: MultiStr,
 		defiFormat: str = "m",
+		byteProgress: Optional[Tuple[int, int]] = None,
 	) -> None:
 		"""
 			word: string or a list of strings (including alternate words)
@@ -201,6 +202,7 @@ class Entry(BaseEntry):
 		self._word = word
 		self._defi = defi
 		self._defiFormat = defiFormat
+		self._byteProgress = byteProgress  # Optional[Tuple[int, int]]
 
 	def getWord(self) -> str:
 		"""
@@ -267,6 +269,9 @@ class Entry(BaseEntry):
 		defi = self.getDefi().lower()
 		if re.match(self.htmlPattern, defi):
 			self._defiFormat = "h"
+
+	def byteProgress(self):
+		return self._byteProgress
 
 	def addAlt(self, alt: str) -> None:
 		words = self.getWords()

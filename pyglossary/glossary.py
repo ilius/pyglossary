@@ -393,14 +393,24 @@ class Glossary(GlossaryType):
 	def addEntryObj(self, entry: Entry) -> None:
 		self._data.append(entry.getRaw())
 
-	def newEntry(self, word: str, defi: str, defiFormat: str = "") -> Entry:
+	def newEntry(
+		self,
+		word: str,
+		defi: str,
+		defiFormat: str = "",
+		byteProgress: Optional[Tuple[int, int]] = None,
+	) -> Entry:
 		"""
 		create and return a new entry object
 		"""
 		if not defiFormat:
 			defiFormat = self._defaultDefiFormat
 
-		return Entry(word, defi, defiFormat)
+		return Entry(
+			word, defi,
+			defiFormat=defiFormat,
+			byteProgress=byteProgress,
+		)
 
 	def addEntry(self, word: str, defi: str, defiFormat: str = "") -> None:
 		"""
@@ -410,6 +420,7 @@ class Glossary(GlossaryType):
 
 	def _loadedEntryGen(self) -> Iterator[BaseEntry]:
 		wordCount = len(self._data)
+		wcThreshold = wordCount // 200 + 1
 		progressbar = self.ui and self._progressbar
 		if progressbar:
 			self.progressInit("Writing")
@@ -420,7 +431,7 @@ class Glossary(GlossaryType):
 				rawEntry,
 				defaultDefiFormat=self._defaultDefiFormat
 			)
-			if progressbar:
+			if progressbar and index % wcThreshold == 0:
 				self.progress(index, wordCount)
 		if progressbar:
 			self.progressEnd()
@@ -434,17 +445,23 @@ class Glossary(GlossaryType):
 					wordCount = len(reader)
 				except Exception:
 					log.exception("")
-				if wordCount:
-					progressbar = True
-				else:
-					log.warning("Progress Bar is disabled because input plugin does not support it")
+				progressbar = True
 			if progressbar:
 				self.progressInit("Converting")
+			wcThreshold = wordCount // 200 + 1
+			lastPos = 0
 			try:
 				for index, entry in enumerate(reader):
 					yield entry
 					if progressbar:
-						self.progress(index, wordCount)
+						if entry is None or wordCount > 0:
+							if index % wcThreshold == 0:
+								self.progress(index, wordCount)
+							continue
+						bp = entry.byteProgress()
+						if bp and bp[0] > lastPos + 10000:
+							self.progress(bp[0], bp[1], unit="bytes")
+							lastPos = bp[0]
 			finally:
 				reader.close()
 			if progressbar:
@@ -667,10 +684,11 @@ class Glossary(GlossaryType):
 				wordCount = len(reader)
 			except Exception:
 				log.exception("")
-			if wordCount:
-				progressbar = True
+			progressbar = True
 		if progressbar:
 			self.progressInit("Reading")
+		wcThreshold = wordCount // 200 + 1
+		lastPos = 0
 		try:
 			for index, entry in enumerate(reader):
 				if index & 0x7f == 0: # 0x3f, 0x7f, 0xff
@@ -678,7 +696,14 @@ class Glossary(GlossaryType):
 				if entry:
 					self.addEntryObj(entry)
 				if progressbar:
-					self.progress(index, wordCount)
+					if entry is None or wordCount > 0:
+						if index % wcThreshold == 0:
+							self.progress(index, wordCount)
+						continue
+					bp = entry.byteProgress()
+					if bp and bp[0] > lastPos + 20000:
+						self.progress(bp[0], bp[1], unit="bytes")
+						lastPos = bp[0]
 		finally:
 			reader.close()
 		if progressbar:
@@ -1244,12 +1269,13 @@ class Glossary(GlossaryType):
 		if self.ui:
 			self.ui.progressInit(*args)
 
-	def progress(self, wordI: int, wordCount: int) -> None:
-		if self.ui and wordI % (wordCount // 500 + 1) == 0:
-			self.ui.progress(
-				min(wordI + 1, wordCount) / wordCount,
-				"%d / %d completed" % (wordI, wordCount),
-			)
+	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
+		if not self.ui:
+			return
+		self.ui.progress(
+			min(pos + 1, total) / total,
+			"%d / %d %s" % (pos, total, unit),
+		)
 
 	def progressEnd(self) -> None:
 		if self.ui:
@@ -1406,10 +1432,12 @@ class Glossary(GlossaryType):
 			", number of words: %s" % wordCount
 		)
 		self.progressInit("Reversing")
+		wcThreshold = wordCount // 200 + 1
 		with open(savePath, "w") as saveFile:
 			for wordI in range(wordCount):
 				word = words[wordI]
-				self.progress(wordI, wordCount)
+				if wordI % wcThreshold == 0:
+					self.progress(wordI, wordCount)
 
 				if wordI % saveStep == 0 and wordI > 0:
 					saveFile.flush()

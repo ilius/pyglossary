@@ -134,12 +134,21 @@ class Reader(object):
 				for child in entryElems[0].iterdescendants()
 			])
 		pos += chunkSize
-		return self._glos.newEntry(word, defi, defiFormat=self._defiFormat), pos
+		if self._limit <= 0:
+			raise ValueError(f"self._limit = {self._limit}")
+		return self._glos.newEntry(
+			word, defi,
+			defiFormat=self._defiFormat,
+			byteProgress=(self._absPos, self._limit),
+		), pos
 
 	def __iter__(self):
 		file = self._file
 		limit = self._limit
-		while file.tell() < limit:
+		while True:
+			self._absPos = file.tell()
+			if self._absPos >= limit:
+				break
 			bufSizeB = file.read(4)  # type: bytes
 			# alternative for buf, bufSize is calculated
 			# ~ flag = f.tell()
