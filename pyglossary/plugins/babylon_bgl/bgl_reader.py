@@ -450,6 +450,16 @@ class BglReader(object):
 
 		self.numBlocks = 0
 
+		encoding = self.targetEncoding  # FIXME: confirm this is correct
+		for key, value in self.info.items():
+			if isinstance(value, bytes):
+				try:
+					value = value.decode(encoding)
+				except Exception:
+					log.warning(f"failed to decode info value: {key} = {value}")
+				else:
+					self.info[key] = value
+
 	def setGlossaryInfo(self):
 		glos = self._glos
 		###
@@ -664,33 +674,37 @@ class BglReader(object):
 				)
 			return
 
-		try:
-			func = infoKeyDecodeMethods[key]
-		except KeyError:
+		value = None
+		func = infoKeyDecodeMethods.get(key)
+		if func is None:
 			value = b_value
 		else:
 			value = func(b_value)
 
-		# `value` can be a bytes instance,
-		# or str instance, depending on `key` FIXME
+		# `value` can be None, str, bytes or dict
 
-		if value:
-			if isinstance(value, dict):
-				self.info.update(value)
-			elif key in {
-				"sourceLang",
-				"targetLang",
-				"defaultCharset",
-				"sourceCharset",
-				"targetCharset",
-				"sourceEncoding",
-				"targetEncoding",
-				"bgl_numEntries",
-				"iconData",
-			}:
-				setattr(self, key, value)
-			else:
-				self.info[key] = value
+		if not value:
+			return
+
+		if isinstance(value, dict):
+			self.info.update(value)
+			return
+
+		if key in {
+			"sourceLang",
+			"targetLang",
+			"defaultCharset",
+			"sourceCharset",
+			"targetCharset",
+			"sourceEncoding",
+			"targetEncoding",
+			"bgl_numEntries",
+			"iconData",
+		}:
+			setattr(self, key, value)
+			return
+
+		self.info[key] = value
 
 	def detectEncoding(self):
 		"""
