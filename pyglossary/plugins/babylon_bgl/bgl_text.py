@@ -107,7 +107,7 @@ def replaceDingbat(u_match):
 	replace chars \\u008c-\\u0095 with \\u2776-\\u277f
 	"""
 	ch = u_match.group(0)
-	code = ch + (0x2776-0x8c)
+	code = ch + 0x2776 - 0x8c
 	return chr(code)
 
 
@@ -152,7 +152,7 @@ def replaceHtmlEntriesInKeys(u_text):
 
 
 def escapeNewlines(u_text):
-	"""
+	r"""
 	convert text to c-escaped string:
 	\ -> \\
 	new line -> \n or \r
@@ -270,14 +270,14 @@ def stripDollarIndexes(b_word):
 		if d0 == -1:
 			b_word_main += b_word[i:]
 			break
-		d1 = b_word.find(b"$", d0+1)
+		d1 = b_word.find(b"$", d0 + 1)
 		if d1 == -1:
 			# log.debug(
 			#	"stripDollarIndexes(%s):\npaired $ is not found" % b_word
 			# )
 			b_word_main += b_word[i:]
 			break
-		if d1 == d0+1:
+		if d1 == d0 + 1:
 			"""
 			You may find keys (or alternative keys) like these:
 			sur l'arbre$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -300,13 +300,13 @@ def stripDollarIndexes(b_word):
 			if i >= len(b_word):
 				break
 			continue
-		if b_word[d0+1:d1].strip(b"0123456789"):
+		if b_word[d0 + 1:d1].strip(b"0123456789"):
 			# if has at least one non-digit char
 			# log.debug("stripDollarIndexes(%s):\nnon-digit between $$', b_word)
 			b_word_main += b_word[i:d1]
 			i = d1
 			continue
-		if d1+1 < len(b_word) and b_word[d1+1] != 0x20:
+		if d1 + 1 < len(b_word) and b_word[d1 + 1] != 0x20:
 			"""
 			Examples:
 		make do$4$/make /do
@@ -322,7 +322,7 @@ def stripDollarIndexes(b_word):
 			)
 			pass
 		b_word_main += b_word[i:d0]
-		i = d1+1
+		i = d1 + 1
 		strip_count += 1
 
 	return b_word_main, strip_count

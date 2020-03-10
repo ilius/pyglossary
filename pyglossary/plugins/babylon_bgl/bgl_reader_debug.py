@@ -207,7 +207,7 @@ class DebugBglReader(BglReader):
 				return False
 
 			if self.writeGz:
-				self.dataFile = self._filename+"-data.gz"
+				self.dataFile = self._filename + "-data.gz"
 				try:
 					f2 = open(self.dataFile, "wb")
 				except IOError:
@@ -358,7 +358,7 @@ class DebugBglReader(BglReader):
 			# inspect char codes offsets allows to quickly jump to the right
 			# place of the file hex editor
 			self.msgLogFile.write("\noffset = {0:#X}\n" % offset)
-			self.msgLogFile.write(text+"\n")
+			self.msgLogFile.write(text + "\n")
 		else:
 			log.debug(text)
 
@@ -367,7 +367,7 @@ class DebugBglReader(BglReader):
 		if self.samplesDumpFile:
 			offset = self.samplesDumpFile.tell()
 			self.samplesDumpFile.write("\noffset = {0:#X}\n" % offset)
-			self.samplesDumpFile.write(text+"\n")
+			self.samplesDumpFile.write(text + "\n")
 		else:
 			log.debug(text)
 

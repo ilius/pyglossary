@@ -32,7 +32,7 @@ from pyglossary.text_utils import (
 
 def decodeBglBinTime(b_value):
 	jd1970 = gregorian.to_jd(1970, 1, 1)
-	djd, hm = divmod(binStrToInt(b_value), 24*60)
+	djd, hm = divmod(binStrToInt(b_value), 24 * 60)
 	year, month, day = gregorian.jd_to(djd + jd1970)
 	hour, minute = divmod(hm, 60)
 	return "%.2d/%.2d/%.2d, %.2d:%.2d" % (year, month, day, hour, minute)
@@ -112,7 +112,7 @@ def utf16InfoDecode(b_value):
 			"utf16InfoDecode: b_value=%s, null expected at 6:8",
 			list(b_value),
 		)
-	if size != len(b_value)-8:
+	if size != len(b_value) - 8:
 		log.warning(
 			"utf16InfoDecode: b_value=%s, size does not match",
 			list(b_value),

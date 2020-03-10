@@ -132,6 +132,7 @@ class BabylonLanguage(object):
 		self.encoding = encoding
 		self.code = code
 
+
 languages = (
 	BabylonLanguage(
 		name="English",
