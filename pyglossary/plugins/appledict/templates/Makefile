@@ -22,7 +22,7 @@ DICT_BUILD_OPTS		=
 # The DICT_BUILD_TOOL_DIR value is used also in "build_dict.sh" script.
 # You need to set it when you invoke the script directly.
 
-DICT_BUILD_TOOL_DIR	=	"/Developer/Extras/Dictionary Development Kit"
+DICT_BUILD_TOOL_DIR	=	"$(HOME)/Developer/Extras/Dictionary Development Kit"
 DICT_BUILD_TOOL_BIN	=	"$(DICT_BUILD_TOOL_DIR)/bin"
 
 ###########################
