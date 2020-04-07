@@ -145,7 +145,7 @@ class Reader(object):
 		"""
 		.ifo file is a text file in utf-8 encoding
 		"""
-		with open(self._filename+".ifo", "r") as ifoFile:
+		with open(self._filename+".ifo", "r", encoding="utf-8") as ifoFile:
 			for line in ifoFile:
 				line = line.strip()
 				if not line:
