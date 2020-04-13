@@ -213,7 +213,7 @@ def write(
 	if not isdir(myResDir):
 		os.mkdir(myResDir)
 
-	with open(filePathBase + ".xml", "w", encoding="utf8") as toFile:
+	with open(filePathBase + ".xml", "w", encoding="utf-8") as toFile:
 		write_header(glos, toFile, frontBackMatter)
 		for entryI, entry in enumerate(glos):
 			if entry.isData():

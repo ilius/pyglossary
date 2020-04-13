@@ -321,7 +321,7 @@ class DebugBglReader(BglReader):
 				if isASCII(toStr(fields.b_defi)):
 					self.metadata2.defiAsciiCount += 1
 				try:
-					fields.b_defi.decode("utf8")
+					fields.b_defi.decode("utf-8")
 				except UnicodeError:
 					pass
 				else:
@@ -487,7 +487,7 @@ class DebugBglReader(BglReader):
 		if len(offsets) == 0:
 			return
 		res = ""
-		utf8 = (encoding.lower() == "utf8")
+		utf8 = (encoding.lower() == "utf-8")
 		i = 0
 		for o in offsets:
 			j = o

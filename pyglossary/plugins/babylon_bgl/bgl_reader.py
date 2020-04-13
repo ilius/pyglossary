@@ -715,7 +715,7 @@ class BglReader(object):
 		if self.sourceEncodingOverwrite:
 			self.sourceEncoding = self.sourceEncodingOverwrite
 		elif utf8Encoding:
-			self.sourceEncoding = "utf8"
+			self.sourceEncoding = "utf-8"
 		elif self.sourceCharset:
 			self.sourceEncoding = self.sourceCharset
 		elif self.sourceLang:
@@ -726,7 +726,7 @@ class BglReader(object):
 		if self.targetEncodingOverwrite:
 			self.targetEncoding = self.targetEncodingOverwrite
 		elif utf8Encoding:
-			self.targetEncoding = "utf8"
+			self.targetEncoding = "utf-8"
 		elif self.targetCharset:
 			self.targetEncoding = self.targetCharset
 		elif self.targetLang:

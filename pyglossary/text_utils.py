@@ -38,11 +38,11 @@ endFormat = "\x1b[0;0;0m"  # len=8
 
 
 def toBytes(s: AnyStr) -> bytes:
-	return bytes(s, "utf8") if isinstance(s, str) else bytes(s)
+	return bytes(s, "utf-8") if isinstance(s, str) else bytes(s)
 
 
 def toStr(s: AnyStr) -> str:
-	return str(s, "utf8") if isinstance(s, bytes) else str(s)
+	return str(s, "utf-8") if isinstance(s, bytes) else str(s)
 
 
 def fixUtf8(st: AnyStr) -> str:

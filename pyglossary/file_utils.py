@@ -11,7 +11,7 @@ from io import IOBase
 
 
 def toBytes(s: AnyStr) -> bytes:
-	return bytes(s, "utf8") if isinstance(s, str) else bytes(s)
+	return bytes(s, "utf-8") if isinstance(s, str) else bytes(s)
 
 
 def fileCountLines(filename: str, newline: str = "\n"):

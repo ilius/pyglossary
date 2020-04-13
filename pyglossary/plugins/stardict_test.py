@@ -5,7 +5,7 @@ from functools import cmp_to_key
 
 
 def toBytes(s):
-	return bytes(s, "utf8") if isinstance(s, str) else bytes(s)
+	return bytes(s, "utf-8") if isinstance(s, str) else bytes(s)
 
 
 def sortKeyBytes(ba):
