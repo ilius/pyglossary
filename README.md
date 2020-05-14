@@ -39,6 +39,7 @@ Supported formats
 | DictionaryForMIDs                 |               |   ✔   |   ✔   |
 | DICTD dictionary server           | .index        |   ✔   |   ✔   |
 | Editable Linked List of Entries   | .edlin        |   ✔   |   ✔   |
+| EPUB-2 E-Book                     | .epub         |       |   ✔   |
 | FreeDict                          | .tei          |       |   ✔   |
 | Gettext Source                    | .po           |   ✔   |   ✔   |
 | Lingoes Source (LDF)              | .ldf          |   ✔   |   ✔   |
