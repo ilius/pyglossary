@@ -43,8 +43,7 @@ class Reader(object):
 		self._encoding = ""
 		self._substyle = True
 		self._mdx = None
-		self._mdd = None
-		self._mddFilename = ""
+		self._mdd = []
 
 	def open(self, filename, encoding="", substyle=True):
 		from pyglossary.plugin_lib.readmdict import MDX, MDD
@@ -54,10 +53,15 @@ class Reader(object):
 		self._mdx = MDX(filename, self._encoding, self._substyle)
 
 		filenameNoExt, ext = splitext(self._filename)
-		mddFilename = "".join([filenameNoExt, extsep, "mdd"])
-		if isfile(mddFilename):
-			self._mdd = MDD(mddFilename)
-			self._mddFilename = mddFilename
+		mddBase = "".join([filenameNoExt, extsep])
+		for fname in (f"{mddBase}mdd", f"{mddBase}1.mdd"):
+			if isfile(fname):
+				self._mdd.append(MDD(fname))
+		mddN = 2
+		while isfile(f"{mddBase}{mddN}.mdd"):
+			self._mdd.append(MDD(f"{mddBase}{mddN}.mdd"))
+			mddN += 1
+		log.info(f"Found {len(self._mdd)} mdd files")
 
 		log.debug("mdx.header = " + pformat(self._mdx.header))
 		# for key, value in self._mdx.header.items():
@@ -84,12 +88,12 @@ class Reader(object):
 				yield self._glos.newEntry(word, defi)
 			self._mdx = None
 
-		if self._mdd:
-			for b_fname, b_data in self._mdd.items():
+		for mdd in self._mdd:
+			for b_fname, b_data in mdd.items():
 				fname = toStr(b_fname)
 				fname = fname.replace("\\", os.sep).lstrip(os.sep)
 				yield self._glos.newDataEntry(fname, b_data)
-			self._mdd = None
+		self._mdd = []
 
 	def __len__(self):
 		if self._mdx is None:
