@@ -41,7 +41,7 @@ optionsProp = {
 
 
 class Writer(EbookWriter):
-	ebook_format = "mobi"
+	ebook_format = format
 
 	CSS_CONTENTS = """"@charset "UTF-8";"""
 	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
