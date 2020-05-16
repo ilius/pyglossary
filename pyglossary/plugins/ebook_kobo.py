@@ -27,7 +27,7 @@ from pyglossary.ebook_base import *
 
 enable = True
 format = "Kobo"
-description = "Kobo E-Book"
+description = "Kobo E-Reader Dictionary"
 extensions = [".kobo",]
 sortOnWrite = ALWAYS
 
