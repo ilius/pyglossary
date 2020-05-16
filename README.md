@@ -42,6 +42,7 @@ Supported formats
 | EPUB-2 E-Book                     | .epub         |       |   ✔   |
 | FreeDict                          | .tei          |       |   ✔   |
 | Gettext Source                    | .po           |   ✔   |   ✔   |
+| Kobo E-Reader Dictionary          | .kobo.zip     |       |   ✔   |
 | Lingoes Source (LDF)              | .ldf          |   ✔   |   ✔   |
 | Octopus MDict                     | .mdx          |   ✔   |       |
 | Octopus MDict Source              | .txt          |   ✔   |   ✔   |
@@ -150,8 +151,12 @@ Feature-specific Requirements
 
 
 -	**Reading or writing Aard 2 (.slob) files**
+
 	`sudo pip3 install PyICU`
 
+-	**Writing to Kobo E-Reader Dictionary**
+
+	`sudo pip3 install marisa-trie`
 
 
 **Other Requirements for Mac OS X**
