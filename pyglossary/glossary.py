@@ -948,6 +948,24 @@ class Glossary(GlossaryType):
 
 		return filename
 
+	def zipOutDir(self, filename: str):
+		if isdir(filename):
+			dirn, name = split(filename)
+			with indir(filename):
+				output, error = subprocess.Popen(
+					["zip", "-r", f"../{name}.zip", ".", "-m"],
+					stdout=subprocess.PIPE,
+				).communicate()
+				return error
+
+		dirn, name = split(filename)
+		with indir(dirn):
+			output, error = subprocess.Popen(
+				["zip", f"{filename}.zip", name, "-m"],
+				stdout=subprocess.PIPE,
+			).communicate()
+			return error
+
 	def archiveOutDir(self, filename: str, archiveType: str) -> str:
 		"""
 		filename is the existing file path
@@ -978,17 +996,13 @@ class Glossary(GlossaryType):
 					"Failed to compress file \"%s\"" % filename
 				)
 		elif archiveType == "zip":
-			dirn, name = split(filename)
-			with indir(dirn):
-				output, error = subprocess.Popen(
-					["zip", filename + ".zip", name, "-m"],
-					stdout=subprocess.PIPE,
-				).communicate()
-				if error:
-					log.error(
-						error + "\n" +
-						"Failed to compress file \"%s\"" % filename
-					)
+			error = self.zipOutDir(filename)
+			if error:
+				log.error(
+					error + "\n" +
+					"Failed to compress file \"%s\"" % filename
+				)
+
 		archiveFilename = "%s.%s" % (filename, archiveType)
 		if isfile(archiveFilename):
 			return archiveFilename
