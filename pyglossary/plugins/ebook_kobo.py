@@ -11,8 +11,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,12 +23,14 @@
 # SOFTWARE.
 
 from formats_common import *
-from pyglossary.ebook_base import *
+from pyglossary.ebook_base import get_prefix
+from itertools import groupby
+from pathlib import Path
 
 enable = True
 format = "Kobo"
 description = "Kobo E-Reader Dictionary"
-extensions = [".kobo",]
+extensions = [".kobo"]
 sortOnWrite = ALWAYS
 
 optionsProp = {
@@ -39,37 +41,32 @@ optionsProp = {
 	"marisa_bin_path": StrOption(),
 }
 
-class Writer(EbookWriter):
-	ebook_format = format
 
+def fixFilename(fname: str) -> str:
+	return Path(fname.replace("/", "2F").replace("\\", "5C")).name
+
+
+class Writer:
 	WORDS_FILE_NAME = "words"
 	MARISA_BUILD = "marisa-build"
 	MARISA_REVERSE_LOOKUP = "marisa-reverse-lookup"
 
 	def __init__(self, glos, **kwargs):
-		import uuid
-		EbookWriter.__init__(
-			self,
-			glos,
-		)
-		glos.setInfo(
-			"uuid",
-			str(uuid.uuid4()).replace("-", ""),
-		)
+		self._glos = glos
 
-	def write_groups(self, group_by_prefix_length, include_index_page):
+	def write_groups(self, group_by_prefix_length):
 		import gzip
 		words = []
-		
-		self.glos.sortWords()
+
+		self._glos.sortWords()
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
-			self.glos,
+			self._glos,
 			lambda tmpEntry: get_prefix(
 				tmpEntry.getWord(),
 				group_by_prefix_length,
 			),
 		)):
-			group_prefix = group_prefix.strip("/") # FIXME: why has slash
+			group_fname = fixFilename(group_prefix)
 			htmlContents = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
 			for entry in group_entry_iter:
 				if entry.isData():
@@ -77,9 +74,10 @@ class Writer(EbookWriter):
 				word = entry.getWord()
 				defi = entry.getDefi()
 				words.append(word)
-				htmlContents += f"<w><a name=\"{word}\"/><div><b>{word}</b><br/>{defi}</div></w>\n"
+				htmlContents += f"<w><a name=\"{word}\"/><div><b>{word}</b>"\
+					f"<br/>{defi}</div></w>\n"
 			htmlContents += "</html>"
-			with gzip.open(group_prefix + ".html", mode="wb") as gzipFile:
+			with gzip.open(group_fname + ".html", mode="wb") as gzipFile:
 				gzipFile.write(htmlContents.encode("utf-8"))
 
 		return words
@@ -96,7 +94,6 @@ class Writer(EbookWriter):
 			raise e
 
 		with indir(filename, create=True):
-			words = self.write_groups(group_by_prefix_length, False)
+			words = self.write_groups(group_by_prefix_length)
 			trie = marisa_trie.Trie(words)
 			trie.save(self.WORDS_FILE_NAME)
-
