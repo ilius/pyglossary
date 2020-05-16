@@ -168,8 +168,19 @@ class FormatOptionsDialog(gtk.Dialog):
 		prop = self.optionsProp[optName]
 		if not prop.customValue:
 			return
+		enable = True
+		if prop.typ == "int":
+			if newText == "":
+				enable = False
+			else:
+				try:
+					valueInt = int(newText)
+				except ValueError:
+					log.error(f"invalid integer value: {optName} = {newText!r}")
+					return
+				newText = str(valueInt)
 		model.set_value(itr, self.valueCol, newText)
-		model.set_value(itr, 0, True) # enable it
+		model.set_value(itr, 0, enable)
 
 	def rowActivated(self, treev, path, col):
 		# forceMenu=True because we can not enter edit mode
