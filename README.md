@@ -129,7 +129,7 @@ Feature-specific Requirements
 
 	`sudo pip3 install lxml beautifulsoup4 html5lib`
 
--	**Reading from Babylon BGL**: Python 3.4 to 3.7 is recommended
+-	**Reading from Babylon BGL**: Python 3.6 to 3.7 is recommended
 
 -   **Reading from CC-CEDICT**
 
