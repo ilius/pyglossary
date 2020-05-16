@@ -461,7 +461,7 @@ class MDD(MDict):
 					print("LZO compression is not supported")
 					break
 				# decompress
-				header = '\xf0' + pack('>I', decompressed_size)
+				header = b'\xf0' + pack('>I', decompressed_size)
 				record_block = lzo.decompress(header + record_block_compressed[8:])
 			elif record_block_type == b'\x02\x00\x00\x00':
 				# decompress
