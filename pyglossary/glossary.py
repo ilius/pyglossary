@@ -857,8 +857,6 @@ class Glossary(GlossaryType):
 
 		returns absolute path of output file, or None if failed
 		"""
-		if isdir(filename):
-			filename = join(filename, basename(self._filename))
 		try:
 			validOptionKeys = self.formatsWriteOptions[format]
 		except KeyError:
@@ -1049,6 +1047,10 @@ class Glossary(GlossaryType):
 		if direct is None:
 			if sort is not True:
 				direct = True  # FIXME
+
+		if isdir(outputFilename):
+			log.error(f"Directory already exists: {outputFilename}")
+			return
 
 		tm0 = now()
 		if not self.read(
