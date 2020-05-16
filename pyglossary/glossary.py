@@ -140,9 +140,9 @@ class Glossary(GlossaryType):
 		"""
 		executed on startup.  as name implies, loads plugins from directory
 		"""
-		log.debug("Loading plugins from directory: %r", directory)
+		log.debug(f"Loading plugins from directory: {directory!r}")
 		if not isdir(directory):
-			log.error("Invalid plugin directory: %r", directory)
+			log.error(f"Invalid plugin directory: {directory!r}")
 			return
 
 		sys.path.append(directory)
@@ -159,20 +159,17 @@ class Glossary(GlossaryType):
 		for name, param in sig.parameters.items():
 			if param.default is inspect._empty:
 				if name not in ("self", "glos", "filename", "dirname", "kwargs"):
-					log.warning("empty default value for %s: %s" % (name, param.default))
+					log.warning(f"empty default value for {name}: {param.default}")
 				continue # non-keyword argument
 			if name not in optionsProp:
-				log.warning("skipping option %s in plugin %s" % (name, format))
+				log.warning(f"skipping option {name} in plugin {format}")
 				continue
 			prop = optionsProp[name]
 			if prop.disabled:
-				log.debug("skipping disabled option %s in %s plugin", name, format)
+				log.debug(f"skipping disabled option {name} in {format} plugin")
 				continue
 			if not prop.validate(param.default):
-				log.warning("invalid default value for option: %s = %r" % (
-					name,
-					param.default,
-				))
+				log.warning(f"invalid default value for option: {name} = {param.default!r}")
 			optNames.append(name)
 		return optNames
 
@@ -181,14 +178,14 @@ class Glossary(GlossaryType):
 		try:
 			plugin = __import__(pluginName)
 		except ModuleNotFoundError as e:
-			log.warning("Module %r not found, skipping plugin %r", e.name, pluginName)
+			log.warning(f"Module {e.name!r} not found, skipping plugin {pluginName!r}")
 			return
 		except Exception as e:
-			log.exception("Error while importing plugin %s", pluginName)
+			log.exception(f"Error while importing plugin {pluginName}")
 			return
 
 		if (not hasattr(plugin, "enable")) or (not plugin.enable):
-			log.debug("Plugin disabled or not a plugin: %s", pluginName)
+			log.debug(f"Plugin disabled or not a plugin: {pluginName}")
 			return
 
 		format = plugin.format
@@ -203,7 +200,7 @@ class Glossary(GlossaryType):
 		if hasattr(plugin, "description"):
 			desc = plugin.description
 		else:
-			desc = "%s (%s)" % (format, extensions[0])
+			desc = f"{format} ({extensions[0]})"
 
 		cls.plugins[format] = plugin
 		cls.descFormat[desc] = format
@@ -238,8 +235,8 @@ class Glossary(GlossaryType):
 			):
 				if not hasattr(Reader, attr):
 					log.error(
-						"Invalid Reader class in \"%s\" plugin" % format +
-						", no \"%s\" method" % attr
+						f"Invalid Reader class in {format!r} plugin"
+						f", no {attr!r} method"
 					)
 					break
 			else:
@@ -555,7 +552,7 @@ class Glossary(GlossaryType):
 			pass
 
 		if origKey != key:
-			log.debug("setInfo: %s -> %s", origKey, key)
+			log.debug(f"setInfo: {origKey} -> {key}")
 
 		self._info[key] = value
 
@@ -613,23 +610,23 @@ class Glossary(GlossaryType):
 		# (read is called before with direct=True)
 		if self._readers and not direct:
 			raise ValueError(
-				"there are already %s readers" % len(self._readers) +
-				", you can not read with direct=False mode"
+				f"there are already {len(self._readers)} readers"
+				f", you can not read with direct=False mode"
 			)
 
 		self.updateEntryFilters()
 		###
 		format = self.detectInputFormat(filename, format=format)
 		if not format:
-			log.error("Could not detect input format from file name: \"%s\"", filename)
+			log.error(f"Could not detect input format from file name: {filename!r}")
 			return False
 
 		validOptionKeys = self.formatsReadOptions[format]
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
 				log.error(
-					"Invalid read option \"%s\" " % key +
-					"given for %s format" % format
+					f"Invalid read option {key!r} "
+					f"given for {format} format"
 				)
 				del options[key]
 
@@ -649,16 +646,16 @@ class Glossary(GlossaryType):
 			if direct:
 				self._readers.append(reader)
 				log.info(
-					"Using Reader class from %s plugin" % format +
-					" for direct conversion without loading into memory"
+					f"Using Reader class from {format} plugin"
+					f" for direct conversion without loading into memory"
 				)
 			else:
 				self.loadReader(reader)
 		else:
 			if direct:
 				log.debug(
-					"No `Reader` class found in %s plugin" % format +
-					", falling back to indirect mode"
+					f"No `Reader` class found in {format} plugin"
+					f", falling back to indirect mode"
 				)
 			result = self.readFunctions[format].__call__(
 				self,
@@ -734,7 +731,7 @@ class Glossary(GlossaryType):
 			if sort:
 				sortKey = self._sortKey
 				cacheSize = self._sortCacheSize
-				log.info("Stream sorting enabled, cache size: %s", cacheSize)
+				log.info(f"Stream sorting enabled, cache size: {cacheSize}")
 				# only sort by main word, or list of words + alternates? FIXME
 				gen = hsortStreamList(
 					self._readers,
@@ -823,7 +820,7 @@ class Glossary(GlossaryType):
 
 		else:  # filename is empty
 			if not inputFilename:
-				log.error("Invalid filename %r", filename)
+				log.error(f"Invalid filename {filename!r}")
 				return
 			filename = inputFilename  # no extension
 			if not format:
@@ -860,13 +857,13 @@ class Glossary(GlossaryType):
 		try:
 			validOptionKeys = self.formatsWriteOptions[format]
 		except KeyError:
-			log.critical("No write support for \"%s\" format", format)
+			log.critical(f"No write support for {format!r} format")
 			return
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
 				log.error(
-					"Invalid write option \"%s\"" % key +
-					" given for %s format" % format
+					f"Invalid write option {key!r}"
+					f" given for {format} format"
 				)
 				del options[key]
 
@@ -875,16 +872,16 @@ class Glossary(GlossaryType):
 		if sortOnWrite == ALWAYS:
 			if sort is False:
 				log.warning(
-					"Writing %s requires sorting" % format +
-					", ignoring user sort=False option"
+					f"Writing {format} requires sorting"
+					f", ignoring user sort=False option"
 				)
 			if self._readers:
 				log.warning(
-					"Writing to %s format requires full sort" % format +
-					", falling back to indirect mode"
+					f"Writing to {format} format requires full sort"
+					f", falling back to indirect mode"
 				)
 				self._inactivateDirectMode()
-				log.info("Loaded %s entries", len(self._data))
+				log.info(f"Loaded {len(self._data)} entries")
 			sort = True
 		elif sortOnWrite == DEFAULT_YES:
 			if sort is None:
@@ -928,7 +925,7 @@ class Glossary(GlossaryType):
 			self._updateIter(sort=False)
 
 		filename = abspath(filename)
-		log.info("Writing to file \"%s\"", filename)
+		log.info(f"Writing to file {filename!r}")
 		try:
 			if format in self.writerClasses:
 				writer = self.writerClasses[format].__call__(self)
@@ -936,7 +933,7 @@ class Glossary(GlossaryType):
 			elif format in self.writeFunctions:
 				self.writeFunctions[format].__call__(self, filename, **options)
 			else:
-				log.error("No write function or Writer class found for plugin %s" % format)
+				log.error(f"No write function or Writer class found for plugin {format}")
 				return
 		except Exception:
 			log.exception("Exception while calling plugin\'s write function")
@@ -1030,9 +1027,9 @@ class Glossary(GlossaryType):
 			writeOptions = {}
 
 		if readOptions:
-			log.info("readOptions = %s" % readOptions)
+			log.info(f"readOptions = {readOptions}")
 		if writeOptions:
-			log.info("writeOptions = %s" % writeOptions)
+			log.info(f"writeOptions = {writeOptions}")
 
 		outputArgs = self.detectOutputFormat(
 			filename=outputFilename,
@@ -1040,7 +1037,7 @@ class Glossary(GlossaryType):
 			inputFilename=inputFilename,
 		)
 		if not outputArgs:
-			log.error("Writing file \"%s\" failed.", outputFilename)
+			log.error(f"Writing file {outputFilename!r} failed.")
 			return
 		outputFilename, outputFormat, archiveType = outputArgs
 
@@ -1073,14 +1070,14 @@ class Glossary(GlossaryType):
 		)
 		log.info("")
 		if not finalOutputFile:
-			log.error("Writing file \"%s\" failed.", outputFilename)
+			log.error(f"Writing file {outputFilename!r} failed.")
 			return
 
 		if archiveType:
 			finalOutputFile = self.archiveOutDir(finalOutputFile, archiveType)
 
-		log.info("Writing file \"%s\" done.", finalOutputFile)
-		log.info("Running time of convert: %.1f seconds", now() - tm0)
+		log.info(f"Writing file {finalOutputFile!r} done.")
+		log.info(f"Running time of convert: {now()-tm0:.1f} seconds")
 
 		return finalOutputFile
 
@@ -1122,7 +1119,7 @@ class Glossary(GlossaryType):
 				fp.write("##" + key + sep1 + desc + sep2)
 		fp.flush()
 
-		myResDir = filename + "_res"
+		myResDir = f"{filename}_res"
 		if not isdir(myResDir):
 			os.mkdir(myResDir)
 
@@ -1212,8 +1209,8 @@ class Glossary(GlossaryType):
 				.replace("\x00", "")\
 				.replace("\r", "")\
 				.replace("\n", newline)
-			infoValues.append("\'" + value + "\'")
-			infoDefLine += "%s char(%d), " % (key, len(value))
+			infoValues.append(f"\'{value}\'")
+			infoDefLine += f"{key} char({len(value)}), "
 
 		infoDefLine = infoDefLine[:-2] + ");"
 		yield infoDefLine
@@ -1232,18 +1229,16 @@ class Glossary(GlossaryType):
 
 		if transaction:
 			yield "BEGIN TRANSACTION;"
-		yield "INSERT INTO dbinfo VALUES(%s);" % (",".join(infoValues))
+		yield f"INSERT INTO dbinfo VALUES({','.join(infoValues)});"
 
 		if addExtraInfo:
 			extraInfo = self.getExtraInfos(infoKeys)
 			for index, (key, value) in enumerate(extraInfo.items()):
+				key = key.replace("\'", "\'\'")
+				value = value.replace("\'", "\'\'")
 				yield (
-					"INSERT INTO dbinfo_extra " +
-					"VALUES(%d, \'%s\', \'%s\');" % (
-						index + 1,
-						key.replace("\'", "\'\'"),
-						value.replace("\'", "\'\'"),
-					)
+					f"INSERT INTO dbinfo_extra VALUES({index+1}, "
+					f"\'{key}\', \'{value}\');"
 				)
 
 		for i, entry in enumerate(self):
@@ -1256,11 +1251,7 @@ class Glossary(GlossaryType):
 				.replace("\r", "").replace("\n", newline)
 			defi = defi.replace("\'", "\'\'")\
 				.replace("\r", "").replace("\n", newline)
-			yield "INSERT INTO word VALUES(%d, \'%s\', \'%s\');" % (
-				i + 1,
-				word,
-				defi,
-			)
+			yield f"INSERT INTO word VALUES({i+1}, \'{word}\', \'{defi}\');"
 		if transaction:
 			yield "END TRANSACTION;"
 		yield "CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);"
@@ -1268,6 +1259,7 @@ class Glossary(GlossaryType):
 	# ________________________________________________________________________#
 
 	def takeOutputWords(self, minWordLen: int = 3) -> List[str]:
+		# fr"[\w]{{{minWordLen},}}"
 		wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
 		words = set()
 		progressbar, self._progressbar = self._progressbar, False
@@ -1290,7 +1282,7 @@ class Glossary(GlossaryType):
 			return
 		self.ui.progress(
 			min(pos + 1, total) / total,
-			"%d / %d %s" % (pos, total, unit),
+			f"{pos:d} / {total:d} {unit}",
 		)
 
 	def progressEnd(self) -> None:
@@ -1369,16 +1361,16 @@ class Glossary(GlossaryType):
 				m = m.replace("\n", "\\n").replace("\t", "\\t")
 				onePer = int(1.0 / num)
 				if onePer == 1.0:
-					out.append("%s\\n%s" % (w, m))
+					out.append(f"{w}\\n{m}")
 				elif showRel == "Percent":
-					out.append("%s(%%%d)\\n%s" % (w, 100 * num, m))
+					out.append(f"{w}(%{100*num})\\n{m}")
 				elif showRel == "Percent At First":
 					if num == numP:
-						out.append("%s\\n%s" % (w, m))
+						out.append(f"{w}\\n{m}")
 					else:
-						out.append("%s(%%%d)\\n%s" % (w, 100 * num, m))
+						out.append(f"{w}(%{100*num})\\n{m}")
 				else:
-					out.append("%s\\n%s" % (w, m))
+					out.append(f"{w}\\n{m}")
 			return out
 		for j in range(n):
 			numP = num
@@ -1387,12 +1379,12 @@ class Glossary(GlossaryType):
 			if onePer == 1.0:
 				out.append(w)
 			elif showRel == "Percent":
-				out.append("%s(%%%d)" % (w, 100 * num))
+				out.append(f"{w}(%{100*num})")
 			elif showRel == "Percent At First":
 				if num == numP:
 					out.append(w)
 				else:
-					out.append("%s(%%%d)" % (w, 100 * num))
+					out.append(f"{w}(%{100*num})")
 			else:
 				out.append(w)
 		return out
@@ -1444,8 +1436,8 @@ class Glossary(GlossaryType):
 
 		wordCount = len(words)
 		log.info(
-			"Reversing to file \"%s\"" % savePath +
-			", number of words: %s" % wordCount
+			f"Reversing to file {savePath!r}"
+			f", number of words: {wordCount}"
 		)
 		self.progressInit("Reversing")
 		wcThreshold = wordCount // 200 + 1
@@ -1470,9 +1462,9 @@ class Glossary(GlossaryType):
 							defi = ", ".join(result) + "."
 					except Exception:
 						log.exception("")
-						log.debug("result = %s", result)
+						log.debug(f"result = {result}")
 						return
-					saveFile.write("%s\t%s\n" % (word, defi))
+					saveFile.write(f"{word}\t{defi}\n")
 				yield wordI
 
 		self.progressEnd()
