@@ -37,10 +37,10 @@ def write(glos: GlossaryType, filename: str):
 			continue
 		word = entry.getWord()
 		defi = entry.getDefi()
-		fp.write("""<entry>
-<form><orth>%s</orth></form>
+		fp.write(f"""<entry>
+<form><orth>{word}</orth></form>
 <gramgrp><pos>n</pos></gramgrp>
-<trans><tr>%s</tr></trans>
-</entry>""" % (word, defi))
+<trans><tr>{defi}</tr></trans>
+</entry>""")
 	fp.write("</body></text></tei.2>")
 	fp.close()
