@@ -42,6 +42,15 @@ class Option(object):
 		valueType = type(value).__name__
 		return self.typ == valueType
 
+	def validateRaw(self, raw: str) -> bool:
+		"returns isValid"
+		value, isValid = self.evaluate(raw)
+		if not isValid:
+			return False
+		if not self.validate(value):
+			return False
+		return True
+
 	def groupValues(self) -> Optional[Dict[str, Any]]:
 		return None
 

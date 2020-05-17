@@ -169,16 +169,11 @@ class FormatOptionsDialog(gtk.Dialog):
 		if not prop.customValue:
 			return
 		enable = True
-		if prop.typ == "int":
-			if newText == "":
-				enable = False
-			else:
-				try:
-					valueInt = int(newText)
-				except ValueError:
-					log.error(f"invalid integer value: {optName} = {newText!r}")
-					return
-				newText = str(valueInt)
+		if newText == "" and prop.typ != "str":
+			enable = False
+		elif not prop.validateRaw(newText):
+			log.error(f"invalid integer value: {optName} = {newText!r}")
+			return
 		model.set_value(itr, self.valueCol, newText)
 		model.set_value(itr, 0, enable)
 
