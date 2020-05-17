@@ -160,7 +160,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		itr = model.get_iter(path)
 		model.set_value(itr, 0, active)
 
-	def valueEdited(self, cell, path, newText):
+	def valueEdited(self, cell, path, rawValue):
 		# value is column 3
 		model = self.treev.get_model()
 		itr = model.get_iter(path)
@@ -169,12 +169,12 @@ class FormatOptionsDialog(gtk.Dialog):
 		if not prop.customValue:
 			return
 		enable = True
-		if newText == "" and prop.typ != "str":
+		if rawValue == "" and prop.typ != "str":
 			enable = False
-		elif not prop.validateRaw(newText):
-			log.error(f"invalid {prop.typ} value: {optName} = {newText!r}")
+		elif not prop.validateRaw(rawValue):
+			log.error(f"invalid {prop.typ} value: {optName} = {rawValue!r}")
 			return
-		model.set_value(itr, self.valueCol, newText)
+		model.set_value(itr, self.valueCol, rawValue)
 		model.set_value(itr, 0, enable)
 
 	def rowActivated(self, treev, path, col):
