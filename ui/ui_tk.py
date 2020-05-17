@@ -300,11 +300,16 @@ class FormatOptionsButton(ttk.Button):
 		entry.insert(0, value)
 		entry.pack(fill="x")
 
+		prop = Glossary.formatsOptionsProp[format][optName]
+
 		def okClicked(event=None):
-			value = entry.get()
-			treev.set(optName, self.valueCol, value)
+			rawValue = entry.get()
+			if not prop.validateRaw(rawValue):
+				log.error(f"invalid {prop.typ} value: {optName} = {rawValue!r}")
+				return
+			treev.set(optName, self.valueCol, rawValue)
 			treev.set(optName, "#1", "1") # enable it
-			col_w = tkFont.Font().measure(value)
+			col_w = tkFont.Font().measure(rawValue)
 			if treev.column("Value", width=None) < col_w:
 				treev.column("Value", width=col_w)
 			dialog.destroy()
@@ -375,7 +380,7 @@ class FormatOptionsButton(ttk.Button):
 		def valueCellClicked(event, optName):
 			if not optName:
 				return
-			prop = Glossary.formatsOptionsProp[format][optName]
+			prop = optionsProp[optName]
 			propValues = prop.values
 			if not propValues:
 				if prop.customValue:
