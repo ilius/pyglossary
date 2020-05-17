@@ -475,11 +475,14 @@ class FormatOptionsButton(ttk.Button):
 		###
 		for optName in options:
 			prop = optionsProp[optName]
+			comment = prop.typ
+			if prop.comment:
+				comment += ", " + prop.comment
 			row = [
 				int(optName in self.values),
 				optName,
 				str(self.values.get(optName, "")),
-				prop.comment,
+				comment,
 			]
 			treev.insert("", "end", values=row, iid=optName) # iid should be rowId
 			# adjust column's width if necessary to fit each value
