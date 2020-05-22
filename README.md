@@ -9,7 +9,7 @@ Screenshots
 
 <img src="https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-gtk-bgl-stardict-nl-en-dark.png" height="450"/>
 
-Linux - (New) Gtk3-based intreface
+Linux - Gtk3-based intreface
 
 ------------------------------------------------------------------------
 
