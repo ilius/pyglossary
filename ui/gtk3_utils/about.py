@@ -45,9 +45,9 @@ class AboutWidget(gtk.Box):
 		self.pack_start(notebook, True, True, 5)
 		notebook.set_tab_pos(gtk.PositionType.LEFT)
 		##
-		tab1_about = self.newTabWidget(about, wrap=False)
-		tab2_authors = self.newTabWidget(authors, wrap=False)
-		tab3_license = self.newTabWidget(license, wrap=False)
+		tab1_about = self.newTabWidget(about)
+		tab2_authors = self.newTabWidget(authors)
+		tab3_license = self.newTabWidget(license)
 		##
 		tabs = [
 			(tab1_about, self.newTabTitle("About", "dialog-information-22.png")),
@@ -60,10 +60,17 @@ class AboutWidget(gtk.Box):
 		##
 		self.show_all()
 
-	def newTabWidget(self, text: str, wrap: bool):
+	def newTabWidget(
+		self,
+		text: str,
+		wrap: bool = False,
+		justification: "Optional[gtk.Justification]" = None,
+	):
 		tv = gtk.TextView()
 		if wrap:
 			tv.set_wrap_mode(gtk.WrapMode.WORD)
+		if justification is not None:
+			tv.set_justification(justification)
 		tv.set_cursor_visible(False)
 		tv.set_border_width(10)
 		buf = tv.get_buffer()
