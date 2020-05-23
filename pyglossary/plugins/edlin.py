@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # edlin.py
 #
-# Copyright © 2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# Copyright © 2016-2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # This file is part of PyGlossary project, https://github.com/ilius/pyglossary
 #
 # This program is a free software; you can redistribute it and/or modify

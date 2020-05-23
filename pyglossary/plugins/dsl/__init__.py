@@ -2,9 +2,9 @@
 # dsl/__init__.py
 # Read ABBYY Lingvo DSL dictionary format
 #
-# Copyright (C) 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
-# Copyright (C) 2013-2016 Saeed Rasooli <saeed.gnu@gmail.com>
-# Copyright (C) 2016 Ratijas <ratijas.t@me.com>
+# Copyright © 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+# Copyright © 2013-2019 Saeed Rasooli <saeed.gnu@gmail.com>
+# Copyright © 2016 Ratijas <ratijas.t@me.com>
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

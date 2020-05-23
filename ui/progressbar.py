@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # progressbar.py - Text progressbar library for python
 #
-# Copyright (C) 2006 Nilton Volpato <nilton.volpato@gmail.com>
+# Copyright © 2006 Nilton Volpato <nilton.volpato@gmail.com>
 #					(until version 2.2)
-# Copyright (C) 2009-2010 Saeed Rasooli <saeed.gnu@gmail.com>
+# Copyright © 2009-2017 Saeed Rasooli <saeed.gnu@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public

@@ -2,9 +2,9 @@
 # appledict/__init__.py
 # Output to Apple Dictionary xml sources for Dictionary Development Kit.
 #
-# Copyright (C) 2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-# Copyright (C) 2016 Ratijas <ratijas.t@me.com>
-# Copyright (C) 2012-2015 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+# Copyright © 2016-2020 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# Copyright © 2016 Ratijas <ratijas.t@me.com>
+# Copyright © 2012-2015 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

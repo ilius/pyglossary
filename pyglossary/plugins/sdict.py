@@ -2,8 +2,8 @@
 # sdict.py
 # Loader engine for AXMASoft's open dictionary format
 #
-# Copyright (C) 2010-2016 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-# Copyright (C) 2006-2008 Igor Tkach, as part of SDict Viewer:
+# Copyright © 2010-2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# Copyright © 2006-2008 Igor Tkach, as part of SDict Viewer:
 #			   http://sdictviewer.sf.net
 #
 # This program is a free software; you can redistribute it and/or modify

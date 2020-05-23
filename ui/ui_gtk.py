@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ui_gtk.py
 #
-# Copyright © 2008-2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# Copyright © 2008-2020 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # Thanks to Pier Carteri <m3tr0@dei.unipd.it> for program Py_Shell.py
 # Thanks to Milad Rastian for program pySQLiteGUI
 #

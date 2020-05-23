@@ -2,11 +2,11 @@
 # xdxf/__init__.py
 """xdxf file format reader and utils to convert xdxf to html."""
 #
-# Copyright (C) 2016 Ratijas <ratijas.t@me.com>
+# Copyright © 2016 Ratijas <ratijas.t@me.com>
 #
 # some parts of this file include code from:
 # Aard Dictionary Tools <http://aarddict.org>.
-# Copyright (C) 2008-2009  Igor Tkach
+# Copyright © 2008-2009  Igor Tkach
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
