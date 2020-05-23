@@ -869,7 +869,7 @@ class UI(tix.Frame, UIBase):
 		###
 		msg1 = tix.Message(
 			about,
-			width=350,
+			width=600,
 			text="PyGlossary %s (Tkinter)" % VERSION,
 			font=("DejaVu Sans", 13, "bold"),
 		)
@@ -877,7 +877,7 @@ class UI(tix.Frame, UIBase):
 		###
 		msg2 = tix.Message(
 			about,
-			width=350,
+			width=600,
 			text=aboutText,
 			font=("DejaVu Sans", 9, "bold"),
 			justify=tix.CENTER,
@@ -886,7 +886,7 @@ class UI(tix.Frame, UIBase):
 		###
 		msg3 = tix.Message(
 			about,
-			width=350,
+			width=600,
 			text=homePage,
 			font=("DejaVu Sans", 8, "bold"),
 			fg="#3333ff",
@@ -895,7 +895,7 @@ class UI(tix.Frame, UIBase):
 		###
 		msg4 = tix.Message(
 			about,
-			width=350,
+			width=600,
 			text="Install Gtk3+PyGI to have a better interface!",
 			font=("DejaVu Sans", 8, "bold"),
 			fg="#00aa00",
@@ -942,8 +942,8 @@ class UI(tix.Frame, UIBase):
 		###
 		msg1 = tix.Message(
 			about,
-			width=500,
-			text="\n".join(authors),
+			width=600,
+			text="\n".join(authors).replace("\t", "    "),
 			font=("DejaVu Sans", 9, "bold"),
 		)
 		msg1.pack(fill="x", expand=True)
