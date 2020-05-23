@@ -1,0 +1,20 @@
+<resources>
+	<resource path="dialog-information.png">
+		<author>>Oxygen Icon Theme</author>
+		<license>LGPLv3+</license>
+		<source>scalable/status/dialog-information.svg</source>
+		<comment></comment>
+	</resource>
+	<resource path="author-22.png">
+		<author>www.svgrepo.com</author>
+		<license>Public Domain</license>
+		<source>https://www.svgrepo.com/svg/24604/user</source>
+		<comment></comment>
+	</resource>
+	<resource path="license-22.png">
+		<author>www.svgrepo.com</author>
+		<license>Public Domain</license>
+		<source>https://www.svgrepo.com/svg/112407/license</source>
+		<comment></comment>
+	</resource>
+</resources>

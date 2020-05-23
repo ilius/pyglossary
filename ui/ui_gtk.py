@@ -45,6 +45,7 @@ from .gtk3_utils import *
 from .gtk3_utils.utils import *
 from .gtk3_utils.dialog import MyDialog
 from .gtk3_utils.resize_button import ResizeButton
+from .gtk3_utils.about import AboutWidget
 
 # from gi.repository import GdkPixbuf
 
@@ -675,6 +676,13 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.convertButton.connect("clicked", self.convertClicked)
 		pack(hbox, self.convertButton, 1, 1, 10)
 		pack(vbox, hbox, 0, 0, 15)
+		####
+		self.convertConsoleTextview = textview = gtk.TextView()
+		swin = gtk.ScrolledWindow()
+		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
+		swin.set_border_width(0)
+		swin.add(textview)
+		pack(vbox, swin, 1, 1)
 		# ____________________ Tab 2 - Reverse ____________________ #
 		self.reverseStatus = ""
 		####
@@ -768,6 +776,18 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(hbox, self.reverseStopButton, 1, 1, 2)
 		###
 		pack(vbox, hbox, 0, 0, 5)
+		######
+		about = AboutWidget(
+			logo=logo,
+			header=f"PyGlossary\nVersion {core.VERSION}",
+			# about=summary,
+			about=aboutText,
+			authors="\n".join(authors),
+			license=licenseText,
+		)
+		about.label = _("About")
+		about.icon = ""  # "*.png"
+		self.prefPages.append(about)
 		#####
 		# ____________________________________________________________ #
 		notebook = gtk.Notebook()
@@ -791,7 +811,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# notebook.set_property("homogeneous", True)  # not in gtk3 FIXME
 		# notebook.set_property("tab-border", 5)  # not in gtk3 FIXME
 		# notebook.set_property("tab-hborder", 15)  # not in gtk3 FIXME
-		pack(self.vbox, notebook, 0, 0)
+		pack(self.vbox, notebook, 1, 1)
 		# for i in ui.prefPagesOrder:
 		#	try:
 		#		j = prefPagesOrder[i]
@@ -799,13 +819,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		#		continue
 		#	notebook.reorder_child(self.prefPages[i], j)
 		# ____________________________________________________________ #
-		self.consoleTextview = textview = gtk.TextView()
-		swin = gtk.ScrolledWindow()
-		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
-		swin.set_border_width(0)
-		swin.add(textview)
-		pack(self.vbox, swin, 1, 1)
-		###
 		handler = GtkSingleTextviewLogHandler(textview)
 		log.addHandler(handler)
 		###
@@ -875,6 +888,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(self.vbox, hbox, 0, 0)
 		# ____________________________________________________________ #
 		self.vbox.show_all()
+		notebook.set_current_page(0)  # Convert tab
 		self.convertInputFormatCombo.dependsButton.hide()
 		self.convertOutputFormatCombo.dependsButton.hide()
 		self.convertInputFormatCombo.optionsButton.hide()
@@ -903,7 +917,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		sys.exit(0)
 
 	def consoleClearButtonClicked(self, widget=None):
-		self.consoleTextview.get_buffer().set_text("")
+		self.convertConsoleTextview.get_buffer().set_text("")
 
 	def verbosityComboChanged(self, widget=None):
 		verbosity = self.verbosityCombo.get_active()
