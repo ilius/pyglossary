@@ -13,6 +13,9 @@ depends = {}
 def write(glos: GlossaryType, filename: str):
 	fp = open(filename, "w")
 	title = glos.getInfo("title")
+	publisher = glos.getInfo("author")
+	copyright = glos.getInfo("copyright")
+	creationTime = glos.getInfo("creationTime")
 
 	fp.write(f"""<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TEI.2 PUBLIC "-//TEI P3//DTD Main Document Type//EN"
@@ -25,7 +28,11 @@ def write(glos: GlossaryType, filename: str):
 	<title>{title}</title>
 	<respStmt><resp>converted with</resp><name>PyGlossary</name></respStmt>
 </titleStmt>
-<publicationStmt><p>freedict.de</p></publicationStmt>
+<publicationStmt>
+	<publisher>{publisher}</publisher>
+	<availability><p>{copyright}</p></availability>
+	<date>{creationTime}</date>
+</publicationStmt>
 <sourceDesc><p>{filename}</p></sourceDesc>
 </fileDesc>
 </teiHeader>
