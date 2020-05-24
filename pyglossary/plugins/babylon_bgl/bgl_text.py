@@ -98,7 +98,8 @@ def replaceHtmlEntryCB(u_match):
 	if u_match.group(0) == u_res:  # conversion failed
 		return u_res
 	else:
-		return xml_escape(u_res)
+		# FIXME: should " and ' be escaped?
+		return xml_escape(u_res, quotation=False)
 
 
 def replaceDingbat(u_match):
