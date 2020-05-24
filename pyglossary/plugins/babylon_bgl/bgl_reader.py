@@ -486,10 +486,9 @@ class BglReader(object):
 		for key, value in self.info.items():
 			if value == "":
 				continue # TODO: a bool flag to add empty value infos?
+			# leave "creationTime" and "lastUpdated" as is
 			if key in {
-				"creationTime",
 				"middleUpdated",
-				"lastUpdated",
 				"utf8Encoding",
 				"spellingAlternatives",
 				"caseSensitive",
