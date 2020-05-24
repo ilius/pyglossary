@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
+from pyglossary.xml_utils import xml_escape
 
 enable = True
 format = "Freedict"
@@ -17,8 +18,6 @@ def write(
 	filename: str,
 	resources: bool = True,
 ):
-	from xml.sax.saxutils import escape
-
 	fp = open(filename, "w", encoding="utf-8")
 	title = glos.getInfo("title")
 	publisher = glos.getInfo("author")
@@ -51,8 +50,8 @@ def write(
 			if resources:
 				entry.save(filename + "_res")
 			continue
-		word = escape(entry.getWord())
-		defi = escape(entry.getDefi())
+		word = xml_escape(entry.getWord())
+		defi = xml_escape(entry.getDefi())
 		fp.write(f"""<entry>
 <form><orth>{word}</orth></form>
 <trans><tr>{defi}</tr></trans>
