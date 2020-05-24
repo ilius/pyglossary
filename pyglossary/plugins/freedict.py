@@ -17,7 +17,7 @@ def write(
 	filename: str,
 	resources: bool = True,
 ):
-	fp = open(filename, "w")
+	fp = open(filename, "w", encoding="utf-8")
 	title = glos.getInfo("title")
 	publisher = glos.getInfo("author")
 	copyright = glos.getInfo("copyright")
