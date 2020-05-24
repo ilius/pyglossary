@@ -6,11 +6,17 @@ enable = True
 format = "Freedict"
 description = "FreeDict (tei)"
 extensions = [".tei"]
-optionsProp = {}
+optionsProp = {
+	"resources": BoolOption(),
+}
 depends = {}
 
 
-def write(glos: GlossaryType, filename: str):
+def write(
+	glos: GlossaryType,
+	filename: str,
+	resources: bool = True,
+):
 	fp = open(filename, "w")
 	title = glos.getInfo("title")
 	publisher = glos.getInfo("author")
@@ -40,7 +46,8 @@ def write(glos: GlossaryType, filename: str):
 
 	for entry in glos:
 		if entry.isData():
-			# FIXME
+			if resources:
+				entry.save(filename + "_res")
 			continue
 		word = entry.getWord()
 		defi = entry.getDefi()
