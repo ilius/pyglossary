@@ -46,7 +46,6 @@ def write(glos: GlossaryType, filename: str):
 		defi = entry.getDefi()
 		fp.write(f"""<entry>
 <form><orth>{word}</orth></form>
-<gramgrp><pos>n</pos></gramgrp>
 <trans><tr>{defi}</tr></trans>
 </entry>""")
 	fp.write("</body></text></tei.2>")
