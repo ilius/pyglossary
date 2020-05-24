@@ -112,6 +112,11 @@ class Glossary(GlossaryType):
 		"destlang": "targetLang",
 		##
 		"license": "copyright",
+		##
+		"publisher": "author",
+		##
+		# are there alternatives to "creationTime"
+		# and "lastUpdated"?
 	}
 	plugins = {}  # format => pluginModule
 	readFunctions = {}
