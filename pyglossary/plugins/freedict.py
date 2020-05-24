@@ -17,6 +17,8 @@ def write(
 	filename: str,
 	resources: bool = True,
 ):
+	from xml.sax.saxutils import escape
+
 	fp = open(filename, "w", encoding="utf-8")
 	title = glos.getInfo("title")
 	publisher = glos.getInfo("author")
@@ -49,8 +51,8 @@ def write(
 			if resources:
 				entry.save(filename + "_res")
 			continue
-		word = entry.getWord()
-		defi = entry.getDefi()
+		word = escape(entry.getWord())
+		defi = escape(entry.getDefi())
 		fp.write(f"""<entry>
 <form><orth>{word}</orth></form>
 <trans><tr>{defi}</tr></trans>
