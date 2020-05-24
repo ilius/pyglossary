@@ -2,38 +2,24 @@
 # from xml.sax.saxutils import unescape as xml_unescape
 
 
-def xml_escape(data: str, entities: bool = None) -> str:
+def xml_escape(data: str, quotation: bool = True) -> str:
 	"""Escape &, <, and > in a string of data.
-
-	You can escape other strings of data by passing a dictionary as
-	the optional entities parameter.  The keys and values must all be
-	strings; each key will be replaced with its corresponding value.
 	"""
-	if entities is None:
-		entities = {}
-
 	# must do ampersand first
 	data = data.replace("&", "&amp;")
 	data = data.replace(">", "&gt;")
 	data = data.replace("<", "&lt;")
-	if entities:
-		data = __dict_replace(data, entities)
+	if quotation:
+		data = data.replace("\"", "&quot;").replace("'", "&apos;")
 	return data
 
 
-def xml_unescape(data: str, entities: bool = None) -> str:
+def xml_unescape(data: str, quotation: bool = True) -> str:
 	"""Unescape &amp;, &lt;, and &gt; in a string of data.
-
-	You can unescape other strings of data by passing a dictionary as
-	the optional entities parameter.  The keys and values must all be
-	strings; each key will be replaced with its corresponding value.
 	"""
-	if entities is None:
-		entities = {}
-
 	data = data.replace("&lt;", "<")
 	data = data.replace("&gt;", ">")
-	if entities:
-		data = __dict_replace(data, entities)
+	if quotation:
+		data = data.replace("&quot;", "\"").replace("&apos;", "'")
 	# must do ampersand last
 	return data.replace("&amp;", "&")
