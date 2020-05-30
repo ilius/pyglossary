@@ -149,7 +149,7 @@ class TestOptionValidateList(unittest.TestCase):
 	def caseEvalFail(self, raw: str):
 		opt = ListOption()
 		valueActual, ok = opt.evaluate(raw)
-		self.assertFalse(ok, "evaluale did not fail, valueActual=%r" % valueActual)
+		self.assertFalse(ok, f"evaluale did not fail, valueActual={valueActual!r}")
 		self.assertEqual(valueActual, None)
 
 	def test_list_ok(self):
