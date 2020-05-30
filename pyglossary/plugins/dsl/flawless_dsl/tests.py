@@ -38,10 +38,10 @@ from flawless_dsl.main import (
 	BRACKET_R,
 )
 
-tag_i = tag.Tag('i', 'i')
-tag_m = tag.Tag('m1', 'm')
-tag_p = tag.Tag('p', 'p')
-tag_s = tag.Tag('s', 's')
+tag_i = tag.Tag("i", "i")
+tag_m = tag.Tag("m1", "m")
+tag_p = tag.Tag("p", "p")
+tag_s = tag.Tag("s", "s")
 
 
 class LayerTestCase(unittest.TestCase):
@@ -57,31 +57,32 @@ class LayerTestCase(unittest.TestCase):
 	def test_was_opened_AND_close_tags(self):
 		stack = []
 		l1, l2 = layer.Layer(stack), layer.Layer(stack)
-		l1.text = '...'
-		l2.tags, l2.text = {tag_i}, ',,,'
+		l1.text = "..."
+		l2.tags, l2.text = {tag_i}, ",,,"
 
 		self.assertTrue(tag.was_opened(stack, tag_i))
-		self.assertFalse(tag.was_opened(stack, tag.Tag('c green', 'c')))
+		self.assertFalse(tag.was_opened(stack, tag.Tag("c green", "c")))
 
 		layer.close_tags(stack, {tag_i}, len(stack) - 1)
 
 		expected = []
 		l = layer.Layer(expected)
-		l.text = '...[i],,,[/i]'
+		l.text = "...[i],,,[/i]"
 		self.assertEqual(expected, stack)
 
 	def test_close_layer(self):
 		stack = []
 		l1, l2, l3 = layer.Layer(stack), layer.Layer(stack), layer.Layer(stack)
-		l1.tags, l1.text = {tag_m}, '...'
-		l2.tags, l2.text = {tag_i}, ',,,'
-		l3.tags, l3.text = {tag_p, tag_s}, '+++'
+		l1.tags, l1.text = {tag_m}, "..."
+		l2.tags, l2.text = {tag_i}, ",,,"
+		l3.tags, l3.text = {tag_p, tag_s}, "+++"
 
 		expected = []
 		l1, l2 = layer.Layer(expected), layer.Layer(expected)
-		l1.tags, l1.text = {tag_m}, '...'
-		l2.tags, l2.text = {tag_i}, ',,,[%s][%s]+++[/%s][/%s]' % (
-			tag_p.opening, tag_s.opening, tag_s.closing, tag_p.closing)
+		l1.tags, l1.text = {tag_m}, "..."
+		l2.tags = {tag_i}
+		l2.text = f",,,[{tag_p.opening}][{tag_s.opening}]" \
+			f"+++[/{tag_s.closing}][/{tag_p.closing}]"
 
 		layer.close_layer(stack)
 		self.assertEqual(expected, stack)
@@ -135,9 +136,9 @@ class ProcessClosingTagsTestCase(unittest.TestCase):
 	def test_index_of_layer_containing_tag(self):
 		stack = []
 		l1, l2, l3 = layer.Layer(stack), layer.Layer(stack), layer.Layer(stack)
-		l1.tags, l1.text = {tag_m}, '...'
-		l2.tags, l2.text = {tag_i, tag_s}, ',,,'
-		l3.tags, l3.text = {tag_p}, '---'
+		l1.tags, l1.text = {tag_m}, "..."
+		l2.tags, l2.text = {tag_i, tag_s}, ",,,"
+		l3.tags, l3.text = {tag_p}, "---"
 
 		fn = partial(tag.index_of_layer_containing_tag, stack)
 		self.assertEqual(0, fn(tag_m.closing))
@@ -148,12 +149,12 @@ class ProcessClosingTagsTestCase(unittest.TestCase):
 	def test_close_one(self):
 		stack = []
 		l1, l2 = layer.Layer(stack), layer.Layer(stack)
-		l1.tags, l1.text = (), '...'
-		l2.tags, l2.text = {tag_p}, ',,,'
+		l1.tags, l1.text = (), "..."
+		l2.tags, l2.text = {tag_p}, ",,,"
 
 		expected = []
 		l = layer.Layer(expected)
-		l.tags, l.text = (), '...[%s],,,[/%s]' % tag_p
+		l.tags, l.text = (), f"...[{tag_p.opening}],,,[/{tag_p.closing}]"
 
 		closings = {tag_p.closing}
 		process_closing_tags(stack, closings)
@@ -163,81 +164,79 @@ class ProcessClosingTagsTestCase(unittest.TestCase):
 class PutBracketsAwayTestCase(unittest.TestCase):
 	def setUp(self):
 		tags = frozenset({
-			'b',
-			'\'',
-			'c',
-			'i',
-			'sup',
-			'sub',
-			'ex',
-			'p',
-			'*',
-			('m', '\d'),
+			"b",
+			"'",
+			"c",
+			"i",
+			"sup",
+			"sub",
+			"ex",
+			"p",
+			"*",
+			("m", "\d"),
 		})
 		parser = FlawlessDSLParser(tags)
 		self.put_brackets_away = parser.put_brackets_away
 
 	def testStandaloneLeftEscapedAtTheBeginning(self):
 		before = "[..."
-		after = "%s..." % BRACKET_L
+		after = f"{BRACKET_L}..."
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testStandaloneRightEscapedAtTheBeginning(self):
 		before = "]..."
-		after = "%s..." % BRACKET_R
+		after = f"{BRACKET_R}..."
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testStandaloneLeftEscaped(self):
 		before = r"...\[,,,"
-		after = r"...\%s,,," % BRACKET_L
+		after = fr"...\{BRACKET_L},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testStandaloneRightEscaped(self):
 		before = r"...\],,,"
-		after = r"...\%s,,," % BRACKET_R
+		after = fr"...\{BRACKET_R},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testStandaloneLeftNonEscaped(self):
 		before = "...[,,,"
-		after = "...%s,,," % BRACKET_L
+		after = f"...{BRACKET_L},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testStandaloneRightNonEscaped(self):
 		before = "...],,,"
-		after = "...%s,,," % BRACKET_R
+		after = f"...{BRACKET_R},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testStandaloneLeftNonEscapedBeforeTagName(self):
 		before = "...[p ,,,"
-		after = "...%sp ,,," % BRACKET_L
+		after = f"...{BRACKET_L}p ,,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testStandaloneRightNonEscapedAfterTagName(self):
 		before = "c]..."
-		after = "c%s..." % BRACKET_R
+		after = f"c{BRACKET_R}..."
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testPairEscaped(self):
 		before = r"...\[the\],,,"
-		after = r"...\%sthe\%s,,," % (BRACKET_L, BRACKET_R)
+		after = fr"...\{BRACKET_L}the\{BRACKET_R},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testPairEscapedAroundTagName(self):
 		before = r"...\[i\],,,"
-		after = r"...\%si\%s,,," % (BRACKET_L, BRACKET_R)
+		after = fr"...\{BRACKET_L}i\{BRACKET_R},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testPairEscapedAroundClosingTagName(self):
 		before = r"...\[/i\],,,"
-		after = r"...\%s/i\%s,,," % (BRACKET_L, BRACKET_R)
+		after = fr"...\{BRACKET_L}/i\{BRACKET_R},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testMixed(self):
+		L, R = BRACKET_L, BRACKET_R
 		before = r"[i]...\[on \]\[the] to[p][/i]"
-		after = r"[i]...\{L}on \{R}\{L}the{R} to[p][/i]".format(
-			L=BRACKET_L,
-			R=BRACKET_R,
-		)
+		after = fr"[i]...\{L}on \{R}\{L}the{R} to[p][/i]"
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testEverythingEscaped(self):
@@ -435,5 +434,5 @@ yīlún
 		self.assertEqual(after, parse(before))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	unittest.main()
