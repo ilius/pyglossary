@@ -136,7 +136,7 @@ re_m = re.compile(r"\[m(\d)\](.*?)\[/m\]")
 wrapped_in_quotes_re = re.compile("^(\\'|\")(.*)(\\1)$")
 
 # single instance of parser
-# it's safe as long as this script's not going multithread.
+# it is safe as long as this script is not going multithread.
 _parse = flawless_dsl.FlawlessDSLParser().parse
 
 
@@ -249,20 +249,20 @@ def _clean_tags(line, audio):
 		.replace("[/*]", "</span>")
 
 	# abbrev. label
-	line = line.replace('[p]', '<i class="p" style=\"color:green\">')
-	line = line.replace('[/p]', '</i>')
+	line = line.replace("[p]", "<i class=\"p\" style=\"color:green\">")
+	line = line.replace("[/p]", "</i>")
 
 	# cross reference
-	line = line.replace('[ref]', '<<').replace('[/ref]', '>>')
-	line = line.replace('[url]', '<<').replace('[/url]', '>>')
-	line = re.sub('<<(.*?)>>', ref_sub, line)
+	line = line.replace("[ref]", "<<").replace("[/ref]", ">>")
+	line = line.replace("[url]", "<<").replace("[/url]", ">>")
+	line = re.sub("<<(.*?)>>", ref_sub, line)
 
 	# sound file
 	if audio:
 		sound_tag = r'<object type="audio/x-wav" data="\g<1>\g<2>" ' \
-			'width="40" height="40">' \
-			'<param name="autoplay" value="false" />' \
-			'</object>'
+			"width=\"40\" height=\"40\">" \
+			"<param name=\"autoplay\" value=\"false\" />" \
+			"</object>"
 	else:
 		sound_tag = ""
 	line = re_sound.sub(sound_tag, line)
@@ -274,12 +274,12 @@ def _clean_tags(line, audio):
 	)
 
 	# \[...\]
-	line = line.replace('\\[', '[').replace('\\]', ']')
+	line = line.replace("\\[", "[").replace("\\]", "]")
 	return line
 
 
 def unwrap_quotes(s):
-	return wrapped_in_quotes_re.sub('\\2', s)
+	return wrapped_in_quotes_re.sub("\\2", s)
 
 
 def read(
