@@ -80,7 +80,7 @@ def indexes_generator(indexes_lang: str) -> Callable[[str, List[str], str, Any],
 		if BeautifulSoup:
 			quoted_title = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(title, True)
 		else:
-			quoted_title = '"%s"' % title.replace(">", "&gt;").replace('"', "&quot;")
+			quoted_title = '"' + title.replace(">", "&gt;").replace('"', "&quot;") + '"'
 
 		if indexer:
 			indexes = set(indexer(indexes, content))
@@ -120,7 +120,7 @@ em0_9_sub = r'<div class="m\1">'
 em0_9_ex_re = re.compile(r'<div class="ex" style="margin-left:(\d)em;color:steelblue">')
 em0_9_ex_sub = r'<div class="m\1 ex">'
 
-href_re = re.compile(r'''href=(["'])(.*?)\1''')
+href_re = re.compile(r"""href=(["'])(.*?)\1""")
 
 
 def href_sub(x: Pattern) -> str:
@@ -220,8 +220,8 @@ def format_clean_content(title: Optional[str], body: str, BeautifulSoup: Any) ->
 			.replace('<i class="p" style="color:green">', '<i class="p">') \
 			.replace('<span class="ex" style="color:steelblue">', '<span class="ex">') \
 			.replace('<span class="sec ex" style="color:steelblue">', '<span class="sec ex">') \
-			.replace('<u>', '<span class="u">').replace('</u>', '</span>') \
-			.replace('<s>', '<del>').replace('</s>', '</del>')
+			.replace("<u>", '<span class="u">').replace("</u>", "</span>") \
+			.replace("<s>", "<del>").replace("</s>", "</del>")
 
 		# nice header to display
 		content = "<h1>%s</h1>%s" % (title, body) if title else body
