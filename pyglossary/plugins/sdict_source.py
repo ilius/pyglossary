@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 # Source Glossary for "Sdictionary" (http://sdict.org)
-# It has extension '.sdct'
+# It has extension ".sdct"
 
 from formats_common import *
 
 enable = True
-format = 'SdictSource'
-description = 'Sdictionary Source (sdct)'
-extensions = ['.sdct']
+format = "SdictSource"
+description = "Sdictionary Source (sdct)"
+extensions = [".sdct"]
 optionsProp = {
 	"writeInfo": BoolOption(),
 	"newline": NewlineOption(),
@@ -20,27 +20,30 @@ def write(
 	glos,
 	filename,
 	writeInfo=True,
-	newline='\n',
+	newline="\n",
 	resources=True,
 ):
-	head = ''
+	head = ""
 	if writeInfo:
-		head += '<header>\n'
-		head += 'title = %s\n' % glos.getInfo('name')
-		head += 'author = %s\n' % glos.getInfo('author')
-		head += 'description = %s\n' % glos.getInfo('description')
-		head += 'w_lang = %s\n' % glos.getInfo('inputlang')
-		head += 'a_lang = %s\n' % glos.getInfo('outputlang')
-		head += '</header>\n#\n#\n#\n'
+		head += "<header>\n"
+		for name, infoKey in (
+			("title", "name"),
+			("author", "author"),
+			("description", "description"),
+			("w_lang", "inputlang"),
+			("a_lang", "outputlang"),
+		):
+			head += name + " = " + glos.getInfo(infoKey) + "\n"
+		head += "</header>\n#\n#\n#\n"
 	glos.writeTxt(
-		'___',
-		'\n',
+		"___",
+		"\n",
 		filename,
 		writeInfo=False,
 		rplList=(
-			('\n', '<BR>'),
+			("\n", "<BR>"),
 		),
-		ext='.sdct',
+		ext=".sdct",
 		head=head,
 		newline=newline,
 		resources=resources,
