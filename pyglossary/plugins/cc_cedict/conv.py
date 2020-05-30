@@ -30,7 +30,7 @@ def load_jinja():
 	except ModuleNotFoundError as e:
 		e.msg += ", run `sudo pip3 install jinja2` to install"
 		raise e
-	from .jinja2htmlcompress import HTMLCompress
+	from plugin_lib.jinja2htmlcompress import HTMLCompress
 	jinja_env = jinja2.Environment(
 		loader=jinja2.FileSystemLoader(script_dir),
 		extensions=[HTMLCompress],
