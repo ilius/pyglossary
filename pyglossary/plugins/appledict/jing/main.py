@@ -5,9 +5,9 @@ from os import path
 import subprocess
 import sys
 
-__all__ = ['JingTestError', 'run', 'main']
+__all__ = ["JingTestError", "run", "main"]
 
-log = logging.getLogger('root')
+log = logging.getLogger("root")
 log.setLevel(logging.DEBUG)
 
 
@@ -21,8 +21,11 @@ class JingTestError(subprocess.CalledProcessError):
 		super(JingTestError, self).__init__(returncode, cmd, output)
 
 	def __str__(self):
-		return 'Jing check failed with exit code %d:\n%s\n%s' %\
-			(self.returncode, '-' * 80, self.output)
+		return "\n".join([
+			f"Jing check failed with exit code {self.returncode}:",
+			"-" * 80,
+			self.output,
+		])
 
 
 def run(filename):
@@ -37,18 +40,18 @@ def run(filename):
 	here = path.abspath(path.dirname(__file__))
 	filename = path.abspath(filename)
 
-	jing_jar_path = path.join(here, 'jing', 'bin', 'jing.jar')
-	rng_path = path.join(here, 'DictionarySchema', 'AppleDictionarySchema.rng')
+	jing_jar_path = path.join(here, "jing", "bin", "jing.jar")
+	rng_path = path.join(here, "DictionarySchema", "AppleDictionarySchema.rng")
 
 	# -Xmxn Specifies the maximum size, in bytes, of the memory allocation
 	#	   pool.
 	# -- from `man 1 java`
-	args = ['java', '-Xmx2G', '-jar', jing_jar_path, rng_path, filename]
-	cmd = ' '.join(args)
+	args = ["java", "-Xmx2G", "-jar", jing_jar_path, rng_path, filename]
+	cmd = " ".join(args)
 
-	log.info('running Jing check:')
+	log.info("running Jing check:")
 	log.info(cmd)
-	log.info('...')
+	log.info("...")
 
 	pipe = subprocess.Popen(args,
 							stdout=subprocess.PIPE,
@@ -58,12 +61,12 @@ def run(filename):
 
 	if returncode != 0:
 		if returncode < 0:
-			log.error('Jing was terminated by signal %d' % -returncode)
+			log.error("Jing was terminated by signal %d" % -returncode)
 		elif returncode > 0:
-			log.error('Jing returned %d' % returncode)
+			log.error("Jing returned %d" % returncode)
 		raise JingTestError(returncode, cmd, output)
 	else:
-		log.info('Jing check successfully passed!')
+		log.info("Jing check successfully passed!")
 
 
 def main():
