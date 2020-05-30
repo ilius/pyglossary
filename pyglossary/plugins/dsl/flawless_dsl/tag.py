@@ -23,18 +23,18 @@ internal stuff. Tag class
 from collections import namedtuple
 
 
-Tag = namedtuple('Tag', ['opening', 'closing'])
+Tag = namedtuple("Tag", ["opening", "closing"])
 
 Tag.__repr__ = lambda tag: \
-	'Tag(%r)' % tag.opening if tag.opening == tag.closing \
-	else 'Tag(%r, %r)' % tag
+	"Tag(%r)" % tag.opening if tag.opening == tag.closing \
+	else "Tag(%r, %r)" % tag
 
 predefined = [
-	'm',
-	'*',
-	'ex',
-	'i',
-	'c',
+	"m",
+	"*",
+	"ex",
+	"i",
+	"c",
 ]
 
 

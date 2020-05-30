@@ -24,12 +24,12 @@ from . import tag
 
 class Layer(object):
 
-	__slots__ = ['tags', 'text']
+	__slots__ = ["tags", "text"]
 
 	def __init__(self, stack):
 		stack.append(self)
 		self.tags = set()
-		self.text = ''
+		self.text = ""
 
 	def __contains__(self, tag):
 		"""
@@ -39,7 +39,7 @@ class Layer(object):
 		return tag in self.tags
 
 	def __repr__(self):
-		return 'Layer({%s}, %r)' % (', '.join(map(str, self.tags)), self.text)
+		return "Layer({%s}, %r)" % (", ".join(map(str, self.tags)), self.text)
 
 	def __eq__(self, other):
 		"""
@@ -48,8 +48,8 @@ class Layer(object):
 		return self.text == other.text and self.tags == other.tags
 
 
-i_and_c = {tag.Tag('i', 'i'), tag.Tag('c', 'c')}
-p_tag = tag.Tag('p', 'p')
+i_and_c = {tag.Tag("i", "i"), tag.Tag("c", "c")}
+p_tag = tag.Tag("p", "p")
 
 
 def close_tags(stack, tags, layer_index=-1):
@@ -78,10 +78,10 @@ def close_tags(stack, tags, layer_index=-1):
 			# no need to layer.tags.add()
 
 		ordered_tags = tag.canonical_order(tags)
-		layer.text = '[%s]%s[/%s]' % (
-			']['.join([x.opening for x in ordered_tags]),
+		layer.text = "[%s]%s[/%s]" % (
+			"][".join([x.opening for x in ordered_tags]),
 			layer.text,
-			'][/'.join([x.closing for x in reversed(ordered_tags)]))
+			"][/".join([x.closing for x in reversed(ordered_tags)]))
 
 	# remove tags from layer
 	layer.tags -= tags

@@ -90,50 +90,50 @@ def ref_sub(x):
 shortcuts = [
 	# canonical: m > * > ex > i > c
 	(
-		r'[i][c](.*?)[/c][/i]',
-		r'<i style="color:green">\g<1></i>'
+		"[i][c](.*?)[/c][/i]",
+		"<i style=\"color:green\">\\g<1></i>"
 	),
 	(
-		r'[m(\d)][ex](.*?)[/ex][/m]',
-		r'<div class="ex" '
-		r'style="margin-left:\g<1>em;color:steelblue">\g<2></div>'
+		"[m(\\d)][ex](.*?)[/ex][/m]",
+		"<div class=\"ex\" "
+		"style=\"margin-left:\\g<1>em;color:steelblue\">\\g<2></div>"
 	),
 	(
-		r'[m(\d)][*][ex](.*?)[/ex][/*][/m]',
-		r'<div class="sec ex" '
-		r'style="margin-left:\g<1>em;color:steelblue">\g<2></div>'
+		"[m(\\d)][*][ex](.*?)[/ex][/*][/m]",
+		"<div class=\"sec ex\" "
+		"style=\"margin-left:\\g<1>em;color:steelblue\">\\g<2></div>"
 	),
 	(
-		r'[*][ex](.*?)[/ex][/*]',
-		r'<span class="sec ex" style="color:steelblue">\g<1></span>'
+		"[*][ex](.*?)[/ex][/*]",
+		"<span class=\"sec ex\" style=\"color:steelblue\">\\g<1></span>"
 	),
 	(
-		r'[m1](?:-{2,})[/m]',
-		'<hr/>'
+		"[m1](?:-{2,})[/m]",
+		"<hr/>"
 	),
 	(
-		r'[m(\d)](?:-{2,})[/m]',
-		r'<hr style="margin-left:\g<1>em"/>'
+		"[m(\\d)](?:-{2,})[/m]",
+		"<hr style=\"margin-left:\\g<1>em\"/>"
 	),
 ]
 
 shortcuts = [
 	(
-		re.compile(repl.replace('[', r'\[').replace('*]', r'\*]')),
+		re.compile(repl.replace("[", "\\[").replace("*]", "\\*]")),
 		sub
 	) for (repl, sub) in shortcuts
 ]
 
 
 # precompiled regexs
-re_brackets_blocks = re.compile(r'\{\{[^}]*\}\}')
-re_lang_open = re.compile(r'(?<!\\)\[lang[^\]]*\]')
-re_m_open = re.compile(r'(?<!\\)\[m\d\]')
-re_c_open_color = re.compile(r'\[c (\w+)\]')
-re_sound = re.compile(r'\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]')
-re_img = re.compile(r'\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]')
-re_m = re.compile(r'\[m(\d)\](.*?)\[/m\]')
-wrapped_in_quotes_re = re.compile(r'^(\'|")(.*)(\1)$')
+re_brackets_blocks = re.compile(r"\{\{[^}]*\}\}")
+re_lang_open = re.compile(r"(?<!\\)\[lang[^\]]*\]")
+re_m_open = re.compile(r"(?<!\\)\[m\d\]")
+re_c_open_color = re.compile(r"\[c (\w+)\]")
+re_sound = re.compile(r"\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]")
+re_img = re.compile(r"\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]")
+re_m = re.compile(r"\[m(\d)\](.*?)\[/m\]")
+wrapped_in_quotes_re = re.compile("^(\\'|\")(.*)(\\1)$")
 
 # single instance of parser
 # it's safe as long as this script's not going multithread.
@@ -228,28 +228,28 @@ def _clean_tags(line, audio):
 
 	# text formats
 
-	line = line.replace("[']", '<u>').replace("[/']", '</u>')
-	line = line.replace('[b]', '<b>').replace('[/b]', '</b>')
-	line = line.replace('[i]', '<i>').replace('[/i]', '</i>')
-	line = line.replace('[u]', '<u>').replace('[/u]', '</u>')
-	line = line.replace('[sup]', '<sup>').replace('[/sup]', '</sup>')
-	line = line.replace('[sub]', '<sub>').replace('[/sub]', '</sub>')
+	line = line.replace("[']", "<u>").replace("[/']", "</u>")
+	line = line.replace("[b]", "<b>").replace("[/b]", "</b>")
+	line = line.replace("[i]", "<i>").replace("[/i]", "</i>")
+	line = line.replace("[u]", "<u>").replace("[/u]", "</u>")
+	line = line.replace("[sup]", "<sup>").replace("[/sup]", "</sup>")
+	line = line.replace("[sub]", "<sub>").replace("[/sub]", "</sub>")
 
 	# color
-	line = line.replace('[c]', r'<span style="color:green">')
-	line = re_c_open_color.sub(r'<span style="color:\g<1>">', line)
-	line = line.replace('[/c]', r'</span>')
+	line = line.replace("[c]", "<span style=\"color:green\">")
+	line = re_c_open_color.sub("<span style=\"color:\\g<1>\">", line)
+	line = line.replace("[/c]", "</span>")
 
 	# example zone
-	line = line.replace('[ex]', r'<span class="ex" style="color:steelblue">')
-	line = line.replace('[/ex]', r'</span>')
+	line = line.replace("[ex]", "<span class=\"ex\" style=\"color:steelblue\">")
+	line = line.replace("[/ex]", "</span>")
 
 	# secondary zone
-	line = line.replace('[*]', '<span class="sec">')\
-		.replace('[/*]', '</span>')
+	line = line.replace("[*]", "<span class=\"sec\">")\
+		.replace("[/*]", "</span>")
 
 	# abbrev. label
-	line = line.replace('[p]', '<i class="p" style="color:green">')
+	line = line.replace('[p]', '<i class="p" style=\"color:green\">')
 	line = line.replace('[/p]', '</i>')
 
 	# cross reference
@@ -274,12 +274,12 @@ def _clean_tags(line, audio):
 	)
 
 	# \[...\]
-	line = line.replace(r'\[', '[').replace(r'\]', ']')
+	line = line.replace('\\[', '[').replace('\\]', ']')
 	return line
 
 
 def unwrap_quotes(s):
-	return wrapped_in_quotes_re.sub(r'\2', s)
+	return wrapped_in_quotes_re.sub('\\2', s)
 
 
 def read(
@@ -343,8 +343,8 @@ def read(
 			# some ill formated source may have tags spanned into
 			# multiple lines
 			# try to match opening and closing tags
-			tags_open = re.findall(r'(?<!\\)\[(c |[cuib]\])', line)
-			tags_close = re.findall(r'\[/[cuib]\]', line)
+			tags_open = re.findall(r"(?<!\\)\[(c |[cuib]\])", line)
+			tags_close = re.findall(r"\[/[cuib]\]", line)
 			if len(tags_open) != len(tags_close):
 				unfinished_line = line
 				continue
