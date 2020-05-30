@@ -272,12 +272,8 @@ def build_name2codepoint_dict():
 	for key in sorted(name2str.keys()):
 		value = toStr(name2str[key])
 		if len(value) > 1:
-			raise ValueError("value = %r" % value)
-		log.info("    \"{0}\": 0x{1:0>4x},  # {2}".format(
-			key,
-			ord(value),
-			value,
-		))
+			raise ValueError(f"value = {value!r}")
+		log.info(f"    \"{key}\": 0x{ord(value):0>4x},  # {value}")
 
 
 if __name__ == "__main__":

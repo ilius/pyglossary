@@ -94,17 +94,17 @@ def splitByBarUnescapeNTB(st: str) -> List[str]:
 # return a message string describing the current exception
 def excMessage() -> str:
 	i = sys.exc_info()
-	return "{0}: {1}".format(i[0].__name__, i[1])
+	return f"{i[0].__name__}: {i[1]}"
 
 
 def formatHMS(h: int, m: int, s: int) -> str:
 	if h == 0:
 		if m == 0:
-			return "%.2d" % s
+			return f"{s:02d}"
 		else:
-			return "%.2d:%.2d" % (m, s)
+			return f"{m:02d}:{s:02d}"
 	else:
-		return "%.2d:%.2d:%.2d" % (h, m, s)
+		return f"{h:02d}:{m:02d}:{s:02d}"
 
 
 def timeHMS(seconds: Union[int, float]) -> str:
@@ -156,7 +156,7 @@ def urlToPath(url: str) -> str:
 	i = 0
 	while i < n:
 		if path[i] == "%" and i < n-2:
-			path2 += chr(eval("0x%s" % path[i+1:i+3]))
+			path2 += chr(eval("0x" + path[i+1:i+3]))
 			i += 3
 		else:
 			path2 += path[i]
@@ -181,11 +181,11 @@ def runDictzip(filename: str) -> None:
 	).communicate()
 #	out = p3[1].read()
 #	err = p3[2].read()
-#	log.debug("dictzip command: \"%s\"", dictzipCmd)
+#	log.debug(f"dictzip command: {dictzipCmd!r}")
 #	if err:
-#		log.error("dictzip error: %s", err.replace("\n", " "))
+#		log.error(f"dictzip error: {err.replace('\n', ' ')}")
 #	if out:
-#		log.error("dictzip error: %s", out.replace("\n", " "))
+#		log.error(f"dictzip error: {out.replace('\n', ' ')}")
 
 
 def isControlChar(y: int) -> bool:
@@ -211,5 +211,5 @@ def isASCII(data: str, exclude: Optional[List[str]] = None) -> bool:
 def formatByteStr(text: str) -> str:
 	out = ""
 	for c in text:
-		out += "{0:0>2x}".format(ord(c)) + " "
+		out += f"{ord(c):0>2x} "
 	return out
