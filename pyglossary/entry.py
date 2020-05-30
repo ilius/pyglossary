@@ -70,7 +70,7 @@ class DataEntry(BaseEntry): # or Resource? FIXME
 		return [self._fname]
 
 	def getDefi(self) -> str:
-		return "File: %s" % self._fname
+		return f"File: {self._fname}"
 
 	def getDefis(self) -> List[str]:
 		return [self.getDefi()]
@@ -188,16 +188,16 @@ class Entry(BaseEntry):
 			if len(word) == 1:
 				word = word[0]
 		elif not isinstance(word, str):
-			raise TypeError("invalid word type %s" % type(word))
+			raise TypeError(f"invalid word type {type(word)}")
 
 		if isinstance(defi, list):
 			if len(defi) == 1:
 				defi = defi[0]
 		elif not isinstance(defi, str):
-			raise TypeError("invalid defi type %s" % type(defi))
+			raise TypeError(f"invalid defi type {type(defi)}")
 
 		if defiFormat not in ("m", "h", "x"):
-			raise ValueError("invalid defiFormat %r" % defiFormat)
+			raise ValueError(f"invalid defiFormat {defiFormat!r}")
 
 		self._word = word
 		self._defi = defi

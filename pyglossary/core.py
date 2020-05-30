@@ -57,7 +57,7 @@ class MyLogger(logging.Logger):
 	def isDebug(self) -> bool:
 		return self.getVerbosity() >= 4
 
-def format_var_dict(dct: Dict[str, Any], indent: int = 4, max_width: int = 80) -> str:
+def formatVarDict(dct: Dict[str, Any], indent: int = 4, max_width: int = 80) -> str:
 	lines = []
 	pre = " " * indent
 	for key, value in dct.items():
@@ -69,7 +69,7 @@ def format_var_dict(dct: Dict[str, Any], indent: int = 4, max_width: int = 80) -
 			except:
 				pass
 			else:
-				line += "\n" + pre + "len(%s) = %s"%(key, value_len)
+				line += f"\n{pre}len({key}) = {value_len}"
 		lines.append(line)
 	return "\n".join(lines)
 
@@ -91,13 +91,9 @@ def format_exception(
 			pass
 		else:
 			if add_locals:
-				text += "Traceback locals:\n%s\n" % format_var_dict(
-					frame.f_locals,
-				)
+				text += f"Traceback locals:\n{formatVarDict(frame.f_locals)}\n"
 			if add_globals:
-				text += "Traceback globals:\n%s\n" % format_var_dict(
-					frame.f_globals,
-				)
+				text += f"Traceback globals:\n{formatVarDict(frame.f_globals)}\n"
 
 	return text
 
@@ -211,8 +207,8 @@ elif os.sep == "\\":  # Operating system is Windows
 	confDir = os.getenv("APPDATA") + "\\" + "PyGlossary"
 else:
 	raise RuntimeError(
-		"Unknown path seperator(os.sep==%r)" % os.sep +
-		", unknown operating system!"
+		f"Unknown path seperator(os.sep=={os.sep!r})"
+		f", unknown operating system!"
 	)
 
 confJsonFile = join(confDir, "config.json")
