@@ -154,7 +154,7 @@ class Reader(object):
 					continue
 				key, eq, value = line.partition("=")
 				if not (key and value):
-					log.warning("Invalid ifo file line: %s", line)
+					log.warning(f"Invalid ifo file line: {line}")
 					continue
 				self._glos.setInfo(key, value)
 
@@ -194,7 +194,7 @@ class Reader(object):
 		dictFile = self._dictFile
 
 		if not dictFile:
-			log.error("%s is not open, can not iterate", self)
+			log.error(f"{self} is not open, can not iterate")
 			raise StopIteration
 
 		if not indexData:
@@ -207,13 +207,13 @@ class Reader(object):
 
 			dictFile.seek(defiOffset)
 			if dictFile.tell() != defiOffset:
-				log.error("Unable to read definition for word \"%s\"", b_word)
+				log.error(f"Unable to read definition for word {b_word}")
 				continue
 
 			b_defiBlock = dictFile.read(defiSize)
 
 			if len(b_defiBlock) != defiSize:
-				log.error("Unable to read definition for word \"%s\"", b_word)
+				log.error(f"Unable to read definition for word {b_word}")
 				continue
 
 			if sametypesequence:
@@ -225,7 +225,7 @@ class Reader(object):
 				defisData = self.parseDefiBlockGeneral(b_defiBlock)
 
 			if defisData is None:
-				log.error("Data file is corrupted. Word \"%s\"", b_word)
+				log.error(f"Data file is corrupted. Word {b_word}")
 				continue
 
 			# defisData is a list of (b_defi, defiFormatCode) tuples
@@ -250,7 +250,7 @@ class Reader(object):
 			# defiFormat = Counter(defiFormats).most_common(1)[0][0]
 
 			if not defiFormat:
-				log.warning("Definition format %s is not supported", defiFormat)
+				log.warning(f"Definition format {defiFormat!r} is not supported")
 
 			word = b_word.decode("utf-8")
 			try:
@@ -303,8 +303,8 @@ class Reader(object):
 			pos += 4
 			if wordIndex >= self._wordCount:
 				log.error(
-					"Corrupted synonym file. " +
-					"Word \"%s\" references invalid item" % b_alt
+					f"Corrupted synonym file. " +
+					f"Word {b_alt} references invalid item"
 				)
 				continue
 
@@ -433,7 +433,7 @@ class Writer(object):
 
 
 		if sametypesequence:
-			log.debug("Using write option sametypesequence=%s" % sametypesequence)
+			log.debug(f"Using write option sametypesequence={sametypesequence}")
 			self.writeCompact(sametypesequence)
 #		elif self.glossaryHasAdditionalDefinitions():
 #			self.writeGeneral()
@@ -506,7 +506,7 @@ class Writer(object):
 		idxFile.close()
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
-		log.info("Writing dict file took %.2f seconds", now() - t0)
+		log.info(f"Writing dict file took {now()-t0:.2f} seconds")
 		log.debug("defiFormat = " + pformat(defiFormat))
 
 		self.writeSynFile(altIndexList)
@@ -575,7 +575,7 @@ class Writer(object):
 		idxFile.close()
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
-		log.info("Writing dict file took %.2f seconds", now() - t0)
+		log.info(f"Writing dict file took {now()-t0:.2f} seconds")
 		log.debug("defiFormatsCount = " + pformat(defiFormatCounter.most_common()))
 
 		self.writeSynFile(altIndexList)
@@ -588,7 +588,7 @@ class Writer(object):
 		if not altIndexList:
 			return
 
-		log.info("Sorting %s synonyms...", len(altIndexList))
+		log.info(f"Sorting {len(altIndexList)} synonyms...")
 		t0 = now()
 
 		altIndexList.sort(
@@ -599,11 +599,9 @@ class Writer(object):
 		# 0.20 seconds without key function (default sort)
 
 		log.info(
-			"Sorting %s synonyms took %.2f seconds",
-			len(altIndexList),
-			now() - t0,
+			f"Sorting {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
 		)
-		log.info("Writing %s synonyms...", len(altIndexList))
+		log.info(f"Writing {len(altIndexList)} synonyms...")
 		t0 = now()
 		with open(self._filename+".syn", "wb") as synFile:
 			synFile.write(b"".join([
@@ -611,9 +609,7 @@ class Writer(object):
 				for b_alt, wordIndex in altIndexList
 			]))
 		log.info(
-			"Writing %s synonyms took %.2f seconds",
-			len(altIndexList),
-			now() - t0,
+			f"Writing {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
 		)
 
 	def writeIfoFile(
@@ -626,15 +622,16 @@ class Writer(object):
 		"""
 		Build .ifo file
 		"""
-		ifoStr = "StarDict's dict ifo file\n" \
-			+ "version=3.0.0\n" \
-			+ "bookname=%s\n" % newlinesToSpace(self._glos.getInfo("name")) \
-			+ "wordcount=%s\n" % wordCount \
-			+ "idxfilesize=%s\n" % indexFileSize
+		ifo = [
+			("version", "3.0.0"),
+			("bookname", newlinesToSpace(self._glos.getInfo("name"))),
+			("wordcount", wordCount),
+			("idxfilesize", indexFileSize),
+		]
 		if sametypesequence:
-			ifoStr += "sametypesequence=%s\n" % sametypesequence
+			ifo.append(("sametypesequence", sametypesequence))
 		if synwordcount > 0:
-			ifoStr += "synwordcount=%s\n" % synwordcount
+			ifo.append(("synwordcount", synwordcount))
 		for key in infoKeys:
 			if key in (
 				"bookname",
@@ -651,8 +648,11 @@ class Writer(object):
 			else:
 				value = newlinesToSpace(value)
 
-			ifoStr += "%s=%s\n" % (key, value)
+			ifo.append((key, value))
 
+		ifoStr = "StarDict's dict ifo file\n"
+		for key, value in ifo:
+			ifoStr += f"{key}={value}\n"
 		with open(self._filename+".ifo", "w", encoding="utf-8") as ifoFile:
 			ifoFile.write(ifoStr)
 
