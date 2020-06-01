@@ -274,7 +274,7 @@ def stripDollarIndexes(b_word):
 		d1 = b_word.find(b"$", d0 + 1)
 		if d1 == -1:
 			# log.debug(
-			#	"stripDollarIndexes(%s):\npaired $ is not found" % b_word
+			#	f"stripDollarIndexes({b_word}):\npaired $ is not found",
 			# )
 			b_word_main += b_word[i:]
 			break
@@ -293,7 +293,7 @@ def stripDollarIndexes(b_word):
 			summary: we must remove any sequence of dollar signs longer
 			than 1 chars
 			"""
-			# log.debug("stripDollarIndexes(%s):\nfound $$", b_word)
+			# log.debug(f"stripDollarIndexes({b_word}):\nfound $$")
 			b_word_main += b_word[i:d0]
 			i = d1 + 1
 			while i < len(b_word) and b_word[i] == ord(b"$"):
@@ -303,7 +303,7 @@ def stripDollarIndexes(b_word):
 			continue
 		if b_word[d0 + 1:d1].strip(b"0123456789"):
 			# if has at least one non-digit char
-			# log.debug("stripDollarIndexes(%s):\nnon-digit between $$', b_word)
+			# log.debug(f"stripDollarIndexes({b_word}):\nnon-digit between $$")
 			b_word_main += b_word[i:d1]
 			i = d1
 			continue
@@ -318,8 +318,8 @@ def stripDollarIndexes(b_word):
 		Ihre$1$Ihres
 			"""
 			log.debug(
-				"stripDollarIndexes(%s):\n" % b_word +
-				"second $ is followed by non-space"
+				f"stripDollarIndexes({b_word}):\n"
+				f"second $ is followed by non-space"
 			)
 			pass
 		b_word_main += b_word[i:d0]

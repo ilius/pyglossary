@@ -35,7 +35,7 @@ def decodeBglBinTime(b_value):
 	djd, hm = divmod(binStrToInt(b_value), 24 * 60)
 	year, month, day = gregorian.jd_to(djd + jd1970)
 	hour, minute = divmod(hm, 60)
-	return "%.2d/%.2d/%.2d, %.2d:%.2d" % (year, month, day, hour, minute)
+	return f"{year:04d}/{month:02d}/{day:02d}, {hour:02d}:{minute:02d}"
 
 
 def languageInfoDecode(b_value):
@@ -46,7 +46,7 @@ def languageInfoDecode(b_value):
 	try:
 		return languageByCode[intValue]
 	except IndexError:
-		log.warning("read_type_3: unknown language code = %s", intValue)
+		log.warning(f"read_type_3: unknown language code = {intValue}")
 		return
 
 
@@ -55,7 +55,7 @@ def charsetInfoDecode(b_value):
 	try:
 		return charsetByCode[value]
 	except KeyError:
-		log.warning("read_type_3: unknown charset %s", value)
+		log.warning(f"read_type_3: unknown charset {value!r}")
 
 
 def aboutInfoDecode(b_value):
@@ -85,23 +85,20 @@ def utf16InfoDecode(b_value):
 	"""
 	if b_value[0] != 0:
 		log.warning(
-			"utf16InfoDecode: b_value=%s, null expected at 0",
-			b_value,
+			f"utf16InfoDecode: b_value={b_value}, null expected at 0",
 		)
 		return
 
 	if b_value[1] == 0:
 		if len(b_value) > 2:
 			log.warning(
-				"utf16InfoDecode: unexpected b_value size: %s",
-				len(b_value),
+				f"utf16InfoDecode: unexpected b_value size: {len(b_value)}",
 			)
 		return
 
 	elif b_value[1] > 1:
 		log.warning(
-			"utf16InfoDecode: b_value=%s, unexpected byte at 1",
-			list(b_value),
+			f"utf16InfoDecode: b_value={b_value!r}, unexpected byte at 1",
 		)
 		return
 
@@ -109,13 +106,11 @@ def utf16InfoDecode(b_value):
 	size = 2 * binStrToInt(b_value[2:6])
 	if tuple(b_value[6:8]) != (0, 0):
 		log.warning(
-			"utf16InfoDecode: b_value=%s, null expected at 6:8",
-			list(b_value),
+			f"utf16InfoDecode: b_value={b_value!r}, null expected at 6:8",
 		)
 	if size != len(b_value) - 8:
 		log.warning(
-			"utf16InfoDecode: b_value=%s, size does not match",
-			list(b_value),
+			f"utf16InfoDecode: b_value={b_value!r}, size does not match",
 		)
 
 	return b_value[8:].decode("utf16")  # str
