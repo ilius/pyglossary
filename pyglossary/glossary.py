@@ -251,6 +251,7 @@ class Glossary(GlossaryType):
 					Reader.open,
 					format,
 				)
+				Reader.formatName = format
 
 		# ignore "read" function if "Reader" class is present
 		if not hasReadSupport:
@@ -650,10 +651,6 @@ class Glossary(GlossaryType):
 			reader.open(filename, **options)
 			if direct:
 				self._readers.append(reader)
-				log.info(
-					f"Using Reader class from {format} plugin"
-					f" for direct conversion without loading into memory"
-				)
 			else:
 				self.loadReader(reader)
 		else:
@@ -928,6 +925,12 @@ class Glossary(GlossaryType):
 			)
 		else:
 			self._updateIter(sort=False)
+
+		for reader in self._readers:
+			log.info(
+				f"Using Reader class from {reader.formatName} plugin"
+				f" for direct conversion without loading into memory"
+			)
 
 		filename = abspath(filename)
 		log.info(f"Writing to file {filename!r}")
