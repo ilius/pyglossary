@@ -906,9 +906,7 @@ class Glossary(GlossaryType):
 				except AttributeError:
 					pass
 				else:
-					log.debug(
-						"Using sort key function from %s plugin" % format
-					)
+					log.debug(f"Using sort key function from {format} plugin")
 			elif sortOnWrite == ALWAYS:
 				try:
 					sortKey = plugin.sortKey
@@ -916,8 +914,8 @@ class Glossary(GlossaryType):
 					pass
 				else:
 					log.warning(
-						"Ignoring user-defined sort order, " +
-						"and using key function from %s plugin" % format
+						f"Ignoring user-defined sort order"
+						f", and using key function from {format} plugin"
 					)
 			self.sortWords(
 				key=sortKey,
@@ -975,7 +973,7 @@ class Glossary(GlossaryType):
 		archiveType is the archive extension (without dot): "gz", "bz2", "zip"
 		"""
 		try:
-			os.remove("%s.%s" % (filename, archiveType))
+			os.remove(f"{filename}.{archiveType}")
 		except OSError:
 			pass
 		if archiveType == "gz":
@@ -986,7 +984,7 @@ class Glossary(GlossaryType):
 			if error:
 				log.error(
 					error + "\n" +
-					"Failed to compress file \"%s\"" % filename
+					f"Failed to compress file \"{filename}\""
 				)
 		elif archiveType == "bz2":
 			output, error = subprocess.Popen(
@@ -996,17 +994,17 @@ class Glossary(GlossaryType):
 			if error:
 				log.error(
 					error + "\n" +
-					"Failed to compress file \"%s\"" % filename
+					f"Failed to compress file \"{filename}\""
 				)
 		elif archiveType == "zip":
 			error = self.zipOutDir(filename)
 			if error:
 				log.error(
 					error + "\n" +
-					"Failed to compress file \"%s\"" % filename
+					f"Failed to compress file \"{filename}\""
 				)
 
-		archiveFilename = "%s.%s" % (filename, archiveType)
+		archiveFilename = f"{filename}.{archiveType}"
 		if isfile(archiveFilename):
 			return archiveFilename
 		else:
