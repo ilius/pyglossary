@@ -137,20 +137,20 @@ class Writer(EbookWriter):
 		# run kindlegen
 		tmp_path = mobi.get_tmp_path()
 		if no_kindlegen:
-			print_info("Not running kindlegen, the raw files are located in "%s"" % tmp_path)
+			log.info(f"Not running kindlegen, the raw files are located in {tmp_path}")
 			result = [tmp_path]
 		else:
 			try:
-				print_debug("Creating .mobi file with kindlegen...", args.debug)
+				log.debug("Creating .mobi file with kindlegen...")
 				kindlegen_path = KINDLEGEN
 				opf_file_path_absolute = os.path.join(tmp_path, "OEBPS", "content.opf")
 				mobi_file_path_relative = "content.mobi"
 				mobi_file_path_absolute = os.path.join(tmp_path, "OEBPS", mobi_file_path_relative)
 				if args.kindlegen_path is None:
-					print_info("  Running '%s' from $PATH" % KINDLEGEN)
+					log.info(f"  Running '{KINDLEGEN}' from $PATH")
 				else:
 					kindlegen_path = args.kindlegen_path
-					print_info("  Running '%s' from '%s'" % (KINDLEGEN, kindlegen_path))
+					log.info(f"  Running '{KINDLEGEN}' from '{kindlegen_path}'")
 				proc = subprocess.Popen(
 					[kindlegen_path, opf_file_path_absolute, "-o", mobi_file_path_relative],
 					stdout=subprocess.PIPE,
@@ -158,17 +158,17 @@ class Writer(EbookWriter):
 					stderr=subprocess.PIPE
 				)
 				output = proc.communicate()
-				if args.debug:
-					output_unicode = (output[0]).decode("utf-8")
-					print_debug(output_unicode, args.debug)
+				log.debug(output[0].decode("utf-8"))
 				copy_file(mobi_file_path_absolute, output_file_path_absolute)
 				result = [output_file_path]
-				print_debug("Creating .mobi file with kindlegen... done", args.debug)
+				log.debug("Creating .mobi file with kindlegen... done")
 			except OSError as exc:
-				print_error("  Unable to run '%s' as '%s'" % (KINDLEGEN, kindlegen_path))
-				print_error("  Please make sure '%s':" % KINDLEGEN)
-				print_error("    1. is available on your $PATH or")
-				print_error("    2. specify its path with --kindlegen-path")
+				log.error(
+					f"  Unable to run '{KINDLEGEN}' as '{kindlegen_path}'"
+					f"  Please make sure '{KINDLEGEN}':"
+					f"    1. is available on your $PATH or"
+					f"    2. specify its path with --kindlegen-path"
+				)
 		"""
 		return True
 
