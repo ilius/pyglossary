@@ -56,13 +56,13 @@ def write(
 	head = ""
 	if writeInfo:
 		head += "\n".join([
-			"### Glossary title:%s" % g.getInfo("name"),
-			"### Author:%s" % g.getInfo("author"),
-			"### Description:%s" % g.getInfo("description"),
-			"### Source language:%s" % g.getInfo("inputlang"),
-			"### Source alphabet:%s" % encoding,
-			"### Target language:%s" % g.getInfo("outputlang"),
-			"### Target alphabet:%s" % encoding,
+			"### Glossary title:" + g.getInfo("name"),
+			"### Author:" + g.getInfo("author"),
+			"### Description:" + g.getInfo("description"),
+			"### Source language:" + g.getInfo("inputlang"),
+			"### Source alphabet:" + encoding,
+			"### Target language:" + g.getInfo("outputlang"),
+			"### Target alphabet:" + encoding,
 			"### Browsing enabled?Yes",
 			"### Type of glossary:00000000",
 			"### Case sensitive words?0"
