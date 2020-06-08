@@ -57,7 +57,10 @@ def id_generator() -> Iterator[str]:
 		cnt += 1
 
 
-def indexes_generator(indexes_lang: str) -> Callable[[str, List[str], str, Any], str]:
+def indexes_generator(indexes_lang: str) -> Callable[
+	[str, List[str], str, Any],
+	str,
+]:
 	"""
 	factory that acts according to glossary language
 	"""
@@ -67,9 +70,10 @@ def indexes_generator(indexes_lang: str) -> Callable[[str, List[str], str, Any],
 		from . import indexes as idxs
 		indexer = idxs.languages.get(indexes_lang, None)
 		if not indexer:
-			msg = "extended indexes not supported for the specified language: %s.\n"\
-				  "following languages avaible: %s." %\
-				  (indexes_lang, ", ".join(list(idxs.languages.keys())))
+			keys_str = ", ".join(list(idxs.languages.keys()))
+			msg = "extended indexes not supported for the" \
+				f" specified language: {indexes_lang}.\n" \
+				f"following languages avaible: {keys_str}."
 			log.error(msg)
 			raise ValueError(msg)
 
@@ -78,9 +82,12 @@ def indexes_generator(indexes_lang: str) -> Callable[[str, List[str], str, Any],
 		indexes.extend(alts)
 
 		if BeautifulSoup:
-			quoted_title = BeautifulSoup.dammit.EntitySubstitution.substitute_xml(title, True)
+			quoted_title = BeautifulSoup.dammit.EntitySubstitution\
+				.substitute_xml(title, True)
 		else:
-			quoted_title = '"' + title.replace(">", "&gt;").replace('"', "&quot;") + '"'
+			quoted_title = '"' + \
+				title.replace(">", "&gt;").replace('"', "&quot;") + \
+				'"'
 
 		if indexer:
 			indexes = set(indexer(indexes, content))
@@ -117,10 +124,14 @@ img_tag = re.compile("<IMG (.*?)>", re.IGNORECASE)
 em0_9_re = re.compile(r'<div style="margin-left:(\d)em">')
 em0_9_sub = r'<div class="m\1">'
 
-em0_9_ex_re = re.compile(r'<div class="ex" style="margin-left:(\d)em;color:steelblue">')
+em0_9_ex_re = re.compile(
+	r'<div class="ex" style="margin-left:(\d)em;color:steelblue">',
+)
 em0_9_ex_sub = r'<div class="m\1 ex">'
 
 href_re = re.compile(r"""href=(["'])(.*?)\1""")
+
+margin_re = re.compile(r"margin-left:(\d)em")
 
 
 def href_sub(x: Pattern) -> str:
@@ -140,8 +151,6 @@ def href_sub(x: Pattern) -> str:
 def is_green(x: dict) -> bool:
 	return "color:green" in x.get("style", "")
 
-margin_re = re.compile("margin-left:(\d)em")
-
 
 def remove_style(tag: dict, line: str) -> None:
 	s = "".join(tag["style"].replace(line, "").split(";"))
@@ -151,7 +160,11 @@ def remove_style(tag: dict, line: str) -> None:
 		del tag["style"]
 
 
-def format_clean_content(title: Optional[str], body: str, BeautifulSoup: Any) -> str:
+def format_clean_content(
+	title: Optional[str],
+	body: str,
+	BeautifulSoup: Any,
+) -> str:
 	# heavily integrated with output of dsl reader plugin!
 	# and with xdxf also.
 	"""
@@ -216,19 +229,29 @@ def format_clean_content(title: Optional[str], body: str, BeautifulSoup: Any) ->
 		body = href_re.sub(href_sub, body)
 
 		body = body \
-			.replace('<i style="color:green">', '<i class="c">') \
-			.replace('<i class="p" style="color:green">', '<i class="p">') \
-			.replace('<span class="ex" style="color:steelblue">', '<span class="ex">') \
-			.replace('<span class="sec ex" style="color:steelblue">', '<span class="sec ex">') \
+			.replace(
+				'<i style="color:green">',
+				'<i class="c">',
+			) \
+			.replace(
+				'<i class="p" style="color:green">',
+				'<i class="p">',
+			) \
+			.replace(
+				'<span class="ex" style="color:steelblue">',
+				'<span class="ex">',
+			) \
+			.replace(
+				'<span class="sec ex" style="color:steelblue">',
+				'<span class="sec ex">',
+			) \
 			.replace("<u>", '<span class="u">').replace("</u>", "</span>") \
 			.replace("<s>", "<del>").replace("</s>", "</del>")
 
 		# nice header to display
 		content = "<h1>%s</h1>%s" % (title, body) if title else body
-		content = close_tag.sub("<\g<1> />", content)
-		content = img_tag.sub("<img \g<1>/>", content)
+		content = close_tag.sub(r"<\g<1> />", content)
+		content = img_tag.sub(r"<img \g<1>/>", content)
 	content = content.replace("&nbsp;", "&#160;")
 	content = nonprintable.sub("", content)
 	return content
-
-
