@@ -68,8 +68,7 @@ class Reader(object):
 			filename = dirname(filename)
 		else:
 			raise ValueError(
-				"error while opening %r" % filename +
-				": no such file or directory"
+				f"error while opening {filename!r}: no such file or directory"
 			)
 		self._filename = filename
 		self._encoding = encoding
@@ -125,8 +124,8 @@ class Reader(object):
 				defi = fromFile.read()
 				if not defi:
 					log.warning(
-						"Edlin Reader: no definition for word %r" % word +
-						", skipping"
+						f"Edlin Reader: no definition for word {word!r}"
+						f", skipping"
 					)
 					yield None  # update progressbar
 					continue
@@ -145,8 +144,8 @@ class Reader(object):
 
 		if wordCount != self._wordCount:
 			log.warning(
-				"%s words found, " % wordCount +
-				"wordCount in info.json was %s" % self._wordCount
+				f"{wordCount} words found, "
+				f"wordCount in info.json was {self._wordCount}"
 			)
 			self._wordCount = wordCount
 
@@ -172,16 +171,6 @@ class Writer(object):
 		self._encoding = "utf-8"
 		self._hashSet = set()
 		# self._wordCount = None
-
-	def open(self, filename: str, encoding: str = "utf-8", havePrevLink: bool = True):
-		if exists(filename):
-			raise ValueError("directory %r already exists" % filename)
-		self._filename = filename
-		self._encoding = encoding
-		self._havePrevLink = havePrevLink
-		self._resDir = join(filename, "res")
-		os.makedirs(filename)
-		os.mkdir(self._resDir)
 
 	def hashToPath(self, h: str) -> str:
 		return h[:2] + "/" + h[2:]
@@ -232,9 +221,23 @@ class Writer(object):
 			else:
 				yield entry
 
-	def write(self) -> None:
+	def write(
+		self,
+		filename: str,
+		encoding: str = "utf-8",
+		havePrevLink: bool = True
+	) -> None:
 		from collections import OrderedDict as odict
 		from pyglossary.json_utils import dataToPrettyJson
+
+		if exists(filename):
+			raise ValueError(f"directory {filename!r} already exists")
+		self._filename = filename
+		self._encoding = encoding
+		self._havePrevLink = havePrevLink
+		self._resDir = join(filename, "res")
+		os.makedirs(filename)
+		os.mkdir(self._resDir)
 
 		glosIter = iter(self._iterNonDataEntries())
 		try:
