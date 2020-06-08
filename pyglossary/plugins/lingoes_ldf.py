@@ -68,8 +68,8 @@ class Reader(TextGlossaryReader):
 				return
 			if len(entryLines) < 2:
 				log.error(
-					"invalid block near line %s" % fileObj.line +
-					" in file %s" % filename
+					f"invalid block near line {fileObj.line}"
+					f" in file {filename}"
 				)
 				return
 			word = entryLines[0]
@@ -91,8 +91,8 @@ def read(glos: GlossaryType, filename: str):
 			return
 		if len(entryLines) < 2:
 			log.error(
-				"invalid block near line %s" % fileObj.line +
-				" in file %s" % filename
+				f"invalid block near line {fileObj.line}"
+				f" in file {filename}"
 			)
 			return
 		word = entryLines[0]
@@ -139,10 +139,7 @@ def write(
 ):
 	g = glos
 	head = "\n".join([
-		"###%s: %s" % (
-			key.capitalize(),
-			g.getInfo(key),
-		)
+		f"###{key.capitalize()}: {g.getInfo(key)}"
 		for key in infoKeys
 	])
 	head += "\n"
