@@ -65,8 +65,8 @@ def unescape(text):
 				try:
 					return chr(i)
 				except ValueError:
-					return ("\\U%08x" % i)\
-						.decode("unicode-escape").encode("utf-8")
+					# f"\\U{i:08x}", but no fb"..."
+					return (b"\\U%08x" % i).decode("unicode-escape")
 		else:
 			# named entity
 			try:
