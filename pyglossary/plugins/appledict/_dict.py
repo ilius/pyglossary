@@ -52,8 +52,7 @@ def id_generator() -> Iterator[str]:
 	cnt = 1
 
 	while True:
-		s = "_%s" % base36(cnt)
-		yield s
+		yield "_" + str(base36(cnt))
 		cnt += 1
 
 
@@ -102,17 +101,18 @@ def indexes_generator(indexes_lang: str) -> Callable[
 		normal_indexes = [s for s in normal_indexes if s.strip()]
 		# skip empty titles.  everything could happen.
 
-		s = "<d:index d:value=%s d:title=%s/>" % (quoted_title, quoted_title)
+		s = f"<d:index d:value={quoted_title} d:title={quoted_title}/>"
 		if BeautifulSoup:
 			for idx in normal_indexes:
-				s += "<d:index d:value=%s d:title=%s/>" % (
-					BeautifulSoup.dammit.EntitySubstitution.substitute_xml(idx, True),
-					quoted_title)
+				quoted_idx = BeautifulSoup.dammit.\
+					EntitySubstitution.substitute_xml(idx, True)
+				s += f"<d:index d:value={quoted_idx} d:title={quoted_title}/>"
 		else:
 			for idx in normal_indexes:
-				s += '<d:index d:value="%s" d:title=%s/>' % (
-					idx.replace(">", "&gt;").replace('"', "&quot;"),
-					quoted_title)
+				quoted_idx = '"' + \
+					idx.replace(">", "&gt;").replace('"', "&quot;") + \
+					'"'
+				s += f"<d:index d:value={quoted_idx} d:title={quoted_title}/>"
 		return s
 	return generate_indexes
 
@@ -140,7 +140,7 @@ def href_sub(x: Pattern) -> str:
 		return x.group()
 	if href.startswith("bword://"):
 		href = href[len("bword://"):]
-	return "href=%s" % quoteattr(
+	return "href=" + quoteattr(
 		"x-dictionary:d:" + unescape(
 			href,
 			{"&quot;": '"'},
@@ -209,7 +209,7 @@ def format_clean_content(
 			if href.startswith("bword://"):
 				href = href[len("bword://"):]
 			if not (href.startswith("http:") or href.startswith("https:")):
-				tag["href"] = "x-dictionary:d:%s" % href
+				tag["href"] = f"x-dictionary:d:{href}"
 		for tag in soup("u"):
 			tag.name = "span"
 			tag["class"] = tag.get("class", []) + ["u"]
@@ -249,7 +249,7 @@ def format_clean_content(
 			.replace("<s>", "<del>").replace("</s>", "</del>")
 
 		# nice header to display
-		content = "<h1>%s</h1>%s" % (title, body) if title else body
+		content = f"<h1>{title}</h1>{body}" if title else body
 		content = close_tag.sub(r"<\g<1> />", content)
 		content = img_tag.sub(r"<img \g<1>/>", content)
 	content = content.replace("&nbsp;", "&#160;")
