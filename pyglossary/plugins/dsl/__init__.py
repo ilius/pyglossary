@@ -79,7 +79,7 @@ def unescape(text):
 
 
 def make_a_href(s):
-	return "<a href=%s>%s</a>" % (quoteattr(s), escape(s))
+	return f"<a href={quoteattr(s)}>{escape(s)}</a>"
 
 
 def ref_sub(x):
@@ -219,7 +219,7 @@ def _clean_tags(line, audio):
 	# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
 	# then leave it alone.  only wrap in "[m1]" when no "m" tag found at all.
 	if not re_m_open.search(line):
-		line = "[m1]%s[/m]" % line
+		line = f"[m1]{line}[/m]"
 
 	line = apply_shortcuts(line)
 
@@ -311,10 +311,10 @@ def read(
 					for i in range(10):
 						fp.readline()
 				except UnicodeDecodeError:
-					log.info("Encoding of DSL file is not %s" % testEncoding)
+					log.info(f"Encoding of DSL file is not {testEncoding}")
 					continue
 				else:
-					log.info("Encoding of DSL file detected: %s" % testEncoding)
+					log.info(f"Encoding of DSL file detected: {testEncoding}")
 					encoding = testEncoding
 					break
 		if not encoding:
