@@ -14,13 +14,13 @@ depends = {}
 
 
 def read(glos: GlossaryType, filename: str) -> bool:
-	log.info("reading from format %s using plugin" % format)
+	log.info(f"reading from format {format} using plugin")
 	count = 100
 	# get number of entries from input file(depending on your format)
 	for i in range(count):
 		# here get word and definition from file(depending on your format)
-		word = "word_%s" % i
-		defi = "definition %s" % i
+		word = f"word_{i}"
+		defi = f"definition {i}"
 		glos.addEntry(word, defi)
 	# here read info from file and set to Glossary object
 	glos.setInfo("name", "Test")
@@ -31,7 +31,7 @@ def read(glos: GlossaryType, filename: str) -> bool:
 
 
 def write(glos: GlossaryType, filename: str) -> bool:
-	log.info("writing to format %s using plugin" % format)
+	log.info(f"writing to format {format} using plugin")
 	for entry in glos:
 		word = entry.getWord()
 		defi = entry.getDefi()
