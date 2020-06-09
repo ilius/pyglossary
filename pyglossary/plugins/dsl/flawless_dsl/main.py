@@ -113,7 +113,7 @@ class FlawlessDSLParser(object):
 			for t in tags
 		):
 			tag_re = re.escape(tag)
-			tag_open_re = r"\[%s%s\]" % (tag_re, ext_re)
+			tag_open_re = fr"\[{tag_re}{ext_re}\]"
 			tags_.add((tag, tag_re, ext_re, tag_open_re))
 		self.tags = frozenset(tags_)
 
@@ -253,21 +253,20 @@ class FlawlessDSLParser(object):
 		clean_line = ""
 		startswith_tag = _startswith_tag_cache.get(self.tags, None)
 		if startswith_tag is None:
-			openings = "|".join("%s%s" % (_[1], _[2]) for _ in self.tags)
+			openings = "|".join(f"{_[1]}{_[2]}" for _ in self.tags)
 			closings = "|".join(_[1] for _ in self.tags)
 			startswith_tag = re.compile(
-				r"(?:(?:%s)|/(?:%s))\]" % (openings, closings)
+				fr"(?:(?:{openings})|/(?:{closings}))\]"
 			)
 			_startswith_tag_cache[self.tags] = startswith_tag
 		for i, chunk in enumerate(re_non_escaped_bracket.split(line)):
 			if i != 0:
 				m = startswith_tag.match(chunk)
 				if m:
-					clean_line += "[%s%s" % (
-						m.group(),
-						chunk[m.end():].replace("[", BRACKET_L)
-						.replace("]", BRACKET_R)
-					)
+					clean_line += "[" + \
+						m.group() + \
+						chunk[m.end():].replace("[", BRACKET_L)\
+							.replace("]", BRACKET_R)
 				else:
 					clean_line += BRACKET_L + chunk.replace("[", BRACKET_L)\
 						.replace("]", BRACKET_R)
