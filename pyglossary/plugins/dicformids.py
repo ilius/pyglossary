@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-from string import Template
 
 from tabfile import Reader as TabfileReader
 from formats_common import *
@@ -14,22 +13,22 @@ depends = {}
 
 
 PROP_TEMPLATE = """#DictionaryForMIDs property file
-infoText=$name, author: $author
-indexFileMaxSize=$indexFileMaxSize\n
-language1IndexNumberOfSourceEntries=%wordCount
+infoText={name}, author: {author}
+indexFileMaxSize={indexFileMaxSize}\n
+language1IndexNumberOfSourceEntries={wordCount}
 language1DictionaryUpdateClassName=de.kugihan.dictionaryformids.dictgen.DictionaryUpdate
 indexCharEncoding=ISO-8859-1
 dictionaryFileSeparationCharacter='\\t'
 language2NormationClassName=de.kugihan.dictionaryformids.translation.Normation
 language2DictionaryUpdateClassName=de.kugihan.dictionaryformids.dictgen.DictionaryUpdate
 logLevel=0
-language1FilePostfix=$directoryPostfix
+language1FilePostfix={directoryPostfix}
 dictionaryCharEncoding=UTF-8
 numberOfAvailableLanguages=2
 language1IsSearchable=true
 language2GenerateIndex=false
-dictionaryFileMaxSize=$dicMaxSize
-language2FilePostfix=$language2FilePostfix
+dictionaryFileMaxSize={dicMaxSize}
+language2FilePostfix={language2FilePostfix}
 searchListFileMaxSize=20000
 language2IsSearchable=false
 fileEncodingFormat=plain_format1
@@ -37,11 +36,11 @@ language1HasSeparateDictionaryFile=true
 searchListCharEncoding=ISO-8859-1
 searchListFileSeparationCharacter='\t'
 indexFileSeparationCharacter='\t'
-language1DisplayText=$inputlang
+language1DisplayText={inputlang}
 language2HasSeparateDictionaryFile=false
 dictionaryGenerationInputCharEncoding=UTF-8
 language1GenerateIndex=true
-language2DisplayText=$outputlang
+language2DisplayText={outputlang}
 language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEng
 """
 
@@ -113,11 +112,6 @@ class Writer(object):
 		self.indexPostfix = "Eng"
 		self.dirname = ""
 
-	def open(self, dirname):
-		self.dirname = dirname
-		if not os.path.isdir(dirname):
-			os.mkdir(dirname)
-
 	def writeGetIndexGen(self):
 		dicMaxSize = 0
 		wordCount = 0
@@ -129,10 +123,7 @@ class Writer(object):
 			# assert len(entryList) == 200
 			dicFp = open(join(
 				self.dirname,
-				"directory%s%d.csv" % (
-					self.directoryPostfix,
-					dicIndex+1,
-				),
+				f"directory{self.directoryPostfix}{dicIndex+1}.csv",
 			), "w")
 			for entry in entryList:
 				if entry.isData():
@@ -142,7 +133,7 @@ class Writer(object):
 				wordCount += 1
 				word = entry.getWord()
 				defi = entry.getDefi()
-				dicLine = "%s\t%s\n" % (word, defi)
+				dicLine = word + "\t" + defi + "\n"
 				dicPos = dicFp.tell()
 				dicFp.write(dicLine)
 				yield word, dicIndex+1, dicPos
@@ -158,7 +149,7 @@ class Writer(object):
 			self.dirname,
 			"DictionaryForMIDs.properties",
 		), "w") as fp:
-			fp.write(Template(PROP_TEMPLATE).substitute(
+			fp.write(PROP_TEMPLATE.format(
 				name=glos.getInfo("name"),
 				author=glos.getInfo("author"),
 				indexFileMaxSize=self.indexFileMaxSize,
@@ -171,7 +162,7 @@ class Writer(object):
 			))
 #			open(join(
 #				self.dirname,
-#				"searchlist%s.csv"%self.directoryPostfix
+#				f"searchlist{self.directoryPostfix}.csv"
 #			), "w")  # FIXME
 
 	def nextIndex(self):
@@ -181,18 +172,17 @@ class Writer(object):
 			self.indexIndex = 0
 
 		self.indexIndex += 1
-		fname = "index%s%d.csv" % (self.indexPostfix, self.indexIndex)
+		fname = f"index{self.indexPostfix}{self.indexIndex}.csv"
 		fpath = join(self.dirname, fname)
 		self.indexFp = open(fpath, "w")
 
-	def write(self):
+	def write(self, dirname: str):
+		self.dirname = dirname
+		if not os.path.isdir(dirname):
+			os.mkdir(dirname)
 		self.nextIndex()
 		for word, dicIndex, dicPos in self.writeGetIndexGen():
-			indexLine = "%s\t%d-%d-B\n" % (
-				word,
-				dicIndex + 1,
-				dicPos,
-			)
+			indexLine = f"{word}\t{dicIndex+1}-{dicPos}-B\n"
 			if (
 				self.indexFp.tell() + len(indexLine)
 			) > self.indexFileMaxSize - 10:
