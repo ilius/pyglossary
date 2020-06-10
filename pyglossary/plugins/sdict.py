@@ -153,7 +153,7 @@ class Reader(object):
 			"copyright",
 			self.readUnit(self._header.copyright_offset),
 		)
-		log.debug("SDict word count: %s", len(self))  # correct? FIXME
+		log.debug(f"SDict word count: {len(self)}")  # correct? FIXME
 
 	def close(self):
 		self._file.close()
@@ -200,8 +200,8 @@ class Reader(object):
 				# unicode chars. It seems best to ignore such index items
 				# The rest of the dictionary should be usable.
 				log.error(
-					"Failed to decode short index item %s" % i +
-					", will ignore: %s" % ve
+					f"Failed to decode short index item {i}"
+					f", will ignore: {ve}"
 				)
 				continue
 			pointer_start = entry_start+s_index_depth*4
