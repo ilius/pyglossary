@@ -32,15 +32,14 @@ def write(
 	glos: GlossaryType,
 	filename: str,
 	encoding: str = "utf-8",
-	archive: str = "tar.bz2",
 	sep: str = os.sep,
 ) -> None:
 	if os.path.exists(filename):
 		if os.path.isdir(filename):
 			if os.listdir(filename):
-				log.warning("Warning: directory \"%s\" is not empty.")
+				log.warning(f"Warning: directory {filename!r} is not empty.")
 		else:
-			raise IOError("\"%s\" is not a directory")
+			raise IOError(f"{filename!r} is not a directory")
 	for entry in glos:
 		defi = entry.getDefi()
 		for word in entry.getWords():
@@ -52,35 +51,9 @@ def write(
 				os.makedirs(filename + os.sep + sep.join(chars[:-1]))
 			except:
 				pass
-			entryFname = "%s%s%s.m" % (
-				filename,
-				os.sep,
-				sep.join(chars),
-			)
+			entryFname = join(filename, sep.join(chars)) + ".m"
 			try:
 				with open(entryFname, "a", encoding=encoding) as entryFp:
 					entryFp.write(defi)
 			except:
 				log.exception("")
-	if archive:
-		if archive == "tar.gz":
-			(output, error) = subprocess.Popen(
-				["tar", "-czf", filename+".tar.gz", filename],
-				stdout=subprocess.PIPE
-			).communicate()
-		elif archive == "tar.bz2":
-			(output, error) = subprocess.Popen(
-				["tar", "-cjf", filename+".tar.bz2", filename],
-				stdout=subprocess.PIPE
-			).communicate()
-		elif archive == "zip":
-			(output, error) = subprocess.Popen(
-				["zip", "-r", filename+".zip", filename],
-				stdout=subprocess.PIPE
-			).communicate()
-		else:
-			log.error("Undefined archive format: \"%s\"", archive)
-		try:
-			shutil.rmtree(filename, ignore_errors=True)
-		except:
-			pass
