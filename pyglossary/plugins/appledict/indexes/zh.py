@@ -18,17 +18,23 @@
 Chinese wildcard and pinyin indexes.
 """
 
+from pyglossary.plugins.formats_common import log
 import re
-
 import bs4
-import colorize_pinyin as color
+
+try:
+	import colorize_pinyin as color
+except ImportError:
+	log.error("""module colorize_pinyin is required to build extended Chinese indexes.
+You can install it by running: sudo pip3 install colorize-pinyin""")
+	raise
 
 from . import languages, log
 
 
 def zh(titles, content):
 	"""
-	chinese indexes.
+	Chinese indexes.
 
 	assuming that content is HTML and pinyin is inside second tag
 	(first is <h1>), we can try to parse pinyin and generate indexes
@@ -77,13 +83,16 @@ def pinyin_indexes(content):
 			return ()
 
 		# just pinyin, with diacritics, separated by whitespace
-		indexes.add("%s." % color.utf(" ".join(py)))
+		indexes.add(color.utf(" ".join(py)) + ".")
 
 		# pinyin with diacritics replaced by tone numbers
-		indexes.add("%s." % color.utf(" ".join(
-			["%s%d" % (
-				color.lowercase_string_by_removing_pinyin_tones(p),
-				color.determine_tone(p)) for p in py])))
+		indexes.add(
+			color.utf(" ".join([
+				color.lowercase_string_by_removing_pinyin_tones(p) +
+				str(color.determine_tone(p))
+				for p in py
+			])) + "."
+		)
 	return indexes
 
 

@@ -48,9 +48,4 @@ use
 here = os.path.dirname(os.path.abspath(__file__))
 
 for _, module, _ in pkgutil.iter_modules([here]):
-	try:
-		__import__("%s.%s" % (__name__, module))
-	except ImportError:
-		log.exception(
-			"error while importing indexes plugin %s" % module
-		)
+	__import__(f"{__name__}.{module}")

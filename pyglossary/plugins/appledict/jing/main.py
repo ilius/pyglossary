@@ -61,9 +61,9 @@ def run(filename):
 
 	if returncode != 0:
 		if returncode < 0:
-			log.error("Jing was terminated by signal %d" % -returncode)
+			log.error(f"Jing was terminated by signal {-returncode}")
 		elif returncode > 0:
-			log.error("Jing returned %d" % returncode)
+			log.error("Jing returned {returncode}")
 		raise JingTestError(returncode, cmd, output)
 	else:
 		log.info("Jing check successfully passed!")
@@ -75,7 +75,7 @@ def main():
 	"""
 	if len(sys.argv) < 2:
 		prog_name = path.basename(sys.argv[0])
-		print("usage:\n  %s filename" % prog_name)
+		log.info(f"usage:\n  {prog_name} filename")
 		exit(1)
 	try:
 		run(sys.argv[1])

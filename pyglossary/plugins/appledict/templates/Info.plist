@@ -5,25 +5,25 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleIdentifier</key>
-	<string>%(CFBundleIdentifier)s</string>
+	<string>{CFBundleIdentifier}</string>
 	<key>CFBundleDisplayName</key>
-	<string>%(CFBundleDisplayName)s</string>
+	<string>{CFBundleDisplayName}</string>
 	<key>CFBundleName</key>
-	<string>%(CFBundleName)s</string>
+	<string>{CFBundleName}</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>DCSDictionaryCopyright</key>
-	<string>%(DCSDictionaryCopyright)s.</string>
+	<string>{DCSDictionaryCopyright}.</string>
 	<key>DCSDictionaryManufacturerName</key>
-	<string>%(DCSDictionaryManufacturerName)s.</string>
+	<string>{DCSDictionaryManufacturerName}.</string>
 	<key>DCSDictionaryXSL</key>
-	<string>%(DCSDictionaryXSL)s</string>
+	<string>{DCSDictionaryXSL}</string>
 	<key>DCSDictionaryDefaultPrefs</key>
 	<dict>
-		%(DCSDictionaryDefaultPrefs)s
+		{DCSDictionaryDefaultPrefs}
 	</dict>
 	<key>DCSDictionaryPrefsHTML</key>
-	<string>%(DCSDictionaryPrefsHTML)s</string>
-	%(DCSDictionaryFrontMatterReferenceID)s
+	<string>{DCSDictionaryPrefsHTML}</string>
+	{DCSDictionaryFrontMatterReferenceID}
 </dict>
 </plist>

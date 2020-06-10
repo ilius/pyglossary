@@ -72,7 +72,7 @@ def indexes_generator(indexes_lang: str) -> Callable[
 			keys_str = ", ".join(list(idxs.languages.keys()))
 			msg = "extended indexes not supported for the" \
 				f" specified language: {indexes_lang}.\n" \
-				f"following languages avaible: {keys_str}."
+				f"following languages available: {keys_str}."
 			log.error(msg)
 			raise ValueError(msg)
 

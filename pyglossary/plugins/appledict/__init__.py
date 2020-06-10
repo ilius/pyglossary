@@ -72,9 +72,9 @@ def loadBeautifulSoup():
 			return
 	if int(BeautifulSoup.__version__.split(".")[0]) < 4:
 		raise ImportError(
-			"BeautifulSoup is too old, required at least version 4, " +
-			"%r found.\n" % BeautifulSoup.__version__ +
-			"Please run `sudo pip3 install lxml beautifulsoup4 html5lib`"
+			f"BeautifulSoup is too old, required at least version 4, "
+			f"{BeautifulSoup.__version__!r} found.\n"
+			f"Please run `sudo pip3 install lxml beautifulsoup4 html5lib`"
 		)
 
 def abspath_or_None(path):
@@ -105,12 +105,16 @@ def format_default_prefs(defaultPrefs):
 	if not defaultPrefs:
 		return ""
 	if not isinstance(defaultPrefs, dict):
-		raise TypeError("defaultPrefs not a dictionary: %r" % defaultPrefs)
+		raise TypeError(f"defaultPrefs not a dictionary: {defaultPrefs!r}")
 	if str(defaultPrefs.get("version", None)) != "1":
-		log.error("default prefs does not contain {'version': '1'}.  prefs "
-				  "will not be persistent between Dictionary.app restarts.")
-	return "\n".join("\t\t<key>%s</key>\n\t\t<string>%s</string>" % i
-					 for i in sorted(defaultPrefs.items())).strip()
+		log.error(
+			"default prefs does not contain {'version': '1'}.  prefs "
+			"will not be persistent between Dictionary.app restarts."
+		)
+	return "\n".join(
+		f"\t\t<key>{key}</key>\n\t\t<string>{value}</string>"
+		for key, value in sorted(defaultPrefs.items())
+	).strip()
 
 
 def write_css(fname, css_file):
@@ -244,7 +248,7 @@ def write(
 			content = format_clean_content(content_title, defi, BeautifulSoup)
 
 			toFile.write(
-				'<d:entry id="%s" d:title=%s>\n' % (_id, title_attr) +
+				f'<d:entry id="{_id}" d:title={title_attr}>\n' +
 				generate_indexes(long_title, alts, content, BeautifulSoup) +
 				content +
 				"\n</d:entry>\n"
@@ -265,7 +269,7 @@ def write(
 			toStr(pkgutil.get_data(
 				__name__,
 				"templates/Makefile",
-			)) % {"dict_name": fileNameBase}
+			)).format(dict_name=fileNameBase)
 		)
 
 	copyright = glos.getInfo("copyright")
@@ -283,28 +287,21 @@ def write(
 			toStr(pkgutil.get_data(
 				__name__,
 				"templates/Info.plist",
-			)) % {
-				"CFBundleIdentifier":
-					fileNameBase.replace(" ", ""),  # identifier must be unique
-				"CFBundleDisplayName":
-					glos.getInfo("name"),
-				"CFBundleName":
-					fileNameBase,
-				"DCSDictionaryCopyright":
-					copyright,
-				"DCSDictionaryManufacturerName":
-					glos.getInfo("author"),
-				"DCSDictionaryXSL":
-					basename(xsl) if xsl else "",
-				"DCSDictionaryDefaultPrefs":
-					format_default_prefs(defaultPrefs),
-				"DCSDictionaryPrefsHTML":
-					basename(prefsHTML) if prefsHTML else "",
-				"DCSDictionaryFrontMatterReferenceID":
+			)).format(
+				# identifier must be unique
+				CFBundleIdentifier=fileNameBase.replace(" ", ""),
+				CFBundleDisplayName=glos.getInfo("name"),
+				CFBundleName=fileNameBase,
+				DCSDictionaryCopyright=copyright,
+				DCSDictionaryManufacturerName=glos.getInfo("author"),
+				DCSDictionaryXSL=basename(xsl) if xsl else "",
+				DCSDictionaryDefaultPrefs=format_default_prefs(defaultPrefs),
+				DCSDictionaryPrefsHTML=basename(prefsHTML) if prefsHTML else "",
+				DCSDictionaryFrontMatterReferenceID=
 					"<key>DCSDictionaryFrontMatterReferenceID</key>\n"
 					"\t<string>front_back_matter</string>" if frontBackMatter
 					else "",
-			}
+			)
 		)
 
 	if jing:

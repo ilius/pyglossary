@@ -24,13 +24,12 @@ from pyglossary.plugins.formats_common import log
 try:
 	import pymorphy2
 except ImportError:
-	log.error("""module pymorphy2 is required to build extended russian indexes.  \
-you can download it here: http://pymorphy2.readthedocs.org/en/latest/.  \
-or run `pip3 install pymorphy2`.
-""")
+	log.error("""module pymorphy2 is required to build extended Russian indexes.
+You can download it here: http://pymorphy2.readthedocs.org/en/latest/.
+Or by running: sudo pip3 install pymorphy2""")
 	raise
-else:
-	morphy = pymorphy2.MorphAnalyzer()
+
+morphy = pymorphy2.MorphAnalyzer()
 
 
 def ru(titles, _):
