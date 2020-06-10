@@ -24,8 +24,8 @@ def loadBeautifulSoup():
 		import BeautifulSoup
 	if int(BeautifulSoup.__version__.split(".")[0]) < 4:
 		raise ImportError(
-			"BeautifulSoup is too old, required at least version 4, " +
-			"%r found.\n" % BeautifulSoup.__version__ +
+			"BeautifulSoup is too old, required at least version 4, "
+			f"{BeautifulSoup.__version__ !r} found.\n"
 			"Please run `sudo pip3 install lxml beautifulsoup4 html5lib`"
 		)
 
@@ -45,7 +45,7 @@ class Reader(object):
 
 	def open(self, dirname):
 		if not isdir(dirname):
-			raise IOError("%s is not a directory" % dirname)
+			raise IOError(f"{dirname} is not a directory")
 		self._rootDir = dirname
 		self._articlesDir = join(self._rootDir, "articles")
 
@@ -68,8 +68,8 @@ class Reader(object):
 				len(files)
 				for _, _, files in os.walk(self._articlesDir)
 			)
-			log.debug("Counting articles took %.2f seconds", now() - t0)
-			log.info("Found %s articles", self._len)
+			log.debug(f"Counting articles took {now()-t0:.2f} seconds", )
+			log.info(f"Found {self._len} articles")
 		return self._len
 
 	def __iter__(self):
@@ -93,10 +93,10 @@ class Reader(object):
 				fname, ext = splitext(fname_html)
 				# fpathRel = join(dirpathRel, fname_html)
 				if ext != ".html":
-					log.warning("unkown article extension: %s", fname_ext)
+					log.warning(f"unkown article extension: {fname_ext}")
 					continue
 				if self.isSpecialByPath(fname):  # , prefix
-					# log.debug("Skipping special page file: %s", fpathRel)
+					# log.debug(f"Skipping special page file: {fpathRel}")
 					self._specialCount += 1
 					yield None  # updates progressbar
 					continue
@@ -107,7 +107,7 @@ class Reader(object):
 					continue
 
 				yield self._glos.newEntry(word, defi)
-		log.info("Skipped %s special page files", self._specialCount)
+		log.info(f"Skipped {self._specialCount} special page files")
 
 	def isSpecialByPath(self, fname):  # , d_prefix
 		"""
@@ -129,7 +129,7 @@ class Reader(object):
 		# if fname[0] == dirParts[0]:
 		#	return False
 		# if list(fname[:3]) != dirParts:
-		#	log.debug("dirParts=%r, fname=%r", dirParts, fname)
+		#	log.debug(f"dirParts={dirParts!r}, fname={fname!r}")
 		# l_fname = fname.lower()
 		# for ext in ("png", "jpg", "jpeg", "gif", "svg", "pdf", "js"):
 		#	if "." + ext in l_fname:
@@ -143,10 +143,10 @@ class Reader(object):
 			with open(fpath) as fileObj:
 				text = fileObj.read()
 		except UnicodeDecodeError:
-			log.error("error decoding file %r, not UTF-8", fpath)
+			log.error(f"error decoding file {fpath!r}, not UTF-8")
 			return
 		except:
-			log.exception("error reading file %r", fpath)
+			log.exception(f"error reading file {fpath!r}")
 			return
 
 		root = BeautifulSoup(text, "lxml")
@@ -171,7 +171,7 @@ class Reader(object):
 
 		if body.p and body.p.text.startswith("Redirecting to "):
 			toWord = body.p.text[len("Redirecting to "):]
-			return "↳ <a href=\"bword://%s\">%s</a>" % (toWord, toWord)
+			return f"↳ <a href=\"bword://{toWord}\">{toWord}</a>"
 			# "↳" does not look good for RTL languages FIXME
 
 		try:
@@ -179,21 +179,21 @@ class Reader(object):
 		except AttributeError:
 			content = None
 		if not content:
-			log.warning("could not find \"content\" element: %s", fpath)
+			log.warning(f"could not find \"content\" element: {fpath}")
 			return
 
 		try:
 			firstHeading = content.find("h1", class_="firstHeading").text
 		except AttributeError:
-			log.warning("could not find \"firstHeading\" element: %s", fpath)
+			log.warning(f"could not find \"firstHeading\" element: {fpath}")
 			return
 
 		if firstHeading != word:
-			log.debug("word=%r, firstHeading=%r", firstHeading, word)
+			log.debug(f"word={firstHeading!r}, firstHeading={word!r}")
 
 		bodyContent = content.find(id="bodyContent")
 		if not bodyContent:
-			log.warning("could not find \"bodyContent\" element: %s", fpath)
+			log.warning(f"could not find \"bodyContent\" element: {fpath}")
 			return
 
 		# FIXME
