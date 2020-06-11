@@ -43,7 +43,7 @@ def read(
 			elif lastEntry and lastEntry.getWords()[0] == mainWord:
 				lastEntry.addAlt(word)
 			else:
-				log.error("alternate is not ride after word: %s", defi)
+				log.error(f"alternate is not ride after word: {defi}")
 			continue
 
 		entry = glos.newEntry(word, defi)
@@ -62,7 +62,7 @@ def read(
 		for sourceWord, targetWord in linksDict.items():
 			targetEntry = entryDict.get(targetWord)
 			if targetEntry is None:
-				log.error("Link to non-existing word %s" % targetWord)
+				log.error(f"Link to non-existing word {targetWord}")
 				continue
 			targetEntry.addAlt(sourceWord)
 		for entry in entryDict.values():
@@ -81,7 +81,7 @@ def writeEntryGen(glos):
 		for alt in words[1:]:
 			yield glos.newEntry(
 				alt,
-				"@@@LINK=%s" % words[0],
+				"@@@LINK=" + words[0],
 			)
 
 
