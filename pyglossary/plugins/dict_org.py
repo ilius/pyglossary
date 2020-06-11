@@ -47,34 +47,43 @@ def installToDictd(filename: str, title: str = "") -> None:
 	"""
 	import shutil
 	targetDir = "/usr/share/dictd/"
-	log.info("Installing %r to DICTD server", filename)
+	dbListPath = join(targetDir, "db.list")
+	if not isfile(dbListPath):
+		log.error(
+			f"{dbListPath} file not found"
+			f", you may create it and try again"
+			f"\nfailed to install to DICTD server directory: {targetDir}"
+		)
+		return
+
+	log.info(f"Installing {filename!r} to DICTD server directory: {targetDir}")
 
 	if os.path.isfile(filename + ".dict.dz"):
-		dictPostfix = ".dict.dz"
+		dictExt = ".dict.dz"
 	elif os.path.isfile(filename + ".dict"):
-		dictPostfix = ".dict"
+		dictExt = ".dict"
 	else:
-		log.error("No .dict file, could not install dictd file %r", filename)
+		log.error(f"No .dict file, could not install dictd file {filename!r}")
 		return
 
 	if not filename.startswith(targetDir):
 		shutil.copy(filename + ".index", targetDir)
-		shutil.copy(filename + dictPostfix, targetDir)
+		shutil.copy(filename + dictExt, targetDir)
 
 	fname = split(filename)[1]
 	if not title:
 		title = fname
-	open("/var/lib/dictd/db.list", "a").write("""
-database %s
-{
-  data %s
-  index %s
-}
-""" % (
-	title,
-	join(targetDir, fname + dictPostfix),
-	join(targetDir, fname + ".index"),
-))
+	dataPath = join(targetDir, fname + dictExt)
+	indexPath = join(targetDir, fname + ".index")
+	dbInfo = f"""
+database {title}
+{{
+  data {dataPath}
+  index {indexPath}
+}}
+"""
+	with open(dbListPath, "a") as dbFile:
+		dbFile.write(dbInfo)
 
 
 class Reader(object):
