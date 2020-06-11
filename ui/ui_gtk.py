@@ -1118,7 +1118,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 	def progress(self, rat, text=None):
 		if not text:
-			text = "%" + str(rat * 100)
+			text = "%" + str(int(rat * 100))
 		text += " - " + self.progressTitle
 		self.progressBar.set_fraction(rat)
 		# self.progressBar.set_text(text)  # not working
