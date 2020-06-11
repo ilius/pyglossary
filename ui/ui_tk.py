@@ -63,10 +63,10 @@ def decodeGeometry(gs):
 	return (int(p[1]), int(p[2]), int(w), int(h))
 
 def encodeGeometry(x, y, w, h):
-	return "%sx%s+%s+%s" % (w, h, x, y)
+	return f"{w}x{h}+{x}+{y}"
 
 def encodeLocation(x, y):
-	return "+%s+%s" % (x, y)
+	return f"+{x}+{y}"
 
 
 def centerWindow(win):
@@ -386,7 +386,10 @@ class FormatOptionsButton(ttk.Button):
 				if prop.customValue:
 					self.valueMenuItemCustomSelected(treev, format, optName, None)
 				else:
-					log.error("invalid option %s, values=%s, customValue=%s" % (propValues, prop.customValue))
+					log.error(
+						f"invalid option {optName}, values={propValues}"
+						f", customValue={prop.customValue}"
+					)
 				return
 			if prop.typ == "bool":
 				rawValue = treev.set(optName, self.valueCol)
@@ -395,7 +398,7 @@ class FormatOptionsButton(ttk.Button):
 				else:
 					value, isValid = prop.evaluate(rawValue)
 					if not isValid:
-						log.error("invalid %s = %r" % (optName, rawValue))
+						log.error(f"invalid {optName} = {rawValue!r}")
 						value = False
 				treev.set(optName, self.valueCol, str(not value))
 				treev.set(optName, "#1", "1") # enable it
@@ -512,7 +515,7 @@ class FormatOptionsButton(ttk.Button):
 				prop = optionsProp[optName]
 				value, isValid = prop.evaluate(rawValue)
 				if not isValid:
-					log.error("invalid option value %s = %s" % (optName, rawValue))
+					log.error(f"invalid option value {optName} = {rawValue}")
 					continue
 				self.values[optName] = value
 			dialog.destroy()
@@ -870,7 +873,7 @@ class UI(tix.Frame, UIBase):
 		msg1 = tix.Message(
 			about,
 			width=600,
-			text="PyGlossary %s (Tkinter)" % VERSION,
+			text=f"PyGlossary {VERSION} (Tkinter)",
 			font=("DejaVu Sans", 13, "bold"),
 		)
 		msg1.pack(fill="x", expand=True)
@@ -1151,8 +1154,8 @@ class UI(tix.Frame, UIBase):
 
 	def progress(self, rat, text=""):
 		if not text:
-			text = "%%%d" % (rat*100)
-		text += " - %s" % self.progressTitle
+			text = "%" + str(int(rat * 100))
+		text += " - " + self.progressTitle
 		self.pbar.updateProgress(rat*100, None, text)
 		# self.pbar.value = rat*100
 		# self.pbar.update()
