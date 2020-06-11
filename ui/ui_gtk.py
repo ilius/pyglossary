@@ -210,8 +210,8 @@ class FormatOptionsDialog(gtk.Dialog):
 		currentValue = model.get_value(itr, self.valueCol)
 		optDesc = optName
 		if prop.comment:
-			optDesc += " (%s)" % prop.comment
-		label = gtk.Label(label="Value for %s" % (optDesc,))
+			optDesc += f" ({prop.comment})"
+		label = gtk.Label(label=f"Value for {optDesc}")
 		dialog = gtk.Dialog(parent=self, title="Option Value")
 		dialog.connect("response", lambda w, e: dialog.hide())
 		dialog_add_button(
@@ -258,7 +258,7 @@ class FormatOptionsDialog(gtk.Dialog):
 			else:
 				value, isValid = prop.evaluate(rawValue)
 				if not isValid:
-					log.error("invalid %s = %r" % (optName, rawValue))
+					log.error(f"invalid {optName} = {rawValue!r}")
 					value = False
 			model.set_value(itr, self.valueCol, str(not value))
 			model.set_value(itr, 0, True) # enable it
@@ -315,7 +315,7 @@ class FormatOptionsDialog(gtk.Dialog):
 			prop = self.optionsProp[optName]
 			value, isValid = prop.evaluate(rawValue)
 			if not isValid:
-				log.error("invalid option value %s = %s" % (optName, rawValue))
+				log.error(f"invalid option value {optName} = {rawValue}")
 				continue
 			optionsValues[optName] = value
 		return optionsValues
@@ -867,10 +867,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		##
 		self.verbosityCombo = combo = gtk.ComboBoxText()
 		for level, levelName in enumerate(log.levelNamesCap):
-			combo.append_text("%s - %s" % (
-				level,
-				_(levelName)
-			))
+			combo.append_text(f"{level} - {_(levelName)}")
 		combo.set_active(log.getVerbosity())
 		combo.set_border_width(0)
 		combo.connect("changed", self.verbosityComboChanged)
@@ -901,7 +898,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			self.convertInputFormatCombo.setOptionsValues(readOptions)
 		# if editPath:
 		#	self.notebook.set_current_page(3)
-		#	log.info("Opening file \"%s\" for edit. please wait...", editPath)
+		#	log.info(f"Opening file {editPath!r} for edit. please wait...")
 		#	while gtk.events_pending():
 		#		gtk.main_iteration_do(False)
 		#	self.dbe_open(editPath, **readOptions)
@@ -962,8 +959,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			#		.get_value_as_int()
 			#	ex = self.glos.readOmnidic(inPath, dicIndex=dicIndex)
 			# else:
-			log.debug("readOptions: %s" % readOptions)
-			log.debug("writeOptions: %s" % writeOptions)
+			log.debug(f"readOptions: {readOptions}")
+			log.debug(f"writeOptions: {writeOptions}")
 			finalOutputFile = self.glos.convert(
 				inPath,
 				inputFormat=inFormat,
@@ -1121,8 +1118,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 	def progress(self, rat, text=None):
 		if not text:
-			text = "%%%d" % (rat*100)
-		text += " - %s" % self.progressTitle
+			text = "%" + str(rat * 100)
+		text += " - " + self.progressTitle
 		self.progressBar.set_fraction(rat)
 		# self.progressBar.set_text(text)  # not working
 		self.status(text)
