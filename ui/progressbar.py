@@ -145,8 +145,8 @@ class FileTransferSpeed(ProgressBarWidget):
 	"""
 		Widget for showing the transfer speed (useful for file transfers).
 	"""
-	def __init__(self):
-		self.fmt = "{speed:6.2f} {unit}/s"
+	def __init__(self, pad=6, digits=2):
+		self.fmt = f"{{speed:{pad}.{digits}f}} {{unit}}/s"
 		self.units = ["B", "K", "M", "G", "T", "P"]
 
 	def update(self):
