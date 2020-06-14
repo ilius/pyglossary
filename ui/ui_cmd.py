@@ -166,8 +166,7 @@ class UI(UIBase):
 			widgets=[
 				title,
 				pb.Bar(marker="█", right=rot),
-				pb.Percentage(),
-				"% ",
+				" ", pb.Percentage(), " ",
 				pb.ETA(),
 			],
 			maxval=1.0,

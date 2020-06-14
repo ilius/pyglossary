@@ -191,9 +191,12 @@ class Percentage(ProgressBarWidget):
 	"""
 		Just the percentage done.
 	"""
+	def __init__(self, prefix="%"):
+		self.prefix = prefix
+
 	def update(self):
-		pbar = self.pbar
-		return f"{pbar.percentage():5.1f}"
+		return f"{self.prefix}{self.pbar.percentage():.1f}"\
+			.rjust(5 + len(self.prefix))
 
 
 class Bar(ProgressBarWidgetHFill):
