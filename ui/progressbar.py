@@ -58,7 +58,7 @@ from array import array
 import signal
 
 import logging
-log = logging.getLogger('root')
+log = logging.getLogger("root")
 
 
 class ProgressBarWidget(object):
@@ -86,12 +86,12 @@ class ProgressBarWidget(object):
 
 	def __add__(self, other):
 		if isinstance(other, bytes):
-			return str(self) + other.encode('utf-8')
+			return str(self) + other.encode("utf-8")
 		return str(self) + str(other)
 
 	def __radd__(self, other):
 		if isinstance(other, bytes):
-			return other.encode('utf-8') + str(self)
+			return other.encode("utf-8") + str(self)
 		return str(other) + str(self)
 
 
@@ -123,22 +123,22 @@ class ETA(ProgressBarWidget):
 	"""
 		Widget for the Estimated Time of Arrival
 	"""
-	def __init__(self, text='ETA: '):
+	def __init__(self, text="ETA: "):
 		self.text = text
 
 	def format_time(self, seconds):
-		return time.strftime('%H:%M:%S', time.gmtime(seconds))
+		return time.strftime("%H:%M:%S", time.gmtime(seconds))
 
 	def update(self):
 		pbar = self.pbar
 		if pbar.currval == 0:
-			return 'ETA: --:--:--'
+			return "ETA: --:--:--"
 		elif pbar.finished:
-			return 'Time: %s' % self.format_time(pbar.seconds_elapsed)
+			return "Time: " + self.format_time(pbar.seconds_elapsed)
 		else:
 			elapsed = pbar.seconds_elapsed
 			eta = elapsed * pbar.maxval / pbar.currval - elapsed
-			return '%s%s' % (self.text, self.format_time(eta))
+			return self.text + self.format_time(eta)
 
 
 class FileTransferSpeed(ProgressBarWidget):
@@ -146,8 +146,8 @@ class FileTransferSpeed(ProgressBarWidget):
 		Widget for showing the transfer speed (useful for file transfers).
 	"""
 	def __init__(self):
-		self.fmt = '%6.2f %s'
-		self.units = ['B', 'K', 'M', 'G', 'T', 'P']
+		self.fmt = "{speed:6.2f} {unit}/s"
+		self.units = ["B", "K", "M", "G", "T", "P"]
 
 	def update(self):
 		pbar = self.pbar
@@ -155,24 +155,24 @@ class FileTransferSpeed(ProgressBarWidget):
 			bps = 0.0
 		else:
 			bps = float(pbar.currval) / pbar.seconds_elapsed
-		spd = bps
-		for u in self.units:
-			if spd < 1000:
+		speed = bps
+		for unit in self.units:
+			if speed < 1000:
 				break
-			spd /= 1000
-		return self.fmt % (spd, u+'/s')
+			speed /= 1000
+		return self.fmt.format(speed=speed, unit=unit)
 
 
 class RotatingMarker(ProgressBarWidget):
 	"""
 		A rotating marker for filling the bar of progress.
 	"""
-	def __init__(self, markers='|/-\\'):
+	def __init__(self, markers="|/-\\"):
 		# Some cool exmaple for markers:
-		# u'░▒▓█'
-		# u'⬅⬉⬆⬈➡⬊⬇⬋' , u'⬌⬉⬆⬈⬌⬊⬇⬋', u'➚➙➘➙', u'➝➞➡➞'
-		# u' ⚊⚌☰⚌⚊', u' ⚋⚊⚍⚌☱☰☱⚌⚍⚊⚋' ,
-		# '<(|)>)|(', u'❘❙❚❙', u'❢❣❤❣'
+		# "░▒▓█"
+		# "⬅⬉⬆⬈➡⬊⬇⬋" , "⬌⬉⬆⬈⬌⬊⬇⬋", "➚➙➘➙", "➝➞➡➞"
+		# " ⚊⚌☰⚌⚊", " ⚋⚊⚍⚌☱☰☱⚌⚍⚊⚋" ,
+		# "<(|)>)|(", "❘❙❚❙", "❢❣❤❣"
 		self.markers = markers
 		self.curmark = -1
 
@@ -193,14 +193,14 @@ class Percentage(ProgressBarWidget):
 	"""
 	def update(self):
 		pbar = self.pbar
-		return '%5.1f' % pbar.percentage()
+		return f"{pbar.percentage():5.1f}"
 
 
 class Bar(ProgressBarWidgetHFill):
 	"""
 		The bar of progress. It will strech to fill the line.
 	"""
-	def __init__(self, marker='#', left='|', right='|'):
+	def __init__(self, marker="#", left="|", right="|"):
 		self.marker = marker
 		self.left = left
 		self.right = right
@@ -267,7 +267,7 @@ class ProgressBar(object):
 		- seconds_elapsed: seconds elapsed since start_time
 		- percentage(): percentage of the progress (this is a method)
 	"""
-	default_widgets = [Percentage(), ' ', Bar()]
+	default_widgets = [Percentage(), " ", Bar()]
 
 	def __init__(
 		self,
@@ -317,7 +317,7 @@ class ProgressBar(object):
 		except:
 			pass
 		else:
-			h, w = array('h', ioctl(self.fd, termios.TIOCGWINSZ, '\0'*8))[:2]
+			h, w = array("h", ioctl(self.fd, termios.TIOCGWINSZ, "\0"*8))[:2]
 			self.term_width = w
 
 	def percentage(self):
@@ -348,7 +348,7 @@ class ProgressBar(object):
 		return r
 
 	def _format_line(self):
-		return ''.join(self._format_widgets()).ljust(self.term_width)
+		return "".join(self._format_widgets()).ljust(self.term_width)
 
 	def _need_update(self):
 		# return int(self.percentage()) != int(self.prev_percentage)
@@ -368,10 +368,10 @@ class ProgressBar(object):
 		self.seconds_elapsed = time.time() - self.start_time
 		self.prev_percentage = self.percentage()
 		if value != self.maxval:
-			self.fd.write(self._format_line() + '\r')
+			self.fd.write(self._format_line() + "\r")
 		else:
 			self.finished = True
-			self.fd.write(self._format_line() + '\n')
+			self.fd.write(self._format_line() + "\n")
 
 	def start(self):
 		"""
@@ -396,16 +396,16 @@ class ProgressBar(object):
 		if self.signal_set:
 			signal.signal(signal.SIGWINCH, signal.SIG_DFL)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	def example1():
 		pbar = ProgressBar(
 			widgets=[
-				'Test: ',
+				"Test: ",
 				Bar(),
-				' ',
+				" ",
 				RotatingMarker(),
 				Percentage(),
-				' ',
+				" ",
 				ETA(),
 			],
 			maxval=1.0,
@@ -417,5 +417,5 @@ if __name__ == '__main__':
 			time.sleep(0.1)
 			pbar.update(i/1000.0)
 		pbar.finish()
-		print('')
+		print("")
 	example1()
