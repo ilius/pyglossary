@@ -124,11 +124,18 @@ class Reader(object):
 			return
 		self._glos.setInfo("author", elem.text)
 
+	def set_publication_date(self, header):
+		elem = header.find(".//publicationStmt/date", self.ns)
+		if elem is None:
+			return
+		self._glos.setInfo("creationTime", elem.text)
+
 	def set_metadata(self, header):
 		self._glos.setInfo("title", header.find(".//title", self.ns).text)
 		self._glos.setInfo("edition", header.find(".//edition", self.ns).text)
 		self.set_copyright(header)
 		self.set_publisher(header)
+		self.set_publication_date(header)
 		self.set_word_count(header)
 
 	def __init__(self, glos: GlossaryType):
