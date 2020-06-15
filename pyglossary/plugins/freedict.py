@@ -103,10 +103,24 @@ class Reader(object):
 		except Exception:
 			log.exception(f"unexpected extent={extent}")
 
+	def set_copyright(self, header):
+		copyright_p = header.findall(".//availability//p", self.ns)
+		if not copyright_p:
+			log.warn("did not find copyright")
+			return
+		copyright = "\n".join(
+			self.to_string(el) for el in copyright_p
+		).strip()
+		prefix = '<p xmlns="http://www.tei-c.org/ns/1.0">'
+		if copyright.startswith(prefix) and copyright.endswith("</p>"):
+			copyright = copyright[len(prefix):-4].strip()
+		self._glos.setInfo("copyright", copyright)
+		log.info(f"Copyright: {copyright!r}")
+
 	def set_metadata(self, header):
 		self._glos.setInfo("title", header.find(".//title", self.ns).text)
 		self._glos.setInfo("edition", header.find(".//edition", self.ns).text)
-		self._glos.setInfo("availability", self.to_string(header.find(".//availability", self.ns)))
+		self.set_copyright(header)
 		self.set_word_count(header)
 
 	def __init__(self, glos: GlossaryType):
