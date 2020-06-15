@@ -103,17 +103,31 @@ class Reader(object):
 		except Exception:
 			log.exception(f"unexpected extent={extent}")
 
+	def strip_tag_p_elem(self, elem: "ET.Element") -> str:
+		text = self.to_string(elem).strip()
+		prefix = '<p xmlns="http://www.tei-c.org/ns/1.0">'
+		if text.startswith(prefix) and text.endswith("</p>"):
+			text = text[len(prefix):-4].strip()
+		elif text.startswith("<p>") and text.endswith("</p>"):
+			text = text[3:-4].strip()
+		return text
+
+	def strip_tag_p(self, elems: List["ET.Element"]) -> str:
+		lines = []
+		for elem in elems:
+			for line in self.strip_tag_p_elem(elem).split("\n"):
+				line = line.strip()
+				if not line:
+					continue
+				lines.append(line)
+		return "\n".join(lines)
+
 	def set_copyright(self, header):
-		copyright_p = header.findall(".//availability//p", self.ns)
-		if not copyright_p:
+		elems = header.findall(".//availability//p", self.ns)
+		if not elems:
 			log.warn("did not find copyright")
 			return
-		copyright = "\n".join(
-			self.to_string(el) for el in copyright_p
-		).strip()
-		prefix = '<p xmlns="http://www.tei-c.org/ns/1.0">'
-		if copyright.startswith(prefix) and copyright.endswith("</p>"):
-			copyright = copyright[len(prefix):-4].strip()
+		copyright = self.strip_tag_p(elems)
 		self._glos.setInfo("copyright", copyright)
 		log.info(f"Copyright: {copyright!r}")
 
@@ -130,13 +144,28 @@ class Reader(object):
 			return
 		self._glos.setInfo("creationTime", elem.text)
 
+	def set_description(self, header):
+		elems = []
+		for tag in ("sourceDesc", "projectDesc"):
+			elems += header.findall(f".//{tag}//p", self.ns)
+		description = self.strip_tag_p(elems)
+		if description:
+			self._glos.setInfo("description", description)
+			log.info(
+				"------------ Description: ------------\n"
+				f"{description}\n"
+				"--------------------------------------"
+			)
+
 	def set_metadata(self, header):
+		self.set_word_count(header)
 		self._glos.setInfo("title", header.find(".//title", self.ns).text)
 		self._glos.setInfo("edition", header.find(".//edition", self.ns).text)
+
 		self.set_copyright(header)
 		self.set_publisher(header)
 		self.set_publication_date(header)
-		self.set_word_count(header)
+		self.set_description(header)
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
