@@ -12,7 +12,9 @@ extensions = [".tei"]
 optionsProp = {
 	"resources": BoolOption(),
 }
-depends = {}
+depends = {
+	"lxml": "lxml",
+}
 
 tei = "{http://www.tei-c.org/ns/1.0}"
 
@@ -180,7 +182,12 @@ class Reader(object):
 		pass
 
 	def open(self, filename: str):
-		from lxml import etree as ET
+		try:
+			from lxml import etree as ET
+		except ModuleNotFoundError as e:
+			e.msg += ", run `sudo pip3 install lxml` to install"
+			raise e
+
 		self._filename = filename
 
 		context = ET.iterparse(filename, events=("end",))
