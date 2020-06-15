@@ -3,7 +3,6 @@
 from formats_common import *
 from pyglossary.xml_utils import xml_escape
 from typing import List, Union, Callable
-from lxml import etree as ET
 from io import BytesIO
 
 enable = True
@@ -22,13 +21,10 @@ class Reader(object):
 		None: "http://www.tei-c.org/ns/1.0",
 	}
 
-	def to_string(self, el):
-		return ET.tostring(el, method="html", pretty_print=True).decode("utf-8")
-
 	def make_list(
 		self,
-		hf: ET.htmlfile,
-		input_elements: List[ET.Element],
+		hf: "lxml.etree.htmlfile",
+		input_elements: "List[lxml.etree.Element]",
 		processor: Callable,
 		single_prefix=None,
 		skip_single=True
@@ -47,7 +43,7 @@ class Reader(object):
 				with hf.element("li"):
 					processor(hf, el)
 
-	def process_sense(self, hf: ET.htmlfile, sense: ET.Element):
+	def process_sense(self, hf: "lxml.etree.htmlfile", sense: "lxml.etree.Element"):
 		# translations
 		hf.write(", ".join(
 			el.text
@@ -63,6 +59,7 @@ class Reader(object):
 		)
 
 	def get_entry_html(self, entry):
+		from lxml import etree as ET
 		keywords = []
 		f = BytesIO()
 		with ET.htmlfile(f) as hf:
@@ -103,8 +100,13 @@ class Reader(object):
 		except Exception:
 			log.exception(f"unexpected extent={extent}")
 
-	def strip_tag_p_elem(self, elem: "ET.Element") -> str:
-		text = self.to_string(elem).strip()
+	def strip_tag_p_elem(self, elem: "lxml.etree.Element") -> str:
+		from lxml import etree as ET
+		text = ET.tostring(
+			elem,
+			method="html",
+			pretty_print=True,
+		).decode("utf-8").strip()
 		prefix = '<p xmlns="http://www.tei-c.org/ns/1.0">'
 		if text.startswith(prefix) and text.endswith("</p>"):
 			text = text[len(prefix):-4].strip()
@@ -112,7 +114,7 @@ class Reader(object):
 			text = text[3:-4].strip()
 		return text
 
-	def strip_tag_p(self, elems: List["ET.Element"]) -> str:
+	def strip_tag_p(self, elems: List["lxml.etree.Element"]) -> str:
 		lines = []
 		for elem in elems:
 			for line in self.strip_tag_p_elem(elem).split("\n"):
@@ -178,6 +180,7 @@ class Reader(object):
 		pass
 
 	def open(self, filename: str):
+		from lxml import etree as ET
 		self._filename = filename
 
 		context = ET.iterparse(filename, events=("end",))
@@ -187,6 +190,7 @@ class Reader(object):
 				return
 
 	def __iter__(self) -> Iterator[BaseEntry]:
+		from lxml import etree as ET
 		context = ET.iterparse(self._filename, events=("end",))
 		for action, elem in context:
 			if elem.tag == f"{tei}entry":
