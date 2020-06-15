@@ -86,16 +86,35 @@ class Reader(object):
 
 		return keywords, f.getvalue().decode('utf8')
 
+	def set_word_count(self, header):
+		extent_elem = header.find('.//extent', self.ns)
+		if extent_elem is None:
+			log.warn(
+				"did not find 'extent' tag in metedata"
+				", progress bar will not word"
+			)
+			return
+		extent = extent_elem.text
+		if not extent.endswith(' headwords'):
+			log.warn(f"unexpected extent={extent}")
+			return
+		try:
+			self._wordCount = int(extent.split(" ")[0])
+		except Exception:
+			log.exception(f"unexpected extent={extent}")
+
 	def set_metadata(self, header):
 		self._glos.setInfo('title', header.find('.//title', self.ns).text)
 		self._glos.setInfo('edition', header.find('.//edition', self.ns).text)
 		self._glos.setInfo('availability', self.to_string(header.find('.//availability', self.ns)))
+		self.set_word_count(header)
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
+		self._wordCount = 0
 
 	def __len__(self) -> int:
-		return 0  # FIXME
+		return self._wordCount
 
 	def close(self) -> None:
 		pass
