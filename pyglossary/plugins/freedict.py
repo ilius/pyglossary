@@ -7,7 +7,7 @@ from lxml import etree as ET
 from io import BytesIO
 
 enable = True
-format = "Freedict"
+format = "FreeDict"
 description = "FreeDict (tei)"
 extensions = [".tei"]
 optionsProp = {
