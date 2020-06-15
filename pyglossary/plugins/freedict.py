@@ -15,15 +15,15 @@ optionsProp = {
 }
 depends = {}
 
-tei = '{http://www.tei-c.org/ns/1.0}'
+tei = "{http://www.tei-c.org/ns/1.0}"
 
 class Reader(object):
 	ns = {
-		None: 'http://www.tei-c.org/ns/1.0',
+		None: "http://www.tei-c.org/ns/1.0",
 	}
 
 	def to_string(self, el):
-		return ET.tostring(el, method='html', pretty_print=True).decode('utf-8')
+		return ET.tostring(el, method="html", pretty_print=True).decode("utf-8")
 
 	def make_list(
 		self,
@@ -42,52 +42,52 @@ class Reader(object):
 			processor(hf, input_elements[0])
 			return
 
-		with hf.element('ol'):
+		with hf.element("ol"):
 			for el in input_elements:
-				with hf.element('li'):
+				with hf.element("li"):
 					processor(hf, el)
 
 	def process_sense(self, hf: ET.htmlfile, sense: ET.Element):
 		# translations
-		hf.write(', '.join(
+		hf.write(", ".join(
 			el.text
-			for el in sense.findall('cit/quote', self.ns)
+			for el in sense.findall("cit/quote", self.ns)
 			if el.text is not None
 		))
 
 		self.make_list(
 			hf,
-			sense.findall('sense/def', self.ns),
+			sense.findall("sense/def", self.ns),
 			lambda hf, el: hf.write(el.text),
-			single_prefix=' — ',
+			single_prefix=" — ",
 		)
 
 	def get_entry_html(self, entry):
 		keywords = []
 		f = BytesIO()
 		with ET.htmlfile(f) as hf:
-			with hf.element('div'):
-				for form in entry.findall('form/orth', self.ns):
+			with hf.element("div"):
+				for form in entry.findall("form/orth", self.ns):
 					keywords.append(form.text)
-					with hf.element('b'):
+					with hf.element("b"):
 						hf.write(form.text)
-				hf.write(' ')
-				for pos in entry.findall('gramGrp/pos', self.ns):
-					with hf.element('i'):
+				hf.write(" ")
+				for pos in entry.findall("gramGrp/pos", self.ns):
+					with hf.element("i"):
 						hf.write(pos.text)
-				hf.write(ET.Element('br'))
-				hf.write('\n')
+				hf.write(ET.Element("br"))
+				hf.write("\n")
 
 				self.make_list(
 					hf,
-					entry.findall('sense', self.ns),
+					entry.findall("sense", self.ns),
 					self.process_sense,
 				)
 
-		return keywords, f.getvalue().decode('utf8')
+		return keywords, f.getvalue().decode("utf-8")
 
 	def set_word_count(self, header):
-		extent_elem = header.find('.//extent', self.ns)
+		extent_elem = header.find(".//extent", self.ns)
 		if extent_elem is None:
 			log.warn(
 				"did not find 'extent' tag in metedata"
@@ -95,7 +95,7 @@ class Reader(object):
 			)
 			return
 		extent = extent_elem.text
-		if not extent.endswith(' headwords'):
+		if not extent.endswith(" headwords"):
 			log.warn(f"unexpected extent={extent}")
 			return
 		try:
@@ -104,9 +104,9 @@ class Reader(object):
 			log.exception(f"unexpected extent={extent}")
 
 	def set_metadata(self, header):
-		self._glos.setInfo('title', header.find('.//title', self.ns).text)
-		self._glos.setInfo('edition', header.find('.//edition', self.ns).text)
-		self._glos.setInfo('availability', self.to_string(header.find('.//availability', self.ns)))
+		self._glos.setInfo("title", header.find(".//title", self.ns).text)
+		self._glos.setInfo("edition", header.find(".//edition", self.ns).text)
+		self._glos.setInfo("availability", self.to_string(header.find(".//availability", self.ns)))
 		self.set_word_count(header)
 
 	def __init__(self, glos: GlossaryType):
@@ -124,14 +124,14 @@ class Reader(object):
 
 		context = ET.iterparse(filename, events=("end",))
 		for action, elem in context:
-			if elem.tag == f'{tei}teiHeader':
+			if elem.tag == f"{tei}teiHeader":
 				self.set_metadata(elem)
 				return
 
 	def __iter__(self) -> Iterator[BaseEntry]:
 		context = ET.iterparse(self._filename, events=("end",))
 		for action, elem in context:
-			if elem.tag == f'{tei}entry':
+			if elem.tag == f"{tei}entry":
 				words, defi = self.get_entry_html(elem)
 				yield self._glos.newEntry(words, defi)
 				# clean up preceding siblings to save memory
