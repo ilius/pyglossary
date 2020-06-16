@@ -25,6 +25,7 @@ enable = True
 format = "Sdict"
 description = "Sdictionary Binary(dct)"
 extensions = [".dct"]
+# homepage = "http://swaj.net/sdict/"
 optionsProp = {
 	"encoding": EncodingOption(),
 }
@@ -138,21 +139,13 @@ class Reader(object):
 
 	def open(self, filename, encoding="utf-8"):
 		self._file = open(filename, "rb")
-		self._header.parse(self._file.read(43))
-		self._compression = compressions[self._header.compressionType]
+		h = self._header
+		h.parse(self._file.read(43))
+		self._compression = compressions[h.compressionType]
 		self.short_index = self.readShortIndex()
-		self._glos.setInfo(
-			"name",
-			self.readUnit(self._header.title_offset),
-		)
-		self._glos.setInfo(
-			"version",
-			self.readUnit(self._header.version_offset)
-		)
-		self._glos.setInfo(
-			"copyright",
-			self.readUnit(self._header.copyright_offset),
-		)
+		self._glos.setInfo("name", self.readUnit(h.title_offset))
+		self._glos.setInfo("version", self.readUnit(h.version_offset))
+		self._glos.setInfo("copyright",self.readUnit(h.copyright_offset))
 		log.debug(f"SDict word count: {len(self)}")  # correct? FIXME
 
 	def close(self):

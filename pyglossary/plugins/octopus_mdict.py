@@ -73,10 +73,8 @@ class Reader(object):
 			pass
 		else:
 			self._glos.setInfo("title", title)
-		self._glos.setInfo(
-			"description",
-			self._mdx.header.get(b"Description", ""),
-		)
+		description = self._mdx.header.get(b"Description", "")
+		self._glos.setInfo("description", description)
 
 	def __iter__(self):
 		if self._mdx is None:

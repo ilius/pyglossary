@@ -111,10 +111,7 @@ class Writer(EbookWriter):
 			self,
 			glos,
 		)
-		glos.setInfo(
-			"uuid",
-			str(uuid.uuid4()).replace("-", ""),
-		)
+		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
 	def write(
 		self,

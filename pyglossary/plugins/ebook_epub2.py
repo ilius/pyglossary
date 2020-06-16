@@ -180,10 +180,7 @@ p.groupDefinition {
 			self,
 			glos,
 		)
-		glos.setInfo(
-			"uuid",
-			str(uuid.uuid4()).replace("-", ""),
-		)
+		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
 
 	def write_ncx(self, group_labels, include_index_page):
