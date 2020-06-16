@@ -9,7 +9,9 @@ extensions = [".po"]
 optionsProp = {
 	"resources": BoolOption(),
 }
-depends = {}
+depends = {
+	"polib": "polib",
+}
 
 
 class Reader(object):
@@ -50,7 +52,11 @@ class Reader(object):
 		return self._wordCount
 
 	def __iter__(self):
-		from polib import unescape as po_unescape
+		try:
+			from polib import unescape as po_unescape
+		except ModuleNotFoundError as e:
+			e.msg += ", run `sudo pip3 install polib` to install"
+			raise e
 		word = ""
 		defi = ""
 		msgstr = False
@@ -67,6 +73,10 @@ class Reader(object):
 					wordCount += 1
 					word = ""
 					defi = ""
+				else:
+					pass
+					# TODO: parse defi and set glos info?
+					# but this should be done in self.open
 				word = po_unescape(line[6:])
 				msgstr = False
 			elif line.startswith("msgstr "):
@@ -86,11 +96,15 @@ class Reader(object):
 
 
 def write(glos: GlossaryType, filename: str, resources: bool = True):
-	from polib import escape as po_escape
+	try:
+		from polib import escape as po_escape
+	except ModuleNotFoundError as e:
+		e.msg += ", run `sudo pip3 install polib` to install"
+		raise e
 	with open(filename, "w") as toFile:
-		toFile.write("#\nmsgid ""\nmsgstr ""\n")
+		toFile.write('#\nmsgid ""\nmsgstr ""\n')
 		for key, value in glos.iterInfo():
-			toFile.write('"%s: %s\\n"\n' % (key, value))
+			toFile.write(f'"{key}: {value}\\n"\n')
 		for entry in glos:
 			if entry.isData():
 				if resources:
@@ -98,7 +112,7 @@ def write(glos: GlossaryType, filename: str, resources: bool = True):
 				continue
 			word = entry.getWord()
 			defi = entry.getDefi()
-			toFile.write("msgid %s\nmsgstr %s\n\n" % (
-				po_escape(word),
-				po_escape(defi),
-			))
+			toFile.write(
+				f"msgid {po_escape(word)}\n"
+				f"msgstr {po_escape(defi)}\n\n"
+			)
