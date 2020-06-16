@@ -190,22 +190,29 @@ class Reader(object):
 
 		self._filename = filename
 
-		context = ET.iterparse(filename, events=("end",))
+		context = ET.iterparse(
+			filename,
+			events=("end",),
+			tag=f"{tei}teiHeader",
+		)
 		for action, elem in context:
-			if elem.tag == f"{tei}teiHeader":
-				self.set_metadata(elem)
-				return
+			self.set_metadata(elem)
+			return
 
 	def __iter__(self) -> Iterator[BaseEntry]:
 		from lxml import etree as ET
-		context = ET.iterparse(self._filename, events=("end",))
+		context = ET.iterparse(
+			self._filename,
+			events=("end",),
+			tag=f"{tei}entry",
+		)
 		for action, elem in context:
-			if elem.tag == f"{tei}entry":
-				words, defi = self.get_entry_html(elem)
-				yield self._glos.newEntry(words, defi)
-				# clean up preceding siblings to save memory
-				while elem.getprevious() is not None:
-					del elem.getparent()[0]
+			words, defi = self.get_entry_html(elem)
+			yield self._glos.newEntry(words, defi)
+			# clean up preceding siblings to save memory
+			# this reduces memory usage from ~64 MB to ~30 MB
+			while elem.getprevious() is not None:
+				del elem.getparent()[0]
 
 
 
