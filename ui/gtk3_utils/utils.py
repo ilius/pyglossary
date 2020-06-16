@@ -62,7 +62,7 @@ def imageFromIconName(iconName: str, size: int, nonStock=False) -> gtk.Image:
 def rgba_parse(colorStr):
 	rgba = gdk.RGBA()
 	if not rgba.parse(colorStr):
-		raise ValueError("bad color string %r" % colorStr)
+		raise ValueError(f"bad color string {colorStr!r}")
 	return rgba
 
 
@@ -76,7 +76,7 @@ def pack(box, child, expand=False, fill=False, padding=0):
 	elif isinstance(box, gtk.CellLayout):
 		box.pack_start(child, expand)
 	else:
-		raise TypeError("pack: unkown type %s" % type(box))
+		raise TypeError(f"pack: unkown type {type(box)}")
 
 
 def dialog_add_button(dialog, iconName, label, resId, onClicked=None, tooltip=""):

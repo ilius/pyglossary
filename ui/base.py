@@ -66,7 +66,9 @@ class UIBase(object):
 			try:
 				userData = jsonToData(fread(confJsonFile))
 			except Exception:
-				log.exception("error while loading user config file \"%s\"", confJsonFile)
+				log.exception(
+					f"error while loading user config file {confJsonFile!r}"
+				)
 			else:
 				data.update(userData)
 
@@ -76,7 +78,7 @@ class UIBase(object):
 			except KeyError:
 				pass
 		for key, value in data.items():
-			log.warning("unkown config key \"%s\"", key)
+			log.warning(f"unkown config key {key!r}")
 
 		for key, value in options.items():
 			if key in self.prefKeys:
