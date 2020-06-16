@@ -138,8 +138,9 @@ def href_sub(x: Pattern) -> str:
 	href = x.groups()[1]
 	if href.startswith("http"):
 		return x.group()
-	if href.startswith("bword://"):
-		href = href[len("bword://"):]
+
+	href=_href_cleanup(href)
+
 	return "href=" + quoteattr(
 		"x-dictionary:d:" + unescape(
 			href,
@@ -206,8 +207,7 @@ def format_clean_content(
 					tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
 		for tag in soup.select("[href]"):
 			href = tag["href"]
-			if href.startswith("bword://"):
-				href = href[len("bword://"):]
+			href = _href_cleanup(href)
 			if not (href.startswith("http:") or href.startswith("https:")):
 				tag["href"] = f"x-dictionary:d:{href}"
 		for tag in soup("u"):
@@ -255,3 +255,16 @@ def format_clean_content(
 	content = content.replace("&nbsp;", "&#160;")
 	content = nonprintable.sub("", content)
 	return content
+
+
+def _href_cleanup(href):
+	if href.startswith("bword://"):
+		href = href[len("bword://"):]
+
+	if href.startswith("entry://"):
+		href = href[len("entry://"):]
+
+	if href.startswith("sound://"):
+		href = href[len("sound://"):]
+
+	return href
