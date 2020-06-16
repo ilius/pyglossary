@@ -152,12 +152,12 @@ class Reader(object):
 		elems = []
 		for tag in ("sourceDesc", "projectDesc"):
 			elems += header.findall(f".//{tag}//p", self.ns)
-		description = self.strip_tag_p(elems)
-		if description:
-			self._glos.setInfo("description", description)
+		desc = self.strip_tag_p(elems)
+		if desc:
+			self._glos.setInfo("description", desc)
 			log.info(
 				"------------ Description: ------------\n"
-				f"{description}\n"
+				f"{desc}\n"
 				"--------------------------------------"
 			)
 
