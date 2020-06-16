@@ -24,7 +24,7 @@ def read(glos: GlossaryType, filename: str) -> bool:
 		glos.addEntry(word, defi)
 	# here read info from file and set to Glossary object
 	glos.setInfo("name", "Test")
-	glos.setInfo("descriptin", "Test glossary craeted by a PyGlossary plugin")
+	glos.setInfo("description", "Test glossary craeted by a PyGlossary plugin")
 	glos.setInfo("author", "Me")
 	glos.setInfo("copyright", "GPL")
 	return True  # reading input file was succesfull
@@ -39,7 +39,7 @@ def write(glos: GlossaryType, filename: str) -> bool:
 		# your format)
 	# here read info from Glossaey object
 	name = glos.getInfo("name")
-	descriptin = glos.getInfo("descriptin")
+	desc = glos.getInfo("description")
 	author = glos.getInfo("author")
 	copyright = glos.getInfo("copyright")
 	# if an info key doesn't exist, getInfo returns empty string
