@@ -36,11 +36,11 @@ language1HasSeparateDictionaryFile=true
 searchListCharEncoding=ISO-8859-1
 searchListFileSeparationCharacter='\t'
 indexFileSeparationCharacter='\t'
-language1DisplayText={inputlang}
+language1DisplayText={sourceLang}
 language2HasSeparateDictionaryFile=false
 dictionaryGenerationInputCharEncoding=UTF-8
 language1GenerateIndex=true
-language2DisplayText={outputlang}
+language2DisplayText={targetLang}
 language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEng
 """
 
@@ -157,8 +157,8 @@ class Writer(object):
 				directoryPostfix=self.directoryPostfix,
 				dicMaxSize=self.dicMaxSize+1,
 				language2FilePostfix="fa",  # FIXME
-				inputlang=glos.getInfo("inputlang"),
-				outputlang=glos.getInfo("outputlang"),
+				sourceLang=glos.getInfo("sourceLang"),
+				targetLang=glos.getInfo("targetLang"),
 			))
 #			open(join(
 #				self.dirname,

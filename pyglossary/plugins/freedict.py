@@ -163,7 +163,7 @@ class Reader(object):
 
 	def set_metadata(self, header):
 		self.set_word_count(header)
-		self._glos.setInfo("title", header.find(".//title", self.ns).text)
+		self._glos.setInfo("name", header.find(".//title", self.ns).text)
 		self._glos.setInfo("edition", header.find(".//edition", self.ns).text)
 
 		self.set_copyright(header)
@@ -222,7 +222,7 @@ def write(
 	resources: bool = True,
 ):
 	fp = open(filename, "w", encoding="utf-8")
-	title = glos.getInfo("title")
+	title = glos.getInfo("name")
 	publisher = glos.getInfo("author")
 	copyright = glos.getInfo("copyright")
 	creationTime = glos.getInfo("creationTime")

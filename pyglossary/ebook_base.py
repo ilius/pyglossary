@@ -287,7 +287,7 @@ class EbookWriter(object):
 				label = label,
 			))
 		links = self.INDEX_XHTML_LINK_JOINER.join(links)
-		title = self.glos.getInfo("title")
+		title = self.glos.getInfo("name")
 		contents = self.INDEX_XHTML_TEMPLATE.format(
 			title = title,
 			indexTitle = title,
@@ -311,7 +311,7 @@ class EbookWriter(object):
 			identifier = self.glos.getInfo("uuid"),
 			sourceLang = self.glos.getInfo("sourceLang"),
 			targetLang = self.glos.getInfo("sourceLang"),
-			title = self.glos.getInfo("title"),
+			title = self.glos.getInfo("name"),
 			creator = self.glos.getInfo("author"),
 			copyright = self.glos.getInfo("copyright"),
 			creationDate = creationDate,
