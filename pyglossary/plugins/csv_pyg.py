@@ -80,7 +80,7 @@ class Reader(object):
 
 	def __iter__(self) -> Iterator[BaseEntry]:
 		if not self._csvReader:
-			log.error("%s is not open, can not iterate", self)
+			log.error(f"{self} is not open, can not iterate")
 			raise StopIteration
 
 		wordCount = 0
@@ -93,7 +93,7 @@ class Reader(object):
 				word = row[0]
 				defi = row[1]
 			except IndexError:
-				log.error("invalid row: %r", row)
+				log.error(f"invalid row: {row!r}")
 				yield None  # update progressbar
 				continue
 			try:

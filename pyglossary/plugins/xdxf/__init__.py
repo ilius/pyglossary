@@ -217,7 +217,7 @@ def xdxf_to_html(xdxf_text):
 	:return: html formatted string
 	"""
 	from io import StringIO
-	xdxf_txt = "<ar>%s</ar>" % xdxf_text
+	xdxf_txt = "<ar>" + xdxf_text + "</ar>"
 	f = StringIO(xdxf_txt)
 	doc = etree.parse(f)
 	result_tree = transform(doc)

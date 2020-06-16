@@ -172,7 +172,7 @@ class EbookWriter(object):
 			mimetype = "image/png"
 		elif b.endswith(".gif"):
 			mimetype = "image/gif"
-		self.add_file_manifest("OEBPS/%s" % basename, basename, cover, mimetype)
+		self.add_file_manifest("OEBPS/" + basename, basename, cover, mimetype)
 		self.cover = basename
 
 	def write_css(self, custom_css_path_absolute):
@@ -199,7 +199,7 @@ class EbookWriter(object):
 		## number of groups are not known## FIXME
 		## so we can not say if the current group is the last or not
 			return "#groupPage"
-		return "g%06d.xhtml" % index
+		return f"g{index:06d}.xhtml"
 
 	def add_group(self, key, entries):
 		self.groups.append({"key": key, "entries": entries})
@@ -237,7 +237,7 @@ class EbookWriter(object):
 
 			group_label = group_prefix
 			if group_prefix != "SPECIAL":
-				group_label = "%s&#8211;%s" % (first_word, last_word)
+				group_label = first_word + "&#8211;" + last_word
 			group_labels.append(group_label)
 
 			previous_link = self.get_group_xhtml_file_name_from_index(index - 1)
@@ -256,7 +256,7 @@ class EbookWriter(object):
 			group_xhtml_path = self.get_group_xhtml_file_name_from_index(index)
 
 			self.add_file_manifest(
-				"OEBPS/%s" % group_xhtml_path,
+				"OEBPS/" + group_xhtml_path,
 				group_xhtml_path,
 				group_contents,
 				"application/xhtml+xml",

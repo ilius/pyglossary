@@ -36,7 +36,7 @@ class Reader(TextGlossaryReader):
 		word, tab, defi = line.partition("\t")
 		if not tab:
 			log.error(
-				"Warning: line starting with \"%s\" has no tab!" % line[:10]
+				f"Warning: line starting with {line[:10]!r} has no tab!"
 			)
 			return
 		###

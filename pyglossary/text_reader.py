@@ -39,7 +39,7 @@ class TextGlossaryReader(object):
 		try:
 			self._file.close()
 		except:
-			log.exception("error while closing file \"%s\"" % self._filename)
+			log.exception(f"error while closing file {self._filename!r}")
 		self._file = None
 
 	def loadInfo(self) -> None:

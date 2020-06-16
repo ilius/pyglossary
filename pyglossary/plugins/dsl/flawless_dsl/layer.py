@@ -39,7 +39,8 @@ class Layer(object):
 		return tag in self.tags
 
 	def __repr__(self):
-		return "Layer({%s}, %r)" % (", ".join(map(str, self.tags)), self.text)
+		tags = "{" + ", ".join(map(str, self.tags)) + "}"
+		return f"Layer({tags}, {self.text!r})"
 
 	def __eq__(self, other):
 		"""
@@ -78,10 +79,11 @@ def close_tags(stack, tags, layer_index=-1):
 			# no need to layer.tags.add()
 
 		ordered_tags = tag.canonical_order(tags)
-		layer.text = "[%s]%s[/%s]" % (
-			"][".join([x.opening for x in ordered_tags]),
-			layer.text,
-			"][/".join([x.closing for x in reversed(ordered_tags)]))
+		layer.text = "".join(
+			[f"[{x.opening}]" for x in ordered_tags] +
+			[layer.text] +
+			[f"[/{x.closing}]" for x in reversed(ordered_tags)]
+		)
 
 	# remove tags from layer
 	layer.tags -= tags
