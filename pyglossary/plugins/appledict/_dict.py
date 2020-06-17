@@ -241,6 +241,7 @@ def format_clean_content(
 			tag=soup.find('p')
 			tag.string='See '
 			tag.insert(1, a)
+		if title and not '<h1' in body:
 			h1 = BeautifulSoup.Tag(name="h1")
 			h1.string = title
 			soup.insert(0, h1)
