@@ -233,6 +233,14 @@ def format_clean_content(
 			tag.name = "del"
 
 		if title:
+		if '@@@LINK=' in body:
+			entry = body[len('@@@LINK='):]
+			a = BeautifulSoup.Tag(name="a")
+			a["href"] = f"x-dictionary:d:{entry}"
+			a.string = entry
+			tag=soup.find('p')
+			tag.string='See '
+			tag.insert(1, a)
 			h1 = BeautifulSoup.Tag(name="h1")
 			h1.string = title
 			soup.insert(0, h1)
