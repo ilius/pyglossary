@@ -79,7 +79,8 @@ class Reader(object):
 		self.clear()
 		"""
 		indexData format
-		indexData[i] - i-th record in index file, a tuple (previously a list) of length 3
+		indexData[i] - i-th record in index file,
+						a tuple (previously a list) of length 3
 		indexData[i][0] - b_word (bytes)
 		indexData[i][1] - definition block offset in dict file (int)
 		indexData[i][2] - definition block size in dict file (int)
@@ -123,9 +124,9 @@ class Reader(object):
 		self._synDict = self.readSynFile()
 		self._sametypesequence = sametypesequence
 		if isfile(self._filename + ".dict.dz"):
-			self._dictFile = gzip.open(self._filename+".dict.dz", mode="rb")
+			self._dictFile = gzip.open(self._filename + ".dict.dz", mode="rb")
 		else:
-			self._dictFile = open(self._filename+".dict", mode="rb")
+			self._dictFile = open(self._filename + ".dict", mode="rb")
 		self._resDir = join(dirname(self._filename), "res")
 		if isdir(self._resDir):
 			self._resFileNames = os.listdir(self._resDir)
@@ -145,7 +146,7 @@ class Reader(object):
 		"""
 		.ifo file is a text file in utf-8 encoding
 		"""
-		with open(self._filename+".ifo", "r", encoding="utf-8") as ifoFile:
+		with open(self._filename + ".ifo", "r", encoding="utf-8") as ifoFile:
 			for line in ifoFile:
 				line = line.strip()
 				if not line:
@@ -159,11 +160,11 @@ class Reader(object):
 				self._glos.setInfo(key, value)
 
 	def readIdxFile(self) -> List[Tuple[bytes, int, int]]:
-		if isfile(self._filename+".idx.gz"):
-			with gzip.open(self._filename+".idx.gz") as idxFile:
+		if isfile(self._filename + ".idx.gz"):
+			with gzip.open(self._filename + ".idx.gz") as idxFile:
 				idxBytes = idxFile.read()
 		else:
-			with open(self._filename+".idx", "rb") as idxFile:
+			with open(self._filename + ".idx", "rb") as idxFile:
 				idxBytes = idxFile.read()
 
 		indexData = []
@@ -179,9 +180,9 @@ class Reader(object):
 			if pos + 8 > len(idxBytes):
 				log.error("Index file is corrupted")
 				break
-			offset = binStrToInt(idxBytes[pos:pos+4])
+			offset = binStrToInt(idxBytes[pos:pos + 4])
 			pos += 4
-			size = binStrToInt(idxBytes[pos:pos+4])
+			size = binStrToInt(idxBytes[pos:pos + 4])
 			pos += 4
 			indexData.append((b_word, offset, size))
 
@@ -281,9 +282,9 @@ class Reader(object):
 		"""
 		return synDict, a dict { wordIndex -> altList }
 		"""
-		if not isfile(self._filename+".syn"):
+		if not isfile(self._filename + ".syn"):
 			return {}
-		with open(self._filename+".syn", "rb") as synFile:
+		with open(self._filename + ".syn", "rb") as synFile:
 			synBytes = synFile.read()
 		synBytesLen = len(synBytes)
 		synDict = {}
@@ -299,7 +300,7 @@ class Reader(object):
 			if pos + 4 > len(synBytes):
 				log.error("Synonym file is corrupted")
 				break
-			wordIndex = binStrToInt(synBytes[pos:pos+4])
+			wordIndex = binStrToInt(synBytes[pos:pos + 4])
 			pos += 4
 			if wordIndex >= self._wordCount:
 				log.error(
@@ -316,7 +317,11 @@ class Reader(object):
 
 		return synDict
 
-	def parseDefiBlockCompact(self, b_block: bytes, sametypesequence: str) -> List[Tuple[bytes, int]]:
+	def parseDefiBlockCompact(
+		self,
+		b_block: bytes,
+		sametypesequence: str,
+	) -> List[Tuple[bytes, int]]:
 		"""
 		Parse definition block when sametypesequence option is specified.
 
@@ -342,11 +347,11 @@ class Reader(object):
 				assert bytes([t]).isupper()
 				if i + 4 > len(b_block):
 					return None
-				size = binStrToInt(b_block[i:i+4])
+				size = binStrToInt(b_block[i:i + 4])
 				i += 4
 				if i + size > len(b_block):
 					return None
-				res.append((b_block[i:i+size], t))
+				res.append((b_block[i:i + size], t))
 				i += size
 
 		if i >= len(b_block):
@@ -388,11 +393,11 @@ class Reader(object):
 				assert bytes([t]).isupper()
 				if i + 4 > len(b_block):
 					return None
-				size = binStrToInt(b_block[i:i+4])
+				size = binStrToInt(b_block[i:i + 4])
 				i += 4
 				if i + size > len(b_block):
 					return None
-				res.append((b_block[i:i+size], t))
+				res.append((b_block[i:i + size], t))
 				i += size
 		return res
 
@@ -431,18 +436,17 @@ class Writer(object):
 		self._filename = fileBasePath
 		self._resDir = join(dirname(self._filename), "res")
 
-
 		if sametypesequence:
 			log.debug(f"Using write option sametypesequence={sametypesequence}")
 			self.writeCompact(sametypesequence)
-#		elif self.glossaryHasAdditionalDefinitions():
-#			self.writeGeneral()
+		# elif self.glossaryHasAdditionalDefinitions():
+		# 	self.writeGeneral()
 		else:
-#			defiFormat = self.detectMainDefinitionFormat()
-#			if defiFormat == None:
+			# defiFormat = self.detectMainDefinitionFormat()
+			# if defiFormat == None:
 			self.writeGeneral()
-#			else:
-#				self.writeCompact(defiFormat)
+			# else:
+			# 	self.writeCompact(defiFormat)
 
 		if dictzip:
 			runDictzip(self._filename)
@@ -459,8 +463,8 @@ class Writer(object):
 		dictMark = 0
 		altIndexList = []  # list of tuples (b"alternate", wordIndex)
 
-		dictFile = open(self._filename+".dict", "wb")
-		idxFile = open(self._filename+".idx", "wb")
+		dictFile = open(self._filename + ".dict", "wb")
+		idxFile = open(self._filename + ".idx", "wb")
 		indexFileSize = 0
 
 		t0 = now()
@@ -510,7 +514,12 @@ class Writer(object):
 		log.debug("defiFormat = " + pformat(defiFormat))
 
 		self.writeSynFile(altIndexList)
-		self.writeIfoFile(wordCount, indexFileSize, len(altIndexList),defiFormat)
+		self.writeIfoFile(
+			wordCount,
+			indexFileSize,
+			len(altIndexList),
+			defiFormat,
+		)
 
 	def writeGeneral(self) -> None:
 		"""
@@ -521,8 +530,8 @@ class Writer(object):
 		dictMark = 0
 		altIndexList = []  # list of tuples (b"alternate", wordIndex)
 
-		dictFile = open(self._filename+".dict", "wb")
-		idxFile = open(self._filename+".idx", "wb")
+		dictFile = open(self._filename + ".dict", "wb")
+		idxFile = open(self._filename + ".idx", "wb")
 		indexFileSize = 0
 
 		t0 = now()
@@ -603,7 +612,7 @@ class Writer(object):
 		)
 		log.info(f"Writing {len(altIndexList)} synonyms...")
 		t0 = now()
-		with open(self._filename+".syn", "wb") as synFile:
+		with open(self._filename + ".syn", "wb") as synFile:
 			synFile.write(b"".join([
 				b_alt + b"\x00" + intToBinStr(wordIndex, 4)
 				for b_alt, wordIndex in altIndexList
@@ -653,7 +662,7 @@ class Writer(object):
 		ifoStr = "StarDict's dict ifo file\n"
 		for key, value in ifo:
 			ifoStr += f"{key}={value}\n"
-		with open(self._filename+".ifo", "w", encoding="utf-8") as ifoFile:
+		with open(self._filename + ".ifo", "w", encoding="utf-8") as ifoFile:
 			ifoFile.write(ifoStr)
 
 	def glossaryHasAdditionalDefinitions(self) -> bool:
@@ -682,4 +691,3 @@ class Writer(object):
 			return None
 
 		return formatsCount[0]
-
