@@ -30,9 +30,6 @@ class GlossaryType(object):
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		raise NotImplementedError
 
-	def getMostUsedDefiFormats(self, count: int = None) -> List[Tuple[str, int]]:
-		raise NotImplementedError
-
 	def iterInfo(self) -> Iterator[Tuple[str, str]]:
 		raise NotImplementedError
 

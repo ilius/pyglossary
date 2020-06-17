@@ -39,7 +39,6 @@ import subprocess
 import re
 
 import pkgutil
-from collections import Counter
 from collections import OrderedDict as odict
 
 import io
@@ -524,12 +523,6 @@ class Glossary(GlossaryType):
 
 	def infoKeys(self) -> List[str]:
 		return list(self._info.keys())
-
-	def getMostUsedDefiFormats(self, count: int = None) -> List[Tuple[str, int]]:
-		return Counter([
-			entry.getDefiFormat()
-			for entry in self
-		]).most_common(count)
 
 	# def formatInfoKeys(self, format: str):# FIXME
 
