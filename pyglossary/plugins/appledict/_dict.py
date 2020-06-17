@@ -209,6 +209,22 @@ def format_clean_content(
 			href = tag["href"]
 			href = _href_cleanup(href)
 			if not (href.startswith("http:") or href.startswith("https:")):
+			if href.startswith("sound:"):
+				src=href[len("sound://"):]
+				if 'data-file' in tag.attrs:  # for webster
+					del tag["href"]
+					audio = BeautifulSoup.Tag(name="audio")
+					audio['id'] = tag['data-file']
+					audio['src'] = f"{src}"
+					tag['onmousedown'] = f'document.getElementById("{tag["data-file"]}").play(); return false;'
+					tag.insert_after(audio)
+
+				if 'fayin' in tag['class']:  # for oxford
+					del tag["href"]
+					audio = BeautifulSoup.Tag(name="audio")
+					audio['src'] = f"{src}"
+					tag['onmousedown'] = f'this.lastChild.play(); return false;'
+					tag.append(audio)
 				tag["href"] = f"x-dictionary:d:{href}"
 		for tag in soup("u"):
 			tag.name = "span"
@@ -263,8 +279,5 @@ def _href_cleanup(href):
 
 	if href.startswith("entry://"):
 		href = href[len("entry://"):]
-
-	if href.startswith("sound://"):
-		href = href[len("sound://"):]
 
 	return href
