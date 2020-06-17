@@ -45,7 +45,11 @@ class Reader(object):
 				with hf.element("li"):
 					processor(hf, el)
 
-	def process_sense(self, hf: "lxml.etree.htmlfile", sense: "lxml.etree.Element"):
+	def process_sense(
+		self,
+		hf: "lxml.etree.htmlfile",
+		sense: "lxml.etree.Element",
+	):
 		# translations
 		hf.write(", ".join(
 			el.text
@@ -60,7 +64,7 @@ class Reader(object):
 			single_prefix=" — ",
 		)
 
-	def get_entry_html(self, entry):
+	def getEntryByElem(self, entry: "lxml.etree.Element") -> "BaseEntry":
 		from lxml import etree as ET
 		keywords = []
 		f = BytesIO()
@@ -83,7 +87,7 @@ class Reader(object):
 					self.process_sense,
 				)
 
-		return keywords, f.getvalue().decode("utf-8")
+		return self._glos.newEntry(keywords, f.getvalue().decode("utf-8"))
 
 	def set_word_count(self, header):
 		extent_elem = header.find(".//extent", self.ns)
@@ -207,8 +211,7 @@ class Reader(object):
 			tag=f"{tei}entry",
 		)
 		for action, elem in context:
-			words, defi = self.get_entry_html(elem)
-			yield self._glos.newEntry(words, defi)
+			yield self.getEntryByElem(elem)
 			# clean up preceding siblings to save memory
 			# this reduces memory usage from ~64 MB to ~30 MB
 			while elem.getprevious() is not None:
