@@ -35,7 +35,7 @@ optionsProp = {
 	"group_by_prefix_length": IntOption(),
 	# "group_by_prefix_merge_min_size": IntOption(),
 	# "group_by_prefix_merge_across_first": BoolOption(),
-	"no_kindlegen": BoolOption(), # specific to mobi
+	"kindlegen_path": StrOption(), # specific to mobi
 }
 
 
@@ -111,61 +111,45 @@ class Writer(EbookWriter):
 			self,
 			glos,
 		)
+		self._glos = glos
 		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
 	def write(
 		self,
 		filename,
-		no_kindlegen=False,
 		group_by_prefix_length=2,
+		kindlegen_path="",
 	):
+		import subprocess
+
 		EbookWriter.write(
 			self,
 			filename,
 			compress=False,
 			keep=False,
 			group_by_prefix_length=group_by_prefix_length,
-			# mobi_no_kindlegen=no_kindlegen,
-			# kindlegen_path=None,
 		)
 		self.close()
 
-		"""
-		# run kindlegen
-		tmp_path = mobi.get_tmp_path()
-		if no_kindlegen:
-			log.info(f"Not running kindlegen, the raw files are located in {tmp_path}")
-			result = [tmp_path]
-		else:
-			try:
-				log.debug("Creating .mobi file with kindlegen...")
-				kindlegen_path = KINDLEGEN
-				opf_file_path_absolute = os.path.join(tmp_path, "OEBPS", "content.opf")
-				mobi_file_path_relative = "content.mobi"
-				mobi_file_path_absolute = os.path.join(tmp_path, "OEBPS", mobi_file_path_relative)
-				if args.kindlegen_path is None:
-					log.info(f"  Running '{KINDLEGEN}' from $PATH")
-				else:
-					kindlegen_path = args.kindlegen_path
-					log.info(f"  Running '{KINDLEGEN}' from '{kindlegen_path}'")
-				proc = subprocess.Popen(
-					[kindlegen_path, opf_file_path_absolute, "-o", mobi_file_path_relative],
-					stdout=subprocess.PIPE,
-					stdin=subprocess.PIPE,
-					stderr=subprocess.PIPE
-				)
-				output = proc.communicate()
-				log.debug(output[0].decode("utf-8"))
-				copy_file(mobi_file_path_absolute, output_file_path_absolute)
-				result = [output_file_path]
-				log.debug("Creating .mobi file with kindlegen... done")
-			except OSError as exc:
-				log.error(
-					f"  Unable to run '{KINDLEGEN}' as '{kindlegen_path}'"
-					f"  Please make sure '{KINDLEGEN}':"
-					f"    1. is available on your $PATH or"
-					f"    2. specify its path with --kindlegen-path"
-				)
-		"""
-		return True
+		# download kindlegen from this page:
+		# https://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000765211
 
+		# run kindlegen
+		if not kindlegen_path:
+			log.info(f"Not running kindlegen, the raw files are located in {filename}")
+			return
+
+		name = self._glos.getInfo("name")
+
+		log.info("Creating .mobi file with kindlegen, using '{kindlegen_path}'")
+		opf_path_abs = join(filename, "OEBPS", "content.opf")
+		proc = subprocess.Popen(
+			[kindlegen_path, opf_path_abs, "-o", "content.mobi"],
+			stdout=subprocess.PIPE,
+			stdin=subprocess.PIPE,
+			stderr=subprocess.PIPE
+		)
+		output = proc.communicate()
+		log.info(output[0].decode("utf-8"))
+		mobi_path_abs = os.path.join(filename, "OEBPS", "content.mobi")
+		log.info(f"Created .mobi file with kindlegen: {mobi_path_abs}")
