@@ -439,14 +439,8 @@ class Writer(object):
 		if sametypesequence:
 			log.debug(f"Using write option sametypesequence={sametypesequence}")
 			self.writeCompact(sametypesequence)
-		# elif self.glossaryHasAdditionalDefinitions():
-		# 	self.writeGeneral()
 		else:
-			# defiFormat = self.detectMainDefinitionFormat()
-			# if defiFormat == None:
 			self.writeGeneral()
-			# else:
-			# 	self.writeCompact(defiFormat)
 
 		if dictzip:
 			runDictzip(self._filename)
@@ -664,30 +658,3 @@ class Writer(object):
 			ifoStr += f"{key}={value}\n"
 		with open(self._filename + ".ifo", "w", encoding="utf-8") as ifoFile:
 			ifoFile.write(ifoStr)
-
-	def glossaryHasAdditionalDefinitions(self) -> bool:
-		"""
-		Search for additional definitions in the glossary.
-		We need to know if the glossary contains additional definitions
-		to make the decision on the format of the StarDict dictionary.
-		"""
-		for entry in self._glos:
-			if len(entry.getDefis()) > 1:
-				return True
-		return False
-
-	def detectMainDefinitionFormat(self) -> Optional[str]:
-		"""
-		Scan main definitions of the glossary.
-		Return format common to all definitions: "h" or "m"
-
-		If definitions has different formats return None.
-		"""
-		self._glos.setDefaultDefiFormat("m")
-		formatsCount = self._glos.getMostUsedDefiFormats()
-		if not formatsCount:
-			return None
-		if len(formatsCount) > 1:  # FIXME
-			return None
-
-		return formatsCount[0]
