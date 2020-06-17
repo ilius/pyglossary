@@ -226,6 +226,10 @@ def format_clean_content(
 					tag['onmousedown'] = f'this.lastChild.play(); return false;'
 					tag.append(audio)
 				tag["href"] = f"x-dictionary:d:{href}"
+		for tag in soup.select("[src]"):
+			src = tag['src']
+			if src.startswith("/"):
+				tag['src'] = src[1:]
 		for tag in soup("u"):
 			tag.name = "span"
 			tag["class"] = tag.get("class", []) + ["u"]
