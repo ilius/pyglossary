@@ -8,6 +8,8 @@ from struct import pack, unpack
 from io import BytesIO
 import re
 import sys
+import os
+from os.path import splitext, isfile, isdir, extsep, basename, dirname
 
 from pyglossary.plugin_lib.readmdict import MDX, MDD
 
@@ -48,6 +50,8 @@ if __name__ == '__main__':
 	parser.add_argument("filename", nargs='?', help="mdx file name")
 	args = parser.parse_args()
 
+	_mdd =[]
+
 	# use GUI to select file, default to extract
 	if not args.filename:
 		if sys.hexversion >= 0x03000000:
@@ -81,10 +85,46 @@ if __name__ == '__main__':
 	else:
 		mdx = None
 
-	# find companion mdd file
-	mdd_filename = ''.join([base, os.path.extsep, 'mdd'])
-	if os.path.exists(mdd_filename):
-		mdd = MDD(mdd_filename, args.passcode)
+	# # find companion mdd file
+	# mdd_filename = ''.join([base, os.path.extsep, 'mdd'])
+	# if os.path.exists(mdd_filename):
+	# 	mdd = MDD(mdd_filename, args.passcode)
+	# 	if type(mdd_filename) is unicode:
+	# 		bfname = mdd_filename.encode('utf-8')
+	# 	else:
+	# 		bfname = mdd_filename
+	# 	print('======== %s ========' % bfname)
+	# 	print('  Number of Entries : %d' % len(mdd))
+	# 	for key, value in mdd.header.items():
+	# 		print('  %s : %s' % (key, value))
+	# else:
+	# 	mdd = None
+
+
+	mddBase = "".join([base, os.path.extsep])
+	for fname in (f"{mddBase}mdd", f"{mddBase}1.mdd"):
+		if isfile(fname):
+			mdd = MDD(fname)
+			_mdd.append(mdd)
+
+			if type(fname) is unicode:
+				bfname = fname.encode('utf-8')
+			else:
+				bfname = fname
+			print('======== %s ========' % bfname)
+			print('  Number of Entries : %d' % len(mdd))
+			for key, value in mdd.header.items():
+				print('  %s : %s' % (key, value))
+
+	mddN = 2
+	while isfile(f"{mddBase}{mddN}.mdd"):
+		mdd_filename = f"{mddBase}{mddN}.mdd"
+
+		mdd = MDD(f"{mddBase}{mddN}.mdd")
+		_mdd.append(mdd)
+		mddN += 1
+
+
 		if type(mdd_filename) is unicode:
 			bfname = mdd_filename.encode('utf-8')
 		else:
@@ -93,8 +133,11 @@ if __name__ == '__main__':
 		print('  Number of Entries : %d' % len(mdd))
 		for key, value in mdd.header.items():
 			print('  %s : %s' % (key, value))
-	else:
-		mdd = None
+
+
+	log.info(f"Found {len(_mdd)} mdd files")
+
+
 
 	if args.extract:
 		# write out glos
@@ -116,15 +159,16 @@ if __name__ == '__main__':
 				sf.write(b'\r\n'.join(mdx.header['StyleSheet'].splitlines()))
 				sf.close()
 		# write out optional data files
-		if mdd:
-			datafolder = os.path.join(os.path.dirname(args.filename), args.datafolder)
-			if not os.path.exists(datafolder):
-				os.makedirs(datafolder)
-			for key, value in mdd.items():
-				fname = key.decode('utf-8').replace('\\', os.path.sep)
-				dfname = datafolder + fname
-				if not os.path.exists(os.path.dirname(dfname)):
-					os.makedirs(os.path.dirname(dfname))
-				df = open(dfname, 'wb')
-				df.write(value)
-				df.close()
+		if _mdd:
+			for mdd in _mdd:
+				datafolder = os.path.join(os.path.dirname(args.filename), args.datafolder)
+				if not os.path.exists(datafolder):
+					os.makedirs(datafolder)
+				for key, value in mdd.items():
+					fname = key.decode('utf-8').replace('\\', os.path.sep)
+					dfname = datafolder + fname
+					if not os.path.exists(os.path.dirname(dfname)):
+						os.makedirs(os.path.dirname(dfname))
+					df = open(dfname, 'wb')
+					df.write(value)
+					df.close()
