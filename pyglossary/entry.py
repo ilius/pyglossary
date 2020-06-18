@@ -131,6 +131,8 @@ class Entry(BaseEntry):
 			r"<span[ >]",
 			r"<a href=",
 			r"<sup[ >]",
+			r"<ol[ >]",
+			r"<li[ >]",
 		]) + ")",
 		re.S,
 	)
