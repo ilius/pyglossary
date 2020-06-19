@@ -330,7 +330,11 @@ class Glossary(GlossaryType):
 		self._defaultDefiFormat = "m"
 		self._progressbar = True
 
-	def __init__(self, info: Optional[Dict[str, str]] = None, ui=Any) -> None:
+	def __init__(
+		self,
+		info: Optional[Dict[str, str]] = None,
+		ui: Any = None,
+	) -> None:
 		"""
 		info:	OrderedDict instance, or None
 				no need to copy OrderedDict instance,
