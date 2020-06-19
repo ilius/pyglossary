@@ -389,6 +389,15 @@ class Glossary(GlossaryType):
 		self._entryFilters.append(ef.NonEmptyDefiFilter(self))
 		self._entryFilters.append(ef.RemoveEmptyAndDuplicateAltWords(self))
 
+	def prepareEntryFilters(self) -> None:
+		"""
+			call .prepare() method on all _entryFilters
+			run this after glossary info is set and ready
+			for most entry filters, it won't do anything
+		"""
+		for ef in self._entryFilters:
+			ef.prepare()
+
 	def __str__(self) -> str:
 		return "glossary.Glossary"
 
@@ -642,11 +651,13 @@ class Glossary(GlossaryType):
 			Reader = self.readerClasses[format]
 			reader = Reader(self)
 			reader.open(filename, **options)
+			self.prepareEntryFilters()
 			if direct:
 				self._readers.append(reader)
 			else:
 				self.loadReader(reader)
 		else:
+			self.prepareEntryFilters()
 			if direct:
 				log.debug(
 					f"No `Reader` class found in {format} plugin"

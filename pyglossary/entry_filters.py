@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import logging
 
 from typing import (
 	Optional,
@@ -15,6 +16,8 @@ from .entry_base import BaseEntry
 from .glossary import Glossary
 
 
+log = logging.getLogger("root")
+
 
 class EntryFilter(object):
 	name = ""
@@ -22,6 +25,12 @@ class EntryFilter(object):
 
 	def __init__(self, glos: Glossary):
 		self.glos = glos
+
+	def prepare(self) -> None:
+		"""
+			run this after glossary info is set and ready
+		"""
+		pass
 
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
 		"""
@@ -146,6 +155,19 @@ class LangEntryFilter(EntryFilter):
 	name = "lang"
 	desc = "Language-dependent Filters"
 
+	def __init__(self, glos: Glossary):
+		EntryFilter.__init__(self, glos)
+		self._run_func = None  # type: Callable[[BaseEntry], [Optional[BaseEntry]]]
+
+	def prepare(self) -> None:
+		langs = (
+			self.glos.getInfo("sourceLang") +
+			self.glos.getInfo("targetLang")
+		).lower()
+		if "persian" in langs or "farsi" in langs:
+			self._run_func = self.run_fa
+			log.info("Using Persian filter")
+
 	def run_fa(self, entry: BaseEntry) -> Optional[BaseEntry]:
 		from pyglossary.persian_utils import faEditStr
 		entry.editFuncWord(faEditStr)
@@ -156,13 +178,8 @@ class LangEntryFilter(EntryFilter):
 		return entry
 
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
-		langs = (
-			self.glos.getInfo("sourceLang") +
-			self.glos.getInfo("targetLang")
-		).lower()
-		if "persian" in langs or "farsi" in langs:
-			entry = self.run_fa(entry)
-
+		if self._run_func:
+			entry = self._run_func(entry)
 		return entry
 
 
