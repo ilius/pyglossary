@@ -64,7 +64,7 @@ data_files = [
 		glob.glob("doc/non-gui_examples/*")),
 	("share/doc/pyglossary/stardict", glob.glob("doc/stardict/*")),
 	("share/doc/pyglossary/babylon", glob.glob("doc/babylon/*")),
-	("share/doc/pyglossary/DSL", glob.glob("doc/DSL/*")),
+	("share/doc/pyglossary/dsl", glob.glob("doc/dsl/*")),
 	("share/doc/pyglossary/octopus_mdict", glob.glob("doc/octopus_mdict/*")),
 	("share/doc/pyglossary", [
 		"README.md",
