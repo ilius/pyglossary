@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# flawless_dsl/main.py
 #
 # Copyright © 2016 Ratijas <ratijas.t@me.com>
 # Copyright © 2016-2018 Saeed Rasooli <saeed.gnu@gmail.com>
@@ -77,17 +76,17 @@ re_non_escaped_bracket = re.compile(r"(?<!\\)\[")
 _startswith_tag_cache = {}
 
 
-class FlawlessDSLParser(object):
+class DSLParser(object):
 	"""
-	only clean flawless dsl on output!
+	only clean dsl on output!
 	"""
 
 	def __init__(self, tags=frozenset({
-		("m", "\d"),
+		("m", r"\d"),
 		"*",
 		"ex",
 		"i",
-		("c", "(?: \w+)?"),
+		("c", r"(?: \w+)?"),
 		"p",
 		"\"",
 		"b",
@@ -97,15 +96,15 @@ class FlawlessDSLParser(object):
 		"ref",
 		"url",
 	})):
-		"""
+		r"""
 		:type tags: set[str | tuple[str]] | frozenset[str | tuple[str]]
 		:param tags: set (or any other iterable) of tags where each tag is a
-					 string or two-tuple.  if string, it is tag name without
-					 brackets, must be constant, i.e. non-save regex characters
-					 will be escaped, e.g.: "i", "sub", "*".
-					 if 2-tuple, then first item is tag"s base name, and
-					 second is its extension for opening tag,
-					 e.g.: ("c", r" (\w+)"), ("m", r"\d")
+					string or two-tuple. if string, it is tag name without
+					brackets, must be constant, i.e. non-save regex characters
+					will be escaped, e.g.: "i", "sub", "*".
+					if 2-tuple, then first item is tag"s base name, and
+					second is its extension for opening tag,
+					e.g.: ("c", r" (\w+)"), ("m", r"\d")
 		"""
 		tags_ = set()
 		for tag, ext_re in (
@@ -193,12 +192,11 @@ class FlawlessDSLParser(object):
 		for item_t, item in tags_and_text:
 
 			if item_t is OPEN:
-				if _tag.was_opened(stack, item) and \
-				  item.closing not in closings:
+				if _tag.was_opened(stack, item) and item.closing not in closings:
 					continue
 
 				if item.closing == "m" and len(stack) >= 1:
-					# close all layers.  [m*] tags can only appear
+					# close all layers. [m*] tags can only appear
 					# at top layer.
 					# note: do not reopen tags that were marked as
 					# closed already.
@@ -246,7 +244,7 @@ class FlawlessDSLParser(object):
 		return "".join([l.text for l in stack])
 
 	def put_brackets_away(self, line):
-		"""put away \[, \] and brackets that does not belong to any of given tags.
+		r"""put away \[, \] and brackets that does not belong to any of given tags.
 
 		:rtype: str
 		"""
@@ -278,25 +276,3 @@ class FlawlessDSLParser(object):
 	@staticmethod
 	def bring_brackets_back(line):
 		return line.replace(BRACKET_L, "[").replace(BRACKET_R, "]")
-
-
-def parse(line, tags=None):
-	"""parse DSL markup.
-
-	WARNING!
-	`parse` function is not optimal because it creates new parser instance
-	on each call.
-	consider cache one [per thread] instance of FlawlessDSLParser in your code.
-	"""
-	import warnings
-	warnings.warn(
-		"`parse` function is not optimal because it creates new parser "
-		"instance on each call.\n"
-		"consider cache one [per thread] instance of FlawlessDSLParser "
-		"in your code."
-	)
-	if tags:
-		parser = FlawlessDSLParser(tags)
-	else:
-		parser = FlawlessDSLParser()
-	return parser.parse(line)

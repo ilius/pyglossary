@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# flawless_dsl/layer.py
 #
 # Copyright © 2016 Ratijas <ratijas.t@me.com>
 # Copyright © 2016-2017 Saeed Rasooli <saeed.gnu@gmail.com>

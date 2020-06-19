@@ -2,9 +2,9 @@
 # dsl/__init__.py
 # Read ABBYY Lingvo DSL dictionary format
 #
-# Copyright © 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
-# Copyright © 2013-2019 Saeed Rasooli <saeed.gnu@gmail.com>
+# Copyright © 2013-2020 Saeed Rasooli <saeed.gnu@gmail.com>
 # Copyright © 2016 Ratijas <ratijas.t@me.com>
+# Copyright © 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,12 @@ import html.entities
 from xml.sax.saxutils import escape, quoteattr
 
 from formats_common import *
-from . import flawless_dsl
+
+from . import layer
+from . import tag
+from .main import (
+	DSLParser,
+)
 
 enable = True
 format = "ABBYYLingvoDSL"
@@ -37,6 +42,7 @@ optionsProp = {
 depends = {}
 
 __all__ = ["read"]
+
 
 # {{{
 # modified to work around codepoints that are not supported by `unichr`.
@@ -74,7 +80,7 @@ def unescape(text):
 			except KeyError:
 				pass
 		return text  # leave as is
-	return re.sub("&#?\w+;", fixup, text)
+	return re.sub(r"&#?\w+;", fixup, text)
 # }}}
 
 
@@ -137,7 +143,7 @@ wrapped_in_quotes_re = re.compile("^(\\'|\")(.*)(\\1)$")
 
 # single instance of parser
 # it is safe as long as this script is not going multithread.
-_parse = flawless_dsl.FlawlessDSLParser().parse
+_parse = DSLParser().parse
 
 
 def apply_shortcuts(line):
@@ -318,7 +324,10 @@ def read(
 					encoding = testEncoding
 					break
 		if not encoding:
-			raise ValueError("Could not detect encoding of DSL file, specify it by: --read-options encoding=ENCODING")
+			raise ValueError(
+				"Could not detect encoding of DSL file"
+				", specify it by: --read-options encoding=ENCODING"
+			)
 
 	fp = open(filename, "r", encoding=encoding)
 

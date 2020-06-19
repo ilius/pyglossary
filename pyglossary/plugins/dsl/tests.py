@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# flawless_dsl/tests.py
 #
 # Copyright © 2016 Ratijas <ratijas.t@me.com>
 # Copyright © 2016-2017 Saeed Rasooli <saeed.gnu@gmail.com>
@@ -23,17 +22,17 @@ test everything.
 import unittest
 
 import os
+from os.path import dirname, realpath
 import sys
 from functools import partial
 
+rootDir = dirname(dirname(dirname(dirname(realpath(__file__)))))
+sys.path.insert(0, rootDir)
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-
-from flawless_dsl import layer, tag
-from flawless_dsl.main import (
+from pyglossary.plugins.dsl import layer, tag
+from pyglossary.plugins.dsl.main import (
 	process_closing_tags,
-	FlawlessDSLParser,
-	parse,
+	DSLParser,
 	BRACKET_L,
 	BRACKET_R,
 )
@@ -44,15 +43,30 @@ tag_p = tag.Tag("p", "p")
 tag_s = tag.Tag("s", "s")
 
 
+def parse(line, tags=None):
+	"""parse DSL markup.
+
+	WARNING!
+	`parse` function is not optimal because it creates new parser instance
+	on each call.
+	consider cache one [per thread] instance of DSLParser in your code.
+	"""
+	if tags:
+		parser = DSLParser(tags)
+	else:
+		parser = DSLParser()
+	return parser.parse(line)
+
+
 class LayerTestCase(unittest.TestCase):
 	def setUp(self):
 		pass
 
 	def test_new_layer(self):
 		stack = []
-		l = layer.Layer(stack)
+		lay = layer.Layer(stack)
 		self.assertEqual(1, len(stack))
-		self.assertEqual(l, stack[0])
+		self.assertEqual(lay, stack[0])
 
 	def test_was_opened_AND_close_tags(self):
 		stack = []
@@ -66,8 +80,8 @@ class LayerTestCase(unittest.TestCase):
 		layer.close_tags(stack, {tag_i}, len(stack) - 1)
 
 		expected = []
-		l = layer.Layer(expected)
-		l.text = "...[i],,,[/i]"
+		lay = layer.Layer(expected)
+		lay.text = "...[i],,,[/i]"
 		self.assertEqual(expected, stack)
 
 	def test_close_layer(self):
@@ -153,8 +167,9 @@ class ProcessClosingTagsTestCase(unittest.TestCase):
 		l2.tags, l2.text = {tag_p}, ",,,"
 
 		expected = []
-		l = layer.Layer(expected)
-		l.tags, l.text = (), f"...[{tag_p.opening}],,,[/{tag_p.closing}]"
+		lay = layer.Layer(expected)
+		lay.text = f"...[{tag_p.opening}],,,[/{tag_p.closing}]"
+		lay.tags = ()
 
 		closings = {tag_p.closing}
 		process_closing_tags(stack, closings)
@@ -173,9 +188,9 @@ class PutBracketsAwayTestCase(unittest.TestCase):
 			"ex",
 			"p",
 			"*",
-			("m", "\d"),
+			("m", r"\d"),
 		})
-		parser = FlawlessDSLParser(tags)
+		parser = DSLParser(tags)
 		self.put_brackets_away = parser.put_brackets_away
 
 	def testStandaloneLeftEscapedAtTheBeginning(self):
@@ -240,15 +255,15 @@ class PutBracketsAwayTestCase(unittest.TestCase):
 		self.assertEqual(after, self.put_brackets_away(before))
 
 	def testEverythingEscaped(self):
-		before = """ change it to \[b\]...\[c\]...\[/c\]\[/b\]\[c\]...\[/c\]"""
+		before = r" change it to \[b\]...\[c\]...\[/c\]\[/b\]\[c\]...\[/c\]"
 		after = before
 		self.assertEqual(after, parse(before))
 
 
-class FlawlessDSLParserTestCase(unittest.TestCase):
+class DSLParserTestCase(unittest.TestCase):
 	def setUp(self):
-		self.split_join = lambda x: FlawlessDSLParser.join_paragraphs(
-			*FlawlessDSLParser.split_line_by_paragraphs(x))
+		self.split_join = lambda x: DSLParser.join_paragraphs(
+			*DSLParser.split_line_by_paragraphs(x))
 
 	def testStartsWithStandaloneClosed(self):
 		before = """[/p]..."""
@@ -336,8 +351,9 @@ class FlawlessDSLParserTestCase(unittest.TestCase):
 		self.assertEqual(after, parse(before))
 
 	def testRespect_m_TagsProperly(self):
-		before = """ [m1]for tags like: [p]n[/c][/i][/p], the line needs scan again[/m]"""
-		after = """ [m1]for tags like: [p]n[/p], the line needs scan again[/m]"""
+		before = " [m1]for tags like: [p]n[/c][/i][/p]" \
+			", the line needs scan again[/m]"
+		after = " [m1]for tags like: [p]n[/p], the line needs scan again[/m]"
 		self.assertEqual(after, parse(before))
 
 	def testNoTagsDoNothing(self):
@@ -370,9 +386,10 @@ class FlawlessDSLParserTestCase(unittest.TestCase):
 
 	def testValidRealDictionaryArticle(self):
 		# zh => ru, http://bkrs.info/slovo.php?ch=和田
-		before = after = """和田
-[m1][p]г. и уезд[/p] Хотан ([i]Синьцзян-Уйгурский[c] авт.[/c] р-н, КНР[/i])[/m]\
-[m2][*][ex]和田玉 Хотанский нефрит[/ex][/*][/m]"""
+		before = after = "和田\n" \
+			"[m1][p]г. и уезд[/p] Хотан ([i]Синьцзян-Уйгурский[c] авт.[/c]" \
+			" р-н, КНР[/i])[/m]" \
+			"[m2][*][ex]和田玉 Хотанский нефрит[/ex][/*][/m]"
 		self.assertEqual(after, parse(before))
 
 	def testBrokenRealDictionaryArticle(self):
@@ -387,16 +404,18 @@ yīyī xiāngyìng
 
 	def testBrokenManyRealDictionaryArticle(self):
 		# zh => ru, http://bkrs.info/slovo.php?ch=一轮
-		before = """一轮
-yīlún
-[m1]1) одна очередь[/m][m1]2) цикл ([i]в 12 лет[/i])[/m][m1]3) диск ([c][i]напр.[/c] луны[/i])[/m]\
-[m1]4) [c] [i]спорт[/c][/i] раунд, круг ([i]встречи спортсменов[/i])[/m]\
-[m1]5) [c] [i]дипл.[/c][/i] раунд ([i]переговоров[/i])[/m]"""
-		after = """一轮
-yīlún
-[m1]1) одна очередь[/m][m1]2) цикл ([i]в 12 лет[/i])[/m][m1]3) диск ([i][c]напр.[/c] луны[/i])[/m]\
-[m1]4) [c] [i]спорт[/i][/c] раунд, круг ([i]встречи спортсменов[/i])[/m]\
-[m1]5) [c] [i]дипл.[/i][/c] раунд ([i]переговоров[/i])[/m]"""
+		before = "一轮\nyīlún\n" \
+			"[m1]1) одна очередь[/m][m1]2) цикл ([i]в 12 лет[/i])[/m][m1]" \
+			"3) диск ([c][i]напр.[/c] луны[/i])[/m]" \
+			"[m1]4) [c] [i]спорт[/c][/i] раунд, круг" \
+			" ([i]встречи спортсменов[/i])[/m]" \
+			"[m1]5) [c] [i]дипл.[/c][/i] раунд ([i]переговоров[/i])[/m]"
+		after = "一轮\nyīlún\n" \
+			"[m1]1) одна очередь[/m][m1]2) цикл ([i]в 12 лет[/i])[/m][m1]3)" \
+			" диск ([i][c]напр.[/c] луны[/i])[/m]" \
+			"[m1]4) [c] [i]спорт[/i][/c] раунд, круг" \
+			" ([i]встречи спортсменов[/i])[/m]" \
+			"[m1]5) [c] [i]дипл.[/i][/c] раунд ([i]переговоров[/i])[/m]"
 		self.assertEqual(after, parse(before))
 
 	def testSameTagsNested(self):
@@ -425,7 +444,8 @@ yīlún
 
 	def testTagMDeepInside(self):
 		before = "...[i],,,[b]+++[c green][/b]---[m1]```[/i][/c][/m]..."
-		after = "...[i],,,[b]+++[/b][c green]---[/c][/i][m1][i][c green]```[/c][/i][/m]..."
+		after = "...[i],,,[b]+++[/b][c green]---[/c][/i][m1][i][c green]" \
+			"```[/c][/i][/m]..."
 		self.assertEqual(after, parse(before))
 
 	def testTagMInsideBroken(self):
