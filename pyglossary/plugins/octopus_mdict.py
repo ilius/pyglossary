@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# octopus_mdic.py
+# octopus_mdict.py
 # Read Octopus MDict dictionary format, mdx(dictionary)/mdd(data)
 #
 # Copyright © 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
