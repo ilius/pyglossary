@@ -123,17 +123,21 @@ class Entry(BaseEntry):
 	htmlPattern = re.compile(
 		".*(" + "|".join([
 			r"<br\s*/?\s*>",
+			r"<hr\s*/?\s*>",
 			r"<b[ >]",
 			r"<u[ >]",
 			r"<i[ >]",
 			r"<p[ >]",
 			r"<div[ >]",
 			r"<span[ >]",
+			r"<font[ >]",
 			r"<a href=",
 			r"<sup[ >]",
 			r"<ul[ >]",
 			r"<ol[ >]",
 			r"<li[ >]",
+			r"<img[ >]",
+			r"<table[ >]",
 		]) + ")",
 		re.S,
 	)
