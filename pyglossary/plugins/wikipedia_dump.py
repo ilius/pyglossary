@@ -5,7 +5,7 @@ import re
 
 from formats_common import *
 
-enable = True
+enable = False
 format = "WikipediaDump"
 description = "Wikipedia Dump(Static HTML)"
 extensions = [".wiki"]

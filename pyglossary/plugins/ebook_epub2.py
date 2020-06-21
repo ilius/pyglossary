@@ -180,10 +180,7 @@ p.groupDefinition {
 			self,
 			glos,
 		)
-		glos.setInfo(
-			"uuid",
-			str(uuid.uuid4()).replace("-", ""),
-		)
+		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
 
 	def write_ncx(self, group_labels, include_index_page):
@@ -210,7 +207,7 @@ p.groupDefinition {
 		ncx_items_unicode = "\n".join(ncx_items)
 		ncx_contents = self.NCX_TEMPLATE.format(
 			identifier = self.glos.getInfo("uuid"),
-			title = self.glos.getInfo("title"),
+			title = self.glos.getInfo("name"),
 			ncx_items = ncx_items_unicode,
 		)
 		self.add_file_manifest(

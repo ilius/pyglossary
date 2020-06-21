@@ -30,8 +30,8 @@ def write(
 			("title", "name"),
 			("author", "author"),
 			("description", "description"),
-			("w_lang", "inputlang"),
-			("a_lang", "outputlang"),
+			("w_lang", "sourceLang"),
+			("a_lang", "targetLang"),
 		):
 			head += name + " = " + glos.getInfo(infoKey) + "\n"
 		head += "</header>\n#\n#\n#\n"

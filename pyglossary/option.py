@@ -31,10 +31,10 @@ class Option(object):
 	def validate(self, value):
 		if not self.customValue:
 			if not self.values:
-				log.error("invalid option: customValue=%r, values=%r" % (
-					self.customValue,
-					self.values,
-				))
+				log.error(
+					f"invalid option: customValue={self.customValue!r}"
+					f", values={self.values!r}"
+				)
 				return False
 			return value in self.values
 		if value is None:
@@ -80,10 +80,10 @@ class StrOption(Option):
 	def validate(self, value):
 		if not self.customValue:
 			if not self.values:
-				log.error("invalid option: customValue=%r, values=%r" % (
-					self.customValue,
-					self.values,
-				))
+				log.error(
+					f"invalid option: customValue={self.customValue!r}"
+					f", values={self.values!r}"
+				)
 				return False
 			return value in self.values
 		return type(value).__name__ == "str"

@@ -18,7 +18,6 @@ from formats_common import *
 
 from struct import unpack
 from zlib import decompress
-from lxml import etree
 
 enable = True
 format = "AppleDictBin"
@@ -26,6 +25,9 @@ description = "AppleDict Binary (.dictionary)"
 extensions = [".dictionary", ".data"]
 optionsProp = {
 	"html": BoolOption(),
+}
+depends = {
+	"lxml": "lxml",
 }
 
 
@@ -100,6 +102,11 @@ class Reader(object):
 		"""
 			returns (entry, pos)
 		"""
+		try:
+			from lxml import etree
+		except ModuleNotFoundError as e:
+			e.msg += ", run `sudo pip3 install lxml` to install"
+			raise e
 		chunkSize, plus = self.getChunkSize(pos)
 		pos += plus
 		if chunkSize == 0:

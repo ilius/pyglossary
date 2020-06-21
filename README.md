@@ -40,7 +40,7 @@ Supported formats
 | DICTD dictionary server           | .index        |   ✔   |   ✔   |
 | Editable Linked List of Entries   | .edlin        |   ✔   |   ✔   |
 | EPUB-2 E-Book                     | .epub         |       |   ✔   |
-| FreeDict                          | .tei          |       |   ✔   |
+| FreeDict                          | .tei          |   ✔   |   ✔   |
 | Gettext Source                    | .po           |   ✔   |   ✔   |
 | Kobo E-Reader Dictionary          | .kobo.zip     |       |   ✔   |
 | Lingoes Source (LDF)              | .ldf          |   ✔   |   ✔   |
@@ -117,7 +117,7 @@ Feature-specific Requirements
 
 	`sudo pip3 install lxml beautifulsoup4`
 
--	**Reading from XDXF**
+-	**Reading from FreeDict or XDXF**
 
 	`sudo pip3 install lxml`
 

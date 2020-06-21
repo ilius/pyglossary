@@ -100,11 +100,11 @@ def read(glos: GlossaryType, filename: str):
 
 def read_metadata_old(glos: GlossaryType, xdxf):
 	full_name = xdxf.find("full_name").text
-	description = xdxf.find("description").text
+	desc = xdxf.find("description").text
 	if full_name:
 		glos.setInfo("name", full_name)
-	if description:
-		glos.setInfo("description", description)
+	if desc:
+		glos.setInfo("description", desc)
 
 
 def read_xdxf_old(glos: GlossaryType, xdxf):
@@ -119,12 +119,12 @@ def read_metadata_new(glos: GlossaryType, xdxf):
 	title = meta_info.find("full_title").text
 	if not title:
 		title = meta_info.find("title").text
-	description = meta_info.find("description").text
+	desc = meta_info.find("description").text
 
 	if title:
 		glos.setInfo("name", title)
-	if description:
-		glos.setInfo("description", description)
+	if desc:
+		glos.setInfo("description", desc)
 
 
 def read_xdxf_new(glos: GlossaryType, xdxf):
@@ -217,7 +217,7 @@ def xdxf_to_html(xdxf_text):
 	:return: html formatted string
 	"""
 	from io import StringIO
-	xdxf_txt = "<ar>%s</ar>" % xdxf_text
+	xdxf_txt = "<ar>" + xdxf_text + "</ar>"
 	f = StringIO(xdxf_txt)
 	doc = etree.parse(f)
 	result_tree = transform(doc)

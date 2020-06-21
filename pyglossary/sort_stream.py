@@ -103,7 +103,7 @@ def main():
 	test_hsortStreamList()
 #	stream = stdinIntegerStream()
 #	for line in hsortStream(stream, 3):
-#		print("------ Placed item: %s"%line)
+#		print(f"------ Placed item: {line}")
 
 if __name__ == "__main__":
 	main()

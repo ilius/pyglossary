@@ -26,8 +26,8 @@ from collections import namedtuple
 Tag = namedtuple("Tag", ["opening", "closing"])
 
 Tag.__repr__ = lambda tag: \
-	"Tag(%r)" % tag.opening if tag.opening == tag.closing \
-	else "Tag(%r, %r)" % tag
+	f"Tag({tag.opening!r})" if tag.opening == tag.closing \
+	else f"Tag({tag.opening!r}, {tag.closing!r})"
 
 predefined = [
 	"m",
