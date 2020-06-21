@@ -314,12 +314,18 @@ class Entry(BaseEntry):
 				func(st) for st in self._defi
 			)
 
+	def _stripTrailingBR(self, s: str) -> str:
+		while s.endswith('<BR>') or s.endswith('<br>'):
+			s = s[:-4]
+		return s
+
 	def strip(self) -> None:
 		"""
 			strip whitespaces from all words and definitions
 		"""
 		self.editFuncWord(str.strip)
 		self.editFuncDefi(str.strip)
+		self.editFuncDefi(self._stripTrailingBR)
 
 	def replaceInWord(self, source: str, target: str) -> None:
 		"""
