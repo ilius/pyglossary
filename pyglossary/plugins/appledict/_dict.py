@@ -205,12 +205,19 @@ def format_clean_content(
 				if m:
 					remove_style(tag, m.group(0))
 					tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
+
+		for tag in soup(lambda x: 'xhtml:' in x.name):
+			old_tag_name = tag.name
+			tag.name = old_tag_name[len('xhtml:'):]
+			if tag.string:
+				tag.string = f'{tag.string} '
+
 		for tag in soup.select("[href]"):
 			href = tag["href"]
 			href = _href_cleanup(href)
-			if not (href.startswith("http:") or href.startswith("https:")):
+
 			if href.startswith("sound:"):
-				src=href[len("sound://"):]
+				src = href[len("sound://"):]
 				if 'data-file' in tag.attrs:  # for webster
 					del tag["href"]
 					audio = BeautifulSoup.Tag(name="audio")
@@ -219,13 +226,54 @@ def format_clean_content(
 					tag['onmousedown'] = f'document.getElementById("{tag["data-file"]}").play(); return false;'
 					tag.insert_after(audio)
 
-				if 'fayin' in tag['class']:  # for oxford
-					del tag["href"]
-					audio = BeautifulSoup.Tag(name="audio")
-					audio['src'] = f"{src}"
+				elif 'class' in tag.attrs:
+					if 'fayin' in tag['class']:  # for oxford8
+						del tag["href"]
+						audio = BeautifulSoup.Tag(name="audio")
+						audio['src'] = f"{src}"
+						tag['onmousedown'] = f'this.lastChild.play(); return false;'
+						tag.append(audio)
+
+				else:
+					brk = False
+					for ch in tag.children:
+						if ch.find_all('a'):
+							brk = True
+							break
+
+					if not brk:
+						audio = BeautifulSoup.Tag(name="audio")
+						audio['src'] = f"{src}"
+						tag['onmousedown'] = f'this.lastChild.play(); return false;'
+						tag.append(audio)
+						del tag["href"]
+
+			elif href.startswith("phonetics") or href.startswith("help:phonetics"):  # for oxford9
+				# print(tag)
+				if tag.audio and 'name' in tag.audio.attrs:
 					tag['onmousedown'] = f'this.lastChild.play(); return false;'
-					tag.append(audio)
+					src_name = tag.audio['name'].replace('#', '_')
+					tag.audio['src'] = f"{src_name}.mp3"
+			# print('>>>',tag)
+
+			elif not (href.startswith("http:")
+					  or href.startswith("https:")
+
+					  or href.startswith("addexample:")
+					  or href.startswith("addid:")
+
+					  or href.startswith("help:")
+					  or href.startswith("helpg:")
+					  or href.startswith("helpp:")
+					  or href.startswith("helpr:")
+					  or href.startswith("helpxr:")
+
+					  or href.startswith("x:")
+					  or href.startswith("xi:")
+					  or href.startswith("#")
+			):
 				tag["href"] = f"x-dictionary:d:{href}"
+
 		for tag in soup.select("[src]"):
 			src = tag['src']
 			if src.startswith("/"):
@@ -236,20 +284,21 @@ def format_clean_content(
 		for tag in soup("s"):
 			tag.name = "del"
 
-		if title:
 		if '@@@LINK=' in body:
 			entry = body[len('@@@LINK='):]
 			a = BeautifulSoup.Tag(name="a")
 			a["href"] = f"x-dictionary:d:{entry}"
 			a.string = entry
 			tag=soup.find('p')
-			tag.string='See '
+			tag.string='See also '
 			tag.insert(1, a)
-		if title and not '<h1' in body:
-			h1 = BeautifulSoup.Tag(name="h1")
-			h1.string = title
-			soup.insert(0, h1)
+
+		# if title and not '<h' in body:
+		# 	h1 = BeautifulSoup.Tag(name="h1")
+		# 	h1.string = title
+		# 	soup.insert(0, h1)
 		# hence the name BeautifulSoup
+		# soup.insert(0,head)
 		content = toStr(soup.encode_contents())
 	else:
 		# somewhat analogue to what BeautifulSoup suppose to do
@@ -292,5 +341,10 @@ def _href_cleanup(href):
 
 	if href.startswith("entry://"):
 		href = href[len("entry://"):]
+
+	xhtml_ns = ['d']
+	for n in xhtml_ns:
+		if href.startswith(f'{n}:'):
+			href = href[len(n) + 1:]
 
 	return href
