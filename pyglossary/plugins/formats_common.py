@@ -45,6 +45,7 @@ enable = False
 format = "Unknown"
 description = "Unknown"
 extensions = [] # type: List[str]
+singleFile = False
 
 # key is option/argument name, value is instance of Option
 optionsProp = {} # type: Dict[str, Option]

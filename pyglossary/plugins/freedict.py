@@ -9,6 +9,7 @@ enable = True
 format = "FreeDict"
 description = "FreeDict (tei)"
 extensions = [".tei"]
+singleFile = True
 optionsProp = {
 	"resources": BoolOption(),
 }

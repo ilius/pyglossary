@@ -6,6 +6,7 @@ enable = True
 format = "CC-CEDICT"
 description = "CC-CEDICT"
 extensions = [".u8"]
+singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
 }

@@ -8,6 +8,7 @@ enable = True
 format = "OctopusMdictSource"
 description = "Octopus MDict Source"
 extensions = [".mtxt"]
+singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
 	"links": BoolOption(),

@@ -28,6 +28,7 @@ enable = True
 format = "Xdxf"
 description = "XDXF"
 extensions = [".xdxf", ".xml"]
+singleFile = True
 optionsProp = {}
 depends = {
 	"lxml": "lxml",

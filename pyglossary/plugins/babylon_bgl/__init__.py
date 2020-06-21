@@ -28,6 +28,7 @@ enable = True
 format = "BabylonBgl"
 description = "Babylon (bgl)"
 extensions = [".bgl"]
+singleFile = True
 depends = {}
 supportsAlternates = True
 # progressbar = DEFAULT_YES

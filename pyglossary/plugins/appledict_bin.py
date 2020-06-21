@@ -23,6 +23,7 @@ enable = True
 format = "AppleDictBin"
 description = "AppleDict Binary (.dictionary)"
 extensions = [".dictionary", ".data"]
+singleFile = True
 optionsProp = {
 	"html": BoolOption(),
 }

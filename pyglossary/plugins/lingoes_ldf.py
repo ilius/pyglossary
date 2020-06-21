@@ -8,6 +8,7 @@ enable = True
 format = "LingoesLDF"
 description = "Lingoes Source (LDF)"
 extensions = [".ldf"]
+singleFile = True
 optionsProp = {
 	"newline": NewlineOption(),
 	"resources": BoolOption(),

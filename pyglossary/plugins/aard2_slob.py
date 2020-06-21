@@ -7,6 +7,7 @@ enable = True
 format = 'Aard2Slob'
 description = 'Aard 2 (slob)'
 extensions = ['.slob']
+singleFile = True
 optionsProp = {
 	"compression": StrOption(
 		values=["", "bz2", "zlib", "lzma2"],

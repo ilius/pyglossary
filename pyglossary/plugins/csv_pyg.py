@@ -26,6 +26,7 @@ enable = True
 format = "Csv"
 description = "CSV"
 extensions = [".csv"]
+singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
 	"resources": BoolOption(),

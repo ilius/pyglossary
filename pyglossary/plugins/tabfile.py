@@ -8,6 +8,7 @@ enable = True
 format = "Tabfile"
 description = "Tabfile (txt, dic)"
 extensions = [".txt", ".tab", ".dic"]
+singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
 	"writeInfo": BoolOption(),
