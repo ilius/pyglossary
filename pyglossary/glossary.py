@@ -246,10 +246,11 @@ class Glossary(GlossaryType):
 			else:
 				cls.readerClasses[format] = Reader
 				hasReadSupport = True
-				cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(
+				options = cls.getRWOptionsFromFunc(
 					Reader.open,
 					format,
 				)
+				cls.formatsReadOptions[format] = options
 				Reader.formatName = format
 
 		# ignore "read" function if "Reader" class is present
@@ -260,10 +261,11 @@ class Glossary(GlossaryType):
 				pass
 			else:
 				hasReadSupport = True
-				cls.formatsReadOptions[format] = cls.getRWOptionsFromFunc(
+				options = cls.getRWOptionsFromFunc(
 					plugin.read,
 					format,
 				)
+				cls.formatsReadOptions[format] = options
 
 		if hasReadSupport:
 			cls.readFormats.append(format)
@@ -273,18 +275,20 @@ class Glossary(GlossaryType):
 		hasWriteSupport = False
 		if hasattr(plugin, "Writer"):
 			cls.writerClasses[format] = plugin.Writer
-			cls.formatsWriteOptions[format] = cls.getRWOptionsFromFunc(
+			options = cls.getRWOptionsFromFunc(
 				plugin.Writer.write,
 				format,
 			)
+			cls.formatsWriteOptions[format] = options
 			hasWriteSupport = True
 
 		if not hasWriteSupport and hasattr(plugin, "write"):
 			cls.writeFunctions[format] = plugin.write
-			cls.formatsWriteOptions[format] = cls.getRWOptionsFromFunc(
+			options = cls.getRWOptionsFromFunc(
 				plugin.write,
 				format,
 			)
+			cls.formatsWriteOptions[format] = options
 			hasWriteSupport = True
 
 		if hasWriteSupport:
