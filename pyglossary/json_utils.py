@@ -27,7 +27,7 @@ def dataToPrettyJson(
 	return json.dumps(
 		data,
 		sort_keys=sort_keys,
-		indent=2,
+		indent="\t",
 		ensure_ascii=ensure_ascii,
 	)
 
