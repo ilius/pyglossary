@@ -630,7 +630,6 @@ class Glossary(GlossaryType):
 				f", you can not read with direct=False mode"
 			)
 
-		self.updateEntryFilters()
 		###
 		format = self.detectInputFormat(filename, format=format)
 		if not format:
@@ -654,6 +653,8 @@ class Glossary(GlossaryType):
 		if not self.getInfo("name"):
 			self.setInfo("name", split(filename)[1])
 		self._progressbar = progressbar
+
+		self.updateEntryFilters()
 
 		if format in self.readerClasses:
 			Reader = self.readerClasses[format]
@@ -783,15 +784,15 @@ class Glossary(GlossaryType):
 		inputFilename: str = "",
 	) -> Optional[Tuple[str, str, str]]:
 		"""
-		returns (filename, format, archiveType) or None
+		returns (filename, format, compression) or None
 		"""
-		archiveType = ""
+		compression = ""
 		if filename:
 			ext = ""
 			filenameNoExt, fext = splitext(filename)
 			fext = fext.lower()
 			if fext in (".gz", ".bz2", ".zip"):
-				archiveType = fext[1:]
+				compression = fext[1:]
 				filename = filenameNoExt
 				fext = get_ext(filename)
 			if not format:
@@ -846,7 +847,7 @@ class Glossary(GlossaryType):
 				log.error("Invalid write format")
 				return
 
-		return filename, format, archiveType
+		return filename, format, compression
 
 	def write(
 		self,
@@ -979,16 +980,16 @@ class Glossary(GlossaryType):
 			).communicate()
 			return error
 
-	def archiveOutDir(self, filename: str, archiveType: str) -> str:
+	def compressOutDir(self, filename: str, compression: str) -> str:
 		"""
 		filename is the existing file path
-		archiveType is the archive extension (without dot): "gz", "bz2", "zip"
+		compression is the archive extension (without dot): "gz", "bz2", "zip"
 		"""
 		try:
-			os.remove(f"{filename}.{archiveType}")
+			os.remove(f"{filename}.{compression}")
 		except OSError:
 			pass
-		if archiveType == "gz":
+		if compression == "gz":
 			output, error = subprocess.Popen(
 				["gzip", filename],
 				stdout=subprocess.PIPE,
@@ -998,7 +999,7 @@ class Glossary(GlossaryType):
 					error + "\n" +
 					f"Failed to compress file \"{filename}\""
 				)
-		elif archiveType == "bz2":
+		elif compression == "bz2":
 			output, error = subprocess.Popen(
 				["bzip2", filename],
 				stdout=subprocess.PIPE,
@@ -1008,7 +1009,7 @@ class Glossary(GlossaryType):
 					error + "\n" +
 					f"Failed to compress file \"{filename}\""
 				)
-		elif archiveType == "zip":
+		elif compression == "zip":
 			error = self.zipOutDir(filename)
 			if error:
 				log.error(
@@ -1016,9 +1017,9 @@ class Glossary(GlossaryType):
 					f"Failed to compress file \"{filename}\""
 				)
 
-		archiveFilename = f"{filename}.{archiveType}"
-		if isfile(archiveFilename):
-			return archiveFilename
+		compressedFilename = f"{filename}.{compression}"
+		if isfile(compressedFilename):
+			return compressedFilename
 		else:
 			return filename
 
@@ -1057,7 +1058,7 @@ class Glossary(GlossaryType):
 		if not outputArgs:
 			log.error(f"Writing file {outputFilename!r} failed.")
 			return
-		outputFilename, outputFormat, archiveType = outputArgs
+		outputFilename, outputFormat, compression = outputArgs
 
 		if direct is None:
 			if sort is not True:
@@ -1091,8 +1092,8 @@ class Glossary(GlossaryType):
 			log.error(f"Writing file {outputFilename!r} failed.")
 			return
 
-		if archiveType:
-			finalOutputFile = self.archiveOutDir(finalOutputFile, archiveType)
+		if compression:
+			finalOutputFile = self.compressOutDir(finalOutputFile, compression)
 
 		log.info(f"Writing file {finalOutputFile!r} done.")
 		log.info(f"Running time of convert: {now()-tm0:.1f} seconds")
