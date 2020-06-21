@@ -274,6 +274,15 @@ def format_clean_content(
 			):
 				tag["href"] = f"x-dictionary:d:{href}"
 
+		for thumb in soup.find_all('div', 'pic_thumb'):
+			thumb['onclick'] = f'this.setAttribute("style", "display:none"); this.nextElementSibling.setAttribute("style", "display:block")'
+
+		for pic in soup.find_all('div', 'big_pic'):
+			pic['onclick'] = f'this.setAttribute("style", "display:none"), this.previousElementSibling.setAttribute("style", "display:block")'
+
+		for pos in soup.find_all('pos', onclick='toggle_infl(t)'):
+			pos['onclick'] = f'var e = this.parentElement.parentElement.parentElement.querySelector(" res-g vp-gs");; style=window.getComputedStyle(e),; display=style.getPropertyValue("display"), "none"===e.style.display || "none"===display ?; e.style.display="block" : e.style.display="none" , this.className.match(/(?:^|\s)Clicked(?!\S)/) ? this.className=this.className.replace(/(?:^|\s)Clicked(?!\S)/g, "" ) : this.setAttribute("class", "Clicked" ) '
+
 		for tag in soup.select("[src]"):
 			src = tag['src']
 			if src.startswith("/"):
