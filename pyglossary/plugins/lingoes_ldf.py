@@ -82,56 +82,6 @@ class Reader(TextGlossaryReader):
 			return word, defi
 
 
-def read(glos: GlossaryType, filename: str):
-	glos.setDefaultDefiFormat("h")
-	fileObj = FileLineWrapper(open(filename))
-	entryLines = []
-
-	def addDataEntry(entryLines):
-		if not entryLines:
-			return
-		if len(entryLines) < 2:
-			log.error(
-				f"invalid block near line {fileObj.line}"
-				f" in file {filename}"
-			)
-			return
-		word = entryLines[0]
-		defi = "\n".join(entryLines[1:])
-		defi = defi.replace("<br/>", "\n")  # FIXME
-
-		word = [p.strip() for p in word.split("|")]
-
-		glos.addEntry(
-			word,
-			defi,
-		)
-
-	for line in fileObj:
-		line = line.strip()
-		if not line.startswith("###"):
-			if line:
-				entryLines.append(line)
-			break
-		parts = line[3:].split(":")
-		if not parts:
-			continue
-		key = parts[0].lower()
-		value = " ".join(parts[1:]).strip()
-		glos.setInfo(key, value)
-	# info lines finished
-
-	for line in fileObj:
-		line = line.strip()
-		if line:
-			entryLines.append(line)
-		else:
-			addDataEntry(entryLines)
-			entryLines = []
-
-	addDataEntry(entryLines)
-
-
 def write(
 	glos: GlossaryType,
 	filename: str,
