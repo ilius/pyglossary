@@ -398,8 +398,10 @@ class Entry(BaseEntry):
 			except IndexError:
 				pass
 			else:
-				# if isinstance(dataEntry, DataEntry)  # FIXME
+				if not isinstance(dataEntry, DataEntry):
+					raise ValueError(f"invalid rawEntry={rawEntry!r}")
 				return dataEntry
+
 		try:
 			defiFormat = rawEntry[2]
 		except IndexError:
