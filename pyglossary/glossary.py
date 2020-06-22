@@ -464,7 +464,8 @@ class Glossary(GlossaryType):
 					wordCount = len(reader)
 				except Exception:
 					log.exception("")
-				progressbar = True
+				if wordCount > 0:
+					progressbar = True
 			if progressbar:
 				self.progressInit("Converting")
 			wcThreshold = wordCount // 200 + 1
