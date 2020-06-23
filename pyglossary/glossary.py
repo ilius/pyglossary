@@ -118,7 +118,6 @@ class Glossary(GlossaryType):
 		# and "lastUpdated"?
 	}
 	plugins = {}  # format => pluginModule
-	readFunctions = {}
 	readerClasses = {}
 	writeFunctions = {}
 	writerClasses = {}
@@ -252,20 +251,6 @@ class Glossary(GlossaryType):
 				)
 				cls.formatsReadOptions[format] = options
 				Reader.formatName = format
-
-		# ignore "read" function if "Reader" class is present
-		if not hasReadSupport:
-			try:
-				cls.readFunctions[format] = plugin.read
-			except AttributeError:
-				pass
-			else:
-				hasReadSupport = True
-				options = cls.getRWOptionsFromFunc(
-					plugin.read,
-					format,
-				)
-				cls.formatsReadOptions[format] = options
 
 		if hasReadSupport:
 			cls.readFormats.append(format)
@@ -657,29 +642,14 @@ class Glossary(GlossaryType):
 
 		self.updateEntryFilters()
 
-		if format in self.readerClasses:
-			Reader = self.readerClasses[format]
-			reader = Reader(self)
-			reader.open(filename, **options)
-			self.prepareEntryFilters()
-			if direct:
-				self._readers.append(reader)
-			else:
-				self.loadReader(reader)
+		Reader = self.readerClasses[format]
+		reader = Reader(self)
+		reader.open(filename, **options)
+		self.prepareEntryFilters()
+		if direct:
+			self._readers.append(reader)
 		else:
-			self.prepareEntryFilters()
-			if direct:
-				log.debug(
-					f"No `Reader` class found in {format} plugin"
-					f", falling back to indirect mode"
-				)
-			result = self.readFunctions[format].__call__(
-				self,
-				filename,
-				**options
-			)
-			# if not result:## FIXME
-			#	return False
+			self.loadReader(reader)
 
 		self._updateIter()
 
