@@ -289,31 +289,46 @@ def unwrap_quotes(s):
 	return wrapped_in_quotes_re.sub("\\2", s)
 
 
-def read(
-	glos: GlossaryType,
-	filename: str,
-	encoding: str = "",
-	audio: bool = False,
-	onlyFixMarkUp: bool = False,
-):
-	if onlyFixMarkUp:
-		def clean_tags(line, audio):
-			return _parse(line)
-	else:
-		clean_tags = _clean_tags
+class Reader(object):
+	def __init__(self, glos: GlossaryType):
+		self._glos = glos
+		self._audio = False
+		self.clean_tags = _clean_tags
+		self._file = None
 
-	def setInfo(key, value):
-		glos.setInfo(key, unwrap_quotes(value))
+	def close(self):
+		if self._file:
+			self._file.close()
+		self._file = None
 
-	current_key = ""
-	current_key_alters = []
-	current_text = []
-	line_type = "header"
-	unfinished_line = ""
+	def __len__(self) -> int:
+		# FIXME
+		return 0
 
-	if not encoding:
+	def _clean_tags_only_markup(self, line, audio):
+		return _parse(line)
+
+	def open(
+		self,
+		filename: str,
+		encoding: str = "",
+		audio: bool = False,
+		onlyFixMarkUp: bool = False,
+	) -> None:
+		self._filename = filename
+		self._audio = audio
+		if onlyFixMarkUp:
+			self.clean_tags = self._clean_tags_only_markup
+		else:
+			self.clean_tags = _clean_tags
+
+		if not encoding:
+			encoding = self.detectEncoding()
+		self._file = open(filename, "r", encoding=encoding)
+
+	def detectEncoding(self):
 		for testEncoding in ("utf-8", "utf-16"):
-			with open(filename, "r", encoding=testEncoding) as fp:
+			with open(self._filename, "r", encoding=testEncoding) as fp:
 				try:
 					for i in range(10):
 						fp.readline()
@@ -322,75 +337,88 @@ def read(
 					continue
 				else:
 					log.info(f"Encoding of DSL file detected: {testEncoding}")
-					encoding = testEncoding
-					break
-		if not encoding:
-			raise ValueError(
-				"Could not detect encoding of DSL file"
-				", specify it by: --read-options encoding=ENCODING"
-			)
+					return testEncoding
+		raise ValueError(
+			"Could not detect encoding of DSL file"
+			", specify it by: --read-options encoding=ENCODING"
+		)
 
-	fp = open(filename, "r", encoding=encoding)
+	def setInfo(self, key, value):
+		self._glos.setInfo(key, unwrap_quotes(value))
 
-	for line in fp:
-		line = line.rstrip()
-		if not line:
-			continue
-		# header
-		if line.startswith("#"):
-			if line.startswith("#NAME"):
-				setInfo("name", line[6:])
-			elif line.startswith("#INDEX_LANGUAGE"):
-				setInfo("sourceLang", line[16:])
-			elif line.startswith("#CONTENTS_LANGUAGE"):
-				setInfo("targetLang", line[19:])
-			line_type = "header"
-		# texts
-		elif line.startswith(" ") or line.startswith("\t"):
-			line_type = "text"
-			line = unfinished_line + line.lstrip()
+	def processHeaderLine(self, line):
+		if line.startswith("#NAME"):
+			self.setInfo("name", line[6:])
+		elif line.startswith("#INDEX_LANGUAGE"):
+			self.setInfo("sourceLang", line[16:])
+		elif line.startswith("#CONTENTS_LANGUAGE"):
+			self.setInfo("targetLang", line[19:])
 
-			# some ill formated source may have tags spanned into
-			# multiple lines
-			# try to match opening and closing tags
-			tags_open = re.findall(r"(?<!\\)\[(c |[cuib]\])", line)
-			tags_close = re.findall(r"\[/[cuib]\]", line)
-			if len(tags_open) != len(tags_close):
-				unfinished_line = line
+	def __iter__(self) -> Iterator[BaseEntry]:
+		current_key = ""
+		current_key_alters = []
+		current_text = []
+		line_type = "header"
+		unfinished_line = ""
+
+		for line in self._file:
+			line = line.rstrip()
+			if not line:
+				continue
+			# header
+			if line.startswith("#"):
+				self.processHeaderLine(line)
+				line_type = "header"
 				continue
 
-			unfinished_line = ""
+			# texts
+			if line.startswith(" ") or line.startswith("\t"):
+				line_type = "text"
+				line = unfinished_line + line.lstrip()
 
-			# convert DSL tags to HTML tags
-			line = clean_tags(line, audio)
-			current_text.append(line)
-		# title word(s)
-		else:
+				# some ill formated source may have tags spanned into
+				# multiple lines
+				# try to match opening and closing tags
+				tags_open = re.findall(r"(?<!\\)\[(c |[cuib]\])", line)
+				tags_close = re.findall(r"\[/[cuib]\]", line)
+				if len(tags_open) != len(tags_close):
+					unfinished_line = line
+					continue
+
+				unfinished_line = ""
+
+				# convert DSL tags to HTML tags
+				line = self.clean_tags(line, self._audio)
+				current_text.append(line)
+				continue
+
+			# title word(s)
 			# alternative titles
 			if line_type == "title":
 				current_key_alters.append(line)
-			# previous line type is text -> start new title
-			else:
-				# append previous entry
-				if line_type == "text":
-					if unfinished_line:
-						# line may be skipped if ill formated
-						current_text.append(clean_tags(unfinished_line, audio))
-					glos.addEntry(
-						[current_key] + current_key_alters,
-						"\n".join(current_text),
-					)
-				# start new entry
-				current_key = line
-				current_key_alters = []
-				current_text = []
-				unfinished_line = ""
-			line_type = "title"
-	fp.close()
+				continue
 
-	# last entry
-	if line_type == "text":
-		glos.addEntry(
-			[current_key] + current_key_alters,
-			"\n".join(current_text),
-		)
+			# previous line type is text -> start new title
+			# append previous entry
+			if line_type == "text":
+				if unfinished_line:
+					# line may be skipped if ill formated
+					current_text.append(self.clean_tags(unfinished_line, self._audio))
+				yield self._glos.newEntry(
+					[current_key] + current_key_alters,
+					"\n".join(current_text),
+				)
+
+			# start new entry
+			current_key = line
+			current_key_alters = []
+			current_text = []
+			unfinished_line = ""
+			line_type = "title"
+
+		# last entry
+		if line_type == "text":
+			yield self._glos.newEntry(
+				[current_key] + current_key_alters,
+				"\n".join(current_text),
+			)
