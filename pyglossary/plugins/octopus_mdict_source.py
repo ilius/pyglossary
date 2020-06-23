@@ -17,60 +17,93 @@ optionsProp = {
 depends = {}
 
 
-def read(
-	glos,
-	filename,
-	encoding="utf-8",
-	links=False,
-):
-	with open(filename, encoding=encoding) as fp:
-		text = fp.read()
-	text = text.replace("\r\n", "\n")
-	text = text.replace("entry://", "bword://")
-	lastEntry = None
-	linksDict = {}
-	entryDict = OrderedDict()
-	for section in text.split("</>"):
-		lines = section.strip().split("\n")
-		if len(lines) < 2:
-			continue
-		word = lines[0]
-		defi = "\n".join(lines[1:])
+class Reader(object):
+	def __init__(self, glos):
+		self._glos = glos
+		self._filename = ""
+		self._encoding = "utf-8"
+		self._file = None
+		self._wordCount = 0
 
-		if defi.startswith("@@@LINK="):
-			mainWord = defi.partition("=")[2]
-			if links:
-				linksDict[word] = mainWord
-			elif lastEntry and lastEntry.getWords()[0] == mainWord:
-				lastEntry.addAlt(word)
-			else:
-				log.error(f"alternate is not ride after word: {defi}")
-			continue
+		# dict of mainWord -> newline-separated altenatives
+		self._linksDict = {}  # type: Dict[str, str]
 
-		entry = glos.newEntry(word, defi)
-		if links:
-			# do not call glos.addEntry or glos.addEntryObj
-			# because we will need to modify entries at the end
-			# and we need to keep a OrderedDict of entries (ordered list of entries, and dict of entries by word)
-			entryDict[word] = entry
-		else:
-			if lastEntry:
-				# now that we know there are no more alternate forms of lastEntry
-				glos.addEntryObj(lastEntry)
-			lastEntry = entry
+	def __len__(self):
+		return self._wordCount
 
-	if links:
-		for sourceWord, targetWord in linksDict.items():
-			targetEntry = entryDict.get(targetWord)
-			if targetEntry is None:
-				log.error(f"Link to non-existing word {targetWord}")
+	def close(self):
+		if self._file:
+			self._file.close()
+		self._file = None
+
+	def open(
+		self,
+		filename,
+		encoding="utf-8",
+	):
+		self._filename = filename
+		self._encoding = encoding
+		self._file = open(filename, encoding=encoding)
+		self.loadLinks()
+
+	def loadLinks(self):
+		linksDict = {}
+		word = ""
+		wordCount = 0
+		for line in self._file:
+			line = line.strip()
+			if line == "</>":
+				word = ""
 				continue
-			targetEntry.addAlt(sourceWord)
-		for entry in entryDict.values():
-			glos.addEntryObj(entry)
-	else:
-		if lastEntry:
-			glos.addEntryObj(lastEntry)
+			if line.startswith("@@@LINK="):
+				if not word:
+					log.warn(f"unexpected line: {line}")
+					continue
+				mainWord = line[8:]
+				if mainWord in linksDict:
+					linksDict[mainWord] += "\n" + word
+				else:
+					linksDict[mainWord] = word
+				continue
+			if not word:
+				word = line
+			else:
+				wordCount += 1
+
+		log.info(f"wordCount = {wordCount}")
+		self._linksDict = linksDict
+		self._wordCount = wordCount
+		self._file = open(self._filename, encoding=self._encoding)
+
+	def __iter__(self):
+		linksDict = self._linksDict
+		word, defi = "", ""
+		glos = self._glos
+
+		def newEntry():
+			words = word
+			altsStr = linksDict.get(word, "")
+			if altsStr:
+				words = [word] + altsStr.split("\n")
+			return glos.newEntry(words, defi)
+
+		for line in self._file:
+			line = line.strip()
+			if line == "</>":
+				if defi:
+					yield newEntry()
+				word, defi = "", ""
+				continue
+			if line.startswith("@@@LINK="):
+				continue
+			if word:
+				defi = line
+			else:
+				word = line
+
+		if word:
+			yield newEntry()
+
 
 def writeEntryGen(glos):
 	for entry in glos:
