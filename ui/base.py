@@ -44,7 +44,6 @@ summary = "A tool for converting dictionary files aka glossaries with" \
 
 class UIBase(object):
 	prefKeys = (
-		"noProgressBar",## command line
 		"ui_autoSetFormat",
 		"ui_autoSetOutputFileName",
 		"lower",
