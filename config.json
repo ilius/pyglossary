@@ -3,10 +3,8 @@
     "ui_autoSetOutputFileName": true,
 
     "lower": false,
-
     "utf8Check": true,
     "enable_alts": true,
-
 
     "reverse_matchWord": true,
     "reverse_showRel": "Percent",
