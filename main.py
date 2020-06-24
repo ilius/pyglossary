@@ -128,6 +128,13 @@ parser.add_argument(
 		 ", this is default",
 )
 parser.add_argument(
+	"--no-alts",
+	dest="enable_alts",
+	action="store_false",
+	default=None,
+	help="disable alternates",
+)
+parser.add_argument(
 	"--reverse",
 	dest="reverse",
 	action="store_true",
@@ -295,6 +302,7 @@ prefOptionsKeys = (
 	"utf8Check",
 	"lower",
 	"skipResources",
+	"enable_alts",
 	"remove_html",
 	"remove_html_all",
 )

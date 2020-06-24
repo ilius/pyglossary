@@ -37,7 +37,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
 
 <b>Full Convert Usage</b>:
     ${CMD} <u>INPUT_FILE</u> <u>OUTPUT_FILE</u> [-v<u>N</u>] [--read-format=<u>FORMAT</u>] [--write-format=<u>FORMAT</u>]
-        [--sort|--no-sort] [--direct|--indirect] [--sort-cache-size=<u>2000</u>] [--utf8-check|--no-utf8-check]
+        [--sort|--no-sort] [--direct|--indirect] [--no-alts] [--sort-cache-size=<u>2000</u>] [--utf8-check|--no-utf8-check]
         [--lower|--no-lower] [--read-options=<u>READ_OPTIONS</u>] [--write-options=<u>WRITE_OPTIONS</u>]
 
 
