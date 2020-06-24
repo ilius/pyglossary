@@ -29,7 +29,7 @@ from pyglossary.ebook_base import *
 enable = True
 format = "Epub2"
 description = "EPUB-2 E-Book"
-extensions = [".epub",]
+extensions = (".epub",)
 sortOnWrite = ALWAYS
 
 optionsProp = {

@@ -33,7 +33,7 @@ from .main import (
 enable = True
 format = "ABBYYLingvoDSL"
 description = "ABBYY Lingvo DSL (dsl)"
-extensions = [".dsl"]
+extensions = (".dsl",)
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),

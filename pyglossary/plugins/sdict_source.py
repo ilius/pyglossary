@@ -7,7 +7,7 @@ from formats_common import *
 enable = True
 format = "SdictSource"
 description = "Sdictionary Source (sdct)"
-extensions = [".sdct"]
+extensions = (".sdct",)
 singleFile = True
 optionsProp = {
 	"writeInfo": BoolOption(),

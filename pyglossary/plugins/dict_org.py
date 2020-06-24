@@ -6,7 +6,7 @@ from pyglossary.file_utils import fileCountLines
 enable = True
 format = "DictOrg"
 description = "DICT.org file format (.index)"
-extensions = [".index"]
+extensions = (".index",)
 optionsProp = {
 	"dictzip": BoolOption(),
 	"install": BoolOption(),

@@ -7,7 +7,7 @@ from collections import OrderedDict
 enable = True
 format = "OctopusMdictSource"
 description = "Octopus MDict Source"
-extensions = [".mtxt"]
+extensions = (".mtxt",)
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),

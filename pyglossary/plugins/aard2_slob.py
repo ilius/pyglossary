@@ -6,7 +6,7 @@ from pyglossary.entry import Entry
 enable = True
 format = 'Aard2Slob'
 description = 'Aard 2 (slob)'
-extensions = ['.slob']
+extensions = ('.slob',)
 singleFile = True
 optionsProp = {
 	"compression": StrOption(

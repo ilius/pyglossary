@@ -5,7 +5,7 @@ from formats_common import *
 enable = True
 format = "Omnidic"
 description = "Omnidic"
-extensions = [".omni", ".omnidic"]
+extensions = (".omni", ".omnidic")
 optionsProp = {
 	"dicIndex": IntOption(),
 }

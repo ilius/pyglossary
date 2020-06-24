@@ -7,7 +7,7 @@ from pyglossary.text_utils import escapeNTB, unescapeNTB, splitByBarUnescapeNTB
 enable = True
 format = "Tabfile"
 description = "Tabfile (txt, dic)"
-extensions = [".txt", ".tab", ".dic"]
+extensions = (".txt", ".tab", ".dic")
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),

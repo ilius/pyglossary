@@ -8,7 +8,7 @@ from formats_common import *
 enable = False
 format = "WikipediaDump"
 description = "Wikipedia Dump(Static HTML)"
-extensions = [".wiki"]
+extensions = (".wiki",)
 optionsProp = {
 	"encoding": EncodingOption(),
 }

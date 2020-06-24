@@ -28,7 +28,7 @@ from pyglossary.ebook_base import *
 enable = True
 format = "Mobi"
 description = "MOBI E-Book"
-extensions = [".mobi",]
+extensions = (".mobi",)
 sortOnWrite = ALWAYS
 
 optionsProp = {

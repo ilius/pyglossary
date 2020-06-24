@@ -25,7 +25,7 @@ from pyglossary.file_utils import fileCountLines
 enable = True
 format = "Csv"
 description = "CSV"
-extensions = [".csv"]
+extensions = (".csv",)
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),

@@ -24,7 +24,7 @@ from formats_common import *
 enable = True
 format = "Sdict"
 description = "Sdictionary Binary(dct)"
-extensions = [".dct"]
+extensions = (".dct",)
 singleFile = True
 # homepage = "http://swaj.net/sdict/"
 optionsProp = {

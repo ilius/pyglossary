@@ -8,7 +8,7 @@ from io import BytesIO
 enable = True
 format = "FreeDict"
 description = "FreeDict (tei)"
-extensions = [".tei"]
+extensions = (".tei",)
 singleFile = True
 optionsProp = {
 	"resources": BoolOption(),

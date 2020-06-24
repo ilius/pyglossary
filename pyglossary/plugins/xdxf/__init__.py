@@ -27,7 +27,7 @@ from formats_common import *
 enable = True
 format = "Xdxf"
 description = "XDXF"
-extensions = [".xdxf", ".xml"]
+extensions = (".xdxf", ".xml")
 singleFile = True
 optionsProp = {}
 depends = {

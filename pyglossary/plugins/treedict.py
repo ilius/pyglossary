@@ -6,7 +6,7 @@ import subprocess
 enable = True
 format = "Treedict"
 description = "TreeDict"
-extensions = [".tree", ".treedict"]
+extensions = (".tree", ".treedict")
 optionsProp = {
 	"encoding": EncodingOption(),
 	"archive": StrOption(

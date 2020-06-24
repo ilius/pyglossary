@@ -4,7 +4,7 @@ from formats_common import *
 enable = False
 format = "BabylonBdc"
 description = "Babylon (bdc)"
-extensions = [".bdc"]
+extensions = (".bdc",)
 singleFile = True
 optionsProp = {}
 depends = {}

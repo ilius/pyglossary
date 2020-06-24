@@ -5,7 +5,7 @@ from formats_common import *
 enable = True
 format = "GettextPo"
 description = "Gettext Source (po)"
-extensions = [".po"]
+extensions = (".po",)
 singleFile = True
 optionsProp = {
 	"resources": BoolOption(),

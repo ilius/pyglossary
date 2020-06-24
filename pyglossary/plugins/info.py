@@ -5,7 +5,7 @@ from formats_common import *
 enable = True
 format = "Info"
 description = "Glossary Info (.info)"
-extensions = [".info"]
+extensions = (".info",)
 singleFile = True
 
 # key is option/argument name, value is instance of Option

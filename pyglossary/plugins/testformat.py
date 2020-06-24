@@ -5,7 +5,7 @@ from formats_common import *
 enable = False
 format = "Test"
 description = "Test Format File(.test)"
-extensions = [".test", ".tst"]
+extensions = (".test", ".tst")
 
 # key is option/argument name, value is instance of Option
 optionsProp = {}

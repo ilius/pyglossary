@@ -29,7 +29,7 @@ from pyglossary.text_utils import (
 enable = True
 format = "Edlin"
 description = "Editable Linked List of Entries"
-extensions = [".edlin"]
+extensions = (".edlin",)
 optionsProp = {
 	"encoding": EncodingOption(),
 	"havePrevLink": BoolOption(),

@@ -30,7 +30,7 @@ from pathlib import Path
 enable = True
 format = "Kobo"
 description = "Kobo E-Reader Dictionary"
-extensions = [".kobo"]
+extensions = (".kobo",)
 sortOnWrite = ALWAYS
 
 optionsProp = {

@@ -44,7 +44,7 @@ from pyglossary.glossary_type import GlossaryType
 enable = False
 format = "Unknown"
 description = "Unknown"
-extensions = [] # type: List[str]
+extensions = () # type: Tuple[str, ...]
 singleFile = False
 
 # key is option/argument name, value is instance of Option

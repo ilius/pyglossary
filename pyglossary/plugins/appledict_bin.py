@@ -22,7 +22,7 @@ from zlib import decompress
 enable = True
 format = "AppleDictBin"
 description = "AppleDict Binary (.dictionary)"
-extensions = [".dictionary", ".data"]
+extensions = (".dictionary", ".data",)
 singleFile = True
 optionsProp = {
 	"html": BoolOption(),

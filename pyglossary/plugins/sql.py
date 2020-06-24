@@ -5,7 +5,7 @@ from formats_common import *
 enable = True
 format = "Sql"
 description = "SQL"
-extensions = [".sql"]
+extensions = (".sql",)
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),

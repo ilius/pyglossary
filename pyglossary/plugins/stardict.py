@@ -23,7 +23,7 @@ from formats_common import *
 enable = True
 format = "Stardict"
 description = "StarDict (ifo)"
-extensions = [".ifo"]
+extensions = (".ifo",)
 optionsProp = {
 	"dictzip": BoolOption(),
 	"sametypesequence": StrOption(

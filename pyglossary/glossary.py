@@ -197,11 +197,13 @@ class Glossary(GlossaryType):
 		format = plugin.format
 
 		extensions = plugin.extensions
-		# FIXME: deprecate non-tuple values in plugin.extensions
-		if isinstance(extensions, str):
-			extensions = (extensions,)
-		elif not isinstance(extensions, tuple):
-			extensions = tuple(extensions)
+		if not isinstance(extensions, tuple):
+			msg = f"{format} plugin: extensions must be tuple"
+			if isinstance(extensions, list):
+				extensions = tuple(extensions)
+				log.error(msg)
+			else:
+				raise ValueError(msg)
 
 		if hasattr(plugin, "description"):
 			desc = plugin.description

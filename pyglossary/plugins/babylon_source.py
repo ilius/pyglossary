@@ -8,7 +8,7 @@ from formats_common import *
 enable = True
 format = "BabylonSource"
 description = "Babylon Source (gls)"
-extensions = [".gls", ".babylon"]
+extensions = (".gls", ".babylon")
 singleFile = True
 optionsProp = {
 	"writeInfo": BoolOption(),
