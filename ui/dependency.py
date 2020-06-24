@@ -28,10 +28,6 @@ from pyglossary.glossary import Glossary
 # ^ this takes about 3 seconds
 # installed_packages = set(r.decode().split('==')[0] for r in reqs.split())
 
-try:
-	ModuleNotFoundError
-except NameError:
-	ModuleNotFoundError = ImportError
 
 def checkFormatDepends(name: str) -> List[str]:
 	"returns the list of uninstalled dependencies"

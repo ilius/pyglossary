@@ -34,11 +34,6 @@ depends = {
 	"lxml": "lxml",
 }
 
-try:
-	ModuleNotFoundError
-except NameError:
-	ModuleNotFoundError = ImportError
-
 
 """
 new format
