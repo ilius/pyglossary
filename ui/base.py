@@ -77,7 +77,10 @@ class UIBase(object):
 			except KeyError:
 				pass
 		for key, value in data.items():
-			log.warning(f"unkown config key {key!r}")
+			log.warning(
+				f"unknown config key {key!r}, you may edit {confJsonFile}"
+				" file and remove this key"
+			)
 
 		for key, value in options.items():
 			if key in self.prefKeys:
