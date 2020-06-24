@@ -172,7 +172,10 @@ class Glossary(GlossaryType):
 				log.debug(f"skipping disabled option {name} in {format} plugin")
 				continue
 			if not prop.validate(param.default):
-				log.warning(f"invalid default value for option: {name} = {param.default!r}")
+				log.warning(
+					"invalid default value for option: "
+					f"{name} = {param.default!r}"
+				)
 			optNames.append(name)
 		return optNames
 
