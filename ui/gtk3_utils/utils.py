@@ -76,7 +76,7 @@ def pack(box, child, expand=False, fill=False, padding=0):
 	elif isinstance(box, gtk.CellLayout):
 		box.pack_start(child, expand)
 	else:
-		raise TypeError(f"pack: unkown type {type(box)}")
+		raise TypeError(f"pack: unknown type {type(box)}")
 
 
 def dialog_add_button(dialog, iconName, label, resId, onClicked=None, tooltip=""):
