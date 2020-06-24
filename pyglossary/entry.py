@@ -398,9 +398,9 @@ class Entry(BaseEntry):
 			except IndexError:
 				pass
 			else:
-				if not isinstance(dataEntry, DataEntry):
-					raise ValueError(f"invalid rawEntry={rawEntry!r}")
-				return dataEntry
+				if isinstance(dataEntry, DataEntry):
+					return dataEntry
+				log.warn(f"Entry.fromRaw: invalid rawEntry={rawEntry!r}")
 
 		try:
 			defiFormat = rawEntry[2]
