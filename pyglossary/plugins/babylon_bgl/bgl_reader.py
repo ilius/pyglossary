@@ -63,7 +63,7 @@ from .bgl_text import (
 	replaceAsciiCharRefs,
 	fixImgLinks,
 	stripDollarIndexes,
-	unkownHtmlEntries,
+	unknownHtmlEntries,
 )
 
 file = io.BufferedReader
@@ -426,7 +426,7 @@ class BglReader(object):
 				self.readType3(block)
 			else:  # Unknown block.type
 				log.debug(
-					f"Unkown Block type {block.type!r}"
+					f"Unknown Block type {block.type!r}"
 					f", data_length = {len(block.data)}"
 					f", number = {self.numBlocks}"
 				)
@@ -530,8 +530,8 @@ class BglReader(object):
 
 	def __del__(self):
 		self.close()
-		while unkownHtmlEntries:
-			entity = unkownHtmlEntries.pop()
+		while unknownHtmlEntries:
+			entity = unknownHtmlEntries.pop()
 			log.debug(f"BGL: unknown html entity: {entity}")
 
 	# returns False if error

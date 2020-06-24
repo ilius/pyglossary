@@ -29,7 +29,7 @@ u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.I)
 u_pat_html_entry_key = re.compile("(?:&#x|&#|&)(\\w+);", re.I)
 b_pat_ascii_char_ref = re.compile(b"(&#\\w+;)", re.I)
 
-unkownHtmlEntries = set()
+unknownHtmlEntries = set()
 
 
 def replaceHtmlEntryNoEscapeCB(u_match):
@@ -80,7 +80,7 @@ def replaceHtmlEntryNoEscapeCB(u_match):
 				other references like &amp; are replaced with corresponding
 				characters.
 				"""
-				unkownHtmlEntries.add(u_text)
+				unknownHtmlEntries.add(u_text)
 				u_res = u_text
 	else:
 		raise ArgumentError()
