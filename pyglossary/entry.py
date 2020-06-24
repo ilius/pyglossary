@@ -111,7 +111,7 @@ class DataEntry(BaseEntry): # or Resource? FIXME
 	def removeEmptyAndDuplicateAltWords(self):
 		pass
 
-	def getRaw(self) -> RawEntryType:
+	def getRaw(self, glos: "GlossaryType") -> RawEntryType:
 		return (
 			self._fname,
 			"DATA",
@@ -153,29 +153,25 @@ class Entry(BaseEntry):
 
 	@staticmethod
 	def getEntrySortKey(
-		key: Optional[Callable[[str], Any]] = None,
+		key: Optional[Callable[[bytes], Any]] = None,
 	) -> Callable[[BaseEntry], Any]:
 		if key:
-			return lambda entry: key(entry.getWords()[0])
+			return lambda entry: key(entry.getWords()[0].encode("utf-8"))
 		else:
 			return lambda entry: entry.getWords()[0]
 
 	@staticmethod
 	def getRawEntrySortKey(
-		key: Optional[Callable[[str], Any]] = None,
-	) -> Callable[[Tuple], str]:
+		key: Optional[Callable[[bytes], Any]] = None,
+	) -> Callable[[Tuple], Any]:
 		# here `x` is raw entity, meaning a tuple of form (word, defi) or
 		# (word, defi, defiFormat)
-		# so x[0] is word(s), that can be a str (one word),
+		# so x[0] is word(s) in bytes, that can be a str (one word),
 		# or a list or tuple (one word with or more alternaties)
-		# FIXME: drop the case that x[0] is tuple
 		if key:
-			return lambda x: key(
-				x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
-			)
+			return lambda x: key(x[0])
 		else:
-			return lambda x: \
-				x[0][0] if isinstance(x[0], (list, tuple)) else x[0]
+			return lambda x: x[0]
 
 	def __init__(
 		self,
@@ -364,25 +360,25 @@ class Entry(BaseEntry):
 		words = list(unique_everseen(words))
 		self._word = words
 
-	def getRaw(self) -> RawEntryType:
+	def getRaw(self, glos: "GlossaryType") -> RawEntryType:
 		"""
 			returns a tuple (word, defi) or (word, defi, defiFormat)
 			where both word and defi might be string or list of strings
 		"""
-		if self._defiFormat:
+		if self._defiFormat and self._defiFormat != glos.getDefaultDefiFormat():
 			return (
-				self._word,
-				self._defi,
+				self.getWord().encode("utf-8"),
+				self.getDefi().encode("utf-8"),
 				self._defiFormat,
 			)
 		else:
 			return (
-				self._word,
-				self._defi,
+				self.getWord().encode("utf-8"),
+				self.getDefi().encode("utf-8"),
 			)
 
 	@classmethod
-	def fromRaw(cls, rawEntry: RawEntryType, defaultDefiFormat: str = "m"):
+	def fromRaw(cls, glos: "GlossaryType", rawEntry: RawEntryType, defaultDefiFormat: str = "m"):
 		"""
 			rawEntry can be (word, defi) or (word, defi, defiFormat)
 			where both word and defi can be string or list of strings
@@ -390,8 +386,8 @@ class Entry(BaseEntry):
 
 			creates and return an Entry object from `rawEntry` tuple
 		"""
-		word = rawEntry[0]
-		defi = rawEntry[1]
+		word = rawEntry[0].decode("utf-8")
+		defi = rawEntry[1].decode("utf-8")
 		if defi == "DATA":
 			try:
 				dataEntry = rawEntry[2] # DataEntry instance
@@ -402,15 +398,14 @@ class Entry(BaseEntry):
 					return dataEntry
 				log.warn(f"Entry.fromRaw: invalid rawEntry={rawEntry!r}")
 
-		try:
+		if len(rawEntry) > 2:
 			defiFormat = rawEntry[2]
-		except IndexError:
+		else:
 			defiFormat = defaultDefiFormat
 
-		if isinstance(word, tuple):
-			word = list(word)
-		if isinstance(defi, tuple):
-			defi = list(defi)
+		if glos.getPref("enable_alts", True):
+			word = word.split(cls.sep)
+			defi = defi.split(cls.sep)
 
 		return cls(
 			word,

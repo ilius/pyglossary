@@ -74,7 +74,7 @@ class BaseEntry(object):
 	def replace(self, source: str, target: str) -> None:
 		raise NotImplementedError
 
-	def getRaw(self) -> RawEntryType:
+	def getRaw(self, glos: "GlossaryType") -> RawEntryType:
 		raise NotImplementedError
 
 	@staticmethod

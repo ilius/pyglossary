@@ -395,7 +395,7 @@ class Glossary(GlossaryType):
 		return "glossary.Glossary"
 
 	def addEntryObj(self, entry: Entry) -> None:
-		self._data.append(entry.getRaw())
+		self._data.append(entry.getRaw(self))
 
 	def newEntry(
 		self,
@@ -432,6 +432,7 @@ class Glossary(GlossaryType):
 			if index & 0x7f == 0: # 0x3f, 0x7f, 0xff
 				gc.collect()
 			yield Entry.fromRaw(
+				self,
 				rawEntry,
 				defaultDefiFormat=self._defaultDefiFormat
 			)
@@ -733,7 +734,7 @@ class Glossary(GlossaryType):
 
 	def sortWords(
 		self,
-		key: Optional[Callable[[str], Any]] = None,
+		key: Optional[Callable[[bytes], Any]] = None,
 		cacheSize: int = 0,
 	) -> None:
 		# only sort by main word, or list of words + alternates? FIXME
@@ -825,7 +826,7 @@ class Glossary(GlossaryType):
 		filename: str,
 		format: str,
 		sort: Optional[bool] = None,
-		sortKey: Optional[Callable[[str], Any]] = None,
+		sortKey: Optional[Callable[[bytes], Any]] = None,
 		sortCacheSize: int = 1000,
 		**options
 	) -> Optional[str]:
@@ -1003,7 +1004,7 @@ class Glossary(GlossaryType):
 		outputFilename: str = "",
 		outputFormat: str = "",
 		sort: Optional[bool] = None,
-		sortKey: Optional[Callable[[str], Any]] = None,
+		sortKey: Optional[Callable[[bytes], Any]] = None,
 		sortCacheSize: int = 1000,
 		readOptions: Optional[Dict[str, Any]] = None,
 		writeOptions: Optional[Dict[str, Any]] = None,

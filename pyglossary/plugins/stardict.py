@@ -45,15 +45,11 @@ infoKeys = (
 )
 
 
-def sortKeyBytes(b_word: bytes) -> Tuple[bytes, bytes]:
+def sortKey(b_word: bytes) -> Tuple[bytes, bytes]:
 	return (
 		b_word.lower(),
 		b_word,
 	)
-
-
-def sortKey(word: str) -> Tuple[bytes, bytes]:
-	return sortKeyBytes(word.encode("utf-8"))
 
 
 def newlinesToSpace(text: str) -> str:
