@@ -81,7 +81,7 @@ class Reader(object):
 						hf.write(pos.text)
 				hf.write(" ")
 				pronuns = entry.findall("form/pron", self.ns)
-				hf.write(', '.join('[' + p.text + ']' for p in pronuns))
+				hf.write(", ".join("[" + p.text + "]" for p in pronuns))
 				hf.write(ET.Element("br"))
 				hf.write("\n")
 
