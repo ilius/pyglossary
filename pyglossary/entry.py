@@ -16,12 +16,14 @@ from typing import (
 	Any,
 )
 
-
 from .entry_base import BaseEntry, MultiStr, RawEntryType
 from .iter_utils import unique_everseen
 
 from pickle import dumps, loads
 from zlib import compress, decompress
+
+import logging
+log = logging.getLogger("root")
 
 
 class DataEntry(BaseEntry): # or Resource? FIXME
