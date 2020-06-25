@@ -591,7 +591,7 @@ class Writer(object):
 		t0 = now()
 
 		altIndexList.sort(
-			key=lambda x: sortKeyBytes(x[0])
+			key=lambda x: sortKey(x[0])
 		)
 		# 28 seconds with old sort key (converted from custom cmp)
 		# 0.63 seconds with my new sort key
