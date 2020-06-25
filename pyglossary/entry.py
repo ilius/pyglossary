@@ -20,6 +20,9 @@ from typing import (
 from .entry_base import BaseEntry, MultiStr, RawEntryType
 from .iter_utils import unique_everseen
 
+from pickle import dumps, loads
+from zlib import compress, decompress
+
 
 class DataEntry(BaseEntry): # or Resource? FIXME
 	def isData(self) -> bool:
@@ -112,10 +115,10 @@ class DataEntry(BaseEntry): # or Resource? FIXME
 		pass
 
 	def getRaw(self, glos: "GlossaryType") -> RawEntryType:
-		return (
+		return compress(dumps((
 			self._fname,
 			"DATA",
-		)
+		)))
 
 
 class Entry(BaseEntry):
@@ -169,9 +172,9 @@ class Entry(BaseEntry):
 		# so x[0] is word(s) in bytes, that can be a str (one word),
 		# or a list or tuple (one word with or more alternaties)
 		if key:
-			return lambda x: key(x[0])
+			return lambda x: key(loads(decompress(x))[0])
 		else:
-			return lambda x: x[0]
+			return lambda x: loads(decompress(x))[0]
 
 	def __init__(
 		self,
@@ -366,16 +369,16 @@ class Entry(BaseEntry):
 			where both word and defi might be string or list of strings
 		"""
 		if self._defiFormat and self._defiFormat != glos.getDefaultDefiFormat():
-			return (
+			return compress(dumps((
 				self.getWord().encode("utf-8"),
 				self.getDefi().encode("utf-8"),
 				self._defiFormat,
-			)
+			)))
 		else:
-			return (
+			return compress(dumps((
 				self.getWord().encode("utf-8"),
 				self.getDefi().encode("utf-8"),
-			)
+			)))
 
 	@classmethod
 	def fromRaw(cls, glos: "GlossaryType", rawEntry: RawEntryType, defaultDefiFormat: str = "m"):
@@ -386,6 +389,7 @@ class Entry(BaseEntry):
 
 			creates and return an Entry object from `rawEntry` tuple
 		"""
+		rawEntry = loads(decompress(rawEntry))
 		word = rawEntry[0].decode("utf-8")
 		defi = rawEntry[1].decode("utf-8")
 		if defi == "DATA":
