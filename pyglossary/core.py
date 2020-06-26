@@ -26,6 +26,7 @@ from types import TracebackType
 
 VERSION = "3.3.0"
 
+
 class MyLogger(logging.Logger):
 	levelsByVerbosity = (
 		logging.CRITICAL,
@@ -57,16 +58,21 @@ class MyLogger(logging.Logger):
 	def isDebug(self) -> bool:
 		return self.getVerbosity() >= 4
 
-def formatVarDict(dct: Dict[str, Any], indent: int = 4, max_width: int = 80) -> str:
+
+def formatVarDict(
+	dct: Dict[str, Any],
+	indent: int = 4,
+	max_width: int = 80,
+) -> str:
 	lines = []
 	pre = " " * indent
 	for key, value in dct.items():
 		line = pre + key + " = " + repr(value)
 		if len(line) > max_width:
-			line = line[:max_width-3] + "..."
+			line = line[:max_width - 3] + "..."
 			try:
 				value_len = len(value)
-			except:
+			except TypeError:
 				pass
 			else:
 				line += f"\n{pre}len({key}) = {value_len}"
@@ -147,9 +153,8 @@ def checkCreateConfDir() -> None:
 	if not exists(userPluginsDir):
 		os.mkdir(userPluginsDir)
 	if not isfile(confJsonFile):
-		with open(rootConfJsonFile) as srcFp, \
-		  open(confJsonFile, "w") as userFp:
-			userFp.write(srcFp.read())
+		with open(rootConfJsonFile) as srcF, open(confJsonFile, "w") as usrF:
+			usrF.write(srcF.read())
 
 
 # __________________________________________________________________________ #
@@ -167,7 +172,8 @@ sys.excepthook = lambda *exc_info: log.critical(
 
 sysName = platform.system()
 
-# can set env var WARNINGS to: "error", "ignore", "always", "default", "module", "once"
+# can set env var WARNINGS to:
+# "error", "ignore", "always", "default", "module", "once"
 if os.getenv("WARNINGS"):
 	import warnings
 	warnings.filterwarnings(os.getenv("WARNINGS"))
