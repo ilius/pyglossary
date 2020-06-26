@@ -375,12 +375,12 @@ class Entry(BaseEntry):
 				self.getWord().encode("utf-8"),
 				self.getDefi().encode("utf-8"),
 				self._defiFormat,
-			)))
+			)), level=9)
 		else:
 			return compress(dumps((
 				self.getWord().encode("utf-8"),
 				self.getDefi().encode("utf-8"),
-			)))
+			)), level=9)
 
 	@classmethod
 	def fromRaw(cls, glos: "GlossaryType", rawEntry: RawEntryType, defaultDefiFormat: str = "m"):
