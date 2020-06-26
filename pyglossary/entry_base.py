@@ -11,10 +11,7 @@ from typing import (
 
 MultiStr = Union[str, List[str]]
 
-RawEntryType = Union[
-	Tuple[MultiStr, MultiStr],
-	Tuple[MultiStr, MultiStr, str],
-]
+RawEntryType = bytes
 
 
 class BaseEntry(object):
