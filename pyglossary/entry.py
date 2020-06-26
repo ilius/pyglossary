@@ -383,7 +383,12 @@ class Entry(BaseEntry):
 			)), level=9)
 
 	@classmethod
-	def fromRaw(cls, glos: "GlossaryType", rawEntry: RawEntryType, defaultDefiFormat: str = "m"):
+	def fromRaw(
+		cls,
+		glos: "GlossaryType",
+		rawEntry: RawEntryType,
+		defaultDefiFormat: str = "m",
+	):
 		"""
 			rawEntry can be (word, defi) or (word, defi, defiFormat)
 			where both word and defi can be string or list of strings
