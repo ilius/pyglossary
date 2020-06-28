@@ -11,8 +11,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -21,10 +21,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-import logging
-log = logging.getLogger("root")
-
 
 from itertools import groupby
 import os
@@ -36,6 +32,9 @@ import shutil
 
 from pyglossary.text_utils import toStr, toBytes
 from pyglossary.os_utils import indir
+
+import logging
+log = logging.getLogger("root")
 
 
 def get_prefix(word, length):
@@ -74,42 +73,44 @@ class EbookWriter(object):
 	CSS_CONTENTS = ""
 	GROUP_XHTML_TEMPLATE = ""
 	GROUP_XHTML_INDEX_LINK = ""
-	
+
 	GROUP_XHTML_WORD_TEMPLATE = ""
 	GROUP_XHTML_WORD_JOINER = ""
 	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = ""
 	GROUP_XHTML_WORD_DEFINITION_JOINER = "\n"
-	
+
 	MIMETYPE_CONTENTS = ""
 	CONTAINER_XML_CONTENTS = ""
-	
+
 	GROUP_START_INDEX = 2
 
 	COVER_TEMPLATE = "{cover}"
 
-	INDEX_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+	INDEX_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8"
+	standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
- <head>
-  <title>{title}</title>
-  <link rel="stylesheet" type="text/css" href="style.css" />
- </head>
- <body class="indexPage">
-  <h1 class="indexTitle">{indexTitle}</h1>
-  <p class="indexGroupss">
+	<head>
+		<title>{title}</title>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+	</head>
+	<body class="indexPage">
+	<h1 class="indexTitle">{indexTitle}</h1>
+	<p class="indexGroupss">
 {links}
-  </p>
- </body>
+	</p>
+	</body>
 </html>"""
-	INDEX_XHTML_LINK_TEMPLATE = "   <span class=\"indexGroup\"><a href=\"{ref}\">{label}</a></span>"
+	INDEX_XHTML_LINK_TEMPLATE = "   <span class=\"indexGroup\">" \
+		"<a href=\"{ref}\">{label}</a></span>"
 
 	INDEX_XHTML_LINK_JOINER = " &#8226;\n"
 
-
-	OPF_MANIFEST_ITEM_TEMPLATE = "  <item href=\"{ref}\" id=\"{id}\" media-type=\"{mediaType}\" />"
+	OPF_MANIFEST_ITEM_TEMPLATE = "  <item href=\"{ref}\" id=\"{id}\"" \
+		" media-type=\"{mediaType}\" />"
 
 	OPF_SPINE_ITEMREF_TEMPLATE = "  <itemref idref=\"{id}\" />"
-
 
 	def get_opf_contents(self, manifest_contents, spine_contents):
 		raise NotImplementedError
@@ -133,7 +134,6 @@ class EbookWriter(object):
 		#"marisa_index_size": 1000000,## kobo format
 		#"sd_ignore_sametypesequence": False,## stardict format
 		#"sd_no_dictzip": False,## stardict format
-		
 		#"group_by_prefix_merge_across_first": False,
 		#"group_by_prefix_merge_min_size": 0,
 
@@ -146,7 +146,8 @@ class EbookWriter(object):
 	def close(self):
 		pass
 
-	myOpen = lambda self, fname, mode: open(join(self.tmpDir, fname), mode)
+	def myOpen(self, fname, mode):
+		return open(join(self.tmpDir, fname), mode)
 
 	def add_file(self, relative_path, contents, mode=None):
 		if mode is None:
@@ -182,8 +183,8 @@ class EbookWriter(object):
 				css_obj = self.myOpen(custom_css_path_absolute, "rb")
 				css = css_obj.read()
 				css_obj.close()
-			except:
-				pass
+			except Exception:
+				log.exception("")
 		self.add_file_manifest("OEBPS/style.css", "style.css", css, "text/css")
 
 	def add_file_manifest(self, relative_path, id, contents, mimetype):
@@ -195,9 +196,9 @@ class EbookWriter(object):
 
 	def get_group_xhtml_file_name_from_index(self, index):
 		if index < self.GROUP_START_INDEX:
-		## or index >= len(self.groups) + self.GROUP_START_INDEX:
-		## number of groups are not known## FIXME
-		## so we can not say if the current group is the last or not
+			# or index >= len(self.groups) + self.GROUP_START_INDEX:
+			# number of groups are not known, FIXME
+			# so we can not say if the current group is the last or not
 			return "#groupPage"
 		return f"g{index:06d}.xhtml"
 
@@ -209,7 +210,7 @@ class EbookWriter(object):
 		# TODO: handle alternates better (now shows word1|word2... in title)
 
 		group_labels = []
-		
+
 		self.glos.sortWords()
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
 			self.glos,
@@ -243,7 +244,9 @@ class EbookWriter(object):
 			previous_link = self.get_group_xhtml_file_name_from_index(index - 1)
 			next_link = self.get_group_xhtml_file_name_from_index(index + 1)
 
-			group_contents = self.GROUP_XHTML_WORD_DEFINITION_JOINER.join(group_contents)
+			group_contents = self.GROUP_XHTML_WORD_DEFINITION_JOINER.join(
+				group_contents,
+			)
 			group_contents = self.GROUP_XHTML_TEMPLATE.format(
 				title=group_label,
 				group_title=group_label,
@@ -252,7 +255,7 @@ class EbookWriter(object):
 				next_link=next_link,
 				group_contents=group_contents,
 			)
-			
+
 			group_xhtml_path = self.get_group_xhtml_file_name_from_index(index)
 
 			self.add_file_manifest(
@@ -261,7 +264,7 @@ class EbookWriter(object):
 				group_contents,
 				"application/xhtml+xml",
 			)
-		
+
 		return group_labels
 
 	def escape_if_needed(self, string):
@@ -273,7 +276,6 @@ class EbookWriter(object):
 				.replace("<", "&lt;")
 		return string
 
-
 	def write_index(self, group_labels):
 		"""
 			group_labels: a list of labels
@@ -281,17 +283,17 @@ class EbookWriter(object):
 		links = []
 		for label_i, label in enumerate(group_labels):
 			links.append(self.INDEX_XHTML_LINK_TEMPLATE.format(
-				ref = self.get_group_xhtml_file_name_from_index(
+				ref=self.get_group_xhtml_file_name_from_index(
 					self.GROUP_START_INDEX + label_i
 				),
-				label = label,
+				label=label,
 			))
 		links = self.INDEX_XHTML_LINK_JOINER.join(links)
 		title = self.glos.getInfo("name")
 		contents = self.INDEX_XHTML_TEMPLATE.format(
-			title = title,
-			indexTitle = title,
-			links = links,
+			title=title,
+			indexTitle=title,
+			links=links,
 		)
 		self.add_file_manifest(
 			"OEBPS/index.xhtml",
@@ -306,18 +308,18 @@ class EbookWriter(object):
 			cover = self.COVER_TEMPLATE.format(cover=self.cover)
 
 		creationDate = datetime.now().strftime("%Y-%m-%d")
-		
+
 		return self.OPF_TEMPLATE.format(
-			identifier = self.glos.getInfo("uuid"),
-			sourceLang = self.glos.getInfo("sourceLang"),
-			targetLang = self.glos.getInfo("sourceLang"),
-			title = self.glos.getInfo("name"),
-			creator = self.glos.getInfo("author"),
-			copyright = self.glos.getInfo("copyright"),
-			creationDate = creationDate,
-			cover = cover,
-			manifest = manifest_contents,
-			spine = spine_contents,
+			identifier=self.glos.getInfo("uuid"),
+			sourceLang=self.glos.getInfo("sourceLang"),
+			targetLang=self.glos.getInfo("sourceLang"),
+			title=self.glos.getInfo("name"),
+			creator=self.glos.getInfo("author"),
+			copyright=self.glos.getInfo("copyright"),
+			creationDate=creationDate,
+			cover=cover,
+			manifest=manifest_contents,
+			spine=spine_contents,
 		)
 
 	def write_opf(self):
@@ -379,10 +381,11 @@ class EbookWriter(object):
 			if cover_path:
 				try:
 					self.write_cover(cover_path)
-				except:
+				except Exception:
 					log.exception("")
 
-			self.write_css(apply_css)
+			if apply_css:
+				self.write_css(apply_css)
 
 			group_labels = self.write_groups(
 				group_by_prefix_length,
@@ -415,7 +418,3 @@ class EbookWriter(object):
 					shutil.copytree(self.tmpDir, filename)
 				else:
 					shutil.move(self.tmpDir, filename)
-
-
-
-
