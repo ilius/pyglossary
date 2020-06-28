@@ -26,7 +26,8 @@ import logging
 log = logging.getLogger("root")
 
 
-class DataEntry(BaseEntry): # or Resource? FIXME
+# or Resource?
+class DataEntry(BaseEntry):
 	def isData(self) -> bool:
 		return True
 
@@ -399,17 +400,11 @@ class Entry(BaseEntry):
 		rawEntry = loads(decompress(rawEntry))
 		word = rawEntry[0].decode("utf-8")
 		defi = rawEntry[1].decode("utf-8")
-		if defi == "DATA":
-			try:
-				dataEntry = rawEntry[2] # DataEntry instance
-			except IndexError:
-				pass
-			else:
-				if isinstance(dataEntry, DataEntry):
-					return dataEntry
-				log.warn(f"Entry.fromRaw: invalid rawEntry={rawEntry!r}")
-
 		if len(rawEntry) > 2:
+			if defi == "DATA":
+				if isinstance(rawEntry[2], DataEntry):
+					return rawEntry[2]
+				log.warn(f"Entry.fromRaw: invalid rawEntry={rawEntry!r}")
 			defiFormat = rawEntry[2]
 		else:
 			defiFormat = defaultDefiFormat
