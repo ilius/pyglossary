@@ -48,6 +48,7 @@ def toStr(s: AnyStr) -> str:
 def fixUtf8(st: AnyStr) -> str:
 	return toBytes(st).replace(b"\x00", b"").decode("utf-8", "replace")
 
+
 pattern_n_us = re.compile(r"((?<!\\)(?:\\\\)*)\\n")
 pattern_t_us = re.compile(r"((?<!\\)(?:\\\\)*)\\t")
 pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|")
@@ -114,7 +115,7 @@ def timeHMS(seconds: Union[int, float]) -> str:
 
 
 def relTimeHMS(seconds: Union[int, float]) -> str:
-	(days, s) = divmod(int(seconds), 24*3600)
+	(days, s) = divmod(int(seconds), 24 * 3600)
 	(m, s) = divmod(s, 60)
 	(h, m) = divmod(m, 60)
 	return formatHMS(h, m, s)
@@ -155,8 +156,8 @@ def urlToPath(url: str) -> str:
 	n = len(path)
 	i = 0
 	while i < n:
-		if path[i] == "%" and i < n-2:
-			path2 += chr(eval("0x" + path[i+1:i+3]))
+		if path[i] == "%" and i < n - 2:
+			path2 += chr(eval("0x" + path[i + 1:i + 3]))
 			i += 3
 		else:
 			path2 += path[i]
@@ -165,7 +166,11 @@ def urlToPath(url: str) -> str:
 
 
 def replacePostSpaceChar(st: str, ch: str) -> str:
-	return st.replace(" "+ch, ch).replace(ch, ch+" ").replace(ch+"  ", ch+" ")
+	return (
+		st.replace(f" {ch}", ch)
+		.replace(ch, f"{ch} ")
+		.replace(f"{ch}  ", f"{ch} ")
+	)
 
 
 def runDictzip(filename: str) -> None:
@@ -176,7 +181,7 @@ def runDictzip(filename: str) -> None:
 	if filename[-4:] == ".ifo":
 		filename = filename[:-4]
 	(out, err) = subprocess.Popen(
-		[dictzipCmd, filename+".dict"],
+		[dictzipCmd, filename + ".dict"],
 		stdout=subprocess.PIPE
 	).communicate()
 #	out = p3[1].read()

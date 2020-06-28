@@ -1,5 +1,6 @@
 from typing import List
 
+
 def chBaseIntToList(number: int, base: int) -> List[int]:
 	result = []
 	if number < 0:

@@ -46,6 +46,8 @@ def my_url_show(link: str) -> None:
 		if os.path.isfile(path):
 			subprocess.call([path, link])
 			break
+
+
 """
 try:
 	from gnome import url_show

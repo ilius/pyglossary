@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 def cleanWinArabicStr(u: str) -> str:
 	"""
 		u is a utf-8 encoded string

@@ -38,7 +38,7 @@ class TextGlossaryReader(object):
 			return
 		try:
 			self._file.close()
-		except:
+		except Exception:
 			log.exception(f"error while closing file {self._filename!r}")
 		self._file = None
 

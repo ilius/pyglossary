@@ -53,7 +53,8 @@ def get_prefix(word, length):
 	word = toStr(word)
 	if "Z" < word[0] < "a":
 		return "SPECIAL"
-	return word[:length] ## return a unicode? FIXME
+	# FIXME: return (unicode) str?
+	return word[:length]
 
 
 class EbookWriter(object):
@@ -359,8 +360,8 @@ class EbookWriter(object):
 		group_by_prefix_length=2,
 		include_index_page=False,
 		compress=True,
-		apply_css="", # path to css file, or ""
-		cover_path="", # path to cover file, or ""
+		apply_css="",  # path to css file, or ""
+		cover_path="",  # path to cover file, or ""
 	):
 		self.tmpDir = tempfile.mkdtemp()
 		with indir(self.tmpDir):

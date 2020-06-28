@@ -158,7 +158,7 @@ class Glossary(GlossaryType):
 			if param.default is inspect._empty:
 				if name not in ("self", "glos", "filename", "dirname", "kwargs"):
 					log.warning(f"empty default value for {name}: {param.default}")
-				continue # non-keyword argument
+				continue  # non-keyword argument
 			if name not in optionsProp:
 				log.warning(f"skipping option {name} in plugin {format}")
 				continue
@@ -429,7 +429,7 @@ class Glossary(GlossaryType):
 		if progressbar:
 			self.progressInit("Writing")
 		for index, rawEntry in enumerate(self._data):
-			if index & 0x7f == 0: # 0x3f, 0x7f, 0xff
+			if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
 				gc.collect()
 			yield Entry.fromRaw(
 				self,
@@ -534,7 +534,7 @@ class Glossary(GlossaryType):
 		return self._info.items()
 
 	def getInfo(self, key: str) -> str:
-		key = str(key) # FIXME: required?
+		key = str(key)  # FIXME: required?
 
 		try:
 			key = self.infoKeysAliasDict[key.lower()]
@@ -675,7 +675,7 @@ class Glossary(GlossaryType):
 		lastPos = 0
 		try:
 			for index, entry in enumerate(reader):
-				if index & 0x7f == 0: # 0x3f, 0x7f, 0xff
+				if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
 					gc.collect()
 				if entry:
 					self.addEntryObj(entry)
@@ -1291,7 +1291,7 @@ class Glossary(GlossaryType):
 		minRel: float = 0.0,
 		minWordLen: int = 3,
 		includeDefs: bool = False,
-		showRel: str = "Percent", # "Percent" | "Percent At First" | ""
+		showRel: str = "Percent",  # "Percent" | "Percent At First" | ""
 	) -> List[str]:
 		# searches word "st" in definitions of the glossary
 		splitPattern = re.compile(

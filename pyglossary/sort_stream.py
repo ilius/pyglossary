@@ -22,12 +22,17 @@ log = logging.getLogger("root")
 
 T = TypeVar("T")
 
-def hsortStream(stream: Iterator[T], maxHeapSize: int, key: Optional[Callable[[T], Any]] = None) -> Iterator[T]:
+
+def hsortStream(
+	stream: Iterator[T],
+	maxHeapSize: int,
+	key: Optional[Callable[[T], Any]] = None,
+) -> Iterator[T]:
 	"""
 		stream: a generator or iterable
 		maxHeapSize: int, maximum size of heap
 		key: a key function, as in `list.sort` method, or `sorted` function
-			 if key is None, we consume less memory
+			if key is None, we consume less memory
 
 		the sort is Stable (unlike normal heapsort) because we include the
 			index (after item / output of key function)
@@ -56,10 +61,14 @@ def hsortStream(stream: Iterator[T], maxHeapSize: int, key: Optional[Callable[[T
 			yield heappop(hp)[0]
 
 
-def hsortStreamList(streams: Sequence[Iterator[T]], *args, **kwargs) -> Iterator[T]:
+def hsortStreamList(
+	streams: Sequence[Iterator[T]],
+	*args,
+	**kwargs
+) -> Iterator[T]:
 	streams = [
-		 hsortStream(stream, *args, **kwargs)
-		 for stream in streams
+		hsortStream(stream, *args, **kwargs)
+		for stream in streams
 	]
 	return merge(*tuple(streams))
 
@@ -104,6 +113,7 @@ def main():
 #	stream = stdinIntegerStream()
 #	for line in hsortStream(stream, 3):
 #		print(f"------ Placed item: {line}")
+
 
 if __name__ == "__main__":
 	main()

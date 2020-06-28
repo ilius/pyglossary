@@ -17,7 +17,8 @@ class Option(object):
 		disabled: bool = False,
 	):
 		if values is None:
-			customValue = True # otherwise there would not be any valid value
+			# otherwise there would not be any valid value
+			customValue = True
 		self.typ = typ
 		self.values = values
 		self.customValue = customValue
@@ -70,7 +71,7 @@ class BoolOption(Option):
 			return True, True
 		if raw.lower() in ("no", "false", "0"):
 			return False, True
-		return None, False # not valid
+		return None, False  # not valid
 
 
 class StrOption(Option):
@@ -132,14 +133,14 @@ class DictOption(Option):
 	def evaluate(self, raw: str) -> Tuple[Optional[Dict], bool]:
 		import ast
 		if raw == "":
-			return None, True # valid
+			return None, True  # valid
 		try:
 			value = ast.literal_eval(raw)
 		except SyntaxError:
-			return None, False # not valid
+			return None, False  # not valid
 		if type(value).__name__ != "dict":
-			return None, False # not valid
-		return value, True # valid
+			return None, False  # not valid
+		return value, True  # valid
 
 
 class ListOption(Option):
@@ -154,14 +155,14 @@ class ListOption(Option):
 	def evaluate(self, raw: str) -> Tuple[Optional[List], bool]:
 		import ast
 		if raw == "":
-			return None, True # valid
+			return None, True  # valid
 		try:
 			value = ast.literal_eval(raw)
 		except SyntaxError:
-			return None, False # not valid
+			return None, False  # not valid
 		if type(value).__name__ != "list":
-			return None, False # not valid
-		return value, True # valid
+			return None, False  # not valid
+		return value, True  # valid
 
 
 class EncodingOption(Option):
@@ -206,8 +207,8 @@ class EncodingOption(Option):
 	def groupValues(self) -> Optional[Dict[str, Any]]:
 		import re
 		from collections import OrderedDict
-		groups = OrderedDict() # type: Dict[str, List[str]]
-		others = [] # type: List[str]
+		groups = OrderedDict()  # type: Dict[str, List[str]]
+		others = []  # type: List[str]
 		for value in self.values:
 			cats = re.findall("^[a-z]+", value)
 			if not cats:
@@ -217,7 +218,7 @@ class EncodingOption(Option):
 			if len(cat) == len(value):
 				others.append(value)
 				continue
-			if not cat in groups:
+			if cat not in groups:
 				groups[cat] = []
 			groups[cat].append(value)
 		if others:

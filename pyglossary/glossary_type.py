@@ -14,6 +14,7 @@ from collections import OrderedDict as odict
 from .entry_base import BaseEntry
 from .entry import Entry, DataEntry
 
+
 class GlossaryType(object):
 	def addEntryObj(self, entry: Entry) -> None:
 		raise NotImplementedError
@@ -78,5 +79,3 @@ class GlossaryType(object):
 		transaction: bool = False,
 	) -> Iterator[str]:
 		raise NotImplementedError
-
-

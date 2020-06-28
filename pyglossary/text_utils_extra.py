@@ -9,7 +9,7 @@ def intToBinStr(n, stLen=0):
 def intToBinStr(n, stLen=0):
 	return bytes((
 		(n >> (i << 3)) & 0xff
-		for i in range(int(ceil(log(n, 256)))-1, -1, -1)
+		for i in range(int(ceil(log(n, 256))) - 1, -1, -1)
 	)).rjust(stLen, b'\x00')
 
 
@@ -23,7 +23,7 @@ def binStrToInt(bs):
 def textProgress(n=100, t=0.1):
 	import time
 	for i in range(n):
-		sys.stdout.write('\b\b\b\b##%3d' % (i+1))
+		sys.stdout.write('\b\b\b\b##%3d' % (i + 1))
 		time.sleep(t)
 	sys.stdout.write('\b\b\b')
 
@@ -37,13 +37,13 @@ def locate(lst, val):
 	if val == lst[0]:
 		return 0
 	if val == lst[-1]:
-		return n-1
+		return n - 1
 	if val > lst[-1]:
-		return n-0.5
+		return n - 0.5
 	si = 0  # start index
 	ei = n  # end index
-	while ei-si > 1:
-		mi = (ei+si)/2  # middle index
+	while ei - si > 1:
+		mi = (ei + si) / 2  # middle index
 		if lst[mi] == val:
 			return mi
 		elif lst[mi] > val:
@@ -52,8 +52,8 @@ def locate(lst, val):
 		else:
 			si = mi
 			continue
-	if ei-si == 1:
-		return si+0.5
+	if ei - si == 1:
+		return si + 0.5
 
 
 def locate2(lst, val, ind=1):
@@ -65,13 +65,13 @@ def locate2(lst, val, ind=1):
 	if val == lst[0][ind]:
 		return 0
 	if val == lst[-1][ind]:
-		return n-1
+		return n - 1
 	if val > lst[-1][ind]:
-		return n-0.5
+		return n - 0.5
 	si = 0
 	ei = n
-	while ei-si > 1:
-		mi = (ei+si)/2
+	while ei - si > 1:
+		mi = (ei + si) / 2
 		if lst[mi][ind] == val:
 			return mi
 		elif lst[mi][ind] > val:
@@ -80,8 +80,8 @@ def locate2(lst, val, ind=1):
 		else:
 			si = mi
 		continue
-	if ei-si == 1:
-		return si+0.5
+	if ei - si == 1:
+		return si + 0.5
 
 
 def xml2dict(xmlText):
@@ -92,7 +92,7 @@ def xml2dict(xmlText):
 		try:
 			elem[0]
 			elemElems = xml2dict()
-		except:
+		except Exception:
 			pass
 
 
