@@ -75,6 +75,7 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._filename = ""
+		self._file = None
 		self._encoding = "utf-8"
 		self.xdxf_init()
 
@@ -113,6 +114,10 @@ class Reader(object):
 			key = self.infoKeyMap.get(elem.tag, elem.tag)
 			self._glos.setInfo(key, elem.text)
 
+		del context
+		self._fileSize = os.path.getsize(filename)
+		self._file = open(self._filename, mode="rb")
+
 	def __len__(self):
 		return 0
 
@@ -123,7 +128,7 @@ class Reader(object):
 		self._glos.setDefaultDefiFormat("x")
 
 		context = ET.iterparse(
-			self._filename,
+			self._file,
 			events=("end",),
 			tag="ar",
 		)
@@ -135,14 +140,20 @@ class Reader(object):
 			# TODO: add a flag to convert to html: self.xdxf_to_html(defi)
 			words = [toStr(w) for w in self.titles(article)]
 			# log.info(f"defi={defi}, words={words}")
-			yield self._glos.newEntry(words, defi)
+			yield self._glos.newEntry(
+				words,
+				defi,
+				byteProgress=(self._file.tell(), self._fileSize)
+			)
 			# clean up preceding siblings to save memory
 			# this reduces memory usage from ~64 MB to ~30 MB
 			while article.getprevious() is not None:
 				del article.getparent()[0]
 
 	def close(self) -> None:
-		pass
+		if self._file:
+			self._file.close()
+			self._file = None
 
 	def read_metadata_old(self):
 		full_name = self._xdxf.find("full_name").text
