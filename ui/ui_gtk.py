@@ -76,7 +76,7 @@ def buffer_get_text(b):
 class FormatOptionsDialog(gtk.Dialog):
 	def __init__(self, formatName: str, options: List[str], optionsValues: Dict[str, Any], parent=None):
 		gtk.Dialog.__init__(self, parent=parent)
-		optionsProp = Glossary.formatsOptionsProp[formatName]
+		optionsProp = Glossary.plugins[formatName].optionsProp
 		self.optionsProp = optionsProp
 		##
 		self.connect("response", lambda w, e: self.hide())
@@ -371,7 +371,7 @@ class FormatComboBox(gtk.ComboBox):
 		self.get_model().append((
 			_format,
 			# icon,
-			Glossary.formatsDesc[_format],
+			Glossary.plugins[_format].description,
 		))
 
 	def getActive(self):
@@ -929,7 +929,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			return
 		inFormat = self.convertInputFormatCombo.getActive()
 		if inFormat:
-			inFormatDesc = Glossary.formatsDesc[inFormat]
+			inFormatDesc = Glossary.plugins[inFormat].description
 		else:
 			inFormatDesc = ""
 			# log.critical("Input format is empty!");return
@@ -941,7 +941,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			return
 		outFormat = self.convertOutputFormatCombo.getActive()
 		if outFormat:
-			outFormatDesc = Glossary.formatsDesc[outFormat]
+			outFormatDesc = Glossary.plugins[outFormat].description
 		else:
 			outFormatDesc = ""
 			# log.critical("Output format is empty!");return
@@ -989,8 +989,9 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			inPath = urlToPath(inPath)
 			self.convertInputEntry.set_text(inPath)
 
+		# FIXME: typo: Copressed
 		inExt = getCopressedFileExt(inPath)
-		inFormatNew = Glossary.extFormat.get(inExt)
+		inFormatNew = Glossary.pluginByExt.get(inExt)
 
 		if not inFormatNew:
 			return
@@ -999,7 +1000,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			return
 
 		if self.pref["ui_autoSetFormat"] and not inFormat:
-			self.convertInputFormatCombo.setActive(inFormatNew)
+			self.convertInputFormatCombo.setActive(inFormatNew.name)
 
 		self.status("Select output file")
 		if self.pref["ui_autoSetOutputFileName"]:
@@ -1008,7 +1009,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			if outFormat:
 				if not outPath and "." in inPath:
 					outPath = splitext(inPath)[0] + \
-						Glossary.formatsExt[outFormat][0]
+						Glossary.plugins[outFormat].extensions[0]
 					self.convertOutputEntry.set_text(outPath)
 					self.status("Press \"Convert\"")
 
@@ -1025,7 +1026,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		if self.pref["ui_autoSetFormat"] and not outFormat:
 			outExt = getCopressedFileExt(outPath)
 			try:
-				outFormatNew = Glossary.extFormat[outExt]
+				outFormatNew = Glossary.pluginByExt[outExt].name
 			except KeyError:
 				pass
 			else:
@@ -1098,10 +1099,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			self.reverseInputEntry.set_text(inPath)
 
 		inExt = getCopressedFileExt(inPath)
-		inFormatNew = Glossary.extFormat.get(inExt)
+		inFormatNew = Glossary.pluginByExt.get(inExt)
 
 		if inFormatNew and self.pref["ui_autoSetFormat"] and not inFormat:
-			self.reverseInputFormatCombo.setActive(inFormatNew)
+			self.reverseInputFormatCombo.setActive(inFormatNew.name)
 
 		if self.pref["ui_autoSetOutputFileName"]:
 			outExt = ".txt"

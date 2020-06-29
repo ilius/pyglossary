@@ -22,8 +22,6 @@ from typing import List
 
 from pyglossary.glossary import Glossary
 
-# Glossary.formatsDepends[format] == depends
-
 # reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
 # ^ this takes about 3 seconds
 # installed_packages = set(r.decode().split('==')[0] for r in reqs.split())
@@ -31,7 +29,7 @@ from pyglossary.glossary import Glossary
 
 def checkFormatDepends(name: str) -> List[str]:
 	"returns the list of uninstalled dependencies"
-	depends = Glossary.formatsDepends[name]
+	depends = Glossary.plugins[name].depends
 	if not depends:
 		return []
 	uninstalled = []

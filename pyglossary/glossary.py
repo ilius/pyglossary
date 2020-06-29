@@ -60,6 +60,7 @@ from . import core
 from .core import VERSION, userPluginsDir
 from .entry_base import BaseEntry
 from .entry import Entry, DataEntry
+from .plugin_prop import PluginProp
 from .sort_stream import hsortStreamList
 
 from .text_utils import (
@@ -112,19 +113,16 @@ class Glossary(GlossaryType):
 		# are there alternatives to "creationTime"
 		# and "lastUpdated"?
 	}
-	plugins = {}  # format => pluginModule
+
+	plugins = {}  # format name => PluginProp
+	pluginByDesc = {}  # description => PluginProp
+	pluginByExt = {}  # extension => PluginProp
+
 	readerClasses = {}
 	writeFunctions = {}
 	writerClasses = {}
-	formatsDesc = {}
-	formatsExt = {}
 	formatsReadOptions = {}
 	formatsWriteOptions = {}
-	formatsOptionsProp = {}
-	formatsDepends = {}
-	descFormat = {}
-	descExt = {}
-	extFormat = {}
 
 	readFormats = []
 	writeFormats = []
@@ -151,7 +149,7 @@ class Glossary(GlossaryType):
 	@classmethod
 	def getRWOptionsFromFunc(cls, func, format):
 		import inspect
-		optionsProp = cls.formatsOptionsProp[format]
+		optionsProp = cls.plugins[format].optionsProp
 		sig = inspect.signature(func)
 		optNames = []
 		for name, param in sig.parameters.items():
@@ -205,23 +203,13 @@ class Glossary(GlossaryType):
 		else:
 			desc = f"{format} ({extensions[0]})"
 
-		cls.plugins[format] = plugin
-		cls.descFormat[desc] = format
-		cls.descExt[desc] = extensions[0]
+		prop = PluginProp(plugin)
+
+		cls.plugins[format] = prop
+		cls.pluginByDesc[desc] = prop
+
 		for ext in extensions:
-			cls.extFormat[ext] = format
-		cls.formatsExt[format] = extensions
-		cls.formatsDesc[format] = desc
-		cls.formatsOptionsProp[format] = getattr(
-			plugin,
-			"optionsProp",
-			{},
-		)
-		cls.formatsDepends[format] = getattr(
-			plugin,
-			"depends",
-			{},
-		)
+			cls.pluginByExt[ext] = prop
 
 		hasReadSupport = False
 		try:
@@ -287,9 +275,9 @@ class Glossary(GlossaryType):
 	def detectInputFormat(cls, filename, format=""):
 		if not format:
 			ext = get_ext(filename)
-			for key in Glossary.formatsExt.keys():
-				if ext in Glossary.formatsExt[key]:
-					format = key
+			for name, plug in Glossary.plugins.items():
+				if ext in plug.extensions:
+					format = name
 
 		return format
 
@@ -637,7 +625,7 @@ class Glossary(GlossaryType):
 				del options[key]
 
 		filenameNoExt, ext = splitext(filename)
-		if not ext.lower() in self.formatsExt[format]:
+		if not ext.lower() in self.plugins[format].extensions:
 			filenameNoExt = filename
 
 		self._filename = filenameNoExt
@@ -772,8 +760,8 @@ class Glossary(GlossaryType):
 				filename = filenameNoExt
 				fext = get_ext(filename)
 			if not format:
-				for fmt, extList in Glossary.formatsExt.items():
-					for e in extList:
+				for fmt, plug in Glossary.plugins.items():
+					for e in plug.extensions:
 						if format == e[1:] or format == e:
 							format = fmt
 							ext = e
@@ -781,7 +769,8 @@ class Glossary(GlossaryType):
 					if format:
 						break
 				if not format:
-					for fmt, extList in Glossary.formatsExt.items():
+					for fmt, plug in Glossary.plugins.items():
+						extList = plug.extensions
 						if filename == fmt:
 							if not inputFilename:
 								log.error("inputFilename is empty")
@@ -801,8 +790,8 @@ class Glossary(GlossaryType):
 						if format:
 							break
 				if not format:
-					for fmt, extList in Glossary.formatsExt.items():
-						if fext in extList:
+					for fmt, plug in Glossary.plugins.items():
+						if fext in plug.extensions:
 							format = fmt
 							ext = fext
 			if not format:
@@ -818,7 +807,7 @@ class Glossary(GlossaryType):
 				log.error("No filename nor format is given for output file")
 				return
 			try:
-				filename += Glossary.formatsExt[format][0]
+				filename += Glossary.plugins[format].extensions[0]
 			except KeyError:
 				log.error("Invalid write format")
 				return
@@ -890,18 +879,12 @@ class Glossary(GlossaryType):
 
 		if sort:
 			if sortKey is None:
-				try:
+				if plugin.sortKey:
 					sortKey = plugin.sortKey
-				except AttributeError:
-					pass
-				else:
 					log.debug(f"Using sort key function from {format} plugin")
 			elif sortOnWrite == ALWAYS:
-				try:
+				if plugin.sortKey:
 					sortKey = plugin.sortKey
-				except AttributeError:
-					pass
-				else:
 					log.warning(
 						f"Ignoring user-defined sort order"
 						f", and using key function from {format} plugin"

@@ -56,11 +56,11 @@ def getColWidth(subject, strings):
 
 def getFormatsTable(names, header):
 	descriptions = [
-		Glossary.formatsDesc[name]
+		Glossary.plugins[name].description
 		for name in names
 	]
 	extensions = [
-		" ".join(Glossary.formatsExt[name])
+		" ".join(Glossary.plugins[name].extensions)
 		for name in names
 	]
 
@@ -249,7 +249,7 @@ class UI(UIBase):
 				pass
 			elif outputFormat:
 				try:
-					ext = Glossary.formatsExt[outputFormat][0]
+					ext = Glossary.plugins[outputFormat].extensions[0]
 				except (KeyError, IndexError):
 					log.error(f"invalid write format {outputFormat}")
 					log.error(f"try: {COMMAND} --help")

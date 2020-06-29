@@ -300,7 +300,7 @@ class FormatOptionsButton(ttk.Button):
 		entry.insert(0, value)
 		entry.pack(fill="x")
 
-		prop = Glossary.formatsOptionsProp[format][optName]
+		prop = Glossary.plugins[format].optionsProp[optName]
 
 		def okClicked(event=None):
 			rawValue = entry.get()
@@ -335,9 +335,9 @@ class FormatOptionsButton(ttk.Button):
 		formatD = self.formatVar.get()
 		if not formatD:
 			return
-		format = Glossary.descFormat[formatD]
+		format = Glossary.pluginByDesc[formatD].name
 		options = self.kindFormatsOptions[self.kind][format]
-		optionsProp = Glossary.formatsOptionsProp[format]
+		optionsProp = Glossary.plugins[format].optionsProp
 
 		dialog = tix.Toplevel()  # bg="#0f0" does not work
 		dialog.resizable(width=True, height=True)
@@ -1005,7 +1005,7 @@ class UI(tix.Frame, UIBase):
 		if not formatD:
 			return
 		self.readOptions.clear() # reset the options, DO NOT re-assign
-		format = Glossary.descFormat[formatD]
+		format = Glossary.pluginByDesc[formatD].name
 		options = Glossary.formatsReadOptions[format]
 		if options:
 			self.readOptionsButton.pack(side="right")
@@ -1018,7 +1018,7 @@ class UI(tix.Frame, UIBase):
 		if not formatD:
 			return
 		self.writeOptions.clear() # reset the options, DO NOT re-assign
-		format = Glossary.descFormat[formatD]
+		format = Glossary.pluginByDesc[formatD].name
 		options = Glossary.formatsWriteOptions[format]
 		if options:
 			self.writeOptionsButton.pack(side="right")
@@ -1039,7 +1039,7 @@ class UI(tix.Frame, UIBase):
 		if "." not in pathI:
 			return
 
-		extO = Glossary.descExt[formatOD]
+		extO = Glossary.pluginByDesc[formatOD].extensions[0]
 		pathO = "".join(os.path.splitext(pathI)[:-1])+extO
 		# self.entry_o.delete(0, "end")
 		self.entry_o.insert(0, pathO)
@@ -1067,7 +1067,7 @@ class UI(tix.Frame, UIBase):
 				formatOD = self.combobox_o.get()
 				pathO = self.entry_o.get()
 				if formatOD and not pathO and "." in pathI:
-					extO = Glossary.descExt[formatOD]
+					extO = Glossary.pluginByDesc[formatOD].extensions[0]
 					pathO = "".join(os.path.splitext(pathI)[:-1]) + extO
 					self.entry_o.delete(0, "end")
 					self.entry_o.insert(0, pathO)
@@ -1116,7 +1116,7 @@ class UI(tix.Frame, UIBase):
 			# log.critical("Input format is empty!");return
 			inFormat = ""
 		else:
-			inFormat = Glossary.descFormat[inFormatDesc]
+			inFormat = Glossary.pluginByDesc[inFormatDesc].name
 
 		outPath = self.entry_o.get()
 		if not outPath:
@@ -1126,7 +1126,7 @@ class UI(tix.Frame, UIBase):
 		if not outFormatDesc:
 			log.critical("Output format is empty!")
 			return
-		outFormat = Glossary.descFormat[outFormatDesc]
+		outFormat = Glossary.pluginByDesc[outFormatDesc].name
 
 		finalOutputFile = self.glos.convert(
 			inPath,
