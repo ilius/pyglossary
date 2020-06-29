@@ -318,6 +318,7 @@ class Glossary(GlossaryType):
 		self._filename = ""
 		self._defaultDefiFormat = "m"
 		self._progressbar = True
+		self._rawEntryCompress = True
 
 	def __init__(
 		self,
@@ -352,6 +353,9 @@ class Glossary(GlossaryType):
 				"x": xdxf
 		"""
 		self.ui = ui
+
+	def setRawEntryCompress(self, enable: bool) -> bool:
+		self._rawEntryCompress = enable
 
 	def updateEntryFilters(self) -> None:
 		from . import entry_filters as ef

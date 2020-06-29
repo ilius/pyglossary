@@ -366,22 +366,30 @@ class Entry(BaseEntry):
 		words = list(unique_everseen(words))
 		self._word = words
 
-	def getRaw(self, glos: "GlossaryType") -> RawEntryType:
+	def getRaw(
+		self,
+		glos: "GlossaryType",
+	) -> RawEntryType:
 		"""
 			returns a tuple (word, defi) or (word, defi, defiFormat)
 			where both word and defi might be string or list of strings
 		"""
 		if self._defiFormat and self._defiFormat != glos.getDefaultDefiFormat():
-			return compress(dumps((
+			tpl = (
 				self.getWord().encode("utf-8"),
 				self.getDefi().encode("utf-8"),
 				self._defiFormat,
-			)), level=9)
+			)
 		else:
-			return compress(dumps((
+			tpl = (
 				self.getWord().encode("utf-8"),
 				self.getDefi().encode("utf-8"),
-			)), level=9)
+			)
+
+		if glos._rawEntryCompress:
+			return compress(dumps(tpl), level=9)
+
+		return tpl
 
 	@classmethod
 	def fromRaw(
@@ -397,7 +405,8 @@ class Entry(BaseEntry):
 
 			creates and return an Entry object from `rawEntry` tuple
 		"""
-		rawEntry = loads(decompress(rawEntry))
+		if isinstance(rawEntry, bytes):
+			rawEntry = loads(decompress(rawEntry))
 		word = rawEntry[0].decode("utf-8")
 		defi = rawEntry[1].decode("utf-8")
 		if len(rawEntry) > 2:

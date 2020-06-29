@@ -262,6 +262,7 @@ class UI(UIBase):
 		if reverse:
 			signal.signal(signal.SIGINT, self.onSigInt)  # good place? FIXME
 			readOptions["direct"] = False
+			glos.setRawEntryCompress(False)
 			if not glos.read(
 				inputFilename,
 				format=inputFormat,
