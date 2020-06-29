@@ -11,7 +11,11 @@ from typing import (
 
 MultiStr = Union[str, List[str]]
 
-RawEntryType = bytes
+RawEntryType = Union[
+	bytes,  # compressed
+	Tuple[bytes, bytes],  # uncompressed, without defiFormat
+	Tuple[bytes, bytes, str],  # uncompressed, with defiFormat
+]
 
 
 class BaseEntry(object):
