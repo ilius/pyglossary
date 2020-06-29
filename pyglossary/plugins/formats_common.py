@@ -44,13 +44,13 @@ from pyglossary.glossary_type import GlossaryType
 enable = False
 format = "Unknown"
 description = "Unknown"
-extensions = () # type: Tuple[str, ...]
+extensions = ()  # type: Tuple[str, ...]
 singleFile = False
 
 # key is option/argument name, value is instance of Option
-optionsProp = {} # type: Dict[str, Option]
+optionsProp = {}  # type: Dict[str, Option]
 
-depends = {}
+depends = {}  # type: Dict[str, str]
 supportsAlternates = False
-sortOnWrite = DEFAULT_NO
+sortOnWrite = DEFAULT_NO  # type: YesNoAlwaysNever
 sortKey = None
