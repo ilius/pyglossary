@@ -139,6 +139,9 @@ class NullObj(object):
 	def __setattr__(self, attr, value):
 		pass
 
+	def __setitem__(self, key, value):
+		pass
+
 	def __call__(self, *args, **kwargs):
 		pass
 
@@ -261,8 +264,7 @@ class UI(UIBase):
 		glos = self.glos = Glossary(ui=self)
 		if reverse:
 			signal.signal(signal.SIGINT, self.onSigInt)  # good place? FIXME
-			readOptions["direct"] = False
-			glos.setRawEntryCompress(False)
+			readOptions["direct"] = True
 			if not glos.read(
 				inputFilename,
 				format=inputFormat,

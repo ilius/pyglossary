@@ -1,5 +1,5 @@
 from .glossary_type import GlossaryType
-from .entry import Entry
+from .entry import Entry, BaseEntry
 
 import re
 
@@ -53,10 +53,15 @@ def reverseGlossary(
 
 	ui = glos.ui
 
+	entries = []
+	for entry in glos:
+		entries.append(entry)
+	log.info(f"loaded {len(entries)} entries into memory")
+
 	if words:
 		words = list(words)
 	else:
-		words = glos.takeOutputWords()
+		words = takeOutputWords(glos, entries)
 
 	wordCount = len(words)
 	log.info(
@@ -65,6 +70,7 @@ def reverseGlossary(
 	)
 	glos.progressInit("Reversing")
 	wcThreshold = wordCount // 200 + 1
+
 	with open(savePath, "w") as saveFile:
 		for wordI in range(wordCount):
 			word = words[wordI]
@@ -74,7 +80,7 @@ def reverseGlossary(
 			if wordI % saveStep == 0 and wordI > 0:
 				saveFile.flush()
 			result = searchWordInDef(
-				glos,
+				entries,
 				word,
 				includeDefs=includeDefs,
 				**kwargs
@@ -96,8 +102,26 @@ def reverseGlossary(
 	yield wordCount
 
 
-def searchWordInDef(
+def takeOutputWords(
 	glos: GlossaryType,
+	entryIter: Iterator[BaseEntry],
+	minWordLen: int = 3,
+) -> List[str]:
+	# fr"[\w]{{{minWordLen},}}"
+	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
+	words = set()
+	progressbar, glos._progressbar = glos._progressbar, False
+	for entry in entryIter:
+		words.update(re.findall(
+			wordPattern,
+			entry.getDefi(),
+		))
+	glos._progressbar = progressbar
+	return sorted(words)
+
+
+def searchWordInDef(
+	entryIter: Iterator[BaseEntry],
 	st: str,
 	matchWord: bool = True,
 	sepChars: str = ".,،",
@@ -114,8 +138,7 @@ def searchWordInDef(
 	)
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
 	outRel = []
-	for rawEntry in glos._data:
-		entry = Entry.fromRaw(glos, rawEntry)
+	for entry in entryIter:
 		words = entry.getWords()
 		defi = "\n".join(entry.getDefis())
 		if st not in defi:

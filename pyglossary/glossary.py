@@ -1253,21 +1253,6 @@ class Glossary(GlossaryType):
 
 	# ________________________________________________________________________#
 
-	def takeOutputWords(self, minWordLen: int = 3) -> List[str]:
-		# fr"[\w]{{{minWordLen},}}"
-		wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
-		words = set()
-		progressbar, self._progressbar = self._progressbar, False
-		for entry in self:
-			words.update(re.findall(
-				wordPattern,
-				entry.getDefi(),
-			))
-		self._progressbar = progressbar
-		return sorted(words)
-
-	# ________________________________________________________________________#
-
 	def progressInit(self, *args) -> None:
 		if self.ui:
 			self.ui.progressInit(*args)
@@ -1285,7 +1270,6 @@ class Glossary(GlossaryType):
 			self.ui.progressEnd()
 
 	# ________________________________________________________________________#
-
 
 	@classmethod
 	def init(cls):
