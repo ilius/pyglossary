@@ -23,6 +23,7 @@ import time
 import signal
 
 from pyglossary.glossary import *
+from pyglossary.reverse import reverseGlossary
 from .base import *
 from . import progressbar as pb
 
@@ -198,7 +199,7 @@ class UI(UIBase):
 
 		if not self._toPause:
 			log.info("Reversing glossary... (Press Ctrl+C to pause/stop)")
-		for wordI in self.glos.reverse(**reverseKwArgs):
+		for wordI in reverseGlossary(self.glos, **reverseKwArgs):
 			if self._toPause:
 				log.info(
 					"Reverse is paused."
