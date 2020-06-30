@@ -48,9 +48,6 @@ class Reader(TextGlossaryReader):
 		else:
 			return word
 
-	def loadInfo(self): # FIXME
-		pass
-
 	def nextPair(self):
 		if not self._file:
 			raise StopIteration
@@ -60,6 +57,11 @@ class Reader(TextGlossaryReader):
 			if not line:
 				raise StopIteration
 			line = line.rstrip("\n\r")  # FIXME
+			if line.startswith("###"):
+				parts = line.split(":")
+				key = parts[0].strip().lower()
+				value = ":".join(parts[1:]).strip()
+				return key, value
 			if line:
 				entryLines.append(line)
 				continue
