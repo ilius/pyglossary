@@ -20,7 +20,7 @@ class TextGlossaryReader(object):
 		self._filename = ""
 		self._encoding = None
 		self._file = None
-		self._hasInfo = True
+		self._hasInfo = hasInfo
 		self._leadingLinesCount = 0
 		self._pendingEntries = []
 		self._wordCount = None
