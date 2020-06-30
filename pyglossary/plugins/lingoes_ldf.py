@@ -44,7 +44,7 @@ class Reader(TextGlossaryReader):
 
 	def fixInfoWord(self, word):
 		if isinstance(word, str):
-			return word.lstrip("#")
+			return word.lstrip("#").lower()
 		else:
 			return word
 
@@ -59,7 +59,7 @@ class Reader(TextGlossaryReader):
 			line = line.rstrip("\n\r")  # FIXME
 			if line.startswith("###"):
 				parts = line.split(":")
-				key = parts[0].strip().lower()
+				key = parts[0].strip()
 				value = ":".join(parts[1:]).strip()
 				return key, value
 			if line:
