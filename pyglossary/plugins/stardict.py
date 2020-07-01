@@ -631,23 +631,28 @@ class Writer(object):
 			ifo.append(("sametypesequence", sametypesequence))
 		if synwordcount > 0:
 			ifo.append(("synwordcount", synwordcount))
+
+		desc = self._glos.getInfo("description")
+		copyright = self._glos.getInfo("copyright")
+		if copyright:
+			desc = f"{copyright}\n{desc}"
+		publisher = self._glos.getInfo("publisher")
+		if publisher:
+			desc = f"Publisher: {publisher}\n{desc}"
+
 		for key in infoKeys:
 			if key in (
 				"bookname",
-				"wordcount",
-				"idxfilesize",
-				"sametypesequence",
+				"description"
 			):
 				continue
 			value = self._glos.getInfo(key)
 			if value == "":
 				continue
-			if key == "description":
-				value = newlinesToBr(value)
-			else:
-				value = newlinesToSpace(value)
-
+			value = newlinesToSpace(value)
 			ifo.append((key, value))
+
+		ifo.append(("description", newlinesToBr(desc)))
 
 		ifoStr = "StarDict's dict ifo file\n"
 		for key, value in ifo:
