@@ -108,7 +108,7 @@ class Glossary(GlossaryType):
 		##
 		"license": "copyright",
 		##
-		"publisher": "author",
+		# do not map "publisher" to "author"
 		##
 		# are there alternatives to "creationTime"
 		# and "lastUpdated"?
