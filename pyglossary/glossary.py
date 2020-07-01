@@ -1135,6 +1135,7 @@ class Glossary(GlossaryType):
 			filename=filename,
 			rplList=(
 				("\\", "\\\\"),
+				("\r", ""),
 				("\n", "\\n"),
 				("\t", "\\t"),
 			),
