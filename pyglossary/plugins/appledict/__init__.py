@@ -187,7 +187,8 @@ def write(
 	if not isdir(dirname):
 		os.mkdir(dirname)
 
-	xdxf.xdxf_init()
+	xdxfReader = xdxf.Reader(glos)
+	xdxfReader.xdxf_init()
 
 	if cleanHTML:
 		if BeautifulSoup is None:
@@ -243,7 +244,7 @@ def write(
 
 			content_title = long_title
 			if entry.getDefiFormat() == "x":
-				defi = xdxf.xdxf_to_html(defi)
+				defi = xdxfReader.xdxf_to_html(defi)
 				content_title = None
 			content = format_clean_content(content_title, defi, BeautifulSoup)
 
