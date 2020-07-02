@@ -23,13 +23,16 @@
 from os import path
 
 from formats_common import *
+from pyglossary.xdxf_transform import xdxf_to_html_transformer
 
 enable = True
 format = "Xdxf"
 description = "XDXF"
 extensions = (".xdxf", ".xml")
 singleFile = True
-optionsProp = {}
+optionsProp = {
+	"html": BoolOption(),
+}
 depends = {
 	"lxml": "lxml",
 }
@@ -77,29 +80,15 @@ class Reader(object):
 		self._filename = ""
 		self._file = None
 		self._encoding = "utf-8"
-		self.xdxf_init()
+		self._xdxf_to_html = None
 
-	def xdxf_init(self):
-		"""
-		call this only once, before `xdxf_to_html`.
-		"""
-		try:
-			from lxml import etree as ET
-		except ModuleNotFoundError as e:
-			e.msg += ", run `sudo pip3 install lxml` to install"
-			raise e
-
-		xsl = path.join(path.dirname(__file__), "xdxf.xsl")
-		with open(xsl, "r") as f:
-			xslt_root_txt = f.read()
-
-		xslt_root = ET.XML(xslt_root_txt)
-		self._transform = ET.XSLT(xslt_root)
-
-	def open(self, filename: str):
+	def open(self, filename: str, html: bool = True):
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		from lxml import etree as ET
 		self._filename = filename
+		self._html = html
+		if html:
+			self._xdxf_to_html = xdxf_to_html_transformer()
 		context = ET.iterparse(
 			filename,
 			events=("end",),
@@ -137,13 +126,17 @@ class Reader(object):
 			defi = tostring(article, encoding=self._encoding)
 			# <ar>...</ar>
 			defi = defi[4:-5].decode(self._encoding).strip()
-			# TODO: add a flag to convert to html: self.xdxf_to_html(defi)
+			defiFormat = "x"
+			if self._xdxf_to_html:
+				defi = self._xdxf_to_html(defi)
+				defiFormat = "h"
 			words = [toStr(w) for w in self.titles(article)]
 			# log.info(f"defi={defi}, words={words}")
 			yield self._glos.newEntry(
 				words,
 				defi,
-				byteProgress=(self._file.tell(), self._fileSize)
+				defiFormat=defiFormat,
+				byteProgress=(self._file.tell(), self._fileSize),
 			)
 			# clean up preceding siblings to save memory
 			# this reduces memory usage from ~64 MB to ~30 MB
@@ -222,17 +215,3 @@ class Reader(object):
 						title = c.tail
 		return title.strip()
 
-	def xdxf_to_html(self, xdxf_text):
-		"""
-		make sure to call `xdxf_init()` first.
-
-		:param xdxf_text: xdxf formatted string
-		:return: html formatted string
-		"""
-		from lxml.etree import tostring
-		from io import StringIO
-		xdxf_txt = "<ar>" + xdxf_text + "</ar>"
-		f = StringIO(xdxf_txt)
-		doc = etree.parse(f)
-		result_tree = self._transform(doc)
-		return tostring(result_tree, encoding="utf-8")

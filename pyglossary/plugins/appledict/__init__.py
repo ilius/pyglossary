@@ -29,9 +29,8 @@ import shutil
 from typing import TextIO
 
 from pyglossary.plugins.formats_common import *
+from pyglossary.xdxf_transform import xdxf_to_html_transformer
 from ._dict import *
-
-import xdxf
 
 sys.setrecursionlimit(10000)
 
@@ -187,8 +186,7 @@ def write(
 	if not isdir(dirname):
 		os.mkdir(dirname)
 
-	xdxfReader = xdxf.Reader(glos)
-	xdxfReader.xdxf_init()
+	xdxf_to_html = xdxf_to_html_transformer()
 
 	if cleanHTML:
 		if BeautifulSoup is None:
@@ -244,7 +242,7 @@ def write(
 
 			content_title = long_title
 			if entry.getDefiFormat() == "x":
-				defi = xdxfReader.xdxf_to_html(defi)
+				defi = xdxf_to_html(defi)
 				content_title = None
 			content = format_clean_content(content_title, defi, BeautifulSoup)
 
