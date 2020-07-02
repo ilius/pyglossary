@@ -333,7 +333,7 @@ if args.inputFilename and readOptions:
 	if not inputFormat:
 		log.error("Could not detect format for input file %s" % args.inputFilename)
 		sys.exit(1)
-	readOptionsProp = Glossary.formatsOptionsProp[inputFormat]
+	readOptionsProp = Glossary.plugins[inputFormat].optionsProp
 	for optName, optValue in readOptions.items():
 		if optName not in Glossary.formatsReadOptions[inputFormat]:
 			log.error("Invalid option name %s for format %s" % (optName, inputFormat))
@@ -354,7 +354,7 @@ if args.outputFilename and writeOptions:
 	if not outputFormat:
 		log.error("Could not detect format for output file %s" % args.outputFilename)
 		sys.exit(1)
-	writeOptionsProp = Glossary.formatsOptionsProp[outputFormat]
+	writeOptionsProp = Glossary.plugins[outputFormat].optionsProp
 	for optName, optValue in writeOptions.items():
 		if optName not in Glossary.formatsWriteOptions[outputFormat]:
 			log.error("Invalid option name %s for format %s" % (optName, outputFormat))
