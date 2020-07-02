@@ -4,6 +4,7 @@ from formats_common import *
 from pyglossary.xml_utils import xml_escape
 from typing import List, Union, Callable
 from io import BytesIO
+import re
 
 enable = True
 format = "FreeDict"
@@ -140,6 +141,7 @@ class Reader(object):
 			log.warn("did not find copyright")
 			return
 		copyright = self.strip_tag_p(elems)
+		copyright = self.replace_ref(copyright)
 		self._glos.setInfo("copyright", copyright)
 		log.info(f"Copyright: {copyright!r}")
 
@@ -156,18 +158,36 @@ class Reader(object):
 			return
 		self._glos.setInfo("creationTime", elem.text)
 
+	def replace_ref(self, text: str) -> str:
+		text = self._ref_pattern.sub('<a href="\\1">\\2</a>', text)
+		return text
+
 	def set_description(self, header):
 		elems = []
 		for tag in ("sourceDesc", "projectDesc"):
 			elems += header.findall(f".//{tag}//p", self.ns)
 		desc = self.strip_tag_p(elems)
-		if desc:
-			self._glos.setInfo("description", desc)
-			log.info(
-				"------------ Description: ------------\n"
-				f"{desc}\n"
-				"--------------------------------------"
-			)
+		if not desc:
+			return
+
+		website_list = []
+		for match in self._website_pattern.findall(desc):
+			if not match[1]:
+				continue
+			website_list.append(match[1])
+		if website_list:
+			website = " | ".join(website_list)
+			self._glos.setInfo("website", website)
+			desc = self._website_pattern.sub("", desc).strip()
+			log.info(f"Website: {website}")
+
+		desc = self.replace_ref(desc)
+		self._glos.setInfo("description", desc)
+		log.info(
+			"------------ Description: ------------\n"
+			f"{desc}\n"
+			"--------------------------------------"
+		)
 
 	def set_metadata(self, header):
 		self.set_word_count(header)
@@ -182,6 +202,10 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._wordCount = 0
+		self._ref_pattern = re.compile('<ref target="(.*)">(.*)</ref>')
+		self._website_pattern = re.compile(
+			'Home: <(ref|ptr) target="(.*)">(.*)</\\1>',
+		)
 
 	def __len__(self) -> int:
 		return self._wordCount
