@@ -118,11 +118,7 @@ class Reader(object):
 			method="html",
 			pretty_print=True,
 		).decode("utf-8").strip()
-		prefix = '<p xmlns="http://www.tei-c.org/ns/1.0">'
-		if text.startswith(prefix) and text.endswith("</p>"):
-			text = text[len(prefix):-4].strip()
-		elif text.startswith("<p>") and text.endswith("</p>"):
-			text = text[3:-4].strip()
+		text = self._p_pattern.sub("\\2", text)
 		return text
 
 	def strip_tag_p(self, elems: List["lxml.etree.Element"]) -> str:
@@ -202,7 +198,13 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._wordCount = 0
-		self._ref_pattern = re.compile('<ref target="(.*)">(.*)</ref>')
+		self._p_pattern = re.compile(
+			'<p( [^<>]*?)?>(.*?)</p>',
+			re.DOTALL,
+		)
+		self._ref_pattern = re.compile(
+			'<ref target="(.*)">(.*)</ref>',
+		)
 		self._website_pattern = re.compile(
 			'Home: <(ref|ptr) target="(.*)">(.*)</\\1>',
 		)
