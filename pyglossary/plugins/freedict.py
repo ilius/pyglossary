@@ -134,6 +134,9 @@ class Reader(object):
 				lines.append(line)
 		return "\n".join(lines)
 
+	def set_info(self, key: str, value: str) -> None:
+		self._glos.setInfo(key, html.unescape(value))
+
 	def set_copyright(self, header):
 		elems = header.findall(".//availability//p", self.ns)
 		if not elems:
@@ -141,7 +144,7 @@ class Reader(object):
 			return
 		copyright = self.strip_tag_p(elems)
 		copyright = self.replace_ref(copyright)
-		self._glos.setInfo("copyright", copyright)
+		self.set_info("copyright", copyright)
 		log.info(f"Copyright: {copyright!r}")
 
 	def set_publisher(self, header):
@@ -149,13 +152,13 @@ class Reader(object):
 		if elem is None:
 			log.warn("did not find publisher (author)")
 			return
-		self._glos.setInfo("author", elem.text)
+		self.set_info("author", elem.text)
 
 	def set_publication_date(self, header):
 		elem = header.find(".//publicationStmt/date", self.ns)
 		if elem is None:
 			return
-		self._glos.setInfo("creationTime", elem.text)
+		self.set_info("creationTime", elem.text)
 
 	def replace_ref(self, text: str) -> str:
 		text = self._ref_pattern.sub('<a href="\\1">\\2</a>', text)
@@ -176,12 +179,12 @@ class Reader(object):
 			website_list.append(match[1])
 		if website_list:
 			website = " | ".join(website_list)
-			self._glos.setInfo("website", website)
+			self.set_info("website", website)
 			desc = self._website_pattern.sub("", desc).strip()
 			log.info(f"Website: {website}")
 
 		desc = self.replace_ref(desc)
-		self._glos.setInfo("description", desc)
+		self.set_info("description", desc)
 		log.info(
 			"------------ Description: ------------\n"
 			f"{desc}\n"
@@ -190,8 +193,8 @@ class Reader(object):
 
 	def set_metadata(self, header):
 		self.set_word_count(header)
-		self._glos.setInfo("name", header.find(".//title", self.ns).text)
-		self._glos.setInfo("edition", header.find(".//edition", self.ns).text)
+		self.set_info("name", header.find(".//title", self.ns).text)
+		self.set_info("edition", header.find(".//edition", self.ns).text)
 
 		self.set_copyright(header)
 		self.set_publisher(header)
