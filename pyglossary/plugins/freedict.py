@@ -5,6 +5,7 @@ from pyglossary.xml_utils import xml_escape
 from typing import List, Union, Callable
 from io import BytesIO
 import re
+import html
 
 enable = True
 format = "FreeDict"
@@ -92,7 +93,9 @@ class Reader(object):
 					self.process_sense,
 				)
 
-		return self._glos.newEntry(keywords, f.getvalue().decode("utf-8"))
+		defi = f.getvalue().decode("utf-8")
+		defi = html.unescape(defi)
+		return self._glos.newEntry(keywords, defi)
 
 	def set_word_count(self, header):
 		extent_elem = header.find(".//extent", self.ns)
