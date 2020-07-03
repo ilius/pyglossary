@@ -292,7 +292,7 @@ def write(
 				CFBundleDisplayName=glos.getInfo("name"),
 				CFBundleName=fileNameBase,
 				DCSDictionaryCopyright=copyright,
-				DCSDictionaryManufacturerName=glos.getInfo("author"),
+				DCSDictionaryManufacturerName=glos.getAuthor(),
 				DCSDictionaryXSL=basename(xsl) if xsl else "",
 				DCSDictionaryDefaultPrefs=format_default_prefs(defaultPrefs),
 				DCSDictionaryPrefsHTML=basename(prefsHTML) if prefsHTML else "",

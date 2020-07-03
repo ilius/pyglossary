@@ -72,7 +72,7 @@ def write(glos: GlossaryType, filename: str) -> bool:
 	# here read info from Glossaey object
 	name = glos.getInfo("name")
 	desc = glos.getInfo("description")
-	author = glos.getInfo("author")
+	author = glos.getAuthor()
 	copyright = glos.getInfo("copyright")
 	# if an info key doesn't exist, getInfo returns empty string
 	# now write info to the output file (depending on your output format)

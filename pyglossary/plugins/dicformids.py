@@ -151,7 +151,7 @@ class Writer(object):
 		), "w") as fp:
 			fp.write(PROP_TEMPLATE.format(
 				name=glos.getInfo("name"),
-				author=glos.getInfo("author"),
+				author=glos.getAuthor(),
 				indexFileMaxSize=self.indexFileMaxSize,
 				wordCount=self.wordCount,
 				directoryPostfix=self.directoryPostfix,

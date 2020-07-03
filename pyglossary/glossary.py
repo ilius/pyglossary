@@ -573,6 +573,13 @@ class Glossary(GlossaryType):
 
 		return extra
 
+	def getAuthor(self) -> str:
+		for key in ("author", "publisher"):
+			value = self._info.get(key, "")
+			if value:
+				return value
+		return ""
+
 	def getPref(self, name: str, default: Optional[str]) -> Optional[str]:
 		if self.ui:
 			return self.ui.pref.get(name, default)

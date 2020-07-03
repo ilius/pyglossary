@@ -58,7 +58,7 @@ def write(
 	if writeInfo:
 		head += "\n".join([
 			"### Glossary title:" + g.getInfo("name"),
-			"### Author:" + g.getInfo("author"),
+			"### Author:" + g.getAuthor(),
 			"### Description:" + g.getInfo("description"),
 			"### Source language:" + g.getInfo("sourceLang"),
 			"### Source alphabet:" + encoding,

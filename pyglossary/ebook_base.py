@@ -315,7 +315,7 @@ class EbookWriter(object):
 			sourceLang=self.glos.getInfo("sourceLang"),
 			targetLang=self.glos.getInfo("sourceLang"),
 			title=self.glos.getInfo("name"),
-			creator=self.glos.getInfo("author"),
+			creator=self.glos.getAuthor(),
 			copyright=self.glos.getInfo("copyright"),
 			creationDate=creationDate,
 			cover=cover,
