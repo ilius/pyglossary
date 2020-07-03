@@ -150,9 +150,9 @@ class Reader(object):
 	def set_publisher(self, header):
 		elem = header.find(".//publisher", self.ns)
 		if elem is None:
-			log.warn("did not find publisher (author)")
+			log.warn("did not find publisher")
 			return
-		self.set_info("author", elem.text)
+		self.set_info("publisher", elem.text)
 
 	def set_publication_date(self, header):
 		elem = header.find(".//publicationStmt/date", self.ns)
@@ -262,7 +262,9 @@ def write(
 ):
 	fp = open(filename, "w", encoding="utf-8")
 	title = glos.getInfo("name")
-	publisher = glos.getInfo("author")
+	author = glos.getInfo("author")
+	# didn't find any tag for author in existing glossaries
+	publisher = glos.getInfo("publisher")
 	copyright = glos.getInfo("copyright")
 	creationTime = glos.getInfo("creationTime")
 
@@ -278,6 +280,7 @@ def write(
 	<respStmt><resp>converted with</resp><name>PyGlossary</name></respStmt>
 </titleStmt>
 <publicationStmt>
+	<author>{author}</author>
 	<publisher>{publisher}</publisher>
 	<availability><p>{copyright}</p></availability>
 	<date>{creationTime}</date>
