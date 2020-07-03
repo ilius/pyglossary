@@ -20,6 +20,8 @@
 from formats_common import *
 
 import os
+import sys
+import gc
 from os.path import splitext, isfile, isdir, extsep, basename, dirname
 
 enable = True
@@ -45,6 +47,10 @@ class Reader(object):
 		self._substyle = True
 		self._mdx = None
 		self._mdd = []
+		self._wordCount = 0
+
+		# dict of mainWord -> newline-separated altenatives
+		self._linksDict = {}  # type: Dict[str, str]
 
 	def open(self, filename, encoding="", substyle=True):
 		from pyglossary.plugin_lib.readmdict import MDX, MDD
@@ -78,30 +84,67 @@ class Reader(object):
 		if desc:
 			self._glos.setInfo("description", desc)
 
+		self.loadLinks()
+
+	def loadLinks(self):
+		from pyglossary.plugin_lib.readmdict import MDX
+		log.info("extracting links...")
+		linksDict = {}
+		word = ""
+		wordCount = 0
+		for b_word, b_defi in self._mdx.items():
+			word = b_word.decode("utf-8")
+			defi = b_defi.decode("utf-8").strip()
+			if defi.startswith("@@@LINK="):
+				if not word:
+					log.warn(f"unexpected defi: {defi}")
+					continue
+				mainWord = defi[8:]
+				if mainWord in linksDict:
+					linksDict[mainWord] += "\n" + word
+				else:
+					linksDict[mainWord] = word
+				continue
+			wordCount += 1
+
+		log.info(f"extracting links done, sizeof(linksDict)={sys.getsizeof(linksDict)}")
+		log.info(f"wordCount = {wordCount}")
+		self._linksDict = linksDict
+		self._wordCount = wordCount
+		self._mdx = MDX(self._filename, self._encoding, self._substyle)
+
 	def __iter__(self):
 		if self._mdx is None:
 			log.error("trying to iterate on a closed MDX file")
-		else:
-			for word, defi in self._mdx.items():
-				word = toStr(word)
-				defi = toStr(defi)
-				yield self._glos.newEntry(word, defi)
-			self._mdx = None
+			return
+
+		glos = self._glos
+		linksDict = self._linksDict
+		for b_word, b_defi in self._mdx.items():
+			word = b_word.decode("utf-8")
+			defi = b_defi.decode("utf-8").strip()
+			if defi.startswith("@@@LINK="):
+				continue
+			words = word
+			altsStr = linksDict.get(word, "")
+			if altsStr:
+				words = [word] + altsStr.split("\n")
+			yield glos.newEntry(words, defi)
+
+		self._mdx = None
+		del linksDict
+		self._linksDict = {}
+		gc.collect()
 
 		for mdd in self._mdd:
 			for b_fname, b_data in mdd.items():
 				fname = toStr(b_fname)
 				fname = fname.replace("\\", os.sep).lstrip(os.sep)
-				yield self._glos.newDataEntry(fname, b_data)
+				yield glos.newDataEntry(fname, b_data)
 		self._mdd = []
 
 	def __len__(self):
-		if self._mdx is None:
-			log.error(
-				"OctopusMdict: called len(reader) while reader is not open"
-			)
-			return 0
-		return len(self._mdx)
+		return self._wordCount
 
 	def close(self):
 		self.clear()
