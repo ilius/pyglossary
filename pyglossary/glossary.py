@@ -61,6 +61,7 @@ from .core import VERSION, userPluginsDir
 from .entry_base import BaseEntry
 from .entry import Entry, DataEntry
 from .plugin_prop import PluginProp
+from .langs import LandDict
 from .sort_stream import hsortStreamList
 
 from .text_utils import (
@@ -72,6 +73,8 @@ from .glossary_type import GlossaryType
 
 homePage = "https://github.com/ilius/pyglossary"
 log = logging.getLogger("root")
+
+landDict = LandDict()
 
 file = io.BufferedReader
 
