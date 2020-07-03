@@ -138,8 +138,9 @@ def href_sub(x: Pattern) -> str:
 	href = x.groups()[1]
 	if href.startswith("http"):
 		return x.group()
-	if href.startswith("bword://"):
-		href = href[len("bword://"):]
+
+	href = cleanup_link_target(href)
+
 	return "href=" + quoteattr(
 		"x-dictionary:d:" + unescape(
 			href,
@@ -160,7 +161,196 @@ def remove_style(tag: dict, line: str) -> None:
 		del tag["style"]
 
 
-def format_clean_content(
+def fix_sound_link(href: str, tag: dict, BeautifulSoup: Any):
+	src = href[len("sound://"):]
+	if "data-file" in tag.attrs:  # for webster
+		del tag["href"]
+		audio = BeautifulSoup.Tag(name="audio")
+		audio["id"] = tag["data-file"]
+		audio["src"] = f"{src}"
+		tag["onmousedown"] = "document.getElementById(" \
+			f'"{tag["data-file"]}").play(); return false;'
+		tag.insert_after(audio)
+		return
+
+	if "class" in tag.attrs:
+		if "fayin" in tag["class"]:  # for oxford8
+			del tag["href"]
+			audio = BeautifulSoup.Tag(name="audio")
+			audio["src"] = f"{src}"
+			tag["onmousedown"] = f"this.lastChild.play(); return false;"
+			tag.append(audio)
+		return
+
+	for ch in tag.children:
+		if ch.find_all("a"):
+			return
+
+	audio = BeautifulSoup.Tag(name="audio")
+	audio["src"] = f"{src}"
+	tag["onmousedown"] = f"this.lastChild.play(); return false;"
+	tag.append(audio)
+	del tag["href"]
+
+
+def link_is_url(href: str) -> bool:
+	for prefix in (
+		"http:",
+		"https:",
+		"addexample:",
+		"addid:",
+		"addpv:",
+		"help:",
+		"helpg:",
+		"helpp:",
+		"helpr:",
+		"helpxr:",
+		"xi:",
+		"xid:",
+		"xp:",
+		"sd:",
+		"#",
+	):
+		if href.startswith(prefix):
+			return True
+	return False
+
+
+def prepare_content_without_soup(
+	title: Optional[str],
+	body: str,
+) -> str:
+	# somewhat analogue to what BeautifulSoup suppose to do
+	body = re_em0_9.sub(em0_9_sub, body)
+	body = re_em0_9_ex.sub(em0_9_ex_sub, body)
+	body = re_href.sub(href_sub, body)
+
+	body = body \
+		.replace(
+			'<i style="color:green">',
+			'<i class="c">',
+		) \
+		.replace(
+			'<i class="p" style="color:green">',
+			'<i class="p">',
+		) \
+		.replace(
+			'<span class="ex" style="color:steelblue">',
+			'<span class="ex">',
+		) \
+		.replace(
+			'<span class="sec ex" style="color:steelblue">',
+			'<span class="sec ex">',
+		) \
+		.replace("<u>", '<span class="u">').replace("</u>", "</span>") \
+		.replace("<s>", "<del>").replace("</s>", "</del>")
+
+	# nice header to display
+	content = f"<h1>{title}</h1>{body}" if title else body
+	content = close_tag.sub(r"<\g<1> />", content)
+	content = img_tag.sub(r"<img \g<1>/>", content)
+	return content
+
+
+def prepare_content_with_soup(
+	title: Optional[str],
+	body: str,
+	BeautifulSoup: Any,
+) -> str:
+	soup = BeautifulSoup.BeautifulSoup(body, features="lxml")
+	# difference between "lxml" and "html.parser"
+	if soup.body:
+		soup = soup.body
+
+	for tag in soup(class_="sec"):
+		tag["class"].remove("sec")
+		if not tag["class"]:
+			del tag["class"]
+		tag["d:priority"] = "2"
+	for tag in soup(lambda x: "color:steelblue" in x.get("style", "")):
+		remove_style(tag, "color:steelblue")
+		if "ex" not in tag.get("class", []):
+			tag["class"] = tag.get("class", []) + ["ex"]
+	for tag in soup(is_green):
+		remove_style(tag, "color:green")
+		if "p" not in tag.get("class", ""):
+			tag["class"] = tag.get("class", []) + ["c"]
+	for tag in soup(True):
+		if "style" in tag.attrs:
+			m = margin_re.search(tag["style"])
+			if m:
+				remove_style(tag, m.group(0))
+				tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
+
+	for tag in soup(lambda x: "xhtml:" in x.name):
+		old_tag_name = tag.name
+		tag.name = old_tag_name[len("xhtml:"):]
+		if tag.string:
+			tag.string = f"{tag.string} "
+
+	for tag in soup.select("[href]"):
+		href = tag["href"]
+		href = cleanup_link_target(href)
+
+		if href.startswith("sound:"):
+			fix_sound_link(href, tag, BeautifulSoup)
+
+		elif href.startswith("phonetics") or href.startswith("help:phonetics"):
+			# for oxford9
+			log.debug(f"phonetics: tag={tag}")
+			if tag.audio and "name" in tag.audio.attrs:
+				tag["onmousedown"] = f"this.lastChild.play(); return false;"
+				src_name = tag.audio["name"].replace("#", "_")
+				tag.audio["src"] = f"{src_name}.mp3"
+
+		elif not link_is_url(href):
+			tag["href"] = f"x-dictionary:d:{href}"
+
+	for thumb in soup.find_all("div", "pic_thumb"):
+		thumb["onclick"] = 'this.setAttribute("style", "display:none"); ' \
+			'this.nextElementSibling.setAttribute("style", "display:block")'
+
+	for pic in soup.find_all("div", "big_pic"):
+		pic["onclick"] = 'this.setAttribute("style", "display:none"), ' \
+			'this.previousElementSibling.setAttribute("style", "display:block")'
+
+	# to unfold(expand) and fold(collapse) blocks
+	for pos in soup.find_all("pos", onclick="toggle_infl(this)"):
+		# TODO: simplify this!
+		pos["onclick"] = (
+			r'var e = this.parentElement.parentElement.parentElement'
+			r'.querySelector("res-g vp-gs"); style = window.'
+			r'getComputedStyle(e), display = style.getPropertyValue'
+			r'("display"), "none" === e.style.display || "none" === display'
+			r' ? e.style.display = "block" : e.style.display = "none", '
+			r'this.className.match(/(?:^|\s)Clicked(?!\S)/) ? this.'
+			r'className = this.className.replace('
+			r'/(?:^|\s)Clicked(?!\S)/g, "") : this.setAttribute('
+			r'"class", "Clicked")'
+		)
+
+	for tag in soup.select("[src]"):
+		src = tag["src"]
+		if src.startswith("/"):
+			tag["src"] = src[1:]
+	for tag in soup("u"):
+		tag.name = "span"
+		tag["class"] = tag.get("class", []) + ["u"]
+	for tag in soup("s"):
+		tag.name = "del"
+
+	if title and "<h" not in body:
+		h1 = BeautifulSoup.Tag(name="h1")
+		h1.string = title
+		soup.insert(0, h1)
+
+	# hence the name BeautifulSoup
+	# soup.insert(0,head)
+	content = toStr(soup.encode_contents())
+	return content
+
+
+def prepare_content(
 	title: Optional[str],
 	body: str,
 	BeautifulSoup: Any,
@@ -180,78 +370,25 @@ def format_clean_content(
 
 	# xhtml is strict
 	if BeautifulSoup:
-		soup = BeautifulSoup.BeautifulSoup(body, features="lxml")
-		# difference between "lxml" and "html.parser"
-		if soup.body:
-			soup = soup.body
-
-		for tag in soup(class_="sec"):
-			tag["class"].remove("sec")
-			if not tag["class"]:
-				del tag["class"]
-			tag["d:priority"] = "2"
-		for tag in soup(lambda x: "color:steelblue" in x.get("style", "")):
-			remove_style(tag, "color:steelblue")
-			if "ex" not in tag.get("class", []):
-				tag["class"] = tag.get("class", []) + ["ex"]
-		for tag in soup(is_green):
-			remove_style(tag, "color:green")
-			if "p" not in tag.get("class", ""):
-				tag["class"] = tag.get("class", []) + ["c"]
-		for tag in soup(True):
-			if "style" in tag.attrs:
-				m = margin_re.search(tag["style"])
-				if m:
-					remove_style(tag, m.group(0))
-					tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
-		for tag in soup.select("[href]"):
-			href = tag["href"]
-			if href.startswith("bword://"):
-				href = href[len("bword://"):]
-			if not (href.startswith("http:") or href.startswith("https:")):
-				tag["href"] = f"x-dictionary:d:{href}"
-		for tag in soup("u"):
-			tag.name = "span"
-			tag["class"] = tag.get("class", []) + ["u"]
-		for tag in soup("s"):
-			tag.name = "del"
-
-		if title:
-			h1 = BeautifulSoup.Tag(name="h1")
-			h1.string = title
-			soup.insert(0, h1)
-		# hence the name BeautifulSoup
-		content = toStr(soup.encode_contents())
+		content = prepare_content_with_soup(title, body, BeautifulSoup)
 	else:
-		# somewhat analogue to what BeautifulSoup suppose to do
-		body = re_em0_9.sub(em0_9_sub, body)
-		body = re_em0_9_ex.sub(em0_9_ex_sub, body)
-		body = re_href.sub(href_sub, body)
+		content = prepare_content_without_soup(title, body)
 
-		body = body \
-			.replace(
-				'<i style="color:green">',
-				'<i class="c">',
-			) \
-			.replace(
-				'<i class="p" style="color:green">',
-				'<i class="p">',
-			) \
-			.replace(
-				'<span class="ex" style="color:steelblue">',
-				'<span class="ex">',
-			) \
-			.replace(
-				'<span class="sec ex" style="color:steelblue">',
-				'<span class="sec ex">',
-			) \
-			.replace("<u>", '<span class="u">').replace("</u>", "</span>") \
-			.replace("<s>", "<del>").replace("</s>", "</del>")
-
-		# nice header to display
-		content = f"<h1>{title}</h1>{body}" if title else body
-		content = close_tag.sub(r"<\g<1> />", content)
-		content = img_tag.sub(r"<img \g<1>/>", content)
 	content = content.replace("&nbsp;", "&#160;")
 	content = nonprintable.sub("", content)
 	return content
+
+
+def cleanup_link_target(href):
+	if href.startswith("bword://"):
+		href = href[len("bword://"):]
+
+	if href.startswith("entry://"):
+		href = href[len("entry://"):]
+
+	xhtml_ns = ["d", "x"]
+	for n in xhtml_ns:
+		if href.startswith(f"{n}:"):
+			href = href[len(n) + 1:]
+
+	return href
