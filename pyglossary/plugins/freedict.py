@@ -269,10 +269,7 @@ def write(
 	creationTime = glos.getInfo("creationTime")
 
 	fp.write(f"""<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE TEI.2 PUBLIC "-//TEI P3//DTD Main Document Type//EN"
-"/usr/share/sgml/tei-3/tei2.dtd" [
-<!ENTITY %% TEI.dictionaries "INCLUDE" > ]>
-<tei.2>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
 <teiHeader>
 <fileDesc>
 <titleStmt>
@@ -301,5 +298,5 @@ def write(
 <form><orth>{word}</orth></form>
 <trans><tr>{defi}</tr></trans>
 </entry>""")
-	fp.write("</body></text></tei.2>")
+	fp.write("</body></text></TEI>")
 	fp.close()
