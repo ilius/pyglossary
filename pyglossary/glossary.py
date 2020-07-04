@@ -345,8 +345,8 @@ class Glossary(GlossaryType):
 		"""
 		self.ui = ui
 
-	def setRawEntryCompress(self, enable: bool) -> bool:
-		self._rawEntryCompress = enable
+	# def setRawEntryCompress(self, enable: bool) -> bool:
+	# 	self._rawEntryCompress = enable
 
 	def updateEntryFilters(self) -> None:
 		from . import entry_filters as ef
