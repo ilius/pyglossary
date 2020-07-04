@@ -621,9 +621,18 @@ class Writer(object):
 		"""
 		Build .ifo file
 		"""
+		glos = self._glos
+		bookname = newlinesToSpace(glos.getInfo("name"))
+
+		sourceLang = glos.sourceLang
+		targetLang = glos.targetLang
+		if sourceLang and targetLang:
+			bookname = f"{bookname} ({sourceLang.code}-{targetLang.code})"
+			log.info(f"bookname: {bookname}")
+
 		ifo = [
 			("version", "3.0.0"),
-			("bookname", newlinesToSpace(self._glos.getInfo("name"))),
+			("bookname", bookname),
 			("wordcount", wordCount),
 			("idxfilesize", indexFileSize),
 		]
@@ -632,11 +641,11 @@ class Writer(object):
 		if synwordcount > 0:
 			ifo.append(("synwordcount", synwordcount))
 
-		desc = self._glos.getInfo("description")
-		copyright = self._glos.getInfo("copyright")
+		desc = glos.getInfo("description")
+		copyright = glos.getInfo("copyright")
 		if copyright:
 			desc = f"{copyright}\n{desc}"
-		publisher = self._glos.getInfo("publisher")
+		publisher = glos.getInfo("publisher")
 		if publisher:
 			desc = f"Publisher: {publisher}\n{desc}"
 
@@ -646,7 +655,7 @@ class Writer(object):
 				"description"
 			):
 				continue
-			value = self._glos.getInfo(key)
+			value = glos.getInfo(key)
 			if value == "":
 				continue
 			value = newlinesToSpace(value)
