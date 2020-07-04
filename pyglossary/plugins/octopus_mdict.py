@@ -48,6 +48,7 @@ class Reader(object):
 		self._mdx = None
 		self._mdd = []
 		self._wordCount = 0
+		self._dataEntryCount = 0
 
 		# dict of mainWord -> newline-separated altenatives
 		self._linksDict = {}  # type: Dict[str, str]
@@ -68,7 +69,12 @@ class Reader(object):
 		while isfile(f"{mddBase}{mddN}.mdd"):
 			self._mdd.append(MDD(f"{mddBase}{mddN}.mdd"))
 			mddN += 1
-		log.info(f"Found {len(self._mdd)} mdd files")
+
+		dataEntryCount = 0
+		for mdd in self._mdd:
+			dataEntryCount += len(mdd)
+		self._dataEntryCount = dataEntryCount
+		log.info(f"Found {len(self._mdd)} mdd files with {dataEntryCount} entries")
 
 		log.debug("mdx.header = " + pformat(self._mdx.header))
 		# for key, value in self._mdx.header.items():
@@ -107,7 +113,10 @@ class Reader(object):
 				continue
 			wordCount += 1
 
-		log.info(f"extracting links done, sizeof(linksDict)={sys.getsizeof(linksDict)}")
+		log.info(
+			"extracting links done, "
+			f"sizeof(linksDict)={sys.getsizeof(linksDict)}"
+		)
 		log.info(f"wordCount = {wordCount}")
 		self._linksDict = linksDict
 		self._wordCount = wordCount
@@ -144,7 +153,7 @@ class Reader(object):
 		self._mdd = []
 
 	def __len__(self):
-		return self._wordCount
+		return self._wordCount + self._dataEntryCount
 
 	def close(self):
 		self.clear()
