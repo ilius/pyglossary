@@ -32,13 +32,9 @@ class Lang(object):
 		return self._names[0]
 
 
-class LandDict(dict):
-	def __init__(self):
-		self._loaded = False
-
+class LangDict(dict):
 	def load(self):
-		print("LandDict: loading")
-		if self._loaded:
+		if len(self) > 0:
 			return
 		filename = join(dataDir, "pyglossary", "langs", "list.csv")
 		with open(filename, "r", encoding="utf-8") as _file:
@@ -55,7 +51,8 @@ class LandDict(dict):
 					self[key] = lang
 				for key in lang.names:
 					self[key] = lang
-		print(f"LandDict: loaded, {len(self)} keys")
+					self[key.lower()] = lang
+		print(f"LangDict: loaded, {len(self)} keys")
 
 	def __getitem__(self, key: str) -> Optional[Lang]:
 		self.load()
