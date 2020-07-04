@@ -31,6 +31,10 @@ class Lang(object):
 	def name(self):
 		return self._names[0]
 
+	@property
+	def code(self):
+		return self._codes[0]
+
 
 class LangDict(dict):
 	def load(self):
