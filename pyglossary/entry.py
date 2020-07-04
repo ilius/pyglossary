@@ -118,10 +118,13 @@ class DataEntry(BaseEntry):
 		pass
 
 	def getRaw(self, glos: "GlossaryType") -> RawEntryType:
-		return compress(dumps((
-			self._fname,
-			"DATA",
-		)))
+		tpl = (
+			self._fname.encode("utf-8"),
+			b"DATA",
+		)
+		if glos._rawEntryCompress:
+			return compress(dumps(tpl), level=9)
+		return tpl
 
 
 class Entry(BaseEntry):
