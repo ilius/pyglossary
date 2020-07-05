@@ -627,7 +627,9 @@ class Writer(object):
 		sourceLang = glos.sourceLang
 		targetLang = glos.targetLang
 		if sourceLang and targetLang:
-			bookname = f"{bookname} ({sourceLang.code}-{targetLang.code})"
+			langs = f"{sourceLang.code}-{targetLang.code}"
+			if langs not in bookname.lower():
+				bookname = f"{bookname} ({langs})"
 			log.info(f"bookname: {bookname}")
 
 		ifo = [
