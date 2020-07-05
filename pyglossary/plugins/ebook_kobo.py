@@ -97,6 +97,10 @@ class Writer:
 		wo = word[:2].strip().lower()
 		if not wo:
 			return "11"
+		if wo[0] == "\x00":
+			return "11"
+		if len(wo) > 1 and wo[1] == "\x00":
+			wo = wo[:1]
 		if is_cyrillic_char(wo[0]):
 			return wo
 		# if either of the first 2 chars are not unicode letters, return "11"
