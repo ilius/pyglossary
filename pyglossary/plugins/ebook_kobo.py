@@ -23,7 +23,6 @@
 # SOFTWARE.
 
 from formats_common import *
-from pyglossary.ebook_base import get_prefix
 from itertools import groupby
 from pathlib import Path
 
@@ -42,6 +41,68 @@ optionsProp = {
 }
 
 
+"""
+FIXME:
+Kobo will only look in the file matching the word’s prefix, so if a
+variant has a different prefix, it must be duplicated into each matching file
+(note that duplicate words aren’t an issue).
+https://pgaskin.net/dictutil/dicthtml/prefixes.html
+"""
+
+
+def get_prefix_kobo(word: str) -> str:
+	if not word:
+		return "11"
+	wo = word[:2].strip().lower()
+	if not wo:
+		return "11"
+	if is_cyrillic_char(wo[0]):
+		return wo
+	wo = wo.ljust(2, "a")
+	return wo
+
+
+def get_prefix_kobo_entry(entry: "Entry") -> str:
+	return get_prefix_kobo(entry.getWord())
+
+
+def sortKey(b_word: bytes) -> Any:
+	word = b_word.decode("utf-8")
+	return (
+		get_prefix_kobo(word),
+		word,
+	)
+
+
+def is_cyrillic_char(c: str) -> bool:
+	# U+0400 – U+04FF: Cyrillic
+	# U+0500 – U+052F: Cyrillic Supplement
+	if "\u0400" <= c <= "\u052F":
+		return True
+
+	# U+2DE0 – U+2DFF: Cyrillic Extended-A
+	if "\u2DE0" <= c <= "\u2DFF":
+		return True
+
+	# U+A640 – U+A69F: Cyrillic Extended-B
+	if "\uA640" <= c <= "\uA69F":
+		return True
+
+	# U+1C80 – U+1C8F: Cyrillic Extended-C
+	if "\u1C80" <= c <= "\u1C8F":
+		return True
+
+	# U+1D2B, U+1D78: Phonetic Extensions:
+	if c in ("\u1D2B", "\u1D78"):
+		return True
+
+	# U+FE2E – U+FE2F: Combining Half Marks
+	if "\uFE2E" <= c <= "\uFE2F":
+		return True
+
+	return False
+
+
 def fixFilename(fname: str) -> str:
 	return Path(fname.replace("/", "2F").replace("\\", "5C")).name
 
@@ -58,13 +119,10 @@ class Writer:
 		import gzip
 		words = []
 
-		self._glos.sortWords()
+		self._glos.sortWords(key=sortKey)
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
 			self._glos,
-			lambda tmpEntry: get_prefix(
-				tmpEntry.getWord(),
-				group_by_prefix_length,
-			),
+			get_prefix_kobo_entry,
 		)):
 			group_fname = fixFilename(group_prefix)
 			htmlContents = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
