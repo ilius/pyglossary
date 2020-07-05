@@ -25,6 +25,7 @@
 from formats_common import *
 from itertools import groupby
 from pathlib import Path
+import unicodedata
 
 enable = True
 format = "Kobo"
@@ -98,6 +99,10 @@ class Writer:
 			return "11"
 		if is_cyrillic_char(wo[0]):
 			return wo
+		# if either of the first 2 chars are letters, return "11"
+		for c in wo:
+			if not unicodedata.category(c).startswith("L"):
+				return "11"
 		wo = wo.ljust(2, "a")
 		return wo
 

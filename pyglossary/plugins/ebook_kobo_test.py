@@ -23,7 +23,6 @@ class GetPrefixTest(unittest.TestCase):
 	def test(self):
 		# test cases are copied from
 		# https://pgaskin.net/dictutil/dicthtml/prefixes.html
-		# two cases (that are commented) do not match the explained algorithm
 		self.case("test", "te")
 		self.case("a", "aa")
 		self.case("Èe", "èe")
@@ -34,13 +33,13 @@ class GetPrefixTest(unittest.TestCase):
 		self.case("", "11")
 		self.case(" ", "11")
 		self.case(" x", "xa")
-		# self.case(" 123", "11")  # WTF?
+		self.case(" 123", "11")
 		self.case("x 23", "xa")
 		self.case("д ", "д")
 		self.case("дaд", "дa")
 		self.case("未未", "未未")
 		self.case("未", "未a")
-		# self.case(" 未", "11")  # WTF?
+		# self.case(" 未", "11")  # WTF? same word as below, different prefix
 		self.case(" 未", "未a")
 
 if __name__ == "__main__":
