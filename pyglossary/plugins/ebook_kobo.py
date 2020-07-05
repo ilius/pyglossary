@@ -68,15 +68,9 @@ def is_cyrillic_char(c: str) -> bool:
 	if "\u1C80" <= c <= "\u1C8F":
 		return True
 
-	# U+1D2B, U+1D78: Phonetic Extensions:
-	if c in ("\u1D2B", "\u1D78"):
-		return True
-
-	# U+FE2E – U+FE2F: Combining Half Marks
-	if "\uFE2E" <= c <= "\uFE2F":
-		return True
-
-	return False
+	# U+FE2E, U+FE2F: Combining Half Marks
+	# U+1D2B, U+1D78: Phonetic Extensions
+	return c in ("\uFE2E", "\uFE2F", "\u1D2B", "\u1D78")
 
 
 def fixFilename(fname: str) -> str:
