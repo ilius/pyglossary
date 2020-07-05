@@ -9,13 +9,14 @@ rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
 
 from pyglossary.plugins.ebook_kobo import (
-	get_prefix_kobo,
+	Writer,
 )
 
 class GetPrefixTest(unittest.TestCase):
 	def case(self, word, prefix):
+		w = Writer(None)
 		self.assertEqual(
-			get_prefix_kobo(word),
+			w.get_prefix(word),
 			prefix,
 		)
 

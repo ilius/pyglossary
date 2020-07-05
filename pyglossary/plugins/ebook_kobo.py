@@ -33,7 +33,6 @@ extensions = (".kobo",)
 sortOnWrite = ALWAYS
 
 optionsProp = {
-	"group_by_prefix_length": IntOption(),
 	# "group_by_prefix_merge_min_size": IntOption(),
 	# "group_by_prefix_merge_across_first": BoolOption(),
 	"keep": BoolOption(),
@@ -48,30 +47,6 @@ variant has a different prefix, it must be duplicated into each matching file
 (note that duplicate words aren’t an issue).
 https://pgaskin.net/dictutil/dicthtml/prefixes.html
 """
-
-
-def get_prefix_kobo(word: str) -> str:
-	if not word:
-		return "11"
-	wo = word[:2].strip().lower()
-	if not wo:
-		return "11"
-	if is_cyrillic_char(wo[0]):
-		return wo
-	wo = wo.ljust(2, "a")
-	return wo
-
-
-def get_prefix_kobo_entry(entry: "Entry") -> str:
-	return get_prefix_kobo(entry.getWord())
-
-
-def sortKey(b_word: bytes) -> Any:
-	word = b_word.decode("utf-8")
-	return (
-		get_prefix_kobo(word),
-		word,
-	)
 
 
 def is_cyrillic_char(c: str) -> bool:
@@ -115,14 +90,32 @@ class Writer:
 	def __init__(self, glos, **kwargs):
 		self._glos = glos
 
-	def write_groups(self, group_by_prefix_length):
+	def get_prefix(self, word: str) -> str:
+		if not word:
+			return "11"
+		wo = word[:2].strip().lower()
+		if not wo:
+			return "11"
+		if is_cyrillic_char(wo[0]):
+			return wo
+		wo = wo.ljust(2, "a")
+		return wo
+
+	def sort_key(self, b_word: bytes) -> Any:
+		word = b_word.decode("utf-8")
+		return (
+			self.get_prefix(word),
+			word,
+		)
+
+	def write_groups(self):
 		import gzip
 		words = []
 
-		self._glos.sortWords(key=sortKey)
+		self._glos.sortWords(key=self.sort_key)
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
 			self._glos,
-			get_prefix_kobo_entry,
+			lambda entry: self.get_prefix(entry.getWord())
 		)):
 			group_fname = fixFilename(group_prefix)
 			htmlContents = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
@@ -143,7 +136,6 @@ class Writer:
 	def write(
 		self,
 		filename,
-		group_by_prefix_length=2,
 	):
 		try:
 			import marisa_trie
@@ -152,6 +144,6 @@ class Writer:
 			raise e
 
 		with indir(filename, create=True):
-			words = self.write_groups(group_by_prefix_length)
+			words = self.write_groups()
 			trie = marisa_trie.Trie(words)
 			trie.save(self.WORDS_FILE_NAME)
