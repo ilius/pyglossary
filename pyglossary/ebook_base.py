@@ -29,6 +29,7 @@ import zipfile
 import tempfile
 from datetime import datetime
 import shutil
+from typing import Any
 
 from pyglossary.text_utils import toStr, toBytes
 from pyglossary.os_utils import indir
@@ -36,25 +37,6 @@ from pyglossary.os_utils import indir
 import logging
 log = logging.getLogger("root")
 
-
-def get_prefix(word, length):
-	"""
-	Return the prefix for the given word,
-	of length length.
-
-	:param word: the word string
-	:type  word: unicode
-	:param length: prefix length
-	:type  length: int
-	:rtype: unicode
-	"""
-	if not word:
-		return None
-	word = toStr(word)
-	if "Z" < word[0] < "a":
-		return "SPECIAL"
-	# FIXME: return (unicode) str?
-	return word[:length]
 
 
 class EbookWriter(object):
@@ -125,6 +107,7 @@ class EbookWriter(object):
 	):
 		self.glos = glos
 
+		self._group_by_prefix_length = 2
 		self._escape_strings = escape_strings
 		self._ignore_synonyms = ignore_synonyms
 		self._flatten_synonyms = flatten_synonyms
@@ -206,19 +189,32 @@ class EbookWriter(object):
 	def add_group(self, key, entries):
 		self.groups.append({"key": key, "entries": entries})
 
-	def write_groups(self, group_by_prefix_length, include_index_page):
+	def get_prefix(self, word: str) -> str:
+		length = self._group_by_prefix_length
+		if not word:
+			return None
+		word = toStr(word)
+		if "Z" < word[0] < "a":
+			return "SPECIAL"
+		return word[:length]
+
+	def sort_key(self, b_word: bytes) -> Any:
+		word = b_word.decode("utf-8")
+		return (
+			self.get_prefix(word),
+			word,
+		)
+
+	def write_groups(self, include_index_page):
 		# TODO: rtl=False option
 		# TODO: handle alternates better (now shows word1|word2... in title)
 
 		group_labels = []
 
-		self.glos.sortWords()
+		self.glos.sortWords(key=self.sort_key)
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
 			self.glos,
-			lambda tmpEntry: get_prefix(
-				tmpEntry.getWord(),
-				group_by_prefix_length,
-			),
+			lambda tmpEntry: self.get_prefix(tmpEntry.getWord()),
 		)):
 			index = group_i + self.GROUP_START_INDEX
 			first_word = ""
@@ -363,6 +359,7 @@ class EbookWriter(object):
 		apply_css="",  # path to css file, or ""
 		cover_path="",  # path to cover file, or ""
 	):
+		self._group_by_prefix_length = group_by_prefix_length
 		self.tmpDir = tempfile.mkdtemp()
 		with indir(self.tmpDir):
 			if cover_path:
@@ -389,7 +386,6 @@ class EbookWriter(object):
 				self.write_css(apply_css)
 
 			group_labels = self.write_groups(
-				group_by_prefix_length,
 				include_index_page,
 			)
 
