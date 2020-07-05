@@ -39,7 +39,7 @@ class GetPrefixTest(unittest.TestCase):
 		self.case("дaд", "дa")
 		self.case("未未", "未未")
 		self.case("未", "未a")
-		# self.case(" 未", "11")  # WTF? same word as below, different prefix
+		self.case("  未", "11")
 		self.case(" 未", "未a")
 
 if __name__ == "__main__":
