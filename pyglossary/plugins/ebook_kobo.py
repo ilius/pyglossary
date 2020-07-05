@@ -128,7 +128,7 @@ class Writer:
 				word = entry.getWord()
 				defi = entry.getDefi()
 				words.append(word)
-				htmlContents += f"<w><a name=\"{word}\"/><div><b>{word}</b>"\
+				htmlContents += f"<w><a name=\"{word}\" /><div><b>{word}</b>"\
 					f"<br/>{defi}</div></w>\n"
 			htmlContents += "</html>"
 			with gzip.open(group_fname + ".html", mode="wb") as gzipFile:
