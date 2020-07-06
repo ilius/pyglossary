@@ -182,13 +182,16 @@ class Entry(BaseEntry):
 		])
 
 	@staticmethod
+	def defaultSortKey(b_word: bytes) -> Any:
+		return b_word.lower()
+
+	@staticmethod
 	def getEntrySortKey(
 		key: Optional[Callable[[bytes], Any]] = None,
 	) -> Callable[[BaseEntry], Any]:
-		if key:
-			return lambda entry: key(entry.getWords()[0].encode("utf-8"))
-		else:
-			return lambda entry: entry.getWords()[0]
+		if key is None:
+			key = Entry.defaultSortKey
+		return lambda entry: key(entry.getWords()[0].encode("utf-8"))
 
 	@staticmethod
 	def getRawEntrySortKey(
@@ -198,10 +201,9 @@ class Entry(BaseEntry):
 		# (word, defi, defiFormat)
 		# so x[0] is word(s) in bytes, that can be a str (one word),
 		# or a list or tuple (one word with or more alternaties)
-		if key:
-			return lambda x: key(loads(decompress(x))[0])
-		else:
-			return lambda x: loads(decompress(x))[0]
+		if key is None:
+			key = Entry.defaultSortKey
+		return lambda x: key(loads(decompress(x))[0])
 
 	def __init__(
 		self,
