@@ -43,6 +43,7 @@ Supported formats
 | FreeDict                          | .tei          |   ✔   |   ✔   |
 | Gettext Source                    | .po           |   ✔   |   ✔   |
 | Kobo E-Reader Dictionary          | .kobo.zip     |       |   ✔   |
+| Kobo E-Reader Dictfile            | .df           |       |   ✔   |
 | Lingoes Source (LDF)              | .ldf          |   ✔   |   ✔   |
 | Octopus MDict                     | .mdx          |   ✔   |       |
 | Octopus MDict Source              | .txt          |   ✔   |   ✔   |
