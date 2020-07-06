@@ -88,8 +88,7 @@ class DataEntry(BaseEntry):
 	def getDefis(self) -> List[str]:
 		return [self.getDefi()]
 
-	def getDefiFormat(self) -> str:
-		# TODO: type: Literal["b", "m"]
+	def getDefiFormat(self) -> 'Literal["b"]':
 		return "b"
 
 	def setDefiFormat(self, defiFormat):
