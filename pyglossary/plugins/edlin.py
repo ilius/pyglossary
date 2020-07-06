@@ -182,7 +182,7 @@ class Writer(object):
 		different hash string
 		"""
 		from hashlib import sha1
-		_hash = sha1(toBytes(entry.word)).hexdigest()[:8]
+		_hash = sha1(entry.word.encode("utf-8")).hexdigest()[:8]
 		if _hash not in self._hashSet:
 			self._hashSet.add(_hash)
 			return _hash
