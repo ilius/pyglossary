@@ -236,7 +236,7 @@ class ProgressBar(tix.Frame):
 		if not labelText:
 			labelText = self.labelFormat % int(ratio * 100)
 		self.canvas.itemconfig(self.label, text=labelText)
-		# FIXME:
+		# FIXME: resizing window causes problem in progressbar
 		# self.canvas.move(self.label, width/2, self.height/2)
 		# self.canvas.scale(self.label, 0, 0, float(width)/self.width, 1)
 		self.canvas.update_idletasks()
@@ -1096,7 +1096,7 @@ class UI(tix.Frame, UIBase):
 			self.entry_i.delete(0, "end")
 			self.entry_i.insert(0, path)
 			self.entry_changed()
-			self.fcd_dir = os.path.dirname(path)  # FIXME
+			self.fcd_dir = os.path.dirname(path)
 
 	def browse_o(self):
 		path = filedialog.asksaveasfilename()
@@ -1104,7 +1104,7 @@ class UI(tix.Frame, UIBase):
 			self.entry_o.delete(0, "end")
 			self.entry_o.insert(0, path)
 			self.entry_changed()
-			self.fcd_dir = os.path.dirname(path)  # FIXME
+			self.fcd_dir = os.path.dirname(path)
 
 	def convert(self):
 		inPath = self.entry_i.get()

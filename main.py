@@ -45,12 +45,12 @@ from pyglossary.text_utils import startRed, endFormat
 # - other code
 
 # no-progress-bar only for command line UI
-# FIXME: load ui-dependent available options from ui modules
+# TODO: load ui-dependent available options from ui modules
 # (for example ui_cmd.available_options)
 # the only problem is that it has to "import gtk" before it get the
 # "ui_gtk.available_options"
 
-# FIXME
+# TODO
 # -v (verbose or version?)
 # -r (reverse or read-options)
 
@@ -64,7 +64,7 @@ parser.add_argument(
 	type=int,
 	choices=(0, 1, 2, 3, 4),
 	required=False,
-	default=3,  # FIXME
+	default=3,
 )
 parser.add_argument(
 	"--version",
@@ -296,7 +296,6 @@ writeOptions = parseFormatOptionsStr(args.writeOptions)
 	--read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
 """
 
-# FIXME
 prefOptionsKeys = (
 	# "verbosity",
 	"utf8Check",
@@ -312,7 +311,7 @@ convertOptionsKeys = (
 	"progressbar",
 	"sort",
 	"sortCacheSize",
-	# "sortKey",# or sortAlg FIXME
+	# "sortKey",  # TODO
 )
 
 prefOptions = {}
@@ -388,7 +387,7 @@ ui_type = args.ui_type
 
 if args.inputFilename:
 	if args.outputFilename and ui_type != "none":
-		ui_type = "cmd"  # silently? FIXME
+		ui_type = "cmd"
 else:
 	if ui_type == "cmd":
 		log.error("no input file given, try --help")
@@ -432,7 +431,7 @@ if ui_type == "auto":
 				"ui_%s" % ui_type2,
 			)
 		except ImportError:
-			log.exception("error while importing UI module:")  # FIXME
+			log.exception("error while importing UI module:")
 		else:
 			break
 	if ui_module is None:

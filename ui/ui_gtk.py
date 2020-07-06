@@ -55,10 +55,10 @@ gtk.Window.set_default_icon_from_file(logo)
 
 _ = str  # later replace with translator function
 
-pixDir = join(dataDir, "res")  # FIXME
+pixDir = join(dataDir, "res")
 
 
-def getCopressedFileExt(fpath):
+def getCompressedFileExt(fpath):
 	fname, ext = splitext(fpath.lower())
 	if ext in (".gz", ".bz2", ".zip"):
 		fname, ext = splitext(fname)
@@ -563,9 +563,6 @@ class BrowseButton(gtk.Button):
 
 
 class UI(gtk.Dialog, MyDialog, UIBase):
-	def write(self, tag):  # FIXME
-		pass
-
 	def status(self, msg):
 		# try:
 		#	_id = self.statusMsgDict[msg]
@@ -808,9 +805,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			except AttributeError:
 				pass
 		#######################
-		# notebook.set_property("homogeneous", True)  # not in gtk3 FIXME
-		# notebook.set_property("tab-border", 5)  # not in gtk3 FIXME
-		# notebook.set_property("tab-hborder", 15)  # not in gtk3 FIXME
 		pack(self.vbox, notebook, 1, 1)
 		# for i in ui.prefPagesOrder:
 		#	try:
@@ -989,8 +983,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			inPath = urlToPath(inPath)
 			self.convertInputEntry.set_text(inPath)
 
-		# FIXME: typo: Copressed
-		inExt = getCopressedFileExt(inPath)
+		inExt = getCompressedFileExt(inPath)
 		inFormatNew = Glossary.pluginByExt.get(inExt)
 
 		if not inFormatNew:
@@ -1024,7 +1017,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			self.convertOutputEntry.set_text(outPath)
 
 		if self.pref["ui_autoSetFormat"] and not outFormat:
-			outExt = getCopressedFileExt(outPath)
+			outExt = getCompressedFileExt(outPath)
 			try:
 				outFormatNew = Glossary.pluginByExt[outExt].name
 			except KeyError:
@@ -1098,7 +1091,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			inPath = urlToPath(inPath)
 			self.reverseInputEntry.set_text(inPath)
 
-		inExt = getCopressedFileExt(inPath)
+		inExt = getCompressedFileExt(inPath)
 		inFormatNew = Glossary.pluginByExt.get(inExt)
 
 		if inFormatNew and self.pref["ui_autoSetFormat"] and not inFormat:
