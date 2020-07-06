@@ -22,9 +22,11 @@ def write(glos: GlossaryType, filename: str) -> bool:
 
 	defiFormatCounter = Counter()
 	firstTagCounter = Counter()
+	wordCount = 0
 	for entry in glos:
 		entry.detectDefiFormat()
 		defiFormat = entry.getDefiFormat()
+		wordCount += 1
 		defiFormatCounter[defiFormat] += 1
 		defi = entry.getDefi()
 		if defiFormat == "m":
@@ -39,6 +41,7 @@ def write(glos: GlossaryType, filename: str) -> bool:
 	info = OrderedDict()
 	for key, value in glos.iterInfo():
 		info[key] = value
+	info["word_count"] = wordCount
 	info["data_entry_count"] = data_entry_count
 	info["defi_format_counter"] = ", ".join(
 		f"{defiFormat}={count}"
