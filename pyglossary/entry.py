@@ -74,7 +74,7 @@ class DataEntry(BaseEntry):
 		if not exists(fdir):
 			os.makedirs(fdir)
 		if self._tmpPath:
-			shutil.copy(self._tmpPath, fpath)
+			shutil.move(self._tmpPath, fpath)
 			self._tmpPath = fpath
 		else:
 			with open(fpath, "wb") as toFile:

@@ -57,7 +57,7 @@ from typing import (
 
 from .flags import *
 from . import core
-from .core import VERSION, userPluginsDir
+from .core import VERSION, userPluginsDir, cacheDir
 from .entry_base import BaseEntry
 from .entry import Entry, DataEntry
 from .plugin_prop import PluginProp
@@ -616,6 +616,11 @@ class Glossary(GlossaryType):
 
 	# ________________________________________________________________________#
 
+	def _hasWriteAccessToDir(self, dirPath: str) -> None:
+		if isdir(dirPath):
+			return os.access(dirPath, os.W_OK)
+		return os.access(dirname(dirPath), os.W_OK)
+
 	def read(
 		self,
 		filename: str,
@@ -632,7 +637,18 @@ class Glossary(GlossaryType):
 		"""
 		filename = abspath(filename)
 
-		self.tmpDataDir = filename + "_res"
+		# good thing about cacheDir is that we don't have to clean it up after
+		# conversion is finished.
+		# specially since dataEntry.save(...) will move the file from cacheDir
+		# to the new directory (associated with output glossary path)
+		# And we don't have to check for write access to cacheDir because it's
+		# inside user's home dir. But input glossary might be in a directory
+		# that we don't have write access to.
+		# still maybe add a pref key to decide if we should always use cacheDir
+		# if self._hasWriteAccessToDir(f"{filename}_res", os.W_OK):
+		# 	self.tmpDataDir = f"{filename}_res"
+		# else:
+		self.tmpDataDir = join(cacheDir, split(filename)[1] + "_res")
 
 		# don't allow direct=False when there are readers
 		# (read is called before with direct=True)
