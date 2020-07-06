@@ -26,6 +26,7 @@ from formats_common import *
 from itertools import groupby
 from pathlib import Path
 import unicodedata
+import re
 
 enable = True
 format = "Kobo"
@@ -84,6 +85,11 @@ class Writer:
 
 	def __init__(self, glos, **kwargs):
 		self._glos = glos
+		self._img_pattern = re.compile(
+			'<img src="([^<>"]*?)"( [^<>]*?)?>',
+			re.DOTALL,
+		)
+		# img tag has no closing
 
 	def get_prefix(self, word: str) -> str:
 		if not word:
@@ -111,9 +117,22 @@ class Writer:
 			word,
 		)
 
+	def fix_defi(self, defi: str) -> str:
+		# @geek1011 on #219: Kobo supports images in dictionaries,
+		# but these have a lot of gotchas
+		# (see https://pgaskin.net/dictutil/dicthtml/format.html).
+		# Basically, The best way to do it is to encode the images as a
+		# base64 data URL after shrinking it and making it grayscale
+		# (if it's JPG, this is as simple as only keeping the Y channel)
+
+		# for now we just skip data entries and remove '<img' tags
+		defi = self._img_pattern.sub("[Image: \\1]", defi)
+		return defi
+
 	def write_groups(self):
 		import gzip
 		words = []
+		dataEntryCount = 0
 
 		self._glos.sortWords(key=self.sort_key)
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
@@ -122,17 +141,26 @@ class Writer:
 		)):
 			group_fname = fixFilename(group_prefix)
 			htmlContents = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
+
 			for entry in group_entry_iter:
 				if entry.isData():
+					dataEntryCount += 1
 					continue
 				word = entry.getWord()
 				defi = entry.getDefi()
+				defi = self.fix_defi(defi)
 				words.append(word)
 				htmlContents += f"<w><a name=\"{word}\" /><div><b>{word}</b>"\
 					f"<br/>{defi}</div></w>\n"
 			htmlContents += "</html>"
 			with gzip.open(group_fname + ".html", mode="wb") as gzipFile:
 				gzipFile.write(htmlContents.encode("utf-8"))
+
+		if dataEntryCount > 0:
+			log.warn(
+				f"ignored {dataEntryCount} files (data entries)"
+				" and replaced '<img ...' tags in definitions with placeholders"
+			)
 
 		return words
 
