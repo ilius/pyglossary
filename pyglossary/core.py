@@ -198,21 +198,22 @@ if os.sep == "/":  # Operating system is Unix-Like
 	tmpDir = "/tmp"
 	# os.name == "posix" # FIXME
 	if sysName == "Darwin":  # MacOS X
-		confDir = homeDir + "/Library/Preferences/PyGlossary"
-		# or maybe: homeDir + "/Library/PyGlossary"
+		_libDir = join(homeDir, "Library")
+		confDir = join(_libDir, "Preferences", "PyGlossary")
+		# or maybe: join(_libDir, "PyGlossary")
 		# os.environ["OSTYPE"] == "darwin10.0"
 		# os.environ["MACHTYPE"] == "x86_64-apple-darwin10.0"
 		# platform.dist() == ("", "", "")
 		# platform.release() == "10.3.0"
-		cacheDir = join(homeDir, "Library", "Caches", "PyGlossary")
+		cacheDir = join(_libDir, "Caches", "PyGlossary")
 	else:  # GNU/Linux, ...
-		confDir = homeDir + "/.pyglossary"
+		confDir = join(homeDir, ".pyglossary")
 		cacheDir = join(homeDir, ".cache", "pyglossary")
 elif os.sep == "\\":  # Operating system is Windows
-	homeDir = os.getenv("HOMEDRIVE") + os.getenv("HOMEPATH")
+	homeDir = join(os.getenv("HOMEDRIVE"), os.getenv("HOMEPATH"))
 	user = os.getenv("USERNAME")
 	tmpDir = os.getenv("TEMP")
-	confDir = os.getenv("APPDATA") + "\\" + "PyGlossary"
+	confDir = join(os.getenv("APPDATA"), "PyGlossary")
 	cacheDir = join(confDir, "Cache")  # FIXME: right directory?
 else:
 	raise RuntimeError(
