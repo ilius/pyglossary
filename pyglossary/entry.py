@@ -124,13 +124,23 @@ class DataEntry(BaseEntry):
 		pass
 
 	def getRaw(self, glos: "GlossaryType") -> RawEntryType:
+		b_fpath = b""
+		if glos.tmpDataDir:
+			b_fpath = self.save(glos.tmpDataDir).encode("utf-8")
 		tpl = (
 			self._fname.encode("utf-8"),
-			b"DATA",
+			b_fpath,
+			"b",
 		)
 		if glos._rawEntryCompress:
 			return compress(dumps(tpl), level=9)
 		return tpl
+
+	@classmethod
+	def fromFile(cls, glos, word, fpath):
+		entry = DataEntry(word, b"")
+		entry._tmpPath = fpath
+		return entry
 
 
 class Entry(BaseEntry):
@@ -419,11 +429,9 @@ class Entry(BaseEntry):
 		word = rawEntry[0].decode("utf-8")
 		defi = rawEntry[1].decode("utf-8")
 		if len(rawEntry) > 2:
-			if defi == "DATA":
-				if isinstance(rawEntry[2], DataEntry):
-					return rawEntry[2]
-				log.warn(f"Entry.fromRaw: invalid rawEntry={rawEntry!r}")
 			defiFormat = rawEntry[2]
+			if defiFormat == "b":
+				return DataEntry.fromFile(glos, word, defi)
 		else:
 			defiFormat = defaultDefiFormat
 

@@ -310,6 +310,7 @@ class Glossary(GlossaryType):
 		self._defaultDefiFormat = "m"
 		self._progressbar = True
 		self._rawEntryCompress = True
+		self.tmpDataDir = ""
 
 	def __init__(
 		self,
@@ -630,6 +631,8 @@ class Glossary(GlossaryType):
 		direct (bool):	enable direct mode
 		"""
 		filename = abspath(filename)
+
+		self.tmpDataDir = filename + "_res"
 
 		# don't allow direct=False when there are readers
 		# (read is called before with direct=True)
