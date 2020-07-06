@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from tempfile import mktemp
+import shutil
 import os
 from os.path import (
 	join,
@@ -72,8 +73,12 @@ class DataEntry(BaseEntry):
 		fdir = dirname(fpath)
 		if not exists(fdir):
 			os.makedirs(fdir)
-		with open(fpath, "wb") as toFile:
-			toFile.write(self.getData())
+		if self._tmpPath:
+			shutil.copy(self._tmpPath, fpath)
+			self._tmpPath = fpath
+		else:
+			with open(fpath, "wb") as toFile:
+				toFile.write(self._data)
 		return fpath
 
 	def getWord(self) -> str:
