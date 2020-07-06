@@ -6,6 +6,7 @@ from os.path import (
 	join,
 	exists,
 	dirname,
+	getsize,
 )
 from typing import (
 	Optional,
@@ -57,6 +58,12 @@ class DataEntry(BaseEntry):
 				return fromFile.read()
 		else:
 			return self._data
+
+	def size(self):
+		if self._tmpPath:
+			return getsize(self._tmpPath)
+		else:
+			return len(self._data)
 
 	def save(self, directory: str) -> str:
 		fname = self._fname
