@@ -41,8 +41,8 @@ def write(
 	for entry in glos:
 		if entry.isData():
 			continue
-		words = entry.getWords()
-		defi = entry.getDefi()
+		words = entry.words
+		defi = entry.defi
 		fp.write(f"@ {fixWord(words[0])}\n")
 		for alt in words[1:]:
 			fp.write(f"& {fixWord(alt)}\n")

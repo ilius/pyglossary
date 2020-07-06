@@ -223,9 +223,9 @@ def write(
 				entry.save(myResDir)
 				continue
 
-			words = entry.getWords()
+			words = entry.words
 			word, alts = words[0], words[1:]
-			defi = entry.getDefi()
+			defi = entry.defi
 
 			long_title = _normalize.title_long(
 				_normalize.title(word, BeautifulSoup)

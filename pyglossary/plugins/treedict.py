@@ -41,8 +41,8 @@ def write(
 		else:
 			raise IOError(f"{filename!r} is not a directory")
 	for entry in glos:
-		defi = entry.getDefi()
-		for word in entry.getWords():
+		defi = entry.defi
+		for word in entry.words:
 			if not word:
 				log.error("empty word")
 				continue

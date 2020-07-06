@@ -137,7 +137,7 @@ class Writer:
 		self._glos.sortWords(key=self.sort_key)
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
 			self._glos,
-			lambda entry: self.get_prefix(entry.getWord())
+			lambda entry: self.get_prefix(entry.word)
 		)):
 			group_fname = fixFilename(group_prefix)
 			htmlContents = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
@@ -146,8 +146,8 @@ class Writer:
 				if entry.isData():
 					dataEntryCount += 1
 					continue
-				word = entry.getWord()
-				defi = entry.getDefi()
+				word = entry.word
+				defi = entry.defi
 				defi = self.fix_defi(defi)
 				words.append(word)
 				htmlContents += f"<w><a name=\"{word}\" /><div><b>{word}</b>"\

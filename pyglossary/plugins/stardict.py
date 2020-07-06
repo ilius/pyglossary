@@ -469,9 +469,9 @@ class Writer(object):
 				continue
 			entryI += 1
 
-			words = entry.getWords()  # list of strs
+			words = entry.words  # list of strs
 			word = words[0]  # str
-			defis = entry.getDefis()  # list of strs
+			defis = entry.defis  # list of strs
 
 			b_dictBlock = b""
 
@@ -537,9 +537,9 @@ class Writer(object):
 				continue
 			entryI += 1
 
-			words = entry.getWords()  # list of strs
+			words = entry.words  # list of strs
 			word = words[0]  # str
-			defis = entry.getDefis()  # list of strs
+			defis = entry.defis  # list of strs
 
 			entry.detectDefiFormat()  # call no more than once
 			defiFormat = entry.getDefiFormat()

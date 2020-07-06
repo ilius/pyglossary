@@ -223,8 +223,8 @@ class EbookWriter(object):
 			for entry in group_entry_iter:
 				if entry.isData():
 					continue
-				word = entry.getWord()
-				defi = entry.getDefi()
+				word = entry.word
+				defi = entry.defi
 				if not first_word:
 					first_word = word
 				last_word = word

@@ -131,8 +131,8 @@ class Writer(object):
 					continue
 
 				wordCount += 1
-				word = entry.getWord()
-				defi = entry.getDefi()
+				word = entry.word
+				defi = entry.defi
 				dicLine = word + "\t" + defi + "\n"
 				dicPos = dicFp.tell()
 				dicFp.write(dicLine)

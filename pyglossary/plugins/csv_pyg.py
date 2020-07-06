@@ -131,11 +131,11 @@ def write(glos: GlossaryType, filename: str, encoding: str = "utf-8", resources:
 					entry.save(resDir)
 				continue
 
-			words = entry.getWords()
+			words = entry.words
 			if not words:
 				continue
 			word, alts = words[0], words[1:]
-			defi = entry.getDefi()
+			defi = entry.defi
 
 			row = [
 				word,

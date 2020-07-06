@@ -28,8 +28,8 @@ def write(glos: GlossaryType, filename: str, dicIndex=16):
 
 			bucketFileObj = open(bucketFilename, "w", encoding="utf8")
 			for entry in bucket:
-				word = entry.getWord()
-				defi = entry.getDefi()
+				word = entry.word
+				defi = entry.defi
 				defi = defi.replace("\n", "  ")  # FIXME
 				bucketFileObj.write(f"{word}#{defi}\n")
 			bucketFileObj.close()

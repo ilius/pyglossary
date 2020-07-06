@@ -111,8 +111,8 @@ def write(glos: GlossaryType, filename: str, resources: bool = True):
 				if resources:
 					entry.save(filename + "_res")
 				continue
-			word = entry.getWord()
-			defi = entry.getDefi()
+			word = entry.word
+			defi = entry.defi
 			toFile.write(
 				f"msgid {po_escape(word)}\n"
 				f"msgstr {po_escape(defi)}\n\n"

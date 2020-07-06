@@ -65,8 +65,8 @@ class Reader(object):
 def write(glos: GlossaryType, filename: str) -> bool:
 	log.info(f"writing to format {format} using plugin")
 	for entry in glos:
-		word = entry.getWord()
-		defi = entry.getDefi()
+		word = entry.word
+		defi = entry.defi
 		# here write word and defi to the output file (depending on
 		# your format)
 	# here read info from Glossaey object

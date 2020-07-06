@@ -180,8 +180,8 @@ def write(
 		if entry.isData():
 			# does dictd support resources? and how? FIXME
 			continue
-		word = toBytes(entry.getWord())
-		defi = toBytes(entry.getDefi())
+		word = toBytes(entry.word)
+		defi = toBytes(entry.defi)
 		lm = len(defi)
 		indexFd.write(
 			word + b"\t" +

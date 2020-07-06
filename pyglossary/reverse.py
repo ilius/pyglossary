@@ -114,7 +114,7 @@ def takeOutputWords(
 	for entry in entryIter:
 		words.update(re.findall(
 			wordPattern,
-			entry.getDefi(),
+			entry.defi,
 		))
 	glos._progressbar = progressbar
 	return sorted(words)
@@ -139,8 +139,8 @@ def searchWordInDef(
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
 	outRel = []
 	for entry in entryIter:
-		words = entry.getWords()
-		defi = "\n".join(entry.getDefis())
+		words = entry.words
+		defi = "\n".join(entry.defis)
 		if st not in defi:
 			continue
 		for word in words:

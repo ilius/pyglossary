@@ -499,7 +499,7 @@ class Glossary(GlossaryType):
 			for bucket in glos.iterEntryBuckets(100):
 				assert len(bucket) == 100
 				for entry in bucket:
-					print(entry.getWord())
+					print(entry.word)
 				print("-----------------")
 		"""
 		bucket = []
@@ -1166,8 +1166,8 @@ class Glossary(GlossaryType):
 				entry = entryFilterFunc(entry)
 				if not entry:
 					continue
-			word = entry.getWord()
-			defi = entry.getDefi()
+			word = entry.word
+			defi = entry.defi
 			if word.startswith("#"):  # FIXME
 				continue
 			# if self.getPref("enable_alts", True):  # FIXME
@@ -1276,8 +1276,8 @@ class Glossary(GlossaryType):
 			if entry.isData():
 				# FIXME
 				continue
-			word = entry.getWord()
-			defi = entry.getDefi()
+			word = entry.word
+			defi = entry.defi
 			word = word.replace("\'", "\'\'")\
 				.replace("\r", "").replace("\n", newline)
 			defi = defi.replace("\'", "\'\'")\

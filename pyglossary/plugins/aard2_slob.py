@@ -83,8 +83,8 @@ def write(
 		name = glos.getInfo("name")
 		slobWriter.tag("label", toStr(name))
 		for entry in glos:
-			words = entry.getWords()
-			b_defi = entry.getDefi().encode("utf-8")
+			words = entry.words
+			b_defi = entry.defi.encode("utf-8")
 			slobWriter.add(
 				b_defi,
 				*tuple(words),

@@ -292,8 +292,8 @@ def write(
 			if resources:
 				entry.save(filename + "_res")
 			continue
-		word = xml_escape(entry.getWord())
-		defi = xml_escape(entry.getDefi())
+		word = xml_escape(entry.word)
+		defi = xml_escape(entry.defi)
 		fp.write(f"""<entry>
 <form><orth>{word}</orth></form>
 <trans><tr>{defi}</tr></trans>

@@ -28,7 +28,7 @@ def write(glos: GlossaryType, filename: str) -> bool:
 		defiFormat = entry.getDefiFormat()
 		wordCount += 1
 		defiFormatCounter[defiFormat] += 1
-		defi = entry.getDefi()
+		defi = entry.defi
 		if defiFormat == "m":
 			if possible_html_re.match(defi):
 				log.warn(f"undetected html defi: {defi}")

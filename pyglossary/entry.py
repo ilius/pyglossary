@@ -81,17 +81,37 @@ class DataEntry(BaseEntry):
 				toFile.write(self._data)
 		return fpath
 
-	def getWord(self) -> str:
+	@property
+	def word(self) -> str:
 		return self._fname
 
-	def getWords(self) -> List[str]:
+	@property
+	def words(self) -> List[str]:
 		return [self._fname]
 
-	def getDefi(self) -> str:
+	@property
+	def defi(self) -> str:
 		return f"File: {self._fname}"
 
+	@property
+	def defis(self) -> List[str]:
+		return [self.defi]
+
+	def getWord(self) -> str:
+		log.error("entry.getWord() is deprecated, use entry.word")
+		return self.word
+
+	def getWords(self) -> List[str]:
+		log.error("entry.getWords() is deprecated, use entry.words")
+		return self.words
+
+	def getDefi(self) -> str:
+		log.error("entry.getDefi() is deprecated, use entry.defi")
+		return self.defi
+
 	def getDefis(self) -> List[str]:
-		return [self.getDefi()]
+		log.error("entry.getDefis() is deprecated, use entry.defis")
+		return self.defis
 
 	def getDefiFormat(self) -> 'Literal["b"]':
 		return "b"
@@ -191,7 +211,7 @@ class Entry(BaseEntry):
 	) -> Callable[[BaseEntry], Any]:
 		if key is None:
 			key = Entry.defaultSortKey
-		return lambda entry: key(entry.getWords()[0].encode("utf-8"))
+		return lambda entry: key(entry.words[0].encode("utf-8"))
 
 	@staticmethod
 	def getRawEntrySortKey(
@@ -242,7 +262,9 @@ class Entry(BaseEntry):
 		self._defiFormat = defiFormat
 		self._byteProgress = byteProgress  # Optional[Tuple[int, int]]
 
-	def getWord(self) -> str:
+
+	@property
+	def word(self):
 		"""
 			returns string of word,
 				and all the alternate words
@@ -253,7 +275,8 @@ class Entry(BaseEntry):
 		else:
 			return self._join(self._word)
 
-	def getWords(self) -> List[str]:
+	@property
+	def words(self) -> List[str]:
 		"""
 			returns list of the word and all the alternate words
 		"""
@@ -262,7 +285,8 @@ class Entry(BaseEntry):
 		else:
 			return self._word
 
-	def getDefi(self) -> str:
+	@property
+	def defi(self) -> str:
 		"""
 			returns string of definition,
 				and all the alternate definitions
@@ -273,7 +297,8 @@ class Entry(BaseEntry):
 		else:
 			return self._join(self._defi)
 
-	def getDefis(self) -> List[str]:
+	@property
+	def defis(self) -> List[str]:
 		"""
 			returns list of the definition and all the alternate definitions
 		"""
@@ -281,6 +306,22 @@ class Entry(BaseEntry):
 			return [self._defi]
 		else:
 			return self._defi
+
+	def getWord(self) -> str:
+		log.error("entry.getWord() is deprecated, use entry.word")
+		return self.word
+
+	def getWords(self) -> List[str]:
+		log.error("entry.getWords() is deprecated, use entry.words")
+		return self.words
+
+	def getDefi(self) -> str:
+		log.error("entry.getDefi() is deprecated, use entry.defi")
+		return self.defi
+
+	def getDefis(self) -> List[str]:
+		log.error("entry.getDefis() is deprecated, use entry.defis")
+		return self.defis
 
 	def getDefiFormat(self) -> str:
 		"""
@@ -304,7 +345,7 @@ class Entry(BaseEntry):
 	def detectDefiFormat(self) -> None:
 		if self._defiFormat != "m":
 			return
-		defi = self.getDefi().lower()
+		defi = self.defi.lower()
 		if re.match(self.htmlPattern, defi):
 			self._defiFormat = "h"
 
@@ -312,7 +353,7 @@ class Entry(BaseEntry):
 		return self._byteProgress
 
 	def addAlt(self, alt: str) -> None:
-		words = self.getWords()
+		words = self.words
 		words.append(alt)
 		self._word = words
 
@@ -385,7 +426,7 @@ class Entry(BaseEntry):
 		self.replaceInDefi(source, target)
 
 	def removeEmptyAndDuplicateAltWords(self):
-		words = self.getWords()
+		words = self.words
 		if len(words) == 1:
 			return
 		words = [word for word in words if word]
@@ -402,14 +443,14 @@ class Entry(BaseEntry):
 		"""
 		if self._defiFormat and self._defiFormat != glos.getDefaultDefiFormat():
 			tpl = (
-				self.getWord().encode("utf-8"),
-				self.getDefi().encode("utf-8"),
+				self.word.encode("utf-8"),
+				self.defi.encode("utf-8"),
 				self._defiFormat,
 			)
 		else:
 			tpl = (
-				self.getWord().encode("utf-8"),
-				self.getDefi().encode("utf-8"),
+				self.word.encode("utf-8"),
+				self.defi.encode("utf-8"),
 			)
 
 		if glos._rawEntryCompress:

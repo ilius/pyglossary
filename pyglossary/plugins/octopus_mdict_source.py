@@ -107,8 +107,8 @@ class Reader(object):
 
 def writeEntryGen(glos):
 	for entry in glos:
-		words = entry.getWords()
-		defi = entry.getDefi()
+		words = entry.words
+		defi = entry.defi
 
 		yield glos.newEntry(words[0], defi)
 

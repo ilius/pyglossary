@@ -57,9 +57,9 @@ class NonEmptyWordFilter(EntryFilter):
 	desc = "Non-empty Words"
 
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
-		if not entry.getWord():
+		if not entry.word:
 			return
-#		words = entry.getWords()
+#		words = entry.words
 #		if not words:
 #			return
 #		wordsStr = "".join([w.strip() for w in words])
@@ -73,7 +73,7 @@ class NonEmptyDefiFilter(EntryFilter):
 	desc = "Non-empty Definition"
 
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
-		if not entry.getDefi():
+		if not entry.defi:
 			return
 		return entry
 
@@ -84,7 +84,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
 		entry.removeEmptyAndDuplicateAltWords()
-		if not entry.getWords():
+		if not entry.words:
 			return
 		return entry
 
