@@ -778,7 +778,8 @@ class Glossary(GlossaryType):
 		key: Optional[Callable[[bytes], Any]] = None,
 		cacheSize: int = 0,
 	) -> None:
-		# only sort by main word, or list of words + alternates? FIXME
+		if key is None:
+			log.warn("WARNING: sortWords: no key function is provided")
 		if self._readers:
 			self._sortKey = key
 			if cacheSize > 0:
@@ -938,6 +939,8 @@ class Glossary(GlossaryType):
 						f"Ignoring user-defined sort order"
 						f", and using key function from {format} plugin"
 					)
+			if sortKey is None:
+				sortKey = Entry.defaultSortKey
 			self.sortWords(
 				key=sortKey,
 				cacheSize=sortCacheSize
