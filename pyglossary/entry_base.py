@@ -48,6 +48,24 @@ class BaseEntry(object):
 		raise NotImplementedError
 
 	@property
+	def b_word(self):
+		"""
+			returns bytes of word,
+				and all the alternate words
+				seperated by b"|"
+		"""
+		return self.word.encode("utf-8")
+
+	@property
+	def b_defi(self):
+		"""
+			returns bytes of definition,
+				and all the alternate definitions
+				seperated by b"|"
+		"""
+		return self.defi.encode("utf-8")
+
+	@property
 	def defiFormat(self) -> str:
 		# TODO: type: Literal["m", "h", "x", "b"]
 		raise NotImplementedError

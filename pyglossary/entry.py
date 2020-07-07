@@ -447,14 +447,14 @@ class Entry(BaseEntry):
 		"""
 		if self._defiFormat and self._defiFormat != glos.getDefaultDefiFormat():
 			tpl = (
-				self.word.encode("utf-8"),
-				self.defi.encode("utf-8"),
+				self.b_word,
+				self.b_defi,
 				self._defiFormat,
 			)
 		else:
 			tpl = (
-				self.word.encode("utf-8"),
-				self.defi.encode("utf-8"),
+				self.b_word,
+				self.b_defi,
 			)
 
 		if glos._rawEntryCompress:
