@@ -413,6 +413,8 @@ class Reader(object):
 class Writer(object):
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
+		self._sourceLang = None
+		self._targetLang = None
 
 	def write(
 		self,
@@ -435,6 +437,9 @@ class Writer(object):
 			fileBasePath = realpath(fileBasePath)
 		self._filename = fileBasePath
 		self._resDir = join(dirname(self._filename), "res")
+
+		self._sourceLang = self._glos.sourceLang
+		self._targetLang = self._glos.targetLang
 
 		if sametypesequence:
 			log.debug(f"Using write option sametypesequence={sametypesequence}")
@@ -628,8 +633,8 @@ class Writer(object):
 		glos = self._glos
 		bookname = newlinesToSpace(glos.getInfo("name"))
 
-		sourceLang = glos.sourceLang
-		targetLang = glos.targetLang
+		sourceLang = self._sourceLang
+		targetLang = self._targetLang
 		if sourceLang and targetLang:
 			langs = f"{sourceLang.code}-{targetLang.code}"
 			if langs not in bookname.lower():
