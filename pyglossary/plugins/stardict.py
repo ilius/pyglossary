@@ -25,6 +25,7 @@ format = "Stardict"
 description = "StarDict (ifo)"
 extensions = (".ifo",)
 optionsProp = {
+	"stardict_client": BoolOption(),
 	"dictzip": BoolOption(),
 	"sametypesequence": StrOption(
 		values=["", "h", "m"],
@@ -415,13 +416,16 @@ class Writer(object):
 		self._glos = glos
 		self._sourceLang = None
 		self._targetLang = None
+		self._stardict_client = False
 
 	def write(
 		self,
 		filename: str,
 		dictzip: bool = True,
 		sametypesequence: str = "", # type: Literal["", "h", "m"]
+		stardict_client: bool = False,
 	) -> None:
+		self._stardict_client = stardict_client
 		fileBasePath = filename
 		##
 		if splitext(filename)[1].lower() == ".ifo":
@@ -452,7 +456,8 @@ class Writer(object):
 
 	def fixDefi(self, defi: str) -> str:
 		# for StarDict 3.0:
-		defi = defi.replace("</p>", "</p><br>").strip()
+		if self._stardict_client:
+			defi = defi.replace("</p>", "</p><br>").strip()
 		return defi
 
 	def fixDefis(self, defis: Tuple[str, ...]) -> List[str]:
