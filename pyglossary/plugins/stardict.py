@@ -417,6 +417,10 @@ class Writer(object):
 		self._sourceLang = None
 		self._targetLang = None
 		self._stardict_client = False
+		self._p_pattern = re.compile(
+			'<p( [^<>]*?)?>(.*?)</p>',
+			re.DOTALL,
+		)
 
 	def write(
 		self,
@@ -454,14 +458,16 @@ class Writer(object):
 		if dictzip:
 			runDictzip(self._filename)
 
-	def fixDefi(self, defi: str) -> str:
+	def fixDefi(self, defi: str, defiFormat: str) -> str:
 		# for StarDict 3.0:
-		if self._stardict_client:
-			defi = defi.replace("</p>", "</p><br>").strip()
+		if self._stardict_client and defiFormat == "h":
+			defi = self._p_pattern.sub("\\2<br>", defi)
+			# if there is </p> left without opening, replace with <br>
+			defi = defi.replace("</p>", "<br>")
 		return defi
 
-	def fixDefis(self, defis: Tuple[str, ...]) -> List[str]:
-		return [self.fixDefi(defi) for defi in defis]
+	def fixDefis(self, defis: Tuple[str, ...], defiFormat: str) -> List[str]:
+		return [self.fixDefi(defi, defiFormat) for defi in defis]
 
 	def writeCompact(self, defiFormat):
 		"""
@@ -493,7 +499,8 @@ class Writer(object):
 
 			words = entry.words  # list of strs
 			word = words[0]  # str
-			defis = self.fixDefis(entry.defis)  # list of strs
+			defis = self.fixDefis(entry.defis, defiFormat)
+			# defis is list of strs
 
 			b_dictBlock = b""
 
@@ -559,15 +566,16 @@ class Writer(object):
 				continue
 			entryI += 1
 
-			words = entry.words  # list of strs
-			word = words[0]  # str
-			defis = self.fixDefis(entry.defis)  # list of strs
-
 			entry.detectDefiFormat()  # call no more than once
 			defiFormat = entry.defiFormat
 			defiFormatCounter[defiFormat] += 1
 			if defiFormat not in ("m", "h"):
 				defiFormat = "m"
+
+			words = entry.words  # list of strs
+			word = words[0]  # str
+			defis = self.fixDefis(entry.defis, defiFormat)
+			# defis is list of strs
 
 			b_dictBlock = b""
 
