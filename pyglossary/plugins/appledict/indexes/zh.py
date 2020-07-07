@@ -31,6 +31,8 @@ You can install it by running: sudo pip3 install colorize-pinyin""")
 
 from . import languages, log
 
+pinyinPattern = re.compile(r",|;")
+
 
 def zh(titles, content):
 	"""
@@ -70,7 +72,7 @@ def pinyin_indexes(content):
 	indexes = set()
 
 	# multiple pronunciations
-	for pinyin in re.split(r",|;", pinyin):
+	for pinyin in pinyinPattern.split(pinyin):
 
 		# find all pinyin ranges, use them to rip pinyin out
 		py = [

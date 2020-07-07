@@ -1018,7 +1018,7 @@ class BglReader(object):
 		encoded with non-default encoding (babylon character references
 		'<CHARSET c="T">00E6;</CHARSET>' do not count).
 		"""
-		b_parts = re.split(charsetDecodePattern, b_text)
+		b_parts = charsetDecodePattern.split(b_text)
 		u_text = ""
 		encodings = []  # stack of encodings
 		defaultEncodingOnly = True

@@ -88,7 +88,7 @@ def splitByBarUnescapeNTB(st: str) -> List[str]:
 	"""
 	return [
 		unescapeNTB(part, bar=True)
-		for part in re.split(pattern_bar_sp, st)
+		for part in pattern_bar_sp.split(st)
 	]
 
 

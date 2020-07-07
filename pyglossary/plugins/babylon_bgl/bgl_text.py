@@ -219,7 +219,7 @@ def replaceAsciiCharRefs(b_text, encoding):
 	# &#x010b;
 	if log.isDebug():
 		assert isinstance(b_text, bytes)
-	b_parts = re.split(b_pat_ascii_char_ref, b_text)
+	b_parts = b_pat_ascii_char_ref.split(b_text)
 	for i_part, b_part in enumerate(b_parts):
 		if i_part % 2 != 1:
 			continue

@@ -283,10 +283,7 @@ class DebugBglReader(BglReader):
 			self.metadata2.charRefs[encoding] = [0] * 257
 		charRefs = self.metadata2.charRefs[encoding]
 
-		for index, b_part in enumerate(re.split(
-			self.charRefStatPattern,
-			b_text,
-		)):
+		for index, b_part in enumerate(self.charRefStatPattern.split(b_text)):
 			if index % 2 != 1:
 				continue
 			try:

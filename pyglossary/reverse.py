@@ -145,7 +145,7 @@ def searchWordInDef(
 			continue
 		for word in words:
 			rel = 0  # relation value of word (0 <= rel <= 1)
-			for part in re.split(splitPattern, defi):
+			for part in splitPattern.split(defi):
 				if not part:
 					continue
 				if matchWord:
