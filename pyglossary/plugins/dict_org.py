@@ -180,15 +180,15 @@ def write(
 		if entry.isData():
 			# does dictd support resources? and how? FIXME
 			continue
-		word = entry.word.encode("utf-8")
-		defi = entry.defi.encode("utf-8")
+		word = entry.b_word
+		defi = entry.b_defi
 		lm = len(defi)
 		indexFd.write(
 			word + b"\t" +
 			intToIndexStr(dictMark) + b"\t" +
 			intToIndexStr(lm) + b"\n"
 		)  # FIXME
-		dictFd.write(defi.encode("utf-8"))
+		dictFd.write(defi)
 		dictMark += lm
 	indexFd.close()
 	dictFd.close()
