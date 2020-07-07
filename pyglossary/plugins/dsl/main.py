@@ -112,7 +112,7 @@ class DSLParser(object):
 			for t in tags
 		):
 			tag_re = re.escape(tag)
-			re_tag_open = fr"\[{tag_re}{ext_re}\]"
+			re_tag_open = re.compile(fr"\[{tag_re}{ext_re}\]")
 			tags_.add((tag, tag_re, ext_re, re_tag_open))
 		self.tags = frozenset(tags_)
 
