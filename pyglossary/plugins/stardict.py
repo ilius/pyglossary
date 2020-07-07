@@ -450,6 +450,14 @@ class Writer(object):
 		if dictzip:
 			runDictzip(self._filename)
 
+	def fixDefi(self, defi: str) -> str:
+		# for StarDict 3.0:
+		defi = defi.replace("</p>", "</p><br>").strip()
+		return defi
+
+	def fixDefis(self, defis: Tuple[str, ...]) -> List[str]:
+		return [self.fixDefi(defi) for defi in defis]
+
 	def writeCompact(self, defiFormat):
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
@@ -480,7 +488,7 @@ class Writer(object):
 
 			words = entry.words  # list of strs
 			word = words[0]  # str
-			defis = entry.defis  # list of strs
+			defis = self.fixDefis(entry.defis)  # list of strs
 
 			b_dictBlock = b""
 
@@ -548,7 +556,7 @@ class Writer(object):
 
 			words = entry.words  # list of strs
 			word = words[0]  # str
-			defis = entry.defis  # list of strs
+			defis = self.fixDefis(entry.defis)  # list of strs
 
 			entry.detectDefiFormat()  # call no more than once
 			defiFormat = entry.defiFormat
@@ -663,7 +671,7 @@ class Writer(object):
 		for key in infoKeys:
 			if key in (
 				"bookname",
-				"description"
+				"description",
 			):
 				continue
 			value = glos.getInfo(key)
