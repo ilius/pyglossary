@@ -71,11 +71,10 @@ def unescapeNTB(st: str, bar: bool = False) -> str:
 	"""
 		unscapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
 	"""
-	st = re.sub(pattern_n_us, "\\1\n", st)
-	st = re.sub(pattern_t_us, "\\1\t", st)
+	st = pattern_n_us.sub("\\1\n", st)
+	st = pattern_t_us.sub("\\1\t", st)
 	if bar:
-		st = re.sub(pattern_bar_us, r"\1\|", st)
-#	st = re.sub(r"\\\\", r"\\", st)
+		st = pattern_bar_us.sub(r"\1\|", st)
 	st = st.replace("\\\\", "\\")  # probably faster than re.sub
 	return st
 

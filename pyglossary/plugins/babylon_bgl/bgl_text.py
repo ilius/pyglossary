@@ -28,6 +28,10 @@ from pyglossary.xml_utils import xml_escape
 u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.I)
 u_pat_html_entry_key = re.compile("(?:&#x|&#|&)(\\w+);", re.I)
 b_pat_ascii_char_ref = re.compile(b"(&#\\w+;)", re.I)
+u_pat_newline_escape = re.compile("[\\r\\n\\\\]")
+u_pat_strip_tags = re.compile("(?:<[/a-zA-Z].*?(?:>|$))+")
+u_pat_control_chars = re.compile("[\x00-\x08\x0c\x0e-\x1f]")
+u_pat_newline = re.compile("[\r\n]+")
 
 unknownHtmlEntries = set()
 
@@ -132,8 +136,7 @@ def replaceHtmlEntries(u_text):
 	# &#x010b;
 	if log.isDebug():
 		assert isinstance(u_text, str)
-	return re.sub(
-		u_pat_html_entry,
+	return u_pat_html_entry.sub(
 		replaceHtmlEntryCB,
 		u_text,
 	)
@@ -145,8 +148,7 @@ def replaceHtmlEntriesInKeys(u_text):
 	# &#x010b;
 	if log.isDebug():
 		assert isinstance(u_text, str)
-	return re.sub(
-		u_pat_html_entry_key,
+	return u_pat_html_entry_key.sub(
 		replaceHtmlEntryNoEscapeCB,
 		u_text,
 	)
@@ -160,8 +162,7 @@ def escapeNewlines(u_text):
 	"""
 	if log.isDebug():
 		assert isinstance(u_text, str)
-	return re.sub(
-		"[\\r\\n\\\\]",
+	return u_pat_newline_escape.sub(
 		escapeNewlinesCallback,
 		u_text,
 	)
@@ -170,8 +171,7 @@ def escapeNewlines(u_text):
 def stripHtmlTags(u_text):
 	if log.isDebug():
 		assert isinstance(u_text, str)
-	return re.sub(
-		"(?:<[/a-zA-Z].*?(?:>|$))+",
+	return u_pat_strip_tags.sub(
 		" ",
 		u_text,
 	)
@@ -184,8 +184,7 @@ def removeControlChars(u_text):
 	# \x0d - carriage return
 	if log.isDebug():
 		assert isinstance(u_text, str)
-	return re.sub(
-		"[\x00-\x08\x0c\x0e-\x1f]",
+	return u_pat_control_chars.sub(
 		"",
 		u_text,
 	)
@@ -194,8 +193,7 @@ def removeControlChars(u_text):
 def removeNewlines(u_text):
 	if log.isDebug():
 		assert isinstance(u_text, str)
-	return re.sub(
-		"[\r\n]+",
+	return u_pat_newline.sub(
 		" ",
 		u_text,
 	)
@@ -207,8 +205,7 @@ def normalizeNewlines(u_text):
 	"""
 	if log.isDebug():
 		assert isinstance(u_text, str)
-	return re.sub(
-		"[\r\n]+",
+	return u_pat_newline.sub(
 		"\n",
 		u_text,
 	)

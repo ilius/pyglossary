@@ -1168,8 +1168,7 @@ class BglReader(object):
 			u_word_main = b_word_main.decode(self.sourceEncoding, "ignore")
 
 		# strip "/" before words
-		u_word_main = re.sub(
-			self.stripSlashAltKeyPattern,
+		u_word_main = self.stripSlashAltKeyPattern.sub(
 			r"\1\2",
 			u_word_main,
 		)

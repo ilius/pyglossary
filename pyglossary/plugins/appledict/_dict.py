@@ -121,15 +121,15 @@ close_tag = re.compile("<(BR|HR)>", re.IGNORECASE)
 nonprintable = re.compile("[\x00-\x07\x0e-\x1f]")
 img_tag = re.compile("<IMG (.*?)>", re.IGNORECASE)
 
-em0_9_re = re.compile(r'<div style="margin-left:(\d)em">')
+re_em0_9 = re.compile(r'<div style="margin-left:(\d)em">')
 em0_9_sub = r'<div class="m\1">'
 
-em0_9_ex_re = re.compile(
+re_em0_9_ex = re.compile(
 	r'<div class="ex" style="margin-left:(\d)em;color:steelblue">',
 )
 em0_9_ex_sub = r'<div class="m\1 ex">'
 
-href_re = re.compile(r"""href=(["'])(.*?)\1""")
+re_href = re.compile(r"""href=(["'])(.*?)\1""")
 
 margin_re = re.compile(r"margin-left:(\d)em")
 
@@ -224,9 +224,9 @@ def format_clean_content(
 		content = toStr(soup.encode_contents())
 	else:
 		# somewhat analogue to what BeautifulSoup suppose to do
-		body = em0_9_re.sub(em0_9_sub, body)
-		body = em0_9_ex_re.sub(em0_9_ex_sub, body)
-		body = href_re.sub(href_sub, body)
+		body = re_em0_9.sub(em0_9_sub, body)
+		body = re_em0_9_ex.sub(em0_9_ex_sub, body)
+		body = re_href.sub(href_sub, body)
 
 		body = body \
 			.replace(

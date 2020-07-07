@@ -52,12 +52,16 @@ def sortKey(b_word: bytes) -> Tuple[bytes, bytes]:
 	)
 
 
+# re_newline = re.compile("[\n\r]+")
+re_newline = re.compile("\n\r?|\r\n?")
+
+
 def newlinesToSpace(text: str) -> str:
-	return re.sub("[\n\r]+", " ", text)
+	return re_newline.sub(" ", text)
 
 
 def newlinesToBr(text: str) -> str:
-	return re.sub("\n\r?|\r\n?", "<br>", text)
+	return re_newline.sub("<br>", text)
 
 
 def verifySameTypeSequence(s: str) -> bool:

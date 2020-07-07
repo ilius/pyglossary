@@ -20,9 +20,10 @@
 
 import re
 
-_spaces_re = re.compile(r"[ \t\n]{2,}")
-_title_re = re.compile('<[^<]+?>|"|[<>]|\xef\xbb\xbf')
-_title_short_re = re.compile(r"\[.*?\]")
+re_spaces = re.compile(r"[ \t\n]{2,}")
+re_title = re.compile('<[^<]+?>|"|[<>]|\xef\xbb\xbf')
+re_title_short = re.compile(r"\[.*?\]")
+re_whitespace = re.compile("(\t|\n|\r)")
 
 
 def spaces(s):
@@ -30,7 +31,7 @@ def spaces(s):
 	strip off leading and trailing whitespaces and
 	replace contiguous whitespaces with just one space.
 	"""
-	return _spaces_re.sub(" ", s.strip())
+	return re_spaces.sub(" ", s.strip())
 
 
 _brackets_sub = (
@@ -96,7 +97,7 @@ def truncate(text, length=449):
 	:return: truncated text
 	:rtype: str
 	"""
-	content = re.sub("(\t|\n|\r)", " ", text)
+	content = re_whitespace.sub(" ", text)
 	if len(text) > length:
 		# find the next space after max_len chars (do not break inside a word)
 		pos = content[:length].rfind(" ")
@@ -119,7 +120,7 @@ def title(title, BeautifulSoup):
 				features="lxml", # FIXME: html or lxml? gives warning unless it's lxml
 			).get_text(strip=True)
 	else:
-		title = _title_re.sub("", title)
+		title = re_title.sub("", title)
 		title = title.replace("&", "&amp;")
 	title = brackets(title)
 	title = truncate(title, 1126)
@@ -137,4 +138,4 @@ def title_short(s):
 	"""
 	title_short("str[ing]") -> "str"
 	"""
-	return spaces(_title_short_re.sub("", s))
+	return spaces(re_title_short.sub("", s))

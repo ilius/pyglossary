@@ -32,6 +32,7 @@ You can install it by running: sudo pip3 install colorize-pinyin""")
 from . import languages, log
 
 pinyinPattern = re.compile(r",|;")
+nonHieroglyphPattern = re.compile(r"[^\u4e00-\u9fff]")
 
 
 def zh(titles, content):
@@ -54,7 +55,7 @@ def zh(titles, content):
 		indexes.update({title, title + "。"})
 
 		# remove all non hieroglyph
-		title = re.sub(r"[^\u4e00-\u9fff]", "", title)
+		title = nonHieroglyphPattern.sub("", title)
 		indexes.add(title)
 
 	indexes.update(pinyin_indexes(content))

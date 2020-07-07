@@ -56,6 +56,8 @@ __all__ = ["read"]
 # @param text The HTML (or XML) source text.
 # @return The plain text, as a Unicode string, if necessary.
 
+htmlEntityPattern = re.compile(r"&#?\w+;")
+
 def unescape(text):
 	def fixup(m):
 		text = m.group(0)
@@ -81,7 +83,7 @@ def unescape(text):
 			except KeyError:
 				pass
 		return text  # leave as is
-	return re.sub(r"&#?\w+;", fixup, text)
+	return htmlEntityPattern.sub(fixup, text)
 # }}}
 
 
@@ -140,7 +142,10 @@ re_c_open_color = re.compile(r"\[c (\w+)\]")
 re_sound = re.compile(r"\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]")
 re_img = re.compile(r"\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]")
 re_m = re.compile(r"\[m(\d)\](.*?)\[/m\]")
-wrapped_in_quotes_re = re.compile("^(\\'|\")(.*)(\\1)$")
+re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
+re_end = re.compile(r"\\$")
+re_ref = re.compile("<<(.*?)>>")
+
 
 # single instance of parser
 # it is safe as long as this script is not going multithread.
@@ -148,8 +153,8 @@ _parse = DSLParser().parse
 
 
 def apply_shortcuts(line):
-	for repl, sub in shortcuts:
-		line = re.sub(repl, sub, line)
+	for pattern, sub in shortcuts:
+		line = pattern.sub(sub, line)
 	return line
 
 
@@ -218,7 +223,7 @@ def _clean_tags(line, audio):
 
 	line = _parse(line)
 
-	line = re.sub(r"\\$", "<br/>", line)
+	line = re_end.sub("<br/>", line)
 
 	# paragraph, part one: before shortcuts.
 	line = line.replace("[m]", "[m1]")
@@ -262,7 +267,7 @@ def _clean_tags(line, audio):
 	# cross reference
 	line = line.replace("[ref]", "<<").replace("[/ref]", ">>")
 	line = line.replace("[url]", "<<").replace("[/url]", ">>")
-	line = re.sub("<<(.*?)>>", ref_sub, line)
+	line = re_ref.sub(ref_sub, line)
 
 	# sound file
 	if audio:
@@ -286,7 +291,7 @@ def _clean_tags(line, audio):
 
 
 def unwrap_quotes(s):
-	return wrapped_in_quotes_re.sub("\\2", s)
+	return re_wrapped_in_quotes.sub("\\2", s)
 
 
 class Reader(object):

@@ -134,7 +134,7 @@ class RemoveHtmlTags(EntryFilter):
 		def fixStr(st: str) -> str:
 			tagsRE = "|".join(self.tags)
 			pattern = f"<.?({tagsRE})[^>]*>"
-			st = re.sub(pattern, "", st)
+			st = pattern.sub("", st)
 			return st
 
 		entry.editFuncDefi(fixStr)
@@ -187,10 +187,14 @@ class CleanEntryFilter(EntryFilter):  # FIXME
 	name = "clean"
 	desc = "Clean"
 
+	winNewlinePattern = re.compile("[\r\n]+")
+	spacesNewlinePattern = re.compile(" *\n *")
+	blocksNewlinePattern = re.compile("♦\n+♦")
+
 	def cleanDefi(self, st: str) -> str:
 		st = st.replace("♦  ", "♦ ")
-		st = re.sub("[\r\n]+", "\n", st)
-		st = re.sub(" *\n *", "\n", st)
+		st = self.winNewlinePattern.sub("\n", st)
+		st = self.spacesNewlinePattern.sub("\n", st)
 
 		"""
 		This code may correct snippets like:
@@ -207,7 +211,7 @@ class CleanEntryFilter(EntryFilter):  # FIXME
 				st = replacePostSpaceChar(st, ch)
 		"""
 
-		st = re.sub("♦\n+♦", "♦", st)
+		st = self.blocksNewlinePattern.sub("♦", st)
 		if st.endswith("<p"):
 			st = st[:-2]
 		st = st.strip()
