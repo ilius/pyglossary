@@ -31,22 +31,28 @@ class BaseEntry(object):
 	def save(self, directory: str) -> str:
 		raise NotImplementedError
 
-	def getWord(self) -> str:
+	@property
+	def word(self) -> str:
 		raise NotImplementedError
 
-	def getWords(self) -> List[str]:
+	@property
+	def words(self) -> List[str]:
 		raise NotImplementedError
 
-	def getDefi(self) -> str:
+	@property
+	def defi(self) -> str:
 		raise NotImplementedError
 
-	def getDefis(self) -> List[str]:
+	@property
+	def defis(self) -> List[str]:
 		raise NotImplementedError
 
-	def getDefiFormat(self) -> str:
+	@property
+	def defiFormat(self) -> str:
 		# TODO: type: Literal["m", "h", "x", "b"]
 		raise NotImplementedError
 
+	@defiFormat.setter
 	def setDefiFormat(self, defiFormat: str) -> None:
 		# TODO: type: Literal["m", "h", "x", "b"]
 		raise NotImplementedError
