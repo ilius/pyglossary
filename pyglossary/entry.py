@@ -346,7 +346,7 @@ class Entry(BaseEntry):
 		if self._defiFormat != "m":
 			return
 		defi = self.defi.lower()
-		if re.match(self.htmlPattern, defi):
+		if self.htmlPattern.match(defi):
 			self._defiFormat = "h"
 
 	def byteProgress(self):

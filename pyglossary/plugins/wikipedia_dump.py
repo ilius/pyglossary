@@ -115,7 +115,7 @@ class Reader(object):
 			d_prefix: str, with length of 3
 				this is the joint string version of directory relative path
 		"""
-		return re.match(self.specialPattern, fname)
+		return self.specialPattern.match(fname)
 		# assert len(d_prefix) == 3
 		# f_prefix = fname[:3].lower()
 		# if f_prefix == d_prefix:

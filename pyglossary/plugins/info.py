@@ -18,7 +18,7 @@ def write(glos: GlossaryType, filename: str) -> bool:
 	from collections import Counter, OrderedDict
 	from pyglossary.json_utils import dataToPrettyJson
 
-	possible_html_re = re.compile(r"<[a-zA-Z]+[ />]")
+	re_possible_html = re.compile(r"<[a-zA-Z]+[ />]")
 
 	defiFormatCounter = Counter()
 	firstTagCounter = Counter()
@@ -30,10 +30,10 @@ def write(glos: GlossaryType, filename: str) -> bool:
 		defiFormatCounter[defiFormat] += 1
 		defi = entry.defi
 		if defiFormat == "m":
-			if possible_html_re.match(defi):
+			if re_possible_html.match(defi):
 				log.warn(f"undetected html defi: {defi}")
 		elif defiFormat == "h":
-			tag = possible_html_re.search(defi).group().strip("< />").lower()
+			tag = re_possible_html.search(defi).group().strip("< />").lower()
 			firstTagCounter[tag] += 1
 
 	data_entry_count = defiFormatCounter["b"]

@@ -110,10 +110,11 @@ else:
 		f"What is your operating system?"
 	)
 
-charsetDecodePattern = re.compile(
+re_charset_decode = re.compile(
 	b"(<charset\\s+c\\=[\'\"]?(\\w)[\"\"]?>|</charset>)",
 	re.I,
 )
+re_b_reference = re.compile(b"^[0-9a-fA-F]{4}$")
 
 
 class BGLGzipFile(GzipFile):
@@ -1018,7 +1019,7 @@ class BglReader(object):
 		encoded with non-default encoding (babylon character references
 		'<CHARSET c="T">00E6;</CHARSET>' do not count).
 		"""
-		b_parts = charsetDecodePattern.split(b_text)
+		b_parts = re_charset_decode.split(b_text)
 		u_text = ""
 		encodings = []  # stack of encodings
 		defaultEncodingOnly = True
@@ -1037,7 +1038,7 @@ class BglReader(object):
 									f" reference ({b_text2!r})\n"
 								)
 							continue
-						if not re.match(b"^[0-9a-fA-F]{4}$", b_ref):
+						if not re_b_reference.match(b_ref):
 							log.debug(
 								f"decoding charset tags, b_text={b_text!r}"
 								f"\ninvalid <charset c=t> character"

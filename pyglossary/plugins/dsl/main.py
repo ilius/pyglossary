@@ -112,8 +112,8 @@ class DSLParser(object):
 			for t in tags
 		):
 			tag_re = re.escape(tag)
-			tag_open_re = fr"\[{tag_re}{ext_re}\]"
-			tags_.add((tag, tag_re, ext_re, tag_open_re))
+			re_tag_open = fr"\[{tag_re}{ext_re}\]"
+			tags_.add((tag, tag_re, ext_re, re_tag_open))
 		self.tags = frozenset(tags_)
 
 	def parse(self, line):
@@ -167,8 +167,8 @@ class DSLParser(object):
 			if line[ptr + 1] == "/":
 				yield CLOSE, line[ptr + 2:bracket]
 			else:
-				for tag, _, _, tag_open_re in self.tags:
-					if re.match(tag_open_re, line[ptr:bracket + 1]):
+				for tag, _, _, re_tag_open in self.tags:
+					if re_tag_open.match(line[ptr:bracket + 1]):
 						yield OPEN, _tag.Tag(line[ptr + 1:bracket], tag)
 						break
 				else:
