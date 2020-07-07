@@ -482,10 +482,10 @@ class Writer(object):
 			for alt in words[1:]:
 				altIndexList.append((alt.encode("utf-8"), entryI))
 
-			b_dictBlock += (defis[0]).encode("utf-8")
+			b_dictBlock += defis[0].encode("utf-8")
 
 			for altDefi in defis[1:]:
-				b_dictBlock += b"\x00" + (altDefi).encode("utf-8")
+				b_dictBlock += b"\x00" + altDefi.encode("utf-8")
 
 			dictFile.write(b_dictBlock)
 
