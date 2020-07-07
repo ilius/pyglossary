@@ -112,8 +112,7 @@ def takeOutputWords(
 	words = set()
 	progressbar, glos._progressbar = glos._progressbar, False
 	for entry in entryIter:
-		words.update(re.findall(
-			wordPattern,
+		words.update(wordPattern.findall(
 			entry.defi,
 		))
 	glos._progressbar = progressbar
@@ -149,8 +148,7 @@ def searchWordInDef(
 				if not part:
 					continue
 				if matchWord:
-					partWords = re.findall(
-						wordPattern,
+					partWords = wordPattern.findall(
 						part,
 					)
 					if not partWords:

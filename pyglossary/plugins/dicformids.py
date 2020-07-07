@@ -46,6 +46,8 @@ language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEn
 
 
 class Reader(object):
+	re_number = re.compile(r"\d+")
+
 	def __init__(self, glos):
 		self._glos = glos
 		self._tabFileNames = []
@@ -59,7 +61,7 @@ class Reader(object):
 			if not fname.startswith("directory"):
 				continue
 			try:
-				num = re.findall("\d+", fname)[-1]
+				num = self.re_number.findall(fname)[-1]
 			except IndexError:
 				pass
 			else:

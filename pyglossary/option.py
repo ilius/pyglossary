@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 import logging
 from typing import Tuple, List, Dict, Optional, Any
 
@@ -166,6 +167,7 @@ class ListOption(Option):
 
 
 class EncodingOption(Option):
+	re_category = re.compile("^[a-z]+")
 	def __init__(self, customValue=True, values=None, **kwargs):
 		if values is None:
 			values = [
@@ -205,12 +207,11 @@ class EncodingOption(Option):
 		)
 
 	def groupValues(self) -> Optional[Dict[str, Any]]:
-		import re
 		from collections import OrderedDict
 		groups = OrderedDict()  # type: Dict[str, List[str]]
 		others = []  # type: List[str]
 		for value in self.values:
-			cats = re.findall("^[a-z]+", value)
+			cats = self.re_category.findall(value)
 			if not cats:
 				others.append(value)
 				continue

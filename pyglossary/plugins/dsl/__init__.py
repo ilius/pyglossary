@@ -295,6 +295,9 @@ def unwrap_quotes(s):
 
 
 class Reader(object):
+	re_tags_open = re.compile(r"(?<!\\)\[(c |[cuib]\])")
+	re_tags_close = re.compile(r"\[/[cuib]\]")
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._audio = False
@@ -365,6 +368,8 @@ class Reader(object):
 		current_text = []
 		line_type = "header"
 		unfinished_line = ""
+		re_tags_open = self.re_tags_open
+		re_tags_close = self.re_tags_close
 
 		for line in self._file:
 			line = line.rstrip()
@@ -384,8 +389,8 @@ class Reader(object):
 				# some ill formated source may have tags spanned into
 				# multiple lines
 				# try to match opening and closing tags
-				tags_open = re.findall(r"(?<!\\)\[(c |[cuib]\])", line)
-				tags_close = re.findall(r"\[/[cuib]\]", line)
+				tags_open = re_tags_open.findall(line)
+				tags_close = re_tags_close.findall(line)
 				if len(tags_open) != len(tags_close):
 					unfinished_line = line
 					continue
