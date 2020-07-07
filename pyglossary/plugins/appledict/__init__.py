@@ -241,7 +241,7 @@ def write(
 				title_attr = str(long_title)
 
 			content_title = long_title
-			if entry.getDefiFormat() == "x":
+			if entry.defiFormat == "x":
 				defi = xdxf_to_html(defi)
 				content_title = None
 			content = format_clean_content(content_title, defi, BeautifulSoup)

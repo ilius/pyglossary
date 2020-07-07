@@ -113,9 +113,11 @@ class DataEntry(BaseEntry):
 		log.error("entry.getDefis() is deprecated, use entry.defis")
 		return self.defis
 
-	def getDefiFormat(self) -> 'Literal["b"]':
+	@property
+	def defiFormat(self) -> 'Literal["b"]':
 		return "b"
 
+	@defiFormat.setter
 	def setDefiFormat(self, defiFormat):
 		pass
 
@@ -323,7 +325,8 @@ class Entry(BaseEntry):
 		log.error("entry.getDefis() is deprecated, use entry.defis")
 		return self.defis
 
-	def getDefiFormat(self) -> str:
+	@property
+	def defiFormat(self) -> str:
 		"""
 			returns definition format:
 				"m": plain text
@@ -333,6 +336,7 @@ class Entry(BaseEntry):
 		# TODO: type: Literal["m", "h", "x"]
 		return self._defiFormat
 
+	@defiFormat.setter
 	def setDefiFormat(self, defiFormat) -> str:
 		"""
 			defiFormat:

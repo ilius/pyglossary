@@ -546,7 +546,7 @@ class Writer(object):
 			defis = entry.defis  # list of strs
 
 			entry.detectDefiFormat()  # call no more than once
-			defiFormat = entry.getDefiFormat()
+			defiFormat = entry.defiFormat
 			defiFormatCounter[defiFormat] += 1
 			if defiFormat not in ("m", "h"):
 				defiFormat = "m"

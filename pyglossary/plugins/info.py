@@ -25,7 +25,7 @@ def write(glos: GlossaryType, filename: str) -> bool:
 	wordCount = 0
 	for entry in glos:
 		entry.detectDefiFormat()
-		defiFormat = entry.getDefiFormat()
+		defiFormat = entry.defiFormat
 		wordCount += 1
 		defiFormatCounter[defiFormat] += 1
 		defi = entry.defi
