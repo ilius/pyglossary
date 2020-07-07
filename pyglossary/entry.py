@@ -171,7 +171,7 @@ class DataEntry(BaseEntry):
 class Entry(BaseEntry):
 	sep = "|"
 	htmlPattern = re.compile(
-		".*(" + "|".join([
+		".*(?:" + "|".join([
 			r"<font[ >]",
 			r"<br\s*/?\s*>",
 			r"<i[ >]",
