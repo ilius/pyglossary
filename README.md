@@ -47,7 +47,6 @@ Supported formats
 | Lingoes Source (LDF)              | .ldf          |   ✔   |   ✔   |
 | Octopus MDict                     | .mdx          |   ✔   |       |
 | Octopus MDict Source              | .txt          |   ✔   |   ✔   |
-| Omnidic                           |               |       |   ✔   |
 | Sdictionary Binary                | .dct          |   ✔   |       |
 | Sdictionary Source                | .sdct         |       |   ✔   |
 | SQL                               | .sql          |       |   ✔   |
