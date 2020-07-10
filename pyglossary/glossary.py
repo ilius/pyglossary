@@ -932,6 +932,8 @@ class Glossary(GlossaryType):
 				if plugin.sortKey:
 					sortKey = plugin.sortKey
 					log.debug(f"Using sort key function from {format} plugin")
+				else:
+					log.warning(f"WARNING: plugin has not provided sortKey")
 			elif sortOnWrite == ALWAYS:
 				if plugin.sortKey:
 					sortKey = plugin.sortKey
