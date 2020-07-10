@@ -32,6 +32,22 @@ optionsProp = {
 }
 depends = {}
 
+tools = [
+	{
+		"name": "PTkSdict",
+		"web": "http://swaj.net/sdict/",
+		"platforms": ["Linux", "Windows", "Mac"],
+		"license": "GPL",
+	},
+	# there is a Perl/Tk-based GUI, and command line tool, both in Perl 5
+	{
+		"name": "Sdictionary for Symbian",
+		"web": "http://swaj.net/epoc/symbian/index.html",
+		"platforms": ["Symbian"],
+		"license": "Unknown",
+	},
+]
+
 
 class GzipCompression(object):
 	def __str__(self):

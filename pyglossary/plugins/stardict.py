@@ -36,6 +36,27 @@ sortOnWrite = ALWAYS
 # sortKey also is defined in line 52
 supportsAlternates = True
 
+tools = [
+	{
+		"name": "StarDict",
+		"web": "http://www.huzheng.org/stardict/",
+		"platforms": ["Linux", "Windows", "Mac"],
+		"license": "GPL",
+	},
+	{
+		"name": "GoldenDict",
+		"web": "http://goldendict.org/",
+		"platforms": ["Linux", "Windows"],
+		"license": "GPL",
+	},
+	{
+		"name": "GoldenDict Mobile",
+		"web": "http://goldendict.mobi/",
+		"platforms": ["Android"],
+		"license": "Unknown",
+	},
+]
+
 infoKeys = (
 	"bookname",
 	"author",

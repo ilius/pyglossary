@@ -35,6 +35,15 @@ optionsProp = {
 }
 depends = {}
 
+tools = [
+	{
+		"name": "MDict",
+		"web": "https://www.mdict.cn/",
+		"platforms": ["Android", "iOS", "Windows", "Mac"],
+		"license": "Proprietary",
+	},
+]
+
 
 class Reader(object):
 	def __init__(self, glos):

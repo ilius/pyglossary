@@ -26,6 +26,14 @@ format = "Dictfile"
 description = "Kobo E-Reader Dictfile"
 extensions = (".df",)
 # https://github.com/geek1011/dictutil
+tools = [
+	{
+		"name": "dictgen",
+		"web": "https://pgaskin.net/dictutil/dictgen/",
+		"platforms": ["Linux", "Windows", "Mac"],
+		"license": "MIT",
+	},
+]
 
 
 def fixWord(word: str) -> str:

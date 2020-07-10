@@ -54,3 +54,5 @@ depends = {}  # type: Dict[str, str]
 supportsAlternates = False
 sortOnWrite = DEFAULT_NO  # type: YesNoAlwaysNever
 sortKey = None
+
+tools = []  # type: List[Dict[str, Any]]

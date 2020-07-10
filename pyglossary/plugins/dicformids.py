@@ -8,6 +8,15 @@ enable = True
 format = "Dicformids"
 description = "DictionaryForMIDs"
 extensions = (".mids",)
+tools = [
+	{
+		"name": "DictionaryForMIDs",
+		"web": "http://dictionarymid.sourceforge.net/",
+		"platforms": ["Android", "Web", "Windows", "Linux", "Mac"],
+		# PC version is Java-based
+		"license": "GPL",
+	},
+]
 optionsProp = {}
 depends = {}
 

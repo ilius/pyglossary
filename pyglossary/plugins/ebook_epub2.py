@@ -32,6 +32,46 @@ description = "EPUB-2 E-Book"
 extensions = (".epub",)
 sortOnWrite = ALWAYS
 
+# https://en.wikipedia.org/wiki/EPUB
+tools = [
+	{
+		"name": "calibre",
+		"web": "https://calibre-ebook.com/",
+		"platforms": ["Linux", "Windows", "Mac"],
+		"license": "GPL",
+	},
+	{
+		"name": "Okular",
+		"web": "https://okular.kde.org/",
+		"platforms": ["Linux", "Windows", "Mac"],
+		"license": "GPL",
+	},
+	{
+		"name": " Book Reader ",
+		"web": "https://f-droid.org/en/packages/com.github.axet.bookreader/",
+		"platforms": ["Android"],
+		"license": "GPL",
+	},
+	{
+		"name": "Kobo eReader",
+		"web": "https://www.kobo.com",
+		"platforms": ["Kobo eReader"],
+		"license": "Proprietary",
+	},
+	{
+		"name": "Icecream Ebook Reader",
+		"web": "https://icecreamapps.com/Ebook-Reader/",
+		"platforms": ["Windows"],
+		"license": "Proprietary",
+	},
+	{
+		"name": "Aldiko",
+		"web": "https://www.demarque.com/aldiko",
+		"platforms": ["Android", "iOS"],
+		"license": "Proprietary",
+	},
+]
+
 optionsProp = {
 	"group_by_prefix_length": IntOption(),
 	# "group_by_prefix_merge_min_size": IntOption(),

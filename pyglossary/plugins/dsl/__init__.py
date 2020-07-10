@@ -42,8 +42,29 @@ optionsProp = {
 }
 depends = {}
 
-__all__ = ["read"]
+tools = [
+	{
+		"name": "ABBYY Lingvo",
+		"web": "https://www.abbyy.com/",
+		"platforms": [
+			"Windows",
+			"Mac",
+			"Android",
+			"iOS",
+			"Windows Mobile",
+			"Symbian",
+		],
+		"license": "Proprietary",
+	},
+]
 
+# ABBYY is a Russian company
+# https://ru.wikipedia.org/wiki/ABBYY_Lingvo
+# http://lingvo.helpmax.net/en/troubleshooting/dsl-compiler/compiling-a-dictionary/
+# https://www.abbyy.com/news/abbyy-lingvo-80-dictionaries-to-suit-every-taste/
+
+
+__all__ = ["read"]
 
 # {{{
 # modified to work around codepoints that are not supported by `unichr`.

@@ -14,6 +14,21 @@ depends = {
 	"polib": "polib",
 }
 
+tools = [
+	{
+		"name": "gettext",
+		"web": "https://www.gnu.org/software/gettext/",
+		"platforms": ["Linux", "Windows"],
+		"license": "GPL",
+	},
+	{
+		"name": "poEdit",
+		"web": "https://github.com/vslavik/poedit",
+		"platforms": ["Linux", "Windows", "Mac"],
+		"license": "MIT / Shareware",
+	},
+]
+
 
 class Reader(object):
 	def __init__(self, glos: GlossaryType):

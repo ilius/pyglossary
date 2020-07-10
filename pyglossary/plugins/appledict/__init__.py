@@ -58,6 +58,16 @@ depends = {
 	"html5lib": "html5lib",
 }
 
+tools = [
+	{
+		"name": "Dictionary Development Kit",
+		"web": "https://github.com/SebastianSzturo/Dictionary-Development-Kit",
+		"platforms": ["Mac"],
+		"license": "Unknown",
+	},
+]
+
+
 BeautifulSoup = None
 
 def loadBeautifulSoup():

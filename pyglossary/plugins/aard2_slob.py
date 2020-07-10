@@ -8,6 +8,20 @@ format = 'Aard2Slob'
 description = 'Aard 2 (slob)'
 extensions = ('.slob',)
 singleFile = True
+tools = [
+	{
+		"name": "Aard 2 for Android",
+		"web": "http://aarddict.org/",
+		"platforms": ["Android"],
+		"license": "GPL",
+	},
+	{
+		"name": "Aard2 for Web",
+		"web": "http://aarddict.org/",
+		"platforms": ["Web"],
+		"license": "MPL",
+	},
+]
 optionsProp = {
 	"compression": StrOption(
 		values=["", "bz2", "zlib", "lzma2"],

@@ -16,6 +16,15 @@ optionsProp = {
 }
 depends = {}
 
+tools = [
+	{
+		"name": "MDXBuilder",
+		"web": "https://www.mdict.cn/",
+		"platforms": ["Windows"],
+		"license": "Proprietary",
+	},
+]
+
 
 class Reader(object):
 	def __init__(self, glos):

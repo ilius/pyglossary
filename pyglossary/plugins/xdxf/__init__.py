@@ -37,6 +37,30 @@ depends = {
 	"lxml": "lxml",
 }
 
+# https://en.wikipedia.org/wiki/XDXF
+
+tools = [
+	{
+		"name": "GoldenDict",
+		"web": "http://goldendict.org/",
+		"platforms": ["Linux", "Windows"],
+		"license": "GPL",
+	},
+	{
+		"name": "QTranslate",
+		"web": "https://quest-app.appspot.com/",
+		"platforms": ["Windows"],
+		"license": "Proprietary",
+	},
+	{
+		"name": "Alpus",
+		"web": "https://alpusapp.com/",
+		"platforms": ["Windows", "Mac", "Linux", "Android"],
+		# Java-based
+		"license": "Freeware",
+	},
+]
+
 
 """
 new format
@@ -214,4 +238,3 @@ class Reader(object):
 					else:
 						title = c.tail
 		return title.strip()
-

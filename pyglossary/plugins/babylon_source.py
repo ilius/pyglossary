@@ -10,6 +10,15 @@ format = "BabylonSource"
 description = "Babylon Source (gls)"
 extensions = (".gls", ".babylon")
 singleFile = True
+tools = [
+	{
+		"name": "Babylon Glossary Builder",
+		"web": "https://babylon-glossary-builder.software.informer.com/",
+		# what's the official web page?
+		"platforms": ["Windows"],
+		"license": "Proprietary",
+	},
+]
 optionsProp = {
 	"writeInfo": BoolOption(),
 	"newline": NewlineOption(),

@@ -14,6 +14,27 @@ optionsProp = {
 depends = {}
 sortOnWrite = DEFAULT_YES
 
+# https://en.wikipedia.org/wiki/DICT#DICT_file_format
+tools = [
+	{
+		"name": "Dictd",
+		"web": "https://directory.fsf.org/wiki/Dictd",
+		"platforms": ["Linux"],
+		"license": "GPL",
+	},
+	{
+		"name": "GNOME Dictionary",
+		"web": "https://wiki.gnome.org/Apps/Dictionary",
+		"platforms": ["Linux"],
+		"license": "GPL",
+	},
+	{
+		"name": "Xfce4 Dictionary",
+		"web": "https://docs.xfce.org/apps/xfce4-dict/start",
+		"platforms": ["linux"],
+		"license": "GPL",
+	},
+]
 
 b64_chars = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 b64_chars_ord = {c: i for i, c in enumerate(b64_chars)}

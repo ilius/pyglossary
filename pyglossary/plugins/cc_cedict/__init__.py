@@ -14,6 +14,9 @@ depends = {
 	"jinja2": "jinja2",
 }
 
+# https://en.wikipedia.org/wiki/CEDICT
+# https://cc-cedict.org/editor/editor.php
+
 entry_count_reg = re.compile(r"#! entries=(\d+)")
 class Reader:
 	def __init__(self, glos):

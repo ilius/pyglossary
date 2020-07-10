@@ -29,6 +29,26 @@ format = "BabylonBgl"
 description = "Babylon (bgl)"
 extensions = (".bgl",)
 singleFile = True
+tools = [
+	{
+		"name": "Babylon Translator",
+		"web": "https://www.babylon-software.com/",
+		"platforms": ["Windows"],
+		"license": "Proprietary",
+	},
+	{
+		"name": "GoldenDict",
+		"web": "http://goldendict.org/",
+		"platforms": ["Linux", "Windows"],
+		"license": "GPL",
+	},
+	{
+		"name": "GoldenDict Mobile",
+		"web": "http://goldendict.mobi/",
+		"platforms": ["Android"],
+		"license": "Unknown",
+	},
+]
 depends = {}
 supportsAlternates = True
 # progressbar = DEFAULT_YES

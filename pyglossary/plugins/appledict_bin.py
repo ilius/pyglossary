@@ -24,6 +24,14 @@ format = "AppleDictBin"
 description = "AppleDict Binary (.dictionary)"
 extensions = (".dictionary", ".data",)
 singleFile = True
+tools = [
+	{
+		"name": "Apple Dictionary",
+		"web": "https://support.apple.com/en-gu/guide/dictionary/welcome/mac",
+		"platforms": ["Mac"],
+		"license": "Proprietary",
+	},
+]
 optionsProp = {
 	"html": BoolOption(),
 }

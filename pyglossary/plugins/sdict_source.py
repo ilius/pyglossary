@@ -16,6 +16,15 @@ optionsProp = {
 }
 depends = {}
 
+tools = [
+	{
+		"name": "PTkSdict",
+		"web": "http://swaj.net/sdict/create-dicts.html",
+		"platforms": ["Linux", "Windows", "Mac"],
+		"license": "GPL",
+	},
+]
+
 
 def write(
 	glos,

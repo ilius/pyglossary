@@ -31,6 +31,15 @@ description = "MOBI E-Book"
 extensions = (".mobi",)
 sortOnWrite = ALWAYS
 
+tools = [
+	{
+		"name": "Amazon Kindle",
+		"web": "https://www.amazon.com/kindle",
+		"platforms": ["Amazon Kindle"],
+		"license": "Proprietary",
+	},
+]
+
 optionsProp = {
 	"group_by_prefix_length": IntOption(),
 	# "group_by_prefix_merge_min_size": IntOption(),

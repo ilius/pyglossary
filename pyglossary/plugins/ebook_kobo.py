@@ -34,6 +34,15 @@ description = "Kobo E-Reader Dictionary"
 extensions = (".kobo",)
 sortOnWrite = ALWAYS
 
+tools = [
+	{
+		"name": "Kobo eReader",
+		"web": "https://www.kobo.com",
+		"platforms": ["Kobo eReader"],
+		"license": "Proprietary",
+	},
+]
+
 optionsProp = {
 	# "group_by_prefix_merge_min_size": IntOption(),
 	# "group_by_prefix_merge_across_first": BoolOption(),

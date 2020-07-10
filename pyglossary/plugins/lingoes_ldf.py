@@ -16,6 +16,18 @@ optionsProp = {
 }
 depends = {}
 
+tools = [
+	{
+		"name": "Lingoes Dictionary Creator",
+		"web": "http://www.lingoes.net/en/dictionary/dict_format.php",
+		"platforms": [],
+		"comment": """Lingoes Dictionary Creator is developing now.
+Please send your finished dictionary source file to kevin-yau@msn.com
+Lingoes will compile it into .ld2 for you.
+You will can do it yourself after the creator release."""
+	},
+]
+
 infoKeys = [
 	"title",
 	"description",
