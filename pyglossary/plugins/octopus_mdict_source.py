@@ -106,7 +106,7 @@ class Reader(object):
 			if line.startswith("@@@LINK="):
 				continue
 			if word:
-				defi = line
+				defi += "\n" + line
 			else:
 				word = line
 
