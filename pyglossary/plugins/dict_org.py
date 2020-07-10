@@ -173,7 +173,6 @@ class Reader(object):
 			defiLen = indexStrToInt(parts[2])
 			self._dictFp.seek(sumLen)
 			defi = self._dictFp.read(defiLen)
-			defi = defi.replace(b"<BR>", b"\n").replace(b"<br>", b"\n")
 			sumLen += defiLen
 			yield self._glos.newEntry(toStr(word), toStr(defi))
 			wordCount += 1
