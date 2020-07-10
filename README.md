@@ -37,7 +37,7 @@ Supported formats
 | CC-CEDICT                         |               |   ✔   |       |
 | CSV                               | .csv          |   ✔   |   ✔   |
 | DictionaryForMIDs                 |               |   ✔   |   ✔   |
-| DICTD dictionary server           | .index        |   ✔   |   ✔   |
+| DICT.org / Dictd server           | .index        |   ✔   |   ✔   |
 | Editable Linked List of Entries   | .edlin        |   ✔   |   ✔   |
 | EPUB-2 E-Book                     | .epub         |       |   ✔   |
 | FreeDict                          | .tei          |   ✔   |   ✔   |
