@@ -7,13 +7,13 @@ from/to various formats used by different dictionary applications
 Screenshots
 -----------
 
-<img src="https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-gtk-bgl-stardict-nl-en-dark.png" height="450"/>
+<img src="https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-gtk-bgl-stardict-aryanpur-dark.png" height="450"/>
 
 Linux - Gtk3-based intreface
 
 ------------------------------------------------------------------------
 
-<img src="https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-tk-bgl-mdict-fr-zh-win10.png" height="450"/>
+<img src="https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-tk-bgl-kobo-es-en.png" height="450"/>
 
 Windows - Tkinter-based interface
 
