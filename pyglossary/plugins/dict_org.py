@@ -187,7 +187,7 @@ class Reader(object):
 def write(
 	glos: GlossaryType,
 	filename: str,
-	dictzip: bool = True,
+	dictzip: bool = False,
 	install: bool = True,
 ) -> None:
 	from pyglossary.text_utils import runDictzip
@@ -218,6 +218,10 @@ def write(
 	#		continue
 	#	pass  # FIXME
 	if dictzip:
+		# FIXME: does not seem to work
+		# dictd does not start
+		# when try to start manually, gives this error:
+		# :E: /usr/share/dictd/test.dict is not readable (data file)
 		runDictzip(filename)
 	if install:
 		installToDictd(filename, glos.getInfo("name").replace(" ", "_"))
