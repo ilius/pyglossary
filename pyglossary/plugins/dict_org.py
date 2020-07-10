@@ -2,6 +2,7 @@
 
 from formats_common import *
 from pyglossary.file_utils import fileCountLines
+from pyglossary.plugin_lib.dictdlib import DictDB
 
 enable = True
 format = "DictOrg"
@@ -12,7 +13,7 @@ optionsProp = {
 	"install": BoolOption(),
 }
 depends = {}
-sortOnWrite = DEFAULT_YES
+sortOnWrite = DEFAULT_NO
 
 # https://en.wikipedia.org/wiki/DICT#DICT_file_format
 tools = [
@@ -36,50 +37,19 @@ tools = [
 	},
 ]
 
-b64_chars = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-b64_chars_ord = {c: i for i, c in enumerate(b64_chars)}
 
-
-def intToIndexStr(n: int) -> bytes:
-	chars = []
-	while True:
-		chars.append(b64_chars[n & 0x3f])
-		n >>= 6
-		if n == 0:
-			break
-	return bytes(reversed(chars))
-
-
-def indexStrToInt(st: str) -> int:
-	n = 0
-	for i, c in enumerate(reversed(list(st))):
-		k = b64_chars_ord[c]
-		assert 0 <= k < 64
-		n |= (k << 6*i)
-		# += is safe
-		# |= is probably a little faster
-		# |= is also safe because n has lesser that 6*i bits. why? ## FIXME
-	return n
-
-
-def installToDictd(filename: str, title: str = "") -> None:
+def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 	"""
 	filename is without extension (neither .index or .dict or .dict.dz)
 	"""
-	import shutil
+	import shutil, subprocess
 	targetDir = "/usr/share/dictd/"
-	dbListPath = join(targetDir, "db.list")
-	if not isfile(dbListPath):
-		log.error(
-			f"{dbListPath} file not found"
-			f", you may create it and try again"
-			f"\nfailed to install to DICTD server directory: {targetDir}"
-		)
+	if filename.startswith(targetDir):
 		return
 
 	log.info(f"Installing {filename!r} to DICTD server directory: {targetDir}")
 
-	if os.path.isfile(filename + ".dict.dz"):
+	if dictzip and os.path.isfile(filename + ".dict.dz"):
 		dictExt = ".dict.dz"
 	elif os.path.isfile(filename + ".dict"):
 		dictExt = ".dict"
@@ -91,96 +61,49 @@ def installToDictd(filename: str, title: str = "") -> None:
 		shutil.copy(filename + ".index", targetDir)
 		shutil.copy(filename + dictExt, targetDir)
 
-	fname = split(filename)[1]
-	if not title:
-		title = fname
-	dataPath = join(targetDir, fname + dictExt)
-	indexPath = join(targetDir, fname + ".index")
-	dbInfo = f"""
-database {title}
-{{
-  data {dataPath}
-  index {indexPath}
-}}
-"""
-	with open(dbListPath, "a") as dbFile:
-		dbFile.write(dbInfo)
+	if subprocess.call(["/usr/sbin/dictdconfig", "-w"]) != 0:
+		log.error(
+			"failed to update .db file, try manually runing: "
+			"sudo /usr/sbin/dictdconfig -w"
+		)
+
+	log.info("don't forget to restart dictd server")
 
 
 class Reader(object):
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._filename = ""
-		self._indexFp = None
-		self._dictFp = None
-		self._leadingLinesCount = 0
-		self._len = None
+		self._dictdb = None  # type: Optional[DictDB]
 
 	def open(self, filename: str) -> None:
 		import gzip
 		if filename.endswith(".index"):
 			filename = filename[:-6]
 		self._filename = filename
-		self._indexFp = open(filename+".index", "rb")
-		if os.path.isfile(filename+".dict.dz"):
-			self._dictFp = gzip.open(filename+".dict.dz")
-		else:
-			self._dictFp = open(filename+".dict", "rb")
+		self._dictdb = DictDB(filename, "read", 1)
 
 	def close(self) -> None:
-		if self._indexFp is not None:
-			try:
-				self._indexFp.close()
-			except:
-				log.exception("error while closing index file")
-			self._indexFp = None
-		if self._dictFp is not None:
-			try:
-				self._dictFp.close()
-			except:
-				log.exception("error while closing dict file")
-			self._dictFp = None
+		if self._dictdb is not None:
+			self._dictdb.indexfile.close()
+			self._dictdb.dictfile.close()
+			# self._dictdb.finish()
+			self._dictdb = None
+
 	def __len__(self) -> int:
-		if self._len is None:
-			log.debug("Try not to use len(reader) as it takes extra time")
-			self._len = fileCountLines(
-				self._filename + ".index"
-			) - self._leadingLinesCount
-		return self._len
+		if self._dictdb is None:
+			return 0
+		return len(self._dictdb.indexentries)
 
 	def __iter__(self) -> Iterator[BaseEntry]:
-		if not self._indexFp:
+		if self._dictdb is None:
 			log.error("reader is not open, can not iterate")
 			raise StopIteration
-		# read info from header of dict file # FIXME
-		word = ""
-		sumLen = 0
-		wrongSortedN = 0
-		wordCount = 0
-		# __________________ IMPORTANT PART __________________ #
-		for line in self._indexFp:
-			line = line.strip()
-			if not line:
-				continue
-			parts = line.split(b"\t")
-			assert len(parts) == 3
-			word = parts[0].replace(b"<BR>", b"\\n")\
-						   .replace(b"<br>", b"\\n")
-			sumLen2 = indexStrToInt(parts[1])
-			if sumLen2 != sumLen:
-				wrongSortedN += 1
-			sumLen = sumLen2
-			defiLen = indexStrToInt(parts[2])
-			self._dictFp.seek(sumLen)
-			defi = self._dictFp.read(defiLen)
-			sumLen += defiLen
-			yield self._glos.newEntry(toStr(word), toStr(defi))
-			wordCount += 1
-		# ____________________________________________________ #
-
-		if wrongSortedN > 0:
-			log.warning("Warning: wrong sorting count: %d", wrongSortedN)
-		self._len = wordCount
+		dictdb = self._dictdb
+		for word in dictdb.getdeflist():
+			b_defis = dictdb.getdef(word)
+			defis = [defi.decode("utf_8") for defi in b_defis]
+			yield self._glos.newEntry(word, defis)
 
 
 def write(
@@ -193,34 +116,14 @@ def write(
 	(filename_nox, ext) = splitext(filename)
 	if ext.lower() == ".index":
 		filename = filename_nox
-	indexFd = open(filename+".index", "wb")
-	dictFd = open(filename+".dict", "wb")
-	dictMark = 0
+	dictdb = DictDB(filename, "write", 1)
 	for entry in glos:
 		if entry.isData():
 			# does dictd support resources? and how? FIXME
 			continue
-		word = entry.b_word
-		defi = entry.b_defi
-		lm = len(defi)
-		indexFd.write(
-			word + b"\t" +
-			intToIndexStr(dictMark) + b"\t" +
-			intToIndexStr(lm) + b"\n"
-		)  # FIXME
-		dictFd.write(defi)
-		dictMark += lm
-	indexFd.close()
-	dictFd.close()
-	# for key, value in glos.iterInfo():
-	#	if not value:
-	#		continue
-	#	pass  # FIXME
+		dictdb.addentry(entry.b_defi, entry.words)
+	dictdb.finish(dosort=1)
 	if dictzip:
-		# FIXME: does not seem to work
-		# dictd does not start
-		# when try to start manually, gives this error:
-		# :E: /usr/share/dictd/test.dict is not readable (data file)
 		runDictzip(filename)
 	if install:
-		installToDictd(filename, glos.getInfo("name").replace(" ", "_"))
+		installToDictd(filename, dictzip, glos.getInfo("name").replace(" ", "_"))
