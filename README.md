@@ -30,7 +30,7 @@ Supported formats
 |-----------------------------------|---------------|:-----:|:-----:|
 | Aard 2 (slob)                     | .slob         |   ✔   |   ✔   |
 | ABBYY Lingvo DSL                  | .dsl          |   ✔   |       |
-| AppleDict Binary (.dictionary)    | .dictionary   |   ✔   |       |
+| AppleDict Binary                  | .dictionary   |   ✔   |       |
 | AppleDict Source                  | .xml          |       |   ✔   |
 | Babylon                           | .bgl          |   ✔   |       |
 | Babylon Source                    | .gls          |       |   ✔   |
@@ -44,7 +44,7 @@ Supported formats
 | Gettext Source                    | .po           |   ✔   |   ✔   |
 | Kobo E-Reader Dictionary          | .kobo.zip     |       |   ✔   |
 | Kobo E-Reader Dictfile            | .df           |       |   ✔   |
-| Lingoes Source (LDF)              | .ldf          |   ✔   |   ✔   |
+| Lingoes Source                    | .ldf          |   ✔   |   ✔   |
 | Octopus MDict                     | .mdx          |   ✔   |       |
 | Octopus MDict Source              | .txt          |   ✔   |   ✔   |
 | Sdictionary Binary                | .dct          |   ✔   |       |
