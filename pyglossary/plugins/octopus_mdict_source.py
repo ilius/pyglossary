@@ -58,11 +58,16 @@ class Reader(object):
 	def loadLinks(self):
 		linksDict = {}
 		word = ""
+		defi = ""
 		wordCount = 0
 		for line in self._file:
 			line = line.strip()
+			if line.startswith("#"):
+				continue
 			if line == "</>":
-				word = ""
+				if word and defi:
+					wordCount += 1
+				word, defi = "", ""
 				continue
 			if line.startswith("@@@LINK="):
 				if not word:
@@ -76,9 +81,11 @@ class Reader(object):
 				continue
 			if not word:
 				word = line
-			else:
-				wordCount += 1
+				continue
+			defi += line
 
+		if word and defi:
+			wordCount += 1
 		log.info(f"wordCount = {wordCount}")
 		self._linksDict = linksDict
 		self._wordCount = wordCount
