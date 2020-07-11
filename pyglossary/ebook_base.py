@@ -198,7 +198,8 @@ class EbookWriter(object):
 			return "SPECIAL"
 		return word[:length]
 
-	def sort_key(self, b_word: bytes) -> Any:
+	def sortKey(self, b_word: bytes) -> Any:
+		# DO NOT change method name
 		word = b_word.decode("utf-8")
 		return (
 			self.get_prefix(word),
@@ -211,7 +212,6 @@ class EbookWriter(object):
 
 		group_labels = []
 
-		self.glos.sortWords(key=self.sort_key)
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
 			self.glos,
 			lambda tmpEntry: self.get_prefix(tmpEntry.getWord()),

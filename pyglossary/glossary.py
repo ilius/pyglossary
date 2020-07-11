@@ -929,11 +929,18 @@ class Glossary(GlossaryType):
 				)
 			sort = False
 
+		writer = None
+		if format in self.writerClasses:
+			writer = self.writerClasses[format].__call__(self)
+
 		if sort:
 			if sortKey is None:
 				if plugin.sortKey:
 					sortKey = plugin.sortKey
-					log.debug(f"Using sort key function from {format} plugin")
+					log.debug(f"Using sortKey function from {format} plugin")
+				elif hasattr(writer, "sortKey"):
+					sortKey = writer.sortKey
+					log.debug(f"Using Writer.sortKey method from {format} plugin")
 				else:
 					log.warning(f"WARNING: plugin has not provided sortKey")
 			elif sortOnWrite == ALWAYS:
@@ -961,8 +968,7 @@ class Glossary(GlossaryType):
 		filename = abspath(filename)
 		log.info(f"Writing to file {filename!r}")
 		try:
-			if format in self.writerClasses:
-				writer = self.writerClasses[format].__call__(self)
+			if writer is not None:
 				writer.write(filename, **options)
 			elif format in self.writeFunctions:
 				self.writeFunctions[format].__call__(self, filename, **options)

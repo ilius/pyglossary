@@ -124,7 +124,8 @@ class Writer:
 		wo = wo.ljust(2, "a")
 		return wo
 
-	def sort_key(self, b_word: bytes) -> Any:
+	def sortKey(self, b_word: bytes) -> Any:
+		# DO NOT change method name
 		word = b_word.decode("utf-8")
 		return (
 			self.get_prefix(word),
@@ -148,7 +149,6 @@ class Writer:
 		words = []
 		dataEntryCount = 0
 
-		self._glos.sortWords(key=self.sort_key)
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
 			self._glos,
 			lambda entry: self.get_prefix(entry.word)
