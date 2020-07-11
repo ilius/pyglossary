@@ -2,8 +2,8 @@ def takePhonetic_oxford_gb(glos):
 	phonGlos = Glossary() ## phonetic glossary
 	phonGlos.setInfo("name", glos.getInfo("name") + "_phonetic")
 	for entry in glos:
-		word = entry.getWord()
-		defi = entry.getDefi()
+		word = entry.word
+		defi = entry.defi
 		if not defi.startswith("/"):
 			continue
 		# Now set the phonetic to the `ph` variable.
