@@ -113,6 +113,7 @@ class Reader(object):
 			if line.startswith("@@@LINK="):
 				continue
 			if word:
+				line = line.replace("entry://", "bword://")
 				defi += "\n" + line
 			else:
 				word = line
