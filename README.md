@@ -38,6 +38,7 @@ Supported formats
 | CSV                               | .csv          |   ✔   |   ✔   |
 | DictionaryForMIDs                 |               |   ✔   |   ✔   |
 | DICT.org / Dictd server           | .index        |   ✔   |   ✔   |
+| DICT.org / dictfmt source file    | (.dtxt)       |   ✔   |   ✔   |
 | Editable Linked List of Entries   | .edlin        |   ✔   |   ✔   |
 | EPUB-2 E-Book                     | .epub         |       |   ✔   |
 | FreeDict                          | .tei          |   ✔   |   ✔   |
