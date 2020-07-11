@@ -47,7 +47,7 @@ def write(
 		head += "</header>\n#\n#\n#\n"
 	glos.writeTxt(
 		entryFmt="{word}___{defi}\n",
-		filename,
+		filename=filename,
 		writeInfo=False,
 		rplList=(
 			("\n", "<BR>"),
