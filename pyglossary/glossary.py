@@ -1236,6 +1236,33 @@ class Glossary(GlossaryType):
 			ext=".dict",
 		)
 
+	def	iterJsonLines(
+		self,
+		filename: str = "",
+		infoKeys: Optional[List] = None,
+		addExtraInfo: bool = True,
+		newline: str = "\\n",
+		transaction: bool = False,
+	) -> Iterator[str]:
+		newline = "<br>"
+
+		yield (
+			"{"
+		)
+
+		for i, entry in enumerate(self):
+			if entry.isData():
+				# FIXME
+				continue
+			word = entry.word.replace("\\", "\\\\").replace('"', '\\"').replace("\n","").replace("\r","")
+			defi = entry.defi.replace("\\", "\\\\").replace('"', '\\"').replace("\n","").replace("\r","")
+			yield f"\"{word}\":\"{defi}\","
+
+
+		yield '"":""\n}'
+
+	# ________________________________________________________________________#
+
 	def iterSqlLines(
 		self,
 		filename: str = "",

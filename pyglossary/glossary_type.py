@@ -79,3 +79,13 @@ class GlossaryType(object):
 		transaction: bool = False,
 	) -> Iterator[str]:
 		raise NotImplementedError
+
+	def iterJsonLines(
+		self,
+		filename: str = "",
+		infoKeys: Optional[List] = None,
+		addExtraInfo: bool = True,
+		newline: str = "\\n",
+		transaction: bool = False,
+	) -> Iterator[str]:
+		raise NotImplementedError
