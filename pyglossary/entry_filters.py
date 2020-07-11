@@ -111,10 +111,19 @@ class LowerWordFilter(EntryFilter):
 class RemoveHtmlTagsAll(EntryFilter):
 	name = "remove_html_all"
 
+	def __init__(self, glos: Glossary):
+		self._p_pattern = re.compile(
+			'<p( [^<>]*?)?>(.*?)</p>',
+			re.DOTALL,
+		)
+
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
 		from bs4 import BeautifulSoup
 
 		def fixStr(st: str) -> str:
+			st = self._p_pattern.sub("\\2\n", st)
+			# if there is </p> left without opening, replace with <br>
+			st = st.replace("</p>", "\n")
 			return BeautifulSoup(st, "lxml").text
 
 		entry.editFuncDefi(fixStr)
