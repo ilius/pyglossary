@@ -210,8 +210,8 @@ class Writer(object):
 				header = nextPath
 			toFile.write("\n".join([
 				header,
-				thisEntry.getWord(),
-				thisEntry.getDefi(),
+				thisEntry.word,
+				thisEntry.defi,
 			]))
 
 	def _iterNonDataEntries(self) -> Iterator[BaseEntry]:
