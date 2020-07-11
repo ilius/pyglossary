@@ -33,7 +33,7 @@ optionsProp = {
 }
 depends = {}
 sortOnWrite = ALWAYS
-# sortKey also is defined in line 52
+# sortKey is defined in Writer class
 supportsAlternates = True
 
 tools = [
@@ -66,12 +66,6 @@ infoKeys = (
 	"date",
 )
 
-
-def sortKey(b_word: bytes) -> Tuple[bytes, bytes]:
-	return (
-		b_word.lower(),
-		b_word,
-	)
 
 
 # re_newline = re.compile("[\n\r]+")
@@ -443,6 +437,12 @@ class Writer(object):
 			re.DOTALL,
 		)
 
+	def sortKey(self, b_word: bytes) -> Tuple[bytes, bytes]:
+		return (
+			b_word.lower(),
+			b_word,
+		)
+
 	def write(
 		self,
 		filename: str,
@@ -642,7 +642,7 @@ class Writer(object):
 		t0 = now()
 
 		altIndexList.sort(
-			key=lambda x: sortKey(x[0])
+			key=lambda x: self.sortKey(x[0])
 		)
 		# 28 seconds with old sort key (converted from custom cmp)
 		# 0.63 seconds with my new sort key

@@ -31,14 +31,6 @@ from .flags import (
 )
 
 
-sortKeyType = Optional[
-	Callable[
-		[bytes],
-		Tuple[bytes, bytes],
-	]
-]
-
-
 class PluginProp(object):
 	def __init__(self, plugin) -> None:
 		self._p = plugin
@@ -78,7 +70,3 @@ class PluginProp(object):
 	@property
 	def sortOnWrite(self) -> YesNoAlwaysNever:
 		return getattr(self._p, "sortOnWrite", DEFAULT_NO)
-
-	@property
-	def sortKey(self) -> sortKeyType:
-		return getattr(self._p, "sortKey", None)

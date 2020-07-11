@@ -83,6 +83,14 @@ def get_ext(path: str) -> str:
 	return splitext(path)[1].lower()
 
 
+sortKeyType = Optional[
+	Callable[
+		[bytes],
+		Tuple[bytes, bytes],
+	]
+]
+
+
 class Glossary(GlossaryType):
 	"""
 	Direct access to glos.data is droped
@@ -915,6 +923,7 @@ class Glossary(GlossaryType):
 				self._inactivateDirectMode()
 				log.info(f"Loaded {len(self._data)} entries")
 			sort = True
+			sortCacheSize = 0
 		elif sortOnWrite == DEFAULT_YES:
 			if sort is None:
 				sort = True
@@ -934,18 +943,16 @@ class Glossary(GlossaryType):
 			writer = self.writerClasses[format].__call__(self)
 
 		if sort:
+			writerSortKey = getattr(writer, "sortKey", None)
 			if sortKey is None:
-				if plugin.sortKey:
-					sortKey = plugin.sortKey
-					log.debug(f"Using sortKey function from {format} plugin")
-				elif hasattr(writer, "sortKey"):
-					sortKey = writer.sortKey
-					log.debug(f"Using Writer.sortKey method from {format} plugin")
-				else:
-					log.warning(f"WARNING: plugin has not provided sortKey")
+				if not writerSortKey:
+					log.critical(f"Plugin has not provided sortKey")
+					return
+				sortKey = writerSortKey
+				log.debug(f"Using Writer.sortKey method from {format} plugin")
 			elif sortOnWrite == ALWAYS:
-				if plugin.sortKey:
-					sortKey = plugin.sortKey
+				if writerSortKey:
+					sortKey = writerSortKey
 					log.warning(
 						f"Ignoring user-defined sort order"
 						f", and using key function from {format} plugin"
