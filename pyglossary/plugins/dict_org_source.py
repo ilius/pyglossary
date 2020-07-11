@@ -7,6 +7,9 @@ format = "DictOrgSource"
 description = "DICT.org / dictfmt source file"
 extensions = (".dtxt",)
 singleFile = True
+optionsProp = {
+	"html": BoolOption(),
+}
 
 tools = [
 	{
@@ -21,15 +24,19 @@ tools = [
 def write(
 	glos,
 	filename: str,
+	html: bool = False,
 ) -> None:
+	rplList = [
+		("\r", ""),
+	]
+	if not html:
+		rplList += [
+			("<br>", "\n"),
+			("<BR>", "\n"),
+		]
 	glos.writeTxt(
 		entryFmt=":{word}:{defi}\n",
 		filename=filename,
-		rplList=(
-			("\\", "\\\\"),
-			("\r", ""),
-			("\n", "\\n"),
-			("\t", "\\t"),
-		),
+		rplList=rplList,
 		ext=".dtxt",
 	)
