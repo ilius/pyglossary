@@ -8,7 +8,7 @@ description = "DICT.org / dictfmt source file"
 extensions = (".dtxt",)
 singleFile = True
 optionsProp = {
-	"html": BoolOption(),
+	"remove_html_all": BoolOption(),
 }
 
 tools = [
@@ -24,16 +24,15 @@ tools = [
 def write(
 	glos,
 	filename: str,
-	html: bool = False,
+	remove_html_all: bool = True,
 ) -> None:
 	rplList = [
 		("\r", ""),
 	]
-	if not html:
-		rplList += [
-			("<br>", "\n"),
-			("<BR>", "\n"),
-		]
+	if remove_html_all:
+		glos.removeHtmlTagsAll()
+	# TODO: add another bool flag to only remove html tags that are not
+	# supported by GtkTextView
 	glos.writeTxt(
 		entryFmt=":{word}:{defi}\n",
 		filename=filename,
