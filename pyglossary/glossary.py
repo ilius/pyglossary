@@ -311,6 +311,7 @@ class Glossary(GlossaryType):
 
 		self._iter = None
 		self._entryFilters = []
+		self._entryFiltersName = set()
 		self._sortKey = None
 		self._sortCacheSize = 1000
 
@@ -386,6 +387,11 @@ class Glossary(GlossaryType):
 		self._entryFilters.append(ef.NonEmptyDefiFilter(self))
 		self._entryFilters.append(ef.RemoveEmptyAndDuplicateAltWords(self))
 
+		self._entryFiltersName = {
+			entryFilter.name
+			for entryFilter in self._entryFilters
+		}
+
 	def prepareEntryFilters(self) -> None:
 		"""
 			call .prepare() method on all _entryFilters
@@ -394,6 +400,12 @@ class Glossary(GlossaryType):
 		"""
 		for ef in self._entryFilters:
 			ef.prepare()
+
+	def removeHtmlTagsAll(self) -> None:
+		from . import entry_filters as ef
+		if ef.RemoveHtmlTagsAll.name in self._entryFiltersName:
+			return
+		self._entryFilters.append(ef.RemoveHtmlTagsAll(self))
 
 	def __str__(self) -> str:
 		return "glossary.Glossary"
