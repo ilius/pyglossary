@@ -51,11 +51,14 @@ class TextGlossaryReader(object):
 				if not wordDefi:
 					continue
 				word, defi = wordDefi
-				if not self.isInfoWord(word):
+				if not self.isInfoWords(word):
 					self._pendingEntries.append(Entry(word, defi))
 					break
 				self._leadingLinesCount += 1
-				word = self.fixInfoWord(word)
+				if isinstance(word, list):
+					word = [self.fixInfoWord(w) for w in word]
+				else:
+					word = self.fixInfoWord(word)
 				if not word:
 					continue
 				self._glos.setInfo(word, defi)
@@ -92,6 +95,13 @@ class TextGlossaryReader(object):
 
 	def isInfoWord(self, word: str) -> bool:
 		raise NotImplementedError
+
+	def isInfoWords(self, arg: "Union[str, List[str]]") -> bool:
+		if isinstance(arg, str):
+			return self.isInfoWord(arg)
+		if isinstance(arg, list):
+			return self.isInfoWord(arg[0])
+		raise TypeError(f"bad argument {arg}")
 
 	def fixInfoWord(self, word: str) -> bool:
 		raise NotImplementedError
