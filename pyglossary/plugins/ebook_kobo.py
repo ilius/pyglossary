@@ -99,6 +99,11 @@ class Writer:
 			re.DOTALL,
 		)
 		# img tag has no closing
+		try:
+			import marisa_trie
+		except ModuleNotFoundError as e:
+			e.msg += ", run `sudo pip3 install marisa-trie` to install"
+			raise e
 
 	def get_prefix(self, word: str) -> str:
 		if not word:
@@ -177,12 +182,7 @@ class Writer:
 		self,
 		filename,
 	):
-		try:
-			import marisa_trie
-		except ImportError as e:
-			log.error("Run: sudo pip3 install marisa-trie")
-			raise e
-
+		import marisa_trie
 		with indir(filename, create=True):
 			words = self.write_groups()
 			trie = marisa_trie.Trie(words)
