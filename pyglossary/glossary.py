@@ -1132,8 +1132,7 @@ class Glossary(GlossaryType):
 
 	def writeTxt(
 		self,
-		sep1: str,
-		sep2: str,
+		entryFmt: str = "",  # contain {word} and {defi}
 		filename: str = "",
 		writeInfo: bool = True,
 		rplList: Optional[List[Tuple[str, str]]] = None,
@@ -1146,6 +1145,8 @@ class Glossary(GlossaryType):
 		newline: str = "\n",
 		resources: bool = True,
 	) -> bool:
+		if not entryFmt:
+			raise ValueError("entryFmt argument is missing")
 		if rplList is None:
 			rplList = []
 		if not filename:
@@ -1163,7 +1164,7 @@ class Glossary(GlossaryType):
 					pass
 				for rpl in rplList:
 					desc = desc.replace(rpl[0], rpl[1])
-				fp.write("##" + key + sep1 + desc + sep2)
+				fp.write("##" + entryFmt.format(word=key, defi=desc))
 		fp.flush()
 
 		myResDir = f"{filename}_res"
@@ -1191,7 +1192,7 @@ class Glossary(GlossaryType):
 
 			for rpl in rplList:
 				defi = defi.replace(rpl[0], rpl[1])
-			fp.write(word + sep1 + defi + sep2)
+			fp.write(entryFmt.format(word=word, defi=defi))
 		fp.close()
 		if not os.listdir(myResDir):
 			os.rmdir(myResDir)
@@ -1199,8 +1200,7 @@ class Glossary(GlossaryType):
 
 	def writeTabfile(self, filename: str = "", **kwargs) -> None:
 		self.writeTxt(
-			"\t",
-			"\n",
+			entryFmt="{word}\t{defi}\n",
 			filename=filename,
 			rplList=(
 				("\\", "\\\\"),
@@ -1215,14 +1215,13 @@ class Glossary(GlossaryType):
 	def writeDict(self, filename: str = "", writeInfo: bool = False) -> None:
 		# Used in "/usr/share/dict/" for some dictionarys such as "ding"
 		self.writeTxt(
-			" :: ",
-			"\n",
-			filename,
-			writeInfo,
-			(
+			entryFmt="{word} :: {defi}\n",
+			filename=filename,
+			writeInfo=writeInfo,
+			rplList=(
 				("\n", "\\n"),
 			),
-			".dict",
+			ext=".dict",
 		)
 
 	def iterSqlLines(

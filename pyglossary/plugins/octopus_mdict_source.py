@@ -141,8 +141,7 @@ def write(
 	resources=True,
 ):
 	glos.writeTxt(
-		"\n",
-		"\n</>\n",
+		entryFmt="{word}\n{defi}\n</>\n",
 		filename=filename,
 		writeInfo=False,
 		rplList=[
