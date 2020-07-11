@@ -785,9 +785,11 @@ class Glossary(GlossaryType):
 			if cacheSize > 0:
 				self._sortCacheSize = cacheSize  # FIXME
 		else:
+			t0 = now()
 			self._data.sort(
 				key=Entry.getRawEntrySortKey(key),
 			)
+			log.info(f"Sorting took {now() - t0:.1f} seconds")
 		self._updateIter(sort=True)
 
 	@classmethod
