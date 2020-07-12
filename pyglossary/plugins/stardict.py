@@ -107,7 +107,7 @@ class Reader(object):
 			indexData[i][4] - list of synonyms (strings)
 
 		synDict:
-			a dict { wordIndex -> altList }
+			a dict { entryIndex -> altList }
 		"""
 
 	def close(self) -> None:
@@ -218,7 +218,7 @@ class Reader(object):
 			log.warning("indexData is empty")
 			raise StopIteration
 
-		for wordIndex, (b_word, defiOffset, defiSize) in enumerate(indexData):
+		for entryIndex, (b_word, defiOffset, defiSize) in enumerate(indexData):
 			if not b_word:
 				continue
 
@@ -271,7 +271,7 @@ class Reader(object):
 
 			word = b_word.decode("utf-8")
 			try:
-				alts = synDict[wordIndex]
+				alts = synDict[entryIndex]
 			except KeyError:  # synDict is dict
 				pass
 			else:
@@ -296,7 +296,7 @@ class Reader(object):
 
 	def readSynFile(self) -> Dict[int, List[str]]:
 		"""
-		return synDict, a dict { wordIndex -> altList }
+		return synDict, a dict { entryIndex -> altList }
 		"""
 		if not isfile(self._filename + ".syn"):
 			return {}
@@ -316,9 +316,9 @@ class Reader(object):
 			if pos + 4 > len(synBytes):
 				log.error("Synonym file is corrupted")
 				break
-			wordIndex = binStrToInt(synBytes[pos:pos + 4])
+			entryIndex = binStrToInt(synBytes[pos:pos + 4])
 			pos += 4
-			if wordIndex >= self._wordCount:
+			if entryIndex >= self._wordCount:
 				log.error(
 					f"Corrupted synonym file. " +
 					f"Word {b_alt} references invalid item"
@@ -327,9 +327,9 @@ class Reader(object):
 
 			s_alt = b_alt.decode("utf-8")  # s_alt is str
 			try:
-				synDict[wordIndex].append(s_alt)
+				synDict[entryIndex].append(s_alt)
 			except KeyError:
-				synDict[wordIndex] = [s_alt]
+				synDict[entryIndex] = [s_alt]
 
 		return synDict
 
@@ -500,7 +500,7 @@ class Writer(object):
 		defiFormat - format of article definition: h - html, m - plain text
 		"""
 		dictMark = 0
-		altIndexList = []  # list of tuples (b"alternate", wordIndex)
+		altIndexList = []  # list of tuples (b"alternate", entryIndex)
 
 		dictFile = open(self._filename + ".dict", "wb")
 		idxFile = open(self._filename + ".idx", "wb")
@@ -511,12 +511,12 @@ class Writer(object):
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
-		entryI = -1
+		entryIndex = -1
 		for entry in self._glos:
 			if entry.isData():
 				entry.save(self._resDir)
 				continue
-			entryI += 1
+			entryIndex += 1
 
 			words = entry.words  # list of strs
 			word = words[0]  # str
@@ -524,7 +524,7 @@ class Writer(object):
 			# defis is list of strs
 
 			for alt in words[1:]:
-				altIndexList.append((alt.encode("utf-8"), entryI))
+				altIndexList.append((alt.encode("utf-8"), entryIndex))
 
 			# for some reason, alternate definitions do not work
 			# in compact mode, that's why we join them by newline
@@ -565,7 +565,7 @@ class Writer(object):
 		sametypesequence option is not used.
 		"""
 		dictMark = 0
-		altIndexList = []  # list of tuples (b"alternate", wordIndex)
+		altIndexList = []  # list of tuples (b"alternate", entryIndex)
 
 		dictFile = open(self._filename + ".dict", "wb")
 		idxFile = open(self._filename + ".idx", "wb")
@@ -577,12 +577,12 @@ class Writer(object):
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
-		entryI = -1
+		entryIndex = -1
 		for entry in self._glos:
 			if entry.isData():
 				entry.save(self._resDir)
 				continue
-			entryI += 1
+			entryIndex += 1
 
 			entry.detectDefiFormat()  # call no more than once
 			defiFormat = entry.defiFormat
@@ -596,7 +596,7 @@ class Writer(object):
 			# defis is list of strs
 
 			for alt in words[1:]:
-				altIndexList.append((alt.encode("utf-8"), entryI))
+				altIndexList.append((alt.encode("utf-8"), entryIndex))
 
 			b_dictBlock = b""
 			for defi in defis:
@@ -652,8 +652,8 @@ class Writer(object):
 		t0 = now()
 		with open(self._filename + ".syn", "wb") as synFile:
 			synFile.write(b"".join([
-				b_alt + b"\x00" + intToBinStr(wordIndex, 4)
-				for b_alt, wordIndex in altIndexList
+				b_alt + b"\x00" + intToBinStr(entryIndex, 4)
+				for b_alt, entryIndex in altIndexList
 			]))
 		log.info(
 			f"Writing {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
@@ -663,7 +663,7 @@ class Writer(object):
 		self,
 		wordCount: int,
 		indexFileSize: int,
-		synwordcount: int,
+		synWordCount: int,
 		defiFormat: str = "", # type: Literal["", "h", "m"]
 	) -> None:
 		"""
@@ -688,8 +688,8 @@ class Writer(object):
 		]
 		if defiFormat:
 			ifo.append(("sametypesequence", defiFormat))
-		if synwordcount > 0:
-			ifo.append(("synwordcount", synwordcount))
+		if synWordCount > 0:
+			ifo.append(("synwordcount", synWordCount))
 
 		desc = glos.getInfo("description")
 		copyright = glos.getInfo("copyright")
