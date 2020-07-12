@@ -1180,7 +1180,10 @@ class Glossary(GlossaryType):
 					pass
 				for rpl in rplList:
 					desc = desc.replace(rpl[0], rpl[1])
-				fp.write("##" + entryFmt.format(word=key, defi=desc))
+				fp.write(entryFmt.format(
+					word=f"##{key}",
+					defi=desc,
+				))
 		fp.flush()
 
 		myResDir = f"{filename}_res"
