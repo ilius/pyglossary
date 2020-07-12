@@ -66,6 +66,7 @@ from .sort_stream import hsortStreamList
 
 from .text_utils import (
 	fixUtf8,
+	replaceStringTable,
 )
 from .os_utils import indir
 
@@ -1151,9 +1152,11 @@ class Glossary(GlossaryType):
 		entryFmt: str = "",  # contain {word} and {defi}
 		filename: str = "",
 		writeInfo: bool = True,
-		rplList: Optional[List[Tuple[str, str]]] = None,
+		wordEscapeFunc: Optional[Callable] = None,
+		defiEscapeFunc: Optional[Callable] = None,
 		ext: str = ".txt",
 		head: str = "",
+		tail: str = "",
 		iterEntries: Optional[Iterator[BaseEntry]] = None,
 		entryFilterFunc: Optional[Callable[[BaseEntry], Optional[BaseEntry]]] = None,
 		outInfoKeysAliasDict: Optional[Dict[str, str]] = None,
@@ -1163,8 +1166,6 @@ class Glossary(GlossaryType):
 	) -> bool:
 		if not entryFmt:
 			raise ValueError("entryFmt argument is missing")
-		if rplList is None:
-			rplList = []
 		if not filename:
 			filename = self._filename + ext
 		if not outInfoKeysAliasDict:
@@ -1178,10 +1179,13 @@ class Glossary(GlossaryType):
 					key = outInfoKeysAliasDict[key]
 				except KeyError:
 					pass
-				for rpl in rplList:
-					desc = desc.replace(rpl[0], rpl[1])
+				word = f"##{key}"
+				if wordEscapeFunc is not None:
+					word = wordEscapeFunc(word)
+				if defiEscapeFunc is not None:
+					desc = defiEscapeFunc(desc)
 				fp.write(entryFmt.format(
-					word=f"##{key}",
+					word=word,
 					defi=desc,
 				))
 		fp.flush()
@@ -1209,9 +1213,15 @@ class Glossary(GlossaryType):
 				continue
 			# if self.getPref("enable_alts", True):  # FIXME
 
-			for rpl in rplList:
-				defi = defi.replace(rpl[0], rpl[1])
+			if wordEscapeFunc is not None:
+				word = wordEscapeFunc(word)
+			if defiEscapeFunc is not None:
+				defi = defiEscapeFunc(defi)
 			fp.write(entryFmt.format(word=word, defi=defi))
+
+		if tail:
+			fp.write(tail)
+
 		fp.close()
 		if not os.listdir(myResDir):
 			os.rmdir(myResDir)
@@ -1221,12 +1231,12 @@ class Glossary(GlossaryType):
 		self.writeTxt(
 			entryFmt="{word}\t{defi}\n",
 			filename=filename,
-			rplList=(
+			defiEscapeFunc=replaceStringTable([
 				("\\", "\\\\"),
 				("\r", ""),
 				("\n", "\\n"),
 				("\t", "\\t"),
-			),
+			]),
 			ext=".txt",
 			**kwargs
 		)
@@ -1237,9 +1247,9 @@ class Glossary(GlossaryType):
 			entryFmt="{word} :: {defi}\n",
 			filename=filename,
 			writeInfo=writeInfo,
-			rplList=(
+			defiEscapeFunc=replaceStringTable([
 				("\n", "\\n"),
-			),
+			]),
 			ext=".dict",
 		)
 

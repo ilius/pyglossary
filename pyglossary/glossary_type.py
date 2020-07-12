@@ -51,13 +51,14 @@ class GlossaryType(object):
 
 	def writeTxt(
 		self,
-		sep1: str,
-		sep2: str,
+		entryFmt: str = "",  # contain {word} and {defi}
 		filename: str = "",
 		writeInfo: bool = True,
-		rplList: Optional[List[Tuple[str, str]]] = None,
+		wordEscapeFunc: Optional[Callable] = None,
+		defiEscapeFunc: Optional[Callable] = None,
 		ext: str = ".txt",
 		head: str = "",
+		tail: str = "",
 		iterEntries: Optional[Iterator[BaseEntry]] = None,
 		entryFilterFunc: Optional[Callable[[BaseEntry], Optional[BaseEntry]]] = None,
 		outInfoKeysAliasDict: Optional[Dict[str, str]] = None,

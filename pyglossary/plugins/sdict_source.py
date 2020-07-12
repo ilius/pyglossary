@@ -49,9 +49,9 @@ def write(
 		entryFmt="{word}___{defi}\n",
 		filename=filename,
 		writeInfo=False,
-		rplList=(
+		defiEscapeFunc=replaceStringTable([
 			("\n", "<BR>"),
-		),
+		]),
 		ext=".sdct",
 		head=head,
 		newline=newline,

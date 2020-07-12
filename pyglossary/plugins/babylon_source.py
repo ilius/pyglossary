@@ -85,9 +85,9 @@ def write(
 		entryFmt="{word}\n{defi}\n\n",
 		filename=filename,
 		writeInfo=False,
-		rplList=(
+		defiEscapeFunc=replaceStringTable([
 			("\n", "<BR>"),
-		),
+		]),
 		ext=".gls",
 		head=head,
 		entryFilterFunc=entryFilterFunc,

@@ -35,7 +35,11 @@ from pyglossary.flags import *
 from pyglossary import core
 from pyglossary.option import *
 from pyglossary.file_utils import FileLineWrapper
-from pyglossary.text_utils import toStr, toBytes
+from pyglossary.text_utils import (
+	toStr,
+	toBytes,
+	replaceStringTable,
+)
 from pyglossary.os_utils import indir
 from pyglossary.entry_base import BaseEntry
 

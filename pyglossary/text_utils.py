@@ -24,9 +24,11 @@ import logging
 
 from typing import (
 	AnyStr,
+	Tuple,
 	List,
 	Union,
 	Optional,
+	Callable,
 )
 
 from . import core
@@ -53,6 +55,16 @@ pattern_n_us = re.compile(r"((?<!\\)(?:\\\\)*)\\n")
 pattern_t_us = re.compile(r"((?<!\\)(?:\\\\)*)\\t")
 pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|")
 pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|")
+
+
+def replaceStringTable(
+	rplList: List[Tuple[str, str]],
+) -> Callable[[str], str]:
+	def replace(st: str) -> str:
+		for rpl in rplList:
+			st = st.replace(rpl[0], rpl[1])
+		return st
+	return replace
 
 
 def escapeNTB(st: str, bar: bool = True) -> str:

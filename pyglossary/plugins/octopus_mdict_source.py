@@ -145,9 +145,9 @@ def write(
 		entryFmt="{word}\n{defi}\n</>\n",
 		filename=filename,
 		writeInfo=False,
-		rplList=[
+		defiEscapeFunc=replaceStringTable([
 			("bword://", "entry://"),
-		],
+		]),
 		ext=".mtxt",
 		head="",
 		iterEntries=writeEntryGen(glos),

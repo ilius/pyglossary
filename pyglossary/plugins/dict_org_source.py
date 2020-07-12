@@ -26,9 +26,6 @@ def write(
 	filename: str,
 	remove_html_all: bool = True,
 ) -> None:
-	rplList = [
-		("\r", ""),
-	]
 	if remove_html_all:
 		glos.removeHtmlTagsAll()
 	# TODO: add another bool flag to only remove html tags that are not
@@ -36,6 +33,8 @@ def write(
 	glos.writeTxt(
 		entryFmt=":{word}:{defi}\n",
 		filename=filename,
-		rplList=rplList,
+		defiEscapeFunc=replaceStringTable([
+			("\r", ""),
+		]),
 		ext=".dtxt",
 	)
