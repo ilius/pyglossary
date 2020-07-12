@@ -44,10 +44,6 @@ class BaseEntry(object):
 		raise NotImplementedError
 
 	@property
-	def defis(self) -> List[str]:
-		raise NotImplementedError
-
-	@property
 	def b_word(self):
 		"""
 			returns bytes of word,

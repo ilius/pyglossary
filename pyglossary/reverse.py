@@ -139,7 +139,7 @@ def searchWordInDef(
 	outRel = []
 	for entry in entryIter:
 		words = entry.words
-		defi = "\n".join(entry.defis)
+		defi = entry.defi
 		if st not in defi:
 			continue
 		for word in words:

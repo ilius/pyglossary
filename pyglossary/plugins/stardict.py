@@ -276,12 +276,10 @@ class Reader(object):
 				pass
 			else:
 				word = [word] + alts
-			if len(defis) == 1:
-				defis = defis[0]
 
 			yield self._glos.newEntry(
 				word,
-				defis,
+				"\n<hr>\n".join(defis),
 				defiFormat=defiFormat,
 			)
 
@@ -487,9 +485,6 @@ class Writer(object):
 			defi = defi.replace("</p>", "<br>")
 		return defi
 
-	def fixDefis(self, defis: Tuple[str, ...], defiFormat: str) -> List[str]:
-		return [self.fixDefi(defi, defiFormat) for defi in defis]
-
 	def writeCompact(self, defiFormat):
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
@@ -520,16 +515,13 @@ class Writer(object):
 
 			words = entry.words  # list of strs
 			word = words[0]  # str
-			defis = self.fixDefis(entry.defis, defiFormat)
-			# defis is list of strs
+			defi = self.fixDefi(entry.defi, defiFormat)
+			# defi is str
 
 			for alt in words[1:]:
 				altIndexList.append((alt.encode("utf-8"), entryIndex))
 
-			# for some reason, alternate definitions do not work
-			# in compact mode, that's why we join them by newline
-			# then add them as a single definition
-			b_dictBlock = "\n".join(defis).encode("utf-8")
+			b_dictBlock = defi.encode("utf-8")
 			dictFile.write(b_dictBlock)
 			blockLen = len(b_dictBlock)
 
@@ -592,15 +584,13 @@ class Writer(object):
 
 			words = entry.words  # list of strs
 			word = words[0]  # str
-			defis = self.fixDefis(entry.defis, defiFormat)
-			# defis is list of strs
+			defi = self.fixDefi(entry.defi, defiFormat)
+			# defi is str
 
 			for alt in words[1:]:
 				altIndexList.append((alt.encode("utf-8"), entryIndex))
 
-			b_dictBlock = b""
-			for defi in defis:
-				b_dictBlock += (defiFormat + defi).encode("utf-8") + b"\x00"
+			b_dictBlock = (defiFormat + defi).encode("utf-8") + b"\x00"
 			dictFile.write(b_dictBlock)
 			blockLen = len(b_dictBlock)
 

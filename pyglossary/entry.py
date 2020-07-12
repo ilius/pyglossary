@@ -93,10 +93,6 @@ class DataEntry(BaseEntry):
 	def defi(self) -> str:
 		return f"File: {self._fname}"
 
-	@property
-	def defis(self) -> List[str]:
-		return [self.defi]
-
 	def getWord(self) -> str:
 		log.error("entry.getWord() is deprecated, use entry.word")
 		return self.word
@@ -108,10 +104,6 @@ class DataEntry(BaseEntry):
 	def getDefi(self) -> str:
 		log.error("entry.getDefi() is deprecated, use entry.defi")
 		return self.defi
-
-	def getDefis(self) -> List[str]:
-		log.error("entry.getDefis() is deprecated, use entry.defis")
-		return self.defis
 
 	@property
 	def defiFormat(self) -> 'Literal["b"]':
@@ -290,24 +282,9 @@ class Entry(BaseEntry):
 	@property
 	def defi(self) -> str:
 		"""
-			returns string of definition,
-				and all the alternate definitions
-				seperated by "|"
+			returns string of definition
 		"""
-		if isinstance(self._defi, str):
-			return self._defi
-		else:
-			return self._join(self._defi)
-
-	@property
-	def defis(self) -> List[str]:
-		"""
-			returns list of the definition and all the alternate definitions
-		"""
-		if isinstance(self._defi, str):
-			return [self._defi]
-		else:
-			return self._defi
+		return self._defi
 
 	def getWord(self) -> str:
 		log.error("entry.getWord() is deprecated, use entry.word")
@@ -320,10 +297,6 @@ class Entry(BaseEntry):
 	def getDefi(self) -> str:
 		log.error("entry.getDefi() is deprecated, use entry.defi")
 		return self.defi
-
-	def getDefis(self) -> List[str]:
-		log.error("entry.getDefis() is deprecated, use entry.defis")
-		return self.defis
 
 	@property
 	def defiFormat(self) -> str:
@@ -380,12 +353,7 @@ class Entry(BaseEntry):
 			`func` must accept only one string as argument
 			and return the modified string
 		"""
-		if isinstance(self._defi, str):
-			self._defi = func(self._defi)
-		else:
-			self._defi = tuple(
-				func(st) for st in self._defi
-			)
+		self._defi = func(self._defi)
 
 	def _stripTrailingBR(self, s: str) -> str:
 		while s.endswith('<BR>') or s.endswith('<br>'):
@@ -415,12 +383,7 @@ class Entry(BaseEntry):
 		"""
 			replace string `source` with `target` in all definitions
 		"""
-		if isinstance(self._defi, str):
-			self._defi = self._defi.replace(source, target)
-		else:
-			self._defi = tuple(
-				st.replace(source, target) for st in self._defi
-			)
+		self._defi = self._defi.replace(source, target)
 
 	def replace(self, source: str, target: str) -> None:
 		"""
@@ -489,7 +452,6 @@ class Entry(BaseEntry):
 
 		if glos.getPref("enable_alts", True):
 			word = word.split(cls.sep)
-			defi = defi.split(cls.sep)
 
 		return cls(
 			word,

@@ -101,9 +101,13 @@ class Reader(object):
 			raise StopIteration
 		dictdb = self._dictdb
 		for word in dictdb.getdeflist():
-			b_defis = dictdb.getdef(word)
-			defis = [defi.decode("utf_8") for defi in b_defis]
-			yield self._glos.newEntry(word, defis)
+			b_defi = b"\n<hr>\n".join(dictdb.getdef(word))
+			try:
+				defi = b_defi.decode("utf_8")
+			except Exception as e:
+				log.error(f"b_defi = {b_defi}")
+				raise e
+			yield self._glos.newEntry(word, defi)
 
 
 def write(
