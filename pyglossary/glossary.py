@@ -1171,8 +1171,8 @@ class Glossary(GlossaryType):
 		if not outInfoKeysAliasDict:
 			outInfoKeysAliasDict = {}
 
-		fp = open(filename, "w", encoding=encoding, newline=newline)
-		fp.write(head)
+		fileObj = open(filename, "w", encoding=encoding, newline=newline)
+		fileObj.write(head)
 		if writeInfo:
 			for key, desc in self._info.items():
 				try:
@@ -1184,11 +1184,11 @@ class Glossary(GlossaryType):
 					word = wordEscapeFunc(word)
 				if defiEscapeFunc is not None:
 					desc = defiEscapeFunc(desc)
-				fp.write(entryFmt.format(
+				fileObj.write(entryFmt.format(
 					word=word,
 					defi=desc,
 				))
-		fp.flush()
+		fileObj.flush()
 
 		myResDir = f"{filename}_res"
 		if not isdir(myResDir):
@@ -1217,12 +1217,12 @@ class Glossary(GlossaryType):
 				word = wordEscapeFunc(word)
 			if defiEscapeFunc is not None:
 				defi = defiEscapeFunc(defi)
-			fp.write(entryFmt.format(word=word, defi=defi))
+			fileObj.write(entryFmt.format(word=word, defi=defi))
 
 		if tail:
-			fp.write(tail)
+			fileObj.write(tail)
 
-		fp.close()
+		fileObj.close()
 		if not os.listdir(myResDir):
 			os.rmdir(myResDir)
 		return True
