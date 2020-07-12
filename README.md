@@ -43,6 +43,7 @@ Supported formats
 | EPUB-2 E-Book                     | .epub         |       |   ✔   |
 | FreeDict                          | .tei          |   ✔   |   ✔   |
 | Gettext Source                    | .po           |   ✔   |   ✔   |
+| JSON                              | .json         |       |   ✔   |
 | Kobo E-Reader Dictionary          | .kobo.zip     |       |   ✔   |
 | Kobo E-Reader Dictfile            | .df           |       |   ✔   |
 | Lingoes Source                    | .ldf          |   ✔   |   ✔   |
