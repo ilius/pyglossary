@@ -70,14 +70,15 @@ tools = [
 
 BeautifulSoup = None
 
+
 def loadBeautifulSoup():
 	global BeautifulSoup
 	try:
 		import bs4 as BeautifulSoup
-	except:
+	except ImportError:
 		try:
 			import BeautifulSoup
-		except:
+		except ImportError:
 			return
 	if int(BeautifulSoup.__version__.split(".")[0]) < 4:
 		raise ImportError(
@@ -86,11 +87,16 @@ def loadBeautifulSoup():
 			f"Please run `sudo pip3 install lxml beautifulsoup4 html5lib`"
 		)
 
+
 def abspath_or_None(path):
 	return os.path.abspath(os.path.expanduser(path)) if path else None
 
 
-def write_header(glos: GlossaryType, toFile: TextIO, frontBackMatter: Optional[str]):
+def write_header(
+	glos: GlossaryType,
+	toFile: TextIO,
+	frontBackMatter: Optional[str],
+) -> None:
 	# write header
 	toFile.write(
 		'<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -148,7 +154,7 @@ def write(
 	prefsHTML: str = "",
 	frontBackMatter: str = "",
 	jing: bool = False,
-	indexes: str = "",# FIXME: rename to indexes_lang?
+	indexes: str = "",  # FIXME: rename to indexes_lang?
 ):
 	"""
 	write glossary to Apple dictionary .xml and supporting files.
@@ -254,7 +260,7 @@ def write(
 			if entry.defiFormat == "x":
 				defi = xdxf_to_html(defi)
 				content_title = None
-			content = format_clean_content(content_title, defi, BeautifulSoup)
+			content = prepare_content(content_title, defi, BeautifulSoup)
 
 			toFile.write(
 				f'<d:entry id="{_id}" d:title={title_attr}>\n' +
@@ -292,6 +298,12 @@ def write(
 	# if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
 	# present in Info.plist, Dictionary.app will crash.
 	with open(filePathBase + ".plist", "w", encoding="utf-8") as toFile:
+		frontMatterReferenceID = (
+			"<key>DCSDictionaryFrontMatterReferenceID</key>\n"
+			"\t<string>front_back_matter</string>"
+			if frontBackMatter
+			else ""
+		)
 		toFile.write(
 			toStr(pkgutil.get_data(
 				__name__,
@@ -306,10 +318,7 @@ def write(
 				DCSDictionaryXSL=basename(xsl) if xsl else "",
 				DCSDictionaryDefaultPrefs=format_default_prefs(defaultPrefs),
 				DCSDictionaryPrefsHTML=basename(prefsHTML) if prefsHTML else "",
-				DCSDictionaryFrontMatterReferenceID=
-					"<key>DCSDictionaryFrontMatterReferenceID</key>\n"
-					"\t<string>front_back_matter</string>" if frontBackMatter
-					else "",
+				DCSDictionaryFrontMatterReferenceID=frontMatterReferenceID,
 			)
 		)
 

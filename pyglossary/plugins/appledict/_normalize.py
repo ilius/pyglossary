@@ -117,7 +117,8 @@ def title(title, BeautifulSoup):
 			# BeautifulSoup has a bug when markup <= 1 char length
 			title = BeautifulSoup.BeautifulSoup(
 				title,
-				features="lxml", # FIXME: html or lxml? gives warning unless it's lxml
+				features="lxml",
+				# FIXME: html or lxml? gives warning unless it's lxml
 			).get_text(strip=True)
 	else:
 		title = re_title.sub("", title)
