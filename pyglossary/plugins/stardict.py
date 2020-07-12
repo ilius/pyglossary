@@ -523,19 +523,16 @@ class Writer(object):
 			defis = self.fixDefis(entry.defis, defiFormat)
 			# defis is list of strs
 
-			b_dictBlock = b""
-
 			for alt in words[1:]:
 				altIndexList.append((alt.encode("utf-8"), entryI))
 
-			b_dictBlock += defis[0].encode("utf-8")
-
-			for altDefi in defis[1:]:
-				b_dictBlock += b"\x00" + altDefi.encode("utf-8")
-
+			# for some reason, alternate definitions do not work
+			# in compact mode, that's why we join them by newline
+			# then add them as a single definition
+			b_dictBlock = "\n".join(defis).encode("utf-8")
 			dictFile.write(b_dictBlock)
-
 			blockLen = len(b_dictBlock)
+
 			b_idxBlock = word.encode("utf-8") + b"\x00" + \
 				intToBinStr(dictMark, 4) + \
 				intToBinStr(blockLen, 4)
@@ -558,7 +555,7 @@ class Writer(object):
 			wordCount,
 			indexFileSize,
 			len(altIndexList),
-			defiFormat,
+			defiFormat=defiFormat,
 		)
 
 	def writeGeneral(self) -> None:
@@ -598,19 +595,15 @@ class Writer(object):
 			defis = self.fixDefis(entry.defis, defiFormat)
 			# defis is list of strs
 
-			b_dictBlock = b""
-
 			for alt in words[1:]:
 				altIndexList.append((alt.encode("utf-8"), entryI))
 
-			b_dictBlock += (defiFormat + defis[0]).encode("utf-8") + b"\x00"
-
-			for altDefi in defis[1:]:
-				b_dictBlock += (defiFormat + altDefi).encode("utf-8") + b"\x00"
-
+			b_dictBlock = b""
+			for defi in defis:
+				b_dictBlock += (defiFormat + defi).encode("utf-8") + b"\x00"
 			dictFile.write(b_dictBlock)
-
 			blockLen = len(b_dictBlock)
+
 			b_idxBlock = word.encode("utf-8") + b"\x00" + \
 				intToBinStr(dictMark, 4) + \
 				intToBinStr(blockLen, 4)
@@ -629,7 +622,11 @@ class Writer(object):
 		log.debug("defiFormatsCount = " + pformat(defiFormatCounter.most_common()))
 
 		self.writeSynFile(altIndexList)
-		self.writeIfoFile(wordCount, indexFileSize, len(altIndexList))
+		self.writeIfoFile(
+			wordCount,
+			indexFileSize,
+			len(altIndexList),
+		)
 
 	def writeSynFile(self, altIndexList: List[Tuple[bytes, int]]) -> None:
 		"""
@@ -667,7 +664,7 @@ class Writer(object):
 		wordCount: int,
 		indexFileSize: int,
 		synwordcount: int,
-		sametypesequence: str = "", # type: Literal["", "h", "m"]
+		defiFormat: str = "", # type: Literal["", "h", "m"]
 	) -> None:
 		"""
 		Build .ifo file
@@ -689,8 +686,8 @@ class Writer(object):
 			("wordcount", wordCount),
 			("idxfilesize", indexFileSize),
 		]
-		if sametypesequence:
-			ifo.append(("sametypesequence", sametypesequence))
+		if defiFormat:
+			ifo.append(("sametypesequence", defiFormat))
 		if synwordcount > 0:
 			ifo.append(("synwordcount", synwordcount))
 
