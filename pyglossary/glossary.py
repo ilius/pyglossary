@@ -295,7 +295,7 @@ class Glossary(GlossaryType):
 	def clear(self) -> None:
 		self._info = odict()
 
-		self._data = []
+		self._data = []  # type: List[RawEntryType]
 
 		try:
 			readers = self._readers
@@ -327,8 +327,8 @@ class Glossary(GlossaryType):
 		ui: Any = None,
 	) -> None:
 		"""
-		info:	OrderedDict instance, or None
-				no need to copy OrderedDict instance,
+		info:	OrderedDict or dict instance, or None
+				no need to copy OrderedDict instance before passing here
 				we will not reference to it
 		"""
 		self.clear()
@@ -341,18 +341,6 @@ class Glossary(GlossaryType):
 			for key, value in info.items():
 				self.setInfo(key, value)
 
-		"""
-		self._data is a list of tuples with length 2 or 3:
-			(word, definition)
-			(word, definition, defiFormat)
-			where both word and definition can be a string, or list
-				(containing word and alternates)
-
-			defiFormat: format of the definition:
-				"m": plain text
-				"h": html
-				"x": xdxf
-		"""
 		self.ui = ui
 
 	# def setRawEntryCompress(self, enable: bool) -> bool:
@@ -422,6 +410,11 @@ class Glossary(GlossaryType):
 	) -> Entry:
 		"""
 		create and return a new entry object
+
+		defiFormat must be empty or one of these:
+			"m": plain text
+			"h": html
+			"x": xdxf
 		"""
 		if not defiFormat:
 			defiFormat = self._defaultDefiFormat
@@ -435,6 +428,11 @@ class Glossary(GlossaryType):
 	def addEntry(self, word: str, defi: str, defiFormat: str = "") -> None:
 		"""
 		create and add a new entry object to glossary
+
+		defiFormat must be empty or one of these:
+			"m": plain text
+			"h": html
+			"x": xdxf
 		"""
 		self.addEntryObj(self.newEntry(word, defi, defiFormat))
 
@@ -531,6 +529,12 @@ class Glossary(GlossaryType):
 		yield bucket
 
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
+		"""
+		defiFormat must be empty or one of these:
+			"m": plain text
+			"h": html
+			"x": xdxf
+		"""
 		self._defaultDefiFormat = defiFormat
 
 	def getDefaultDefiFormat(self) -> str:
