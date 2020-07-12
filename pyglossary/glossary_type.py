@@ -69,13 +69,3 @@ class GlossaryType(object):
 
 	def writeTabfile(self, filename: str = "", **kwargs) -> None:
 		raise NotImplementedError
-
-	def iterSqlLines(
-		self,
-		filename: str = "",
-		infoKeys: Optional[List] = None,
-		addExtraInfo: bool = True,
-		newline: str = "\\n",
-		transaction: bool = False,
-	) -> Iterator[str]:
-		raise NotImplementedError
