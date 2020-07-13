@@ -87,7 +87,7 @@ def read_raw(s, fe):
 
 
 def read_str(s, fe):
-	read_raw(s, fe).replace(b"\x00", b"")
+	return read_raw(s, fe).replace(b"\x00", b"")
 
 
 def read_int(s, fe=None):
@@ -125,7 +125,7 @@ class Header(object):
 	def parse(self, st):
 		self.signature = read_str(st, self.f_signature)
 		if self.signature != b"sdct":
-			raise ValueError("Not a valid sdict dictionary")
+			raise ValueError(f"Not a valid sdict dictionary: signature={self.signature}")
 		self.word_lang = read_str(st, self.f_input_lang)
 		self.article_lang = read_str(st, self.f_output_lang)
 		self.short_index_length = read_int(st, self.f_length_of_short_index)
@@ -166,7 +166,8 @@ class Reader(object):
 		log.debug(f"SDict word count: {len(self)}")  # correct? FIXME
 
 	def close(self):
-		self._file.close()
+		if self._file:
+			self._file.close()
 		self.clear()
 
 	def __len__(self):
