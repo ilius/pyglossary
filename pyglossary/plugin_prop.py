@@ -64,9 +64,5 @@ class PluginProp(object):
 		return getattr(self._p, "depends", {})
 
 	@property
-	def supportsAlternates(self) -> bool:
-		return self._p.supportsAlternates
-
-	@property
 	def sortOnWrite(self) -> YesNoAlwaysNever:
 		return getattr(self._p, "sortOnWrite", DEFAULT_NO)

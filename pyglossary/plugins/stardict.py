@@ -34,7 +34,6 @@ optionsProp = {
 depends = {}
 sortOnWrite = ALWAYS
 # sortKey is defined in Writer class
-supportsAlternates = True
 
 tools = [
 	{

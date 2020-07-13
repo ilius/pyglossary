@@ -46,7 +46,6 @@ tools = [
 	},
 ]
 depends = {}
-supportsAlternates = True
 # progressbar = DEFAULT_YES
 
 # FIXME: document type of read/write options

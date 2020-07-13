@@ -55,7 +55,6 @@ singleFile = False
 optionsProp = {}  # type: Dict[str, Option]
 
 depends = {}  # type: Dict[str, str]
-supportsAlternates = False
 sortOnWrite = DEFAULT_NO  # type: YesNoAlwaysNever
 
 tools = []  # type: List[Dict[str, Any]]

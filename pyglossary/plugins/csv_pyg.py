@@ -46,7 +46,6 @@ optionsProp = {
 	"resources": BoolOption(),
 }
 depends = {}
-supportsAlternates = True
 
 
 class Reader(object):
