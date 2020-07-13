@@ -433,6 +433,10 @@ class Writer(object):
 			'<p( [^<>]*?)?>(.*?)</p>',
 			re.DOTALL,
 		)
+		self._br_pattern = re.compile(
+			"<br[ /]*>",
+			re.IGNORECASE,
+		)
 
 	def sortKey(self, b_word: bytes) -> Tuple[bytes, bytes]:
 		return (
@@ -482,6 +486,7 @@ class Writer(object):
 			defi = self._p_pattern.sub("\\2<br>", defi)
 			# if there is </p> left without opening, replace with <br>
 			defi = defi.replace("</p>", "<br>")
+			defi = self._br_pattern.sub("<br>", defi)
 		return defi
 
 	def writeCompact(self, defiFormat):
