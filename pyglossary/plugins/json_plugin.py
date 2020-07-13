@@ -22,13 +22,18 @@ def write(
 	resources: bool = True,
 ) -> bool:
 	from json import dumps
+	ascii = encoding == "ascii"
+
+	def escape(st):
+		return dumps(st, ensure_ascii=ascii)
+
 	return glos.writeTxt(
 		entryFmt="\t{word}: {defi},\n",
 		filename=filename,
 		encoding=encoding,
 		writeInfo=writeInfo,
-		wordEscapeFunc=dumps,
-		defiEscapeFunc=dumps,
+		wordEscapeFunc=escape,
+		defiEscapeFunc=escape,
 		ext=".json",
 		head="{\n",
 		tail='\t"": ""\n}',
