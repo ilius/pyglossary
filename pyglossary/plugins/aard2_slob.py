@@ -43,6 +43,11 @@ class Reader(object):
 	def __init__(self, glos):
 		self._glos = glos
 		self._clear()
+		try:
+			import icu
+		except ModuleNotFoundError as e:
+			e.msg += ", run `sudo pip3 install PyICU` to install"
+			raise e
 
 	def close(self):
 		if self._slobObj is not None:
