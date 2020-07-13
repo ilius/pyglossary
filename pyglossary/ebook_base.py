@@ -105,7 +105,7 @@ class EbookWriter(object):
 		ignore_synonyms=False,
 		flatten_synonyms=False,
 	):
-		self.glos = glos
+		self._glos = glos
 
 		self._group_by_prefix_length = 2
 		self._escape_strings = escape_strings
@@ -213,7 +213,7 @@ class EbookWriter(object):
 		group_labels = []
 
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
-			self.glos,
+			self._glos,
 			lambda tmpEntry: self.get_prefix(tmpEntry.s_word),
 		)):
 			index = group_i + self.GROUP_START_INDEX
@@ -286,7 +286,7 @@ class EbookWriter(object):
 				label=label,
 			))
 		links = self.INDEX_XHTML_LINK_JOINER.join(links)
-		title = self.glos.getInfo("name")
+		title = self._glos.getInfo("name")
 		contents = self.INDEX_XHTML_TEMPLATE.format(
 			title=title,
 			indexTitle=title,
@@ -307,12 +307,12 @@ class EbookWriter(object):
 		creationDate = datetime.now().strftime("%Y-%m-%d")
 
 		return self.OPF_TEMPLATE.format(
-			identifier=self.glos.getInfo("uuid"),
-			sourceLang=self.glos.getInfo("sourceLang"),
-			targetLang=self.glos.getInfo("sourceLang"),
-			title=self.glos.getInfo("name"),
-			creator=self.glos.getAuthor(),
-			copyright=self.glos.getInfo("copyright"),
+			identifier=self._glos.getInfo("uuid"),
+			sourceLang=self._glos.getInfo("sourceLang"),
+			targetLang=self._glos.getInfo("sourceLang"),
+			title=self._glos.getInfo("name"),
+			creator=self._glos.getAuthor(),
+			copyright=self._glos.getInfo("copyright"),
 			creationDate=creationDate,
 			cover=cover,
 			manifest=manifest_contents,

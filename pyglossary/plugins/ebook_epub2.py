@@ -246,8 +246,8 @@ p.groupDefinition {
 			index += 1
 		ncx_items_unicode = "\n".join(ncx_items)
 		ncx_contents = self.NCX_TEMPLATE.format(
-			identifier = self.glos.getInfo("uuid"),
-			title = self.glos.getInfo("name"),
+			identifier = self._glos.getInfo("uuid"),
+			title = self._glos.getInfo("name"),
 			ncx_items = ncx_items_unicode,
 		)
 		self.add_file_manifest(
