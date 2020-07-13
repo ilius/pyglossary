@@ -138,7 +138,7 @@ def searchWordInDef(
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
 	outRel = []
 	for entry in entryIter:
-		words = entry.words
+		words = entry.l_word
 		defi = entry.defi
 		if st not in defi:
 			continue

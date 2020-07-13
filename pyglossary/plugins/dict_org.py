@@ -125,7 +125,7 @@ def write(
 		if entry.isData():
 			# does dictd support resources? and how? FIXME
 			continue
-		dictdb.addentry(entry.b_defi, entry.words)
+		dictdb.addentry(entry.b_defi, entry.l_word)
 	dictdb.finish(dosort=1)
 	if dictzip:
 		runDictzip(filename)

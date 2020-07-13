@@ -86,7 +86,7 @@ class DataEntry(BaseEntry):
 		return self._fname
 
 	@property
-	def words(self) -> List[str]:
+	def l_word(self) -> List[str]:
 		return [self._fname]
 
 	@property
@@ -98,8 +98,8 @@ class DataEntry(BaseEntry):
 		return self.s_word
 
 	def getWords(self) -> List[str]:
-		log.error("entry.getWords() is deprecated, use entry.words")
-		return self.words
+		log.error("entry.getWords() is deprecated, use entry.l_word")
+		return self.l_word
 
 	def getDefi(self) -> str:
 		log.error("entry.getDefi() is deprecated, use entry.defi")
@@ -205,7 +205,7 @@ class Entry(BaseEntry):
 	) -> Callable[[BaseEntry], Any]:
 		if key is None:
 			key = Entry.defaultSortKey
-		return lambda entry: key(entry.words[0].encode("utf-8"))
+		return lambda entry: key(entry.l_word[0].encode("utf-8"))
 
 	@staticmethod
 	def getRawEntrySortKey(
@@ -270,7 +270,7 @@ class Entry(BaseEntry):
 			return self._join(self._word)
 
 	@property
-	def words(self) -> List[str]:
+	def l_word(self) -> List[str]:
 		"""
 			returns list of the word and all the alternate words
 		"""
@@ -291,8 +291,8 @@ class Entry(BaseEntry):
 		return self.s_word
 
 	def getWords(self) -> List[str]:
-		log.error("entry.getWords() is deprecated, use entry.words")
-		return self.words
+		log.error("entry.getWords() is deprecated, use entry.l_word")
+		return self.l_word
 
 	def getDefi(self) -> str:
 		log.error("entry.getDefi() is deprecated, use entry.defi")
@@ -330,9 +330,9 @@ class Entry(BaseEntry):
 		return self._byteProgress
 
 	def addAlt(self, alt: str) -> None:
-		words = self.words
-		words.append(alt)
-		self._word = words
+		l_word = self.l_word
+		l_word.append(alt)
+		self._word = l_word
 
 	def editFuncWord(self, func: Callable[[str], str]) -> None:
 		"""
@@ -393,12 +393,12 @@ class Entry(BaseEntry):
 		self.replaceInDefi(source, target)
 
 	def removeEmptyAndDuplicateAltWords(self):
-		words = self.words
-		if len(words) == 1:
+		l_word = self.l_word
+		if len(l_word) == 1:
 			return
-		words = [word for word in words if word]
-		words = list(unique_everseen(words))
-		self._word = words
+		l_word = [word for word in l_word if word]
+		l_word = list(unique_everseen(l_word))
+		self._word = l_word
 
 	def getRaw(
 		self,

@@ -124,7 +124,7 @@ class Reader(object):
 
 def writeEntryGen(glos):
 	for entry in glos:
-		words = entry.words
+		words = entry.l_word
 		defi = entry.defi
 
 		yield glos.newEntry(words[0], defi)

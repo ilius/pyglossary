@@ -36,7 +36,7 @@ class BaseEntry(object):
 		raise NotImplementedError
 
 	@property
-	def words(self) -> List[str]:
+	def l_word(self) -> List[str]:
 		raise NotImplementedError
 
 	@property

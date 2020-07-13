@@ -239,7 +239,7 @@ def write(
 				entry.save(myResDir)
 				continue
 
-			words = entry.words
+			words = entry.l_word
 			word, alts = words[0], words[1:]
 			defi = entry.defi
 

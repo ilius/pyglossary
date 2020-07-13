@@ -59,7 +59,7 @@ class NonEmptyWordFilter(EntryFilter):
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
 		if not entry.s_word:
 			return
-#		words = entry.words
+#		words = entry.l_word
 #		if not words:
 #			return
 #		wordsStr = "".join([w.strip() for w in words])
@@ -84,7 +84,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
 		entry.removeEmptyAndDuplicateAltWords()
-		if not entry.words:
+		if not entry.l_word:
 			return
 		return entry
 

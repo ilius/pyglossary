@@ -144,7 +144,7 @@ def write(glos: GlossaryType, filename: str, encoding: str = "utf-8", resources:
 					entry.save(resDir)
 				continue
 
-			words = entry.words
+			words = entry.l_word
 			if not words:
 				continue
 			word, alts = words[0], words[1:]

@@ -512,7 +512,7 @@ class Writer(object):
 				continue
 			entryIndex += 1
 
-			words = entry.words  # list of strs
+			words = entry.l_word  # list of strs
 			word = words[0]  # str
 			defi = self.fixDefi(entry.defi, defiFormat)
 			# defi is str
@@ -581,7 +581,7 @@ class Writer(object):
 			if defiFormat not in ("m", "h"):
 				defiFormat = "m"
 
-			words = entry.words  # list of strs
+			words = entry.l_word  # list of strs
 			word = words[0]  # str
 			defi = self.fixDefi(entry.defi, defiFormat)
 			# defi is str
