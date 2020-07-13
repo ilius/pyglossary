@@ -1,5 +1,6 @@
+<!-- Copyright (c) 2020 Saeed Rasooli -->
+<!-- Copyright (c) 2016 Ratijas -->
 <!-- Copyright (c) 2008-2011 Dmitry Zhuk. All rights reserved. -->
-<!-- Modified by Ratijas. -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
 
@@ -51,7 +52,7 @@
   </xsl:template>
 
   <xsl:template match="pos | abr">
-    <span class="abr"><xsl:apply-templates/></span>
+    <span class="abr"><font color="green"><i><xsl:apply-templates/></i></font></span>
   </xsl:template>
 
   <xsl:template match="c[@c]">
@@ -59,7 +60,7 @@
   </xsl:template>
 
   <xsl:template match="c">
-    <span style="color: green"><xsl:apply-templates/></span>
+    <font color="green"><xsl:apply-templates/></font>
   </xsl:template>
 
   <xsl:template match="dtrn | co">
@@ -69,10 +70,10 @@
   <xsl:template match="kref">
     <xsl:choose>
       <xsl:when test="@k">
-        <a class="kref" href="{@k}"><xsl:apply-templates/></a>
+        <a class="kref" href="bword://{@k}"><xsl:apply-templates/></a>
       </xsl:when>
       <xsl:otherwise>
-        <a class="kref" href="{text()}"><xsl:apply-templates/></a>
+        <a class="kref" href="bword://{text()}"><xsl:apply-templates/></a>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

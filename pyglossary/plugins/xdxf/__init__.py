@@ -105,6 +105,9 @@ class Reader(object):
 		self._file = None
 		self._encoding = "utf-8"
 		self._xdxf_to_html = None
+		self._re_span_k = re.compile(
+			'<span class="k">[^<>]*</span>(<br/>)?',
+		)
 
 	def open(self, filename: str, html: bool = True):
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
@@ -147,6 +150,7 @@ class Reader(object):
 		)
 		for action, article in context:
 			article.tail = None
+			words = [toStr(w) for w in self.titles(article)]
 			defi = tostring(article, encoding=self._encoding)
 			# <ar>...</ar>
 			defi = defi[4:-5].decode(self._encoding).strip()
@@ -154,7 +158,9 @@ class Reader(object):
 			if self._xdxf_to_html:
 				defi = self._xdxf_to_html(defi)
 				defiFormat = "h"
-			words = [toStr(w) for w in self.titles(article)]
+				if len(words) == 1:
+					defi = self._re_span_k.sub("", defi)
+
 			# log.info(f"defi={defi}, words={words}")
 			yield self._glos.newEntry(
 				words,

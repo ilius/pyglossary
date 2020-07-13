@@ -21,6 +21,8 @@ def xdxf_to_html_transformer():
 	def xdxf_to_html(xdxf_text: str) -> str:
 		doc = etree.parse(StringIO(f"<ar>{xdxf_text}</ar>"))
 		result_tree = _transform(doc)
-		return tostring(result_tree, encoding="utf-8").decode("utf-8")
+		text = tostring(result_tree, encoding="utf-8").decode("utf-8")
+		text = text.replace("<br/> ", "<br/>")
+		return text
 
 	return xdxf_to_html
