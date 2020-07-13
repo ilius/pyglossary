@@ -32,7 +32,7 @@ class BaseEntry(object):
 		raise NotImplementedError
 
 	@property
-	def word(self) -> str:
+	def s_word(self) -> str:
 		raise NotImplementedError
 
 	@property
@@ -50,7 +50,7 @@ class BaseEntry(object):
 				and all the alternate words
 				seperated by b"|"
 		"""
-		return self.word.encode("utf-8")
+		return self.s_word.encode("utf-8")
 
 	@property
 	def b_defi(self):

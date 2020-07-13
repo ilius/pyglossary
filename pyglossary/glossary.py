@@ -518,7 +518,7 @@ class Glossary(GlossaryType):
 			for bucket in glos.iterEntryBuckets(100):
 				assert len(bucket) == 100
 				for entry in bucket:
-					print(entry.word)
+					print(entry.s_word)
 				print("-----------------")
 		"""
 		bucket = []
@@ -1207,7 +1207,7 @@ class Glossary(GlossaryType):
 				entry = entryFilterFunc(entry)
 				if not entry:
 					continue
-			word = entry.word
+			word = entry.s_word
 			defi = entry.defi
 			if word.startswith("#"):  # FIXME
 				continue

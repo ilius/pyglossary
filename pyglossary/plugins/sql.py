@@ -81,7 +81,7 @@ def iterSqlLines(
 		if entry.isData():
 			# FIXME
 			continue
-		word = entry.word
+		word = entry.s_word
 		defi = entry.defi
 		word = word.replace("\'", "\'\'")\
 			.replace("\r", "").replace("\n", newline)

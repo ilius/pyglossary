@@ -142,7 +142,7 @@ class Writer(object):
 					continue
 
 				wordCount += 1
-				word = entry.word
+				word = entry.s_word
 				defi = entry.defi
 				dicLine = word + "\t" + defi + "\n"
 				dicPos = dicFp.tell()

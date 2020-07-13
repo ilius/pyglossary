@@ -214,7 +214,7 @@ class EbookWriter(object):
 
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
 			self.glos,
-			lambda tmpEntry: self.get_prefix(tmpEntry.word),
+			lambda tmpEntry: self.get_prefix(tmpEntry.s_word),
 		)):
 			index = group_i + self.GROUP_START_INDEX
 			first_word = ""
@@ -223,7 +223,7 @@ class EbookWriter(object):
 			for entry in group_entry_iter:
 				if entry.isData():
 					continue
-				word = entry.word
+				word = entry.s_word
 				defi = entry.defi
 				if not first_word:
 					first_word = word

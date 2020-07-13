@@ -57,7 +57,7 @@ class NonEmptyWordFilter(EntryFilter):
 	desc = "Non-empty Words"
 
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
-		if not entry.word:
+		if not entry.s_word:
 			return
 #		words = entry.words
 #		if not words:

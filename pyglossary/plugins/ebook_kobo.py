@@ -151,7 +151,7 @@ class Writer:
 
 		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
 			self._glos,
-			lambda entry: self.get_prefix(entry.word)
+			lambda entry: self.get_prefix(entry.s_word)
 		)):
 			group_fname = fixFilename(group_prefix)
 			htmlContents = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
@@ -160,7 +160,7 @@ class Writer:
 				if entry.isData():
 					dataEntryCount += 1
 					continue
-				word = entry.word
+				word = entry.s_word
 				defi = entry.defi
 				defi = self.fix_defi(defi)
 				words.append(word)

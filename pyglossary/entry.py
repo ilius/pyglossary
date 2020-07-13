@@ -82,7 +82,7 @@ class DataEntry(BaseEntry):
 		return fpath
 
 	@property
-	def word(self) -> str:
+	def s_word(self) -> str:
 		return self._fname
 
 	@property
@@ -94,8 +94,8 @@ class DataEntry(BaseEntry):
 		return f"File: {self._fname}"
 
 	def getWord(self) -> str:
-		log.error("entry.getWord() is deprecated, use entry.word")
-		return self.word
+		log.error("entry.getWord() is deprecated, use entry.s_word")
+		return self.s_word
 
 	def getWords(self) -> List[str]:
 		log.error("entry.getWords() is deprecated, use entry.words")
@@ -258,7 +258,7 @@ class Entry(BaseEntry):
 
 
 	@property
-	def word(self):
+	def s_word(self):
 		"""
 			returns string of word,
 				and all the alternate words
@@ -287,8 +287,8 @@ class Entry(BaseEntry):
 		return self._defi
 
 	def getWord(self) -> str:
-		log.error("entry.getWord() is deprecated, use entry.word")
-		return self.word
+		log.error("entry.getWord() is deprecated, use entry.s_word")
+		return self.s_word
 
 	def getWords(self) -> List[str]:
 		log.error("entry.getWords() is deprecated, use entry.words")
