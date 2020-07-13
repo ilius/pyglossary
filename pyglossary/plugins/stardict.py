@@ -28,7 +28,7 @@ optionsProp = {
 	"stardict_client": BoolOption(),
 	"dictzip": BoolOption(),
 	"sametypesequence": StrOption(
-		values=["", "h", "m"],
+		values=["", "h", "m", "x"],
 	),
 }
 depends = {}
@@ -578,7 +578,8 @@ class Writer(object):
 			entry.detectDefiFormat()  # call no more than once
 			defiFormat = entry.defiFormat
 			defiFormatCounter[defiFormat] += 1
-			if defiFormat not in ("m", "h"):
+			if defiFormat not in ("m", "h", "x"):
+				log.error(f"invalid defiFormat={defiFormat}, using 'm'")
 				defiFormat = "m"
 
 			words = entry.l_word  # list of strs
@@ -653,7 +654,7 @@ class Writer(object):
 		wordCount: int,
 		indexFileSize: int,
 		synWordCount: int,
-		defiFormat: str = "", # type: Literal["", "h", "m"]
+		defiFormat: str = "", # type: Literal["", "h", "m", "x"]
 	) -> None:
 		"""
 		Build .ifo file
