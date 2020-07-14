@@ -62,13 +62,6 @@ gtk.Window.set_default_icon_from_file(logo)
 _ = str  # later replace with translator function
 
 
-def getCompressedFileExt(fpath):
-	fname, ext = splitext(fpath.lower())
-	if ext in (".gz", ".bz2", ".zip"):
-		fname, ext = splitext(fname)
-	return ext
-
-
 def buffer_get_text(b):
 	return b.get_text(
 		b.get_start_iter(),
@@ -998,49 +991,36 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			inPath = urlToPath(inPath)
 			self.convertInputEntry.set_text(inPath)
 
-		inExt = getCompressedFileExt(inPath)
-		inFormatNew = Glossary.pluginByExt.get(inExt)
-
-		if not inFormatNew:
-			return
+		if self.pref["ui_autoSetFormat"] and not inFormat:
+			inFormatNew = Glossary.detectInputFormat(inPath, quiet=True)
+			if inFormatNew:
+				self.convertInputFormatCombo.setActive(inFormatNew)
 
 		if not isfile(inPath):
 			return
 
-		if self.pref["ui_autoSetFormat"] and not inFormat:
-			self.convertInputFormatCombo.setActive(inFormatNew.name)
-
 		self.status("Select output file")
-		if self.pref["ui_autoSetOutputFileName"]:
-			outFormat = self.convertOutputFormatCombo.getActive()
-			outPath = self.convertOutputEntry.get_text()
-			if outFormat:
-				if not outPath and "." in inPath:
-					outPath = splitext(inPath)[0] + \
-						Glossary.plugins[outFormat].extensions[0]
-					self.convertOutputEntry.set_text(outPath)
-					self.status("Press \"Convert\"")
 
 	def convertOutputEntryChanged(self, widget=None):
 		outPath = self.convertOutputEntry.get_text()
 		outFormat = self.convertOutputFormatCombo.getActive()
 		if not outPath:
 			return
-		# outFormat = self.combobox_o.get_active_text()
 		if outPath.startswith("file://"):
 			outPath = urlToPath(outPath)
 			self.convertOutputEntry.set_text(outPath)
 
 		if self.pref["ui_autoSetFormat"] and not outFormat:
-			outExt = getCompressedFileExt(outPath)
-			try:
-				outFormatNew = Glossary.pluginByExt[outExt].name
-			except KeyError:
-				pass
-			else:
-				self.convertOutputFormatCombo.setActive(outFormatNew)
+			outputArgs = Glossary.detectOutputFormat(
+				filename=outPath,
+				inputFilename=self.convertInputEntry.get_text(),
+				quiet=True,
+			)
+			if outputArgs:
+				outFormat = outputArgs[1]
+				self.convertOutputFormatCombo.setActive(outFormat)
 
-		if self.convertOutputFormatCombo.getActive():
+		if outFormat:
 			self.status("Press \"Convert\"")
 		else:
 			self.status("Select output format")
@@ -1106,18 +1086,9 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			inPath = urlToPath(inPath)
 			self.reverseInputEntry.set_text(inPath)
 
-		inExt = getCompressedFileExt(inPath)
-		inFormatNew = Glossary.pluginByExt.get(inExt)
-
-		if inFormatNew and self.pref["ui_autoSetFormat"] and not inFormat:
-			self.reverseInputFormatCombo.setActive(inFormatNew.name)
-
-		if self.pref["ui_autoSetOutputFileName"]:
-			outExt = ".txt"
-			outPath = self.reverseOutputEntry.get_text()
-			if inFormatNew and not outPath:
-				outPath = splitext(inPath)[0] + "-reversed" + outExt
-				self.reverseOutputEntry.set_text(outPath)
+		if not inFormat and self.pref["ui_autoSetFormat"]:
+			inFormat = Glossary.detectInputFormat(inPath, quiet=True)
+			self.reverseInputFormatCombo.setActive(inFormat)
 
 	def reverseOutputEntryChanged(self, widget=None):
 		pass
