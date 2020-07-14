@@ -43,7 +43,7 @@ class GetPrefixTest(unittest.TestCase):
 		self.case(" 未", "未a")
 
 		# the rest of test cases are from
-		# https://github.com/geek1011/dictutil/blob/master/kobodict/util_test.go
+		# https://github.com/pgaskin/dictutil/blob/master/kobodict/util_test.go
 
 		# dicthtml-en
 		self.case("a-", "11")

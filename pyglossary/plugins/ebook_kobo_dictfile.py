@@ -25,7 +25,7 @@ enable = True
 format = "Dictfile"
 description = "Kobo E-Reader Dictfile"
 extensions = (".df",)
-# https://github.com/geek1011/dictutil
+# https://github.com/pgaskin/dictutil
 tools = [
 	{
 		"name": "dictgen",
