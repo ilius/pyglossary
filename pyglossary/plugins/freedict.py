@@ -86,7 +86,7 @@ class Reader(object):
 						hf.write(pos.text)
 				hf.write(" ")
 				pronuns = entry.findall("form/pron", self.ns)
-				hf.write(", ".join("[" + p.text + "]" for p in pronuns))
+				hf.write(", ".join(f"[{p.text}]" for p in pronuns))
 				hf.write(ET.Element("br"))
 				hf.write("\n")
 
@@ -293,7 +293,7 @@ def write(
 	for entry in glos:
 		if entry.isData():
 			if resources:
-				entry.save(filename + "_res")
+				entry.save(f"{filename}_res")
 			continue
 		word = xml_escape(entry.s_word)
 		defi = xml_escape(entry.defi)
