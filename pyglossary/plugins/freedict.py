@@ -78,17 +78,26 @@ class Reader(object):
 			with hf.element("div"):
 				for form in entry.findall("form/orth", self.ns):
 					keywords.append(form.text)
+					# TODO: if there is only one keyword, we should skip this
 					with hf.element("b"):
 						hf.write(form.text)
-				hf.write(" ")
-				for pos in entry.findall("gramGrp/pos", self.ns):
-					with hf.element("i"):
-						hf.write(pos.text)
-				hf.write(" ")
-				pronuns = entry.findall("form/pron", self.ns)
-				hf.write(", ".join(f"[{p.text}]" for p in pronuns))
 				hf.write(ET.Element("br"))
-				hf.write("\n")
+				# TODO: "gramGrp/gen" is gender: m|masc|f|fem|n|neut|m;f|adj
+				posList = entry.findall("gramGrp/pos", self.ns)
+				if posList:
+					for pos in posList:
+						with hf.element("i"):
+							hf.write(pos.text)
+						hf.write(" ")
+					hf.write(ET.Element("br"))
+				pronList = entry.findall("form/pron", self.ns)
+				if pronList:
+					hf.write(", ".join(
+						f'<font color="green">/{p.text}/</font>'
+						for p in pronList
+					))
+					hf.write(ET.Element("br"))
+					hf.write("\n")
 
 				self.make_list(
 					hf,
