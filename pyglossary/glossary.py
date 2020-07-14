@@ -221,6 +221,7 @@ class Glossary(GlossaryType):
 		cls.pluginByDesc[desc] = prop
 
 		for ext in extensions:
+			cls.pluginByExt[ext.lstrip(".")] = prop
 			cls.pluginByExt[ext] = prop
 
 		hasReadSupport = False
@@ -241,6 +242,7 @@ class Glossary(GlossaryType):
 						f"Invalid Reader class in {format!r} plugin"
 						f", no {attr!r} method"
 					)
+					plugin.Reader = None
 					break
 			else:
 				cls.readerClasses[format] = Reader
@@ -284,14 +286,31 @@ class Glossary(GlossaryType):
 		return plugin
 
 	@classmethod
-	def detectInputFormat(cls, filename, format=""):
-		if not format:
-			ext = get_ext(filename)
-			for name, plug in Glossary.plugins.items():
-				if ext in plug.extensions:
-					format = name
+	def detectInputFormat(
+		cls,
+		filename: str,
+		format: str = "",
+		quiet: bool = False,
+	) -> str:
+		def error(msg: str) -> str:
+			if not quiet:
+				log.error(msg)
+			return ""
 
-		return format
+		if format:
+			plugin = cls.plugins[format]
+			if plugin.readerClass:
+				return plugin.name
+			return error(f"plugin {plugin.name} does not support reading")
+
+		ext = get_ext(filename)
+		plugin = cls.pluginByExt[ext]
+		if plugin:
+			if plugin.readerClass:
+				return plugin.name
+			return error(f"plugin {plugin.name} does not support reading")
+
+		return error(f"Could not detect input format")
 
 	def clear(self) -> None:
 		self._info = odict()
@@ -686,7 +705,6 @@ class Glossary(GlossaryType):
 		###
 		format = self.detectInputFormat(filename, format=format)
 		if not format:
-			log.error(f"Could not detect input format from file name: {filename!r}")
 			return False
 
 		validOptionKeys = self.formatsReadOptions[format]
@@ -818,78 +836,84 @@ class Glossary(GlossaryType):
 		self._updateIter(sort=True)
 
 	@classmethod
+	def findPlugin(cls, query: str) -> Optional[PluginProp]:
+		"""
+			find plugin by name or extention
+		"""
+		plugin = Glossary.plugins.get(query)
+		if plugin:
+			return plugin
+		plugin = Glossary.pluginByExt.get(query)
+		if plugin:
+			return plugin
+		return None
+
+	@classmethod
 	def detectOutputFormat(
 		cls,
 		filename: str = "",
 		format: str = "",
 		inputFilename: str = "",
+		quiet: bool = False,
 	) -> Optional[Tuple[str, str, str]]:
 		"""
 		returns (filename, format, compression) or None
 		"""
-		compression = ""
-		if filename:
-			ext = ""
-			filenameNoExt, fext = splitext(filename)
-			fext = fext.lower()
-			if fext in (".gz", ".bz2", ".zip"):
-				compression = fext[1:]
-				filename = filenameNoExt
-				fext = get_ext(filename)
-			if not format:
-				for fmt, plug in Glossary.plugins.items():
-					for e in plug.extensions:
-						if format == e[1:] or format == e:
-							format = fmt
-							ext = e
-							break
-					if format:
-						break
-				if not format:
-					for fmt, plug in Glossary.plugins.items():
-						extList = plug.extensions
-						if filename == fmt:
-							if not inputFilename:
-								log.error("inputFilename is empty")
-							else:
-								format = filename
-								ext = extList[0]
-								filename = inputFilename + ext
-								break
-						for e in extList:
-							if not inputFilename:
-								log.error("inputFilename is empty")
-							elif filename == e[1:] or filename == e:
-								format = fmt
-								ext = e
-								filename = inputFilename + ext
-								break
-						if format:
-							break
-				if not format:
-					for fmt, plug in Glossary.plugins.items():
-						if fext in plug.extensions:
-							format = fmt
-							ext = fext
-			if not format:
-				log.error("Unable to detect write format!")
-				return
+		def error(msg: str) -> None:
+			if not quiet:
+				log.error(msg)
+			return None
 
-		else:  # filename is empty
+		plugin = None
+		if format:
+			plugin = Glossary.plugins.get(format)
+			if not plugin:
+				return error(f"Invalid write format {format}")
+			if not plugin.canWrite:
+				return error(f"plugin {plugin.name} does not support writing")
+
+		if not filename:
 			if not inputFilename:
-				log.error(f"Invalid filename {filename!r}")
-				return
-			filename = inputFilename  # no extension
-			if not format:
-				log.error("No filename nor format is given for output file")
-				return
-			try:
-				filename += Glossary.plugins[format].extensions[0]
-			except KeyError:
-				log.error("Invalid write format")
-				return
+				return error(f"Invalid filename {filename!r}")
+			if not plugin:
+				return error("No filename nor format is given for output file")
+			if not plugin.canWrite:
+				return error(f"plugin {plugin.name} does not support writing")
+			filename = splitext(inputFilename)[0] + plugin.ext
+			return filename, plugin.name, ""
 
-		return filename, format, compression
+		compression = ""
+		filenameNoExt, ext = splitext(filename)
+		ext = ext.lower()
+		if not ext and len(filenameNoExt) < 5:
+			filenameNoExt, ext = "", filenameNoExt
+		if ext in (".gz", ".bz2", ".zip"):
+			compression = ext[1:]
+			filename = filenameNoExt
+			ext = get_ext(filename)
+
+		if not plugin:
+			plugin = cls.pluginByExt.get(ext)
+			if not plugin:
+				plugin = cls.findPlugin(filename)
+
+		if not plugin:
+			return error("Unable to detect write format!")
+
+		if not plugin.canWrite:
+			return error(f"plugin {plugin.name} does not support writing")
+
+		if not filenameNoExt:
+			if inputFilename:
+				ext = plugin.ext
+				filename = splitext(inputFilename)[0] + ext
+			else:
+				error("inputFilename is empty")
+
+		if not ext and plugin.ext:
+			filename += plugin.ext
+
+		return filename, plugin.name, compression
 
 	def write(
 		self,
@@ -1089,6 +1113,10 @@ class Glossary(GlossaryType):
 			readOptions = {}
 		if not writeOptions:
 			writeOptions = {}
+
+		if outputFilename == inputFilename:
+			log.error(f"Input and output files are the same")
+			return
 
 		if readOptions:
 			log.info(f"readOptions = {readOptions}")

@@ -22,6 +22,7 @@ from typing import (
 	Dict,
 	Optional,
 	Callable,
+	Any,
 )
 
 from .option import Option
@@ -52,6 +53,13 @@ class PluginProp(object):
 		return self._p.extensions
 
 	@property
+	def ext(self) -> str:
+		extensions = self.extensions
+		if extensions:
+			return extensions[0]
+		return ""
+
+	@property
 	def singleFile(self) -> bool:
 		return self._p.singleFile
 
@@ -66,3 +74,15 @@ class PluginProp(object):
 	@property
 	def sortOnWrite(self) -> YesNoAlwaysNever:
 		return getattr(self._p, "sortOnWrite", DEFAULT_NO)
+
+	@property
+	def readerClass(self) -> Optional[Any]:
+		return getattr(self._p, "Reader", None)
+
+	@property
+	def canWrite(self) -> bool:
+		if getattr(self._p, "Writer", None):
+			return True
+		if getattr(self._p, "write", None):
+			return True
+		return False
