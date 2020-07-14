@@ -39,6 +39,10 @@ tools = [
 def fixWord(word: str) -> str:
 	return word.replace("\n", " ")
 
+def escapeDefi(defi: str) -> str:
+	return defi.replace("\n@", "\n @")\
+		.replace("\n:", "\n :")\
+		.replace("\n&", "\n &")
 
 def write(
 	glos,
@@ -54,5 +58,5 @@ def write(
 		fp.write(f"@ {fixWord(words[0])}\n")
 		for alt in words[1:]:
 			fp.write(f"& {fixWord(alt)}\n")
-		fp.write(f"{defi}\n\n")
+		fp.write(f"{escapeDefi(defi)}\n\n")
 	fp.close()
