@@ -1241,18 +1241,6 @@ class Glossary(GlossaryType):
 			**kwargs
 		)
 
-	def writeDict(self, filename: str = "", writeInfo: bool = False) -> None:
-		# Used in "/usr/share/dict/" for some dictionarys such as "ding"
-		self.writeTxt(
-			entryFmt="{word} :: {defi}\n",
-			filename=filename,
-			writeInfo=writeInfo,
-			defiEscapeFunc=replaceStringTable([
-				("\n", "\\n"),
-			]),
-			ext=".dict",
-		)
-
 	# ________________________________________________________________________#
 
 	def progressInit(self, *args) -> None:
