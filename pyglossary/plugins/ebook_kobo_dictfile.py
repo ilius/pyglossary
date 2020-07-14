@@ -39,10 +39,12 @@ tools = [
 def fixWord(word: str) -> str:
 	return word.replace("\n", " ")
 
+
 def escapeDefi(defi: str) -> str:
 	return defi.replace("\n@", "\n @")\
 		.replace("\n:", "\n :")\
 		.replace("\n&", "\n &")
+
 
 def write(
 	glos,
