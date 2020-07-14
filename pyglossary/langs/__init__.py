@@ -48,7 +48,7 @@ class LangDict(dict):
 			)
 			for row in csvReader:
 				lang = Lang(
-					codes=row[:2],
+					codes=[c for c in row[:2] if c],
 					names=row[2:],
 				)
 				for key in lang.codes:
