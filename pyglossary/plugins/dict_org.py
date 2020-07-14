@@ -35,6 +35,14 @@ tools = [
 		"platforms": ["linux"],
 		"license": "GPL",
 	},
+	{
+		"name": "Ding",
+		"desc": "Graphical dictionary lookup program for Unix (Tk)",
+		"web": "https://www-user.tu-chemnitz.de/~fri/ding/",
+		"platforms": ["linux"],
+		"license": "GPL",
+		"copyright": "Copyright (c) 1999 - 2016 Frank Richter",
+	},
 ]
 
 
