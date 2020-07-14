@@ -53,6 +53,7 @@ def set_window_icon(window):
 		tk.PhotoImage(file=join(dataDir, "res", "pyglossary.png")),
 	)
 
+
 def decodeGeometry(gs):
 	"""
 		example for gs: "253x252+30+684"
@@ -62,8 +63,10 @@ def decodeGeometry(gs):
 	w, h = p[0].split("x")
 	return (int(p[1]), int(p[2]), int(w), int(h))
 
+
 def encodeGeometry(x, y, w, h):
 	return f"{w}x{h}+{x}+{y}"
+
 
 def encodeLocation(x, y):
 	return f"+{x}+{y}"
@@ -128,8 +131,10 @@ def CallWrapper__call__(self, *args):
 		args = self.subst(*args)
 	try:
 		return self.func(*args)
-	except:
+	except Exception:
 		log.exception("Exception in Tkinter callback:")
+
+
 tk.CallWrapper.__call__ = CallWrapper__call__
 
 
@@ -185,8 +190,8 @@ class ProgressBar(tix.Frame):
 			fill=fillColor,
 		)
 		self.label = self.canvas.create_text(
-			width/2,
-			height/2,
+			width / 2,
+			height / 2,
 			text="",
 			anchor="c",
 			fill=labelColor,
@@ -212,7 +217,7 @@ class ProgressBar(tix.Frame):
 		# Adjust the rectangle
 		width = int(self.winfo_width())
 		# width = self.width
-		ratio = float(value)/self.max
+		ratio = float(value) / self.max
 		if self.orientation == "horizontal":
 			self.canvas.coords(
 				self.scale,
@@ -240,7 +245,6 @@ class ProgressBar(tix.Frame):
 		# self.canvas.move(self.label, width/2, self.height/2)
 		# self.canvas.scale(self.label, 0, 0, float(width)/self.width, 1)
 		self.canvas.update_idletasks()
-
 
 
 class FormatOptionsButton(ttk.Button):
@@ -275,7 +279,7 @@ class FormatOptionsButton(ttk.Button):
 
 		value = treev.set(optName, self.valueCol)
 
-		dialog = tix.Toplevel(master=treev) # bg="#0f0" does not work
+		dialog = tix.Toplevel(master=treev)  # bg="#0f0" does not work
 		dialog.resizable(width=True, height=True)
 		dialog.title(optName)
 		set_window_icon(dialog)
@@ -285,12 +289,12 @@ class FormatOptionsButton(ttk.Button):
 		w = 300
 		h = 100
 		dialog.geometry(encodeGeometry(
-			px + pw//2 - w//2,
-			py + ph//2 - h//2,
+			px + pw // 2 - w // 2,
+			py + ph // 2 - h // 2,
 			w,
 			h,
 		))
-		
+
 		frame = tix.Frame(master=dialog)
 
 		label = ttk.Label(master=frame, text="Value for " + optName)
@@ -308,7 +312,7 @@ class FormatOptionsButton(ttk.Button):
 				log.error(f"invalid {prop.typ} value: {optName} = {rawValue!r}")
 				return
 			treev.set(optName, self.valueCol, rawValue)
-			treev.set(optName, "#1", "1") # enable it
+			treev.set(optName, "#1", "1")  # enable it
 			col_w = tkFont.Font().measure(rawValue)
 			if treev.column("Value", width=None) < col_w:
 				treev.column("Value", width=col_w)
@@ -347,10 +351,10 @@ class FormatOptionsButton(ttk.Button):
 		###
 		self.valueCol = "#3"
 		cols = [
-			"Enable", # bool
-			"Name", # str
-			"Value", # str
-			"Comment", # str
+			"Enable",  # bool
+			"Name",  # str
+			"Value",  # str
+			"Comment",  # str
 		]
 		treev = ttk.Treeview(
 			master=dialog,
@@ -369,14 +373,16 @@ class FormatOptionsButton(ttk.Button):
 				width=tkFont.Font().measure(col.title()),
 			)
 		###
+
 		def valueMenuItemSelected(optName, menu, value):
 			treev.set(optName, self.valueCol, value)
-			treev.set(optName, "#1", "1") # enable it
+			treev.set(optName, "#1", "1")  # enable it
 			col_w = tkFont.Font().measure(value)
 			if treev.column("Value", width=None) < col_w:
 				treev.column("Value", width=col_w)
 			menu.destroy()
 			self.menu = None
+
 		def valueCellClicked(event, optName):
 			if not optName:
 				return
@@ -401,18 +407,23 @@ class FormatOptionsButton(ttk.Button):
 						log.error(f"invalid {optName} = {rawValue!r}")
 						value = False
 				treev.set(optName, self.valueCol, str(not value))
-				treev.set(optName, "#1", "1") # enable it
+				treev.set(optName, "#1", "1")  # enable it
 				return
 			menu = tk.Menu(
 				master=treev,
 				title=optName,
 				tearoff=False,
 			)
-			self.menu = menu # to destroy it later
+			self.menu = menu  # to destroy it later
 			if prop.customValue:
 				menu.add_command(
 					label="[Custom Value]",
-					command=lambda: self.valueMenuItemCustomSelected(treev, format, optName, menu),
+					command=lambda: self.valueMenuItemCustomSelected(
+						treev,
+						format,
+						optName,
+						menu,
+					),
 				)
 			groupedValues = None
 			if len(propValues) > 10:
@@ -431,7 +442,11 @@ class FormatOptionsButton(ttk.Button):
 						for subValue in subValues:
 							subMenu.add_command(
 								label=str(subValue),
-								command=lambda value=subValue: valueMenuItemSelected(optName, menu, value),
+								command=lambda value=subValue: valueMenuItemSelected(
+									optName,
+									menu,
+									value,
+								),
 							)
 						menu.add_cascade(label=groupName, menu=subMenu)
 						maxItemW = max(maxItemW, tkFont.Font().measure(groupName))
@@ -442,9 +457,11 @@ class FormatOptionsButton(ttk.Button):
 						label=value,
 						command=lambda value=value: valueMenuItemSelected(optName, menu, value),
 					)
+
 			def close():
 				menu.destroy()
 				self.menu = None
+
 			menu.add_command(
 				label="[Close]",
 				command=close,
@@ -459,21 +476,23 @@ class FormatOptionsButton(ttk.Button):
 			finally:
 				# make sure to release the grab (Tk 8.0a1 only)
 				menu.grab_release()
+
 		def treeClicked(event):
 			if self.menu:
 				self.menu.destroy()
 				self.menu = None
 				return
-			optName = treev.identify_row(event.y) # optName is rowId
+			optName = treev.identify_row(event.y)  # optName is rowId
 			if not optName:
 				return
-			col = treev.identify_column(event.x) # "#1" to self.valueCol
+			col = treev.identify_column(event.x)  # "#1" to self.valueCol
 			if col == "#1":
 				value = treev.set(optName, col)
-				treev.set(optName, col, 1-int(value))
+				treev.set(optName, col, 1 - int(value))
 				return
 			if col == self.valueCol:
 				valueCellClicked(event, optName)
+
 		treev.bind(
 			"<Button-1>",
 			# "<<TreeviewSelect>>", # event.x and event.y are zero
@@ -492,18 +511,20 @@ class FormatOptionsButton(ttk.Button):
 				str(self.values.get(optName, "")),
 				comment,
 			]
-			treev.insert("", "end", values=row, iid=optName) # iid should be rowId
+			treev.insert("", "end", values=row, iid=optName)  # iid should be rowId
 			# adjust column's width if necessary to fit each value
 			for col_i, value in enumerate(row):
 				value = str(value)
 				if col_i == 3:
-					value = value.zfill(20) # to reserve window width, because it's hard to resize it later
+					value = value.zfill(20)
+					# to reserve window width, because it's hard to resize it later
 				col_w = tkFont.Font().measure(value)
 				if treev.column(cols[col_i], width=None) < col_w:
 					treev.column(cols[col_i], width=col_w)
 		###########
 		frame = tix.Frame(dialog)
 		###
+
 		def okClicked():
 			for optName in options:
 				enable = bool(int(treev.set(optName, "#1")))
@@ -519,6 +540,7 @@ class FormatOptionsButton(ttk.Button):
 					continue
 				self.values[optName] = value
 			dialog.destroy()
+
 		button = ttk.Button(
 			frame,
 			text="OK",
@@ -536,8 +558,8 @@ class FormatOptionsButton(ttk.Button):
 		px, py, pw, ph = decodeGeometry(self.winfo_toplevel().geometry())
 		# move dialog without changing the size
 		dialog.geometry(encodeLocation(
-			px + pw//2 - w//2,
-			py + ph//2 - h//2,
+			px + pw // 2 - w // 2,
+			py + ph // 2 - h // 2,
 		))
 		dialog.focus()
 
@@ -550,9 +572,9 @@ class UI(tix.Frame, UIBase):
 		#############################################
 		rootWin = self.rootWin = tix.Tk()
 		# a hack that hides the window until we move it to the center of screen
-		if os.sep == "\\": # Windows
+		if os.sep == "\\":  # Windows
 			rootWin.attributes('-alpha', 0.0)
-		else: # Linux
+		else:  # Linux
 			rootWin.withdraw()
 		tix.Frame.__init__(self, rootWin)
 		rootWin.title("PyGlossary (Tkinter)")
@@ -573,9 +595,9 @@ class UI(tix.Frame, UIBase):
 		######################
 		vpaned = ttk.PanedWindow(self, orient=tk.VERTICAL)
 		notebook = tix.NoteBook(vpaned)
-		notebook.add("tab1", label="Convert", underline=0)
-		notebook.add("tab2", label="Reverse", underline=0)
-		convertFrame = tix.Frame(notebook.tab1)
+		notebook.add("tabConvert", label="Convert", underline=0)
+		# notebook.add("tabReverse", label="Reverse", underline=0)
+		convertFrame = tix.Frame(notebook.tabConvert)
 		######################
 		frame = tix.Frame(convertFrame)
 		##
@@ -586,20 +608,20 @@ class UI(tix.Frame, UIBase):
 		combo = ttk.OptionMenu(
 			frame,
 			comboVar,
-			None, # default
+			None,  # default
 			*Glossary.readDesc,
 		)
 		combo.pack(side="left")
 		comboVar.trace("w", self.inputComboChanged)
-		self.combobox_i = comboVar
+		self.formatVarInputConvert = comboVar
 		##
-		self.readOptions = {} # type: Dict[str, Any]
-		self.writeOptions = {} # type: Dict[str, Any]
+		self.readOptions = {}  # type: Dict[str, Any]
+		self.writeOptions = {}  # type: Dict[str, Any]
 		##
 		self.readOptionsButton = FormatOptionsButton(
 			"Read",
 			self.readOptions,
-			self.combobox_i,
+			self.formatVarInputConvert,
 			master=frame,
 		)
 		##
@@ -612,13 +634,13 @@ class UI(tix.Frame, UIBase):
 		##
 		entry = tix.Entry(frame)
 		entry.pack(side="left", fill="x", expand=True)
-		entry.bind_all("<KeyPress>", self.entry_changed)
-		self.entry_i = entry
+		entry.bind_all("<KeyPress>", self.inputEntryChanged)
+		self.entryInputConvert = entry
 		##
 		button = ttk.Button(
 			frame,
 			text="Browse",
-			command=self.browse_i,
+			command=self.browseInputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
 		)
@@ -635,17 +657,17 @@ class UI(tix.Frame, UIBase):
 		combo = ttk.OptionMenu(
 			frame,
 			comboVar,
-			None, # default
+			None,  # default
 			*Glossary.writeDesc,
 		)
 		combo.pack(side="left")
 		comboVar.trace("w", self.outputComboChanged)
-		self.combobox_o = comboVar
+		self.formatVarOutputConvert = comboVar
 		##
 		self.writeOptionsButton = FormatOptionsButton(
 			"Write",
 			self.writeOptions,
-			self.combobox_o,
+			self.formatVarOutputConvert,
 			master=frame,
 		)
 		##
@@ -658,13 +680,13 @@ class UI(tix.Frame, UIBase):
 		##
 		entry = tix.Entry(frame)
 		entry.pack(side="left", fill="x", expand=True)
-		# entry.bind_all("<KeyPress>", self.entry_changed)
-		self.entry_o = entry
+		entry.bind_all("<KeyPress>", self.outputEntryChanged)
+		self.entryOutputConvert = entry
 		##
 		button = ttk.Button(
 			frame,
 			text="Browse",
-			command=self.browse_o,
+			command=self.browseOutputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
 		)
@@ -673,7 +695,7 @@ class UI(tix.Frame, UIBase):
 		frame.pack(fill="x")
 		#######
 		frame = tix.Frame(convertFrame)
-		label = ttk.Label(frame, text=" "*15)
+		label = ttk.Label(frame, text=" " * 15)
 		label.pack(
 			side="left",
 			fill="x",
@@ -736,7 +758,7 @@ class UI(tix.Frame, UIBase):
 		combo = ttk.OptionMenu(
 			frame2,
 			comboVar,
-			log.getVerbosity(), # default
+			log.getVerbosity(),  # default
 			0, 1, 2, 3, 4,
 		)
 		comboVar.trace("w", self.verbosityChanged)
@@ -776,86 +798,87 @@ class UI(tix.Frame, UIBase):
 		closeB.pack(side="right")
 		frame3.pack(fill="x")
 		# __________________________ Reverse Tab __________________________ #
-		revFrame = tix.Frame(notebook.tab2)
-		revFrame.pack(fill="x")
-		######################
-		frame = tix.Frame(revFrame)
-		##
-		label = ttk.Label(frame, text="Read from format")
-		label.pack(side="left")
-		##
-		comboVar = tk.StringVar()
-		combo = ttk.OptionMenu(
-			frame,
-			comboVar,
-			None, # default
-			*Glossary.readDesc,
-		)
-		combo.pack(side="left")
-		self.combobox_r_i = comboVar
-		##
-		frame.pack(fill="x")
-		###################
-		frame = tix.Frame(revFrame)
-		##
-		label = ttk.Label(frame, text="  Path:")
-		label.pack(side="left")
-		##
-		entry = tix.Entry(frame)
-		entry.pack(side="left", fill="x", expand=True)
-		# entry.bind_all("<KeyPress>", self.entry_r_i_changed)
-		self.entry_r_i = entry
-		##
-		button = ttk.Button(
-			frame,
-			text="Browse",
-			command=self.r_browse_i,
-			# bg="#f0f000",
-			# activebackground="#f6f622",
-		)
-		button.pack(side="left")
-		##
-		button = ttk.Button(
-			frame,
-			text="Load",
-			command=self.r_load,
-			# bg="#7777ff",
-		)
-		button.pack(side="left")
-		###
-		frame.pack(fill="x")
-		###################
-		frame = tix.Frame(revFrame)
-		##
-		label = ttk.Label(frame, text="Output Tabfile")
-		label.pack(side="left")
-		###
-		entry = tix.Entry(frame)
-		entry.pack(side="left", fill="x", expand=True)
-		# entry.bind_all("<KeyPress>", self.entry_r_i_changed)
-		self.entry_r_o = entry
-		##
-		button = ttk.Button(
-			frame,
-			text="Browse",
-			command=self.r_browse_o,
-			# bg="#f0f000",
-			# activebackground="#f6f622",
-		)
-		button.pack(side="left")
-		##
-		frame.pack(fill="x")
-		#############
+		# revFrame = tix.Frame(notebook.tabReverse)
+		# revFrame.pack(fill="x")
+		# ######################
+		# frame = tix.Frame(revFrame)
+		# ##
+		# label = ttk.Label(frame, text="Read from format")
+		# label.pack(side="left")
+		# ##
+		# comboVar = tk.StringVar()
+		# combo = ttk.OptionMenu(
+		# 	frame,
+		# 	comboVar,
+		# 	None, # default
+		# 	*Glossary.readDesc,
+		# )
+		# combo.pack(side="left")
+		# self.combobox_r_i = comboVar
+		# ##
+		# frame.pack(fill="x")
+		# ###################
+		# frame = tix.Frame(revFrame)
+		# ##
+		# label = ttk.Label(frame, text="  Path:")
+		# label.pack(side="left")
+		# ##
+		# entry = tix.Entry(frame)
+		# entry.pack(side="left", fill="x", expand=True)
+		# # entry.bind_all("<KeyPress>", self.entry_r_i_changed)
+		# self.entry_r_i = entry
+		# ##
+		# button = ttk.Button(
+		# 	frame,
+		# 	text="Browse",
+		# 	command=self.reverseBrowseInput,
+		# 	# bg="#f0f000",
+		# 	# activebackground="#f6f622",
+		# )
+		# button.pack(side="left")
+		# ##
+		# button = ttk.Button(
+		# 	frame,
+		# 	text="Load",
+		# 	command=self.reverseLoad,
+		# 	# bg="#7777ff",
+		# )
+		# button.pack(side="left")
+		# ###
+		# frame.pack(fill="x")
+		# ###################
+		# frame = tix.Frame(revFrame)
+		# ##
+		# label = ttk.Label(frame, text="Output Tabfile")
+		# label.pack(side="left")
+		# ###
+		# entry = tix.Entry(frame)
+		# entry.pack(side="left", fill="x", expand=True)
+		# # entry.bind_all("<KeyPress>", self.entry_r_i_changed)
+		# self.entry_r_o = entry
+		# ##
+		# button = ttk.Button(
+		# 	frame,
+		# 	text="Browse",
+		# 	command=self.reverseBrowseOutput,
+		# 	# bg="#f0f000",
+		# 	# activebackground="#f6f622",
+		# )
+		# button.pack(side="left")
+		# ##
+		# frame.pack(fill="x")
+		# _________________________________________________________________ #
+
 		centerWindow(rootWin)
-		# show the window again
-		if os.sep == "\\": # Windows
+		# show the window
+		if os.sep == "\\":  # Windows
 			rootWin.attributes('-alpha', 1.0)
-		else: # Linux
+		else:  # Linux
 			rootWin.deiconify()
-		##############################
 		if path:
-			self.entry_i.insert(0, path)
-			self.entry_changed()
+			self.entryInputConvert.insert(0, path)
+			self.inputEntryChanged()
+			self.outputEntryChanged()
 			self.load()
 
 	def verbosityChanged(self, index, value, op):
@@ -1001,11 +1024,11 @@ class UI(tix.Frame, UIBase):
 		#		log.debug(x)
 
 	def inputComboChanged(self, *args):
-		formatD = self.combobox_i.get()
-		if not formatD:
+		formatDesc = self.formatVarInputConvert.get()
+		if not formatDesc:
 			return
-		self.readOptions.clear() # reset the options, DO NOT re-assign
-		format = Glossary.pluginByDesc[formatD].name
+		self.readOptions.clear()  # reset the options, DO NOT re-assign
+		format = Glossary.pluginByDesc[formatDesc].name
 		options = Glossary.formatsReadOptions[format]
 		if options:
 			self.readOptionsButton.pack(side="right")
@@ -1013,12 +1036,12 @@ class UI(tix.Frame, UIBase):
 			self.readOptionsButton.pack_forget()
 
 	def outputComboChanged(self, *args):
-		# log.debug(self.combobox_o.get())
-		formatD = self.combobox_o.get()
-		if not formatD:
+		# log.debug(self.formatVarOutputConvert.get())
+		formatDesc = self.formatVarOutputConvert.get()
+		if not formatDesc:
 			return
-		self.writeOptions.clear() # reset the options, DO NOT re-assign
-		format = Glossary.pluginByDesc[formatD].name
+		self.writeOptions.clear()  # reset the options, DO NOT re-assign
+		format = Glossary.pluginByDesc[formatDesc].name
 		options = Glossary.formatsWriteOptions[format]
 		if options:
 			self.writeOptionsButton.pack(side="right")
@@ -1028,9 +1051,9 @@ class UI(tix.Frame, UIBase):
 		if not self.pref["ui_autoSetOutputFileName"]:  # and format is None:
 			return
 
-		pathI = self.entry_i.get()
-		pathO = self.entry_o.get()
-		formatOD = self.combobox_o.get()
+		pathI = self.entryInputConvert.get()
+		pathO = self.entryOutputConvert.get()
+		formatOD = self.formatVarOutputConvert.get()
 
 		if formatOD is None:
 			return
@@ -1040,89 +1063,83 @@ class UI(tix.Frame, UIBase):
 			return
 
 		extO = Glossary.pluginByDesc[formatOD].extensions[0]
-		pathO = "".join(os.path.splitext(pathI)[:-1])+extO
-		# self.entry_o.delete(0, "end")
-		self.entry_o.insert(0, pathO)
+		pathO = "".join(os.path.splitext(pathI)[:-1]) + extO
+		# self.entryOutputConvert.delete(0, "end")
+		self.entryOutputConvert.insert(0, pathO)
 
-	def entry_changed(self, event=None):
-		# log.debug("entry_changed")
+	def inputEntryChanged(self, event=None):
 		# char = event.keysym
-		pathI = self.entry_i.get()
+		pathI = self.entryInputConvert.get()
 		if self.pathI != pathI:
-			formatD = self.combobox_i.get()
 			if pathI.startswith("file://"):
 				pathI = urlToPath(pathI)
-				self.entry_i.delete(0, "end")
-				self.entry_i.insert(0, pathI)
+				self.entryInputConvert.delete(0, "end")
+				self.entryInputConvert.insert(0, pathI)
 			if self.pref["ui_autoSetFormat"]:
-				ext = os.path.splitext(pathI)[-1].lower()
-				if ext in (".gz", ".bz2", ".zip"):
-					ext = os.path.splitext(pathI[:-len(ext)])[-1].lower()
-				for i in range(len(Glossary.readExt)):
-					if ext in Glossary.readExt[i]:
-						self.combobox_i.set(Glossary.readDesc[i])
-						break
-			if self.pref["ui_autoSetOutputFileName"]:
-				# pathI = self.entry_i.get()
-				formatOD = self.combobox_o.get()
-				pathO = self.entry_o.get()
-				if formatOD and not pathO and "." in pathI:
-					extO = Glossary.pluginByDesc[formatOD].extensions[0]
-					pathO = "".join(os.path.splitext(pathI)[:-1]) + extO
-					self.entry_o.delete(0, "end")
-					self.entry_o.insert(0, pathO)
+				formatDesc = self.formatVarInputConvert.get()
+				if not formatDesc:
+					format = Glossary.detectInputFormat(pathI, quiet=True)
+					if format:
+						plugin = Glossary.plugins.get(format)
+						if plugin:
+							self.formatVarInputConvert.set(plugin.description)
 			self.pathI = pathI
-		##############################################
-		pathO = self.entry_o.get()
+
+	def outputEntryChanged(self, event=None):
+		pathO = self.entryOutputConvert.get()
 		if self.pathO != pathO:
-			formatD = self.combobox_o.get()
 			if pathO.startswith("file://"):
 				pathO = urlToPath(pathO)
-				self.entry_o.delete(0, "end")
-				self.entry_o.insert(0, pathO)
+				self.entryOutputConvert.delete(0, "end")
+				self.entryOutputConvert.insert(0, pathO)
 			if self.pref["ui_autoSetFormat"]:
-				ext = os.path.splitext(pathO)[-1].lower()
-				if ext in (".gz", ".bz2", ".zip"):
-					ext = os.path.splitext(pathO[:-len(ext)])[-1].lower()
-				for i in range(len(Glossary.writeExt)):
-					if ext in Glossary.writeExt[i]:
-						self.combobox_o.set(Glossary.writeDesc[i])
-						break
+				formatDesc = self.formatVarOutputConvert.get()
+				if not formatDesc:
+					outputArgs = Glossary.detectOutputFormat(
+						filename=pathO,
+						inputFilename=self.entryInputConvert.get(),
+						quiet=True,
+					)
+					if outputArgs:
+						outputFormat = outputArgs[1]
+						self.formatVarOutputConvert.set(
+							Glossary.plugins[outputFormat].description
+						)
 			self.pathO = pathO
 
-	def browse_i(self):
+	def browseInputConvert(self):
 		path = filedialog.askopenfilename(initialdir=self.fcd_dir)
 		if path:
-			self.entry_i.delete(0, "end")
-			self.entry_i.insert(0, path)
-			self.entry_changed()
+			self.entryInputConvert.delete(0, "end")
+			self.entryInputConvert.insert(0, path)
+			self.inputEntryChanged()
 			self.fcd_dir = os.path.dirname(path)
 
-	def browse_o(self):
+	def browseOutputConvert(self):
 		path = filedialog.asksaveasfilename()
 		if path:
-			self.entry_o.delete(0, "end")
-			self.entry_o.insert(0, path)
-			self.entry_changed()
+			self.entryOutputConvert.delete(0, "end")
+			self.entryOutputConvert.insert(0, path)
+			self.outputEntryChanged()
 			self.fcd_dir = os.path.dirname(path)
 
 	def convert(self):
-		inPath = self.entry_i.get()
+		inPath = self.entryInputConvert.get()
 		if not inPath:
 			log.critical("Input file path is empty!")
 			return
-		inFormatDesc = self.combobox_i.get()
+		inFormatDesc = self.formatVarInputConvert.get()
 		if not inFormatDesc:
 			# log.critical("Input format is empty!");return
 			inFormat = ""
 		else:
 			inFormat = Glossary.pluginByDesc[inFormatDesc].name
 
-		outPath = self.entry_o.get()
+		outPath = self.entryOutputConvert.get()
 		if not outPath:
 			log.critical("Output file path is empty!")
 			return
-		outFormatDesc = self.combobox_o.get()
+		outFormatDesc = self.formatVarOutputConvert.get()
 		if not outFormatDesc:
 			log.critical("Output format is empty!")
 			return
@@ -1137,9 +1154,9 @@ class UI(tix.Frame, UIBase):
 			writeOptions=self.writeOptions,
 		)
 		# if finalOutputFile:
-			# self.status("Convert finished")
+		# 	self.status("Convert finished")
 		# else:
-			# self.status("Convert failed")
+		# 	self.status("Convert failed")
 		return bool(finalOutputFile)
 
 	def run(self, editPath=None, readOptions=None):
@@ -1156,8 +1173,8 @@ class UI(tix.Frame, UIBase):
 		if not text:
 			text = "%" + str(int(rat * 100))
 		text += " - " + self.progressTitle
-		self.pbar.updateProgress(rat*100, None, text)
-		# self.pbar.value = rat*100
+		self.pbar.updateProgress(rat * 100, None, text)
+		# self.pbar.value = rat * 100
 		# self.pbar.update()
 		self.rootWin.update()
 
@@ -1165,14 +1182,14 @@ class UI(tix.Frame, UIBase):
 		self.console.delete("1.0", "end")
 		self.console.insert("end", "Console:\n")
 
-	def r_browse_i(self):
-		pass
+	# def reverseBrowseInput(self):
+	# 	pass
 
-	def r_browse_o(self):
-		pass
+	# def reverseBrowseOutput(self):
+	# 	pass
 
-	def r_load(self):
-		pass
+	# def reverseLoad(self):
+	# 	pass
 
 
 if __name__ == "__main__":
