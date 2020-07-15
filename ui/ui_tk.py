@@ -42,12 +42,7 @@ endFormat = "\x1b[0;0;0m"  # End Format #len=8
 startRed = "\x1b[31m"
 
 
-bitmapLogo = join(dataDir, "res", "pyglossary.ico") if "nt" == os.name \
-	else "@" + join(dataDir, "res", "pyglossary.xbm")
-
-
 def set_window_icon(window):
-	# window.wm_iconbitmap(bitmap=bitmapLogo)
 	window.iconphoto(
 		True,
 		tk.PhotoImage(file=join(dataDir, "res", "pyglossary.png")),
