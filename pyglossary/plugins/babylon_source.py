@@ -40,14 +40,12 @@ def write(
 	filename: str,
 	writeInfo: bool = True,
 	newline: str = "",
-	encoding: str = "",
+	encoding: str = "utf-8",
 	resources: bool = True,
 ) -> None:
 	g = glos
 	entryFilterFunc = None
-	if encoding.lower() in ("", "utf8", "utf-8"):
-		encoding = "UTF-8"
-	elif encoding.lower() in (
+	if encoding.lower() in (
 		"arabic",
 		"windows-1256",
 		"windows-arabic",
