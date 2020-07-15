@@ -35,6 +35,15 @@ def entryCleanWinArabic(entry: BaseEntry) -> Optional[BaseEntry]:
 	return entry
 
 
+def writeIterEntries(glos, entryFilterFunc):
+	for entry in glos:
+		if entryFilterFunc:
+			entry = entryFilterFunc(entry)
+			if not entry:
+				continue
+		yield entry
+
+
 def write(
 	glos: GlossaryType,
 	filename: str,
@@ -79,6 +88,10 @@ def write(
 			"",
 		])
 
+	iterEntries = None
+	if entryFilterFunc:
+		iterEntries = writeIterEntries(glos, entryFilterFunc)
+
 	g.writeTxt(
 		entryFmt="{word}\n{defi}\n\n",
 		filename=filename,
@@ -88,7 +101,7 @@ def write(
 		]),
 		ext=".gls",
 		head=head,
-		entryFilterFunc=entryFilterFunc,
+		iterEntries=iterEntries,
 		encoding=encoding,
 		newline=newline,
 		resources=resources,

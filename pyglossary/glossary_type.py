@@ -60,7 +60,6 @@ class GlossaryType(object):
 		head: str = "",
 		tail: str = "",
 		iterEntries: Optional[Iterator[BaseEntry]] = None,
-		entryFilterFunc: Optional[Callable[[BaseEntry], Optional[BaseEntry]]] = None,
 		outInfoKeysAliasDict: Optional[Dict[str, str]] = None,
 		encoding: str = "utf-8",
 		newline: str = "\n",

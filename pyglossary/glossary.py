@@ -1169,7 +1169,6 @@ class Glossary(GlossaryType):
 		head: str = "",
 		tail: str = "",
 		iterEntries: Optional[Iterator[BaseEntry]] = None,
-		entryFilterFunc: Optional[Callable[[BaseEntry], Optional[BaseEntry]]] = None,
 		outInfoKeysAliasDict: Optional[Dict[str, str]] = None,
 		encoding: str = "utf-8",
 		newline: str = "\n",
@@ -1211,10 +1210,6 @@ class Glossary(GlossaryType):
 					entry.save(myResDir)
 				continue
 
-			if entryFilterFunc:
-				entry = entryFilterFunc(entry)
-				if not entry:
-					continue
 			word = entry.s_word
 			defi = entry.defi
 			if word.startswith("#"):  # FIXME
