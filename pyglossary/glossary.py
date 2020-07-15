@@ -225,11 +225,8 @@ class Glossary(GlossaryType):
 			cls.pluginByExt[ext] = prop
 
 		hasReadSupport = False
-		try:
-			Reader = plugin.Reader
-		except AttributeError:
-			pass
-		else:
+		Reader = prop.readerClass
+		if Reader is not None:
 			for attr in (
 				"__init__",
 				"open",
@@ -317,16 +314,12 @@ class Glossary(GlossaryType):
 
 		self._data = []  # type: List[RawEntryType]
 
-		try:
-			readers = self._readers
-		except AttributeError:
-			pass
-		else:
-			for reader in readers:
-				try:
-					reader.close()
-				except Exception:
-					log.exception("")
+		readers = getattr(self, "_readers", [])
+		for reader in readers:
+			try:
+				reader.close()
+			except Exception:
+				log.exception("")
 		self._readers = []
 
 		self._iter = None
@@ -575,12 +568,7 @@ class Glossary(GlossaryType):
 
 	def getInfo(self, key: str) -> str:
 		key = str(key)  # FIXME: required?
-
-		try:
-			key = self.infoKeysAliasDict[key.lower()]
-		except KeyError:
-			pass
-
+		key = self.infoKeysAliasDict.get(key.lower(), key)
 		return self._info.get(key, "")  # "" or None as default? FIXME
 
 	def setInfo(self, key: str, value: str) -> None:
@@ -589,10 +577,7 @@ class Glossary(GlossaryType):
 		key = fixUtf8(key)
 		value = fixUtf8(value)
 
-		try:
-			key = self.infoKeysAliasDict[key.lower()]
-		except KeyError:
-			pass
+		key = self.infoKeysAliasDict.get(key.lower(), key)
 
 		if origKey != key:
 			log.debug(f"setInfo: {origKey} -> {key}")
@@ -608,10 +593,9 @@ class Glossary(GlossaryType):
 		excludeKeySet = set()
 		for key in excludeKeys:
 			excludeKeySet.add(key)
-			try:
-				excludeKeySet.add(self.infoKeysAliasDict[key.lower()])
-			except KeyError:
-				pass
+			key2 = self.infoKeysAliasDict.get(key.lower())
+			if key2:
+				excludeKeySet.add(key2)
 
 		extra = odict()
 		for key, value in self._info.items():
@@ -935,9 +919,8 @@ class Glossary(GlossaryType):
 
 		returns absolute path of output file, or None if failed
 		"""
-		try:
-			validOptionKeys = self.formatsWriteOptions[format]
-		except KeyError:
+		validOptionKeys = self.formatsWriteOptions.get(format)
+		if validOptionKeys is None:
 			log.critical(f"No write support for {format!r} format")
 			return
 		for key in list(options.keys()):
@@ -1203,10 +1186,7 @@ class Glossary(GlossaryType):
 		fileObj.write(head)
 		if writeInfo:
 			for key, desc in self._info.items():
-				try:
-					key = outInfoKeysAliasDict[key]
-				except KeyError:
-					pass
+				key = outInfoKeysAliasDict.get(key, key)
 				word = f"##{key}"
 				if wordEscapeFunc is not None:
 					word = wordEscapeFunc(word)
