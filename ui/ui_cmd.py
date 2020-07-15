@@ -167,15 +167,16 @@ class UI(UIBase):
 	def progressInit(self, title):
 		rot = pb.RotatingMarker()
 		self.pbar = pb.ProgressBar(
-			widgets=[
-				title,
-				pb.Bar(marker="█", right=rot),
-				" ", pb.Percentage(), " ",
-				pb.ETA(),
-			],
 			maxval=1.0,
-			update_step=0.5,
+			# update_step=0.5, removed
 		)
+		self.pbar.widgets = [
+			title,
+			pb.Bar(marker="█", right=rot),
+			" ", pb.Percentage(), " ",
+			pb.ETA(),
+		]
+		self.pbar.start()
 		rot.pbar = self.pbar
 
 	def progress(self, rat, text=""):
