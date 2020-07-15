@@ -161,15 +161,15 @@ class FileOffS(file):
 	byte of the modeled file.
 	"""
 	def __init__(self, filename, offset=0):
-		fp = open(filename, "rb")
-		file.__init__(self, fp)
-		self._fp = fp
+		fileObj = open(filename, "rb")
+		file.__init__(self, fileObj)
+		self._fileObj = fileObj
 		self.offset = offset
 		self.filesize = os.path.getsize(filename)
 		file.seek(self, offset)  # OR self.seek(0)
 
 	def close(self):
-		self._fp.close()
+		self._fileObj.close()
 
 	def seek(self, pos, whence=0):  # position, whence
 		if whence == 0:  # relative to start of file

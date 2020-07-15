@@ -159,8 +159,8 @@ class Writer(object):
 		with open(join(
 			self.dirname,
 			"DictionaryForMIDs.properties",
-		), "w") as fp:
-			fp.write(PROP_TEMPLATE.format(
+		), "w") as fileObj:
+			fileObj.write(PROP_TEMPLATE.format(
 				name=glos.getInfo("name"),
 				author=glos.getAuthor(),
 				indexFileMaxSize=self.indexFileMaxSize,

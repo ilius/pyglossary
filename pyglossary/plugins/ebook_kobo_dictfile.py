@@ -50,15 +50,15 @@ def write(
 	glos,
 	filename,
 ):
-	fp = open(filename, "w", encoding="utf-8")
+	fileObj = open(filename, "w", encoding="utf-8")
 	# dictgen's ParseDictFile does not seem to support glossary info / metedata
 	for entry in glos:
 		if entry.isData():
 			continue
 		words = entry.l_word
 		defi = entry.defi
-		fp.write(f"@ {fixWord(words[0])}\n")
+		fileObj.write(f"@ {fixWord(words[0])}\n")
 		for alt in words[1:]:
-			fp.write(f"& {fixWord(alt)}\n")
-		fp.write(f"{escapeDefi(defi)}\n\n")
-	fp.close()
+			fileObj.write(f"& {fixWord(alt)}\n")
+		fileObj.write(f"{escapeDefi(defi)}\n\n")
+	fileObj.close()

@@ -272,7 +272,7 @@ def write(
 	filename: str,
 	resources: bool = True,
 ):
-	fp = open(filename, "w", encoding="utf-8")
+	fileObj = open(filename, "w", encoding="utf-8")
 	title = glos.getInfo("name")
 	author = glos.getInfo("author")
 	# didn't find any tag for author in existing glossaries
@@ -280,7 +280,7 @@ def write(
 	copyright = glos.getInfo("copyright")
 	creationTime = glos.getInfo("creationTime")
 
-	fp.write(f"""<?xml version="1.0" encoding="UTF-8"?>
+	fileObj.write(f"""<?xml version="1.0" encoding="UTF-8"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
 <teiHeader>
 <fileDesc>
@@ -306,9 +306,9 @@ def write(
 			continue
 		word = xml_escape(entry.s_word)
 		defi = xml_escape(entry.defi)
-		fp.write(f"""<entry>
+		fileObj.write(f"""<entry>
 <form><orth>{word}</orth></form>
 <trans><tr>{defi}</tr></trans>
 </entry>""")
-	fp.write("</body></text></TEI>")
-	fp.close()
+	fileObj.write("</body></text></TEI>")
+	fileObj.close()

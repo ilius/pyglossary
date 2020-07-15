@@ -357,10 +357,10 @@ class Reader(object):
 
 	def detectEncoding(self):
 		for testEncoding in ("utf-8", "utf-16"):
-			with open(self._filename, "r", encoding=testEncoding) as fp:
+			with open(self._filename, "r", encoding=testEncoding) as fileObj:
 				try:
 					for i in range(10):
-						fp.readline()
+						fileObj.readline()
 				except UnicodeDecodeError:
 					log.info(f"Encoding of DSL file is not {testEncoding}")
 					continue

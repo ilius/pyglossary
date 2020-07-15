@@ -98,9 +98,9 @@ def write(
 	filename: str,
 	encoding: str = "utf-8",
 ):
-	with open(filename, "w", encoding=encoding) as fp:
+	with open(filename, "w", encoding=encoding) as fileObj:
 		for line in iterSqlLines(
 			glos,
 			transaction=False,
 		):
-			fp.write(line + "\n")
+			fileObj.write(line + "\n")
