@@ -61,6 +61,8 @@ class TextGlossaryReader(object):
 					word = self.fixInfoWord(word)
 				if not word:
 					continue
+				if not defi:
+					continue
 				self._glos.setInfo(word, defi)
 		except StopIteration:
 			pass

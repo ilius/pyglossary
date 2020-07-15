@@ -30,7 +30,7 @@ class Reader(TextGlossaryReader):
 		line = self._file.readline()
 		if not line:
 			raise StopIteration
-		line = line.strip()  # This also removes tailing newline
+		line = line.rstrip("\n")
 		if not line:
 			return
 		###
