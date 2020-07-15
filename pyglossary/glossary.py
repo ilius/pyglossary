@@ -1170,6 +1170,7 @@ class Glossary(GlossaryType):
 		tail: str = "",
 		iterEntries: Optional[Iterator[BaseEntry]] = None,
 		outInfoKeysAliasDict: Optional[Dict[str, str]] = None,
+		# TODO: replace above arg with a func?
 		encoding: str = "utf-8",
 		newline: str = "\n",
 		resources: bool = True,
@@ -1184,16 +1185,26 @@ class Glossary(GlossaryType):
 		fileObj = open(filename, "w", encoding=encoding, newline=newline)
 		fileObj.write(head)
 		if writeInfo:
-			for key, desc in self._info.items():
+			for key, value in self._info.items():
+				# both key and value are supposed to be non-empty string
+				if not (key and value):
+					log.warn(f"skipping info key={key!r}, value={value!r}")
+					continue
 				key = outInfoKeysAliasDict.get(key, key)
+				if not key:
+					continue
 				word = f"##{key}"
 				if wordEscapeFunc is not None:
 					word = wordEscapeFunc(word)
+					if not word:
+						continue
 				if defiEscapeFunc is not None:
-					desc = defiEscapeFunc(desc)
+					value = defiEscapeFunc(value)
+					if not value:
+						continue
 				fileObj.write(entryFmt.format(
 					word=word,
-					defi=desc,
+					defi=value,
 				))
 		fileObj.flush()
 
