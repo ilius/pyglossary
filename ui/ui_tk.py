@@ -17,7 +17,7 @@
 # GNU General Public License for more details.
 
 
-from pyglossary.core import homeDir
+from pyglossary.core import homeDir, confDir
 from pyglossary.glossary import *
 from pyglossary.text_utils import urlToPath
 from .base import *
@@ -565,6 +565,8 @@ class FormatOptionsButton(ttk.Button):
 
 
 class UI(tix.Frame, UIBase):
+	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
+
 	def __init__(self, path="", **options):
 		self.glos = Glossary(ui=self)
 		self.pref = {}
@@ -591,7 +593,14 @@ class UI(tix.Frame, UIBase):
 		self.pref_load()
 		self.pathI = ""
 		self.pathO = ""
-		self.fcd_dir = join(homeDir, "Desktop")
+		fcd_dir = join(homeDir, "Desktop")
+		if isfile(self.fcd_dir_save_path):
+			try:
+				with open(self.fcd_dir_save_path, encoding="utf-8") as fp:
+					fcd_dir = fp.read().strip("\n")
+			except Exception:
+				log.exception("")
+		self.fcd_dir = fcd_dir
 		######################
 		vpaned = ttk.PanedWindow(self, orient=tk.VERTICAL)
 		notebook = tix.NoteBook(vpaned)
@@ -1107,6 +1116,12 @@ class UI(tix.Frame, UIBase):
 						)
 			self.pathO = pathO
 
+	def save_fcd_dir(self):
+		if not self.fcd_dir:
+			return
+		with open(self.fcd_dir_save_path, mode="w", encoding="utf-8") as fp:
+			fp.write(self.fcd_dir)
+
 	def browseInputConvert(self):
 		path = filedialog.askopenfilename(initialdir=self.fcd_dir)
 		if path:
@@ -1114,6 +1129,7 @@ class UI(tix.Frame, UIBase):
 			self.entryInputConvert.insert(0, path)
 			self.inputEntryChanged()
 			self.fcd_dir = os.path.dirname(path)
+			self.save_fcd_dir()
 
 	def browseOutputConvert(self):
 		path = filedialog.asksaveasfilename()
@@ -1122,6 +1138,7 @@ class UI(tix.Frame, UIBase):
 			self.entryOutputConvert.insert(0, path)
 			self.outputEntryChanged()
 			self.fcd_dir = os.path.dirname(path)
+			self.save_fcd_dir()
 
 	def convert(self):
 		inPath = self.entryInputConvert.get()
