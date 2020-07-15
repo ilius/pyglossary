@@ -1,16 +1,15 @@
 ⚫︎ Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-⚫︎ Kubtek <kubtek@gmail.com>
-⚫︎ Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
-⚫︎ Thomas Vogt <tuxor1337@web.de>
 
 Thanks to:
+	⚫︎ Kubtek <kubtek@gmail.com>
+		for contributions to BGL plugin
+	⚫︎ Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+		for codes / contributions in AppleDict, MDict and DSL
+	⚫︎ Thomas Vogt <tuxor1337@web.de>
+		for fixing several bugs
 	⚫︎ Raul Fernandes <rgfbr@yahoo.com.br> and Karl Grill
 		for reverse enginearing on BGL format
 	⚫︎ Nilton Volpato
-		for program python-progressbar
-	⚫︎ Pier Carteri <m3tr0@dei.unipd.it>
-		for program Py_Shell.py
-	⚫︎ gnomek <sabayon11@gmail.com>
-		for suggestions and feedback about Octopus MDic
+		for https://github.com/niltonvolpato/python-progressbar
 
 PyGlossary logo is created based on QStarDict logo and Python logo
