@@ -54,6 +54,31 @@ tools = [
 		"platforms": ["Android"],
 		"license": "Unknown",
 	},
+	{
+		"name": "Twinkle Star Dictionary",
+		"web": "https://play.google.com/store/apps/details?id=com.qtier.dict",
+		"platforms": ["Android"],
+		"license": "Unknown",
+		# last release: 2015/10/19
+		# could not find the source code, license or website
+	},
+	{
+		"name": "WordMateX",
+		"web": "https://apkcombo.com/wordmatex/org.d1scw0rld.wordmatex/",
+		"platforms": ["Android"],
+		"license": "Proprietary",
+		# last release: 2020-01-01, version 2.1.1
+		# Google Play says "not compatible with your devices", no letting me
+		# download and install, so I downloaded apk from apkcombo.com
+	},
+	{
+		"name": "QDict",
+		"web": "https://github.com/namndev/QDict",
+		"platforms": ["Android"],
+		"license": "Apache 2.0",
+		# last release: 2017/04/16 (keeps crashing on my device, unusable)
+		# last commit: 2020/06/24
+	},
 ]
 
 infoKeys = (
