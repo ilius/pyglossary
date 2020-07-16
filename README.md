@@ -48,7 +48,6 @@ Supported formats
 | Kobo E-Reader Dictfile            | .df           |       |   ✔   |
 | Lingoes Source                    | .ldf          |   ✔   |   ✔   |
 | Octopus MDict                     | .mdx          |   ✔   |       |
-| Octopus MDict Source              | (.mtxt)       |   ✔   |   ✔   |
 | Sdictionary Binary                | .dct          |   ✔   |       |
 | Sdictionary Source                | .sdct         |       |   ✔   |
 | SQL                               | .sql          |       |   ✔   |
