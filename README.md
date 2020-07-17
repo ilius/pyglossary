@@ -33,7 +33,6 @@ Supported formats
 | AppleDict Binary                  | .dictionary   |   ✔   |       |
 | AppleDict Source                  | .xml          |       |   ✔   |
 | Babylon                           | .bgl          |   ✔   |       |
-| Babylon Source                    | .gls          |       |   ✔   |
 | CC-CEDICT                         |               |   ✔   |       |
 | CSV                               | .csv          |   ✔   |   ✔   |
 | DictionaryForMIDs                 |               |   ✔   |   ✔   |
