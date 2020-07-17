@@ -4,7 +4,7 @@ from pyglossary.entry import Entry
 
 from pyglossary.glossary_type import GlossaryType
 
-
+from os.path import isfile
 from typing import (
 	Tuple,
 	Iterator,
@@ -25,6 +25,8 @@ class TextGlossaryReader(object):
 		self._pendingEntries = []
 		self._wordCount = None
 		self._pos = -1
+		self._fileCount = 1
+		self._fileIndex = 0
 
 	def open(self, filename: str, encoding: str = "utf-8") -> None:
 		self._filename = filename
@@ -32,6 +34,20 @@ class TextGlossaryReader(object):
 		self._file = open(filename, "r", encoding=encoding)
 		if self._hasInfo:
 			self.loadInfo()
+
+	def openNextFile(self) -> None:
+		self.close()
+		nextFilename = f"{self._filename}.{self._fileIndex + 1}"
+		if not isfile(nextFilename):
+			# TODO: detect compressed file, like file.txt.1.gz
+			log.warn(f"WARNING: next file not found: {nextFilename}")
+			return False
+		self._fileIndex += 1
+		log.info(f"Reading next file: {nextFilename}")
+		self._file = open(nextFilename, "r", encoding=self._encoding)
+		if self._hasInfo:
+			self.loadInfo()
+		return True
 
 	def close(self) -> None:
 		if not self._file:
@@ -67,6 +83,12 @@ class TextGlossaryReader(object):
 		except StopIteration:
 			pass
 
+		if self._fileIndex == 0:
+			fileCountStr = self._glos.getInfo("file_count")
+			if fileCountStr:
+				self._fileCount = int(fileCountStr)
+				self._glos.setInfo("file_count", "")
+
 	def __next__(self) -> BaseEntry:
 		self._pos += 1
 		try:
@@ -77,6 +99,9 @@ class TextGlossaryReader(object):
 		try:
 			wordDefi = self.nextPair()
 		except StopIteration as e:
+			if self._fileIndex < self._fileCount + 1:
+				if self.openNextFile():
+					return self.__next__()
 			self._wordCount = self._pos
 			raise e
 		if not wordDefi:
