@@ -14,12 +14,14 @@ tools = [
 		"web": "http://aarddict.org/",
 		"platforms": ["Android"],
 		"license": "GPL",
+		# no html support at all, no RTL support
 	},
 	{
 		"name": "Aard2 for Web",
 		"web": "http://aarddict.org/",
 		"platforms": ["Web"],
 		"license": "MPL",
+		# no html support at all, RTL works fine
 	},
 ]
 optionsProp = {
@@ -97,6 +99,8 @@ def write(
 	kwargs = {}
 	if compression:
 		kwargs["compression"] = compression
+	log.info("removing all html tags since Aard2 does not support html")
+	glos.removeHtmlTagsAll()
 	# must not pass compression=None to slob.create()
 	with slob.create(filename, **kwargs) as slobWriter:
 		name = glos.getInfo("name")
