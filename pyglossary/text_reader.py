@@ -35,7 +35,7 @@ class TextGlossaryReader(object):
 		if self._hasInfo:
 			self.loadInfo()
 
-	def openNextFile(self) -> None:
+	def openNextFile(self) -> bool:
 		self.close()
 		nextFilename = f"{self._filename}.{self._fileIndex + 1}"
 		if not isfile(nextFilename):
