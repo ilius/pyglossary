@@ -464,8 +464,12 @@ class BglReader(object):
 		###
 		if self.sourceLang:
 			glos.setInfo("sourceLang", self.sourceLang.name)
+			if self.sourceLang.name2:
+				glos.setInfo("sourceLang2", self.sourceLang.name2)
 		if self.targetLang:
 			glos.setInfo("targetLang", self.targetLang.name)
+			if self.targetLang.name2:
+				glos.setInfo("targetLang2", self.targetLang.name2)
 		###
 		for attr in (
 			"defaultCharset",
