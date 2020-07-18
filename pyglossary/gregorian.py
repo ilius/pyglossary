@@ -32,7 +32,6 @@ from typing import (
 
 name = "gregorian"
 desc = "Gregorian"
-origLang = "en"
 
 monthName = (
 	"January",
@@ -65,22 +64,8 @@ monthNameAb = (
 )
 
 
-def getMonthName(m: int, y: Optional[int] = None) -> str:
-	return monthName.__getitem__(m - 1)
-
-
-def getMonthNameAb(m, y: Optional[int] = None) -> str:
-	return monthNameAb.__getitem__(m - 1)
-
-
-def getMonthsInYear(y: int) -> int:
-	return 12
-
 
 epoch = 1721426
-minMonthLen = 29
-maxMonthLen = 31
-avgYearLen = 365.2425  # FIXME
 
 options = ()
 
@@ -147,16 +132,3 @@ def jd_to(jd: int) -> Tuple[int, int, int]:
 	month = ((yearday + leapadj) * 12 + 373) // 367
 	day = jd - to_jd(year, month, 1) + 1
 	return int(year), int(month), int(day)
-
-
-def getMonthLen(y: int, m: int) -> int:
-	if m == 12:
-		return to_jd(y + 1, 1, 1) - to_jd(y, 12, 1)
-	else:
-		return to_jd(y, m + 1, 1) - to_jd(y, m, 1)
-
-
-J0001 = 1721426  # to_jd(1, 1, 1)
-J1970 = 2440588  # to_jd(1970, 1, 1)
-
-J0001_epoch = -62135621220
