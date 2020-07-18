@@ -206,15 +206,18 @@ if os.sep == "/":  # Operating system is Unix-Like
 		# platform.dist() == ("", "", "")
 		# platform.release() == "10.3.0"
 		cacheDir = join(_libDir, "Caches", "PyGlossary")
+		pip = "pip3"
 	else:  # GNU/Linux, ...
 		confDir = join(homeDir, ".pyglossary")
 		cacheDir = join(homeDir, ".cache", "pyglossary")
+		pip = "sudo pip3"
 elif os.sep == "\\":  # Operating system is Windows
 	homeDir = join(os.getenv("HOMEDRIVE"), os.getenv("HOMEPATH"))
 	user = os.getenv("USERNAME")
 	tmpDir = os.getenv("TEMP")
 	confDir = join(os.getenv("APPDATA"), "PyGlossary")
 	cacheDir = join(confDir, "Cache")  # FIXME: right directory?
+	pip = "pip3"
 else:
 	raise RuntimeError(
 		f"Unknown path seperator(os.sep=={os.sep!r})"

@@ -2,6 +2,7 @@ import re
 import os
 from .pinyin import convert
 from .summarize import summarize
+from formats_common import pip
 
 line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
 
@@ -24,7 +25,7 @@ def load_jinja():
 	try:
 		import jinja2
 	except ModuleNotFoundError as e:
-		e.msg += ", run `sudo pip3 install jinja2` to install"
+		e.msg += f", run `{pip} install jinja2` to install"
 		raise e
 	from plugin_lib.jinja2htmlcompress import HTMLCompress
 	jinja_env = jinja2.Environment(

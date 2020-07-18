@@ -19,14 +19,14 @@ Russian indexes based on pymorphy.
 """
 
 from . import languages
-from pyglossary.plugins.formats_common import log
+from pyglossary.plugins.formats_common import log, pip
 
 try:
 	import pymorphy2
 except ImportError:
-	log.error("""module pymorphy2 is required to build extended Russian indexes.
+	log.error(f"""module pymorphy2 is required to build extended Russian indexes.
 You can download it here: http://pymorphy2.readthedocs.org/en/latest/.
-Or by running: sudo pip3 install pymorphy2""")
+Or by running: {pip} install pymorphy2""")
 	raise
 
 morphy = pymorphy2.MorphAnalyzer()

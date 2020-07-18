@@ -102,7 +102,7 @@ class Writer:
 		try:
 			import marisa_trie
 		except ModuleNotFoundError as e:
-			e.msg += ", run `sudo pip3 install marisa-trie` to install"
+			e.msg += f", run `{pip} install marisa-trie` to install"
 			raise e
 
 	def get_prefix(self, word: str) -> str:

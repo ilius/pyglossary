@@ -71,7 +71,7 @@ class Reader(object):
 		try:
 			from polib import unescape as po_unescape
 		except ModuleNotFoundError as e:
-			e.msg += ", run `sudo pip3 install polib` to install"
+			e.msg += f", run `{pip} install polib` to install"
 			raise e
 		word = ""
 		defi = ""
@@ -115,7 +115,7 @@ def write(glos: GlossaryType, filename: str, resources: bool = True):
 	try:
 		from polib import escape as po_escape
 	except ModuleNotFoundError as e:
-		e.msg += ", run `sudo pip3 install polib` to install"
+		e.msg += f", run `{pip} install polib` to install"
 		raise e
 	with open(filename, "w") as toFile:
 		toFile.write('#\nmsgid ""\nmsgstr ""\n')

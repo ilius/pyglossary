@@ -26,7 +26,7 @@ def loadBeautifulSoup():
 		raise ImportError(
 			"BeautifulSoup is too old, required at least version 4, "
 			f"{BeautifulSoup.__version__ !r} found.\n"
-			"Please run `sudo pip3 install lxml beautifulsoup4 html5lib`"
+			f"Please run `{pip} install lxml beautifulsoup4 html5lib`"
 		)
 
 class Reader(object):

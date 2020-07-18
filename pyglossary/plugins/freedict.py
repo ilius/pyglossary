@@ -237,7 +237,7 @@ class Reader(object):
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
-			e.msg += ", run `sudo pip3 install lxml` to install"
+			e.msg += f", run `{pip} install lxml` to install"
 			raise e
 
 		self._filename = filename

@@ -1,3 +1,4 @@
+from pyglossary import core
 from pyglossary.core import dataDir
 from os.path import join
 
@@ -9,7 +10,7 @@ def xdxf_to_html_transformer():
 	try:
 		from lxml import etree as ET
 	except ModuleNotFoundError as e:
-		e.msg += ", run `sudo pip3 install lxml` to install"
+		e.msg += f", run `{core.pip} install lxml` to install"
 		raise e
 
 	with open(join(dataDir, "pyglossary", "xdxf.xsl"), "r") as f:

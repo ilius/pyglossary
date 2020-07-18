@@ -18,15 +18,15 @@
 Chinese wildcard and pinyin indexes.
 """
 
-from pyglossary.plugins.formats_common import log
+from pyglossary.plugins.formats_common import log, pip
 import re
 import bs4
 
 try:
 	import colorize_pinyin as color
 except ImportError:
-	log.error("""module colorize_pinyin is required to build extended Chinese indexes.
-You can install it by running: sudo pip3 install colorize-pinyin""")
+	log.error(f"""module colorize_pinyin is required to build extended Chinese indexes.
+You can install it by running: {pip} install colorize-pinyin""")
 	raise
 
 from . import languages, log

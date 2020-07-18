@@ -33,6 +33,9 @@ sys.path.insert(0, rootDir)
 from pyglossary.flags import *
 
 from pyglossary import core
+from pyglossary.core import (
+	pip,
+)
 from pyglossary.option import *
 from pyglossary.file_utils import FileLineWrapper
 from pyglossary.text_utils import (

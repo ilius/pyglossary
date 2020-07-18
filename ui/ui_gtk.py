@@ -409,10 +409,10 @@ class FormatComboBox(gtk.ComboBox):
 			print("All dependencies are stattisfied for " + formatName)
 			return
 		pkgNamesStr = " ".join(pkgNames)
-		msg = "\n".join([
-			"Run the following command:",
-			"sudo pip3 install " + pkgNamesStr,
-		])
+		msg = (
+			"Run the following command:\n"
+			f"{core.pip} install {pkgNamesStr}"
+		)
 		showInfo(
 			msg,
 			title="Dependencies for " + formatName,

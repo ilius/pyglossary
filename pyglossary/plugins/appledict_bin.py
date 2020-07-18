@@ -114,7 +114,7 @@ class Reader(object):
 		try:
 			from lxml import etree
 		except ModuleNotFoundError as e:
-			e.msg += ", run `sudo pip3 install lxml` to install"
+			e.msg += f", run `{pip} install lxml` to install"
 			raise e
 		chunkSize, plus = self.getChunkSize(pos)
 		pos += plus

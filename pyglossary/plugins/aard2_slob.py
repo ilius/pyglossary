@@ -48,7 +48,7 @@ class Reader(object):
 		try:
 			import icu
 		except ModuleNotFoundError as e:
-			e.msg += ", run `sudo pip3 install PyICU` to install"
+			e.msg += f", run `{pip} install PyICU` to install"
 			raise e
 
 	def close(self):

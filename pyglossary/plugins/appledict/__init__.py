@@ -84,7 +84,7 @@ def loadBeautifulSoup():
 		raise ImportError(
 			f"BeautifulSoup is too old, required at least version 4, "
 			f"{BeautifulSoup.__version__!r} found.\n"
-			f"Please run `sudo pip3 install lxml beautifulsoup4 html5lib`"
+			f"Please run `{pip} install lxml beautifulsoup4 html5lib`"
 		)
 
 
@@ -209,8 +209,8 @@ def write(
 			loadBeautifulSoup()
 		if BeautifulSoup is None:
 			log.warning(
-				"cleanHTML option passed but BeautifulSoup not found.  " +
-				"to fix this run `sudo pip3 install lxml beautifulsoup4 html5lib`"
+				"cleanHTML option passed but BeautifulSoup not found.  " \
+				f"to fix this run `{pip} install lxml beautifulsoup4 html5lib`"
 			)
 	else:
 		BeautifulSoup = None
