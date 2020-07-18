@@ -50,8 +50,6 @@ optionsProp = {
 
 
 class Writer(EbookWriter):
-	ebook_format = format
-
 	CSS_CONTENTS = """"@charset "UTF-8";"""
 	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
@@ -72,10 +70,6 @@ class Writer(EbookWriter):
 </html>"""
 
 	GROUP_XHTML_INDEX_LINK = """   <a href="index.xhtml">[ Index ]</a>"""
-
-	GROUP_XHTML_WORD_TEMPLATE = """   <span class="groupHeadword"><idx:entry><idx:orth>{headword}</idx:orth></idx:entry></span>"""
-
-	GROUP_XHTML_WORD_JOINER = " &#8226;\n"
 
 	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """  <div class="groupEntry">
    <idx:entry>

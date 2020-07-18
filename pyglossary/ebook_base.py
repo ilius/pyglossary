@@ -51,14 +51,11 @@ class EbookWriter(object):
 
 	The actual file templates are provided by the caller.
 	"""
-	ebook_format = ""
 
 	CSS_CONTENTS = ""
 	GROUP_XHTML_TEMPLATE = ""
 	GROUP_XHTML_INDEX_LINK = ""
 
-	GROUP_XHTML_WORD_TEMPLATE = ""
-	GROUP_XHTML_WORD_JOINER = ""
 	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = ""
 	GROUP_XHTML_WORD_DEFINITION_JOINER = "\n"
 
@@ -102,15 +99,15 @@ class EbookWriter(object):
 		self,
 		glos,
 		escape_strings=False,
-		ignore_synonyms=False,
-		flatten_synonyms=False,
+		# ignore_synonyms=False,
+		# flatten_synonyms=False,
 	):
 		self._glos = glos
 
 		self._group_by_prefix_length = 2
 		self._escape_strings = escape_strings
-		self._ignore_synonyms = ignore_synonyms
-		self._flatten_synonyms = flatten_synonyms
+		# self._ignore_synonyms = ignore_synonyms
+		# self._flatten_synonyms = flatten_synonyms
 
 		#"bookeen_collation_function": None,## bookeen format
 		#"bookeen_install_file": False,## bookeen format
@@ -125,7 +122,6 @@ class EbookWriter(object):
 		self.cover = None
 		self.files = []
 		self.manifest_files = []
-		self.groups = []
 
 	def close(self):
 		pass
@@ -180,14 +176,11 @@ class EbookWriter(object):
 
 	def get_group_xhtml_file_name_from_index(self, index):
 		if index < self.GROUP_START_INDEX:
-			# or index >= len(self.groups) + self.GROUP_START_INDEX:
+			# or index >= groupCount + self.GROUP_START_INDEX:
 			# number of groups are not known, FIXME
 			# so we can not say if the current group is the last or not
 			return "#groupPage"
 		return f"g{index:06d}.xhtml"
-
-	def add_group(self, key, entries):
-		self.groups.append({"key": key, "entries": entries})
 
 	def get_prefix(self, word: str) -> str:
 		length = self._group_by_prefix_length

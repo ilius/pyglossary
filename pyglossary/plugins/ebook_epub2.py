@@ -84,7 +84,6 @@ optionsProp = {
 }
 
 class Writer(EbookWriter):
-	ebook_format = format
 	## MIMETYPE_CONTENTS, CONTAINER_XML_CONTENTS, NCX_TEMPLATE, NCX_NAVPOINT_TEMPLATE are only in Epub
 	MIMETYPE_CONTENTS = "application/epub+zip"
 	CONTAINER_XML_CONTENTS = """<?xml version="1.0" encoding="UTF-8" ?>
@@ -182,10 +181,6 @@ p.groupDefinition {
  </body>
 </html>"""
 	GROUP_XHTML_INDEX_LINK = "   <a href=\"index.xhtml\">[ Index ]</a>"
-
-	GROUP_XHTML_WORD_TEMPLATE = "   <span class=\"groupHeadword\">{headword}</span>"
-
-	GROUP_XHTML_WORD_JOINER = " &#8226;\n"
 
 	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """  <div class="groupEntry">
    <h2 class="groupHeadword">{headword}</h2>
