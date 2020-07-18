@@ -329,7 +329,7 @@ class Glossary(GlossaryType):
 		self._entryFiltersName = set()
 		self._sort = False
 		self._sortKey = None
-		self._sortCacheSize = 1000
+		self._sortCacheSize = 0
 
 		self._filename = ""
 		self._defaultDefiFormat = "m"
@@ -909,7 +909,7 @@ class Glossary(GlossaryType):
 		format: str,
 		sort: Optional[bool] = None,
 		sortKey: Optional[Callable[[bytes], Any]] = None,
-		sortCacheSize: int = 1000,
+		sortCacheSize: int = 0,
 		**options
 	) -> Optional[str]:
 		"""
@@ -1096,7 +1096,7 @@ class Glossary(GlossaryType):
 		outputFormat: str = "",
 		sort: Optional[bool] = None,
 		sortKey: Optional[Callable[[bytes], Any]] = None,
-		sortCacheSize: int = 1000,
+		sortCacheSize: int = 0,
 		readOptions: Optional[Dict[str, Any]] = None,
 		writeOptions: Optional[Dict[str, Any]] = None,
 	) -> Optional[str]:
