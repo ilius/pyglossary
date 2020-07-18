@@ -709,6 +709,13 @@ class BglReader(object):
 		"""
 		utf8Encoding = self.info.get("utf8Encoding", False)
 
+		if self.defaultEncodingOverwrite:
+			self.defaultEncoding = self.defaultEncodingOverwrite
+		elif self.defaultCharset:
+			self.defaultEncoding = self.defaultCharset
+		else:
+			self.defaultEncoding = "cp1252"
+
 		if self.sourceEncodingOverwrite:
 			self.sourceEncoding = self.sourceEncodingOverwrite
 		elif utf8Encoding:
@@ -718,7 +725,7 @@ class BglReader(object):
 		elif self.sourceLang:
 			self.sourceEncoding = self.sourceLang.encoding
 		else:
-			self.sourceEncoding = "cp1252"
+			self.sourceEncoding = self.defaultEncoding
 
 		if self.targetEncodingOverwrite:
 			self.targetEncoding = self.targetEncodingOverwrite
@@ -729,15 +736,7 @@ class BglReader(object):
 		elif self.targetLang:
 			self.targetEncoding = self.targetLang.encoding
 		else:
-			self.targetEncoding = "cp1252"
-
-		# not used
-		if self.defaultEncodingOverwrite:
-			self.defaultEncoding = self.defaultEncodingOverwrite
-		elif self.defaultCharset:
-			self.defaultEncoding = self.defaultCharset
-		else:
-			self.defaultEncoding = "cp1252"
+			self.targetEncoding = self.defaultEncoding
 
 	def logUnknownBlock(self, block):
 		log.debug(
