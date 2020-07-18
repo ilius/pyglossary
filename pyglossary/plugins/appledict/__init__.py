@@ -36,8 +36,8 @@ sys.setrecursionlimit(10000)
 
 enable = True
 format = "AppleDict"
-description = "AppleDict Source (xml)"
-extensions = (".xml",)
+description = "AppleDict Source"
+extensions = ()
 # FIXME: rename indexes arg/option to indexes_lang?
 optionsProp = {
 	"cleanHTML": BoolOption(comment="use BeautifulSoup parser"),

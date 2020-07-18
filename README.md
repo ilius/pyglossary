@@ -31,7 +31,7 @@ Supported formats
 | Aard 2 (slob)                     | .slob         |   ✔   |   ✔   |
 | ABBYY Lingvo DSL                  | .dsl          |   ✔   |       |
 | AppleDict Binary                  | .dictionary   |   ✔   |       |
-| AppleDict Source                  | .xml          |       |   ✔   |
+| AppleDict Source                  |               |       |   ✔   |
 | Babylon                           | .bgl          |   ✔   |       |
 | CC-CEDICT                         |               |   ✔   |       |
 | CSV                               | .csv          |   ✔   |   ✔   |
