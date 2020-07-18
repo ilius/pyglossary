@@ -20,11 +20,3 @@ def cleanWinArabicStr(u: str) -> str:
 	for item in replaceList:
 		u = u.replace(item[0], item[1])
 	return u
-
-
-def recodeToWinArabic(u: str) -> bytes:
-	"""
-		u is a utf-8 encoded string
-	"""
-	u = cleanWinArabicStr(u)
-	return u.encode("windows-1256", "replace")
