@@ -327,6 +327,7 @@ class Glossary(GlossaryType):
 		self._iter = None
 		self._entryFilters = []
 		self._entryFiltersName = set()
+		self._sort = False
 		self._sortKey = None
 		self._sortCacheSize = 1000
 
@@ -775,7 +776,7 @@ class Glossary(GlossaryType):
 			self.loadReader(reader)
 		self._readers = []
 
-	def _updateIter(self, sort: bool = False) -> None:
+	def _updateIter(self) -> None:
 		"""
 		updates self._iter
 		depending on:
@@ -785,7 +786,7 @@ class Glossary(GlossaryType):
 				checks for self._sortKey and self._sortCacheSize
 		"""
 		if self._readers:  # direct mode
-			if sort:
+			if self._sort:
 				sortKey = self._sortKey
 				cacheSize = self._sortCacheSize
 				log.info(f"Stream sorting enabled, cache size: {cacheSize}")
@@ -819,7 +820,8 @@ class Glossary(GlossaryType):
 				key=Entry.getRawEntrySortKey(key),
 			)
 			log.info(f"Sorting took {now() - t0:.1f} seconds")
-		self._updateIter(sort=True)
+		self._sort = True
+		self._updateIter()
 
 	@classmethod
 	def findPlugin(cls, query: str) -> Optional[PluginProp]:
@@ -968,6 +970,8 @@ class Glossary(GlossaryType):
 		if format in self.writerClasses:
 			writer = self.writerClasses[format].__call__(self)
 
+		self._sort = sort
+
 		if sort:
 			writerSortKey = getattr(writer, "sortKey", None)
 			if sortKey is None:
@@ -985,12 +989,17 @@ class Glossary(GlossaryType):
 					)
 			if sortKey is None:
 				sortKey = Entry.defaultSortKey
-			self.sortWords(
-				key=sortKey,
-				cacheSize=sortCacheSize
-			)
-		else:
-			self._updateIter(sort=False)
+
+			if self._readers:
+				self._sortKey = sortKey
+				if cacheSize > 0:
+					self._sortCacheSize = cacheSize  # FIXME
+			else:
+				t0 = now()
+				self._data.sort(key=Entry.getRawEntrySortKey(sortKey))
+				log.info(f"Sorting took {now() - t0:.1f} seconds")
+
+		self._updateIter()
 
 		for reader in self._readers:
 			log.info(
