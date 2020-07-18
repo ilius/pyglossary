@@ -84,12 +84,14 @@ def get_ext(path: str) -> str:
 	return splitext(path)[1].lower()
 
 
+"""
 sortKeyType = Optional[
 	Callable[
 		[bytes],
 		Tuple[bytes, bytes],
 	]
 ]
+"""
 
 
 class Glossary(GlossaryType):
@@ -644,10 +646,10 @@ class Glossary(GlossaryType):
 
 	# ________________________________________________________________________#
 
-	def _hasWriteAccessToDir(self, dirPath: str) -> None:
-		if isdir(dirPath):
-			return os.access(dirPath, os.W_OK)
-		return os.access(dirname(dirPath), os.W_OK)
+	# def _hasWriteAccessToDir(self, dirPath: str) -> None:
+	# 	if isdir(dirPath):
+	# 		return os.access(dirPath, os.W_OK)
+	# 	return os.access(dirname(dirPath), os.W_OK)
 
 	def read(
 		self,
