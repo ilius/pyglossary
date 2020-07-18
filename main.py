@@ -248,20 +248,12 @@ core.checkCreateConfDir()
 ##############################
 
 from pyglossary.glossary import Glossary
-from ui.ui_cmd import COMMAND, help, parseFormatOptionsStr
+from ui.ui_cmd import help, parseFormatOptionsStr
 
 if args.verbosity != defaultVerbosity:
 	Glossary.init()
 
 ##############################
-
-
-def dashToCamelCase(text):  # converts "hello-PYTHON-user" to "helloPythonUser"
-	parts = text.split("-")
-	parts[0] = parts[0].lower()
-	for i in range(1, len(parts)):
-		parts[i] = parts[i].capitalize()
-	return "".join(parts)
 
 ui_list = (
 	"gtk",
