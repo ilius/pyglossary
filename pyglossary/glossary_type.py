@@ -59,7 +59,6 @@ class GlossaryType(object):
 		ext: str = ".txt",
 		head: str = "",
 		tail: str = "",
-		iterEntries: Optional[Iterator[BaseEntry]] = None,
 		outInfoKeysAliasDict: Optional[Dict[str, str]] = None,
 		encoding: str = "utf-8",
 		newline: str = "\n",

@@ -30,7 +30,7 @@ def write(
 		glos.removeHtmlTagsAll()
 	# TODO: add another bool flag to only remove html tags that are not
 	# supported by GtkTextView
-	glos.writeTxt(
+	yield from glos.writeTxt(
 		entryFmt=":{word}:{defi}\n",
 		filename=filename,
 		defiEscapeFunc=replaceStringTable([

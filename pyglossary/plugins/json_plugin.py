@@ -27,7 +27,7 @@ def write(
 	def escape(st):
 		return dumps(st, ensure_ascii=ascii)
 
-	return glos.writeTxt(
+	yield from glos.writeTxt(
 		entryFmt="\t{word}: {defi},\n",
 		filename=filename,
 		encoding=encoding,

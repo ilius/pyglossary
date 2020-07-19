@@ -60,7 +60,7 @@ def write(
 	writeInfo: bool = True,
 	resources: bool = True,
 ) -> bool:
-	return glos.writeTabfile(
+	yield from glos.writeTabfile(
 		filename,
 		encoding=encoding,
 		writeInfo=writeInfo,

@@ -214,12 +214,6 @@ class Writer(object):
 				thisEntry.defi,
 			]))
 
-	def _iterNonDataEntries(self) -> Iterator[BaseEntry]:
-		for entry in self._glos:
-			if entry.isData():
-				entry.save(self._resDir)
-			else:
-				yield entry
 
 	def write(
 		self,
@@ -239,16 +233,21 @@ class Writer(object):
 		os.makedirs(filename)
 		os.mkdir(self._resDir)
 
-		glosIter = iter(self._iterNonDataEntries())
-		try:
-			thisEntry = next(glosIter)
-		except StopIteration:
+		thisEntry = yield
+		if thisEntry is None:
 			raise ValueError("glossary is empty")
 
 		count = 1
 		rootHash = thisHash = self.getEntryHash(thisEntry)
 		prevHash = None
-		for nextEntry in glosIter:
+
+		while True:
+			nextEntry = yield
+			if nextEntry is None:
+				break
+			if nextEntry.isData():
+				nextEntry.save(self._resDir)
+				continue
 			nextHash = self.getEntryHash(nextEntry)
 			self.saveEntry(thisEntry, thisHash, prevHash, nextHash)
 			thisEntry = nextEntry

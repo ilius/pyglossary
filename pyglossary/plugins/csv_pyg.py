@@ -138,7 +138,10 @@ def write(glos: GlossaryType, filename: str, encoding: str = "utf-8", resources:
 			dialect="excel",
 			quoting=csv.QUOTE_ALL,  # FIXME
 		)
-		for entry in glos:
+		while True:
+			entry = yield
+			if entry is None:
+				break
 			if entry.isData():
 				if resources:
 					entry.save(resDir)

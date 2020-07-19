@@ -40,7 +40,10 @@ def write(
 				log.warning(f"Warning: directory {filename!r} is not empty.")
 		else:
 			raise IOError(f"{filename!r} is not a directory")
-	for entry in glos:
+	while True:
+		entry = yield
+		if entry is None:
+			break
 		defi = entry.defi
 		for word in entry.l_word:
 			if not word:

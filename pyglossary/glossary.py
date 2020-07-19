@@ -53,6 +53,7 @@ from typing import (
 	ClassVar,
 	Iterator,
 	Callable,
+	Generator,
 )
 
 from .flags import *
@@ -1011,12 +1012,26 @@ class Glossary(GlossaryType):
 		log.info(f"Writing to file {filename!r}")
 		try:
 			if writer is not None:
-				writer.write(filename, **options)
+				gen = writer.write(filename, **options)
 			elif format in self.writeFunctions:
-				self.writeFunctions[format].__call__(self, filename, **options)
+				gen = self.writeFunctions[format].__call__(
+					self,
+					filename,
+					**options,
+				)
 			else:
 				log.error(f"No write function or Writer class found for plugin {format}")
 				return
+			if gen is None:
+				log.error(f"\n{format} write function is not a generator")
+			else:
+				gen.send(None)
+				for entry in self:
+					gen.send(entry)
+				try:
+					gen.send(None)
+				except StopIteration:
+					pass
 		except Exception:
 			log.exception("Exception while calling plugin\'s write function")
 			return
@@ -1179,13 +1194,12 @@ class Glossary(GlossaryType):
 		ext: str = ".txt",
 		head: str = "",
 		tail: str = "",
-		iterEntries: Optional[Iterator[BaseEntry]] = None,
 		outInfoKeysAliasDict: Optional[Dict[str, str]] = None,
 		# TODO: replace above arg with a func?
 		encoding: str = "utf-8",
 		newline: str = "\n",
 		resources: bool = True,
-	) -> bool:
+	) -> Generator:
 		if not entryFmt:
 			raise ValueError("entryFmt argument is missing")
 		if not filename:
@@ -1223,10 +1237,10 @@ class Glossary(GlossaryType):
 		if not isdir(myResDir):
 			os.mkdir(myResDir)
 
-		if not iterEntries:
-			iterEntries = self
-
-		for entry in iterEntries:
+		while True:
+			entry = yield
+			if entry is None:
+				break
 			if entry.isData():
 				if resources:
 					entry.save(myResDir)
@@ -1253,7 +1267,7 @@ class Glossary(GlossaryType):
 		return True
 
 	def writeTabfile(self, filename: str = "", **kwargs) -> None:
-		self.writeTxt(
+		yield from self.writeTxt(
 			entryFmt="{word}\t{defi}\n",
 			filename=filename,
 			defiEscapeFunc=replaceStringTable([

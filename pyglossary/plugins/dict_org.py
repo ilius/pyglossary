@@ -129,7 +129,10 @@ def write(
 	if ext.lower() == ".index":
 		filename = filename_nox
 	dictdb = DictDB(filename, "write", 1)
-	for entry in glos:
+	while True:
+		entry = yield
+		if entry is None:
+			break
 		if entry.isData():
 			# does dictd support resources? and how? FIXME
 			continue

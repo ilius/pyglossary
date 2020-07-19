@@ -13,15 +13,17 @@ optionsProp = {
 depends = {}
 
 
-def iterSqlLines(
+def write(
 	glos: GlossaryType,
-	filename: str = "",
+	filename: str,
+	encoding: str = "utf-8",
 	infoKeys: Optional[List] = None,
 	addExtraInfo: bool = True,
-	newline: str = "\\n",
+	newline: str = "<br>",
 	transaction: bool = False,
-) -> Iterator[str]:
-	newline = "<br>"
+):
+	fileObj = open(filename, "w", encoding=encoding)
+
 	infoDefLine = "CREATE TABLE dbinfo ("
 	infoValues = []
 
@@ -49,35 +51,39 @@ def iterSqlLines(
 		infoDefLine += f"{key} char({len(value)}), "
 
 	infoDefLine = infoDefLine[:-2] + ");"
-	yield infoDefLine
+	fileObj.write(infoDefLine + "\n")
 
 	if addExtraInfo:
-		yield (
-			"CREATE TABLE dbinfo_extra (" +
-			"\'id\' INTEGER PRIMARY KEY NOT NULL, " +
-			"\'name\' TEXT UNIQUE, \'value\' TEXT);"
+		fileObj.write(
+			"CREATE TABLE dbinfo_extra ("
+			"\'id\' INTEGER PRIMARY KEY NOT NULL, "
+			"\'name\' TEXT UNIQUE, \'value\' TEXT);\n"
 		)
 
-	yield (
+	fileObj.write(
 		"CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, " +
-		"\'w\' TEXT, \'m\' TEXT);"
+		"\'w\' TEXT, \'m\' TEXT);\n"
 	)
 
 	if transaction:
-		yield "BEGIN TRANSACTION;"
-	yield f"INSERT INTO dbinfo VALUES({','.join(infoValues)});"
+		fileObj.write("BEGIN TRANSACTION;\n")
+	fileObj.write(f"INSERT INTO dbinfo VALUES({','.join(infoValues)});\n")
 
 	if addExtraInfo:
 		extraInfo = glos.getExtraInfos(infoKeys)
 		for index, (key, value) in enumerate(extraInfo.items()):
 			key = key.replace("\'", "\'\'")
 			value = value.replace("\'", "\'\'")
-			yield (
+			fileObj.write(
 				f"INSERT INTO dbinfo_extra VALUES({index+1}, "
-				f"\'{key}\', \'{value}\');"
+				f"\'{key}\', \'{value}\');\n"
 			)
 
-	for i, entry in enumerate(glos):
+	i = 0
+	while True:
+		entry = yield
+		if entry is None:
+			break
 		if entry.isData():
 			# FIXME
 			continue
@@ -87,20 +93,10 @@ def iterSqlLines(
 			.replace("\r", "").replace("\n", newline)
 		defi = defi.replace("\'", "\'\'")\
 			.replace("\r", "").replace("\n", newline)
-		yield f"INSERT INTO word VALUES({i+1}, \'{word}\', \'{defi}\');"
+		fileObj.write(
+			f"INSERT INTO word VALUES({i+1}, \'{word}\', \'{defi}\');\n"
+		)
+		i += 1
 	if transaction:
-		yield "END TRANSACTION;"
-	yield "CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);"
-
-
-def write(
-	glos: GlossaryType,
-	filename: str,
-	encoding: str = "utf-8",
-):
-	with open(filename, "w", encoding=encoding) as fileObj:
-		for line in iterSqlLines(
-			glos,
-			transaction=False,
-		):
-			fileObj.write(line + "\n")
+		fileObj.write("END TRANSACTION;\n")
+	fileObj.write("CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);\n")

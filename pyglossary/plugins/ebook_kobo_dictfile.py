@@ -52,7 +52,10 @@ def write(
 ):
 	fileObj = open(filename, "w", encoding="utf-8")
 	# dictgen's ParseDictFile does not seem to support glossary info / metedata
-	for entry in glos:
+	while True:
+		entry = yield
+		if entry is None:
+			break
 		if entry.isData():
 			continue
 		words = entry.l_word

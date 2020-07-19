@@ -234,7 +234,10 @@ def write(
 
 	with open(filePathBase + ".xml", "w", encoding="utf-8") as toFile:
 		write_header(glos, toFile, frontBackMatter)
-		for entry in glos:
+		while True:
+			entry = yield
+			if entry is None:
+				break
 			if entry.isData():
 				entry.save(myResDir)
 				continue

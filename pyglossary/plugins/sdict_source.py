@@ -45,7 +45,7 @@ def write(
 		):
 			head += name + " = " + glos.getInfo(infoKey) + "\n"
 		head += "</header>\n#\n#\n#\n"
-	glos.writeTxt(
+	yield from glos.writeTxt(
 		entryFmt="{word}___{defi}\n",
 		filename=filename,
 		writeInfo=False,

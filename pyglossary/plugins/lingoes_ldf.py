@@ -108,7 +108,7 @@ def write(
 		for key in infoKeys
 	])
 	head += "\n"
-	g.writeTxt(
+	yield from g.writeTxt(
 		entryFmt="{word}\n{defi}\n\n",
 		filename=filename,
 		writeInfo=False,

@@ -299,7 +299,10 @@ def write(
 </teiHeader>
 <text><body>""")
 
-	for entry in glos:
+	while True:
+		entry = yield
+		if entry is None:
+			break
 		if entry.isData():
 			if resources:
 				entry.save(f"{filename}_res")

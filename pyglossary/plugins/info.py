@@ -23,7 +23,10 @@ def write(glos: GlossaryType, filename: str) -> bool:
 	defiFormatCounter = Counter()
 	firstTagCounter = Counter()
 	wordCount = 0
-	for entry in glos:
+	while True:
+		entry = yield
+		if entry is None:
+			break
 		entry.detectDefiFormat()
 		defiFormat = entry.defiFormat
 		wordCount += 1

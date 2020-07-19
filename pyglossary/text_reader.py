@@ -99,7 +99,7 @@ class TextGlossaryReader(object):
 		try:
 			wordDefi = self.nextPair()
 		except StopIteration as e:
-			if self._fileIndex < self._fileCount + 1:
+			if self._fileIndex < self._fileCount - 1:
 				if self.openNextFile():
 					return self.__next__()
 			self._wordCount = self._pos

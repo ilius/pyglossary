@@ -121,7 +121,11 @@ def write(glos: GlossaryType, filename: str, resources: bool = True):
 		toFile.write('#\nmsgid ""\nmsgstr ""\n')
 		for key, value in glos.iterInfo():
 			toFile.write(f'"{key}: {value}\\n"\n')
-		for entry in glos:
+
+		while True:
+			entry = yield
+			if entry is None:
+				break
 			if entry.isData():
 				if resources:
 					entry.save(filename + "_res")

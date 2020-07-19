@@ -498,9 +498,9 @@ class Writer(object):
 
 		if sametypesequence:
 			log.debug(f"Using write option sametypesequence={sametypesequence}")
-			self.writeCompact(sametypesequence)
+			yield from self.writeCompact(sametypesequence)
 		else:
-			self.writeGeneral()
+			yield from self.writeGeneral()
 
 		if dictzip:
 			runDictzip(self._filename)
@@ -536,7 +536,10 @@ class Writer(object):
 			os.mkdir(self._resDir)
 
 		entryIndex = -1
-		for entry in self._glos:
+		while True:
+			entry = yield
+			if entry is None:
+				break
 			if entry.isData():
 				entry.save(self._resDir)
 				continue
@@ -599,7 +602,10 @@ class Writer(object):
 			os.mkdir(self._resDir)
 
 		entryIndex = -1
-		for entry in self._glos:
+		while True:
+			entry = yield
+			if entry is None:
+				break
 			if entry.isData():
 				entry.save(self._resDir)
 				continue

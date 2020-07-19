@@ -95,6 +95,11 @@ def write(
 	compression: str = "",
 	content_type: str = "",
 ):
+	try:
+		import icu
+	except ModuleNotFoundError as e:
+		e.msg += f", run `{pip} install PyICU` to install"
+		raise e
 	from pyglossary.plugin_lib import slob
 	kwargs = {}
 	if compression:
@@ -105,7 +110,10 @@ def write(
 	with slob.create(filename, **kwargs) as slobWriter:
 		name = glos.getInfo("name")
 		slobWriter.tag("label", toStr(name))
-		for entry in glos:
+		while True:
+			entry = yield
+			if entry is None:
+				break
 			words = entry.l_word
 			b_defi = entry.defi.encode("utf-8")
 			slobWriter.add(
