@@ -53,6 +53,7 @@ Supported formats
 | StarDict                          | .ifo          |   ✔   |   ✔   |
 | Tabfile                           | .txt, .dic    |   ✔   |   ✔   |
 | TreeDict                          |               |       |   ✔   |
+| [Wordset.org JSON directory](https://github.com/wordset/wordset-dictionary) | | ✔ | |
 | XDXF                              | .xdxf         |   ✔   |       |
 
 

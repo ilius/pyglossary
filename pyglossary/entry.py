@@ -196,6 +196,10 @@ class Entry(BaseEntry):
 		])
 
 	@staticmethod
+	def defaultStringSortKey(word: str) -> Any:
+		return Entry.defaultSortKey(word.encode("utf-8"))
+
+	@staticmethod
 	def defaultSortKey(b_word: bytes) -> Any:
 		return b_word.lower()
 
