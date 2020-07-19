@@ -183,13 +183,13 @@ class EbookWriter(object):
 		return f"g{index:06d}.xhtml"
 
 	def get_prefix(self, word: str) -> str:
-		length = self._group_by_prefix_length
 		if not word:
 			return None
-		word = toStr(word)
-		if "Z" < word[0] < "a":
+		length = self._group_by_prefix_length
+		prefix = word[:length].lower()
+		if prefix[0] < "a":
 			return "SPECIAL"
-		return word[:length]
+		return prefix
 
 	def sortKey(self, b_word: bytes) -> Any:
 		# DO NOT change method name
