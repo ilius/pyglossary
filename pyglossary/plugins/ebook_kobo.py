@@ -94,6 +94,7 @@ class Writer:
 
 	def __init__(self, glos, **kwargs):
 		self._glos = glos
+		self._words = []
 		self._img_pattern = re.compile(
 			'<img src="([^<>"]*?)"( [^<>]*?)?>',
 			re.DOTALL,
@@ -149,26 +150,47 @@ class Writer:
 		words = []
 		dataEntryCount = 0
 
-		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
-			self._glos,
-			lambda entry: self.get_prefix(entry.s_word)
-		)):
-			group_fname = fixFilename(group_prefix)
-			htmlContents = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
+		htmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
 
-			for entry in group_entry_iter:
-				if entry.isData():
-					dataEntryCount += 1
-					continue
-				word = entry.s_word
-				defi = entry.defi
-				defi = self.fix_defi(defi)
-				words.append(word)
-				htmlContents += f"<w><a name=\"{word}\" /><div><b>{word}</b>"\
-					f"<br/>{defi}</div></w>\n"
+		groupCounter = 0
+		htmlContents = htmlHeader
+
+		def writeGroup(lastPrefix):
+			nonlocal htmlContents
+			group_fname = fixFilename(lastPrefix)
 			htmlContents += "</html>"
+			log.debug(
+				f"writeGroup: {lastPrefix!r}, "
+				"{group_fname!r}, count={groupCounter}"
+			)
 			with gzip.open(group_fname + ".html", mode="wb") as gzipFile:
 				gzipFile.write(htmlContents.encode("utf-8"))
+			htmlContents = htmlHeader
+
+		lastPrefix = ""
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				dataEntryCount += 1
+				continue
+			word = entry.s_word
+			prefix = self.get_prefix(word)
+			if lastPrefix and prefix != lastPrefix:
+				writeGroup(lastPrefix)
+				groupCounter = 0
+			lastPrefix = prefix
+
+			defi = entry.defi
+			defi = self.fix_defi(defi)
+			words.append(word)
+			htmlContents += f"<w><a name=\"{word}\" /><div><b>{word}</b>"\
+				f"<br/>{defi}</div></w>\n"
+			groupCounter += 1
+
+		if groupCounter > 0:
+			writeGroup(lastPrefix)
 
 		if dataEntryCount > 0:
 			log.warn(
@@ -176,7 +198,7 @@ class Writer:
 				" and replaced '<img ...' tags in definitions with placeholders"
 			)
 
-		return words
+		self._words = words
 
 	def write(
 		self,
@@ -184,6 +206,7 @@ class Writer:
 	):
 		import marisa_trie
 		with indir(filename, create=True):
-			words = self.write_groups()
+			yield from self.write_groups()
+			words = self._words
 			trie = marisa_trie.Trie(words)
 			trie.save(self.WORDS_FILE_NAME)
