@@ -67,7 +67,7 @@ tools = [
 		"web": "https://apkcombo.com/wordmatex/org.d1scw0rld.wordmatex/",
 		"platforms": ["Android"],
 		"license": "Proprietary",
-		# last release: 2020-01-01, version 2.1.1
+		# last release: 2020/01/01, version 2.1.1
 		# Google Play says "not compatible with your devices", no letting me
 		# download and install, so I downloaded apk from apkcombo.com
 	},
