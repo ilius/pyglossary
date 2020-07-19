@@ -8,17 +8,22 @@ enable = True
 format = "Dicformids"
 description = "DictionaryForMIDs"
 extensions = (".mids",)
+sortOnWrite = ALWAYS
+
 tools = [
 	{
 		"name": "DictionaryForMIDs",
 		"web": "http://dictionarymid.sourceforge.net/",
+		# https://sourceforge.net/projects/dictionarymid/
 		"platforms": ["Android", "Web", "Windows", "Linux", "Mac"],
 		# PC version is Java-based
 		"license": "GPL",
+		# android last commit:	2015/02/09
+		# android last release:	2015/02/09 - version 1.0.1
 	},
 ]
+
 optionsProp = {}
-depends = {}
 
 
 PROP_TEMPLATE = """#DictionaryForMIDs property file
@@ -108,7 +113,7 @@ class Reader(object):
 		if self._tabFileReader:
 			try:
 				self._tabFileReader.close()
-			except:
+			except Exception:
 				pass
 		self._tabFileReader = None
 		self._tabFileNames = []
@@ -120,39 +125,33 @@ class Writer(object):
 		self.linesPerDirectoryFile = 500  # 200
 		self.indexFileMaxSize = 32722  # 30000
 		self.directoryPostfix = ""
-		self.indexPostfix = "Eng"
+		self.indexPostfix = ""
 		self.dirname = ""
+		self.re_punc = re.compile(
+			r"[!\"$§$%&/()=?´`\\{}\[\]^°+*~#'-_.:,;<>@]*",
+			# FIXME: |
+		)
+		self.re_spaces = re.compile(" +")
+		self.re_tabs = re.compile("\t+")
 
-	def writeGetIndexGen(self):
-		dicMaxSize = 0
-		wordCount = 0
-		for dicIndex, entryList in enumerate(
-			self._glos.iterEntryBuckets(
-				self.linesPerDirectoryFile
-			)
-		):
-			# assert len(entryList) == 200
-			dicFp = open(join(
-				self.dirname,
-				f"directory{self.directoryPostfix}{dicIndex+1}.csv",
-			), "w")
-			for entry in entryList:
-				if entry.isData():
-					# FIXME
-					continue
+	def normateWord(self, word: str) -> str:
+		word = word.strip()
+		# looks like we need to remove tabs, because app gives error
+		# but based on the java code, all punctuations should be removed
+		# as well, including '|' which is used to separate alternate words
+		# FIXME
+		# word = word.replace("|", " ")
+		word = self.re_punc.sub("", word)
+		word = self.re_spaces.sub(" ", word)
+		word = self.re_tabs.sub(" ", word)
+		word = word.lower()
+		return word
 
-				wordCount += 1
-				word = entry.s_word
-				defi = entry.defi
-				dicLine = word + "\t" + defi + "\n"
-				dicPos = dicFp.tell()
-				dicFp.write(dicLine)
-				yield word, dicIndex+1, dicPos
-
-			dicMaxSize = max(dicMaxSize, dicFp.tell())
-			dicFp.close()
-		self.dicMaxSize = dicMaxSize
-		self.wordCount = wordCount
+	def sortKey(self, b_word: bytes) -> Any:
+		# DO NOT change method name
+		# FIXME: confirm
+		word = b_word.decode("utf-8")
+		return self.normateWord(word)
 
 	def writeProbs(self):
 		glos = self._glos
@@ -166,15 +165,11 @@ class Writer(object):
 				indexFileMaxSize=self.indexFileMaxSize,
 				wordCount=self.wordCount,
 				directoryPostfix=self.directoryPostfix,
-				dicMaxSize=self.dicMaxSize+1,
+				dicMaxSize=self.dicMaxSize + 1,
 				language2FilePostfix="fa",  # FIXME
 				sourceLang=glos.getInfo("sourceLang"),
 				targetLang=glos.getInfo("targetLang"),
 			))
-#			open(join(
-#				self.dirname,
-#				f"searchlist{self.directoryPostfix}.csv"
-#			), "w")  # FIXME
 
 	def nextIndex(self):
 		try:
@@ -185,23 +180,84 @@ class Writer(object):
 		self.indexIndex += 1
 		fname = f"index{self.indexPostfix}{self.indexIndex}.csv"
 		fpath = join(self.dirname, fname)
-		self.indexFp = open(fpath, "w")
+		self.indexFp = open(fpath, mode="w", encoding="utf-8")
 
 	def write(self, dirname: str):
 		self.dirname = dirname
 		if not os.path.isdir(dirname):
 			os.mkdir(dirname)
 		self.nextIndex()
-		for word, dicIndex, dicPos in self.writeGetIndexGen():
-			indexLine = f"{word}\t{dicIndex+1}-{dicPos}-B\n"
+
+		dicMaxSize = 0
+		indexData = []
+
+		def writeBucket(dicIndex: int, entryList: "List[BaseEntry]"):
+			nonlocal dicMaxSize
+			log.debug(
+				f"dicIndex={dicIndex}, len(entryList)={len(entryList)}"
+				f", dicMaxSize={dicMaxSize}"
+			)
+			dicFp = open(join(
+				self.dirname,
+				f"directory{self.directoryPostfix}{dicIndex+1}.csv",
+			), mode="w", encoding="utf-8")
+			for entry in entryList:
+				word = entry.s_word
+				n_word = self.normateWord(word)
+				defi = entry.defi
+				dicLine = word + "\t" + defi + "\n"
+				dicPos = dicFp.tell()
+				dicFp.write(dicLine)
+				indexData.append((n_word, dicIndex + 1, dicPos))
+
+			dicMaxSize = max(dicMaxSize, dicFp.tell())
+			dicFp.close()
+
+		bucketSize = self.linesPerDirectoryFile
+		wordCount = 0
+		dicIndex = 0
+		entryList = []  # aka bucket
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				# FIXME
+				continue
+			wordCount += 1
+			entryList.append(entry)
+			if len(entryList) >= bucketSize:
+				writeBucket(dicIndex, entryList)
+				dicIndex += 1
+				entryList = []
+
+		if entryList:
+			writeBucket(dicIndex, entryList)
+			entryList = None
+
+		self.dicMaxSize = dicMaxSize
+		self.wordCount = wordCount
+
+		langSearchListFp = open(join(
+			self.dirname,
+			f"searchlist{self.directoryPostfix}.csv"
+		), mode="w", encoding="utf-8")
+
+		langSearchListFp.write(f"{indexData[0][0]}\t{self.indexIndex}\n")
+
+		for word, dicIndex, dicPos in indexData:
+			indexLine = f"{word}\t{dicIndex}-{dicPos}-B\n"
 			if (
 				self.indexFp.tell() + len(indexLine)
 			) > self.indexFileMaxSize - 10:
 				self.nextIndex()
+				langSearchListFp.write(f"{word}\t{self.indexIndex}\n")
 			self.indexFp.write(indexLine)
+
 		self.indexFp.close()
+		langSearchListFp.close()
+
 		self.writeProbs()
 
 	# def close(self):
 	#	pass
-
