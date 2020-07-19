@@ -10,10 +10,8 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -218,14 +216,14 @@ p.groupDefinition {
 		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
 
-	def write_ncx(self, group_labels, include_index_page):
+	def write_ncx(self, group_labels):
 		"""
 			write_ncx
 			only for epub
 		"""
 		ncx_items = []
 		index = 1
-		if include_index_page:
+		if self._include_index_page:
 			ncx_items.append(self.NCX_NAVPOINT_TEMPLATE.format(
 				index=index,
 				text="Index",

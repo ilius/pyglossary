@@ -124,7 +124,7 @@ class Writer(EbookWriter):
 	):
 		import subprocess
 
-		EbookWriter.write(
+		yield from EbookWriter.write(
 			self,
 			filename,
 			compress=False,

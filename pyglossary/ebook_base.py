@@ -38,6 +38,30 @@ import logging
 log = logging.getLogger("root")
 
 
+class GroupState(object):
+	def __init__(self, writer) -> None:
+		self.writer = writer
+		self.last_prefix = ""
+		self.group_index = -1
+		self.reset()
+
+	def reset(self) -> None:
+		self.first_word = ""
+		self.last_word = ""
+		self.group_contents = []
+
+	def is_new(self, prefix: str) -> bool:
+		return self.last_prefix and prefix != self.last_prefix
+
+	def add(self, entry: "BaseEntry", prefix: str) -> None:
+		word = entry.s_word
+		defi = entry.defi
+		if not self.first_word:
+			self.first_word = word
+		self.last_word = word
+		self.last_prefix = prefix
+		self.group_contents.append(self.writer.format_group_content(word, defi))
+
 
 class EbookWriter(object):
 	"""
@@ -105,6 +129,7 @@ class EbookWriter(object):
 		self._glos = glos
 
 		self._group_by_prefix_length = 2
+		self._include_index_page = False
 		self._escape_strings = escape_strings
 		# self._ignore_synonyms = ignore_synonyms
 		# self._flatten_synonyms = flatten_synonyms
@@ -122,6 +147,7 @@ class EbookWriter(object):
 		self.cover = None
 		self.files = []
 		self.manifest_files = []
+		self._group_labels = []
 
 	def close(self):
 		pass
@@ -199,63 +225,68 @@ class EbookWriter(object):
 			word,
 		)
 
-	def write_groups(self, include_index_page):
+	def write_groups(self):
 		# TODO: rtl=False option
 		# TODO: handle alternates better (now shows word1|word2... in title)
 
 		group_labels = []
 
-		for group_i, (group_prefix, group_entry_iter) in enumerate(groupby(
-			self._glos,
-			lambda tmpEntry: self.get_prefix(tmpEntry.s_word),
-		)):
-			index = group_i + self.GROUP_START_INDEX
-			first_word = ""
-			last_word = ""
-			group_contents = []
-			for entry in group_entry_iter:
-				if entry.isData():
-					continue
-				word = entry.s_word
-				defi = entry.defi
-				if not first_word:
-					first_word = word
-				last_word = word
-				group_contents.append(self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
-					headword=self.escape_if_needed(word),
-					definition=self.escape_if_needed(defi),
-				))
-
-			group_label = group_prefix
-			if group_prefix != "SPECIAL":
-				group_label = first_word + "&#8211;" + last_word
+		def add_group(state):
+			if not state.last_prefix:
+				return
+			state.group_index += 1
+			index = state.group_index + self.GROUP_START_INDEX
+			group_label = state.last_prefix
+			if group_label != "SPECIAL":
+				group_label = state.first_word + "&#8211;" + state.last_word
+			log.debug(f"add_group: {state.group_index}, {state.last_prefix!r}")
 			group_labels.append(group_label)
-
 			previous_link = self.get_group_xhtml_file_name_from_index(index - 1)
 			next_link = self.get_group_xhtml_file_name_from_index(index + 1)
-
-			group_contents = self.GROUP_XHTML_WORD_DEFINITION_JOINER.join(
-				group_contents,
-			)
-			group_contents = self.GROUP_XHTML_TEMPLATE.format(
-				title=group_label,
-				group_title=group_label,
-				previous_link=previous_link,
-				index_link=self.GROUP_XHTML_INDEX_LINK if include_index_page else "",
-				next_link=next_link,
-				group_contents=group_contents,
-			)
-
 			group_xhtml_path = self.get_group_xhtml_file_name_from_index(index)
-
 			self.add_file_manifest(
 				"OEBPS/" + group_xhtml_path,
 				group_xhtml_path,
-				group_contents,
+				self.GROUP_XHTML_TEMPLATE.format(
+					title=group_label,
+					group_title=group_label,
+					previous_link=previous_link,
+					index_link=(
+						self.GROUP_XHTML_INDEX_LINK
+						if self._include_index_page else ""
+					),
+					next_link=next_link,
+					group_contents=self.GROUP_XHTML_WORD_DEFINITION_JOINER.join(
+						state.group_contents,
+					),
+				),
 				"application/xhtml+xml",
 			)
 
-		return group_labels
+		state = GroupState(self)
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				continue
+
+			prefix = self.get_prefix(entry.s_word)
+			if state.is_new(prefix):
+				add_group(state)
+				state.reset()
+
+			state.add(entry, prefix)
+
+		add_group(state)
+
+		self._group_labels = group_labels
+
+	def format_group_content(self, word: str, defi: str) -> str:
+		return self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
+			headword=self.escape_if_needed(word),
+			definition=self.escape_if_needed(defi),
+		)
 
 	def escape_if_needed(self, string):
 		if self._escape_strings:
@@ -335,7 +366,7 @@ class EbookWriter(object):
 
 		self.add_file("OEBPS/content.opf", opf_contents)
 
-	def write_ncx(self, group_labels, include_index_page):
+	def write_ncx(self, group_labels):
 		"""
 			write_ncx
 			only for epub
@@ -353,6 +384,7 @@ class EbookWriter(object):
 		cover_path="",  # path to cover file, or ""
 	):
 		self._group_by_prefix_length = group_by_prefix_length
+		self._include_index_page = include_index_page
 		self.tmpDir = tempfile.mkdtemp()
 		with indir(self.tmpDir):
 			if cover_path:
@@ -378,14 +410,13 @@ class EbookWriter(object):
 			if apply_css:
 				self.write_css(apply_css)
 
-			group_labels = self.write_groups(
-				include_index_page,
-			)
+			yield from self.write_groups()
+			group_labels = self._group_labels
 
 			if include_index_page:
 				self.write_index()
 
-			self.write_ncx(group_labels, include_index_page)
+			self.write_ncx(group_labels)
 
 			self.write_opf()
 
