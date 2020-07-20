@@ -60,12 +60,14 @@ class Writer(object):
 	def write(
 		self,
 		filename: str,
+		fileObj: Optional["file"] = None,
 		encoding: str = "utf-8",
 		writeInfo: bool = True,
 		resources: bool = True,
 	) -> Generator[None, "BaseEntry", None]:
 		yield from self._glos.writeTabfile(
 			filename,
+			fileObj=fileObj,
 			encoding=encoding,
 			writeInfo=writeInfo,
 			resources=resources,

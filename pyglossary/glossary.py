@@ -44,6 +44,8 @@ from collections import OrderedDict as odict
 import io
 import gc
 
+import gzip
+
 from typing import (
 	Dict,
 	Tuple,
@@ -137,6 +139,8 @@ class Glossary(GlossaryType):
 	writerClasses = {}
 	formatsReadOptions = {}
 	formatsWriteOptions = {}
+	formatsReadFileObj = {}  # type: Dict[str, bool]
+	formatsWriteFileObj = {}  # type: Dict[str, bool]
 
 	readFormats = []
 	writeFormats = []
@@ -163,6 +167,7 @@ class Glossary(GlossaryType):
 	@classmethod
 	def getRWOptionsFromFunc(cls, func, format):
 		import inspect
+		extraOptNames = []
 		optionsProp = cls.plugins[format].optionsProp
 		sig = inspect.signature(func)
 		optNames = []
@@ -171,6 +176,9 @@ class Glossary(GlossaryType):
 				if name not in ("self", "glos", "filename", "dirname", "kwargs"):
 					log.warning(f"empty default value for {name}: {param.default}")
 				continue  # non-keyword argument
+			if name in ("fileObj",):
+				extraOptNames.append(name)
+				continue
 			if name not in optionsProp:
 				log.warning(f"skipping option {name} in plugin {format}")
 				continue
@@ -184,7 +192,7 @@ class Glossary(GlossaryType):
 					f"{name} = {param.default!r}"
 				)
 			optNames.append(name)
-		return optNames
+		return optNames, extraOptNames
 
 	@classmethod
 	def loadPlugin(cls: ClassVar, pluginName: str) -> None:
@@ -246,12 +254,20 @@ class Glossary(GlossaryType):
 			else:
 				cls.readerClasses[format] = Reader
 				hasReadSupport = True
-				options = cls.getRWOptionsFromFunc(
+				options, extraOptions = cls.getRWOptionsFromFunc(
 					Reader.open,
 					format,
 				)
 				cls.formatsReadOptions[format] = options
 				Reader.formatName = format
+				if "fileObj" in extraOptions:
+					if plugin.singleFile:
+						cls.formatsReadFileObj[format] = True
+					else:
+						log.error(
+							f"plugin {format}: fileObj= argument "
+							"in Reader.open, without singleFile=True"
+						)
 
 		if hasReadSupport:
 			cls.readFormats.append(format)
@@ -260,7 +276,7 @@ class Glossary(GlossaryType):
 
 		if hasattr(plugin, "Writer"):
 			cls.writerClasses[format] = plugin.Writer
-			options = cls.getRWOptionsFromFunc(
+			options, extraOptions = cls.getRWOptionsFromFunc(
 				plugin.Writer.write,
 				format,
 			)
@@ -268,6 +284,15 @@ class Glossary(GlossaryType):
 			cls.writeFormats.append(format)
 			cls.writeExt.append(extensions)
 			cls.writeDesc.append(desc)
+			if "fileObj" in extraOptions:
+				if plugin.singleFile:
+					cls.formatsWriteFileObj[format] = True
+				else:
+					log.error(
+						f"plugin {format}: fileObj= argument "
+						"in write, without singleFile=True"
+					)
+
 
 		if hasattr(plugin, "write"):
 			log.error(
@@ -1173,6 +1198,7 @@ class Glossary(GlossaryType):
 		self,
 		entryFmt: str = "",  # contain {word} and {defi}
 		filename: str = "",
+		fileObj: Optional["file"] = None,
 		writeInfo: bool = True,
 		wordEscapeFunc: Optional[Callable] = None,
 		defiEscapeFunc: Optional[Callable] = None,
@@ -1185,14 +1211,28 @@ class Glossary(GlossaryType):
 		newline: str = "\n",
 		resources: bool = True,
 	) -> Generator[None, "BaseEntry", None]:
+		import codecs
 		if not entryFmt:
 			raise ValueError("entryFmt argument is missing")
+		if filename and fileObj:
+			raise ValueError(f"both filename and fileObj are passed")
 		if not filename:
 			filename = self._filename + ext
+
 		if not outInfoKeysAliasDict:
 			outInfoKeysAliasDict = {}
 
-		fileObj = open(filename, "w", encoding=encoding, newline=newline)
+		if fileObj:
+			mode = getattr(fileObj, "mode", "")
+			if isinstance(mode, int):
+				# for gzip.open with BytesIO, mode == 2
+				pass
+			elif "b" in mode:
+				# binFileObj = fileObj  # needed?
+				fileObj = codecs.getwriter(encoding)(fileObj)
+		else:
+			fileObj = open(filename, "w", encoding=encoding, newline=newline)
+
 		fileObj.write(head)
 		if writeInfo:
 			for key, value in self._info.items():
@@ -1253,11 +1293,13 @@ class Glossary(GlossaryType):
 	def writeTabfile(
 		self,
 		filename: str = "",
+		fileObj: Optional["file"] = None,
 		**kwargs,
 	) -> Generator[None, "BaseEntry", None]:
 		yield from self.writeTxt(
 			entryFmt="{word}\t{defi}\n",
 			filename=filename,
+			fileObj=fileObj,
 			defiEscapeFunc=replaceStringTable([
 				("\\", "\\\\"),
 				("\r", ""),
