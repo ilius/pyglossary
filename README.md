@@ -26,35 +26,35 @@ Linux - command line interface
 Supported formats
 -----------------
 
-| Format                            | Extension     | Read  | Write |
-|-----------------------------------|---------------|:-----:|:-----:|
-| Aard 2 (slob)                     | .slob         |   ✔   |   ✔   |
-| ABBYY Lingvo DSL                  | .dsl          |   ✔   |       |
-| AppleDict Binary                  | .dictionary   |   ✔   |       |
-| AppleDict Source                  |               |       |   ✔   |
-| Babylon                           | .bgl          |   ✔   |       |
-| CC-CEDICT                         |               |   ✔   |       |
-| CSV                               | .csv          |   ✔   |   ✔   |
-| DictionaryForMIDs                 |               |   ✔   |   ✔   |
-| DICT.org / Dictd server           | .index        |   ✔   |   ✔   |
-| DICT.org / dictfmt source file    | (.dtxt)       |       |   ✔   |
-| Editable Linked List of Entries   | .edlin        |   ✔   |   ✔   |
-| EPUB-2 E-Book                     | .epub         |       |   ✔   |
-| FreeDict                          | .tei          |   ✔   |   ✔   |
-| Gettext Source                    | .po           |   ✔   |   ✔   |
-| JSON                              | .json         |       |   ✔   |
-| Kobo E-Reader Dictionary          | .kobo.zip     |       |   ✔   |
-| Kobo E-Reader Dictfile            | .df           |       |   ✔   |
-| Lingoes Source                    | .ldf          |   ✔   |   ✔   |
-| Octopus MDict                     | .mdx          |   ✔   |       |
-| Sdictionary Binary                | .dct          |   ✔   |       |
-| Sdictionary Source                | .sdct         |       |   ✔   |
-| SQL                               | .sql          |       |   ✔   |
-| StarDict                          | .ifo          |   ✔   |   ✔   |
-| Tabfile                           | .txt, .dic    |   ✔   |   ✔   |
-| TreeDict                          |               |       |   ✔   |
-| [Wordset.org JSON directory](https://github.com/wordset/wordset-dictionary) | | ✔ | |
-| XDXF                              | .xdxf         |   ✔   |       |
+| Format                                                       |   | Extension |Read|Write|
+|--------------------------------------------------------------|:-:|:---------:|:--:|:---:|
+| [Aard 2 (slob)](http://aarddict.org)                         |🔢 | .slob     | ✔  |  ✔  |
+| ABBYY Lingvo DSL                                             |📝 | .dsl      | ✔  |     |
+| AppleDict Binary                                             |🔢 |.dictionary| ✔  | :x: |
+| AppleDict Source                                             |📁 |           |    |  ✔  |
+| Babylon                                                      |🔢 | .bgl      | ✔  | :x: |
+| [CC-CEDICT](https://cc-cedict.org/wiki)                      |📝 |           | ✔  |     |
+| CSV                                                          |📝 | .csv      | ✔  |  ✔  |
+| [DictionaryForMIDs](http://dictionarymid.sourceforge.net)    |📁 | (.mids)   | ✔  |  ✔  |
+| DICT.org / Dictd server                                      |📁 | (.index)  | ✔  |  ✔  |
+| DICT.org / dictfmt source file                               |📝 | (.dtxt)   |    |  ✔  |
+| Editable Linked List of Entries                              |📁 | .edlin    | ✔  |  ✔  |
+| EPUB-2 E-Book                                                |📦 | .epub     |:x: |  ✔  |
+| [FreeDict](https://freedict.org)                             |📝 | .tei      | ✔  |  ✔  |
+| [Gettext Source](https://www.gnu.org/software/gettext)       |📝 | .po       | ✔  |  ✔  |
+| JSON                                                         |📝 | .json     |    |  ✔  |
+| Kobo E-Reader Dictionary                                     |📦 | .kobo.zip |:x: |  ✔  |
+| [Kobo E-Reader Dictfile](https://github.com/pgaskin/dictutil)|📝 | .df       |    |  ✔  |
+| Lingoes Source                                               |📝 | .ldf      | ✔  |  ✔  |
+| Octopus MDict                                                |🔢 | .mdx      | ✔  | :x: |
+| [Sdictionary Binary](http://swaj.net/sdict/)                 |🔢 | .dct      | ✔  |     |
+| [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)|📝 | .sdc      |    |  ✔  |
+| SQL                                                          |📝 | .sql      |:x: |  ✔  |
+| StarDict                                                     |📁 | (.ifo)    | ✔  |  ✔  |
+| [Tabfile](https://en.wikipedia.org/wiki/Tab-separated_values)|📝 |.txt, .tab | ✔  |  ✔  |
+| TreeDict                                                     |📁 |           |    |  ✔  |
+| [Wordset.org](https://github.com/wordset/wordset-dictionary) |📁 |           | ✔  |     |
+| [XDXF](https://github.com/soshial/xdxf_makedict)             |📝 |.xdxf      | ✔  | :x: |
 
 
 Requirements
