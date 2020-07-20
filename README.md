@@ -35,9 +35,9 @@ Supported formats
 | Babylon                                                      |🔢 | .bgl      | ✔  | :x: |
 | [CC-CEDICT](https://cc-cedict.org/wiki)                      |📝 |           | ✔  |     |
 | CSV                                                          |📝 | .csv      | ✔  |  ✔  |
-| [DictionaryForMIDs](http://dictionarymid.sourceforge.net)    |📁 | (.mids)   | ✔  |  ✔  |
-| DICT.org / Dictd server                                      |📁 | (.index)  | ✔  |  ✔  |
-| DICT.org / dictfmt source file                               |📝 | (.dtxt)   |    |  ✔  |
+| [DictionaryForMIDs](http://dictionarymid.sourceforge.net)    |📁 | (📁.mids) | ✔  |  ✔  |
+| DICT.org / Dictd server                                      |📁 | (📝.index)| ✔  |  ✔  |
+| DICT.org / dictfmt source file                               |📝 | (📝.dtxt) |    |  ✔  |
 | Editable Linked List of Entries                              |📁 | .edlin    | ✔  |  ✔  |
 | EPUB-2 E-Book                                                |📦 | .epub     |:x: |  ✔  |
 | [FreeDict](https://freedict.org)                             |📝 | .tei      | ✔  |  ✔  |
@@ -50,11 +50,19 @@ Supported formats
 | [Sdictionary Binary](http://swaj.net/sdict/)                 |🔢 | .dct      | ✔  |     |
 | [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)|📝 | .sdc      |    |  ✔  |
 | SQL                                                          |📝 | .sql      |:x: |  ✔  |
-| StarDict                                                     |📁 | (.ifo)    | ✔  |  ✔  |
+| StarDict                                                     |📁 | (📝.ifo)  | ✔  |  ✔  |
 | [Tabfile](https://en.wikipedia.org/wiki/Tab-separated_values)|📝 |.txt, .tab | ✔  |  ✔  |
 | TreeDict                                                     |📁 |           |    |  ✔  |
 | [Wordset.org](https://github.com/wordset/wordset-dictionary) |📁 |           | ✔  |     |
 | [XDXF](https://github.com/soshial/xdxf_makedict)             |📝 |.xdxf      | ✔  | :x: |
+
+Legend:
+- 📁	Directory
+- 📝	Text file
+- 📦	Package/archive file
+- 🔢	Binary file
+- ✔		Supported
+- :x:	Will not support
 
 
 Requirements
