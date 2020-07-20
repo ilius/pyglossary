@@ -9,6 +9,10 @@ extensions = (".sql",)
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
+	"infoKeys": ListOption(),
+	"addExtraInfo": BoolOption(),
+	"newline": NewlineOption(),
+	"transaction": BoolOption(),
 }
 depends = {}
 
