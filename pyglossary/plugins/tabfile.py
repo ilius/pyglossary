@@ -7,7 +7,7 @@ from pyglossary.text_utils import escapeNTB, unescapeNTB, splitByBarUnescapeNTB
 enable = True
 format = "Tabfile"
 description = "Tabfile (txt, dic)"
-extensions = (".txt", ".tab", ".dic")
+extensions = (".txt", ".tab", ".tsv")
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
@@ -15,6 +15,8 @@ optionsProp = {
 	"resources": BoolOption(),
 }
 depends = {}
+
+# https://en.wikipedia.org/wiki/Tab-separated_values
 
 
 class Reader(TextGlossaryReader):
