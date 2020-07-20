@@ -1184,7 +1184,7 @@ class Glossary(GlossaryType):
 		encoding: str = "utf-8",
 		newline: str = "\n",
 		resources: bool = True,
-	) -> Generator:
+	) -> Generator[None, "BaseEntry", None]:
 		if not entryFmt:
 			raise ValueError("entryFmt argument is missing")
 		if not filename:
@@ -1249,9 +1249,12 @@ class Glossary(GlossaryType):
 		fileObj.close()
 		if not os.listdir(myResDir):
 			os.rmdir(myResDir)
-		return True
 
-	def writeTabfile(self, filename: str = "", **kwargs) -> None:
+	def writeTabfile(
+		self,
+		filename: str = "",
+		**kwargs,
+	) -> Generator[None, "BaseEntry", None]:
 		yield from self.writeTxt(
 			entryFmt="{word}\t{defi}\n",
 			filename=filename,
