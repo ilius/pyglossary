@@ -70,6 +70,8 @@ tools = [
 		# last release: 2020/01/01, version 2.1.1
 		# Google Play says "not compatible with your devices", no letting me
 		# download and install, so I downloaded apk from apkcombo.com
+		# This is the only Android app (not just for StarDict format) I found
+		# that supports auto-RTL
 	},
 	{
 		"name": "QDict",
