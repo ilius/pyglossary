@@ -134,7 +134,6 @@ class Glossary(GlossaryType):
 	pluginByExt = {}  # extension => PluginProp
 
 	readerClasses = {}
-	writeFunctions = {}
 	writerClasses = {}
 	formatsReadOptions = {}
 	formatsWriteOptions = {}
@@ -259,7 +258,6 @@ class Glossary(GlossaryType):
 			cls.readExt.append(extensions)
 			cls.readDesc.append(desc)
 
-		hasWriteSupport = False
 		if hasattr(plugin, "Writer"):
 			cls.writerClasses[format] = plugin.Writer
 			options = cls.getRWOptionsFromFunc(
@@ -267,21 +265,15 @@ class Glossary(GlossaryType):
 				format,
 			)
 			cls.formatsWriteOptions[format] = options
-			hasWriteSupport = True
-
-		if not hasWriteSupport and hasattr(plugin, "write"):
-			cls.writeFunctions[format] = plugin.write
-			options = cls.getRWOptionsFromFunc(
-				plugin.write,
-				format,
-			)
-			cls.formatsWriteOptions[format] = options
-			hasWriteSupport = True
-
-		if hasWriteSupport:
 			cls.writeFormats.append(format)
 			cls.writeExt.append(extensions)
 			cls.writeDesc.append(desc)
+
+		if hasattr(plugin, "write"):
+			log.error(
+				f"plugin {format} has write function, "
+				f"must migrate to Writer class"
+			)
 
 		return plugin
 
@@ -968,8 +960,11 @@ class Glossary(GlossaryType):
 			sort = False
 
 		writer = None
-		if format in self.writerClasses:
-			writer = self.writerClasses[format].__call__(self)
+		if format not in self.writerClasses:
+			log.error(f"No Writer class found for plugin {format}")
+			return
+
+		writer = self.writerClasses[format].__call__(self)
 
 		self._sort = sort
 
@@ -1011,17 +1006,7 @@ class Glossary(GlossaryType):
 		filename = abspath(filename)
 		log.info(f"Writing to file {filename!r}")
 		try:
-			if writer is not None:
-				gen = writer.write(filename, **options)
-			elif format in self.writeFunctions:
-				gen = self.writeFunctions[format].__call__(
-					self,
-					filename,
-					**options,
-				)
-			else:
-				log.error(f"No write function or Writer class found for plugin {format}")
-				return
+			gen = writer.write(filename, **options)
 			if gen is None:
 				log.error(f"\n{format} write function is not a generator")
 			else:

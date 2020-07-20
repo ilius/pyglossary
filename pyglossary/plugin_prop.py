@@ -81,8 +81,4 @@ class PluginProp(object):
 
 	@property
 	def canWrite(self) -> bool:
-		if getattr(self._p, "Writer", None):
-			return True
-		if getattr(self._p, "write", None):
-			return True
-		return False
+		return getattr(self._p, "Writer", None) is not None
