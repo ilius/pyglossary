@@ -118,27 +118,32 @@ class Reader(object):
 			yield self._glos.newEntry(word, defi)
 
 
-def write(
-	glos: GlossaryType,
-	filename: str,
-	dictzip: bool = False,
-	install: bool = True,
-) -> None:
-	from pyglossary.text_utils import runDictzip
-	(filename_nox, ext) = splitext(filename)
-	if ext.lower() == ".index":
-		filename = filename_nox
-	dictdb = DictDB(filename, "write", 1)
-	while True:
-		entry = yield
-		if entry is None:
-			break
-		if entry.isData():
-			# does dictd support resources? and how? FIXME
-			continue
-		dictdb.addentry(entry.b_defi, entry.l_word)
-	dictdb.finish(dosort=1)
-	if dictzip:
-		runDictzip(filename)
-	if install:
-		installToDictd(filename, dictzip, glos.getInfo("name").replace(" ", "_"))
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
+
+	def write(
+		self,
+		filename: str,
+		dictzip: bool = False,
+		install: bool = True,
+	) -> Generator[None, "BaseEntry", None]:
+		from pyglossary.text_utils import runDictzip
+		glos = self._glos
+		filename_nox, ext = splitext(filename)
+		if ext.lower() == ".index":
+			filename = filename_nox
+		dictdb = DictDB(filename, "write", 1)
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				# does dictd support resources? and how? FIXME
+				continue
+			dictdb.addentry(entry.b_defi, entry.l_word)
+		dictdb.finish(dosort=1)
+		if dictzip:
+			runDictzip(filename)
+		if install:
+			installToDictd(filename, dictzip, glos.getInfo("name").replace(" ", "_"))

@@ -111,28 +111,37 @@ class Reader(object):
 		self._wordCount = wordCount
 
 
-def write(glos: GlossaryType, filename: str, resources: bool = True):
-	try:
-		from polib import escape as po_escape
-	except ModuleNotFoundError as e:
-		e.msg += f", run `{pip} install polib` to install"
-		raise e
-	with open(filename, "w") as toFile:
-		toFile.write('#\nmsgid ""\nmsgstr ""\n')
-		for key, value in glos.iterInfo():
-			toFile.write(f'"{key}: {value}\\n"\n')
+class Writer(object):
+	def __init__(self, glos: GlossaryType):
+		self._glos = glos
 
-		while True:
-			entry = yield
-			if entry is None:
-				break
-			if entry.isData():
-				if resources:
-					entry.save(filename + "_res")
-				continue
-			word = entry.s_word
-			defi = entry.defi
-			toFile.write(
-				f"msgid {po_escape(word)}\n"
-				f"msgstr {po_escape(defi)}\n\n"
-			)
+	def write(
+		self,
+		filename: str,
+		resources: bool = True,
+	) -> Generator[None, "BaseEntry", None]:
+		try:
+			from polib import escape as po_escape
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install polib` to install"
+			raise e
+		glos = self._glos
+		with open(filename, "w") as toFile:
+			toFile.write('#\nmsgid ""\nmsgstr ""\n')
+			for key, value in glos.iterInfo():
+				toFile.write(f'"{key}: {value}\\n"\n')
+
+			while True:
+				entry = yield
+				if entry is None:
+					break
+				if entry.isData():
+					if resources:
+						entry.save(filename + "_res")
+					continue
+				word = entry.s_word
+				defi = entry.defi
+				toFile.write(
+					f"msgid {po_escape(word)}\n"
+					f"msgstr {po_escape(defi)}\n\n"
+				)

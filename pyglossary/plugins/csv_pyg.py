@@ -127,40 +127,49 @@ class Reader(object):
 					fromFile.read(),
 				)
 
+class Writer(object):
+	def __init__(self, glos: GlossaryType):
+		self._glos = glos
 
-def write(glos: GlossaryType, filename: str, encoding: str = "utf-8", resources: bool = True) -> None:
-	resDir = filename + "_res"
-	if not isdir(resDir):
-		os.mkdir(resDir)
-	with open(filename, "w", encoding=encoding) as csvfile:
-		writer = csv.writer(
-			csvfile,
-			dialect="excel",
-			quoting=csv.QUOTE_ALL,  # FIXME
-		)
-		while True:
-			entry = yield
-			if entry is None:
-				break
-			if entry.isData():
-				if resources:
-					entry.save(resDir)
-				continue
+	def write(
+		self,
+		filename: str,
+		encoding: str = "utf-8",
+		resources: bool = True,
+	) -> Generator[None, "BaseEntry", None]:
+		glos = self._glos
+		resDir = filename + "_res"
+		if not isdir(resDir):
+			os.mkdir(resDir)
+		with open(filename, "w", encoding=encoding) as csvfile:
+			writer = csv.writer(
+				csvfile,
+				dialect="excel",
+				quoting=csv.QUOTE_ALL,  # FIXME
+			)
+			while True:
+				entry = yield
+				if entry is None:
+					break
+				if entry.isData():
+					if resources:
+						entry.save(resDir)
+					continue
 
-			words = entry.l_word
-			if not words:
-				continue
-			word, alts = words[0], words[1:]
-			defi = entry.defi
+				words = entry.l_word
+				if not words:
+					continue
+				word, alts = words[0], words[1:]
+				defi = entry.defi
 
-			row = [
-				word,
-				defi,
-			]
-			if alts:
-				row.append(",".join(alts))
+				row = [
+					word,
+					defi,
+				]
+				if alts:
+					row.append(",".join(alts))
 
-			writer.writerow(row)
+				writer.writerow(row)
 
-	if not os.listdir(resDir):
-		os.rmdir(resDir)
+		if not os.listdir(resDir):
+			os.rmdir(resDir)

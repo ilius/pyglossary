@@ -89,42 +89,41 @@ class Reader(object):
 		return Entry(word, defi)
 
 
-def write(
-	glos: GlossaryType,
-	filename: str,
-	compression: str = "",
-	content_type: str = "",
-):
-	try:
-		import icu
-	except ModuleNotFoundError as e:
-		e.msg += f", run `{pip} install PyICU` to install"
-		raise e
-	from pyglossary.plugin_lib import slob
-	kwargs = {}
-	if compression:
-		kwargs["compression"] = compression
-	log.info("removing all html tags since Aard2 does not support html")
-	glos.removeHtmlTagsAll()
-	# must not pass compression=None to slob.create()
-	with slob.create(filename, **kwargs) as slobWriter:
-		name = glos.getInfo("name")
-		slobWriter.tag("label", toStr(name))
-		while True:
-			entry = yield
-			if entry is None:
-				break
-			words = entry.l_word
-			b_defi = entry.defi.encode("utf-8")
-			slobWriter.add(
-				b_defi,
-				*tuple(words),
-				content_type=content_type,
-			)
-	# slobWriter.finalize() is called called on __exit__
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
 
-
-# is Writer class needed?
-
-
-
+	def write(
+		self,
+		filename: str,
+		compression: str = "",
+		content_type: str = "",
+	) -> Generator[None, "BaseEntry", None]:
+		try:
+			import icu
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install PyICU` to install"
+			raise e
+		from pyglossary.plugin_lib import slob
+		glos = self._glos
+		kwargs = {}
+		if compression:
+			kwargs["compression"] = compression
+		log.info("removing all html tags since Aard2 does not support html")
+		glos.removeHtmlTagsAll()
+		# must not pass compression=None to slob.create()
+		with slob.create(filename, **kwargs) as slobWriter:
+			name = glos.getInfo("name")
+			slobWriter.tag("label", toStr(name))
+			while True:
+				entry = yield
+				if entry is None:
+					break
+				words = entry.l_word
+				b_defi = entry.defi.encode("utf-8")
+				slobWriter.add(
+					b_defi,
+					*tuple(words),
+					content_type=content_type,
+				)
+		# slobWriter.finalize() is called called on __exit__

@@ -28,35 +28,40 @@ optionsProp = {
 depends = {}
 
 
-def write(
-	glos: GlossaryType,
-	filename: str,
-	encoding: str = "utf-8",
-	sep: str = os.sep,
-) -> None:
-	if os.path.exists(filename):
-		if os.path.isdir(filename):
-			if os.listdir(filename):
-				log.warning(f"Warning: directory {filename!r} is not empty.")
-		else:
-			raise IOError(f"{filename!r} is not a directory")
-	while True:
-		entry = yield
-		if entry is None:
-			break
-		defi = entry.defi
-		for word in entry.l_word:
-			if not word:
-				log.error("empty word")
-				continue
-			chars = list(word)
-			try:
-				os.makedirs(filename + os.sep + sep.join(chars[:-1]))
-			except:
-				pass
-			entryFname = join(filename, sep.join(chars)) + ".m"
-			try:
-				with open(entryFname, "a", encoding=encoding) as entryFp:
-					entryFp.write(defi)
-			except:
-				log.exception("")
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
+
+	def write(
+		self,
+		filename: str,
+		encoding: str = "utf-8",
+		sep: str = os.sep,
+	) -> None:
+		glos = self._glos
+		if os.path.exists(filename):
+			if os.path.isdir(filename):
+				if os.listdir(filename):
+					log.warning(f"Warning: directory {filename!r} is not empty.")
+			else:
+				raise IOError(f"{filename!r} is not a directory")
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			defi = entry.defi
+			for word in entry.l_word:
+				if not word:
+					log.error("empty word")
+					continue
+				chars = list(word)
+				try:
+					os.makedirs(filename + os.sep + sep.join(chars[:-1]))
+				except:
+					pass
+				entryFname = join(filename, sep.join(chars)) + ".m"
+				try:
+					with open(entryFname, "a", encoding=encoding) as entryFp:
+						entryFp.write(defi)
+				except:
+					log.exception("")

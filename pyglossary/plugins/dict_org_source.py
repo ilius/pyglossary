@@ -21,20 +21,25 @@ tools = [
 ]
 
 
-def write(
-	glos,
-	filename: str,
-	remove_html_all: bool = True,
-) -> None:
-	if remove_html_all:
-		glos.removeHtmlTagsAll()
-	# TODO: add another bool flag to only remove html tags that are not
-	# supported by GtkTextView
-	yield from glos.writeTxt(
-		entryFmt=":{word}:{defi}\n",
-		filename=filename,
-		defiEscapeFunc=replaceStringTable([
-			("\r", ""),
-		]),
-		ext=".dtxt",
-	)
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
+
+	def write(
+		self,
+		filename: str,
+		remove_html_all: bool = True,
+	) -> Generator[None, "BaseEntry", None]:
+		glos = self._glos
+		if remove_html_all:
+			glos.removeHtmlTagsAll()
+		# TODO: add another bool flag to only remove html tags that are not
+		# supported by GtkTextView
+		yield from glos.writeTxt(
+			entryFmt=":{word}:{defi}\n",
+			filename=filename,
+			defiEscapeFunc=replaceStringTable([
+				("\r", ""),
+			]),
+			ext=".dtxt",
+		)

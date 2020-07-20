@@ -13,90 +13,95 @@ optionsProp = {
 depends = {}
 
 
-def write(
-	glos: GlossaryType,
-	filename: str,
-	encoding: str = "utf-8",
-	infoKeys: Optional[List] = None,
-	addExtraInfo: bool = True,
-	newline: str = "<br>",
-	transaction: bool = False,
-):
-	fileObj = open(filename, "w", encoding=encoding)
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
 
-	infoDefLine = "CREATE TABLE dbinfo ("
-	infoValues = []
+	def write(
+		self,
+		filename: str,
+		encoding: str = "utf-8",
+		infoKeys: Optional[List] = None,
+		addExtraInfo: bool = True,
+		newline: str = "<br>",
+		transaction: bool = False,
+	) -> Generator[None, "BaseEntry", None]:
+		glos = self._glos
+		fileObj = open(filename, "w", encoding=encoding)
 
-	if not infoKeys:
-		infoKeys = [
-			"dbname",
-			"author",
-			"version",
-			"direction",
-			"origLang",
-			"destLang",
-			"license",
-			"category",
-			"description",
-		]
+		infoDefLine = "CREATE TABLE dbinfo ("
+		infoValues = []
 
-	for key in infoKeys:
-		value = glos.getInfo(key)
-		value = value\
-			.replace("\'", "\'\'")\
-			.replace("\x00", "")\
-			.replace("\r", "")\
-			.replace("\n", newline)
-		infoValues.append(f"\'{value}\'")
-		infoDefLine += f"{key} char({len(value)}), "
+		if not infoKeys:
+			infoKeys = [
+				"dbname",
+				"author",
+				"version",
+				"direction",
+				"origLang",
+				"destLang",
+				"license",
+				"category",
+				"description",
+			]
 
-	infoDefLine = infoDefLine[:-2] + ");"
-	fileObj.write(infoDefLine + "\n")
+		for key in infoKeys:
+			value = glos.getInfo(key)
+			value = value\
+				.replace("\'", "\'\'")\
+				.replace("\x00", "")\
+				.replace("\r", "")\
+				.replace("\n", newline)
+			infoValues.append(f"\'{value}\'")
+			infoDefLine += f"{key} char({len(value)}), "
 
-	if addExtraInfo:
-		fileObj.write(
-			"CREATE TABLE dbinfo_extra ("
-			"\'id\' INTEGER PRIMARY KEY NOT NULL, "
-			"\'name\' TEXT UNIQUE, \'value\' TEXT);\n"
-		)
+		infoDefLine = infoDefLine[:-2] + ");"
+		fileObj.write(infoDefLine + "\n")
 
-	fileObj.write(
-		"CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, " +
-		"\'w\' TEXT, \'m\' TEXT);\n"
-	)
-
-	if transaction:
-		fileObj.write("BEGIN TRANSACTION;\n")
-	fileObj.write(f"INSERT INTO dbinfo VALUES({','.join(infoValues)});\n")
-
-	if addExtraInfo:
-		extraInfo = glos.getExtraInfos(infoKeys)
-		for index, (key, value) in enumerate(extraInfo.items()):
-			key = key.replace("\'", "\'\'")
-			value = value.replace("\'", "\'\'")
+		if addExtraInfo:
 			fileObj.write(
-				f"INSERT INTO dbinfo_extra VALUES({index+1}, "
-				f"\'{key}\', \'{value}\');\n"
+				"CREATE TABLE dbinfo_extra ("
+				"\'id\' INTEGER PRIMARY KEY NOT NULL, "
+				"\'name\' TEXT UNIQUE, \'value\' TEXT);\n"
 			)
 
-	i = 0
-	while True:
-		entry = yield
-		if entry is None:
-			break
-		if entry.isData():
-			# FIXME
-			continue
-		word = entry.s_word
-		defi = entry.defi
-		word = word.replace("\'", "\'\'")\
-			.replace("\r", "").replace("\n", newline)
-		defi = defi.replace("\'", "\'\'")\
-			.replace("\r", "").replace("\n", newline)
 		fileObj.write(
-			f"INSERT INTO word VALUES({i+1}, \'{word}\', \'{defi}\');\n"
+			"CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, " +
+			"\'w\' TEXT, \'m\' TEXT);\n"
 		)
-		i += 1
-	if transaction:
-		fileObj.write("END TRANSACTION;\n")
-	fileObj.write("CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);\n")
+
+		if transaction:
+			fileObj.write("BEGIN TRANSACTION;\n")
+		fileObj.write(f"INSERT INTO dbinfo VALUES({','.join(infoValues)});\n")
+
+		if addExtraInfo:
+			extraInfo = glos.getExtraInfos(infoKeys)
+			for index, (key, value) in enumerate(extraInfo.items()):
+				key = key.replace("\'", "\'\'")
+				value = value.replace("\'", "\'\'")
+				fileObj.write(
+					f"INSERT INTO dbinfo_extra VALUES({index+1}, "
+					f"\'{key}\', \'{value}\');\n"
+				)
+
+		i = 0
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				# FIXME
+				continue
+			word = entry.s_word
+			defi = entry.defi
+			word = word.replace("\'", "\'\'")\
+				.replace("\r", "").replace("\n", newline)
+			defi = defi.replace("\'", "\'\'")\
+				.replace("\r", "").replace("\n", newline)
+			fileObj.write(
+				f"INSERT INTO word VALUES({i+1}, \'{word}\', \'{defi}\');\n"
+			)
+			i += 1
+		if transaction:
+			fileObj.write("END TRANSACTION;\n")
+		fileObj.write("CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);\n")

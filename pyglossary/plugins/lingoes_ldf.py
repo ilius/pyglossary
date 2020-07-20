@@ -96,27 +96,30 @@ class Reader(TextGlossaryReader):
 			return word, defi
 
 
-def write(
-	glos: GlossaryType,
-	filename: str,
-	newline: str = "\n",
-	resources: str = True,
-):
-	g = glos
-	head = "\n".join([
-		f"###{key.capitalize()}: {g.getInfo(key)}"
-		for key in infoKeys
-	])
-	head += "\n"
-	yield from g.writeTxt(
-		entryFmt="{word}\n{defi}\n\n",
-		filename=filename,
-		writeInfo=False,
-		defiEscapeFunc=replaceStringTable([
-			("\n", "<br/>"),
-		]),
-		ext=".ldf",
-		head=head,
-		newline=newline,
-		resources=resources,
-	)
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
+
+	def write(
+		self,
+		filename: str,
+		newline: str = "\n",
+		resources: str = True,
+	) -> Generator[None, "BaseEntry", None]:
+		head = "\n".join([
+			f"###{key.capitalize()}: {self._glos.getInfo(key)}"
+			for key in infoKeys
+		])
+		head += "\n"
+		yield from self._glos.writeTxt(
+			entryFmt="{word}\n{defi}\n\n",
+			filename=filename,
+			writeInfo=False,
+			defiEscapeFunc=replaceStringTable([
+				("\n", "<br/>"),
+			]),
+			ext=".ldf",
+			head=head,
+			newline=newline,
+			resources=resources,
+		)

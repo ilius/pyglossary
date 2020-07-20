@@ -19,6 +19,7 @@ from typing import (
 	List,
 	Dict,
 	Iterator,
+	Generator,
 )
 
 import logging

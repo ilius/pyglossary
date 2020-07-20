@@ -144,187 +144,184 @@ def write_css(fname, css_file):
 			))
 
 
-def write(
-	glos: GlossaryType,
-	dirname: str,
-	cleanHTML: bool = True,
-	css: str = "",
-	xsl: str = "",
-	defaultPrefs: Optional[Dict] = None,
-	prefsHTML: str = "",
-	frontBackMatter: str = "",
-	jing: bool = False,
-	indexes: str = "",  # FIXME: rename to indexes_lang?
-):
-	"""
-	write glossary to Apple dictionary .xml and supporting files.
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
 
-	:type glos: pyglossary.glossary.Glossary
-	:type dirname: str, directory path, must not have extension
+	def write(
+		self,
+		dirname: str,
+		cleanHTML: bool = True,
+		css: str = "",
+		xsl: str = "",
+		defaultPrefs: Optional[Dict] = None,
+		prefsHTML: str = "",
+		frontBackMatter: str = "",
+		jing: bool = False,
+		indexes: str = "",  # FIXME: rename to indexes_lang?
+	) -> Generator[None, "BaseEntry", None]:
+		"""
+		write glossary to Apple dictionary .xml and supporting files.
 
-	:type cleanHTML: bool
-	:param cleanHTML: pass True to use BeautifulSoup parser.
+		:param dirname: directory path, must not have extension
 
-	:type css: str
-	:param css: path to custom .css file
+		:param cleanHTML: pass True to use BeautifulSoup parser.
 
-	:type xsl: str
-	:param xsl: path to custom XSL transformations file.
+		:param css: path to custom .css file
 
-	:type defaultPrefs: dict or None
-	:param defaultPrefs: Default prefs in python dictionary literal format,
-	i.e. {"key1": "value1", "key2": "value2", ...}.  All keys and values must
-	be quoted strings; not allowed characters (e.g. single/double quotes,
-	equal sign "=", semicolon) must be escaped as hex code according to
-	python string literal rules.
+		:param xsl: path to custom XSL transformations file.
 
-	:type prefsHTML: str
-	:param prefsHTML: path to XHTML file with user interface for dictionary's
-	preferences.  refer to Apple's documentation for details.
+		:param defaultPrefs: Default prefs in python dictionary literal format,
+		i.e. {"key1": "value1", "key2": "value2", ...}.  All keys and values 
+		must be quoted strings; not allowed characters (e.g. single/double
+		quotes,equal sign "=", semicolon) must be escaped as hex code
+		according to python string literal rules.
 
-	:type frontBackMatter: str
-	:param frontBackMatter: path to XML file with top-level tag
-	<d:entry id="front_back_matter" d:title="Your Front/Back Matter Title">
-		your front/back matter entry content
-	</d:entry>
+		:param prefsHTML: path to XHTML file with user interface for
+		dictionary's preferences. refer to Apple's documentation for details.
 
-	:type jing: bool
-	:param jing: pass True to run Jing check on generated XML.
+		:param frontBackMatter: path to XML file with top-level tag
+		<d:entry id="front_back_matter" d:title="Your Front/Back Matter Title">
+			your front/back matter entry content
+		</d:entry>
 
-	# FIXME: rename to indexes_lang?
-	:type indexes: str
-	:param indexes: Dictionary.app is dummy and by default it don't know
-	how to perform flexible search.  we can help it by manually providing
-	additional indexes to dictionary entries.
-	"""
-	global BeautifulSoup
+		:param jing: pass True to run Jing check on generated XML.
 
-	if not isdir(dirname):
-		os.mkdir(dirname)
+		# FIXME: rename to indexes_lang?
+		:param indexes: Dictionary.app is dummy and by default it don't know
+		how to perform flexible search.  we can help it by manually providing
+		additional indexes to dictionary entries.
+		"""
+		global BeautifulSoup
 
-	xdxf_to_html = xdxf_to_html_transformer()
+		glos = self._glos
+		if not isdir(dirname):
+			os.mkdir(dirname)
 
-	if cleanHTML:
-		if BeautifulSoup is None:
-			loadBeautifulSoup()
-		if BeautifulSoup is None:
-			log.warning(
-				"cleanHTML option passed but BeautifulSoup not found.  " \
-				f"to fix this run `{pip} install lxml beautifulsoup4 html5lib`"
-			)
-	else:
-		BeautifulSoup = None
+		xdxf_to_html = xdxf_to_html_transformer()
 
-	fileNameBase = basename(dirname).replace(".", "_")
-	filePathBase = join(dirname, fileNameBase)
-	# before chdir (outside indir block)
-	css = abspath_or_None(css)
-	xsl = abspath_or_None(xsl)
-	prefsHTML = abspath_or_None(prefsHTML)
-	frontBackMatter = abspath_or_None(frontBackMatter)
+		if cleanHTML:
+			if BeautifulSoup is None:
+				loadBeautifulSoup()
+			if BeautifulSoup is None:
+				log.warning(
+					"cleanHTML option passed but BeautifulSoup not found. "
+					f"to fix this run "
+					f"`{pip} install lxml beautifulsoup4 html5lib`"
+				)
+		else:
+			BeautifulSoup = None
 
-	generate_id = id_generator()
-	generate_indexes = indexes_generator(indexes)
+		fileNameBase = basename(dirname).replace(".", "_")
+		filePathBase = join(dirname, fileNameBase)
+		# before chdir (outside indir block)
+		css = abspath_or_None(css)
+		xsl = abspath_or_None(xsl)
+		prefsHTML = abspath_or_None(prefsHTML)
+		frontBackMatter = abspath_or_None(frontBackMatter)
 
-	glos.setDefaultDefiFormat("h")
+		generate_id = id_generator()
+		generate_indexes = indexes_generator(indexes)
 
-	myResDir = join(dirname, "OtherResources")
-	if not isdir(myResDir):
-		os.mkdir(myResDir)
+		glos.setDefaultDefiFormat("h")
 
-	with open(filePathBase + ".xml", "w", encoding="utf-8") as toFile:
-		write_header(glos, toFile, frontBackMatter)
-		while True:
-			entry = yield
-			if entry is None:
-				break
-			if entry.isData():
-				entry.save(myResDir)
-				continue
+		myResDir = join(dirname, "OtherResources")
+		if not isdir(myResDir):
+			os.mkdir(myResDir)
 
-			words = entry.l_word
-			word, alts = words[0], words[1:]
-			defi = entry.defi
+		with open(filePathBase + ".xml", "w", encoding="utf-8") as toFile:
+			write_header(glos, toFile, frontBackMatter)
+			while True:
+				entry = yield
+				if entry is None:
+					break
+				if entry.isData():
+					entry.save(myResDir)
+					continue
 
-			long_title = _normalize.title_long(
-				_normalize.title(word, BeautifulSoup)
-			)
-			if not long_title:
-				continue
+				words = entry.l_word
+				word, alts = words[0], words[1:]
+				defi = entry.defi
 
-			_id = next(generate_id)
-			if BeautifulSoup:
-				title_attr = BeautifulSoup.dammit.EntitySubstitution\
-					.substitute_xml(long_title, True)
-			else:
-				title_attr = str(long_title)
+				long_title = _normalize.title_long(
+					_normalize.title(word, BeautifulSoup)
+				)
+				if not long_title:
+					continue
 
-			content_title = long_title
-			if entry.defiFormat == "x":
-				defi = xdxf_to_html(defi)
-				content_title = None
-			content = prepare_content(content_title, defi, BeautifulSoup)
+				_id = next(generate_id)
+				if BeautifulSoup:
+					title_attr = BeautifulSoup.dammit.EntitySubstitution\
+						.substitute_xml(long_title, True)
+				else:
+					title_attr = str(long_title)
 
+				content_title = long_title
+				if entry.defiFormat == "x":
+					defi = xdxf_to_html(defi)
+					content_title = None
+				content = prepare_content(content_title, defi, BeautifulSoup)
+
+				toFile.write(
+					f'<d:entry id="{_id}" d:title={title_attr}>\n' +
+					generate_indexes(long_title, alts, content, BeautifulSoup) +
+					content +
+					"\n</d:entry>\n"
+				)
+
+			toFile.write("</d:dictionary>\n")
+
+		if xsl:
+			shutil.copy(xsl, myResDir)
+
+		if prefsHTML:
+			shutil.copy(prefsHTML, myResDir)
+
+		write_css(filePathBase + ".css", css)
+
+		with open(join(dirname, "Makefile"), "w") as toFile:
 			toFile.write(
-				f'<d:entry id="{_id}" d:title={title_attr}>\n' +
-				generate_indexes(long_title, alts, content, BeautifulSoup) +
-				content +
-				"\n</d:entry>\n"
+				toStr(pkgutil.get_data(
+					__name__,
+					"templates/Makefile",
+				)).format(dict_name=fileNameBase)
 			)
 
-		toFile.write("</d:dictionary>\n")
+		copyright = glos.getInfo("copyright")
+		if BeautifulSoup:
+			# strip html tags
+			copyright = str(BeautifulSoup.BeautifulSoup(
+				copyright,
+				features="lxml"
+			).text)
 
-	if xsl:
-		shutil.copy(xsl, myResDir)
-
-	if prefsHTML:
-		shutil.copy(prefsHTML, myResDir)
-
-	write_css(filePathBase + ".css", css)
-
-	with open(join(dirname, "Makefile"), "w") as toFile:
-		toFile.write(
-			toStr(pkgutil.get_data(
-				__name__,
-				"templates/Makefile",
-			)).format(dict_name=fileNameBase)
-		)
-
-	copyright = glos.getInfo("copyright")
-	if BeautifulSoup:
-		# strip html tags
-		copyright = str(BeautifulSoup.BeautifulSoup(
-			copyright,
-			features="lxml"
-		).text)
-
-	# if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
-	# present in Info.plist, Dictionary.app will crash.
-	with open(filePathBase + ".plist", "w", encoding="utf-8") as toFile:
-		frontMatterReferenceID = (
-			"<key>DCSDictionaryFrontMatterReferenceID</key>\n"
-			"\t<string>front_back_matter</string>"
-			if frontBackMatter
-			else ""
-		)
-		toFile.write(
-			toStr(pkgutil.get_data(
-				__name__,
-				"templates/Info.plist",
-			)).format(
-				# identifier must be unique
-				CFBundleIdentifier=fileNameBase.replace(" ", ""),
-				CFBundleDisplayName=glos.getInfo("name"),
-				CFBundleName=fileNameBase,
-				DCSDictionaryCopyright=copyright,
-				DCSDictionaryManufacturerName=glos.getAuthor(),
-				DCSDictionaryXSL=basename(xsl) if xsl else "",
-				DCSDictionaryDefaultPrefs=format_default_prefs(defaultPrefs),
-				DCSDictionaryPrefsHTML=basename(prefsHTML) if prefsHTML else "",
-				DCSDictionaryFrontMatterReferenceID=frontMatterReferenceID,
+		# if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
+		# present in Info.plist, Dictionary.app will crash.
+		with open(filePathBase + ".plist", "w", encoding="utf-8") as toFile:
+			frontMatterReferenceID = (
+				"<key>DCSDictionaryFrontMatterReferenceID</key>\n"
+				"\t<string>front_back_matter</string>"
+				if frontBackMatter
+				else ""
 			)
-		)
+			toFile.write(
+				toStr(pkgutil.get_data(
+					__name__,
+					"templates/Info.plist",
+				)).format(
+					# identifier must be unique
+					CFBundleIdentifier=fileNameBase.replace(" ", ""),
+					CFBundleDisplayName=glos.getInfo("name"),
+					CFBundleName=fileNameBase,
+					DCSDictionaryCopyright=copyright,
+					DCSDictionaryManufacturerName=glos.getAuthor(),
+					DCSDictionaryXSL=basename(xsl) if xsl else "",
+					DCSDictionaryDefaultPrefs=format_default_prefs(defaultPrefs),
+					DCSDictionaryPrefsHTML=basename(prefsHTML) if prefsHTML else "",
+					DCSDictionaryFrontMatterReferenceID=frontMatterReferenceID,
+				)
+			)
 
-	if jing:
-		from .jing import run as jing_run
-		jing_run(filePathBase + ".xml")
+		if jing:
+			from .jing import run as jing_run
+			jing_run(filePathBase + ".xml")

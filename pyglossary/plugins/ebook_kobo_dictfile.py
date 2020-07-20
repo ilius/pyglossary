@@ -21,6 +21,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from formats_common import *
+
 enable = True
 format = "Dictfile"
 description = "Kobo E-Reader Dictfile"
@@ -46,22 +48,27 @@ def escapeDefi(defi: str) -> str:
 		.replace("\n&", "\n &")
 
 
-def write(
-	glos,
-	filename,
-):
-	fileObj = open(filename, "w", encoding="utf-8")
-	# dictgen's ParseDictFile does not seem to support glossary info / metedata
-	while True:
-		entry = yield
-		if entry is None:
-			break
-		if entry.isData():
-			continue
-		words = entry.l_word
-		defi = entry.defi
-		fileObj.write(f"@ {fixWord(words[0])}\n")
-		for alt in words[1:]:
-			fileObj.write(f"& {fixWord(alt)}\n")
-		fileObj.write(f"{escapeDefi(defi)}\n\n")
-	fileObj.close()
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
+
+	def write(
+		self,
+		filename: str,
+	) -> Generator[None, "BaseEntry", None]:
+		glos = self._glos
+		fileObj = open(filename, "w", encoding="utf-8")
+		# dictgen's ParseDictFile does not seem to support glossary info / metedata
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				continue
+			words = entry.l_word
+			defi = entry.defi
+			fileObj.write(f"@ {fixWord(words[0])}\n")
+			for alt in words[1:]:
+				fileObj.write(f"& {fixWord(alt)}\n")
+			fileObj.write(f"{escapeDefi(defi)}\n\n")
+		fileObj.close()

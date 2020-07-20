@@ -267,20 +267,25 @@ class Reader(object):
 
 
 
-def write(
-	glos: GlossaryType,
-	filename: str,
-	resources: bool = True,
-):
-	fileObj = open(filename, "w", encoding="utf-8")
-	title = glos.getInfo("name")
-	author = glos.getInfo("author")
-	# didn't find any tag for author in existing glossaries
-	publisher = glos.getInfo("publisher")
-	copyright = glos.getInfo("copyright")
-	creationTime = glos.getInfo("creationTime")
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
 
-	fileObj.write(f"""<?xml version="1.0" encoding="UTF-8"?>
+	def write(
+		self,
+		filename: str,
+		resources: bool = True,
+	) -> Generator[None, "BaseEntry", None]:
+		glos = self._glos
+		fileObj = open(filename, "w", encoding="utf-8")
+		title = glos.getInfo("name")
+		author = glos.getInfo("author")
+		# didn't find any tag for author in existing glossaries
+		publisher = glos.getInfo("publisher")
+		copyright = glos.getInfo("copyright")
+		creationTime = glos.getInfo("creationTime")
+
+		fileObj.write(f"""<?xml version="1.0" encoding="UTF-8"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
 <teiHeader>
 <fileDesc>
@@ -299,19 +304,19 @@ def write(
 </teiHeader>
 <text><body>""")
 
-	while True:
-		entry = yield
-		if entry is None:
-			break
-		if entry.isData():
-			if resources:
-				entry.save(f"{filename}_res")
-			continue
-		word = xml_escape(entry.s_word)
-		defi = xml_escape(entry.defi)
-		fileObj.write(f"""<entry>
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				if resources:
+					entry.save(f"{filename}_res")
+				continue
+			word = xml_escape(entry.s_word)
+			defi = xml_escape(entry.defi)
+			fileObj.write(f"""<entry>
 <form><orth>{word}</orth></form>
 <trans><tr>{defi}</tr></trans>
 </entry>""")
-	fileObj.write("</body></text></TEI>")
-	fileObj.close()
+		fileObj.write("</body></text></TEI>")
+		fileObj.close()

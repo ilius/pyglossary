@@ -26,34 +26,39 @@ tools = [
 ]
 
 
-def write(
-	glos,
-	filename,
-	writeInfo=True,
-	newline="\n",
-	resources=True,
-):
-	head = ""
-	if writeInfo:
-		head += "<header>\n"
-		for name, infoKey in (
-			("title", "name"),
-			("author", "author"),
-			("description", "description"),
-			("w_lang", "sourceLang"),
-			("a_lang", "targetLang"),
-		):
-			head += name + " = " + glos.getInfo(infoKey) + "\n"
-		head += "</header>\n#\n#\n#\n"
-	yield from glos.writeTxt(
-		entryFmt="{word}___{defi}\n",
-		filename=filename,
-		writeInfo=False,
-		defiEscapeFunc=replaceStringTable([
-			("\n", "<BR>"),
-		]),
-		ext=".sdct",
-		head=head,
-		newline=newline,
-		resources=resources,
-	)
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
+
+	def write(
+		self,
+		filename,
+		writeInfo=True,
+		newline="\n",
+		resources=True,
+	) -> Generator[None, "BaseEntry", None]:
+		glos = self._glos
+		head = ""
+		if writeInfo:
+			head += "<header>\n"
+			for name, infoKey in (
+				("title", "name"),
+				("author", "author"),
+				("description", "description"),
+				("w_lang", "sourceLang"),
+				("a_lang", "targetLang"),
+			):
+				head += name + " = " + glos.getInfo(infoKey) + "\n"
+			head += "</header>\n#\n#\n#\n"
+		yield from glos.writeTxt(
+			entryFmt="{word}___{defi}\n",
+			filename=filename,
+			writeInfo=False,
+			defiEscapeFunc=replaceStringTable([
+				("\n", "<BR>"),
+			]),
+			ext=".sdct",
+			head=head,
+			newline=newline,
+			resources=resources,
+		)

@@ -53,16 +53,20 @@ class Reader(TextGlossaryReader):
 		return word, defi
 
 
-def write(
-	glos: GlossaryType,
-	filename: str,
-	encoding: str = "utf-8",
-	writeInfo: bool = True,
-	resources: bool = True,
-) -> bool:
-	yield from glos.writeTabfile(
-		filename,
-		encoding=encoding,
-		writeInfo=writeInfo,
-		resources=resources,
-	)
+class Writer(object):
+	def __init__(self, glos: GlossaryType) -> None:
+		self._glos = glos
+
+	def write(
+		self,
+		filename: str,
+		encoding: str = "utf-8",
+		writeInfo: bool = True,
+		resources: bool = True,
+	) -> Generator[None, "BaseEntry", None]:
+		yield from self._glos.writeTabfile(
+			filename,
+			encoding=encoding,
+			writeInfo=writeInfo,
+			resources=resources,
+		)
