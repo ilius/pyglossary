@@ -13,14 +13,14 @@ tools = [
 		"web": "http://aarddict.org/",
 		"platforms": ["Android"],
 		"license": "GPL",
-		# no html support at all, no RTL support
+		# no auto-RTL (in plaintext or html)
 	},
 	{
 		"name": "Aard2 for Web",
 		"web": "http://aarddict.org/",
 		"platforms": ["Web"],
 		"license": "MPL",
-		# no html support at all, RTL works fine
+		# auto-RTL works in plaintext mode, but not html
 	},
 ]
 optionsProp = {
@@ -30,7 +30,10 @@ optionsProp = {
 	),
 	"content_type": StrOption(
 		customValue=True,
-		values=["text/plain; charset=utf-8"],
+		values=[
+			"text/plain; charset=utf-8",
+			"text/html; charset=utf-8",
+		],
 		comment="Content Type",
 	),
 	"encoding": EncodingOption(),
@@ -113,8 +116,6 @@ class Writer(object):
 		kwargs = {}
 		if compression:
 			kwargs["compression"] = compression
-		log.info("removing all html tags since Aard2 does not support html")
-		glos.removeHtmlTagsAll()
 		# must not pass compression=None to slob.create()
 		with slob.create(filename, **kwargs) as slobWriter:
 			name = glos.getInfo("name")
@@ -125,9 +126,19 @@ class Writer(object):
 					break
 				words = entry.l_word
 				b_defi = entry.defi.encode("utf-8")
+				_ctype = content_type
+				if not _ctype:
+					entry.detectDefiFormat()
+					defiFormat = entry.defiFormat
+					if defiFormat == "h":
+						_ctype = "text/html; charset=utf-8"
+					elif defiFormat == "m":
+						_ctype = "text/plain; charset=utf-8"
+					else:
+						_ctype = "text/plain; charset=utf-8"
 				slobWriter.add(
 					b_defi,
 					*tuple(words),
-					content_type=content_type,
+					content_type=_ctype,
 				)
 		# slobWriter.finalize() is called called on __exit__
