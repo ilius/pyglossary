@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
-from pyglossary.entry import Entry
 
 enable = True
 format = 'Aard2Slob'
@@ -58,7 +57,7 @@ class Reader(object):
 
 	def _clear(self):
 		self._filename = ""
-		self._slobObj = None # slobObj is instance of slob.Slob class
+		self._slobObj = None  # slobObj is instance of slob.Slob class
 		self._refIndex = -1
 
 	def open(self, filename, encoding="utf-8"):
@@ -76,6 +75,7 @@ class Reader(object):
 		return self
 
 	def __next__(self):
+		from pyglossary.plugin_lib.slob import MIME_HTML, MIME_TEXT
 		if not self._slobObj:
 			log.error("iterating over a reader which is not open")
 			raise StopIteration
@@ -85,8 +85,17 @@ class Reader(object):
 		blob = self._slobObj[self._refIndex]
 		# blob.key is str, blob.content is bytes
 		word = blob.key
-		defi = toStr(blob.content)
-		return Entry(word, defi)
+
+		ctype = blob.content_type.split(";")[0]
+		if ctype not in (MIME_HTML, MIME_TEXT):
+			log.debug(f"{word!r}: content_type={blob.content_type}")
+			if word.startswith("~/"):
+				word = word[2:]
+			return self._glos.newDataEntry(word, blob.content)
+
+		defi = blob.content.decode("utf-8")
+
+		return self._glos.newEntry(word, defi)
 
 
 class Writer(object):
