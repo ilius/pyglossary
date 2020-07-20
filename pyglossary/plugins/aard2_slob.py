@@ -58,7 +58,6 @@ class Reader(object):
 	def _clear(self):
 		self._filename = ""
 		self._slobObj = None  # slobObj is instance of slob.Slob class
-		self._refIndex = -1
 
 	def open(self, filename, encoding="utf-8"):
 		from pyglossary.plugin_lib import slob
@@ -72,30 +71,26 @@ class Reader(object):
 		return len(self._slobObj)
 
 	def __iter__(self):
-		return self
-
-	def __next__(self):
 		from pyglossary.plugin_lib.slob import MIME_HTML, MIME_TEXT
 		if not self._slobObj:
 			log.error("iterating over a reader which is not open")
-			raise StopIteration
-		self._refIndex += 1
-		if self._refIndex >= len(self._slobObj):
-			raise StopIteration
-		blob = self._slobObj[self._refIndex]
-		# blob.key is str, blob.content is bytes
-		word = blob.key
+			return
 
-		ctype = blob.content_type.split(";")[0]
-		if ctype not in (MIME_HTML, MIME_TEXT):
-			log.debug(f"{word!r}: content_type={blob.content_type}")
-			if word.startswith("~/"):
-				word = word[2:]
-			return self._glos.newDataEntry(word, blob.content)
+		slobObj = self._slobObj
+		for blob in slobObj:
+			# blob.key is str, blob.content is bytes
+			word = blob.key
 
-		defi = blob.content.decode("utf-8")
+			ctype = blob.content_type.split(";")[0]
+			if ctype not in (MIME_HTML, MIME_TEXT):
+				log.debug(f"{word!r}: content_type={blob.content_type}")
+				if word.startswith("~/"):
+					word = word[2:]
+				yield self._glos.newDataEntry(word, blob.content)
+				continue
 
-		return self._glos.newEntry(word, defi)
+			defi = blob.content.decode("utf-8")
+			yield self._glos.newEntry(word, defi)
 
 
 class Writer(object):
