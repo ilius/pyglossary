@@ -210,7 +210,7 @@ class Writer(object):
 				header = nextPath
 			toFile.write("\n".join([
 				header,
-				thisEntry.s_word,
+				escapeNTB(thisEntry.s_word, bar=False),
 				thisEntry.defi,
 			]))
 
