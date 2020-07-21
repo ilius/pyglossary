@@ -27,6 +27,14 @@ class TextGlossaryReader(object):
 		self._pos = -1
 		self._fileCount = 1
 		self._fileIndex = 0
+		self._bufferLine = ""
+
+	def readline(self):
+		if self._bufferLine:
+			line = self._bufferLine
+			self._bufferLine = ""
+			return line
+		return self._file.readline()
 
 	def open(self, filename: str, encoding: str = "utf-8") -> None:
 		self._filename = filename
