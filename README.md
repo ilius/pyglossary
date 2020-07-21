@@ -19,7 +19,7 @@ Windows - Tkinter-based interface
 
 ------------------------------------------------------------------------
 
-![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-cmd-bgl-apple-ru-de.png)
+![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-cmd-freedict-mids-de-ru.png)
 
 Linux - command line interface
 
