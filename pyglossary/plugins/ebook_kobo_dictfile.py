@@ -102,9 +102,10 @@ class Writer(object):
 	def write(
 		self,
 		filename: str,
+		encoding: str = "utf-8",
 	) -> Generator[None, "BaseEntry", None]:
 		glos = self._glos
-		fileObj = open(filename, "w", encoding="utf-8")
+		fileObj = open(filename, "w", encoding=encoding)
 		# dictgen's ParseDictFile does not seem to support glossary info / metedata
 		while True:
 			entry = yield
