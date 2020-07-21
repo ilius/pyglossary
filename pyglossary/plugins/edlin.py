@@ -137,7 +137,7 @@ class Reader(object):
 				if len(word) == 1:
 					word = word[0]
 			else:
-				word = unescapeNTB(word, bar=True)
+				word = unescapeNTB(word, bar=False)
 
 			# defi = unescapeNTB(defi)
 			yield self._glos.newEntry(word, defi)
