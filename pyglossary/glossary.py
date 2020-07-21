@@ -509,11 +509,14 @@ class Glossary(GlossaryType):
 			lastPos = 0
 			try:
 				for index, entry in enumerate(reader):
-					yield entry
+					if entry is not None:
+						yield entry
 					if progressbar:
-						if entry is None or wordCount > 0:
+						if wordCount > 0:
 							if index % wcThreshold == 0:
 								self.progress(index, wordCount)
+							continue
+						if entry is None:
 							continue
 						bp = entry.byteProgress()
 						if bp and bp[0] > lastPos + 10000:
