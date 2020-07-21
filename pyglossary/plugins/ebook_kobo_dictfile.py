@@ -56,9 +56,6 @@ def unescapeDefi(defi: str) -> str:
 
 
 class Reader(TextGlossaryReader):
-	def __len__(self):
-		return 0
-
 	def isInfoWord(self, word):
 		return False
 
