@@ -967,7 +967,7 @@ class Glossary(GlossaryType):
 					f", falling back to indirect mode"
 				)
 				self._inactivateDirectMode()
-				log.info(f"Loaded {len(self._data)} entries")
+				log.info(f"\nLoaded {len(self._data)} entries")
 			sort = True
 			sortCacheSize = 0
 		elif sortOnWrite == DEFAULT_YES:
