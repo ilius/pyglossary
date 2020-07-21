@@ -29,6 +29,11 @@ format = "Dictfile"
 description = "Kobo E-Reader Dictfile"
 extensions = (".df",)
 # https://github.com/pgaskin/dictutil
+
+optionsProp = {
+	"encoding": EncodingOption(),
+}
+
 tools = [
 	{
 		"name": "dictgen",
