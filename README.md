@@ -44,7 +44,7 @@ Supported formats
 | [Gettext Source](https://www.gnu.org/software/gettext)       |📝 | .po       | ✔  |  ✔  |
 | JSON                                                         |📝 | .json     |    |  ✔  |
 | Kobo E-Reader Dictionary                                     |📦 | .kobo.zip |:x: |  ✔  |
-| [Kobo E-Reader Dictfile](https://github.com/pgaskin/dictutil)|📝 | .df       |    |  ✔  |
+| [Kobo E-Reader Dictfile](https://github.com/pgaskin/dictutil)|📝 | .df       | ✔  |  ✔  |
 | Lingoes Source                                               |📝 | .ldf      | ✔  |  ✔  |
 | Octopus MDict                                                |🔢 | .mdx      | ✔  | :x: |
 | [Sdictionary Binary](http://swaj.net/sdict/)                 |🔢 | .dct      | ✔  |     |

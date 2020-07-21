@@ -22,6 +22,7 @@
 # SOFTWARE.
 
 from formats_common import *
+from pyglossary.text_reader import TextGlossaryReader
 
 enable = True
 format = "Dictfile"
@@ -46,6 +47,50 @@ def escapeDefi(defi: str) -> str:
 	return defi.replace("\n@", "\n @")\
 		.replace("\n:", "\n :")\
 		.replace("\n&", "\n &")
+
+
+def unescapeDefi(defi: str) -> str:
+	return defi.replace("\n @", "\n@")\
+		.replace("\n :", "\n:")\
+		.replace("\n &", "\n&")
+
+
+class Reader(TextGlossaryReader):
+	def __len__(self):
+		return 0
+
+	def isInfoWord(self, word):
+		return False
+
+	def fixInfoWord(self, word):
+		raise NotImplementedError
+
+	def nextPair(self):
+		if not self._file:
+			raise StopIteration
+		words = []
+		defiLines = []
+
+		while True:
+			line = self.readline()
+			if not line:
+				break
+			line = line.rstrip("\n\r")
+			if line.startswith("@"):
+				if words:
+					self._bufferLine = line
+					return words, unescapeDefi("\n".join(defiLines))
+				words = [line[1:]]
+				continue
+			if line.startswith("&"):
+				words.append(line[1:])
+				continue
+			defiLines.append(line)
+
+		if words:
+			return words, unescapeDefi("\n".join(defiLines))
+
+		raise StopIteration
 
 
 class Writer(object):
