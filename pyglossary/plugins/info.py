@@ -27,6 +27,7 @@ class Writer(object):
 
 		defiFormatCounter = Counter()
 		firstTagCounter = Counter()
+		allTagsCounter = Counter()
 		wordCount = 0
 		while True:
 			entry = yield
@@ -43,6 +44,9 @@ class Writer(object):
 			elif defiFormat == "h":
 				tag = re_possible_html.search(defi).group().strip("< />").lower()
 				firstTagCounter[tag] += 1
+				for tag in re_possible_html.findall(defi):
+					tag = tag.strip("< />").lower()
+					allTagsCounter[tag] += 1
 
 		data_entry_count = defiFormatCounter["b"]
 		del defiFormatCounter["b"]
@@ -55,6 +59,11 @@ class Writer(object):
 			f"{defiFormat}={count}"
 			for defiFormat, count in
 			sorted(defiFormatCounter.items())
+		)
+		info["defi_tag_counter"] = ", ".join(
+			f"{defiFormat}={count}"
+			for defiFormat, count in
+			allTagsCounter.most_common()
 		)
 		info["defi_first_tag_counter"] = ", ".join(
 			f"{defiFormat}={count}"
