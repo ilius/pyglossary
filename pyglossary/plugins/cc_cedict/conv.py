@@ -52,7 +52,7 @@ def render_article(trad, simp, pinyin, eng):
 	if jinja_env is None:
 		load_jinja()
 
-	pinyin_tones = [convert(syl) for syl in pinyin.split()]
+	# pinyin_tones = [convert(syl) for syl in pinyin.split()]
 	nice_pinyin = []
 	tones = []
 	for syllable in pinyin.split():

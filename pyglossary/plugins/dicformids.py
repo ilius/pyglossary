@@ -69,7 +69,6 @@ class Reader(object):
 
 	def open(self, dirname):
 		self._dirname = dirname
-		dicFiles = []
 		orderFileNames = []
 		for fname in os.listdir(dirname):
 			if not fname.startswith("directory"):

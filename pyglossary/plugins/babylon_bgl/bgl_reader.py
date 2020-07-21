@@ -165,7 +165,6 @@ class FileOffS(file):
 		file.__init__(self, fileObj)
 		self._fileObj = fileObj
 		self.offset = offset
-		self.filesize = os.path.getsize(filename)
 		file.seek(self, offset)  # OR self.seek(0)
 
 	def close(self):

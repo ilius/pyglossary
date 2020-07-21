@@ -71,7 +71,7 @@ BRACKET_L = "\0\1"
 BRACKET_R = "\0\2"
 
 # precompiled regexs
-re_m_tag_with_content = re.compile(r"(\[m\d\])(.*?)(\[/m\])")
+# re_m_tag_with_content = re.compile(r"(\[m\d\])(.*?)(\[/m\])")
 re_non_escaped_bracket = re.compile(r"(?<!\\)\[")
 _startswith_tag_cache = {}
 

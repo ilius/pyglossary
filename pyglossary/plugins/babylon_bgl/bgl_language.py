@@ -578,4 +578,3 @@ languages = (
 	),
 )
 languageByCode = {lang.code: lang for lang in languages}
-languageByName = {lang.name: lang for lang in languages}

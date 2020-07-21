@@ -47,7 +47,6 @@ optionsProp = {
 	# "group_by_prefix_merge_min_size": IntOption(),
 	# "group_by_prefix_merge_across_first": BoolOption(),
 	"keep": BoolOption(),
-	"marisa_bin_path": StrOption(),
 }
 
 
@@ -89,8 +88,6 @@ def fixFilename(fname: str) -> str:
 
 class Writer:
 	WORDS_FILE_NAME = "words"
-	MARISA_BUILD = "marisa-build"
-	MARISA_REVERSE_LOOKUP = "marisa-reverse-lookup"
 
 	def __init__(self, glos, **kwargs):
 		self._glos = glos
