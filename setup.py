@@ -56,7 +56,7 @@ data_files = [
 		"config.json",
 	]),
 	(relRootDir+"/ui", glob.glob("ui/*.py")),
-	(relRootDir+"/ui/glade", glob.glob("ui/glade/*")),
+	(relRootDir+"/ui/progressbar", glob.glob("ui/progressbar/*.py")),
 	(relRootDir+"/ui/gtk3_utils", glob.glob("ui/gtk3_utils/*.py")),
 	(relRootDir+"/res", glob.glob("res/*")),
 	("share/doc/pyglossary", []),
@@ -117,10 +117,11 @@ if py2exe:
 			[join(sys.prefix, "tcl", "tix8.4.3", "init.tcl")]),
 		("", ["about", "license-dialog", "help"]),
 		("ui", glob.glob("ui/*.py")),
-		("ui/glade", glob.glob("ui/glade/*")),
+		("ui/progressbar", glob.glob("ui/progressbar/*.py")),
 		("res", glob.glob("res/*")),
 		("plugins", glob.glob("pyglossary/plugins/*")),
 		("plugin_lib", glob.glob("pyglossary/plugin_lib/*")),
+		("langs", glob.glob("pyglossary/langs/*")),
 		("doc/pyglossary", ["doc/bgl_structure.svgz", ]),
 		("doc/pyglossary/non-gui_examples",
 			glob.glob("doc/non-gui_examples/*")),
@@ -159,6 +160,7 @@ setup(
 	package_data={
 		"pyglossary": [
 			"plugins/*.py",
+			"langs/*",
 			"plugin_lib/*.py",
 			"plugin_lib/py*/*.py",
 		] + [
