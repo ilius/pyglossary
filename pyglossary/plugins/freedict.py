@@ -52,8 +52,8 @@ class Reader(object):
 		"masc": "male",
 		"f": "female",
 		"fem": "female",
-		"n": "noun",
-		"neut": "noun",
+		"n": "neutral",
+		"neut": "neutral",
 		# "m;f"
 		"adj": "adjective",
 	}
