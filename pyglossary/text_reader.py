@@ -70,6 +70,16 @@ class TextGlossaryReader(object):
 			log.exception(f"error while closing file {self._filename!r}")
 		self._file = None
 
+	def newEntry(self, word, defi) -> "BaseEntry":
+		byteProgress = None
+		if self._fileSize:
+			byteProgress = (self._file.tell(), self._fileSize)
+		return Entry(
+			word,
+			defi,
+			byteProgress=byteProgress,
+		)
+
 	def loadInfo(self) -> None:
 		self._pendingEntries = []
 		try:
@@ -79,7 +89,7 @@ class TextGlossaryReader(object):
 					continue
 				word, defi = wordDefi
 				if not self.isInfoWords(word):
-					self._pendingEntries.append(Entry(word, defi))
+					self._pendingEntries.append(self.newEntry(word, defi))
 					break
 				if isinstance(word, list):
 					word = [self.fixInfoWord(w) for w in word]
@@ -118,14 +128,7 @@ class TextGlossaryReader(object):
 			return
 		word, defi = wordDefi
 		###
-		byteProgress = None
-		if self._fileSize:
-			byteProgress = (self._file.tell(), self._fileSize)
-		return Entry(
-			word,
-			defi,
-			byteProgress=byteProgress,
-		)
+		return self.newEntry(word, defi)
 
 	def __len__(self) -> int:
 		return self._wordCount
