@@ -221,7 +221,7 @@ class Reader(object):
 			re.DOTALL,
 		)
 		self._ref_pattern = re.compile(
-			'<ref target="(.*)">(.*)</ref>',
+			'<ref target="(.*?)">(.*?)</ref>',
 		)
 		self._website_pattern = re.compile(
 			'Home: <(ref|ptr) target="(.*)">(.*)</\\1>',
