@@ -1296,16 +1296,13 @@ class Glossary(GlossaryType):
 		fileObj: Optional["file"] = None,
 		**kwargs,
 	) -> Generator[None, "BaseEntry", None]:
+		from .text_utils import escapeNTB
 		yield from self.writeTxt(
 			entryFmt="{word}\t{defi}\n",
 			filename=filename,
 			fileObj=fileObj,
-			defiEscapeFunc=replaceStringTable([
-				("\\", "\\\\"),
-				("\r", ""),
-				("\n", "\\n"),
-				("\t", "\\t"),
-			]),
+			wordEscapeFunc=escapeNTB,
+			defiEscapeFunc=escapeNTB,
 			ext=".txt",
 			**kwargs
 		)
