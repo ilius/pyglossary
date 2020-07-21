@@ -183,7 +183,7 @@ class Entry(BaseEntry):
 			r"<ol[ >]",
 			r"<li[ >]",
 		]) + ")",
-		re.S,
+		re.S | re.I,
 	)
 
 	def isData(self) -> bool:
@@ -326,8 +326,7 @@ class Entry(BaseEntry):
 	def detectDefiFormat(self) -> None:
 		if self._defiFormat != "m":
 			return
-		defi = self.defi.lower()
-		if self.htmlPattern.match(defi):
+		if self.htmlPattern.match(self.defi):
 			self._defiFormat = "h"
 
 	def byteProgress(self):
