@@ -2,7 +2,10 @@
 
 from formats_common import *
 from pyglossary.text_reader import TextGlossaryReader
-from pyglossary.text_utils import escapeNTB, unescapeNTB, splitByBarUnescapeNTB
+from pyglossary.text_utils import (
+	unescapeNTB,
+	splitByBarUnescapeNTB,
+)
 
 enable = True
 format = "Tabfile"
