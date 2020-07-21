@@ -861,6 +861,7 @@ class Glossary(GlossaryType):
 		format: str = "",
 		inputFilename: str = "",
 		quiet: bool = False,
+		addExt: bool = False,
 	) -> Optional[Tuple[str, str, str]]:
 		"""
 		returns (filename, format, compression) or None
@@ -909,15 +910,15 @@ class Glossary(GlossaryType):
 		if not plugin.canWrite:
 			return error(f"plugin {plugin.name} does not support writing")
 
-		if not filenameNoExt:
-			if inputFilename:
-				ext = plugin.ext
-				filename = splitext(inputFilename)[0] + ext
-			else:
-				error("inputFilename is empty")
-
-		if not ext and plugin.ext:
-			filename += plugin.ext
+		if addExt:
+			if not filenameNoExt:
+				if inputFilename:
+					ext = plugin.ext
+					filename = splitext(inputFilename)[0] + ext
+				else:
+					error("inputFilename is empty")
+			if not ext and plugin.ext:
+				filename += plugin.ext
 
 		return filename, plugin.name, compression
 
