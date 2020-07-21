@@ -38,7 +38,6 @@ from pyglossary.core import (
 	pip,
 )
 from pyglossary.option import *
-from pyglossary.file_utils import FileLineWrapper
 from pyglossary.text_utils import (
 	toStr,
 	toBytes,
