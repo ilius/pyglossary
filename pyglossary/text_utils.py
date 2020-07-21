@@ -73,6 +73,7 @@ def escapeNTB(st: str, bar: bool = False) -> str:
 	"""
 	st = st.replace(r"\\", r"\\\\")
 	st = st.replace("\t", r"\t")
+	st = st.replace("\r", "")
 	st = st.replace("\n", r"\n")
 	if bar:
 		st = st.replace("|", r"\|")
