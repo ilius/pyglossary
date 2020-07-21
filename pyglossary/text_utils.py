@@ -67,7 +67,7 @@ def replaceStringTable(
 	return replace
 
 
-def escapeNTB(st: str, bar: bool = True) -> str:
+def escapeNTB(st: str, bar: bool = False) -> str:
 	"""
 		scapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
 	"""
