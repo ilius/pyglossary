@@ -195,7 +195,7 @@ class Reader(object):
 					continue
 				if line == "StarDict's dict ifo file":
 					continue
-				key, eq, value = line.partition("=")
+				key, _, value = line.partition("=")
 				if not (key and value):
 					log.warning(f"Invalid ifo file line: {line}")
 					continue
