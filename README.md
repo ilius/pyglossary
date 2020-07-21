@@ -160,6 +160,17 @@ Feature-specific Requirements
 	`sudo pip3 install marisa-trie`
 
 
+
+User Plugins
+------------
+If you want to add your own plugin without adding it to source code directory,
+or you want to use a plugin that has been removed from repository,
+you can place it in this directory:
+- Linux: `~/.pyglossary/plugins/`
+- Mac: `~/Library/Preferences/PyGlossary/plugins`
+- Windows: `C:\Users\USERNAME\AppData\Roaming\PyGlossary\plugins`
+
+
 AppleDict
 ---------
 See [doc/apple.md](doc/apple.md) for AppleDict requirements and instructions.
