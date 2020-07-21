@@ -4,6 +4,7 @@ from pyglossary.entry import Entry
 
 from pyglossary.glossary_type import GlossaryType
 
+import os
 from os.path import isfile
 from typing import (
 	Tuple,
@@ -21,9 +22,9 @@ class TextGlossaryReader(object):
 		self._encoding = None
 		self._file = None
 		self._hasInfo = hasInfo
-		self._leadingLinesCount = 0
 		self._pendingEntries = []
-		self._wordCount = None
+		self._wordCount = 0
+		self._fileSize = 0
 		self._pos = -1
 		self._fileCount = 1
 		self._fileIndex = 0
@@ -42,6 +43,9 @@ class TextGlossaryReader(object):
 		self._file = open(filename, "r", encoding=encoding)
 		if self._hasInfo:
 			self.loadInfo()
+		if not self._wordCount:
+			self._fileSize = os.path.getsize(filename)
+			log.debug(f"File size of {filename}: {self._fileSize}")
 
 	def openNextFile(self) -> bool:
 		self.close()
@@ -68,7 +72,6 @@ class TextGlossaryReader(object):
 
 	def loadInfo(self) -> None:
 		self._pendingEntries = []
-		self._leadingLinesCount = 0
 		try:
 			while True:
 				wordDefi = self.nextPair()
@@ -78,7 +81,6 @@ class TextGlossaryReader(object):
 				if not self.isInfoWords(word):
 					self._pendingEntries.append(Entry(word, defi))
 					break
-				self._leadingLinesCount += 1
 				if isinstance(word, list):
 					word = [self.fixInfoWord(w) for w in word]
 				else:
@@ -116,13 +118,16 @@ class TextGlossaryReader(object):
 			return
 		word, defi = wordDefi
 		###
-		return Entry(word, defi)
+		byteProgress = None
+		if self._fileSize:
+			byteProgress = (self._file.tell(), self._fileSize)
+		return Entry(
+			word,
+			defi,
+			byteProgress=byteProgress,
+		)
 
 	def __len__(self) -> int:
-		if self._wordCount is None:
-			log.debug("Try not to use len(reader) as it takes extra time")
-			self._wordCount = fileCountLines(self._filename) - \
-				self._leadingLinesCount
 		return self._wordCount
 
 	def __iter__(self) -> Iterator[BaseEntry]:
