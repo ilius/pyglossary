@@ -14,6 +14,7 @@ extensions = (".tei",)
 singleFile = True
 optionsProp = {
 	"resources": BoolOption(),
+	"discover": BoolOption(),
 }
 depends = {
 	"lxml": "lxml",
@@ -24,9 +25,49 @@ depends = {
 
 tei = "{http://www.tei-c.org/ns/1.0}"
 
+
 class Reader(object):
 	ns = {
 		None: "http://www.tei-c.org/ns/1.0",
+	}
+
+	supportedTags = {
+		f"{tei}{tag}" for tag in (
+			"entry",
+			"form",  # entry.form
+			"orth",  # entry.form.orth
+			"pron",  # entry.form.pron
+			"sense",  # entry.sense
+			"cit",  # entry.sense.cit
+			"quote",  # entry.sense.cit.quote
+			"gramGrp",  # entry.sense.cit.gramGrp
+			"pos",  # entry.sense.cit.gramGrp.pos
+			"gen",  # entry.sense.cit.gramGrp.gen
+			"number",  # entry.sense.cit.gramGrp.number
+			"num",  # entry.sense.cit.gramGrp.num
+		)
+	}
+	genderMapping = {
+		"m": "male",
+		"masc": "male",
+		"f": "female",
+		"fem": "female",
+		"n": "noun",
+		"neut": "noun",
+		# "m;f"
+		"adj": "adjective",
+	}
+	posMapping = {
+		"n": "noun",
+		"v": "verb",
+		"pn": "pronoun",
+		"pron": "pronoun",
+		"prep": "preposition",
+		"conj": "conjuction",
+		"adj": "adjective",
+		"adv": "adverb",
+		# "numeral", "interjection", "suffix", "particle"
+		# "indefinitePronoun"
 	}
 
 	def make_list(
@@ -70,10 +111,29 @@ class Reader(object):
 			single_prefix=" — ",
 		)
 
+	def normalizeGramGrpChild(self, elem) -> str:
+		# child can be "pos" or "gen"
+		tag = elem.tag
+		text = elem.text.strip()
+		if tag == f"{tei}pos":
+			return self.posMapping.get(text.lower(), text)
+		if tag == f"{tei}gen":
+			return self.genderMapping.get(text.lower(), text)
+		if tag in (f"{tei}num", f"{tei}number"):
+			return f"number: {text}"
+		log.info(f"unrecognize GramGrp child: {elem}")
+		return ""
+
 	def getEntryByElem(self, entry: "lxml.etree.Element") -> "BaseEntry":
 		from lxml import etree as ET
 		keywords = []
 		f = BytesIO()
+
+		if self._discover:
+			for elem in entry.iter():
+				if elem.tag not in self.supportedTags:
+					self._discoveredTags[elem.tag] = elem
+
 		with ET.htmlfile(f) as hf:
 			with hf.element("div"):
 				for form in entry.findall("form/orth", self.ns):
@@ -82,14 +142,24 @@ class Reader(object):
 					with hf.element("b"):
 						hf.write(form.text)
 				hf.write(ET.Element("br"))
-				# TODO: "gramGrp/gen" is gender: m|masc|f|fem|n|neut|m;f|adj
-				posList = entry.findall("gramGrp/pos", self.ns)
-				if posList:
-					for pos in posList:
+
+				# TODO: "form/usg"
+				# <usg type="geo">Brit</usg>
+				# <usg type="geo">US</usg>
+				# <usg type="hint">...</usg>
+
+				gramGrpList = entry.findall("gramGrp", self.ns)
+				if gramGrpList:
+					for gramGrp in gramGrpList:
+						parts = []
+						for child in gramGrp.iterchildren():
+							text = self.normalizeGramGrpChild(child)
+							if text:
+								parts.append(text)
 						with hf.element("i"):
-							hf.write(pos.text)
-						hf.write(" ")
-					hf.write(ET.Element("br"))
+							hf.write(", ".join(parts))
+						hf.write(ET.Element("br"))
+
 				pronList = entry.findall("form/pron", self.ns)
 				if pronList:
 					hf.write(", ".join(
@@ -126,13 +196,16 @@ class Reader(object):
 		except Exception:
 			log.exception(f"unexpected extent={extent}")
 
-	def strip_tag_p_elem(self, elem: "lxml.etree.Element") -> str:
+	def tostring(self, elem: "lxml.etree.Element") -> str:
 		from lxml import etree as ET
-		text = ET.tostring(
+		return ET.tostring(
 			elem,
 			method="html",
 			pretty_print=True,
 		).decode("utf-8").strip()
+
+	def strip_tag_p_elem(self, elem: "lxml.etree.Element") -> str:
+		text = self.tostring(elem)
 		text = self._p_pattern.sub("\\2", text)
 		return text
 
@@ -216,6 +289,9 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._wordCount = 0
+		self._discover = False
+		self._discoveredTags = dict()
+
 		self._p_pattern = re.compile(
 			'<p( [^<>]*?)?>(.*?)</p>',
 			re.DOTALL,
@@ -233,7 +309,11 @@ class Reader(object):
 	def close(self) -> None:
 		pass
 
-	def open(self, filename: str):
+	def open(
+		self,
+		filename: str,
+		discover: bool = False,
+	):
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -241,6 +321,7 @@ class Reader(object):
 			raise e
 
 		self._filename = filename
+		self._discover = discover
 
 		context = ET.iterparse(
 			filename,
@@ -265,6 +346,10 @@ class Reader(object):
 			while elem.getprevious() is not None:
 				del elem.getparent()[0]
 
+		if self._discoveredTags:
+			log.info("\nFound unsupported tags")
+			for tag, elem in self._discoveredTags.items():
+				log.info(f"\n{self.tostring(elem)}\n")
 
 
 class Writer(object):
