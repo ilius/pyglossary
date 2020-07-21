@@ -50,6 +50,7 @@ class UIBase(object):
 		"utf8Check",
 		"remove_html",
 		"remove_html_all",
+		"normalize_html",
 		"enable_alts",
 		## Reverse Options:
 		"reverse_matchWord",

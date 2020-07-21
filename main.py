@@ -208,6 +208,12 @@ parser.add_argument(
 	action="store_true",
 	help="remove all html tags from definitions",
 )
+parser.add_argument(
+	"--normalize-html",
+	dest="normalize_html",
+	action="store_true",
+	help="lowercase and normalize html tags in definitions",
+)
 
 
 parser.add_argument(
@@ -296,6 +302,7 @@ prefOptionsKeys = (
 	"enable_alts",
 	"remove_html",
 	"remove_html_all",
+	"normalize_html",
 )
 
 convertOptionsKeys = (

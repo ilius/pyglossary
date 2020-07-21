@@ -403,6 +403,9 @@ class Glossary(GlossaryType):
 			tags = pref.get("remove_html").split(",")
 			self._entryFilters.append(ef.RemoveHtmlTags(self, tags))
 
+		if pref.get("normalize_html", False):
+			self._entryFilters.append(ef.NormalizeHtml(self))
+
 		self._entryFilters.append(ef.LangEntryFilter(self))
 		self._entryFilters.append(ef.CleanEntryFilter(self))
 		self._entryFilters.append(ef.NonEmptyWordFilter(self))

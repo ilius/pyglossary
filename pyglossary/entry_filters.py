@@ -155,6 +155,41 @@ class RemoveHtmlTags(EntryFilter):
 		return entry
 
 
+# FIXME: this may not be safe as it lowercases everything between < and >
+# including class name, element ids/names, scripts etc. how can we fix that?
+class NormalizeHtml(EntryFilter):
+	name = "normalize_html"
+	desc = "Normalize HTML Tags"
+
+	def __init__(self, glos: Glossary):
+		log.info("Normalizing HTML tags")
+		self._pattern = re.compile(
+			"(" + "|".join([
+				fr"</?{tag}[^<>]*?>"
+				for tag in (
+					"a", "font", "i", "b", "u", "p", "sup", 
+					"div", "span",
+					"table", "tr", "th", "td",
+					"ul", "ol", "li",
+					"img",
+					"br", "hr",
+				)
+			]) + ")",
+			re.S | re.I,
+		)
+
+	def _subLower(self, m) -> str:
+		return m.group(0).lower()
+
+	def _fixDefi(self, st: str) -> str:
+		st = self._pattern.sub(self._subLower, st)
+		return st
+
+	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+		entry.editFuncDefi(self._fixDefi)
+		return entry
+
+
 class SkipDataEntryFilter(EntryFilter):
 	name = "skip_resources"
 	desc = "Skip Resources"
