@@ -120,18 +120,6 @@ def formatHMS(h: int, m: int, s: int) -> str:
 		return f"{h:02d}:{m:02d}:{s:02d}"
 
 
-def timeHMS(seconds: Union[int, float]) -> str:
-	import time
-	(h, m, s) = time.gmtime(int(seconds))[3:6]
-	return formatHMS(h, m, s)
-
-
-def relTimeHMS(seconds: Union[int, float]) -> str:
-	(days, s) = divmod(int(seconds), 24 * 3600)
-	(m, s) = divmod(s, 60)
-	(h, m) = divmod(m, 60)
-	return formatHMS(h, m, s)
-
 # ___________________________________________ #
 
 
