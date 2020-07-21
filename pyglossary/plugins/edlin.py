@@ -114,7 +114,7 @@ class Reader(object):
 			) as fromFile:
 				header = fromFile.readline().rstrip()
 				if self._havePrevLink:
-					self._prevPath, nextPath = header.split(" ")
+					_prevPath, nextPath = header.split(" ")
 				else:
 					nextPath = header
 				word = fromFile.readline()
