@@ -62,7 +62,7 @@ Legend:
 - 📦	Package/archive file
 - 🔢	Binary file
 - ✔		Supported
-- :x:	Will not support
+- :x:	Will not be supported
 
 
 Requirements
@@ -100,9 +100,6 @@ ie. multiple ways to use the program.
 
 	`python3 main.py --help`
 
-	You may have to give `--no-progress-bar` option in Windows when
-	converting glossaries (because the progress bar does not work
-	properly in Windows command window)
 
 When you run the program without any command line arguments or options,
 PyGlossary tries to find PyGI, if it's installed, opens the Gtk3-based
