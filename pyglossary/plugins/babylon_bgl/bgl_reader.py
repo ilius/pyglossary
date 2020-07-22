@@ -307,7 +307,7 @@ class BglReader(object):
 		self.gzipOffset = None
 		# must be a in RRGGBB format
 		self.partOfSpeechColor = "007000"
-		self.iconData = None
+		self.iconDataList = []
 
 	def __len__(self):
 		if self.numEntries is None:
@@ -679,6 +679,10 @@ class BglReader(object):
 				)
 			return
 
+		if key.startswith("iconData"):
+			self.iconDataList.append(b_value)
+			return
+
 		value = None
 		func = infoKeyDecodeMethods.get(key)
 		if func is None:
@@ -704,7 +708,6 @@ class BglReader(object):
 			"sourceEncoding",
 			"targetEncoding",
 			"bgl_numEntries",
-			"iconData",
 		}:
 			setattr(self, key, value)
 			return
@@ -754,11 +757,12 @@ class BglReader(object):
 		)
 
 	def __iter__(self):
-		return self
-
-	def __next__(self):
 		if not self.file:
 			raise StopIteration
+
+		for index, iconData in enumerate(self.iconDataList):
+			yield self._glos.newDataEntry(f"icon{index+1}.ico", iconData)
+
 		block = Block()
 		while not self.isEndOfDictData():
 			if not self.readBlock(block):
@@ -767,14 +771,14 @@ class BglReader(object):
 				continue
 
 			if block.type == 2:
-				return self.readType2(block)
+				yield self.readType2(block)
 
 			elif block.type == 11:
 				succeed, u_word, u_alts, u_defi = self.readEntry_Type11(block)
 				if not succeed:
 					continue
 
-				return self._glos.newEntry(
+				yield self._glos.newEntry(
 					[u_word] + u_alts,
 					u_defi,
 				)
@@ -802,12 +806,10 @@ class BglReader(object):
 				)
 				if not succeed:
 					continue
-				return self._glos.newEntry(
+				yield self._glos.newEntry(
 					[u_word] + u_alts,
 					u_defi,
 				)
-
-		raise StopIteration
 
 	def readEntryWord(self, block, pos):
 		"""

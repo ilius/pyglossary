@@ -149,7 +149,7 @@ infoKeysByCode = {
 	0x08: "targetLang",
 	0x09: "description",  # Glossary description
 	0x0a: "browsingEnabled",  # 0: browsing disabled, 1: browsing enabled
-	0x0b: "iconData",  # FIXME
+	0x0b: "iconData",
 	0x0c: "bgl_numEntries",
 	0x11: "flags",  # the value is a dict
 	0x14: "creationTime",
@@ -163,6 +163,7 @@ infoKeysByCode = {
 	# in some cases, it's minutes after creationTime
 	# firstUpdated exists in more glossaries than lastUpdated
 	# so if lastUpdated is not there, we use firstUpdated as lastUpdated
+	0x24: "iconData2",
 	0x2c: "purchaseLicenseMsg",
 	0x2d: "licenseExpiredMsg",
 	0x2e: "purchaseAddress",
