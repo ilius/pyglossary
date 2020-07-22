@@ -29,6 +29,7 @@ class Writer(object):
 		firstTagCounter = Counter()
 		allTagsCounter = Counter()
 		wordCount = 0
+		bwordCount = 0
 		while True:
 			entry = yield
 			if entry is None:
@@ -38,6 +39,7 @@ class Writer(object):
 			wordCount += 1
 			defiFormatCounter[defiFormat] += 1
 			defi = entry.defi
+			bwordCount += defi.count("bword://")
 			if defiFormat == "m":
 				if re_possible_html.match(defi):
 					log.warn(f"undetected html defi: {defi}")
@@ -54,6 +56,7 @@ class Writer(object):
 		for key, value in glos.iterInfo():
 			info[key] = value
 		info["word_count"] = wordCount
+		info["bword_count"] = bwordCount
 		info["data_entry_count"] = data_entry_count
 		info["defi_format_counter"] = ", ".join(
 			f"{defiFormat}={count}"
@@ -71,5 +74,5 @@ class Writer(object):
 			firstTagCounter.most_common()
 		)
 		with open(filename, mode="w", encoding="utf-8") as _file:
-			_file.write(dataToPrettyJson(info))
+			_file.write(dataToPrettyJson(info) + "\n")
 
