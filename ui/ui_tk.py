@@ -18,7 +18,12 @@
 
 
 from pyglossary.core import homeDir, confDir, dataDir
-from pyglossary.glossary import *
+
+from pyglossary.glossary import *  # FIXME
+from pyglossary.glossary import (
+	homePage,
+)
+
 from pyglossary.text_utils import urlToPath
 from .base import *
 from os.path import join
@@ -890,7 +895,10 @@ class UI(tix.Frame, UIBase):
 			text="\nLicense\n",
 		)
 
-		label = newReadOnlyText(aboutFrame3, text=aboutText)
+		label = newReadOnlyText(
+			aboutFrame3,
+			text=f"{aboutText}\nHome page: {homePage}",
+		)
 		label.pack(fill="x")
 
 		label = newReadOnlyText(
