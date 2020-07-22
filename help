@@ -33,7 +33,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         <b>-v3</b> or '--verbosity 3' for errors, warnings and info
         <b>-v4</b> or '--verbosity 4' for debug mode
     Appearance:
-        --no-progress-bar and --no-color, useful for Windows (non-Unix) command line
+        --no-progress-bar and --no-color, useful for scripts
 
 <b>Full Convert Usage</b>:
     ${CMD} <u>INPUT_FILE</u> <u>OUTPUT_FILE</u> [-v<u>N</u>] [--read-format=<u>FORMAT</u>] [--write-format=<u>FORMAT</u>]
