@@ -154,7 +154,7 @@ class Glossary(GlossaryType):
 		"""
 		executed on startup.  as name implies, loads plugins from directory
 		"""
-		log.debug(f"Loading plugins from directory: {directory!r}")
+		# log.debug(f"Loading plugins from directory: {directory!r}")
 		if not isdir(directory):
 			log.error(f"Invalid plugin directory: {directory!r}")
 			return
@@ -206,7 +206,7 @@ class Glossary(GlossaryType):
 			return
 
 		if (not hasattr(plugin, "enable")) or (not plugin.enable):
-			log.debug(f"Plugin disabled or not a plugin: {pluginName}")
+			# log.debug(f"Plugin disabled or not a plugin: {pluginName}")
 			return
 
 		format = plugin.format
