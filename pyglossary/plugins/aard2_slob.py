@@ -47,6 +47,10 @@ class Reader(object):
 	def __init__(self, glos):
 		self._glos = glos
 		self._clear()
+		self._re_bword = re.compile(
+			'(<a href=[^<>]+?>)',
+			re.I,
+		)
 		try:
 			import icu
 		except ModuleNotFoundError as e:
@@ -73,6 +77,14 @@ class Reader(object):
 			return 0
 		return len(self._slobObj)
 
+	def _href_sub(self, m: re.Match) -> str:
+		st = m.group(0)
+		if "//" in st:
+			return st
+		st = st.replace('href="', 'href="bword://')
+		st = st.replace("href='", "href='bword://")
+		return st
+
 	def __iter__(self):
 		from pyglossary.plugin_lib.slob import MIME_HTML, MIME_TEXT
 		if not self._slobObj:
@@ -93,6 +105,7 @@ class Reader(object):
 				continue
 
 			defi = blob.content.decode("utf-8")
+			defi = self._re_bword.sub(self._href_sub, defi)
 			yield self._glos.newEntry(word, defi)
 
 
@@ -132,6 +145,8 @@ class Writer(object):
 					defiFormat = entry.defiFormat
 					if defiFormat == "h":
 						_ctype = "text/html; charset=utf-8"
+						b_defi = b_defi.replace(b'"bword://', b'"')
+						b_defi = b_defi.replace(b"'bword://", b"'")
 					elif defiFormat == "m":
 						_ctype = "text/plain; charset=utf-8"
 					else:
