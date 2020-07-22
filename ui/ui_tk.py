@@ -17,7 +17,7 @@
 # GNU General Public License for more details.
 
 
-from pyglossary.core import homeDir, confDir
+from pyglossary.core import homeDir, confDir, dataDir
 from pyglossary.glossary import *
 from pyglossary.text_utils import urlToPath
 from .base import *
@@ -41,11 +41,13 @@ endFormat = "\x1b[0;0;0m"  # End Format #len=8
 # redOnGray = "\x1b[0;1;31;47m"
 startRed = "\x1b[31m"
 
+resDir = join(dataDir, "res")
+
 
 def set_window_icon(window):
 	window.iconphoto(
 		True,
-		tk.PhotoImage(file=join(dataDir, "res", "pyglossary.png")),
+		tk.PhotoImage(file=logo),
 	)
 
 
@@ -83,6 +85,13 @@ def centerWindow(win):
 	y = win.winfo_screenheight() // 2 - win_height // 2
 	win.geometry(encodeGeometry(x, y, width, height))
 	win.deiconify()
+
+
+def newLabelWithImage(parent, file=""):
+	image = tk.PhotoImage(file=file)
+	label = ttk.Label(parent, image=image)
+	label.image = image  # keep a reference!
+	return label
 
 
 class TkTextLogHandler(logging.Handler):
@@ -597,11 +606,13 @@ class UI(tix.Frame, UIBase):
 				log.exception("")
 		self.fcd_dir = fcd_dir
 		######################
-		vpaned = ttk.PanedWindow(self, orient=tk.VERTICAL)
-		notebook = tix.NoteBook(vpaned)
+		notebook = tix.NoteBook(self)
 		notebook.add("tabConvert", label="Convert", underline=0)
 		# notebook.add("tabReverse", label="Reverse", underline=0)
+		notebook.add("tabAbout", label="About", underline=0)
 		convertFrame = tix.Frame(notebook.tabConvert)
+		aboutFrame = tix.Frame(notebook.tabAbout)
+		convertVpaned = ttk.PanedWindow(convertFrame, orient=tk.VERTICAL)
 		######################
 		frame = tix.Frame(convertFrame)
 		##
@@ -719,14 +730,14 @@ class UI(tix.Frame, UIBase):
 		)
 		###
 		frame.pack(fill="x")
+		convertVpaned.add(frame)
 		######
 		convertFrame.pack(fill="x")
-		vpaned.add(notebook)
 		#################
-		console = tix.Text(vpaned, height=15, background="#000000")
+		console = tix.Text(convertVpaned, height=15, background="#000000")
 		# self.consoleH = 15
 		# sbar = Tix.Scrollbar(
-		#	vpaned,
+		#	convertVpaned,
 		#	orien=Tix.VERTICAL,
 		#	command=console.yview
 		# )
@@ -739,43 +750,11 @@ class UI(tix.Frame, UIBase):
 		)
 		console.insert("end", "Console:\n")
 		####
-		vpaned.add(console)
-		vpaned.pack(fill="both", expand=True)
+		convertVpaned.add(console)
+		convertVpaned.pack(fill="both", expand=True)
 		self.console = console
 		##################
-		frame2 = tix.Frame(self)
-		clearB = ttk.Button(
-			frame2,
-			text="Clear",
-			command=self.console_clear,
-			# bg="black",
-			# fg="#ffff00",
-			# activebackground="#333333",
-			# activeforeground="#ffff00",
-		)
-		clearB.pack(side="left")
-		####
-		label = ttk.Label(frame2, text="Verbosity")
-		label.pack(side="left")
-		##
-		comboVar = tk.StringVar()
-		combo = ttk.OptionMenu(
-			frame2,
-			comboVar,
-			log.getVerbosity(),  # default
-			0, 1, 2, 3, 4,
-		)
-		comboVar.trace("w", self.verbosityChanged)
-		combo.pack(side="left")
-		self.verbosityCombo = comboVar
-		#####
-		pbar = ProgressBar(frame2, width=400)
-		pbar.pack(side="left", fill="x", expand=True)
-		self.pbar = pbar
-		frame2.pack(fill="x")
-		self.progressTitle = ""
-		#############
-		# vpaned.grid()
+		# convertVpaned.grid()
 		# bottomFrame.grid()
 		# self.grid()
 		#####################
@@ -783,24 +762,6 @@ class UI(tix.Frame, UIBase):
 		# lbox.insert(0, "aaaaaaaa", "bbbbbbbbbbbbbbbbbbbb")
 		# lbox.pack(fill="x")
 		##############
-		frame3 = tix.Frame(self)
-		aboutB = ttk.Button(
-			frame3,
-			text="About",
-			command=self.about_clicked,
-			# bg="#e000e0",
-			# activebackground="#f030f0",
-		)
-		aboutB.pack(side="right")
-		closeB = ttk.Button(
-			frame3,
-			text="Close",
-			command=rootWin.quit,
-			# bg="#ff0000",
-			# activebackground="#ff5050",
-		)
-		closeB.pack(side="right")
-		frame3.pack(fill="x")
 		# __________________________ Reverse Tab __________________________ #
 		# revFrame = tix.Frame(notebook.tabReverse)
 		# revFrame.pack(fill="x")
@@ -873,6 +834,111 @@ class UI(tix.Frame, UIBase):
 		# frame.pack(fill="x")
 		# _________________________________________________________________ #
 
+		aboutFrame2 = tix.Frame(aboutFrame)
+		##
+		label = newLabelWithImage(aboutFrame2, file=logo)
+		label.pack(side="left")
+		##
+		##
+		label = ttk.Label(aboutFrame2, text=f"PyGlossary\nVersion {core.VERSION}")
+		label.pack(side="left")
+		##
+		aboutFrame2.pack(side="top", fill="x")
+		##
+		style = ttk.Style(self)
+		style.configure("TNotebook", tabposition="wn")
+		# ws => to the left (west) and to the bottom (south)
+		# wn => to the left (west) and at top
+		aboutNotebook = ttk.Notebook(aboutFrame, style="TNotebook")
+
+		aboutFrame3 = tk.Frame(aboutNotebook)
+		authorsFrame = tk.Frame(aboutNotebook)
+		licenseFrame = tk.Frame(aboutNotebook)
+
+		# tabImg = tk.PhotoImage(file=join(resDir, "dialog-information-22.png"))
+		# tabImg = tk.PhotoImage(file=join(resDir, "author-22.png"))
+
+		aboutNotebook.add(
+			aboutFrame3,
+			text="\n About  \n",
+			# image=tabImg, # not working
+			# compound=tk.TOP,
+			# padding=50, # not working
+		)
+		aboutNotebook.add(
+			authorsFrame,
+			text="\nAuthors\n",
+		)
+		aboutNotebook.add(
+			licenseFrame,
+			text="\nLicense\n",
+		)
+
+		label = ttk.Label(aboutFrame3, text=aboutText)
+		label.pack(fill="x")
+
+		label = ttk.Label(
+			authorsFrame,
+			text="\n".join(authors).replace("\t", "    "),
+		)
+		label.pack(fill="x")
+
+		label = ttk.Label(licenseFrame, text=licenseText)
+		label.pack(fill="x")
+
+		aboutNotebook.pack(fill="x")
+
+		aboutFrame.pack(fill="x")
+		# _________________________________________________________________ #
+
+		notebook.pack(fill="both", expand=True)
+
+		# _________________________________________________________________ #
+
+		statusBarframe = tix.Frame(self)
+		clearB = ttk.Button(
+			statusBarframe,
+			text="Clear",
+			command=self.console_clear,
+			# bg="black",
+			# fg="#ffff00",
+			# activebackground="#333333",
+			# activeforeground="#ffff00",
+		)
+		clearB.pack(side="left")
+		####
+		label = ttk.Label(statusBarframe, text="Verbosity")
+		label.pack(side="left")
+		##
+		comboVar = tk.StringVar()
+		combo = ttk.OptionMenu(
+			statusBarframe,
+			comboVar,
+			log.getVerbosity(),  # default
+			0, 1, 2, 3, 4,
+		)
+		comboVar.trace("w", self.verbosityChanged)
+		combo.pack(side="left")
+		self.verbosityCombo = comboVar
+		#####
+		pbar = ProgressBar(statusBarframe, width=400)
+		pbar.pack(side="left", fill="x", expand=True)
+		self.pbar = pbar
+		statusBarframe.pack(fill="x")
+		self.progressTitle = ""
+		# _________________________________________________________________ #
+		frame3 = tix.Frame(self)
+		closeB = ttk.Button(
+			frame3,
+			text="Close",
+			command=rootWin.quit,
+			# bg="#ff0000",
+			# activebackground="#ff5050",
+		)
+		closeB.pack(side="right")
+		frame3.pack(fill="x")
+		# _________________________________________________________________ #
+
 		centerWindow(rootWin)
 		# show the window
 		if os.sep == "\\":  # Windows
@@ -889,131 +955,6 @@ class UI(tix.Frame, UIBase):
 		log.setVerbosity(
 			int(self.verbosityCombo.get())
 		)
-
-	def about_clicked(self):
-		about = tix.Toplevel(width=600)  # bg="#0f0" does not work
-		about.title("About PyGlossary")
-		about.resizable(width=False, height=False)
-		set_window_icon(about)
-		about.bind('<Escape>', lambda e: about.destroy())
-		###
-		msg1 = tix.Message(
-			about,
-			width=600,
-			text=f"PyGlossary {VERSION} (Tkinter)",
-			font=("DejaVu Sans", 13, "bold"),
-		)
-		msg1.pack(fill="x", expand=True)
-		###
-		msg2 = tix.Message(
-			about,
-			width=600,
-			text=aboutText,
-			font=("DejaVu Sans", 9, "bold"),
-			justify=tix.CENTER,
-		)
-		msg2.pack(fill="x", expand=True)
-		###
-		msg3 = tix.Message(
-			about,
-			width=600,
-			text=homePage,
-			font=("DejaVu Sans", 8, "bold"),
-			fg="#3333ff",
-		)
-		msg3.pack(fill="x", expand=True)
-		###
-		msg4 = tix.Message(
-			about,
-			width=600,
-			text="Install Gtk3+PyGI to have a better interface!",
-			font=("DejaVu Sans", 8, "bold"),
-			fg="#00aa00",
-		)
-		msg4.pack(fill="x", expand=True)
-		###########
-		frame = tix.Frame(about)
-		###
-		button = ttk.Button(
-			frame,
-			text="Close",
-			command=about.destroy,
-			# bg="#ff0000",
-			# activebackground="#ff5050",
-		)
-		button.pack(side="right")
-		###
-		button = ttk.Button(
-			frame,
-			text="License",
-			command=self.about_license_clicked,
-			# bg="#00e000",
-			# activebackground="#22f022",
-		)
-		button.pack(side="right")
-		###
-		button = ttk.Button(
-			frame,
-			text="Credits",
-			command=self.about_credits_clicked,
-			# bg="#0000ff",
-			# activebackground="#5050ff",
-		)
-		button.pack(side="right")
-		###
-		frame.pack(fill="x")
-
-	def about_credits_clicked(self):
-		about = tix.Toplevel()  # bg="#0f0" does not work
-		about.title("Credits")
-		about.resizable(width=False, height=False)
-		set_window_icon(about)
-		about.bind('<Escape>', lambda e: about.destroy())
-		###
-		msg1 = tix.Message(
-			about,
-			width=600,
-			text="\n".join(authors).replace("\t", "    "),
-			font=("DejaVu Sans", 9, "bold"),
-		)
-		msg1.pack(fill="x", expand=True)
-		###########
-		frame = tix.Frame(about)
-		closeB = ttk.Button(
-			frame,
-			text="Close",
-			command=about.destroy,
-			# bg="#ff0000",
-			# activebackground="#ff5050",
-		)
-		closeB.pack(side="right")
-		frame.pack(fill="x")
-
-	def about_license_clicked(self):
-		about = tix.Toplevel()  # bg="#0f0" does not work
-		about.title("License")
-		about.resizable(width=False, height=False)
-		set_window_icon(about)
-		about.bind('<Escape>', lambda e: about.destroy())
-		###
-		msg1 = tix.Message(
-			about,
-			width=420,
-			text=licenseText,
-			font=("DejaVu Sans", 9, "bold"),
-		)
-		msg1.pack(fill="x", expand=True)
-		###########
-		frame = tix.Frame(about)
-		closeB = ttk.Button(
-			frame,
-			text="Close",
-			command=about.destroy,
-			# bg="#ff0000",
-			# activebackground="#ff5050",
-		)
-		closeB.pack(side="right")
-		frame.pack(fill="x")
 
 	def resized(self, event):
 		dh = self.rootWin.winfo_height() - self.winfo_height()
