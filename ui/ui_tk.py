@@ -16,17 +16,25 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-
+from pyglossary import core
 from pyglossary.core import homeDir, confDir, dataDir
 
-from pyglossary.glossary import *  # FIXME
 from pyglossary.glossary import (
+	Glossary,
 	homePage,
 )
 
+from .base import (
+	UIBase,
+	logo,
+	aboutText,
+	authors,
+	licenseText,
+)
+
 from pyglossary.text_utils import urlToPath
-from .base import *
-from os.path import join
+import os
+from os.path import join, isfile
 import logging
 import traceback
 

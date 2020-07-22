@@ -26,7 +26,6 @@ from pyglossary.core import (
 	dataDir,
 	appResDir,
 )
-from pyglossary.glossary import *
 from pyglossary.json_utils import jsonToData
 
 def fread(path):

@@ -34,9 +34,19 @@ from typing import (
 from pyglossary.text_utils import urlToPath
 from pyglossary.os_utils import click_website
 
-from pyglossary.glossary import *  # FIXME
+from pyglossary.glossary import (
+	Glossary,
+	homePage,
+)
 
-from .base import *
+from .base import (
+	UIBase,
+	logo,
+	aboutText,
+	authors,
+	licenseText,
+)
+
 from pyglossary import core
 from .dependency import checkFormatDepends
 
