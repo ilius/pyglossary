@@ -18,6 +18,8 @@
 from . import *
 from .utils import (
 	imageFromFile,
+	VBox,
+	pack,
 )
 
 class AboutWidget(gtk.Box):
@@ -36,6 +38,7 @@ class AboutWidget(gtk.Box):
 		if logo:
 			headerBox.pack_start(imageFromFile(logo), False, False, 0)
 		headerLabel = gtk.Label(label=header)
+		headerLabel.set_selectable(True)
 		headerBox.pack_start(headerLabel, False, False, 15)
 		headerBox.show_all()
 		self.pack_start(headerBox, False, False, 0)
@@ -45,9 +48,9 @@ class AboutWidget(gtk.Box):
 		self.pack_start(notebook, True, True, 5)
 		notebook.set_tab_pos(gtk.PositionType.LEFT)
 		##
-		tab1_about = self.newTabWidget(about)
-		tab2_authors = self.newTabWidget(authors)
-		tab3_license = self.newTabWidget(license)
+		tab1_about = self.newTabLabelWidget(about)
+		tab2_authors = self.newTabWidgetTextView(authors)
+		tab3_license = self.newTabWidgetTextView(license)
 		##
 		tabs = [
 			(tab1_about, self.newTabTitle("About", "dialog-information-22.png")),
@@ -60,7 +63,8 @@ class AboutWidget(gtk.Box):
 		##
 		self.show_all()
 
-	def newTabWidget(
+	# <a href="...">Somethig</a> does not work with TextView
+	def newTabWidgetTextView(
 		self,
 		text: str,
 		wrap: bool = False,
@@ -74,13 +78,40 @@ class AboutWidget(gtk.Box):
 		tv.set_cursor_visible(False)
 		tv.set_border_width(10)
 		buf = tv.get_buffer()
-		# buf.insert_markup(iter=buf.get_end_iter(), markup=text, len=-1)
+		# buf.insert_markup(buf.get_end_iter(), markup=text, len=len(text.encode("utf-8")))
 		buf.set_text(text)
 		tv.show_all()
 		swin = gtk.ScrolledWindow()
 		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
 		swin.set_border_width(0)
 		swin.add(tv)
+		return swin
+
+	def newTabLabelWidget(
+		self,
+		text: str,
+		wrap: bool = False,
+		justification: "Optional[gtk.Justification]" = None,
+	):
+		box = VBox()
+		box.set_border_width(10)
+		label = gtk.Label()
+		label.set_selectable(True)
+		label.set_xalign(0)
+		label.set_yalign(0)
+		pack(box, label, 0, 0)
+		#if wrap:
+		#	tv.set_wrap_mode(gtk.WrapMode.WORD)
+		#if justification is not None:
+		#	tv.set_justification(justification)
+		# label.set_cursor_visible(False)
+		# label.set_border_width(10)
+		label.set_markup(text)
+		label.show_all()
+		swin = gtk.ScrolledWindow()
+		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
+		swin.set_border_width(0)
+		swin.add(box)
 		return swin
 
 	def newTabTitle(self, title: str, icon: str):

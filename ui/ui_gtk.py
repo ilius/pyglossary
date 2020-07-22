@@ -33,7 +33,9 @@ from typing import (
 
 from pyglossary.text_utils import urlToPath
 from pyglossary.os_utils import click_website
-from pyglossary.glossary import *
+
+from pyglossary.glossary import *  # FIXME
+
 from .base import *
 from pyglossary import core
 from .dependency import checkFormatDepends
@@ -588,12 +590,12 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# ____________________ Tab 1 - Convert ____________________ #
 		sizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		####
-		vbox = gtk.VBox()
+		vbox = VBox()
 		vbox.label = _("Convert")
 		vbox.icon = ""  # "*.png"
 		self.prefPages.append(vbox)
 		######
-		hbox = gtk.HBox(spacing=3)
+		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input Format")+":")
 		pack(hbox, hbox.label)
 		sizeGroup.add_widget(hbox.label)
@@ -605,7 +607,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(hbox, self.convertInputFormatCombo.optionsButton)
 		pack(vbox, hbox)
 		###
-		hbox = gtk.HBox(spacing=3)
+		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input File")+":")
 		pack(hbox, hbox.label)
 		sizeGroup.add_widget(hbox.label)
@@ -630,7 +632,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		vbox.sep1.show()
 		pack(vbox, vbox.sep1)
 		#####
-		hbox = gtk.HBox(spacing=3)
+		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Output Format")+":")
 		pack(hbox, hbox.label)
 		sizeGroup.add_widget(hbox.label)
@@ -642,7 +644,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(hbox, self.convertOutputFormatCombo.optionsButton)
 		pack(vbox, hbox)
 		###
-		hbox = gtk.HBox(spacing=3)
+		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Output File")+":")
 		pack(hbox, hbox.label)
 		sizeGroup.add_widget(hbox.label)
@@ -663,7 +665,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			self.convertOutputEntryChanged,
 		)
 		#####
-		hbox = gtk.HBox(spacing=10)
+		hbox = HBox(spacing=10)
 		label = gtk.Label(label="")
 		pack(hbox, label, 1, 1, 10)
 		self.convertButton = gtk.Button()
@@ -683,12 +685,12 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		####
 		sizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		####
-		vbox = gtk.VBox()
+		vbox = VBox()
 		vbox.label = _("Reverse")
 		vbox.icon = ""  # "*.png"
 		# self.prefPages.append(vbox)
 		######
-		hbox = gtk.HBox(spacing=3)
+		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input Format")+":")
 		pack(hbox, hbox.label)
 		sizeGroup.add_widget(hbox.label)
@@ -697,7 +699,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(hbox, self.reverseInputFormatCombo)
 		pack(vbox, hbox)
 		###
-		hbox = gtk.HBox(spacing=3)
+		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input File")+":")
 		pack(hbox, hbox.label)
 		sizeGroup.add_widget(hbox.label)
@@ -722,7 +724,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		vbox.sep1.show()
 		pack(vbox, vbox.sep1)
 		#####
-		hbox = gtk.HBox(spacing=3)
+		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Output Tabfile")+":")
 		pack(hbox, hbox.label)
 		sizeGroup.add_widget(hbox.label)
@@ -743,7 +745,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			self.reverseOutputEntryChanged,
 		)
 		#####
-		hbox = gtk.HBox(spacing=3)
+		hbox = HBox(spacing=3)
 		label = gtk.Label(label="")
 		pack(hbox, label, 1, 1, 5)
 		###
@@ -776,7 +778,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			logo=logo,
 			header=f"PyGlossary\nVersion {core.VERSION}",
 			# about=summary,
-			about=aboutText,
+			about=f'{aboutText}\n<a href="{homePage}">{homePage}</a>',
 			authors="\n".join(authors),
 			license=licenseText,
 		)
@@ -791,7 +793,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		for vbox in self.prefPages:
 			l = gtk.Label(label=vbox.label)
 			l.set_use_underline(True)
-			vb = gtk.VBox(spacing=3)
+			vb = VBox(spacing=3)
 			if vbox.icon:
 				vbox.image = imageFromFile(vbox.icon)
 				pack(vb, vbox.image)
@@ -836,7 +838,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# pbar.set_property("height-request", 20)
 		pack(self.vbox, pbar, 0, 0)
 		############
-		hbox = gtk.HBox(spacing=5)
+		hbox = HBox(spacing=5)
 		clearButton = gtk.Button(
 			use_stock=gtk.STOCK_CLEAR,
 			always_show_image=True,

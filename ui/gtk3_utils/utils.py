@@ -22,6 +22,15 @@ from os.path import isabs, join
 from pyglossary.core import appResDir
 
 
+
+def VBox(**kwargs):
+	return gtk.Box(orientation=gtk.Orientation.VERTICAL, **kwargs)
+
+
+def HBox(**kwargs):
+	return gtk.Box(orientation=gtk.Orientation.HORIZONTAL, **kwargs)
+
+
 def set_tooltip(widget, text):
 	try:
 		widget.set_tooltip_text(text)  # PyGTK 2.12 or above
@@ -104,7 +113,7 @@ def showMsg(
 	# flags=0 makes it skip task bar
 	if title:
 		win.set_title(title)
-	hbox = gtk.HBox(spacing=10)
+	hbox = HBox(spacing=10)
 	hbox.set_border_width(borderWidth)
 	if iconName:
 		# win.set_icon(...)
