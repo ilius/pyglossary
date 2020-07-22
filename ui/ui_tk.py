@@ -107,8 +107,19 @@ def newLabelWithImage(parent, file=""):
 	return label
 
 
-def newReadOnlyText(parent, text="", height=20, borderwidth=10):
-	w = tk.Text(parent, height=height, borderwidth=borderwidth)
+def newReadOnlyText(
+	parent,
+	text="",
+	height=20,
+	borderwidth=10,
+	font=None,
+):
+	w = tk.Text(
+		parent,
+		height=height,
+		borderwidth=borderwidth,
+		font=font,
+	)
 	w.insert(1.0, text)
 	w.pack()
 	w.configure(state="disabled")
@@ -906,16 +917,24 @@ class UI(tix.Frame, UIBase):
 		label = newReadOnlyText(
 			aboutFrame3,
 			text=f"{aboutText}\nHome page: {homePage}",
+			font=("DejaVu Sans", 11, ""),
+		)
+		label.pack(fill="x")
+
+		authorsText = "\n".join(authors)
+		authorsText = authorsText.replace("\t", "    ")
+		label = newReadOnlyText(
+			authorsFrame,
+			text=authorsText,
+			font=("DejaVu Sans", 11, ""),
 		)
 		label.pack(fill="x")
 
 		label = newReadOnlyText(
-			authorsFrame,
-			text="\n".join(authors).replace("\t", "    "),
+			licenseFrame,
+			text=licenseText,
+			font=("DejaVu Sans", 11, ""),
 		)
-		label.pack(fill="x")
-
-		label = newReadOnlyText(licenseFrame, text=licenseText)
 		label.pack(fill="x")
 
 		aboutNotebook.pack(fill="x")
