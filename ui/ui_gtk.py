@@ -55,8 +55,6 @@ gtk.Window.set_default_icon_from_file(logo)
 
 _ = str  # later replace with translator function
 
-pixDir = join(dataDir, "res")
-
 
 def getCompressedFileExt(fpath):
 	fname, ext = splitext(fpath.lower())
