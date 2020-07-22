@@ -485,12 +485,17 @@ class BglReader(object):
 		glos.setInfo("sourceCharset", "UTF-8")
 		glos.setInfo("targetCharset", "UTF-8")
 		###
+		if "lastUpdated" not in self.info:
+			if "firstUpdated" in self.info:
+				log.debug(f"replacing firstUpdated with lastUpdated")
+				self.info["lastUpdated"] = self.info.pop("firstUpdated")
+		###
 		for key, value in self.info.items():
 			if value == "":
 				continue # TODO: a bool flag to add empty value infos?
 			# leave "creationTime" and "lastUpdated" as is
 			if key in {
-				"middleUpdated",
+				"firstUpdated",
 				"utf8Encoding",
 				"spellingAlternatives",
 				"caseSensitive",

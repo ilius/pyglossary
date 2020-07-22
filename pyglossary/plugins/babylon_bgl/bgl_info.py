@@ -155,7 +155,14 @@ infoKeysByCode = {
 	0x14: "creationTime",
 	0x1a: "sourceCharset",
 	0x1b: "targetCharset",
-	0x1c: "middleUpdated",
+	0x1c: "firstUpdated",
+	# firstUpdated was prevously called middleUpdated
+	# in rare cases, firstUpdated is before creationTime
+	# but usually it looks like to be the first update (after creation)
+	# in some cases, it's the same as lastUpdated
+	# in some cases, it's minutes after creationTime
+	# firstUpdated exists in more glossaries than lastUpdated
+	# so if lastUpdated is not there, we use firstUpdated as lastUpdated
 	0x2c: "purchaseLicenseMsg",
 	0x2d: "licenseExpiredMsg",
 	0x2e: "purchaseAddress",
@@ -175,7 +182,7 @@ infoKeyDecodeMethods = {
 	"browsingEnabled": lambda b_value: (b_value[0] != 0),
 	"bgl_numEntries": binStrToInt,
 	"creationTime": decodeBglBinTime,
-	"middleUpdated": decodeBglBinTime,
+	"firstUpdated": decodeBglBinTime,
 	"lastUpdated": decodeBglBinTime,
 	"sourceCharset": charsetInfoDecode,
 	"targetCharset": charsetInfoDecode,
