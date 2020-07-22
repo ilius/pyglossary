@@ -94,8 +94,8 @@ def newLabelWithImage(parent, file=""):
 	return label
 
 
-def newReadOnlyText(parent, text="", borderwidth=10):
-	w = tk.Text(parent, borderwidth=borderwidth)
+def newReadOnlyText(parent, text="", height=20, borderwidth=10):
+	w = tk.Text(parent, height=height, borderwidth=borderwidth)
 	w.insert(1.0, text)
 	w.pack()
 	w.configure(state="disabled")
