@@ -94,6 +94,22 @@ def newLabelWithImage(parent, file=""):
 	return label
 
 
+def newReadOnlyText(parent, text="", borderwidth=10):
+	w = tk.Text(parent, borderwidth=borderwidth)
+	w.insert(1.0, text)
+	w.pack()
+	w.configure(state="disabled")
+	# if tkinter is 8.5 or above you'll want the selection background
+	# to appear like it does when the widget is activated
+	# comment this out for older versions of Tkinter
+	w.configure(
+		inactiveselectbackground=w.cget("selectbackground"),
+		bg=parent.cget('bg'),
+		relief="flat",
+	)
+	return w
+
+
 class TkTextLogHandler(logging.Handler):
 	def __init__(self, tktext):
 		logging.Handler.__init__(self)
@@ -874,16 +890,16 @@ class UI(tix.Frame, UIBase):
 			text="\nLicense\n",
 		)
 
-		label = ttk.Label(aboutFrame3, text=aboutText)
+		label = newReadOnlyText(aboutFrame3, text=aboutText)
 		label.pack(fill="x")
 
-		label = ttk.Label(
+		label = newReadOnlyText(
 			authorsFrame,
 			text="\n".join(authors).replace("\t", "    "),
 		)
 		label.pack(fill="x")
 
-		label = ttk.Label(licenseFrame, text=licenseText)
+		label = newReadOnlyText(licenseFrame, text=licenseText)
 		label.pack(fill="x")
 
 		aboutNotebook.pack(fill="x")
