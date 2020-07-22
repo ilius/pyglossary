@@ -110,10 +110,10 @@ def newLabelWithImage(parent, file=""):
 def newReadOnlyText(
 	parent,
 	text="",
-	height=20,
 	borderwidth=10,
 	font=None,
 ):
+	height = len(text.strip().split("\n"))
 	w = tk.Text(
 		parent,
 		height=height,
