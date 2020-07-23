@@ -161,36 +161,8 @@ def remove_style(tag: dict, line: str) -> None:
 		del tag["style"]
 
 
-def fix_sound_link(href: str, tag: dict, BeautifulSoup: Any):
-	src = href[len("sound://"):]
-	if "data-file" in tag.attrs:  # for webster
-		del tag["href"]
-		audio = BeautifulSoup.Tag(name="audio")
-		audio["id"] = tag["data-file"]
-		audio["src"] = f"{src}"
-		tag["onmousedown"] = "document.getElementById(" \
-			f'"{tag["data-file"]}").play(); return false;'
-		tag.insert_after(audio)
-		return
-
-	if "class" in tag.attrs:
-		if "fayin" in tag["class"]:  # for oxford8
-			del tag["href"]
-			audio = BeautifulSoup.Tag(name="audio")
-			audio["src"] = f"{src}"
-			tag["onmousedown"] = f"this.lastChild.play(); return false;"
-			tag.append(audio)
-		return
-
-	for ch in tag.children:
-		if ch.find_all("a"):
-			return
-
-	audio = BeautifulSoup.Tag(name="audio")
-	audio["src"] = f"{src}"
-	tag["onmousedown"] = f"this.lastChild.play(); return false;"
-	tag.append(audio)
-	del tag["href"]
+def fix_sound_link(href: str, tag: dict):
+	tag["href"] = f'javascript:new Audio("{href[len("sound://"):]}").play();'
 
 
 def link_is_url(href: str) -> bool:
@@ -293,7 +265,7 @@ def prepare_content_with_soup(
 		href = cleanup_link_target(href)
 
 		if href.startswith("sound:"):
-			fix_sound_link(href, tag, BeautifulSoup)
+			fix_sound_link(href, tag)
 
 		elif href.startswith("phonetics") or href.startswith("help:phonetics"):
 			# for oxford9
