@@ -293,7 +293,6 @@ class Glossary(GlossaryType):
 						"in write, without singleFile=True"
 					)
 
-
 		if hasattr(plugin, "write"):
 			log.error(
 				f"plugin {format} has write function, "
@@ -916,6 +915,7 @@ class Glossary(GlossaryType):
 		format: str,
 		sort: Optional[bool] = None,
 		sortKey: Optional[Callable[[bytes], Any]] = None,
+		defaultSortKey: Optional[Callable[[bytes], Any]] = None,
 		sortCacheSize: int = 0,
 		**options
 	) -> Optional[str]:
@@ -924,9 +924,13 @@ class Glossary(GlossaryType):
 			True (enable sorting),
 			False (disable sorting),
 			None (auto, get from UI)
+
 		sortKey (callable or None):
 			key function for sorting
 			takes a word as argument, which is str or list (with alternates)
+
+		defaultSortKey (callable or None):
+			used when no sortKey was given, or found in plugin
 
 		returns absolute path of output file, or None if failed
 		"""
@@ -984,21 +988,27 @@ class Glossary(GlossaryType):
 
 		if sort:
 			writerSortKey = getattr(writer, "sortKey", None)
-			if sortKey is None:
-				if not writerSortKey:
-					log.critical(f"Plugin has not provided sortKey")
-					return
-				sortKey = writerSortKey
-				log.debug(f"Using Writer.sortKey method from {format} plugin")
-			elif sortOnWrite == ALWAYS:
+			if sortOnWrite == ALWAYS:
 				if writerSortKey:
+					if sortKey:
+						log.warning(
+							f"Ignoring user-defined sort order, and "
+							f"using sortKey function from {format} plugin"
+						)
 					sortKey = writerSortKey
-					log.warning(
-						f"Ignoring user-defined sort order"
-						f", and using key function from {format} plugin"
-					)
+				else:
+					log.error(f"No sortKey was found in plugin")
+
 			if sortKey is None:
-				sortKey = Entry.defaultSortKey
+				if writerSortKey:
+					log.info(f"Using sortKey from {format} plugin")
+					sortKey = writerSortKey
+				elif defaultSortKey:
+					log.info(f"Using default sortKey")
+					sortKey = defaultSortKey
+				else:
+					log.critical(f"No sortKey was found")
+					return
 
 			if self._readers:
 				self._sortKey = sortKey
@@ -1110,12 +1120,15 @@ class Glossary(GlossaryType):
 		outputFormat: str = "",
 		sort: Optional[bool] = None,
 		sortKey: Optional[Callable[[bytes], Any]] = None,
+		defaultSortKey: Optional[Callable[[bytes], Any]] = None,
 		sortCacheSize: int = 0,
 		readOptions: Optional[Dict[str, Any]] = None,
 		writeOptions: Optional[Dict[str, Any]] = None,
 	) -> Optional[str]:
 		"""
 		returns absolute path of output file, or None if failed
+
+		defaultSortKey is used when no sortKey was given, or found in plugin
 		"""
 		if not readOptions:
 			readOptions = {}
@@ -1165,6 +1178,7 @@ class Glossary(GlossaryType):
 			outputFormat,
 			sort=sort,
 			sortKey=sortKey,
+			defaultSortKey=defaultSortKey,
 			sortCacheSize=sortCacheSize,
 			**writeOptions
 		)

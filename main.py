@@ -329,7 +329,7 @@ for param in convertOptionsKeys:
 		convertOptions[param] = value
 
 if convertOptions.get("sort", False):
-	convertOptions["sortKey"] = Entry.defaultSortKey
+	convertOptions["defaultSortKey"] = Entry.defaultSortKey
 
 if args.inputFilename and readOptions:
 	inputFormat = Glossary.detectInputFormat(
