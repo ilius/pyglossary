@@ -19,6 +19,8 @@ RawEntryType = Union[
 
 
 class BaseEntry(object):
+	__slots__ = []
+
 	def isData(self) -> bool:
 		raise NotImplementedError
 
