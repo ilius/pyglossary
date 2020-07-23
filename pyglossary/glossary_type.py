@@ -7,6 +7,7 @@ from typing import (
 	Optional,
 	Iterator,
 	Callable,
+	Generator,
 )
 
 from collections import OrderedDict as odict
@@ -60,8 +61,13 @@ class GlossaryType(object):
 		encoding: str = "utf-8",
 		newline: str = "\n",
 		resources: bool = True,
-	) -> bool:
+	) -> Generator[None, "BaseEntry", None]:
 		raise NotImplementedError
 
-	def writeTabfile(self, filename: str = "", **kwargs) -> None:
+	def writeTabfile(
+		self,
+		filename: str = "",
+		fileObj: Optional["file"] = None,
+		**kwargs,
+	) -> Generator[None, "BaseEntry", None]:
 		raise NotImplementedError
