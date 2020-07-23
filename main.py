@@ -125,8 +125,10 @@ parser.add_argument(
 	dest="direct",
 	action="store_false",
 	default=None,
-	help="disable `direct` mode, load full data into memory before writing"
-		 ", this is default",
+	help=(
+		"disable `direct` mode, load full data into memory before writing"
+		", this is default"
+	),
 )
 parser.add_argument(
 	"--no-alts",
@@ -330,19 +332,27 @@ if convertOptions.get("sort", False):
 	convertOptions["sortKey"] = Entry.defaultSortKey
 
 if args.inputFilename and readOptions:
-	inputFormat = Glossary.detectInputFormat(args.inputFilename, format=args.inputFormat)
+	inputFormat = Glossary.detectInputFormat(
+		args.inputFilename,
+		format=args.inputFormat,
+	)
 	if not inputFormat:
-		log.error("Could not detect format for input file %s" % args.inputFilename)
+		log.error(
+			f"Could not detect format for input file {args.inputFilename}"
+		)
 		sys.exit(1)
 	readOptionsProp = Glossary.plugins[inputFormat].optionsProp
 	for optName, optValue in readOptions.items():
 		if optName not in Glossary.formatsReadOptions[inputFormat]:
-			log.error("Invalid option name %s for format %s" % (optName, inputFormat))
+			log.error(f"Invalid option name {optName} for format {inputFormat}")
 			sys.exit(1)
 		prop = readOptionsProp[optName]
 		optValueNew, ok = prop.evaluate(optValue)
 		if not ok or not prop.validate(optValueNew):
-			log.error("Invalid option value %s=%r for format %s" % (optName, optValue, inputFormat))
+			log.error(
+				f"Invalid option value {optName}={optValue!r}"
+				f" for format {inputFormat}"
+			)
 			sys.exit(1)
 		readOptions[optName] = optValueNew
 
@@ -353,17 +363,22 @@ if args.outputFilename and writeOptions:
 		inputFilename=args.inputFilename,
 	)
 	if not outputFormat:
-		log.error("Could not detect format for output file %s" % args.outputFilename)
+		log.error(
+			f"Could not detect format for output file {args.outputFilename}"
+		)
 		sys.exit(1)
 	writeOptionsProp = Glossary.plugins[outputFormat].optionsProp
 	for optName, optValue in writeOptions.items():
 		if optName not in Glossary.formatsWriteOptions[outputFormat]:
-			log.error("Invalid option name %s for format %s" % (optName, outputFormat))
+			log.error(f"Invalid option name {optName} for format {outputFormat}")
 			sys.exit(1)
 		prop = writeOptionsProp[optName]
 		optValueNew, ok = prop.evaluate(optValue)
 		if not ok or not prop.validate(optValueNew):
-			log.error("Invalid option value %s=%r for format %s" % (optName, optValue, outputFormat))
+			log.error(
+				f"Invalid option value {optName}={optValue!r}"
+				f" for format {outputFormat}"
+			)
 			sys.exit(1)
 		writeOptions[optName] = optValueNew
 
@@ -378,7 +393,7 @@ if convertOptions:
 ui_type: User interface type
 Possible values:
 	cmd - Command line interface, this ui will automatically selected
-		  if you give both input and output file
+		if you give both input and output file
 	gtk - GTK interface
 	tk - Tkinter interface
 	qt - Qt interface
@@ -437,7 +452,10 @@ if ui_type == "auto":
 		else:
 			break
 	if ui_module is None:
-		log.error("no user interface module found! try \"%s -h\" to see command line usage" % sys.argv[0])
+		log.error(
+			"no user interface module found! "
+			f"try \"{sys.argv[0]} -h\" to see command line usage"
+		)
 		sys.exit(1)
 else:
 	ui_module = getattr(
