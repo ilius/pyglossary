@@ -23,23 +23,41 @@ class Writer(object):
 		from pyglossary.json_utils import dataToPrettyJson
 
 		glos = self._glos
-		re_possible_html = re.compile(r"<[a-zA-Z]+[ />]")
+
+		re_possible_html = re.compile(
+			r"<[a-z]+[ />]",
+			re.I,
+		)
+		re_style = re.compile(
+			r"<([a-z]+)[^<>]* style=",
+			re.I | re.DOTALL,
+		)
+
+		wordCount = 0
+		bwordCount = 0
+
+		styleByTagCounter = Counter()
 
 		defiFormatCounter = Counter()
 		firstTagCounter = Counter()
 		allTagsCounter = Counter()
-		wordCount = 0
-		bwordCount = 0
+
 		while True:
 			entry = yield
 			if entry is None:
 				break
+			defi = entry.defi
+
+			wordCount += 1
+			bwordCount += defi.count("bword://")
+
+			for m in re_style.finditer(defi):
+				tag = m.group(1)
+				styleByTagCounter[tag] += 1
+
 			entry.detectDefiFormat()
 			defiFormat = entry.defiFormat
-			wordCount += 1
 			defiFormatCounter[defiFormat] += 1
-			defi = entry.defi
-			bwordCount += defi.count("bword://")
 			if defiFormat == "m":
 				if re_possible_html.match(defi):
 					log.warn(f"undetected html defi: {defi}")
@@ -72,6 +90,11 @@ class Writer(object):
 			f"{defiFormat}={count}"
 			for defiFormat, count in
 			firstTagCounter.most_common()
+		)
+		info["style_counter"] = ", ".join(
+			f"{defiFormat}={count}"
+			for defiFormat, count in
+			styleByTagCounter.most_common()
 		)
 		with open(filename, mode="w", encoding="utf-8") as _file:
 			_file.write(dataToPrettyJson(info) + "\n")
