@@ -30,6 +30,7 @@ import logging
 from pyglossary import core  # essential
 from pyglossary import VERSION
 from pyglossary.text_utils import startRed, endFormat
+from pyglossary.entry import Entry
 
 # the first thing to do is to set up logger.
 # other modules also using logger "root", so it is essential to set it up prior
@@ -325,6 +326,8 @@ for param in convertOptionsKeys:
 	if value is not None:
 		convertOptions[param] = value
 
+if convertOptions.get("sort", False):
+	convertOptions["sortKey"] = Entry.defaultSortKey
 
 if args.inputFilename and readOptions:
 	inputFormat = Glossary.detectInputFormat(args.inputFilename, format=args.inputFormat)
