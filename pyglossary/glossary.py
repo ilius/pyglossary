@@ -550,24 +550,6 @@ class Glossary(GlossaryType):
 			return iter([])
 		return self._iter
 
-	def iterEntryBuckets(self, size: int) -> Iterator[BaseEntry]:
-		"""
-		iterate over buckets of entries, with size `size`
-		For example:
-			for bucket in glos.iterEntryBuckets(100):
-				assert len(bucket) == 100
-				for entry in bucket:
-					print(entry.s_word)
-				print("-----------------")
-		"""
-		bucket = []
-		for entry in self:
-			if len(bucket) >= size:
-				yield bucket
-				bucket = []
-			bucket.append(entry)
-		yield bucket
-
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		"""
 		defiFormat must be empty or one of these:

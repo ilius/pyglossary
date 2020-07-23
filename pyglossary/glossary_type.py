@@ -25,9 +25,6 @@ class GlossaryType(object):
 	def addEntry(self, word: str, defi: str, defiFormat: str = "") -> None:
 		raise NotImplementedError
 
-	def iterEntryBuckets(self, size: int) -> Iterator[BaseEntry]:
-		raise NotImplementedError
-
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		raise NotImplementedError
 
