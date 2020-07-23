@@ -30,6 +30,12 @@ log = logging.getLogger("root")
 
 # or Resource?
 class DataEntry(BaseEntry):
+	__slots__ = [
+		"_fname",
+		"_data",
+		"_tmpPath",
+	]
+
 	def isData(self) -> bool:
 		return True
 
@@ -186,12 +192,19 @@ class Entry(BaseEntry):
 		re.S | re.I,
 	)
 
+	__slots__ = [
+		"_word",
+		"_defi",
+		"_defiFormat",
+		"_byteProgress",
+	]
+
 	def isData(self) -> bool:
 		return False
 
 	def _join(self, parts: List[str]) -> str:
-		return self.sep.join([
-			part.replace(self.sep, "\\" + self.sep)
+		return Entry.sep.join([
+			part.replace(Entry.sep, "\\" + Entry.sep)
 			for part in parts
 		])
 
@@ -326,7 +339,7 @@ class Entry(BaseEntry):
 	def detectDefiFormat(self) -> None:
 		if self._defiFormat != "m":
 			return
-		if self.htmlPattern.match(self.defi):
+		if Entry.htmlPattern.match(self.defi):
 			self._defiFormat = "h"
 
 	def byteProgress(self):
