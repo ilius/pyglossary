@@ -29,6 +29,30 @@ from pyglossary.text_utils import (
 	binStrToInt,
 )
 
+from typing import (
+	Optional,
+	Callable,
+	Any,
+)
+
+
+class InfoItem(object):
+	__slots__ = (
+		"name",
+		"decode",
+		"attr",
+	)
+
+	def __init__(
+		self,
+		name: str,
+		decode: Optional[Callable[[bytes], Any]] = None,
+		attr: bool = False,
+	):
+		self.name = name
+		self.decode = decode
+		self.attr = attr
+
 
 def decodeBglBinTime(b_value):
 	jd1970 = gregorian.to_jd(1970, 1, 1)
@@ -123,10 +147,10 @@ def flagsInfoDecode(b_value):
 				when this flag is set utf8 encoding is used for all articles
 				when false, the encoding is set according to the source and
 					target alphabet
-			spellingAlternatives
+			bgl_spellingAlternatives
 				determines whether the glossary offers spelling alternatives
 				for searched terms
-			caseSensitive
+			bgl_caseSensitive
 				defines if the search for terms in this glossary is
 					case sensitive
 				see code 0x20 as well
@@ -135,87 +159,149 @@ def flagsInfoDecode(b_value):
 	flags = binStrToInt(b_value)
 	return {
 		"utf8Encoding": (flags & 0x8000 != 0),
-		"spellingAlternatives": (flags & 0x10000 == 0),
-		"caseSensitive": (flags & 0x1000 != 0),
+		"bgl_spellingAlternatives": (flags & 0x10000 == 0),
+		"bgl_caseSensitive": (flags & 0x1000 != 0),
 	}
 
 
-infoKeysByCode = {
-	0x01: "title",  # glossary name
-	0x02: "author",  # glossary author name, a list of "|"-separated values
-	0x03: "email",  # glossary author e-mail
-	0x04: "copyright",  # copyright message
-	0x07: "sourceLang",
-	0x08: "targetLang",
-	0x09: "description",  # Glossary description
-	0x0a: "browsingEnabled",  # 0: browsing disabled, 1: browsing enabled
-	0x0b: "iconData",
-	0x0c: "bgl_numEntries",
-	0x11: "flags",  # the value is a dict
-	0x14: "creationTime",
-	0x1a: "sourceCharset",
-	0x1b: "targetCharset",
-	0x1c: "firstUpdated",
-	# firstUpdated was prevously called middleUpdated
-	# in rare cases, firstUpdated is before creationTime
+infoType3ByCode = {
+	# glossary name
+	0x01: InfoItem("title"),
+
+	# glossary author name, a list of "|"-separated values
+	0x02: InfoItem("author"),
+
+	# glossary author e-mail
+	0x03: InfoItem("email"),
+
+	0x04: InfoItem("copyright"),
+	0x07: InfoItem(
+		"sourceLang",
+		decode=languageInfoDecode,
+		attr=True,
+	),
+	0x08: InfoItem(
+		"targetLang",
+		decode=languageInfoDecode,
+		attr=True,
+	),
+	0x09: InfoItem("description"),
+
+	# 0: browsing disabled, 1: browsing enabled
+	0x0a: InfoItem(
+		"bgl_browsingEnabled",
+		decode=lambda b_value: (b_value[0] != 0),
+	),
+
+	0x0b: InfoItem("icon1.ico"),
+
+	0x0c: InfoItem(
+		"bgl_numEntries",
+		decode=binStrToInt,
+		attr=True,
+	),
+
+	# the value is a dict
+	0x11: InfoItem("flags", decode=flagsInfoDecode),
+
+	0x14: InfoItem("creationTime", decode=decodeBglBinTime),
+	0x1a: InfoItem(
+		"sourceCharset",
+		decode=charsetInfoDecode,
+		attr=True,
+	),
+	0x1b: InfoItem(
+		"targetCharset",
+		decode=charsetInfoDecode,
+		attr=True,
+	),
+	0x1c: InfoItem(
+		"bgl_firstUpdated",
+		decode=decodeBglBinTime,
+	),
+	# bgl_firstUpdated was prevously called middleUpdated
+	# in rare cases, bgl_firstUpdated is before creationTime
 	# but usually it looks like to be the first update (after creation)
 	# in some cases, it's the same as lastUpdated
 	# in some cases, it's minutes after creationTime
-	# firstUpdated exists in more glossaries than lastUpdated
-	# so if lastUpdated is not there, we use firstUpdated as lastUpdated
-	0x24: "iconData2",
-	0x2c: "purchaseLicenseMsg",
-	0x2d: "licenseExpiredMsg",
-	0x2e: "purchaseAddress",
-	0x30: "titleWide",
-	0x31: "authorWide",
-	0x33: "lastUpdated",
-	0x3b: "contractions",
-	0x3d: "fontName",  # contains a value like "Arial Unicode MS" or "Tahoma"
-	0x41: "about",  # (aboutExtension, aboutContents)
-	0x43: "length",  # the length of the substring match in a term
+	# bgl_firstUpdated exists in more glossaries than lastUpdated
+	# so if lastUpdated is not there, we use bgl_firstUpdated as lastUpdated
+
+	0x20: InfoItem(
+		"bgl_caseSensitive2",
+		decode=lambda b_value: (b_value[0] == 0x31),
+		# 0x30 - case sensitive search is disabled
+		# 0x31 - case sensitive search is enabled
+	),
+
+	0x24: InfoItem("icon2.ico"),
+
+	0x2c: InfoItem(
+		"bgl_purchaseLicenseMsg",
+		decode=utf16InfoDecode,
+	),
+	0x2d: InfoItem(
+		"bgl_licenseExpiredMsg",
+		decode=utf16InfoDecode,
+	),
+	0x2e: InfoItem("bgl_purchaseAddress"),
+
+	0x30: InfoItem(
+		"bgl_titleWide",
+		decode=utf16InfoDecode,
+	),
+
+	# a list of "|"-separated values
+	0x31: InfoItem(
+		"bgl_authorWide",
+		decode=utf16InfoDecode,
+	),
+
+	0x33: InfoItem(
+		"lastUpdated",
+		decode=decodeBglBinTime,
+	),
+	0x3b: InfoItem("bgl_contractions"),
+
+	# contains a value like "Arial Unicode MS" or "Tahoma"
+	0x3d: InfoItem("bgl_fontName"),
+
+	# value would be dict
+	0x41: InfoItem(
+		"bgl_about",
+		decode=aboutInfoDecode,
+	),
+
+	# the length of the substring match in a term
+	0x43: InfoItem(
+		"bgl_length",
+		decode=binStrToInt,
+	),
 }
 
-
-infoKeyDecodeMethods = {
-	"sourceLang": languageInfoDecode,
-	"targetLang": languageInfoDecode,
-	"browsingEnabled": lambda b_value: (b_value[0] != 0),
-	"bgl_numEntries": binStrToInt,
-	"creationTime": decodeBglBinTime,
-	"firstUpdated": decodeBglBinTime,
-	"lastUpdated": decodeBglBinTime,
-	"sourceCharset": charsetInfoDecode,
-	"targetCharset": charsetInfoDecode,
-	"about": aboutInfoDecode,
-	"length": binStrToInt,
-	"purchaseLicenseMsg": utf16InfoDecode,
-	"licenseExpiredMsg": utf16InfoDecode,
-	"licenseExpiredMsg": utf16InfoDecode,
-	"titleWide": utf16InfoDecode,
-	"authorWide": utf16InfoDecode,  # a list of "|"-separated values
-	"flags": flagsInfoDecode,
-}
 
 """
 bgl_numEntries (0x0c):
 	bgl_numEntries does not always matches the number of entries in the
 		dictionary, but it's close to it.
 	the difference is usually +- 1 or 2, in rare cases may be 9, 29 and more
-length (0x43)
+
+bgl_length (0x43)
 	The length of the substring match in a term.
 	For example, if your glossary contains the term "Dog" and the substring
 		length is 2,
 	search of the substrings "Do" or "og" will retrieve the term dog.
 	Use substring length 0 for exact match.
-contractions (0x3b):
+
+bgl_contractions (0x3b):
 	contains a value like this:
 	V-0#Verb|V-0.0#|V-0.1#Infinitive|V-0.1.1#|V-1.0#|V-1.1#|V-1.1.1#Present Simple|V-1.1.2#Present Simple (3rd pers. sing.)|V-2.0#|V-2.1#|V-2.1.1#Past Simple|V-3.0#|V-3.1#|V-3.1.1#Present Participle|V-4.0#|V-4.1#|V-4.1.1#Past Participle|V-5.0#|V-5.1#|V-5.1.1#Future|V2-0#|V2-0.0#|V2-0.1#Infinitive|V2-0.1.1#|V2-1.0#|V2-1.1#|V2-1.1.1#Present Simple (1st pers. sing.)|V2-1.1.2#Present Simple (2nd pers. sing. & plural forms)|V2-1.1.3#Present Simple (3rd pers. sing.)|V2-2.0#|V2-2.1#|V2-2.1.1#Past Simple (1st & 3rd pers. sing.)|V2-2.1.2#Past Simple (2nd pers. sing. & plural forms)|V2-3.0#|V2-3.1#|V2-3.1.1#Present Participle|V2-4.0#|V2-4.1#|V2-4.1.1#Past Participle|V2-5.0#|V2-5.1#|V2-5.1.1#Future||N-0#Noun|N-1.0#|N-1.1#|N-1.1.1#Singular|N-2.0#|N-2.1#|N-2.1.1#Plural|N4-1.0#|N4-1.1#|N4-1.1.1#Singular Masc.|N4-1.1.2#Singular Fem.|N4-2.0#|N4-2.1#|N4-2.1.1#Plural Masc.|N4-2.1.2#Plural Fem.||ADJ-0#Adjective|ADJ-1.0#|ADJ-1.1#|ADJ-1.1.1#Adjective|ADJ-1.1.2#Comparative|ADJ-1.1.3#Superlative||
 	value format: (<contraction> "#" [<value>] "|")+
 	The value is in second language, that is for Babylon Russian-English.BGL
 		the value in russian,
 	for Babylon English-Spanish.BGL the value is spanish (I guess), etc.
-Glossary manual file (0x41)
+
+bgl_about: Glossary manual file (0x41)
 	additional information about the dictionary
 	in .txt format this may be short info like this:
 
@@ -235,26 +321,21 @@ Glossary manual file (0x41)
 	format <file extension> "\x00" <file contents>
 	file extension may be: ".txt", ".pdf"
 
-purchaseLicenseMsg (0x2c):
+bgl_purchaseLicenseMsg (0x2c):
 	contains a value like this:
 	In order to view this glossary, you must purchase a license.
 	<br /><a href="http://www.babylon.com/redirects/purchase.cgi?type=170&trid=BPCWHAR">Click here</a> to purchase.
 
-licenseExpiredMsg (0x2d):
+bgl_licenseExpiredMsg (0x2d):
 	contains a value like this:
 	Your license for this glossary has expired.
-	In order to view this glossary, you must have a valid license. <br><a href="http://www.babylon.com/redirects/purchase.cgi?type=130&trid=BPCBRTBR">Renew</a> your license today.
+	In order to view this glossary, you must have a valid license.
+	<br><a href="http://www.babylon.com/redirects/purchase.cgi?type=130&trid=BPCBRTBR">Renew</a> your license today.
 
-purchaseAddress (0x2e):
+bgl_purchaseAddress (0x2e):
 	contains a value like this:
 	http://www.babylon.com/redirects/purchase.cgi?type=169&trid=BPCOT
 	or
 	mailto:larousse@babylon.com
 
-#elif keyCode==0x20:
-#	# 0x30 - case sensitive search is disabled
-#	# 0x31 - case sensitive search is enabled
-#	# see code 0x11 as well
-#	if b_value:
-#		value = b_value[0]
 """

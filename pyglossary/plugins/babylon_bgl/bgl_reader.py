@@ -48,8 +48,7 @@ from pyglossary.text_utils import (
 from pyglossary.xml_utils import xml_escape
 
 from .bgl_info import (
-	infoKeysByCode,
-	infoKeyDecodeMethods,
+	infoType3ByCode,
 	charsetInfoDecode,
 )
 from .bgl_pos import partOfSpeechByCode
@@ -486,19 +485,16 @@ class BglReader(object):
 		glos.setInfo("targetCharset", "UTF-8")
 		###
 		if "lastUpdated" not in self.info:
-			if "firstUpdated" in self.info:
-				log.debug(f"replacing firstUpdated with lastUpdated")
-				self.info["lastUpdated"] = self.info.pop("firstUpdated")
+			if "bgl_firstUpdated" in self.info:
+				log.debug(f"replacing bgl_firstUpdated with lastUpdated")
+				self.info["lastUpdated"] = self.info.pop("bgl_firstUpdated")
 		###
 		for key, value in self.info.items():
 			if value == "":
 				continue # TODO: a bool flag to add empty value infos?
 			# leave "creationTime" and "lastUpdated" as is
 			if key in {
-				"firstUpdated",
 				"utf8Encoding",
-				"spellingAlternatives",
-				"caseSensitive",
 			}:
 				key = "bgl_" + key
 			try:
@@ -671,7 +667,7 @@ class BglReader(object):
 		# if not b_value.strip(b"\x00"): return  # FIXME
 
 		try:
-			key = infoKeysByCode[code]
+			item = infoType3ByCode[code]
 		except KeyError:
 			if b_value.strip(b"\x00"):
 				log.debug(
@@ -679,16 +675,18 @@ class BglReader(object):
 				)
 			return
 
-		if key.startswith("iconData"):
-			self.iconDataList.append(b_value)
+		key = item.name
+		decode = item.decode
+
+		if key.endswith(".ico"):
+			self.iconDataList.append((key, b_value))
 			return
 
 		value = None
-		func = infoKeyDecodeMethods.get(key)
-		if func is None:
+		if decode is None:
 			value = b_value
 		else:
-			value = func(b_value)
+			value = decode(b_value)
 
 		# `value` can be None, str, bytes or dict
 
@@ -699,16 +697,7 @@ class BglReader(object):
 			self.info.update(value)
 			return
 
-		if key in {
-			"sourceLang",
-			"targetLang",
-			"defaultCharset",
-			"sourceCharset",
-			"targetCharset",
-			"sourceEncoding",
-			"targetEncoding",
-			"bgl_numEntries",
-		}:
+		if item.attr:
 			setattr(self, key, value)
 			return
 
@@ -760,8 +749,8 @@ class BglReader(object):
 		if not self.file:
 			raise StopIteration
 
-		for index, iconData in enumerate(self.iconDataList):
-			yield self._glos.newDataEntry(f"icon{index+1}.ico", iconData)
+		for fname, iconData in self.iconDataList:
+			yield self._glos.newDataEntry(fname, iconData)
 
 		block = Block()
 		while not self.isEndOfDictData():
