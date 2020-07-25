@@ -13,8 +13,8 @@ from collections import Counter
 #from typing_extensions import Literal
 
 from pyglossary.text_utils import (
-	intToBinStr,
-	binStrToInt,
+	intToBytes,
+	intFromBytes,
 	runDictzip,
 )
 
@@ -222,9 +222,9 @@ class Reader(object):
 			if pos + 8 > len(idxBytes):
 				log.error("Index file is corrupted")
 				break
-			offset = binStrToInt(idxBytes[pos:pos + 4])
+			offset = intFromBytes(idxBytes[pos:pos + 4])
 			pos += 4
-			size = binStrToInt(idxBytes[pos:pos + 4])
+			size = intFromBytes(idxBytes[pos:pos + 4])
 			pos += 4
 			indexData.append((b_word, offset, size))
 
@@ -340,7 +340,7 @@ class Reader(object):
 			if pos + 4 > len(synBytes):
 				log.error("Synonym file is corrupted")
 				break
-			entryIndex = binStrToInt(synBytes[pos:pos + 4])
+			entryIndex = intFromBytes(synBytes[pos:pos + 4])
 			pos += 4
 			if entryIndex >= self._wordCount:
 				log.error(
@@ -387,7 +387,7 @@ class Reader(object):
 				assert bytes([t]).isupper()
 				if i + 4 > len(b_block):
 					return None
-				size = binStrToInt(b_block[i:i + 4])
+				size = intFromBytes(b_block[i:i + 4])
 				i += 4
 				if i + size > len(b_block):
 					return None
@@ -433,7 +433,7 @@ class Reader(object):
 				assert bytes([t]).isupper()
 				if i + 4 > len(b_block):
 					return None
-				size = binStrToInt(b_block[i:i + 4])
+				size = intFromBytes(b_block[i:i + 4])
 				i += 4
 				if i + size > len(b_block):
 					return None
@@ -560,8 +560,8 @@ class Writer(object):
 			blockLen = len(b_dictBlock)
 
 			b_idxBlock = word.encode("utf-8") + b"\x00" + \
-				intToBinStr(dictMark, 4) + \
-				intToBinStr(blockLen, 4)
+				intToBytes(dictMark, 4) + \
+				intToBytes(blockLen, 4)
 			idxFile.write(b_idxBlock)
 
 			dictMark += blockLen
@@ -633,8 +633,8 @@ class Writer(object):
 			blockLen = len(b_dictBlock)
 
 			b_idxBlock = word.encode("utf-8") + b"\x00" + \
-				intToBinStr(dictMark, 4) + \
-				intToBinStr(blockLen, 4)
+				intToBytes(dictMark, 4) + \
+				intToBytes(blockLen, 4)
 			idxFile.write(b_idxBlock)
 
 			dictMark += blockLen
@@ -680,7 +680,7 @@ class Writer(object):
 		t0 = now()
 		with open(self._filename + ".syn", "wb") as synFile:
 			synFile.write(b"".join([
-				b_alt + b"\x00" + intToBinStr(entryIndex, 4)
+				b_alt + b"\x00" + intToBytes(entryIndex, 4)
 				for b_alt, entryIndex in altIndexList
 			]))
 		log.info(

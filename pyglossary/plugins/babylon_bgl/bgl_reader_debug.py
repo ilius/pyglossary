@@ -188,7 +188,7 @@ class DebugBglReader(BglReader):
 			):
 				log.error(f"invalid header: {buf[:6]!r}")
 				return False
-			self.gzipOffset = gzipOffset = binStrToInt(buf[4:6])
+			self.gzipOffset = gzipOffset = intFromBytes(buf[4:6])
 			log.debug(f"Position of gz header: {gzipOffset}")
 			if gzipOffset < 6:
 				log.error(f"invalid gzip header position: {gzipOffset}")

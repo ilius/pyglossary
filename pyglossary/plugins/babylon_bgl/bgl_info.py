@@ -26,7 +26,7 @@ from .bgl_charset import charsetByCode
 from pyglossary.plugins.formats_common import log
 import pyglossary.gregorian as gregorian
 from pyglossary.text_utils import (
-	binStrToInt,
+	intFromBytes,
 )
 
 from typing import (
@@ -56,7 +56,7 @@ class InfoItem(object):
 
 def decodeBglBinTime(b_value):
 	jd1970 = gregorian.to_jd(1970, 1, 1)
-	djd, hm = divmod(binStrToInt(b_value), 24 * 60)
+	djd, hm = divmod(intFromBytes(b_value), 24 * 60)
 	year, month, day = gregorian.jd_to(djd + jd1970)
 	hour, minute = divmod(hm, 60)
 	return f"{year:04d}/{month:02d}/{day:02d}, {hour:02d}:{minute:02d}"
@@ -66,7 +66,7 @@ def languageInfoDecode(b_value):
 	"""
 		returns BabylonLanguage instance
 	"""
-	intValue = binStrToInt(b_value)
+	intValue = intFromBytes(b_value)
 	try:
 		return languageByCode[intValue]
 	except IndexError:
@@ -127,7 +127,7 @@ def utf16InfoDecode(b_value):
 		return
 
 	# now b_value[1] == 1
-	size = 2 * binStrToInt(b_value[2:6])
+	size = 2 * intFromBytes(b_value[2:6])
 	if tuple(b_value[6:8]) != (0, 0):
 		log.warning(
 			f"utf16InfoDecode: b_value={b_value!r}, null expected at 6:8",
@@ -156,7 +156,7 @@ def flagsInfoDecode(b_value):
 				see code 0x20 as well
 
 	"""
-	flags = binStrToInt(b_value)
+	flags = intFromBytes(b_value)
 	return {
 		"utf8Encoding": (flags & 0x8000 != 0),
 		"bgl_spellingAlternatives": (flags & 0x10000 == 0),
@@ -197,7 +197,7 @@ infoType3ByCode = {
 
 	0x0c: InfoItem(
 		"bgl_numEntries",
-		decode=binStrToInt,
+		decode=intFromBytes,
 		attr=True,
 	),
 
@@ -275,7 +275,7 @@ infoType3ByCode = {
 	# the length of the substring match in a term
 	0x43: InfoItem(
 		"bgl_length",
-		decode=binStrToInt,
+		decode=intFromBytes,
 	),
 }
 

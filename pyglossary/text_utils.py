@@ -123,7 +123,7 @@ def formatHMS(h: int, m: int, s: int) -> str:
 # ___________________________________________ #
 
 
-def intToBinStr(n: int, stLen: int = 0) -> bytes:
+def intToBytes(n: int, stLen: int = 0) -> bytes:
 	bs = []
 	while n > 0:
 		bs.insert(0, n & 0xff)
@@ -131,7 +131,7 @@ def intToBinStr(n: int, stLen: int = 0) -> bytes:
 	return bytes(bs).rjust(stLen, b"\x00")
 
 
-def binStrToInt(bs: bytes) -> int:
+def intFromBytes(bs: bytes) -> int:
 	n = 0
 	for c in bs:
 		n = (n << 8) + c

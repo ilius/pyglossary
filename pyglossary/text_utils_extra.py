@@ -1,4 +1,4 @@
-def intToBinStr(n, stLen=0):
+def intToBytes2(n, stLen=0):
 	bs = b''
 	while n > 0:
 		bs = bytes([n & 255]) + bs
@@ -6,18 +6,11 @@ def intToBinStr(n, stLen=0):
 	return bs.rjust(stLen, b'\x00')
 
 
-def intToBinStr(n, stLen=0):
+def intToBytes3(n, stLen=0):
 	return bytes((
 		(n >> (i << 3)) & 0xff
 		for i in range(int(ceil(log(n, 256))) - 1, -1, -1)
 	)).rjust(stLen, b'\x00')
-
-
-def binStrToInt(bs):
-	n = 0
-	for c in bs:
-		n = (n << 8) + c
-	return n
 
 
 def chBaseIntToStr(number, base):
