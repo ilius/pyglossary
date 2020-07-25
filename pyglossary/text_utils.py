@@ -20,6 +20,7 @@ import string
 import sys
 import os
 import re
+import struct
 import logging
 
 from typing import (
@@ -123,12 +124,13 @@ def formatHMS(h: int, m: int, s: int) -> str:
 # ___________________________________________ #
 
 
-def intToBytes(n: int, stLen: int = 0) -> bytes:
-	bs = []
-	while n > 0:
-		bs.insert(0, n & 0xff)
-		n >>= 8
-	return bytes(bs).rjust(stLen, b"\x00")
+
+def uint32ToBytes(n: int) -> bytes:
+	return struct.pack('>I', n)
+
+
+def uint32FromBytes(bs: bytes) -> int:
+	return struct.unpack('>I', bs)[0]
 
 
 def intFromBytes(bs: bytes) -> int:
