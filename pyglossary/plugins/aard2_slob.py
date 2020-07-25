@@ -92,7 +92,19 @@ class Reader(object):
 			return
 
 		slobObj = self._slobObj
+		blobSet = set()
+
+		# slob library gives duplicate blobs when iterating over slobObj
+		# even keeping the last id is not enough, since duplicate blobs
+		# are not all consecutive. so we have to keep a set of blob IDs
+
 		for blob in slobObj:
+			_id = blob.id
+			if _id in blobSet:
+				yield None  # update progressbar
+				continue
+			blobSet.add(_id)
+
 			# blob.key is str, blob.content is bytes
 			word = blob.key
 
