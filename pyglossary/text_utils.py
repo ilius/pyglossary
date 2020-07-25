@@ -131,8 +131,7 @@ def intToBinStr(n: int, stLen: int = 0) -> bytes:
 	return bytes(bs).rjust(stLen, b"\x00")
 
 
-def binStrToInt(bs: AnyStr) -> int:
-	bs = toBytes(bs)
+def binStrToInt(bs: bytes) -> int:
 	n = 0
 	for c in bs:
 		n = (n << 8) + c
