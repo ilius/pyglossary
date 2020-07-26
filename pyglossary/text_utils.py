@@ -133,7 +133,7 @@ def uint32FromBytes(bs: bytes) -> int:
 	return struct.unpack('>I', bs)[0]
 
 
-def intFromBytes(bs: bytes) -> int:
+def uintFromBytes(bs: bytes) -> int:
 	n = 0
 	for c in bs:
 		n = (n << 8) + c

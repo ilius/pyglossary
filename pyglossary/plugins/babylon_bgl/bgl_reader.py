@@ -41,7 +41,7 @@ except ImportError:
 	)
 
 from pyglossary.text_utils import (
-	intFromBytes,
+	uintFromBytes,
 	excMessage,
 )
 
@@ -386,7 +386,7 @@ class BglReader(object):
 			log.error(f"invalid header: {b_head[:6]!r}")
 			return False
 
-		self.gzipOffset = gzipOffset = intFromBytes(b_head[4:6])
+		self.gzipOffset = gzipOffset = uintFromBytes(b_head[4:6])
 		log.debug(f"Position of gz header: {gzipOffset}")
 
 		if gzipOffset < 6:
@@ -592,7 +592,7 @@ class BglReader(object):
 				f", but found {len(buf)} bytes"
 			)
 			return -1
-		return intFromBytes(buf)
+		return uintFromBytes(buf)
 
 	def readType0(self, block):
 		code = block.data[0]
@@ -600,7 +600,7 @@ class BglReader(object):
 			# this number is vary close to self.bgl_numEntries,
 			# but does not always equal to the number of entries
 			# see self.readType3, code == 12 as well
-			num = intFromBytes(block.data[1:])
+			num = uintFromBytes(block.data[1:])
 		elif code == 8:
 			self.defaultCharset = charsetInfoDecode(block.data[1:])
 			if not self.defaultCharset:
@@ -661,7 +661,7 @@ class BglReader(object):
 			reads block with type 3, and updates self.info
 			returns None
 		"""
-		code, b_value = intFromBytes(block.data[:2]), block.data[2:]
+		code, b_value = uintFromBytes(block.data[:2]), block.data[2:]
 		if not b_value:
 			return
 		# if not b_value.strip(b"\x00"): return  # FIXME
@@ -861,7 +861,7 @@ class BglReader(object):
 				f", reading defi size: pos + 2 > len(block.data)"
 			)
 			return Err
-		Len = intFromBytes(block.data[pos:pos + 2])
+		Len = uintFromBytes(block.data[pos:pos + 2])
 		pos += 2
 		if pos + Len > len(block.data):
 			log.error(
@@ -925,7 +925,7 @@ class BglReader(object):
 				f", reading word size: pos + 5 > len(block.data)"
 			)
 			return Err
-		wordLen = intFromBytes(block.data[pos:pos + 5])
+		wordLen = uintFromBytes(block.data[pos:pos + 5])
 		pos += 5
 		if pos + wordLen > len(block.data):
 			log.error(
@@ -946,7 +946,7 @@ class BglReader(object):
 				f", reading defi size: pos + 4 > len(block.data)"
 			)
 			return Err
-		altsCount = intFromBytes(block.data[pos:pos + 4])
+		altsCount = uintFromBytes(block.data[pos:pos + 4])
 		pos += 4
 
 		# reading alts
@@ -959,7 +959,7 @@ class BglReader(object):
 					f", reading alt size: pos + 4 > len(block.data)"
 				)
 				return Err
-			altLen = intFromBytes(block.data[pos:pos + 4])
+			altLen = uintFromBytes(block.data[pos:pos + 4])
 			pos += 4
 			if altLen == 0:
 				if pos + altLen != len(block.data):
@@ -987,7 +987,7 @@ class BglReader(object):
 		u_alts = list(sorted(u_alts))
 
 		# reading defi
-		defiLen = intFromBytes(block.data[pos:pos + 4])
+		defiLen = uintFromBytes(block.data[pos:pos + 4])
 		pos += 4
 		if pos + defiLen > len(block.data):
 			log.error(
@@ -1499,7 +1499,7 @@ class BglReader(object):
 					)
 					return
 				i += 1
-				Len = intFromBytes(b_defi[i:i + 2])
+				Len = uintFromBytes(b_defi[i:i + 2])
 				i += 2
 				if Len == 0:
 					log.debug(
@@ -1570,7 +1570,7 @@ class BglReader(object):
 					return
 				fields.code_transcription_60 = b_defi[i + 1]
 				i += 2
-				Len = intFromBytes(b_defi[i:i + 2])
+				Len = uintFromBytes(b_defi[i:i + 2])
 				i += 2
 				if Len == 0:
 					log.debug(
