@@ -1030,13 +1030,23 @@ class Glossary(GlossaryType):
 		filename = abspath(filename)
 		log.info(f"Writing to file {filename!r}")
 		try:
+			genList = []
 			gen = writer.write(filename, **options)
 			if gen is None:
 				log.error(f"\n{format} write function is not a generator")
 			else:
+				genList.append(gen)
+
+			if self.getPref("save_info_json", False):
+				infoWriter = self.writerClasses["Info"].__call__(self)
+				genList.append(infoWriter.write(f"{filename}.info"))
+
+			for gen in genList:
 				gen.send(None)
-				for entry in self:
+			for entry in self:
+				for gen in genList:
 					gen.send(entry)
+			for gen in genList:
 				try:
 					gen.send(None)
 				except StopIteration:

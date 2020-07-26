@@ -227,6 +227,15 @@ parser.add_argument(
 # _______________________________
 
 parser.add_argument(
+	"--info",
+	dest="save_info_json",
+	action="store_true",
+	help="save glossary info as json file with .info extension",
+)
+
+# _______________________________
+
+parser.add_argument(
 	"--reverse",
 	dest="reverse",
 	action="store_true",
@@ -316,6 +325,7 @@ prefOptionsKeys = (
 	"remove_html",
 	"remove_html_all",
 	"normalize_html",
+	"save_info_json",
 )
 
 convertOptionsKeys = (

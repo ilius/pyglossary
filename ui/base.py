@@ -51,6 +51,7 @@ class UIBase(object):
 		"remove_html_all",
 		"normalize_html",
 		"enable_alts",
+		"save_info_json",
 		## Reverse Options:
 		"reverse_matchWord",
 		"reverse_showRel",
