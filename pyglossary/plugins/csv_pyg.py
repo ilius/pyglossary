@@ -44,6 +44,11 @@ tools = [
 optionsProp = {
 	"encoding": EncodingOption(),
 	"resources": BoolOption(),
+	"delimiter": Option(
+		"str",
+		customValue=True,
+		values=[",", ";", "@"],
+	),
 }
 depends = {}
 
@@ -63,12 +68,18 @@ class Reader(object):
 		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self, filename: str, encoding: str = "utf-8") -> None:
+	def open(
+		self,
+		filename: str,
+		encoding: str = "utf-8",
+		delimiter: str = ",",
+	) -> None:
 		self._filename = filename
 		self._file = open(filename, "r", encoding=encoding)
 		self._csvReader = csv.reader(
 			self._file,
 			dialect="excel",
+			delimiter=delimiter,
 		)
 		self._resDir = filename + "_res"
 		if isdir(self._resDir):
@@ -136,6 +147,7 @@ class Writer(object):
 		filename: str,
 		encoding: str = "utf-8",
 		resources: bool = True,
+		delimiter: str = ",",
 	) -> Generator[None, "BaseEntry", None]:
 		glos = self._glos
 		resDir = filename + "_res"
@@ -146,6 +158,7 @@ class Writer(object):
 				csvfile,
 				dialect="excel",
 				quoting=csv.QUOTE_ALL,  # FIXME
+				delimiter=delimiter,
 			)
 			while True:
 				entry = yield
