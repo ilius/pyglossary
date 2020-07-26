@@ -92,6 +92,7 @@ parser.add_argument(
 		"none",
 	),
 )
+
 parser.add_argument(
 	"-r",
 	"--read-options",
@@ -104,6 +105,7 @@ parser.add_argument(
 	dest="writeOptions",
 	default="",
 )
+
 parser.add_argument(
 	"--read-format",
 	dest="inputFormat",
@@ -113,6 +115,7 @@ parser.add_argument(
 	dest="outputFormat",
 	action="store",
 )
+
 parser.add_argument(
 	"--direct",
 	dest="direct",
@@ -130,6 +133,7 @@ parser.add_argument(
 		", this is default"
 	),
 )
+
 parser.add_argument(
 	"--no-alts",
 	dest="enable_alts",
@@ -137,17 +141,19 @@ parser.add_argument(
 	default=None,
 	help="disable alternates",
 )
-parser.add_argument(
-	"--reverse",
-	dest="reverse",
-	action="store_true",
-)
+
 parser.add_argument(
 	"--no-progress-bar",
 	dest="progressbar",
 	action="store_false",
 	default=None,
 )
+parser.add_argument(
+	"--no-color",
+	dest="noColor",
+	action="store_true",
+)
+
 parser.add_argument(
 	"--sort",
 	dest="sort",
@@ -218,12 +224,14 @@ parser.add_argument(
 	help="lowercase and normalize html tags in definitions",
 )
 
+# _______________________________
 
 parser.add_argument(
-	"--no-color",
-	dest="noColor",
+	"--reverse",
+	dest="reverse",
 	action="store_true",
 )
+
 parser.add_argument(
 	"inputFilename",
 	action="store",
@@ -236,6 +244,8 @@ parser.add_argument(
 	default="",
 	nargs="?",
 )
+
+# _______________________________
 
 args = parser.parse_args()
 
