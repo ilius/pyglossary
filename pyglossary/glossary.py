@@ -340,6 +340,7 @@ class Glossary(GlossaryType):
 			except Exception:
 				log.exception("")
 		self._readers = []
+		self._readersOpenArgs = {}
 
 		self._iter = None
 		self._entryFilters = []
@@ -561,6 +562,55 @@ class Glossary(GlossaryType):
 	def getDefaultDefiFormat(self) -> str:
 		return self._defaultDefiFormat
 
+	# TODO
+	#def _reopenReader(self, reader):
+	#	log.info(f"re-opening {reader.__class__}")
+	#	filename, options = self._readersOpenArgs[reader]
+	#	reader.close()
+	#	reader.open(filename, **options)
+
+	def collectDefiFormat(
+		self,
+		maxCount: int,
+	) -> Optional[Dict[str, float]]:
+		"""
+			example return value:
+				[("h", 0.91), ("m", 0.09)]
+		"""
+		from collections import Counter
+		readers = self._readers
+		if readers:
+			log.error("collectDefiFormat: not supported in direct mode")
+			return None
+
+		counter = Counter()
+		count = 0
+		for entry in self:
+			if entry.isData():
+				continue
+			entry.detectDefiFormat()
+			counter[entry.defiFormat] += 1
+			count += 1
+			if count >= maxCount:
+				break
+
+		result = {
+			defiFormat: itemCount / count
+			for defiFormat, itemCount in counter.items()
+		}
+		for defiFormat in ("h", "m", "x"):
+			if not defiFormat in result:
+				result[defiFormat] = 0
+
+		# TODO
+		# for reader in readers:
+		# 	self._reopenReader(reader)
+		# self._readers = readers
+
+		self._updateIter()
+
+		return result
+
 	def __len__(self) -> int:
 		return len(self._data) + sum(
 			len(reader) for reader in self._readers
@@ -722,6 +772,7 @@ class Glossary(GlossaryType):
 		Reader = self.readerClasses[format]
 		reader = Reader(self)
 		reader.open(filename, **options)
+		self._readersOpenArgs[reader] = (filename, options)
 		self.prepareEntryFilters()
 		if direct:
 			self._readers.append(reader)

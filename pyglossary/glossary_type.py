@@ -29,6 +29,15 @@ class GlossaryType(object):
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		raise NotImplementedError
 
+	def getDefaultDefiFormat(self) -> str:
+		raise NotImplementedError
+
+	def collectDefiFormat(
+		self,
+		maxCount: int,
+	) -> Optional[Dict[str, float]]:
+		raise NotImplementedError
+
 	def iterInfo(self) -> Iterator[Tuple[str, str]]:
 		raise NotImplementedError
 

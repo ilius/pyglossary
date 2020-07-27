@@ -500,6 +500,17 @@ class Writer(object):
 
 		if sametypesequence:
 			log.debug(f"Using write option sametypesequence={sametypesequence}")
+		else:
+			stat = self._glos.collectDefiFormat(100)
+			log.info(f"defiFormat stat: {stat}")
+			if stat["m"] > 0.97:
+				log.info(f"Auto-selecting sametypesequence=m")
+				sametypesequence = "m"
+			elif stat["h"] > 0.5:
+				log.info(f"Auto-selecting sametypesequence=h")
+				sametypesequence = "h"
+
+		if sametypesequence:
 			yield from self.writeCompact(sametypesequence)
 		else:
 			yield from self.writeGeneral()
@@ -574,7 +585,6 @@ class Writer(object):
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
 		log.info(f"Writing dict file took {now()-t0:.2f} seconds")
-		log.debug("defiFormat = " + pformat(defiFormat))
 
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(
