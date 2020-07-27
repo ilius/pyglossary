@@ -35,9 +35,9 @@ Supported formats
 | Babylon                                                      |🔢 | .bgl      | ✔  | :x: |
 | [CC-CEDICT](https://cc-cedict.org/wiki)                      |📝 |           | ✔  |     |
 | CSV                                                          |📝 | .csv      | ✔  |  ✔  |
-| [DictionaryForMIDs](http://dictionarymid.sourceforge.net)    |📁 | (📁.mids) | ✔  |  ✔  |
 | DICT.org / Dictd server                                      |📁 | (📝.index)| ✔  |  ✔  |
 | DICT.org / dictfmt source file                               |📝 | (📝.dtxt) |    |  ✔  |
+| [DictionaryForMIDs](http://dictionarymid.sourceforge.net)    |📁 | (📁.mids) | ✔  |  ✔  |
 | Editable Linked List of Entries                              |📁 | .edlin    | ✔  |  ✔  |
 | EPUB-2 E-Book                                                |📦 | .epub     |:x: |  ✔  |
 | [FreeDict](https://freedict.org)                             |📝 | .tei      | ✔  |  ✔  |
