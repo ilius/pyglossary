@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
+import html
 
 enable = True
 format = 'Dictcc'
@@ -45,7 +46,7 @@ class Reader(object):
 			" order by term1"
 		)
 		for row in self._cur:
-			term1 = row[0]
+			term1 = html.unescape(row[0])
 			term2 = row[1]
 			entry_type = row[2]
 			defi = term2
