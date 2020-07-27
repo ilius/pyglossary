@@ -49,6 +49,7 @@ optionsProp = {
 		customValue=True,
 		values=[",", ";", "@"],
 	),
+	"add_defi_format": BoolOption(),
 }
 depends = {}
 
@@ -148,6 +149,7 @@ class Writer(object):
 		encoding: str = "utf-8",
 		resources: bool = True,
 		delimiter: str = ",",
+		add_defi_format: bool = False,
 	) -> Generator[None, "BaseEntry", None]:
 		glos = self._glos
 		resDir = filename + "_res"
@@ -179,6 +181,9 @@ class Writer(object):
 					word,
 					defi,
 				]
+				if add_defi_format:
+					entry.detectDefiFormat()
+					row.append(entry.defiFormat)
 				if alts:
 					row.append(",".join(alts))
 
