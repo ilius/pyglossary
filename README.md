@@ -35,6 +35,7 @@ Supported formats
 | Babylon                                                      |🔢 | .bgl      | ✔  | :x: |
 | [CC-CEDICT](https://cc-cedict.org/wiki)                      |📝 |           | ✔  |     |
 | CSV                                                          |📝 | .csv      | ✔  |  ✔  |
+| Dict.cc (SQLite3)                                            |🔢 | .db       | ✔  |     |
 | DICT.org / Dictd server                                      |📁 | (📝.index)| ✔  |  ✔  |
 | DICT.org / dictfmt source file                               |📝 | (📝.dtxt) |    |  ✔  |
 | [DictionaryForMIDs](http://dictionarymid.sourceforge.net)    |📁 | (📁.mids) | ✔  |  ✔  |
