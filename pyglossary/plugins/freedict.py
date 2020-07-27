@@ -15,6 +15,9 @@ singleFile = True
 optionsProp = {
 	"resources": BoolOption(),
 	"discover": BoolOption(),
+	"keywords_header": BoolOption(
+		comment="repeat keywords on top of definition"
+	),
 }
 depends = {
 	"lxml": "lxml",
@@ -134,14 +137,19 @@ class Reader(object):
 				if elem.tag not in self.supportedTags:
 					self._discoveredTags[elem.tag] = elem
 
+		def br():
+			return ET.Element("br")
+
 		with ET.htmlfile(f) as hf:
 			with hf.element("div"):
 				for form in entry.findall("form/orth", self.ns):
 					keywords.append(form.text)
-					# TODO: if there is only one keyword, we should skip this
-					with hf.element("b"):
-						hf.write(form.text)
-				hf.write(ET.Element("br"))
+
+				if self._keywords_header:
+					for keyword in keywords:
+						with hf.element("b"):
+							hf.write(keyword)
+						hf.write(br())
 
 				# TODO: "form/usg"
 				# <usg type="geo">Brit</usg>
@@ -158,7 +166,7 @@ class Reader(object):
 								parts.append(text)
 						with hf.element("i"):
 							hf.write(", ".join(parts))
-						hf.write(ET.Element("br"))
+						hf.write(br())
 
 				pronList = entry.findall("form/pron", self.ns)
 				if pronList:
@@ -166,7 +174,7 @@ class Reader(object):
 						f'<font color="green">/{p.text}/</font>'
 						for p in pronList
 					))
-					hf.write(ET.Element("br"))
+					hf.write(br())
 					hf.write("\n")
 
 				self.make_list(
@@ -291,6 +299,7 @@ class Reader(object):
 		self._wordCount = 0
 		self._discover = False
 		self._discoveredTags = dict()
+		self._keywords_header = False
 
 		self._p_pattern = re.compile(
 			'<p( [^<>]*?)?>(.*?)</p>',
@@ -313,6 +322,7 @@ class Reader(object):
 		self,
 		filename: str,
 		discover: bool = False,
+		keywords_header: bool = False,
 	):
 		try:
 			from lxml import etree as ET
@@ -322,6 +332,7 @@ class Reader(object):
 
 		self._filename = filename
 		self._discover = discover
+		self._keywords_header = keywords_header
 
 		context = ET.iterparse(
 			filename,
