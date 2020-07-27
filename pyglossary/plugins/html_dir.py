@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
+import html
 
 enable = True
 format = "HtmlDir"
@@ -12,6 +13,7 @@ optionsProp = {
 	"resources": BoolOption(),
 	"max_file_size": IntOption(),
 	"filename_format": StrOption(),
+	"escape_defi": BoolOption(),
 }
 
 
@@ -45,6 +47,7 @@ class Writer(object):
 		resources: bool = True,
 		max_file_size: int = 102400,
 		filename_format: str = "{n:05d}.html",
+		escape_defi: bool = False,
 	) -> Generator[None, "BaseEntry", None]:
 		if max_file_size < 100:
 			raise ValueError(f"max_file_size={max_file_size} is too small")
@@ -74,8 +77,12 @@ class Writer(object):
 					entry.save(resDir)
 				continue
 			words = entry.l_word
-			words_str = ' <font color="red">|</font> '.join(words)
+			words_str = ' <font color="red">|</font> '.join([
+				html.escape(w) for w in words
+			])
 			defi = entry.defi
+			if escape_defi:
+				defi = html.escape(defi)
 			text = f"<b>{words_str}</b><br>\n{defi}\n<hr>\n"
 			pos = fileObj.tell()
 			if pos > initFileSizeMax:
