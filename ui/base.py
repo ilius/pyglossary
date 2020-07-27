@@ -18,6 +18,7 @@
 ## If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 from os.path import join, isfile
+import logging
 
 from pyglossary.core import (
 	rootConfJsonFile,
@@ -32,6 +33,7 @@ def fread(path):
 	with open(path, encoding="utf-8") as fp:
 		return fp.read()
 
+log = logging.getLogger("root")
 logo = join(appResDir, "pyglossary.png")
 aboutText = fread(join(dataDir, "about"))
 licenseText = fread(join(dataDir, "license-dialog"))
