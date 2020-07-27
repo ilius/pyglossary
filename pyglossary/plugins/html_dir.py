@@ -46,6 +46,11 @@ class Writer(object):
 		max_file_size: int = 102400,
 		filename_format: str = "{n:05d}.html",
 	) -> Generator[None, "BaseEntry", None]:
+		if max_file_size < 100:
+			raise ValueError(f"max_file_size={max_file_size} is too small")
+
+		initFileSizeMax = 100
+
 		glos = self._glos
 		resDir = filename + "_res"
 		if not isdir(resDir):
@@ -72,8 +77,10 @@ class Writer(object):
 			words_str = ' <font color="red">|</font> '.join(words)
 			defi = entry.defi
 			text = f"<b>{words_str}</b><br>\n{defi}\n<hr>\n"
-			if fileObj.tell() + len(text.encode(encoding)) > max_file_size:
-				fileObj = self.nextFile()
+			pos = fileObj.tell()
+			if pos > initFileSizeMax:
+				if pos > max_file_size - len(text.encode(encoding)):
+					fileObj = self.nextFile()
 			fileObj.write(text)
 
 		fileObj.close()
