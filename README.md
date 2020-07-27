@@ -7,19 +7,19 @@ from/to various formats used by different dictionary applications
 Screenshots
 -----------
 
-<img src="https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-gtk-bgl-stardict-aryanpur-dark.png" height="450"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-gtk-bgl-stardict-aryanpur-dark.png" height="450"/>
 
 Linux - Gtk3-based interface
 
 ------------------------------------------------------------------------
 
-<img src="https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-tk-bgl-kobo-es-en-2.png" height="450"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-tk-bgl-kobo-es-en-2.png" height="450"/>
 
 Windows - Tkinter-based interface
 
 ------------------------------------------------------------------------
 
-![](https://raw.githubusercontent.com/ilius/pyglossary/resources/screenshots/32-cmd-freedict-mids-de-ru.png)
+![](https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-cmd-freedict-mids-de-ru.png)
 
 Linux - command line interface
 
