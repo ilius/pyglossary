@@ -53,7 +53,7 @@ class Reader(object):
 			defi = term2
 			if entry_type:
 				defi = f"<i>{entry_type}</i><br>{defi}"
-			yield self._glos.newEntry(term1, defi)
+			yield self._glos.newEntry(term1, defi, defiFormat="h")
 
 	def close(self):
 		if self._cur:
