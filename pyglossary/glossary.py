@@ -842,6 +842,29 @@ class Glossary(GlossaryType):
 		return None
 
 	@classmethod
+	def splitFilenameExt(
+		cls,
+		filename: str = "",
+	) -> Tuple[str, str, str]:
+		"""
+		returns (filenameNoExt, ext, compression)
+		"""
+		compression = ""
+		filenameNoExt, ext = splitext(filename)
+		ext = ext.lower()
+
+		if not ext and len(filenameNoExt) < 5:
+			filenameNoExt, ext = "", filenameNoExt
+
+		if ext in (".gz", ".bz2", ".zip"):
+			compression = ext[1:]
+			filename = filenameNoExt
+			filenameNoExt, ext = splitext(filename)
+			ext = ext.lower()
+
+		return filenameNoExt, filename, ext, compression
+
+	@classmethod
 	def detectOutputFormat(
 		cls,
 		filename: str = "",
@@ -876,15 +899,7 @@ class Glossary(GlossaryType):
 			filename = splitext(inputFilename)[0] + plugin.ext
 			return filename, plugin.name, ""
 
-		compression = ""
-		filenameNoExt, ext = splitext(filename)
-		ext = ext.lower()
-		if not ext and len(filenameNoExt) < 5:
-			filenameNoExt, ext = "", filenameNoExt
-		if ext in (".gz", ".bz2", ".zip"):
-			compression = ext[1:]
-			filename = filenameNoExt
-			ext = get_ext(filename)
+		filenameNoExt, filename, ext, compression = cls.splitFilenameExt(filename)
 
 		if not plugin:
 			plugin = cls.pluginByExt.get(ext)
@@ -1039,7 +1054,8 @@ class Glossary(GlossaryType):
 
 			if self.getPref("save_info_json", False):
 				infoWriter = self.writerClasses["Info"].__call__(self)
-				genList.append(infoWriter.write(f"{filename}.info"))
+				filenameNoExt, _, _, _ = Glossary.splitFilenameExt(filename)
+				genList.append(infoWriter.write(f"{filenameNoExt}.info"))
 
 			for gen in genList:
 				gen.send(None)
