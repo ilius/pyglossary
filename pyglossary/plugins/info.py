@@ -62,11 +62,13 @@ class Writer(object):
 				if re_possible_html.match(defi):
 					log.warn(f"undetected html defi: {defi}")
 			elif defiFormat == "h":
-				tag = re_possible_html.search(defi).group().strip("< />").lower()
-				firstTagCounter[tag] += 1
-				for tag in re_possible_html.findall(defi):
-					tag = tag.strip("< />").lower()
-					allTagsCounter[tag] += 1
+				match = re_possible_html.search(defi)
+				if match is not None:
+					tag = match.group().strip("< />").lower()
+					firstTagCounter[tag] += 1
+					for tag in re_possible_html.findall(defi):
+						tag = tag.strip("< />").lower()
+						allTagsCounter[tag] += 1
 
 		data_entry_count = defiFormatCounter["b"]
 		del defiFormatCounter["b"]
