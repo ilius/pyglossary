@@ -8,256 +8,291 @@ def toStr(s: AnyStr) -> str:
 	return str(s, "utf-8") if isinstance(s, bytes) else str(s)
 
 
-html_entity2str = {
-	"ldash": "–",
-	"acirc": "â",
-	"ecirc": "ê",
-	"icirc": "î",
-	"ocirc": "ô",
-	"ucirc": "û",
-	"ycirc": "ŷ",
-	"uring": "ů",
-	"wring": "ẘ",
-	"yring": "ẙ",
-	"agrave": "à",
-	"egrave": "è",
-	"igrave": "ì",
-	"ograve": "ò",
-	"ugrave": "ù",
-	"ygrave": "ỳ",
-	"atilde": "ã",
-	"etilde": "ẽ",
-	"itilde": "ĩ",
-	"otilde": "õ",
-	"utilde": "ũ",
-	"ytilde": "ỹ",
-	"auml": "ӓ",
-	"euml": "ë",
-	"iuml": "ï",
-	"ouml": "ö",
-	"uuml": "ü",
-	"yuml": "ÿ",
-	"ccedil": "ç",
-	"aelig": "æ",
-	"eth": "ð",
-	"pound": "£",
-	"deg": "°",
-	"divide": "÷",
-	"frac12": "½",
-	"frac13": "⅓",
-	"frac14": "¼",
-	"frac23": "⅔",
-	"frac34": "¾",
-	"xfrac13": "⅓",
-	"hearts": "♥",
-	"diams": "♦",
-	"spades": "♠",
-	"clubs": "♣"
+# these are not included in html.entities.name2codepoint
+name2codepoint_extra = {
+	"etilde": 0x1ebd,  # ẽ
+	"frac13": 0x2153,  # ⅓
+	"frac23": 0x2154,  # ⅔
+	"itilde": 0x0129,  # ĩ
+	"ldash": 0x2013,  # –
+	"uring": 0x016f,  # ů
+	"utilde": 0x0169,  # ũ
+	"wring": 0x1e98,  # ẘ
+	"xfrac13": 0x2153,  # ⅓
+	"ycirc": 0x0177,  # ŷ
+	"ygrave": 0x1ef3,  # ỳ
+	"yring": 0x1e99,  # ẙ
+	"ytilde": 0x1ef9,  # ỹ
 }
+
 
 # Use build_name2codepoint_dict function to update this dictionary
 name2codepoint = {
-	"aring": 0x00c5,  # Å
-	"gt": 0x003e,  # >
-	"sup": 0x2283,  # ⊃
-	"ge": 0x2265,  # ≥
-	"upsih": 0x03d2,  # ϒ
-	"asymp": 0x2248,  # ≈
-	"radic": 0x221a,  # √
-	"otimes": 0x2297,  # ⊗
-	"aelig": 0x00c6,  # Æ
-	"sigmaf": 0x03c2,  # ς
-	"lrm": 0x200e,  # ‎
-	"cedil": 0x00b8,  # ¸
-	"kappa": 0x03ba,  # κ
-	"wring": 0x1e98,  # ẘ
-	"prime": 0x2032,  # ′
-	"lceil": 0x2308,  # ⌈
-	"iquest": 0x00bf,  # ¿
-	"shy": 0x00ad,  # ­
-	"sdot": 0x22c5,  # ⋅
-	"lfloor": 0x230a,  # ⌊
-	"brvbar": 0x00a6,  # ¦
-	"egrave": 0x00c8,  # È
-	"sub": 0x2282,  # ⊂
-	"iexcl": 0x00a1,  # ¡
-	"ordf": 0x00aa,  # ª
-	"sum": 0x2211,  # ∑
-	"ntilde": 0x00f1,  # ñ
-	"atilde": 0x00e3,  # ã
-	"theta": 0x03b8,  # θ
-	"equiv": 0x2261,  # ≡
-	"nsub": 0x2284,  # ⊄
-	"omicron": 0x039f,  # Ο
-	"yuml": 0x0178,  # Ÿ
-	"thinsp": 0x2009,  #  
-	"ecirc": 0x00ca,  # Ê
-	"bdquo": 0x201e,  # „
-	"frac23": 0x2154,  # ⅔
-	"emsp": 0x2003,  #  
-	"permil": 0x2030,  # ‰
-	"eta": 0x0397,  # Η
-	"forall": 0x2200,  # ∀
-	"eth": 0x00d0,  # Ð
-	"rceil": 0x2309,  # ⌉
-	"ldash": 0x2013,  # –
-	"divide": 0x00f7,  # ÷
-	"igrave": 0x00cc,  # Ì
-	"pound": 0x00a3,  # £
-	"frasl": 0x2044,  # ⁄
-	"zeta": 0x03b6,  # ζ
-	"lowast": 0x2217,  # ∗
-	"chi": 0x03a7,  # Χ
-	"cent": 0x00a2,  # ¢
-	"perp": 0x22a5,  # ⊥
-	"there4": 0x2234,  # ∴
-	"pi": 0x03c0,  # π
-	"empty": 0x2205,  # ∅
-	"euml": 0x00cb,  # Ë
-	"notin": 0x2209,  # ∉
-	"uuml": 0x00fc,  # ü
-	"icirc": 0x00ee,  # î
-	"bull": 0x2022,  # •
-	"upsilon": 0x03a5,  # Υ
-	"ensp": 0x2002,  #  
-	"ccedil": 0x00c7,  # Ç
-	"cap": 0x2229,  # ∩
-	"mu": 0x03bc,  # μ
-	"deg": 0x00b0,  # °
-	"tau": 0x03c4,  # τ
-	"nabla": 0x2207,  # ∇
-	"ucirc": 0x00db,  # Û
-	"ugrave": 0x00f9,  # ù
-	"cong": 0x2245,  # ≅
-	"quot": 0x0022,  # "
-	"uacute": 0x00da,  # Ú
-	"acirc": 0x00c2,  # Â
-	"sim": 0x223c,  # ∼
-	"phi": 0x03a6,  # Φ
-	"diams": 0x2666,  # ♦
-	"minus": 0x2212,  # −
-	"euro": 0x20ac,  # €
-	"thetasym": 0x03d1,  # ϑ
-	"iuml": 0x00cf,  # Ï
-	"sect": 0x00a7,  # §
-	"ldquo": 0x201c,  # “
-	"hearts": 0x2665,  # ♥
-	"oacute": 0x00f3,  # ó
-	"zwnj": 0x200c,  # ‌
-	"yen": 0x00a5,  # ¥
-	"ograve": 0x00d2,  # Ò
-	"uring": 0x016f,  # ů
-	"trade": 0x2122,  # ™
-	"nbsp": 0x00a0,  #  
-	"tilde": 0x02dc,  # ˜
-	"itilde": 0x0129,  # ĩ
-	"oelig": 0x0153,  # œ
-	"xfrac13": 0x2153,  # ⅓
-	"le": 0x2264,  # ≤
-	"auml": 0x00e4,  # ä
-	"cup": 0x222a,  # ∪
-	"otilde": 0x00f5,  # õ
-	"lt": 0x003c,  # <
-	"ndash": 0x2013,  # –
-	"sbquo": 0x201a,  # ‚
-	"real": 0x211c,  # ℜ
-	"psi": 0x03c8,  # ψ
-	"rsaquo": 0x203a,  # ›
-	"darr": 0x2193,  # ↓
-	"not": 0x00ac,  # ¬
-	"amp": 0x0026,  # &
-	"oslash": 0x00f8,  # ø
+	"Aacute": 0x00c1,  # Á
+	"aacute": 0x00e1,  # á
+	"Acirc": 0x00c2,  # Â
+	"acirc": 0x00e2,  # â
 	"acute": 0x00b4,  # ´
-	"zwj": 0x200d,  # ‍
-	"alefsym": 0x2135,  # ℵ
-	"sup3": 0x00b3,  # ³
-	"rdquo": 0x201d,  # ”
-	"laquo": 0x00ab,  # «
-	"micro": 0x00b5,  # µ
-	"ygrave": 0x1ef3,  # ỳ
-	"szlig": 0x00df,  # ß
-	"clubs": 0x2663,  # ♣
+	"AElig": 0x00c6,  # Æ
+	"aelig": 0x00e6,  # æ
+	"Agrave": 0x00c0,  # À
 	"agrave": 0x00e0,  # à
-	"harr": 0x2194,  # ↔
-	"frac14": 0x00bc,  # ¼
-	"frac13": 0x2153,  # ⅓
-	"frac12": 0x00bd,  # ½
-	"utilde": 0x0169,  # ũ
-	"prop": 0x221d,  # ∝
-	"circ": 0x02c6,  # ˆ
-	"ocirc": 0x00f4,  # ô
-	"uml": 0x00a8,  # ¨
-	"prod": 0x220f,  # ∏
-	"reg": 0x00ae,  # ®
-	"rlm": 0x200f,  # ‏
-	"ycirc": 0x0177,  # ŷ
-	"infin": 0x221e,  # ∞
-	"etilde": 0x1ebd,  # ẽ
-	"mdash": 0x2014,  # —
-	"uarr": 0x21d1,  # ⇑
-	"times": 0x00d7,  # ×
-	"rarr": 0x21d2,  # ⇒
-	"yring": 0x1e99,  # ẙ
-	"or": 0x2228,  # ∨
-	"gamma": 0x03b3,  # γ
-	"lambda": 0x03bb,  # λ
-	"rang": 0x232a,  # 〉
-	"xi": 0x039e,  # Ξ
-	"dagger": 0x2021,  # ‡
-	"image": 0x2111,  # ℑ
-	"hellip": 0x2026,  # …
-	"sube": 0x2286,  # ⊆
+	"alefsym": 0x2135,  # ℵ
+	"Alpha": 0x0391,  # Α
 	"alpha": 0x03b1,  # α
-	"plusmn": 0x00b1,  # ±
-	"sup1": 0x00b9,  # ¹
-	"sup2": 0x00b2,  # ²
-	"frac34": 0x00be,  # ¾
-	"oline": 0x203e,  # ‾
-	"loz": 0x25ca,  # ◊
-	"iota": 0x03b9,  # ι
-	"iacute": 0x00cd,  # Í
-	"para": 0x00b6,  # ¶
-	"ordm": 0x00ba,  # º
-	"epsilon": 0x03b5,  # ε
-	"weierp": 0x2118,  # ℘
-	"part": 0x2202,  # ∂
-	"delta": 0x03b4,  # δ
-	"copy": 0x00a9,  # ©
-	"scaron": 0x0161,  # š
-	"lsquo": 0x2018,  # ‘
-	"isin": 0x2208,  # ∈
-	"supe": 0x2287,  # ⊇
+	"amp": 0x0026,  # &
 	"and": 0x2227,  # ∧
 	"ang": 0x2220,  # ∠
-	"curren": 0x00a4,  # ¤
-	"int": 0x222b,  # ∫
-	"rfloor": 0x230b,  # ⌋
-	"crarr": 0x21b5,  # ↵
-	"exist": 0x2203,  # ∃
-	"oplus": 0x2295,  # ⊕
-	"piv": 0x03d6,  # ϖ
-	"ni": 0x220b,  # ∋
-	"ne": 0x2260,  # ≠
-	"lsaquo": 0x2039,  # ‹
-	"yacute": 0x00fd,  # ý
-	"nu": 0x03bd,  # ν
-	"macr": 0x00af,  # ¯
-	"larr": 0x2190,  # ←
-	"aacute": 0x00e1,  # á
+	"Aring": 0x00c5,  # Å
+	"aring": 0x00e5,  # å
+	"asymp": 0x2248,  # ≈
+	"Atilde": 0x00c3,  # Ã
+	"atilde": 0x00e3,  # ã
+	"Auml": 0x00c4,  # Ä
+	"auml": 0x00e4,  # ä
+	"bdquo": 0x201e,  # „
+	"Beta": 0x0392,  # Β
 	"beta": 0x03b2,  # β
-	"fnof": 0x0192,  # ƒ
-	"rho": 0x03c1,  # ρ
+	"brvbar": 0x00a6,  # ¦
+	"bull": 0x2022,  # •
+	"cap": 0x2229,  # ∩
+	"Ccedil": 0x00c7,  # Ç
+	"ccedil": 0x00e7,  # ç
+	"cedil": 0x00b8,  # ¸
+	"cent": 0x00a2,  # ¢
+	"Chi": 0x03a7,  # Χ
+	"chi": 0x03c7,  # χ
+	"circ": 0x02c6,  # ˆ
+	"clubs": 0x2663,  # ♣
+	"cong": 0x2245,  # ≅
+	"copy": 0x00a9,  # ©
+	"crarr": 0x21b5,  # ↵
+	"cup": 0x222a,  # ∪
+	"curren": 0x00a4,  # ¤
+	"Dagger": 0x2021,  # ‡
+	"dagger": 0x2020,  # †
+	"dArr": 0x21d3,  # ⇓
+	"darr": 0x2193,  # ↓
+	"deg": 0x00b0,  # °
+	"Delta": 0x0394,  # Δ
+	"delta": 0x03b4,  # δ
+	"diams": 0x2666,  # ♦
+	"divide": 0x00f7,  # ÷
+	"Eacute": 0x00c9,  # É
 	"eacute": 0x00e9,  # é
-	"omega": 0x03c9,  # ω
-	"middot": 0x00b7,  # ·
+	"Ecirc": 0x00ca,  # Ê
+	"ecirc": 0x00ea,  # ê
+	"Egrave": 0x00c8,  # È
+	"egrave": 0x00e8,  # è
+	"empty": 0x2205,  # ∅
+	"emsp": 0x2003,  #  
+	"ensp": 0x2002,  #  
+	"Epsilon": 0x0395,  # Ε
+	"epsilon": 0x03b5,  # ε
+	"equiv": 0x2261,  # ≡
+	"Eta": 0x0397,  # Η
+	"eta": 0x03b7,  # η
+	"ETH": 0x00d0,  # Ð
+	"eth": 0x00f0,  # ð
+	"etilde": 0x1ebd,  # ẽ
+	"Euml": 0x00cb,  # Ë
+	"euml": 0x00eb,  # ë
+	"euro": 0x20ac,  # €
+	"exist": 0x2203,  # ∃
+	"fnof": 0x0192,  # ƒ
+	"forall": 0x2200,  # ∀
+	"frac12": 0x00bd,  # ½
+	"frac13": 0x2153,  # ⅓
+	"frac14": 0x00bc,  # ¼
+	"frac23": 0x2154,  # ⅔
+	"frac34": 0x00be,  # ¾
+	"frasl": 0x2044,  # ⁄
+	"Gamma": 0x0393,  # Γ
+	"gamma": 0x03b3,  # γ
+	"ge": 0x2265,  # ≥
+	"gt": 0x003e,  # >
+	"hArr": 0x21d4,  # ⇔
+	"harr": 0x2194,  # ↔
+	"hearts": 0x2665,  # ♥
+	"hellip": 0x2026,  # …
+	"Iacute": 0x00cd,  # Í
+	"iacute": 0x00ed,  # í
+	"Icirc": 0x00ce,  # Î
+	"icirc": 0x00ee,  # î
+	"iexcl": 0x00a1,  # ¡
+	"Igrave": 0x00cc,  # Ì
+	"igrave": 0x00ec,  # ì
+	"image": 0x2111,  # ℑ
+	"infin": 0x221e,  # ∞
+	"int": 0x222b,  # ∫
+	"Iota": 0x0399,  # Ι
+	"iota": 0x03b9,  # ι
+	"iquest": 0x00bf,  # ¿
+	"isin": 0x2208,  # ∈
+	"itilde": 0x0129,  # ĩ
+	"Iuml": 0x00cf,  # Ï
+	"iuml": 0x00ef,  # ï
+	"Kappa": 0x039a,  # Κ
+	"kappa": 0x03ba,  # κ
+	"Lambda": 0x039b,  # Λ
+	"lambda": 0x03bb,  # λ
 	"lang": 0x2329,  # 〈
-	"spades": 0x2660,  # ♠
-	"rsquo": 0x2019,  # ’
-	"thorn": 0x00fe,  # þ
+	"laquo": 0x00ab,  # «
+	"lArr": 0x21d0,  # ⇐
+	"larr": 0x2190,  # ←
+	"lceil": 0x2308,  # ⌈
+	"ldash": 0x2013,  # –
+	"ldquo": 0x201c,  # “
+	"le": 0x2264,  # ≤
+	"lfloor": 0x230a,  # ⌊
+	"lowast": 0x2217,  # ∗
+	"loz": 0x25ca,  # ◊
+	"lrm": 0x200e,  # ‎
+	"lsaquo": 0x2039,  # ‹
+	"lsquo": 0x2018,  # ‘
+	"lt": 0x003c,  # <
+	"macr": 0x00af,  # ¯
+	"mdash": 0x2014,  # —
+	"micro": 0x00b5,  # µ
+	"middot": 0x00b7,  # ·
+	"minus": 0x2212,  # −
+	"Mu": 0x039c,  # Μ
+	"mu": 0x03bc,  # μ
+	"nabla": 0x2207,  # ∇
+	"nbsp": 0x00a0,  #  
+	"ndash": 0x2013,  # –
+	"ne": 0x2260,  # ≠
+	"ni": 0x220b,  # ∋
+	"not": 0x00ac,  # ¬
+	"notin": 0x2209,  # ∉
+	"nsub": 0x2284,  # ⊄
+	"Ntilde": 0x00d1,  # Ñ
+	"ntilde": 0x00f1,  # ñ
+	"Nu": 0x039d,  # Ν
+	"nu": 0x03bd,  # ν
+	"Oacute": 0x00d3,  # Ó
+	"oacute": 0x00f3,  # ó
+	"Ocirc": 0x00d4,  # Ô
+	"ocirc": 0x00f4,  # ô
+	"OElig": 0x0152,  # Œ
+	"oelig": 0x0153,  # œ
+	"Ograve": 0x00d2,  # Ò
+	"ograve": 0x00f2,  # ò
+	"oline": 0x203e,  # ‾
+	"Omega": 0x03a9,  # Ω
+	"omega": 0x03c9,  # ω
+	"Omicron": 0x039f,  # Ο
+	"omicron": 0x03bf,  # ο
+	"oplus": 0x2295,  # ⊕
+	"or": 0x2228,  # ∨
+	"ordf": 0x00aa,  # ª
+	"ordm": 0x00ba,  # º
+	"Oslash": 0x00d8,  # Ø
+	"oslash": 0x00f8,  # ø
+	"Otilde": 0x00d5,  # Õ
+	"otilde": 0x00f5,  # õ
+	"otimes": 0x2297,  # ⊗
+	"Ouml": 0x00d6,  # Ö
 	"ouml": 0x00f6,  # ö
+	"para": 0x00b6,  # ¶
+	"part": 0x2202,  # ∂
+	"permil": 0x2030,  # ‰
+	"perp": 0x22a5,  # ⊥
+	"Phi": 0x03a6,  # Φ
+	"phi": 0x03c6,  # φ
+	"Pi": 0x03a0,  # Π
+	"pi": 0x03c0,  # π
+	"piv": 0x03d6,  # ϖ
+	"plusmn": 0x00b1,  # ±
+	"pound": 0x00a3,  # £
+	"Prime": 0x2033,  # ″
+	"prime": 0x2032,  # ′
+	"prod": 0x220f,  # ∏
+	"prop": 0x221d,  # ∝
+	"Psi": 0x03a8,  # Ψ
+	"psi": 0x03c8,  # ψ
+	"quot": 0x0022,  # "
+	"radic": 0x221a,  # √
+	"rang": 0x232a,  # 〉
 	"raquo": 0x00bb,  # »
+	"rArr": 0x21d2,  # ⇒
+	"rarr": 0x2192,  # →
+	"rceil": 0x2309,  # ⌉
+	"rdquo": 0x201d,  # ”
+	"real": 0x211c,  # ℜ
+	"reg": 0x00ae,  # ®
+	"rfloor": 0x230b,  # ⌋
+	"Rho": 0x03a1,  # Ρ
+	"rho": 0x03c1,  # ρ
+	"rlm": 0x200f,  # ‏
+	"rsaquo": 0x203a,  # ›
+	"rsquo": 0x2019,  # ’
+	"sbquo": 0x201a,  # ‚
+	"Scaron": 0x0160,  # Š
+	"scaron": 0x0161,  # š
+	"sdot": 0x22c5,  # ⋅
+	"sect": 0x00a7,  # §
+	"shy": 0x00ad,  # ­
+	"Sigma": 0x03a3,  # Σ
 	"sigma": 0x03c3,  # σ
+	"sigmaf": 0x03c2,  # ς
+	"sim": 0x223c,  # ∼
+	"spades": 0x2660,  # ♠
+	"sub": 0x2282,  # ⊂
+	"sube": 0x2286,  # ⊆
+	"sum": 0x2211,  # ∑
+	"sup": 0x2283,  # ⊃
+	"sup1": 0x00b9,  # ¹
+	"sup2": 0x00b2,  # ²
+	"sup3": 0x00b3,  # ³
+	"supe": 0x2287,  # ⊇
+	"szlig": 0x00df,  # ß
+	"Tau": 0x03a4,  # Τ
+	"tau": 0x03c4,  # τ
+	"there4": 0x2234,  # ∴
+	"Theta": 0x0398,  # Θ
+	"theta": 0x03b8,  # θ
+	"thetasym": 0x03d1,  # ϑ
+	"thinsp": 0x2009,  #  
+	"THORN": 0x00de,  # Þ
+	"thorn": 0x00fe,  # þ
+	"tilde": 0x02dc,  # ˜
+	"times": 0x00d7,  # ×
+	"trade": 0x2122,  # ™
+	"Uacute": 0x00da,  # Ú
+	"uacute": 0x00fa,  # ú
+	"uArr": 0x21d1,  # ⇑
+	"uarr": 0x2191,  # ↑
+	"Ucirc": 0x00db,  # Û
+	"ucirc": 0x00fb,  # û
+	"Ugrave": 0x00d9,  # Ù
+	"ugrave": 0x00f9,  # ù
+	"uml": 0x00a8,  # ¨
+	"upsih": 0x03d2,  # ϒ
+	"Upsilon": 0x03a5,  # Υ
+	"upsilon": 0x03c5,  # υ
+	"uring": 0x016f,  # ů
+	"utilde": 0x0169,  # ũ
+	"Uuml": 0x00dc,  # Ü
+	"uuml": 0x00fc,  # ü
+	"weierp": 0x2118,  # ℘
+	"wring": 0x1e98,  # ẘ
+	"xfrac13": 0x2153,  # ⅓
+	"Xi": 0x039e,  # Ξ
+	"xi": 0x03be,  # ξ
+	"Yacute": 0x00dd,  # Ý
+	"yacute": 0x00fd,  # ý
+	"ycirc": 0x0177,  # ŷ
+	"yen": 0x00a5,  # ¥
+	"ygrave": 0x1ef3,  # ỳ
+	"yring": 0x1e99,  # ẙ
 	"ytilde": 0x1ef9,  # ỹ
+	"Yuml": 0x0178,  # Ÿ
+	"yuml": 0x00ff,  # ÿ
+	"Zeta": 0x0396,  # Ζ
+	"zeta": 0x03b6,  # ζ
+	"zwj": 0x200d,  # ‍
+	"zwnj": 0x200c,  # ‌
 }
 
 
@@ -268,14 +303,16 @@ def build_name2codepoint_dict():
 		name2str - name to utf-8 string dictionary
 	"""
 	import html.entities
-	name2str = html_entity2str
+	name2str = {}
+	for k, v in name2codepoint_extra.items():
+		name2str[k] = chr(v)
 	for k, v in html.entities.name2codepoint.items():
-		name2str[k.lower()] = chr(v).encode("utf-8")
-	for key in sorted(name2str.keys()):
-		value = toStr(name2str[key])
+		name2str[k] = chr(v)
+	for key in sorted(name2str.keys(), key=lambda s: (s.lower(), s)):
+		value = name2str[key]
 		if len(value) > 1:
 			raise ValueError(f"value = {value!r}")
-		log.info(f"    \"{key}\": 0x{ord(value):0>4x},  # {value}")
+		print(f"\t\"{key}\": 0x{ord(value):0>4x},  # {value}")
 
 
 if __name__ == "__main__":
