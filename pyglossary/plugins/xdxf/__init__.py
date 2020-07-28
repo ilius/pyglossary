@@ -133,6 +133,7 @@ class Reader(object):
 		del context
 		self._fileSize = os.path.getsize(filename)
 		self._file = open(self._filename, mode="rb")
+		self._glos.setDefaultDefiFormat("x")
 
 	def __len__(self):
 		return 0
@@ -140,8 +141,6 @@ class Reader(object):
 	def __iter__(self):
 		from lxml.etree import tostring
 		from lxml import etree as ET
-
-		self._glos.setDefaultDefiFormat("x")
 
 		context = ET.iterparse(
 			self._file,

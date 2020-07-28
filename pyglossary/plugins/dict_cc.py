@@ -35,6 +35,7 @@ class Reader(object):
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
+		self._glos.setDefaultDefiFormat("h")
 
 	def __len__(self):
 		self._cur.execute("select count(*) from main_ft")

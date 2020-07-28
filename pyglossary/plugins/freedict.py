@@ -334,6 +334,8 @@ class Reader(object):
 		self._discover = discover
 		self._keywords_header = keywords_header
 
+		self._glos.setDefaultDefiFormat("h")
+
 		context = ET.iterparse(
 			filename,
 			events=("end",),

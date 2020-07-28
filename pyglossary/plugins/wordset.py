@@ -53,6 +53,7 @@ class Reader(object):
 		name = self._glos.getInfo("name")
 		if not name or name == "data":
 			self._glos.setInfo("name", "Wordset.org")
+		self._glos.setDefaultDefiFormat("h")
 
 	def __len__(self) -> int:
 		return 0
@@ -71,7 +72,6 @@ class Reader(object):
 		direc = self._filename
 		encoding = self._encoding
 		glos = self._glos
-		glos.setDefaultDefiFormat("h")
 		for fname in sorted(listdir(direc), key=self.fileNameSortKey):
 			fpath = join(direc, fname)
 			if not (fname.endswith(".json") and isfile(fpath)) :
