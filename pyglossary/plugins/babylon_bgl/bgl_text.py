@@ -44,7 +44,6 @@ def replaceHtmlEntryNoEscapeCB(u_match):
 	Return the original string if conversion fails.
 	Use this as a replace function of re.sub.
 	"""
-	import html.entities
 	from pyglossary.html_utils import name2codepoint
 
 	u_text = u_match.group(0)
@@ -66,26 +65,23 @@ def replaceHtmlEntryNoEscapeCB(u_match):
 		except (ValueError, OverflowError):
 			u_res = chr(0xFFFD)  # replacement character
 	elif u_text[0] == "&":
+		"""
+		Babylon dictionaries contain a lot of non-standard entity,
+		references for example, csdot, fllig, nsm, cancer, thlig,
+		tsdot, upslur...
+		This not just a typo. These entries repeat over and over again.
+		Perhaps they had meaning in the source dictionary that was
+		converted to Babylon, but now the meaning is lost. Babylon
+		does render them as is, that is, for example, &csdot; despite
+		other references like &amp; are replaced with corresponding
+		characters.
+		"""
 		# named entity
 		try:
-			u_res = chr(html.entities.name2codepoint[u_name])
+			u_res = chr(name2codepoint[u_name.lower()])
 		except KeyError:
-			try:
-				u_res = chr(name2codepoint[u_name.lower()])
-			except KeyError:
-				"""
-				Babylon dictionaries contain a lot of non-standard entity,
-				references for example, csdot, fllig, nsm, cancer, thlig,
-				tsdot, upslur...
-				This not just a typo. These entries repeat over and over again.
-				Perhaps they had meaning in the source dictionary that was
-				converted to Babylon, but now the meaning is lost. Babylon
-				does render them as is, that is, for example, &csdot; despite
-				other references like &amp; are replaced with corresponding
-				characters.
-				"""
-				unknownHtmlEntries.add(u_text)
-				u_res = u_text
+			unknownHtmlEntries.add(u_text)
+			u_res = u_text
 	else:
 		raise ArgumentError()
 	return u_res
