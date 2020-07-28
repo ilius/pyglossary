@@ -115,10 +115,15 @@ class Reader(object):
 					word = word[2:]
 				yield self._glos.newDataEntry(word, blob.content)
 				continue
+			defiFormat = ""
+			if ctype == MIME_HTML:
+				defiFormat = "h"
+			elif ctype == MIME_TEXT:
+				defiFormat = "m"
 
 			defi = blob.content.decode("utf-8")
 			defi = self._re_bword.sub(self._href_sub, defi)
-			yield self._glos.newEntry(word, defi)
+			yield self._glos.newEntry(word, defi, defiFormat=defiFormat)
 
 
 class Writer(object):
