@@ -185,7 +185,7 @@ class Reader(object):
 
 		defi = f.getvalue().decode("utf-8")
 		defi = html.unescape(defi)
-		return self._glos.newEntry(keywords, defi)
+		return self._glos.newEntry(keywords, defi, defiFormat="h")
 
 	def set_word_count(self, header):
 		extent_elem = header.find(".//extent", self.ns)
