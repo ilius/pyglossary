@@ -1,3 +1,4 @@
+import re
 from typing import AnyStr
 
 import logging
@@ -6,6 +7,13 @@ log = logging.getLogger("root")
 
 def toStr(s: AnyStr) -> str:
 	return str(s, "utf-8") if isinstance(s, bytes) else str(s)
+
+
+special_entity_dict = {
+	"lt": 0x003c,  # <
+	"gt": 0x003e,  # >
+	"amp": 0x0026,  # &
+}
 
 
 # these are not included in html.entities.name2codepoint
@@ -313,6 +321,38 @@ def build_name2codepoint_dict():
 		if len(value) > 1:
 			raise ValueError(f"value = {value!r}")
 		print(f"\t\"{key}\": 0x{ord(value):0>4x},  # {value}")
+
+
+def unescape_unicode(text):
+	"""
+		unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
+		leave these 3 special entities alone, since unscaping them
+		creates invalid html
+	"""
+
+	def fixup(m: re.Match) -> str:
+		text = m.group(0)
+		if text[:2] == "&#":
+			# character reference
+			if text.startswith("&#x"):
+				code = int(text[3:-1], 16)
+			else:
+				code = int(text[2:-1])
+			try:
+				return chr(code)
+			except ValueError:
+				pass
+			return text
+
+		# named entity
+		name = text[1:-1]
+		if name in name2codepoint:
+			if name not in special_entity_dict:
+				return chr(name2codepoint[name])
+
+		return text
+
+	return re.sub(r"&#?\w+;", fixup, text)
 
 
 if __name__ == "__main__":

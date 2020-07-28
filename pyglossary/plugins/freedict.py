@@ -2,6 +2,7 @@
 
 from formats_common import *
 from pyglossary.xml_utils import xml_escape
+from pyglossary.html_utils import unescape_unicode
 from typing import List, Union, Callable
 from io import BytesIO
 import re
@@ -185,6 +186,7 @@ class Reader(object):
 				)
 
 		defi = f.getvalue().decode("utf-8")
+		defi = unescape_unicode(defi)
 		return self._glos.newEntry(keywords, defi, defiFormat="h")
 
 	def set_word_count(self, header):
@@ -228,7 +230,7 @@ class Reader(object):
 		return "\n".join(lines)
 
 	def set_info(self, key: str, value: str) -> None:
-		self._glos.setInfo(key, html.unescape(value))
+		self._glos.setInfo(key, unescape_unicode(value))
 
 	def set_copyright(self, header):
 		elems = header.findall(".//availability//p", self.ns)
