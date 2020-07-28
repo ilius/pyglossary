@@ -48,7 +48,7 @@ class Reader(object):
 		for row in self._cur:
 			term1 = html.unescape(row[0])
 			term2 = row[1]
-			term2 = html.escape(html.unescape(term2))
+			term2 = html.escape(html.unescape(term2), quote=False)
 			entry_type = row[2]
 			defi = term2
 			if entry_type:
