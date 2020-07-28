@@ -20,6 +20,8 @@ class UnescapeUnicodeTest(unittest.TestCase):
 		self.case("&lt;", "&lt;")
 		self.case("&gt;", "&gt;")
 		self.case("&amp;", "&amp;")
+		self.case("&quot;", "&quot;")
+		self.case("&#x27;", "&#x27;")
 
 		self.case("&lt;&aacute;&gt;", "&lt;á&gt;")
 

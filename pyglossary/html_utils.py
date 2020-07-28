@@ -16,10 +16,12 @@ re_entity = re.compile(
 )
 
 
-special_entity_dict = {
-	"lt": 0x003c,  # <
-	"gt": 0x003e,  # >
-	"amp": 0x0026,  # &
+special_chars = {
+	"<",
+	">",
+	"&",
+	'"',
+	"'",
 }
 
 
@@ -339,16 +341,19 @@ def _sub_unescape_unicode(m: re.Match) -> str:
 		else:
 			code = int(text[2:-1])
 		try:
-			return chr(code)
+			char = chr(code)
 		except ValueError:
-			pass
+			return text
+		if char not in special_chars:
+			return char
 		return text
 
 	# named entity
 	name = text[1:-1]
 	if name in name2codepoint:
-		if name not in special_entity_dict:
-			return chr(name2codepoint[name])
+		char = chr(name2codepoint[name])
+		if char not in special_chars:
+			return char
 
 	return text
 
@@ -357,8 +362,7 @@ def unescape_unicode(text):
 		unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
 		leave these 3 special entities alone, since unscaping them
 		creates invalid html
-
-		TODO: should add a flag for '&quot;' and '&#x27;' ?
+		we also ignore quotations: "&quot;" and "&#x27;"
 	"""
 	return re_entity.sub(_sub_unescape_unicode, text)
 
