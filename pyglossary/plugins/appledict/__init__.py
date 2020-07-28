@@ -223,8 +223,6 @@ class Writer(object):
 		generate_id = id_generator()
 		generate_indexes = indexes_generator(indexes)
 
-		glos.setDefaultDefiFormat("h")
-
 		myResDir = join(dirname, "OtherResources")
 		if not isdir(myResDir):
 			os.mkdir(myResDir)
