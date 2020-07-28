@@ -303,11 +303,8 @@ class Reader(object):
 			else:
 				word = [word] + alts
 
-			yield self._glos.newEntry(
-				word,
-				"\n<hr>\n".join(defis),
-				defiFormat=defiFormat,
-			)
+			defis_str = "\n<hr>\n".join(defis)
+			yield self._glos.newEntry(word, defis_str, defiFormat=defiFormat)
 
 		if isdir(self._resDir):
 			for fname in os.listdir(self._resDir):
