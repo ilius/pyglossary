@@ -91,6 +91,6 @@ class Reader(object):
 						})
 						for meaning in entryDict.get("meanings", [])
 					)
-					yield glos.newEntry(word, defi)
+					yield glos.newEntry(word, defi, defiFormat="h")
 			log.info(f"finished reading {fname}")
 
