@@ -170,10 +170,11 @@ class Reader(object):
 
 				pronList = entry.findall("form/pron", self.ns)
 				if pronList:
-					hf.write(", ".join(
-						f'<font color="green">/{p.text}/</font>'
-						for p in pronList
-					))
+					for i, pron in enumerate(pronList):
+						if i > 0:
+							hf.write(", ")
+						with hf.element("font", color="green"):
+							hf.write(f"/{pron.text}/")
 					hf.write(br())
 					hf.write("\n")
 
@@ -184,7 +185,6 @@ class Reader(object):
 				)
 
 		defi = f.getvalue().decode("utf-8")
-		defi = html.unescape(defi)
 		return self._glos.newEntry(keywords, defi, defiFormat="h")
 
 	def set_word_count(self, header):
