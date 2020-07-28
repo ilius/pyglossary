@@ -25,9 +25,11 @@ class Writer(object):
 		self._encoding = "utf-8"
 		self._fileIndex = 0
 		self._filename_format = "{n:05d}.html"
+		self._tail = "</body></html>"
 
 	def nextFile(self):
 		if self._fileObj:
+			self._fileObj.write(self._tail)
 			self._fileObj.close()
 		self._fileObj = open(
 			join(
@@ -63,10 +65,23 @@ class Writer(object):
 		self._encoding = encoding
 		self._filename_format = filename_format
 
+		title = glos.getInfo("name")
+		header = (
+			'<!DOCTYPE html>\n'
+			'<html><head>'
+			f'<title>Page {{n}} of {title}</title>'
+			f'<meta charset="{encoding}">'
+			'</head><body>\n'
+		)
+
+		tailSize = len(self._tail.encode(encoding))
+		max_file_size -= tailSize
+
 		if not isdir(self._filename):
 			os.mkdir(self._filename)
 
 		fileObj = self.nextFile()
+		fileObj.write(header.format(n=0))
 
 		while True:
 			entry = yield
@@ -88,6 +103,7 @@ class Writer(object):
 			if pos > initFileSizeMax:
 				if pos > max_file_size - len(text.encode(encoding)):
 					fileObj = self.nextFile()
+					fileObj.write(header.format(n=self._fileIndex - 1))
 			fileObj.write(text)
 
 		fileObj.close()
