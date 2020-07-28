@@ -9,6 +9,11 @@ def toStr(s: AnyStr) -> str:
 	return str(s, "utf-8") if isinstance(s, bytes) else str(s)
 
 
+re_entity = re.compile(
+	r"&#?\w+;",
+)
+
+
 special_entity_dict = {
 	"lt": 0x003c,  # <
 	"gt": 0x003e,  # >
@@ -352,7 +357,7 @@ def unescape_unicode(text):
 
 		return text
 
-	return re.sub(r"&#?\w+;", fixup, text)
+	return re_entity.sub(fixup, text)
 
 
 if __name__ == "__main__":
