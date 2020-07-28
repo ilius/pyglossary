@@ -25,6 +25,9 @@ class UnescapeUnicodeTest(unittest.TestCase):
 
 		self.case("/w&#601;&#720;ki&#331;ti&#720;m/", "/wəːkiŋtiːm/")
 
+		# Babylon dictionaries contain a lot of non-standard entity,
+		# references for example, csdot, fllig, nsm, cancer, thlig,
+		# tsdot, upslur...
 		self.case("&lt;&etilde;", "&lt;ẽ")
 		self.case("&lt;&frac13;", "&lt;⅓")
 		self.case("&lt;&frac23;", "&lt;⅔")

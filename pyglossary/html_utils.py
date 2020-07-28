@@ -25,19 +25,19 @@ special_entity_dict = {
 
 # these are not included in html.entities.name2codepoint
 name2codepoint_extra = {
-	"etilde": 0x1ebd,  # ẽ
-	"frac13": 0x2153,  # ⅓
-	"frac23": 0x2154,  # ⅔
 	"itilde": 0x0129,  # ĩ
-	"ldash": 0x2013,  # –
-	"uring": 0x016f,  # ů
 	"utilde": 0x0169,  # ũ
-	"wring": 0x1e98,  # ẘ
-	"xfrac13": 0x2153,  # ⅓
+	"uring": 0x016f,  # ů
 	"ycirc": 0x0177,  # ŷ
-	"ygrave": 0x1ef3,  # ỳ
+	"wring": 0x1e98,  # ẘ
 	"yring": 0x1e99,  # ẙ
+	"etilde": 0x1ebd,  # ẽ
+	"ygrave": 0x1ef3,  # ỳ
 	"ytilde": 0x1ef9,  # ỹ
+	"ldash": 0x2013,  # –
+	"frac13": 0x2153,  # ⅓
+	"xfrac13": 0x2153,  # ⅓
+	"frac23": 0x2154,  # ⅔
 }
 
 
@@ -357,6 +357,8 @@ def unescape_unicode(text):
 		unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
 		leave these 3 special entities alone, since unscaping them
 		creates invalid html
+
+		TODO: should add a flag for '&quot;' and '&#x27;' ?
 	"""
 	return re_entity.sub(_sub_unescape_unicode, text)
 
