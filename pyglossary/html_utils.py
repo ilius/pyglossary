@@ -330,36 +330,35 @@ def build_name2codepoint_dict():
 		print(f"\t\"{key}\": 0x{ord(value):0>4x},  # {value}")
 
 
+def _sub_unescape_unicode(m: re.Match) -> str:
+	text = m.group(0)
+	if text[:2] == "&#":
+		# character reference
+		if text.startswith("&#x"):
+			code = int(text[3:-1], 16)
+		else:
+			code = int(text[2:-1])
+		try:
+			return chr(code)
+		except ValueError:
+			pass
+		return text
+
+	# named entity
+	name = text[1:-1]
+	if name in name2codepoint:
+		if name not in special_entity_dict:
+			return chr(name2codepoint[name])
+
+	return text
+
 def unescape_unicode(text):
 	"""
 		unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
 		leave these 3 special entities alone, since unscaping them
 		creates invalid html
 	"""
-
-	def fixup(m: re.Match) -> str:
-		text = m.group(0)
-		if text[:2] == "&#":
-			# character reference
-			if text.startswith("&#x"):
-				code = int(text[3:-1], 16)
-			else:
-				code = int(text[2:-1])
-			try:
-				return chr(code)
-			except ValueError:
-				pass
-			return text
-
-		# named entity
-		name = text[1:-1]
-		if name in name2codepoint:
-			if name not in special_entity_dict:
-				return chr(name2codepoint[name])
-
-		return text
-
-	return re_entity.sub(fixup, text)
+	return re_entity.sub(_sub_unescape_unicode, text)
 
 
 if __name__ == "__main__":
