@@ -111,7 +111,7 @@ class Writer(object):
 				linksTxtFileObj.write(
 					f"{escapeNTB(target)}\t"
 					f"{escapeNTB(s_word)}\t"
-					f"{self._currentFilename}\t"
+					f"{escapeNTB(self._currentFilename)}\t"
 					f"{pos + m.start()}\t"
 					f"{m.end() - m.start()}\n"
 				)
@@ -141,7 +141,7 @@ class Writer(object):
 			pos = fileObj.tell()
 			indexTxtFileObj.write(
 				f"{escapeNTB(s_word)}\t"
-				f"{self._currentFilename}\t"
+				f"{escapeNTB(self._currentFilename)}\t"
 				f"{pos}\n"
 			)
 			addLinks(s_word, text, pos)
