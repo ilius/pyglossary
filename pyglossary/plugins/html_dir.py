@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
+from pyglossary.text_utils import escapeNTB
 import html
 
 enable = True
@@ -25,16 +26,18 @@ class Writer(object):
 		self._encoding = "utf-8"
 		self._fileIndex = 0
 		self._filename_format = "{n:05d}.html"
+		self._currentFilename = None
 		self._tail = "</body></html>"
 
 	def nextFile(self):
 		if self._fileObj:
 			self._fileObj.write(self._tail)
 			self._fileObj.close()
+		self._currentFilename = self._filename_format.format(n=self._fileIndex)
 		self._fileObj = open(
 			join(
 				self._filename,
-				self._filename_format.format(n=self._fileIndex),
+				self._currentFilename,
 			),
 			mode="w",
 			encoding=self._encoding,
@@ -61,9 +64,18 @@ class Writer(object):
 		if not isdir(resDir):
 			os.mkdir(resDir)
 
+		if not isdir(filename):
+			os.mkdir(filename)
+
 		self._filename = filename
 		self._encoding = encoding
 		self._filename_format = filename_format
+
+		indexTxtFileObj = open(
+			join(filename, "index.txt"),
+			mode="w",
+			encoding="utf-8",
+		)
 
 		title = glos.getInfo("name")
 		header = (
@@ -104,7 +116,13 @@ class Writer(object):
 				if pos > max_file_size - len(text.encode(encoding)):
 					fileObj = self.nextFile()
 					fileObj.write(header.format(n=self._fileIndex - 1))
+			indexTxtFileObj.write(
+				f"{escapeNTB(entry.s_word)}\t"
+				f"{self._currentFilename}\t"
+				f"{fileObj.tell()}\n"
+			)
 			fileObj.write(text)
 
 		fileObj.close()
 		self._fileObj = None
+		indexTxtFileObj.close()
