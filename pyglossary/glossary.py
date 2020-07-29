@@ -807,9 +807,11 @@ class Glossary(GlossaryType):
 				if entry:
 					self.addEntryObj(entry)
 				if progressbar:
-					if entry is None or wordCount > 0:
+					if wordCount > 0:
 						if index % wcThreshold == 0:
 							self.progress(index, wordCount)
+						continue
+					if entry is None:
 						continue
 					bp = entry.byteProgress()
 					if bp and bp[0] > lastPos + 20000:
@@ -1395,6 +1397,9 @@ class Glossary(GlossaryType):
 
 	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
 		if not self.ui:
+			return
+		if total == 0:
+			log.warning(f"pos={pos}, total={total}")
 			return
 		self.ui.progress(
 			min(pos + 1, total) / total,
