@@ -101,13 +101,23 @@ class Writer(object):
 		fileObj.write(header.format(n=0))
 
 		re_bword = re.compile(
-			r'<a (?:.* )?href="bword://(.*?)">.+</a>',
+			r'<a (.* )?href="bword://(.*?)">(.+)</a>',
+			re.I,
+		)
+		re_fixed_link = re.compile(
+			r'<a (?:.* )?href="#(.*?)">.+</a>',
 			re.I,
 		)
 
-		def addLinks(s_word: str, text: str, pos: int):
-			for m in re_bword.finditer(text):
-				target = m.group(1)
+		def fixLinks(text) -> str:
+			return re_bword.sub(
+				r'<a \1href="#\2">\3</a>',
+				text,
+			)
+
+		def addLinks(s_word: str, text: str, pos: int) -> str:
+			for m in re_fixed_link.finditer(text):
+				target = html.unescape(m.group(1))
 				linksTxtFileObj.write(
 					f"{escapeNTB(target)}\t"
 					f"{escapeNTB(s_word)}\t"
@@ -131,7 +141,10 @@ class Writer(object):
 			defi = entry.defi
 			if escape_defi:
 				defi = html.escape(defi)
-			text = f"<b>{words_str}</b><br>\n{defi}\n<hr>\n"
+			text = (
+				f'<b id="{html.escape(words_str)}">{words_str}</b>'
+				f"<br>\n{defi}\n<hr>\n"
+			)
 			pos = fileObj.tell()
 			if pos > initFileSizeMax:
 				if pos > max_file_size - len(text.encode(encoding)):
@@ -144,6 +157,7 @@ class Writer(object):
 				f"{escapeNTB(self._currentFilename)}\t"
 				f"{pos}\n"
 			)
+			text = fixLinks(text)
 			addLinks(s_word, text, pos)
 			fileObj.write(text)
 
