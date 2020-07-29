@@ -28,7 +28,7 @@ from pyglossary.xdxf_transform import xdxf_to_html_transformer
 enable = True
 format = "Xdxf"
 description = "XDXF"
-extensions = (".xdxf", ".xml")
+extensions = (".xdxf",)
 singleFile = True
 optionsProp = {
 	"html": BoolOption(),
