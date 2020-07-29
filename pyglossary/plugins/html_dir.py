@@ -76,6 +76,11 @@ class Writer(object):
 			mode="w",
 			encoding="utf-8",
 		)
+		linksTxtFileObj = open(
+			join(filename, "links.txt"),
+			mode="w",
+			encoding="utf-8",
+		)
 
 		title = glos.getInfo("name")
 		header = (
@@ -94,6 +99,20 @@ class Writer(object):
 
 		fileObj = self.nextFile()
 		fileObj.write(header.format(n=0))
+
+		re_bword = re.compile(
+			r'<a (?:.* )?href="bword://(.*?)">.+</a>',
+			re.I,
+		)
+
+		def addLinks(s_word: str, defi: str):
+			for m in re_bword.finditer(defi):
+				target = m.group(1)
+				linksTxtFileObj.write(
+					f"{escapeNTB(target)}\t"
+					f"{escapeNTB(s_word)}\t"
+					f"{self._currentFilename}\n"
+				)
 
 		while True:
 			entry = yield
@@ -116,12 +135,14 @@ class Writer(object):
 				if pos > max_file_size - len(text.encode(encoding)):
 					fileObj = self.nextFile()
 					fileObj.write(header.format(n=self._fileIndex - 1))
+			s_word = entry.s_word
 			indexTxtFileObj.write(
-				f"{escapeNTB(entry.s_word)}\t"
+				f"{escapeNTB(s_word)}\t"
 				f"{self._currentFilename}\t"
 				f"{fileObj.tell()}\n"
 			)
 			fileObj.write(text)
+			addLinks(s_word, defi)
 
 		fileObj.close()
 		self._fileObj = None
