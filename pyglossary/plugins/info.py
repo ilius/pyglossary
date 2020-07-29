@@ -25,11 +25,11 @@ class Writer(object):
 		glos = self._glos
 
 		re_possible_html = re.compile(
-			r"<[a-z]+[ />]",
+			r"<[a-z1-6]+[ />]",
 			re.I,
 		)
 		re_style = re.compile(
-			r"<([a-z]+)[^<>]* style=",
+			r"<([a-z1-6]+)[^<>]* style=",
 			re.I | re.DOTALL,
 		)
 
