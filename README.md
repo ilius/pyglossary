@@ -55,6 +55,7 @@ Supported formats
 | StarDict                                                     |📁 | (📝.ifo)  | ✔  |  ✔  |
 | [Tabfile](https://en.wikipedia.org/wiki/Tab-separated_values)|📝 |.txt, .tab | ✔  |  ✔  |
 | TreeDict                                                     |📁 |           |    |  ✔  |
+| Wiktionary Dump                                              |📝 | .xml      | ✔  | :x: |
 | [Wordset.org](https://github.com/wordset/wordset-dictionary) |📁 |           | ✔  |     |
 | [XDXF](https://github.com/soshial/xdxf_makedict)             |📝 |.xdxf      | ✔  | :x: |
 
