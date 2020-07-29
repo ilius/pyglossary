@@ -105,13 +105,15 @@ class Writer(object):
 			re.I,
 		)
 
-		def addLinks(s_word: str, defi: str):
-			for m in re_bword.finditer(defi):
+		def addLinks(s_word: str, text: str, pos: int):
+			for m in re_bword.finditer(text):
 				target = m.group(1)
 				linksTxtFileObj.write(
 					f"{escapeNTB(target)}\t"
 					f"{escapeNTB(s_word)}\t"
-					f"{self._currentFilename}\n"
+					f"{self._currentFilename}\t"
+					f"{pos + m.start()}\t"
+					f"{m.end() - m.start()}\n"
 				)
 
 		while True:
@@ -136,13 +138,14 @@ class Writer(object):
 					fileObj = self.nextFile()
 					fileObj.write(header.format(n=self._fileIndex - 1))
 			s_word = entry.s_word
+			pos = fileObj.tell()
 			indexTxtFileObj.write(
 				f"{escapeNTB(s_word)}\t"
 				f"{self._currentFilename}\t"
-				f"{fileObj.tell()}\n"
+				f"{pos}\n"
 			)
+			addLinks(s_word, text, pos)
 			fileObj.write(text)
-			addLinks(s_word, defi)
 
 		fileObj.close()
 		self._fileObj = None
