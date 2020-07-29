@@ -101,11 +101,11 @@ class Writer(object):
 		fileObj.write(header.format(n=0))
 
 		re_bword = re.compile(
-			r'<a (.* )?href="bword://(.*?)">(.+)</a>',
+			r'<a (.*? )?href="bword://([^<>"]*?)">(.+?)</a>',
 			re.I,
 		)
 		re_fixed_link = re.compile(
-			r'<a (?:.* )?href="#(.*?)">.+</a>',
+			r'<a (?:.*? )?href="#([^<>"]*?)">.+?</a>',
 			re.I,
 		)
 
@@ -118,12 +118,15 @@ class Writer(object):
 		def addLinks(s_word: str, text: str, pos: int) -> str:
 			for m in re_fixed_link.finditer(text):
 				target = html.unescape(m.group(1))
+				start = m.start()
+				b_start = len(text[:start].encode(encoding))
+				b_size = len(text[start:m.end()].encode(encoding))
 				linksTxtFileObj.write(
 					f"{escapeNTB(target)}\t"
 					f"{escapeNTB(s_word)}\t"
 					f"{escapeNTB(self._currentFilename)}\t"
-					f"{pos + m.start()}\t"
-					f"{m.end() - m.start()}\n"
+					f"{pos + b_start}\t"
+					f"{b_size}\n"
 				)
 
 		while True:
