@@ -486,6 +486,11 @@ class Writer(object):
 			fileBasePath = join(filename, split(filename[:-1])[-1])
 		elif isdir(filename):
 			fileBasePath = join(filename, split(filename)[-1])
+
+		parentDir = split(fileBasePath)[0]
+		if not isdir(parentDir):
+			log.info(f"Creating directory {parentDir}")
+			os.mkdir(parentDir)
 		##
 		if fileBasePath:
 			fileBasePath = realpath(fileBasePath)
