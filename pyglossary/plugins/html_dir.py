@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
-from pyglossary.text_utils import escapeNTB
+from pyglossary.text_utils import escapeNTB, unescapeNTB
 import html
 
 enable = True
@@ -44,6 +44,72 @@ class Writer(object):
 		)
 		self._fileIndex += 1
 		return self._fileObj
+
+	def fixCrossFileLinks(self, linkTargetSet):
+		import json
+		import gc
+		gc.collect()
+		dirn = self._filename
+
+		fileByWord = {}
+		for line in open(join(dirn, "index.txt"), encoding="utf-8"):
+			line = line.rstrip("\n")
+			if not line:
+				continue
+			word, filename, _ = line.split("\t")
+			word = unescapeNTB(word)
+			if word not in linkTargetSet:
+				continue
+			fileByWord[word] = filename
+
+		linksByFile = {}
+		log.info("")
+		for line in open(join(dirn, "links.txt"), encoding="utf-8"):
+			line = line.rstrip("\n")
+			if not line:
+				continue
+			parts = line.split("\t")
+			if len(parts) != 5:
+				log.error(f"invalid link line, {len(parts)} parts: {parts}")
+				continue
+			target, _, filename, b_start, b_size = parts
+			target = unescapeNTB(target)
+			if target not in fileByWord:
+				log.warn(f"invalid target: {target}")
+				continue
+			targetFilename = fileByWord[target]
+			if targetFilename == filename:
+				continue
+			linkTuple = (
+				int(b_start),
+				int(b_size),
+				targetFilename.encode(self._encoding),
+			)
+			if filename in linksByFile:
+				linksByFile[filename].append(linkTuple)
+			else:
+				linksByFile[filename] = [linkTuple]
+
+		linkTargetSet.clear()
+		del fileByWord, linkTargetSet
+		gc.collect()
+
+		for filename, linkTuples in linksByFile.items():
+			linkTuples.sort()
+			with open(join(dirn, filename), mode="rb") as fileObj:
+				data = fileObj.read()
+			dataPos = 0
+			with open(join(dirn, filename), mode="wb") as fileObj:
+				for linkTuple in linkTuples:
+					start, size, targetFilename = linkTuple
+					fileObj.write(data[dataPos:start])
+					end = start + size
+					fileObj.write(data[start:end].replace(
+						b'href="#',
+						b'href="./' + targetFilename + b'#',
+					))
+					dataPos = end
+				fileObj.write(data[dataPos:])
 
 	def write(
 		self,
@@ -109,6 +175,8 @@ class Writer(object):
 			re.I,
 		)
 
+		linkTargetSet = set()
+
 		def fixLinks(text) -> str:
 			return re_bword.sub(
 				r'<a \1href="#\2">\3</a>',
@@ -118,6 +186,7 @@ class Writer(object):
 		def addLinks(s_word: str, text: str, pos: int) -> str:
 			for m in re_fixed_link.finditer(text):
 				target = html.unescape(m.group(1))
+				linkTargetSet.add(target)
 				start = m.start()
 				b_start = len(text[:start].encode(encoding))
 				b_size = len(text[start:m.end()].encode(encoding))
@@ -167,3 +236,6 @@ class Writer(object):
 		fileObj.close()
 		self._fileObj = None
 		indexTxtFileObj.close()
+
+		if linkTargetSet:
+			self.fixCrossFileLinks(linkTargetSet)
