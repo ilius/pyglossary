@@ -17,9 +17,6 @@ depends = {
 }
 
 
-ignorePageTitlePattern = "|"
-
-
 class Reader(object):
 	def __init__(self, glos):
 		self._glos = glos
@@ -100,13 +97,20 @@ class Reader(object):
 		return f'<a href="bword://{html.escape(ref)}">{ref}</a>'
 
 	def compilePatterns(self):
+		self._re_comment = re.compile(
+			"<!--.*?-->",
+		)
 		self._re_internal_link = re.compile(
 			r"\[\[(.+?)\]\]",
 			re.MULTILINE,
 		)
 		self._re_translationHeader = re.compile(
-			r"^[;*]?\s?{{(.+?)}}: (.+)$",
-			re.MULTILINE | re.UNICODE,
+			r"^[;*]?\s?{{(.+?)}}:\s*(.+)$",
+			re.MULTILINE,
+		)
+		self._re_listItemEmpty = re.compile(
+			r"^[#*]\s*$",
+			re.MULTILINE,
 		)
 		# ideally '# ...'  should become <ol>, and '* ...' become <ul>
 		# but that's hard, so we just replace both with '⚫︎ ...'
@@ -115,19 +119,15 @@ class Reader(object):
 			re.MULTILINE,
 		)
 		self._re_h2 = re.compile(
-			r"^==([^=]+)==$",
+			r"^==(\{\{\{\d+\|)?([^={}]+?)(\}\}\})?==$",
 			re.MULTILINE,
 		)
 		self._re_h3 = re.compile(
-			r"^===([^=]+)===$",
+			r"^===(\{\{\{\d+\|)?([^={}]+?)(\}\}\})?===$",
 			re.MULTILINE,
 		)
 		self._re_h4 = re.compile(
-			r"^====([^=]+)====$",
-			re.MULTILINE,
-		)
-		self._re_h5 = re.compile(
-			r"^=====([^=]+)=====$",
+			r"^={4,5}([^=]+?)={4,5}$",
 			re.MULTILINE,
 		)
 		self._re_template = re.compile(
@@ -141,30 +141,36 @@ class Reader(object):
 			"\\n(<a href=[^<>]*>.*</a>)\\s*$",
 		)
 		self._re_remainDoubleCurlyBraces = re.compile(
-			r"^\{\{(.+)\}\}$",
+			r"\{\{([^{}]+?)\}\}",
 			re.MULTILINE,
 		)
 		self._re_nonTaggedLine = re.compile(
-			r"^([^<\s].+[^>\s])$",
+			r"^([^<\s].+?[^>\s])$",
 			re.MULTILINE,
 		)
+		#self._re_emptyCircledLines = re.compile(
+		#	r"^\s*⚫︎\s*$",
+		#	re.MULTILINE | re.UNICODE,
+		#)
 
 	def fixText(self, text: str) -> str:
+		text = self._re_comment.sub("", text)
+		text = self._re_listItemEmpty.sub("", text)
 		text = self._re_internal_link.sub(self._sub_internal_link, text)
 		text = self._re_translationHeader.sub(
 			r"<h3>\1</h3>\n⚫︎ \2<br>",
 			text,
 		)
 		text = self._re_listItem.sub(r"⚫︎ \1<br>", text)
-		text = self._re_h2.sub(r"<h2>\1</h2>", text)
-		text = self._re_h3.sub(r"<h3>\1</h3>", text)
+		text = self._re_h2.sub(r"<h2>\2</h2>", text)
+		text = self._re_h3.sub(r"<h3>\2</h3>", text)
 		text = self._re_h4.sub(r"<h4>\1</h4>", text)
-		text = self._re_h5.sub(r"<h5>\1</h5>", text)
 		text = self._re_template.sub(r"<i>Template: \1</i>", text)
 		text = self._re_qualifier.sub(r"<i>(\1)</i>", text)
 		text = self._re_lastLineLink.sub("\n<br><br>\\1", text)
 		text = self._re_remainDoubleCurlyBraces.sub(r"<i>\1</i><br>", text)
 		text = self._re_nonTaggedLine.sub(r"\1<br>", text)
+		# text = self._re_emptyCircledLines.sub("", text)
 		return text
 
 	def _getEntryFromPage(self, page: "lxml.etree.Element") -> "BaseEntry":
