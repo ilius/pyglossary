@@ -16,7 +16,24 @@ optionsProp = {
 	"max_file_size": IntOption(),
 	"filename_format": StrOption(),
 	"escape_defi": BoolOption(),
+	"dark": BoolOption(),
 }
+
+
+darkStyle = """
+body {{
+	background-color: #373737;
+	color: #eee;
+}}
+a {{ color: #aaaaff; }}
+a.broken {{ color: #e0c0c0; }}
+h1 {{ font-size: 1.5em; color: #c7ffb9;}}
+h2 {{ font-size: 1.3em;}}
+h3 {{ font-size: 1.0em;}}
+h4 {{ font-size: 1.0em;}}
+h5 {{ font-size: 1.0em;}}
+h6 {{ font-size: 1.0em;}}
+"""
 
 
 class Writer(object):
@@ -52,6 +69,12 @@ class Writer(object):
 		gc.collect()
 		dirn = self._filename
 
+		brokenLinksFile = open(
+			join(dirn, "broken-links.txt"),
+			mode="w",
+			encoding="utf-8",
+		)
+
 		fileByWord = {}
 		for line in open(join(dirn, "index.txt"), encoding="utf-8"):
 			line = line.rstrip("\n")
@@ -76,21 +99,24 @@ class Writer(object):
 			target, _, filename, b_start, b_size = parts
 			target = unescapeNTB(target)
 			if target not in fileByWord:
-				log.warn(f"invalid link target: {target}")
-				continue
-			targetFilename = fileByWord[target]
-			if targetFilename == filename:
-				continue
+				brokenLinksFile.write("{target}\n")
+				targetFilename = None
+			else:
+				targetFilename = fileByWord[target]
+				if targetFilename == filename:
+					continue
+				targetFilename = targetFilename.encode(self._encoding)
 			linkTuple = (
 				int(b_start),
 				int(b_size),
-				targetFilename.encode(self._encoding),
+				targetFilename,
 			)
 			if filename in linksByFile:
 				linksByFile[filename].append(linkTuple)
 			else:
 				linksByFile[filename] = [linkTuple]
 
+		brokenLinksFile.close()
 		linkTargetSet.clear()
 		del fileByWord, linkTargetSet
 		gc.collect()
@@ -105,10 +131,16 @@ class Writer(object):
 					start, size, targetFilename = linkTuple
 					fileObj.write(data[dataPos:start])
 					end = start + size
-					fileObj.write(data[start:end].replace(
-						b'href="#',
-						b'href="./' + targetFilename + b'#',
-					))
+					if targetFilename is None:
+						fileObj.write(data[start:end].replace(
+							b' href="#',
+							b' class="broken" href="#',
+						))
+					else:
+						fileObj.write(data[start:end].replace(
+							b' href="#',
+							b' href="./' + targetFilename + b'#',
+						))
 					dataPos = end
 				fileObj.write(data[dataPos:])
 
@@ -120,9 +152,8 @@ class Writer(object):
 		max_file_size: int = 102400,
 		filename_format: str = "{n:05d}.html",
 		escape_defi: bool = False,
+		dark: bool = True,
 	) -> Generator[None, "BaseEntry", None]:
-		if max_file_size < 100:
-			raise ValueError(f"max_file_size={max_file_size} is too small")
 
 		initFileSizeMax = 100
 
@@ -150,15 +181,23 @@ class Writer(object):
 		)
 
 		title = glos.getInfo("name")
+		style = ""
+		if dark:
+			style = f'<style type="text/css">{darkStyle}</style>'
 		header = (
 			'<!DOCTYPE html>\n'
 			'<html><head>'
 			f'<title>Page {{n}} of {title}</title>'
 			f'<meta charset="{encoding}">'
+			f'{style}'
 			'</head><body>\n'
 		)
 
 		tailSize = len(self._tail.encode(encoding))
+
+		if max_file_size < len(header) + tailSize:
+			raise ValueError(f"max_file_size={max_file_size} is too small")
+
 		max_file_size -= tailSize
 
 		if not isdir(self._filename):
@@ -167,10 +206,6 @@ class Writer(object):
 		fileObj = self.nextFile()
 		fileObj.write(header.format(n=0))
 
-		re_bword = re.compile(
-			r'<a (.*? )?href="bword://([^<>"]*?)">(.+?)</a>',
-			re.I,
-		)
 		re_fixed_link = re.compile(
 			r'<a (?:.*? )?href="#([^<>"]*?)">.+?</a>',
 			re.I,
@@ -179,9 +214,9 @@ class Writer(object):
 		linkTargetSet = set()
 
 		def fixLinks(text) -> str:
-			return re_bword.sub(
-				r'<a \1href="#\2">\3</a>',
-				text,
+			return text.replace(
+				' href="bword://',
+				' href="#',
 			)
 
 		def addLinks(s_word: str, text: str, pos: int) -> str:
@@ -215,7 +250,7 @@ class Writer(object):
 			if escape_defi:
 				defi = html.escape(defi)
 			text = (
-				f'<b id="{html.escape(words_str)}">{words_str}</b>'
+				f'<h1 id="{html.escape(words_str)}">{words_str}</h1>'
 				f"<br>\n{defi}\n<hr>\n"
 			)
 			pos = fileObj.tell()
