@@ -83,7 +83,10 @@ class Writer(object):
 				continue
 			fileByWord[word] = filename
 
-		linksByFile = [[] for i in range(len(filenameList))]
+		linksByFile = [
+			open(join(dirn, f"links{i}"), "w", encoding="utf-8")
+			for i in range(len(filenameList))
+		]
 		log.info("")
 		for line in open(join(dirn, "links.txt"), encoding="utf-8"):
 			line = line.rstrip("\n")
@@ -97,25 +100,26 @@ class Writer(object):
 				targetFilename = fileByWord[target]
 				if targetFilename == filename:
 					continue
-			linksByFile[int(fileIndex)].append(
-				f"{x_start}\t{x_size}\t{targetFilename}".encode("utf-8")
+			_file = linksByFile[int(fileIndex)]
+			_file.write(
+				f"{x_start}\t{x_size}\t{targetFilename}\n"
 			)
+			_file.flush()
 
-		# from pprint import pformat
-		# with open(join(dirn, 'linksByFile'), 'w') as _file:
-		# 	_file.write(pformat(linksByFile))
+		for _file in linksByFile:
+			_file.close()
+		del linksByFile
 
 		linkTargetSet.clear()
 		del fileByWord, linkTargetSet
 		gc.collect()
 
-		for fileIndex, linkList in enumerate(linksByFile):
-			filename = filenameList[fileIndex]
-			# linkList is already sorted
+		for fileIndex, filename in enumerate(filenameList):
 			with open(join(dirn, filename), mode="rb") as inFile:
 				with open(join(dirn, f"{filename}.new"), mode="wb") as outFile:
-					for link in linkList:
-						x_start, x_size, targetFilename = link.split(b"\t")
+					for linkLine in open(join(dirn, f"links{fileIndex}"), "rb"):
+						linkLine = linkLine.rstrip(b"\n")
+						x_start, x_size, targetFilename = linkLine.split(b"\t")
 						outFile.write(inFile.read(
 							int(x_start, 16) - inFile.tell()
 						))
@@ -130,8 +134,10 @@ class Writer(object):
 								b' href="#',
 								b' href="./' + targetFilename + b'#',
 							))
+						outFile.flush()
 					outFile.write(inFile.read())
-				os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
+			os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
+			os.remove(join(dirn, f"links{fileIndex}"))
 
 	def write(
 		self,
@@ -224,6 +230,7 @@ class Writer(object):
 					f"{hex(pos+b_start)[2:]}\t"
 					f"{hex(b_size)[2:]}\n"
 				)
+				linksTxtFileObj.flush()
 
 		while True:
 			entry = yield
