@@ -274,6 +274,8 @@ class Writer(object):
 		indexTxtFileObj.close()
 
 		if linkTargetSet:
+			log.info(f"\n{len(linkTargetSet)} link targets found")
+			log.info("Fixing cross-file links, please wait...")
 			self.fixCrossFileLinks(linkTargetSet)
 
 		os.remove(join(filename, "links.txt"))
