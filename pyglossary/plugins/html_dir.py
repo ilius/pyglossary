@@ -42,25 +42,26 @@ class Writer(object):
 		self._filename = None
 		self._fileObj = None
 		self._encoding = "utf-8"
-		self._fileIndex = 0
 		self._filename_format = "{n:05d}.html"
-		self._currentFilename = None
 		self._tail = "</body></html>"
+		self._filenameList = []
 
 	def nextFile(self):
 		if self._fileObj:
 			self._fileObj.write(self._tail)
 			self._fileObj.close()
-		self._currentFilename = self._filename_format.format(n=self._fileIndex)
+		currentFilename = self._filename_format.format(
+			n=len(self._filenameList)
+		)
+		self._filenameList.append(currentFilename)
 		self._fileObj = open(
 			join(
 				self._filename,
-				self._currentFilename,
+				currentFilename,
 			),
 			mode="w",
 			encoding=self._encoding,
 		)
-		self._fileIndex += 1
 		return self._fileObj
 
 	def fixCrossFileLinks(self, linkTargetSet):
@@ -69,11 +70,7 @@ class Writer(object):
 		gc.collect()
 		dirn = self._filename
 
-		brokenLinksFile = open(
-			join(dirn, "broken-links.txt"),
-			mode="w",
-			encoding="utf-8",
-		)
+		filenameList = self._filenameList
 
 		fileByWord = {}
 		for line in open(join(dirn, "index.txt"), encoding="utf-8"):
@@ -86,63 +83,55 @@ class Writer(object):
 				continue
 			fileByWord[word] = filename
 
-		linksByFile = {}
+		linksByFile = [[] for i in range(len(filenameList))]
 		log.info("")
 		for line in open(join(dirn, "links.txt"), encoding="utf-8"):
 			line = line.rstrip("\n")
 			if not line:
 				continue
-			parts = line.split("\t")
-			if len(parts) != 5:
-				log.error(f"invalid link line, {len(parts)} parts: {parts}")
-				continue
-			target, _, filename, b_start, b_size = parts
+			target, fileIndex, x_start, x_size = line.split("\t")
 			target = unescapeNTB(target)
 			if target not in fileByWord:
-				brokenLinksFile.write("{target}\n")
-				targetFilename = None
+				targetFilename = ""
 			else:
 				targetFilename = fileByWord[target]
 				if targetFilename == filename:
 					continue
-				targetFilename = targetFilename.encode(self._encoding)
-			linkTuple = (
-				int(b_start),
-				int(b_size),
-				targetFilename,
+			linksByFile[int(fileIndex)].append(
+				f"{x_start}\t{x_size}\t{targetFilename}".encode("utf-8")
 			)
-			if filename in linksByFile:
-				linksByFile[filename].append(linkTuple)
-			else:
-				linksByFile[filename] = [linkTuple]
 
-		brokenLinksFile.close()
+		# from pprint import pformat
+		# with open(join(dirn, 'linksByFile'), 'w') as _file:
+		# 	_file.write(pformat(linksByFile))
+
 		linkTargetSet.clear()
 		del fileByWord, linkTargetSet
 		gc.collect()
 
-		for filename, linkTuples in linksByFile.items():
-			linkTuples.sort()
-			with open(join(dirn, filename), mode="rb") as fileObj:
-				data = fileObj.read()
-			dataPos = 0
-			with open(join(dirn, filename), mode="wb") as fileObj:
-				for linkTuple in linkTuples:
-					start, size, targetFilename = linkTuple
-					fileObj.write(data[dataPos:start])
-					end = start + size
-					if targetFilename is None:
-						fileObj.write(data[start:end].replace(
-							b' href="#',
-							b' class="broken" href="#',
+		for fileIndex, linkList in enumerate(linksByFile):
+			filename = filenameList[fileIndex]
+			# linkList is already sorted
+			with open(join(dirn, filename), mode="rb") as inFile:
+				with open(join(dirn, f"{filename}.new"), mode="wb") as outFile:
+					for link in linkList:
+						x_start, x_size, targetFilename = link.split(b"\t")
+						outFile.write(inFile.read(
+							int(x_start, 16) - inFile.tell()
 						))
-					else:
-						fileObj.write(data[start:end].replace(
-							b' href="#',
-							b' href="./' + targetFilename + b'#',
-						))
-					dataPos = end
-				fileObj.write(data[dataPos:])
+						curLink = inFile.read(int(x_size, 16))
+						if not targetFilename:
+							outFile.write(curLink.replace(
+								b' href="#',
+								b' class="broken" href="#',
+							))
+						else:
+							outFile.write(curLink.replace(
+								b' href="#',
+								b' href="./' + targetFilename + b'#',
+							))
+					outFile.write(inFile.read())
+				os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
 
 	def write(
 		self,
@@ -168,6 +157,9 @@ class Writer(object):
 		self._filename = filename
 		self._encoding = encoding
 		self._filename_format = filename_format
+
+		# from math import log2, ceil
+		# maxPosHexLen = int(ceil(log2(max_file_size) / 4))
 
 		indexTxtFileObj = open(
 			join(filename, "index.txt"),
@@ -228,10 +220,9 @@ class Writer(object):
 				b_size = len(text[start:m.end()].encode(encoding))
 				linksTxtFileObj.write(
 					f"{escapeNTB(target)}\t"
-					f"{escapeNTB(s_word)}\t"
-					f"{escapeNTB(self._currentFilename)}\t"
-					f"{pos + b_start}\t"
-					f"{b_size}\n"
+					f"{len(self._filenameList)-1}\t"
+					f"{hex(pos+b_start)[2:]}\t"
+					f"{hex(b_size)[2:]}\n"
 				)
 
 		while True:
@@ -257,12 +248,14 @@ class Writer(object):
 			if pos > initFileSizeMax:
 				if pos > max_file_size - len(text.encode(encoding)):
 					fileObj = self.nextFile()
-					fileObj.write(header.format(n=self._fileIndex - 1))
+					fileObj.write(header.format(
+						n=len(self._filenameList) - 1
+					))
 			s_word = entry.s_word
 			pos = fileObj.tell()
 			indexTxtFileObj.write(
 				f"{escapeNTB(s_word)}\t"
-				f"{escapeNTB(self._currentFilename)}\t"
+				f"{escapeNTB(self._filenameList[-1])}\t"
 				f"{pos}\n"
 			)
 			text = fixLinks(text)
