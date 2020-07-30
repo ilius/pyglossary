@@ -3,6 +3,7 @@
 from formats_common import *
 from pyglossary.text_utils import escapeNTB, unescapeNTB
 import html
+import os
 
 enable = True
 format = "HtmlDir"
@@ -46,8 +47,8 @@ class Writer(object):
 		return self._fileObj
 
 	def fixCrossFileLinks(self, linkTargetSet):
-		import json
 		import gc
+
 		gc.collect()
 		dirn = self._filename
 
@@ -75,7 +76,7 @@ class Writer(object):
 			target, _, filename, b_start, b_size = parts
 			target = unescapeNTB(target)
 			if target not in fileByWord:
-				log.warn(f"invalid target: {target}")
+				log.warn(f"invalid link target: {target}")
 				continue
 			targetFilename = fileByWord[target]
 			if targetFilename == filename:
@@ -239,3 +240,5 @@ class Writer(object):
 
 		if linkTargetSet:
 			self.fixCrossFileLinks(linkTargetSet)
+
+		os.remove(join(filename, "links.txt"))
