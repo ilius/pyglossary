@@ -27,6 +27,7 @@ body {{
 }}
 a {{ color: #aaaaff; }}
 a.broken {{ color: #e0c0c0; }}
+a.no_ul {{ text-decoration: none; }}
 b.headword {{ font-size: 1.5em; color: #c7ffb9; }}
 h1 {{ font-size: 1.5em; color: #c7ffb9;}}
 h2 {{ font-size: 1.3em;}}
@@ -165,6 +166,14 @@ class Writer(object):
 		self._encoding = encoding
 		self._filename_format = filename_format
 
+		entry_url_fmt = glos.getInfo("entry_url")
+
+		def getEntryWebLink(words_escaped: str) -> str:
+			if not entry_url_fmt:
+				return ""
+			url = entry_url_fmt.format(word=words_escaped)
+			return f'&nbsp;<a class="no_ul" href="{url}">&#127759;</a>'
+
 		# from math import log2, ceil
 		# maxPosHexLen = int(ceil(log2(max_file_size) / 4))
 
@@ -253,7 +262,8 @@ class Writer(object):
 				f'<div id="{words_escaped}">'
 				f'<b class="headword">{words_str}</b>'
 				'&nbsp;&nbsp;'
-				f'<a href="#{words_escaped}">&#128279;</a>'
+				f'<a class="no_ul" href="#{words_escaped}">&#128279;</a>'
+				f'{getEntryWebLink(words_escaped)}'
 				f"<br>\n{defi}"
 				'</div>\n'
 				'<hr>\n'
