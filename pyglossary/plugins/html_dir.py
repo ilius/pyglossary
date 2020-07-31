@@ -27,6 +27,7 @@ body {{
 }}
 a {{ color: #aaaaff; }}
 a.broken {{ color: #e0c0c0; }}
+b.headword {{ font-size: 1.5em; color: #c7ffb9; }}
 h1 {{ font-size: 1.5em; color: #c7ffb9;}}
 h2 {{ font-size: 1.3em;}}
 h3 {{ font-size: 1.0em;}}
@@ -247,9 +248,15 @@ class Writer(object):
 			defi = entry.defi
 			if escape_defi:
 				defi = html.escape(defi)
+			words_escaped = html.escape(words_str)
 			text = (
-				f'<h1 id="{html.escape(words_str)}">{words_str}</h1>'
-				f"<br>\n{defi}\n<hr>\n"
+				f'<div id="{words_escaped}">'
+				f'<b class="headword">{words_str}</b>'
+				'&nbsp;&nbsp;'
+				f'<a href="#{words_escaped}">&#128279;</a>'
+				f"<br>\n{defi}"
+				'</div>\n'
+				'<hr>\n'
 			)
 			pos = fileObj.tell()
 			if pos > initFileSizeMax:
