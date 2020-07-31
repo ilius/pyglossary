@@ -171,7 +171,7 @@ class Reader(object):
 		text = self._re_h2.sub(r"<h2>\2</h2>", text)
 		text = self._re_h3.sub(r"<h3>\2</h3>", text)
 		text = self._re_h4.sub(r"<h4>\1</h4>", text)
-		text = self._re_template.sub(r"<i>Template: \1</i>", text)
+		text = self._re_template.sub(r"<i>Template: \1</i><br>", text)
 		text = self._re_qualifier.sub(r"<i>(\1)</i>", text)
 		text = self._re_lastLineLink.sub("\n<br><br>\\1", text)
 		text = self._re_remainDoubleCurlyBraces.sub(r"<i>\1</i><br>", text)
