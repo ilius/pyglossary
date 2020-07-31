@@ -39,14 +39,14 @@ class Reader(object):
 
 	def _readSiteInfo(self) -> bytes:
 		self._buff = self._readUntil(b"<siteinfo>")
-		self._buff += self._readUntil(b"</siteinfo>")
-		siteinfoBytes = self._buff
+		self._readUntil(b"</siteinfo>")
+		siteinfoBytes = self._buff + b"</siteinfo>"
 		self._buff = b""
 		return siteinfoBytes
 
 	def open(self, filename):
 		try:
-			from lxml import etree
+			from lxml import etree as ET
 		except ModuleNotFoundError as e:
 			e.msg += ", run `sudo pip3 install lxml` to install"
 			raise e
@@ -57,9 +57,15 @@ class Reader(object):
 		log.info(f"fileSize = {self._fileSize}")
 
 		siteinfoBytes = self._readSiteInfo()
-		siteinfo = siteinfoBytes.decode("utf-8")
-		self._glos.setInfo("siteinfo", siteinfo)
-		# TODO: parse siteinfoBytes
+		siteinfoStr = siteinfoBytes.decode("utf-8")
+		self._glos.setInfo("siteinfo", siteinfoStr)
+
+		siteinfo = ET.fromstring(siteinfoStr)
+		base = siteinfo.xpath("base/text()")
+		if base:
+			wiki_url = "/".join(base[0].rstrip("/").split("/")[:-1])
+			self._glos.setInfo("website", wiki_url)
+			self._glos.setInfo("entry_url", f"{wiki_url}/{{word}}")
 
 	def close(self):
 		self._filename = ""
