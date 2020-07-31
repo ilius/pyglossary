@@ -69,7 +69,7 @@ class Writer(object):
 		)
 		return self._fileObj
 
-	def fixCrossFileLinks(self, linkTargetSet):
+	def fixLinks(self, linkTargetSet):
 		import gc
 		from cachetools import LRUCache
 
@@ -325,7 +325,7 @@ class Writer(object):
 
 		if linkTargetSet:
 			log.info(f"\n{len(linkTargetSet)} link targets found")
-			log.info("Fixing cross-file links, please wait...")
-			self.fixCrossFileLinks(linkTargetSet)
+			log.info("Fixing links, please wait...")
+			self.fixLinks(linkTargetSet)
 
 		os.remove(join(filename, "links.txt"))
