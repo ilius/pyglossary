@@ -18,6 +18,9 @@ optionsProp = {
 	"escape_defi": BoolOption(),
 	"dark": BoolOption(),
 }
+depends = {
+	"cachetools": "cachetools",
+}
 
 
 darkStyle = """
@@ -68,6 +71,7 @@ class Writer(object):
 
 	def fixCrossFileLinks(self, linkTargetSet):
 		import gc
+		from cachetools import LRUCache
 
 		gc.collect()
 		dirn = self._filename
@@ -85,10 +89,20 @@ class Writer(object):
 				continue
 			fileByWord[word] = filename
 
-		linksByFile = [
-			open(join(dirn, f"links{i}"), "w", encoding="utf-8")
-			for i in range(len(filenameList))
-		]
+		linksByFile = LRUCache(maxsize=100)
+
+		def getLinksByFile(fileIndex):
+			_file = linksByFile.get(fileIndex)
+			if _file is not None:
+				return _file
+			_file = open(
+				join(dirn, f"links{fileIndex}"),
+				mode="a",
+				encoding="utf-8",
+			)
+			linksByFile[fileIndex] = _file
+			return _file
+
 		log.info("")
 		for line in open(join(dirn, "links.txt"), encoding="utf-8"):
 			line = line.rstrip("\n")
@@ -102,13 +116,13 @@ class Writer(object):
 				targetFilename = fileByWord[target]
 				if targetFilename == filename:
 					continue
-			_file = linksByFile[int(fileIndex)]
+			_file = getLinksByFile(int(fileIndex))
 			_file.write(
 				f"{x_start}\t{x_size}\t{targetFilename}\n"
 			)
 			_file.flush()
 
-		for _file in linksByFile:
+		for _, _file in linksByFile.items():
 			_file.close()
 		del linksByFile
 
@@ -116,28 +130,47 @@ class Writer(object):
 		del fileByWord, linkTargetSet
 		gc.collect()
 
+		entry_url_fmt = self._glos.getInfo("entry_url")
+
 		for fileIndex, filename in enumerate(filenameList):
 			with open(join(dirn, filename), mode="rb") as inFile:
 				with open(join(dirn, f"{filename}.new"), mode="wb") as outFile:
 					for linkLine in open(join(dirn, f"links{fileIndex}"), "rb"):
+						outFile.flush()
 						linkLine = linkLine.rstrip(b"\n")
 						x_start, x_size, targetFilename = linkLine.split(b"\t")
 						outFile.write(inFile.read(
 							int(x_start, 16) - inFile.tell()
 						))
 						curLink = inFile.read(int(x_size, 16))
-						if not targetFilename:
-							outFile.write(curLink.replace(
-								b' href="#',
-								b' class="broken" href="#',
-							))
-						else:
+
+						if targetFilename:
 							outFile.write(curLink.replace(
 								b' href="#',
 								b' href="./' + targetFilename + b'#',
 							))
-						outFile.flush()
+							continue
+
+						if not entry_url_fmt:
+							outFile.write(curLink.replace(
+								b' href="#',
+								b' class="broken" href="#',
+							))
+							continue
+
+						_st = curLink.decode("utf-8")
+						i = _st.find('href="#')
+						j = _st.find('"', i + 7)
+						word = _st[i + 7:j]
+						url = entry_url_fmt.format(word=word)
+						outFile.write((
+							_st[:i] +
+							f'class="broken" href="{url}"' +
+							_st[j + 1:]
+						).encode("utf-8"))
+
 					outFile.write(inFile.read())
+
 			os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
 			os.remove(join(dirn, f"links{fileIndex}"))
 
