@@ -30,6 +30,9 @@ class Writer(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
+	def getInfo(self, key):
+		return self._glos.getInfo(key).replace("\n", "<br>")
+
 	def write(
 		self,
 		filename,
@@ -40,16 +43,15 @@ class Writer(object):
 		glos = self._glos
 		head = ""
 		if writeInfo:
-			head += "<header>\n"
-			for name, infoKey in (
-				("title", "name"),
-				("author", "author"),
-				("description", "description"),
-				("w_lang", "sourceLang"),
-				("a_lang", "targetLang"),
-			):
-				head += name + " = " + glos.getInfo(infoKey) + "\n"
-			head += "</header>\n#\n#\n#\n"
+			head = (
+				"<header>\n"
+				f"title = {self.getInfo('name')}\n"
+				f"author = {self.getInfo('author')}\n"
+				f"description = {self.getInfo('description')}\n"
+				f"w_lang = {glos.sourceLangName}\n"
+				f"a_lang = {glos.targetLangName}\n"
+				"</header>\n#\n#\n#\n"
+			)
 		yield from glos.writeTxt(
 			entryFmt="{word}___{defi}\n",
 			filename=filename,
