@@ -58,14 +58,26 @@ class Reader(object):
 
 		siteinfoBytes = self._readSiteInfo()
 		siteinfoStr = siteinfoBytes.decode("utf-8")
-		self._glos.setInfo("siteinfo", siteinfoStr)
 
 		siteinfo = ET.fromstring(siteinfoStr)
+
+		sitename = ", ".join(siteinfo.xpath("sitename/text()"))
+		dbname = ", ".join(siteinfo.xpath("dbname/text()"))
+		generator = ", ".join(siteinfo.xpath("generator/text()"))
+
+		self._glos.setInfo("title", f"{dbname} ({sitename})")
+
 		base = siteinfo.xpath("base/text()")
 		if base:
 			wiki_url = "/".join(base[0].rstrip("/").split("/")[:-1])
 			self._glos.setInfo("website", wiki_url)
 			self._glos.setInfo("entry_url", f"{wiki_url}/{{word}}")
+
+		self._glos.setInfo("generator", generator)
+
+		namespaces = siteinfo.find("namespaces")
+		if namespaces is not None:
+			self._glos.setInfo("namespaces", ET.tostring(namespaces))
 
 	def close(self):
 		self._filename = ""
