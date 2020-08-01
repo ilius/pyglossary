@@ -209,11 +209,12 @@ class LangEntryFilter(EntryFilter):
 		self._run_func = None  # type: Callable[[BaseEntry], [Optional[BaseEntry]]]
 
 	def prepare(self) -> None:
-		langs = (
-			self.glos.getInfo("sourceLang") +
-			self.glos.getInfo("targetLang")
-		).lower()
-		if "persian" in langs or "farsi" in langs:
+		langCodes = {
+			lang.code
+			for lang in (self.glos.sourceLang, self.glos.targetLang)
+			if lang is not None
+		}
+		if "fa" in langCodes:
 			self._run_func = self.run_fa
 			log.info("Using Persian filter")
 
