@@ -332,8 +332,8 @@ class EbookWriter(object):
 
 		return self.OPF_TEMPLATE.format(
 			identifier=self._glos.getInfo("uuid"),
-			sourceLang=self._glos.getInfo("sourceLang"),
-			targetLang=self._glos.getInfo("sourceLang"),
+			sourceLang=self._glos.sourceLangName,
+			targetLang=self._glos.targetLangName,
 			title=self._glos.getInfo("name"),
 			creator=self._glos.getAuthor(),
 			copyright=self._glos.getInfo("copyright"),

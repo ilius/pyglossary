@@ -166,8 +166,8 @@ class Writer(object):
 				directoryPostfix=self.directoryPostfix,
 				dicMaxSize=self.dicMaxSize + 1,
 				language2FilePostfix="fa",  # FIXME
-				sourceLang=glos.getInfo("sourceLang"),
-				targetLang=glos.getInfo("targetLang"),
+				sourceLang=glos.sourceLangName,
+				targetLang=glos.targetLangName,
 			))
 
 	def nextIndex(self):

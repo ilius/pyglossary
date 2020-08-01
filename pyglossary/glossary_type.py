@@ -14,6 +14,7 @@ from collections import OrderedDict as odict
 
 from .entry_base import BaseEntry
 from .entry import Entry, DataEntry
+from .langs import Lang
 
 
 class GlossaryType(object):
@@ -54,6 +55,22 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	def newDataEntry(self, fname: str, data: bytes) -> DataEntry:
+		raise NotImplementedError
+
+	@property
+	def sourceLang(self) -> Optional[Lang]:
+		raise NotImplementedError
+
+	@property
+	def targetLang(self) -> Optional[Lang]:
+		raise NotImplementedError
+
+	@property
+	def sourceLangName(self) -> str:
+		raise NotImplementedError
+
+	@property
+	def targetLangName(self) -> str:
 		raise NotImplementedError
 
 	def writeTxt(

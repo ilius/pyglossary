@@ -690,6 +690,20 @@ class Glossary(GlossaryType):
 	def targetLang(self) -> Optional[Lang]:
 		return self._getLangByInfoKey("targetLang")
 
+	@property
+	def sourceLangName(self) -> str:
+		lang = self._getLangByInfoKey("sourceLang")
+		if lang is None:
+			return ""
+		return lang.name
+
+	@property
+	def targetLangName(self) -> str:
+		lang = self._getLangByInfoKey("targetLang")
+		if lang is None:
+			return ""
+		return lang.name
+
 	def getPref(self, name: str, default: Optional[str]) -> Optional[str]:
 		if self.ui:
 			return self.ui.pref.get(name, default)
