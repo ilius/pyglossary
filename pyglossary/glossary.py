@@ -435,44 +435,6 @@ class Glossary(GlossaryType):
 	def __str__(self) -> str:
 		return "glossary.Glossary"
 
-	def addEntryObj(self, entry: Entry) -> None:
-		self._data.append(entry.getRaw(self))
-
-	def newEntry(
-		self,
-		word: str,
-		defi: str,
-		defiFormat: str = "",
-		byteProgress: Optional[Tuple[int, int]] = None,
-	) -> Entry:
-		"""
-		create and return a new entry object
-
-		defiFormat must be empty or one of these:
-			"m": plain text
-			"h": html
-			"x": xdxf
-		"""
-		if not defiFormat:
-			defiFormat = self._defaultDefiFormat
-
-		return Entry(
-			word, defi,
-			defiFormat=defiFormat,
-			byteProgress=byteProgress,
-		)
-
-	def addEntry(self, word: str, defi: str, defiFormat: str = "") -> None:
-		"""
-		create and add a new entry object to glossary
-
-		defiFormat must be empty or one of these:
-			"m": plain text
-			"h": html
-			"x": xdxf
-		"""
-		self.addEntryObj(self.newEntry(word, defi, defiFormat))
-
 	def _loadedEntryGen(self) -> Iterator[BaseEntry]:
 		wordCount = len(self._data)
 		wcThreshold = wordCount // 200 + 1
@@ -710,6 +672,44 @@ class Glossary(GlossaryType):
 			return self.ui.pref.get(name, default)
 		else:
 			return default
+
+	def addEntryObj(self, entry: Entry) -> None:
+		self._data.append(entry.getRaw(self))
+
+	def newEntry(
+		self,
+		word: str,
+		defi: str,
+		defiFormat: str = "",
+		byteProgress: Optional[Tuple[int, int]] = None,
+	) -> Entry:
+		"""
+		create and return a new entry object
+
+		defiFormat must be empty or one of these:
+			"m": plain text
+			"h": html
+			"x": xdxf
+		"""
+		if not defiFormat:
+			defiFormat = self._defaultDefiFormat
+
+		return Entry(
+			word, defi,
+			defiFormat=defiFormat,
+			byteProgress=byteProgress,
+		)
+
+	def addEntry(self, word: str, defi: str, defiFormat: str = "") -> None:
+		"""
+		create and add a new entry object to glossary
+
+		defiFormat must be empty or one of these:
+			"m": plain text
+			"h": html
+			"x": xdxf
+		"""
+		self.addEntryObj(self.newEntry(word, defi, defiFormat))
 
 	def newDataEntry(self, fname: str, data: bytes) -> DataEntry:
 		inTmp = not self._readers

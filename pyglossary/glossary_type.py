@@ -18,15 +18,6 @@ from .langs import Lang
 
 
 class GlossaryType(object):
-	def addEntryObj(self, entry: Entry) -> None:
-		raise NotImplementedError
-
-	def newEntry(self, word: str, defi: str, defiFormat: str = "") -> Entry:
-		raise NotImplementedError
-
-	def addEntry(self, word: str, defi: str, defiFormat: str = "") -> None:
-		raise NotImplementedError
-
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		raise NotImplementedError
 
@@ -51,10 +42,7 @@ class GlossaryType(object):
 	def getExtraInfos(self, excludeKeys: List[str]) -> odict:
 		raise NotImplementedError
 
-	def getPref(self, name: str, default: Optional[str]) -> Optional[str]:
-		raise NotImplementedError
-
-	def newDataEntry(self, fname: str, data: bytes) -> DataEntry:
+	def getAuthor(self) -> str:
 		raise NotImplementedError
 
 	@property
@@ -71,6 +59,21 @@ class GlossaryType(object):
 
 	@property
 	def targetLangName(self) -> str:
+		raise NotImplementedError
+
+	def getPref(self, name: str, default: Optional[str]) -> Optional[str]:
+		raise NotImplementedError
+
+	def addEntryObj(self, entry: Entry) -> None:
+		raise NotImplementedError
+
+	def newEntry(self, word: str, defi: str, defiFormat: str = "") -> Entry:
+		raise NotImplementedError
+
+	def addEntry(self, word: str, defi: str, defiFormat: str = "") -> None:
+		raise NotImplementedError
+
+	def newDataEntry(self, fname: str, data: bytes) -> DataEntry:
 		raise NotImplementedError
 
 	def writeTxt(
