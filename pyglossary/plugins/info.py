@@ -13,6 +13,7 @@ optionsProp = {}
 
 depends = {}
 
+
 class Writer(object):
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
@@ -101,3 +102,24 @@ class Writer(object):
 		with open(filename, mode="w", encoding="utf-8") as _file:
 			_file.write(dataToPrettyJson(info) + "\n")
 
+
+class Reader(object):
+	def __init__(self, glos: GlossaryType):
+		self._glos = glos
+
+	def close(self) -> None:
+		pass
+
+	def open(self, filename: str, encoding: str = "utf-8") -> None:
+		from pyglossary.json_utils import jsonToOrderedData
+
+		with open(filename, "r", encoding=encoding) as infoFp:
+			info = jsonToOrderedData(infoFp.read())
+		for key, value in info.items():
+			self._glos.setInfo(key, value)
+
+	def __len__(self) -> int:
+		return 0
+
+	def __iter__(self) -> Iterator[BaseEntry]:
+		yield None
