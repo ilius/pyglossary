@@ -74,13 +74,12 @@ class Reader(object):
 		self._encoding = encoding
 
 		with open(infoFname, "r", encoding=encoding) as infoFp:
-			infoJson = infoFp.read()
-			info = jsonToOrderedData(infoJson)
-			self._wordCount = info.pop("wordCount")
-			self._havePrevLink = info.pop("havePrevLink")
-			self._rootPath = info.pop("root")
-			for key, value in info.items():
-				self._glos.setInfo(key, value)
+			info = jsonToOrderedData(infoFp.read())
+		self._wordCount = info.pop("wordCount")
+		self._havePrevLink = info.pop("havePrevLink")
+		self._rootPath = info.pop("root")
+		for key, value in info.items():
+			self._glos.setInfo(key, value)
 
 		self._resDir = join(filename, "res")
 		if isdir(self._resDir):
