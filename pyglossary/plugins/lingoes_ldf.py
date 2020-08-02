@@ -28,15 +28,6 @@ You will can do it yourself after the creator release."""
 	},
 ]
 
-infoKeys = [
-	"title",
-	"description",
-	"author",
-	"email",
-	"website",
-	"copyright",
-]
-
 
 class Reader(TextGlossaryReader):
 	def __len__(self):
@@ -100,17 +91,26 @@ class Writer(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
+	def getInfo(self, key):
+		return self._glos.getInfo(key).replace("\n", "<br>")
+
+	def getAuthor(self):
+		return self._glos.getAuthor().replace("\n", "<br>")
+
 	def write(
 		self,
 		filename: str,
 		newline: str = "\n",
 		resources: str = True,
 	) -> Generator[None, "BaseEntry", None]:
-		head = "\n".join([
-			f"###{key.capitalize()}: {self._glos.getInfo(key)}"
-			for key in infoKeys
-		])
-		head += "\n"
+		head = (
+			f"###Title: {self.getInfo('title')}\n"
+			f"###Description: {self.getInfo('description')}\n"
+			f"###Author: {self.getAuthor()}\n"
+			f"###Email: {self.getInfo('email')}\n"
+			f"###Website: {self.getInfo('website')}\n"
+			f"###Copyright: {self.getInfo('copyright')}\n"
+		)
 		yield from self._glos.writeTxt(
 			entryFmt="{word}\n{defi}\n\n",
 			filename=filename,
