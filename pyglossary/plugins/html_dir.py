@@ -8,7 +8,7 @@ import os
 enable = True
 format = "HtmlDir"
 description = "HTML Directory"
-extensions = ()
+extensions = (".hdir",)
 singleFile = False
 optionsProp = {
 	"encoding": EncodingOption(),
