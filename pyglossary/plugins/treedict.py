@@ -2,6 +2,7 @@
 
 from formats_common import *
 import subprocess
+from os.path import dirname
 
 enable = True
 format = "Treedict"
@@ -24,8 +25,16 @@ optionsProp = {
 			"\\",
 		],
 	),
+	"length": IntOption(),
 }
 depends = {}
+
+
+def chunkString(string, length):
+    return (
+    	string[0 + i:length + i]
+    	for i in range(0, len(string), length)
+	)
 
 
 class Writer(object):
@@ -37,6 +46,7 @@ class Writer(object):
 		filename: str,
 		encoding: str = "utf-8",
 		sep: str = os.sep,
+		length: int = 2,
 	) -> None:
 		glos = self._glos
 		if os.path.exists(filename):
@@ -45,23 +55,26 @@ class Writer(object):
 					log.warning(f"Warning: directory {filename!r} is not empty.")
 			else:
 				raise IOError(f"{filename!r} is not a directory")
+		maxDepth = 0
 		while True:
 			entry = yield
 			if entry is None:
 				break
 			defi = entry.defi
-			for word in entry.l_word:
-				if not word:
-					log.error("empty word")
-					continue
-				chars = list(word)
-				try:
-					os.makedirs(filename + os.sep + sep.join(chars[:-1]))
-				except:
-					pass
-				entryFname = join(filename, sep.join(chars)) + ".m"
-				try:
-					with open(entryFname, "a", encoding=encoding) as entryFp:
-						entryFp.write(defi)
-				except:
-					log.exception("")
+			word = entry.s_word
+			if not word:
+				log.error("empty word")
+				continue
+			parts = list(chunkString(word, length))
+			entryFname = join(filename, sep.join(parts)) + ".m"
+			if len(parts) > maxDepth:
+				maxDepth = len(parts)
+				log.info(f"depth={maxDepth}, {entryFname}")
+			entryDir = dirname(entryFname)
+			if not isdir(entryDir):
+				os.makedirs(entryDir)
+			try:
+				with open(entryFname, "a", encoding=encoding) as entryFp:
+					entryFp.write(defi)
+			except:
+				log.exception("")
