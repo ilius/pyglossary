@@ -174,26 +174,25 @@ class Writer(object):
 			os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
 			os.remove(join(dirn, f"links{fileIndex}"))
 
-	def writeInfo(self, filename, style):
+	def writeInfo(self, filename, header):
 		glos = self._glos
 		title = glos.getInfo("name")
 		encoding = self._encoding
+		customStyle = (
+			'table, th, td {border: 1px solid black; '
+			'border-collapse: collapse; padding: 5px;}'
+		)
+		infoHeader = header.format(
+			pageTitle=f"Info: {title}",
+			customStyle=customStyle,
+		)
 		with open(
 			join(filename, "info.html"),
 			mode="w",
 			encoding="utf-8",
 		) as _file:
 			_file.write(
-				'<!DOCTYPE html>\n'
-				'<html><head>'
-				f'<title>Info: {title}</title>'
-				f'<meta charset="{encoding}">'
-				f'{style.format()}'
-				'<style type="text/css">'
-				'table, th, td {border: 1px solid black; '
-				'border-collapse: collapse; padding: 5px;}'
-				'</style>'
-				'</head><body>\n'
+				infoHeader +
 				'<table>'
 				'<tr>'
 				'<th width="%10">Key</th>'
@@ -256,18 +255,22 @@ class Writer(object):
 		title = glos.getInfo("name")
 		style = ""
 		if dark:
-			style = f'<style type="text/css">{darkStyle}</style>'
-
-		self.writeInfo(filename, style)
+			style = darkStyle
 
 		header = (
 			'<!DOCTYPE html>\n'
 			'<html><head>'
-			f'<title>Page {{n}} of {title}</title>'
+			f'<title>{{pageTitle}}</title>'
 			f'<meta charset="{encoding}">'
-			f'{style}'
+			f'<style type="text/css">{style}{{customStyle}}</style>'
 			'</head><body>\n'
 		)
+
+		def pageHeader(n: int):
+			return header.format(
+				pageTitle=f"Page {{n}} of {title}",
+				customStyle="",
+			)
 
 		tailSize = len(self._tail.encode(encoding))
 
@@ -280,7 +283,7 @@ class Writer(object):
 			os.mkdir(self._filename)
 
 		fileObj = self.nextFile()
-		fileObj.write(header.format(n=0))
+		fileObj.write(pageHeader(0))
 
 		re_fixed_link = re.compile(
 			r'<a (?:.*? )?href="#([^<>"]*?)">.+?</a>',
@@ -309,6 +312,8 @@ class Writer(object):
 					f"{hex(b_size)[2:]}\n"
 				)
 				linksTxtFileObj.flush()
+
+		self.writeInfo(filename, header)
 
 		while True:
 			entry = yield
@@ -340,8 +345,8 @@ class Writer(object):
 			if pos > initFileSizeMax:
 				if pos > max_file_size - len(text.encode(encoding)):
 					fileObj = self.nextFile()
-					fileObj.write(header.format(
-						n=len(self._filenameList) - 1
+					fileObj.write(pageHeader(
+						len(self._filenameList) - 1
 					))
 			s_word = entry.s_word
 			pos = fileObj.tell()
