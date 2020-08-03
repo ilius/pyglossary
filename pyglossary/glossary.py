@@ -632,10 +632,7 @@ class Glossary(GlossaryType):
 				return value
 		return ""
 
-	def _getLangByInfoKey(self, key: str) -> Optional[Lang]:
-		st = self.getInfo(key)
-		if not st:
-			return
+	def _getLangByStr(self, st) -> Optional[Lang]:
 		lang = langDict[st]
 		if lang:
 			return lang
@@ -644,6 +641,12 @@ class Glossary(GlossaryType):
 			return lang
 		log.error(f"unknown language {st!r}")
 		return
+
+	def _getLangByInfoKey(self, key: str) -> Optional[Lang]:
+		st = self.getInfo(key)
+		if not st:
+			return
+		return self._getLangByStr(st)
 
 	@property
 	def sourceLang(self) -> Optional[Lang]:
@@ -655,17 +658,37 @@ class Glossary(GlossaryType):
 
 	@property
 	def sourceLangName(self) -> str:
-		lang = self._getLangByInfoKey("sourceLang")
+		lang = self.sourceLang
 		if lang is None:
 			return ""
 		return lang.name
 
+	@sourceLangName.setter
+	def sourceLangName(self, langName: str) -> None:
+		if not langName:
+			self.setInfo("sourceLang", "")
+			return
+		lang = self._getLangByStr(langName)
+		if lang is None:
+			return
+		self.setInfo("sourceLang", lang.name)
+
 	@property
 	def targetLangName(self) -> str:
-		lang = self._getLangByInfoKey("targetLang")
+		lang = self.targetLang
 		if lang is None:
 			return ""
 		return lang.name
+
+	@targetLangName.setter
+	def targetLangName(self, langName: str) -> None:
+		if not langName:
+			self.setInfo("targetLang", "")
+			return
+		lang = self._getLangByStr(langName)
+		if lang is None:
+			return
+		self.setInfo("targetLang", lang.name)
 
 	def getPref(self, name: str, default: Optional[str]) -> Optional[str]:
 		if self.ui:

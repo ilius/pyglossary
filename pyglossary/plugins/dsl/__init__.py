@@ -379,9 +379,9 @@ class Reader(object):
 		if line.startswith("#NAME"):
 			self.setInfo("name", line[6:])
 		elif line.startswith("#INDEX_LANGUAGE"):
-			self.setInfo("sourceLang", line[16:])
+			self._glos.sourceLangName = unwrap_quotes(line[16:])
 		elif line.startswith("#CONTENTS_LANGUAGE"):
-			self.setInfo("targetLang", line[19:])
+			self._glos.targetLangName = unwrap_quotes(line[19:])
 
 	def __iter__(self) -> Iterator[BaseEntry]:
 		current_key = ""
