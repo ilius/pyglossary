@@ -174,6 +174,38 @@ class Writer(object):
 			os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
 			os.remove(join(dirn, f"links{fileIndex}"))
 
+	def writeInfo(self, filename, style):
+		glos = self._glos
+		title = glos.getInfo("name")
+		encoding = self._encoding
+		with open(
+			join(filename, "info.html"),
+			mode="w",
+			encoding="utf-8",
+		) as _file:
+			_file.write(
+				'<!DOCTYPE html>\n'
+				'<html><head>'
+				f'<title>Info: {title}</title>'
+				f'<meta charset="{encoding}">'
+				f'{style.format()}'
+				'<style type="text/css">'
+				'table, th, td {border: 1px solid black; '
+				'border-collapse: collapse; padding: 5px;}'
+				'</style>'
+				'</head><body>\n'
+				'<table>'
+				'<tr>'
+				'<th width="%10">Key</th>'
+				'<th width="%90">Value</th>'
+				'</tr>\n'
+			)
+			for key, value in glos.iterInfo():
+				_file.write(
+					f'<tr><td>{key}</td><td>{value}</td></tr>\n'
+				)
+			_file.write("</table></body></html>")
+
 	def write(
 		self,
 		filename: str,
@@ -226,33 +258,7 @@ class Writer(object):
 		if dark:
 			style = f'<style type="text/css">{darkStyle}</style>'
 
-		with open(
-			join(filename, "info.html"),
-			mode="w",
-			encoding="utf-8",
-		) as _file:
-			_file.write(
-				'<!DOCTYPE html>\n'
-				'<html><head>'
-				f'<title>Info: {title}</title>'
-				f'<meta charset="{encoding}">'
-				f'{style.format()}'
-				'<style type="text/css">'
-				'table, th, td {border: 1px solid black; '
-				'border-collapse: collapse; padding: 5px;}'
-				'</style>'
-				'</head><body>\n'
-				'<table>'
-				'<tr>'
-				'<th width="%10">Key</th>'
-				'<th width="%90">Value</th>'
-				'</tr>\n'
-			)
-			for key, value in glos.iterInfo():
-				_file.write(
-					f'<tr><td>{key}</td><td>{value}</td></tr>\n'
-				)
-			_file.write("</table></body></html>")
+		self.writeInfo(filename, style)
 
 		header = (
 			'<!DOCTYPE html>\n'
