@@ -116,7 +116,7 @@ class DataEntry(BaseEntry):
 		return "b"
 
 	@defiFormat.setter
-	def setDefiFormat(self, defiFormat):
+	def defiFormat(self, defiFormat: str) -> None:
 		pass
 
 	def detectDefiFormat(self) -> None:
@@ -328,7 +328,7 @@ class Entry(BaseEntry):
 		return self._defiFormat
 
 	@defiFormat.setter
-	def setDefiFormat(self, defiFormat) -> str:
+	def defiFormat(self, defiFormat: str) -> None:
 		"""
 			defiFormat:
 				"m": plain text

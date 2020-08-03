@@ -69,7 +69,7 @@ class BaseEntry(object):
 		raise NotImplementedError
 
 	@defiFormat.setter
-	def setDefiFormat(self, defiFormat: str) -> None:
+	def defiFormat(self, defiFormat: str) -> None:
 		# TODO: type: Literal["m", "h", "x", "b"]
 		raise NotImplementedError
 
