@@ -100,9 +100,9 @@ sortKeyType = Optional[
 class Glossary(GlossaryType):
 	"""
 	Direct access to glos.data is droped
-	Use `glos.addEntry(word, defi, [defiFormat])`
+	Use `glos.addEntryObj(glos.newEntry(word, defi, [defiFormat]))`
 		where both word and defi can be list (including alternates) or string
-	See help(glos.addEntry)
+	See help(glos.addEntryObj)
 
 	Use `for entry in glos:` to iterate over entries (glossary data)
 	See help(pyglossary.entry.Entry) for details
@@ -722,17 +722,6 @@ class Glossary(GlossaryType):
 			defiFormat=defiFormat,
 			byteProgress=byteProgress,
 		)
-
-	def addEntry(self, word: str, defi: str, defiFormat: str = "") -> None:
-		"""
-		create and add a new entry object to glossary
-
-		defiFormat must be empty or one of these:
-			"m": plain text
-			"h": html
-			"x": xdxf
-		"""
-		self.addEntryObj(self.newEntry(word, defi, defiFormat))
 
 	def newDataEntry(self, fname: str, data: bytes) -> DataEntry:
 		inTmp = not self._readers

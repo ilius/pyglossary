@@ -41,5 +41,5 @@ def takePhonetic_oxford_gb(glos):
 		# 	.replace("\\n ", "\\n")
 		# 	.replace("\\n ", "\\n")
 		if ph != "":
-			phonGlos.addEntry(word, ph)
+			phonGlos.addEntryObj(phonGlos.newEntry(word, ph))
 	return phonGlos
