@@ -57,8 +57,16 @@ class GlossaryType(object):
 	def sourceLangName(self) -> str:
 		raise NotImplementedError
 
+	@sourceLangName.setter
+	def sourceLangName(self, langName: str) -> None:
+		raise NotImplementedError
+
 	@property
 	def targetLangName(self) -> str:
+		raise NotImplementedError
+
+	@targetLangName.setter
+	def targetLangName(self, langName: str) -> None:
 		raise NotImplementedError
 
 	def getPref(self, name: str, default: Optional[str]) -> Optional[str]:
