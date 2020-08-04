@@ -72,7 +72,7 @@ def escapeNTB(st: str, bar: bool = False) -> str:
 	"""
 		scapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
 	"""
-	st = st.replace(r"\\", r"\\\\")
+	st = st.replace("\\", "\\\\")
 	st = st.replace("\t", r"\t")
 	st = st.replace("\r", "")
 	st = st.replace("\n", r"\n")
