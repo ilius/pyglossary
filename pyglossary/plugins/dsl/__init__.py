@@ -324,6 +324,7 @@ class Reader(object):
 		self._audio = False
 		self.clean_tags = _clean_tags
 		self._file = None
+		self._bufferLine = ""
 
 	def close(self):
 		if self._file:
@@ -355,6 +356,16 @@ class Reader(object):
 			encoding = self.detectEncoding()
 		self._file = open(filename, "r", encoding=encoding)
 
+		# read header
+		for line in self._file:
+			line = line.rstrip()
+			if not line:
+				continue
+			if not line.startswith("#"):
+				self._bufferLine = line
+				break
+			self.processHeaderLine(line)
+
 	def detectEncoding(self):
 		for testEncoding in ("utf-8", "utf-16"):
 			with open(self._filename, "r", encoding=testEncoding) as fileObj:
@@ -383,6 +394,14 @@ class Reader(object):
 		elif line.startswith("#CONTENTS_LANGUAGE"):
 			self._glos.targetLangName = unwrap_quotes(line[19:])
 
+	def _iterLines(self) -> Iterator[str]:
+		if self._bufferLine:
+			line = self._bufferLine
+			self._bufferLine = ""
+			yield line
+		for line in self._file:
+			yield line
+
 	def __iter__(self) -> Iterator[BaseEntry]:
 		current_key = ""
 		current_key_alters = []
@@ -392,14 +411,9 @@ class Reader(object):
 		re_tags_open = self.re_tags_open
 		re_tags_close = self.re_tags_close
 
-		for line in self._file:
+		for line in self._iterLines():
 			line = line.rstrip()
 			if not line:
-				continue
-			# header
-			if line.startswith("#"):
-				self.processHeaderLine(line)
-				line_type = "header"
 				continue
 
 			# texts
