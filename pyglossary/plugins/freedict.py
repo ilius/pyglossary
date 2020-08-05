@@ -144,6 +144,9 @@ class Reader(object):
 		with ET.htmlfile(f) as hf:
 			with hf.element("div"):
 				for form in entry.findall("form/orth", self.ns):
+					if form.getparent().get("type"):
+					    # only use normal form, not inflected one, here
+					    continue
 					keywords.append(form.text)
 
 				if self._keywords_header:
@@ -184,6 +187,12 @@ class Reader(object):
 					entry.findall("sense", self.ns),
 					self.process_sense,
 				)
+
+				# Add keywords for inflected forms
+				for form in entry.findall('.//form[@type="infl"]/orth', self.ns):
+					if not form.text:
+					    continue
+					keywords.append(form.text)
 
 		defi = f.getvalue().decode("utf-8")
 		defi = unescape_unicode(defi)
