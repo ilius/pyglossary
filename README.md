@@ -57,7 +57,8 @@ Supported formats
 | TreeDict                                                     |📁 |           |    |  ✔  |
 | Wiktionary Dump                                              |📝 | .xml      | ✔  | :x: |
 | [Wordset.org](https://github.com/wordset/wordset-dictionary) |📁 |           | ✔  |     |
-| [XDXF](https://github.com/soshial/xdxf_makedict)             |📝 |.xdxf      | ✔  | :x: |
+| [XDXF](https://github.com/soshial/xdxf_makedict)             |📝 | .xdxf     | ✔  | :x: |
+| Zim ([Kiwix](https://github.com/kiwix))                      |🔢 | .zim      | ✔  |     |
 
 Legend:
 - 📁	Directory
