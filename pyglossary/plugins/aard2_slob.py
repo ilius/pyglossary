@@ -127,14 +127,15 @@ class Reader(object):
 
 
 class Writer(object):
+	_compression: str = ""
+	_content_type: str = ""
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
 	def write(
 		self,
 		filename: str,
-		compression: str = "",
-		content_type: str = "",
 	) -> Generator[None, "BaseEntry", None]:
 		try:
 			import icu
@@ -142,6 +143,8 @@ class Writer(object):
 			e.msg += f", run `{pip} install PyICU` to install"
 			raise e
 		from pyglossary.plugin_lib import slob
+		compression = self._compression
+		content_type = self._content_type
 		glos = self._glos
 		kwargs = {}
 		if compression:

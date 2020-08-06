@@ -45,10 +45,20 @@ optionsProp = {
 	# "group_by_prefix_merge_min_size": IntOption(),
 	# "group_by_prefix_merge_across_first": BoolOption(),
 	"kindlegen_path": StrOption(),  # specific to mobi
+
+	"compress": BoolOption(disabled=True),
+	"keep": BoolOption(disabled=True),
+	"include_index_page": BoolOption(disabled=True),
+	"apply_css": StrOption(disabled=True),
+	"cover_path": StrOption(disabled=True),
 }
 
 
 class Writer(EbookWriter):
+	_compress: bool = False
+	_keep: bool = False
+	_kindlegen_path: str = ""
+
 	CSS_CONTENTS = """"@charset "UTF-8";"""
 	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
@@ -117,17 +127,14 @@ class Writer(EbookWriter):
 	def write(
 		self,
 		filename,
-		group_by_prefix_length=2,
-		kindlegen_path="",
 	):
 		import subprocess
+
+		kindlegen_path = self._kindlegen_path
 
 		yield from EbookWriter.write(
 			self,
 			filename,
-			compress=False,
-			keep=False,
-			group_by_prefix_length=group_by_prefix_length,
 		)
 		self.close()
 

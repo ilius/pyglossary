@@ -448,11 +448,14 @@ class Reader(object):
 
 
 class Writer(object):
+	_dictzip: bool = True
+	_sametypesequence: str = "" # type: Literal["", "h", "m"]
+	_stardict_client: bool = False
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._sourceLang = None
 		self._targetLang = None
-		self._stardict_client = False
 		self._p_pattern = re.compile(
 			'<p( [^<>]*?)?>(.*?)</p>',
 			re.DOTALL,
@@ -471,11 +474,10 @@ class Writer(object):
 	def write(
 		self,
 		filename: str,
-		dictzip: bool = True,
-		sametypesequence: str = "", # type: Literal["", "h", "m"]
-		stardict_client: bool = False,
 	) -> None:
-		self._stardict_client = stardict_client
+		dictzip = self._dictzip
+		sametypesequence = self._sametypesequence
+
 		fileBasePath = filename
 		##
 		if splitext(filename)[1].lower() == ".ifo":

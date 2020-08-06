@@ -16,18 +16,24 @@ depends = {}
 
 
 class Writer(object):
+	_encoding: str = "utf-8"
+	_writeInfo: bool = True
+	_resources: bool = True
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
 	def write(
 		self,
 		filename: str,
-		encoding: str = "utf-8",
-		writeInfo: bool = True,
-		resources: bool = True,
 	) -> Generator[None, "BaseEntry", None]:
 		from json import dumps
+
 		glos = self._glos
+		encoding = self._encoding
+		writeInfo = self._writeInfo
+		resources = self._resources
+
 		ascii = encoding == "ascii"
 
 		def escape(st):

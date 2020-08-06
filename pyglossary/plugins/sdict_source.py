@@ -27,6 +27,10 @@ tools = [
 
 
 class Writer(object):
+	_writeInfo: bool = True
+	_newline: bool = "\n"
+	_resources: bool = True
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
@@ -36,13 +40,10 @@ class Writer(object):
 	def write(
 		self,
 		filename,
-		writeInfo=True,
-		newline="\n",
-		resources=True,
 	) -> Generator[None, "BaseEntry", None]:
 		glos = self._glos
 		head = ""
-		if writeInfo:
+		if self._writeInfo:
 			head = (
 				"<header>\n"
 				f"title = {self.getInfo('name')}\n"
@@ -61,6 +62,6 @@ class Writer(object):
 			]),
 			ext=".sdct",
 			head=head,
-			newline=newline,
-			resources=resources,
+			newline=self._newline,
+			resources=self._resources,
 		)

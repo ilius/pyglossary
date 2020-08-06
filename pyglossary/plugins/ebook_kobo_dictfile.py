@@ -96,15 +96,18 @@ class Reader(TextGlossaryReader):
 
 
 class Writer(object):
+	_encoding: str = "utf-8"
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
 	def write(
 		self,
 		filename: str,
-		encoding: str = "utf-8",
 	) -> Generator[None, "BaseEntry", None]:
 		glos = self._glos
+		encoding = self._encoding
+
 		fileObj = open(filename, "w", encoding=encoding)
 		# dictgen's ParseDictFile does not seem to support glossary info / metedata
 		while True:

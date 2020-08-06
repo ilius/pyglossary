@@ -165,13 +165,12 @@ class Glossary(GlossaryType):
 		sys.path.pop()
 
 	@classmethod
-	def getRWOptionsFromFunc(cls, func, format):
+	def getOptionsFromFunc(cls, func, format):
 		import inspect
 		extraOptNames = []
 		optionsProp = cls.plugins[format].optionsProp
-		sig = inspect.signature(func)
 		optNames = []
-		for name, param in sig.parameters.items():
+		for name, param in inspect.signature(func).parameters.items():
 			if param.default is inspect._empty:
 				if name not in ("self", "glos", "filename", "dirname", "kwargs"):
 					log.warning(f"empty default value for {name}: {param.default}")
@@ -193,6 +192,49 @@ class Glossary(GlossaryType):
 				)
 			optNames.append(name)
 		return optNames, extraOptNames
+
+	@classmethod
+	def getExtraOptions(cls, func, format):
+		import inspect
+		extraOptNames = []
+		for name, param in inspect.signature(func).parameters.items():
+			if param.default is not inspect._empty:
+				extraOptNames.append(name)
+				continue
+			if name not in ("self", "filename", "dirname"):
+				extraOptNames.append(name)
+		if extraOptNames:
+			log.info(f"{format}: extraOptNames = {extraOptNames}")
+		return extraOptNames
+
+	@classmethod
+	def getOptionsFromClass(cls, writerCls, format):
+		optionsProp = cls.plugins[format].optionsProp
+		optNames = []
+		for attrName in dir(writerCls):
+			if not attrName.startswith("_"):
+				continue
+			if attrName.startswith("__"):
+				continue
+			name = attrName[1:]
+			default = getattr(writerCls, attrName)
+			if name not in optionsProp:
+				if not callable(default):
+					log.warn(f"format={format}, attrName={attrName}, type={type(default)}")
+				continue
+			prop = optionsProp[name]
+			if prop.disabled:
+				log.debug(f"skipping disabled option {name} in {format} plugin")
+				continue
+			if not prop.validate(default):
+				log.warning(
+					"invalid default value for option: "
+					f"{name} = {default!r} in plugin {format}"
+				)
+			optNames.append(name)
+
+		return optNames
+
 
 	@classmethod
 	def loadPlugin(cls: ClassVar, pluginName: str) -> None:
@@ -254,7 +296,7 @@ class Glossary(GlossaryType):
 			else:
 				cls.readerClasses[format] = Reader
 				hasReadSupport = True
-				options, extraOptions = cls.getRWOptionsFromFunc(
+				options, extraOptions = cls.getOptionsFromFunc(
 					Reader.open,
 					format,
 				)
@@ -276,10 +318,10 @@ class Glossary(GlossaryType):
 
 		if hasattr(plugin, "Writer"):
 			cls.writerClasses[format] = plugin.Writer
-			options, extraOptions = cls.getRWOptionsFromFunc(
-				plugin.Writer.write,
-				format,
-			)
+
+			options = cls.getOptionsFromClass(plugin.Writer, format)
+			extraOptions = cls.getExtraOptions(plugin.Writer.write, format)
+
 			cls.formatsWriteOptions[format] = options
 			cls.writeFormats.append(format)
 			cls.writeExt.append(extensions)
@@ -1004,6 +1046,16 @@ class Glossary(GlossaryType):
 
 		return filename, plugin.name, compression
 
+	def _createWriter(
+		self,
+		format: str,
+		options: Dict[str, Any],
+	) -> Any:
+		writer = self.writerClasses[format].__call__(self)
+		for name, value in options.items():
+			setattr(writer, f"_{name}", value)
+		return writer
+
 	def write(
 		self,
 		filename: str,
@@ -1077,7 +1129,7 @@ class Glossary(GlossaryType):
 			log.error(f"No Writer class found for plugin {format}")
 			return
 
-		writer = self.writerClasses[format].__call__(self)
+		writer = self._createWriter(format, options)
 
 		self._sort = sort
 
@@ -1126,14 +1178,14 @@ class Glossary(GlossaryType):
 		log.info(f"Writing to file {filename!r}")
 		try:
 			genList = []
-			gen = writer.write(filename, **options)
+			gen = writer.write(filename)
 			if gen is None:
 				log.error(f"\n{format} write function is not a generator")
 			else:
 				genList.append(gen)
 
 			if self.getPref("save_info_json", False):
-				infoWriter = self.writerClasses["Info"].__call__(self)
+				infoWriter = self._createWriter("Info", {})
 				filenameNoExt, _, _, _ = Glossary.splitFilenameExt(filename)
 				genList.append(infoWriter.write(f"{filenameNoExt}.info"))
 

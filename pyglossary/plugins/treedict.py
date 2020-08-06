@@ -38,17 +38,22 @@ def chunkString(string, length):
 
 
 class Writer(object):
+	_encoding: str = "utf-8"
+	_sep: str = os.sep
+	_length: int = 2
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
 	def write(
 		self,
 		filename: str,
-		encoding: str = "utf-8",
-		sep: str = os.sep,
-		length: int = 2,
 	) -> None:
 		glos = self._glos
+		encoding = self._encoding
+		sep = self._sep
+		length = self._length
+
 		if os.path.exists(filename):
 			if os.path.isdir(filename):
 				if os.listdir(filename):

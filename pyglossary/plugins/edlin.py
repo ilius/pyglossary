@@ -158,6 +158,9 @@ class Reader(object):
 
 
 class Writer(object):
+	_encoding: str = "utf-8"
+	_havePrevLink: bool = True
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._clear()
@@ -217,11 +220,12 @@ class Writer(object):
 	def write(
 		self,
 		filename: str,
-		encoding: str = "utf-8",
-		havePrevLink: bool = True
 	) -> None:
 		from collections import OrderedDict as odict
 		from pyglossary.json_utils import dataToPrettyJson
+
+		encoding = self._encoding
+		havePrevLink = self._havePrevLink
 
 		if exists(filename):
 			raise ValueError(f"directory {filename!r} already exists")

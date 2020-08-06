@@ -119,17 +119,22 @@ class Reader(object):
 
 
 class Writer(object):
+	_dictzip: bool = False
+	_install: bool = True
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
 	def write(
 		self,
 		filename: str,
-		dictzip: bool = False,
-		install: bool = True,
 	) -> Generator[None, "BaseEntry", None]:
 		from pyglossary.text_utils import runDictzip
+
 		glos = self._glos
+		dictzip = self._dictzip
+		install = self._install
+
 		filename_nox, ext = splitext(filename)
 		if ext.lower() == ".index":
 			filename = filename_nox

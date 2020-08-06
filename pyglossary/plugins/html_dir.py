@@ -42,6 +42,13 @@ h6 {{ font-size: 1.0em;}}
 
 
 class Writer(object):
+	_encoding: str = "utf-8"
+	_resources: bool = True
+	_max_file_size: int = 102400
+	_filename_format: str = "{n:05d}.html"
+	_escape_defi: bool = False
+	_dark: bool = True
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._filename = None
@@ -208,13 +215,13 @@ class Writer(object):
 	def write(
 		self,
 		filename: str,
-		encoding: str = "utf-8",
-		resources: bool = True,
-		max_file_size: int = 102400,
-		filename_format: str = "{n:05d}.html",
-		escape_defi: bool = False,
-		dark: bool = True,
 	) -> Generator[None, "BaseEntry", None]:
+
+		encoding = self._encoding
+		resources = self._resources
+		max_file_size = self._max_file_size
+		filename_format = self._filename_format
+		escape_defi = self._escape_defi
 
 		initFileSizeMax = 100
 
@@ -254,7 +261,7 @@ class Writer(object):
 
 		title = glos.getInfo("name")
 		style = ""
-		if dark:
+		if self._dark:
 			style = darkStyle
 
 		header = (

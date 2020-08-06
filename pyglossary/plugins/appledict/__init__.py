@@ -144,57 +144,68 @@ def write_css(fname, css_file):
 			))
 
 
+"""
+write glossary to Apple dictionary .xml and supporting files.
+
+:param dirname: directory path, must not have extension
+
+:param cleanHTML: pass True to use BeautifulSoup parser.
+
+:param css: path to custom .css file
+
+:param xsl: path to custom XSL transformations file.
+
+:param defaultPrefs: Default prefs in python dictionary literal format,
+i.e. {"key1": "value1", "key2": "value2", ...}.  All keys and values 
+must be quoted strings; not allowed characters (e.g. single/double
+quotes,equal sign "=", semicolon) must be escaped as hex code
+according to python string literal rules.
+
+:param prefsHTML: path to XHTML file with user interface for
+dictionary's preferences. refer to Apple's documentation for details.
+
+:param frontBackMatter: path to XML file with top-level tag
+<d:entry id="front_back_matter" d:title="Your Front/Back Matter Title">
+	your front/back matter entry content
+</d:entry>
+
+:param jing: pass True to run Jing check on generated XML.
+
+# FIXME: rename to indexes_lang?
+:param indexes: Dictionary.app is dummy and by default it don't know
+how to perform flexible search.  we can help it by manually providing
+additional indexes to dictionary entries.
+"""
+
 class Writer(object):
+	_cleanHTML: bool = True
+	_css: str = ""
+	_xsl: str = ""
+	_defaultPrefs: Optional[Dict] = None
+	_prefsHTML: str = ""
+	_frontBackMatter: str = ""
+	_jing: bool = False
+	_indexes: str = ""  # FIXME: rename to indexes_lang?
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
 	def write(
 		self,
 		dirname: str,
-		cleanHTML: bool = True,
-		css: str = "",
-		xsl: str = "",
-		defaultPrefs: Optional[Dict] = None,
-		prefsHTML: str = "",
-		frontBackMatter: str = "",
-		jing: bool = False,
-		indexes: str = "",  # FIXME: rename to indexes_lang?
 	) -> Generator[None, "BaseEntry", None]:
-		"""
-		write glossary to Apple dictionary .xml and supporting files.
-
-		:param dirname: directory path, must not have extension
-
-		:param cleanHTML: pass True to use BeautifulSoup parser.
-
-		:param css: path to custom .css file
-
-		:param xsl: path to custom XSL transformations file.
-
-		:param defaultPrefs: Default prefs in python dictionary literal format,
-		i.e. {"key1": "value1", "key2": "value2", ...}.  All keys and values 
-		must be quoted strings; not allowed characters (e.g. single/double
-		quotes,equal sign "=", semicolon) must be escaped as hex code
-		according to python string literal rules.
-
-		:param prefsHTML: path to XHTML file with user interface for
-		dictionary's preferences. refer to Apple's documentation for details.
-
-		:param frontBackMatter: path to XML file with top-level tag
-		<d:entry id="front_back_matter" d:title="Your Front/Back Matter Title">
-			your front/back matter entry content
-		</d:entry>
-
-		:param jing: pass True to run Jing check on generated XML.
-
-		# FIXME: rename to indexes_lang?
-		:param indexes: Dictionary.app is dummy and by default it don't know
-		how to perform flexible search.  we can help it by manually providing
-		additional indexes to dictionary entries.
-		"""
 		global BeautifulSoup
 
 		glos = self._glos
+		cleanHTML = self._cleanHTML
+		css = self._css
+		xsl = self._xsl
+		defaultPrefs = self._defaultPrefs
+		prefsHTML = self._prefsHTML
+		frontBackMatter = self._frontBackMatter
+		jing = self._jing
+		indexes = self._indexes
+
 		if not isdir(dirname):
 			os.mkdir(dirname)
 

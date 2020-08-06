@@ -18,19 +18,26 @@ depends = {}
 
 
 class Writer(object):
+	_encoding: str = "utf-8"
+	_infoKeys: Optional[List] = None
+	_addExtraInfo: bool = True
+	_newline: str = "<br>"
+	_transaction: bool = False
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
 	def write(
 		self,
 		filename: str,
-		encoding: str = "utf-8",
-		infoKeys: Optional[List] = None,
-		addExtraInfo: bool = True,
-		newline: str = "<br>",
-		transaction: bool = False,
 	) -> Generator[None, "BaseEntry", None]:
 		glos = self._glos
+		encoding = self._encoding
+		infoKeys = self._infoKeys
+		addExtraInfo = self._addExtraInfo
+		newline = self._newline
+		transaction = self._transaction
+
 		fileObj = open(filename, "w", encoding=encoding)
 
 		infoDefLine = "CREATE TABLE dbinfo ("

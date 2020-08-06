@@ -22,14 +22,16 @@ tools = [
 
 
 class Writer(object):
+	_remove_html_all: bool = True
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
 	def write(
 		self,
 		filename: str,
-		remove_html_all: bool = True,
 	) -> Generator[None, "BaseEntry", None]:
+		remove_html_all = self._remove_html_all
 		glos = self._glos
 		if remove_html_all:
 			glos.removeHtmlTagsAll()

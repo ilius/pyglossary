@@ -76,6 +76,13 @@ class EbookWriter(object):
 	The actual file templates are provided by the caller.
 	"""
 
+	_keep: bool =False
+	_group_by_prefix_length: int = 2
+	_include_index_page: bool = False
+	_compress: bool = True
+	_apply_css: str = ""  # path to css file, or ""
+	_cover_path: str = ""  # path to cover file, or ""
+
 	CSS_CONTENTS = ""
 	GROUP_XHTML_TEMPLATE = ""
 	GROUP_XHTML_INDEX_LINK = ""
@@ -128,8 +135,6 @@ class EbookWriter(object):
 	):
 		self._glos = glos
 
-		self._group_by_prefix_length = 2
-		self._include_index_page = False
 		self._escape_strings = escape_strings
 		# self._ignore_synonyms = ignore_synonyms
 		# self._flatten_synonyms = flatten_synonyms
@@ -376,15 +381,14 @@ class EbookWriter(object):
 	def write(
 		self,
 		filename,
-		keep=False,
-		group_by_prefix_length=2,
-		include_index_page=False,
-		compress=True,
-		apply_css="",  # path to css file, or ""
-		cover_path="",  # path to cover file, or ""
 	):
-		self._group_by_prefix_length = group_by_prefix_length
-		self._include_index_page = include_index_page
+		keep = self._keep
+		# self._group_by_prefix_length
+		# self._include_index_page
+		compress = self._compress
+		apply_css = self._apply_css
+		cover_path = self._cover_path
+
 		self.tmpDir = tempfile.mkdtemp()
 		with indir(self.tmpDir):
 			if cover_path:
@@ -413,7 +417,7 @@ class EbookWriter(object):
 			yield from self.write_groups()
 			group_labels = self._group_labels
 
-			if include_index_page:
+			if self._include_index_page:
 				self.write_index()
 
 			self.write_ncx(group_labels)

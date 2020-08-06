@@ -112,19 +112,21 @@ class Reader(object):
 
 
 class Writer(object):
+	_resources: bool = True
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 
 	def write(
 		self,
 		filename: str,
-		resources: bool = True,
 	) -> Generator[None, "BaseEntry", None]:
 		try:
 			from polib import escape as po_escape
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install polib` to install"
 			raise e
+		resources = self._resources
 		glos = self._glos
 		with open(filename, "w") as toFile:
 			toFile.write('#\nmsgid ""\nmsgstr ""\n')

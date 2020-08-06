@@ -59,6 +59,10 @@ class Reader(TextGlossaryReader):
 
 
 class Writer(object):
+	_encoding: str = "utf-8"
+	_writeInfo: bool = True
+	_resources: bool = True
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
@@ -66,14 +70,11 @@ class Writer(object):
 		self,
 		filename: str,
 		fileObj: Optional["file"] = None,
-		encoding: str = "utf-8",
-		writeInfo: bool = True,
-		resources: bool = True,
 	) -> Generator[None, "BaseEntry", None]:
 		yield from self._glos.writeTabfile(
 			filename,
 			fileObj=fileObj,
-			encoding=encoding,
-			writeInfo=writeInfo,
-			resources=resources,
+			encoding=self._encoding,
+			writeInfo=self._writeInfo,
+			resources=self._resources,
 		)

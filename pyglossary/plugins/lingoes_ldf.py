@@ -88,6 +88,9 @@ class Reader(TextGlossaryReader):
 
 
 class Writer(object):
+	_newline: str = "\n"
+	_resources: str = True
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
@@ -100,9 +103,10 @@ class Writer(object):
 	def write(
 		self,
 		filename: str,
-		newline: str = "\n",
-		resources: str = True,
 	) -> Generator[None, "BaseEntry", None]:
+		newline = self._newline
+		resources = self._resources
+
 		head = (
 			f"###Title: {self.getInfo('title')}\n"
 			f"###Description: {self.getInfo('description')}\n"

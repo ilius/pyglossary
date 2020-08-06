@@ -140,17 +140,22 @@ class Reader(object):
 				)
 
 class Writer(object):
+	_encoding: str = "utf-8"
+	_resources: bool = True
+	_delimiter: str = ","
+	_add_defi_format: bool = False
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 
 	def write(
 		self,
 		filename: str,
-		encoding: str = "utf-8",
-		resources: bool = True,
-		delimiter: str = ",",
-		add_defi_format: bool = False,
 	) -> Generator[None, "BaseEntry", None]:
+		encoding = self._encoding
+		resources = self._resources
+		delimiter = self._delimiter
+		add_defi_format = self._add_defi_format
 		glos = self._glos
 		resDir = filename + "_res"
 		if not isdir(resDir):

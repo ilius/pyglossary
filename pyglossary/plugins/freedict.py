@@ -377,15 +377,18 @@ class Reader(object):
 
 
 class Writer(object):
+	_resources: bool = True
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
 	def write(
 		self,
 		filename: str,
-		resources: bool = True,
 	) -> Generator[None, "BaseEntry", None]:
 		glos = self._glos
+		resources = self._resources
+
 		fileObj = open(filename, "w", encoding="utf-8")
 		title = glos.getInfo("name")
 		author = glos.getInfo("author")
