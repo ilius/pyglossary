@@ -133,6 +133,18 @@ Feature-specific Requirements
 
 -	**Reading from Babylon BGL**: Python 3.6 to 3.7 is recommended
 
+-	**Reading or writing Aard 2 (.slob) files**
+
+	`sudo pip3 install PyICU`
+
+-	**Writing to Kobo E-Reader Dictionary**
+
+	`sudo pip3 install marisa-trie`
+
+-	**Reading from Zim**
+
+	`sudo pip3 install libzim`
+
 -   **Reading from CC-CEDICT**
 
     `sudo pip3 install jinja2`
@@ -150,15 +162,6 @@ Feature-specific Requirements
 			+ If you are using Python 3.7 (32 bit) for example, click on `python_lzo‑1.12‑cp37‑cp37m‑win32.whl`
 			+ Open Start -> type Command -> right-click on Command Prompt -> Run as administrator
 			+ Run `pip install C:\....\python_lzo‑1.12‑cp37‑cp37m‑win32.whl` command, giving the path of downloaded file
-
-
--	**Reading or writing Aard 2 (.slob) files**
-
-	`sudo pip3 install PyICU`
-
--	**Writing to Kobo E-Reader Dictionary**
-
-	`sudo pip3 install marisa-trie`
 
 
 
