@@ -94,6 +94,8 @@ old format
 
 
 class Reader(object):
+	_html: bool = True
+
 	infoKeyMap = {
 		"full_name": "name",
 		"full_title": "name",
@@ -113,8 +115,7 @@ class Reader(object):
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		from lxml import etree as ET
 		self._filename = filename
-		self._html = html
-		if html:
+		if self._html:
 			self._xdxf_to_html = xdxf_to_html_transformer()
 		context = ET.iterparse(
 			filename,

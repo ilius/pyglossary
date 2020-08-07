@@ -18,16 +18,20 @@ depends = {
 # https://cc-cedict.org/editor/editor.php
 
 entry_count_reg = re.compile(r"#! entries=(\d+)")
+
+
 class Reader:
+	_encoding: str = "utf-8"
+
 	def __init__(self, glos):
 		self._glos = glos
 		self.file = None
 		self.total_entries = self.entries_left = None
 
-	def open(self, filename, encoding="utf-8"):
+	def open(self, filename):
 		if self.file is not None:
 			self.file.close()
-		self.file = open(filename, "r", encoding=encoding)
+		self.file = open(filename, "r", encoding=self._encoding)
 		for line in self.file:
 			match = entry_count_reg.match(line)
 			if match is not None:

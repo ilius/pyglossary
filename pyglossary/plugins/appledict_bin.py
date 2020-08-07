@@ -41,18 +41,18 @@ depends = {
 
 
 class Reader(object):
+	_html: bool = False
+
 	def __init__(self, glos):
 		self._glos = glos
 		self._filename = ""
 		self._file = None
 		self._encoding = "utf-8"
 		self._buf = ""
-		self._html = False
 		self._defiFormat = "m"
 
-	def open(self, filename, html: bool = False):
-		self._html = html
-		self._defiFormat = "h" if html else "m"
+	def open(self, filename):
+		self._defiFormat = "h" if self._html else "m"
 		parts = filename.split(os.sep)
 		dbname = parts[-1]
 		if isdir(filename):

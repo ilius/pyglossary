@@ -143,36 +143,30 @@ class GzipWithCheck(object):
 
 
 class DebugBglReader(BglReader):
+	_collectMetadata2 = False
+	_searchCharSamples = False
+	_writeGz = False
+	_rawDumpPath = None
+	_unpackedGzipPath = None
+	_charSamplesPath = None
+	_msgLogPath = None
+
 	def open(
 		self,
 		filename,
-		collectMetadata2=False,
-		searchCharSamples=False,
-		writeGz=False,
-		rawDumpPath=None,
-		unpackedGzipPath=None,
-		charSamplesPath=None,
-		msgLogPath=None,
-		**kwargs
 	):
-		if not BglReader.open(self, filename, **kwargs):
+		if not BglReader.open(self, filename):
 			return
 
-		self.metadata2 = MetaData2() if collectMetadata2 else None
+		self.metadata2 = MetaData2() if self._collectMetadata2 else None
 		self.targetCharsArray = ([False] * 256) if searchCharSamples else None
 
-		self.writeGz = writeGz
-		self.rawDumpPath = rawDumpPath
-		self.unpackedGzipPath = unpackedGzipPath
-		self.charSamplesPath = charSamplesPath
-		self.msgLogPath = msgLogPath
-
-		if self.rawDumpPath:
-			self.rawDumpFile = open(self.rawDumpPath, "w")
-		if self.charSamplesPath:
-			self.samplesDumpFile = open(self.charSamplesPath, "w")
-		if self.msgLogPath:
-			self.msgLogFile = open(self.msgLogPath, "w")
+		if self._rawDumpPath:
+			self.rawDumpFile = open(self._rawDumpPath, "w")
+		if self._charSamplesPath:
+			self.samplesDumpFile = open(self._charSamplesPath, "w")
+		if self._msgLogPath:
+			self.msgLogFile = open(self._msgLogPath, "w")
 
 		self.charRefStatPattern = re.compile(b"(&#\\w+;)", re.I)
 
@@ -194,7 +188,7 @@ class DebugBglReader(BglReader):
 				log.error(f"invalid gzip header position: {gzipOffset}")
 				return False
 
-			if self.writeGz:
+			if self._writeGz:
 				self.dataFile = self._filename + "-data.gz"
 				try:
 					f2 = open(self.dataFile, "wb")
@@ -211,10 +205,10 @@ class DebugBglReader(BglReader):
 				self.file = gzip.open(self.dataFile, "rb")
 			else:
 				f2 = FileOffS(self._filename, gzipOffset)
-				if self.unpackedGzipPath:
+				if self._unpackedGzipPath:
 					self.file = GzipWithCheck(
 						f2,
-						self.unpackedGzipPath,
+						self._unpackedGzipPath,
 						self,
 						closeFileobj=True,
 					)

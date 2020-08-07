@@ -46,14 +46,15 @@ tools = [
 
 
 class Reader(object):
+	_encoding: str = ""
+	_substyle: bool = True
+
 	def __init__(self, glos):
 		self._glos = glos
 		self.clear()
 
 	def clear(self):
 		self._filename = ""
-		self._encoding = ""
-		self._substyle = True
 		self._mdx = None
 		self._mdd = []
 		self._wordCount = 0
@@ -62,11 +63,9 @@ class Reader(object):
 		# dict of mainWord -> newline-separated altenatives
 		self._linksDict = {}  # type: Dict[str, str]
 
-	def open(self, filename, encoding="", substyle=True):
+	def open(self, filename):
 		from pyglossary.plugin_lib.readmdict import MDX, MDD
 		self._filename = filename
-		self._encoding = encoding
-		self._substyle = substyle
 		self._mdx = MDX(filename, self._encoding, self._substyle)
 
 		filenameNoExt, ext = splitext(self._filename)

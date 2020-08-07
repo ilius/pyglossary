@@ -55,6 +55,9 @@ depends = {}
 
 
 class Reader(object):
+	_encoding: str = "utf-8"
+	_delimiter: str = ","
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self.clear()
@@ -72,15 +75,13 @@ class Reader(object):
 	def open(
 		self,
 		filename: str,
-		encoding: str = "utf-8",
-		delimiter: str = ",",
 	) -> None:
 		self._filename = filename
-		self._file = open(filename, "r", encoding=encoding)
+		self._file = open(filename, "r", encoding=self._encoding)
 		self._csvReader = csv.reader(
 			self._file,
 			dialect="excel",
-			delimiter=delimiter,
+			delimiter=self._delimiter,
 		)
 		self._resDir = filename + "_res"
 		if isdir(self._resDir):
@@ -138,6 +139,7 @@ class Reader(object):
 					fname,
 					fromFile.read(),
 				)
+
 
 class Writer(object):
 	_encoding: str = "utf-8"

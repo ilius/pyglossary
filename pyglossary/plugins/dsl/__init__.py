@@ -316,12 +316,15 @@ def unwrap_quotes(s):
 
 
 class Reader(object):
+	_encoding: str = ""
+	_audio: bool = False
+	_onlyFixMarkUp: bool = False
+
 	re_tags_open = re.compile(r"(?<!\\)\[(c |[cuib]\])")
 	re_tags_close = re.compile(r"\[/[cuib]\]")
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
-		self._audio = False
 		self.clean_tags = _clean_tags
 		self._file = None
 		self._bufferLine = ""
@@ -341,17 +344,14 @@ class Reader(object):
 	def open(
 		self,
 		filename: str,
-		encoding: str = "",
-		audio: bool = False,
-		onlyFixMarkUp: bool = False,
 	) -> None:
 		self._filename = filename
-		self._audio = audio
-		if onlyFixMarkUp:
+		if self._onlyFixMarkUp:
 			self.clean_tags = self._clean_tags_only_markup
 		else:
 			self.clean_tags = _clean_tags
 
+		encoding = self._encoding
 		if not encoding:
 			encoding = self.detectEncoding()
 		self._file = open(filename, "r", encoding=encoding)

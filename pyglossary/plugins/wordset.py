@@ -18,6 +18,8 @@ depends = {}
 
 
 class Reader(object):
+	_encoding: str = "utf-8"
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._clear()
@@ -45,11 +47,9 @@ class Reader(object):
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._encoding = "utf-8"
 
-	def open(self, filename: str, encoding: str = "utf-8") -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._encoding = encoding
 		name = self._glos.getInfo("name")
 		if not name or name == "data":
 			self._glos.setInfo("name", "Wordset.org")

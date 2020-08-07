@@ -244,6 +244,25 @@ class DefinitionFields(object):
 
 
 class BglReader(object):
+	_defaultEncodingOverwrite = ""
+	_sourceEncodingOverwrite = ""
+	_targetEncodingOverwrite = ""
+	_partOfSpeechColor = "007000"
+	_noControlSequenceInDefi = False
+	_strictStringConvertion = False
+	# process keys and alternates as HTML
+	# Babylon does not interpret keys and alternates as HTML text,
+	# however you may encounter many keys containing character references
+	# and html tags. That is clearly a bug of the dictionary.
+	# We must be very careful processing HTML tags in keys, not damage
+	# normal keys. This option should be disabled by default, enabled
+	# explicitly by user. Namely this option does the following:
+	# - resolve character references
+	# - strip HTML tags
+	_processHtmlInKey = False
+	# a string of characters that will be stripped from the end of the
+	# key (and alternate), see str.rstrip function
+	_keyRStripChars = ""
 
 	##########################################################################
 	"""
@@ -305,7 +324,6 @@ class BglReader(object):
 		# offset of gzip header, set in self.open()
 		self.gzipOffset = None
 		# must be a in RRGGBB format
-		self.partOfSpeechColor = "007000"
 		self.iconDataList = []
 
 	def __len__(self):
@@ -319,50 +337,8 @@ class BglReader(object):
 	def open(
 		self,
 		filename,
-		defaultEncodingOverwrite="",
-		sourceEncodingOverwrite="",
-		targetEncodingOverwrite="",
-		partOfSpeechColor="",
-		noControlSequenceInDefi=False,
-		strictStringConvertion=False,
-		# process keys and alternates as HTML
-		# Babylon does not interpret keys and alternates as HTML text,
-		# however you may encounter many keys containing character references
-		# and html tags. That is clearly a bug of the dictionary.
-		# We must be very careful processing HTML tags in keys, not damage
-		# normal keys. This option should be disabled by default, enabled
-		# explicitly by user. Namely this option does the following:
-		# - resolve character references
-		# - strip HTML tags
-		processHtmlInKey=False,
-		# a string of characters that will be stripped from the end of the
-		# key (and alternate), see str.rstrip function
-		keyRStripChars="",
-		**kwargs
 	):
-		if kwargs:
-			for key in kwargs:
-				if key in debugReadOptions:
-					log.error(
-						f"BGL Reader: option {key!r} is only usable"
-						f"in debug mode, add -v4 to enable debug mode"
-					)
-				else:
-					log.error(f"BGL Reader: invalid option {key!r}")
-			return False
-
 		self._filename = filename
-		self.defaultEncodingOverwrite = defaultEncodingOverwrite
-		self.sourceEncodingOverwrite = sourceEncodingOverwrite
-		self.targetEncodingOverwrite = targetEncodingOverwrite
-
-		if partOfSpeechColor:
-			self.partOfSpeechColor = partOfSpeechColor
-
-		self.noControlSequenceInDefi = noControlSequenceInDefi
-		self.strictStringConvertion = strictStringConvertion
-		self.processHtmlInKey = processHtmlInKey
-		self.keyRStripChars = keyRStripChars
 
 		if not self.openGzip():
 			return False
@@ -709,15 +685,15 @@ class BglReader(object):
 		"""
 		utf8Encoding = self.info.get("utf8Encoding", False)
 
-		if self.defaultEncodingOverwrite:
-			self.defaultEncoding = self.defaultEncodingOverwrite
+		if self._defaultEncodingOverwrite:
+			self.defaultEncoding = self._defaultEncodingOverwrite
 		elif self.defaultCharset:
 			self.defaultEncoding = self.defaultCharset
 		else:
 			self.defaultEncoding = "cp1252"
 
-		if self.sourceEncodingOverwrite:
-			self.sourceEncoding = self.sourceEncodingOverwrite
+		if self._sourceEncodingOverwrite:
+			self.sourceEncoding = self._sourceEncodingOverwrite
 		elif utf8Encoding:
 			self.sourceEncoding = "utf-8"
 		elif self.sourceCharset:
@@ -727,8 +703,8 @@ class BglReader(object):
 		else:
 			self.sourceEncoding = self.defaultEncoding
 
-		if self.targetEncodingOverwrite:
-			self.targetEncoding = self.targetEncodingOverwrite
+		if self._targetEncodingOverwrite:
+			self.targetEncoding = self._targetEncodingOverwrite
 		elif utf8Encoding:
 			self.targetEncoding = "utf-8"
 		elif self.targetCharset:
@@ -1048,7 +1024,7 @@ class BglReader(object):
 					self.charReferencesStat(b_text2, encoding)
 					if encoding == "cp1252":
 						b_text2 = replaceAsciiCharRefs(b_text2, encoding)
-					if self.strictStringConvertion:
+					if self._strictStringConvertion:
 						try:
 							u_text2 = b_text2.decode(encoding)
 						except UnicodeError:
@@ -1119,7 +1095,7 @@ class BglReader(object):
 				f"number of dollar indexes = {strip_count}",
 			)
 		# convert to unicode
-		if self.strictStringConvertion:
+		if self._strictStringConvertion:
 			try:
 				u_word_main = b_word_main.decode(self.sourceEncoding)
 			except UnicodeError:
@@ -1133,7 +1109,7 @@ class BglReader(object):
 		else:
 			u_word_main = b_word_main.decode(self.sourceEncoding, "ignore")
 
-		if self.processHtmlInKey:
+		if self._processHtmlInKey:
 			# u_word_main_orig = u_word_main
 			u_word_main = stripHtmlTags(u_word_main)
 			u_word_main = replaceHtmlEntriesInKeys(u_word_main)
@@ -1143,8 +1119,8 @@ class BglReader(object):
 		u_word_main = removeControlChars(u_word_main)
 		u_word_main = removeNewlines(u_word_main)
 		u_word_main = u_word_main.lstrip()
-		if self.keyRStripChars:
-			u_word_main = u_word_main.rstrip(self.keyRStripChars)
+		if self._keyRStripChars:
+			u_word_main = u_word_main.rstrip(self._keyRStripChars)
 		return u_word_main
 
 	def processAlternativeKey(self, b_word, b_key):
@@ -1154,7 +1130,7 @@ class BglReader(object):
 		"""
 		b_word_main, strip_count = stripDollarIndexes(b_word)
 		# convert to unicode
-		if self.strictStringConvertion:
+		if self._strictStringConvertion:
 			try:
 				u_word_main = b_word_main.decode(self.sourceEncoding)
 			except UnicodeError:
@@ -1172,7 +1148,7 @@ class BglReader(object):
 			u_word_main,
 		)
 
-		if self.processHtmlInKey:
+		if self._processHtmlInKey:
 			# u_word_main_orig = u_word_main
 			u_word_main = stripHtmlTags(u_word_main)
 			u_word_main = replaceHtmlEntriesInKeys(u_word_main)
@@ -1182,7 +1158,7 @@ class BglReader(object):
 		u_word_main = removeControlChars(u_word_main)
 		u_word_main = removeNewlines(u_word_main)
 		u_word_main = u_word_main.lstrip()
-		u_word_main = u_word_main.rstrip(self.keyRStripChars)
+		u_word_main = u_word_main.rstrip(self._keyRStripChars)
 		return u_word_main
 
 	def processDefi(self, b_defi, b_key):
@@ -1285,7 +1261,7 @@ class BglReader(object):
 		if fields.partOfSpeech or fields.u_title:
 			if fields.partOfSpeech:
 				pos = xml_escape(fields.partOfSpeech)
-				posColor = self.partOfSpeechColor
+				posColor = self._partOfSpeechColor
 				u_defi_format += f'<font color="#{posColor}">{pos}</font>'
 			if fields.u_title:
 				if u_defi_format:
@@ -1321,7 +1297,7 @@ class BglReader(object):
 		by space, we assume this is part of the article and continue search.
 		Unfortunately this does no help in many cases...
 		"""
-		if self.noControlSequenceInDefi:
+		if self._noControlSequenceInDefi:
 			return -1
 		index = -1
 		while True:

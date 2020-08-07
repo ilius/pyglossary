@@ -16,10 +16,11 @@ log = logging.getLogger("root")
 
 
 class TextGlossaryReader(object):
+	_encoding = "utf-8"
+
 	def __init__(self, glos: GlossaryType, hasInfo: bool = True):
 		self._glos = glos
 		self._filename = ""
-		self._encoding = None
 		self._file = None
 		self._hasInfo = hasInfo
 		self._pendingEntries = []
@@ -37,10 +38,9 @@ class TextGlossaryReader(object):
 			return line
 		return self._file.readline()
 
-	def open(self, filename: str, encoding: str = "utf-8") -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._encoding = encoding
-		self._file = open(filename, "r", encoding=encoding)
+		self._file = open(filename, "r", encoding=self._encoding)
 		if self._hasInfo:
 			self.loadInfo()
 		if not self._wordCount:

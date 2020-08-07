@@ -31,6 +31,9 @@ tei = "{http://www.tei-c.org/ns/1.0}"
 
 
 class Reader(object):
+	_discover: bool = False
+	_keywords_header: bool = False
+
 	ns = {
 		None: "http://www.tei-c.org/ns/1.0",
 	}
@@ -308,9 +311,7 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._wordCount = 0
-		self._discover = False
 		self._discoveredTags = dict()
-		self._keywords_header = False
 
 		self._p_pattern = re.compile(
 			'<p( [^<>]*?)?>(.*?)</p>',
@@ -332,8 +333,6 @@ class Reader(object):
 	def open(
 		self,
 		filename: str,
-		discover: bool = False,
-		keywords_header: bool = False,
 	):
 		try:
 			from lxml import etree as ET
@@ -342,8 +341,6 @@ class Reader(object):
 			raise e
 
 		self._filename = filename
-		self._discover = discover
-		self._keywords_header = keywords_header
 
 		self._glos.setDefaultDefiFormat("h")
 

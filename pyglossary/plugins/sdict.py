@@ -28,7 +28,7 @@ extensions = (".dct",)
 singleFile = True
 # homepage = "http://swaj.net/sdict/"
 optionsProp = {
-	"encoding": EncodingOption(),
+	# "encoding": EncodingOption(),  # TODO: needed?
 }
 depends = {}
 
@@ -144,6 +144,8 @@ class Header(object):
 
 
 class Reader(object):
+	# _encoding: str = "utf-8"
+
 	def __init__(self, glos):
 		self._glos = glos
 		self.clear()
@@ -151,10 +153,9 @@ class Reader(object):
 	def clear(self):
 		self._file = None
 		self._filename = ""
-		self._encoding = ""
 		self._header = Header()
 
-	def open(self, filename, encoding="utf-8"):
+	def open(self, filename):
 		self._file = open(filename, "rb")
 		h = self._header
 		h.parse(self._file.read(43))
@@ -162,7 +163,7 @@ class Reader(object):
 		self.short_index = self.readShortIndex()
 		self._glos.setInfo("name", self.readUnit(h.title_offset))
 		self._glos.setInfo("version", self.readUnit(h.version_offset))
-		self._glos.setInfo("copyright",self.readUnit(h.copyright_offset))
+		self._glos.setInfo("copyright", self.readUnit(h.copyright_offset))
 		log.debug(f"SDict word count: {len(self)}")  # correct? FIXME
 
 	def close(self):

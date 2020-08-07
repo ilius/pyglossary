@@ -36,7 +36,7 @@ optionsProp = {
 		],
 		comment="Content Type",
 	),
-	"encoding": EncodingOption(),
+	# "encoding": EncodingOption(),
 }
 depends = {
 	"icu": "PyICU",
@@ -66,7 +66,7 @@ class Reader(object):
 		self._filename = ""
 		self._slobObj = None  # slobObj is instance of slob.Slob class
 
-	def open(self, filename, encoding="utf-8"):
+	def open(self, filename):
 		from pyglossary.plugin_lib import slob
 		self._filename = filename
 		self._slobObj = slob.open(filename)

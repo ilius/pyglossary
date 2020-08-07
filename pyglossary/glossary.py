@@ -165,35 +165,6 @@ class Glossary(GlossaryType):
 		sys.path.pop()
 
 	@classmethod
-	def getOptionsFromFunc(cls, func, format):
-		import inspect
-		extraOptNames = []
-		optionsProp = cls.plugins[format].optionsProp
-		optNames = []
-		for name, param in inspect.signature(func).parameters.items():
-			if param.default is inspect._empty:
-				if name not in ("self", "glos", "filename", "dirname", "kwargs"):
-					log.warning(f"empty default value for {name}: {param.default}")
-				continue  # non-keyword argument
-			if name in ("fileObj",):
-				extraOptNames.append(name)
-				continue
-			if name not in optionsProp:
-				log.warning(f"skipping option {name} in plugin {format}")
-				continue
-			prop = optionsProp[name]
-			if prop.disabled:
-				log.debug(f"skipping disabled option {name} in {format} plugin")
-				continue
-			if not prop.validate(param.default):
-				log.warning(
-					"invalid default value for option: "
-					f"{name} = {param.default!r}"
-				)
-			optNames.append(name)
-		return optNames, extraOptNames
-
-	@classmethod
 	def getExtraOptions(cls, func, format):
 		import inspect
 		extraOptNames = []
@@ -296,10 +267,8 @@ class Glossary(GlossaryType):
 			else:
 				cls.readerClasses[format] = Reader
 				hasReadSupport = True
-				options, extraOptions = cls.getOptionsFromFunc(
-					Reader.open,
-					format,
-				)
+				options = cls.getOptionsFromClass(Reader, format)
+				extraOptions = cls.getExtraOptions(Reader.open, format)
 				cls.formatsReadOptions[format] = options
 				Reader.formatName = format
 				if "fileObj" in extraOptions:
@@ -776,6 +745,12 @@ class Glossary(GlossaryType):
 	# 		return os.access(dirPath, os.W_OK)
 	# 	return os.access(dirname(dirPath), os.W_OK)
 
+	def _createReader(self, format: str, options: Dict[str, Any]) -> Any:
+		reader = self.readerClasses[format](self)
+		for name, value in options.items():
+			setattr(reader, f"_{name}", value)
+		return reader
+
 	def read(
 		self,
 		filename: str,
@@ -838,9 +813,8 @@ class Glossary(GlossaryType):
 
 		self.updateEntryFilters()
 
-		Reader = self.readerClasses[format]
-		reader = Reader(self)
-		reader.open(filename, **options)
+		reader = self._createReader(format, options)
+		reader.open(filename)
 		self._readersOpenArgs[reader] = (filename, options)
 		self.prepareEntryFilters()
 		if direct:

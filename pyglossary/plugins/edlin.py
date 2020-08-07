@@ -43,6 +43,8 @@ def makeDir(direc: str) -> None:
 
 
 class Reader(object):
+	_encoding: str = "utf-8"
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._clear()
@@ -52,14 +54,13 @@ class Reader(object):
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._encoding = "utf-8"
 		self._havePrevLink = True
 		self._wordCount = None
 		self._rootPath = None
 		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self, filename: str, encoding: str = "utf-8") -> None:
+	def open(self, filename: str) -> None:
 		from pyglossary.json_utils import jsonToOrderedData
 		if isdir(filename):
 			infoFname = join(filename, "info.json")
@@ -71,9 +72,8 @@ class Reader(object):
 				f"error while opening {filename!r}: no such file or directory"
 			)
 		self._filename = filename
-		self._encoding = encoding
 
-		with open(infoFname, "r", encoding=encoding) as infoFp:
+		with open(infoFname, "r", encoding=self._encoding) as infoFp:
 			info = jsonToOrderedData(infoFp.read())
 		self._wordCount = info.pop("wordCount")
 		self._havePrevLink = info.pop("havePrevLink")
