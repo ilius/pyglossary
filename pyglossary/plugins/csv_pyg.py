@@ -50,6 +50,7 @@ optionsProp = {
 		values=[",", ";", "@"],
 	),
 	"add_defi_format": BoolOption(),
+	"writeInfo": BoolOption(),
 }
 depends = {}
 
@@ -71,6 +72,7 @@ class Reader(object):
 		self._csvReader = None
 		self._resDir = ""
 		self._resFileNames = []
+		self._bufferRow = None
 
 	def open(
 		self,
@@ -89,6 +91,16 @@ class Reader(object):
 		else:
 			self._resDir = ""
 			self._resFileNames = []
+		for row in self._csvReader:
+			if not row:
+				continue
+			if not row[0].startswith("#"):
+				self._bufferRow = row
+				break
+			if len(row) < 2:
+				log.error(f"invalid row: {row}")
+				continue
+			self._glos.setInfo(row[0].lstrip("#"), row[1])
 
 	def close(self) -> None:
 		if self._file:
@@ -105,13 +117,19 @@ class Reader(object):
 				self._leadingLinesCount
 		return self._wordCount + len(self._resFileNames)
 
+	def _iterRows(self):
+		if self._bufferRow:
+			yield self._bufferRow
+		for row in self._csvReader:
+			yield row
+
 	def __iter__(self) -> Iterator[BaseEntry]:
 		if not self._csvReader:
 			log.error(f"{self} is not open, can not iterate")
 			raise StopIteration
 
 		wordCount = 0
-		for row in self._csvReader:
+		for row in self._iterRows():
 			wordCount += 1
 			if not row:
 				yield None  # update progressbar
@@ -146,6 +164,7 @@ class Writer(object):
 	_resources: bool = True
 	_delimiter: str = ","
 	_add_defi_format: bool = False
+	_writeInfo: bool = True
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
@@ -169,6 +188,9 @@ class Writer(object):
 				quoting=csv.QUOTE_ALL,  # FIXME
 				delimiter=delimiter,
 			)
+			if self._writeInfo:
+				for key, value in glos.iterInfo():
+					writer.writerow([f"#{key}", value])
 			while True:
 				entry = yield
 				if entry is None:
