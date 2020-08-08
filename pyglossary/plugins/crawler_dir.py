@@ -13,10 +13,31 @@ description = "Crawler Directory"
 extensions = (".crawler",)
 singleFile = True
 optionsProp = {
+	"compression": StrOption(
+		values=["", "gz", "bz2", "lzma"],
+		comment="Compression Algorithm",
+	),
 }
 
 
+def compressionOpen(c: str):
+	if not c:
+		return open
+	if c == "gz":
+		import gzip
+		return gzip.open
+	if c == "bz2":
+		import bz2
+		return bz2.open
+	if c == "lzma":
+		import lzma
+		return lzma.open
+	return None
+
+
 class Writer(object):
+	_compression: str = ""
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
@@ -43,6 +64,10 @@ class Writer(object):
 			makedirs(filename)
 
 		wordCount = 0
+		compression = self._compression
+		c_open = compressionOpen(compression)
+		if not c_open:
+			raise ValueError(f"invalid compression {c!r}")
 		while True:
 			entry = yield
 			if entry is None:
@@ -50,13 +75,15 @@ class Writer(object):
 			if entry.isData():
 				continue
 			fpath = join(filename, self.filePathFromWord(entry.b_word))
+			if compression:
+				fpath = f"{fpath}.{compression}"
 			parentDir = dirname(fpath)
 			if not isdir(parentDir):
 				makedirs(parentDir)
 			if isfile(fpath):
 				log.warn(f"file exists: {fpath}")
 				fpath += f"-{sha1(entry.b_defi).hexdigest()[:4]}"
-			with open(fpath, "w", encoding="utf-8") as _file:
+			with c_open(fpath, "wt", encoding="utf-8") as _file:
 				_file.write(
 					f"{escapeNTB(entry.s_word)}\n{entry.defi}"
 				)
@@ -102,10 +129,21 @@ class Reader(object):
 		return self._wordCount
 
 	def _fromFile(self, fpath):
-		with open(fpath, "r", encoding="utf-8") as _file:
+		_, ext = splitext(fpath)
+		c_open = compressionOpen(ext.lstrip("."))
+		if not c_open:
+			log.error(f"invalid extention {ext}")
+			c_open = open
+		with c_open(fpath, "rt", encoding="utf-8") as _file:
 			words = splitByBarUnescapeNTB(_file.readline().rstrip("\n"))
 			defi = _file.read()
 			return self._glos.newEntry(words, defi)
+
+	def _listdirSortKey(self, name):
+		name_nox, ext = splitext(name)
+		if ext == ".d":
+			return name
+		return name_nox
 
 	def _readDir(
 		self,
@@ -118,7 +156,7 @@ class Reader(object):
 				name for name in children
 				if name not in exclude
 			]
-		children.sort()
+		children.sort(key=self._listdirSortKey)
 		for name in children:
 			cpath = join(dpath, name)
 			if isfile(cpath):
