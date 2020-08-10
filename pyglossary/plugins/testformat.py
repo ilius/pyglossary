@@ -65,9 +65,14 @@ class Reader(object):
 class Writer(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = None
 
-	def write(self, filename: str) -> Generator[None, "BaseEntry", None]:
+	def open(self, filename: str) -> None:
+		self._filename = filename
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
 		glos = self._glos
+		filename = self._filename
 		log.info(f"writing to format {format} using plugin")
 		while True:
 			entry = yield
@@ -84,3 +89,6 @@ class Writer(object):
 		copyright = glos.getInfo("copyright")
 		# if an info key doesn't exist, getInfo returns empty string
 		# now write info to the output file (depending on your output format)
+
+	def finish(self):
+		self._filename = None

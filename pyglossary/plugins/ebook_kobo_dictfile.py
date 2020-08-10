@@ -100,16 +100,21 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._file = None
+
+	def finish(self):
+		if self._file is None:
+			return
+		self._file.close()
+
+	def open(self, filename: str) -> None:
+		self._file = open(filename, "w", encoding=self._encoding)
+		# dictgen's ParseDictFile does not seem to support glossary info / metedata
 
 	def write(
 		self,
-		filename: str,
 	) -> Generator[None, "BaseEntry", None]:
-		glos = self._glos
-		encoding = self._encoding
-
-		fileObj = open(filename, "w", encoding=encoding)
-		# dictgen's ParseDictFile does not seem to support glossary info / metedata
+		fileObj = self._file
 		while True:
 			entry = yield
 			if entry is None:
@@ -122,4 +127,3 @@ class Writer(object):
 			for alt in words[1:]:
 				fileObj.write(f"& {fixWord(alt)}\n")
 			fileObj.write(f"{escapeDefi(defi)}\n\n")
-		fileObj.close()

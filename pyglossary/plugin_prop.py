@@ -30,11 +30,17 @@ from .flags import (
 	YesNoAlwaysNever,
 	DEFAULT_NO,
 )
+import logging
 
+log = logging.getLogger("root")
 
 class PluginProp(object):
 	def __init__(self, plugin) -> None:
 		self._p = plugin
+		self._Reader = None
+		self._ReaderLoaded = False
+		self._Writer = None
+		self._WriterLoaded = False
 
 	@property
 	def pluginModule(self):
@@ -75,10 +81,64 @@ class PluginProp(object):
 	def sortOnWrite(self) -> YesNoAlwaysNever:
 		return getattr(self._p, "sortOnWrite", DEFAULT_NO)
 
+	def _loadReaderClass(self) -> Optional[Any]:
+		cls = getattr(self._p, "Reader", None)
+		if cls is None:
+			return None
+		for attr in (
+			"__init__",
+			"open",
+			"close",
+			"__len__",
+			"__iter__",
+		):
+			if not hasattr(cls, attr):
+				log.error(
+					f"Invalid Reader class in {self.name!r} plugin"
+					f", no {attr!r} method"
+				)
+				self._p.Reader = None
+				return None
+		return cls
+
+
 	@property
 	def readerClass(self) -> Optional[Any]:
-		return getattr(self._p, "Reader", None)
+		if self._ReaderLoaded:
+			return self._Reader
+		cls = self._loadReaderClass()
+		self._Reader = cls
+		self._ReaderLoaded = True
+		return cls
+
+	def _loadWriterClass(self) -> Optional[Any]:
+		cls = getattr(self._p, "Writer", None)
+		if cls is None:
+			return None
+		for attr in (
+			"__init__",
+			"open",
+			"write",
+			"finish",
+		):
+			if not hasattr(cls, attr):
+				log.error(
+					f"Invalid Writer class in {self.name!r} plugin"
+					f", no {attr!r} method"
+				)
+				self._p.Reader = None
+				return None
+		return cls
+
+	@property
+	def writerClass(self) -> Optional[Any]:
+		if self._WriterLoaded:
+			return self._Writer
+		cls = self._loadWriterClass()
+		self._Writer = cls
+		self._WriterLoaded = True
+		return cls
 
 	@property
 	def canWrite(self) -> bool:
-		return getattr(self._p, "Writer", None) is not None
+		return self.writerClass is not None

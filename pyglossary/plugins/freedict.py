@@ -378,15 +378,27 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = None
+		self._file = None
 
-	def write(
-		self,
-		filename: str,
-	) -> Generator[None, "BaseEntry", None]:
+	def finish(self):
+		if self._file is None:
+			return
+		self._file.write("</body></text></TEI>")
+		self._file.close()
+		self._file = None
+		self._filename = None
+
+	def open(self, filename: str):
+		self._filename = filename
+		self._file = open(filename, "w", encoding="utf-8")
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
 		glos = self._glos
 		resources = self._resources
+		filename = self._filename
 
-		fileObj = open(filename, "w", encoding="utf-8")
+		fileObj = self._file
 		title = glos.getInfo("name")
 		author = glos.getInfo("author")
 		# didn't find any tag for author in existing glossaries
@@ -427,5 +439,4 @@ class Writer(object):
 <form><orth>{word}</orth></form>
 <trans><tr>{defi}</tr></trans>
 </entry>""")
-		fileObj.write("</body></text></TEI>")
-		fileObj.close()
+

@@ -37,7 +37,7 @@ sys.setrecursionlimit(10000)
 enable = True
 format = "AppleDict"
 description = "AppleDict Source"
-extensions = ()
+extensions = (".apple",)
 # FIXME: rename indexes arg/option to indexes_lang?
 optionsProp = {
 	"cleanHTML": BoolOption(comment="use BeautifulSoup parser"),
@@ -189,11 +189,17 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._dirname = None
 
-	def write(
-		self,
-		dirname: str,
-	) -> Generator[None, "BaseEntry", None]:
+	def finish(self):
+		self._dirname = None
+
+	def open(self, dirname: str) -> None:
+		self._dirname = dirname
+		if not isdir(dirname):
+			os.mkdir(dirname)
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
 		global BeautifulSoup
 
 		glos = self._glos
@@ -205,9 +211,6 @@ class Writer(object):
 		frontBackMatter = self._frontBackMatter
 		jing = self._jing
 		indexes = self._indexes
-
-		if not isdir(dirname):
-			os.mkdir(dirname)
 
 		xdxf_to_html = xdxf_to_html_transformer()
 
@@ -223,6 +226,7 @@ class Writer(object):
 		else:
 			BeautifulSoup = None
 
+		dirname = self._dirname
 		fileNameBase = basename(dirname).replace(".", "_")
 		filePathBase = join(dirname, fileNameBase)
 		# before chdir (outside indir block)

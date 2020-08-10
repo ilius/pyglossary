@@ -134,6 +134,7 @@ class EbookWriter(object):
 		# flatten_synonyms=False,
 	):
 		self._glos = glos
+		self._filename = None
 
 		self._escape_strings = escape_strings
 		# self._ignore_synonyms = ignore_synonyms
@@ -148,22 +149,22 @@ class EbookWriter(object):
 		#"group_by_prefix_merge_across_first": False,
 		#"group_by_prefix_merge_min_size": 0,
 
-		self.tmpDir = None
+		self._tmpDir = None
 		self.cover = None
 		self.files = []
 		self.manifest_files = []
 		self._group_labels = []
 
-	def close(self):
-		pass
+	def finish(self):
+		self._filename = None
 
 	def myOpen(self, fname, mode):
-		return open(join(self.tmpDir, fname), mode)
+		return open(join(self._tmpDir, fname), mode)
 
 	def add_file(self, relative_path, contents, mode=None):
 		if mode is None:
 			mode = zipfile.ZIP_DEFLATED
-		file_path = os.path.join(self.tmpDir, relative_path)
+		file_path = os.path.join(self._tmpDir, relative_path)
 		file_obj = self.myOpen(file_path, "wb")
 		contents = toBytes(contents)
 		file_obj.write(contents)
@@ -378,19 +379,18 @@ class EbookWriter(object):
 		"""
 		pass
 
-	def write(
-		self,
-		filename,
-	):
-		keep = self._keep
+	def open(self, filename: str):
+		self._filename = filename
+		self._tmpDir = tempfile.mkdtemp()
+
+	def write(self):
+		filename = self._filename
 		# self._group_by_prefix_length
 		# self._include_index_page
-		compress = self._compress
 		apply_css = self._apply_css
 		cover_path = self._cover_path
 
-		self.tmpDir = tempfile.mkdtemp()
-		with indir(self.tmpDir):
+		with indir(self._tmpDir):
 			if cover_path:
 				cover_path = os.path.abspath(cover_path)
 
@@ -424,7 +424,7 @@ class EbookWriter(object):
 
 			self.write_opf()
 
-			if compress:
+			if self._compress:
 				zipFp = zipfile.ZipFile(
 					filename,
 					"w",
@@ -436,10 +436,10 @@ class EbookWriter(object):
 						compress_type=fileDict["mode"],
 					)
 				zipFp.close()
-				if not keep:
-					shutil.rmtree(self.tmpDir)
+				if not self._keep:
+					shutil.rmtree(self._tmpDir)
 			else:
-				if keep:
-					shutil.copytree(self.tmpDir, filename)
+				if self._keep:
+					shutil.copytree(self._tmpDir, filename)
 				else:
-					shutil.move(self.tmpDir, filename)
+					shutil.move(self._tmpDir, filename)

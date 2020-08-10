@@ -454,6 +454,8 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
+		self._filename = None
+		self._resDir = None
 		self._sourceLang = None
 		self._targetLang = None
 		self._p_pattern = re.compile(
@@ -471,13 +473,14 @@ class Writer(object):
 			b_word,
 		)
 
-	def write(
-		self,
-		filename: str,
-	) -> None:
-		dictzip = self._dictzip
-		sametypesequence = self._sametypesequence
+	def finish(self) -> None:
+		self._filename = None
+		self._resDir = None
+		self._sourceLang = None
+		self._targetLang = None
 
+	def open(self, filename: str) -> None:
+		log.info(f"open: filename = {filename}")
 		fileBasePath = filename
 		##
 		if splitext(filename)[1].lower() == ".ifo":
@@ -497,29 +500,27 @@ class Writer(object):
 		if fileBasePath:
 			fileBasePath = realpath(fileBasePath)
 		self._filename = fileBasePath
-		self._resDir = join(dirname(self._filename), "res")
-
+		self._resDir = join(dirname(fileBasePath), "res")
 		self._sourceLang = self._glos.sourceLang
 		self._targetLang = self._glos.targetLang
-
-		if sametypesequence:
+		if self._sametypesequence:
 			log.debug(f"Using write option sametypesequence={sametypesequence}")
 		else:
 			stat = self._glos.collectDefiFormat(100)
 			log.info(f"defiFormat stat: {stat}")
 			if stat["m"] > 0.97:
 				log.info(f"Auto-selecting sametypesequence=m")
-				sametypesequence = "m"
+				self._sametypesequence = "m"
 			elif stat["h"] > 0.5:
 				log.info(f"Auto-selecting sametypesequence=h")
-				sametypesequence = "h"
+				self._sametypesequence = "h"
 
-		if sametypesequence:
-			yield from self.writeCompact(sametypesequence)
+	def write(self) -> Generator[None, "BaseEntry", None]:
+		if self._sametypesequence:
+			yield from self.writeCompact(self._sametypesequence)
 		else:
 			yield from self.writeGeneral()
-
-		if dictzip:
+		if self._dictzip:
 			runDictzip(self._filename)
 
 	def fixDefi(self, defi: str, defiFormat: str) -> str:

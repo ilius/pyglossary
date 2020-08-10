@@ -124,19 +124,13 @@ class Writer(EbookWriter):
 		)
 		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
-	def write(
-		self,
-		filename,
-	):
+	def write(self):
 		import subprocess
 
+		filename = self._filename
 		kindlegen_path = self._kindlegen_path
 
-		yield from EbookWriter.write(
-			self,
-			filename,
-		)
-		self.close()
+		yield from EbookWriter.write(self)
 
 		# download kindlegen from this page:
 		# https://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000765211

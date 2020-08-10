@@ -33,14 +33,18 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = None
 
 	def getInfo(self, key):
 		return self._glos.getInfo(key).replace("\n", "<br>")
 
-	def write(
-		self,
-		filename,
-	) -> Generator[None, "BaseEntry", None]:
+	def finish(self):
+		self._filename = None
+
+	def open(self, filename: str) -> None:
+		self._filename = filename
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
 		glos = self._glos
 		head = ""
 		if self._writeInfo:
@@ -55,7 +59,7 @@ class Writer(object):
 			)
 		yield from glos.writeTxt(
 			entryFmt="{word}___{defi}\n",
-			filename=filename,
+			filename=self._filename,
 			writeInfo=False,
 			defiEscapeFunc=replaceStringTable([
 				("\n", "<BR>"),

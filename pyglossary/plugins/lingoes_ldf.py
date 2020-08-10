@@ -93,6 +93,7 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = None
 
 	def getInfo(self, key):
 		return self._glos.getInfo(key).replace("\n", "<br>")
@@ -100,13 +101,15 @@ class Writer(object):
 	def getAuthor(self):
 		return self._glos.getAuthor().replace("\n", "<br>")
 
-	def write(
-		self,
-		filename: str,
-	) -> Generator[None, "BaseEntry", None]:
+	def finish(self):
+		self._filename = None
+
+	def open(self, filename: str):
+		self._filename = filename
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
 		newline = self._newline
 		resources = self._resources
-
 		head = (
 			f"###Title: {self.getInfo('title')}\n"
 			f"###Description: {self.getInfo('description')}\n"
@@ -117,7 +120,7 @@ class Writer(object):
 		)
 		yield from self._glos.writeTxt(
 			entryFmt="{word}\n{defi}\n\n",
-			filename=filename,
+			filename=self._filename ,
 			writeInfo=False,
 			defiEscapeFunc=replaceStringTable([
 				("\n", "<br/>"),

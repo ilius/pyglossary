@@ -165,11 +165,18 @@ class Writer(object):
 		self._glos = glos
 		self._clear()
 
-	def close(self) -> None:
+	def finish(self) -> None:
 		self._clear()
 
+	def open(self, filename: str):
+		self._filename = filename
+		self._resDir = join(filename, "res")
+		os.makedirs(filename)
+		os.mkdir(self._resDir)
+
 	def _clear(self) -> None:
-		self._filename = ""
+		self._filename = None
+		self._resDir = None
 		self._encoding = "utf-8"
 		self._hashSet = set()
 		# self._wordCount = None
@@ -217,24 +224,11 @@ class Writer(object):
 			]))
 
 
-	def write(
-		self,
-		filename: str,
-	) -> None:
+	def write(self) -> Generator[None, "BaseEntry", None]:
 		from collections import OrderedDict as odict
 		from pyglossary.json_utils import dataToPrettyJson
 
-		encoding = self._encoding
-		havePrevLink = self._havePrevLink
-
-		if exists(filename):
-			raise ValueError(f"directory {filename!r} already exists")
-		self._filename = filename
-		self._encoding = encoding
-		self._havePrevLink = havePrevLink
-		self._resDir = join(filename, "res")
-		os.makedirs(filename)
-		os.mkdir(self._resDir)
+		filename = self._filename
 
 		thisEntry = yield
 		if thisEntry is None:

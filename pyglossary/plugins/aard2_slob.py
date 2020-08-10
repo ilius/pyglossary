@@ -132,48 +132,55 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = None
 
-	def write(
-		self,
-		filename: str,
-	) -> Generator[None, "BaseEntry", None]:
+	def open(self, filename: str):
 		try:
 			import icu
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install PyICU` to install"
 			raise e
 		from pyglossary.plugin_lib import slob
+		if isfile(filename):
+			raise IOError(f"File '{filename}' already exists")
+		self._filename = filename
 		compression = self._compression
-		content_type = self._content_type
-		glos = self._glos
 		kwargs = {}
 		if compression:
 			kwargs["compression"] = compression
 		# must not pass compression=None to slob.create()
-		with slob.create(filename, **kwargs) as slobWriter:
-			name = glos.getInfo("name")
-			slobWriter.tag("label", toStr(name))
-			while True:
-				entry = yield
-				if entry is None:
-					break
-				words = entry.l_word
-				b_defi = entry.defi.encode("utf-8")
-				_ctype = content_type
-				if not _ctype:
-					entry.detectDefiFormat()
-					defiFormat = entry.defiFormat
-					if defiFormat == "h":
-						_ctype = "text/html; charset=utf-8"
-						b_defi = b_defi.replace(b'"bword://', b'"')
-						b_defi = b_defi.replace(b"'bword://", b"'")
-					elif defiFormat == "m":
-						_ctype = "text/plain; charset=utf-8"
-					else:
-						_ctype = "text/plain; charset=utf-8"
-				slobWriter.add(
-					b_defi,
-					*tuple(words),
-					content_type=_ctype,
-				)
-		# slobWriter.finalize() is called called on __exit__
+		self._slobWriter = slobWriter = slob.create(filename, **kwargs)
+		slobWriter.tag("label", self._glos.getInfo("name"))
+
+	def finish(self):
+		self._filename = None
+		if self._slobWriter is not None:
+			self._slobWriter.finalize()
+			self._slobWriter = None
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
+		content_type = self._content_type
+		slobWriter = self._slobWriter
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			words = entry.l_word
+			b_defi = entry.defi.encode("utf-8")
+			_ctype = content_type
+			if not _ctype:
+				entry.detectDefiFormat()
+				defiFormat = entry.defiFormat
+				if defiFormat == "h":
+					_ctype = "text/html; charset=utf-8"
+					b_defi = b_defi.replace(b'"bword://', b'"')
+					b_defi = b_defi.replace(b"'bword://", b"'")
+				elif defiFormat == "m":
+					_ctype = "text/plain; charset=utf-8"
+				else:
+					_ctype = "text/plain; charset=utf-8"
+			slobWriter.add(
+				b_defi,
+				*tuple(words),
+				content_type=_ctype,
+			)

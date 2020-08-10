@@ -88,6 +88,7 @@ class Writer:
 
 	def __init__(self, glos, **kwargs):
 		self._glos = glos
+		self._filename = None
 		self._words = []
 		self._img_pattern = re.compile(
 			'<img src="([^<>"]*?)"( [^<>]*?)?>',
@@ -194,13 +195,16 @@ class Writer:
 
 		self._words = words
 
-	def write(
-		self,
-		filename,
-	):
-		import marisa_trie
-		with indir(filename, create=True):
+	def open(self, filename: str) -> None:
+		self._filename = filename
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
+		with indir(self._filename, create=True):
 			yield from self.write_groups()
-			words = self._words
-			trie = marisa_trie.Trie(words)
+
+	def finish(self) -> None:
+		import marisa_trie
+		with indir(self._filename, create=False):
+			trie = marisa_trie.Trie(self._words)
 			trie.save(self.WORDS_FILE_NAME)
+		self._filename = None

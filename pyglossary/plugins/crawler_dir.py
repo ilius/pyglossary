@@ -40,6 +40,15 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = None
+
+	def finish(self):
+		pass
+
+	def open(self, filename: str):
+		self._filename = filename
+		if not isdir(filename):
+			makedirs(filename)
 
 	def filePathFromWord(self, b_word: bytes) -> str:
 		bw = b_word.lower()
@@ -56,12 +65,11 @@ class Writer(object):
 			bw[4:8].hex() + "-" + sha1(b_word).hexdigest()[:8],
 		)
 
-	def write(self, filename: str):
+	def write(self, ):
 		from collections import OrderedDict as odict
 		from pyglossary.json_utils import dataToPrettyJson
 
-		if not isdir(filename):
-			makedirs(filename)
+		filename = self._filename
 
 		wordCount = 0
 		compression = self._compression

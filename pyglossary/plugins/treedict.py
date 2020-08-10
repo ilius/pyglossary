@@ -44,22 +44,27 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = None
 
-	def write(
-		self,
-		filename: str,
-	) -> None:
-		glos = self._glos
-		encoding = self._encoding
-		sep = self._sep
-		length = self._length
+	def finish(self):
+		self._filename = None
 
+	def open(self, filename: str) -> None:
+		self._filename = filename
 		if os.path.exists(filename):
 			if os.path.isdir(filename):
 				if os.listdir(filename):
 					log.warning(f"Warning: directory {filename!r} is not empty.")
 			else:
 				raise IOError(f"{filename!r} is not a directory")
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
+		glos = self._glos
+		filename = self._filename
+		encoding = self._encoding
+		sep = self._sep
+		length = self._length
+
 		maxDepth = 0
 		while True:
 			entry = yield

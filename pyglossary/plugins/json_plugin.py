@@ -22,11 +22,15 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = None
 
-	def write(
-		self,
-		filename: str,
-	) -> Generator[None, "BaseEntry", None]:
+	def open(self, filename: str):
+		self._filename = filename
+
+	def finish(self):
+		self._filename = None
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
 		from json import dumps
 
 		glos = self._glos
@@ -41,7 +45,7 @@ class Writer(object):
 
 		yield from glos.writeTxt(
 			entryFmt="\t{word}: {defi},\n",
-			filename=filename,
+			filename=self._filename,
 			encoding=encoding,
 			writeInfo=writeInfo,
 			wordEscapeFunc=escape,

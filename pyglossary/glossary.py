@@ -250,46 +250,32 @@ class Glossary(GlossaryType):
 		hasReadSupport = False
 		Reader = prop.readerClass
 		if Reader is not None:
-			for attr in (
-				"__init__",
-				"open",
-				"close",
-				"__len__",
-				"__iter__",
-			):
-				if not hasattr(Reader, attr):
+			cls.readerClasses[format] = Reader
+			hasReadSupport = True
+			options = cls.getOptionsFromClass(Reader, format)
+			extraOptions = cls.getExtraOptions(Reader.open, format)
+			cls.formatsReadOptions[format] = options
+			Reader.formatName = format
+			if "fileObj" in extraOptions:
+				if plugin.singleFile:
+					cls.formatsReadFileObj[format] = True
+				else:
 					log.error(
-						f"Invalid Reader class in {format!r} plugin"
-						f", no {attr!r} method"
+						f"plugin {format}: fileObj= argument "
+						"in Reader.open, without singleFile=True"
 					)
-					plugin.Reader = None
-					break
-			else:
-				cls.readerClasses[format] = Reader
-				hasReadSupport = True
-				options = cls.getOptionsFromClass(Reader, format)
-				extraOptions = cls.getExtraOptions(Reader.open, format)
-				cls.formatsReadOptions[format] = options
-				Reader.formatName = format
-				if "fileObj" in extraOptions:
-					if plugin.singleFile:
-						cls.formatsReadFileObj[format] = True
-					else:
-						log.error(
-							f"plugin {format}: fileObj= argument "
-							"in Reader.open, without singleFile=True"
-						)
 
 		if hasReadSupport:
 			cls.readFormats.append(format)
 			cls.readExt.append(extensions)
 			cls.readDesc.append(desc)
 
-		if hasattr(plugin, "Writer"):
-			cls.writerClasses[format] = plugin.Writer
+		Writer = prop.writerClass
+		if Writer is not None:
+			cls.writerClasses[format] = Writer
 
-			options = cls.getOptionsFromClass(plugin.Writer, format)
-			extraOptions = cls.getExtraOptions(plugin.Writer.write, format)
+			options = cls.getOptionsFromClass(Writer, format)
+			extraOptions = cls.getExtraOptions(Writer.write, format)
 
 			cls.formatsWriteOptions[format] = options
 			cls.writeFormats.append(format)
@@ -814,7 +800,11 @@ class Glossary(GlossaryType):
 		self.updateEntryFilters()
 
 		reader = self._createReader(format, options)
-		reader.open(filename)
+		try:
+			reader.open(filename)
+		except Exception:
+			log.exception("")
+			return False
 		self._readersOpenArgs[reader] = (filename, options)
 		self.prepareEntryFilters()
 		if direct:
@@ -1055,6 +1045,8 @@ class Glossary(GlossaryType):
 
 		returns absolute path of output file, or None if failed
 		"""
+		filename = abspath(filename)
+
 		validOptionKeys = self.formatsWriteOptions.get(format)
 		if validOptionKeys is None:
 			log.critical(f"No write support for {format!r} format")
@@ -1103,7 +1095,14 @@ class Glossary(GlossaryType):
 			log.error(f"No Writer class found for plugin {format}")
 			return
 
+		log.info(f"Writing to file {filename!r}")
+
 		writer = self._createWriter(format, options)
+		try:
+			writer.open(filename)
+		except Exception:
+			log.exception("")
+			return False
 
 		self._sort = sort
 
@@ -1148,11 +1147,10 @@ class Glossary(GlossaryType):
 				f" for direct conversion without loading into memory"
 			)
 
-		filename = abspath(filename)
-		log.info(f"Writing to file {filename!r}")
+		writerList = [writer]
 		try:
 			genList = []
-			gen = writer.write(filename)
+			gen = writer.write()
 			if gen is None:
 				log.error(f"\n{format} write function is not a generator")
 			else:
@@ -1161,7 +1159,9 @@ class Glossary(GlossaryType):
 			if self.getPref("save_info_json", False):
 				infoWriter = self._createWriter("Info", {})
 				filenameNoExt, _, _, _ = Glossary.splitFilenameExt(filename)
-				genList.append(infoWriter.write(f"{filenameNoExt}.info"))
+				infoWriter.open(f"{filenameNoExt}.info")
+				genList.append(infoWriter.write())
+				writerList.append(infoWriter)
 
 			for gen in genList:
 				gen.send(None)
@@ -1177,6 +1177,8 @@ class Glossary(GlossaryType):
 			log.exception("Exception while calling plugin\'s write function")
 			return
 		finally:
+			for writer in writerList:
+				writer.finish()
 			self.clear()
 
 		return filename

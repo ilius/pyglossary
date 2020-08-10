@@ -125,7 +125,7 @@ class Writer(object):
 		self.indexFileMaxSize = 32722  # 30000
 		self.directoryPostfix = ""
 		self.indexPostfix = ""
-		self.dirname = ""
+		self._dirname = ""
 		self.re_punc = re.compile(
 			r"[!\"$§$%&/()=?´`\\{}\[\]^°+*~#'-_.:,;<>@]*",
 			# FIXME: |
@@ -155,7 +155,7 @@ class Writer(object):
 	def writeProbs(self):
 		glos = self._glos
 		with open(join(
-			self.dirname,
+			self._dirname,
 			"DictionaryForMIDs.properties",
 		), "w") as fileObj:
 			fileObj.write(PROP_TEMPLATE.format(
@@ -178,13 +178,18 @@ class Writer(object):
 
 		self.indexIndex += 1
 		fname = f"index{self.indexPostfix}{self.indexIndex}.csv"
-		fpath = join(self.dirname, fname)
+		fpath = join(self._dirname, fname)
 		self.indexFp = open(fpath, mode="w", encoding="utf-8")
 
-	def write(self, dirname: str):
-		self.dirname = dirname
+	def finish(self):
+		pass
+
+	def open(self, dirname: str):
+		self._dirname = dirname
 		if not os.path.isdir(dirname):
 			os.mkdir(dirname)
+
+	def write(self):
 		self.nextIndex()
 
 		dicMaxSize = 0
@@ -197,7 +202,7 @@ class Writer(object):
 				f", dicMaxSize={dicMaxSize}"
 			)
 			dicFp = open(join(
-				self.dirname,
+				self._dirname,
 				f"directory{self.directoryPostfix}{dicIndex+1}.csv",
 			), mode="w", encoding="utf-8")
 			for entry in entryList:
@@ -238,7 +243,7 @@ class Writer(object):
 		self.wordCount = wordCount
 
 		langSearchListFp = open(join(
-			self.dirname,
+			self._dirname,
 			f"searchlist{self.directoryPostfix}.csv"
 		), mode="w", encoding="utf-8")
 

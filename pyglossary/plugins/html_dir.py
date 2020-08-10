@@ -58,6 +58,17 @@ class Writer(object):
 		self._tail = "</body></html>"
 		self._filenameList = []
 
+	def open(self, filename: str):
+		self._filename = filename
+		self._resDir = resDir = join(filename, "res")
+		if not isdir(filename):
+			os.mkdir(filename)
+		if not isdir(resDir):
+			os.mkdir(resDir)
+
+	def finish(self):
+		pass
+
 	def nextFile(self):
 		if self._fileObj:
 			self._fileObj.write(self._tail)
@@ -212,10 +223,7 @@ class Writer(object):
 				)
 			_file.write("</table></body></html>")
 
-	def write(
-		self,
-		filename: str,
-	) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> Generator[None, "BaseEntry", None]:
 
 		encoding = self._encoding
 		resources = self._resources
@@ -226,14 +234,8 @@ class Writer(object):
 		initFileSizeMax = 100
 
 		glos = self._glos
-		resDir = filename + "_res"
-		if not isdir(resDir):
-			os.mkdir(resDir)
 
-		if not isdir(filename):
-			os.mkdir(filename)
-
-		self._filename = filename
+		filename = self._filename
 		self._encoding = encoding
 		self._filename_format = filename_format
 
@@ -322,6 +324,7 @@ class Writer(object):
 
 		self.writeInfo(filename, header)
 
+		resDir = self._resDir
 		while True:
 			entry = yield
 			if entry is None:

@@ -17,8 +17,20 @@ depends = {}
 class Writer(object):
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
+		self._filename = None
+		self._file = None
 
-	def write(self, filename: str) -> Generator[None, "BaseEntry", None]:
+	def open(self, filename: str):
+		self._filename = filename
+		self._file = open(filename, mode="wt", encoding="utf-8")
+
+	def finish(self):
+		self._filename = None
+		if self._file:
+			self._file.close()
+			self._file = None
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
 		import re
 		from collections import Counter, OrderedDict
 		from pyglossary.json_utils import dataToPrettyJson
@@ -99,8 +111,7 @@ class Writer(object):
 			for defiFormat, count in
 			styleByTagCounter.most_common()
 		)
-		with open(filename, mode="w", encoding="utf-8") as _file:
-			_file.write(dataToPrettyJson(info) + "\n")
+		self._file.write(dataToPrettyJson(info) + "\n")
 
 
 class Reader(object):

@@ -169,54 +169,61 @@ class Writer(object):
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 
-	def write(
-		self,
-		filename: str,
-	) -> Generator[None, "BaseEntry", None]:
-		encoding = self._encoding
-		resources = self._resources
-		delimiter = self._delimiter
-		add_defi_format = self._add_defi_format
-		glos = self._glos
-		resDir = filename + "_res"
+	def open(self, filename: str):
+		self._filename = filename
+		self._file = open(filename, "w", encoding=self._encoding)
+		self._resDir = resDir = filename + "_res"
+		self._csvWriter = csv.writer(
+			self._file,
+			dialect="excel",
+			quoting=csv.QUOTE_ALL,  # FIXME
+			delimiter=self._delimiter,
+		)
 		if not isdir(resDir):
 			os.mkdir(resDir)
-		with open(filename, "w", encoding=encoding) as csvfile:
-			writer = csv.writer(
-				csvfile,
-				dialect="excel",
-				quoting=csv.QUOTE_ALL,  # FIXME
-				delimiter=delimiter,
-			)
-			if self._writeInfo:
-				for key, value in glos.iterInfo():
-					writer.writerow([f"#{key}", value])
-			while True:
-				entry = yield
-				if entry is None:
-					break
-				if entry.isData():
-					if resources:
-						entry.save(resDir)
-					continue
+		if self._writeInfo:
+			for key, value in self._glos.iterInfo():
+				self._csvWriter.writerow([f"#{key}", value])
 
-				words = entry.l_word
-				if not words:
-					continue
-				word, alts = words[0], words[1:]
-				defi = entry.defi
+	def finish(self):
+		self._filename = None
+		if self._file:
+			self._file.close()
+			self._file = None
+		if not os.listdir(self._resDir):
+			os.rmdir(self._resDir)
 
-				row = [
-					word,
-					defi,
-				]
-				if add_defi_format:
-					entry.detectDefiFormat()
-					row.append(entry.defiFormat)
-				if alts:
-					row.append(",".join(alts))
+	def write(self) -> Generator[None, "BaseEntry", None]:
+		encoding = self._encoding
+		resources = self._resources
+		add_defi_format = self._add_defi_format
+		glos = self._glos
+		resDir = self._resDir
+		writer = self._csvWriter
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				if resources:
+					entry.save(resDir)
+				continue
 
-				writer.writerow(row)
+			words = entry.l_word
+			if not words:
+				continue
+			word, alts = words[0], words[1:]
+			defi = entry.defi
 
-		if not os.listdir(resDir):
-			os.rmdir(resDir)
+			row = [
+				word,
+				defi,
+			]
+			if add_defi_format:
+				entry.detectDefiFormat()
+				row.append(entry.defiFormat)
+			if alts:
+				row.append(",".join(alts))
+
+			writer.writerow(row)
+

@@ -124,21 +124,31 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = None
+		self._dictdb = None
 
-	def write(
-		self,
-		filename: str,
-	) -> Generator[None, "BaseEntry", None]:
+	def finish(self):
 		from pyglossary.text_utils import runDictzip
+		self._dictdb.finish(dosort=1)
+		if self._dictzip:
+			runDictzip(self._filename)
+		if self._install:
+			installToDictd(
+				self._filename,
+				self._dictzip,
+				self._glos.getInfo("name").replace(" ", "_"),
+			)
+		self._filename = None
 
-		glos = self._glos
-		dictzip = self._dictzip
-		install = self._install
-
+	def open(self, filename: str):
 		filename_nox, ext = splitext(filename)
 		if ext.lower() == ".index":
 			filename = filename_nox
-		dictdb = DictDB(filename, "write", 1)
+		self._dictdb = DictDB(filename, "write", 1)
+		self._filename = filename
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
+		dictdb = self._dictdb
 		while True:
 			entry = yield
 			if entry is None:
@@ -147,8 +157,4 @@ class Writer(object):
 				# does dictd support resources? and how? FIXME
 				continue
 			dictdb.addentry(entry.b_defi, entry.l_word)
-		dictdb.finish(dosort=1)
-		if dictzip:
-			runDictzip(filename)
-		if install:
-			installToDictd(filename, dictzip, glos.getInfo("name").replace(" ", "_"))
+

@@ -116,34 +116,39 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
+		self._filename = None
+		self._file = None
 
-	def write(
-		self,
-		filename: str,
-	) -> Generator[None, "BaseEntry", None]:
+	def open(self, filename: str):
+		self._filename = filename
+		self._file = _file = open(filename, mode="wt", encoding="utf-8")
+		_file.write('#\nmsgid ""\nmsgstr ""\n')
+		for key, value in self._glos.iterInfo():
+			_file.write(f'"{key}: {value}\\n"\n')
+
+	def finish(self):
+		self._filename = None
+		if self._file:
+			self._file.close()
+			self._file = None
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
 		try:
 			from polib import escape as po_escape
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install polib` to install"
 			raise e
 		resources = self._resources
-		glos = self._glos
-		with open(filename, "w") as toFile:
-			toFile.write('#\nmsgid ""\nmsgstr ""\n')
-			for key, value in glos.iterInfo():
-				toFile.write(f'"{key}: {value}\\n"\n')
-
-			while True:
-				entry = yield
-				if entry is None:
-					break
-				if entry.isData():
-					if resources:
-						entry.save(filename + "_res")
-					continue
-				word = entry.s_word
-				defi = entry.defi
-				toFile.write(
-					f"msgid {po_escape(word)}\n"
-					f"msgstr {po_escape(defi)}\n\n"
-				)
+		_file = self._file
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				if resources:
+					entry.save(filename + "_res")
+				continue
+			_file.write(
+				f"msgid {po_escape(entry.s_word)}\n"
+				f"msgstr {po_escape(entry.defi)}\n\n"
+			)

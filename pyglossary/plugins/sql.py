@@ -26,35 +26,27 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = None
+		self._file = None
 
-	def write(
-		self,
-		filename: str,
-	) -> Generator[None, "BaseEntry", None]:
-		glos = self._glos
-		encoding = self._encoding
-		infoKeys = self._infoKeys
-		addExtraInfo = self._addExtraInfo
+	def finish(self):
+		self._filename = None
+		if self._file:
+			self._file.close()
+			self._file = None
+
+	def open(self, filename: str):
+		self._filename = filename
+		self._file = open(filename, "wt", encoding=self._encoding)
+		self._writeInfo()
+
+	def _writeInfo(self):
+		fileObj = self._file
 		newline = self._newline
-		transaction = self._transaction
-
-		fileObj = open(filename, "w", encoding=encoding)
-
+		infoKeys = self._getInfoKeys()
 		infoDefLine = "CREATE TABLE dbinfo ("
 		infoValues = []
-
-		if not infoKeys:
-			infoKeys = [
-				"dbname",
-				"author",
-				"version",
-				"direction",
-				"origLang",
-				"destLang",
-				"license",
-				"category",
-				"description",
-			]
+		glos = self._glos
 
 		for key in infoKeys:
 			value = glos.getInfo(key)
@@ -69,7 +61,7 @@ class Writer(object):
 		infoDefLine = infoDefLine[:-2] + ");"
 		fileObj.write(infoDefLine + "\n")
 
-		if addExtraInfo:
+		if self._addExtraInfo:
 			fileObj.write(
 				"CREATE TABLE dbinfo_extra ("
 				"\'id\' INTEGER PRIMARY KEY NOT NULL, "
@@ -81,11 +73,11 @@ class Writer(object):
 			"\'w\' TEXT, \'m\' TEXT);\n"
 		)
 
-		if transaction:
+		if self._transaction:
 			fileObj.write("BEGIN TRANSACTION;\n")
 		fileObj.write(f"INSERT INTO dbinfo VALUES({','.join(infoValues)});\n")
 
-		if addExtraInfo:
+		if self._addExtraInfo:
 			extraInfo = glos.getExtraInfos(infoKeys)
 			for index, (key, value) in enumerate(extraInfo.items()):
 				key = key.replace("\'", "\'\'")
@@ -94,6 +86,29 @@ class Writer(object):
 					f"INSERT INTO dbinfo_extra VALUES({index+1}, "
 					f"\'{key}\', \'{value}\');\n"
 				)
+
+	def _getInfoKeys(self):
+		infoKeys = self._infoKeys
+		if infoKeys:
+			return infoKeys
+		return [
+			"dbname",
+			"author",
+			"version",
+			"direction",
+			"origLang",
+			"destLang",
+			"license",
+			"category",
+			"description",
+		]
+
+	def write(self) -> Generator[None, "BaseEntry", None]:
+		glos = self._glos
+
+		newline = self._newline
+
+		fileObj = self._file
 
 		i = 0
 		while True:
@@ -113,6 +128,6 @@ class Writer(object):
 				f"INSERT INTO word VALUES({i+1}, \'{word}\', \'{defi}\');\n"
 			)
 			i += 1
-		if transaction:
+		if self._transaction:
 			fileObj.write("END TRANSACTION;\n")
 		fileObj.write("CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);\n")
