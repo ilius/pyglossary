@@ -1477,6 +1477,3 @@ class Glossary(GlossaryType):
 		cls.writeDesc = []
 		cls.loadPlugins(join(dirname(__file__), "plugins"))
 		cls.loadPlugins(userPluginsDir)
-
-
-Glossary.init()

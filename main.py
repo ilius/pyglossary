@@ -278,8 +278,7 @@ core.checkCreateConfDir()
 from pyglossary.glossary import Glossary
 from ui.ui_cmd import help, parseFormatOptionsStr
 
-if args.verbosity != defaultVerbosity:
-	Glossary.init()
+Glossary.init()
 
 ##############################
 
