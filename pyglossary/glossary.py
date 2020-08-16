@@ -175,7 +175,7 @@ class Glossary(GlossaryType):
 			if name not in ("self", "filename", "dirname"):
 				extraOptNames.append(name)
 		if extraOptNames:
-			log.info(f"{format}: extraOptNames = {extraOptNames}")
+			log.debug(f"{format}: extraOptNames = {extraOptNames}")
 		return extraOptNames
 
 	@classmethod
