@@ -110,7 +110,7 @@ class Reader(object):
 				break
 			yield self._getEntryFromPage(page)
 
-	def _sub_internal_link(self, m: re.Match) -> str:
+	def _sub_internal_link(self, m: "re.Match") -> str:
 		ref = m.group(1)
 		return f'<a href="bword://{html.escape(ref)}">{ref}</a>'
 

@@ -332,7 +332,7 @@ def build_name2codepoint_dict():
 		print(f"\t\"{key}\": 0x{ord(value):0>4x},  # {value}")
 
 
-def _sub_unescape_unicode(m: re.Match) -> str:
+def _sub_unescape_unicode(m: "re.Match") -> str:
 	text = m.group(0)
 	if text[:2] == "&#":
 		# character reference

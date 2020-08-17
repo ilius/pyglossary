@@ -77,7 +77,7 @@ class Reader(object):
 			return 0
 		return len(self._slobObj)
 
-	def _href_sub(self, m: re.Match) -> str:
+	def _href_sub(self, m: "re.Match") -> str:
 		st = m.group(0)
 		if "//" in st:
 			return st
