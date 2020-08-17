@@ -70,6 +70,7 @@ data_files = [
 		"README.md",
 		"doc/apple.md",
 		"doc/lzo.md",
+		"doc/termux.md",
 	]),
 	("share/applications", ["pyglossary.desktop"]),
 	("share/pixmaps", ["res/pyglossary.png"]),

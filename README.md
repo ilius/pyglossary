@@ -156,6 +156,7 @@ Feature-specific Requirements
 	then try to install [LZO library and Python binding](doc/lzo.md).
 
 
+**Using Termux on Android?** See [doc/termux.md](./doc/termux.md)
 
 
 User Plugins
