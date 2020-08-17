@@ -141,7 +141,7 @@ Feature-specific Requirements
 
 	`sudo pip3 install marisa-trie`
 
--	**Reading from Zim**
+-	**Reading from Zim** (see [#228](https://github.com/ilius/pyglossary/issues/228))
 
 	`sudo pip3 install libzim`
 
