@@ -1098,11 +1098,6 @@ class Glossary(GlossaryType):
 		log.info(f"Writing to file {filename!r}")
 
 		writer = self._createWriter(format, options)
-		try:
-			writer.open(filename)
-		except Exception:
-			log.exception("")
-			return False
 
 		self._sort = sort
 
@@ -1140,6 +1135,11 @@ class Glossary(GlossaryType):
 				log.info(f"Sorting took {now() - t0:.1f} seconds")
 
 		self._updateIter()
+		try:
+			writer.open(filename)
+		except Exception:
+			log.exception("")
+			return False
 
 		for reader in self._readers:
 			log.info(
