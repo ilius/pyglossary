@@ -151,17 +151,10 @@ Feature-specific Requirements
 
 -	**Reading from Octopus Mdict (MDX)**
 
-	+ **python-lzo**, required for **some** MDX glossaries
+	`python-lzo` is required for **some** MDX glossaries.
+	First try converting your MDX file, if failed (`AssertionError` probably),
+	then try to install [LZO library and Python binding](doc/lzo.md).
 
-		- First try converting your MDX file, and if failed (`AssertionError` probably), then you may need to install LZO library and Python binding:
-
-		- **On Linux**, make sure `liblzo2-dev` or `liblzo2-devel` is installed and then run `sudo pip3 install python-lzo`
-
-		- **On Windows**:
-			+ Open this page: https://www.lfd.uci.edu/~gohlke/pythonlibs/#python-lzo
-			+ If you are using Python 3.7 (32 bit) for example, click on `python_lzo‑1.12‑cp37‑cp37m‑win32.whl`
-			+ Open Start -> type Command -> right-click on Command Prompt -> Run as administrator
-			+ Run `pip install C:\....\python_lzo‑1.12‑cp37‑cp37m‑win32.whl` command, giving the path of downloaded file
 
 
 

@@ -69,6 +69,7 @@ data_files = [
 	("share/doc/pyglossary", [
 		"README.md",
 		"doc/apple.md",
+		"doc/lzo.md",
 	]),
 	("share/applications", ["pyglossary.desktop"]),
 	("share/pixmaps", ["res/pyglossary.png"]),
