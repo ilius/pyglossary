@@ -176,7 +176,7 @@ class UI(UIBase):
 			" ", pb.Percentage(), " ",
 			pb.ETA(),
 		]
-		self.pbar.start()
+		self.pbar.start(num_intervals=1000)
 		rot.pbar = self.pbar
 
 	def progress(self, rat, text=""):

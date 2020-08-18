@@ -264,7 +264,7 @@ class ProgressBar(object):
         self.last_update_time = now
 
 
-    def start(self):
+    def start(self, num_intervals=0):
         """Starts measuring time, and prints the bar at 0%.
 
         It returns self so you can use it like this:
@@ -279,7 +279,10 @@ class ProgressBar(object):
         if self.maxval is None:
             self.maxval = self._DEFAULT_MAXVAL
 
-        self.num_intervals = max(100, self.term_width)
+        if num_intervals > 0:
+            self.num_intervals = num_intervals
+        else:
+            self.num_intervals = max(100, self.term_width)
         self.next_update = 0
 
         if self.maxval is not widgets.UnknownLength:

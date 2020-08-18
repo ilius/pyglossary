@@ -435,9 +435,13 @@ class Glossary(GlossaryType):
 	def __str__(self) -> str:
 		return "glossary.Glossary"
 
+	def _calcProgressThreshold(self, wordCount: int) -> int:
+		return max(1, min(500, wordCount // 200))
+
 	def _loadedEntryGen(self) -> Iterator[BaseEntry]:
 		wordCount = len(self._data)
-		wcThreshold = wordCount // 200 + 1
+		threshold = self._calcProgressThreshold(wordCount)
+
 		progressbar = self.ui and self._progressbar
 		if progressbar:
 			self.progressInit("Writing")
@@ -449,7 +453,7 @@ class Glossary(GlossaryType):
 				rawEntry,
 				defaultDefiFormat=self._defaultDefiFormat
 			)
-			if progressbar and index % wcThreshold == 0:
+			if progressbar and index % threshold == 0:
 				self.progress(index, wordCount)
 		if progressbar:
 			self.progressEnd()
@@ -467,7 +471,7 @@ class Glossary(GlossaryType):
 					progressbar = True
 			if progressbar:
 				self.progressInit("Converting")
-			wcThreshold = wordCount // 200 + 1
+			threshold = self._calcProgressThreshold(wordCount)
 			lastPos = 0
 			try:
 				for index, entry in enumerate(reader):
@@ -475,7 +479,7 @@ class Glossary(GlossaryType):
 						yield entry
 					if progressbar:
 						if wordCount > 0:
-							if index % wcThreshold == 0:
+							if index % threshold == 0:
 								self.progress(index, wordCount)
 							continue
 						if entry is None:
@@ -834,7 +838,7 @@ class Glossary(GlossaryType):
 			progressbar = True
 		if progressbar:
 			self.progressInit("Reading")
-		wcThreshold = wordCount // 200 + 1
+		threshold = self._calcProgressThreshold(wordCount)
 		lastPos = 0
 		try:
 			for index, entry in enumerate(reader):
@@ -844,7 +848,7 @@ class Glossary(GlossaryType):
 					self.addEntryObj(entry)
 				if progressbar:
 					if wordCount > 0:
-						if index % wcThreshold == 0:
+						if index % threshold == 0:
 							self.progress(index, wordCount)
 						continue
 					if entry is None:
