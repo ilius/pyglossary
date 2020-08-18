@@ -1,4 +1,4 @@
-Feature-specific Requirements on Termux
+Feature-specific Requirements on [Termux](https://github.com/termux/termux-app)
 ---------------------------------------
 
 -	**Using `--remove-html-all` flag**
