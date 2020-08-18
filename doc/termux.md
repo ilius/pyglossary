@@ -7,13 +7,13 @@ Feature-specific Requirements on [Termux](https://github.com/termux/termux-app)
 	+ `pip install lxml beautifulsoup4`
 
 
-- **Reading from FreeDict or XDXF**
+- **Reading from FreeDict, XDXF or AppleDict Binary (.dictionary)**
 
 	+ `apt install libxml2 libxslt`
 	+ `pip install lxml`
 
 
-- **Reading or writing Aard 2  files**
+- **Reading or writing Aard 2 (.slob)**
 
 	+ `pip install PyICU`
 
@@ -27,6 +27,12 @@ Feature-specific Requirements on [Termux](https://github.com/termux/termux-app)
 
 	+ `apt install libzim`
 	+ `pip install libzim`
+
+
+-	**Writing to AppleDict**
+
+	+ `apt install libxml2 libxslt`
+	+ `pip install lxml beautifulsoup4 html5lib`
 
 
 - **Reading from CC-CEDICT**
