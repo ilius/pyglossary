@@ -247,14 +247,18 @@ class Glossary(GlossaryType):
 			cls.pluginByExt[ext.lstrip(".")] = prop
 			cls.pluginByExt[ext] = prop
 
-		hasReadSupport = False
 		Reader = prop.readerClass
 		if Reader is not None:
 			cls.readerClasses[format] = Reader
-			hasReadSupport = True
+
 			options = cls.getOptionsFromClass(Reader, format)
 			extraOptions = cls.getExtraOptions(Reader.open, format)
+
 			cls.formatsReadOptions[format] = options
+			cls.readFormats.append(format)
+			cls.readExt.append(extensions)
+			cls.readDesc.append(desc)
+
 			Reader.formatName = format
 			if "fileObj" in extraOptions:
 				if plugin.singleFile:
@@ -264,11 +268,6 @@ class Glossary(GlossaryType):
 						f"plugin {format}: fileObj= argument "
 						"in Reader.open, without singleFile=True"
 					)
-
-		if hasReadSupport:
-			cls.readFormats.append(format)
-			cls.readExt.append(extensions)
-			cls.readDesc.append(desc)
 
 		Writer = prop.writerClass
 		if Writer is not None:
@@ -289,6 +288,9 @@ class Glossary(GlossaryType):
 						f"plugin {format}: fileObj= argument "
 						"in write, without singleFile=True"
 					)
+
+		if not (Reader or Writer):
+			log.warm(f"WARNING: plugin {format} has no Reader nor Writer")
 
 		if hasattr(plugin, "write"):
 			log.error(
@@ -317,11 +319,12 @@ class Glossary(GlossaryType):
 			return error(f"plugin {plugin.name} does not support reading")
 
 		ext = get_ext(filename)
-		plugin = cls.pluginByExt[ext]
+		plugin = cls.pluginByExt.get(ext)
 		if plugin:
 			if plugin.readerClass:
 				return plugin.name
 			return error(f"plugin {plugin.name} does not support reading")
+		log.debug(f"{sorted(cls.pluginByExt.keys())}")
 
 		return error(f"Could not detect input format")
 
