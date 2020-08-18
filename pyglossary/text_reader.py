@@ -80,6 +80,9 @@ class TextGlossaryReader(object):
 			byteProgress=byteProgress,
 		)
 
+	def setInfo(self, word: str, defi: str) -> None:
+		self._glos.setInfo(word, defi)
+
 	def loadInfo(self) -> None:
 		self._pendingEntries = []
 		try:
@@ -99,7 +102,7 @@ class TextGlossaryReader(object):
 					continue
 				if not defi:
 					continue
-				self._glos.setInfo(word, defi)
+				self.setInfo(word, defi)
 		except StopIteration:
 			pass
 
