@@ -12,7 +12,6 @@ optionsProp = {
 	"dictzip": BoolOption(),
 	"install": BoolOption(),
 }
-depends = {}
 sortOnWrite = DEFAULT_NO
 
 # https://en.wikipedia.org/wiki/DICT#DICT_file_format

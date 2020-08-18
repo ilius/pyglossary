@@ -9,10 +9,6 @@ extensions = (".zim",)
 singleFile = True
 optionsProp = {
 }
-depends = {
-	"libzim": "libzim",
-}
-
 
 # https://wiki.kiwix.org/wiki/Software
 tools = [
@@ -50,6 +46,10 @@ tools = [
 
 
 class Reader(object):
+	depends = {
+		"libzim": "libzim",
+	}
+
 	resourceMimeTypes = {
 		"image/png",
 		"image/jpeg",

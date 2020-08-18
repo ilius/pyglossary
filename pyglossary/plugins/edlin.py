@@ -34,7 +34,6 @@ optionsProp = {
 	"encoding": EncodingOption(),
 	"havePrevLink": BoolOption(),
 }
-depends = {}
 
 
 def makeDir(direc: str) -> None:

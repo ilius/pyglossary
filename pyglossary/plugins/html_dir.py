@@ -18,10 +18,6 @@ optionsProp = {
 	"escape_defi": BoolOption(),
 	"dark": BoolOption(),
 }
-depends = {
-	"cachetools": "cachetools",
-}
-
 
 darkStyle = """
 body {{
@@ -42,6 +38,10 @@ h6 {{ font-size: 1.0em;}}
 
 
 class Writer(object):
+	depends = {
+		"cachetools": "cachetools",
+	}
+
 	_encoding: str = "utf-8"
 	_resources: bool = True
 	_max_file_size: int = 102400

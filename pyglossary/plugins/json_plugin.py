@@ -12,7 +12,6 @@ optionsProp = {
 	"writeInfo": BoolOption(),
 	"resources": BoolOption(),
 }
-depends = {}
 
 
 class Writer(object):

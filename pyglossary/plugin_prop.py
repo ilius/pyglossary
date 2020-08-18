@@ -74,10 +74,6 @@ class PluginProp(object):
 		return getattr(self._p, "optionsProp", {})
 
 	@property
-	def depends(self) -> Dict[str, str]:
-		return getattr(self._p, "depends", {})
-
-	@property
 	def sortOnWrite(self) -> YesNoAlwaysNever:
 		return getattr(self._p, "sortOnWrite", DEFAULT_NO)
 
@@ -99,6 +95,16 @@ class PluginProp(object):
 				)
 				self._p.Reader = None
 				return None
+
+		if hasattr(cls, "depends"):
+			if not isinstance(cls.depends, dict):
+				log.error(
+					f"invalid depends={cls.depends}"
+					f" in {self.name!r}.Reader class"
+				)
+		else:
+			cls.depends = {}
+
 		return cls
 
 
@@ -128,6 +134,16 @@ class PluginProp(object):
 				)
 				self._p.Reader = None
 				return None
+
+		if hasattr(cls, "depends"):
+			if not isinstance(cls.depends, dict):
+				log.error(
+					f"invalid depends={cls.depends}"
+					f" in {self.name!r}.Writer class"
+				)
+		else:
+			cls.depends = {}
+
 		return cls
 
 	@property

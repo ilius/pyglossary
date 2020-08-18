@@ -17,7 +17,6 @@ optionsProp = {
 	"writeInfo": BoolOption(),
 	"resources": BoolOption(),
 }
-depends = {}
 
 # https://en.wikipedia.org/wiki/Tab-separated_values
 

@@ -18,7 +18,7 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from typing import List
+from typing import List, Dict
 
 from pyglossary.glossary import Glossary
 
@@ -27,9 +27,8 @@ from pyglossary.glossary import Glossary
 # installed_packages = set(r.decode().split('==')[0] for r in reqs.split())
 
 
-def checkFormatDepends(name: str) -> List[str]:
+def checkDepends(depends: Dict[str, str]) -> List[str]:
 	"returns the list of uninstalled dependencies"
-	depends = Glossary.plugins[name].depends
 	if not depends:
 		return []
 	uninstalled = []
@@ -39,4 +38,3 @@ def checkFormatDepends(name: str) -> List[str]:
 		except ModuleNotFoundError:
 			uninstalled.append(pkgName)
 	return uninstalled
-

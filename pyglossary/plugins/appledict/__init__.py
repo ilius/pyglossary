@@ -52,11 +52,6 @@ optionsProp = {
 	"jing": BoolOption(comment="run Jing check on generated XML"),
 	"indexes": StrOption(customValue=False, values=["", "ru", "zh"]),
 }
-depends = {
-	"lxml": "lxml",
-	"bs4": "beautifulsoup4",
-	"html5lib": "html5lib",
-}
 
 tools = [
 	{
@@ -178,6 +173,12 @@ additional indexes to dictionary entries.
 """
 
 class Writer(object):
+	depends = {
+		"lxml": "lxml",
+		"bs4": "beautifulsoup4",
+		"html5lib": "html5lib",
+	}
+
 	_cleanHTML: bool = True
 	_css: str = ""
 	_xsl: str = ""

@@ -14,7 +14,6 @@ optionsProp = {
 	"newline": NewlineOption(),
 	"transaction": BoolOption(),
 }
-depends = {}
 
 
 class Writer(object):

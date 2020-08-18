@@ -27,7 +27,6 @@ optionsProp = {
 	),
 	"length": IntOption(),
 }
-depends = {}
 
 
 def chunkString(string, length):

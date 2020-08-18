@@ -48,7 +48,7 @@ from .base import (
 )
 
 from pyglossary import core
-from .dependency import checkFormatDepends
+from .dependency import checkDepends
 
 import gi
 gi.require_version("Gtk", "3.0")
@@ -438,7 +438,16 @@ class FormatComboBox(gtk.ComboBox):
 		options = self.getActiveOptions()
 		self.optionsButton.set_visible(bool(options))
 
-		uninstalled = checkFormatDepends(name)
+		kind = self.kind()
+		plugin = Glossary.plugins[name]
+		if kind == "r":
+			cls = plugin.readerClass
+		elif kind == "w":
+			cls = plugin.writerClass
+		else:
+			raise RuntimeError(f"invalid kind={kind}")
+		uninstalled = checkDepends(cls.depends)
+
 		self.dependsButton.pkgNames = uninstalled
 		self.dependsButton.set_visible(bool(uninstalled))
 

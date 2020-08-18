@@ -45,7 +45,6 @@ tools = [
 		"license": "Unknown",
 	},
 ]
-depends = {}
 # progressbar = DEFAULT_YES
 
 # FIXME: document type of read/write options

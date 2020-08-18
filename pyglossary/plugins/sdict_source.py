@@ -14,7 +14,6 @@ optionsProp = {
 	"newline": NewlineOption(),
 	"resources": BoolOption(),
 }
-depends = {}
 
 tools = [
 	{

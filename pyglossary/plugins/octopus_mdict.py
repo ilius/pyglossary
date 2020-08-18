@@ -33,7 +33,6 @@ optionsProp = {
 	"encoding": EncodingOption(),
 	"substyle": BoolOption(),
 }
-depends = {}
 
 tools = [
 	{

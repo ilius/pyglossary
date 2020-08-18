@@ -31,7 +31,6 @@ optionsProp = {
 		values=["", "h", "m", "x"],
 	),
 }
-depends = {}
 sortOnWrite = ALWAYS
 # sortKey is defined in Writer class
 

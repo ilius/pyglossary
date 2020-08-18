@@ -40,7 +40,6 @@ optionsProp = {
 	"audio": BoolOption(),
 	"onlyFixMarkUp": BoolOption(),
 }
-depends = {}
 
 tools = [
 	{

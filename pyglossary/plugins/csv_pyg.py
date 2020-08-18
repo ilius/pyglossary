@@ -52,7 +52,6 @@ optionsProp = {
 	"add_defi_format": BoolOption(),
 	"writeInfo": BoolOption(),
 }
-depends = {}
 
 
 class Reader(object):

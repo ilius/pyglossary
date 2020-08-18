@@ -13,8 +13,6 @@ extensions = (".xml",)
 optionsProp = {
 	"encoding": EncodingOption(),
 }
-depends = {
-}
 
 
 class Reader(object):

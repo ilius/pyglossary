@@ -35,12 +35,13 @@ tools = [
 optionsProp = {
 	"html": BoolOption(),
 }
-depends = {
-	"lxml": "lxml",
-}
 
 
 class Reader(object):
+	depends = {
+		"lxml": "lxml",
+	}
+
 	_html: bool = False
 
 	def __init__(self, glos):

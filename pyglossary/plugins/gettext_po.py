@@ -10,9 +10,6 @@ singleFile = True
 optionsProp = {
 	"resources": BoolOption(),
 }
-depends = {
-	"polib": "polib",
-}
 
 tools = [
 	{
@@ -31,6 +28,10 @@ tools = [
 
 
 class Reader(object):
+	depends = {
+		"polib": "polib",
+	}
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self.clear()
@@ -112,6 +113,10 @@ class Reader(object):
 
 
 class Writer(object):
+	depends = {
+		"polib": "polib",
+	}
+
 	_resources: bool = True
 
 	def __init__(self, glos: GlossaryType):

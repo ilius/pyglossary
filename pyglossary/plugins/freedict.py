@@ -20,9 +20,6 @@ optionsProp = {
 		comment="repeat keywords on top of definition"
 	),
 }
-depends = {
-	"lxml": "lxml",
-}
 
 # https://freedict.org/
 # https://github.com/freedict/fd-dictionaries/wiki
@@ -31,6 +28,10 @@ tei = "{http://www.tei-c.org/ns/1.0}"
 
 
 class Reader(object):
+	depends = {
+		"lxml": "lxml",
+	}
+
 	_discover: bool = False
 	_keywords_header: bool = False
 

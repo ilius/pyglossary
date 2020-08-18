@@ -14,7 +14,6 @@ optionsProp = {
 	"resources": BoolOption(),
 	"encoding": EncodingOption(),
 }
-depends = {}
 
 tools = [
 	{

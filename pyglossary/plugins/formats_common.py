@@ -57,7 +57,6 @@ singleFile = False
 # key is option/argument name, value is instance of Option
 optionsProp = {}  # type: Dict[str, Option]
 
-depends = {}  # type: Dict[str, str]
 sortOnWrite = DEFAULT_NO  # type: YesNoAlwaysNever
 
 tools = []  # type: List[Dict[str, Any]]

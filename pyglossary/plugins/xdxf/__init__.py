@@ -33,9 +33,6 @@ singleFile = True
 optionsProp = {
 	"html": BoolOption(),
 }
-depends = {
-	"lxml": "lxml",
-}
 
 # https://en.wikipedia.org/wiki/XDXF
 
@@ -94,6 +91,10 @@ old format
 
 
 class Reader(object):
+	depends = {
+		"lxml": "lxml",
+	}
+
 	_html: bool = True
 
 	infoKeyMap = {

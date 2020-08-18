@@ -14,7 +14,6 @@ singleFile = False
 optionsProp = {
 	"encoding": EncodingOption(),
 }
-depends = {}
 
 
 class Reader(object):

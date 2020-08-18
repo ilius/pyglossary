@@ -30,7 +30,6 @@ singleFile = True
 optionsProp = {
 	# "encoding": EncodingOption(),  # TODO: needed?
 }
-depends = {}
 
 tools = [
 	{

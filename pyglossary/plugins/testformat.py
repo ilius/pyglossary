@@ -10,8 +10,6 @@ extensions = (".test", ".tst")
 # key is option/argument name, value is instance of Option
 optionsProp = {}
 
-depends = {}
-
 
 class Reader(object):
 	def __init__(self, glos: GlossaryType) -> None:

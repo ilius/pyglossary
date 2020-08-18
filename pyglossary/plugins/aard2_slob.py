@@ -38,12 +38,13 @@ optionsProp = {
 	),
 	# "encoding": EncodingOption(),
 }
-depends = {
-	"icu": "PyICU",
-}
 
 
 class Reader(object):
+	depends = {
+		"icu": "PyICU",
+	}
+
 	def __init__(self, glos):
 		self._glos = glos
 		self._clear()
@@ -127,6 +128,10 @@ class Reader(object):
 
 
 class Writer(object):
+	depends = {
+		"icu": "PyICU",
+	}
+
 	_compression: str = ""
 	_content_type: str = ""
 

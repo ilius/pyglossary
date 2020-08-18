@@ -11,8 +11,6 @@ singleFile = True
 # key is option/argument name, value is instance of Option
 optionsProp = {}
 
-depends = {}
-
 
 class Writer(object):
 	def __init__(self, glos: GlossaryType):
