@@ -68,10 +68,11 @@ def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 		shutil.copy(filename + ".index", targetDir)
 		shutil.copy(filename + dictExt, targetDir)
 
+	# update /var/lib/dictd/db.list
 	if subprocess.call(["/usr/sbin/dictdconfig", "-w"]) != 0:
 		log.error(
-			"failed to update .db file, try manually runing: "
-			"sudo /usr/sbin/dictdconfig -w"
+			"failed to update /var/lib/dictd/db.list file"
+			", try manually runing: sudo /usr/sbin/dictdconfig -w"
 		)
 
 	log.info("don't forget to restart dictd server")
