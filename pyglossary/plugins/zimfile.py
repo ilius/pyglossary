@@ -8,6 +8,7 @@ description = "Zim (Kiwix)"
 extensions = (".zim",)
 singleFile = True
 optionsProp = {
+	"skip_duplicate_words": BoolOption(),
 }
 
 # https://wiki.kiwix.org/wiki/Software
@@ -50,6 +51,8 @@ class Reader(object):
 		"libzim": "libzim",
 	}
 
+	_skip_duplicate_words = False
+
 	resourceMimeTypes = {
 		"image/png",
 		"image/jpeg",
@@ -90,18 +93,31 @@ class Reader(object):
 		zimfile = self._zimfile
 		emptyContentCount = 0
 		invalidMimeTypeCount = 0
-		article_count = zimfile.article_count
-		for articleIndex in range(article_count):
+		articleCount = zimfile.article_count
+		duplicateArticleCount = 0
+
+		skip_dup = self._skip_duplicate_words
+		hashSet = set()
+
+		for articleIndex in range(articleCount):
 			ar = zimfile.get_article_by_id(articleIndex)
 			word = ar.title
 			b_content = ar.content.tobytes()
 
+			if skip_dup:
+				if word in hashSet:
+					duplicateArticleCount += 1
+					yield None
+					continue
+				hashSet.add(word)
+
 			if not b_content:
 				emptyContentCount += 1
-				if ar.url != word:
+				if ar.url == word:
+					yield None
+				else:
 					defi = f"URL: {ar.url}"
 					yield glos.newEntry(word, defi, defiFormat="m")
-				yield None
 				continue
 
 			try:
@@ -128,7 +144,9 @@ class Reader(object):
 
 			yield glos.newDataEntry(word, b_content)
 
-		log.info(f"Article Count: {article_count}")
+		log.info(f"\nArticle Count: {articleCount}")
+		if duplicateArticleCount > 0:
+			log.info(f"Duplicate Title Count: {duplicateArticleCount}")
 		if emptyContentCount > 0:
 			log.info(f"Empty Content Count: {emptyContentCount}")
 		if invalidMimeTypeCount > 0:
