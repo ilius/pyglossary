@@ -170,8 +170,8 @@ class Writer:
 			if entry.isData():
 				dataEntryCount += 1
 				continue
-			word = entry.s_word
-			prefix = self.get_prefix(word)
+			headword, *variants = entry.l_word
+			prefix = self.get_prefix(headword)
 			if lastPrefix and prefix != lastPrefix:
 				writeGroup(lastPrefix)
 				groupCounter = 0
@@ -179,9 +179,16 @@ class Writer:
 
 			defi = entry.defi
 			defi = self.fix_defi(defi)
-			words.append(word)
-			htmlContents += f"<w><a name=\"{word}\" /><div><b>{word}</b>"\
-				f"<br/>{defi}</div></w>\n"
+			for w in entry.l_word:
+			    words.append(w)
+			variants = [v.strip().lower() for v in variants]
+			variants_html = (
+			    '<var>' +
+			    ''.join(f'<variant name="{v}"/>' for v in variants) +
+			    '</var>'
+			)
+			htmlContents += f"<w><a name=\"{headword}\" /><div><b>{headword}</b>"\
+				f"{variants_html}<br/>{defi}</div></w>\n"
 			groupCounter += 1
 
 		if groupCounter > 0:
