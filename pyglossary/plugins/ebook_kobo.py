@@ -32,7 +32,7 @@ enable = True
 format = "Kobo"
 description = "Kobo E-Reader Dictionary"
 extensions = (".kobo",)
-sortOnWrite = ALWAYS
+sortOnWrite = NEVER
 
 tools = [
 	{
@@ -120,6 +120,9 @@ class Writer:
 		wo = wo.ljust(2, "a")
 		return wo
 
+	def get_prefix_b(self, b_word: bytes) -> str:
+		return self.get_prefix(b_word.decode("utf-8"))
+
 	def sortKey(self, b_word: bytes) -> Any:
 		# DO NOT change method name
 		word = b_word.decode("utf-8")
@@ -142,6 +145,10 @@ class Writer:
 
 	def write_groups(self):
 		import gzip
+		from collections import OrderedDict
+		from pyglossary.entry import Entry
+
+		glos = self._glos
 		words = []
 		dataEntryCount = 0
 
@@ -162,7 +169,8 @@ class Writer:
 				gzipFile.write(htmlContents.encode("utf-8"))
 			htmlContents = htmlHeader
 
-		lastPrefix = ""
+		data = []
+
 		while True:
 			entry = yield
 			if entry is None:
@@ -170,6 +178,35 @@ class Writer:
 			if entry.isData():
 				dataEntryCount += 1
 				continue
+			l_word = entry.l_word
+			if len(l_word) == 1:
+				data.append(entry.getRaw(glos))
+				continue
+			wordsByPrefix = OrderedDict()
+			for word in l_word:
+				prefix = self.get_prefix(word)
+				if prefix in wordsByPrefix:
+					wordsByPrefix[prefix].append(word)
+				else:
+					wordsByPrefix[prefix] = [word]
+			if len(wordsByPrefix) == 1:
+				data.append(entry.getRaw(glos))
+				continue
+			defi = entry.defi
+			for prefix, p_words in wordsByPrefix.items():
+				for word in l_word:
+					if word not in p_words:
+						p_words.append(word)
+				data.append(Entry(p_words, defi).getRaw(glos))
+			del entry
+
+		log.info(f"\nKobo: sorting entries...")
+		data.sort(key=Entry.getRawEntrySortKey(self.get_prefix_b))
+
+		lastPrefix = ""
+		for rawEntry in data:
+			entry = Entry.fromRaw(glos, rawEntry)
+
 			headword, *variants = entry.l_word
 			prefix = self.get_prefix(headword)
 			if lastPrefix and prefix != lastPrefix:
@@ -180,12 +217,12 @@ class Writer:
 			defi = entry.defi
 			defi = self.fix_defi(defi)
 			for w in entry.l_word:
-			    words.append(w)
+				words.append(w)
 			variants = [v.strip().lower() for v in variants]
 			variants_html = (
-			    '<var>' +
-			    ''.join(f'<variant name="{v}"/>' for v in variants) +
-			    '</var>'
+				'<var>' +
+				''.join(f'<variant name="{v}"/>' for v in variants) +
+				'</var>'
 			)
 			htmlContents += f"<w><a name=\"{headword}\" /><div><b>{headword}</b>"\
 				f"{variants_html}<br/>{defi}</div></w>\n"
