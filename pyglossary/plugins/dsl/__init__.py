@@ -44,7 +44,8 @@ optionsProp = {
 tools = [
 	{
 		"name": "ABBYY Lingvo",
-		"web": "https://www.abbyy.com/",
+		"web": "https://www.lingvo.ru/",
+		# https://ru.wikipedia.org/wiki/ABBYY_Lingvo
 		"platforms": [
 			"Windows",
 			"Mac",
