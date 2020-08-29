@@ -1,5 +1,5 @@
 
-from pyglossary.core import dataDir
+from pyglossary.core import rootDir
 from os.path import join
 import csv
 from typing import (
@@ -40,7 +40,7 @@ class LangDict(dict):
 	def load(self):
 		if len(self) > 0:
 			return
-		filename = join(dataDir, "pyglossary", "langs", "list.csv")
+		filename = join(rootDir, "pyglossary", "langs", "list.csv")
 		with open(filename, "r", encoding="utf-8") as _file:
 			csvReader = csv.reader(
 				_file,
