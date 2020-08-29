@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
-from pyglossary.text_utils import escapeNTB, unescapeNTB
+from pyglossary.text_utils import (
+	escapeNTB,
+	unescapeNTB,
+)
 import html
 import os
+import json
 
 enable = True
 format = "HtmlDir"
@@ -101,13 +105,22 @@ class Writer(object):
 			line = line.rstrip("\n")
 			if not line:
 				continue
-			word, filename, _ = line.split("\t")
-			word = unescapeNTB(word)
+			entryIndex, wordEsc, filename, _ = line.split("\t")
+			entryIndex = int(entryIndex)
+			# entryId = f"entry{entryIndex}"
+			word = unescapeNTB(wordEsc)
 			if word not in linkTargetSet:
 				continue
-			fileByWord[word] = filename
+			if word in fileByWord:
+				# log.info(f'fileByWord[{word}]={fileByWord[word]}, filename={filename}')
+				fileByWord[word].append((filename, entryIndex))
+			else:
+				fileByWord[word] = [(filename, entryIndex)]
 
 		linksByFile = LRUCache(maxsize=100)
+
+		# with open(join(dirn, "fileByWord.json"), "w") as fileByWordFile:
+		# 	json.dump(fileByWord, fileByWordFile, ensure_ascii=False, indent="\t")
 
 		def getLinksByFile(fileIndex):
 			_file = linksByFile.get(fileIndex)
@@ -129,14 +142,15 @@ class Writer(object):
 			target, fileIndex, x_start, x_size = line.split("\t")
 			target = unescapeNTB(target)
 			if target not in fileByWord:
-				targetFilename = ""
+				targetNew = ""
 			else:
-				targetFilename = fileByWord[target]
+				targetFilename, targetEntryIndex = fileByWord[target][0]
 				if targetFilename == filename:
 					continue
+				targetNew = f"{targetFilename}#entry{targetEntryIndex}"
 			_file = getLinksByFile(int(fileIndex))
 			_file.write(
-				f"{x_start}\t{x_size}\t{targetFilename}\n"
+				f"{x_start}\t{x_size}\t{targetNew}\n"
 			)
 			_file.flush()
 
@@ -150,22 +164,29 @@ class Writer(object):
 
 		entry_url_fmt = self._glos.getInfo("entry_url")
 
+		re_href = re.compile(
+			b' href="[^<>"]*?"',
+			re.I,
+		)
+
 		for fileIndex, filename in enumerate(filenameList):
+			if not isfile(join(dirn, f"links{fileIndex}")):
+				continue
 			with open(join(dirn, filename), mode="rb") as inFile:
 				with open(join(dirn, f"{filename}.new"), mode="wb") as outFile:
 					for linkLine in open(join(dirn, f"links{fileIndex}"), "rb"):
 						outFile.flush()
 						linkLine = linkLine.rstrip(b"\n")
-						x_start, x_size, targetFilename = linkLine.split(b"\t")
+						x_start, x_size, target = linkLine.split(b"\t")
 						outFile.write(inFile.read(
 							int(x_start, 16) - inFile.tell()
 						))
 						curLink = inFile.read(int(x_size, 16))
 
-						if targetFilename:
-							outFile.write(curLink.replace(
-								b' href="#',
-								b' href="./' + targetFilename + b'#',
+						if target:
+							outFile.write(re_href.sub(
+								b' href="./' + target + b'"',
+								curLink,
 							))
 							continue
 
@@ -231,6 +252,8 @@ class Writer(object):
 		filename_format = self._filename_format
 		escape_defi = self._escape_defi
 
+		wordSep = ' <font color="red">|</font> '
+
 		initFileSizeMax = 100
 
 		glos = self._glos
@@ -295,20 +318,24 @@ class Writer(object):
 		fileObj.write(pageHeader(0))
 
 		re_fixed_link = re.compile(
-			r'<a (?:.*? )?href="#([^<>"]*?)">.+?</a>',
+			r'<a (?:[^<>]*? )?href="#([^<>"]+?)">[^<>]+?</a>',
 			re.I,
 		)
 
 		linkTargetSet = set()
 
-		def fixLinks(text) -> str:
+		def replaceBword(text) -> str:
 			return text.replace(
 				' href="bword://',
 				' href="#',
 			)
 
-		def addLinks(s_word: str, text: str, pos: int) -> str:
+		def addLinks(text: str, pos: int) -> str:
 			for m in re_fixed_link.finditer(text):
+				if ' class="entry_link"' in m.group(0):
+					continue
+				if m.group(0).count("href=") != 1:
+					log.error(f"unexpected match: {m.group(0)}")
 				target = html.unescape(m.group(1))
 				linkTargetSet.add(target)
 				start = m.start()
@@ -325,7 +352,9 @@ class Writer(object):
 		self.writeInfo(filename, header)
 
 		resDir = self._resDir
+		entryIndex = -1
 		while True:
+			entryIndex += 1
 			entry = yield
 			if entry is None:
 				break
@@ -334,18 +363,16 @@ class Writer(object):
 					entry.save(resDir)
 				continue
 			words = entry.l_word
-			words_str = ' <font color="red">|</font> '.join([
-				html.escape(w) for w in words
-			])
 			defi = entry.defi
 			if escape_defi:
 				defi = html.escape(defi)
-			words_escaped = html.escape(words_str)
+			words_escaped = html.escape(entry.s_word)
+			entryId = f"entry{entryIndex}"
 			text = (
-				f'<div id="{words_escaped}">'
-				f'<b class="headword">{words_str}</b>'
+				f'<div id="{entryId}">'
+				f'<b class="headword">{wordSep.join(words)}</b>'
 				'&nbsp;&nbsp;'
-				f'<a class="no_ul" href="#{words_escaped}">&#128279;</a>'
+				f'<a class="no_ul" class="entry_link" href="#{entryId}">&#128279;</a>'
 				f'{getEntryWebLink(words_escaped)}'
 				f"<br>\n{defi}"
 				'</div>\n'
@@ -358,15 +385,18 @@ class Writer(object):
 					fileObj.write(pageHeader(
 						len(self._filenameList) - 1
 					))
-			s_word = entry.s_word
 			pos = fileObj.tell()
-			indexTxtFileObj.write(
-				f"{escapeNTB(s_word)}\t"
-				f"{escapeNTB(self._filenameList[-1])}\t"
-				f"{pos}\n"
-			)
-			text = fixLinks(text)
-			addLinks(s_word, text, pos)
+			tmpFilename = escapeNTB(self._filenameList[-1])
+			for word in entry.l_word:
+				indexTxtFileObj.write(
+					f"{entryIndex}\t"
+					f"{escapeNTB(word)}\t"
+					f"{tmpFilename}\t"
+					f"{pos}\n"
+				)
+			del tmpFilename
+			text = replaceBword(text)
+			addLinks(text, pos)
 			fileObj.write(text)
 
 		fileObj.close()
