@@ -158,8 +158,14 @@ class Reader(object):
 					rebList.append(elem.text)
 					keywords.append(elem.text)
 
-				if kebList and rebList:
-					keywords.append(f"{kebList[0]}・{rebList[0]}")
+				# this is for making internal links valid
+				# this makes too many alternates!
+				# but we don't seem to have a choice
+				# execpt for scanning and indexing all words once
+				# and then starting over and fixing/optimizing links
+				for keb in kebList:
+					for reb in rebList:
+						keywords.append(f"{keb}・{reb}")
 
 				if kebList:
 					with hf.element("b"):
