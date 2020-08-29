@@ -58,6 +58,7 @@ he,heb,Hebrew
 hi,hin,Hindi
 ho,hmo,Hiri Motu
 hr,hrv,Croatian
+,scr,Croatian
 ht,hat,Haitian
 hu,hun,Hungarian
 hy,arm,Armenian
@@ -68,7 +69,6 @@ ie,ile,Interlingue
 ig,ibo,Igbo
 ii,iii,Sichuan Yi
 ik,ipk,Inupiaq
-,kha,Khasi
 io,ido,Ido
 is,ice,Icelandic
 it,ita,Italian
@@ -115,7 +115,7 @@ nb,nob,Norwegian Bokmal
 nd,nde,North Ndebele
 ne,nep,Nepali
 ng,ndo,Ndonga
-nl,dut,Dutch
+nl,dut,Dutch/Flemish
 nn,nno,Norwegian Nynorsk
 no,nor,Norwegian
 nr,nbl,South Ndebele
@@ -185,3 +185,15 @@ yo,yor,Yoruba
 za,zha,Zhuang
 zh,chi,Chinese
 zu,zul,Zulu
+,ain,Ainu
+,alg,Algonquian
+,arn,Mapuche,Mapudungun
+,bnt,Bantu
+,chn,Chinook Jargon,Chinuk Wawa,Chinook Wawa
+,fil,Filipino,Pilipino
+,grc,Ancient Greek
+,haw,Hawaiian
+,kha,Khasi
+,mas,Maasai,Masai,Maa
+,mnc,Manchu,manju gisun
+mo,mol,Moldovan,Moldavian
