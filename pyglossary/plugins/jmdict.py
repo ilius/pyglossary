@@ -86,7 +86,8 @@ class Reader(object):
 		for elem in sense.findall("xref"):
 			if not elem.text:
 				continue
-			word = elem.text.strip().split("・")[0]
+			word = elem.text.strip()
+			word = self._link_number_postfix.sub("", word)
 			relatedWords.append(word)
 		if relatedWords:
 			hf.write("Related: ")
@@ -101,7 +102,8 @@ class Reader(object):
 		for elem in sense.findall("ant"):
 			if not elem.text:
 				continue
-			word = elem.text.strip().split("・")[0]
+			word = elem.text.strip()
+			word = self._link_number_postfix.sub("", word)
 			antonymWords.append(word)
 		if antonymWords:
 			hf.write("Antonym: ")
@@ -155,6 +157,9 @@ class Reader(object):
 				for elem in entry.findall("r_ele/reb"):
 					rebList.append(elem.text)
 					keywords.append(elem.text)
+
+				if kebList and rebList:
+					keywords.append(f"{kebList[0]}・{rebList[0]}")
 
 				if kebList:
 					with hf.element("b"):
@@ -238,6 +243,7 @@ class Reader(object):
 		self._filename = ""
 		self._file = None
 		self._fileSize = 0
+		self._link_number_postfix = re.compile("・[0-9]+$")
 
 	def __len__(self) -> int:
 		return self._wordCount
