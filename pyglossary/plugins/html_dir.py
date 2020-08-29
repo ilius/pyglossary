@@ -277,7 +277,7 @@ class Writer(object):
 
 		def pageHeader(n: int):
 			return header.format(
-				pageTitle=f"Page {{n}} of {title}",
+				pageTitle=f"Page {n} of {title}",
 				customStyle="",
 			)
 
