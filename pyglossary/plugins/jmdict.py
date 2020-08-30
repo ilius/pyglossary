@@ -28,6 +28,19 @@ class Reader(object):
 		"lxml": "lxml",
 	}
 
+	tagStyle = (
+		"color:white;"
+		"background:green;"
+		"padding-left:3px;"
+		"padding-right:3px;"
+	)
+
+	re_inf_mapping = {
+		"gikun (meaning as reading) or jukujikun (special kanji reading)": "gikun/jukujikun",
+		"out-dated or obsolete kana usage": "obsolete",  # outdated/obsolete
+		"word containing irregular kana usage": "irregular",
+	}
+
 	def make_list(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -114,18 +127,11 @@ class Reader(object):
 					hf.write(word)
 			hf.write(br())
 
-		tagStyle = (
-			"color:white;"
-			"background:green;"
-			"padding-left:3px;"
-			"padding-right:3px;"
-		)
-
 		for elem in sense.findall("field"):
 			if not elem.text:
 				continue
 			desc = elem.text
-			with hf.element("span", style=tagStyle):
+			with hf.element("span", style=self.tagStyle):
 				hf.write(desc)
 			hf.write(br())
 
@@ -133,7 +139,7 @@ class Reader(object):
 			if not elem.text:
 				continue
 			desc = elem.text
-			with hf.element("span", style=tagStyle):
+			with hf.element("span", style=self.tagStyle):
 				hf.write(desc)
 			hf.write(br())
 
@@ -150,13 +156,31 @@ class Reader(object):
 			kebList = []  # type: List[str]
 			rebList = []  # type: List[str]
 			with hf.element("div"):
-				for elem in entry.findall("k_ele/keb"):
-					kebList.append(elem.text)
-					keywords.append(elem.text)
+				for k_ele in entry.findall("k_ele"):
+					keb = k_ele.find("keb")
+					if keb is None:
+						continue
+					kebList.append(keb.text)
+					keywords.append(keb.text)
+					# for elem in k_ele.findall("ke_pri"):
+					# 	log.info(elem.text)
 
-				for elem in entry.findall("r_ele/reb"):
-					rebList.append(elem.text)
-					keywords.append(elem.text)
+				for r_ele in entry.findall("r_ele"):
+					reb = r_ele.find("reb")
+					if reb is None:
+						continue
+					props = []
+					if r_ele.find("re_nokanji") is not None:
+						props.append("no kanji")
+					inf = r_ele.find("re_inf")
+					if inf is not None:
+						props.append(
+							self.re_inf_mapping.get(inf.text, inf.text)
+						)
+					rebList.append((reb.text, props))
+					keywords.append(reb.text)
+					# for elem in r_ele.findall("re_pri"):
+					# 	log.info(elem.text)
 
 				# this is for making internal links valid
 				# this makes too many alternates!
@@ -164,7 +188,7 @@ class Reader(object):
 				# execpt for scanning and indexing all words once
 				# and then starting over and fixing/optimizing links
 				for keb in kebList:
-					for reb in rebList:
+					for reb, _ in rebList:
 						keywords.append(f"{keb}・{reb}")
 
 				if kebList:
@@ -177,12 +201,17 @@ class Reader(object):
 					hf.write(br())
 
 				if rebList:
-					for i, reb in enumerate(rebList):
+					for i, (reb, props) in enumerate(rebList):
 						if i > 0:
 							with hf.element("font", color="red"):
 								hf.write(" | ")
 						with hf.element("font", color="green"):
 							hf.write(reb)
+						for prop in props:
+							hf.write(" ")
+							with hf.element("span", style=self.tagStyle):
+								with hf.element("small"):
+									hf.write(prop)
 					hf.write(br())
 
 				self.make_list(
