@@ -255,7 +255,9 @@ class Reader(object):
 		return self._wordCount
 
 	def close(self) -> None:
-		pass
+		if self._file:
+			self._file.close()
+			self._file = None
 
 	def open(
 		self,
