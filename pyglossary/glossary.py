@@ -915,7 +915,7 @@ class Glossary(GlossaryType):
 		else:
 			t0 = now()
 			self._data.sort(
-				key=Entry.getRawEntrySortKey(key),
+				key=Entry.getRawEntrySortKey(self, key),
 			)
 			log.info(f"Sorting took {now() - t0:.1f} seconds")
 		self._sort = True
@@ -1138,7 +1138,7 @@ class Glossary(GlossaryType):
 					self._sortCacheSize = cacheSize  # FIXME
 			else:
 				t0 = now()
-				self._data.sort(key=Entry.getRawEntrySortKey(sortKey))
+				self._data.sort(key=Entry.getRawEntrySortKey(self, sortKey))
 				log.info(f"Sorting took {now() - t0:.1f} seconds")
 
 		self._updateIter()

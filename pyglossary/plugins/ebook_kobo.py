@@ -198,7 +198,7 @@ class Writer:
 			del entry
 
 		log.info(f"\nKobo: sorting entries...")
-		data.sort(key=Entry.getRawEntrySortKey(self.get_prefix_b))
+		data.sort(key=Entry.getRawEntrySortKey(glos, self.get_prefix_b))
 
 		lastPrefix = ""
 		for rawEntry in data:

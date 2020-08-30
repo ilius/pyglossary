@@ -227,6 +227,7 @@ class Entry(BaseEntry):
 
 	@staticmethod
 	def getRawEntrySortKey(
+		glos: "GlossaryType",
 		key: Optional[Callable[[bytes], Any]] = None,
 	) -> Callable[[Tuple], Any]:
 		# here `x` is raw entity, meaning a tuple of form (word, defi) or
@@ -235,7 +236,10 @@ class Entry(BaseEntry):
 		# or a list or tuple (one word with or more alternaties)
 		if key is None:
 			key = Entry.defaultSortKey
-		return lambda x: key(loads(decompress(x))[0])
+		if glos._rawEntryCompress:
+			return lambda x: key(loads(decompress(x))[0])
+		else:
+			return lambda x: key(x[0])
 
 	def __init__(
 		self,
