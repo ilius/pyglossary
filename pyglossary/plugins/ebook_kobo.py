@@ -194,9 +194,6 @@ class Writer:
 				continue
 			defi = entry.defi
 			for prefix, p_words in wordsByPrefix.items():
-				for word in l_word:
-					if word not in p_words:
-						p_words.append(word)
 				data.append(Entry(p_words, defi).getRaw(glos))
 			del entry
 
