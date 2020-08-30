@@ -196,9 +196,6 @@ class Reader(object):
 		byteProgress = (self._file.tell(), self._fileSize)
 		return self._glos.newEntry(keywords, defi, defiFormat="h", byteProgress=byteProgress)
 
-	def set_word_count(self, header):
-		pass
-
 	def tostring(self, elem: "lxml.etree.Element") -> str:
 		from lxml import etree as ET
 		return ET.tostring(
@@ -222,26 +219,15 @@ class Reader(object):
 				lines.append(line)
 		return "\n".join(lines)
 
-	def set_info(self, key: str, value: str) -> None:
-		self._glos.setInfo(key, unescape_unicode(value))
-
-	def set_copyright(self, header):
-		pass
-
-	def set_publisher(self, header: str):
-		pass
-
-	def set_description(self, header: str):
-		pass
+	def set_creation_time(self, header):
+		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)
+		if m is None:
+			return
+		self._glos.setInfo("creationTime", m.group(1))
 
 	def set_metadata(self, header: str):
-		# TODO
-		#self.set_info("name", header.find(".//title", self.ns).text)
-		#self.set_info("edition", header.find(".//edition", self.ns).text)
-
-		self.set_copyright(header)
-		self.set_publisher(header)
-		self.set_description(header)
+		# TODO: self.set_info("edition", ...)
+		self.set_creation_time(header)
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
