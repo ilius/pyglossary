@@ -200,7 +200,8 @@ class Reader(object):
 
 		defi = f.getvalue().decode("utf-8")
 		defi = unescape_unicode(defi)
-		return self._glos.newEntry(keywords, defi, defiFormat="h")
+		byteProgress = (self._file.tell(), self._fileSize)
+		return self._glos.newEntry(keywords, defi, defiFormat="h", byteProgress=byteProgress)
 
 	def set_word_count(self, header):
 		extent_elem = header.find(".//extent", self.ns)
@@ -311,6 +312,9 @@ class Reader(object):
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
+		self._filename = ""
+		self._file = None
+		self._fileSize = 0
 		self._wordCount = 0
 		self._discoveredTags = dict()
 
@@ -329,7 +333,11 @@ class Reader(object):
 		return self._wordCount
 
 	def close(self) -> None:
-		pass
+		if self._file:
+			self._file.close()
+			self._file = None
+		self._filename = ""
+		self._fileSize = 0
 
 	def open(
 		self,
@@ -342,11 +350,13 @@ class Reader(object):
 			raise e
 
 		self._filename = filename
+		self._fileSize = os.path.getsize(filename)
+		self._file = open(filename, mode="rb")
 
 		self._glos.setDefaultDefiFormat("h")
 
 		context = ET.iterparse(
-			filename,
+			self._file,
 			events=("end",),
 			tag=f"{tei}teiHeader",
 		)
