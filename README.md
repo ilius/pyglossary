@@ -45,6 +45,7 @@ Supported formats
 | [FreeDict](https://freedict.org)                             |📝 | .tei            | ✔  |  ✔  |
 | [Gettext Source](https://www.gnu.org/software/gettext)       |📝 | .po             | ✔  |  ✔  |
 | HTML Directory (by file size)                                |📁 |                 |:x: |  ✔  |
+| [JMDict](https://www.edrdg.org/jmdict/j_jmdict.html)         |📝 |                 | ✔  | :x: |
 | JSON                                                         |📝 | .json           |    |  ✔  |
 | Kobo E-Reader Dictionary                                     |📦 | .kobo.zip       |:x: |  ✔  |
 | [Kobo E-Reader Dictfile](https://github.com/pgaskin/dictutil)|📝 | .df             | ✔  |  ✔  |
