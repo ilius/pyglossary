@@ -351,6 +351,8 @@ class Writer(object):
 
 		self.writeInfo(filename, header)
 
+		defiHasHeadwords = glos.getInfo("definition_has_headwords") == "True"
+
 		resDir = self._resDir
 		entryIndex = -1
 		while True:
@@ -362,16 +364,18 @@ class Writer(object):
 				if resources:
 					entry.save(resDir)
 				continue
-			words = entry.l_word
 			defi = entry.defi
 			if escape_defi:
 				defi = html.escape(defi)
 			words_escaped = html.escape(entry.s_word)
 			entryId = f"entry{entryIndex}"
+
+			if defiHasHeadwords:
+				headwords = f'<b class="headword">Entry {entryIndex}</b>'
+			else:
+				headwords = f'<b class="headword">{wordSep.join(entry.l_word)}</b>'
 			text = (
-				f'<div id="{entryId}">'
-				f'<b class="headword">{wordSep.join(words)}</b>'
-				'&nbsp;&nbsp;'
+				f'<div id="{entryId}">{headwords}&nbsp;&nbsp;'
 				f'<a class="no_ul" class="entry_link" href="#{entryId}">&#128279;</a>'
 				f'{getEntryWebLink(words_escaped)}'
 				f"<br>\n{defi}"

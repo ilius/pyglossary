@@ -288,6 +288,7 @@ class Reader(object):
 		self._fileSize = os.path.getsize(filename)
 
 		self._glos.setDefaultDefiFormat("h")
+		self._glos.setInfo("definition_has_headwords", "True")
 
 		header = ""
 		with open(filename, mode="rt", encoding="utf-8") as _file:
