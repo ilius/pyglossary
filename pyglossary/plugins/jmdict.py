@@ -33,6 +33,8 @@ class Reader(object):
 		"background:green;"
 		"padding-left:3px;"
 		"padding-right:3px;"
+		"border-radius:0.5ex;"
+		# 0.5ex ~= 0.3em, but "ex" is recommended
 	)
 
 	re_inf_mapping = {
@@ -142,8 +144,9 @@ class Reader(object):
 			if not elem.text:
 				continue
 			desc = elem.text
-			with hf.element("span", style=self.tagStyle):
-				hf.write(desc)
+			with hf.element("small"):
+				with hf.element("span", style=self.tagStyle):
+					hf.write(desc)
 			hf.write(br())
 
 
@@ -212,8 +215,8 @@ class Reader(object):
 							hf.write(reb)
 						for prop in props:
 							hf.write(" ")
-							with hf.element("span", style=self.tagStyle):
-								with hf.element("small"):
+							with hf.element("small"):
+								with hf.element("span", style=self.tagStyle):
 									hf.write(prop)
 					hf.write(br())
 
@@ -268,6 +271,8 @@ class Reader(object):
 		self._file = None
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
+		self._glos.setInfo("entry_url", f"https://jisho.org/search/{{word}}")
+		# also good: f"https://sakuradict.com/search?q={{word}}"
 
 	def __len__(self) -> int:
 		return self._wordCount
