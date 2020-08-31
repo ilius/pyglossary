@@ -295,7 +295,7 @@ class Writer(object):
 			f'<title>{{pageTitle}}</title>'
 			f'<meta charset="{encoding}">'
 			f'<style type="text/css">{style}{{customStyle}}</style>'
-			'</head><body>\n'
+			'</meta></head><body>\n'
 		)
 
 		def pageHeader(n: int):
