@@ -102,11 +102,13 @@ class Reader(object):
 			word = elem.text.strip()
 			word = self._link_number_postfix.sub("", word)
 			relatedWords.append(word)
+
 		if relatedWords:
 			hf.write("Related: ")
 			for i, word in enumerate(relatedWords):
 				if i > 0:
-					hf.write(", ")
+					with hf.element("big"):
+						hf.write(" | ")
 				with hf.element("a", href=f"bword://{word}"):
 					hf.write(word)
 			hf.write(br())
@@ -122,7 +124,8 @@ class Reader(object):
 			hf.write("Antonym: ")
 			for i, word in enumerate(antonymWords):
 				if i > 0:
-					hf.write(", ")
+					with hf.element("big"):
+						hf.write(" | ")
 				with hf.element("a", href=f"bword://{word}"):
 					hf.write(word)
 			hf.write(br())
