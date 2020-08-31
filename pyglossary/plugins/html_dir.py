@@ -264,10 +264,10 @@ class Writer(object):
 
 		entry_url_fmt = glos.getInfo("entry_url")
 
-		def getEntryWebLink(words_escaped: str) -> str:
+		def getEntryWebLink(entry) -> str:
 			if not entry_url_fmt:
 				return ""
-			url = entry_url_fmt.format(word=words_escaped)
+			url = entry_url_fmt.format(word=html.escape(entry.l_word[0]))
 			return f'&nbsp;<a class="no_ul" href="{url}">&#127759;</a>'
 
 		# from math import log2, ceil
@@ -367,7 +367,6 @@ class Writer(object):
 			defi = entry.defi
 			if escape_defi:
 				defi = html.escape(defi)
-			words_escaped = html.escape(entry.s_word)
 			entryId = f"entry{entryIndex}"
 
 			if defiHasHeadwords:
@@ -377,7 +376,7 @@ class Writer(object):
 			text = (
 				f'<div id="{entryId}">{headwords}&nbsp;&nbsp;'
 				f'<a class="no_ul" class="entry_link" href="#{entryId}">&#128279;</a>'
-				f'{getEntryWebLink(words_escaped)}'
+				f'{getEntryWebLink(entry)}'
 				f"<br>\n{defi}"
 				'</div>\n'
 				'<hr>\n'
