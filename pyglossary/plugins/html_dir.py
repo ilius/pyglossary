@@ -371,7 +371,7 @@ class Writer(object):
 			entryId = f"entry{entryIndex}"
 
 			if defiHasHeadwords:
-				headwords = f'<b class="headword">Entry {entryIndex}</b>'
+				headwords = f'Entry {entryIndex}'
 			else:
 				headwords = f'<b class="headword">{wordSep.join(entry.l_word)}</b>'
 			text = (
