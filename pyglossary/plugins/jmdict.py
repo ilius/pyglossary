@@ -13,14 +13,7 @@ description = "JMDict"
 extensions = ()
 singleFile = True
 optionsProp = {
-	"resources": BoolOption(),
-	#"keywords_header": BoolOption(
-	#	comment="repeat keywords on top of definition"
-	#),
 }
-
-# https://freedict.org/
-# https://github.com/freedict/fd-dictionaries/wiki
 
 
 class Reader(object):
