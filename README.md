@@ -134,6 +134,10 @@ Feature-specific Requirements
 
 	`sudo pip3 install lxml`
 
+-	**Reading from cc-kedict**
+
+	`sudo pip3 install lxml PyYAML`
+
 -	**Reading from Babylon BGL**: Python 3.6 to 3.7 is recommended
 
 -	**Reading or writing Aard 2 (.slob) files**

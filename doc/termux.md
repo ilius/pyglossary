@@ -1,7 +1,7 @@
 Feature-specific Requirements on [Termux](https://github.com/termux/termux-app)
 ---------------------------------------
 
--	**Using `--remove-html-all` flag**
+- **Using `--remove-html-all` flag**
 
 	+ `apt install libxml2 libxslt`
 	+ `pip install lxml beautifulsoup4`
@@ -12,6 +12,10 @@ Feature-specific Requirements on [Termux](https://github.com/termux/termux-app)
 	+ `apt install libxml2 libxslt`
 	+ `pip install lxml`
 
+- **Reading from cc-kedict**
+
+	+ `apt install libxml2 libxslt`
+	+ `pip install lxml PyYAML`
 
 - **Reading or writing Aard 2 (.slob)**
 
@@ -29,7 +33,7 @@ Feature-specific Requirements on [Termux](https://github.com/termux/termux-app)
 	+ `pip install libzim`
 
 
--	**Writing to AppleDict**
+- **Writing to AppleDict**
 
 	+ `apt install libxml2 libxslt`
 	+ `pip install lxml beautifulsoup4 html5lib`
