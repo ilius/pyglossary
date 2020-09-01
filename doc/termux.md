@@ -7,7 +7,7 @@ Feature-specific Requirements on [Termux](https://github.com/termux/termux-app)
 	+ `pip install lxml beautifulsoup4`
 
 
-- **Reading from FreeDict, XDXF or AppleDict Binary (.dictionary)**
+- **Reading from FreeDict, XDXF, JMDict or AppleDict Binary (.dictionary)**
 
 	+ `apt install libxml2 libxslt`
 	+ `pip install lxml`

@@ -130,7 +130,7 @@ Feature-specific Requirements
 
 	`sudo pip3 install lxml beautifulsoup4`
 
--	**Reading from FreeDict or XDXF**
+-	**Reading from FreeDict, XDXF or JMDict**
 
 	`sudo pip3 install lxml`
 
