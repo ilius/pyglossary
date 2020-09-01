@@ -191,7 +191,7 @@ class Glossary(GlossaryType):
 			default = getattr(writerCls, attrName)
 			if name not in optionsProp:
 				if not callable(default):
-					log.warn(f"format={format}, attrName={attrName}, type={type(default)}")
+					log.warning(f"format={format}, attrName={attrName}, type={type(default)}")
 				continue
 			prop = optionsProp[name]
 			if prop.disabled:
@@ -290,7 +290,7 @@ class Glossary(GlossaryType):
 					)
 
 		if not (Reader or Writer):
-			log.warm(f"WARNING: plugin {format} has no Reader nor Writer")
+			log.warning(f"WARNING: plugin {format} has no Reader nor Writer")
 
 		if hasattr(plugin, "write"):
 			log.error(
@@ -907,7 +907,7 @@ class Glossary(GlossaryType):
 		cacheSize: int = 0,
 	) -> None:
 		if key is None:
-			log.warn("WARNING: sortWords: no key function is provided")
+			log.warning("WARNING: sortWords: no key function is provided")
 		if self._readers:
 			self._sortKey = key
 			if cacheSize > 0:
@@ -1382,7 +1382,7 @@ class Glossary(GlossaryType):
 			for key, value in self._info.items():
 				# both key and value are supposed to be non-empty string
 				if not (key and value):
-					log.warn(f"skipping info key={key!r}, value={value!r}")
+					log.warning(f"skipping info key={key!r}, value={value!r}")
 					continue
 				key = outInfoKeysAliasDict.get(key, key)
 				if not key:
