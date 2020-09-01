@@ -34,6 +34,7 @@ Supported formats
 | AppleDict Source                                             |📁 |                 |    |  ✔  |
 | Babylon                                                      |🔢 | .bgl            | ✔  | :x: |
 | [CC-CEDICT](https://cc-cedict.org/wiki)                      |📝 |                 | ✔  |     |
+| [cc-kedict](https://github.com/mhagiwara/cc-kedict)          |📝 |                 | ✔  |     |
 | CSV                                                          |📝 | .csv            | ✔  |  ✔  |
 | Dict.cc (SQLite3)                                            |🔢 | .db             | ✔  |     |
 | DICT.org / Dictd server                                      |📁 | (📝.index)      | ✔  |  ✔  |
