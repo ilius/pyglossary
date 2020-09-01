@@ -125,17 +125,21 @@ class Reader(object):
 					hf.write(word)
 			hf.write(br())
 
-		for elem in sense.findall("field"):
+		for i, elem in enumerate(sense.findall("field")):
 			if not elem.text:
 				continue
+			if i > 0:
+				hf.write(" ")
 			desc = elem.text
 			with hf.element("span", style=self.tagStyle):
 				hf.write(desc)
 			hf.write(br())
 
-		for elem in sense.findall("misc"):
+		for i, elem in enumerate(sense.findall("misc")):
 			if not elem.text:
 				continue
+			if i > 0:
+				hf.write(" ")
 			desc = elem.text
 			with hf.element("small"):
 				with hf.element("span", style=self.tagStyle):
