@@ -78,29 +78,30 @@ class Reader(object):
 		# "indefinitePronoun"
 	}
 
-	def make_list(
+	def makeList(
 		self,
 		hf: "lxml.etree.htmlfile",
-		input_elements: "List[lxml.etree.Element]",
+		input_objects: "List[Any]",
 		processor: Callable,
 		single_prefix=None,
 		skip_single=True
 	):
 		""" Wrap elements into <ol> if more than one element """
-		if len(input_elements) == 0:
+
+		if not input_objects:
 			return
 
-		if len(input_elements) == 1:
+		if skip_single and len(input_objects) == 1:
 			hf.write(single_prefix)
-			processor(hf, input_elements[0])
+			processor(hf, input_objects[0])
 			return
 
 		with hf.element("ol"):
-			for el in input_elements:
+			for el in input_objects:
 				with hf.element("li"):
 					processor(hf, el)
 
-	def process_sense(
+	def writeSense(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sense: "lxml.etree.Element",
@@ -112,7 +113,7 @@ class Reader(object):
 			if el.text is not None
 		))
 
-		self.make_list(
+		self.makeList(
 			hf,
 			sense.findall("sense/def", self.ns),
 			lambda hf, el: hf.write(el.text),
@@ -149,8 +150,8 @@ class Reader(object):
 			with hf.element("div"):
 				for form in entry.findall("form/orth", self.ns):
 					if form.getparent().get("type"):
-					    # only use normal form, not inflected one, here
-					    continue
+						# only use normal form, not inflected one, here
+						continue
 					keywords.append(form.text)
 
 				if self._keywords_header:
@@ -186,24 +187,27 @@ class Reader(object):
 					hf.write(br())
 					hf.write("\n")
 
-				self.make_list(
+				self.makeList(
 					hf,
 					entry.findall("sense", self.ns),
-					self.process_sense,
+					self.writeSense,
 				)
 
 				# Add keywords for inflected forms
 				for form in entry.findall('.//form[@type="infl"]/orth', self.ns):
 					if not form.text:
-					    continue
+						continue
 					keywords.append(form.text)
 
-		defi = f.getvalue().decode("utf-8")
-		defi = unescape_unicode(defi)
-		byteProgress = (self._file.tell(), self._fileSize)
-		return self._glos.newEntry(keywords, defi, defiFormat="h", byteProgress=byteProgress)
+		defi = unescape_unicode(f.getvalue().decode("utf-8"))
+		return self._glos.newEntry(
+			keywords,
+			defi,
+			defiFormat="h",
+			byteProgress=(self._file.tell(), self._fileSize),
+		)
 
-	def set_word_count(self, header):
+	def setWordCount(self, header):
 		extent_elem = header.find(".//extent", self.ns)
 		if extent_elem is None:
 			log.warn(
@@ -228,56 +232,56 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def strip_tag_p_elem(self, elem: "lxml.etree.Element") -> str:
+	def stripParag(self, elem: "lxml.etree.Element") -> str:
 		text = self.tostring(elem)
 		text = self._p_pattern.sub("\\2", text)
 		return text
 
-	def strip_tag_p(self, elems: List["lxml.etree.Element"]) -> str:
+	def stripParagList(self, elems: List["lxml.etree.Element"]) -> str:
 		lines = []
 		for elem in elems:
-			for line in self.strip_tag_p_elem(elem).split("\n"):
+			for line in self.stripParag(elem).split("\n"):
 				line = line.strip()
 				if not line:
 					continue
 				lines.append(line)
 		return "\n".join(lines)
 
-	def set_info(self, key: str, value: str) -> None:
+	def setGlosInfo(self, key: str, value: str) -> None:
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def set_copyright(self, header):
+	def setCopyright(self, header):
 		elems = header.findall(".//availability//p", self.ns)
 		if not elems:
 			log.warn("did not find copyright")
 			return
-		copyright = self.strip_tag_p(elems)
-		copyright = self.replace_ref(copyright)
-		self.set_info("copyright", copyright)
+		copyright = self.stripParagList(elems)
+		copyright = self.replaceRefLink(copyright)
+		self.setGlosInfo("copyright", copyright)
 		log.info(f"Copyright: {copyright!r}")
 
-	def set_publisher(self, header):
+	def setPublisher(self, header):
 		elem = header.find(".//publisher", self.ns)
 		if elem is None:
 			log.warn("did not find publisher")
 			return
-		self.set_info("publisher", elem.text)
+		self.setGlosInfo("publisher", elem.text)
 
-	def set_publication_date(self, header):
+	def setCreationTime(self, header):
 		elem = header.find(".//publicationStmt/date", self.ns)
 		if elem is None:
 			return
-		self.set_info("creationTime", elem.text)
+		self.setGlosInfo("creationTime", elem.text)
 
-	def replace_ref(self, text: str) -> str:
+	def replaceRefLink(self, text: str) -> str:
 		text = self._ref_pattern.sub('<a href="\\1">\\2</a>', text)
 		return text
 
-	def set_description(self, header):
+	def setDescription(self, header):
 		elems = []
 		for tag in ("sourceDesc", "projectDesc"):
 			elems += header.findall(f".//{tag}//p", self.ns)
-		desc = self.strip_tag_p(elems)
+		desc = self.stripParagList(elems)
 		if not desc:
 			return
 
@@ -288,27 +292,27 @@ class Reader(object):
 			website_list.append(match[1])
 		if website_list:
 			website = " | ".join(website_list)
-			self.set_info("website", website)
+			self.setGlosInfo("website", website)
 			desc = self._website_pattern.sub("", desc).strip()
 			log.info(f"Website: {website}")
 
-		desc = self.replace_ref(desc)
-		self.set_info("description", desc)
+		desc = self.replaceRefLink(desc)
+		self.setGlosInfo("description", desc)
 		log.info(
 			"------------ Description: ------------\n"
 			f"{desc}\n"
 			"--------------------------------------"
 		)
 
-	def set_metadata(self, header):
-		self.set_word_count(header)
-		self.set_info("name", header.find(".//title", self.ns).text)
-		self.set_info("edition", header.find(".//edition", self.ns).text)
+	def setMetadata(self, header):
+		self.setWordCount(header)
+		self.setGlosInfo("name", header.find(".//title", self.ns).text)
+		self.setGlosInfo("edition", header.find(".//edition", self.ns).text)
 
-		self.set_copyright(header)
-		self.set_publisher(header)
-		self.set_publication_date(header)
-		self.set_description(header)
+		self.setCopyright(header)
+		self.setPublisher(header)
+		self.setCreationTime(header)
+		self.setDescription(header)
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
@@ -361,7 +365,7 @@ class Reader(object):
 			tag=f"{tei}teiHeader",
 		)
 		for action, elem in context:
-			self.set_metadata(elem)
+			self.setMetadata(elem)
 			return
 
 	def __iter__(self) -> Iterator[BaseEntry]:
@@ -450,4 +454,3 @@ class Writer(object):
 <form><orth>{word}</orth></form>
 <trans><tr>{defi}</tr></trans>
 </entry>""")
-
