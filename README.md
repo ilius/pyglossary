@@ -53,7 +53,7 @@ Supported formats
 | Lingoes Source                                               |📝 | .ldf            | ✔  |  ✔  |
 | Octopus MDict                                                |🔢 | .mdx            | ✔  | :x: |
 | [Sdictionary Binary](http://swaj.net/sdict/)                 |🔢 | .dct            | ✔  |     |
-| [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)|📝 | .sdc            |    |  ✔  |
+| [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)|📝 | .sdct           |    |  ✔  |
 | SQL                                                          |📝 | .sql            |:x: |  ✔  |
 | StarDict                                                     |📁 | (📝.ifo)        | ✔  |  ✔  |
 | [Tabfile](https://en.wikipedia.org/wiki/Tab-separated_values)|📝 |.txt, .tab       | ✔  |  ✔  |
