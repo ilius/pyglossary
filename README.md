@@ -41,6 +41,7 @@ Supported formats
 | DICT.org / dictfmt source file                               |📝 | (.dtxt)         |    |  ✔  |
 | dictunformat output file                                     |📝 | (.dictunformat) | ✔  |     |
 | [DictionaryForMIDs](http://dictionarymid.sourceforge.net)    |📁 | (📁.mids)       | ✔  |  ✔  |
+| [DigitalNK](https://github.com/digitalprk/dicrs) (SQLite3, North Korean) |🔢 |     | ✔  |     |
 | Editable Linked List of Entries                              |📁 | .edlin          | ✔  |  ✔  |
 | EPUB-2 E-Book                                                |📦 | .epub           |:x: |  ✔  |
 | [FreeDict](https://freedict.org)                             |📝 | .tei            | ✔  |  ✔  |
