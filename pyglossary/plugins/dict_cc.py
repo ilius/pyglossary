@@ -6,7 +6,7 @@ import html
 enable = True
 format = 'Dictcc'
 description = 'Dict.cc (SQLite3)'
-extensions = ('.db',)
+extensions = ()
 readOptions = []
 writeOptions = []
 
