@@ -26,43 +26,43 @@ Linux - command line interface
 Supported formats
 -----------------
 
-| Format                                                       |   |    Extension    |Read|Write|
-|--------------------------------------------------------------|:-:|:---------------:|:--:|:---:|
-| [Aard 2 (slob)](http://aarddict.org)                         |🔢 | .slob           | ✔  |  ✔  |
-| ABBYY Lingvo DSL                                             |📝 | .dsl            | ✔  |     |
-| AppleDict Binary                                             |🔢 |.dictionary      | ✔  | :x: |
-| AppleDict Source                                             |📁 |                 |    |  ✔  |
-| Babylon                                                      |🔢 | .bgl            | ✔  | :x: |
-| [CC-CEDICT](https://cc-cedict.org/wiki)                      |📝 |                 | ✔  |     |
-| [cc-kedict](https://github.com/mhagiwara/cc-kedict)          |📝 |                 | ✔  |     |
-| CSV                                                          |📝 | .csv            | ✔  |  ✔  |
-| Dict.cc (SQLite3)                                            |🔢 | .db             | ✔  |     |
-| DICT.org / Dictd server                                      |📁 | (📝.index)      | ✔  |  ✔  |
-| DICT.org / dictfmt source file                               |📝 | (.dtxt)         |    |  ✔  |
-| dictunformat output file                                     |📝 | (.dictunformat) | ✔  |     |
-| [DictionaryForMIDs](http://dictionarymid.sourceforge.net)    |📁 | (📁.mids)       | ✔  |  ✔  |
-| [DigitalNK](https://github.com/digitalprk/dicrs) (SQLite3, North Korean) |🔢 |     | ✔  |     |
-| Editable Linked List of Entries                              |📁 | .edlin          | ✔  |  ✔  |
-| EPUB-2 E-Book                                                |📦 | .epub           |:x: |  ✔  |
-| [FreeDict](https://freedict.org)                             |📝 | .tei            | ✔  |  ✔  |
-| [Gettext Source](https://www.gnu.org/software/gettext)       |📝 | .po             | ✔  |  ✔  |
-| HTML Directory (by file size)                                |📁 |                 |:x: |  ✔  |
-| [JMDict](https://www.edrdg.org/jmdict/j_jmdict.html)         |📝 |                 | ✔  | :x: |
-| JSON                                                         |📝 | .json           |    |  ✔  |
-| Kobo E-Reader Dictionary                                     |📦 | .kobo.zip       |:x: |  ✔  |
-| [Kobo E-Reader Dictfile](https://github.com/pgaskin/dictutil)|📝 | .df             | ✔  |  ✔  |
-| Lingoes Source                                               |📝 | .ldf            | ✔  |  ✔  |
-| Octopus MDict                                                |🔢 | .mdx            | ✔  | :x: |
-| [Sdictionary Binary](http://swaj.net/sdict/)                 |🔢 | .dct            | ✔  |     |
-| [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)|📝 | .sdct           |    |  ✔  |
-| SQL                                                          |📝 | .sql            |:x: |  ✔  |
-| StarDict                                                     |📁 | (📝.ifo)        | ✔  |  ✔  |
-| [Tabfile](https://en.wikipedia.org/wiki/Tab-separated_values)|📝 |.txt, .tab       | ✔  |  ✔  |
-| TreeDict                                                     |📁 |                 |    |  ✔  |
-| Wiktionary Dump                                              |📝 | .xml            | ✔  | :x: |
-| [Wordset.org](https://github.com/wordset/wordset-dictionary) |📁 |                 | ✔  |     |
-| [XDXF](https://github.com/soshial/xdxf_makedict)             |📝 | .xdxf           | ✔  | :x: |
-| Zim ([Kiwix](https://github.com/kiwix))                      |🔢 | .zim            | ✔  |     |
+| Format                                                                |   |    Extension    |Read|Write|
+|-----------------------------------------------------------------------|:-:|:---------------:|:--:|:---:|
+| [Aard 2 (slob)](http://aarddict.org)                                  |🔢 | .slob           | ✔  |  ✔  |
+| ABBYY Lingvo DSL                                                      |📝 | .dsl            | ✔  |     |
+| AppleDict Binary                                                      |🔢 |.dictionary      | ✔  | :x: |
+| AppleDict Source                                                      |📁 |                 |    |  ✔  |
+| Babylon                                                               |🔢 | .bgl            | ✔  | :x: |
+| [CC-CEDICT](https://cc-cedict.org/wiki) (Chinese)                     |📝 |                 | ✔  |     |
+| [cc-kedict](https://github.com/mhagiwara/cc-kedict) (Korean)          |📝 |                 | ✔  |     |
+| CSV                                                                   |📝 | .csv            | ✔  |  ✔  |
+| Dict.cc (SQLite3, German)                                             |🔢 |                 | ✔  |     |
+| DICT.org / Dictd server                                               |📁 | (📝.index)      | ✔  |  ✔  |
+| DICT.org / dictfmt source file                                        |📝 | (.dtxt)         |    |  ✔  |
+| [dictunformat](https://linux.die.net/man/1/dictunformat) output file  |📝 | (.dictunformat) | ✔  |     |
+| [DictionaryForMIDs](http://dictionarymid.sourceforge.net)             |📁 | (📁.mids)       | ✔  |  ✔  |
+| [DigitalNK](https://github.com/digitalprk/dicrs) (SQLite3, N-Korean)  |🔢 |                 | ✔  |     |
+| Editable Linked List of Entries                                       |📁 | .edlin          | ✔  |  ✔  |
+| EPUB-2 E-Book                                                         |📦 | .epub           |:x: |  ✔  |
+| [FreeDict](https://freedict.org)                                      |📝 | .tei            | ✔  |  ✔  |
+| [Gettext Source](https://www.gnu.org/software/gettext)                |📝 | .po             | ✔  |  ✔  |
+| HTML Directory (by file size)                                         |📁 |                 |:x: |  ✔  |
+| [JMDict](https://www.edrdg.org/jmdict/j_jmdict.html) (Japanese)       |📝 |                 | ✔  | :x: |
+| JSON                                                                  |📝 | .json           |    |  ✔  |
+| Kobo E-Reader Dictionary                                              |📦 | .kobo.zip       |:x: |  ✔  |
+| [Kobo E-Reader Dictfile](https://github.com/pgaskin/dictutil)         |📝 | .df             | ✔  |  ✔  |
+| [Lingoes Source](http://www.lingoes.net/en/dictionary/dict_format.php)|📝 | .ldf           | ✔  |  ✔  |
+| Octopus MDict                                                         |🔢 | .mdx            | ✔  | :x: |
+| [Sdictionary Binary](http://swaj.net/sdict/)                          |🔢 | .dct            | ✔  |     |
+| [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)         |📝 | .sdct           |    |  ✔  |
+| SQL                                                                   |📝 | .sql            |:x: |  ✔  |
+| StarDict                                                              |📁 | (📝.ifo)        | ✔  |  ✔  |
+| [Tabfile](https://en.wikipedia.org/wiki/Tab-separated_values)         |📝 |.txt, .tab       | ✔  |  ✔  |
+| TreeDict                                                              |📁 |                 |    |  ✔  |
+| Wiktionary Dump                                                       |📝 | .xml            | ✔  | :x: |
+| [Wordset.org](https://github.com/wordset/wordset-dictionary)          |📁 |                 | ✔  |     |
+| [XDXF](https://github.com/soshial/xdxf_makedict)                      |📝 | .xdxf           | ✔  | :x: |
+| Zim ([Kiwix](https://github.com/kiwix))                               |🔢 | .zim            | ✔  |     |
 
 Legend:
 - 📁	Directory
