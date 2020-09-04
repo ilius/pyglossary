@@ -365,8 +365,12 @@ class Writer(object):
 					entry.save(resDir)
 				continue
 			defi = entry.defi
+			if entry.defiFormat == "m":
+				defi = defi.replace("\n", "<br>")
+
 			if escape_defi:
 				defi = html.escape(defi)
+
 			entryId = f"entry{entryIndex}"
 
 			if defiHasHeadwords:
