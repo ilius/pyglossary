@@ -1,8 +1,11 @@
 PyGlossary
 ==========
 
-PyGlossary is a tool for converting dictionary files aka glossaries,
-from/to various formats used by different dictionary applications
+A tool for converting dictionary files aka glossaries.
+
+The primary purpose is to be able to use our offline glossaries in any Open Source dictionary we like on any OS/device.
+
+More popular glossary formats have higher priority.
 
 Screenshots
 -----------
