@@ -3,9 +3,12 @@ PyGlossary
 
 A tool for converting dictionary files aka glossaries.
 
-The primary purpose is to be able to use our offline glossaries in any Open Source dictionary we like on any OS/device.
+The primary purpose is to be able to use our offline glossaries in any Open
+Source dictionary we like on any OS/device.
 
-More popular glossary formats have higher priority.
+There are countless formats, and my time is limited, so I implement formats that
+seem more useful for myself, or for Open Source community. Also diversity of
+languages is taken into account. Pull requests are welcome.
 
 Screenshots
 -----------
@@ -80,18 +83,18 @@ Requirements
 ------------
 
 PyGlossary requires **Python 3.6 or higher**, and works in practically all
-modern operating systems. While primarilly designed for *GNU/Linux*, it works
+modern operating systems. While primarily designed for *GNU/Linux*, it works
 on *Windows*, *Mac OS X* and other Unix-based operating systems as well.
 
-As shown in the screenshots, there are multiple User Interface types,
-ie. multiple ways to use the program.
+As shown in the screenshots, there are multiple User Interface types (multiple
+ways to use the program).
 
 -	**Gtk3-based interface**, uses [PyGI (Python Gobject Introspection)](http://pygobject.readthedocs.io/en/latest/getting_started.html)
 	You can install it on:
 	-	Debian/Ubuntu: `apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0`
 	-	openSUSE: `zypper install python3-gobject gtk3`
 	-	Fedora: `dnf install pygobject3 python3-gobject gtk3`
-	-	Archlinux:
+	-	ArchLinux:
 		* `pacman -S python-gobject gtk3`
 		* https://aur.archlinux.org/packages/pyglossary/
 	-	Mac OS X: `brew install pygobject3 gtk+3`
@@ -160,7 +163,7 @@ Feature-specific Requirements
 
     `sudo pip3 install jinja2`
 
--	**Reading from Octopus Mdict (MDX)**
+-	**Reading from Octopus MDict (MDX)**
 
 	`python-lzo` is required for **some** MDX glossaries.
 	First try converting your MDX file, if failed (`AssertionError` probably),
