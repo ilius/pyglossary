@@ -28,7 +28,7 @@ import logging
 log = logging.getLogger("root")
 
 
-# or Resource?
+# aka Resource
 class DataEntry(BaseEntry):
 	__slots__ = [
 		"_fname",
@@ -59,7 +59,8 @@ class DataEntry(BaseEntry):
 	def getFileName(self) -> str:
 		return self._fname
 
-	def getData(self) -> bytes:
+	@property
+	def data(self) -> bytes:
 		if self._tmpPath:
 			with open(self._tmpPath, "rb") as fromFile:
 				return fromFile.read()

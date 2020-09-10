@@ -27,7 +27,8 @@ class BaseEntry(object):
 	def getFileName(self) -> str:
 		raise NotImplementedError
 
-	def getData(self) -> bytes:
+	@property
+	def data(self) -> bytes:
 		raise NotImplementedError
 
 	def save(self, directory: str) -> str:
