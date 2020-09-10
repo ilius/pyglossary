@@ -73,18 +73,21 @@ class Writer(object):
 	def finish(self):
 		pass
 
+	def getNextFilename(self):
+		return self._filename_format.format(
+			n=len(self._filenameList)
+		)
+
 	def nextFile(self):
 		if self._fileObj:
 			self._fileObj.write(self._tail)
 			self._fileObj.close()
-		currentFilename = self._filename_format.format(
-			n=len(self._filenameList)
-		)
-		self._filenameList.append(currentFilename)
+		filename = self.getNextFilename()
+		self._filenameList.append(filename)
 		self._fileObj = open(
 			join(
 				self._filename,
-				currentFilename,
+				filename,
 			),
 			mode="w",
 			encoding=self._encoding,
@@ -304,6 +307,18 @@ class Writer(object):
 				customStyle="",
 			)
 
+		def navBar() -> str:
+			links = []
+			if len(self._filenameList) > 1:
+				links.append(f'<a href="./{self._filenameList[-2]}">&#9664;</a>')
+			links.append(f'<a href="./{self.getNextFilename()}">&#9654;</a>')
+			links.append(f'<a href="./info.html">ℹ️</a></div>')
+			return (
+				'<div style="text-align: center; font-size: 2.5em;">' +
+				'&nbsp;&nbsp;&nbsp;'.join(links) +
+				'</div>'
+			)
+
 		tailSize = len(self._tail.encode(encoding))
 
 		if max_file_size < len(header) + tailSize:
@@ -316,6 +331,7 @@ class Writer(object):
 
 		fileObj = self.nextFile()
 		fileObj.write(pageHeader(0))
+		fileObj.write(navBar())
 
 		re_fixed_link = re.compile(
 			r'<a (?:[^<>]*? )?href="#([^<>"]+?)">[^<>]+?</a>',
@@ -392,6 +408,7 @@ class Writer(object):
 					fileObj.write(pageHeader(
 						len(self._filenameList) - 1
 					))
+					fileObj.write(navBar())
 			pos = fileObj.tell()
 			tmpFilename = escapeNTB(self._filenameList[-1])
 			for word in entry.l_word:
