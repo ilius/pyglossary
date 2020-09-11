@@ -117,24 +117,28 @@ def indexes_generator(indexes_lang: str) -> Callable[
 	return generate_indexes
 
 
-# FIXME: most of the following codes seems to be to specific to MDX format
-# the MDX-specific parts should be isolated and moved to MDX Reader
+# FIXME:
+# MDX-specific parts should be isolated and moved to MDX Reader
+# and parts that are specific to one glossary
+# (like Oxford_Advanced_English-Chinese_Dictionary_9th_Edition.mdx)
+# should be moved to separate modules (like content processors) and enabled
+# per-glossary (by title or something else)
 
-close_tag = re.compile("<(BR|HR)>", re.IGNORECASE)
-nonprintable = re.compile("[\x00-\x07\x0e-\x1f]")
-img_tag = re.compile("<IMG (.*?)>", re.IGNORECASE)
+re_brhr = re.compile("<(BR|HR)>", re.IGNORECASE)
+re_nonprintable = re.compile("[\x00-\x07\x0e-\x1f]")
+re_img = re.compile("<IMG (.*?)>", re.IGNORECASE)
 
-re_em0_9 = re.compile(r'<div style="margin-left:(\d)em">')
-em0_9_sub = r'<div class="m\1">'
+re_div_margin_em = re.compile(r'<div style="margin-left:(\d)em">')
+sub_div_margin_em = r'<div class="m\1">'
 
-re_em0_9_ex = re.compile(
+re_div_margin_em_ex = re.compile(
 	r'<div class="ex" style="margin-left:(\d)em;color:steelblue">',
 )
-em0_9_ex_sub = r'<div class="m\1 ex">'
+sub_div_margin_em_ex = r'<div class="m\1 ex">'
 
 re_href = re.compile(r"""href=(["'])(.*?)\1""")
 
-margin_re = re.compile(r"margin-left:(\d)em")
+re_margin = re.compile(r"margin-left:(\d)em")
 
 
 def href_sub(x: Pattern) -> str:
@@ -196,8 +200,8 @@ def prepare_content_without_soup(
 	body: str,
 ) -> str:
 	# somewhat analogue to what BeautifulSoup suppose to do
-	body = re_em0_9.sub(em0_9_sub, body)
-	body = re_em0_9_ex.sub(em0_9_ex_sub, body)
+	body = re_div_margin_em.sub(sub_div_margin_em, body)
+	body = re_div_margin_em_ex.sub(sub_div_margin_em_ex, body)
 	body = re_href.sub(href_sub, body)
 
 	body = body \
@@ -222,8 +226,8 @@ def prepare_content_without_soup(
 
 	# nice header to display
 	content = f"<h1>{title}</h1>{body}" if title else body
-	content = close_tag.sub(r"<\g<1> />", content)
-	content = img_tag.sub(r"<img \g<1>/>", content)
+	content = re_brhr.sub(r"<\g<1> />", content)
+	content = re_img.sub(r"<img \g<1>/>", content)
 	return content
 
 
@@ -252,7 +256,7 @@ def prepare_content_with_soup(
 			tag["class"] = tag.get("class", []) + ["c"]
 	for tag in soup(True):
 		if "style" in tag.attrs:
-			m = margin_re.search(tag["style"])
+			m = re_margin.search(tag["style"])
 			if m:
 				remove_style(tag, m.group(0))
 				tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
@@ -350,7 +354,7 @@ def prepare_content(
 		content = prepare_content_without_soup(title, body)
 
 	content = content.replace("&nbsp;", "&#160;")
-	content = nonprintable.sub("", content)
+	content = re_nonprintable.sub("", content)
 	return content
 
 
