@@ -102,6 +102,16 @@ class Reader(object):
 		for articleIndex in range(articleCount):
 			ar = zimfile.get_article_by_id(articleIndex)
 			word = ar.title
+
+			if ar.is_redirect:
+				targetWord = ar.get_redirect_article().title
+				yield glos.newEntry(
+					word,
+					f'Redirect: <a href="bword://{targetWord}">{targetWord}</a>',
+					defiFormat="h",
+				)
+				continue
+
 			b_content = ar.content.tobytes()
 
 			if skip_dup:
@@ -141,6 +151,9 @@ class Reader(object):
 
 			if mimetype not in self.resourceMimeTypes:
 				log.warn("Unrecognized mimetype={mimetype!r}")
+
+			if "|" in word:
+				log.error(f"resource title: {word}")
 
 			yield glos.newDataEntry(word, b_content)
 
