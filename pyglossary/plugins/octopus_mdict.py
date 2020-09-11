@@ -141,6 +141,7 @@ class Reader(object):
 			defi = b_defi.decode("utf-8").strip()
 			if defi.startswith("@@@LINK="):
 				continue
+			defi = defi.replace("entry://", "bword://")
 			words = word
 			altsStr = linksDict.get(word, "")
 			if altsStr:

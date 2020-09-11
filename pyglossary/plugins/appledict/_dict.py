@@ -355,9 +355,6 @@ def cleanup_link_target(href):
 	if href.startswith("bword://"):
 		href = href[len("bword://"):]
 
-	if href.startswith("entry://"):
-		href = href[len("entry://"):]
-
 	xhtml_ns = ["d", "x"]
 	for n in xhtml_ns:
 		if href.startswith(f"{n}:"):
