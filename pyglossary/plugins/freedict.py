@@ -146,14 +146,33 @@ class Reader(object):
 		def br():
 			return ET.Element("br")
 
+		for form in entry.findall("form/orth", self.ns):
+			if form.getparent().get("type"):
+				# only use normal form, not inflected one, here
+				continue
+			keywords.append(form.text)
+
+		# Add keywords for inflected forms
+		for orth in entry.findall('.//form[@type="infl"]/orth', self.ns):
+			if not orth.text:
+				continue
+			keywords.append(orth.text)
+
+		gramList = []  # type: List[str]
+		for gramGrp in entry.findall("gramGrp", self.ns):
+			parts = []
+			for child in gramGrp.iterchildren():
+				text = self.normalizeGramGrpChild(child)
+				if text:
+					parts.append(text)
+			if parts:
+				gramList.append(", ".join(parts))
+
+		pronList = entry.findall("form/pron", self.ns)
+		senseList = entry.findall("sense", self.ns)
+
 		with ET.htmlfile(f) as hf:
 			with hf.element("div"):
-				for form in entry.findall("form/orth", self.ns):
-					if form.getparent().get("type"):
-						# only use normal form, not inflected one, here
-						continue
-					keywords.append(form.text)
-
 				if self._keywords_header:
 					for keyword in keywords:
 						with hf.element("b"):
@@ -165,19 +184,11 @@ class Reader(object):
 				# <usg type="geo">US</usg>
 				# <usg type="hint">...</usg>
 
-				gramGrpList = entry.findall("gramGrp", self.ns)
-				if gramGrpList:
-					for gramGrp in gramGrpList:
-						parts = []
-						for child in gramGrp.iterchildren():
-							text = self.normalizeGramGrpChild(child)
-							if text:
-								parts.append(text)
-						with hf.element("i"):
-							hf.write(", ".join(parts))
-						hf.write(br())
+				for text in gramList:
+					with hf.element("i"):
+						hf.write(text)
+					hf.write(br())
 
-				pronList = entry.findall("form/pron", self.ns)
 				if pronList:
 					for i, pron in enumerate(pronList):
 						if i > 0:
@@ -189,15 +200,9 @@ class Reader(object):
 
 				self.makeList(
 					hf,
-					entry.findall("sense", self.ns),
+					senseList,
 					self.writeSense,
 				)
-
-				# Add keywords for inflected forms
-				for form in entry.findall('.//form[@type="infl"]/orth', self.ns):
-					if not form.text:
-						continue
-					keywords.append(form.text)
 
 		defi = unescape_unicode(f.getvalue().decode("utf-8"))
 		return self._glos.newEntry(
