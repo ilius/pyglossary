@@ -63,6 +63,8 @@ class Writer(object):
 		self._filenameList = []
 
 	def open(self, filename: str):
+		from cachetools import LRUCache
+
 		self._filename = filename
 		self._resDir = resDir = join(filename, "res")
 		if not isdir(filename):
