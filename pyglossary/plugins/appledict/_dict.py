@@ -117,6 +117,9 @@ def indexes_generator(indexes_lang: str) -> Callable[
 	return generate_indexes
 
 
+# FIXME: most of the following codes seems to be to specific to MDX format
+# the MDX-specific parts should be isolated and moved to MDX Reader
+
 close_tag = re.compile("<(BR|HR)>", re.IGNORECASE)
 nonprintable = re.compile("[\x00-\x07\x0e-\x1f]")
 img_tag = re.compile("<IMG (.*?)>", re.IGNORECASE)
