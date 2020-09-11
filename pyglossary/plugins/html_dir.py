@@ -309,6 +309,25 @@ class Writer(object):
 				customStyle="",
 			)
 
+		def stripEntryFullHtml(entry, defi: str) -> str:
+			word = entry.s_word
+			i = defi.find('<body')
+			if i == -1:
+				log.error(f"<body not found: word={word}")
+				return defi
+			defi = defi[i + 5:]
+			i = defi.find('>')
+			if i == -1:
+				log.error(f"'>' after <body not found: word={word}")
+				return defi
+			defi = defi[i + 1:]
+			i = defi.find('</body')
+			if i == -1:
+				log.error(f"</body close not found: word={word}")
+				return defi
+			defi = defi[:i]
+			return defi
+
 		def navBar() -> str:
 			links = []
 			if len(self._filenameList) > 1:
@@ -383,7 +402,15 @@ class Writer(object):
 					entry.save(resDir)
 				continue
 			defi = entry.defi
-			if entry.defiFormat == "m":
+			defiFormat = entry.defiFormat
+
+			if defi.startswith('<!DOCTYPE html>'):
+				if defiFormat != "h":
+					log.error(f"bad defiFormat={defiFormat}")
+					defiFormat = "h"
+				defi = stripEntryFullHtml(entry, defi)
+
+			if defiFormat == "m":
 				defi = defi.replace("\n", "<br>")
 
 			if escape_defi:
