@@ -94,8 +94,9 @@ class Reader(object):
 		emptyContentCount = 0
 		invalidMimeTypeCount = 0
 		articleCount = zimfile.article_count
-		duplicateArticleCount = 0
 
+		duplicateArticleCount = 0
+		redirectCount = 0
 		skip_dup = self._skip_duplicate_words
 		hashSet = set()
 
@@ -104,6 +105,7 @@ class Reader(object):
 			word = ar.title
 
 			if ar.is_redirect:
+				redirectCount += 1
 				targetWord = ar.get_redirect_article().title
 				yield glos.newEntry(
 					word,
@@ -137,11 +139,11 @@ class Reader(object):
 				yield glos.newDataEntry(word, b_content)
 
 			if mimetype == "text/html":
-				yield glos.newEntry(
-					word, b_content.decode("utf-8"),
-					defiFormat="h",
-				)
+				defi = b_content.decode("utf-8")
+				defi = defi.replace(' src="../I/', ' src="./res/')
+				yield glos.newEntry(word, defi, defiFormat="h")
 				continue
+
 			if mimetype == "text/plain":
 				yield glos.newEntry(
 					word, b_content.decode("utf-8"),
@@ -164,3 +166,5 @@ class Reader(object):
 			log.info(f"Empty Content Count: {emptyContentCount}")
 		if invalidMimeTypeCount > 0:
 			log.info(f"Invalid MIME-Type Count: {invalidMimeTypeCount}")
+		if redirectCount > 0:
+			log.info(f"Redirect Count: {redirectCount}")
