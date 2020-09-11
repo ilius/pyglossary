@@ -357,10 +357,4 @@ def prepare_content(
 def cleanup_link_target(href):
 	if href.startswith("bword://"):
 		href = href[len("bword://"):]
-
-	xhtml_ns = ["d", "x"]
-	for n in xhtml_ns:
-		if href.startswith(f"{n}:"):
-			href = href[len(n) + 1:]
-
 	return href
