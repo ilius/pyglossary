@@ -188,13 +188,13 @@ AppleDict
 See [doc/apple.md](doc/apple.md) for AppleDict requirements and instructions.
 
 
-Internal/intermediate glossary structure
-----------------------------------------
+Internal Glossary Structure
+---------------------------
 A glossary contains a number of entries.
 
 Each entry contains:
 
-- Headword (title or main phrase for quert)
+- Headword (title or main phrase for query)
 - Alternates (some alternative phrases for query)
 - Definition
 
