@@ -188,3 +188,23 @@ AppleDict
 See [doc/apple.md](doc/apple.md) for AppleDict requirements and instructions.
 
 
+Internal/intermediate glossary structure
+----------------------------------------
+A glossary contains a number of entries.
+Each entry contains:
+
+- Headword (the main word / phrase)
+- Alternates (some alternative words / phrases)
+- Definition
+
+In PyGlossary, headword and alternates together are accessible as a single Python list `entry.l_word`
+
+`entry.defi` is the definition as a Python Unicode `str`. Also `entry.b_defi` is definition in UTF-8 byte array.
+
+`entry.defiFormat` is definition format. If definition is plaintext (not rich text), the value is `m`. And if it's in HTML (contains any html tag), then `defiFormat` is `m`. The value `x` is also allowed for XFXF, but XDXF is not widely supported in dictionary applications.
+
+There is another type of `Entry` which is called **Data Entry**, and generally contains image files, TTL or other audio files, or any file that was included in input glossary. For data entries:
+- `entry.s_word` is file name (and `l_word` is still a list containing this string),
+- `entry.defiFormat` is `b`
+- `entry.data` gives the content of file in `bytes`.
+
