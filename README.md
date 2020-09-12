@@ -191,10 +191,11 @@ See [doc/apple.md](doc/apple.md) for AppleDict requirements and instructions.
 Internal/intermediate glossary structure
 ----------------------------------------
 A glossary contains a number of entries.
+
 Each entry contains:
 
-- Headword (the main word / phrase)
-- Alternates (some alternative words / phrases)
+- Headword (title or main phrase for quert)
+- Alternates (some alternative phrases for query)
 - Definition
 
 In PyGlossary, headword and alternates together are accessible as a single Python list `entry.l_word`
