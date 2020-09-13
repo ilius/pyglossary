@@ -1,52 +1,52 @@
-aa,aar,Afar
-ab,abk,Abkhazian
-ae,ave,Avestan
+aa,aar,Afar,Qafaraf,’Afar Af,Afaraf,Qafar af
+ab,abk,Abkhaz,Abkhazian,Abxaz,Аҧсуа,Аҧсуа бызшәа
+ae,ave,Avestan,Zend,اوستایی
 af,afr,Afrikaans
 ak,aka,Akan
-am,amh,Amharic
-an,arg,Aragonese
-ar,ara,Arabic
-as,asm,Assamese
-av,ava,Avaric
-ay,aym,Aymara
-az,aze,Azerbaijani
-ba,bak,Bashkir
-be,bel,Belarusian
-bg,bul,Bulgarian
-bh,bih,Bihari,Bihari languages
-bi,bis,Bislama
-bm,bam,Bambara
-bn,ben,Bengali
-bo,tib,Tibetan
-br,bre,Breton
-bs,bos,Bosnian
+am,amh,Amharic,አማርኛ,Amarəñña
+an,arg,Aragonese,Aragonés
+ar,ara,Arabic,اَلْعَرَبِيَّةُ,العربیه,عَرَبِيّ,عربی
+as,asm,Assamese,Asamiya,অসমীয়া
+av,ava,Avar,Avaric,Авар,Awar
+ay,aym,Aymara,Aymar aru,Aymaran
+az,aze,Azerbaijani,Azeri
+ba,bak,Bashkir,Башҡортса‎,Башҡорт теле,Башорца,Башкирский
+be,bel,Belarusian,Беларуская,Белорусский
+bg,bul,Bulgarian,български,български език,Bǎlgarski
+bh,bih,Bihari,Bihari languages,बिहारी
+bi,bis,Bislama,Bichelamar
+bm,bam,Bambara,Bamanankan,ߓߡߊߣߊ߲,ߓߡߊߣߊ߲ߞߊ߲
+bn,ben,Bengali,বাংলা
+bo,tib,Tibetan,Standard Tibetan
+br,bre,Breton,Brezhoneg
+bs,bos,Bosnian,Bosanski,Босански
 ca,cat,Catalan
-ce,che,Chechen
-ch,cha,Chamorro
-co,cos,Corsican
+ce,che,Chechen,нохчийн,нохчийн мотт
+ch,cha,Chamorro,Chamoru,CHamoru
+co,cos,Corsican,Corsa
 cr,cre,Cree
 cs,cze,Czech
-cu,chu,Church Slavic
-cv,chv,Chuvash
-cy,wel,Welsh
-da,dan,Danish
-de,ger,German
-dv,div,Divehi
-dz,dzo,Dzongkha
-ee,ewe,Ewe
-el,gre,Greek
+cu,chu,Church Slavonic,Church Slavic,New Church Slavonic,New Church Slavic,црькъвьнословѣньскъ ѩзыкъ
+cv,chv,Chuvash,Căvašla,Çovaşla,Чӑвашла
+cy,wel,Welsh,Cymraeg,y Gymraeg
+da,dan,Danish,dansk
+de,ger,German,Deutsch
+dv,div,Maldivian,Dhivehi,Divehi,ދިވެހި
+dz,dzo,Dzongkha,རྫོང་ཁ་
+ee,ewe,Ewe,Èʋe,Èʋegbe
+el,gre,Greek,ελληνικά,Elliniká
 en,eng,English
 eo,epo,Esperanto
-es,spa,Spanish
-et,est,Estonian
-eu,baq,Basque
-fa,per,Persian,Farsi
-ff,ful,Fulah
-fi,fin,Finnish
-fj,fij,Fijian
-fo,fao,Faroese
-fr,fre,French
-fy,fry,Western Frisian
+es,spa,Spanish,español,española
+et,est,Estonian,eesti keel,eesti
+eu,baq,Basque,Euskara
+fa,per,Persian,Farsi,فارسی
+ff,ful,Fula,Fulani,Fulah,Fulfulde,𞤊𞤵𞤤𞤬𞤵𞤤𞤣𞤫,Pulaar,𞤆𞤵𞤤𞤢𞥄𞤪,Pular,𞤆𞤵𞤤𞤢𞤪;Peul
+fi,fin,Finnish,suomi,suomen kieli
+fj,fij,Fijian,Na Vosa Vakaviti,Na vosa vaka-Viti
+fo,fao,Faroese,føroyskt mál
+fr,fre,French,français,langue française
+fy,fry,West Frisian,Western Frisian,Frisian
 ga,gle,Irish
 gd,gla,Gaelic,Scottish Gaelic
 gl,glg,Galician
@@ -64,16 +64,16 @@ hu,hun,Hungarian
 hy,arm,Armenian
 hz,her,Herero
 ia,ina,Interlingua
-id,ind,Indonesian
+id,ind,Indonesian,bahasa Indonesia
 ie,ile,Interlingue
 ig,ibo,Igbo
 ii,iii,Sichuan Yi
 ik,ipk,Inupiaq
 io,ido,Ido
 is,ice,Icelandic
-it,ita,Italian
+it,ita,Italian,italiano
 iu,iku,Inuktitut
-ja,jpn,Japanese
+ja,jpn,Japanese,日本語,にほんご
 jb,jbo,Lojban
 jv,jav,Javanese
 ka,geo,Georgian
@@ -91,13 +91,13 @@ ku,kur,Kurdish
 kv,kom,Komi
 kw,cor,Cornish
 ky,kir,Kirghiz
-la,lat,Latin
+la,lat,Latin,latine,latīne
 lb,ltz,Luxembourgish
 lg,lug,Ganda
 li,lim,Limburgish,Limburgan,Limburgian,Limburgic
 ln,lin,Lingala
 lo,lao,Lao
-lt,lit,Lithuanian
+lt,lit,Lithuanian,lietuvių kalba
 lu,lub,Luba-Katanga
 lv,lav,Latvian
 mg,mlg,Malagasy
@@ -115,9 +115,9 @@ nb,nob,Norwegian Bokmal
 nd,nde,North Ndebele
 ne,nep,Nepali
 ng,ndo,Ndonga
-nl,dut,Dutch,Flemish
+nl,dut,Dutch,Flemish,Nederlands
 nn,nno,Norwegian Nynorsk
-no,nor,Norwegian
+no,nor,Norwegian,norsk
 nr,nbl,South Ndebele
 nv,nav,Navajo
 ny,nya,Chichewa
@@ -128,14 +128,14 @@ or,ori,Oriya
 os,oss,Ossetian
 pa,pan,Panjabi
 pi,pli,Pali
-pl,pol,Polish
+pl,pol,Polish,język polski,polszczyzna,polski
 ps,pus,Pashto
-pt,por,Portuguese
+pt,por,Portuguese,português,língua portuguesa
 qu,que,Quechua
 rm,roh,Raeto-Romance
 rn,run,Kirundi
 ro,rum,Romanian
-ru,rus,Russian
+ru,rus,Russian,русский,русский язык
 rw,kin,Kinyarwanda
 sa,san,Sanskrit
 sc,srd,Sardinian
@@ -154,7 +154,7 @@ sr,srp,Serbian
 ss,ssw,Swati
 st,sot,Sotho,Southern Sotho
 su,sun,Sundanese
-sv,swe,Swedish
+sv,swe,Swedish,svenska
 sw,swa,Swahili
 ta,tam,Tamil
 te,tel,Telugu
@@ -165,7 +165,7 @@ tk,tuk,Turkmen
 tl,tgl,Tagalog
 tn,tsn,Tswana
 to,ton,Tonga
-tr,tur,Turkish
+tr,tur,Turkish,Türkçe,Türk dili,Istanbul Turkish,Turkey Turkish
 ts,tso,Tsonga
 tt,tat,Tatar
 tw,twi,Twi
