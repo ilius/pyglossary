@@ -53,11 +53,10 @@ class LangDict(dict):
 				)
 				for key in lang.codes:
 					self[key] = lang
-				for key in lang.names:
-					self[key] = lang
-					self[key.lower()] = lang
+				for name in lang.names:
+					self[name.lower()] = lang
 		print(f"LangDict: loaded, {len(self)} keys")
 
 	def __getitem__(self, key: str) -> Optional[Lang]:
 		self.load()
-		return self.get(key, None)
+		return self.get(key.lower(), None)
