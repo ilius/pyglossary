@@ -268,8 +268,6 @@ class Reader(object):
 		self._file = None
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
-		self._glos.setInfo("entry_url", f"https://jisho.org/search/{{word}}")
-		# also good: f"https://sakuradict.com/search?q={{word}}"
 
 	def __len__(self) -> int:
 		return self._wordCount
@@ -292,8 +290,12 @@ class Reader(object):
 		self._filename = filename
 		self._fileSize = os.path.getsize(filename)
 
+		self._glos.sourceLangName = "Japanese"
+
 		self._glos.setDefaultDefiFormat("h")
 		self._glos.setInfo("definition_has_headwords", "True")
+		self._glos.setInfo("entry_url", f"https://jisho.org/search/{{word}}")
+		# also good: f"https://sakuradict.com/search?q={{word}}"
 
 		header = ""
 		with open(filename, mode="rt", encoding="utf-8") as _file:
