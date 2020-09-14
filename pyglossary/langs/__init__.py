@@ -7,6 +7,9 @@ from typing import (
 	Optional,
 )
 
+import logging
+log = logging.getLogger("root")
+
 
 class Lang(object):
 	def __init__(self, codes: List[str], names: List[str]):
@@ -48,12 +51,21 @@ class LangDict(dict):
 			)
 			for row in csvReader:
 				lang = Lang(
-					codes=[c for c in row[:2] if c],
+					codes=[
+						c
+						for part in row[:2]
+						for c in part.split("|")
+						if c
+					],
 					names=row[2:],
 				)
 				for key in lang.codes:
+					if key in self:
+						log.error(f"duplicate language code: {key}")
 					self[key] = lang
 				for name in lang.names:
+					if name in self:
+						log.error(f"duplicate language name: {name}")
 					self[name.lower()] = lang
 		print(f"LangDict: loaded, {len(self)} keys")
 
