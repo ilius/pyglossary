@@ -288,6 +288,7 @@ class Reader(object):
 		self._filename = filename
 
 		self._glos.sourceLangName = "Korean"
+		self._glos.targetLangName = "English"
 
 		self._glos.setDefaultDefiFormat("h")
 		self._yaml.open(filename)

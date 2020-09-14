@@ -34,6 +34,7 @@ class Reader:
 			self.file.close()
 
 		self._glos.sourceLangName = "Chinese"
+		self._glos.targetLangName = "English"
 
 		self.file = open(filename, "r", encoding=self._encoding)
 		for line in self.file:
