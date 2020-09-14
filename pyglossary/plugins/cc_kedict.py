@@ -286,6 +286,9 @@ class Reader(object):
 		if isdir(filename):
 			filename = join(filename, "kedict.yml")
 		self._filename = filename
+
+		self._glos.sourceLangName = "Korean"
+
 		self._glos.setDefaultDefiFormat("h")
 		self._yaml.open(filename)
 

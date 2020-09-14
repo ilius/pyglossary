@@ -32,6 +32,9 @@ class Reader:
 	def open(self, filename):
 		if self.file is not None:
 			self.file.close()
+
+		self._glos.sourceLangName = "Chinese"
+
 		self.file = open(filename, "r", encoding=self._encoding)
 		for line in self.file:
 			match = entry_count_reg.match(line)
