@@ -135,6 +135,7 @@ class Reader(object):
 
 	def getEntryByElem(self, entry: "lxml.etree.Element") -> "BaseEntry":
 		from lxml import etree as ET
+		glos = self._glos
 		keywords = []
 		f = BytesIO()
 
@@ -175,7 +176,7 @@ class Reader(object):
 			with hf.element("div"):
 				if self._keywords_header:
 					for keyword in keywords:
-						with hf.element("b"):
+						with glos.titleElement(hf):
 							hf.write(keyword)
 						hf.write(br())
 
