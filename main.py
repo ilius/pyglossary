@@ -275,10 +275,13 @@ core.checkCreateConfDir()
 
 ##############################
 
-from pyglossary.glossary import Glossary
+from pyglossary.glossary import Glossary, langDict
 from ui.ui_cmd import help, parseFormatOptionsStr
 
 Glossary.init()
+
+if log.isDebug():
+	log.debug(f"en -> {langDict['en']}")
 
 ##############################
 
