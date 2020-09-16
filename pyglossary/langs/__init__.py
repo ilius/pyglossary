@@ -1,7 +1,7 @@
 
 from pyglossary.core import rootDir
 from os.path import join
-import csv
+import json
 from typing import (
 	List,
 	Optional,
@@ -43,21 +43,13 @@ class LangDict(dict):
 	def load(self):
 		if len(self) > 0:
 			return
-		filename = join(rootDir, "pyglossary", "langs", "list.csv")
+		filename = join(rootDir, "pyglossary", "langs", "langs.json")
 		with open(filename, "r", encoding="utf-8") as _file:
-			csvReader = csv.reader(
-				_file,
-				dialect="excel",
-			)
-			for row in csvReader:
+			data = json.load(_file)
+			for row in data:
 				lang = Lang(
-					codes=[
-						c
-						for part in row[:2]
-						for c in part.split("|")
-						if c
-					],
-					names=row[2:],
+					codes=row["codes"],
+					names=[row["name"]] + row["alt_names"],
 				)
 				for key in lang.codes:
 					if key in self:
