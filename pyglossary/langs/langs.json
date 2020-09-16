@@ -71,7 +71,7 @@
 		"codes": ["as", "asm"],
 		"name": "Assamese",
 		"alt_names": ["Asamiya", "অসমীয়া"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["av", "ava"],
@@ -113,7 +113,7 @@
 		"codes": ["bh", "bih"],
 		"name": "Bihari",
 		"alt_names": ["Bihari languages", "बिहारी"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["bi", "bis"],
@@ -125,13 +125,13 @@
 		"codes": ["bm", "bam"],
 		"name": "Bambara",
 		"alt_names": ["Bamanankan", "ߓߡߊߣߊ߲", "ߓߡߊߣߊ߲ߞߊ߲"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["bn", "ben"],
 		"name": "Bengali",
 		"alt_names": ["বাংলা"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["bnt"],
@@ -240,7 +240,7 @@
 		"codes": ["dz", "dzo"],
 		"name": "Dzongkha",
 		"alt_names": ["རྫོང་ཁ་"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["ee", "ewe"],
@@ -295,7 +295,7 @@
 		"codes": ["ff", "ful"],
 		"name": "Fula",
 		"alt_names": ["Fulani", "Fulah", "Fulfulde", "𞤊𞤵𞤤𞤬𞤵𞤤𞤣𞤫", "Pulaar", "𞤆𞤵𞤤𞤢𞥄𞤪", "Pular", "𞤆𞤵𞤤𞤢𞤪;Peul"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["fi", "fin"],
@@ -350,7 +350,7 @@
 		"name": "Gurjari",
 		"alt_names": ["Gujri", "गुर्जरी", "گُوجَری"],
 		"rtl": 1,
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["gl", "glg"],
@@ -374,7 +374,7 @@
 		"codes": ["gu", "guj"],
 		"name": "Gujarati",
 		"alt_names": ["ગુજરાતી", "Gujarātī"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["gv", "glv"],
@@ -418,7 +418,7 @@
 		"codes": ["hi", "hin"],
 		"name": "Hindi",
 		"alt_names": ["Hindī", "हिंदी"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": [],
@@ -505,7 +505,7 @@
 		"codes": ["ii", "iii"],
 		"name": "Nuosu",
 		"alt_names": ["Nosu", "Northern Yi", "Liangshan Yi", "Sichuan Yi", "ꆈꌠꉙ", "Nuosuhxop", "彝語", "诺苏语"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["ik", "ipk"],
@@ -541,7 +541,7 @@
 		"codes": ["ja", "jpn"],
 		"name": "Japanese",
 		"alt_names": ["日本語", "にほんご", "Nihongo"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["jb", "jbo"],
@@ -553,13 +553,13 @@
 		"codes": ["jv", "jav"],
 		"name": "Javanese",
 		"alt_names": ["ꦧꦱꦗꦮ", "ꦕꦫꦗꦮ", "باسا جاوا", "Basa Jawa", "Båså Jåwå", "Cara Jawa"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["ka", "geo"],
 		"name": "Georgian",
 		"alt_names": ["Kartuli", "ქართული"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["kg", "kon"],
@@ -571,7 +571,7 @@
 		"codes": ["kha"],
 		"name": "Khasi",
 		"alt_names": ["Ka Ktien Khasi", "ক ক্ত্যেন খসি"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["ki", "kik"],
@@ -601,7 +601,7 @@
 		"codes": ["km", "khm"],
 		"name": "Khmer",
 		"alt_names": ["Cambodian", "ភាសាខ្មែរ", "phiăsaa khmae", "ខ្មែរ", "khmae"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["kn", "kan"],
@@ -613,7 +613,7 @@
 		"codes": ["ko", "kor"],
 		"name": "Korean",
 		"alt_names": ["한국어", "韓國語", "조선말", "朝鮮말"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["kr", "kau"],
@@ -625,7 +625,7 @@
 		"codes": ["ks", "kas"],
 		"name": "Kashmiri",
 		"alt_names": ["Koshur", "कॉशुर", "كٲشُر"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["ku", "kur"],
@@ -685,7 +685,7 @@
 		"codes": ["lo", "lao"],
 		"name": "Lao",
 		"alt_names": ["Laotian", "ລາວ", "ພາສາລາວ"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["lt", "lit"],
@@ -739,13 +739,13 @@
 		"codes": ["ml", "mal"],
 		"name": "Malayalam",
 		"alt_names": ["മലയാളം ", "Malayāḷam"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["mnc"],
 		"name": "Manchu",
 		"alt_names": ["manju gisun", "ᠮᠠᠨᠵᡠᡤᡳᠰᡠᠨ"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["mn", "mon"],
@@ -781,7 +781,7 @@
 		"codes": ["my", "bur"],
 		"name": "Burmese",
 		"alt_names": ["မြန်မာစာ", "မြန်မာစကား"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["na", "nau"],
@@ -805,7 +805,7 @@
 		"codes": ["ne", "nep"],
 		"name": "Nepali",
 		"alt_names": ["Gorkhali", "Khaskura", "Nepalese", "Parbate", "नेपाली/खस कुरा"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["ng", "ndo"],
@@ -871,7 +871,7 @@
 		"codes": ["or", "ori"],
 		"name": "Odia",
 		"alt_names": ["Oriya", "ଓଡ଼ିଆ", "Oṛiā"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["os", "oss"],
@@ -883,7 +883,7 @@
 		"codes": ["pa", "pan"],
 		"name": "Punjabi",
 		"alt_names": ["Panjabi", "ਪੰਜਾਬੀ", "پن٘جابی"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["pi", "pli"],
@@ -949,7 +949,7 @@
 		"codes": ["sa", "san"],
 		"name": "Sanskrit",
 		"alt_names": ["संस्कृतम्", "saṃskṛtam"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["sc", "srd"],
@@ -961,7 +961,7 @@
 		"codes": ["sd", "snd"],
 		"name": "Sindhi",
 		"alt_names": ["سنڌي", "सिंधी", "ਸਿੰਧੀ", "𑈩𑈭𑈴𑈝𑈮", "𑋝𑋡𑋟𑋐𑋢"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["se", "sme"],
@@ -985,7 +985,7 @@
 		"codes": ["si", "sin"],
 		"name": "Sinhala",
 		"alt_names": ["Sinhalese", "සිංහල", "Siṁhala"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["sk", "slo"],
@@ -1063,13 +1063,13 @@
 		"codes": ["ta", "tam"],
 		"name": "Tamil",
 		"alt_names": ["தமிழ்", "Tamiḻ"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["te", "tel"],
 		"name": "Telugu",
 		"alt_names": ["తెలుగు"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["tg", "tgk"],
@@ -1081,13 +1081,13 @@
 		"codes": ["th", "tha"],
 		"name": "Thai",
 		"alt_names": ["Central Thai", "Siamese", "ภาษาไทย", "Phasa Thai"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["ti", "tir"],
 		"name": "Tigrinya",
 		"alt_names": ["Tigrigna", "ትግርኛ", "tigriññā"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["tk", "tuk"],
@@ -1226,13 +1226,13 @@
 		"codes": ["za", "zha"],
 		"name": "Zhuang",
 		"alt_names": ["Vahcuengh", "話僮", "壮语", "壯語", "Zhuàngyǔ"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["zh", "chi", "zho"],
 		"name": "Chinese",
 		"alt_names": ["汉语", "漢語", "Mandarin", "Standard Chinese", "Modern Standard Mandarin", "Standard Mandarin", "Mandarin Chinese", "普通话", "普通話", "国语", "國語", "华语", "華語"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["zu", "zul"],
