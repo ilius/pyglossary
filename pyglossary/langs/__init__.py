@@ -12,12 +12,24 @@ log = logging.getLogger("root")
 
 
 class Lang(object):
-	def __init__(self, codes: List[str], names: List[str]):
+	def __init__(
+		self,
+		codes: List[str],
+		names: List[str],
+		titleTag: str = "b",
+	):
 		self._codes = codes
 		self._names = names
+		self._titleTag = titleTag
 
 	def __repr__(self) -> str:
-		return f"Lang(codes={self._codes!r}, names={self._names!r})"
+		return (
+			f'Lang('
+			f'codes={self._codes!r}, '
+			f'names={self._names!r}, '
+			f'titleTag={self._titleTag!r}'
+			f')'
+		)
 
 	def __str__(self) -> str:
 		return f"Lang({self._codes + self._names})"
@@ -38,6 +50,9 @@ class Lang(object):
 	def code(self):
 		return self._codes[0]
 
+	@property
+	def titleTag(self):
+		return self._titleTag
 
 class LangDict(dict):
 	def load(self):
@@ -50,6 +65,7 @@ class LangDict(dict):
 				lang = Lang(
 					codes=row["codes"],
 					names=[row["name"]] + row["alt_names"],
+					titleTag=row["title_tag"],
 				)
 				for key in lang.codes:
 					if key in self:

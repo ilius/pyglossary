@@ -281,7 +281,7 @@ from ui.ui_cmd import help, parseFormatOptionsStr
 Glossary.init()
 
 if log.isDebug():
-	log.debug(f"en -> {langDict['en']}")
+	log.debug(f"en -> {langDict['en']!r}")
 
 ##############################
 

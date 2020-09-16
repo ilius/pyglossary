@@ -698,15 +698,7 @@ class Glossary(GlossaryType):
 		sourceLang = self.sourceLang
 		if sourceLang is None:
 			return hf.element("b")
-
-		if sourceLang.code in (
-			"zh",
-			"ja",
-			"ko",
-		):
-			return hf.element("big")
-
-		return hf.element("b")
+		return hf.element(sourceLang.titleTag)
 
 	def getPref(self, name: str, default: Optional[str]) -> Optional[str]:
 		if self.ui:
