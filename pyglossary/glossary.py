@@ -660,6 +660,18 @@ class Glossary(GlossaryType):
 	def targetLang(self) -> Optional[Lang]:
 		return self._getLangByInfoKey("targetLang")
 
+	@sourceLang.setter
+	def sourceLang(self, lang) -> None:
+		if not isinstance(lang, Lang):
+			raise TypeError(f"invalid lang={lang}, must be a Lang object")
+		self.setInfo("sourceLang", lang.name)
+
+	@targetLang.setter
+	def targetLang(self, lang) -> None:
+		if not isinstance(lang, Lang):
+			raise TypeError(f"invalid lang={lang}, must be a Lang object")
+		self.setInfo("targetLang", lang.name)
+
 	@property
 	def sourceLangName(self) -> str:
 		lang = self.sourceLang
