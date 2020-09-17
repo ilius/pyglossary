@@ -48,7 +48,7 @@ Supported formats
 | [dictunformat](https://linux.die.net/man/1/dictunformat) output file  |📝 | (.dictunformat) | ✔  |     |
 | [DictionaryForMIDs](http://dictionarymid.sourceforge.net)             |📁 | (📁.mids)       | ✔  |  ✔  |
 | [DigitalNK](https://github.com/digitalprk/dicrs) (SQLite3, N-Korean)  |🔢 |                 | ✔  |     |
-| Editable Linked List of Entries                                       |📁 | .edlin          | ✔  |  ✔  |
+| EDLIN                                                                 |📁 | .edlin          | ✔  |  ✔  |
 | EPUB-2 E-Book                                                         |📦 | .epub           |:x: |  ✔  |
 | [FreeDict](https://freedict.org)                                      |📝 | .tei            | ✔  |  ✔  |
 | [Gettext Source](https://www.gnu.org/software/gettext)                |📝 | .po             | ✔  |  ✔  |
