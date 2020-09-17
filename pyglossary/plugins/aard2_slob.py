@@ -135,9 +135,25 @@ class Writer(object):
 	_compression: str = ""
 	_content_type: str = ""
 
+	resourceMimeTypes = {
+		"png": "image/png",
+		"jpeg": "image/jpeg",
+		"jpg": "image/jpeg",
+		"gif": "image/gif",
+		"svg": "image/svg+xml",
+		"css": "text/css",
+		"js": "application/javascript",
+		"json": "application/json",
+		"woff": "application/font-woff",
+		"ttf": "application/x-font-ttf",
+		"otf": "application/x-font-opentype"
+		# "application/octet-stream+xapian",
+	}
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
+		self._resPrefix = "res/"
 
 	def open(self, filename: str):
 		try:
@@ -163,6 +179,24 @@ class Writer(object):
 			self._slobWriter.finalize()
 			self._slobWriter = None
 
+	def addDataEntry(self, entry: "DataEntry") -> None:
+		slobWriter = self._slobWriter
+		rel_path = entry.s_word
+		_, ext = splitext(rel_path)
+		ext = ext.lstrip(os.path.extsep).lower()
+		content_type = self.resourceMimeTypes.get(ext)
+		if not content_type:
+			log.error(f'unknown content type for {rel_path!r}')
+			return
+		content = entry.data
+		key = self._resPrefix + rel_path
+		try:
+			key.encode(slobWriter.encoding)
+		except UnicodeEncodeError:
+			log.error('Failed to add, broken unicode in key: {!a}'.format(key))
+			return
+		slobWriter.add(content, key, content_type=content_type)
+
 	def write(self) -> Generator[None, "BaseEntry", None]:
 		content_type = self._content_type
 		slobWriter = self._slobWriter
@@ -170,6 +204,9 @@ class Writer(object):
 			entry = yield
 			if entry is None:
 				break
+			if entry.isData():
+				self.addDataEntry(entry)
+
 			words = entry.l_word
 			b_defi = entry.defi.encode("utf-8")
 			_ctype = content_type
