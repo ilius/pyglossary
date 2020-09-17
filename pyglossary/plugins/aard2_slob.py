@@ -153,7 +153,7 @@ class Writer(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
-		self._resPrefix = "res/"
+		self._resPrefix = ""
 
 	def open(self, filename: str):
 		try:

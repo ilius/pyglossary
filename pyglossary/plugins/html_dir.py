@@ -412,6 +412,8 @@ class Writer(object):
 
 			if defiFormat == "m":
 				defi = defi.replace("\n", "<br>")
+			elif defiFormat == "h":
+				defi = defi.replace(' src="./', ' src="./res/')
 
 			if escape_defi:
 				defi = html.escape(defi)

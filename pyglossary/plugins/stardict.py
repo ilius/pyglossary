@@ -302,8 +302,10 @@ class Reader(object):
 			else:
 				word = [word] + alts
 
-			defis_str = "\n<hr>\n".join(defis)
-			yield self._glos.newEntry(word, defis_str, defiFormat=defiFormat)
+			defi = "\n<hr>\n".join(defis)
+			# FIXME:
+			# defi = defi.replace(' src="./res/', ' src="./')
+			yield self._glos.newEntry(word, defi, defiFormat=defiFormat)
 
 		if isdir(self._resDir):
 			for fname in os.listdir(self._resDir):
@@ -529,6 +531,9 @@ class Writer(object):
 			# if there is </p> left without opening, replace with <br>
 			defi = defi.replace("</p>", "<br>")
 			defi = self._br_pattern.sub("<br>", defi)
+
+		# FIXME:
+		# defi = defi.replace(' src="./', ' src="./res/')
 		return defi
 
 	def writeCompact(self, defiFormat):

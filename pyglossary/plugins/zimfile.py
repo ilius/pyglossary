@@ -140,7 +140,7 @@ class Reader(object):
 
 			if mimetype == "text/html":
 				defi = b_content.decode("utf-8")
-				defi = defi.replace(' src="../I/', ' src="./res/')
+				defi = defi.replace(' src="../I/', ' src="./')
 				yield glos.newEntry(word, defi, defiFormat="h")
 				continue
 
