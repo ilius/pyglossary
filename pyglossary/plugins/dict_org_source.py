@@ -4,7 +4,7 @@ from formats_common import *
 
 enable = True
 format = "DictOrgSource"
-description = "DICT.org / dictfmt source file"
+description = "DICT.org dictfmt source file"
 extensions = (".dtxt",)
 singleFile = True
 optionsProp = {

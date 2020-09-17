@@ -28,7 +28,8 @@ from pyglossary.text_utils import (
 
 enable = True
 format = "Edlin"
-description = "Editable Linked List of Entries"
+# Editable Linked List of Entries
+description = "EDLIN"
 extensions = (".edlin",)
 optionsProp = {
 	"encoding": EncodingOption(),

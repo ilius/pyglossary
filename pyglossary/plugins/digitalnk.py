@@ -5,7 +5,7 @@ import html
 
 enable = True
 format = 'DigitalNK'
-description = 'DigitalNK (SQLite3, North Korean)'
+description = 'DigitalNK (SQLite3, N-Korean)'
 extensions = ()
 readOptions = []
 writeOptions = []

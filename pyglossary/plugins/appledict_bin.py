@@ -21,7 +21,7 @@ from zlib import decompress
 
 enable = True
 format = "AppleDictBin"
-description = "AppleDict Binary (.dictionary)"
+description = "AppleDict Binary"
 extensions = (".dictionary", ".data",)
 singleFile = True
 tools = [
