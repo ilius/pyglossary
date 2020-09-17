@@ -762,6 +762,38 @@ class Glossary(GlossaryType):
 			setattr(reader, f"_{name}", value)
 		return reader
 
+	def detectLangsFromName(self):
+		"""
+		extract sourceLang and targetLang from glossary name/title
+		"""
+		name = self.getInfo("name")
+		if not name:
+			return
+		if self.getInfo("sourceLang"):
+			return
+		for match in re.findall(
+			r"(\w\w\w*)\s*(-| to )\s*(\w\w\w*)",
+			name,
+			flags=re.I,
+		):
+			sourceLang = langDict[match[0]]
+			if sourceLang is None:
+				log.info(f"Invalid language code/name {match[0]!r} in match={match}")
+				continue
+			targetLang = langDict[match[2]]
+			if targetLang is None:
+				log.info(f"Invalid language code/name {match[2]!r} in match={match}")
+				continue
+			self.sourceLang = sourceLang
+			self.targetLang = targetLang
+			log.info(
+				f"Detected sourceLang={sourceLang.name!r}, "
+				f"targetLang={targetLang.name!r} "
+				f"from glossary name {name!r}"
+			)
+			return
+		log.info(f"Failed to detect sourceLang and targetLang from glossary name {name!r}")
+
 	def read(
 		self,
 		filename: str,
@@ -838,6 +870,7 @@ class Glossary(GlossaryType):
 			self.loadReader(reader)
 
 		self._updateIter()
+		self.detectLangsFromName()
 
 		return True
 
