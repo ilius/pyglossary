@@ -132,7 +132,7 @@ class PluginProp(object):
 					f"Invalid Writer class in {self.name!r} plugin"
 					f", no {attr!r} method"
 				)
-				self._p.Reader = None
+				self._p.Writer = None
 				return None
 
 		if hasattr(cls, "depends"):
