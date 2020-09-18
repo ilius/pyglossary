@@ -294,7 +294,7 @@
 	{
 		"codes": ["ff", "ful"],
 		"name": "Fula",
-		"alt_names": ["Fulani", "Fulah", "Fulfulde", "𞤊𞤵𞤤𞤬𞤵𞤤𞤣𞤫", "Pulaar", "𞤆𞤵𞤤𞤢𞥄𞤪", "Pular", "𞤆𞤵𞤤𞤢𞤪;Peul"],
+		"alt_names": ["Fulani", "Fulah", "Fulfulde", "𞤊𞤵𞤤𞤬𞤵𞤤𞤣𞤫", "Pulaar", "𞤆𞤵𞤤𞤢𞥄𞤪", "Pular", "𞤆𞤵𞤤𞤢𞤪", "Peul"],
 		"title_tag": "big"
 	},
 	{
@@ -738,7 +738,7 @@
 	{
 		"codes": ["ml", "mal"],
 		"name": "Malayalam",
-		"alt_names": ["മലയാളം ", "Malayāḷam"],
+		"alt_names": ["മലയാളം", "Malayāḷam"],
 		"title_tag": "big"
 	},
 	{
@@ -804,7 +804,7 @@
 	{
 		"codes": ["ne", "nep"],
 		"name": "Nepali",
-		"alt_names": ["Gorkhali", "Khaskura", "Nepalese", "Parbate", "नेपाली/खस कुरा"],
+		"alt_names": ["Gorkhali", "Khaskura", "Nepalese", "Parbate", "नेपाली", "खस कुरा"],
 		"title_tag": "big"
 	},
 	{
@@ -1171,7 +1171,7 @@
 	{
 		"codes": ["uz", "uzb"],
 		"name": "Uzbek",
-		"alt_names": ["O‘zbekcha", " o‘zbek tili", "Ўзбекча", "ўзбек тили", "اۉزبېکچه", " اۉزبېک تیلی", "Özbekçä", " Özbek Tili"],
+		"alt_names": ["O‘zbekcha", "o‘zbek tili", "Ўзбекча", "ўзбек тили", "اۉزبېکچه", "اۉزبېک تیلی", "Özbekçä", "Özbek Tili"],
 		"title_tag": "b"
 	},
 	{
