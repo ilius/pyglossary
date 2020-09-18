@@ -293,6 +293,7 @@ def unwrap_quotes(s):
 
 class Reader(object):
 	compressions = stdCompressions + ("dz",)
+	defiFormats = ("h", "m")
 
 	_encoding: str = ""
 	_audio: bool = False

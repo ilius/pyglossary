@@ -21,6 +21,8 @@ optionsProp = {
 
 
 class Reader(object):
+	defiFormats = ("h", "m")
+
 	depends = {
 		"polib": "polib",
 	}
@@ -106,6 +108,8 @@ class Reader(object):
 
 
 class Writer(object):
+	defiFormats = ("h", "m")
+
 	depends = {
 		"polib": "polib",
 	}

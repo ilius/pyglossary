@@ -22,6 +22,8 @@ optionsProp = {
 
 
 class Writer(object):
+	defiFormats = ("H", "h", "m")
+
 	_encoding: str = "utf-8"
 	_info_keys: "Optional[List]" = None
 	_add_extra_info: bool = True

@@ -132,6 +132,15 @@ class PluginProp(object):
 		else:
 			cls.depends = {}
 
+		if hasattr(cls, "defiFormats"):
+			if not isinstance(cls.defiFormats, tuple):
+				log.error(
+					f"invalid defiFormats={cls.defiFormats}"
+					f" in {self.name!r}.Reader class"
+				)
+		else:
+			log.error(f"no defiFormats in {self.name!r}.Reader class")
+
 		return cls
 
 	@property
@@ -169,6 +178,16 @@ class PluginProp(object):
 				)
 		else:
 			cls.depends = {}
+
+		if hasattr(cls, "defiFormats"):
+			if not isinstance(cls.defiFormats, tuple):
+				log.error(
+					f"invalid defiFormats={cls.defiFormats}"
+					f" in {self.name!r}.Writer class"
+				)
+		else:
+			log.error(f"no defiFormats in {self.name!r}.Writer class")
+
 
 		return cls
 

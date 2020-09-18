@@ -24,6 +24,8 @@ optionsProp = {
 
 class Reader(object):
 	compressions = stdCompressions
+	defiFormats = ("h",)
+
 	depends = {
 		"lxml": "lxml",
 	}

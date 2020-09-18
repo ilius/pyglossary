@@ -52,6 +52,8 @@ tei = "{http://www.tei-c.org/ns/1.0}"
 
 class Reader(object):
 	compressions = stdCompressions
+	defiFormats = ("h",)
+
 	depends = {
 		"lxml": "lxml",
 	}
@@ -852,3 +854,4 @@ class Reader(object):
 			log.info("Found unsupported tags")
 			for tag, elem in self._discoveredTags.items():
 				log.info(f"{self.tostring(elem)}\n")
+

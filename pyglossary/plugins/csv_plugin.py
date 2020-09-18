@@ -57,6 +57,7 @@ optionsProp = {
 
 class Reader(object):
 	compressions = stdCompressions
+	defiFormats = ("h", "m", "b")
 
 	_encoding: str = "utf-8"
 	_delimiter: str = ","
@@ -179,6 +180,7 @@ class Reader(object):
 
 class Writer(object):
 	compressions = stdCompressions
+	defiFormats = ("h", "m", "b")
 
 	_encoding: str = "utf-8"
 	_resources: bool = True

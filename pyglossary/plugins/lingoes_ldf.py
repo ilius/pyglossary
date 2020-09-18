@@ -27,6 +27,7 @@ optionsProp = {
 
 class Reader(TextGlossaryReader):
 	compressions = stdCompressions
+	defiFormats = ("h", "m", "b")
 
 	def __len__(self):
 		if self._wordCount is None:
@@ -87,6 +88,7 @@ class Reader(TextGlossaryReader):
 
 class Writer(object):
 	compressions = stdCompressions
+	defiFormats = ("h", "m", "b")
 
 	_newline: str = "\n"
 	_resources: str = True

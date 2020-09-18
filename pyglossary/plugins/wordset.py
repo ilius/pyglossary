@@ -25,6 +25,7 @@ optionsProp = {
 
 
 class Reader(object):
+	defiFormats = ("h",)
 	_encoding: str = "utf-8"
 
 	def __init__(self, glos: GlossaryType):

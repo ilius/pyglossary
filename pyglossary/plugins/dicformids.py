@@ -55,6 +55,8 @@ language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEn
 
 
 class Reader(object):
+	defiFormats = ("h", "m")
+
 	re_number = re.compile(r"\d+")
 
 	def __init__(self, glos):
@@ -114,6 +116,8 @@ class Reader(object):
 
 
 class Writer(object):
+	defiFormats = ("h", "m")
+
 	def __init__(self, glos):
 		self._glos = glos
 		self.linesPerDirectoryFile = 500  # 200

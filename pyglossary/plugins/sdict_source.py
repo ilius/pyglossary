@@ -25,6 +25,8 @@ optionsProp = {
 
 
 class Writer(object):
+	defiFormats = ("h", "b")
+
 	_enable_info: bool = True
 	_newline: bool = "\n"
 	_resources: bool = True

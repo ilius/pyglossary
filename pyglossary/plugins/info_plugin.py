@@ -18,6 +18,8 @@ optionsProp = {}
 
 
 class Writer(object):
+	defiFormats = ("H", "h", "m", "b")
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._filename = None
@@ -143,6 +145,8 @@ class Writer(object):
 
 
 class Reader(object):
+	defiFormats = ("H", "h", "m", "b")
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 

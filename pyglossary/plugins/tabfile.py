@@ -35,6 +35,8 @@ optionsProp = {
 
 
 class Reader(TextGlossaryReader):
+	defiFormats = ("h", "m", "b")
+
 	def __init__(self, glos: GlossaryType, hasInfo: bool = True):
 		TextGlossaryReader.__init__(self, glos, hasInfo=hasInfo)
 		self._resDir = ""
@@ -93,6 +95,8 @@ class Reader(TextGlossaryReader):
 
 
 class Writer(object):
+	defiFormats = ("h", "m", "b")
+
 	_encoding: str = "utf-8"
 	_enable_info: bool = True
 	_resources: bool = True

@@ -48,6 +48,7 @@ def makeDir(direc: str) -> None:
 
 
 class Reader(object):
+	defiFormats = ("H", "h", "m", "b")
 	_encoding: str = "utf-8"
 
 	def __init__(self, glos: GlossaryType):
@@ -162,6 +163,7 @@ class Reader(object):
 
 
 class Writer(object):
+	defiFormats = ("H", "h", "m", "b")
 	_encoding: str = "utf-8"
 	_prev_link: bool = True
 

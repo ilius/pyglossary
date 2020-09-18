@@ -269,6 +269,7 @@ class YamlReader(TextGlossaryReader):
 
 
 class Reader(object):
+	defiFormats = ("h",)
 	depends = {
 		"yaml": "PyYAML",
 		"lxml": "lxml",

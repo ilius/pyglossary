@@ -111,6 +111,8 @@ class GroupStateBySize(object):
 
 
 class Writer(EbookWriter):
+	defiFormats = ("h",)
+
 	_compress: bool = False
 	_keep: bool = False
 	_kindlegen_path: str = ""

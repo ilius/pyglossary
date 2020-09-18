@@ -24,6 +24,8 @@ def unescapeDefi(defi: str) -> str:
 
 
 class Reader(TextGlossaryReader):
+	defiFormats = ("h", "m")
+
 	def isInfoWord(self, word):
 		return word.startswith("00-database-")
 

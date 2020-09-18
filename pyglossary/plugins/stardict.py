@@ -103,6 +103,8 @@ def verifySameTypeSequence(s: str) -> bool:
 
 
 class Reader(object):
+	defiFormats = ("h", "m", "x", "b")
+
 	_xdxf_to_html = True
 	_unicode_errors = "strict"
 
@@ -463,6 +465,8 @@ class Reader(object):
 
 
 class Writer(object):
+	defiFormats = ("h", "m", "x", "b")
+
 	_dictzip: bool = True
 	_sametypesequence: str = ""  # type: Literal["", "h", "m", "x", None]
 	_stardict_client: bool = False

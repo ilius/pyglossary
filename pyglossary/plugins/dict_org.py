@@ -62,6 +62,8 @@ def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 
 
 class Reader(object):
+	defiFormats = ("h", "m")
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._filename = ""
@@ -126,6 +128,8 @@ class Reader(object):
 
 
 class Writer(object):
+	defiFormats = ("h", "m")
+
 	_dictzip: bool = False
 	_install: bool = True
 

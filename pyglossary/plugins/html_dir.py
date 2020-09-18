@@ -66,6 +66,8 @@ h6 {{ font-size: 1.0em;}}
 
 
 class Writer(object):
+	defiFormats = ("h", "m", "b")
+
 	depends = {
 		"cachetools": "cachetools",
 	}

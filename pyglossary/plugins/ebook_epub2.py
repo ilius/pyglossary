@@ -60,6 +60,8 @@ optionsProp = {
 
 
 class Writer(EbookWriter):
+	defiFormats = ("h",)
+
 	# these class attrs are only in Epub
 	# MIMETYPE_CONTENTS, CONTAINER_XML_CONTENTS
 	# NCX_TEMPLATE, NCX_NAVPOINT_TEMPLATE

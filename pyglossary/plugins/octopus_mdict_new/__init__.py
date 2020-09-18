@@ -59,6 +59,8 @@ then try to install [LZO library and Python binding](./doc/lzo.md)."""
 
 
 class Reader(object):
+	defiFormats = ("h", "m", "b")
+
 	_encoding: str = ""
 	_substyle: bool = True
 	_same_dir_data_files: bool = False

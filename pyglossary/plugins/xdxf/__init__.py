@@ -75,6 +75,8 @@ old format
 
 
 class Reader(object):
+	defiFormats = ("h", "x")
+
 	depends = {
 		"lxml": "lxml",
 	}
