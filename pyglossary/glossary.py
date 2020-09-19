@@ -706,7 +706,11 @@ class Glossary(GlossaryType):
 			return
 		self.setInfo("targetLang", lang.name)
 
-	def titleElement(self, hf: "lxml.etree.htmlfile") -> "lxml.etree._FileWriterElement":
+	def titleElement(
+		self,
+		hf: "lxml.etree.htmlfile",
+		sample: str = "",
+	) -> "lxml.etree._FileWriterElement":
 		sourceLang = self.sourceLang
 		if sourceLang is None:
 			return hf.element("b")

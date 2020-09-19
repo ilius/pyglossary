@@ -196,7 +196,7 @@ class Reader(object):
 						keywords.append(f"{keb}・{reb}")
 
 				if kebList:
-					with glos.titleElement(hf):
+					with glos.titleElement(hf, kebList[0]):
 						for i, keb in enumerate(kebList):
 							if i > 0:
 								with hf.element("font", color="red"):

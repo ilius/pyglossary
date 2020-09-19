@@ -176,7 +176,7 @@ class Reader(object):
 			with hf.element("div"):
 				if self._keywords_header:
 					for keyword in keywords:
-						with glos.titleElement(hf):
+						with glos.titleElement(hf, keyword):
 							hf.write(keyword)
 						hf.write(br())
 
