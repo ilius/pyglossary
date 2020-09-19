@@ -64,7 +64,10 @@ from .core import VERSION, userPluginsDir, cacheDir
 from .entry_base import BaseEntry
 from .entry import Entry, DataEntry
 from .plugin_prop import PluginProp
+
 from .langs import LangDict, Lang
+from .langs.writing_system import getWritingSystemFromText
+
 from .sort_stream import hsortStreamList
 
 from .text_utils import (
@@ -712,9 +715,13 @@ class Glossary(GlossaryType):
 		sample: str = "",
 	) -> "lxml.etree._FileWriterElement":
 		sourceLang = self.sourceLang
-		if sourceLang is None:
-			return hf.element("b")
-		return hf.element(sourceLang.titleTag)
+		if sourceLang:
+			return hf.element(sourceLang.titleTag)
+		if sample:
+			ws = getWritingSystemFromText(sample)
+			if ws:
+				return hf.element(ws.titleTag)
+		return hf.element("b")
 
 	def getPref(self, name: str, default: Optional[str]) -> Optional[str]:
 		if self.ui:
