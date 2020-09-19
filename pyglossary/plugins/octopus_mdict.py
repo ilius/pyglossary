@@ -143,6 +143,7 @@ class Reader(object):
 			if defi.startswith("@@@LINK="):
 				continue
 			defi = self._re_internal_link.sub(r'href=\1bword://', defi)
+			defi = defi.replace(' src="file://', ' src="')
 			words = word
 			altsStr = linksDict.get(word, "")
 			if altsStr:
