@@ -28,7 +28,13 @@
 		"codes": ["ain"],
 		"name": "Ainu",
 		"alt_names": ["Ainuic", "Aynu", "itak", "アィヌ・イタㇰ"],
-		"title_tag": "b"
+		"title_tag": "big"
+	},
+	{
+		"codes": ["aib"],
+		"name": "Äynu",
+		"alt_names": ["Aynu", "Ainu", "Aini", "Eynu", "Abdal", "Äynú", "ئەينۇ‎", "ئابدال"],
+		"title_tag": "big"
 	},
 	{
 		"codes": ["ak", "aka"],
@@ -46,7 +52,7 @@
 		"codes": ["am", "amh"],
 		"name": "Amharic",
 		"alt_names": ["አማርኛ", "Amarəñña"],
-		"title_tag": "b"
+		"title_tag": "big"
 	},
 	{
 		"codes": ["an", "arg"],
