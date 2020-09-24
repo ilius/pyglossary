@@ -27,6 +27,8 @@ from itertools import groupby
 from pathlib import Path
 import unicodedata
 import re
+from pickle import dumps, loads
+from zlib import compress, decompress
 
 enable = True
 format = "Kobo"
@@ -120,17 +122,6 @@ class Writer:
 		wo = wo.ljust(2, "a")
 		return wo
 
-	def get_prefix_b(self, b_word: bytes) -> str:
-		return self.get_prefix(b_word.decode("utf-8"))
-
-	def sortKey(self, b_word: bytes) -> Any:
-		# DO NOT change method name
-		word = b_word.decode("utf-8")
-		return (
-			self.get_prefix(word),
-			word,
-		)
-
 	def fix_defi(self, defi: str) -> str:
 		# @pgaskin on #219: Kobo supports images in dictionaries,
 		# but these have a lot of gotchas
@@ -149,7 +140,6 @@ class Writer:
 		from pyglossary.entry import Entry
 
 		glos = self._glos
-		words = []
 		dataEntryCount = 0
 
 		htmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
@@ -169,6 +159,7 @@ class Writer:
 				gzipFile.write(htmlContents.encode("utf-8"))
 			htmlContents = htmlHeader
 
+		allWords = []
 		data = []
 
 		while True:
@@ -179,9 +170,7 @@ class Writer:
 				dataEntryCount += 1
 				continue
 			l_word = entry.l_word
-			if len(l_word) == 1:
-				data.append(entry.getRaw(glos))
-				continue
+			allWords += l_word
 			wordsByPrefix = OrderedDict()
 			for word in l_word:
 				prefix = self.get_prefix(word)
@@ -189,41 +178,38 @@ class Writer:
 					wordsByPrefix[prefix].append(word)
 				else:
 					wordsByPrefix[prefix] = [word]
-			if len(wordsByPrefix) == 1:
-				data.append(entry.getRaw(glos))
-				continue
-			defi = entry.defi
+			defi = self.fix_defi(entry.defi)
+			mainHeadword = l_word[0]
 			for prefix, p_words in wordsByPrefix.items():
-				data.append(Entry(p_words, defi).getRaw(glos))
+				headword, *variants = p_words
+				if headword != mainHeadword:
+					headword = f"{mainHeadword}, {headword}"
+				data.append(
+					compress(dumps((prefix, headword, variants, defi)), level=9)
+				)
 			del entry
 
 		log.info(f"\nKobo: sorting entries...")
-		data.sort(key=Entry.getRawEntrySortKey(glos, self.get_prefix_b))
+		data.sort(key=lambda x: loads(decompress(x))[0])
+
+		log.info(f"Kobo: writing entries...")
 
 		lastPrefix = ""
-		for rawEntry in data:
-			entry = Entry.fromRaw(glos, rawEntry)
-
-			headword, *variants = entry.l_word
-			prefix = self.get_prefix(headword)
+		for row in data:
+			prefix, headword, variants, defi = loads(decompress(row))
 			if lastPrefix and prefix != lastPrefix:
 				writeGroup(lastPrefix)
 				groupCounter = 0
 			lastPrefix = prefix
 
-			defi = entry.defi
-			defi = self.fix_defi(defi)
-			for w in entry.l_word:
-				words.append(w)
-			variants = [v.strip().lower() for v in variants]
-			variants_html = (
-				'<var>' +
-				''.join(f'<variant name="{v}"/>' for v in variants) +
-				'</var>'
+			htmlVariants = "".join(
+				f'<variant name="{v.strip().lower()}"/>'
+				for v in variants
 			)
-			htmlContents += f"<w><a name=\"{headword}\" /><div><b>{headword}</b>"\
-				f"{variants_html}<br/>{defi}</div></w>\n"
+			body = f"<div><b>{headword}</b><var>{htmlVariants}</var><br/>{defi}</div>"
+			htmlContents += f"<w><a name=\"{headword}\" />{body}</w>\n"
 			groupCounter += 1
+		del data
 
 		if groupCounter > 0:
 			writeGroup(lastPrefix)
@@ -234,7 +220,7 @@ class Writer:
 				" and replaced '<img ...' tags in definitions with placeholders"
 			)
 
-		self._words = words
+		self._words = allWords
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
