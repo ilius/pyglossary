@@ -152,7 +152,7 @@ class Reader(object):
 				continue
 
 			if mimetype not in self.resourceMimeTypes:
-				log.warn("Unrecognized mimetype={mimetype!r}")
+				log.warn(f"Unrecognized mimetype={mimetype!r}")
 
 			if "|" in word:
 				log.error(f"resource title: {word}")
