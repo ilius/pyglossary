@@ -136,6 +136,7 @@ class Reader(object):
 		self._fileSize = os.path.getsize(filename)
 		self._file = open(self._filename, mode="rb")
 		self._glos.setDefaultDefiFormat("x")
+		self._glos.setInfo("input_file_size", f"{self._fileSize}")
 
 	def __len__(self):
 		return 0

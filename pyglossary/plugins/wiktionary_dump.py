@@ -64,6 +64,7 @@ class Reader(object):
 		generator = ", ".join(siteinfo.xpath("generator/text()"))
 
 		self._glos.setInfo("title", f"{dbname} ({sitename})")
+		self._glos.setInfo("input_file_size", f"{self._fileSize}")
 
 		base = siteinfo.xpath("base/text()")
 		if base:

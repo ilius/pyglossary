@@ -364,6 +364,7 @@ class Reader(object):
 		self._file = open(filename, mode="rb")
 
 		self._glos.setDefaultDefiFormat("h")
+		self._glos.setInfo("input_file_size", f"{self._fileSize}")
 
 		context = ET.iterparse(
 			self._file,
