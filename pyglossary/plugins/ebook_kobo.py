@@ -28,7 +28,7 @@ from pathlib import Path
 import unicodedata
 import re
 from pickle import dumps, loads
-from zlib import compress, decompress
+from gzip import compress, decompress
 
 enable = True
 format = "Kobo"
@@ -184,19 +184,24 @@ class Writer:
 				headword, *variants = p_words
 				if headword != mainHeadword:
 					headword = f"{mainHeadword}, {headword}"
-				data.append(
-					compress(dumps((prefix, headword, variants, defi)), level=9)
-				)
+				data.append((
+					prefix,
+					compress(dumps((
+						headword,
+						variants,
+						defi,
+					)))
+				))
 			del entry
 
 		log.info(f"\nKobo: sorting entries...")
-		data.sort(key=lambda x: loads(decompress(x))[0])
+		data.sort(key=lambda x: x[0])
 
 		log.info(f"Kobo: writing entries...")
 
 		lastPrefix = ""
-		for row in data:
-			prefix, headword, variants, defi = loads(decompress(row))
+		for prefix, row in data:
+			headword, variants, defi = loads(decompress(row))
 			if lastPrefix and prefix != lastPrefix:
 				writeGroup(lastPrefix)
 				groupCounter = 0
