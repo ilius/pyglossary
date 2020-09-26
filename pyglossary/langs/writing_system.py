@@ -66,7 +66,7 @@ writingSystemList = [
 	WritingSystem(name="Georgian", unicode=["GEORGIAN"], titleTag="big"),
 
 	# https://en.wikipedia.org/wiki/Ge%CA%BDez_script
-	WritingSystem(name="Geʽez", unicode=["ETHIOPIC"], titleTag="big"),
+	WritingSystem(name="Ge'ez", unicode=["ETHIOPIC"], titleTag="big"),
 
 	WritingSystem(name="Javanese", unicode=["JAVANESE"], titleTag="big"),
 	WritingSystem(name="Kannada", unicode=["KANNADA"], titleTag="big"),
@@ -91,6 +91,11 @@ writingSystemList = [
 	WritingSystem(name="Thai", unicode=["THAI"], titleTag="big"),
 	WritingSystem(name="Tibetan", unicode=["TIBETAN"], titleTag="big"),
 	WritingSystem(name="Baybayin", unicode=["TAGALOG"], titleTag="big"),
+	WritingSystem(name="Avestan", unicode=["AVESTAN"], titleTag="b"),
+	WritingSystem(name="Bengali", unicode=["BENGALI"], titleTag="b"),
+	WritingSystem(name="Glagolitic", unicode=["GLAGOLITIC"], titleTag="b"),
+	WritingSystem(name="Takri", unicode=["TAKRI"], titleTag="b"),
+	# WritingSystem(name="Mwangwego", unicode=[], titleTag="b"),
 
 	WritingSystem(
 		name="Canadian syllabic",
@@ -105,6 +110,10 @@ writingSystemByUnicode = {
 	for uni in ws.unicode
 }
 
+writingSystemByName = {
+	ws.name: ws
+	for ws in writingSystemList
+}
 
 unicodeNextWord = {
 	"HALFWIDTH",
