@@ -88,17 +88,17 @@ writingSystemList = [
 	WritingSystem(
 		name="Greek",
 		unicode=["GREEK"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Gujarati",
 		unicode=["GUJARATI"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Gurmukhi",
 		unicode=["GURMUKHI"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Hebrew",
@@ -108,42 +108,42 @@ writingSystemList = [
 	WritingSystem(
 		name="Kannada",
 		unicode=["KANNADA"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Khmer",
 		unicode=["KHMER"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Lao",
 		unicode=["LAO"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Malayalam",
 		unicode=["MALAYALAM"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Mongolian",
 		unicode=["MONGOLIAN"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Odia",
 		unicode=["ORIYA"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Sinhala",
 		unicode=["SINHALA"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Sundanese",
 		unicode=["SUNDANESE"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Tamil",
@@ -154,17 +154,17 @@ writingSystemList = [
 	WritingSystem(
 		name="Telugu",
 		unicode=["TELUGU"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Thai",
 		unicode=["THAI"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Tibetan",
 		unicode=["TIBETAN"],
-		titleTag="big"
+		titleTag="big",
 	),
 
 	# _____________________________________________________
@@ -172,11 +172,12 @@ writingSystemList = [
 	WritingSystem(
 		name="Takri",
 		unicode=["TAKRI"],
-		titleTag="b"),
+		titleTag="b",
+	),
 	WritingSystem(
 		name="Thaana",
 		unicode=["THAANA"],
-		titleTag="big"
+		titleTag="big",
 	),
 
 	# _____________________________________________________
@@ -184,35 +185,37 @@ writingSystemList = [
 	WritingSystem(
 		name="Adlam",
 		unicode=["ADLAM"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Avestan",
 		unicode=["AVESTAN"],
-		titleTag="b"),
+		titleTag="b",
+	),
 	WritingSystem(
 		name="Glagolitic",
 		unicode=["GLAGOLITIC"],
-		titleTag="b"),
+		titleTag="b",
+	),
 	WritingSystem(
 		name="Javanese",
 		unicode=["JAVANESE"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Khojki",
 		unicode=["KHOJKI"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Khudabadi",
 		unicode=["KHUDAWADI"],
-		titleTag="big"
+		titleTag="big",
 	),
 	WritingSystem(
 		name="N'Ko",
 		unicode=["NKO"],
-		titleTag="big"
+		titleTag="big",
 	),
 
 	# _____________________________________________________
@@ -226,7 +229,7 @@ writingSystemList = [
 	#	unicode=["REJANG"],
 	# ),
 	# WritingSystem(
-	#	name="Mandombe"
+	#	name="Mandombe",
 	#	unicode=[],
 	# ),
 	# WritingSystem(
