@@ -56,8 +56,10 @@ class Lang(object):
 
 class LangDict(dict):
 	def load(self):
+		from time import time as now
 		if len(self) > 0:
 			return
+		t0 = now()
 		filename = join(rootDir, "pyglossary", "langs", "langs.json")
 		with open(filename, "r", encoding="utf-8") as _file:
 			data = json.load(_file)
@@ -75,7 +77,7 @@ class LangDict(dict):
 					if name in self:
 						log.error(f"duplicate language name: {name}")
 					self[name.lower()] = lang
-		print(f"LangDict: loaded, {len(self)} keys")
+		print(f"LangDict: loaded, {len(self)} keys, took {(now() - t0)*1000:.1f} ms")
 
 	def __getitem__(self, key: str) -> Optional[Lang]:
 		self.load()

@@ -3,12 +3,16 @@
 		"codes": ["aa", "aar"],
 		"name": "Afar",
 		"alt_names": ["Qafaraf", "’Afar Af", "Afaraf", "Qafar af"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Afar_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ab", "abk"],
 		"name": "Abkhaz",
 		"alt_names": ["Abkhazian", "Abxaz", "Аҧсуа", "Аҧсуа бызшәа"],
+		"script": ["Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Abkhaz_language",
 		"title_tag": "b"
 	},
 	{
@@ -16,48 +20,64 @@
 		"name": "Avestan",
 		"alt_names": ["Zend", "اوستایی"],
 		"rtl": 1,
+		"script": ["Avestan"],
+		"wiki": "https://en.wikipedia.org/wiki/Avestan",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["af", "afr"],
 		"name": "Afrikaans",
 		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Afrikaans",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ain"],
 		"name": "Ainu",
 		"alt_names": ["Ainuic", "Aynu", "itak", "アィヌ・イタㇰ"],
+		"script": ["CJK", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Ainu_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["aib"],
 		"name": "Äynu",
 		"alt_names": ["Aynu", "Ainu", "Aini", "Eynu", "Abdal", "Äynú", "ئەينۇ‎", "ئابدال"],
+		"script": ["Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/%C3%84ynu_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["ak", "aka"],
 		"name": "Akan",
 		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Akan_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["alg"],
 		"name": "Algonquian",
 		"alt_names": ["Algonkian"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Algonquian_languages",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["am", "amh"],
 		"name": "Amharic",
 		"alt_names": ["አማርኛ", "Amarəñña"],
+		"script": ["Ge'ez"],
+		"wiki": "https://en.wikipedia.org/wiki/Amharic",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["an", "arg"],
 		"name": "Aragonese",
 		"alt_names": ["Aragonés"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Aragonese_language",
 		"title_tag": "b"
 	},
 	{
@@ -65,174 +85,232 @@
 		"name": "Arabic",
 		"alt_names": ["اَلْعَرَبِيَّةُ", "العربیه", "عَرَبِيّ", "عربی"],
 		"rtl": 1,
+		"script": ["Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Arabic",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["arn"],
 		"name": "Mapuche",
 		"alt_names": ["Mapudungun"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Mapuche_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["as", "asm"],
 		"name": "Assamese",
 		"alt_names": ["Asamiya", "অসমীয়া"],
+		"script": ["Bengali-Assamese"],
+		"wiki": "https://en.wikipedia.org/wiki/Assamese_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["av", "ava"],
 		"name": "Avar",
 		"alt_names": ["Avaric", "Авар", "Awar"],
+		"script": ["Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Avar_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ay", "aym"],
 		"name": "Aymara",
 		"alt_names": ["Aymar aru", "Aymaran"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Aymara_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["az", "aze"],
 		"name": "Azerbaijani",
 		"alt_names": ["Azeri"],
+		"script": ["Latin", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Azerbaijani_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ba", "bak"],
 		"name": "Bashkir",
 		"alt_names": ["Башҡортса‎", "Башҡорт теле", "Башорца", "Башкирский"],
+		"script": ["Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Bashkir_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["be", "bel"],
 		"name": "Belarusian",
 		"alt_names": ["Беларуская", "Белорусский"],
+		"script": ["Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Belarusian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["bg", "bul"],
 		"name": "Bulgarian",
 		"alt_names": ["български", "български език", "Bǎlgarski"],
+		"script": ["Cyrillic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Bulgarian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["bh", "bih"],
 		"name": "Bihari",
 		"alt_names": ["Bihari languages", "बिहारी"],
+		"script": ["Devanagari"],
+		"wiki": "https://en.wikipedia.org/wiki/Bihari_languages",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["bi", "bis"],
 		"name": "Bislama",
 		"alt_names": ["Bichelamar"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Bislama",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["bm", "bam"],
 		"name": "Bambara",
 		"alt_names": ["Bamanankan", "ߓߡߊߣߊ߲", "ߓߡߊߣߊ߲ߞߊ߲"],
+		"script": ["Latin", "N'Ko"],
+		"wiki": "https://en.wikipedia.org/wiki/Bambara_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["bn", "ben"],
 		"name": "Bengali",
 		"alt_names": ["বাংলা"],
+		"script": ["Bengali"],
+		"wiki": "https://en.wikipedia.org/wiki/Bengali_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["bnt"],
 		"name": "Bantu",
 		"alt_names": ["*bantʊ̀", "bantʊ̀"],
+		"script": ["Latin", "Arabic", "Mandombe"],
+		"wiki": "https://en.wikipedia.org/wiki/Bantu_languages",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["bo", "tib"],
 		"name": "Tibetan",
 		"alt_names": ["Standard Tibetan"],
+		"script": ["Tibetan"],
+		"wiki": "https://en.wikipedia.org/wiki/Standard_Tibetan",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["br", "bre"],
 		"name": "Breton",
 		"alt_names": ["Brezhoneg"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Breton_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["bs", "bos"],
 		"name": "Bosnian",
 		"alt_names": ["Bosanski", "Босански"],
+		"script": ["Cyrillic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Bosnian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ca", "cat"],
 		"name": "Catalan",
 		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Catalan_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ce", "che"],
 		"name": "Chechen",
 		"alt_names": ["нохчийн", "нохчийн мотт"],
+		"script": ["Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Chechen_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ch", "cha"],
 		"name": "Chamorro",
 		"alt_names": ["Chamoru", "CHamoru"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Chamorro_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["chn"],
 		"name": "Chinook Jargon",
 		"alt_names": ["Chinuk Wawa", "Chinook Wawa", "wawa", "chinook lelang", "lelang", "chinook"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Chinook_Jargon",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["co", "cos"],
 		"name": "Corsican",
 		"alt_names": ["Corsa"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Corsican_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["cr", "cre"],
 		"name": "Cree",
 		"alt_names": [],
+		"script": ["Canadian syllabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Cree",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["cs", "cze"],
 		"name": "Czech",
 		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Czech_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["cu", "chu"],
 		"name": "Church Slavonic",
 		"alt_names": ["Church Slavic", "New Church Slavonic", "New Church Slavic", "црькъвьнословѣньскъ ѩзыкъ"],
+		"script": ["Glagolitic", "Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Church_Slavonic",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["cv", "chv"],
 		"name": "Chuvash",
 		"alt_names": ["Căvašla", "Çovaşla", "Чӑвашла"],
+		"script": ["Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Chuvash_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["cy", "wel"],
 		"name": "Welsh",
 		"alt_names": ["Cymraeg", "y Gymraeg"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Welsh_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["da", "dan"],
 		"name": "Danish",
 		"alt_names": ["dansk"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Danish_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["de", "ger"],
 		"name": "German",
 		"alt_names": ["Deutsch"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/German_language",
 		"title_tag": "b"
 	},
 	{
@@ -240,54 +318,72 @@
 		"name": "Maldivian",
 		"alt_names": ["Dhivehi", "Divehi", "ދިވެހި"],
 		"rtl": 1,
+		"script": ["Thaana"],
+		"wiki": "https://en.wikipedia.org/wiki/Maldivian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["dz", "dzo"],
 		"name": "Dzongkha",
 		"alt_names": ["རྫོང་ཁ་"],
+		"script": ["Tibetan"],
+		"wiki": "https://en.wikipedia.org/wiki/Dzongkha",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["ee", "ewe"],
 		"name": "Ewe",
 		"alt_names": ["Èʋe", "Èʋegbe"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Ewe_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["el", "gre"],
 		"name": "Greek",
 		"alt_names": ["ελληνικά", "Elliniká"],
+		"script": ["Greek"],
+		"wiki": "https://en.wikipedia.org/wiki/Greek_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["en", "eng"],
 		"name": "English",
 		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/English_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["eo", "epo"],
 		"name": "Esperanto",
 		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Esperanto",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["es", "spa"],
 		"name": "Spanish",
 		"alt_names": ["español", "española"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Spanish_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["et", "est"],
 		"name": "Estonian",
 		"alt_names": ["eesti keel", "eesti"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Estonian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["eu", "baq"],
 		"name": "Basque",
 		"alt_names": ["Euskara"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Basque_language",
 		"title_tag": "b"
 	},
 	{
@@ -295,60 +391,80 @@
 		"name": "Persian",
 		"alt_names": ["Farsi", "فارسی", "Parsi", "Fārsī", "форсӣ", "Forsī", "Porsī"],
 		"rtl": 1,
+		"script": ["Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Persian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ff", "ful"],
 		"name": "Fula",
 		"alt_names": ["Fulani", "Fulah", "Fulfulde", "𞤊𞤵𞤤𞤬𞤵𞤤𞤣𞤫", "Pulaar", "𞤆𞤵𞤤𞤢𞥄𞤪", "Pular", "𞤆𞤵𞤤𞤢𞤪", "Peul"],
+		"script": ["Latin", "Arabic", "Adlam"],
+		"wiki": "https://en.wikipedia.org/wiki/Fula_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["fi", "fin"],
 		"name": "Finnish",
 		"alt_names": ["suomi", "suomen kieli"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Finnish_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["fil"],
 		"name": "Filipino",
 		"alt_names": ["Pilipino", "Wikang Filipino"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Filipino_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["fj", "fij"],
 		"name": "Fijian",
 		"alt_names": ["Na Vosa Vakaviti", "Na vosa vaka-Viti"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Fijian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["fo", "fao"],
 		"name": "Faroese",
 		"alt_names": ["føroyskt mál"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Faroese_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["fr", "fre"],
 		"name": "French",
 		"alt_names": ["français", "langue française"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/French_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["fy", "fry"],
 		"name": "West Frisian",
 		"alt_names": ["Western Frisian", "Frisian"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/West_Frisian_languages",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ga", "gle"],
 		"name": "Irish",
 		"alt_names": ["Gaeilge"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Irish_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["gd", "gla"],
 		"name": "Scottish Gaelic",
 		"alt_names": ["Gaelic", "Gàidhlig", "Scots Gaelic"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Scottish_Gaelic",
 		"title_tag": "b"
 	},
 	{
@@ -356,36 +472,48 @@
 		"name": "Gurjari",
 		"alt_names": ["Gujri", "गुर्जरी", "گُوجَری"],
 		"rtl": 1,
+		"script": ["Takri", "Arabic", "Devanagari"],
+		"wiki": "https://en.wikipedia.org/wiki/Gujari_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["gl", "glg"],
 		"name": "Galician",
 		"alt_names": ["galego"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Galician_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["gn", "grn"],
 		"name": "Guarani",
 		"alt_names": ["Paraguayan Guarani", "avañeʼẽ"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Guarani_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["grc"],
 		"name": "Ancient Greek",
 		"alt_names": ["Ἑλληνική", "Hellēnikḗ"],
+		"script": ["Greek"],
+		"wiki": "https://en.wikipedia.org/wiki/Ancient_Greek",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["gu", "guj"],
 		"name": "Gujarati",
 		"alt_names": ["ગુજરાતી", "Gujarātī"],
+		"script": ["Gujarati"],
+		"wiki": "https://en.wikipedia.org/wiki/Gujarati_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["gv", "glv"],
 		"name": "Manx",
 		"alt_names": ["Manx Gaelic", "Gaelg", "Gailck"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Manx_language",
 		"title_tag": "b"
 	},
 	{
@@ -393,6 +521,8 @@
 		"name": "Kalami",
 		"alt_names": ["Gawri", "Garwi", "Bashkarik", "کالامي", "ګاوری"],
 		"rtl": 1,
+		"script": ["Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Kalami_language",
 		"title_tag": "b"
 	},
 	{
@@ -400,30 +530,40 @@
 		"name": "Hausa",
 		"alt_names": ["Harshen Hausa", "Halshen Hausa", "هَرْشَن هَوْسَ‎"],
 		"rtl": 2,
+		"script": ["Latin", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Hausa_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": [],
 		"name": "Haitian French",
 		"alt_names": ["français haïtien"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Haitian_French",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["haw"],
 		"name": "Hawaiian",
 		"alt_names": ["ʻŌlelo Hawaiʻi"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Hawaiian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["he", "heb"],
 		"name": "Hebrew",
 		"alt_names": ["Ivrit", "עִבְרִית"],
+		"script": ["Hebrew"],
+		"wiki": "https://en.wikipedia.org/wiki/Hebrew_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["hi", "hin"],
 		"name": "Hindi",
 		"alt_names": ["Hindī", "हिंदी"],
+		"script": ["Devanagari", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Hindi",
 		"title_tag": "big"
 	},
 	{
@@ -431,6 +571,8 @@
 		"name": "Hindko",
 		"alt_names": ["ہندکو"],
 		"rtl": 1,
+		"script": ["Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Hindko",
 		"title_tag": "b"
 	},
 	{
@@ -438,6 +580,8 @@
 		"name": "Southern Hindko",
 		"alt_names": [],
 		"rtl": 1,
+		"script": ["Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Hindko",
 		"title_tag": "b"
 	},
 	{
@@ -445,726 +589,968 @@
 		"name": "Northern Hindko",
 		"alt_names": [],
 		"rtl": 1,
+		"script": ["Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Hindko",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ho", "hmo"],
 		"name": "Hiri Motu",
 		"alt_names": ["Police Motu", "Pidgin Motu", "Hiri"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Hiri_Motu",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["hr", "hrv", "scr"],
 		"name": "Croatian",
 		"alt_names": ["hrvatski"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Croatian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ht", "hat"],
 		"name": "Haitian Creole",
 		"alt_names": ["Haitian", "kreyòl ayisyen", "kreyòl", "créole haïtien"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Haitian_Creole",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["hu", "hun"],
 		"name": "Hungarian",
 		"alt_names": ["magyar nyelv"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Hungarian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["hy", "arm"],
 		"name": "Armenian",
 		"alt_names": ["հայերէն", "հայերեն", "hayeren"],
+		"script": ["Armenian"],
+		"wiki": "https://en.wikipedia.org/wiki/Armenian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["hz", "her"],
 		"name": "Herero",
 		"alt_names": ["Otjiherero"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Herero_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ia", "ina"],
 		"name": "Interlingua",
 		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Interlingua",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["id", "ind"],
 		"name": "Indonesian",
 		"alt_names": ["bahasa Indonesia"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Indonesian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ie", "ile"],
 		"name": "Interlingue",
 		"alt_names": ["Occidental", "Interlingue"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Interlingue",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ig", "ibo"],
 		"name": "Igbo",
 		"alt_names": ["Ásụ̀sụ̀ Ìgbò"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Igbo_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ii", "iii"],
 		"name": "Nuosu",
 		"alt_names": ["Nosu", "Northern Yi", "Liangshan Yi", "Sichuan Yi", "ꆈꌠꉙ", "Nuosuhxop", "彝語", "诺苏语"],
+		"script": ["CJK"],
+		"wiki": "https://en.wikipedia.org/wiki/Nuosu_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["ik", "ipk"],
 		"name": "Inupiaq",
 		"alt_names": ["Inupiat", "Inupiatun", "Alaskan Inuit", "Iñupiatun", "Inupiaqtun"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Inupiaq_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["io", "ido"],
 		"name": "Ido",
 		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Ido",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["is", "ice"],
 		"name": "Icelandic",
 		"alt_names": ["íslenska"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Icelandic_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["it", "ita"],
 		"name": "Italian",
 		"alt_names": ["italiano", "lingua italiana"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Italian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["iu", "iku"],
 		"name": "Inuktitut",
 		"alt_names": ["Eastern Canadian Inuktitut", "ᐃᓄᒃᑎᑐᑦ"],
+		"script": ["Canadian syllabic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Inuktitut",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ja", "jpn"],
 		"name": "Japanese",
 		"alt_names": ["日本語", "にほんご", "Nihongo"],
+		"script": ["CJK"],
+		"wiki": "https://en.wikipedia.org/wiki/Japanese_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["jb", "jbo"],
 		"name": "Lojban",
 		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Lojban",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["jv", "jav"],
 		"name": "Javanese",
 		"alt_names": ["ꦧꦱꦗꦮ", "ꦕꦫꦗꦮ", "باسا جاوا", "Basa Jawa", "Båså Jåwå", "Cara Jawa"],
+		"script": ["Latin", "Javanese", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Javanese_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["ka", "geo"],
 		"name": "Georgian",
 		"alt_names": ["Kartuli", "ქართული"],
+		"script": ["Georgian"],
+		"wiki": "https://en.wikipedia.org/wiki/Georgian_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["kg", "kon"],
 		"name": "Kongo",
 		"alt_names": ["Kikongo"],
+		"script": ["Latin", "Mandombe"],
+		"wiki": "https://en.wikipedia.org/wiki/Kongo_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["kha"],
 		"name": "Khasi",
 		"alt_names": ["Ka Ktien Khasi", "ক ক্ত্যেন খসি"],
+		"script": ["Latin", "Bengali"],
+		"wiki": "https://en.wikipedia.org/wiki/Khasi_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["ki", "kik"],
 		"name": "Kikuyu",
 		"alt_names": ["Gĩkũyũ"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Kikuyu_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["kj", "kua"],
 		"name": "Kwanyama",
 		"alt_names": ["Kuanyama", "Cuanhama"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Kwanyama_dialect",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["kk", "kaz"],
 		"name": "Kazakh",
 		"alt_names": ["qazaqşa", "qazaq tili", "қазақша", "қазақ тілі", "قازاقشا", "قازاق تىلى"],
+		"script": ["Cyrillic", "Latin", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Kazakh_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["kl", "kal"],
 		"name": "Greenlandic",
 		"alt_names": ["kalaallisut", "grønlandsk"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Greenlandic_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["km", "khm"],
 		"name": "Khmer",
 		"alt_names": ["Cambodian", "ភាសាខ្មែរ", "phiăsaa khmae", "ខ្មែរ", "khmae"],
+		"script": ["Khmer"],
+		"wiki": "https://en.wikipedia.org/wiki/Khmer_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["kn", "kan"],
 		"name": "Kannada",
 		"alt_names": ["Kanarese", "ಕನ್ನಡ"],
+		"script": ["Kannada"],
+		"wiki": "https://en.wikipedia.org/wiki/Kannada",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ko", "kor"],
 		"name": "Korean",
 		"alt_names": ["한국어", "韓國語", "조선말", "朝鮮말"],
+		"script": ["CJK"],
+		"wiki": "https://en.wikipedia.org/wiki/Korean_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["kr", "kau"],
 		"name": "Kanuri",
 		"alt_names": ["Kànùrí"],
+		"script": ["Arabic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Kanuri_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ks", "kas"],
 		"name": "Kashmiri",
 		"alt_names": ["Koshur", "कॉशुर", "كٲشُر"],
+		"script": ["Arabic", "Devanagari"],
+		"wiki": "https://en.wikipedia.org/wiki/Kashmiri_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["ku", "kur"],
 		"name": "Kurdish",
 		"alt_names": ["Kurdî", "کوردی"],
+		"script": ["Arabic", "Latin", "Armenian"],
+		"wiki": "https://en.wikipedia.org/wiki/Kurdish_languages",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["kv", "kom"],
 		"name": "Komi",
 		"alt_names": ["Komi-Zyryan", "Коми", "Коми кыв"],
+		"script": ["Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Komi-Zyryan_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["kw", "cor"],
 		"name": "Cornish",
 		"alt_names": ["Kernewek", "Kernowek"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Cornish_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ky", "kir"],
 		"name": "Kyrgyz",
 		"alt_names": ["Kirghiz", "Kirgiz", "Qirghiz", "Кыргызча", "Qırğızça"],
+		"script": ["Cyrillic", "Arabic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Kyrgyz_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["la", "lat"],
 		"name": "Latin",
 		"alt_names": ["latine", "latīne"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Latin",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["lb", "ltz"],
 		"name": "Luxembourgish",
 		"alt_names": ["Luxemburgish", "Letzeburgesch", "Lëtzebuergesch", "Luxembourgian"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Luxembourgish",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["lg", "lug"],
 		"name": "Luganda",
 		"alt_names": ["Ganda", "Oluganda"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Luganda",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["li", "lim"],
 		"name": "Limburgish",
 		"alt_names": ["Limburgan", "Limburgian", "Limburgic", "Lèmburgs", "Limburgs", "Limburgisch", "Limbourgeois"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Limburgish",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ln", "lin"],
 		"name": "Lingala",
 		"alt_names": ["lingála"],
+		"script": ["Latin", "Mandombe"],
+		"wiki": "https://en.wikipedia.org/wiki/Lingala",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["lo", "lao"],
 		"name": "Lao",
 		"alt_names": ["Laotian", "ລາວ", "ພາສາລາວ"],
+		"script": ["Lao", "Thai"],
+		"wiki": "https://en.wikipedia.org/wiki/Lao_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["lt", "lit"],
 		"name": "Lithuanian",
 		"alt_names": ["lietuvių kalba"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Lithuanian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["lu", "lub"],
 		"name": "Luba-Katanga",
 		"alt_names": ["Luba-Shaba", "Kiluba"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Luba-Katanga_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["lv", "lav"],
 		"name": "Latvian",
 		"alt_names": ["Lettish", "latviešu valoda"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Latvian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["mas"],
 		"name": "Maasai",
 		"alt_names": ["Masai", "Maa", "ɔl"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Maasai_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["mg", "mlg"],
 		"name": "Malagasy",
 		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Malagasy_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["mh", "mah"],
 		"name": "Marshallese",
 		"alt_names": ["Ebon", "Kajin M̧ajeļ", "Kajin Majōl"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Marshallese_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["mi", "mao"],
 		"name": "Maori",
 		"alt_names": ["Māori", "Te reo Māori"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/M%C4%81ori_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["mk", "mac"],
 		"name": "Macedonian",
 		"alt_names": ["македонски", "македонски јазик"],
+		"script": ["Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Macedonian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ml", "mal"],
 		"name": "Malayalam",
 		"alt_names": ["മലയാളം", "Malayāḷam"],
+		"script": ["Malayalam"],
+		"wiki": "https://en.wikipedia.org/wiki/Malayalam",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["mnc"],
 		"name": "Manchu",
 		"alt_names": ["manju gisun", "ᠮᠠᠨᠵᡠᡤᡳᠰᡠᠨ"],
+		"script": ["Mongolian"],
+		"wiki": "https://en.wikipedia.org/wiki/Manchu_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["mn", "mon"],
 		"name": "Mongolian",
 		"alt_names": ["монгол хэл", "ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ"],
+		"script": ["Mongolian", "Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Mongolian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["mo", "mol"],
 		"name": "Moldovan",
 		"alt_names": ["Moldavian", "limba moldovenească", "лимба молдовеняскэ", "лимба Молдовенѣскъ"],
+		"script": ["Latin", "Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Moldovan_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["mr", "mar"],
 		"name": "Marathi",
 		"alt_names": ["मराठी", "Marāṭhī"],
+		"script": ["Devanagari"],
+		"wiki": "https://en.wikipedia.org/wiki/Marathi_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ms", "may"],
 		"name": "Malay",
 		"alt_names": ["bahasa Melayu", "بهاس ملايو", "ꤷꥁꤼ ꤸꥍꤾꤿꥈ"],
+		"script": ["Latin", "Arabic", "Thai"],
+		"wiki": "https://en.wikipedia.org/wiki/Malay_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["mt", "mlt"],
 		"name": "Maltese",
 		"alt_names": ["Malti"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Maltese_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["my", "bur"],
 		"name": "Burmese",
 		"alt_names": ["မြန်မာစာ", "မြန်မာစကား"],
+		"script": ["Burmese"],
+		"wiki": "https://en.wikipedia.org/wiki/Burmese_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["na", "nau"],
 		"name": "Nauruan",
 		"alt_names": ["Nauru", "dorerin Naoero", "Ekaiairũ Naoero"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Nauruan_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["nb", "nob"],
 		"name": "Bokmal",
 		"alt_names": ["Bokmål", "Norwegian Bokmal", "Norwegian Bokmål"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Bokm%C3%A5l",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["nd", "nde"],
 		"name": "North Ndebele",
 		"alt_names": ["Ndebele", "amaNdebele", "Zimbabwean Ndebele", "North Ndebele"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Northern_Ndebele_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ne", "nep"],
 		"name": "Nepali",
 		"alt_names": ["Gorkhali", "Khaskura", "Nepalese", "Parbate", "नेपाली", "खस कुरा"],
+		"script": ["Devanagari"],
+		"wiki": "https://en.wikipedia.org/wiki/Nepali_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["ng", "ndo"],
 		"name": "Ndonga",
 		"alt_names": ["Oshindonga"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Ndonga_dialect",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["nl", "dut"],
 		"name": "Dutch",
 		"alt_names": ["Flemish", "Nederlands"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Dutch_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["nn", "nno"],
 		"name": "Norwegian Nynorsk",
 		"alt_names": ["nynorsk"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Nynorsk",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["no", "nor"],
 		"name": "Norwegian",
 		"alt_names": ["norsk"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Norwegian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["nr", "nbl"],
 		"name": "Southern Ndebele",
 		"alt_names": ["South Ndebele", "Transvaal Ndebele", "isiNdebele seSewula"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Southern_Ndebele_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["nv", "nav"],
 		"name": "Navajo",
 		"alt_names": ["Navaho", "Diné bizaad", "Naabeehó bizaad"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Navajo_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ny", "nya"],
 		"name": "Chewa",
 		"alt_names": ["Nyanja", "Chichewa", "Chinyanja"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Chewa_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["oc", "oci"],
 		"name": "Occitan",
 		"alt_names": ["lenga d'òc", "provençal"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Occitan_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["oj", "oji"],
 		"name": "Ojibwe",
 		"alt_names": ["Ojibwa", "Ojibway", "Otchipwe", "Anishinaabemowin"],
+		"script": ["Latin", "Canadian syllabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Ojibwe_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["om", "orm"],
 		"name": "Oromo",
 		"alt_names": ["Afaan Oromoo"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Oromo_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["or", "ori"],
 		"name": "Odia",
 		"alt_names": ["Oriya", "ଓଡ଼ିଆ", "Oṛiā"],
+		"script": ["Odia"],
+		"wiki": "https://en.wikipedia.org/wiki/Odia_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["os", "oss"],
 		"name": "Ossetian",
 		"alt_names": ["Ossetic", "Ossete", "ирон ӕвзаг", "дигорон ӕвзаг"],
+		"script": ["Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Ossetian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["pa", "pan"],
 		"name": "Punjabi",
 		"alt_names": ["Panjabi", "ਪੰਜਾਬੀ", "پن٘جابی"],
+		"script": ["Gurmukhi", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Punjabi_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["pi", "pli"],
 		"name": "Pali",
 		"alt_names": ["Magadhan"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Pali",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["pl", "pol"],
 		"name": "Polish",
 		"alt_names": ["język polski", "polszczyzna", "polski"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Polish_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ps", "pus"],
 		"name": "Pashto",
 		"alt_names": ["پښتو", "Pax̌tō"],
+		"script": ["Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Pashto",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["pt", "por"],
 		"name": "Portuguese",
 		"alt_names": ["português", "língua portuguesa"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Portuguese_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["qu", "que"],
 		"name": "Quechua",
 		"alt_names": ["Runasimi", "Kechua", "Runa Simi"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Quechuan_languages",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["rm", "roh"],
 		"name": "Rhaeto-Romance",
 		"alt_names": ["Rheto-Romance", "Rhaetian", "Raeto-Romance"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Rhaeto-Romance_languages",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["rn", "run"],
 		"name": "Kirundi",
 		"alt_names": ["Rundi", "Ikirundi"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Kirundi",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ro", "rum"],
 		"name": "Romanian",
 		"alt_names": ["Rumanian", "Roumanian", "Daco-Romanian", "limba română"],
+		"script": ["Latin", "Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Romanian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ru", "rus"],
 		"name": "Russian",
 		"alt_names": ["русский", "русский язык"],
+		"script": ["Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Russian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["rw", "kin"],
 		"name": "Kinyarwanda",
 		"alt_names": ["Ikinyarwanda"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Kinyarwanda",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sa", "san"],
 		"name": "Sanskrit",
 		"alt_names": ["संस्कृतम्", "saṃskṛtam"],
+		"script": ["Devanagari"],
+		"wiki": "https://en.wikipedia.org/wiki/Sanskrit",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["sc", "srd"],
 		"name": "Sardinian",
 		"alt_names": ["Sard", "sardu", "sadru", "limba sarda", "lìngua sarda"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Sardinian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sd", "snd"],
 		"name": "Sindhi",
 		"alt_names": ["سنڌي", "सिंधी", "ਸਿੰਧੀ", "𑈩𑈭𑈴𑈝𑈮", "𑋝𑋡𑋟𑋐𑋢"],
+		"script": ["Arabic", "Devanagari", "Gurmukhi", "Khojki", "Khudabadi"],
+		"wiki": "https://en.wikipedia.org/wiki/Sindhi_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["se", "sme"],
 		"name": "Northern Sami",
 		"alt_names": ["North Sami", "Sami", "davvisámegiella"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Northern_Sami",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sg", "sag"],
 		"name": "Sango",
 		"alt_names": ["Sangho", "yângâ tî sängö"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Sango_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sh", "shr"],
 		"name": "Serbo-Croatian",
 		"alt_names": ["Serbo-Croat", "Serbo-Croat-Bosnian", "Bosnian-Croatian-Serbian", "Bosnian-Croatian-Montenegrin-Serbian", "srpskohrvatski", "hrvatskosrpski", "српскохрватски", "хрватскосрпски", "naš jezik", "наш језик"],
+		"script": ["Latin", "Cyrillic"],
+		"wiki": "https://en.wikipedia.org/wiki/Serbo-Croatian",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["si", "sin"],
 		"name": "Sinhala",
 		"alt_names": ["Sinhalese", "සිංහල", "Siṁhala"],
+		"script": ["Sinhala"],
+		"wiki": "https://en.wikipedia.org/wiki/Sinhala_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["sk", "slo"],
 		"name": "Slovak",
 		"alt_names": ["slovenčina", "slovenský jazyk"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Slovak_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sl", "slv"],
 		"name": "Slovene",
 		"alt_names": ["Slovenian", "slovenski jezik", "slovenščina"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Slovene_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sm", "smo"],
 		"name": "Samoan",
 		"alt_names": ["Gagana faʻa Sāmoa", "Gagana Sāmoa"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Samoan_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sn", "sna"],
 		"name": "Shona",
 		"alt_names": ["chiShona"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Shona_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["so", "som"],
 		"name": "Somali",
 		"alt_names": ["Af Soomaali"],
+		"script": ["Latin", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Somali_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sq", "alb"],
 		"name": "Albanian",
 		"alt_names": ["shqip", "gjuha shqipe"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Albanian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sr", "srp"],
 		"name": "Serbian",
 		"alt_names": ["српски", "srpski"],
+		"script": ["Cyrillic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Serbian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ss", "ssw"],
 		"name": "Swazi",
 		"alt_names": ["Swati", "siSwati"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Swazi_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["st", "sot"],
 		"name": "Sotho",
 		"alt_names": ["Sesotho", "Southern Sotho"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Sotho_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["su", "sun"],
 		"name": "Sundanese",
 		"alt_names": ["Basa Sunda", "ᮘᮞ ᮞᮥᮔ᮪ᮓ"],
+		"script": ["Sundanese", "Arabic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Sundanese_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sv", "swe"],
 		"name": "Swedish",
 		"alt_names": ["svenska"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Swedish_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["sw", "swa"],
 		"name": "Swahili",
 		"alt_names": ["Kiswahili"],
+		"script": ["Latin", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Swahili_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ta", "tam"],
 		"name": "Tamil",
 		"alt_names": ["தமிழ்", "Tamiḻ"],
+		"script": ["Tamil", "Arabic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Tamil_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["te", "tel"],
 		"name": "Telugu",
 		"alt_names": ["తెలుగు"],
+		"script": ["Telugu"],
+		"wiki": "https://en.wikipedia.org/wiki/Telugu_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["tg", "tgk"],
 		"name": "Tajik",
 		"alt_names": ["Tajiki", "тоҷик", "Тоҷикӣ", "tojikī", "забо́ни тоҷикӣ́", "zaboni tojikī"],
+		"script": ["Cyrillic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Tajik_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["th", "tha"],
 		"name": "Thai",
 		"alt_names": ["Central Thai", "Siamese", "ภาษาไทย", "Phasa Thai"],
+		"script": ["Thai"],
+		"wiki": "https://en.wikipedia.org/wiki/Thai_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["ti", "tir"],
 		"name": "Tigrinya",
 		"alt_names": ["Tigrigna", "ትግርኛ", "tigriññā"],
+		"script": ["Ge'ez"],
+		"wiki": "https://en.wikipedia.org/wiki/Tigrinya_language",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["tk", "tuk"],
 		"name": "Turkmen",
 		"alt_names": ["Türkmençe", "Türkmen", "Türkmen dili", "Түркменче Түркмен дили", "تۆرکمن ديلی", "تۆرکمنچه‎", "تۆرکمن"],
+		"script": ["Latin", "Cyrillic", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Turkmen_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["tl", "tgl"],
 		"name": "Tagalog",
-		"alt_names": ["ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔", "Wikang Tagalog"],
+		"alt_names": ["Wikang Tagalog"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Tagalog_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["tn", "tsn"],
 		"name": "Tswana",
 		"alt_names": ["Setswana"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Tswana_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["to", "ton"],
 		"name": "Tongan",
 		"alt_names": ["Tonga", "lea fakatonga", "lea faka-Tonga"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Tongan_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["tr", "tur"],
 		"name": "Turkish",
 		"alt_names": ["Türkçe", "Türk dili", "Istanbul Turkish", "Turkey Turkish"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Turkish_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["trw"],
 		"name": "Torwali",
 		"alt_names": ["توروالی"],
+		"script": ["Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Torwali_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ts", "tso"],
 		"name": "Tsonga",
 		"alt_names": ["Xitsonga", "Xitsonga"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Tsonga_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["tt", "tat"],
 		"name": "Tatar",
 		"alt_names": ["татар", "تاتار", "татар теле", "tatar tele", "تاتار تلی‎"],
+		"script": ["Cyrillic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Tatar_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["tw", "twi"],
 		"name": "Twi",
 		"alt_names": ["Akan Kasa"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Twi",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ty", "tah"],
 		"name": "Tahitian",
 		"alt_names": ["Reo Tahiti", "Reo Māꞌohi"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Tahitian_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ug", "uig"],
 		"name": "Uyghur",
 		"alt_names": ["Uighur", "Uyƣur", "Uyğur", "ئۇيغۇر", "Уйғур", "ئۇيغۇر تىلى", "Уйғур тили", "Uyghur tili", "Uyƣur tili", "Uyğur tili"],
+		"script": ["Arabic", "Cyrillic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Uyghur_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["uk", "ukr"],
 		"name": "Ukrainian",
 		"alt_names": ["українська", "українська мова", "ukrayins'ka mova"],
+		"script": ["Cyrillic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Ukrainian_language",
 		"title_tag": "b"
 	},
 	{
@@ -1172,78 +1558,104 @@
 		"name": "Urdu",
 		"alt_names": ["Urdū", "اُردُو", "اردو", "Lashkari", "لشکری", "Laškarī", "Modern Standard Urdu"],
 		"rtl": 1,
+		"script": ["Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Urdu",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["uz", "uzb"],
 		"name": "Uzbek",
 		"alt_names": ["O‘zbekcha", "o‘zbek tili", "Ўзбекча", "ўзбек тили", "اۉزبېکچه", "اۉزبېک تیلی", "Özbekçä", "Özbek Tili"],
+		"script": ["Latin", "Cyrillic", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Uzbek_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["ve", "ven"],
 		"name": "Venda",
 		"alt_names": ["Tshivenda", "Tshivenḓa", "Luvenḓa"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Venda_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["vi", "vie"],
 		"name": "Vietnamese",
 		"alt_names": ["Tiếng Việt", "Việt"],
+		"script": ["Latin", "CJK"],
+		"wiki": "https://en.wikipedia.org/wiki/Vietnamese_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["vo", "vol"],
 		"name": "Volapuk",
 		"alt_names": ["Volapük", "Volapük nulik"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Volap%C3%BCk",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["wa", "wln"],
 		"name": "Walloon",
 		"alt_names": ["walon"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Walloon_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["wo", "wol"],
 		"name": "Wolof",
 		"alt_names": [],
+		"script": ["Latin", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Wolof_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["xh", "xho"],
 		"name": "Xhosa",
 		"alt_names": ["isiXhosa"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Xhosa_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["yi", "yid"],
 		"name": "Yiddish",
 		"alt_names": ["ייִדיש", "יידיש", "אידיש", "yidish", "idish"],
+		"script": ["Hebrew"],
+		"wiki": "https://en.wikipedia.org/wiki/Yiddish",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["yo", "yor"],
 		"name": "Yoruba",
 		"alt_names": ["Èdè Yorùbá"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Yoruba_language",
 		"title_tag": "b"
 	},
 	{
 		"codes": ["za", "zha"],
 		"name": "Zhuang",
 		"alt_names": ["Vahcuengh", "話僮", "壮语", "壯語", "Zhuàngyǔ"],
+		"script": ["CJK"],
+		"wiki": "https://en.wikipedia.org/wiki/Zhuang_languages",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["zh", "chi", "zho"],
 		"name": "Chinese",
 		"alt_names": ["汉语", "漢語", "Mandarin", "Standard Chinese", "Modern Standard Mandarin", "Standard Mandarin", "Mandarin Chinese", "普通话", "普通話", "国语", "國語", "华语", "華語"],
+		"script": ["CJK"],
+		"wiki": "https://en.wikipedia.org/wiki/Standard_Chinese",
 		"title_tag": "big"
 	},
 	{
 		"codes": ["zu", "zul"],
 		"name": "Zulu",
 		"alt_names": ["isiZulu"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Zulu_language",
 		"title_tag": "b"
 	}
 ]

@@ -90,7 +90,7 @@ writingSystemList = [
 	WritingSystem(name="Thaana", unicode=["THAANA"], titleTag="big"),
 	WritingSystem(name="Thai", unicode=["THAI"], titleTag="big"),
 	WritingSystem(name="Tibetan", unicode=["TIBETAN"], titleTag="big"),
-	WritingSystem(name="Baybayin", unicode=["TAGALOG"], titleTag="big"),
+	# WritingSystem(name="Baybayin", unicode=["TAGALOG"], titleTag="big"),
 	WritingSystem(name="Avestan", unicode=["AVESTAN"], titleTag="b"),
 	WritingSystem(name="Bengali", unicode=["BENGALI"], titleTag="b"),
 	WritingSystem(name="Glagolitic", unicode=["GLAGOLITIC"], titleTag="b"),
