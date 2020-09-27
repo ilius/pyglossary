@@ -92,7 +92,6 @@ writingSystemList = [
 	WritingSystem(name="Tibetan", unicode=["TIBETAN"], titleTag="big"),
 	# WritingSystem(name="Baybayin", unicode=["TAGALOG"], titleTag="big"),
 	WritingSystem(name="Avestan", unicode=["AVESTAN"], titleTag="b"),
-	WritingSystem(name="Bengali", unicode=["BENGALI"], titleTag="b"),
 	WritingSystem(name="Glagolitic", unicode=["GLAGOLITIC"], titleTag="b"),
 	WritingSystem(name="Takri", unicode=["TAKRI"], titleTag="b"),
 	# WritingSystem(name="Mwangwego", unicode=[], titleTag="b"),

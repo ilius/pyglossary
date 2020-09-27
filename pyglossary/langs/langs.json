@@ -181,7 +181,7 @@
 		"codes": ["bn", "ben"],
 		"name": "Bengali",
 		"alt_names": ["বাংলা"],
-		"script": ["Bengali"],
+		"script": ["Bengali-Assamese"],
 		"wiki": "https://en.wikipedia.org/wiki/Bengali_language",
 		"title_tag": "big"
 	},
@@ -765,7 +765,7 @@
 		"codes": ["kha"],
 		"name": "Khasi",
 		"alt_names": ["Ka Ktien Khasi", "ক ক্ত্যেন খসি"],
-		"script": ["Latin", "Bengali"],
+		"script": ["Latin", "Bengali-Assamese"],
 		"wiki": "https://en.wikipedia.org/wiki/Khasi_language",
 		"title_tag": "big"
 	},
