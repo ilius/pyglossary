@@ -154,6 +154,13 @@ class Writer(object):
 		self._glos = glos
 		self._filename = None
 		self._resPrefix = ""
+		self._eventCounter = 0
+
+	def _slobObserver(self, event: "slob.WriterEvent"):
+		if self._eventCounter == 0:
+			log.debug("")
+		self._eventCounter += 1
+		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
 	def open(self, filename: str):
 		try:
@@ -170,7 +177,11 @@ class Writer(object):
 		if compression:
 			kwargs["compression"] = compression
 		# must not pass compression=None to slob.create()
-		self._slobWriter = slobWriter = slob.create(filename, **kwargs)
+		self._slobWriter = slobWriter = slob.create(
+			filename,
+			observer=self._slobObserver,
+			**kwargs
+		)
 		slobWriter.tag("label", self._glos.getInfo("name"))
 
 	def finish(self):
