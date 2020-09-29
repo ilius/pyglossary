@@ -508,7 +508,9 @@ class GtkTextviewLogHandler(logging.Handler):
 		# foreground-gdk is deprecated since Gtk 3.4
 
 	def emit(self, record):
-		msg = record.getMessage()
+		msg = ""
+		if record.getMessage():
+			msg = self.format(record)
 		# msg = msg.replace("\x00", "")
 
 		if record.exc_info:

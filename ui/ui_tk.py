@@ -147,7 +147,9 @@ class TkTextLogHandler(logging.Handler):
 		self.tktext = tktext
 
 	def emit(self, record):
-		msg = record.getMessage()
+		msg = ""
+		if record.getMessage():
+			msg = self.format(record)
 		###
 		if record.exc_info:
 			_type, value, tback = record.exc_info

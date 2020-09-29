@@ -45,6 +45,7 @@ summary = "A tool for converting dictionary files aka glossaries with" \
 
 class UIBase(object):
 	prefKeys = (
+		"log_time",
 		"ui_autoSetFormat",
 		"ui_autoSetOutputFileName",
 		"lower",
@@ -88,7 +89,9 @@ class UIBase(object):
 		for key, value in options.items():
 			if key in self.prefKeys:
 				self.pref[key] = value
-		
+
+		log.setTimeEnable(self.pref["log_time"])
+
 		return True
 
 	def progressEnd(self):

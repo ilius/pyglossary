@@ -1,4 +1,6 @@
 {
+	"log_time": false,
+
 	"ui_autoSetFormat": true,
 	"ui_autoSetOutputFileName": true,
 

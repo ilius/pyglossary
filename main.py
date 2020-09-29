@@ -68,6 +68,19 @@ parser.add_argument(
 	default=3,
 )
 parser.add_argument(
+	"--log-time",
+	dest="log_time",
+	action="store_true",
+	default=None,
+)
+parser.add_argument(
+	"--no-log-time",
+	dest="log_time",
+	action="store_false",
+	default=None,
+)
+
+parser.add_argument(
 	"--version",
 	action="version",
 	version="PyGlossary %s" % VERSION,
@@ -328,6 +341,7 @@ prefOptionsKeys = (
 	"remove_html_all",
 	"normalize_html",
 	"save_info_json",
+	"log_time",
 )
 
 convertOptionsKeys = (

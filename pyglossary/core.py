@@ -58,6 +58,27 @@ class MyLogger(logging.Logger):
 	def isDebug(self) -> bool:
 		return self.getVerbosity() >= 4
 
+	def newFormatter(self):
+		timeEnable = getattr(self, "_timeEnable", False)
+		if timeEnable:
+			fmt = "%(asctime)s [%(levelname)s] %(message)s"
+		else:
+			fmt = "[%(levelname)s] %(message)s"
+		return logging.Formatter(fmt)
+
+	def setTimeEnable(self, timeEnable: bool):
+		self._timeEnable = timeEnable
+		formatter = self.newFormatter()
+		for handler in self.handlers:
+			handler.setFormatter(formatter)
+
+	def addHandler(self, handler: "logging.Handler"):
+		# if want to add separate format (new pref keys and flags) for ui_gtk
+		# and ui_tk, you need to remove this function and run handler.setFormatter
+		# in ui_gtk and ui_tk
+		logging.Logger.addHandler(self, handler)
+		handler.setFormatter(self.newFormatter())
+
 
 def formatVarDict(
 	dct: Dict[str, Any],
@@ -113,7 +134,9 @@ class StdLogHandler(logging.Handler):
 		self.noColor = noColor
 
 	def emit(self, record: logging.LogRecord) -> None:
-		msg = record.getMessage()
+		msg = ""
+		if record.getMessage():
+			msg = self.format(record)
 		###
 		if record.exc_info:
 			_type, value, tback = record.exc_info
@@ -129,7 +152,7 @@ class StdLogHandler(logging.Handler):
 			msg += tback_text
 		###
 		if record.levelname in ("CRITICAL", "ERROR"):
-			if not self.noColor:
+			if msg and not self.noColor:
 				msg = self.startRed + msg + self.endFormat
 			fp = sys.stderr
 		else:
