@@ -293,7 +293,7 @@ class Glossary(GlossaryType):
 					)
 
 		if not (Reader or Writer):
-			log.warning(f"WARNING: plugin {format} has no Reader nor Writer")
+			log.warning(f"plugin {format} has no Reader nor Writer")
 
 		if hasattr(plugin, "write"):
 			log.error(
@@ -969,7 +969,7 @@ class Glossary(GlossaryType):
 		cacheSize: int = 0,
 	) -> None:
 		if key is None:
-			log.warning("WARNING: sortWords: no key function is provided")
+			log.warning("sortWords: no key function is provided")
 		if self._readers:
 			self._sortKey = key
 			if cacheSize > 0:

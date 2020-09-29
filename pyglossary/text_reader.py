@@ -53,7 +53,7 @@ class TextGlossaryReader(object):
 		nextFilename = f"{self._filename}.{self._fileIndex + 1}"
 		if not isfile(nextFilename):
 			# TODO: detect compressed file, like file.txt.1.gz
-			log.warn(f"WARNING: next file not found: {nextFilename}")
+			log.warning(f"next file not found: {nextFilename}")
 			return False
 		self._fileIndex += 1
 		log.info(f"Reading next file: {nextFilename}")
