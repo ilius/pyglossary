@@ -422,6 +422,28 @@ class Entry(BaseEntry):
 		l_word = list(unique_everseen(l_word))
 		self._word = l_word
 
+	def stripFullHtml(self) -> None:
+		defi = self._defi
+		if not defi.startswith('<!DOCTYPE html>'):
+			return
+		word = self.s_word
+		i = defi.find('<body')
+		if i == -1:
+			log.error(f"<body not found: word={word}")
+			return
+		defi = defi[i + 5:]
+		i = defi.find('>')
+		if i == -1:
+			log.error(f"'>' after <body not found: word={word}")
+			return
+		defi = defi[i + 1:]
+		i = defi.find('</body')
+		if i == -1:
+			log.error(f"</body close not found: word={word}")
+			return
+		defi = defi[:i]
+		self._defi = defi
+
 	def getRaw(
 		self,
 		glos: "GlossaryType",
