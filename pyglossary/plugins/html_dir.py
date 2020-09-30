@@ -387,17 +387,21 @@ class Writer(object):
 				log.error(f"bad defiFormat={defiFormat}")
 				defiFormat = "h"
 
+			entry.detectDefiFormat()
 			entry.stripFullHtml()
 			defi = entry.defi
 			defiFormat = entry.defiFormat
 
 			if defiFormat == "m":
-				defi = defi.replace("\n", "<br>")
-			elif defiFormat == "h":
-				defi = defi.replace(' src="./', ' src="./res/')
-
-			if escape_defi:
 				defi = html.escape(defi)
+				if "\n" in defi:
+					# could be markdown or unformatted plaintext
+					# FIXME: this changes the font to a monospace
+					defi = f'<pre>{defi}</pre>'
+			elif defiFormat == "h":
+				if escape_defi:
+					defi = html.escape(defi)
+				defi = defi.replace(' src="./', ' src="./res/')
 
 			entryId = f"entry{entryIndex}"
 
