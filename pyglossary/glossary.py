@@ -198,7 +198,7 @@ class Glossary(GlossaryType):
 				continue
 			prop = optionsProp[name]
 			if prop.disabled:
-				log.debug(f"skipping disabled option {name} in {format} plugin")
+				log.trace(f"skipping disabled option {name} in {format} plugin")
 				continue
 			if not prop.validate(default):
 				log.warning(

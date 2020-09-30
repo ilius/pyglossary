@@ -63,7 +63,7 @@ parser.add_argument(
 	action="store",
 	dest="verbosity",
 	type=int,
-	choices=(0, 1, 2, 3, 4),
+	choices=(0, 1, 2, 3, 4, 5),
 	required=False,
 	default=3,
 )

@@ -32,6 +32,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         <b>-v2</b> or '--verbosity 2' for errors and warnings
         <b>-v3</b> or '--verbosity 3' for errors, warnings and info
         <b>-v4</b> or '--verbosity 4' for debug mode
+        <b>-v5</b> or '--verbosity 5' for trace mode
     Appearance:
         --no-progress-bar and --no-color, useful for scripts
 

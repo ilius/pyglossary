@@ -27,6 +27,9 @@ from types import TracebackType
 VERSION = "3.3.0"
 
 
+TRACE = 5
+logging.addLevelName(TRACE, "TRACE")
+
 class MyLogger(logging.Logger):
 	levelsByVerbosity = (
 		logging.CRITICAL,
@@ -34,6 +37,7 @@ class MyLogger(logging.Logger):
 		logging.WARNING,
 		logging.INFO,
 		logging.DEBUG,
+		TRACE,
 		logging.NOTSET,
 	)
 	levelNamesCap = [
@@ -42,8 +46,12 @@ class MyLogger(logging.Logger):
 		"Warning",
 		"Info",
 		"Debug",
+		"Trace",
 		"All",  # "Not-Set",
 	]
+
+	def __init__(self, *args):
+		logging.Logger.__init__(self, *args)
 
 	def setVerbosity(self, verbosity: int) -> None:
 		self.setLevel(self.levelsByVerbosity[verbosity])
@@ -51,6 +59,9 @@ class MyLogger(logging.Logger):
 
 	def getVerbosity(self) -> int:
 		return getattr(self, "_verbosity", 3)  # FIXME
+
+	def trace(self, msg: str):
+		self.log(TRACE, msg)
 
 	def pretty(self, data: Any, header: str = "") -> None:
 		self.debug(header + pformat(data))
