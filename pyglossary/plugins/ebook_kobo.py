@@ -88,6 +88,10 @@ def fixFilename(fname: str) -> str:
 class Writer:
 	WORDS_FILE_NAME = "words"
 
+	depends = {
+		"marisa_trie": "marisa-trie",
+	}
+
 	def __init__(self, glos, **kwargs):
 		self._glos = glos
 		self._filename = None
