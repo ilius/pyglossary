@@ -54,13 +54,31 @@ def escapeDefi(defi: str) -> str:
 		.replace("\n&", "\n &")
 
 
-def unescapeDefi(defi: str) -> str:
-	return defi.replace("\n @", "\n@")\
+def fixDefi(defi: str) -> str:
+	import mistune
+	defi = defi.replace("\n @", "\n@")\
 		.replace("\n :", "\n:")\
 		.replace("\n &", "\n&")
+	defi = defi.lstrip()
+	if not defi.startswith("<html>"):
+		defi = mistune.html(defi)
+	return defi
 
 
 class Reader(TextGlossaryReader):
+	depends = {
+		"mistune": "mistune==2.0.0a5",
+	}
+
+	def open(self, filename: str) -> None:
+		try:
+			import mistune
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install mistune` to install"
+			raise e
+		TextGlossaryReader.open(self, filename)
+		self._glos.setDefaultDefiFormat("h")
+
 	def isInfoWord(self, word):
 		return False
 
@@ -81,7 +99,7 @@ class Reader(TextGlossaryReader):
 			if line.startswith("@"):
 				if words:
 					self._bufferLine = line
-					return words, unescapeDefi("\n".join(defiLines))
+					return words, fixDefi("\n".join(defiLines))
 				words = [line[1:]]
 				continue
 			if line.startswith("&"):
@@ -90,7 +108,7 @@ class Reader(TextGlossaryReader):
 			defiLines.append(line)
 
 		if words:
-			return words, unescapeDefi("\n".join(defiLines))
+			return words, fixDefi("\n".join(defiLines))
 
 		raise StopIteration
 
