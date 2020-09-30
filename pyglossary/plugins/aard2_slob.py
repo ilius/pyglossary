@@ -132,7 +132,7 @@ class Writer(object):
 		"icu": "PyICU",
 	}
 
-	_compression: str = ""
+	_compression: str = "lzma2"
 	_content_type: str = ""
 
 	resourceMimeTypes = {
@@ -172,11 +172,8 @@ class Writer(object):
 		if isfile(filename):
 			raise IOError(f"File '{filename}' already exists")
 		self._filename = filename
-		compression = self._compression
 		kwargs = {}
-		if compression:
-			kwargs["compression"] = compression
-		# must not pass compression=None to slob.create()
+		kwargs["compression"] = self._compression
 		self._slobWriter = slobWriter = slob.create(
 			filename,
 			observer=self._slobObserver,
