@@ -178,6 +178,7 @@ class Writer:
 					wordsByPrefix[prefix].append(word)
 				else:
 					wordsByPrefix[prefix] = [word]
+			entry.stripFullHtml()
 			defi = self.fix_defi(entry.defi)
 			mainHeadword = l_word[0]
 			for prefix, p_words in wordsByPrefix.items():
