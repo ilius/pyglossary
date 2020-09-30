@@ -75,7 +75,7 @@ class TextGlossaryReader(object):
 		byteProgress = None
 		if self._fileSize:
 			byteProgress = (self._file.tell(), self._fileSize)
-		return Entry(
+		return self._glos.newEntry(
 			word,
 			defi,
 			byteProgress=byteProgress,
