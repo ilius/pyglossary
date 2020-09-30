@@ -77,7 +77,7 @@ class LangDict(dict):
 					if name in self:
 						log.error(f"duplicate language name: {name}")
 					self[name.lower()] = lang
-		print(f"LangDict: loaded, {len(self)} keys, took {(now() - t0)*1000:.1f} ms")
+		log.debug(f"LangDict: loaded, {len(self)} keys, took {(now() - t0)*1000:.1f} ms")
 
 	def __getitem__(self, key: str) -> Optional[Lang]:
 		self.load()
