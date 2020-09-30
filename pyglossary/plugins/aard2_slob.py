@@ -132,7 +132,7 @@ class Writer(object):
 		"icu": "PyICU",
 	}
 
-	_compression: str = "lzma2"
+	_compression: str = "zlib"
 	_content_type: str = ""
 
 	resourceMimeTypes = {
