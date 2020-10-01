@@ -424,8 +424,15 @@ class Entry(BaseEntry):
 
 	def stripFullHtml(self) -> None:
 		defi = self._defi
-		if not defi.startswith('<!DOCTYPE html>'):
+		if not defi.startswith('<'):
 			return
+		if defi.startswith('<!DOCTYPE html>'):
+			defi = defi[len('<!DOCTYPE html>'):]
+			if not defi.startswith('<html>'):
+				log.error(f"<html> not found: word={word}")
+		else:
+			if not defi.startswith('<html>'):
+				return
 		word = self.s_word
 		i = defi.find('<body')
 		if i == -1:
