@@ -113,32 +113,29 @@ class TextGlossaryReader(object):
 				self._fileCount = int(fileCountStr)
 				self._glos.setInfo("file_count", "")
 
-	def __next__(self) -> BaseEntry:
-		self._pos += 1
-		try:
-			return self._pendingEntries.pop(0)
-		except IndexError:
-			pass
-		###
-		try:
-			wordDefi = self.nextPair()
-		except StopIteration as e:
-			if self._fileIndex < self._fileCount - 1:
-				if self.openNextFile():
-					return self.__next__()
-			self._wordCount = self._pos
-			raise e
-		if not wordDefi:
-			return
-		word, defi = wordDefi
-		###
-		return self.newEntry(word, defi)
+	def __iter__(self) -> Iterator[BaseEntry]:
+		while True:
+			self._pos += 1
+			if self._pendingEntries:
+				yield self._pendingEntries.pop(0)
+				continue
+			###
+			try:
+				wordDefi = self.nextPair()
+			except StopIteration as e:
+				if self._fileIndex < self._fileCount - 1:
+					if self.openNextFile():
+						continue
+				self._wordCount = self._pos
+				break
+			if not wordDefi:
+				yield None
+			word, defi = wordDefi
+			###
+			yield self.newEntry(word, defi)
 
 	def __len__(self) -> int:
 		return self._wordCount
-
-	def __iter__(self) -> Iterator[BaseEntry]:
-		return self
 
 	def isInfoWord(self, word: str) -> bool:
 		raise NotImplementedError
