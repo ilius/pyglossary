@@ -82,7 +82,7 @@ Legend:
 Requirements
 ------------
 
-PyGlossary requires **Python 3.6 or higher**, and works in practically all
+PyGlossary requires **Python 3.7 or higher**, and works in practically all
 modern operating systems. While primarily designed for *GNU/Linux*, it works
 on *Windows*, *Mac OS X* and other Unix-based operating systems as well.
 
@@ -98,7 +98,7 @@ ways to use the program).
 		* `pacman -S python-gobject gtk3`
 		* https://aur.archlinux.org/packages/pyglossary/
 	-	Mac OS X: `brew install pygobject3 gtk+3`
-	-	Nix / NixOS: `nix-shell -p gnome3.gobjectIntrospection python37Packages.pygobject3 python37Packages.pycairo`
+	-	Nix / NixOS: `nix-shell -p gnome3.gobjectIntrospection python38Packages.pygobject3 python38Packages.pycairo`
 
 -	**Tkinter-based interface**, works in the lack of Gtk. Specially on
 	Windows where Tkinter library is installed with the Python itself.
@@ -107,7 +107,7 @@ ways to use the program).
 	-	openSUSE: `zypper install python3-tk tix`
 	-	Fedora: `yum install python3-tkinter tix`
 	-	Mac OS X: read <https://www.python.org/download/mac/tcltk/>
-	-	Nix / NixOS: `nix-shell -p python37Packages.tkinter tix`
+	-	Nix / NixOS: `nix-shell -p python38Packages.tkinter tix`
 
 -	**Command-line interface**, works in all operating systems without
 	any specific requirements, just type:
