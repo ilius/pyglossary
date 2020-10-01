@@ -34,12 +34,19 @@ class DataEntry(BaseEntry):
 		"_fname",
 		"_data",
 		"_tmpPath",
+		"_byteProgress",
 	]
 
 	def isData(self) -> bool:
 		return True
 
-	def __init__(self, fname: str, data: bytes, inTmp: bool = False) -> None:
+	def __init__(
+		self,
+		fname: str,
+		data: bytes,
+		inTmp: bool = False,
+		byteProgress: Optional[Tuple[int, int]] = None,
+	) -> None:
 		assert isinstance(fname, str)
 		assert isinstance(data, bytes)
 		assert isinstance(inTmp, bool)
@@ -55,6 +62,7 @@ class DataEntry(BaseEntry):
 		self._fname = fname
 		self._data = data  # bytes instance
 		self._tmpPath = tmpPath
+		self._byteProgress = byteProgress  # Optional[Tuple[int, int]]
 
 	def getFileName(self) -> str:
 		return self._fname
@@ -99,6 +107,9 @@ class DataEntry(BaseEntry):
 	@property
 	def defi(self) -> str:
 		return f"File: {self._fname}"
+
+	def byteProgress(self):
+		return self._byteProgress
 
 	def getWord(self) -> str:
 		log.error("entry.getWord() is deprecated, use entry.s_word")
