@@ -21,6 +21,7 @@ import sys
 import os
 import re
 import struct
+import binascii
 import logging
 
 from typing import (
@@ -139,6 +140,8 @@ def uintFromBytes(bs: bytes) -> int:
 		n = (n << 8) + c
 	return n
 
+def crc32hex(bs: bytes) -> str:
+	return struct.pack('>I', binascii.crc32(bs) & 0xffffffff).hex()
 
 # ___________________________________________ #
 

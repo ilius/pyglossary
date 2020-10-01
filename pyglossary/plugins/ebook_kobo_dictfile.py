@@ -23,6 +23,7 @@
 
 from formats_common import *
 from pyglossary.text_reader import TextGlossaryReader
+from pyglossary.image_utils import extractInlineHtmlImages
 
 enable = True
 format = "Dictfile"
@@ -32,6 +33,7 @@ extensions = (".df",)
 
 optionsProp = {
 	"encoding": EncodingOption(),
+	"extract_inline_images": BoolOption(),
 }
 
 tools = [
@@ -54,26 +56,12 @@ def escapeDefi(defi: str) -> str:
 		.replace("\n&", "\n &")
 
 
-def fixDefi(defi: str) -> str:
-	import mistune
-	defi = defi.replace("\n @", "\n@")\
-		.replace("\n :", "\n:")\
-		.replace("\n &", "\n&")
-	defi = defi.lstrip()
-	if defi.startswith("<html>"):
-		defi = defi[len("<html>"):].lstrip()
-		i = defi.find("</html>")
-		if i >= 0:
-			defi = defi[:i]
-	else:
-		defi = mistune.html(defi)
-	return defi
-
-
 class Reader(TextGlossaryReader):
 	depends = {
 		"mistune": "mistune==2.0.0a5",
 	}
+
+	_extract_inline_images = True
 
 	def open(self, filename: str) -> None:
 		try:
@@ -83,12 +71,37 @@ class Reader(TextGlossaryReader):
 			raise e
 		TextGlossaryReader.open(self, filename)
 		self._glos.setDefaultDefiFormat("h")
+		if not isdir(self._glos.tmpDataDir):
+			os.mkdir(self._glos.tmpDataDir)
 
 	def isInfoWord(self, word):
 		return False
 
 	def fixInfoWord(self, word):
 		raise NotImplementedError
+
+	def fixDefi(self, defi: str) -> str:
+		import mistune
+		defi = defi.replace("\n @", "\n@")\
+			.replace("\n :", "\n:")\
+			.replace("\n &", "\n&")
+		defi = defi.lstrip()
+		if defi.startswith("<html>"):
+			defi = defi[len("<html>"):].lstrip()
+			i = defi.find("</html>")
+			if i >= 0:
+				defi = defi[:i]
+		else:
+			defi = mistune.html(defi)
+		if self._extract_inline_images:
+			defi, images = extractInlineHtmlImages(
+				defi,
+				self._glos.tmpDataDir,
+				fnamePrefix="",  # maybe f"{self._pos:06d}-"
+			)
+			if images:
+				defi = (defi, images)
+		return defi
 
 	def nextPair(self):
 		if not self._file:
@@ -104,7 +117,7 @@ class Reader(TextGlossaryReader):
 			if line.startswith("@"):
 				if words:
 					self._bufferLine = line
-					return words, fixDefi("\n".join(defiLines))
+					return words, self.fixDefi("\n".join(defiLines))
 				words = [line[1:]]
 				continue
 			if line.startswith("&"):
@@ -113,7 +126,7 @@ class Reader(TextGlossaryReader):
 			defiLines.append(line)
 
 		if words:
-			return words, fixDefi("\n".join(defiLines))
+			return words, self.fixDefi("\n".join(defiLines))
 
 		raise StopIteration
 

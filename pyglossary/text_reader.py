@@ -1,6 +1,6 @@
 from pyglossary.file_utils import fileCountLines
 from pyglossary.entry_base import BaseEntry
-from pyglossary.entry import Entry
+from pyglossary.entry import Entry, DataEntry
 
 from pyglossary.glossary_type import GlossaryType
 
@@ -131,7 +131,10 @@ class TextGlossaryReader(object):
 			if not wordDefi:
 				yield None
 			word, defi = wordDefi
-			###
+			if isinstance(defi, tuple):
+				defi, resList = defi
+				for relPath, fullPath in resList:
+					yield DataEntry.fromFile(self._glos, relPath, fullPath)
 			yield self.newEntry(word, defi)
 
 	def __len__(self) -> int:
