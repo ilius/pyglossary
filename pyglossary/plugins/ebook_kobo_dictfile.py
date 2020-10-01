@@ -60,7 +60,12 @@ def fixDefi(defi: str) -> str:
 		.replace("\n :", "\n:")\
 		.replace("\n &", "\n&")
 	defi = defi.lstrip()
-	if not defi.startswith("<html>"):
+	if defi.startswith("<html>"):
+		defi = defi[len("<html>"):].lstrip()
+		i = defi.find("</html>")
+		if i >= 0:
+			defi = defi[:i]
+	else:
 		defi = mistune.html(defi)
 	return defi
 
@@ -141,6 +146,12 @@ class Writer(object):
 				continue
 			words = entry.l_word
 			defi = entry.defi
+
+			entry.detectDefiFormat()
+			if entry.defiFormat == "h":
+				entry.stripFullHtml()
+				defi = f"<html>{entry.defi}"
+
 			fileObj.write(f"@ {fixWord(words[0])}\n")
 			for alt in words[1:]:
 				fileObj.write(f"& {fixWord(alt)}\n")
