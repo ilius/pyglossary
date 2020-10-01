@@ -125,7 +125,6 @@ def formatHMS(h: int, m: int, s: int) -> str:
 # ___________________________________________ #
 
 
-
 def uint32ToBytes(n: int) -> bytes:
 	return struct.pack('>I', n)
 
@@ -140,10 +139,12 @@ def uintFromBytes(bs: bytes) -> int:
 		n = (n << 8) + c
 	return n
 
+
 def crc32hex(bs: bytes) -> str:
 	return struct.pack('>I', binascii.crc32(bs) & 0xffffffff).hex()
 
 # ___________________________________________ #
+
 
 def urlToPath(url: str) -> str:
 	if not url.startswith("file://"):
