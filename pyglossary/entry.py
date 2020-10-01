@@ -174,9 +174,9 @@ class DataEntry(BaseEntry):
 		return tpl
 
 	@classmethod
-	def fromFile(cls, glos, word, fpath):
-		entry = DataEntry(word, b"")
-		entry._tmpPath = fpath
+	def fromFile(cls, glos, relPath, fullPath):
+		entry = DataEntry(relPath, b"")
+		entry._tmpPath = fullPath
 		return entry
 
 
