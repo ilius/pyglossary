@@ -167,7 +167,7 @@ class NormalizeHtml(EntryFilter):
 			"(" + "|".join([
 				fr"</?{tag}[^<>]*?>"
 				for tag in (
-					"a", "font", "i", "b", "u", "p", "sup", 
+					"a", "font", "i", "b", "u", "p", "sup",
 					"div", "span",
 					"table", "tr", "th", "td",
 					"ul", "ol", "li",
