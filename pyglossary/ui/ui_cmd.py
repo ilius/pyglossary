@@ -202,7 +202,7 @@ class UI(UIBase):
 				return
 
 	def fillMessage(self: "typing.Self", msg: str) -> str:
-		return wc_ljust(msg, self.pbar.term_width)
+		return "\r" + wc_ljust(msg, self.pbar.term_width)
 
 	def fixLogHandler(self: "typing.Self", h: "logging.Handler") -> None:
 		def reset() -> None:
@@ -212,7 +212,10 @@ class UI(UIBase):
 		h.formatter.fill = self.fillMessage
 
 	def progressInit(self: "typing.Self", title: str) -> None:
-		from .pbar_legacy import createProgressBar
+		try:
+			from .pbar_tqdm import createProgressBar
+		except ModuleNotFoundError:
+			from .pbar_legacy import createProgressBar
 		self.pbar = createProgressBar(title)
 		self.fixLogger()
 
