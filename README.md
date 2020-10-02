@@ -39,8 +39,8 @@ Supported formats
 | AppleDict Binary                                                      |🔢 |.dictionary      | ✔  | :x: |
 | AppleDict Source                                                      |📁 |                 |    |  ✔  |
 | Babylon                                                               |🔢 | .bgl            | ✔  | :x: |
-| [CC-CEDICT](https://cc-cedict.org/wiki) (Chinese)                     |📝 |                 | ✔  |     |
-| [cc-kedict](https://github.com/mhagiwara/cc-kedict) (Korean)          |📝 |                 | ✔  |     |
+| [CC-CEDICT](https://cc-cedict.org/wiki) (Chinese)                     |📝 |                 | ✔  | :x: |
+| [cc-kedict](https://github.com/mhagiwara/cc-kedict) (Korean)          |📝 |                 | ✔  | :x: |
 | CSV                                                                   |📝 | .csv            | ✔  |  ✔  |
 | Dict.cc (SQLite3, German)                                             |🔢 |                 | ✔  |     |
 | DICT.org / Dictd server                                               |📁 | (📝.index)      | ✔  |  ✔  |
@@ -57,7 +57,7 @@ Supported formats
 | JSON                                                                  |📝 | .json           |    |  ✔  |
 | Kobo E-Reader Dictionary                                              |📦 | .kobo.zip       |:x: |  ✔  |
 | [Kobo E-Reader Dictfile](https://github.com/pgaskin/dictutil)         |📝 | .df             | ✔  |  ✔  |
-| [Lingoes Source](http://www.lingoes.net/en/dictionary/dict_format.php)|📝 | .ldf           | ✔  |  ✔  |
+| [Lingoes Source](http://www.lingoes.net/en/dictionary/dict_format.php)|📝 | .ldf            | ✔  |  ✔  |
 | Octopus MDict                                                         |🔢 | .mdx            | ✔  | :x: |
 | [Sdictionary Binary](http://swaj.net/sdict/)                          |🔢 | .dct            | ✔  |     |
 | [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)         |📝 | .sdct           |    |  ✔  |
