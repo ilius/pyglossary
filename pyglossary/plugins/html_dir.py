@@ -409,9 +409,11 @@ class Writer(object):
 				headwords = f'Entry {entryIndex}'
 			else:
 				headwords = f'<b class="headword">{wordSep.join(entry.l_word)}</b>'
+			# entry_link_sym = "&#182;"
+			entry_link_sym = "&#128279;"
 			text = (
 				f'<div id="{entryId}">{headwords}&nbsp;&nbsp;'
-				f'<a class="no_ul" class="entry_link" href="#{entryId}">&#128279;</a>'
+				f'<a class="no_ul" class="entry_link" href="#{entryId}">{entry_link_sym}</a>'
 				f'{getEntryWebLink(entry)}'
 				f"<br>\n{defi}"
 				'</div>\n'
