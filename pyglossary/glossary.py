@@ -415,6 +415,14 @@ class Glossary(GlossaryType):
 		self._entryFilters.append(ef.NonEmptyDefiFilter(self))
 		self._entryFilters.append(ef.RemoveEmptyAndDuplicateAltWords(self))
 
+		if log.level <= core.TRACE:
+			try:
+				import psutil
+			except ModuleNotFoundError:
+				pass
+			else:
+				self._entryFilters.append(ef.MaxMemoryUsageEntryFilter(self))
+
 		self._entryFiltersName = {
 			entryFilter.name
 			for entryFilter in self._entryFilters
@@ -1216,6 +1224,8 @@ class Glossary(GlossaryType):
 				f" for direct conversion without loading into memory"
 			)
 
+		self.showMemoryUsage()
+
 		writerList = [writer]
 		try:
 			genList = []
@@ -1246,9 +1256,13 @@ class Glossary(GlossaryType):
 			log.exception("Exception while calling plugin\'s write function")
 			return
 		finally:
+			self.showMemoryUsage()
+			log.debug("\nRunning writer.finish()")
 			for writer in writerList:
 				writer.finish()
 			self.clear()
+
+		self.showMemoryUsage()
 
 		return filename
 
@@ -1365,6 +1379,8 @@ class Glossary(GlossaryType):
 			log.error(f"Directory already exists: {outputFilename}")
 			return
 
+		self.showMemoryUsage()
+
 		tm0 = now()
 		if not self.read(
 			inputFilename,
@@ -1395,6 +1411,7 @@ class Glossary(GlossaryType):
 
 		log.info(f"Writing file {finalOutputFile!r} done.")
 		log.info(f"Running time of convert: {now()-tm0:.1f} seconds")
+		self.showMemoryUsage()
 
 		return finalOutputFile
 
@@ -1533,6 +1550,17 @@ class Glossary(GlossaryType):
 	def progressEnd(self) -> None:
 		if self.ui:
 			self.ui.progressEnd()
+
+
+	def showMemoryUsage(self):
+		if log.level > core.TRACE:
+			return
+		try:
+			import psutil
+		except ModuleNotFoundError:
+			return
+		usage = psutil.Process(os.getpid()).memory_info().rss // 1024
+		log.trace(f"Memory Usage: {usage} kB")
 
 	# ________________________________________________________________________#
 

@@ -273,3 +273,24 @@ class CleanEntryFilter(EntryFilter):  # FIXME
 	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
 		entry.editFuncDefi(self.cleanDefi)
 		return entry
+
+
+class MaxMemoryUsageEntryFilter(EntryFilter):
+	name = "max_memory_usage"
+	desc = "Show Max Memory Usage"
+
+	def __init__(self, glos: Glossary):
+		EntryFilter.__init__(self, glos)
+		self._max_mem_usage = 0
+
+	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+		import os
+		import psutil
+		usage = psutil.Process(os.getpid()).memory_info().rss // 1024
+		if usage > self._max_mem_usage:
+			self._max_mem_usage = usage
+			word = entry.s_word
+			if len(word) > 40:
+				word = word[:37] + "..."
+			log.trace(f"Maximum Memory Usage: {usage} kB, word={word}")
+		return entry
