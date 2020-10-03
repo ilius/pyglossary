@@ -154,12 +154,8 @@ class Writer(object):
 		self._glos = glos
 		self._filename = None
 		self._resPrefix = ""
-		self._eventCounter = 0
 
 	def _slobObserver(self, event: "slob.WriterEvent"):
-		if self._eventCounter == 0:
-			log.debug("")
-		self._eventCounter += 1
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
 	def open(self, filename: str):
