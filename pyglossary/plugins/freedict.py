@@ -390,9 +390,9 @@ class Reader(object):
 				del elem.getparent()[0]
 
 		if self._discoveredTags:
-			log.info("\nFound unsupported tags")
+			log.info("Found unsupported tags")
 			for tag, elem in self._discoveredTags.items():
-				log.info(f"\n{self.tostring(elem)}\n")
+				log.info(f"{self.tostring(elem)}\n")
 
 
 class Writer(object):

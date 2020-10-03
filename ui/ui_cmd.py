@@ -155,12 +155,13 @@ class UI(UIBase):
 		self._resetLogFormatter = None
 
 	def onSigInt(self, *args):
+		log.info("")
 		if self._toPause:
-			log.info("\nOperation Canceled")
+			log.info("Operation Canceled")
 			sys.exit(0)
 		else:
 			self._toPause = True
-			log.info("\nPlease wait...")
+			log.info("Please wait...")
 
 	def setText(self, text):
 		self.pbar.widgets[0] = text

@@ -446,7 +446,7 @@ class Writer(object):
 		indexTxtFileObj.close()
 
 		if linkTargetSet:
-			log.info(f"\n{len(linkTargetSet)} link targets found")
+			log.info(f"{len(linkTargetSet)} link targets found")
 			log.info("Fixing links, please wait...")
 			self.fixLinks(linkTargetSet)
 

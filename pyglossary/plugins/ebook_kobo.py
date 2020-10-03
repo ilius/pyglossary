@@ -199,7 +199,7 @@ class Writer:
 				))
 			del entry
 
-		log.info(f"\nKobo: sorting entries...")
+		log.info(f"Kobo: sorting entries...")
 		data.sort(key=lambda x: x[0])
 
 		log.info(f"Kobo: writing entries...")

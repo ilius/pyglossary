@@ -133,7 +133,7 @@ class Reader(object):
 		try:
 			entryRoot = etree.fromstring(entryFull)
 		except etree.XMLSyntaxError as e:
-			log.error(f"\n{self._buf[pos-plus:pos+100]}")
+			log.error(f"{self._buf[pos-plus:pos+100]}")
 			log.error(
 				f"chunkSize={chunkSize}, plus={plus}, pos={pos}, len(buf)={len(self._buf)}"
 			)

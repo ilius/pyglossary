@@ -1150,7 +1150,7 @@ class Glossary(GlossaryType):
 					f", falling back to indirect mode"
 				)
 				self._inactivateDirectMode()
-				log.info(f"\nLoaded {len(self._data)} entries")
+				log.info(f"Loaded {len(self._data)} entries")
 			sort = True
 			sortCacheSize = 0
 		elif sortOnWrite == DEFAULT_YES:
@@ -1231,7 +1231,7 @@ class Glossary(GlossaryType):
 			genList = []
 			gen = writer.write()
 			if gen is None:
-				log.error(f"\n{format} write function is not a generator")
+				log.error(f"{format} write function is not a generator")
 			else:
 				genList.append(gen)
 

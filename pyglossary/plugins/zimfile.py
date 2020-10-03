@@ -159,7 +159,7 @@ class Reader(object):
 
 			yield glos.newDataEntry(word, b_content)
 
-		log.info(f"\nArticle Count: {articleCount}")
+		log.info(f"Article Count: {articleCount}")
 		if duplicateArticleCount > 0:
 			log.info(f"Duplicate Title Count: {duplicateArticleCount}")
 		if emptyContentCount > 0:
