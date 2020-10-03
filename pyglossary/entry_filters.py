@@ -290,7 +290,7 @@ class MaxMemoryUsageEntryFilter(EntryFilter):
 		if usage > self._max_mem_usage:
 			self._max_mem_usage = usage
 			word = entry.s_word
-			if len(word) > 40:
+			if len(word) > 30:
 				word = word[:37] + "..."
-			log.trace(f"Maximum Memory Usage: {usage} kB, word={word}")
+			log.trace(f"MaxMemUsage: {usage}, word={word}")
 		return entry
