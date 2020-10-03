@@ -30,6 +30,19 @@ VERSION = "3.3.0"
 TRACE = 5
 logging.addLevelName(TRACE, "TRACE")
 
+
+class Formatter(logging.Formatter):
+	def __init__(self, *args, **kwargs):
+		logging.Formatter.__init__(self, *args, **kwargs)
+		self.fill = None  # type: Optional[Callable[[str], str]]
+
+	def formatMessage(self, record):
+		msg = logging.Formatter.formatMessage(self, record)
+		if self.fill is not None:
+			msg = self.fill(msg)
+		return msg
+
+
 class MyLogger(logging.Logger):
 	levelsByVerbosity = (
 		logging.CRITICAL,
@@ -75,7 +88,7 @@ class MyLogger(logging.Logger):
 			fmt = "%(asctime)s [%(levelname)s] %(message)s"
 		else:
 			fmt = "[%(levelname)s] %(message)s"
-		return logging.Formatter(fmt)
+		return Formatter(fmt)
 
 	def setTimeEnable(self, timeEnable: bool):
 		self._timeEnable = timeEnable
@@ -142,6 +155,7 @@ class StdLogHandler(logging.Handler):
 
 	def __init__(self, noColor: bool = False):
 		logging.Handler.__init__(self)
+		self.set_name("std")
 		self.noColor = noColor
 
 	def emit(self, record: logging.LogRecord) -> None:

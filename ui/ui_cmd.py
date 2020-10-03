@@ -152,6 +152,7 @@ class UI(UIBase):
 		# log.debug(self.pref)
 		self.pbar = NullObj()
 		self._toPause = False
+		self._resetLogFormatter = None
 
 	def onSigInt(self, *args):
 		if self._toPause:
@@ -164,6 +165,22 @@ class UI(UIBase):
 	def setText(self, text):
 		self.pbar.widgets[0] = text
 
+	def fixLogger(self):
+		for h in log.handlers:
+			if h.name == "std":
+				self.fixLogHandler(h)
+				return
+
+	def fillMessage(self, msg):
+		return msg.ljust(self.pbar.term_width)
+
+	def fixLogHandler(self, h):
+		def reset():
+			h.formatter.fill = None
+
+		self._resetLogFormatter = reset
+		h.formatter.fill = self.fillMessage
+
 	def progressInit(self, title):
 		rot = pb.RotatingMarker()
 		self.pbar = pb.ProgressBar(
@@ -171,16 +188,24 @@ class UI(UIBase):
 			# update_step=0.5, removed
 		)
 		self.pbar.widgets = [
-			title,
-			pb.Bar(marker="█", right=rot),
-			" ", pb.Percentage(), " ",
+			title + " ",
+			pb.AnimatedMarker(),
+			" ",
+			pb.Bar(marker="█"),
+			pb.Percentage(), " ",
 			pb.ETA(),
 		]
 		self.pbar.start(num_intervals=1000)
 		rot.pbar = self.pbar
+		self.fixLogger()
 
 	def progress(self, rat, text=""):
 		self.pbar.update(rat)
+
+	def progressEnd(self):
+		self.pbar.finish()
+		if self._resetLogFormatter:
+			self._resetLogFormatter()
 
 	def reverseLoop(self, *args, **kwargs):
 		reverseKwArgs = {}

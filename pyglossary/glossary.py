@@ -1257,7 +1257,7 @@ class Glossary(GlossaryType):
 			return
 		finally:
 			self.showMemoryUsage()
-			log.debug("\nRunning writer.finish()")
+			log.debug("Running writer.finish()")
 			for writer in writerList:
 				writer.finish()
 			self.clear()
