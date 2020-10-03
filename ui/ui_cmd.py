@@ -26,6 +26,11 @@ from pyglossary.glossary import *
 from pyglossary.reverse import reverseGlossary
 from .base import *
 from . import progressbar as pb
+from .wcwidth import wcswidth
+
+
+def wc_ljust(text, length, padding=' '):
+	return text + padding * max(0, (length - wcswidth(text)))
 
 
 if os.sep == "\\":  # Operating system is Windows
@@ -173,7 +178,7 @@ class UI(UIBase):
 				return
 
 	def fillMessage(self, msg):
-		return msg.ljust(self.pbar.term_width)
+		return wc_ljust(msg, self.pbar.term_width)
 
 	def fixLogHandler(self, h):
 		def reset():
