@@ -2,7 +2,7 @@
 from formats_common import *
 from pyglossary.xml_utils import xml_escape
 from pyglossary.html_utils import unescape_unicode
-from typing import List, Union, Callable
+from typing import List, Callable
 from io import BytesIO
 import re
 import html
@@ -36,29 +36,29 @@ class Reader(object):
 		"word containing irregular kana usage": "irregular",
 	}
 
-	def make_list(
+	def makeList(
 		self,
 		hf: "lxml.etree.htmlfile",
-		input_elements: "List[lxml.etree.Element]",
+		input_objects: "List[lxml.etree.Element]",
 		processor: Callable,
 		single_prefix=None,
 		skip_single=True
 	):
 		""" Wrap elements into <ol> if more than one element """
-		if len(input_elements) == 0:
+		if len(input_objects) == 0:
 			return
 
-		if len(input_elements) == 1:
+		if len(input_objects) == 1:
 			hf.write(single_prefix)
-			processor(hf, input_elements[0])
+			processor(hf, input_objects[0])
 			return
 
 		with hf.element("ol"):
-			for el in input_elements:
+			for el in input_objects:
 				with hf.element("li"):
 					processor(hf, el)
 
-	def process_sense(
+	def writeSense(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sense: "lxml.etree.Element",
@@ -146,7 +146,6 @@ class Reader(object):
 					hf.write(desc)
 			hf.write(br())
 
-
 	def getEntryByElem(self, entry: "lxml.etree.Element") -> "BaseEntry":
 		from lxml import etree as ET
 		glos = self._glos
@@ -218,10 +217,10 @@ class Reader(object):
 									hf.write(prop)
 					hf.write(br())
 
-				self.make_list(
+				self.makeList(
 					hf,
 					entry.findall("sense"),
-					self.process_sense,
+					self.writeSense,
 				)
 
 		defi = f.getvalue().decode("utf-8")
@@ -252,15 +251,15 @@ class Reader(object):
 				lines.append(line)
 		return "\n".join(lines)
 
-	def set_creation_time(self, header):
+	def setCreationTime(self, header):
 		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)
 		if m is None:
 			return
 		self._glos.setInfo("creationTime", m.group(1))
 
-	def set_metadata(self, header: str):
+	def setMetadata(self, header: str):
 		# TODO: self.set_info("edition", ...)
-		self.set_creation_time(header)
+		self.setCreationTime(header)
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
@@ -304,7 +303,7 @@ class Reader(object):
 				if "<JMdict>" in line:
 					break
 				header += line
-		self.set_metadata(header)
+		self.setMetadata(header)
 
 		self._file = open(filename, mode="rb")
 
