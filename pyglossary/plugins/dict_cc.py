@@ -40,13 +40,10 @@ class Reader(object):
 		self._glos.setInfo("definition_has_headwords", "True")
 
 	def __len__(self):
-		self._cur.execute("select count(distinct term1) from main_ft")
-		mainCount = self._cur.fetchone()[0]
-
-		self._cur.execute("select count(term1) from main_ft")
-		revCount = self._cur.fetchone()[0]
-
-		return mainCount + revCount
+		self._cur.execute(
+			"select count(distinct term1)+count(distinct term2) from main_ft"
+		)
+		return self._cur.fetchone()[0]
 
 	def makeList(
 		self,
@@ -76,20 +73,25 @@ class Reader(object):
 		row: Tuple[str, str, str],
 	):
 		from lxml import etree as ET
-		term2, entry_type = row
+		trans, entry_type = row
 		if entry_type:
 			with hf.element("i"):
 				hf.write(f"{entry_type}")
 			hf.write(ET.Element("br"))
 		try:
-			hf.write(term2)
-		except:
-			log.error(f"error in writing term2={term2!r}")
+			hf.write(trans + " ")
+		except Exception as e:
+			log.error(f"error in writing {trans!r}, {e}")
+			hf.write(repr(trans) + " ")
+		else:
+			with hf.element("big"):
+				with hf.element("a", href=f'bword://{trans}'):
+					hf.write(f"⏎")
 
-	def iterRows(self):
+	def iterRows(self, column1, column2):
 		self._cur.execute(
-			"select term1, term2, entry_type from main_ft"
-			" order by term1"
+			f"select {column1}, {column2}, entry_type from main_ft"
+			f" order by {column1}"
 		)
 		for row in self._cur:
 			term1 = row[0]
@@ -100,7 +102,7 @@ class Reader(object):
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
-	def __iter__(self):
+	def _iterOneDirection(self, column1, column2):
 		from itertools import groupby
 		from lxml import etree as ET
 		from io import BytesIO
@@ -108,7 +110,7 @@ class Reader(object):
 
 		glos = self._glos
 		for headword, groupsOrig in groupby(
-			self.iterRows(),
+			self.iterRows(column1, column2),
 			key=lambda row: row[0],
 		):
 			headword = html.unescape(headword)
@@ -120,7 +122,11 @@ class Reader(object):
 			with ET.htmlfile(f) as hf:
 				with hf.element("div"):
 					with glos.titleElement(hf, headword):
-						hf.write(headword)
+						try:
+							hf.write(headword)
+						except Exception as e:
+							log.error(f"error in writing {headword!r}, {e}")
+							hf.write(repr(headword))
 					if len(groups) == 1:
 						hf.write(ET.Element("br"))
 					self.makeList(
@@ -131,27 +137,9 @@ class Reader(object):
 			defi = unescape_unicode(f.getvalue().decode("utf-8"))
 			yield self._glos.newEntry(headword, defi, defiFormat="h")
 
-			for term2, entry_type in groups:
-				revWord = term2
-				if entry_type:
-					revWord = f"{revWord} {{{entry_type}}}"
-				f = BytesIO()
-				with ET.htmlfile(f) as hf:
-					with hf.element("div"):
-						with glos.titleElement(hf, revWord):
-							try:
-								hf.write(revWord)
-							except:
-								log.error(f'error in writing revWord={revWord!r}')
-						hf.write(ET.Element("br"))
-						with hf.element("a", href=f'bword://{headword}'):
-							hf.write(headword)
-				yield self._glos.newEntry(
-					revWord,
-					unescape_unicode(f.getvalue().decode("utf-8")),
-					defiFormat="h",
-				)
-
+	def __iter__(self):
+		yield from self._iterOneDirection("term1", "term2")
+		yield from self._iterOneDirection("term2", "term1")
 
 	def close(self):
 		if self._cur:
