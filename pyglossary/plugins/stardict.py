@@ -4,6 +4,7 @@ import sys
 import os
 from os.path import (
 	dirname,
+	getsize,
 	realpath,
 )
 import re
@@ -30,6 +31,7 @@ optionsProp = {
 	"sametypesequence": StrOption(
 		values=["", "h", "m", "x"],
 	),
+	"merge_syns": BoolOption(),
 }
 sortOnWrite = ALWAYS
 # sortKey is defined in Writer class
@@ -452,6 +454,7 @@ class Writer(object):
 	_dictzip: bool = True
 	_sametypesequence: str = "" # type: Literal["", "h", "m"]
 	_stardict_client: bool = False
+	_merge_syns: bool = False
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
@@ -518,9 +521,15 @@ class Writer(object):
 
 	def write(self) -> Generator[None, "BaseEntry", None]:
 		if self._sametypesequence:
-			yield from self.writeCompact(self._sametypesequence)
+			if self._merge_syns:
+				yield from self.writeCompactMergeSyns(self._sametypesequence)
+			else:
+				yield from self.writeCompact(self._sametypesequence)
 		else:
-			yield from self.writeGeneral()
+			if self._merge_syns:
+				yield from self.writeGeneralMergeSyns()
+			else:
+				yield from self.writeGeneral()
 		if self._dictzip:
 			runDictzip(self._filename)
 
@@ -705,6 +714,152 @@ class Writer(object):
 		log.info(
 			f"Writing {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
 		)
+
+	def writeCompactMergeSyns(self, defiFormat):
+		"""
+		Build StarDict dictionary with sametypesequence option specified.
+		Every item definition consists of a single article.
+		All articles have the same format, specified in defiFormat parameter.
+
+		Parameters:
+		defiFormat - format of article definition: h - html, m - plain text
+		"""
+		dictMark = 0
+		idxBlockList = []  # list of tuples (b"word", startAndLength)
+		altIndexList = []  # list of tuples (b"alternate", entryIndex)
+
+		dictFile = open(self._filename + ".dict", "wb")
+
+		t0 = now()
+		if not isdir(self._resDir):
+			os.mkdir(self._resDir)
+
+		entryIndex = -1
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				entry.save(self._resDir)
+				continue
+			entryIndex += 1
+
+			words = entry.l_word  # list of strs
+			word = words[0]  # str
+			defi = self.fixDefi(entry.defi, defiFormat)
+			# defi is str
+
+			b_dictBlock = defi.encode("utf-8")
+			dictFile.write(b_dictBlock)
+			blockLen = len(b_dictBlock)
+
+			blockData = uint32ToBytes(dictMark) + uint32ToBytes(blockLen)
+			idxBlockList += [(word, blockData) for word in words]
+
+			dictMark += blockLen
+
+		wordCount, indexFileSize = self.writeIdxFile(idxBlockList)
+
+		dictFile.close()
+		if not os.listdir(self._resDir):
+			os.rmdir(self._resDir)
+		log.info(f"Writing dict file took {now()-t0:.2f} seconds")
+
+		self.writeIfoFile(
+			wordCount,
+			indexFileSize,
+			len(altIndexList),
+			defiFormat=defiFormat,
+		)
+
+	def writeGeneralMergeSyns(self) -> None:
+		"""
+		Build StarDict dictionary in general case.
+		Every item definition may consist of an arbitrary number of articles.
+		sametypesequence option is not used.
+		"""
+		dictMark = 0
+		idxBlockList = []  # list of tuples (b"word", startAndLength)
+		altIndexList = []  # list of tuples (b"alternate", entryIndex)
+
+		dictFile = open(self._filename + ".dict", "wb")
+
+		t0 = now()
+		wordCount = 0
+		defiFormatCounter = Counter()
+		if not isdir(self._resDir):
+			os.mkdir(self._resDir)
+
+		entryIndex = -1
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				entry.save(self._resDir)
+				continue
+			entryIndex += 1
+
+			entry.detectDefiFormat()  # call no more than once
+			defiFormat = entry.defiFormat
+			defiFormatCounter[defiFormat] += 1
+			if defiFormat not in ("m", "h", "x"):
+				log.error(f"invalid defiFormat={defiFormat}, using 'm'")
+				defiFormat = "m"
+
+			words = entry.l_word  # list of strs
+			word = words[0]  # str
+			defi = self.fixDefi(entry.defi, defiFormat)
+			# defi is str
+
+			b_dictBlock = (defiFormat + defi).encode("utf-8") + b"\x00"
+			dictFile.write(b_dictBlock)
+			blockLen = len(b_dictBlock)
+
+			blockData = uint32ToBytes(dictMark) + uint32ToBytes(blockLen)
+			idxBlockList += [(word, blockData) for word in words]
+
+			dictMark += blockLen
+
+		wordCount, indexFileSize = self.writeIdxFile(idxBlockList)
+
+		dictFile.close()
+		if not os.listdir(self._resDir):
+			os.rmdir(self._resDir)
+		log.info(f"Writing dict file took {now()-t0:.2f} seconds")
+		log.debug("defiFormatsCount = " + pformat(defiFormatCounter.most_common()))
+
+		self.writeIfoFile(
+			wordCount,
+			indexFileSize,
+			len(altIndexList),
+		)
+
+	def writeIdxFile(self, indexList: List[Tuple[bytes, bytes]]) -> Tuple:
+		filename = self._filename + ".idx"
+		if not indexList:
+			return (0,0)
+
+		log.info(f"Sorting {len(indexList)} items...")
+		t0 = now()
+
+		indexList.sort(key=lambda x: self.sortKey(x[0]))
+		log.info(
+			f"Sorting {len(indexList)} {filename} took {now()-t0:.2f} seconds",
+		)
+		log.info(f"Writing {len(indexList)} index entries...")
+		t0 = now()
+		with open(filename, "wb") as indexFile:
+			indexFile.write(b"".join([
+				key.encode("utf-8") \
+				+ b"\x00" \
+				+ value
+				for key, value in indexList
+			]))
+		log.info(
+			f"Writing {len(indexList)} {filename} took {now()-t0:.2f} seconds",
+		)
+		return (len(indexList), getsize(filename))
 
 	def writeIfoFile(
 		self,
