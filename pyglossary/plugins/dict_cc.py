@@ -40,8 +40,13 @@ class Reader(object):
 		self._glos.setInfo("definition_has_headwords", "True")
 
 	def __len__(self):
-		self._cur.execute("select count(*) from main_ft")
-		return self._cur.fetchone()[0]
+		self._cur.execute("select count(distinct term1) from main_ft")
+		mainCount = self._cur.fetchone()[0]
+
+		self._cur.execute("select count(term1) from main_ft")
+		revCount = self._cur.fetchone()[0]
+
+		return mainCount + revCount
 
 	def makeList(
 		self,
@@ -71,7 +76,7 @@ class Reader(object):
 		row: Tuple[str, str, str],
 	):
 		from lxml import etree as ET
-		term1, term2, entry_type = row
+		term2, entry_type = row
 		if entry_type:
 			with hf.element("i"):
 				hf.write(f"{entry_type}")
@@ -79,7 +84,7 @@ class Reader(object):
 		try:
 			hf.write(term2)
 		except:
-			log.error(f"term2={term2!r}")
+			log.error(f"error in writing term2={term2!r}")
 
 	def iterRows(self):
 		self._cur.execute(
@@ -87,25 +92,30 @@ class Reader(object):
 			" order by term1"
 		)
 		for row in self._cur:
-			term1 = html.unescape(row[0])
+			term1 = row[0]
 			term2 = row[1]
-			entry_type = row[2]
-			#defi = term2
-			#if entry_type:
-			#	defi = f"<i>{entry_type}</i><br>{defi}"
-			yield term1, term2, entry_type
+			try:
+				term2 = html.unescape(term2)
+			except Exception as e:
+				log.error(f"html.unescape({term2!r}) -> {e}")
+			yield term1, term2, row[2]
 
 	def __iter__(self):
 		from itertools import groupby
 		from lxml import etree as ET
 		from io import BytesIO
+		from pyglossary.html_utils import unescape_unicode
 
 		glos = self._glos
-		for headword, groups in groupby(
+		for headword, groupsOrig in groupby(
 			self.iterRows(),
 			key=lambda row: row[0],
 		):
-			groups = list(groups)
+			headword = html.unescape(headword)
+			groups = [
+				(term2, entry_type)
+				for _, term2, entry_type in groupsOrig
+			]
 			f = BytesIO()
 			with ET.htmlfile(f) as hf:
 				with hf.element("div"):
@@ -118,8 +128,29 @@ class Reader(object):
 						groups,
 						self.writeSense,
 					)
-			defi = f.getvalue().decode("utf-8")
+			defi = unescape_unicode(f.getvalue().decode("utf-8"))
 			yield self._glos.newEntry(headword, defi, defiFormat="h")
+
+			for term2, entry_type in groups:
+				revWord = term2
+				if entry_type:
+					revWord = f"{revWord} {{{entry_type}}}"
+				f = BytesIO()
+				with ET.htmlfile(f) as hf:
+					with hf.element("div"):
+						with glos.titleElement(hf, revWord):
+							try:
+								hf.write(revWord)
+							except:
+								log.error(f'error in writing revWord={revWord!r}')
+						hf.write(ET.Element("br"))
+						with hf.element("a", href=f'bword://{headword}'):
+							hf.write(headword)
+				yield self._glos.newEntry(
+					revWord,
+					unescape_unicode(f.getvalue().decode("utf-8")),
+					defiFormat="h",
+				)
 
 
 	def close(self):
