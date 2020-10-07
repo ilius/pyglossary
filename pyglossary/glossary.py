@@ -1156,6 +1156,13 @@ class Glossary(GlossaryType):
 		elif sortOnWrite == DEFAULT_YES:
 			if sort is None:
 				sort = True
+			if sortCacheSize == 0:
+				log.warning(
+					f"Writing to {format} format requires full sort"
+					f", falling back to indirect mode"
+				)
+				self._inactivateDirectMode()
+				log.info(f"Loaded {len(self._data)} entries")
 		elif sortOnWrite == DEFAULT_NO:
 			if sort is None:
 				sort = False
@@ -1204,8 +1211,8 @@ class Glossary(GlossaryType):
 
 			if self._readers:
 				self._sortKey = sortKey
-				if cacheSize > 0:
-					self._sortCacheSize = cacheSize  # FIXME
+				if sortCacheSize > 0:
+					self._sortCacheSize = sortCacheSize  # FIXME
 			else:
 				t0 = now()
 				self._data.sort(key=Entry.getRawEntrySortKey(self, sortKey))
