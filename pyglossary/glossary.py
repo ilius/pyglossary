@@ -415,6 +415,9 @@ class Glossary(GlossaryType):
 		self._entryFilters.append(ef.NonEmptyDefiFilter(self))
 		self._entryFilters.append(ef.RemoveEmptyAndDuplicateAltWords(self))
 
+		if self.ui and self._progressbar:
+			self._entryFilters.append(ef.ProgressBarEntryFilter(self))
+
 		if log.level <= core.TRACE:
 			try:
 				import psutil
@@ -483,7 +486,6 @@ class Glossary(GlossaryType):
 			if progressbar:
 				self.progressInit("Converting")
 			threshold = self._calcProgressThreshold(wordCount)
-			lastPos = 0
 			try:
 				for index, entry in enumerate(reader):
 					if entry is not None:
@@ -493,12 +495,6 @@ class Glossary(GlossaryType):
 							if index % threshold == 0:
 								self.progress(index, wordCount)
 							continue
-						if entry is None:
-							continue
-						bp = entry.byteProgress()
-						if bp and bp[0] > lastPos + 10000:
-							self.progress(bp[0], bp[1], unit="bytes")
-							lastPos = bp[0]
 			finally:
 				reader.close()
 			if progressbar:

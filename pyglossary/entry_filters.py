@@ -275,6 +275,22 @@ class CleanEntryFilter(EntryFilter):  # FIXME
 		return entry
 
 
+class ProgressBarEntryFilter(EntryFilter):
+	name = "progressbar"
+	desc = "Progress Bar"
+
+	def __init__(self, glos: Glossary):
+		EntryFilter.__init__(self, glos)
+		self._lastPos = 0
+
+	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+		bp = entry.byteProgress()
+		if bp and bp[0] > self._lastPos + 20000:
+			self.glos.progress(bp[0], bp[1], unit="bytes")
+			self._lastPos = bp[0]
+		return entry
+
+
 class MaxMemoryUsageEntryFilter(EntryFilter):
 	name = "max_memory_usage"
 	desc = "Show Max Memory Usage"
