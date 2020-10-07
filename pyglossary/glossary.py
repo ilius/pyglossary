@@ -475,40 +475,26 @@ class Glossary(GlossaryType):
 	def _readersEntryGen(self) -> Iterator[BaseEntry]:
 		for reader in self._readers:
 			wordCount = 0
-			progressbar = False
-			if self.ui and self._progressbar:
-				try:
-					wordCount = len(reader)
-				except Exception:
-					log.exception("")
-				if wordCount >= 0:
-					progressbar = True
-			if progressbar:
+			if self._progressbar:
 				self.progressInit("Converting")
-			threshold = self._calcProgressThreshold(wordCount)
 			try:
 				for index, entry in enumerate(reader):
 					if entry is not None:
 						yield entry
-					if progressbar:
-						if wordCount > 0:
-							if index % threshold == 0:
-								self.progress(index, wordCount)
-							continue
 			finally:
 				reader.close()
-			if progressbar:
+			if self._progressbar:
 				self.progressEnd()
 
 	def _applyEntryFiltersGen(
 		self,
 		gen: Iterator[BaseEntry],
 	) -> Iterator[BaseEntry]:
-		for entry in gen:
+		for index, entry in enumerate(gen):
 			if not entry:
 				continue
 			for entryFilter in self._entryFilters:
-				entry = entryFilter.run(entry)
+				entry = entryFilter.run(entry, index)
 				if not entry:
 					break
 			else:

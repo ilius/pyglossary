@@ -32,7 +32,7 @@ class EntryFilter(object):
 		"""
 		pass
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		"""
 			returns an Entry object, or None to skip
 				may return the same `entry`,
@@ -46,7 +46,7 @@ class StripEntryFilter(EntryFilter):
 	name = "strip"
 	desc = "Strip Whitespaces"
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		entry.strip()
 		entry.replace("\r", "")
 		return entry
@@ -56,7 +56,7 @@ class NonEmptyWordFilter(EntryFilter):
 	name = "non_empty_word"
 	desc = "Non-empty Words"
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		if not entry.s_word:
 			return
 #		words = entry.l_word
@@ -72,7 +72,7 @@ class NonEmptyDefiFilter(EntryFilter):
 	name = "non_empty_defi"
 	desc = "Non-empty Definition"
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		if not entry.defi:
 			return
 		return entry
@@ -82,7 +82,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 	name = "remove_empty_dup_alt_words"
 	desc = "Remove Empty and Duplicate Alternate Words"
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		entry.removeEmptyAndDuplicateAltWords()
 		if not entry.l_word:
 			return
@@ -93,7 +93,7 @@ class FixUnicodeFilter(EntryFilter):
 	name = "fix_unicode"
 	desc = "Fix Unicode"
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		entry.editFuncWord(fixUtf8)
 		entry.editFuncDefi(fixUtf8)
 		return entry
@@ -103,7 +103,7 @@ class LowerWordFilter(EntryFilter):
 	name = "lower_word"
 	desc = "Lowercase Words"
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		entry.editFuncWord(str.lower)
 		return entry
 
@@ -121,7 +121,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 			re.IGNORECASE,
 		)
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		from bs4 import BeautifulSoup
 
 		def fixStr(st: str) -> str:
@@ -142,7 +142,7 @@ class RemoveHtmlTags(EntryFilter):
 		self.glos = glos
 		self.tags = tags
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		import re
 
 		def fixStr(st: str) -> str:
@@ -185,7 +185,7 @@ class NormalizeHtml(EntryFilter):
 		st = self._pattern.sub(self._subLower, st)
 		return st
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		entry.editFuncDefi(self._fixDefi)
 		return entry
 
@@ -194,7 +194,7 @@ class SkipDataEntryFilter(EntryFilter):
 	name = "skip_resources"
 	desc = "Skip Resources"
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		if entry.isData():
 			return
 		return entry
@@ -227,7 +227,7 @@ class LangEntryFilter(EntryFilter):
 		# for GoldenDict ^^ FIXME
 		return entry
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		if self._run_func:
 			entry = self._run_func(entry)
 		return entry
@@ -270,7 +270,7 @@ class CleanEntryFilter(EntryFilter):  # FIXME
 
 		return st
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		entry.editFuncDefi(self.cleanDefi)
 		return entry
 
@@ -281,13 +281,26 @@ class ProgressBarEntryFilter(EntryFilter):
 
 	def __init__(self, glos: Glossary):
 		EntryFilter.__init__(self, glos)
+		self._wordCount = -1
+		self._wordCountThreshold = 0
 		self._lastPos = 0
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		bp = entry.byteProgress()
-		if bp and bp[0] > self._lastPos + 20000:
-			self.glos.progress(bp[0], bp[1], unit="bytes")
-			self._lastPos = bp[0]
+		if bp:
+			if bp[0] > self._lastPos + 20000:
+				self.glos.progress(bp[0], bp[1], unit="bytes")
+				self._lastPos = bp[0]
+			return entry
+
+		if self._wordCount == -1:
+			self._wordCount = len(self.glos)
+			self._wordCountThreshold = self.glos._calcProgressThreshold(self._wordCount)
+
+		if self._wordCount > 0:
+			if index % self._wordCountThreshold == 0:
+				self.glos.progress(index, self._wordCount)
+
 		return entry
 
 
@@ -299,7 +312,7 @@ class MaxMemoryUsageEntryFilter(EntryFilter):
 		EntryFilter.__init__(self, glos)
 		self._max_mem_usage = 0
 
-	def run(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
 		import os
 		import psutil
 		usage = psutil.Process(os.getpid()).memory_info().rss // 1024
