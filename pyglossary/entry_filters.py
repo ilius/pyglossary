@@ -286,18 +286,19 @@ class ProgressBarEntryFilter(EntryFilter):
 		self._lastPos = 0
 
 	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
-		bp = entry.byteProgress()
-		if bp:
-			if bp[0] > self._lastPos + 20000:
-				self.glos.progress(bp[0], bp[1], unit="bytes")
-				self._lastPos = bp[0]
-			return entry
+		if entry is not None:
+			bp = entry.byteProgress()
+			if bp:
+				if bp[0] > self._lastPos + 20000:
+					self.glos.progress(bp[0], bp[1], unit="bytes")
+					self._lastPos = bp[0]
+				return entry
 
 		if self._wordCount == -1:
 			self._wordCount = len(self.glos)
 			self._wordCountThreshold = self.glos._calcProgressThreshold(self._wordCount)
 
-		if self._wordCount > 0:
+		if self._wordCount > 1:
 			if index % self._wordCountThreshold == 0:
 				self.glos.progress(index, self._wordCount)
 
