@@ -453,12 +453,9 @@ class Glossary(GlossaryType):
 		return max(1, min(500, wordCount // 200))
 
 	def _loadedEntryGen(self) -> Iterator[BaseEntry]:
-		wordCount = len(self._data)
-		threshold = self._calcProgressThreshold(wordCount)
-
-		progressbar = self.ui and self._progressbar
-		if progressbar:
+		if self._progressbar:
 			self.progressInit("Writing")
+
 		for index, rawEntry in enumerate(self._data):
 			if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
 				gc.collect()
@@ -467,9 +464,8 @@ class Glossary(GlossaryType):
 				rawEntry,
 				defaultDefiFormat=self._defaultDefiFormat
 			)
-			if progressbar and index % threshold == 0:
-				self.progress(index, wordCount)
-		if progressbar:
+
+		if self._progressbar:
 			self.progressEnd()
 
 	def _readersEntryGen(self) -> Iterator[BaseEntry]:
