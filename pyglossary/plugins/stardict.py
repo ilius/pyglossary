@@ -34,6 +34,9 @@ optionsProp = {
 sortOnWrite = ALWAYS
 # sortKey is defined in Writer class
 
+if os.getenv("PYGLOSSARY_STARDICT_NO_FORCE_SORT") == "1":
+	sortOnWrite = DEFAULT_YES
+
 tools = [
 	{
 		"name": "StarDict",
