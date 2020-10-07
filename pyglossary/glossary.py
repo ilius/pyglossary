@@ -898,6 +898,7 @@ class Glossary(GlossaryType):
 		iterates over `reader` object and loads the whole data into self._data
 		must call `reader.open(filename)` before calling this function
 		"""
+		self.showMemoryUsage()
 		wordCount = 0
 		progressbar = False
 		if self.ui and self._progressbar:
@@ -932,6 +933,7 @@ class Glossary(GlossaryType):
 		if progressbar:
 			self.progressEnd()
 
+		self.showMemoryUsage()
 		return True
 
 	def _inactivateDirectMode(self) -> None:
@@ -1144,25 +1146,11 @@ class Glossary(GlossaryType):
 					f"Writing {format} requires sorting"
 					f", ignoring user sort=False option"
 				)
-			if self._readers:
-				log.warning(
-					f"Writing to {format} format requires full sort"
-					f", falling back to indirect mode"
-				)
-				self._inactivateDirectMode()
-				log.info(f"Loaded {len(self._data)} entries")
 			sort = True
 			sortCacheSize = 0
 		elif sortOnWrite == DEFAULT_YES:
 			if sort is None:
 				sort = True
-			if sortCacheSize == 0:
-				log.warning(
-					f"Writing to {format} format requires full sort"
-					f", falling back to indirect mode"
-				)
-				self._inactivateDirectMode()
-				log.info(f"Loaded {len(self._data)} entries")
 		elif sortOnWrite == DEFAULT_NO:
 			if sort is None:
 				sort = False
@@ -1173,6 +1161,13 @@ class Glossary(GlossaryType):
 					", ignoring user sort=True option"
 				)
 			sort = False
+
+		if self._readers and sort and sortCacheSize == 0:
+			log.warning(
+				f"Full sort enabled, falling back to indirect mode"
+			)
+			self._inactivateDirectMode()
+			log.info(f"Loaded {len(self._data)} entries")
 
 		writer = None
 		if format not in self.writerClasses:
