@@ -861,10 +861,10 @@ class Glossary(GlossaryType):
 			return False
 		self._readersOpenArgs[reader] = (filename, options)
 		self.prepareEntryFilters()
-		if direct:
-			self._readers.append(reader)
-		else:
-			self.loadReader(reader)
+
+		self._readers.append(reader)
+		if not direct:
+			self._inactivateDirectMode()
 
 		self._updateIter()
 		self.detectLangsFromName()
@@ -876,39 +876,25 @@ class Glossary(GlossaryType):
 		iterates over `reader` object and loads the whole data into self._data
 		must call `reader.open(filename)` before calling this function
 		"""
+		from . import entry_filters as ef
 		self.showMemoryUsage()
-		wordCount = 0
-		progressbar = False
+		progressbarFilter = None
 		if self.ui and self._progressbar:
-			try:
-				wordCount = len(reader)
-			except Exception:
-				log.exception("")
-			progressbar = True
-		if progressbar:
+			progressbarFilter = ef.ProgressBarEntryFilter(self)
 			self.progressInit("Reading")
-		threshold = self._calcProgressThreshold(wordCount)
-		lastPos = 0
+
 		try:
 			for index, entry in enumerate(reader):
 				if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
 					gc.collect()
 				if entry:
 					self.addEntryObj(entry)
-				if progressbar:
-					if wordCount > 0:
-						if index % threshold == 0:
-							self.progress(index, wordCount)
-						continue
-					if entry is None:
-						continue
-					bp = entry.byteProgress()
-					if bp and bp[0] > lastPos + 20000:
-						self.progress(bp[0], bp[1], unit="bytes")
-						lastPos = bp[0]
+				if progressbarFilter is not None:
+					progressbarFilter.run(entry, index)
 		finally:
 			reader.close()
-		if progressbar:
+
+		if self._progressbar:
 			self.progressEnd()
 
 		self.showMemoryUsage()
