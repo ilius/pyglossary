@@ -509,12 +509,13 @@ class Writer(object):
 		else:
 			stat = self._glos.collectDefiFormat(100)
 			log.info(f"defiFormat stat: {stat}")
-			if stat["m"] > 0.97:
-				log.info(f"Auto-selecting sametypesequence=m")
-				self._sametypesequence = "m"
-			elif stat["h"] > 0.5:
-				log.info(f"Auto-selecting sametypesequence=h")
-				self._sametypesequence = "h"
+			if stat:
+				if stat["m"] > 0.97:
+					log.info(f"Auto-selecting sametypesequence=m")
+					self._sametypesequence = "m"
+				elif stat["h"] > 0.5:
+					log.info(f"Auto-selecting sametypesequence=h")
+					self._sametypesequence = "h"
 
 	def write(self) -> Generator[None, "BaseEntry", None]:
 		if self._sametypesequence:
