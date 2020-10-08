@@ -78,9 +78,6 @@ class GlossaryType(object):
 	def newEntry(self, word: str, defi: str, defiFormat: str = "") -> Entry:
 		raise NotImplementedError
 
-	def addEntry(self, word: str, defi: str, defiFormat: str = "") -> None:
-		raise NotImplementedError
-
 	def newDataEntry(self, fname: str, data: bytes) -> DataEntry:
 		raise NotImplementedError
 
