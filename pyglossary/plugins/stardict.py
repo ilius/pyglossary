@@ -29,7 +29,7 @@ optionsProp = {
 	"stardict_client": BoolOption(),
 	"dictzip": BoolOption(),
 	"sametypesequence": StrOption(
-		values=["", "h", "m", "x"],
+		values=["", "h", "m", "x", None],
 	),
 	"merge_syns": BoolOption(),
 }
@@ -455,7 +455,7 @@ class Reader(object):
 
 class Writer(object):
 	_dictzip: bool = True
-	_sametypesequence: str = "" # type: Literal["", "h", "m"]
+	_sametypesequence: str = "" # type: Literal["", "h", "m", "x", None]
 	_stardict_client: bool = False
 	_merge_syns: bool = False
 
@@ -511,8 +511,8 @@ class Writer(object):
 		self._sourceLang = self._glos.sourceLang
 		self._targetLang = self._glos.targetLang
 		if self._sametypesequence:
-			log.debug(f"Using write option sametypesequence={sametypesequence}")
-		else:
+			log.debug(f"Using write option sametypesequence={self._sametypesequence}")
+		elif self._sametypesequence is not None:
 			stat = self._glos.collectDefiFormat(100)
 			log.info(f"defiFormat stat: {stat}")
 			if stat:
@@ -558,12 +558,12 @@ class Writer(object):
 		Parameters:
 		defiFormat - format of article definition: h - html, m - plain text
 		"""
+		log.debug(f"writeCompact: defiFormat={defiFormat}")
 		dictMark = 0
 		altIndexList = []  # list of tuples (b"alternate", entryIndex)
 
 		dictFile = open(self._filename + ".dict", "wb")
 		idxFile = open(self._filename + ".idx", "wb")
-		indexFileSize = 0
 
 		t0 = now()
 		wordCount = 0
@@ -598,8 +598,6 @@ class Writer(object):
 			idxFile.write(b_idxBlock)
 
 			dictMark += blockLen
-			indexFileSize += len(b_idxBlock)
-
 			wordCount += 1
 
 		dictFile.close()
@@ -611,7 +609,6 @@ class Writer(object):
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(
 			wordCount,
-			indexFileSize,
 			len(altIndexList),
 			defiFormat=defiFormat,
 		)
@@ -622,12 +619,12 @@ class Writer(object):
 		Every item definition may consist of an arbitrary number of articles.
 		sametypesequence option is not used.
 		"""
+		log.debug(f"writeGeneral")
 		dictMark = 0
 		altIndexList = []  # list of tuples (b"alternate", entryIndex)
 
 		dictFile = open(self._filename + ".dict", "wb")
 		idxFile = open(self._filename + ".idx", "wb")
-		indexFileSize = 0
 
 		t0 = now()
 		wordCount = 0
@@ -648,7 +645,7 @@ class Writer(object):
 			entry.detectDefiFormat()  # call no more than once
 			defiFormat = entry.defiFormat
 			defiFormatCounter[defiFormat] += 1
-			if defiFormat not in ("m", "h", "x"):
+			if defiFormat not in ("h", "m", "x"):
 				log.error(f"invalid defiFormat={defiFormat}, using 'm'")
 				defiFormat = "m"
 
@@ -670,8 +667,6 @@ class Writer(object):
 			idxFile.write(b_idxBlock)
 
 			dictMark += blockLen
-			indexFileSize += len(b_idxBlock)
-
 			wordCount += 1
 
 		dictFile.close()
@@ -684,8 +679,8 @@ class Writer(object):
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(
 			wordCount,
-			indexFileSize,
 			len(altIndexList),
+			defiFormat="",
 		)
 
 	def writeSynFile(self, altIndexList: List[Tuple[bytes, int]]) -> None:
@@ -728,6 +723,7 @@ class Writer(object):
 		Parameters:
 		defiFormat - format of article definition: h - html, m - plain text
 		"""
+		log.debug(f"writeCompactMergeSyns: defiFormat={defiFormat}")
 		dictMark = 0
 		idxBlockList = []  # list of tuples (b"word", startAndLength)
 		altIndexList = []  # list of tuples (b"alternate", entryIndex)
@@ -758,11 +754,12 @@ class Writer(object):
 			blockLen = len(b_dictBlock)
 
 			blockData = uint32ToBytes(dictMark) + uint32ToBytes(blockLen)
-			idxBlockList += [(word, blockData) for word in words]
+			for word in words:
+				idxBlockList.append((word, blockData))
 
 			dictMark += blockLen
 
-		wordCount, indexFileSize = self.writeIdxFile(idxBlockList)
+		wordCount = self.writeIdxFile(idxBlockList)
 
 		dictFile.close()
 		if not os.listdir(self._resDir):
@@ -771,7 +768,6 @@ class Writer(object):
 
 		self.writeIfoFile(
 			wordCount,
-			indexFileSize,
 			len(altIndexList),
 			defiFormat=defiFormat,
 		)
@@ -782,6 +778,7 @@ class Writer(object):
 		Every item definition may consist of an arbitrary number of articles.
 		sametypesequence option is not used.
 		"""
+		log.debug(f"writeGeneralMergeSyns")
 		dictMark = 0
 		idxBlockList = []  # list of tuples (b"word", startAndLength)
 		altIndexList = []  # list of tuples (b"alternate", entryIndex)
@@ -807,7 +804,7 @@ class Writer(object):
 			entry.detectDefiFormat()  # call no more than once
 			defiFormat = entry.defiFormat
 			defiFormatCounter[defiFormat] += 1
-			if defiFormat not in ("m", "h", "x"):
+			if defiFormat not in ("h", "m", "x"):
 				log.error(f"invalid defiFormat={defiFormat}, using 'm'")
 				defiFormat = "m"
 
@@ -821,11 +818,12 @@ class Writer(object):
 			blockLen = len(b_dictBlock)
 
 			blockData = uint32ToBytes(dictMark) + uint32ToBytes(blockLen)
-			idxBlockList += [(word, blockData) for word in words]
+			for word in words:
+				idxBlockList.append((word, blockData))
 
 			dictMark += blockLen
 
-		wordCount, indexFileSize = self.writeIdxFile(idxBlockList)
+		wordCount = self.writeIdxFile(idxBlockList)
 
 		dictFile.close()
 		if not os.listdir(self._resDir):
@@ -835,8 +833,8 @@ class Writer(object):
 
 		self.writeIfoFile(
 			wordCount,
-			indexFileSize,
 			len(altIndexList),
+			defiFormat="",
 		)
 
 	def writeIdxFile(self, indexList: List[Tuple[bytes, bytes]]) -> Tuple:
@@ -863,12 +861,11 @@ class Writer(object):
 		log.info(
 			f"Writing {len(indexList)} {filename} took {now()-t0:.2f} seconds",
 		)
-		return (len(indexList), getsize(filename))
+		return len(indexList)
 
 	def writeIfoFile(
 		self,
 		wordCount: int,
-		indexFileSize: int,
 		synWordCount: int,
 		defiFormat: str = "", # type: Literal["", "h", "m", "x"]
 	) -> None:
@@ -877,6 +874,7 @@ class Writer(object):
 		"""
 		glos = self._glos
 		bookname = newlinesToSpace(glos.getInfo("name"))
+		indexFileSize = getsize(self._filename + ".idx")
 
 		sourceLang = self._sourceLang
 		targetLang = self._targetLang
