@@ -28,6 +28,8 @@ class Option(object):
 
 	def evaluate(self, raw: str) -> Tuple[Any, bool]:
 		"returns (value, isValid)"
+		if raw == "None":
+			return None, True
 		return raw, True
 
 	def validate(self, value):
