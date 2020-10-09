@@ -474,7 +474,7 @@ class Glossary(GlossaryType):
 			if self._progressbar:
 				self.progressInit("Converting")
 			try:
-				for index, entry in enumerate(reader):
+				for index, entry in enumerate(self._applyEntryFiltersGen(reader)):
 					if entry is not None:
 						yield entry
 			finally:
@@ -884,7 +884,7 @@ class Glossary(GlossaryType):
 			self.progressInit("Reading")
 
 		try:
-			for index, entry in enumerate(reader):
+			for index, entry in enumerate(self._applyEntryFiltersGen(reader)):
 				if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
 					gc.collect()
 				if entry:
@@ -935,7 +935,7 @@ class Glossary(GlossaryType):
 		else:
 			gen = self._loadedEntryGen()
 
-		self._iter = self._applyEntryFiltersGen(gen)
+		self._iter = gen
 
 	def sortWords(
 		self,
