@@ -5,7 +5,7 @@ import logging
 from typing import Tuple, List, Dict, Optional, Any
 
 
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 
 class Option(object):

@@ -79,7 +79,7 @@ from .os_utils import indir
 from .glossary_type import GlossaryType
 
 homePage = "https://github.com/ilius/pyglossary"
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 langDict = LangDict()
 

@@ -61,7 +61,7 @@ from .gtk3_utils.about import AboutWidget
 
 # from gi.repository import GdkPixbuf
 
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 gtk.Window.set_default_icon_from_file(logo)
 

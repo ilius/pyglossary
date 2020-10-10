@@ -208,7 +208,7 @@ def checkCreateConfDir() -> None:
 # __________________________________________________________________________ #
 
 logging.setLoggerClass(MyLogger)
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 sys.excepthook = lambda *exc_info: log.critical(
 	format_exception(

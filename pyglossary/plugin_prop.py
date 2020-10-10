@@ -32,7 +32,7 @@ from .flags import (
 )
 import logging
 
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 class PluginProp(object):
 	def __init__(self, plugin) -> None:

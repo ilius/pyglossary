@@ -267,7 +267,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 defaultVerbosity = log.getVerbosity()
 

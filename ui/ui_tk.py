@@ -46,7 +46,7 @@ from tkinter import tix
 from tkinter import ttk
 from tkinter import font as tkFont
 
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 # startBold = "\x1b[1m"  # Start Bold #len=4
 # startUnderline = "\x1b[4m"  # Start Underline #len=4

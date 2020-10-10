@@ -5,7 +5,7 @@ from os.path import join
 
 from pyglossary.text_utils import crc32hex
 
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 re_inline_image = re.compile('src="(data:image/[^<>"]*)"')
 

@@ -8,7 +8,7 @@ from typing import (
 )
 
 import logging
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 
 class Lang(object):

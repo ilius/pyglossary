@@ -33,7 +33,7 @@ def fread(path):
 	with open(path, encoding="utf-8") as fp:
 		return fp.read()
 
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 logo = join(appResDir, "pyglossary.png")
 aboutText = fread(join(dataDir, "about"))
 licenseText = fread(join(dataDir, "license-dialog"))

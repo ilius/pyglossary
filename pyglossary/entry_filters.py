@@ -16,7 +16,7 @@ from .entry_base import BaseEntry
 from .glossary import Glossary
 
 
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 
 class EntryFilter(object):

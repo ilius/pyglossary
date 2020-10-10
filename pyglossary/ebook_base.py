@@ -35,7 +35,7 @@ from pyglossary.text_utils import toStr, toBytes
 from pyglossary.os_utils import indir
 
 import logging
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 
 class GroupState(object):

@@ -4,7 +4,7 @@ import re
 from typing import AnyStr
 
 import logging
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 
 def toStr(s: AnyStr) -> str:

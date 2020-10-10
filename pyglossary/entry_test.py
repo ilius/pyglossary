@@ -12,7 +12,7 @@ sys.path.insert(0, rootDir)
 from pyglossary.entry import *
 from pyglossary.core_test import MockLogHandler
 
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 for handler in log.handlers:
 	log.removeHandler(handler)

@@ -7,7 +7,7 @@ import sys
 
 __all__ = ["JingTestError", "run", "main"]
 
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 log.setLevel(logging.DEBUG)
 
 

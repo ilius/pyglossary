@@ -25,7 +25,7 @@ from pickle import dumps, loads
 from zlib import compress, decompress
 
 import logging
-log = logging.getLogger("root")
+log = logging.getLogger("pyglossary")
 
 
 # aka Resource
