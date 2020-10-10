@@ -22,14 +22,10 @@
 import os
 import sys
 import argparse
-import builtins
-from os.path import dirname, join, realpath
-from pprint import pformat
 import logging
 
 from pyglossary import core  # essential
 from pyglossary import VERSION
-from pyglossary.text_utils import startRed, endFormat
 from pyglossary.entry import Entry
 
 # the first thing to do is to set up logger.
@@ -83,7 +79,7 @@ parser.add_argument(
 parser.add_argument(
 	"--version",
 	action="version",
-	version="PyGlossary %s" % VERSION,
+	version=f"PyGlossary {VERSION}",
 )
 parser.add_argument(
 	"-h",
@@ -482,8 +478,8 @@ if ui_type == "auto":
 	for ui_type2 in ui_list:
 		try:
 			ui_module = getattr(
-				__import__("ui.ui_%s" % ui_type2),
-				"ui_%s" % ui_type2,
+				__import__(f"ui.ui_{ui_type2}"),
+				f"ui_{ui_type2}",
 			)
 		except ImportError:
 			log.exception("error while importing UI module:")
@@ -497,8 +493,8 @@ if ui_type == "auto":
 		sys.exit(1)
 else:
 	ui_module = getattr(
-		__import__("ui.ui_%s" % ui_type),
-		"ui_%s" % ui_type,
+		__import__(f"ui.ui_{ui_type}"),
+		f"ui_{ui_type}",
 	)
 
 sys.exit(0 if ui_module.UI(**prefOptions).run(
