@@ -8,6 +8,7 @@ WritingSystem = namedtuple(
 		"unicode",
 		"titleTag",
 		"direction",  # ltr | rtl | ttb
+		"comma",
 	],
 	defaults=(
 		None,  # name
@@ -15,6 +16,7 @@ WritingSystem = namedtuple(
 		[],  # unicode
 		"b",  # titleTag
 		"ltr",  # direction
+		", ",  # comma
 	),
 )
 
@@ -32,6 +34,7 @@ writingSystemList = [
 			"FULLWIDTH LATIN",
 		],
 		titleTag="b",
+		comma=", ",
 	),
 
 	WritingSystem(
@@ -40,12 +43,14 @@ writingSystemList = [
 		unicode=["ARABIC"],
 		titleTag="b",
 		direction="rtl",
+		comma="، ",
 	),
 	WritingSystem(
 		name="Cyrillic",
 		# iso=(220, "Cyrl"),
 		unicode=["CYRILLIC"],
 		titleTag="b",
+		comma=", ",
 	),
 	WritingSystem(
 		name="CJK",
@@ -63,12 +68,14 @@ writingSystemList = [
 			"YI",  # https://en.wikipedia.org/wiki/Yi_script
 		],
 		titleTag="big",
+		comma="、",
 	),
 	WritingSystem(
 		name="Devanagari",
 		# iso=(315 , "Deva"),
 		unicode=["DEVANAGARI"],
 		titleTag="big",
+		comma=", ",
 	),
 
 	# _____________________________________________________
@@ -78,54 +85,63 @@ writingSystemList = [
 		iso=(230, "Armn"),
 		unicode=["ARMENIAN"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Bengali-Assamese",
 		iso=(325, "Beng"),
 		unicode=["BENGALI"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Burmese",
 		iso=(350 , "Mymr"),
 		unicode=["MYANMAR"],
 		titleTag="big",
+		comma=", ",  # almost not used except in English phrases
 	),
 	WritingSystem(
 		name="Canadian syllabic",
 		iso=(440, "Cans"),
 		unicode=["CANADIAN SYLLABICS"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Ge'ez",
 		iso=(430, "Ethi"),
 		unicode=["ETHIOPIC"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Georgian",
 		iso=(240, "Geor"),
 		unicode=["GEORGIAN"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Greek",
 		iso=(200, "Grek"),
 		unicode=["GREEK"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Gujarati",
 		iso=(320, "Gujr"),
 		unicode=["GUJARATI"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Gurmukhi",
 		iso=(310, "Guru"),
 		unicode=["GURMUKHI"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Hebrew",
@@ -133,55 +149,64 @@ writingSystemList = [
 		unicode=["HEBREW"],
 		titleTag="big",
 		direction="rtl",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Kannada",
 		iso=(345, "Knda"),
 		unicode=["KANNADA"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Khmer",
 		iso=(355, "Khmr"),
 		unicode=["KHMER"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Lao",
 		iso=(356, "Laoo"),
 		unicode=["LAO"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Malayalam",
 		iso=(347, "Mlym"),
 		unicode=["MALAYALAM"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Mongolian",
 		iso=(145, "Mong"),
 		unicode=["MONGOLIAN"],
 		titleTag="big",
-		direction="ttb",
+		direction="ltr",  #  historically ttb?
+		comma=", ",
 	),
 	WritingSystem(
 		name="Odia",
 		iso=(327, "Orya"),
 		unicode=["ORIYA"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Sinhala",
 		iso=(348, "Sinh"),
 		unicode=["SINHALA"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Sundanese",
 		iso=(362, "Sund"),
 		unicode=["SUNDANESE"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Tamil",
@@ -189,24 +214,28 @@ writingSystemList = [
 		unicode=["TAMIL"],
 		titleTag="big",
 		# Parent scripts: Brahmi, Tamil-Brahmi, Pallava
+		comma=", ",
 	),
 	WritingSystem(
 		name="Telugu",
 		iso=(340, "Telu"),
 		unicode=["TELUGU"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Thai",
 		iso=(352, "Thai"),
 		unicode=["THAI"],
 		titleTag="big",
+		comma=", ",
 	),
 	WritingSystem(
 		name="Tibetan",
 		iso=(330, "Tibt"),
 		unicode=["TIBETAN"],
 		titleTag="big",
+		comma=", ",  # almost not used expect in numbers!
 	),
 
 	# _____________________________________________________
@@ -216,6 +245,7 @@ writingSystemList = [
 		iso=(321, "Takr"),
 		unicode=["TAKRI"],
 		titleTag="b",
+		# comma="", FIXME
 	),
 	WritingSystem(
 		name="Thaana",
@@ -223,6 +253,7 @@ writingSystemList = [
 		unicode=["THAANA"],
 		titleTag="big",
 		direction="rtl",
+		comma="، ",
 	),
 
 	# _____________________________________________________
@@ -233,6 +264,7 @@ writingSystemList = [
 		unicode=["SIGNWRITING"],
 		titleTag="big",
 		direction="ttb",
+		comma="𝪇",
 	),
 
 	# _____________________________________________________

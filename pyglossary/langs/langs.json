@@ -1397,7 +1397,7 @@
 		"codes": ["su", "sun"],
 		"name": "Sundanese",
 		"alt_names": ["Basa Sunda", "ᮘᮞ ᮞᮥᮔ᮪ᮓ"],
-		"script": ["Sundanese", "Arabic", "Latin"],
+		"script": ["Latin", "Sundanese", "Arabic"],
 		"wiki": "https://en.wikipedia.org/wiki/Sundanese_language",
 		"title_tag": "b"
 	},
