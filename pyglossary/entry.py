@@ -438,9 +438,10 @@ class Entry(BaseEntry):
 		if not defi.startswith('<'):
 			return
 		if defi.startswith('<!DOCTYPE html>'):
-			defi = defi[len('<!DOCTYPE html>'):]
-			if not defi.startswith('<html>'):
-				log.error(f"<html> not found: word={word}")
+			defi = defi[len('<!DOCTYPE html>'):].strip()
+			if not defi.startswith('<html'):
+				log.error(f"<html> not found: word={self.s_word}")
+				log.error(f"defi={defi[:100]}...")
 		else:
 			if not defi.startswith('<html>'):
 				return
