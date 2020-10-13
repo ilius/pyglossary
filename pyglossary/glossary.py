@@ -209,7 +209,6 @@ class Glossary(GlossaryType):
 
 		return optNames
 
-
 	@classmethod
 	def loadPlugin(cls: ClassVar, pluginName: str) -> None:
 		try:
@@ -554,7 +553,7 @@ class Glossary(GlossaryType):
 			for defiFormat, itemCount in counter.items()
 		}
 		for defiFormat in ("h", "m", "x"):
-			if not defiFormat in result:
+			if defiFormat not in result:
 				result[defiFormat] = 0
 
 		# TODO
@@ -789,7 +788,9 @@ class Glossary(GlossaryType):
 				f"from glossary name {name!r}"
 			)
 			return
-		log.info(f"Failed to detect sourceLang and targetLang from glossary name {name!r}")
+		log.info(
+			f"Failed to detect sourceLang and targetLang from glossary name {name!r}"
+		)
 
 	def read(
 		self,
@@ -1516,7 +1517,6 @@ class Glossary(GlossaryType):
 	def progressEnd(self) -> None:
 		if self.ui:
 			self.ui.progressEnd()
-
 
 	def showMemoryUsage(self):
 		if log.level > core.TRACE:

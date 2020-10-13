@@ -11,6 +11,7 @@ sys.path.insert(0, rootDir)
 
 from pyglossary.html_utils import unescape_unicode
 
+
 class UnescapeUnicodeTest(unittest.TestCase):
 	def case(self, text, expected):
 		actual = unescape_unicode(text)
@@ -43,7 +44,6 @@ class UnescapeUnicodeTest(unittest.TestCase):
 		self.case("&lt;&ygrave;", "&lt;ỳ")
 		self.case("&lt;&yring;", "&lt;ẙ")
 		self.case("&lt;&ytilde;", "&lt;ỹ")
-
 
 
 if __name__ == "__main__":

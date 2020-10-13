@@ -170,6 +170,7 @@ class ListOption(Option):
 
 class EncodingOption(Option):
 	re_category = re.compile("^[a-z]+")
+
 	def __init__(self, customValue=True, values=None, **kwargs):
 		if values is None:
 			values = [

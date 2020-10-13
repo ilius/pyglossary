@@ -76,7 +76,7 @@ class EbookWriter(object):
 	The actual file templates are provided by the caller.
 	"""
 
-	_keep: bool =False
+	_keep: bool = False
 	_group_by_prefix_length: int = 2
 	_include_index_page: bool = False
 	_compress: bool = True

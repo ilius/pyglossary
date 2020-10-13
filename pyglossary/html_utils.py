@@ -357,6 +357,7 @@ def _sub_unescape_unicode(m: "re.Match") -> str:
 
 	return text
 
+
 def unescape_unicode(text):
 	"""
 		unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"

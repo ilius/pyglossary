@@ -299,7 +299,6 @@ class Entry(BaseEntry):
 		self._defiFormat = defiFormat
 		self._byteProgress = byteProgress  # Optional[Tuple[int, int]]
 
-
 	@property
 	def s_word(self):
 		"""

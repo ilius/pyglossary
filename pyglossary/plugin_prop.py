@@ -34,6 +34,7 @@ import logging
 
 log = logging.getLogger("pyglossary")
 
+
 class PluginProp(object):
 	def __init__(self, plugin) -> None:
 		self._p = plugin
@@ -106,7 +107,6 @@ class PluginProp(object):
 			cls.depends = {}
 
 		return cls
-
 
 	@property
 	def readerClass(self) -> Optional[Any]:
