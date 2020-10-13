@@ -333,7 +333,7 @@ class Glossary(GlossaryType):
 	def clear(self) -> None:
 		self._info = odict()
 
-		self._data = []  # type: List[RawEntryType]
+		self._data.clear()  # type: List[RawEntryType]
 
 		readers = getattr(self, "_readers", [])
 		for reader in readers:
@@ -354,7 +354,6 @@ class Glossary(GlossaryType):
 		self._filename = ""
 		self._defaultDefiFormat = "m"
 		self._progressbar = True
-		self._rawEntryCompress = True
 		self.tmpDataDir = ""
 
 	def __init__(
@@ -367,6 +366,9 @@ class Glossary(GlossaryType):
 				no need to copy OrderedDict instance before passing here
 				we will not reference to it
 		"""
+		self._data = []
+		self._rawEntryCompress = True
+		self._cleanupPathList = []
 		self.clear()
 		if info:
 			if not isinstance(info, (dict, odict)):
@@ -379,8 +381,29 @@ class Glossary(GlossaryType):
 
 		self.ui = ui
 
-	# def setRawEntryCompress(self, enable: bool) -> bool:
-	# 	self._rawEntryCompress = enable
+	def _removeDir(self, dirPath):
+		import shutil
+		shutil.rmtree(dirPath)
+
+	def cleanup(self):
+		if not self._cleanupPathList:
+			return
+		if not self.getPref("cleanup", True):
+			log.info("Not cleaning up files:")
+			log.info("\n".join(self._cleanupPathList))
+			return
+		for cleanupPath in self._cleanupPathList:
+			if isfile(cleanupPath):
+				log.debug(f"Removing file {cleanupPath}")
+				os.remove(cleanupPath)
+			elif isdir(cleanupPath):
+				log.debug(f"Removing directory {cleanupPath}")
+				self._removeDir(cleanupPath)
+			else:
+				log.error(f"no such file or directory: {cleanupPath}")
+
+	def setRawEntryCompress(self, enable: bool) -> bool:
+		self._rawEntryCompress = enable
 
 	def updateEntryFilters(self) -> None:
 		from . import entry_filters as ef
@@ -820,6 +843,9 @@ class Glossary(GlossaryType):
 		# 	self.tmpDataDir = f"{filename}_res"
 		# else:
 		self.tmpDataDir = join(cacheDir, split(filename)[1] + "_res")
+		if not isdir(self.tmpDataDir):
+			os.mkdir(self.tmpDataDir)
+		self._cleanupPathList.append(self.tmpDataDir)
 
 		# don't allow direct=False when there are readers
 		# (read is called before with direct=True)
@@ -1139,7 +1165,7 @@ class Glossary(GlossaryType):
 			log.error(f"No Writer class found for plugin {format}")
 			return
 
-		log.info(f"Writing to file {filename!r}")
+		log.info(f"Writing to {format} file {filename!r}")
 
 		writer = self._createWriter(format, options)
 
@@ -1379,6 +1405,7 @@ class Glossary(GlossaryType):
 		log.info(f"Writing file {finalOutputFile!r} done.")
 		log.info(f"Running time of convert: {now()-tm0:.1f} seconds")
 		self.showMemoryUsage()
+		self.cleanup()
 
 		return finalOutputFile
 

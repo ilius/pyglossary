@@ -46,6 +46,7 @@ summary = "A tool for converting dictionary files aka glossaries with" \
 class UIBase(object):
 	prefKeys = (
 		"log_time",
+		"cleanup",
 		"ui_autoSetFormat",
 		"ui_autoSetOutputFileName",
 		"lower",

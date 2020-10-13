@@ -233,6 +233,21 @@ parser.add_argument(
 	help="lowercase and normalize html tags in definitions",
 )
 
+parser.add_argument(
+	"--cleanup",
+	dest="cleanup",
+	action="store_true",
+	default=None,
+	help="cleanup cache or temporary files after convertion",
+)
+parser.add_argument(
+	"--no-cleanup",
+	dest="cleanup",
+	action="store_false",
+	default=None,
+	help="do not cleanup cache or temporary files after convertion",
+)
+
 # _______________________________
 
 parser.add_argument(
@@ -340,6 +355,7 @@ prefOptionsKeys = (
 	"normalize_html",
 	"save_info_json",
 	"log_time",
+	"cleanup",
 )
 
 convertOptionsKeys = (

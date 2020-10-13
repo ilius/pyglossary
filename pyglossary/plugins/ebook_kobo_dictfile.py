@@ -71,8 +71,6 @@ class Reader(TextGlossaryReader):
 			raise e
 		TextGlossaryReader.open(self, filename)
 		self._glos.setDefaultDefiFormat("h")
-		if not isdir(self._glos.tmpDataDir):
-			os.mkdir(self._glos.tmpDataDir)
 
 	def isInfoWord(self, word):
 		return False
