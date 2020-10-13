@@ -182,6 +182,7 @@ class DataEntry(BaseEntry):
 
 class Entry(BaseEntry):
 	sep = "|"
+	b_sep = b"|"
 	htmlPattern = re.compile(
 		".*(?:" + "|".join([
 			r"<font[ >]",
@@ -238,6 +239,14 @@ class Entry(BaseEntry):
 		return lambda entry: key(entry.l_word[0].encode("utf-8"))
 
 	@staticmethod
+	def _sameBytes(b_word):
+		return b_word
+
+	@staticmethod
+	def _headwordBytes(b_word):
+		return b_word.split(Entry.b_sep)[0]
+
+	@staticmethod
 	def getRawEntrySortKey(
 		glos: "GlossaryType",
 		key: Optional[Callable[[bytes], Any]] = None,
@@ -248,10 +257,15 @@ class Entry(BaseEntry):
 		# or a list or tuple (one word with or more alternaties)
 		if key is None:
 			key = Entry.defaultSortKey
+
+		getHeadword = Entry._sameBytes
+		if glos.getPref("enable_alts", True):
+			getHeadword = Entry._headwordBytes
+
 		if glos._rawEntryCompress:
-			return lambda x: key(loads(decompress(x))[0])
+			return lambda x: key(getHeadword(loads(decompress(x))[0]))
 		else:
-			return lambda x: key(x[0])
+			return lambda x: key(getHeadword(x[0]))
 
 	def __init__(
 		self,
