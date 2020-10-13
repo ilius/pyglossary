@@ -299,6 +299,9 @@ class Entry(BaseEntry):
 		self._defiFormat = defiFormat
 		self._byteProgress = byteProgress  # Optional[Tuple[int, int]]
 
+	def __repr__(self):
+		return f"Entry({self._word!r}, {self._defi!r}, defiFormat={self._defiFormat!r})"
+
 	@property
 	def s_word(self):
 		"""
