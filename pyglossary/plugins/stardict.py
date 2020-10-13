@@ -475,6 +475,7 @@ class Writer(object):
 		)
 
 	def sortKey(self, b_word: bytes) -> Tuple[bytes, bytes]:
+		assert isinstance(b_word, bytes)
 		return (
 			b_word.lower(),
 			b_word,
@@ -755,7 +756,7 @@ class Writer(object):
 
 			blockData = uint32ToBytes(dictMark) + uint32ToBytes(blockLen)
 			for word in words:
-				idxBlockList.append((word, blockData))
+				idxBlockList.append((word.encode("utf-8"), blockData))
 
 			dictMark += blockLen
 
@@ -819,7 +820,7 @@ class Writer(object):
 
 			blockData = uint32ToBytes(dictMark) + uint32ToBytes(blockLen)
 			for word in words:
-				idxBlockList.append((word, blockData))
+				idxBlockList.append((word.encode("utf-8"), blockData))
 
 			dictMark += blockLen
 
@@ -853,7 +854,7 @@ class Writer(object):
 		t0 = now()
 		with open(filename, "wb") as indexFile:
 			indexFile.write(b"".join([
-				key.encode("utf-8") \
+				key \
 				+ b"\x00" \
 				+ value
 				for key, value in indexList
