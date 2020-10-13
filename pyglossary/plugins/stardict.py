@@ -837,10 +837,10 @@ class Writer(object):
 			defiFormat="",
 		)
 
-	def writeIdxFile(self, indexList: List[Tuple[bytes, bytes]]) -> Tuple:
+	def writeIdxFile(self, indexList: List[Tuple[bytes, bytes]]) -> int:
 		filename = self._filename + ".idx"
 		if not indexList:
-			return (0, 0)
+			return 0
 
 		log.info(f"Sorting {len(indexList)} items...")
 		t0 = now()
