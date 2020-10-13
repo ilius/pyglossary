@@ -97,7 +97,6 @@ infoKeys = (
 )
 
 
-
 # re_newline = re.compile("[\n\r]+")
 re_newline = re.compile("\n\r?|\r\n?")
 
@@ -455,7 +454,7 @@ class Reader(object):
 
 class Writer(object):
 	_dictzip: bool = True
-	_sametypesequence: str = "" # type: Literal["", "h", "m", "x", None]
+	_sametypesequence: str = ""  # type: Literal["", "h", "m", "x", None]
 	_stardict_client: bool = False
 	_merge_syns: bool = False
 
@@ -841,7 +840,7 @@ class Writer(object):
 	def writeIdxFile(self, indexList: List[Tuple[bytes, bytes]]) -> Tuple:
 		filename = self._filename + ".idx"
 		if not indexList:
-			return (0,0)
+			return (0, 0)
 
 		log.info(f"Sorting {len(indexList)} items...")
 		t0 = now()
@@ -854,9 +853,7 @@ class Writer(object):
 		t0 = now()
 		with open(filename, "wb") as indexFile:
 			indexFile.write(b"".join([
-				key \
-				+ b"\x00" \
-				+ value
+				key + b"\x00" + value
 				for key, value in indexList
 			]))
 		log.info(
@@ -868,7 +865,7 @@ class Writer(object):
 		self,
 		wordCount: int,
 		synWordCount: int,
-		defiFormat: str = "", # type: Literal["", "h", "m", "x"]
+		defiFormat: str = "",  # type: Literal["", "h", "m", "x"]
 	) -> None:
 		"""
 		Build .ifo file
