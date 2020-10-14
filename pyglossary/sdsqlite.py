@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from os.path import isfile
+
 class Writer(object):
 	def __init__(self, glos):
 		self._glos = glos
@@ -12,6 +14,8 @@ class Writer(object):
 
 	def open(self, filename):
 		from sqlite3 import connect
+		if isfile(filename):
+			raise IOError(f"file {filename!r} already exists")
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
@@ -52,7 +56,7 @@ class Writer(object):
 				),
 			)
 			count += 1
-			if count % 100 == 0:
+			if count % 1000 == 0:
 				self._con.commit()
 
 		self._con.commit()
