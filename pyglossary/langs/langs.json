@@ -90,6 +90,14 @@
 		"title_tag": "b"
 	},
 	{
+		"codes": ["arc"],
+		"name": "Aramaic",
+		"alt_names": ["Classical Syriac", "ܐܪܡܝܐ"],
+		"script": ["Syriac"],
+		"wiki": "https://en.wikipedia.org/wiki/Aramaic",
+		"title_tag": "b"
+	},
+	{
 		"codes": ["arn"],
 		"name": "Mapuche",
 		"alt_names": ["Mapudungun"],

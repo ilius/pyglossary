@@ -255,6 +255,14 @@ writingSystemList = [
 		direction="rtl",
 		comma="، ",
 	),
+	WritingSystem(
+		name="Syriac",
+		iso=(135, "Syrc"),
+		unicode=["SYRIAC"],
+		titleTag="b",
+		direction="rtl",
+		comma="، ",
+	),
 
 	# _____________________________________________________
 
