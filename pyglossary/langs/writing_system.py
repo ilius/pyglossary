@@ -31,7 +31,6 @@ writingSystemList = [
 		iso=(215, "Latn"),
 		unicode=[
 			"LATIN",
-			"FULLWIDTH LATIN",
 		],
 		titleTag="b",
 		comma=", ",
@@ -66,6 +65,7 @@ writingSystemList = [
 			"HALFWIDTH KATAKANA",
 			"HALFWIDTH HANGUL",
 			"YI",  # https://en.wikipedia.org/wiki/Yi_script
+			"FULLWIDTH LATIN",
 		],
 		titleTag="big",
 		comma="、",
