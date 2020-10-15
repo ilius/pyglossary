@@ -29,7 +29,6 @@ import zipfile
 import tempfile
 from datetime import datetime
 import shutil
-from typing import Any
 
 from pyglossary.text_utils import toStr, toBytes
 from pyglossary.os_utils import indir
@@ -223,7 +222,7 @@ class EbookWriter(object):
 			return "SPECIAL"
 		return prefix
 
-	def sortKey(self, b_word: bytes) -> Any:
+	def sortKey(self, b_word: bytes) -> "Any":
 		# DO NOT change method name
 		word = b_word.decode("utf-8")
 		return (

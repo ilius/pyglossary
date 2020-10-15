@@ -3,12 +3,6 @@ from .entry import Entry, BaseEntry
 
 import re
 
-from typing import (
-	Optional,
-	List,
-	Iterator,
-)
-
 import logging
 log = logging.getLogger("pyglossary")
 
@@ -16,12 +10,12 @@ log = logging.getLogger("pyglossary")
 def reverseGlossary(
 	glos: GlossaryType,
 	savePath: str = "",
-	words: Optional[List[str]] = None,
+	words: "Optional[List[str]]" = None,
 	includeDefs: bool = False,
 	reportStep: int = 300,
 	saveStep: int = 1000,  # set this to zero to disable auto saving
 	**kwargs
-) -> Iterator[int]:
+) -> "Iterator[int]":
 	"""
 	This is a generator
 	Usage:
@@ -104,9 +98,9 @@ def reverseGlossary(
 
 def takeOutputWords(
 	glos: GlossaryType,
-	entryIter: Iterator[BaseEntry],
+	entryIter: "Iterator[BaseEntry]",
 	minWordLen: int = 3,
-) -> List[str]:
+) -> "List[str]":
 	# fr"[\w]{{{minWordLen},}}"
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
 	words = set()
@@ -120,7 +114,7 @@ def takeOutputWords(
 
 
 def searchWordInDef(
-	entryIter: Iterator[BaseEntry],
+	entryIter: "Iterator[BaseEntry]",
 	st: str,
 	matchWord: bool = True,
 	sepChars: str = ".,،",
@@ -129,7 +123,7 @@ def searchWordInDef(
 	minWordLen: int = 3,
 	includeDefs: bool = False,
 	showRel: str = "Percent",  # "Percent" | "Percent At First" | ""
-) -> List[str]:
+) -> "List[str]":
 	# searches word "st" in definitions of the glossary
 	splitPattern = re.compile(
 		"|".join([re.escape(x) for x in sepChars]),

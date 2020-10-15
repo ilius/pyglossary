@@ -94,7 +94,7 @@ class Reader(object):
 			return 0
 		return self._wordCount + len(self._resFileNames)
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		if not self._rootPath:
 			log.error("iterating over a reader which is not open")
 			raise StopIteration
@@ -224,7 +224,7 @@ class Writer(object):
 			]))
 
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		from collections import OrderedDict as odict
 		from pyglossary.json_utils import dataToPrettyJson
 

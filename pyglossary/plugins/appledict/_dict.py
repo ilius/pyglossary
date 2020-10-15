@@ -23,10 +23,6 @@ import re
 import string
 from xml.sax.saxutils import unescape, quoteattr
 
-from typing import Callable
-from typing.re import Pattern
-
-
 from . import _normalize
 from pyglossary.plugins.formats_common import *
 
@@ -48,7 +44,7 @@ def base36(x: int) -> str:
 	return "".join(digits)
 
 
-def id_generator() -> Iterator[str]:
+def id_generator() -> "Iterator[str]":
 	cnt = 1
 
 	while True:
@@ -56,10 +52,10 @@ def id_generator() -> Iterator[str]:
 		cnt += 1
 
 
-def indexes_generator(indexes_lang: str) -> Callable[
+def indexes_generator(indexes_lang: str) -> """Callable[
 	[str, List[str], str, Any],
 	str,
-]:
+]""":
 	"""
 	factory that acts according to glossary language
 	"""
@@ -141,7 +137,7 @@ re_href = re.compile(r"""href=(["'])(.*?)\1""")
 re_margin = re.compile(r"margin-left:(\d)em")
 
 
-def href_sub(x: Pattern) -> str:
+def href_sub(x: "typing.re.Pattern") -> str:
 	href = x.groups()[1]
 	if href.startswith("http"):
 		return x.group()
@@ -196,7 +192,7 @@ def link_is_url(href: str) -> bool:
 
 
 def prepare_content_without_soup(
-	title: Optional[str],
+	title: "Optional[str]",
 	body: str,
 ) -> str:
 	# somewhat analogue to what BeautifulSoup suppose to do
@@ -232,9 +228,9 @@ def prepare_content_without_soup(
 
 
 def prepare_content_with_soup(
-	title: Optional[str],
+	title: "Optional[str]",
 	body: str,
-	BeautifulSoup: Any,
+	BeautifulSoup: "Any",
 ) -> str:
 	soup = BeautifulSoup.BeautifulSoup(body, features="lxml")
 	# difference between "lxml" and "html.parser"
@@ -330,9 +326,9 @@ def prepare_content_with_soup(
 
 
 def prepare_content(
-	title: Optional[str],
+	title: "Optional[str]",
 	body: str,
-	BeautifulSoup: Any,
+	BeautifulSoup: "Any",
 ) -> str:
 	# heavily integrated with output of dsl reader plugin!
 	# and with xdxf also.

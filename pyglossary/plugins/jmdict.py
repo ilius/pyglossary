@@ -2,7 +2,6 @@
 from formats_common import *
 from pyglossary.xml_utils import xml_escape
 from pyglossary.html_utils import unescape_unicode
-from typing import List, Callable
 from io import BytesIO
 import re
 import html
@@ -40,7 +39,7 @@ class Reader(object):
 		self,
 		hf: "lxml.etree.htmlfile",
 		input_objects: "List[lxml.etree.Element]",
-		processor: Callable,
+		processor: "Callable",
 		single_prefix=None,
 		skip_single=True
 	):
@@ -241,7 +240,7 @@ class Reader(object):
 		text = self._p_pattern.sub("\\2", text)
 		return text
 
-	def strip_tag_p(self, elems: List["lxml.etree.Element"]) -> str:
+	def strip_tag_p(self, elems: "List[lxml.etree.Element]") -> str:
 		lines = []
 		for elem in elems:
 			for line in self.strip_tag_p_elem(elem).split("\n"):
@@ -307,7 +306,7 @@ class Reader(object):
 
 		self._file = open(filename, mode="rb")
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		from lxml import etree as ET
 
 		context = ET.iterparse(

@@ -29,12 +29,6 @@ from pyglossary.text_utils import (
 	uintFromBytes,
 )
 
-from typing import (
-	Optional,
-	Callable,
-	Any,
-)
-
 
 class InfoItem(object):
 	__slots__ = (
@@ -46,7 +40,7 @@ class InfoItem(object):
 	def __init__(
 		self,
 		name: str,
-		decode: Optional[Callable[[bytes], Any]] = None,
+		decode: "Optional[Callable[[bytes], Any]]" = None,
 		attr: bool = False,
 	):
 		self.name = name

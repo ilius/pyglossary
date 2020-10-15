@@ -24,15 +24,6 @@ import struct
 import binascii
 import logging
 
-from typing import (
-	AnyStr,
-	Tuple,
-	List,
-	Union,
-	Optional,
-	Callable,
-)
-
 from . import core
 
 log = logging.getLogger("pyglossary")
@@ -41,15 +32,15 @@ startRed = "\x1b[31m"
 endFormat = "\x1b[0;0;0m"  # len=8
 
 
-def toBytes(s: AnyStr) -> bytes:
+def toBytes(s: "AnyStr") -> bytes:
 	return bytes(s, "utf-8") if isinstance(s, str) else bytes(s)
 
 
-def toStr(s: AnyStr) -> str:
+def toStr(s: "AnyStr") -> str:
 	return str(s, "utf-8") if isinstance(s, bytes) else str(s)
 
 
-def fixUtf8(st: AnyStr) -> str:
+def fixUtf8(st: "AnyStr") -> str:
 	return toBytes(st).replace(b"\x00", b"").decode("utf-8", "replace")
 
 
@@ -60,8 +51,8 @@ pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|")
 
 
 def replaceStringTable(
-	rplList: List[Tuple[str, str]],
-) -> Callable[[str], str]:
+	rplList: "List[Tuple[str, str]]",
+) -> "Callable[[str], str]":
 	def replace(st: str) -> str:
 		for rpl in rplList:
 			st = st.replace(rpl[0], rpl[1])
@@ -94,7 +85,7 @@ def unescapeNTB(st: str, bar: bool = False) -> str:
 	return st
 
 
-def splitByBarUnescapeNTB(st: str) -> List[str]:
+def splitByBarUnescapeNTB(st: str) -> "List[str]":
 	"""
 		splits by "|" (and not "\\|") then unescapes Newline (\\n),
 			Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
@@ -208,7 +199,7 @@ def isControlChar(y: int) -> bool:
 	return False
 
 
-def isASCII(data: str, exclude: Optional[List[str]] = None) -> bool:
+def isASCII(data: str, exclude: "Optional[List[str]]" = None) -> bool:
 	if exclude is None:
 		exclude = []
 	for c in data:

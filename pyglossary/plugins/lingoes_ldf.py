@@ -106,7 +106,7 @@ class Writer(object):
 	def open(self, filename: str):
 		self._filename = filename
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		newline = self._newline
 		resources = self._resources
 		head = (

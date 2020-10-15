@@ -3,31 +3,18 @@
 from heapq import heappush, heappop
 from heapq import merge
 
-from typing import (
-	TypeVar,
-	#Dict,
-	#Tuple,
-	List,
-	Sequence,
-	Any,
-	Optional,
-	Iterator,
-	Callable,
-)
-
-
 import logging
 log = logging.getLogger("pyglossary")
 
 
-T = TypeVar("T")
+T = 'TypeVar("T")'
 
 
 def hsortStream(
-	stream: Iterator[T],
+	stream: "Iterator[T]",
 	maxHeapSize: int,
-	key: Optional[Callable[[T], Any]] = None,
-) -> Iterator[T]:
+	key: "Optional[Callable[[T], Any]]" = None,
+) -> "Iterator[T]":
 	"""
 		stream: a generator or iterable
 		maxHeapSize: int, maximum size of heap
@@ -62,10 +49,10 @@ def hsortStream(
 
 
 def hsortStreamList(
-	streams: Sequence[Iterator[T]],
+	streams: "Sequence[Iterator[T]]",
 	*args,
 	**kwargs
-) -> Iterator[T]:
+) -> "Iterator[T]":
 	streams = [
 		hsortStream(stream, *args, **kwargs)
 		for stream in streams

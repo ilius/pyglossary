@@ -3,14 +3,10 @@ from itertools import (
 	repeat,
 )
 
-from typing import (
-	AnyStr,
-	Iterator
-)
 from io import IOBase
 
 
-def toBytes(s: AnyStr) -> bytes:
+def toBytes(s: "AnyStr") -> bytes:
 	return bytes(s, "utf-8") if isinstance(s, str) else bytes(s)
 
 
@@ -38,5 +34,5 @@ class FileLineWrapper(object):
 		self.line += 1
 		return self.f.readline()
 
-	def __iter__(self) -> Iterator[str]:
+	def __iter__(self) -> "Iterator[str]":
 		return iter(self.f)

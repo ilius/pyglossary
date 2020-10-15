@@ -26,8 +26,6 @@ import re
 import pkgutil
 import shutil
 
-from typing import TextIO
-
 from pyglossary.plugins.formats_common import *
 from pyglossary.xdxf_transform import xdxf_to_html_transformer
 from ._dict import *
@@ -88,9 +86,9 @@ def abspath_or_None(path):
 
 
 def write_header(
-	glos: GlossaryType,
-	toFile: TextIO,
-	frontBackMatter: Optional[str],
+	glos: "GlossaryType",
+	toFile: "TextIO",
+	frontBackMatter: "Optional[str]",
 ) -> None:
 	# write header
 	toFile.write(
@@ -182,7 +180,7 @@ class Writer(object):
 	_cleanHTML: bool = True
 	_css: str = ""
 	_xsl: str = ""
-	_defaultPrefs: Optional[Dict] = None
+	_defaultPrefs: "Optional[Dict]" = None
 	_prefsHTML: str = ""
 	_frontBackMatter: str = ""
 	_jing: bool = False
@@ -200,7 +198,7 @@ class Writer(object):
 		if not isdir(dirname):
 			os.mkdir(dirname)
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		global BeautifulSoup
 
 		glos = self._glos

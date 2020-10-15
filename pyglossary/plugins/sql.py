@@ -18,12 +18,12 @@ optionsProp = {
 
 class Writer(object):
 	_encoding: str = "utf-8"
-	_infoKeys: Optional[List] = None
+	_infoKeys: "Optional[List]" = None
 	_addExtraInfo: bool = True
 	_newline: str = "<br>"
 	_transaction: bool = False
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = None
 		self._file = None
@@ -102,7 +102,7 @@ class Writer(object):
 			"description",
 		]
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		glos = self._glos
 
 		newline = self._newline

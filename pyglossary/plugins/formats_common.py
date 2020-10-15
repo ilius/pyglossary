@@ -11,17 +11,6 @@ from os.path import (
 	exists,
 )
 
-from typing import (
-	Optional,
-	Any,
-	AnyStr,
-	Tuple,
-	List,
-	Dict,
-	Iterator,
-	Generator,
-)
-
 import logging
 
 log = logging.getLogger("pyglossary")

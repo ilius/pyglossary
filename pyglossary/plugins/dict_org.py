@@ -103,7 +103,7 @@ class Reader(object):
 			return 0
 		return len(self._dictdb.indexentries)
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		if self._dictdb is None:
 			log.error("reader is not open, can not iterate")
 			raise StopIteration
@@ -147,7 +147,7 @@ class Writer(object):
 		self._dictdb = DictDB(filename, "write", 1)
 		self._filename = filename
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		dictdb = self._dictdb
 		while True:
 			entry = yield

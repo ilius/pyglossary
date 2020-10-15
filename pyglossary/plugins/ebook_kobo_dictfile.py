@@ -152,7 +152,7 @@ class Writer(object):
 
 	def write(
 		self,
-	) -> Generator[None, "BaseEntry", None]:
+	) -> "Generator[None, BaseEntry, None]":
 		fileObj = self._file
 		resDir = self._resDir
 		while True:

@@ -108,7 +108,7 @@ class Reader(object):
 			raise e
 		return chunkSize, plus
 
-	def _readEntry(self, pos: int) -> Tuple["BaseEntry", int]:
+	def _readEntry(self, pos: int) -> "Tuple[BaseEntry, int]":
 		"""
 			returns (entry, pos)
 		"""

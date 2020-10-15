@@ -38,7 +38,7 @@ class Writer(object):
 		# TODO: add another bool flag to only remove html tags that are not
 		# supported by GtkTextView
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		yield from self._glos.writeTxt(
 			entryFmt=":{word}:{defi}\n",
 			filename=self._filename,

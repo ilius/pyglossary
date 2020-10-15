@@ -146,7 +146,7 @@ class Writer(object):
 		word = word.lower()
 		return word
 
-	def sortKey(self, b_word: bytes) -> Any:
+	def sortKey(self, b_word: bytes) -> "Any":
 		# DO NOT change method name
 		# FIXME: confirm
 		word = b_word.decode("utf-8")

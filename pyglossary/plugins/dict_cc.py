@@ -2,7 +2,6 @@
 
 from formats_common import *
 import html
-from typing import List, Tuple, Callable
 
 enable = True
 format = 'Dictcc'
@@ -49,7 +48,7 @@ class Reader(object):
 		self,
 		hf: "lxml.etree.htmlfile",
 		input_elements: "List[lxml.etree.Element]",
-		processor: Callable,
+		processor: "Callable",
 		single_prefix=None,
 		skip_single=True
 	):
@@ -70,7 +69,7 @@ class Reader(object):
 	def writeSense(
 		self,
 		hf: "lxml.etree.htmlfile",
-		row: Tuple[str, str, str],
+		row: "Tuple[str, str, str]",
 	):
 		from lxml import etree as ET
 		trans, entry_type = row

@@ -38,8 +38,6 @@ from os.path import join, isfile
 import logging
 import traceback
 
-from typing import Union, Dict
-
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import tix
@@ -296,8 +294,8 @@ class ProgressBar(tix.Frame):
 class FormatOptionsButton(ttk.Button):
 	def __init__(
 		self,
-		kind: Union["Read", "Write"],
-		values: Dict,
+		kind: "Literal['Read', 'Write']",
+		values: "Dict",
 		formatVar: tk.StringVar,
 		master=None,
 	):

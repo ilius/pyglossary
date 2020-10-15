@@ -17,14 +17,6 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from typing import (
-	Tuple,
-	Dict,
-	Optional,
-	Callable,
-	Any,
-)
-
 from .option import Option
 from .flags import (
 	YesNoAlwaysNever,
@@ -56,7 +48,7 @@ class PluginProp(object):
 		return self._p.description
 
 	@property
-	def extensions(self) -> Tuple[str, ...]:
+	def extensions(self) -> "Tuple[str, ...]":
 		return self._p.extensions
 
 	@property
@@ -71,14 +63,14 @@ class PluginProp(object):
 		return self._p.singleFile
 
 	@property
-	def optionsProp(self) -> Dict[str, Option]:
+	def optionsProp(self) -> "Dict[str, Option]":
 		return getattr(self._p, "optionsProp", {})
 
 	@property
 	def sortOnWrite(self) -> YesNoAlwaysNever:
 		return getattr(self._p, "sortOnWrite", DEFAULT_NO)
 
-	def _loadReaderClass(self) -> Optional[Any]:
+	def _loadReaderClass(self) -> "Optional[Any]":
 		cls = getattr(self._p, "Reader", None)
 		if cls is None:
 			return None
@@ -109,7 +101,7 @@ class PluginProp(object):
 		return cls
 
 	@property
-	def readerClass(self) -> Optional[Any]:
+	def readerClass(self) -> "Optional[Any]":
 		if self._ReaderLoaded:
 			return self._Reader
 		cls = self._loadReaderClass()
@@ -117,7 +109,7 @@ class PluginProp(object):
 		self._ReaderLoaded = True
 		return cls
 
-	def _loadWriterClass(self) -> Optional[Any]:
+	def _loadWriterClass(self) -> "Optional[Any]":
 		cls = getattr(self._p, "Writer", None)
 		if cls is None:
 			return None
@@ -147,7 +139,7 @@ class PluginProp(object):
 		return cls
 
 	@property
-	def writerClass(self) -> Optional[Any]:
+	def writerClass(self) -> "Optional[Any]":
 		if self._WriterLoaded:
 			return self._Writer
 		cls = self._loadWriterClass()

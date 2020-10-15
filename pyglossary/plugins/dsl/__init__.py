@@ -394,7 +394,7 @@ class Reader(object):
 		elif line.startswith("#CONTENTS_LANGUAGE"):
 			self._glos.targetLangName = unwrap_quotes(line[19:])
 
-	def _iterLines(self) -> Iterator[str]:
+	def _iterLines(self) -> "Iterator[str]":
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -402,7 +402,7 @@ class Reader(object):
 		for line in self._file:
 			yield line
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		current_key = ""
 		current_key_alters = []
 		current_text = []

@@ -2,7 +2,6 @@
 
 import re
 import logging
-from typing import Tuple, List, Dict, Optional, Any
 
 
 log = logging.getLogger("pyglossary")
@@ -13,10 +12,10 @@ class Option(object):
 		self,
 		typ: str,
 		customValue: bool = False,
-		values: Optional[List[str]] = None,
+		values: "Optional[List[str]]" = None,
 		comment: str = "",
 		disabled: bool = False,
-	):
+	) -> None:
 		if values is None:
 			# otherwise there would not be any valid value
 			customValue = True
@@ -26,7 +25,7 @@ class Option(object):
 		self.comment = comment
 		self.disabled = disabled
 
-	def evaluate(self, raw: str) -> Tuple[Any, bool]:
+	def evaluate(self, raw: str) -> "Tuple[Any, bool]":
 		"returns (value, isValid)"
 		if raw == "None":
 			return None, True
@@ -55,7 +54,7 @@ class Option(object):
 			return False
 		return True
 
-	def groupValues(self) -> Optional[Dict[str, Any]]:
+	def groupValues(self) -> "Optional[Dict[str, Any]]":
 		return None
 
 
@@ -69,7 +68,7 @@ class BoolOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self, raw: str) -> Tuple[Optional[bool], bool]:
+	def evaluate(self, raw: str) -> "Tuple[Optional[bool], bool]":
 		if raw.lower() in ("yes", "true", "1"):
 			return True, True
 		if raw.lower() in ("no", "false", "0"):
@@ -92,7 +91,7 @@ class StrOption(Option):
 			return value in self.values
 		return type(value).__name__ == "str"
 
-	def groupValues(self) -> Optional[Dict[str, Any]]:
+	def groupValues(self) -> "Optional[Dict[str, Any]]":
 		return None
 
 
@@ -100,7 +99,7 @@ class IntOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(self, "int", **kwargs)
 
-	def evaluate(self, raw: str) -> Tuple[Optional[int], bool]:
+	def evaluate(self, raw: str) -> "Tuple[Optional[int], bool]":
 		"returns (value, isValid)"
 		try:
 			value = int(raw)
@@ -114,7 +113,7 @@ class FloatOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(self, "float", **kwargs)
 
-	def evaluate(self, raw: float) -> Tuple[Optional[float], bool]:
+	def evaluate(self, raw: float) -> "Tuple[Optional[float], bool]":
 		"returns (value, isValid)"
 		try:
 			value = float(raw)
@@ -133,7 +132,7 @@ class DictOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self, raw: str) -> Tuple[Optional[Dict], bool]:
+	def evaluate(self, raw: str) -> "Tuple[Optional[Dict], bool]":
 		import ast
 		if raw == "":
 			return None, True  # valid
@@ -155,7 +154,7 @@ class ListOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self, raw: str) -> Tuple[Optional[List], bool]:
+	def evaluate(self, raw: str) -> "Tuple[Optional[List], bool]":
 		import ast
 		if raw == "":
 			return None, True  # valid
@@ -209,7 +208,7 @@ class EncodingOption(Option):
 			**kwargs
 		)
 
-	def groupValues(self) -> Optional[Dict[str, Any]]:
+	def groupValues(self) -> "Optional[Dict[str, Any]]":
 		from collections import OrderedDict
 		groups = OrderedDict()  # type: Dict[str, List[str]]
 		others = []  # type: List[str]

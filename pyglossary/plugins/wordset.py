@@ -63,7 +63,7 @@ class Reader(object):
 			return "\x80"
 		return fname
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		if not self._filename:
 			log.error("iterating over a reader which is not open")
 			raise StopIteration

@@ -6,10 +6,6 @@ from pyglossary.glossary_type import GlossaryType
 
 import os
 from os.path import isfile
-from typing import (
-	Tuple,
-	Iterator,
-)
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -113,7 +109,7 @@ class TextGlossaryReader(object):
 				self._fileCount = int(fileCountStr)
 				self._glos.setInfo("file_count", "")
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		while True:
 			self._pos += 1
 			if self._pendingEntries:
@@ -153,5 +149,5 @@ class TextGlossaryReader(object):
 	def fixInfoWord(self, word: str) -> bool:
 		raise NotImplementedError
 
-	def nextPair(self) -> Tuple[str, str]:
+	def nextPair(self) -> "Tuple[str, str]":
 		raise NotImplementedError

@@ -3,7 +3,6 @@
 from formats_common import *
 from pyglossary.xml_utils import xml_escape
 from pyglossary.html_utils import unescape_unicode
-from typing import List, Union, Callable
 from io import BytesIO
 import re
 import html
@@ -82,7 +81,7 @@ class Reader(object):
 		self,
 		hf: "lxml.etree.htmlfile",
 		input_objects: "List[Any]",
-		processor: Callable,
+		processor: "Callable",
 		single_prefix=None,
 		skip_single=True
 	):
@@ -243,7 +242,7 @@ class Reader(object):
 		text = self._p_pattern.sub("\\2", text)
 		return text
 
-	def stripParagList(self, elems: List["lxml.etree.Element"]) -> str:
+	def stripParagList(self, elems: "List[lxml.etree.Element]") -> str:
 		lines = []
 		for elem in elems:
 			for line in self.stripParag(elem).split("\n"):
@@ -375,7 +374,7 @@ class Reader(object):
 			self.setMetadata(elem)
 			return
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		from lxml import etree as ET
 		context = ET.iterparse(
 			self._filename,
@@ -415,7 +414,7 @@ class Writer(object):
 		self._filename = filename
 		self._file = open(filename, "w", encoding="utf-8")
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		glos = self._glos
 		resources = self._resources
 		filename = self._filename

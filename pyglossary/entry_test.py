@@ -3,7 +3,6 @@
 import sys
 from os.path import join, dirname, abspath
 import unittest
-from typing import Optional, Tuple, List, Any
 import logging
 
 rootDir = dirname(dirname(abspath(__file__)))

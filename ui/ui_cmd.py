@@ -20,10 +20,8 @@
 
 from os.path import join
 import time
-import signal
 
 from pyglossary.glossary import *
-from pyglossary.reverse import reverseGlossary
 from .base import *
 from . import progressbar as pb
 from .wcwidth import wcswidth
@@ -214,6 +212,7 @@ class UI(UIBase):
 			self._resetLogFormatter()
 
 	def reverseLoop(self, *args, **kwargs):
+		from pyglossary.reverse import reverseGlossary
 		reverseKwArgs = {}
 		for key in (
 			"words",
@@ -295,6 +294,7 @@ class UI(UIBase):
 
 		glos = self.glos = Glossary(ui=self)
 		if reverse:
+			import signal
 			signal.signal(signal.SIGINT, self.onSigInt)  # good place? FIXME
 			readOptions["direct"] = True
 			if not glos.read(

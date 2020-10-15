@@ -3,11 +3,6 @@
 import re
 import logging
 
-from typing import (
-	Optional,
-	List,
-)
-
 from .text_utils import (
 	fixUtf8,
 )
@@ -23,7 +18,7 @@ class EntryFilter(object):
 	name = ""
 	desc = ""
 
-	def __init__(self, glos: Glossary):
+	def __init__(self, glos: "GlossaryType"):
 		self.glos = glos
 
 	def prepare(self) -> None:
@@ -32,7 +27,7 @@ class EntryFilter(object):
 		"""
 		pass
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		"""
 			returns an Entry object, or None to skip
 				may return the same `entry`,
@@ -46,7 +41,7 @@ class StripEntryFilter(EntryFilter):
 	name = "strip"
 	desc = "Strip Whitespaces"
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.strip()
 		entry.replace("\r", "")
 		return entry
@@ -56,7 +51,7 @@ class NonEmptyWordFilter(EntryFilter):
 	name = "non_empty_word"
 	desc = "Non-empty Words"
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		if not entry.s_word:
 			return
 #		words = entry.l_word
@@ -72,7 +67,7 @@ class NonEmptyDefiFilter(EntryFilter):
 	name = "non_empty_defi"
 	desc = "Non-empty Definition"
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		if not entry.defi:
 			return
 		return entry
@@ -82,7 +77,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 	name = "remove_empty_dup_alt_words"
 	desc = "Remove Empty and Duplicate Alternate Words"
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.removeEmptyAndDuplicateAltWords()
 		if not entry.l_word:
 			return
@@ -93,7 +88,7 @@ class FixUnicodeFilter(EntryFilter):
 	name = "fix_unicode"
 	desc = "Fix Unicode"
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.editFuncWord(fixUtf8)
 		entry.editFuncDefi(fixUtf8)
 		return entry
@@ -103,7 +98,7 @@ class LowerWordFilter(EntryFilter):
 	name = "lower_word"
 	desc = "Lowercase Words"
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.editFuncWord(str.lower)
 		return entry
 
@@ -111,7 +106,7 @@ class LowerWordFilter(EntryFilter):
 class RemoveHtmlTagsAll(EntryFilter):
 	name = "remove_html_all"
 
-	def __init__(self, glos: Glossary):
+	def __init__(self, glos: "GlossaryType"):
 		self._p_pattern = re.compile(
 			'<p( [^<>]*?)?>(.*?)</p>',
 			re.DOTALL,
@@ -121,7 +116,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 			re.IGNORECASE,
 		)
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		from bs4 import BeautifulSoup
 
 		def fixStr(st: str) -> str:
@@ -138,11 +133,11 @@ class RemoveHtmlTagsAll(EntryFilter):
 class RemoveHtmlTags(EntryFilter):
 	name = "remove_html"
 
-	def __init__(self, glos: Glossary, tags: List[str]):
+	def __init__(self, glos: "GlossaryType", tags: "List[str]"):
 		self.glos = glos
 		self.tags = tags
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		import re
 
 		def fixStr(st: str) -> str:
@@ -161,7 +156,7 @@ class NormalizeHtml(EntryFilter):
 	name = "normalize_html"
 	desc = "Normalize HTML Tags"
 
-	def __init__(self, glos: Glossary):
+	def __init__(self, glos: "GlossaryType"):
 		log.info("Normalizing HTML tags")
 		self._pattern = re.compile(
 			"(" + "|".join([
@@ -185,7 +180,7 @@ class NormalizeHtml(EntryFilter):
 		st = self._pattern.sub(self._subLower, st)
 		return st
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.editFuncDefi(self._fixDefi)
 		return entry
 
@@ -194,7 +189,7 @@ class SkipDataEntryFilter(EntryFilter):
 	name = "skip_resources"
 	desc = "Skip Resources"
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		if entry.isData():
 			return
 		return entry
@@ -204,7 +199,7 @@ class LangEntryFilter(EntryFilter):
 	name = "lang"
 	desc = "Language-dependent Filters"
 
-	def __init__(self, glos: Glossary):
+	def __init__(self, glos: "GlossaryType"):
 		EntryFilter.__init__(self, glos)
 		self._run_func = None  # type: Callable[[BaseEntry], [Optional[BaseEntry]]]
 
@@ -218,7 +213,7 @@ class LangEntryFilter(EntryFilter):
 			self._run_func = self.run_fa
 			log.info("Using Persian filter")
 
-	def run_fa(self, entry: BaseEntry) -> Optional[BaseEntry]:
+	def run_fa(self, entry: BaseEntry) -> "Optional[BaseEntry]":
 		from pyglossary.persian_utils import faEditStr
 		entry.editFuncWord(faEditStr)
 		entry.editFuncDefi(faEditStr)
@@ -227,7 +222,7 @@ class LangEntryFilter(EntryFilter):
 		# for GoldenDict ^^ FIXME
 		return entry
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		if self._run_func:
 			entry = self._run_func(entry)
 		return entry
@@ -270,7 +265,7 @@ class CleanEntryFilter(EntryFilter):  # FIXME
 
 		return st
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.editFuncDefi(self.cleanDefi)
 		return entry
 
@@ -279,13 +274,13 @@ class ProgressBarEntryFilter(EntryFilter):
 	name = "progressbar"
 	desc = "Progress Bar"
 
-	def __init__(self, glos: Glossary):
+	def __init__(self, glos: "GlossaryType"):
 		EntryFilter.__init__(self, glos)
 		self._wordCount = -1
 		self._wordCountThreshold = 0
 		self._lastPos = 0
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		if entry is not None:
 			bp = entry.byteProgress()
 			if bp:
@@ -309,11 +304,11 @@ class MaxMemoryUsageEntryFilter(EntryFilter):
 	name = "max_memory_usage"
 	desc = "Show Max Memory Usage"
 
-	def __init__(self, glos: Glossary):
+	def __init__(self, glos: "GlossaryType"):
 		EntryFilter.__init__(self, glos)
 		self._max_mem_usage = 0
 
-	def run(self, entry: BaseEntry, index: int) -> Optional[BaseEntry]:
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		import os
 		import psutil
 		usage = psutil.Process(os.getpid()).memory_info().rss // 1024

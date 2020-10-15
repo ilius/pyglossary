@@ -28,7 +28,7 @@ class Writer(object):
 			self._file.close()
 			self._file = None
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		import re
 		from collections import Counter, OrderedDict
 		from pyglossary.json_utils import dataToPrettyJson
@@ -130,5 +130,5 @@ class Reader(object):
 	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		yield None

@@ -18,8 +18,6 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from typing import List, Dict
-
 from pyglossary.glossary import Glossary
 
 # reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
@@ -27,7 +25,7 @@ from pyglossary.glossary import Glossary
 # installed_packages = set(r.decode().split('==')[0] for r in reqs.split())
 
 
-def checkDepends(depends: Dict[str, str]) -> List[str]:
+def checkDepends(depends: "Dict[str, str]") -> "List[str]":
 	"returns the list of uninstalled dependencies"
 	if not depends:
 		return []

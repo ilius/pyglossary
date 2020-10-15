@@ -1,6 +1,5 @@
 import os
 import shutil
-from typing import Any
 
 
 class indir(object):
@@ -59,5 +58,5 @@ except:
 """
 
 
-def click_website(widget: Any, link: str) -> None:
+def click_website(widget: "Any", link: str) -> None:
 	my_url_show(link)

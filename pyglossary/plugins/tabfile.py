@@ -28,7 +28,7 @@ class Reader(TextGlossaryReader):
 	def fixInfoWord(self, word: str) -> str:
 		return word.lstrip("#")
 
-	def nextPair(self) -> Tuple[str, str]:
+	def nextPair(self) -> "Tuple[str, str]":
 		if not self._file:
 			raise StopIteration
 		line = self._file.readline()
@@ -70,7 +70,7 @@ class Writer(object):
 	def open(
 		self, 
 		filename: str,
-		fileObj: Optional["file"] = None,
+		fileObj: "Optional[file]" = None,
 	):
 		self._filename = filename
 		self._file = fileObj
@@ -80,7 +80,7 @@ class Writer(object):
 			self._file.close()
 			self._file = None
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		yield from self._glos.writeTabfile(
 			self._filename,
 			fileObj=self._file,

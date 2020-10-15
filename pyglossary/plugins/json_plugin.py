@@ -29,7 +29,7 @@ class Writer(object):
 	def finish(self):
 		self._filename = None
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		from json import dumps
 
 		glos = self._glos

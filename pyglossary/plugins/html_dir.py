@@ -249,7 +249,7 @@ class Writer(object):
 				)
 			_file.write("</table></body></html>")
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 
 		encoding = self._encoding
 		resources = self._resources

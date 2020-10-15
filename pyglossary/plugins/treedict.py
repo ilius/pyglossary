@@ -57,7 +57,7 @@ class Writer(object):
 			else:
 				raise IOError(f"{filename!r} is not a directory")
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		glos = self._glos
 		filename = self._filename
 		encoding = self._encoding

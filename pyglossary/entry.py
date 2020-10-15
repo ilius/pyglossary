@@ -9,14 +9,6 @@ from os.path import (
 	dirname,
 	getsize,
 )
-from typing import (
-	Optional,
-	Tuple,
-	List,
-	Dict,
-	Callable,
-	Any,
-)
 
 from .entry_base import BaseEntry, MultiStr, RawEntryType
 from .iter_utils import unique_everseen
@@ -45,7 +37,7 @@ class DataEntry(BaseEntry):
 		fname: str,
 		data: bytes,
 		inTmp: bool = False,
-		byteProgress: Optional[Tuple[int, int]] = None,
+		byteProgress: "Optional[Tuple[int, int]]" = None,
 	) -> None:
 		assert isinstance(fname, str)
 		assert isinstance(data, bytes)
@@ -101,7 +93,7 @@ class DataEntry(BaseEntry):
 		return self._fname
 
 	@property
-	def l_word(self) -> List[str]:
+	def l_word(self) -> "List[str]":
 		return [self._fname]
 
 	@property
@@ -115,7 +107,7 @@ class DataEntry(BaseEntry):
 		log.error("entry.getWord() is deprecated, use entry.s_word")
 		return self.s_word
 
-	def getWords(self) -> List[str]:
+	def getWords(self) -> "List[str]":
 		log.error("entry.getWords() is deprecated, use entry.l_word")
 		return self.l_word
 
@@ -137,12 +129,12 @@ class DataEntry(BaseEntry):
 	def addAlt(self, alt: str) -> None:
 		pass
 
-	def editFuncWord(self, func: Callable[[str], str]) -> None:
+	def editFuncWord(self, func: "Callable[[str], str]") -> None:
 		pass
 		# modify fname?
 		# FIXME
 
-	def editFuncDefi(self, func: Callable[[str], str]) -> None:
+	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
 		pass
 
 	def strip(self) -> None:
@@ -160,7 +152,7 @@ class DataEntry(BaseEntry):
 	def removeEmptyAndDuplicateAltWords(self):
 		pass
 
-	def getRaw(self, glos: "GlossaryType") -> RawEntryType:
+	def getRaw(self, glos: "GlossaryType") -> "RawEntryType":
 		b_fpath = b""
 		if glos.tmpDataDir:
 			b_fpath = self.save(glos.tmpDataDir).encode("utf-8")
@@ -216,24 +208,24 @@ class Entry(BaseEntry):
 	def isData(self) -> bool:
 		return False
 
-	def _join(self, parts: List[str]) -> str:
+	def _join(self, parts: "List[str]") -> str:
 		return Entry.sep.join([
 			part.replace(Entry.sep, "\\" + Entry.sep)
 			for part in parts
 		])
 
 	@staticmethod
-	def defaultStringSortKey(word: str) -> Any:
+	def defaultStringSortKey(word: str) -> "Any":
 		return Entry.defaultSortKey(word.encode("utf-8"))
 
 	@staticmethod
-	def defaultSortKey(b_word: bytes) -> Any:
+	def defaultSortKey(b_word: bytes) -> "Any":
 		return b_word.lower()
 
 	@staticmethod
 	def getEntrySortKey(
-		key: Optional[Callable[[bytes], Any]] = None,
-	) -> Callable[[BaseEntry], Any]:
+		key: "Optional[Callable[[bytes], Any]]" = None,
+	) -> "Callable[[BaseEntry], Any]":
 		if key is None:
 			key = Entry.defaultSortKey
 		return lambda entry: key(entry.l_word[0].encode("utf-8"))
@@ -241,8 +233,8 @@ class Entry(BaseEntry):
 	@staticmethod
 	def getRawEntrySortKey(
 		glos: "GlossaryType",
-		key: Optional[Callable[[bytes], Any]] = None,
-	) -> Callable[[Tuple], Any]:
+		key: "Optional[Callable[[bytes], Any]]" = None,
+	) -> "Callable[[Tuple], Any]":
 		# here `x` is raw entity, meaning a tuple of form (word, defi) or
 		# (word, defi, defiFormat)
 		# so x[0] is word(s) in bytes, that can be a str (one word),
@@ -267,7 +259,7 @@ class Entry(BaseEntry):
 		word: MultiStr,
 		defi: MultiStr,
 		defiFormat: str = "m",
-		byteProgress: Optional[Tuple[int, int]] = None,
+		byteProgress: "Optional[Tuple[int, int]]" = None,
 	) -> None:
 		"""
 			word: string or a list of strings (including alternate words)
@@ -315,7 +307,7 @@ class Entry(BaseEntry):
 			return self._join(self._word)
 
 	@property
-	def l_word(self) -> List[str]:
+	def l_word(self) -> "List[str]":
 		"""
 			returns list of the word and all the alternate words
 		"""
@@ -335,7 +327,7 @@ class Entry(BaseEntry):
 		log.error("entry.getWord() is deprecated, use entry.s_word")
 		return self.s_word
 
-	def getWords(self) -> List[str]:
+	def getWords(self) -> "List[str]":
 		log.error("entry.getWords() is deprecated, use entry.l_word")
 		return self.l_word
 
@@ -378,7 +370,7 @@ class Entry(BaseEntry):
 		l_word.append(alt)
 		self._word = l_word
 
-	def editFuncWord(self, func: Callable[[str], str]) -> None:
+	def editFuncWord(self, func: "Callable[[str], str]") -> None:
 		"""
 			run function `func` on all the words
 			`func` must accept only one string as argument
@@ -391,7 +383,7 @@ class Entry(BaseEntry):
 				func(st) for st in self._word
 			)
 
-	def editFuncDefi(self, func: Callable[[str], str]) -> None:
+	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
 		"""
 			run function `func` on all the definitions
 			`func` must accept only one string as argument

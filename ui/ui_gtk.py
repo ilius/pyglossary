@@ -25,12 +25,6 @@ from os.path import join, isfile, isabs, splitext
 import logging
 import traceback
 
-from typing import (
-	List,
-	Dict,
-	Any,
-)
-
 from pyglossary.text_utils import urlToPath
 from pyglossary.os_utils import click_website
 
@@ -84,7 +78,7 @@ def buffer_get_text(b):
 
 
 class FormatOptionsDialog(gtk.Dialog):
-	def __init__(self, formatName: str, options: List[str], optionsValues: Dict[str, Any], parent=None):
+	def __init__(self, formatName: str, options: "List[str]", optionsValues: "Dict[str, Any]", parent=None):
 		gtk.Dialog.__init__(self, parent=parent)
 		optionsProp = Glossary.plugins[formatName].optionsProp
 		self.optionsProp = optionsProp
@@ -367,7 +361,7 @@ class FormatComboBox(gtk.ComboBox):
 
 		self.connect("changed", self.onChanged)
 
-	def setOptionsValues(self, optionsValues: Dict[str, Any]):
+	def setOptionsValues(self, optionsValues: "Dict[str, Any]"):
 		self.optionsValues = optionsValues
 
 	def kind(self):

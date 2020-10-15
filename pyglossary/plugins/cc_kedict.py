@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from formats_common import *
 from pyglossary.text_reader import TextGlossaryReader
-from typing import List, Dict, Optional, Callable
 from io import BytesIO
 from os.path import dirname
 
@@ -66,7 +65,7 @@ class YamlReader(TextGlossaryReader):
 		self,
 		hf: "lxml.etree.htmlfile",
 		input_objects: "List[Any]",
-		processor: Callable,
+		processor: "Callable",
 		single_prefix=None,
 		skip_single=True
 	):
@@ -91,7 +90,7 @@ class YamlReader(TextGlossaryReader):
 	def _processExample(
 		self,
 		hf: "lxml.etree.htmlfile",
-		exampleDict: Dict,
+		exampleDict: "Dict",
 		count: int,
 	):
 		from lxml import etree as ET
@@ -117,7 +116,7 @@ class YamlReader(TextGlossaryReader):
 	def _processDef(
 		self,
 		hf: "lxml.etree.htmlfile",
-		defDict: Dict,
+		defDict: "Dict",
 		count: int,
 	):
 		from lxml import etree as ET
@@ -152,7 +151,7 @@ class YamlReader(TextGlossaryReader):
 	def _processEntry(
 		self,
 		hf: "lxml.etree.htmlfile",
-		edict: Dict,
+		edict: "Dict",
 	):
 		from lxml import etree as ET
 

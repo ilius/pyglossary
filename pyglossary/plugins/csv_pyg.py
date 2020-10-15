@@ -122,7 +122,7 @@ class Reader(object):
 		for row in self._csvReader:
 			yield row
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		if not self._csvReader:
 			log.error(f"{self} is not open, can not iterate")
 			raise StopIteration
@@ -192,7 +192,7 @@ class Writer(object):
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		encoding = self._encoding
 		resources = self._resources
 		add_defi_format = self._add_defi_format

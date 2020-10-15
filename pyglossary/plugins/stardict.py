@@ -11,7 +11,6 @@ import re
 import gzip
 from time import time as now
 from collections import Counter
-#from typing_extensions import Literal
 
 from pyglossary.text_utils import (
 	uint32ToBytes,
@@ -204,7 +203,7 @@ class Reader(object):
 					continue
 				self._glos.setInfo(key, value)
 
-	def readIdxFile(self) -> List[Tuple[bytes, int, int]]:
+	def readIdxFile(self) -> "List[Tuple[bytes, int, int]]":
 		if isfile(self._filename + ".idx.gz"):
 			with gzip.open(self._filename + ".idx.gz") as idxFile:
 				idxBytes = idxFile.read()
@@ -233,7 +232,7 @@ class Reader(object):
 
 		return indexData
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		indexData = self._indexData
 		synDict = self._synDict
 		sametypesequence = self._sametypesequence
@@ -320,7 +319,7 @@ class Reader(object):
 						fromFile.read(),
 					)
 
-	def readSynFile(self) -> Dict[int, List[str]]:
+	def readSynFile(self) -> "Dict[int, List[str]]":
 		"""
 		return synDict, a dict { entryIndex -> altList }
 		"""
@@ -363,7 +362,7 @@ class Reader(object):
 		self,
 		b_block: bytes,
 		sametypesequence: str,
-	) -> List[Tuple[bytes, int]]:
+	) -> "List[Tuple[bytes, int]]":
 		"""
 		Parse definition block when sametypesequence option is specified.
 
@@ -409,7 +408,7 @@ class Reader(object):
 
 		return res
 
-	def parseDefiBlockGeneral(self, b_block: bytes) -> List[Tuple[bytes, int]]:
+	def parseDefiBlockGeneral(self, b_block: bytes) -> "List[Tuple[bytes, int]]":
 		"""
 		Parse definition block when sametypesequence option is not specified.
 
@@ -473,7 +472,7 @@ class Writer(object):
 			re.IGNORECASE,
 		)
 
-	def sortKey(self, b_word: bytes) -> Tuple[bytes, bytes]:
+	def sortKey(self, b_word: bytes) -> "Tuple[bytes, bytes]":
 		assert isinstance(b_word, bytes)
 		return (
 			b_word.lower(),
@@ -523,7 +522,7 @@ class Writer(object):
 					log.info(f"Auto-selecting sametypesequence=h")
 					self._sametypesequence = "h"
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		if self._sametypesequence:
 			if self._merge_syns:
 				yield from self.writeCompactMergeSyns(self._sametypesequence)
@@ -683,7 +682,7 @@ class Writer(object):
 			defiFormat="",
 		)
 
-	def writeSynFile(self, altIndexList: List[Tuple[bytes, int]]) -> None:
+	def writeSynFile(self, altIndexList: "List[Tuple[bytes, int]]") -> None:
 		"""
 		Build .syn file
 		"""
@@ -837,7 +836,7 @@ class Writer(object):
 			defiFormat="",
 		)
 
-	def writeIdxFile(self, indexList: List[Tuple[bytes, bytes]]) -> int:
+	def writeIdxFile(self, indexList: "List[Tuple[bytes, bytes]]") -> int:
 		filename = self._filename + ".idx"
 		if not indexList:
 			return 0

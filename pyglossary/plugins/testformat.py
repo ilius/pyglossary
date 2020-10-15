@@ -68,7 +68,7 @@ class Writer(object):
 	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		glos = self._glos
 		filename = self._filename
 		log.info(f"writing to format {format} using plugin")

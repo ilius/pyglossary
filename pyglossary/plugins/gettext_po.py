@@ -137,7 +137,7 @@ class Writer(object):
 			self._file.close()
 			self._file = None
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		try:
 			from polib import escape as po_escape
 		except ModuleNotFoundError as e:

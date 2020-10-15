@@ -201,7 +201,7 @@ class Writer(object):
 			return
 		slobWriter.add(content, key, content_type=content_type)
 
-	def write(self) -> Generator[None, "BaseEntry", None]:
+	def write(self) -> "Generator[None, BaseEntry, None]":
 		content_type = self._content_type
 		slobWriter = self._slobWriter
 		while True:

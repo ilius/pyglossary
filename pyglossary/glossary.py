@@ -46,18 +46,6 @@ import gc
 
 import gzip
 
-from typing import (
-	Dict,
-	Tuple,
-	List,
-	Any,
-	Optional,
-	ClassVar,
-	Iterator,
-	Callable,
-	Generator,
-)
-
 from .flags import *
 from . import core
 from .core import VERSION, userPluginsDir, cacheDir
@@ -66,9 +54,6 @@ from .entry import Entry, DataEntry
 from .plugin_prop import PluginProp
 
 from .langs import LangDict, Lang
-from .langs.writing_system import getWritingSystemFromText
-
-from .sort_stream import hsortStreamList
 
 from .text_utils import (
 	fixUtf8,
@@ -94,7 +79,7 @@ def get_ext(path: str) -> str:
 sortKeyType = Optional[
 	Callable[
 		[bytes],
-		Tuple[bytes, bytes],
+		"Tuple[bytes, bytes]",
 	]
 ]
 """
@@ -153,7 +138,7 @@ class Glossary(GlossaryType):
 	writeDesc = []
 
 	@classmethod
-	def loadPlugins(cls: ClassVar, directory: str) -> None:
+	def loadPlugins(cls: "ClassVar", directory: str) -> None:
 		"""
 		executed on startup.  as name implies, loads plugins from directory
 		"""
@@ -163,7 +148,12 @@ class Glossary(GlossaryType):
 			return
 
 		sys.path.append(directory)
-		for _, pluginName, _ in pkgutil.iter_modules([directory]):
+		pluginNames = [
+			pluginName
+			for _, pluginName, _ in pkgutil.iter_modules([directory])
+		]
+		pluginNames.sort()
+		for pluginName in pluginNames:
 			cls.loadPlugin(pluginName)
 		sys.path.pop()
 
@@ -210,7 +200,7 @@ class Glossary(GlossaryType):
 		return optNames
 
 	@classmethod
-	def loadPlugin(cls: ClassVar, pluginName: str) -> None:
+	def loadPlugin(cls: "ClassVar", pluginName: str) -> None:
 		try:
 			plugin = __import__(pluginName)
 		except ModuleNotFoundError as e:
@@ -358,8 +348,8 @@ class Glossary(GlossaryType):
 
 	def __init__(
 		self,
-		info: Optional[Dict[str, str]] = None,
-		ui: Any = None,
+		info: "Optional[Dict[str, str]]" = None,
+		ui: "Any" = None,
 	) -> None:
 		"""
 		info:	OrderedDict or dict instance, or None
@@ -474,7 +464,7 @@ class Glossary(GlossaryType):
 	def _calcProgressThreshold(self, wordCount: int) -> int:
 		return max(1, min(500, wordCount // 200))
 
-	def _loadedEntryGen(self) -> Iterator[BaseEntry]:
+	def _loadedEntryGen(self) -> "Iterator[BaseEntry]":
 		if self._progressbar:
 			self.progressInit("Writing")
 
@@ -490,7 +480,7 @@ class Glossary(GlossaryType):
 		if self._progressbar:
 			self.progressEnd()
 
-	def _readersEntryGen(self) -> Iterator[BaseEntry]:
+	def _readersEntryGen(self) -> "Iterator[BaseEntry]":
 		for reader in self._readers:
 			wordCount = 0
 			if self._progressbar:
@@ -506,8 +496,8 @@ class Glossary(GlossaryType):
 
 	def _applyEntryFiltersGen(
 		self,
-		gen: Iterator[BaseEntry],
-	) -> Iterator[BaseEntry]:
+		gen: "Iterator[BaseEntry]",
+	) -> "Iterator[BaseEntry]":
 		for index, entry in enumerate(gen):
 			if not entry:
 				continue
@@ -518,7 +508,7 @@ class Glossary(GlossaryType):
 			else:
 				yield entry
 
-	def __iter__(self) -> Iterator[BaseEntry]:
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		if self._iter is None:
 			log.error(
 				"Trying to iterate over a blank Glossary"
@@ -549,7 +539,7 @@ class Glossary(GlossaryType):
 	def collectDefiFormat(
 		self,
 		maxCount: int,
-	) -> Optional[Dict[str, float]]:
+	) -> "Optional[Dict[str, float]]":
 		"""
 			example return value:
 				[("h", 0.91), ("m", 0.09)]
@@ -593,12 +583,12 @@ class Glossary(GlossaryType):
 			len(reader) for reader in self._readers
 		)
 
-	def infoKeys(self) -> List[str]:
+	def infoKeys(self) -> "List[str]":
 		return list(self._info.keys())
 
 	# def formatInfoKeys(self, format: str):# FIXME
 
-	def iterInfo(self) -> Iterator[Tuple[str, str]]:
+	def iterInfo(self) -> "Iterator[Tuple[str, str]]":
 		return self._info.items()
 
 	def getInfo(self, key: str) -> str:
@@ -619,7 +609,7 @@ class Glossary(GlossaryType):
 
 		self._info[key] = value
 
-	def getExtraInfos(self, excludeKeys: List[str]) -> odict:
+	def getExtraInfos(self, excludeKeys: "List[str]") -> "odict":
 		"""
 		excludeKeys: a list of (basic) info keys to be excluded
 		returns an OrderedDict including the rest of info keys,
@@ -647,7 +637,7 @@ class Glossary(GlossaryType):
 				return value
 		return ""
 
-	def _getLangByStr(self, st) -> Optional[Lang]:
+	def _getLangByStr(self, st) -> "Optional[Lang]":
 		lang = langDict[st]
 		if lang:
 			return lang
@@ -657,18 +647,18 @@ class Glossary(GlossaryType):
 		log.error(f"unknown language {st!r}")
 		return
 
-	def _getLangByInfoKey(self, key: str) -> Optional[Lang]:
+	def _getLangByInfoKey(self, key: str) -> "Optional[Lang]":
 		st = self.getInfo(key)
 		if not st:
 			return
 		return self._getLangByStr(st)
 
 	@property
-	def sourceLang(self) -> Optional[Lang]:
+	def sourceLang(self) -> "Optional[Lang]":
 		return self._getLangByInfoKey("sourceLang")
 
 	@property
-	def targetLang(self) -> Optional[Lang]:
+	def targetLang(self) -> "Optional[Lang]":
 		return self._getLangByInfoKey("targetLang")
 
 	@sourceLang.setter
@@ -722,6 +712,7 @@ class Glossary(GlossaryType):
 		hf: "lxml.etree.htmlfile",
 		sample: str = "",
 	) -> "lxml.etree._FileWriterElement":
+		from .langs.writing_system import getWritingSystemFromText
 		sourceLang = self.sourceLang
 		if sourceLang:
 			return hf.element(sourceLang.titleTag)
@@ -731,7 +722,7 @@ class Glossary(GlossaryType):
 				return hf.element(ws.titleTag)
 		return hf.element("b")
 
-	def getPref(self, name: str, default: Optional[str]) -> Optional[str]:
+	def getPref(self, name: str, default: "Optional[str]") -> "Optional[str]":
 		if self.ui:
 			return self.ui.pref.get(name, default)
 		else:
@@ -745,8 +736,8 @@ class Glossary(GlossaryType):
 		word: str,
 		defi: str,
 		defiFormat: str = "",
-		byteProgress: Optional[Tuple[int, int]] = None,
-	) -> Entry:
+		byteProgress: "Optional[Tuple[int, int]]" = None,
+	) -> "Entry":
 		"""
 		create and return a new entry object
 
@@ -764,7 +755,7 @@ class Glossary(GlossaryType):
 			byteProgress=byteProgress,
 		)
 
-	def newDataEntry(self, fname: str, data: bytes) -> DataEntry:
+	def newDataEntry(self, fname: str, data: bytes) -> "DataEntry":
 		inTmp = not self._readers
 		return DataEntry(fname, data, inTmp)
 
@@ -775,7 +766,7 @@ class Glossary(GlossaryType):
 	# 		return os.access(dirPath, os.W_OK)
 	# 	return os.access(dirname(dirPath), os.W_OK)
 
-	def _createReader(self, format: str, options: Dict[str, Any]) -> Any:
+	def _createReader(self, format: str, options: "Dict[str, Any]") -> "Any":
 		reader = self.readerClasses[format](self)
 		for name, value in options.items():
 			setattr(reader, f"_{name}", value)
@@ -898,7 +889,7 @@ class Glossary(GlossaryType):
 
 		return True
 
-	def loadReader(self, reader: Any) -> bool:
+	def loadReader(self, reader: "Any") -> bool:
 		"""
 		iterates over `reader` object and loads the whole data into self._data
 		must call `reader.open(filename)` before calling this function
@@ -946,27 +937,32 @@ class Glossary(GlossaryType):
 			2- Wheather sort is True, and if it is,
 				checks for self._sortKey and self._sortCacheSize
 		"""
-		if self._readers:  # direct mode
-			if self._sort:
-				sortKey = self._sortKey
-				cacheSize = self._sortCacheSize
-				log.info(f"Stream sorting enabled, cache size: {cacheSize}")
-				# only sort by main word, or list of words + alternates? FIXME
-				gen = hsortStreamList(
-					self._readers,
-					cacheSize,
-					key=Entry.getEntrySortKey(sortKey),
-				)
-			else:
-				gen = self._readersEntryGen()
-		else:
-			gen = self._loadedEntryGen()
+		if not self._readers:  # indirect mode
+			self._iter = self._loadedEntryGen()
+			return
 
-		self._iter = gen
+		# direct mode
+		if not self._sort:
+			self._iter = self._readersEntryGen()
+			return
+
+		self._updateIterPartialSort()
+
+	def _updateIterPartialSort(self) -> None:
+		from .sort_stream import hsortStreamList
+		sortKey = self._sortKey
+		cacheSize = self._sortCacheSize
+		log.info(f"Stream sorting enabled, cache size: {cacheSize}")
+		# only sort by main word, or list of words + alternates? FIXME
+		self._iter = hsortStreamList(
+			self._readers,
+			cacheSize,
+			key=Entry.getEntrySortKey(sortKey),
+		)
 
 	def sortWords(
 		self,
-		key: Optional[Callable[[bytes], Any]] = None,
+		key: "Optional[Callable[[bytes], Any]]" = None,
 		cacheSize: int = 0,
 	) -> None:
 		if key is None:
@@ -985,7 +981,7 @@ class Glossary(GlossaryType):
 		self._updateIter()
 
 	@classmethod
-	def findPlugin(cls, query: str) -> Optional[PluginProp]:
+	def findPlugin(cls, query: str) -> "Optional[PluginProp]":
 		"""
 			find plugin by name or extention
 		"""
@@ -1001,7 +997,7 @@ class Glossary(GlossaryType):
 	def splitFilenameExt(
 		cls,
 		filename: str = "",
-	) -> Tuple[str, str, str]:
+	) -> "Tuple[str, str, str]":
 		"""
 		returns (filenameNoExt, ext, compression)
 		"""
@@ -1028,7 +1024,7 @@ class Glossary(GlossaryType):
 		inputFilename: str = "",
 		quiet: bool = False,
 		addExt: bool = False,
-	) -> Optional[Tuple[str, str, str]]:
+	) -> "Optional[Tuple[str, str, str]]":
 		"""
 		returns (filename, format, compression) or None
 		"""
@@ -1083,8 +1079,8 @@ class Glossary(GlossaryType):
 	def _createWriter(
 		self,
 		format: str,
-		options: Dict[str, Any],
-	) -> Any:
+		options: "Dict[str, Any]",
+	) -> "Any":
 		writer = self.writerClasses[format].__call__(self)
 		for name, value in options.items():
 			setattr(writer, f"_{name}", value)
@@ -1094,12 +1090,12 @@ class Glossary(GlossaryType):
 		self,
 		filename: str,
 		format: str,
-		sort: Optional[bool] = None,
-		sortKey: Optional[Callable[[bytes], Any]] = None,
-		defaultSortKey: Optional[Callable[[bytes], Any]] = None,
+		sort: "Optional[bool]" = None,
+		sortKey: "Optional[Callable[[bytes], Any]]" = None,
+		defaultSortKey: "Optional[Callable[[bytes], Any]]" = None,
 		sortCacheSize: int = 0,
 		**options
-	) -> Optional[str]:
+	) -> "Optional[str]":
 		"""
 		sort (bool):
 			True (enable sorting),
@@ -1324,17 +1320,17 @@ class Glossary(GlossaryType):
 		self,
 		inputFilename: str,
 		inputFormat: str = "",
-		direct: Optional[bool] = None,
+		direct: "Optional[bool]" = None,
 		progressbar: bool = True,
 		outputFilename: str = "",
 		outputFormat: str = "",
-		sort: Optional[bool] = None,
-		sortKey: Optional[Callable[[bytes], Any]] = None,
-		defaultSortKey: Optional[Callable[[bytes], Any]] = None,
+		sort: "Optional[bool]" = None,
+		sortKey: "Optional[Callable[[bytes], Any]]" = None,
+		defaultSortKey: "Optional[Callable[[bytes], Any]]" = None,
 		sortCacheSize: int = 0,
-		readOptions: Optional[Dict[str, Any]] = None,
-		writeOptions: Optional[Dict[str, Any]] = None,
-	) -> Optional[str]:
+		readOptions: "Optional[Dict[str, Any]]" = None,
+		writeOptions: "Optional[Dict[str, Any]]" = None,
+	) -> "Optional[str]":
 		"""
 		returns absolute path of output file, or None if failed
 
@@ -1415,19 +1411,19 @@ class Glossary(GlossaryType):
 		self,
 		entryFmt: str = "",  # contain {word} and {defi}
 		filename: str = "",
-		fileObj: Optional["file"] = None,
+		fileObj: "Optional[file]" = None,
 		writeInfo: bool = True,
-		wordEscapeFunc: Optional[Callable] = None,
-		defiEscapeFunc: Optional[Callable] = None,
+		wordEscapeFunc: "Optional[Callable]" = None,
+		defiEscapeFunc: "Optional[Callable]" = None,
 		ext: str = ".txt",
 		head: str = "",
 		tail: str = "",
-		outInfoKeysAliasDict: Optional[Dict[str, str]] = None,
+		outInfoKeysAliasDict: "Optional[Dict[str, str]]" = None,
 		# TODO: replace above arg with a func?
 		encoding: str = "utf-8",
 		newline: str = "\n",
 		resources: bool = True,
-	) -> Generator[None, "BaseEntry", None]:
+	) -> "Generator[None, BaseEntry, None]":
 		import codecs
 		if not entryFmt:
 			raise ValueError("entryFmt argument is missing")
@@ -1510,9 +1506,9 @@ class Glossary(GlossaryType):
 	def writeTabfile(
 		self,
 		filename: str = "",
-		fileObj: Optional["file"] = None,
+		fileObj: "Optional[file]" = None,
 		**kwargs,
-	) -> Generator[None, "BaseEntry", None]:
+	) -> "Generator[None, BaseEntry, None]":
 		from .text_utils import escapeNTB
 		yield from self.writeTxt(
 			entryFmt="{word}\t{defi}\n",

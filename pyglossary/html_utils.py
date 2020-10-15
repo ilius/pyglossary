@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import re
-from typing import AnyStr
 
 import logging
 log = logging.getLogger("pyglossary")
 
 
-def toStr(s: AnyStr) -> str:
+def toStr(s: "AnyStr") -> str:
 	return str(s, "utf-8") if isinstance(s, bytes) else str(s)
 
 

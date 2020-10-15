@@ -1,7 +1,6 @@
 import logging
 import traceback
 import inspect
-from pprint import pformat
 import sys
 import os
 from os.path import (
@@ -13,16 +12,6 @@ from os.path import (
 	dirname,
 )
 import platform
-
-from typing import (
-	Dict,
-	Tuple,
-	Any,
-	Optional,
-	Type,
-)
-
-from types import TracebackType
 
 VERSION = "3.3.0"
 
@@ -76,7 +65,8 @@ class MyLogger(logging.Logger):
 	def trace(self, msg: str):
 		self.log(TRACE, msg)
 
-	def pretty(self, data: Any, header: str = "") -> None:
+	def pretty(self, data: "Any", header: str = "") -> None:
+		from pprint import pformat
 		self.debug(header + pformat(data))
 
 	def isDebug(self) -> bool:
@@ -105,7 +95,7 @@ class MyLogger(logging.Logger):
 
 
 def formatVarDict(
-	dct: Dict[str, Any],
+	dct: "Dict[str, Any]",
 	indent: int = 4,
 	max_width: int = 80,
 ) -> str:
@@ -126,7 +116,7 @@ def formatVarDict(
 
 
 def format_exception(
-	exc_info: Optional[Tuple[Type, Exception, TracebackType]] = None,
+	exc_info: "Optional[Tuple[Type, Exception, types.TracebackType]]" = None,
 	add_locals: bool = False,
 	add_globals: bool = False,
 ) -> str:
