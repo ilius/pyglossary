@@ -58,6 +58,7 @@ data_files = [
 	(relRootDir+"/ui", glob.glob("ui/*.py")),
 	(relRootDir+"/ui/progressbar", glob.glob("ui/progressbar/*.py")),
 	(relRootDir+"/ui/gtk3_utils", glob.glob("ui/gtk3_utils/*.py")),
+	(relRootDir+"/ui/wcwidth", glob.glob("ui/wcwidth/*.py")),
 	(relRootDir+"/res", glob.glob("res/*")),
 	("share/doc/pyglossary", []),
 	("share/doc/pyglossary/non-gui_examples",
