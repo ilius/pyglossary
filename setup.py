@@ -129,7 +129,7 @@ if py2exe:
 		("doc/pyglossary/non-gui_examples",
 			glob.glob("doc/non-gui_examples/*")),
 	]
-	for pyVer in ("36", "37", "38", "39"):
+	for pyVer in ("37", "38", "39"):
 		relPath = "plugin_lib/py%s" % pyVer
 		data_files.append((
 			relPath,
