@@ -147,7 +147,7 @@ setup(
 	cmdclass={
 		"install": my_install,
 	},
-	description="A tool for workig with dictionary databases",
+	description="A tool for converting dictionary files aka glossaries.",
 	long_description_content_type="text/markdown",
 	long_description=long_description,
 	author="Saeed Rasooli",
