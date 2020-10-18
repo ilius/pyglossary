@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-from os.path import dirname, join
+import sys
+from os.path import dirname
 
-with open(join(dirname(__file__), "main.py")) as fp:
-	exec(fp.read())
+sys.path.insert(0, dirname(__file__))
 
+from pyglossary.ui.main import main
 
+main()

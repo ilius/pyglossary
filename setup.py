@@ -100,8 +100,6 @@ if py2exe:
 			"py2exe": {
 				"packages": [
 					"pyglossary",
-					"ui.ui_tk",
-					# "ui.ui_gtk",
 					# "BeautifulSoup",
 					# "xml",
 					"Tkinter", "tkFileDialog", "Tix",
@@ -119,17 +117,19 @@ if py2exe:
 		("tcl/tcl8.1/init.tcl",
 			[join(sys.prefix, "tcl", "tix8.4.3", "init.tcl")]),
 		("", ["about", "license-dialog", "help"]),
-		("ui", glob.glob("ui/*.py")),
-		("ui/progressbar", glob.glob("ui/progressbar/*.py")),
 		("res", glob.glob("res/*")),
 		("plugins", glob.glob("pyglossary/plugins/*")),
 		("plugin_lib", glob.glob("pyglossary/plugin_lib/*")),
 		("langs", glob.glob("pyglossary/langs/*")),
+		("ui", glob.glob("pyglossary/ui/*.py")),
+		("ui/progressbar", glob.glob("pyglossary/ui/progressbar/*.py")),
+		("ui/gtk3_utils", glob.glob("pyglossary/ui/gtk3_utils/*.py")),
+		("ui/wcwidth", glob.glob("pyglossary/ui/wcwidth/*.py")),
 		("doc/pyglossary", ["doc/bgl_structure.svgz", ]),
 		("doc/pyglossary/non-gui_examples",
 			glob.glob("doc/non-gui_examples/*")),
 	]
-	for pyVer in ("34", "35", "36"):
+	for pyVer in ("36", "37", "38", "39"):
 		relPath = "plugin_lib/py%s" % pyVer
 		data_files.append((
 			relPath,
@@ -154,18 +154,25 @@ setup(
 	author_email="saeed.gnu@gmail.com",
 	license="GPLv3+",
 	url="https://github.com/ilius/pyglossary",
-	scripts=[
-		# "main.py",
-	],
 	packages=[
 		"pyglossary",
 	],
+	entry_points={
+		'console_scripts': [
+			'pyglossary = pyglossary.ui.main:main',
+		],
+	},
 	package_data={
+		"res": glob.glob("res/*"),
 		"pyglossary": [
 			"plugins/*.py",
 			"langs/*",
 			"plugin_lib/*.py",
 			"plugin_lib/py*/*.py",
+			"ui/*.py",
+			"ui/progressbar/*.py",
+			"ui/gtk3_utils/*.py",
+			"ui/wcwidth/*.py",
 		] + [
 			# safest way found so far to include every resource of plugins
 			# producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
