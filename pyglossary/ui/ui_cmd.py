@@ -33,14 +33,11 @@ def wc_ljust(text, length, padding=' '):
 
 if os.sep == "\\":  # Operating system is Windows
 	startRed = ""
-	endFormat = ""
 	startBold = ""
 	startUnderline = ""
 	endFormat = ""
 else:
 	startRed = "\x1b[31m"
-	endFormat = "\x1b[0;0;0m"
-
 	startBold = "\x1b[1m"  # Start Bold # len=4
 	startUnderline = "\x1b[4m"  # Start Underline # len=4
 	endFormat = "\x1b[0;0;0m"  # End Format # len=8
@@ -48,7 +45,6 @@ else:
 
 
 COMMAND = "pyglossary"
-# COMMAND = sys.argv[0]
 
 
 def getColWidth(subject, strings):
@@ -125,7 +121,7 @@ def parseFormatOptionsStr(st):
 	parts = st.split(";")
 	for part in parts:
 		try:
-			(key, value) = part.split("=")
+			key, value = part.split("=")
 		except ValueError:
 			log.error(f"bad option syntax: {part}")
 			continue
@@ -244,23 +240,23 @@ class UI(UIBase):
 
 	def run(
 		self,
-		inputFilename,
-		outputFilename="",
-		inputFormat="",
-		outputFormat="",
-		reverse=False,
-		prefOptions=None,
-		readOptions=None,
-		writeOptions=None,
-		convertOptions=None,
+		inputFilename: str,
+		outputFilename: str = "",
+		inputFormat: str = "",
+		outputFormat: str = "",
+		reverse: bool = False,
+		prefOptions: "Optional[Dict]" = None,
+		readOptions: "Optional[Dict]" = None,
+		writeOptions: "Optional[Dict]" = None,
+		convertOptions: "Optional[Dict]" = None,
 	):
-		if not prefOptions:
+		if prefOptions is None:
 			prefOptions = {}
-		if not readOptions:
+		if readOptions is None:
 			readOptions = {}
-		if not writeOptions:
+		if writeOptions is None:
 			writeOptions = {}
-		if not convertOptions:
+		if convertOptions is None:
 			convertOptions = {}
 
 		self.pref_load(**prefOptions)
