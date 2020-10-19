@@ -120,13 +120,12 @@ def parseFormatOptionsStr(st):
 	opt = {}
 	parts = st.split(";")
 	for part in parts:
-		try:
-			key, value = part.split("=")
-		except ValueError:
+		kv = part.split("=")
+		if len(kv) < 2:
 			log.error(f"bad option syntax: {part}")
 			continue
-		key = key.strip()
-		value = value.strip()
+		key = kv[0].strip()
+		value = "=".join(kv[1:]).strip()
 		opt[key] = value
 	return opt
 
