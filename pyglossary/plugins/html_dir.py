@@ -408,7 +408,11 @@ class Writer(object):
 			if defiHasHeadwords:
 				headwords = f'Entry {entryIndex}'
 			else:
-				headwords = f'<b class="headword">{wordSep.join(entry.l_word)}</b>'
+				words = [
+					html.escape(word)
+					for word in entry.l_word
+				]
+				headwords = f'<b class="headword">{wordSep.join(words)}</b>'
 			# entry_link_sym = "&#182;"
 			entry_link_sym = "&#128279;"
 			text = (
