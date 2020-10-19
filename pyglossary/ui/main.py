@@ -51,6 +51,7 @@ from pyglossary.entry import Entry
 # -v (verbose or version?)
 # -r (reverse or read-options)
 
+
 def main():
 	parser = argparse.ArgumentParser(add_help=False)
 
@@ -294,7 +295,6 @@ def main():
 	# with the logger setted up, we can import other pyglossary modules, so they
 	# can do some loggging in right way.
 
-
 	core.checkCreateConfDir()
 
 	if sys.getdefaultencoding() != "utf-8":
@@ -320,20 +320,16 @@ def main():
 
 	# log.info("PyGlossary %s"%VERSION)
 
-
 	if args.help:
 		help()
 		sys.exit(0)
 
-
 	if os.sep != "/":
 		args.noColor = True
-
 
 	# only used in ui_cmd for now
 	readOptions = parseFormatOptionsStr(args.readOptions)
 	writeOptions = parseFormatOptionsStr(args.writeOptions)
-
 
 	"""
 		examples for read and write options:
@@ -433,12 +429,10 @@ def main():
 				sys.exit(1)
 			writeOptions[optName] = optValueNew
 
-
 	if prefOptions:
 		log.debug("prefOptions = %s", prefOptions)
 	if convertOptions:
 		log.debug("convertOptions = %s", convertOptions)
-
 
 	"""
 	ui_type: User interface type
@@ -452,7 +446,6 @@ def main():
 	"""
 	ui_type = args.ui_type
 
-
 	if args.inputFilename:
 		if args.outputFilename and ui_type != "none":
 			ui_type = "cmd"
@@ -460,7 +453,6 @@ def main():
 		if ui_type == "cmd":
 			log.error("no input file given, try --help")
 			exit(1)
-
 
 	if ui_type == "none":
 		if args.reverse:
