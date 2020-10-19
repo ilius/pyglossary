@@ -5,7 +5,7 @@ import html
 
 enable = True
 format = 'Dictcc_split'
-description = 'Dict.cc Splitted (SQLite3)'
+description = 'Dict.cc (SQLite3) - Split'
 extensions = ()
 readOptions = []
 writeOptions = []
