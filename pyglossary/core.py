@@ -218,11 +218,14 @@ if os.getenv("WARNINGS"):
 
 
 if hasattr(sys, "frozen"):
+	# FIXME: was this for py2exe?
+	log.info(f"sys.frozen = {sys.frozen}")
 	rootDir = dirname(sys.executable)
-	uiDir = join(rootDir, "ui")
+	uiDir = join(rootDir, "pyglossary", "ui")
 else:
-	uiDir = dirname(realpath(__file__))
-	rootDir = dirname(uiDir)
+	_srcDir = dirname(realpath(__file__))
+	uiDir = join(_srcDir, "ui")
+	rootDir = dirname(_srcDir)
 
 dataDir = rootDir
 if dataDir.endswith("dist-packages") or dataDir.endswith("site-packages"):
