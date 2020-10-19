@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 
-try:
-	import py2exe
-except ImportError:
-	py2exe = None
-
 import glob
 import sys
 import os
@@ -83,60 +78,6 @@ def files(folder):
 		if os.path.isfile(path):
 			yield path
 
-if py2exe:
-	py2exeoptions = {
-		"script_args": ["py2exe"],
-		"bundle_files": 1,
-		"windows": [
-			{
-				"script": "main.py", # or pyglossary.pyw ?
-				"icon_resources": [
-					(1, "res/pyglossary.ico"),
-				],
-			},
-		],
-		"zipfile": None,
-		"options": {
-			"py2exe": {
-				"packages": [
-					"pyglossary",
-					# "BeautifulSoup",
-					# "xml",
-					"Tkinter", "tkFileDialog", "Tix",
-					# "gtk", "glib", "gobject",
-				],
-			},
-		},
-	}
-	data_files = [
-		("tcl/tix8.1", files(join(sys.prefix, "tcl", "tix8.4.3"))),
-		("tcl/tix8.1/bitmaps",
-			files(join(sys.prefix, "tcl", "tix8.4.3", "bitmaps"))),
-		("tcl/tix8.1/pref",
-			files(join(sys.prefix, "tcl", "tix8.4.3", "pref"))),
-		("tcl/tcl8.1/init.tcl",
-			[join(sys.prefix, "tcl", "tix8.4.3", "init.tcl")]),
-		("", ["about", "license-dialog", "help"]),
-		("res", glob.glob("res/*")),
-		("plugins", glob.glob("pyglossary/plugins/*")),
-		("plugin_lib", glob.glob("pyglossary/plugin_lib/*")),
-		("langs", glob.glob("pyglossary/langs/*")),
-		("ui", glob.glob("pyglossary/ui/*.py")),
-		("ui/progressbar", glob.glob("pyglossary/ui/progressbar/*.py")),
-		("ui/gtk3_utils", glob.glob("pyglossary/ui/gtk3_utils/*.py")),
-		("ui/wcwidth", glob.glob("pyglossary/ui/wcwidth/*.py")),
-		("doc/pyglossary", ["doc/bgl_structure.svgz", ]),
-		("doc/pyglossary/non-gui_examples",
-			glob.glob("doc/non-gui_examples/*")),
-	]
-	for pyVer in ("37", "38", "39"):
-		relPath = "plugin_lib/py%s" % pyVer
-		data_files.append((
-			relPath,
-			glob.glob("pyglossary/" + relPath + "/*.py",
-		)))
-else:
-	py2exeoptions = {}
 
 with open("README.md", "r", encoding="utf-8") as fh:
 	long_description = fh.read()
@@ -190,5 +131,4 @@ setup(
 		],
 	},
 	data_files=data_files,
-	**py2exeoptions
 )
