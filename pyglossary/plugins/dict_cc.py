@@ -96,6 +96,10 @@ class Reader(object):
 			term1 = row[0]
 			term2 = row[1]
 			try:
+				term1 = html.unescape(term1)
+			except Exception as e:
+				log.error(f"html.unescape({term1!r}) -> {e}")
+			try:
 				term2 = html.unescape(term2)
 			except Exception as e:
 				log.error(f"html.unescape({term2!r}) -> {e}")
