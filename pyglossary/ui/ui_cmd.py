@@ -112,7 +112,11 @@ def help():
 	print(text)
 
 
-def parseFormatOptionsStr(st):
+def parseFormatOptionsStr(st) -> "Optional[Dict]":
+	"""
+		prints error and returns None if failed to parse one option
+	"""
+
 	st = st.strip()
 	if not st:
 		return {}
@@ -120,12 +124,17 @@ def parseFormatOptionsStr(st):
 	opt = {}
 	parts = st.split(";")
 	for part in parts:
-		kv = part.split("=")
-		if len(kv) < 2:
-			log.error(f"bad option syntax: {part}")
+		if not part:
 			continue
-		key = kv[0].strip()
-		value = "=".join(kv[1:]).strip()
+		eq = part.find("=")
+		if eq < 1:
+			log.critical(f"bad option syntax: {part!r}")
+			return None
+		key = part[:eq].strip()
+		if not key:
+			log.critical(f"bad option syntax: {part!r}")
+			return None
+		value = part[eq + 1:].strip()
 		opt[key] = value
 	return opt
 

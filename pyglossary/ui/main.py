@@ -329,7 +329,11 @@ def main():
 
 	# only used in ui_cmd for now
 	readOptions = parseFormatOptionsStr(args.readOptions)
+	if readOptions is None:
+		return
 	writeOptions = parseFormatOptionsStr(args.writeOptions)
+	if writeOptions is None:
+		return
 
 	"""
 		examples for read and write options:
