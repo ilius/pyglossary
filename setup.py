@@ -50,11 +50,11 @@ data_files = [
 		"AUTHORS",
 		"config.json",
 	]),
-	(relRootDir+"/ui", glob.glob("ui/*.py")),
-	(relRootDir+"/ui/progressbar", glob.glob("ui/progressbar/*.py")),
-	(relRootDir+"/ui/gtk3_utils", glob.glob("ui/gtk3_utils/*.py")),
-	(relRootDir+"/ui/wcwidth", glob.glob("ui/wcwidth/*.py")),
-	(relRootDir+"/res", glob.glob("res/*")),
+	(f"{relRootDir}/ui", glob.glob("ui/*.py")),
+	(f"{relRootDir}/ui/progressbar", glob.glob("ui/progressbar/*.py")),
+	(f"{relRootDir}/ui/gtk3_utils", glob.glob("ui/gtk3_utils/*.py")),
+	(f"{relRootDir}/ui/wcwidth", glob.glob("ui/wcwidth/*.py")),
+	(f"{relRootDir}/res", glob.glob("res/*")),
 	("share/doc/pyglossary", []),
 	("share/doc/pyglossary/non-gui_examples",
 		glob.glob("doc/non-gui_examples/*")),
@@ -72,9 +72,37 @@ data_files = [
 	("share/pixmaps", ["res/pyglossary.png"]),
 ]
 
+package_data = {
+	"res": glob.glob("res/*"),
+	"pyglossary": [
+		"plugins/*.py",
+		"langs/*",
+		"plugin_lib/*.py",
+		"plugin_lib/py*/*.py",
+		"ui/*.py",
+		"ui/progressbar/*.py",
+		"ui/gtk3_utils/*.py",
+		"ui/wcwidth/*.py",
+	] + [
+		# safest way found so far to include every resource of plugins
+		# producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
+		re.sub(
+			r"^.*?pyglossary%s(?=plugins)" % ("\\\\" if os.sep == "\\" else os.sep),
+			"",
+			join(dirpath, f),
+		)
+		for top in glob.glob(
+			join(dirname(__file__), "pyglossary", "plugins")
+		)
+		for dirpath, _, files in os.walk(top)
+		for f in files
+		if not (f.endswith(".pyc") or f.endswith(".pyo"))
+	],
+}
+
 
 def files(folder):
-	for path in glob.glob(folder+"/*"):
+	for path in glob.glob(folder + "/*"):
 		if os.path.isfile(path):
 			yield path
 
@@ -103,32 +131,6 @@ setup(
 			'pyglossary = pyglossary.ui.main:main',
 		],
 	},
-	package_data={
-		"res": glob.glob("res/*"),
-		"pyglossary": [
-			"plugins/*.py",
-			"langs/*",
-			"plugin_lib/*.py",
-			"plugin_lib/py*/*.py",
-			"ui/*.py",
-			"ui/progressbar/*.py",
-			"ui/gtk3_utils/*.py",
-			"ui/wcwidth/*.py",
-		] + [
-			# safest way found so far to include every resource of plugins
-			# producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
-			re.sub(
-				r"^.*?pyglossary%s(?=plugins)" % ("\\\\" if os.sep == "\\" else os.sep),
-				"",
-				join(dirpath, f),
-			)
-			for top in glob.glob(
-				join(dirname(__file__), "pyglossary", "plugins")
-			)
-			for dirpath, _, files in os.walk(top)
-			for f in files
-			if not (f.endswith(".pyc") or f.endswith(".pyo"))
-		],
-	},
+	package_data=package_data,
 	data_files=data_files,
 )
