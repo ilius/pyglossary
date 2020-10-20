@@ -123,8 +123,6 @@ class Glossary(GlossaryType):
 	pluginByDesc = {}  # description => PluginProp
 	pluginByExt = {}  # extension => PluginProp
 
-	readerClasses = {}
-	writerClasses = {}
 	formatsReadOptions = {}
 	formatsWriteOptions = {}
 	formatsReadFileObj = {}  # type: Dict[str, bool]
@@ -241,8 +239,6 @@ class Glossary(GlossaryType):
 
 		Reader = prop.readerClass
 		if Reader is not None:
-			cls.readerClasses[format] = Reader
-
 			options = cls.getOptionsFromClass(Reader, format)
 			extraOptions = cls.getExtraOptions(Reader.open, format)
 
@@ -263,8 +259,6 @@ class Glossary(GlossaryType):
 
 		Writer = prop.writerClass
 		if Writer is not None:
-			cls.writerClasses[format] = Writer
-
 			options = cls.getOptionsFromClass(Writer, format)
 			extraOptions = cls.getExtraOptions(Writer.write, format)
 
@@ -767,7 +761,7 @@ class Glossary(GlossaryType):
 	# 	return os.access(dirname(dirPath), os.W_OK)
 
 	def _createReader(self, format: str, options: "Dict[str, Any]") -> "Any":
-		reader = self.readerClasses[format](self)
+		reader = self.plugins[format].readerClass(self)
 		for name, value in options.items():
 			setattr(reader, f"_{name}", value)
 		return reader
@@ -1080,7 +1074,7 @@ class Glossary(GlossaryType):
 		format: str,
 		options: "Dict[str, Any]",
 	) -> "Any":
-		writer = self.writerClasses[format].__call__(self)
+		writer = self.plugins[format].writerClass(self)
 		for name, value in options.items():
 			setattr(writer, f"_{name}", value)
 		return writer
@@ -1156,7 +1150,7 @@ class Glossary(GlossaryType):
 			log.info(f"Loaded {len(self._data)} entries")
 
 		writer = None
-		if format not in self.writerClasses:
+		if format not in self.plugins or not self.plugins[format].canWrite:
 			log.error(f"No Writer class found for plugin {format}")
 			return
 
