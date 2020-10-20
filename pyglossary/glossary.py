@@ -834,8 +834,7 @@ class Glossary(GlossaryType):
 		# 	self.tmpDataDir = f"{filename}_res"
 		# else:
 		self.tmpDataDir = join(cacheDir, split(filename)[1] + "_res")
-		if not isdir(self.tmpDataDir):
-			os.mkdir(self.tmpDataDir)
+		os.makedirs(self.tmpDataDir, mode=0o700, exist_ok=True)
 		self._cleanupPathList.append(self.tmpDataDir)
 
 		# don't allow direct=False when there are readers
