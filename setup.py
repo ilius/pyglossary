@@ -39,39 +39,6 @@ class my_install(install):
 			os.chmod(binPath, 0o755)
 
 
-data_files = [
-	(relRootDir, [
-		"about",
-		"license.txt",
-		"license-dialog",
-		"help",
-		"main.py",
-		"pyglossary.pyw",
-		"AUTHORS",
-		"config.json",
-	]),
-	(f"{relRootDir}/ui", glob.glob("ui/*.py")),
-	(f"{relRootDir}/ui/progressbar", glob.glob("ui/progressbar/*.py")),
-	(f"{relRootDir}/ui/gtk3_utils", glob.glob("ui/gtk3_utils/*.py")),
-	(f"{relRootDir}/ui/wcwidth", glob.glob("ui/wcwidth/*.py")),
-	(f"{relRootDir}/res", glob.glob("res/*")),
-	("share/doc/pyglossary", []),
-	("share/doc/pyglossary/non-gui_examples",
-		glob.glob("doc/non-gui_examples/*")),
-	("share/doc/pyglossary/stardict", glob.glob("doc/stardict/*")),
-	("share/doc/pyglossary/babylon", glob.glob("doc/babylon/*")),
-	("share/doc/pyglossary/dsl", glob.glob("doc/dsl/*")),
-	("share/doc/pyglossary/octopus_mdict", glob.glob("doc/octopus_mdict/*")),
-	("share/doc/pyglossary", [
-		"README.md",
-		"doc/apple.md",
-		"doc/lzo.md",
-		"doc/termux.md",
-	]),
-	("share/applications", ["pyglossary.desktop"]),
-	("share/pixmaps", ["res/pyglossary.png"]),
-]
-
 package_data = {
 	"res": glob.glob("res/*"),
 	"pyglossary": [
@@ -132,5 +99,4 @@ setup(
 		],
 	},
 	package_data=package_data,
-	data_files=data_files,
 )
