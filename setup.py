@@ -8,8 +8,8 @@ import re
 import logging
 
 import setuptools
-from distutils.core import setup
-from distutils.command.install import install
+from setuptools import setup
+from setuptools.command.install import install
 
 from pyglossary.glossary import VERSION
 
