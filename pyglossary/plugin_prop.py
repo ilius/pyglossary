@@ -150,3 +150,36 @@ class PluginProp(object):
 	@property
 	def canWrite(self) -> bool:
 		return self.writerClass is not None
+
+	def getReadOptions(self):
+		return self.getOptionsFromClass(self.readerClass)
+
+	def getWriteOptions(self):
+		return self.getOptionsFromClass(self.writerClass)
+
+	def getOptionsFromClass(self, rwclass):
+		optionsProp = self.optionsProp
+		optNames = []
+		for attrName in dir(rwclass):
+			if not attrName.startswith("_"):
+				continue
+			if attrName.startswith("__"):
+				continue
+			name = attrName[1:]
+			default = getattr(rwclass, attrName)
+			if name not in optionsProp:
+				if not callable(default):
+					log.warning(f"format={self.name}, attrName={attrName}, type={type(default)}")
+				continue
+			prop = optionsProp[name]
+			if prop.disabled:
+				log.trace(f"skipping disabled option {name} in {self.name} plugin")
+				continue
+			if not prop.validate(default):
+				log.warning(
+					"invalid default value for option: "
+					f"{name} = {default!r} in plugin {self.name}"
+				)
+			optNames.append(name)
+
+		return optNames

@@ -170,34 +170,6 @@ class Glossary(GlossaryType):
 		return extraOptNames
 
 	@classmethod
-	def getOptionsFromClass(cls, writerCls, format):
-		optionsProp = cls.plugins[format].optionsProp
-		optNames = []
-		for attrName in dir(writerCls):
-			if not attrName.startswith("_"):
-				continue
-			if attrName.startswith("__"):
-				continue
-			name = attrName[1:]
-			default = getattr(writerCls, attrName)
-			if name not in optionsProp:
-				if not callable(default):
-					log.warning(f"format={format}, attrName={attrName}, type={type(default)}")
-				continue
-			prop = optionsProp[name]
-			if prop.disabled:
-				log.trace(f"skipping disabled option {name} in {format} plugin")
-				continue
-			if not prop.validate(default):
-				log.warning(
-					"invalid default value for option: "
-					f"{name} = {default!r} in plugin {format}"
-				)
-			optNames.append(name)
-
-		return optNames
-
-	@classmethod
 	def loadPlugin(cls: "ClassVar", pluginName: str) -> None:
 		try:
 			plugin = __import__(pluginName)
@@ -239,7 +211,7 @@ class Glossary(GlossaryType):
 
 		Reader = prop.readerClass
 		if Reader is not None:
-			options = cls.getOptionsFromClass(Reader, format)
+			options = prop.getReadOptions()
 			extraOptions = cls.getExtraOptions(Reader.open, format)
 
 			cls.formatsReadOptions[format] = options
@@ -259,7 +231,7 @@ class Glossary(GlossaryType):
 
 		Writer = prop.writerClass
 		if Writer is not None:
-			options = cls.getOptionsFromClass(Writer, format)
+			options = prop.getWriteOptions()
 			extraOptions = cls.getExtraOptions(Writer.write, format)
 
 			cls.formatsWriteOptions[format] = options
