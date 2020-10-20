@@ -39,9 +39,20 @@ class my_install(install):
 			os.chmod(binPath, 0o755)
 
 
+root_data_file_names = [
+	"about",
+	"license.txt",
+	"license-dialog",
+	"help",
+	"AUTHORS",
+	"config.json",
+]
+
+
 package_data = {
-	"res": glob.glob("res/*"),
+	"": root_data_file_names,
 	"pyglossary": [
+		"res/*",
 		"plugins/*.py",
 		"langs/*",
 		"plugin_lib/*.py",
@@ -99,4 +110,10 @@ setup(
 		],
 	},
 	package_data=package_data,
+	# FIXME: data_files is deprecated, but without it
+	# `pip install --user` does not work
+	data_files=[
+		(relRootDir, root_data_file_names),
+		(f"{relRootDir}/res", glob.glob("res/*")),
+	],
 )
