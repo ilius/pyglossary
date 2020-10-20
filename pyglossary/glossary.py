@@ -156,20 +156,6 @@ class Glossary(GlossaryType):
 		sys.path.pop()
 
 	@classmethod
-	def getExtraOptions(cls, func, format):
-		import inspect
-		extraOptNames = []
-		for name, param in inspect.signature(func).parameters.items():
-			if param.default is not inspect._empty:
-				extraOptNames.append(name)
-				continue
-			if name not in ("self", "filename", "dirname"):
-				extraOptNames.append(name)
-		if extraOptNames:
-			log.debug(f"{format}: extraOptNames = {extraOptNames}")
-		return extraOptNames
-
-	@classmethod
 	def loadPlugin(cls: "ClassVar", pluginName: str) -> None:
 		try:
 			plugin = __import__(pluginName)
@@ -212,7 +198,7 @@ class Glossary(GlossaryType):
 		Reader = prop.readerClass
 		if Reader is not None:
 			options = prop.getReadOptions()
-			extraOptions = cls.getExtraOptions(Reader.open, format)
+			extraOptions = prop.getReadExtraOptions()
 
 			cls.formatsReadOptions[format] = options
 			cls.readFormats.append(format)
@@ -232,7 +218,7 @@ class Glossary(GlossaryType):
 		Writer = prop.writerClass
 		if Writer is not None:
 			options = prop.getWriteOptions()
-			extraOptions = cls.getExtraOptions(Writer.write, format)
+			extraOptions = prop.getWriteExtraOptions()
 
 			cls.formatsWriteOptions[format] = options
 			cls.writeFormats.append(format)

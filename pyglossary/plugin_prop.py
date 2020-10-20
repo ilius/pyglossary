@@ -183,3 +183,23 @@ class PluginProp(object):
 			optNames.append(name)
 
 		return optNames
+
+	def getReadExtraOptions(self):
+		return self.__class__.getExtraOptions(self.readerClass.open, self.name)
+
+	def getWriteExtraOptions(self):
+		return self.__class__.getExtraOptions(self.writerClass.write, self.name)
+
+	@classmethod
+	def getExtraOptions(cls, func, format):
+		import inspect
+		extraOptNames = []
+		for name, param in inspect.signature(func).parameters.items():
+			if param.default is not inspect._empty:
+				extraOptNames.append(name)
+				continue
+			if name not in ("self", "filename", "dirname"):
+				extraOptNames.append(name)
+		if extraOptNames:
+			log.debug(f"{format}: extraOptNames = {extraOptNames}")
+		return extraOptNames
