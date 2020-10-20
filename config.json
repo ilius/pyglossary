@@ -3,7 +3,6 @@
 	"cleanup": true,
 
 	"ui_autoSetFormat": true,
-	"ui_autoSetOutputFileName": true,
 
 	"lower": false,
 	"utf8Check": true,

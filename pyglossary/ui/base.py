@@ -48,7 +48,6 @@ class UIBase(object):
 		"log_time",
 		"cleanup",
 		"ui_autoSetFormat",
-		"ui_autoSetOutputFileName",
 		"lower",
 		"utf8Check",
 		"remove_html",

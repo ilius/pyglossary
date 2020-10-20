@@ -1044,25 +1044,6 @@ class UI(tix.Frame, UIBase):
 		else:
 			self.writeOptionsButton.pack_forget()
 
-		if not self.pref["ui_autoSetOutputFileName"]:  # and format is None:
-			return
-
-		pathI = self.entryInputConvert.get()
-		pathO = self.entryOutputConvert.get()
-		formatOD = self.formatVarOutputConvert.get()
-
-		if formatOD is None:
-			return
-		if pathO:
-			return
-		if "." not in pathI:
-			return
-
-		extO = Glossary.pluginByDesc[formatOD].extensions[0]
-		pathO = "".join(os.path.splitext(pathI)[:-1]) + extO
-		# self.entryOutputConvert.delete(0, "end")
-		self.entryOutputConvert.insert(0, pathO)
-
 	def inputEntryChanged(self, event=None):
 		# char = event.keysym
 		pathI = self.entryInputConvert.get()
