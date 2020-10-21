@@ -11,7 +11,7 @@ import setuptools
 from setuptools import setup
 from setuptools.command.install import install
 
-from pyglossary.glossary import VERSION
+from pyglossary.core import VERSION
 
 log = logging.getLogger("root")
 relRootDir = "share/pyglossary"
