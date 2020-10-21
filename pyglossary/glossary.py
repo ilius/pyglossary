@@ -115,7 +115,6 @@ class Glossary(GlossaryType):
 	}
 
 	plugins = {}  # format name => PluginProp
-	pluginByDesc = {}  # description => PluginProp
 	pluginByExt = {}  # extension => PluginProp
 
 	formatsReadOptions = {}
@@ -185,7 +184,6 @@ class Glossary(GlossaryType):
 		prop = PluginProp(plugin)
 
 		cls.plugins[format] = prop
-		cls.pluginByDesc[desc] = prop
 
 		for ext in extensions:
 			cls.pluginByExt[ext.lstrip(".")] = prop

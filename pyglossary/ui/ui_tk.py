@@ -54,6 +54,11 @@ startRed = "\x1b[31m"
 
 resDir = join(dataDir, "res")
 
+pluginByDesc = {
+	plugin.description: plugin
+	for plugin in Glossary.plugins.values()
+}
+
 
 def set_window_icon(window):
 	window.iconphoto(
@@ -383,7 +388,7 @@ class FormatOptionsButton(ttk.Button):
 		formatD = self.formatVar.get()
 		if not formatD:
 			return
-		format = Glossary.pluginByDesc[formatD].name
+		format = pluginByDesc[formatD].name
 		options = self.kindFormatsOptions[self.kind][format]
 		optionsProp = Glossary.plugins[format].optionsProp
 
@@ -1024,7 +1029,7 @@ class UI(tix.Frame, UIBase):
 		if not formatDesc:
 			return
 		self.readOptions.clear()  # reset the options, DO NOT re-assign
-		format = Glossary.pluginByDesc[formatDesc].name
+		format = pluginByDesc[formatDesc].name
 		options = Glossary.formatsReadOptions[format]
 		if options:
 			self.readOptionsButton.pack(side="right")
@@ -1037,7 +1042,7 @@ class UI(tix.Frame, UIBase):
 		if not formatDesc:
 			return
 		self.writeOptions.clear()  # reset the options, DO NOT re-assign
-		format = Glossary.pluginByDesc[formatDesc].name
+		format = pluginByDesc[formatDesc].name
 		options = Glossary.formatsWriteOptions[format]
 		if options:
 			self.writeOptionsButton.pack(side="right")
@@ -1118,7 +1123,7 @@ class UI(tix.Frame, UIBase):
 			# log.critical("Input format is empty!");return
 			inFormat = ""
 		else:
-			inFormat = Glossary.pluginByDesc[inFormatDesc].name
+			inFormat = pluginByDesc[inFormatDesc].name
 
 		outPath = self.entryOutputConvert.get()
 		if not outPath:
@@ -1128,7 +1133,7 @@ class UI(tix.Frame, UIBase):
 		if not outFormatDesc:
 			log.critical("Output format is empty!")
 			return
-		outFormat = Glossary.pluginByDesc[outFormatDesc].name
+		outFormat = pluginByDesc[outFormatDesc].name
 
 		finalOutputFile = self.glos.convert(
 			inPath,
