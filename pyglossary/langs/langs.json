@@ -762,6 +762,14 @@
 		"title_tag": "big"
 	},
 	{
+		"codes": ["kea"],
+		"name": "Cape Verdean Creole",
+		"alt_names": ["Cape Verdean"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Cape_Verdean_Creole",
+		"title_tag": "b"
+	},
+	{
 		"codes": ["kg", "kon"],
 		"name": "Kongo",
 		"alt_names": ["Kikongo"],
