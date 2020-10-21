@@ -35,7 +35,6 @@ from os.path import (
 )
 
 from time import time as now
-import subprocess
 import re
 
 import pkgutil
@@ -59,7 +58,6 @@ from .text_utils import (
 	fixUtf8,
 	replaceStringTable,
 )
-from .os_utils import indir
 
 from .glossary_type import GlossaryType
 
@@ -1206,66 +1204,9 @@ class Glossary(GlossaryType):
 
 		return filename
 
-	def zipOutDir(self, filename: str):
-		if isdir(filename):
-			dirn, name = split(filename)
-			with indir(filename):
-				output, error = subprocess.Popen(
-					["zip", "-r", f"../{name}.zip", ".", "-m"],
-					stdout=subprocess.PIPE,
-				).communicate()
-				return error
-
-		dirn, name = split(filename)
-		with indir(dirn):
-			output, error = subprocess.Popen(
-				["zip", f"{filename}.zip", name, "-m"],
-				stdout=subprocess.PIPE,
-			).communicate()
-			return error
-
-	def compressOutDir(self, filename: str, compression: str) -> str:
-		"""
-		filename is the existing file path
-		compression is the archive extension (without dot): "gz", "bz2", "zip"
-		"""
-		try:
-			os.remove(f"{filename}.{compression}")
-		except OSError:
-			pass
-		if compression == "gz":
-			output, error = subprocess.Popen(
-				["gzip", filename],
-				stdout=subprocess.PIPE,
-			).communicate()
-			if error:
-				log.error(
-					error + "\n" +
-					f"Failed to compress file \"{filename}\""
-				)
-		elif compression == "bz2":
-			output, error = subprocess.Popen(
-				["bzip2", filename],
-				stdout=subprocess.PIPE,
-			).communicate()
-			if error:
-				log.error(
-					error + "\n" +
-					f"Failed to compress file \"{filename}\""
-				)
-		elif compression == "zip":
-			error = self.zipOutDir(filename)
-			if error:
-				log.error(
-					error + "\n" +
-					f"Failed to compress file \"{filename}\""
-				)
-
-		compressedFilename = f"{filename}.{compression}"
-		if isfile(compressedFilename):
-			return compressedFilename
-		else:
-			return filename
+	def _compressOutDir(self, filename: str, compression: str) -> str:
+		from pyglossary.glossary_utils import compressOutDir
+		return compressOutDir(filename, compression)
 
 	def convert(
 		self,
@@ -1347,7 +1288,7 @@ class Glossary(GlossaryType):
 			return
 
 		if compression:
-			finalOutputFile = self.compressOutDir(finalOutputFile, compression)
+			finalOutputFile = self._compressOutDir(finalOutputFile, compression)
 
 		log.info(f"Writing file {finalOutputFile!r} done.")
 		log.info(f"Running time of convert: {now()-tm0:.1f} seconds")
