@@ -51,6 +51,12 @@ from pyglossary.entry import Entry
 # -r (reverse or read-options)
 
 
+def canRunGUI():
+	if core.sysName == "Linux":
+		return bool(os.getenv("DISPLAY"))
+	return True
+
+
 def main():
 	parser = argparse.ArgumentParser(add_help=False)
 
@@ -101,6 +107,13 @@ def main():
 			"auto",
 			"none",
 		),
+	)
+	parser.add_argument(
+		"--no-interactive",
+		dest="no_interactive",
+		action="store_true",
+		default=None,
+		help="do not automatically switch to interactive command line interface, for scripts",
 	)
 
 	parser.add_argument(
@@ -311,11 +324,10 @@ def main():
 
 	##############################
 
-	ui_list = (
+	ui_list = [
 		"gtk",
 		"tk",
-		"qt",
-	)
+	]
 
 	# log.info(f"PyGlossary {core.VERSION}")
 
@@ -449,13 +461,10 @@ def main():
 	"""
 	ui_type = args.ui_type
 
-	if args.inputFilename:
-		if args.outputFilename and ui_type != "none":
-			ui_type = "cmd"
-	else:
-		if ui_type == "cmd":
-			log.error("no input file given, try --help")
-			exit(1)
+	if args.inputFilename and args.outputFilename and ui_type != "none":
+		ui_type = "cmd"
+	elif not canRunGUI() and ui_type == "auto":
+		ui_type = "cmd"
 
 	if ui_type == "none":
 		if args.reverse:
@@ -473,8 +482,14 @@ def main():
 		)
 		sys.exit(0)
 	elif ui_type == "cmd":
-		from ui import ui_cmd
-		sys.exit(0 if ui_cmd.UI().run(
+		if args.inputFilename and args.outputFilename:
+			from ui.ui_cmd import UI
+		elif not args.no_interactive:
+			from ui.ui_cmd_interactive import UI
+		else:
+			log.error("no input file given, try --help")
+			sys.exit(1)
+		sys.exit(0 if UI().run(
 			args.inputFilename,
 			outputFilename=args.outputFilename,
 			inputFormat=args.inputFormat,
