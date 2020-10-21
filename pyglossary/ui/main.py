@@ -25,7 +25,6 @@ import argparse
 import logging
 
 from pyglossary import core  # essential
-from pyglossary import VERSION
 from pyglossary.entry import Entry
 
 # the first thing to do is to set up logger.
@@ -81,7 +80,7 @@ def main():
 	parser.add_argument(
 		"--version",
 		action="version",
-		version=f"PyGlossary {VERSION}",
+		version=f"PyGlossary {core.VERSION}",
 	)
 	parser.add_argument(
 		"-h",
@@ -318,7 +317,7 @@ def main():
 		"qt",
 	)
 
-	# log.info("PyGlossary %s"%VERSION)
+	# log.info(f"PyGlossary {core.VERSION}")
 
 	if args.help:
 		help()
@@ -434,9 +433,9 @@ def main():
 			writeOptions[optName] = optValueNew
 
 	if prefOptions:
-		log.debug("prefOptions = %s", prefOptions)
+		log.debug(f"prefOptions = {prefOptions}")
 	if convertOptions:
-		log.debug("convertOptions = %s", convertOptions)
+		log.debug(f"convertOptions = {convertOptions}")
 
 	"""
 	ui_type: User interface type
