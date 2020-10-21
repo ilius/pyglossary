@@ -124,8 +124,6 @@ class Glossary(GlossaryType):
 
 	readFormats = []
 	writeFormats = []
-	readExt = []
-	writeExt = []
 	readDesc = []
 	writeDesc = []
 
@@ -196,7 +194,6 @@ class Glossary(GlossaryType):
 
 			cls.formatsReadOptions[format] = options
 			cls.readFormats.append(format)
-			cls.readExt.append(extensions)
 			cls.readDesc.append(desc)
 
 			Reader.formatName = format
@@ -216,7 +213,6 @@ class Glossary(GlossaryType):
 
 			cls.formatsWriteOptions[format] = options
 			cls.writeFormats.append(format)
-			cls.writeExt.append(extensions)
 			cls.writeDesc.append(desc)
 			if "fileObj" in extraOptions:
 				if plugin.singleFile:
@@ -1445,8 +1441,6 @@ class Glossary(GlossaryType):
 	def init(cls):
 		cls.readFormats = []
 		cls.writeFormats = []
-		cls.readExt = []
-		cls.writeExt = []
 		cls.readDesc = []
 		cls.writeDesc = []
 		cls.loadPlugins(join(dirname(__file__), "plugins"))
