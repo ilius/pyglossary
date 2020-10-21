@@ -58,6 +58,16 @@ pluginByDesc = {
 	plugin.description: plugin
 	for plugin in Glossary.plugins.values()
 }
+readDesc = [
+	plugin.description
+	for plugin in Glossary.plugins.values()
+	if plugin.canRead
+]
+writeDesc = [
+	plugin.description
+	for plugin in Glossary.plugins.values()
+	if plugin.canWrite
+]
 
 
 def set_window_icon(window):
@@ -669,7 +679,7 @@ class UI(tix.Frame, UIBase):
 			frame,
 			comboVar,
 			None,  # default
-			*Glossary.readDesc,
+			*readDesc,
 		)
 		combo.pack(side="left")
 		comboVar.trace("w", self.inputComboChanged)
@@ -718,7 +728,7 @@ class UI(tix.Frame, UIBase):
 			frame,
 			comboVar,
 			None,  # default
-			*Glossary.writeDesc,
+			*writeDesc,
 		)
 		combo.pack(side="left")
 		comboVar.trace("w", self.outputComboChanged)
@@ -821,7 +831,7 @@ class UI(tix.Frame, UIBase):
 		# 	frame,
 		# 	comboVar,
 		# 	None, # default
-		# 	*Glossary.readDesc,
+		# 	*readDesc,
 		# )
 		# combo.pack(side="left")
 		# self.combobox_r_i = comboVar

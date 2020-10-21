@@ -124,8 +124,6 @@ class Glossary(GlossaryType):
 
 	readFormats = []
 	writeFormats = []
-	readDesc = []
-	writeDesc = []
 
 	@classmethod
 	def loadPlugins(cls: "ClassVar", directory: str) -> None:
@@ -194,7 +192,6 @@ class Glossary(GlossaryType):
 
 			cls.formatsReadOptions[format] = options
 			cls.readFormats.append(format)
-			cls.readDesc.append(desc)
 
 			Reader.formatName = format
 			if "fileObj" in extraOptions:
@@ -213,7 +210,6 @@ class Glossary(GlossaryType):
 
 			cls.formatsWriteOptions[format] = options
 			cls.writeFormats.append(format)
-			cls.writeDesc.append(desc)
 			if "fileObj" in extraOptions:
 				if plugin.singleFile:
 					cls.formatsWriteFileObj[format] = True
@@ -1441,7 +1437,5 @@ class Glossary(GlossaryType):
 	def init(cls):
 		cls.readFormats = []
 		cls.writeFormats = []
-		cls.readDesc = []
-		cls.writeDesc = []
 		cls.loadPlugins(join(dirname(__file__), "plugins"))
 		cls.loadPlugins(userPluginsDir)

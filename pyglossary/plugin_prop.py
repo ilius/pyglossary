@@ -148,6 +148,10 @@ class PluginProp(object):
 		return cls
 
 	@property
+	def canRead(self) -> bool:
+		return self.readerClass is not None
+
+	@property
 	def canWrite(self) -> bool:
 		return self.writerClass is not None
 
