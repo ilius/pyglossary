@@ -30,14 +30,12 @@ from os.path import (
 	isfile,
 	isdir,
 	dirname,
-	basename,
 	abspath,
 )
 
 from time import time as now
 import re
 
-import pkgutil
 from collections import OrderedDict as odict
 
 import io
@@ -47,7 +45,7 @@ import gzip
 
 from .flags import *
 from . import core
-from .core import VERSION, userPluginsDir, cacheDir
+from .core import userPluginsDir, cacheDir
 from .entry_base import BaseEntry
 from .entry import Entry, DataEntry
 from .plugin_prop import PluginProp
@@ -56,7 +54,6 @@ from .langs import LangDict, Lang
 
 from .text_utils import (
 	fixUtf8,
-	replaceStringTable,
 )
 
 from .glossary_type import GlossaryType
@@ -135,6 +132,7 @@ class Glossary(GlossaryType):
 
 	@classmethod
 	def loadPlugins(cls: "ClassVar", directory: str) -> None:
+		import pkgutil
 		"""
 		executed on startup.  as name implies, loads plugins from directory
 		"""
