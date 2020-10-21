@@ -694,7 +694,7 @@ class UI(tix.Frame, UIBase):
 		##
 		entry = tix.Entry(frame)
 		entry.pack(side="left", fill="x", expand=True)
-		entry.bind_all("<KeyPress>", self.inputEntryChanged)
+		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryInputConvert = entry
 		##
 		button = ttk.Button(
@@ -740,7 +740,7 @@ class UI(tix.Frame, UIBase):
 		##
 		entry = tix.Entry(frame)
 		entry.pack(side="left", fill="x", expand=True)
-		entry.bind_all("<KeyPress>", self.outputEntryChanged)
+		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryOutputConvert = entry
 		##
 		button = ttk.Button(
@@ -1048,6 +1048,10 @@ class UI(tix.Frame, UIBase):
 			self.writeOptionsButton.pack(side="right")
 		else:
 			self.writeOptionsButton.pack_forget()
+
+	def anyEntryChanged(self, event=None):
+		self.inputEntryChanged()
+		self.outputEntryChanged()
 
 	def inputEntryChanged(self, event=None):
 		# char = event.keysym
