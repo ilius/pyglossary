@@ -34,7 +34,7 @@ from .base import (
 
 from pyglossary.text_utils import urlToPath
 import os
-from os.path import join, isfile
+from os.path import join, isfile, abspath
 import logging
 import traceback
 
@@ -330,6 +330,9 @@ class FormatOptionsButton(ttk.Button):
 		self.values = values
 		self.formatVar = formatVar
 		self.menu = None
+
+	def setOptionsValues(self, values):
+		self.values = values
 
 	def valueMenuItemCustomSelected(self, treev, format, optName, menu=None):
 		if menu:
@@ -630,6 +633,7 @@ class UI(tix.Frame, UIBase):
 		self.glos = Glossary(ui=self)
 		self.pref = {}
 		self.pref_load(**options)
+		self._convertOptions = {}
 		#############################################
 		rootWin = self.rootWin = tix.Tk()
 		# a hack that hides the window until we move it to the center of screen
@@ -1156,6 +1160,7 @@ class UI(tix.Frame, UIBase):
 			outputFormat=outFormat,
 			readOptions=self.readOptions,
 			writeOptions=self.writeOptions,
+			**self._convertOptions
 		)
 		# if finalOutputFile:
 		# 	self.status("Convert finished")
@@ -1163,10 +1168,50 @@ class UI(tix.Frame, UIBase):
 		# 	self.status("Convert failed")
 		return bool(finalOutputFile)
 
-	def run(self, editPath=None, readOptions=None):
-		if readOptions is None:
-			readOptions = {}
-		# editPath and readOptions are for DB Editor
+	def run(
+		self,
+		inputFilename: str = "",
+		outputFilename: str = "",
+		inputFormat: str = "",
+		outputFormat: str = "",
+		reverse: bool = False,
+		prefOptions: "Optional[Dict]" = None,
+		readOptions: "Optional[Dict]" = None,
+		writeOptions: "Optional[Dict]" = None,
+		convertOptions: "Optional[Dict]" = None,
+	):
+		if inputFilename:
+			self.entryInputConvert.insert(0, abspath(inputFilename))
+		if outputFilename:
+			self.entryOutputConvert.insert(0, abspath(outputFilename))
+		
+		if inputFormat:
+			self.formatVarInputConvert.set(Glossary.plugins[inputFormat].description)
+		if outputFormat:
+			self.formatVarOutputConvert.set(Glossary.plugins[outputFormat].description)
+
+		if reverse:
+			log.error(f"Tkinter interface does not support Reverse feature")
+
+		if prefOptions:
+			self.pref.update(prefOptions)
+
+		# must be before setting self.readOptions and self.writeOptions
+		self.anyEntryChanged()
+
+		if readOptions:
+			self.readOptionsButton.setOptionsValues(readOptions)
+			self.readOptions = readOptions
+
+		if writeOptions:
+			self.writeOptionsButton.setOptionsValues(writeOptions)
+			self.writeOptions = writeOptions
+
+		self._convertOptions = convertOptions
+		if convertOptions:
+			log.info(f"Using convertOptions={convertOptions}")
+
+		# inputFilename and readOptions are for DB Editor
 		# which is not implemented
 		self.mainloop()
 

@@ -468,10 +468,9 @@ def main():
 	"""
 	ui_type = args.ui_type
 
-	if ui_type != "none" and args.inputFilename and args.outputFilename:
-		ui_type = "cmd"
-	elif ui_type == "auto" and not canRunGUI():
-		ui_type = "cmd"
+	if ui_type == "auto":
+		if not canRunGUI() or (args.inputFilename and args.outputFilename):
+			ui_type = "cmd"
 
 	if ui_type == "none":
 		if args.reverse:
@@ -488,7 +487,20 @@ def main():
 			**convertOptions
 		)
 		sys.exit(0)
-	elif ui_type == "cmd":
+
+	runKeywordArgs = dict(
+		inputFilename=args.inputFilename,
+		outputFilename=args.outputFilename,
+		inputFormat=args.inputFormat,
+		outputFormat=args.outputFormat,
+		reverse=args.reverse,
+		prefOptions=prefOptions,
+		readOptions=readOptions,
+		writeOptions=writeOptions,
+		convertOptions=convertOptions,
+	)
+
+	if ui_type == "cmd":
 		if args.inputFilename and args.outputFilename:
 			from ui.ui_cmd import UI
 		elif not args.no_interactive:
@@ -496,17 +508,8 @@ def main():
 		else:
 			log.error("no input file given, try --help")
 			sys.exit(1)
-		sys.exit(0 if UI().run(
-			args.inputFilename,
-			outputFilename=args.outputFilename,
-			inputFormat=args.inputFormat,
-			outputFormat=args.outputFormat,
-			reverse=args.reverse,
-			prefOptions=prefOptions,
-			readOptions=readOptions,
-			writeOptions=writeOptions,
-			convertOptions=convertOptions,
-		) else 1)
+		sys.exit(0 if UI().run(**runKeywordArgs) else 1)
+
 	if ui_type == "auto":
 		ui_module = None
 		for ui_type2 in ui_list:
@@ -531,7 +534,4 @@ def main():
 			f"ui_{ui_type}",
 		)
 
-	sys.exit(0 if ui_module.UI(**prefOptions).run(
-		editPath=args.inputFilename,
-		readOptions=readOptions,
-	) else 1)
+	sys.exit(0 if ui_module.UI(**prefOptions).run(**runKeywordArgs) else 1)

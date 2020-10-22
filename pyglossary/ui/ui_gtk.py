@@ -21,7 +21,7 @@
 import shutil
 import sys
 import os
-from os.path import join, isfile, isabs, splitext
+from os.path import join, isfile, isabs, splitext, abspath
 import logging
 import traceback
 
@@ -591,6 +591,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		#####
 		self.pref = {}
 		self.pref_load(**options)
+		self._convertOptions = {}
 		#####
 		self.assert_quit = False
 		self.path = ""
@@ -895,15 +896,43 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		########
 		self.status("Select input file")
 
-	def run(self, editPath=None, readOptions=None):
-		if readOptions is not None:
+	def run(
+		self,
+		inputFilename: str = "",
+		outputFilename: str = "",
+		inputFormat: str = "",
+		outputFormat: str = "",
+		reverse: bool = False,
+		prefOptions: "Optional[Dict]" = None,
+		readOptions: "Optional[Dict]" = None,
+		writeOptions: "Optional[Dict]" = None,
+		convertOptions: "Optional[Dict]" = None,
+	):
+		if inputFilename:
+			self.convertInputEntry.set_text(abspath(inputFilename))
+		if outputFilename:
+			self.convertOutputEntry.set_text(abspath(outputFilename))
+
+		if inputFormat:
+			self.convertInputFormatCombo.setActive(inputFormat)
+		if outputFormat:
+			self.convertOutputFormatCombo.setActive(outputFormat)
+
+		if reverse:
+			log.error(f"Gtk interface does not support Reverse feature")
+
+		if prefOptions:
+			self.pref.update(prefOptions)
+
+		if readOptions:
 			self.convertInputFormatCombo.setOptionsValues(readOptions)
-		# if editPath:
-		#	self.notebook.set_current_page(3)
-		#	log.info(f"Opening file {editPath!r} for edit. please wait...")
-		#	while gtk.events_pending():
-		#		gtk.main_iteration_do(False)
-		#	self.dbe_open(editPath, **readOptions)
+		if writeOptions:
+			self.convertOutputFormatCombo.setOptionsValues(writeOptions)
+
+		self._convertOptions = convertOptions
+		if convertOptions:
+			log.info(f"Using convertOptions={convertOptions}")
+
 		gtk.Dialog.present(self)
 		gtk.main()
 
@@ -970,6 +999,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 				outputFormat=outFormat,
 				readOptions=readOptions,
 				writeOptions=writeOptions,
+				**self._convertOptions,
 			)
 			if finalOutputFile:
 				self.status("Convert finished")

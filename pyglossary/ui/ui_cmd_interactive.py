@@ -361,7 +361,7 @@ class UI(ui_cmd.UI):
 
 	def run(
 		self,
-		inputFilename: str,
+		inputFilename: str = "",
 		outputFilename: str = "",
 		inputFormat: str = "",
 		outputFormat: str = "",

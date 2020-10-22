@@ -248,7 +248,7 @@ class UI(UIBase):
 
 	def run(
 		self,
-		inputFilename: str,
+		inputFilename: str = "",
 		outputFilename: str = "",
 		inputFormat: str = "",
 		outputFormat: str = "",
