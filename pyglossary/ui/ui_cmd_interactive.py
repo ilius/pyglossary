@@ -123,9 +123,24 @@ class UI(ui_cmd.UI):
 	def fs_pwd(self, args: "List[str]"):
 		print(os.getcwd())
 
-	def fs_ls(self, args: "List[str]"):
+	def get_ls_l(self, arg: str) -> str:
 		import pwd
 		import grp
+		st = os.lstat(arg)
+		# os.lstat does not follow sym links, like "ls" command
+		details = [
+			stat.filemode(st.st_mode),
+			pwd.getpwuid(st.st_uid).pw_name,
+			grp.getgrgid(st.st_gid).gr_name,
+			str(st.st_size),
+			time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(st.st_mtime)),
+			arg,
+		]
+		if islink(arg):
+			details.append(f"-> {os.readlink(arg)}")
+		return "  ".join(details)
+
+	def fs_ls(self, args: "List[str]"):
 		if not args:
 			args = [os.getcwd()]
 		showTitle = len(args) > 1
@@ -134,19 +149,7 @@ class UI(ui_cmd.UI):
 			if i > 0:
 				print()
 			if not isdir(arg):
-				st = os.lstat(arg)
-				# os.lstat does not follow sym links, like "ls" command
-				details = [
-					stat.filemode(st.st_mode),
-					pwd.getpwuid(st.st_uid).pw_name,
-					grp.getgrgid(st.st_gid).gr_name,
-					str(st.st_size),
-					time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(st.st_mtime)),
-					arg,
-				]
-				if islink(arg):
-					details.append(f"-> {os.readlink(arg)}")
-				print("  ".join(details))
+				print(self.get_ls_l(arg))
 				continue
 			if showTitle:
 				print(f"> List of directory {arg}:")
