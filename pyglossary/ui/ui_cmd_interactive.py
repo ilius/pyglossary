@@ -25,7 +25,9 @@ sudo pip3 install prompt_toolkit
 
 import sys
 import os
-from os.path import dirname, join, abspath, isdir, isfile, isabs
+from os.path import dirname, join, abspath, isdir, isfile, isabs, islink
+import stat
+import time
 import logging
 from collections import OrderedDict
 
@@ -82,6 +84,7 @@ def dataToPrettyJson(data, ensure_ascii=False, sort_keys=False):
 		ensure_ascii=ensure_ascii,
 	)
 
+
 def prompt(
 	message: str,
 	multiline: bool = False,
@@ -121,6 +124,8 @@ class UI(ui_cmd.UI):
 		print(os.getcwd())
 
 	def fs_ls(self, args: "List[str]"):
+		import pwd
+		import grp
 		if not args:
 			args = [os.getcwd()]
 		showTitle = len(args) > 1
@@ -129,7 +134,19 @@ class UI(ui_cmd.UI):
 			if i > 0:
 				print()
 			if not isdir(arg):
-				print(arg)  # TODO: show details of file
+				st = os.lstat(arg)
+				# os.lstat does not follow sym links, like "ls" command
+				details = [
+					stat.filemode(st.st_mode),
+					pwd.getpwuid(st.st_uid).pw_name,
+					grp.getgrgid(st.st_gid).gr_name,
+					str(st.st_size),
+					time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(st.st_mtime)),
+					arg,
+				]
+				if islink(arg):
+					details.append(f"-> {os.readlink(arg)}")
+				print("  ".join(details))
 				continue
 			if showTitle:
 				print(f"> List of directory {arg}:")
