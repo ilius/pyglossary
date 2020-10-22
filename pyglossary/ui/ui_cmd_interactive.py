@@ -25,7 +25,7 @@ sudo pip3 install prompt_toolkit
 
 import sys
 import os
-from os.path import dirname, join, abspath, isdir, isfile
+from os.path import dirname, join, abspath, isdir, isfile, isabs
 import logging
 from collections import OrderedDict
 
@@ -110,18 +110,83 @@ class UI(ui_cmd.UI):
 		self._convertOptions = None
 		ui_cmd.UI.__init__(self)
 
+		self.fsActions = OrderedDict([
+			("!pwd", self.fs_pwd),
+			("!ls", self.fs_ls),
+			("!..", self.fs_cd_parent),
+			("!cd", self.fs_cd),
+		])
+
+	def fs_pwd(self, args: "List[str]"):
+		print(os.getcwd())
+
+	def fs_ls(self, args: "List[str]"):
+		if not args:
+			args = [os.getcwd()]
+		showTitle = len(args) > 1
+		for i, arg in enumerate(args):
+			if i > 0:
+				print()
+			if not isdir(arg):
+				print(arg)  # TODO: show details of file
+				continue
+			if showTitle:
+				print(f"> List of directory {arg}:")
+			for _path in os.listdir(arg):
+				if isdir(_path):
+					_path += "/"
+				print(f"{_path}")
+
+	def fs_cd_parent(self, args: "List[str]"):
+		if args:
+			log.error("This command does not take arguments")
+			return
+		newDir = dirname(os.getcwd())
+		os.chdir(newDir)
+		print(f"Changed current directory to: {newDir}")
+
+	def fs_cd(self, args: "List[str]"):
+		if len(args) != 1:
+			log.error("This command takes exactly one argument")
+			return
+		newDir = args[0]
+		if not isabs(newDir):
+			newDir = abspath(newDir)
+		os.chdir(newDir)
+		print(f"Changed current directory to: {newDir}")
+
 	def paramHistoryPath(self, name: str) -> str:
 		return join(histDir, f"param-{name}")
 
 	def askFile(self, kind: str, histName: str, reading: bool):
+		from shlex import split as shlex_split
+		history = FileHistory(join(histDir, histName))
+		auto_suggest = AutoSuggestFromHistory()
+		completer_keys = list(self.fsActions.keys())
+		for _path in os.listdir(os.getcwd()):
+			if isdir(_path):
+				continue
+			completer_keys.append(_path)
+		completer = WordCompleter(
+			completer_keys,
+			ignore_case=False,
+			match_middle=True,
+		)
 		while True:
 			filename = prompt(
 				f"> {kind}: ",
-				history=FileHistory(join(histDir, histName)),
-				auto_suggest=AutoSuggestFromHistory(),
+				history=history,
+				auto_suggest=auto_suggest,
+				completer=completer,
 			)
-			if filename:
-				return filename
+			if not filename:
+				continue
+			parts = shlex_split(filename)
+			if parts[0] in self.fsActions:
+				actionFunc = self.fsActions[parts[0]]
+				actionFunc(parts[1:])
+				continue
+			return filename
 		raise ValueError(f"{kind} is not given")
 
 	def askInputFile(self):
