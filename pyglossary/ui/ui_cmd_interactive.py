@@ -124,6 +124,7 @@ class UI(ui_cmd.UI):
 		if not args:
 			args = [os.getcwd()]
 		showTitle = len(args) > 1
+		# Note: isdir and isfile funcs follow sym links, so no worry about links
 		for i, arg in enumerate(args):
 			if i > 0:
 				print()
@@ -163,6 +164,7 @@ class UI(ui_cmd.UI):
 		history = FileHistory(join(histDir, histName))
 		auto_suggest = AutoSuggestFromHistory()
 		completer_keys = list(self.fsActions.keys())
+		# Note: isdir and isfile funcs follow sym links, so no worry about links
 		for _path in os.listdir(os.getcwd()):
 			if isdir(_path):
 				continue
@@ -170,7 +172,8 @@ class UI(ui_cmd.UI):
 		completer = WordCompleter(
 			completer_keys,
 			ignore_case=False,
-			match_middle=True,
+			match_middle=False,
+			sentence=True,
 		)
 		while True:
 			filename = prompt(
