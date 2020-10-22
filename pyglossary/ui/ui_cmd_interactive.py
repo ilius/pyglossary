@@ -101,6 +101,9 @@ def prompt(
 	return text
 
 
+back = "back"
+
+
 class UI(ui_cmd.UI):
 	def __init__(self):
 		self._inputFilename = ""
@@ -113,11 +116,20 @@ class UI(ui_cmd.UI):
 		self._convertOptions = None
 		ui_cmd.UI.__init__(self)
 
-		self.fsActions = OrderedDict([
+		self._fsActions = OrderedDict([
 			("!pwd", self.fs_pwd),
 			("!ls", self.fs_ls),
 			("!..", self.fs_cd_parent),
 			("!cd", self.fs_cd),
+		])
+		self._finalActions = OrderedDict([
+			("read-options", self.askReadOptions),
+			("write-options", self.askWriteOptions),
+			("reset-read-options", self.resetReadOptions),
+			("reset-write-options", self.resetWriteOptions),
+			("indirect", self.setIndirect),
+			("show-options", self.showOptions),
+			("back", None),
 		])
 
 	def fs_pwd(self, args: "List[str]"):
@@ -179,11 +191,11 @@ class UI(ui_cmd.UI):
 	def paramHistoryPath(self, name: str) -> str:
 		return join(histDir, f"param-{name}")
 
-	def askFile(self, kind: str, histName: str, reading: bool):
+	def askFile(self, kind: str, histName: str, varName: str, reading: bool):
 		from shlex import split as shlex_split
 		history = FileHistory(join(histDir, histName))
 		auto_suggest = AutoSuggestFromHistory()
-		completer_keys = list(self.fsActions.keys())
+		completer_keys = list(self._fsActions.keys())
 		# Note: isdir and isfile funcs follow sym links, so no worry about links
 		for _path in os.listdir(os.getcwd()):
 			if isdir(_path):
@@ -195,31 +207,44 @@ class UI(ui_cmd.UI):
 			match_middle=False,
 			sentence=True,
 		)
+		default = getattr(self, varName)
 		while True:
 			filename = prompt(
 				f"> {kind}: ",
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
+				default=default,
 			)
 			if not filename:
 				continue
 			parts = shlex_split(filename)
-			if parts[0] in self.fsActions:
-				actionFunc = self.fsActions[parts[0]]
+			if parts[0] in self._fsActions:
+				actionFunc = self._fsActions[parts[0]]
 				try:
 					actionFunc(parts[1:])
 				except Exception as e:
 					log.exception("")
 				continue
+			setattr(self, varName, filename)
 			return filename
 		raise ValueError(f"{kind} is not given")
 
 	def askInputFile(self):
-		return self.askFile("Input file", "filename-input", True)
+		return self.askFile(
+			"Input file",
+			"filename-input",
+			"_inputFilename",
+			True,
+		)
 
 	def askOutputFile(self):
-		return self.askFile("Output file", "filename-output", False)
+		return self.askFile(
+			"Output file",
+			"filename-output",
+			"_outputFilename",
+			False,
+		)
 
 	def pluginByNameOrDesc(self, value: str) -> "Optional[PluginProp]":
 		prop = pluginByDesc.get(value)
@@ -246,6 +271,7 @@ class UI(ui_cmd.UI):
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
+				default=self._inputFormat,
 			)
 			if not value:
 				continue
@@ -269,6 +295,7 @@ class UI(ui_cmd.UI):
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
+				default=self._outputFormat,
 			)
 			if not value:
 				continue
@@ -429,19 +456,11 @@ class UI(ui_cmd.UI):
 		self._convertOptions["direct"] = False
 		print(f"Switched to indirect mode")
 
-	def askFinalAction(self) -> "Optional[Callable]":
+	def askFinalAction(self) -> "Optional[str]":
 		history = FileHistory(join(histDir, "action"))
 		auto_suggest = AutoSuggestFromHistory()
-		actions = OrderedDict([
-			("read-options", self.askReadOptions),
-			("write-options", self.askWriteOptions),
-			("reset-read-options", self.resetReadOptions),
-			("reset-write-options", self.resetWriteOptions),
-			("indirect", self.setIndirect),
-			("show-options", self.showOptions),
-		])
 		completer = WordCompleter(
-			list(actions.keys()),
+			list(self._finalActions.keys()),
 			ignore_case=False,
 			match_middle=True,
 			sentence=True,
@@ -455,20 +474,25 @@ class UI(ui_cmd.UI):
 			)
 			if not action:
 				return None
-			if action not in actions:
+			if action not in self._finalActions:
 				log.error(f"invalid action: {action}")
 				continue
-			return actions[action]
+			return action
 
-	def askFinalOptions(self) -> bool:
+	def askFinalOptions(self) -> "Union[bool, Literal[back]]":
 		while True:
 			try:
-				actionFunc = self.askFinalAction()
+				action = self.askFinalAction()
 			except (KeyboardInterrupt, EOFError):
 				return False
 			except Exception as e:
 				log.exception("")
 				return False
+			if action == back:
+				return back
+			if action is None:
+				return True  # convert
+			actionFunc = self._finalActions[action]
 			if actionFunc is None:
 				return True  # convert
 			actionFunc()
@@ -486,6 +510,32 @@ class UI(ui_cmd.UI):
 			writeOptions=self._writeOptions,
 			convertOptions=self._convertOptions,
 		)
+
+	def checkInputFormat(self, forceAsk: bool = False):
+		if not forceAsk:
+			inputFormat = Glossary.detectInputFormat(self._inputFilename, quiet=True)
+			if inputFormat:
+				self._inputFormat = inputFormat
+				return
+		self._inputFormat = self.askInputFormat()
+
+	def checkOutputFormat(self, forceAsk: bool = False):
+		if not forceAsk:
+			outputArgs = Glossary.detectOutputFormat(
+				filename=self._outputFilename,
+				inputFilename=self._inputFilename,
+				quiet=True,
+			)
+			if outputArgs:
+				self._outputFormat = outputArgs[1]
+				return
+		self._outputFormat = self.askOutputFormat()
+
+	def askInputOutputAgain(self):
+		self.askInputFile()
+		self.checkInputFormat(forceAsk=True)
+		self.askOutputFile()
+		self.checkOutputFormat(forceAsk=True)
 
 	def run(
 		self,
@@ -507,36 +557,6 @@ class UI(ui_cmd.UI):
 			writeOptions = {}
 		if convertOptions is None:
 			convertOptions = {}
-		if not inputFilename:
-			try:
-				inputFilename = self.askInputFile()
-			except (KeyboardInterrupt, EOFError):
-				return
-		if not inputFormat:
-			inputFormat = Glossary.detectInputFormat(inputFilename, quiet=True)
-			if not inputFormat:
-				try:
-					inputFormat = self.askInputFormat()
-				except (KeyboardInterrupt, EOFError):
-					return
-		if not outputFilename:
-			try:
-				outputFilename = self.askOutputFile()
-			except (KeyboardInterrupt, EOFError):
-				return
-		if not outputFormat:
-			outputArgs = Glossary.detectOutputFormat(
-				filename=outputFilename,
-				inputFilename=inputFilename,
-				quiet=True,
-			)
-			if outputArgs:
-				outputFormat = outputArgs[1]
-			else:
-				try:
-					outputFormat = self.askOutputFormat()
-				except (KeyboardInterrupt, EOFError):
-					return
 
 		self._inputFilename = inputFilename
 		self._outputFilename = outputFilename
@@ -547,8 +567,36 @@ class UI(ui_cmd.UI):
 		self._writeOptions = writeOptions
 		self._convertOptions = convertOptions
 
+		del inputFilename, outputFilename, inputFormat, outputFormat
+		del prefOptions, readOptions, writeOptions, convertOptions
+
+		if not self._inputFilename:
+			try:
+				self.askInputFile()
+			except (KeyboardInterrupt, EOFError):
+				return
+		if not self._inputFormat:
+			try:
+				self.checkInputFormat()
+			except (KeyboardInterrupt, EOFError):
+				return
+		if not self._outputFilename:
+			try:
+				self.askOutputFile()
+			except (KeyboardInterrupt, EOFError):
+				return
+		if not self._outputFormat:
+			try:
+				self.checkOutputFormat()
+			except (KeyboardInterrupt, EOFError):
+				return
+
 		while True:
-			if not self.askFinalOptions():
+			status = self.askFinalOptions()
+			if status == back:
+				self.askInputOutputAgain()
+				continue
+			if not status:
 				return
 			try:
 				succeed = ui_cmd.UI.run(self, **self.getRunKeywordArgs())
