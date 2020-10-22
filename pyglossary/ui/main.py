@@ -54,6 +54,13 @@ from pyglossary.entry import Entry
 def canRunGUI():
 	if core.sysName == "Linux":
 		return bool(os.getenv("DISPLAY"))
+
+	if core.sysName == "Darwin":
+		try:
+			import tkinter
+		except ModuleNotFoundError:
+			return False
+
 	return True
 
 
@@ -461,9 +468,9 @@ def main():
 	"""
 	ui_type = args.ui_type
 
-	if args.inputFilename and args.outputFilename and ui_type != "none":
+	if ui_type != "none" and args.inputFilename and args.outputFilename:
 		ui_type = "cmd"
-	elif not canRunGUI() and ui_type == "auto":
+	elif ui_type == "auto" and not canRunGUI():
 		ui_type = "cmd"
 
 	if ui_type == "none":
