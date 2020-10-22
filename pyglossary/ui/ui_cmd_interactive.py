@@ -207,7 +207,10 @@ class UI(ui_cmd.UI):
 			parts = shlex_split(filename)
 			if parts[0] in self.fsActions:
 				actionFunc = self.fsActions[parts[0]]
-				actionFunc(parts[1:])
+				try:
+					actionFunc(parts[1:])
+				except Exception as e:
+					log.exception("")
 				continue
 			return filename
 		raise ValueError(f"{kind} is not given")
@@ -463,11 +466,26 @@ class UI(ui_cmd.UI):
 				actionFunc = self.askFinalAction()
 			except (KeyboardInterrupt, EOFError):
 				return False
+			except Exception as e:
+				log.exception("")
+				return False
 			if actionFunc is None:
 				return True  # convert
 			actionFunc()
 
 		return True  # convert
+
+	def getRunKeywordArgs(self) -> "Dict":
+		return dict(
+			inputFilename=self._inputFilename,
+			outputFilename=self._outputFilename,
+			inputFormat=self._inputFormat,
+			outputFormat=self._outputFormat,
+			prefOptions=self._prefOptions,
+			readOptions=self._readOptions,
+			writeOptions=self._writeOptions,
+			convertOptions=self._convertOptions,
+		)
 
 	def run(
 		self,
@@ -529,17 +547,14 @@ class UI(ui_cmd.UI):
 		self._writeOptions = writeOptions
 		self._convertOptions = convertOptions
 
-		if not self.askFinalOptions():
-			return
-
-		return ui_cmd.UI.run(
-			self,
-			self._inputFilename,
-			outputFilename=self._outputFilename,
-			inputFormat=self._inputFormat,
-			outputFormat=self._outputFormat,
-			prefOptions=self._prefOptions,
-			readOptions=self._readOptions,
-			writeOptions=self._writeOptions,
-			convertOptions=self._convertOptions,
-		)
+		while True:
+			if not self.askFinalOptions():
+				return
+			try:
+				succeed = ui_cmd.UI.run(self, **self.getRunKeywordArgs())
+			except Exception as e:
+				log.exception("")
+			else:
+				if succeed:
+					return succeed
+			print("Press Control + C to exit")
