@@ -274,6 +274,26 @@ class UI(ui_cmd.UI):
 	def finish(self):
 		pass
 
+	# TODO: how to handle \r and \n in NewlineOption.values?
+
+	def getRWOptionValueSuggestValues(self, prop):
+		if prop.values:
+			return [str(x) for x in prop.values]
+		if prop.typ == "bool":
+			return ["True", "False"]
+		return None
+
+	def getRWOptionValueCompleter(self, prop):
+		values = self.getRWOptionValueSuggestValues(prop)
+		if values:
+			return WordCompleter(
+				values,
+				ignore_case=True,
+				match_middle=True,
+				sentence=True,
+			)
+		return None
+
 	def askReadOptions(self):
 		optionNames = Glossary.formatsReadOptions.get(self._inputFormat)
 		if optionNames is None:
@@ -300,6 +320,8 @@ class UI(ui_cmd.UI):
 				return
 			if not optName:
 				return
+			prop = optionsProp[optName]
+			valueCompleter = self.getRWOptionValueCompleter(prop)
 			while True:
 				try:
 					optValue = prompt(
@@ -307,6 +329,7 @@ class UI(ui_cmd.UI):
 						history=FileHistory(join(histDir, f"option-value-{optName}")),
 						auto_suggest=AutoSuggestFromHistory(),
 						default=str(self._readOptions.get(optName, "")),
+						completer=valueCompleter,
 					)
 				except (KeyboardInterrupt, EOFError):
 					break
@@ -316,7 +339,6 @@ class UI(ui_cmd.UI):
 						del self._readOptions[optName]
 					# FIXME: set empty value?
 					break
-				prop = optionsProp[optName]
 				optValueNew, ok = prop.evaluate(optValue)
 				if not ok or not prop.validate(optValueNew):
 					log.error(
@@ -354,6 +376,8 @@ class UI(ui_cmd.UI):
 				return
 			if not optName:
 				return
+			prop = optionsProp[optName]
+			valueCompleter = self.getRWOptionValueCompleter(prop)
 			while True:
 				try:
 					optValue = prompt(
@@ -361,6 +385,7 @@ class UI(ui_cmd.UI):
 						history=FileHistory(join(histDir, f"option-value-{optName}")),
 						auto_suggest=AutoSuggestFromHistory(),
 						default=str(self._writeOptions.get(optName, "")),
+						completer=valueCompleter,
 					)
 				except (KeyboardInterrupt, EOFError):
 					break
@@ -370,7 +395,6 @@ class UI(ui_cmd.UI):
 						del self._writeOptions[optName]
 					# FIXME: set empty value?
 					break
-				prop = optionsProp[optName]
 				optValueNew, ok = prop.evaluate(optValue)
 				if not ok or not prop.validate(optValueNew):
 					log.error(
