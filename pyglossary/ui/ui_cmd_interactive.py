@@ -232,6 +232,7 @@ class UI(ui_cmd.UI):
 			readFormatDescList + Glossary.readFormats,
 			ignore_case=True,
 			match_middle=True,
+			sentence=True,
 		)
 		while True:
 			value = prompt(
@@ -254,6 +255,7 @@ class UI(ui_cmd.UI):
 			writeFormatDescList + Glossary.writeFormats,
 			ignore_case=True,
 			match_middle=True,
+			sentence=True,
 		)
 		while True:
 			value = prompt(
@@ -284,6 +286,7 @@ class UI(ui_cmd.UI):
 			optionNames,
 			ignore_case=True,
 			match_middle=True,
+			sentence=True,
 		)
 		while True:
 			try:
@@ -337,6 +340,7 @@ class UI(ui_cmd.UI):
 			optionNames,
 			ignore_case=True,
 			match_middle=True,
+			sentence=True,
 		)
 		while True:
 			try:
@@ -410,6 +414,7 @@ class UI(ui_cmd.UI):
 			list(actions.keys()),
 			ignore_case=False,
 			match_middle=True,
+			sentence=True,
 		)
 		while True:
 			action = prompt(
