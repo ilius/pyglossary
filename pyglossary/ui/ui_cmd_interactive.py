@@ -113,29 +113,22 @@ class UI(ui_cmd.UI):
 	def paramHistoryPath(self, name: str) -> str:
 		return join(histDir, f"param-{name}")
 
-	def askInputFile(self):
+	def askFile(self, kind: str, histName: str, reading: bool):
 		while True:
 			filename = prompt(
-				"> Input file: ",
-				history=FileHistory(join(histDir, "filename-input")),
+				f"> {kind}: ",
+				history=FileHistory(join(histDir, histName)),
 				auto_suggest=AutoSuggestFromHistory(),
 			)
 			if filename:
 				return filename
-		raise ValueError("input file is not given")
+		raise ValueError(f"{kind} is not given")
+
+	def askInputFile(self):
+		return self.askFile("Input file", "filename-input", True)
 
 	def askOutputFile(self):
-		history = FileHistory(join(histDir, "filename-output"))
-		auto_suggest = AutoSuggestFromHistory()
-		while True:
-			filename = prompt(
-				"> Output file: ",
-				history=history,
-				auto_suggest=auto_suggest,
-			)
-			if filename:
-				return filename
-		raise ValueError("output file is not given")
+		return self.askFile("Output file", "filename-output", False)
 
 	def pluginByNameOrDesc(self, value: str) -> "Optional[PluginProp]":
 		prop = pluginByDesc.get(value)
