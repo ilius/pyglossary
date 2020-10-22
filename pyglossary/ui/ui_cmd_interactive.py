@@ -300,6 +300,19 @@ class UI(ui_cmd.UI):
 				self._writeOptions[optName] = optValueNew
 				break
 
+	def resetReadOptions(self):
+		self._readOptions = {}
+
+	def resetWriteOptions(self):
+		self._writeOptions = {}
+
+	def showOptions(self):
+		print(f"readOptions = {self._readOptions}")
+		print(f"writeOptions = {self._writeOptions}")
+		print(f"convertOptions = {self._convertOptions}")
+		print(f"prefOptions = {self._prefOptions}")
+		print()
+
 	def setIndirect(self):
 		self._convertOptions["direct"] = False
 		print(f"Switched to indirect mode")
@@ -310,9 +323,10 @@ class UI(ui_cmd.UI):
 		actions = OrderedDict([
 			("read-options", self.askReadOptions),
 			("write-options", self.askWriteOptions),
-			# TODO: reset-read-options
-			# TODO: reset-write-options
+			("reset-read-options", self.resetReadOptions),
+			("reset-write-options", self.resetWriteOptions),
 			("indirect", self.setIndirect),
+			("show-options", self.showOptions),
 		])
 		completer = WordCompleter(
 			list(actions.keys()),
