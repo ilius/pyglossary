@@ -103,18 +103,6 @@ class DataEntry(BaseEntry):
 	def byteProgress(self):
 		return self._byteProgress
 
-	def getWord(self) -> str:
-		log.error("entry.getWord() is deprecated, use entry.s_word")
-		return self.s_word
-
-	def getWords(self) -> "List[str]":
-		log.error("entry.getWords() is deprecated, use entry.l_word")
-		return self.l_word
-
-	def getDefi(self) -> str:
-		log.error("entry.getDefi() is deprecated, use entry.defi")
-		return self.defi
-
 	@property
 	def defiFormat(self) -> 'Literal["b"]':
 		return "b"
@@ -322,18 +310,6 @@ class Entry(BaseEntry):
 			returns string of definition
 		"""
 		return self._defi
-
-	def getWord(self) -> str:
-		log.error("entry.getWord() is deprecated, use entry.s_word")
-		return self.s_word
-
-	def getWords(self) -> "List[str]":
-		log.error("entry.getWords() is deprecated, use entry.l_word")
-		return self.l_word
-
-	def getDefi(self) -> str:
-		log.error("entry.getDefi() is deprecated, use entry.defi")
-		return self.defi
 
 	@property
 	def defiFormat(self) -> str:
