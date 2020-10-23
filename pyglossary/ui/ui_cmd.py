@@ -253,13 +253,13 @@ class UI(UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		prefOptions: "Optional[Dict]" = None,
+		configOptions: "Optional[Dict]" = None,
 		readOptions: "Optional[Dict]" = None,
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
 	):
-		if prefOptions is None:
-			prefOptions = {}
+		if configOptions is None:
+			configOptions = {}
 		if readOptions is None:
 			readOptions = {}
 		if writeOptions is None:
@@ -267,7 +267,7 @@ class UI(UIBase):
 		if convertOptions is None:
 			convertOptions = {}
 
-		self.pref_load(**prefOptions)
+		self.pref_load(**configOptions)
 
 		if inputFormat:
 			# inputFormat = inputFormat.capitalize()

@@ -1175,7 +1175,7 @@ class UI(tix.Frame, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		prefOptions: "Optional[Dict]" = None,
+		configOptions: "Optional[Dict]" = None,
 		readOptions: "Optional[Dict]" = None,
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
@@ -1193,8 +1193,8 @@ class UI(tix.Frame, UIBase):
 		if reverse:
 			log.error(f"Tkinter interface does not support Reverse feature")
 
-		if prefOptions:
-			self.pref.update(prefOptions)
+		if configOptions:
+			self.pref.update(configOptions)
 
 		# must be before setting self.readOptions and self.writeOptions
 		self.anyEntryChanged()

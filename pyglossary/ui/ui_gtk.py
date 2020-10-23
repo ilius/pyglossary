@@ -903,7 +903,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		prefOptions: "Optional[Dict]" = None,
+		configOptions: "Optional[Dict]" = None,
 		readOptions: "Optional[Dict]" = None,
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
@@ -921,8 +921,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		if reverse:
 			log.error(f"Gtk interface does not support Reverse feature")
 
-		if prefOptions:
-			self.pref.update(prefOptions)
+		if configOptions:
+			self.pref.update(configOptions)
 
 		if readOptions:
 			self.convertInputFormatCombo.setOptionsValues(readOptions)

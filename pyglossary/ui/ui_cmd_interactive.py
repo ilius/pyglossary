@@ -110,7 +110,7 @@ class UI(ui_cmd.UI):
 		self._outputFilename = ""
 		self._inputFormat = ""
 		self._outputFormat = ""
-		self._prefOptions = None
+		self._configOptions = None
 		self._readOptions = None
 		self._writeOptions = None
 		self._convertOptions = None
@@ -449,7 +449,7 @@ class UI(ui_cmd.UI):
 		print(f"readOptions = {self._readOptions}")
 		print(f"writeOptions = {self._writeOptions}")
 		print(f"convertOptions = {self._convertOptions}")
-		print(f"prefOptions = {self._prefOptions}")
+		print(f"configOptions = {self._configOptions}")
 		print()
 
 	def setIndirect(self):
@@ -505,7 +505,7 @@ class UI(ui_cmd.UI):
 			outputFilename=self._outputFilename,
 			inputFormat=self._inputFormat,
 			outputFormat=self._outputFormat,
-			prefOptions=self._prefOptions,
+			configOptions=self._configOptions,
 			readOptions=self._readOptions,
 			writeOptions=self._writeOptions,
 			convertOptions=self._convertOptions,
@@ -544,13 +544,13 @@ class UI(ui_cmd.UI):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		prefOptions: "Optional[Dict]" = None,
+		configOptions: "Optional[Dict]" = None,
 		readOptions: "Optional[Dict]" = None,
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
 	):
-		if prefOptions is None:
-			prefOptions = {}
+		if configOptions is None:
+			configOptions = {}
 		if readOptions is None:
 			readOptions = {}
 		if writeOptions is None:
@@ -562,13 +562,13 @@ class UI(ui_cmd.UI):
 		self._outputFilename = outputFilename
 		self._inputFormat = inputFormat
 		self._outputFormat = outputFormat
-		self._prefOptions = prefOptions
+		self._configOptions = configOptions
 		self._readOptions = readOptions
 		self._writeOptions = writeOptions
 		self._convertOptions = convertOptions
 
 		del inputFilename, outputFilename, inputFormat, outputFormat
-		del prefOptions, readOptions, writeOptions, convertOptions
+		del configOptions, readOptions, writeOptions, convertOptions
 
 		if not self._inputFilename:
 			try:

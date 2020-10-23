@@ -363,7 +363,7 @@ def main():
 		--read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
 	"""
 
-	prefOptionsKeys = (
+	configOptionsKeys = (
 		# "verbosity",
 		"utf8Check",
 		"lower",
@@ -385,11 +385,11 @@ def main():
 		# "sortKey",  # TODO
 	)
 
-	prefOptions = {}
-	for param in prefOptionsKeys:
+	configOptions = {}
+	for param in configOptionsKeys:
 		value = getattr(args, param, None)
 		if value is not None:
-			prefOptions[param] = value
+			configOptions[param] = value
 
 	convertOptions = {}
 	for param in convertOptionsKeys:
@@ -451,8 +451,8 @@ def main():
 				sys.exit(1)
 			writeOptions[optName] = optValueNew
 
-	if prefOptions:
-		log.debug(f"prefOptions = {prefOptions}")
+	if configOptions:
+		log.debug(f"configOptions = {configOptions}")
 	if convertOptions:
 		log.debug(f"convertOptions = {convertOptions}")
 
@@ -494,7 +494,7 @@ def main():
 		inputFormat=args.inputFormat,
 		outputFormat=args.outputFormat,
 		reverse=args.reverse,
-		prefOptions=prefOptions,
+		configOptions=configOptions,
 		readOptions=readOptions,
 		writeOptions=writeOptions,
 		convertOptions=convertOptions,
@@ -534,4 +534,4 @@ def main():
 			f"ui_{ui_type}",
 		)
 
-	sys.exit(0 if ui_module.UI(**prefOptions).run(**runKeywordArgs) else 1)
+	sys.exit(0 if ui_module.UI(**configOptions).run(**runKeywordArgs) else 1)
