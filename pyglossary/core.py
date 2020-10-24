@@ -140,13 +140,22 @@ def format_exception(
 
 
 class StdLogHandler(logging.Handler):
-	startRed = "\x1b[31m"
-	endFormat = "\x1b[0;0;0m"  # len=8
-
 	def __init__(self, noColor: bool = False):
 		logging.Handler.__init__(self)
 		self.set_name("std")
 		self.noColor = noColor
+
+	@property
+	def startRed(self):
+		if self.noColor:
+			return ""
+		return "\x1b[31m"
+
+	@property
+	def endFormat(self):
+		if self.noColor:
+			return ""
+		return "\x1b[0;0;0m"
 
 	def emit(self, record: logging.LogRecord) -> None:
 		msg = ""

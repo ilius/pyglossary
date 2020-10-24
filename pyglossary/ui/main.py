@@ -182,6 +182,7 @@ def main():
 		"--no-color",
 		dest="noColor",
 		action="store_true",
+		default=(os.sep != "/"),
 	)
 
 	parser.add_argument(
@@ -341,9 +342,6 @@ def main():
 	if args.help:
 		help()
 		sys.exit(0)
-
-	if os.sep != "/":
-		args.noColor = True
 
 	# only used in ui_cmd for now
 	readOptions = parseFormatOptionsStr(args.readOptions)
