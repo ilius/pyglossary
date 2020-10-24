@@ -129,6 +129,7 @@ class UI(ui_cmd.UI):
 			("write-options", self.askWriteOptions),
 			("reset-read-options", self.resetReadOptions),
 			("reset-write-options", self.resetWriteOptions),
+			("config", self.askConfig),
 			("indirect", self.setIndirect),
 			("show-options", self.showOptions),
 			("back", None),
@@ -249,12 +250,12 @@ class UI(ui_cmd.UI):
 		)
 
 	def pluginByNameOrDesc(self, value: str) -> "Optional[PluginProp]":
-		prop = pluginByDesc.get(value)
-		if prop:
-			return prop
-		prop = Glossary.plugins.get(value)
-		if prop:
-			return prop
+		plugin = pluginByDesc.get(value)
+		if plugin:
+			return plugin
+		plugin = Glossary.plugins.get(value)
+		if plugin:
+			return plugin
 		log.error(f"internal error: invalid format name/desc {value!r}")
 		return None
 
@@ -311,15 +312,15 @@ class UI(ui_cmd.UI):
 
 	# TODO: how to handle \r and \n in NewlineOption.values?
 
-	def getRWOptionValueSuggestValues(self, prop):
-		if prop.values:
-			return [str(x) for x in prop.values]
-		if prop.typ == "bool":
+	def getOptionValueSuggestValues(self, option: "option.Option"):
+		if option.values:
+			return [str(x) for x in option.values]
+		if option.typ == "bool":
 			return ["True", "False"]
 		return None
 
-	def getRWOptionValueCompleter(self, prop):
-		values = self.getRWOptionValueSuggestValues(prop)
+	def getOptionValueCompleter(self, option: "option.Option"):
+		values = self.getOptionValueSuggestValues(option)
 		if values:
 			return WordCompleter(
 				values,
@@ -355,11 +356,11 @@ class UI(ui_cmd.UI):
 				return
 			if not optName:
 				return
-			prop = optionsProp[optName]
-			valueCompleter = self.getRWOptionValueCompleter(prop)
+			option = optionsProp[optName]
+			valueCompleter = self.getOptionValueCompleter(option)
 			while True:
 				try:
-					optValue = prompt(
+					value = prompt(
 						f">>> ReadOption: {optName} = ",
 						history=FileHistory(join(histDir, f"option-value-{optName}")),
 						auto_suggest=AutoSuggestFromHistory(),
@@ -368,21 +369,21 @@ class UI(ui_cmd.UI):
 					)
 				except (KeyboardInterrupt, EOFError):
 					break
-				if optValue == "":
+				if value == "":
 					if optName in self._readOptions:
 						print(f"Unset read-option {optName!r}")
 						del self._readOptions[optName]
 					# FIXME: set empty value?
 					break
-				optValueNew, ok = prop.evaluate(optValue)
-				if not ok or not prop.validate(optValueNew):
+				valueNew, ok = option.evaluate(value)
+				if not ok or not option.validate(valueNew):
 					log.error(
-						f"Invalid read option value {optName}={optValue!r}"
+						f"Invalid read option value {optName}={value!r}"
 						f" for format {self._inputFormat}"
 					)
 					continue
-				print(f"Set read-option: {optName} = {optValueNew!r}")
-				self._readOptions[optName] = optValueNew
+				print(f"Set read-option: {optName} = {valueNew!r}")
+				self._readOptions[optName] = valueNew
 				break
 
 	def askWriteOptions(self):
@@ -411,11 +412,11 @@ class UI(ui_cmd.UI):
 				return
 			if not optName:
 				return
-			prop = optionsProp[optName]
-			valueCompleter = self.getRWOptionValueCompleter(prop)
+			option = optionsProp[optName]
+			valueCompleter = self.getOptionValueCompleter(option)
 			while True:
 				try:
-					optValue = prompt(
+					value = prompt(
 						f">>> WriteOption: {optName} = ",
 						history=FileHistory(join(histDir, f"option-value-{optName}")),
 						auto_suggest=AutoSuggestFromHistory(),
@@ -424,21 +425,21 @@ class UI(ui_cmd.UI):
 					)
 				except (KeyboardInterrupt, EOFError):
 					break
-				if optValue == "":
+				if value == "":
 					if optName in self._writeOptions:
 						print(f"Unset write-option {optName!r}")
 						del self._writeOptions[optName]
 					# FIXME: set empty value?
 					break
-				optValueNew, ok = prop.evaluate(optValue)
-				if not ok or not prop.validate(optValueNew):
+				valueNew, ok = option.evaluate(value)
+				if not ok or not option.validate(valueNew):
 					log.error(
-						f"Invalid write option value {optName}={optValue!r}"
+						f"Invalid write option value {optName}={value!r}"
 						f" for format {self._outputFormat}"
 					)
 					continue
-				print(f"Set write-option: {optName} = {optValueNew!r}")
-				self._writeOptions[optName] = optValueNew
+				print(f"Set write-option: {optName} = {valueNew!r}")
+				self._writeOptions[optName] = valueNew
 				break
 
 	def resetReadOptions(self):
@@ -446,6 +447,57 @@ class UI(ui_cmd.UI):
 
 	def resetWriteOptions(self):
 		self._writeOptions = {}
+
+	def askConfig(self):
+		configKeys = list(sorted(self.configDefDict.keys()))
+		history = FileHistory(join(histDir, f"config-key"))
+		auto_suggest = AutoSuggestFromHistory()
+		completer = WordCompleter(
+			configKeys,
+			ignore_case=True,
+			match_middle=True,
+			sentence=True,
+		)
+		while True:
+			try:
+				configKey = prompt(
+					">> Config: Key [ENTER if done]: ",
+					history=history,
+					auto_suggest=auto_suggest,
+					completer=completer,
+				)
+			except (KeyboardInterrupt, EOFError):
+				return
+			if not configKey:
+				return
+			option = self.configDefDict[configKey]
+			valueCompleter = self.getOptionValueCompleter(option)
+			while True:
+				try:
+					value = prompt(
+						f">>> Config: {configKey} = ",
+						history=FileHistory(join(histDir, f"config-value-{configKey}")),
+						auto_suggest=AutoSuggestFromHistory(),
+						default=str(self._configOptions.get(configKey, "")),
+						completer=valueCompleter,
+					)
+				except (KeyboardInterrupt, EOFError):
+					break
+				if value == "":
+					if configKey in self._configOptions:
+						print(f"Unset config {configKey!r}")
+						del self._configOptions[configKey]
+					# FIXME: set empty value?
+					break
+				valueNew, ok = option.evaluate(value)
+				if not ok or not option.validate(valueNew):
+					log.error(
+						f"Invalid config value {configKey}={value!r}"
+					)
+					continue
+				print(f"Set config: {configKey} = {valueNew!r}")
+				self._configOptions[configKey] = valueNew
+				break
 
 	def showOptions(self):
 		print(f"readOptions = {self._readOptions}")
