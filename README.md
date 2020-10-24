@@ -137,6 +137,7 @@ ways to use the program).
 		- Don't forget to use *Up/Down* or *Tab* keys in prompts!
 			- Up/Down key shows you recent values you have used
 			- Tab key shows available values/options
+		- You can press Control+C (on Linux/Windows) at any prompt to exit
 
 
 
