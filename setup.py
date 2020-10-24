@@ -32,10 +32,12 @@ class my_install(install):
 						"installation path already exists " +
 						"but is not a directory: %s" % self.install_scripts
 					)
-			open(binPath, "w").write(
-				join(self.install_data, relRootDir, "main.py") +
-				" \"$@\""  # pass options from command line
-			)
+			open(binPath, "w").write("""#!/usr/bin/env python3
+import sys
+from os.path import dirname
+sys.path.insert(0, dirname(__file__))
+from pyglossary.ui.main import main
+main()""")
 			os.chmod(binPath, 0o755)
 
 

@@ -238,7 +238,11 @@ else:
 
 dataDir = rootDir
 if dataDir.endswith("dist-packages") or dataDir.endswith("site-packages"):
-	dataDir = join(dirname(dirname(dirname(rootDir))), "share", "pyglossary")
+	parent3 = dirname(dirname(dirname(rootDir)))
+	if os.sep == "\\":
+		dataDir = join(parent3, "Python", "share", "pyglossary")
+	else:
+		dataDir = join(parent3, "share", "pyglossary")
 
 appResDir = join(dataDir, "res")
 
