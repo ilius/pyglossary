@@ -19,7 +19,9 @@
 
 from os.path import join, isfile
 import logging
+from collections import OrderedDict
 
+from pyglossary.json_utils import jsonToData
 from pyglossary.core import (
 	rootConfJsonFile,
 	confJsonFile,
@@ -27,7 +29,12 @@ from pyglossary.core import (
 	dataDir,
 	appResDir,
 )
-from pyglossary.json_utils import jsonToData
+from pyglossary.option import (
+	BoolOption,
+	StrOption,
+	IntOption,
+	FloatOption,
+)
 
 def fread(path):
 	with open(path, encoding="utf-8") as fp:
@@ -44,25 +51,28 @@ summary = "A tool for converting dictionary files aka glossaries with" \
 
 
 class UIBase(object):
-	prefKeys = (
-		"log_time",
-		"cleanup",
-		"ui_autoSetFormat",
-		"lower",
-		"utf8Check",
-		"remove_html",
-		"remove_html_all",
-		"normalize_html",
-		"enable_alts",
-		"save_info_json",
-		## Reverse Options:
-		"reverse_matchWord",
-		"reverse_showRel",
-		"reverse_saveStep",
-		"reverse_minRel",
-		"reverse_maxNum",
-		"reverse_includeDefs",
-	)
+	configDefDict = OrderedDict([
+		("log_time", BoolOption()),
+		("cleanup", BoolOption()),
+
+		("ui_autoSetFormat", BoolOption()),
+
+		("lower", BoolOption()),
+		("utf8Check", BoolOption()),
+		("enable_alts", BoolOption()),
+
+		("remove_html", StrOption()),
+		("remove_html_all", BoolOption()),
+		("normalize_html", BoolOption()),
+		("save_info_json", BoolOption()),
+
+		("reverse_matchWord", BoolOption()),
+		("reverse_showRel", StrOption()),
+		("reverse_saveStep", IntOption()),
+		("reverse_minRel", FloatOption()),
+		("reverse_maxNum", IntOption()),
+		("reverse_includeDefs", BoolOption()),
+	])
 	def pref_load(self, **options):
 		data = jsonToData(fread(rootConfJsonFile))
 		if isfile(confJsonFile):
@@ -75,7 +85,7 @@ class UIBase(object):
 			else:
 				data.update(userData)
 
-		for key in self.prefKeys:
+		for key in self.configDefDict:
 			try:
 				self.pref[key] = data.pop(key)
 			except KeyError:
@@ -87,7 +97,7 @@ class UIBase(object):
 			)
 
 		for key, value in options.items():
-			if key in self.prefKeys:
+			if key in self.configDefDict:
 				self.pref[key] = value
 
 		log.setTimeEnable(self.pref["log_time"])
