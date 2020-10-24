@@ -8,6 +8,11 @@
 	"utf8Check": true,
 	"enable_alts": true,
 
+	"remove_html": "",
+	"remove_html_all": false,
+	"normalize_html": false,
+	"save_info_json": false,
+
 	"reverse_matchWord": true,
 	"reverse_showRel": "Percent",
 	"reverse_saveStep": 1000,
