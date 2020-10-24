@@ -27,7 +27,14 @@ Windows - Tkinter-based interface
 
 ![](https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-cmd-freedict-mids-de-ru.png)
 
-Linux - command line interface
+Linux - command-line interface
+
+------------------------------------------------------------------------
+
+![](https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40-cmdi-zim-slob-fa-med.png)
+
+Linux - interactive command-line interface
+
 
 Supported formats
 -----------------
@@ -114,8 +121,26 @@ ways to use the program).
 
 	`python3 main.py --help`
 
+	- **Interactive command-line interface**
+		- Requires: `pip3 install prompt_toolkit`
+		- Perfect for mobile devices (like Termux on Android) where no GUI is available
+		- Automatically selected if output file argument is not passed **and** one of these:
+			- On Linux and `$DISPLAY` environment variable is empty or not set
+				- For example when you are using a remote Linux machine over SSH
+			- On Mac and no `tkinter` module is found
+		- Manually select with `--ui=cmd`
+			- Minimally: `python3 main.py --ui=cmd`
+			- You can still pass input and output files, or any flag/option
+		- If both input and output files are passed, non-interactive cmd ui will be default
+		- If you are writing a script, you can pass `--no-interactive` to force disable interactive ui
+			- Then you have to pass both input and output file arguments
+		- Don't forget to use *Up/Down* or *Tab* keys in prompts!
+			- Up/Down key shows you recent values you have used
+			- Tab key shows available values/options
 
-When you run the program without any command line arguments or options,
+
+
+When you run the program without any command-line arguments or options,
 PyGlossary tries to find PyGI, if it's installed, opens the Gtk3-based
 interface, if it's not, tries to find Tkinter and open the Tkinter-based
 interface. And exits with an error if neither are installed.
