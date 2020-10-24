@@ -90,6 +90,8 @@ def prompt(
 	multiline: bool = False,
 	**kwargs,
 ):
+	if kwargs.get("default", "") is None:
+		kwargs["default"] = ""
 	text = promptLow(message=message, **kwargs)
 	if multiline and text == "!m":
 		print("Entering Multi-line mode, press Alt+Enter to end")
