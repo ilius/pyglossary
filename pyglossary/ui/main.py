@@ -243,7 +243,7 @@ def main():
 
 	parser.add_argument(
 		"--skip-resources",
-		dest="skipResources",
+		dest="skip_resources",
 		action="store_true",
 		default=None,
 		help="skip resources (images, audio, etc)",
@@ -428,7 +428,7 @@ def main():
 		"lower",
 		"utf8Check",
 		"enable_alts",
-		"skipResources",
+		"skip_resources",
 
 		"remove_html",
 		"remove_html_all",

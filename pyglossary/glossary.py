@@ -341,7 +341,7 @@ class Glossary(GlossaryType):
 		self._entryFilters.append(ef.StripEntryFilter(self))
 		self._entryFilters.append(ef.NonEmptyWordFilter(self))
 
-		if config.get("skipResources", False):
+		if config.get("skip_resources", False):
 			self._entryFilters.append(ef.SkipDataEntryFilter(self))
 
 		if config.get("utf8Check", True):

@@ -60,6 +60,7 @@ class UIBase(object):
 		("lower", BoolOption()),
 		("utf8Check", BoolOption()),
 		("enable_alts", BoolOption()),
+		("skip_resources", BoolOption()),
 
 		("remove_html", StrOption()),
 		("remove_html_all", BoolOption()),
