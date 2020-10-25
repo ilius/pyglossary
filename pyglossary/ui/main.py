@@ -422,17 +422,18 @@ def main():
 	"""
 
 	configKeys = (
-		# "verbosity",
-		"utf8Check",
+		"log_time",
+		"cleanup",
+
 		"lower",
-		"skipResources",
+		"utf8Check",
 		"enable_alts",
+		"skipResources",
+
 		"remove_html",
 		"remove_html_all",
 		"normalize_html",
 		"save_info_json",
-		"log_time",
-		"cleanup",
 	)
 
 	convertOptionsKeys = (
