@@ -609,12 +609,32 @@ class UI(ui_cmd.UI):
 			optionsJson = json.dumps(self._writeOptions, ensure_ascii=True)
 			cmd.append(quote(f"--json-write-options={optionsJson}"))
 
-		# TODO: self._configOptions
+		if self._configOptions:
+			for key, value in self._configOptions.items():
+				if value is None:
+					continue
+				option = self.configDefDict.get(key)
+				if option is None:
+					log.error(f"config key {key} was not found")
+				if not option.cmd:
+					log.error(f"config key {key} has no command line flag")
+				flag = option.cmdFlag
+				if not flag:
+					flag = key.replace('_', '-')
+				if option.typ == "bool":
+					if not value:
+						flag = f"no-{flag}"
+					cmd.append(f"--{flag}")
+				else:
+					cmd.append(quote(f"--{flag}={value}"))
 
 		# TODO: self._convertOptions
 
 		print()
-		print("If you want to repeat this conversion later, you can use this command:")
+		print(
+			"If you want to repeat this conversion later, "
+			"you can use this command:"
+		)
 		print(" ".join(cmd))
 
 	def run(
