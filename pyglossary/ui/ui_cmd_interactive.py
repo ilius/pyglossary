@@ -602,12 +602,12 @@ class UI(ui_cmd.UI):
 		]
 
 		if self._readOptions:
-			optionsStr = ui_cmd.encodeFormatOptions(self._readOptions)
-			cmd.append(quote(f"--read-options={optionsStr}"))
+			optionsJson = json.dumps(self._readOptions, ensure_ascii=True)
+			cmd.append(quote(f"--json-read-options={optionsJson}"))
 
 		if self._writeOptions:
-			optionsStr = ui_cmd.encodeFormatOptions(self._writeOptions)
-			cmd.append(quote(f"--read-options={optionsStr}"))
+			optionsJson = json.dumps(self._writeOptions, ensure_ascii=True)
+			cmd.append(quote(f"--json-write-options={optionsJson}"))
 
 		# TODO: self._configOptions
 

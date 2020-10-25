@@ -22,6 +22,7 @@
 import os
 import sys
 import argparse
+import json
 import logging
 
 from pyglossary import core  # essential
@@ -159,6 +160,17 @@ def main():
 		"--write-options",
 		dest="writeOptions",
 		default="",
+	)
+
+	parser.add_argument(
+		"--json-read-options",
+		dest="jsonReadOptions",
+		default=None,
+	)
+	parser.add_argument(
+		"--json-write-options",
+		dest="jsonWriteOptions",
+		default=None,
 	)
 
 	parser.add_argument(
@@ -376,9 +388,28 @@ def main():
 	readOptions = parseFormatOptionsStr(args.readOptions)
 	if readOptions is None:
 		return
+	if args.jsonReadOptions:
+		newReadOptions = json.loads(args.jsonReadOptions)
+		if isinstance(newReadOptions, dict):
+			readOptions.update(newReadOptions)
+		else:
+			log.error(
+				f"invalid value for --json-read-options, "
+				f"must be an object/dict, not {type(newReadOptions)}"
+			)
+
 	writeOptions = parseFormatOptionsStr(args.writeOptions)
 	if writeOptions is None:
 		return
+	if args.jsonWriteOptions:
+		newWriteOptions = json.loads(args.jsonWriteOptions)
+		if isinstance(newWriteOptions, dict):
+			writeOptions.update(newWriteOptions)
+		else:
+			log.error(
+				f"invalid value for --json-write-options, "
+				f"must be an object/dict, not {type(newWriteOptions)}"
+			)
 
 	"""
 		examples for read and write options:
