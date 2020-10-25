@@ -134,17 +134,15 @@ class RemoveHtmlTags(EntryFilter):
 	name = "remove_html"
 
 	def __init__(self, glos: "GlossaryType", tags: "List[str]"):
+		import re
 		self.glos = glos
 		self.tags = tags
+		tagsRE = "|".join(self.tags)
+		self.pattern = re.compile(f"<.?({tagsRE})[^>]*>")
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
-		import re
-
 		def fixStr(st: str) -> str:
-			tagsRE = "|".join(self.tags)
-			pattern = f"<.?({tagsRE})[^>]*>"
-			st = pattern.sub("", st)
-			return st
+			return self.pattern.sub("", st)
 
 		entry.editFuncDefi(fixStr)
 		return entry
