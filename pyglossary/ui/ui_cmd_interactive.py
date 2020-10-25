@@ -591,6 +591,32 @@ class UI(ui_cmd.UI):
 		self.askOutputFile()
 		self.checkOutputFormat(forceAsk=True)
 
+	def printNonInteractiveCommand(self):
+		from shlex import quote
+		cmd = [
+			ui_cmd.COMMAND,
+			quote(self._inputFilename),
+			quote(self._outputFilename),
+			quote(f"--read-format={self._inputFormat}"),
+			quote(f"--write-format={self._outputFormat}"),
+		]
+
+		if self._readOptions:
+			optionsStr = ui_cmd.encodeFormatOptions(self._readOptions)
+			cmd.append(quote(f"--read-options={optionsStr}"))
+
+		if self._writeOptions:
+			optionsStr = ui_cmd.encodeFormatOptions(self._writeOptions)
+			cmd.append(quote(f"--read-options={optionsStr}"))
+
+		# TODO: self._configOptions
+
+		# TODO: self._convertOptions
+
+		print()
+		print("If you want to repeat this conversion later, you can use this command:")
+		print(" ".join(cmd))
+
 	def run(
 		self,
 		inputFilename: str = "",
@@ -657,6 +683,7 @@ class UI(ui_cmd.UI):
 			except Exception as e:
 				log.exception("")
 			else:
+				self.printNonInteractiveCommand()
 				if succeed:
 					return succeed
 			print("Press Control + C to exit")

@@ -139,6 +139,15 @@ def parseFormatOptionsStr(st) -> "Optional[Dict]":
 	return opt
 
 
+def encodeFormatOptions(opt: "Dict") -> str:
+	if not opt:
+		return ""
+	parts = []
+	for key, value in opt.items():
+		parts.append(f"{key}={value}")
+	return ";".join(parts)
+
+
 class NullObj(object):
 	def __getattr__(self, attr):
 		return self
