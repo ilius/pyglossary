@@ -54,6 +54,8 @@ from .langs import LangDict, Lang
 
 from .text_utils import (
 	fixUtf8,
+	compressionOpen,
+	stdCompressions,
 )
 
 from .glossary_type import GlossaryType
@@ -119,8 +121,6 @@ class Glossary(GlossaryType):
 
 	formatsReadOptions = {}
 	formatsWriteOptions = {}
-	formatsReadFileObj = {}  # type: Dict[str, bool]
-	formatsWriteFileObj = {}  # type: Dict[str, bool]
 
 	readFormats = []
 	writeFormats = []
@@ -194,14 +194,6 @@ class Glossary(GlossaryType):
 			cls.readFormats.append(format)
 
 			Reader.formatName = format
-			if "fileObj" in extraOptions:
-				if plugin.singleFile:
-					cls.formatsReadFileObj[format] = True
-				else:
-					log.error(
-						f"plugin {format}: fileObj= argument "
-						"in Reader.open, without singleFile=True"
-					)
 
 		Writer = prop.writerClass
 		if Writer is not None:
@@ -210,14 +202,6 @@ class Glossary(GlossaryType):
 
 			cls.formatsWriteOptions[format] = options
 			cls.writeFormats.append(format)
-			if "fileObj" in extraOptions:
-				if plugin.singleFile:
-					cls.formatsWriteFileObj[format] = True
-				else:
-					log.error(
-						f"plugin {format}: fileObj= argument "
-						"in write, without singleFile=True"
-					)
 
 		if not (Reader or Writer):
 			log.warning(f"plugin {format} has no Reader nor Writer")
@@ -236,27 +220,37 @@ class Glossary(GlossaryType):
 		filename: str,
 		format: str = "",
 		quiet: bool = False,
-	) -> str:
-		def error(msg: str) -> str:
+	) -> "Optional[Tuple[str, str, str]]":
+		"""
+			returns (filename, format, compression) or None
+		"""
+
+		def error(msg: str) -> None:
 			if not quiet:
 				log.error(msg)
-			return ""
+			return None
 
+		filenameOrig = filename
+		filenameNoExt, filename, ext, compression = cls.splitFilenameExt(filename)
+
+		plugin = None
 		if format:
 			plugin = cls.plugins[format]
-			if plugin.readerClass:
-				return plugin.name
+		else:
+			plugin = cls.pluginByExt.get(ext)
+			if not plugin:
+				plugin = cls.findPlugin(filename)
+				if not plugin:
+					return error("Unable to detect write format!")
+
+		if not plugin.canRead:
 			return error(f"plugin {plugin.name} does not support reading")
 
-		ext = get_ext(filename)
-		plugin = cls.pluginByExt.get(ext)
-		if plugin:
-			if plugin.readerClass:
-				return plugin.name
-			return error(f"plugin {plugin.name} does not support reading")
-		log.debug(f"{sorted(cls.pluginByExt.keys())}")
+		if compression in getattr(plugin.readerClass, "compressions", []):
+			compression = ""
+			filename = filenameOrig
 
-		return error(f"Could not detect input format")
+		return filename, plugin.name, compression
 
 	def clear(self) -> None:
 		self._info = odict()
@@ -784,9 +778,15 @@ class Glossary(GlossaryType):
 			)
 
 		###
-		format = self.detectInputFormat(filename, format=format)
-		if not format:
+		inputArgs = self.detectInputFormat(filename, format=format)
+		if inputArgs is None:
 			return False
+		origFilename = filename
+		filename, format, compression = inputArgs
+
+		if compression:
+			from pyglossary.glossary_utils import uncompress
+			uncompress(origFilename, filename, compression)
 
 		validOptionKeys = self.formatsReadOptions[format]
 		for key in list(options.keys()):
@@ -945,7 +945,10 @@ class Glossary(GlossaryType):
 		if not ext and len(filenameNoExt) < 5:
 			filenameNoExt, ext = "", filenameNoExt
 
-		if ext in (".gz", ".bz2", ".zip"):
+		if not ext:
+			return filename, filename, "", ""
+
+		if ext[1:] in stdCompressions + ("zip",):
 			compression = ext[1:]
 			filename = filenameNoExt
 			filenameNoExt, ext = splitext(filename)
@@ -988,6 +991,7 @@ class Glossary(GlossaryType):
 			filename = splitext(inputFilename)[0] + plugin.ext
 			return filename, plugin.name, ""
 
+		filenameOrig = filename
 		filenameNoExt, filename, ext, compression = cls.splitFilenameExt(filename)
 
 		if not plugin:
@@ -1000,6 +1004,10 @@ class Glossary(GlossaryType):
 
 		if not plugin.canWrite:
 			return error(f"plugin {plugin.name} does not support writing")
+
+		if compression in getattr(plugin.writerClass, "compressions", []):
+			compression = ""
+			filename = filenameOrig
 
 		if addExt:
 			if not filenameNoExt:
@@ -1192,9 +1200,9 @@ class Glossary(GlossaryType):
 
 		return filename
 
-	def _compressOutDir(self, filename: str, compression: str) -> str:
-		from pyglossary.glossary_utils import compressOutDir
-		return compressOutDir(filename, compression)
+	def _compressOutput(self, filename: str, compression: str) -> str:
+		from pyglossary.glossary_utils import compress
+		return compress(filename, compression)
 
 	def convert(
 		self,
@@ -1276,7 +1284,7 @@ class Glossary(GlossaryType):
 			return
 
 		if compression:
-			finalOutputFile = self._compressOutDir(finalOutputFile, compression)
+			finalOutputFile = self._compressOutput(finalOutputFile, compression)
 
 		log.info(f"Writing file {finalOutputFile!r} done.")
 		log.info(f"Running time of convert: {now()-tm0:.1f} seconds")
@@ -1291,7 +1299,6 @@ class Glossary(GlossaryType):
 		self,
 		entryFmt: str = "",  # contain {word} and {defi}
 		filename: str = "",
-		fileObj: "Optional[file]" = None,
 		writeInfo: bool = True,
 		wordEscapeFunc: "Optional[Callable]" = None,
 		defiEscapeFunc: "Optional[Callable]" = None,
@@ -1307,24 +1314,13 @@ class Glossary(GlossaryType):
 		import codecs
 		if not entryFmt:
 			raise ValueError("entryFmt argument is missing")
-		if filename and fileObj:
-			raise ValueError(f"both filename and fileObj are passed")
 		if not filename:
 			filename = self._filename + ext
 
 		if not outInfoKeysAliasDict:
 			outInfoKeysAliasDict = {}
 
-		if fileObj:
-			mode = getattr(fileObj, "mode", "")
-			if isinstance(mode, int):
-				# for gzip.open with BytesIO, mode == 2
-				pass
-			elif "b" in mode:
-				# binFileObj = fileObj  # needed?
-				fileObj = codecs.getwriter(encoding)(fileObj)
-		else:
-			fileObj = open(filename, "w", encoding=encoding, newline=newline)
+		fileObj = compressionOpen(filename, mode="wt", encoding=encoding, newline=newline)
 
 		fileObj.write(head)
 		if writeInfo:
@@ -1386,14 +1382,12 @@ class Glossary(GlossaryType):
 	def writeTabfile(
 		self,
 		filename: str = "",
-		fileObj: "Optional[file]" = None,
 		**kwargs,
 	) -> "Generator[None, BaseEntry, None]":
 		from .text_utils import escapeNTB
 		yield from self.writeTxt(
 			entryFmt="{word}\t{defi}\n",
 			filename=filename,
-			fileObj=fileObj,
 			wordEscapeFunc=escapeNTB,
 			defiEscapeFunc=escapeNTB,
 			ext=".txt",

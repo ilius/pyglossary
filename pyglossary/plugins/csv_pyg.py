@@ -55,6 +55,8 @@ optionsProp = {
 
 
 class Reader(object):
+	compressions = stdCompressions
+
 	_encoding: str = "utf-8"
 	_delimiter: str = ","
 
@@ -78,7 +80,7 @@ class Reader(object):
 		filename: str,
 	) -> None:
 		self._filename = filename
-		self._file = open(filename, "r", encoding=self._encoding)
+		self._file = compressionOpen(filename, mode="rt", encoding=self._encoding)
 		self._csvReader = csv.reader(
 			self._file,
 			dialect="excel",
@@ -159,6 +161,8 @@ class Reader(object):
 
 
 class Writer(object):
+	compressions = stdCompressions
+
 	_encoding: str = "utf-8"
 	_resources: bool = True
 	_delimiter: str = ","
@@ -170,7 +174,7 @@ class Writer(object):
 
 	def open(self, filename: str):
 		self._filename = filename
-		self._file = open(filename, "w", encoding=self._encoding)
+		self._file = compressionOpen(filename, mode="wt", encoding=self._encoding)
 		self._resDir = resDir = filename + "_res"
 		self._csvWriter = csv.writer(
 			self._file,

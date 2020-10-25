@@ -31,6 +31,8 @@ from pyglossary.text_utils import (
 	toStr,
 	toBytes,
 	replaceStringTable,
+	compressionOpen,
+	stdCompressions,
 )
 from pyglossary.os_utils import indir
 from pyglossary.entry_base import BaseEntry

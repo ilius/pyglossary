@@ -5,6 +5,7 @@ from os import makedirs, listdir
 from pyglossary.text_utils import (
 	escapeNTB,
 	splitByBarUnescapeNTB,
+	compressionOpenFunc,
 )
 
 enable = True
@@ -18,21 +19,6 @@ optionsProp = {
 		comment="Compression Algorithm",
 	),
 }
-
-
-def compressionOpen(c: str):
-	if not c:
-		return open
-	if c == "gz":
-		import gzip
-		return gzip.open
-	if c == "bz2":
-		import bz2
-		return bz2.open
-	if c == "lzma":
-		import lzma
-		return lzma.open
-	return None
 
 
 class Writer(object):
@@ -73,7 +59,7 @@ class Writer(object):
 
 		wordCount = 0
 		compression = self._compression
-		c_open = compressionOpen(compression)
+		c_open = compressionOpenFunc(compression)
 		if not c_open:
 			raise ValueError(f"invalid compression {c!r}")
 		while True:
@@ -138,7 +124,7 @@ class Reader(object):
 
 	def _fromFile(self, fpath):
 		_, ext = splitext(fpath)
-		c_open = compressionOpen(ext.lstrip("."))
+		c_open = compressionOpenFunc(ext.lstrip("."))
 		if not c_open:
 			log.error(f"invalid extention {ext}")
 			c_open = open

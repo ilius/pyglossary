@@ -62,28 +62,24 @@ class Writer(object):
 	_writeInfo: bool = True
 	_resources: bool = True
 
+	compressions = stdCompressions
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
-		self._file = None
 
 	def open(
 		self, 
 		filename: str,
-		fileObj: "Optional[file]" = None,
 	):
 		self._filename = filename
-		self._file = fileObj
 
 	def finish(self):
-		if self._file:
-			self._file.close()
-			self._file = None
+		pass
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
 		yield from self._glos.writeTabfile(
 			self._filename,
-			fileObj=self._file,
 			encoding=self._encoding,
 			writeInfo=self._writeInfo,
 			resources=self._resources,

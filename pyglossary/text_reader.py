@@ -1,7 +1,10 @@
 from pyglossary.file_utils import fileCountLines
 from pyglossary.entry_base import BaseEntry
 from pyglossary.entry import Entry, DataEntry
-
+from pyglossary.text_utils import (
+	compressionOpen,
+	stdCompressions,
+)
 from pyglossary.glossary_type import GlossaryType
 
 import os
@@ -13,6 +16,8 @@ log = logging.getLogger("pyglossary")
 
 class TextGlossaryReader(object):
 	_encoding = "utf-8"
+
+	compressions = stdCompressions
 
 	def __init__(self, glos: GlossaryType, hasInfo: bool = True):
 		self._glos = glos
@@ -36,7 +41,7 @@ class TextGlossaryReader(object):
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._file = open(filename, "r", encoding=self._encoding)
+		self._file = compressionOpen(filename, mode="rt", encoding=self._encoding)
 		if self._hasInfo:
 			self.loadInfo()
 		if not self._wordCount:
@@ -53,7 +58,7 @@ class TextGlossaryReader(object):
 			return False
 		self._fileIndex += 1
 		log.info(f"Reading next file: {nextFilename}")
-		self._file = open(nextFilename, "r", encoding=self._encoding)
+		self._file = compressionOpen(nextFilename, "rt", encoding=self._encoding)
 		if self._hasInfo:
 			self.loadInfo()
 		return True

@@ -27,6 +27,7 @@ tei = "{http://www.tei-c.org/ns/1.0}"
 
 
 class Reader(object):
+	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
 	}
@@ -363,7 +364,7 @@ class Reader(object):
 
 		self._filename = filename
 		self._fileSize = os.path.getsize(filename)
-		self._file = open(filename, mode="rb")
+		self._file = compressionOpen(filename, mode="rb")
 
 		self._glos.setDefaultDefiFormat("h")
 		self._glos.setInfo("input_file_size", f"{self._fileSize}")
@@ -379,8 +380,9 @@ class Reader(object):
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		from lxml import etree as ET
+		self._file = compressionOpen(self._filename, mode="rb")
 		context = ET.iterparse(
-			self._filename,
+			self._file,
 			events=("end",),
 			tag=f"{tei}entry",
 		)
@@ -398,6 +400,7 @@ class Reader(object):
 
 
 class Writer(object):
+	compressions = stdCompressions
 	_resources: bool = True
 
 	def __init__(self, glos: GlossaryType) -> None:
@@ -415,7 +418,7 @@ class Writer(object):
 
 	def open(self, filename: str):
 		self._filename = filename
-		self._file = open(filename, "w", encoding="utf-8")
+		self._file = compressionOpen(filename, mode="wt", encoding="utf-8")
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
 		glos = self._glos

@@ -316,6 +316,8 @@ def unwrap_quotes(s):
 
 
 class Reader(object):
+	compressions = stdCompressions
+
 	_encoding: str = ""
 	_audio: bool = False
 	_onlyFixMarkUp: bool = False
@@ -354,7 +356,7 @@ class Reader(object):
 		encoding = self._encoding
 		if not encoding:
 			encoding = self.detectEncoding()
-		self._file = open(filename, "r", encoding=encoding)
+		self._file = compressionOpen(filename, mode="rt", encoding=encoding)
 
 		# read header
 		for line in self._file:
@@ -368,7 +370,7 @@ class Reader(object):
 
 	def detectEncoding(self):
 		for testEncoding in ("utf-8", "utf-16"):
-			with open(self._filename, "r", encoding=testEncoding) as fileObj:
+			with compressionOpen(self._filename, mode="rt", encoding=testEncoding) as fileObj:
 				try:
 					for i in range(10):
 						fileObj.readline()

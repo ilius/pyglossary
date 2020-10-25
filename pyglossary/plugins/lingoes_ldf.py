@@ -29,6 +29,8 @@ You will can do it yourself after the creator release."""
 
 
 class Reader(TextGlossaryReader):
+	compressions = stdCompressions
+
 	def __len__(self):
 		if self._wordCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
@@ -87,6 +89,8 @@ class Reader(TextGlossaryReader):
 
 
 class Writer(object):
+	compressions = stdCompressions
+
 	_newline: str = "\n"
 	_resources: str = True
 

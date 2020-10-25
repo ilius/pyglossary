@@ -1073,8 +1073,9 @@ class UI(tix.Frame, UIBase):
 			if self.config["ui_autoSetFormat"]:
 				formatDesc = self.formatVarInputConvert.get()
 				if not formatDesc:
-					format = Glossary.detectInputFormat(pathI, quiet=True)
-					if format:
+					inputArgs = Glossary.detectInputFormat(pathI, quiet=True)
+					if inputArgs:
+						format = inputArgs[1]
 						plugin = Glossary.plugins.get(format)
 						if plugin:
 							self.formatVarInputConvert.set(plugin.description)

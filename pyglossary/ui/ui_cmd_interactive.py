@@ -568,8 +568,9 @@ class UI(ui_cmd.UI):
 
 	def checkInputFormat(self, forceAsk: bool = False):
 		if not forceAsk:
-			inputFormat = Glossary.detectInputFormat(self._inputFilename, quiet=True)
-			if inputFormat:
+			inputArgs = Glossary.detectInputFormat(self._inputFilename, quiet=True)
+			if inputArgs:
+				inputFormat = inputArgs[1]
 				self._inputFormat = inputFormat
 				return
 		self._inputFormat = self.askInputFormat()

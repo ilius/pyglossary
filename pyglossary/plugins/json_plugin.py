@@ -19,6 +19,8 @@ class Writer(object):
 	_writeInfo: bool = True
 	_resources: bool = True
 
+	compressions = stdCompressions
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None

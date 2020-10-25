@@ -399,15 +399,16 @@ def main():
 		convertOptions["defaultSortKey"] = Entry.defaultSortKey
 
 	if args.inputFilename and readOptions:
-		inputFormat = Glossary.detectInputFormat(
+		inputArgs = Glossary.detectInputFormat(
 			args.inputFilename,
 			format=args.inputFormat,
 		)
-		if not inputFormat:
+		if not inputArgs:
 			log.error(
 				f"Could not detect format for input file {args.inputFilename}"
 			)
 			sys.exit(1)
+		inputFormat = inputArgs[1]
 		readOptionsProp = Glossary.plugins[inputFormat].optionsProp
 		for optName, optValue in readOptions.items():
 			if optName not in Glossary.formatsReadOptions[inputFormat]:
