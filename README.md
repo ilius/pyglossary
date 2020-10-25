@@ -43,11 +43,11 @@ Supported formats
 |-----------------------------------------------------------------------|:-:|:---------------:|:--:|:---:|
 | [Aard 2 (slob)](http://aarddict.org)                                  |🔢 | .slob           | ✔  |  ✔  |
 | ABBYY Lingvo DSL                                                      |📝 | .dsl            | ✔  |     |
-| AppleDict Binary                                                      |🔢 |.dictionary      | ✔  | :x: |
+| AppleDict Binary                                                      |🔢 |.dictionary      | ✔  | ❌  |
 | AppleDict Source                                                      |📁 |                 |    |  ✔  |
-| Babylon                                                               |🔢 | .bgl            | ✔  | :x: |
-| [CC-CEDICT](https://cc-cedict.org/wiki) (Chinese)                     |📝 |                 | ✔  | :x: |
-| [cc-kedict](https://github.com/mhagiwara/cc-kedict) (Korean)          |📝 |                 | ✔  | :x: |
+| Babylon                                                               |🔢 | .bgl            | ✔  | ❌  |
+| [CC-CEDICT](https://cc-cedict.org/wiki) (Chinese)                     |📝 |                 | ✔  | ❌  |
+| [cc-kedict](https://github.com/mhagiwara/cc-kedict) (Korean)          |📝 |                 | ✔  | ❌  |
 | CSV                                                                   |📝 | .csv            | ✔  |  ✔  |
 | Dict.cc (SQLite3, German)                                             |🔢 |                 | ✔  |     |
 | DICT.org / Dictd server                                               |📁 | (📝.index)      | ✔  |  ✔  |
@@ -56,25 +56,25 @@ Supported formats
 | [DictionaryForMIDs](http://dictionarymid.sourceforge.net)             |📁 | (📁.mids)       | ✔  |  ✔  |
 | [DigitalNK](https://github.com/digitalprk/dicrs) (SQLite3, N-Korean)  |🔢 |                 | ✔  |     |
 | EDLIN                                                                 |📁 | .edlin          | ✔  |  ✔  |
-| EPUB-2 E-Book                                                         |📦 | .epub           |:x: |  ✔  |
+| EPUB-2 E-Book                                                         |📦 | .epub           |❌  |  ✔  |
 | [FreeDict](https://freedict.org)                                      |📝 | .tei            | ✔  |  ✔  |
 | [Gettext Source](https://www.gnu.org/software/gettext)                |📝 | .po             | ✔  |  ✔  |
-| HTML Directory (by file size)                                         |📁 |                 |:x: |  ✔  |
-| [JMDict](https://www.edrdg.org/jmdict/j_jmdict.html) (Japanese)       |📝 |                 | ✔  | :x: |
+| HTML Directory (by file size)                                         |📁 |                 |❌  |  ✔  |
+| [JMDict](https://www.edrdg.org/jmdict/j_jmdict.html) (Japanese)       |📝 |                 | ✔  | ❌  |
 | JSON                                                                  |📝 | .json           |    |  ✔  |
-| Kobo E-Reader Dictionary                                              |📦 | .kobo.zip       |:x: |  ✔  |
+| Kobo E-Reader Dictionary                                              |📦 | .kobo.zip       |❌  |  ✔  |
 | [Kobo E-Reader Dictfile](https://github.com/pgaskin/dictutil)         |📝 | .df             | ✔  |  ✔  |
 | [Lingoes Source](http://www.lingoes.net/en/dictionary/dict_format.php)|📝 | .ldf            | ✔  |  ✔  |
-| Octopus MDict                                                         |🔢 | .mdx            | ✔  | :x: |
+| Octopus MDict                                                         |🔢 | .mdx            | ✔  | ❌  |
 | [Sdictionary Binary](http://swaj.net/sdict/)                          |🔢 | .dct            | ✔  |     |
 | [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)         |📝 | .sdct           |    |  ✔  |
-| SQL                                                                   |📝 | .sql            |:x: |  ✔  |
+| SQL                                                                   |📝 | .sql            |❌  |  ✔  |
 | StarDict                                                              |📁 | (📝.ifo)        | ✔  |  ✔  |
 | [Tabfile](https://en.wikipedia.org/wiki/Tab-separated_values)         |📝 |.txt, .tab       | ✔  |  ✔  |
 | TreeDict                                                              |📁 |                 |    |  ✔  |
-| Wiktionary Dump                                                       |📝 | .xml            | ✔  | :x: |
+| Wiktionary Dump                                                       |📝 | .xml            | ✔  | ❌  |
 | [Wordset.org](https://github.com/wordset/wordset-dictionary)          |📁 |                 | ✔  |     |
-| [XDXF](https://github.com/soshial/xdxf_makedict)                      |📝 | .xdxf           | ✔  | :x: |
+| [XDXF](https://github.com/soshial/xdxf_makedict)                      |📝 | .xdxf           | ✔  | ❌  |
 | Zim ([Kiwix](https://github.com/kiwix))                               |🔢 | .zim            | ✔  |     |
 
 Legend:
@@ -83,7 +83,7 @@ Legend:
 - 📦	Package/archive file
 - 🔢	Binary file
 - ✔		Supported
-- :x:	Will not be supported
+- ❌ 	Will not be supported
 
 
 Requirements
