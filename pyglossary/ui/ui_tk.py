@@ -631,8 +631,8 @@ class UI(tix.Frame, UIBase):
 
 	def __init__(self, path="", **options):
 		self.glos = Glossary(ui=self)
-		self.pref = {}
-		self.pref_load(**options)
+		self.config = {}
+		self.loadConfig(**options)
 		self._convertOptions = {}
 		#############################################
 		rootWin = self.rootWin = tix.Tk()
@@ -652,8 +652,8 @@ class UI(tix.Frame, UIBase):
 		# rootWin.bind("<Configure>", self.resized)
 		######################
 		self.glos = Glossary(ui=self)
-		self.pref = {}
-		self.pref_load()
+		self.config = {}
+		self.loadConfig()
 		self.pathI = ""
 		self.pathO = ""
 		fcd_dir = join(homeDir, "Desktop")
@@ -1075,7 +1075,7 @@ class UI(tix.Frame, UIBase):
 				pathI = urlToPath(pathI)
 				self.entryInputConvert.delete(0, "end")
 				self.entryInputConvert.insert(0, pathI)
-			if self.pref["ui_autoSetFormat"]:
+			if self.config["ui_autoSetFormat"]:
 				formatDesc = self.formatVarInputConvert.get()
 				if not formatDesc:
 					format = Glossary.detectInputFormat(pathI, quiet=True)
@@ -1092,7 +1092,7 @@ class UI(tix.Frame, UIBase):
 				pathO = urlToPath(pathO)
 				self.entryOutputConvert.delete(0, "end")
 				self.entryOutputConvert.insert(0, pathO)
-			if self.pref["ui_autoSetFormat"]:
+			if self.config["ui_autoSetFormat"]:
 				formatDesc = self.formatVarOutputConvert.get()
 				if not formatDesc:
 					outputArgs = Glossary.detectOutputFormat(
@@ -1194,7 +1194,7 @@ class UI(tix.Frame, UIBase):
 			log.error(f"Tkinter interface does not support Reverse feature")
 
 		if configOptions:
-			self.pref.update(configOptions)
+			self.config.update(configOptions)
 
 		# must be before setting self.readOptions and self.writeOptions
 		self.anyEntryChanged()

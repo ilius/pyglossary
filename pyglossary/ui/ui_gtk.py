@@ -585,12 +585,12 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.set_title("PyGlossary (Gtk3)")
 		self.resize(800, 800)
 		self.connect("delete-event", self.onDeleteEvent)
-		self.prefPages = []
+		self.pages = []
 		# self.statusNewId = 0
 		# self.statusMsgDict = {}## message -> id
 		#####
-		self.pref = {}
-		self.pref_load(**options)
+		self.config = {}
+		self.loadConfig(**options)
 		self._convertOptions = {}
 		#####
 		self.assert_quit = False
@@ -602,7 +602,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		vbox = VBox()
 		vbox.label = _("Convert")
 		vbox.icon = ""  # "*.png"
-		self.prefPages.append(vbox)
+		self.pages.append(vbox)
 		######
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input Format")+":")
@@ -697,7 +697,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		vbox = VBox()
 		vbox.label = _("Reverse")
 		vbox.icon = ""  # "*.png"
-		# self.prefPages.append(vbox)
+		# self.pages.append(vbox)
 		######
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input Format")+":")
@@ -793,13 +793,13 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		)
 		about.label = _("About")
 		about.icon = ""  # "*.png"
-		self.prefPages.append(about)
+		self.pages.append(about)
 		#####
 		# ____________________________________________________________ #
 		notebook = gtk.Notebook()
 		self.notebook = notebook
 		#########
-		for vbox in self.prefPages:
+		for vbox in self.pages:
 			l = gtk.Label(label=vbox.label)
 			l.set_use_underline(True)
 			vb = VBox(spacing=3)
@@ -815,12 +815,12 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 				pass
 		#######################
 		pack(self.vbox, notebook, 1, 1)
-		# for i in ui.prefPagesOrder:
+		# for i in ui.pagesOrder:
 		#	try:
-		#		j = prefPagesOrder[i]
+		#		j = pagesOrder[i]
 		#	except IndexError:
 		#		continue
-		#	notebook.reorder_child(self.prefPages[i], j)
+		#	notebook.reorder_child(self.pages[i], j)
 		# ____________________________________________________________ #
 		handler = GtkSingleTextviewLogHandler(textview)
 		log.addHandler(handler)
@@ -922,7 +922,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			log.error(f"Gtk interface does not support Reverse feature")
 
 		if configOptions:
-			self.pref.update(configOptions)
+			self.config.update(configOptions)
 
 		if readOptions:
 			self.convertInputFormatCombo.setOptionsValues(readOptions)
@@ -1021,7 +1021,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			inPath = urlToPath(inPath)
 			self.convertInputEntry.set_text(inPath)
 
-		if self.pref["ui_autoSetFormat"] and not inFormat:
+		if self.config["ui_autoSetFormat"] and not inFormat:
 			inFormatNew = Glossary.detectInputFormat(inPath, quiet=True)
 			if inFormatNew:
 				self.convertInputFormatCombo.setActive(inFormatNew)
@@ -1040,7 +1040,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			outPath = urlToPath(outPath)
 			self.convertOutputEntry.set_text(outPath)
 
-		if self.pref["ui_autoSetFormat"] and not outFormat:
+		if self.config["ui_autoSetFormat"] and not outFormat:
 			outputArgs = Glossary.detectOutputFormat(
 				filename=outPath,
 				inputFilename=self.convertInputEntry.get_text(),
@@ -1116,7 +1116,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			inPath = urlToPath(inPath)
 			self.reverseInputEntry.set_text(inPath)
 
-		if not inFormat and self.pref["ui_autoSetFormat"]:
+		if not inFormat and self.config["ui_autoSetFormat"]:
 			inFormat = Glossary.detectInputFormat(inPath, quiet=True)
 			self.reverseInputFormatCombo.setActive(inFormat)
 

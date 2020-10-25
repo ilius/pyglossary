@@ -171,7 +171,7 @@ def replacePostSpaceChar(st: str, ch: str) -> str:
 
 def runDictzip(filename: str) -> None:
 	import subprocess
-	dictzipCmd = "/usr/bin/dictzip"  # Save in pref FIXME
+	dictzipCmd = "/usr/bin/dictzip"  # TODO: save in user config
 	if not os.path.isfile(dictzipCmd):
 		return False
 	if filename[-4:] == ".ifo":

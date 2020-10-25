@@ -155,8 +155,8 @@ class NullObj(object):
 
 class UI(UIBase):
 	def __init__(self, **options):
-		self.pref = {}
-		# log.debug(self.pref)
+		self.config = {}
+		# log.debug(self.config)
 		self.pbar = NullObj()
 		self._toPause = False
 		self._resetLogFormatter = None
@@ -230,7 +230,7 @@ class UI(UIBase):
 			"minWordLen"
 		):
 			try:
-				reverseKwArgs[key] = self.pref["reverse_" + key]
+				reverseKwArgs[key] = self.config["reverse_" + key]
 			except KeyError:
 				pass
 		reverseKwArgs.update(kwargs)
@@ -267,7 +267,7 @@ class UI(UIBase):
 		if convertOptions is None:
 			convertOptions = {}
 
-		self.pref_load(**configOptions)
+		self.loadConfig(**configOptions)
 
 		if inputFormat:
 			# inputFormat = inputFormat.capitalize()

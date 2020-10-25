@@ -336,27 +336,27 @@ class Glossary(GlossaryType):
 	def updateEntryFilters(self) -> None:
 		from . import entry_filters as ef
 		self._entryFilters = []
-		pref = getattr(self.ui, "pref", {})
+		config = getattr(self.ui, "config", {})
 
 		self._entryFilters.append(ef.StripEntryFilter(self))
 		self._entryFilters.append(ef.NonEmptyWordFilter(self))
 
-		if pref.get("skipResources", False):
+		if config.get("skipResources", False):
 			self._entryFilters.append(ef.SkipDataEntryFilter(self))
 
-		if pref.get("utf8Check", True):
+		if config.get("utf8Check", True):
 			self._entryFilters.append(ef.FixUnicodeFilter(self))
 
-		if pref.get("lower", True):
+		if config.get("lower", True):
 			self._entryFilters.append(ef.LowerWordFilter(self))
 
-		if pref.get("remove_html_all", False):
+		if config.get("remove_html_all", False):
 			self._entryFilters.append(ef.RemoveHtmlTagsAll(self))
-		elif pref.get("remove_html"):
-			tags = pref.get("remove_html").split(",")
+		elif config.get("remove_html"):
+			tags = config.get("remove_html").split(",")
 			self._entryFilters.append(ef.RemoveHtmlTags(self, tags))
 
-		if pref.get("normalize_html", False):
+		if config.get("normalize_html", False):
 			self._entryFilters.append(ef.NormalizeHtml(self))
 
 		self._entryFilters.append(ef.LangEntryFilter(self))
@@ -662,7 +662,7 @@ class Glossary(GlossaryType):
 
 	def getPref(self, name: str, default: "Optional[str]") -> "Optional[str]":
 		if self.ui:
-			return self.ui.pref.get(name, default)
+			return self.ui.config.get(name, default)
 		else:
 			return default
 
@@ -767,7 +767,7 @@ class Glossary(GlossaryType):
 		# And we don't have to check for write access to cacheDir because it's
 		# inside user's home dir. But input glossary might be in a directory
 		# that we don't have write access to.
-		# still maybe add a pref key to decide if we should always use cacheDir
+		# still maybe add a config key to decide if we should always use cacheDir
 		# if self._hasWriteAccessToDir(f"{filename}_res", os.W_OK):
 		# 	self.tmpDataDir = f"{filename}_res"
 		# else:

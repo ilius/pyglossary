@@ -73,7 +73,7 @@ class UIBase(object):
 		("reverse_maxNum", IntOption()),
 		("reverse_includeDefs", BoolOption()),
 	])
-	def pref_load(self, **options):
+	def loadConfig(self, **options):
 		data = jsonToData(fread(rootConfJsonFile))
 		if isfile(confJsonFile):
 			try:
@@ -87,7 +87,7 @@ class UIBase(object):
 
 		for key in self.configDefDict:
 			try:
-				self.pref[key] = data.pop(key)
+				self.config[key] = data.pop(key)
 			except KeyError:
 				pass
 		for key, value in data.items():
@@ -98,9 +98,9 @@ class UIBase(object):
 
 		for key, value in options.items():
 			if key in self.configDefDict:
-				self.pref[key] = value
+				self.config[key] = value
 
-		log.setTimeEnable(self.pref["log_time"])
+		log.setTimeEnable(self.config["log_time"])
 
 		return True
 
