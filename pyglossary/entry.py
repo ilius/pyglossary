@@ -230,7 +230,7 @@ class Entry(BaseEntry):
 		if key is None:
 			key = Entry.defaultSortKey
 
-		if glos.getPref("enable_alts", True):
+		if glos.getConfig("enable_alts", True):
 			b_sep = Entry.b_sep
 			if glos._rawEntryCompress:
 				return lambda x: key(loads(decompress(x))[0].split(b_sep)[0])
@@ -492,7 +492,7 @@ class Entry(BaseEntry):
 		else:
 			defiFormat = defaultDefiFormat
 
-		if glos.getPref("enable_alts", True):
+		if glos.getConfig("enable_alts", True):
 			word = word.split(cls.sep)
 
 		return cls(

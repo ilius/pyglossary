@@ -57,7 +57,7 @@ class GlossaryType(object):
 	def targetLangName(self, langName: str) -> None:
 		raise NotImplementedError
 
-	def getPref(self, name: str, default: "Optional[str]") -> "Optional[str]":
+	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
 		raise NotImplementedError
 
 	def addEntryObj(self, entry: "Entry") -> None:

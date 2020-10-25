@@ -316,7 +316,7 @@ class Glossary(GlossaryType):
 	def cleanup(self):
 		if not self._cleanupPathList:
 			return
-		if not self.getPref("cleanup", True):
+		if not self.getConfig("cleanup", True):
 			log.info("Not cleaning up files:")
 			log.info("\n".join(self._cleanupPathList))
 			return
@@ -660,7 +660,7 @@ class Glossary(GlossaryType):
 				return hf.element(ws.titleTag)
 		return hf.element("b")
 
-	def getPref(self, name: str, default: "Optional[str]") -> "Optional[str]":
+	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
 		if self.ui:
 			return self.ui.config.get(name, default)
 		else:
@@ -1161,7 +1161,7 @@ class Glossary(GlossaryType):
 			else:
 				genList.append(gen)
 
-			if self.getPref("save_info_json", False):
+			if self.getConfig("save_info_json", False):
 				infoWriter = self._createWriter("Info", {})
 				filenameNoExt, _, _, _ = Glossary.splitFilenameExt(filename)
 				infoWriter.open(f"{filenameNoExt}.info")
@@ -1368,7 +1368,7 @@ class Glossary(GlossaryType):
 			defi = entry.defi
 			if word.startswith("#"):  # FIXME
 				continue
-			# if self.getPref("enable_alts", True):  # FIXME
+			# if self.getConfig("enable_alts", True):  # FIXME
 
 			if wordEscapeFunc is not None:
 				word = wordEscapeFunc(word)
