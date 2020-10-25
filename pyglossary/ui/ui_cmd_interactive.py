@@ -628,7 +628,29 @@ class UI(ui_cmd.UI):
 				else:
 					cmd.append(quote(f"--{flag}={value}"))
 
-		# TODO: self._convertOptions
+		if self._convertOptions:
+			convertOptionsFlags = {
+				"direct": ("indirect", "direct"),
+				"progressbar": ("no-progress-bar", ""),
+				"sort": ("no-sort", "sort"),
+				"sortCacheSize": ("sort-cache-size", ""),
+				"defaultSortKey": None,
+			}
+			for key, value in self._convertOptions.items():
+				if value is None:
+					continue
+				if key not in convertOptionsFlags:
+					log.error(f"unknow key {key} in convertOptions")
+					continue
+				ftup = convertOptionsFlags[key]
+				if ftup is None:
+					continue
+				if isinstance(value, bool):
+					flag = ftup[int(value)]
+					cmd.append(f"--{flag}")
+				else:
+					flag = ftup[0]
+					cmd.append(f"--{flag}={value}")
 
 		print()
 		print(
