@@ -117,6 +117,30 @@ def main():
 		),
 	)
 	parser.add_argument(
+		"--cmd",
+		dest="ui_type",
+		action="store_const",
+		const="cmd",
+		default=None,
+		help="use command-line user interface",
+	)
+	parser.add_argument(
+		"--gtk",
+		dest="ui_type",
+		action="store_const",
+		const="gtk",
+		default=None,
+		help="use Gtk-based user interface",
+	)
+	parser.add_argument(
+		"--tk",
+		dest="ui_type",
+		action="store_const",
+		const="tk",
+		default=None,
+		help="use Tkinter-based user interface",
+	)
+	parser.add_argument(
 		"--no-interactive",
 		dest="no_interactive",
 		action="store_true",
