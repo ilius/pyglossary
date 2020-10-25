@@ -344,7 +344,7 @@ class Glossary(GlossaryType):
 		if config.get("skip_resources", False):
 			self._entryFilters.append(ef.SkipDataEntryFilter(self))
 
-		if config.get("utf8Check", True):
+		if config.get("utf8_check", True):
 			self._entryFilters.append(ef.FixUnicodeFilter(self))
 
 		if config.get("lower", True):

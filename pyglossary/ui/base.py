@@ -58,7 +58,7 @@ class UIBase(object):
 		("ui_autoSetFormat", BoolOption()),
 
 		("lower", BoolOption()),
-		("utf8Check", BoolOption()),
+		("utf8_check", BoolOption()),
 		("enable_alts", BoolOption()),
 		("skip_resources", BoolOption()),
 

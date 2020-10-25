@@ -250,13 +250,13 @@ def main():
 	)
 	parser.add_argument(
 		"--utf8-check",
-		dest="utf8Check",
+		dest="utf8_check",
 		action="store_true",
 		default=None,
 	)
 	parser.add_argument(
 		"--no-utf8-check",
-		dest="utf8Check",
+		dest="utf8_check",
 		action="store_false",
 		default=None,
 	)
@@ -426,7 +426,7 @@ def main():
 		"cleanup",
 
 		"lower",
-		"utf8Check",
+		"utf8_check",
 		"enable_alts",
 		"skip_resources",
 

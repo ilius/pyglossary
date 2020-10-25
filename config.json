@@ -5,7 +5,7 @@
 	"ui_autoSetFormat": true,
 
 	"lower": false,
-	"utf8Check": true,
+	"utf8_check": true,
 	"enable_alts": true,
 	"skip_resources": false,
 
