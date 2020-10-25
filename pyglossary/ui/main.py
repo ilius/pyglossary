@@ -26,6 +26,7 @@ import logging
 
 from pyglossary import core  # essential
 from pyglossary.entry import Entry
+from pyglossary.ui.base import UIBase
 
 # the first thing to do is to set up logger.
 # other modules also using logger "root", so it is essential to set it up prior
@@ -240,18 +241,21 @@ def main():
 	parser.add_argument(
 		"--remove-html",
 		dest="remove_html",
+		default=None,
 		help="remove given html tags (comma-separated) from definitions",
 	)
 	parser.add_argument(
 		"--remove-html-all",
 		dest="remove_html_all",
 		action="store_true",
+		default=None,
 		help="remove all html tags from definitions",
 	)
 	parser.add_argument(
 		"--normalize-html",
 		dest="normalize_html",
 		action="store_true",
+		default=None,
 		help="lowercase and normalize html tags in definitions",
 	)
 
@@ -276,6 +280,7 @@ def main():
 		"--info",
 		dest="save_info_json",
 		action="store_true",
+		default=None,
 		help="save glossary info as json file with .info extension",
 	)
 
@@ -361,7 +366,7 @@ def main():
 		--read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
 	"""
 
-	configOptionsKeys = (
+	configKeys = (
 		# "verbosity",
 		"utf8Check",
 		"lower",
@@ -383,17 +388,22 @@ def main():
 		# "sortKey",  # TODO
 	)
 
-	configOptions = {}
-	for param in configOptionsKeys:
-		value = getattr(args, param, None)
-		if value is not None:
-			configOptions[param] = value
+	config = {}
+	for key in configKeys:
+		value = getattr(args, key, None)
+		if value is None:
+			continue
+		option = UIBase.configDefDict[key]
+		if not option.validate(value):
+			log.error("invalid config value: {key} = {value!r}")
+			continue
+		config[key] = value
 
 	convertOptions = {}
-	for param in convertOptionsKeys:
-		value = getattr(args, param, None)
+	for key in convertOptionsKeys:
+		value = getattr(args, key, None)
 		if value is not None:
-			convertOptions[param] = value
+			convertOptions[key] = value
 
 	if convertOptions.get("sort", False):
 		convertOptions["defaultSortKey"] = Entry.defaultSortKey
@@ -449,8 +459,8 @@ def main():
 				sys.exit(1)
 			writeOptions[optName] = optValueNew
 
-	if configOptions:
-		log.debug(f"configOptions = {configOptions}")
+	if config:
+		log.debug(f"config = {config}")
 	if convertOptions:
 		log.debug(f"convertOptions = {convertOptions}")
 
@@ -492,7 +502,7 @@ def main():
 		inputFormat=args.inputFormat,
 		outputFormat=args.outputFormat,
 		reverse=args.reverse,
-		configOptions=configOptions,
+		configOptions=config,
 		readOptions=readOptions,
 		writeOptions=writeOptions,
 		convertOptions=convertOptions,
@@ -532,4 +542,4 @@ def main():
 			f"ui_{ui_type}",
 		)
 
-	sys.exit(0 if ui_module.UI(**configOptions).run(**runKeywordArgs) else 1)
+	sys.exit(0 if ui_module.UI().run(**runKeywordArgs) else 1)

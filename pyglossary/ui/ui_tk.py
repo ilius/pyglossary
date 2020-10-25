@@ -629,12 +629,7 @@ class FormatOptionsButton(ttk.Button):
 class UI(tix.Frame, UIBase):
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
-	def __init__(self, path="", **options):
-		self.glos = Glossary(ui=self)
-		self.config = {}
-		self.loadConfig(**options)
-		self._convertOptions = {}
-		#############################################
+	def __init__(self, path=""):
 		rootWin = self.rootWin = tix.Tk()
 		# a hack that hides the window until we move it to the center of screen
 		if os.sep == "\\":  # Windows
@@ -651,9 +646,9 @@ class UI(tix.Frame, UIBase):
 		self.pack(fill="x")
 		# rootWin.bind("<Configure>", self.resized)
 		######################
-		self.glos = Glossary(ui=self)
 		self.config = {}
-		self.loadConfig()
+		self.glos = Glossary(ui=self)
+		self._convertOptions = {}
 		self.pathI = ""
 		self.pathO = ""
 		fcd_dir = join(homeDir, "Desktop")
@@ -1193,8 +1188,7 @@ class UI(tix.Frame, UIBase):
 		if reverse:
 			log.error(f"Tkinter interface does not support Reverse feature")
 
-		if configOptions:
-			self.config.update(configOptions)
+		self.loadConfig(**configOptions)
 
 		# must be before setting self.readOptions and self.writeOptions
 		self.anyEntryChanged()

@@ -580,7 +580,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		_id = self.statusBar.get_context_id(msg)
 		self.statusBar.push(_id, msg)
 
-	def __init__(self, **options):
+	def __init__(self):
 		gtk.Dialog.__init__(self)
 		self.set_title("PyGlossary (Gtk3)")
 		self.resize(800, 800)
@@ -590,7 +590,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# self.statusMsgDict = {}## message -> id
 		#####
 		self.config = {}
-		self.loadConfig(**options)
 		self._convertOptions = {}
 		#####
 		self.assert_quit = False
@@ -921,8 +920,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		if reverse:
 			log.error(f"Gtk interface does not support Reverse feature")
 
-		if configOptions:
-			self.config.update(configOptions)
+		self.loadConfig(**configOptions)
 
 		if readOptions:
 			self.convertInputFormatCombo.setOptionsValues(readOptions)

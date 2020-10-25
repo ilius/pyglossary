@@ -154,7 +154,7 @@ class NullObj(object):
 
 
 class UI(UIBase):
-	def __init__(self, **options):
+	def __init__(self):
 		self.config = {}
 		# log.debug(self.config)
 		self.pbar = NullObj()
