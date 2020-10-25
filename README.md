@@ -130,7 +130,7 @@ ways to use the program).
 			- On Mac and no `tkinter` module is found
 		- Manually select with `--cmd` or `--ui=cmd`
 			- Minimally: `python3 main.py --cmd`
-			- You can still pass input and output files, or any flag/option
+			- You can still pass input file, or any flag/option
 		- If both input and output files are passed, non-interactive cmd ui will be default
 		- If you are writing a script, you can pass `--no-interactive` to force disable interactive ui
 			- Then you have to pass both input and output file arguments
