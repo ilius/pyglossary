@@ -3,13 +3,15 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
     <b>PyGI (Gtk3)</b> Interface:
         To open PyGlossary window:
             <b>${CMD}</b>
-        PyGI is the default interface (so you never need to use "--ui=gtk" option)
+        PyGI is the default interface (so you never need to use "--ui=gtk" or --gtk option)
         If PyGI was not found (not installed), then PyGlossary will fallback to Tkinter interface.
     <b>Tkinter</b> Interface:
         To open PyGlossary window:
+            <b>${CMD} --tk</b>
+        Or
             <b>${CMD} --ui=tk</b>
         Usually good for Windows and Mac OS X
-    <b>Command Line</b> Interface:
+    <b>Command-line</b> interface:
         To show this help:
             ${CMD} --help
         To show program version:
@@ -18,12 +20,20 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
             ${CMD} <u>INPUT_FILE</u> <u>OUTPUT_FILE</u>
         To Reverse:
             ${CMD} <u>INPUT_FILE</u> <u>OUTPUT_FILE</u>.txt --reverse
-        Input and output files formats will be detected from extensions.
-        Except that you explicitly specify input or output format, for example:
-            ${CMD} mydic.utf8 mydic.ifo --read-format=tabfile
-            ${CMD} mydic.utf8 mydic.ifo --read-format tabfile
-            ${CMD} mydic.ifo mydic.utf8 --write-format=tabfile
-            ${CMD} mydic.ifo mydic.utf8 --write-format tabfile
+        Input and output formats will be detected from extensions if possible.
+        If not, you need to specify input or output format, for example:
+            ${CMD} test.utf8 test.ifo --read-format=tabfile
+            ${CMD} test.utf8 test.ifo --read-format tabfile
+            ${CMD} test.ifo test.utf8 --write-format=tabfile
+            ${CMD} test.ifo test.utf8 --write-format tabfile
+
+    <b>Interactive command-line</b> interface:
+        Minimal command:
+            <b>${CMD} --cmd</b>
+        Or
+            <b>${CMD} --ui=cmd</b>
+        Additionally you can pass any flag to act to act as default
+
 
 <b>General Options:</b>
     Verbosity:
