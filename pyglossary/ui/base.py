@@ -52,27 +52,67 @@ summary = "A tool for converting dictionary files aka glossaries with" \
 
 class UIBase(object):
 	configDefDict = OrderedDict([
-		("log_time", BoolOption()),
-		("cleanup", BoolOption()),
+		("log_time", BoolOption(
+			cmd=True,
+			comment="show date and time in logs",
+			falseComment="do not show date and time in logs",
+		)),
+		("cleanup", BoolOption(
+			cmd=True,
+			comment="cleanup cache or temporary files after convertion",
+			falseComment="do not cleanup cache or temporary files after convertion",
+		)),
 
-		("ui_autoSetFormat", BoolOption()),
+		("lower", BoolOption(
+			cmd=True,
+			comment="lowercase words before writing",
+			falseComment="do not lowercase words before writing",
+		)),
+		("utf8_check", BoolOption(
+			cmd=True,
+			comment="ensure entries contain valid UTF-8 strings",
+			falseComment="do not ensure entries contain valid UTF-8 strings",
+		)),
+		("enable_alts", BoolOption(
+			cmd=True,
+			cmdFlag="alts",
+			comment="",
+			falseComment="disable alternates",
+		)),
+		("skip_resources", BoolOption(
+			cmd=True,
+			comment="skip resources (images, audio, etc)",
+			falseComment="",
+		)),
 
-		("lower", BoolOption()),
-		("utf8_check", BoolOption()),
-		("enable_alts", BoolOption()),
-		("skip_resources", BoolOption()),
+		("remove_html", StrOption(
+			cmd=True,
+			comment="remove given html tags (comma-separated) from definitions",
+		)),
+		("remove_html_all", BoolOption(
+			cmd=True,
+			comment="remove all html tags from definitions",
+			falseComment="",
+		)),
+		("normalize_html", BoolOption(
+			cmd=True,
+			comment="lowercase and normalize html tags in definitions",
+		)),
+		("save_info_json", BoolOption(
+			cmd=True,
+			cmdFlag="info",
+			comment="save glossary info as json file with .info extension",
+			falseComment="",
+		)),
 
-		("remove_html", StrOption()),
-		("remove_html_all", BoolOption()),
-		("normalize_html", BoolOption()),
-		("save_info_json", BoolOption()),
+		("ui_autoSetFormat", BoolOption(cmd=False)),
 
-		("reverse_matchWord", BoolOption()),
-		("reverse_showRel", StrOption()),
-		("reverse_saveStep", IntOption()),
-		("reverse_minRel", FloatOption()),
-		("reverse_maxNum", IntOption()),
-		("reverse_includeDefs", BoolOption()),
+		("reverse_matchWord", BoolOption(cmd=False)),
+		("reverse_showRel", StrOption(cmd=False)),
+		("reverse_saveStep", IntOption(cmd=False)),
+		("reverse_minRel", FloatOption(cmd=False)),
+		("reverse_maxNum", IntOption(cmd=False)),
+		("reverse_includeDefs", BoolOption(cmd=False)),
 	])
 	def loadConfig(self, **options):
 		data = jsonToData(fread(rootConfJsonFile))

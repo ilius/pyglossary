@@ -66,6 +66,41 @@ def canRunGUI():
 	return True
 
 
+def registerOption(parser, key: str, option: "Option"):
+	if not option.cmd:
+		return
+	flag = option.cmdFlag
+	if not flag:
+		flag = key.replace('_', '-')
+
+	if option.typ != "bool":
+		parser.add_argument(
+			f"--{flag}",
+			dest=key,
+			default=None,
+			help=option.comment,
+		)
+		return
+
+	if option.comment:
+		parser.add_argument(
+			f"--{flag}",
+			dest=key,
+			action="store_true",
+			default=None,
+			help=option.comment,
+		)
+
+	if option.falseComment:
+		parser.add_argument(
+			f"--no-{flag}",
+			dest=key,
+			action="store_false",
+			default=None,
+			help=option.falseComment,
+		)
+
+
 def main():
 	parser = argparse.ArgumentParser(add_help=False)
 
@@ -78,18 +113,6 @@ def main():
 		choices=(0, 1, 2, 3, 4, 5),
 		required=False,
 		default=3,
-	)
-	parser.add_argument(
-		"--log-time",
-		dest="log_time",
-		action="store_true",
-		default=None,
-	)
-	parser.add_argument(
-		"--no-log-time",
-		dest="log_time",
-		action="store_false",
-		default=None,
 	)
 
 	parser.add_argument(
@@ -202,14 +225,6 @@ def main():
 	)
 
 	parser.add_argument(
-		"--no-alts",
-		dest="enable_alts",
-		action="store_false",
-		default=None,
-		help="disable alternates",
-	)
-
-	parser.add_argument(
 		"--no-progress-bar",
 		dest="progressbar",
 		action="store_false",
@@ -241,85 +256,6 @@ def main():
 		default=None,
 	)
 
-	parser.add_argument(
-		"--skip-resources",
-		dest="skip_resources",
-		action="store_true",
-		default=None,
-		help="skip resources (images, audio, etc)",
-	)
-	parser.add_argument(
-		"--utf8-check",
-		dest="utf8_check",
-		action="store_true",
-		default=None,
-	)
-	parser.add_argument(
-		"--no-utf8-check",
-		dest="utf8_check",
-		action="store_false",
-		default=None,
-	)
-	parser.add_argument(
-		"--lower",
-		dest="lower",
-		action="store_true",
-		default=None,
-		help="lowercase words before writing",
-	)
-	parser.add_argument(
-		"--no-lower",
-		dest="lower",
-		action="store_false",
-		default=None,
-		help="do not lowercase words before writing",
-	)
-	parser.add_argument(
-		"--remove-html",
-		dest="remove_html",
-		default=None,
-		help="remove given html tags (comma-separated) from definitions",
-	)
-	parser.add_argument(
-		"--remove-html-all",
-		dest="remove_html_all",
-		action="store_true",
-		default=None,
-		help="remove all html tags from definitions",
-	)
-	parser.add_argument(
-		"--normalize-html",
-		dest="normalize_html",
-		action="store_true",
-		default=None,
-		help="lowercase and normalize html tags in definitions",
-	)
-
-	parser.add_argument(
-		"--cleanup",
-		dest="cleanup",
-		action="store_true",
-		default=None,
-		help="cleanup cache or temporary files after convertion",
-	)
-	parser.add_argument(
-		"--no-cleanup",
-		dest="cleanup",
-		action="store_false",
-		default=None,
-		help="do not cleanup cache or temporary files after convertion",
-	)
-
-	# _______________________________
-
-	parser.add_argument(
-		"--info",
-		dest="save_info_json",
-		action="store_true",
-		default=None,
-		help="save glossary info as json file with .info extension",
-	)
-
 	# _______________________________
 
 	parser.add_argument(
@@ -340,6 +276,11 @@ def main():
 		default="",
 		nargs="?",
 	)
+
+	# _______________________________
+
+	for key, option in UIBase.configDefDict.items():
+		registerOption(parser, key, option)
 
 	# _______________________________
 
@@ -421,21 +362,6 @@ def main():
 		--read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
 	"""
 
-	configKeys = (
-		"log_time",
-		"cleanup",
-
-		"lower",
-		"utf8_check",
-		"enable_alts",
-		"skip_resources",
-
-		"remove_html",
-		"remove_html_all",
-		"normalize_html",
-		"save_info_json",
-	)
-
 	convertOptionsKeys = (
 		"direct",
 		"progressbar",
@@ -445,7 +371,9 @@ def main():
 	)
 
 	config = {}
-	for key in configKeys:
+	for key, option in UIBase.configDefDict.items():
+		if not option.cmd:
+			continue
 		value = getattr(args, key, None)
 		if value is None:
 			continue

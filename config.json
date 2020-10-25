@@ -2,8 +2,6 @@
 	"log_time": false,
 	"cleanup": true,
 
-	"ui_autoSetFormat": true,
-
 	"lower": false,
 	"utf8_check": true,
 	"enable_alts": true,
@@ -13,6 +11,8 @@
 	"remove_html_all": false,
 	"normalize_html": false,
 	"save_info_json": false,
+
+	"ui_autoSetFormat": true,
 
 	"reverse_matchWord": true,
 	"reverse_showRel": "Percent",
