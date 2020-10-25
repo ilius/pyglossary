@@ -360,6 +360,12 @@ def main():
 		--read-options 'fooList=[1, 2, 3]'
 		--read-options 'testOption=stringValue; enableFoo=True; fooList=[1, 2, 3]'
 		--read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
+
+		if a desired value contains ";", you can use --json-read-options or --json-write-options
+		flags instead, with json object as value, quoted for command line
+		for example:
+			'--json-write-options={"delimiter": ";"}'
+
 	"""
 
 	convertOptionsKeys = (
@@ -448,16 +454,6 @@ def main():
 	if convertOptions:
 		log.debug(f"convertOptions = {convertOptions}")
 
-	"""
-	ui_type: User interface type
-	Possible values:
-		cmd - Command line interface, this ui will automatically selected
-			if you give both input and output file
-		gtk - GTK interface
-		tk - Tkinter interface
-		qt - Qt interface
-		auto - Use the first available UI
-	"""
 	ui_type = args.ui_type
 
 	if ui_type == "auto":
