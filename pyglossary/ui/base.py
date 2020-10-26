@@ -21,7 +21,6 @@ from os.path import join, isfile
 import logging
 from collections import OrderedDict
 
-from pyglossary.json_utils import jsonToData
 from pyglossary.core import (
 	rootConfJsonFile,
 	confJsonFile,
@@ -118,6 +117,7 @@ class UIBase(object):
 	])
 
 	def loadConfig(self, **options):
+		from pyglossary.json_utils import jsonToData
 		data = jsonToData(fread(rootConfJsonFile))
 		if isfile(confJsonFile):
 			try:
@@ -147,6 +147,23 @@ class UIBase(object):
 		log.setTimeEnable(self.config["log_time"])
 
 		return True
+
+	def saveConfig(self):
+		from pyglossary.json_utils import dataToPrettyJson
+		config = OrderedDict()
+		for key, option in self.configDefDict.items():
+			if key not in self.config:
+				log.warning(f"saveConfig: missing key {key!r}")
+				continue
+			value = self.config[key]
+			if not option.validate(value):
+				log.error(f"saveConfig: invalid {key}={value!r}")
+				continue
+			config[key] = value
+		jsonStr = dataToPrettyJson(config)
+		with open(confJsonFile, mode="wt", encoding="utf-8") as _file:
+			_file.write(jsonStr)
+		log.info(f"saved {confJsonFile!r}")
 
 	def progressEnd(self):
 		self.progress(1.0)

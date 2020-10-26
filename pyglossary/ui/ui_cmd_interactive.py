@@ -44,6 +44,7 @@ from prompt_toolkit import prompt as promptLow
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion.word_completer import WordCompleter
+from prompt_toolkit.shortcuts import confirm
 
 from pyglossary.core import confDir
 from pyglossary.glossary import Glossary
@@ -733,5 +734,7 @@ class UI(ui_cmd.UI):
 			else:
 				self.printNonInteractiveCommand()
 				if succeed:
+					if self._configOptions and confirm("Save Config?"):
+						self.saveConfig()
 					return succeed
 			print("Press Control + C to exit")
