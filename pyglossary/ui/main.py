@@ -54,10 +54,10 @@ from pyglossary.ui.base import UIBase
 
 
 def canRunGUI():
-	if core.sysName == "Linux":
+	if core.sysName == "linux":
 		return bool(os.getenv("DISPLAY"))
 
-	if core.sysName == "Darwin":
+	if core.sysName == "darwin":
 		try:
 			import tkinter
 		except ModuleNotFoundError:

@@ -219,7 +219,10 @@ sys.excepthook = lambda *exc_info: log.critical(
 	)
 )
 
-sysName = platform.system()
+sysName = platform.system().lower()
+# platform.system() is in	["Linux", "Windows", "Darwin", "FreeBSD"]
+# sysName is in				["linux", "windows", "darwin', "freebsd"]
+
 
 # can set env var WARNINGS to:
 # "error", "ignore", "always", "default", "module", "once"
@@ -253,7 +256,7 @@ if os.sep == "/":  # Operating system is Unix-Like
 	user = os.getenv("USER")
 	tmpDir = "/tmp"
 	# os.name == "posix" # FIXME
-	if sysName == "Darwin":  # MacOS X
+	if sysName == "darwin":  # MacOS X
 		_libDir = join(homeDir, "Library")
 		confDir = join(_libDir, "Preferences", "PyGlossary")
 		# or maybe: join(_libDir, "PyGlossary")
