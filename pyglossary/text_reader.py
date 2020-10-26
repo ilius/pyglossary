@@ -1,7 +1,7 @@
 from pyglossary.file_utils import fileCountLines
 from pyglossary.entry_base import BaseEntry
 from pyglossary.entry import Entry, DataEntry
-from pyglossary.text_utils import (
+from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )

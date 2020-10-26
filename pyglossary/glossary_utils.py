@@ -23,7 +23,7 @@ from os.path import split, isdir, isfile
 import subprocess
 import logging
 
-from .text_utils import (
+from .compression import (
 	compressionOpenFunc,
 	stdCompressions,
 )
@@ -64,7 +64,7 @@ def compress(filename: str, compression: str) -> str:
 		with compressionOpenFunc(compression)(compFilename, mode="wb") as dest:
 			with open(filename, mode="rb") as source:
 				shutil.copyfileobj(source, dest)
-		return ""
+		return compFilename
 
 	if compression == "zip":
 		try:

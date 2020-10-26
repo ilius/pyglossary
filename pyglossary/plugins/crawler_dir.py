@@ -5,6 +5,8 @@ from os import makedirs, listdir
 from pyglossary.text_utils import (
 	escapeNTB,
 	splitByBarUnescapeNTB,
+)
+from pyglossary.compression import (
 	compressionOpenFunc,
 )
 

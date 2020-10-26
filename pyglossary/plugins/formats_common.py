@@ -31,6 +31,8 @@ from pyglossary.text_utils import (
 	toStr,
 	toBytes,
 	replaceStringTable,
+)
+from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )

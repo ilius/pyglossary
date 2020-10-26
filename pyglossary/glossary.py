@@ -54,10 +54,11 @@ from .langs import LangDict, Lang
 
 from .text_utils import (
 	fixUtf8,
+)
+from .compression import (
 	compressionOpen,
 	stdCompressions,
 )
-
 from .glossary_type import GlossaryType
 
 homePage = "https://github.com/ilius/pyglossary"
