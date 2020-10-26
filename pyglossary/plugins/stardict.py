@@ -31,6 +31,7 @@ optionsProp = {
 		values=["", "h", "m", "x", None],
 	),
 	"merge_syns": BoolOption(),
+	"xdxf_to_html": BoolOption(),
 }
 sortOnWrite = ALWAYS
 # sortKey is defined in Writer class
@@ -118,9 +119,17 @@ def verifySameTypeSequence(s: str) -> bool:
 
 
 class Reader(object):
+	_xdxf_to_html = True
+
 	def __init__(self, glos: GlossaryType):
+		from pyglossary.xdxf_transform import xdxf_to_html_transformer
 		self._glos = glos
 		self.clear()
+
+		self._xdxf_tr = None
+		if self._xdxf_to_html:
+			self._xdxf_tr = xdxf_to_html_transformer()
+
 		"""
 		indexData format
 		indexData[i] - i-th record in index file,
@@ -277,18 +286,21 @@ class Reader(object):
 
 			defis = []
 			defiFormats = []
-			for b_defi, defiFormatCode in defisData:
-				defis.append(b_defi.decode("utf-8"))
-				defiFormats.append(
-					{
-						"m": "m",
-						"t": "m",
-						"y": "m",
-						"g": "h",
-						"h": "h",
-						"x": "x",
-					}.get(chr(defiFormatCode), "")
-				)
+			for b_partDefi, defiFormatCode in defisData:
+				partDefi = b_partDefi.decode("utf-8")
+				partDefiFormat = {
+					"m": "m",
+					"t": "m",
+					"y": "m",
+					"g": "h",
+					"h": "h",
+					"x": "x",
+				}.get(chr(defiFormatCode), "")
+				if partDefiFormat == "x" and self._xdxf_tr:
+					partDefi = self._xdxf_tr(partDefi)
+					partDefiFormat = "h"
+				defis.append(partDefi)
+				defiFormats.append(partDefiFormat)
 
 			# FIXME
 			defiFormat = defiFormats[0]
@@ -305,7 +317,11 @@ class Reader(object):
 			else:
 				word = [word] + alts
 
-			defi = "\n<hr>\n".join(defis)
+			defiSep = "\n<hr>\n"
+			# if defiFormat == "x"
+			#	defiSep = FIXME
+			defi = defiSep.join(defis)
+
 			# FIXME:
 			# defi = defi.replace(' src="./res/', ' src="./')
 			yield self._glos.newEntry(word, defi, defiFormat=defiFormat)
