@@ -288,8 +288,6 @@ def main():
 
 	log = logging.getLogger("pyglossary")
 
-	defaultVerbosity = log.getVerbosity()
-
 	log.setVerbosity(args.verbosity)
 	log.addHandler(
 		core.StdLogHandler(noColor=args.noColor),

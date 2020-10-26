@@ -1254,6 +1254,7 @@ class BglReader(object):
 				fields.b_field_1a,
 				self.sourceEncoding,
 			)
+			log.info(f"------- u_field_1a = {fields.u_field_1a}")
 
 		self.processDefiStat(fields, b_defi, b_key)
 

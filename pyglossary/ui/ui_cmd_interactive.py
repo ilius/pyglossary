@@ -193,9 +193,6 @@ class UI(ui_cmd.UI):
 		os.chdir(newDir)
 		print(f"Changed current directory to: {newDir}")
 
-	def paramHistoryPath(self, name: str) -> str:
-		return join(histDir, f"param-{name}")
-
 	def askFile(self, kind: str, histName: str, varName: str, reading: bool):
 		from shlex import split as shlex_split
 		history = FileHistory(join(histDir, histName))
