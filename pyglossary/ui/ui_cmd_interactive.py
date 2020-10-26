@@ -125,6 +125,7 @@ class UI(ui_cmd.UI):
 			("!cd", self.fs_cd),
 		])
 		self._finalActions = OrderedDict([
+			("formats", self.askFormats),
 			("read-options", self.askReadOptions),
 			("write-options", self.askWriteOptions),
 			("reset-read-options", self.resetReadOptions),
@@ -584,6 +585,10 @@ class UI(ui_cmd.UI):
 				self._outputFormat = outputArgs[1]
 				return
 		self._outputFormat = self.askOutputFormat()
+
+	def askFormats(self):
+		self.checkInputFormat(forceAsk=True)
+		self.checkOutputFormat(forceAsk=True)
 
 	def askInputOutputAgain(self):
 		self.askInputFile()
