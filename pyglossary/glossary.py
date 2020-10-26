@@ -189,18 +189,13 @@ class Glossary(GlossaryType):
 		Reader = prop.readerClass
 		if Reader is not None:
 			options = prop.getReadOptions()
-			extraOptions = prop.getReadExtraOptions()
-
 			cls.formatsReadOptions[format] = options
 			cls.readFormats.append(format)
-
 			Reader.formatName = format
 
 		Writer = prop.writerClass
 		if Writer is not None:
 			options = prop.getWriteOptions()
-			extraOptions = prop.getWriteExtraOptions()
-
 			cls.formatsWriteOptions[format] = options
 			cls.writeFormats.append(format)
 
