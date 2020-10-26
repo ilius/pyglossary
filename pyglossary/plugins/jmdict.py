@@ -235,21 +235,6 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def strip_tag_p_elem(self, elem: "lxml.etree.Element") -> str:
-		text = self.tostring(elem)
-		text = self._p_pattern.sub("\\2", text)
-		return text
-
-	def strip_tag_p(self, elems: "List[lxml.etree.Element]") -> str:
-		lines = []
-		for elem in elems:
-			for line in self.strip_tag_p_elem(elem).split("\n"):
-				line = line.strip()
-				if not line:
-					continue
-				lines.append(line)
-		return "\n".join(lines)
-
 	def setCreationTime(self, header):
 		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)
 		if m is None:
