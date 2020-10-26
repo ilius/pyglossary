@@ -54,13 +54,15 @@ class MyLogger(logging.Logger):
 
 	def __init__(self, *args):
 		logging.Logger.__init__(self, *args)
+		self._verbosity = 3
+		self._timeEnable = False
 
 	def setVerbosity(self, verbosity: int) -> None:
 		self.setLevel(self.levelsByVerbosity[verbosity])
 		self._verbosity = verbosity
 
 	def getVerbosity(self) -> int:
-		return getattr(self, "_verbosity", 3)  # FIXME
+		return self._verbosity
 
 	def trace(self, msg: str):
 		self.log(TRACE, msg)
@@ -73,7 +75,7 @@ class MyLogger(logging.Logger):
 		return self.getVerbosity() >= 4
 
 	def newFormatter(self):
-		timeEnable = getattr(self, "_timeEnable", False)
+		timeEnable = self._timeEnable
 		if timeEnable:
 			fmt = "%(asctime)s [%(levelname)s] %(message)s"
 		else:
