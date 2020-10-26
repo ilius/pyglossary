@@ -267,14 +267,14 @@ class Reader(object):
 
 	def setPublisher(self, header):
 		elem = header.find(".//publisher", self.ns)
-		if elem is None:
+		if elem is None or not elem.text:
 			log.warn("did not find publisher")
 			return
 		self.setGlosInfo("publisher", elem.text)
 
 	def setCreationTime(self, header):
 		elem = header.find(".//publicationStmt/date", self.ns)
-		if elem is None:
+		if elem is None or not elem.text:
 			return
 		self.setGlosInfo("creationTime", elem.text)
 
@@ -312,7 +312,10 @@ class Reader(object):
 	def setMetadata(self, header):
 		self.setWordCount(header)
 		self.setGlosInfo("name", header.find(".//title", self.ns).text)
-		self.setGlosInfo("edition", header.find(".//edition", self.ns).text)
+
+		edition = header.find(".//edition", self.ns)
+		if edition and edition.text:
+			self.setGlosInfo("edition", edition.text)
 
 		self.setCopyright(header)
 		self.setPublisher(header)
