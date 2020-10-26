@@ -15,7 +15,6 @@ from collections import Counter
 from pyglossary.text_utils import (
 	uint32ToBytes,
 	uint32FromBytes,
-	runDictzip,
 )
 
 from formats_common import *
@@ -539,6 +538,7 @@ class Writer(object):
 					self._sametypesequence = "h"
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
+		from pyglossary.os_utils import runDictzip
 		if self._sametypesequence:
 			if self._merge_syns:
 				yield from self.writeCompactMergeSyns(self._sametypesequence)

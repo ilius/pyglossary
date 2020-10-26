@@ -34,6 +34,26 @@ class indir(object):
 		self.oldpwd = None
 
 
+def runDictzip(filename: str) -> None:
+	import subprocess
+	dictzipCmd = "/usr/bin/dictzip"  # TODO: save in user config
+	if not os.path.isfile(dictzipCmd):
+		return False
+	if filename[-4:] == ".ifo":
+		filename = filename[:-4]
+	(out, err) = subprocess.Popen(
+		[dictzipCmd, filename + ".dict"],
+		stdout=subprocess.PIPE
+	).communicate()
+#	out = p3[1].read()
+#	err = p3[2].read()
+#	log.debug(f"dictzip command: {dictzipCmd!r}")
+#	if err:
+#		log.error(f"dictzip error: {err.replace('\n', ' ')}")
+#	if out:
+#		log.error(f"dictzip error: {out.replace('\n', ' ')}")
+
+
 def my_url_show(link: str) -> None:
 	import subprocess
 	for path in (

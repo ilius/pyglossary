@@ -128,7 +128,7 @@ class Writer(object):
 		self._dictdb = None
 
 	def finish(self):
-		from pyglossary.text_utils import runDictzip
+		from pyglossary.os_utils import runDictzip
 		self._dictdb.finish(dosort=1)
 		if self._dictzip:
 			runDictzip(self._filename)
