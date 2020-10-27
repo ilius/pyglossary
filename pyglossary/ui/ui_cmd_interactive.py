@@ -506,7 +506,7 @@ class UI(ui_cmd.UI):
 		self._writeOptions = {}
 
 	def askConfigValue(self, configKey, option):
-		default = self._configOptions.get(configKey, "")
+		default = self.config.get(configKey, "")
 		if option.typ == "bool":
 			return str(checkbox_prompt(
 				message=f">>> Config: {configKey}",
@@ -563,6 +563,7 @@ class UI(ui_cmd.UI):
 					continue
 				print(f"Set config: {configKey} = {valueNew!r}")
 				self._configOptions[configKey] = valueNew
+				self.config[configKey] = valueNew
 				break
 
 	def showOptions(self):
@@ -762,6 +763,8 @@ class UI(ui_cmd.UI):
 
 		del inputFilename, outputFilename, inputFormat, outputFormat
 		del configOptions, readOptions, writeOptions, convertOptions
+
+		self.loadConfig(**self._configOptions)
 
 		if not self._inputFilename:
 			try:
