@@ -35,9 +35,10 @@ class indir(object):
 
 
 def runDictzip(filename: str) -> None:
+	import shutil
 	import subprocess
-	dictzipCmd = "/usr/bin/dictzip"  # TODO: save in user config
-	if not os.path.isfile(dictzipCmd):
+	dictzipCmd = shutil.which("dictzip")
+	if not dictzipCmd:
 		return False
 	if filename[-4:] == ".ifo":
 		filename = filename[:-4]
