@@ -116,6 +116,18 @@ class UIBase(object):
 		("reverse_includeDefs", BoolOption(cmd=False)),
 	])
 
+	def __init__(self, **kwargs):
+		self.config = {}
+
+	def progressInit(self, title):
+		pass
+
+	def progress(self, rat, text=""):
+		pass
+
+	def progressEnd(self):
+		self.progress(1.0)
+
 	def loadConfig(self, **options):
 		from pyglossary.json_utils import jsonToData
 		data = jsonToData(fread(rootConfJsonFile))
@@ -146,6 +158,7 @@ class UIBase(object):
 
 		log.setTimeEnable(self.config["log_time"])
 
+		log.debug("loaded config")
 		return True
 
 	def saveConfig(self):
@@ -164,6 +177,3 @@ class UIBase(object):
 		with open(confJsonFile, mode="wt", encoding="utf-8") as _file:
 			_file.write(jsonStr)
 		log.info(f"saved {confJsonFile!r}")
-
-	def progressEnd(self):
-		self.progress(1.0)

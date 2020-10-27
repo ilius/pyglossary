@@ -582,6 +582,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 	def __init__(self):
 		gtk.Dialog.__init__(self)
+		UIBase.__init__(self)
 		self.set_title("PyGlossary (Gtk3)")
 		self.resize(800, 800)
 		self.connect("delete-event", self.onDeleteEvent)

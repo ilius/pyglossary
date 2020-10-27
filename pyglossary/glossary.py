@@ -277,7 +277,7 @@ class Glossary(GlossaryType):
 	def __init__(
 		self,
 		info: "Optional[Dict[str, str]]" = None,
-		ui: "Any" = None,
+		ui: "Optional[UIBase]" = None,
 	) -> None:
 		"""
 		info:	OrderedDict or dict instance, or None

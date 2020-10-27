@@ -629,7 +629,7 @@ class FormatOptionsButton(ttk.Button):
 class UI(tix.Frame, UIBase):
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
-	def __init__(self, path=""):
+	def __init__(self):
 		rootWin = self.rootWin = tix.Tk()
 		# a hack that hides the window until we move it to the center of screen
 		if os.sep == "\\":  # Windows
@@ -637,6 +637,7 @@ class UI(tix.Frame, UIBase):
 		else:  # Linux
 			rootWin.withdraw()
 		tix.Frame.__init__(self, rootWin)
+		UIBase.__init__(self)
 		rootWin.title("PyGlossary (Tkinter)")
 		rootWin.resizable(True, False)
 		########
@@ -646,7 +647,6 @@ class UI(tix.Frame, UIBase):
 		self.pack(fill="x")
 		# rootWin.bind("<Configure>", self.resized)
 		######################
-		self.config = {}
 		self.glos = Glossary(ui=self)
 		self._convertOptions = {}
 		self.pathI = ""
@@ -1010,11 +1010,6 @@ class UI(tix.Frame, UIBase):
 			rootWin.attributes('-alpha', 1.0)
 		else:  # Linux
 			rootWin.deiconify()
-		if path:
-			self.entryInputConvert.insert(0, path)
-			self.inputEntryChanged()
-			self.outputEntryChanged()
-			self.load()
 
 	def verbosityChanged(self, index, value, op):
 		log.setVerbosity(

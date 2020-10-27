@@ -65,12 +65,12 @@ class QVirtualFile(object):
 class UI(qt.QWidget, UIBase):
 	def __init__(self):
 		qt.QWidget.__init__(self)
+		UIBase.__init__(self)
 		self.setWindowTitle('PyGlossary (Qt)')
 		self.setWindowIcon(qt.QIcon(join(uiDir, 'pyglossary.png')))
 		######################
 		self.running = False
 		self.glos = Glossary(ui=self)
-		self.config = {}
 		self.pathI = ''
 		self.pathO = ''
 		self.fcd_dir = join(homeDir, 'Desktop')

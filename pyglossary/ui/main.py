@@ -463,7 +463,9 @@ def main():
 		if args.reverse:
 			log.error("--reverse does not work with --ui=none")
 			sys.exit(1)
-		glos = Glossary()
+		ui = UIBase()
+		ui.loadConfig(**config)
+		glos = Glossary(ui=ui)
 		glos.convert(
 			args.inputFilename,
 			inputFormat=args.inputFormat,
