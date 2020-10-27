@@ -6,4 +6,5 @@
 /pyglossary.egg-info
 /.mypy_cache/
 /plugins
+/ui
 vulture.*
