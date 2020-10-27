@@ -40,15 +40,73 @@ import json
 
 #import atexit
 
+from pyglossary.core import confDir
+from pyglossary.glossary import Glossary
+from pyglossary.ui import ui_cmd
+
+
 from prompt_toolkit import prompt as promptLow
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion.word_completer import WordCompleter
-from prompt_toolkit.shortcuts import confirm
+from prompt_toolkit.shortcuts import confirm, PromptSession
+from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.keys import Keys
 
-from pyglossary.core import confDir
-from pyglossary.glossary import Glossary
-from pyglossary.ui import ui_cmd
+
+class MiniCheckBoxPrompt(object):
+	def __init__(
+		self,
+		message: str = "",
+		fmt: str = "{message}: {check}",
+		value: bool = False,
+	):
+		self.message = message
+		self.fmt = fmt
+		self.value = value
+
+	def formatMessage(self):
+		return self.fmt.format(
+			check="[x]" if self.value else "[ ]",
+			message=self.message,
+		)
+
+	def __pt_formatted_text__(self):
+		return [("", self.formatMessage())]
+
+
+def checkbox_prompt(
+	message: str,
+	default: bool,
+) -> PromptSession[bool]:
+	"""
+	Create a `PromptSession` object for the 'confirm' function.
+	"""
+	bindings = KeyBindings()
+
+	check = MiniCheckBoxPrompt(message=message, value=default)
+
+	@bindings.add(" ")
+	def space(event: "E") -> None:
+		check.value = not check.value
+		# cursor_pos = check.formatMessage().find("[") + 1
+		# cur_cursor_pos = session.default_buffer.cursor_position
+		# print(f"cur_cursor_pos={cur_cursor_pos}, cursor_pos={cursor_pos}")
+		# session.default_buffer.cursor_position = cursor_pos
+
+	@bindings.add(Keys.Any)
+	def _(event: "E") -> None:
+		" Disallow inserting other text. "
+		pass
+
+	complete_message = check
+	session: PromptSession[bool] = PromptSession(
+		complete_message,
+		key_bindings=bindings
+	)
+	session.prompt()
+	return check.value
+
 
 log = logging.getLogger("pyglossary")
 
@@ -447,6 +505,21 @@ class UI(ui_cmd.UI):
 	def resetWriteOptions(self):
 		self._writeOptions = {}
 
+	def askConfigValue(self, configKey, option):
+		default = self._configOptions.get(configKey, "")
+		if option.typ == "bool":
+			return str(checkbox_prompt(
+				message=f">>> Config: {configKey}",
+				default=bool(default),
+			))
+		return prompt(
+			f">>> Config: {configKey} = ",
+			history=FileHistory(join(histDir, f"config-value-{configKey}")),
+			auto_suggest=AutoSuggestFromHistory(),
+			default=str(default),
+			completer=self.getOptionValueCompleter(option),
+		)
+
 	def askConfig(self):
 		configKeys = list(sorted(self.configDefDict.keys()))
 		history = FileHistory(join(histDir, f"config-key"))
@@ -457,6 +530,7 @@ class UI(ui_cmd.UI):
 			match_middle=True,
 			sentence=True,
 		)
+
 		while True:
 			try:
 				configKey = prompt(
@@ -470,16 +544,9 @@ class UI(ui_cmd.UI):
 			if not configKey:
 				return
 			option = self.configDefDict[configKey]
-			valueCompleter = self.getOptionValueCompleter(option)
 			while True:
 				try:
-					value = prompt(
-						f">>> Config: {configKey} = ",
-						history=FileHistory(join(histDir, f"config-value-{configKey}")),
-						auto_suggest=AutoSuggestFromHistory(),
-						default=str(self._configOptions.get(configKey, "")),
-						completer=valueCompleter,
-					)
+					value = self.askConfigValue(configKey, option)
 				except (KeyboardInterrupt, EOFError):
 					break
 				if value == "":
