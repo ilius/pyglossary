@@ -40,10 +40,8 @@ def runDictzip(filename: str) -> None:
 	dictzipCmd = shutil.which("dictzip")
 	if not dictzipCmd:
 		return False
-	if filename[-4:] == ".ifo":
-		filename = filename[:-4]
 	(out, err) = subprocess.Popen(
-		[dictzipCmd, filename + ".dict"],
+		[dictzipCmd, filename],
 		stdout=subprocess.PIPE
 	).communicate()
 #	out = p3[1].read()

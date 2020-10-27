@@ -131,7 +131,7 @@ class Writer(object):
 		from pyglossary.os_utils import runDictzip
 		self._dictdb.finish(dosort=1)
 		if self._dictzip:
-			runDictzip(self._filename)
+			runDictzip(f"{self._filename}.dict")
 		if self._install:
 			installToDictd(
 				self._filename,

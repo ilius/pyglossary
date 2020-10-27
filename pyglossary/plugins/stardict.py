@@ -550,7 +550,7 @@ class Writer(object):
 			else:
 				yield from self.writeGeneral()
 		if self._dictzip:
-			runDictzip(self._filename)
+			runDictzip(f"{self._filename}.dict")
 
 	def fixDefi(self, defi: str, defiFormat: str) -> str:
 		# for StarDict 3.0:
