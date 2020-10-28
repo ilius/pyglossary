@@ -25,6 +25,7 @@ from pyglossary.flags import *
 from pyglossary import core
 from pyglossary.core import (
 	pip,
+	cacheDir,
 )
 from pyglossary.option import *
 from pyglossary.text_utils import (

@@ -866,6 +866,8 @@ class Writer(object):
 			prefix='{0}-'.format(os.path.basename(filename)),
 			dir=workdir)
 
+		print(f"slob: workdir: {workdir}")
+
 		self.f_ref_positions = self._wbfopen('ref-positions')
 		self.f_store_positions = self._wbfopen('store-positions')
 		self.f_refs = self._wbfopen('refs')

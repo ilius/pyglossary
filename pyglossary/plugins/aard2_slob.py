@@ -173,6 +173,7 @@ class Writer(object):
 		self._slobWriter = slobWriter = slob.create(
 			filename,
 			observer=self._slobObserver,
+			workdir=cacheDir,
 			**kwargs
 		)
 		slobWriter.tag("label", self._glos.getInfo("name"))
