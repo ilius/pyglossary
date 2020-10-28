@@ -3,6 +3,7 @@ import sys
 from os.path import dirname
 import unittest
 import random
+import unicodedata
 from pyglossary.plugin_lib.slob import *
 
 print(dirname(dirname(__file__)))

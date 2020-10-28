@@ -1,17 +1,11 @@
 #pylint: disable=C0111,C0103,C0302,R0903,R0904,R0914,R0201
-import argparse
-import array
-import collections
 import encodings
 import functools
 import io
 import os
 import pickle
-import random
 import sys
 import tempfile
-import unicodedata
-import unittest
 import warnings
 
 from abc import abstractmethod
@@ -27,6 +21,7 @@ from types import MappingProxyType
 from uuid import uuid4, UUID
 
 import icu
+from icu import Locale, Collator, UCollAttribute, UCollAttributeValue
 
 DEFAULT_COMPRESSION = 'lzma2'
 
@@ -37,13 +32,15 @@ Compression = namedtuple('Compression', 'compress decompress')
 
 Ref = namedtuple('Ref', 'key bin_index item_index fragment')
 
-Header = namedtuple('Header',
-					'magic uuid encoding '
-					'compression tags content_types '
-					'blob_count '
-					'store_offset '
-					'refs_offset '
-					'size')
+Header = namedtuple(
+	'Header',
+	'magic uuid encoding '
+	'compression tags content_types '
+	'blob_count '
+	'store_offset '
+	'refs_offset '
+	'size',
+)
 
 U_CHAR = '>B'
 U_CHAR_SIZE = calcsize(U_CHAR)
@@ -55,16 +52,15 @@ U_LONG_LONG = '>Q'
 U_LONG_LONG_SIZE = calcsize(U_LONG_LONG)
 
 
-
 def calcmax(len_size_spec):
-	return 2**(calcsize(len_size_spec)*8) - 1
+	return 2 ** (calcsize(len_size_spec) * 8) - 1
+
 
 MAX_TEXT_LEN = calcmax(U_SHORT)
 MAX_TINY_TEXT_LEN = calcmax(U_CHAR)
 MAX_LARGE_BYTE_STRING_LEN = calcmax(U_INT)
 MAX_BIN_ITEM_COUNT = calcmax(U_SHORT)
 
-from icu import Locale, Collator, UCollAttribute, UCollAttributeValue
 
 PRIMARY = Collator.PRIMARY
 SECONDARY = Collator.SECONDARY
@@ -74,7 +70,9 @@ IDENTICAL = Collator.IDENTICAL
 
 
 def init_compressions():
-	ident = lambda x: x
+	def ident(x):
+		return x
+
 	compressions = {'': Compression(ident, ident)}
 	for name in ('bz2', 'zlib'):
 		try:
@@ -91,14 +89,20 @@ def init_compressions():
 		warnings.warn('lzma is not available')
 	else:
 		filters = [{'id': lzma.FILTER_LZMA2}]
-		compress = lambda s: lzma.compress(s,
-										   format=lzma.FORMAT_RAW,
-										   filters=filters)
-		decompress = lambda s: lzma.decompress(s,
-											   format=lzma.FORMAT_RAW,
-											   filters=filters)
-		compressions['lzma2'] = Compression(compress, decompress)
+		compressions['lzma2'] = Compression(
+			lambda s: lzma.compress(
+				s,
+				format=lzma.FORMAT_RAW,
+				filters=filters,
+			),
+			lambda s: lzma.decompress(
+				s,
+				format=lzma.FORMAT_RAW,
+				filters=filters,
+			),
+		)
 	return compressions
+
 
 COMPRESSIONS = init_compressions()
 
@@ -156,8 +160,10 @@ class TagNotFound(Exception):
 def sortkey(strength, maxlength=None):
 	c = Collator.createInstance(Locale(''))
 	c.setStrength(strength)
-	c.setAttribute(UCollAttribute.ALTERNATE_HANDLING,
-				   UCollAttributeValue.SHIFTED)
+	c.setAttribute(
+		UCollAttribute.ALTERNATE_HANDLING,
+		UCollAttributeValue.SHIFTED,
+	)
 	if maxlength is None:
 		return c.getSortKey
 	else:
@@ -167,10 +173,12 @@ def sortkey(strength, maxlength=None):
 def sortkey_length(strength, word):
 	c = Collator.createInstance(Locale(''))
 	c.setStrength(strength)
-	c.setAttribute(UCollAttribute.ALTERNATE_HANDLING,
-				   UCollAttributeValue.SHIFTED)
+	c.setAttribute(
+		UCollAttribute.ALTERNATE_HANDLING,
+		UCollAttributeValue.SHIFTED,
+	)
 	coll_key = c.getSortKey(word)
-	return len(coll_key) - 1 #subtract 1 for ending \x00 byte
+	return len(coll_key) - 1  # subtract 1 for ending \x00 byte
 
 
 class MultiFileReader(io.BufferedIOBase):
@@ -188,7 +196,7 @@ class MultiFileReader(io.BufferedIOBase):
 		offset = 0
 		for name in filenames:
 			size = os.stat(name).st_size
-			ranges.append(range(offset, offset+size))
+			ranges.append(range(offset, offset + size))
 			files.append(fopen(name, 'rb'))
 			offset += size
 		self.size = offset
@@ -198,7 +206,7 @@ class MultiFileReader(io.BufferedIOBase):
 		self._offset = -1
 		self.seek(0)
 
-	def  __enter__(self):
+	def __enter__(self):
 		return self
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
@@ -313,9 +321,14 @@ class KeydItemDict(object):
 
 
 class Blob(object):
-
-	def __init__(self, content_id, key, fragment,
-				 read_content_type_func, read_func):
+	def __init__(
+		self,
+		content_id,
+		key,
+		fragment,
+		read_content_type_func,
+		read_func,
+	):
 		self._content_id = content_id
 		self._key = key
 		self._fragment = fragment
@@ -346,8 +359,7 @@ class Blob(object):
 		return self.key
 
 	def __repr__(self):
-		return ('<{0.__class__.__module__}.{0.__class__.__name__} '
-				'{0.key}>'.format(self))
+		return f'<{self.__class__.__module__}.{self.__class__.__name__} {self.key}>'
 
 
 def read_byte_string(f, len_spec):
@@ -377,7 +389,7 @@ class StructReader:
 		return unpack(U_SHORT, self._file.read(U_SHORT_SIZE))[0]
 
 	def _read_text(self, len_spec):
-		max_len = 2**(8*calcsize(len_spec)) - 1
+		max_len = 2 ** (8 * calcsize(len_spec)) - 1
 		byte_string = read_byte_string(self._file, len_spec)
 		if len(byte_string) == max_len:
 			terminator = byte_string.find(0)
@@ -421,9 +433,10 @@ class StructWriter:
 		max_length = calcmax(len_size_spec)
 		if length > max_length:
 			raise ValueError("Text is too long for size spec %s" % len_size_spec)
-		self._file.write(
-			pack(len_size_spec,
-				 pad_to_length if pad_to_length else length))
+		self._file.write(pack(
+			len_size_spec,
+			pad_to_length if pad_to_length else length
+		))
 		self._file.write(text_bytes)
 		if pad_to_length:
 			for _ in range(pad_to_length - length):
@@ -431,9 +444,12 @@ class StructWriter:
 
 	def write_tiny_text(self, text, encoding=None, editable=False):
 		pad_to_length = 255 if editable else None
-		self._write_text(text, U_CHAR,
-						 encoding=encoding,
-						 pad_to_length=pad_to_length)
+		self._write_text(
+			text,
+			U_CHAR,
+			encoding=encoding,
+			pad_to_length=pad_to_length,
+		)
 
 	def write_text(self, text, encoding=None):
 		self._write_text(text, U_SHORT, encoding=encoding)
@@ -476,7 +492,7 @@ def read_header(f):
 
 	f = StructReader(f, encoding)
 	compression = f.read_tiny_text()
-	if not compression in COMPRESSIONS:
+	if compression not in COMPRESSIONS:
 		raise UnknownCompression(compression)
 
 	def read_tags():
@@ -503,16 +519,18 @@ def read_header(f):
 	size = f.read_long()
 	refs_offset = f.tell()
 
-	return Header(magic=magic,
-				  uuid=uuid,
-				  encoding=encoding,
-				  compression=compression,
-				  tags=MappingProxyType(tags),
-				  content_types=content_types,
-				  blob_count=blob_count,
-				  store_offset=store_offset,
-				  refs_offset=refs_offset,
-				  size=size)
+	return Header(
+		magic=magic,
+		uuid=uuid,
+		encoding=encoding,
+		compression=compression,
+		tags=MappingProxyType(tags),
+		content_types=content_types,
+		blob_count=blob_count,
+		store_offset=store_offset,
+		refs_offset=refs_offset,
+		size=size,
+	)
 
 
 def meld_ints(a, b):
@@ -540,17 +558,21 @@ class Slob(Sequence):
 			self._f.close()
 			raise
 
-		self._refs = RefList(self._f,
-							 self._header.encoding,
-							 offset=self._header.refs_offset)
+		self._refs = RefList(
+			self._f,
+			self._header.encoding,
+			offset=self._header.refs_offset,
+		)
 
 		self._g = MultiFileReader(file_or_filenames)
-		self._store = Store(self._g,
-							self._header.store_offset,
-							COMPRESSIONS[self._header.compression].decompress,
-							self._header.content_types)
+		self._store = Store(
+			self._g,
+			self._header.store_offset,
+			COMPRESSIONS[self._header.compression].decompress,
+			self._header.content_types,
+		)
 
-	def  __enter__(self):
+	def __enter__(self):
 		return self
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
@@ -595,17 +617,24 @@ class Slob(Sequence):
 			return self._store.content_type(ref.bin_index, ref.item_index)
 
 		content_id = meld_ints(ref.bin_index, ref.item_index)
-		return Blob(content_id, ref.key, ref.fragment,
-					read_content_type_func, read_func)
+		return Blob(
+			content_id,
+			ref.key,
+			ref.fragment,
+			read_content_type_func,
+			read_func,
+		)
 
 	def get(self, blob_id):
 		bin_index, bin_item_index = unmeld_ints(blob_id)
 		return self._store.get(bin_index, bin_item_index)
 
 	@lru_cache(maxsize=None)
-	def as_dict(self,
-				strength=TERTIARY,
-				maxlength=None):
+	def as_dict(
+		self,
+		strength=TERTIARY,
+		maxlength=None,
+	):
 		return KeydItemDict(self, strength, maxlength=maxlength)
 
 	def close(self):
@@ -668,10 +697,14 @@ class BinMemWriter:
 
 
 class ItemList(Sequence):
-
-	def __init__(self, file_, offset,
-				 count_or_spec, pos_spec,
-				 cache_size=None):
+	def __init__(
+		self,
+		file_,
+		offset,
+		count_or_spec,
+		pos_spec,
+		cache_size=None,
+	):
 		self.lock = RLock()
 		self._file = file_
 		file_.seek(offset)
@@ -692,7 +725,7 @@ class ItemList(Sequence):
 
 	def pos(self, i):
 		with self.lock:
-			self._file.seek(self.pos_offset + self.pos_size*i)
+			self._file.seek(self.pos_offset + self.pos_size * i)
 			return unpack(self.pos_spec, self._file.read(self.pos_size))[0]
 
 	def read(self, pos):
@@ -713,37 +746,43 @@ class ItemList(Sequence):
 class RefList(ItemList):
 
 	def __init__(self, f, encoding, offset=0, count=None):
-		super().__init__(StructReader(f, encoding),
-						 offset,
-						 U_INT if count is None else count,
-						 U_LONG_LONG,
-						 cache_size=512)
-
+		super().__init__(
+			StructReader(f, encoding),
+			offset,
+			U_INT if count is None else count,
+			U_LONG_LONG,
+			cache_size=512,
+		)
 
 	def _read_item(self):
 		key = self._file.read_text()
 		bin_index = self._file.read_int()
 		item_index = self._file.read_short()
 		fragment = self._file.read_tiny_text()
-		return Ref(key=key,
-				   bin_index=bin_index,
-				   item_index=item_index,
-				   fragment=fragment)
+		return Ref(
+			key=key,
+			bin_index=bin_index,
+			item_index=item_index,
+			fragment=fragment,
+		)
 
 	@lru_cache(maxsize=None)
-	def as_dict(self,
-				strength=TERTIARY,
-				maxlength=None):
+	def as_dict(
+		self,
+		strength=TERTIARY,
+		maxlength=None,
+	):
 		return KeydItemDict(self, strength, maxlength=maxlength)
 
 
 class Bin(ItemList):
-
 	def __init__(self, count, bin_bytes):
-		super().__init__(StructReader(io.BytesIO(bin_bytes)),
-						 0,
-						 count,
-						 U_INT)
+		super().__init__(
+			StructReader(io.BytesIO(bin_bytes)),
+			0,
+			count,
+			U_INT,
+		)
 
 	def _read_item(self):
 		content_len = self._file.read_int()
@@ -757,25 +796,29 @@ StoreItem = namedtuple('StoreItem', 'content_type_ids compressed_content')
 class Store(ItemList):
 
 	def __init__(self, file_, offset, decompress, content_types):
-		super().__init__(StructReader(file_),
-						 offset,
-						 U_INT,
-						 U_LONG_LONG,
-						 cache_size=32)
+		super().__init__(
+			StructReader(file_),
+			offset,
+			U_INT,
+			U_LONG_LONG,
+			cache_size=32,
+		)
 		self.decompress = decompress
 		self.content_types = content_types
 
 	def _read_item(self):
 		bin_item_count = self._file.read_int()
-		packed_content_type_ids = self._file.read(bin_item_count*U_CHAR_SIZE)
+		packed_content_type_ids = self._file.read(bin_item_count * U_CHAR_SIZE)
 		content_type_ids = []
 		for i in range(bin_item_count):
-			content_type_id = unpack(U_CHAR, packed_content_type_ids[i:i+1])[0]
+			content_type_id = unpack(U_CHAR, packed_content_type_ids[i:i + 1])[0]
 			content_type_ids.append(content_type_id)
 		content_length = self._file.read_int()
 		content = self._file.read(content_length)
-		return StoreItem(content_type_ids=content_type_ids,
-						 compressed_content=content)
+		return StoreItem(
+			content_type_ids=content_type_ids,
+			compressed_content=content,
+		)
 
 	def _content_type(self, bin_index, item_index):
 		store_item = self[bin_index]
@@ -838,14 +881,16 @@ class KeyTooLongException(Exception):
 
 class Writer(object):
 
-	def __init__(self,
-				 filename,
-				 workdir=None,
-				 encoding=UTF8,
-				 compression=DEFAULT_COMPRESSION,
-				 min_bin_size=512*1024,
-				 max_redirects=5,
-				 observer=None):
+	def __init__(
+		self,
+		filename,
+		workdir=None,
+		encoding=UTF8,
+		compression=DEFAULT_COMPRESSION,
+		min_bin_size=512 * 1024,
+		max_redirects=5,
+		observer=None,
+	):
 		self.filename = filename
 		self.observer = observer
 		if os.path.exists(self.filename):
@@ -876,14 +921,16 @@ class Writer(object):
 		self.max_redirects = max_redirects
 		if max_redirects:
 			self.aliases_path = os.path.join(tmpdir.name, 'aliases')
-			self.f_aliases = Writer(self.aliases_path,
-									workdir=tmpdir.name,
-									max_redirects=0,
-									compression=None)
+			self.f_aliases = Writer(
+				self.aliases_path,
+				workdir=tmpdir.name,
+				max_redirects=0,
+				compression=None,
+			)
 
 		if compression is None:
 			compression = ''
-		if not compression in COMPRESSIONS:
+		if compression not in COMPRESSIONS:
 			raise UnknownCompression(compression)
 		else:
 			self.compress = COMPRESSIONS[compression].compress
@@ -928,8 +975,7 @@ class Writer(object):
 			fragment = ''
 		else:
 			actual_key, fragment = key
-		if (len(actual_key) > MAX_TEXT_LEN or
-			len(fragment) > MAX_TINY_TEXT_LEN):
+		if len(actual_key) > MAX_TEXT_LEN or len(fragment) > MAX_TINY_TEXT_LEN:
 			raise KeyTooLongException(key)
 		return actual_key, fragment
 
@@ -971,8 +1017,10 @@ class Writer(object):
 		for actual_key, fragment in actual_keys:
 			self._write_ref(actual_key, bin_index, bin_item_index, fragment)
 
-		if (self.current_bin.current_offset > self.min_bin_size or
-			len(self.current_bin) == MAX_BIN_ITEM_COUNT):
+		if (
+			self.current_bin.current_offset > self.min_bin_size or
+			len(self.current_bin) == MAX_BIN_ITEM_COUNT
+		):
 			self._write_current_bin()
 
 	def add_alias(self, key, target_key):
@@ -1016,8 +1064,10 @@ class Writer(object):
 		with MultiFileReader(self.f_ref_positions.name, self.f_refs.name) as f:
 			ref_list = RefList(f, self.encoding, count=self.ref_count)
 			sortkey_func = sortkey(IDENTICAL)
-			for i in sorted(range(len(ref_list)),
-							key=lambda j: sortkey_func(ref_list[j].key)):
+			for i in sorted(
+				range(len(ref_list)),
+				key=lambda j: sortkey_func(ref_list[j].key)
+			):
 				ref_pos = ref_list.pos(i)
 				f_ref_positions_sorted.write_long(ref_pos)
 		f_ref_positions_sorted.close()
@@ -1032,16 +1082,18 @@ class Writer(object):
 		self._fire_event('begin_resolve_aliases')
 		self.f_aliases.finalize()
 		with MultiFileReader(self.f_ref_positions.name,
-							 self.f_refs.name) as f_ref_list:
+							self.f_refs.name) as f_ref_list:
 			ref_list = RefList(f_ref_list, self.encoding, count=self.ref_count)
 			ref_dict = ref_list.as_dict()
 			with open(self.aliases_path) as r:
 				aliases = r.as_dict()
 				path = os.path.join(self.tmpdir.name, 'resolved-aliases')
-				with create(path,
-							workdir=self.tmpdir.name,
-							max_redirects=0,
-							compression=None) as alias_writer:
+				with create(
+					path,
+					workdir=self.tmpdir.name,
+					max_redirects=0,
+					compression=None,
+				) as alias_writer:
 
 					def read_key_frag(item, default_fragment):
 						key_frag = pickle.loads(item.content)
@@ -1074,11 +1126,13 @@ class Writer(object):
 							self._fire_event('alias_target_not_found', to_key)
 						else:
 							for key in keys:
-								ref = Ref(key=key,
-										  bin_index=target_ref.bin_index,
-										  item_index=target_ref.item_index,
-										  #last fragment in the chain wins
-										  fragment=target_ref.fragment or fragment)
+								ref = Ref(
+									key=key,
+									bin_index=target_ref.bin_index,
+									item_index=target_ref.item_index,
+									#last fragment in the chain wins
+									fragment=target_ref.fragment or fragment,
+								)
 								alias_writer.add(pickle.dumps(ref), key)
 
 		with open(path) as resolved_aliases_reader:
@@ -1087,31 +1141,36 @@ class Writer(object):
 				ref = pickle.loads(item.content)
 				if ref.key == previous_key:
 					continue
-				self._write_ref(ref.key, ref.bin_index,
-								ref.item_index, ref.fragment)
+				self._write_ref(
+					ref.key,
+					ref.bin_index,
+					ref.item_index,
+					ref.fragment,
+				)
 				previous_key = ref.key
 		self._sort()
 		self._fire_event('end_resolve_aliases')
 
-
 	def finalize(self):
 		self._fire_event('begin_finalize')
-		if not self.current_bin is None:
+		if self.current_bin is not None:
 			self._write_current_bin()
 
 		self._sort()
 		if self.max_redirects:
 			self._resolve_aliases()
 
-		files = (self.f_ref_positions,
-				 self.f_refs,
-				 self.f_store_positions,
-				 self.f_store)
+		files = (
+			self.f_ref_positions,
+			self.f_refs,
+			self.f_store_positions,
+			self.f_store,
+		)
 
 		for f in files:
 			f.close()
 
-		buf_size = 10*1024*1024
+		buf_size = 10 * 1024 * 1024
 
 		with fopen(self.filename, mode='wb') as output_file:
 			out = StructWriter(output_file, self.encoding)
@@ -1136,18 +1195,22 @@ class Writer(object):
 			write_content_types(self.content_types, out)
 
 			out.write_int(self.blob_count)
-			store_offset = (out.tell() +
-									U_LONG_LONG_SIZE + # this value
-									U_LONG_LONG_SIZE + # file size value
-									U_INT_SIZE + # ref count value
-									os.stat(self.f_ref_positions.name).st_size +
-									os.stat(self.f_refs.name).st_size)
+			store_offset = (
+				out.tell() +
+				U_LONG_LONG_SIZE +  # this value
+				U_LONG_LONG_SIZE +  # file size value
+				U_INT_SIZE +  # ref count value
+				os.stat(self.f_ref_positions.name).st_size +
+				os.stat(self.f_refs.name).st_size,
+			)
 			out.write_long(store_offset)
 			out.flush()
 
-			file_size = (out.tell() + # bytes written so far
-						 U_LONG_LONG_SIZE + # file size value
-						 2*U_INT_SIZE) # ref count and bin count
+			file_size = (
+				out.tell() +  # bytes written so far
+				U_LONG_LONG_SIZE +  # file size value
+				2 * U_INT_SIZE,  # ref count and bin count
+			)
 			file_size += sum((os.stat(f.name).st_size for f in files))
 			out.write_long(file_size)
 
@@ -1172,28 +1235,26 @@ class Writer(object):
 			mv(self.f_store_positions, out)
 			mv(self.f_store, out)
 
-
 		self.tmpdir.cleanup()
 		self._fire_event('end_finalize')
-
 
 	def size_header(self):
 		size = 0
 		size += len(MAGIC)
-		size += 16 # uuid bytes
+		size += 16  # uuid bytes
 		size += U_CHAR_SIZE + len(self.encoding.encode(UTF8))
 		size += U_CHAR_SIZE + len(self.compression.encode(self.encoding))
 
-		size += U_CHAR_SIZE # tag length
-		size += U_CHAR_SIZE # content types count
+		size += U_CHAR_SIZE  # tag length
+		size += U_CHAR_SIZE  # content types count
 
-		#tags and content types themselves counted elsewhere
+		# tags and content types themselves counted elsewhere
 
-		size += U_INT_SIZE #blob count
-		size += U_LONG_LONG_SIZE #store offset
-		size += U_LONG_LONG_SIZE # file size
-		size += U_INT_SIZE # ref count
-		size += U_INT_SIZE # bin count
+		size += U_INT_SIZE  # blob count
+		size += U_LONG_LONG_SIZE  # store offset
+		size += U_LONG_LONG_SIZE  # file size
+		size += U_INT_SIZE  # ref count
+		size += U_INT_SIZE  # bin count
 
 		return size
 
@@ -1211,13 +1272,15 @@ class Writer(object):
 		return size
 
 	def size_data(self):
-		files = (self.f_ref_positions,
-				 self.f_refs,
-				 self.f_store_positions,
-				 self.f_store)
+		files = (
+			self.f_ref_positions,
+			self.f_refs,
+			self.f_store_positions,
+			self.f_store,
+		)
 		return sum((os.stat(f.name).st_size for f in files))
 
-	def  __enter__(self):
+	def __enter__(self):
 		return self
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
