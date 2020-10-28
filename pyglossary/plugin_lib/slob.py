@@ -1,4 +1,4 @@
-#pylint: disable=C0111,C0103,C0302,R0903,R0904,R0914,R0201
+# pylint: disable=C0111,C0103,C0302,R0903,R0904,R0914,R0201
 import encodings
 import functools
 import io
@@ -896,7 +896,7 @@ class Writer(object):
 		if os.path.exists(self.filename):
 			raise SystemExit('File %r already exists' % self.filename)
 
-		#make sure we can write
+		# make sure we can write
 		with fopen(self.filename, 'wb'):
 			pass
 
@@ -1109,7 +1109,7 @@ class Writer(object):
 						to_key, fragment = read_key_frag(item, item.fragment)
 						count = 0
 						while count <= self.max_redirects:
-							#is target key itself a redirect?
+							# is target key itself a redirect?
 							try:
 								orig_to_key = to_key
 								to_key, fragment = read_key_frag(
@@ -1130,7 +1130,7 @@ class Writer(object):
 									key=key,
 									bin_index=target_ref.bin_index,
 									item_index=target_ref.item_index,
-									#last fragment in the chain wins
+									# last fragment in the chain wins
 									fragment=target_ref.fragment or fragment,
 								)
 								alias_writer.add(pickle.dumps(ref), key)
