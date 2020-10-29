@@ -71,7 +71,6 @@ Supported formats
 | SQL                                                                   |📝 | .sql            |❌  |  ✔  |
 | [StarDict](https://github.com/huzheng001/stardict-3)                  |📁 | (📝.ifo)        | ✔  |  ✔  |
 | [Tabfile](https://en.wikipedia.org/wiki/Tab-separated_values)         |📝 |.txt, .tab       | ✔  |  ✔  |
-| TreeDict                                                              |📁 |                 |    |  ✔  |
 | [Wiktionary Dump](https://dumps.wikimedia.org/backup-index.html)      |📝 | .xml            | ✔  | ❌  |
 | [Wordset.org](https://github.com/wordset/wordset-dictionary)          |📁 |                 | ✔  |     |
 | [XDXF](https://github.com/soshial/xdxf_makedict)                      |📝 | .xdxf           | ✔  | ❌  |
