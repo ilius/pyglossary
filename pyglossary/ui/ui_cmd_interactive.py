@@ -153,7 +153,7 @@ def prompt(
 		kwargs["default"] = ""
 	text = promptLow(message=message, **kwargs)
 	if multiline and text == "!m":
-		print("Entering Multi-line mode, press Alt+Enter to end")
+		print("Entering Multi-line mode, press Alt+ENTER to end")
 		text = promptLow(
 			message="",
 			multiline=True,
@@ -404,7 +404,7 @@ class UI(ui_cmd.UI):
 		while True:
 			try:
 				optName = prompt(
-					">> ReadOption: Name [ENTER if done]: ",
+					">> ReadOption: Name (ENTER if done): ",
 					history=history,
 					auto_suggest=auto_suggest,
 					completer=completer,
@@ -460,7 +460,7 @@ class UI(ui_cmd.UI):
 		while True:
 			try:
 				optName = prompt(
-					">> WriteOption: Name [ENTER if done]: ",
+					">> WriteOption: Name (ENTER if done): ",
 					history=history,
 					auto_suggest=auto_suggest,
 					completer=completer,
@@ -534,7 +534,7 @@ class UI(ui_cmd.UI):
 		while True:
 			try:
 				configKey = prompt(
-					">> Config: Key [ENTER if done]: ",
+					">> Config: Key (ENTER if done): ",
 					history=history,
 					auto_suggest=auto_suggest,
 					completer=completer,
