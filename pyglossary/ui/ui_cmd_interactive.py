@@ -38,8 +38,6 @@ import json
 # readline's complete func silently (and stupidly) hides any exception
 # and only shows the print if it's in the first line of function. very awkward!
 
-#import atexit
-
 from pyglossary.core import confDir
 from pyglossary.glossary import Glossary
 from pyglossary.ui import ui_cmd
@@ -191,6 +189,8 @@ class UI(ui_cmd.UI):
 			("reset-write-options", self.resetWriteOptions),
 			("config", self.askConfig),
 			("indirect", self.setIndirect),
+			("no-progressbar", self.setNoProgressbar),
+			("sort", self.setSort),
 			("show-options", self.showOptions),
 			("back", None),
 		])
@@ -575,7 +575,21 @@ class UI(ui_cmd.UI):
 
 	def setIndirect(self):
 		self._convertOptions["direct"] = False
-		print(f"Switched to indirect mode")
+		print("Switched to indirect mode")
+
+	def setNoProgressbar(self):
+		self._convertOptions["progressbar"] = False
+		print("Disabled progress bar")
+
+	def setSort(self):
+		try:
+			value = checkbox_prompt(
+				message=f">> Enable Sort",
+				default=self._convertOptions.get("sort", False),
+			)
+		except (KeyboardInterrupt, EOFError):
+			return
+		self._convertOptions["sort"] = value
 
 	def askFinalAction(self) -> "Optional[str]":
 		history = FileHistory(join(histDir, "action"))
