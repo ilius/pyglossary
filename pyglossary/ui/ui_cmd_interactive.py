@@ -582,6 +582,7 @@ class UI(ui_cmd.UI):
 		print("Disabled progress bar")
 
 	def setSort(self):
+		from pyglossary.entry import Entry
 		try:
 			value = checkbox_prompt(
 				message=f">> Enable Sort",
@@ -590,6 +591,8 @@ class UI(ui_cmd.UI):
 		except (KeyboardInterrupt, EOFError):
 			return
 		self._convertOptions["sort"] = value
+		if value:
+			self._convertOptions["defaultSortKey"] = Entry.defaultSortKey
 
 	def askFinalAction(self) -> "Optional[str]":
 		history = FileHistory(join(histDir, "action"))
