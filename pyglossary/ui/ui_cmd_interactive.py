@@ -25,9 +25,7 @@ sudo pip3 install prompt_toolkit
 
 import sys
 import os
-from os.path import dirname, join, abspath, isdir, isfile, isabs, islink
-import stat
-import time
+from os.path import dirname, join, abspath, isdir, isabs
 import logging
 from collections import OrderedDict
 
@@ -199,8 +197,10 @@ class UI(ui_cmd.UI):
 		print(os.getcwd())
 
 	def get_ls_l(self, arg: str) -> str:
+		import stat
 		import pwd
 		import grp
+		import time
 		st = os.lstat(arg)
 		# os.lstat does not follow sym links, like "ls" command
 		details = [
@@ -211,7 +211,7 @@ class UI(ui_cmd.UI):
 			time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(st.st_mtime)),
 			arg,
 		]
-		if islink(arg):
+		if stat.S_ISLNK(st.st_mode):
 			details.append(f"-> {os.readlink(arg)}")
 		return "  ".join(details)
 
