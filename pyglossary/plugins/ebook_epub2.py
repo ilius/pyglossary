@@ -29,6 +29,7 @@ extensions = (".epub",)
 sortOnWrite = ALWAYS
 
 # https://en.wikipedia.org/wiki/EPUB
+# EPUB-3: https://www.w3.org/community/epub3/
 tools = [
 	{
 		"name": "calibre",
@@ -87,14 +88,17 @@ class Writer(EbookWriter):
 
 	MIMETYPE_CONTENTS = "application/epub+zip"
 	CONTAINER_XML_CONTENTS = """<?xml version="1.0" encoding="UTF-8" ?>
-<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+<container version="1.0"
+	xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
 	<rootfiles>
-		<rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+		<rootfile full-path="OEBPS/content.opf"
+			media-type="application/oebps-package+xml"/>
 	</rootfiles>
 </container>"""
 
 	NCX_TEMPLATE = """<?xml version="1.0" encoding="utf-8" ?>
-<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
+	"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
 	<head>
 		<meta name="dtb:uid" content="{identifier}" />
@@ -110,7 +114,8 @@ class Writer(EbookWriter):
 	</navMap>
 </ncx>"""
 
-	NCX_NAVPOINT_TEMPLATE = """\t<navPoint id="n{index:06d}" playOrder="{index:d}">
+	NCX_NAVPOINT_TEMPLATE = \
+		"""\t<navPoint id="n{index:06d}" playOrder="{index:d}">
 		<navLabel>
 			<text>{text}</text>
 		</navLabel>
@@ -162,8 +167,10 @@ p.groupDefinition {
 }
 """
 
-	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+	GROUP_XHTML_TEMPLATE = \
+		"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>{title}</title>
@@ -187,8 +194,10 @@ p.groupDefinition {
 	</div>"""
 
 	OPF_TEMPLATE = """<?xml version="1.0" encoding="utf-8" ?>
-<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uid">
-	<metadata xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0"
+	unique-identifier="uid">
+	<metadata xmlns:opf="http://www.idpf.org/2007/opf"
+		xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<dc:identifier id="uid" opf:scheme="uuid">{identifier}</dc:identifier>
 		<dc:language>{sourceLang}</dc:language>
 		<dc:title>{title}</dc:title>
