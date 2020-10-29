@@ -16,7 +16,7 @@ ignore W504 "line break after binary operator"
 #ignore E702 "multiple statements on one line (semicolon)"
 
 #if [ -z $2 ] ; then
-/usr/bin/pep8 --ignore=$IGNORE "$@" | grep --color=always -P ':\d*:' | less -RU
+/usr/bin/pep8 --ignore=$IGNORE "$@" | grep --color=always -P ':\d*:' 2>&1 | less -RU
 #else
-#	/usr/bin/pep8 --select "$@" | grep --color=always -P ':\d*:'
+#	/usr/bin/pep8 --select "$@" | grep --color=always -P ':\d*:' 2>&1
 #fi
