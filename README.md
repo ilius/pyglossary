@@ -42,14 +42,14 @@ Supported formats
 | Format                                                                |   |    Extension    |Read|Write|
 |-----------------------------------------------------------------------|:-:|:---------------:|:--:|:---:|
 | [Aard 2 (slob)](http://aarddict.org)                                  |🔢 | .slob           | ✔  |  ✔  |
-| ABBYY Lingvo DSL                                                      |📝 | .dsl            | ✔  |     |
+| [ABBYY Lingvo](https://www.lingvo.ru/) DSL                            |📝 | .dsl            | ✔  |     |
 | AppleDict Binary                                                      |🔢 |.dictionary      | ✔  | ❌  |
 | AppleDict Source                                                      |📁 |                 |    |  ✔  |
 | Babylon                                                               |🔢 | .bgl            | ✔  | ❌  |
 | [CC-CEDICT](https://cc-cedict.org/wiki) (Chinese)                     |📝 |                 | ✔  | ❌  |
 | [cc-kedict](https://github.com/mhagiwara/cc-kedict) (Korean)          |📝 |                 | ✔  | ❌  |
 | CSV                                                                   |📝 | .csv            | ✔  |  ✔  |
-| Dict.cc (SQLite3, German)                                             |🔢 |                 | ✔  |     |
+| [Dict.cc](https://play.google.com/store/apps/details?id=cc.dict.dictcc) (SQLite3, German)|🔢| | ✔ |    |
 | DICT.org / Dictd server                                               |📁 | (📝.index)      | ✔  |  ✔  |
 | DICT.org / dictfmt source file                                        |📝 | (.dtxt)         |    |  ✔  |
 | [dictunformat](https://linux.die.net/man/1/dictunformat) output file  |📝 | (.dictunformat) | ✔  |     |
@@ -69,10 +69,10 @@ Supported formats
 | [Sdictionary Binary](http://swaj.net/sdict/)                          |🔢 | .dct            | ✔  |     |
 | [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)         |📝 | .sdct           |    |  ✔  |
 | SQL                                                                   |📝 | .sql            |❌  |  ✔  |
-| StarDict                                                              |📁 | (📝.ifo)        | ✔  |  ✔  |
+| [StarDict](https://github.com/huzheng001/stardict-3)                  |📁 | (📝.ifo)        | ✔  |  ✔  |
 | [Tabfile](https://en.wikipedia.org/wiki/Tab-separated_values)         |📝 |.txt, .tab       | ✔  |  ✔  |
 | TreeDict                                                              |📁 |                 |    |  ✔  |
-| Wiktionary Dump                                                       |📝 | .xml            | ✔  | ❌  |
+| [Wiktionary Dump](https://dumps.wikimedia.org/backup-index.html)      |📝 | .xml            | ✔  | ❌  |
 | [Wordset.org](https://github.com/wordset/wordset-dictionary)          |📁 |                 | ✔  |     |
 | [XDXF](https://github.com/soshial/xdxf_makedict)                      |📝 | .xdxf           | ✔  | ❌  |
 | Zim ([Kiwix](https://github.com/kiwix))                               |🔢 | .zim            | ✔  |     |
