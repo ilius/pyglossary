@@ -911,8 +911,6 @@ class Writer(object):
 			prefix='{0}-'.format(os.path.basename(filename)),
 			dir=workdir)
 
-		print(f"slob: workdir: {workdir}")
-
 		self.f_ref_positions = self._wbfopen('ref-positions')
 		self.f_store_positions = self._wbfopen('store-positions')
 		self.f_refs = self._wbfopen('refs')
@@ -1201,7 +1199,7 @@ class Writer(object):
 				U_LONG_LONG_SIZE +  # file size value
 				U_INT_SIZE +  # ref count value
 				os.stat(self.f_ref_positions.name).st_size +
-				os.stat(self.f_refs.name).st_size,
+				os.stat(self.f_refs.name).st_size
 			)
 			out.write_long(store_offset)
 			out.flush()
@@ -1209,7 +1207,7 @@ class Writer(object):
 			file_size = (
 				out.tell() +  # bytes written so far
 				U_LONG_LONG_SIZE +  # file size value
-				2 * U_INT_SIZE,  # ref count and bin count
+				2 * U_INT_SIZE  # ref count and bin count
 			)
 			file_size += sum((os.stat(f.name).st_size for f in files))
 			out.write_long(file_size)
