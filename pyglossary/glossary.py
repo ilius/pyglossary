@@ -55,10 +55,7 @@ from .langs import LangDict, Lang
 from .text_utils import (
 	fixUtf8,
 )
-from .compression import (
-	compressionOpen,
-	stdCompressions,
-)
+from .compression import stdCompressions
 from .glossary_type import GlossaryType
 
 homePage = "https://github.com/ilius/pyglossary"
@@ -117,14 +114,14 @@ class Glossary(GlossaryType):
 		# and "lastUpdated"?
 	}
 
-	plugins = {}  # format name => PluginProp
-	pluginByExt = {}  # extension => PluginProp
+	plugins = {}  # type: Dict[str, PluginProp]
+	pluginByExt = {}  # type: Dict[str, PluginProp]
 
-	formatsReadOptions = {}
-	formatsWriteOptions = {}
+	formatsReadOptions = {}  # type: Dict[str, List[str]]
+	formatsWriteOptions = {}  # type: Dict[str, List[str]]
 
-	readFormats = []
-	writeFormats = []
+	readFormats = []  # type: List[str]
+	writeFormats = []  # type: List[str]
 
 	@classmethod
 	def loadPlugins(cls: "ClassVar", directory: str) -> None:
@@ -458,11 +455,11 @@ class Glossary(GlossaryType):
 		return self._defaultDefiFormat
 
 	# TODO
-	#def _reopenReader(self, reader):
-	#	log.info(f"re-opening {reader.__class__}")
-	#	filename, options = self._readersOpenArgs[reader]
-	#	reader.close()
-	#	reader.open(filename, **options)
+	# def _reopenReader(self, reader):
+	# 	log.info(f"re-opening {reader.__class__}")
+	# 	filename, options = self._readersOpenArgs[reader]
+	# 	reader.close()
+	# 	reader.open(filename, **options)
 
 	def collectDefiFormat(
 		self,
@@ -1307,7 +1304,7 @@ class Glossary(GlossaryType):
 		newline: str = "\n",
 		resources: bool = True,
 	) -> "Generator[None, BaseEntry, None]":
-		import codecs
+		from .compression import compressionOpen as c_open
 		if not entryFmt:
 			raise ValueError("entryFmt argument is missing")
 		if not filename:
@@ -1316,7 +1313,7 @@ class Glossary(GlossaryType):
 		if not outInfoKeysAliasDict:
 			outInfoKeysAliasDict = {}
 
-		fileObj = compressionOpen(filename, mode="wt", encoding=encoding, newline=newline)
+		fileObj = c_open(filename, mode="wt", encoding=encoding, newline=newline)
 
 		fileObj.write(head)
 		if writeInfo:
