@@ -74,7 +74,9 @@ class BoolOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self, raw: str) -> "Tuple[Optional[bool], bool]":
+	def evaluate(self, raw: "Union[str, bool]") -> "Tuple[Optional[bool], bool]":
+		if isinstance(raw, bool):
+			return raw, True
 		if raw.lower() in ("yes", "true", "1"):
 			return True, True
 		if raw.lower() in ("no", "false", "0"):
@@ -105,7 +107,7 @@ class IntOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(self, "int", **kwargs)
 
-	def evaluate(self, raw: str) -> "Tuple[Optional[int], bool]":
+	def evaluate(self, raw: "Union[str, int]") -> "Tuple[Optional[int], bool]":
 		"returns (value, isValid)"
 		try:
 			value = int(raw)
@@ -119,7 +121,7 @@ class FloatOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(self, "float", **kwargs)
 
-	def evaluate(self, raw: float) -> "Tuple[Optional[float], bool]":
+	def evaluate(self, raw: "Union[str, float, int]") -> "Tuple[Optional[float], bool]":
 		"returns (value, isValid)"
 		try:
 			value = float(raw)
@@ -138,8 +140,10 @@ class DictOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self, raw: str) -> "Tuple[Optional[Dict], bool]":
+	def evaluate(self, raw: "Union[str, dict]") -> "Tuple[Optional[Dict], bool]":
 		import ast
+		if isinstance(raw, dict):
+			return raw, True
 		if raw == "":
 			return None, True  # valid
 		try:
