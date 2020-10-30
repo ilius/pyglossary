@@ -670,7 +670,7 @@ class UI(tix.Frame, UIBase):
 		######################
 		frame = tix.Frame(convertFrame)
 		##
-		label = ttk.Label(frame, text="Read from format")
+		label = ttk.Label(frame, text="Input Format: ")
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
@@ -698,7 +698,7 @@ class UI(tix.Frame, UIBase):
 		###################
 		frame = tix.Frame(convertFrame)
 		##
-		label = ttk.Label(frame, text="  Path:")
+		label = ttk.Label(frame, text="Input File: ")
 		label.pack(side="left")
 		##
 		entry = tix.Entry(frame)
@@ -719,7 +719,7 @@ class UI(tix.Frame, UIBase):
 		######################
 		frame = tix.Frame(convertFrame)
 		##
-		label = ttk.Label(frame, text="Write to format    ")
+		label = ttk.Label(frame, text="Output Format: ")
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
@@ -744,7 +744,7 @@ class UI(tix.Frame, UIBase):
 		###################
 		frame = tix.Frame(convertFrame)
 		##
-		label = ttk.Label(frame, text="  Path:")
+		label = ttk.Label(frame, text="Output File: ")
 		label.pack(side="left")
 		##
 		entry = tix.Entry(frame)
