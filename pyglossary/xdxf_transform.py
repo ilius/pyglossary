@@ -1,5 +1,5 @@
 from pyglossary import core
-from pyglossary.core import dataDir
+from pyglossary.core import rootDir
 from os.path import join
 
 
@@ -13,7 +13,7 @@ def xdxf_to_html_transformer():
 		e.msg += f", run `{core.pip} install lxml` to install"
 		raise e
 
-	with open(join(dataDir, "pyglossary", "xdxf.xsl"), "r") as f:
+	with open(join(rootDir, "pyglossary", "xdxf.xsl"), "r") as f:
 		xslt_root_txt = f.read()
 
 	xslt_root = ET.XML(xslt_root_txt)

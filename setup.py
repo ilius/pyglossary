@@ -54,6 +54,7 @@ root_data_file_names = [
 package_data = {
 	"": root_data_file_names,
 	"pyglossary": [
+		"xdxf.xsl",
 		"res/*",
 		"plugins/*.py",
 		"langs/*",
