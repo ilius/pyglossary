@@ -78,14 +78,17 @@ class DataEntry(BaseEntry):
 		# fix filename depending on operating system? FIXME
 		fpath = join(directory, fname)
 		fdir = dirname(fpath)
-		if not exists(fdir):
-			os.makedirs(fdir)
-		if self._tmpPath:
-			shutil.move(self._tmpPath, fpath)
-			self._tmpPath = fpath
-		else:
-			with open(fpath, "wb") as toFile:
-				toFile.write(self._data)
+		try:
+			os.makedirs(fdir, mode=0o755, exist_ok=True)
+			if self._tmpPath:
+				shutil.move(self._tmpPath, fpath)
+				self._tmpPath = fpath
+			else:
+				with open(fpath, "wb") as toFile:
+					toFile.write(self._data)
+		except Exception:
+			log.exception(f"error while saving {fpath}")
+			return ""
 		return fpath
 
 	@property
