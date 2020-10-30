@@ -450,7 +450,7 @@ class InputFormatComboBox(FormatComboBox):
 		return "r"
 
 	def getActiveOptions(self):
-		return Glossary.formatsReadOptions[self.getActive()]
+		return list(Glossary.formatsReadOptions[self.getActive()].keys())
 
 
 class OutputFormatComboBox(FormatComboBox):
@@ -464,7 +464,7 @@ class OutputFormatComboBox(FormatComboBox):
 		return "w"
 
 	def getActiveOptions(self):
-		return Glossary.formatsWriteOptions[self.getActive()]
+		return list(Glossary.formatsWriteOptions[self.getActive()].keys())
 
 
 class GtkTextviewLogHandler(logging.Handler):

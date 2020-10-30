@@ -388,15 +388,16 @@ class UI(ui_cmd.UI):
 		return None
 
 	def askReadOptions(self):
-		optionNames = Glossary.formatsReadOptions.get(self._inputFormat)
-		if optionNames is None:
+		plugin = Glossary.plugins[self._inputFormat]
+		options = Glossary.formatsReadOptions.get(self._inputFormat)
+		if options is None:
 			log.error(f"internal error: invalid format {self._inputFormat!r}")
 			return
 		optionsProp = Glossary.plugins[self._inputFormat].optionsProp
 		history = FileHistory(join(histDir, f"read-options-{self._inputFormat}"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
-			optionNames,
+			options.keys(),
 			ignore_case=True,
 			match_middle=True,
 			sentence=True,
@@ -415,13 +416,27 @@ class UI(ui_cmd.UI):
 				return
 			option = optionsProp[optName]
 			valueCompleter = self.getOptionValueCompleter(option)
+			default = self._readOptions.get(optName)
+			if default is None:
+				default = options[optName]
 			while True:
+				if option.typ == "bool":
+					try:
+						valueNew = checkbox_prompt(
+							f">>> ReadOption: {optName}",
+							default=default,
+						)
+					except (KeyboardInterrupt, EOFError):
+						break
+					print(f"Set read-option: {optName} = {valueNew!r}")
+					self._readOptions[optName] = valueNew
+					break
 				try:
 					value = prompt(
 						f">>> ReadOption: {optName} = ",
 						history=FileHistory(join(histDir, f"option-value-{optName}")),
 						auto_suggest=AutoSuggestFromHistory(),
-						default=str(self._readOptions.get(optName, "")),
+						default=str(default),
 						completer=valueCompleter,
 					)
 				except (KeyboardInterrupt, EOFError):
@@ -444,15 +459,16 @@ class UI(ui_cmd.UI):
 				break
 
 	def askWriteOptions(self):
-		optionNames = Glossary.formatsWriteOptions.get(self._outputFormat)
-		if optionNames is None:
+		plugin = Glossary.plugins[self._inputFormat]
+		options = Glossary.formatsWriteOptions.get(self._outputFormat)
+		if options is None:
 			log.error(f"internal error: invalid format {self._outputFormat!r}")
 			return
 		optionsProp = Glossary.plugins[self._outputFormat].optionsProp
 		history = FileHistory(join(histDir, f"write-options-{self._outputFormat}"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
-			optionNames,
+			options.keys(),
 			ignore_case=True,
 			match_middle=True,
 			sentence=True,
@@ -471,13 +487,27 @@ class UI(ui_cmd.UI):
 				return
 			option = optionsProp[optName]
 			valueCompleter = self.getOptionValueCompleter(option)
+			default = self._writeOptions.get(optName)
+			if default is None:
+				default = options[optName]
 			while True:
+				if option.typ == "bool":
+					try:
+						valueNew = checkbox_prompt(
+							f">>> WriteOption: {optName}",
+							default=default,
+						)
+					except (KeyboardInterrupt, EOFError):
+						break
+					print(f"Set write-option: {optName} = {valueNew!r}")
+					self._writeOptions[optName] = valueNew
+					break
 				try:
 					value = prompt(
 						f">>> WriteOption: {optName} = ",
 						history=FileHistory(join(histDir, f"option-value-{optName}")),
 						auto_suggest=AutoSuggestFromHistory(),
-						default=str(self._writeOptions.get(optName, "")),
+						default=str(default),
 						completer=valueCompleter,
 					)
 				except (KeyboardInterrupt, EOFError):

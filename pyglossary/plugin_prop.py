@@ -23,6 +23,7 @@ from .flags import (
 	DEFAULT_NO,
 )
 import logging
+from collections import OrderedDict as odict
 
 log = logging.getLogger("pyglossary")
 
@@ -163,7 +164,7 @@ class PluginProp(object):
 
 	def getOptionsFromClass(self, rwclass):
 		optionsProp = self.optionsProp
-		optNames = []
+		options = odict()
 		for attrName in dir(rwclass):
 			if not attrName.startswith("_"):
 				continue
@@ -184,9 +185,9 @@ class PluginProp(object):
 					"invalid default value for option: "
 					f"{name} = {default!r} in plugin {self.name}"
 				)
-			optNames.append(name)
+			options[name] = default
 
-		return optNames
+		return options
 
 	def getReadExtraOptions(self):
 		return self.__class__.getExtraOptions(self.readerClass.open, self.name)

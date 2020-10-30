@@ -402,7 +402,7 @@ class FormatOptionsButton(ttk.Button):
 		if not formatD:
 			return
 		format = pluginByDesc[formatD].name
-		options = self.kindFormatsOptions[self.kind][format]
+		options = list(self.kindFormatsOptions[self.kind][format].keys())
 		optionsProp = Glossary.plugins[format].optionsProp
 
 		dialog = tix.Toplevel()  # bg="#0f0" does not work
@@ -1034,8 +1034,7 @@ class UI(tix.Frame, UIBase):
 			return
 		self.readOptions.clear()  # reset the options, DO NOT re-assign
 		format = pluginByDesc[formatDesc].name
-		options = Glossary.formatsReadOptions[format]
-		if options:
+		if Glossary.formatsReadOptions[format]:
 			self.readOptionsButton.pack(side="right")
 		else:
 			self.readOptionsButton.pack_forget()
@@ -1047,8 +1046,7 @@ class UI(tix.Frame, UIBase):
 			return
 		self.writeOptions.clear()  # reset the options, DO NOT re-assign
 		format = pluginByDesc[formatDesc].name
-		options = Glossary.formatsWriteOptions[format]
-		if options:
+		if Glossary.formatsWriteOptions[format]:
 			self.writeOptionsButton.pack(side="right")
 		else:
 			self.writeOptionsButton.pack_forget()

@@ -117,8 +117,9 @@ class Glossary(GlossaryType):
 	plugins = {}  # type: Dict[str, PluginProp]
 	pluginByExt = {}  # type: Dict[str, PluginProp]
 
-	formatsReadOptions = {}  # type: Dict[str, List[str]]
-	formatsWriteOptions = {}  # type: Dict[str, List[str]]
+	formatsReadOptions = {}  # type: Dict[str, OrderedDict[str, Any]]
+	formatsWriteOptions = {}  # type: Dict[str, OrderedDict[str, Any]]
+	# for example formatsReadOptions[format][optName] gives you the default value
 
 	readFormats = []  # type: List[str]
 	writeFormats = []  # type: List[str]
@@ -781,7 +782,7 @@ class Glossary(GlossaryType):
 			from pyglossary.glossary_utils import uncompress
 			uncompress(origFilename, filename, compression)
 
-		validOptionKeys = self.formatsReadOptions[format]
+		validOptionKeys = list(self.formatsReadOptions[format].keys())
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
 				log.error(
@@ -1051,10 +1052,11 @@ class Glossary(GlossaryType):
 		"""
 		filename = abspath(filename)
 
-		validOptionKeys = self.formatsWriteOptions.get(format)
-		if validOptionKeys is None:
+		validOptions = self.formatsWriteOptions.get(format)
+		if validOptions is None:
 			log.critical(f"No write support for {format!r} format")
 			return
+		validOptionKeys = list(validOptions.keys())
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
 				log.error(
