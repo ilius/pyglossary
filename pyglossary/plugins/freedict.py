@@ -363,8 +363,10 @@ class Reader(object):
 			raise e
 
 		self._filename = filename
-		self._fileSize = os.path.getsize(filename)
 		self._file = compressionOpen(filename, mode="rb")
+		self._file.seek(0, 2)
+		self._fileSize = self._file.tell()
+		self._file.seek(0)
 
 		self._glos.setDefaultDefiFormat("h")
 		self._glos.setInfo("input_file_size", f"{self._fileSize}")
