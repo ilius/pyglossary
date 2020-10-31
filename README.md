@@ -19,7 +19,7 @@ Linux - Gtk3-based interface
 
 ------------------------------------------------------------------------
 
-<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-tk-bgl-kobo-es-en-2.png" height="450"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40-tk-bgl-epub-es-en.png" height="450"/>
 
 Windows - Tkinter-based interface
 
