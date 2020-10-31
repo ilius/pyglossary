@@ -13,13 +13,13 @@ languages is taken into account. Pull requests are welcome.
 Screenshots
 -----------
 
-<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-gtk-bgl-stardict-aryanpur-dark.png" height="450"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-gtk-bgl-stardict-aryanpur-dark.png" style="max-height:450px"/>
 
 Linux - Gtk3-based interface
 
 ------------------------------------------------------------------------
 
-<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40-tk-bgl-epub-es-en.png" height="450"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40-tk-bgl-epub-es-en.png" style="max-height:450px"/>
 
 Windows - Tkinter-based interface
 
