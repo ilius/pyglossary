@@ -436,7 +436,10 @@ class EbookWriter(object):
 					)
 				zipFp.close()
 				if not self._keep:
-					shutil.rmtree(self._tmpDir)
+					try:
+						shutil.rmtree(self._tmpDir)
+					except Exception:
+						log.exception(f"error removing {self._tmpDir}/")
 			else:
 				if self._keep:
 					shutil.copytree(self._tmpDir, filename)
