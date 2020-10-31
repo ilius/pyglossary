@@ -31,9 +31,9 @@ Linux - command-line interface
 
 ------------------------------------------------------------------------
 
-![](https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40-cmdi-zim-slob-fa-med.png)
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40-cmdi-termux-zim-slob-en-med.jpg" style="max-height:450px"/>
 
-Linux - interactive command-line interface
+Android Termux - interactive command-line interface
 
 
 Supported formats
