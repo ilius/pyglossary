@@ -306,7 +306,7 @@ class ProgressBar(tix.Frame):
 		self.canvas.update_idletasks()
 
 
-class FormatOptionsButton(ttk.Button):
+class FormatOptionsButton(tk.Button):
 	def __init__(
 		self,
 		kind: "Literal['Read', 'Write']",
@@ -314,13 +314,14 @@ class FormatOptionsButton(ttk.Button):
 		formatVar: tk.StringVar,
 		master=None,
 	):
-		ttk.Button.__init__(
+		tk.Button.__init__(
 			self,
 			master=master,
 			text="Options",
 			command=self.buttonClicked,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
+			borderwidth=3,
 		)
 		self.kind = kind
 		self.kindFormatsOptions = {
@@ -709,12 +710,13 @@ class UI(tix.Frame, UIBase):
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryInputConvert = entry
 		##
-		button = ttk.Button(
+		button = tk.Button(
 			convertFrame,
 			text="Browse",
 			command=self.browseInputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
+			borderwidth=3,
 		)
 		button.grid(row=row, column=3, sticky=tk.W + tk.E)
 		######################
@@ -754,12 +756,13 @@ class UI(tix.Frame, UIBase):
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryOutputConvert = entry
 		##
-		button = ttk.Button(
+		button = tk.Button(
 			convertFrame,
 			text="Browse",
 			command=self.browseOutputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
+			borderwidth=3,
 		)
 		button.grid(row=row, column=3, sticky=tk.W + tk.E)
 		###################
@@ -908,7 +911,8 @@ class UI(tix.Frame, UIBase):
 			# fg="#ffff00",
 			# activebackground="#333333",
 			# activeforeground="#ffff00",
-			borderwidth=5,
+			borderwidth=3,
+			height=2,
 		)
 		clearB.pack(side="left")
 		####
