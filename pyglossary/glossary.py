@@ -311,10 +311,16 @@ class Glossary(GlossaryType):
 		for cleanupPath in self._cleanupPathList:
 			if isfile(cleanupPath):
 				log.debug(f"Removing file {cleanupPath}")
-				os.remove(cleanupPath)
+				try:
+					os.remove(cleanupPath)
+				except Exception:
+					log.exception(f"error removing {cleanupPath}")
 			elif isdir(cleanupPath):
 				log.debug(f"Removing directory {cleanupPath}")
-				self._removeDir(cleanupPath)
+				try:
+					self._removeDir(cleanupPath)
+				except Exception:
+					log.exception(f"error removing {cleanupPath}/")
 			else:
 				log.error(f"no such file or directory: {cleanupPath}")
 
