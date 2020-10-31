@@ -30,5 +30,7 @@ def compressionOpen(filename, **kwargs):
 		_, ext = splitext(filenameNoExt)
 		ext = ext.lower().lstrip(".")
 	if ext in stdCompressions:
-		return compressionOpenFunc(ext)(filename, **kwargs)
+		_file = compressionOpenFunc(ext)(filename, **kwargs)
+		_file.compression = ext
+		return _file
 	return open(filename, **kwargs)

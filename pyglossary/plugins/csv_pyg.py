@@ -113,6 +113,9 @@ class Reader(object):
 
 	def __len__(self) -> int:
 		if self._wordCount is None:
+			if hasattr(self._file, "compression"):
+				log.warning("progressbar for compressed csv file is not implemented")
+				return 0
 			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(self._filename) - \
 				self._leadingLinesCount
