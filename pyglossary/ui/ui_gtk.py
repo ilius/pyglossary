@@ -590,7 +590,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# self.statusNewId = 0
 		# self.statusMsgDict = {}## message -> id
 		#####
-		self.config = {}
 		self._convertOptions = {}
 		#####
 		self.assert_quit = False
@@ -908,6 +907,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
 	):
+		self.loadConfig(**configOptions)
+
 		if inputFilename:
 			self.convertInputEntry.set_text(abspath(inputFilename))
 		if outputFilename:
@@ -920,8 +921,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 		if reverse:
 			log.error(f"Gtk interface does not support Reverse feature")
-
-		self.loadConfig(**configOptions)
 
 		if readOptions:
 			self.convertInputFormatCombo.setOptionsValues(readOptions)
