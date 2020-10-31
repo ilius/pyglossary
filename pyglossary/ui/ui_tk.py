@@ -427,7 +427,7 @@ class FormatOptionsButton(ttk.Button):
 			treev.heading(
 				col,
 				text=col,
-				#command=lambda c=col: sortby(treev, c, 0),
+				# command=lambda c=col: sortby(treev, c, 0),
 			)
 			# adjust the column's width to the header string
 			treev.column(
@@ -671,12 +671,12 @@ class UI(tix.Frame, UIBase):
 		tk.Grid.columnconfigure(convertFrame, 1, weight=30)
 		tk.Grid.columnconfigure(convertFrame, 2, weight=40)
 		tk.Grid.columnconfigure(convertFrame, 3, weight=1)
-		#tk.Grid.rowconfigure(convertFrame, 0, weight=5)
-		#tk.Grid.rowconfigure(convertFrame, 1, weight=5)
-		#tk.Grid.rowconfigure(convertFrame, 2, weight=1)
-		#tk.Grid.rowconfigure(convertFrame, 3, weight=5)
-		#tk.Grid.rowconfigure(convertFrame, 4, weight=5)
-		#tk.Grid.rowconfigure(convertFrame, 5, weight=5)
+		# tk.Grid.rowconfigure(convertFrame, 0, weight=5)
+		# tk.Grid.rowconfigure(convertFrame, 1, weight=5)
+		# tk.Grid.rowconfigure(convertFrame, 2, weight=1)
+		# tk.Grid.rowconfigure(convertFrame, 3, weight=5)
+		# tk.Grid.rowconfigure(convertFrame, 4, weight=5)
+		# tk.Grid.rowconfigure(convertFrame, 5, weight=5)
 		######################
 		row = 0
 		label = ttk.Label(convertFrame, text="Input Format: ")
@@ -792,13 +792,12 @@ class UI(tix.Frame, UIBase):
 		console = tix.Text(convertFrame, height=15, background="#000000")
 		# self.consoleH = 15
 		# sbar = Tix.Scrollbar(
-		#	convertFrame,
-		#	orien=Tix.VERTICAL,
-		#	command=console.yview
+		# 	convertFrame,
+		# 	orien=Tix.VERTICAL,
+		# 	command=console.yview
 		# )
 		# sbar.grid (row=row, column=1)
 		# console["yscrollcommand"] = sbar.set
-		# console.grid()
 		console.grid(
 			row=row,
 			column=0,
@@ -813,85 +812,6 @@ class UI(tix.Frame, UIBase):
 		console.grid()
 		self.console = console
 		##################
-		# bottomFrame.grid()
-		# self.grid()
-		#####################
-		# lbox = Tix.Listbox(convertFrame)
-		# lbox.insert(0, "aaaaaaaa", "bbbbbbbbbbbbbbbbbbbb")
-		# lbox.pack(fill="x")
-		##############
-		# __________________________ Reverse Tab __________________________ #
-		# revFrame = tix.Frame(notebook.tabReverse)
-		# revFrame.pack(fill="x")
-		# ######################
-		# frame = tix.Frame(revFrame)
-		# ##
-		# label = ttk.Label(frame, text="Read from format")
-		# label.pack(side="left")
-		# ##
-		# comboVar = tk.StringVar()
-		# combo = ttk.OptionMenu(
-		# 	frame,
-		# 	comboVar,
-		# 	None, # default
-		# 	*readDesc,
-		# )
-		# combo.pack(side="left")
-		# self.combobox_r_i = comboVar
-		# ##
-		# frame.pack(fill="x")
-		# ###################
-		# frame = tix.Frame(revFrame)
-		# ##
-		# label = ttk.Label(frame, text="  Path:")
-		# label.pack(side="left")
-		# ##
-		# entry = tix.Entry(frame)
-		# entry.pack(side="left", fill="x", expand=True)
-		# # entry.bind_all("<KeyPress>", self.entry_r_i_changed)
-		# self.entry_r_i = entry
-		# ##
-		# button = ttk.Button(
-		# 	frame,
-		# 	text="Browse",
-		# 	command=self.reverseBrowseInput,
-		# 	# bg="#f0f000",
-		# 	# activebackground="#f6f622",
-		# )
-		# button.pack(side="left")
-		# ##
-		# button = ttk.Button(
-		# 	frame,
-		# 	text="Load",
-		# 	command=self.reverseLoad,
-		# 	# bg="#7777ff",
-		# )
-		# button.pack(side="left")
-		# ###
-		# frame.pack(fill="x")
-		# ###################
-		# frame = tix.Frame(revFrame)
-		# ##
-		# label = ttk.Label(frame, text="Output Tabfile")
-		# label.pack(side="left")
-		# ###
-		# entry = tix.Entry(frame)
-		# entry.pack(side="left", fill="x", expand=True)
-		# # entry.bind_all("<KeyPress>", self.entry_r_i_changed)
-		# self.entry_r_o = entry
-		# ##
-		# button = ttk.Button(
-		# 	frame,
-		# 	text="Browse",
-		# 	command=self.reverseBrowseOutput,
-		# 	# bg="#f0f000",
-		# 	# activebackground="#f6f622",
-		# )
-		# button.pack(side="left")
-		# ##
-		# frame.pack(fill="x")
-		# _________________________________________________________________ #
-
 		aboutFrame2 = tix.Frame(aboutFrame)
 		##
 		label = newLabelWithImage(aboutFrame2, file=logo)
@@ -1024,13 +944,13 @@ class UI(tix.Frame, UIBase):
 		dh = self.rootWin.winfo_height() - self.winfo_height()
 		# log.debug(dh, self.consoleH)
 		# if dh > 20:
-		#	self.consoleH += 1
-		#	self.console["height"] = self.consoleH
-		#	self.console["width"] = int(self.console["width"]) + 1
-		#	self.console.grid()
+		# 	self.consoleH += 1
+		# 	self.console["height"] = self.consoleH
+		# 	self.console["width"] = int(self.console["width"]) + 1
+		# 	self.console.grid()
 		# for x in dir(self):
-		#	if "info" in x:
-		#		log.debug(x)
+		# 	if "info" in x:
+		# 		log.debug(x)
 
 	def inputComboChanged(self, *args):
 		formatDesc = self.formatVarInputConvert.get()
@@ -1039,7 +959,11 @@ class UI(tix.Frame, UIBase):
 		self.readOptions.clear()  # reset the options, DO NOT re-assign
 		format = pluginByDesc[formatDesc].name
 		if Glossary.formatsReadOptions[format]:
-			self.readOptionsButton.grid(row=self.inputFormatRow, column=3, sticky=tk.W + tk.E)
+			self.readOptionsButton.grid(
+				row=self.inputFormatRow,
+				column=3,
+				sticky=tk.W + tk.E,
+			)
 		else:
 			self.readOptionsButton.grid_forget()
 
@@ -1051,7 +975,10 @@ class UI(tix.Frame, UIBase):
 		self.writeOptions.clear()  # reset the options, DO NOT re-assign
 		format = pluginByDesc[formatDesc].name
 		if Glossary.formatsWriteOptions[format]:
-			self.writeOptionsButton.grid(row=self.outputFormatRow, column=3, sticky=tk.W + tk.E)
+			self.writeOptionsButton.grid(
+				row=self.outputFormatRow,
+				column=3, sticky=tk.W + tk.E,
+			)
 		else:
 			self.writeOptionsButton.grid_forget()
 
@@ -1177,7 +1104,7 @@ class UI(tix.Frame, UIBase):
 			self.entryInputConvert.insert(0, abspath(inputFilename))
 		if outputFilename:
 			self.entryOutputConvert.insert(0, abspath(outputFilename))
-		
+
 		if inputFormat:
 			self.formatVarInputConvert.set(Glossary.plugins[inputFormat].description)
 		if outputFormat:
