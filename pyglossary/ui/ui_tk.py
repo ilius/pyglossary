@@ -926,7 +926,7 @@ class UI(tix.Frame, UIBase):
 		combo.pack(side="left")
 		self.verbosityCombo = comboVar
 		#####
-		pbar = ProgressBar(statusBarframe, width=400)
+		pbar = ProgressBar(statusBarframe, width=700, height=28)
 		pbar.pack(side="left", fill="x", expand=True)
 		self.pbar = pbar
 		statusBarframe.pack(fill="x")
