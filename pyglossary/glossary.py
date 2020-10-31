@@ -1409,7 +1409,7 @@ class Glossary(GlossaryType):
 			return
 		self.ui.progress(
 			min(pos + 1, total) / total,
-			f"{pos:d} / {total:d} {unit}",
+			f"{pos:,} / {total:,} {unit}",
 		)
 
 	def progressEnd(self) -> None:
