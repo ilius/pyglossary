@@ -666,21 +666,30 @@ class UI(tix.Frame, UIBase):
 		notebook.add("tabAbout", label="About", underline=0)
 		convertFrame = tix.Frame(notebook.tabConvert)
 		aboutFrame = tix.Frame(notebook.tabAbout)
-		convertVpaned = ttk.PanedWindow(convertFrame, orient=tk.VERTICAL)
 		######################
-		frame = tix.Frame(convertFrame)
-		##
-		label = ttk.Label(frame, text="Input Format: ")
-		label.pack(side="left")
+		tk.Grid.columnconfigure(convertFrame, 0, weight=1)
+		tk.Grid.columnconfigure(convertFrame, 1, weight=30)
+		tk.Grid.columnconfigure(convertFrame, 2, weight=40)
+		tk.Grid.columnconfigure(convertFrame, 3, weight=1)
+		#tk.Grid.rowconfigure(convertFrame, 0, weight=5)
+		#tk.Grid.rowconfigure(convertFrame, 1, weight=5)
+		#tk.Grid.rowconfigure(convertFrame, 2, weight=1)
+		#tk.Grid.rowconfigure(convertFrame, 3, weight=5)
+		#tk.Grid.rowconfigure(convertFrame, 4, weight=5)
+		#tk.Grid.rowconfigure(convertFrame, 5, weight=5)
+		######################
+		row = 0
+		label = ttk.Label(convertFrame, text="Input Format: ")
+		label.grid(row=row, column=0, sticky=tk.W)
 		##
 		comboVar = tk.StringVar()
 		combo = ttk.OptionMenu(
-			frame,
+			convertFrame,
 			comboVar,
 			None,  # default
 			*readDesc,
 		)
-		combo.pack(side="left")
+		combo.grid(row=row, column=1, sticky=tk.W)
 		comboVar.trace("w", self.inputComboChanged)
 		self.formatVarInputConvert = comboVar
 		##
@@ -691,45 +700,44 @@ class UI(tix.Frame, UIBase):
 			"Read",
 			self.readOptions,
 			self.formatVarInputConvert,
-			master=frame,
+			master=convertFrame,
 		)
-		##
-		frame.pack(fill="x")
+		self.inputFormatRow = row
 		###################
-		frame = tix.Frame(convertFrame)
+		row += 1
+		label = ttk.Label(convertFrame, text="Input File: ")
+		label.grid(row=row, column=0, sticky=tk.W)
 		##
-		label = ttk.Label(frame, text="Input File: ")
-		label.pack(side="left")
-		##
-		entry = tix.Entry(frame)
-		entry.pack(side="left", fill="x", expand=True)
+		entry = tix.Entry(convertFrame)
+		entry.grid(row=row, column=1, columnspan=2, sticky=tk.W + tk.E)
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryInputConvert = entry
 		##
 		button = ttk.Button(
-			frame,
+			convertFrame,
 			text="Browse",
 			command=self.browseInputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
 		)
-		button.pack(side="left")
-		##
-		frame.pack(fill="x")
+		button.grid(row=row, column=3, sticky=tk.W + tk.E)
 		######################
-		frame = tix.Frame(convertFrame)
-		##
-		label = ttk.Label(frame, text="Output Format: ")
-		label.pack(side="left")
+		row += 1
+		label = ttk.Label(convertFrame)
+		label.grid(row=row, column=0, sticky=tk.W)
+		######################
+		row += 1
+		label = ttk.Label(convertFrame, text="Output Format: ")
+		label.grid(row=row, column=0, sticky=tk.W)
 		##
 		comboVar = tk.StringVar()
 		combo = ttk.OptionMenu(
-			frame,
+			convertFrame,
 			comboVar,
 			None,  # default
 			*writeDesc,
 		)
-		combo.pack(side="left")
+		combo.grid(row=row, column=1, columnspan=2, sticky=tk.W)
 		comboVar.trace("w", self.outputComboChanged)
 		self.formatVarOutputConvert = comboVar
 		##
@@ -737,78 +745,74 @@ class UI(tix.Frame, UIBase):
 			"Write",
 			self.writeOptions,
 			self.formatVarOutputConvert,
-			master=frame,
+			master=convertFrame,
 		)
-		##
-		frame.pack(fill="x")
+		self.outputFormatRow = row
 		###################
-		frame = tix.Frame(convertFrame)
+		row += 1
+		label = ttk.Label(convertFrame, text="Output File: ")
+		label.grid(row=row, column=0, sticky=tk.W)
 		##
-		label = ttk.Label(frame, text="Output File: ")
-		label.pack(side="left")
-		##
-		entry = tix.Entry(frame)
-		entry.pack(side="left", fill="x", expand=True)
+		entry = tix.Entry(convertFrame)
+		entry.grid(row=row, column=1, columnspan=2, sticky=tk.W + tk.E)
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryOutputConvert = entry
 		##
 		button = ttk.Button(
-			frame,
+			convertFrame,
 			text="Browse",
 			command=self.browseOutputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
 		)
-		button.pack(side="left")
-		##
-		frame.pack(fill="x")
-		#######
-		frame = tix.Frame(convertFrame)
-		label = ttk.Label(frame, text=" " * 15)
-		label.pack(
-			side="left",
-			fill="x",
-			expand=True,
-		)
+		button.grid(row=row, column=3, sticky=tk.W + tk.E)
+		###################
+		row += 1
+		label = ttk.Label(convertFrame)
+		label.grid(row=row, column=0, sticky=tk.W)
+		###################
+		row += 1
 		button = ttk.Button(
-			frame,
+			convertFrame,
 			text="Convert",
 			command=self.convert,
 			# bg="#00e000",
 			# activebackground="#22f022",
 		)
-		button.pack(
-			side="left",
-			fill="x",
-			expand=True,
+		button.grid(
+			row=row,
+			column=2,
+			columnspan=3,
+			sticky=tk.W + tk.E,
 		)
-		###
-		frame.pack(fill="x")
-		convertVpaned.add(frame)
 		######
 		convertFrame.pack(fill="x")
 		#################
-		console = tix.Text(convertVpaned, height=15, background="#000000")
+		row += 1
+		console = tix.Text(convertFrame, height=15, background="#000000")
 		# self.consoleH = 15
 		# sbar = Tix.Scrollbar(
-		#	convertVpaned,
+		#	convertFrame,
 		#	orien=Tix.VERTICAL,
 		#	command=console.yview
 		# )
-		# sbar.grid ( row=0, column=1)
+		# sbar.grid (row=row, column=1)
 		# console["yscrollcommand"] = sbar.set
 		# console.grid()
-		console.pack(fill="both", expand=True)
+		console.grid(
+			row=row,
+			column=0,
+			columnspan=4,
+			sticky=tk.W + tk.E,
+		)
 		log.addHandler(
 			TkTextLogHandler(console),
 		)
 		console.insert("end", "Console:\n")
 		####
-		convertVpaned.add(console)
-		convertVpaned.pack(fill="both", expand=True)
+		console.grid()
 		self.console = console
 		##################
-		# convertVpaned.grid()
 		# bottomFrame.grid()
 		# self.grid()
 		#####################
@@ -1035,9 +1039,9 @@ class UI(tix.Frame, UIBase):
 		self.readOptions.clear()  # reset the options, DO NOT re-assign
 		format = pluginByDesc[formatDesc].name
 		if Glossary.formatsReadOptions[format]:
-			self.readOptionsButton.pack(side="right")
+			self.readOptionsButton.grid(row=self.inputFormatRow, column=3, sticky=tk.W + tk.E)
 		else:
-			self.readOptionsButton.pack_forget()
+			self.readOptionsButton.grid_forget()
 
 	def outputComboChanged(self, *args):
 		# log.debug(self.formatVarOutputConvert.get())
@@ -1047,9 +1051,9 @@ class UI(tix.Frame, UIBase):
 		self.writeOptions.clear()  # reset the options, DO NOT re-assign
 		format = pluginByDesc[formatDesc].name
 		if Glossary.formatsWriteOptions[format]:
-			self.writeOptionsButton.pack(side="right")
+			self.writeOptionsButton.grid(row=self.outputFormatRow, column=3, sticky=tk.W + tk.E)
 		else:
-			self.writeOptionsButton.pack_forget()
+			self.writeOptionsButton.grid_forget()
 
 	def anyEntryChanged(self, event=None):
 		self.inputEntryChanged()
