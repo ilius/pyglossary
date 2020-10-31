@@ -387,7 +387,7 @@ class FormatOptionsButton(ttk.Button):
 
 		button = ttk.Button(
 			frame,
-			text="Ok",
+			text="OK",
 			command=okClicked,
 			# bg="#ff0000",
 			# activebackground="#ff5050",
@@ -646,6 +646,13 @@ class UI(tix.Frame, UIBase):
 		########
 		self.pack(fill="x")
 		# rootWin.bind("<Configure>", self.resized)
+		#######################
+		defaultFont = tkFont.nametofont('TkDefaultFont')
+		if core.sysName in ("linux", "freebsd"):
+			defaultFont.configure(size=int(defaultFont.cget("size") * 1.4))
+		####
+		self.biggerFont = defaultFont.copy()
+		self.biggerFont.configure(size=int(defaultFont.cget("size") * 1.5))
 		######################
 		self.glos = Glossary(ui=self)
 		self._convertOptions = {}
@@ -666,17 +673,6 @@ class UI(tix.Frame, UIBase):
 		notebook.add("tabAbout", label="About", underline=0)
 		convertFrame = tix.Frame(notebook.tabConvert)
 		aboutFrame = tix.Frame(notebook.tabAbout)
-		######################
-		tk.Grid.columnconfigure(convertFrame, 0, weight=1)
-		tk.Grid.columnconfigure(convertFrame, 1, weight=30)
-		tk.Grid.columnconfigure(convertFrame, 2, weight=40)
-		tk.Grid.columnconfigure(convertFrame, 3, weight=1)
-		# tk.Grid.rowconfigure(convertFrame, 0, weight=5)
-		# tk.Grid.rowconfigure(convertFrame, 1, weight=5)
-		# tk.Grid.rowconfigure(convertFrame, 2, weight=1)
-		# tk.Grid.rowconfigure(convertFrame, 3, weight=5)
-		# tk.Grid.rowconfigure(convertFrame, 4, weight=5)
-		# tk.Grid.rowconfigure(convertFrame, 5, weight=5)
 		######################
 		row = 0
 		label = ttk.Label(convertFrame, text="Input Format: ")
@@ -772,21 +768,26 @@ class UI(tix.Frame, UIBase):
 		label.grid(row=row, column=0, sticky=tk.W)
 		###################
 		row += 1
-		button = ttk.Button(
+		button = tk.Button(
 			convertFrame,
 			text="Convert",
 			command=self.convert,
-			# bg="#00e000",
-			# activebackground="#22f022",
+			background="#00e000",
+			activebackground="#22f022",
+			borderwidth=5,
+			font=self.biggerFont,
+			# pady=10,
 		)
 		button.grid(
 			row=row,
 			column=2,
 			columnspan=3,
-			sticky=tk.W + tk.E,
+			sticky=tk.W + tk.E + tk.S,
 		)
+		# print(f"row number for Convert button: {row}")
 		######
 		convertFrame.pack(fill="x")
+		# convertFrame.grid(sticky=tk.W + tk.E + tk.N + tk.S)
 		#################
 		row += 1
 		console = tix.Text(convertFrame, height=15, background="#000000")
@@ -878,14 +879,28 @@ class UI(tix.Frame, UIBase):
 		aboutNotebook.pack(fill="x")
 
 		aboutFrame.pack(fill="x")
+
+		######################
+		tk.Grid.columnconfigure(convertFrame, 0, weight=1)
+		tk.Grid.columnconfigure(convertFrame, 1, weight=30)
+		tk.Grid.columnconfigure(convertFrame, 2, weight=20)
+		tk.Grid.columnconfigure(convertFrame, 3, weight=1)
+		tk.Grid.rowconfigure(convertFrame, 0, weight=50)
+		tk.Grid.rowconfigure(convertFrame, 1, weight=50)
+		tk.Grid.rowconfigure(convertFrame, 2, weight=1)
+		tk.Grid.rowconfigure(convertFrame, 3, weight=50)
+		tk.Grid.rowconfigure(convertFrame, 4, weight=50)
+		tk.Grid.rowconfigure(convertFrame, 5, weight=1)
+		tk.Grid.rowconfigure(convertFrame, 6, weight=50)
+
 		# _________________________________________________________________ #
 
 		notebook.pack(fill="both", expand=True)
 
 		# _________________________________________________________________ #
 
-		statusBarframe = tix.Frame(self)
-		clearB = ttk.Button(
+		statusBarframe = tk.Frame(self, borderwidth=3)
+		clearB = tk.Button(
 			statusBarframe,
 			text="Clear",
 			command=self.console_clear,
@@ -893,6 +908,7 @@ class UI(tix.Frame, UIBase):
 			# fg="#ffff00",
 			# activebackground="#333333",
 			# activeforeground="#ffff00",
+			borderwidth=5,
 		)
 		clearB.pack(side="left")
 		####
@@ -915,17 +931,6 @@ class UI(tix.Frame, UIBase):
 		self.pbar = pbar
 		statusBarframe.pack(fill="x")
 		self.progressTitle = ""
-		# _________________________________________________________________ #
-		frame3 = tix.Frame(self)
-		closeB = ttk.Button(
-			frame3,
-			text="Close",
-			command=rootWin.quit,
-			# bg="#ff0000",
-			# activebackground="#ff5050",
-		)
-		closeB.pack(side="right")
-		frame3.pack(fill="x")
 		# _________________________________________________________________ #
 
 		centerWindow(rootWin)
