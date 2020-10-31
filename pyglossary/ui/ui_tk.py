@@ -793,7 +793,7 @@ class UI(tix.Frame, UIBase):
 		# convertFrame.grid(sticky=tk.W + tk.E + tk.N + tk.S)
 		#################
 		row += 1
-		console = tix.Text(convertFrame, height=15, background="#000000")
+		console = tix.Text(convertFrame, height=15, background="#000", foreground="#fff")
 		# self.consoleH = 15
 		# sbar = Tix.Scrollbar(
 		# 	convertFrame,
