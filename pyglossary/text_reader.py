@@ -45,7 +45,9 @@ class TextGlossaryReader(object):
 		if self._hasInfo:
 			self.loadInfo()
 		if not self._wordCount:
-			self._fileSize = os.path.getsize(filename)
+			self._file.seek(0, 2)
+			self._fileSize = self._file.tell()
+			self._file.seek(0)
 			log.debug(f"File size of {filename}: {self._fileSize}")
 			self._glos.setInfo("input_file_size", f"{self._fileSize}")
 
