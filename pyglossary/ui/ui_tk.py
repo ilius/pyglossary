@@ -924,7 +924,7 @@ class UI(tix.Frame, UIBase):
 			statusBarframe,
 			comboVar,
 			log.getVerbosity(),  # default
-			0, 1, 2, 3, 4,
+			0, 1, 2, 3, 4, 5,
 		)
 		comboVar.trace("w", self.verbosityChanged)
 		combo.pack(side="left")
