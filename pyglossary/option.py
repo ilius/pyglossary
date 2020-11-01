@@ -121,7 +121,10 @@ class FloatOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(self, "float", **kwargs)
 
-	def evaluate(self, raw: "Union[str, float, int]") -> "Tuple[Optional[float], bool]":
+	def evaluate(
+		self,
+		raw: "Union[str, float, int]",
+	) -> "Tuple[Optional[float], bool]":
 		"returns (value, isValid)"
 		try:
 			value = float(raw)

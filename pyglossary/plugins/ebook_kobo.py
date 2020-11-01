@@ -49,13 +49,7 @@ optionsProp = {
 }
 
 
-"""
-FIXME:
-Kobo will only look in the file matching the word’s prefix, so if a
-variant has a different prefix, it must be duplicated into each matching file
-(note that duplicate words aren’t an issue).
-https://pgaskin.net/dictutil/dicthtml/prefixes.html
-"""
+# Penelope option: marisa_index_size=1000000
 
 
 def is_cyrillic_char(c: str) -> bool:

@@ -187,12 +187,6 @@ class StdLogHandler(logging.Handler):
 		fp.write(msg + "\n")
 		fp.flush()
 
-#	def exception(self, msg: str) -> None:
-#		if not self.noColor:
-#			msg = self.startRed + msg + self.endFormat
-#		sys.stderr.write(msg + "\n")
-#		sys.stderr.flush()
-
 
 def checkCreateConfDir() -> None:
 	if not isdir(confDir):

@@ -139,14 +139,11 @@ class EbookWriter(object):
 		# self._ignore_synonyms = ignore_synonyms
 		# self._flatten_synonyms = flatten_synonyms
 
-		#"bookeen_collation_function": None,## bookeen format
-		#"bookeen_install_file": False,## bookeen format
-		#"marisa_bin_path": None,## kobo format
-		#"marisa_index_size": 1000000,## kobo format
-		#"sd_ignore_sametypesequence": False,## stardict format
-		#"sd_no_dictzip": False,## stardict format
-		#"group_by_prefix_merge_across_first": False,
-		#"group_by_prefix_merge_min_size": 0,
+		# Penelope's extra options:
+		# "bookeen_collation_function": None,  # bookeen format
+		# "bookeen_install_file": False,  # bookeen format
+		# "group_by_prefix_merge_across_first": False,
+		# "group_by_prefix_merge_min_size": 0,
 
 		self._tmpDir = None
 		self.cover = None

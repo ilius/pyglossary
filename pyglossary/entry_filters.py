@@ -54,12 +54,6 @@ class NonEmptyWordFilter(EntryFilter):
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		if not entry.s_word:
 			return
-#		words = entry.l_word
-#		if not words:
-#			return
-#		wordsStr = "".join([w.strip() for w in words])
-#		if not wordsStr:
-#			return
 		return entry
 
 

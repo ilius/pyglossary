@@ -2,6 +2,7 @@
 
 from os.path import isfile
 
+
 class Writer(object):
 	def __init__(self, glos):
 		self._glos = glos

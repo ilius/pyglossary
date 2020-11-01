@@ -169,7 +169,6 @@ def replacePostSpaceChar(st: str, ch: str) -> str:
 	)
 
 
-
 def isControlChar(y: int) -> bool:
 	# y: char code
 	if y < 32 and chr(y) not in "\t\n\r\v":

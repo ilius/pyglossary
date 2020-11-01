@@ -174,7 +174,9 @@ class PluginProp(object):
 			default = getattr(rwclass, attrName)
 			if name not in optionsProp:
 				if not callable(default):
-					log.warning(f"format={self.name}, attrName={attrName}, type={type(default)}")
+					log.warning(
+						f"format={self.name}, attrName={attrName}, type={type(default)}"
+					)
 				continue
 			prop = optionsProp[name]
 			if prop.disabled:
