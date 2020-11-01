@@ -31,7 +31,7 @@ from .compression import (
 log = logging.getLogger("pyglossary")
 
 
-def zipFileOrDir(filename: str):
+def zipFileOrDir(glos: "GlossaryType", filename: str):
 	from .os_utils import indir
 	if isdir(filename):
 		dirn, name = split(filename)
@@ -43,15 +43,20 @@ def zipFileOrDir(filename: str):
 			return error
 
 	dirn, name = split(filename)
+	files = [name]
+
+	if isdir(f"{filename}_res"):
+		files.append(f"{name}_res")
+
 	with indir(dirn):
 		output, error = subprocess.Popen(
-			["zip", f"{filename}.zip", name, "-m"],
+			["zip", "-mr", f"{filename}.zip"] + files,
 			stdout=subprocess.PIPE,
 		).communicate()
 		return error
 
 
-def compress(filename: str, compression: str) -> str:
+def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 	"""
 	filename is the existing file path
 	supported compressions: "gz", "bz2", "lzma", "zip"
@@ -71,7 +76,7 @@ def compress(filename: str, compression: str) -> str:
 			os.remove(compFilename)
 		except OSError:
 			pass
-		error = zipFileOrDir(filename)
+		error = zipFileOrDir(glos, filename)
 		if error:
 			log.error(
 				error + "\n" +

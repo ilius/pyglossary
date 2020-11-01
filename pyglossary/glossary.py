@@ -1203,7 +1203,7 @@ class Glossary(GlossaryType):
 
 	def _compressOutput(self, filename: str, compression: str) -> str:
 		from pyglossary.glossary_utils import compress
-		return compress(filename, compression)
+		return compress(self, filename, compression)
 
 	def convert(
 		self,
