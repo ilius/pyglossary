@@ -19,6 +19,7 @@
 
 from formats_common import *
 import csv
+import io
 from pyglossary.file_utils import fileCountLines
 
 
@@ -54,6 +55,27 @@ optionsProp = {
 }
 
 
+class TextFilePosWrapper(io.TextIOWrapper):
+	def __init__(self, fileobj, encoding):
+		self.fileobj = fileobj
+		self._encoding = encoding
+		self.pos = 0
+
+	def __iter__(self):
+		return self
+
+	def close(self):
+		self.fileobj.close()
+
+	def __next__(self):
+		line = self.fileobj.__next__()
+		self.pos += len(line.encode(self._encoding))
+		return line
+
+	def tell(self):
+		return self.pos
+
+
 class Reader(object):
 	compressions = stdCompressions
 
@@ -80,7 +102,11 @@ class Reader(object):
 		filename: str,
 	) -> None:
 		self._filename = filename
-		self._file = compressionOpen(filename, mode="rt", encoding=self._encoding)
+		cfile = compressionOpen(filename, mode="rt", encoding=self._encoding)
+		cfile.seek(0, 2)
+		self._fileSize = cfile.tell()
+		cfile.seek(0)
+		self._file = TextFilePosWrapper(cfile, self._encoding)
 		self._csvReader = csv.reader(
 			self._file,
 			dialect="excel",
@@ -107,14 +133,13 @@ class Reader(object):
 		if self._file:
 			try:
 				self._file.close()
-			except:
+			except Exception:
 				log.exception("error while closing csv file")
 		self.clear()
 
 	def __len__(self) -> int:
 		if self._wordCount is None:
 			if hasattr(self._file, "compression"):
-				log.warning("progressbar for compressed csv file is not implemented")
 				return 0
 			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(self._filename) - \
@@ -151,7 +176,11 @@ class Reader(object):
 				pass
 			else:
 				word = [word] + alts
-			yield self._glos.newEntry(word, defi)
+			yield self._glos.newEntry(
+				word,
+				defi,
+				byteProgress=(self._file.tell(), self._fileSize),
+			)
 		self._wordCount = wordCount
 
 		resDir = self._resDir
@@ -232,4 +261,3 @@ class Writer(object):
 				row.append(",".join(alts))
 
 			writer.writerow(row)
-
