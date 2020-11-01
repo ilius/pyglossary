@@ -13,25 +13,25 @@ languages is taken into account. Pull requests are welcome.
 Screenshots
 -----------
 
-<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-gtk-bgl-stardict-aryanpur-dark.png" style="max-height:450px"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-gtk-bgl-stardict-aryanpur-dark.png" width="50%" height="50%"/>
 
 Linux - Gtk3-based interface
 
 ------------------------------------------------------------------------
 
-<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40-tk-bgl-epub-es-en.png" style="max-height:450px"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40-tk-bgl-epub-es-en.png" width="50%" height="50%"/>
 
 Windows - Tkinter-based interface
 
 ------------------------------------------------------------------------
 
-![](https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-cmd-freedict-mids-de-ru.png)
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/32-cmd-freedict-mids-de-ru.png" width="50%" height="50%"/>
 
 Linux - command-line interface
 
 ------------------------------------------------------------------------
 
-<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40-cmdi-termux-zim-slob-en-med.jpg" style="max-height:450px"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40-cmdi-termux-zim-slob-en-med.jpg" width="50%" height="50%"/>
 
 Android Termux - interactive command-line interface
 
