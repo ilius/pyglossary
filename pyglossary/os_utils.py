@@ -1,5 +1,8 @@
 import os
 import shutil
+import logging
+
+log = logging.getLogger("pyglossary")
 
 
 class indir(object):
@@ -44,13 +47,13 @@ def runDictzip(filename: str) -> None:
 		[dictzipCmd, filename],
 		stdout=subprocess.PIPE
 	).communicate()
-#	out = p3[1].read()
-#	err = p3[2].read()
-#	log.debug(f"dictzip command: {dictzipCmd!r}")
-#	if err:
-#		log.error(f"dictzip error: {err.replace('\n', ' ')}")
-#	if out:
-#		log.error(f"dictzip error: {out.replace('\n', ' ')}")
+	log.debug(f"dictzip command: {dictzipCmd!r}")
+	if err:
+		err = err.replace('\n', ' ')
+		log.error(f"dictzip error: {err}")
+	if out:
+		out = out.replace('\n', ' ')
+		log.error(f"dictzip error: {out}")
 
 
 def my_url_show(link: str) -> None:
