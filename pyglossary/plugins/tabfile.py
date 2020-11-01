@@ -22,6 +22,28 @@ optionsProp = {
 
 
 class Reader(TextGlossaryReader):
+	def __init__(self, glos: GlossaryType, hasInfo: bool = True):
+		TextGlossaryReader.__init__(self, glos, hasInfo=hasInfo)
+		self._resDir = ""
+		self._resFileNames = []
+
+	def open(self, filename: str) -> None:
+		TextGlossaryReader.open(self, filename)
+		resDir = f"{filename}_res"
+		if isdir(resDir):
+			self._resDir = resDir
+			self._resFileNames = os.listdir(self._resDir)
+
+	def __iter__(self) -> "Iterator[BaseEntry]":
+		yield from TextGlossaryReader.__iter__(self)
+		resDir = self._resDir
+		for fname in self._resFileNames:
+			with open(join(resDir, fname), "rb") as fromFile:
+				yield self._glos.newDataEntry(
+					fname,
+					fromFile.read(),
+				)
+
 	def isInfoWord(self, word: str) -> bool:
 		return word.startswith("#")
 
