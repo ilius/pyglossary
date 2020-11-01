@@ -31,7 +31,7 @@ class Reader(TextGlossaryReader):
 	def nextPair(self) -> "Tuple[str, str]":
 		if not self._file:
 			raise StopIteration
-		line = self._file.readline()
+		line = self.readline()
 		if not line:
 			raise StopIteration
 		line = line.rstrip("\n")
@@ -69,7 +69,7 @@ class Writer(object):
 		self._filename = None
 
 	def open(
-		self, 
+		self,
 		filename: str,
 	):
 		self._filename = filename

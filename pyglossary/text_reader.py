@@ -14,6 +14,27 @@ import logging
 log = logging.getLogger("pyglossary")
 
 
+class TextFilePosWrapper(object):
+	def __init__(self, fileobj, encoding):
+		self.fileobj = fileobj
+		self._encoding = encoding
+		self.pos = 0
+
+	def __iter__(self):
+		return self
+
+	def close(self):
+		self.fileobj.close()
+
+	def __next__(self):
+		line = self.fileobj.__next__()
+		self.pos += len(line.encode(self._encoding))
+		return line
+
+	def tell(self):
+		return self.pos
+
+
 class TextGlossaryReader(object):
 	_encoding = "utf-8"
 
@@ -29,7 +50,7 @@ class TextGlossaryReader(object):
 		self._fileSize = 0
 		self._pos = -1
 		self._fileCount = 1
-		self._fileIndex = 0
+		self._fileIndex = -1
 		self._bufferLine = ""
 
 	def readline(self):
@@ -37,33 +58,43 @@ class TextGlossaryReader(object):
 			line = self._bufferLine
 			self._bufferLine = ""
 			return line
-		return self._file.readline()
+		try:
+			return next(self._file)
+		except StopIteration:
+			return ""
+
+	def _open(self, filename: str) -> None:
+		self._fileIndex += 1
+		log.info(f"Reading file: {filename}")
+		cfile = compressionOpen(filename, mode="rt", encoding=self._encoding)
+
+		if not self._wordCount:
+			cfile.seek(0, 2)
+			self._fileSize = cfile.tell()
+			cfile.seek(0)
+			log.debug(f"File size of {filename}: {self._fileSize}")
+			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+
+		self._file = TextFilePosWrapper(cfile, self._encoding)
+		if self._hasInfo:
+			self.loadInfo()
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._file = compressionOpen(filename, mode="rt", encoding=self._encoding)
-		if not self._wordCount:
-			self._file.seek(0, 2)
-			self._fileSize = self._file.tell()
-			self._file.seek(0)
-			log.debug(f"File size of {filename}: {self._fileSize}")
-			self._glos.setInfo("input_file_size", f"{self._fileSize}")
-		if self._hasInfo:
-			self.loadInfo()
+		self._open(filename)
 
 	def openNextFile(self) -> bool:
 		self.close()
 		nextFilename = f"{self._filename}.{self._fileIndex + 1}"
-		if not isfile(nextFilename):
-			# TODO: detect compressed file, like file.txt.1.gz
-			log.warning(f"next file not found: {nextFilename}")
-			return False
-		self._fileIndex += 1
-		log.info(f"Reading next file: {nextFilename}")
-		self._file = compressionOpen(nextFilename, "rt", encoding=self._encoding)
-		if self._hasInfo:
-			self.loadInfo()
-		return True
+		if isfile(nextFilename):
+			self._open(nextFilename)
+			return True
+		for ext in self.compressions:
+			if isfile(f"{nextFilename}.{ext}"):
+				self._open(f"{nextFilename}.{ext}")
+				return True
+		log.warning(f"next file not found: {nextFilename}")
+		return False
 
 	def close(self) -> None:
 		if not self._file:

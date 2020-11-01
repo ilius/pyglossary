@@ -57,7 +57,7 @@ class Reader(TextGlossaryReader):
 			raise StopIteration
 		entryLines = []
 		while True:
-			line = self._file.readline()
+			line = self.readline()
 			if not line:
 				raise StopIteration
 			line = line.rstrip("\n\r")  # FIXME

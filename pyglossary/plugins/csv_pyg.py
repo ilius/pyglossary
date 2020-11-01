@@ -19,7 +19,6 @@
 
 from formats_common import *
 import csv
-from pyglossary.file_utils import fileCountLines
 
 
 enable = True
@@ -54,27 +53,6 @@ optionsProp = {
 }
 
 
-class TextFilePosWrapper(object):
-	def __init__(self, fileobj, encoding):
-		self.fileobj = fileobj
-		self._encoding = encoding
-		self.pos = 0
-
-	def __iter__(self):
-		return self
-
-	def close(self):
-		self.fileobj.close()
-
-	def __next__(self):
-		line = self.fileobj.__next__()
-		self.pos += len(line.encode(self._encoding))
-		return line
-
-	def tell(self):
-		return self.pos
-
-
 class Reader(object):
 	compressions = stdCompressions
 
@@ -100,6 +78,7 @@ class Reader(object):
 		self,
 		filename: str,
 	) -> None:
+		from pyglossary.text_reader import TextFilePosWrapper
 		self._filename = filename
 		cfile = compressionOpen(filename, mode="rt", encoding=self._encoding)
 		cfile.seek(0, 2)
@@ -137,6 +116,7 @@ class Reader(object):
 		self.clear()
 
 	def __len__(self) -> int:
+		from pyglossary.file_utils import fileCountLines
 		if self._wordCount is None:
 			if hasattr(self._file, "compression"):
 				return 0
