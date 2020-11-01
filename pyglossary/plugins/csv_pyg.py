@@ -19,7 +19,6 @@
 
 from formats_common import *
 import csv
-import io
 from pyglossary.file_utils import fileCountLines
 
 
@@ -55,7 +54,7 @@ optionsProp = {
 }
 
 
-class TextFilePosWrapper(io.TextIOWrapper):
+class TextFilePosWrapper(object):
 	def __init__(self, fileobj, encoding):
 		self.fileobj = fileobj
 		self._encoding = encoding
