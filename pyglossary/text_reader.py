@@ -42,14 +42,14 @@ class TextGlossaryReader(object):
 	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = compressionOpen(filename, mode="rt", encoding=self._encoding)
-		if self._hasInfo:
-			self.loadInfo()
 		if not self._wordCount:
 			self._file.seek(0, 2)
 			self._fileSize = self._file.tell()
 			self._file.seek(0)
 			log.debug(f"File size of {filename}: {self._fileSize}")
 			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+		if self._hasInfo:
+			self.loadInfo()
 
 	def openNextFile(self) -> bool:
 		self.close()
