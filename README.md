@@ -42,33 +42,33 @@ Supported formats
 | Format                                                                |   |    Extension    |Read|Write|
 |-----------------------------------------------------------------------|:-:|:---------------:|:--:|:---:|
 | [Aard 2 (slob)](http://aarddict.org)                                  |🔢 | .slob           | ✔  |  ✔  |
-| [ABBYY Lingvo](https://www.lingvo.ru/) DSL                            |📝 | .dsl            | ✔  |     |
+| [ABBYY Lingvo](https://www.lingvo.ru/) DSL (Russian-origin)           |📝 | .dsl            | ✔  |     |
 | AppleDict Binary                                                      |🔢 |.dictionary      | ✔  | ❌  |
 | AppleDict Source                                                      |📁 |                 |    |  ✔  |
 | Babylon                                                               |🔢 | .bgl            | ✔  | ❌  |
 | [CC-CEDICT](https://cc-cedict.org/wiki) (Chinese)                     |📝 |                 | ✔  | ❌  |
 | [cc-kedict](https://github.com/mhagiwara/cc-kedict) (Korean)          |📝 |                 | ✔  | ❌  |
 | CSV                                                                   |📝 | .csv            | ✔  |  ✔  |
-| [Dict.cc](https://play.google.com/store/apps/details?id=cc.dict.dictcc) (SQLite3, German)|🔢| | ✔ |    |
+| [Dict.cc](https://ply.gl/cc.dict.dictcc) (SQLite3, German)            |🔢 |                 | ✔  |     |
 | DICT.org / Dictd server                                               |📁 | (📝.index)      | ✔  |  ✔  |
 | DICT.org / dictfmt source file                                        |📝 | (.dtxt)         |    |  ✔  |
 | [dictunformat](https://linux.die.net/man/1/dictunformat) output file  |📝 | (.dictunformat) | ✔  |     |
 | [DictionaryForMIDs](http://dictionarymid.sourceforge.net)             |📁 | (📁.mids)       | ✔  |  ✔  |
 | [DigitalNK](https://github.com/digitalprk/dicrs) (SQLite3, N-Korean)  |🔢 |                 | ✔  |     |
 | EDLIN                                                                 |📁 | .edlin          | ✔  |  ✔  |
-| EPUB-2 E-Book                                                         |📦 | .epub           |❌  |  ✔  |
+| EPUB-2 E-Book                                                         |📦 | .epub           | ❌ |  ✔  |
 | [FreeDict](https://freedict.org)                                      |📝 | .tei            | ✔  |  ✔  |
 | [Gettext Source](https://www.gnu.org/software/gettext)                |📝 | .po             | ✔  |  ✔  |
-| HTML Directory (by file size)                                         |📁 |                 |❌  |  ✔  |
+| HTML Directory (by file size)                                         |📁 |                 | ❌ |  ✔  |
 | [JMDict](https://www.edrdg.org/jmdict/j_jmdict.html) (Japanese)       |📝 |                 | ✔  | ❌  |
 | JSON                                                                  |📝 | .json           |    |  ✔  |
-| Kobo E-Reader Dictionary                                              |📦 | .kobo.zip       |❌  |  ✔  |
+| Kobo E-Reader Dictionary                                              |📦 | .kobo.zip       | ❌ |  ✔  |
 | [Kobo E-Reader Dictfile](https://github.com/pgaskin/dictutil)         |📝 | .df             | ✔  |  ✔  |
 | [Lingoes Source](http://www.lingoes.net/en/dictionary/dict_format.php)|📝 | .ldf            | ✔  |  ✔  |
-| Octopus MDict                                                         |🔢 | .mdx            | ✔  | ❌  |
+| Octopus MDict (Chinese-origin)                                        |🔢 | .mdx            | ✔  | ❌  |
 | [Sdictionary Binary](http://swaj.net/sdict/)                          |🔢 | .dct            | ✔  |     |
 | [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)         |📝 | .sdct           |    |  ✔  |
-| SQL                                                                   |📝 | .sql            |❌  |  ✔  |
+| SQL                                                                   |📝 | .sql            | ❌ |  ✔  |
 | [StarDict](https://github.com/huzheng001/stardict-3)                  |📁 | (📝.ifo)        | ✔  |  ✔  |
 | [Tabfile](https://en.wikipedia.org/wiki/Tab-separated_values)         |📝 |.txt, .tab       | ✔  |  ✔  |
 | [Wiktionary Dump](https://dumps.wikimedia.org/backup-index.html)      |📝 | .xml            | ✔  | ❌  |
