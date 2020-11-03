@@ -402,11 +402,8 @@ unicodeNextWord = {
 }
 
 
-def getWritingSystemFromText(st: str):
-	# some special first words in unicodedata.name(c):
-	# "RIGHT", "ASTERISK", "MODIFIER"
-	k = (len(st) + 1) // 2 - 1
-	for c in st[k:]:
+def _getWritingSystemFromText(st: str, start: int, end: int):
+	for c in st[start:end]:
 		unicodeWords = unicodedata.name(c).split(' ')
 		alias = unicodeWords[0]
 		ws = writingSystemByUnicode.get(alias)
@@ -416,3 +413,13 @@ def getWritingSystemFromText(st: str):
 			ws = writingSystemByUnicode.get(" ".join(unicodeWords[:2]))
 			if ws:
 				return ws
+
+
+def getWritingSystemFromText(st: str):
+	# some special first words in unicodedata.name(c):
+	# "RIGHT", "ASTERISK", "MODIFIER"
+	k = (len(st) + 1) // 2 - 1
+	ws = _getWritingSystemFromText(st, k, len(st))
+	if ws:
+		return ws
+	return _getWritingSystemFromText(st, 0, k)
