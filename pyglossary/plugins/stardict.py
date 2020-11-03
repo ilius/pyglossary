@@ -121,13 +121,11 @@ class Reader(object):
 	_xdxf_to_html = True
 
 	def __init__(self, glos: GlossaryType):
-		from pyglossary.xdxf_transform import xdxf_to_html_transformer
+
 		self._glos = glos
 		self.clear()
 
 		self._xdxf_tr = None
-		if self._xdxf_to_html:
-			self._xdxf_tr = xdxf_to_html_transformer()
 
 		"""
 		indexData format
@@ -145,6 +143,15 @@ class Reader(object):
 		synDict:
 			a dict { entryIndex -> altList }
 		"""
+
+	def xdxf_setup(self):
+		from pyglossary.xdxf_transform import xdxf_to_html_transformer
+		self._xdxf_tr = xdxf_to_html_transformer()
+
+	def xdxf_transform(self, text: str):
+		if self._xdxf_tr is None:
+			self.xdxf_setup()
+		return self._xdxf_tr(text)
 
 	def close(self) -> None:
 		if self._dictFile:
@@ -295,8 +302,8 @@ class Reader(object):
 					"h": "h",
 					"x": "x",
 				}.get(chr(defiFormatCode), "")
-				if partDefiFormat == "x" and self._xdxf_tr:
-					partDefi = self._xdxf_tr(partDefi)
+				if partDefiFormat == "x" and self._xdxf_to_html:
+					partDefi = self.xdxf_transform(partDefi)
 					partDefiFormat = "h"
 				defis.append(partDefi)
 				defiFormats.append(partDefiFormat)
