@@ -325,7 +325,7 @@ class Reader(object):
 
 			defiSep = "\n<hr>\n"
 			# if defiFormat == "x"
-			#	defiSep = FIXME
+			# 	defiSep = FIXME
 			defi = defiSep.join(defis)
 
 			# FIXME:
@@ -465,12 +465,12 @@ class Reader(object):
 		return res
 
 	# def readResources(self):
-	#	if not isdir(self._resDir):
-	#		resInfoPath = join(baseDirPath, "res.rifo")
-	#		if isfile(resInfoPath):
-	#			log.warning(
-	#				"StarDict resource database is not supported. Skipping"
-	#			)
+	# 	if not isdir(self._resDir):
+	# 		resInfoPath = join(baseDirPath, "res.rifo")
+	# 		if isfile(resInfoPath):
+	# 			log.warning(
+	# 				"StarDict resource database is not supported. Skipping"
+	# 			)
 
 
 class Writer(object):
