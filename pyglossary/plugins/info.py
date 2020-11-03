@@ -32,6 +32,7 @@ class Writer(object):
 		import re
 		from collections import Counter, OrderedDict
 		from pyglossary.json_utils import dataToPrettyJson
+		from pyglossary.langs.writing_system import getWritingSystemFromText
 
 		glos = self._glos
 
@@ -52,6 +53,7 @@ class Writer(object):
 		defiFormatCounter = Counter()
 		firstTagCounter = Counter()
 		allTagsCounter = Counter()
+		sourceScriptCounter = Counter()
 
 		while True:
 			entry = yield
@@ -81,6 +83,14 @@ class Writer(object):
 						tag = tag.strip("< />").lower()
 						allTagsCounter[tag] += 1
 
+			ws = getWritingSystemFromText(entry.s_word)
+			if ws:
+				wsName = ws.name
+			else:
+				log.debug(f"No script detected for word: {entry.s_word}")
+				wsName = "None"
+			sourceScriptCounter[wsName] += 1
+
 		data_entry_count = defiFormatCounter["b"]
 		del defiFormatCounter["b"]
 		info = OrderedDict()
@@ -89,25 +99,30 @@ class Writer(object):
 		info["word_count"] = wordCount
 		info["bword_count"] = bwordCount
 		info["data_entry_count"] = data_entry_count
-		info["defi_format_counter"] = ", ".join(
+		info["defi_format"] = ", ".join(
 			f"{defiFormat}={count}"
 			for defiFormat, count in
 			sorted(defiFormatCounter.items())
 		)
-		info["defi_tag_counter"] = ", ".join(
+		info["defi_tag"] = ", ".join(
 			f"{defiFormat}={count}"
 			for defiFormat, count in
 			allTagsCounter.most_common()
 		)
-		info["defi_first_tag_counter"] = ", ".join(
+		info["defi_first_tag"] = ", ".join(
 			f"{defiFormat}={count}"
 			for defiFormat, count in
 			firstTagCounter.most_common()
 		)
-		info["style_counter"] = ", ".join(
+		info["style"] = ", ".join(
 			f"{defiFormat}={count}"
 			for defiFormat, count in
 			styleByTagCounter.most_common()
+		)
+		info["source_script"] = ", ".join(
+			f"{defiFormat}={count}"
+			for defiFormat, count in
+			sourceScriptCounter.most_common()
 		)
 		self._file.write(dataToPrettyJson(info) + "\n")
 
