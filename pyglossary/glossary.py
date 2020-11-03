@@ -181,6 +181,8 @@ class Glossary(GlossaryType):
 		cls.plugins[format] = prop
 
 		for ext in extensions:
+			if ext.lower() != ext:
+				log.error(f"non-lowercase extension={ext!r} in {pluginName} plugin")
 			cls.pluginByExt[ext.lstrip(".")] = prop
 			cls.pluginByExt[ext] = prop
 
@@ -826,7 +828,7 @@ class Glossary(GlossaryType):
 
 		return True
 
-	def loadReader(self, reader: "Any") -> bool:
+	def loadReader(self, reader: "Any") -> None:
 		"""
 		iterates over `reader` object and loads the whole data into self._data
 		must call `reader.open(filename)` before calling this function
@@ -853,7 +855,6 @@ class Glossary(GlossaryType):
 			self.progressEnd()
 
 		self.showMemoryUsage()
-		return True
 
 	def _inactivateDirectMode(self) -> None:
 		"""
