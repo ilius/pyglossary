@@ -44,6 +44,8 @@ tools = [
 		"license": "Proprietary",
 	},
 ]
+# https://help.kobo.com/hc/en-us/articles/360017640093-Add-new-dictionaries-to-your-Kobo-eReader
+
 
 optionsProp = {
 }
