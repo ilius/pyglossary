@@ -98,7 +98,7 @@ def write_header(
 	)
 
 	if frontBackMatter:
-		with open(frontBackMatter, "r") as front_back_matter:
+		with open(frontBackMatter, mode="r", encoding="utf-8") as front_back_matter:
 			toFile.write(front_back_matter.read())
 
 
@@ -126,9 +126,9 @@ def format_default_prefs(defaultPrefs):
 
 
 def write_css(fname, css_file):
-	with open(fname, "wb") as toFile:
+	with open(fname, mode="wb") as toFile:
 		if css_file:
-			with open(css_file, "rb") as fromFile:
+			with open(css_file, mode="rb") as fromFile:
 				toFile.write(fromFile.read())
 		else:
 			toFile.write(pkgutil.get_data(
@@ -241,7 +241,7 @@ class Writer(object):
 		if not isdir(myResDir):
 			os.mkdir(myResDir)
 
-		with open(filePathBase + ".xml", "w", encoding="utf-8") as toFile:
+		with open(filePathBase + ".xml", mode="w", encoding="utf-8") as toFile:
 			write_header(glos, toFile, frontBackMatter)
 			while True:
 				entry = yield
@@ -291,7 +291,7 @@ class Writer(object):
 
 		write_css(filePathBase + ".css", css)
 
-		with open(join(dirname, "Makefile"), "w") as toFile:
+		with open(join(dirname, "Makefile"), mode="w", encoding="utf-8") as toFile:
 			toFile.write(
 				toStr(pkgutil.get_data(
 					__name__,
@@ -309,7 +309,7 @@ class Writer(object):
 
 		# if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
 		# present in Info.plist, Dictionary.app will crash.
-		with open(filePathBase + ".plist", "w", encoding="utf-8") as toFile:
+		with open(filePathBase + ".plist", mode="w", encoding="utf-8") as toFile:
 			frontMatterReferenceID = (
 				"<key>DCSDictionaryFrontMatterReferenceID</key>\n"
 				"\t<string>front_back_matter</string>"
