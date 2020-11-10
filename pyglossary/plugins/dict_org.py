@@ -105,8 +105,7 @@ class Reader(object):
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		if self._dictdb is None:
-			log.error("reader is not open, can not iterate")
-			raise StopIteration
+			raise RuntimeError("iterating over a reader while it's not open")
 		dictdb = self._dictdb
 		for word in dictdb.getdeflist():
 			b_defi = b"\n<hr>\n".join(dictdb.getdef(word))

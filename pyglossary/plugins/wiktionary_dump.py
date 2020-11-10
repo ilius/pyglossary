@@ -98,11 +98,7 @@ class Reader(object):
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		from lxml import etree as ET
 		if not self._filename:
-			log.error(
-				"WikipediaDump: trying to iterate over reader"
-				" while it's not open"
-			)
-			raise StopIteration
+			raise RuntimeError("iterating over a reader while it's not open")
 		while True:
 			page = self._readPage()
 			if page is None:

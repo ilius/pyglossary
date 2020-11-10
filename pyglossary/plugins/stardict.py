@@ -254,12 +254,11 @@ class Reader(object):
 		dictFile = self._dictFile
 
 		if not dictFile:
-			log.error(f"{self} is not open, can not iterate")
-			raise StopIteration
+			raise RuntimeError("iterating over a reader while it's not open")
 
 		if not indexData:
 			log.warning("indexData is empty")
-			raise StopIteration
+			return
 
 		for entryIndex, (b_word, defiOffset, defiSize) in enumerate(indexData):
 			if not b_word:

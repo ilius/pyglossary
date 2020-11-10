@@ -723,7 +723,7 @@ class BglReader(object):
 
 	def __iter__(self):
 		if not self.file:
-			raise StopIteration
+			raise RuntimeError("iterating over a reader while it's not open")
 
 		for fname, iconData in self.iconDataList:
 			yield self._glos.newDataEntry(fname, iconData)

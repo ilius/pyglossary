@@ -133,8 +133,7 @@ class Reader(object):
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		if not self._csvReader:
-			log.error(f"{self} is not open, can not iterate")
-			raise StopIteration
+			raise RuntimeError("iterating over a reader while it's not open")
 
 		wordCount = 0
 		for row in self._iterRows():

@@ -65,8 +65,7 @@ class Reader(object):
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		if not self._filename:
-			log.error("iterating over a reader which is not open")
-			raise StopIteration
+			raise RuntimeError("iterating over a reader while it's not open")
 
 		direc = self._filename
 		encoding = self._encoding

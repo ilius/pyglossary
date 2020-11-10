@@ -96,8 +96,7 @@ class Reader(object):
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		if not self._rootPath:
-			log.error("iterating over a reader which is not open")
-			raise StopIteration
+			raise RuntimeError("iterating over a reader while it's not open")
 
 		wordCount = 0
 		nextPath = self._rootPath
