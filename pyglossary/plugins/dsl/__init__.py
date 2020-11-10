@@ -23,6 +23,7 @@ import html.entities
 from xml.sax.saxutils import escape, quoteattr
 
 from formats_common import *
+from pyglossary.text_reader import TextFilePosWrapper
 
 from . import layer
 from . import tag
@@ -329,6 +330,7 @@ class Reader(object):
 		self._glos = glos
 		self.clean_tags = _clean_tags
 		self._file = None
+		self._fileSize = 0
 		self._bufferLine = ""
 
 	def close(self):
@@ -356,7 +358,11 @@ class Reader(object):
 		encoding = self._encoding
 		if not encoding:
 			encoding = self.detectEncoding()
-		self._file = compressionOpen(filename, mode="rt", encoding=encoding)
+		cfile = compressionOpen(filename, mode="rt", encoding=encoding)
+		cfile.seek(0, 2)
+		self._fileSize = cfile.tell()
+		cfile.seek(0)
+		self._file = TextFilePosWrapper(cfile, encoding)
 
 		# read header
 		for line in self._file:
@@ -454,6 +460,7 @@ class Reader(object):
 				yield self._glos.newEntry(
 					[current_key] + current_key_alters,
 					"\n".join(current_text),
+					byteProgress=(self._file.tell(), self._fileSize),
 				)
 
 			# start new entry
