@@ -507,7 +507,7 @@ class Writer(object):
 		self._targetLang = None
 
 	def open(self, filename: str) -> None:
-		log.info(f"open: filename = {filename}")
+		log.debug(f"open: filename = {filename}")
 		fileBasePath = filename
 		##
 		if splitext(filename)[1].lower() == ".ifo":
@@ -534,7 +534,7 @@ class Writer(object):
 			log.debug(f"Using write option sametypesequence={self._sametypesequence}")
 		elif self._sametypesequence is not None:
 			stat = self._glos.collectDefiFormat(100)
-			log.info(f"defiFormat stat: {stat}")
+			log.debug(f"defiFormat stat: {stat}")
 			if stat:
 				if stat["m"] > 0.97:
 					log.info(f"Auto-selecting sametypesequence=m")
