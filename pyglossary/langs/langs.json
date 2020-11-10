@@ -347,11 +347,19 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["el", "gre"],
+		"codes": ["el", "gre", "ell", "gr"],
 		"name": "Greek",
 		"alt_names": ["ελληνικά", "Elliniká"],
 		"script": ["Greek"],
 		"wiki": "https://en.wikipedia.org/wiki/Greek_language",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["grc"],
+		"name": "Ancient Greek",
+		"alt_names": ["Ἑλληνική", "Hellēnikḗ"],
+		"script": ["Greek"],
+		"wiki": "https://en.wikipedia.org/wiki/Ancient_Greek",
 		"title_tag": "b"
 	},
 	{
@@ -498,14 +506,6 @@
 		"alt_names": ["Paraguayan Guarani", "avañeʼẽ"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Guarani_language",
-		"title_tag": "b"
-	},
-	{
-		"codes": ["grc"],
-		"name": "Ancient Greek",
-		"alt_names": ["Ἑλληνική", "Hellēnikḗ"],
-		"script": ["Greek"],
-		"wiki": "https://en.wikipedia.org/wiki/Ancient_Greek",
 		"title_tag": "b"
 	},
 	{
