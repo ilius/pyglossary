@@ -392,9 +392,9 @@ class Reader(object):
 		if line.startswith("#NAME"):
 			self.setInfo("name", line[6:])
 		elif line.startswith("#INDEX_LANGUAGE"):
-			self._glos.sourceLangName = unwrap_quotes(line[16:])
+			self._glos.sourceLangName = unwrap_quotes(line[16:].strip())
 		elif line.startswith("#CONTENTS_LANGUAGE"):
-			self._glos.targetLangName = unwrap_quotes(line[19:])
+			self._glos.targetLangName = unwrap_quotes(line[19:].strip())
 
 	def _iterLines(self) -> "Iterator[str]":
 		if self._bufferLine:
