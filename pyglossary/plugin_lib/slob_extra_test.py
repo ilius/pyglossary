@@ -33,23 +33,24 @@ class TestBestMatch(BaseTest):
 
 	def test_best_match(self):
 		self.maxDiff = None
-		with open(self.path1) as s1, \
-			 open(self.path2) as s2:
+		with open(self.path1) as s1, open(self.path2) as s2:
 			result = find('aa', [s1, s2], match_prefix=True)
 			actual = list((s.id, item.key) for s, item in result)
-			expected = [(s1.id, 'aa'),
-						(s1.id, 'aa'),
-						(s2.id, 'aa'),
-						(s1.id, 'a-a'),
-						(s2.id, 'a-a'),
-						(s2.id, 'a,a'),
-						(s1.id, 'Aa'),
-						(s2.id, 'aA'),
-						(s1.id, 'Äā'),
-						(s2.id, 'Äā'),
-						(s2.id, 'āā'),
-						(s1.id, 'aabc'),
-						(s2.id, 'aade'),]
+			expected = [
+				(s1.id, 'aa'),
+				(s1.id, 'aa'),
+				(s2.id, 'aa'),
+				(s1.id, 'a-a'),
+				(s2.id, 'a-a'),
+				(s2.id, 'a,a'),
+				(s1.id, 'Aa'),
+				(s2.id, 'aA'),
+				(s1.id, 'Äā'),
+				(s2.id, 'Äā'),
+				(s2.id, 'āā'),
+				(s1.id, 'aabc'),
+				(s2.id, 'aade'),
+			]
 			self.assertEqual(expected, actual)
 
 	def tearDown(self):
