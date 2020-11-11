@@ -23,13 +23,13 @@ log.addHandler(mockLog)
 class BaseTest(unittest.TestCase):
 	def _observer(self, event: "slob.WriterEvent"):
 		log.info(f"slob: {event.name}{': ' + event.data if event.data else ''}")
-		#self._writers = []
+		# self._writers = []
 
 	def create(self, *args, observer=None, **kwargs):
 		if observer is None:
 			observer = self._observer
 		w = Writer(*args, observer=observer, **kwargs)
-		#self._writers.append(w)
+		# self._writers.append(w)
 		return w
 
 
@@ -42,9 +42,11 @@ class TestReadWrite(BaseTest):
 
 		with self.create(self.path) as w:
 
-			self.tags = {'a': 'abc',
-						 'bb': 'xyz123',
-						 'ccc': 'lkjlk'}
+			self.tags = {
+				'a': 'abc',
+				'bb': 'xyz123',
+				'ccc': 'lkjlk',
+			}
 			for name, value in self.tags.items():
 				w.tag(name, value)
 
@@ -101,8 +103,7 @@ class TestReadWrite(BaseTest):
 	def test_content(self):
 		with open(self.path) as r:
 			self.assertEqual(len(r), len(self.all_keys))
-			self.assertRaises(IndexError,
-							  r.__getitem__, len(self.all_keys))
+			self.assertRaises(IndexError, r.__getitem__, len(self.all_keys))
 			for i, item in enumerate(r):
 				self.assertEqual(item.key, self.all_keys[i])
 				content_type, value, fragment = self.data_as_dict[item.key]
@@ -113,20 +114,16 @@ class TestReadWrite(BaseTest):
 				self.assertEqual(
 					item.fragment, fragment)
 
-
 	def tearDown(self):
 		self.tmpdir.cleanup()
 
 
 class TestSort(BaseTest):
-
 	def setUp(self):
-
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
-		with self.create(self.path) as  w:
-
+		with self.create(self.path) as w:
 			data = [
 				'Ф, ф',
 				'Ф ф',
@@ -175,8 +172,10 @@ class TestFind(BaseTest):
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
 		with self.create(self.path) as w:
-			data = ['Cc', 'aA', 'aa', 'Aa', 'Bb', 'cc', 'Äā', 'ăÀ',
-					'a\u00A0a', 'a-a', 'a\u2019a', 'a\u2032a', 'a,a', 'a a']
+			data = [
+				'Cc', 'aA', 'aa', 'Aa', 'Bb', 'cc', 'Äā', 'ăÀ',
+				'a\u00A0a', 'a-a', 'a\u2019a', 'a\u2032a', 'a,a', 'a a',
+			]
 
 			for k in data:
 				v = ';'.join(unicodedata.name(c) for c in k)
@@ -200,8 +199,11 @@ class TestFind(BaseTest):
 			['LATIN SMALL LETTER A;LATIN CAPITAL LETTER A'])
 		self.assertEqual(
 			self.get(d, 'Äā'),
-			['LATIN CAPITAL LETTER A WITH DIAERESIS;'
-			 'LATIN SMALL LETTER A WITH MACRON'])
+			[
+				'LATIN CAPITAL LETTER A WITH DIAERESIS;'
+				'LATIN SMALL LETTER A WITH MACRON',
+			],
+		)
 		self.assertEqual(
 			self.get(d, 'a a'),
 			['LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A'])
@@ -213,52 +215,63 @@ class TestFind(BaseTest):
 			['LATIN SMALL LETTER A;PRIME;LATIN SMALL LETTER A'])
 		self.assertEqual(
 			self.get(d, 'a a'),
-			['LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;NO-BREAK SPACE;LATIN SMALL LETTER A'])
+			[
+				'LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;NO-BREAK SPACE;LATIN SMALL LETTER A',
+			],
+		)
 
 	def test_find_tertiary(self):
 		d = self.r.as_dict(TERTIARY)
 		self.assertEqual(
 			self.get(d, 'aa'),
-			['LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;NO-BREAK SPACE;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;HYPHEN-MINUS;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;COMMA;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;RIGHT SINGLE QUOTATION MARK;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;PRIME;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;LATIN SMALL LETTER A'])
+			[
+				'LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;NO-BREAK SPACE;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;HYPHEN-MINUS;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;COMMA;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;RIGHT SINGLE QUOTATION MARK;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;PRIME;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;LATIN SMALL LETTER A',
+			],
+		)
 
 	def test_find_secondary(self):
 		d = self.r.as_dict(SECONDARY)
 		self.assertEqual(
 			self.get(d, 'aa'),
-			['LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;NO-BREAK SPACE;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;HYPHEN-MINUS;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;COMMA;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;RIGHT SINGLE QUOTATION MARK;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;PRIME;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;LATIN CAPITAL LETTER A',
-			 'LATIN CAPITAL LETTER A;LATIN SMALL LETTER A'])
-
+			[
+				'LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;NO-BREAK SPACE;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;HYPHEN-MINUS;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;COMMA;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;RIGHT SINGLE QUOTATION MARK;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;PRIME;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;LATIN CAPITAL LETTER A',
+				'LATIN CAPITAL LETTER A;LATIN SMALL LETTER A',
+			],
+		)
 
 	def test_find_primary(self):
 		d = self.r.as_dict(PRIMARY)
 
 		self.assertEqual(
 			self.get(d, 'aa'),
-			['LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;NO-BREAK SPACE;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;HYPHEN-MINUS;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;COMMA;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;RIGHT SINGLE QUOTATION MARK;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;PRIME;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A;LATIN CAPITAL LETTER A',
-			 'LATIN CAPITAL LETTER A;LATIN SMALL LETTER A',
-			 'LATIN SMALL LETTER A WITH BREVE;LATIN CAPITAL LETTER A WITH GRAVE',
-			 'LATIN CAPITAL LETTER A WITH DIAERESIS;LATIN SMALL LETTER A WITH MACRON'])
+			[
+				'LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;NO-BREAK SPACE;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;HYPHEN-MINUS;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;COMMA;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;RIGHT SINGLE QUOTATION MARK;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;PRIME;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A;LATIN CAPITAL LETTER A',
+				'LATIN CAPITAL LETTER A;LATIN SMALL LETTER A',
+				'LATIN SMALL LETTER A WITH BREVE;LATIN CAPITAL LETTER A WITH GRAVE',
+				'LATIN CAPITAL LETTER A WITH DIAERESIS;LATIN SMALL LETTER A WITH MACRON',
+			],
+		)
 
 	def tearDown(self):
 		self.r.close()
@@ -266,7 +279,6 @@ class TestFind(BaseTest):
 
 
 class TestPrefixFind(BaseTest):
-
 	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
@@ -282,12 +294,13 @@ class TestPrefixFind(BaseTest):
 		with open(self.path) as r:
 			for i, k in enumerate(self.data):
 				d = r.as_dict(IDENTICAL, len(k))
-				self.assertEqual(list(v.content.decode('ascii') for v in  d[k]),
-								 self.data[i:])
+				self.assertEqual(
+					[v.content.decode('ascii') for v in d[k]],
+					self.data[i:],
+				)
 
 
 class TestAlias(BaseTest):
-
 	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
@@ -328,14 +341,18 @@ class TestAlias(BaseTest):
 			w.add_alias('g1', 'g')
 			w.add_alias('g2', ('g1', 'g-frag1'))
 
-
 		self.assertEqual(too_many_redirects, ['l1', 'l2', 'l3'])
 		self.assertEqual(target_not_found, ['l2', 'l3', 'l1', 'YYY'])
 
 		with open(self.path) as r:
 			d = r.as_dict()
+
 			def get(key):
-				return list(item.content.decode('ascii') for item in d[key])
+				return [
+					item.content.decode('ascii')
+					for item in d[key]
+				]
+
 			self.assertEqual(get('w'), ['LATIN SMALL LETTER U'])
 			self.assertEqual(get('y1'), ['LATIN SMALL LETTER Z'])
 			self.assertEqual(get('y2'), ['LATIN SMALL LETTER Z'])
@@ -367,21 +384,23 @@ class TestAlias(BaseTest):
 
 
 class TestBlobId(BaseTest):
-
 	def test(self):
 		max_i = 2**32 - 1
 		max_j = 2**16 - 1
-		i_values = [0, max_i] + [random.randint(1, max_i - 1)
-								 for _ in range(100)]
-		j_values = [0, max_j] + [random.randint(1, max_j - 1)
-								 for _ in range(100)]
+		i_values = [0, max_i] + [
+			random.randint(1, max_i - 1)
+			for _ in range(100)
+		]
+		j_values = [0, max_j] + [
+			random.randint(1, max_j - 1)
+			for _ in range(100)
+		]
 		for i in i_values:
 			for j in j_values:
 				self.assertEqual(unmeld_ints(meld_ints(i, j)), (i, j))
 
 
 class TestMultiFileReader(BaseTest):
-
 	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 
@@ -399,7 +418,6 @@ class TestMultiFileReader(BaseTest):
 			self.assertEqual(m.read().decode(UTF8), 'abcdef')
 
 	def test_seek_and_read(self):
-
 		def mkfile(basename, content):
 			part = os.path.join(self.tmpdir.name, basename)
 			with fopen(part, 'wb') as f:
@@ -426,7 +444,6 @@ class TestMultiFileReader(BaseTest):
 
 
 class TestFormatErrors(BaseTest):
-
 	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 
@@ -462,7 +479,6 @@ class TestFormatErrors(BaseTest):
 
 
 class TestFindParts(BaseTest):
-
 	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 
@@ -470,8 +486,10 @@ class TestFindParts(BaseTest):
 		self.tmpdir.cleanup()
 
 	def test_find_parts(self):
-		names = [os.path.join(self.tmpdir.name, name)
-				 for name in ('abc-1', 'abc-2', 'abc-3')]
+		names = [
+			os.path.join(self.tmpdir.name, name)
+			for name in ('abc-1', 'abc-2', 'abc-3')
+		]
 		for name in names:
 			with fopen(name, 'wb'):
 				pass
@@ -480,7 +498,6 @@ class TestFindParts(BaseTest):
 
 
 class TestTooLongText(BaseTest):
-
 	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
@@ -494,6 +511,7 @@ class TestTooLongText(BaseTest):
 		rejected_alias_targets = []
 		rejected_tags = []
 		rejected_content_types = []
+
 		def observer(event):
 			if event.name == 'key_too_long':
 				rejected_keys.append(event.data)
@@ -506,15 +524,15 @@ class TestTooLongText(BaseTest):
 			elif event.name == 'content_type_too_long':
 				rejected_content_types.append(event.data)
 
-		long_tag_name = 't'*(MAX_TINY_TEXT_LEN+1)
-		long_tag_value = 'v'*(MAX_TINY_TEXT_LEN+1)
-		long_content_type = 'T'*(MAX_TEXT_LEN+1)
-		long_key = 'c'*(MAX_TEXT_LEN+1)
-		long_frag = 'd'*(MAX_TINY_TEXT_LEN+1)
+		long_tag_name = 't' * (MAX_TINY_TEXT_LEN + 1)
+		long_tag_value = 'v' * (MAX_TINY_TEXT_LEN + 1)
+		long_content_type = 'T' * (MAX_TEXT_LEN + 1)
+		long_key = 'c' * (MAX_TEXT_LEN + 1)
+		long_frag = 'd' * (MAX_TINY_TEXT_LEN + 1)
 		key_with_long_frag = ('d', long_frag)
 		tag_with_long_name = (long_tag_name, 't3 value')
 		tag_with_long_value = ('t1', long_tag_value)
-		long_alias = 'f'*(MAX_TEXT_LEN+1)
+		long_alias = 'f' * (MAX_TEXT_LEN + 1)
 		alias_with_long_frag = ('i', long_frag)
 		long_alias_target = long_key
 		long_alias_target_frag = key_with_long_frag
@@ -542,16 +560,26 @@ class TestTooLongText(BaseTest):
 
 			w.add(b'Hello', 'hello', content_type=long_content_type)
 
-		self.assertEqual(rejected_keys,
-						 [long_key, key_with_long_frag])
-		self.assertEqual(rejected_aliases,
-						 [long_alias, alias_with_long_frag])
-		self.assertEqual(rejected_alias_targets,
-						 [long_alias_target, long_alias_target_frag])
-		self.assertEqual(rejected_tags,
-						 [tag_with_long_name])
-		self.assertEqual(rejected_content_types,
-						 [long_content_type])
+		self.assertEqual(
+			rejected_keys,
+			[long_key, key_with_long_frag],
+		)
+		self.assertEqual(
+			rejected_aliases,
+			[long_alias, alias_with_long_frag],
+		)
+		self.assertEqual(
+			rejected_alias_targets,
+			[long_alias_target, long_alias_target_frag],
+		)
+		self.assertEqual(
+			rejected_tags,
+			[tag_with_long_name],
+		)
+		self.assertEqual(
+			rejected_content_types,
+			[long_content_type],
+		)
 
 		with open(self.path) as r:
 			self.assertEqual(r.tags['t2'], 't2 value')
@@ -567,11 +595,16 @@ class TestTooLongText(BaseTest):
 			self.assertFalse(long_alias in d)
 			self.assertFalse('g' in d)
 
-		self.assertRaises(ValueError, set_tag_value, self.path, 't1', 'ы'*128)
+		self.assertRaises(
+			ValueError,
+			set_tag_value,
+			self.path,
+			't1',
+			'ы' * 128,
+		)
 
 
 class TestEditTag(BaseTest):
-
 	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
@@ -597,7 +630,6 @@ class TestEditTag(BaseTest):
 
 
 class TestBinItemNumberLimit(BaseTest):
-
 	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
@@ -607,7 +639,7 @@ class TestBinItemNumberLimit(BaseTest):
 
 	def test_writing_more_then_max_number_of_bin_items(self):
 		with self.create(self.path) as w:
-			for _ in range(MAX_BIN_ITEM_COUNT+2):
+			for _ in range(MAX_BIN_ITEM_COUNT + 2):
 				w.add(b'a', 'a')
 			self.assertEqual(w.bin_count, 2)
 
