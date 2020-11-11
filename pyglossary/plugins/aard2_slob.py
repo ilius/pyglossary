@@ -170,7 +170,7 @@ class Writer(object):
 		self._filename = filename
 		kwargs = {}
 		kwargs["compression"] = self._compression
-		self._slobWriter = slobWriter = slob.create(
+		self._slobWriter = slobWriter = slob.Writer(
 			filename,
 			observer=self._slobObserver,
 			workdir=cacheDir,

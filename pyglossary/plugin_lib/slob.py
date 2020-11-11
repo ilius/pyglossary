@@ -660,10 +660,6 @@ def open(file_or_filenames):
 	return Slob(file_or_filenames)
 
 
-def create(*args, **kwargs):
-	return Writer(*args, **kwargs)
-
-
 class BinMemWriter:
 
 	def __init__(self):
@@ -841,32 +837,6 @@ class Store(ItemList):
 		store_bin = Bin(count, content)
 		content = store_bin[item_index]
 		return (content_type, content)
-
-
-def find(word, slobs, match_prefix=True):
-	seen = set()
-	if isinstance(slobs, Slob):
-		slobs = [slobs]
-
-	variants = []
-
-	for strength in (QUATERNARY, TERTIARY, SECONDARY, PRIMARY):
-		variants.append((strength, None))
-
-	if match_prefix:
-		for strength in (QUATERNARY, TERTIARY, SECONDARY, PRIMARY):
-			variants.append((strength, sortkey_length(strength, word)))
-
-	for strength, maxlength in variants:
-		for slob in slobs:
-			d = slob.as_dict(strength=strength, maxlength=maxlength)
-			for item in d[word]:
-				dedup_key = (slob.id, item.id, item.fragment)
-				if dedup_key in seen:
-					continue
-				else:
-					seen.add(dedup_key)
-					yield slob, item
 
 
 WriterEvent = namedtuple('WriterEvent', 'name data')
@@ -1083,10 +1053,10 @@ class Writer(object):
 							self.f_refs.name) as f_ref_list:
 			ref_list = RefList(f_ref_list, self.encoding, count=self.ref_count)
 			ref_dict = ref_list.as_dict()
-			with open(self.aliases_path) as r:
+			with Slob(self.aliases_path) as r:
 				aliases = r.as_dict()
 				path = os.path.join(self.tmpdir.name, 'resolved-aliases')
-				with create(
+				with Writer(
 					path,
 					workdir=self.tmpdir.name,
 					max_redirects=0,
@@ -1133,7 +1103,7 @@ class Writer(object):
 								)
 								alias_writer.add(pickle.dumps(ref), key)
 
-		with open(path) as resolved_aliases_reader:
+		with Slob(path) as resolved_aliases_reader:
 			previous_key = None
 			for item in resolved_aliases_reader:
 				ref = pickle.loads(item.content)
