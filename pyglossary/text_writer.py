@@ -3,8 +3,121 @@ import logging
 from os.path import (
 	isdir,
 )
+from pyglossary.compression import compressionOpen as c_open
 
 log = logging.getLogger("pyglossary")
+
+
+class TextGlossaryWriter(object):
+	_encoding = "utf-8"
+	_newline = "\n",
+	_wordEscapeFunc: "Optional[Callable]" = None,
+	_defiEscapeFunc: "Optional[Callable]" = None,
+	_ext: str = ".txt",
+	_head: str = "",
+	_tail: str = "",
+	_resources: bool = True,
+
+	def __init__(
+		self,
+		glos: "GlossaryType",
+		entryFmt: str = "",  # contain {word} and {defi}
+		writeInfo: bool = True,
+		outInfoKeysAliasDict: "Optional[Dict[str, str]]" = None,
+	) -> None:
+		self._glos = glos
+		self._filename = ""
+		self._file = None
+		self._resDir = ""
+
+		if not entryFmt:
+			raise ValueError("entryFmt argument is missing")
+
+		self._entryFmt = entryFmt
+		self._writeInfo = writeInfo
+
+		if not outInfoKeysAliasDict:
+			outInfoKeysAliasDict = {}
+		self._outInfoKeysAliasDict = outInfoKeysAliasDict
+		# TODO: replace outInfoKeysAliasDict arg with a func?
+
+	def open(self, filename: str):
+		if not filename:
+			filename = self._glos.filename + self._ext
+		self._filename = filename
+		self._resDir = f"{filename}_res"
+		if not isdir(self._resDir):
+			os.mkdir(self._resDir)
+		_file = self._file = c_open(
+			filename,
+			mode="wt",
+			encoding=self._encoding,
+			newline=self._newline,
+		)
+		_file.write(self._head)
+		if self._writeInfo:
+			entryFmt = self._entryFmt
+			outInfoKeysAliasDict = self._outInfoKeysAliasDict
+			wordEscapeFunc = self._wordEscapeFunc
+			defiEscapeFunc = self._defiEscapeFunc
+			for key, value in self._glos.iterInfo():
+				# both key and value are supposed to be non-empty string
+				if not (key and value):
+					log.warning(f"skipping info key={key!r}, value={value!r}")
+					continue
+				key = outInfoKeysAliasDict.get(key, key)
+				if not key:
+					continue
+				word = f"##{key}"
+				if wordEscapeFunc is not None:
+					word = wordEscapeFunc(word)
+					if not word:
+						continue
+				if defiEscapeFunc is not None:
+					value = defiEscapeFunc(value)
+					if not value:
+						continue
+				_file.write(entryFmt.format(
+					word=word,
+					defi=value,
+				))
+		_file.flush()
+
+	def write(self):
+		# glos = self._glos
+		_file = self._file
+		entryFmt = self._entryFmt
+		wordEscapeFunc = self._wordEscapeFunc
+		defiEscapeFunc = self._defiEscapeFunc
+		resources = self._resources
+
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				if resources:
+					entry.save(self._resDir)
+				continue
+
+			word = entry.s_word
+			defi = entry.defi
+			if word.startswith("#"):  # FIXME
+				continue
+			# if glos.getConfig("enable_alts", True):  # FIXME
+
+			if wordEscapeFunc is not None:
+				word = wordEscapeFunc(word)
+			if defiEscapeFunc is not None:
+				defi = defiEscapeFunc(defi)
+			_file.write(entryFmt.format(word=word, defi=defi))
+
+	def finish(self):
+		if self._tail:
+			self._file.write(tail)
+		self._file.close()
+		if not os.listdir(self._resDir):
+			os.rmdir(self._resDir)
 
 
 def writeTxt(
@@ -22,71 +135,18 @@ def writeTxt(
 	newline: str = "\n",
 	resources: bool = True,
 ) -> "Generator[None, BaseEntry, None]":
-	# TODO: replace outInfoKeysAliasDict arg with a func?
-	from .compression import compressionOpen as c_open
-	if not entryFmt:
-		raise ValueError("entryFmt argument is missing")
-	if not filename:
-		filename = glos.filename + ext
-
-	if not outInfoKeysAliasDict:
-		outInfoKeysAliasDict = {}
-
-	fileObj = c_open(filename, mode="wt", encoding=encoding, newline=newline)
-
-	fileObj.write(head)
-	if writeInfo:
-		for key, value in glos.iterInfo():
-			# both key and value are supposed to be non-empty string
-			if not (key and value):
-				log.warning(f"skipping info key={key!r}, value={value!r}")
-				continue
-			key = outInfoKeysAliasDict.get(key, key)
-			if not key:
-				continue
-			word = f"##{key}"
-			if wordEscapeFunc is not None:
-				word = wordEscapeFunc(word)
-				if not word:
-					continue
-			if defiEscapeFunc is not None:
-				value = defiEscapeFunc(value)
-				if not value:
-					continue
-			fileObj.write(entryFmt.format(
-				word=word,
-				defi=value,
-			))
-	fileObj.flush()
-
-	myResDir = f"{filename}_res"
-	if not isdir(myResDir):
-		os.mkdir(myResDir)
-
-	while True:
-		entry = yield
-		if entry is None:
-			break
-		if entry.isData():
-			if resources:
-				entry.save(myResDir)
-			continue
-
-		word = entry.s_word
-		defi = entry.defi
-		if word.startswith("#"):  # FIXME
-			continue
-		# if glos.getConfig("enable_alts", True):  # FIXME
-
-		if wordEscapeFunc is not None:
-			word = wordEscapeFunc(word)
-		if defiEscapeFunc is not None:
-			defi = defiEscapeFunc(defi)
-		fileObj.write(entryFmt.format(word=word, defi=defi))
-
-	if tail:
-		fileObj.write(tail)
-
-	fileObj.close()
-	if not os.listdir(myResDir):
-		os.rmdir(myResDir)
+	writer = TextGlossaryWriter(
+		glos,
+		entryFmt=entryFmt,
+		outInfoKeysAliasDict=outInfoKeysAliasDict,
+	)
+	writer._encoding = encoding
+	writer._newline = newline
+	writer._wordEscapeFunc = wordEscapeFunc
+	writer._defiEscapeFunc = defiEscapeFunc
+	writer._ext = ext
+	writer._head = head
+	writer._tail = tail
+	writer._resources = resources
+	writer.open(filename)
+	yield from writer.write()
