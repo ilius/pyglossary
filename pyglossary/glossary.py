@@ -588,6 +588,10 @@ class Glossary(GlossaryType):
 		return self._getLangByStr(st)
 
 	@property
+	def filename(self):
+		return self._filename
+
+	@property
 	def sourceLang(self) -> "Optional[Lang]":
 		return self._getLangByInfoKey("sourceLang")
 
@@ -1308,78 +1312,26 @@ class Glossary(GlossaryType):
 		head: str = "",
 		tail: str = "",
 		outInfoKeysAliasDict: "Optional[Dict[str, str]]" = None,
-		# TODO: replace above arg with a func?
 		encoding: str = "utf-8",
 		newline: str = "\n",
 		resources: bool = True,
 	) -> "Generator[None, BaseEntry, None]":
-		from .compression import compressionOpen as c_open
-		if not entryFmt:
-			raise ValueError("entryFmt argument is missing")
-		if not filename:
-			filename = self._filename + ext
-
-		if not outInfoKeysAliasDict:
-			outInfoKeysAliasDict = {}
-
-		fileObj = c_open(filename, mode="wt", encoding=encoding, newline=newline)
-
-		fileObj.write(head)
-		if writeInfo:
-			for key, value in self._info.items():
-				# both key and value are supposed to be non-empty string
-				if not (key and value):
-					log.warning(f"skipping info key={key!r}, value={value!r}")
-					continue
-				key = outInfoKeysAliasDict.get(key, key)
-				if not key:
-					continue
-				word = f"##{key}"
-				if wordEscapeFunc is not None:
-					word = wordEscapeFunc(word)
-					if not word:
-						continue
-				if defiEscapeFunc is not None:
-					value = defiEscapeFunc(value)
-					if not value:
-						continue
-				fileObj.write(entryFmt.format(
-					word=word,
-					defi=value,
-				))
-		fileObj.flush()
-
-		myResDir = f"{filename}_res"
-		if not isdir(myResDir):
-			os.mkdir(myResDir)
-
-		while True:
-			entry = yield
-			if entry is None:
-				break
-			if entry.isData():
-				if resources:
-					entry.save(myResDir)
-				continue
-
-			word = entry.s_word
-			defi = entry.defi
-			if word.startswith("#"):  # FIXME
-				continue
-			# if self.getConfig("enable_alts", True):  # FIXME
-
-			if wordEscapeFunc is not None:
-				word = wordEscapeFunc(word)
-			if defiEscapeFunc is not None:
-				defi = defiEscapeFunc(defi)
-			fileObj.write(entryFmt.format(word=word, defi=defi))
-
-		if tail:
-			fileObj.write(tail)
-
-		fileObj.close()
-		if not os.listdir(myResDir):
-			os.rmdir(myResDir)
+		from .text_writer import writeTxt
+		yield from writeTxt(
+			self,
+			entryFmt=entryFmt,
+			filename=filename,
+			writeInfo=writeInfo,
+			wordEscapeFunc=wordEscapeFunc,
+			defiEscapeFunc=defiEscapeFunc,
+			ext=ext,
+			head=head,
+			tail=tail,
+			outInfoKeysAliasDict=outInfoKeysAliasDict,
+			encoding=encoding,
+			newline=newline,
+			resources=resources,
+		)
 
 	def writeTabfile(
 		self,
@@ -1387,7 +1339,9 @@ class Glossary(GlossaryType):
 		**kwargs,
 	) -> "Generator[None, BaseEntry, None]":
 		from .text_utils import escapeNTB
-		yield from self.writeTxt(
+		from .text_writer import writeTxt
+		yield from writeTxt(
+			self,
 			entryFmt="{word}\t{defi}\n",
 			filename=filename,
 			wordEscapeFunc=escapeNTB,

@@ -33,6 +33,7 @@ class Writer(object):
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
 		from json import dumps
+		from pyglossary.text_writer import writeTxt
 
 		glos = self._glos
 		encoding = self._encoding
@@ -44,7 +45,8 @@ class Writer(object):
 		def escape(st):
 			return dumps(st, ensure_ascii=ascii)
 
-		yield from glos.writeTxt(
+		yield from writeTxt(
+			glos,
 			entryFmt="\t{word}: {defi},\n",
 			filename=self._filename,
 			encoding=encoding,

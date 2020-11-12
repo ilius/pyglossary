@@ -111,6 +111,7 @@ class Writer(object):
 		self._filename = filename
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
+		from pyglossary.text_writer import writeTxt
 		newline = self._newline
 		resources = self._resources
 		head = (
@@ -121,7 +122,8 @@ class Writer(object):
 			f"###Website: {self.getInfo('website')}\n"
 			f"###Copyright: {self.getInfo('copyright')}\n"
 		)
-		yield from self._glos.writeTxt(
+		yield from writeTxt(
+			self._glos,
 			entryFmt="{word}\n{defi}\n\n",
 			filename=self._filename ,
 			writeInfo=False,

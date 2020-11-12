@@ -44,6 +44,7 @@ class Writer(object):
 		self._filename = filename
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
+		from pyglossary.text_writer import writeTxt
 		glos = self._glos
 		head = ""
 		if self._writeInfo:
@@ -56,7 +57,8 @@ class Writer(object):
 				f"a_lang = {glos.targetLangName}\n"
 				"</header>\n#\n#\n#\n"
 			)
-		yield from glos.writeTxt(
+		yield from writeTxt(
+			glos,
 			entryFmt="{word}___{defi}\n",
 			filename=self._filename,
 			writeInfo=False,

@@ -39,7 +39,9 @@ class Writer(object):
 		# supported by GtkTextView
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
-		yield from self._glos.writeTxt(
+		from pyglossary.text_writer import writeTxt
+		yield from writeTxt(
+			self._glos,
 			entryFmt=":{word}:{defi}\n",
 			filename=self._filename,
 			defiEscapeFunc=replaceStringTable([
