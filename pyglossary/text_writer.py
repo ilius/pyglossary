@@ -150,3 +150,4 @@ def writeTxt(
 	writer._resources = resources
 	writer.open(filename)
 	yield from writer.write()
+	writer.finish()
