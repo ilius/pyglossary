@@ -10,13 +10,13 @@ log = logging.getLogger("pyglossary")
 
 class TextGlossaryWriter(object):
 	_encoding = "utf-8"
-	_newline = "\n",
-	_wordEscapeFunc: "Optional[Callable]" = None,
-	_defiEscapeFunc: "Optional[Callable]" = None,
-	_ext: str = ".txt",
-	_head: str = "",
-	_tail: str = "",
-	_resources: bool = True,
+	_newline = "\n"
+	_wordEscapeFunc: "Optional[Callable]" = None
+	_defiEscapeFunc: "Optional[Callable]" = None
+	_ext: str = ".txt"
+	_head: str = ""
+	_tail: str = ""
+	_resources: bool = True
 
 	def __init__(
 		self,
