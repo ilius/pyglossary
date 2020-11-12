@@ -1316,22 +1316,23 @@ class Glossary(GlossaryType):
 		newline: str = "\n",
 		resources: bool = True,
 	) -> "Generator[None, BaseEntry, None]":
-		from .text_writer import writeTxt
-		yield from writeTxt(
-			self,
+		from .text_writer import TextGlossaryWriter
+		writer = TextGlossaryWriter(
+			glos,
 			entryFmt=entryFmt,
-			filename=filename,
-			writeInfo=writeInfo,
-			wordEscapeFunc=wordEscapeFunc,
-			defiEscapeFunc=defiEscapeFunc,
-			ext=ext,
-			head=head,
-			tail=tail,
 			outInfoKeysAliasDict=outInfoKeysAliasDict,
-			encoding=encoding,
-			newline=newline,
-			resources=resources,
 		)
+		writer._encoding = encoding
+		writer._newline = newline
+		writer._wordEscapeFunc = wordEscapeFunc
+		writer._defiEscapeFunc = defiEscapeFunc
+		writer._ext = ext
+		writer._head = head
+		writer._tail = tail
+		writer._resources = resources
+		writer.open(filename)
+		yield from writer.write()
+		writer.finish()
 
 	def writeTabfile(
 		self,
