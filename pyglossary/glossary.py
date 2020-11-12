@@ -237,7 +237,7 @@ class Glossary(GlossaryType):
 			if not plugin:
 				plugin = cls.findPlugin(filename)
 				if not plugin:
-					return error("Unable to detect write format!")
+					return error("Unable to detect input format!")
 
 		if not plugin.canRead:
 			return error(f"plugin {plugin.name} does not support reading")
