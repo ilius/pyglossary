@@ -86,11 +86,3 @@ class GlossaryType(object):
 		resources: bool = True,
 	) -> "Generator[None, BaseEntry, None]":
 		raise NotImplementedError
-
-	def writeTabfile(
-		self,
-		filename: str = "",
-		fileObj: "Optional[file]" = None,
-		**kwargs,
-	) -> "Generator[None, BaseEntry, None]":
-		raise NotImplementedError

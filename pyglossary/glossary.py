@@ -1334,23 +1334,6 @@ class Glossary(GlossaryType):
 		yield from writer.write()
 		writer.finish()
 
-	def writeTabfile(
-		self,
-		filename: str = "",
-		**kwargs,
-	) -> "Generator[None, BaseEntry, None]":
-		from .text_utils import escapeNTB
-		from .text_writer import writeTxt
-		yield from writeTxt(
-			self,
-			entryFmt="{word}\t{defi}\n",
-			filename=filename,
-			wordEscapeFunc=escapeNTB,
-			defiEscapeFunc=escapeNTB,
-			ext=".txt",
-			**kwargs
-		)
-
 	# ________________________________________________________________________#
 
 	def progressInit(self, *args) -> None:

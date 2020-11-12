@@ -100,9 +100,19 @@ class Writer(object):
 		pass
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
-		yield from self._glos.writeTabfile(
-			self._filename,
-			encoding=self._encoding,
+		from pyglossary.text_writer import TextGlossaryWriter
+		from pyglossary.text_utils import escapeNTB
+		writer = TextGlossaryWriter(
+			self._glos,
+			entryFmt="{word}\t{defi}\n",
 			writeInfo=self._writeInfo,
-			resources=self._resources,
+			outInfoKeysAliasDict=None,
 		)
+		writer._encoding = self._encoding
+		writer._wordEscapeFunc = escapeNTB
+		writer._defiEscapeFunc = escapeNTB
+		writer._ext = ".txt"
+		writer._resources = self._resources
+		writer.open(self._filename)
+		yield from writer.write()
+		writer.finish()
