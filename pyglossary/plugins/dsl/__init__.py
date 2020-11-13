@@ -19,10 +19,11 @@
 # GNU General Public License for more details.
 
 import re
+import html
 import html.entities
 from xml.sax.saxutils import escape, quoteattr
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from pyglossary.text_reader import TextFilePosWrapper
 
 from . import layer
@@ -236,6 +237,10 @@ def _clean_tags(line, audio):
 	line = re_lang_open.sub("", line).replace("[/lang]", "")
 	# remove com tags
 	line = line.replace("[com]", "").replace("[/com]", "")
+
+	# escape html special characters like '<' and '>'
+	line = html.escape(html.unescape(line))
+
 	# remove t tags
 	line = line.replace(
 		"[t]",
