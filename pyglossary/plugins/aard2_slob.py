@@ -77,6 +77,13 @@ class Reader(object):
 		from pyglossary.plugin_lib import slob
 		self._filename = filename
 		self._slobObj = slob.open(filename)
+		tags = self._slobObj.tags
+		name = tags.get("label")
+		if name:
+			self._glos.setInfo("name", name)
+		creationTime = tags.get("created.at")
+		if creationTime:
+			self._glos.setInfo("creationTime", creationTime)
 
 	def __len__(self):
 		if self._slobObj is None:
