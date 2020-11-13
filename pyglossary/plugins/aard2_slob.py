@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from formats_common import *
+import shutil
 
 enable = True
 format = 'Aard2Slob'
@@ -37,7 +38,12 @@ optionsProp = {
 		comment="Content Type",
 	),
 	# "encoding": EncodingOption(),
+	"file_size_approx": IntOption(
+		comment="split up by given approximate file size",
+	),
 }
+
+file_size_check_every = 100
 
 
 class Reader(object):
@@ -134,6 +140,7 @@ class Writer(object):
 
 	_compression: str = "zlib"
 	_content_type: str = ""
+	_file_size_approx: int = 0
 
 	resourceMimeTypes = {
 		"png": "image/png",
@@ -154,20 +161,17 @@ class Writer(object):
 		self._glos = glos
 		self._filename = None
 		self._resPrefix = ""
+		self._slobWriter = None
 
 	def _slobObserver(self, event: "slob.WriterEvent"):
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
-	def open(self, filename: str):
-		try:
-			import icu
-		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install PyICU` to install"
-			raise e
+	def _open(self, filename: str, namePostfix: str) -> None:
+		import icu
 		from pyglossary.plugin_lib import slob
 		if isfile(filename):
-			raise IOError(f"File '{filename}' already exists")
-		self._filename = filename
+			shutil.move(filename, f"{filename}.bak")
+			log.warning(f"renamed existing {filename!r} to {filename+'.bak'!r}")
 		kwargs = {}
 		kwargs["compression"] = self._compression
 		self._slobWriter = slobWriter = slob.Writer(
@@ -176,7 +180,21 @@ class Writer(object):
 			workdir=cacheDir,
 			**kwargs
 		)
-		slobWriter.tag("label", self._glos.getInfo("name"))
+		slobWriter.tag("label", self._glos.getInfo("name") + namePostfix)
+
+	def open(self, filename: str) -> None:
+		try:
+			import icu
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install PyICU` to install"
+			raise e
+		if isfile(filename):
+			raise IOError(f"File '{filename}' already exists")
+		namePostfix = ""
+		if self._file_size_approx > 0:
+			namePostfix = " (part 1)"
+		self._open(filename, namePostfix)
+		self._filename = filename
 
 	def finish(self):
 		self._filename = None
@@ -202,32 +220,50 @@ class Writer(object):
 			return
 		slobWriter.add(content, key, content_type=content_type)
 
+	def addEntry(self, entry: "Entry") -> None:
+		words = entry.l_word
+		b_defi = entry.defi.encode("utf-8")
+		_ctype = self._content_type
+		if not _ctype:
+			entry.detectDefiFormat()
+			defiFormat = entry.defiFormat
+			if defiFormat == "h":
+				_ctype = "text/html; charset=utf-8"
+				b_defi = b_defi.replace(b'"bword://', b'"')
+				b_defi = b_defi.replace(b"'bword://", b"'")
+			elif defiFormat == "m":
+				_ctype = "text/plain; charset=utf-8"
+			else:
+				_ctype = "text/plain; charset=utf-8"
+		self._slobWriter.add(
+			b_defi,
+			*tuple(words),
+			content_type=_ctype,
+		)
+
 	def write(self) -> "Generator[None, BaseEntry, None]":
-		content_type = self._content_type
-		slobWriter = self._slobWriter
+		file_size_approx = int(self._file_size_approx * 0.95)
+		entryCount = 0
+		sumBlobSize = 0
+		fileIndex = 0
+		filenameNoExt, _ = splitext(self._filename)
 		while True:
 			entry = yield
 			if entry is None:
 				break
+
 			if entry.isData():
 				self.addDataEntry(entry)
+			else:
+				self.addEntry(entry)
 
-			words = entry.l_word
-			b_defi = entry.defi.encode("utf-8")
-			_ctype = content_type
-			if not _ctype:
-				entry.detectDefiFormat()
-				defiFormat = entry.defiFormat
-				if defiFormat == "h":
-					_ctype = "text/html; charset=utf-8"
-					b_defi = b_defi.replace(b'"bword://', b'"')
-					b_defi = b_defi.replace(b"'bword://", b"'")
-				elif defiFormat == "m":
-					_ctype = "text/plain; charset=utf-8"
-				else:
-					_ctype = "text/plain; charset=utf-8"
-			slobWriter.add(
-				b_defi,
-				*tuple(words),
-				content_type=_ctype,
-			)
+			if file_size_approx > 0:
+				entryCount += 1
+				if entryCount % file_size_check_every == 0:
+					sumBlobSize = self._slobWriter.size_data()
+					if sumBlobSize >= file_size_approx:
+						self._slobWriter.finalize()
+						fileIndex += 1
+						self._open(f"{filenameNoExt}.{fileIndex}.slob", f" (part {fileIndex+1})")
+						sumBlobSize = 0
+						entryCount = 0
