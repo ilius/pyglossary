@@ -94,9 +94,8 @@ class Reader(object):
 
 	def __iter__(self):
 		from pyglossary.plugin_lib.slob import MIME_HTML, MIME_TEXT
-		if not self._slobObj:
-			log.error("iterating over a reader which is not open")
-			return
+		if self._slobObj is None:
+			raise RuntimeError("iterating over a reader while it's not open")
 
 		slobObj = self._slobObj
 		blobSet = set()
