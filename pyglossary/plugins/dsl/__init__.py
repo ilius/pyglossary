@@ -401,7 +401,7 @@ class Reader(object):
 
 	def processHeaderLine(self, line):
 		if line.startswith("#NAME"):
-			self.setInfo("name", line[6:])
+			self.setInfo("name", unwrap_quotes(line[6:].strip()))
 		elif line.startswith("#INDEX_LANGUAGE"):
 			self._glos.sourceLangName = unwrap_quotes(line[16:].strip())
 		elif line.startswith("#CONTENTS_LANGUAGE"):
