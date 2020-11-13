@@ -491,9 +491,9 @@ def main():
 
 	if ui_type == "cmd":
 		if args.inputFilename and args.outputFilename:
-			from ui.ui_cmd import UI
+			from pyglossary.ui.ui_cmd import UI
 		elif not args.no_interactive:
-			from ui.ui_cmd_interactive import UI
+			from pyglossary.ui.ui_cmd_interactive import UI
 		else:
 			log.error("no input file given, try --help")
 			sys.exit(1)
@@ -503,10 +503,7 @@ def main():
 		ui_module = None
 		for ui_type2 in ui_list:
 			try:
-				ui_module = getattr(
-					__import__(f"ui.ui_{ui_type2}"),
-					f"ui_{ui_type2}",
-				)
+				ui_module = __import__(f"pyglossary.ui.ui_{ui_type2}", fromlist=f"ui_{ui_type2}")
 			except ImportError:
 				log.exception("error while importing UI module:")
 			else:
@@ -518,9 +515,6 @@ def main():
 			)
 			sys.exit(1)
 	else:
-		ui_module = getattr(
-			__import__(f"ui.ui_{ui_type}"),
-			f"ui_{ui_type}",
-		)
+		ui_module = __import__(f"pyglossary.ui.ui_{ui_type}", fromlist=f"ui_{ui_type}")
 
 	sys.exit(0 if ui_module.UI().run(**runKeywordArgs) else 1)

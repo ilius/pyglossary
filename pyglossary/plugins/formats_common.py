@@ -1,5 +1,3 @@
-from formats_common import *
-
 import sys
 import os
 from os.path import (
@@ -17,7 +15,7 @@ log = logging.getLogger("pyglossary")
 
 from pprint import pformat
 
-from paths import rootDir
+from pyglossary.core import rootDir
 sys.path.insert(0, rootDir)
 
 from pyglossary.flags import *
