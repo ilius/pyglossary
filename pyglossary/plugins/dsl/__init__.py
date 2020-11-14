@@ -122,24 +122,6 @@ def ref_sub(x):
 shortcuts = [
 	# canonical: m > * > ex > i > c
 	(
-		"[i][c](.*?)[/c][/i]",
-		"<i style=\"color:green\">\\g<1></i>"
-	),
-	(
-		"[m(\\d)][ex](.*?)[/ex][/m]",
-		"<div class=\"ex\" "
-		"style=\"margin-left:\\g<1>em;color:steelblue\">\\g<2></div>"
-	),
-	(
-		"[m(\\d)][*][ex](.*?)[/ex][/*][/m]",
-		"<div class=\"sec ex\" "
-		"style=\"margin-left:\\g<1>em;color:steelblue\">\\g<2></div>"
-	),
-	(
-		"[*][ex](.*?)[/ex][/*]",
-		"<span class=\"sec ex\" style=\"color:steelblue\">\\g<1></span>"
-	),
-	(
 		"[m1](?:-{2,})[/m]",
 		"<hr/>"
 	),
@@ -189,9 +171,9 @@ def _clean_tags(line, audio):
 		<div class="sec ex" style="margin-left:2em;color:steelblue">{}</div>
 	[m{}] => <div style="margin-left:{}em">
 	[*]   => <span class="sec">
-	[ex]  => <span class="ex" style="color:steelblue">
-	[c]   => <span style="color:green">
-	[p]   => <i class="p" style="color:green">
+	[ex]  => <span class="ex"><font color="steelblue">
+	[c]   => <font color="green">
+	[p]   => <i class="p"><font color="green">
 
 	[']   => <u>
 	[b]   => <b>
@@ -209,7 +191,7 @@ def _clean_tags(line, audio):
 			</object>
 	[s] =>  <img align="top" src="{}" alt="{}" />
 
-	[t] => <!-- T --><span style="font-family:'Helvetica'">
+	[t] => <!-- T --><font face="Helvetica">
 
 	{{...}}   \
 	[trn]      |
@@ -244,9 +226,9 @@ def _clean_tags(line, audio):
 	# remove t tags
 	line = line.replace(
 		"[t]",
-		"<!-- T --><span style=\"font-family:'Helvetica'\">"
+		"<!-- T --><font face=\"Helvetica\">"
 	)
-	line = line.replace("[/t]", "</span><!-- T -->")
+	line = line.replace("[/t]", "</font><!-- T -->")
 
 	line = _parse(line)
 
@@ -275,21 +257,21 @@ def _clean_tags(line, audio):
 	line = line.replace("[sub]", "<sub>").replace("[/sub]", "</sub>")
 
 	# color
-	line = line.replace("[c]", "<span style=\"color:green\">")
-	line = re_c_open_color.sub("<span style=\"color:\\g<1>\">", line)
-	line = line.replace("[/c]", "</span>")
+	line = line.replace("[c]", "<font color=\"green\">")
+	line = re_c_open_color.sub("<font color=\"\\g<1>\">", line)
+	line = line.replace("[/c]", "</font>")
 
 	# example zone
-	line = line.replace("[ex]", "<span class=\"ex\" style=\"color:steelblue\">")
-	line = line.replace("[/ex]", "</span>")
+	line = line.replace("[ex]", "<span class=\"ex\"><font color=\"steelblue\">")
+	line = line.replace("[/ex]", "</font></span>")
 
 	# secondary zone
 	line = line.replace("[*]", "<span class=\"sec\">")\
 		.replace("[/*]", "</span>")
 
 	# abbrev. label
-	line = line.replace("[p]", "<i class=\"p\" style=\"color:green\">")
-	line = line.replace("[/p]", "</i>")
+	line = line.replace("[p]", "<i class=\"p\"><font color=\"green\">")
+	line = line.replace("[/p]", "</font></i>")
 
 	# cross reference
 	line = line.replace("[ref]", "<<").replace("[/ref]", ">>")
