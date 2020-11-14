@@ -56,7 +56,7 @@
   </xsl:template>
 
   <xsl:template match="c[@c]">
-    <span style="color:{@c}"><xsl:apply-templates/></span>
+    <font color="{@c}"><xsl:apply-templates/></font>
   </xsl:template>
 
   <xsl:template match="c">
