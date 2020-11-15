@@ -191,7 +191,7 @@ def _clean_tags(line, audio):
 			</object>
 	[s] =>  <img align="top" src="{}" alt="{}" />
 
-	[t] => <!-- T --><font face="Helvetica">
+	[t] => <font face="Helvetica" class="dsl_t">
 
 	{{...}}   \
 	[trn]      |
@@ -226,9 +226,9 @@ def _clean_tags(line, audio):
 	# remove t tags
 	line = line.replace(
 		"[t]",
-		"<!-- T --><font face=\"Helvetica\">"
+		"<font face=\"Helvetica\" class=\"dsl_t\">"
 	)
-	line = line.replace("[/t]", "</font><!-- T -->")
+	line = line.replace("[/t]", "</font>")
 
 	line = _parse(line)
 
