@@ -9,7 +9,7 @@ import unittest
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.html_utils import unescape_unicode
+from pyglossary.html_utils import *
 
 
 class UnescapeUnicodeTest(unittest.TestCase):
@@ -48,5 +48,30 @@ class UnescapeUnicodeTest(unittest.TestCase):
 		self.case("&lt;&ytilde;", "&lt;ỹ")
 
 
+def benchmark_main():
+	import timeit
+	from random import choice
+	from english_words import english_words_set
+	english_words_list = list(english_words_set)
+	textList = []
+
+	for i in range(20):
+		text = ""
+		for j in range(10):
+			text += choice(english_words_list) + " "
+		textList.append(text)
+
+	print("avg length:", sum(len(text) for text in textList) / len(textList))
+
+	def run_benchmark1():
+		for text in textList:
+			unescape_unicode(text)
+
+	print("benchmark 1:", timeit.timeit("run_benchmark1()", globals=locals()))
+
+
 if __name__ == "__main__":
-	unittest.main()
+	if "-b" in sys.argv:
+		benchmark_main()
+	else:
+		unittest.main()
