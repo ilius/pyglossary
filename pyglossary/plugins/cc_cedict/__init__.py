@@ -19,7 +19,7 @@ entry_count_reg = re.compile(r"#! entries=(\d+)")
 
 class Reader:
 	depends = {
-		"jinja2": "jinja2",
+		"lxml": "lxml",
 	}
 
 	_encoding: str = "utf-8"
