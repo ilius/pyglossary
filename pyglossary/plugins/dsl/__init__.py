@@ -165,10 +165,6 @@ def apply_shortcuts(line):
 
 def _clean_tags(line, audio):
 	r"""
-	WARNING! shortcuts may apply:
-		[m2][*][ex]{}[/ex][/*][/m]
-		=>
-		<div class="sec ex" style="margin-left:2em;color:steelblue">{}</div>
 	[m{}] => <div style="margin-left:{}em">
 	[*]   => <span class="sec">
 	[ex]  => <span class="ex"><font color="steelblue">
