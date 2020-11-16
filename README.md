@@ -162,7 +162,7 @@ Feature-specific Requirements
 
 	`sudo pip3 install lxml beautifulsoup4`
 
--	**Reading from FreeDict, XDXF or JMDict**
+-	**Reading from FreeDict, XDXF, JMDict or CC-CEDICT**
 
 	`sudo pip3 install lxml`
 
@@ -181,10 +181,6 @@ Feature-specific Requirements
 -	**Reading from Zim** (see [#228](https://github.com/ilius/pyglossary/issues/228))
 
 	`sudo pip3 install libzim`
-
--   **Reading from CC-CEDICT**
-
-    `sudo pip3 install jinja2`
 
 -	**Reading from Octopus MDict (MDX)**
 

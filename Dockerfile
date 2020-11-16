@@ -14,7 +14,6 @@ RUN apt-get install --yes pkg-config
 RUN pip3 install prompt_toolkit
 RUN pip3 install beautifulsoup4
 RUN pip3 install marisa-trie
-RUN pip3 install jinja2
 RUN pip3 install libzim
 
 WORKDIR /root
