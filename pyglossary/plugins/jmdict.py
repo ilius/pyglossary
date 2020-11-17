@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from formats_common import *
 from pyglossary.xml_utils import xml_escape
-from pyglossary.html_utils import unescape_unicode
 from io import BytesIO
 import re
 import html
@@ -154,7 +153,7 @@ class Reader(object):
 		def br():
 			return ET.Element("br")
 
-		with ET.htmlfile(f) as hf:
+		with ET.htmlfile(f, encoding="utf-8") as hf:
 			kebList = []  # type: List[str]
 			rebList = []  # type: List[str]
 			with hf.element("div"):
@@ -223,7 +222,6 @@ class Reader(object):
 				)
 
 		defi = f.getvalue().decode("utf-8")
-		defi = unescape_unicode(defi)
 		byteProgress = (self._file.tell(), self._fileSize)
 		return self._glos.newEntry(keywords, defi, defiFormat="h", byteProgress=byteProgress)
 
