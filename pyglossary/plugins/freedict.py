@@ -172,7 +172,7 @@ class Reader(object):
 		pronList = entry.findall("form/pron", self.ns)
 		senseList = entry.findall("sense", self.ns)
 
-		with ET.htmlfile(f) as hf:
+		with ET.htmlfile(f, encoding="utf-8") as hf:
 			with hf.element("div"):
 				if self._keywords_header:
 					for keyword in keywords:
@@ -205,7 +205,8 @@ class Reader(object):
 					self.writeSense,
 				)
 
-		defi = unescape_unicode(f.getvalue().decode("utf-8"))
+		defi = f.getvalue().decode("utf-8")
+		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
 		return self._glos.newEntry(
 			keywords,
 			defi,
