@@ -11,7 +11,7 @@ def toStr(s: "AnyStr") -> str:
 
 
 re_entity = re.compile(
-	r"&#?\w+;",
+	r"&#?\w{2,8};",
 )
 
 
@@ -334,6 +334,31 @@ def build_name2codepoint_dict():
 
 def _sub_unescape_unicode(m: "re.Match") -> str:
 	text = m.group(0)
+	#print(f"_sub_unescape_unicode: {text}")
+	if text[:2] == "&#":
+		# character reference
+		if text.startswith("&#x"):
+			code = int(text[3:-1], 16)
+		else:
+			code = int(text[2:-1])
+		try:
+			char = chr(code)
+		except ValueError:
+			return text
+		if char not in special_chars:
+			return char
+		return text
+
+	# named entity
+	name = text[1:-1]
+	if name in name2codepoint:
+		char = chr(name2codepoint[name])
+		if char not in special_chars:
+			return char
+
+	return text
+
+def _unescape_unicode_x(text: str) -> str:
 	if text[:2] == "&#":
 		# character reference
 		if text.startswith("&#x"):
@@ -358,6 +383,7 @@ def _sub_unescape_unicode(m: "re.Match") -> str:
 	return text
 
 
+
 def unescape_unicode(text):
 	"""
 		unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
@@ -368,5 +394,25 @@ def unescape_unicode(text):
 	return re_entity.sub(_sub_unescape_unicode, text)
 
 
+def unescape_unicode2(text):
+	i = 0
+	while True:
+		i = text.find("&", i)
+		if i < 0:
+			break
+		j = text.find(";", i)
+		if j < 0:
+			break
+		item = text[i : j + 1]
+		fixed = _unescape_unicode_x(item)
+		text = text[:i] + fixed + text[j + 1:]
+		i = j + 1 - len(item) + len(fixed)
+	return text
+
+
 if __name__ == "__main__":
-	build_name2codepoint_dict()
+	print(max([
+		len(name)
+		for name in list(name2codepoint_extra.keys()) + list(name2codepoint.keys())
+	]))
+	# build_name2codepoint_dict()
