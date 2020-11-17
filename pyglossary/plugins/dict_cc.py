@@ -109,7 +109,6 @@ class Reader(object):
 		from itertools import groupby
 		from lxml import etree as ET
 		from io import BytesIO
-		from pyglossary.html_utils import unescape_unicode
 
 		glos = self._glos
 		for headword, groupsOrig in groupby(
@@ -122,7 +121,7 @@ class Reader(object):
 				for _, term2, entry_type in groupsOrig
 			]
 			f = BytesIO()
-			with ET.htmlfile(f) as hf:
+			with ET.htmlfile(f, encoding="utf-8") as hf:
 				with hf.element("div"):
 					with glos.titleElement(hf, headword):
 						try:
@@ -137,7 +136,7 @@ class Reader(object):
 						groups,
 						self.writeSense,
 					)
-			defi = unescape_unicode(f.getvalue().decode("utf-8"))
+			defi = f.getvalue().decode("utf-8")
 			yield self._glos.newEntry(headword, defi, defiFormat="h")
 
 	def __iter__(self):
