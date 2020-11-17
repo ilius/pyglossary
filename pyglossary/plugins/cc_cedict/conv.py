@@ -3,7 +3,6 @@ import os
 from .pinyin import convert
 from .summarize import summarize
 from pyglossary.plugins.formats_common import pip
-from pyglossary.html_utils import unescape_unicode
 
 line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
 
@@ -57,7 +56,7 @@ def render_article(trad, simp, pinyin, eng):
 		tones.append(tone)
 
 	f = BytesIO()
-	with ET.htmlfile(f) as hf:
+	with ET.htmlfile(f, encoding="utf-8") as hf:
 		with hf.element("div", style="border: 1px solid; padding: 5px"):
 			with hf.element("div"):
 				with hf.element("big"):
@@ -76,5 +75,4 @@ def render_article(trad, simp, pinyin, eng):
 							hf.write(defn)
 
 	article = f.getvalue().decode("utf-8")
-	article = unescape_unicode(article)
 	return article
