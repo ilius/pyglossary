@@ -230,7 +230,7 @@ class YamlReader(TextGlossaryReader):
 
 		f = BytesIO()
 
-		with ET.htmlfile(f) as hf:
+		with ET.htmlfile(f, encoding="utf-8") as hf:
 			with hf.element("div"):
 				self._processEntry(hf, edict)
 
