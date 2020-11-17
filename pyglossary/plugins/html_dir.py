@@ -23,6 +23,9 @@ optionsProp = {
 	"dark": BoolOption(),
 }
 
+nbsp = "\xa0"
+# nbsp = "&nbsp;"
+
 darkStyle = """
 body {{
 	background-color: #373737;
@@ -273,7 +276,7 @@ class Writer(object):
 			if not entry_url_fmt:
 				return ""
 			url = entry_url_fmt.format(word=html.escape(entry.l_word[0]))
-			return f'&nbsp;<a class="no_ul" href="{url}">&#127759;</a>'
+			return f'{nbsp}<a class="no_ul" href="{url}">&#127759;</a>'
 
 		# from math import log2, ceil
 		# maxPosHexLen = int(ceil(log2(max_file_size) / 4))
@@ -317,7 +320,7 @@ class Writer(object):
 			links.append(f'<a href="./info.html">ℹ️</a></div>')
 			return (
 				'<div style="text-align: center; font-size: 2.5em;">' +
-				'&nbsp;&nbsp;&nbsp;'.join(links) +
+				f'{nbsp}{nbsp}{nbsp}'.join(links) +
 				'</div>'
 			)
 
@@ -416,8 +419,9 @@ class Writer(object):
 			# entry_link_sym = "&#182;"
 			entry_link_sym = "&#128279;"
 			text = (
-				f'<div id="{entryId}">{headwords}&nbsp;&nbsp;'
-				f'<a class="no_ul" class="entry_link" href="#{entryId}">{entry_link_sym}</a>'
+				f'<div id="{entryId}">{headwords}{nbsp}{nbsp}'
+				f'<a class="no_ul" class="entry_link" href="#{entryId}">'
+				f'{entry_link_sym}</a>'
 				f'{getEntryWebLink(entry)}'
 				f"<br>\n{defi}"
 				'</div>\n'
