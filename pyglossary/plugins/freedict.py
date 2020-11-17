@@ -195,7 +195,7 @@ class Reader(object):
 						if i > 0:
 							hf.write(", ")
 						with hf.element("font", color="green"):
-							hf.write(f"/{pron.text}/")
+							hf.write(f"/{pron.text.strip('/')}/")
 					hf.write(br())
 					hf.write("\n")
 
