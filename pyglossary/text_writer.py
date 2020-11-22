@@ -2,10 +2,13 @@ import os
 import logging
 from os.path import (
 	isdir,
+	splitext,
 )
 from pyglossary.compression import compressionOpen as c_open
 
 log = logging.getLogger("pyglossary")
+
+file_size_check_every = 100
 
 
 class TextGlossaryWriter(object):
@@ -17,6 +20,7 @@ class TextGlossaryWriter(object):
 	_head: str = ""
 	_tail: str = ""
 	_resources: bool = True
+	_file_size_approx: int = 0
 
 	def __init__(
 		self,
@@ -41,13 +45,17 @@ class TextGlossaryWriter(object):
 		self._outInfoKeysAliasDict = outInfoKeysAliasDict
 		# TODO: replace outInfoKeysAliasDict arg with a func?
 
-	def open(self, filename: str):
-		if not filename:
-			filename = self._glos.filename + self._ext
+	def open(self, filename: str) -> None:
+		self._open(filename)
 		self._filename = filename
 		self._resDir = f"{filename}_res"
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
+
+	def _open(self, filename: str):
+		if not filename:
+			filename = self._glos.filename + self._ext
+
 		_file = self._file = c_open(
 			filename,
 			mode="wt",
@@ -82,6 +90,7 @@ class TextGlossaryWriter(object):
 					defi=value,
 				))
 		_file.flush()
+		return _file
 
 	def write(self):
 		# glos = self._glos
@@ -90,6 +99,12 @@ class TextGlossaryWriter(object):
 		wordEscapeFunc = self._wordEscapeFunc
 		defiEscapeFunc = self._defiEscapeFunc
 		resources = self._resources
+
+		file_size_approx = self._file_size_approx
+		entryCount = 0
+		fileIndex = 0
+		filenameNoExt, _ = splitext(self._filename)
+		ext = self._ext
 
 		while True:
 			entry = yield
@@ -111,6 +126,13 @@ class TextGlossaryWriter(object):
 			if defiEscapeFunc is not None:
 				defi = defiEscapeFunc(defi)
 			_file.write(entryFmt.format(word=word, defi=defi))
+
+			if file_size_approx > 0:
+				entryCount += 1
+				if entryCount % file_size_check_every == 0:
+					if _file.tell() >= file_size_approx:
+						fileIndex += 1
+						_file = self._open(f"{filenameNoExt}.{fileIndex}{ext}")
 
 	def finish(self):
 		if self._tail:

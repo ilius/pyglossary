@@ -16,6 +16,9 @@ optionsProp = {
 	"encoding": EncodingOption(),
 	"writeInfo": BoolOption(),
 	"resources": BoolOption(),
+	"file_size_approx": IntOption(
+		comment="split up by given approximate file size",
+	),
 }
 
 # https://en.wikipedia.org/wiki/Tab-separated_values
@@ -83,6 +86,7 @@ class Writer(object):
 	_encoding: str = "utf-8"
 	_writeInfo: bool = True
 	_resources: bool = True
+	_file_size_approx: int = 0
 
 	compressions = stdCompressions
 
@@ -113,6 +117,7 @@ class Writer(object):
 		writer._defiEscapeFunc = escapeNTB
 		writer._ext = ".txt"
 		writer._resources = self._resources
+		writer._file_size_approx = self._file_size_approx
 		writer.open(self._filename)
 		yield from writer.write()
 		writer.finish()
