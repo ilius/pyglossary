@@ -42,6 +42,14 @@ class Reader(object):
 		return self._cur.fetchone()[0]
 
 	def __iter__(self):
+		alternateDict = {}
+		self._cur.execute("select wordkey, searchwordkey from Keys")
+		for row in self._cur.fetchall():
+			if row[0] in alternateDict:
+				alternateDict[row[0]].append(row[1])
+			else:
+				alternateDict[row[0]] = [row[1]]
+
 		self._cur.execute(
 			"select word, searchword, root, meaning from WordsTable"
 			" order by id"
@@ -58,8 +66,11 @@ class Reader(object):
 			definition = definition.replace("|", "<br>")
 			if root:
 				definition += f'<br>Root: <a href="bword://{html.escape(root)}">{root}</a>'
+			words = [word, searchword]
+			if word in alternateDict:
+				words += alternateDict[word]
 			yield self._glos.newEntry(
-				[word, searchword],
+				words,
 				definition,
 				defiFormat="h",
 			)
