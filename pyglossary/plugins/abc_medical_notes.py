@@ -38,7 +38,7 @@ class Reader(object):
 		self._glos.setDefaultDefiFormat("h")
 
 	def __len__(self):
-		self._cur.execute("select count(_id) from NEW_TABLE")
+		self._cur.execute("select count(*) from NEW_TABLE")
 		return self._cur.fetchone()[0]
 
 	def __iter__(self):
