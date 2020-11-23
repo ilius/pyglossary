@@ -31,6 +31,10 @@ class Option(object):
 		self.cmdFlag = cmdFlag
 		self.falseComment = falseComment
 
+	@property
+	def typeDesc(self):
+		return self.typ
+
 	def evaluate(self, raw: str) -> "Tuple[Any, bool]":
 		"returns (value, isValid)"
 		if raw == "None":
@@ -113,8 +117,37 @@ class IntOption(Option):
 			value = int(raw)
 		except ValueError:
 			return None, False
-		else:
-			return value, True
+		return value, True
+
+
+class FileSizeOption(IntOption):
+	factors = {
+		"k": 1024,
+		"K": 1024,
+		"m": 1048576,
+		"M": 1048576,
+		"g": 1073741824,
+		"G": 1073741824,
+	}
+
+	@property
+	def typeDesc(self):
+		return ""
+
+	def evaluate(self, raw: "Union[str, int]") -> "Tuple[Optional[int], bool]":
+		if not raw:
+			return 0
+		factor = 1
+		if raw[-1] in self.factors:
+			factor = self.factors[raw[-1]]
+			raw = raw[:-1]
+		try:
+			value = float(raw)
+		except ValueError:
+			return None, False
+		if value < 0:
+			return None, False
+		return int(value * factor), True
 
 
 class FloatOption(Option):

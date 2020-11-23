@@ -64,6 +64,19 @@ class TestOptionValidateBoolNumber(unittest.TestCase):
 		self.caseFailed(IntOption, "12f", None)
 		self.caseFailed(IntOption, "fff", None)
 
+	def test_file_size_ok(self):
+		self.caseOK(FileSizeOption, "0", 0)
+		self.caseOK(FileSizeOption, "1", 1)
+		self.caseOK(FileSizeOption, "1234", 1234)
+		self.caseOK(FileSizeOption, "123k", 123 * 1024)
+		self.caseOK(FileSizeOption, "123m", 123 * 1024 ** 2)
+		self.caseOK(FileSizeOption, "1.7g", int(1.7 * 1024 ** 3))
+
+	def test_file_size_failed(self):
+		self.caseFailed(FileSizeOption, "-1", None)
+		self.caseFailed(FileSizeOption, "123kg", None)
+		self.caseFailed(FileSizeOption, "123k.1", None)
+
 	def test_float_ok(self):
 		self.caseOK(FloatOption, "0", 0.0)
 		self.caseOK(FloatOption, "1", 1.0)

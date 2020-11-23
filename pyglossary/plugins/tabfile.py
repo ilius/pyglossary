@@ -16,8 +16,8 @@ optionsProp = {
 	"encoding": EncodingOption(),
 	"writeInfo": BoolOption(),
 	"resources": BoolOption(),
-	"file_size_approx": IntOption(
-		comment="split up by given approximate file size",
+	"file_size_approx": FileSizeOption(
+		comment="split up by given approximate file size\nexamples: 100m, 1g",
 	),
 }
 
