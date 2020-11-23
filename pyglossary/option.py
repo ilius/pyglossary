@@ -35,6 +35,25 @@ class Option(object):
 	def typeDesc(self):
 		return self.typ
 
+	def toDict(self):
+		data = {
+			"class": self.__class__.__name__,
+			"type": self.typ,
+			"customValue": self.customValue,
+		}
+		if self.values:
+			data["values"] = self.values
+		if self.comment:
+			data["comment"] = self.comment
+		if self.disabled:
+			data["disabled"] = True
+		if self.cmd:
+			data["cmd"] = True
+			data["cmdFlag"] = self.cmdFlag
+		if self.falseComment:
+			data["falseComment"] = self.falseComment
+		return data
+
 	def evaluate(self, raw: str) -> "Tuple[Any, bool]":
 		"returns (value, isValid)"
 		if raw == "None":
@@ -77,6 +96,12 @@ class BoolOption(Option):
 			values=[False, True],
 			**kwargs,
 		)
+
+	def toDict(self):
+		data = Option.toDict(self)
+		del data["customValue"]
+		del data["values"]
+		return data
 
 	def evaluate(self, raw: "Union[str, bool]") -> "Tuple[Optional[bool], bool]":
 		if isinstance(raw, bool):
@@ -253,6 +278,11 @@ class EncodingOption(Option):
 			values=values,
 			**kwargs
 		)
+
+	def toDict(self):
+		data = Option.toDict(self)
+		del data["values"]
+		return data
 
 	def groupValues(self) -> "Optional[Dict[str, Any]]":
 		from collections import OrderedDict

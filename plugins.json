@@ -1,0 +1,1140 @@
+[
+	{
+		"name": "Aard2Slob",
+		"description": "Aard 2 (slob)",
+		"extensions": [
+			".slob"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"compression": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": false,
+				"values": [
+					"",
+					"bz2",
+					"zlib",
+					"lzma2"
+				],
+				"comment": "Compression Algorithm"
+			},
+			"content_type": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"values": [
+					"text/plain; charset=utf-8",
+					"text/html; charset=utf-8"
+				],
+				"comment": "Content Type"
+			},
+			"file_size_approx": {
+				"class": "FileSizeOption",
+				"type": "int",
+				"customValue": true,
+				"comment": "split up by given approximate file size\nexamples: 100m, 1g"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {},
+		"writeOptions": {
+			"compression": "zlib",
+			"content_type": "",
+			"file_size_approx": 0
+		}
+	},
+	{
+		"name": "ABCMedicalNotes",
+		"description": "ABC Medical Notes 2020 (SQLite3)",
+		"extensions": [],
+		"singleFile": false,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {}
+	},
+	{
+		"name": "Almaany",
+		"description": "Almaany.com Arabic Dictionary (SQLite3)",
+		"extensions": [],
+		"singleFile": false,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {}
+	},
+	{
+		"name": "AppleDict",
+		"description": "AppleDict Source",
+		"extensions": [
+			".apple"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"cleanHTML": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "use BeautifulSoup parser"
+			},
+			"css": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "custom .css file path"
+			},
+			"xsl": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "custom XSL transformations file path"
+			},
+			"defaultPrefs": {
+				"class": "DictOption",
+				"type": "dict",
+				"customValue": true,
+				"comment": "default prefs in python dict format"
+			},
+			"prefsHTML": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "preferences XHTML file path"
+			},
+			"frontBackMatter": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "XML file path with top-level tag"
+			},
+			"jing": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "run Jing check on generated XML"
+			},
+			"indexes": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": false,
+				"values": [
+					"",
+					"ru",
+					"zh"
+				]
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {
+			"cleanHTML": true,
+			"css": "",
+			"defaultPrefs": null,
+			"frontBackMatter": "",
+			"indexes": "",
+			"jing": false,
+			"prefsHTML": "",
+			"xsl": ""
+		}
+	},
+	{
+		"name": "AppleDictBin",
+		"description": "AppleDict Binary",
+		"extensions": [
+			".dictionary",
+			".data"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"html": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"html": false
+		}
+	},
+	{
+		"name": "BabylonBgl",
+		"description": "Babylon (bgl)",
+		"extensions": [
+			".bgl"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"defaultEncodingOverwrite": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"sourceEncodingOverwrite": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"targetEncodingOverwrite": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"partOfSpeechColor": {
+				"class": "HtmlColorOption",
+				"type": "str",
+				"customValue": true
+			},
+			"noControlSequenceInDefi": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"strictStringConvertion": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"processHtmlInKey": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"keyRStripChars": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true
+			},
+			"searchCharSamples": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"collectMetadata2": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"writeGz": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"charSamplesPath": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true
+			},
+			"msgLogPath": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true
+			},
+			"rawDumpPath": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true
+			},
+			"unpackedGzipPath": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"defaultEncodingOverwrite": "",
+			"keyRStripChars": "",
+			"noControlSequenceInDefi": false,
+			"partOfSpeechColor": "007000",
+			"processHtmlInKey": false,
+			"sourceEncodingOverwrite": "",
+			"strictStringConvertion": false,
+			"targetEncodingOverwrite": ""
+		}
+	},
+	{
+		"name": "CC-CEDICT",
+		"description": "CC-CEDICT",
+		"extensions": [
+			".u8"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"encoding": "utf-8"
+		}
+	},
+	{
+		"name": "cc-kedict",
+		"description": "cc-kedict",
+		"extensions": [],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {}
+	},
+	{
+		"name": "CrawlerDir",
+		"description": "Crawler Directory",
+		"extensions": [
+			".crawler"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"compression": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": false,
+				"values": [
+					"",
+					"gz",
+					"bz2",
+					"lzma"
+				],
+				"comment": "Compression Algorithm"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {},
+		"writeOptions": {
+			"compression": ""
+		}
+	},
+	{
+		"name": "Csv",
+		"description": "CSV",
+		"extensions": [
+			".csv"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"delimiter": {
+				"class": "Option",
+				"type": "str",
+				"customValue": true,
+				"values": [
+					",",
+					";",
+					"@"
+				]
+			},
+			"add_defi_format": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"writeInfo": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {
+			"delimiter": ",",
+			"encoding": "utf-8"
+		},
+		"writeOptions": {
+			"add_defi_format": false,
+			"delimiter": ",",
+			"encoding": "utf-8",
+			"resources": true,
+			"writeInfo": true
+		}
+	},
+	{
+		"name": "Dicformids",
+		"description": "DictionaryForMIDs",
+		"extensions": [
+			".mids"
+		],
+		"singleFile": false,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {},
+		"writeOptions": {}
+	},
+	{
+		"name": "Dictcc",
+		"description": "Dict.cc (SQLite3)",
+		"extensions": [],
+		"singleFile": false,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {}
+	},
+	{
+		"name": "Dictcc_split",
+		"description": "Dict.cc (SQLite3) - Split",
+		"extensions": [],
+		"singleFile": false,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {}
+	},
+	{
+		"name": "DictOrg",
+		"description": "DICT.org file format (.index)",
+		"extensions": [
+			".index"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"dictzip": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"install": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {},
+		"writeOptions": {
+			"dictzip": false,
+			"install": true
+		}
+	},
+	{
+		"name": "DictOrgSource",
+		"description": "DICT.org dictfmt source file",
+		"extensions": [
+			".dtxt"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"remove_html_all": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {
+			"remove_html_all": true
+		}
+	},
+	{
+		"name": "Dictunformat",
+		"description": "dictunformat output file",
+		"extensions": [
+			".dictunformat"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"encoding": "utf-8"
+		}
+	},
+	{
+		"name": "DigitalNK",
+		"description": "DigitalNK (SQLite3, N-Korean)",
+		"extensions": [],
+		"singleFile": false,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {}
+	},
+	{
+		"name": "ABBYYLingvoDSL",
+		"description": "ABBYY Lingvo DSL (dsl)",
+		"extensions": [
+			".dsl"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"audio": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"onlyFixMarkUp": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"audio": false,
+			"encoding": "",
+			"onlyFixMarkUp": false
+		}
+	},
+	{
+		"name": "Epub2",
+		"description": "EPUB-2 E-Book",
+		"extensions": [
+			".epub"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"group_by_prefix_length": {
+				"class": "IntOption",
+				"type": "int",
+				"customValue": true
+			},
+			"compress": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"keep": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"include_index_page": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"apply_css": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "path to css file"
+			},
+			"cover_path": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "path to cover file"
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {
+			"apply_css": "",
+			"compress": true,
+			"cover_path": "",
+			"group_by_prefix_length": 2,
+			"include_index_page": false,
+			"keep": false
+		}
+	},
+	{
+		"name": "Kobo",
+		"description": "Kobo E-Reader Dictionary",
+		"extensions": [
+			".kobo"
+		],
+		"singleFile": false,
+		"optionsProp": {},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {}
+	},
+	{
+		"name": "Dictfile",
+		"description": "Kobo E-Reader Dictfile",
+		"extensions": [
+			".df"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"extract_inline_images": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {
+			"encoding": "utf-8",
+			"extract_inline_images": true
+		},
+		"writeOptions": {
+			"encoding": "utf-8"
+		}
+	},
+	{
+		"name": "Mobi",
+		"description": "MOBI E-Book",
+		"extensions": [
+			".mobi"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"group_by_prefix_length": {
+				"class": "IntOption",
+				"type": "int",
+				"customValue": true
+			},
+			"kindlegen_path": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true
+			},
+			"compress": {
+				"class": "BoolOption",
+				"type": "bool",
+				"disabled": true
+			},
+			"keep": {
+				"class": "BoolOption",
+				"type": "bool",
+				"disabled": true
+			},
+			"include_index_page": {
+				"class": "BoolOption",
+				"type": "bool",
+				"disabled": true
+			},
+			"apply_css": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"disabled": true
+			},
+			"cover_path": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"disabled": true
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {
+			"group_by_prefix_length": 2,
+			"kindlegen_path": ""
+		}
+	},
+	{
+		"name": "Edlin",
+		"description": "EDLIN",
+		"extensions": [
+			".edlin"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"havePrevLink": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {
+			"encoding": "utf-8"
+		},
+		"writeOptions": {
+			"encoding": "utf-8",
+			"havePrevLink": true
+		}
+	},
+	{
+		"name": "FreeDict",
+		"description": "FreeDict (tei)",
+		"extensions": [
+			".tei"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"discover": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"keywords_header": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "repeat keywords on top of definition"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {
+			"discover": false,
+			"keywords_header": false
+		},
+		"writeOptions": {
+			"resources": true
+		}
+	},
+	{
+		"name": "GettextPo",
+		"description": "Gettext Source (po)",
+		"extensions": [
+			".po"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {},
+		"writeOptions": {
+			"resources": true
+		}
+	},
+	{
+		"name": "HtmlDir",
+		"description": "HTML Directory",
+		"extensions": [
+			".hdir"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"max_file_size": {
+				"class": "IntOption",
+				"type": "int",
+				"customValue": true
+			},
+			"filename_format": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true
+			},
+			"escape_defi": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"dark": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {
+			"dark": true,
+			"encoding": "utf-8",
+			"escape_defi": false,
+			"filename_format": "{n:05d}.html",
+			"max_file_size": 102400,
+			"resources": true
+		}
+	},
+	{
+		"name": "Info",
+		"description": "Glossary Info (.info)",
+		"extensions": [
+			".info"
+		],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {},
+		"writeOptions": {}
+	},
+	{
+		"name": "JMDict",
+		"description": "JMDict",
+		"extensions": [],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {}
+	},
+	{
+		"name": "Json",
+		"description": "JSON",
+		"extensions": [
+			".json"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"writeInfo": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {
+			"encoding": "utf-8",
+			"resources": true,
+			"writeInfo": true
+		}
+	},
+	{
+		"name": "LingoesLDF",
+		"description": "Lingoes Source (LDF)",
+		"extensions": [
+			".ldf"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"newline": {
+				"class": "NewlineOption",
+				"type": "str",
+				"customValue": true,
+				"values": [
+					"\r\n",
+					"\n",
+					"\r"
+				]
+			},
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {
+			"encoding": "utf-8"
+		},
+		"writeOptions": {
+			"newline": "\n",
+			"resources": true
+		}
+	},
+	{
+		"name": "OctopusMdict",
+		"description": "Octopus MDict",
+		"extensions": [
+			".mdx"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"substyle": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"encoding": "",
+			"substyle": true
+		}
+	},
+	{
+		"name": "Sdict",
+		"description": "Sdictionary Binary(dct)",
+		"extensions": [
+			".dct"
+		],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {}
+	},
+	{
+		"name": "SdictSource",
+		"description": "Sdictionary Source (sdct)",
+		"extensions": [
+			".sdct"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"writeInfo": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"newline": {
+				"class": "NewlineOption",
+				"type": "str",
+				"customValue": true,
+				"values": [
+					"\r\n",
+					"\n",
+					"\r"
+				]
+			},
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {
+			"newline": "\n",
+			"resources": true,
+			"writeInfo": true
+		}
+	},
+	{
+		"name": "Sql",
+		"description": "SQL",
+		"extensions": [
+			".sql"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"infoKeys": {
+				"class": "ListOption",
+				"type": "list",
+				"customValue": true
+			},
+			"addExtraInfo": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"newline": {
+				"class": "NewlineOption",
+				"type": "str",
+				"customValue": true,
+				"values": [
+					"\r\n",
+					"\n",
+					"\r"
+				]
+			},
+			"transaction": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {
+			"addExtraInfo": true,
+			"encoding": "utf-8",
+			"infoKeys": null,
+			"newline": "<br>",
+			"transaction": false
+		}
+	},
+	{
+		"name": "Stardict",
+		"description": "StarDict (ifo)",
+		"extensions": [
+			".ifo"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"stardict_client": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"dictzip": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"sametypesequence": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": false,
+				"values": [
+					"",
+					"h",
+					"m",
+					"x",
+					null
+				]
+			},
+			"merge_syns": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"xdxf_to_html": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {
+			"xdxf_to_html": true
+		},
+		"writeOptions": {
+			"dictzip": true,
+			"merge_syns": false,
+			"sametypesequence": "",
+			"stardict_client": false
+		}
+	},
+	{
+		"name": "Tabfile",
+		"description": "Tabfile (txt, dic)",
+		"extensions": [
+			".txt",
+			".tab",
+			".tsv"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			},
+			"writeInfo": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool"
+			},
+			"file_size_approx": {
+				"class": "FileSizeOption",
+				"type": "int",
+				"customValue": true,
+				"comment": "split up by given approximate file size\nexamples: 100m, 1g"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {
+			"encoding": "utf-8"
+		},
+		"writeOptions": {
+			"encoding": "utf-8",
+			"file_size_approx": 0,
+			"resources": true,
+			"writeInfo": true
+		}
+	},
+	{
+		"name": "WiktionaryDump",
+		"description": "Wiktionary Dump (.xml)",
+		"extensions": [
+			".xml"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {}
+	},
+	{
+		"name": "Wordset",
+		"description": "Wordset.org JSON directory",
+		"extensions": [],
+		"singleFile": false,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"encoding": "utf-8"
+		}
+	},
+	{
+		"name": "Xdxf",
+		"description": "XDXF",
+		"extensions": [
+			".xdxf"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"html": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"html": true
+		}
+	},
+	{
+		"name": "Zim",
+		"description": "Zim (Kiwix)",
+		"extensions": [
+			".zim"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"skip_duplicate_words": {
+				"class": "BoolOption",
+				"type": "bool"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"skip_duplicate_words": false
+		}
+	}
+]
