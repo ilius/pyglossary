@@ -5,7 +5,7 @@ import html
 
 enable = True
 format = 'Almaany'
-description = 'Almaany.com Arabic Dictionary (SQLite3)'
+description = 'Almaany.com (SQLite3)'
 extensions = ()
 readOptions = []
 writeOptions = []

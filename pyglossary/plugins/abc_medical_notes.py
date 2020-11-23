@@ -5,7 +5,7 @@ import html
 
 enable = True
 format = 'ABCMedicalNotes'
-description = 'ABC Medical Notes 2020 (SQLite3)'
+description = 'ABC Medical Notes (SQLite3)'
 extensions = ()
 readOptions = []
 writeOptions = []

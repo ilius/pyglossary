@@ -47,7 +47,7 @@
 	},
 	{
 		"name": "ABCMedicalNotes",
-		"description": "ABC Medical Notes 2020 (SQLite3)",
+		"description": "ABC Medical Notes (SQLite3)",
 		"extensions": [],
 		"singleFile": false,
 		"optionsProp": {},
@@ -57,7 +57,7 @@
 	},
 	{
 		"name": "Almaany",
-		"description": "Almaany.com Arabic Dictionary (SQLite3)",
+		"description": "Almaany.com (SQLite3)",
 		"extensions": [],
 		"singleFile": false,
 		"optionsProp": {},
