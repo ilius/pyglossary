@@ -43,18 +43,19 @@ Supported formats
 |-----------------------------------------------------------------------|:-:|:---------------:|:--:|:---:|
 | [Aard 2 (slob)](http://aarddict.org)                                  |🔢 | .slob           | ✔  |  ✔  |
 | [ABBYY Lingvo](https://www.lingvo.ru/) DSL (Russian-origin)           |📝 | .dsl            | ✔  |     |
+| Almaany.com (SQLite3, Arabic)                                         |🔢 | .db             | ✔  |     |
 | AppleDict Binary                                                      |🔢 |.dictionary      | ✔  | ❌  |
 | AppleDict Source                                                      |📁 |                 |    |  ✔  |
 | Babylon                                                               |🔢 | .bgl            | ✔  | ❌  |
 | [CC-CEDICT](https://cc-cedict.org/wiki) (Chinese)                     |📝 |                 | ✔  | ❌  |
 | [cc-kedict](https://github.com/mhagiwara/cc-kedict) (Korean)          |📝 |                 | ✔  | ❌  |
 | CSV                                                                   |📝 | .csv            | ✔  |  ✔  |
-| [Dict.cc](https://ply.gl/cc.dict.dictcc) (SQLite3, German)            |🔢 |                 | ✔  |     |
+| [Dict.cc](https://ply.gl/cc.dict.dictcc) (SQLite3, German)            |🔢 | .db             | ✔  |     |
 | DICT.org / Dictd server                                               |📁 | (📝.index)      | ✔  |  ✔  |
 | DICT.org / dictfmt source file                                        |📝 | (.dtxt)         |    |  ✔  |
 | [dictunformat](https://linux.die.net/man/1/dictunformat) output file  |📝 | (.dictunformat) | ✔  |     |
 | [DictionaryForMIDs](http://dictionarymid.sourceforge.net)             |📁 | (📁.mids)       | ✔  |  ✔  |
-| [DigitalNK](https://github.com/digitalprk/dicrs) (SQLite3, N-Korean)  |🔢 |                 | ✔  |     |
+| [DigitalNK](https://github.com/digitalprk/dicrs) (SQLite3, N-Korean)  |🔢 | .db             | ✔  |     |
 | EDLIN                                                                 |📁 | .edlin          | ✔  |  ✔  |
 | EPUB-2 E-Book                                                         |📦 | .epub           | ❌ |  ✔  |
 | [FreeDict](https://freedict.org)                                      |📝 | .tei            | ✔  |  ✔  |
@@ -84,6 +85,7 @@ Legend:
 - ✔		Supported
 - ❌ 	Will not be supported
 
+Note: SQLite3 `.db` files are not detected by extension, you need to specify the format.
 
 Requirements
 ------------
