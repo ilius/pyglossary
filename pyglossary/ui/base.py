@@ -86,6 +86,11 @@ class UIBase(object):
 			falseComment="",
 		)),
 
+		("rtl", BoolOption(
+			cmd=True,
+			comment="mark all definitions as Right-To-Left (definitions must be HTML)",
+			falseComment="",
+		)),
 		("remove_html", StrOption(
 			cmd=True,
 			comment="remove given html tags (comma-separated) from definitions",

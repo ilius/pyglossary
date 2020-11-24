@@ -346,6 +346,9 @@ class Glossary(GlossaryType):
 		if config.get("lower", True):
 			self._entryFilters.append(ef.LowerWordFilter(self))
 
+		if config.get("rtl", False):
+			self._entryFilters.append(ef.RTLFilter(self))
+
 		if config.get("remove_html_all", False):
 			self._entryFilters.append(ef.RemoveHtmlTagsAll(self))
 		elif config.get("remove_html"):

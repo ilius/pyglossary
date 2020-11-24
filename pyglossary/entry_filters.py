@@ -97,6 +97,14 @@ class LowerWordFilter(EntryFilter):
 		return entry
 
 
+class RTLFilter(EntryFilter):
+	name = "rtl"
+
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
+		entry._defi = f'<div dir="rtl">{entry._defi}</div>'
+		return entry
+
+
 class RemoveHtmlTagsAll(EntryFilter):
 	name = "remove_html_all"
 

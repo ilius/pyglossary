@@ -7,6 +7,7 @@
 	"enable_alts": true,
 	"skip_resources": false,
 
+	"rtl": false,
 	"remove_html": "",
 	"remove_html_all": false,
 	"normalize_html": false,
