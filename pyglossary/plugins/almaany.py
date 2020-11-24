@@ -42,6 +42,7 @@ class Reader(object):
 		return self._cur.fetchone()[0]
 
 	def __iter__(self):
+		from pyglossary.langs.writing_system import getWritingSystemFromText
 		alternateDict = {}
 		self._cur.execute("select wordkey, searchwordkey from Keys")
 		for row in self._cur.fetchall():
@@ -64,8 +65,14 @@ class Reader(object):
 			meaning = row[3]
 			definition = meaning
 			definition = definition.replace("|", "<br>")
+
 			if root:
 				definition += f'<br>Root: <a href="bword://{html.escape(root)}">{root}</a>'
+
+			ws = getWritingSystemFromText(meaning)
+			if ws and ws.direction == "rtl":
+				definition = f'<div dir="rtl">{definition}</div>'
+
 			words = [word, searchword]
 			if word in alternateDict:
 				words += alternateDict[word]
