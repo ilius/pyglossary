@@ -93,7 +93,8 @@ class TextGlossaryReader(object):
 			if isfile(f"{nextFilename}.{ext}"):
 				self._open(f"{nextFilename}.{ext}")
 				return True
-		log.warning(f"next file not found: {nextFilename}")
+		if self._fileCount != -1:
+			log.warning(f"next file not found: {nextFilename}")
 		return False
 
 	def close(self) -> None:
@@ -157,7 +158,7 @@ class TextGlossaryReader(object):
 			try:
 				wordDefi = self.nextPair()
 			except StopIteration as e:
-				if self._fileIndex < self._fileCount - 1:
+				if self._fileCount == -1 or self._fileIndex < self._fileCount - 1:
 					if self.openNextFile():
 						continue
 				self._wordCount = self._pos

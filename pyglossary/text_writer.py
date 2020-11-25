@@ -46,6 +46,8 @@ class TextGlossaryWriter(object):
 		# TODO: replace outInfoKeysAliasDict arg with a func?
 
 	def open(self, filename: str) -> None:
+		if self._file_size_approx > 0:
+			self._glos.setInfo("file_count", "-1")
 		self._open(filename)
 		self._filename = filename
 		self._resDir = f"{filename}_res"
