@@ -419,6 +419,7 @@ class UI(ui_cmd.UI):
 			default = self._readOptions.get(optName)
 			if default is None:
 				default = options[optName]
+			print(f"Comment: {option.longComment}")
 			while True:
 				if option.typ == "bool":
 					try:
@@ -486,6 +487,7 @@ class UI(ui_cmd.UI):
 			if not optName:
 				return
 			option = optionsProp[optName]
+			print(f"Comment: {option.longComment}")
 			valueCompleter = self.getOptionValueCompleter(option)
 			default = self._writeOptions.get(optName)
 			if default is None:
