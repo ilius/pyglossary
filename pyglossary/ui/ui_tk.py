@@ -565,11 +565,7 @@ class FormatOptionsButton(tk.Button):
 		###
 		for optName in options:
 			prop = optionsProp[optName]
-			comment = prop.typeDesc
-			if prop.comment:
-				if comment:
-					comment += ", "
-				comment += prop.comment
+			comment = prop.longComment
 			row = [
 				int(optName in self.values),
 				optName,

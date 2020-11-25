@@ -35,6 +35,15 @@ class Option(object):
 	def typeDesc(self):
 		return self.typ
 
+	@property
+	def longComment(self):
+		comment = self.typeDesc
+		if self.comment:
+			if comment:
+				comment += ", "
+			comment += self.comment
+		return comment
+
 	def toDict(self):
 		data = {
 			"class": self.__class__.__name__,

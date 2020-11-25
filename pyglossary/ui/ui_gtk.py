@@ -136,13 +136,9 @@ class FormatOptionsDialog(gtk.Dialog):
 		#############
 		for name in options:
 			prop = optionsProp[name]
-			comment = prop.typeDesc
-			if prop.comment:
-				if comment:
-					comment += ", "
-				comment += prop.comment
-			if prop.typ == "str" and not prop.values:
-				comment += ", double-click to edit"
+			comment = prop.longComment
+			if prop.typ != "bool" and not prop.values:
+				comment += " (double-click to edit)"
 			trees.append([
 				name in optionsValues, # enable
 				name, # name
