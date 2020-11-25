@@ -103,8 +103,6 @@ class TextGlossaryWriter(object):
 		file_size_approx = self._file_size_approx
 		entryCount = 0
 		fileIndex = 0
-		filenameNoExt, _ = splitext(self._filename)
-		ext = self._ext
 
 		while True:
 			entry = yield
@@ -132,7 +130,7 @@ class TextGlossaryWriter(object):
 				if entryCount % file_size_check_every == 0:
 					if _file.tell() >= file_size_approx:
 						fileIndex += 1
-						_file = self._open(f"{filenameNoExt}.{fileIndex}{ext}")
+						_file = self._open(f"{self._filename}.{fileIndex}")
 
 	def finish(self):
 		if self._tail:
