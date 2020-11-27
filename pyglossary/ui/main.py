@@ -290,6 +290,7 @@ def main():
 			"gtk",
 			"gtk4",
 			"tk",
+			"wx",
 			# "qt",
 			"auto",
 			"none",
@@ -326,6 +327,14 @@ def main():
 		const="tk",
 		default=None,
 		help="use Tkinter-based user interface",
+	)
+	parser.add_argument(
+		"--wx",
+		dest="ui_type",
+		action="store_const",
+		const="wx",
+		default=None,
+		help="use wxWidgets/wxPython user interface",
 	)
 	parser.add_argument(
 		"--interactive",
@@ -609,7 +618,11 @@ def main():
 
 	##############################
 
-	ui_list = ["gtk", "tk"]
+	ui_list = [
+		"gtk",
+		"tk",
+		"wx",
+	]
 	if os.sep == "\\":
 		ui_list = ["tk", "gtk"]
 
