@@ -306,34 +306,93 @@ class ProgressBar(tix.Frame):
 		self.canvas.update_idletasks()
 
 
-class FormatOptionsButton(tk.Button):
-	def __init__(
-		self,
-		kind: "Literal['Read', 'Write']",
-		values: "Dict",
-		formatVar: tk.StringVar,
-		master=None,
-	):
-		tk.Button.__init__(
-			self,
-			master=master,
-			text="Options",
-			command=self.buttonClicked,
-			# bg="#f0f000",
-			# activebackground="#f6f622",
-			borderwidth=3,
-		)
-		self.kind = kind
-		self.kindFormatsOptions = {
-			"Read": Glossary.formatsReadOptions,
-			"Write": Glossary.formatsWriteOptions,
-		}
-		self.values = values
-		self.formatVar = formatVar
+class FormatOptionsDialog(tix.Toplevel):
+	kindFormatsOptions = {
+		"Read": Glossary.formatsReadOptions,
+		"Write": Glossary.formatsWriteOptions,
+	}
+
+	def __init__(self, format, kind, values, master=None):
+		tix.Toplevel.__init__(self)
+		# bg="#0f0" does not work
 		self.menu = None
 
-	def setOptionsValues(self, values):
+		self.format = format
+		self.kind = kind
 		self.values = values
+		self.options = list(self.kindFormatsOptions[kind][format].keys())
+		self.optionsProp = Glossary.plugins[format].optionsProp
+
+		self.resizable(width=True, height=True)
+		self.title(kind + " Options")
+		set_window_icon(self)
+		self.bind('<Escape>', lambda e: self.destroy())
+		###
+		self.valueCol = "#3"
+		cols = [
+			"Enable",  # bool
+			"Name",  # str
+			"Value",  # str
+			"Comment",  # str
+		]
+		treev = self.treev = ttk.Treeview(
+			master=self,
+			columns=cols,
+			show="headings",
+		)
+		for col in cols:
+			treev.heading(
+				col,
+				text=col,
+				# command=lambda c=col: sortby(treev, c, 0),
+			)
+			# adjust the column's width to the header string
+			treev.column(
+				col,
+				width=tkFont.Font().measure(col.title()),
+			)
+		###
+		treev.bind(
+			"<Button-1>",
+			# "<<TreeviewSelect>>", # event.x and event.y are zero
+			self.treeClicked,
+		)
+		treev.pack(fill="x", expand=True)
+		###
+		for optName in self.options:
+			prop = self.optionsProp[optName]
+			comment = prop.longComment
+			row = [
+				int(optName in values),
+				optName,
+				str(values.get(optName, "")),
+				comment,
+			]
+			treev.insert("", "end", values=row, iid=optName)  # iid should be rowId
+			# adjust column's width if necessary to fit each value
+			for col_i, value in enumerate(row):
+				value = str(value)
+				if col_i == 3:
+					value = value.zfill(20)
+					# to reserve window width, because it's hard to resize it later
+				col_w = tkFont.Font().measure(value)
+				if treev.column(cols[col_i], width=None) < col_w:
+					treev.column(cols[col_i], width=col_w)
+		###########
+		frame = tix.Frame(self)
+		###
+
+		button = ttk.Button(
+			frame,
+			text="OK",
+			command=self.okClicked,
+			# bg="#ff0000",
+			# activebackground="#ff5050",
+		)
+		button.pack(side="right")
+		###
+		frame.pack(fill="x")
+		###
 
 	def valueMenuItemCustomSelected(self, treev, format, optName, menu=None):
 		if menu:
@@ -369,7 +428,7 @@ class FormatOptionsButton(tk.Button):
 
 		prop = Glossary.plugins[format].optionsProp[optName]
 
-		def okClicked(event=None):
+		def customOkClicked(event=None):
 			rawValue = entry.get()
 			if not prop.validateRaw(rawValue):
 				log.error(f"invalid {prop.typ} value: {optName} = {rawValue!r}")
@@ -381,238 +440,197 @@ class FormatOptionsButton(tk.Button):
 				treev.column("Value", width=col_w)
 			dialog.destroy()
 
-		entry.bind("<Return>", okClicked)
+		entry.bind("<Return>", customOkClicked)
 
 		label = ttk.Label(master=frame)
 		label.pack(fill="x")
 
-		button = ttk.Button(
+		customOkbutton = ttk.Button(
 			frame,
 			text="OK",
-			command=okClicked,
+			command=customOkClicked,
 			# bg="#ff0000",
 			# activebackground="#ff5050",
 		)
-		button.pack(side="right")
+		customOkbutton.pack(side="right")
 		###
 		frame.pack(fill="x")
 		dialog.focus()
+
+	def valueMenuItemSelected(self, optName, menu, value):
+		treev = self.treev
+		treev.set(optName, self.valueCol, value)
+		treev.set(optName, "#1", "1")  # enable it
+		col_w = tkFont.Font().measure(value)
+		if treev.column("Value", width=None) < col_w:
+			treev.column("Value", width=col_w)
+		menu.destroy()
+		self.menu = None
+
+	def valueCellClicked(self, event, optName):
+		if not optName:
+			return
+		treev = self.treev
+		prop = self.optionsProp[optName]
+		propValues = prop.values
+		if not propValues:
+			if prop.customValue:
+				self.valueMenuItemCustomSelected(treev, self.format, optName, None)
+			else:
+				log.error(
+					f"invalid option {optName}, values={propValues}"
+					f", customValue={prop.customValue}"
+				)
+			return
+		if prop.typ == "bool":
+			rawValue = treev.set(optName, self.valueCol)
+			if rawValue == "":
+				value = False
+			else:
+				value, isValid = prop.evaluate(rawValue)
+				if not isValid:
+					log.error(f"invalid {optName} = {rawValue!r}")
+					value = False
+			treev.set(optName, self.valueCol, str(not value))
+			treev.set(optName, "#1", "1")  # enable it
+			return
+		menu = tk.Menu(
+			master=treev,
+			title=optName,
+			tearoff=False,
+		)
+		self.menu = menu  # to destroy it later
+		if prop.customValue:
+			menu.add_command(
+				label="[Custom Value]",
+				command=lambda: self.valueMenuItemCustomSelected(
+					treev,
+					self.format,
+					optName,
+					menu,
+				),
+			)
+		groupedValues = None
+		if len(propValues) > 10:
+			groupedValues = prop.groupValues()
+		maxItemW = 0
+
+		def valueMenuItemSelectedCommand(value):
+			def callback():
+				self.valueMenuItemSelected(optName, menu, value)
+			return callback
+
+		if groupedValues:
+			for groupName, subValues in groupedValues.items():
+				if subValues is None:
+					menu.add_command(
+						label=str(value),
+						command=valueMenuItemSelectedCommand(value),
+					)
+					maxItemW = max(maxItemW, tkFont.Font().measure(str(value)))
+				else:
+					subMenu = tk.Menu(tearoff=False)
+					for subValue in subValues:
+						subMenu.add_command(
+							label=str(subValue),
+							command=valueMenuItemSelectedCommand(subValue),
+						)
+					menu.add_cascade(label=groupName, menu=subMenu)
+					maxItemW = max(maxItemW, tkFont.Font().measure(groupName))
+		else:
+			for value in propValues:
+				value = str(value)
+				menu.add_command(
+					label=value,
+					command=valueMenuItemSelectedCommand(value),
+				)
+
+		def close():
+			menu.destroy()
+			self.menu = None
+
+		menu.add_command(
+			label="[Close]",
+			command=close,
+		)
+		try:
+			menu.tk_popup(
+				event.x_root,
+				event.y_root,
+			)
+			# do not pass the third argument (entry), so that the menu
+			# apears where the pointer is on its top-left corner
+		finally:
+			# make sure to release the grab (Tk 8.0a1 only)
+			menu.grab_release()
+
+	def treeClicked(self, event):
+		treev = self.treev
+		if self.menu:
+			self.menu.destroy()
+			self.menu = None
+			return
+		optName = treev.identify_row(event.y)  # optName is rowId
+		if not optName:
+			return
+		col = treev.identify_column(event.x)  # "#1" to self.valueCol
+		if col == "#1":
+			value = treev.set(optName, col)
+			treev.set(optName, col, 1 - int(value))
+			return
+		if col == self.valueCol:
+			self.valueCellClicked(event, optName)
+
+	def okClicked(self):
+		treev = self.treev
+		for optName in self.options:
+			enable = bool(int(treev.set(optName, "#1")))
+			if not enable:
+				if optName in self.values:
+					del self.values[optName]
+				continue
+			rawValue = treev.set(optName, self.valueCol)
+			prop = self.optionsProp[optName]
+			value, isValid = prop.evaluate(rawValue)
+			if not isValid:
+				log.error(f"invalid option value {optName} = {rawValue}")
+				continue
+			self.values[optName] = value
+		self.destroy()
+
+
+class FormatOptionsButton(tk.Button):
+	def __init__(
+		self,
+		kind: "Literal['Read', 'Write']",
+		values: "Dict",
+		formatVar: tk.StringVar,
+		master=None,
+	):
+		tk.Button.__init__(
+			self,
+			master=master,
+			text="Options",
+			command=self.buttonClicked,
+			# bg="#f0f000",
+			# activebackground="#f6f622",
+			borderwidth=3,
+		)
+		self.kind = kind
+		self.values = values
+		self.formatVar = formatVar
+
+	def setOptionsValues(self, values):
+		self.values = values
 
 	def buttonClicked(self):
 		formatD = self.formatVar.get()
 		if not formatD:
 			return
 		format = pluginByDesc[formatD].name
-		options = list(self.kindFormatsOptions[self.kind][format].keys())
-		optionsProp = Glossary.plugins[format].optionsProp
 
-		dialog = tix.Toplevel()  # bg="#0f0" does not work
-		dialog.resizable(width=True, height=True)
-		dialog.title(self.kind + " Options")
-		set_window_icon(dialog)
-		dialog.bind('<Escape>', lambda e: dialog.destroy())
-		###
-		self.valueCol = "#3"
-		cols = [
-			"Enable",  # bool
-			"Name",  # str
-			"Value",  # str
-			"Comment",  # str
-		]
-		treev = ttk.Treeview(
-			master=dialog,
-			columns=cols,
-			show="headings",
-		)
-		for col in cols:
-			treev.heading(
-				col,
-				text=col,
-				# command=lambda c=col: sortby(treev, c, 0),
-			)
-			# adjust the column's width to the header string
-			treev.column(
-				col,
-				width=tkFont.Font().measure(col.title()),
-			)
-		###
+		dialog = FormatOptionsDialog(format, self.kind, self.values, master=self)
 
-		def valueMenuItemSelected(optName, menu, value):
-			treev.set(optName, self.valueCol, value)
-			treev.set(optName, "#1", "1")  # enable it
-			col_w = tkFont.Font().measure(value)
-			if treev.column("Value", width=None) < col_w:
-				treev.column("Value", width=col_w)
-			menu.destroy()
-			self.menu = None
-
-		def valueCellClicked(event, optName):
-			if not optName:
-				return
-			prop = optionsProp[optName]
-			propValues = prop.values
-			if not propValues:
-				if prop.customValue:
-					self.valueMenuItemCustomSelected(treev, format, optName, None)
-				else:
-					log.error(
-						f"invalid option {optName}, values={propValues}"
-						f", customValue={prop.customValue}"
-					)
-				return
-			if prop.typ == "bool":
-				rawValue = treev.set(optName, self.valueCol)
-				if rawValue == "":
-					value = False
-				else:
-					value, isValid = prop.evaluate(rawValue)
-					if not isValid:
-						log.error(f"invalid {optName} = {rawValue!r}")
-						value = False
-				treev.set(optName, self.valueCol, str(not value))
-				treev.set(optName, "#1", "1")  # enable it
-				return
-			menu = tk.Menu(
-				master=treev,
-				title=optName,
-				tearoff=False,
-			)
-			self.menu = menu  # to destroy it later
-			if prop.customValue:
-				menu.add_command(
-					label="[Custom Value]",
-					command=lambda: self.valueMenuItemCustomSelected(
-						treev,
-						format,
-						optName,
-						menu,
-					),
-				)
-			groupedValues = None
-			if len(propValues) > 10:
-				groupedValues = prop.groupValues()
-			maxItemW = 0
-			if groupedValues:
-				for groupName, subValues in groupedValues.items():
-					if subValues is None:
-						menu.add_command(
-							label=str(value),
-							command=lambda value=value: valueMenuItemSelected(optName, menu, value),
-						)
-						maxItemW = max(maxItemW, tkFont.Font().measure(str(value)))
-					else:
-						subMenu = tk.Menu(tearoff=False)
-						for subValue in subValues:
-							subMenu.add_command(
-								label=str(subValue),
-								command=lambda value=subValue: valueMenuItemSelected(
-									optName,
-									menu,
-									value,
-								),
-							)
-						menu.add_cascade(label=groupName, menu=subMenu)
-						maxItemW = max(maxItemW, tkFont.Font().measure(groupName))
-			else:
-				for value in propValues:
-					value = str(value)
-					menu.add_command(
-						label=value,
-						command=lambda value=value: valueMenuItemSelected(optName, menu, value),
-					)
-
-			def close():
-				menu.destroy()
-				self.menu = None
-
-			menu.add_command(
-				label="[Close]",
-				command=close,
-			)
-			try:
-				menu.tk_popup(
-					event.x_root,
-					event.y_root,
-				)
-				# do not pass the third argument (entry), so that the menu
-				# apears where the pointer is on its top-left corner
-			finally:
-				# make sure to release the grab (Tk 8.0a1 only)
-				menu.grab_release()
-
-		def treeClicked(event):
-			if self.menu:
-				self.menu.destroy()
-				self.menu = None
-				return
-			optName = treev.identify_row(event.y)  # optName is rowId
-			if not optName:
-				return
-			col = treev.identify_column(event.x)  # "#1" to self.valueCol
-			if col == "#1":
-				value = treev.set(optName, col)
-				treev.set(optName, col, 1 - int(value))
-				return
-			if col == self.valueCol:
-				valueCellClicked(event, optName)
-
-		treev.bind(
-			"<Button-1>",
-			# "<<TreeviewSelect>>", # event.x and event.y are zero
-			treeClicked,
-		)
-		treev.pack(fill="x", expand=True)
-		###
-		for optName in options:
-			prop = optionsProp[optName]
-			comment = prop.longComment
-			row = [
-				int(optName in self.values),
-				optName,
-				str(self.values.get(optName, "")),
-				comment,
-			]
-			treev.insert("", "end", values=row, iid=optName)  # iid should be rowId
-			# adjust column's width if necessary to fit each value
-			for col_i, value in enumerate(row):
-				value = str(value)
-				if col_i == 3:
-					value = value.zfill(20)
-					# to reserve window width, because it's hard to resize it later
-				col_w = tkFont.Font().measure(value)
-				if treev.column(cols[col_i], width=None) < col_w:
-					treev.column(cols[col_i], width=col_w)
-		###########
-		frame = tix.Frame(dialog)
-		###
-
-		def okClicked():
-			for optName in options:
-				enable = bool(int(treev.set(optName, "#1")))
-				if not enable:
-					if optName in self.values:
-						del self.values[optName]
-					continue
-				rawValue = treev.set(optName, self.valueCol)
-				prop = optionsProp[optName]
-				value, isValid = prop.evaluate(rawValue)
-				if not isValid:
-					log.error(f"invalid option value {optName} = {rawValue}")
-					continue
-				self.values[optName] = value
-			dialog.destroy()
-
-		button = ttk.Button(
-			frame,
-			text="OK",
-			command=okClicked,
-			# bg="#ff0000",
-			# activebackground="#ff5050",
-		)
-		button.pack(side="right")
-		###
-		frame.pack(fill="x")
-		###
 		# x, y, w, h = decodeGeometry(dialog.geometry())
 		w, h = 380, 250
 		# w and h are rough estimated width and height of `dialog`
