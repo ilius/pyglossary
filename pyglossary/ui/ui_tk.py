@@ -315,19 +315,33 @@ class FormatOptionsDialog(tix.Toplevel):
 	def __init__(self, format, kind, values, master=None):
 		tix.Toplevel.__init__(self)
 		# bg="#0f0" does not work
-		self.menu = None
+		self.resizable(width=True, height=True)
+		self.title(kind + " Options")
+		set_window_icon(self)
+		self.bind('<Escape>', lambda e: self.destroy())
 
+		self.menu = None
 		self.format = format
 		self.kind = kind
 		self.values = values
 		self.options = list(self.kindFormatsOptions[kind][format].keys())
 		self.optionsProp = Glossary.plugins[format].optionsProp
 
-		self.resizable(width=True, height=True)
-		self.title(kind + " Options")
-		set_window_icon(self)
-		self.bind('<Escape>', lambda e: self.destroy())
-		###
+		self.createOptionsList()
+
+		buttonBox = tix.Frame(self)
+		okButton = ttk.Button(
+			buttonBox,
+			text="OK",
+			command=self.okClicked,
+			# bg="#ff0000",
+			# activebackground="#ff5050",
+		)
+		okButton.pack(side="right")
+		buttonBox.pack(fill="x")
+
+	def createOptionsList(self):
+		values = self.values
 		self.valueCol = "#3"
 		cols = [
 			"Enable",  # bool
@@ -378,21 +392,6 @@ class FormatOptionsDialog(tix.Toplevel):
 				col_w = tkFont.Font().measure(value)
 				if treev.column(cols[col_i], width=None) < col_w:
 					treev.column(cols[col_i], width=col_w)
-		###########
-		frame = tix.Frame(self)
-		###
-
-		button = ttk.Button(
-			frame,
-			text="OK",
-			command=self.okClicked,
-			# bg="#ff0000",
-			# activebackground="#ff5050",
-		)
-		button.pack(side="right")
-		###
-		frame.pack(fill="x")
-		###
 
 	def valueMenuItemCustomSelected(self, treev, format, optName, menu=None):
 		if menu:
@@ -809,7 +808,12 @@ class UI(tix.Frame, UIBase):
 		# convertFrame.grid(sticky=tk.W + tk.E + tk.N + tk.S)
 		#################
 		row += 1
-		console = tix.Text(convertFrame, height=15, background="#000", foreground="#fff")
+		console = tix.Text(
+			convertFrame,
+			height=15,
+			background="#000",
+			foreground="#fff",
+		)
 		# self.consoleH = 15
 		# sbar = Tix.Scrollbar(
 		# 	convertFrame,
