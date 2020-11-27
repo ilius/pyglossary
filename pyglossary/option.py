@@ -14,6 +14,7 @@ class Option(object):
 		customValue: bool = False,
 		values: "Optional[List[str]]" = None,
 		comment: str = "",
+		multiline: bool = False,
 		disabled: bool = False,
 		cmd: bool = False,
 		cmdFlag: str = "",
@@ -26,6 +27,7 @@ class Option(object):
 		self.values = values
 		self.customValue = customValue
 		self.comment = comment
+		self.multiline = multiline
 		self.disabled = disabled
 		self.cmd = cmd
 		self.cmdFlag = cmdFlag
@@ -207,6 +209,7 @@ class DictOption(Option):
 			self,
 			"dict",
 			customValue=True,
+			multiline=True,
 			**kwargs,
 		)
 
@@ -231,6 +234,7 @@ class ListOption(Option):
 			self,
 			"list",
 			customValue=True,
+			multiline=True,
 			**kwargs,
 		)
 
@@ -327,6 +331,7 @@ class NewlineOption(Option):
 			"str",
 			customValue=customValue,
 			values=values,
+			multiline=True,
 			**kwargs
 		)
 

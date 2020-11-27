@@ -76,8 +76,12 @@ optionsProp = {
 	"compress": BoolOption(),
 	"keep": BoolOption(),
 	"include_index_page": BoolOption(),
-	"apply_css": StrOption(comment="path to css file"),
-	"cover_path": StrOption(comment="path to cover file"),
+	"apply_css": StrOption(
+		comment="path to css file",
+	),
+	"cover_path": StrOption(
+		comment="path to cover file",
+	),
 }
 
 

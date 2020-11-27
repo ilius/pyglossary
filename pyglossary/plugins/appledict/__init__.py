@@ -39,14 +39,26 @@ extensions = (".apple",)
 # FIXME: rename indexes arg/option to indexes_lang?
 optionsProp = {
 	"cleanHTML": BoolOption(comment="use BeautifulSoup parser"),
-	"css": StrOption(comment="custom .css file path"),
-	"xsl": StrOption(comment="custom XSL transformations file path"),
+	"css": StrOption(
+		comment="custom .css file path",
+		multiline=True,
+	),
+	"xsl": StrOption(
+		comment="custom XSL transformations file path",
+		multiline=True,
+	),
 	"defaultPrefs": DictOption(
 		comment='default prefs in python dict format',
 		# example: {"key": "value", "version": "1"}
 	),
-	"prefsHTML": StrOption(comment="preferences XHTML file path"),
-	"frontBackMatter": StrOption(comment="XML file path with top-level tag"),
+	"prefsHTML": StrOption(
+		comment="preferences XHTML file path",
+		multiline=True,
+	),
+	"frontBackMatter": StrOption(
+		comment="XML file path with top-level tag",
+		multiline=True,
+	),
 	"jing": BoolOption(comment="run Jing check on generated XML"),
 	"indexes": StrOption(customValue=False, values=["", "ru", "zh"]),
 }

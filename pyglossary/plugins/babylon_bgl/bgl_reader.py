@@ -86,7 +86,7 @@ optionsProp = {
 	"noControlSequenceInDefi": BoolOption(),
 	"strictStringConvertion": BoolOption(),
 	"processHtmlInKey": BoolOption(),
-	"keyRStripChars": StrOption(),
+	"keyRStripChars": StrOption(multiline=True),
 
 	# debug read options:
 	"searchCharSamples": BoolOption(),
