@@ -659,6 +659,11 @@ class UI(tix.Frame, UIBase):
 		########
 		set_window_icon(rootWin)
 		rootWin.bind('<Escape>', lambda e: rootWin.quit())
+		#########
+		# Linux: ('clam', 'alt', 'default', 'classic')
+		# Windows: ('winnative', 'clam', 'alt', 'default', 'classic', 'vista', 'xpnative')
+		# style = ttk.Style()
+		# style.theme_use("default")
 		########
 		self.pack(fill="x")
 		# rootWin.bind("<Configure>", self.resized)
