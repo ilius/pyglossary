@@ -344,6 +344,10 @@ class FormatComboBox(gtk.ComboBox):
 		self.optionsValues = {}
 
 		self.optionsButton = gtk.Button(label="Options")
+		self.optionsButton.set_image(gtk.Image.new_from_icon_name(
+			"gtk-preferences",
+			gtk.IconSize.BUTTON,
+		))
 		self.optionsButton.connect("clicked", self.optionsButtonClicked)
 
 		self.dependsButton = gtk.Button(label="Install dependencies")
