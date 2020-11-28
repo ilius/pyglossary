@@ -602,18 +602,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.pages.append(vbox)
 		######
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Input Format")+":")
-		pack(hbox, hbox.label)
-		sizeGroup.add_widget(hbox.label)
-		hbox.label.set_property("xalign", 0)
-		self.convertInputFormatCombo = InputFormatComboBox(parent=self)
-		pack(hbox, self.convertInputFormatCombo)
-		pack(hbox, gtk.Label(), 1, 1)
-		pack(hbox, self.convertInputFormatCombo.dependsButton)
-		pack(hbox, self.convertInputFormatCombo.optionsButton)
-		pack(vbox, hbox)
-		###
-		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input File")+":")
 		pack(hbox, hbox.label)
 		sizeGroup.add_widget(hbox.label)
@@ -633,23 +621,23 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			"changed",
 			self.convertInputEntryChanged,
 		)
+		###
+		hbox = HBox(spacing=3)
+		hbox.label = gtk.Label(label=_("Input Format")+":")
+		pack(hbox, hbox.label)
+		sizeGroup.add_widget(hbox.label)
+		hbox.label.set_property("xalign", 0)
+		self.convertInputFormatCombo = InputFormatComboBox(parent=self)
+		pack(hbox, self.convertInputFormatCombo)
+		pack(hbox, gtk.Label(), 1, 1)
+		pack(hbox, self.convertInputFormatCombo.dependsButton)
+		pack(hbox, self.convertInputFormatCombo.optionsButton)
+		pack(vbox, hbox)
 		#####
 		vbox.sep1 = gtk.Label(label="")
 		vbox.sep1.show()
 		pack(vbox, vbox.sep1)
 		#####
-		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Output Format")+":")
-		pack(hbox, hbox.label)
-		sizeGroup.add_widget(hbox.label)
-		hbox.label.set_property("xalign", 0)
-		self.convertOutputFormatCombo = OutputFormatComboBox(parent=self)
-		pack(hbox, self.convertOutputFormatCombo)
-		pack(hbox, gtk.Label(), 1, 1)
-		pack(hbox, self.convertOutputFormatCombo.dependsButton)
-		pack(hbox, self.convertOutputFormatCombo.optionsButton)
-		pack(vbox, hbox)
-		###
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Output File")+":")
 		pack(hbox, hbox.label)
@@ -670,6 +658,18 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			"changed",
 			self.convertOutputEntryChanged,
 		)
+		###
+		hbox = HBox(spacing=3)
+		hbox.label = gtk.Label(label=_("Output Format")+":")
+		pack(hbox, hbox.label)
+		sizeGroup.add_widget(hbox.label)
+		hbox.label.set_property("xalign", 0)
+		self.convertOutputFormatCombo = OutputFormatComboBox(parent=self)
+		pack(hbox, self.convertOutputFormatCombo)
+		pack(hbox, gtk.Label(), 1, 1)
+		pack(hbox, self.convertOutputFormatCombo.dependsButton)
+		pack(hbox, self.convertOutputFormatCombo.optionsButton)
+		pack(vbox, hbox)
 		#####
 		hbox = HBox(spacing=10)
 		label = gtk.Label(label="")
