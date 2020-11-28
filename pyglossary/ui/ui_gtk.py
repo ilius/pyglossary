@@ -61,6 +61,21 @@ gtk.Window.set_default_icon_from_file(logo)
 
 _ = str  # later replace with translator function
 
+pluginByDesc = {
+	plugin.description: plugin
+	for plugin in Glossary.plugins.values()
+}
+readDesc = [
+	plugin.description
+	for plugin in Glossary.plugins.values()
+	if plugin.canRead
+]
+writeDesc = [
+	plugin.description
+	for plugin in Glossary.plugins.values()
+	if plugin.canWrite
+]
+
 
 def buffer_get_text(b):
 	return b.get_text(
@@ -70,8 +85,158 @@ def buffer_get_text(b):
 	)
 
 
+class FormatDialog(gtk.Dialog):
+	def __init__(self, descList: "List[str]", parent=None, **kwargs):
+		gtk.Dialog.__init__(self, parent=parent, **kwargs)
+		self.descList = descList
+		self.items = descList
+		self.activeDesc = ""
+		##
+		self.connect("response", lambda w, e: self.hide())
+		dialog_add_button(
+			self,
+			"gtk-ok",
+			"_OK",
+			gtk.ResponseType.OK,
+		)
+		dialog_add_button(
+			self,
+			"gtk-cancel",
+			"_Cancel",
+			gtk.ResponseType.CANCEL,
+		)
+		###
+		treev = gtk.TreeView()
+		treeModel = gtk.ListStore(str)
+		treev.set_headers_visible(False)
+		treev.set_model(treeModel)
+		treev.connect("row-activated", self.rowActivated)
+		# treev.connect("response", self.onResponse)
+		###
+		self.treev = treev
+		#############
+		cell = gtk.CellRendererText(editable=False)
+		col = gtk.TreeViewColumn(
+			title="Descriptin",
+			cell_renderer=cell,
+			text=0,
+		)
+		col.set_property("expand", True)
+		col.set_resizable(True)
+		treev.append_column(col)
+		self.descCol = col
+		############
+		swin = gtk.ScrolledWindow()
+		swin.add(treev)
+		swin.set_policy(gtk.PolicyType.NEVER, gtk.PolicyType.AUTOMATIC)
+		pack(self.vbox, swin, 1, 1)
+		self.vbox.show_all()
+		####
+		self.updateTree()
+		self.resize(300, 300)
+
+	def setCursor(self, desc: str):
+		model = self.treev.get_model()
+		_iter = model.iter_children(None)
+		while _iter is not None:
+			if model.get_value(_iter, 0) == desc:
+				path = model.get_path(_iter)
+				self.treev.set_cursor(path, self.descCol, False)
+				self.treev.scroll_to_cell(path)
+				return
+			_iter = model.iter_next(_iter)
+
+	def updateTree(self):
+		model = self.treev.get_model()
+		for desc in self.items:
+			model.append([desc])
+
+		if self.activeDesc:
+			self.setCursor(self.activeDesc)
+
+	def getActive(self) -> "Optional[PluginProp]":
+		path = self.treev.get_cursor()[0]
+		# path is either None or gtk.TreePath
+		if path is None:
+			return
+		model = self.treev.get_model()
+		_iter = model.get_iter(path)
+		desc = model.get_value(_iter, 0)
+		return pluginByDesc[desc]
+
+	def setActive(self, plugin):
+		if plugin is None:
+			self.activeDesc = ""
+			return
+		desc = plugin.description
+		self.activeDesc = desc
+		self.setCursor(desc)
+
+	def rowActivated(self, treev, path, col):
+		model = treev.get_model()
+		_iter = model.get_iter(path)
+		desc = model.get_value(_iter, 0)
+		self.activeDesc = desc
+		self.response(gtk.ResponseType.OK)
+
+	# def onResponse
+
+
+class FormatButton(gtk.Button):
+	noneLabel = "[Select Format]"
+	dialogTitle = "Select Format"
+
+	def __init__(self, descList: "List[str]", parent=None):
+		gtk.Button.__init__(self)
+		self.set_label(self.noneLabel)
+		###
+		self.descList = descList
+		self._parent = parent
+		self.activePlugin = None
+		###
+		self.connect("clicked", self.onClick)
+
+	def onChanged(self, obj=None):
+		pass
+
+	def onClick(self, button=None):
+		dialog = FormatDialog(
+			descList=self.descList,
+			parent=self._parent,
+			title=self.dialogTitle,
+		)
+		dialog.setActive(self.activePlugin)
+		if dialog.run() != gtk.ResponseType.OK:
+			return
+
+		plugin = dialog.getActive()
+		self.activePlugin = plugin
+		if plugin:
+			self.set_label(plugin.description)
+		else:
+			self.set_label(self.noneLabel)
+		self.onChanged()
+
+	def getActive(self):
+		if self.activePlugin is None:
+			return ""
+		return self.activePlugin.name
+
+	def setActive(self, _format):
+		plugin = Glossary.plugins[_format]
+		self.activePlugin = plugin
+		self.set_label(plugin.description)
+		self.onChanged()
+
+
 class FormatOptionsDialog(gtk.Dialog):
-	def __init__(self, formatName: str, options: "List[str]", optionsValues: "Dict[str, Any]", parent=None):
+	def __init__(
+		self,
+		formatName: str,
+		options: "List[str]",
+		optionsValues: "Dict[str, Any]",
+		parent=None,
+	):
 		gtk.Dialog.__init__(self, parent=parent)
 		optionsProp = Glossary.plugins[formatName].optionsProp
 		self.optionsProp = optionsProp
@@ -91,30 +256,34 @@ class FormatOptionsDialog(gtk.Dialog):
 		)
 		###
 		treev = gtk.TreeView()
-		trees = gtk.ListStore(
-			bool, # enable
-			str, # name
-			str, # comment
-			str, # value
+		treeModel = gtk.ListStore(
+			bool,  # enable
+			str,  # name
+			str,  # comment
+			str,  # value
 		)
 		treev.set_headers_clickable(True)
-		treev.set_model(trees)
+		treev.set_model(treeModel)
 		treev.connect("row-activated", self.rowActivated)
 		treev.connect("button-press-event", self.treeviewButtonPress)
 		###
 		self.treev = treev
 		#############
 		cell = gtk.CellRendererToggle()
-		#cell.set_property("activatable", True)
+		# cell.set_property("activatable", True)
 		cell.connect("toggled", self.enableToggled)
 		col = gtk.TreeViewColumn(title="Enable", cell_renderer=cell)
 		col.add_attribute(cell, "active", 0)
-		#cell.set_active(False)
+		# cell.set_active(False)
 		col.set_property("expand", False)
 		col.set_resizable(True)
 		treev.append_column(col)
 		###
-		col = gtk.TreeViewColumn(title="Name", cell_renderer=gtk.CellRendererText(), text=1)
+		col = gtk.TreeViewColumn(
+			title="Name",
+			cell_renderer=gtk.CellRendererText(),
+			text=1,
+		)
 		col.set_property("expand", False)
 		col.set_resizable(True)
 		treev.append_column(col)
@@ -123,13 +292,21 @@ class FormatOptionsDialog(gtk.Dialog):
 		self.valueCell = cell
 		self.valueCol = 3
 		cell.connect("edited", self.valueEdited)
-		col = gtk.TreeViewColumn(title="Value", cell_renderer=cell, text=self.valueCol)
+		col = gtk.TreeViewColumn(
+			title="Value",
+			cell_renderer=cell,
+			text=self.valueCol,
+		)
 		col.set_property("expand", True)
 		col.set_resizable(True)
 		col.set_min_width(200)
 		treev.append_column(col)
 		###
-		col = gtk.TreeViewColumn(title="Comment", cell_renderer=gtk.CellRendererText(), text=2)
+		col = gtk.TreeViewColumn(
+			title="Comment",
+			cell_renderer=gtk.CellRendererText(),
+			text=2,
+		)
 		col.set_property("expand", False)
 		col.set_resizable(False)
 		treev.append_column(col)
@@ -139,11 +316,11 @@ class FormatOptionsDialog(gtk.Dialog):
 			comment = prop.longComment
 			if prop.typ != "bool" and not prop.values:
 				comment += " (double-click to edit)"
-			trees.append([
-				name in optionsValues, # enable
-				name, # name
-				comment, # comment
-				str(optionsValues.get(name, "")), # value
+			treeModel.append([
+				name in optionsValues,  # enable
+				name,  # name
+				comment,  # comment
+				str(optionsValues.get(name, "")),  # value
 			])
 		############
 		pack(self.vbox, treev, 1, 1)
@@ -197,7 +374,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		value = item.get_label()
 		model = self.treev.get_model()
 		model.set_value(itr, self.valueCol, value)
-		model.set_value(itr, 0, True) # enable it
+		model.set_value(itr, 0, True)  # enable it
 
 	def valueCustomOpenDialog(self, itr: gtk.TreeIter, optName: str):
 		model = self.treev.get_model()
@@ -231,7 +408,7 @@ class FormatOptionsDialog(gtk.Dialog):
 			return
 		value = entry.get_text()
 		model.set_value(itr, self.valueCol, value)
-		model.set_value(itr, 0, True) # enable it
+		model.set_value(itr, 0, True)  # enable it
 
 	def valueItemCustomActivate(self, item: gtk.MenuItem, itr: gtk.TreeIter):
 		model = self.treev.get_model()
@@ -240,7 +417,8 @@ class FormatOptionsDialog(gtk.Dialog):
 
 	def valueCellClicked(self, path, forceMenu=False) -> bool:
 		"""
-		returns True if event is handled, False if not handled (need to enter edit mode)
+		returns True if event is handled, False if not handled
+		(need to enter edit mode)
 		"""
 		model = self.treev.get_model()
 		itr = model.get_iter(path)
@@ -256,7 +434,7 @@ class FormatOptionsDialog(gtk.Dialog):
 					log.error(f"invalid {optName} = {rawValue!r}")
 					value = False
 			model.set_value(itr, self.valueCol, str(not value))
-			model.set_value(itr, 0, True) # enable it
+			model.set_value(itr, 0, True)  # enable it
 			return True
 		propValues = prop.values
 		if not propValues:
@@ -303,7 +481,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		model = self.treev.get_model()
 		optionsValues = {}
 		for row in model:
-			if not row[0]: # not enable
+			if not row[0]:  # not enable
 				continue
 			optName = row[1]
 			rawValue = row[3]
@@ -316,30 +494,9 @@ class FormatOptionsDialog(gtk.Dialog):
 		return optionsValues
 
 
-
-class FormatComboBox(gtk.ComboBox):
-	def __init__(self, parent=None):
-		gtk.ComboBox.__init__(self)
-		self._parent = parent
-		self.model = gtk.ListStore(
-			str,  # format name, hidden
-			# GdkPixbuf.Pixbuf,# icon
-			str,  # format description, shown
-		)
-		self.set_model(self.model)
-
-		cell = gtk.CellRendererText()
-		cell.set_visible(False)
-		pack(self, cell)
-		self.add_attribute(cell, "text", 0)
-
-		# cell = gtk.CellRendererPixbuf()
-		# pack(self, cell, False)
-		# self.add_attribute(cell, "pixbuf", 1)
-
-		cell = gtk.CellRendererText()
-		pack(self, cell, True)
-		self.add_attribute(cell, "text", 1)
+class FormatBox(FormatButton):
+	def __init__(self, descList: "List[str]", parent=None):
+		FormatButton.__init__(self, descList, parent=parent)
 
 		self.optionsValues = {}
 
@@ -354,8 +511,6 @@ class FormatComboBox(gtk.ComboBox):
 		self.dependsButton.pkgNames = []
 		self.dependsButton.connect("clicked", self.dependsButtonClicked)
 
-		self.connect("changed", self.onChanged)
-
 	def setOptionsValues(self, optionsValues: "Dict[str, Any]"):
 		self.optionsValues = optionsValues
 
@@ -365,25 +520,6 @@ class FormatComboBox(gtk.ComboBox):
 
 	def getActiveOptions(self):
 		raise NotImplementedError
-
-	def addFormat(self, _format):
-		self.get_model().append((
-			_format,
-			# icon,
-			Glossary.plugins[_format].description,
-		))
-
-	def getActive(self):
-		index = gtk.ComboBox.get_active(self)
-		if index is None or index < 0:
-			return ""
-		return self.get_model()[index][0]
-
-	def setActive(self, _format):
-		for i, row in enumerate(self.get_model()):
-			if row[0] == _format:
-				gtk.ComboBox.set_active(self, i)
-				return
 
 	def optionsButtonClicked(self, button):
 		formatName = self.getActive()
@@ -420,7 +556,7 @@ class FormatComboBox(gtk.ComboBox):
 		)
 		self.onChanged(self)
 
-	def onChanged(self, combo):
+	def onChanged(self, obj=None):
 		name = self.getActive()
 		self.optionsValues.clear()
 
@@ -441,11 +577,11 @@ class FormatComboBox(gtk.ComboBox):
 		self.dependsButton.set_visible(bool(uninstalled))
 
 
-class InputFormatComboBox(FormatComboBox):
+class InputFormatBox(FormatBox):
+	dialogTitle = "Select Input Format"
+
 	def __init__(self, **kwargs):
-		FormatComboBox.__init__(self, **kwargs)
-		for _format in Glossary.readFormats:
-			self.addFormat(_format)
+		FormatBox.__init__(self, readDesc, **kwargs)
 
 	def kind(self):
 		"returns 'r' or 'w'"
@@ -455,11 +591,11 @@ class InputFormatComboBox(FormatComboBox):
 		return list(Glossary.formatsReadOptions[self.getActive()].keys())
 
 
-class OutputFormatComboBox(FormatComboBox):
+class OutputFormatBox(FormatBox):
+	dialogTitle = "Select Output Format"
+
 	def __init__(self, **kwargs):
-		FormatComboBox.__init__(self, **kwargs)
-		for _format in Glossary.writeFormats:
-			self.addFormat(_format)
+		FormatBox.__init__(self, writeDesc, **kwargs)
 
 	def kind(self):
 		"returns 'r' or 'w'"
@@ -575,10 +711,10 @@ class BrowseButton(gtk.Button):
 class UI(gtk.Dialog, MyDialog, UIBase):
 	def status(self, msg):
 		# try:
-		#	_id = self.statusMsgDict[msg]
+		# 	_id = self.statusMsgDict[msg]
 		# except KeyError:
-		#	_id = self.statusMsgDict[msg] = self.statusNewId
-		#	self.statusNewId += 1
+		# 	_id = self.statusMsgDict[msg] = self.statusNewId
+		# 	self.statusNewId += 1
 		_id = self.statusBar.get_context_id(msg)
 		self.statusBar.push(_id, msg)
 
@@ -607,7 +743,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.pages.append(vbox)
 		######
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Input File")+":")
+		hbox.label = gtk.Label(label=_("Input File:"))
 		pack(hbox, hbox.label)
 		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
@@ -629,11 +765,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		)
 		###
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Input Format")+":")
+		hbox.label = gtk.Label(label=_("Input Format:"))
 		pack(hbox, hbox.label)
 		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
-		self.convertInputFormatCombo = InputFormatComboBox(parent=self)
+		self.convertInputFormatCombo = InputFormatBox(parent=self)
 		buttonSizeGroup.add_widget(self.convertInputFormatCombo.optionsButton)
 		pack(hbox, self.convertInputFormatCombo)
 		pack(hbox, gtk.Label(), 1, 1)
@@ -646,7 +782,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(vbox, vbox.sep1)
 		#####
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Output File")+":")
+		hbox.label = gtk.Label(label=_("Output File:"))
 		pack(hbox, hbox.label)
 		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
@@ -668,11 +804,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		)
 		###
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Output Format")+":")
+		hbox.label = gtk.Label(label=_("Output Format:"))
 		pack(hbox, hbox.label)
 		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
-		self.convertOutputFormatCombo = OutputFormatComboBox(parent=self)
+		self.convertOutputFormatCombo = OutputFormatBox(parent=self)
 		buttonSizeGroup.add_widget(self.convertOutputFormatCombo.optionsButton)
 		pack(hbox, self.convertOutputFormatCombo)
 		pack(hbox, gtk.Label(), 1, 1)
@@ -706,16 +842,16 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# self.pages.append(vbox)
 		######
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Input Format")+":")
+		hbox.label = gtk.Label(label=_("Input Format:"))
 		pack(hbox, hbox.label)
 		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
-		self.reverseInputFormatCombo = InputFormatComboBox()
+		self.reverseInputFormatCombo = InputFormatBox()
 		pack(hbox, self.reverseInputFormatCombo)
 		pack(vbox, hbox)
 		###
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Input File")+":")
+		hbox.label = gtk.Label(label=_("Input File:"))
 		pack(hbox, hbox.label)
 		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
@@ -740,7 +876,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		pack(vbox, vbox.sep1)
 		#####
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Output Tabfile")+":")
+		hbox.label = gtk.Label(label=_("Output Tabfile:"))
 		pack(hbox, hbox.label)
 		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
@@ -806,13 +942,13 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.notebook = notebook
 		#########
 		for vbox in self.pages:
-			l = gtk.Label(label=vbox.label)
-			l.set_use_underline(True)
+			label = gtk.Label(label=vbox.label)
+			label.set_use_underline(True)
 			vb = VBox(spacing=3)
 			if vbox.icon:
 				vbox.image = imageFromFile(vbox.icon)
 				pack(vb, vbox.image)
-			pack(vb, l)
+			pack(vb, label)
 			vb.show_all()
 			notebook.append_page(vbox, vb)
 			try:
@@ -822,11 +958,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		#######################
 		pack(self.vbox, notebook, 1, 1)
 		# for i in ui.pagesOrder:
-		#	try:
-		#		j = pagesOrder[i]
-		#	except IndexError:
-		#		continue
-		#	notebook.reorder_child(self.pages[i], j)
+		# 	try:
+		# 		j = pagesOrder[i]
+		# 	except IndexError:
+		# 		continue
+		# 	notebook.reorder_child(self.pages[i], j)
 		# ____________________________________________________________ #
 		handler = GtkSingleTextviewLogHandler(textview)
 		log.addHandler(handler)
@@ -871,7 +1007,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# hbox.sepLabel1 = gtk.Label(label="")
 		# pack(hbox, hbox.sepLabel1, 1, 1)
 		######
-		hbox.verbosityLabel = gtk.Label(label=_("Verbosity")+":")
+		hbox.verbosityLabel = gtk.Label(label=_("Verbosity:"))
 		pack(hbox, hbox.verbosityLabel, 0, 0)
 		##
 		self.verbosityCombo = combo = gtk.ComboBoxText()
@@ -991,9 +1127,9 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		writeOptions = self.convertOutputFormatCombo.optionsValues
 		try:
 			# if inFormat=="Omnidic":
-			#	dicIndex = self.xml.get_widget("spinbutton_omnidic_i")\
-			#		.get_value_as_int()
-			#	ex = self.glos.readOmnidic(inPath, dicIndex=dicIndex)
+			# 	dicIndex = self.xml.get_widget("spinbutton_omnidic_i")\
+			# 		.get_value_as_int()
+			# 	ex = self.glos.readOmnidic(inPath, dicIndex=dicIndex)
 			# else:
 			log.debug(f"readOptions: {readOptions}")
 			log.debug(f"writeOptions: {writeOptions}")
