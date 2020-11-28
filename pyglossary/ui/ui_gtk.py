@@ -594,7 +594,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.path = ""
 		self.glos = Glossary(ui=self)
 		# ____________________ Tab 1 - Convert ____________________ #
-		sizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
+		labelSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
+		buttonSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		####
 		vbox = VBox()
 		vbox.label = _("Convert")
@@ -604,7 +605,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input File")+":")
 		pack(hbox, hbox.label)
-		sizeGroup.add_widget(hbox.label)
+		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
 		self.convertInputEntry = gtk.Entry()
 		pack(hbox, self.convertInputEntry, 1, 1)
@@ -615,6 +616,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			title="Select Input File",
 		)
 		pack(hbox, button)
+		buttonSizeGroup.add_widget(button)
 		pack(vbox, hbox)
 		##
 		self.convertInputEntry.connect(
@@ -625,9 +627,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input Format")+":")
 		pack(hbox, hbox.label)
-		sizeGroup.add_widget(hbox.label)
+		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
 		self.convertInputFormatCombo = InputFormatComboBox(parent=self)
+		buttonSizeGroup.add_widget(self.convertInputFormatCombo.optionsButton)
 		pack(hbox, self.convertInputFormatCombo)
 		pack(hbox, gtk.Label(), 1, 1)
 		pack(hbox, self.convertInputFormatCombo.dependsButton)
@@ -641,7 +644,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Output File")+":")
 		pack(hbox, hbox.label)
-		sizeGroup.add_widget(hbox.label)
+		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
 		self.convertOutputEntry = gtk.Entry()
 		pack(hbox, self.convertOutputEntry, 1, 1)
@@ -652,6 +655,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			title="Select Output File",
 		)
 		pack(hbox, button)
+		buttonSizeGroup.add_widget(button)
 		pack(vbox, hbox)
 		##
 		self.convertOutputEntry.connect(
@@ -662,9 +666,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Output Format")+":")
 		pack(hbox, hbox.label)
-		sizeGroup.add_widget(hbox.label)
+		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
 		self.convertOutputFormatCombo = OutputFormatComboBox(parent=self)
+		buttonSizeGroup.add_widget(self.convertOutputFormatCombo.optionsButton)
 		pack(hbox, self.convertOutputFormatCombo)
 		pack(hbox, gtk.Label(), 1, 1)
 		pack(hbox, self.convertOutputFormatCombo.dependsButton)
@@ -689,7 +694,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# ____________________ Tab 2 - Reverse ____________________ #
 		self.reverseStatus = ""
 		####
-		sizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
+		labelSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		####
 		vbox = VBox()
 		vbox.label = _("Reverse")
@@ -699,7 +704,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input Format")+":")
 		pack(hbox, hbox.label)
-		sizeGroup.add_widget(hbox.label)
+		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
 		self.reverseInputFormatCombo = InputFormatComboBox()
 		pack(hbox, self.reverseInputFormatCombo)
@@ -708,7 +713,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Input File")+":")
 		pack(hbox, hbox.label)
-		sizeGroup.add_widget(hbox.label)
+		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
 		self.reverseInputEntry = gtk.Entry()
 		pack(hbox, self.reverseInputEntry, 1, 1)
@@ -733,7 +738,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Output Tabfile")+":")
 		pack(hbox, hbox.label)
-		sizeGroup.add_widget(hbox.label)
+		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
 		self.reverseOutputEntry = gtk.Entry()
 		pack(hbox, self.reverseOutputEntry, 1, 1)
