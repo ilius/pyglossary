@@ -822,7 +822,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.convertButton = gtk.Button()
 		self.convertButton.set_label("Convert")
 		self.convertButton.connect("clicked", self.convertClicked)
-		pack(hbox, self.convertButton, 1, 1, 10)
+		self.convertButton.set_size_request(300, 40)
+		pack(hbox, self.convertButton, 0, 0, 10)
 		pack(vbox, hbox, 0, 0, 15)
 		####
 		self.convertConsoleTextview = textview = gtk.TextView()
