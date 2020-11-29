@@ -21,6 +21,9 @@ optionsProp = {
 	"filename_format": StrOption(),
 	"escape_defi": BoolOption(),
 	"dark": BoolOption(),
+	"word_title": BoolOption(
+		comment="add headwords title to begining of definition",
+	),
 }
 
 nbsp = "\xa0"
@@ -55,6 +58,7 @@ class Writer(object):
 	_filename_format: str = "{n:05d}.html"
 	_escape_defi: bool = False
 	_dark: bool = True
+	_word_title: bool = True
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
@@ -372,7 +376,7 @@ class Writer(object):
 
 		self.writeInfo(filename, header)
 
-		defiHasHeadwords = glos.getInfo("definition_has_headwords") == "True"
+		_word_title = self._word_title
 
 		resDir = self._resDir
 		entryIndex = -1
@@ -408,18 +412,24 @@ class Writer(object):
 
 			entryId = f"entry{entryIndex}"
 
-			if defiHasHeadwords:
-				headwords = f'Entry {entryIndex}'
-			else:
+			if _word_title:
 				words = [
 					html.escape(word)
 					for word in entry.l_word
 				]
-				headwords = f'<b class="headword">{wordSep.join(words)}</b>'
+				title = glos.wordTitleStr(
+					wordSep.join(words),
+					sample=entry.l_word[0],
+					_class="headword",
+				)
+
+			if not title:
+				title = f'Entry {entryIndex}'
+
 			# entry_link_sym = "&#182;"
 			entry_link_sym = "&#128279;"
 			text = (
-				f'<div id="{entryId}">{headwords}{nbsp}{nbsp}'
+				f'<div id="{entryId}">{title}{nbsp}{nbsp}'
 				f'<a class="no_ul" class="entry_link" href="#{entryId}">'
 				f'{entry_link_sym}</a>'
 				f'{getEntryWebLink(entry)}'

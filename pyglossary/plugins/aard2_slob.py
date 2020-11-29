@@ -44,6 +44,9 @@ optionsProp = {
 	"separate_alternates": BoolOption(
 		comment="add alternate headwords as separate entries to slob",
 	),
+	"word_title": BoolOption(
+		comment="add headwords title to begining of definition",
+	),
 }
 
 file_size_check_every = 100
@@ -151,6 +154,7 @@ class Writer(object):
 	_content_type: str = ""
 	_file_size_approx: int = 0
 	_separate_alternates: bool = False
+	_word_title: bool = False
 
 	resourceMimeTypes = {
 		"png": "image/png",
@@ -247,6 +251,13 @@ class Writer(object):
 				_ctype = "text/plain; charset=utf-8"
 
 		writer = self._slobWriter
+
+		if self._word_title and defiFormat == "h":
+			title = self._glos.wordTitleStr(
+				" | ".join(words),
+				sample=words[0],
+			)
+			b_defi = title.encode("utf-8") + b_defi
 
 		if not self._separate_alternates:
 			writer.add(

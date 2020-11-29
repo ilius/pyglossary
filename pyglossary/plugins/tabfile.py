@@ -19,6 +19,9 @@ optionsProp = {
 	"file_size_approx": FileSizeOption(
 		comment="split up by given approximate file size\nexamples: 100m, 1g",
 	),
+	"word_title": BoolOption(
+		comment="add headwords title to begining of definition",
+	),
 }
 
 # https://en.wikipedia.org/wiki/Tab-separated_values
@@ -87,6 +90,7 @@ class Writer(object):
 	_writeInfo: bool = True
 	_resources: bool = True
 	_file_size_approx: int = 0
+	_word_title: bool = False
 
 	compressions = stdCompressions
 
@@ -118,6 +122,7 @@ class Writer(object):
 		writer._ext = ".txt"
 		writer._resources = self._resources
 		writer._file_size_approx = self._file_size_approx
+		writer._word_title = self._word_title
 		writer.open(self._filename)
 		yield from writer.write()
 		writer.finish()

@@ -36,7 +36,6 @@ class Reader(object):
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("h")
-		self._glos.setInfo("definition_has_headwords", "True")
 
 	def __len__(self):
 		self._cur.execute(
@@ -123,12 +122,6 @@ class Reader(object):
 			f = BytesIO()
 			with ET.htmlfile(f, encoding="utf-8") as hf:
 				with hf.element("div"):
-					with glos.titleElement(hf, headword):
-						try:
-							hf.write(headword)
-						except Exception as e:
-							log.error(f"error in writing {headword!r}, {e}")
-							hf.write(repr(headword))
 					if len(groups) == 1:
 						hf.write(ET.Element("br"))
 					self.makeList(

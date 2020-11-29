@@ -11,6 +11,9 @@ optionsProp = {
 	"encoding": EncodingOption(),
 	"writeInfo": BoolOption(),
 	"resources": BoolOption(),
+	"word_title": BoolOption(
+		comment="add headwords title to begining of definition",
+	),
 }
 
 
@@ -18,6 +21,7 @@ class Writer(object):
 	_encoding: str = "utf-8"
 	_writeInfo: bool = True
 	_resources: bool = True
+	_word_title: bool = False
 
 	compressions = stdCompressions
 
@@ -57,4 +61,5 @@ class Writer(object):
 			head="{\n",
 			tail='\t"": ""\n}',
 			resources=resources,
+			word_title=self._word_title,
 		)

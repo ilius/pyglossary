@@ -36,7 +36,6 @@ class Reader(object):
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("h")
-		self._glos.setInfo("definition_has_headwords", "True")
 
 	def __len__(self):
 		self._cur.execute("select count(*) from WordsTable")
@@ -69,8 +68,6 @@ class Reader(object):
 
 			if root:
 				definition += f'<br>Root: <a href="bword://{html.escape(root)}">{root}</a>'
-
-			definition = f"<b>{word}</b><br>{definition}"
 
 			ws = getWritingSystemFromText(meaning)
 			if ws and ws.direction == "rtl":

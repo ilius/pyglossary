@@ -50,6 +50,9 @@ optionsProp = {
 	),
 	"add_defi_format": BoolOption(),
 	"writeInfo": BoolOption(),
+	"word_title": BoolOption(
+		comment="add headwords title to begining of definition",
+	),
 }
 
 
@@ -178,6 +181,7 @@ class Writer(object):
 	_delimiter: str = ","
 	_add_defi_format: bool = False
 	_writeInfo: bool = True
+	_word_title: bool = False
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
@@ -213,6 +217,7 @@ class Writer(object):
 		glos = self._glos
 		resDir = self._resDir
 		writer = self._csvWriter
+		word_title = self._word_title
 		while True:
 			entry = yield
 			if entry is None:
@@ -227,6 +232,9 @@ class Writer(object):
 				continue
 			word, alts = words[0], words[1:]
 			defi = entry.defi
+
+			if word_title:
+				defi = glos.wordTitleStr(" | ".join(words)) + defi
 
 			row = [
 				word,

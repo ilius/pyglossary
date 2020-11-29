@@ -15,8 +15,8 @@ singleFile = True
 optionsProp = {
 	"resources": BoolOption(),
 	"discover": BoolOption(),
-	"keywords_header": BoolOption(
-		comment="repeat keywords on top of definition"
+	"word_title": BoolOption(
+		comment="add headwords title to begining of definition",
 	),
 }
 
@@ -33,7 +33,7 @@ class Reader(object):
 	}
 
 	_discover: bool = False
-	_keywords_header: bool = False
+	_word_title: bool = False
 
 	ns = {
 		None: "http://www.tei-c.org/ns/1.0",
@@ -174,7 +174,7 @@ class Reader(object):
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
 			with hf.element("div"):
-				if self._keywords_header:
+				if self._word_title:
 					for keyword in keywords:
 						with glos.titleElement(hf, keyword):
 							hf.write(keyword)
@@ -370,6 +370,10 @@ class Reader(object):
 		self._file.seek(0)
 
 		self._glos.setDefaultDefiFormat("h")
+
+		if self._word_title:
+			self._glos.setInfo("definition_has_headwords", "True")
+
 		self._glos.setInfo("input_file_size", f"{self._fileSize}")
 
 		context = ET.iterparse(

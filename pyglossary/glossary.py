@@ -261,6 +261,7 @@ class Glossary(GlossaryType):
 				log.exception("")
 		self._readers = []
 		self._readersOpenArgs = {}
+		self._defiHasWordTitle = False
 
 		self._iter = None
 		self._entryFilters = []
@@ -648,20 +649,48 @@ class Glossary(GlossaryType):
 			return
 		self.setInfo("targetLang", lang.name)
 
+	def _getTitleTag(self, sample: str) -> str:
+		from .langs.writing_system import getWritingSystemFromText
+		ws = getWritingSystemFromText(sample)
+		if ws and ws.name != "Latin":
+			return ws.titleTag
+		sourceLang = self.sourceLang
+		if sourceLang:
+			return sourceLang.titleTag
+		return "b"
+
 	def titleElement(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sample: str = "",
 	) -> "lxml.etree._FileWriterElement":
-		from .langs.writing_system import getWritingSystemFromText
-		sourceLang = self.sourceLang
-		if sourceLang:
-			return hf.element(sourceLang.titleTag)
-		if sample:
-			ws = getWritingSystemFromText(sample)
-			if ws:
-				return hf.element(ws.titleTag)
-		return hf.element("b")
+		return hf.element(self._getTitleTag(sample))
+
+	def wordTitleStr(
+		self,
+		word: str,
+		sample: str = "",
+		_class: str = "",
+	) -> str:
+		"""
+		notes:
+			- `word` needs to be escaped before passing
+			- `word` can contain html code (multiple words, colors, etc)
+			- if input format (reader) indicates that words are already included
+				in definition (as title), this method will return empty string
+			- depending on glossary's `sourceLang` or writing system of `word`,
+				(or sample if given) either '<b>' or '<big>' will be used
+		"""
+		if self._defiHasWordTitle:
+			return ""
+		if not word:
+			return ""
+		if not sample:
+			sample = word
+		tag = self._getTitleTag(sample)
+		if _class:
+			return f'<{tag} class="{_class}">{word}</{tag}>'
+		return f'<{tag}>{word}</{tag}>'
 
 	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
 		if self.ui:
@@ -825,6 +854,13 @@ class Glossary(GlossaryType):
 			return False
 		self._readersOpenArgs[reader] = (filename, options)
 		self.prepareEntryFilters()
+
+		hasTitleStr = self.getInfo("definition_has_headwords")
+		if hasTitleStr:
+			if hasTitleStr.lower() == "true":
+				self._defiHasWordTitle = True
+			else:
+				log.error(f"bad info value: definition_has_headwords={hasTitleStr!r}")
 
 		self._readers.append(reader)
 		if not direct:

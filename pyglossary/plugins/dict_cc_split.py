@@ -36,7 +36,6 @@ class Reader(object):
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("m")
-		self._glos.setInfo("definition_has_headwords", "False")
 
 	def __len__(self):
 		self._cur.execute("select count(*) * 2 from main_ft")

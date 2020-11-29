@@ -21,6 +21,7 @@ class TextGlossaryWriter(object):
 	_tail: str = ""
 	_resources: bool = True
 	_file_size_approx: int = 0
+	_word_title: bool = False
 
 	def __init__(
 		self,
@@ -95,12 +96,13 @@ class TextGlossaryWriter(object):
 		return _file
 
 	def write(self):
-		# glos = self._glos
+		glos = self._glos
 		_file = self._file
 		entryFmt = self._entryFmt
 		wordEscapeFunc = self._wordEscapeFunc
 		defiEscapeFunc = self._defiEscapeFunc
 		resources = self._resources
+		word_title = self._word_title
 
 		file_size_approx = self._file_size_approx
 		entryCount = 0
@@ -121,6 +123,9 @@ class TextGlossaryWriter(object):
 				continue
 			# if glos.getConfig("enable_alts", True):  # FIXME
 
+			if word_title:
+				defi = glos.wordTitleStr(word) + defi
+
 			if wordEscapeFunc is not None:
 				word = wordEscapeFunc(word)
 			if defiEscapeFunc is not None:
@@ -136,7 +141,7 @@ class TextGlossaryWriter(object):
 
 	def finish(self):
 		if self._tail:
-			self._file.write(tail)
+			self._file.write(self._tail)
 		self._file.close()
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
@@ -156,6 +161,7 @@ def writeTxt(
 	encoding: str = "utf-8",
 	newline: str = "\n",
 	resources: bool = True,
+	word_title: bool = False,
 ) -> "Generator[None, BaseEntry, None]":
 	writer = TextGlossaryWriter(
 		glos,
@@ -171,6 +177,7 @@ def writeTxt(
 	writer._head = head
 	writer._tail = tail
 	writer._resources = resources
+	writer._word_title = word_title
 	writer.open(filename)
 	yield from writer.write()
 	writer.finish()
