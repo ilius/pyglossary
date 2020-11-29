@@ -41,6 +41,9 @@ optionsProp = {
 	"file_size_approx": FileSizeOption(
 		comment="split up by given approximate file size\nexamples: 100m, 1g",
 	),
+	"separate_alternates": BoolOption(
+		comment="add alternate headwords as separate entries to slob",
+	),
 }
 
 file_size_check_every = 100
@@ -147,6 +150,7 @@ class Writer(object):
 	_compression: str = "zlib"
 	_content_type: str = ""
 	_file_size_approx: int = 0
+	_separate_alternates: bool = False
 
 	resourceMimeTypes = {
 		"png": "image/png",
@@ -243,8 +247,16 @@ class Writer(object):
 				_ctype = "text/plain; charset=utf-8"
 
 		writer = self._slobWriter
-		headword, *alts = words
 
+		if not self._separate_alternates:
+			writer.add(
+				b_defi,
+				*tuple(words),
+				content_type=_ctype,
+			)
+			return
+
+		headword, *alts = words
 		writer.add(
 			b_defi,
 			headword,
