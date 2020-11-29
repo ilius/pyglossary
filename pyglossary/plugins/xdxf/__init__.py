@@ -118,6 +118,10 @@ class Reader(object):
 		self._filename = filename
 		if self._html:
 			self._xdxf_to_html = xdxf_to_html_transformer()
+			self._glos.setDefaultDefiFormat("h")
+		else:
+			self._glos.setDefaultDefiFormat("x")
+
 		context = ET.iterparse(
 			filename,
 			events=("end",),
@@ -135,7 +139,6 @@ class Reader(object):
 		del context
 		self._fileSize = os.path.getsize(filename)
 		self._file = open(self._filename, mode="rb")
-		self._glos.setDefaultDefiFormat("x")
 		self._glos.setInfo("input_file_size", f"{self._fileSize}")
 
 	def __len__(self):
