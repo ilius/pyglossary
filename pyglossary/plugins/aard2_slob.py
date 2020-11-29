@@ -241,11 +241,21 @@ class Writer(object):
 				_ctype = "text/plain; charset=utf-8"
 			else:
 				_ctype = "text/plain; charset=utf-8"
-		self._slobWriter.add(
+
+		writer = self._slobWriter
+		headword, *alts = words
+
+		writer.add(
 			b_defi,
-			*tuple(words),
+			headword,
 			content_type=_ctype,
 		)
+		for alt in alts:
+			writer.add(
+				b_defi,
+				f"{alt}, {headword}",
+				content_type=_ctype,
+			)
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
 		file_size_approx = int(self._file_size_approx * 0.95)
