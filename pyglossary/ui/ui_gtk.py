@@ -126,14 +126,58 @@ class FormatDialog(gtk.Dialog):
 		treev.append_column(col)
 		self.descCol = col
 		############
-		swin = gtk.ScrolledWindow()
+		hbox = HBox(spacing=15)
+		hbox.set_border_width(10)
+		pack(hbox, gtk.Label("Search:"))
+		entry = self.entry = gtk.Entry()
+		pack(hbox, entry, 1, 1)
+		pack(self.vbox, hbox)
+		###
+		entry.connect("changed", self.onEntryChange)
+		############
+		self.swin = swin = gtk.ScrolledWindow()
 		swin.add(treev)
 		swin.set_policy(gtk.PolicyType.NEVER, gtk.PolicyType.AUTOMATIC)
 		pack(self.vbox, swin, 1, 1)
 		self.vbox.show_all()
+		##
+		treev.set_can_focus(True)  # no need, just to be safe
+		treev.set_can_default(True)
+		treev.set_receives_default(True)
+		# print("can_focus:", treev.get_can_focus())
+		# print("can_default:", treev.get_can_default())
+		# print("receives_default:", treev.get_receives_default())
 		####
 		self.updateTree()
-		self.resize(300, 300)
+		self.resize(400, 400)
+		self.connect("realize", self.onRealize)
+
+	def onRealize(self, widget=None):
+		if self.activeDesc:
+			self.treev.grab_focus()
+		else:
+			self.entry.grab_focus()
+
+	def onEntryChange(self, entry):
+		text = entry.get_text().strip()
+		if not text:
+			self.items = self.descList
+			self.updateTree()
+			return
+
+		text = text.lower()
+		descList = self.descList
+
+		items1 = []
+		items2 = []
+		for desc in descList:
+			if desc.lower().startswith(text):
+				items1.append(desc)
+			elif text in desc.lower():
+				items2.append(desc)
+
+		self.items = items1 + items2
+		self.updateTree()
 
 	def setCursor(self, desc: str):
 		model = self.treev.get_model()
@@ -148,6 +192,7 @@ class FormatDialog(gtk.Dialog):
 
 	def updateTree(self):
 		model = self.treev.get_model()
+		model.clear()
 		for desc in self.items:
 			model.append([desc])
 
@@ -155,12 +200,10 @@ class FormatDialog(gtk.Dialog):
 			self.setCursor(self.activeDesc)
 
 	def getActive(self) -> "Optional[PluginProp]":
-		path = self.treev.get_cursor()[0]
-		# path is either None or gtk.TreePath
-		if path is None:
+		_iter = self.treev.get_selection().get_selected()[1]
+		if _iter is None:
 			return
 		model = self.treev.get_model()
-		_iter = model.get_iter(path)
 		desc = model.get_value(_iter, 0)
 		return pluginByDesc[desc]
 
@@ -558,6 +601,9 @@ class FormatBox(FormatButton):
 
 	def onChanged(self, obj=None):
 		name = self.getActive()
+		if not name:
+			self.optionsButton.set_visible(False)
+			return
 		self.optionsValues.clear()
 
 		options = self.getActiveOptions()
@@ -588,7 +634,10 @@ class InputFormatBox(FormatBox):
 		return "r"
 
 	def getActiveOptions(self):
-		return list(Glossary.formatsReadOptions[self.getActive()].keys())
+		formatName = self.getActive()
+		if not formatName:
+			return
+		return list(Glossary.formatsReadOptions[formatName].keys())
 
 
 class OutputFormatBox(FormatBox):
