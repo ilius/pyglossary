@@ -306,6 +306,142 @@ class ProgressBar(tix.Frame):
 		self.canvas.update_idletasks()
 
 
+class FormatDialog(tix.Toplevel):
+	def __init__(
+		self,
+		descList: "List[str]",
+		title: str,
+		onOk: "Callable",
+		button: "FormatButton",
+		activeDesc: str = "",
+	):
+		tix.Toplevel.__init__(self)
+		# bg="#0f0" does not work
+		self.descList = descList
+		self.onOk = onOk
+		self.activeDesc = activeDesc
+		self.resizable(width=True, height=True)
+		if title:
+			self.title(title)
+		set_window_icon(self)
+		self.bind('<Escape>', lambda e: self.destroy())
+
+		px, py, pw, ph = decodeGeometry(button.winfo_toplevel().geometry())
+		w = 400
+		h = 400
+		self.geometry(encodeGeometry(
+			px + pw // 2 - w // 2,
+			py + ph // 2 - h // 2,
+			w,
+			h,
+		))
+
+		treev = self.treev = ttk.Treeview(
+			master=self,
+			columns=["Description"],
+			show="",
+		)
+		treev.bind("<Double-1>", self.onTreeDoubleClick)
+		treev.pack(
+			fill="both",
+			expand=True,
+			padx=5,
+			pady=5,
+		)
+
+		self.updateTree()
+
+		buttonBox = tix.Frame(self)
+
+		okButton = ttk.Button(
+			buttonBox,
+			text="OK",
+			command=self.okClicked,
+			# bg="#ff0000",
+			# activebackground="#ff5050",
+		)
+		okButton.pack(side="right")
+
+		cancelButton = ttk.Button(
+			buttonBox,
+			text="Cancel",
+			command=self.cancelClicked,
+		)
+		cancelButton.pack(side="right")
+
+		buttonBox.pack(fill="x")
+
+	def updateTree(self):
+		treev = self.treev
+		for desc in self.descList:
+			treev.insert("", "end", values=[desc], iid=desc)  # iid should be rowId
+		if self.activeDesc:
+			treev.selection_set(self.activeDesc)
+			treev.see(self.activeDesc)
+
+	def onTreeDoubleClick(self, event):
+		self.okClicked()
+
+	def cancelClicked(self):
+		self.destroy()
+
+	def okClicked(self):
+		treev = self.treev
+		selectedList = treev.selection()
+		if selectedList:
+			desc = selectedList[0]
+		else:
+			desc = ""
+		self.onOk(desc)
+		self.destroy()
+
+
+class FormatButton(ttk.Button):
+	noneLabel = "[Select Format]"
+
+	def __init__(
+		self, 
+		descList: "List[str]",
+		dialogTitle: str,
+		onChange: "Callable",
+		master=None,
+	):
+		self.var = tk.StringVar()
+		self.var.set(self.noneLabel)
+		ttk.Button.__init__(
+			self,
+			master=master,
+			textvariable=self.var,
+			command=self.onClick,
+		)
+		self.descList = descList
+		self.dialogTitle = dialogTitle
+		self._onChange = onChange
+		self.activeDesc = ""
+
+	def onChange(self, desc):
+		self.activeDesc = desc
+		self.var.set(desc)
+		self._onChange(desc)
+
+	def get(self):
+		return self.activeDesc
+
+	def set(self, desc):
+		self.var.set(desc)
+		self.activeDesc = desc
+
+	def onClick(self):
+		dialog = FormatDialog(
+			descList=self.descList,
+			title=self.dialogTitle,
+			onOk=self.onChange,
+			button=self,
+			activeDesc=self.activeDesc,
+		)
+		dialog.focus()
+
+
 class FormatOptionsDialog(tix.Toplevel):
 	kindFormatsOptions = {
 		"Read": Glossary.formatsReadOptions,
@@ -603,7 +739,7 @@ class FormatOptionsButton(tk.Button):
 		self,
 		kind: "Literal['Read', 'Write']",
 		values: "Dict",
-		formatVar: tk.StringVar,
+		formatInput: "FormatButton",
 		master=None,
 	):
 		tk.Button.__init__(
@@ -617,13 +753,13 @@ class FormatOptionsButton(tk.Button):
 		)
 		self.kind = kind
 		self.values = values
-		self.formatVar = formatVar
+		self.formatInput = formatInput
 
 	def setOptionsValues(self, values):
 		self.values = values
 
 	def buttonClicked(self):
-		formatD = self.formatVar.get()
+		formatD = self.formatInput.get()
 		if not formatD:
 			return
 		format = pluginByDesc[formatD].name
@@ -718,16 +854,13 @@ class UI(tix.Frame, UIBase):
 		label = ttk.Label(convertFrame, text="Input Format: ")
 		label.grid(row=row, column=0, sticky=tk.W)
 		##
-		comboVar = tk.StringVar()
-		combo = ttk.OptionMenu(
-			convertFrame,
-			comboVar,
-			None,  # default
-			*readDesc,
+		self.formatButtonInputConvert = FormatButton(
+			master=convertFrame,
+			descList=readDesc,
+			dialogTitle="Select Input Format",
+			onChange=self.inputFormatChanged,
 		)
-		combo.grid(row=row, column=1, sticky=tk.W)
-		comboVar.trace("w", self.inputComboChanged)
-		self.formatVarInputConvert = comboVar
+		self.formatButtonInputConvert.grid(row=row, column=1, columnspan=2, sticky=tk.W)
 		##
 		self.readOptions = {}  # type: Dict[str, Any]
 		self.writeOptions = {}  # type: Dict[str, Any]
@@ -735,7 +868,7 @@ class UI(tix.Frame, UIBase):
 		self.readOptionsButton = FormatOptionsButton(
 			"Read",
 			self.readOptions,
-			self.formatVarInputConvert,
+			self.formatButtonInputConvert,
 			master=convertFrame,
 		)
 		self.inputFormatRow = row
@@ -767,21 +900,18 @@ class UI(tix.Frame, UIBase):
 		label = ttk.Label(convertFrame, text="Output Format: ")
 		label.grid(row=row, column=0, sticky=tk.W)
 		##
-		comboVar = tk.StringVar()
-		combo = ttk.OptionMenu(
-			convertFrame,
-			comboVar,
-			None,  # default
-			*writeDesc,
+		self.formatButtonOutputConvert = FormatButton(
+			master=convertFrame,
+			descList=writeDesc,
+			dialogTitle="Select Output Format",
+			onChange=self.outputFormatChanged,
 		)
-		combo.grid(row=row, column=1, columnspan=2, sticky=tk.W)
-		comboVar.trace("w", self.outputComboChanged)
-		self.formatVarOutputConvert = comboVar
+		self.formatButtonOutputConvert.grid(row=row, column=1, columnspan=2, sticky=tk.W)
 		##
 		self.writeOptionsButton = FormatOptionsButton(
 			"Write",
 			self.writeOptions,
-			self.formatVarOutputConvert,
+			self.formatButtonOutputConvert,
 			master=convertFrame,
 		)
 		self.outputFormatRow = row
@@ -986,8 +1116,8 @@ class UI(tix.Frame, UIBase):
 		# 	if "info" in x:
 		# 		log.debug(x)
 
-	def inputComboChanged(self, *args):
-		formatDesc = self.formatVarInputConvert.get()
+	def inputFormatChanged(self, *args):
+		formatDesc = self.formatButtonInputConvert.get()
 		if not formatDesc:
 			return
 		self.readOptions.clear()  # reset the options, DO NOT re-assign
@@ -1001,9 +1131,8 @@ class UI(tix.Frame, UIBase):
 		else:
 			self.readOptionsButton.grid_forget()
 
-	def outputComboChanged(self, *args):
-		# log.debug(self.formatVarOutputConvert.get())
-		formatDesc = self.formatVarOutputConvert.get()
+	def outputFormatChanged(self, *args):
+		formatDesc = self.formatButtonOutputConvert.get()
 		if not formatDesc:
 			return
 		self.writeOptions.clear()  # reset the options, DO NOT re-assign
@@ -1011,7 +1140,8 @@ class UI(tix.Frame, UIBase):
 		if Glossary.formatsWriteOptions[format]:
 			self.writeOptionsButton.grid(
 				row=self.outputFormatRow,
-				column=3, sticky=tk.W + tk.E,
+				column=3,
+				sticky=tk.W + tk.E,
 			)
 		else:
 			self.writeOptionsButton.grid_forget()
@@ -1029,14 +1159,15 @@ class UI(tix.Frame, UIBase):
 				self.entryInputConvert.delete(0, "end")
 				self.entryInputConvert.insert(0, pathI)
 			if self.config["ui_autoSetFormat"]:
-				formatDesc = self.formatVarInputConvert.get()
+				formatDesc = self.formatButtonInputConvert.get()
 				if not formatDesc:
 					inputArgs = Glossary.detectInputFormat(pathI, quiet=True)
 					if inputArgs:
 						format = inputArgs[1]
 						plugin = Glossary.plugins.get(format)
 						if plugin:
-							self.formatVarInputConvert.set(plugin.description)
+							self.formatButtonInputConvert.set(plugin.description)
+							self.inputFormatChanged()
 			self.pathI = pathI
 
 	def outputEntryChanged(self, event=None):
@@ -1047,7 +1178,7 @@ class UI(tix.Frame, UIBase):
 				self.entryOutputConvert.delete(0, "end")
 				self.entryOutputConvert.insert(0, pathO)
 			if self.config["ui_autoSetFormat"]:
-				formatDesc = self.formatVarOutputConvert.get()
+				formatDesc = self.formatButtonOutputConvert.get()
 				if not formatDesc:
 					outputArgs = Glossary.detectOutputFormat(
 						filename=pathO,
@@ -1056,9 +1187,10 @@ class UI(tix.Frame, UIBase):
 					)
 					if outputArgs:
 						outputFormat = outputArgs[1]
-						self.formatVarOutputConvert.set(
+						self.formatButtonOutputConvert.set(
 							Glossary.plugins[outputFormat].description
 						)
+						self.outputFormatChanged()
 			self.pathO = pathO
 
 	def save_fcd_dir(self):
@@ -1090,7 +1222,7 @@ class UI(tix.Frame, UIBase):
 		if not inPath:
 			log.critical("Input file path is empty!")
 			return
-		inFormatDesc = self.formatVarInputConvert.get()
+		inFormatDesc = self.formatButtonInputConvert.get()
 		if not inFormatDesc:
 			# log.critical("Input format is empty!");return
 			inFormat = ""
@@ -1101,7 +1233,7 @@ class UI(tix.Frame, UIBase):
 		if not outPath:
 			log.critical("Output file path is empty!")
 			return
-		outFormatDesc = self.formatVarOutputConvert.get()
+		outFormatDesc = self.formatButtonOutputConvert.get()
 		if not outFormatDesc:
 			log.critical("Output format is empty!")
 			return
@@ -1134,20 +1266,24 @@ class UI(tix.Frame, UIBase):
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
 	):
+		self.loadConfig(**configOptions)
+
 		if inputFilename:
 			self.entryInputConvert.insert(0, abspath(inputFilename))
+			self.inputEntryChanged()
 		if outputFilename:
 			self.entryOutputConvert.insert(0, abspath(outputFilename))
+			self.outputEntryChanged()
 
 		if inputFormat:
-			self.formatVarInputConvert.set(Glossary.plugins[inputFormat].description)
+			self.formatButtonInputConvert.set(Glossary.plugins[inputFormat].description)
+			self.inputFormatChanged()
 		if outputFormat:
-			self.formatVarOutputConvert.set(Glossary.plugins[outputFormat].description)
+			self.formatButtonOutputConvert.set(Glossary.plugins[outputFormat].description)
+			self.outputFormatChanged()
 
 		if reverse:
 			log.error(f"Tkinter interface does not support Reverse feature")
-
-		self.loadConfig(**configOptions)
 
 		# must be before setting self.readOptions and self.writeOptions
 		self.anyEntryChanged()
