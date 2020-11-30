@@ -336,22 +336,39 @@ class FormatDialog(tix.Toplevel):
 			h,
 		))
 
+		treevBox = tk.Frame(master=self)
+
 		treev = self.treev = ttk.Treeview(
-			master=self,
+			master=treevBox,
 			columns=["Description"],
 			show="",
 		)
 		treev.bind("<Double-1>", self.onTreeDoubleClick)
 		treev.pack(
+			side="left",
+			fill="both",
+			expand=True,
+		)
+
+		vsb = ttk.Scrollbar(
+			master=treevBox,
+			orient="vertical",
+			command=treev.yview,
+		)
+		vsb.pack(side="right", fill="y")
+
+		treevBox.pack(
 			fill="both",
 			expand=True,
 			padx=5,
 			pady=5,
 		)
 
+		treev.configure(yscrollcommand=vsb.set)
+
 		self.updateTree()
 
-		buttonBox = tix.Frame(self)
+		buttonBox = tix.Frame(master=self)
 
 		okButton = ttk.Button(
 			buttonBox,
