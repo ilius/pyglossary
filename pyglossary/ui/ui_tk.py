@@ -340,8 +340,10 @@ class FormatDialog(tix.Toplevel):
 		tix.Toplevel.__init__(self)
 		# bg="#0f0" does not work
 		self.descList = descList
+		self.items = self.descList
 		self.onOk = onOk
 		self.activeDesc = activeDesc
+		self.lastSearch = None
 		self.resizable(width=True, height=True)
 		if title:
 			self.title(title)
@@ -357,6 +359,16 @@ class FormatDialog(tix.Toplevel):
 			w,
 			h,
 		))
+
+		entryBox = tk.Frame(master=self)
+		label = ttk.Label(master=entryBox, text="Search: ")
+		label.pack(side="left")
+		entry = self.entry = ttk.Entry(master=entryBox)
+		entry.pack(fill="x", expand=True, side="left")
+		entryBox.pack(fill="x")
+
+		entry.bind("<KeyRelease>", self.onEntryKeyRelease)
+		entry.focus()
 
 		treevBox = tk.Frame(master=self)
 
@@ -424,10 +436,41 @@ class FormatDialog(tix.Toplevel):
 
 	def updateTree(self):
 		treev = self.treev
-		for desc in self.descList:
+		current = treev.get_children()
+		if current:
+			treev.delete(*current)
+		for desc in self.items:
 			treev.insert("", "end", values=[desc], iid=desc)  # iid should be rowId
 		if self.activeDesc:
 			self.setActiveRow(self.activeDesc)
+
+	def onEntryKeyRelease(self, event):
+		text = self.entry.get().strip()
+		if text == self.lastSearch:
+			return
+
+		if not text:
+			self.items = self.descList
+			self.updateTree()
+			self.lastSearch = text
+			return
+
+		text = text.lower()
+		descList = self.descList
+
+		items1 = []
+		items2 = []
+		for desc in descList:
+			if desc.lower().startswith(text):
+				items1.append(desc)
+			elif text in desc.lower():
+				items2.append(desc)
+
+		items = items1 + items2
+
+		self.items = items
+		self.updateTree()
+		self.lastSearch = text
 
 	def onTreeDoubleClick(self, event):
 		self.okClicked()
@@ -443,7 +486,8 @@ class FormatDialog(tix.Toplevel):
 		treev.focus()
 		selection = treev.selection()
 		if not selection:
-			self.setActiveRow(self.descList[0])
+			if self.items:
+				self.setActiveRow(self.items[0])
 			return
 		nextDesc = treev.next(selection[0])
 		if nextDesc:
@@ -454,7 +498,8 @@ class FormatDialog(tix.Toplevel):
 		treev.focus()
 		selection = treev.selection()
 		if not selection:
-			self.setActiveRow(self.descList[0])
+			if self.items:
+				self.setActiveRow(self.items[0])
 			return
 		nextDesc = treev.prev(selection[0])
 		if nextDesc:
