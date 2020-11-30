@@ -113,6 +113,28 @@ def centerWindow(win):
 	win.deiconify()
 
 
+def newButton(*args, **kwargs):
+	button = tk.Button(*args, **kwargs)
+
+	def onEnter(event=None):
+		button.invoke()
+
+	button.bind("<Return>", onEnter)
+	button.bind("<KP_Enter>", onEnter)
+	return button
+
+
+def newTTKButton(*args, **kwargs):
+	button = ttk.Button(*args, **kwargs)
+
+	def onEnter(event=None):
+		button.invoke()
+
+	button.bind("<Return>", onEnter)
+	button.bind("<KP_Enter>", onEnter)
+	return button
+
+
 def newLabelWithImage(parent, file=""):
 	image = tk.PhotoImage(file=file)
 	label = ttk.Label(parent, image=image)
@@ -370,7 +392,7 @@ class FormatDialog(tix.Toplevel):
 
 		buttonBox = tix.Frame(master=self)
 
-		okButton = ttk.Button(
+		okButton = newTTKButton(
 			buttonBox,
 			text="OK",
 			command=self.okClicked,
@@ -379,7 +401,7 @@ class FormatDialog(tix.Toplevel):
 		)
 		okButton.pack(side="right")
 
-		cancelButton = ttk.Button(
+		cancelButton = newTTKButton(
 			buttonBox,
 			text="Cancel",
 			command=self.cancelClicked,
@@ -387,6 +409,10 @@ class FormatDialog(tix.Toplevel):
 		cancelButton.pack(side="right")
 
 		buttonBox.pack(fill="x")
+
+		self.bind("<Return>", self.onReturnPress)
+		self.bind("<KP_Enter>", self.onReturnPress)
+		# self.bind("<KeyPress>", self.onKeyPress)
 
 	def updateTree(self):
 		treev = self.treev
@@ -401,6 +427,12 @@ class FormatDialog(tix.Toplevel):
 
 	def cancelClicked(self):
 		self.destroy()
+
+	# def onKeyPress(self, event):
+	# 	print(event)
+
+	def onReturnPress(self, event):
+		self.okClicked()
 
 	def okClicked(self):
 		treev = self.treev
@@ -435,17 +467,24 @@ class FormatButton(ttk.Button):
 		self.dialogTitle = dialogTitle
 		self._onChange = onChange
 		self.activeDesc = ""
+		self.bind("<Return>", self.onEnter)
+		self.bind("<KP_Enter>", self.onEnter)
+
+	def onEnter(self, event=None):
+		self.invoke()
 
 	def onChange(self, desc):
-		self.activeDesc = desc
-		self.var.set(desc)
+		self.set(desc)
 		self._onChange(desc)
 
 	def get(self):
 		return self.activeDesc
 
 	def set(self, desc):
-		self.var.set(desc)
+		if desc:
+			self.var.set(desc)
+		else:
+			self.var.set(self.noneLabel)
 		self.activeDesc = desc
 
 	def onClick(self):
@@ -483,7 +522,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		self.createOptionsList()
 
 		buttonBox = tix.Frame(self)
-		okButton = ttk.Button(
+		okButton = newTTKButton(
 			buttonBox,
 			text="OK",
 			command=self.okClicked,
@@ -597,7 +636,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		label = ttk.Label(master=frame)
 		label.pack(fill="x")
 
-		customOkbutton = ttk.Button(
+		customOkbutton = newTTKButton(
 			frame,
 			text="OK",
 			command=customOkClicked,
@@ -857,7 +896,7 @@ class UI(tix.Frame, UIBase):
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryInputConvert = entry
 		##
-		button = tk.Button(
+		button = newButton(
 			convertFrame,
 			text="Browse",
 			command=self.browseInputConvert,
@@ -903,7 +942,7 @@ class UI(tix.Frame, UIBase):
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryOutputConvert = entry
 		##
-		button = tk.Button(
+		button = newButton(
 			convertFrame,
 			text="Browse",
 			command=self.browseOutputConvert,
@@ -938,7 +977,7 @@ class UI(tix.Frame, UIBase):
 		label.grid(row=row, column=0, sticky=tk.W)
 		###################
 		row += 1
-		button = tk.Button(
+		button = newButton(
 			convertFrame,
 			text="Convert",
 			command=self.convert,
@@ -1075,7 +1114,7 @@ class UI(tix.Frame, UIBase):
 		# _________________________________________________________________ #
 
 		statusBarframe = tk.Frame(self, borderwidth=3)
-		clearB = tk.Button(
+		clearB = newButton(
 			statusBarframe,
 			text="Clear",
 			command=self.console_clear,
