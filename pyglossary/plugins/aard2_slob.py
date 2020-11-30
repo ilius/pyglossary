@@ -238,26 +238,32 @@ class Writer(object):
 		words = entry.l_word
 		b_defi = entry.defi.encode("utf-8")
 		_ctype = self._content_type
-		if not _ctype:
-			entry.detectDefiFormat()
-			defiFormat = entry.defiFormat
-			if defiFormat == "h":
-				_ctype = "text/html; charset=utf-8"
-				b_defi = b_defi.replace(b'"bword://', b'"')
-				b_defi = b_defi.replace(b"'bword://", b"'")
-			elif defiFormat == "m":
-				_ctype = "text/plain; charset=utf-8"
-			else:
-				_ctype = "text/plain; charset=utf-8"
-
 		writer = self._slobWriter
 
-		if self._word_title and defiFormat == "h":
+		entry.detectDefiFormat()
+		defiFormat = entry.defiFormat
+
+		if self._word_title and defiFormat in ("h", "m"):
+			if defiFormat == "m":
+				defiFormat = "h"
 			title = self._glos.wordTitleStr(
 				" | ".join(words),
 				sample=words[0],
 			)
 			b_defi = title.encode("utf-8") + b_defi
+
+		if defiFormat == "h":
+			b_defi = b_defi.replace(b'"bword://', b'"')
+			b_defi = b_defi.replace(b"'bword://", b"'")
+
+		if not _ctype:
+			if defiFormat == "h":
+				_ctype = "text/html; charset=utf-8"
+			elif defiFormat == "m":
+				_ctype = "text/plain; charset=utf-8"
+			else:
+				_ctype = "text/plain; charset=utf-8"
+
 
 		if not self._separate_alternates:
 			writer.add(
