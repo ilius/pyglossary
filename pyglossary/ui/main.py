@@ -423,16 +423,14 @@ def main():
 			readOptions[optName] = optValueNew
 
 	if args.outputFilename and writeOptions:
-		_, outputFormat, _ = Glossary.detectOutputFormat(
+		outputArgs = Glossary.detectOutputFormat(
 			filename=args.outputFilename,
 			format=args.outputFormat,
 			inputFilename=args.inputFilename,
 		)
-		if not outputFormat:
-			log.error(
-				f"Could not detect format for output file {args.outputFilename}"
-			)
+		if outputArgs is None:
 			sys.exit(1)
+		_, outputFormat, _ = outputArgs
 		writeOptionsProp = Glossary.plugins[outputFormat].optionsProp
 		for optName, optValue in writeOptions.items():
 			if optName not in Glossary.formatsWriteOptions[outputFormat]:
