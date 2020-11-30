@@ -412,15 +412,22 @@ class FormatDialog(tix.Toplevel):
 
 		self.bind("<Return>", self.onReturnPress)
 		self.bind("<KP_Enter>", self.onReturnPress)
+
+		self.bind("<Down>", self.onDownPress)
+		self.bind("<Up>", self.onUpPress)
+
 		# self.bind("<KeyPress>", self.onKeyPress)
+
+	def setActiveRow(self, desc):
+		self.treev.selection_set(desc)
+		self.treev.see(desc)
 
 	def updateTree(self):
 		treev = self.treev
 		for desc in self.descList:
 			treev.insert("", "end", values=[desc], iid=desc)  # iid should be rowId
 		if self.activeDesc:
-			treev.selection_set(self.activeDesc)
-			treev.see(self.activeDesc)
+			self.setActiveRow(self.activeDesc)
 
 	def onTreeDoubleClick(self, event):
 		self.okClicked()
@@ -428,11 +435,33 @@ class FormatDialog(tix.Toplevel):
 	def cancelClicked(self):
 		self.destroy()
 
-	# def onKeyPress(self, event):
-	# 	print(event)
-
 	def onReturnPress(self, event):
 		self.okClicked()
+
+	def onDownPress(self, event):
+		treev = self.treev
+		treev.focus()
+		selection = treev.selection()
+		if not selection:
+			self.setActiveRow(self.descList[0])
+			return
+		nextDesc = treev.next(selection[0])
+		if nextDesc:
+			self.setActiveRow(nextDesc)
+
+	def onUpPress(self, event):
+		treev = self.treev
+		treev.focus()
+		selection = treev.selection()
+		if not selection:
+			self.setActiveRow(self.descList[0])
+			return
+		nextDesc = treev.prev(selection[0])
+		if nextDesc:
+			self.setActiveRow(nextDesc)
+
+	def onKeyPress(self, event):
+		print("FormatDialog: onKeyPress:", event)
 
 	def okClicked(self):
 		treev = self.treev
