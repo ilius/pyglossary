@@ -234,7 +234,7 @@ class Writer(object):
 			defi = entry.defi
 
 			if word_title:
-				defi = glos.wordTitleStr(" | ".join(words)) + defi
+				defi = glos.wordTitleStr(words[0]) + defi
 
 			row = [
 				word,

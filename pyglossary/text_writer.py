@@ -124,7 +124,7 @@ class TextGlossaryWriter(object):
 			# if glos.getConfig("enable_alts", True):  # FIXME
 
 			if word_title:
-				defi = glos.wordTitleStr(word) + defi
+				defi = glos.wordTitleStr(entry.l_word[0]) + defi
 
 			if wordEscapeFunc is not None:
 				word = wordEscapeFunc(word)

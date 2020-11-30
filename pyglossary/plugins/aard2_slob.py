@@ -247,8 +247,7 @@ class Writer(object):
 			if defiFormat == "m":
 				defiFormat = "h"
 			title = self._glos.wordTitleStr(
-				" | ".join(words),
-				sample=words[0],
+				words[0],
 			)
 			b_defi = title.encode("utf-8") + b_defi
 
