@@ -694,8 +694,27 @@ class UI(tix.Frame, UIBase):
 		notebook.add("tabAbout", label="About", underline=0)
 		convertFrame = tix.Frame(notebook.tabConvert)
 		aboutFrame = tix.Frame(notebook.tabAbout)
-		######################
+		###################
 		row = 0
+		label = ttk.Label(convertFrame, text="Input File: ")
+		label.grid(row=row, column=0, sticky=tk.W)
+		##
+		entry = tix.Entry(convertFrame)
+		entry.grid(row=row, column=1, columnspan=2, sticky=tk.W + tk.E)
+		entry.bind_all("<KeyPress>", self.anyEntryChanged)
+		self.entryInputConvert = entry
+		##
+		button = tk.Button(
+			convertFrame,
+			text="Browse",
+			command=self.browseInputConvert,
+			# bg="#f0f000",
+			# activebackground="#f6f622",
+			borderwidth=3,
+		)
+		button.grid(row=row, column=3, sticky=tk.W + tk.E)
+		######################
+		row += 1
 		label = ttk.Label(convertFrame, text="Input Format: ")
 		label.grid(row=row, column=0, sticky=tk.W)
 		##
@@ -720,29 +739,29 @@ class UI(tix.Frame, UIBase):
 			master=convertFrame,
 		)
 		self.inputFormatRow = row
+		######################
+		row += 1
+		label = ttk.Label(convertFrame)
+		label.grid(row=row, column=0, sticky=tk.W)
 		###################
 		row += 1
-		label = ttk.Label(convertFrame, text="Input File: ")
+		label = ttk.Label(convertFrame, text="Output File: ")
 		label.grid(row=row, column=0, sticky=tk.W)
 		##
 		entry = tix.Entry(convertFrame)
 		entry.grid(row=row, column=1, columnspan=2, sticky=tk.W + tk.E)
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
-		self.entryInputConvert = entry
+		self.entryOutputConvert = entry
 		##
 		button = tk.Button(
 			convertFrame,
 			text="Browse",
-			command=self.browseInputConvert,
+			command=self.browseOutputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
 			borderwidth=3,
 		)
 		button.grid(row=row, column=3, sticky=tk.W + tk.E)
-		######################
-		row += 1
-		label = ttk.Label(convertFrame)
-		label.grid(row=row, column=0, sticky=tk.W)
 		######################
 		row += 1
 		label = ttk.Label(convertFrame, text="Output Format: ")
@@ -766,25 +785,6 @@ class UI(tix.Frame, UIBase):
 			master=convertFrame,
 		)
 		self.outputFormatRow = row
-		###################
-		row += 1
-		label = ttk.Label(convertFrame, text="Output File: ")
-		label.grid(row=row, column=0, sticky=tk.W)
-		##
-		entry = tix.Entry(convertFrame)
-		entry.grid(row=row, column=1, columnspan=2, sticky=tk.W + tk.E)
-		entry.bind_all("<KeyPress>", self.anyEntryChanged)
-		self.entryOutputConvert = entry
-		##
-		button = tk.Button(
-			convertFrame,
-			text="Browse",
-			command=self.browseOutputConvert,
-			# bg="#f0f000",
-			# activebackground="#f6f622",
-			borderwidth=3,
-		)
-		button.grid(row=row, column=3, sticky=tk.W + tk.E)
 		###################
 		row += 1
 		label = ttk.Label(convertFrame)
