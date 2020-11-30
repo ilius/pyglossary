@@ -1005,6 +1005,7 @@ class UI(tix.Frame, UIBase):
 			background="#000",
 			foreground="#fff",
 		)
+		console.bind("<Key>", lambda e: "break")
 		# self.consoleH = 15
 		# sbar = Tix.Scrollbar(
 		# 	convertFrame,
