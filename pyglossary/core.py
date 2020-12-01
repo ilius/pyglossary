@@ -13,7 +13,7 @@ from os.path import (
 )
 import platform
 
-VERSION = "4.0.9"
+VERSION = "4.0.10"
 
 
 TRACE = 5
