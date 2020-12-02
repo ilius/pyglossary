@@ -157,7 +157,10 @@ def newReadOnlyText(
 	)
 	w.insert(1.0, text)
 	w.pack()
+
+	# w.bind("<Key>", lambda e: "break")
 	w.configure(state="disabled")
+
 	# if tkinter is 8.5 or above you'll want the selection background
 	# to appear like it does when the widget is activated
 	# comment this out for older versions of Tkinter
@@ -939,7 +942,7 @@ class UI(tix.Frame, UIBase):
 			defaultFont.configure(size=int(defaultFont.cget("size") * 1.4))
 		####
 		self.biggerFont = defaultFont.copy()
-		self.biggerFont.configure(size=int(defaultFont.cget("size") * 1.5))
+		self.biggerFont.configure(size=int(defaultFont.cget("size") * 1.8))
 		######################
 		self.glos = Glossary(ui=self)
 		self._convertOptions = {}
@@ -963,10 +966,21 @@ class UI(tix.Frame, UIBase):
 		###################
 		row = 0
 		label = ttk.Label(convertFrame, text="Input File: ")
-		label.grid(row=row, column=0, sticky=tk.W)
+		label.grid(
+			row=row,
+			column=0,
+			sticky=tk.W,
+			padx=5,
+		)
 		##
 		entry = tix.Entry(convertFrame)
-		entry.grid(row=row, column=1, columnspan=2, sticky=tk.W + tk.E)
+		entry.grid(
+			row=row,
+			column=1,
+			columnspan=2,
+			sticky=tk.W + tk.E,
+			padx=0,
+		)
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryInputConvert = entry
 		##
@@ -978,11 +992,21 @@ class UI(tix.Frame, UIBase):
 			# activebackground="#f6f622",
 			borderwidth=3,
 		)
-		button.grid(row=row, column=3, sticky=tk.W + tk.E)
+		button.grid(
+			row=row,
+			column=3,
+			sticky=tk.W + tk.E,
+			padx=5,
+		)
 		######################
 		row += 1
 		label = ttk.Label(convertFrame, text="Input Format: ")
-		label.grid(row=row, column=0, sticky=tk.W)
+		label.grid(
+			row=row,
+			column=0,
+			sticky=tk.W,
+			padx=5,
+		)
 		##
 		self.formatButtonInputConvert = FormatButton(
 			master=convertFrame,
@@ -990,7 +1014,13 @@ class UI(tix.Frame, UIBase):
 			dialogTitle="Select Input Format",
 			onChange=self.inputFormatChanged,
 		)
-		self.formatButtonInputConvert.grid(row=row, column=1, columnspan=2, sticky=tk.W)
+		self.formatButtonInputConvert.grid(
+			row=row,
+			column=1,
+			columnspan=2,
+			sticky=tk.W,
+			padx=0,
+		)
 		##
 		self.readOptions = {}  # type: Dict[str, Any]
 		self.writeOptions = {}  # type: Dict[str, Any]
@@ -1005,14 +1035,29 @@ class UI(tix.Frame, UIBase):
 		######################
 		row += 1
 		label = ttk.Label(convertFrame)
-		label.grid(row=row, column=0, sticky=tk.W)
+		label.grid(
+			row=row,
+			column=0,
+			sticky=tk.W,
+		)
 		###################
 		row += 1
 		label = ttk.Label(convertFrame, text="Output File: ")
-		label.grid(row=row, column=0, sticky=tk.W)
+		label.grid(
+			row=row,
+			column=0,
+			sticky=tk.W,
+			padx=5,
+		)
 		##
 		entry = tix.Entry(convertFrame)
-		entry.grid(row=row, column=1, columnspan=2, sticky=tk.W + tk.E)
+		entry.grid(
+			row=row,
+			column=1,
+			columnspan=2,
+			sticky=tk.W + tk.E,
+			padx=0,
+		)
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryOutputConvert = entry
 		##
@@ -1024,11 +1069,21 @@ class UI(tix.Frame, UIBase):
 			# activebackground="#f6f622",
 			borderwidth=3,
 		)
-		button.grid(row=row, column=3, sticky=tk.W + tk.E)
+		button.grid(
+			row=row,
+			column=3,
+			sticky=tk.W + tk.E,
+			padx=5,
+		)
 		######################
 		row += 1
 		label = ttk.Label(convertFrame, text="Output Format: ")
-		label.grid(row=row, column=0, sticky=tk.W)
+		label.grid(
+			row=row,
+			column=0,
+			sticky=tk.W,
+			padx=5,
+		)
 		##
 		self.formatButtonOutputConvert = FormatButton(
 			master=convertFrame,
@@ -1036,7 +1091,13 @@ class UI(tix.Frame, UIBase):
 			dialogTitle="Select Output Format",
 			onChange=self.outputFormatChanged,
 		)
-		self.formatButtonOutputConvert.grid(row=row, column=1, columnspan=2, sticky=tk.W)
+		self.formatButtonOutputConvert.grid(
+			row=row,
+			column=1,
+			columnspan=2,
+			sticky=tk.W,
+			padx=0,
+		)
 		##
 		self.writeOptionsButton = FormatOptionsButton(
 			"Write",
@@ -1047,25 +1108,22 @@ class UI(tix.Frame, UIBase):
 		self.outputFormatRow = row
 		###################
 		row += 1
-		label = ttk.Label(convertFrame)
-		label.grid(row=row, column=0, sticky=tk.W)
-		###################
-		row += 1
 		button = newButton(
 			convertFrame,
 			text="Convert",
 			command=self.convert,
-			background="#00e000",
-			activebackground="#22f022",
-			borderwidth=5,
+			# background="#00e000",
+			# activebackground="#22f022",
+			borderwidth=7,
 			font=self.biggerFont,
-			# pady=10,
+			padx=5, pady=5,
 		)
 		button.grid(
 			row=row,
 			column=2,
 			columnspan=3,
 			sticky=tk.W + tk.E + tk.S,
+			padx=5, pady=5,
 		)
 		# print(f"row number for Convert button: {row}")
 		######
@@ -1093,13 +1151,13 @@ class UI(tix.Frame, UIBase):
 			column=0,
 			columnspan=4,
 			sticky=tk.W + tk.E,
+			padx=5, pady=0,
 		)
 		log.addHandler(
 			TkTextLogHandler(console),
 		)
 		console.insert("end", "Console:\n")
 		####
-		console.grid()
 		self.console = console
 		##################
 		aboutFrame2 = tix.Frame(aboutFrame)
@@ -1258,6 +1316,7 @@ class UI(tix.Frame, UIBase):
 				row=self.inputFormatRow,
 				column=3,
 				sticky=tk.W + tk.E,
+				padx=5, pady=0,
 			)
 		else:
 			self.readOptionsButton.grid_forget()
@@ -1273,6 +1332,7 @@ class UI(tix.Frame, UIBase):
 				row=self.outputFormatRow,
 				column=3,
 				sticky=tk.W + tk.E,
+				padx=5, pady=0,
 			)
 		else:
 			self.writeOptionsButton.grid_forget()
