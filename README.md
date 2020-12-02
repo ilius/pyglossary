@@ -164,7 +164,7 @@ Feature-specific Requirements
 
 	`sudo pip3 install lxml beautifulsoup4`
 
--	**Reading from FreeDict, XDXF, JMDict or CC-CEDICT**
+-	**Reading from FreeDict, XDXF (or StarDict with XDXF), JMDict or CC-CEDICT**
 
 	`sudo pip3 install lxml`
 
