@@ -365,7 +365,7 @@ class FormatDialog(tix.Toplevel):
 		label.pack(side="left")
 		entry = self.entry = ttk.Entry(master=entryBox)
 		entry.pack(fill="x", expand=True, side="left")
-		entryBox.pack(fill="x")
+		entryBox.pack(fill="x", padx=5, pady=5)
 
 		entry.bind("<KeyRelease>", self.onEntryKeyRelease)
 		entry.focus()
@@ -483,15 +483,15 @@ class FormatDialog(tix.Toplevel):
 
 	def onDownPress(self, event):
 		treev = self.treev
-		treev.focus()
 		selection = treev.selection()
-		if not selection:
+		if selection:
+			nextDesc = treev.next(selection[0])
+			if nextDesc:
+				self.setActiveRow(nextDesc)
+		else:
 			if self.items:
 				self.setActiveRow(self.items[0])
-			return
-		nextDesc = treev.next(selection[0])
-		if nextDesc:
-			self.setActiveRow(nextDesc)
+		treev.focus()
 
 	def onUpPress(self, event):
 		treev = self.treev
