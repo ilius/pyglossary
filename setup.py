@@ -120,4 +120,15 @@ setup(
 		(relRootDir, root_data_file_names),
 		(f"{relRootDir}/res", glob.glob("res/*")),
 	],
+	extras_require={
+		"full": [
+			"lxml",
+			"beautifulsoup4",
+			"PyICU",
+			"PyYAML",
+			"marisa-trie",
+			"libzim",
+			"python-lzo",
+		],
+	}
 )
