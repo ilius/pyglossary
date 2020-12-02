@@ -6,7 +6,7 @@ from pyglossary.file_utils import fileCountLines
 
 enable = True
 format = "LingoesLDF"
-description = "Lingoes Source (LDF)"
+description = "Lingoes Source (.ldf)"
 extensions = (".ldf",)
 singleFile = True
 optionsProp = {

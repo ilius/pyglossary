@@ -26,7 +26,7 @@ from os.path import splitext, isfile, isdir, extsep, basename, dirname
 
 enable = True
 format = "OctopusMdict"
-description = "Octopus MDict"
+description = "Octopus MDict (.mdx)"
 extensions = (".mdx",)
 singleFile = False
 optionsProp = {

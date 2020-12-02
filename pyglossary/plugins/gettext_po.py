@@ -4,7 +4,7 @@ from formats_common import *
 
 enable = True
 format = "GettextPo"
-description = "Gettext Source (po)"
+description = "Gettext Source (.po)"
 extensions = (".po",)
 singleFile = True
 optionsProp = {

@@ -6,7 +6,7 @@ from formats_common import *
 
 enable = True
 format = "SdictSource"
-description = "Sdictionary Source (sdct)"
+description = "Sdictionary Source (.sdct)"
 extensions = (".sdct",)
 singleFile = True
 optionsProp = {

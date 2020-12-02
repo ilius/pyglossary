@@ -21,7 +21,7 @@ from formats_common import *
 
 enable = True
 format = "Stardict"
-description = "StarDict (ifo)"
+description = "StarDict (.ifo)"
 extensions = (".ifo",)
 optionsProp = {
 	"stardict_client": BoolOption(),

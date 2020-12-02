@@ -4,7 +4,7 @@ from formats_common import *
 
 enable = True
 format = "Zim"
-description = "Zim (Kiwix)"
+description = "Zim (.zim, for Kiwix)"
 extensions = (".zim",)
 singleFile = True
 optionsProp = {

@@ -4,7 +4,7 @@ from formats_common import *
 
 enable = True
 format = "Json"
-description = "JSON"
+description = "JSON (.json)"
 extensions = (".json",)
 singleFile = True
 optionsProp = {

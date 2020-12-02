@@ -23,7 +23,7 @@ import csv
 
 enable = True
 format = "Csv"
-description = "CSV"
+description = "CSV (.csv)"
 extensions = (".csv",)
 singleFile = True
 tools = [

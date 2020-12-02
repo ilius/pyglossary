@@ -34,7 +34,7 @@ from .main import (
 
 enable = True
 format = "ABBYYLingvoDSL"
-description = "ABBYY Lingvo DSL (dsl)"
+description = "ABBYY Lingvo DSL (.dsl)"
 extensions = (".dsl",)
 singleFile = True
 optionsProp = {

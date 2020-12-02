@@ -9,7 +9,7 @@ from pyglossary.text_utils import (
 
 enable = True
 format = "Tabfile"
-description = "Tabfile (txt, dic)"
+description = "Tabfile (.txt, .dic)"
 extensions = (".txt", ".tab", ".tsv")
 singleFile = True
 optionsProp = {

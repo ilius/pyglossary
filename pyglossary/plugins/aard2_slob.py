@@ -5,7 +5,7 @@ import shutil
 
 enable = True
 format = 'Aard2Slob'
-description = 'Aard 2 (slob)'
+description = 'Aard 2 (.slob)'
 extensions = ('.slob',)
 singleFile = True
 tools = [

@@ -22,7 +22,7 @@ from .bgl_reader import optionsProp
 
 enable = True
 format = "BabylonBgl"
-description = "Babylon (bgl)"
+description = "Babylon (.BGL)"
 extensions = (".bgl",)
 singleFile = True
 tools = [

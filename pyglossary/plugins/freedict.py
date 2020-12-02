@@ -9,7 +9,7 @@ import html
 
 enable = True
 format = "FreeDict"
-description = "FreeDict (tei)"
+description = "FreeDict (.tei)"
 extensions = (".tei",)
 singleFile = True
 optionsProp = {

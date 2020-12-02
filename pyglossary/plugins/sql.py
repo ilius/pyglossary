@@ -4,7 +4,7 @@ from formats_common import *
 
 enable = True
 format = "Sql"
-description = "SQL"
+description = "SQL (.sql)"
 extensions = (".sql",)
 singleFile = True
 optionsProp = {
