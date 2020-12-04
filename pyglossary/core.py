@@ -15,6 +15,8 @@ import platform
 
 VERSION = "4.0.10"
 
+homePage = "https://github.com/ilius/pyglossary"
+
 
 TRACE = 5
 logging.addLevelName(TRACE, "TRACE")

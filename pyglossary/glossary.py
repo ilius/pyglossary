@@ -57,7 +57,6 @@ from .glossary_utils import splitFilenameExt
 from .os_utils import showMemoryUsage
 from .glossary_type import GlossaryType
 
-homePage = "https://github.com/ilius/pyglossary"
 log = logging.getLogger("pyglossary")
 
 langDict = LangDict()

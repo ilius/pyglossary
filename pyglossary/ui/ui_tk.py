@@ -21,7 +21,6 @@ from pyglossary.core import homeDir, confDir, dataDir
 
 from pyglossary.glossary import (
 	Glossary,
-	homePage,
 )
 
 from .base import (
@@ -1202,7 +1201,7 @@ class UI(tix.Frame, UIBase):
 
 		label = newReadOnlyText(
 			aboutFrame3,
-			text=f"{aboutText}\nHome page: {homePage}",
+			text=f"{aboutText}\nHome page: {core.homePage}",
 			font=("DejaVu Sans", 11, ""),
 		)
 		label.pack(fill="x")

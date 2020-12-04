@@ -30,7 +30,6 @@ from pyglossary.os_utils import click_website
 
 from pyglossary.glossary import (
 	Glossary,
-	homePage,
 )
 
 from .base import (
@@ -979,7 +978,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			logo=logo,
 			header=f"PyGlossary\nVersion {core.VERSION}",
 			# about=summary,
-			about=f'{aboutText}\n<a href="{homePage}">{homePage}</a>',
+			about=f'{aboutText}\n<a href="{core.homePage}">{core.homePage}</a>',
 			authors="\n".join(authors),
 			license=licenseText,
 		)
