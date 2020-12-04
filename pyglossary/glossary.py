@@ -55,7 +55,7 @@ from .langs import LangDict, Lang
 from .text_utils import (
 	fixUtf8,
 )
-from .compression import stdCompressions
+from .glossary_utils import splitFilenameExt
 from .os_utils import showMemoryUsage
 from .glossary_type import GlossaryType
 
@@ -228,7 +228,7 @@ class Glossary(GlossaryType):
 			return None
 
 		filenameOrig = filename
-		filenameNoExt, filename, ext, compression = cls.splitFilenameExt(filename)
+		filenameNoExt, filename, ext, compression = splitFilenameExt(filename)
 
 		plugin = None
 		if format:
@@ -976,32 +976,6 @@ class Glossary(GlossaryType):
 		return None
 
 	@classmethod
-	def splitFilenameExt(
-		cls,
-		filename: str = "",
-	) -> "Tuple[str, str, str]":
-		"""
-		returns (filenameNoExt, ext, compression)
-		"""
-		compression = ""
-		filenameNoExt, ext = splitext(filename)
-		ext = ext.lower()
-
-		if not ext and len(filenameNoExt) < 5:
-			filenameNoExt, ext = "", filenameNoExt
-
-		if not ext:
-			return filename, filename, "", ""
-
-		if ext[1:] in stdCompressions + ("zip",):
-			compression = ext[1:]
-			filename = filenameNoExt
-			filenameNoExt, ext = splitext(filename)
-			ext = ext.lower()
-
-		return filenameNoExt, filename, ext, compression
-
-	@classmethod
 	def detectOutputFormat(
 		cls,
 		filename: str = "",
@@ -1037,7 +1011,7 @@ class Glossary(GlossaryType):
 			return filename, plugin.name, ""
 
 		filenameOrig = filename
-		filenameNoExt, filename, ext, compression = cls.splitFilenameExt(filename)
+		filenameNoExt, filename, ext, compression = splitFilenameExt(filename)
 
 		if not plugin:
 			plugin = cls.pluginByExt.get(ext)
@@ -1217,7 +1191,7 @@ class Glossary(GlossaryType):
 
 			if self.getConfig("save_info_json", False):
 				infoWriter = self._createWriter("Info", {})
-				filenameNoExt, _, _, _ = Glossary.splitFilenameExt(filename)
+				filenameNoExt, _, _, _ = splitFilenameExt(filename)
 				infoWriter.open(f"{filenameNoExt}.info")
 				genList.append(infoWriter.write())
 				writerList.append(infoWriter)

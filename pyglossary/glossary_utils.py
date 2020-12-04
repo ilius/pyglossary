@@ -19,7 +19,12 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import os
-from os.path import split, isdir, isfile
+from os.path import (
+	split,
+	isdir,
+	isfile,
+	splitext,
+)
 import subprocess
 import logging
 
@@ -107,3 +112,27 @@ def uncompress(srcFilename: str, dstFilename: str, compression: str) -> None:
 
 	# TODO: if compression == "zip":
 	raise ValueError(f"unexpected compression={compression!r}")
+
+def splitFilenameExt(
+	filename: str = "",
+) -> "Tuple[str, str, str]":
+	"""
+	returns (filenameNoExt, ext, compression)
+	"""
+	compression = ""
+	filenameNoExt, ext = splitext(filename)
+	ext = ext.lower()
+
+	if not ext and len(filenameNoExt) < 5:
+		filenameNoExt, ext = "", filenameNoExt
+
+	if not ext:
+		return filename, filename, "", ""
+
+	if ext[1:] in stdCompressions + ("zip",):
+		compression = ext[1:]
+		filename = filenameNoExt
+		filenameNoExt, ext = splitext(filename)
+		ext = ext.lower()
+
+	return filenameNoExt, filename, ext, compression
