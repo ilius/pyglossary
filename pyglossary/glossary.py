@@ -56,6 +56,7 @@ from .text_utils import (
 	fixUtf8,
 )
 from .compression import stdCompressions
+from .os_utils import showMemoryUsage
 from .glossary_type import GlossaryType
 
 homePage = "https://github.com/ilius/pyglossary"
@@ -877,7 +878,7 @@ class Glossary(GlossaryType):
 		must call `reader.open(filename)` before calling this function
 		"""
 		from . import entry_filters as ef
-		self.showMemoryUsage()
+		showMemoryUsage()
 		progressbarFilter = None
 		if self.ui and self._progressbar:
 			progressbarFilter = ef.ProgressBarEntryFilter(self)
@@ -897,7 +898,7 @@ class Glossary(GlossaryType):
 		if self._progressbar:
 			self.progressEnd()
 
-		self.showMemoryUsage()
+		showMemoryUsage()
 
 	def _inactivateDirectMode(self) -> None:
 		"""
@@ -1203,7 +1204,7 @@ class Glossary(GlossaryType):
 				f" for direct conversion without loading into memory"
 			)
 
-		self.showMemoryUsage()
+		showMemoryUsage()
 
 		writerList = [writer]
 		try:
@@ -1235,13 +1236,13 @@ class Glossary(GlossaryType):
 			log.exception("Exception while calling plugin\'s write function")
 			return
 		finally:
-			self.showMemoryUsage()
+			showMemoryUsage()
 			log.debug("Running writer.finish()")
 			for writer in writerList:
 				writer.finish()
 			self.clear()
 
-		self.showMemoryUsage()
+		showMemoryUsage()
 
 		return filename
 
@@ -1301,7 +1302,7 @@ class Glossary(GlossaryType):
 			log.error(f"Directory already exists: {outputFilename}")
 			return
 
-		self.showMemoryUsage()
+		showMemoryUsage()
 
 		tm0 = now()
 		if not self.read(
@@ -1333,7 +1334,7 @@ class Glossary(GlossaryType):
 
 		log.info(f"Writing file {finalOutputFile!r} done.")
 		log.info(f"Running time of convert: {now()-tm0:.1f} seconds")
-		self.showMemoryUsage()
+		showMemoryUsage()
 		self.cleanup()
 
 		return finalOutputFile
@@ -1358,16 +1359,6 @@ class Glossary(GlossaryType):
 	def progressEnd(self) -> None:
 		if self.ui:
 			self.ui.progressEnd()
-
-	def showMemoryUsage(self):
-		if log.level > core.TRACE:
-			return
-		try:
-			import psutil
-		except ModuleNotFoundError:
-			return
-		usage = psutil.Process(os.getpid()).memory_info().rss // 1024
-		log.trace(f"Memory Usage: {usage} kB")
 
 	# ________________________________________________________________________#
 

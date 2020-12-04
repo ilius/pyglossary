@@ -1,6 +1,7 @@
 import os
 import shutil
 import logging
+from pyglossary import core
 
 log = logging.getLogger("pyglossary")
 
@@ -54,6 +55,17 @@ def runDictzip(filename: str) -> None:
 	if out:
 		out = out.replace('\n', ' ')
 		log.error(f"dictzip error: {out}")
+
+
+def showMemoryUsage():
+	if log.level > core.TRACE:
+		return
+	try:
+		import psutil
+	except ModuleNotFoundError:
+		return
+	usage = psutil.Process(os.getpid()).memory_info().rss // 1024
+	log.trace(f"Memory Usage: {usage} kB")
 
 
 def my_url_show(link: str) -> None:
