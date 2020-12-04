@@ -1340,41 +1340,6 @@ class Glossary(GlossaryType):
 
 	# ________________________________________________________________________#
 
-	def writeTxt(
-		self,
-		entryFmt: str = "",  # contain {word} and {defi}
-		filename: str = "",
-		writeInfo: bool = True,
-		wordEscapeFunc: "Optional[Callable]" = None,
-		defiEscapeFunc: "Optional[Callable]" = None,
-		ext: str = ".txt",
-		head: str = "",
-		tail: str = "",
-		outInfoKeysAliasDict: "Optional[Dict[str, str]]" = None,
-		encoding: str = "utf-8",
-		newline: str = "\n",
-		resources: bool = True,
-	) -> "Generator[None, BaseEntry, None]":
-		from .text_writer import TextGlossaryWriter
-		writer = TextGlossaryWriter(
-			glos,
-			entryFmt=entryFmt,
-			outInfoKeysAliasDict=outInfoKeysAliasDict,
-		)
-		writer._encoding = encoding
-		writer._newline = newline
-		writer._wordEscapeFunc = wordEscapeFunc
-		writer._defiEscapeFunc = defiEscapeFunc
-		writer._ext = ext
-		writer._head = head
-		writer._tail = tail
-		writer._resources = resources
-		writer.open(filename)
-		yield from writer.write()
-		writer.finish()
-
-	# ________________________________________________________________________#
-
 	def progressInit(self, *args) -> None:
 		if self.ui:
 			self.ui.progressInit(*args)
