@@ -38,7 +38,6 @@ import re
 
 from collections import OrderedDict as odict
 
-import io
 import gc
 
 import gzip
@@ -46,7 +45,6 @@ import gzip
 from .flags import *
 from . import core
 from .core import userPluginsDir, cacheDir
-from .entry_base import BaseEntry
 from .entry import Entry, DataEntry
 from .plugin_prop import PluginProp
 
@@ -63,13 +61,6 @@ homePage = "https://github.com/ilius/pyglossary"
 log = logging.getLogger("pyglossary")
 
 langDict = LangDict()
-
-file = io.BufferedReader
-
-
-def get_ext(path: str) -> str:
-	return splitext(path)[1].lower()
-
 
 """
 sortKeyType = Optional[
@@ -333,41 +324,41 @@ class Glossary(GlossaryType):
 
 	def updateEntryFilters(self) -> None:
 		from . import entry_filters as ef
-		self._entryFilters = []
+		entryFilters = []
 		config = getattr(self.ui, "config", {})
 
-		self._entryFilters.append(ef.StripEntryFilter(self))
-		self._entryFilters.append(ef.NonEmptyWordFilter(self))
+		entryFilters.append(ef.StripEntryFilter(self))
+		entryFilters.append(ef.NonEmptyWordFilter(self))
 
 		if config.get("skip_resources", False):
-			self._entryFilters.append(ef.SkipDataEntryFilter(self))
+			entryFilters.append(ef.SkipDataEntryFilter(self))
 
 		if config.get("utf8_check", True):
-			self._entryFilters.append(ef.FixUnicodeFilter(self))
+			entryFilters.append(ef.FixUnicodeFilter(self))
 
 		if config.get("lower", True):
-			self._entryFilters.append(ef.LowerWordFilter(self))
+			entryFilters.append(ef.LowerWordFilter(self))
 
 		if config.get("rtl", False):
-			self._entryFilters.append(ef.RTLFilter(self))
+			entryFilters.append(ef.RTLFilter(self))
 
 		if config.get("remove_html_all", False):
-			self._entryFilters.append(ef.RemoveHtmlTagsAll(self))
+			entryFilters.append(ef.RemoveHtmlTagsAll(self))
 		elif config.get("remove_html"):
 			tags = config.get("remove_html").split(",")
-			self._entryFilters.append(ef.RemoveHtmlTags(self, tags))
+			entryFilters.append(ef.RemoveHtmlTags(self, tags))
 
 		if config.get("normalize_html", False):
-			self._entryFilters.append(ef.NormalizeHtml(self))
+			entryFilters.append(ef.NormalizeHtml(self))
 
-		self._entryFilters.append(ef.LangEntryFilter(self))
-		self._entryFilters.append(ef.CleanEntryFilter(self))
-		self._entryFilters.append(ef.NonEmptyWordFilter(self))
-		self._entryFilters.append(ef.NonEmptyDefiFilter(self))
-		self._entryFilters.append(ef.RemoveEmptyAndDuplicateAltWords(self))
+		entryFilters.append(ef.LangEntryFilter(self))
+		entryFilters.append(ef.CleanEntryFilter(self))
+		entryFilters.append(ef.NonEmptyWordFilter(self))
+		entryFilters.append(ef.NonEmptyDefiFilter(self))
+		entryFilters.append(ef.RemoveEmptyAndDuplicateAltWords(self))
 
 		if self.ui and self._progressbar:
-			self._entryFilters.append(ef.ProgressBarEntryFilter(self))
+			entryFilters.append(ef.ProgressBarEntryFilter(self))
 
 		if log.level <= core.TRACE:
 			try:
@@ -375,7 +366,9 @@ class Glossary(GlossaryType):
 			except ModuleNotFoundError:
 				pass
 			else:
-				self._entryFilters.append(ef.MaxMemoryUsageEntryFilter(self))
+				entryFilters.append(ef.MaxMemoryUsageEntryFilter(self))
+
+		self._entryFilters = entryFilters
 
 		self._entryFiltersName = {
 			entryFilter.name
