@@ -664,6 +664,7 @@ class GtkTextviewLogHandler(logging.Handler):
 			"WARNING",
 			"INFO",
 			"DEBUG",
+			"TRACE",
 		):
 			textview = treeview_dict[levelname]
 
@@ -712,6 +713,7 @@ class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
 			"WARNING": textview,
 			"INFO": textview,
 			"DEBUG": textview,
+			"TRACE": textview,
 		})
 
 
