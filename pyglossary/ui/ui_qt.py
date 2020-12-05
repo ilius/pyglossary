@@ -71,6 +71,7 @@ class UI(qt.QWidget, UIBase):
 		######################
 		self.running = False
 		self.glos = Glossary(ui=self)
+		self.glos.config = self.config
 		self.pathI = ''
 		self.pathO = ''
 		self.fcd_dir = join(homeDir, 'Desktop')

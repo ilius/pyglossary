@@ -306,6 +306,7 @@ class UI(UIBase):
 				return 1
 
 		glos = self.glos = Glossary(ui=self)
+		self.glos.config = self.config
 		if reverse:
 			import signal
 			signal.signal(signal.SIGINT, self.onSigInt)  # good place? FIXME

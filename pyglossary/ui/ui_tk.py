@@ -944,6 +944,7 @@ class UI(tix.Frame, UIBase):
 		self.biggerFont.configure(size=int(defaultFont.cget("size") * 1.8))
 		######################
 		self.glos = Glossary(ui=self)
+		self.glos.config = self.config
 		self._convertOptions = {}
 		self.pathI = ""
 		self.pathO = ""

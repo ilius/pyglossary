@@ -276,6 +276,7 @@ class Glossary(GlossaryType):
 				no need to copy OrderedDict instance before passing here
 				we will not reference to it
 		"""
+		self._config = {}
 		self._data = []
 		self._rawEntryCompress = True
 		self._cleanupPathList = []
@@ -324,7 +325,7 @@ class Glossary(GlossaryType):
 	def updateEntryFilters(self) -> None:
 		from . import entry_filters as ef
 		entryFilters = []
-		config = getattr(self.ui, "config", {})
+		config = self._config
 
 		entryFilters.append(ef.StripEntryFilter(self))
 		entryFilters.append(ef.NonEmptyWordFilter(self))
@@ -396,8 +397,7 @@ class Glossary(GlossaryType):
 		return max(1, min(500, wordCount // 200))
 
 	def _loadedEntryGen(self) -> "Iterator[BaseEntry]":
-		if self._progressbar:
-			self.progressInit("Writing")
+		self.progressInit("Writing")
 
 		for index, rawEntry in enumerate(self._data):
 			if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
@@ -408,22 +408,19 @@ class Glossary(GlossaryType):
 				defaultDefiFormat=self._defaultDefiFormat
 			)
 
-		if self._progressbar:
-			self.progressEnd()
+		self.progressEnd()
 
 	def _readersEntryGen(self) -> "Iterator[BaseEntry]":
 		for reader in self._readers:
 			wordCount = 0
-			if self._progressbar:
-				self.progressInit("Converting")
+			self.progressInit("Converting")
 			try:
 				for index, entry in enumerate(self._applyEntryFiltersGen(reader)):
 					if entry is not None:
 						yield entry
 			finally:
 				reader.close()
-			if self._progressbar:
-				self.progressEnd()
+			self.progressEnd()
 
 	def _applyEntryFiltersGen(
 		self,
@@ -585,6 +582,16 @@ class Glossary(GlossaryType):
 		return self._getLangByStr(st)
 
 	@property
+	def config(self):
+		raise NotImplementedError
+
+	@config.setter
+	def config(self, c: "Dict[str, Any]"):
+		if self._config:
+			log.error(f"glos.config is set more than once")
+		self._config = c
+
+	@property
 	def filename(self):
 		return self._filename
 
@@ -686,10 +693,7 @@ class Glossary(GlossaryType):
 		return f'<{tag}>{word}</{tag}><br>'
 
 	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
-		if self.ui:
-			return self.ui.config.get(name, default)
-		else:
-			return default
+		return self._config.get(name, default)
 
 	def addEntryObj(self, entry: Entry) -> None:
 		self._data.append(entry.getRaw(self))
@@ -874,8 +878,8 @@ class Glossary(GlossaryType):
 		progressbarFilter = None
 		if self.ui and self._progressbar:
 			progressbarFilter = ef.ProgressBarEntryFilter(self)
-			self.progressInit("Reading")
 
+		self.progressInit("Reading")
 		try:
 			for index, entry in enumerate(self._applyEntryFiltersGen(reader)):
 				if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
@@ -887,8 +891,7 @@ class Glossary(GlossaryType):
 		finally:
 			reader.close()
 
-		if self._progressbar:
-			self.progressEnd()
+		self.progressEnd()
 
 		showMemoryUsage()
 
@@ -1308,7 +1311,7 @@ class Glossary(GlossaryType):
 	# ________________________________________________________________________#
 
 	def progressInit(self, *args) -> None:
-		if self.ui:
+		if self.ui and self._progressbar:
 			self.ui.progressInit(*args)
 
 	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
@@ -1323,7 +1326,7 @@ class Glossary(GlossaryType):
 		)
 
 	def progressEnd(self) -> None:
-		if self.ui:
+		if self.ui and self._progressbar:
 			self.ui.progressEnd()
 
 	# ________________________________________________________________________#

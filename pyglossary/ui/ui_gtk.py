@@ -783,6 +783,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.assert_quit = False
 		self.path = ""
 		self.glos = Glossary(ui=self)
+		self.glos.config = self.config
 		# ____________________ Tab 1 - Convert ____________________ #
 		labelSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		buttonSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)

@@ -464,6 +464,7 @@ def main():
 		ui = UIBase()
 		ui.loadConfig(**config)
 		glos = Glossary(ui=ui)
+		glos.config = ui.config
 		glos.convert(
 			args.inputFilename,
 			inputFormat=args.inputFormat,
