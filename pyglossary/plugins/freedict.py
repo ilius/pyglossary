@@ -3,6 +3,7 @@
 from formats_common import *
 from pyglossary.xml_utils import xml_escape
 from pyglossary.html_utils import unescape_unicode
+from pyglossary.langs import langDict
 from io import BytesIO
 import re
 import html
@@ -15,6 +16,7 @@ singleFile = True
 optionsProp = {
 	"resources": BoolOption(),
 	"discover": BoolOption(),
+	"auto_rtl": BoolOption(),
 	"word_title": BoolOption(
 		comment="add headwords title to begining of definition",
 	),
@@ -33,6 +35,7 @@ class Reader(object):
 	}
 
 	_discover: bool = False
+	_auto_rtl: bool = False
 	_word_title: bool = False
 
 	ns = {
@@ -77,14 +80,18 @@ class Reader(object):
 		# "numeral", "interjection", "suffix", "particle"
 		# "indefinitePronoun"
 	}
+	subcMapping = {
+		"t": "transitive",
+		"i": "intransitive",
+	}
 
 	def makeList(
 		self,
 		hf: "lxml.etree.htmlfile",
 		input_objects: "List[Any]",
 		processor: "Callable",
-		single_prefix=None,
-		skip_single=True
+		single_prefix="",
+		skip_single=True,
 	):
 		""" Wrap elements into <ol> if more than one element """
 
@@ -92,7 +99,8 @@ class Reader(object):
 			return
 
 		if skip_single and len(input_objects) == 1:
-			hf.write(single_prefix)
+			if single_prefix:
+				hf.write(single_prefix)
 			processor(hf, input_objects[0])
 			return
 
@@ -112,13 +120,42 @@ class Reader(object):
 			for el in sense.findall("cit/quote", self.ns)
 			if el.text is not None
 		))
-
+		defiList = sense.findall("sense/def", self.ns)
 		self.makeList(
 			hf,
-			sense.findall("sense/def", self.ns),
+			defiList,
 			lambda hf, el: hf.write(el.text),
-			single_prefix=" — ",
+			single_prefix="",
 		)
+
+	def getDirection(self, elem: "lxml.etree.Element"):
+		lang = elem.get("{http://www.w3.org/XML/1998/namespace}lang")
+		if lang is None:
+			return ""
+		langObj = langDict[lang]
+		if langObj is None:
+			log.warning(f"unknown language {lang}")
+			return ""
+		if langObj.rtl:
+			return "rtl"
+		return ""
+
+	def writeSenseList(
+		self,
+		hf: "lxml.etree.htmlfile",
+		senseList: "List[lxml.etree.Element]",
+	):
+		if not senseList:
+			return
+
+		if self._auto_rtl:
+			direction = self.getDirection(senseList[0])
+			if direction:
+				with hf.element("div", dir=direction):
+					self.makeList(hf, senseList, self.writeSense)
+				return
+
+		self.makeList(hf, senseList, self.writeSense)
 
 	def normalizeGramGrpChild(self, elem) -> str:
 		# child can be "pos" or "gen"
@@ -129,8 +166,26 @@ class Reader(object):
 		if tag == f"{tei}gen":
 			return self.genderMapping.get(text.lower(), text)
 		if tag in (f"{tei}num", f"{tei}number"):
-			return f"number: {text}"
-		log.info(f"unrecognize GramGrp child: {elem}")
+			return f"number: {text}"  # FIXME
+		if tag == f"{tei}subc":
+			return self.subcMapping.get(text.lower(), text)
+		if tag == f"{tei}gram":
+			_type = elem.get("type")
+			if _type:
+				if _type == "pos":
+					return self.posMapping.get(text.lower(), text)
+				if _type == "gen":
+					return self.genderMapping.get(text.lower(), text)
+				if _type in ("num", "number"):
+					return f"number: {text}"  # FIXME
+				if _type == "subc":
+					return self.subcMapping.get(text.lower(), text)
+				log.warning(f"unrecognize type={_type!r}: {self.tostring(elem)}")
+				return text
+			else:
+				log.warning(f"<gram> with no type: {self.tostring(elem)}")
+				return text
+		log.warning(f"unrecognize GramGrp child tag: {self.tostring(elem)}")
 		return ""
 
 	def getEntryByElem(self, entry: "lxml.etree.Element") -> "BaseEntry":
@@ -199,11 +254,7 @@ class Reader(object):
 					hf.write(br())
 					hf.write("\n")
 
-				self.makeList(
-					hf,
-					senseList,
-					self.writeSense,
-				)
+				self.writeSenseList(hf, senseList)
 
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
