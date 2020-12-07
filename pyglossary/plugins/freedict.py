@@ -112,17 +112,45 @@ class Reader(object):
 				with hf.element("li"):
 					processor(hf, el)
 
+	def writeCit(
+		self,
+		hf: "lxml.etree.htmlfile",
+		cit: "lxml.etree.Element",
+	):
+		sep = ", "
+		# sep = ET.Element("br")
+		count = 0
+		for quote in cit.findall("quote", self.ns):
+			for ref in quote.findall("ref", self.ns):
+				target = ref.get("target")
+				if not target:
+					target = f"bword://{ref.text}"
+				if count > 0:
+					hf.write(sep)
+				with hf.element("a", href=target):
+					hf.write(ref.text)
+				count += 1
+
+			if quote.text:
+				if count > 0:
+					hf.write(sep)
+				hf.write(quote.text)
+				count += 1
+
 	def writeSense(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sense: "lxml.etree.Element",
 	):
 		# translations
-		hf.write(", ".join(
-			el.text
-			for el in sense.findall("cit/quote", self.ns)
-			if el.text is not None
-		))
+		citList = sense.findall("cit", self.ns)
+		self.makeList(
+			hf,
+			citList,
+			self.writeCit,
+			single_prefix="",
+		)
+
 		defiList = sense.findall("sense/def", self.ns)
 		self.makeList(
 			hf,
