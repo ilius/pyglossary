@@ -13,10 +13,12 @@ class Lang(object):
 		codes: "List[str]",
 		names: "List[str]",
 		titleTag: str = "b",
+		rtl: int = 0,
 	):
 		self._codes = codes
 		self._names = names
 		self._titleTag = titleTag
+		self._rtl = rtl
 
 	def __repr__(self) -> str:
 		return (
@@ -31,24 +33,29 @@ class Lang(object):
 		return f"Lang({self._codes + self._names})"
 
 	@property
-	def codes(self):
+	def codes(self) -> "List[str]":
 		return self._codes
 
 	@property
-	def names(self):
+	def names(self) -> "List[str]":
 		return self._names
 
 	@property
-	def name(self):
+	def name(self) -> str:
 		return self._names[0]
 
 	@property
-	def code(self):
+	def code(self) -> str:
 		return self._codes[0]
 
 	@property
-	def titleTag(self):
+	def titleTag(self) -> str:
 		return self._titleTag
+
+	@property
+	def rtl(self) -> int:
+		return self._rtl
+
 
 class LangDict(dict):
 	def load(self):
@@ -64,6 +71,7 @@ class LangDict(dict):
 					codes=row["codes"],
 					names=[row["name"]] + row["alt_names"],
 					titleTag=row["title_tag"],
+					rtl=row.get("rtl", 0),
 				)
 				for key in lang.codes:
 					if key in self:
@@ -78,3 +86,5 @@ class LangDict(dict):
 	def __getitem__(self, key: str) -> "Optional[Lang]":
 		self.load()
 		return self.get(key.lower(), None)
+
+langDict = LangDict()

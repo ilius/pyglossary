@@ -48,7 +48,7 @@ from .core import userPluginsDir, cacheDir
 from .entry import Entry, DataEntry
 from .plugin_prop import PluginProp
 
-from .langs import LangDict, Lang
+from .langs import langDict, Lang
 
 from .text_utils import (
 	fixUtf8,
@@ -59,7 +59,6 @@ from .glossary_type import GlossaryType
 
 log = logging.getLogger("pyglossary")
 
-langDict = LangDict()
 
 """
 sortKeyType = Optional[
