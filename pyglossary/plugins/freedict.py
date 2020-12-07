@@ -405,7 +405,7 @@ class Reader(object):
 		copyright = self.stripParagList(elems)
 		copyright = self.replaceRefLink(copyright)
 		self.setGlosInfo("copyright", copyright)
-		log.info(f"Copyright: {copyright!r}")
+		log.debug(f"Copyright: {copyright!r}")
 
 	def setPublisher(self, header):
 		elem = header.find(".//publisher", self.ns)
@@ -441,11 +441,11 @@ class Reader(object):
 			website = " | ".join(website_list)
 			self.setGlosInfo("website", website)
 			desc = self._website_pattern.sub("", desc).strip()
-			log.info(f"Website: {website}")
+			log.debug(f"Website: {website}")
 
 		desc = self.replaceRefLink(desc)
 		self.setGlosInfo("description", desc)
-		log.info(
+		log.debug(
 			"------------ Description: ------------\n"
 			f"{desc}\n"
 			"--------------------------------------"
@@ -456,7 +456,7 @@ class Reader(object):
 		self.setGlosInfo("name", header.find(".//title", self.ns).text)
 
 		edition = header.find(".//edition", self.ns)
-		if edition and edition.text:
+		if edition is not None and edition.text:
 			self.setGlosInfo("edition", edition.text)
 
 		self.setCopyright(header)
