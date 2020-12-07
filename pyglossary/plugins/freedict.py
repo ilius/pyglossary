@@ -4,6 +4,7 @@ from formats_common import *
 from pyglossary.xml_utils import xml_escape
 from pyglossary.html_utils import unescape_unicode
 from pyglossary.langs import langDict
+from pyglossary.langs.writing_system import getWritingSystemFromText
 from io import BytesIO
 import re
 import html
@@ -95,6 +96,7 @@ class Reader(object):
 		processor: "Callable",
 		single_prefix="",
 		skip_single=True,
+		ordered=True,
 	):
 		""" Wrap elements into <ol> if more than one element """
 
@@ -107,55 +109,111 @@ class Reader(object):
 			processor(hf, input_objects[0])
 			return
 
-		with hf.element("ol"):
+		with hf.element("ol" if ordered else "ul"):
 			for el in input_objects:
 				with hf.element("li"):
 					processor(hf, el)
+
+	def getTitleTag(self, sample: str) -> str:
+		ws = getWritingSystemFromText(sample)
+		if ws:
+			return ws.titleTag
+		return "b"
+
+	def writeText(
+		self,
+		hf: "lxml.etree.htmlfile",
+		x: "Union[None, str, lxml.etree.Element]",
+	):
+		if x is None:
+			return
+
+		if isinstance(x, str):
+			hf.write(x)
+			return
+
+		if x.tag == "ref":
+			target = x.get("target")
+			if not target:
+				target = f"bword://{ref.text}"
+			with hf.element("a", href=target):
+				hf.write(x.text)
+			return
+
+		if x.text:
+			hf.write(x.text)
 
 	def writeCit(
 		self,
 		hf: "lxml.etree.htmlfile",
 		cit: "lxml.etree.Element",
 	):
-		sep = ", "
-		# sep = ET.Element("br")
-		count = 0
-		for quote in cit.findall("quote", self.ns):
-			for ref in quote.findall("ref", self.ns):
-				target = ref.get("target")
-				if not target:
-					target = f"bword://{ref.text}"
-				if count > 0:
-					hf.write(sep)
-				with hf.element("a", href=target):
-					hf.write(ref.text)
-				count += 1
+		from lxml import etree as ET
 
-			if quote.text:
-				if count > 0:
-					hf.write(sep)
-				hf.write(quote.text)
-				count += 1
+		sep = ", "
+		# if self._cif_newline:
+		# 	sep = ET.Element("br")
+		count = 0
+
+		def addText(text):
+			nonlocal count
+			if text is None:
+				return
+			text = text.strip()
+			if not text:
+				return
+			if count > 0:
+				hf.write(sep)
+			with hf.element(self.getTitleTag(text)):
+				hf.write(text)
+			count += 1
+
+		def addRef(ref):
+			nonlocal count
+			if count > 0:
+				hf.write(sep)
+			target = ref.get("target")
+			if not target:
+				target = f"bword://{ref.text}"
+			with hf.element("a", href=target):
+				hf.write(ref.text)
+			count += 1
+
+		for quote in cit.findall("quote", self.ns):
+			addText(quote.text)
+
+			for elem in quote.iterchildren():
+				if elem.tag == f"{tei}ref":
+					addRef(elem)
+				else:
+					addText(elem.text)
+				addText(elem.tail)
+
+			addText(quote.tail)
 
 	def writeSense(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sense: "lxml.etree.Element",
 	):
-		# translations
-		citList = sense.findall("cit", self.ns)
-		self.makeList(
-			hf,
-			citList,
-			self.writeCit,
-			single_prefix="",
-		)
+		from lxml import etree as ET
 
 		defiList = sense.findall("sense/def", self.ns)
 		self.makeList(
 			hf,
 			defiList,
-			lambda hf, el: hf.write(el.text),
+			lambda hf, el: hf.write(el.text),  # self.writeText,
+			single_prefix="",
+		)
+
+		if len(defiList) == 1:
+			hf.write(ET.Element("br"))
+
+		# translations
+		self.makeList(
+			hf,
+			sense.findall("cit", self.ns),
+			self.writeCit,
 			single_prefix="",
 		)
 
