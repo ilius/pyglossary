@@ -58,16 +58,6 @@ class Reader(object):
 			"num",  # entry.sense.cit.gramGrp.num
 		)
 	}
-	genderMapping = {
-		"m": "male",
-		"masc": "male",
-		"f": "female",
-		"fem": "female",
-		"n": "neutral",
-		"neut": "neutral",
-		# "m;f"
-		"adj": "adjective",
-	}
 	posMapping = {
 		"n": "noun",
 		"v": "verb",
@@ -80,11 +70,24 @@ class Reader(object):
 		# "numeral", "interjection", "suffix", "particle"
 		# "indefinitePronoun"
 	}
+	genderMapping = {
+		"m": "male",
+		"masc": "male",
+		"f": "female",
+		"fem": "female",
+		"n": "neutral",
+		"neut": "neutral",
+		# "m;f"
+		"adj": "adjective",
+	}
+	numberMapping = {
+		"pl": "plural",
+		"sing": "singular",
+	}
 	subcMapping = {
 		"t": "transitive",
 		"i": "intransitive",
 	}
-
 	def makeList(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -166,7 +169,7 @@ class Reader(object):
 		if tag == f"{tei}gen":
 			return self.genderMapping.get(text.lower(), text)
 		if tag in (f"{tei}num", f"{tei}number"):
-			return f"number: {text}"  # FIXME
+			return self.numberMapping.get(text.lower(), text)
 		if tag == f"{tei}subc":
 			return self.subcMapping.get(text.lower(), text)
 		if tag == f"{tei}gram":
@@ -177,7 +180,7 @@ class Reader(object):
 				if _type == "gen":
 					return self.genderMapping.get(text.lower(), text)
 				if _type in ("num", "number"):
-					return f"number: {text}"  # FIXME
+					return self.numberMapping.get(text.lower(), text)
 				if _type == "subc":
 					return self.subcMapping.get(text.lower(), text)
 				log.warning(f"unrecognize type={_type!r}: {self.tostring(elem)}")
