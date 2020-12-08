@@ -191,19 +191,12 @@ class Reader(object):
 
 			addText(quote.tail)
 
-	def writeSense(
+	def writeSenseDefs(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sense: "lxml.etree.Element",
 	):
 		from lxml import etree as ET
-
-		gramList = self.parseGramGroups(sense.findall("gramGrp", self.ns))
-		for text in gramList:
-			with hf.element("i"):
-				hf.write(text)
-			hf.write(ET.Element("br"))
-
 		defiList = sense.findall("sense/def", self.ns)
 		self.makeList(
 			hf,
@@ -211,10 +204,14 @@ class Reader(object):
 			lambda hf, el: hf.write(el.text),  # self.writeText,
 			single_prefix="",
 		)
-
 		if len(defiList) == 1:
 			hf.write(ET.Element("br"))
 
+	def writeSenseCits(
+		self,
+		hf: "lxml.etree.htmlfile",
+		sense: "lxml.etree.Element",
+	):
 		# translations
 		self.makeList(
 			hf,
@@ -222,6 +219,37 @@ class Reader(object):
 			self.writeCit,
 			single_prefix="",
 		)
+
+	def writeSenseGrams(
+		self,
+		hf: "lxml.etree.htmlfile",
+		sense: "lxml.etree.Element",
+	):
+		from lxml import etree as ET
+		gramList = self.parseGramGroups(sense.findall("gramGrp", self.ns))
+		for text in gramList:
+			with hf.element("i"):
+				hf.write(text)
+			hf.write(ET.Element("br"))
+
+	def writeSense(
+		self,
+		hf: "lxml.etree.htmlfile",
+		sense: "lxml.etree.Element",
+	):
+		self.writeSenseGrams(hf, sense)
+		self.writeSenseDefs(hf, sense)
+		self.writeSenseCits(hf, sense)
+
+	def writeSenseRTL(
+		self,
+		hf: "lxml.etree.htmlfile",
+		sense: "lxml.etree.Element",
+	):
+		with hf.element("div", dir="ltr"):
+			self.writeSenseGrams(hf, sense)
+		self.writeSenseDefs(hf, sense)
+		self.writeSenseCits(hf, sense)
 
 	def getDirection(self, elem: "lxml.etree.Element"):
 		lang = elem.get("{http://www.w3.org/XML/1998/namespace}lang")
@@ -243,12 +271,10 @@ class Reader(object):
 		if not senseList:
 			return
 
-		if self._auto_rtl:
-			direction = self.getDirection(senseList[0])
-			if direction:
-				with hf.element("div", dir=direction):
-					self.makeList(hf, senseList, self.writeSense)
-				return
+		if self._auto_rtl and self.getDirection(senseList[0]) == "rtl":
+			with hf.element("div", dir="rtl"):
+				self.makeList(hf, senseList, self.writeSenseRTL)
+			return
 
 		self.makeList(hf, senseList, self.writeSense)
 
