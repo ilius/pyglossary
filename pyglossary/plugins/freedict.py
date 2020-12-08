@@ -97,6 +97,7 @@ class Reader(object):
 		single_prefix="",
 		skip_single=True,
 		ordered=True,
+		list_type="",
 	):
 		""" Wrap elements into <ol> if more than one element """
 
@@ -109,7 +110,11 @@ class Reader(object):
 			processor(hf, input_objects[0])
 			return
 
-		with hf.element("ol" if ordered else "ul"):
+		kw = {}
+		if list_type:
+			kw["type"] = list_type
+
+		with hf.element("ol" if ordered else "ul", **kw):
 			for el in input_objects:
 				with hf.element("li"):
 					processor(hf, el)
@@ -273,10 +278,18 @@ class Reader(object):
 
 		if self._auto_rtl and self.getDirection(senseList[0]) == "rtl":
 			with hf.element("div", dir="rtl"):
-				self.makeList(hf, senseList, self.writeSenseRTL)
+				self.makeList(
+					hf, senseList,
+					self.writeSenseRTL,
+					ordered=(len(senseList) > 3),
+				)
 			return
 
-		self.makeList(hf, senseList, self.writeSense)
+		self.makeList(
+			hf, senseList,
+			self.writeSense,
+			# list_type="A",
+		)
 
 	def normalizeGramGrpChild(self, elem) -> str:
 		# child can be "pos" or "gen"
