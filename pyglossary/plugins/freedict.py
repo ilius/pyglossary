@@ -198,6 +198,12 @@ class Reader(object):
 	):
 		from lxml import etree as ET
 
+		gramList = self.parseGramGroups(sense.findall("gramGrp", self.ns))
+		for text in gramList:
+			with hf.element("i"):
+				hf.write(text)
+			hf.write(ET.Element("br"))
+
 		defiList = sense.findall("sense/def", self.ns)
 		self.makeList(
 			hf,
@@ -277,6 +283,22 @@ class Reader(object):
 		log.warning(f"unrecognize GramGrp child tag: {self.tostring(elem)}")
 		return ""
 
+	def parseGramGroups(
+		self,
+		gramGrpList: "List[lxml.etree.Element]",
+	):
+		gramList = []  # type: List[str]
+		for gramGrp in gramGrpList:
+			parts = []
+			for child in gramGrp.iterchildren():
+				text = self.normalizeGramGrpChild(child)
+				if text:
+					parts.append(text)
+			if parts:
+				gramList.append(", ".join(parts))
+		return gramList
+
+
 	def getEntryByElem(self, entry: "lxml.etree.Element") -> "BaseEntry":
 		from lxml import etree as ET
 		glos = self._glos
@@ -303,15 +325,7 @@ class Reader(object):
 				continue
 			keywords.append(orth.text)
 
-		gramList = []  # type: List[str]
-		for gramGrp in entry.findall("gramGrp", self.ns):
-			parts = []
-			for child in gramGrp.iterchildren():
-				text = self.normalizeGramGrpChild(child)
-				if text:
-					parts.append(text)
-			if parts:
-				gramList.append(", ".join(parts))
+		gramList = self.parseGramGroups(entry.findall("gramGrp", self.ns))
 
 		pronList = entry.findall("form/pron", self.ns)
 		senseList = entry.findall("sense", self.ns)
