@@ -353,7 +353,11 @@ class Reader(object):
 
 		gramList = self.parseGramGroups(entry.findall("gramGrp", self.ns))
 
-		pronList = entry.findall("form/pron", self.ns)
+		pronList = [
+			pron.text.strip('/')
+			for pron in entry.findall("form/pron", self.ns)
+			if pron.text
+		]
 		senseList = entry.findall("sense", self.ns)
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
@@ -379,7 +383,7 @@ class Reader(object):
 						if i > 0:
 							hf.write(", ")
 						with hf.element("font", color="green"):
-							hf.write(f"/{pron.text.strip('/')}/")
+							hf.write(f"/{pron}/")
 					hf.write(br())
 					hf.write("\n")
 
