@@ -21,6 +21,12 @@ optionsProp = {
 	"word_title": BoolOption(
 		comment="add headwords title to begining of definition",
 	),
+	"pron_color": StrOption(
+		comment="pronunciation color",
+	),
+	"gram_color": StrOption(
+		comment="grammar color",
+	),
 }
 
 # https://freedict.org/
@@ -38,6 +44,8 @@ class Reader(object):
 	_discover: bool = False
 	_auto_rtl: bool = False
 	_word_title: bool = False
+	_pron_color: str = "gray"
+	_gram_color: str = "green"
 
 	ns = {
 		None: "http://www.tei-c.org/ns/1.0",
@@ -225,17 +233,42 @@ class Reader(object):
 			single_prefix="",
 		)
 
+	def writeGramGroups(
+		self,
+		hf: "lxml.etree.htmlfile",
+		gramGrpList: "List[lxml.etree.htmlfile]",
+	):
+		from lxml import etree as ET
+
+		auto_rtl = self._auto_rtl
+		color = self._gram_color
+		for gramGrp in gramGrpList:
+			parts = []
+			for child in gramGrp.iterchildren():
+				part = self.normalizeGramGrpChild(child)
+				if part:
+					parts.append(part)
+			if not parts:
+				continue
+
+			sep = ", "
+			if auto_rtl:
+				ws = getWritingSystemFromText(parts[0])
+				if ws:
+					sep = ws.comma + " "
+
+			text = sep.join(parts)
+			with hf.element("font", color=color):
+				hf.write(text)
+
+			hf.write(ET.Element("br"))
+
 	def writeSenseGrams(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sense: "lxml.etree.Element",
 	):
-		from lxml import etree as ET
-		gramList = self.parseGramGroups(sense.findall("gramGrp", self.ns))
-		for text in gramList:
-			with hf.element("i"):
-				hf.write(text)
-			hf.write(ET.Element("br"))
+		self.writeGramGroups(hf, sense.findall("gramGrp", self.ns))
 
 	def writeSense(
 		self,
@@ -243,16 +276,6 @@ class Reader(object):
 		sense: "lxml.etree.Element",
 	):
 		self.writeSenseGrams(hf, sense)
-		self.writeSenseDefs(hf, sense)
-		self.writeSenseCits(hf, sense)
-
-	def writeSenseRTL(
-		self,
-		hf: "lxml.etree.htmlfile",
-		sense: "lxml.etree.Element",
-	):
-		with hf.element("div", dir="ltr"):
-			self.writeSenseGrams(hf, sense)
 		self.writeSenseDefs(hf, sense)
 		self.writeSenseCits(hf, sense)
 
@@ -280,7 +303,7 @@ class Reader(object):
 			with hf.element("div", dir="rtl"):
 				self.makeList(
 					hf, senseList,
-					self.writeSenseRTL,
+					self.writeSense,
 					ordered=(len(senseList) > 3),
 				)
 			return
@@ -322,27 +345,12 @@ class Reader(object):
 		log.warning(f"unrecognize GramGrp child tag: {self.tostring(elem)}")
 		return ""
 
-	def parseGramGroups(
-		self,
-		gramGrpList: "List[lxml.etree.Element]",
-	):
-		gramList = []  # type: List[str]
-		for gramGrp in gramGrpList:
-			parts = []
-			for child in gramGrp.iterchildren():
-				text = self.normalizeGramGrpChild(child)
-				if text:
-					parts.append(text)
-			if parts:
-				gramList.append(", ".join(parts))
-		return gramList
-
-
 	def getEntryByElem(self, entry: "lxml.etree.Element") -> "BaseEntry":
 		from lxml import etree as ET
 		glos = self._glos
 		keywords = []
 		f = BytesIO()
+		pron_color = self._pron_color
 
 		if self._discover:
 			for elem in entry.iter():
@@ -364,8 +372,6 @@ class Reader(object):
 				continue
 			keywords.append(orth.text)
 
-		gramList = self.parseGramGroups(entry.findall("gramGrp", self.ns))
-
 		pronList = [
 			pron.text.strip('/')
 			for pron in entry.findall("form/pron", self.ns)
@@ -386,19 +392,18 @@ class Reader(object):
 				# <usg type="geo">US</usg>
 				# <usg type="hint">...</usg>
 
-				for text in gramList:
-					with hf.element("i"):
-						hf.write(text)
-					hf.write(br())
-
 				if pronList:
 					for i, pron in enumerate(pronList):
 						if i > 0:
 							hf.write(", ")
-						with hf.element("font", color="green"):
-							hf.write(f"/{pron}/")
+						hf.write("/")
+						with hf.element("font", color=pron_color):
+							hf.write(f"{pron}")
+						hf.write("/")
 					hf.write(br())
 					hf.write("\n")
+
+				self.writeGramGroups(hf, entry.findall("gramGrp", self.ns))
 
 				self.writeSenseList(hf, senseList)
 
