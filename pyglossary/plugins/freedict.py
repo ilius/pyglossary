@@ -167,11 +167,13 @@ class Reader(object):
 				with hf.element(self.getTitleTag(item)):
 					hf.write(item)
 				return
+
 			if item.tag == f"{tei}ref":
 				if count > 0:
 					hf.write(sep)
 				self.writeRef(hf, item)
 				return
+
 			for child in item.xpath("child::node()"):
 				writeChild(child, depth + 1)
 			if depth < 1:
@@ -196,6 +198,10 @@ class Reader(object):
 			if child.tag == f"{tei}br":
 				hf.write(ET.Element("br"))
 				continue
+			if child.tag == f"{tei}p":
+				with hf.element("p", **child.attrib):
+					self.writeRichText(hf, child)
+					continue
 			self.writeRichText(hf, child)
 
 	def writeSenseDefs(
