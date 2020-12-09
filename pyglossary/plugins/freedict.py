@@ -133,29 +133,6 @@ class Reader(object):
 			return ws.titleTag
 		return "b"
 
-	def writeText(
-		self,
-		hf: "lxml.etree.htmlfile",
-		x: "Union[None, str, lxml.etree.Element]",
-	):
-		if x is None:
-			return
-
-		if isinstance(x, str):
-			hf.write(x)
-			return
-
-		if x.tag == "ref":
-			target = x.get("target")
-			if not target:
-				target = f"bword://{ref.text}"
-			with hf.element("a", href=target):
-				hf.write(x.text)
-			return
-
-		if x.text:
-			hf.write(x.text)
-
 	def writeCit(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -204,7 +181,7 @@ class Reader(object):
 
 			addText(quote.tail)
 
-	def writeSenseDef(
+	def writeRichText(
 		self,
 		hf: "lxml.etree.htmlfile",
 		el: "lxml.etree.Element",
@@ -220,10 +197,8 @@ class Reader(object):
 				with hf.element("a", href=target):
 					hf.write(child.text)
 				continue
-			if child.text:
-				hf.write(child.text)
-				continue
-			log.warning(f"writeSenseDef: unexcepted element: {self.tostring(child)}")
+			self.writeRichText(hf, child)
+			log.warning(f"writeRichText: unexcepted element: {self.tostring(child)}")
 
 	def writeSenseDefs(
 		self,
@@ -235,7 +210,7 @@ class Reader(object):
 		self.makeList(
 			hf,
 			defiList,
-			self.writeSenseDef,
+			self.writeRichText,
 			single_prefix="",
 		)
 		if len(defiList) == 1:
