@@ -204,6 +204,27 @@ class Reader(object):
 
 			addText(quote.tail)
 
+	def writeSenseDef(
+		self,
+		hf: "lxml.etree.htmlfile",
+		el: "lxml.etree.Element",
+	):
+		for child in el.xpath("child::node()"):
+			if isinstance(child, str):
+				hf.write(child)
+				continue
+			if child.tag == f"{tei}ref":
+				target = child.get("target")
+				if not target:
+					target = f"bword://{child.text}"
+				with hf.element("a", href=target):
+					hf.write(child.text)
+				continue
+			if child.text:
+				hf.write(child.text)
+				continue
+			log.warning(f"writeSenseDef: unexcepted element: {self.tostring(child)}")
+
 	def writeSenseDefs(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -214,7 +235,7 @@ class Reader(object):
 		self.makeList(
 			hf,
 			defiList,
-			lambda hf, el: hf.write(el.text),  # self.writeText,
+			self.writeSenseDef,
 			single_prefix="",
 		)
 		if len(defiList) == 1:
