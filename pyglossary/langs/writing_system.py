@@ -1,5 +1,7 @@
 import unicodedata
 from collections import namedtuple
+import string
+
 
 WritingSystem = namedtuple(
 	"WritingSystem", [
@@ -404,7 +406,12 @@ unicodeNextWord = {
 
 def _getWritingSystemFromText(st: str, start: int, end: int):
 	for c in st[start:end]:
-		unicodeWords = unicodedata.name(c).split(' ')
+		try:
+			unicodeWords = unicodedata.name(c).split(' ')
+		except ValueError as e:
+			# if c not in string.whitespace:
+			# 	print(f"c={c!r}, {e}")
+			continue
 		alias = unicodeWords[0]
 		ws = writingSystemByUnicode.get(alias)
 		if ws:
