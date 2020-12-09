@@ -133,6 +133,17 @@ class Reader(object):
 			return ws.titleTag
 		return "b"
 
+	def writeRef(
+		self,
+		hf: "lxml.etree.htmlfile",
+		ref: "lxml.etree.Element",
+	):
+		target = ref.get("target")
+		if not target:
+			target = f"bword://{ref.text}"
+		with hf.element("a", href=target):
+			hf.write(ref.text)
+
 	def writeCit(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -145,41 +156,29 @@ class Reader(object):
 		# 	sep = ET.Element("br")
 		count = 0
 
-		def addText(text):
+		def writeChild(item, depth):
 			nonlocal count
-			if text is None:
+			if isinstance(item, str):
+				item = item.rstrip()
+				if not item:
+					return
+				if count > 0:
+					hf.write(sep)
+				with hf.element(self.getTitleTag(item)):
+					hf.write(item)
 				return
-			text = text.strip()
-			if not text:
+			if item.tag == f"{tei}ref":
+				if count > 0:
+					hf.write(sep)
+				self.writeRef(hf, item)
 				return
-			if count > 0:
-				hf.write(sep)
-			with hf.element(self.getTitleTag(text)):
-				hf.write(text)
-			count += 1
+			for child in item.xpath("child::node()"):
+				writeChild(child, depth + 1)
+			if depth < 1:
+				count += 1
 
-		def addRef(ref):
-			nonlocal count
-			if count > 0:
-				hf.write(sep)
-			target = ref.get("target")
-			if not target:
-				target = f"bword://{ref.text}"
-			with hf.element("a", href=target):
-				hf.write(ref.text)
-			count += 1
-
-		for quote in cit.findall("quote", self.ns):
-			addText(quote.text)
-
-			for elem in quote.iterchildren():
-				if elem.tag == f"{tei}ref":
-					addRef(elem)
-				else:
-					addText(elem.text)
-				addText(elem.tail)
-
-			addText(quote.tail)
+		for child in cit.xpath("child::node()"):
+			writeChild(child, 0)
 
 	def writeRichText(
 		self,
@@ -191,11 +190,7 @@ class Reader(object):
 				hf.write(child)
 				continue
 			if child.tag == f"{tei}ref":
-				target = child.get("target")
-				if not target:
-					target = f"bword://{child.text}"
-				with hf.element("a", href=target):
-					hf.write(child.text)
+				self.writeRef(hf, child)
 				continue
 			self.writeRichText(hf, child)
 			log.warning(f"writeRichText: unexcepted element: {self.tostring(child)}")
