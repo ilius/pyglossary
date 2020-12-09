@@ -185,6 +185,7 @@ class Reader(object):
 		hf: "lxml.etree.htmlfile",
 		el: "lxml.etree.Element",
 	):
+		from lxml import etree as ET
 		for child in el.xpath("child::node()"):
 			if isinstance(child, str):
 				hf.write(child)
@@ -192,8 +193,10 @@ class Reader(object):
 			if child.tag == f"{tei}ref":
 				self.writeRef(hf, child)
 				continue
+			if child.tag == f"{tei}br":
+				hf.write(ET.Element("br"))
+				continue
 			self.writeRichText(hf, child)
-			log.warning(f"writeRichText: unexcepted element: {self.tostring(child)}")
 
 	def writeSenseDefs(
 		self,
