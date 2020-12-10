@@ -17,7 +17,7 @@ singleFile = True
 optionsProp = {
 	"resources": BoolOption(),
 	"discover": BoolOption(),
-	"auto_rtl": BoolOption(),
+	"auto_rtl": BoolOption(allowNone=True),
 	"word_title": BoolOption(
 		comment="add headwords title to begining of definition",
 	),
@@ -42,7 +42,7 @@ class Reader(object):
 	}
 
 	_discover: bool = False
-	_auto_rtl: bool = False
+	_auto_rtl: "Optional[bool]" = None
 	_word_title: bool = False
 	_pron_color: str = "gray"
 	_gram_color: str = "green"
@@ -589,6 +589,16 @@ class Reader(object):
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		from lxml import etree as ET
+
+		if self._auto_rtl is None:
+			glos = self._glos
+			if (
+				glos.sourceLang and glos.sourceLang.rtl or
+				glos.targetLang and glos.targetLang.rtl
+			):
+				log.info("setting auto_rtl=True")
+				self._auto_rtl = True
+
 		self._file = compressionOpen(self._filename, mode="rb")
 		context = ET.iterparse(
 			self._file,
