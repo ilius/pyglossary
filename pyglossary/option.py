@@ -13,6 +13,7 @@ class Option(object):
 		typ: str,
 		customValue: bool = False,
 		values: "Optional[List[str]]" = None,
+		allowNone: bool = False,
 		comment: str = "",
 		multiline: bool = False,
 		disabled: bool = False,
@@ -25,6 +26,7 @@ class Option(object):
 			customValue = True
 		self.typ = typ
 		self.values = values
+		self.allowNone = allowNone
 		self.customValue = customValue
 		self.comment = comment
 		self.multiline = multiline
@@ -81,7 +83,7 @@ class Option(object):
 				return False
 			return value in self.values
 		if value is None:
-			return self.typ in ("dict", "list")
+			return self.allowNone
 		valueType = type(value).__name__
 		return self.typ == valueType
 
@@ -99,12 +101,16 @@ class Option(object):
 
 
 class BoolOption(Option):
-	def __init__(self, **kwargs):
+	def __init__(self, allowNone=False, **kwargs):
+		values = [False, True]
+		if allowNone:
+			values.append(None)
 		Option.__init__(
 			self,
 			"bool",
 			customValue=False,
-			values=[False, True],
+			values=values,
+			allowNone=allowNone,
 			**kwargs,
 		)
 
@@ -115,6 +121,8 @@ class BoolOption(Option):
 		return data
 
 	def evaluate(self, raw: "Union[str, bool]") -> "Tuple[Optional[bool], bool]":
+		if raw is None or raw.lower() == "none":
+			return None, True
 		if isinstance(raw, bool):
 			return raw, True
 		if raw.lower() in ("yes", "true", "1"):
@@ -209,6 +217,7 @@ class DictOption(Option):
 			self,
 			"dict",
 			customValue=True,
+			allowNone=True,
 			multiline=True,
 			**kwargs,
 		)
@@ -234,6 +243,7 @@ class ListOption(Option):
 			self,
 			"list",
 			customValue=True,
+			allowNone=True,
 			multiline=True,
 			**kwargs,
 		)
