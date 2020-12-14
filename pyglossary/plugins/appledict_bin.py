@@ -144,10 +144,16 @@ class Reader(object):
 			return None, pos
 		word = entryElems[0].xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
 		if self._html:
-			defi = self.decode(etree.tostring(entryElems[0]))
+			defi = self.decode(etree.tostring(
+				entryElems[0],
+				encoding="utf-8",
+			))
 		else:
 			defi = "".join([
-				self.decode(etree.tostring(child))
+				self.decode(etree.tostring(
+					child,
+					encoding="utf-8",
+				))
 				for child in entryElems[0].iterdescendants()
 			])
 		pos += chunkSize
