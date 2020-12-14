@@ -101,6 +101,36 @@ def registerOption(parser, key: str, option: "Option"):
 		)
 
 
+def base_ui_run(
+	inputFilename: str = "",
+	outputFilename: str = "",
+	inputFormat: str = "",
+	outputFormat: str = "",
+	reverse: bool = False,
+	configOptions: "Optional[Dict]" = None,
+	readOptions: "Optional[Dict]" = None,
+	writeOptions: "Optional[Dict]" = None,
+	convertOptions: "Optional[Dict]" = None,
+):
+	if reverse:
+		log.error("--reverse does not work with --ui=none")
+		return False
+	ui = UIBase()
+	ui.loadConfig(**config)
+	glos = Glossary(ui=ui)
+	glos.config = ui.config
+	glos.convert(
+		inputFilename=inputFilename,
+		outputFilename=outputFilename,
+		inputFormat=inputFormat,
+		outputFormat=outputFormat,
+		readOptions=readOptions,
+		writeOptions=writeOptions,
+		**convertOptions
+	)
+	return True
+
+
 def main():
 	parser = argparse.ArgumentParser(add_help=False)
 
@@ -165,11 +195,21 @@ def main():
 		help="use Tkinter-based user interface",
 	)
 	parser.add_argument(
+		"--interactive",
+		dest="interactive",
+		action="store_true",
+		default=None,
+		help="switch to interactive command line interface",
+	)
+	parser.add_argument(
 		"--no-interactive",
 		dest="no_interactive",
 		action="store_true",
 		default=None,
-		help="do not automatically switch to interactive command line interface, for scripts",
+		help=(
+			"do not automatically switch to interactive command line"
+			" interface, for scripts"
+		),
 	)
 
 	parser.add_argument(
@@ -277,6 +317,15 @@ def main():
 		nargs="?",
 	)
 
+	def shouldUseCMD(args):
+		if not canRunGUI():
+			return True
+		if args.interactive:
+			return True
+		if args.inputFilename and args.outputFilename:
+			return True
+		return False
+
 	# _______________________________
 
 	for key, option in UIBase.configDefDict.items():
@@ -359,9 +408,9 @@ def main():
 		--read-options 'testOption=stringValue; enableFoo=True; fooList=[1, 2, 3]'
 		--read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
 
-		if a desired value contains ";", you can use --json-read-options or --json-write-options
-		flags instead, with json object as value, quoted for command line
-		for example:
+		if a desired value contains ";", you can use --json-read-options
+		or --json-write-options flags instead, with json object as value,
+		quoted for command line. for example:
 			'--json-write-options={"delimiter": ";"}'
 
 	"""
@@ -451,31 +500,6 @@ def main():
 	if convertOptions:
 		log.debug(f"convertOptions = {convertOptions}")
 
-	ui_type = args.ui_type
-
-	if ui_type == "auto":
-		if not canRunGUI() or (args.inputFilename and args.outputFilename):
-			ui_type = "cmd"
-
-	if ui_type == "none":
-		if args.reverse:
-			log.error("--reverse does not work with --ui=none")
-			sys.exit(1)
-		ui = UIBase()
-		ui.loadConfig(**config)
-		glos = Glossary(ui=ui)
-		glos.config = ui.config
-		glos.convert(
-			args.inputFilename,
-			inputFormat=args.inputFormat,
-			outputFilename=args.outputFilename,
-			outputFormat=args.outputFormat,
-			readOptions=readOptions,
-			writeOptions=writeOptions,
-			**convertOptions
-		)
-		sys.exit(0)
-
 	runKeywordArgs = dict(
 		inputFilename=args.inputFilename,
 		outputFilename=args.outputFilename,
@@ -488,8 +512,18 @@ def main():
 		convertOptions=convertOptions,
 	)
 
+	ui_type = args.ui_type
+
+	if ui_type == "none":
+		sys.exit(0 if base_ui_run(**runKeywordArgs) else 1)
+
+	if ui_type == "auto" and shouldUseCMD(args):
+		ui_type = "cmd"
+
 	if ui_type == "cmd":
-		if args.inputFilename and args.outputFilename:
+		if args.interactive:
+			from pyglossary.ui.ui_cmd_interactive import UI
+		elif args.inputFilename and args.outputFilename:
 			from pyglossary.ui.ui_cmd import UI
 		elif not args.no_interactive:
 			from pyglossary.ui.ui_cmd_interactive import UI
@@ -502,7 +536,10 @@ def main():
 		ui_module = None
 		for ui_type2 in ui_list:
 			try:
-				ui_module = __import__(f"pyglossary.ui.ui_{ui_type2}", fromlist=f"ui_{ui_type2}")
+				ui_module = __import__(
+					f"pyglossary.ui.ui_{ui_type2}",
+					fromlist=f"ui_{ui_type2}",
+				)
 			except ImportError:
 				log.exception("error while importing UI module:")
 			else:
@@ -514,6 +551,9 @@ def main():
 			)
 			sys.exit(1)
 	else:
-		ui_module = __import__(f"pyglossary.ui.ui_{ui_type}", fromlist=f"ui_{ui_type}")
+		ui_module = __import__(
+			f"pyglossary.ui.ui_{ui_type}",
+			fromlist=f"ui_{ui_type}",
+		)
 
 	sys.exit(0 if ui_module.UI().run(**runKeywordArgs) else 1)
