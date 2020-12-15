@@ -15,10 +15,13 @@ def compressionOpenFunc(c: str):
 	if c == "lzma":
 		import lzma
 		return lzma.open
+	if c == "dz":
+		import gzip
+		return gzip.open
 	return None
 
 
-def compressionOpen(filename, **kwargs):
+def compressionOpen(filename, dz=False, **kwargs):
 	from os.path import splitext
 	filenameNoExt, ext = splitext(filename)
 	ext = ext.lower().lstrip(".")
@@ -29,7 +32,7 @@ def compressionOpen(filename, **kwargs):
 	else:
 		_, ext = splitext(filenameNoExt)
 		ext = ext.lower().lstrip(".")
-	if ext in stdCompressions:
+	if ext in stdCompressions or (dz and ext == "dz"):
 		_file = compressionOpenFunc(ext)(filename, **kwargs)
 		_file.compression = ext
 		return _file

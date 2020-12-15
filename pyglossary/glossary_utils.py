@@ -129,7 +129,7 @@ def splitFilenameExt(
 	if not ext:
 		return filename, filename, "", ""
 
-	if ext[1:] in stdCompressions + ("zip",):
+	if ext[1:] in stdCompressions + ("zip", "dz"):
 		compression = ext[1:]
 		filename = filenameNoExt
 		filenameNoExt, ext = splitext(filename)
