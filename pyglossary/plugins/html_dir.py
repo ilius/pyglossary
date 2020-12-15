@@ -21,6 +21,9 @@ optionsProp = {
 	"filename_format": StrOption(),
 	"escape_defi": BoolOption(),
 	"dark": BoolOption(),
+	"css": StrOption(
+		comment="path to css file",
+	),
 	"word_title": BoolOption(
 		comment="add headwords title to begining of definition",
 	),
@@ -58,6 +61,7 @@ class Writer(object):
 	_filename_format: str = "{n:05d}.html"
 	_escape_defi: bool = False
 	_dark: bool = True
+	_css: str = ""
 	_word_title: bool = True
 
 	def __init__(self, glos: GlossaryType):
@@ -78,6 +82,12 @@ class Writer(object):
 			os.mkdir(filename)
 		if not isdir(resDir):
 			os.mkdir(resDir)
+		if self._css:
+			self.copyCSS(self._css)
+
+	def copyCSS(self, cssPath):
+		import shutil
+		shutil.copy(self._css, join(self._filename, "style.css"))
 
 	def finish(self):
 		pass
@@ -301,12 +311,17 @@ class Writer(object):
 		if self._dark:
 			style = darkStyle
 
+		if self._css:
+			cssLink = '<link rel="stylesheet" href="style.css" />'
+		else:
+			cssLink = ""
+
 		header = (
 			'<!DOCTYPE html>\n'
 			'<html><head>'
 			f'<title>{{pageTitle}}</title>'
 			f'<meta charset="{encoding}">'
-			f'<style type="text/css">{style}{{customStyle}}</style>'
+			f'<style type="text/css">{style}{{customStyle}}</style>{cssLink}'
 			'</meta></head><body>\n'
 		)
 
