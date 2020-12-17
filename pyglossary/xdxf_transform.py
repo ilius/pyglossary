@@ -14,16 +14,16 @@ def xdxf_to_html_transformer():
 		raise e
 
 	with open(join(rootDir, "pyglossary", "xdxf.xsl"), "r") as f:
-		xslt_root_txt = f.read()
+		xslt_txt = f.read()
 
-	xslt_root = ET.XML(xslt_root_txt)
-	_transform = ET.XSLT(xslt_root)
+	xslt = ET.XML(xslt_txt)
+	_transform = ET.XSLT(xslt)
 
-	def xdxf_to_html(xdxf_text: str) -> str:
-		doc = etree.parse(StringIO(f"<ar>{xdxf_text}</ar>"))
+	def transform(input_text: str) -> str:
+		doc = etree.parse(StringIO(f"<ar>{input_text}</ar>"))
 		result_tree = _transform(doc)
 		text = tostring(result_tree, encoding="utf-8").decode("utf-8")
 		text = text.replace("<br/> ", "<br/>")
 		return text
 
-	return xdxf_to_html
+	return transform
