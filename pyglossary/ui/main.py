@@ -112,11 +112,12 @@ def base_ui_run(
 	writeOptions: "Optional[Dict]" = None,
 	convertOptions: "Optional[Dict]" = None,
 ):
+	from pyglossary.glossary import Glossary
 	if reverse:
 		log.error("--reverse does not work with --ui=none")
 		return False
 	ui = UIBase()
-	ui.loadConfig(**config)
+	ui.loadConfig(**configOptions)
 	glos = Glossary(ui=ui)
 	glos.config = ui.config
 	glos.convert(
