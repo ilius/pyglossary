@@ -206,6 +206,14 @@ class Reader(object):
 		if desc:
 			self._glos.setInfo("description", desc)
 
+	def tostring(self, elem: "lxml.etree.Element") -> str:
+		from lxml import etree as ET
+		return ET.tostring(
+			elem,
+			method="html",
+			pretty_print=True,
+		).decode("utf-8").strip()
+
 	def titles(self, article):
 		"""
 
@@ -215,6 +223,9 @@ class Reader(object):
 		from itertools import combinations
 		titles = []
 		for title_element in article.findall("k"):
+			if title_element.text is None:
+				log.error(f"empty title element: {self.tostring(title_element)}")
+				continue
 			n_opts = len([c for c in title_element if c.tag == "opt"])
 			if n_opts:
 				for j in range(n_opts + 1):
