@@ -166,6 +166,7 @@ class DataEntry(BaseEntry):
 class Entry(BaseEntry):
 	sep = "|"
 	b_sep = b"|"
+	xdxfPattern = re.compile("^<k>[^<>]*</k>", re.S | re.I)
 	htmlPattern = re.compile(
 		".*(?:" + "|".join([
 			r"<font[ >]",
@@ -341,8 +342,12 @@ class Entry(BaseEntry):
 	def detectDefiFormat(self) -> None:
 		if self._defiFormat != "m":
 			return
+		if Entry.xdxfPattern.match(self.defi):
+			self._defiFormat = "x"
+			return
 		if Entry.htmlPattern.match(self.defi):
 			self._defiFormat = "h"
+			return
 
 	def byteProgress(self):
 		return self._byteProgress
