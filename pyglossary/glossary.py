@@ -1267,7 +1267,7 @@ class Glossary(GlossaryType):
 				direct = True  # FIXME
 
 		if isdir(outputFilename):
-			log.error(f"Directory already exists: {outputFilename}")
+			log.critical(f"Directory already exists: {outputFilename}")
 			return
 
 		showMemoryUsage()
