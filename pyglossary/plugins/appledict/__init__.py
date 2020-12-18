@@ -27,7 +27,6 @@ import pkgutil
 import shutil
 
 from pyglossary.plugins.formats_common import *
-from pyglossary.xdxf_transform import xdxf_to_html_transformer
 from ._dict import *
 
 sys.setrecursionlimit(10000)
@@ -208,6 +207,7 @@ class Writer(object):
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
 		global BeautifulSoup
+		from pyglossary.xdxf_transform import XdxfTransformer
 
 		glos = self._glos
 		cleanHTML = self._cleanHTML
@@ -219,7 +219,7 @@ class Writer(object):
 		jing = self._jing
 		indexes = self._indexes
 
-		xdxf_to_html = xdxf_to_html_transformer()
+		xdxf_to_html = XdxfTransformer(encoding="utf-8")
 
 		if cleanHTML:
 			if BeautifulSoup is None:
@@ -278,7 +278,7 @@ class Writer(object):
 
 				content_title = long_title
 				if entry.defiFormat == "x":
-					defi = xdxf_to_html(defi)
+					defi = xdxf_to_html.transformByInnerString(defi)
 					content_title = None
 				content = prepare_content(content_title, defi, BeautifulSoup)
 

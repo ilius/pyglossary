@@ -125,7 +125,7 @@ class Reader(object):
 		self._glos = glos
 		self.clear()
 
-		self._xdxf_tr = None
+		self._xdxfTr = None
 
 		"""
 		indexData format
@@ -145,13 +145,13 @@ class Reader(object):
 		"""
 
 	def xdxf_setup(self):
-		from pyglossary.xdxf_transform import xdxf_to_html_transformer
-		self._xdxf_tr = xdxf_to_html_transformer()
+		from pyglossary.xdxf_transform import XdxfTransformer
+		self._xdxfTr = XdxfTransformer(encoding="utf-8")
 
 	def xdxf_transform(self, text: str):
-		if self._xdxf_tr is None:
+		if self._xdxfTr is None:
 			self.xdxf_setup()
-		return self._xdxf_tr(text)
+		return self._xdxfTr.transformByInnerString(text)
 
 	def close(self) -> None:
 		if self._dictFile:

@@ -23,7 +23,7 @@
 from os import path
 
 from formats_common import *
-from pyglossary.xdxf_transform import xdxf_to_html_transformer
+from pyglossary.xdxf_transform import *
 
 enable = True
 format = "Xdxf"
@@ -107,7 +107,7 @@ class Reader(object):
 		self._filename = ""
 		self._file = None
 		self._encoding = "utf-8"
-		self._xdxf_to_html = None
+		self._htmlTr = None
 		self._re_span_k = re.compile(
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
@@ -117,7 +117,7 @@ class Reader(object):
 		from lxml import etree as ET
 		self._filename = filename
 		if self._html:
-			self._xdxf_to_html = xdxf_to_html_transformer()
+			self._htmlTr = XdxfTransformer(encoding=self._encoding)
 			self._glos.setDefaultDefiFormat("h")
 		else:
 			self._glos.setDefaultDefiFormat("x")
@@ -156,15 +156,15 @@ class Reader(object):
 		for action, article in context:
 			article.tail = None
 			words = [toStr(w) for w in self.titles(article)]
-			defi = tostring(article, encoding=self._encoding)
-			# <ar>...</ar>
-			defi = defi[4:-5].decode(self._encoding).strip()
-			defiFormat = "x"
-			if self._xdxf_to_html:
-				defi = self._xdxf_to_html(defi)
+			if self._htmlTr:
+				defi = self._htmlTr.transform(article)
 				defiFormat = "h"
 				if len(words) == 1:
 					defi = self._re_span_k.sub("", defi)
+			else:
+				defi = tostring(article, encoding=self._encoding)
+				defi = defi[4:-5].decode(self._encoding).strip()
+				defiFormat = "x"
 
 			# log.info(f"defi={defi}, words={words}")
 			yield self._glos.newEntry(
@@ -224,7 +224,7 @@ class Reader(object):
 		titles = []
 		for title_element in article.findall("k"):
 			if title_element.text is None:
-				log.error(f"empty title element: {self.tostring(title_element)}")
+				log.warning(f"empty title element: {self.tostring(title_element)}")
 				continue
 			n_opts = len([c for c in title_element if c.tag == "opt"])
 			if n_opts:
