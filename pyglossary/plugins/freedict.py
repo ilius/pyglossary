@@ -360,17 +360,19 @@ class Reader(object):
 		def br():
 			return ET.Element("br")
 
-		for form in entry.findall("form/orth", self.ns):
-			if form.getparent().get("type"):
-				# only use normal form, not inflected one, here
-				continue
-			keywords.append(form.text)
+		inflectedKeywords = []
 
-		# Add keywords for inflected forms
-		for orth in entry.findall('.//form[@type="infl"]/orth', self.ns):
-			if not orth.text:
-				continue
-			keywords.append(orth.text)
+		for form in entry.findall("form", self.ns):
+			inflected = form.get("type") == "infl"
+			for orth in form.findall("orth", self.ns):
+				if not orth.text:
+					continue
+				if inflected:
+					inflectedKeywords.append(orth.text)
+				else:
+					keywords.append(orth.text)
+
+		keywords += inflectedKeywords
 
 		pronList = [
 			pron.text.strip('/')
