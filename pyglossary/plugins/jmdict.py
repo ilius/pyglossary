@@ -29,7 +29,8 @@ class Reader(object):
 	)
 
 	re_inf_mapping = {
-		"gikun (meaning as reading) or jukujikun (special kanji reading)": "gikun/jukujikun",
+		"gikun (meaning as reading) or jukujikun (special kanji reading)":
+			"gikun/jukujikun",
 		"out-dated or obsolete kana usage": "obsolete",  # outdated/obsolete
 		"word containing irregular kana usage": "irregular",
 	}
@@ -223,7 +224,12 @@ class Reader(object):
 
 		defi = f.getvalue().decode("utf-8")
 		byteProgress = (self._file.tell(), self._fileSize)
-		return self._glos.newEntry(keywords, defi, defiFormat="h", byteProgress=byteProgress)
+		return self._glos.newEntry(
+			keywords,
+			defi,
+			defiFormat="h",
+			byteProgress=byteProgress,
+		)
 
 	def tostring(self, elem: "lxml.etree.Element") -> str:
 		from lxml import etree as ET
