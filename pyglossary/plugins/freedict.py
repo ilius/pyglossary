@@ -50,6 +50,7 @@ class Reader(object):
 	ns = {
 		None: "http://www.tei-c.org/ns/1.0",
 	}
+	xmlLang = "{http://www.w3.org/XML/1998/namespace}lang"
 
 	supportedTags = {
 		f"{tei}{tag}" for tag in (
@@ -182,6 +183,23 @@ class Reader(object):
 		for child in cit.xpath("child::node()"):
 			writeChild(child, 0)
 
+	def writeDivSpan(self, hf, child, tag):
+		attrib = child.attrib
+		try:
+			lang = attrib.pop(self.xmlLang)
+		except KeyError:
+			pass
+		else:
+			if self._auto_rtl:
+				langObj = langDict[lang]
+				if langObj:
+					if langObj.rtl:
+						attrib["dir"] = "rtl"
+					else:
+						attrib["dir"] = "ltr"
+		with hf.element(tag, **attrib):
+			self.writeRichText(hf, child)
+
 	def writeRichText(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -202,6 +220,13 @@ class Reader(object):
 				with hf.element("p", **child.attrib):
 					self.writeRichText(hf, child)
 					continue
+			if child.tag == f"{tei}div":
+				self.writeDivSpan(hf, child, "div")
+				continue
+			if child.tag == f"{tei}span":
+				self.writeDivSpan(hf, child, "span")
+				continue
+
 			self.writeRichText(hf, child)
 
 	def writeSenseDefs(
@@ -280,7 +305,7 @@ class Reader(object):
 		self.writeSenseCits(hf, sense)
 
 	def getDirection(self, elem: "lxml.etree.Element"):
-		lang = elem.get("{http://www.w3.org/XML/1998/namespace}lang")
+		lang = elem.get(self.xmlLang)
 		if lang is None:
 			return ""
 		langObj = langDict[lang]
