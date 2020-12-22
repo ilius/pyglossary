@@ -262,10 +262,13 @@ if os.sep == "/":  # Operating system is Unix-Like
 		# platform.release() == "10.3.0"
 		cacheDir = join(_libDir, "Caches", "PyGlossary")
 		pip = "pip3"
-	else:  # GNU/Linux, ...
+	else:  # GNU/Linux, Termux, FreeBSD, etc
 		confDir = join(homeDir, ".pyglossary")
 		cacheDir = join(homeDir, ".cache", "pyglossary")
-		pip = "sudo pip3"
+		if "/com.termux/" in homeDir:
+			pip = "pip3"
+		else:
+			pip = "sudo pip3"
 elif os.sep == "\\":  # Operating system is Windows
 	homeDir = join(os.getenv("HOMEDRIVE"), os.getenv("HOMEPATH"))
 	user = os.getenv("USERNAME")
