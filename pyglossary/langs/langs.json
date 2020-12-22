@@ -93,6 +93,7 @@
 		"codes": ["arc"],
 		"name": "Aramaic",
 		"alt_names": ["Classical Syriac", "ܐܪܡܝܐ"],
+		"rtl": 1,
 		"script": ["Syriac"],
 		"wiki": "https://en.wikipedia.org/wiki/Aramaic",
 		"title_tag": "b"
@@ -562,6 +563,7 @@
 		"codes": ["he", "heb"],
 		"name": "Hebrew",
 		"alt_names": ["Ivrit", "עִבְרִית"],
+		"rtl": 1,
 		"script": ["Hebrew"],
 		"wiki": "https://en.wikipedia.org/wiki/Hebrew_language",
 		"title_tag": "b"
