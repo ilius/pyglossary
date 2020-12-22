@@ -250,7 +250,7 @@ appResDir = join(dataDir, "res")
 if os.sep == "/":  # Operating system is Unix-Like
 	homeDir = os.getenv("HOME")
 	user = os.getenv("USER")
-	tmpDir = "/tmp"
+	tmpDir = os.getenv("TMPDIR", "/tmp")
 	# os.name == "posix" # FIXME
 	if sysName == "darwin":  # MacOS X
 		_libDir = join(homeDir, "Library")
