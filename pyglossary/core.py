@@ -13,7 +13,7 @@ from os.path import (
 )
 import platform
 
-VERSION = "4.0.10"
+VERSION = "4.0.11"
 
 homePage = "https://github.com/ilius/pyglossary"
 
