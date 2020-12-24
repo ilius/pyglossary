@@ -54,6 +54,10 @@ def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 	if filename.startswith(targetDir):
 		return
 
+	if not isdir(targetDir):
+		log.warning(f"Directory {targetDir!r} does not exist, skipping install")
+		return
+
 	log.info(f"Installing {filename!r} to DICTD server directory: {targetDir}")
 
 	if dictzip and os.path.isfile(filename + ".dict.dz"):
