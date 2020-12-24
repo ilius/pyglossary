@@ -161,10 +161,9 @@ class EbookWriter(object):
 		if mode is None:
 			mode = zipfile.ZIP_DEFLATED
 		file_path = os.path.join(self._tmpDir, relative_path)
-		file_obj = self.myOpen(file_path, "wb")
 		contents = toBytes(contents)
-		file_obj.write(contents)
-		file_obj.close()
+		with self.myOpen(file_path, "wb") as file_obj:
+			file_obj.write(contents)
 		self.files.append({
 			"path": relative_path,
 			"mode": mode,
@@ -172,9 +171,8 @@ class EbookWriter(object):
 
 	def write_cover(self, cover_path):
 		basename = os.path.basename(cover_path)
-		cover_obj = self.myOpen(cover_path, "rb")
-		cover = cover_obj.read()
-		cover_obj.close()
+		with self.myOpen(cover_path, "rb") as cover_obj:
+			cover = cover_obj.read()
 		b = basename.lower()
 		mimetype = "image/jpeg"
 		if b.endswith(".png"):
@@ -188,9 +186,8 @@ class EbookWriter(object):
 		css = self.CSS_CONTENTS
 		if custom_css_path_absolute is not None:
 			try:
-				css_obj = self.myOpen(custom_css_path_absolute, "rb")
-				css = css_obj.read()
-				css_obj.close()
+				with self.myOpen(custom_css_path_absolute, "rb") as css_obj:
+					css = css_obj.read()
 			except Exception:
 				log.exception("")
 		self.add_file_manifest("OEBPS/style.css", "style.css", css, "text/css")
