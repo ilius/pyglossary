@@ -57,6 +57,25 @@ def runDictzip(filename: str) -> None:
 		log.error(f"dictzip error: {out}")
 
 
+def _rmtreeError(func, direc, exc_info):
+	exc_type, exc_val, exc_tb = exc_info
+	log.error(exc_val)
+
+
+def rmtree(direc):
+	import shutil
+	from os.path import isdir
+	try:
+		for i in range(2):
+			if isdir(direc):
+				shutil.rmtree(
+					direc,
+					onerror=_rmtreeError,
+				)
+	except Exception:
+		log.exception(f"error removing directory: {direc}")
+
+
 def showMemoryUsage():
 	if log.level > core.TRACE:
 		return

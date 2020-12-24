@@ -54,7 +54,7 @@ from .text_utils import (
 	fixUtf8,
 )
 from .glossary_utils import splitFilenameExt
-from .os_utils import showMemoryUsage
+from .os_utils import showMemoryUsage, rmtree
 from .glossary_type import GlossaryType
 
 log = logging.getLogger("pyglossary")
@@ -291,10 +291,6 @@ class Glossary(GlossaryType):
 
 		self.ui = ui
 
-	def _removeDir(self, dirPath):
-		import shutil
-		shutil.rmtree(dirPath)
-
 	def cleanup(self):
 		if not self._cleanupPathList:
 			return
@@ -311,10 +307,7 @@ class Glossary(GlossaryType):
 					log.exception(f"error removing {cleanupPath}")
 			elif isdir(cleanupPath):
 				log.debug(f"Removing directory {cleanupPath}")
-				try:
-					self._removeDir(cleanupPath)
-				except Exception:
-					log.exception(f"error removing {cleanupPath}/")
+				rmtree(cleanupPath)
 			else:
 				log.error(f"no such file or directory: {cleanupPath}")
 

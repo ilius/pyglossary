@@ -31,7 +31,7 @@ from datetime import datetime
 import shutil
 
 from pyglossary.text_utils import toStr, toBytes
-from pyglossary.os_utils import indir
+from pyglossary.os_utils import indir, rmtree
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -430,10 +430,7 @@ class EbookWriter(object):
 					)
 				zipFp.close()
 				if not self._keep:
-					try:
-						shutil.rmtree(self._tmpDir)
-					except Exception:
-						log.exception(f"error removing {self._tmpDir}/")
+					rmtree(self._tmpDir)
 			else:
 				if self._keep:
 					shutil.copytree(self._tmpDir, filename)
