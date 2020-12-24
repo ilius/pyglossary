@@ -132,6 +132,35 @@ def base_ui_run(
 	return True
 
 
+def getGitVersion(gitDir):
+	import subprocess
+	try:
+		outputB, error = subprocess.Popen(
+			[
+				"git",
+				"--git-dir", gitDir,
+				"describe",
+				"--always",
+			],
+			stdout=subprocess.PIPE,
+		).communicate()
+	except Exception as e:
+		sys.stderr.write(str(e) + "\n")
+		return ""
+	# if error == None:
+	return outputB.decode("utf-8").strip()
+
+
+def getVersion():
+	from pyglossary.core import rootDir
+	gitDir = os.path.join(rootDir, ".git")
+	if os.path.isdir(gitDir):
+		version = getGitVersion(gitDir)
+		if version:
+			return version
+	return core.VERSION
+
+
 def main():
 	parser = argparse.ArgumentParser(add_help=False)
 
@@ -148,8 +177,7 @@ def main():
 
 	parser.add_argument(
 		"--version",
-		action="version",
-		version=f"PyGlossary {core.VERSION}",
+		action="store_true",
 	)
 	parser.add_argument(
 		"-h",
@@ -335,6 +363,10 @@ def main():
 	# _______________________________
 
 	args = parser.parse_args()
+
+	if args.version:
+		print(f"PyGlossary {getVersion()}")
+		sys.exit(0)
 
 	log = logging.getLogger("pyglossary")
 
