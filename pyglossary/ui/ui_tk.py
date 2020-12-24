@@ -1137,7 +1137,7 @@ class UI(tix.Frame, UIBase):
 			background="#000",
 			foreground="#fff",
 		)
-		console.bind("<Key>", lambda e: "break")
+		console.bind("<Key>", self.consoleKeyPress)
 		# self.consoleH = 15
 		# sbar = Tix.Scrollbar(
 		# 	convertFrame,
@@ -1287,6 +1287,15 @@ class UI(tix.Frame, UIBase):
 			rootWin.attributes('-alpha', 1.0)
 		else:  # Linux
 			rootWin.deiconify()
+
+	def consoleKeyPress(self, e):
+		# print(e.state, e.keysym)
+		if e.state > 0:
+			if e.keysym == "c":
+				return
+		if e.keysym == "Escape":
+			return
+		return "break"
 
 	def verbosityChanged(self, index, value, op):
 		log.setVerbosity(
