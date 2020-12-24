@@ -1288,11 +1288,19 @@ class UI(tix.Frame, UIBase):
 		else:  # Linux
 			rootWin.deiconify()
 
+	def textSelectAll(self, tktext):
+		tktext.tag_add(tk.SEL, "1.0", tk.END)
+		tktext.mark_set(tk.INSERT, "1.0")
+		tktext.see(tk.INSERT)
+
 	def consoleKeyPress(self, e):
 		# print(e.state, e.keysym)
 		if e.state > 0:
 			if e.keysym == "c":
 				return
+			if e.keysym == "a":
+				self.textSelectAll(self.console)
+				return "break"
 		if e.keysym == "Escape":
 			return
 		return "break"
