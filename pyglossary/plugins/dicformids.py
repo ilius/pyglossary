@@ -141,6 +141,9 @@ class Writer(object):
 		word = word.lower()
 		return word
 
+	#def _sortKeyFunc(self, rawEntry: List[str, str, str]) -> Any:
+	#	pass
+
 	def sortKey(self, b_word: bytes) -> "Any":
 		# DO NOT change method name
 		# FIXME: confirm

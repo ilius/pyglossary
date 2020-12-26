@@ -36,6 +36,21 @@ from .compression import (
 log = logging.getLogger("pyglossary")
 
 
+class EntryList(list):
+	def __init__(self):
+		list.__init__(self)
+		self._sortKey = None
+
+	def setSortKey(self, sortKey, sampleItem):
+		self._sortKey = sortKey
+
+	def sort(self):
+		if self._sortKey is None:
+			raise ValueError("EntryList.sort: sortKey is not set")
+
+		list.sort(self, key=self._sortKey)
+
+
 def winZipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
 	import shutil
 	from .os_utils import indir
@@ -146,6 +161,7 @@ def uncompress(srcFilename: str, dstFilename: str, compression: str) -> None:
 
 	# TODO: if compression == "zip":
 	raise ValueError(f"unexpected compression={compression!r}")
+
 
 def splitFilenameExt(
 	filename: str = "",

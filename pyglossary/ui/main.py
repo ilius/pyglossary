@@ -296,6 +296,13 @@ def main():
 			", this is default"
 		),
 	)
+	parser.add_argument(
+		"--sqlite",
+		dest="sqlite",
+		action="store_true",
+		default=None,
+		help="use SQLite as middle storage instead of RAM in direct mode, for very large glossaries",
+	)
 
 	parser.add_argument(
 		"--no-progress-bar",
@@ -408,6 +415,13 @@ def main():
 	# with the logger setted up, we can import other pyglossary modules, so they
 	# can do some logging in right way.
 
+	if args.sqlite:
+		if args.direct:
+			log.critical("Conflicting flags: --sqlite and --direct")
+			sys.exit(1)
+		# args.direct is None by default which means automatic
+		args.direct = False
+
 	core.checkCreateConfDir()
 
 	if sys.getdefaultencoding() != "utf-8":
@@ -485,6 +499,7 @@ def main():
 		"sort",
 		"sortCacheSize",
 		# "sortKey",  # TODO
+		"sqlite",
 	)
 	glossarySetAttrsNames = (
 		"sourceLangName",

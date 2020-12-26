@@ -139,7 +139,13 @@ class TestGlossary(unittest.TestCase):
 		self.assertEqual(outputFilename, res)
 		self.compareTextFiles(outputFilename, expectedFilename)
 
-	def convert_txt_stardict(self, fname, dictzip=False, **kwargs):
+	def convert_txt_stardict(
+		self,
+		fname,
+		dictzip=False,
+		config=None,
+		**kwargs
+	):
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname}.ifo")
 		otherFiles = {
@@ -148,6 +154,8 @@ class TestGlossary(unittest.TestCase):
 		}
 
 		glos = Glossary()
+		if config is not None:
+			glos.config = config
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
@@ -172,6 +180,34 @@ class TestGlossary(unittest.TestCase):
 	def test_convert_txt_stardict_1(self):
 		self.convert_txt_stardict("100-en-fa")
 
+	def test_convert_txt_stardict_sqlite_1(self):
+		self.convert_txt_stardict(
+			"100-en-fa",
+			sqlite=True,
+		)
+
+	def test_convert_txt_stardict_sqlite_2(self):
+		self.convert_txt_stardict(
+			"100-en-fa",
+			config={"enable_alts": False},
+			sqlite=True,
+		)
+
+	def test_convert_sqlite_direct_error(self):
+		glos = Glossary()
+		err = ""
+		try:
+			res = glos.convert(
+				inputFilename="foo.txt",
+				outputFilename="bar.txt",
+				direct=True,
+				sqlite=True,
+			)
+		except Exception as e:
+			err = str(e)
+			res = ""
+		self.assertEqual(res, "")
+		self.assertEqual(err, "Conflictng arguments: direct=True, sqlite=True")
 
 	def test_convert_txt_slob_1(self):
 		fname = "100-en-fa"

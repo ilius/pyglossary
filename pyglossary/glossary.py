@@ -53,7 +53,10 @@ from .langs import langDict, Lang
 from .text_utils import (
 	fixUtf8,
 )
-from .glossary_utils import splitFilenameExt
+from .glossary_utils import (
+	splitFilenameExt,
+	EntryList,
+)
 from .os_utils import showMemoryUsage, rmtree
 from .glossary_type import GlossaryType
 from .info import *
@@ -255,7 +258,8 @@ class Glossary(GlossaryType):
 				we will not reference to it
 		"""
 		self._config = {}
-		self._data = []
+		self._data = EntryList()
+		self._sqlite = False
 		self._rawEntryCompress = True
 		self._cleanupPathList = set()
 		self.clear()
@@ -889,6 +893,7 @@ class Glossary(GlossaryType):
 
 		self.progressEnd()
 
+		log.trace(f"Loaded {len(self._data)} entries")
 		showMemoryUsage()
 
 	def _inactivateDirectMode(self) -> None:
@@ -945,10 +950,13 @@ class Glossary(GlossaryType):
 			if cacheSize > 0:
 				self._sortCacheSize = cacheSize  # FIXME
 		else:
+			if self._sqlite:
+				raise TypeError(
+					"can not use sortWords in SQLite mode"
+				)
 			t0 = now()
-			self._data.sort(
-				key=Entry.getRawEntrySortKey(self, key),
-			)
+			self._data.setSortKey(Entry.getRawEntrySortKey(self, key), ["a", "b"])
+			self._data.sort()
 			log.info(f"Sorting took {now() - t0:.1f} seconds")
 		self._sort = True
 		self._updateIter()
@@ -1112,7 +1120,6 @@ class Glossary(GlossaryType):
 				f"Full sort enabled, falling back to indirect mode"
 			)
 			self._inactivateDirectMode()
-			log.info(f"Loaded {len(self._data)} entries")
 
 		writer = None
 		if format not in self.plugins or not self.plugins[format].canWrite:
@@ -1155,7 +1162,8 @@ class Glossary(GlossaryType):
 					self._sortCacheSize = sortCacheSize  # FIXME
 			else:
 				t0 = now()
-				self._data.sort(key=Entry.getRawEntrySortKey(self, sortKey))
+				self._data.setSortKey(Entry.getRawEntrySortKey(self, sortKey), ["a", "b"])
+				self._data.sort()
 				log.info(f"Sorting took {now() - t0:.1f} seconds")
 
 		self._updateIter()
@@ -1217,6 +1225,33 @@ class Glossary(GlossaryType):
 		from pyglossary.glossary_utils import compress
 		return compress(self, filename, compression)
 
+	def _switchToSQLite(self, inputFilename, outputFormat):
+		from pyglossary.sqlist import SQList
+
+		outputPlugin = self.plugins[outputFormat]
+		sqliteSortKey = getattr(outputPlugin.writerClass, "sqliteSortKey", None)
+
+		if not sqliteSortKey:
+			log.warning(f"{outputFormat} writer does not support sqliteSortKey")
+			return
+
+		sq_fpath = join(cacheDir, f"{basename(inputFilename)}.db")
+		if isfile(sq_fpath):
+			log.info(f"Removing and re-creating {sq_fpath!r}")
+			os.remove(sq_fpath)
+
+		self._data = SQList(sq_fpath, sqliteSortKey, persist=True)
+		self._rawEntryCompress = False
+		self._cleanupPathList.add(sq_fpath)
+
+		if not self._config.get("enable_alts", True):
+			log.warning(
+				f"SQLite mode only works with enable_alts=True"
+				f", force-enabling it."
+			)
+		self._config["enable_alts"] = True
+
+
 	def convert(
 		self,
 		inputFilename: str,
@@ -1231,6 +1266,7 @@ class Glossary(GlossaryType):
 		sortCacheSize: int = 0,
 		readOptions: "Optional[Dict[str, Any]]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
+		sqlite: bool = False,
 	) -> "Optional[str]":
 		"""
 		returns absolute path of output file, or None if failed
@@ -1261,13 +1297,19 @@ class Glossary(GlossaryType):
 			return
 		outputFilename, outputFormat, compression = outputArgs
 
-		if direct is None:
-			if sort is not True:
-				direct = True  # FIXME
-
 		if isdir(outputFilename):
 			log.critical(f"Directory already exists: {outputFilename}")
 			return
+
+		self._sqlite = sqlite
+		if sqlite:
+			if direct:
+				raise ValueError(f"Conflictng arguments: direct=True, sqlite=True")
+			direct = False
+			self._switchToSQLite(inputFilename, outputFormat)
+		elif direct is None:
+			# if sort is in (False, None) ==> direct = True
+			direct = not sort
 
 		showMemoryUsage()
 

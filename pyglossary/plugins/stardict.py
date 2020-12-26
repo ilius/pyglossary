@@ -470,6 +470,27 @@ class Writer(object):
 	_audio_goldendict: bool = False
 	_audio_icon: bool = True
 
+	sqliteSortKey = [
+		(
+			"wordlower",
+			"TEXT",
+			lambda x: x[0].split(b"|")[0].lower(),
+		),
+		(
+			"word",
+			"TEXT",
+			lambda x: x[0].split(b"|")[0],
+		),
+	]
+	"""
+		https://en.wikipedia.org/wiki/UTF-8#Comparison_with_other_encodings
+
+		Sorting order: The chosen values of the leading bytes means that a list
+		of UTF-8 strings can be sorted in code point order by sorting the
+		corresponding byte sequences.
+	"""
+
+
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._filename = None
