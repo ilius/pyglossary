@@ -106,6 +106,17 @@ class MDict(object):
 			print("Try Brutal Force on Encrypted Key Blocks")
 			self._key_list = self._read_keys_brutal()
 
+	def __repr__(self):
+		return (
+			f"MDict({self._fname!r}, "
+			f"encoding={self._encoding!r}, "
+			f"passcode={self._passcode})"
+		)
+
+	@property
+	def filename(self):
+		return self._fname
+
 	def __len__(self):
 		return self._num_entries
 
