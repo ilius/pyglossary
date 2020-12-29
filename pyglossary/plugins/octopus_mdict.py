@@ -165,10 +165,13 @@ class Reader(object):
 		gc.collect()
 
 		for mdd in self._mdd:
-			for b_fname, b_data in mdd.items():
-				fname = toStr(b_fname)
-				fname = fname.replace("\\", os.sep).lstrip(os.sep)
-				yield glos.newDataEntry(fname, b_data)
+			try:
+				for b_fname, b_data in mdd.items():
+					fname = toStr(b_fname)
+					fname = fname.replace("\\", os.sep).lstrip(os.sep)
+					yield glos.newDataEntry(fname, b_data)
+			except Exception as e:
+				log.exception(f"Error reading {mdd.filename}")
 		self._mdd = []
 
 	def __len__(self):
