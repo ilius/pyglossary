@@ -68,6 +68,15 @@ class Reader(object):
 		self._filename = filename
 		self._mdx = MDX(filename, self._encoding, self._substyle)
 
+		"""
+			multiple MDD files are supported with this naming schema:
+				FILE.mdx
+				FILE.mdd
+				FILE.1.mdd
+				FILE.2.mdd
+				FILE.3.mdd
+		"""
+
 		filenameNoExt, ext = splitext(self._filename)
 		mddBase = "".join([filenameNoExt, extsep])
 		for fname in (f"{mddBase}mdd", f"{mddBase}1.mdd"):
