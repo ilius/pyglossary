@@ -175,6 +175,11 @@ class Reader(object):
 				self.writeRef(hf, item)
 				return
 
+			if item.tag == f"{tei}quote":
+				self.writeWithDirection(hf, item, "div")
+				count += 1
+				return
+
 			for child in item.xpath("child::node()"):
 				writeChild(child, depth + 1)
 			if depth < 1:
@@ -183,13 +188,14 @@ class Reader(object):
 		for child in cit.xpath("child::node()"):
 			writeChild(child, 0)
 
-	def writeDivSpan(self, hf, child, tag):
+	def writeWithDirection(self, hf, child, tag):
 		attrib = child.attrib
 		try:
 			lang = attrib.pop(self.xmlLang)
 		except KeyError:
 			pass
 		else:
+			attrib["lang"] = lang
 			if self._auto_rtl:
 				langObj = langDict[lang]
 				if langObj:
@@ -197,6 +203,13 @@ class Reader(object):
 						attrib["dir"] = "rtl"
 					else:
 						attrib["dir"] = "ltr"
+		try:
+			_type = attrib.pop("type")
+		except KeyError:
+			pass
+		else:
+			if _type not in ("trans",):
+				attrib["class"] = _type
 		with hf.element(tag, **attrib):
 			self.writeRichText(hf, child)
 
@@ -221,42 +234,54 @@ class Reader(object):
 					self.writeRichText(hf, child)
 					continue
 			if child.tag == f"{tei}div":
-				self.writeDivSpan(hf, child, "div")
+				self.writeWithDirection(hf, child, "div")
 				continue
 			if child.tag == f"{tei}span":
-				self.writeDivSpan(hf, child, "span")
+				self.writeWithDirection(hf, child, "span")
 				continue
 
 			self.writeRichText(hf, child)
 
-	def writeSenseDefs(
-		self,
-		hf: "lxml.etree.htmlfile",
-		sense: "lxml.etree.Element",
-	):
-		from lxml import etree as ET
-		defiList = sense.findall("sense/def", self.ns)
-		self.makeList(
-			hf,
-			defiList,
-			self.writeRichText,
-			single_prefix="",
-		)
-		if len(defiList) == 1:
-			hf.write(ET.Element("br"))
+	def extractCits(self, sense: "lxml.etree.Element"):
+		# this <sense> can be 1st-level or 2nd-level
+		transCits = []
+		exampleCits = []
+		for cit in sense.findall("./cit", self.ns):
+			if cit.attrib.get("type", "trans") == "trans":
+				transCits.append(cit)
+				continue
+			if cit.attrib.get("type") == "example":
+				exampleCits.append(cit)
+				continue
+			log.warning(f"unknown cit type: {self.tostring(cit)}")
+		return transCits, exampleCits
 
 	def writeSenseCits(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sense: "lxml.etree.Element",
 	):
-		# translations
+		from lxml import etree as ET
+		# this <sense> element can be 1st-level (directly under <entry>)
+		# or 2nd-level
+		transCits, exampleCits = self.extractCits(sense)
 		self.makeList(
 			hf,
-			sense.findall("cit", self.ns),
+			transCits,
 			self.writeCit,
 			single_prefix="",
 		)
+		if exampleCits:
+			for cit in exampleCits:
+				with hf.element("div", **{"class": "example"}):
+					for quote in cit.findall("quote", self.ns):
+						self.writeWithDirection(hf, quote, "div")
+					for cit2 in cit.findall("cit", self.ns):
+						for quote in cit2.findall("quote", self.ns):
+							quote.attrib.update(cit2.attrib)
+							self.writeWithDirection(hf, quote, "div")
+
+		return len(transCits) + len(exampleCits)
 
 	def writeGramGroups(
 		self,
@@ -295,13 +320,40 @@ class Reader(object):
 	):
 		self.writeGramGroups(hf, sense.findall("gramGrp", self.ns))
 
+	def writeSenseSense(
+		self,
+		hf: "lxml.etree.htmlfile",
+		sense: "lxml.etree.Element",
+	):
+		# this <sense> element is 2st-level (under 1st-level <sense>)
+		from lxml import etree as ET
+		childCount = 0
+		for child in sense.iterchildren():
+			if child.tag == "{tei}def":
+				self.writeRichText(hf, child)
+				childCount += 1
+				continue
+			if child.tag == "{tei}cit":
+				pass
+
+		childCount += self.writeSenseCits(hf, sense)
+
+		# if childCount == 1:
+		# 	hf.write(ET.Element("br"))
+
 	def writeSense(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sense: "lxml.etree.Element",
 	):
+		# this <sense> element is 1st-level (directly under <entry>)
 		self.writeSenseGrams(hf, sense)
-		self.writeSenseDefs(hf, sense)
+		self.makeList(
+			hf,
+			sense.findall("sense", self.ns),
+			self.writeSenseSense,
+			single_prefix="",
+		)
 		self.writeSenseCits(hf, sense)
 
 	def getDirection(self, elem: "lxml.etree.Element"):
@@ -321,6 +373,7 @@ class Reader(object):
 		hf: "lxml.etree.htmlfile",
 		senseList: "List[lxml.etree.Element]",
 	):
+		# these <sense> elements are 1st-level (directly under <entry>)
 		if not senseList:
 			return
 
