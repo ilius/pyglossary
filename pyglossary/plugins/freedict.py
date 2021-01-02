@@ -27,6 +27,7 @@ optionsProp = {
 	"gram_color": StrOption(
 		comment="grammar color",
 	),
+	"example_padding": IntOption(),
 }
 
 # https://freedict.org/
@@ -46,6 +47,8 @@ class Reader(object):
 	_word_title: bool = False
 	_pron_color: str = "gray"
 	_gram_color: str = "green"
+
+	_example_padding: int = 10
 
 	ns = {
 		None: "http://www.tei-c.org/ns/1.0",
@@ -273,7 +276,10 @@ class Reader(object):
 		)
 		if exampleCits:
 			for cit in exampleCits:
-				with hf.element("div", **{"class": "example"}):
+				with hf.element("div", **{
+					"class": "example",
+					"style": f"padding: {self._example_padding}px 0px;",
+				}):
 					for quote in cit.findall("quote", self.ns):
 						self.writeWithDirection(hf, quote, "div")
 					for cit2 in cit.findall("cit", self.ns):
