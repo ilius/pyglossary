@@ -148,10 +148,47 @@ class Reader(object):
 		with hf.element("a", href=target):
 			hf.write(ref.text)
 
-	def writeCit(
+
+	def writeQuote(
 		self,
 		hf: "lxml.etree.htmlfile",
-		cit: "lxml.etree.Element",
+		elem: "lxml.etree.Element",
+	):
+		self.writeWithDirection(hf, elem, "div")
+
+	def writeTransCit(
+		self,
+		hf: "lxml.etree.htmlfile",
+		elem: "lxml.etree.Element",
+	):
+		from lxml import etree as ET
+
+		quotes = []
+		for child in elem.xpath("child::node()"):
+			if isinstance(child, str):
+				child = child.strip()
+				if child:
+					hf.write(child)
+					log.warning(f"text directly inside <cit>")
+				continue
+
+			if child.tag != f"{tei}quote":
+				log.warning(f"unknown tag {child.tag} inside <cit>")
+				continue
+
+			quotes.append(child)
+
+		self.makeList(
+			hf,
+			quotes,
+			self.writeQuote,
+			single_prefix="",
+		)
+
+	def writeDef(
+		self,
+		hf: "lxml.etree.htmlfile",
+		elem: "lxml.etree.Element",
 	):
 		from lxml import etree as ET
 
@@ -168,8 +205,8 @@ class Reader(object):
 					return
 				if count > 0:
 					hf.write(sep)
-				with hf.element(self.getTitleTag(item)):
-					hf.write(item)
+				# with hf.element(self.getTitleTag(item)):
+				hf.write(item)
 				return
 
 			if item.tag == f"{tei}ref":
@@ -178,17 +215,12 @@ class Reader(object):
 				self.writeRef(hf, item)
 				return
 
-			if item.tag == f"{tei}quote":
-				self.writeWithDirection(hf, item, "div")
-				count += 1
-				return
-
 			for child in item.xpath("child::node()"):
 				writeChild(child, depth + 1)
 			if depth < 1:
 				count += 1
 
-		for child in cit.xpath("child::node()"):
+		for child in elem.xpath("child::node()"):
 			writeChild(child, 0)
 
 	def writeWithDirection(self, hf, child, tag):
@@ -245,21 +277,28 @@ class Reader(object):
 
 			self.writeRichText(hf, child)
 
-	def extractCits(self, sense: "lxml.etree.Element"):
+	def extractCitsDefs(self, sense: "lxml.etree.Element"):
 		# this <sense> can be 1st-level or 2nd-level
 		transCits = []
+		defList = []
 		exampleCits = []
-		for cit in sense.findall("./cit", self.ns):
-			if cit.attrib.get("type", "trans") == "trans":
-				transCits.append(cit)
+		for child in sense.iterchildren():
+			if child.tag == f"{tei}cit":
+				if child.attrib.get("type", "trans") == "trans":
+					transCits.append(child)
+				elif child.attrib.get("type") == "example":
+					exampleCits.append(child)
+				else:
+					log.warning(f"unknown cit type: {self.tostring(child)}")
 				continue
-			if cit.attrib.get("type") == "example":
-				exampleCits.append(cit)
-				continue
-			log.warning(f"unknown cit type: {self.tostring(cit)}")
-		return transCits, exampleCits
 
-	def writeSenseCits(
+			if child.tag == f"{tei}def":
+				defList.append(child)
+				continue
+
+		return transCits, defList, exampleCits
+
+	def writeSenseCitsDefs(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sense: "lxml.etree.Element",
@@ -267,11 +306,17 @@ class Reader(object):
 		from lxml import etree as ET
 		# this <sense> element can be 1st-level (directly under <entry>)
 		# or 2nd-level
-		transCits, exampleCits = self.extractCits(sense)
+		transCits, defList, exampleCits = self.extractCitsDefs(sense)
+		self.makeList(
+			hf,
+			defList,
+			self.writeDef,
+			single_prefix="",
+		)
 		self.makeList(
 			hf,
 			transCits,
-			self.writeCit,
+			self.writeTransCit,
 			single_prefix="",
 		)
 		if exampleCits:
@@ -333,16 +378,7 @@ class Reader(object):
 	):
 		# this <sense> element is 2st-level (under 1st-level <sense>)
 		from lxml import etree as ET
-		childCount = 0
-		for child in sense.iterchildren():
-			if child.tag == "{tei}def":
-				self.writeRichText(hf, child)
-				childCount += 1
-				continue
-			if child.tag == "{tei}cit":
-				pass
-
-		childCount += self.writeSenseCits(hf, sense)
+		childCount = self.writeSenseCitsDefs(hf, sense)
 
 		# if childCount == 1:
 		# 	hf.write(ET.Element("br"))
@@ -360,7 +396,7 @@ class Reader(object):
 			self.writeSenseSense,
 			single_prefix="",
 		)
-		self.writeSenseCits(hf, sense)
+		self.writeSenseCitsDefs(hf, sense)
 
 	def getDirection(self, elem: "lxml.etree.Element"):
 		lang = elem.get(self.xmlLang)
