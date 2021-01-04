@@ -101,6 +101,7 @@ class Reader(object):
 		"t": "transitive",
 		"i": "intransitive",
 	}
+
 	def makeList(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -147,7 +148,6 @@ class Reader(object):
 			target = f"bword://{ref.text}"
 		with hf.element("a", href=target):
 			hf.write(ref.text)
-
 
 	def writeQuote(
 		self,
@@ -277,10 +277,17 @@ class Reader(object):
 
 			self.writeRichText(hf, child)
 
-	def extractCitsDefs(self, sense: "lxml.etree.Element"):
-		# this <sense> can be 1st-level or 2nd-level
+	def writeSenseCitsDefs(
+		self,
+		hf: "lxml.etree.htmlfile",
+		sense: "lxml.etree.Element",
+	):
+		from lxml import etree as ET
+		# this <sense> element can be 1st-level (directly under <entry>)
+		# or 2nd-level
 		transCits = []
 		defList = []
+		notes = []
 		exampleCits = []
 		for child in sense.iterchildren():
 			if child.tag == f"{tei}cit":
@@ -296,21 +303,25 @@ class Reader(object):
 				defList.append(child)
 				continue
 
-		return transCits, defList, exampleCits
+			if child.tag == f"{tei}note":
+				notes.append(child)
+				continue
 
-	def writeSenseCitsDefs(
-		self,
-		hf: "lxml.etree.htmlfile",
-		sense: "lxml.etree.Element",
-	):
-		from lxml import etree as ET
-		# this <sense> element can be 1st-level (directly under <entry>)
-		# or 2nd-level
-		transCits, defList, exampleCits = self.extractCitsDefs(sense)
+			if child.tag in (f"{tei}sense", f"{tei}gramGrp"):
+				continue
+
+			log.warning(f"unknown tag {child.tag} in <cit>")
+
 		self.makeList(
 			hf,
 			defList,
 			self.writeDef,
+			single_prefix="",
+		)
+		self.makeList(
+			hf,
+			notes,
+			self.writeRichText,
 			single_prefix="",
 		)
 		self.makeList(
