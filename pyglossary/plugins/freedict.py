@@ -173,7 +173,7 @@ class Reader(object):
 				continue
 
 			if child.tag != f"{tei}quote":
-				log.warning(f"unknown tag {child.tag} inside <cit>")
+				log.warning(f"unknown tag {child.tag} inside translation <cit>")
 				continue
 
 			quotes.append(child)
@@ -192,7 +192,7 @@ class Reader(object):
 	):
 		from lxml import etree as ET
 
-		sep = ", "
+		sep = ", "  # TODO: self.getCommaSep(sample)
 		# if self._cif_newline:
 		# 	sep = ET.Element("br")
 		count = 0
@@ -277,6 +277,34 @@ class Reader(object):
 
 			self.writeRichText(hf, child)
 
+	def getLangDesc(self, elem):
+		lang = elem.attrib.get(self.xmlLang)
+		if lang:
+			langObj = langDict[lang]
+			if not langObj:
+				log.warning(f"unknown lang {lang!r} in {self.tostring(elem)}")
+				return
+			return langObj.name
+
+		orig = elem.attrib.get("orig")
+		if orig:
+			return orig
+
+		log.warning(f"unknown lang name in {self.tostring(elem)}")
+
+	def writeLangTag(self, hf, elem):
+		langDesc = self.getLangDesc(elem)
+		if not langDesc:
+			return
+		# TODO: make it Italic or change font color?
+		if elem.text:
+			hf.write(f"{langDesc}: {elem.text}")
+		else:
+			hf.write(f"{langDesc}")
+
+	def writeNote(self, hf, note):
+		self.writeRichText(hf, note)
+
 	def writeSenseCitsDefs(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -287,7 +315,10 @@ class Reader(object):
 		# or 2nd-level
 		transCits = []
 		defList = []
-		notes = []
+		gramList = []
+		noteList = []
+		refList = []
+		usgList = []
 		exampleCits = []
 		for child in sense.iterchildren():
 			if child.tag == f"{tei}cit":
@@ -304,13 +335,40 @@ class Reader(object):
 				continue
 
 			if child.tag == f"{tei}note":
-				notes.append(child)
+				_type = child.attrib.get("type")
+				if not _type:
+					noteList.append(child)
+				elif _type in ("pos", "gram"):
+					gramList.append(child)
+				elif _type in (
+					"sense", "stagr", "stagk", "def", "usage", "hint",
+					"status", "editor", "dom", "infl", "obj", "lbl",
+				):
+					noteList.append(child)
+				else:
+					log.warning(f"unknown note type {_type}")
+					noteList.append(child)
+				continue
+
+			if child.tag == f"{tei}ref":
+				refList.append(child)
+				continue
+
+			if child.tag == f"{tei}usg":
+				if not child.text:
+					log.warning(f"empty usg: {self.tostring(child)}")
+					continue
+				usgList.append(child)
+				continue
+
+			if child.tag == f"{tei}lang":
+				self.writeLangTag(hf, child)
 				continue
 
 			if child.tag in (f"{tei}sense", f"{tei}gramGrp"):
 				continue
 
-			log.warning(f"unknown tag {child.tag} in <cit>")
+			log.warning(f"unknown tag {child.tag} in <sense>")
 
 		self.makeList(
 			hf,
@@ -318,10 +376,17 @@ class Reader(object):
 			self.writeDef,
 			single_prefix="",
 		)
+		if gramList:
+			with hf.element("div"):
+				for i, gram in enumerate(gramList):
+					if i > 0:
+						hf.write(self.getCommaSep(gram.text))
+					with hf.element("font", color=self._gram_color):
+						hf.write(gram.text)
 		self.makeList(
 			hf,
-			notes,
-			self.writeRichText,
+			noteList,
+			self.writeNote,
 			single_prefix="",
 		)
 		self.makeList(
@@ -330,6 +395,20 @@ class Reader(object):
 			self.writeTransCit,
 			single_prefix="",
 		)
+		if refList:
+			with hf.element("div"):
+				hf.write("Related: ")
+				for i, ref in enumerate(refList):
+					if i > 0:
+						hf.write(" | ")
+					self.writeRef(hf, ref)
+		if usgList:
+			with hf.element("div"):
+				hf.write("Usage: ")
+				for i, usg in enumerate(usgList):
+					if i > 0:
+						hf.write(self.getCommaSep(usg.text))
+					hf.write(usg.text)
 		if exampleCits:
 			for cit in exampleCits:
 				with hf.element("div", **{
@@ -345,6 +424,13 @@ class Reader(object):
 
 		return len(transCits) + len(exampleCits)
 
+	def getCommaSep(self, sample: str):
+		if self._auto_rtl:
+			ws = getWritingSystemFromText(sample)
+			if ws:
+				sep = ws.comma + " "
+		return ", "
+
 	def writeGramGroups(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -352,7 +438,6 @@ class Reader(object):
 	):
 		from lxml import etree as ET
 
-		auto_rtl = self._auto_rtl
 		color = self._gram_color
 		for gramGrp in gramGrpList:
 			parts = []
@@ -363,12 +448,7 @@ class Reader(object):
 			if not parts:
 				continue
 
-			sep = ", "
-			if auto_rtl:
-				ws = getWritingSystemFromText(parts[0])
-				if ws:
-					sep = ws.comma + " "
-
+			sep = self.getCommaSep(parts[0])
 			text = sep.join(parts)
 			with hf.element("font", color=color):
 				hf.write(text)
@@ -528,7 +608,7 @@ class Reader(object):
 				if pronList:
 					for i, pron in enumerate(pronList):
 						if i > 0:
-							hf.write(", ")
+							hf.write(self.getCommaSep(pron))
 						hf.write("/")
 						with hf.element("font", color=pron_color):
 							hf.write(f"{pron}")
@@ -562,7 +642,7 @@ class Reader(object):
 			log.warn(f"unexpected extent={extent}")
 			return
 		try:
-			self._wordCount = int(extent.split(" ")[0])
+			self._wordCount = int(extent.split(" ")[0].replace(",", ""))
 		except Exception:
 			log.exception(f"unexpected extent={extent}")
 
