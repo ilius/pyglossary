@@ -428,7 +428,7 @@ class Reader(object):
 		if self._auto_rtl:
 			ws = getWritingSystemFromText(sample)
 			if ws:
-				sep = ws.comma + " "
+				return ws.comma + " "
 		return ", "
 
 	def writeGramGroups(
