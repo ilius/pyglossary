@@ -15,6 +15,7 @@ optionsProp = {
 
 
 class Reader(object):
+	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
 	}
@@ -286,14 +287,14 @@ class Reader(object):
 		# also good: f"https://sakuradict.com/search?q={{word}}"
 
 		header = ""
-		with open(filename, mode="rt", encoding="utf-8") as _file:
+		with compressionOpen(filename, mode="rt", encoding="utf-8") as _file:
 			for line in _file:
 				if "<JMdict>" in line:
 					break
 				header += line
 		self.setMetadata(header)
 
-		self._file = open(filename, mode="rb")
+		self._file = compressionOpen(filename, mode="rb")
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		from lxml import etree as ET
