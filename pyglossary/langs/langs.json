@@ -1516,6 +1516,15 @@
 		"title_tag": "b"
 	},
 	{
+		"codes": ["ota"],
+		"name": "Ottoman Turkish",
+		"alt_names": ["لسان عثمانى‎", "lisân-ı Osmânî", "Osmanlı Türkçesi"],
+		"rtl": 1,
+		"script": ["Arabic", "Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Ottoman_Turkish",
+		"title_tag": "b"
+	},
+	{
 		"codes": ["trw"],
 		"name": "Torwali",
 		"alt_names": ["توروالی"],
