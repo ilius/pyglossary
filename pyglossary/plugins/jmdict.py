@@ -68,6 +68,16 @@ class Reader(object):
 		def br():
 			return ET.Element("br")
 
+		for elem in sense.findall("pos"):
+			if not elem.text:
+				continue
+			desc = elem.text
+			if desc == "unclassified":
+				continue
+			with hf.element("i"):
+				hf.write(f"{desc.capitalize()}")
+			hf.write(br())
+
 		glossList = [
 			elem.text.strip()
 			for elem in sense.findall("gloss")
@@ -78,16 +88,6 @@ class Reader(object):
 				if i > 0:
 					hf.write(", ")
 				hf.write(gloss)
-			hf.write(br())
-
-		for elem in sense.findall("pos"):
-			if not elem.text:
-				continue
-			desc = elem.text
-			if desc == "unclassified":
-				continue
-			with hf.element("i"):
-				hf.write(f"{desc.capitalize()}")
 			hf.write(br())
 
 		relatedWords = []
