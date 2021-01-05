@@ -144,9 +144,13 @@ class Reader(object):
 		ref: "lxml.etree.Element",
 	):
 		target = ref.get("target")
-		if not target:
+		attrib = {}
+		if target:
+			if "://" in target:
+				attrib["class"] = "external"
+		else:
 			target = f"bword://{ref.text}"
-		with hf.element("a", href=target):
+		with hf.element("a", href=target, **attrib):
 			hf.write(ref.text)
 
 	def writeQuote(
@@ -172,8 +176,14 @@ class Reader(object):
 					log.warning(f"text directly inside <cit>")
 				continue
 
+			if child.__class__.__name__ == "_Comment":
+				continue
+
 			if child.tag != f"{tei}quote":
-				log.warning(f"unknown tag {child.tag} inside translation <cit>")
+				log.warning(
+					f"unknown tag {child.tag!r} inside translation <cit>"
+					f": {self.tostring(child)}"
+				)
 				continue
 
 			quotes.append(child)
@@ -553,6 +563,8 @@ class Reader(object):
 			else:
 				log.warning(f"<gram> with no type: {self.tostring(elem)}")
 				return text
+		if tag == f"{tei}note":
+			return text
 		log.warning(f"unrecognize GramGrp child tag: {self.tostring(elem)}")
 		return ""
 
