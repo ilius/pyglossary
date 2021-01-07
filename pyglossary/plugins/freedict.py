@@ -315,7 +315,7 @@ class Reader(object):
 	def writeNote(self, hf, note):
 		self.writeRichText(hf, note)
 
-	def writeSenseCitsDefs(
+	def writeSenseSense(
 		self,
 		hf: "lxml.etree.htmlfile",
 		sense: "lxml.etree.Element",
@@ -329,6 +329,7 @@ class Reader(object):
 		noteList = []
 		refList = []
 		usgList = []
+		xrList = []
 		exampleCits = []
 		for child in sense.iterchildren():
 			if child.tag == f"{tei}cit":
@@ -378,6 +379,10 @@ class Reader(object):
 			if child.tag in (f"{tei}sense", f"{tei}gramGrp"):
 				continue
 
+			if child.tag == f"{tei}xr":
+				xrList.append(child)
+				continue
+
 			log.warning(f"unknown tag {child.tag} in <sense>")
 
 		self.makeList(
@@ -412,6 +417,10 @@ class Reader(object):
 					if i > 0:
 						hf.write(" | ")
 					self.writeRef(hf, ref)
+		if xrList:
+			for xr in xrList:
+				with hf.element("div"):
+					self.writeRichText(hf, xr)
 		if usgList:
 			with hf.element("div"):
 				hf.write("Usage: ")
@@ -472,18 +481,6 @@ class Reader(object):
 	):
 		self.writeGramGroups(hf, sense.findall("gramGrp", self.ns))
 
-	def writeSenseSense(
-		self,
-		hf: "lxml.etree.htmlfile",
-		sense: "lxml.etree.Element",
-	):
-		# this <sense> element is 2st-level (under 1st-level <sense>)
-		from lxml import etree as ET
-		childCount = self.writeSenseCitsDefs(hf, sense)
-
-		# if childCount == 1:
-		# 	hf.write(ET.Element("br"))
-
 	def writeSense(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -497,7 +494,7 @@ class Reader(object):
 			self.writeSenseSense,
 			single_prefix="",
 		)
-		self.writeSenseCitsDefs(hf, sense)
+		self.writeSenseSense(hf, sense)
 
 	def getDirection(self, elem: "lxml.etree.Element"):
 		lang = elem.get(self.xmlLang)
