@@ -170,17 +170,6 @@ def sortkey(strength, maxlength=None):
 		return lambda x: c.getSortKey(x)[:maxlength]
 
 
-def sortkey_length(strength, word):
-	c = Collator.createInstance(Locale(''))
-	c.setStrength(strength)
-	c.setAttribute(
-		UCollAttribute.ALTERNATE_HANDLING,
-		UCollAttributeValue.SHIFTED,
-	)
-	coll_key = c.getSortKey(word)
-	return len(coll_key) - 1  # subtract 1 for ending \x00 byte
-
-
 class MultiFileReader(io.BufferedIOBase):
 
 	def __init__(self, *args):
