@@ -19,6 +19,7 @@ Feature-specific Requirements on [Termux](https://github.com/termux/termux-app)
 
 - **Reading or writing Aard 2 (.slob)**
 
+	+ `pkg install libicu`
 	+ `pip install PyICU`
 
 
