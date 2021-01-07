@@ -83,13 +83,55 @@ class Reader(object):
 		from pyglossary.plugin_lib import slob
 		self._filename = filename
 		self._slobObj = slob.open(filename)
-		tags = self._slobObj.tags
-		name = tags.get("label")
-		if name:
+		tags = dict(self._slobObj.tags.items())
+
+		try:
+			name = tags.pop("label")
+		except KeyError:
+			pass
+		else:
 			self._glos.setInfo("name", name)
-		creationTime = tags.get("created.at")
-		if creationTime:
+
+		try:
+			creationTime = tags.pop("created.at")
+		except KeyError:
+			pass
+		else:
 			self._glos.setInfo("creationTime", creationTime)
+
+		try:
+			createdBy = tags.pop("created.by")
+		except KeyError:
+			pass
+		else:
+			self._glos.setInfo("author", createdBy)
+
+		copyrightLines = []
+		for key in ("copyright", "license.name", "license.url"):
+			try:
+				value = tags.pop(key)
+			except KeyError:
+				continue
+			copyrightLines.append(value)
+		if copyrightLines:
+			self._glos.setInfo("copyright", "\n".join(copyrightLines))
+
+		try:
+			uri = tags.pop("uri")
+		except KeyError:
+			pass
+		else:
+			self._glos.setInfo("website", uri)
+
+		try:
+			edition = tags.pop("edition")
+		except KeyError:
+			pass
+		else:
+			self._glos.setInfo("edition", edition)
+
+		for key, value in tags.items():
+			self._glos.setInfo(f"slob.{key}", value)
 
 	def __len__(self):
 		if self._slobObj is None:
