@@ -46,7 +46,12 @@ class Reader(object):
 			"select word, definition from dictionary"
 			" order by word"
 		)
-		for row in self._cur:
+		# iteration over self._cur stops after one entry
+		# and self._cur.fetchone() returns None
+		# no idea why!
+		# https://github.com/ilius/pyglossary/issues/282
+		# for row in self._cur:
+		for row in self._cur.fetchall():
 			word = html.unescape(row[0])
 			definition = row[1]
 			yield self._glos.newEntry(word, definition, defiFormat="m")
