@@ -157,6 +157,18 @@ Or
 	python3 main.py --ui=tk
 
 
+Installation on Windows
+-----------------------
+- [Download and install Python](https://www.python.org/downloads/windows/) (3.8 or 3.9 is recommended)
+- Open Start -> type Command -> right-click on Command Prompt -> Run as administrator
+- To ensure you have `pip`, run: `python -m ensurepip --upgrade`
+- To install, run: `pip install --upgrade pyglossary`
+- Now you should be able to run `pyglossary` command
+- If command was not found, make sure Python environment variables are set up:
+
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/windows-python39-env-vars.png" width="50%" height="50%"/>
+
+
 Feature-specific Requirements
 ----------------------------
 
