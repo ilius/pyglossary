@@ -209,7 +209,8 @@ class Writer(object):
 		"json": "application/json",
 		"woff": "application/font-woff",
 		"ttf": "application/x-font-ttf",
-		"otf": "application/x-font-opentype"
+		"otf": "application/x-font-opentype",
+		"mp3": "audio/mpeg",
 		# "application/octet-stream+xapian",
 	}
 
