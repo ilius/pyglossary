@@ -112,9 +112,10 @@ class Reader(object):
 			raise RuntimeError("iterating over a reader while it's not open")
 		dictdb = self._dictdb
 		for word in dictdb.getdeflist():
-			b_defi = b"\n<hr>\n".join(dictdb.getdef(word))
+			b_defi = b"\n\n--------\n\n".join(dictdb.getdef(word))
 			try:
-				defi = b_defi.decode("utf_8")
+				b_defi = b_defi.replace(b"\n\n", b"\n \n")
+				defi = b_defi.decode("utf_8", 'ignore')
 			except Exception as e:
 				log.error(f"b_defi = {b_defi}")
 				raise e
