@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 from formats_common import *
 from pyglossary.file_utils import fileCountLines
 from pyglossary.plugin_lib.dictdlib import DictDB
@@ -88,6 +89,10 @@ class Reader(object):
 		self._filename = ""
 		self._dictdb = None  # type: Optional[DictDB]
 
+                # regular expression patterns used to prettify 
+                # definition text
+		self.compilePatterns()
+
 	def open(self, filename: str) -> None:
 		import gzip
 		if filename.endswith(".index"):
@@ -102,6 +107,23 @@ class Reader(object):
 			# self._dictdb.finish()
 			self._dictdb = None
 
+	def compilePatterns(self) -> None:
+		self._re_newline_in_braces = re.compile(r'\{(?P<left>.*?)\n(?P<right>.*?)?\}')
+		self._re_words_in_braces = re.compile(r'\{(?P<word>.+?)\}')
+
+	def prettifyDefinitionText(self, defi: str) -> str:
+                # Handle words in {}. 
+                # First, we remove any \n in {} pairs
+		defi = self._re_newline_in_braces.sub(r'{\g<left>\g<right>}', defi)
+
+                # Then, replace any {words} into <a href="words">words</a>,
+                # so it can be rendered as link correctly
+		defi = self._re_words_in_braces.sub(r'<a href="\g<word>">\g<word></a>', defi)
+
+                 # Use <br /> so it can be rendered as newline correctly
+		defi = defi.replace("\n", "<br />")
+		return defi
+
 	def __len__(self) -> int:
 		if self._dictdb is None:
 			return 0
@@ -114,8 +136,8 @@ class Reader(object):
 		for word in dictdb.getdeflist():
 			b_defi = b"\n\n<hr>\n\n".join(dictdb.getdef(word))
 			try:
-				b_defi = b_defi.replace(b"\n", b"<br />")
 				defi = b_defi.decode("utf_8", 'ignore')
+				defi = self.prettifyDefinitionText(defi)
 			except Exception as e:
 				log.error(f"b_defi = {b_defi}")
 				raise e
