@@ -40,6 +40,18 @@ def zipFileOrDir(glos: "GlossaryType", filename: str):
 	import shutil
 	from .os_utils import indir
 
+	if os.sep == "\\":
+		tarCmd = shutil.which("tar")
+		if not tarCmd:
+			return "No tar command was found"
+		dirn, name = split(filename)
+		with indir(dirn):
+			output, error = subprocess.Popen(
+				[tarCmd, "-a", "-c", "-f", f"{name}.zip", name],
+				stdout=subprocess.PIPE,
+			).communicate()
+			return error
+
 	zipCmd = shutil.which("zip")
 	if not zipCmd:
 		return "No zip command was found"
@@ -48,7 +60,7 @@ def zipFileOrDir(glos: "GlossaryType", filename: str):
 		dirn, name = split(filename)
 		with indir(filename):
 			output, error = subprocess.Popen(
-				["zip", "-r", f"../{name}.zip", ".", "-m"],
+				[zipCmd, "-r", f"../{name}.zip", ".", "-m"],
 				stdout=subprocess.PIPE,
 			).communicate()
 			return error
@@ -61,7 +73,7 @@ def zipFileOrDir(glos: "GlossaryType", filename: str):
 
 	with indir(dirn):
 		output, error = subprocess.Popen(
-			["zip", "-mr", f"{filename}.zip"] + files,
+			[zipCmd, "-mr", f"{filename}.zip"] + files,
 			stdout=subprocess.PIPE,
 		).communicate()
 		return error
