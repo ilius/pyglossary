@@ -37,7 +37,13 @@ log = logging.getLogger("pyglossary")
 
 
 def zipFileOrDir(glos: "GlossaryType", filename: str):
+	import shutil
 	from .os_utils import indir
+
+	zipCmd = shutil.which("zip")
+	if not zipCmd:
+		return "No zip command was found"
+
 	if isdir(filename):
 		dirn, name = split(filename)
 		with indir(filename):
