@@ -62,11 +62,10 @@ def zipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
 	import shutil
 	from .os_utils import indir
 
-	if os.sep == "\\":
-		return winZipFileOrDir(glos, filename)
-
 	zipCmd = shutil.which("zip")
 	if not zipCmd:
+		if os.sep == "\\":
+			return winZipFileOrDir(glos, filename)
 		return "No zip command was found"
 
 	if isdir(filename):
