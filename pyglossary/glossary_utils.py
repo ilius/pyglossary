@@ -36,21 +36,31 @@ from .compression import (
 log = logging.getLogger("pyglossary")
 
 
-def zipFileOrDir(glos: "GlossaryType", filename: str):
+def winZipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
+	tarCmd = shutil.which("tar")
+	if not tarCmd:
+		return "No tar command was found"
+
+	dirn, name = split(filename)
+	with indir(dirn):
+		output, error = subprocess.Popen(
+			[tarCmd, "-a", "-c", "-f", f"{name}.zip", name],
+			stdout=subprocess.PIPE,
+		).communicate()
+		if error:
+			return error
+
+	if isdir(filename):
+		shutil.rmtree(filename)
+	else:
+		os.remove(filename)
+
+def zipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
 	import shutil
 	from .os_utils import indir
 
 	if os.sep == "\\":
-		tarCmd = shutil.which("tar")
-		if not tarCmd:
-			return "No tar command was found"
-		dirn, name = split(filename)
-		with indir(dirn):
-			output, error = subprocess.Popen(
-				[tarCmd, "-a", "-c", "-f", f"{name}.zip", name],
-				stdout=subprocess.PIPE,
-			).communicate()
-			return error
+		return winZipFileOrDir(glos, filename)
 
 	zipCmd = shutil.which("zip")
 	if not zipCmd:
@@ -63,7 +73,10 @@ def zipFileOrDir(glos: "GlossaryType", filename: str):
 				[zipCmd, "-r", f"../{name}.zip", ".", "-m"],
 				stdout=subprocess.PIPE,
 			).communicate()
-			return error
+			if error:
+				return error
+		shutil.rmtree(filename)
+		return
 
 	dirn, name = split(filename)
 	files = [name]
@@ -76,7 +89,8 @@ def zipFileOrDir(glos: "GlossaryType", filename: str):
 			[zipCmd, "-mr", f"{filename}.zip"] + files,
 			stdout=subprocess.PIPE,
 		).communicate()
-		return error
+		if error:
+			return error
 
 
 def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
