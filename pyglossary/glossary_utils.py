@@ -37,6 +37,9 @@ log = logging.getLogger("pyglossary")
 
 
 def winZipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
+	import shutil
+	from .os_utils import indir
+
 	tarCmd = shutil.which("tar")
 	if not tarCmd:
 		return "No tar command was found"
