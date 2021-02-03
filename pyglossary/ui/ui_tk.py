@@ -1040,6 +1040,37 @@ class UI(tix.Frame, UIBase):
 			column=0,
 			sticky=tk.W,
 		)
+		######################
+		row += 1
+		label = ttk.Label(convertFrame, text="Output Format: ")
+		label.grid(
+			row=row,
+			column=0,
+			sticky=tk.W,
+			padx=5,
+		)
+		##
+		self.formatButtonOutputConvert = FormatButton(
+			master=convertFrame,
+			descList=writeDesc,
+			dialogTitle="Select Output Format",
+			onChange=self.outputFormatChanged,
+		)
+		self.formatButtonOutputConvert.grid(
+			row=row,
+			column=1,
+			columnspan=2,
+			sticky=tk.W,
+			padx=0,
+		)
+		##
+		self.writeOptionsButton = FormatOptionsButton(
+			"Write",
+			self.writeOptions,
+			self.formatButtonOutputConvert,
+			master=convertFrame,
+		)
+		self.outputFormatRow = row
 		###################
 		row += 1
 		label = ttk.Label(convertFrame, text="Output File: ")
@@ -1075,37 +1106,6 @@ class UI(tix.Frame, UIBase):
 			sticky=tk.W + tk.E,
 			padx=5,
 		)
-		######################
-		row += 1
-		label = ttk.Label(convertFrame, text="Output Format: ")
-		label.grid(
-			row=row,
-			column=0,
-			sticky=tk.W,
-			padx=5,
-		)
-		##
-		self.formatButtonOutputConvert = FormatButton(
-			master=convertFrame,
-			descList=writeDesc,
-			dialogTitle="Select Output Format",
-			onChange=self.outputFormatChanged,
-		)
-		self.formatButtonOutputConvert.grid(
-			row=row,
-			column=1,
-			columnspan=2,
-			sticky=tk.W,
-			padx=0,
-		)
-		##
-		self.writeOptionsButton = FormatOptionsButton(
-			"Write",
-			self.writeOptions,
-			self.formatButtonOutputConvert,
-			master=convertFrame,
-		)
-		self.outputFormatRow = row
 		###################
 		row += 1
 		button = newButton(
