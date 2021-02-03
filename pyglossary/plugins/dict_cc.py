@@ -104,6 +104,32 @@ class Reader(object):
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
+	def parseGender(self, headword):
+		# {m}	masc	masculine	German: maskulin
+		# {f}	fem 	femenine	German: feminin
+		# {n}	neut	neutral		German: neutral
+		# { }	????
+		i = headword.find(" {")
+		if i <= 0:
+			return None, headword
+		if len(headword) < i + 4:
+			return None, headword
+		if headword[i + 3] != "}":
+			return None, headword
+		g = headword[i + 2]
+		gender = None
+		if g == "m":
+			gender = "masculine"
+		elif g == "f":
+			gender = "femenine"
+		elif g == "n":
+			gender = "neutral"
+		else:
+			log.warning(f"invalid gender {g!r}")
+			return None, headword
+		headword = headword[:i] + headword[i + 4:]
+		return gender, headword
+
 	def _iterOneDirection(self, column1, column2):
 		from itertools import groupby
 		from lxml import etree as ET
@@ -120,9 +146,12 @@ class Reader(object):
 				for _, term2, entry_type in groupsOrig
 			]
 			f = BytesIO()
+			gender, headword = self.parseGender(headword)
 			with ET.htmlfile(f, encoding="utf-8") as hf:
 				with hf.element("div"):
-					if len(groups) == 1:
+					if gender:
+						with hf.element("i"):
+							hf.write(gender)
 						hf.write(ET.Element("br"))
 					self.makeList(
 						hf,
