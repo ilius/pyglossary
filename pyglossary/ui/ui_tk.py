@@ -1361,45 +1361,49 @@ class UI(tix.Frame, UIBase):
 	def inputEntryChanged(self, event=None):
 		# char = event.keysym
 		pathI = self.entryInputConvert.get()
-		if self.pathI != pathI:
-			if pathI.startswith("file://"):
-				pathI = urlToPath(pathI)
-				self.entryInputConvert.delete(0, "end")
-				self.entryInputConvert.insert(0, pathI)
-			if self.config["ui_autoSetFormat"]:
-				formatDesc = self.formatButtonInputConvert.get()
-				if not formatDesc:
-					inputArgs = Glossary.detectInputFormat(pathI, quiet=True)
-					if inputArgs:
-						format = inputArgs[1]
-						plugin = Glossary.plugins.get(format)
-						if plugin:
-							self.formatButtonInputConvert.set(plugin.description)
-							self.inputFormatChanged()
-			self.pathI = pathI
+		if self.pathI == pathI:
+			return
+
+		if pathI.startswith("file://"):
+			pathI = urlToPath(pathI)
+			self.entryInputConvert.delete(0, "end")
+			self.entryInputConvert.insert(0, pathI)
+		if self.config["ui_autoSetFormat"]:
+			formatDesc = self.formatButtonInputConvert.get()
+			if not formatDesc:
+				inputArgs = Glossary.detectInputFormat(pathI, quiet=True)
+				if inputArgs:
+					format = inputArgs[1]
+					plugin = Glossary.plugins.get(format)
+					if plugin:
+						self.formatButtonInputConvert.set(plugin.description)
+						self.inputFormatChanged()
+		self.pathI = pathI
 
 	def outputEntryChanged(self, event=None):
 		pathO = self.entryOutputConvert.get()
-		if self.pathO != pathO:
-			if pathO.startswith("file://"):
-				pathO = urlToPath(pathO)
-				self.entryOutputConvert.delete(0, "end")
-				self.entryOutputConvert.insert(0, pathO)
-			if self.config["ui_autoSetFormat"]:
-				formatDesc = self.formatButtonOutputConvert.get()
-				if not formatDesc:
-					outputArgs = Glossary.detectOutputFormat(
-						filename=pathO,
-						inputFilename=self.entryInputConvert.get(),
-						quiet=True,
+		if self.pathO == pathO:
+			return
+
+		if pathO.startswith("file://"):
+			pathO = urlToPath(pathO)
+			self.entryOutputConvert.delete(0, "end")
+			self.entryOutputConvert.insert(0, pathO)
+		if self.config["ui_autoSetFormat"]:
+			formatDesc = self.formatButtonOutputConvert.get()
+			if not formatDesc:
+				outputArgs = Glossary.detectOutputFormat(
+					filename=pathO,
+					inputFilename=self.entryInputConvert.get(),
+					quiet=True,
+				)
+				if outputArgs:
+					outputFormat = outputArgs[1]
+					self.formatButtonOutputConvert.set(
+						Glossary.plugins[outputFormat].description
 					)
-					if outputArgs:
-						outputFormat = outputArgs[1]
-						self.formatButtonOutputConvert.set(
-							Glossary.plugins[outputFormat].description
-						)
-						self.outputFormatChanged()
-			self.pathO = pathO
+					self.outputFormatChanged()
+		self.pathO = pathO
 
 	def save_fcd_dir(self):
 		if not self.fcd_dir:
