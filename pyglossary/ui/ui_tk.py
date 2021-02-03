@@ -443,7 +443,7 @@ class FormatDialog(tix.Toplevel):
 			treev.delete(*current)
 		for desc in self.items:
 			treev.insert("", "end", values=[desc], iid=desc)  # iid should be rowId
-		if self.activeDesc:
+		if self.activeDesc and self.items:
 			self.setActiveRow(self.activeDesc)
 
 	def onEntryKeyRelease(self, event):
