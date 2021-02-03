@@ -91,7 +91,7 @@ class Reader(object):
 			f"select {column1}, {column2}, entry_type from main_ft"
 			f" order by {column1}"
 		)
-		for row in self._cur:
+		for row in self._cur.fetchall():
 			term1 = row[0]
 			term2 = row[1]
 			try:
