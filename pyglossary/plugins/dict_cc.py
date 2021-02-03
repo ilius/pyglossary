@@ -106,7 +106,7 @@ class Reader(object):
 
 	def parseGender(self, headword):
 		# {m}	masc	masculine	German: maskulin
-		# {f}	fem 	femenine	German: feminin
+		# {f}	fem 	feminine	German: feminin
 		# {n}	neut	neutral		German: neutral
 		# { }	????
 		i = headword.find(" {")
@@ -121,7 +121,7 @@ class Reader(object):
 		if g == "m":
 			gender = "masculine"
 		elif g == "f":
-			gender = "femenine"
+			gender = "feminine"
 		elif g == "n":
 			gender = "neutral"
 		else:
