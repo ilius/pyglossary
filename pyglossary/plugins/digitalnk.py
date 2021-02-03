@@ -7,6 +7,7 @@ enable = True
 format = 'DigitalNK'
 description = 'DigitalNK (SQLite3, N-Korean)'
 extensions = ()
+extensionCreate = ".db"
 readOptions = []
 writeOptions = []
 

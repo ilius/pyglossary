@@ -6,6 +6,7 @@ enable = True
 format = "Zim"
 description = "Zim (.zim, for Kiwix)"
 extensions = (".zim",)
+extensionCreate = ".zim"
 singleFile = True
 optionsProp = {
 	"skip_duplicate_words": BoolOption(),

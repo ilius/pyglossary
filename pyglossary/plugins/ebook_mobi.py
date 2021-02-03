@@ -29,6 +29,7 @@ enable = True
 format = "Mobi"
 description = "MOBI E-Book"
 extensions = (".mobi",)
+extensionCreate = ".mobi"
 sortOnWrite = ALWAYS
 
 tools = [

@@ -7,6 +7,7 @@ enable = True
 format = 'ABCMedicalNotes'
 description = 'ABC Medical Notes (SQLite3)'
 extensions = ()
+extensionCreate = ".db"
 readOptions = []
 writeOptions = []
 

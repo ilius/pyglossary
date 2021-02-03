@@ -8,6 +8,7 @@ enable = True
 format = "Dicformids"
 description = "DictionaryForMIDs"
 extensions = (".mids",)
+extensionCreate = ".mids/"
 sortOnWrite = ALWAYS
 
 tools = [

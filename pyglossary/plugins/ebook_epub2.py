@@ -26,6 +26,7 @@ enable = True
 format = "Epub2"
 description = "EPUB-2 E-Book"
 extensions = (".epub",)
+extensionCreate = ".epub"
 sortOnWrite = ALWAYS
 
 # https://en.wikipedia.org/wiki/EPUB

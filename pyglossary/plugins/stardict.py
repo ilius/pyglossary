@@ -23,6 +23,7 @@ enable = True
 format = "Stardict"
 description = "StarDict (.ifo)"
 extensions = (".ifo",)
+extensionCreate = "-stardict/"
 optionsProp = {
 	"stardict_client": BoolOption(),
 	"dictzip": BoolOption(),

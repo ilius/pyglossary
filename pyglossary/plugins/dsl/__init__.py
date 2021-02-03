@@ -36,6 +36,7 @@ enable = True
 format = "ABBYYLingvoDSL"
 description = "ABBYY Lingvo DSL (.dsl)"
 extensions = (".dsl",)
+extensionCreate = ".dsl"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),

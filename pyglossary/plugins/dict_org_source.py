@@ -6,6 +6,7 @@ enable = True
 format = "DictOrgSource"
 description = "DICT.org dictfmt source file"
 extensions = (".dtxt",)
+extensionCreate = ".dtxt"
 singleFile = True
 optionsProp = {
 	"remove_html_all": BoolOption(),

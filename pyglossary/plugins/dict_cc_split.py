@@ -7,6 +7,7 @@ enable = True
 format = 'Dictcc_split'
 description = 'Dict.cc (SQLite3) - Split'
 extensions = ()
+extensionCreate = ".db"
 readOptions = []
 writeOptions = []
 

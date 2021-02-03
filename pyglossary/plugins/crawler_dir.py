@@ -14,6 +14,7 @@ enable = True
 format = "CrawlerDir"
 description = "Crawler Directory"
 extensions = (".crawler",)
+extensionCreate = ".crawler/"
 singleFile = True
 optionsProp = {
 	"compression": StrOption(

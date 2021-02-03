@@ -6,5 +6,6 @@ enable = False
 format = "GettextMo"
 description = "Gettext Binary (mo)"
 extensions = (".mo",)
+extensionCreate = ".mo"
 singleFile = True
 optionsProp = {}

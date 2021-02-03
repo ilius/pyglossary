@@ -23,6 +23,7 @@ enable = True
 format = "AppleDictBin"
 description = "AppleDict Binary"
 extensions = (".dictionary", ".data",)
+extensionCreate = ""
 singleFile = True
 tools = [
 	{

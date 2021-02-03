@@ -7,6 +7,7 @@ enable = True
 format = 'Almaany'
 description = 'Almaany.com (SQLite3)'
 extensions = ()
+extensionCreate = ".db"
 readOptions = []
 writeOptions = []
 

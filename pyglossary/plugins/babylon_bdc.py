@@ -5,5 +5,6 @@ enable = False
 format = "BabylonBdc"
 description = "Babylon (bdc)"
 extensions = (".bdc",)
+extensionCreate = ""
 singleFile = True
 optionsProp = {}

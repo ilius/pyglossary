@@ -34,6 +34,7 @@ enable = True
 format = "Kobo"
 description = "Kobo E-Reader Dictionary"
 extensions = (".kobo",)
+extensionCreate = ".kobo.zip"
 sortOnWrite = NEVER
 
 tools = [

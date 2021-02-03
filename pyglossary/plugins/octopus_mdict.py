@@ -28,6 +28,7 @@ enable = True
 format = "OctopusMdict"
 description = "Octopus MDict (.mdx)"
 extensions = (".mdx",)
+extensionCreate = ""
 singleFile = False
 optionsProp = {
 	"encoding": EncodingOption(),

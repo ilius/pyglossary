@@ -7,6 +7,7 @@ enable = True
 format = 'Aard2Slob'
 description = 'Aard 2 (.slob)'
 extensions = ('.slob',)
+extensionCreate = ".slob"
 singleFile = True
 tools = [
 	{

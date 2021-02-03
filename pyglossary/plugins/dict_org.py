@@ -8,6 +8,7 @@ enable = True
 format = "DictOrg"
 description = "DICT.org file format (.index)"
 extensions = (".index",)
+extensionCreate = ".db"
 optionsProp = {
 	"dictzip": BoolOption(),
 	"install": BoolOption(),

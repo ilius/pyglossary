@@ -10,6 +10,7 @@ enable = True
 format = "WiktionaryDump"
 description = "Wiktionary Dump (.xml)"
 extensions = (".xml",)
+extensionCreate = ""
 optionsProp = {
 	"encoding": EncodingOption(),
 }

@@ -29,6 +29,7 @@ enable = True
 format = "Xdxf"
 description = "XDXF (.xdxf)"
 extensions = (".xdxf",)
+extensionCreate = ".xdxf"
 singleFile = True
 optionsProp = {
 	"html": BoolOption(),

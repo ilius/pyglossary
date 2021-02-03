@@ -44,6 +44,7 @@ enable = False
 format = "Unknown"
 description = "Unknown"
 extensions = ()  # type: Tuple[str, ...]
+extensionCreate = ""  # type: str
 singleFile = False
 
 # key is option/argument name, value is instance of Option

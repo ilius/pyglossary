@@ -11,6 +11,7 @@ enable = True
 format = "Tabfile"
 description = "Tabfile (.txt, .dic)"
 extensions = (".txt", ".tab", ".tsv")
+extensionCreate = ".txt"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),

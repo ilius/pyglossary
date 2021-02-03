@@ -6,6 +6,7 @@ enable = True
 format = "Sql"
 description = "SQL (.sql)"
 extensions = (".sql",)
+extensionCreate = ".sql"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),

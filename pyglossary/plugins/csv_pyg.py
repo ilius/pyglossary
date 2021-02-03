@@ -25,6 +25,7 @@ enable = True
 format = "Csv"
 description = "CSV (.csv)"
 extensions = (".csv",)
+extensionCreate = ".csv"
 singleFile = True
 tools = [
 	{

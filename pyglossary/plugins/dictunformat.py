@@ -5,6 +5,7 @@ enable = True
 format = "Dictunformat"
 description = "dictunformat output file"
 extensions = (".dictunformat",)
+extensionCreate = ".dictunformat"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),

@@ -10,6 +10,7 @@ enable = True
 format = "Wordset"
 description = "Wordset.org JSON directory"
 extensions = ()
+extensionCreate = "-wordset/"
 singleFile = False
 optionsProp = {
 	"encoding": EncodingOption(),

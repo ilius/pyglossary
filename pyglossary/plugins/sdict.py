@@ -25,6 +25,7 @@ enable = True
 format = "Sdict"
 description = "Sdictionary Binary(dct)"
 extensions = (".dct",)
+extensionCreate = ".dct"
 singleFile = True
 # homepage = "http://swaj.net/sdict/"
 optionsProp = {

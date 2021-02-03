@@ -7,6 +7,7 @@ enable = True
 format = 'Dictcc'
 description = 'Dict.cc (SQLite3)'
 extensions = ()
+extensionCreate = ".db"
 readOptions = []
 writeOptions = []
 

@@ -29,6 +29,7 @@ enable = True
 format = "Dictfile"
 description = "Kobo E-Reader Dictfile (.df)"
 extensions = (".df",)
+extensionCreate = ".df"
 # https://github.com/pgaskin/dictutil
 
 optionsProp = {

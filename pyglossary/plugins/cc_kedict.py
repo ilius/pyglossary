@@ -8,6 +8,7 @@ enable = True
 format = "cc-kedict"
 description = "cc-kedict"
 extensions = ()
+extensionCreate = ""
 singleFile = True
 optionsProp = {
 }

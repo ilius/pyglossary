@@ -6,6 +6,7 @@ enable = True
 format = "GettextPo"
 description = "Gettext Source (.po)"
 extensions = (".po",)
+extensionCreate = ".po"
 singleFile = True
 optionsProp = {
 	"resources": BoolOption(),

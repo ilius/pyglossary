@@ -8,6 +8,7 @@ enable = True
 format = "SdictSource"
 description = "Sdictionary Source (.sdct)"
 extensions = (".sdct",)
+extensionCreate = ".sdct"
 singleFile = True
 optionsProp = {
 	"writeInfo": BoolOption(),

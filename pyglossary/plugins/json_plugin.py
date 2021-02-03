@@ -6,6 +6,7 @@ enable = True
 format = "Json"
 description = "JSON (.json)"
 extensions = (".json",)
+extensionCreate = ".json"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),

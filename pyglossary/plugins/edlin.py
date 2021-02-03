@@ -31,6 +31,7 @@ format = "Edlin"
 # Editable Linked List of Entries
 description = "EDLIN"
 extensions = (".edlin",)
+extensionCreate = ".edlin/"
 optionsProp = {
 	"encoding": EncodingOption(),
 	"havePrevLink": BoolOption(),

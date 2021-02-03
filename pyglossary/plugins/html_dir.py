@@ -13,6 +13,7 @@ enable = True
 format = "HtmlDir"
 description = "HTML Directory"
 extensions = (".hdir",)
+extensionCreate = ".hdir/"
 singleFile = False
 optionsProp = {
 	"encoding": EncodingOption(),

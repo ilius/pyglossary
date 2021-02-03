@@ -24,6 +24,7 @@ enable = True
 format = "BabylonBgl"
 description = "Babylon (.BGL)"
 extensions = (".bgl",)
+extensionCreate = ""
 singleFile = True
 tools = [
 	{

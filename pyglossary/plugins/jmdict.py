@@ -9,6 +9,7 @@ enable = True
 format = "JMDict"
 description = "JMDict"
 extensions = ()
+extensionCreate = ""
 singleFile = True
 optionsProp = {
 }
