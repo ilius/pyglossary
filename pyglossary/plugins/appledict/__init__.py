@@ -28,6 +28,7 @@ import shutil
 
 from pyglossary.plugins.formats_common import *
 from ._dict import *
+from ._content import prepare_content
 
 sys.setrecursionlimit(10000)
 
