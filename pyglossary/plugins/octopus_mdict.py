@@ -140,6 +140,11 @@ class Reader(object):
 		self._wordCount = wordCount
 		self._mdx = MDX(self._filename, self._encoding, self._substyle)
 
+	def fixDefi(self, defi: str) -> str:
+		defi = self._re_internal_link.sub(r'href=\1bword://', defi)
+		defi = defi.replace(' src="file://', ' src="')
+		return defi
+
 	def __iter__(self):
 		if self._mdx is None:
 			log.error("trying to iterate on a closed MDX file")
@@ -152,8 +157,7 @@ class Reader(object):
 			defi = b_defi.decode("utf-8").strip()
 			if defi.startswith("@@@LINK="):
 				continue
-			defi = self._re_internal_link.sub(r'href=\1bword://', defi)
-			defi = defi.replace(' src="file://', ' src="')
+			defi = self.fixDefi(defi)
 			words = word
 			altsStr = linksDict.get(word, "")
 			if altsStr:
