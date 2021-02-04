@@ -33,7 +33,7 @@ from .base import (
 
 from pyglossary.text_utils import urlToPath
 import os
-from os.path import join, isfile, abspath
+from os.path import join, isfile, abspath, splitext
 import logging
 import traceback
 
@@ -1342,8 +1342,14 @@ class UI(tix.Frame, UIBase):
 		formatDesc = self.formatButtonOutputConvert.get()
 		if not formatDesc:
 			return
-		self.writeOptions.clear()  # reset the options, DO NOT re-assign
+
 		format = pluginByDesc[formatDesc].name
+		plugin = Glossary.plugins.get(format)
+		if not plugin:
+			log.error(f"plugin {format} not found")
+			return
+
+		self.writeOptions.clear()  # reset the options, DO NOT re-assign
 		if Glossary.formatsWriteOptions[format]:
 			self.writeOptionsButton.grid(
 				row=self.outputFormatRow,
@@ -1353,6 +1359,15 @@ class UI(tix.Frame, UIBase):
 			)
 		else:
 			self.writeOptionsButton.grid_forget()
+
+		pathI = self.entryInputConvert.get()
+		if pathI and not self.entryOutputConvert.get():
+			if self.formatButtonInputConvert.get() and plugin.extensionCreate:
+				pathNoExt, ext = splitext(pathI)
+				self.entryOutputConvert.insert(
+					0,
+					pathNoExt + plugin.extensionCreate,
+				)
 
 	def anyEntryChanged(self, event=None):
 		self.inputEntryChanged()
