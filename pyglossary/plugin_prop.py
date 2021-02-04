@@ -60,6 +60,10 @@ class PluginProp(object):
 		return ""
 
 	@property
+	def extensionCreate(self) -> str:
+		return self._p.extensionCreate
+
+	@property
 	def singleFile(self) -> bool:
 		return self._p.singleFile
 
