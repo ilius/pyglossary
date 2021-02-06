@@ -438,7 +438,7 @@ class Entry(BaseEntry):
 		word = self.s_word
 		i = defi.find('<body')
 		if i == -1:
-			log.error(f"<body not found: word={word}")
+			log.warning(f"<body not found: word={word}")
 			return
 		defi = defi[i + 5:]
 		i = defi.find('>')
