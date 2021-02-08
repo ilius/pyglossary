@@ -268,6 +268,13 @@ class EbookWriter(object):
 			if entry is None:
 				break
 			if entry.isData():
+				if entry.getFileName() == "style.css":
+					self.add_file_manifest(
+						"OEBPS/style.css",
+						"style.css",
+						entry.data.decode("utf-8"),
+						"text/css",
+					)
 				continue
 
 			prefix = self.get_prefix(entry.s_word)
