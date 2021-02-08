@@ -177,8 +177,17 @@ class Reader(object):
 		), pos
 
 	def __iter__(self):
+		from os.path import dirname
+
 		if self._file is None:
 			raise RuntimeError("iterating over a reader while it's not open")
+		glos = self._glos
+
+		cssFilename = join(dirname(self._filename), "DefaultStyle.css")
+		if isfile(cssFilename):
+			with open(cssFilename, mode="rb") as cssFile:
+				cssBytes = cssFile.read()
+			yield glos.newDataEntry("style.css", cssBytes)
 
 		_file = self._file
 		limit = self._limit
