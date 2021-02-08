@@ -19,7 +19,7 @@ you also need:
 	Xcode](http://developer.apple.com/downloads).
 -	Dictionary Development Kit as part of [Additional Tools for
 	Xcode](http://developer.apple.com/downloads). Extract to
-	`~/Developer/Extras/Dictionary Development Kit`
+	`/Applications/Utilities/Dictionary Development Kit`
 
 
 
