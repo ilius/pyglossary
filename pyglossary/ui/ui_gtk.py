@@ -94,15 +94,15 @@ class FormatDialog(gtk.Dialog):
 		self.connect("response", lambda w, e: self.hide())
 		dialog_add_button(
 			self,
-			"gtk-ok",
-			"_OK",
-			gtk.ResponseType.OK,
-		)
-		dialog_add_button(
-			self,
 			"gtk-cancel",
 			"_Cancel",
 			gtk.ResponseType.CANCEL,
+		)
+		dialog_add_button(
+			self,
+			"gtk-ok",
+			"_OK",
+			gtk.ResponseType.OK,
 		)
 		###
 		treev = gtk.TreeView()
@@ -286,15 +286,15 @@ class FormatOptionsDialog(gtk.Dialog):
 		self.connect("response", lambda w, e: self.hide())
 		dialog_add_button(
 			self,
-			"gtk-ok",
-			"_OK",
-			gtk.ResponseType.OK,
-		)
-		dialog_add_button(
-			self,
 			"gtk-cancel",
 			"_Cancel",
 			gtk.ResponseType.CANCEL,
+		)
+		dialog_add_button(
+			self,
+			"gtk-ok",
+			"_OK",
+			gtk.ResponseType.OK,
 		)
 		###
 		treev = gtk.TreeView()
@@ -430,15 +430,15 @@ class FormatOptionsDialog(gtk.Dialog):
 		dialog.connect("response", lambda w, e: dialog.hide())
 		dialog_add_button(
 			dialog,
-			"gtk-ok",
-			"_OK",
-			gtk.ResponseType.OK,
-		)
-		dialog_add_button(
-			dialog,
 			"gtk-cancel",
 			"_Cancel",
 			gtk.ResponseType.CANCEL,
+		)
+		dialog_add_button(
+			dialog,
+			"gtk-ok",
+			"_OK",
+			gtk.ResponseType.OK,
 		)
 		pack(dialog.vbox, label, 0, 0)
 		entry = gtk.Entry()
