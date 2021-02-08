@@ -62,8 +62,15 @@ class Reader(object):
 				filename = join(filename, "Body.data")
 				if len(parts) > 2:
 					dbname = parts[-2]
-			else:
+			elif isfile(join(filename, "Contents/Body.data")):
+				filename = join(filename, "Contents/Body.data")
+			elif isfile(join(filename, "Contents/Resources/Body.data")):
 				filename = join(filename, "Contents/Resources/Body.data")
+			else:
+				raise IOError(
+					"could not find Body.data file, "
+					"please select Body.data file instead of directory"
+				)
 		elif dbname == "Body.data" and len(parts) > 1:
 			dbname = parts[-2]
 			if len(parts) > 2:
@@ -71,6 +78,9 @@ class Reader(object):
 					dbname = parts[-3]
 				elif dbname == "Resources" and len(parts) > 3:
 					dbname = parts[-4]
+
+		if not isfile(filename):
+			raise IOError(f"no such file: {filename}")
 
 		if dbname.endswith(".dictionary"):
 			dbname = dbname[:-len(".dictionary")]
@@ -167,13 +177,16 @@ class Reader(object):
 		), pos
 
 	def __iter__(self):
-		file = self._file
+		if self._file is None:
+			raise RuntimeError("iterating over a reader while it's not open")
+
+		_file = self._file
 		limit = self._limit
 		while True:
-			self._absPos = file.tell()
+			self._absPos = _file.tell()
 			if self._absPos >= limit:
 				break
-			bufSizeB = file.read(4)  # type: bytes
+			bufSizeB = _file.read(4)  # type: bytes
 			# alternative for buf, bufSize is calculated
 			# ~ flag = f.tell()
 			# ~ bufSize = 0
@@ -191,7 +204,7 @@ class Reader(object):
 			# ~			bufSize = bufSize+1
 
 			bufSize, = unpack("i", bufSizeB)  # type: int
-			self._buf = decompress(file.read(bufSize)[8:])
+			self._buf = decompress(_file.read(bufSize)[8:])
 
 			pos = 0
 			while pos < len(self._buf):
