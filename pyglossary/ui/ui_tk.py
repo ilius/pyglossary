@@ -406,21 +406,21 @@ class FormatDialog(tix.Toplevel):
 
 		buttonBox = tix.Frame(master=self)
 
-		okButton = newTTKButton(
-			buttonBox,
-			text="OK",
-			command=self.okClicked,
-			# bg="#ff0000",
-			# activebackground="#ff5050",
-		)
-		okButton.pack(side="right")
-
 		cancelButton = newTTKButton(
 			buttonBox,
 			text="Cancel",
 			command=self.cancelClicked,
 		)
 		cancelButton.pack(side="right")
+
+		okButton = newTTKButton(
+			buttonBox,
+			text="  OK  ",
+			command=self.okClicked,
+			# bg="#ff0000",
+			# activebackground="#ff5050",
+		)
+		okButton.pack(side="right")
 
 		buttonBox.pack(fill="x")
 
@@ -443,7 +443,7 @@ class FormatDialog(tix.Toplevel):
 			treev.delete(*current)
 		for desc in self.items:
 			treev.insert("", "end", values=[desc], iid=desc)  # iid should be rowId
-		if self.activeDesc and self.items:
+		if self.activeDesc in self.items:
 			self.setActiveRow(self.activeDesc)
 
 	def onEntryKeyRelease(self, event):
@@ -600,7 +600,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		buttonBox = tix.Frame(self)
 		okButton = newTTKButton(
 			buttonBox,
-			text="OK",
+			text="  OK  ",
 			command=self.okClicked,
 			# bg="#ff0000",
 			# activebackground="#ff5050",
@@ -714,7 +714,7 @@ class FormatOptionsDialog(tix.Toplevel):
 
 		customOkbutton = newTTKButton(
 			frame,
-			text="OK",
+			text="  OK  ",
 			command=customOkClicked,
 			# bg="#ff0000",
 			# activebackground="#ff5050",
