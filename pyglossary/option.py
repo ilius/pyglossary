@@ -166,13 +166,40 @@ class IntOption(Option):
 
 class FileSizeOption(IntOption):
 	factors = {
-		"k": 1024,
-		"K": 1024,
-		"m": 1048576,
-		"M": 1048576,
-		"g": 1073741824,
-		"G": 1073741824,
+		"KiB": 1024,
+		"kib": 1024,
+		"Ki": 1024,
+		"ki": 1024,
+
+		"MiB": 1048576,
+		"mib": 1048576,
+		"Mi": 1048576,
+		"mi": 1048576,
+
+		"GiB": 1073741824,
+		"gib": 1073741824,
+		"Gi": 1073741824,
+		"gi": 1073741824,
+
+		"kB": 1000,
+		"kb": 1000,
+		"KB": 1000,
+		"k": 1000,
+		"K": 1000,
+
+		"MB": 1000000,
+		"mb": 1000000,
+		"mB": 1000000,
+		"M": 1000000,
+		"m": 1000000,
+
+		"GB": 1000000000,
+		"gb": 1000000000,
+		"gB": 1000000000,
+		"G": 1000000000,
+		"g": 1000000000,
 	}
+	validPattern = "^([0-9.]+)([kKmMgG]i?[bB]?)$"
 
 	@property
 	def typeDesc(self):
@@ -182,9 +209,12 @@ class FileSizeOption(IntOption):
 		if not raw:
 			return 0
 		factor = 1
-		if raw[-1] in self.factors:
-			factor = self.factors[raw[-1]]
-			raw = raw[:-1]
+		m = re.match(self.validPattern, raw)
+		if m is not None:
+			raw, unit = m.groups()
+			factor = self.factors.get(unit)
+			if factor is None:
+				return None, False
 		try:
 			value = float(raw)
 		except ValueError:
