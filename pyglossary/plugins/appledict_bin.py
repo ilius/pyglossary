@@ -43,7 +43,7 @@ class Reader(object):
 		"lxml": "lxml",
 	}
 
-	_html: bool = False
+	_html: bool = True
 
 	def __init__(self, glos):
 		self._glos = glos
@@ -160,6 +160,7 @@ class Reader(object):
 				encoding="utf-8",
 			))
 		else:
+			# FIXME: this produces duplicate text for Idioms.dictionary, see #301
 			defi = "".join([
 				self.decode(etree.tostring(
 					child,
