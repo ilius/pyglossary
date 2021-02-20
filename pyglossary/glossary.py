@@ -30,6 +30,7 @@ from os.path import (
 	isfile,
 	isdir,
 	dirname,
+	basename,
 	abspath,
 )
 
@@ -768,6 +769,23 @@ class Glossary(GlossaryType):
 			f"Failed to detect sourceLang and targetLang from glossary name {name!r}"
 		)
 
+	def _setTmpDataDir(self, filename):
+		# good thing about cacheDir is that we don't have to clean it up after
+		# conversion is finished.
+		# specially since dataEntry.save(...) will move the file from cacheDir
+		# to the new directory (associated with output glossary path)
+		# And we don't have to check for write access to cacheDir because it's
+		# inside user's home dir. But input glossary might be in a directory
+		# that we don't have write access to.
+		# still maybe add a config key to decide if we should always use cacheDir
+		# if self._hasWriteAccessToDir(f"{filename}_res", os.W_OK):
+		# 	self.tmpDataDir = f"{filename}_res"
+		# else:
+		self.tmpDataDir = join(cacheDir, basename(filename) + "_res")
+		log.debug(f"tmpDataDir = {self.tmpDataDir}")
+		os.makedirs(self.tmpDataDir, mode=0o700, exist_ok=True)
+		self._cleanupPathList.append(self.tmpDataDir)
+
 	def read(
 		self,
 		filename: str,
@@ -784,20 +802,7 @@ class Glossary(GlossaryType):
 		"""
 		filename = abspath(filename)
 
-		# good thing about cacheDir is that we don't have to clean it up after
-		# conversion is finished.
-		# specially since dataEntry.save(...) will move the file from cacheDir
-		# to the new directory (associated with output glossary path)
-		# And we don't have to check for write access to cacheDir because it's
-		# inside user's home dir. But input glossary might be in a directory
-		# that we don't have write access to.
-		# still maybe add a config key to decide if we should always use cacheDir
-		# if self._hasWriteAccessToDir(f"{filename}_res", os.W_OK):
-		# 	self.tmpDataDir = f"{filename}_res"
-		# else:
-		self.tmpDataDir = join(cacheDir, split(filename)[1] + "_res")
-		os.makedirs(self.tmpDataDir, mode=0o700, exist_ok=True)
-		self._cleanupPathList.append(self.tmpDataDir)
+		self._setTmpDataDir(filename)
 
 		# don't allow direct=False when there are readers
 		# (read is called before with direct=True)
