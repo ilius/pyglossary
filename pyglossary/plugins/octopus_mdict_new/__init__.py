@@ -102,7 +102,9 @@ class Reader(object):
 		except KeyError:
 			pass
 		else:
-			self._glos.setInfo("name", title)
+			title = title.strip()
+			if title:
+				self._glos.setInfo("name", title)
 		desc = self._mdx.header.get(b"Description", "")
 		if desc:
 			self._glos.setInfo("description", desc)
