@@ -715,8 +715,11 @@ class Glossary(GlossaryType):
 		)
 
 	def newDataEntry(self, fname: str, data: bytes) -> "DataEntry":
-		inTmp = not self._readers
-		return DataEntry(fname, data, inTmp)
+		from tempfile import mktemp
+		tmpPath = None
+		if not self._readers:
+			tmpPath = mktemp(prefix=fname.replace("/", "_") + "_")
+		return DataEntry(fname, data, tmpPath=tmpPath)
 
 	# ________________________________________________________________________#
 

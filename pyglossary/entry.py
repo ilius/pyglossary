@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-from tempfile import mktemp
 import shutil
 import os
 from os.path import (
@@ -36,20 +35,16 @@ class DataEntry(BaseEntry):
 		self,
 		fname: str,
 		data: bytes,
-		inTmp: bool = False,
+		tmpPath: "Optional[str]" = None,
 		byteProgress: "Optional[Tuple[int, int]]" = None,
 	) -> None:
 		assert isinstance(fname, str)
 		assert isinstance(data, bytes)
-		assert isinstance(inTmp, bool)
 
-		if inTmp:
-			tmpPath = mktemp(prefix=fname + "_")
+		if tmpPath:
 			with open(tmpPath, "wb") as toFile:
 				toFile.write(data)
-			data = ""
-		else:
-			tmpPath = None
+			data = b""
 
 		self._fname = fname
 		self._data = data  # bytes instance
