@@ -279,7 +279,7 @@ class Glossary(GlossaryType):
 		self._config = {}
 		self._data = []
 		self._rawEntryCompress = True
-		self._cleanupPathList = []
+		self._cleanupPathList = set()
 		self.clear()
 		if info:
 			if not isinstance(info, (dict, odict)):
@@ -716,10 +716,15 @@ class Glossary(GlossaryType):
 		)
 
 	def newDataEntry(self, fname: str, data: bytes) -> "DataEntry":
-		from tempfile import mktemp
+		import uuid
 		tmpPath = None
 		if not self._readers:
-			tmpPath = mktemp(prefix=fname.replace("/", "_") + "_")
+			if self.tmpDataDir:
+				tmpPath = join(self.tmpDataDir, fname.replace("/", "_"))
+			else:
+				os.makedirs(join(cacheDir, "tmp"), mode=0o700, exist_ok=True)
+				self._cleanupPathList.add(join(cacheDir, "tmp"))
+				tmpPath = join(cacheDir, "tmp", uuid.uuid1().hex)
 		return DataEntry(fname, data, tmpPath=tmpPath)
 
 	# ________________________________________________________________________#
@@ -784,7 +789,7 @@ class Glossary(GlossaryType):
 		self.tmpDataDir = join(cacheDir, basename(filename) + "_res")
 		log.debug(f"tmpDataDir = {self.tmpDataDir}")
 		os.makedirs(self.tmpDataDir, mode=0o700, exist_ok=True)
-		self._cleanupPathList.append(self.tmpDataDir)
+		self._cleanupPathList.add(self.tmpDataDir)
 
 	def read(
 		self,
