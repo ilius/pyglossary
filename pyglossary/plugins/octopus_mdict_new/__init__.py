@@ -143,7 +143,7 @@ class Reader(object):
 
 	def fixDefi(self, defi: str) -> str:
 		defi = self._re_internal_link.sub(r'href=\1bword://', defi)
-		defi = defi.replace(' src="file://', ' src="')
+		defi = defi.replace(' src="file://', ' src=".')
 		return defi
 
 	def __iter__(self):
