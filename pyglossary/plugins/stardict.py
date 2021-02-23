@@ -79,7 +79,8 @@ tools = [
 	},
 	{
 		"name": "QDict",
-		"web": "https://github.com/namndev/QDict",
+		"web": "https://play.google.com/store/apps/details?id=com.annie.dictionary",
+		"source": "https://github.com/namndev/QDict",
 		"platforms": ["Android"],
 		"license": "Apache 2.0",
 		# last release: 2017/04/16 (keeps crashing on my device, unusable)
