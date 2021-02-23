@@ -88,10 +88,10 @@ class Reader(object):
 		self._glos = glos
 		self._filename = ""
 		self._dictdb = None  # type: Optional[DictDB]
-
-                # regular expression patterns used to prettify 
-                # definition text
-		self.compilePatterns()
+		
+		# regular expression patterns used to prettify definition text
+		self._re_newline_in_braces = re.compile(r'\{(?P<left>.*?)\n(?P<right>.*?)?\}')
+		self._re_words_in_braces = re.compile(r'\{(?P<word>.+?)\}')
 
 	def open(self, filename: str) -> None:
 		import gzip
@@ -107,20 +107,16 @@ class Reader(object):
 			# self._dictdb.finish()
 			self._dictdb = None
 
-	def compilePatterns(self) -> None:
-		self._re_newline_in_braces = re.compile(r'\{(?P<left>.*?)\n(?P<right>.*?)?\}')
-		self._re_words_in_braces = re.compile(r'\{(?P<word>.+?)\}')
-
 	def prettifyDefinitionText(self, defi: str) -> str:
-                # Handle words in {}. 
-                # First, we remove any \n in {} pairs
+		# Handle words in {}. 
+		# First, we remove any \n in {} pairs
 		defi = self._re_newline_in_braces.sub(r'{\g<left>\g<right>}', defi)
 
-                # Then, replace any {words} into <a href="words">words</a>,
-                # so it can be rendered as link correctly
-		defi = self._re_words_in_braces.sub(r'<a href="\g<word>">\g<word></a>', defi)
+		# Then, replace any {words} into <a href="bword://words">words</a>,
+		# so it can be rendered as link correctly
+		defi = self._re_words_in_braces.sub(r'<a href="bword://\g<word>">\g<word></a>', defi)
 
-                 # Use <br /> so it can be rendered as newline correctly
+		# Use <br /> so it can be rendered as newline correctly
 		defi = defi.replace("\n", "<br />")
 		return defi
 
