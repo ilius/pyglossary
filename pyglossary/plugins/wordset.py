@@ -33,12 +33,12 @@ class Reader(object):
 			"</p>"
 		)
 		"""
-        {
-            "id": "492099d426",
-            "def": "without musical accompaniment",
-            "example": "they performed a cappella",
-            "speech_part": "adverb"
-        },
+		{
+			"id": "492099d426",
+			"def": "without musical accompaniment",
+			"example": "they performed a cappella",
+			"speech_part": "adverb"
+		},
 		"""
 
 
