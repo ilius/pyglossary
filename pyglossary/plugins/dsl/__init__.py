@@ -355,7 +355,8 @@ class Reader(object):
 
 		# read header
 		for line in self._file:
-			line = line.rstrip()
+			line = line.rstrip().lstrip('\ufeff')
+			# \ufeff -> https://github.com/ilius/pyglossary/issues/306
 			if not line:
 				continue
 			if not line.startswith("#"):
