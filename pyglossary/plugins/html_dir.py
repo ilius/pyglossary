@@ -339,9 +339,9 @@ class Writer(object):
 			links.append(f'<a href="./{self.getNextFilename()}">&#9654;</a>')
 			links.append(f'<a href="./info.html">ℹ️</a></div>')
 			return (
-				'<div style="text-align: center; font-size: 2.5em;">' +
+				'<nav style="text-align: center; font-size: 2.5em;">' +
 				f'{nbsp}{nbsp}{nbsp}'.join(links) +
-				'</div>'
+				'</nav>'
 			)
 
 		tailSize = len(self._tail.encode(encoding))
