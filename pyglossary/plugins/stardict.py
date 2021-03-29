@@ -32,6 +32,14 @@ optionsProp = {
 	),
 	"merge_syns": BoolOption(),
 	"xdxf_to_html": BoolOption(),
+	"unicode_errors": StrOption(
+		values=[
+			"strict",  # raise a UnicodeDecodeError exception
+			"ignore",  # just leave the character out
+			"replace",  # use U+FFFD, REPLACEMENT CHARACTER
+			"backslashreplace",  # insert a \xNN escape sequence
+		],
+	),
 }
 sortOnWrite = ALWAYS
 # sortKey is defined in Writer class
@@ -121,6 +129,7 @@ def verifySameTypeSequence(s: str) -> bool:
 
 class Reader(object):
 	_xdxf_to_html = True
+	_unicode_errors = "strict"
 
 	def __init__(self, glos: GlossaryType):
 
@@ -254,6 +263,7 @@ class Reader(object):
 		synDict = self._synDict
 		sametypesequence = self._sametypesequence
 		dictFile = self._dictFile
+		unicode_errors = self._unicode_errors
 
 		if not dictFile:
 			raise RuntimeError("iterating over a reader while it's not open")
@@ -294,7 +304,7 @@ class Reader(object):
 			defis = []
 			defiFormats = []
 			for b_partDefi, defiFormatCode in defisData:
-				partDefi = b_partDefi.decode("utf-8")
+				partDefi = b_partDefi.decode("utf-8", errors=unicode_errors)
 				partDefiFormat = {
 					"m": "m",
 					"t": "m",
@@ -316,7 +326,7 @@ class Reader(object):
 			if not defiFormat:
 				log.warning(f"Definition format {defiFormat!r} is not supported")
 
-			word = b_word.decode("utf-8")
+			word = b_word.decode("utf-8", errors=unicode_errors)
 			try:
 				alts = synDict[entryIndex]
 			except KeyError:  # synDict is dict
@@ -348,6 +358,8 @@ class Reader(object):
 		"""
 		if not isfile(self._filename + ".syn"):
 			return {}
+		unicode_errors = self._unicode_errors
+
 		with open(self._filename + ".syn", "rb") as synFile:
 			synBytes = synFile.read()
 		synBytesLen = len(synBytes)
@@ -373,7 +385,8 @@ class Reader(object):
 				)
 				continue
 
-			s_alt = b_alt.decode("utf-8")  # s_alt is str
+			s_alt = b_alt.decode("utf-8", errors=unicode_errors)
+			# s_alt is str
 			try:
 				synDict[entryIndex].append(s_alt)
 			except KeyError:
