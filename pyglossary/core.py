@@ -242,6 +242,9 @@ if dataDir.endswith("dist-packages") or dataDir.endswith("site-packages"):
 	parent3 = dirname(dirname(dirname(rootDir)))
 	if os.sep == "\\":
 		dataDir = join(parent3, "Python", "share", "pyglossary")
+		if not isdir(dataDir):
+			pyVer = f'{sys.version_info.major}{sys.version_info.minor}'
+			dataDir = join(parent3, f"Python{pyVer}", "share", "pyglossary")
 	else:
 		dataDir = join(parent3, "share", "pyglossary")
 
