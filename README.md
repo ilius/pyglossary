@@ -58,7 +58,7 @@ Supported formats
 | [DigitalNK](https://github.com/digitalprk/dicrs) (SQLite3, N-Korean)  |🔢 | .db             | ✔  |     |
 | EDLIN                                                                 |📁 | .edlin          | ✔  |  ✔  |
 | EPUB-2 E-Book                                                         |📦 | .epub           | ❌ |  ✔  |
-| [FreeDict](https://freedict.org)                                      |📝 | .tei            | ✔  |  ✔  |
+| [FreeDict](https://freedict.org)                                      |📝 | .tei            | ✔  | ❌  |
 | [Gettext Source](https://www.gnu.org/software/gettext)                |📝 | .po             | ✔  |  ✔  |
 | HTML Directory (by file size)                                         |📁 |                 | ❌ |  ✔  |
 | [JMDict](https://www.edrdg.org/jmdict/j_jmdict.html) (Japanese)       |📝 |                 | ✔  | ❌  |
