@@ -245,6 +245,9 @@ if dataDir.endswith("dist-packages") or dataDir.endswith("site-packages"):
 		if not isdir(dataDir):
 			pyVer = f'{sys.version_info.major}{sys.version_info.minor}'
 			dataDir = join(parent3, f"Python{pyVer}", "share", "pyglossary")
+		if not isdir(dataDir):
+			venv_dir = os.environ['VIRTUAL_ENV']
+			dataDir = join(parent3, venv_dir, "share", "pyglossary")
 	else:
 		dataDir = join(parent3, "share", "pyglossary")
 
