@@ -202,7 +202,41 @@ def checkCreateConfDir() -> None:
 			usrF.write(srcF.read())
 
 
+def getDataDir():
+	virtualEnv = os.getenv("VIRTUAL_ENV")
+	if virtualEnv:
+		return join(
+			dirname(dirname(dirname(rootDir))),
+			virtualEnv, "share", "pyglossary",
+		)
+
+	if not (
+		rootDir.endswith("dist-packages") or
+		rootDir.endswith("site-packages")
+	):
+		return rootDir
+
+	parent3 = dirname(dirname(dirname(rootDir)))
+	if os.sep == "/":
+		return join(parent3, "share", "pyglossary")
+
+	_dir = join(parent3, "Python", "share", "pyglossary")
+	if isdir(_dir):
+		return _dir
+
+	_dir = join(
+		parent3,
+		f"Python{sys.version_info.major}{sys.version_info.minor}",
+		"share",
+		"pyglossary",
+	)
+	if isdir(_dir):
+		return _dir
+
+	raise OSError("failed to detect dataDir")
+
 # __________________________________________________________________________ #
+
 
 logging.setLoggerClass(MyLogger)
 log = logging.getLogger("pyglossary")
@@ -237,20 +271,7 @@ else:
 	uiDir = join(_srcDir, "ui")
 	rootDir = dirname(_srcDir)
 
-dataDir = rootDir
-if dataDir.endswith("dist-packages") or dataDir.endswith("site-packages"):
-	parent3 = dirname(dirname(dirname(rootDir)))
-	if os.sep == "\\":
-		dataDir = join(parent3, "Python", "share", "pyglossary")
-		if not isdir(dataDir):
-			pyVer = f'{sys.version_info.major}{sys.version_info.minor}'
-			dataDir = join(parent3, f"Python{pyVer}", "share", "pyglossary")
-		if not isdir(dataDir):
-			venv_dir = os.environ['VIRTUAL_ENV']
-			dataDir = join(parent3, venv_dir, "share", "pyglossary")
-	else:
-		dataDir = join(parent3, "share", "pyglossary")
-
+dataDir = getDataDir()
 appResDir = join(dataDir, "res")
 
 if os.sep == "/":  # Operating system is Unix-Like
