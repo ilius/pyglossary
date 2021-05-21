@@ -23,6 +23,7 @@ import logging
 import sys
 
 import os
+import os.path
 from os.path import (
 	split,
 	join,
@@ -1341,4 +1342,5 @@ class Glossary(GlossaryType):
 		cls.readFormats = []
 		cls.writeFormats = []
 		cls.loadPlugins(join(dirname(__file__), "plugins"))
-		cls.loadPlugins(userPluginsDir)
+		if os.path.exists(userPluginsDir):
+			cls.loadPlugins(userPluginsDir)
