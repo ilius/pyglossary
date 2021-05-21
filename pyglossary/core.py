@@ -196,7 +196,10 @@ def checkCreateConfDir() -> None:
 			os.rename(confDir, confDir + ".bak")  # we do not import old config
 		os.mkdir(confDir)
 	if not exists(userPluginsDir):
-		os.mkdir(userPluginsDir)
+		try:
+			os.mkdir(userPluginsDir)
+		except Exception as e:
+			log.warning(f"failed to create user plugins directory: {e}")
 	if not isfile(confJsonFile):
 		with open(rootConfJsonFile) as srcF, open(confJsonFile, "w") as usrF:
 			usrF.write(srcF.read())
