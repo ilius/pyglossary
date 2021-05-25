@@ -173,12 +173,12 @@ class XdxfTransformer(object):
 				}):
 					hf.write(child.text)
 			elif any(iref_url.endswith(ext) for ext in ("mp3", "wav", "aac", "ogg")):
-				with hf.element("audio", src=iref_url, controls=None):
-					with hf.element("a", **{
-						"class": "iref",
-						"href": iref_url,
-					}):
-						hf.write("🔈")
+				#  with hf.element("audio", src=iref_url):
+				with hf.element("a", **{
+					"class": "iref",
+					"href": iref_url,
+				}):
+					hf.write("🔊")
 				return
 			elif iref_url:
 				with hf.element("a", **{
