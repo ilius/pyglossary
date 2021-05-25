@@ -165,23 +165,29 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag == "iref":
+			iref_url = child.attrib.get("href", "")
 			if child.text:
 				with hf.element("a", **{
 					"class": "iref",
 					"href": child.attrib.get("href", child.text),
 				}):
 					hf.write(child.text)
-			elif any(child.attrib.get("href", "").endswith(ext) for ext in ("mp3", "wav", "aac", "ogg")):
-				audio = child.attrib.get("href")
-				with hf.element("audio", src=audio):
+			elif any(iref_url.endswith(ext) for ext in ("mp3", "wav", "aac", "ogg")):
+				with hf.element("audio", src=iref_url):
 					with hf.element("a", **{
 						"class": "iref",
-						"href": audio,
+						"href": iref_url,
 					}):
-						hf.write("audio")
+						hf.write("🔊")
 				return
+			elif iref_url:
+				with hf.element("a", **{
+					"class": "iref",
+					"href": iref_url,
+				}):
+					hf.write("⎋")
 			else:
-				log.warning(f"iref with no text: {self.tostring(child)}")
+				log.warning(f"iref with no text and no url: {self.tostring(child)}")
 			return
 
 		if child.tag == "rref":
