@@ -178,7 +178,7 @@ class XdxfTransformer(object):
 						"class": "iref",
 						"href": iref_url,
 					}):
-						hf.write("🔊")
+						hf.write("🔈")
 				return
 			elif iref_url:
 				with hf.element("a", **{
