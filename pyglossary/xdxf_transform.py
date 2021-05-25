@@ -34,6 +34,8 @@ def xdxf_to_html_transformer():
 
 
 class XdxfTransformer(object):
+	_gram_color: str = "green"
+
 	def __init__(self, encoding="utf-8"):
 		self._encoding = encoding
 
@@ -129,7 +131,7 @@ class XdxfTransformer(object):
 			hf.write("]")
 			return
 
-		if child.tag in ("k", "ex"):
+		if child.tag in ("k", "ex", "sr"):
 			with hf.element("span", **{"class": child.tag}):
 				self.writeChildrenOf(hf, child)
 			return
@@ -163,14 +165,23 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag == "iref":
-			if not child.text:
-				log.warning(f"iref with no text: {self.tostring(child)}")
+			if child.text:
+				with hf.element("a", **{
+					"class": "iref",
+					"href": child.attrib.get("href", child.text),
+				}):
+					hf.write(child.text)
+			elif any(child.attrib.get("href", "").endswith(ext) for ext in ("mp3", "wav", "aac", "ogg")):
+				audio = child.attrib.get("href")
+				with hf.element("audio", src=audio, controls=None):
+					with hf.element("a", **{
+						"class": "iref",
+						"href": audio,
+					}):
+						hf.write("audio")
 				return
-			with hf.element("a", **{
-				"class": "iref",
-				"href": child.attrib.get("href", child.text),
-			}):
-				hf.write(child.text)
+			else:
+				log.warning(f"iref with no text: {self.tostring(child)}")
 			return
 
 		if child.tag == "rref":
@@ -181,6 +192,23 @@ class XdxfTransformer(object):
 		if child.tag == "def":
 			self.writeChildrenOf(hf, child)
 			return
+
+		if child.tag == "gr":
+			with hf.element("font", color=self._gram_color):
+				hf.write(child.text)
+			return
+
+		if child.tag == "ex_orig":
+			with hf.element("i"):
+				hf.write(child.text)
+			return
+
+		if child.tag == "ex_transl" and prev.tag == "ex_orig":
+			if child.text != prev.text:
+				with hf.element("i"):
+					hf.write(child.text)
+			return
+
 
 		log.warning(f"unknown tag {child.tag}")
 		self.writeChildrenOf(hf, child)
