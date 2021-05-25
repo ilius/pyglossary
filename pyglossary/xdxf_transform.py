@@ -173,7 +173,7 @@ class XdxfTransformer(object):
 					hf.write(child.text)
 			elif any(child.attrib.get("href", "").endswith(ext) for ext in ("mp3", "wav", "aac", "ogg")):
 				audio = child.attrib.get("href")
-				with hf.element("audio", src=audio, controls=None):
+				with hf.element("audio", src=audio):
 					with hf.element("a", **{
 						"class": "iref",
 						"href": audio,
