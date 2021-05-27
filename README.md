@@ -142,19 +142,19 @@ ways to use the program).
 
 
 
-When you run the program without any command-line arguments or options,
-PyGlossary tries to find PyGI, if it's installed, opens the Gtk3-based
-interface, if it's not, tries to find Tkinter and open the Tkinter-based
-interface. And exits with an error if neither are installed.
+UI (User Interface) Selection
+-----------------------------
+When you run PyGlossary without any command-line arguments or options/flags,
+PyGlossary tries to find PyGI and open the Gtk3-based interface. If it fails,
+it tries to find Tkinter and open the Tkinter-based interface. If that fails,
+it tries to find `prompt_toolkit` and run interactive command-line interface.
+And if none of these libraries are found, it exits with an error.
 
-But you can explicitly determine the user interface type using `--ui`,
-for example:
+But you can explicitly determine the user interface type using `--ui`
 
-	python3 main.py --ui=gtk
-
-Or
-
-	python3 main.py --ui=tk
+- `python3 main.py --ui=gtk`
+- `python3 main.py --ui=tk`
+- `python3 main.py --ui=cmd`
 
 
 Installation on Windows
