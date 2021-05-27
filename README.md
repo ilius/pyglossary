@@ -165,8 +165,7 @@ Installation on Windows
 - To install, run: `pip install --upgrade pyglossary`
 - Now you should be able to run `pyglossary` command
 - If command was not found, make sure Python environment variables are set up:
-
-<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/windows-python39-env-vars.png" width="50%" height="50%"/>
+	<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/windows-python39-env-vars.png" width="50%" height="50%"/>
 
 
 Feature-specific Requirements
