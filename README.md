@@ -66,6 +66,7 @@ Supported formats
 | Kobo E-Reader Dictionary                                              |📦 | .kobo.zip       | ❌ |  ✔  |
 | [Kobo E-Reader Dictfile](https://github.com/pgaskin/dictutil)         |📝 | .df             | ✔  |  ✔  |
 | [Lingoes Source](http://www.lingoes.net/en/dictionary/dict_format.php)|📝 | .ldf            | ✔  |  ✔  |
+| Mobipocket E-Book                                                     |🔢 | .mobi           | ❌ |  ✔  |
 | Octopus MDict (Chinese-origin)                                        |🔢 | .mdx            | ✔  | ❌  |
 | [Sdictionary Binary](http://swaj.net/sdict/)                          |🔢 | .dct            | ✔  |     |
 | [Sdictionary Source](http://swaj.net/sdict/create-dicts.html)         |📝 | .sdct           |    |  ✔  |
@@ -202,7 +203,7 @@ Feature-specific Requirements
 
 	`sudo pip3 install marisa-trie`
 
--	**Writing to Mobipocket (`.mobi`) E-Reader file**
+-	**Writing to Mobipocket (`.mobi`) E-Book**
 
 	Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen)
 
