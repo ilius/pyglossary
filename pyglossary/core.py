@@ -248,6 +248,11 @@ def getDataDir():
 	if isdir(_dir):
 		return _dir
 
+	if os.getenv("CONDA_PREFIX"):
+		_dir = join(os.getenv("CONDA_PREFIX"), "share", "pyglossary")
+		if isdir(_dir):
+			return _dir
+
 	raise OSError("failed to detect dataDir")
 
 # __________________________________________________________________________ #
