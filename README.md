@@ -188,10 +188,6 @@ Feature-specific Requirements
 	+ `sudo pip3 install PyICU`
 	+ PyICU >= 1.5 is required, see [doc/pyicu.md](./doc/pyicu.md) for more details.
 
--	**Writing to Kobo E-Reader Dictionary**
-
-	`sudo pip3 install marisa-trie`
-
 -	**Reading from Zim** (see [#228](https://github.com/ilius/pyglossary/issues/228))
 
 	`sudo pip3 install libzim`
@@ -201,6 +197,15 @@ Feature-specific Requirements
 	`python-lzo` is required for **some** MDX glossaries.
 	First try converting your MDX file, if failed (`AssertionError` probably),
 	then try to install [LZO library and Python binding](doc/lzo.md).
+
+-	**Writing to Kobo E-Reader Dictionary**
+
+	`sudo pip3 install marisa-trie`
+
+-	**Writing to Mobipocket (`.mobi`) E-Reader file**
+
+	Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen)
+
 
 
 **Using Termux on Android?** See [doc/termux.md](./doc/termux.md)

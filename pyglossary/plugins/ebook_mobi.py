@@ -27,7 +27,7 @@ from pyglossary.ebook_base import *
 
 enable = True
 format = "Mobi"
-description = "MOBI E-Book"
+description = "Mobipocket (.mobi) E-Book"
 extensions = (".mobi",)
 extensionCreate = ".mobi"
 sortOnWrite = ALWAYS
@@ -138,7 +138,8 @@ class Writer(EbookWriter):
 
 		# run kindlegen
 		if not kindlegen_path:
-			log.info(f"Not running kindlegen, the raw files are located in {filename}")
+			log.warn(f"Not running kindlegen, the raw files are located in {filename}")
+			log.warn(f"Provide KindleGen path with: --write-options 'kindlegen_path=...'")
 			return
 
 		name = self._glos.getInfo("name")
