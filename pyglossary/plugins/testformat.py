@@ -31,7 +31,7 @@ class Reader(object):
 		# and set self._wordCount if you can
 		# read-options should be keyword arguments in this method
 		self._wordCount = 100
-		log.info(f"reading from format {format} using plugin")
+		# log.info(f"some useful message")
 		# here read info from file and set to Glossary object
 		self._glos.setInfo("name", "Test")
 		desc = "Test glossary craeted by a PyGlossary plugin"
@@ -72,7 +72,7 @@ class Writer(object):
 	def write(self) -> "Generator[None, BaseEntry, None]":
 		glos = self._glos
 		filename = self._filename
-		log.info(f"writing to format {format} using plugin")
+		# log.info(f"some useful message")
 		while True:
 			entry = yield
 			if entry is None:
