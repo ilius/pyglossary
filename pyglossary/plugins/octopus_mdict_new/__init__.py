@@ -32,6 +32,7 @@ singleFile = False
 optionsProp = {
 	"encoding": EncodingOption(),
 	"substyle": BoolOption(),
+	"same_dir_data_files": BoolOption(),
 }
 
 tools = [
@@ -47,6 +48,7 @@ tools = [
 class Reader(object):
 	_encoding: str = ""
 	_substyle: bool = True
+	_same_dir_data_files: bool = False
 
 	def __init__(self, glos):
 		self._glos = glos
@@ -169,6 +171,17 @@ class Reader(object):
 		del linksDict
 		self._linksDict = {}
 		gc.collect()
+
+		if self._same_dir_data_files:
+			dirPath = dirname(self._filename)
+			for fname in os.listdir(dirPath):
+				ext = splitext(fname)[1].lower()
+				if ext in (".mdx", ".mdd"):
+					continue
+				fpath = join(dirPath, fname)
+				with open(fpath, mode="rb") as _file:
+					b_data = _file.read()
+				yield glos.newDataEntry(fname, b_data)
 
 		for mdd in self._mdd:
 			try:
