@@ -212,6 +212,7 @@ class Writer(object):
 		"ttf": "application/x-font-ttf",
 		"otf": "application/x-font-opentype",
 		"mp3": "audio/mpeg",
+		"ini": "text/plain",
 		# "application/octet-stream+xapian",
 	}
 
