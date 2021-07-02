@@ -248,13 +248,27 @@ def getDataDir():
 logging.setLoggerClass(MyLogger)
 log = logging.getLogger("pyglossary")
 
-sys.excepthook = lambda *exc_info: log.critical(
-	format_exception(
+def windows_show_exception(*exc_info):
+	import ctypes
+	msg = format_exception(
 		exc_info=exc_info,
 		add_locals=(log.level <= logging.DEBUG),  # FIXME
 		add_globals=False,
 	)
-)
+	log.critical(msg)
+	ctypes.windll.user32.MessageBoxW(0, msg, "PyGlossary Error", 0)
+
+if os.sep == "\\":
+	sys.excepthook = windows_show_exception
+else:
+	sys.excepthook = lambda *exc_info: log.critical(
+		format_exception(
+			exc_info=exc_info,
+			add_locals=(log.level <= logging.DEBUG),  # FIXME
+			add_globals=False,
+		)
+	)
+
 
 sysName = platform.system().lower()
 # platform.system() is in	["Linux", "Windows", "Darwin", "FreeBSD"]
