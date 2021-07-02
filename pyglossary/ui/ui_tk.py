@@ -1156,6 +1156,7 @@ class UI(tix.Frame, UIBase):
 		log.addHandler(
 			TkTextLogHandler(console),
 		)
+		log.info(f"Data Directory: {dataDir}")
 		console.insert("end", "Console:\n")
 		####
 		self.console = console

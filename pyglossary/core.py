@@ -227,16 +227,24 @@ def getDataDir():
 	if os.sep == "/":
 		return join(parent3, "share", "pyglossary")
 
-	_dir = join(parent3, "Python", "share", "pyglossary")
-	if isdir(_dir):
-		return _dir
-
 	_dir = join(
 		parent3,
 		f"Python{sys.version_info.major}{sys.version_info.minor}",
 		"share",
 		"pyglossary",
 	)
+	if isdir(_dir):
+		return _dir
+
+	_dir = join(parent3, "Python3", "share", "pyglossary")
+	if isdir(_dir):
+		return _dir
+
+	_dir = join(parent3, "Python", "share", "pyglossary")
+	if isdir(_dir):
+		return _dir
+
+	_dir = join(sys.prefix, "share", "pyglossary")
 	if isdir(_dir):
 		return _dir
 
