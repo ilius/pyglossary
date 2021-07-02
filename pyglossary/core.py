@@ -186,6 +186,10 @@ class StdLogHandler(logging.Handler):
 		else:
 			fp = sys.stdout
 		###
+		if fp is None:
+			print("fp=None, levelname={record.levelname}")
+			print(msg)
+			return
 		fp.write(msg + "\n")
 		fp.flush()
 
