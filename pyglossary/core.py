@@ -255,11 +255,6 @@ def getDataDir():
 
 	raise OSError("failed to detect dataDir")
 
-# __________________________________________________________________________ #
-
-
-logging.setLoggerClass(MyLogger)
-log = logging.getLogger("pyglossary")
 
 def windows_show_exception(*exc_info):
 	import ctypes
@@ -270,6 +265,12 @@ def windows_show_exception(*exc_info):
 	)
 	log.critical(msg)
 	ctypes.windll.user32.MessageBoxW(0, msg, "PyGlossary Error", 0)
+
+# __________________________________________________________________________ #
+
+
+logging.setLoggerClass(MyLogger)
+log = logging.getLogger("pyglossary")
 
 if os.sep == "\\":
 	sys.excepthook = windows_show_exception
