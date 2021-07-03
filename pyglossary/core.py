@@ -187,7 +187,7 @@ class StdLogHandler(logging.Handler):
 			fp = sys.stdout
 		###
 		if fp is None:
-			print("fp=None, levelname={record.levelname}")
+			print(f"fp=None, levelname={record.levelname}")
 			print(msg)
 			return
 		fp.write(msg + "\n")
