@@ -55,6 +55,7 @@ class Writer(object):
 		firstTagCounter = Counter()
 		allTagsCounter = Counter()
 		sourceScriptCounter = Counter()
+		dataEntryExtCounter = Counter()
 
 		while True:
 			entry = yield
@@ -83,6 +84,10 @@ class Writer(object):
 					for tag in re_possible_html.findall(defi):
 						tag = tag.strip("< />").lower()
 						allTagsCounter[tag] += 1
+			elif defiFormat == "b":
+				filenameNoExt, ext = splitext(entry.s_word)
+				ext = ext.lstrip(".")
+				dataEntryExtCounter[ext] += 1
 
 			ws = getWritingSystemFromText(entry.s_word)
 			if ws:
@@ -100,6 +105,11 @@ class Writer(object):
 		info["word_count"] = wordCount
 		info["bword_count"] = bwordCount
 		info["data_entry_count"] = data_entry_count
+		info["data_entry_extension_count"] = ", ".join(
+			f"{ext}={count}"
+			for ext, count in
+			dataEntryExtCounter.most_common()
+		)
 		info["defi_format"] = ", ".join(
 			f"{defiFormat}={count}"
 			for defiFormat, count in
