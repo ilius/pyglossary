@@ -59,6 +59,7 @@ class Reader(object):
 		"image/jpeg",
 		"image/gif",
 		"image/svg+xml",
+		"image/webp",
 		"text/css",
 		"application/javascript",
 		"application/octet-stream+xapian",
