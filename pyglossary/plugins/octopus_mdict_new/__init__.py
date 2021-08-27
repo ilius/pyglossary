@@ -33,6 +33,7 @@ optionsProp = {
 	"encoding": EncodingOption(),
 	"substyle": BoolOption(),
 	"same_dir_data_files": BoolOption(),
+	"audio": BoolOption(),
 }
 
 tools = [
@@ -49,11 +50,15 @@ class Reader(object):
 	_encoding: str = ""
 	_substyle: bool = True
 	_same_dir_data_files: bool = False
+	_audio: bool = False
 
 	def __init__(self, glos):
 		self._glos = glos
 		self.clear()
 		self._re_internal_link = re.compile('href=(["\'])(entry://|[dx]:)')
+		self._re_audio_link = re.compile(
+			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>'
+		)
 
 	def clear(self):
 		self._filename = ""
@@ -146,6 +151,16 @@ class Reader(object):
 	def fixDefi(self, defi: str) -> str:
 		defi = self._re_internal_link.sub(r'href=\1bword://', defi)
 		defi = defi.replace(' src="file://', ' src=".')
+
+		if self._audio:
+			# \5 is the possible elements between <a ...> and </a>
+			# if it's <img> it's useless
+			# right now let's just ignore it
+			defi = self._re_audio_link.sub(
+				r'<audio controls \2src="\3"\4></audio>',
+				defi,
+			)
+
 		return defi
 
 	def __iter__(self):
