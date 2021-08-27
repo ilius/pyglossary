@@ -40,7 +40,9 @@ def colorize(hf, syllables, tones):
 	if len(syllables) != len(tones):
 		log.warn(f"unmatched tones: syllables={syllables!r}, tones={tones}")
 		with hf.element("div", style="display: inline-block"):
-			hf.write(syllables)
+			for syllable in syllables:
+				with hf.element("font", color=""):
+					hf.write(syllable)
 		return
 
 	with hf.element("div", style="display: inline-block"):
