@@ -2,7 +2,7 @@ import re
 import os
 from .pinyin import convert
 from .summarize import summarize
-from pyglossary.plugins.formats_common import pip
+from pyglossary.plugins.formats_common import pip, log
 
 line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
 
@@ -37,6 +37,12 @@ def make_entry(trad, simp, pinyin, eng):
 
 
 def colorize(hf, syllables, tones):
+	if len(syllables) != len(tones):
+		log.warn(f"unmatched tones: syllables={syllables!r}, tones={tones}")
+		with hf.element("div", style="display: inline-block"):
+			hf.write(syllables)
+		return
+
 	with hf.element("div", style="display: inline-block"):
 		for syllable, tone in zip(syllables, tones):
 			with hf.element("font", color=COLORS[tone]):
