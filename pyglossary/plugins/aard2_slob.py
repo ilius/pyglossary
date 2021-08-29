@@ -206,6 +206,8 @@ class Writer(object):
 		"gif": "image/gif",
 		"svg": "image/svg+xml",
 		"webp": "image/webp",
+		"tiff": "image/tiff",
+		"tif": "image/tiff",
 		"css": "text/css",
 		"js": "application/javascript",
 		"json": "application/json",
