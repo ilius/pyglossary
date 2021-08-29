@@ -154,10 +154,16 @@ class Reader(object):
 
 		if self._audio:
 			# \5 is the possible elements between <a ...> and </a>
-			# if it's <img> it's useless
-			# right now let's just ignore it
+			# but anything between <audio...> and </audio> is completely
+			# ignored by Aaard2 Web and browser
+			# and there is no point adding it after </audio>
+			# which makes it shown after audio controls
+
+			# GoldenDict acts completely different, so must use
+			# audio_goldendict=True option in StarDict writer instead.
+
 			defi = self._re_audio_link.sub(
-				r'<audio controls \2src="\3"\4></audio>',
+				r'<audio controls src="\3"></audio>',
 				defi,
 			)
 
