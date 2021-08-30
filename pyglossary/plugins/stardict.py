@@ -40,7 +40,12 @@ optionsProp = {
 			"backslashreplace",  # insert a \xNN escape sequence
 		],
 	),
-	"audio_goldendict": BoolOption(),
+	"audio_goldendict": BoolOption(
+		comment="convert audio links for GoldenDict (desktop)"
+	),
+	"audio_icon": BoolOption(
+		comment="add glossary's audio icon",
+	),
 }
 sortOnWrite = ALWAYS
 # sortKey is defined in Writer class
@@ -494,6 +499,7 @@ class Writer(object):
 	_stardict_client: bool = False
 	_merge_syns: bool = False
 	_audio_goldendict: bool = False
+	_audio_icon: bool = True
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
@@ -587,10 +593,16 @@ class Writer(object):
 			defi = self._br_pattern.sub("<br>", defi)
 
 		if self._audio_goldendict:
-			defi = self._re_audio_link.sub(
-				r'<audio src="\3">\5</audio>',
-				defi,
-			)
+			if self._audio_icon:
+				defi = self._re_audio_link.sub(
+					r'<audio src="\3">\5</audio>',
+					defi,
+				)
+			else:
+				defi = self._re_audio_link.sub(
+					r'<audio src="\3"></audio>',
+					defi,
+				)
 
 		# FIXME:
 		# defi = defi.replace(' src="./', ' src="./res/')
