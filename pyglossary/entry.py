@@ -170,7 +170,7 @@ class Entry(BaseEntry):
 			r"<b[ >]",
 			r"<p[ >]",
 			r"<hr\s*/?\s*>",
-			r"<a href=",
+			r"<a ",  # or r"<a [^<>]*href="
 			r"<div[ >]",
 			r"<span[ >]",
 			r"<img[ >]",
