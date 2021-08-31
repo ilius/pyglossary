@@ -36,6 +36,7 @@ optionsProp = {
 }
 
 # https://en.wikipedia.org/wiki/XDXF
+# https://github.com/soshial/xdxf_makedict/blob/master/format_standard/xdxf_description.md
 
 tools = [
 	{
