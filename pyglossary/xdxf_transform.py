@@ -215,6 +215,8 @@ class XdxfTransformer(object):
 					hf.write(child.text)
 			return
 
+		if child.tag == "opt":
+			return
 
 		log.warning(f"unknown tag {child.tag}")
 		self.writeChildrenOf(hf, child)
