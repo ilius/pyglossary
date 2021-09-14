@@ -29,10 +29,14 @@ def parse_line(line):
 	return trad, simp, pinyin, eng
 
 
-def make_entry(trad, simp, pinyin, eng, trad_name):
+def make_entry(trad, simp, pinyin, eng, traditional_title):
 	eng_names = list(map(summarize, eng))
-	names = [trad if trad_name else simp, simp if trad_name else trad, pinyin] + eng_names
-	article = render_article(trad, simp, pinyin, eng, trad_name)
+	names = [
+			trad if traditional_title else simp,
+			simp if traditional_title else trad,
+			pinyin
+	] + eng_names
+	article = render_article(trad, simp, pinyin, eng, traditional_title)
 	return names, article
 
 
@@ -43,7 +47,7 @@ def colorize(hf, syllables, tones):
 				hf.write(syllable)
 
 
-def render_article(trad, simp, pinyin, eng, trad_name):
+def render_article(trad, simp, pinyin, eng, traditional_title):
 	from lxml import etree as ET
 	from io import BytesIO
 
@@ -60,10 +64,10 @@ def render_article(trad, simp, pinyin, eng, trad_name):
 		with hf.element("div", style="border: 1px solid; padding: 5px"):
 			with hf.element("div"):
 				with hf.element("big"):
-					colorize(hf, trad if trad_name else simp, tones)
+					colorize(hf, trad if traditional_title else simp, tones)
 				if trad != simp:
 					hf.write("\xa0/\xa0")  # "\xa0" --> "&#160;" == "&nbsp;"
-					colorize(hf, simp if trad_name else trad, tones)
+					colorize(hf, simp if traditional_title else trad, tones)
 				hf.write(ET.Element("br"))
 				with hf.element("big"):
 					colorize(hf, pinyin_list, tones)

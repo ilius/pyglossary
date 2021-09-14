@@ -10,7 +10,7 @@ extensionCreate = ""
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
-	"trad_name": BoolOption(),
+	"traditional_title": BoolOption(),
 }
 
 # https://en.wikipedia.org/wiki/CEDICT
@@ -25,7 +25,7 @@ class Reader:
 	}
 
 	_encoding: str = "utf-8"
-	_trad_name: bool = False
+	_traditional_title: bool = False
 
 	def __init__(self, glos):
 		self._glos = glos
@@ -79,6 +79,6 @@ class Reader:
 			if parts is None:
 				log.warning("bad line: %s", line)
 				continue
-			names, article = conv.make_entry(*parts, trad_name=self._trad_name)
+			names, article = conv.make_entry(*parts, traditional_title=self._traditional_title)
 			entry = self._glos.newEntry(names, article, defiFormat="h")
 			yield entry
