@@ -86,7 +86,7 @@ Legend:
 - ✔		Supported
 - ❌ 	Will not be supported
 
-Note: SQLite3 `.db` files are not detected by extension, you need to specify the format.
+Note: SQLite3 `.db` files are not detected by extension; So you need to specify the format.
 
 Requirements
 ------------
@@ -217,7 +217,7 @@ User Plugins
 If you want to add your own plugin without adding it to source code directory,
 or you want to use a plugin that has been removed from repository,
 you can place it in this directory:
-- Linux: `~/.pyglossary/plugins/`
+- Linux or BSD: `~/.pyglossary/plugins/`
 - Mac: `~/Library/Preferences/PyGlossary/plugins`
 - Windows: `C:\Users\USERNAME\AppData\Roaming\PyGlossary\plugins`
 
@@ -233,8 +233,8 @@ A glossary contains a number of entries.
 
 Each entry contains:
 
-- Headword (title or main phrase for query)
-- Alternates (some alternative phrases for query)
+- Headword (title or main phrase for lookup)
+- Alternates (some alternative phrases for lookup)
 - Definition
 
 In PyGlossary, headword and alternates together are accessible as a single Python list `entry.l_word`
