@@ -67,7 +67,7 @@ class Reader(object):
 		self._wordCount = 0
 		self._dataEntryCount = 0
 
-		# dict of mainWord -> newline-separated altenatives
+		# dict of mainWord -> newline-separated alternatives
 		self._linksDict = {}  # type: Dict[str, str]
 
 	def open(self, filename):

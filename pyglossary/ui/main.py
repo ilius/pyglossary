@@ -375,7 +375,7 @@ def main():
 		core.StdLogHandler(noColor=args.noColor),
 	)
 	# with the logger setted up, we can import other pyglossary modules, so they
-	# can do some loggging in right way.
+	# can do some logging in right way.
 
 	core.checkCreateConfDir()
 

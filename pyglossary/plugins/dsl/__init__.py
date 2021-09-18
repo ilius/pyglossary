@@ -424,7 +424,7 @@ class Reader(object):
 				line_type = "text"
 				line = unfinished_line + line.lstrip()
 
-				# some ill formated source may have tags spanned into
+				# some ill formatted source may have tags spanned into
 				# multiple lines
 				# try to match opening and closing tags
 				tags_open = re_tags_open.findall(line)
@@ -450,7 +450,7 @@ class Reader(object):
 			# append previous entry
 			if line_type == "text":
 				if unfinished_line:
-					# line may be skipped if ill formated
+					# line may be skipped if ill formatted
 					current_text.append(self.clean_tags(unfinished_line, self._audio))
 				yield self._glos.newEntry(
 					[current_key] + current_key_alters,

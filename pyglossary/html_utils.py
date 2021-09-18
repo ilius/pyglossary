@@ -361,7 +361,7 @@ def _sub_unescape_unicode(m: "re.Match") -> str:
 def unescape_unicode(text):
 	"""
 		unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
-		leave these 3 special entities alone, since unscaping them
+		leave these 3 special entities alone, since unescaping them
 		creates invalid html
 		we also ignore quotations: "&quot;" and "&#x27;"
 	"""
