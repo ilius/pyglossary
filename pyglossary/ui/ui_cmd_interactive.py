@@ -31,7 +31,7 @@ from collections import OrderedDict
 
 import json
 
-# the code for cmd.Cmd is very ugly and hard to understan
+# the code for cmd.Cmd is very ugly and hard to understand
 
 # readline's complete func silently (and stupidly) hides any exception
 # and only shows the print if it's in the first line of function. very awkward!

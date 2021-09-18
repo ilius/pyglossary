@@ -268,7 +268,7 @@ class DSLParser(object):
 				else:
 					clean_line += BRACKET_L + chunk.replace("[", BRACKET_L)\
 						.replace("]", BRACKET_R)
-			else:  # firsr chunk
+			else:  # first chunk
 				clean_line += chunk.replace("[", BRACKET_L)\
 					.replace("]", BRACKET_R)
 		return clean_line

@@ -1134,7 +1134,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# gtk.main_quit()
 		# if callled while converting, main_quit does not exit program,
 		# it keeps printing warnings,
-		# and makes you close the terminal or force kill the proccess
+		# and makes you close the terminal or force kill the process
 		sys.exit(0)
 
 	def consoleClearButtonClicked(self, widget=None):

@@ -189,7 +189,7 @@ class Reader(object):
 				# this is for making internal links valid
 				# this makes too many alternates!
 				# but we don't seem to have a choice
-				# execpt for scanning and indexing all words once
+				# except for scanning and indexing all words once
 				# and then starting over and fixing/optimizing links
 				for keb in kebList:
 					for reb, _ in rebList:
