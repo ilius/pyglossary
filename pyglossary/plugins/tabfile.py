@@ -15,7 +15,7 @@ extensionCreate = ".txt"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
-	"writeInfo": BoolOption(
+	"enable_info": BoolOption(
 		comment="Enable glossary info / metedata",
 	),
 	"resources": BoolOption(
@@ -92,7 +92,7 @@ class Reader(TextGlossaryReader):
 
 class Writer(object):
 	_encoding: str = "utf-8"
-	_writeInfo: bool = True
+	_enable_info: bool = True
 	_resources: bool = True
 	_file_size_approx: int = 0
 	_word_title: bool = False
@@ -118,7 +118,7 @@ class Writer(object):
 		writer = TextGlossaryWriter(
 			self._glos,
 			entryFmt="{word}\t{defi}\n",
-			writeInfo=self._writeInfo,
+			writeInfo=self._enable_info,
 			outInfoKeysAliasDict=None,
 		)
 		writer._encoding = self._encoding
