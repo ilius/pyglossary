@@ -11,7 +11,7 @@ extensions = (".sdct",)
 extensionCreate = ".sdct"
 singleFile = True
 optionsProp = {
-	"writeInfo": BoolOption(comment="Enable glossary info / metedata"),
+	"enable_info": BoolOption(comment="Enable glossary info / metedata"),
 	"newline": NewlineOption(),
 	"resources": BoolOption(comment="Enable resources / data files"),
 }
@@ -27,7 +27,7 @@ tools = [
 
 
 class Writer(object):
-	_writeInfo: bool = True
+	_enable_info: bool = True
 	_newline: bool = "\n"
 	_resources: bool = True
 
@@ -48,7 +48,7 @@ class Writer(object):
 		from pyglossary.text_writer import writeTxt
 		glos = self._glos
 		head = ""
-		if self._writeInfo:
+		if self._enable_info:
 			head = (
 				"<header>\n"
 				f"title = {self.getInfo('name')}\n"
