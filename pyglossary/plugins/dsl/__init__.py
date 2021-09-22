@@ -41,7 +41,7 @@ singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
 	"audio": BoolOption(comment="Enable audio objects"),
-	"onlyFixMarkUp": BoolOption(comment=""),
+	"only_fix_markup": BoolOption(comment=""),
 }
 
 tools = [
@@ -305,7 +305,7 @@ class Reader(object):
 
 	_encoding: str = ""
 	_audio: bool = False
-	_onlyFixMarkUp: bool = False
+	_only_fix_markup: bool = False
 
 	re_tags_open = re.compile(r"(?<!\\)\[(c |[cuib]\])")
 	re_tags_close = re.compile(r"\[/[cuib]\]")
@@ -334,7 +334,7 @@ class Reader(object):
 		filename: str,
 	) -> None:
 		self._filename = filename
-		if self._onlyFixMarkUp:
+		if self._only_fix_markup:
 			self.clean_tags = self._clean_tags_only_markup
 		else:
 			self.clean_tags = _clean_tags
