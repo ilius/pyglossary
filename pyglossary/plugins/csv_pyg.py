@@ -55,7 +55,7 @@ optionsProp = {
 	"add_defi_format": BoolOption(
 		comment="",
 	),
-	"writeInfo": BoolOption(
+	"enable_info": BoolOption(
 		comment="Enable glossary info / metedata",
 	),
 	"word_title": BoolOption(
@@ -188,7 +188,7 @@ class Writer(object):
 	_resources: bool = True
 	_delimiter: str = ","
 	_add_defi_format: bool = False
-	_writeInfo: bool = True
+	_enable_info: bool = True
 	_word_title: bool = False
 
 	def __init__(self, glos: GlossaryType):
@@ -206,7 +206,7 @@ class Writer(object):
 		)
 		if not isdir(resDir):
 			os.mkdir(resDir)
-		if self._writeInfo:
+		if self._enable_info:
 			for key, value in self._glos.iterInfo():
 				self._csvWriter.writerow([f"#{key}", value])
 
