@@ -10,8 +10,8 @@ extensionCreate = ".sql"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
-	"infoKeys": ListOption(comment="List of dbinfo table columns"),
-	"addExtraInfo": BoolOption(comment="Create dbinfo_extra table"),
+	"info_keys": ListOption(comment="List of dbinfo table columns"),
+	"add_extra_info": BoolOption(comment="Create dbinfo_extra table"),
 	"newline": NewlineOption(),
 	"transaction": BoolOption(comment="Use TRANSACTION"),
 }
@@ -19,8 +19,8 @@ optionsProp = {
 
 class Writer(object):
 	_encoding: str = "utf-8"
-	_infoKeys: "Optional[List]" = None
-	_addExtraInfo: bool = True
+	_info_keys: "Optional[List]" = None
+	_add_extra_info: bool = True
 	_newline: str = "<br>"
 	_transaction: bool = False
 
@@ -43,12 +43,12 @@ class Writer(object):
 	def _writeInfo(self):
 		fileObj = self._file
 		newline = self._newline
-		infoKeys = self._getInfoKeys()
+		info_keys = self._getInfoKeys()
 		infoDefLine = "CREATE TABLE dbinfo ("
 		infoValues = []
 		glos = self._glos
 
-		for key in infoKeys:
+		for key in info_keys:
 			value = glos.getInfo(key)
 			value = value\
 				.replace("\'", "\'\'")\
@@ -61,7 +61,7 @@ class Writer(object):
 		infoDefLine = infoDefLine[:-2] + ");"
 		fileObj.write(infoDefLine + "\n")
 
-		if self._addExtraInfo:
+		if self._add_extra_info:
 			fileObj.write(
 				"CREATE TABLE dbinfo_extra ("
 				"\'id\' INTEGER PRIMARY KEY NOT NULL, "
@@ -77,8 +77,8 @@ class Writer(object):
 			fileObj.write("BEGIN TRANSACTION;\n")
 		fileObj.write(f"INSERT INTO dbinfo VALUES({','.join(infoValues)});\n")
 
-		if self._addExtraInfo:
-			extraInfo = glos.getExtraInfos(infoKeys)
+		if self._add_extra_info:
+			extraInfo = glos.getExtraInfos(info_keys)
 			for index, (key, value) in enumerate(extraInfo.items()):
 				key = key.replace("\'", "\'\'")
 				value = value.replace("\'", "\'\'")
@@ -88,9 +88,9 @@ class Writer(object):
 				)
 
 	def _getInfoKeys(self):
-		infoKeys = self._infoKeys
-		if infoKeys:
-			return infoKeys
+		info_keys = self._info_keys
+		if info_keys:
+			return info_keys
 		return [
 			"dbname",
 			"author",
