@@ -10,7 +10,7 @@ extensionCreate = ".json"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
-	"writeInfo": BoolOption(comment="Enable glossary info / metedata"),
+	"enable_info": BoolOption(comment="Enable glossary info / metedata"),
 	"resources": BoolOption(comment="Enable resources / data files"),
 	"word_title": BoolOption(
 		comment="add headwords title to begining of definition",
@@ -20,7 +20,7 @@ optionsProp = {
 
 class Writer(object):
 	_encoding: str = "utf-8"
-	_writeInfo: bool = True
+	_enable_info: bool = True
 	_resources: bool = True
 	_word_title: bool = False
 
@@ -42,7 +42,7 @@ class Writer(object):
 
 		glos = self._glos
 		encoding = self._encoding
-		writeInfo = self._writeInfo
+		enable_info = self._enable_info
 		resources = self._resources
 
 		ascii = encoding == "ascii"
@@ -55,7 +55,7 @@ class Writer(object):
 			entryFmt="\t{word}: {defi},\n",
 			filename=self._filename,
 			encoding=encoding,
-			writeInfo=writeInfo,
+			writeInfo=enable_info,
 			wordEscapeFunc=escape,
 			defiEscapeFunc=escape,
 			ext=".json",
