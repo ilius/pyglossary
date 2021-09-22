@@ -368,19 +368,28 @@ class EncodingOption(Option):
 
 
 class NewlineOption(Option):
-	def __init__(self, customValue=True, values=None, **kwargs):
+	def __init__(
+		self,
+		customValue=True,
+		values=None,
+		comment=None,
+		**kwargs
+	):
 		if values is None:
 			values = [
 				"\r\n",
 				"\n",
 				"\r",
 			]
+		if comment is None:
+			comment = "Newline string"
 		Option.__init__(
 			self,
 			"str",
 			customValue=customValue,
 			values=values,
 			multiline=True,
+			comment=comment,
 			**kwargs
 		)
 
