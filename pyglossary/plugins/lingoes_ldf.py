@@ -12,7 +12,7 @@ extensionCreate = ".ldf"
 singleFile = True
 optionsProp = {
 	"newline": NewlineOption(),
-	"resources": BoolOption(),
+	"resources": BoolOption(comment="Enable resources / data files"),
 	"encoding": EncodingOption(),
 }
 

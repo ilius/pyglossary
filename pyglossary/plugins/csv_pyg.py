@@ -43,14 +43,21 @@ tools = [
 ]
 optionsProp = {
 	"encoding": EncodingOption(),
-	"resources": BoolOption(),
+	"resources": BoolOption(
+		comment="Enable resources / data files",
+	),
 	"delimiter": Option(
-		"str",
+		typ="str",
 		customValue=True,
 		values=[",", ";", "@"],
+		comment="",
 	),
-	"add_defi_format": BoolOption(),
-	"writeInfo": BoolOption(),
+	"add_defi_format": BoolOption(
+		comment="",
+	),
+	"writeInfo": BoolOption(
+		comment="Enable glossary info / metedata",
+	),
 	"word_title": BoolOption(
 		comment="add headwords title to begining of definition",
 	),

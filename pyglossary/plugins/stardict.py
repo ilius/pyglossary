@@ -25,13 +25,22 @@ description = "StarDict (.ifo)"
 extensions = (".ifo",)
 extensionCreate = "-stardict/"
 optionsProp = {
-	"stardict_client": BoolOption(),
-	"dictzip": BoolOption(),
+	"stardict_client": BoolOption(
+		comment="Modify html entries for StarDict 3.0",
+	),
+	"dictzip": BoolOption(
+		comment="Compress .dict file to .dict.dz",
+	),
 	"sametypesequence": StrOption(
 		values=["", "h", "m", "x", None],
+		comment="Definition format: h=html, m=plaintext, x=xdxf",
 	),
-	"merge_syns": BoolOption(),
-	"xdxf_to_html": BoolOption(),
+	"merge_syns": BoolOption(
+		comment="Write alternates to .idx instead of .syn",
+	),
+	"xdxf_to_html": BoolOption(
+		comment="",
+	),
 	"unicode_errors": StrOption(
 		values=[
 			"strict",  # raise a UnicodeDecodeError exception
@@ -39,12 +48,13 @@ optionsProp = {
 			"replace",  # use U+FFFD, REPLACEMENT CHARACTER
 			"backslashreplace",  # insert a \xNN escape sequence
 		],
+		comment="What to do with Unicode decoding errors",
 	),
 	"audio_goldendict": BoolOption(
-		comment="convert audio links for GoldenDict (desktop)"
+		comment="Convert audio links for GoldenDict (desktop)"
 	),
 	"audio_icon": BoolOption(
-		comment="add glossary's audio icon",
+		comment="Add glossary's audio icon",
 	),
 }
 sortOnWrite = ALWAYS

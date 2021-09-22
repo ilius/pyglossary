@@ -16,19 +16,28 @@ extensions = (".tei",)
 extensionCreate = ".tei"
 singleFile = True
 optionsProp = {
-	"resources": BoolOption(),
-	"discover": BoolOption(),
-	"auto_rtl": BoolOption(allowNone=True),
+	"resources": BoolOption(
+		comment="Enable resources / data files",
+	),
+	"discover": BoolOption(
+		comment="Find and show unsupported tags",
+	),
+	"auto_rtl": BoolOption(
+		allowNone=True,
+		comment="Auto-detect and mark Right-to-Left text",
+	),
 	"word_title": BoolOption(
-		comment="add headwords title to begining of definition",
+		comment="Add headwords title to begining of definition",
 	),
 	"pron_color": StrOption(
-		comment="pronunciation color",
+		comment="Pronunciation color",
 	),
 	"gram_color": StrOption(
-		comment="grammar color",
+		comment="Grammar color",
 	),
-	"example_padding": IntOption(),
+	"example_padding": IntOption(
+		comment="Padding for examples (in px)",
+	),
 }
 
 # https://freedict.org/

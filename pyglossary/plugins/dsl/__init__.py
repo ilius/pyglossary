@@ -40,8 +40,8 @@ extensionCreate = ".dsl"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
-	"audio": BoolOption(),
-	"onlyFixMarkUp": BoolOption(),
+	"audio": BoolOption(comment="Enable audio objects"),
+	"onlyFixMarkUp": BoolOption(comment=""),
 }
 
 tools = [

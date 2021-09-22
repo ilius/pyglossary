@@ -71,17 +71,25 @@ tools = [
 ]
 
 optionsProp = {
-	"group_by_prefix_length": IntOption(),
+	"group_by_prefix_length": IntOption(
+		comment="Prefix length for grouping",
+	),
 	# "group_by_prefix_merge_min_size": IntOption(),
 	# "group_by_prefix_merge_across_first": BoolOption(),
-	"compress": BoolOption(),
-	"keep": BoolOption(),
-	"include_index_page": BoolOption(),
+	"compress": BoolOption(
+		comment="Enable compression",
+	),
+	"keep": BoolOption(
+		comment="Keep temp files",
+	),
+	"include_index_page": BoolOption(
+		comment="Include index page",
+	),
 	"apply_css": StrOption(
-		comment="path to css file",
+		comment="Path to css file",
 	),
 	"cover_path": StrOption(
-		comment="path to cover file",
+		comment="Path to cover file",
 	),
 }
 

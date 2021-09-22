@@ -10,10 +10,10 @@ extensionCreate = ".sql"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
-	"infoKeys": ListOption(),
-	"addExtraInfo": BoolOption(),
+	"infoKeys": ListOption(comment="List of dbinfo table columns"),
+	"addExtraInfo": BoolOption(comment="Create dbinfo_extra table"),
 	"newline": NewlineOption(),
-	"transaction": BoolOption(),
+	"transaction": BoolOption(comment="Use TRANSACTION"),
 }
 
 

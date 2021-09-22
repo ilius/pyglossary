@@ -9,7 +9,7 @@ extensions = (".po",)
 extensionCreate = ".po"
 singleFile = True
 optionsProp = {
-	"resources": BoolOption(),
+	"resources": BoolOption(comment="Enable resources / data files"),
 }
 
 tools = [

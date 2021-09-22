@@ -11,9 +11,9 @@ extensions = (".sdct",)
 extensionCreate = ".sdct"
 singleFile = True
 optionsProp = {
-	"writeInfo": BoolOption(),
+	"writeInfo": BoolOption(comment="Enable glossary info / metedata"),
 	"newline": NewlineOption(),
-	"resources": BoolOption(),
+	"resources": BoolOption(comment="Enable resources / data files"),
 }
 
 tools = [

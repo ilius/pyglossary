@@ -42,16 +42,37 @@ tools = [
 ]
 
 optionsProp = {
-	"group_by_prefix_length": IntOption(),
+	"group_by_prefix_length": IntOption(
+		comment="Prefix length for grouping",
+	),
 	# "group_by_prefix_merge_min_size": IntOption(),
 	# "group_by_prefix_merge_across_first": BoolOption(),
-	"kindlegen_path": StrOption(),  # specific to mobi
 
-	"compress": BoolOption(disabled=True),
-	"keep": BoolOption(disabled=True),
-	"include_index_page": BoolOption(disabled=True),
-	"apply_css": StrOption(disabled=True),
-	"cover_path": StrOption(disabled=True),
+	# specific to mobi
+	"kindlegen_path": StrOption(
+		comment="Path to kindlegen executable",
+	),
+
+	"compress": BoolOption(
+		disabled=True,
+		comment="Enable compression",
+	),
+	"keep": BoolOption(
+		disabled=True,
+		comment="Keep temp files",
+	),
+	"include_index_page": BoolOption(
+		disabled=True,
+		comment="Include index page",
+	),
+	"apply_css": StrOption(
+		disabled=True,
+		comment="Path to css file",
+	),
+	"cover_path": StrOption(
+		disabled=True,
+		comment="Path to cover file",
+	),
 }
 
 

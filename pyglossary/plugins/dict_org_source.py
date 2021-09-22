@@ -9,7 +9,7 @@ extensions = (".dtxt",)
 extensionCreate = ".dtxt"
 singleFile = True
 optionsProp = {
-	"remove_html_all": BoolOption(),
+	"remove_html_all": BoolOption(comment="Remove all HTML tags"),
 }
 
 tools = [

@@ -78,24 +78,59 @@ debugReadOptions = {
 }
 
 optionsProp = {
-	"defaultEncodingOverwrite": EncodingOption(),
-	"sourceEncodingOverwrite": EncodingOption(),
-	"targetEncodingOverwrite": EncodingOption(),
-	"partOfSpeechColor": HtmlColorOption(),
+	"defaultEncodingOverwrite": EncodingOption(
+		comment="Default encoding (overwrite)",
+	),
+	"sourceEncodingOverwrite": EncodingOption(
+		comment="Source encoding (overwrite)",
+	),
+	"targetEncodingOverwrite": EncodingOption(
+		comment="Target encoding (overwrite)",
+	),
+	"partOfSpeechColor": HtmlColorOption(
+		comment="Color for Part of Speech",
+	),
 
-	"noControlSequenceInDefi": BoolOption(),
-	"strictStringConvertion": BoolOption(),
-	"processHtmlInKey": BoolOption(),
-	"keyRStripChars": StrOption(multiline=True),
+	"noControlSequenceInDefi": BoolOption(
+		comment="No control sequence in definitions",
+	),
+	"strictStringConvertion": BoolOption(
+		comment="Strict string convertion",
+	),
+	"processHtmlInKey": BoolOption(
+		comment="Process HTML in (entry or info) key",
+	),
+	"keyRStripChars": StrOption(
+		multiline=True,
+		comment="Characters to strip from right-side of keys",
+	),
 
 	# debug read options:
-	"searchCharSamples": BoolOption(),
-	"collectMetadata2": BoolOption(),
-	"writeGz": BoolOption(),
-	"charSamplesPath": StrOption(), # file path
-	"msgLogPath": StrOption(), # file path
-	"rawDumpPath": StrOption(), # file path
-	"unpackedGzipPath": StrOption(), # file path
+	"searchCharSamples": BoolOption(
+		comment="",
+	),
+	"collectMetadata2": BoolOption(
+		comment="",
+	),
+	"writeGz": BoolOption(
+		comment="",
+	),
+	"charSamplesPath": StrOption(
+		# file path
+		comment="",
+	),
+	"msgLogPath": StrOption(
+		# file path
+		comment="",
+	),
+	"rawDumpPath": StrOption(
+		# file path
+		comment="",
+	),
+	"unpackedGzipPath": StrOption(
+		# file path
+		comment="",
+	),
 }
 
 

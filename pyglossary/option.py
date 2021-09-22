@@ -294,7 +294,13 @@ class ListOption(Option):
 class EncodingOption(Option):
 	re_category = re.compile("^[a-z]+")
 
-	def __init__(self, customValue=True, values=None, **kwargs):
+	def __init__(
+		self,
+		customValue=True,
+		values=None,
+		comment=None,
+		**kwargs
+	):
 		if values is None:
 			values = [
 				"utf-8",
@@ -324,11 +330,14 @@ class EncodingOption(Option):
 				"latin5",
 				"latin6",
 			]
+		if comment is None:
+			comment = "Encoding/charset"
 		Option.__init__(
 			self,
 			"str",
 			customValue=customValue,
 			values=values,
+			comment=comment,
 			**kwargs
 		)
 

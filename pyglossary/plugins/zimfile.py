@@ -9,7 +9,9 @@ extensions = (".zim",)
 extensionCreate = ".zim"
 singleFile = True
 optionsProp = {
-	"skip_duplicate_words": BoolOption(),
+	"skip_duplicate_words": BoolOption(
+		comment="Detect and skip duplicate words",
+	),
 }
 
 # https://wiki.kiwix.org/wiki/Software

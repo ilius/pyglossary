@@ -34,7 +34,7 @@ extensions = (".edlin",)
 extensionCreate = ".edlin/"
 optionsProp = {
 	"encoding": EncodingOption(),
-	"havePrevLink": BoolOption(),
+	"havePrevLink": BoolOption(comment="Enable link to previous entry"),
 }
 
 

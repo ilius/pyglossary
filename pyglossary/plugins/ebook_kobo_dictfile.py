@@ -34,7 +34,7 @@ extensionCreate = ".df"
 
 optionsProp = {
 	"encoding": EncodingOption(),
-	"extract_inline_images": BoolOption(),
+	"extract_inline_images": BoolOption(comment="Extract inline images"),
 }
 
 tools = [

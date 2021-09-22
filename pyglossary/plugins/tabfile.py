@@ -15,8 +15,12 @@ extensionCreate = ".txt"
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
-	"writeInfo": BoolOption(),
-	"resources": BoolOption(),
+	"writeInfo": BoolOption(
+		comment="Enable glossary info / metedata",
+	),
+	"resources": BoolOption(
+		comment="Enable resources / data files",
+	),
 	"file_size_approx": FileSizeOption(
 		comment="split up by given approximate file size\nexamples: 100m, 1g",
 	),

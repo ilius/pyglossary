@@ -57,7 +57,11 @@ optionsProp = {
 		comment="XML file path with top-level tag",
 	),
 	"jing": BoolOption(comment="run Jing check on generated XML"),
-	"indexes": StrOption(customValue=False, values=["", "ru", "zh"]),
+	"indexes": StrOption(
+		customValue=False,
+		values=["", "ru", "zh"],
+		comment="Additional indexes to dictionary entries",
+	),
 }
 
 tools = [

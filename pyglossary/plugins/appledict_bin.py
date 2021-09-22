@@ -34,7 +34,7 @@ tools = [
 	},
 ]
 optionsProp = {
-	"html": BoolOption(),
+	"html": BoolOption(comment="Entries are HTML"),
 }
 
 

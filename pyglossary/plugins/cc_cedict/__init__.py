@@ -10,7 +10,9 @@ extensionCreate = ""
 singleFile = True
 optionsProp = {
 	"encoding": EncodingOption(),
-	"traditional_title": BoolOption(),
+	"traditional_title": BoolOption(
+		comment="Use traditional Chinese for entry titles/keys",
+	),
 }
 
 # https://en.wikipedia.org/wiki/CEDICT

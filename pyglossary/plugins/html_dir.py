@@ -17,16 +17,26 @@ extensionCreate = ".hdir/"
 singleFile = False
 optionsProp = {
 	"encoding": EncodingOption(),
-	"resources": BoolOption(),
-	"max_file_size": IntOption(),
-	"filename_format": StrOption(),
-	"escape_defi": BoolOption(),
-	"dark": BoolOption(),
+	"resources": BoolOption(
+		comment="Enable resources / data files",
+	),
+	"max_file_size": IntOption(
+		comment="Maximum file size in bytes",
+	),
+	"filename_format": StrOption(
+		comment="Filename format, default: {n:05d}.html",
+	),
+	"escape_defi": BoolOption(
+		comment="Escape definitions",
+	),
+	"dark": BoolOption(
+		comment="Use dark style",
+	),
 	"css": StrOption(
-		comment="path to css file",
+		comment="Path to css file",
 	),
 	"word_title": BoolOption(
-		comment="add headwords title to begining of definition",
+		comment="Add headwords title to begining of definition",
 	),
 }
 

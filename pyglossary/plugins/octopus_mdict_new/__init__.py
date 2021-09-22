@@ -31,9 +31,9 @@ extensionCreate = ""
 singleFile = False
 optionsProp = {
 	"encoding": EncodingOption(),
-	"substyle": BoolOption(),
-	"same_dir_data_files": BoolOption(),
-	"audio": BoolOption(),
+	"substyle": BoolOption(comment="Enable substyle"),
+	"same_dir_data_files": BoolOption(comment="Read data files from same directory"),
+	"audio": BoolOption(comment="Enable audio objects"),
 }
 
 tools = [
