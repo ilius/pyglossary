@@ -39,21 +39,21 @@ extensions = (".apple",)
 extensionCreate = ".apple/"
 # FIXME: rename indexes arg/option to indexes_lang?
 optionsProp = {
-	"cleanHTML": BoolOption(comment="use BeautifulSoup parser"),
+	"clean_html": BoolOption(comment="use BeautifulSoup parser"),
 	"css": StrOption(
 		comment="custom .css file path",
 	),
 	"xsl": StrOption(
 		comment="custom XSL transformations file path",
 	),
-	"defaultPrefs": DictOption(
+	"default_prefs": DictOption(
 		comment="default prefs in python dict format",
 		# example: {"key": "value", "version": "1"}
 	),
-	"prefsHTML": StrOption(
+	"prefs_html": StrOption(
 		comment="preferences XHTML file path",
 	),
-	"frontBackMatter": StrOption(
+	"front_back_matter": StrOption(
 		comment="XML file path with top-level tag",
 	),
 	"jing": BoolOption(comment="run Jing check on generated XML"),
@@ -101,7 +101,7 @@ def abspath_or_None(path):
 def write_header(
 	glos: "GlossaryType",
 	toFile: "TextIO",
-	frontBackMatter: "Optional[str]",
+	front_back_matter: "Optional[str]",
 ) -> None:
 	# write header
 	toFile.write(
@@ -110,31 +110,31 @@ def write_header(
 		'xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\n'
 	)
 
-	if frontBackMatter:
-		with open(frontBackMatter, mode="r", encoding="utf-8") as front_back_matter:
+	if front_back_matter:
+		with open(front_back_matter, mode="r", encoding="utf-8") as front_back_matter:
 			toFile.write(front_back_matter.read())
 
 
-def format_default_prefs(defaultPrefs):
+def format_default_prefs(default_prefs):
 	"""
-	:type defaultPrefs: dict or None
+	:type default_prefs: dict or None
 
 	as by 14th of Jan 2016, it is highly recommended that prefs should contain
 	{"version": "1"}, otherwise Dictionary.app does not keep user changes
 	between restarts.
 	"""
-	if not defaultPrefs:
+	if not default_prefs:
 		return ""
-	if not isinstance(defaultPrefs, dict):
-		raise TypeError(f"defaultPrefs not a dictionary: {defaultPrefs!r}")
-	if str(defaultPrefs.get("version", None)) != "1":
+	if not isinstance(default_prefs, dict):
+		raise TypeError(f"default_prefs not a dictionary: {default_prefs!r}")
+	if str(default_prefs.get("version", None)) != "1":
 		log.error(
 			"default prefs does not contain {'version': '1'}.  prefs "
 			"will not be persistent between Dictionary.app restarts."
 		)
 	return "\n".join(
 		f"\t\t<key>{key}</key>\n\t\t<string>{value}</string>"
-		for key, value in sorted(defaultPrefs.items())
+		for key, value in sorted(default_prefs.items())
 	).strip()
 
 
@@ -155,22 +155,22 @@ write glossary to Apple dictionary .xml and supporting files.
 
 :param dirname: directory path, must not have extension
 
-:param cleanHTML: pass True to use BeautifulSoup parser.
+:param clean_html: pass True to use BeautifulSoup parser.
 
 :param css: path to custom .css file
 
 :param xsl: path to custom XSL transformations file.
 
-:param defaultPrefs: Default prefs in python dictionary literal format,
+:param default_prefs: Default prefs in python dictionary literal format,
 i.e. {"key1": "value1", "key2": "value2", ...}.  All keys and values 
 must be quoted strings; not allowed characters (e.g. single/double
 quotes,equal sign "=", semicolon) must be escaped as hex code
 according to python string literal rules.
 
-:param prefsHTML: path to XHTML file with user interface for
+:param prefs_html: path to XHTML file with user interface for
 dictionary's preferences. refer to Apple's documentation for details.
 
-:param frontBackMatter: path to XML file with top-level tag
+:param front_back_matter: path to XML file with top-level tag
 <d:entry id="front_back_matter" d:title="Your Front/Back Matter Title">
 	your front/back matter entry content
 </d:entry>
@@ -190,12 +190,12 @@ class Writer(object):
 		"html5lib": "html5lib",
 	}
 
-	_cleanHTML: bool = True
+	_clean_html: bool = True
 	_css: str = ""
 	_xsl: str = ""
-	_defaultPrefs: "Optional[Dict]" = None
-	_prefsHTML: str = ""
-	_frontBackMatter: str = ""
+	_default_prefs: "Optional[Dict]" = None
+	_prefs_html: str = ""
+	_front_back_matter: str = ""
 	_jing: bool = False
 	_indexes: str = ""  # FIXME: rename to indexes_lang?
 
@@ -216,23 +216,23 @@ class Writer(object):
 		from pyglossary.xdxf_transform import XdxfTransformer
 
 		glos = self._glos
-		cleanHTML = self._cleanHTML
+		clean_html = self._clean_html
 		css = self._css
 		xsl = self._xsl
-		defaultPrefs = self._defaultPrefs
-		prefsHTML = self._prefsHTML
-		frontBackMatter = self._frontBackMatter
+		default_prefs = self._default_prefs
+		prefs_html = self._prefs_html
+		front_back_matter = self._front_back_matter
 		jing = self._jing
 		indexes = self._indexes
 
 		xdxf_to_html = XdxfTransformer(encoding="utf-8")
 
-		if cleanHTML:
+		if clean_html:
 			if BeautifulSoup is None:
 				loadBeautifulSoup()
 			if BeautifulSoup is None:
 				log.warning(
-					"cleanHTML option passed but BeautifulSoup not found. "
+					"clean_html option passed but BeautifulSoup not found. "
 					f"to fix this run "
 					f"`{pip} install lxml beautifulsoup4 html5lib`"
 				)
@@ -245,8 +245,8 @@ class Writer(object):
 		# before chdir (outside indir block)
 		css = abspath_or_None(css)
 		xsl = abspath_or_None(xsl)
-		prefsHTML = abspath_or_None(prefsHTML)
-		frontBackMatter = abspath_or_None(frontBackMatter)
+		prefs_html = abspath_or_None(prefs_html)
+		front_back_matter = abspath_or_None(front_back_matter)
 
 		generate_id = id_generator()
 		generate_indexes = indexes_generator(indexes)
@@ -256,7 +256,7 @@ class Writer(object):
 			os.mkdir(myResDir)
 
 		with open(filePathBase + ".xml", mode="w", encoding="utf-8") as toFile:
-			write_header(glos, toFile, frontBackMatter)
+			write_header(glos, toFile, front_back_matter)
 			while True:
 				entry = yield
 				if entry is None:
@@ -300,8 +300,8 @@ class Writer(object):
 		if xsl:
 			shutil.copy(xsl, myResDir)
 
-		if prefsHTML:
-			shutil.copy(prefsHTML, myResDir)
+		if prefs_html:
+			shutil.copy(prefs_html, myResDir)
 
 		write_css(filePathBase + ".css", css)
 
@@ -327,7 +327,7 @@ class Writer(object):
 			frontMatterReferenceID = (
 				"<key>DCSDictionaryFrontMatterReferenceID</key>\n"
 				"\t<string>front_back_matter</string>"
-				if frontBackMatter
+				if front_back_matter
 				else ""
 			)
 			toFile.write(
@@ -342,8 +342,8 @@ class Writer(object):
 					DCSDictionaryCopyright=copyright,
 					DCSDictionaryManufacturerName=glos.getAuthor(),
 					DCSDictionaryXSL=basename(xsl) if xsl else "",
-					DCSDictionaryDefaultPrefs=format_default_prefs(defaultPrefs),
-					DCSDictionaryPrefsHTML=basename(prefsHTML) if prefsHTML else "",
+					DCSDictionaryDefaultPrefs=format_default_prefs(default_prefs),
+					DCSDictionaryPrefsHTML=basename(prefs_html) if prefs_html else "",
 					DCSDictionaryFrontMatterReferenceID=frontMatterReferenceID,
 				)
 			)
