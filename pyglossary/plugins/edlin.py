@@ -34,7 +34,7 @@ extensions = (".edlin",)
 extensionCreate = ".edlin/"
 optionsProp = {
 	"encoding": EncodingOption(),
-	"havePrevLink": BoolOption(comment="Enable link to previous entry"),
+	"prev_link": BoolOption(comment="Enable link to previous entry"),
 }
 
 
@@ -55,7 +55,7 @@ class Reader(object):
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._havePrevLink = True
+		self._prev_link = True
 		self._wordCount = None
 		self._rootPath = None
 		self._resDir = ""
@@ -77,7 +77,7 @@ class Reader(object):
 		with open(infoFname, "r", encoding=self._encoding) as infoFp:
 			info = jsonToOrderedData(infoFp.read())
 		self._wordCount = info.pop("wordCount")
-		self._havePrevLink = info.pop("havePrevLink")
+		self._prev_link = info.pop("prev_link")
 		self._rootPath = info.pop("root")
 		for key, value in info.items():
 			self._glos.setInfo(key, value)
@@ -112,7 +112,7 @@ class Reader(object):
 				encoding=self._encoding,
 			) as fromFile:
 				header = fromFile.readline().rstrip()
-				if self._havePrevLink:
+				if self._prev_link:
 					_prevPath, nextPath = header.split(" ")
 				else:
 					nextPath = header
@@ -159,7 +159,7 @@ class Reader(object):
 
 class Writer(object):
 	_encoding: str = "utf-8"
-	_havePrevLink: bool = True
+	_prev_link: bool = True
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
@@ -212,7 +212,7 @@ class Writer(object):
 			encoding=self._encoding,
 		) as toFile:
 			nextPath = self.hashToPath(nextHash) if nextHash else "END"
-			if self._havePrevLink:
+			if self._prev_link:
 				prevPath = self.hashToPath(prevHash) if prevHash else "START"
 				header = prevPath + " " + nextPath
 			else:
@@ -260,14 +260,14 @@ class Writer(object):
 			info = odict()
 			info["name"] = self._glos.getInfo("name")
 			info["root"] = self.hashToPath(rootHash)
-			info["havePrevLink"] = self._havePrevLink
+			info["prev_link"] = self._prev_link
 			info["wordCount"] = count
 			# info["modified"] =
 
 			for key, value in self._glos.getExtraInfos((
 				"name",
 				"root",
-				"havePrevLink",
+				"prev_link",
 				"wordCount",
 			)).items():
 				info[key] = value
