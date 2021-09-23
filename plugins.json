@@ -179,79 +179,79 @@
 		],
 		"singleFile": true,
 		"optionsProp": {
-			"defaultEncodingOverwrite": {
+			"default_encoding_overwrite": {
 				"class": "EncodingOption",
 				"type": "str",
 				"customValue": true,
 				"comment": "Default encoding (overwrite)"
 			},
-			"sourceEncodingOverwrite": {
+			"source_encoding_overwrite": {
 				"class": "EncodingOption",
 				"type": "str",
 				"customValue": true,
 				"comment": "Source encoding (overwrite)"
 			},
-			"targetEncodingOverwrite": {
+			"target_encoding_overwrite": {
 				"class": "EncodingOption",
 				"type": "str",
 				"customValue": true,
 				"comment": "Target encoding (overwrite)"
 			},
-			"partOfSpeechColor": {
+			"part_of_speech_color": {
 				"class": "HtmlColorOption",
 				"type": "str",
 				"customValue": true,
 				"comment": "Color for Part of Speech"
 			},
-			"noControlSequenceInDefi": {
+			"no_control_sequence_in_defi": {
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "No control sequence in definitions"
 			},
-			"strictStringConvertion": {
+			"strict_string_convertion": {
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Strict string convertion"
 			},
-			"processHtmlInKey": {
+			"process_html_in_key": {
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Process HTML in (entry or info) key"
 			},
-			"keyRStripChars": {
+			"key_rstrip_chars": {
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true,
 				"comment": "Characters to strip from right-side of keys"
 			},
-			"searchCharSamples": {
+			"search_char_samples": {
 				"class": "BoolOption",
 				"type": "bool"
 			},
-			"collectMetadata2": {
+			"collect_metadata2": {
 				"class": "BoolOption",
 				"type": "bool"
 			},
-			"writeGz": {
+			"write_gz": {
 				"class": "BoolOption",
 				"type": "bool"
 			},
-			"charSamplesPath": {
+			"char_samples_path": {
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true
 			},
-			"msgLogPath": {
+			"msg_log_path": {
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true
 			},
-			"rawDumpPath": {
+			"raw_dump_path": {
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true
 			},
-			"unpackedGzipPath": {
+			"unpacked_gzip_path": {
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true
@@ -260,14 +260,14 @@
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
-			"defaultEncodingOverwrite": "",
-			"keyRStripChars": "",
-			"noControlSequenceInDefi": false,
-			"partOfSpeechColor": "007000",
-			"processHtmlInKey": false,
-			"sourceEncodingOverwrite": "",
-			"strictStringConvertion": false,
-			"targetEncodingOverwrite": ""
+			"default_encoding_overwrite": "",
+			"key_rstrip_chars": "",
+			"no_control_sequence_in_defi": false,
+			"part_of_speech_color": "007000",
+			"process_html_in_key": false,
+			"source_encoding_overwrite": "",
+			"strict_string_convertion": false,
+			"target_encoding_overwrite": ""
 		}
 	},
 	{
