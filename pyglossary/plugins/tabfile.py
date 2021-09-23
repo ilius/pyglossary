@@ -22,10 +22,10 @@ optionsProp = {
 		comment="Enable resources / data files",
 	),
 	"file_size_approx": FileSizeOption(
-		comment="split up by given approximate file size\nexamples: 100m, 1g",
+		comment="Split up by given approximate file size\nexamples: 100m, 1g",
 	),
 	"word_title": BoolOption(
-		comment="add headwords title to begining of definition",
+		comment="Add headwords title to begining of definition",
 	),
 }
 
