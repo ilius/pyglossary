@@ -24,6 +24,7 @@ from .flags import (
 )
 import logging
 from collections import OrderedDict as odict
+import string
 
 log = logging.getLogger("pyglossary")
 
@@ -36,6 +37,18 @@ class PluginProp(object):
 		self._Writer = None
 		self._WriterLoaded = False
 
+		if log.level >= logging.DEBUG:
+			for name in self.optionsProp:
+				if name.lower() != name:
+					suggestName = "".join([
+						"_" + x.lower() if x in string.ascii_uppercase
+						else x
+						for x in name
+					])
+					log.debug(
+						f"{self.name}: please rename option "
+						f"{name} to {suggestName}"
+					)
 	@property
 	def pluginModule(self):
 		return self._p
