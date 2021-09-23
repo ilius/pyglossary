@@ -143,13 +143,13 @@ class GzipWithCheck(object):
 
 
 class DebugBglReader(BglReader):
-	_collectMetadata2 = False
-	_searchCharSamples = False
-	_writeGz = False
-	_rawDumpPath = None
-	_unpackedGzipPath = None
-	_charSamplesPath = None
-	_msgLogPath = None
+	_collect_metadata2 = False
+	_search_char_samples = False
+	_write_gz = False
+	_raw_dump_path = None
+	_unpacked_gzip_path = None
+	_char_samples_path = None
+	_msg_log_path = None
 
 	def open(
 		self,
@@ -158,15 +158,15 @@ class DebugBglReader(BglReader):
 		if not BglReader.open(self, filename):
 			return
 
-		self.metadata2 = MetaData2() if self._collectMetadata2 else None
-		self.targetCharsArray = ([False] * 256) if searchCharSamples else None
+		self.metadata2 = MetaData2() if self._collect_metadata2 else None
+		self.targetCharsArray = ([False] * 256) if self._search_char_samples else None
 
-		if self._rawDumpPath:
-			self.rawDumpFile = open(self._rawDumpPath, "w")
-		if self._charSamplesPath:
-			self.samplesDumpFile = open(self._charSamplesPath, "w")
-		if self._msgLogPath:
-			self.msgLogFile = open(self._msgLogPath, "w")
+		if self._raw_dump_path:
+			self.rawDumpFile = open(self._raw_dump_path, "w")
+		if self._char_samples_path:
+			self.samplesDumpFile = open(self._char_samples_path, "w")
+		if self._msg_log_path:
+			self.msgLogFile = open(self._msg_log_path, "w")
 
 		self.charRefStatPattern = re.compile(b"(&#\\w+;)", re.I)
 
@@ -188,7 +188,7 @@ class DebugBglReader(BglReader):
 				log.error(f"invalid gzip header position: {gzipOffset}")
 				return False
 
-			if self._writeGz:
+			if self._write_gz:
 				self.dataFile = self._filename + "-data.gz"
 				try:
 					f2 = open(self.dataFile, "wb")
@@ -205,10 +205,10 @@ class DebugBglReader(BglReader):
 				self.file = gzip.open(self.dataFile, "rb")
 			else:
 				f2 = FileOffS(self._filename, gzipOffset)
-				if self._unpackedGzipPath:
+				if self._unpacked_gzip_path:
 					self.file = GzipWithCheck(
 						f2,
-						self._unpackedGzipPath,
+						self._unpacked_gzip_path,
 						self,
 						closeFileobj=True,
 					)
