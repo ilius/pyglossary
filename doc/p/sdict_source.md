@@ -16,7 +16,7 @@ Website | http://swaj.net/sdict/
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `enable_info` | `True` | bool | Enable glossary info / metedata
 `newline` | `
 ` | str | Newline string

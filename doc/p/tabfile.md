@@ -15,12 +15,12 @@ Website | ―
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `enable_info` | `True` | bool | Enable glossary info / metedata
 `encoding` | `utf-8` | str | Encoding/charset
 `file_size_approx` | `0` | int | Split up by given approximate file size<br />examples: 100m, 1g

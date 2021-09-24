@@ -15,6 +15,6 @@ Website | https://support.apple.com/en-gu/guide/dictionary/welcome/mac
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `html` | `True` | bool | Entries are HTML
 

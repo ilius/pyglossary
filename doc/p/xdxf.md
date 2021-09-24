@@ -15,6 +15,6 @@ Website | https://github.com/soshial/xdxf_makedict/blob/master/format_standard/x
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `html` | `True` | bool | Entries are HTML
 

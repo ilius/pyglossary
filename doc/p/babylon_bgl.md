@@ -15,7 +15,7 @@ Website | ―
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `default_encoding_overwrite` |  | str | Default encoding (overwrite)
 `key_rstrip_chars` |  | str | Characters to strip from right-side of keys
 `no_control_sequence_in_defi` | `False` | bool | No control sequence in definitions

@@ -15,13 +15,13 @@ Website | ―
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `delimiter` | `,` | str | 
 `encoding` | `utf-8` | str | Encoding/charset
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `add_defi_format` | `False` | bool | 
 `delimiter` | `,` | str | 
 `enable_info` | `True` | bool | Enable glossary info / metedata

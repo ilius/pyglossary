@@ -15,9 +15,9 @@ Website | https://www.gnu.org/software/gettext
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `resources` | `True` | bool | Enable resources / data files

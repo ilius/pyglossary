@@ -15,7 +15,7 @@ Website | https://www.mdict.cn/wp/?page_id=5325&lang=en
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `audio` | `False` | bool | Enable audio objects
 `encoding` |  | str | Encoding/charset
 `same_dir_data_files` | `False` | bool | Read data files from same directory

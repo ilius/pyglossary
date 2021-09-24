@@ -15,5 +15,5 @@ Website | http://swaj.net/sdict/
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 

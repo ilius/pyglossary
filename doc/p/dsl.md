@@ -15,7 +15,7 @@ Website | https://www.lingvo.ru/
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `audio` | `False` | bool | Enable audio objects
 `encoding` |  | str | Encoding/charset
 `only_fix_markup` | `False` | bool | 

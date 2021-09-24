@@ -16,5 +16,5 @@ Website | https://github.com/cheusov/dictd
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `remove_html_all` | `True` | bool | Remove all HTML tags

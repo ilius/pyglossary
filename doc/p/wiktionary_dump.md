@@ -15,5 +15,5 @@ Website | https://dumps.wikimedia.org/mirrors.html
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 

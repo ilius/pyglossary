@@ -15,13 +15,13 @@ Website | http://www.huzheng.org/stardict/
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `unicode_errors` | `strict` | str | What to do with Unicode decoding errors
 `xdxf_to_html` | `True` | bool | 
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `audio_goldendict` | `False` | bool | Convert audio links for GoldenDict (desktop)
 `audio_icon` | `True` | bool | Add glossary's audio icon
 `dictzip` | `True` | bool | Compress .dict file to .dict.dz

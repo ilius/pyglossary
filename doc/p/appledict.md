@@ -16,7 +16,7 @@ Website | ―
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `clean_html` | `True` | bool | use BeautifulSoup parser
 `css` |  | str | custom .css file path
 `default_prefs` | `None` | dict | default prefs in python dict format

@@ -15,11 +15,11 @@ Website | ―
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset
 `prev_link` | `True` | bool | Enable link to previous entry

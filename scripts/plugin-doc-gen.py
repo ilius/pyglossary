@@ -39,7 +39,7 @@ Website | ${website_md}
 % if canRead:
 ${"### Read options ###"}
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 % for optName, default in readOptions.items():
 `${optName}` | ${codeValue(default)} | ${optionsType[optName]} | ${optionsComment[optName]}
 % endfor
@@ -48,11 +48,19 @@ Name | Default | Type | Comment
 % if canWrite:
 ${"### Write options ###"}
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 % for optName, default in writeOptions.items():
 `${optName}` | ${codeValue(default)} | ${optionsType[optName]} | ${optionsComment[optName]}
 % endfor
 % endif
+""")
+
+indexTemplate = Template("""
+Name | Description | Doc Link
+---- | ----------- | --------
+% for p in plugins:
+${p.name} | ${p.description} | [${p.lname}.md](./${p.lname}.md)
+% endfor
 """)
 
 def codeValue(x):
@@ -68,7 +76,6 @@ def yesNo(x):
 		return "No"
 	return ""
 
-data = []
 for p in Glossary.plugins.values():
 	module = p.pluginModule
 	optionsProp = p.optionsProp
@@ -83,7 +90,7 @@ for p in Glossary.plugins.values():
 	if module.website:
 		website_md = module.website
 
-	data = {
+	text = template.render(**{
 		"codeValue": codeValue,
 		"yesNo": yesNo,
 		"name": p.name,
@@ -106,8 +113,13 @@ for p in Glossary.plugins.values():
 			optName: opt.typ
 			for optName, opt in optionsProp.items()
 		},
-	}
-	text = template.render(**data)
+	})
 	with open(join("doc", "p", f"{p.lname}.md"), mode="w") as _file:
 		_file.write(text)
+
+indexText = indexTemplate.render(
+	plugins=Glossary.plugins.values(),
+)
+with open(join("doc", "p", f"__index__.md"), mode="w") as _file:
+	_file.write(indexText)
 

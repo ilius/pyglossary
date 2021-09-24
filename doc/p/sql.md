@@ -16,7 +16,7 @@ Website | ―
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `add_extra_info` | `True` | bool | Create dbinfo_extra table
 `encoding` | `utf-8` | str | Encoding/charset
 `info_keys` | `None` | list | List of dbinfo table columns

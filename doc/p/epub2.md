@@ -16,7 +16,7 @@ Website | ―
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `apply_css` |  | str | Path to css file
 `compress` | `True` | bool | Enable compression
 `cover_path` |  | str | Path to cover file

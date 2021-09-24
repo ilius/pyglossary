@@ -16,7 +16,7 @@ Website | ―
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `css` |  | str | Path to css file
 `dark` | `True` | bool | Use dark style
 `encoding` | `utf-8` | str | Encoding/charset

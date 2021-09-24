@@ -15,5 +15,5 @@ Website | https://www.edrdg.org/jmdict/j_jmdict.html
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 

@@ -15,11 +15,11 @@ Website | http://aarddict.org/
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `compression` | `zlib` | str | Compression Algorithm
 `content_type` |  | str | Content Type
 `file_size_approx` | `0` | int | split up by given approximate file size<br />examples: 100m, 1g

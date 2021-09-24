@@ -15,6 +15,6 @@ Website | https://github.com/cheusov/dictd/blob/master/dictunformat.1.in
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset
 

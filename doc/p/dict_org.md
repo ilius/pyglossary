@@ -15,10 +15,10 @@ Website | ―
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `dictzip` | `False` | bool | Compress .dict file to .dict.dz
 `install` | `True` | bool | Install dictionary to /usr/share/dictd/

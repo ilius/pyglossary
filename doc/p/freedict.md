@@ -15,7 +15,7 @@ Website | https://freedict.org/
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `auto_rtl` | `None` | bool | Auto-detect and mark Right-to-Left text
 `discover` | `False` | bool | Find and show unsupported tags
 `example_padding` | `10` | int | Padding for examples (in px)

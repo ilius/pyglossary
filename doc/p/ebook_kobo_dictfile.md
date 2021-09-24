@@ -15,11 +15,11 @@ Website | https://pgaskin.net/dictutil/dictgen/#dictfile-format
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset
 `extract_inline_images` | `True` | bool | Extract inline images
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset

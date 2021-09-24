@@ -15,12 +15,12 @@ Website | http://www.lingoes.net/en/dictionary/dict_format.php
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `newline` | `
 ` | str | Newline string
 `resources` | `True` | bool | Enable resources / data files

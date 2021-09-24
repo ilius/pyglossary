@@ -15,6 +15,6 @@ Website | https://github.com/wordset/wordset-dictionary
 
 ### Read options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset
 

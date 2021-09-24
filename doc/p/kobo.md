@@ -16,4 +16,4 @@ Website | https://www.kobo.com
 
 ### Write options ###
 Name | Default | Type | Comment
----- | ---- | ------- | -------
+---- | ------- | ---- | -------
