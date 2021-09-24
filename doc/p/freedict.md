@@ -21,6 +21,3 @@ Name | Default | Type | Comment
 `pron_color` | `gray` | str | Pronunciation color
 `word_title` | `False` | bool | Add headwords title to begining of definition
 
-### Write options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------

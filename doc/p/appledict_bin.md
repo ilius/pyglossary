@@ -16,6 +16,3 @@ Name | Default | Type | Comment
 ---- | ---- | ------- | -------
 `html` | `True` | bool | Entries are HTML
 
-### Write options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------

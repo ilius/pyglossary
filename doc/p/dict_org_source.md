@@ -11,9 +11,6 @@ Wiki | [DICT](https://en.wikipedia.org/wiki/DICT)
 Website | https://github.com/cheusov/dictd
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------
 
 ### Write options ###
 Name | Default | Type | Comment

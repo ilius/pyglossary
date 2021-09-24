@@ -11,9 +11,6 @@ Wiki | [SQL](https://en.wikipedia.org/wiki/SQL)
 Website | ―
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------
 
 ### Write options ###
 Name | Default | Type | Comment

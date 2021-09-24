@@ -15,6 +15,3 @@ Website | https://www.edrdg.org/jmdict/j_jmdict.html
 Name | Default | Type | Comment
 ---- | ---- | ------- | -------
 
-### Write options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------

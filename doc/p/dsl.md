@@ -18,6 +18,3 @@ Name | Default | Type | Comment
 `encoding` |  | str | Encoding/charset
 `only_fix_markup` | `False` | bool | 
 
-### Write options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------

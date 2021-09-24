@@ -16,6 +16,3 @@ Name | Default | Type | Comment
 ---- | ---- | ------- | -------
 `skip_duplicate_words` | `False` | bool | Detect and skip duplicate words
 
-### Write options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------

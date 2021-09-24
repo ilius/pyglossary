@@ -11,9 +11,6 @@ Wiki | [Mobipocket](https://en.wikipedia.org/wiki/Mobipocket)
 Website | ―
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------
 
 ### Write options ###
 Name | Default | Type | Comment

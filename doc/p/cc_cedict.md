@@ -17,6 +17,3 @@ Name | Default | Type | Comment
 `encoding` | `utf-8` | str | Encoding/charset
 `traditional_title` | `False` | bool | Use traditional Chinese for entry titles/keys
 
-### Write options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------

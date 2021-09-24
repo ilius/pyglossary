@@ -19,6 +19,3 @@ Name | Default | Type | Comment
 `same_dir_data_files` | `False` | bool | Read data files from same directory
 `substyle` | `True` | bool | Enable substyle
 
-### Write options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------

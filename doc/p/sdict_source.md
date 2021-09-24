@@ -11,9 +11,6 @@ Wiki | ―
 Website | http://swaj.net/sdict/
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------
 
 ### Write options ###
 Name | Default | Type | Comment

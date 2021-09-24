@@ -15,6 +15,3 @@ Website | https://github.com/mhagiwara/cc-kedict
 Name | Default | Type | Comment
 ---- | ---- | ------- | -------
 
-### Write options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------

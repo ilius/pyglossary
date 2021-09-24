@@ -34,19 +34,23 @@ Wiki | ${wiki_md}
 Website | ${website_md}
 
 
+% if canRead:
 ${"### Read options ###"}
 Name | Default | Type | Comment
 ---- | ---- | ------- | -------
 % for optName, default in readOptions.items():
 `${optName}` | ${codeValue(default)} | ${optionsType[optName]} | ${optionsComment[optName]}
 % endfor
+% endif
 
+% if canWrite:
 ${"### Write options ###"}
 Name | Default | Type | Comment
 ---- | ---- | ------- | -------
 % for optName, default in writeOptions.items():
 `${optName}` | ${codeValue(default)} | ${optionsType[optName]} | ${optionsComment[optName]}
 % endfor
+% endif
 """)
 
 def codeValue(x):

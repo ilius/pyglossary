@@ -11,9 +11,6 @@ Wiki | [Kobo eReader](https://en.wikipedia.org/wiki/Kobo_eReader)
 Website | https://www.kobo.com
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------
 
 ### Write options ###
 Name | Default | Type | Comment

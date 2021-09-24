@@ -23,6 +23,3 @@ Name | Default | Type | Comment
 `strict_string_convertion` | `False` | bool | Strict string convertion
 `target_encoding_overwrite` |  | str | Target encoding (overwrite)
 
-### Write options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------

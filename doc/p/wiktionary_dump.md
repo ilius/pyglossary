@@ -15,6 +15,3 @@ Website | https://dumps.wikimedia.org/mirrors.html
 Name | Default | Type | Comment
 ---- | ---- | ------- | -------
 
-### Write options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------

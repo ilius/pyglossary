@@ -11,9 +11,6 @@ Wiki | [JSON](https://en.wikipedia.org/wiki/JSON)
 Website | https://www.json.org/json-en.html
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ---- | ------- | -------
 
 ### Write options ###
 Name | Default | Type | Comment
