@@ -107,7 +107,7 @@ class BoolOption(Option):
 			values.append(None)
 		Option.__init__(
 			self,
-			"bool",
+			typ="bool",
 			customValue=False,
 			values=values,
 			allowNone=allowNone,
@@ -134,7 +134,11 @@ class BoolOption(Option):
 
 class StrOption(Option):
 	def __init__(self, **kwargs):
-		Option.__init__(self, "str", **kwargs)
+		Option.__init__(
+			self,
+			typ="str",
+			**kwargs
+		)
 
 	def validate(self, value):
 		if not self.customValue:
@@ -153,7 +157,11 @@ class StrOption(Option):
 
 class IntOption(Option):
 	def __init__(self, **kwargs):
-		Option.__init__(self, "int", **kwargs)
+		Option.__init__(
+			self,
+			typ="int",
+			**kwargs
+		)
 
 	def evaluate(self, raw: "Union[str, int]") -> "Tuple[Optional[int], bool]":
 		"returns (value, isValid)"
@@ -226,7 +234,11 @@ class FileSizeOption(IntOption):
 
 class FloatOption(Option):
 	def __init__(self, **kwargs):
-		Option.__init__(self, "float", **kwargs)
+		Option.__init__(
+			self,
+			typ="float",
+			**kwargs
+		)
 
 	def evaluate(
 		self,
@@ -245,7 +257,7 @@ class DictOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(
 			self,
-			"dict",
+			typ="dict",
 			customValue=True,
 			allowNone=True,
 			multiline=True,
@@ -271,7 +283,7 @@ class ListOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(
 			self,
-			"list",
+			typ="list",
 			customValue=True,
 			allowNone=True,
 			multiline=True,
@@ -334,7 +346,7 @@ class EncodingOption(Option):
 			comment = "Encoding/charset"
 		Option.__init__(
 			self,
-			"str",
+			typ="str",
 			customValue=customValue,
 			values=values,
 			comment=comment,
@@ -385,7 +397,7 @@ class NewlineOption(Option):
 			comment = "Newline string"
 		Option.__init__(
 			self,
-			"str",
+			typ="str",
 			customValue=customValue,
 			values=values,
 			multiline=True,
@@ -396,5 +408,10 @@ class NewlineOption(Option):
 
 class HtmlColorOption(Option):
 	def __init__(self, **kwargs):
-		Option.__init__(self, "str", customValue=True, **kwargs)
+		Option.__init__(
+			self,
+			typ="str",
+			customValue=True,
+			**kwargs
+		)
 		# FIXME: use a specific type?
