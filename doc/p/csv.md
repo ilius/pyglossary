@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Csv
+Name | Value
 ---- | -------
+Name | Csv
+snake_case_name | csv
 Description | CSV (.csv)
 Extensions | `.csv`
 Read support | Yes

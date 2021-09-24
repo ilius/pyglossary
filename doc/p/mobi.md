@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Mobi
+Name | Value
 ---- | -------
+Name | Mobi
+snake_case_name | mobi
 Description | Mobipocket (.mobi) E-Book
 Extensions | `.mobi`
 Read support | No

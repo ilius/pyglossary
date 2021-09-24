@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | AppleDict
+Name | Value
 ---- | -------
+Name | AppleDict
+snake_case_name | appledict
 Description | AppleDict Source
 Extensions | `.apple`
 Read support | No

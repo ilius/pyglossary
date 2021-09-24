@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | JMDict
+Name | Value
 ---- | -------
+Name | JMDict
+snake_case_name | jmdict
 Description | JMDict
 Extensions | 
 Read support | Yes

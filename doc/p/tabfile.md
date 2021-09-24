@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Tabfile
+Name | Value
 ---- | -------
+Name | Tabfile
+snake_case_name | tabfile
 Description | Tabfile (.txt, .dic)
 Extensions | `.txt`, `.tab`, `.tsv`
 Read support | Yes

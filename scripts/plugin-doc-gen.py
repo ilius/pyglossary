@@ -23,8 +23,10 @@ Mako template engine:
 
 template = Template("""
 ${"### General Information ###"}
-Name | ${name}
+Name | Value
 ---- | -------
+Name | ${name}
+snake_case_name | ${lname}
 Description | ${description}
 Extensions | ${", ".join([codeValue(ext) for ext in extensions])}
 Read support | ${yesNo(canRead)}
@@ -85,6 +87,7 @@ for p in Glossary.plugins.values():
 		"codeValue": codeValue,
 		"yesNo": yesNo,
 		"name": p.name,
+		"lname": p.lname,
 		"description": p.description,
 		"extensions": p.extensions,
 		"canRead": p.canRead,

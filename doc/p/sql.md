@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Sql
+Name | Value
 ---- | -------
+Name | Sql
+snake_case_name | sql
 Description | SQL (.sql)
 Extensions | `.sql`
 Read support | No

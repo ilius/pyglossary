@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Edlin
+Name | Value
 ---- | -------
+Name | Edlin
+snake_case_name | edlin
 Description | EDLIN
 Extensions | `.edlin`
 Read support | Yes

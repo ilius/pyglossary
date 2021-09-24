@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | AppleDictBin
+Name | Value
 ---- | -------
+Name | AppleDictBin
+snake_case_name | appledict_bin
 Description | AppleDict Binary
 Extensions | `.dictionary`, `.data`
 Read support | Yes

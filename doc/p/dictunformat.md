@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Dictunformat
+Name | Value
 ---- | -------
+Name | Dictunformat
+snake_case_name | dictunformat
 Description | dictunformat output file
 Extensions | `.dictunformat`
 Read support | Yes

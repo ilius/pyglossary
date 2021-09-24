@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Sdict
+Name | Value
 ---- | -------
+Name | Sdict
+snake_case_name | sdict
 Description | Sdictionary Binary(dct)
 Extensions | `.dct`
 Read support | Yes

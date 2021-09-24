@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Dicformids
+Name | Value
 ---- | -------
+Name | Dicformids
+snake_case_name | dicformids
 Description | DictionaryForMIDs
 Extensions | `.mids`
 Read support | Yes

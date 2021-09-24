@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | LingoesLDF
+Name | Value
 ---- | -------
+Name | LingoesLDF
+snake_case_name | lingoes_ldf
 Description | Lingoes Source (.ldf)
 Extensions | `.ldf`
 Read support | Yes

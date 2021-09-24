@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | CrawlerDir
+Name | Value
 ---- | -------
+Name | CrawlerDir
+snake_case_name | crawler_dir
 Description | Crawler Directory
 Extensions | `.crawler`
 Read support | Yes

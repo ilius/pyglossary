@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | WiktionaryDump
+Name | Value
 ---- | -------
+Name | WiktionaryDump
+snake_case_name | wiktionary_dump
 Description | Wiktionary Dump (.xml)
 Extensions | `.xml`
 Read support | Yes

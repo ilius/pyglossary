@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Almaany
+Name | Value
 ---- | -------
+Name | Almaany
+snake_case_name | almaany
 Description | Almaany.com (SQLite3)
 Extensions | 
 Read support | Yes

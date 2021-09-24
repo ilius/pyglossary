@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | OctopusMdict
+Name | Value
 ---- | -------
+Name | OctopusMdict
+snake_case_name | octopus_mdict
 Description | Octopus MDict (.mdx)
 Extensions | `.mdx`
 Read support | Yes

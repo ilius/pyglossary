@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Xdxf
+Name | Value
 ---- | -------
+Name | Xdxf
+snake_case_name | xdxf
 Description | XDXF (.xdxf)
 Extensions | `.xdxf`
 Read support | Yes

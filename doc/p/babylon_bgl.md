@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | BabylonBgl
+Name | Value
 ---- | -------
+Name | BabylonBgl
+snake_case_name | babylon_bgl
 Description | Babylon (.BGL)
 Extensions | `.bgl`
 Read support | Yes

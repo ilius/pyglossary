@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Dictcc_split
+Name | Value
 ---- | -------
+Name | Dictcc_split
+snake_case_name | dict_cc_split
 Description | Dict.cc (SQLite3) - Split
 Extensions | 
 Read support | Yes

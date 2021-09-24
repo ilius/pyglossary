@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Json
+Name | Value
 ---- | -------
+Name | Json
+snake_case_name | json
 Description | JSON (.json)
 Extensions | `.json`
 Read support | No

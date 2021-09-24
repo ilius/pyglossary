@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | GettextPo
+Name | Value
 ---- | -------
+Name | GettextPo
+snake_case_name | gettext_po
 Description | Gettext Source (.po)
 Extensions | `.po`
 Read support | Yes

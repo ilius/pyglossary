@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | ABBYYLingvoDSL
+Name | Value
 ---- | -------
+Name | ABBYYLingvoDSL
+snake_case_name | dsl
 Description | ABBYY Lingvo DSL (.dsl)
 Extensions | `.dsl`
 Read support | Yes

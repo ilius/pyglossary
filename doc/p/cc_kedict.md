@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | cc-kedict
+Name | Value
 ---- | -------
+Name | cc-kedict
+snake_case_name | cc_kedict
 Description | cc-kedict
 Extensions | 
 Read support | Yes

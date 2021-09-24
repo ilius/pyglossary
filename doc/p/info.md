@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Info
+Name | Value
 ---- | -------
+Name | Info
+snake_case_name | info
 Description | Glossary Info (.info)
 Extensions | `.info`
 Read support | Yes

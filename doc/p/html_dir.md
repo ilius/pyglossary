@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | HtmlDir
+Name | Value
 ---- | -------
+Name | HtmlDir
+snake_case_name | html_dir
 Description | HTML Directory
 Extensions | `.hdir`
 Read support | No

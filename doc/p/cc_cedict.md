@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | CC-CEDICT
+Name | Value
 ---- | -------
+Name | CC-CEDICT
+snake_case_name | cc_cedict
 Description | CC-CEDICT
 Extensions | `.u8`
 Read support | Yes

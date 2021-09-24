@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Kobo
+Name | Value
 ---- | -------
+Name | Kobo
+snake_case_name | kobo
 Description | Kobo E-Reader Dictionary
 Extensions | `.kobo`
 Read support | No

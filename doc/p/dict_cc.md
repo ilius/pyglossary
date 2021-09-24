@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Dictcc
+Name | Value
 ---- | -------
+Name | Dictcc
+snake_case_name | dict_cc
 Description | Dict.cc (SQLite3)
 Extensions | 
 Read support | Yes

@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Zim
+Name | Value
 ---- | -------
+Name | Zim
+snake_case_name | zim
 Description | Zim (.zim, for Kiwix)
 Extensions | `.zim`
 Read support | Yes

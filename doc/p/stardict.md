@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | Stardict
+Name | Value
 ---- | -------
+Name | Stardict
+snake_case_name | stardict
 Description | StarDict (.ifo)
 Extensions | `.ifo`
 Read support | Yes

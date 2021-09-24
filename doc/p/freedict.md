@@ -1,7 +1,9 @@
 
 ### General Information ###
-Name | FreeDict
+Name | Value
 ---- | -------
+Name | FreeDict
+snake_case_name | freedict
 Description | FreeDict (.tei)
 Extensions | `.tei`
 Read support | Yes
