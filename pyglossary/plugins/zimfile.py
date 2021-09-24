@@ -8,6 +8,8 @@ description = "Zim (.zim, for Kiwix)"
 extensions = (".zim",)
 extensionCreate = ".zim"
 singleFile = True
+wiki = "https://en.wikipedia.org/wiki/ZIM_(file_format)"
+website = "https://wiki.openzim.org/wiki/OpenZIM"
 optionsProp = {
 	"skip_duplicate_words": BoolOption(
 		comment="Detect and skip duplicate words",

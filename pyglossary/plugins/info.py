@@ -8,6 +8,8 @@ description = "Glossary Info (.info)"
 extensions = (".info",)
 extensionCreate = ".info"
 singleFile = True
+wiki = ""
+website = ""
 
 # key is option/argument name, value is instance of Option
 optionsProp = {}

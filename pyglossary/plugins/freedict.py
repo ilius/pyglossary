@@ -15,6 +15,8 @@ description = "FreeDict (.tei)"
 extensions = (".tei",)
 extensionCreate = ".tei"
 singleFile = True
+wiki = "https://github.com/freedict/fd-dictionaries/wiki"
+website = "https://freedict.org/"
 optionsProp = {
 	"resources": BoolOption(
 		comment="Enable resources / data files",
@@ -39,9 +41,6 @@ optionsProp = {
 		comment="Padding for examples (in px)",
 	),
 }
-
-# https://freedict.org/
-# https://github.com/freedict/fd-dictionaries/wiki
 
 tei = "{http://www.tei-c.org/ns/1.0}"
 

@@ -24,6 +24,8 @@ format = "Stardict"
 description = "StarDict (.ifo)"
 extensions = (".ifo",)
 extensionCreate = "-stardict/"
+wiki = "https://en.wikipedia.org/wiki/StarDict"
+website = "http://www.huzheng.org/stardict/"
 optionsProp = {
 	"stardict_client": BoolOption(
 		comment="Modify html entries for StarDict 3.0",
@@ -77,10 +79,18 @@ tools = [
 		"license": "GPL",
 	},
 	{
-		"name": "GoldenDict Mobile",
+		"name": "GoldenDict Mobile (Free)",
 		"web": "http://goldendict.mobi/",
+		# https://play.google.com/store/apps/details?id=mobi.goldendict.android.free
 		"platforms": ["Android"],
-		"license": "Unknown",
+		"license": "Freeware",
+	},
+	{
+		"name": "GoldenDict Mobile (Full)",
+		"web": "http://goldendict.mobi/",
+		# https://play.google.com/store/apps/details?id=mobi.goldendict.android
+		"platforms": ["Android"],
+		"license": "Proprietary",
 	},
 	{
 		"name": "Twinkle Star Dictionary",

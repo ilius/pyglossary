@@ -38,6 +38,8 @@ description = "ABBYY Lingvo DSL (.dsl)"
 extensions = (".dsl",)
 extensionCreate = ".dsl"
 singleFile = True
+wiki = "https://ru.wikipedia.org/wiki/ABBYY_Lingvo"
+website = "https://www.lingvo.ru/"
 optionsProp = {
 	"encoding": EncodingOption(),
 	"audio": BoolOption(comment="Enable audio objects"),

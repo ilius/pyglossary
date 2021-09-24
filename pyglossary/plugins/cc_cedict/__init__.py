@@ -8,15 +8,14 @@ description = "CC-CEDICT"
 extensions = (".u8",)
 extensionCreate = ""
 singleFile = True
+wiki = "https://en.wikipedia.org/wiki/CEDICT"
+website = "https://cc-cedict.org/editor/editor.php"
 optionsProp = {
 	"encoding": EncodingOption(),
 	"traditional_title": BoolOption(
 		comment="Use traditional Chinese for entry titles/keys",
 	),
 }
-
-# https://en.wikipedia.org/wiki/CEDICT
-# https://cc-cedict.org/editor/editor.php
 
 entry_count_reg = re.compile(r"#! entries=(\d+)")
 

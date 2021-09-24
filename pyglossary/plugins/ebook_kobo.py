@@ -36,6 +36,8 @@ description = "Kobo E-Reader Dictionary"
 extensions = (".kobo",)
 extensionCreate = ".kobo.zip"
 sortOnWrite = NEVER
+wiki = "https://en.wikipedia.org/wiki/Kobo_eReader"
+website = "https://www.kobo.com"
 
 tools = [
 	{

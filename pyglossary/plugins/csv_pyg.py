@@ -27,6 +27,8 @@ description = "CSV (.csv)"
 extensions = (".csv",)
 extensionCreate = ".csv"
 singleFile = True
+wiki = "https://en.wikipedia.org/wiki/Comma-separated_values"
+website = ""
 tools = [
 	{
 		"name": "LibreOffice Calc",

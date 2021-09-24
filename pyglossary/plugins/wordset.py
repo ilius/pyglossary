@@ -12,6 +12,8 @@ description = "Wordset.org JSON directory"
 extensions = ()
 extensionCreate = "-wordset/"
 singleFile = False
+wiki = ""
+website = "https://github.com/wordset/wordset-dictionary"
 optionsProp = {
 	"encoding": EncodingOption(),
 }

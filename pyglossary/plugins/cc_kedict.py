@@ -10,10 +10,10 @@ description = "cc-kedict"
 extensions = ()
 extensionCreate = ""
 singleFile = True
+wiki = ""
+website = "https://github.com/mhagiwara/cc-kedict"
 optionsProp = {
 }
-
-# https://github.com/mhagiwara/cc-kedict
 
 
 class YamlReader(TextGlossaryReader):

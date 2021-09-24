@@ -8,6 +8,8 @@ description = "DICT.org dictfmt source file"
 extensions = (".dtxt",)
 extensionCreate = ".dtxt"
 singleFile = True
+wiki = "https://en.wikipedia.org/wiki/DICT"
+website = "https://github.com/cheusov/dictd"
 optionsProp = {
 	"remove_html_all": BoolOption(comment="Remove all HTML tags"),
 }

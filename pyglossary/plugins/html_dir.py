@@ -15,6 +15,8 @@ description = "HTML Directory"
 extensions = (".hdir",)
 extensionCreate = ".hdir/"
 singleFile = False
+wiki = ""
+website = ""
 optionsProp = {
 	"encoding": EncodingOption(),
 	"resources": BoolOption(

@@ -11,6 +11,8 @@ format = "WiktionaryDump"
 description = "Wiktionary Dump (.xml)"
 extensions = (".xml",)
 extensionCreate = ""
+wiki = "https://en.wiktionary.org/wiki/Wiktionary:Main_Page"
+website = "https://dumps.wikimedia.org/mirrors.html"
 optionsProp = {
 	"encoding": EncodingOption(),
 }

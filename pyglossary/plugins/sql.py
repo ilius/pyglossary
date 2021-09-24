@@ -8,6 +8,8 @@ description = "SQL (.sql)"
 extensions = (".sql",)
 extensionCreate = ".sql"
 singleFile = True
+wiki = "https://en.wikipedia.org/wiki/SQL"
+website = ""
 optionsProp = {
 	"encoding": EncodingOption(),
 	"info_keys": ListOption(comment="List of dbinfo table columns"),

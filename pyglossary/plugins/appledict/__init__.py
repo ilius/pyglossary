@@ -37,6 +37,8 @@ format = "AppleDict"
 description = "AppleDict Source"
 extensions = (".apple",)
 extensionCreate = ".apple/"
+wiki = ""
+website = ""
 # FIXME: rename indexes arg/option to indexes_lang?
 optionsProp = {
 	"clean_html": BoolOption(comment="use BeautifulSoup parser"),

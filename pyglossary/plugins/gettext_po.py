@@ -8,6 +8,8 @@ description = "Gettext Source (.po)"
 extensions = (".po",)
 extensionCreate = ".po"
 singleFile = True
+wiki = "https://en.wikipedia.org/wiki/Gettext"
+website = "https://www.gnu.org/software/gettext"
 optionsProp = {
 	"resources": BoolOption(comment="Enable resources / data files"),
 }

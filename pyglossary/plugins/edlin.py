@@ -32,6 +32,8 @@ format = "Edlin"
 description = "EDLIN"
 extensions = (".edlin",)
 extensionCreate = ".edlin/"
+wiki = ""
+website = ""
 optionsProp = {
 	"encoding": EncodingOption(),
 	"prev_link": BoolOption(comment="Enable link to previous entry"),

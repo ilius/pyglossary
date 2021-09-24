@@ -7,6 +7,8 @@ format = "Test"
 description = "Test Format File(.test)"
 extensions = (".test", ".tst")
 extensionCreate = ".test"
+wiki = ""
+website = ""
 
 # key is option/argument name, value is instance of Option
 optionsProp = {}

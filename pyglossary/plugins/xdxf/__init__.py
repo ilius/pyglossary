@@ -31,12 +31,11 @@ description = "XDXF (.xdxf)"
 extensions = (".xdxf",)
 extensionCreate = ".xdxf"
 singleFile = True
+wiki = "https://en.wikipedia.org/wiki/XDXF"
+website = "https://github.com/soshial/xdxf_makedict/blob/master/format_standard/xdxf_description.md"
 optionsProp = {
 	"html": BoolOption(comment="Entries are HTML"),
 }
-
-# https://en.wikipedia.org/wiki/XDXF
-# https://github.com/soshial/xdxf_makedict/blob/master/format_standard/xdxf_description.md
 
 tools = [
 	{

@@ -8,6 +8,8 @@ description = "JSON (.json)"
 extensions = (".json",)
 extensionCreate = ".json"
 singleFile = True
+wiki = "https://en.wikipedia.org/wiki/JSON"
+website = "https://www.json.org/json-en.html"
 optionsProp = {
 	"encoding": EncodingOption(),
 	"enable_info": BoolOption(comment="Enable glossary info / metedata"),

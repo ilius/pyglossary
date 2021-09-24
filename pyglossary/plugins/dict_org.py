@@ -15,8 +15,9 @@ optionsProp = {
 	"install": BoolOption(comment="Install dictionary to /usr/share/dictd/"),
 }
 sortOnWrite = DEFAULT_NO
+wiki = "https://en.wikipedia.org/wiki/DICT#DICT_file_format"
+website = ""
 
-# https://en.wikipedia.org/wiki/DICT#DICT_file_format
 tools = [
 	{
 		"name": "Dictd",

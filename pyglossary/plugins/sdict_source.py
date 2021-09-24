@@ -10,6 +10,8 @@ description = "Sdictionary Source (.sdct)"
 extensions = (".sdct",)
 extensionCreate = ".sdct"
 singleFile = True
+wiki = ""
+website = "http://swaj.net/sdict/"
 optionsProp = {
 	"enable_info": BoolOption(comment="Enable glossary info / metedata"),
 	"newline": NewlineOption(),

@@ -26,12 +26,15 @@ description = "Babylon (.BGL)"
 extensions = (".bgl",)
 extensionCreate = ""
 singleFile = True
+wiki = ""
+website = ""
 tools = [
 	{
 		"name": "Babylon Translator",
 		"web": "https://www.babylon-software.com/",
+		"wiki": "https://en.wikipedia.org/wiki/Babylon_Software",
 		"platforms": ["Windows"],
-		"license": "Proprietary",
+		"license": "Proprietary",  # aka Freemium
 	},
 	{
 		"name": "GoldenDict",
@@ -40,10 +43,18 @@ tools = [
 		"license": "GPL",
 	},
 	{
-		"name": "GoldenDict Mobile",
+		"name": "GoldenDict Mobile (Free)",
 		"web": "http://goldendict.mobi/",
+		# https://play.google.com/store/apps/details?id=mobi.goldendict.android.free
 		"platforms": ["Android"],
-		"license": "Unknown",
+		"license": "Freeware",
+	},
+	{
+		"name": "GoldenDict Mobile (Full)",
+		"web": "http://goldendict.mobi/",
+		# https://play.google.com/store/apps/details?id=mobi.goldendict.android
+		"platforms": ["Android"],
+		"license": "Proprietary",
 	},
 ]
 # progressbar = DEFAULT_YES

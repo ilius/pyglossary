@@ -46,6 +46,8 @@ description = "Unknown"
 extensions = ()  # type: Tuple[str, ...]
 extensionCreate = ""  # type: str
 singleFile = False
+wiki = ""
+website = ""
 
 # key is option/argument name, value is instance of Option
 optionsProp = {}  # type: Dict[str, Option]

@@ -7,4 +7,6 @@ description = "Babylon (bdc)"
 extensions = (".bdc",)
 extensionCreate = ""
 singleFile = True
+wiki = ""
+website = ""
 optionsProp = {}

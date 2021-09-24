@@ -29,6 +29,8 @@ description = "Octopus MDict (.mdx)"
 extensions = (".mdx",)
 extensionCreate = ""
 singleFile = False
+wiki = ""
+website = "https://www.mdict.cn/wp/?page_id=5325&lang=en"
 optionsProp = {
 	"encoding": EncodingOption(),
 	"substyle": BoolOption(comment="Enable substyle"),

@@ -10,6 +10,8 @@ description = "Lingoes Source (.ldf)"
 extensions = (".ldf",)
 extensionCreate = ".ldf"
 singleFile = True
+wiki = "https://en.wikipedia.org/wiki/Lingoes"
+website = "http://www.lingoes.net/en/dictionary/dict_format.php"
 optionsProp = {
 	"newline": NewlineOption(),
 	"resources": BoolOption(comment="Enable resources / data files"),

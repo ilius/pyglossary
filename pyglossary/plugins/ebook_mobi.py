@@ -31,6 +31,8 @@ description = "Mobipocket (.mobi) E-Book"
 extensions = (".mobi",)
 extensionCreate = ".mobi"
 sortOnWrite = ALWAYS
+wiki = "https://en.wikipedia.org/wiki/Mobipocket"
+website = ""
 
 tools = [
 	{
@@ -38,6 +40,29 @@ tools = [
 		"web": "https://www.amazon.com/kindle",
 		"platforms": ["Amazon Kindle"],
 		"license": "Proprietary",
+	},
+	{
+		"name": "calibre",
+		"web": "https://calibre-ebook.com/",
+		"wiki": "https://en.wikipedia.org/wiki/Calibre_(software)",
+		"repo": "https://github.com/kovidgoyal/calibre",
+		"platforms": ["Linux", "Windows", "Mac"],
+		"license": "GPL",
+	},
+	{
+		"name": "Okular",
+		"web": "https://okular.kde.org/",
+		"wiki": "https://en.wikipedia.org/wiki/Okular",
+		"repo": "https://invent.kde.org/graphics/okular",
+		"platforms": ["Linux", "Windows", "Mac"],
+		"license": "GPL",
+	},
+	{
+		"name": "Book Reader",
+		"web": "https://f-droid.org/en/packages/com.github.axet.bookreader/",
+		"repo": "https://gitlab.com/axet/android-book-reader",
+		"platforms": ["Android"],
+		"license": "GPL",
 	},
 ]
 

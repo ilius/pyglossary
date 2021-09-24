@@ -27,7 +27,8 @@ description = "Sdictionary Binary(dct)"
 extensions = (".dct",)
 extensionCreate = ".dct"
 singleFile = True
-# homepage = "http://swaj.net/sdict/"
+wiki = ""
+website = "http://swaj.net/sdict/"
 optionsProp = {
 	# "encoding": EncodingOption(),  # TODO: needed?
 }

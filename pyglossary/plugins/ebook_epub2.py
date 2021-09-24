@@ -28,6 +28,8 @@ description = "EPUB-2 E-Book"
 extensions = (".epub",)
 extensionCreate = ".epub"
 sortOnWrite = ALWAYS
+wiki = ""
+website = ""
 
 # https://en.wikipedia.org/wiki/EPUB
 # EPUB-3: https://www.w3.org/community/epub3/
@@ -35,18 +37,23 @@ tools = [
 	{
 		"name": "calibre",
 		"web": "https://calibre-ebook.com/",
+		"wiki": "https://en.wikipedia.org/wiki/Calibre_(software)",
+		"repo": "https://github.com/kovidgoyal/calibre",
 		"platforms": ["Linux", "Windows", "Mac"],
 		"license": "GPL",
 	},
 	{
 		"name": "Okular",
 		"web": "https://okular.kde.org/",
+		"wiki": "https://en.wikipedia.org/wiki/Okular",
+		"repo": "https://invent.kde.org/graphics/okular",
 		"platforms": ["Linux", "Windows", "Mac"],
 		"license": "GPL",
 	},
 	{
-		"name": " Book Reader ",
+		"name": "Book Reader",
 		"web": "https://f-droid.org/en/packages/com.github.axet.bookreader/",
+		"repo": "https://gitlab.com/axet/android-book-reader",
 		"platforms": ["Android"],
 		"license": "GPL",
 	},

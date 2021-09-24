@@ -10,6 +10,8 @@ description = "DictionaryForMIDs"
 extensions = (".mids",)
 extensionCreate = ".mids/"
 sortOnWrite = ALWAYS
+wiki = ""
+website = "http://dictionarymid.sourceforge.net/"
 
 tools = [
 	{

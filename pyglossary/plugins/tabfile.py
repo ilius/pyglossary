@@ -13,6 +13,8 @@ description = "Tabfile (.txt, .dic)"
 extensions = (".txt", ".tab", ".tsv")
 extensionCreate = ".txt"
 singleFile = True
+wiki = "https://en.wikipedia.org/wiki/Tab-separated_values"
+website = ""
 optionsProp = {
 	"encoding": EncodingOption(),
 	"enable_info": BoolOption(
@@ -28,8 +30,6 @@ optionsProp = {
 		comment="Add headwords title to begining of definition",
 	),
 }
-
-# https://en.wikipedia.org/wiki/Tab-separated_values
 
 
 class Reader(TextGlossaryReader):
