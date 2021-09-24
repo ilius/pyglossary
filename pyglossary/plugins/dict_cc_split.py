@@ -4,6 +4,7 @@ from formats_common import *
 import html
 
 enable = True
+lname = "dict_cc_split"
 format = 'Dictcc_split'
 description = 'Dict.cc (SQLite3) - Split'
 extensions = ()

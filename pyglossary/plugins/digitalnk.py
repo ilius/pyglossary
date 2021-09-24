@@ -4,6 +4,7 @@ from formats_common import *
 import html
 
 enable = True
+lname = "digitalnk"
 format = 'DigitalNK'
 description = 'DigitalNK (SQLite3, N-Korean)'
 extensions = ()

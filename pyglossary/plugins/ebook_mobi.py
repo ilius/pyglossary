@@ -26,6 +26,7 @@ from formats_common import *
 from pyglossary.ebook_base import *
 
 enable = True
+lname = "mobi"
 format = "Mobi"
 description = "Mobipocket (.mobi) E-Book"
 extensions = (".mobi",)

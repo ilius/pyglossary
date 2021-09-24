@@ -4,6 +4,7 @@ from formats_common import *
 import shutil
 
 enable = True
+lname = "aard2_slob"
 format = 'Aard2Slob'
 description = 'Aard 2 (.slob)'
 extensions = ('.slob',)

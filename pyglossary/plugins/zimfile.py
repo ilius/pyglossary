@@ -3,6 +3,7 @@
 from formats_common import *
 
 enable = True
+lname = "zim"
 format = "Zim"
 description = "Zim (.zim, for Kiwix)"
 extensions = (".zim",)

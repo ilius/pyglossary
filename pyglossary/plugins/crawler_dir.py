@@ -11,6 +11,7 @@ from pyglossary.compression import (
 )
 
 enable = True
+lname = "crawler_dir"
 format = "CrawlerDir"
 description = "Crawler Directory"
 extensions = (".crawler",)

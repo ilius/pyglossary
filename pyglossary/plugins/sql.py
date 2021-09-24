@@ -3,6 +3,7 @@
 from formats_common import *
 
 enable = True
+lname = "sql"
 format = "Sql"
 description = "SQL (.sql)"
 extensions = (".sql",)

@@ -4,6 +4,7 @@ from formats_common import *
 import html
 
 enable = True
+lname = "almaany"
 format = 'Almaany'
 description = 'Almaany.com (SQLite3)'
 extensions = ()

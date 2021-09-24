@@ -3,6 +3,7 @@
 from formats_common import *
 
 enable = True
+lname = "gettext_po"
 format = "GettextPo"
 description = "Gettext Source (.po)"
 extensions = (".po",)

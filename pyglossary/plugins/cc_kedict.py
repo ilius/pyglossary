@@ -5,6 +5,7 @@ from io import BytesIO
 from os.path import dirname
 
 enable = True
+lname = "cc_kedict"
 format = "cc-kedict"
 description = "cc-kedict"
 extensions = ()

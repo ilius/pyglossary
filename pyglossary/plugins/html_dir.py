@@ -10,6 +10,7 @@ import os
 import json
 
 enable = True
+lname = "html_dir"
 format = "HtmlDir"
 description = "HTML Directory"
 extensions = (".hdir",)

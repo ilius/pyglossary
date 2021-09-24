@@ -20,6 +20,7 @@ from pyglossary.text_utils import (
 from formats_common import *
 
 enable = True
+lname = "stardict"
 format = "Stardict"
 description = "StarDict (.ifo)"
 extensions = (".ifo",)

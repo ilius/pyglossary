@@ -26,6 +26,7 @@ from pyglossary.text_reader import TextGlossaryReader
 from pyglossary.image_utils import extractInlineHtmlImages
 
 enable = True
+lname = "ebook_kobo_dictfile"
 format = "Dictfile"
 description = "Kobo E-Reader Dictfile (.df)"
 extensions = (".df",)

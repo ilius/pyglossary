@@ -6,6 +6,7 @@ from pyglossary.file_utils import fileCountLines
 from pyglossary.plugin_lib.dictdlib import DictDB
 
 enable = True
+lname = "dict_org"
 format = "DictOrg"
 description = "DICT.org file format (.index)"
 extensions = (".index",)

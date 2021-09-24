@@ -27,6 +27,7 @@ from pyglossary.text_utils import (
 )
 
 enable = True
+lname = "edlin"
 format = "Edlin"
 # Editable Linked List of Entries
 description = "EDLIN"

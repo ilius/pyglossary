@@ -5,6 +5,7 @@
 from formats_common import *
 
 enable = True
+lname = "sdict_source"
 format = "SdictSource"
 description = "Sdictionary Source (.sdct)"
 extensions = (".sdct",)

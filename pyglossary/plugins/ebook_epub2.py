@@ -23,6 +23,7 @@ from formats_common import *
 from pyglossary.ebook_base import *
 
 enable = True
+lname = "epub2"
 format = "Epub2"
 description = "EPUB-2 E-Book"
 extensions = (".epub",)

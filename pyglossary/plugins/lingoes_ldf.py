@@ -5,6 +5,7 @@ from pyglossary.text_reader import TextGlossaryReader
 from pyglossary.file_utils import fileCountLines
 
 enable = True
+lname = "lingoes_ldf"
 format = "LingoesLDF"
 description = "Lingoes Source (.ldf)"
 extensions = (".ldf",)

@@ -3,6 +3,7 @@
 from formats_common import *
 
 enable = False
+lname = "gettext_mo"
 format = "GettextMo"
 description = "Gettext Binary (mo)"
 extensions = (".mo",)

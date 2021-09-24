@@ -22,6 +22,7 @@ import csv
 
 
 enable = True
+lname = "csv"
 format = "Csv"
 description = "CSV (.csv)"
 extensions = (".csv",)

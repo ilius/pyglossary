@@ -31,6 +31,7 @@ from pickle import dumps, loads
 from gzip import compress, decompress
 
 enable = True
+lname = "kobo"
 format = "Kobo"
 description = "Kobo E-Reader Dictionary"
 extensions = (".kobo",)

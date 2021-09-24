@@ -3,6 +3,7 @@
 from formats_common import *
 
 enable = True
+lname = "info"
 format = "Info"
 description = "Glossary Info (.info)"
 extensions = (".info",)

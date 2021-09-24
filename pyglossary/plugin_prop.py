@@ -54,6 +54,10 @@ class PluginProp(object):
 		return self._p
 
 	@property
+	def lname(self) -> str:
+		return self._p.lname
+
+	@property
 	def name(self) -> str:
 		return self._p.format
 

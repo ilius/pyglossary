@@ -20,6 +20,7 @@ from struct import unpack
 from zlib import decompress
 
 enable = True
+lname = "appledict_bin"
 format = "AppleDictBin"
 description = "AppleDict Binary"
 extensions = (".dictionary", ".data",)

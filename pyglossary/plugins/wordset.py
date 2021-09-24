@@ -7,6 +7,7 @@ from os.path import isfile
 from json import load
 
 enable = True
+lname = "wordset"
 format = "Wordset"
 description = "Wordset.org JSON directory"
 extensions = ()

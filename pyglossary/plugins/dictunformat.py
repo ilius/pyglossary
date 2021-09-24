@@ -2,6 +2,7 @@ from formats_common import *
 from pyglossary.text_reader import TextGlossaryReader
 
 enable = True
+lname = "dictunformat"
 format = "Dictunformat"
 description = "dictunformat output file"
 extensions = (".dictunformat",)

@@ -33,6 +33,7 @@ from ._content import prepare_content
 sys.setrecursionlimit(10000)
 
 enable = True
+lname = "appledict"
 format = "AppleDict"
 description = "AppleDict Source"
 extensions = (".apple",)

@@ -3,6 +3,7 @@
 from formats_common import *
 
 enable = False
+lname = "testformat"
 format = "Test"
 description = "Test Format File(.test)"
 extensions = (".test", ".tst")

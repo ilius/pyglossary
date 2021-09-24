@@ -22,6 +22,7 @@ from struct import unpack
 from formats_common import *
 
 enable = True
+lname = "sdict"
 format = "Sdict"
 description = "Sdictionary Binary(dct)"
 extensions = (".dct",)

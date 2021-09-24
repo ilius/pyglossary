@@ -10,6 +10,7 @@ import re
 import html
 
 enable = True
+lname = "freedict"
 format = "FreeDict"
 description = "FreeDict (.tei)"
 extensions = (".tei",)

@@ -24,6 +24,7 @@ import gc
 from os.path import splitext, isfile, isdir, extsep, basename, dirname
 
 enable = True
+lname = "octopus_mdict"
 format = "OctopusMdict"
 description = "Octopus MDict (.mdx)"
 extensions = (".mdx",)

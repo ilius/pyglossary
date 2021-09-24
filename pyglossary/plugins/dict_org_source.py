@@ -3,6 +3,7 @@
 from formats_common import *
 
 enable = True
+lname = "dict_org_source"
 format = "DictOrgSource"
 description = "DICT.org dictfmt source file"
 extensions = (".dtxt",)

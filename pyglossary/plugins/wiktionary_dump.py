@@ -7,6 +7,7 @@ import html
 from formats_common import *
 
 enable = True
+lname = "wiktionary_dump"
 format = "WiktionaryDump"
 description = "Wiktionary Dump (.xml)"
 extensions = (".xml",)

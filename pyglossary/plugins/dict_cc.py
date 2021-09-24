@@ -4,6 +4,7 @@ from formats_common import *
 import html
 
 enable = True
+lname = "dict_cc"
 format = 'Dictcc'
 description = 'Dict.cc (SQLite3)'
 extensions = ()

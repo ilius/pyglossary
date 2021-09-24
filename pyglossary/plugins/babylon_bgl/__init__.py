@@ -21,6 +21,7 @@ from .bgl_reader import BglReader as Reader
 from .bgl_reader import optionsProp
 
 enable = True
+lname = "babylon_bgl"
 format = "BabylonBgl"
 description = "Babylon (.BGL)"
 extensions = (".bgl",)

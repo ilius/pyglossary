@@ -3,6 +3,7 @@
 from formats_common import *
 
 enable = True
+lname = "json"
 format = "Json"
 description = "JSON (.json)"
 extensions = (".json",)

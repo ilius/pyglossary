@@ -41,6 +41,7 @@ from pyglossary.entry_base import BaseEntry
 from pyglossary.glossary_type import GlossaryType
 
 enable = False
+lname = ""
 format = "Unknown"
 description = "Unknown"
 extensions = ()  # type: Tuple[str, ...]

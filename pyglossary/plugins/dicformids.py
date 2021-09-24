@@ -4,6 +4,7 @@ import re
 from tabfile import Reader as TabfileReader
 from formats_common import *
 
+lname = "dicformids"
 enable = True
 format = "Dicformids"
 description = "DictionaryForMIDs"

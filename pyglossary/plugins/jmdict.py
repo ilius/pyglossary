@@ -6,6 +6,7 @@ import re
 import html
 
 enable = True
+lname = "jmdict"
 format = "JMDict"
 description = "JMDict"
 extensions = ()

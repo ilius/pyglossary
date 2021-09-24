@@ -3,6 +3,7 @@ from formats_common import *
 from . import conv
 
 enable = True
+lname = "cc_cedict"
 format = "CC-CEDICT"
 description = "CC-CEDICT"
 extensions = (".u8",)

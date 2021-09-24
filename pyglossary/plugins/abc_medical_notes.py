@@ -4,6 +4,7 @@ from formats_common import *
 import html
 
 enable = True
+lname = "abc_medical_notes"
 format = 'ABCMedicalNotes'
 description = 'ABC Medical Notes (SQLite3)'
 extensions = ()

@@ -33,6 +33,7 @@ from .main import (
 )
 
 enable = True
+lname = "dsl"
 format = "ABBYYLingvoDSL"
 description = "ABBYY Lingvo DSL (.dsl)"
 extensions = (".dsl",)

@@ -8,6 +8,7 @@ from pyglossary.text_utils import (
 )
 
 enable = True
+lname = "tabfile"
 format = "Tabfile"
 description = "Tabfile (.txt, .dic)"
 extensions = (".txt", ".tab", ".tsv")
