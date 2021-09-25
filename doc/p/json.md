@@ -9,6 +9,7 @@ Extensions | `.json`
 Read support | No
 Write support | Yes
 Single-file | Yes
+Kind | text
 Wiki | [JSON](https://en.wikipedia.org/wiki/JSON)
 Website | https://www.json.org/json-en.html
 

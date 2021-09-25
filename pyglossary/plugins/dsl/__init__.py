@@ -39,6 +39,7 @@ description = "ABBYY Lingvo DSL (.dsl)"
 extensions = (".dsl",)
 extensionCreate = ".dsl"
 singleFile = True
+kind = "text"
 wiki = "https://ru.wikipedia.org/wiki/ABBYY_Lingvo"
 website = "https://www.lingvo.ru/"
 optionsProp = {

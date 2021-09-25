@@ -29,6 +29,7 @@ description = "EPUB-2 E-Book"
 extensions = (".epub",)
 extensionCreate = ".epub"
 sortOnWrite = ALWAYS
+kind = "package"
 wiki = ""
 website = ""
 

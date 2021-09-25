@@ -9,6 +9,7 @@ Extensions |
 Read support | Yes
 Write support | No
 Single-file | Yes
+Kind | text
 Wiki | ―
 Website | https://github.com/mhagiwara/cc-kedict
 

@@ -9,6 +9,7 @@ description = "CC-CEDICT"
 extensions = (".u8",)
 extensionCreate = ""
 singleFile = True
+kind = "text"
 wiki = "https://en.wikipedia.org/wiki/CEDICT"
 website = "https://cc-cedict.org/editor/editor.php"
 optionsProp = {

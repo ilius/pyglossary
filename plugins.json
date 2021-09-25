@@ -1219,12 +1219,12 @@
 				"class": "FileSizeOption",
 				"type": "int",
 				"customValue": true,
-				"comment": "split up by given approximate file size\nexamples: 100m, 1g"
+				"comment": "Split up by given approximate file size\nexamples: 100m, 1g"
 			},
 			"word_title": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "add headwords title to begining of definition"
+				"comment": "Add headwords title to begining of definition"
 			}
 		},
 		"canRead": true,

@@ -9,6 +9,7 @@ description = "Glossary Info (.info)"
 extensions = (".info",)
 extensionCreate = ".info"
 singleFile = True
+kind = "text"
 wiki = ""
 website = ""
 

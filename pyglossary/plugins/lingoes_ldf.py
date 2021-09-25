@@ -11,6 +11,7 @@ description = "Lingoes Source (.ldf)"
 extensions = (".ldf",)
 extensionCreate = ".ldf"
 singleFile = True
+kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Lingoes"
 website = "http://www.lingoes.net/en/dictionary/dict_format.php"
 optionsProp = {

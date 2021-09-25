@@ -9,6 +9,7 @@ Extensions | `.bgl`
 Read support | Yes
 Write support | No
 Single-file | Yes
+Kind | binary
 Wiki | ―
 Website | ―
 

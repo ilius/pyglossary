@@ -9,6 +9,7 @@ Extensions | `.mdx`
 Read support | Yes
 Write support | No
 Single-file | No
+Kind | binary
 Wiki | ―
 Website | https://www.mdict.cn/wp/?page_id=5325&lang=en
 

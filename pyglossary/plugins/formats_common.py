@@ -47,6 +47,7 @@ description = "Unknown"
 extensions = ()  # type: Tuple[str, ...]
 extensionCreate = ""  # type: str
 singleFile = False
+kind = ""
 wiki = ""
 website = ""
 

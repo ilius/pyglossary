@@ -9,6 +9,7 @@ Extensions | `.txt`, `.tab`, `.tsv`
 Read support | Yes
 Write support | Yes
 Single-file | Yes
+Kind | text
 Wiki | [Tab-separated values](https://en.wikipedia.org/wiki/Tab-separated_values)
 Website | ―
 

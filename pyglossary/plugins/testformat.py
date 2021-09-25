@@ -8,6 +8,7 @@ format = "Test"
 description = "Test Format File(.test)"
 extensions = (".test", ".tst")
 extensionCreate = ".test"
+kind = "text"
 wiki = ""
 website = ""
 

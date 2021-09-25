@@ -32,6 +32,7 @@ Extensions | ${", ".join([codeValue(ext) for ext in extensions])}
 Read support | ${yesNo(canRead)}
 Write support | ${yesNo(canWrite)}
 Single-file | ${yesNo(singleFile)}
+Kind | ${kind}
 Wiki | ${wiki_md}
 Website | ${website_md}
 
@@ -100,6 +101,7 @@ for p in Glossary.plugins.values():
 		"canRead": p.canRead,
 		"canWrite": p.canWrite,
 		"singleFile": p.singleFile,
+		"kind": module.kind,
 		"wiki_md": wiki_md,
 		"website_md": website_md,
 		"optionsProp": optionsProp,

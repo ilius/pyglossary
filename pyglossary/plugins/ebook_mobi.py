@@ -32,6 +32,7 @@ description = "Mobipocket (.mobi) E-Book"
 extensions = (".mobi",)
 extensionCreate = ".mobi"
 sortOnWrite = ALWAYS
+kind = "package"
 wiki = "https://en.wikipedia.org/wiki/Mobipocket"
 website = ""
 

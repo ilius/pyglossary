@@ -10,6 +10,7 @@ description = 'Aard 2 (.slob)'
 extensions = ('.slob',)
 extensionCreate = ".slob"
 singleFile = True
+kind = "binary"
 wiki = "https://github.com/itkach/slob/wiki"
 website = "http://aarddict.org/"
 tools = [

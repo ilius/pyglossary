@@ -9,6 +9,7 @@ Extensions | `.epub`
 Read support | No
 Write support | Yes
 Single-file | No
+Kind | package
 Wiki | ―
 Website | ―
 

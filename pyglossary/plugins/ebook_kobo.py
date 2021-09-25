@@ -36,6 +36,7 @@ format = "Kobo"
 description = "Kobo E-Reader Dictionary"
 extensions = (".kobo",)
 extensionCreate = ".kobo.zip"
+kind = "package"
 sortOnWrite = NEVER
 wiki = "https://en.wikipedia.org/wiki/Kobo_eReader"
 website = "https://www.kobo.com"

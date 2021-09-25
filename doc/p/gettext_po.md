@@ -9,6 +9,7 @@ Extensions | `.po`
 Read support | Yes
 Write support | Yes
 Single-file | Yes
+Kind | text
 Wiki | [Gettext](https://en.wikipedia.org/wiki/Gettext)
 Website | https://www.gnu.org/software/gettext
 

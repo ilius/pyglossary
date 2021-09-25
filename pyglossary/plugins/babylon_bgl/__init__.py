@@ -27,6 +27,7 @@ description = "Babylon (.BGL)"
 extensions = (".bgl",)
 extensionCreate = ""
 singleFile = True
+kind = "binary"
 wiki = ""
 website = ""
 tools = [

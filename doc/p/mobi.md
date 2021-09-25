@@ -9,6 +9,7 @@ Extensions | `.mobi`
 Read support | No
 Write support | Yes
 Single-file | No
+Kind | package
 Wiki | [Mobipocket](https://en.wikipedia.org/wiki/Mobipocket)
 Website | ―
 

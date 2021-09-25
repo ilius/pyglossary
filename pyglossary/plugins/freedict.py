@@ -16,6 +16,7 @@ description = "FreeDict (.tei)"
 extensions = (".tei",)
 extensionCreate = ".tei"
 singleFile = True
+kind = "text"
 wiki = "https://github.com/freedict/fd-dictionaries/wiki"
 website = "https://freedict.org/"
 optionsProp = {

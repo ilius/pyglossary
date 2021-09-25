@@ -31,6 +31,7 @@ format = "Dictfile"
 description = "Kobo E-Reader Dictfile (.df)"
 extensions = (".df",)
 extensionCreate = ".df"
+kind = "text"
 wiki = ""
 website = "https://pgaskin.net/dictutil/dictgen/#dictfile-format"
 # https://github.com/pgaskin/dictutil

@@ -30,6 +30,7 @@ description = "Octopus MDict (.mdx)"
 extensions = (".mdx",)
 extensionCreate = ""
 singleFile = False
+kind = "binary"
 wiki = ""
 website = "https://www.mdict.cn/wp/?page_id=5325&lang=en"
 optionsProp = {

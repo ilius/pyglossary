@@ -12,6 +12,7 @@ description = "JMDict"
 extensions = ()
 extensionCreate = ""
 singleFile = True
+kind = "text"
 wiki = "https://en.wikipedia.org/wiki/JMdict"
 website = "https://www.edrdg.org/jmdict/j_jmdict.html"
 optionsProp = {

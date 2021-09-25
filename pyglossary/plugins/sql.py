@@ -9,6 +9,7 @@ description = "SQL (.sql)"
 extensions = (".sql",)
 extensionCreate = ".sql"
 singleFile = True
+kind = "text"
 wiki = "https://en.wikipedia.org/wiki/SQL"
 website = ""
 optionsProp = {

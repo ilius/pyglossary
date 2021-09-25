@@ -9,6 +9,7 @@ Extensions |
 Read support | Yes
 Write support | No
 Single-file | No
+Kind | directory
 Wiki | ―
 Website | https://github.com/wordset/wordset-dictionary
 

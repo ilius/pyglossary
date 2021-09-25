@@ -9,6 +9,7 @@ Extensions | `.crawler`
 Read support | Yes
 Write support | Yes
 Single-file | Yes
+Kind | directory
 Wiki | ―
 Website | ―
 

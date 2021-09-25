@@ -9,6 +9,7 @@ Extensions | `.edlin`
 Read support | Yes
 Write support | Yes
 Single-file | No
+Kind | directory
 Wiki | ―
 Website | ―
 

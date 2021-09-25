@@ -17,6 +17,7 @@ description = "Crawler Directory"
 extensions = (".crawler",)
 extensionCreate = ".crawler/"
 singleFile = True
+kind = "directory"
 wiki = ""
 website = ""
 optionsProp = {

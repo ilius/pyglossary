@@ -25,6 +25,7 @@ format = "Stardict"
 description = "StarDict (.ifo)"
 extensions = (".ifo",)
 extensionCreate = "-stardict/"
+kind = "directory"
 wiki = "https://en.wikipedia.org/wiki/StarDict"
 website = "http://www.huzheng.org/stardict/"
 optionsProp = {

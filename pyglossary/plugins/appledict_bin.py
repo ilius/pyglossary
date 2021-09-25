@@ -26,6 +26,7 @@ description = "AppleDict Binary"
 extensions = (".dictionary", ".data",)
 extensionCreate = ""
 singleFile = True
+kind = "binary"
 wiki = ""
 website = "https://support.apple.com/en-gu/guide/dictionary/welcome/mac"
 tools = [

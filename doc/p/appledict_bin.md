@@ -9,6 +9,7 @@ Extensions | `.dictionary`, `.data`
 Read support | Yes
 Write support | No
 Single-file | Yes
+Kind | binary
 Wiki | ―
 Website | https://support.apple.com/en-gu/guide/dictionary/welcome/mac
 

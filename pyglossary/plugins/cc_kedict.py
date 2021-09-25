@@ -11,6 +11,7 @@ description = "cc-kedict"
 extensions = ()
 extensionCreate = ""
 singleFile = True
+kind = "text"
 wiki = ""
 website = "https://github.com/mhagiwara/cc-kedict"
 optionsProp = {

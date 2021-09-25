@@ -8,6 +8,7 @@ description = "dictunformat output file"
 extensions = (".dictunformat",)
 extensionCreate = ".dictunformat"
 singleFile = True
+kind = "text"
 wiki = "https://directory.fsf.org/wiki/Dictd"
 website = "https://github.com/cheusov/dictd/blob/master/dictunformat.1.in"
 optionsProp = {

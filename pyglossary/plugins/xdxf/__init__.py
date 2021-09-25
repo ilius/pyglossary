@@ -32,6 +32,7 @@ description = "XDXF (.xdxf)"
 extensions = (".xdxf",)
 extensionCreate = ".xdxf"
 singleFile = True
+kind = "text"
 wiki = "https://en.wikipedia.org/wiki/XDXF"
 website = "https://github.com/soshial/xdxf_makedict/blob/master/format_standard/xdxf_description.md"
 optionsProp = {

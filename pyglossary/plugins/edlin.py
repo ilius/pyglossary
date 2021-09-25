@@ -33,6 +33,7 @@ format = "Edlin"
 description = "EDLIN"
 extensions = (".edlin",)
 extensionCreate = ".edlin/"
+kind = "directory"
 wiki = ""
 website = ""
 optionsProp = {

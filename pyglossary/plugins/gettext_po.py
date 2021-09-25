@@ -9,6 +9,7 @@ description = "Gettext Source (.po)"
 extensions = (".po",)
 extensionCreate = ".po"
 singleFile = True
+kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Gettext"
 website = "https://www.gnu.org/software/gettext"
 optionsProp = {

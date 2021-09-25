@@ -11,6 +11,7 @@ description = "DictionaryForMIDs"
 extensions = (".mids",)
 extensionCreate = ".mids/"
 sortOnWrite = ALWAYS
+kind = "directory"
 wiki = ""
 website = "http://dictionarymid.sourceforge.net/"
 

@@ -14,6 +14,7 @@ description = "Tabfile (.txt, .dic)"
 extensions = (".txt", ".tab", ".tsv")
 extensionCreate = ".txt"
 singleFile = True
+kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Tab-separated_values"
 website = ""
 optionsProp = {

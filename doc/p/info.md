@@ -9,6 +9,7 @@ Extensions | `.info`
 Read support | Yes
 Write support | Yes
 Single-file | Yes
+Kind | text
 Wiki | ―
 Website | ―
 

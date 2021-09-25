@@ -9,8 +9,9 @@ format = 'Dictcc_split'
 description = 'Dict.cc (SQLite3) - Split'
 extensions = ()
 extensionCreate = ".db"
-readOptions = []
-writeOptions = []
+kind = "binary"
+wiki = "https://en.wikipedia.org/wiki/Dict.cc"
+website = "https://play.google.com/store/apps/details?id=cc.dict.dictcc"
 
 tools = [
 	{

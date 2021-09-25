@@ -11,6 +11,7 @@ description = "Sdictionary Source (.sdct)"
 extensions = (".sdct",)
 extensionCreate = ".sdct"
 singleFile = True
+kind = "text"
 wiki = ""
 website = "http://swaj.net/sdict/"
 optionsProp = {

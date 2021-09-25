@@ -9,6 +9,7 @@ Extensions | `.u8`
 Read support | Yes
 Write support | No
 Single-file | Yes
+Kind | text
 Wiki | [CEDICT](https://en.wikipedia.org/wiki/CEDICT)
 Website | https://cc-cedict.org/editor/editor.php
 

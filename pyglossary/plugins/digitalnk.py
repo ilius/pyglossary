@@ -9,8 +9,9 @@ format = 'DigitalNK'
 description = 'DigitalNK (SQLite3, N-Korean)'
 extensions = ()
 extensionCreate = ".db"
-readOptions = []
-writeOptions = []
+kind = "binary"
+wiki = ""
+website = "https://github.com/digitalprk/dicrs"
 
 tools = [
 	{

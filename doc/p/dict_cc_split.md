@@ -9,8 +9,9 @@ Extensions |
 Read support | Yes
 Write support | No
 Single-file | No
-Wiki | ―
-Website | ―
+Kind | binary
+Wiki | [Dict.cc](https://en.wikipedia.org/wiki/Dict.cc)
+Website | https://play.google.com/store/apps/details?id=cc.dict.dictcc
 
 
 ### Read options ###

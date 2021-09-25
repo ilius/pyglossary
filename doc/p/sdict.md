@@ -9,6 +9,7 @@ Extensions | `.dct`
 Read support | Yes
 Write support | No
 Single-file | Yes
+Kind | binary
 Wiki | ―
 Website | http://swaj.net/sdict/
 

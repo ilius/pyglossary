@@ -9,6 +9,7 @@ Extensions | `.ifo`
 Read support | Yes
 Write support | Yes
 Single-file | No
+Kind | directory
 Wiki | [StarDict](https://en.wikipedia.org/wiki/StarDict)
 Website | http://www.huzheng.org/stardict/
 

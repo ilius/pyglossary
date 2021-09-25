@@ -9,6 +9,7 @@ Extensions | `.dsl`
 Read support | Yes
 Write support | No
 Single-file | Yes
+Kind | text
 Wiki | [ABBYY Lingvo](https://ru.wikipedia.org/wiki/ABBYY_Lingvo)
 Website | https://www.lingvo.ru/
 

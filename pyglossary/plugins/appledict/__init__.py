@@ -38,6 +38,7 @@ format = "AppleDict"
 description = "AppleDict Source"
 extensions = (".apple",)
 extensionCreate = ".apple/"
+kind = "directory"
 wiki = ""
 website = ""
 # FIXME: rename indexes arg/option to indexes_lang?

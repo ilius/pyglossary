@@ -13,6 +13,7 @@ description = "Wordset.org JSON directory"
 extensions = ()
 extensionCreate = "-wordset/"
 singleFile = False
+kind = "directory"
 wiki = ""
 website = "https://github.com/wordset/wordset-dictionary"
 optionsProp = {

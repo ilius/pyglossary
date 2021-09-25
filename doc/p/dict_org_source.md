@@ -9,6 +9,7 @@ Extensions | `.dtxt`
 Read support | No
 Write support | Yes
 Single-file | Yes
+Kind | text
 Wiki | [DICT](https://en.wikipedia.org/wiki/DICT)
 Website | https://github.com/cheusov/dictd
 

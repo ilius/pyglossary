@@ -10,12 +10,12 @@ lname = "dict_org"
 format = "DictOrg"
 description = "DICT.org file format (.index)"
 extensions = (".index",)
-extensionCreate = ".db"
 optionsProp = {
 	"dictzip": BoolOption(comment="Compress .dict file to .dict.dz"),
 	"install": BoolOption(comment="Install dictionary to /usr/share/dictd/"),
 }
 sortOnWrite = DEFAULT_NO
+kind = "directory"
 wiki = "https://en.wikipedia.org/wiki/DICT#DICT_file_format"
 website = ""
 

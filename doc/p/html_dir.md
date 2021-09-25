@@ -9,6 +9,7 @@ Extensions | `.hdir`
 Read support | No
 Write support | Yes
 Single-file | No
+Kind | directory
 Wiki | ―
 Website | ―
 

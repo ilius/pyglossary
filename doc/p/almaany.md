@@ -9,8 +9,9 @@ Extensions |
 Read support | Yes
 Write support | No
 Single-file | No
+Kind | binary
 Wiki | ―
-Website | ―
+Website | https://ply.gl/com.almaany.arar
 
 
 ### Read options ###

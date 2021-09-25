@@ -16,6 +16,7 @@ description = "HTML Directory"
 extensions = (".hdir",)
 extensionCreate = ".hdir/"
 singleFile = False
+kind = "directory"
 wiki = ""
 website = ""
 optionsProp = {

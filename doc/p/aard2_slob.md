@@ -9,6 +9,7 @@ Extensions | `.slob`
 Read support | Yes
 Write support | Yes
 Single-file | Yes
+Kind | binary
 Wiki | [wiki](https://github.com/itkach/slob/wiki)
 Website | http://aarddict.org/
 

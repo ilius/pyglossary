@@ -9,6 +9,7 @@ description = "DICT.org dictfmt source file"
 extensions = (".dtxt",)
 extensionCreate = ".dtxt"
 singleFile = True
+kind = "text"
 wiki = "https://en.wikipedia.org/wiki/DICT"
 website = "https://github.com/cheusov/dictd"
 optionsProp = {

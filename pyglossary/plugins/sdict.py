@@ -28,6 +28,7 @@ description = "Sdictionary Binary(dct)"
 extensions = (".dct",)
 extensionCreate = ".dct"
 singleFile = True
+kind = "binary"
 wiki = ""
 website = "http://swaj.net/sdict/"
 optionsProp = {

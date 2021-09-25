@@ -9,8 +9,9 @@ format = 'Almaany'
 description = 'Almaany.com (SQLite3)'
 extensions = ()
 extensionCreate = ".db"
-readOptions = []
-writeOptions = []
+kind = "binary"
+wiki = ""
+website = "https://ply.gl/com.almaany.arar"
 
 tools = [
 	{

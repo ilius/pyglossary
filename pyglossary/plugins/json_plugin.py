@@ -9,6 +9,7 @@ description = "JSON (.json)"
 extensions = (".json",)
 extensionCreate = ".json"
 singleFile = True
+kind = "text"
 wiki = "https://en.wikipedia.org/wiki/JSON"
 website = "https://www.json.org/json-en.html"
 optionsProp = {
