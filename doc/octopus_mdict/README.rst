@@ -14,12 +14,12 @@ MDict stores the dictionary definitions, i.e. (key word, explanation) in MDX fil
 
 MDX File Format
 ===============
-.. image:: MDX.svg
+.. image:: MDX.svgz
 
 
 MDD File Format
 ===============
-.. image:: MDD.svg
+.. image:: MDD.svgz
 
 Example Programs
 ================
