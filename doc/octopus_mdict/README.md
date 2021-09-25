@@ -1,8 +1,8 @@
 An Analysis of MDX/MDD File Format
 ==================================
 
-    MDict is a multi-platform open dictionary
-    
+> MDict is a multi-platform open dictionary
+
 which are both questionable. It is not available for every platform, e.g. OS X, Linux. Its  dictionary file format is not open. But this has not hindered its popularity, and many dictionaries have been created for it.
 
 This is an attempt to reveal MDX/MDD file format, so that my favarite dictionaries, created by MDict users, could be used elsewhere.
@@ -12,14 +12,10 @@ MDict Files
 ===========
 MDict stores the dictionary definitions, i.e. (key word, explanation) in MDX file and the dictionary reference data, e.g. images, pronunciations, stylesheets in MDD file. Although holding different contents, these two file formats share the same structure.
 
-MDX File Format
+MDX and MDD File Formats
 ===============
-.. image:: MDX.svgz
+See [MDX.svgz](./MDX.svgz) and [MDD.svgz](./MDD.svgz)
 
-
-MDD File Format
-===============
-.. image:: MDD.svgz
 
 Example Programs
 ================
@@ -63,7 +59,7 @@ Read MDD file and print the first entry::
 
     In [7]: items = mdd.next()
     Out[7]: 
-    (u'\\pic\\accordion_concertina.jpg',
+    ('\\pic\\accordion_concertina.jpg',
     '\xff\xd8\xff\xe0\x00\x10JFIF...........')
 
 ``mdd`` is an object having all info from a MDD file. ``items`` is an iterator producing 2-item tuples. 
