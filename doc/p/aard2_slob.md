@@ -12,13 +12,10 @@ Read support | Yes
 Write support | Yes
 Single-file | Yes
 Kind | 🔢 binary
-Wiki | [wiki](https://github.com/itkach/slob/wiki)
+Wiki | [@itkach/slob/wiki](https://github.com/itkach/slob/wiki)
 Website | http://aarddict.org/
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
 
 ### Write options ###
 Name | Default | Type | Comment
@@ -28,3 +25,9 @@ Name | Default | Type | Comment
 `file_size_approx` | `0` | int | split up by given approximate file size<br />examples: 100m, 1g
 `separate_alternates` | `False` | bool | add alternate headwords as separate entries to slob
 `word_title` | `False` | bool | add headwords title to begining of definition
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[Aard 2 for Android](http://aarddict.org/) | GPL | Android
+[Aard2 for Web](http://aarddict.org/) | MPL | Web

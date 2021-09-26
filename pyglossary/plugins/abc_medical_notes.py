@@ -16,9 +16,10 @@ website = "https://ply.gl/com.pocketmednotes2014.secondapp"
 tools = [
 	{
 		"name": "ABC Medical Notes 2020",
-		"web": "https://ply.gl/com.pocketmednotes2014.secondapp",
+		"web": "https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp",
+		# "web": "https://ply.gl/com.pocketmednotes2014.secondapp",
 		"platforms": ["Android"],
-		# "license": "",
+		"license": "Unknown",
 	},
 ]
 

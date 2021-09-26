@@ -21,3 +21,8 @@ Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `html` | `True` | bool | Entries are HTML
 
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[Apple Dictionary](https://support.apple.com/en-gu/guide/dictionary/welcome/mac) | Proprietary | Mac

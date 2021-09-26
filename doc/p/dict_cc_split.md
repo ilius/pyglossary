@@ -16,7 +16,9 @@ Wiki | [Dict.cc](https://en.wikipedia.org/wiki/Dict.cc)
 Website | https://play.google.com/store/apps/details?id=cc.dict.dictcc
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
 
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[dict.cc dictionary](https://play.google.com/store/apps/details?id=cc.dict.dictcc) | Proprietary | Android

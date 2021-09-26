@@ -16,7 +16,5 @@ Wiki | ―
 Website | https://github.com/mhagiwara/cc-kedict
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
+
 

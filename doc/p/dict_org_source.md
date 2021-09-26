@@ -21,3 +21,8 @@ Website | https://github.com/cheusov/dictd
 Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `remove_html_all` | `True` | bool | Remove all HTML tags
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[dictfmt](https://linux.die.net/man/1/dictfmt) | GPL | Linux

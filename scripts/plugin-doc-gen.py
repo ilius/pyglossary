@@ -39,7 +39,7 @@ Wiki | ${wiki_md}
 Website | ${website_md}
 
 
-% if canRead:
+% if readOptions:
 ${"### Read options ###"}
 Name | Default | Type | Comment
 ---- | ------- | ---- | -------
@@ -48,12 +48,21 @@ Name | Default | Type | Comment
 % endfor
 % endif
 
-% if canWrite:
+% if writeOptions:
 ${"### Write options ###"}
 Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 % for optName, default in writeOptions.items():
 `${optName}` | ${codeValue(default)} | ${optionsType[optName]} | ${optionsComment[optName]}
+% endfor
+% endif
+
+% if tools:
+${"### Dictionary Applications/Tools ###"}
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+% for tool in tools:
+[${tool["name"]}](${tool["web"]}) | ${tool["license"]} | ${", ".join(tool["platforms"])}
 % endfor
 % endif
 """)
@@ -95,13 +104,18 @@ for p in Glossary.plugins.values():
 
 	wiki = module.wiki
 	wiki_md = "―"
-	if module.wiki:
-		wiki_title = wiki.split("/")[-1].replace("_", " ")
+	if wiki:
+		if wiki.startswith("https://github.com/"):
+			wiki_title = "@" + wiki[len("https://github.com/"):]
+		else:
+			wiki_title = wiki.split("/")[-1].replace("_", " ")
 		wiki_md = f"[{wiki_title}]({wiki})"
 
 	website_md = "―"
 	if module.website:
 		website_md = module.website
+
+	tools = getattr(module, "tools", [])
 
 	text = template.render(
 		codeValue=codeValue,
@@ -128,6 +142,7 @@ for p in Glossary.plugins.values():
 			optName: opt.typ
 			for optName, opt in optionsProp.items()
 		},
+		tools=tools,
 	)
 	with open(join("doc", "p", f"{p.lname}.md"), mode="w") as _file:
 		_file.write(text)

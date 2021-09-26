@@ -24,3 +24,8 @@ Name | Default | Type | Comment
 `same_dir_data_files` | `False` | bool | Read data files from same directory
 `substyle` | `True` | bool | Enable substyle
 
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[MDict](https://www.mdict.cn/) | Proprietary | Android, iOS, Windows, Mac

@@ -28,3 +28,11 @@ Name | Default | Type | Comment
 `strict_string_convertion` | `False` | bool | Strict string convertion
 `target_encoding_overwrite` |  | str | Target encoding (overwrite)
 
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[Babylon Translator](https://www.babylon-software.com/) | Proprietary | Windows
+[GoldenDict](http://goldendict.org/) | GPL | Linux, Windows
+[GoldenDict Mobile (Free)](http://goldendict.mobi/) | Freeware | Android
+[GoldenDict Mobile (Full)](http://goldendict.mobi/) | Proprietary | Android

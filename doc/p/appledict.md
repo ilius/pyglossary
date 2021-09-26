@@ -28,3 +28,8 @@ Name | Default | Type | Comment
 `jing` | `False` | bool | run Jing check on generated XML
 `prefs_html` |  | str | preferences XHTML file path
 `xsl` |  | str | custom XSL transformations file path
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[Dictionary Development Kit](https://github.com/SebastianSzturo/Dictionary-Development-Kit) | Unknown | Mac

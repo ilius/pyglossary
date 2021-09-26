@@ -16,7 +16,9 @@ Wiki | ―
 Website | https://ply.gl/com.pocketmednotes2014.secondapp
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
 
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[ABC Medical Notes 2020](https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp) | Unknown | Android

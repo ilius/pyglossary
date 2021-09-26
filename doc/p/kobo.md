@@ -17,6 +17,8 @@ Website | https://www.kobo.com
 
 
 
-### Write options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[Kobo eReader](https://www.kobo.com) | Proprietary | Kobo eReader

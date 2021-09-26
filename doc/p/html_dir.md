@@ -28,3 +28,4 @@ Name | Default | Type | Comment
 `max_file_size` | `102400` | int | Maximum file size in bytes
 `resources` | `True` | bool | Enable resources / data files
 `word_title` | `True` | bool | Add headwords title to begining of definition
+

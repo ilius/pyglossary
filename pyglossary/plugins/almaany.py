@@ -11,14 +11,14 @@ extensions = ()
 extensionCreate = ".db"
 kind = "binary"
 wiki = ""
-website = "https://ply.gl/com.almaany.arar"
+website = "https://play.google.com/store/apps/details?id=com.almaany.arar"
 
 tools = [
 	{
 		"name": "Almaany.com Arabic Dictionary",
-		"web": "https://ply.gl/com.almaany.arar",
+		"web": "https://play.google.com/store/apps/details?id=com.almaany.arar",
 		"platforms": ["Android"],
-		# "license": "",
+		"license": "Unknown",
 	},
 ]
 

@@ -31,3 +31,9 @@ Name | Default | Type | Comment
 `encoding` | `utf-8` | str | Encoding/charset
 `resources` | `True` | bool | Enable resources / data files
 `word_title` | `False` | bool | add headwords title to begining of definition
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[LibreOffice Calc](https://www.libreoffice.org/discover/calc/) | MPL/GPL | Linux, Windows, Mac
+[Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel) | Proprietary | Windows

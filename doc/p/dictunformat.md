@@ -21,3 +21,8 @@ Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset
 
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[dictunformat](https://linux.die.net/man/1/dictunformat) | GPL | Linux

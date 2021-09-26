@@ -21,3 +21,10 @@ Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `html` | `True` | bool | Entries are HTML
 
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[GoldenDict](http://goldendict.org/) | GPL | Linux, Windows
+[QTranslate](https://quest-app.appspot.com/) | Proprietary | Windows
+[Alpus](https://alpusapp.com/) | Freeware | Windows, Mac, Linux, Android

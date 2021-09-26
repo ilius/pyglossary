@@ -16,7 +16,5 @@ Wiki | [Wiktionary:Main Page](https://en.wiktionary.org/wiki/Wiktionary:Main_Pag
 Website | https://dumps.wikimedia.org/mirrors.html
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
+
 

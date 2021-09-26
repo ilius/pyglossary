@@ -13,10 +13,12 @@ Write support | No
 Single-file | No
 Kind | 🔢 binary
 Wiki | ―
-Website | https://ply.gl/com.almaany.arar
+Website | https://play.google.com/store/apps/details?id=com.almaany.arar
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
 
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[Almaany.com Arabic Dictionary](https://play.google.com/store/apps/details?id=com.almaany.arar) | Unknown | Android

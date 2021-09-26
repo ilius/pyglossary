@@ -12,7 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | Yes
 Kind | 📝 text
-Wiki | [wiki](https://github.com/freedict/fd-dictionaries/wiki)
+Wiki | [@freedict/fd-dictionaries/wiki](https://github.com/freedict/fd-dictionaries/wiki)
 Website | https://freedict.org/
 
 
@@ -25,4 +25,5 @@ Name | Default | Type | Comment
 `gram_color` | `green` | str | Grammar color
 `pron_color` | `gray` | str | Pronunciation color
 `word_title` | `False` | bool | Add headwords title to begining of definition
+
 

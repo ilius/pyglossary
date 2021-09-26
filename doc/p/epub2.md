@@ -26,3 +26,13 @@ Name | Default | Type | Comment
 `group_by_prefix_length` | `2` | int | Prefix length for grouping
 `include_index_page` | `False` | bool | Include index page
 `keep` | `False` | bool | Keep temp files
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[calibre](https://calibre-ebook.com/) | GPL | Linux, Windows, Mac
+[Okular](https://okular.kde.org/) | GPL | Linux, Windows, Mac
+[Book Reader](https://f-droid.org/en/packages/com.github.axet.bookreader/) | GPL | Android
+[Kobo eReader](https://www.kobo.com) | Proprietary | Kobo eReader
+[Icecream Ebook Reader](https://icecreamapps.com/Ebook-Reader/) | Proprietary | Windows
+[Aldiko](https://www.demarque.com/aldiko) | Proprietary | Android, iOS

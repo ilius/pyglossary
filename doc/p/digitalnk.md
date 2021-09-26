@@ -16,7 +16,9 @@ Wiki | ―
 Website | https://github.com/digitalprk/dicrs
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
 
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[Dic.rs](https://github.com/digitalprk/dicrs) |  BSD-2-Clause | Linux

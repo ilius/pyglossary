@@ -16,10 +16,5 @@ Wiki | ―
 Website | ―
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
 
-### Write options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
+

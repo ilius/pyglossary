@@ -26,3 +26,8 @@ Name | Default | Type | Comment
 Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[dictgen](https://pgaskin.net/dictutil/dictgen/) | MIT | Linux, Windows, Mac

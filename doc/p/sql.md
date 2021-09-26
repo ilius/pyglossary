@@ -25,3 +25,4 @@ Name | Default | Type | Comment
 `info_keys` | `None` | list | List of dbinfo table columns
 `newline` | `<br>` | str | Newline string
 `transaction` | `False` | bool | Use TRANSACTION
+

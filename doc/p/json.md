@@ -24,3 +24,4 @@ Name | Default | Type | Comment
 `encoding` | `utf-8` | str | Encoding/charset
 `resources` | `True` | bool | Enable resources / data files
 `word_title` | `False` | bool | add headwords title to begining of definition
+

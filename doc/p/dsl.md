@@ -23,3 +23,8 @@ Name | Default | Type | Comment
 `encoding` |  | str | Encoding/charset
 `only_fix_markup` | `False` | bool | 
 
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[ABBYY Lingvo](https://www.lingvo.ru/) | Proprietary | Windows, Mac, Android, iOS, Windows Mobile, Symbian

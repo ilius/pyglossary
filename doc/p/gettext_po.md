@@ -16,11 +16,14 @@ Wiki | [Gettext](https://en.wikipedia.org/wiki/Gettext)
 Website | https://www.gnu.org/software/gettext
 
 
-### Read options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
 
 ### Write options ###
 Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `resources` | `True` | bool | Enable resources / data files
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[gettext](https://www.gnu.org/software/gettext/) | GPL | Linux, Windows
+[poEdit](https://github.com/vslavik/poedit) | MIT / Shareware | Linux, Windows, Mac

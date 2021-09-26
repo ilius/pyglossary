@@ -27,3 +27,8 @@ Name | Default | Type | Comment
 `newline` | `
 ` | str | Newline string
 `resources` | `True` | bool | Enable resources / data files
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[Lingoes Dictionary Creator](http://www.lingoes.net/en/dictionary/dict_format.php) | Unknown | 

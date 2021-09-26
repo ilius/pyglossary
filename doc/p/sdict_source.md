@@ -24,3 +24,8 @@ Name | Default | Type | Comment
 `newline` | `
 ` | str | Newline string
 `resources` | `True` | bool | Enable resources / data files
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[PTkSdict](http://swaj.net/sdict/create-dicts.html) | GPL | Linux, Windows, Mac

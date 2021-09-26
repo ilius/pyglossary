@@ -29,3 +29,4 @@ Name | Default | Type | Comment
 `file_size_approx` | `0` | int | Split up by given approximate file size<br />examples: 100m, 1g
 `resources` | `True` | bool | Enable resources / data files
 `word_title` | `False` | bool | Add headwords title to begining of definition
+

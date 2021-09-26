@@ -31,3 +31,14 @@ Name | Default | Type | Comment
 `merge_syns` | `False` | bool | Write alternates to .idx instead of .syn
 `sametypesequence` |  | str | Definition format: h=html, m=plaintext, x=xdxf
 `stardict_client` | `False` | bool | Modify html entries for StarDict 3.0
+
+### Dictionary Applications/Tools ###
+Name & Website | License | Platforms
+-------------- | ------- | ---------
+[StarDict](http://www.huzheng.org/stardict/) | GPL | Linux, Windows, Mac
+[GoldenDict](http://goldendict.org/) | GPL | Linux, Windows
+[GoldenDict Mobile (Free)](http://goldendict.mobi/) | Freeware | Android
+[GoldenDict Mobile (Full)](http://goldendict.mobi/) | Proprietary | Android
+[Twinkle Star Dictionary](https://play.google.com/store/apps/details?id=com.qtier.dict) | Unknown | Android
+[WordMateX](https://apkcombo.com/wordmatex/org.d1scw0rld.wordmatex/) | Proprietary | Android
+[QDict](https://play.google.com/store/apps/details?id=com.annie.dictionary) | Apache 2.0 | Android
