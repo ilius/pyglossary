@@ -121,6 +121,7 @@ for p in Glossary.plugins.values():
 				url, title = website
 			except ValueError:
 				raise ValueError(f"website = {website!r}")
+			title = title.replace("|", "\\|")
 			website_md = f"[{title}]({url})"
 
 	tools = getattr(module, "tools", [])
