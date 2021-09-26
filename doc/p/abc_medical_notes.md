@@ -13,7 +13,7 @@ Write support | No
 Single-file | No
 Kind | 🔢 binary
 Wiki | ―
-Website | https://ply.gl/com.pocketmednotes2014.secondapp
+Website | https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp
 
 
 

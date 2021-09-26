@@ -11,7 +11,7 @@ extensions = ()
 extensionCreate = ".db"
 kind = "binary"
 wiki = ""
-website = "https://ply.gl/com.pocketmednotes2014.secondapp"
+website = "https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp"
 
 tools = [
 	{
