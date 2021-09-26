@@ -1,4 +1,6 @@
 
+## Sdictionary Source (.sdct) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.sdct`
 Read support | No
 Write support | Yes
 Single-file | Yes
-Kind | text
+Kind | 📝 text
 Wiki | ―
 Website | http://swaj.net/sdict/
 

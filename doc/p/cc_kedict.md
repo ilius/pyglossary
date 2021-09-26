@@ -1,4 +1,6 @@
 
+## cc-kedict ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions |
 Read support | Yes
 Write support | No
 Single-file | Yes
-Kind | text
+Kind | 📝 text
 Wiki | ―
 Website | https://github.com/mhagiwara/cc-kedict
 

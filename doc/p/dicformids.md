@@ -1,4 +1,6 @@
 
+## DictionaryForMIDs ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.mids`
 Read support | Yes
 Write support | Yes
 Single-file | No
-Kind | directory
+Kind | 📁 directory
 Wiki | ―
 Website | http://dictionarymid.sourceforge.net/
 

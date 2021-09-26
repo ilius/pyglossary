@@ -1,4 +1,6 @@
 
+## HTML Directory ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.hdir`
 Read support | No
 Write support | Yes
 Single-file | No
-Kind | directory
+Kind | 📁 directory
 Wiki | ―
 Website | ―
 

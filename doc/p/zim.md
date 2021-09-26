@@ -1,4 +1,6 @@
 
+## Zim (.zim, for Kiwix) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.zim`
 Read support | Yes
 Write support | No
 Single-file | Yes
-Kind | binary
+Kind | 🔢 binary
 Wiki | [ZIM (file format)](https://en.wikipedia.org/wiki/ZIM_(file_format))
 Website | https://wiki.openzim.org/wiki/OpenZIM
 

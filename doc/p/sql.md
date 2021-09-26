@@ -1,4 +1,6 @@
 
+## SQL (.sql) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.sql`
 Read support | No
 Write support | Yes
 Single-file | Yes
-Kind | text
+Kind | 📝 text
 Wiki | [SQL](https://en.wikipedia.org/wiki/SQL)
 Website | ―
 

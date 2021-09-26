@@ -1,4 +1,6 @@
 
+## Dict.cc (SQLite3) - Split ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions |
 Read support | Yes
 Write support | No
 Single-file | No
-Kind | binary
+Kind | 🔢 binary
 Wiki | [Dict.cc](https://en.wikipedia.org/wiki/Dict.cc)
 Website | https://play.google.com/store/apps/details?id=cc.dict.dictcc
 

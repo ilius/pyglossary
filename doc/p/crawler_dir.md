@@ -1,4 +1,6 @@
 
+## Crawler Directory ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.crawler`
 Read support | Yes
 Write support | Yes
 Single-file | Yes
-Kind | directory
+Kind | 📁 directory
 Wiki | ―
 Website | ―
 

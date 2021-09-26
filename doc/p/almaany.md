@@ -1,4 +1,6 @@
 
+## Almaany.com (SQLite3) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions |
 Read support | Yes
 Write support | No
 Single-file | No
-Kind | binary
+Kind | 🔢 binary
 Wiki | ―
 Website | https://ply.gl/com.almaany.arar
 

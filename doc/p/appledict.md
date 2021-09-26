@@ -1,4 +1,6 @@
 
+## AppleDict Source ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.apple`
 Read support | No
 Write support | Yes
 Single-file | No
-Kind | directory
+Kind | 📁 directory
 Wiki | ―
 Website | ―
 

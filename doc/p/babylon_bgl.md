@@ -1,4 +1,6 @@
 
+## Babylon (.BGL) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.bgl`
 Read support | Yes
 Write support | No
 Single-file | Yes
-Kind | binary
+Kind | 🔢 binary
 Wiki | ―
 Website | ―
 

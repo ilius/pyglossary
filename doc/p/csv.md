@@ -1,4 +1,6 @@
 
+## CSV (.csv) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.csv`
 Read support | Yes
 Write support | Yes
 Single-file | Yes
-Kind | text
+Kind | 📝 text
 Wiki | [Comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values)
 Website | ―
 

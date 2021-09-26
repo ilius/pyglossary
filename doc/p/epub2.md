@@ -1,4 +1,6 @@
 
+## EPUB-2 E-Book ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.epub`
 Read support | No
 Write support | Yes
 Single-file | No
-Kind | package
+Kind | 📦 package
 Wiki | ―
 Website | ―
 

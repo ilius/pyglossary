@@ -1,4 +1,6 @@
 
+## Aard 2 (.slob) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.slob`
 Read support | Yes
 Write support | Yes
 Single-file | Yes
-Kind | binary
+Kind | 🔢 binary
 Wiki | [wiki](https://github.com/itkach/slob/wiki)
 Website | http://aarddict.org/
 

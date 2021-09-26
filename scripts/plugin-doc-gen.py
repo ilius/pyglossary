@@ -22,6 +22,8 @@ Mako template engine:
 """
 
 template = Template("""
+${"##"} ${description} ${"##"}
+
 ${"### General Information ###"}
 Name | Value
 ---- | -------
@@ -32,7 +34,7 @@ Extensions | ${", ".join([codeValue(ext) for ext in extensions])}
 Read support | ${yesNo(canRead)}
 Write support | ${yesNo(canWrite)}
 Single-file | ${yesNo(singleFile)}
-Kind | ${kind}
+Kind | ${kindEmoji(kind)} ${kind}
 Wiki | ${wiki_md}
 Website | ${website_md}
 
@@ -77,6 +79,16 @@ def yesNo(x):
 		return "No"
 	return ""
 
+def kindEmoji(kind):
+	if not kind:
+		return ""
+	return {
+		"text": "📝",
+		"binary": "🔢",
+		"directory": "📁",
+		"package": "📦",
+	}[kind]
+
 for p in Glossary.plugins.values():
 	module = p.pluginModule
 	optionsProp = p.optionsProp
@@ -91,31 +103,32 @@ for p in Glossary.plugins.values():
 	if module.website:
 		website_md = module.website
 
-	text = template.render(**{
-		"codeValue": codeValue,
-		"yesNo": yesNo,
-		"name": p.name,
-		"lname": p.lname,
-		"description": p.description,
-		"extensions": p.extensions,
-		"canRead": p.canRead,
-		"canWrite": p.canWrite,
-		"singleFile": p.singleFile,
-		"kind": module.kind,
-		"wiki_md": wiki_md,
-		"website_md": website_md,
-		"optionsProp": optionsProp,
-		"readOptions": p.getReadOptions(),
-		"writeOptions": p.getWriteOptions(),
-		"optionsComment": {
+	text = template.render(
+		codeValue=codeValue,
+		yesNo=yesNo,
+		kindEmoji=kindEmoji,
+		name=p.name,
+		lname=p.lname,
+		description=p.description,
+		extensions=p.extensions,
+		canRead=p.canRead,
+		canWrite=p.canWrite,
+		singleFile=p.singleFile,
+		kind=module.kind,
+		wiki_md=wiki_md,
+		website_md=website_md,
+		optionsProp=optionsProp,
+		readOptions=p.getReadOptions(),
+		writeOptions=p.getWriteOptions(),
+		optionsComment={
 			optName: opt.comment.replace("\n", "<br />")
 			for optName, opt in optionsProp.items()
 		},
-		"optionsType": {
+		optionsType={
 			optName: opt.typ
 			for optName, opt in optionsProp.items()
 		},
-	})
+	)
 	with open(join("doc", "p", f"{p.lname}.md"), mode="w") as _file:
 		_file.write(text)
 

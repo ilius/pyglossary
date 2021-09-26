@@ -1,4 +1,6 @@
 
+## Kobo E-Reader Dictfile (.df) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.df`
 Read support | Yes
 Write support | Yes
 Single-file | No
-Kind | text
+Kind | 📝 text
 Wiki | ―
 Website | https://pgaskin.net/dictutil/dictgen/#dictfile-format
 

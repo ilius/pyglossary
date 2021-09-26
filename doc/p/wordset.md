@@ -1,4 +1,6 @@
 
+## Wordset.org JSON directory ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions |
 Read support | Yes
 Write support | No
 Single-file | No
-Kind | directory
+Kind | 📁 directory
 Wiki | ―
 Website | https://github.com/wordset/wordset-dictionary
 

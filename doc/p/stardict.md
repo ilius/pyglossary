@@ -1,4 +1,6 @@
 
+## StarDict (.ifo) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.ifo`
 Read support | Yes
 Write support | Yes
 Single-file | No
-Kind | directory
+Kind | 📁 directory
 Wiki | [StarDict](https://en.wikipedia.org/wiki/StarDict)
 Website | http://www.huzheng.org/stardict/
 

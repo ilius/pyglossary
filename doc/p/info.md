@@ -1,4 +1,6 @@
 
+## Glossary Info (.info) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.info`
 Read support | Yes
 Write support | Yes
 Single-file | Yes
-Kind | text
+Kind | 📝 text
 Wiki | ―
 Website | ―
 

@@ -1,4 +1,6 @@
 
+## Sdictionary Binary(dct) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.dct`
 Read support | Yes
 Write support | No
 Single-file | Yes
-Kind | binary
+Kind | 🔢 binary
 Wiki | ―
 Website | http://swaj.net/sdict/
 

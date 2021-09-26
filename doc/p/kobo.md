@@ -1,4 +1,6 @@
 
+## Kobo E-Reader Dictionary ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.kobo`
 Read support | No
 Write support | Yes
 Single-file | No
-Kind | package
+Kind | 📦 package
 Wiki | [Kobo eReader](https://en.wikipedia.org/wiki/Kobo_eReader)
 Website | https://www.kobo.com
 

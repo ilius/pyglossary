@@ -1,4 +1,6 @@
 
+## DICT.org file format (.index) ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.index`
 Read support | Yes
 Write support | Yes
 Single-file | No
-Kind | directory
+Kind | 📁 directory
 Wiki | [DICT#DICT file format](https://en.wikipedia.org/wiki/DICT#DICT_file_format)
 Website | ―
 

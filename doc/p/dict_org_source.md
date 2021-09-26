@@ -1,4 +1,6 @@
 
+## DICT.org dictfmt source file ##
+
 ### General Information ###
 Name | Value
 ---- | -------
@@ -9,7 +11,7 @@ Extensions | `.dtxt`
 Read support | No
 Write support | Yes
 Single-file | Yes
-Kind | text
+Kind | 📝 text
 Wiki | [DICT](https://en.wikipedia.org/wiki/DICT)
 Website | https://github.com/cheusov/dictd
 
