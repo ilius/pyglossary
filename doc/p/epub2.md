@@ -27,6 +27,8 @@ Name | Default | Type | Comment
 `include_index_page` | `False` | bool | Include index page
 `keep` | `False` | bool | Keep temp files
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

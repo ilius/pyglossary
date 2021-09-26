@@ -22,6 +22,10 @@ Name | Default | Type | Comment
 `html` | `True` | bool | Entries are HTML
 
 
+### Dependencies for reading ###
+[lxml](https://pypi.org/project/lxml)
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

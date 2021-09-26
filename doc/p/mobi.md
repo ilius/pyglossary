@@ -23,6 +23,8 @@ Name | Default | Type | Comment
 `group_by_prefix_length` | `2` | int | Prefix length for grouping
 `kindlegen_path` |  | str | Path to kindlegen executable
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

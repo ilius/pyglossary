@@ -32,6 +32,8 @@ Name | Default | Type | Comment
 `resources` | `True` | bool | Enable resources / data files
 `word_title` | `False` | bool | add headwords title to begining of definition
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

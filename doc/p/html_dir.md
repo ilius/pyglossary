@@ -29,3 +29,7 @@ Name | Default | Type | Comment
 `resources` | `True` | bool | Enable resources / data files
 `word_title` | `True` | bool | Add headwords title to begining of definition
 
+
+### Dependencies for writing ###
+[cachetools](https://pypi.org/project/cachetools)
+

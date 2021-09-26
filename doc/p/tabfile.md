@@ -30,3 +30,5 @@ Name | Default | Type | Comment
 `resources` | `True` | bool | Enable resources / data files
 `word_title` | `False` | bool | Add headwords title to begining of definition
 
+
+

@@ -22,6 +22,8 @@ Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `remove_html_all` | `True` | bool | Remove all HTML tags
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

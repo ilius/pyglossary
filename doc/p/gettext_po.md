@@ -22,6 +22,12 @@ Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `resources` | `True` | bool | Enable resources / data files
 
+### Dependencies for reading ###
+[polib](https://pypi.org/project/polib)
+
+### Dependencies for writing ###
+[polib](https://pypi.org/project/polib)
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

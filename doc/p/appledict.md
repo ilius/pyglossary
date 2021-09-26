@@ -29,6 +29,10 @@ Name | Default | Type | Comment
 `prefs_html` |  | str | preferences XHTML file path
 `xsl` |  | str | custom XSL transformations file path
 
+
+### Dependencies for writing ###
+[lxml](https://pypi.org/project/lxml), [beautifulsoup4](https://pypi.org/project/beautifulsoup4), [html5lib](https://pypi.org/project/html5lib)
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

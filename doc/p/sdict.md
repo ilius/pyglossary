@@ -18,6 +18,8 @@ Website | [Sdictionary Project](http://swaj.net/sdict/)
 
 
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

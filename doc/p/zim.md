@@ -22,6 +22,10 @@ Name | Default | Type | Comment
 `skip_duplicate_words` | `False` | bool | Detect and skip duplicate words
 
 
+### Dependencies for reading ###
+[libzim](https://pypi.org/project/libzim)
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

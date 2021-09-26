@@ -32,6 +32,8 @@ Name | Default | Type | Comment
 `sametypesequence` |  | str | Definition format: h=html, m=plaintext, x=xdxf
 `stardict_client` | `False` | bool | Modify html entries for StarDict 3.0
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

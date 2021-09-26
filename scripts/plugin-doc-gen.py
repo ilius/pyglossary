@@ -57,6 +57,16 @@ Name | Default | Type | Comment
 % endfor
 % endif
 
+% if readDependsMD:
+${"### Dependencies for reading ###"}
+${readDependsMD}
+% endif
+
+% if writeDependsMD:
+${"### Dependencies for writing ###"}
+${writeDependsMD}
+% endif
+
 % if tools:
 ${"### Dictionary Applications/Tools ###"}
 Name & Website | License | Platforms
@@ -124,6 +134,20 @@ for p in Glossary.plugins.values():
 			title = title.replace("|", "\\|")
 			website_md = f"[{title}]({url})"
 
+	readDependsMD = ""
+	if p.canRead and hasattr(module.Reader, "depends"):
+		readDependsMD = ", ".join([
+			f"[{pypiName.replace('==', ' ')}](https://pypi.org/project/{pypiName.replace('==', '/')})"
+			for pypiName in module.Reader.depends.values()
+		])
+
+	writeDependsMD = ""
+	if p.canWrite and hasattr(module.Writer, "depends"):
+		writeDependsMD = ", ".join([
+			f"[{pypiName}](https://pypi.org/project/{pypiName.replace('==', '/')})"
+			for pypiName in module.Writer.depends.values()
+		])
+
 	tools = getattr(module, "tools", [])
 
 	text = template.render(
@@ -151,6 +175,8 @@ for p in Glossary.plugins.values():
 			optName: opt.typ
 			for optName, opt in optionsProp.items()
 		},
+		readDependsMD=readDependsMD,
+		writeDependsMD=writeDependsMD,
 		tools=tools,
 	)
 	with open(join("doc", "p", f"{p.lname}.md"), mode="w") as _file:

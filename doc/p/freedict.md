@@ -27,3 +27,7 @@ Name | Default | Type | Comment
 `word_title` | `False` | bool | Add headwords title to begining of definition
 
 
+### Dependencies for reading ###
+[lxml](https://pypi.org/project/lxml)
+
+

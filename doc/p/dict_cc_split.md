@@ -18,6 +18,8 @@ Website | [dict.cc dictionary - Google Play](https://play.google.com/store/apps/
 
 
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

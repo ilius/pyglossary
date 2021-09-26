@@ -18,6 +18,8 @@ Website | [Almaany.com Arabic Dictionary - Google Play](https://play.google.com/
 
 
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

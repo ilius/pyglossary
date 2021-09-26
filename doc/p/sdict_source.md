@@ -25,6 +25,8 @@ Name | Default | Type | Comment
 ` | str | Newline string
 `resources` | `True` | bool | Enable resources / data files
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

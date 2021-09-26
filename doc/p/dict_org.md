@@ -23,6 +23,8 @@ Name | Default | Type | Comment
 `dictzip` | `False` | bool | Compress .dict file to .dict.dz
 `install` | `True` | bool | Install dictionary to /usr/share/dictd/
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

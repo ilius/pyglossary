@@ -25,6 +25,8 @@ Name | Default | Type | Comment
 `substyle` | `True` | bool | Enable substyle
 
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

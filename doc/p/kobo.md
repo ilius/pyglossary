@@ -18,6 +18,10 @@ Website | [www.kobo.com](https://www.kobo.com)
 
 
 
+
+### Dependencies for writing ###
+[marisa-trie](https://pypi.org/project/marisa-trie)
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

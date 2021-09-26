@@ -24,6 +24,8 @@ Name | Default | Type | Comment
 `only_fix_markup` | `False` | bool | 
 
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

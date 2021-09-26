@@ -27,6 +27,10 @@ Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `encoding` | `utf-8` | str | Encoding/charset
 
+### Dependencies for reading ###
+[mistune 2.0.0a5](https://pypi.org/project/mistune/2.0.0a5)
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

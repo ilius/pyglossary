@@ -18,6 +18,8 @@ Website | [@digitalprk/dicrs](https://github.com/digitalprk/dicrs)
 
 
 
+
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

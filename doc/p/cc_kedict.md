@@ -18,3 +18,7 @@ Website | [@mhagiwara/cc-kedict](https://github.com/mhagiwara/cc-kedict)
 
 
 
+### Dependencies for reading ###
+[PyYAML](https://pypi.org/project/PyYAML), [lxml](https://pypi.org/project/lxml)
+
+

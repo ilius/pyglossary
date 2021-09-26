@@ -23,3 +23,7 @@ Name | Default | Type | Comment
 `traditional_title` | `False` | bool | Use traditional Chinese for entry titles/keys
 
 
+### Dependencies for reading ###
+[lxml](https://pypi.org/project/lxml)
+
+
