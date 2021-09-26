@@ -13,7 +13,7 @@ Write support | Yes
 Single-file | No
 Kind | 📁 directory
 Wiki | ―
-Website | ―
+Website | [Dictionary User Guide for Mac](https://support.apple.com/en-gu/guide/dictionary/welcome/mac)
 
 
 

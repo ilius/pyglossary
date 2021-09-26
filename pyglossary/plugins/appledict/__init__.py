@@ -40,7 +40,10 @@ extensions = (".apple",)
 extensionCreate = ".apple/"
 kind = "directory"
 wiki = ""
-website = ""
+website = (
+	"https://support.apple.com/en-gu/guide/dictionary/welcome/mac",
+	"Dictionary User Guide for Mac",
+)
 # FIXME: rename indexes arg/option to indexes_lang?
 optionsProp = {
 	"clean_html": BoolOption(comment="use BeautifulSoup parser"),
