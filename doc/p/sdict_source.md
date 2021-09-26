@@ -13,7 +13,7 @@ Write support | Yes
 Single-file | Yes
 Kind | 📝 text
 Wiki | ―
-Website | http://swaj.net/sdict/
+Website | [Sdictionary Project](http://swaj.net/sdict/)
 
 
 

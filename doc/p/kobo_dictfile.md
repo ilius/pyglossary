@@ -13,7 +13,7 @@ Write support | Yes
 Single-file | No
 Kind | 📝 text
 Wiki | ―
-Website | https://pgaskin.net/dictutil/dictgen/#dictfile-format
+Website | [dictgen - dictutil](https://pgaskin.net/dictutil/dictgen/#dictfile-format)
 
 
 ### Read options ###

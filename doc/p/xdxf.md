@@ -13,7 +13,7 @@ Write support | No
 Single-file | Yes
 Kind | 📝 text
 Wiki | [XDXF](https://en.wikipedia.org/wiki/XDXF)
-Website | https://github.com/soshial/xdxf_makedict/blob/master/format_standard/xdxf_description.md
+Website | [xdxf_description.md - @soshial/xdxf_makedict](https://github.com/soshial/xdxf_makedict/blob/master/format_standard/xdxf_description.md)
 
 
 ### Read options ###

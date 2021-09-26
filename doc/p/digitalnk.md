@@ -13,7 +13,7 @@ Write support | No
 Single-file | No
 Kind | 🔢 binary
 Wiki | ―
-Website | https://github.com/digitalprk/dicrs
+Website | [@digitalprk/dicrs](https://github.com/digitalprk/dicrs)
 
 
 

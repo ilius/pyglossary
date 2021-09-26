@@ -11,7 +11,10 @@ extensionCreate = ".po"
 singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Gettext"
-website = "https://www.gnu.org/software/gettext"
+website = (
+	"https://www.gnu.org/software/gettext",
+	"gettext - GNU Project",
+)
 optionsProp = {
 	"resources": BoolOption(comment="Enable resources / data files"),
 }

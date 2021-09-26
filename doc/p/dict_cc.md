@@ -13,7 +13,7 @@ Write support | No
 Single-file | No
 Kind | 🔢 binary
 Wiki | [Dict.cc](https://en.wikipedia.org/wiki/Dict.cc)
-Website | https://play.google.com/store/apps/details?id=cc.dict.dictcc
+Website | [dict.cc dictionary - Google Play](https://play.google.com/store/apps/details?id=cc.dict.dictcc)
 
 
 

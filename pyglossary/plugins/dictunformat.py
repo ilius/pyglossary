@@ -10,7 +10,10 @@ extensionCreate = ".dictunformat"
 singleFile = True
 kind = "text"
 wiki = "https://directory.fsf.org/wiki/Dictd"
-website = "https://github.com/cheusov/dictd/blob/master/dictunformat.1.in"
+website = (
+	"https://github.com/cheusov/dictd/blob/master/dictunformat.1.in",
+	"dictd/dictunformat.1.in - @cheusov/dictd",
+)
 optionsProp = {
 	"encoding": EncodingOption(),
 }

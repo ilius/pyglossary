@@ -13,7 +13,7 @@ Write support | No
 Single-file | No
 Kind | 🔢 binary
 Wiki | ―
-Website | https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp
+Website | [ABC Medical Notes 2021 - Google Play](https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp)
 
 
 

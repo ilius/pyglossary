@@ -11,7 +11,10 @@ extensionCreate = ".dtxt"
 singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/DICT"
-website = "https://github.com/cheusov/dictd"
+website = (
+	"https://github.com/cheusov/dictd",
+	"@cheusov/dictd",
+)
 optionsProp = {
 	"remove_html_all": BoolOption(comment="Remove all HTML tags"),
 }

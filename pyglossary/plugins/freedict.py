@@ -18,7 +18,10 @@ extensionCreate = ".tei"
 singleFile = True
 kind = "text"
 wiki = "https://github.com/freedict/fd-dictionaries/wiki"
-website = "https://freedict.org/"
+website = (
+	"https://freedict.org/",
+	"FreeDict.org",
+)
 optionsProp = {
 	"resources": BoolOption(
 		comment="Enable resources / data files",

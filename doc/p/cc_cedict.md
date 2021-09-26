@@ -13,7 +13,7 @@ Write support | No
 Single-file | Yes
 Kind | 📝 text
 Wiki | [CEDICT](https://en.wikipedia.org/wiki/CEDICT)
-Website | https://cc-cedict.org/editor/editor.php
+Website | [CC-CEDICT Editor](https://cc-cedict.org/editor/editor.php)
 
 
 ### Read options ###

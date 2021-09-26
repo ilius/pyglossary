@@ -13,7 +13,10 @@ extensionCreate = ".sdct"
 singleFile = True
 kind = "text"
 wiki = ""
-website = "http://swaj.net/sdict/"
+website = (
+	"http://swaj.net/sdict/",
+	"Sdictionary Project",
+)
 optionsProp = {
 	"enable_info": BoolOption(comment="Enable glossary info / metedata"),
 	"newline": NewlineOption(),

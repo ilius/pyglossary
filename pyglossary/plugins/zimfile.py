@@ -11,7 +11,10 @@ extensionCreate = ".zim"
 singleFile = True
 kind = "binary"
 wiki = "https://en.wikipedia.org/wiki/ZIM_(file_format)"
-website = "https://wiki.openzim.org/wiki/OpenZIM"
+website = (
+	"https://wiki.openzim.org/wiki/OpenZIM",
+	"OpenZIM",
+)
 optionsProp = {
 	"skip_duplicate_words": BoolOption(
 		comment="Detect and skip duplicate words",

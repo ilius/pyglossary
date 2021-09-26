@@ -13,7 +13,7 @@ Write support | No
 Single-file | No
 Kind | 🔢 binary
 Wiki | ―
-Website | https://play.google.com/store/apps/details?id=com.almaany.arar
+Website | [Almaany.com Arabic Dictionary - Google Play](https://play.google.com/store/apps/details?id=com.almaany.arar)
 
 
 

@@ -13,7 +13,7 @@ Write support | No
 Single-file | No
 Kind | 🔢 binary
 Wiki | ―
-Website | https://www.mdict.cn/wp/?page_id=5325&lang=en
+Website | [Download | MDict.cn](https://www.mdict.cn/wp/?page_id=5325&lang=en)
 
 
 ### Read options ###

@@ -13,7 +13,7 @@ Write support | No
 Single-file | No
 Kind | 📝 text
 Wiki | [Wiktionary:Main Page](https://en.wiktionary.org/wiki/Wiktionary:Main_Page)
-Website | https://dumps.wikimedia.org/mirrors.html
+Website | [dumps.wikimedia.org](https://dumps.wikimedia.org/mirrors.html)
 
 
 

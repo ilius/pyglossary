@@ -12,7 +12,10 @@ extensionCreate = ".slob"
 singleFile = True
 kind = "binary"
 wiki = "https://github.com/itkach/slob/wiki"
-website = "http://aarddict.org/"
+website = (
+	"http://aarddict.org/",
+	"aarddict.org",
+)
 tools = [
 	{
 		"name": "Aard 2 for Android",

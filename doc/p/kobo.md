@@ -13,7 +13,7 @@ Write support | Yes
 Single-file | No
 Kind | 📦 package
 Wiki | [Kobo eReader](https://en.wikipedia.org/wiki/Kobo_eReader)
-Website | https://www.kobo.com
+Website | [www.kobo.com](https://www.kobo.com)
 
 
 

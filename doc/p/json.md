@@ -13,7 +13,7 @@ Write support | Yes
 Single-file | Yes
 Kind | 📝 text
 Wiki | [JSON](https://en.wikipedia.org/wiki/JSON)
-Website | https://www.json.org/json-en.html
+Website | [www.json.org](https://www.json.org/json-en.html)
 
 
 

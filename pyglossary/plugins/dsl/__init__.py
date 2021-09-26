@@ -41,7 +41,10 @@ extensionCreate = ".dsl"
 singleFile = True
 kind = "text"
 wiki = "https://ru.wikipedia.org/wiki/ABBYY_Lingvo"
-website = "https://www.lingvo.ru/"
+website = (
+	"https://www.lingvo.ru/",
+	"www.lingvo.ru",
+)
 optionsProp = {
 	"encoding": EncodingOption(),
 	"audio": BoolOption(comment="Enable audio objects"),

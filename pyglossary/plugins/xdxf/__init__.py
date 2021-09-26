@@ -34,7 +34,10 @@ extensionCreate = ".xdxf"
 singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/XDXF"
-website = "https://github.com/soshial/xdxf_makedict/blob/master/format_standard/xdxf_description.md"
+website = (
+	"https://github.com/soshial/xdxf_makedict/blob/master/format_standard/xdxf_description.md",
+	"xdxf_description.md - @soshial/xdxf_makedict",
+)
 optionsProp = {
 	"html": BoolOption(comment="Entries are HTML"),
 }

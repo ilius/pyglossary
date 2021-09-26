@@ -13,7 +13,10 @@ extensionCreate = ""
 singleFile = True
 kind = "text"
 wiki = ""
-website = "https://github.com/mhagiwara/cc-kedict"
+website = (
+	"https://github.com/mhagiwara/cc-kedict",
+	"@mhagiwara/cc-kedict",
+)
 optionsProp = {
 }
 

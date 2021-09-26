@@ -14,7 +14,10 @@ extensions = (".xml",)
 extensionCreate = ""
 kind = "text"
 wiki = "https://en.wiktionary.org/wiki/Wiktionary:Main_Page"
-website = "https://dumps.wikimedia.org/mirrors.html"
+website = (
+	"https://dumps.wikimedia.org/mirrors.html",
+	"dumps.wikimedia.org",
+)
 optionsProp = {
 	"encoding": EncodingOption(),
 }

@@ -13,7 +13,7 @@ Write support | Yes
 Single-file | No
 Kind | 📁 directory
 Wiki | [StarDict](https://en.wikipedia.org/wiki/StarDict)
-Website | http://www.huzheng.org/stardict/
+Website | [huzheng.org/stardict](http://huzheng.org/stardict/)
 
 
 ### Read options ###
@@ -35,7 +35,7 @@ Name | Default | Type | Comment
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------
-[StarDict](http://www.huzheng.org/stardict/) | GPL | Linux, Windows, Mac
+[StarDict](http://huzheng.org/stardict/) | GPL | Linux, Windows, Mac
 [GoldenDict](http://goldendict.org/) | GPL | Linux, Windows
 [GoldenDict Mobile (Free)](http://goldendict.mobi/) | Freeware | Android
 [GoldenDict Mobile (Full)](http://goldendict.mobi/) | Proprietary | Android

@@ -11,7 +11,10 @@ extensionCreate = ""
 singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/CEDICT"
-website = "https://cc-cedict.org/editor/editor.php"
+website = (
+	"https://cc-cedict.org/editor/editor.php",
+	"CC-CEDICT Editor",
+)
 optionsProp = {
 	"encoding": EncodingOption(),
 	"traditional_title": BoolOption(

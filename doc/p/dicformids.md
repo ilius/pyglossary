@@ -13,7 +13,7 @@ Write support | Yes
 Single-file | No
 Kind | 📁 directory
 Wiki | ―
-Website | http://dictionarymid.sourceforge.net/
+Website | [DictionaryForMIDs - SourceForge](http://dictionarymid.sourceforge.net/)
 
 
 

@@ -11,7 +11,10 @@ extensions = ()
 extensionCreate = ".db"
 kind = "binary"
 wiki = ""
-website = "https://github.com/digitalprk/dicrs"
+website = (
+	"https://github.com/digitalprk/dicrs",
+	"@digitalprk/dicrs",
+)
 
 tools = [
 	{

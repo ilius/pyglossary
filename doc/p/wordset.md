@@ -13,7 +13,7 @@ Write support | No
 Single-file | No
 Kind | 📁 directory
 Wiki | ―
-Website | https://github.com/wordset/wordset-dictionary
+Website | [@wordset/wordset-dictionary](https://github.com/wordset/wordset-dictionary)
 
 
 ### Read options ###

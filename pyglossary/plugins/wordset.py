@@ -15,7 +15,10 @@ extensionCreate = "-wordset/"
 singleFile = False
 kind = "directory"
 wiki = ""
-website = "https://github.com/wordset/wordset-dictionary"
+website = (
+	"https://github.com/wordset/wordset-dictionary",
+	"@wordset/wordset-dictionary",
+)
 optionsProp = {
 	"encoding": EncodingOption(),
 }

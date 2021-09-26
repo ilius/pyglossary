@@ -13,7 +13,10 @@ extensionCreate = ".mids/"
 sortOnWrite = ALWAYS
 kind = "directory"
 wiki = ""
-website = "http://dictionarymid.sourceforge.net/"
+website = (
+	"http://dictionarymid.sourceforge.net/",
+	"DictionaryForMIDs - SourceForge",
+)
 
 tools = [
 	{

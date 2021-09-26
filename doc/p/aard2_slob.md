@@ -13,7 +13,7 @@ Write support | Yes
 Single-file | Yes
 Kind | 🔢 binary
 Wiki | [@itkach/slob/wiki](https://github.com/itkach/slob/wiki)
-Website | http://aarddict.org/
+Website | [aarddict.org](http://aarddict.org/)
 
 
 

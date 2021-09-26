@@ -13,7 +13,7 @@ Write support | No
 Single-file | Yes
 Kind | 📝 text
 Wiki | [@freedict/fd-dictionaries/wiki](https://github.com/freedict/fd-dictionaries/wiki)
-Website | https://freedict.org/
+Website | [FreeDict.org](https://freedict.org/)
 
 
 ### Read options ###

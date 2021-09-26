@@ -112,8 +112,16 @@ for p in Glossary.plugins.values():
 		wiki_md = f"[{wiki_title}]({wiki})"
 
 	website_md = "―"
-	if module.website:
-		website_md = module.website
+	website = module.website
+	if website:
+		if isinstance(website, str):
+			website_md = website
+		else:
+			try:
+				url, title = website
+			except ValueError:
+				raise ValueError(f"website = {website!r}")
+			website_md = f"[{title}]({url})"
 
 	tools = getattr(module, "tools", [])
 

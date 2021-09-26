@@ -27,7 +27,10 @@ extensions = (".ifo",)
 extensionCreate = "-stardict/"
 kind = "directory"
 wiki = "https://en.wikipedia.org/wiki/StarDict"
-website = "http://www.huzheng.org/stardict/"
+website = (
+	"http://huzheng.org/stardict/",
+	"huzheng.org/stardict",
+)
 optionsProp = {
 	"stardict_client": BoolOption(
 		comment="Modify html entries for StarDict 3.0",
@@ -70,7 +73,7 @@ if os.getenv("PYGLOSSARY_STARDICT_NO_FORCE_SORT") == "1":
 tools = [
 	{
 		"name": "StarDict",
-		"web": "http://www.huzheng.org/stardict/",
+		"web": "http://huzheng.org/stardict/",
 		"platforms": ["Linux", "Windows", "Mac"],
 		"license": "GPL",
 	},

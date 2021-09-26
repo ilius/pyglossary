@@ -13,7 +13,7 @@ Write support | No
 Single-file | Yes
 Kind | 🔢 binary
 Wiki | ―
-Website | http://swaj.net/sdict/
+Website | [Sdictionary Project](http://swaj.net/sdict/)
 
 
 

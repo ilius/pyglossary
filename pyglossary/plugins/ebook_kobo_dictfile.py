@@ -33,7 +33,10 @@ extensions = (".df",)
 extensionCreate = ".df"
 kind = "text"
 wiki = ""
-website = "https://pgaskin.net/dictutil/dictgen/#dictfile-format"
+website = (
+	"https://pgaskin.net/dictutil/dictgen/#dictfile-format",
+	"dictgen - dictutil",
+)
 # https://github.com/pgaskin/dictutil
 
 optionsProp = {

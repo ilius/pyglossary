@@ -13,7 +13,7 @@ Write support | Yes
 Single-file | Yes
 Kind | 📝 text
 Wiki | [Lingoes](https://en.wikipedia.org/wiki/Lingoes)
-Website | http://www.lingoes.net/en/dictionary/dict_format.php
+Website | [Lingoes.net](http://www.lingoes.net/en/dictionary/dict_format.php)
 
 
 ### Read options ###

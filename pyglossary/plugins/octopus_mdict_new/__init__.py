@@ -32,7 +32,10 @@ extensionCreate = ""
 singleFile = False
 kind = "binary"
 wiki = ""
-website = "https://www.mdict.cn/wp/?page_id=5325&lang=en"
+website = (
+	"https://www.mdict.cn/wp/?page_id=5325&lang=en",
+	"Download | MDict.cn",
+)
 optionsProp = {
 	"encoding": EncodingOption(),
 	"substyle": BoolOption(comment="Enable substyle"),

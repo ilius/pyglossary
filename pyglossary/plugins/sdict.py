@@ -30,7 +30,10 @@ extensionCreate = ".dct"
 singleFile = True
 kind = "binary"
 wiki = ""
-website = "http://swaj.net/sdict/"
+website = (
+	"http://swaj.net/sdict/",
+	"Sdictionary Project",
+)
 optionsProp = {
 	# "encoding": EncodingOption(),  # TODO: needed?
 }

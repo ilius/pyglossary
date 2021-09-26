@@ -39,7 +39,10 @@ extensionCreate = ".kobo.zip"
 kind = "package"
 sortOnWrite = NEVER
 wiki = "https://en.wikipedia.org/wiki/Kobo_eReader"
-website = "https://www.kobo.com"
+website = (
+	"https://www.kobo.com",
+	"www.kobo.com",
+)
 
 tools = [
 	{

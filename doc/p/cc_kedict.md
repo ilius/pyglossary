@@ -13,7 +13,7 @@ Write support | No
 Single-file | Yes
 Kind | 📝 text
 Wiki | ―
-Website | https://github.com/mhagiwara/cc-kedict
+Website | [@mhagiwara/cc-kedict](https://github.com/mhagiwara/cc-kedict)
 
 
 
