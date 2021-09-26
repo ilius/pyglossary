@@ -68,10 +68,10 @@ Name & Website | License | Platforms
 """)
 
 indexTemplate = Template("""
-Name | Description | Doc Link
----- | ----------- | --------
+Description | Name | Doc Link
+----------- | ---- | --------
 % for p in plugins:
-${p.name} | ${p.description} | [${p.lname}.md](./${p.lname}.md)
+${p.description} | ${p.name} | [${p.lname}.md](./${p.lname}.md)
 % endfor
 """)
 
@@ -156,7 +156,10 @@ for p in Glossary.plugins.values():
 		_file.write(text)
 
 indexText = indexTemplate.render(
-	plugins=Glossary.plugins.values(),
+	plugins=sorted(
+		Glossary.plugins.values(),
+		key=lambda p: p.description.lower(),
+	),
 )
 with open(join("doc", "p", f"__index__.md"), mode="w") as _file:
 	_file.write(indexText)
