@@ -16,22 +16,6 @@ website = (
 	"http://aarddict.org/",
 	"aarddict.org",
 )
-tools = [
-	{
-		"name": "Aard 2 for Android",
-		"web": "http://aarddict.org/",
-		"platforms": ["Android"],
-		"license": "GPL",
-		# no auto-RTL (in plaintext or html)
-	},
-	{
-		"name": "Aard2 for Web",
-		"web": "http://aarddict.org/",
-		"platforms": ["Web"],
-		"license": "MPL",
-		# auto-RTL works in plaintext mode, but not html
-	},
-]
 optionsProp = {
 	"compression": StrOption(
 		values=["", "bz2", "zlib", "lzma2"],
@@ -56,6 +40,23 @@ optionsProp = {
 		comment="add headwords title to begining of definition",
 	),
 }
+
+tools = [
+	{
+		"name": "Aard 2 for Android",
+		"web": "http://aarddict.org/",
+		"platforms": ["Android"],
+		"license": "GPL",
+		# no auto-RTL (in plaintext or html)
+	},
+	{
+		"name": "Aard2 for Web",
+		"web": "http://aarddict.org/",
+		"platforms": ["Web"],
+		"license": "MPL",
+		# auto-RTL works in plaintext mode, but not html
+	},
+]
 
 file_size_check_every = 100
 
@@ -317,7 +318,6 @@ class Writer(object):
 				_ctype = "text/plain; charset=utf-8"
 			else:
 				_ctype = "text/plain; charset=utf-8"
-
 
 		if not self._separate_alternates:
 			writer.add(
