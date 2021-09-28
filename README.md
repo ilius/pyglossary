@@ -187,7 +187,7 @@ Feature-specific Requirements
 -	**Reading or writing Aard 2 (.slob) files**
 
 	+ `sudo pip3 install PyICU`
-	+ PyICU >= 1.5 is required, see [doc/pyicu.md](./doc/pyicu.md) for more details.
+	+ See [doc/pyicu.md](./doc/pyicu.md) for more details.
 
 -	**Reading from Zim** (see [#228](https://github.com/ilius/pyglossary/issues/228))
 

@@ -63,7 +63,7 @@ file_size_check_every = 100
 
 class Reader(object):
 	depends = {
-		"icu": "PyICU",
+		"icu": "PyICU",  # >=1.5
 	}
 
 	def __init__(self, glos):

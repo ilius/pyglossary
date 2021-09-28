@@ -1,4 +1,4 @@
-**[PyICU](https://github.com/ovalhub/pyicu) >= 1.5** is required for reading or writing Aard 2 (.slob) files.
+# [PyICU](https://github.com/ovalhub/pyicu)
 
 Installation on Linux
 ---------------------
