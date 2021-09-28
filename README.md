@@ -193,11 +193,6 @@ you can place it in this directory:
 - Windows: `C:\Users\USERNAME\AppData\Roaming\PyGlossary\plugins`
 
 
-AppleDict
----------
-See [doc/apple.md](doc/apple.md) for AppleDict requirements and instructions.
-
-
 Internal Glossary Structure
 ---------------------------
 A glossary contains a number of entries.

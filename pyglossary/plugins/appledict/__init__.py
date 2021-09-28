@@ -71,6 +71,13 @@ optionsProp = {
 	),
 }
 
+extraDocs = [
+	(
+		"Also see:",
+		"See [doc/apple.md](./doc/apple.md) for additional AppleDict instructions.",
+	),
+]
+
 tools = [
 	{
 		"name": "Dictionary Development Kit",

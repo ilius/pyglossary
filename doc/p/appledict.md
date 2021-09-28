@@ -38,6 +38,9 @@ To install, run
     pip3 install lxml beautifulsoup4 html5lib
 
 
+### Also see: ###
+See [doc/apple.md](../apple.md) for additional AppleDict instructions.
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

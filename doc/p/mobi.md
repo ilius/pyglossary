@@ -26,7 +26,7 @@ Name | Default | Type | Comment
 
 
 ### Other Requirements ###
-Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen)for creating Mobipocket e-books.
+Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen) for creating Mobipocket e-books.
 
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
