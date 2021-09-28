@@ -57,14 +57,34 @@ Name | Default | Type | Comment
 % endfor
 % endif
 
-% if readDependsMD:
-${"### Dependencies for reading ###"}
-${readDependsMD}
-% endif
+% if readDependsLinksMD and readDependsLinksMD == writeDependsLinksMD:
+${"### Dependencies for reading and writing ###"}
+Links: ${readDependsLinksMD}
 
-% if writeDependsMD:
+To install, run:
+
+    ${readDependsCmd}
+
+% else:
+	% if readDependsLinksMD:
+${"### Dependencies for reading ###"}
+Links: ${readDependsLinksMD}
+
+To install, run:
+
+    ${readDependsCmd}
+
+	% endif
+
+	% if writeDependsLinksMD:
 ${"### Dependencies for writing ###"}
-${writeDependsMD}
+Links: ${writeDependsLinksMD}
+
+To install, run
+
+    ${writeDependsCmd}
+
+	% endif
 % endif
 
 % if tools:
@@ -134,19 +154,27 @@ for p in Glossary.plugins.values():
 			title = title.replace("|", "\\|")
 			website_md = f"[{title}]({url})"
 
-	readDependsMD = ""
+	readDependsLinksMD = ""
+	readDependsCmd = ""
 	if p.canRead and hasattr(module.Reader, "depends"):
-		readDependsMD = ", ".join([
+		readDependsLinksMD = ", ".join([
 			f"[{pypiName.replace('==', ' ')}](https://pypi.org/project/{pypiName.replace('==', '/')})"
 			for pypiName in module.Reader.depends.values()
 		])
+		readDependsCmd = "pip3 install " + " ".join(
+			module.Reader.depends.values()
+		)
 
-	writeDependsMD = ""
+	writeDependsLinksMD = ""
+	writeDependsCmd = ""
 	if p.canWrite and hasattr(module.Writer, "depends"):
-		writeDependsMD = ", ".join([
+		writeDependsLinksMD = ", ".join([
 			f"[{pypiName}](https://pypi.org/project/{pypiName.replace('==', '/')})"
 			for pypiName in module.Writer.depends.values()
 		])
+		writeDependsCmd = "pip3 install " + " ".join(
+			module.Writer.depends.values()
+		)
 
 	tools = getattr(module, "tools", [])
 
@@ -175,8 +203,10 @@ for p in Glossary.plugins.values():
 			optName: opt.typ
 			for optName, opt in optionsProp.items()
 		},
-		readDependsMD=readDependsMD,
-		writeDependsMD=writeDependsMD,
+		readDependsLinksMD=readDependsLinksMD,
+		readDependsCmd=readDependsCmd,
+		writeDependsLinksMD=writeDependsLinksMD,
+		writeDependsCmd=writeDependsCmd,
 		tools=tools,
 	)
 	with open(join("doc", "p", f"{p.lname}.md"), mode="w") as _file:

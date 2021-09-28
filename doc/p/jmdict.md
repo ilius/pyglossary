@@ -19,6 +19,11 @@ Website | [The JMDict Project](https://www.edrdg.org/jmdict/j_jmdict.html)
 
 
 ### Dependencies for reading ###
-[lxml](https://pypi.org/project/lxml)
+Links: [lxml](https://pypi.org/project/lxml)
+
+To install, run:
+
+    pip3 install lxml
+
 
 

@@ -26,11 +26,13 @@ Name | Default | Type | Comment
 `separate_alternates` | `False` | bool | add alternate headwords as separate entries to slob
 `word_title` | `False` | bool | add headwords title to begining of definition
 
-### Dependencies for reading ###
-[PyICU](https://pypi.org/project/PyICU)
+### Dependencies for reading and writing ###
+Links: [PyICU](https://pypi.org/project/PyICU)
 
-### Dependencies for writing ###
-[PyICU](https://pypi.org/project/PyICU)
+To install, run:
+
+    pip3 install PyICU
+
 
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms

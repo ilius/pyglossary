@@ -31,7 +31,12 @@ Name | Default | Type | Comment
 
 
 ### Dependencies for writing ###
-[lxml](https://pypi.org/project/lxml), [beautifulsoup4](https://pypi.org/project/beautifulsoup4), [html5lib](https://pypi.org/project/html5lib)
+Links: [lxml](https://pypi.org/project/lxml), [beautifulsoup4](https://pypi.org/project/beautifulsoup4), [html5lib](https://pypi.org/project/html5lib)
+
+To install, run
+
+    pip3 install lxml beautifulsoup4 html5lib
+
 
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms

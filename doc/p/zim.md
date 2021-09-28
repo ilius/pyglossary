@@ -23,7 +23,12 @@ Name | Default | Type | Comment
 
 
 ### Dependencies for reading ###
-[libzim](https://pypi.org/project/libzim)
+Links: [libzim](https://pypi.org/project/libzim)
+
+To install, run:
+
+    pip3 install libzim
+
 
 
 ### Dictionary Applications/Tools ###

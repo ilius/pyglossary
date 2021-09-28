@@ -31,5 +31,10 @@ Name | Default | Type | Comment
 
 
 ### Dependencies for writing ###
-[cachetools](https://pypi.org/project/cachetools)
+Links: [cachetools](https://pypi.org/project/cachetools)
+
+To install, run
+
+    pip3 install cachetools
+
 
