@@ -23,7 +23,7 @@ Name | Default | Type | Comment
 
 
 ### Dependencies for reading ###
-Links: [libzim](https://pypi.org/project/libzim)
+PyPI Links: [libzim](https://pypi.org/project/libzim)
 
 To install, run:
 

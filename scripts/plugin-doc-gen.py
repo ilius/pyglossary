@@ -13,6 +13,7 @@ from pyglossary.glossary import Glossary
 
 Glossary.init()
 
+
 """
 Mako template engine:
 	https://docs.makotemplates.org/en/latest/
@@ -57,18 +58,18 @@ Name | Default | Type | Comment
 % endfor
 % endif
 
-% if readDependsLinksMD and readDependsLinksMD == writeDependsLinksMD:
+% if readDependsLinks and readDependsLinks == writeDependsLinks:
 ${"### Dependencies for reading and writing ###"}
-Links: ${readDependsLinksMD}
+PyPI Links: ${readDependsLinks}
 
 To install, run:
 
     ${readDependsCmd}
 
 % else:
-	% if readDependsLinksMD:
+	% if readDependsLinks:
 ${"### Dependencies for reading ###"}
-Links: ${readDependsLinksMD}
+PyPI Links: ${readDependsLinks}
 
 To install, run:
 
@@ -76,9 +77,9 @@ To install, run:
 
 	% endif
 
-	% if writeDependsLinksMD:
+	% if writeDependsLinks:
 ${"### Dependencies for writing ###"}
-Links: ${writeDependsLinksMD}
+PyPI Links: ${writeDependsLinks}
 
 To install, run
 
@@ -87,6 +88,13 @@ To install, run
 	% endif
 % endif
 
+% if extraDocs:
+% for title, text in extraDocs:
+${f"### {title} ###"}
+${text.replace('(./doc/', '(../')}
+
+% endfor
+% endif
 % if tools:
 ${"### Dictionary Applications/Tools ###"}
 Name & Website | License | Platforms
@@ -105,11 +113,13 @@ ${p.description} | ${p.name} | [${p.lname}.md](./${p.lname}.md)
 % endfor
 """)
 
+
 def codeValue(x):
 	s = str(x)
 	if s:
 		return "`" + s + "`"
 	return ""
+
 
 def yesNo(x):
 	if x is True:
@@ -117,6 +127,7 @@ def yesNo(x):
 	if x is False:
 		return "No"
 	return ""
+
 
 def kindEmoji(kind):
 	if not kind:
@@ -127,6 +138,20 @@ def kindEmoji(kind):
 		"directory": "📁",
 		"package": "📦",
 	}[kind]
+
+
+def makeDependsDoc(cls):
+	if not (cls and getattr(cls, "depends", None)):
+		return "", ""
+	links = ", ".join([
+		f"[{pypiName.replace('==', ' ')}](https://pypi.org/project/{pypiName.replace('==', '/')})"
+		for pypiName in cls.depends.values()
+	])
+	cmd = "pip3 install " + " ".join(
+		cls.depends.values()
+	)
+	return links, cmd
+
 
 for p in Glossary.plugins.values():
 	module = p.pluginModule
@@ -154,27 +179,17 @@ for p in Glossary.plugins.values():
 			title = title.replace("|", "\\|")
 			website_md = f"[{title}]({url})"
 
-	readDependsLinksMD = ""
-	readDependsCmd = ""
-	if p.canRead and hasattr(module.Reader, "depends"):
-		readDependsLinksMD = ", ".join([
-			f"[{pypiName.replace('==', ' ')}](https://pypi.org/project/{pypiName.replace('==', '/')})"
-			for pypiName in module.Reader.depends.values()
-		])
-		readDependsCmd = "pip3 install " + " ".join(
-			module.Reader.depends.values()
-		)
+	(
+		readDependsLinks,
+		readDependsCmd,
+	) = makeDependsDoc(getattr(module, "Reader", None))
 
-	writeDependsLinksMD = ""
-	writeDependsCmd = ""
-	if p.canWrite and hasattr(module.Writer, "depends"):
-		writeDependsLinksMD = ", ".join([
-			f"[{pypiName}](https://pypi.org/project/{pypiName.replace('==', '/')})"
-			for pypiName in module.Writer.depends.values()
-		])
-		writeDependsCmd = "pip3 install " + " ".join(
-			module.Writer.depends.values()
-		)
+	(
+		writeDependsLinks,
+		writeDependsCmd,
+	) = makeDependsDoc(getattr(module, "Writer", None))
+
+	extraDocs = getattr(module, "extraDocs", [])
 
 	tools = getattr(module, "tools", [])
 
@@ -203,10 +218,11 @@ for p in Glossary.plugins.values():
 			optName: opt.typ
 			for optName, opt in optionsProp.items()
 		},
-		readDependsLinksMD=readDependsLinksMD,
+		readDependsLinks=readDependsLinks,
 		readDependsCmd=readDependsCmd,
-		writeDependsLinksMD=writeDependsLinksMD,
+		writeDependsLinks=writeDependsLinks,
 		writeDependsCmd=writeDependsCmd,
+		extraDocs=extraDocs,
 		tools=tools,
 	)
 	with open(join("doc", "p", f"{p.lname}.md"), mode="w") as _file:

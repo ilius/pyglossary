@@ -31,7 +31,7 @@ Name | Default | Type | Comment
 
 
 ### Dependencies for writing ###
-Links: [cachetools](https://pypi.org/project/cachetools)
+PyPI Links: [cachetools](https://pypi.org/project/cachetools)
 
 To install, run
 

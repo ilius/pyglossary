@@ -102,6 +102,14 @@ optionsProp = {
 	),
 }
 
+extraDocs = [
+	(
+		"Other Requirements",
+		"Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen)"
+		" for creating Mobipocket e-books."
+	),
+]
+
 
 class Writer(EbookWriter):
 	_compress: bool = False

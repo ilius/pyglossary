@@ -23,7 +23,7 @@ Name | Default | Type | Comment
 `resources` | `True` | bool | Enable resources / data files
 
 ### Dependencies for reading and writing ###
-Links: [polib](https://pypi.org/project/polib)
+PyPI Links: [polib](https://pypi.org/project/polib)
 
 To install, run:
 

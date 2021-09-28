@@ -27,12 +27,15 @@ Name | Default | Type | Comment
 `word_title` | `False` | bool | add headwords title to begining of definition
 
 ### Dependencies for reading and writing ###
-Links: [PyICU](https://pypi.org/project/PyICU)
+PyPI Links: [PyICU](https://pypi.org/project/PyICU)
 
 To install, run:
 
     pip3 install PyICU
 
+
+### PyICU ###
+See [doc/pyicu.md](../pyicu.md) file for a more detailed instructions on how to install PyICU.
 
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms

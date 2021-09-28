@@ -58,6 +58,14 @@ tools = [
 	},
 ]
 
+extraDocs = [
+	(
+		"PyICU",
+		"See [doc/pyicu.md](./doc/pyicu.md) file for a more detailed"
+		" instructions on how to install PyICU.",
+	),
+]
+
 file_size_check_every = 100
 
 

@@ -27,6 +27,10 @@ Name | Default | Type | Comment
 
 
 
+### `python-lzo` is required for **some** MDX glossaries. ###
+First try converting your MDX file, if failed (`AssertionError` probably),
+then try to install [LZO library and Python binding](../lzo.md).
+
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------

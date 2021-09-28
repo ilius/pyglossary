@@ -20,7 +20,7 @@ Website | [www.kobo.com](https://www.kobo.com)
 
 
 ### Dependencies for writing ###
-Links: [marisa-trie](https://pypi.org/project/marisa-trie)
+PyPI Links: [marisa-trie](https://pypi.org/project/marisa-trie)
 
 To install, run
 

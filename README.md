@@ -176,38 +176,9 @@ Feature-specific Requirements
 
 	`sudo pip3 install lxml beautifulsoup4`
 
--	**Reading from FreeDict, XDXF (or StarDict with XDXF), JMDict or CC-CEDICT**
 
-	`sudo pip3 install lxml`
-
--	**Reading from cc-kedict**
-
-	`sudo pip3 install lxml PyYAML`
-
--	**Reading or writing Aard 2 (.slob) files**
-
-	+ `sudo pip3 install PyICU`
-	+ See [doc/pyicu.md](./doc/pyicu.md) for more details.
-
--	**Reading from Zim** (see [#228](https://github.com/ilius/pyglossary/issues/228))
-
-	`sudo pip3 install libzim`
-
--	**Reading from Octopus MDict (MDX)**
-
-	`python-lzo` is required for **some** MDX glossaries.
-	First try converting your MDX file, if failed (`AssertionError` probably),
-	then try to install [LZO library and Python binding](doc/lzo.md).
-
--	**Writing to Kobo E-Reader Dictionary**
-
-	`sudo pip3 install marisa-trie`
-
--	**Writing to Mobipocket (`.mobi`) E-Book**
-
-	Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen)
-
-
+Some formats have additional requirements.
+Please check the [links given for each format](#supported-formats) to see documentations.
 
 **Using Termux on Android?** See [doc/termux.md](./doc/termux.md)
 

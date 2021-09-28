@@ -58,6 +58,14 @@ tools = [
 	},
 ]
 
+extraDocs = [
+	(
+		"`python-lzo` is required for **some** MDX glossaries.",
+		"""First try converting your MDX file, if failed (`AssertionError` probably),
+then try to install [LZO library and Python binding](./doc/lzo.md)."""
+	),
+]
+
 
 class Reader(object):
 	_encoding: str = ""

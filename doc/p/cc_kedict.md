@@ -19,7 +19,7 @@ Website | [@mhagiwara/cc-kedict](https://github.com/mhagiwara/cc-kedict)
 
 
 ### Dependencies for reading ###
-Links: [PyYAML](https://pypi.org/project/PyYAML), [lxml](https://pypi.org/project/lxml)
+PyPI Links: [PyYAML](https://pypi.org/project/PyYAML), [lxml](https://pypi.org/project/lxml)
 
 To install, run:
 

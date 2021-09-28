@@ -24,7 +24,7 @@ Name | Default | Type | Comment
 
 
 ### Dependencies for reading ###
-Links: [lxml](https://pypi.org/project/lxml)
+PyPI Links: [lxml](https://pypi.org/project/lxml)
 
 To install, run:
 
