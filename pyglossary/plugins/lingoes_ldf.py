@@ -134,7 +134,7 @@ class Writer(object):
 		yield from writeTxt(
 			self._glos,
 			entryFmt="{word}\n{defi}\n\n",
-			filename=self._filename ,
+			filename=self._filename,
 			writeInfo=False,
 			defiEscapeFunc=replaceStringTable([
 				("\n", "<br/>"),

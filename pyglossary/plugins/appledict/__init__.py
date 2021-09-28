@@ -118,7 +118,11 @@ def write_header(
 	)
 
 	if front_back_matter:
-		with open(front_back_matter, mode="r", encoding="utf-8") as front_back_matter:
+		with open(
+			front_back_matter,
+			mode="r",
+			encoding="utf-8",
+		) as front_back_matter:
 			toFile.write(front_back_matter.read())
 
 
@@ -169,7 +173,7 @@ write glossary to Apple dictionary .xml and supporting files.
 :param xsl: path to custom XSL transformations file.
 
 :param default_prefs: Default prefs in python dictionary literal format,
-i.e. {"key1": "value1", "key2": "value2", ...}.  All keys and values 
+i.e. {"key1": "value1", "key2": "value2", ...}.  All keys and values
 must be quoted strings; not allowed characters (e.g. single/double
 quotes,equal sign "=", semicolon) must be escaped as hex code
 according to python string literal rules.
@@ -189,6 +193,7 @@ dictionary's preferences. refer to Apple's documentation for details.
 how to perform flexible search.  we can help it by manually providing
 additional indexes to dictionary entries.
 """
+
 
 class Writer(object):
 	depends = {

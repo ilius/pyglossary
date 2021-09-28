@@ -48,7 +48,6 @@ class Reader(object):
 		},
 		"""
 
-
 	def close(self) -> None:
 		self._clear()
 
@@ -80,7 +79,7 @@ class Reader(object):
 		glos = self._glos
 		for fname in sorted(listdir(direc), key=self.fileNameSortKey):
 			fpath = join(direc, fname)
-			if not (fname.endswith(".json") and isfile(fpath)) :
+			if not (fname.endswith(".json") and isfile(fpath)):
 				continue
 			with open(fpath, encoding=encoding) as fileObj:
 				data = load(fileObj)
@@ -99,4 +98,3 @@ class Reader(object):
 					)
 					yield glos.newEntry(word, defi, defiFormat="h")
 			log.info(f"finished reading {fname}")
-

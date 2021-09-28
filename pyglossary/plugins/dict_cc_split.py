@@ -64,7 +64,6 @@ class Reader(object):
 			except Exception as e:
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
-		
 
 	def _iterOneDirection(self, column1, column2):
 		for word, defi, entry_type in self.iterRows(column1, column2):

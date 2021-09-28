@@ -89,6 +89,7 @@ __all__ = ["read"]
 
 htmlEntityPattern = re.compile(r"&#?\w+;")
 
+
 def unescape(text):
 	def fixup(m):
 		text = m.group(0)

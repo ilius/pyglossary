@@ -201,8 +201,8 @@ class DSLParser(object):
 					# note: do not reopen tags that were marked as
 					# closed already.
 					to_open = set.union(*(
-						{t for t in l.tags if t.closing not in closings}
-						for l in stack
+						{t for t in layer.tags if t.closing not in closings}
+						for layer in stack
 					))
 					for i in range(len(stack)):
 						_layer.close_layer(stack)
@@ -241,7 +241,7 @@ class DSLParser(object):
 		if state is CLOSE and closings:
 			process_closing_tags(stack, closings)
 		# shutdown unclosed tags
-		return "".join([l.text for l in stack])
+		return "".join([layer.text for layer in stack])
 
 	def put_brackets_away(self, line):
 		r"""put away \[, \] and brackets that does not belong to any of given tags.

@@ -85,6 +85,9 @@ class Reader:
 			if parts is None:
 				log.warning("bad line: %s", line)
 				continue
-			names, article = conv.make_entry(*parts, traditional_title=self._traditional_title)
+			names, article = conv.make_entry(
+				*parts,
+				traditional_title=self._traditional_title,
+			)
 			entry = self._glos.newEntry(names, article, defiFormat="h")
 			yield entry

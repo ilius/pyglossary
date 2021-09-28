@@ -38,9 +38,15 @@ website = (
 )
 optionsProp = {
 	"encoding": EncodingOption(),
-	"substyle": BoolOption(comment="Enable substyle"),
-	"same_dir_data_files": BoolOption(comment="Read data files from same directory"),
-	"audio": BoolOption(comment="Enable audio objects"),
+	"substyle": BoolOption(
+		comment="Enable substyle",
+	),
+	"same_dir_data_files": BoolOption(
+		comment="Read data files from same directory",
+	),
+	"audio": BoolOption(
+		comment="Enable audio objects",
+	),
 }
 
 tools = [
@@ -109,8 +115,8 @@ class Reader(object):
 
 		log.debug("mdx.header = " + pformat(self._mdx.header))
 		# for key, value in self._mdx.header.items():
-		#	key = key.lower()
-		#	self._glos.setInfo(key, value)
+		# 	key = key.lower()
+		# 	self._glos.setInfo(key, value)
 		try:
 			title = self._mdx.header[b"Title"]
 		except KeyError:

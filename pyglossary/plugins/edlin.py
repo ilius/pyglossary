@@ -207,7 +207,13 @@ class Writer(object):
 				return tmp_hash
 			index += 1
 
-	def saveEntry(self, thisEntry: BaseEntry, thisHash: str, prevHash: str, nextHash: str) -> None:
+	def saveEntry(
+		self,
+		thisEntry: BaseEntry,
+		thisHash: str,
+		prevHash: str,
+		nextHash: str,
+	) -> None:
 		dpath = join(self._filename, thisHash[:2])
 		makeDir(dpath)
 		with open(
@@ -226,7 +232,6 @@ class Writer(object):
 				escapeNTB(thisEntry.s_word, bar=False),
 				thisEntry.defi,
 			]))
-
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
 		from collections import OrderedDict as odict
@@ -277,4 +282,3 @@ class Writer(object):
 				info[key] = value
 
 			toFile.write(dataToPrettyJson(info))
-

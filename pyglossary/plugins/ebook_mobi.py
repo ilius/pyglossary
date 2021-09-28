@@ -11,8 +11,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -187,7 +187,10 @@ class Writer(EbookWriter):
 		# run kindlegen
 		if not kindlegen_path:
 			log.warn(f"Not running kindlegen, the raw files are located in {filename}")
-			log.warn(f"Provide KindleGen path with: --write-options 'kindlegen_path=...'")
+			log.warn(
+				"Provide KindleGen path with: "
+				"--write-options 'kindlegen_path=...'"
+			)
 			return
 
 		name = self._glos.getInfo("name")

@@ -4,7 +4,7 @@
 #
 # Copyright © 2010-2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # Copyright © 2006-2008 Igor Tkach, as part of SDict Viewer:
-#			   http://sdictviewer.sf.net
+#     http://sdictviewer.sf.net
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -131,7 +131,9 @@ class Header(object):
 	def parse(self, st):
 		self.signature = read_str(st, self.f_signature)
 		if self.signature != b"sdct":
-			raise ValueError(f"Not a valid sdict dictionary: signature={self.signature}")
+			raise ValueError(
+				f"Not a valid sdict dictionary: signature={self.signature}"
+			)
 		self.word_lang = read_str(st, self.f_input_lang)
 		self.article_lang = read_str(st, self.f_output_lang)
 		self.short_index_length = read_int(st, self.f_length_of_short_index)
@@ -189,16 +191,16 @@ class Reader(object):
 	def readShortIndex(self):
 		self._file.seek(self._header.short_index_offset)
 		s_index_depth = self._header.short_index_depth
-		index_entry_len = (s_index_depth+1)*4
+		index_entry_len = (s_index_depth + 1) * 4
 		short_index_str = self._file.read(
 			index_entry_len * self._header.short_index_length
 		)
 		short_index_str = self._compression.decompress(short_index_str)
 		index_length = self._header.short_index_length
-		short_index = [{} for i in range(s_index_depth+2)]
+		short_index = [{} for i in range(s_index_depth + 2)]
 		depth_range = range(s_index_depth)
 		for i in range(index_length):
-			entry_start = start_index = i*index_entry_len
+			entry_start = start_index = i * index_entry_len
 			short_word = ""
 			try:
 				for j in depth_range:
@@ -206,7 +208,7 @@ class Reader(object):
 					# compared to calling read_int()
 					uchar_code = unpack(
 						"<I",
-						short_index_str[start_index:start_index+4]
+						short_index_str[start_index:start_index + 4]
 					)[0]
 					start_index += 4
 					if uchar_code == 0:
@@ -222,10 +224,10 @@ class Reader(object):
 					f", will ignore: {ve}"
 				)
 				continue
-			pointer_start = entry_start+s_index_depth*4
+			pointer_start = entry_start + s_index_depth * 4
 			pointer = unpack(
 				"<I",
-				short_index_str[pointer_start:pointer_start+4]
+				short_index_str[pointer_start:pointer_start + 4]
 			)[0]
 			short_index[len(short_word)][short_word] = pointer
 		return short_index

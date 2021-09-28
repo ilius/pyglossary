@@ -169,10 +169,10 @@ class Reader(object):
 			r"^([^<\s].+?[^>\s])$",
 			re.MULTILINE,
 		)
-		#self._re_emptyCircledLines = re.compile(
-		#	r"^\s*⚫︎\s*$",
-		#	re.MULTILINE | re.UNICODE,
-		#)
+		# self._re_emptyCircledLines = re.compile(
+		# 	r"^\s*⚫︎\s*$",
+		# 	re.MULTILINE | re.UNICODE,
+		# )
 
 	def fixText(self, text: str) -> str:
 		text = self._re_comment.sub("", text)

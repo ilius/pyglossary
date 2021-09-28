@@ -106,18 +106,18 @@ class GzipWithCheck(object):
 			self.reader.msgLogFileWrite(
 				f"GzipWithCheck.read: !=: size = {buf1}, ({buf2}) ({size})",
 			)
-#		else:
-#			self.reader.msgLogFileWrite(
-#				f"GzipWithCheck.read: ==: size = {buf1}, ({buf2}) ({size})",
-#			)
+		# else:
+		# 	self.reader.msgLogFileWrite(
+		# 		f"GzipWithCheck.read: ==: size = {buf1}, ({buf2}) ({size})",
+		# 	)
 		return buf1
 
 	def seek(self, offset, whence=os.SEEK_SET):
 		self.file.seek(offset, whence)
 		self.unpackedFile.seek(offset, whence)
-#		self.reader.msgLogFileWrite(
-#			f"GzipWithCheck.seek: offset = {offset}, whence = {whence}",
-#		)
+		# self.reader.msgLogFileWrite(
+		# 	f"GzipWithCheck.seek: offset = {offset}, whence = {whence}",
+		# )
 
 	def tell(self):
 		pos1 = self.file.tell()
@@ -126,10 +126,10 @@ class GzipWithCheck(object):
 			self.reader.msgLogFileWrite(
 				f"GzipWithCheck.tell: !=: {pos1} {pos2}",
 			)
-#		else:
-#			self.reader.msgLogFileWrite(
-#				f"GzipWithCheck.tell: ==: {pos1} {pos2}",
-#			)
+		# else:
+		# 	self.reader.msgLogFileWrite(
+		# 		f"GzipWithCheck.tell: ==: {pos1} {pos2}",
+		# 	)
 		return pos1
 
 	def flush(self):
@@ -159,7 +159,10 @@ class DebugBglReader(BglReader):
 			return
 
 		self.metadata2 = MetaData2() if self._collect_metadata2 else None
-		self.targetCharsArray = ([False] * 256) if self._search_char_samples else None
+		if self._search_char_samples:
+			self.targetCharsArray = ([False] * 256)
+		else:
+			self.targetCharsArray = None
 
 		if self._raw_dump_path:
 			self.rawDumpFile = open(self._raw_dump_path, "w")

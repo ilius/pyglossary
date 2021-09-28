@@ -270,6 +270,3 @@ class Writer(object):
 		langSearchListFp.close()
 
 		self.writeProbs()
-
-	# def close(self):
-	#	pass

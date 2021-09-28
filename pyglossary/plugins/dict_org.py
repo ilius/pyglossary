@@ -53,7 +53,8 @@ def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 	"""
 	filename is without extension (neither .index or .dict or .dict.dz)
 	"""
-	import shutil, subprocess
+	import shutil
+	import subprocess
 	targetDir = "/usr/share/dictd/"
 	if filename.startswith(targetDir):
 		return
@@ -91,10 +92,14 @@ class Reader(object):
 		self._glos = glos
 		self._filename = ""
 		self._dictdb = None  # type: Optional[DictDB]
-		
+
 		# regular expression patterns used to prettify definition text
-		self._re_newline_in_braces = re.compile(r'\{(?P<left>.*?)\n(?P<right>.*?)?\}')
-		self._re_words_in_braces = re.compile(r'\{(?P<word>.+?)\}')
+		self._re_newline_in_braces = re.compile(
+			r'\{(?P<left>.*?)\n(?P<right>.*?)?\}',
+		)
+		self._re_words_in_braces = re.compile(
+			r'\{(?P<word>.+?)\}',
+		)
 
 	def open(self, filename: str) -> None:
 		import gzip
@@ -111,13 +116,16 @@ class Reader(object):
 			self._dictdb = None
 
 	def prettifyDefinitionText(self, defi: str) -> str:
-		# Handle words in {}. 
+		# Handle words in {}
 		# First, we remove any \n in {} pairs
 		defi = self._re_newline_in_braces.sub(r'{\g<left>\g<right>}', defi)
 
 		# Then, replace any {words} into <a href="bword://words">words</a>,
 		# so it can be rendered as link correctly
-		defi = self._re_words_in_braces.sub(r'<a href="bword://\g<word>">\g<word></a>', defi)
+		defi = self._re_words_in_braces.sub(
+			r'<a href="bword://\g<word>">\g<word></a>',
+			defi,
+		)
 
 		# Use <br /> so it can be rendered as newline correctly
 		defi = defi.replace("\n", "<br />")
@@ -182,4 +190,3 @@ class Writer(object):
 				# does dictd support resources? and how? FIXME
 				continue
 			dictdb.addentry(entry.b_defi, entry.l_word)
-

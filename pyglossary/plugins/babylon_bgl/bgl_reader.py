@@ -502,7 +502,8 @@ class BglReader(object):
 		###
 		for key, value in self.info.items():
 			if value == "":
-				continue # TODO: a bool flag to add empty value infos?
+				continue
+				# TODO: a bool flag to add empty value infos?
 			# leave "creationTime" and "lastUpdated" as is
 			if key in {
 				"utf8Encoding",
@@ -659,8 +660,8 @@ class BglReader(object):
 		pos += Len
 		b_data = block.data[pos:]
 		# if b_name in (b"C2EEF3F6.html", b"8EAF66FD.bmp"):
-		#	log.debug(f"Skipping non-useful file {b_name!r}")
-		#	return
+		# 	log.debug(f"Skipping non-useful file {b_name!r}")
+		# 	return
 		u_name = b_name.decode(self.sourceEncoding)
 		return self._glos.newDataEntry(
 			u_name,
@@ -1148,9 +1149,9 @@ class BglReader(object):
 			# u_word_main_orig = u_word_main
 			u_word_main = stripHtmlTags(u_word_main)
 			u_word_main = replaceHtmlEntriesInKeys(u_word_main)
-#			if(re.match(".*[&<>].*", u_word_main_orig)):
-#				log.debug("original text: " + u_word_main_orig + "\n" \
-#						  + "new      text: " + u_word_main + "\n")
+			# if(re.match(".*[&<>].*", u_word_main_orig)):
+			# 	log.debug("original text: " + u_word_main_orig + "\n" \
+			# 			  + "new      text: " + u_word_main + "\n")
 		u_word_main = removeControlChars(u_word_main)
 		u_word_main = removeNewlines(u_word_main)
 		u_word_main = u_word_main.lstrip()
@@ -1187,9 +1188,9 @@ class BglReader(object):
 			# u_word_main_orig = u_word_main
 			u_word_main = stripHtmlTags(u_word_main)
 			u_word_main = replaceHtmlEntriesInKeys(u_word_main)
-#			if(re.match(".*[&<>].*", u_word_main_orig)):
-#				log.debug("original text: " + u_word_main_orig + "\n" \
-#						+ "new      text: " + u_word_main + "\n")
+			# if(re.match(".*[&<>].*", u_word_main_orig)):
+			# 	log.debug("original text: " + u_word_main_orig + "\n" \
+			# 			+ "new      text: " + u_word_main + "\n")
 		u_word_main = removeControlChars(u_word_main)
 		u_word_main = removeNewlines(u_word_main)
 		u_word_main = u_word_main.lstrip()
@@ -1466,8 +1467,8 @@ class BglReader(object):
 				i += 1
 				if Len == 0:
 					# log.debug(
-					#	f"collecting definition fields, b_defi = {b_defi!r}\n"
-					#	f"b_key = {b_key!r}:\nblank entry title"
+					# 	f"collecting definition fields, b_defi = {b_defi!r}\n"
+					# 	f"b_key = {b_key!r}:\nblank entry title"
 					# )
 					continue
 				if i + Len > len(b_defi):

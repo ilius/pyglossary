@@ -32,9 +32,9 @@ def parse_line(line):
 def make_entry(trad, simp, pinyin, eng, traditional_title):
 	eng_names = list(map(summarize, eng))
 	names = [
-			trad if traditional_title else simp,
-			simp if traditional_title else trad,
-			pinyin
+		trad if traditional_title else simp,
+		simp if traditional_title else trad,
+		pinyin
 	] + eng_names
 	article = render_article(trad, simp, pinyin, eng, traditional_title)
 	return names, article

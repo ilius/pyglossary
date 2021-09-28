@@ -267,7 +267,7 @@ def stripDollarIndexes(b_word):
 		d1 = b_word.find(b"$", d0 + 1)
 		if d1 == -1:
 			# log.debug(
-			#	f"stripDollarIndexes({b_word}):\npaired $ is not found",
+			# 	f"stripDollarIndexes({b_word}):\npaired $ is not found",
 			# )
 			b_word_main += b_word[i:]
 			break
