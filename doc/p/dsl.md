@@ -21,7 +21,7 @@ Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `audio` | `False` | bool | Enable audio objects
 `encoding` |  | str | Encoding/charset
-`only_fix_markup` | `False` | bool | 
+`only_fix_markup` | `False` | bool | Only fix markup, without tag conversion
 
 
 

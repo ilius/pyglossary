@@ -54,10 +54,10 @@ optionsProp = {
 		typ="str",
 		customValue=True,
 		values=[",", ";", "@"],
-		comment="",
+		comment="Column delimiter",
 	),
 	"add_defi_format": BoolOption(
-		comment="",
+		comment="enable adding defiFormat (m/h/x)",
 	),
 	"enable_info": BoolOption(
 		comment="Enable glossary info / metedata",

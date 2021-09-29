@@ -19,14 +19,14 @@ Website | ―
 ### Read options ###
 Name | Default | Type | Comment
 ---- | ------- | ---- | -------
-`delimiter` | `,` | str | 
+`delimiter` | `,` | str | Column delimiter
 `encoding` | `utf-8` | str | Encoding/charset
 
 ### Write options ###
 Name | Default | Type | Comment
 ---- | ------- | ---- | -------
-`add_defi_format` | `False` | bool | 
-`delimiter` | `,` | str | 
+`add_defi_format` | `False` | bool | enable adding defiFormat (m/h/x)
+`delimiter` | `,` | str | Column delimiter
 `enable_info` | `True` | bool | Enable glossary info / metedata
 `encoding` | `utf-8` | str | Encoding/charset
 `resources` | `True` | bool | Enable resources / data files

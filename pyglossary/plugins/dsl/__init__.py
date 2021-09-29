@@ -48,7 +48,7 @@ website = (
 optionsProp = {
 	"encoding": EncodingOption(),
 	"audio": BoolOption(comment="Enable audio objects"),
-	"only_fix_markup": BoolOption(comment=""),
+	"only_fix_markup": BoolOption(comment="Only fix markup, without tag conversion"),
 }
 
 tools = [

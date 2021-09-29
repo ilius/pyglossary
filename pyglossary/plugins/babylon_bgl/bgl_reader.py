@@ -107,29 +107,29 @@ optionsProp = {
 
 	# debug read options:
 	"search_char_samples": BoolOption(
-		comment="",
+		comment="(debug) Search character samples",
 	),
 	"collect_metadata2": BoolOption(
-		comment="",
+		comment="(debug) Collect second pass metadata from definitions",
 	),
 	"write_gz": BoolOption(
-		comment="",
+		comment="(debug) Create a file named *-data.gz",
 	),
 	"char_samples_path": StrOption(
 		# file path
-		comment="",
+		comment="(debug) File path for character samples",
 	),
 	"msg_log_path": StrOption(
 		# file path
-		comment="",
+		comment="(debug) File path for message log",
 	),
 	"raw_dump_path": StrOption(
 		# file path
-		comment="",
+		comment="(debug) File path for writing raw blocks",
 	),
 	"unpacked_gzip_path": StrOption(
 		# file path
-		comment="",
+		comment="(debug) Path to create unzipped file",
 	),
 }
 

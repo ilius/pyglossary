@@ -38,7 +38,7 @@ class PluginProp(object):
 		self._WriterLoaded = False
 
 		if log.level >= logging.DEBUG:
-			for name in self.optionsProp:
+			for name, opt in self.optionsProp.items():
 				if name.lower() != name:
 					suggestName = "".join([
 						"_" + x.lower() if x in string.ascii_uppercase
@@ -49,6 +49,11 @@ class PluginProp(object):
 						f"{self.name}: please rename option "
 						f"{name} to {suggestName}"
 					)
+				if not opt.comment:
+					log.debug(
+						f"{self.name}: please add comment for option {name}"
+					)
+
 	@property
 	def pluginModule(self):
 		return self._p

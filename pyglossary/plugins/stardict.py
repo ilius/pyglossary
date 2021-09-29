@@ -46,7 +46,7 @@ optionsProp = {
 		comment="Write alternates to .idx instead of .syn",
 	),
 	"xdxf_to_html": BoolOption(
-		comment="",
+		comment="Convert XDXF entries to HTML",
 	),
 	"unicode_errors": StrOption(
 		values=[

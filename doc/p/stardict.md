@@ -20,7 +20,7 @@ Website | [huzheng.org/stardict](http://huzheng.org/stardict/)
 Name | Default | Type | Comment
 ---- | ------- | ---- | -------
 `unicode_errors` | `strict` | str | What to do with Unicode decoding errors
-`xdxf_to_html` | `True` | bool | 
+`xdxf_to_html` | `True` | bool | Convert XDXF entries to HTML
 
 ### Write options ###
 Name | Default | Type | Comment
