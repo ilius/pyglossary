@@ -61,7 +61,7 @@ tools = [
 extraDocs = [
 	(
 		"PyICU",
-		"See [doc/pyicu.md](./doc/pyicu.md) file for a more detailed"
+		"See [doc/pyicu.md](./doc/pyicu.md) file for more detailed"
 		" instructions on how to install PyICU.",
 	),
 ]

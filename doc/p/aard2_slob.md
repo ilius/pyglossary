@@ -35,7 +35,7 @@ To install, run:
 
 
 ### PyICU ###
-See [doc/pyicu.md](../pyicu.md) file for a more detailed instructions on how to install PyICU.
+See [doc/pyicu.md](../pyicu.md) file for more detailed instructions on how to install PyICU.
 
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
