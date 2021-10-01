@@ -3,6 +3,7 @@
 import sys
 import json
 from os.path import join, dirname, abspath
+from pathlib import Path
 from pprint import pprint
 from mako.template import Template
 
@@ -10,6 +11,7 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary
+from pyglossary.core import userPluginsDir
 
 Glossary.init()
 
@@ -153,8 +155,15 @@ def makeDependsDoc(cls):
 	)
 	return links, cmd
 
+userPluginsDirPath = Path(userPluginsDir)
+plugins = [
+	p
+	for p in Glossary.plugins.values()
+	if userPluginsDirPath not in Path(p.pluginModule.__file__).parents
+]
 
-for p in Glossary.plugins.values():
+
+for p in plugins:
 	module = p.pluginModule
 	optionsProp = p.optionsProp
 
@@ -232,7 +241,7 @@ for p in Glossary.plugins.values():
 
 indexText = indexTemplate.render(
 	plugins=sorted(
-		Glossary.plugins.values(),
+		plugins,
 		key=lambda p: p.description.lower(),
 	),
 )
