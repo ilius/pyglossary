@@ -30,8 +30,11 @@ log = logging.getLogger("pyglossary")
 
 
 class PluginProp(object):
-	def __init__(self, plugin) -> None:
-		self._p = plugin
+	def __init__(
+		self,
+		module,
+	) -> None:
+		self._mod = module
 		self._Reader = None
 		self._ReaderLoaded = False
 		self._Writer = None
@@ -56,23 +59,23 @@ class PluginProp(object):
 
 	@property
 	def pluginModule(self):
-		return self._p
+		return self._mod
 
 	@property
 	def lname(self) -> str:
-		return self._p.lname
+		return self._mod.lname
 
 	@property
 	def name(self) -> str:
-		return self._p.format
+		return self._mod.format
 
 	@property
 	def description(self) -> str:
-		return self._p.description
+		return self._mod.description
 
 	@property
 	def extensions(self) -> "Tuple[str, ...]":
-		return self._p.extensions
+		return self._mod.extensions
 
 	@property
 	def ext(self) -> str:
@@ -83,22 +86,22 @@ class PluginProp(object):
 
 	@property
 	def extensionCreate(self) -> str:
-		return self._p.extensionCreate
+		return self._mod.extensionCreate
 
 	@property
 	def singleFile(self) -> bool:
-		return self._p.singleFile
+		return self._mod.singleFile
 
 	@property
 	def optionsProp(self) -> "Dict[str, Option]":
-		return getattr(self._p, "optionsProp", {})
+		return getattr(self._mod, "optionsProp", {})
 
 	@property
 	def sortOnWrite(self) -> YesNoAlwaysNever:
-		return getattr(self._p, "sortOnWrite", DEFAULT_NO)
+		return getattr(self._mod, "sortOnWrite", DEFAULT_NO)
 
 	def _loadReaderClass(self) -> "Optional[Any]":
-		cls = getattr(self._p, "Reader", None)
+		cls = getattr(self._mod, "Reader", None)
 		if cls is None:
 			return None
 		for attr in (
@@ -113,7 +116,7 @@ class PluginProp(object):
 					f"Invalid Reader class in {self.name!r} plugin"
 					f", no {attr!r} method"
 				)
-				self._p.Reader = None
+				self._mod.Reader = None
 				return None
 
 		if hasattr(cls, "depends"):
@@ -137,7 +140,7 @@ class PluginProp(object):
 		return cls
 
 	def _loadWriterClass(self) -> "Optional[Any]":
-		cls = getattr(self._p, "Writer", None)
+		cls = getattr(self._mod, "Writer", None)
 		if cls is None:
 			return None
 		for attr in (
@@ -151,7 +154,7 @@ class PluginProp(object):
 					f"Invalid Writer class in {self.name!r} plugin"
 					f", no {attr!r} method"
 				)
-				self._p.Writer = None
+				self._mod.Writer = None
 				return None
 
 		if hasattr(cls, "depends"):
