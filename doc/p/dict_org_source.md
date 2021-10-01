@@ -12,6 +12,7 @@ Read support | No
 Write support | Yes
 Single-file | Yes
 Kind | 📝 text
+Sort-on-write | No (by default)
 Wiki | [DICT](https://en.wikipedia.org/wiki/DICT)
 Website | [@cheusov/dictd](https://github.com/cheusov/dictd)
 

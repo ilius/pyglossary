@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | Yes
 Kind | 📝 text
+Sort-on-write | No (by default)
 Wiki | [Dictd](https://directory.fsf.org/wiki/Dictd)
 Website | [dictd/dictunformat.1.in - @cheusov/dictd](https://github.com/cheusov/dictd/blob/master/dictunformat.1.in)
 

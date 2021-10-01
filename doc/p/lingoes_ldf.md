@@ -12,6 +12,7 @@ Read support | Yes
 Write support | Yes
 Single-file | Yes
 Kind | 📝 text
+Sort-on-write | No (by default)
 Wiki | [Lingoes](https://en.wikipedia.org/wiki/Lingoes)
 Website | [Lingoes.net](http://www.lingoes.net/en/dictionary/dict_format.php)
 

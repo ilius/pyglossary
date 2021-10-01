@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | Yes
 Kind | 🔢 binary
+Sort-on-write | No (by default)
 Wiki | ―
 Website | [Sdictionary Project](http://swaj.net/sdict/)
 

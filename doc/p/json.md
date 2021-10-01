@@ -12,6 +12,7 @@ Read support | No
 Write support | Yes
 Single-file | Yes
 Kind | 📝 text
+Sort-on-write | No (by default)
 Wiki | [JSON](https://en.wikipedia.org/wiki/JSON)
 Website | [www.json.org](https://www.json.org/json-en.html)
 

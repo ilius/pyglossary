@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | No
 Kind | 🔢 binary
+Sort-on-write | No (by default)
 Wiki | ―
 Website | [@digitalprk/dicrs](https://github.com/digitalprk/dicrs)
 

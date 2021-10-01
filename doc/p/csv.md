@@ -12,6 +12,7 @@ Read support | Yes
 Write support | Yes
 Single-file | Yes
 Kind | 📝 text
+Sort-on-write | No (by default)
 Wiki | [Comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values)
 Website | ―
 

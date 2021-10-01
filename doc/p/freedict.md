@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | Yes
 Kind | 📝 text
+Sort-on-write | No (by default)
 Wiki | [@freedict/fd-dictionaries/wiki](https://github.com/freedict/fd-dictionaries/wiki)
 Website | [FreeDict.org](https://freedict.org/)
 

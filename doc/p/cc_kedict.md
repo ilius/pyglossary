@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | Yes
 Kind | 📝 text
+Sort-on-write | No (by default)
 Wiki | ―
 Website | [@mhagiwara/cc-kedict](https://github.com/mhagiwara/cc-kedict)
 

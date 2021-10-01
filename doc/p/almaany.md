@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | No
 Kind | 🔢 binary
+Sort-on-write | No (by default)
 Wiki | ―
 Website | [Almaany.com Arabic Dictionary - Google Play](https://play.google.com/store/apps/details?id=com.almaany.arar)
 

@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | Yes
 Kind | 🔢 binary
+Sort-on-write | No (by default)
 Wiki | [ZIM (file format)](https://en.wikipedia.org/wiki/ZIM_(file_format))
 Website | [OpenZIM](https://wiki.openzim.org/wiki/OpenZIM)
 

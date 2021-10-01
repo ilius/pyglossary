@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | No
 Kind | 📝 text
+Sort-on-write | No (by default)
 Wiki | [Wiktionary:Main Page](https://en.wiktionary.org/wiki/Wiktionary:Main_Page)
 Website | [dumps.wikimedia.org](https://dumps.wikimedia.org/mirrors.html)
 

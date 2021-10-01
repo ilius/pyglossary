@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | No
 Kind | 📁 directory
+Sort-on-write | No (by default)
 Wiki | ―
 Website | [@wordset/wordset-dictionary](https://github.com/wordset/wordset-dictionary)
 

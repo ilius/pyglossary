@@ -12,6 +12,7 @@ Read support | No
 Write support | Yes
 Single-file | No
 Kind | 📦 package
+Sort-on-write | Always
 Wiki | [EPUB](https://en.wikipedia.org/wiki/EPUB)
 Website | ―
 

@@ -12,6 +12,7 @@ Read support | Yes
 Write support | Yes
 Single-file | No
 Kind | 📁 directory
+Sort-on-write | No (by default)
 Wiki | ―
 Website | ―
 

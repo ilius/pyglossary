@@ -12,6 +12,7 @@ Read support | No
 Write support | Yes
 Single-file | No
 Kind | 📦 package
+Sort-on-write | Never
 Wiki | [Kobo eReader](https://en.wikipedia.org/wiki/Kobo_eReader)
 Website | [www.kobo.com](https://www.kobo.com)
 

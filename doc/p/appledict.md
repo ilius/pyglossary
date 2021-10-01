@@ -12,6 +12,7 @@ Read support | No
 Write support | Yes
 Single-file | No
 Kind | 📁 directory
+Sort-on-write | No (by default)
 Wiki | ―
 Website | [Dictionary User Guide for Mac](https://support.apple.com/en-gu/guide/dictionary/welcome/mac)
 

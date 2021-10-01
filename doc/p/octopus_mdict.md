@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | No
 Kind | 🔢 binary
+Sort-on-write | No (by default)
 Wiki | ―
 Website | [Download \| MDict.cn](https://www.mdict.cn/wp/?page_id=5325&lang=en)
 

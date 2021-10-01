@@ -36,6 +36,7 @@ Read support | ${yesNo(canRead)}
 Write support | ${yesNo(canWrite)}
 Single-file | ${yesNo(singleFile)}
 Kind | ${kindEmoji(kind)} ${kind}
+Sort-on-write | ${sortOnWrite}
 Wiki | ${wiki_md}
 Website | ${website_md}
 
@@ -204,6 +205,7 @@ for p in Glossary.plugins.values():
 		canRead=p.canRead,
 		canWrite=p.canWrite,
 		singleFile=p.singleFile,
+		sortOnWrite=p.sortOnWrite.desc,
 		kind=module.kind,
 		wiki_md=wiki_md,
 		website_md=website_md,

@@ -12,6 +12,7 @@ Read support | Yes
 Write support | No
 Single-file | Yes
 Kind | 📝 text
+Sort-on-write | No (by default)
 Wiki | [CEDICT](https://en.wikipedia.org/wiki/CEDICT)
 Website | [CC-CEDICT Editor](https://cc-cedict.org/editor/editor.php)
 

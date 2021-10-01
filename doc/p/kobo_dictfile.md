@@ -12,6 +12,7 @@ Read support | Yes
 Write support | Yes
 Single-file | No
 Kind | 📝 text
+Sort-on-write | No (by default)
 Wiki | ―
 Website | [dictgen - dictutil](https://pgaskin.net/dictutil/dictgen/#dictfile-format)
 

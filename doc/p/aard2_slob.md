@@ -12,6 +12,7 @@ Read support | Yes
 Write support | Yes
 Single-file | Yes
 Kind | 🔢 binary
+Sort-on-write | No (by default)
 Wiki | [@itkach/slob/wiki](https://github.com/itkach/slob/wiki)
 Website | [aarddict.org](http://aarddict.org/)
 
