@@ -17,7 +17,10 @@ optionsProp = {
 sortOnWrite = DEFAULT_NO
 kind = "directory"
 wiki = "https://en.wikipedia.org/wiki/DICT#DICT_file_format"
-website = ""
+website = (
+	"http://dict.org/bin/Dict",
+	"The DICT Development Group",
+)
 
 tools = [
 	{

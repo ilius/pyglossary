@@ -30,7 +30,7 @@ extensionCreate = ".csv"
 singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Comma-separated_values"
-website = ""
+website = None
 tools = [
 	{
 		"name": "LibreOffice Calc",

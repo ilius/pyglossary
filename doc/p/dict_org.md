@@ -14,7 +14,7 @@ Single-file | No
 Kind | 📁 directory
 Sort-on-write | No (by default)
 Wiki | [DICT#DICT file format](https://en.wikipedia.org/wiki/DICT#DICT_file_format)
-Website | ―
+Website | [The DICT Development Group](http://dict.org/bin/Dict)
 
 
 

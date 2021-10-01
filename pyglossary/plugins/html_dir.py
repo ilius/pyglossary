@@ -18,7 +18,7 @@ extensionCreate = ".hdir/"
 singleFile = False
 kind = "directory"
 wiki = ""
-website = ""
+website = None
 optionsProp = {
 	"encoding": EncodingOption(),
 	"resources": BoolOption(

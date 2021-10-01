@@ -35,7 +35,7 @@ extensions = (".edlin",)
 extensionCreate = ".edlin/"
 kind = "directory"
 wiki = ""
-website = ""
+website = None
 optionsProp = {
 	"encoding": EncodingOption(),
 	"prev_link": BoolOption(comment="Enable link to previous entry"),

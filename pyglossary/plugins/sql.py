@@ -11,7 +11,7 @@ extensionCreate = ".sql"
 singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/SQL"
-website = ""
+website = None
 optionsProp = {
 	"encoding": EncodingOption(),
 	"info_keys": ListOption(comment="List of dbinfo table columns"),

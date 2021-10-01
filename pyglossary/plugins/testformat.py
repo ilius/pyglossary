@@ -10,7 +10,7 @@ extensions = (".test", ".tst")
 extensionCreate = ".test"
 kind = "text"
 wiki = ""
-website = ""
+website = None
 
 # key is option/argument name, value is instance of Option
 optionsProp = {}

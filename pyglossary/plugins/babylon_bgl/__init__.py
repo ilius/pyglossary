@@ -29,7 +29,7 @@ extensionCreate = ""
 singleFile = True
 kind = "binary"
 wiki = ""
-website = ""
+website = None
 tools = [
 	{
 		"name": "Babylon Translator",

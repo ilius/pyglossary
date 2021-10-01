@@ -16,7 +16,7 @@ extensionCreate = ".txt"
 singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Tab-separated_values"
-website = ""
+website = None
 optionsProp = {
 	"encoding": EncodingOption(),
 	"enable_info": BoolOption(

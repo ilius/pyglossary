@@ -31,7 +31,7 @@ extensionCreate = ".epub"
 sortOnWrite = ALWAYS
 kind = "package"
 wiki = "https://en.wikipedia.org/wiki/EPUB"
-website = ""
+website = None
 
 # EPUB-3: https://www.w3.org/community/epub3/
 tools = [

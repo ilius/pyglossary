@@ -34,7 +34,7 @@ extensionCreate = ".mobi"
 sortOnWrite = ALWAYS
 kind = "package"
 wiki = "https://en.wikipedia.org/wiki/Mobipocket"
-website = ""
+website = None
 
 tools = [
 	{

@@ -19,7 +19,7 @@ extensionCreate = ".crawler/"
 singleFile = True
 kind = "directory"
 wiki = ""
-website = ""
+website = None
 optionsProp = {
 	"compression": StrOption(
 		values=["", "gz", "bz2", "lzma"],

@@ -10,5 +10,5 @@ extensionCreate = ""
 singleFile = True
 kind = "binary"
 wiki = ""
-website = ""
+website = None
 optionsProp = {}
