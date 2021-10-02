@@ -100,6 +100,11 @@ class PluginProp(object):
 	def sortOnWrite(self) -> YesNoAlwaysNever:
 		return getattr(self._mod, "sortOnWrite", DEFAULT_NO)
 
+	@property
+	def path(self) -> "pathlib.Path":
+		from pathlib import Path
+		return Path(self._mod.__file__)
+
 	def _loadReaderClass(self) -> "Optional[Any]":
 		cls = getattr(self._mod, "Reader", None)
 		if cls is None:

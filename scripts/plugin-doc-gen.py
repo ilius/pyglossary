@@ -159,7 +159,7 @@ userPluginsDirPath = Path(userPluginsDir)
 plugins = [
 	p
 	for p in Glossary.plugins.values()
-	if userPluginsDirPath not in Path(p.pluginModule.__file__).parents
+	if userPluginsDirPath not in p.path.parents
 ]
 
 
