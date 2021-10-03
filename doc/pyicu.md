@@ -1,4 +1,4 @@
-# [PyICU](https://github.com/ovalhub/pyicu)
+# [PyICU](https://pyicu.org)
 
 Installation on Linux
 ---------------------
