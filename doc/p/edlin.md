@@ -2,8 +2,8 @@
 ## EDLIN ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Edlin
 snake_case_name | edlin
 Description | EDLIN

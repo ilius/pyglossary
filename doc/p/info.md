@@ -2,8 +2,8 @@
 ## Glossary Info (.info) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Info
 snake_case_name | info
 Description | Glossary Info (.info)

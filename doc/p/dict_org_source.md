@@ -2,8 +2,8 @@
 ## DICT.org dictfmt source file ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | DictOrgSource
 snake_case_name | dict_org_source
 Description | DICT.org dictfmt source file

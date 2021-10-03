@@ -2,8 +2,8 @@
 ## Zim (.zim, for Kiwix) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Zim
 snake_case_name | zim
 Description | Zim (.zim, for Kiwix)

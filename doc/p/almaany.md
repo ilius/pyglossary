@@ -2,8 +2,8 @@
 ## Almaany.com (SQLite3) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Almaany
 snake_case_name | almaany
 Description | Almaany.com (SQLite3)

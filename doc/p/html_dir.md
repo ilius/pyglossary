@@ -2,8 +2,8 @@
 ## HTML Directory ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | HtmlDir
 snake_case_name | html_dir
 Description | HTML Directory

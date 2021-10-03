@@ -2,8 +2,8 @@
 ## CC-CEDICT ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | CC-CEDICT
 snake_case_name | cc_cedict
 Description | CC-CEDICT

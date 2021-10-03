@@ -2,8 +2,8 @@
 ## Sdictionary Source (.sdct) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | SdictSource
 snake_case_name | sdict_source
 Description | Sdictionary Source (.sdct)

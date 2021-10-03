@@ -2,8 +2,8 @@
 ## Wiktionary Dump (.xml) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | WiktionaryDump
 snake_case_name | wiktionary_dump
 Description | Wiktionary Dump (.xml)

@@ -2,8 +2,8 @@
 ## ABC Medical Notes (SQLite3) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | ABCMedicalNotes
 snake_case_name | abc_medical_notes
 Description | ABC Medical Notes (SQLite3)

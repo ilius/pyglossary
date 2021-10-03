@@ -2,8 +2,8 @@
 ## Kobo E-Reader Dictionary ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Kobo
 snake_case_name | kobo
 Description | Kobo E-Reader Dictionary

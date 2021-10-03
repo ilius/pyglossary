@@ -2,8 +2,8 @@
 ## Dict.cc (SQLite3) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Dictcc
 snake_case_name | dict_cc
 Description | Dict.cc (SQLite3)

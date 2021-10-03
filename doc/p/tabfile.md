@@ -2,8 +2,8 @@
 ## Tabfile (.txt, .dic) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Tabfile
 snake_case_name | tabfile
 Description | Tabfile (.txt, .dic)

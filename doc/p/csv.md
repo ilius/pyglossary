@@ -2,8 +2,8 @@
 ## CSV (.csv) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Csv
 snake_case_name | csv
 Description | CSV (.csv)

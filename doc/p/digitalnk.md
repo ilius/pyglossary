@@ -2,8 +2,8 @@
 ## DigitalNK (SQLite3, N-Korean) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | DigitalNK
 snake_case_name | digitalnk
 Description | DigitalNK (SQLite3, N-Korean)

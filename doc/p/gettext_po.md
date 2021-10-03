@@ -2,8 +2,8 @@
 ## Gettext Source (.po) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | GettextPo
 snake_case_name | gettext_po
 Description | Gettext Source (.po)

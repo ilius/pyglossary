@@ -2,8 +2,8 @@
 ## Lingoes Source (.ldf) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | LingoesLDF
 snake_case_name | lingoes_ldf
 Description | Lingoes Source (.ldf)

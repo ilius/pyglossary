@@ -2,8 +2,8 @@
 ## Sdictionary Binary(dct) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Sdict
 snake_case_name | sdict
 Description | Sdictionary Binary(dct)

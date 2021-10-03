@@ -2,8 +2,8 @@
 ## FreeDict (.tei) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | FreeDict
 snake_case_name | freedict
 Description | FreeDict (.tei)

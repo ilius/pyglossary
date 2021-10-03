@@ -2,8 +2,8 @@
 ## Dict.cc (SQLite3) - Split ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Dictcc_split
 snake_case_name | dict_cc_split
 Description | Dict.cc (SQLite3) - Split

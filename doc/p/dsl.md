@@ -2,8 +2,8 @@
 ## ABBYY Lingvo DSL (.dsl) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | ABBYYLingvoDSL
 snake_case_name | dsl
 Description | ABBYY Lingvo DSL (.dsl)

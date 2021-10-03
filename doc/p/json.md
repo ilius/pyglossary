@@ -2,8 +2,8 @@
 ## JSON (.json) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Json
 snake_case_name | json
 Description | JSON (.json)

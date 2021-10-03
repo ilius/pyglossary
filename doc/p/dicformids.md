@@ -2,8 +2,8 @@
 ## DictionaryForMIDs ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Dicformids
 snake_case_name | dicformids
 Description | DictionaryForMIDs

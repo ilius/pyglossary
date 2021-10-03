@@ -2,8 +2,8 @@
 ## Kobo E-Reader Dictfile (.df) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Dictfile
 snake_case_name | kobo_dictfile
 Description | Kobo E-Reader Dictfile (.df)

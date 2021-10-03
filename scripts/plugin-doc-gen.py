@@ -28,8 +28,8 @@ template = Template("""
 ${"##"} ${description} ${"##"}
 
 ${"### General Information ###"}
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | ${name}
 snake_case_name | ${lname}
 Description | ${description}

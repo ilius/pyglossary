@@ -2,8 +2,8 @@
 ## XDXF (.xdxf) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Xdxf
 snake_case_name | xdxf
 Description | XDXF (.xdxf)

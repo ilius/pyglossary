@@ -2,8 +2,8 @@
 ## Aard 2 (.slob) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Aard2Slob
 snake_case_name | aard2_slob
 Description | Aard 2 (.slob)

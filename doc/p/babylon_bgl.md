@@ -2,8 +2,8 @@
 ## Babylon (.BGL) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | BabylonBgl
 snake_case_name | babylon_bgl
 Description | Babylon (.BGL)

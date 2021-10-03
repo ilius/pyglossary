@@ -2,8 +2,8 @@
 ## StarDict (.ifo) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Stardict
 snake_case_name | stardict
 Description | StarDict (.ifo)

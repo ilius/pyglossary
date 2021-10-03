@@ -2,8 +2,8 @@
 ## SQL (.sql) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Sql
 snake_case_name | sql
 Description | SQL (.sql)

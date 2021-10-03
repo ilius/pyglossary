@@ -2,8 +2,8 @@
 ## AppleDict Binary ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | AppleDictBin
 snake_case_name | appledict_bin
 Description | AppleDict Binary

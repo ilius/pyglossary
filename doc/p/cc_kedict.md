@@ -2,8 +2,8 @@
 ## cc-kedict ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | cc-kedict
 snake_case_name | cc_kedict
 Description | cc-kedict

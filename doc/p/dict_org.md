@@ -2,8 +2,8 @@
 ## DICT.org file format (.index) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | DictOrg
 snake_case_name | dict_org
 Description | DICT.org file format (.index)

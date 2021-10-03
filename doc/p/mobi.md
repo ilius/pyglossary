@@ -2,8 +2,8 @@
 ## Mobipocket (.mobi) E-Book ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Mobi
 snake_case_name | mobi
 Description | Mobipocket (.mobi) E-Book

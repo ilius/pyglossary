@@ -2,8 +2,8 @@
 ## JMDict ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | JMDict
 snake_case_name | jmdict
 Description | JMDict

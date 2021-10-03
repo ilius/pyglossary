@@ -2,8 +2,8 @@
 ## dictunformat output file ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | Dictunformat
 snake_case_name | dictunformat
 Description | dictunformat output file

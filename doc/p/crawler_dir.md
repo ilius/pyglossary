@@ -2,8 +2,8 @@
 ## Crawler Directory ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | CrawlerDir
 snake_case_name | crawler_dir
 Description | Crawler Directory

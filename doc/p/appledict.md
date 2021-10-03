@@ -2,8 +2,8 @@
 ## AppleDict Source ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | AppleDict
 snake_case_name | appledict
 Description | AppleDict Source

@@ -2,8 +2,8 @@
 ## Octopus MDict (.mdx) ##
 
 ### General Information ###
-Name | Value
----- | -------
+Attribute | Value
+--------- | -------
 Name | OctopusMdict
 snake_case_name | octopus_mdict
 Description | Octopus MDict (.mdx)
