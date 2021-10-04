@@ -186,7 +186,8 @@ scriptable="yes"{spellcheck_str}>
 <idx:orth{headword_hide}>{headword}{infl}
 </idx:orth>
 {definition}
-</idx:entry>"""
+</idx:entry>
+<hr/>"""
 
 	GROUP_XHTML_WORD_INFL_TEMPLATE = """<idx:infl>
 {iforms_str}
