@@ -41,31 +41,31 @@ tools = [
 	{
 		"name": "Amazon Kindle",
 		"web": "https://www.amazon.com/kindle",
-		"platforms": ["Amazon Kindle"],
-		"license": "Proprietary",
+				"platforms": ["Amazon Kindle"],
+				"license": "Proprietary",
 	},
 	{
 		"name": "calibre",
 		"web": "https://calibre-ebook.com/",
-		"wiki": "https://en.wikipedia.org/wiki/Calibre_(software)",
-		"repo": "https://github.com/kovidgoyal/calibre",
-		"platforms": ["Linux", "Windows", "Mac"],
-		"license": "GPL",
+				"wiki": "https://en.wikipedia.org/wiki/Calibre_(software)",
+				"repo": "https://github.com/kovidgoyal/calibre",
+				"platforms": ["Linux", "Windows", "Mac"],
+				"license": "GPL",
 	},
 	{
 		"name": "Okular",
 		"web": "https://okular.kde.org/",
-		"wiki": "https://en.wikipedia.org/wiki/Okular",
-		"repo": "https://invent.kde.org/graphics/okular",
-		"platforms": ["Linux", "Windows", "Mac"],
-		"license": "GPL",
+				"wiki": "https://en.wikipedia.org/wiki/Okular",
+				"repo": "https://invent.kde.org/graphics/okular",
+				"platforms": ["Linux", "Windows", "Mac"],
+				"license": "GPL",
 	},
 	{
 		"name": "Book Reader",
 		"web": "https://f-droid.org/en/packages/com.github.axet.bookreader/",
-		"repo": "https://gitlab.com/axet/android-book-reader",
-		"platforms": ["Android"],
-		"license": "GPL",
+				"repo": "https://gitlab.com/axet/android-book-reader",
+				"platforms": ["Android"],
+				"license": "GPL",
 	},
 ]
 
@@ -193,7 +193,7 @@ scriptable="yes"{spellcheck_str}>
 {iforms_str}
 </idx:infl>"""
 
-	GROUP_XHTML_WORD_IFORM_TEMPLATE = """<idx:iform /
+	GROUP_XHTML_WORD_IFORM_TEMPLATE = """<idx:iform \
 value="{inflword}"{exact_str} />"""
 
 	OPF_TEMPLATE = """<?xml version="1.0" encoding="utf-8"?>
@@ -338,8 +338,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		# run kindlegen
 		if not kindlegen_path:
 			log.warn(
-				f"Not running kindlegen, \
-the raw files are located in {filename}")
+				"Not running kindlegen, "
+				f"the raw files are located in {filename}")
 			log.warn(
 				"Provide KindleGen path with: "
 				"--write-options 'kindlegen_path=...'"
