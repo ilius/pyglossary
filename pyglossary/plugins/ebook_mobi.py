@@ -98,17 +98,13 @@ optionsProp = {
 		comment="Specify how many entries should in each xhtml file",
 	),
 	"hide_word_index": BoolOption(
-		comment="Hide wordhead from word definition in the "
-		"tap-to-check interface.",
+		comment="Hide wordhead from word definition in the tap-to-check interface.",
 	),
 	"spellcheck": BoolOption(
-		comment="The spell attribute enables wildcard search and spell "
-		"correction during word lookup.(May be it just enable the kindlegen's"
-		"spellcheck.)",
+		comment="The spell attribute enables wildcard search and spell correction during word lookup.(May be it just enable the kindlegen's spellcheck.)",
 	),
 	"exact": BoolOption(
-		comment="Exact-match Parameter.I guess it only works for inflections, "
-		"but have not yet give it a try.",
+		comment="Exact-match Parameter.I guess it only works for inflections,but have not yet give it a try.",
 	),
 }
 
@@ -119,8 +115,6 @@ extraDocs = [
 		" for creating Mobipocket e-books."
 	),
 ]
-
-
 class GroupStateByCount(GroupState):
 	def reset(self) -> None:
 		self.word_count = 0
@@ -137,40 +131,22 @@ class GroupStateByCount(GroupState):
 		if not self.first_word:
 			self.first_word = word
 		self.last_word = word
-		self.group_contents.append(
-			self.writer.format_group_content(word, defi))
+		self.group_contents.append(self.writer.format_group_content(word, defi))
 		self.word_count += 1
-
 
 class Writer(EbookWriter):
 	_compress: bool = False
 	_keep: bool = False
 	_kindlegen_path: str = ""
 	_group_by_prefix_length: int = 1
-	_group_size = 256
+	_group_size=256
 	_hide_word_index: bool = False
 	_spellcheck: bool = True
 	_exact: bool = False
 	CSS_CONTENTS = """"@charset "UTF-8";"""
-	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" \
-standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" \
-"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns:cx=\
-"https://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf" \
-xmlns:dc="http://purl.org/dc/elements/1.1/" \
-xmlns:idx="https://kindlegen.s3.amazonaws.com/AmazonK\
-indlePublishingGuidelines.pdf" \
-xmlns:math="http://exslt.org/math" \
-xmlns:mbp="https://kindlegen.s3.amazonaws.com\
-/AmazonKindlePublishingGuidelines.pdf" \
-xmlns:mmc="https://kindlegen.s3.amazonaws.com\
-/AmazonKindlePublishingGuidelines.pdf" \
-xmlns:saxon="http://saxon.sf.net/" xmlns:svg="http://www.w3.org/2000/svg" \
-xmlns:tl="https://kindlegen.s3.amazonaws.com\
-/AmazonKindlePublishingGuidelines.pdf" \
-xmlns:xs="http://www.w3.org/2001/XMLSchema" \
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns:cx="https://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:idx="https://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf" xmlns:math="http://exslt.org/math" xmlns:mbp="https://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf" xmlns:mmc="https://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf" xmlns:saxon="http://saxon.sf.net/" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tl="https://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <head>
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
 <link href="style.css" rel="stylesheet" type="text/css" />
@@ -182,8 +158,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 </body>
 </html>"""
 
-	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """<idx:entry \
-scriptable="yes"{spellcheck_str}>
+	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """<idx:entry scriptable="yes"{spellcheck_str}>
 <idx:orth{headword_hide}>{headword}{infl}
 </idx:orth>
 {definition}
@@ -193,8 +168,7 @@ scriptable="yes"{spellcheck_str}>
 {iforms_str}
 </idx:infl>"""
 
-	GROUP_XHTML_WORD_IFORM_TEMPLATE = """<idx:iform \
-value="{inflword}"{exact_str} />"""
+	GROUP_XHTML_WORD_IFORM_TEMPLATE = """<idx:iform value="{inflword}"{exact_str} />"""
 
 	OPF_TEMPLATE = """<?xml version="1.0" encoding="utf-8"?>
 <package unique-identifier="uid">
@@ -237,30 +211,28 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 	def format_group_content(self, word: "List[str]", defi: str) -> str:
 		hide_word_index = self._hide_word_index
 		if len(word) == 1:
-			infl = ''
+			infl =''
 			mainword = word[0]
 		else:
 			mainword, *variants = word
 			iforms_list = []
 			for variant in variants:
 				iforms_list.append(self.GROUP_XHTML_WORD_IFORM_TEMPLATE.format(
-					inflword=variant,
-					exact_str=' exact="yes"' if self._exact else '',
+				inflword=variant,
+				exact_str=' exact="yes"' if self._exact else '',
 				))
-			infl = '\n' + \
-				self.GROUP_XHTML_WORD_INFL_TEMPLATE.format(
-					iforms_str="\n".join(iforms_list))
-		headword = self.escape_if_needed(mainword)
-		group_content = self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
+			infl = '\n'+self.GROUP_XHTML_WORD_INFL_TEMPLATE.format(iforms_str="\n".join(iforms_list))
+		headword=self.escape_if_needed(mainword)
+		group_content=self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
 			spellcheck_str=' spell="yes"' if self._spellcheck else '',
 			headword=f'\n{headword}' if not hide_word_index else '',
 			headword_hide=f' value="{headword}"' if hide_word_index else '',
 			definition=self.escape_if_needed(defi),
 			infl=infl,
-		)
+			)
 		return group_content
 
-	def getLangCode(self, lang) -> str:
+	def getLangCode(self,lang) -> str:
 		return lang.code if isinstance(lang, Lang) else ''
 
 	def get_opf_contents(self, manifest_contents, spine_contents):
@@ -271,8 +243,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 		return self.OPF_TEMPLATE.format(
 			identifier=self._glos.getInfo("uuid"),
-			# use Language code instead name for kindlegen
-			sourceLang=self.getLangCode(self._glos.sourceLang),
+			sourceLang=self.getLangCode(self._glos.sourceLang),#use Language code instead name for kindlegen
 			targetLang=self.getLangCode(self._glos.targetLang),
 			title=self._glos.getInfo("name"),
 			creator=self._glos.getAuthor(),
@@ -283,7 +254,6 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			manifest=manifest_contents,
 			spine=spine_contents,
 		)
-
 	def write_groups(self):
 
 		group_size = self._group_size
@@ -291,7 +261,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			group_size = 1
 
 		def add_group(state):
-			if state.word_count < 0:
+			if state.word_count<0:
 				return
 			state.group_index += 1
 			index = state.group_index + self.GROUP_START_INDEX
@@ -300,8 +270,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 				"OEBPS/" + group_xhtml_path,
 				group_xhtml_path,
 				self.GROUP_XHTML_TEMPLATE.format(
-					group_contents=self.GROUP_XHTML_WORD_DEFINITION_JOINER.join
-					(
+					group_contents=self.GROUP_XHTML_WORD_DEFINITION_JOINER.join(
 						state.group_contents,
 					),
 				),
@@ -337,9 +306,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 		# run kindlegen
 		if not kindlegen_path:
-			log.warn(
-				"Not running kindlegen, "
-				f"the raw files are located in {filename}")
+			log.warn(f"Not running kindlegen, the raw files are located in {filename}")
 			log.warn(
 				"Provide KindleGen path with: "
 				"--write-options 'kindlegen_path=...'"
@@ -348,8 +315,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 		name = self._glos.getInfo("name")
 
-		log.info(
-			"Creating .mobi file with kindlegen, using '{kindlegen_path}'")
+		log.info("Creating .mobi file with kindlegen, using '{kindlegen_path}'")
 		opf_path_abs = join(filename, "OEBPS", "content.opf")
 		proc = subprocess.Popen(
 			[kindlegen_path, opf_path_abs, "-o", "content.mobi"],
