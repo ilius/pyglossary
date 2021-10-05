@@ -94,9 +94,8 @@ optionsProp = {
 		# disabled=True,
 		comment="Path to cover file",
 	),
-	"group_size": IntOption(
-		comment="Roughly specify a max size of each xhtml file(in KB). "
-		"value less than 100 will round to 100.",
+	"max_file_size": FileSizeOption(
+		comment="Roughly specify a max size of each xhtml file(default 256KiB). ",
 	),
 	"hide_word_index": BoolOption(
 		comment="Hide wordhead from word definition in the tap-to-check interface.",
@@ -146,7 +145,7 @@ class Writer(EbookWriter):
 	_compress: bool = False
 	_keep: bool = False
 	_kindlegen_path: str = ""
-	_group_size = 256
+	_max_file_size:int = 271360
 	_hide_word_index: bool = False
 	_spellcheck: bool = True
 	_exact: bool = False
@@ -288,13 +287,9 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 	def write_groups(self):
 
-		group_size = self._group_size
-		if group_size < 100:
-			group_size = 100
-		group_size *= 1024
 
 		def add_group(state):
-			if state.group_size < 0:
+			if state.group_size <= 0:
 				return
 			state.group_index += 1
 			index = state.group_index + self.GROUP_START_INDEX
@@ -318,7 +313,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			if entry.isData():
 				continue
 
-			if state.group_size >= group_size:
+			if state.group_size >= self._max_file_size:
 				add_group(state)
 				state.reset()
 
