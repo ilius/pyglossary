@@ -109,6 +109,9 @@ optionsProp = {
 		comment="Exact-match Parameter.I guess it only works for inflections, "
 		"but have not yet give it a try.",
 	),
+	"newline_before_defi": BoolOption(
+		comment="Add a newline(\\n) before word definition.(default ON)"
+	),
 }
 
 extraDocs = [
@@ -145,11 +148,11 @@ class Writer(EbookWriter):
 	_compress: bool = False
 	_keep: bool = False
 	_kindlegen_path: str = ""
-	_group_by_prefix_length: int = 1
 	_group_size = 256
 	_hide_word_index: bool = False
 	_spellcheck: bool = True
 	_exact: bool = False
+	_newline_before_defi: bool = True
 	CSS_CONTENTS = """"@charset "UTF-8";"""
 	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" \
 standalone="no"?>
@@ -185,7 +188,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 scriptable="yes"{spellcheck_str}>
 <idx:orth{headword_hide}>{headword}{infl}
 </idx:orth>
-{definition}
+{newline_str}{definition}
 </idx:entry>
 <hr/>"""
 
@@ -255,6 +258,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			spellcheck_str=' spell="yes"' if self._spellcheck else '',
 			headword=f'\n{headword}' if not hide_word_index else '',
 			headword_hide=f' value="{headword}"' if hide_word_index else '',
+			newline_str='<br/>' if self._newline_before_defi else '',
 			definition=self.escape_if_needed(defi),
 			infl=infl,
 		)
