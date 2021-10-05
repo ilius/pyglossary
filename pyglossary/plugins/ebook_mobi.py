@@ -95,7 +95,8 @@ optionsProp = {
 		comment="Path to cover file",
 	),
 	"group_size": IntOption(
-		comment="Specify how many entries should in each xhtml file",
+		comment="Roughly specify a max size of each xhtml file(in KB). "
+		"value less than 100 will round to 100.",
 	),
 	"hide_word_index": BoolOption(
 		comment="Hide wordhead from word definition in the tap-to-check interface.",
@@ -123,25 +124,22 @@ extraDocs = [
 ]
 
 
-class GroupStateByCount(GroupState):
-	def reset(self) -> None:
-		self.word_count = 0
-		self.first_word = ""
-		self.last_word = ""
-		self.group_contents = []
+class GroupStateBySize(object):
+	def __init__(self, writer) -> None:
+		self.writer = writer
+		self.group_index = -1
+		self.reset()
 
-	def is_full(self, size: int) -> bool:
-		return self.word_count >= size
+	def reset(self) -> None:
+		self.group_contents = []
+		self.group_size = 0
 
 	def add(self, entry: "BaseEntry") -> None:
 		word = entry.l_word
 		defi = entry.defi
-		if not self.first_word:
-			self.first_word = word
-		self.last_word = word
-		self.group_contents.append(
-			self.writer.format_group_content(word, defi))
-		self.word_count += 1
+		content = self.writer.format_group_content(word, defi)
+		self.group_contents.append(content)
+		self.group_size += len(content)
 
 
 class Writer(EbookWriter):
@@ -291,11 +289,12 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 	def write_groups(self):
 
 		group_size = self._group_size
-		if group_size < 1:
-			group_size = 1
+		if group_size < 100:
+			group_size = 100
+		group_size *= 1024
 
 		def add_group(state):
-			if state.word_count < 0:
+			if state.group_size < 0:
 				return
 			state.group_index += 1
 			index = state.group_index + self.GROUP_START_INDEX
@@ -311,7 +310,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 				"application/xhtml+xml",
 			)
 
-		state = GroupStateByCount(self)
+		state = GroupStateBySize(self)
 		while True:
 			entry = yield
 			if entry is None:
@@ -319,7 +318,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			if entry.isData():
 				continue
 
-			if state.is_full(group_size):
+			if state.group_size >= group_size:
 				add_group(state)
 				state.reset()
 
