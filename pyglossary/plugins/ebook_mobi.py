@@ -24,6 +24,7 @@
 
 from formats_common import *
 from pyglossary.ebook_base import *
+from pyglossary.langs import Lang
 
 enable = True
 lname = "mobi"
@@ -31,7 +32,7 @@ format = "Mobi"
 description = "Mobipocket (.mobi) E-Book"
 extensions = (".mobi",)
 extensionCreate = ".mobi"
-sortOnWrite = ALWAYS
+sortOnWrite = DEFAULT_YES
 kind = "package"
 wiki = "https://en.wikipedia.org/wiki/Mobipocket"
 website = None
@@ -79,7 +80,6 @@ optionsProp = {
 	"kindlegen_path": StrOption(
 		comment="Path to kindlegen executable",
 	),
-
 	"compress": BoolOption(
 		disabled=True,
 		comment="Enable compression",
@@ -93,12 +93,26 @@ optionsProp = {
 		comment="Include index page",
 	),
 	"apply_css": StrOption(
-		disabled=True,
+		# disabled=True,
 		comment="Path to css file",
 	),
 	"cover_path": StrOption(
-		disabled=True,
+		# disabled=True,
 		comment="Path to cover file",
+	),
+	"file_size_approx": FileSizeOption(
+		comment="Approximate size of each xhtml file (example: 200kb)",
+	),
+	"hide_word_index": BoolOption(
+		comment="Hide headword in tap-to-check interface",
+	),
+	"spellcheck": BoolOption(
+		comment="Enable wildcard search and spell correction during word lookup",
+		# "May be it just enable the kindlegen's spellcheck."
+	),
+	"exact": BoolOption(
+		comment="Exact-match Parameter",
+		# "I guess it only works for inflections"
 	),
 }
 
@@ -111,66 +125,106 @@ extraDocs = [
 ]
 
 
+class GroupStateBySize(object):
+	def __init__(self, writer) -> None:
+		self.writer = writer
+		self.group_index = -1
+		self.reset()
+
+	def reset(self) -> None:
+		self.group_contents = []
+		self.group_size = 0
+
+	def add(self, entry: "BaseEntry") -> None:
+		word = entry.l_word
+		defi = entry.defi
+		content = self.writer.format_group_content(word, defi)
+		self.group_contents.append(content)
+		self.group_size += len(content.encode("utf-8"))
+
+
 class Writer(EbookWriter):
 	_compress: bool = False
 	_keep: bool = False
 	_kindlegen_path: str = ""
-
+	_file_size_approx: int = 271360
+	_hide_word_index: bool = False
+	_spellcheck: bool = True
+	_exact: bool = False
 	CSS_CONTENTS = """"@charset "UTF-8";"""
-	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title>{title}</title>
-		<link rel="stylesheet" type="text/css" href="style.css" />
-	</head>
-	<body id="groupPage" class="groupPage">
-		<h1 class="groupTitle">{group_title}</h1>
-		<div class="groupNavigation">
-			<a href="{previous_link}">[ Previous ]</a>
-{index_link}
-			<a href="{next_link}">[ Next ]</a>
-		</div>
+	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" \
+standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" \
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns:cx=\
+"https://kindlegen.s3.amazonaws.com/AmazonKindlePublishingGuidelines.pdf" \
+xmlns:dc="http://purl.org/dc/elements/1.1/" \
+xmlns:idx="https://kindlegen.s3.amazonaws.com\
+/AmazonKindlePublishingGuidelines.pdf" \
+xmlns:math="http://exslt.org/math" \
+xmlns:mbp="https://kindlegen.s3.amazonaws.com\
+/AmazonKindlePublishingGuidelines.pdf" \
+xmlns:mmc="https://kindlegen.s3.amazonaws.com\
+/AmazonKindlePublishingGuidelines.pdf" \
+xmlns:saxon="http://saxon.sf.net/" xmlns:svg="http://www.w3.org/2000/svg" \
+xmlns:tl="https://kindlegen.s3.amazonaws.com\
+/AmazonKindlePublishingGuidelines.pdf" \
+xmlns:xs="http://www.w3.org/2001/XMLSchema" \
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<mbp:frameset>
 {group_contents}
-	</body>
+</mbp:frameset>
+</body>
 </html>"""
 
-	GROUP_XHTML_INDEX_LINK = """\t\t<a href="index.xhtml">[ Index ]</a>"""
+	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """<idx:entry \
+scriptable="yes"{spellcheck_str}>
+<idx:orth{headword_hide}>{headword}{infl}
+</idx:orth>
+<br/>{definition}
+</idx:entry>
+<hr/>"""
 
-	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """\t<div class="groupEntry">
-		<idx:entry>
-			<h2 class="groupHeadword"><idx:orth>{headword}</idx:orth></h2>
-			<p class="groupDefinition">{definition}</p>
-		</idx:entry>
-	</div>"""
+	GROUP_XHTML_WORD_INFL_TEMPLATE = """<idx:infl>
+{iforms_str}
+</idx:infl>"""
+
+	GROUP_XHTML_WORD_IFORM_TEMPLATE = """<idx:iform \
+value="{inflword}"{exact_str} />"""
 
 	OPF_TEMPLATE = """<?xml version="1.0" encoding="utf-8"?>
 <package unique-identifier="uid">
-	<metadata>
-		<dc-metadata xmlns:dc="http://purl.org/metadata/dublin_core"
-			xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
-			<dc:Title>{title}</dc:Title>
-			<dc:Language>{sourceLang}</dc:Language>
-			<dc:Identifier id="uid">{identifier}</dc:Identifier>
-			<dc:Creator>{creator}</dc:Creator>
-			<dc:Rights>{copyright}</dc:Rights>
-			<dc:Subject BASICCode="REF008000">Dictionaries</dc:Subject>
-		</dc-metadata>
-		<x-metadata>
-			<output encoding="utf-8"></output>
-			<DictionaryInLanguage>{sourceLang}</DictionaryInLanguage>
-			<DictionaryOutLanguage>{targetLang}</DictionaryOutLanguage>
-			<EmbeddedCover>{cover}</EmbeddedCover>
-		</x-metadata>
-	</metadata>
-	<manifest>
+<metadata>
+<dc-metadata xmlns:dc="http://purl.org/metadata/dublin_core"
+xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
+<dc:Title>{title}</dc:Title>
+<dc:Language>{sourceLang}</dc:Language>
+<dc:Identifier id="uid">{identifier}</dc:Identifier>
+<dc:Creator>{creator}</dc:Creator>
+<dc:Rights>{copyright}</dc:Rights>
+<dc:description>{description}</dc:description>
+<dc:Subject BASICCode="REF008000">Dictionaries</dc:Subject>
+</dc-metadata>
+<x-metadata>
+<output encoding="utf-8"></output>
+<DictionaryInLanguage>{sourceLang}</DictionaryInLanguage>
+<DictionaryOutLanguage>{targetLang}</DictionaryOutLanguage>
+<EmbeddedCover>{cover}</EmbeddedCover>
+</x-metadata>
+</metadata>
+<manifest>
 {manifest}
-	</manifest>
-	<spine>
+</manifest>
+<spine>
 {spine}
-	</spine>
-	<tours></tours>
-	<guide></guide>
+</spine>
+<tours></tours>
+<guide></guide>
 </package>"""
 
 	def __init__(self, glos, **kwargs):
@@ -180,6 +234,95 @@ class Writer(EbookWriter):
 			glos,
 		)
 		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
+
+	def format_group_content(self, word: "List[str]", defi: str) -> str:
+		hide_word_index = self._hide_word_index
+		if len(word) == 1:
+			infl = ''
+			mainword = word[0]
+		else:
+			mainword, *variants = word
+			iforms_list = []
+			for variant in variants:
+				iforms_list.append(self.GROUP_XHTML_WORD_IFORM_TEMPLATE.format(
+					inflword=variant,
+					exact_str=' exact="yes"' if self._exact else '',
+				))
+			infl = '\n' + \
+				self.GROUP_XHTML_WORD_INFL_TEMPLATE.format(
+					iforms_str="\n".join(iforms_list))
+
+		headword = self.escape_if_needed(mainword)
+
+		defi = self.escape_if_needed(defi)
+
+		group_content = self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
+			spellcheck_str=' spell="yes"' if self._spellcheck else '',
+			headword=f'\n{headword}' if not hide_word_index else '',
+			headword_hide=f' value="{headword}"' if hide_word_index else '',
+			definition=defi,
+			infl=infl,
+		)
+		return group_content
+
+	def getLangCode(self, lang) -> str:
+		return lang.code if isinstance(lang, Lang) else ''
+
+	def get_opf_contents(self, manifest_contents, spine_contents):
+		cover = ""
+		if self.cover:
+			cover = self.COVER_TEMPLATE.format(cover=self.cover)
+		creationDate = datetime.now().strftime("%Y-%m-%d")
+
+		return self.OPF_TEMPLATE.format(
+			identifier=self._glos.getInfo("uuid"),
+			# use Language code instead name for kindlegen
+			sourceLang=self.getLangCode(self._glos.sourceLang),
+			targetLang=self.getLangCode(self._glos.targetLang),
+			title=self._glos.getInfo("name"),
+			creator=self._glos.getAuthor(),
+			copyright=self._glos.getInfo("copyright"),
+			description=self._glos.getInfo("description"),
+			creationDate=creationDate,
+			cover=cover,
+			manifest=manifest_contents,
+			spine=spine_contents,
+		)
+
+	def write_groups(self):
+
+		def add_group(state):
+			if state.group_size <= 0:
+				return
+			state.group_index += 1
+			index = state.group_index + self.GROUP_START_INDEX
+			group_xhtml_path = self.get_group_xhtml_file_name_from_index(index)
+			self.add_file_manifest(
+				"OEBPS/" + group_xhtml_path,
+				group_xhtml_path,
+				self.GROUP_XHTML_TEMPLATE.format(
+					group_contents=self.GROUP_XHTML_WORD_DEFINITION_JOINER.join(
+						state.group_contents,
+					),
+				),
+				"application/xhtml+xml",
+			)
+
+		state = GroupStateBySize(self)
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				continue
+
+			if state.group_size >= self._file_size_approx:
+				add_group(state)
+				state.reset()
+
+			state.add(entry)
+
+		add_group(state)
 
 	def write(self):
 		import subprocess
