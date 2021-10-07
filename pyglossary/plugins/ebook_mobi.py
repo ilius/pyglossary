@@ -22,6 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import re
 from formats_common import *
 from pyglossary.ebook_base import *
 from pyglossary.langs import Lang
@@ -186,7 +187,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 scriptable="yes"{spellcheck_str}>
 <idx:orth{headword_hide}>{headword}{infl}
 </idx:orth>
-<br/>{definition}
+{definition}
 </idx:entry>
 <hr/>"""
 
@@ -227,6 +228,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 <guide></guide>
 </package>"""
 
+	html_re = re.compile(r'^\s*<')
+
 	def __init__(self, glos, **kwargs):
 		import uuid
 		EbookWriter.__init__(
@@ -255,6 +258,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		headword = self.escape_if_needed(mainword)
 
 		defi = self.escape_if_needed(defi)
+		if not self.html_re.search(defi):
+			defi = '<br/>' + defi
 
 		group_content = self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
 			spellcheck_str=' spell="yes"' if self._spellcheck else '',
