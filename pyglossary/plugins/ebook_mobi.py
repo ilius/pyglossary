@@ -70,6 +70,12 @@ tools = [
 ]
 
 optionsProp = {
+	"group_by_prefix_length": IntOption(
+		comment="Prefix length for grouping",
+	),
+	# "group_by_prefix_merge_min_size": IntOption(),
+	# "group_by_prefix_merge_across_first": BoolOption(),
+
 	# specific to mobi
 	"kindlegen_path": StrOption(
 		comment="Path to kindlegen executable",
@@ -94,23 +100,19 @@ optionsProp = {
 		# disabled=True,
 		comment="Path to cover file",
 	),
-	"max_file_size": FileSizeOption(
-		comment="Roughly specify a max size of each xhtml file(default 256KiB). ",
+	"file_size_approx": FileSizeOption(
+		comment="Approximate size of each xhtml file (example: 200kb)",
 	),
 	"hide_word_index": BoolOption(
-		comment="Hide wordhead from word definition in the tap-to-check interface.",
+		comment="Hide headword in tap-to-check interface",
 	),
 	"spellcheck": BoolOption(
-		comment="The spell attribute enables wildcard search and spell "
-		"correction during word lookup.(May be it just enable the kindlegen's"
-		"spellcheck.)",
+		comment="Enable wildcard search and spell correction during word lookup",
+		# "May be it just enable the kindlegen's spellcheck."
 	),
 	"exact": BoolOption(
-		comment="Exact-match Parameter.I guess it only works for inflections, "
-		"but have not yet give it a try.",
-	),
-	"newline_before_defi": BoolOption(
-		comment="Add a newline(\\n) before word definition.(default ON)"
+		comment="Exact-match Parameter",
+		# "I guess it only works for inflections"
 	),
 }
 
@@ -138,18 +140,17 @@ class GroupStateBySize(object):
 		defi = entry.defi
 		content = self.writer.format_group_content(word, defi)
 		self.group_contents.append(content)
-		self.group_size += len(content)
+		self.group_size += len(content.encode("utf-8"))
 
 
 class Writer(EbookWriter):
 	_compress: bool = False
 	_keep: bool = False
 	_kindlegen_path: str = ""
-	_max_file_size:int = 271360
+	_file_size_approx: int = 271360
 	_hide_word_index: bool = False
 	_spellcheck: bool = True
 	_exact: bool = False
-	_newline_before_defi: bool = True
 	CSS_CONTENTS = """"@charset "UTF-8";"""
 	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" \
 standalone="no"?>
@@ -185,7 +186,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 scriptable="yes"{spellcheck_str}>
 <idx:orth{headword_hide}>{headword}{infl}
 </idx:orth>
-{newline_str}{definition}
+<br/>{definition}
 </idx:entry>
 <hr/>"""
 
@@ -250,13 +251,16 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			infl = '\n' + \
 				self.GROUP_XHTML_WORD_INFL_TEMPLATE.format(
 					iforms_str="\n".join(iforms_list))
+
 		headword = self.escape_if_needed(mainword)
+
+		defi = self.escape_if_needed(defi)
+
 		group_content = self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
 			spellcheck_str=' spell="yes"' if self._spellcheck else '',
 			headword=f'\n{headword}' if not hide_word_index else '',
 			headword_hide=f' value="{headword}"' if hide_word_index else '',
-			newline_str='<br/>' if self._newline_before_defi else '',
-			definition=self.escape_if_needed(defi),
+			definition=defi,
 			infl=infl,
 		)
 		return group_content
@@ -287,7 +291,6 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 	def write_groups(self):
 
-
 		def add_group(state):
 			if state.group_size <= 0:
 				return
@@ -313,7 +316,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			if entry.isData():
 				continue
 
-			if state.group_size >= self._max_file_size:
+			if state.group_size >= self._file_size_approx:
 				add_group(state)
 				state.reset()
 
