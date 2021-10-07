@@ -133,10 +133,14 @@ class UIBase(object):
 	def progressEnd(self):
 		self.progress(1.0)
 
-	def loadConfig(self, **options):
+	def loadConfig(
+		self,
+		user: bool = True,
+		**options
+	):
 		from pyglossary.json_utils import jsonToData
 		data = jsonToData(fread(rootConfJsonFile))
-		if isfile(confJsonFile):
+		if user and isfile(confJsonFile):
 			try:
 				userData = jsonToData(fread(confJsonFile))
 			except Exception:
@@ -163,7 +167,7 @@ class UIBase(object):
 
 		log.setTimeEnable(self.config["log_time"])
 
-		log.debug("loaded config")
+		log.debug(f"loaded config: {self.config}")
 		return True
 
 	def saveConfig(self):
