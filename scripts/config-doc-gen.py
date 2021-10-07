@@ -28,8 +28,16 @@ Name | Command Flags | Type | Default | Comment
 % endif
 % endfor
 
-""")
+${"## Configuration Files ##"}
+The default configuration values are stored in [config.json](../config.json) file in source/installation directory.
 
+The user configuration file - if exists - will override default configuration values.
+The location of this file depends on the operating system:
+
+- Linux or BSD: `~/.pyglossary/config.json`
+- Mac: `~/Library/Preferences/PyGlossary/config.json`
+- Windows: `C:\\Users\\USERNAME\\AppData\\Roaming\\PyGlossary\\config.json`
+""")
 
 def codeValue(x):
 	s = str(x)
