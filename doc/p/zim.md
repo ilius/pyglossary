@@ -24,11 +24,11 @@ Name | Default | Type | Comment
 
 
 ### Dependencies for reading ###
-PyPI Links: [libzim](https://pypi.org/project/libzim)
+PyPI Links: [libzim 1.0](https://pypi.org/project/libzim/1.0)
 
 To install, run:
 
-    pip3 install libzim
+    pip3 install libzim==1.0
 
 
 

@@ -58,7 +58,7 @@ tools = [
 
 class Reader(object):
 	depends = {
-		"libzim": "libzim",
+		"libzim": "libzim==1.0",
 	}
 
 	_skip_duplicate_words = False
@@ -81,13 +81,13 @@ class Reader(object):
 
 	def open(self, filename: str) -> None:
 		try:
-			from libzim.reader import File
+			from libzim.reader import Archive
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install libzim` to install"
 			raise e
 
 		self._filename = filename
-		self._zimfile = File(filename)
+		self._zimfile = Archive(filename)
 
 	def close(self) -> None:
 		self._filename = None
@@ -97,27 +97,27 @@ class Reader(object):
 		if self._zimfile is None:
 			log.error(f"len(reader) called before reader.open()")
 			return 0
-		return self._zimfile.article_count
+		return self._zimfile.entry_count
 
 	def __iter__(self):
 		glos = self._glos
 		zimfile = self._zimfile
 		emptyContentCount = 0
 		invalidMimeTypeCount = 0
-		articleCount = zimfile.article_count
+		entryCount = zimfile.entry_count
 
-		duplicateArticleCount = 0
+		duplicateEntryCount = 0
 		redirectCount = 0
 		skip_dup = self._skip_duplicate_words
 		hashSet = set()
 
-		for articleIndex in range(articleCount):
-			ar = zimfile.get_article_by_id(articleIndex)
-			word = ar.title
+		for entryIndex in range(entryCount):
+			zEntry = zimfile._get_entry_by_id(entryIndex)
+			word = zEntry.title
 
-			if ar.is_redirect:
+			if zEntry.is_redirect:
 				redirectCount += 1
-				targetWord = ar.get_redirect_article().title
+				targetWord = zEntry.get_redirect_entry().title
 				yield glos.newEntry(
 					word,
 					f'Redirect: <a href="bword://{targetWord}">{targetWord}</a>',
@@ -125,26 +125,31 @@ class Reader(object):
 				)
 				continue
 
-			b_content = ar.content.tobytes()
+			zItem = zEntry.get_item()
+			b_content = zItem.content.tobytes()
 
 			if skip_dup:
 				if word in hashSet:
-					duplicateArticleCount += 1
+					duplicateEntryCount += 1
 					yield None
 					continue
 				hashSet.add(word)
 
 			if not b_content:
 				emptyContentCount += 1
-				if ar.url == word:
-					yield None
-				else:
-					defi = f"URL: {ar.url}"
-					yield glos.newEntry(word, defi, defiFormat="m")
+				yield None
+				# TODO: test with more zim files
+				# Looks like: zItem.path == zEntry.path == "-" + word
+				# print(f"b_content empty, word={word!r}, zEntry.path={zEntry.path!r}, zItem.path={zItem.path}")
+				# if zEntry.path == "-" + word:
+				# 	yield None
+				# else:
+				# 	defi = f"Path: {zEntry.path}"
+				# 	yield glos.newEntry(word, defi, defiFormat="m")
 				continue
 
 			try:
-				mimetype = ar.mimetype
+				mimetype = zItem.mimetype
 			except RuntimeError:
 				invalidMimeTypeCount += 1
 				yield glos.newDataEntry(word, b_content)
@@ -170,9 +175,9 @@ class Reader(object):
 
 			yield glos.newDataEntry(word, b_content)
 
-		log.info(f"Article Count: {articleCount}")
-		if duplicateArticleCount > 0:
-			log.info(f"Duplicate Title Count: {duplicateArticleCount}")
+		log.info(f"ZIM Entry Count: {entryCount}")
+		if duplicateEntryCount > 0:
+			log.info(f"Duplicate Title Count: {duplicateEntryCount}")
 		if emptyContentCount > 0:
 			log.info(f"Empty Content Count: {emptyContentCount}")
 		if invalidMimeTypeCount > 0:
