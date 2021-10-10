@@ -183,6 +183,10 @@ Please check the [links given for each format](#supported-formats) to see docume
 **Using Termux on Android?** See [doc/termux.md](./doc/termux.md)
 
 
+Configuration
+-------------
+See [doc/config.md](./doc/config.md).
+
 User Plugins
 ------------
 If you want to add your own plugin without adding it to source code directory,
