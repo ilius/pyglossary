@@ -178,7 +178,7 @@ Feature-specific Requirements
 
 
 Some formats have additional requirements.
-Please check the [links given for each format](#supported-formats) to see documentations.
+If you have trouble with any format, please check the [link given for that format](#supported-formats) to see its documentations.
 
 **Using Termux on Android?** See [doc/termux.md](./doc/termux.md)
 
