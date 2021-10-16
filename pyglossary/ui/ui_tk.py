@@ -525,7 +525,7 @@ class FormatButton(ttk.Button):
 	noneLabel = "[Select Format]"
 
 	def __init__(
-		self, 
+		self,
 		descList: "List[str]",
 		dialogTitle: str,
 		onChange: "Callable",
@@ -929,7 +929,8 @@ class UI(tix.Frame, UIBase):
 		rootWin.bind('<Escape>', lambda e: rootWin.quit())
 		#########
 		# Linux: ('clam', 'alt', 'default', 'classic')
-		# Windows: ('winnative', 'clam', 'alt', 'default', 'classic', 'vista', 'xpnative')
+		# Windows: ('winnative', 'clam', 'alt', 'default', 'classic', 'vista',
+		#           'xpnative')
 		# style = ttk.Style()
 		# style.theme_use("default")
 		########
@@ -1156,7 +1157,6 @@ class UI(tix.Frame, UIBase):
 		log.addHandler(
 			TkTextLogHandler(console),
 		)
-		log.info(f"Data Directory: {dataDir}")
 		console.insert("end", "Console:\n")
 		####
 		self.console = console
@@ -1504,10 +1504,14 @@ class UI(tix.Frame, UIBase):
 			self.outputEntryChanged()
 
 		if inputFormat:
-			self.formatButtonInputConvert.set(Glossary.plugins[inputFormat].description)
+			self.formatButtonInputConvert.set(
+				Glossary.plugins[inputFormat].description,
+			)
 			self.inputFormatChanged()
 		if outputFormat:
-			self.formatButtonOutputConvert.set(Glossary.plugins[outputFormat].description)
+			self.formatButtonOutputConvert.set(
+				Glossary.plugins[outputFormat].description,
+			)
 			self.outputFormatChanged()
 
 		if reverse:
