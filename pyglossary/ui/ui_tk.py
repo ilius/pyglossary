@@ -180,6 +180,7 @@ class TkTextLogHandler(logging.Handler):
 		tktext.tag_config("WARNING", foreground="#ffff00")
 		tktext.tag_config("INFO", foreground="#00ff00")
 		tktext.tag_config("DEBUG", foreground="#ffffff")
+		tktext.tag_config("TRACE", foreground="#ffffff")
 		###
 		self.tktext = tktext
 

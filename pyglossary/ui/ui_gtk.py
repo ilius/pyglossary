@@ -658,21 +658,15 @@ class GtkTextviewLogHandler(logging.Handler):
 		logging.Handler.__init__(self)
 
 		self.buffers = {}
-		for levelname in (
-			"CRITICAL",
-			"ERROR",
-			"WARNING",
-			"INFO",
-			"DEBUG",
-			"TRACE",
-		):
-			textview = treeview_dict[levelname]
+		for levelNameCap in log.levelNamesCap[:-1]:
+			levelName = levelNameCap.upper()
+			textview = treeview_dict[levelName]
 
 			buff = textview.get_buffer()
-			tag = gtk.TextTag.new(levelname)
+			tag = gtk.TextTag.new(levelName)
 			buff.get_tag_table().add(tag)
 
-			self.buffers[levelname] = buff
+			self.buffers[levelName] = buff
 
 	def getTag(self, levelname):
 		return self.buffers[levelname].get_tag_table().lookup(levelname)
@@ -1029,6 +1023,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		handler.setColor("WARNING", rgba_parse("yellow"))
 		handler.setColor("INFO", rgba_parse("white"))
 		handler.setColor("DEBUG", rgba_parse("white"))
+		handler.setColor("TRACE", rgba_parse("white"))
 		###
 		textview.get_buffer().set_text("Output & Error Console:\n")
 		textview.set_editable(False)
