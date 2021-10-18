@@ -28,6 +28,7 @@ import os
 from os.path import dirname, join, abspath, isdir, isabs
 import logging
 from collections import OrderedDict
+import argparse
 
 import json
 
@@ -173,11 +174,32 @@ class UI(ui_cmd.UI):
 		self._convertOptions = None
 		ui_cmd.UI.__init__(self)
 
+		self.ls_parser = argparse.ArgumentParser(add_help=False)
+		self.ls_parser.add_argument(
+			"-l",
+			"--long",
+			action="store_true",
+			dest="long",
+			help="use a long listing format",
+		)
+		self.ls_parser.add_argument(
+			"--help",
+			action="store_true",
+			dest="help",
+			help="display help",
+		)
+		self.ls_usage = (
+			'Usage: !ls [--help] [-l] [FILE/DIRECTORY]...\n\n'
+			'optional arguments:\n'
+			'    --help      show this help message and exit\n'
+			'    -l, --long  use a long listing format\n'
+		)
+
 		self._fsActions = OrderedDict([
-			("!pwd", self.fs_pwd),
-			("!ls", self.fs_ls),
-			("!..", self.fs_cd_parent),
-			("!cd", self.fs_cd),
+			("!pwd", (self.fs_pwd, "")),
+			("!ls", (self.fs_ls, self.ls_usage)),
+			("!..", (self.fs_cd_parent, "")),
+			("!cd", (self.fs_cd, "")),
 		])
 		self._finalActions = OrderedDict([
 			("formats", self.askFormats),
@@ -196,42 +218,83 @@ class UI(ui_cmd.UI):
 	def fs_pwd(self, args: "List[str]"):
 		print(os.getcwd())
 
-	def get_ls_l(self, arg: str) -> str:
+	def get_ls_l(
+		self,
+		arg: str,
+		st: "Optional[os.stat_result]" = None,
+		parentDir: str = "",
+		sizeWidth: int = 0,
+	) -> str:
 		import stat
 		import pwd
 		import grp
 		import time
-		st = os.lstat(arg)
+		argPath = arg
+		if parentDir:
+			argPath = join(parentDir, arg)
+		if st is None:
+			st = os.lstat(argPath)
 		# os.lstat does not follow sym links, like "ls" command
 		details = [
 			stat.filemode(st.st_mode),
 			pwd.getpwuid(st.st_uid).pw_name,
 			grp.getgrgid(st.st_gid).gr_name,
-			str(st.st_size),
+			str(st.st_size).rjust(sizeWidth),
 			time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(st.st_mtime)),
 			arg,
 		]
 		if stat.S_ISLNK(st.st_mode):
-			details.append(f"-> {os.readlink(arg)}")
+			details.append(f"-> {os.readlink(argPath)}")
 		return "  ".join(details)
 
 	def fs_ls(self, args: "List[str]"):
+		opts, args = self.ls_parser.parse_known_args(args=args)
+
+		if opts.help:
+			print(self.ls_usage)
+			return
+
 		if not args:
 			args = [os.getcwd()]
+
 		showTitle = len(args) > 1
 		# Note: isdir and isfile funcs follow sym links, so no worry about links
+
 		for i, arg in enumerate(args):
 			if i > 0:
 				print()
+
 			if not isdir(arg):
 				print(self.get_ls_l(arg))
 				continue
+
 			if showTitle:
-				print(f"> List of directory {arg}:")
-			for _path in os.listdir(arg):
-				if isdir(_path):
-					_path += "/"
-				print(f"{_path}")
+				print(f"> List of directory {arg!r}:")
+
+			if not opts.long:
+				for _path in os.listdir(arg):
+					if isdir(_path):
+						_path += "/"
+					print(f"{_path}")
+				continue
+
+			contents = os.listdir(arg)
+			statList = [
+				os.lstat(join(arg, _path))
+				for _path in contents
+			]
+			maxFileSize = max([
+				st.st_size
+				for st in statList
+			])
+			sizeWidth = len(str(maxFileSize))
+			for i, _path in enumerate(contents):
+				print(self.get_ls_l(
+					_path,
+					parentDir=arg,
+					st=statList[i],
+					sizeWidth=sizeWidth,
+				))
 
 	def fs_cd_parent(self, args: "List[str]"):
 		if args:
@@ -280,11 +343,13 @@ class UI(ui_cmd.UI):
 				continue
 			parts = shlex_split(filename)
 			if parts[0] in self._fsActions:
-				actionFunc = self._fsActions[parts[0]]
+				actionFunc, usage = self._fsActions[parts[0]]
 				try:
 					actionFunc(parts[1:])
 				except Exception as e:
 					log.exception("")
+					if usage:
+						print("\n" + usage)
 				continue
 			setattr(self, varName, filename)
 			return filename
