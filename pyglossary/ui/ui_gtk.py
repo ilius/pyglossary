@@ -76,6 +76,18 @@ writeDesc = [
 ]
 
 
+def getScreenSize():
+	rootWindow = gdk.get_default_root_window()
+	return rootWindow.get_width(), rootWindow.get_height()
+
+
+def getWorkAreaSize():
+	display = gdk.Display.get_default()
+	monitor = display.get_primary_monitor()
+	rect = monitor.get_workarea()
+	return rect.width, rect.height
+
+
 def buffer_get_text(b):
 	return b.get_text(
 		b.get_start_iter(),
@@ -766,7 +778,12 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		gtk.Dialog.__init__(self)
 		UIBase.__init__(self)
 		self.set_title("PyGlossary (Gtk3)")
-		self.resize(800, 800)
+		#####
+		screenW, screenH = getWorkAreaSize()
+		winSize = min(800, screenW - 50, screenH - 50)
+		self.resize(winSize, winSize)
+		# print(f"{screenW}x{screenH}, {'%sx%s' % getScreenSize()}")
+		#####
 		self.connect("delete-event", self.onDeleteEvent)
 		self.pages = []
 		# self.statusNewId = 0
