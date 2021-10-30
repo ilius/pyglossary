@@ -42,7 +42,14 @@ To use this user interface:
 
 import sys
 import os
-from os.path import dirname, join, abspath, isdir, isabs
+from os.path import (
+	dirname,
+	join,
+	abspath,
+	relpath,
+	isdir,
+	isabs,
+)
 import logging
 from collections import OrderedDict
 import argparse
@@ -223,6 +230,19 @@ class MyPathCompleter(PathCompleter):
 		)
 
 
+class AbsolutePathHistory(FileHistory):
+	def load_history_strings(self) -> "Iterable[str]":
+		# pwd = os.getcwd()
+		pathList = FileHistory.load_history_strings(self)
+		return [
+			relpath(p)
+			for p in pathList
+		]
+
+	def store_string(self, string: str) -> None:
+		FileHistory.store_string(self, abspath(string))
+
+
 class UI(ui_cmd.UI):
 	def __init__(self):
 		self._inputFilename = ""
@@ -377,7 +397,7 @@ class UI(ui_cmd.UI):
 
 	def askFile(self, kind: str, histName: str, varName: str, reading: bool):
 		from shlex import split as shlex_split
-		history = FileHistory(join(histDir, histName))
+		history = AbsolutePathHistory(join(histDir, histName))
 		auto_suggest = AutoSuggestFromHistory()
 		# Note: isdir and isfile funcs follow sym links, so no worry about links
 		completer = MyPathCompleter(
