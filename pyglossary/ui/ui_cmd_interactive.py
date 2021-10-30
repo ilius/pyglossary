@@ -57,7 +57,11 @@ from pyglossary.ui import ui_cmd
 from prompt_toolkit import prompt as promptLow
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from prompt_toolkit.completion.word_completer import WordCompleter
+from prompt_toolkit.completion import (
+	WordCompleter,
+	PathCompleter,
+	Completion,
+)
 from prompt_toolkit.shortcuts import confirm, PromptSession
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
@@ -172,6 +176,51 @@ def prompt(
 
 
 back = "back"
+
+
+class MyPathCompleter(PathCompleter):
+	def __init__(
+		self,
+		reading: bool,
+		fs_action_names=None,
+		**kwargs
+	):
+		PathCompleter.__init__(
+			self,
+			file_filter=self.file_filter,
+			**kwargs
+		)
+		if fs_action_names is None:
+			fs_action_names = []
+		self.fs_action_names = fs_action_names
+
+	def file_filter(self, filename: str) -> bool:
+		# filename is full/absoule file path
+		return True
+
+	# def get_completions_exception(document, complete_event, e):
+	# 	log.error(f"Execption in get_completions: {e}")
+
+	def get_completions(
+		self,
+		document: "Document",
+		complete_event: "CompleteEvent",
+	) -> "Iterable[Completion]":
+		text = document.text_before_cursor
+
+		for action in self.fs_action_names:
+			if action.startswith(text):
+				yield Completion(
+					text=action,
+					start_position=-len(text),
+					display=action,
+				)
+
+		yield from PathCompleter.get_completions(
+			self,
+			document=document,
+			complete_event=complete_event,
+		)
 
 
 class UI(ui_cmd.UI):
@@ -330,17 +379,10 @@ class UI(ui_cmd.UI):
 		from shlex import split as shlex_split
 		history = FileHistory(join(histDir, histName))
 		auto_suggest = AutoSuggestFromHistory()
-		completer_keys = list(self._fsActions.keys())
 		# Note: isdir and isfile funcs follow sym links, so no worry about links
-		for _path in os.listdir(os.getcwd()):
-			if isdir(_path):
-				continue
-			completer_keys.append(_path)
-		completer = WordCompleter(
-			completer_keys,
-			ignore_case=False,
-			match_middle=False,
-			sentence=True,
+		completer = MyPathCompleter(
+			reading=reading,
+			fs_action_names=list(self._fsActions.keys()),
 		)
 		default = getattr(self, varName)
 		while True:
