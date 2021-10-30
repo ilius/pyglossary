@@ -20,8 +20,25 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 """
-sudo pip3 install prompt_toolkit
+To use this user interface:
+	sudo pip3 install prompt_toolkit
 """
+
+# GitHub repo for prompt_toolkit
+# https://github.com/prompt-toolkit/python-prompt-toolkit
+
+# The code for Python's cmd.Cmd was very ugly and hard to understand last I
+# cheched. But we don't use cmd module here, and nor does prompt_toolkit.
+
+# Completion func for Python's readline, silently (and stupidly) hides any
+# exception, and only shows the print if it's in the first line of function.
+# very awkward!
+# We also don't use readline module, and nor does prompt_toolkit.
+# Looks like prompt_toolkit works directly with sys.stdin, sys.stdout
+# and sys.stderr.
+
+# prompt_toolkit also supports ncurses-like dialogs with buttons and widgets,
+# but I prefer this kind of UI with auto-completion and history
 
 import sys
 import os
@@ -31,11 +48,6 @@ from collections import OrderedDict
 import argparse
 
 import json
-
-# the code for cmd.Cmd is very ugly and hard to understand
-
-# readline's complete func silently (and stupidly) hides any exception
-# and only shows the print if it's in the first line of function. very awkward!
 
 from pyglossary.core import confDir
 from pyglossary.glossary import Glossary
