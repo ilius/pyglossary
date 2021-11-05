@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest/request a feature (new format, option, parameter etc)
 title: ''
-labels: Feature
+labels:
 
 ---
 
