@@ -85,7 +85,6 @@ optionsProp = {
 		comment="Enable compression",
 	),
 	"keep": BoolOption(
-		disabled=True,
 		comment="Keep temp files",
 	),
 	"include_index_page": BoolOption(
