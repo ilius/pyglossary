@@ -27,6 +27,7 @@ Name | Default | Type | Comment
 `file_size_approx` | `271360` | int | Approximate size of each xhtml file (example: 200kb)
 `group_by_prefix_length` | `2` | int | Prefix length for grouping
 `hide_word_index` | `False` | bool | Hide headword in tap-to-check interface
+`keep` | `False` | bool | Keep temp files
 `kindlegen_path` |  | str | Path to kindlegen executable
 `spellcheck` | `True` | bool | Enable wildcard search and spell correction during word lookup
 
