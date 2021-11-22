@@ -1074,6 +1074,8 @@ class Glossary(GlossaryType):
 		defaultSortKey (callable or None):
 			used when no sortKey was given, or found in plugin
 
+		You can pass read-options (of given format) as keyword arguments
+
 		returns absolute path of output file, or None if failed
 		"""
 		filename = abspath(filename)
