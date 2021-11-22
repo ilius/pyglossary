@@ -226,35 +226,42 @@
 			},
 			"search_char_samples": {
 				"class": "BoolOption",
-				"type": "bool"
+				"type": "bool",
+				"comment": "(debug) Search character samples"
 			},
 			"collect_metadata2": {
 				"class": "BoolOption",
-				"type": "bool"
+				"type": "bool",
+				"comment": "(debug) Collect second pass metadata from definitions"
 			},
 			"write_gz": {
 				"class": "BoolOption",
-				"type": "bool"
+				"type": "bool",
+				"comment": "(debug) Create a file named *-data.gz"
 			},
 			"char_samples_path": {
 				"class": "StrOption",
 				"type": "str",
-				"customValue": true
+				"customValue": true,
+				"comment": "(debug) File path for character samples"
 			},
 			"msg_log_path": {
 				"class": "StrOption",
 				"type": "str",
-				"customValue": true
+				"customValue": true,
+				"comment": "(debug) File path for message log"
 			},
 			"raw_dump_path": {
 				"class": "StrOption",
 				"type": "str",
-				"customValue": true
+				"customValue": true,
+				"comment": "(debug) File path for writing raw blocks"
 			},
 			"unpacked_gzip_path": {
 				"class": "StrOption",
 				"type": "str",
-				"customValue": true
+				"customValue": true,
+				"comment": "(debug) Path to create unzipped file"
 			}
 		},
 		"canRead": true,
@@ -362,11 +369,13 @@
 					",",
 					";",
 					"@"
-				]
+				],
+				"comment": "Column delimiter"
 			},
 			"add_defi_format": {
 				"class": "BoolOption",
-				"type": "bool"
+				"type": "bool",
+				"comment": "enable adding defiFormat (m/h/x)"
 			},
 			"enable_info": {
 				"class": "BoolOption",
@@ -526,7 +535,8 @@
 			},
 			"only_fix_markup": {
 				"class": "BoolOption",
-				"type": "bool"
+				"type": "bool",
+				"comment": "Only fix markup, without tag conversion"
 			}
 		},
 		"canRead": true,
@@ -661,8 +671,7 @@
 			"keep": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "Keep temp files",
-				"disabled": true
+				"comment": "Keep temp files"
 			},
 			"include_index_page": {
 				"class": "BoolOption",
@@ -674,22 +683,48 @@
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true,
-				"comment": "Path to css file",
-				"disabled": true
+				"comment": "Path to css file"
 			},
 			"cover_path": {
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true,
-				"comment": "Path to cover file",
-				"disabled": true
+				"comment": "Path to cover file"
+			},
+			"file_size_approx": {
+				"class": "FileSizeOption",
+				"type": "int",
+				"customValue": true,
+				"comment": "Approximate size of each xhtml file (example: 200kb)"
+			},
+			"hide_word_index": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Hide headword in tap-to-check interface"
+			},
+			"spellcheck": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Enable wildcard search and spell correction during word lookup"
+			},
+			"exact": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Exact-match Parameter"
 			}
 		},
 		"canRead": false,
 		"canWrite": true,
 		"writeOptions": {
+			"apply_css": "",
+			"cover_path": "",
+			"exact": false,
+			"file_size_approx": 271360,
 			"group_by_prefix_length": 2,
-			"kindlegen_path": ""
+			"hide_word_index": false,
+			"keep": false,
+			"kindlegen_path": "",
+			"spellcheck": true
 		}
 	},
 	{
@@ -1149,7 +1184,8 @@
 			},
 			"xdxf_to_html": {
 				"class": "BoolOption",
-				"type": "bool"
+				"type": "bool",
+				"comment": "Convert XDXF entries to HTML"
 			},
 			"unicode_errors": {
 				"class": "StrOption",
