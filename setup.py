@@ -130,5 +130,5 @@ setup(
 			"libzim",
 			"python-lzo",
 		],
-	}
+	},
 )
