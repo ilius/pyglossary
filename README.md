@@ -197,6 +197,61 @@ you can place it in this directory:
 - Windows: `C:\Users\USERNAME\AppData\Roaming\PyGlossary\plugins`
 
 
+Using PyGlossary as a Python library
+------------------------------------
+There are a few examples in [doc/lib-examples](./doc/lib-examples) directory.
+
+Here is a basic script that converts any supported glossary format to [Tabfile](./doc/p/tabfile.md):
+
+
+	import sys
+	import pyglossary
+	from pyglossary import Glossary
+
+	# Glossary.init() must be called only once, so make sure you put it
+	# in the right place
+	Glossary.init()
+
+	glos = Glossary()
+	glos.convert(
+		inputFilename=sys.argv[1],
+		outputFilename=f"{sys.argv[1]}.txt",
+		# although it can detect format for *.txt, you can still pass outputFormat
+		outputFormat="Tabfile",
+		# you can pass readOptions or writeOptions as a dict
+		# writeOptions={"encoding": "utf-8"},
+	)
+
+You may look at docstring of `Glossary.convert` for full list of keyword arguments.
+
+If you need to add entries inside your Python program (rather than converting one glossary into another), then you use `write` instead of `convert`, here is an example:
+
+
+	from pyglossary.glossary import Glossary
+
+	Glossary.init()
+
+	glos = Glossary()
+	mydict = {
+		"a": "test1",
+		"b": "test2",
+		"c": "test3",
+	}
+	for word, defi in mydict.items():
+		glos.addEntryObj(glos.newEntry(
+			word,
+			defi,
+			defiFormat="m",  # "m" for plain text, "h" for HTML
+		))
+
+	glos.setInfo("title", "My Test StarDict")
+	glos.setInfo("author", "John Doe")
+	glos.write("test.ifo", format="Stardict")
+
+
+And if you need to read a glossary from file into a `Glossary` object in RAM (without immediately converting it), you can use `glos.read(filename, format=inputFormat)`. Be wary of RAM usage in this case.
+
+
 Internal Glossary Structure
 ---------------------------
 A glossary contains a number of entries.
