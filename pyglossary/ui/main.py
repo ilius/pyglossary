@@ -370,6 +370,10 @@ def main():
 
 	log = logging.getLogger("pyglossary")
 
+	ui_type = args.ui_type
+	if ui_type == "none":
+		args.noColor = True
+
 	log.setVerbosity(args.verbosity)
 	log.addHandler(
 		core.StdLogHandler(noColor=args.noColor),
@@ -544,8 +548,6 @@ def main():
 		writeOptions=writeOptions,
 		convertOptions=convertOptions,
 	)
-
-	ui_type = args.ui_type
 
 	if ui_type == "none":
 		sys.exit(0 if base_ui_run(**runKeywordArgs) else 1)
