@@ -3,7 +3,6 @@
 import sys
 import pyglossary
 from pyglossary import Glossary
-from pyglossary.text_writer import writeTabfile
 
 # Glossary.init() must be called only once, so make sure you put it
 # in the right place
