@@ -1,0 +1,4 @@
+[dictunformat]
+web = "https://linux.die.net/man/1/dictunformat"
+platforms = [ "Linux",]
+license = "GPL"

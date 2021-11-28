@@ -51,23 +51,6 @@ optionsProp = {
 	"only_fix_markup": BoolOption(comment="Only fix markup, without tag conversion"),
 }
 
-tools = [
-	{
-		"name": "ABBYY Lingvo",
-		"web": "https://www.lingvo.ru/",
-		# https://ru.wikipedia.org/wiki/ABBYY_Lingvo
-		"platforms": [
-			"Windows",
-			"Mac",
-			"Android",
-			"iOS",
-			"Windows Mobile",
-			"Symbian",
-		],
-		"license": "Proprietary",
-	},
-]
-
 # ABBYY is a Russian company
 # https://ru.wikipedia.org/wiki/ABBYY_Lingvo
 # http://lingvo.helpmax.net/en/troubleshooting/dsl-compiler/compiling-a-dictionary/

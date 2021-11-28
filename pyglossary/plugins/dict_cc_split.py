@@ -16,15 +16,6 @@ website = (
 	"dict.cc dictionary - Google Play",
 )
 
-tools = [
-	{
-		"name": "dict.cc dictionary",
-		"web": "https://play.google.com/store/apps/details?id=cc.dict.dictcc",
-		"platforms": ["Android"],
-		"license": "Proprietary",
-	},
-]
-
 
 class Reader(object):
 	def __init__(self, glos):

@@ -1,0 +1,23 @@
+["Babylon Translator"]
+web = "https://www.babylon-software.com/"
+wiki = "https://en.wikipedia.org/wiki/Babylon_Software"
+platforms = [ "Windows",]
+license = "Proprietary"
+# aka Freemium
+
+[GoldenDict]
+web = "http://goldendict.org/"
+platforms = [ "Linux", "Windows",]
+license = "GPL"
+
+["GoldenDict Mobile (Free)"]
+web = "http://goldendict.mobi/"
+# https://play.google.com/store/apps/details?id=mobi.goldendict.android.free
+platforms = [ "Android",]
+license = "Freeware"
+
+["GoldenDict Mobile (Full)"]
+web = "http://goldendict.mobi/"
+# https://play.google.com/store/apps/details?id=mobi.goldendict.android
+platforms = [ "Android",]
+license = "Proprietary"

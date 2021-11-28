@@ -1,0 +1,4 @@
+["dict.cc dictionary"]
+web = "https://play.google.com/store/apps/details?id=cc.dict.dictcc"
+platforms = [ "Android",]
+license = "Proprietary"

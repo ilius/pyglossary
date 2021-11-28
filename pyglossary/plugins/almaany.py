@@ -16,15 +16,6 @@ website = (
 	"Almaany.com Arabic Dictionary - Google Play",
 )
 
-tools = [
-	{
-		"name": "Almaany.com Arabic Dictionary",
-		"web": "https://play.google.com/store/apps/details?id=com.almaany.arar",
-		"platforms": ["Android"],
-		"license": "Unknown",
-	},
-]
-
 
 class Reader(object):
 	def __init__(self, glos):

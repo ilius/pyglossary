@@ -1,0 +1,4 @@
+["Dic.rs"]
+web = "https://github.com/digitalprk/dicrs"
+platforms = [ "Linux",]
+license = " BSD-2-Clause"

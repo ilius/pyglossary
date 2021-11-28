@@ -49,15 +49,6 @@ optionsProp = {
 	),
 }
 
-tools = [
-	{
-		"name": "MDict",
-		"web": "https://www.mdict.cn/",
-		"platforms": ["Android", "iOS", "Windows", "Mac"],
-		"license": "Proprietary",
-	},
-]
-
 extraDocs = [
 	(
 		"`python-lzo` is required for **some** MDX glossaries.",

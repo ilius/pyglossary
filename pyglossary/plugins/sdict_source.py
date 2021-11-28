@@ -23,15 +23,6 @@ optionsProp = {
 	"resources": BoolOption(comment="Enable resources / data files"),
 }
 
-tools = [
-	{
-		"name": "PTkSdict",
-		"web": "http://swaj.net/sdict/create-dicts.html",
-		"platforms": ["Linux", "Windows", "Mac"],
-		"license": "GPL",
-	},
-]
-
 
 class Writer(object):
 	_enable_info: bool = True

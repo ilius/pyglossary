@@ -18,15 +18,6 @@ optionsProp = {
 	"encoding": EncodingOption(),
 }
 
-tools = [
-	{
-		"name": "dictunformat",
-		"web": "https://linux.die.net/man/1/dictunformat",
-		"platforms": ["Linux"],
-		"license": "GPL",
-	},
-]
-
 
 def unescapeDefi(defi: str) -> str:
 	return defi

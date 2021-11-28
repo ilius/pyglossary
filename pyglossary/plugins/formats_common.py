@@ -55,5 +55,3 @@ website = None
 optionsProp = {}  # type: Dict[str, Option]
 
 sortOnWrite = DEFAULT_NO  # type: YesNoAlwaysNever
-
-tools = []  # type: List[Dict[str, Any]]

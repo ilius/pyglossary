@@ -1,0 +1,4 @@
+["Kobo eReader"]
+web = "https://www.kobo.com"
+platforms = [ "Kobo eReader",]
+license = "Proprietary"

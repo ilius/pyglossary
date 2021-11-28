@@ -1,0 +1,24 @@
+["Kiwix Desktop"]
+web = "https://github.com/kiwix/kiwix-desktop"
+platforms = [ "Linux", "Windows",]
+license = "GPL"
+
+["Kiwix JS"]
+web = "https://github.com/kiwix/kiwix-js"
+platforms = [ "Windows",]
+license = "GPL"
+
+["Kiwix Serve"]
+web = "https://github.com/kiwix/kiwix-tools"
+platforms = [ "Linux", "Windows",]
+license = "GPL"
+
+["Kiwix for Apple Mac OS X"]
+web = "macos.kiwix.org"
+platforms = [ "Mac",]
+license = ""
+
+["Kiwix for Android"]
+web = "https://github.com/kiwix/kiwix-android"
+platforms = [ "Android",]
+license = "GPL"

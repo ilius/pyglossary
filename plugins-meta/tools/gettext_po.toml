@@ -1,0 +1,9 @@
+[gettext]
+web = "https://www.gnu.org/software/gettext/"
+platforms = [ "Linux", "Windows",]
+license = "GPL"
+
+[poEdit]
+web = "https://github.com/vslavik/poedit"
+platforms = [ "Linux", "Windows", "Mac",]
+license = "MIT / Shareware"

@@ -1,0 +1,4 @@
+["Apple Dictionary"]
+web = "https://support.apple.com/en-gu/guide/dictionary/welcome/mac"
+platforms = [ "Mac",]
+license = "Proprietary"

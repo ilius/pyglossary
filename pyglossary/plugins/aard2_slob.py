@@ -41,23 +41,6 @@ optionsProp = {
 	),
 }
 
-tools = [
-	{
-		"name": "Aard 2 for Android",
-		"web": "http://aarddict.org/",
-		"platforms": ["Android"],
-		"license": "GPL",
-		# no auto-RTL (in plaintext or html)
-	},
-	{
-		"name": "Aard2 for Web",
-		"web": "http://aarddict.org/",
-		"platforms": ["Web"],
-		"license": "MPL",
-		# auto-RTL works in plaintext mode, but not html
-	},
-]
-
 extraDocs = [
 	(
 		"PyICU",

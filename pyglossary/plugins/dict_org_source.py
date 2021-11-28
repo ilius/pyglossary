@@ -19,15 +19,6 @@ optionsProp = {
 	"remove_html_all": BoolOption(comment="Remove all HTML tags"),
 }
 
-tools = [
-	{
-		"name": "dictfmt",
-		"web": "https://linux.die.net/man/1/dictfmt",
-		"platforms": ["Linux"],
-		"license": "GPL",
-	},
-]
-
 
 class Writer(object):
 	_remove_html_all: bool = True

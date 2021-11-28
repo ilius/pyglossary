@@ -30,35 +30,6 @@ singleFile = True
 kind = "binary"
 wiki = ""
 website = None
-tools = [
-	{
-		"name": "Babylon Translator",
-		"web": "https://www.babylon-software.com/",
-		"wiki": "https://en.wikipedia.org/wiki/Babylon_Software",
-		"platforms": ["Windows"],
-		"license": "Proprietary",  # aka Freemium
-	},
-	{
-		"name": "GoldenDict",
-		"web": "http://goldendict.org/",
-		"platforms": ["Linux", "Windows"],
-		"license": "GPL",
-	},
-	{
-		"name": "GoldenDict Mobile (Free)",
-		"web": "http://goldendict.mobi/",
-		# https://play.google.com/store/apps/details?id=mobi.goldendict.android.free
-		"platforms": ["Android"],
-		"license": "Freeware",
-	},
-	{
-		"name": "GoldenDict Mobile (Full)",
-		"web": "http://goldendict.mobi/",
-		# https://play.google.com/store/apps/details?id=mobi.goldendict.android
-		"platforms": ["Android"],
-		"license": "Proprietary",
-	},
-]
 # progressbar = DEFAULT_YES
 
 # FIXME: document type of read/write options

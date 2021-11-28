@@ -1,0 +1,5 @@
+["Lingoes Dictionary Creator"]
+web = "http://www.lingoes.net/en/dictionary/dict_format.php"
+platforms = []
+license = "Unknown"
+comment = "Lingoes Dictionary Creator is developing now.\nPlease send your finished dictionary source file to kevin-yau@msn.com\nLingoes will compile it into .ld2 for you.\nYou will can do it yourself after the creator release."

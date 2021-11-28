@@ -19,21 +19,6 @@ optionsProp = {
 	"resources": BoolOption(comment="Enable resources / data files"),
 }
 
-tools = [
-	{
-		"name": "gettext",
-		"web": "https://www.gnu.org/software/gettext/",
-		"platforms": ["Linux", "Windows"],
-		"license": "GPL",
-	},
-	{
-		"name": "poEdit",
-		"web": "https://github.com/vslavik/poedit",
-		"platforms": ["Linux", "Windows", "Mac"],
-		"license": "MIT / Shareware",
-	},
-]
-
 
 class Reader(object):
 	depends = {

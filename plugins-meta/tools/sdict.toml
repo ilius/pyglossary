@@ -1,0 +1,11 @@
+[PTkSdict]
+web = "http://swaj.net/sdict/"
+platforms = [ "Linux", "Windows", "Mac",]
+license = "GPL"
+
+["Sdictionary for Symbian"]
+web = "http://swaj.net/epoc/symbian/index.html"
+platforms = [ "Symbian",]
+license = "Unknown"
+
+# there is a Perl/Tk-based GUI, and command line tool, both in Perl 5

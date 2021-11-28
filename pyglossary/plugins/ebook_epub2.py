@@ -34,49 +34,6 @@ wiki = "https://en.wikipedia.org/wiki/EPUB"
 website = None
 
 # EPUB-3: https://www.w3.org/community/epub3/
-tools = [
-	{
-		"name": "calibre",
-		"web": "https://calibre-ebook.com/",
-		"wiki": "https://en.wikipedia.org/wiki/Calibre_(software)",
-		"repo": "https://github.com/kovidgoyal/calibre",
-		"platforms": ["Linux", "Windows", "Mac"],
-		"license": "GPL",
-	},
-	{
-		"name": "Okular",
-		"web": "https://okular.kde.org/",
-		"wiki": "https://en.wikipedia.org/wiki/Okular",
-		"repo": "https://invent.kde.org/graphics/okular",
-		"platforms": ["Linux", "Windows", "Mac"],
-		"license": "GPL",
-	},
-	{
-		"name": "Book Reader",
-		"web": "https://f-droid.org/en/packages/com.github.axet.bookreader/",
-		"repo": "https://gitlab.com/axet/android-book-reader",
-		"platforms": ["Android"],
-		"license": "GPL",
-	},
-	{
-		"name": "Kobo eReader",
-		"web": "https://www.kobo.com",
-		"platforms": ["Kobo eReader"],
-		"license": "Proprietary",
-	},
-	{
-		"name": "Icecream Ebook Reader",
-		"web": "https://icecreamapps.com/Ebook-Reader/",
-		"platforms": ["Windows"],
-		"license": "Proprietary",
-	},
-	{
-		"name": "Aldiko",
-		"web": "https://www.demarque.com/aldiko",
-		"platforms": ["Android", "iOS"],
-		"license": "Proprietary",
-	},
-]
 
 optionsProp = {
 	"group_by_prefix_length": IntOption(

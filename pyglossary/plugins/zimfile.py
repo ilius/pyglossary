@@ -22,38 +22,6 @@ optionsProp = {
 }
 
 # https://wiki.kiwix.org/wiki/Software
-tools = [
-	{
-		"name": "Kiwix Desktop",
-		"web": "https://github.com/kiwix/kiwix-desktop",
-		"platforms": ["Linux", "Windows"],
-		"license": "GPL",
-	},
-	{
-		"name": "Kiwix JS",
-		"web": "https://github.com/kiwix/kiwix-js",
-		"platforms": ["Windows"],
-		"license": "GPL",
-	},
-	{
-		"name": "Kiwix Serve",
-		"web": "https://github.com/kiwix/kiwix-tools",
-		"platforms": ["Linux", "Windows"],
-		"license": "GPL",
-	},
-	{
-		"name": "Kiwix for Apple Mac OS X",
-		"web": "macos.kiwix.org",
-		"platforms": ["Mac"],
-		"license": "",
-	},
-	{
-		"name": "Kiwix for Android",
-		"web": "https://github.com/kiwix/kiwix-android",
-		"platforms": ["Android"],
-		"license": "GPL",
-	},
-]
 
 
 class Reader(object):

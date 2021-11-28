@@ -32,14 +32,6 @@ website = (
 	"https://support.apple.com/en-gu/guide/dictionary/welcome/mac",
 	"Dictionary User Guide for Mac",
 )
-tools = [
-	{
-		"name": "Apple Dictionary",
-		"web": "https://support.apple.com/en-gu/guide/dictionary/welcome/mac",
-		"platforms": ["Mac"],
-		"license": "Proprietary",
-	},
-]
 optionsProp = {
 	"html": BoolOption(comment="Entries are HTML"),
 }

@@ -1,0 +1,9 @@
+["LibreOffice Calc"]
+web = "https://www.libreoffice.org/discover/calc/"
+platforms = [ "Linux", "Windows", "Mac",]
+license = "MPL/GPL"
+
+["Microsoft Excel"]
+web = "https://www.microsoft.com/en-us/microsoft-365/excel"
+platforms = [ "Windows",]
+license = "Proprietary"

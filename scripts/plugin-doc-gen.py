@@ -5,7 +5,9 @@ import json
 from os.path import join, dirname, abspath
 from pathlib import Path
 from pprint import pprint
+from collections import OrderedDict
 from mako.template import Template
+import toml
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -162,6 +164,7 @@ plugins = [
 	if userPluginsDirPath not in p.path.parents
 ]
 
+toolsDir = join(rootDir, "plugins-meta", "tools")
 
 for p in plugins:
 	module = p.pluginModule
@@ -201,7 +204,16 @@ for p in plugins:
 
 	extraDocs = getattr(module, "extraDocs", [])
 
-	tools = getattr(module, "tools", [])
+	toolsFile = join(toolsDir, f"{p.lname}.toml")
+	try:
+		with open(toolsFile) as _file:
+			tools_toml = toml.load(_file, _dict=OrderedDict)
+	except Exception as e:
+		print(f"\nFile: {toolsFile}")
+		raise e
+	for name, tool in tools_toml.items():
+		tool.update({"name": name})
+	tools = tools_toml.values()
 
 	text = template.render(
 		codeValue=codeValue,
@@ -236,7 +248,7 @@ for p in plugins:
 		extraDocs=extraDocs,
 		tools=tools,
 	)
-	with open(join("doc", "p", f"{p.lname}.md"), mode="w") as _file:
+	with open(join(rootDir, "doc", "p", f"{p.lname}.md"), mode="w") as _file:
 		_file.write(text)
 
 indexText = indexTemplate.render(
@@ -245,6 +257,6 @@ indexText = indexTemplate.render(
 		key=lambda p: p.description.lower(),
 	),
 )
-with open(join("doc", "p", f"__index__.md"), mode="w") as _file:
+with open(join(rootDir, "doc", "p", f"__index__.md"), mode="w") as _file:
 	_file.write(indexText)
 

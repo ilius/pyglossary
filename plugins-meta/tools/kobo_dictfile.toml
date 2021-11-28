@@ -1,0 +1,4 @@
+[dictgen]
+web = "https://pgaskin.net/dictutil/dictgen/"
+platforms = [ "Linux", "Windows", "Mac",]
+license = "MIT"

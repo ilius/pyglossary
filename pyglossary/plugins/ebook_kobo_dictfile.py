@@ -44,15 +44,6 @@ optionsProp = {
 	"extract_inline_images": BoolOption(comment="Extract inline images"),
 }
 
-tools = [
-	{
-		"name": "dictgen",
-		"web": "https://pgaskin.net/dictutil/dictgen/",
-		"platforms": ["Linux", "Windows", "Mac"],
-		"license": "MIT",
-	},
-]
-
 
 def fixWord(word: str) -> str:
 	return word.replace("\n", " ")

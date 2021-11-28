@@ -16,16 +16,6 @@ website = (
 	"@digitalprk/dicrs",
 )
 
-tools = [
-	{
-		"name": "Dic.rs",
-		"web": "https://github.com/digitalprk/dicrs",
-		"platforms": ["Linux"],
-		"license": " BSD-2-Clause",
-	},
-]
-
-
 class Reader(object):
 	def __init__(self, glos):
 		self._glos = glos

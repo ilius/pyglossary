@@ -18,19 +18,6 @@ website = (
 	"DictionaryForMIDs - SourceForge",
 )
 
-tools = [
-	{
-		"name": "DictionaryForMIDs",
-		"web": "http://dictionarymid.sourceforge.net/",
-		# https://sourceforge.net/projects/dictionarymid/
-		"platforms": ["Android", "Web", "Windows", "Linux", "Mac"],
-		# PC version is Java-based
-		"license": "GPL",
-		# android last commit:	2015/02/09
-		# android last release:	2015/02/09 - version 1.0.1
-	},
-]
-
 optionsProp = {}
 
 

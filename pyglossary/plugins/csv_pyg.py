@@ -31,20 +31,7 @@ singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Comma-separated_values"
 website = None
-tools = [
-	{
-		"name": "LibreOffice Calc",
-		"web": "https://www.libreoffice.org/discover/calc/",
-		"platforms": ["Linux", "Windows", "Mac"],
-		"license": "MPL/GPL",
-	},
-	{
-		"name": "Microsoft Excel",
-		"web": "https://www.microsoft.com/en-us/microsoft-365/excel",
-		"platforms": ["Windows"],
-		"license": "Proprietary",
-	},
-]
+
 optionsProp = {
 	"encoding": EncodingOption(),
 	"resources": BoolOption(

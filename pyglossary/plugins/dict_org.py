@@ -22,35 +22,6 @@ website = (
 	"The DICT Development Group",
 )
 
-tools = [
-	{
-		"name": "Dictd",
-		"web": "https://directory.fsf.org/wiki/Dictd",
-		"platforms": ["Linux"],
-		"license": "GPL",
-	},
-	{
-		"name": "GNOME Dictionary",
-		"web": "https://wiki.gnome.org/Apps/Dictionary",
-		"platforms": ["Linux"],
-		"license": "GPL",
-	},
-	{
-		"name": "Xfce4 Dictionary",
-		"web": "https://docs.xfce.org/apps/xfce4-dict/start",
-		"platforms": ["linux"],
-		"license": "GPL",
-	},
-	{
-		"name": "Ding",
-		"desc": "Graphical dictionary lookup program for Unix (Tk)",
-		"web": "https://www-user.tu-chemnitz.de/~fri/ding/",
-		"platforms": ["linux"],
-		"license": "GPL",
-		"copyright": "Copyright (c) 1999 - 2016 Frank Richter",
-	},
-]
-
 
 def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 	"""

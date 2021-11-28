@@ -1,0 +1,4 @@
+[dictfmt]
+web = "https://linux.die.net/man/1/dictfmt"
+platforms = [ "Linux",]
+license = "GPL"
