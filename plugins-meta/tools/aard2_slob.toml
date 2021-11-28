@@ -2,10 +2,12 @@
 web = "http://aarddict.org/"
 platforms = [ "Android",]
 license = "GPL"
+plang = "Java"
 # no auto-RTL (in plaintext or html)
 
 ["Aard2 for Web"]
 web = "http://aarddict.org/"
 platforms = [ "Web",]
 license = "MPL"
+plang = "Java"
 # auto-RTL works in plaintext mode, but not html

@@ -35,7 +35,7 @@ Name | Default | Type | Comment
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------
-[Babylon Translator](https://www.babylon-software.com/) | Proprietary | Windows
+[Babylon Translator](https://www.babylon-software.com/) | Freemium | Windows
 [GoldenDict](http://goldendict.org/) | GPL | Linux, Windows
 [GoldenDict Mobile (Free)](http://goldendict.mobi/) | Freeware | Android
 [GoldenDict Mobile (Full)](http://goldendict.mobi/) | Proprietary | Android

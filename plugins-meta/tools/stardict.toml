@@ -2,21 +2,23 @@
 web = "http://goldendict.org/"
 platforms = [ "Linux", "Windows",]
 license = "GPL"
+plang = "C++"
 
 [StarDict]
 web = "http://huzheng.org/stardict/"
 platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
+plang = "C"
 
 ["GoldenDict Mobile (Free)"]
 web = "http://goldendict.mobi/"
-# https://play.google.com/store/apps/details?id=mobi.goldendict.android.free
+web2 = "https://play.google.com/store/apps/details?id=mobi.goldendict.android.free"
 platforms = [ "Android",]
-license = "Freeware"
+license = "Freemium"
 
 ["GoldenDict Mobile (Full)"]
 web = "http://goldendict.mobi/"
-# https://play.google.com/store/apps/details?id=mobi.goldendict.android
+web2 = "https://play.google.com/store/apps/details?id=mobi.goldendict.android"
 platforms = [ "Android",]
 license = "Proprietary"
 
@@ -48,7 +50,7 @@ license = "Apache 2.0"
 ["Fora Dictionary"]
 web = "https://play.google.com/store/apps/details?id=com.ngc.fora"
 platforms = [ "Android",]
-license = "Proprietary"
+license = "Freemium"
 # no dark mode
 # some options show "Premium Feature"
 # has prefix-search-on-type but it's a little slow

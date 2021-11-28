@@ -2,14 +2,16 @@
 web = "http://goldendict.org/"
 platforms = [ "Linux", "Windows",]
 license = "GPL"
+plang = "C++"
 
 [QTranslate]
 web = "https://quest-app.appspot.com/"
 platforms = [ "Windows",]
 license = "Proprietary"
+plang = "C++"
 
 [Alpus]
 web = "https://alpusapp.com/"
 platforms = [ "Windows", "Mac", "Linux", "Android",]
 license = "Freeware"
-# Java-based
+plang = "Java"
