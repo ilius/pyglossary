@@ -72,15 +72,15 @@ if os.getenv("PYGLOSSARY_STARDICT_NO_FORCE_SORT") == "1":
 
 tools = [
 	{
-		"name": "StarDict",
-		"web": "http://huzheng.org/stardict/",
-		"platforms": ["Linux", "Windows", "Mac"],
-		"license": "GPL",
-	},
-	{
 		"name": "GoldenDict",
 		"web": "http://goldendict.org/",
 		"platforms": ["Linux", "Windows"],
+		"license": "GPL",
+	},
+	{
+		"name": "StarDict",
+		"web": "http://huzheng.org/stardict/",
+		"platforms": ["Linux", "Windows", "Mac"],
 		"license": "GPL",
 	},
 	{
@@ -111,7 +111,7 @@ tools = [
 		"platforms": ["Android"],
 		"license": "Proprietary",
 		# last release: 2020/01/01, version 2.1.1
-		# Google Play says "not compatible with your devices", no letting me
+		# Google Play says "not compatible with your devices", not letting me
 		# download and install, so I downloaded apk from apkcombo.com
 		# This is the only Android app (not just for StarDict format) I found
 		# that supports auto-RTL
@@ -124,6 +124,22 @@ tools = [
 		"license": "Apache 2.0",
 		# last release: 2017/04/16 (keeps crashing on my device, unusable)
 		# last commit: 2020/06/24
+	},
+	{
+		"name": "Fora Dictionary",
+		"web": "https://play.google.com/store/apps/details?id=com.ngc.fora",
+		"platforms": ["Android"],
+		"license": "Proprietary",
+		# no dark mode
+		# some options show "Premium Feature"
+		# has prefix-search-on-type but it's a little slow
+		# supports RTL (haven't tested auto-RTL)
+	},
+	{
+		"name": "Fora Dictionary Pro",
+		"web": "https://play.google.com/store/apps/details?id=com.ngc.fora.android",
+		"platforms": ["Android"],
+		"license": "Proprietary",
 	},
 ]
 

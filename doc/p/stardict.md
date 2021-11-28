@@ -38,10 +38,12 @@ Name | Default | Type | Comment
 ### Dictionary Applications/Tools ###
 Name & Website | License | Platforms
 -------------- | ------- | ---------
-[StarDict](http://huzheng.org/stardict/) | GPL | Linux, Windows, Mac
 [GoldenDict](http://goldendict.org/) | GPL | Linux, Windows
+[StarDict](http://huzheng.org/stardict/) | GPL | Linux, Windows, Mac
 [GoldenDict Mobile (Free)](http://goldendict.mobi/) | Freeware | Android
 [GoldenDict Mobile (Full)](http://goldendict.mobi/) | Proprietary | Android
 [Twinkle Star Dictionary](https://play.google.com/store/apps/details?id=com.qtier.dict) | Unknown | Android
 [WordMateX](https://apkcombo.com/wordmatex/org.d1scw0rld.wordmatex/) | Proprietary | Android
 [QDict](https://play.google.com/store/apps/details?id=com.annie.dictionary) | Apache 2.0 | Android
+[Fora Dictionary](https://play.google.com/store/apps/details?id=com.ngc.fora) | Proprietary | Android
+[Fora Dictionary Pro](https://play.google.com/store/apps/details?id=com.ngc.fora.android) | Proprietary | Android
