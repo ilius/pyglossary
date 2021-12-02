@@ -328,13 +328,13 @@ class Glossary(GlossaryType):
 			entryFilters.append(ef.SkipDataEntry(self))
 
 		if config.get("utf8_check", True):
-			entryFilters.append(ef.FixUnicodeFilter(self))
+			entryFilters.append(ef.FixUnicode(self))
 
 		if config.get("lower", True):
-			entryFilters.append(ef.LowerWordFilter(self))
+			entryFilters.append(ef.LowerWord(self))
 
 		if config.get("rtl", False):
-			entryFilters.append(ef.RTLFilter(self))
+			entryFilters.append(ef.RTLDefi(self))
 
 		if config.get("remove_html_all", False):
 			entryFilters.append(ef.RemoveHtmlTagsAll(self))

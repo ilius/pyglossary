@@ -78,7 +78,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 		return entry
 
 
-class FixUnicodeFilter(EntryFilter):
+class FixUnicode(EntryFilter):
 	name = "fix_unicode"
 	desc = "Fix Unicode"
 
@@ -88,7 +88,7 @@ class FixUnicodeFilter(EntryFilter):
 		return entry
 
 
-class LowerWordFilter(EntryFilter):
+class LowerWord(EntryFilter):
 	name = "lower_word"
 	desc = "Lowercase Words"
 
@@ -97,7 +97,7 @@ class LowerWordFilter(EntryFilter):
 		return entry
 
 
-class RTLFilter(EntryFilter):
+class RTLDefi(EntryFilter):
 	name = "rtl"
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
