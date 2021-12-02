@@ -37,7 +37,7 @@ class EntryFilter(object):
 		return entry
 
 
-class StripEntryFilter(EntryFilter):
+class StripWhitespaces(EntryFilter):
 	name = "strip"
 	desc = "Strip Whitespaces"
 
@@ -185,7 +185,7 @@ class NormalizeHtml(EntryFilter):
 		return entry
 
 
-class SkipDataEntryFilter(EntryFilter):
+class SkipDataEntry(EntryFilter):
 	name = "skip_resources"
 	desc = "Skip Resources"
 
@@ -195,7 +195,7 @@ class SkipDataEntryFilter(EntryFilter):
 		return entry
 
 
-class LangEntryFilter(EntryFilter):
+class LanguageCleanup(EntryFilter):
 	name = "lang"
 	desc = "Language-dependent Filters"
 
@@ -228,7 +228,7 @@ class LangEntryFilter(EntryFilter):
 		return entry
 
 
-class CleanEntryFilter(EntryFilter):  # FIXME
+class CommonCleanup(EntryFilter):  # FIXME
 	name = "clean"
 	desc = "Clean"
 
@@ -297,7 +297,7 @@ class PreventDuplicateWords(EntryFilter):
 		return entry
 
 
-class ProgressBarEntryFilter(EntryFilter):
+class ShowProgressBar(EntryFilter):
 	name = "progressbar"
 	desc = "Progress Bar"
 
@@ -327,7 +327,7 @@ class ProgressBarEntryFilter(EntryFilter):
 		return entry
 
 
-class MaxMemoryUsageEntryFilter(EntryFilter):
+class ShowMaxMemoryUsage(EntryFilter):
 	name = "max_memory_usage"
 	desc = "Show Max Memory Usage"
 

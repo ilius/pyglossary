@@ -321,11 +321,11 @@ class Glossary(GlossaryType):
 		entryFilters = []
 		config = self._config
 
-		entryFilters.append(ef.StripEntryFilter(self))
+		entryFilters.append(ef.StripWhitespaces(self))
 		entryFilters.append(ef.NonEmptyWordFilter(self))
 
 		if config.get("skip_resources", False):
-			entryFilters.append(ef.SkipDataEntryFilter(self))
+			entryFilters.append(ef.SkipDataEntry(self))
 
 		if config.get("utf8_check", True):
 			entryFilters.append(ef.FixUnicodeFilter(self))
@@ -345,14 +345,14 @@ class Glossary(GlossaryType):
 		if config.get("normalize_html", False):
 			entryFilters.append(ef.NormalizeHtml(self))
 
-		entryFilters.append(ef.LangEntryFilter(self))
-		entryFilters.append(ef.CleanEntryFilter(self))
+		entryFilters.append(ef.LanguageCleanup(self))
+		entryFilters.append(ef.CommonCleanup(self))
 		entryFilters.append(ef.NonEmptyWordFilter(self))
 		entryFilters.append(ef.NonEmptyDefiFilter(self))
 		entryFilters.append(ef.RemoveEmptyAndDuplicateAltWords(self))
 
 		if self.ui and self._progressbar:
-			entryFilters.append(ef.ProgressBarEntryFilter(self))
+			entryFilters.append(ef.ShowProgressBar(self))
 
 		if log.level <= core.TRACE:
 			try:
@@ -360,7 +360,7 @@ class Glossary(GlossaryType):
 			except ModuleNotFoundError:
 				pass
 			else:
-				entryFilters.append(ef.MaxMemoryUsageEntryFilter(self))
+				entryFilters.append(ef.ShowMaxMemoryUsage(self))
 
 		self._entryFilters = entryFilters
 
@@ -896,7 +896,7 @@ class Glossary(GlossaryType):
 		showMemoryUsage()
 		progressbarFilter = None
 		if self.ui and self._progressbar:
-			progressbarFilter = ef.ProgressBarEntryFilter(self)
+			progressbarFilter = ef.ShowProgressBar(self)
 
 		self.progressInit("Reading")
 		try:
