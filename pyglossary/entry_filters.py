@@ -270,6 +270,33 @@ class CleanEntryFilter(EntryFilter):  # FIXME
 		return entry
 
 
+class PreventDuplicateWords(EntryFilter):
+	name = "prevent_duplicate_words"
+	desc = "Prevent Duplicate Words"
+
+	def __init__(self, glos: "GlossaryType"):
+		EntryFilter.__init__(self, glos)
+		self._wordSet = set()
+
+	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
+		wordSet = self._wordSet
+		word = entry.s_word
+
+		if word not in wordSet:
+			wordSet.add(word)
+			return entry
+
+		n = 2
+		while f"{word} ({n})" in wordSet:
+			n += 1
+		word = f"{word} ({n})"
+
+		wordSet.add(word)
+		entry._word = word
+
+		return entry
+
+
 class ProgressBarEntryFilter(EntryFilter):
 	name = "progressbar"
 	desc = "Progress Bar"

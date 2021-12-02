@@ -36,6 +36,7 @@ class Writer(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
+		glos.preventDuplicateWords()
 
 	def open(self, filename: str):
 		self._filename = filename

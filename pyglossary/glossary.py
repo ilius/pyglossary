@@ -384,6 +384,19 @@ class Glossary(GlossaryType):
 			return
 		self._entryFilters.append(ef.RemoveHtmlTagsAll(self))
 
+	def preventDuplicateWords(self):
+		"""
+		Adds entry filter to prevent duplicate `entry.s_word`
+
+		Note: there may be still duplicate headwords or alternate words
+			but we only care about making the whole `entry.s_word`
+			(aka entry key) unique
+		"""
+		from . import entry_filters as ef
+		if ef.PreventDuplicateWords.name in self._entryFiltersName:
+			return
+		self._entryFilters.append(ef.PreventDuplicateWords(self))
+
 	def __str__(self) -> str:
 		return "glossary.Glossary"
 
