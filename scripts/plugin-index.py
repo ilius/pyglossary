@@ -41,5 +41,9 @@ jsonText = json.dumps(
 	indent="\t",
 	ensure_ascii=False,
 )
-with open("plugins.json", mode="w", encoding="utf-8") as _file:
+with open(
+	join(rootDir, "plugins-meta", "index.json"),
+	mode="w",
+	encoding="utf-8",
+) as _file:
 	_file.write(jsonText)
