@@ -279,6 +279,9 @@ class PreventDuplicateWords(EntryFilter):
 		self._wordSet = set()
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
+		if entry.isData():
+			return entry
+
 		wordSet = self._wordSet
 		word = entry.s_word
 
