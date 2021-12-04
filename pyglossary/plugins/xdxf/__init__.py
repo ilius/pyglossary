@@ -114,6 +114,8 @@ class Reader(object):
 			if elem.tag in ("meta_info", "ar", "k", "abr", "dtrn"):
 				break
 			# every other tag before </meta_info> or </ar> is considered info
+			if elem.tag in ("abbr_def",):
+				continue
 			if not elem.text:
 				log.warn(f"empty tag <{elem.tag}>")
 				continue
@@ -208,6 +210,7 @@ class Reader(object):
 		titles = []
 		for title_element in article.findall("k"):
 			if title_element.text is None:
+				# TODO: look for <opt> tag?
 				log.warning(f"empty title element: {self.tostring(title_element)}")
 				continue
 			n_opts = len([c for c in title_element if c.tag == "opt"])

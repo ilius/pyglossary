@@ -35,6 +35,7 @@ def xdxf_to_html_transformer():
 
 class XdxfTransformer(object):
 	_gram_color: str = "green"
+	_example_padding: int = 10
 
 	def __init__(self, encoding="utf-8"):
 		self._encoding = encoding
@@ -96,6 +97,58 @@ class XdxfTransformer(object):
 			hf.write(ET.Element("br"))
 		return
 
+	def writeExample(
+		self,
+		hf: "lxml.etree.htmlfile",
+		elem: "Union[str, lxml.etree.Element]",
+	):
+		with hf.element("div", **{
+			"class": "example",
+			"style": f"padding: {self._example_padding}px 0px;",
+		}):
+			for child in elem.xpath("child::node()"):
+				if isinstance(child, str):
+					continue
+				if child.tag == "iref":
+					with hf.element("div"):
+						self.writeIRef(hf, child)
+					continue
+				if child.tag in ("ex_orig", "ex_tran"):
+					with hf.element("div"):
+						self.writeChildrenOf(hf, child)
+					continue
+				log.warning(f"unknown tag {child.tag} inside <ex>")
+
+
+	def writeIRef(
+		self,
+		hf: "lxml.etree.htmlfile",
+		child: "Union[str, lxml.etree.Element]",
+	):
+		iref_url = child.attrib.get("href", "")
+		if child.text:
+			with hf.element("a", **{
+				"class": "iref",
+				"href": child.attrib.get("href", child.text),
+			}):
+				hf.write(child.text)
+		elif any(iref_url.endswith(ext) for ext in ("mp3", "wav", "aac", "ogg")):
+			#  with hf.element("audio", src=iref_url):
+			with hf.element("a", **{
+				"class": "iref",
+				"href": iref_url,
+			}):
+				hf.write("🔊")
+			return
+		elif iref_url:
+			with hf.element("a", **{
+				"class": "iref",
+				"href": iref_url,
+			}):
+				hf.write("⎋")
+		else:
+			log.warning(f"iref with no text and no url: {self.tostring(child)}")
+
 	def writeChild(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -131,9 +184,21 @@ class XdxfTransformer(object):
 			hf.write("]")
 			return
 
-		if child.tag in ("k", "ex", "sr"):
-			with hf.element("span", **{"class": child.tag}):
+		if child.tag in ("k", "sr"):
+			with hf.element("div", **{"class": child.tag}):
 				self.writeChildrenOf(hf, child)
+			return
+
+		if child.tag == "ex":
+			self.writeExample(hf, child)
+			return
+
+		if child.tag == "mrkd":
+			if child.text:
+				return
+			with hf.element("span", **{"class": child.tag}):
+				with hf.element("b"):
+					hf.write(child.text)
 			return
 
 		if child.tag in ("pos", "abr"):
@@ -165,29 +230,7 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag == "iref":
-			iref_url = child.attrib.get("href", "")
-			if child.text:
-				with hf.element("a", **{
-					"class": "iref",
-					"href": child.attrib.get("href", child.text),
-				}):
-					hf.write(child.text)
-			elif any(iref_url.endswith(ext) for ext in ("mp3", "wav", "aac", "ogg")):
-				#  with hf.element("audio", src=iref_url):
-				with hf.element("a", **{
-					"class": "iref",
-					"href": iref_url,
-				}):
-					hf.write("🔊")
-				return
-			elif iref_url:
-				with hf.element("a", **{
-					"class": "iref",
-					"href": iref_url,
-				}):
-					hf.write("⎋")
-			else:
-				log.warning(f"iref with no text and no url: {self.tostring(child)}")
+			self.writeIRef(hf, child)
 			return
 
 		if child.tag == "rref":
@@ -196,6 +239,23 @@ class XdxfTransformer(object):
 				return
 
 		if child.tag == "def":
+			self.writeChildrenOf(hf, child)
+			return
+
+		if child.tag == "deftext":
+			self.writeChildrenOf(hf, child)
+			return
+
+		if child.tag == "span":
+			with hf.element("span"):
+				self.writeChildrenOf(hf, child)
+			return
+
+		if child.tag == "abbr_def":
+			# _type = child.attrib.get("type", "")
+			# {"": "", "grm": "grammatical", "stl": "stylistical",
+			#  "knl": "area/field of knowledge", "aux": "subsidiary"
+			#  "oth": "others"}[_type]
 			self.writeChildrenOf(hf, child)
 			return
 
@@ -216,6 +276,20 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag == "opt":
+			if child.text:
+				hf.write(" (")
+				hf.write(child.text)
+				hf.write(")")
+			return
+
+		if child.tag == "img":
+			with hf.element("img", **child.attrib):
+				pass
+			return
+
+		if child.tag == "abbr":
+			with hf.element("i"):
+				hf.write(f"{child.text}")
 			return
 
 		log.warning(f"unknown tag {child.tag}")
