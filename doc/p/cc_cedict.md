@@ -1,35 +1,37 @@
+## CC-CEDICT
 
-## CC-CEDICT ##
+### General Information
 
-### General Information ###
-Attribute | Value
---------- | -------
-Name | CC-CEDICT
-snake_case_name | cc_cedict
-Description | CC-CEDICT
-Extensions | `.u8`
-Read support | Yes
-Write support | No
-Single-file | Yes
-Kind | 📝 text
-Sort-on-write | No (by default)
-Wiki | [CEDICT](https://en.wikipedia.org/wiki/CEDICT)
-Website | [CC-CEDICT Editor](https://cc-cedict.org/editor/editor.php)
+| Attribute       | Value                                                       |
+| --------------- | ----------------------------------------------------------- |
+| Name            | GoldenDict Mobile (Full)                                    |
+| snake_case_name | cc_cedict                                                   |
+| Description     | CC-CEDICT                                                   |
+| Extensions      | `.u8`                                                       |
+| Read support    | Yes                                                         |
+| Write support   | No                                                          |
+| Single-file     | Yes                                                         |
+| Kind            | 📝 text                                                      |
+| Sort-on-write   | default_no                                                  |
+| Wiki            | [CEDICT](https://en.wikipedia.org/wiki/CEDICT)              |
+| Website         | [CC-CEDICT Editor](https://cc-cedict.org/editor/editor.php) |
 
+### Read options
 
-### Read options ###
-Name | Default | Type | Comment
----- | ------- | ---- | -------
-`encoding` | `utf-8` | str | Encoding/charset
-`traditional_title` | `False` | bool | Use traditional Chinese for entry titles/keys
+| Name              | Default | Type | Comment                                       |
+| ----------------- | ------- | ---- | --------------------------------------------- |
+| encoding          | `utf-8` | str  | Encoding/charset                              |
+| traditional_title | `False` | bool | Use traditional Chinese for entry titles/keys |
 
+### Dependencies for reading
 
-### Dependencies for reading ###
 PyPI Links: [lxml](https://pypi.org/project/lxml)
 
 To install, run:
 
-    pip3 install lxml
+```
+pip3 install lxml
+```
 
 
 

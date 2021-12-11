@@ -1,28 +1,26 @@
+## Sdictionary Binary(dct)
 
-## Sdictionary Binary(dct) ##
+### General Information
 
-### General Information ###
-Attribute | Value
---------- | -------
-Name | Sdict
-snake_case_name | sdict
-Description | Sdictionary Binary(dct)
-Extensions | `.dct`
-Read support | Yes
-Write support | No
-Single-file | Yes
-Kind | 🔢 binary
-Sort-on-write | No (by default)
-Wiki | ―
-Website | [Sdictionary Project](http://swaj.net/sdict/)
-
-
+| Attribute       | Value                                         |
+| --------------- | --------------------------------------------- |
+| Name            | Sdictionary for Symbian                       |
+| snake_case_name | sdict                                         |
+| Description     | Sdictionary Binary(dct)                       |
+| Extensions      | `.dct`                                        |
+| Read support    | Yes                                           |
+| Write support   | No                                            |
+| Single-file     | Yes                                           |
+| Kind            | 🔢 binary                                      |
+| Sort-on-write   | default_no                                    |
+| Wiki            | ―                                             |
+| Website         | [Sdictionary Project](http://swaj.net/sdict/) |
 
 
 
+### Dictionary Applications/Tools
 
-### Dictionary Applications/Tools ###
-Name & Website | License | Platforms
--------------- | ------- | ---------
-[PTkSdict](http://swaj.net/sdict/) | GPL | Linux, Windows, Mac
-[Sdictionary for Symbian](http://swaj.net/epoc/symbian/index.html) | Unknown | Symbian
+| Name & Website                                                     | License | Platforms           |
+| ------------------------------------------------------------------ | ------- | ------------------- |
+| [PTkSdict](http://swaj.net/sdict/)                                 | GPL     | Linux, Windows, Mac |
+| [Sdictionary for Symbian](http://swaj.net/epoc/symbian/index.html) | Unknown | Symbian             |

@@ -1,27 +1,25 @@
+## Almaany.com (SQLite3)
 
-## Almaany.com (SQLite3) ##
+### General Information
 
-### General Information ###
-Attribute | Value
---------- | -------
-Name | Almaany
-snake_case_name | almaany
-Description | Almaany.com (SQLite3)
-Extensions | 
-Read support | Yes
-Write support | No
-Single-file | No
-Kind | 🔢 binary
-Sort-on-write | No (by default)
-Wiki | ―
-Website | [Almaany.com Arabic Dictionary - Google Play](https://play.google.com/store/apps/details?id=com.almaany.arar)
-
-
+| Attribute       | Value                                                                                                         |
+| --------------- | ------------------------------------------------------------------------------------------------------------- |
+| Name            | Almaany.com Arabic Dictionary                                                                                 |
+| snake_case_name | almaany                                                                                                       |
+| Description     | Almaany.com (SQLite3)                                                                                         |
+| Extensions      |                                                                                                               |
+| Read support    | Yes                                                                                                           |
+| Write support   | No                                                                                                            |
+| Single-file     | No                                                                                                            |
+| Kind            | 🔢 binary                                                                                                      |
+| Sort-on-write   | default_no                                                                                                    |
+| Wiki            | ―                                                                                                             |
+| Website         | [Almaany.com Arabic Dictionary - Google Play](https://play.google.com/store/apps/details?id=com.almaany.arar) |
 
 
 
+### Dictionary Applications/Tools
 
-### Dictionary Applications/Tools ###
-Name & Website | License | Platforms
--------------- | ------- | ---------
-[Almaany.com Arabic Dictionary](https://play.google.com/store/apps/details?id=com.almaany.arar) | Unknown | Android
+| Name & Website                                                                                  | License | Platforms |
+| ----------------------------------------------------------------------------------------------- | ------- | --------- |
+| [Almaany.com Arabic Dictionary](https://play.google.com/store/apps/details?id=com.almaany.arar) | Unknown | Android   |

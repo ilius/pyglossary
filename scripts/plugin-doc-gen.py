@@ -26,96 +26,54 @@ Mako template engine:
 	Package python3-mako in Debian repos
 """
 
-template = Template("""
-${"##"} ${description} ${"##"}
+template = Template("""${"##"} ${description}
 
-${"### General Information ###"}
-Attribute | Value
---------- | -------
-Name | ${name}
-snake_case_name | ${lname}
-Description | ${description}
-Extensions | ${", ".join([codeValue(ext) for ext in extensions])}
-Read support | ${yesNo(canRead)}
-Write support | ${yesNo(canWrite)}
-Single-file | ${yesNo(singleFile)}
-Kind | ${kindEmoji(kind)} ${kind}
-Sort-on-write | ${sortOnWrite}
-Wiki | ${wiki_md}
-Website | ${website_md}
-
-
-% if readOptions:
-${"### Read options ###"}
-Name | Default | Type | Comment
----- | ------- | ---- | -------
-% for optName, default in readOptions.items():
-`${optName}` | ${codeValue(default)} | ${optionsType[optName]} | ${optionsComment[optName]}
-% endfor
-% endif
-
-% if writeOptions:
-${"### Write options ###"}
-Name | Default | Type | Comment
----- | ------- | ---- | -------
-% for optName, default in writeOptions.items():
-`${optName}` | ${codeValue(default)} | ${optionsType[optName]} | ${optionsComment[optName]}
-% endfor
-% endif
+${topTables}
 
 % if readDependsLinks and readDependsLinks == writeDependsLinks:
-${"### Dependencies for reading and writing ###"}
+${"### Dependencies for reading and writing"}
+
 PyPI Links: ${readDependsLinks}
 
 To install, run:
 
-    ${readDependsCmd}
-
+```
+${readDependsCmd}
+```
 % else:
 	% if readDependsLinks:
-${"### Dependencies for reading ###"}
+${"### Dependencies for reading"}
+
 PyPI Links: ${readDependsLinks}
 
 To install, run:
 
-    ${readDependsCmd}
-
+```
+${readDependsCmd}
+```
 	% endif
 
 	% if writeDependsLinks:
-${"### Dependencies for writing ###"}
+${"### Dependencies for writing"}
+
 PyPI Links: ${writeDependsLinks}
 
 To install, run
-
-    ${writeDependsCmd}
-
+```
+${writeDependsCmd}
+```
 	% endif
 % endif
 
 % if extraDocs:
 % for title, text in extraDocs:
-${f"### {title} ###"}
+${f"### {title}"}
+
 ${text.replace('(./doc/', '(../')}
 
 % endfor
 % endif
-% if tools:
-${"### Dictionary Applications/Tools ###"}
-Name & Website | License | Platforms
--------------- | ------- | ---------
-% for tool in tools:
-[${tool["name"]}](${tool["web"]}) | ${tool["license"]} | ${", ".join(tool["platforms"])}
-% endfor
-% endif
-""")
-
-indexTemplate = Template("""
-Description | Name | Doc Link
------------ | ---- | --------
-% for p in plugins:
-${p.description} | ${p.name} | [${p.lname}.md](./${p.lname}.md)
-% endfor
+${toolsTable}
 """)
 
 
@@ -157,6 +115,57 @@ def makeDependsDoc(cls):
 	)
 	return links, cmd
 
+
+def renderCell(value):
+	return str(value).replace("\n", "\\n").replace("\t", "\\t")
+
+
+def renderTable(rows):
+	"""
+		rows[0] must be headers
+	"""
+	rows = [
+		[
+			renderCell(cell) for cell in row
+		]
+		for row in rows
+	]
+	width = [
+		max(len(row[i]) for row in rows)
+		for i in range(len(rows[0]))
+	]
+	rows = [
+		[
+			cell.ljust(width[i], " ")
+			for i, cell in enumerate(row)
+		]
+		for rowI, row in enumerate(rows)
+	]
+	rows.insert(1, [
+		"-" * colWidth
+		for colWidth in width
+	])
+	return "\n".join([
+		"| " + " | ".join(row) + " |"
+		for row in rows
+	])
+
+
+def renderRWOptions(options):
+	return renderTable(
+		[("Name", "Default", "Type", "Comment")] + [
+			(
+				optName,
+				codeValue(default),
+				optionsType[optName],
+				optionsComment[optName],
+			)
+			for optName, default in options.items()
+		]
+	)
+
+
+
 userPluginsDirPath = Path(userPluginsDir)
 plugins = [
 	p
@@ -165,6 +174,12 @@ plugins = [
 ]
 
 toolsDir = join(rootDir, "plugins-meta", "tools")
+
+def renderLink(title, url):
+	if "(" in title or ")" in title:
+		url = f"<{url}>"
+	title = title.replace("|", "\\|")
+	return f"[{title}]({url})"
 
 for p in plugins:
 	module = p.pluginModule
@@ -177,7 +192,7 @@ for p in plugins:
 			wiki_title = "@" + wiki[len("https://github.com/"):]
 		else:
 			wiki_title = wiki.split("/")[-1].replace("_", " ")
-		wiki_md = f"[{wiki_title}]({wiki})"
+		wiki_md = renderLink(wiki_title, wiki)
 
 	website_md = "―"
 	website = module.website
@@ -189,8 +204,7 @@ for p in plugins:
 				url, title = website
 			except ValueError:
 				raise ValueError(f"website = {website!r}")
-			title = title.replace("|", "\\|")
-			website_md = f"[{title}]({url})"
+			website_md = renderLink(title, url)
 
 	(
 		readDependsLinks,
@@ -215,48 +229,86 @@ for p in plugins:
 		tool.update({"name": name})
 	tools = tools_toml.values()
 
+	generalInfoTable = "### General Information\n\n" + renderTable([
+		("Attribute", "Value"),
+		("Name", name),
+		("snake_case_name", p.lname),
+		("Description", p.description),
+		("Extensions", ", ".join([
+			codeValue(ext) for ext in p.extensions
+		])),
+		("Read support", yesNo(p.canRead)),
+		("Write support", yesNo(p.canWrite)),
+		("Single-file", yesNo(p.singleFile)),
+		("Kind", f"{kindEmoji(module.kind)} {module.kind}"),
+		("Sort-on-write", p.sortOnWrite),
+		("Wiki", wiki_md),
+		("Website", website_md),
+	])
+	topTables = generalInfoTable
+
+	optionsType = {
+		optName: opt.typ
+		for optName, opt in optionsProp.items()
+	}
+	optionsComment = {
+		optName: opt.comment.replace("\n", "<br />")
+		for optName, opt in optionsProp.items()
+	}
+
+
+	readOptions = p.getReadOptions()
+	if readOptions:
+		topTables += "\n\n### Read options\n\n" + renderRWOptions(readOptions)
+
+	writeOptions = p.getWriteOptions()
+	if writeOptions:
+		topTables += "\n\n### Write options\n\n" + renderRWOptions(writeOptions)
+
+	toolsTable = ""
+	if tools:
+		toolsTable = "### Dictionary Applications/Tools\n\n" + renderTable(
+			[("Name & Website", "License", "Platforms")] + [
+				(
+					f"[{tool['name']}]({tool['web']})",
+					tool["license"],
+					", ".join(tool["platforms"]),
+				)
+				for tool in tools
+			],
+		)
+
 	text = template.render(
+		description=p.description,
 		codeValue=codeValue,
 		yesNo=yesNo,
-		kindEmoji=kindEmoji,
-		name=p.name,
-		lname=p.lname,
-		description=p.description,
-		extensions=p.extensions,
-		canRead=p.canRead,
-		canWrite=p.canWrite,
-		singleFile=p.singleFile,
-		sortOnWrite=p.sortOnWrite.desc,
-		kind=module.kind,
-		wiki_md=wiki_md,
-		website_md=website_md,
+		topTables=topTables,
 		optionsProp=optionsProp,
-		readOptions=p.getReadOptions(),
-		writeOptions=p.getWriteOptions(),
-		optionsComment={
-			optName: opt.comment.replace("\n", "<br />")
-			for optName, opt in optionsProp.items()
-		},
-		optionsType={
-			optName: opt.typ
-			for optName, opt in optionsProp.items()
-		},
+		readOptions=readOptions,
+		writeOptions=writeOptions,
+		optionsComment=optionsComment,
+		optionsType=optionsType,
 		readDependsLinks=readDependsLinks,
 		readDependsCmd=readDependsCmd,
 		writeDependsLinks=writeDependsLinks,
 		writeDependsCmd=writeDependsCmd,
 		extraDocs=extraDocs,
-		tools=tools,
+		toolsTable=toolsTable,
 	)
 	with open(join(rootDir, "doc", "p", f"{p.lname}.md"), mode="w") as _file:
 		_file.write(text)
 
-indexText = indexTemplate.render(
-	plugins=sorted(
-		plugins,
-		key=lambda p: p.description.lower(),
-	),
+indexText = renderTable(
+	[("Description", "Name", "Doc Link")] + [
+		(
+			p.description,
+			p.name,
+			renderLink(f"{p.lname}.md", f"./{p.lname}.md"),
+		)
+		for p in plugins
+	]
 )
+
 with open(join(rootDir, "doc", "p", f"__index__.md"), mode="w") as _file:
-	_file.write(indexText)
+	_file.write(indexText + "\n")
 

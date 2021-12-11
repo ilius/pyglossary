@@ -1,43 +1,42 @@
-
-Description | Name | Doc Link
------------ | ---- | --------
-Aard 2 (.slob) | Aard2Slob | [aard2_slob.md](./aard2_slob.md)
-ABBYY Lingvo DSL (.dsl) | ABBYYLingvoDSL | [dsl.md](./dsl.md)
-ABC Medical Notes (SQLite3) | ABCMedicalNotes | [abc_medical_notes.md](./abc_medical_notes.md)
-Almaany.com (SQLite3) | Almaany | [almaany.md](./almaany.md)
-AppleDict Binary | AppleDictBin | [appledict_bin.md](./appledict_bin.md)
-AppleDict Source | AppleDict | [appledict.md](./appledict.md)
-Babylon (.BGL) | BabylonBgl | [babylon_bgl.md](./babylon_bgl.md)
-CC-CEDICT | CC-CEDICT | [cc_cedict.md](./cc_cedict.md)
-cc-kedict | cc-kedict | [cc_kedict.md](./cc_kedict.md)
-Crawler Directory | CrawlerDir | [crawler_dir.md](./crawler_dir.md)
-CSV (.csv) | Csv | [csv.md](./csv.md)
-Dict.cc (SQLite3) | Dictcc | [dict_cc.md](./dict_cc.md)
-Dict.cc (SQLite3) - Split | Dictcc_split | [dict_cc_split.md](./dict_cc_split.md)
-DICT.org dictfmt source file | DictOrgSource | [dict_org_source.md](./dict_org_source.md)
-DICT.org file format (.index) | DictOrg | [dict_org.md](./dict_org.md)
-DictionaryForMIDs | Dicformids | [dicformids.md](./dicformids.md)
-dictunformat output file | Dictunformat | [dictunformat.md](./dictunformat.md)
-DigitalNK (SQLite3, N-Korean) | DigitalNK | [digitalnk.md](./digitalnk.md)
-EDLIN | Edlin | [edlin.md](./edlin.md)
-EPUB-2 E-Book | Epub2 | [epub2.md](./epub2.md)
-FreeDict (.tei) | FreeDict | [freedict.md](./freedict.md)
-Gettext Source (.po) | GettextPo | [gettext_po.md](./gettext_po.md)
-Glossary Info (.info) | Info | [info.md](./info.md)
-HTML Directory | HtmlDir | [html_dir.md](./html_dir.md)
-JMDict | JMDict | [jmdict.md](./jmdict.md)
-JSON (.json) | Json | [json.md](./json.md)
-Kobo E-Reader Dictfile (.df) | Dictfile | [kobo_dictfile.md](./kobo_dictfile.md)
-Kobo E-Reader Dictionary | Kobo | [kobo.md](./kobo.md)
-Lingoes Source (.ldf) | LingoesLDF | [lingoes_ldf.md](./lingoes_ldf.md)
-Mobipocket (.mobi) E-Book | Mobi | [mobi.md](./mobi.md)
-Octopus MDict (.mdx) | OctopusMdict | [octopus_mdict.md](./octopus_mdict.md)
-Sdictionary Binary(dct) | Sdict | [sdict.md](./sdict.md)
-Sdictionary Source (.sdct) | SdictSource | [sdict_source.md](./sdict_source.md)
-SQL (.sql) | Sql | [sql.md](./sql.md)
-StarDict (.ifo) | Stardict | [stardict.md](./stardict.md)
-Tabfile (.txt, .dic) | Tabfile | [tabfile.md](./tabfile.md)
-Wiktionary Dump (.xml) | WiktionaryDump | [wiktionary_dump.md](./wiktionary_dump.md)
-Wordset.org JSON directory | Wordset | [wordset.md](./wordset.md)
-XDXF (.xdxf) | Xdxf | [xdxf.md](./xdxf.md)
-Zim (.zim, for Kiwix) | Zim | [zim.md](./zim.md)
+| Description                   | Name            | Doc Link                                       |
+| ----------------------------- | --------------- | ---------------------------------------------- |
+| Aard 2 (.slob)                | Aard2Slob       | [aard2_slob.md](./aard2_slob.md)               |
+| ABC Medical Notes (SQLite3)   | ABCMedicalNotes | [abc_medical_notes.md](./abc_medical_notes.md) |
+| Almaany.com (SQLite3)         | Almaany         | [almaany.md](./almaany.md)                     |
+| AppleDict Source              | AppleDict       | [appledict.md](./appledict.md)                 |
+| AppleDict Binary              | AppleDictBin    | [appledict_bin.md](./appledict_bin.md)         |
+| Babylon (.BGL)                | BabylonBgl      | [babylon_bgl.md](./babylon_bgl.md)             |
+| CC-CEDICT                     | CC-CEDICT       | [cc_cedict.md](./cc_cedict.md)                 |
+| cc-kedict                     | cc-kedict       | [cc_kedict.md](./cc_kedict.md)                 |
+| Crawler Directory             | CrawlerDir      | [crawler_dir.md](./crawler_dir.md)             |
+| CSV (.csv)                    | Csv             | [csv.md](./csv.md)                             |
+| DictionaryForMIDs             | Dicformids      | [dicformids.md](./dicformids.md)               |
+| Dict.cc (SQLite3)             | Dictcc          | [dict_cc.md](./dict_cc.md)                     |
+| Dict.cc (SQLite3) - Split     | Dictcc_split    | [dict_cc_split.md](./dict_cc_split.md)         |
+| DICT.org file format (.index) | DictOrg         | [dict_org.md](./dict_org.md)                   |
+| DICT.org dictfmt source file  | DictOrgSource   | [dict_org_source.md](./dict_org_source.md)     |
+| dictunformat output file      | Dictunformat    | [dictunformat.md](./dictunformat.md)           |
+| DigitalNK (SQLite3, N-Korean) | DigitalNK       | [digitalnk.md](./digitalnk.md)                 |
+| ABBYY Lingvo DSL (.dsl)       | ABBYYLingvoDSL  | [dsl.md](./dsl.md)                             |
+| EPUB-2 E-Book                 | Epub2           | [epub2.md](./epub2.md)                         |
+| Kobo E-Reader Dictionary      | Kobo            | [kobo.md](./kobo.md)                           |
+| Kobo E-Reader Dictfile (.df)  | Dictfile        | [kobo_dictfile.md](./kobo_dictfile.md)         |
+| Mobipocket (.mobi) E-Book     | Mobi            | [mobi.md](./mobi.md)                           |
+| EDLIN                         | Edlin           | [edlin.md](./edlin.md)                         |
+| FreeDict (.tei)               | FreeDict        | [freedict.md](./freedict.md)                   |
+| Gettext Source (.po)          | GettextPo       | [gettext_po.md](./gettext_po.md)               |
+| HTML Directory                | HtmlDir         | [html_dir.md](./html_dir.md)                   |
+| Glossary Info (.info)         | Info            | [info.md](./info.md)                           |
+| JMDict                        | JMDict          | [jmdict.md](./jmdict.md)                       |
+| JSON (.json)                  | Json            | [json.md](./json.md)                           |
+| Lingoes Source (.ldf)         | LingoesLDF      | [lingoes_ldf.md](./lingoes_ldf.md)             |
+| Octopus MDict (.mdx)          | OctopusMdict    | [octopus_mdict.md](./octopus_mdict.md)         |
+| Sdictionary Binary(dct)       | Sdict           | [sdict.md](./sdict.md)                         |
+| Sdictionary Source (.sdct)    | SdictSource     | [sdict_source.md](./sdict_source.md)           |
+| SQL (.sql)                    | Sql             | [sql.md](./sql.md)                             |
+| StarDict (.ifo)               | Stardict        | [stardict.md](./stardict.md)                   |
+| Tabfile (.txt, .dic)          | Tabfile         | [tabfile.md](./tabfile.md)                     |
+| Wiktionary Dump (.xml)        | WiktionaryDump  | [wiktionary_dump.md](./wiktionary_dump.md)     |
+| Wordset.org JSON directory    | Wordset         | [wordset.md](./wordset.md)                     |
+| XDXF (.xdxf)                  | Xdxf            | [xdxf.md](./xdxf.md)                           |
+| Zim (.zim, for Kiwix)         | Zim             | [zim.md](./zim.md)                             |

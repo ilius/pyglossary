@@ -1,22 +1,20 @@
+## Glossary Info (.info)
 
-## Glossary Info (.info) ##
+### General Information
 
-### General Information ###
-Attribute | Value
---------- | -------
-Name | Info
-snake_case_name | info
-Description | Glossary Info (.info)
-Extensions | `.info`
-Read support | Yes
-Write support | Yes
-Single-file | Yes
-Kind | 📝 text
-Sort-on-write | No (by default)
-Wiki | ―
-Website | ―
-
-
+| Attribute       | Value                 |
+| --------------- | --------------------- |
+| Name            | poEdit                |
+| snake_case_name | info                  |
+| Description     | Glossary Info (.info) |
+| Extensions      | `.info`               |
+| Read support    | Yes                   |
+| Write support   | Yes                   |
+| Single-file     | Yes                   |
+| Kind            | 📝 text                |
+| Sort-on-write   | default_no            |
+| Wiki            | ―                     |
+| Website         | ―                     |
 
 
 
