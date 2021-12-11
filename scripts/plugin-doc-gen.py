@@ -103,11 +103,25 @@ def kindEmoji(kind):
 	}[kind]
 
 
+def renderLink(title, url):
+	if "(" in title or ")" in title:
+		url = f"<{url}>"
+	title = title.replace("|", "\\|")
+	return f"[{title}]({url})"
+
+
+def pypiLink(pypiName):
+	return renderLink(
+		pypiName.replace('==', ' '),
+		f"https://pypi.org/project/{pypiName.replace('==', '/')}",
+	)
+
+
 def makeDependsDoc(cls):
 	if not (cls and getattr(cls, "depends", None)):
 		return "", ""
 	links = ", ".join([
-		f"[{pypiName.replace('==', ' ')}](https://pypi.org/project/{pypiName.replace('==', '/')})"
+		pypiLink(pypiName)
 		for pypiName in cls.depends.values()
 	])
 	cmd = "pip3 install " + " ".join(
@@ -165,7 +179,6 @@ def renderRWOptions(options):
 	)
 
 
-
 userPluginsDirPath = Path(userPluginsDir)
 plugins = [
 	p
@@ -175,11 +188,6 @@ plugins = [
 
 toolsDir = join(rootDir, "plugins-meta", "tools")
 
-def renderLink(title, url):
-	if "(" in title or ")" in title:
-		url = f"<{url}>"
-	title = title.replace("|", "\\|")
-	return f"[{title}]({url})"
 
 for p in plugins:
 	module = p.pluginModule
@@ -256,7 +264,6 @@ for p in plugins:
 		for optName, opt in optionsProp.items()
 	}
 
-
 	readOptions = p.getReadOptions()
 	if readOptions:
 		topTables += "\n\n### Read options\n\n" + renderRWOptions(readOptions)
@@ -311,4 +318,3 @@ indexText = renderTable(
 
 with open(join(rootDir, "doc", "p", f"__index__.md"), mode="w") as _file:
 	_file.write(indexText + "\n")
-
