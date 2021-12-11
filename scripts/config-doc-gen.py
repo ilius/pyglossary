@@ -17,18 +17,10 @@ ui.loadConfig(user=False)
 
 # ui.configDefDict
 
-template = Template("""
-${"## Configuration Parameters ##"}
+template = Template("""${paramsTable}
 
-Name | Command Flags | Type | Default | Comment
----- | ------------- | ---- | ------- | -------
-% for name, opt in ui.configDefDict.items():
-% if not opt.disabled:
-`${name}` | ${cmdFlags[name]} | ${opt.typ} | ${codeValue(ui.config[name])} | ${opt.comment}
-% endif
-% endfor
+${"## Configuration Files"}
 
-${"## Configuration Files ##"}
 The default configuration values are stored in [config.json](../config.json) file in source/installation directory.
 
 The user configuration file - if exists - will override default configuration values.
@@ -39,11 +31,47 @@ The location of this file depends on the operating system:
 - Windows: `C:\\Users\\USERNAME\\AppData\\Roaming\\PyGlossary\\config.json`
 """)
 
+
 def codeValue(x):
 	s = str(x)
 	if s:
 		return "`" + s + "`"
 	return ""
+
+
+def renderCell(value):
+	return str(value).replace("\n", "\\n").replace("\t", "\\t")
+
+
+def renderTable(rows):
+	"""
+		rows[0] must be headers
+	"""
+	rows = [
+		[
+			renderCell(cell) for cell in row
+		]
+		for row in rows
+	]
+	width = [
+		max(len(row[i]) for row in rows)
+		for i in range(len(rows[0]))
+	]
+	rows = [
+		[
+			cell.ljust(width[i], " ")
+			for i, cell in enumerate(row)
+		]
+		for rowI, row in enumerate(rows)
+	]
+	rows.insert(1, [
+		"-" * colWidth
+		for colWidth in width
+	])
+	return "\n".join([
+		"| " + " | ".join(row) + " |"
+		for row in rows
+	])
 
 
 def getCommandFlagsMD(name, opt):
@@ -59,16 +87,24 @@ def getCommandFlagsMD(name, opt):
 	return f"`--{flag}`"
 
 
-cmdFlags = {}
-
-for name, opt in ui.configDefDict.items():
-	cmdFlags[name] = getCommandFlagsMD(name, opt)
+paramsTable = "## Configuration Parameters\n\n" + renderTable(
+	[("Name", "Command Flags", "Type", "Default", "Comment")] + [
+		(
+			f"`{name}`",
+			getCommandFlagsMD(name, opt),
+			opt.typ,
+			codeValue(ui.config[name]),
+			opt.comment,
+		)
+		for name, opt in ui.configDefDict.items()
+		if not opt.disabled
+	],
+)
 
 text = template.render(
 	codeValue=codeValue,
 	ui=ui,
-	cmdFlags=cmdFlags,
+	paramsTable=paramsTable,
 )
 with open(join("doc", "config.md"), mode="w") as _file:
 	_file.write(text)
-
