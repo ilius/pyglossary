@@ -88,9 +88,15 @@ def getCommandFlagsMD(name, opt):
 
 
 paramsTable = "## Configuration Parameters\n\n" + renderTable(
-	[("Name", "Command Flags", "Type", "Default", "Comment")] + [
+	[(
+		"Name",
+		"Command Flags",
+		"Type",
+		"Default",
+		"Comment",
+	)] + [
 		(
-			f"`{name}`",
+			codeValue(name),
 			getCommandFlagsMD(name, opt),
 			opt.typ,
 			codeValue(ui.config[name]),
