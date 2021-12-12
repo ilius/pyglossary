@@ -151,7 +151,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """<idx:entry \
 scriptable="yes"{spellcheck_str}>
-<idx:orth{headword_hide}>{headword}{infl}
+<idx:orth{headword_hide}><b>{headword}</b>{infl}
 </idx:orth>
 <br/>{definition}
 </idx:entry>
