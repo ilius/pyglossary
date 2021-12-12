@@ -163,12 +163,18 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Entries are HTML"
+			},
+			"html_full": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Turn every entry's definition into an HTML document"
 			}
 		},
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
-			"html": true
+			"html": true,
+			"html_full": false
 		}
 	},
 	{
