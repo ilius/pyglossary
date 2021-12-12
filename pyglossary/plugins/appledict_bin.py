@@ -34,6 +34,9 @@ website = (
 )
 optionsProp = {
 	"html": BoolOption(comment="Entries are HTML"),
+	"html_full": BoolOption(
+		comment="Turn every entry's definition into an HTML document",
+	),
 }
 
 
@@ -43,6 +46,7 @@ class Reader(object):
 	}
 
 	_html: bool = True
+	_html_full: bool = False
 
 	def __init__(self, glos):
 		self._glos = glos
@@ -51,6 +55,12 @@ class Reader(object):
 		self._encoding = "utf-8"
 		self._buf = ""
 		self._defiFormat = "m"
+
+		try:
+			from lxml import etree
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install lxml` to install"
+			raise e
 
 	def open(self, filename):
 		self._defiFormat = "h" if self._html else "m"
@@ -118,15 +128,41 @@ class Reader(object):
 			raise e
 		return chunkSize, plus
 
+	def _getDefi(self, entryElem: "Element") -> str:
+		from lxml import etree
+
+		if not self._html:
+			# FIXME: this produces duplicate text for Idioms.dictionary, see #301
+			return "".join([
+				self.decode(etree.tostring(
+					child,
+					encoding="utf-8",
+				))
+				for child in entryElem.iterdescendants()
+			])
+
+
+		defi = self.decode(etree.tostring(
+			entryElem,
+			encoding="utf-8",
+		))
+
+		if self._html_full:
+			defi = (
+				f'<!DOCTYPE html><html><head>'
+				f'<link rel="stylesheet" href="DefaultStyle.css">'
+				f'</head><body>{defi}</body></html>'
+			)
+
+		return defi
+
+
 	def _readEntry(self, pos: int) -> "Tuple[BaseEntry, int]":
 		"""
 			returns (entry, pos)
 		"""
-		try:
-			from lxml import etree
-		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e
+		from lxml import etree
+
 		chunkSize, plus = self.getChunkSize(pos)
 		pos += plus
 		if chunkSize == 0:
@@ -153,20 +189,9 @@ class Reader(object):
 		if not entryElems:
 			return None, pos
 		word = entryElems[0].xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
-		if self._html:
-			defi = self.decode(etree.tostring(
-				entryElems[0],
-				encoding="utf-8",
-			))
-		else:
-			# FIXME: this produces duplicate text for Idioms.dictionary, see #301
-			defi = "".join([
-				self.decode(etree.tostring(
-					child,
-					encoding="utf-8",
-				))
-				for child in entryElems[0].iterdescendants()
-			])
+
+		defi = self._getDefi(entryElems[0])
+
 		pos += chunkSize
 		if self._limit <= 0:
 			raise ValueError(f"self._limit = {self._limit}")
