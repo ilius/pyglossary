@@ -20,8 +20,8 @@
 
 | Name                   | Default  | Type | Comment                                                        |
 | ---------------------- | -------- | ---- | -------------------------------------------------------------- |
-| apply_css              |          | str  | Path to css file                                               |
 | cover_path             |          | str  | Path to cover file                                             |
+| css                    |          | str  | Path to css file                                               |
 | exact                  | `False`  | bool | Exact-match Parameter                                          |
 | file_size_approx       | `271360` | int  | Approximate size of each xhtml file (example: 200kb)           |
 | group_by_prefix_length | `2`      | int  | Prefix length for grouping                                     |

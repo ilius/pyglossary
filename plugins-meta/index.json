@@ -582,7 +582,7 @@
 				"type": "bool",
 				"comment": "Include index page"
 			},
-			"apply_css": {
+			"css": {
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true,
@@ -598,9 +598,9 @@
 		"canRead": false,
 		"canWrite": true,
 		"writeOptions": {
-			"apply_css": "",
 			"compress": true,
 			"cover_path": "",
+			"css": "",
 			"group_by_prefix_length": 2,
 			"include_index_page": false,
 			"keep": false
@@ -685,7 +685,7 @@
 				"comment": "Include index page",
 				"disabled": true
 			},
-			"apply_css": {
+			"css": {
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true,
@@ -722,8 +722,8 @@
 		"canRead": false,
 		"canWrite": true,
 		"writeOptions": {
-			"apply_css": "",
 			"cover_path": "",
+			"css": "",
 			"exact": false,
 			"file_size_approx": 271360,
 			"group_by_prefix_length": 2,
