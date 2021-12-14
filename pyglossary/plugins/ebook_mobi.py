@@ -151,7 +151,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """<idx:entry \
 scriptable="yes"{spellcheck_str}>
-<idx:orth{value_headword}><b>{headword}</b>{infl}
+<idx:orth{value_headword}>{headword_visible}{infl}
 </idx:orth>
 <br/>{definition}
 </idx:entry>
@@ -223,10 +223,17 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 		defi = self.escape_if_needed(defi)
 
+		if hide_word_index:
+			headword_visible = ""
+			value_headword = f' value="{headword}"'
+		else:
+			headword_visible = "\n" + self._glos.wordTitleStr(headword)
+			value_headword = ""
+
 		group_content = self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
 			spellcheck_str=' spell="yes"' if self._spellcheck else "",
-			headword=f"\n{headword}" if not hide_word_index else "",
-			value_headword=f' value="{headword}"' if hide_word_index else "",
+			headword_visible=headword_visible,
+			value_headword=value_headword,
 			definition=defi,
 			infl=infl,
 		)
