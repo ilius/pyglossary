@@ -75,7 +75,7 @@ optionsProp = {
 	),
 	"spellcheck": BoolOption(
 		comment="Enable wildcard search and spell correction during word lookup",
-		# "May be it just enable the kindlegen's spellcheck."
+		# "Maybe it just enables the kindlegen's spellcheck."
 	),
 	"exact": BoolOption(
 		comment="Exact-match Parameter",
@@ -151,7 +151,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """<idx:entry \
 scriptable="yes"{spellcheck_str}>
-<idx:orth{headword_hide}><b>{headword}</b>{infl}
+<idx:orth{value_headword}><b>{headword}</b>{infl}
 </idx:orth>
 <br/>{definition}
 </idx:entry>
@@ -224,16 +224,16 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		defi = self.escape_if_needed(defi)
 
 		group_content = self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
-			spellcheck_str=' spell="yes"' if self._spellcheck else '',
-			headword=f'\n{headword}' if not hide_word_index else '',
-			headword_hide=f' value="{headword}"' if hide_word_index else '',
+			spellcheck_str=' spell="yes"' if self._spellcheck else "",
+			headword=f"\n{headword}" if not hide_word_index else "",
+			value_headword=f' value="{headword}"' if hide_word_index else "",
 			definition=defi,
 			infl=infl,
 		)
 		return group_content
 
 	def getLangCode(self, lang) -> str:
-		return lang.code if isinstance(lang, Lang) else ''
+		return lang.code if isinstance(lang, Lang) else ""
 
 	def get_opf_contents(self, manifest_contents, spine_contents):
 		cover = ""
@@ -313,7 +313,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 		name = self._glos.getInfo("name")
 
-		log.info("Creating .mobi file with kindlegen, using '{kindlegen_path}'")
+		log.info("Creating .mobi file with kindlegen, using {kindlegen_path!r}")
 		opf_path_abs = join(filename, "OEBPS", "content.opf")
 		proc = subprocess.Popen(
 			[kindlegen_path, opf_path_abs, "-o", "content.mobi"],
