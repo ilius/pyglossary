@@ -20,12 +20,12 @@
 
 | Name            | Default | Type | Comment                                       |
 | --------------- | ------- | ---- | --------------------------------------------- |
-| auto_rtl        | `None`  | bool | Auto-detect and mark Right-to-Left text       |
 | discover        | `False` | bool | Find and show unsupported tags                |
-| example_padding | `10`    | int  | Padding for examples (in px)                  |
-| gram_color      | `green` | str  | Grammar color                                 |
-| pron_color      | `gray`  | str  | Pronunciation color                           |
+| auto_rtl        | `None`  | bool | Auto-detect and mark Right-to-Left text       |
 | word_title      | `False` | bool | Add headwords title to begining of definition |
+| pron_color      | `gray`  | str  | Pronunciation color                           |
+| gram_color      | `green` | str  | Grammar color                                 |
+| example_padding | `10`    | int  | Padding for examples (in px)                  |
 
 ### Dependencies for reading
 

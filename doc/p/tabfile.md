@@ -26,10 +26,10 @@
 
 | Name             | Default | Type | Comment                                                         |
 | ---------------- | ------- | ---- | --------------------------------------------------------------- |
-| enable_info      | `True`  | bool | Enable glossary info / metedata                                 |
 | encoding         | `utf-8` | str  | Encoding/charset                                                |
-| file_size_approx | `0`     | int  | Split up by given approximate file size<br />examples: 100m, 1g |
+| enable_info      | `True`  | bool | Enable glossary info / metedata                                 |
 | resources        | `True`  | bool | Enable resources / data files                                   |
+| file_size_approx | `0`     | int  | Split up by given approximate file size<br />examples: 100m, 1g |
 | word_title       | `False` | bool | Add headwords title to begining of definition                   |
 
 

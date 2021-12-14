@@ -20,12 +20,12 @@
 
 | Name                   | Default | Type | Comment                    |
 | ---------------------- | ------- | ---- | -------------------------- |
-| compress               | `True`  | bool | Enable compression         |
-| cover_path             |         | str  | Path to cover file         |
-| css                    |         | str  | Path to css file           |
+| keep                   | `False` | bool | Keep temp files            |
 | group_by_prefix_length | `2`     | int  | Prefix length for grouping |
 | include_index_page     | `False` | bool | Include index page         |
-| keep                   | `False` | bool | Keep temp files            |
+| compress               | `True`  | bool | Enable compression         |
+| css                    |         | str  | Path to css file           |
+| cover_path             |         | str  | Path to cover file         |
 
 
 

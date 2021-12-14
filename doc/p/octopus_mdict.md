@@ -20,10 +20,10 @@
 
 | Name                | Default | Type | Comment                             |
 | ------------------- | ------- | ---- | ----------------------------------- |
-| audio               | `False` | bool | Enable audio objects                |
 | encoding            |         | str  | Encoding/charset                    |
-| same_dir_data_files | `False` | bool | Read data files from same directory |
 | substyle            | `True`  | bool | Enable substyle                     |
+| same_dir_data_files | `False` | bool | Read data files from same directory |
+| audio               | `False` | bool | Enable audio objects                |
 
 
 

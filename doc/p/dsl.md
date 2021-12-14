@@ -20,8 +20,8 @@
 
 | Name            | Default | Type | Comment                                 |
 | --------------- | ------- | ---- | --------------------------------------- |
-| audio           | `False` | bool | Enable audio objects                    |
 | encoding        |         | str  | Encoding/charset                        |
+| audio           | `False` | bool | Enable audio objects                    |
 | only_fix_markup | `False` | bool | Only fix markup, without tag conversion |
 
 

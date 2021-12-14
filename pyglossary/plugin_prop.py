@@ -196,14 +196,29 @@ class PluginProp(object):
 	def getWriteOptions(self):
 		return self.getOptionsFromClass(self.writerClass)
 
+	def getOptionAttrNamesFromClass(self, rwclass):
+		nameList = []
+
+		for cls in rwclass.__bases__ + (rwclass,):
+			for _name in cls.__dict__:
+				if not _name.startswith("_") or _name.startswith("__"):
+					# and _name not in ("_open",)
+					continue
+				nameList.append(_name)
+
+		# rwclass.__dict__ does not include attributes of parent/base class
+		# and dir(rwclass) is sorted by attribute name alphabetically
+		# using rwclass.__bases__ solves the problem
+
+		return nameList
+
 	def getOptionsFromClass(self, rwclass):
 		optionsProp = self.optionsProp
 		options = odict()
-		for attrName in dir(rwclass):
-			if not attrName.startswith("_"):
-				continue
-			if attrName.startswith("__"):
-				continue
+		if rwclass is None:
+			return options
+
+		for attrName in self.getOptionAttrNamesFromClass(rwclass):
 			name = attrName[1:]
 			default = getattr(rwclass, attrName)
 			if name not in optionsProp:
