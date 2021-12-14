@@ -142,12 +142,12 @@
 		"writeOptions": {
 			"clean_html": true,
 			"css": "",
+			"xsl": "",
 			"default_prefs": null,
-			"front_back_matter": "",
-			"indexes": "",
-			"jing": false,
 			"prefs_html": "",
-			"xsl": ""
+			"front_back_matter": "",
+			"jing": false,
+			"indexes": ""
 		}
 	},
 	{
@@ -274,13 +274,13 @@
 		"canWrite": false,
 		"readOptions": {
 			"default_encoding_overwrite": "",
-			"key_rstrip_chars": "",
-			"no_control_sequence_in_defi": false,
-			"part_of_speech_color": "007000",
-			"process_html_in_key": false,
 			"source_encoding_overwrite": "",
+			"target_encoding_overwrite": "",
+			"part_of_speech_color": "007000",
+			"no_control_sequence_in_defi": false,
 			"strict_string_convertion": false,
-			"target_encoding_overwrite": ""
+			"process_html_in_key": false,
+			"key_rstrip_chars": ""
 		}
 	},
 	{
@@ -397,15 +397,15 @@
 		"canRead": true,
 		"canWrite": true,
 		"readOptions": {
-			"delimiter": ",",
-			"encoding": "utf-8"
+			"encoding": "utf-8",
+			"delimiter": ","
 		},
 		"writeOptions": {
-			"add_defi_format": false,
-			"delimiter": ",",
-			"enable_info": true,
 			"encoding": "utf-8",
 			"resources": true,
+			"delimiter": ",",
+			"add_defi_format": false,
+			"enable_info": true,
 			"word_title": false
 		}
 	},
@@ -548,8 +548,8 @@
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
-			"audio": false,
 			"encoding": "",
+			"audio": false,
 			"only_fix_markup": false
 		}
 	},
@@ -598,12 +598,12 @@
 		"canRead": false,
 		"canWrite": true,
 		"writeOptions": {
-			"compress": true,
-			"cover_path": "",
-			"css": "",
+			"keep": false,
 			"group_by_prefix_length": 2,
 			"include_index_page": false,
-			"keep": false
+			"compress": true,
+			"css": "",
+			"cover_path": ""
 		}
 	},
 	{
@@ -722,15 +722,15 @@
 		"canRead": false,
 		"canWrite": true,
 		"writeOptions": {
-			"cover_path": "",
-			"css": "",
-			"exact": false,
-			"file_size_approx": 271360,
-			"group_by_prefix_length": 2,
-			"hide_word_index": false,
 			"keep": false,
+			"group_by_prefix_length": 2,
+			"css": "",
+			"cover_path": "",
 			"kindlegen_path": "",
-			"spellcheck": true
+			"file_size_approx": 271360,
+			"hide_word_index": false,
+			"spellcheck": true,
+			"exact": false
 		}
 	},
 	{
@@ -813,12 +813,12 @@
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
-			"auto_rtl": null,
 			"discover": false,
-			"example_padding": 10,
-			"gram_color": "green",
+			"auto_rtl": null,
+			"word_title": false,
 			"pron_color": "gray",
-			"word_title": false
+			"gram_color": "green",
+			"example_padding": 10
 		}
 	},
 	{
@@ -898,13 +898,13 @@
 		"canRead": false,
 		"canWrite": true,
 		"writeOptions": {
-			"css": "",
-			"dark": true,
 			"encoding": "utf-8",
-			"escape_defi": false,
-			"filename_format": "{n:05d}.html",
-			"max_file_size": 102400,
 			"resources": true,
+			"max_file_size": 102400,
+			"filename_format": "{n:05d}.html",
+			"escape_defi": false,
+			"dark": true,
+			"css": "",
 			"word_title": true
 		}
 	},
@@ -964,8 +964,8 @@
 		"canRead": false,
 		"canWrite": true,
 		"writeOptions": {
-			"enable_info": true,
 			"encoding": "utf-8",
+			"enable_info": true,
 			"resources": true,
 			"word_title": false
 		}
@@ -1044,10 +1044,10 @@
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
-			"audio": false,
 			"encoding": "",
+			"substyle": true,
 			"same_dir_data_files": false,
-			"substyle": true
+			"audio": false
 		}
 	},
 	{
@@ -1145,9 +1145,9 @@
 		"canRead": false,
 		"canWrite": true,
 		"writeOptions": {
-			"add_extra_info": true,
 			"encoding": "utf-8",
 			"info_keys": null,
+			"add_extra_info": true,
 			"newline": "<br>",
 			"transaction": false
 		}
@@ -1219,16 +1219,16 @@
 		"canRead": true,
 		"canWrite": true,
 		"readOptions": {
-			"unicode_errors": "strict",
-			"xdxf_to_html": true
+			"xdxf_to_html": true,
+			"unicode_errors": "strict"
 		},
 		"writeOptions": {
-			"audio_goldendict": false,
-			"audio_icon": true,
 			"dictzip": true,
-			"merge_syns": false,
 			"sametypesequence": "",
-			"stardict_client": false
+			"stardict_client": false,
+			"merge_syns": false,
+			"audio_goldendict": false,
+			"audio_icon": true
 		}
 	},
 	{
@@ -1275,10 +1275,10 @@
 			"encoding": "utf-8"
 		},
 		"writeOptions": {
-			"enable_info": true,
 			"encoding": "utf-8",
-			"file_size_approx": 0,
+			"enable_info": true,
 			"resources": true,
+			"file_size_approx": 0,
 			"word_title": false
 		}
 	},
