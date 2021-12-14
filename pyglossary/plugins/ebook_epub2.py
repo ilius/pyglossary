@@ -50,7 +50,7 @@ optionsProp = {
 	"include_index_page": BoolOption(
 		comment="Include index page",
 	),
-	"apply_css": StrOption(
+	"css": StrOption(
 		comment="Path to css file",
 	),
 	"cover_path": StrOption(

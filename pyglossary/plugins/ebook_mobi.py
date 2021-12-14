@@ -59,7 +59,7 @@ optionsProp = {
 		disabled=True,
 		comment="Include index page",
 	),
-	"apply_css": StrOption(
+	"css": StrOption(
 		# disabled=True,
 		comment="Path to css file",
 	),

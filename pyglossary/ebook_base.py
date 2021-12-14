@@ -79,7 +79,7 @@ class EbookWriter(object):
 	_group_by_prefix_length: int = 2
 	_include_index_page: bool = False
 	_compress: bool = True
-	_apply_css: str = ""  # path to css file, or ""
+	_css: str = ""  # path to css file, or ""
 	_cover_path: str = ""  # path to cover file, or ""
 
 	CSS_CONTENTS = ""
@@ -387,15 +387,15 @@ class EbookWriter(object):
 		filename = self._filename
 		# self._group_by_prefix_length
 		# self._include_index_page
-		apply_css = self._apply_css
+		css = self._css
 		cover_path = self._cover_path
 
 		with indir(self._tmpDir):
 			if cover_path:
 				cover_path = os.path.abspath(cover_path)
 
-			if apply_css:
-				apply_css = os.path.abspath(apply_css)
+			if css:
+				css = os.path.abspath(css)
 
 			os.makedirs("META-INF")
 			os.makedirs("OEBPS")
@@ -411,8 +411,8 @@ class EbookWriter(object):
 				except Exception:
 					log.exception("")
 
-			if apply_css:
-				self.write_css(apply_css)
+			if css:
+				self.write_css(css)
 
 			yield from self.write_groups()
 			group_labels = self._group_labels
