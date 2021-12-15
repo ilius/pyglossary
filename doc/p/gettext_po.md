@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                         |
 | --------------- | ------------------------------------------------------------- |
-| Name            | poEdit                                                        |
+| Name            | GettextPo                                                     |
 | snake_case_name | gettext_po                                                    |
 | Description     | Gettext Source (.po)                                          |
 | Extensions      | `.po`                                                         |

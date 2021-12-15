@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                                         |
 | --------------- | --------------------------------------------------------------------------------------------- |
-| Name            | Dictionary Development Kit                                                                    |
+| Name            | AppleDict                                                                                     |
 | snake_case_name | appledict                                                                                     |
 | Description     | AppleDict Source                                                                              |
 | Extensions      | `.apple`                                                                                      |

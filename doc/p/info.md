@@ -4,7 +4,7 @@
 
 | Attribute       | Value                 |
 | --------------- | --------------------- |
-| Name            | poEdit                |
+| Name            | Info                  |
 | snake_case_name | info                  |
 | Description     | Glossary Info (.info) |
 | Extensions      | `.info`               |

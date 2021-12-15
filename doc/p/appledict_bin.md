@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                                         |
 | --------------- | --------------------------------------------------------------------------------------------- |
-| Name            | Apple Dictionary                                                                              |
+| Name            | AppleDictBin                                                                                  |
 | snake_case_name | appledict_bin                                                                                 |
 | Description     | AppleDict Binary                                                                              |
 | Extensions      | `.dictionary`, `.data`                                                                        |

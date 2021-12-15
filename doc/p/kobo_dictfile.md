@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                       |
 | --------------- | --------------------------------------------------------------------------- |
-| Name            | dictgen                                                                     |
+| Name            | Dictfile                                                                    |
 | snake_case_name | kobo_dictfile                                                               |
 | Description     | Kobo E-Reader Dictfile (.df)                                                |
 | Extensions      | `.df`                                                                       |

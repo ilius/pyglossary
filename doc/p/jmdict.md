@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                            |
 | --------------- | ---------------------------------------------------------------- |
-| Name            | poEdit                                                           |
+| Name            | JMDict                                                           |
 | snake_case_name | jmdict                                                           |
 | Description     | JMDict                                                           |
 | Extensions      |                                                                  |

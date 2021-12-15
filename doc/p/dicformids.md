@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                    |
 | --------------- | ------------------------------------------------------------------------ |
-| Name            | DictionaryForMIDs                                                        |
+| Name            | Dicformids                                                               |
 | snake_case_name | dicformids                                                               |
 | Description     | DictionaryForMIDs                                                        |
 | Extensions      | `.mids`                                                                  |

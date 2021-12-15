@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                    |
 | --------------- | ---------------------------------------- |
-| Name            | PTkSdict                                 |
+| Name            | Sql                                      |
 | snake_case_name | sql                                      |
 | Description     | SQL (.sql)                               |
 | Extensions      | `.sql`                                   |

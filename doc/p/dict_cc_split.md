@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                                            |
 | --------------- | ------------------------------------------------------------------------------------------------ |
-| Name            | dict.cc dictionary                                                                               |
+| Name            | Dictcc_split                                                                                     |
 | snake_case_name | dict_cc_split                                                                                    |
 | Description     | Dict.cc (SQLite3) - Split                                                                        |
 | Extensions      |                                                                                                  |

@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                          |
 | --------------- | ------------------------------------------------------------------------------ |
-| Name            | Microsoft Excel                                                                |
+| Name            | Csv                                                                            |
 | snake_case_name | csv                                                                            |
 | Description     | CSV (.csv)                                                                     |
 | Extensions      | `.csv`                                                                         |

@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                    |
 | --------------- | -------------------------------------------------------- |
-| Name            | Dic.rs                                                   |
+| Name            | DigitalNK                                                |
 | snake_case_name | digitalnk                                                |
 | Description     | DigitalNK (SQLite3, N-Korean)                            |
 | Extensions      |                                                          |

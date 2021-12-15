@@ -4,7 +4,7 @@
 
 | Attribute       | Value          |
 | --------------- | -------------- |
-| Name            | poEdit         |
+| Name            | HtmlDir        |
 | snake_case_name | html_dir       |
 | Description     | HTML Directory |
 | Extensions      | `.hdir`        |

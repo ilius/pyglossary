@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                         |
 | --------------- | --------------------------------------------- |
-| Name            | PTkSdict                                      |
+| Name            | SdictSource                                   |
 | snake_case_name | sdict_source                                  |
 | Description     | Sdictionary Source (.sdct)                    |
 | Extensions      | `.sdct`                                       |

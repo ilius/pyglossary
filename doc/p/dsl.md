@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                      |
 | --------------- | ---------------------------------------------------------- |
-| Name            | ABBYY Lingvo                                               |
+| Name            | ABBYYLingvoDSL                                             |
 | snake_case_name | dsl                                                        |
 | Description     | ABBYY Lingvo DSL (.dsl)                                    |
 | Extensions      | `.dsl`                                                     |

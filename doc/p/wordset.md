@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                        |
 | --------------- | ---------------------------------------------------------------------------- |
-| Name            | Fora Dictionary Pro                                                          |
+| Name            | Wordset                                                                      |
 | snake_case_name | wordset                                                                      |
 | Description     | Wordset.org JSON directory                                                   |
 | Extensions      |                                                                              |

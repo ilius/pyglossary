@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                |
 | --------------- | ---------------------------------------------------- |
-| Name            | Fora Dictionary Pro                                  |
+| Name            | Stardict                                             |
 | snake_case_name | stardict                                             |
 | Description     | StarDict (.ifo)                                      |
 | Extensions      | `.ifo`                                               |

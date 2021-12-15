@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                              |
 | --------------- | -------------------------------------------------- |
-| Name            | dictfmt                                            |
+| Name            | DictOrgSource                                      |
 | snake_case_name | dict_org_source                                    |
 | Description     | DICT.org dictfmt source file                       |
 | Extensions      | `.dtxt`                                            |

@@ -2,19 +2,19 @@
 
 ### General Information
 
-| Attribute       | Value                    |
-| --------------- | ------------------------ |
-| Name            | GoldenDict Mobile (Full) |
-| snake_case_name | babylon_bgl              |
-| Description     | Babylon (.BGL)           |
-| Extensions      | `.bgl`                   |
-| Read support    | Yes                      |
-| Write support   | No                       |
-| Single-file     | Yes                      |
-| Kind            | 🔢 binary                 |
-| Sort-on-write   | default_no               |
-| Wiki            | ―                        |
-| Website         | ―                        |
+| Attribute       | Value          |
+| --------------- | -------------- |
+| Name            | BabylonBgl     |
+| snake_case_name | babylon_bgl    |
+| Description     | Babylon (.BGL) |
+| Extensions      | `.bgl`         |
+| Read support    | Yes            |
+| Write support   | No             |
+| Single-file     | Yes            |
+| Kind            | 🔢 binary       |
+| Sort-on-write   | default_no     |
+| Wiki            | ―              |
+| Website         | ―              |
 
 ### Read options
 

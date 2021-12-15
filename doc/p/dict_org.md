@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                        |
 | --------------- | ---------------------------------------------------------------------------- |
-| Name            | Ding                                                                         |
+| Name            | DictOrg                                                                      |
 | snake_case_name | dict_org                                                                     |
 | Description     | DICT.org file format (.index)                                                |
 | Extensions      | `.index`                                                                     |

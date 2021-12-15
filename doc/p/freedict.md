@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                              |
 | --------------- | ---------------------------------------------------------------------------------- |
-| Name            | Book Reader                                                                        |
+| Name            | FreeDict                                                                           |
 | snake_case_name | freedict                                                                           |
 | Description     | FreeDict (.tei)                                                                    |
 | Extensions      | `.tei`                                                                             |

@@ -233,13 +233,13 @@ for p in plugins:
 	except Exception as e:
 		print(f"\nFile: {toolsFile}")
 		raise e
-	for name, tool in tools_toml.items():
-		tool.update({"name": name})
+	for toolName, tool in tools_toml.items():
+		tool.update({"name": toolName})
 	tools = tools_toml.values()
 
 	generalInfoTable = "### General Information\n\n" + renderTable([
 		("Attribute", "Value"),
-		("Name", name),
+		("Name", p.name),
 		("snake_case_name", p.lname),
 		("Description", p.description),
 		("Extensions", ", ".join([

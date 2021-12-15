@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                    |
 | --------------- | -------------------------------------------------------- |
-| Name            | Aard2 for Web                                            |
+| Name            | Aard2Slob                                                |
 | snake_case_name | aard2_slob                                               |
 | Description     | Aard 2 (.slob)                                           |
 | Extensions      | `.slob`                                                  |

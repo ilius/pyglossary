@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                                                      |
 | --------------- | ---------------------------------------------------------------------------------------------------------- |
-| Name            | dictunformat                                                                                               |
+| Name            | Dictunformat                                                                                               |
 | snake_case_name | dictunformat                                                                                               |
 | Description     | dictunformat output file                                                                                   |
 | Extensions      | `.dictunformat`                                                                                            |

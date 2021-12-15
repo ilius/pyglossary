@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                       |
 | --------------- | ----------------------------------------------------------- |
-| Name            | GoldenDict Mobile (Full)                                    |
+| Name            | CC-CEDICT                                                   |
 | snake_case_name | cc_cedict                                                   |
 | Description     | CC-CEDICT                                                   |
 | Extensions      | `.u8`                                                       |

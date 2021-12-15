@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                 |
 | --------------- | --------------------------------------------------------------------- |
-| Name            | MDict                                                                 |
+| Name            | OctopusMdict                                                          |
 | snake_case_name | octopus_mdict                                                         |
 | Description     | Octopus MDict (.mdx)                                                  |
 | Extensions      | `.mdx`                                                                |

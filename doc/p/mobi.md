@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                  |
 | --------------- | ------------------------------------------------------ |
-| Name            | Book Reader                                            |
+| Name            | Mobi                                                   |
 | snake_case_name | mobi                                                   |
 | Description     | Mobipocket (.mobi) E-Book                              |
 | Extensions      | `.mobi`                                                |

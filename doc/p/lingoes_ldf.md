@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                               |
 | --------------- | ------------------------------------------------------------------- |
-| Name            | Lingoes Dictionary Creator                                          |
+| Name            | LingoesLDF                                                          |
 | snake_case_name | lingoes_ldf                                                         |
 | Description     | Lingoes Source (.ldf)                                               |
 | Extensions      | `.ldf`                                                              |

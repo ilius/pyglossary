@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                                                                  |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Name            | ABC Medical Notes 2020                                                                                                 |
+| Name            | ABCMedicalNotes                                                                                                        |
 | snake_case_name | abc_medical_notes                                                                                                      |
 | Description     | ABC Medical Notes (SQLite3)                                                                                            |
 | Extensions      |                                                                                                                        |

@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                      |
 | --------------- | ---------------------------------------------------------- |
-| Name            | Kobo eReader                                               |
+| Name            | Kobo                                                       |
 | snake_case_name | kobo                                                       |
 | Description     | Kobo E-Reader Dictionary                                   |
 | Extensions      | `.kobo`                                                    |

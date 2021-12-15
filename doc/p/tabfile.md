@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                      |
 | --------------- | -------------------------------------------------------------------------- |
-| Name            | Fora Dictionary Pro                                                        |
+| Name            | Tabfile                                                                    |
 | snake_case_name | tabfile                                                                    |
 | Description     | Tabfile (.txt, .dic)                                                       |
 | Extensions      | `.txt`, `.tab`, `.tsv`                                                     |

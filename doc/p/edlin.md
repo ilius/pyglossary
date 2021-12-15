@@ -4,7 +4,7 @@
 
 | Attribute       | Value       |
 | --------------- | ----------- |
-| Name            | Book Reader |
+| Name            | Edlin       |
 | snake_case_name | edlin       |
 | Description     | EDLIN       |
 | Extensions      | `.edlin`    |

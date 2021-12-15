@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                  |
 | --------------- | ---------------------------------------------------------------------- |
-| Name            | Kiwix for Android                                                      |
+| Name            | Zim                                                                    |
 | snake_case_name | zim                                                                    |
 | Description     | Zim (.zim, for Kiwix)                                                  |
 | Extensions      | `.zim`                                                                 |

@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                          |
 | --------------- | -------------------------------------------------------------- |
-| Name            | GoldenDict Mobile (Full)                                       |
+| Name            | cc-kedict                                                      |
 | snake_case_name | cc_kedict                                                      |
 | Description     | cc-kedict                                                      |
 | Extensions      |                                                                |

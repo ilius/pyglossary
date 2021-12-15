@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                             |
 | --------------- | ------------------------------------------------- |
-| Name            | poEdit                                            |
+| Name            | Json                                              |
 | snake_case_name | json                                              |
 | Description     | JSON (.json)                                      |
 | Extensions      | `.json`                                           |

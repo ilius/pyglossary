@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                         |
 | --------------- | --------------------------------------------- |
-| Name            | Sdictionary for Symbian                       |
+| Name            | Sdict                                         |
 | snake_case_name | sdict                                         |
 | Description     | Sdictionary Binary(dct)                       |
 | Extensions      | `.dct`                                        |

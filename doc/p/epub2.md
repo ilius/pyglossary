@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                      |
 | --------------- | ------------------------------------------ |
-| Name            | Aldiko                                     |
+| Name            | Epub2                                      |
 | snake_case_name | epub2                                      |
 | Description     | EPUB-2 E-Book                              |
 | Extensions      | `.epub`                                    |

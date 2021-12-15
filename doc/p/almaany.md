@@ -4,7 +4,7 @@
 
 | Attribute       | Value                                                                                                         |
 | --------------- | ------------------------------------------------------------------------------------------------------------- |
-| Name            | Almaany.com Arabic Dictionary                                                                                 |
+| Name            | Almaany                                                                                                       |
 | snake_case_name | almaany                                                                                                       |
 | Description     | Almaany.com (SQLite3)                                                                                         |
 | Extensions      |                                                                                                               |
