@@ -525,12 +525,15 @@ class Glossary(GlossaryType):
 		return self._info.items()
 
 	def getInfo(self, key: str) -> str:
-		key = str(key)  # FIXME: required?
+		if not isinstance(key, str):
+			raise TypeError(f"invalid key={key!r}, must be str")
 		key = self.infoKeysAliasDict.get(key.lower(), key)
-		return self._info.get(key, "")  # "" or None as default? FIXME
+		return self._info.get(key, "")
 
 	def setInfo(self, key: str, value: str) -> None:
-		#  FIXME
+		if not isinstance(key, str):
+			raise TypeError(f"invalid key={key!r}, must be str")
+
 		origKey = key
 		key = fixUtf8(key)
 		value = fixUtf8(value)
