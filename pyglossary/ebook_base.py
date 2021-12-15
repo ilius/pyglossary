@@ -341,7 +341,7 @@ class EbookWriter(object):
 			sourceLang=self._glos.sourceLangName,
 			targetLang=self._glos.targetLangName,
 			title=self._glos.getInfo("name"),
-			creator=self._glos.getAuthor(),
+			creator=self._glos.author,
 			copyright=self._glos.getInfo("copyright"),
 			creationDate=creationDate,
 			cover=cover,

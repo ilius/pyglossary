@@ -30,7 +30,8 @@ class GlossaryType(object):
 	def getExtraInfos(self, excludeKeys: "List[str]") -> "OrderedDict":
 		raise NotImplementedError
 
-	def getAuthor(self) -> str:
+	@property
+	def author(self) -> str:
 		raise NotImplementedError
 
 	@property

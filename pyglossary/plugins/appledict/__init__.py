@@ -350,7 +350,7 @@ class Writer(object):
 					CFBundleDisplayName=glos.getInfo("name"),
 					CFBundleName=fileNameBase,
 					DCSDictionaryCopyright=copyright,
-					DCSDictionaryManufacturerName=glos.getAuthor(),
+					DCSDictionaryManufacturerName=glos.author,
 					DCSDictionaryXSL=basename(xsl) if xsl else "",
 					DCSDictionaryDefaultPrefs=format_default_prefs(default_prefs),
 					DCSDictionaryPrefsHTML=basename(prefs_html) if prefs_html else "",

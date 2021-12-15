@@ -565,7 +565,8 @@ class Glossary(GlossaryType):
 
 		return extra
 
-	def getAuthor(self) -> str:
+	@property
+	def author(self) -> str:
 		for key in ("author", "publisher"):
 			value = self._info.get(key, "")
 			if value:

@@ -98,7 +98,7 @@ class Writer(object):
 		return self._glos.getInfo(key).replace("\n", "<br>")
 
 	def getAuthor(self):
-		return self._glos.getAuthor().replace("\n", "<br>")
+		return self._glos.author.replace("\n", "<br>")
 
 	def finish(self):
 		self._filename = None

@@ -88,7 +88,7 @@ class Writer(object):
 		# here read info from Glossaey object
 		name = glos.getInfo("name")
 		desc = glos.getInfo("description")
-		author = glos.getAuthor()
+		author = glos.author
 		copyright = glos.getInfo("copyright")
 		# if an info key doesn't exist, getInfo returns empty string
 		# now write info to the output file (depending on your output format)
