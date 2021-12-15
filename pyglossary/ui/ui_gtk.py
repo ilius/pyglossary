@@ -1190,11 +1190,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		readOptions = self.convertInputFormatCombo.optionsValues
 		writeOptions = self.convertOutputFormatCombo.optionsValues
 		try:
-			# if inFormat=="Omnidic":
-			# 	dicIndex = self.xml.get_widget("spinbutton_omnidic_i")\
-			# 		.get_value_as_int()
-			# 	ex = self.glos.readOmnidic(inPath, dicIndex=dicIndex)
-			# else:
 			log.debug(f"readOptions: {readOptions}")
 			log.debug(f"writeOptions: {writeOptions}")
 			finalOutputFile = self.glos.convert(
