@@ -111,6 +111,7 @@ def base_ui_run(
 	readOptions: "Optional[Dict]" = None,
 	writeOptions: "Optional[Dict]" = None,
 	convertOptions: "Optional[Dict]" = None,
+	glossarySetAttrs: "Optional[Dict]" = None,
 ):
 	from pyglossary.glossary import Glossary
 	if reverse:
@@ -120,6 +121,9 @@ def base_ui_run(
 	ui.loadConfig(**configOptions)
 	glos = Glossary(ui=ui)
 	glos.config = ui.config
+	if glossarySetAttrs:
+		for attr, value in glossarySetAttrs.items():
+			setattr(glos, attr, value)
 	glos.convert(
 		inputFilename=inputFilename,
 		outputFilename=outputFilename,
@@ -328,6 +332,29 @@ def main():
 	# _______________________________
 
 	parser.add_argument(
+		"--source-lang",
+		action="store",
+		dest="sourceLangName",
+		default=None,
+		help=(
+			"source/query language"
+			" (may be overridden by input glossary)"
+		),
+	)
+	parser.add_argument(
+		"--target-lang",
+		action="store",
+		dest="targetLangName",
+		default=None,
+		help=(
+			"target/definition language"
+			" (may be overridden by input glossary)"
+		)
+	)
+
+	# _______________________________
+
+	parser.add_argument(
 		"--reverse",
 		dest="reverse",
 		action="store_true",
@@ -459,6 +486,11 @@ def main():
 		"sortCacheSize",
 		# "sortKey",  # TODO
 	)
+	glossarySetAttrsNames = (
+		"sourceLangName",
+		"targetLangName",
+		# "author",
+	)
 
 	config = {}
 	for key, option in UIBase.configDefDict.items():
@@ -481,6 +513,12 @@ def main():
 
 	if convertOptions.get("sort", False):
 		convertOptions["defaultSortKey"] = Entry.defaultSortKey
+
+	glossarySetAttrs = {}
+	for key in glossarySetAttrsNames:
+		value = getattr(args, key, None)
+		if value is not None:
+			glossarySetAttrs[key] = value
 
 	if args.inputFilename and readOptions:
 		inputArgs = Glossary.detectInputFormat(
@@ -536,6 +574,8 @@ def main():
 		log.debug(f"config = {config}")
 	if convertOptions:
 		log.debug(f"convertOptions = {convertOptions}")
+	if glossarySetAttrs:
+		log.debug(f"glossarySetAttrs = {glossarySetAttrs}")
 
 	runKeywordArgs = dict(
 		inputFilename=args.inputFilename,
@@ -547,6 +587,7 @@ def main():
 		readOptions=readOptions,
 		writeOptions=writeOptions,
 		convertOptions=convertOptions,
+		glossarySetAttrs=glossarySetAttrs,
 	)
 
 	if ui_type == "none":

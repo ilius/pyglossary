@@ -1113,7 +1113,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		readOptions: "Optional[Dict]" = None,
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
+		glossarySetAttrs: "Optional[Dict]" = None,
 	):
+		if glossarySetAttrs is None:
+			glossarySetAttrs = {}
+
 		self.loadConfig(**configOptions)
 
 		if inputFilename:
@@ -1137,6 +1141,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self._convertOptions = convertOptions
 		if convertOptions:
 			log.info(f"Using convertOptions={convertOptions}")
+
+		self._glossarySetAttrs = glossarySetAttrs
 
 		gtk.Dialog.present(self)
 		gtk.main()
@@ -1189,6 +1195,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.progressTitle = "Converting"
 		readOptions = self.convertInputFormatCombo.optionsValues
 		writeOptions = self.convertOutputFormatCombo.optionsValues
+
+		for attr, value in self._glossarySetAttrs.items():
+			setattr(self.glos, attr, value)
+
 		try:
 			log.debug(f"readOptions: {readOptions}")
 			log.debug(f"writeOptions: {writeOptions}")

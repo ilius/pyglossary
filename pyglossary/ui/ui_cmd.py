@@ -266,6 +266,7 @@ class UI(UIBase):
 		readOptions: "Optional[Dict]" = None,
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
+		glossarySetAttrs: "Optional[Dict]" = None,
 	):
 		if configOptions is None:
 			configOptions = {}
@@ -275,6 +276,8 @@ class UI(UIBase):
 			writeOptions = {}
 		if convertOptions is None:
 			convertOptions = {}
+		if glossarySetAttrs is None:
+			glossarySetAttrs = {}
 
 		self.loadConfig(**configOptions)
 
@@ -307,6 +310,10 @@ class UI(UIBase):
 
 		glos = self.glos = Glossary(ui=self)
 		self.glos.config = self.config
+
+		for attr, value in glossarySetAttrs.items():
+			setattr(glos, attr, value)
+
 		if reverse:
 			import signal
 			signal.signal(signal.SIGINT, self.onSigInt)  # good place? FIXME

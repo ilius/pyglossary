@@ -1468,6 +1468,9 @@ class UI(tix.Frame, UIBase):
 			return
 		outFormat = pluginByDesc[outFormatDesc].name
 
+		for attr, value in self._glossarySetAttrs.items():
+			setattr(self.glos, attr, value)
+
 		finalOutputFile = self.glos.convert(
 			inPath,
 			inputFormat=inFormat,
@@ -1494,7 +1497,11 @@ class UI(tix.Frame, UIBase):
 		readOptions: "Optional[Dict]" = None,
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
+		glossarySetAttrs: "Optional[Dict]" = None,
 	):
+		if glossarySetAttrs is None:
+			glossarySetAttrs = {}
+
 		self.loadConfig(**configOptions)
 
 		if inputFilename:
@@ -1532,6 +1539,8 @@ class UI(tix.Frame, UIBase):
 		self._convertOptions = convertOptions
 		if convertOptions:
 			log.info(f"Using convertOptions={convertOptions}")
+
+		self._glossarySetAttrs = glossarySetAttrs
 
 		# inputFilename and readOptions are for DB Editor
 		# which is not implemented

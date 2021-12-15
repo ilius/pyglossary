@@ -50,6 +50,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
     ${CMD} <u>INPUT_FILE</u> <u>OUTPUT_FILE</u> [-v<u>N</u>] [--read-format=<u>FORMAT</u>] [--write-format=<u>FORMAT</u>]
         [--sort|--no-sort] [--direct|--indirect] [--no-alts] [--sort-cache-size=<u>2000</u>] [--utf8-check|--no-utf8-check]
         [--lower|--no-lower] [--read-options=<u>READ_OPTIONS</u>] [--write-options=<u>WRITE_OPTIONS</u>]
+        [--source-lang=<u>LANGUAGE</u>] [--target-lang=<u>LANGUAGE</u>]
 
 
 Command line arguments and options (and arguments for options) is parsed with GNU getopt method

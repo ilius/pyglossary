@@ -818,6 +818,7 @@ class UI(ui_cmd.UI):
 			readOptions=self._readOptions,
 			writeOptions=self._writeOptions,
 			convertOptions=self._convertOptions,
+			glossarySetAttrs=self._glossarySetAttrs,
 		)
 
 	def checkInputFormat(self, forceAsk: bool = False):
@@ -930,6 +931,7 @@ class UI(ui_cmd.UI):
 		readOptions: "Optional[Dict]" = None,
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
+		glossarySetAttrs: "Optional[Dict]" = None,
 	):
 		if configOptions is None:
 			configOptions = {}
@@ -939,6 +941,8 @@ class UI(ui_cmd.UI):
 			writeOptions = {}
 		if convertOptions is None:
 			convertOptions = {}
+		if glossarySetAttrs is None:
+			glossarySetAttrs = {}
 
 		self._inputFilename = inputFilename
 		self._outputFilename = outputFilename
@@ -948,6 +952,7 @@ class UI(ui_cmd.UI):
 		self._readOptions = readOptions
 		self._writeOptions = writeOptions
 		self._convertOptions = convertOptions
+		self._glossarySetAttrs = glossarySetAttrs
 
 		del inputFilename, outputFilename, inputFormat, outputFormat
 		del configOptions, readOptions, writeOptions, convertOptions
