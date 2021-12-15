@@ -55,60 +55,58 @@ class UIBase(object):
 	configDefDict = OrderedDict([
 		("log_time", BoolOption(
 			cmd=True,
-			comment="show date and time in logs",
-			falseComment="do not show date and time in logs",
+			comment="Show date and time in logs",
+			falseComment="Do not show date and time in logs",
 		)),
 		("cleanup", BoolOption(
 			cmd=True,
-			comment="cleanup cache or temporary files after conversion",
-			falseComment="do not cleanup cache or temporary files after conversion",
+			comment="Cleanup cache or temporary files after conversion",
+			falseComment="Do not cleanup cache or temporary files after conversion",
 		)),
 
 		("lower", BoolOption(
 			cmd=True,
-			comment="lowercase words before writing",
-			falseComment="do not lowercase words before writing",
+			comment="Lowercase words before writing",
+			falseComment="Do not lowercase words before writing",
 		)),
 		("utf8_check", BoolOption(
 			cmd=True,
-			comment="ensure entries contain valid UTF-8 strings",
-			falseComment="do not ensure entries contain valid UTF-8 strings",
+			comment="Ensure entries contain valid UTF-8 strings",
+			falseComment="Do not ensure entries contain valid UTF-8 strings",
 		)),
 		("enable_alts", BoolOption(
 			cmd=True,
 			cmdFlag="alts",
-			comment="",
-			falseComment="disable alternates",
+			comment="Enable alternates",
+			falseComment="Disable alternates",
 		)),
+		# FIXME: replace with "resources"
+		# 	comment="Use resources (images, audio, etc)"
 		("skip_resources", BoolOption(
 			cmd=True,
-			comment="skip resources (images, audio, etc)",
-			falseComment="",
+			comment="Skip resources (images, audio, etc)",
 		)),
 
 		("rtl", BoolOption(
 			cmd=True,
-			comment="mark all definitions as Right-To-Left (definitions must be HTML)",
-			falseComment="",
+			comment="Mark all definitions as Right-To-Left (definitions must be HTML)",
 		)),
 		("remove_html", StrOption(
 			cmd=True,
-			comment="remove given html tags (comma-separated) from definitions",
+			comment="Remove given html tags (comma-separated) from definitions",
 		)),
 		("remove_html_all", BoolOption(
 			cmd=True,
-			comment="remove all html tags from definitions",
-			falseComment="",
+			comment="Remove all html tags from definitions",
 		)),
 		("normalize_html", BoolOption(
 			cmd=True,
-			comment="lowercase and normalize html tags in definitions",
+			comment="Lowercase and normalize html tags in definitions",
 		)),
 		("save_info_json", BoolOption(
 			cmd=True,
 			cmdFlag="info",
-			comment="save glossary info as json file with .info extension",
-			falseComment="",
+			comment="Save glossary info as json file with .info extension",
 		)),
 
 		("ui_autoSetFormat", BoolOption(cmd=False)),

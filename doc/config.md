@@ -2,17 +2,17 @@
 
 | Name                  | Command Flags                        | Type  | Default   | Comment                                                          |
 | --------------------- | ------------------------------------ | ----- | --------- | ---------------------------------------------------------------- |
-| `log_time`            | `--log-time`<br/>`--no-log-time`     | bool  | `False`   | show date and time in logs                                       |
-| `cleanup`             | `--cleanup`<br/>`--no-cleanup`       | bool  | `True`    | cleanup cache or temporary files after conversion                |
-| `lower`               | `--lower`<br/>`--no-lower`           | bool  | `False`   | lowercase words before writing                                   |
-| `utf8_check`          | `--utf8-check`<br/>`--no-utf8-check` | bool  | `True`    | ensure entries contain valid UTF-8 strings                       |
-| `enable_alts`         | `--alts`<br/>`--no-alts`             | bool  | `True`    |                                                                  |
-| `skip_resources`      | `--skip-resources`                   | bool  | `False`   | skip resources (images, audio, etc)                              |
-| `rtl`                 | `--rtl`                              | bool  | `False`   | mark all definitions as Right-To-Left (definitions must be HTML) |
-| `remove_html`         | `--remove-html`                      | str   |           | remove given html tags (comma-separated) from definitions        |
-| `remove_html_all`     | `--remove-html-all`                  | bool  | `False`   | remove all html tags from definitions                            |
-| `normalize_html`      | `--normalize-html`                   | bool  | `False`   | lowercase and normalize html tags in definitions                 |
-| `save_info_json`      | `--info`                             | bool  | `False`   | save glossary info as json file with .info extension             |
+| `log_time`            | `--log-time`<br/>`--no-log-time`     | bool  | `False`   | Show date and time in logs                                       |
+| `cleanup`             | `--cleanup`<br/>`--no-cleanup`       | bool  | `True`    | Cleanup cache or temporary files after conversion                |
+| `lower`               | `--lower`<br/>`--no-lower`           | bool  | `False`   | Lowercase words before writing                                   |
+| `utf8_check`          | `--utf8-check`<br/>`--no-utf8-check` | bool  | `True`    | Ensure entries contain valid UTF-8 strings                       |
+| `enable_alts`         | `--alts`<br/>`--no-alts`             | bool  | `True`    | Enable alternates                                                |
+| `skip_resources`      | `--skip-resources`                   | bool  | `False`   | Skip resources (images, audio, etc)                              |
+| `rtl`                 | `--rtl`                              | bool  | `False`   | Mark all definitions as Right-To-Left (definitions must be HTML) |
+| `remove_html`         | `--remove-html`                      | str   |           | Remove given html tags (comma-separated) from definitions        |
+| `remove_html_all`     | `--remove-html-all`                  | bool  | `False`   | Remove all html tags from definitions                            |
+| `normalize_html`      | `--normalize-html`                   | bool  | `False`   | Lowercase and normalize html tags in definitions                 |
+| `save_info_json`      | `--info`                             | bool  | `False`   | Save glossary info as json file with .info extension             |
 | `ui_autoSetFormat`    |                                      | bool  | `True`    |                                                                  |
 | `reverse_matchWord`   |                                      | bool  | `True`    |                                                                  |
 | `reverse_showRel`     |                                      | str   | `Percent` |                                                                  |
