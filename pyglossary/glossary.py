@@ -527,22 +527,19 @@ class Glossary(GlossaryType):
 	def getInfo(self, key: str) -> str:
 		if not isinstance(key, str):
 			raise TypeError(f"invalid key={key!r}, must be str")
-		key = self.infoKeysAliasDict.get(key.lower(), key)
-		return self._info.get(key, "")
+		return self._info.get(
+			self.infoKeysAliasDict.get(key.lower(), key),
+			"",
+		)
 
 	def setInfo(self, key: str, value: str) -> None:
 		if not isinstance(key, str):
 			raise TypeError(f"invalid key={key!r}, must be str")
 
-		origKey = key
 		key = fixUtf8(key)
 		value = fixUtf8(value)
 
 		key = self.infoKeysAliasDict.get(key.lower(), key)
-
-		if origKey != key:
-			log.debug(f"setInfo: {origKey} -> {key}")
-
 		self._info[key] = value
 
 	def getExtraInfos(self, excludeKeys: "List[str]") -> "odict":
@@ -585,7 +582,7 @@ class Glossary(GlossaryType):
 		return
 
 	def _getLangByInfoKey(self, key: str) -> "Optional[Lang]":
-		st = self.getInfo(key)
+		st = self._info.get(key, "")
 		if not st:
 			return
 		return self._getLangByStr(st)
@@ -616,13 +613,13 @@ class Glossary(GlossaryType):
 	def sourceLang(self, lang) -> None:
 		if not isinstance(lang, Lang):
 			raise TypeError(f"invalid lang={lang}, must be a Lang object")
-		self.setInfo("sourceLang", lang.name)
+		self._info["sourceLang"] = lang.name
 
 	@targetLang.setter
 	def targetLang(self, lang) -> None:
 		if not isinstance(lang, Lang):
 			raise TypeError(f"invalid lang={lang}, must be a Lang object")
-		self.setInfo("targetLang", lang.name)
+		self._info["targetLang"] = lang.name
 
 	@property
 	def sourceLangName(self) -> str:
@@ -634,12 +631,12 @@ class Glossary(GlossaryType):
 	@sourceLangName.setter
 	def sourceLangName(self, langName: str) -> None:
 		if not langName:
-			self.setInfo("sourceLang", "")
+			self._info["sourceLang"] = ""
 			return
 		lang = self._getLangByStr(langName)
 		if lang is None:
 			return
-		self.setInfo("sourceLang", lang.name)
+		self._info["sourceLang"] = lang.name
 
 	@property
 	def targetLangName(self) -> str:
@@ -651,12 +648,12 @@ class Glossary(GlossaryType):
 	@targetLangName.setter
 	def targetLangName(self, langName: str) -> None:
 		if not langName:
-			self.setInfo("targetLang", "")
+			self._info["targetLang"] = ""
 			return
 		lang = self._getLangByStr(langName)
 		if lang is None:
 			return
-		self.setInfo("targetLang", lang.name)
+		self._info["targetLang"] = lang.name
 
 	def _getTitleTag(self, sample: str) -> str:
 		from .langs.writing_system import getWritingSystemFromText
@@ -760,10 +757,10 @@ class Glossary(GlossaryType):
 		"""
 		extract sourceLang and targetLang from glossary name/title
 		"""
-		name = self.getInfo("name")
+		name = self._info.get("name")
 		if not name:
 			return
-		if self.getInfo("sourceLang"):
+		if self._info.get("sourceLang"):
 			return
 		for match in re.findall(
 			r"(\w\w\w*)\s*(-| to )\s*(\w\w\w*)",
@@ -858,8 +855,8 @@ class Glossary(GlossaryType):
 			filenameNoExt = filename
 
 		self._filename = filenameNoExt
-		if not self.getInfo("name"):
-			self.setInfo("name", split(filename)[1])
+		if not self._info.get("name"):
+			self._info["name"] = split(filename)[1]
 		self._progressbar = progressbar
 
 		self.updateEntryFilters()
@@ -873,7 +870,7 @@ class Glossary(GlossaryType):
 		self._readersOpenArgs[reader] = (filename, options)
 		self.prepareEntryFilters()
 
-		hasTitleStr = self.getInfo("definition_has_headwords")
+		hasTitleStr = self._info.get("definition_has_headwords", "")
 		if hasTitleStr:
 			if hasTitleStr.lower() == "true":
 				self._defiHasWordTitle = True
