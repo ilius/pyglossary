@@ -42,8 +42,6 @@ from collections import OrderedDict as odict
 
 import gc
 
-import gzip
-
 from .flags import *
 from . import core
 from .core import userPluginsDir, cacheDir

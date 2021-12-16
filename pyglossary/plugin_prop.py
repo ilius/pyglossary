@@ -24,7 +24,6 @@ from .flags import (
 )
 import logging
 from collections import OrderedDict as odict
-import string
 
 log = logging.getLogger("pyglossary")
 
@@ -44,7 +43,7 @@ class PluginProp(object):
 			for name, opt in self.optionsProp.items():
 				if name.lower() != name:
 					suggestName = "".join([
-						"_" + x.lower() if x in string.ascii_uppercase
+						"_" + x.lower() if x.isupper()
 						else x
 						for x in name
 					])
