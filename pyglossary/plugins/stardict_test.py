@@ -8,12 +8,9 @@ def toBytes(s):
 	return bytes(s, "utf-8") if isinstance(s, str) else bytes(s)
 
 
-def sortKeyBytes(ba):
-	"""
-	ba is a bytes instance
-	"""
+def sortKeyBytes(ba: bytes):
 	assert isinstance(ba, bytes)
-	# WRONG: ba.lower() + ba
+	# ba.lower() + ba is wrong
 	return (
 		ba.lower(),
 		ba,
@@ -30,8 +27,7 @@ def stardictStrCmp(s1, s2):
 	a = asciiStrCaseCmp(s1, s2)
 	if a == 0:
 		return strCmp(s1, s2)
-	else:
-		return a
+	return a
 
 
 # the slow way in Python 3 (where there is no cmp arg in list.sort)
@@ -176,7 +172,7 @@ class SortRandomTest(unittest.TestCase):
 				locale.setlocale(locale.LC_ALL, localeName)
 			except Exception as e:
 				if "unsupported locale setting" not in str(e):
-					print(e)
+					raise e
 				continue
 			# print(localeName)
 			yield localeName
