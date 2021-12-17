@@ -56,6 +56,7 @@ from .text_utils import (
 from .glossary_utils import splitFilenameExt
 from .os_utils import showMemoryUsage, rmtree
 from .glossary_type import GlossaryType
+from .info import *
 
 log = logging.getLogger("pyglossary")
 
@@ -81,28 +82,6 @@ class Glossary(GlossaryType):
 	See help(pyglossary.entry.Entry) for details
 
 	"""
-
-	# Should be changed according to plugins? FIXME
-	infoKeysAliasDict = {
-		"title": "name",
-		"bookname": "name",
-		"dbname": "name",
-		##
-		"sourcelang": "sourceLang",
-		"inputlang": "sourceLang",
-		"origlang": "sourceLang",
-		##
-		"targetlang": "targetLang",
-		"outputlang": "targetLang",
-		"destlang": "targetLang",
-		##
-		"license": "copyright",
-		##
-		# do not map "publisher" to "author"
-		##
-		# are there alternatives to "creationTime"
-		# and "lastUpdated"?
-	}
 
 	plugins = {}  # type: Dict[str, PluginProp]
 	pluginByExt = {}  # type: Dict[str, PluginProp]
@@ -528,7 +507,7 @@ class Glossary(GlossaryType):
 		if not isinstance(key, str):
 			raise TypeError(f"invalid key={key!r}, must be str")
 		return self._info.get(
-			self.infoKeysAliasDict.get(key.lower(), key),
+			infoKeysAliasDict.get(key.lower(), key),
 			"",
 		)
 
@@ -539,7 +518,7 @@ class Glossary(GlossaryType):
 		key = fixUtf8(key)
 		value = fixUtf8(value)
 
-		key = self.infoKeysAliasDict.get(key.lower(), key)
+		key = infoKeysAliasDict.get(key.lower(), key)
 		self._info[key] = value
 
 	def getExtraInfos(self, excludeKeys: "List[str]") -> "odict":
@@ -551,7 +530,7 @@ class Glossary(GlossaryType):
 		excludeKeySet = set()
 		for key in excludeKeys:
 			excludeKeySet.add(key)
-			key2 = self.infoKeysAliasDict.get(key.lower())
+			key2 = infoKeysAliasDict.get(key.lower())
 			if key2:
 				excludeKeySet.add(key2)
 
@@ -565,7 +544,7 @@ class Glossary(GlossaryType):
 
 	@property
 	def author(self) -> str:
-		for key in ("author", "publisher"):
+		for key in (c_author, c_publisher):
 			value = self._info.get(key, "")
 			if value:
 				return value
@@ -603,23 +582,23 @@ class Glossary(GlossaryType):
 
 	@property
 	def sourceLang(self) -> "Optional[Lang]":
-		return self._getLangByInfoKey("sourceLang")
+		return self._getLangByInfoKey(c_sourceLang)
 
 	@property
 	def targetLang(self) -> "Optional[Lang]":
-		return self._getLangByInfoKey("targetLang")
+		return self._getLangByInfoKey(c_targetLang)
 
 	@sourceLang.setter
 	def sourceLang(self, lang) -> None:
 		if not isinstance(lang, Lang):
 			raise TypeError(f"invalid lang={lang}, must be a Lang object")
-		self._info["sourceLang"] = lang.name
+		self._info[c_sourceLang] = lang.name
 
 	@targetLang.setter
 	def targetLang(self, lang) -> None:
 		if not isinstance(lang, Lang):
 			raise TypeError(f"invalid lang={lang}, must be a Lang object")
-		self._info["targetLang"] = lang.name
+		self._info[c_targetLang] = lang.name
 
 	@property
 	def sourceLangName(self) -> str:
@@ -631,12 +610,12 @@ class Glossary(GlossaryType):
 	@sourceLangName.setter
 	def sourceLangName(self, langName: str) -> None:
 		if not langName:
-			self._info["sourceLang"] = ""
+			self._info[c_sourceLang] = ""
 			return
 		lang = self._getLangByStr(langName)
 		if lang is None:
 			return
-		self._info["sourceLang"] = lang.name
+		self._info[c_sourceLang] = lang.name
 
 	@property
 	def targetLangName(self) -> str:
@@ -648,12 +627,12 @@ class Glossary(GlossaryType):
 	@targetLangName.setter
 	def targetLangName(self, langName: str) -> None:
 		if not langName:
-			self._info["targetLang"] = ""
+			self._info[c_targetLang] = ""
 			return
 		lang = self._getLangByStr(langName)
 		if lang is None:
 			return
-		self._info["targetLang"] = lang.name
+		self._info[c_targetLang] = lang.name
 
 	def _getTitleTag(self, sample: str) -> str:
 		from .langs.writing_system import getWritingSystemFromText
@@ -757,10 +736,10 @@ class Glossary(GlossaryType):
 		"""
 		extract sourceLang and targetLang from glossary name/title
 		"""
-		name = self._info.get("name")
+		name = self._info.get(c_name)
 		if not name:
 			return
-		if self._info.get("sourceLang"):
+		if self._info.get(c_sourceLang):
 			return
 		for match in re.findall(
 			r"(\w\w\w*)\s*(-| to )\s*(\w\w\w*)",
@@ -855,8 +834,8 @@ class Glossary(GlossaryType):
 			filenameNoExt = filename
 
 		self._filename = filenameNoExt
-		if not self._info.get("name"):
-			self._info["name"] = split(filename)[1]
+		if not self._info.get(c_name):
+			self._info[c_name] = split(filename)[1]
 		self._progressbar = progressbar
 
 		self.updateEntryFilters()
