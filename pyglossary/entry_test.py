@@ -21,14 +21,20 @@ log.addHandler(mockLog)
 
 
 class TestEntryStripFullHtml(unittest.TestCase):
-	def case(self, origDefi: str, fixedDefi: str, errMsg: str):
+	def case(
+		self,
+		origDefi: str,
+		fixedDefi: str,
+		logMsg: str = "",
+		logLevel: int = logging.ERROR,
+	):
 		entry = Entry("test", origDefi)
 		entry.stripFullHtml()
 		self.assertEqual(entry.defi, fixedDefi)
 		# to check error, we need to mock Logger
-		if errMsg:
-			record = mockLog.popLog(logging.ERROR, errMsg)
-			self.assertNotEqual(record, None)
+		if logMsg:
+			record = mockLog.popLog(logLevel, logMsg)
+			self.assertIsNotNone(record, msg=f"logMsg={logMsg!r}")
 		self.assertEqual(0, mockLog.printRemainingErrors())
 		mockLog.clear()
 
@@ -57,6 +63,7 @@ class TestEntryStripFullHtml(unittest.TestCase):
 			"<!DOCTYPE html><html><head></head>simple <i>html</i></html>",
 			"<!DOCTYPE html><html><head></head>simple <i>html</i></html>",
 			"<body not found: word=test",
+			logLevel=logging.WARNING,
 		)
 		self.case(
 			"<html><head></head>no <body",
