@@ -103,7 +103,7 @@ class TestGlossary(unittest.TestCase):
 		outputExpectedFilename = self.downloadFile("100-en-fa.csv")
 		glos = Glossary()
 		glos.config = {
-			"lower": False,
+			# "lower": False,
 		}
 		outputFilename2 = glos.convert(
 			inputFilename=inputFilename,

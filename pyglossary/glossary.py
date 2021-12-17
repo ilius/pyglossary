@@ -307,7 +307,7 @@ class Glossary(GlossaryType):
 		if config.get("utf8_check", True):
 			entryFilters.append(ef.FixUnicode(self))
 
-		if config.get("lower", True):
+		if config.get("lower", False):
 			entryFilters.append(ef.LowerWord(self))
 
 		if config.get("rtl", False):
