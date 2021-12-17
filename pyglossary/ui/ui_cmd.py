@@ -98,8 +98,7 @@ def getFormatsTable(names, header):
 
 def help():
 	import string
-	with open(join(dataDir, "help")) as fp:
-		text = fp.read()
+	text = fread(join(dataDir, "help"))
 	text = text.replace("<b>", startBold)\
 		.replace("<u>", startUnderline)\
 		.replace("</b>", endFormat)\
