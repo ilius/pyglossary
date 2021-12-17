@@ -6,4 +6,4 @@ myDir1=$(dirname "$myPath")
 myDir2=$(dirname "$myDir1")
 srcDir="$myDir2/pyglossary"
 
-find "$srcDir" -name "*_test.py" -exec python3 '{}' \;
+find "$srcDir" -name "*_test.py" -print -exec python3 '{}' \;
