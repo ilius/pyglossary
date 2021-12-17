@@ -224,7 +224,7 @@ class Reader(object):
 		def writeChild(item, depth):
 			nonlocal count
 			if isinstance(item, str):
-				item = item.rstrip()
+				item = item.strip()
 				if not item:
 					return
 				if count > 0:
