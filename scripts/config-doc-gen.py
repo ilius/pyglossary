@@ -29,6 +29,17 @@ The location of this file depends on the operating system:
 - Linux or BSD: `~/.pyglossary/config.json`
 - Mac: `~/Library/Preferences/PyGlossary/config.json`
 - Windows: `C:\\Users\\USERNAME\\AppData\\Roaming\\PyGlossary\\config.json`
+
+${"## Using as library"}
+
+When you use PyGlossary as a library, neither of `config.json` files are loaded. So if you want to change the config, you should set `glos.config` property (which you can do only once for each instance of `Glossary`). For example:
+
+```
+glos = Glossary()
+glos.config = {
+	"lower": True,
+}
+```
 """)
 
 
