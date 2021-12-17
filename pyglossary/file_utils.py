@@ -12,10 +12,10 @@ def toBytes(s: "AnyStr") -> bytes:
 
 def fileCountLines(filename: str, newline: str = "\n"):
 	newline = toBytes(newline)  # required? FIXME
-	f = open(filename, "rb")  # or "r"
-	bufgen = takewhile(
-		lambda x: x, (f.read(1024 * 1024) for _ in repeat(None))
-	)
-	return sum(
-		buf.count(newline) for buf in bufgen if buf
-	)
+	with open(filename, "rb") as _file:
+		bufgen = takewhile(
+			lambda x: x, (_file.read(1024 * 1024) for _ in repeat(None))
+		)
+		return sum(
+			buf.count(newline) for buf in bufgen if buf
+		)
