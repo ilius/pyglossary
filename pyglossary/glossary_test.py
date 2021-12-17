@@ -43,7 +43,8 @@ class TestGlossary(unittest.TestCase):
 			os.makedirs(dataDir)
 
 	def tearDown(self):
-		return
+		if os.getenv("NO_CLEANUP"):
+			return
 		for cleanupPath in self._cleanupPathList:
 			if isfile(cleanupPath):
 				log.debug(f"Removing file {cleanupPath}")
