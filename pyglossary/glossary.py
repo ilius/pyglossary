@@ -396,7 +396,6 @@ class Glossary(GlossaryType):
 
 	def _readersEntryGen(self) -> "Iterator[BaseEntry]":
 		for reader in self._readers:
-			wordCount = 0
 			self.progressInit("Converting")
 			try:
 				for index, entry in enumerate(self._applyEntryFiltersGen(reader)):
