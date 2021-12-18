@@ -1,5 +1,6 @@
-from typing import Optional, List, Tuple
 from pickle import dumps, loads
+import os
+from os.path import isfile
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -20,7 +21,7 @@ class SQList(object):
 	def __init__(
 		self,
 		filename: str,
-		sortColumns: List[Tuple[str, str, str]],
+		sortColumns: "List[Tuple[str, str, str]]",
 		create: bool = True,
 		persist: bool = False,
 	):
@@ -152,7 +153,7 @@ class SQList(object):
 
 	def __del__(self):
 		self.close()
-		if not self._persist:
+		if not self._persist and isfile(self._filename):
 			os.remove(self._filename)
 
 	def __iter__(self):

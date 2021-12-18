@@ -1240,7 +1240,12 @@ class Glossary(GlossaryType):
 			log.info(f"Removing and re-creating {sq_fpath!r}")
 			os.remove(sq_fpath)
 
-		self._data = SQList(sq_fpath, sqliteSortKey, persist=True)
+		self._data = SQList(
+			sq_fpath,
+			sqliteSortKey,
+			create=True,
+			persist=True,
+		)
 		self._rawEntryCompress = False
 		self._cleanupPathList.add(sq_fpath)
 
