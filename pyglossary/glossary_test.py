@@ -24,6 +24,12 @@ dataDir = join(cacheDir, "test")
 dataFileSize = {
 	"100-en-fa.txt": 29885,
 	"100-en-fa.csv": 30923,
+
+	"100-en-fa.sd/100-en-fa.dict": 28571,
+	"100-en-fa.sd/100-en-fa.idx": 1557,
+	"100-en-fa.sd/100-en-fa.ifo": 348,
+	"100-en-fa.sd/100-en-fa.syn": 76,
+
 	"100-en-de.txt": 15117,
 	"100-en-de.csv": 15970,
 	"100-ja-en.txt": 31199,
@@ -60,7 +66,7 @@ class TestGlossary(unittest.TestCase):
 
 	def downloadFile(self, filename):
 		size = dataFileSize[filename]
-		fpath = join(dataDir, filename)
+		fpath = join(dataDir, filename.replace("/", "__"))
 		if isfile(fpath):
 			if os.stat(fpath).st_size != size:
 				raise RuntimeError(f"Invalid file size for: {fpath}")
@@ -98,29 +104,79 @@ class TestGlossary(unittest.TestCase):
 		self.assertEqual(glos.sourceLangName, "Russian")
 		self.assertEqual(glos.targetLangName, "German")
 
+	def compareTextFiles(self, fpath1, fpath2):
+		with open(fpath1) as file1:
+			with open(fpath2) as file2:
+				text1 = file1.read()
+				text2 = file2.read()
+				self.assertEqual(
+					text1,
+					text2,
+					msg=f"{fpath1} differs from {fpath2}",
+				)
+
+	def compareBinaryFiles(self, fpath1, fpath2):
+		with open(fpath1, mode="rb") as file1:
+			with open(fpath2, mode="rb") as file2:
+				data1 = file1.read()
+				data2 = file2.read()
+				self.assertEqual(len(data1), len(data2), msg=f"{fpath1}")
+				self.assertTrue(
+					data1 == data2,
+					msg=f"{fpath1} differs from {fpath2}",
+				)
+
 	def test_convert_txt_csv_1(self):
-		inputFilename = self.downloadFile("100-en-fa.txt")
-		outputFilename = self.newTempFilePath("100-en-fa-2.csv") 
-		outputExpectedFilename = self.downloadFile("100-en-fa.csv")
+		fname = "100-en-fa"
+		inputFilename = self.downloadFile(f"{fname}.txt")
+		outputFilename = self.newTempFilePath(f"{fname}-2.csv")
+		expectedFilename = self.downloadFile(f"{fname}.csv")
 		glos = Glossary()
-		glos.config = {
-			# "lower": False,
-		}
-		outputFilename2 = glos.convert(
+		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
 		)
-		self.assertEqual(outputFilename, outputFilename2)
-		with open(outputFilename) as file1:
-			with open(outputExpectedFilename) as file2:
-				text1 = file1.read()
-				text2 = file2.read()
-				self.assertEqual(text1, text2)
+		self.assertEqual(outputFilename, res)
+		self.compareTextFiles(outputFilename, expectedFilename)
+
+	def convert_txt_stardict(self, fname, dictzip=False, **kwargs):
+		inputFilename = self.downloadFile(f"{fname}.txt")
+		outputFilename = self.newTempFilePath(f"{fname}.ifo")
+		otherFiles = {
+			ext: self.newTempFilePath(f"{fname}.{ext}")
+			for ext in ("idx", "dict")
+		}
+
+		glos = Glossary()
+		res = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+			writeOptions={
+				"dictzip": dictzip,
+			},
+			**kwargs
+		)
+		self.assertEqual(outputFilename, res)
+
+		self.compareTextFiles(
+			outputFilename,
+			self.downloadFile(f"{fname}.sd/{fname}.ifo"),
+		)
+
+		for ext in ("idx", "dict"):
+			self.compareBinaryFiles(
+				otherFiles[ext],
+				self.downloadFile(f"{fname}.sd/{fname}.{ext}")
+			)
+
+	def test_convert_txt_stardict_1(self):
+		self.convert_txt_stardict("100-en-fa")
 
 
 	def test_convert_txt_slob_1(self):
-		inputFilename = self.downloadFile("100-en-fa.txt")
-		outputFilename = self.newTempFilePath("100-en-fa.slob") 
+		fname = "100-en-fa"
+		inputFilename = self.downloadFile(f"{fname}.txt")
+		outputFilename = self.newTempFilePath(f"{fname}.slob")
 		glos = Glossary()
 		outputFilename2 = glos.convert(
 			inputFilename=inputFilename,
