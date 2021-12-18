@@ -4,7 +4,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         To open PyGlossary window:
             <b>${CMD}</b>
         PyGI is the default interface (so you never need to use "--ui=gtk" or --gtk option)
-        If PyGI was not found (not installed), then PyGlossary will fallback to Tkinter interface.
+        If PyGI was not found (not installed), then PyGlossary will fallback to Tkinter.
     <b>Tkinter</b> Interface:
         To open PyGlossary window:
             <b>${CMD} --tk</b>
@@ -48,20 +48,39 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
 
 <b>Full Convert Usage</b>:
     ${CMD} <u>INPUT_FILE</u> <u>OUTPUT_FILE</u> [-v<u>N</u>] [--read-format=<u>FORMAT</u>] [--write-format=<u>FORMAT</u>]
-        [--sort|--no-sort] [--direct|--indirect] [--no-alts] [--sort-cache-size=<u>2000</u>] [--utf8-check|--no-utf8-check]
-        [--lower|--no-lower] [--read-options=<u>READ_OPTIONS</u>] [--write-options=<u>WRITE_OPTIONS</u>]
+        [--direct|--indirect|--sqlite] [--no-alts]
+        [--sort|--no-sort] [--sort-cache-size=<u>2000</u>]
+        [--utf8-check|--no-utf8-check] [--lower|--no-lower]
+        [--read-options=<u>READ_OPTIONS</u>] [--write-options=<u>WRITE_OPTIONS</u>]
         [--source-lang=<u>LANGUAGE</u>] [--target-lang=<u>LANGUAGE</u>]
+
+<b>Direct and indirect modes</b>
+    Indirect mode means the input glossary is read and loaded into RAM, then converted into
+    the output format. This was the only method available in old versions (before 3.0.0).
+    Direct mode means entries are one-at-a-time read, processed and written into output
+    glossary. Direct mode was added to limit the memory usage for large glossaries; But it
+    may reduce the conversion time for most cases as well.
+    Converting glossaries into some formats like StarDict and EPUB-2 requires sorting entries.
+    That's why direct mode will not work for these format, and PyGlossary will use indirect
+    mode. Otherwise direct mode will be the default. You may override this by --indirect flag.
+
+
+<b>SQLite mode</b>:
+    As mentioned above, converting glossaries into some formats like StarDict will need
+    them to loaded into RAM.
+    This can be problematic if the glossary is too big to fit into RAM. That's when
+    you should try adding --sqlite flag to your command. Then it uses SQLite as intermediate
+    storage for sorting then fetching entries. This fixes the memory issue, and may even
+    reduce running time of conversion (depending on your home directory storage).
+    The temporary SQLite file is stored in ~/.cache/pyglossary/ then deleted after
+    conversion, unless you pass --no-cleanup flag.
+    Currently you can not disable alternates in SQLite mode (--no-alts is ignored).
 
 
 Command line arguments and options (and arguments for options) is parsed with GNU getopt method
-You can also just type extension of output file instead of full path, if you want to create with the same input
-file name with another extension. For example:
-    ${CMD} mydic.ifo txt
-instead of:
-    ${CMD} mydic.ifo mydic.txt
-Compressing with gz, bz2 and zip is supported, just append these extension to the file name, for example:
+
+Compressing with gz, bz2 and zip is supported.
+Just append these extension to the file name, for example:
     ${CMD} mydic.ifo mydic.txt.gz
-or
-    ${CMD} mydic.ifo txt.gz
 And if the input file has these extensions (gz, bz2, zip), it will be extracted before loading
 
