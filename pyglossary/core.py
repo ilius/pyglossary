@@ -335,8 +335,13 @@ elif os.sep == "\\":  # Operating system is Windows
 	homeDir = join(os.getenv("HOMEDRIVE"), os.getenv("HOMEPATH"))
 	user = os.getenv("USERNAME")
 	tmpDir = os.getenv("TEMP")
-	confDir = join(os.getenv("APPDATA"), "PyGlossary")
-	cacheDir = join(confDir, "Cache")  # FIXME: right directory?
+	_appData = os.getenv("APPDATA")
+	confDir = join(_appData, "PyGlossary")
+	_localAppData = os.getenv("LOCALAPPDATA")
+	if not _localAppData:
+		# Windows Vista or older
+		_localAppData = abspath(join(_appData, "..", "Local"))
+	cacheDir = join(_localAppData, "PyGlossary", "Cache")
 	pip = "pip3"
 else:
 	raise RuntimeError(
