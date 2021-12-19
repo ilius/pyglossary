@@ -71,6 +71,7 @@ class TestTextUtils(unittest.TestCase):
 		self.assertEqual(f("a|"), ["a", ""])
 		self.assertEqual(f("|a"), ["", "a"])
 		self.assertEqual(f("a|b"), ["a", "b"])
+		self.assertEqual(f("a\\|b"), ["a|b"])
 		self.assertEqual(f("a\\|b|c"), ["a|b", "c"])
 		self.assertEqual(f("a\\\\1|b|c"), ["a\\1", "b", "c"])
 		# self.assertEqual(f("a\\\\|b|c"), ["a\\", "b", "c"])  # FIXME
@@ -93,6 +94,7 @@ class TestTextUtils(unittest.TestCase):
 		self.assertEqual(f(b"a|"), [b"a", b""])
 		self.assertEqual(f(b"|a"), [b"", b"a"])
 		self.assertEqual(f(b"a|b"), [b"a", b"b"])
+		self.assertEqual(f(b"a\\|b"), [b"a|b"])
 		self.assertEqual(f(b"a\\|b|c"), [b"a|b", b"c"])
 		self.assertEqual(f(b"a\\\\1|b|c"), [b"a\\1", b"b", b"c"])
 		# self.assertEqual(f("a\\\\|b|c"), ["a\\", "b", "c"])  # FIXME

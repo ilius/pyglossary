@@ -101,7 +101,7 @@ def splitByBarUnescapeNTB(st: str) -> "List[str]":
 
 def escapeBar(st: str) -> str:
 	"""
-		scapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
+		scapes vertical bar (\|)
 	"""
 	st = st.replace("\\", "\\\\")
 	st = st.replace("|", r"\|")
@@ -119,9 +119,7 @@ def unescapeBar(st: str) -> str:
 
 def splitByBar(st: str) -> "List[str]":
 	"""
-		splits by "|" (and not "\\|") then unescapes Newline (\\n),
-			Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
-		returns a list
+		splits by "|" (and not "\\|") then unescapes Baskslash (\\) and Bar (\\|) in each part
 	"""
 	return [
 		unescapeBar(part)
