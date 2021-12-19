@@ -24,7 +24,6 @@ dataDir = join(cacheDir, "test")
 dataFileSize = {
 	"100-en-fa.txt": 29885,
 	"100-en-fa.csv": 30923,
-
 	"100-en-fa.sd/100-en-fa.dict": 28571,
 	"100-en-fa.sd/100-en-fa.idx": 1557,
 	"100-en-fa.sd/100-en-fa.ifo": 348,
@@ -32,8 +31,16 @@ dataFileSize = {
 
 	"100-en-de.txt": 15117,
 	"100-en-de.csv": 15970,
+	"100-en-de.sd/100-en-de.dict": 13601,
+	"100-en-de.sd/100-en-de.idx": 1323,
+	"100-en-de.sd/100-en-de.ifo": 864,
+
 	"100-ja-en.txt": 31199,
 	"100-ja-en.csv": 32272,
+	"100-ja-en.sd/100-ja-en.dict": 27585,
+	"100-ja-en.sd/100-ja-en.idx": 2014,
+	"100-ja-en.sd/100-ja-en.ifo": 845,
+	"100-ja-en.sd/100-ja-en.syn": 1953,
 
 	"004-bar.txt": 45,
 	"004-bar.sd/004-bar.dict": 16,
@@ -77,8 +84,12 @@ class TestGlossary(unittest.TestCase):
 			if os.stat(fpath).st_size != size:
 				raise RuntimeError(f"Invalid file size for: {fpath}")
 			return fpath
-		with urlopen(dataURL.format(filename=filename)) as res:
-			data = res.read()
+		try:
+			with urlopen(dataURL.format(filename=filename)) as res:
+				data = res.read()
+		except Exception as e:
+			e.msg += f", filename={filename}"
+			raise e
 		if len(data) != size:
 			raise RuntimeError(f"Invalid file size for: {fpath}")
 		with open(fpath, mode="wb") as _file:
@@ -111,6 +122,8 @@ class TestGlossary(unittest.TestCase):
 		self.assertEqual(glos.targetLangName, "German")
 
 	def compareTextFiles(self, fpath1, fpath2):
+		self.assertTrue(isfile(fpath1))
+		self.assertTrue(isfile(fpath2))
 		with open(fpath1) as file1:
 			with open(fpath2) as file2:
 				text1 = file1.read()
@@ -122,6 +135,8 @@ class TestGlossary(unittest.TestCase):
 				)
 
 	def compareBinaryFiles(self, fpath1, fpath2):
+		self.assertTrue(isfile(fpath1))
+		self.assertTrue(isfile(fpath2))
 		with open(fpath1, mode="rb") as file1:
 			with open(fpath2, mode="rb") as file2:
 				data1 = file1.read()
@@ -132,8 +147,7 @@ class TestGlossary(unittest.TestCase):
 					msg=f"{fpath1} differs from {fpath2}",
 				)
 
-	def test_convert_txt_csv_1(self):
-		fname = "100-en-fa"
+	def convert_txt_csv(self, fname):
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname}-2.csv")
 		expectedFilename = self.downloadFile(f"{fname}.csv")
@@ -145,18 +159,32 @@ class TestGlossary(unittest.TestCase):
 		self.assertEqual(outputFilename, res)
 		self.compareTextFiles(outputFilename, expectedFilename)
 
+	def test_convert_txt_csv_1(self):
+		self.convert_txt_csv("100-en-fa")
+
+	def test_convert_txt_csv_2(self):
+		self.convert_txt_csv("100-en-de")
+
+	def test_convert_txt_csv_3(self):
+		self.convert_txt_csv("100-ja-en")
+
 	def convert_txt_stardict(
 		self,
 		fname,
+		syn=True,
 		dictzip=False,
 		config=None,
 		**kwargs
 	):
+		binExtList = ["idx", "dict"]
+		if syn:
+			binExtList.append("syn")
+
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname}.ifo")
 		otherFiles = {
 			ext: self.newTempFilePath(f"{fname}.{ext}")
-			for ext in ("idx", "dict")
+			for ext in binExtList
 		}
 
 		glos = Glossary()
@@ -177,40 +205,45 @@ class TestGlossary(unittest.TestCase):
 			self.downloadFile(f"{fname}.sd/{fname}.ifo"),
 		)
 
-		for ext in ("idx", "dict"):
+		for ext in binExtList:
 			self.compareBinaryFiles(
 				otherFiles[ext],
 				self.downloadFile(f"{fname}.sd/{fname}.{ext}")
 			)
 
 	def test_convert_txt_stardict_1(self):
-		self.convert_txt_stardict(
-			"100-en-fa",
-			sqlite=False,
-		)
+		for sqlite in (False, True):
+			self.convert_txt_stardict(
+				"100-en-fa",
+				sqlite=sqlite,
+			)
 
 	def test_convert_txt_stardict_2(self):
-		self.convert_txt_stardict(
-			"004-bar",
-			sqlite=False,
-		)
+		for sqlite in (False, True):
+			self.convert_txt_stardict(
+				"004-bar",
+				sqlite=sqlite,
+			)
 
-	def test_convert_txt_stardict_sqlite_1(self):
-		self.convert_txt_stardict(
-			"100-en-fa",
-			sqlite=True,
-		)
+	def test_convert_txt_stardict_3(self):
+		for sqlite in (False, True):
+			self.convert_txt_stardict(
+				"100-en-de",
+				syn=False,
+				sqlite=sqlite,
+			)
 
-	def test_convert_txt_stardict_sqlite_2(self):
+	def test_convert_txt_stardict_4(self):
+		for sqlite in (False, True):
+			self.convert_txt_stardict(
+				"100-ja-en",
+				sqlite=sqlite,
+			)
+
+	def test_convert_txt_stardict_sqlite_no_alts(self):
 		self.convert_txt_stardict(
 			"100-en-fa",
 			config={"enable_alts": False},
-			sqlite=True,
-		)
-
-	def test_convert_txt_stardict_sqlite_3(self):
-		self.convert_txt_stardict(
-			"004-bar",
 			sqlite=True,
 		)
 
