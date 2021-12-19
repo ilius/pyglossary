@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from os.path import isfile
+from pyglossary.text_utils import (
+	splitByBar,
+	joinByBar,
+)
 
 
 class Writer(object):
@@ -40,7 +44,7 @@ class Writer(object):
 			if entry is None:
 				break
 			word = entry.l_word[0]
-			alts = "|".join(entry.l_word[1:])
+			alts = joinByBar(entry.l_word[1:])
 			defi = entry.defi
 			defiFormat = entry.defiFormat
 			bindata = None
@@ -97,7 +101,7 @@ class Reader(object):
 			" order by wordlower, word"
 		)
 		for row in self._cur:
-			words = [row[0]] + row[1].split("|")
+			words = [row[0]] + splitByBar(row[1])
 			defi = row[2]
 			defiFormat = row[3]
 			yield self._glos.newEntry(words, defi, defiFormat=defiFormat)
