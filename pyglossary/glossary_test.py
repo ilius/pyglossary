@@ -34,6 +34,12 @@ dataFileSize = {
 	"100-en-de.csv": 15970,
 	"100-ja-en.txt": 31199,
 	"100-ja-en.csv": 32272,
+
+	"004-bar.txt": 45,
+	"004-bar.sd/004-bar.dict": 16,
+	"004-bar.sd/004-bar.idx": 45,
+	"004-bar.sd/004-bar.ifo": 134,
+	"004-bar.sd/004-bar.syn": 24,
 }
 
 
@@ -178,7 +184,16 @@ class TestGlossary(unittest.TestCase):
 			)
 
 	def test_convert_txt_stardict_1(self):
-		self.convert_txt_stardict("100-en-fa")
+		self.convert_txt_stardict(
+			"100-en-fa",
+			sqlite=False,
+		)
+
+	def test_convert_txt_stardict_2(self):
+		self.convert_txt_stardict(
+			"004-bar",
+			sqlite=False,
+		)
 
 	def test_convert_txt_stardict_sqlite_1(self):
 		self.convert_txt_stardict(
@@ -190,6 +205,12 @@ class TestGlossary(unittest.TestCase):
 		self.convert_txt_stardict(
 			"100-en-fa",
 			config={"enable_alts": False},
+			sqlite=True,
+		)
+
+	def test_convert_txt_stardict_sqlite_3(self):
+		self.convert_txt_stardict(
+			"004-bar",
 			sqlite=True,
 		)
 
