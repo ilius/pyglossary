@@ -80,7 +80,7 @@ def unescapeNTB(st: str, bar: bool = False) -> str:
 	st = pattern_n_us.sub("\\1\n", st)
 	st = pattern_t_us.sub("\\1\t", st)
 	if bar:
-		st = pattern_bar_us.sub(r"\1\|", st)
+		st = pattern_bar_us.sub(r"\1|", st)
 	st = st.replace("\\\\", "\\")  # probably faster than re.sub
 	return st
 
