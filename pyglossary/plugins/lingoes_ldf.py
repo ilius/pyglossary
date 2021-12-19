@@ -2,6 +2,7 @@
 
 from formats_common import *
 from pyglossary.text_reader import TextGlossaryReader
+from pyglossary.text_utils import splitByBar
 from pyglossary.file_utils import fileCountLines
 
 enable = True
@@ -79,7 +80,7 @@ class Reader(TextGlossaryReader):
 			defi = "\n".join(entryLines[1:])
 			defi = defi.replace("<br/>", "\n")  # FIXME
 
-			word = [p.strip() for p in word.split("|")]
+			word = splitByBar(word)
 
 			return word, defi
 
