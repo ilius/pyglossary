@@ -290,6 +290,7 @@ class UI(ui_cmd.UI):
 			("reset-write-options", self.resetWriteOptions),
 			("config", self.askConfig),
 			("indirect", self.setIndirect),
+			("sqlite", self.setSQLite),
 			("no-progressbar", self.setNoProgressbar),
 			("sort", self.setSort),
 			("show-options", self.showOptions),
@@ -746,7 +747,13 @@ class UI(ui_cmd.UI):
 
 	def setIndirect(self):
 		self._convertOptions["direct"] = False
+		self._convertOptions["sqlite"] = None
 		print("Switched to indirect mode")
+
+	def setSQLite(self):
+		self._convertOptions["direct"] = None
+		self._convertOptions["sqlite"] = True
+		print("Switched to SQLite mode")
 
 	def setNoProgressbar(self):
 		self._convertOptions["progressbar"] = False
@@ -892,6 +899,7 @@ class UI(ui_cmd.UI):
 		if self._convertOptions:
 			convertOptionsFlags = {
 				"direct": ("indirect", "direct"),
+				"sqlite": ("", "sqlite"),
 				"progressbar": ("no-progress-bar", ""),
 				"sort": ("no-sort", "sort"),
 				"sortCacheSize": ("sort-cache-size", ""),
@@ -908,7 +916,8 @@ class UI(ui_cmd.UI):
 					continue
 				if isinstance(value, bool):
 					flag = ftup[int(value)]
-					cmd.append(f"--{flag}")
+					if flag:
+						cmd.append(f"--{flag}")
 				else:
 					flag = ftup[0]
 					cmd.append(f"--{flag}={value}")
