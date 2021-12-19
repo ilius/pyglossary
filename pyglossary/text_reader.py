@@ -165,6 +165,7 @@ class TextGlossaryReader(object):
 				break
 			if not wordDefi:
 				yield None
+				continue
 			word, defi = wordDefi
 			if isinstance(defi, tuple):
 				defi, resList = defi
