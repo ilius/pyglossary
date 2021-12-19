@@ -139,7 +139,7 @@ ways to use the program).
       - Tab key shows available values/options
     - You can press Control+C (on Linux/Windows) at any prompt to exit
 
-## UI (User Interface) Selection
+## UI (User Interface) selection
 
 When you run PyGlossary without any command-line arguments or options/flags,
 PyGlossary tries to find PyGI and open the Gtk3-based interface. If it fails,
@@ -163,7 +163,7 @@ But you can explicitly determine the user interface type using `--ui`
 - If command was not found, make sure Python environment variables are set up:
   <img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/windows-python39-env-vars.png" width="50%" height="50%"/>
 
-## Feature-specific Requirements
+## Feature-specific requirements
 
 - **Using `--remove-html-all` flag**
 
@@ -178,7 +178,48 @@ If you have trouble with any format, please check the [link given for that forma
 
 See [doc/config.md](./doc/config.md).
 
-## User Plugins
+## Direct and indirect modes
+
+Indirect mode means the input glossary is completely read and loaded into RAM, then converted
+into the output format. This was the only method available in old versions (before [3.0.0](https://github.com/ilius/pyglossary/releases/tag/3.0.0)).
+
+Direct mode means entries are one-at-a-time read, processed and written into output glossary.
+
+Direct mode was added to limit the memory usage for large glossaries; But it may reduce the
+conversion time for most cases as well.
+
+Converting glossaries into some formats like [StarDict](./doc/p/stardict.md) and
+[EPUB-2](./doc/p/epub2.md) requires sorting entries.
+That's why direct mode will not work for these format, and PyGlossary will use indirect
+mode. Otherwise direct mode will be the default. You may override this by `--indirect` flag.
+
+## SQLite mode
+
+As mentioned above, converting glossaries into some formats like [StarDict](./doc/p/stardict.md) will need
+them to loaded into RAM.
+
+This can be problematic if the glossary is too big to fit into RAM. That's when
+you should try adding `--sqlite` flag to your command. Then it uses SQLite3 as intermediate
+storage for storing, sorting and then fetching entries. This fixes the memory issue, and may
+even reduce running time of conversion (depending on your home directory storage).
+
+The temporary SQLite file is stored in [cache directory](#cache-directory) then deleted after
+conversion (unless you pass `--no-cleanup` flag).
+
+Currently you can not disable alternates in SQLite mode (`--no-alts` is ignored).
+
+## Cache directory
+
+The cache directory is used for storing temporary files which are either moved or deleted
+after conversion. You can pass `--no-cleanup` flag in order to keep them.
+
+The path of cache directory:
+
+- Linux or BSD: `~/.cache/pyglossary/`
+- Mac: `~/Library/Caches/PyGlossary/`
+- Windows: `C:\Users\USERNAME\AppData\Local\PyGlossary\Cache`
+
+## User plugins
 
 If you want to add your own plugin without adding it to source code directory,
 or you want to use a plugin that has been removed from repository,
@@ -243,7 +284,7 @@ glos.write("test.ifo", format="Stardict")
 
 And if you need to read a glossary from file into a `Glossary` object in RAM (without immediately converting it), you can use `glos.read(filename, format=inputFormat)`. Be wary of RAM usage in this case.
 
-## Internal Glossary Structure
+## Internal glossary structure
 
 A glossary contains a number of entries.
 

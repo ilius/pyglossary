@@ -55,9 +55,9 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         [--source-lang=<u>LANGUAGE</u>] [--target-lang=<u>LANGUAGE</u>]
 
 <b>Direct and indirect modes</b>
-    Indirect mode means the input glossary is read and loaded into RAM, then converted into
-    the output format. This was the only method available in old versions (before 3.0.0).
-    Direct mode means entries are one-at-a-time read, processed and written into output
+    Indirect mode means the input glossary is completely read and loaded into RAM, then converted
+    into the output format. This was the only method available in old versions (before 3.0.0).
+    Direct mode means entries are one-at-a-time read, processed and written into the output
     glossary. Direct mode was added to limit the memory usage for large glossaries; But it
     may reduce the conversion time for most cases as well.
     Converting glossaries into some formats like StarDict and EPUB-2 requires sorting entries.
