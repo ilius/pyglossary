@@ -32,13 +32,9 @@ try:
 		f"pyglossary.plugin_lib.py{vmajor}{vminor}.gzip_no_crc",
 		fromlist="GzipFile",
 	).GzipFile
-except ImportError:
+except ImportError as e:
 	from gzip import GzipFile
-	log.exception("")
-	log.warning(
-		"If things didn\'t work well with BGL files, "
-		"install Python 3.5 to 3.7 and try again"
-	)
+	log.warning(str(e))
 
 from pyglossary.text_utils import (
 	uintFromBytes,
