@@ -17,7 +17,7 @@ PICKLE_PROTOCOL = 4
 # https://docs.python.org/3/library/pickle.html
 
 
-class SQList(object):
+class SqList(object):
 	def __init__(
 		self,
 		filename: str,
@@ -88,7 +88,7 @@ class SQList(object):
 		return self
 
 	def setSortKey(self, sortKey, sampleItem):
-		log.warning(f"SQList: ignoring sortKey {sortKey}")
+		log.warning(f"SqList: ignoring sortKey {sortKey}")
 		# FIXME
 		# sample = sortKey(sampleItem)
 

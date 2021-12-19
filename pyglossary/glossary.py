@@ -1226,7 +1226,7 @@ class Glossary(GlossaryType):
 		return compress(self, filename, compression)
 
 	def _switchToSQLite(self, inputFilename, outputFormat):
-		from pyglossary.sqlist import SQList
+		from pyglossary.sqlist import SqList
 
 		outputPlugin = self.plugins[outputFormat]
 		sqliteSortKey = getattr(outputPlugin.writerClass, "sqliteSortKey", None)
@@ -1240,7 +1240,7 @@ class Glossary(GlossaryType):
 			log.info(f"Removing and re-creating {sq_fpath!r}")
 			os.remove(sq_fpath)
 
-		self._data = SQList(
+		self._data = SqList(
 			sq_fpath,
 			sqliteSortKey,
 			create=True,

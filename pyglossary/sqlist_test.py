@@ -33,7 +33,7 @@ def stardictSortKey(item: List):
 	return b_word.lower(), b_word
 
 
-class TestSQList(unittest.TestCase):
+class TestSqList(unittest.TestCase):
 	def __init__(self, *args):
 		unittest.TestCase.__init__(self, *args)
 		self.basePath = join(tmpDir, f"{user}-entry_test-")
@@ -69,7 +69,7 @@ class TestSQList(unittest.TestCase):
 		if create and isfile(filename):
 			os.remove(filename)
 		self._tmpFiles.add(filename)
-		ls = SQList(filename, sortColumns, create=create, persist=True)
+		ls = SqList(filename, sortColumns, create=create, persist=True)
 		if items is not None:
 			for x in items:
 				ls.append(x)
