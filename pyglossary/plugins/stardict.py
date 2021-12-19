@@ -15,6 +15,7 @@ from collections import Counter
 from pyglossary.text_utils import (
 	uint32ToBytes,
 	uint32FromBytes,
+	splitByBarBytes,
 )
 
 from formats_common import *
@@ -474,12 +475,12 @@ class Writer(object):
 		(
 			"wordlower",
 			"TEXT",
-			lambda x: x[0].split(b"|")[0].lower(),
+			lambda x: splitByBarBytes(x[0])[0].lower(),
 		),
 		(
 			"word",
 			"TEXT",
-			lambda x: x[0].split(b"|")[0],
+			lambda x: splitByBarBytes(x[0])[0],
 		),
 	]
 	"""

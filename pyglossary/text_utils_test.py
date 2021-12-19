@@ -51,6 +51,51 @@ class TestTextUtils(unittest.TestCase):
 		self.assertEqual(f("a\\|b|c"), ["a|b", "c"])
 		self.assertEqual(f("a\\\\1|b|c"), ["a\\1", "b", "c"])
 		# self.assertEqual(f("a\\\\|b|c"), ["a\\", "b", "c"])  # FIXME
+		self.assertEqual(f("a\\\\1|b\\n|c\\t"), ["a\\1", "b\n", "c\t"])
+
+	def test_unescapeBar(self):
+		f = unescapeBar
+		self.assertEqual("", f(""))
+		self.assertEqual("|", f("\\|"))
+		self.assertEqual("a|b", f("a\\|b"))
+		self.assertEqual("a|b\tc", f("a\\|b\tc"))
+		self.assertEqual("a|b\\t\\nc", f("a\\|b\\t\\nc"))
+		self.assertEqual("\\", f("\\\\"))
+		self.assertEqual("\\|", f("\\\\\\|"))
+
+	def test_splitByBar(self):
+		f = splitByBar
+		self.assertEqual(f(""), [""])
+		self.assertEqual(f("|"), ["", ""])
+		self.assertEqual(f("a"), ["a"])
+		self.assertEqual(f("a|"), ["a", ""])
+		self.assertEqual(f("|a"), ["", "a"])
+		self.assertEqual(f("a|b"), ["a", "b"])
+		self.assertEqual(f("a\\|b|c"), ["a|b", "c"])
+		self.assertEqual(f("a\\\\1|b|c"), ["a\\1", "b", "c"])
+		# self.assertEqual(f("a\\\\|b|c"), ["a\\", "b", "c"])  # FIXME
+
+	def test_unescapeBarBytes(self):
+		f = unescapeBarBytes
+		self.assertEqual(b"", f(b""))
+		self.assertEqual(b"|", f(b"\\|"))
+		self.assertEqual(b"a|b", f(b"a\\|b"))
+		self.assertEqual(b"a|b\tc", f(b"a\\|b\tc"))
+		self.assertEqual(b"a|b\\t\\nc", f(b"a\\|b\\t\\nc"))
+		self.assertEqual(b"\\", f(b"\\\\"))
+		self.assertEqual(b"\\|", f(b"\\\\\\|"))
+
+	def test_splitByBarBytes(self):
+		f = splitByBarBytes
+		self.assertEqual(f(b""), [b""])
+		self.assertEqual(f(b"|"), [b"", b""])
+		self.assertEqual(f(b"a"), [b"a"])
+		self.assertEqual(f(b"a|"), [b"a", b""])
+		self.assertEqual(f(b"|a"), [b"", b"a"])
+		self.assertEqual(f(b"a|b"), [b"a", b"b"])
+		self.assertEqual(f(b"a\\|b|c"), [b"a|b", b"c"])
+		self.assertEqual(f(b"a\\\\1|b|c"), [b"a\\1", b"b", b"c"])
+		# self.assertEqual(f("a\\\\|b|c"), ["a\\", "b", "c"])  # FIXME
 
 
 if __name__ == "__main__":

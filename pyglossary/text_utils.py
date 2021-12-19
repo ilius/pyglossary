@@ -48,6 +48,8 @@ pattern_n_us = re.compile(r"((?<!\\)(?:\\\\)*)\\n")
 pattern_t_us = re.compile(r"((?<!\\)(?:\\\\)*)\\t")
 pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|")
 pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|")
+b_pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|".encode("ascii"))
+b_pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|".encode("ascii"))
 
 
 def replaceStringTable(
@@ -94,6 +96,64 @@ def splitByBarUnescapeNTB(st: str) -> "List[str]":
 	return [
 		unescapeNTB(part, bar=True)
 		for part in pattern_bar_sp.split(st)
+	]
+
+
+def escapeBar(st: str) -> str:
+	"""
+		scapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
+	"""
+	st = st.replace("\\", "\\\\")
+	st = st.replace("|", r"\|")
+	return st
+
+
+def unescapeBar(st: str) -> str:
+	"""
+		unscapes vertical bar (\|)
+	"""
+	st = pattern_bar_us.sub(r"\1|", st)
+	st = st.replace("\\\\", "\\")  # probably faster than re.sub
+	return st
+
+
+def splitByBar(st: str) -> "List[str]":
+	"""
+		splits by "|" (and not "\\|") then unescapes Newline (\\n),
+			Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
+		returns a list
+	"""
+	return [
+		unescapeBar(part)
+		for part in pattern_bar_sp.split(st)
+	]
+
+
+def joinByBar(parts: "List[str]") -> "str":
+	return "|".join([
+		escapeBar(part)
+		for part in parts
+	])
+
+
+def unescapeBarBytes(st: bytes) -> bytes:
+	"""
+		unscapes vertical bar (\|)
+	"""
+	st = b_pattern_bar_us.sub(b"\\1|", st)
+	st = st.replace(b"\\\\", b"\\")  # probably faster than re.sub
+	return st
+
+
+def splitByBarBytes(st: bytes) -> "List[bytes]":
+	"""
+		splits by "|" (and not "\\|") then unescapes Newline (\\n),
+			Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
+		returns a list
+	"""
+	return [
+		unescapeBarBytes(part)
+		for part in b_pattern_bar_sp.split(st)
 	]
 
 

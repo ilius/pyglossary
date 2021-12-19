@@ -11,6 +11,11 @@ from os.path import (
 
 from .entry_base import BaseEntry, MultiStr, RawEntryType
 from .iter_utils import unique_everseen
+from .text_utils import (
+	joinByBar,
+	splitByBar,
+	splitByBarBytes,
+)
 
 from pickle import dumps, loads
 from zlib import compress, decompress
@@ -159,8 +164,6 @@ class DataEntry(BaseEntry):
 
 
 class Entry(BaseEntry):
-	sep = "|"
-	b_sep = b"|"
 	xdxfPattern = re.compile("^<k>[^<>]*</k>", re.S | re.I)
 	htmlPattern = re.compile(
 		".*(?:" + "|".join([
@@ -195,12 +198,6 @@ class Entry(BaseEntry):
 	def isData(self) -> bool:
 		return False
 
-	def _join(self, parts: "List[str]") -> str:
-		return Entry.sep.join([
-			part.replace(Entry.sep, "\\" + Entry.sep)
-			for part in parts
-		])
-
 	@staticmethod
 	def defaultStringSortKey(word: str) -> "Any":
 		return Entry.defaultSortKey(word.encode("utf-8"))
@@ -230,11 +227,10 @@ class Entry(BaseEntry):
 			key = Entry.defaultSortKey
 
 		if glos.getConfig("enable_alts", True):
-			b_sep = Entry.b_sep
 			if glos._rawEntryCompress:
-				return lambda x: key(loads(decompress(x))[0].split(b_sep)[0])
+				return lambda x: key(splitByBarBytes(loads(decompress(x))[0])[0])
 			else:
-				return lambda x: key(x[0].split(b_sep)[0])
+				return lambda x: key(splitByBarBytes(x[0])[0])
 		else:
 			if glos._rawEntryCompress:
 				return lambda x: key(loads(decompress(x))[0])
@@ -294,7 +290,7 @@ class Entry(BaseEntry):
 		if isinstance(self._word, str):
 			return self._word
 		else:
-			return self._join(self._word)
+			return joinByBar(self._word)
 
 	@property
 	def l_word(self) -> "List[str]":
@@ -499,7 +495,7 @@ class Entry(BaseEntry):
 			defiFormat = defaultDefiFormat
 
 		if glos.getConfig("enable_alts", True):
-			word = word.split(cls.sep)
+			word = splitByBar(word)
 
 		return cls(
 			word,
