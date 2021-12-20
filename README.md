@@ -217,7 +217,7 @@ The path of cache directory:
 
 - Linux or BSD: `~/.cache/pyglossary/`
 - Mac: `~/Library/Caches/PyGlossary/`
-- Windows: `C:\Users\USERNAME\AppData\Local\PyGlossary\Cache`
+- Windows: `C:\Users\USERNAME\AppData\Local\PyGlossary\Cache\`
 
 ## User plugins
 
@@ -226,8 +226,8 @@ or you want to use a plugin that has been removed from repository,
 you can place it in this directory:
 
 - Linux or BSD: `~/.pyglossary/plugins/`
-- Mac: `~/Library/Preferences/PyGlossary/plugins`
-- Windows: `C:\Users\USERNAME\AppData\Roaming\PyGlossary\plugins`
+- Mac: `~/Library/Preferences/PyGlossary/plugins/`
+- Windows: `C:\Users\USERNAME\AppData\Roaming\PyGlossary\plugins\`
 
 ## Using PyGlossary as a Python library
 
