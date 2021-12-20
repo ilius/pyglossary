@@ -120,6 +120,7 @@ class Reader(object):
 	def compilePatterns(self):
 		self._re_comment = re.compile(
 			"<!--.*?-->",
+			re.MULTILINE,
 		)
 		self._re_internal_link = re.compile(
 			r"\[\[(.+?)\]\]",
