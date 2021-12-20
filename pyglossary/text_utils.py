@@ -196,59 +196,31 @@ def crc32hex(bs: bytes) -> str:
 
 
 def urlToPath(url: str) -> str:
+	from urllib.parse import unquote
 	if not url.startswith("file://"):
-		return url
+		return unquote(url)
 	path = url[7:]
 	if path[-2:] == "\r\n":
 		path = path[:-2]
 	elif path[-1] == "\r":
 		path = path[:-1]
-	# here convert html unicode symbols to utf8 string:
-	if "%" not in path:
-		return path
-	path2 = ""
-	n = len(path)
-	i = 0
-	while i < n:
-		if path[i] == "%" and i < n - 2:
-			path2 += chr(eval("0x" + path[i + 1:i + 3]))
-			i += 3
-		else:
-			path2 += path[i]
-			i += 1
-	return path2
+	# here convert html unicode symbols to utf-8 string:
+	return unquote(path)
 
 
 def replacePostSpaceChar(st: str, ch: str) -> str:
-	return (
+	st = (
 		st.replace(f" {ch}", ch)
 		.replace(ch, f"{ch} ")
 		.replace(f"{ch}  ", f"{ch} ")
 	)
+	if st.endswith(" "):
+		st = st[:-1]
+	return st
 
 
-def isControlChar(y: int) -> bool:
-	# y: char code
-	if y < 32 and chr(y) not in "\t\n\r\v":
-		return True
-	# according to ISO-8859-1
-	if 128 <= y <= 159:
-		return True
-	return False
-
-
-def isASCII(data: str, exclude: "Optional[List[str]]" = None) -> bool:
-	if exclude is None:
-		exclude = []
+def isASCII(data: str) -> bool:
 	for c in data:
-		co = ord(c)
-		if co >= 128 and co not in exclude:
+		if ord(c) >= 128:
 			return False
 	return True
-
-
-def formatByteStr(text: str) -> str:
-	out = ""
-	for c in text:
-		out += f"{ord(c):0>2x} "
-	return out
