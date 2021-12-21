@@ -190,7 +190,7 @@ conversion time for most cases as well.
 
 Converting glossaries into some formats like [StarDict](./doc/p/stardict.md) and
 [EPUB-2](./doc/p/epub2.md) requires sorting entries.
-That's why direct mode will not work for these format, and PyGlossary will use indirect
+That's why direct mode will not work for these formats, and PyGlossary will use indirect
 mode. Otherwise direct mode will be the default. You may override this by `--indirect` flag.
 
 ## SQLite mode
@@ -210,10 +210,10 @@ Currently you can not disable alternates in SQLite mode (`--no-alts` is ignored)
 
 ## Cache directory
 
-The cache directory is used for storing temporary files which are either moved or deleted
+Cache directory is used for storing temporary files which are either moved or deleted
 after conversion. You can pass `--no-cleanup` flag in order to keep them.
 
-The path of cache directory:
+The path for cache directory:
 
 - Linux or BSD: `~/.cache/pyglossary/`
 - Mac: `~/Library/Caches/PyGlossary/`
