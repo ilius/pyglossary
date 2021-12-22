@@ -7,4 +7,5 @@
 /.mypy_cache/
 /plugins
 /ui
+.coverage
 vulture.*
