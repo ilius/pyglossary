@@ -130,6 +130,7 @@ setup(
 			"marisa-trie",
 			"libzim",
 			"python-lzo",
+			"html5lib",
 		],
 	},
 )
