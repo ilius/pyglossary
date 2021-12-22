@@ -95,6 +95,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
 	name="pyglossary",
 	version=VERSION,
+	python_requires=">=3.7.0",
 	cmdclass={
 		"install": my_install,
 	},
