@@ -133,6 +133,30 @@ class Reader(object):
 		for row in self._csvReader:
 			yield row
 
+	def _processRow(self, row):
+		if not row:
+			return None
+
+		try:
+			word = row[0]
+			defi = row[1]
+		except IndexError:
+			log.error(f"invalid row: {row!r}")
+			return None
+
+		try:
+			alts = row[2].split(",")
+		except IndexError:
+			pass
+		else:
+			word = [word] + alts
+
+		return self._glos.newEntry(
+			word,
+			defi,
+			byteProgress=(self._file.tell(), self._fileSize),
+		)
+
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		if not self._csvReader:
 			raise RuntimeError("iterating over a reader while it's not open")
@@ -140,27 +164,8 @@ class Reader(object):
 		wordCount = 0
 		for row in self._iterRows():
 			wordCount += 1
-			if not row:
-				yield None  # update progressbar
-				continue
-			try:
-				word = row[0]
-				defi = row[1]
-			except IndexError:
-				log.error(f"invalid row: {row!r}")
-				yield None  # update progressbar
-				continue
-			try:
-				alts = row[2].split(",")
-			except IndexError:
-				pass
-			else:
-				word = [word] + alts
-			yield self._glos.newEntry(
-				word,
-				defi,
-				byteProgress=(self._file.tell(), self._fileSize),
-			)
+			yield self._processRow(row)
+
 		self._wordCount = wordCount
 
 		resDir = self._resDir
