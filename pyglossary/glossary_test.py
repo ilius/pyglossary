@@ -159,6 +159,24 @@ class TestGlossary(unittest.TestCase):
 		self.assertEqual(outputFilename, res)
 		self.compareTextFiles(outputFilename, expectedFilename)
 
+	def convert_csv_txt(self, fname):
+		inputFilename = self.downloadFile(f"{fname}.csv")
+		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
+		expectedFilename = self.downloadFile(f"{fname}.txt")
+		glos = Glossary()
+		# using glos.convert will add "input_file_size" info key
+		# perhaps add another optional argument to glos.convert named infoOverride
+
+		res = glos.read(inputFilename)
+		self.assertTrue(res)
+
+		glos.setInfo("input_file_size", "")
+
+		res = glos.write(outputFilename, format="Tabfile")
+		self.assertTrue(res)
+
+		self.compareTextFiles(outputFilename, expectedFilename)
+
 	def test_convert_txt_csv_1(self):
 		self.convert_txt_csv("100-en-fa")
 
@@ -167,6 +185,15 @@ class TestGlossary(unittest.TestCase):
 
 	def test_convert_txt_csv_3(self):
 		self.convert_txt_csv("100-ja-en")
+
+	def test_convert_csv_txt_1(self):
+		self.convert_csv_txt("100-en-fa")
+
+	def test_convert_csv_txt_2(self):
+		self.convert_csv_txt("100-en-de")
+
+	def test_convert_csv_txt_3(self):
+		self.convert_csv_txt("100-ja-en")
 
 	def convert_txt_stardict(
 		self,
