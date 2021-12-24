@@ -1272,6 +1272,7 @@ class Glossary(GlossaryType):
 		readOptions: "Optional[Dict[str, Any]]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
 		sqlite: bool = False,
+		infoOverride: "Optional[Dict[str, str]]" = None,
 	) -> "Optional[str]":
 		"""
 		returns absolute path of output file, or None if failed
@@ -1328,6 +1329,10 @@ class Glossary(GlossaryType):
 		):
 			return
 		log.info("")
+
+		if infoOverride:
+			for key, value in infoOverride.items():
+				self.setInfo(key, value)
 
 		finalOutputFile = self.write(
 			outputFilename,

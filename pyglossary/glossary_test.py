@@ -159,7 +159,7 @@ class TestGlossary(unittest.TestCase):
 		self.assertEqual(outputFilename, res)
 		self.compareTextFiles(outputFilename, expectedFilename)
 
-	def convert_csv_txt(self, fname):
+	def convert_csv_txt_rw(self, fname):
 		inputFilename = self.downloadFile(f"{fname}.csv")
 		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
 		expectedFilename = self.downloadFile(f"{fname}.txt")
@@ -167,13 +167,30 @@ class TestGlossary(unittest.TestCase):
 		# using glos.convert will add "input_file_size" info key
 		# perhaps add another optional argument to glos.convert named infoOverride
 
-		res = glos.read(inputFilename)
-		self.assertTrue(res)
+		rRes = glos.read(inputFilename, direct=True)
+		self.assertTrue(rRes)
 
 		glos.setInfo("input_file_size", "")
 
-		res = glos.write(outputFilename, format="Tabfile")
-		self.assertTrue(res)
+		wRes = glos.write(outputFilename, format="Tabfile")
+		self.assertEqual(outputFilename, wRes)
+
+		self.compareTextFiles(outputFilename, expectedFilename)
+
+	def convert_csv_txt(self, fname):
+		inputFilename = self.downloadFile(f"{fname}.csv")
+		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
+		expectedFilename = self.downloadFile(f"{fname}.txt")
+		glos = Glossary()
+
+		res = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+			infoOverride={
+				"input_file_size": "",
+			},
+		)
+		self.assertEqual(outputFilename, res)
 
 		self.compareTextFiles(outputFilename, expectedFilename)
 
@@ -194,6 +211,9 @@ class TestGlossary(unittest.TestCase):
 
 	def test_convert_csv_txt_3(self):
 		self.convert_csv_txt("100-ja-en")
+
+	def test_convert_csv_txt_4(self):
+		self.convert_csv_txt_rw("100-en-fa")
 
 	def convert_txt_stardict(
 		self,
