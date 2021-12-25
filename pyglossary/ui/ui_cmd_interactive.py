@@ -53,6 +53,7 @@ from os.path import (
 import logging
 from collections import OrderedDict
 import argparse
+import shlex
 
 import json
 
@@ -941,7 +942,7 @@ class UI(ui_cmd.UI):
 			"If you want to repeat this conversion later, "
 			"you can use this command:"
 		)
-		print(" ".join(cmd))
+		print(shlex.join(cmd))
 
 	def run(
 		self,
