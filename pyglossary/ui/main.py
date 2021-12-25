@@ -359,20 +359,14 @@ def main():
 		action="store",
 		dest="sourceLang",
 		default=None,
-		help=(
-			"source/query language"
-			" (may be overridden by input glossary)"
-		),
+		help="source/query language",
 	)
 	parser.add_argument(
 		"--target-lang",
 		action="store",
 		dest="targetLang",
 		default=None,
-		help=(
-			"target/definition language"
-			" (may be overridden by input glossary)"
-		)
+		help="target/definition language",
 	)
 
 	# _______________________________
@@ -520,7 +514,6 @@ def main():
 	infoOverrideSpec = (
 		("sourceLang", validateLangStr),
 		("targetLang", validateLangStr),
-		# ("author", str),
 	)
 
 	config = {}
