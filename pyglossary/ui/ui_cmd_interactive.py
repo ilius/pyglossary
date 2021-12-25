@@ -166,6 +166,7 @@ convertOptionsFlags = {
 infoOverrideFlags = {
 	"sourceLang": "source-lang",
 	"targetLang": "target-lang",
+	"name": "name",
 }
 
 

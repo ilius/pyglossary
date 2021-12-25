@@ -53,6 +53,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         [--utf8-check|--no-utf8-check] [--lower|--no-lower]
         [--read-options=<u>READ_OPTIONS</u>] [--write-options=<u>WRITE_OPTIONS</u>]
         [--source-lang=<u>LANGUAGE</u>] [--target-lang=<u>LANGUAGE</u>]
+        ['--name=<u>GLOSSARY NAME</u>']
 
 <b>Direct and indirect modes</b>
     Indirect mode means the input glossary is completely read and loaded into RAM, then converted

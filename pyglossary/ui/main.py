@@ -368,6 +368,13 @@ def main():
 		default=None,
 		help="target/definition language",
 	)
+	parser.add_argument(
+		"--name",
+		action="store",
+		dest="name",
+		default=None,
+		help="glossary name/title",
+	)
 
 	# _______________________________
 
@@ -514,6 +521,7 @@ def main():
 	infoOverrideSpec = (
 		("sourceLang", validateLangStr),
 		("targetLang", validateLangStr),
+		("name", str),
 	)
 
 	config = {}
