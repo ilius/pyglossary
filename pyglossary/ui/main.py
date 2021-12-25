@@ -28,6 +28,7 @@ import logging
 from pyglossary import core  # essential
 from pyglossary.entry import Entry
 from pyglossary.ui.base import UIBase
+from pyglossary.langs import langDict
 
 # the first thing to do is to set up logger.
 # other modules also using logger "root", so it is essential to set it up prior
@@ -51,6 +52,8 @@ from pyglossary.ui.base import UIBase
 # TODO
 # -v (verbose or version?)
 # -r (reverse or read-options)
+
+log = None
 
 
 def canRunGUI():
@@ -165,7 +168,20 @@ def getVersion():
 	return core.VERSION
 
 
+def validateLangStr(st) -> "Optional[str]":
+	lang = langDict[st]
+	if lang:
+		return lang.name
+	lang = langDict[st.lower()]
+	if lang:
+		return lang.name
+	log.error(f"unknown language {st!r}")
+	return
+
+
 def main():
+	global log
+
 	parser = argparse.ArgumentParser(add_help=False)
 
 	parser.add_argument(
@@ -341,7 +357,7 @@ def main():
 	parser.add_argument(
 		"--source-lang",
 		action="store",
-		dest="sourceLangName",
+		dest="sourceLang",
 		default=None,
 		help=(
 			"source/query language"
@@ -351,7 +367,7 @@ def main():
 	parser.add_argument(
 		"--target-lang",
 		action="store",
-		dest="targetLangName",
+		dest="targetLang",
 		default=None,
 		help=(
 			"target/definition language"
@@ -501,10 +517,10 @@ def main():
 		# "sortKey",  # TODO
 		"sqlite",
 	)
-	glossarySetAttrsNames = (
-		"sourceLangName",
-		"targetLangName",
-		# "author",
+	infoOverrideSpec = (
+		("sourceLang", validateLangStr),
+		("targetLang", validateLangStr),
+		# ("author", str),
 	)
 
 	config = {}
@@ -529,11 +545,17 @@ def main():
 	if convertOptions.get("sort", False):
 		convertOptions["defaultSortKey"] = Entry.defaultSortKey
 
-	glossarySetAttrs = {}
-	for key in glossarySetAttrsNames:
+	infoOverride = {}
+	for key, validate in infoOverrideSpec:
 		value = getattr(args, key, None)
-		if value is not None:
-			glossarySetAttrs[key] = value
+		if value is None:
+			continue
+		value = validate(value)
+		if value is None:
+			continue
+		infoOverride[key] = value
+	if infoOverride:
+		convertOptions["infoOverride"] = infoOverride
 
 	if args.inputFilename and readOptions:
 		inputArgs = Glossary.detectInputFormat(
@@ -589,8 +611,6 @@ def main():
 		log.debug(f"config = {config}")
 	if convertOptions:
 		log.debug(f"convertOptions = {convertOptions}")
-	if glossarySetAttrs:
-		log.debug(f"glossarySetAttrs = {glossarySetAttrs}")
 
 	runKeywordArgs = dict(
 		inputFilename=args.inputFilename,
@@ -602,7 +622,7 @@ def main():
 		readOptions=readOptions,
 		writeOptions=writeOptions,
 		convertOptions=convertOptions,
-		glossarySetAttrs=glossarySetAttrs,
+		glossarySetAttrs=None,
 	)
 
 	if ui_type == "none":

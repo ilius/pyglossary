@@ -905,6 +905,20 @@ class UI(ui_cmd.UI):
 				"sortCacheSize": ("sort-cache-size", ""),
 				"defaultSortKey": None,
 			}
+			infoOverrideFlags = {
+				"sourceLang": "source-lang",
+				"targetLang": "target-lang",
+			}
+
+			if "infoOverride" in self._convertOptions:
+				infoOverride = self._convertOptions.pop("infoOverride")
+				for key, value in infoOverride.items():
+					flag = infoOverrideFlags.get(key)
+					if not flag:
+						log.error(f"unknow key {key} in infoOverride")
+						continue
+					cmd.append(f"--{flag}={value}")
+
 			for key, value in self._convertOptions.items():
 				if value is None:
 					continue
