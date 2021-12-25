@@ -154,6 +154,19 @@ writeFormatDescList = [
 	for _format in Glossary.writeFormats
 ]
 
+convertOptionsFlags = {
+	"direct": ("indirect", "direct"),
+	"sqlite": ("", "sqlite"),
+	"progressbar": ("no-progress-bar", ""),
+	"sort": ("no-sort", "sort"),
+	"sortCacheSize": ("sort-cache-size", ""),
+	"defaultSortKey": None,
+}
+infoOverrideFlags = {
+	"sourceLang": "source-lang",
+	"targetLang": "target-lang",
+}
+
 
 def dataToPrettyJson(data, ensure_ascii=False, sort_keys=False):
 	return json.dumps(
@@ -897,19 +910,6 @@ class UI(ui_cmd.UI):
 					cmd.append(quote(f"--{flag}={value}"))
 
 		if self._convertOptions:
-			convertOptionsFlags = {
-				"direct": ("indirect", "direct"),
-				"sqlite": ("", "sqlite"),
-				"progressbar": ("no-progress-bar", ""),
-				"sort": ("no-sort", "sort"),
-				"sortCacheSize": ("sort-cache-size", ""),
-				"defaultSortKey": None,
-			}
-			infoOverrideFlags = {
-				"sourceLang": "source-lang",
-				"targetLang": "target-lang",
-			}
-
 			if "infoOverride" in self._convertOptions:
 				infoOverride = self._convertOptions.pop("infoOverride")
 				for key, value in infoOverride.items():
