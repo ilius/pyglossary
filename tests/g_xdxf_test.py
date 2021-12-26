@@ -13,14 +13,14 @@ class TestGlossaryXDXF(TestGlossaryBase):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
-			"100-cyber_lexicon_en-es.txt": "8571e444",
+			"100-cyber_lexicon_en-es-2.txt": "67ab90ba",
 			"100-cyber_lexicon_en-es.xdxf": "8d9ba394"
 		})
 
 	def convert_xdxf_txt(self, fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.xdxf",
-			f"{fname}-2.txt",
+			f"{fname}-tmp.txt",
 			compareText=f"{fname2}.txt",
 			**convertArgs
 		)
@@ -28,7 +28,7 @@ class TestGlossaryXDXF(TestGlossaryBase):
 	def test_convert_xdxf_txt_1(self):
 		self.convert_xdxf_txt(
 			"100-cyber_lexicon_en-es",
-			"100-cyber_lexicon_en-es",
+			"100-cyber_lexicon_en-es-2",
 		)
 
 

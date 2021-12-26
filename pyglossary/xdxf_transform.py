@@ -157,7 +157,15 @@ class XdxfTransformer(object):
 			hf.write("]")
 			return
 
-		if child.tag in ("k", "sr"):
+		if child.tag == "k":
+			with hf.element("div", **{"class": child.tag}):
+				# with glos.titleElement(hf, child.text):
+				# ^ no glos object here!
+				with hf.element("b"):
+					self.writeChildrenOf(hf, child)
+			return
+
+		if child.tag == "sr":
 			with hf.element("div", **{"class": child.tag}):
 				self.writeChildrenOf(hf, child)
 			return
@@ -261,6 +269,7 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag == "abbr":
+			# FIXME: may need an space or newline before it
 			with hf.element("i"):
 				hf.write(f"{child.text}")
 			return
