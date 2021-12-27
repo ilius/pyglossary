@@ -69,21 +69,3 @@ class GlossaryType(object):
 
 	def newDataEntry(self, fname: str, data: bytes) -> DataEntry:
 		raise NotImplementedError
-
-	def writeTxt(
-		self,
-		entryFmt: str = "",  # contain {word} and {defi}
-		filename: str = "",
-		fileObj: "Optional[file]" = None,
-		writeInfo: bool = True,
-		wordEscapeFunc: "Optional[Callable]" = None,
-		defiEscapeFunc: "Optional[Callable]" = None,
-		ext: str = ".txt",
-		head: str = "",
-		tail: str = "",
-		outInfoKeysAliasDict: "Optional[Dict[str, str]]" = None,
-		encoding: str = "utf-8",
-		newline: str = "\n",
-		resources: bool = True,
-	) -> "Generator[None, BaseEntry, None]":
-		raise NotImplementedError

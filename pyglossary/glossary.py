@@ -432,6 +432,7 @@ class Glossary(GlossaryType):
 			return iter([])
 		return self._iter
 
+	# TODO: switch to @property defaultDefiFormat
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		"""
 		defiFormat must be empty or one of these:
