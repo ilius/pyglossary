@@ -6,6 +6,11 @@ from .langs import Lang
 
 
 class GlossaryType(object):
+	"""
+	an abstract type class for Glossary class in plugins. it only
+	contains methods and properties that might be used in plugins
+	"""
+
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		raise NotImplementedError
 
@@ -35,6 +40,10 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	@property
+	def filename(self):
+		raise NotImplementedError
+
+	@property
 	def sourceLang(self) -> "Optional[Lang]":
 		raise NotImplementedError
 
@@ -56,6 +65,21 @@ class GlossaryType(object):
 
 	@targetLangName.setter
 	def targetLangName(self, langName: str) -> None:
+		raise NotImplementedError
+
+	def titleElement(
+		self,
+		hf: "lxml.etree.htmlfile",
+		sample: str = "",
+	) -> "lxml.etree._FileWriterElement":
+		raise NotImplementedError
+
+	def wordTitleStr(
+		self,
+		word: str,
+		sample: str = "",
+		_class: str = "",
+	) -> str:
 		raise NotImplementedError
 
 	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
