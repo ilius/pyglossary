@@ -13,6 +13,9 @@
 | `remove_html_all`     | `--remove-html-all`                  | bool  | `False`   | Remove all html tags from definitions                            |
 | `normalize_html`      | `--normalize-html`                   | bool  | `False`   | Lowercase and normalize html tags in definitions                 |
 | `save_info_json`      | `--info`                             | bool  | `False`   | Save glossary info as json file with .info extension             |
+| `color.cmd.critical`  |                                      | int   | `196`     |                                                                  |
+| `color.cmd.error`     |                                      | int   | `1`       |                                                                  |
+| `color.cmd.warning`   |                                      | int   | `15`      |                                                                  |
 | `ui_autoSetFormat`    |                                      | bool  | `True`    |                                                                  |
 | `reverse_matchWord`   |                                      | bool  | `True`    |                                                                  |
 | `reverse_showRel`     |                                      | str   | `Percent` |                                                                  |
