@@ -17,7 +17,7 @@
 # GNU General Public License for more details.
 
 from pyglossary import core
-from pyglossary.core import homeDir, confDir, dataDir
+from pyglossary.core import homeDir, confDir
 
 from pyglossary.glossary import (
 	Glossary,
@@ -44,14 +44,6 @@ from tkinter import ttk
 from tkinter import font as tkFont
 
 log = logging.getLogger("pyglossary")
-
-# startBold = "\x1b[1m"  # Start Bold #len=4
-# startUnderline = "\x1b[4m"  # Start Underline #len=4
-endFormat = "\x1b[0;0;0m"  # End Format #len=8
-# redOnGray = "\x1b[0;1;31;47m"
-startRed = "\x1b[31m"
-
-resDir = join(dataDir, "res")
 
 pluginByDesc = {
 	plugin.description: plugin
@@ -148,27 +140,27 @@ def newReadOnlyText(
 	font=None,
 ):
 	height = len(text.strip().split("\n"))
-	w = tk.Text(
+	widget = tk.Text(
 		parent,
 		height=height,
 		borderwidth=borderwidth,
 		font=font,
 	)
-	w.insert(1.0, text)
-	w.pack()
+	widget.insert(1.0, text)
+	widget.pack()
 
-	# w.bind("<Key>", lambda e: "break")
-	w.configure(state="disabled")
+	# widget.bind("<Key>", lambda e: "break")
+	widget.configure(state="disabled")
 
 	# if tkinter is 8.5 or above you'll want the selection background
 	# to appear like it does when the widget is activated
 	# comment this out for older versions of Tkinter
-	w.configure(
-		inactiveselectbackground=w.cget("selectbackground"),
+	widget.configure(
+		inactiveselectbackground=widget.cget("selectbackground"),
 		bg=parent.cget('bg'),
 		relief="flat",
 	)
-	return w
+	return widget
 
 
 class TkTextLogHandler(logging.Handler):
@@ -285,10 +277,10 @@ class ProgressBar(tix.Frame):
 		self.bind("<Configure>", self.update)
 		self.canvas.pack(side="top", fill="x", expand="no")
 
-	def updateProgress(self, newVal, newMax=None, text=""):
-		if newMax:
-			self.max = newMax
-		self.value = newVal
+	def updateProgress(self, value, _max=None, text=""):
+		if _max:
+			self.max = _max
+		self.value = value
 		self.update(None, text)
 
 	def update(self, event=None, labelText=""):
@@ -354,13 +346,13 @@ class FormatDialog(tix.Toplevel):
 		self.bind('<Escape>', lambda e: self.destroy())
 
 		px, py, pw, ph = decodeGeometry(button.winfo_toplevel().geometry())
-		w = 400
-		h = 400
+		width = 400
+		height = 400
 		self.geometry(encodeGeometry(
-			px + pw // 2 - w // 2,
-			py + ph // 2 - h // 2,
-			w,
-			h,
+			px + pw // 2 - width // 2,
+			py + ph // 2 - height // 2,
+			width,
+			height,
 		))
 
 		entryBox = tk.Frame(master=self)
@@ -443,7 +435,8 @@ class FormatDialog(tix.Toplevel):
 		if current:
 			treev.delete(*current)
 		for desc in self.items:
-			treev.insert("", "end", values=[desc], iid=desc)  # iid should be rowId
+			treev.insert("", "end", values=[desc], iid=desc)
+			# iid should be rowId
 		if self.activeDesc in self.items:
 			self.setActiveRow(self.activeDesc)
 
@@ -469,9 +462,7 @@ class FormatDialog(tix.Toplevel):
 			elif text in desc.lower():
 				items2.append(desc)
 
-		items = items1 + items2
-
-		self.items = items
+		self.items = items1 + items2
 		self.updateTree()
 		self.lastSearch = text
 
@@ -509,7 +500,7 @@ class FormatDialog(tix.Toplevel):
 			self.setActiveRow(nextDesc)
 
 	def onKeyPress(self, event):
-		print("FormatDialog: onKeyPress:", event)
+		print(f"FormatDialog: onKeyPress: {event}")
 
 	def okClicked(self):
 		treev = self.treev
@@ -676,13 +667,13 @@ class FormatOptionsDialog(tix.Toplevel):
 		dialog.bind('<Escape>', lambda e: dialog.destroy())
 
 		px, py, pw, ph = decodeGeometry(treev.winfo_toplevel().geometry())
-		w = 300
-		h = 100
+		width = 300
+		height = 100
 		dialog.geometry(encodeGeometry(
-			px + pw // 2 - w // 2,
-			py + ph // 2 - h // 2,
-			w,
-			h,
+			px + pw // 2 - width // 2,
+			py + ph // 2 - height // 2,
+			width,
+			height,
 		))
 
 		frame = tix.Frame(master=dialog)
@@ -1183,8 +1174,8 @@ class UI(tix.Frame, UIBase):
 		authorsFrame = tk.Frame(aboutNotebook)
 		licenseFrame = tk.Frame(aboutNotebook)
 
-		# tabImg = tk.PhotoImage(file=join(resDir, "dialog-information-22.png"))
-		# tabImg = tk.PhotoImage(file=join(resDir, "author-22.png"))
+		# tabImg = tk.PhotoImage(file=join(dataDir, "res", "dialog-information-22.png"))
+		# tabImg = tk.PhotoImage(file=join(dataDir, "res", "author-22.png"))
 
 		aboutNotebook.add(
 			aboutFrame3,
