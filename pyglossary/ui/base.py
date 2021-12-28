@@ -109,9 +109,18 @@ class UIBase(object):
 			comment="Save glossary info as json file with .info extension",
 		)),
 
-		("color.cmd.critical", IntOption(hasFlag=False)),
-		("color.cmd.error", IntOption(hasFlag=False)),
-		("color.cmd.warning", IntOption(hasFlag=False)),
+		("color.cmd.critical", IntOption(
+			hasFlag=False,
+			comment="Color code for critical errors in terminal",
+		)),
+		("color.cmd.error", IntOption(
+			hasFlag=False,
+			comment="Color code for errors in terminal",
+		)),
+		("color.cmd.warning", IntOption(
+			hasFlag=False,
+			comment="Color code for warnings in terminal",
+		)),
 
 		("ui_autoSetFormat", BoolOption(hasFlag=False)),
 

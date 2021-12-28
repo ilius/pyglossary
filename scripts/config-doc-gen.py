@@ -97,6 +97,16 @@ def getCommandFlagsMD(name, opt):
 
 	return f"`--{flag}`"
 
+def optionComment(name, opt):
+	comment = opt.comment
+
+	if name.startswith("color.cmd."):
+		if comment:
+			comment += "<br/>"
+		comment += "See [term_colors.md](./term_colors.md)"
+
+	return comment
+
 
 paramsTable = "## Configuration Parameters\n\n" + renderTable(
 	[(
@@ -111,7 +121,7 @@ paramsTable = "## Configuration Parameters\n\n" + renderTable(
 			getCommandFlagsMD(name, opt),
 			opt.typ,
 			codeValue(ui.config[name]),
-			opt.comment,
+			optionComment(name, opt),
 		)
 		for name, opt in ui.configDefDict.items()
 		if not opt.disabled
