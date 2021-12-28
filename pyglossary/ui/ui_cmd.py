@@ -32,12 +32,10 @@ def wc_ljust(text, length, padding=' '):
 
 
 if os.sep == "\\":  # Operating system is Windows
-	startRed = ""
 	startBold = ""
 	startUnderline = ""
 	endFormat = ""
 else:
-	startRed = "\x1b[31m"
 	startBold = "\x1b[1m"  # Start Bold # len=4
 	startUnderline = "\x1b[4m"  # Start Underline # len=4
 	endFormat = "\x1b[0;0;0m"  # End Format # len=8

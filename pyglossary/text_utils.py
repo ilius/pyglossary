@@ -28,7 +28,6 @@ from . import core
 
 log = logging.getLogger("pyglossary")
 
-startRed = "\x1b[31m"
 endFormat = "\x1b[0;0;0m"  # len=8
 
 
