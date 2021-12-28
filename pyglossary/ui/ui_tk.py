@@ -1484,7 +1484,7 @@ class UI(tix.Frame, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		configOptions: "Optional[Dict]" = None,
+		config: "Optional[Dict]" = None,
 		readOptions: "Optional[Dict]" = None,
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
@@ -1493,7 +1493,7 @@ class UI(tix.Frame, UIBase):
 		if glossarySetAttrs is None:
 			glossarySetAttrs = {}
 
-		self.loadConfig(**configOptions)
+		self.config = config
 
 		if inputFilename:
 			self.entryInputConvert.insert(0, abspath(inputFilename))

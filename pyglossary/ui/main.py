@@ -110,7 +110,7 @@ def base_ui_run(
 	inputFormat: str = "",
 	outputFormat: str = "",
 	reverse: bool = False,
-	configOptions: "Optional[Dict]" = None,
+	config: "Optional[Dict]" = None,
 	readOptions: "Optional[Dict]" = None,
 	writeOptions: "Optional[Dict]" = None,
 	convertOptions: "Optional[Dict]" = None,
@@ -121,7 +121,7 @@ def base_ui_run(
 		log.error("--reverse does not work with --ui=none")
 		return False
 	ui = UIBase()
-	ui.loadConfig(**configOptions)
+	ui.loadConfig(**config)
 	glos = Glossary(ui=ui)
 	glos.config = ui.config
 	if glossarySetAttrs:
@@ -425,10 +425,11 @@ def main():
 	if ui_type == "none":
 		args.noColor = True
 
-	log.setVerbosity(args.verbosity)
-	log.addHandler(
-		core.StdLogHandler(noColor=args.noColor),
+	logHanlder = core.StdLogHandler(
+		noColor=args.noColor
 	)
+	log.setVerbosity(args.verbosity)
+	log.addHandler(logHanlder)
 	# with the logger setted up, we can import other pyglossary modules, so they
 	# can do some logging in right way.
 
@@ -524,14 +525,15 @@ def main():
 		("name", str),
 	)
 
-	config = {}
-	for key, option in UIBase.configDefDict.items():
+	uiBase = UIBase()
+	uiBase.loadConfig()
+	config = uiBase.config
+	for key, option in uiBase.configDefDict.items():
 		if not option.cmd:
 			continue
 		value = getattr(args, key, None)
 		if value is None:
 			continue
-		option = UIBase.configDefDict[key]
 		if not option.validate(value):
 			log.error("invalid config value: {key} = {value!r}")
 			continue
@@ -608,8 +610,6 @@ def main():
 				sys.exit(1)
 			writeOptions[optName] = optValueNew
 
-	if config:
-		log.debug(f"config = {config}")
 	if convertOptions:
 		log.debug(f"convertOptions = {convertOptions}")
 
@@ -619,7 +619,7 @@ def main():
 		inputFormat=args.inputFormat,
 		outputFormat=args.outputFormat,
 		reverse=args.reverse,
-		configOptions=config,
+		config=config,
 		readOptions=readOptions,
 		writeOptions=writeOptions,
 		convertOptions=convertOptions,

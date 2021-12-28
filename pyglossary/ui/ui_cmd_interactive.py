@@ -264,7 +264,7 @@ class UI(ui_cmd.UI):
 		self._outputFilename = ""
 		self._inputFormat = ""
 		self._outputFormat = ""
-		self._configOptions = None
+		self.config = None
 		self._readOptions = None
 		self._writeOptions = None
 		self._convertOptions = None
@@ -737,9 +737,9 @@ class UI(ui_cmd.UI):
 				except (KeyboardInterrupt, EOFError):
 					break
 				if value == "":
-					if configKey in self._configOptions:
+					if configKey in self.config:
 						print(f"Unset config {configKey!r}")
-						del self._configOptions[configKey]
+						del self.config[configKey]
 					# FIXME: set empty value?
 					break
 				valueNew, ok = option.evaluate(value)
@@ -749,7 +749,7 @@ class UI(ui_cmd.UI):
 					)
 					continue
 				print(f"Set config: {configKey} = {valueNew!r}")
-				self._configOptions[configKey] = valueNew
+				self.config[configKey] = valueNew
 				self.config[configKey] = valueNew
 				break
 
@@ -757,7 +757,7 @@ class UI(ui_cmd.UI):
 		print(f"readOptions = {self._readOptions}")
 		print(f"writeOptions = {self._writeOptions}")
 		print(f"convertOptions = {self._convertOptions}")
-		print(f"configOptions = {self._configOptions}")
+		print(f"config = {self.config}")
 		print()
 
 	def setIndirect(self):
@@ -836,7 +836,7 @@ class UI(ui_cmd.UI):
 			outputFilename=self._outputFilename,
 			inputFormat=self._inputFormat,
 			outputFormat=self._outputFormat,
-			configOptions=self._configOptions,
+			config=self.config,
 			readOptions=self._readOptions,
 			writeOptions=self._writeOptions,
 			convertOptions=self._convertOptions,
@@ -892,8 +892,8 @@ class UI(ui_cmd.UI):
 			optionsJson = json.dumps(self._writeOptions, ensure_ascii=True)
 			cmd.append(quote(f"--json-write-options={optionsJson}"))
 
-		if self._configOptions:
-			for key, value in self._configOptions.items():
+		if self.config:
+			for key, value in self.config.items():
 				if value is None:
 					continue
 				option = self.configDefDict.get(key)
@@ -952,14 +952,14 @@ class UI(ui_cmd.UI):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		configOptions: "Optional[Dict]" = None,
+		config: "Optional[Dict]" = None,
 		readOptions: "Optional[Dict]" = None,
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
 		glossarySetAttrs: "Optional[Dict]" = None,
 	):
-		if configOptions is None:
-			configOptions = {}
+		if config is None:
+			config = {}
 		if readOptions is None:
 			readOptions = {}
 		if writeOptions is None:
@@ -973,16 +973,17 @@ class UI(ui_cmd.UI):
 		self._outputFilename = outputFilename
 		self._inputFormat = inputFormat
 		self._outputFormat = outputFormat
-		self._configOptions = configOptions
 		self._readOptions = readOptions
 		self._writeOptions = writeOptions
 		self._convertOptions = convertOptions
 		self._glossarySetAttrs = glossarySetAttrs
 
 		del inputFilename, outputFilename, inputFormat, outputFormat
-		del configOptions, readOptions, writeOptions, convertOptions
+		del config, readOptions, writeOptions, convertOptions
 
-		self.loadConfig(**self._configOptions)
+		self.loadConfig()
+		self.savedConfig = self.config
+		self.config = config
 
 		if not self._inputFilename:
 			try:
@@ -1019,7 +1020,7 @@ class UI(ui_cmd.UI):
 			else:
 				self.printNonInteractiveCommand()
 				if succeed:
-					if self._configOptions and confirm("Save Config?"):
+					if self.config != self.savedConfig and confirm("Save Config?"):
 						self.saveConfig()
 					return succeed
 			print("Press Control + C to exit")
