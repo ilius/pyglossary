@@ -72,7 +72,7 @@ def canRunGUI():
 def registerOption(parser, key: str, option: "Option"):
 	if not option.cmd:
 		return
-	flag = option.cmdFlag
+	flag = option.customFlag
 	if not flag:
 		flag = key.replace('_', '-')
 

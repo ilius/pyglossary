@@ -901,7 +901,7 @@ class UI(ui_cmd.UI):
 					log.error(f"config key {key} was not found")
 				if not option.cmd:
 					log.error(f"config key {key} has no command line flag")
-				flag = option.cmdFlag
+				flag = option.customFlag
 				if not flag:
 					flag = key.replace('_', '-')
 				if option.typ == "bool":

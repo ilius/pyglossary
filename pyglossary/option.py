@@ -18,7 +18,7 @@ class Option(object):
 		multiline: bool = False,
 		disabled: bool = False,
 		cmd: bool = False,
-		cmdFlag: str = "",
+		customFlag: str = "",
 		falseComment: str = "",
 	) -> None:
 		if values is None:
@@ -32,7 +32,7 @@ class Option(object):
 		self.multiline = multiline
 		self.disabled = disabled
 		self.cmd = cmd
-		self.cmdFlag = cmdFlag
+		self.customFlag = customFlag
 		self.falseComment = falseComment
 
 	@property
@@ -62,7 +62,7 @@ class Option(object):
 			data["disabled"] = True
 		if self.cmd:
 			data["cmd"] = True
-			data["cmdFlag"] = self.cmdFlag
+			data["customFlag"] = self.customFlag
 		if self.falseComment:
 			data["falseComment"] = self.falseComment
 		return data

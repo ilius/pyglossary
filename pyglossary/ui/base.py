@@ -76,7 +76,7 @@ class UIBase(object):
 		)),
 		("enable_alts", BoolOption(
 			cmd=True,
-			cmdFlag="alts",
+			customFlag="alts",
 			comment="Enable alternates",
 			falseComment="Disable alternates",
 		)),
@@ -105,7 +105,7 @@ class UIBase(object):
 		)),
 		("save_info_json", BoolOption(
 			cmd=True,
-			cmdFlag="info",
+			customFlag="info",
 			comment="Save glossary info as json file with .info extension",
 		)),
 
