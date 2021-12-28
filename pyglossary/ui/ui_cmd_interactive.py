@@ -978,12 +978,13 @@ class UI(ui_cmd.UI):
 		self._convertOptions = convertOptions
 		self._glossarySetAttrs = glossarySetAttrs
 
-		del inputFilename, outputFilename, inputFormat, outputFormat
-		del config, readOptions, writeOptions, convertOptions
 
 		self.loadConfig()
 		self.savedConfig = self.config
 		self.config = config
+
+		del inputFilename, outputFilename, inputFormat, outputFormat
+		del config, readOptions, writeOptions, convertOptions
 
 		if not self._inputFilename:
 			try:
