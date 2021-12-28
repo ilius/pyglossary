@@ -144,20 +144,19 @@ def format_exception(
 
 
 class StdLogHandler(logging.Handler):
+	colorsConfig = {
+		"ERROR": ("color.cmd.error", 1),
+		"CRITICAL": ("color.cmd.error", 1),
+		"WARNING": ("color.cmd.warning", 15),
+	}
+	# 1: dark red (like 31m), 196: real red, 9: light red
+	# 15: white, 229: light yellow (#ffffaf), 226: real yellow (#ffff00)
+
 	def __init__(self, noColor: bool = False):
 		logging.Handler.__init__(self)
 		self.set_name("std")
 		self.noColor = noColor
 		self.config = {}
-
-	@property
-	def startError(self):
-		if self.noColor:
-			return ""
-		# 1: dark red (like 31m), 196: real red, 9: light red
-		colorCode = self.config.get("color.cmd.error", 1)
-		return f"\x1b[38;5;{colorCode}m"
-		# return "\x1b[31m"
 
 	@property
 	def endFormat(self):
@@ -183,12 +182,19 @@ class StdLogHandler(logging.Handler):
 			msg += "\n"
 			msg += tback_text
 		###
-		if record.levelname in ("CRITICAL", "ERROR"):
-			if msg and not self.noColor:
-				msg = self.startError + msg + self.endFormat
+		levelname = record.levelname
+
+		if levelname in ("CRITICAL", "ERROR"):
 			fp = sys.stderr
 		else:
 			fp = sys.stdout
+
+		if levelname in self.colorsConfig:
+			key, default = self.colorsConfig[levelname]
+			colorCode = self.config.get(key, default)
+			startColor = f"\x1b[38;5;{colorCode}m"
+			msg = startColor + msg + self.endFormat
+
 		###
 		if fp is None:
 			print(f"fp=None, levelname={record.levelname}")

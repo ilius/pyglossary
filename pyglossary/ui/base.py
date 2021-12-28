@@ -110,6 +110,7 @@ class UIBase(object):
 		)),
 
 		("color.cmd.error", IntOption(cmd=False)),
+		("color.cmd.warning", IntOption(cmd=False)),
 
 		("ui_autoSetFormat", BoolOption(cmd=False)),
 

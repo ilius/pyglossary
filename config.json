@@ -14,6 +14,7 @@
 	"save_info_json": false,
 
 	"color.cmd.error": 1,
+	"color.cmd.warning": 15,
 
 	"ui_autoSetFormat": true,
 
