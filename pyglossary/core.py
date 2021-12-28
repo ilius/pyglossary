@@ -148,12 +148,16 @@ class StdLogHandler(logging.Handler):
 		logging.Handler.__init__(self)
 		self.set_name("std")
 		self.noColor = noColor
+		self.config = {}
 
 	@property
-	def startRed(self):
+	def startError(self):
 		if self.noColor:
 			return ""
-		return "\x1b[31m"
+		# 1: dark red (like 31m), 196: real red, 9: light red
+		colorCode = self.config.get("color.cmd.error", 1)
+		return f"\x1b[38;5;{colorCode}m"
+		# return "\x1b[31m"
 
 	@property
 	def endFormat(self):
@@ -181,7 +185,7 @@ class StdLogHandler(logging.Handler):
 		###
 		if record.levelname in ("CRITICAL", "ERROR"):
 			if msg and not self.noColor:
-				msg = self.startRed + msg + self.endFormat
+				msg = self.startError + msg + self.endFormat
 			fp = sys.stderr
 		else:
 			fp = sys.stdout

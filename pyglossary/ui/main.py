@@ -539,6 +539,8 @@ def main():
 			continue
 		config[key] = value
 
+	logHanlder.config = config
+
 	convertOptions = {}
 	for key in convertOptionsKeys:
 		value = getattr(args, key, None)

@@ -13,6 +13,8 @@
 	"normalize_html": false,
 	"save_info_json": false,
 
+	"color.cmd.error": 1,
+
 	"ui_autoSetFormat": true,
 
 	"reverse_matchWord": true,

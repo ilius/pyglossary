@@ -109,6 +109,8 @@ class UIBase(object):
 			comment="Save glossary info as json file with .info extension",
 		)),
 
+		("color.cmd.error", IntOption(cmd=False)),
+
 		("ui_autoSetFormat", BoolOption(cmd=False)),
 
 		("reverse_matchWord", BoolOption(cmd=False)),
