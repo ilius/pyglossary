@@ -17,7 +17,7 @@ class Option(object):
 		comment: str = "",
 		multiline: bool = False,
 		disabled: bool = False,
-		cmd: bool = False,
+		hasFlag: bool = False,
 		customFlag: str = "",
 		falseComment: str = "",
 	) -> None:
@@ -31,7 +31,7 @@ class Option(object):
 		self.comment = comment
 		self.multiline = multiline
 		self.disabled = disabled
-		self.cmd = cmd
+		self.hasFlag = hasFlag
 		self.customFlag = customFlag
 		self.falseComment = falseComment
 
@@ -60,8 +60,8 @@ class Option(object):
 			data["comment"] = self.comment
 		if self.disabled:
 			data["disabled"] = True
-		if self.cmd:
-			data["cmd"] = True
+		if self.hasFlag:
+			data["hasFlag"] = True
 			data["customFlag"] = self.customFlag
 		if self.falseComment:
 			data["falseComment"] = self.falseComment

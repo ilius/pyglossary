@@ -899,7 +899,7 @@ class UI(ui_cmd.UI):
 				option = self.configDefDict.get(key)
 				if option is None:
 					log.error(f"config key {key} was not found")
-				if not option.cmd:
+				if not option.hasFlag:
 					log.error(f"config key {key} has no command line flag")
 				flag = option.customFlag
 				if not flag:

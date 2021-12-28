@@ -54,28 +54,28 @@ summary = "A tool for converting dictionary files aka glossaries with" \
 class UIBase(object):
 	configDefDict = OrderedDict([
 		("log_time", BoolOption(
-			cmd=True,
+			hasFlag=True,
 			comment="Show date and time in logs",
 			falseComment="Do not show date and time in logs",
 		)),
 		("cleanup", BoolOption(
-			cmd=True,
+			hasFlag=True,
 			comment="Cleanup cache or temporary files after conversion",
 			falseComment="Do not cleanup cache or temporary files after conversion",
 		)),
 
 		("lower", BoolOption(
-			cmd=True,
+			hasFlag=True,
 			comment="Lowercase words before writing",
 			falseComment="Do not lowercase words before writing",
 		)),
 		("utf8_check", BoolOption(
-			cmd=True,
+			hasFlag=True,
 			comment="Ensure entries contain valid UTF-8 strings",
 			falseComment="Do not ensure entries contain valid UTF-8 strings",
 		)),
 		("enable_alts", BoolOption(
-			cmd=True,
+			hasFlag=True,
 			customFlag="alts",
 			comment="Enable alternates",
 			falseComment="Disable alternates",
@@ -83,44 +83,44 @@ class UIBase(object):
 		# FIXME: replace with "resources"
 		# 	comment="Use resources (images, audio, etc)"
 		("skip_resources", BoolOption(
-			cmd=True,
+			hasFlag=True,
 			comment="Skip resources (images, audio, etc)",
 		)),
 
 		("rtl", BoolOption(
-			cmd=True,
+			hasFlag=True,
 			comment="Mark all definitions as Right-To-Left (definitions must be HTML)",
 		)),
 		("remove_html", StrOption(
-			cmd=True,
+			hasFlag=True,
 			comment="Remove given html tags (comma-separated) from definitions",
 		)),
 		("remove_html_all", BoolOption(
-			cmd=True,
+			hasFlag=True,
 			comment="Remove all html tags from definitions",
 		)),
 		("normalize_html", BoolOption(
-			cmd=True,
+			hasFlag=True,
 			comment="Lowercase and normalize html tags in definitions",
 		)),
 		("save_info_json", BoolOption(
-			cmd=True,
+			hasFlag=True,
 			customFlag="info",
 			comment="Save glossary info as json file with .info extension",
 		)),
 
-		("color.cmd.critical", IntOption(cmd=False)),
-		("color.cmd.error", IntOption(cmd=False)),
-		("color.cmd.warning", IntOption(cmd=False)),
+		("color.cmd.critical", IntOption(hasFlag=False)),
+		("color.cmd.error", IntOption(hasFlag=False)),
+		("color.cmd.warning", IntOption(hasFlag=False)),
 
-		("ui_autoSetFormat", BoolOption(cmd=False)),
+		("ui_autoSetFormat", BoolOption(hasFlag=False)),
 
-		("reverse_matchWord", BoolOption(cmd=False)),
-		("reverse_showRel", StrOption(cmd=False)),
-		("reverse_saveStep", IntOption(cmd=False)),
-		("reverse_minRel", FloatOption(cmd=False)),
-		("reverse_maxNum", IntOption(cmd=False)),
-		("reverse_includeDefs", BoolOption(cmd=False)),
+		("reverse_matchWord", BoolOption(hasFlag=False)),
+		("reverse_showRel", StrOption(hasFlag=False)),
+		("reverse_saveStep", IntOption(hasFlag=False)),
+		("reverse_minRel", FloatOption(hasFlag=False)),
+		("reverse_maxNum", IntOption(hasFlag=False)),
+		("reverse_includeDefs", BoolOption(hasFlag=False)),
 	])
 
 	def __init__(self, **kwargs):

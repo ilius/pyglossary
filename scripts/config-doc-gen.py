@@ -86,7 +86,7 @@ def renderTable(rows):
 
 
 def getCommandFlagsMD(name, opt):
-	if not opt.cmd:
+	if not opt.hasFlag:
 		return ""
 	flag = opt.customFlag
 	if not flag:

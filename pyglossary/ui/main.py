@@ -70,7 +70,7 @@ def canRunGUI():
 
 
 def registerOption(parser, key: str, option: "Option"):
-	if not option.cmd:
+	if not option.hasFlag:
 		return
 	flag = option.customFlag
 	if not flag:
@@ -529,7 +529,7 @@ def main():
 	uiBase.loadConfig()
 	config = uiBase.config
 	for key, option in uiBase.configDefDict.items():
-		if not option.cmd:
+		if not option.hasFlag:
 			continue
 		value = getattr(args, key, None)
 		if value is None:
