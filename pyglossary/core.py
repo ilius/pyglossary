@@ -189,7 +189,7 @@ class StdLogHandler(logging.Handler):
 		else:
 			fp = sys.stdout
 
-		if levelname in self.colorsConfig:
+		if not self.noColor and levelname in self.colorsConfig:
 			key, default = self.colorsConfig[levelname]
 			colorCode = self.config.get(key, default)
 			startColor = f"\x1b[38;5;{colorCode}m"
