@@ -109,6 +109,7 @@ class UIBase(object):
 			comment="Save glossary info as json file with .info extension",
 		)),
 
+		("color.cmd.critical", IntOption(cmd=False)),
 		("color.cmd.error", IntOption(cmd=False)),
 		("color.cmd.warning", IntOption(cmd=False)),
 

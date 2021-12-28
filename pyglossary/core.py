@@ -145,8 +145,8 @@ def format_exception(
 
 class StdLogHandler(logging.Handler):
 	colorsConfig = {
+		"CRITICAL": ("color.cmd.critical", 196),
 		"ERROR": ("color.cmd.error", 1),
-		"CRITICAL": ("color.cmd.error", 1),
 		"WARNING": ("color.cmd.warning", 15),
 	}
 	# 1: dark red (like 31m), 196: real red, 9: light red
