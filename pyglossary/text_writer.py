@@ -46,6 +46,37 @@ class TextGlossaryWriter(object):
 		self._outInfoKeysAliasDict = outInfoKeysAliasDict
 		# TODO: replace outInfoKeysAliasDict arg with a func?
 
+	def setAttrs(
+		self,
+		encoding=None,
+		newline=None,
+		wordEscapeFunc=None,
+		defiEscapeFunc=None,
+		ext=None,
+		head=None,
+		tail=None,
+		resources=None,
+		word_title=None,
+	):
+		if encoding is not None:
+			self._encoding = encoding
+		if newline is not None:
+			self._newline = newline
+		if wordEscapeFunc is not None:
+			self._wordEscapeFunc = wordEscapeFunc
+		if defiEscapeFunc is not None:
+			self._defiEscapeFunc = defiEscapeFunc
+		if ext is not None:
+			self._ext = ext
+		if head is not None:
+			self._head = head
+		if tail is not None:
+			self._tail = tail
+		if resources is not None:
+			self._resources = resources
+		if word_title is not None:
+			self._word_title = word_title
+
 	def open(self, filename: str) -> None:
 		if self._file_size_approx > 0:
 			self._glos.setInfo("file_count", "-1")
@@ -169,15 +200,17 @@ def writeTxt(
 		writeInfo=writeInfo,
 		outInfoKeysAliasDict=outInfoKeysAliasDict,
 	)
-	writer._encoding = encoding
-	writer._newline = newline
-	writer._wordEscapeFunc = wordEscapeFunc
-	writer._defiEscapeFunc = defiEscapeFunc
-	writer._ext = ext
-	writer._head = head
-	writer._tail = tail
-	writer._resources = resources
-	writer._word_title = word_title
+	writer.setAttrs(
+		encoding=encoding,
+		newline=newline,
+		wordEscapeFunc=wordEscapeFunc,
+		defiEscapeFunc=defiEscapeFunc,
+		ext=ext,
+		head=head,
+		tail=tail,
+		resources=resources,
+		word_title=word_title,
+	)
 	writer.open(filename)
 	yield from writer.write()
 	writer.finish()
@@ -194,11 +227,13 @@ def writeTabfile(
 		entryFmt="{word}\t{defi}\n",
 		outInfoKeysAliasDict=None,
 	)
-	writer._encoding = encoding
-	writer._wordEscapeFunc = escapeNTB
-	writer._defiEscapeFunc = escapeNTB
-	writer._ext = ".txt"
-	writer._resources = resources
+	writer.setAttrs(
+		encoding=encoding,
+		wordEscapeFunc=escapeNTB,
+		defiEscapeFunc=escapeNTB,
+		ext=".txt",
+		resources=resources,
+	)
 	writer.open(filename)
 	yield from writer.write()
 	writer.finish()
