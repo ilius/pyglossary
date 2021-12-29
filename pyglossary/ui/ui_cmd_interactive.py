@@ -896,6 +896,8 @@ class UI(ui_cmd.UI):
 			for key, value in self.config.items():
 				if value is None:
 					continue
+				if value == self.savedConfig.get(key):
+					continue
 				option = self.configDefDict.get(key)
 				if option is None:
 					log.error(f"config key {key} was not found")
@@ -980,7 +982,7 @@ class UI(ui_cmd.UI):
 
 
 		self.loadConfig()
-		self.savedConfig = self.config
+		self.savedConfig = dict(self.config)
 		self.config = config
 
 		del inputFilename, outputFilename, inputFormat, outputFormat
