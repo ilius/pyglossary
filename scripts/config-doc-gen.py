@@ -86,6 +86,9 @@ def renderTable(rows):
 
 
 def getCommandFlagsMD(name, opt):
+	if name.startswith("color.enable.cmd."):
+		return f"`--no-color`"
+
 	if not opt.hasFlag:
 		return ""
 	flag = opt.customFlag

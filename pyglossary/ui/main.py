@@ -182,6 +182,15 @@ def validateLangStr(st) -> "Optional[str]":
 def main():
 	global log
 
+	uiBase = UIBase()
+	uiBase.loadConfig()
+	config = uiBase.config
+	defaultHasColor = config.get(
+		"color.enable.cmd.windows" if os.sep == "\\"
+		else "color.enable.cmd.unix",
+		True,
+	)
+
 	parser = argparse.ArgumentParser(add_help=False)
 
 	parser.add_argument(
@@ -330,7 +339,7 @@ def main():
 		"--no-color",
 		dest="noColor",
 		action="store_true",
-		default=(os.sep != "/"),
+		default=not defaultHasColor,
 	)
 
 	parser.add_argument(
@@ -525,9 +534,6 @@ def main():
 		("name", str),
 	)
 
-	uiBase = UIBase()
-	uiBase.loadConfig()
-	config = uiBase.config
 	for key, option in uiBase.configDefDict.items():
 		if not option.hasFlag:
 			continue

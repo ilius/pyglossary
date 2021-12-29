@@ -109,17 +109,26 @@ class UIBase(object):
 			comment="Save glossary info as json file with .info extension",
 		)),
 
+		("color.enable.cmd.unix", BoolOption(
+			hasFlag=False,
+			comment="Enable colors in Linux/Unix command line"
+		)),
+		("color.enable.cmd.windows", BoolOption(
+			hasFlag=False,
+			comment="Enable colors in Windows command line"
+		)),
+
 		("color.cmd.critical", IntOption(
 			hasFlag=False,
-			comment="Color code for critical errors in terminal",
+			comment="Color code for critical errors in command line",
 		)),
 		("color.cmd.error", IntOption(
 			hasFlag=False,
-			comment="Color code for errors in terminal",
+			comment="Color code for errors in command line",
 		)),
 		("color.cmd.warning", IntOption(
 			hasFlag=False,
-			comment="Color code for warnings in terminal",
+			comment="Color code for warnings in command line",
 		)),
 
 		("ui_autoSetFormat", BoolOption(hasFlag=False)),
