@@ -295,6 +295,10 @@ class Glossary(GlossaryType):
 			else:
 				log.error(f"no such file or directory: {cleanupPath}")
 
+	@property
+	def rawEntryCompress(self) -> bool:
+		return self._rawEntryCompress
+
 	def setRawEntryCompress(self, enable: bool) -> bool:
 		self._rawEntryCompress = enable
 

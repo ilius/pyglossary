@@ -152,7 +152,7 @@ class DataEntry(BaseEntry):
 			b_fpath,
 			"b",
 		)
-		if glos._rawEntryCompress:
+		if glos.rawEntryCompress:
 			return compress(dumps(tpl), level=9)
 		return tpl
 
@@ -227,12 +227,12 @@ class Entry(BaseEntry):
 			key = Entry.defaultSortKey
 
 		if glos.getConfig("enable_alts", True):
-			if glos._rawEntryCompress:
+			if glos.rawEntryCompress:
 				return lambda x: key(splitByBarBytes(loads(decompress(x))[0])[0])
 			else:
 				return lambda x: key(splitByBarBytes(x[0])[0])
 		else:
-			if glos._rawEntryCompress:
+			if glos.rawEntryCompress:
 				return lambda x: key(loads(decompress(x))[0])
 			else:
 				return lambda x: key(x[0])
@@ -464,7 +464,7 @@ class Entry(BaseEntry):
 				self.b_defi,
 			)
 
-		if glos._rawEntryCompress:
+		if glos.rawEntryCompress:
 			return compress(dumps(tpl), level=9)
 
 		return tpl
