@@ -24,6 +24,7 @@ dataDir = join(cacheDir, "test")
 dataFileSize = {
 	"100-en-fa.txt": 29885,
 	"100-en-fa.csv": 30923,
+	"100-en-fa.json": 31234,
 	"100-en-fa.sd/100-en-fa.dict": 28571,
 	"100-en-fa.sd/100-en-fa.idx": 1557,
 	"100-en-fa.sd/100-en-fa.ifo": 348,
@@ -31,18 +32,21 @@ dataFileSize = {
 
 	"100-en-de.txt": 15117,
 	"100-en-de.csv": 15970,
+	"100-en-de.json": 16257,
 	"100-en-de.sd/100-en-de.dict": 13601,
 	"100-en-de.sd/100-en-de.idx": 1323,
 	"100-en-de.sd/100-en-de.ifo": 864,
 
 	"100-ja-en.txt": 31199,
 	"100-ja-en.csv": 32272,
+	"100-ja-en.json": 32389,
 	"100-ja-en.sd/100-ja-en.dict": 27585,
 	"100-ja-en.sd/100-ja-en.idx": 2014,
 	"100-ja-en.sd/100-ja-en.ifo": 845,
 	"100-ja-en.sd/100-ja-en.syn": 1953,
 
 	"004-bar.txt": 45,
+	"004-bar.json": 141,
 	"004-bar.sd/004-bar.dict": 16,
 	"004-bar.sd/004-bar.idx": 45,
 	"004-bar.sd/004-bar.ifo": 134,
@@ -194,6 +198,18 @@ class TestGlossary(unittest.TestCase):
 
 		self.compareTextFiles(outputFilename, expectedFilename)
 
+	def convert_txt_json(self, fname):
+		inputFilename = self.downloadFile(f"{fname}.txt")
+		outputFilename = self.newTempFilePath(f"{fname}-2.json")
+		expectedFilename = self.downloadFile(f"{fname}.json")
+		glos = Glossary()
+		res = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+		)
+		self.assertEqual(outputFilename, res)
+		self.compareTextFiles(outputFilename, expectedFilename)
+
 	def test_convert_txt_csv_1(self):
 		self.convert_txt_csv("100-en-fa")
 
@@ -214,6 +230,18 @@ class TestGlossary(unittest.TestCase):
 
 	def test_convert_csv_txt_4(self):
 		self.convert_csv_txt_rw("100-en-fa")
+
+	def test_convert_txt_json_0(self):
+		self.convert_txt_json("004-bar")
+
+	def test_convert_txt_json_1(self):
+		self.convert_txt_json("100-en-fa")
+
+	def test_convert_txt_json_2(self):
+		self.convert_txt_json("100-en-de")
+
+	def test_convert_txt_json_3(self):
+		self.convert_txt_json("100-ja-en")
 
 	def convert_txt_stardict(
 		self,
