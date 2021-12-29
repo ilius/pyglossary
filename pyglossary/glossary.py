@@ -386,9 +386,6 @@ class Glossary(GlossaryType):
 	def __str__(self) -> str:
 		return "glossary.Glossary"
 
-	def _calcProgressThreshold(self, wordCount: int) -> int:
-		return max(1, min(500, wordCount // 200))
-
 	def _loadedEntryGen(self) -> "Iterator[BaseEntry]":
 		self.progressInit("Writing")
 

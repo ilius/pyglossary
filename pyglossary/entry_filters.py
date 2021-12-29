@@ -321,7 +321,10 @@ class ShowProgressBar(EntryFilter):
 
 		if self._wordCount == -1:
 			self._wordCount = len(self.glos)
-			self._wordCountThreshold = self.glos._calcProgressThreshold(self._wordCount)
+			self._wordCountThreshold = max(1, min(
+				500,
+				self._wordCount // 200,
+			))
 
 		if self._wordCount > 1:
 			if index % self._wordCountThreshold == 0:
