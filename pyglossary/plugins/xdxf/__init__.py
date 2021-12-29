@@ -96,7 +96,7 @@ class Reader(object):
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
 
-	def open(self, filename: str, html: bool = True):
+	def open(self, filename: str):
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		from lxml import etree as ET
 		self._filename = filename
