@@ -101,7 +101,7 @@ class RTLDefi(EntryFilter):
 	name = "rtl"
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
-		entry._defi = f'<div dir="rtl">{entry._defi}</div>'
+		entry.editFuncDefi(lambda defi: f'<div dir="rtl">{defi}</div>')
 		return entry
 
 
@@ -296,6 +296,7 @@ class PreventDuplicateWords(EntryFilter):
 
 		wordSet.add(word)
 		entry._word = word
+		# use entry.editFuncWord?
 
 		return entry
 
