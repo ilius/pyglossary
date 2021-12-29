@@ -107,12 +107,13 @@ class Glossary(GlossaryType):
 			log.error(f"Invalid plugin directory: {directory!r}")
 			return
 
-		sys.path.append(directory)
 		pluginNames = [
 			pluginName
 			for _, pluginName, _ in pkgutil.iter_modules([directory])
 		]
 		pluginNames.sort()
+
+		sys.path.append(directory)
 		for pluginName in pluginNames:
 			cls.loadPlugin(pluginName)
 		sys.path.pop()
