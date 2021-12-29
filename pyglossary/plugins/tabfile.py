@@ -123,13 +123,15 @@ class Writer(object):
 			writeInfo=self._enable_info,
 			outInfoKeysAliasDict=None,
 		)
-		writer._encoding = self._encoding
-		writer._wordEscapeFunc = escapeNTB
-		writer._defiEscapeFunc = escapeNTB
-		writer._ext = ".txt"
-		writer._resources = self._resources
-		writer._file_size_approx = self._file_size_approx
-		writer._word_title = self._word_title
+		writer.setAttrs(
+			encoding=self._encoding,
+			wordEscapeFunc=escapeNTB,
+			defiEscapeFunc=escapeNTB,
+			ext=".txt",
+			resources=self._resources,
+			word_title=self._word_title,
+			file_size_approx=self._file_size_approx
+		)
 		writer.open(self._filename)
 		yield from writer.write()
 		writer.finish()

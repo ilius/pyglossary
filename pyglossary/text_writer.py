@@ -57,6 +57,7 @@ class TextGlossaryWriter(object):
 		tail=None,
 		resources=None,
 		word_title=None,
+		file_size_approx=None,
 	):
 		if encoding is not None:
 			self._encoding = encoding
@@ -76,6 +77,8 @@ class TextGlossaryWriter(object):
 			self._resources = resources
 		if word_title is not None:
 			self._word_title = word_title
+		if file_size_approx is not None:
+			self._file_size_approx = file_size_approx
 
 	def open(self, filename: str) -> None:
 		if self._file_size_approx > 0:
