@@ -154,7 +154,7 @@ def getGitVersion(gitDir):
 	except Exception as e:
 		sys.stderr.write(str(e) + "\n")
 		return ""
-	# if error == None:
+	# if error is None:
 	return outputB.decode("utf-8").strip()
 
 
