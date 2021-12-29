@@ -7,7 +7,7 @@ except ImportError:
 from collections import OrderedDict
 
 JsonEncodable = "Union[Dict, List]"
-# OrderedDict is also subclass of Dict, issubclass(OrderedDict, Dict) == True
+# OrderedDict is also subclass of Dict, issubclass(OrderedDict, Dict) is True
 
 
 def dataToPrettyJson(

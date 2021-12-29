@@ -497,7 +497,9 @@ class DebugBglReader(BglReader):
 			log.error("findCharSamples: b_data is not a bytes instance")
 			return res
 		if not self.targetCharsArray:
-			log.error("findCharSamples: self.targetCharsArray == None")
+			log.error(
+				"findCharSamples: self.targetCharsArray={self.targetCharsArray}"
+			)
 			return res
 		for i, char in enumerate(b_data):
 			if x < 128:
