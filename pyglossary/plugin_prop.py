@@ -250,11 +250,13 @@ class PluginProp(object):
 		import inspect
 		extraOptNames = []
 		for name, param in inspect.signature(func).parameters.items():
-			if param.default is not inspect._empty:
+			if name == "self":
+				continue
+			if str(param.default) != "<class 'inspect._empty'>":
 				extraOptNames.append(name)
 				continue
-			if name not in ("self", "filename", "dirname"):
+			if name not in ("filename", "dirname"):
 				extraOptNames.append(name)
 		if extraOptNames:
-			log.debug(f"{format}: extraOptNames = {extraOptNames}")
+			log.warning(f"{format}: extraOptNames = {extraOptNames}")
 		return extraOptNames
