@@ -170,7 +170,10 @@ class TextGlossaryReader(object):
 			if isinstance(defi, tuple):
 				defi, resList = defi
 				for relPath, fullPath in resList:
-					yield DataEntry.fromFile(self._glos, relPath, fullPath)
+					yield DataEntry(
+						fname=relPath,
+						tmpPath=fullPath,
+					)
 			yield self.newEntry(word, defi)
 
 	def __len__(self) -> int:

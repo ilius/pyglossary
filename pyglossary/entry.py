@@ -39,14 +39,14 @@ class DataEntry(BaseEntry):
 	def __init__(
 		self,
 		fname: str,
-		data: bytes,
+		data: bytes = b"",
 		tmpPath: "Optional[str]" = None,
 		byteProgress: "Optional[Tuple[int, int]]" = None,
 	) -> None:
 		assert isinstance(fname, str)
 		assert isinstance(data, bytes)
 
-		if tmpPath:
+		if data and tmpPath:
 			with open(tmpPath, "wb") as toFile:
 				toFile.write(data)
 			data = b""
@@ -155,12 +155,6 @@ class DataEntry(BaseEntry):
 		if glos.rawEntryCompress:
 			return compress(dumps(tpl), level=9)
 		return tpl
-
-	@classmethod
-	def fromFile(cls, glos, relPath, fullPath):
-		entry = DataEntry(relPath, b"")
-		entry._tmpPath = fullPath
-		return entry
 
 
 class Entry(BaseEntry):
