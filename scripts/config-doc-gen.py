@@ -34,7 +34,7 @@ ${"## Using as library"}
 
 When you use PyGlossary as a library, neither of `config.json` files are loaded. So if you want to change the config, you should set `glos.config` property (which you can do only once for each instance of `Glossary`). For example:
 
-```
+```python
 glos = Glossary()
 glos.config = {
 	"lower": True,
