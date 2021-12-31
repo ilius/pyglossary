@@ -332,7 +332,10 @@ class Glossary(GlossaryType):
 			entryFilters.append(ef.NormalizeHtml(self))
 
 		entryFilters.append(ef.LanguageCleanup(self))
-		entryFilters.append(ef.CommonCleanup(self))
+
+		# add a cmd flag for this?
+		# entryFilters.append(ef.TextListSymbolCleanup(self))
+
 		entryFilters.append(ef.NonEmptyWordFilter(self))
 		entryFilters.append(ef.NonEmptyDefiFilter(self))
 		entryFilters.append(ef.RemoveEmptyAndDuplicateAltWords(self))
@@ -1258,7 +1261,6 @@ class Glossary(GlossaryType):
 				f", force-enabling it."
 			)
 		self._config["enable_alts"] = True
-
 
 	def convert(
 		self,

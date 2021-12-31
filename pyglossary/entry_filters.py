@@ -228,9 +228,16 @@ class LanguageCleanup(EntryFilter):
 		return entry
 
 
-class CommonCleanup(EntryFilter):  # FIXME
-	name = "clean"
-	desc = "Clean"
+class TextListSymbolCleanup(EntryFilter):
+	"""
+	Symbols like ♦ (diamond) ● (black circle) or * (star) are used in some
+	plaintext or even html glossaries to represent items of a list
+	(like <li> in proper html).
+	This EntryFilter cleans up spaces/newlines issues around them.
+	"""
+
+	name = "text_list_symbol_cleanup"
+	desc = "Text List Symbol Cleanup"
 
 	winNewlinePattern = re.compile("[\r\n]+")
 	spacesNewlinePattern = re.compile(" *\n *")
