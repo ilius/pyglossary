@@ -35,7 +35,7 @@
 PyPI Links: [cachetools](https://pypi.org/project/cachetools)
 
 To install, run
-```
+```sh
 pip3 install cachetools
 ```
 

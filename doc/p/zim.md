@@ -28,7 +28,7 @@ PyPI Links: [libzim 1.0](https://pypi.org/project/libzim/1.0)
 
 To install, run:
 
-```
+```sh
 pip3 install libzim==1.0
 ```
 

@@ -32,7 +32,7 @@ PyPI Links: [PyICU](https://pypi.org/project/PyICU)
 
 To install, run:
 
-```
+```sh
 pip3 install PyICU
 ```
 

@@ -22,7 +22,7 @@ PyPI Links: [PyYAML](https://pypi.org/project/PyYAML), [lxml](https://pypi.org/p
 
 To install, run:
 
-```
+```sh
 pip3 install PyYAML lxml
 ```
 

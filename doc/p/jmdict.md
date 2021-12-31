@@ -22,7 +22,7 @@ PyPI Links: [lxml](https://pypi.org/project/lxml)
 
 To install, run:
 
-```
+```sh
 pip3 install lxml
 ```
 

@@ -37,7 +37,7 @@ PyPI Links: ${readDependsLinks}
 
 To install, run:
 
-```
+```sh
 ${readDependsCmd}
 ```
 % else:
@@ -48,7 +48,7 @@ PyPI Links: ${readDependsLinks}
 
 To install, run:
 
-```
+```sh
 ${readDependsCmd}
 ```
 	% endif
@@ -59,7 +59,7 @@ ${"### Dependencies for writing"}
 PyPI Links: ${writeDependsLinks}
 
 To install, run
-```
+```sh
 ${writeDependsCmd}
 ```
 	% endif

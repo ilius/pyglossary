@@ -22,7 +22,7 @@
 PyPI Links: [marisa-trie](https://pypi.org/project/marisa-trie)
 
 To install, run
-```
+```sh
 pip3 install marisa-trie
 ```
 

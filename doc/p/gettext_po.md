@@ -28,7 +28,7 @@ PyPI Links: [polib](https://pypi.org/project/polib)
 
 To install, run:
 
-```
+```sh
 pip3 install polib
 ```
 

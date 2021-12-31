@@ -35,7 +35,7 @@ PyPI Links: [mistune 2.0.0a5](https://pypi.org/project/mistune/2.0.0a5)
 
 To install, run:
 
-```
+```sh
 pip3 install mistune==2.0.0a5
 ```
 
