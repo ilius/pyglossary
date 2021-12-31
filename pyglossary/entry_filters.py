@@ -241,21 +241,6 @@ class CommonCleanup(EntryFilter):  # FIXME
 		st = self.winNewlinePattern.sub("\n", st)
 		st = self.spacesNewlinePattern.sub("\n", st)
 
-		"""
-		This code may correct snippets like:
-		- First sentence .Second sentence. -> First sentence. Second sentence.
-		- First clause ,second clause. -> First clause, second clause.
-		But there are cases when this code have undesirable effects
-		( "<" represented as "&lt;" in HTML markup):
-		- <Adj.> -> < Adj. >
-		- <fig.> -> < fig. >
-		"""
-		"""
-		for j in range(3):
-			for ch in ",.;":
-				st = replacePostSpaceChar(st, ch)
-		"""
-
 		st = self.blocksNewlinePattern.sub("♦", st)
 		if st.endswith("<p"):
 			st = st[:-2]
