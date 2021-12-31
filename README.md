@@ -235,7 +235,7 @@ There are a few examples in [doc/lib-examples](./doc/lib-examples) directory.
 
 Here is a basic script that converts any supported glossary format to [Tabfile](./doc/p/tabfile.md):
 
-```
+```python
 import sys
 import pyglossary
 from pyglossary import Glossary
@@ -259,7 +259,7 @@ You may look at docstring of `Glossary.convert` for full list of keyword argumen
 
 If you need to add entries inside your Python program (rather than converting one glossary into another), then you use `write` instead of `convert`, here is an example:
 
-```
+```python
 from pyglossary.glossary import Glossary
 
 Glossary.init()
