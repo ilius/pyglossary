@@ -24,7 +24,7 @@ you also need:
 Let's assume the Babylon dict is at
 `~/Documents/Duden_Synonym/Duden_Synonym.BGL`:
 
-```
+```sh
 cd ~/Documents/Duden_Synonym/
 python3 ~/Software/pyglossary/main.py --write-format=AppleDict Duden_Synonym.BGL Duden_Synonym-apple
 cd Duden_Synonym-apple
@@ -41,7 +41,7 @@ Let's assume the MDict dict is at
 
 Run the following command:
 
-```
+```sh
 cd ~/Documents/Duden-Oxford/
 python3 ~/Software/pyglossary/main.py --write-format=AppleDict "Duden-Oxford DEED ver.20110408.mdx" "Duden-Oxford DEED ver.20110408-apple"
 cd "Duden-Oxford DEED ver.20110408-apple"
@@ -56,7 +56,7 @@ with the image/audio resources file `oald8.mdd`.
 
 Run the following commands: :
 
-```
+```sh
 cd ~/Downloads/oald8/
 python3 ~/Software/pyglossary/main.py --write-format=AppleDict oald8.mdx oald8-apple
 cd oald8-apple
@@ -65,14 +65,14 @@ cd oald8-apple
 This extracts dictionary into `oald8.xml` and data resources into folder
 `OtherResources`. Hyperlinks use relative path. :
 
-```
+```sh
 sed -i "" 's:src="/:src=":g' oald8.xml
 ```
 
 Convert audio file from SPX format to WAV format. You need package
 `speex` from [MacPorts](https://www.macports.org) :
 
-```
+```sh
 find OtherResources -name "*.spx" -execdir sh -c 'spx={};speexdec $spx  ${spx%.*}.wav' \;
 sed -i "" 's|sound://\([/_a-zA-Z0-9]*\).spx|\1.wav|g' oald8.xml
 ```
@@ -82,7 +82,7 @@ space!
 
 Compile and install. :
 
-```
+```sh
 make
 make install
 ```
