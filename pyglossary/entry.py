@@ -14,7 +14,7 @@ from .iter_utils import unique_everseen
 from .text_utils import (
 	joinByBar,
 	splitByBar,
-	splitByBarBytes,
+	firstByBarBytes,
 )
 
 from pickle import dumps, loads
@@ -222,9 +222,9 @@ class Entry(BaseEntry):
 
 		if glos.getConfig("enable_alts", True):
 			if glos.rawEntryCompress:
-				return lambda x: key(splitByBarBytes(loads(decompress(x))[0])[0])
+				return lambda x: key(firstByBarBytes(loads(decompress(x))[0]))
 			else:
-				return lambda x: key(splitByBarBytes(x[0])[0])
+				return lambda x: key(firstByBarBytes(x[0]))
 		else:
 			if glos.rawEntryCompress:
 				return lambda x: key(loads(decompress(x))[0])

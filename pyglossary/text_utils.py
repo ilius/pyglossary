@@ -154,6 +154,18 @@ def splitByBarBytes(st: bytes) -> "List[bytes]":
 	]
 
 
+def firstByBarBytes(st: bytes) -> bytes:
+	"""
+		splits by "|" (and not "\\|") then unescapes Newline (\\n),
+			Tab (\\t), Baskslash (\\) and Bar (\\|) in the first part
+		returns a bytes
+	"""
+	m = b_pattern_bar_sp.search(st)
+	if m is None:
+		return unescapeBarBytes(st)
+	return unescapeBarBytes(st[:m.start()])
+
+
 # return a message string describing the current exception
 def excMessage() -> str:
 	i = sys.exc_info()
