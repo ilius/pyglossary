@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 #
 # Copyright © 2016-2017 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 #

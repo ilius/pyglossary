@@ -1,5 +1,6 @@
+# -*- coding: future_fstrings -*-
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
 
 from os.path import dirname, abspath
 import sys

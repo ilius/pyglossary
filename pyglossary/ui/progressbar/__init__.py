@@ -1,5 +1,6 @@
+# -*- coding: future_fstrings -*-
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
 #
 # progressbar  - Text progress bar library for Python.
 # Copyright (c) 2005 Nilton Volpato

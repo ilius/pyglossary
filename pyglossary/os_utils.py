@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import os
 import shutil
 import logging

@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """Jing, a validator for RELAX NG and other schema languages."""
 
 import logging

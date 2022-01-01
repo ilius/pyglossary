@@ -1,5 +1,6 @@
+# -*- coding: future_fstrings -*-
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
 # readmdict.py from https://bitbucket.org/xwang/mdict-analysis
 # Octopus MDict Dictionary File (.mdx) and Resource File (.mdd) Analyser
 #

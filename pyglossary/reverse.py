@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from .glossary_type import GlossaryType
 from .entry import Entry, BaseEntry
 

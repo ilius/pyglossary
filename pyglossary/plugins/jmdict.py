@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
 from pyglossary.plugins.formats_common import *
 from io import BytesIO
 import re

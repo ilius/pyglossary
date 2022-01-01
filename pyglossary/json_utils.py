@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import sys
 try:
 	import json

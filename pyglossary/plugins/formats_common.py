@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import sys
 import os
 from os.path import (

@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 c_name = "name"
 c_sourceLang = "sourceLang"
 c_targetLang = "targetLang"

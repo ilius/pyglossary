@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from pyglossary import core
 from pyglossary.core import rootDir
 import logging

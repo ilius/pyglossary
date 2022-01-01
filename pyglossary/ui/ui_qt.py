@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 # ui_qk.py
 #
 # Copyright © 2010-2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)

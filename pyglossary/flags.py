@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 flagsByName = {}
 
 class StrWithDesc(str):

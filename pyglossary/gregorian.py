@@ -1,5 +1,6 @@
+# -*- coding: future_fstrings -*-
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
 #
 # Copyright © 2008-2019 Saeed Rasooli <saeed.gnu@gmail.com>
 # Copyright © 2007 Mehdi Bayazee <Bayazee@Gmail.com>

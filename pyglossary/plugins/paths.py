@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from os.path import realpath, dirname, join, isdir
 import sys
 

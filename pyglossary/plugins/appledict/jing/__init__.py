@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """checking XML files with Apple Dictionary Schema.
 
 this module can be run from command line with only argument -- file to

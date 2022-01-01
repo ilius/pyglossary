@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 # Dictionary creation library
 # Copyright (C) 2002 John Goerzen <jgoerzen@complete.org>
 # Copyright (C) 2020 Saeed Rasooli

@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """main entry point"""
 
 import logging

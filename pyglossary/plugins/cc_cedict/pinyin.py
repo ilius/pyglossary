@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 # coding=utf-8
 # based on https://github.com/zkoch/CEDICT_Parser
 

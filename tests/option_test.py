@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 #!/usr/bin/python3
 
 import sys

@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import unicodedata
 from collections import namedtuple
 import string

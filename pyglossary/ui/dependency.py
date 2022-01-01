@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 # dependency.py
 #
 # Copyright © 2019-2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)

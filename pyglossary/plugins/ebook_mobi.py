@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 # The MIT License (MIT)
 
 # Copyright © 2012-2016 Alberto Pettarin (alberto@albertopettarin.it)

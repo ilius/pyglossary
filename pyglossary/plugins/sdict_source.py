@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 # Source Glossary for "Sdictionary" (http://sdict.org)
 # It has extension ".sdct"
 

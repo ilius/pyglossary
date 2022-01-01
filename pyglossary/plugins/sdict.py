@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 # sdict.py
 # Loader engine for AXMASoft's open dictionary format
 #

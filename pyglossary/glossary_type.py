@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 
 from .entry_base import BaseEntry
 from .entry import Entry, DataEntry

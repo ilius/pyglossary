@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 # Read Octopus MDict dictionary format, mdx(dictionary)/mdd(data)
 #
 # Copyright © 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>

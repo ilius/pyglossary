@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 # from xml.sax.saxutils import escape as xml_escape
 # from xml.sax.saxutils import unescape as xml_unescape
 

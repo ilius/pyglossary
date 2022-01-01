@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from itertools import (
 	takewhile,
 	repeat,

@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 # pylint: disable=C0111,C0103,C0302,R0903,R0904,R0914,R0201
 import encodings
 import functools

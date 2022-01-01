@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 def chBaseIntToStr(number, base):
 	"""
 		reverse function of int(str, base) and long(str, base)

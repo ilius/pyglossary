@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 # appledict/_normalize.py
 # Output to Apple Dictionary xml sources for Dictionary Development Kit.
 #

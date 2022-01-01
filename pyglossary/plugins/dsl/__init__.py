@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 # dsl/__init__.py
 # Read ABBYY Lingvo DSL dictionary format
 #

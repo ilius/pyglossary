@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 # xdxf/__init__.py
 """xdxf file format reader and utils to convert xdxf to html."""
 #

@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """ 
 Copyright by https://github.com/zhansliu/writemdict
 

@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 # Copyright (c) 2019 Saeed Rasooli
 # Copyright (c) 2012 Erik Rose
 

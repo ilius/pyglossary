@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import logging
 import traceback
 import inspect

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
 from pyglossary.plugins.formats_common import *
 from pyglossary.text_reader import TextGlossaryReader
 from io import BytesIO

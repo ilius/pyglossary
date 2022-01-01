@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 # appledict/indexes/ru.py
 #
 # Copyright © 2016 Ratijas <ratijas.t@me.com>

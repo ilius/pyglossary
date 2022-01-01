@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 #!/usr/bin/env python
 # coding: utf-8
 

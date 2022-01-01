@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from pyglossary.file_utils import fileCountLines
 from pyglossary.entry_base import BaseEntry
 from pyglossary.entry import Entry, DataEntry

@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import re
 from pyglossary.plugins.formats_common import *
 from . import conv

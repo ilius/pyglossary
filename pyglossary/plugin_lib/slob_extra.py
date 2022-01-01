@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 
 from pyglossary.plugin_lib.slob import *
 
