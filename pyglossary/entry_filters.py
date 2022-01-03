@@ -150,8 +150,9 @@ class RemoveHtmlTags(EntryFilter):
 		return entry
 
 
-# FIXME: this may not be safe as it lowercases everything between < and >
-# including class name, element ids/names, scripts etc. how can we fix that?
+# FIXME: It's is not safe to lowercases everything between < and >
+# including class name, element ids/names, scripts, <a href="bword://..."> 
+# etc. How can we fix that?
 class NormalizeHtml(EntryFilter):
 	name = "normalize_html"
 	desc = "Normalize HTML Tags"
