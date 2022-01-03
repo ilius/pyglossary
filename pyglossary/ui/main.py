@@ -449,6 +449,12 @@ def main():
 		# args.direct is None by default which means automatic
 		args.direct = False
 
+	if args.remove_html and args.remove_html_all:
+		log.critical("Conflicting flags: --remove-html and --remove-html-all")
+		sys.exit(1)
+
+	# TODO: define conflicting flags in UIBase?
+
 	core.checkCreateConfDir()
 
 	if sys.getdefaultencoding() != "utf-8":
