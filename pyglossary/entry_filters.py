@@ -8,7 +8,6 @@ from .text_utils import (
 )
 
 from .entry_base import BaseEntry
-from .glossary import Glossary
 
 
 log = logging.getLogger("pyglossary")
@@ -146,8 +145,9 @@ class RemoveHtmlTagsAll(EntryFilter):
 class RemoveHtmlTags(EntryFilter):
 	name = "remove_html"
 
-	def __init__(self, glos: "GlossaryType", tags: "List[str]"):
+	def __init__(self, glos: "GlossaryType", tagsStr: str):
 		import re
+		tags = tagsStr.split(",")
 		self.glos = glos
 		self.tags = tags
 		tagsRE = "|".join(self.tags)

@@ -47,6 +47,7 @@ from . import core
 from .core import userPluginsDir, cacheDir
 from .entry import Entry, DataEntry
 from .plugin_prop import PluginProp
+from .entry_filters import *
 
 from .langs import langDict, Lang
 
@@ -95,6 +96,26 @@ class Glossary(GlossaryType):
 
 	readFormats = []  # type: List[str]
 	writeFormats = []  # type: List[str]
+
+	entryFiltersRules = [
+		(None, StripWhitespaces),
+		(None, NonEmptyWordFilter),
+		(("skip_resources", False), SkipDataEntry),
+		(("utf8_check", True), FixUnicode),
+		(("lower", False), LowerWord),
+		(("rtl", False), RTLDefi),
+		(("remove_html_all", False), RemoveHtmlTagsAll),
+		(("remove_html", ""), RemoveHtmlTags),
+		(("normalize_html", False), NormalizeHtml),
+		(None, LanguageCleanup),
+
+		# TODO
+		# (("text_list_symbol_cleanup", False), TextListSymbolCleanup),
+
+		(None, NonEmptyWordFilter),
+		(None, NonEmptyDefiFilter),
+		(None, RemoveEmptyAndDuplicateAltWords),
+	]
 
 	@classmethod
 	def loadPlugins(cls: "ClassVar", directory: str) -> None:
@@ -303,45 +324,22 @@ class Glossary(GlossaryType):
 		self._rawEntryCompress = enable
 
 	def updateEntryFilters(self) -> None:
-		from . import entry_filters as ef
 		entryFilters = []
 		config = self._config
 
-		entryFilters.append(ef.StripWhitespaces(self))
-		entryFilters.append(ef.NonEmptyWordFilter(self))
-
-		if config.get("skip_resources", False):
-			entryFilters.append(ef.SkipDataEntry(self))
-
-		if config.get("utf8_check", True):
-			entryFilters.append(ef.FixUnicode(self))
-
-		if config.get("lower", False):
-			entryFilters.append(ef.LowerWord(self))
-
-		if config.get("rtl", False):
-			entryFilters.append(ef.RTLDefi(self))
-
-		if config.get("remove_html_all", False):
-			entryFilters.append(ef.RemoveHtmlTagsAll(self))
-		elif config.get("remove_html"):
-			tags = config.get("remove_html").split(",")
-			entryFilters.append(ef.RemoveHtmlTags(self, tags))
-
-		if config.get("normalize_html", False):
-			entryFilters.append(ef.NormalizeHtml(self))
-
-		entryFilters.append(ef.LanguageCleanup(self))
-
-		# add a cmd flag for this?
-		# entryFilters.append(ef.TextListSymbolCleanup(self))
-
-		entryFilters.append(ef.NonEmptyWordFilter(self))
-		entryFilters.append(ef.NonEmptyDefiFilter(self))
-		entryFilters.append(ef.RemoveEmptyAndDuplicateAltWords(self))
+		for configRule, filterClass in self.entryFiltersRules:
+			args = ()
+			if configRule is not None:
+				param, default = configRule
+				value = config.get(param, default)
+				if not value:
+					continue
+				if not isinstance(default, bool):
+					args = (value,)
+			entryFilters.append(filterClass(self, *args))
 
 		if self.ui and self._progressbar:
-			entryFilters.append(ef.ShowProgressBar(self))
+			entryFilters.append(ShowProgressBar(self))
 
 		if log.level <= core.TRACE:
 			try:
@@ -349,7 +347,7 @@ class Glossary(GlossaryType):
 			except ModuleNotFoundError:
 				pass
 			else:
-				entryFilters.append(ef.ShowMaxMemoryUsage(self))
+				entryFilters.append(ShowMaxMemoryUsage(self))
 
 		self._entryFilters = entryFilters
 
@@ -368,10 +366,9 @@ class Glossary(GlossaryType):
 			ef.prepare()
 
 	def removeHtmlTagsAll(self) -> None:
-		from . import entry_filters as ef
-		if ef.RemoveHtmlTagsAll.name in self._entryFiltersName:
+		if RemoveHtmlTagsAll.name in self._entryFiltersName:
 			return
-		self._entryFilters.append(ef.RemoveHtmlTagsAll(self))
+		self._entryFilters.append(RemoveHtmlTagsAll(self))
 
 	def preventDuplicateWords(self):
 		"""
@@ -381,10 +378,9 @@ class Glossary(GlossaryType):
 			but we only care about making the whole `entry.s_word`
 			(aka entry key) unique
 		"""
-		from . import entry_filters as ef
-		if ef.PreventDuplicateWords.name in self._entryFiltersName:
+		if PreventDuplicateWords.name in self._entryFiltersName:
 			return
-		self._entryFilters.append(ef.PreventDuplicateWords(self))
+		self._entryFilters.append(PreventDuplicateWords(self))
 
 	def __str__(self) -> str:
 		return "glossary.Glossary"
@@ -879,11 +875,10 @@ class Glossary(GlossaryType):
 		iterates over `reader` object and loads the whole data into self._data
 		must call `reader.open(filename)` before calling this function
 		"""
-		from . import entry_filters as ef
 		showMemoryUsage()
 		progressbarFilter = None
 		if self.ui and self._progressbar:
-			progressbarFilter = ef.ShowProgressBar(self)
+			progressbarFilter = ShowProgressBar(self)
 
 		self.progressInit("Reading")
 		try:
