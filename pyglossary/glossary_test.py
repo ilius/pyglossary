@@ -39,6 +39,7 @@ dataFileCRC32 = {
 	"100-en-de.sd/100-en-de.dict": "d74bf277",
 	"100-en-de.sd/100-en-de.idx": "945b303c",
 	"100-en-de.sd/100-en-de.ifo": "6529871f",
+	"100-en-de-remove_font_b.txt": "727320ac",
 
 	"100-en-fa.txt": "f5c53133",
 	"100-en-fa.csv": "eb8b0474",
@@ -287,6 +288,13 @@ class TestGlossary(unittest.TestCase):
 			"100-en-fa",
 			"100-en-fa-remove_html_all",
 			{"remove_html_all": True}
+		)
+
+	def test_convert_txt_txt_remove_html_1(self):
+		self.convert_txt_txt(
+			"100-en-de",
+			"100-en-de-remove_font_b",
+			{"remove_html": "font,b"},
 		)
 
 	def convert_txt_stardict(

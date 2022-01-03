@@ -151,7 +151,7 @@ class RemoveHtmlTags(EntryFilter):
 		self.glos = glos
 		self.tags = tags
 		tagsRE = "|".join(self.tags)
-		self.pattern = re.compile(f"<.?({tagsRE})[^>]*>")
+		self.pattern = re.compile(f"</?({tagsRE})( [^>]*)?>")
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		def fixStr(st: str) -> str:
