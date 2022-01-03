@@ -13,50 +13,52 @@ sys.path.insert(0, rootDir)
 from pyglossary.glossary import Glossary, log
 from pyglossary.core import tmpDir, cacheDir
 from pyglossary.os_utils import rmtree
+from pyglossary.text_utils import crc32hex
 
 Glossary.init()
 
 
-dataURL = "https://raw.githubusercontent.com/ilius/pyglossary-test/main/{filename}"
+dataURL = (
+	"https://raw.githubusercontent.com/"
+	"ilius/pyglossary-test/main/{filename}"
+)
 
 dataDir = join(cacheDir, "test")
 
-dataFileSize = {
-	"100-en-fa.txt": 29885,
-	"100-en-fa.csv": 30923,
-	"100-en-fa.json": 31234,
-	"100-en-fa.sd/100-en-fa.dict": 28571,
-	"100-en-fa.sd/100-en-fa.idx": 1557,
-	"100-en-fa.sd/100-en-fa.ifo": 348,
-	"100-en-fa.sd/100-en-fa.syn": 76,
-	"100-en-fa-lower.txt": 29903,
-	"100-en-fa-rtl.txt": 32009,
-	"100-en-fa-remove_html_all.txt": 20436,
+dataFileCRC32 = {
+	"004-bar.txt": "6775e590",
+	"004-bar.json": "7e4b2663",
+	"004-bar.sd/004-bar.dict": "9ea397f8",
+	"004-bar.sd/004-bar.idx": "cf9440cf",
+	"004-bar.sd/004-bar.ifo": "ada870e4",
+	"004-bar.sd/004-bar.syn": "286b17bf",
 
+	"100-en-de.txt": "f22fc392",
+	"100-en-de.csv": "b5283518",
+	"100-en-de.json": "6fa8e159",
+	"100-en-de.sd/100-en-de.dict": "d74bf277",
+	"100-en-de.sd/100-en-de.idx": "945b303c",
+	"100-en-de.sd/100-en-de.ifo": "6529871f",
 
-	"100-en-de.txt": 15117,
-	"100-en-de.csv": 15970,
-	"100-en-de.json": 16257,
-	"100-en-de.sd/100-en-de.dict": 13601,
-	"100-en-de.sd/100-en-de.idx": 1323,
-	"100-en-de.sd/100-en-de.ifo": 864,
+	"100-en-fa.txt": "f5c53133",
+	"100-en-fa.csv": "eb8b0474",
+	"100-en-fa.json": "8d29c1be",
+	"100-en-fa-lower.txt": "62178940",
+	"100-en-fa-remove_html_all.txt": "d611c978",
+	"100-en-fa-rtl.txt": "25ede1e8",
+	"100-en-fa.sd/100-en-fa.dict": "223a0d1d",
+	"100-en-fa.sd/100-en-fa.idx": "6df43378",
+	"100-en-fa.sd/100-en-fa.ifo": "3f2086cd",
+	"100-en-fa.sd/100-en-fa.syn": "1160fa0b",
 
-	"100-ja-en.txt": 31199,
-	"100-ja-en.csv": 32272,
-	"100-ja-en.json": 32389,
-	"100-ja-en.sd/100-ja-en.dict": 27585,
-	"100-ja-en.sd/100-ja-en.idx": 2014,
-	"100-ja-en.sd/100-ja-en.ifo": 845,
-	"100-ja-en.sd/100-ja-en.syn": 1953,
-
-	"004-bar.txt": 45,
-	"004-bar.json": 141,
-	"004-bar.sd/004-bar.dict": 16,
-	"004-bar.sd/004-bar.idx": 45,
-	"004-bar.sd/004-bar.ifo": 134,
-	"004-bar.sd/004-bar.syn": 24,
+	"100-ja-en.txt": "93542e89",
+	"100-ja-en.csv": "7af18cf3",
+	"100-ja-en.json": "fab2c106",
+	"100-ja-en.sd/100-ja-en.dict": "39715f01",
+	"100-ja-en.sd/100-ja-en.idx": "adf0e552",
+	"100-ja-en.sd/100-ja-en.ifo": "b01e368c",
+	"100-ja-en.sd/100-ja-en.syn": "76e6df95",
 }
-
 
 
 class TestGlossary(unittest.TestCase):
@@ -86,11 +88,13 @@ class TestGlossary(unittest.TestCase):
 				log.error(f"no such file or directory: {cleanupPath}")
 
 	def downloadFile(self, filename):
-		size = dataFileSize[filename]
+		_crc32 = dataFileCRC32[filename]
 		fpath = join(dataDir, filename.replace("/", "__"))
 		if isfile(fpath):
-			if os.stat(fpath).st_size != size:
-				raise RuntimeError(f"Invalid file size for: {fpath}")
+			with open(fpath, mode="rb") as _file:
+				data = _file.read()
+			if crc32hex(data) != _crc32:
+				raise RuntimeError(f"CRC32 check failed for existing file: {fpath}")
 			return fpath
 		try:
 			with urlopen(dataURL.format(filename=filename)) as res:
@@ -98,8 +102,8 @@ class TestGlossary(unittest.TestCase):
 		except Exception as e:
 			e.msg += f", filename={filename}"
 			raise e
-		if len(data) != size:
-			raise RuntimeError(f"Invalid file size for: {fpath}")
+		if crc32hex(data) != _crc32:
+			raise RuntimeError(f"CRC32 check failed for downloaded file: {filename}")
 		with open(fpath, mode="wb") as _file:
 			_file.write(data)
 		return fpath
