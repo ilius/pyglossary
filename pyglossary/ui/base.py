@@ -141,6 +141,11 @@ class UIBase(object):
 		("reverse_includeDefs", BoolOption(hasFlag=False)),
 	])
 
+	conflictingParams = [
+		("sqlite", "direct"),
+		("remove_html", "remove_html_all"),
+	]
+
 	def __init__(self, **kwargs):
 		self.config = {}
 

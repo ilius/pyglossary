@@ -442,18 +442,18 @@ def main():
 	# with the logger setted up, we can import other pyglossary modules, so they
 	# can do some logging in right way.
 
-	if args.sqlite:
-		if args.direct:
-			log.critical("Conflicting flags: --sqlite and --direct")
+	for param1, param2 in UIBase.conflictingParams:
+		if getattr(args, param1) and getattr(args, param2):
+			log.critical(
+				"Conflicting flags: "
+				f"--{param1.replace('_', '-')} and "
+				f"--{param2.replace('_', '-')}"
+			)
 			sys.exit(1)
+
+	if args.sqlite:
 		# args.direct is None by default which means automatic
 		args.direct = False
-
-	if args.remove_html and args.remove_html_all:
-		log.critical("Conflicting flags: --remove-html and --remove-html-all")
-		sys.exit(1)
-
-	# TODO: define conflicting flags in UIBase?
 
 	core.checkCreateConfDir()
 
