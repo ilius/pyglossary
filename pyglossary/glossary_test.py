@@ -29,6 +29,10 @@ dataFileSize = {
 	"100-en-fa.sd/100-en-fa.idx": 1557,
 	"100-en-fa.sd/100-en-fa.ifo": 348,
 	"100-en-fa.sd/100-en-fa.syn": 76,
+	"100-en-fa-lower.txt": 29903,
+	"100-en-fa-rtl.txt": 32009,
+	"100-en-fa-remove_html_all.txt": 20436,
+
 
 	"100-en-de.txt": 15117,
 	"100-en-de.csv": 15970,
@@ -198,6 +202,23 @@ class TestGlossary(unittest.TestCase):
 
 		self.compareTextFiles(outputFilename, expectedFilename)
 
+	def convert_txt_txt(self, fname, fname2, config=None):
+		inputFilename = self.downloadFile(f"{fname}.txt")
+		outputFilename = self.newTempFilePath(f"{fname2}-tmp.txt")
+		expectedFilename = self.downloadFile(f"{fname2}.txt")
+		glos = Glossary()
+
+		if config is not None:
+			glos.config = config
+
+		res = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+		)
+		self.assertEqual(outputFilename, res)
+
+		self.compareTextFiles(outputFilename, expectedFilename)
+
 	def convert_txt_json(self, fname):
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname}-2.json")
@@ -242,6 +263,27 @@ class TestGlossary(unittest.TestCase):
 
 	def test_convert_txt_json_3(self):
 		self.convert_txt_json("100-ja-en")
+
+	def test_convert_txt_txt_lower_1(self):
+		self.convert_txt_txt(
+			"100-en-fa",
+			"100-en-fa-lower",
+			{"lower": True}
+		)
+
+	def test_convert_txt_txt_rtl_1(self):
+		self.convert_txt_txt(
+			"100-en-fa",
+			"100-en-fa-rtl",
+			{"rtl": True}
+		)
+
+	def test_convert_txt_txt_remove_html_all_1(self):
+		self.convert_txt_txt(
+			"100-en-fa",
+			"100-en-fa-remove_html_all",
+			{"remove_html_all": True}
+		)
 
 	def convert_txt_stardict(
 		self,
