@@ -92,8 +92,19 @@ class LowerWord(EntryFilter):
 	name = "lower_word"
 	desc = "Lowercase Words"
 
+	def __init__(self, glos: "GlossaryType"):
+		EntryFilter.__init__(self, glos)
+		self._re_word_ref = re.compile('href=["\'](bword://[^"\']+)["\']')
+
+	def lowerWordRefs(self, defi):
+		return self._re_word_ref.sub(
+			lambda m: m.group(0).lower(),
+			defi,
+		)
+
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.editFuncWord(str.lower)
+		entry.editFuncDefi(self.lowerWordRefs)
 		return entry
 
 
