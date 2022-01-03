@@ -353,7 +353,7 @@ class Glossary(GlossaryType):
 
 		self._entryFiltersName = {
 			entryFilter.name
-			for entryFilter in self._entryFilters
+			for entryFilter in entryFilters
 		}
 
 	def prepareEntryFilters(self) -> None:
@@ -362,8 +362,8 @@ class Glossary(GlossaryType):
 			run this after glossary info is set and ready
 			for most entry filters, it won't do anything
 		"""
-		for ef in self._entryFilters:
-			ef.prepare()
+		for entryFilter in self._entryFilters:
+			entryFilter.prepare()
 
 	def removeHtmlTagsAll(self) -> None:
 		if RemoveHtmlTagsAll.name in self._entryFiltersName:
