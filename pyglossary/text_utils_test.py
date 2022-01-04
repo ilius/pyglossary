@@ -98,19 +98,6 @@ class TestTextUtils(unittest.TestCase):
 		self.assertEqual(b"\\", f(b"\\\\"))
 		self.assertEqual(b"\\|", f(b"\\\\\\|"))
 
-	def test_splitByBarBytes(self):
-		f = splitByBarBytes
-		self.assertEqual(f(b""), [b""])
-		self.assertEqual(f(b"|"), [b"", b""])
-		self.assertEqual(f(b"a"), [b"a"])
-		self.assertEqual(f(b"a|"), [b"a", b""])
-		self.assertEqual(f(b"|a"), [b"", b"a"])
-		self.assertEqual(f(b"a|b"), [b"a", b"b"])
-		self.assertEqual(f(b"a\\|b"), [b"a|b"])
-		self.assertEqual(f(b"a\\|b|c"), [b"a|b", b"c"])
-		self.assertEqual(f(b"a\\\\1|b|c"), [b"a\\1", b"b", b"c"])
-		# self.assertEqual(f("a\\\\|b|c"), ["a\\", "b", "c"])  # FIXME
-
 	def test_firstByBarBytes(self):
 		f = firstByBarBytes
 		self.assertEqual(f(b""), b"")

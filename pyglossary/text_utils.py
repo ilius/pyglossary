@@ -48,7 +48,6 @@ pattern_t_us = re.compile(r"((?<!\\)(?:\\\\)*)\\t")
 pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|")
 pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|")
 b_pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|".encode("ascii"))
-b_pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|".encode("ascii"))
 b_pattern_bar_first = re.compile(r"(?:(?<!\\)(?:\\\\)*)(\|)".encode("ascii"))
 
 
@@ -141,18 +140,6 @@ def unescapeBarBytes(st: bytes) -> bytes:
 	st = b_pattern_bar_us.sub(b"\\1|", st)
 	st = st.replace(b"\\\\", b"\\")  # probably faster than re.sub
 	return st
-
-
-def splitByBarBytes(st: bytes) -> "List[bytes]":
-	"""
-		splits by "|" (and not "\\|") then unescapes Newline (\\n),
-			Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
-		returns a list
-	"""
-	return [
-		unescapeBarBytes(part)
-		for part in b_pattern_bar_sp.split(st)
-	]
 
 
 def firstByBarBytes(st: bytes) -> bytes:
