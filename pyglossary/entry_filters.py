@@ -78,7 +78,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 
 
 class FixUnicode(EntryFilter):
-	name = "fix_unicode"
+	name = "utf8_check"
 	desc = "Fix Unicode in word(s) and definition"
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
@@ -88,7 +88,7 @@ class FixUnicode(EntryFilter):
 
 
 class LowerWord(EntryFilter):
-	name = "lower_word"
+	name = "lower"
 	desc = "Lowercase word(s)"
 
 	def __init__(self, glos: "GlossaryType"):

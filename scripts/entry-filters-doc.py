@@ -88,6 +88,7 @@ for configRule, filterClass in Glossary.entryFiltersRules:
 		continue
 	name, default = configRule
 	assert ui.config[name] == default
+	assert filterClass.name == name
 
 
 entryFiltersTable = "## Entry Filters\n\n" + renderTable(
