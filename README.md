@@ -305,3 +305,16 @@ There is another type of `Entry` which is called **Data Entry**, and generally c
 - `entry.s_word` is file name (and `l_word` is still a list containing this string),
 - `entry.defiFormat` is `b`
 - `entry.data` gives the content of file in `bytes`.
+
+## Entry filters
+
+Entry filters are internal objects that modify words/definition of entries,
+or remove entries (in some special cases).
+
+Like several filters in a pipe that connects a `reader` object to a `writer` object
+(with both of their classes defined in plugins and instantiated in `Glossary` class).
+
+You can enable/disable some of these filters using config parameters / command like flags, which
+are documented in [doc/config.md](./doc/config.md).
+
+The full list of entry filters is also documented in [doc/entry_filters.md](./doc/entry_filters.md).
