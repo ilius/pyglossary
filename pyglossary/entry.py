@@ -220,7 +220,7 @@ class Entry(BaseEntry):
 		if key is None:
 			key = Entry.defaultSortKey
 
-		if glos.getConfig("enable_alts", True):
+		if glos.alts:
 			if glos.rawEntryCompress:
 				return lambda x: key(firstByBarBytes(loads(decompress(x))[0]))
 			else:
@@ -488,7 +488,7 @@ class Entry(BaseEntry):
 		else:
 			defiFormat = defaultDefiFormat
 
-		if glos.getConfig("enable_alts", True):
+		if glos.alts:
 			word = splitByBar(word)
 
 		return cls(

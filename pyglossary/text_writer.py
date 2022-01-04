@@ -154,7 +154,7 @@ class TextGlossaryWriter(object):
 			word = entry.s_word
 			defi = entry.defi
 
-			# if glos.getConfig("enable_alts", True):  # FIXME
+			# if glos.alts:  # FIXME
 
 			if word_title:
 				defi = glos.wordTitleStr(entry.l_word[0]) + defi

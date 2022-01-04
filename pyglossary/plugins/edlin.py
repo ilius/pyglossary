@@ -135,7 +135,7 @@ class Reader(object):
 				word = word.rstrip()
 				defi = defi.rstrip()
 
-			if self._glos.getConfig("enable_alts", True):
+			if self._glos.alts:
 				word = splitByBarUnescapeNTB(word)
 				if len(word) == 1:
 					word = word[0]

@@ -582,6 +582,10 @@ class Glossary(GlossaryType):
 		self._config = c
 
 	@property
+	def alts(self) -> bool:
+		return self._config.get("enable_alts", True)
+
+	@property
 	def filename(self):
 		return self._filename
 
@@ -1250,7 +1254,7 @@ class Glossary(GlossaryType):
 		self._rawEntryCompress = False
 		self._cleanupPathList.add(sq_fpath)
 
-		if not self._config.get("enable_alts", True):
+		if not self.alts:
 			log.warning(
 				f"SQLite mode only works with enable_alts=True"
 				f", force-enabling it."

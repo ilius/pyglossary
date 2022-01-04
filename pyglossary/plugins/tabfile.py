@@ -80,7 +80,7 @@ class Reader(TextGlossaryReader):
 			)
 			return
 		###
-		if self._glos.getConfig("enable_alts", True):
+		if self._glos.alts:
 			word = splitByBarUnescapeNTB(word)
 			if len(word) == 1:
 				word = word[0]

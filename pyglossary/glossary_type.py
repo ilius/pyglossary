@@ -40,6 +40,10 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	@property
+	def alts(self) -> bool:
+		raise NotImplementedError
+
+	@property
 	def filename(self):
 		raise NotImplementedError
 
