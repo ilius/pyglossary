@@ -69,7 +69,46 @@ def canRunGUI():
 	return True
 
 
-def registerOption(parser, key: str, option: "Option"):
+class StoreConstAction(argparse.Action):
+	def __init__(
+		self,
+		option_strings,
+		conflictWith="",
+		constValue=None,
+		nargs=0,
+		**kwargs
+	):
+		if isinstance(option_strings, str):
+			option_strings = [option_strings]
+		argparse.Action.__init__(
+			self,
+			option_strings=option_strings,
+			nargs=nargs,
+			**kwargs
+		)
+		self.conflictWith = conflictWith
+		self.constValue = constValue
+
+	def __call__(
+		self,
+		parser=None,
+		namespace=None,
+		values=None,
+		option_strings=None,
+		required=False,
+		dest=None,
+	):
+		if not parser:
+			return self
+		dest = self.dest
+		if getattr(namespace, dest) is not None:
+			flag = self.option_strings[0]
+			parser.error(f"conflicting options: {self.conflictWith} and {flag}")
+		setattr(namespace, dest, self.constValue)
+		return self
+
+
+def registerConfigOption(parser, key: str, option: "Option"):
 	if not option.hasFlag:
 		return
 	flag = option.customFlag
@@ -85,7 +124,11 @@ def registerOption(parser, key: str, option: "Option"):
 		)
 		return
 
-	if option.comment:
+	if not option.comment:
+		print(f"registerConfigOption: option has no comment: {option}")
+		return
+
+	if not option.falseComment:
 		parser.add_argument(
 			f"--{flag}",
 			dest=key,
@@ -93,15 +136,30 @@ def registerOption(parser, key: str, option: "Option"):
 			default=None,
 			help=option.comment,
 		)
+		return
 
-	if option.falseComment:
-		parser.add_argument(
-			f"--no-{flag}",
+	parser.add_argument(
+		dest=key,
+		action=StoreConstAction(
+			f"--{flag}",
+			conflictWith=f"--no-{flag}",
+			constValue=True,
 			dest=key,
-			action="store_false",
+			default=None,
+			help=option.comment,
+		),
+	)
+	parser.add_argument(
+		dest=key,
+		action=StoreConstAction(
+			f"--no-{flag}",
+			conflictWith=f"--{flag}",
+			constValue=False,
+			dest=key,
 			default=None,
 			help=option.falseComment,
-		)
+		),
+	)
 
 
 def base_ui_run(
@@ -326,7 +384,10 @@ def main():
 		dest="sqlite",
 		action="store_true",
 		default=None,
-		help="use SQLite as middle storage instead of RAM in direct mode, for very large glossaries",
+		help=(
+			"use SQLite as middle storage instead of RAM in direct mode,"
+			"for very large glossaries"
+		),
 	)
 
 	parser.add_argument(
@@ -418,7 +479,7 @@ def main():
 	# _______________________________
 
 	for key, option in UIBase.configDefDict.items():
-		registerOption(parser, key, option)
+		registerConfigOption(parser, key, option)
 
 	# _______________________________
 
@@ -546,6 +607,7 @@ def main():
 		value = getattr(args, key, None)
 		if value is None:
 			continue
+		log.debug(f"config: {key} = {value}")
 		if not option.validate(value):
 			log.error("invalid config value: {key} = {value!r}")
 			continue
