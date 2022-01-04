@@ -38,7 +38,7 @@ class EntryFilter(object):
 
 class StripWhitespaces(EntryFilter):
 	name = "strip"
-	desc = "Strip Whitespaces"
+	desc = "Strip whitespaces in word(s) and definition"
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.strip()
@@ -48,7 +48,7 @@ class StripWhitespaces(EntryFilter):
 
 class NonEmptyWordFilter(EntryFilter):
 	name = "non_empty_word"
-	desc = "Non-empty Words"
+	desc = "Skip entries with empty word"
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		if not entry.s_word:
@@ -58,7 +58,7 @@ class NonEmptyWordFilter(EntryFilter):
 
 class NonEmptyDefiFilter(EntryFilter):
 	name = "non_empty_defi"
-	desc = "Non-empty Definition"
+	desc = "Skip entries with empty definition"
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		if not entry.defi:
@@ -68,7 +68,7 @@ class NonEmptyDefiFilter(EntryFilter):
 
 class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 	name = "remove_empty_dup_alt_words"
-	desc = "Remove Empty and Duplicate Alternate Words"
+	desc = "Remove empty and duplicate alternate words"
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.removeEmptyAndDuplicateAltWords()
@@ -79,7 +79,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 
 class FixUnicode(EntryFilter):
 	name = "fix_unicode"
-	desc = "Fix Unicode"
+	desc = "Fix Unicode in word(s) and definition"
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.editFuncWord(fixUtf8)
@@ -89,7 +89,7 @@ class FixUnicode(EntryFilter):
 
 class LowerWord(EntryFilter):
 	name = "lower_word"
-	desc = "Lowercase Words"
+	desc = "Lowercase word(s)"
 
 	def __init__(self, glos: "GlossaryType"):
 		EntryFilter.__init__(self, glos)
@@ -109,6 +109,7 @@ class LowerWord(EntryFilter):
 
 class RTLDefi(EntryFilter):
 	name = "rtl"
+	desc = "Make definition right-to-left"
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		entry.editFuncDefi(lambda defi: f'<div dir="rtl">{defi}</div>')
@@ -117,6 +118,7 @@ class RTLDefi(EntryFilter):
 
 class RemoveHtmlTagsAll(EntryFilter):
 	name = "remove_html_all"
+	desc = "Remove all HTML tags from definition"
 
 	def __init__(self, glos: "GlossaryType"):
 		self._p_pattern = re.compile(
@@ -144,6 +146,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 
 class RemoveHtmlTags(EntryFilter):
 	name = "remove_html"
+	desc = "Remove specific HTML tags from definition"
 
 	def __init__(self, glos: "GlossaryType", tagsStr: str):
 		import re
@@ -166,7 +169,7 @@ class RemoveHtmlTags(EntryFilter):
 # etc. How can we fix that?
 class NormalizeHtml(EntryFilter):
 	name = "normalize_html"
-	desc = "Normalize HTML Tags"
+	desc = "Normalize HTML tags in definition (WIP)"
 
 	def __init__(self, glos: "GlossaryType"):
 		log.info("Normalizing HTML tags")
@@ -199,7 +202,7 @@ class NormalizeHtml(EntryFilter):
 
 class SkipDataEntry(EntryFilter):
 	name = "skip_resources"
-	desc = "Skip Resources"
+	desc = "Skip resources / data files"
 
 	def run(self, entry: BaseEntry, index: int) -> "Optional[BaseEntry]":
 		if entry.isData():
@@ -209,7 +212,7 @@ class SkipDataEntry(EntryFilter):
 
 class LanguageCleanup(EntryFilter):
 	name = "lang"
-	desc = "Language-dependent Filters"
+	desc = "Language-specific cleanup/fixes"
 
 	def __init__(self, glos: "GlossaryType"):
 		EntryFilter.__init__(self, glos)
@@ -276,7 +279,7 @@ class TextListSymbolCleanup(EntryFilter):
 
 class PreventDuplicateWords(EntryFilter):
 	name = "prevent_duplicate_words"
-	desc = "Prevent Duplicate Words"
+	desc = "Prevent duplicate words"
 
 	def __init__(self, glos: "GlossaryType"):
 		EntryFilter.__init__(self, glos)
