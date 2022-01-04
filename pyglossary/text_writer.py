@@ -153,8 +153,7 @@ class TextGlossaryWriter(object):
 
 			word = entry.s_word
 			defi = entry.defi
-			if word.startswith("#"):  # FIXME
-				continue
+
 			# if glos.getConfig("enable_alts", True):  # FIXME
 
 			if word_title:
