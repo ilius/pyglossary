@@ -11,6 +11,16 @@ from pyglossary.text_utils import *
 
 
 class TestTextUtils(unittest.TestCase):
+	def test_fixUtf8(self):
+		f = fixUtf8
+		# Since entries already keep words and defi as string, fixUtf8 does not
+		# do much. It just removes zero bytes between valid characters
+		# (and not within characters)
+		# If there were encoding errors in input file, Reader class would
+		# most likely fail to read and raise exception.
+		# This feature was useful in Python 2.x, but not much anymore!
+		self.assertEqual(f("\x00س\x00لام"), "سلام")
+
 	def test_unescapeNTB(self):
 		self.assertEqual("a", unescapeNTB("a", bar=False))
 		self.assertEqual("a\t", unescapeNTB("a\\t", bar=False))
