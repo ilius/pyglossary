@@ -101,7 +101,7 @@ class Glossary(GlossaryType):
 		(None, StripWhitespaces),
 		(None, NonEmptyWordFilter),
 		(("skip_resources", False), SkipDataEntry),
-		(("utf8_check", True), FixUnicode),
+		(("utf8_check", False), FixUnicode),
 		(("lower", False), LowerWord),
 		(("rtl", False), RTLDefi),
 		(("remove_html_all", False), RemoveHtmlTagsAll),

@@ -5,7 +5,7 @@
 | `strip`                      | Yes             |                                      | Strip whitespaces in word(s) and definition |
 | `non_empty_word`             | Yes             |                                      | Skip entries with empty word                |
 | `skip_resources`             | No              | `--skip-resources`                   | Skip resources / data files                 |
-| `utf8_check`                 | Yes             | `--utf8-check`<br/>`--no-utf8-check` | Fix Unicode in word(s) and definition       |
+| `utf8_check`                 | No              | `--utf8-check`<br/>`--no-utf8-check` | Fix Unicode in word(s) and definition       |
 | `lower`                      | No              | `--lower`<br/>`--no-lower`           | Lowercase word(s)                           |
 | `rtl`                        | No              | `--rtl`                              | Make definition right-to-left               |
 | `remove_html_all`            | No              | `--remove-html-all`                  | Remove all HTML tags from definition        |

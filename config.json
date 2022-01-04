@@ -3,7 +3,7 @@
 	"cleanup": true,
 
 	"lower": false,
-	"utf8_check": true,
+	"utf8_check": false,
 	"enable_alts": true,
 	"skip_resources": false,
 

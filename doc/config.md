@@ -5,7 +5,7 @@
 | `log_time`                 | `--log-time`<br/>`--no-log-time`     | bool  | `False`   | Show date and time in logs                                                                |
 | `cleanup`                  | `--cleanup`<br/>`--no-cleanup`       | bool  | `True`    | Cleanup cache or temporary files after conversion                                         |
 | `lower`                    | `--lower`<br/>`--no-lower`           | bool  | `False`   | Lowercase words before writing                                                            |
-| `utf8_check`               | `--utf8-check`<br/>`--no-utf8-check` | bool  | `True`    | Ensure entries contain valid UTF-8 strings                                                |
+| `utf8_check`               | `--utf8-check`<br/>`--no-utf8-check` | bool  | `False`   | Ensure entries contain valid UTF-8 strings                                                |
 | `enable_alts`              | `--alts`<br/>`--no-alts`             | bool  | `True`    | Enable alternates                                                                         |
 | `skip_resources`           | `--skip-resources`                   | bool  | `False`   | Skip resources (images, audio, etc)                                                       |
 | `rtl`                      | `--rtl`                              | bool  | `False`   | Mark all definitions as Right-To-Left (definitions must be HTML)                          |
