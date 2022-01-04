@@ -414,4 +414,4 @@ class HtmlColorOption(Option):
 			customValue=True,
 			**kwargs
 		)
-		# FIXME: use a specific type?
+		# TODO: use a specific type?

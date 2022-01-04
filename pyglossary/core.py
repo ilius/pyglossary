@@ -173,7 +173,7 @@ class StdLogHandler(logging.Handler):
 			_type, value, tback = record.exc_info
 			tback_text = format_exception(
 				exc_info=record.exc_info,
-				add_locals=(log.level <= logging.DEBUG),  # FIXME
+				add_locals=(log.level <= logging.DEBUG),
 				add_globals=False,
 			)
 
@@ -270,7 +270,7 @@ def windows_show_exception(*exc_info):
 	import ctypes
 	msg = format_exception(
 		exc_info=exc_info,
-		add_locals=(log.level <= logging.DEBUG),  # FIXME
+		add_locals=(log.level <= logging.DEBUG),
 		add_globals=False,
 	)
 	log.critical(msg)
@@ -288,7 +288,7 @@ else:
 	sys.excepthook = lambda *exc_info: log.critical(
 		format_exception(
 			exc_info=exc_info,
-			add_locals=(log.level <= logging.DEBUG),  # FIXME
+			add_locals=(log.level <= logging.DEBUG),
 			add_globals=False,
 		)
 	)
@@ -323,7 +323,6 @@ if os.sep == "/":  # Operating system is Unix-Like
 	homeDir = os.getenv("HOME")
 	user = os.getenv("USER")
 	tmpDir = os.getenv("TMPDIR", "/tmp")
-	# os.name == "posix" # FIXME
 	if sysName == "darwin":  # MacOS X
 		_libDir = join(homeDir, "Library")
 		confDir = join(_libDir, "Preferences", "PyGlossary")
