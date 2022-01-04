@@ -73,8 +73,8 @@ class StoreConstAction(argparse.Action):
 	def __init__(
 		self,
 		option_strings,
-		conflictWith="",
-		constValue=None,
+		same_dest="",
+		const_value=None,
 		nargs=0,
 		**kwargs
 	):
@@ -86,8 +86,8 @@ class StoreConstAction(argparse.Action):
 			nargs=nargs,
 			**kwargs
 		)
-		self.conflictWith = conflictWith
-		self.constValue = constValue
+		self.same_dest = same_dest
+		self.const_value = const_value
 
 	def __call__(
 		self,
@@ -103,8 +103,11 @@ class StoreConstAction(argparse.Action):
 		dest = self.dest
 		if getattr(namespace, dest) is not None:
 			flag = self.option_strings[0]
-			parser.error(f"conflicting options: {self.conflictWith} and {flag}")
-		setattr(namespace, dest, self.constValue)
+			if getattr(namespace, dest) == self.const_value:
+				parser.error(f"multiple {flag} options")
+			else:
+				parser.error(f"conflicting options: {self.same_dest} and {flag}")
+		setattr(namespace, dest, self.const_value)
 		return self
 
 
@@ -142,8 +145,8 @@ def registerConfigOption(parser, key: str, option: "Option"):
 		dest=key,
 		action=StoreConstAction(
 			f"--{flag}",
-			conflictWith=f"--no-{flag}",
-			constValue=True,
+			same_dest=f"--no-{flag}",
+			const_value=True,
 			dest=key,
 			default=None,
 			help=option.comment,
@@ -153,8 +156,8 @@ def registerConfigOption(parser, key: str, option: "Option"):
 		dest=key,
 		action=StoreConstAction(
 			f"--no-{flag}",
-			conflictWith=f"--{flag}",
-			constValue=False,
+			same_dest=f"--{flag}",
+			const_value=False,
 			dest=key,
 			default=None,
 			help=option.falseComment,
@@ -249,7 +252,11 @@ def main():
 		True,
 	)
 
-	parser = argparse.ArgumentParser(add_help=False)
+	parser = argparse.ArgumentParser(
+		prog=sys.argv[0],
+		add_help=False,
+		# allow_abbrev=False,
+	)
 
 	parser.add_argument(
 		"-v",
@@ -312,6 +319,7 @@ def main():
 	)
 	parser.add_argument(
 		"--interactive",
+		"--inter",
 		dest="interactive",
 		action="store_true",
 		default=None,
@@ -319,6 +327,7 @@ def main():
 	)
 	parser.add_argument(
 		"--no-interactive",
+		"--no-inter",
 		dest="no_interactive",
 		action="store_true",
 		default=None,
@@ -484,6 +493,8 @@ def main():
 	# _______________________________
 
 	args = parser.parse_args()
+
+	# parser.conflict_handler == "error"
 
 	if args.version:
 		print(f"PyGlossary {getVersion()}")
