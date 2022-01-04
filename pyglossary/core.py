@@ -306,8 +306,8 @@ if os.getenv("WARNINGS"):
 	warnings.filterwarnings(os.getenv("WARNINGS"))
 
 
-if hasattr(sys, "frozen"):
-	# FIXME: was this for py2exe?
+if getattr(sys, "frozen", False):
+	# PyInstaller frozen executable
 	log.info(f"sys.frozen = {sys.frozen}")
 	rootDir = dirname(sys.executable)
 	uiDir = join(rootDir, "pyglossary", "ui")
