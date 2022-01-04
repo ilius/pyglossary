@@ -49,6 +49,7 @@ pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|")
 pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|")
 b_pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|".encode("ascii"))
 b_pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|".encode("ascii"))
+b_pattern_bar_first = re.compile(r"(?:(?<!\\)(?:\\\\)*)(\|)".encode("ascii"))
 
 
 def replaceStringTable(
@@ -160,10 +161,10 @@ def firstByBarBytes(st: bytes) -> bytes:
 			Tab (\\t), Baskslash (\\) and Bar (\\|) in the first part
 		returns a bytes
 	"""
-	m = b_pattern_bar_sp.search(st)
+	m = b_pattern_bar_first.search(st)
 	if m is None:
 		return unescapeBarBytes(st)
-	return unescapeBarBytes(st[:m.start()])
+	return unescapeBarBytes(st[:m.start(1)])
 
 
 # return a message string describing the current exception

@@ -122,7 +122,9 @@ class TestTextUtils(unittest.TestCase):
 		self.assertEqual(f(b"a\\|b"), b"a|b")
 		self.assertEqual(f(b"a\\|b|c"), b"a|b")
 		self.assertEqual(f(b"a\\\\1|b|c"), b"a\\1")
-		# self.assertEqual(f("a\\\\|b|c"), ["a\\", "b", "c"])  # FIXME
+		self.assertEqual(f(b"a\\\\|b|c"), b"a\\")
+		self.assertEqual(f(b"a\\\\\\|b|c"), b"a\\|b")
+		self.assertEqual(f(b"a\\\\\\\\|b|c"), b"a\\\\")
 
 	def test_formatHMS(self):
 		f = formatHMS
