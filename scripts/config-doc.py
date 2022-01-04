@@ -136,5 +136,5 @@ text = template.render(
 	ui=ui,
 	paramsTable=paramsTable,
 )
-with open(join("doc", "config.md"), mode="w") as _file:
+with open(join(rootDir, "doc", "config.md"), mode="w") as _file:
 	_file.write(text)
