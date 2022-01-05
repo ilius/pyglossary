@@ -1118,7 +1118,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		if glossarySetAttrs is None:
 			glossarySetAttrs = {}
 
-		self.loadConfig(**config)
+		self.config = config
 
 		if inputFilename:
 			self.convertInputEntry.set_text(abspath(inputFilename))
