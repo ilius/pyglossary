@@ -206,6 +206,10 @@ even reduce running time of conversion (depending on your home directory storage
 The temporary SQLite file is stored in [cache directory](#cache-directory) then deleted after
 conversion (unless you pass `--no-cleanup` flag).
 
+SQLite mode is automatically enabled for writing StarDict if `auto_sqlite`
+[config parameter](./doc/config.md) is `true` (which is the default).
+You may use `--no-sqlite` to override this.
+
 Currently you can not disable alternates in SQLite mode (`--no-alts` is ignored).
 
 ## Cache directory

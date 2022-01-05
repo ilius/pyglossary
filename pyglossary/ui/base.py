@@ -64,6 +64,15 @@ class UIBase(object):
 			falseComment="Do not cleanup cache or temporary files after conversion",
 		)),
 
+		("auto_sqlite", BoolOption(
+			hasFlag=False,
+			comment=(
+				"Auto-enable --sqlite to limit RAM usage"
+				" when direct mode is not possible"
+				". Can override with --no-sqlite"
+			),
+		)),
+
 		("lower", BoolOption(
 			hasFlag=True,
 			comment="Lowercase words before writing",

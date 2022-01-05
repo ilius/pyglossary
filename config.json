@@ -2,6 +2,8 @@
 	"log_time": false,
 	"cleanup": true,
 
+	"auto_sqlite": true,
+
 	"lower": false,
 	"utf8_check": false,
 	"enable_alts": true,

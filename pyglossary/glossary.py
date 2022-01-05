@@ -1275,7 +1275,7 @@ class Glossary(GlossaryType):
 		sortCacheSize: int = 0,
 		readOptions: "Optional[Dict[str, Any]]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
-		sqlite: bool = False,
+		sqlite: "Optional[bool]" = None,
 		infoOverride: "Optional[Dict[str, str]]" = None,
 	) -> "Optional[str]":
 		"""
@@ -1310,6 +1310,13 @@ class Glossary(GlossaryType):
 		if isdir(outputFilename):
 			log.critical(f"Directory already exists: {outputFilename}")
 			return
+
+		if sqlite is None:
+			_sort = sort
+			if self.plugins[outputFormat].sortOnWrite == ALWAYS:
+				 _sort = True
+			sqlite = _sort and self._config.get("auto_sqlite", True)
+			log.info(f"Automatically switching to SQLite mode for writing {outputFormat}")
 
 		self._sqlite = sqlite
 		if sqlite:

@@ -398,6 +398,13 @@ def main():
 			"for very large glossaries"
 		),
 	)
+	parser.add_argument(
+		"--no-sqlite",
+		dest="sqlite",
+		action="store_false",
+		default=None,
+		help="do not use SQLite mode",
+	)
 
 	parser.add_argument(
 		"--no-progress-bar",

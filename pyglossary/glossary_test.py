@@ -347,7 +347,7 @@ class TestGlossary(unittest.TestCase):
 			)
 
 	def test_convert_txt_stardict_1(self):
-		for sqlite in (False, True):
+		for sqlite in (None, False, True):
 			for rawEntryCompress in (None, True, False):
 				self.convert_txt_stardict(
 					"100-en-fa",
@@ -356,7 +356,7 @@ class TestGlossary(unittest.TestCase):
 				)
 
 	def test_convert_txt_stardict_2(self):
-		for sqlite in (False, True):
+		for sqlite in (None, False, True):
 			for rawEntryCompress in (None, True, False):
 				self.convert_txt_stardict(
 					"004-bar",
@@ -365,7 +365,7 @@ class TestGlossary(unittest.TestCase):
 				)
 
 	def test_convert_txt_stardict_3(self):
-		for sqlite in (False, True):
+		for sqlite in (None, False, True):
 			self.convert_txt_stardict(
 				"100-en-de",
 				syn=False,
@@ -373,7 +373,7 @@ class TestGlossary(unittest.TestCase):
 			)
 
 	def test_convert_txt_stardict_4(self):
-		for sqlite in (False, True):
+		for sqlite in (None, False, True):
 			self.convert_txt_stardict(
 				"100-ja-en",
 				sqlite=sqlite,

@@ -108,6 +108,8 @@ def optionComment(name, opt):
 			comment += "<br/>"
 		comment += "See [term_colors.md](./term_colors.md)"
 
+	comment = comment.replace("\n", "<br/>")
+
 	return comment
 
 
