@@ -84,7 +84,7 @@ class Reader(object):
 			with open(fpath, encoding=encoding) as fileObj:
 				data = load(fileObj)
 				words = list(data.keys())
-				words.sort(key=Entry.defaultStringSortKey)
+				words.sort(key=Entry.defaultSortKey)
 				for word in words:
 					entryDict = data[word]
 					defi = "".join(

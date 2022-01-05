@@ -13,8 +13,6 @@ from .entry_base import BaseEntry, MultiStr, RawEntryType
 from .iter_utils import unique_everseen
 from .text_utils import (
 	joinByBar,
-	splitByBar,
-	firstByBarBytes,
 )
 
 from pickle import dumps, loads
@@ -148,7 +146,7 @@ class DataEntry(BaseEntry):
 		if glos.tmpDataDir:
 			b_fpath = self.save(glos.tmpDataDir).encode("utf-8")
 		tpl = (
-			self._fname.encode("utf-8"),
+			[self._fname],
 			b_fpath,
 			"b",
 		)
@@ -193,12 +191,8 @@ class Entry(BaseEntry):
 		return False
 
 	@staticmethod
-	def defaultStringSortKey(word: str) -> "Any":
-		return Entry.defaultSortKey(word.encode("utf-8"))
-
-	@staticmethod
-	def defaultSortKey(b_word: bytes) -> "Any":
-		return b_word.lower()
+	def defaultSortKey(word: str) -> "Any":
+		return word.encode("utf-8").lower()
 
 	@staticmethod
 	def getEntrySortKey(
@@ -206,7 +200,7 @@ class Entry(BaseEntry):
 	) -> "Callable[[BaseEntry], Any]":
 		if key is None:
 			key = Entry.defaultSortKey
-		return lambda entry: key(entry.l_word[0].encode("utf-8"))
+		return lambda entry: key(entry.l_word)
 
 	@staticmethod
 	def getRawEntrySortKey(
@@ -220,16 +214,11 @@ class Entry(BaseEntry):
 		if key is None:
 			key = Entry.defaultSortKey
 
-		if glos.alts:
-			if glos.rawEntryCompress:
-				return lambda x: key(firstByBarBytes(loads(decompress(x))[0]))
-			else:
-				return lambda x: key(firstByBarBytes(x[0]))
+		if glos.rawEntryCompress:
+			return lambda x: key(loads(decompress(x))[0])
 		else:
-			if glos.rawEntryCompress:
-				return lambda x: key(loads(decompress(x))[0])
-			else:
-				return lambda x: key(x[0])
+			# x is rawEntry, so x[0] is list of words (entry.l_word)
+			return lambda x: key(x[0])
 
 	def __init__(
 		self,
@@ -448,13 +437,13 @@ class Entry(BaseEntry):
 		"""
 		if self._defiFormat and self._defiFormat != glos.getDefaultDefiFormat():
 			tpl = (
-				self.b_word,
+				self.l_word,
 				self.b_defi,
 				self._defiFormat,
 			)
 		else:
 			tpl = (
-				self.b_word,
+				self.l_word,
 				self.b_defi,
 			)
 
@@ -479,7 +468,7 @@ class Entry(BaseEntry):
 		"""
 		if isinstance(rawEntry, bytes):
 			rawEntry = loads(decompress(rawEntry))
-		word = rawEntry[0].decode("utf-8")
+		word = rawEntry[0]
 		defi = rawEntry[1].decode("utf-8")
 		if len(rawEntry) > 2:
 			defiFormat = rawEntry[2]
@@ -487,9 +476,6 @@ class Entry(BaseEntry):
 				return DataEntry.fromFile(glos, word, defi)
 		else:
 			defiFormat = defaultDefiFormat
-
-		if glos.alts:
-			word = splitByBar(word)
 
 		return cls(
 			word,

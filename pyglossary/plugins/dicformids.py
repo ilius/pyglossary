@@ -144,11 +144,10 @@ class Writer(object):
 	#def _sortKeyFunc(self, rawEntry: List[str, str, str]) -> Any:
 	#	pass
 
-	def sortKey(self, b_word: bytes) -> "Any":
+	def sortKey(self, words: "List[str]") -> "Any":
 		# DO NOT change method name
 		# FIXME: confirm
-		word = b_word.decode("utf-8")
-		return self.normateWord(word)
+		return self.normateWord(words[0])
 
 	def writeProbs(self):
 		glos = self._glos

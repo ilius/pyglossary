@@ -15,7 +15,6 @@ from collections import Counter
 from pyglossary.text_utils import (
 	uint32ToBytes,
 	uint32FromBytes,
-	firstByBarBytes,
 )
 
 from formats_common import *
@@ -475,12 +474,12 @@ class Writer(object):
 		(
 			"wordlower",
 			"TEXT",
-			lambda x: firstByBarBytes(x[0]).lower(),
+			lambda x: x[0][0].encode("utf-8").lower(),
 		),
 		(
 			"word",
 			"TEXT",
-			lambda x: firstByBarBytes(x[0]),
+			lambda x: x[0][0].encode("utf-8"),
 		),
 	]
 	"""
@@ -510,8 +509,16 @@ class Writer(object):
 			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>'
 		)
 
-	def sortKey(self, b_word: bytes) -> "Tuple[bytes, bytes]":
-		assert isinstance(b_word, bytes)
+	def byteSortKey(self, b_word: bytes) -> "Tuple[bytes, bytes]":
+		return (
+			b_word.lower(),
+			b_word,
+		)
+
+	def sortKey(self, words: "List[str]") -> "Tuple[bytes, bytes]":
+		if not isinstance(words, list):
+			raise TypeError(f"words = {words!r}")
+		b_word = words[0].encode("utf-8")
 		return (
 			b_word.lower(),
 			b_word,
@@ -744,7 +751,7 @@ class Writer(object):
 		t0 = now()
 
 		altIndexList.sort(
-			key=lambda x: self.sortKey(x[0])
+			key=lambda x: self.byteSortKey(x[0])
 		)
 		# 28 seconds with old sort key (converted from custom cmp)
 		# 0.63 seconds with my new sort key
@@ -895,7 +902,7 @@ class Writer(object):
 		log.info(f"Sorting {len(indexList)} items...")
 		t0 = now()
 
-		indexList.sort(key=lambda x: self.sortKey(x[0]))
+		indexList.sort(key=lambda x: self.byteSortKey(x[0]))
 		log.info(
 			f"Sorting {len(indexList)} {filename} took {now()-t0:.2f} seconds",
 		)

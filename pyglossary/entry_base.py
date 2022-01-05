@@ -4,8 +4,8 @@ MultiStr = "Union[str, List[str]]"
 
 RawEntryType = """Union[
 	bytes,  # compressed
-	Tuple[bytes, bytes],  # uncompressed, without defiFormat
-	Tuple[bytes, bytes, str],  # uncompressed, with defiFormat
+	Tuple[List[str], bytes],  # uncompressed, without defiFormat
+	Tuple[List[str], bytes, str],  # uncompressed, with defiFormat
 ]"""
 
 

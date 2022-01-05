@@ -303,6 +303,7 @@ class TestGlossary(unittest.TestCase):
 		syn=True,
 		dictzip=False,
 		config=None,
+		rawEntryCompress=None,
 		**kwargs
 	):
 		binExtList = ["idx", "dict"]
@@ -317,8 +318,13 @@ class TestGlossary(unittest.TestCase):
 		}
 
 		glos = Glossary()
+
 		if config is not None:
 			glos.config = config
+
+		if rawEntryCompress is not None:
+			glos.setRawEntryCompress(rawEntryCompress)
+
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
@@ -342,17 +348,21 @@ class TestGlossary(unittest.TestCase):
 
 	def test_convert_txt_stardict_1(self):
 		for sqlite in (False, True):
-			self.convert_txt_stardict(
-				"100-en-fa",
-				sqlite=sqlite,
-			)
+			for rawEntryCompress in (None, True, False):
+				self.convert_txt_stardict(
+					"100-en-fa",
+					rawEntryCompress=rawEntryCompress,
+					sqlite=sqlite,
+				)
 
 	def test_convert_txt_stardict_2(self):
 		for sqlite in (False, True):
-			self.convert_txt_stardict(
-				"004-bar",
-				sqlite=sqlite,
-			)
+			for rawEntryCompress in (None, True, False):
+				self.convert_txt_stardict(
+					"004-bar",
+					rawEntryCompress=rawEntryCompress,
+					sqlite=sqlite,
+				)
 
 	def test_convert_txt_stardict_3(self):
 		for sqlite in (False, True):
