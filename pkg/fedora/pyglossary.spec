@@ -4,7 +4,7 @@
 Name:           pyglossary
 Version:        master
 Release:        1%{?dist}
-Summary:        Working on glossaries (dictionary databases)
+Summary:        Working on glossaries (dictionary files)
 
 Group:          Applications/Productivity
 License:        GPLv3
@@ -15,9 +15,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 
 %description
-Working on glossaries (dictionary databases) using python. Including editing
-glossaries and converting theme between many formats such as: Tabfile StarDict
-format xFarDic format "Babylon Builder" source format Omnidic format and etc.
+A tool for converting dictionary files aka glossaries.
 
 %prep
 %setup -q
