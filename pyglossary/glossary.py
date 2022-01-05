@@ -960,7 +960,10 @@ class Glossary(GlossaryType):
 					"can not use sortWords in SQLite mode"
 				)
 			t0 = now()
-			self._data.setSortKey(Entry.getRawEntrySortKey(self, key), ["a", "b"])
+			self._data.setSortKey(
+				Entry.getRawEntrySortKey(self, key),
+				["a", "b"],
+			)
 			self._data.sort()
 			log.info(f"Sorting took {now() - t0:.1f} seconds")
 		self._sort = True
@@ -1167,7 +1170,11 @@ class Glossary(GlossaryType):
 					self._sortCacheSize = sortCacheSize  # FIXME
 			else:
 				t0 = now()
-				self._data.setSortKey(Entry.getRawEntrySortKey(self, sortKey), ["a", "b"])
+				if not self._sqlite:
+					self._data.setSortKey(
+						Entry.getRawEntrySortKey(self, sortKey),
+						["a", "b"],
+					)
 				self._data.sort()
 				log.info(f"Sorting took {now() - t0:.1f} seconds")
 
