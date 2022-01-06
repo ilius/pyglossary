@@ -117,9 +117,15 @@ def optionComment(name, opt):
 	return comment
 
 
+def jsonCodeValue(value):
+	# if isinstance(value, str):
+	# 	return codeValue(value)
+	return codeValue(json.dumps(value))
+
+
 def defaultOptionValue(name, opt):
 	value = ui.config[name]
-	valueMD = codeValue(value)
+	valueMD = jsonCodeValue(value)
 
 	if name.startswith("color.cmd."):
 		_hex = termColors[str(value)].lstrip("#")
