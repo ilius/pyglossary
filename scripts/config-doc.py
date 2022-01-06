@@ -42,6 +42,9 @@ glos.config = {
 ```
 """)
 
+with open(join(rootDir, "scripts/term_colors.json")) as _file:
+	termColors = json.load(_file)
+
 
 def codeValue(x):
 	s = str(x)
@@ -100,6 +103,7 @@ def getCommandFlagsMD(name, opt):
 
 	return f"`--{flag}`"
 
+
 def optionComment(name, opt):
 	comment = opt.comment
 
@@ -111,6 +115,17 @@ def optionComment(name, opt):
 	comment = comment.replace("\n", "<br/>")
 
 	return comment
+
+
+def defaultOptionValue(name, opt):
+	value = ui.config[name]
+	valueMD = codeValue(value)
+
+	if name.startswith("color.cmd."):
+		_hex = termColors[str(value)].lstrip("#")
+		valueMD += f" ![](https://via.placeholder.com/20x20/{_hex}/000000?text=+)"
+
+	return valueMD
 
 
 paramsTable = "## Configuration Parameters\n\n" + renderTable(
@@ -125,7 +140,7 @@ paramsTable = "## Configuration Parameters\n\n" + renderTable(
 			codeValue(name),
 			getCommandFlagsMD(name, opt),
 			opt.typ,
-			codeValue(ui.config[name]),
+			defaultOptionValue(name, opt),
 			optionComment(name, opt),
 		)
 		for name, opt in ui.configDefDict.items()
