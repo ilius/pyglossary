@@ -2,6 +2,7 @@
 
 import sys
 import json
+import re
 from os.path import join, dirname, abspath
 from pprint import pprint
 from mako.template import Template
@@ -17,29 +18,37 @@ ui.loadConfig(user=False)
 
 # ui.configDefDict
 
+re_flag = re.compile("(\\s)(--[a-z\\-]+)")
+
 template = Template("""${paramsTable}
 
-${"## Configuration Files"}
+${"Configuration Files"}
+${"-------------------"}
 
-The default configuration values are stored in [config.json](../config.json) file in source/installation directory.
+The default configuration values are stored in `config.json <./../config.json/>`_
+file in source/installation directory.
 
-The user configuration file - if exists - will override default configuration values.
-The location of this file depends on the operating system:
+The user configuration file - if exists - will override default configuration
+values. The location of this file depends on the operating system:
 
-- Linux or BSD: `~/.pyglossary/config.json`
-- Mac: `~/Library/Preferences/PyGlossary/config.json`
-- Windows: `C:\\Users\\USERNAME\\AppData\\Roaming\\PyGlossary\\config.json`
+- Linux or BSD: ``~/.pyglossary/config.json``
+- Mac: ``~/Library/Preferences/PyGlossary/config.json``
+- Windows: ``C:\\Users\\USERNAME\\AppData\\Roaming\\PyGlossary\\config.json``
 
-${"## Using as library"}
+${"Using as library"}
+${"----------------"}
 
-When you use PyGlossary as a library, neither of `config.json` files are loaded. So if you want to change the config, you should set `glos.config` property (which you can do only once for each instance of `Glossary`). For example:
+When you use PyGlossary as a library, neither of ``config.json`` files are
+loaded. So if you want to change the config, you should set ``glos.config``
+property (which you can do only once for each instance of ``Glossary``).
+For example:
 
-```python
-glos = Glossary()
-glos.config = {
-	"lower": True,
-}
-```
+.. code:: python
+
+    glos = Glossary()
+    glos.config = {
+        "lower": True,
+    }
 """)
 
 with open(join(rootDir, "scripts/term_colors.json")) as _file:
@@ -49,48 +58,59 @@ with open(join(rootDir, "scripts/term_colors.json")) as _file:
 def codeValue(x):
 	s = str(x)
 	if s:
-		return "`" + s + "`"
+		return "``" + s + "``"
 	return ""
 
 
-def renderCell(value):
-	return str(value).replace("\n", "\\n").replace("\t", "\\t")
+def tableRowSep(width, c="-"):
+	return "+" + c + f"{c}+{c}".join([
+		c * w for w in width
+	]) + c + "+"
 
 
 def renderTable(rows):
 	"""
 		rows[0] must be headers
 	"""
-	rows = [
-		[
-			renderCell(cell) for cell in row
-		]
-		for row in rows
-	]
+	colN = len(rows[0])
 	width = [
-		max(len(row[i]) for row in rows)
-		for i in range(len(rows[0]))
+		max(
+			max(len(line) for line in row[i].split("\n"))
+			for row in rows
+		)
+		for i in range(colN)
 	]
-	rows = [
-		[
-			cell.ljust(width[i], " ")
-			for i, cell in enumerate(row)
-		]
-		for rowI, row in enumerate(rows)
-	]
-	rows.insert(1, [
-		"-" * colWidth
-		for colWidth in width
-	])
-	return "\n".join([
-		"| " + " | ".join(row) + " |"
-		for row in rows
-	])
+	rowSep = tableRowSep(width, "-")
+	headerSep = tableRowSep(width, "=")
+
+	lines = [rowSep]
+	for rowI, row in enumerate(rows):
+		newRows = []
+		for colI, cell in enumerate(row):
+			for lineI, line in enumerate(cell.split("\n")):
+				if lineI >= len(newRows):
+					newRows.append([
+						" " * width[colI]
+						for colI in range(colN)
+					])
+				newRows[lineI][colI] = line.ljust(width[colI], " ")
+		for row in newRows:
+			lines.append("| " + " | ".join(row) + " |")
+		if rowI == 0:
+			lines.append(headerSep)
+		else:
+			lines.append(rowSep)
+
+	# widthsStr = ", ".join([str(w) for w in width])
+	# header = f".. table:: my table\n\t:widths: {widthsStr}\n\n"
+	# return header + "\n".join(["\t" + line for line in lines])
+
+	return "\n".join(lines)
 
 
 def getCommandFlagsMD(name, opt):
 	if name.startswith("color.enable.cmd."):
-		return f"`--no-color`"
+		return f"``--no-color``"
 
 	if not opt.hasFlag:
 		return ""
@@ -99,20 +119,19 @@ def getCommandFlagsMD(name, opt):
 		flag = name.replace('_', '-')
 
 	if opt.falseComment:
-		return f"`--{flag}`<br/>`--no-{flag}`"
+		return f"| ``--{flag}``\n| ``--no-{flag}``"
+		# return f"- ``--{flag}``\n- ``--no-{flag}``"
 
-	return f"`--{flag}`"
+	return f"``--{flag}``"
 
 
 def optionComment(name, opt):
 	comment = opt.comment
 
-	if name.startswith("color.cmd."):
-		if comment:
-			comment += "<br/>"
-		comment += "See [term_colors.md](./term_colors.md)"
+	comment = re_flag.sub("\\1``\\2``", comment)
 
-	comment = comment.replace("\n", "<br/>")
+	if name.startswith("color.cmd."):
+		comment = f"| {comment}\n| See `term_colors.md <./term_colors.md/>`_"
 
 	return comment
 
@@ -123,18 +142,27 @@ def jsonCodeValue(value):
 	return codeValue(json.dumps(value))
 
 
-def defaultOptionValue(name, opt):
+def defaultOptionValue(name, opt, images):
 	value = ui.config[name]
 	valueMD = jsonCodeValue(value)
 
 	if name.startswith("color.cmd."):
 		_hex = termColors[str(value)].lstrip("#")
-		valueMD += f" ![](https://via.placeholder.com/20x20/{_hex}/000000?text=+)"
+		imageI = f"image{len(images)}"
+		images.append(
+			f".. |{imageI}| image:: https://via.placeholder.com/20/{_hex}/000000?text=+"
+		)
+		valueMD += f"\n|{imageI}|"
 
 	return valueMD
 
 
-paramsTable = "## Configuration Parameters\n\n" + renderTable(
+title = "Configuration Parameters"
+title += "\n" + len(title) * "-" + "\n"
+
+images = []
+
+paramsTable = title + renderTable(
 	[(
 		"Name",
 		"Command Flags",
@@ -146,7 +174,7 @@ paramsTable = "## Configuration Parameters\n\n" + renderTable(
 			codeValue(name),
 			getCommandFlagsMD(name, opt),
 			opt.typ,
-			defaultOptionValue(name, opt),
+			defaultOptionValue(name, opt, images),
 			optionComment(name, opt),
 		)
 		for name, opt in ui.configDefDict.items()
@@ -159,5 +187,10 @@ text = template.render(
 	ui=ui,
 	paramsTable=paramsTable,
 )
-with open(join(rootDir, "doc", "config.md"), mode="w") as _file:
+
+text += "\n"
+for image in images:
+	text += "\n" + image
+
+with open(join(rootDir, "doc", "config.rst"), mode="w") as _file:
 	_file.write(text)

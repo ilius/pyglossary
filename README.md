@@ -176,7 +176,7 @@ If you have trouble with any format, please check the [link given for that forma
 
 ## Configuration
 
-See [doc/config.md](./doc/config.md).
+See [doc/config.rst](./doc/config.rst).
 
 ## Direct and indirect modes
 
@@ -207,7 +207,7 @@ The temporary SQLite file is stored in [cache directory](#cache-directory) then 
 conversion (unless you pass `--no-cleanup` flag).
 
 SQLite mode is automatically enabled for writing StarDict if `auto_sqlite`
-[config parameter](./doc/config.md) is `true` (which is the default).
+[config parameter](./doc/config.rst) is `true` (which is the default).
 You may use `--no-sqlite` to override this.
 
 Currently you can not disable alternates in SQLite mode (`--no-alts` is ignored).
@@ -319,6 +319,6 @@ Like several filters in a pipe that connects a `reader` object to a `writer` obj
 (with both of their classes defined in plugins and instantiated in `Glossary` class).
 
 You can enable/disable some of these filters using config parameters / command like flags, which
-are documented in [doc/config.md](./doc/config.md).
+are documented in [doc/config.rst](./doc/config.rst).
 
 The full list of entry filters is also documented in [doc/entry_filters.md](./doc/entry_filters.md).
