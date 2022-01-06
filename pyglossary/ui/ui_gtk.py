@@ -791,6 +791,15 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		#####
 		self._convertOptions = {}
 		#####
+		self.styleProvider = gtk.CssProvider()
+		gtk.StyleContext.add_provider_for_screen(
+			gdk.Screen.get_default(),
+			self.styleProvider,
+			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+		)
+		css = "check {min-width: 1.25em; min-height: 1.25em;}\n"
+		self.styleProvider.load_from_data(css.encode("utf-8"))
+		#####
 		self.assert_quit = False
 		self.path = ""
 		self.glos = Glossary(ui=self)
