@@ -20,7 +20,7 @@
 
 	"color.cmd.critical": 196,
 	"color.cmd.error": 1,
-	"color.cmd.warning": 15,
+	"color.cmd.warning": 208,
 
 	"ui_autoSetFormat": true,
 

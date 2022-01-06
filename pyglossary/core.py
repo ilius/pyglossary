@@ -147,7 +147,7 @@ class StdLogHandler(logging.Handler):
 	colorsConfig = {
 		"CRITICAL": ("color.cmd.critical", 196),
 		"ERROR": ("color.cmd.error", 1),
-		"WARNING": ("color.cmd.warning", 15),
+		"WARNING": ("color.cmd.warning", 208),
 	}
 	# 1: dark red (like 31m), 196: real red, 9: light red
 	# 15: white, 229: light yellow (#ffffaf), 226: real yellow (#ffff00)
