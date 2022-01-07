@@ -67,9 +67,8 @@ class UIBase(object):
 		("auto_sqlite", BoolOption(
 			hasFlag=False,
 			comment=(
-				"Auto-enable --sqlite to limit RAM usage"
-				" when direct mode is not possible"
-				". Can override with --no-sqlite"
+				"Auto-enable --sqlite to limit RAM usage when direct\n"
+				" mode is not possible. Can override with --no-sqlite"
 			),
 		)),
 
@@ -98,11 +97,17 @@ class UIBase(object):
 
 		("rtl", BoolOption(
 			hasFlag=True,
-			comment="Mark all definitions as Right-To-Left (definitions must be HTML)",
+			comment=(
+				"Mark all definitions as Right-To-Left\n"
+				" (definitions must be HTML)"
+			),
 		)),
 		("remove_html", StrOption(
 			hasFlag=True,
-			comment="Remove given html tags (comma-separated) from definitions",
+			comment=(
+				"Remove given html tags (comma-separated)\n"
+				" from definitions"
+			),
 		)),
 		("remove_html_all", BoolOption(
 			hasFlag=True,
