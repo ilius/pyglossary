@@ -334,6 +334,8 @@ if os.sep == "/":  # Operating system is Unix-Like
 		cacheDir = join(_libDir, "Caches", "PyGlossary")
 		pip = "pip3"
 	else:  # GNU/Linux, Termux, FreeBSD, etc
+		# should switch to "$XDG_CONFIG_HOME/pyglossary" in version 5.0.0
+		# which generally means ~/.config/pyglossary
 		confDir = join(homeDir, ".pyglossary")
 		cacheDir = join(homeDir, ".cache", "pyglossary")
 		if "/com.termux/" in homeDir:
