@@ -57,6 +57,7 @@ import shlex
 
 import json
 
+from pyglossary import core
 from pyglossary.core import confDir
 from pyglossary.glossary import Glossary
 from pyglossary.ui import ui_cmd
@@ -70,9 +71,13 @@ from prompt_toolkit.completion import (
 	PathCompleter,
 	Completion,
 )
+from prompt_toolkit import ANSI
 from prompt_toolkit.shortcuts import confirm, PromptSession
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
+
+
+endFormat = "\x1b[0;0;0m"
 
 
 class MiniCheckBoxPrompt(object):
@@ -87,10 +92,12 @@ class MiniCheckBoxPrompt(object):
 		self.value = value
 
 	def formatMessage(self):
-		return self.fmt.format(
+		msg = self.fmt.format(
 			check="[x]" if self.value else "[ ]",
 			message=self.message,
 		)
+		# msg = ANSI(msg)  # NOT SUPPORTED
+		return msg
 
 	def __pt_formatted_text__(self):
 		return [("", self.formatMessage())]
@@ -410,6 +417,32 @@ class UI(ui_cmd.UI):
 		os.chdir(newDir)
 		print(f"Changed current directory to: {newDir}")
 
+	def formatPromptMsg(self, level, msg, colon=":"):
+		indent = self.promptIndentStr * level
+
+		if core.noColor:
+			return f"{indent} {msg}{colon} ", False
+
+		if self.promptIndentColor >= 0:
+			indent = f"\x1b[38;5;{self.promptIndentColor}m{indent}{endFormat}"
+
+		if self.promptMsgColor >= 0:
+			msg = f"\x1b[38;5;{self.promptMsgColor}m{msg}{endFormat}"
+
+		return f"{indent} {msg}{colon} ", True
+
+	def prompt(self, level, msg, colon=":", **kwargs):
+		msg, colored = self.formatPromptMsg(level, msg, colon)
+		if colored:
+			msg = ANSI(msg)
+		return prompt(msg, **kwargs)
+
+	def checkbox_prompt(self, level, msg, colon=":", **kwargs):
+		# FIXME: colors are not working, they are being escaped
+		msg = f"{self.promptIndentStr * level} {msg}{colon} "
+		# msg, colored = self.formatPromptMsg(level, msg, colon)
+		return checkbox_prompt(msg, **kwargs)
+
 	def askFile(self, kind: str, histName: str, varName: str, reading: bool):
 		from shlex import split as shlex_split
 		history = AbsolutePathHistory(join(histDir, histName))
@@ -421,8 +454,8 @@ class UI(ui_cmd.UI):
 		)
 		default = getattr(self, varName)
 		while True:
-			filename = prompt(
-				f"> {kind}: ",
+			filename = self.prompt(
+				1, kind,
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
@@ -480,8 +513,8 @@ class UI(ui_cmd.UI):
 			sentence=True,
 		)
 		while True:
-			value = prompt(
-				"> Input format: ",
+			value = self.prompt(
+				1, "Input format",
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
@@ -504,8 +537,8 @@ class UI(ui_cmd.UI):
 			sentence=True,
 		)
 		while True:
-			value = prompt(
-				"> Output format: ",
+			value = self.prompt(
+				1, "Output format",
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
@@ -558,8 +591,8 @@ class UI(ui_cmd.UI):
 		)
 		while True:
 			try:
-				optName = prompt(
-					">> ReadOption: Name (ENTER if done): ",
+				optName = self.prompt(
+					2, "ReadOption: Name (ENTER if done)",
 					history=history,
 					auto_suggest=auto_suggest,
 					completer=completer,
@@ -577,8 +610,8 @@ class UI(ui_cmd.UI):
 			while True:
 				if option.typ == "bool":
 					try:
-						valueNew = checkbox_prompt(
-							f">>> ReadOption: {optName}",
+						valueNew = self.checkbox_prompt(
+							3, f"ReadOption: {optName}",
 							default=default,
 						)
 					except (KeyboardInterrupt, EOFError):
@@ -587,8 +620,9 @@ class UI(ui_cmd.UI):
 					self._readOptions[optName] = valueNew
 					break
 				try:
-					value = prompt(
-						f">>> ReadOption: {optName} = ",
+					value = self.prompt(
+						3, f"ReadOption: {optName}",
+						colon=" =",
 						history=FileHistory(join(histDir, f"option-value-{optName}")),
 						auto_suggest=AutoSuggestFromHistory(),
 						default=str(default),
@@ -630,8 +664,8 @@ class UI(ui_cmd.UI):
 		)
 		while True:
 			try:
-				optName = prompt(
-					">> WriteOption: Name (ENTER if done): ",
+				optName = self.prompt(
+					2, "WriteOption: Name (ENTER if done)",
 					history=history,
 					auto_suggest=auto_suggest,
 					completer=completer,
@@ -649,8 +683,8 @@ class UI(ui_cmd.UI):
 			while True:
 				if option.typ == "bool":
 					try:
-						valueNew = checkbox_prompt(
-							f">>> WriteOption: {optName}",
+						valueNew = self.checkbox_prompt(
+							3, f"WriteOption: {optName}",
 							default=default,
 						)
 					except (KeyboardInterrupt, EOFError):
@@ -659,8 +693,9 @@ class UI(ui_cmd.UI):
 					self._writeOptions[optName] = valueNew
 					break
 				try:
-					value = prompt(
-						f">>> WriteOption: {optName} = ",
+					value = self.prompt(
+						3, f"WriteOption: {optName}",
+						colon=" =",
 						history=FileHistory(join(histDir, f"option-value-{optName}")),
 						auto_suggest=AutoSuggestFromHistory(),
 						default=str(default),
@@ -694,12 +729,13 @@ class UI(ui_cmd.UI):
 	def askConfigValue(self, configKey, option):
 		default = self.config.get(configKey, "")
 		if option.typ == "bool":
-			return str(checkbox_prompt(
-				message=f">>> Config: {configKey}",
+			return str(self.checkbox_prompt(
+				3, f"Config: {configKey}",
 				default=bool(default),
 			))
-		return prompt(
-			f">>> Config: {configKey} = ",
+		return self.prompt(
+			3, f"Config: {configKey}",
+			colon=" =",
 			history=FileHistory(join(histDir, f"config-value-{configKey}")),
 			auto_suggest=AutoSuggestFromHistory(),
 			default=str(default),
@@ -719,8 +755,8 @@ class UI(ui_cmd.UI):
 
 		while True:
 			try:
-				configKey = prompt(
-					">> Config: Key (ENTER if done): ",
+				configKey = self.prompt(
+					2, "Config: Key (ENTER if done)",
 					history=history,
 					auto_suggest=auto_suggest,
 					completer=completer,
@@ -776,8 +812,8 @@ class UI(ui_cmd.UI):
 	def setSort(self):
 		from pyglossary.entry import Entry
 		try:
-			value = checkbox_prompt(
-				message=f">> Enable Sort",
+			value = self.checkbox_prompt(
+				2, f"Enable Sort",
 				default=self._convertOptions.get("sort", False),
 			)
 		except (KeyboardInterrupt, EOFError):
@@ -796,8 +832,8 @@ class UI(ui_cmd.UI):
 			sentence=True,
 		)
 		while True:
-			action = prompt(
-				"> Select action (ENTER to convert): ",
+			action = self.prompt(
+				1, "Select action (ENTER to convert)",
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
@@ -946,6 +982,13 @@ class UI(ui_cmd.UI):
 		)
 		print(shlex.join(cmd))
 
+	def setConfigAttrs(self):
+		config = self.config
+		self.promptIndentStr = config.get("cmdi.prompt.indent.str", ">")
+		self.promptIndentColor = config.get("cmdi.prompt.indent.color", 2)
+		self.promptMsgColor = config.get("cmdi.prompt.msg.color", -1)
+		self.msgColor = config.get("cmdi.msg.color", -1)
+
 	def run(
 		self,
 		inputFilename: str = "",
@@ -986,6 +1029,8 @@ class UI(ui_cmd.UI):
 
 		del inputFilename, outputFilename, inputFormat, outputFormat
 		del config, readOptions, writeOptions, convertOptions
+
+		self.setConfigAttrs()
 
 		if not self._inputFilename:
 			try:

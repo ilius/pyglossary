@@ -507,6 +507,7 @@ def main():
 	if ui_type == "none":
 		args.noColor = True
 
+	core.noColor = args.noColor
 	logHanlder = core.StdLogHandler(
 		noColor=args.noColor
 	)

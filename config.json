@@ -22,6 +22,12 @@
 	"color.cmd.error": 1,
 	"color.cmd.warning": 208,
 
+	"cmdi.prompt.indent.str": ">",
+	"cmdi.prompt.indent.color": 2,
+	"cmdi.prompt.msg.color": -1,
+	"cmdi.msg.color": -1,
+
+
 	"ui_autoSetFormat": true,
 
 	"reverse_matchWord": true,

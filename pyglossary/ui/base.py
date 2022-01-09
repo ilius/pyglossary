@@ -145,6 +145,14 @@ class UIBase(object):
 			comment="Color code for warnings in command line",
 		)),
 
+
+		# interactive command line interface
+		("cmdi.prompt.indent.str", StrOption(hasFlag=False)),
+		("cmdi.prompt.indent.color", IntOption(hasFlag=False)),
+		("cmdi.prompt.msg.color", IntOption(hasFlag=False)),
+		("cmdi.msg.color", IntOption(hasFlag=False)),
+
+
 		("ui_autoSetFormat", BoolOption(hasFlag=False)),
 
 		("reverse_matchWord", BoolOption(hasFlag=False)),

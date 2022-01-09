@@ -20,6 +20,7 @@ homePage = "https://github.com/ilius/pyglossary"
 
 TRACE = 5
 logging.addLevelName(TRACE, "TRACE")
+noColor = False
 
 
 class Formatter(logging.Formatter):
