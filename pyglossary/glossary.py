@@ -1267,6 +1267,7 @@ class Glossary(GlossaryType):
 				f", force-enabling it."
 			)
 		self._config["enable_alts"] = True
+		self._sqlite = True
 
 	def convert(
 		self,
@@ -1325,7 +1326,6 @@ class Glossary(GlossaryType):
 			sqlite = _sort and self._config.get("auto_sqlite", True)
 			log.info(f"Automatically switching to SQLite mode for writing {outputFormat}")
 
-		self._sqlite = sqlite
 		if sqlite:
 			if direct:
 				raise ValueError(f"Conflictng arguments: direct=True, sqlite=True")

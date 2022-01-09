@@ -191,8 +191,8 @@ class Entry(BaseEntry):
 		return False
 
 	@staticmethod
-	def defaultSortKey(word: str) -> "Any":
-		return word.encode("utf-8").lower()
+	def defaultSortKey(words: "List[str]") -> "Any":
+		return words[0].encode("utf-8").lower()
 
 	@staticmethod
 	def getEntrySortKey(
