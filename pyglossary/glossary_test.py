@@ -11,6 +11,7 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary, log
+from pyglossary.entry import Entry
 from pyglossary.core import tmpDir, cacheDir
 from pyglossary.os_utils import rmtree
 from pyglossary.text_utils import crc32hex
@@ -42,6 +43,7 @@ dataFileCRC32 = {
 	"100-en-de-remove_font_b.txt": "727320ac",
 
 	"100-en-fa.txt": "f5c53133",
+	"100-en-fa-sort.txt": "d7a82dc8",
 	"100-en-fa.csv": "eb8b0474",
 	"100-en-fa.json": "8d29c1be",
 	"100-en-fa-lower.txt": "62178940",
@@ -207,7 +209,7 @@ class TestGlossary(unittest.TestCase):
 
 		self.compareTextFiles(outputFilename, expectedFilename)
 
-	def convert_txt_txt(self, fname, fname2, config=None):
+	def convert_txt_txt(self, fname, fname2, config=None, **convertArgs):
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname2}-tmp.txt")
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
@@ -219,6 +221,7 @@ class TestGlossary(unittest.TestCase):
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
+			**convertArgs
 		)
 		self.assertEqual(outputFilename, res)
 
@@ -269,25 +272,33 @@ class TestGlossary(unittest.TestCase):
 	def test_convert_txt_json_3(self):
 		self.convert_txt_json("100-ja-en")
 
+	def test_convert_txt_txt_sort_1(self):
+		self.convert_txt_txt(
+			"100-en-fa",
+			"100-en-fa-sort",
+			sort=True,
+			defaultSortKey=Entry.defaultSortKey,
+		)
+
 	def test_convert_txt_txt_lower_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-lower",
-			{"lower": True}
+			{"lower": True},
 		)
 
 	def test_convert_txt_txt_rtl_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-rtl",
-			{"rtl": True}
+			{"rtl": True},
 		)
 
 	def test_convert_txt_txt_remove_html_all_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-remove_html_all",
-			{"remove_html_all": True}
+			{"remove_html_all": True},
 		)
 
 	def test_convert_txt_txt_remove_html_1(self):
