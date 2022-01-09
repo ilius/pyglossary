@@ -37,9 +37,18 @@ class Reader(object):
 		"image/gif",
 		"image/svg+xml",
 		"image/webp",
+		"image/x-icon",
+
 		"text/css",
+		"text/javascript",
+
 		"application/javascript",
+		"application/json",
+		"application/octet-stream",
 		"application/octet-stream+xapian",
+		"application/x-chrome-extension",
+		"application/warc-headers",
+		"application/font-woff",
 	}
 
 	def __init__(self, glos: GlossaryType) -> None:
@@ -78,6 +87,10 @@ class Reader(object):
 		redirectCount = 0
 		skip_dup = self._skip_duplicate_words
 		hashSet = set()
+
+		f_namemax = os.statvfs(cacheDir).f_namemax
+
+		fileNameTooLong = []
 
 		for entryIndex in range(entryCount):
 			zEntry = zimfile._get_entry_by_id(entryIndex)
@@ -122,7 +135,8 @@ class Reader(object):
 				invalidMimeTypeCount += 1
 				yield glos.newDataEntry(word, b_content)
 
-			if mimetype == "text/html":
+			if mimetype.startswith("text/html"):
+				# can be "text/html;raw=true"
 				defi = b_content.decode("utf-8")
 				defi = defi.replace(' src="../I/', ' src="./')
 				yield glos.newEntry(word, defi, defiFormat="h")
@@ -138,12 +152,20 @@ class Reader(object):
 			if mimetype not in self.resourceMimeTypes:
 				log.warn(f"Unrecognized mimetype={mimetype!r}")
 
+			if len(word) > f_namemax:
+				fileNameTooLong.append(word)
+				continue
+
 			if "|" in word:
 				log.error(f"resource title: {word}")
 
 			yield glos.newDataEntry(word, b_content)
 
 		log.info(f"ZIM Entry Count: {entryCount}")
+
+		if len(fileNameTooLong) > 0:
+			log.error(f"Files with name too long: {len(fileNameTooLong)}")
+
 		if duplicateEntryCount > 0:
 			log.info(f"Duplicate Title Count: {duplicateEntryCount}")
 		if emptyContentCount > 0:
