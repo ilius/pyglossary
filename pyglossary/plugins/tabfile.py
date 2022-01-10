@@ -51,10 +51,10 @@ class Reader(TextGlossaryReader):
 		yield from TextGlossaryReader.__iter__(self)
 		resDir = self._resDir
 		for fname in self._resFileNames:
-			with open(join(resDir, fname), "rb") as fromFile:
+			with open(join(resDir, fname), "rb") as _file:
 				yield self._glos.newDataEntry(
 					fname,
-					fromFile.read(),
+					_file.read(),
 				)
 
 	def isInfoWord(self, word: str) -> bool:

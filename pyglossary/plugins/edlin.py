@@ -114,17 +114,17 @@ class Reader(object):
 				join(self._filename, nextPath),
 				"r",
 				encoding=self._encoding,
-			) as fromFile:
-				header = fromFile.readline().rstrip()
+			) as _file:
+				header = _file.readline().rstrip()
 				if self._prev_link:
 					_prevPath, nextPath = header.split(" ")
 				else:
 					nextPath = header
-				word = fromFile.readline()
+				word = _file.readline()
 				if not word:
 					yield None  # update progressbar
 					continue
-				defi = fromFile.read()
+				defi = _file.read()
 				if not defi:
 					log.warning(
 						f"Edlin Reader: no definition for word {word!r}"
@@ -154,10 +154,10 @@ class Reader(object):
 
 		resDir = self._resDir
 		for fname in self._resFileNames:
-			with open(join(resDir, fname), "rb") as fromFile:
+			with open(join(resDir, fname), "rb") as _file:
 				yield self._glos.newDataEntry(
 					fname,
-					fromFile.read(),
+					_file.read(),
 				)
 
 

@@ -60,8 +60,8 @@ class DataEntry(BaseEntry):
 	@property
 	def data(self) -> bytes:
 		if self._tmpPath:
-			with open(self._tmpPath, "rb") as fromFile:
-				return fromFile.read()
+			with open(self._tmpPath, "rb") as _file:
+				return _file.read()
 		else:
 			return self._data
 

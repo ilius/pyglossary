@@ -321,10 +321,10 @@ class Reader(object):
 		if isdir(self._resDir):
 			for fname in os.listdir(self._resDir):
 				fpath = join(self._resDir, fname)
-				with open(fpath, "rb") as fromFile:
+				with open(fpath, "rb") as _file:
 					yield self._glos.newDataEntry(
 						fname,
-						fromFile.read(),
+						_file.read(),
 					)
 
 	def readSynFile(self) -> "Dict[int, List[str]]":
