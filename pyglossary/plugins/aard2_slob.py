@@ -216,6 +216,8 @@ class Writer(object):
 		"mp3": "audio/mpeg",
 		"ini": "text/plain",
 		# "application/octet-stream+xapian",
+		"eot": "application/vnd.ms-fontobject",
+		"pdf": "application/pdf",
 	}
 
 	def __init__(self, glos: GlossaryType) -> None:
