@@ -473,7 +473,10 @@ class Entry(BaseEntry):
 		if len(rawEntry) > 2:
 			defiFormat = rawEntry[2]
 			if defiFormat == "b":
-				return DataEntry.fromFile(glos, word, defi)
+				fname = word
+				if isinstance(fname, list):
+					fname = fname[0]
+				return DataEntry(fname, tmpPath=defi)
 		else:
 			defiFormat = defaultDefiFormat
 
