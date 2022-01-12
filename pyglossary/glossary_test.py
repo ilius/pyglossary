@@ -53,6 +53,11 @@ dataFileCRC32 = {
 	"100-en-fa.sd/100-en-fa.idx": "6df43378",
 	"100-en-fa.sd/100-en-fa.ifo": "3f2086cd",
 	"100-en-fa.sd/100-en-fa.syn": "1160fa0b",
+	"100-en-fa-res.slob": "0216d006",
+	"100-en-fa-res-slob.txt": "c73100b3",
+
+	"res/stardict.png": "7e1447fa",
+	"res/test.json": "41f8cf31",
 
 	"100-ja-en.txt": "93542e89",
 	"100-ja-en.csv": "7af18cf3",
@@ -150,8 +155,8 @@ class TestGlossary(unittest.TestCase):
 				)
 
 	def compareBinaryFiles(self, fpath1, fpath2):
-		self.assertTrue(isfile(fpath1))
-		self.assertTrue(isfile(fpath2))
+		self.assertTrue(isfile(fpath1), f"File {fpath1} does not exist")
+		self.assertTrue(isfile(fpath2), f"File {fpath2} does not exist")
 		with open(fpath1, mode="rb") as file1:
 			with open(fpath2, mode="rb") as file2:
 				data1 = file1.read()
@@ -423,6 +428,40 @@ class TestGlossary(unittest.TestCase):
 			outputFilename=outputFilename,
 		)
 		self.assertEqual(outputFilename, outputFilename2)
+
+	def convert_slob_txt(self, fname, fname2, resFiles, **convertArgs):
+		inputFilename = self.downloadFile(f"{fname}.slob")
+		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
+
+		resFilesPath = {
+			resFileName: self.newTempFilePath(f"{fname}-2.txt_res/{resFileName}")
+			for resFileName in resFiles
+		}
+
+		expectedFilename = self.downloadFile(f"{fname2}.txt")
+		glos = Glossary()
+		res = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+			**convertArgs
+		)
+		self.assertEqual(outputFilename, res)
+		self.compareTextFiles(outputFilename, expectedFilename)
+
+		for resFileName in resFiles:
+			fpath1 = self.downloadFile(f"res/{resFileName}")
+			fpath2 = resFilesPath[resFileName]
+			self.compareBinaryFiles(fpath1, fpath2)
+
+	def test_convert_slob_txt_1(self):
+		self.convert_slob_txt(
+			"100-en-fa-res",
+			"100-en-fa-res-slob",
+			resFiles=[
+				"stardict.png",
+				"test.json",
+			],
+		)
 
 
 if __name__ == "__main__":
