@@ -4,7 +4,7 @@ import sys
 import os
 from os.path import join, dirname, abspath, isdir, isfile
 import unittest
-import random
+import tempfile
 from urllib.request import urlopen
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -12,7 +12,7 @@ sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary, log
 from pyglossary.entry import Entry
-from pyglossary.core import tmpDir, cacheDir
+from pyglossary.core import cacheDir
 from pyglossary.os_utils import rmtree
 from pyglossary.text_utils import crc32hex
 
@@ -75,28 +75,20 @@ class TestGlossary(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		unittest.TestCase.__init__(self, *args, **kwargs)
 		self.maxDiff = None
-		self._cleanupPathList = set()
 		log.setVerbosity(1)
+
+	# The setUp() and tearDown() methods allow you to define instructions that
+	# will be executed before and after each test method.
 
 	def setUp(self):
 		if not isdir(dataDir):
 			os.makedirs(dataDir)
+		self.tempDir = tempfile.mkdtemp(dir=dataDir)
 
 	def tearDown(self):
 		if os.getenv("NO_CLEANUP"):
 			return
-		for cleanupPath in self._cleanupPathList:
-			if isfile(cleanupPath):
-				log.debug(f"Removing file {cleanupPath}")
-				try:
-					os.remove(cleanupPath)
-				except Exception:
-					log.exception(f"error removing {cleanupPath}")
-			elif isdir(cleanupPath):
-				log.debug(f"Removing directory {cleanupPath}")
-				rmtree(cleanupPath)
-			else:
-				log.error(f"no such file or directory: {cleanupPath}")
+		rmtree(self.tempDir)
 
 	def downloadFile(self, filename):
 		_crc32 = dataFileCRC32[filename]
@@ -120,8 +112,7 @@ class TestGlossary(unittest.TestCase):
 		return fpath
 
 	def newTempFilePath(self, filename):
-		fpath = join(dataDir, filename)
-		self._cleanupPathList.add(fpath)
+		fpath = join(self.tempDir, filename)
 		if isfile(fpath):
 			os.remove(fpath)
 		return fpath
