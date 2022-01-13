@@ -587,6 +587,13 @@ class TestGlossary(unittest.TestCase):
 				sqlite=sqlite,
 			)
 
+	def test_convert_slob_epub_4(self):
+		for direct in (True, False):
+			self.convert_slob_epub(
+				"100-en-fa-res",
+				"100-en-fa-res-slob",
+				direct=direct,
+			)
 
 if __name__ == "__main__":
 	unittest.main()

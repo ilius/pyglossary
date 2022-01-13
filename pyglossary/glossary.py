@@ -1296,9 +1296,14 @@ class Glossary(GlossaryType):
 
 		if sqlite is None:
 			_sort = sort
-			if self.plugins[outputFormat].sortOnWrite == ALWAYS:
+			outputPlugin = self.plugins[outputFormat]
+			if outputPlugin.sortOnWrite == ALWAYS:
 				 _sort = True
-			sqlite = _sort and self._config.get("auto_sqlite", True)
+			sqlite = (
+				_sort and
+				self._config.get("auto_sqlite", True) and
+				getattr(outputPlugin.writerClass, "sqliteSortKey", None)
+			)
 			log.info(f"Automatically switching to SQLite mode for writing {outputFormat}")
 
 		if sqlite:
