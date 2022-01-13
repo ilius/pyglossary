@@ -1161,7 +1161,10 @@ class Glossary(GlossaryType):
 					log.info(f"Using default sortKey")
 					sortKey = defaultSortKey
 				else:
-					log.critical(f"No sortKey was found")
+					log.critical(
+						"No sortKey was found"
+						" (need to pass defaultSortKey argument)"
+					)
 					return
 
 			if self._readers:
@@ -1237,7 +1240,7 @@ class Glossary(GlossaryType):
 		from pyglossary.glossary_utils import compress
 		return compress(self, filename, compression)
 
-	def _switchToSQLite(self, inputFilename, outputFormat):
+	def _switchToSQLite(self, inputFilename, outputFormat) -> bool:
 		from pyglossary.sqlist import SqList
 
 		outputPlugin = self.plugins[outputFormat]
@@ -1245,7 +1248,7 @@ class Glossary(GlossaryType):
 
 		if not sqliteSortKey:
 			log.warning(f"{outputFormat} writer does not support sqliteSortKey")
-			return
+			return False
 
 		sq_fpath = join(cacheDir, f"{basename(inputFilename)}.db")
 		if isfile(sq_fpath):
@@ -1268,6 +1271,39 @@ class Glossary(GlossaryType):
 			)
 		self._config["enable_alts"] = True
 		self._sqlite = True
+		return True
+
+	def _resolveConvertSortParams(
+		self,
+		sort: "Optional[bool]",
+		direct: "Optional[bool]",
+		sqlite: "Optional[bool]",
+		inputFilename: str,
+		outputFormat: str,
+	) -> "Tuple[bool, bool]":
+		"""
+			returns (sort, direct)
+		"""
+
+		if sqlite is None:
+			_sort = sort
+			if self.plugins[outputFormat].sortOnWrite == ALWAYS:
+				 _sort = True
+			sqlite = _sort and self._config.get("auto_sqlite", True)
+			log.info(f"Automatically switching to SQLite mode for writing {outputFormat}")
+
+		if sqlite:
+			if direct:
+				raise ValueError(f"Conflictng arguments: direct=True, sqlite=True")
+			direct = False
+			if self._switchToSQLite(inputFilename, outputFormat):
+				return sort, direct
+
+		if direct is None:
+			# if sort is in (False, None) ==> direct = True
+			direct = not sort
+
+		return sort, direct
 
 	def convert(
 		self,
@@ -1319,21 +1355,14 @@ class Glossary(GlossaryType):
 			log.critical(f"Directory already exists: {outputFilename}")
 			return
 
-		if sqlite is None:
-			_sort = sort
-			if self.plugins[outputFormat].sortOnWrite == ALWAYS:
-				 _sort = True
-			sqlite = _sort and self._config.get("auto_sqlite", True)
-			log.info(f"Automatically switching to SQLite mode for writing {outputFormat}")
-
-		if sqlite:
-			if direct:
-				raise ValueError(f"Conflictng arguments: direct=True, sqlite=True")
-			direct = False
-			self._switchToSQLite(inputFilename, outputFormat)
-		elif direct is None:
-			# if sort is in (False, None) ==> direct = True
-			direct = not sort
+		sort, direct = self._resolveConvertSortParams(
+			sort=sort,
+			direct=direct,
+			sqlite=sqlite,
+			inputFilename=inputFilename,
+			outputFormat=outputFormat,
+		)
+		del sqlite
 
 		showMemoryUsage()
 
@@ -1345,6 +1374,7 @@ class Glossary(GlossaryType):
 			progressbar=progressbar,
 			**readOptions
 		):
+			log.error(f"Reading file {inputFilename!r} failed.")
 			return
 		log.info("")
 
