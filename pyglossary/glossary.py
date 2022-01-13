@@ -579,6 +579,7 @@ class Glossary(GlossaryType):
 	def config(self, c: "Dict[str, Any]"):
 		if self._config:
 			log.error(f"glos.config is set more than once")
+			return
 		self._config = c
 
 	@property
