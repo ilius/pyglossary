@@ -216,9 +216,9 @@ class EbookWriter(object):
 			return "SPECIAL"
 		return prefix
 
-	def sortKey(self, b_word: bytes) -> "Any":
+	def sortKey(self, words: "List[str]") -> "Any":
 		# DO NOT change method name
-		word = b_word.decode("utf-8")
+		word = words[0]
 		return (
 			self.get_prefix(word),
 			word,
