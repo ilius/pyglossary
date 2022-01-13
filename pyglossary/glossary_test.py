@@ -75,6 +75,7 @@ class TestGlossary(unittest.TestCase):
 		unittest.TestCase.__init__(self, *args, **kwargs)
 		self.maxDiff = None
 		self._cleanupPathList = set()
+		log.setVerbosity(1)
 
 	def setUp(self):
 		if not isdir(dataDir):
