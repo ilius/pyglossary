@@ -55,6 +55,7 @@ dataFileCRC32 = {
 	"100-en-fa.sd/100-en-fa.syn": "1160fa0b",
 	"100-en-fa-res.slob": "0216d006",
 	"100-en-fa-res-slob.txt": "c73100b3",
+	"100-en-fa-res-slob-sort.txt": "8253fe96",
 
 	"res/stardict.png": "7e1447fa",
 	"res/test.json": "41f8cf31",
@@ -461,6 +462,40 @@ class TestGlossary(unittest.TestCase):
 				"stardict.png",
 				"test.json",
 			],
+		)
+
+	def test_convert_slob_txt_2(self):
+		self.convert_slob_txt(
+			"100-en-fa-res",
+			"100-en-fa-res-slob",
+			resFiles=[
+				"stardict.png",
+				"test.json",
+			],
+			direct=False,
+		)
+
+	def test_convert_slob_txt_2(self):
+		self.convert_slob_txt(
+			"100-en-fa-res",
+			"100-en-fa-res-slob",
+			resFiles=[
+				"stardict.png",
+				"test.json",
+			],
+			sqlite=True,
+		)
+
+	def test_convert_slob_txt_2(self):
+		self.convert_slob_txt(
+			"100-en-fa-res",
+			"100-en-fa-res-slob-sort",
+			resFiles=[
+				"stardict.png",
+				"test.json",
+			],
+			sort=True,
+			defaultSortKey=Entry.defaultSortKey,
 		)
 
 
