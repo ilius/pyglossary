@@ -56,6 +56,7 @@ dataFileCRC32 = {
 	"100-en-fa-res.slob": "0216d006",
 	"100-en-fa-res-slob.txt": "c73100b3",
 	"100-en-fa-res-slob-sort.txt": "8253fe96",
+	"100-en-fa-res-slob.epub": "30506767",
 
 	"res/stardict.png": "7e1447fa",
 	"res/test.json": "41f8cf31",
@@ -498,6 +499,93 @@ class TestGlossary(unittest.TestCase):
 			sort=True,
 			defaultSortKey=Entry.defaultSortKey,
 		)
+
+	def compareZipFiles(
+		self,
+		fpath1,
+		fpath2,
+		dataReplaceFuncs: "Dict[str: Callable",
+	):
+		import zipfile
+		zf1 = zipfile.ZipFile(fpath1)
+		zf2 = zipfile.ZipFile(fpath2)
+		pathList1 = zf1.namelist()
+		pathList2 = zf1.namelist()
+		self.assertEqual(pathList1, pathList2)
+		for zfpath in pathList1:
+			data1 = zf1.read(zfpath)
+			data2 = zf2.read(zfpath)
+
+			func = dataReplaceFuncs.get(zfpath)
+			if func is not None:
+				data1 = func(data1)
+				data2 = func(data2)
+
+			self.assertEqual(len(data1), len(data2), msg=f"zfpath={zfpath!r}")
+			self.assertTrue(
+				data1 == data2,
+				msg=f"zfpath={zfpath!r}",
+			)
+
+	def convert_slob_epub(self, fname, fname2, **convertArgs):
+		import re
+
+		inputFilename = self.downloadFile(f"{fname}.slob")
+		outputFilename = self.newTempFilePath(f"{fname}-2.epub")
+
+		expectedFilename = self.downloadFile(f"{fname2}.epub")
+		glos = Glossary()
+		res = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+			**convertArgs
+		)
+		self.assertEqual(outputFilename, res)
+
+		def remove_toc_uid(data):
+			return re.sub(
+				b'<meta name="dtb:uid" content="[0-9a-f]{32}" />',
+				b'<meta name="dtb:uid" content="" />',
+				data,
+			)
+
+		def remove_content_uid(data):
+			return re.sub(
+				b'<dc:identifier id="uid" opf:scheme="uuid">[0-9a-f]{32}</dc:identifier>',
+				b'<dc:identifier id="uid" opf:scheme="uuid"></dc:identifier>',
+				data,
+			)
+
+		self.compareZipFiles(
+			outputFilename,
+			expectedFilename,
+			{
+				"OEBPS/toc.ncx": remove_toc_uid,
+				"OEBPS/content.opf": remove_content_uid,
+			},
+		)
+
+	def test_convert_slob_epub_1(self):
+		self.convert_slob_epub(
+			"100-en-fa-res",
+			"100-en-fa-res-slob",
+		)
+
+	def test_convert_slob_epub_2(self):
+		for sort in (True, False):
+			self.convert_slob_epub(
+				"100-en-fa-res",
+				"100-en-fa-res-slob",
+				sort=sort,
+			)
+
+	def test_convert_slob_epub_3(self):
+		for sqlite in (True, False):
+			self.convert_slob_epub(
+				"100-en-fa-res",
+				"100-en-fa-res-slob",
+				sqlite=sqlite,
+			)
 
 
 if __name__ == "__main__":
