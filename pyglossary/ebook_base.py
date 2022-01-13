@@ -208,21 +208,10 @@ class EbookWriter(object):
 		return f"g{index:06d}.xhtml"
 
 	def get_prefix(self, word: str) -> str:
-		if not word:
-			return None
-		length = self._group_by_prefix_length
-		prefix = word[:length].lower()
-		if prefix[0] < "a":
-			return "SPECIAL"
-		return prefix
+		raise NotImplementedError
 
 	def sortKey(self, words: "List[str]") -> "Any":
-		# DO NOT change method name
-		word = words[0]
-		return (
-			self.get_prefix(word),
-			word,
-		)
+		raise NotImplementedError
 
 	def write_groups(self):
 		# TODO: rtl=False option

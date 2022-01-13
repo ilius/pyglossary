@@ -202,6 +202,23 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		)
 		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
+	def get_prefix(self, word: str) -> str:
+		if not word:
+			return None
+		length = self._group_by_prefix_length
+		prefix = word[:length].lower()
+		if prefix[0] < "a":
+			return "SPECIAL"
+		return prefix
+
+	def sortKey(self, words: "List[str]") -> "Any":
+		# DO NOT change method name
+		word = words[0]
+		return (
+			self.get_prefix(word),
+			word,
+		)
+
 	def format_group_content(self, word: "List[str]", defi: str) -> str:
 		hide_word_index = self._hide_word_index
 		if len(word) == 1:
