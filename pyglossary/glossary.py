@@ -125,7 +125,7 @@ class Glossary(GlossaryType):
 		"""
 		# log.debug(f"Loading plugins from directory: {directory!r}")
 		if not isdir(directory):
-			log.error(f"Invalid plugin directory: {directory!r}")
+			log.critical(f"Invalid plugin directory: {directory!r}")
 			return
 
 		pluginNames = [
@@ -1132,7 +1132,7 @@ class Glossary(GlossaryType):
 
 		writer = None
 		if format not in self.plugins or not self.plugins[format].canWrite:
-			log.error(f"No Writer class found for plugin {format}")
+			log.critical(f"No Writer class found for plugin {format}")
 			return
 
 		log.info(f"Writing to {format} file {filename!r}")
@@ -1152,7 +1152,8 @@ class Glossary(GlossaryType):
 						)
 					sortKey = writerSortKey
 				else:
-					log.error(f"No sortKey was found in plugin")
+					log.critical(f"No sortKey was found in plugin")
+					return
 
 			if sortKey is None:
 				if writerSortKey:
@@ -1334,7 +1335,7 @@ class Glossary(GlossaryType):
 			writeOptions = {}
 
 		if outputFilename == inputFilename:
-			log.error(f"Input and output files are the same")
+			log.critical(f"Input and output files are the same")
 			return
 
 		if readOptions:
@@ -1348,9 +1349,10 @@ class Glossary(GlossaryType):
 			inputFilename=inputFilename,
 		)
 		if not outputArgs:
-			log.error(f"Writing file {outputFilename!r} failed.")
+			log.critical(f"Writing file {outputFilename!r} failed.")
 			return
 		outputFilename, outputFormat, compression = outputArgs
+		del outputArgs
 
 		if isdir(outputFilename):
 			log.critical(f"Directory already exists: {outputFilename}")
@@ -1375,8 +1377,10 @@ class Glossary(GlossaryType):
 			progressbar=progressbar,
 			**readOptions
 		):
-			log.error(f"Reading file {inputFilename!r} failed.")
+			log.critical(f"Reading file {inputFilename!r} failed.")
 			return
+
+		del inputFilename, inputFormat, direct, readOptions
 		log.info("")
 
 		if infoOverride:
@@ -1394,7 +1398,7 @@ class Glossary(GlossaryType):
 		)
 		log.info("")
 		if not finalOutputFile:
-			log.error(f"Writing file {outputFilename!r} failed.")
+			log.critical(f"Writing file {outputFilename!r} failed.")
 			return
 
 		if compression:
