@@ -191,7 +191,7 @@ class TestGlossary(unittest.TestCase):
 		rRes = glos.read(inputFilename, direct=True)
 		self.assertTrue(rRes)
 
-		glos.setInfo("input_file_size", "")
+		glos.setInfo("input_file_size", None)
 
 		wRes = glos.write(outputFilename, format="Tabfile")
 		self.assertEqual(outputFilename, wRes)
@@ -208,7 +208,7 @@ class TestGlossary(unittest.TestCase):
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
 			infoOverride={
-				"input_file_size": "",
+				"input_file_size": None,
 			},
 		)
 		self.assertEqual(outputFilename, res)

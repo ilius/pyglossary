@@ -516,7 +516,14 @@ class Glossary(GlossaryType):
 			"",
 		)
 
-	def setInfo(self, key: str, value: str) -> None:
+	def setInfo(self, key: str, value: "Optional[str]") -> None:
+		if value is None:
+			try:
+				del self._info[key]
+			except KeyError:
+				pass
+			return
+
 		if not isinstance(key, str):
 			raise TypeError(f"invalid key={key!r}, must be str")
 
