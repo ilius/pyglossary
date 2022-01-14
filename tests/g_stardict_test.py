@@ -27,6 +27,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"100-en-fa.sd/100-en-fa.idx": "6df43378",
 			"100-en-fa.sd/100-en-fa.ifo": "3f2086cd",
 			"100-en-fa.sd/100-en-fa.syn": "1160fa0b",
+			"100-en-fa-sd.txt": "85f9d3fc",
 
 			"100-ja-en.sd/100-ja-en.dict": "39715f01",
 			"100-ja-en.sd/100-ja-en.idx": "adf0e552",
@@ -83,6 +84,27 @@ class TestGlossaryStarDict(TestGlossaryBase):
 				self.downloadFile(f"{fname}.sd/{fname}.{ext}")
 			)
 
+	def convert_stardict_txt(
+		self,
+		inputFname: str,
+		ouputFname: str,
+		testId: str,
+	):
+		inputFilename = self.downloadFile(f"{inputFname}.sd/{inputFname}.ifo")
+		outputFilename = self.newTempFilePath(
+			f"{inputFname}-{testId}.txt"
+		)
+		expectedFilename = self.downloadFile(f"{ouputFname}.txt")
+		glos = Glossary()
+
+		res = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+		)
+		self.assertEqual(outputFilename, res)
+
+		self.compareTextFiles(outputFilename, expectedFilename)
+
 	def test_convert_txt_stardict_0(self):
 		self.convert_txt_stardict(
 			"100-en-fa",
@@ -128,6 +150,13 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"100-en-fa",
 			config={"enable_alts": False},
 			sqlite=True,
+		)
+
+	def test_convert_stardict_txt_1(self):
+		self.convert_stardict_txt(
+			"100-en-fa",
+			"100-en-fa-sd",
+			"1",
 		)
 
 
