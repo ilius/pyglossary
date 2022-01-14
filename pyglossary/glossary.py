@@ -1294,7 +1294,7 @@ class Glossary(GlossaryType):
 			returns (sort, direct)
 		"""
 
-		if sqlite is None:
+		if not direct and sqlite is None:
 			_sort = sort
 			outputPlugin = self.plugins[outputFormat]
 			if outputPlugin.sortOnWrite == ALWAYS:

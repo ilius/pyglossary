@@ -83,6 +83,13 @@ class TestGlossaryStarDict(TestGlossaryBase):
 				self.downloadFile(f"{fname}.sd/{fname}.{ext}")
 			)
 
+	def test_convert_txt_stardict_0(self):
+		self.convert_txt_stardict(
+			"100-en-fa",
+			config={"auto_sqlite": True},
+			direct=True,
+		)
+
 	def test_convert_txt_stardict_1(self):
 		for sqlite in (None, False, True):
 			for rawEntryCompress in (None, True, False):
