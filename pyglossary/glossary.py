@@ -1249,15 +1249,22 @@ class Glossary(GlossaryType):
 		from pyglossary.glossary_utils import compress
 		return compress(self, filename, compression)
 
-	def _switchToSQLite(self, inputFilename, outputFormat) -> bool:
+	def _switchToSQLite(
+		self,
+		inputFilename: str,
+		outputFormat: str,
+		writeOptions: "Dict[str, Any]",
+	) -> bool:
 		from pyglossary.sqlist import SqList
 
 		outputPlugin = self.plugins[outputFormat]
-		sqliteSortKey = getattr(outputPlugin.writerClass, "sqliteSortKey", None)
+		sqliteSortKeyFunc = outputPlugin.sqliteSortKey
 
-		if not sqliteSortKey:
+		if not sqliteSortKeyFunc:
 			log.warning(f"{outputFormat} writer does not support sqliteSortKey")
 			return False
+
+		sqliteSortKey = sqliteSortKeyFunc(writeOptions)
 
 		sq_fpath = join(cacheDir, f"{basename(inputFilename)}.db")
 		if isfile(sq_fpath):
@@ -1289,6 +1296,7 @@ class Glossary(GlossaryType):
 		sqlite: "Optional[bool]",
 		inputFilename: str,
 		outputFormat: str,
+		writeOptions: "Dict[str, Any]",
 	) -> "Tuple[bool, bool]":
 		"""
 			returns (sort, direct)
@@ -1302,15 +1310,15 @@ class Glossary(GlossaryType):
 			sqlite = (
 				_sort and
 				self._config.get("auto_sqlite", True) and
-				getattr(outputPlugin.writerClass, "sqliteSortKey", None)
+				bool(outputPlugin.sqliteSortKey)
 			)
 			log.info(f"Automatically switching to SQLite mode for writing {outputFormat}")
 
 		if sqlite:
 			if direct:
-				raise ValueError(f"Conflictng arguments: direct=True, sqlite=True")
+				raise ValueError(f"Conflictng arguments: direct={direct}, sqlite={sqlite}")
 			direct = False
-			if self._switchToSQLite(inputFilename, outputFormat):
+			if self._switchToSQLite(inputFilename, outputFormat, writeOptions):
 				return sort, direct
 
 		if direct is None:
@@ -1376,6 +1384,7 @@ class Glossary(GlossaryType):
 			sqlite=sqlite,
 			inputFilename=inputFilename,
 			outputFormat=outputFormat,
+			writeOptions=writeOptions,
 		)
 		del sqlite
 

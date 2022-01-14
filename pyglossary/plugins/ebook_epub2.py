@@ -202,6 +202,31 @@ p.groupDefinition {
 		)
 		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
+	@classmethod
+	def sqliteSortKey(cls, options):
+		return [
+			(
+				"wordprefix",
+				"TEXT",
+				lambda x: cls.cls_get_prefix(options, x[0][0]),
+			),
+			(
+				"word",
+				"TEXT",
+				lambda x: x[0][0].encode("utf-8"),
+			),
+		]
+
+	@classmethod
+	def cls_get_prefix(cls, options: "Dict[str, Any]", word: str) -> str:
+		if not word:
+			return None
+		length = options.get("group_by_prefix_length", cls._group_by_prefix_length)
+		prefix = word[:length].lower()
+		if prefix[0] < "a":
+			return "SPECIAL"
+		return prefix
+
 	def get_prefix(self, word: str) -> str:
 		if not word:
 			return None

@@ -470,18 +470,21 @@ class Writer(object):
 	_audio_goldendict: bool = False
 	_audio_icon: bool = True
 
-	sqliteSortKey = [
-		(
-			"wordlower",
-			"TEXT",
-			lambda x: x[0][0].encode("utf-8").lower(),
-		),
-		(
-			"word",
-			"TEXT",
-			lambda x: x[0][0].encode("utf-8"),
-		),
-	]
+	@classmethod
+	def sqliteSortKey(cls, options):
+		return [
+			(
+				"wordlower",
+				"TEXT",
+				lambda x: x[0][0].encode("utf-8").lower(),
+			),
+			(
+				"word",
+				"TEXT",
+				lambda x: x[0][0].encode("utf-8"),
+			),
+		]
+
 	"""
 		https://en.wikipedia.org/wiki/UTF-8#Comparison_with_other_encodings
 
