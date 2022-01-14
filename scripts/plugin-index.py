@@ -4,16 +4,25 @@ import sys
 import json
 from os.path import join, dirname, abspath
 from collections import OrderedDict as odict
+from pathlib import Path
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary
+from pyglossary.core import userPluginsDir
 
 Glossary.init()
 
+userPluginsDirPath = Path(userPluginsDir)
+plugins = [
+	p
+	for p in Glossary.plugins.values()
+	if userPluginsDirPath not in p.path.parents
+]
+
 data = []
-for p in Glossary.plugins.values():
+for p in plugins:
 	canRead = p.canRead
 	canWrite = p.canWrite
 	item = odict([
