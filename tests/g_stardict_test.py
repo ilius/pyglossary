@@ -34,7 +34,6 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"100-ja-en.sd/100-ja-en.syn": "76e6df95",
 		})
 
-
 	def convert_txt_stardict(
 		self,
 		fname,

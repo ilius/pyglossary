@@ -18,7 +18,6 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"100-en-fa-res-slob.epub": "30506767",
 		})
 
-
 	def convert_slob_epub(self, fname, fname2, **convertArgs):
 		import re
 
@@ -92,7 +91,6 @@ class TestGlossaryStarDict(TestGlossaryBase):
 				"100-en-fa-res-slob",
 				direct=direct,
 			)
-
 
 
 if __name__ == "__main__":

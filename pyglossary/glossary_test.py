@@ -141,18 +141,12 @@ class TestGlossary(TestGlossaryBase):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
-			"100-en-de.csv": "b5283518",
-			"100-en-fa.csv": "eb8b0474",
-			"100-ja-en.csv": "7af18cf3",
-
-
 			"100-en-fa-sort.txt": "d7a82dc8",
 			"100-en-fa-lower.txt": "62178940",
 			"100-en-fa-remove_html_all.txt": "d611c978",
 			"100-en-fa-rtl.txt": "25ede1e8",
 			"100-en-de-remove_font_b.txt": "727320ac",
 		})
-
 
 	def test_read_txt_1(self):
 		inputFilename = self.downloadFile("100-en-fa.txt")
@@ -172,53 +166,6 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(glos.sourceLangName, "Russian")
 		self.assertEqual(glos.targetLangName, "German")
 
-	def convert_txt_csv(self, fname):
-		inputFilename = self.downloadFile(f"{fname}.txt")
-		outputFilename = self.newTempFilePath(f"{fname}-2.csv")
-		expectedFilename = self.downloadFile(f"{fname}.csv")
-		glos = Glossary()
-		res = glos.convert(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
-		)
-		self.assertEqual(outputFilename, res)
-		self.compareTextFiles(outputFilename, expectedFilename)
-
-	def convert_csv_txt_rw(self, fname):
-		inputFilename = self.downloadFile(f"{fname}.csv")
-		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
-		expectedFilename = self.downloadFile(f"{fname}.txt")
-		glos = Glossary()
-		# using glos.convert will add "input_file_size" info key
-		# perhaps add another optional argument to glos.convert named infoOverride
-
-		rRes = glos.read(inputFilename, direct=True)
-		self.assertTrue(rRes)
-
-		glos.setInfo("input_file_size", None)
-
-		wRes = glos.write(outputFilename, format="Tabfile")
-		self.assertEqual(outputFilename, wRes)
-
-		self.compareTextFiles(outputFilename, expectedFilename)
-
-	def convert_csv_txt(self, fname):
-		inputFilename = self.downloadFile(f"{fname}.csv")
-		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
-		expectedFilename = self.downloadFile(f"{fname}.txt")
-		glos = Glossary()
-
-		res = glos.convert(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
-			infoOverride={
-				"input_file_size": None,
-			},
-		)
-		self.assertEqual(outputFilename, res)
-
-		self.compareTextFiles(outputFilename, expectedFilename)
-
 	def convert_txt_txt(self, fname, fname2, config=None, **convertArgs):
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname2}-tmp.txt")
@@ -237,29 +184,7 @@ class TestGlossary(TestGlossaryBase):
 
 		self.compareTextFiles(outputFilename, expectedFilename)
 
-
-	def test_convert_txt_csv_1(self):
-		self.convert_txt_csv("100-en-fa")
-
-	def test_convert_txt_csv_2(self):
-		self.convert_txt_csv("100-en-de")
-
-	def test_convert_txt_csv_3(self):
-		self.convert_txt_csv("100-ja-en")
-
-	def test_convert_csv_txt_1(self):
-		self.convert_csv_txt("100-en-fa")
-
-	def test_convert_csv_txt_2(self):
-		self.convert_csv_txt("100-en-de")
-
-	def test_convert_csv_txt_3(self):
-		self.convert_csv_txt("100-ja-en")
-
-	def test_convert_csv_txt_4(self):
-		self.convert_csv_txt_rw("100-en-fa")
-
-	def test_convert_txt_txt_sort_1(self):
+	def test_sort_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-sort",
@@ -267,34 +192,33 @@ class TestGlossary(TestGlossaryBase):
 			defaultSortKey=Entry.defaultSortKey,
 		)
 
-	def test_convert_txt_txt_lower_1(self):
+	def test_lower_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-lower",
 			{"lower": True},
 		)
 
-	def test_convert_txt_txt_rtl_1(self):
+	def test_rtl_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-rtl",
 			{"rtl": True},
 		)
 
-	def test_convert_txt_txt_remove_html_all_1(self):
+	def test_remove_html_all_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-remove_html_all",
 			{"remove_html_all": True},
 		)
 
-	def test_convert_txt_txt_remove_html_1(self):
+	def test_remove_html_1(self):
 		self.convert_txt_txt(
 			"100-en-de",
 			"100-en-de-remove_font_b",
 			{"remove_html": "font,b"},
 		)
-
 
 	def test_convert_sqlite_direct_error(self):
 		glos = Glossary()
