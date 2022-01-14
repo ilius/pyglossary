@@ -217,7 +217,7 @@ class Glossary(GlossaryType):
 
 		def error(msg: str) -> None:
 			if not quiet:
-				log.error(msg)
+				log.critical(msg)
 			return None
 
 		filenameOrig = filename
@@ -225,7 +225,9 @@ class Glossary(GlossaryType):
 
 		plugin = None
 		if format:
-			plugin = cls.plugins[format]
+			plugin = cls.plugins.get(format)
+			if plugin is None:
+				return error(f"Invalid format {format!r}")
 		else:
 			plugin = cls.pluginByExt.get(ext)
 			if not plugin:
@@ -1004,14 +1006,14 @@ class Glossary(GlossaryType):
 		"""
 		def error(msg: str) -> None:
 			if not quiet:
-				log.error(msg)
+				log.critical(msg)
 			return None
 
 		plugin = None
 		if format:
 			plugin = Glossary.plugins.get(format)
 			if not plugin:
-				return error(f"Invalid write format {format}")
+				return error(f"Invalid format {format}")
 			if not plugin.canWrite:
 				return error(f"plugin {plugin.name} does not support writing")
 
@@ -1034,7 +1036,7 @@ class Glossary(GlossaryType):
 				plugin = cls.findPlugin(filename)
 
 		if not plugin:
-			return error("Unable to detect write format!")
+			return error("Unable to detect output format!")
 
 		if not plugin.canWrite:
 			return error(f"plugin {plugin.name} does not support writing")
@@ -1049,7 +1051,7 @@ class Glossary(GlossaryType):
 					ext = plugin.ext
 					filename = splitext(inputFilename)[0] + ext
 				else:
-					error("inputFilename is empty")
+					log.error("inputFilename is empty")
 			if not ext and plugin.ext:
 				filename += plugin.ext
 
