@@ -18,6 +18,8 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"100-en-fa-res.slob": "0216d006",
 			"100-en-fa-res-slob.epub": "30506767",
 			"100-en-fa-prefix3.epub": "af8ee89d",
+			"300-rand-en-fa.txt": "586617c8",
+			"300-rand-en-fa-prefix3.epub": "c0308c97",
 		})
 
 	def remove_toc_uid(self, data):
@@ -110,6 +112,16 @@ class TestGlossaryStarDict(TestGlossaryBase):
 				"100-en-fa.txt",
 				"100-en-fa-prefix3",
 				"5",
+				sqlite=sqlite,
+				writeOptions={"group_by_prefix_length": 3},
+			)
+
+	def test_convert_to_epub_6(self):
+		for sqlite in (True, False):
+			self.convert_to_epub(
+				"300-rand-en-fa.txt",
+				"300-rand-en-fa-prefix3",
+				"6",
 				sqlite=sqlite,
 				writeOptions={"group_by_prefix_length": 3},
 			)
