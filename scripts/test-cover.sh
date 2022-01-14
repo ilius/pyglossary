@@ -3,9 +3,8 @@ set -e
 
 myPath=$(realpath "$0")
 myDir1=$(dirname "$myPath")
-myDir2=$(dirname "$myDir1")
-srcDir="$myDir2/pyglossary"
+rootDir=$(dirname "$myDir1")
 
-cd "$srcDir"
-coverage run -m unittest *_test.py */*_test.py */*/*_test.py
+cd "$rootDir/tests"
+coverage run -m unittest *_test.py
 coverage html

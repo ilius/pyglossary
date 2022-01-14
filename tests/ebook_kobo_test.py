@@ -6,8 +6,10 @@ import sys
 import unittest
 
 
-rootDir = dirname(dirname(dirname(abspath(__file__))))
+rootDir = dirname(dirname(abspath(__file__)))
+sys.path.insert(0, join(rootDir, "pyglossary", "plugins"))
 sys.path.insert(0, rootDir)
+
 
 from pyglossary.plugins.ebook_kobo import (
 	Writer,

@@ -27,7 +27,7 @@ from os.path import dirname, realpath
 import sys
 from functools import partial
 
-rootDir = dirname(dirname(dirname(dirname(realpath(__file__)))))
+rootDir = dirname(dirname(realpath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.plugins.dsl import layer, tag
