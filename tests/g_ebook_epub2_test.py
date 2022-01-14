@@ -1,6 +1,7 @@
 import sys
 from os.path import dirname, abspath
 import unittest
+import re
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -16,15 +17,42 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		self.dataFileCRC32.update({
 			"100-en-fa-res.slob": "0216d006",
 			"100-en-fa-res-slob.epub": "30506767",
+			"100-en-fa-prefix3.epub": "af8ee89d",
 		})
 
-	def convert_slob_epub(self, fname, fname2, **convertArgs):
-		import re
+	def remove_toc_uid(self, data):
+		return re.sub(
+			b'<meta name="dtb:uid" content="[0-9a-f]{32}" />',
+			b'<meta name="dtb:uid" content="" />',
+			data,
+		)
 
-		inputFilename = self.downloadFile(f"{fname}.slob")
-		outputFilename = self.newTempFilePath(f"{fname}-2.epub")
+	def remove_content_extra(self, data):
+		data = re.sub(
+			b'<dc:identifier id="uid" opf:scheme="uuid">[0-9a-f]{32}</dc:identifier>',
+			b'<dc:identifier id="uid" opf:scheme="uuid"></dc:identifier>',
+			data,
+		)
+		data = re.sub(
+			b'<dc:date opf:event="creation">[0-9-]{10}</dc:date>',
+			b'<dc:date opf:event="creation"></dc:date>',
+			data,
+		)
+		return data
 
-		expectedFilename = self.downloadFile(f"{fname2}.epub")
+	def convert_to_epub(
+		self,
+		inputFname,
+		ouputFname,
+		testId,
+		**convertArgs
+	):
+		inputFilename = self.downloadFile(f"{inputFname}")
+		outputFilename = self.newTempFilePath(
+			f"{inputFname.replace('.', '_')}-{testId}.epub"
+		)
+
+		expectedFilename = self.downloadFile(f"{ouputFname}.epub")
 		glos = Glossary()
 		res = glos.convert(
 			inputFilename=inputFilename,
@@ -33,63 +61,57 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		)
 		self.assertEqual(outputFilename, res)
 
-		def remove_toc_uid(data):
-			return re.sub(
-				b'<meta name="dtb:uid" content="[0-9a-f]{32}" />',
-				b'<meta name="dtb:uid" content="" />',
-				data,
-			)
-
-		def remove_content_extra(data):
-			data = re.sub(
-				b'<dc:identifier id="uid" opf:scheme="uuid">[0-9a-f]{32}</dc:identifier>',
-				b'<dc:identifier id="uid" opf:scheme="uuid"></dc:identifier>',
-				data,
-			)
-			data = re.sub(
-				b'<dc:date opf:event="creation">[0-9-]{10}</dc:date>',
-				b'<dc:date opf:event="creation"></dc:date>',
-				data,
-			)
-			return data
-
 		self.compareZipFiles(
 			outputFilename,
 			expectedFilename,
 			{
-				"OEBPS/toc.ncx": remove_toc_uid,
-				"OEBPS/content.opf": remove_content_extra,
+				"OEBPS/toc.ncx": self.remove_toc_uid,
+				"OEBPS/content.opf": self.remove_content_extra,
 			},
 		)
 
-	def test_convert_slob_epub_1(self):
-		self.convert_slob_epub(
-			"100-en-fa-res",
+	def test_convert_to_epub_1(self):
+		self.convert_to_epub(
+			"100-en-fa-res.slob",
 			"100-en-fa-res-slob",
+			"1",
 		)
 
-	def test_convert_slob_epub_2(self):
+	def test_convert_to_epub_2(self):
 		for sort in (True, False):
-			self.convert_slob_epub(
-				"100-en-fa-res",
+			self.convert_to_epub(
+				"100-en-fa-res.slob",
 				"100-en-fa-res-slob",
+				"2",
 				sort=sort,
 			)
 
-	def test_convert_slob_epub_3(self):
+	def test_convert_to_epub_3(self):
 		for sqlite in (True, False):
-			self.convert_slob_epub(
-				"100-en-fa-res",
+			self.convert_to_epub(
+				"100-en-fa-res.slob",
 				"100-en-fa-res-slob",
+				"3",
 				sqlite=sqlite,
 			)
 
-	def test_convert_slob_epub_4(self):
+	def test_convert_to_epub_4(self):
 		for direct in (True, False):
-			self.convert_slob_epub(
-				"100-en-fa-res",
+			self.convert_to_epub(
+				"100-en-fa-res.slob",
 				"100-en-fa-res-slob",
+				"4",
 				direct=direct,
+			)
+
+	def test_convert_to_epub_5(self):
+		for sqlite in (True, False):
+			self.convert_to_epub(
+				"100-en-fa.txt",
+				"100-en-fa-prefix3",
+				"5",
+				sqlite=sqlite,
+				writeOptions={"group_by_prefix_length": 3},
 			)
 
 
