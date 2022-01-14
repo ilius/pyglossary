@@ -5,7 +5,7 @@ import unittest
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.glossary_test import TestGlossaryBase
+from tests.glossary_test import TestGlossaryBase
 from pyglossary.glossary import Glossary
 
 

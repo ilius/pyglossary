@@ -3,7 +3,6 @@ set -e
 
 myPath=$(realpath "$0")
 myDir1=$(dirname "$myPath")
-myDir2=$(dirname "$myDir1")
-srcDir="$myDir2/pyglossary"
+rootDir=$(dirname "$myDir1")
 
-find "$srcDir" -name "*_test.py" -print -exec python3 '{}' \;
+find "$rootDir" -name "*_test.py" -print -exec python3 '{}' \;
