@@ -5,6 +5,7 @@ import os
 from os.path import join, dirname, abspath, isdir, isfile
 import unittest
 import tempfile
+import logging
 from urllib.request import urlopen
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -31,7 +32,6 @@ class TestGlossaryBase(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		unittest.TestCase.__init__(self, *args, **kwargs)
 		self.maxDiff = None
-		log.setVerbosity(1)
 		self.dataFileCRC32 = {
 			"004-bar.txt": "6775e590",
 			"100-en-de.txt": "f22fc392",
@@ -46,11 +46,14 @@ class TestGlossaryBase(unittest.TestCase):
 	# will be executed before and after each test method.
 
 	def setUp(self):
+		self.prevLogLevel = log.level
+		log.setLevel(logging.ERROR)
 		if not isdir(dataDir):
 			os.makedirs(dataDir)
 		self.tempDir = tempfile.mkdtemp(dir=dataDir)
 
 	def tearDown(self):
+		log.setLevel(self.prevLogLevel)
 		if os.getenv("NO_CLEANUP"):
 			return
 		rmtree(self.tempDir)

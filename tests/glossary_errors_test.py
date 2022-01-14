@@ -10,33 +10,31 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary
-from pyglossary.core_test import MockLogHandler
+from pyglossary.core_test import getMockLogger
 
 
 Glossary.init()
 
-log = logging.getLogger("pyglossary")
-
-for handler in log.handlers:
-	log.removeHandler(handler)
-
-mockLog = MockLogHandler()
-log.addHandler(mockLog)
-
 
 class TestGlossaryErrors(unittest.TestCase):
+	def __init__(self, *args, **kwargs):
+		unittest.TestCase.__init__(self, *args, **kwargs)
+		self.mockLog = getMockLogger()
+
+	def setUp(self):
+		self.mockLog.clear()
+
 	def tearDown(self):
-		self.assertEqual(0, mockLog.printRemainingErrors())
-		mockLog.clear()
+		self.assertEqual(0, self.mockLog.printRemainingErrors())
 
 	def assertLogError(self, errorMsg):
-		self.assertIsNotNone(mockLog.popLog(
+		self.assertIsNotNone(self.mockLog.popLog(
 			logging.ERROR,
 			errorMsg,
 		), msg=f"did not find error log {errorMsg!r}")
 
 	def assertLogCritical(self, errorMsg):
-		self.assertIsNotNone(mockLog.popLog(
+		self.assertIsNotNone(self.mockLog.popLog(
 			logging.CRITICAL,
 			errorMsg,
 		), msg=f"did not find critical log {errorMsg!r}")

@@ -9,72 +9,90 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.entry import *
-from pyglossary.core_test import MockLogHandler
-
-log = logging.getLogger("pyglossary")
-
-for handler in log.handlers:
-	log.removeHandler(handler)
-
-mockLog = MockLogHandler()
-log.addHandler(mockLog)
+from pyglossary.core_test import getMockLogger
 
 
 class TestEntryStripFullHtml(unittest.TestCase):
+	def __init__(self, *args, **kwargs):
+		unittest.TestCase.__init__(self, *args, **kwargs)
+		self.mockLog = getMockLogger()
+
+	def setUp(self):
+		self.mockLog.clear()
+
+	def tearDown(self):
+		self.assertEqual(0, self.mockLog.printRemainingErrors())
+
 	def case(
 		self,
+		word: str,
 		origDefi: str,
 		fixedDefi: str,
 		logMsg: str = "",
 		logLevel: int = logging.ERROR,
 	):
-		entry = Entry("test", origDefi)
+		entry = Entry(word, origDefi)
 		entry.stripFullHtml()
 		self.assertEqual(entry.defi, fixedDefi)
-		# to check error, we need to mock Logger
 		if logMsg:
-			record = mockLog.popLog(logLevel, logMsg)
+			record = self.mockLog.popLog(logLevel, logMsg)
 			self.assertIsNotNone(record, msg=f"logMsg={logMsg!r}")
-		self.assertEqual(0, mockLog.printRemainingErrors())
-		mockLog.clear()
 
-	def test(self):
+	def test_1(self):
 		self.case(
-			"plain text",
-			"plain text",
-			"",
+			word="test1",
+			origDefi="plain text",
+			fixedDefi="plain text",
+			logMsg="",
 		)
+
+	def test_2(self):
 		self.case(
-			"<p>simple <i>html</i> text</p>",
-			"<p>simple <i>html</i> text</p>",
-			"",
+			word="test2",
+			origDefi="<p>simple <i>html</i> text</p>",
+			fixedDefi="<p>simple <i>html</i> text</p>",
+			logMsg="",
 		)
+
+	def test_3(self):
 		self.case(
-			"<!DOCTYPE html><html><head></head><body>simple <i>html</i></body></html>",
-			"simple <i>html</i>",
-			"",
+			word="test3",
+			origDefi="<!DOCTYPE html><html><head></head><body>simple <i>html</i></body></html>",
+			fixedDefi="simple <i>html</i>",
+			logMsg="",
 		)
+
+	def test_4(self):
 		self.case(
-			"<html><head></head><body>simple <i>html</i></body></html>",
-			"simple <i>html</i>",
-			"",
+			word="test4",
+			origDefi="<html><head></head><body>simple <i>html</i></body></html>",
+			fixedDefi="simple <i>html</i>",
+			logMsg="",
 		)
-		# FIXME: fails with ./scripts/test-cover.sh only
-		#self.case(
-		#	"<!DOCTYPE html><html><head></head>simple <i>html</i></html>",
-		#	"<!DOCTYPE html><html><head></head>simple <i>html</i></html>",
-		#	"<body not found: word=test",
-		#	logLevel=logging.WARNING,
-		#)
+
+	def test_5(self):
 		self.case(
-			"<html><head></head>no <body",
-			"<html><head></head>no <body",
-			"'>' after <body not found: word=test",
+			word="test5",
+			origDefi="<!DOCTYPE html><html><head></head>simple <i>html</i></html>",
+			fixedDefi="<!DOCTYPE html><html><head></head>simple <i>html</i></html>",
+			logMsg="<body not found: word=test5",
+			logLevel=logging.WARNING,
 		)
+
+	def test_6(self):
 		self.case(
-			"<html><head></head><body>",
-			"<html><head></head><body>",
-			"</body close not found: word=test",
+			word="test6",
+			origDefi="<html><head></head>no <body",
+			fixedDefi="<html><head></head>no <body",
+			logMsg="'>' after <body not found: word=test6",
+		)
+
+	def test_7(self):
+		self.case(
+			word="test7",
+			origDefi="<html><head></head><body>",
+			fixedDefi="<html><head></head><body>",
+			logMsg="</body close not found: word=test7",
 		)
 
 

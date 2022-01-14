@@ -40,3 +40,22 @@ class MockLogHandler(logging.Handler):
 				count += 1
 				print(self.format(record))
 		return count
+
+
+mockLog = None
+
+def getMockLogger():
+	global mockLog
+
+	if mockLog is not None:
+		return mockLog
+
+	log = logging.getLogger("pyglossary")
+
+	for handler in log.handlers:
+		log.removeHandler(handler)
+
+	mockLog = MockLogHandler()
+	mockLog.setLevel(logging.WARNING)
+	log.addHandler(mockLog)
+	return mockLog
