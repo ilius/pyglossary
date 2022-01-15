@@ -68,7 +68,7 @@ log = logging.getLogger("pyglossary")
 """
 sortKeyType = Optional[
 	Callable[
-		[bytes],
+		[[List[str]],
 		"Tuple[bytes, bytes]",
 	]
 ]
@@ -1082,7 +1082,7 @@ class Glossary(GlossaryType):
 		filename: str,
 		format: str,
 		sort: "Optional[bool]" = None,
-		sortKey: "Optional[Callable[[bytes], Any]]" = None,
+		sortKey: "sortKeyType" = None,
 		defaultSortKey: "Optional[Callable[[bytes], Any]]" = None,
 		sortCacheSize: int = 0,
 		**options
@@ -1095,7 +1095,7 @@ class Glossary(GlossaryType):
 
 		sortKey (callable or None):
 			key function for sorting
-			takes a word as argument, which is str or list (with alternates)
+			takes words as argument, which is list of str (with alternates)
 
 		defaultSortKey (callable or None):
 			used when no sortKey was given, or found in plugin
@@ -1354,7 +1354,7 @@ class Glossary(GlossaryType):
 		outputFilename: str = "",
 		outputFormat: str = "",
 		sort: "Optional[bool]" = None,
-		sortKey: "Optional[Callable[[bytes], Any]]" = None,
+		sortKey: "sortKeyType" = None,
 		defaultSortKey: "Optional[Callable[[bytes], Any]]" = None,
 		sortCacheSize: int = 0,
 		readOptions: "Optional[Dict[str, Any]]" = None,
