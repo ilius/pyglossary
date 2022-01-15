@@ -88,6 +88,18 @@ class TestTextUtils(unittest.TestCase):
 		self.assertEqual(f("a\\\\1|b|c"), ["a\\1", "b", "c"])
 		# self.assertEqual(f("a\\\\|b|c"), ["a\\", "b", "c"])  # FIXME
 
+	def test_joinByBar(self):
+		f = joinByBar
+		self.assertEqual("", f([""]))
+		self.assertEqual("|", f(["", ""]))
+		self.assertEqual("a", f(["a"]))
+		self.assertEqual("a|", f(["a", ""]))
+		self.assertEqual("|a", f(["", "a"]))
+		self.assertEqual("a|b", f(["a", "b"]))
+		self.assertEqual("a\\|b", f(["a|b"]))
+		self.assertEqual("a\\|b|c", f(["a|b", "c"]))
+		self.assertEqual("a\\\\1|b|c", f(["a\\1", "b", "c"]))
+
 	def test_unescapeBarBytes(self):
 		f = unescapeBarBytes
 		self.assertEqual(b"", f(b""))
