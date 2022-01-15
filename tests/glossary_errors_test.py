@@ -232,6 +232,28 @@ class TestGlossaryErrors(TestGlossaryBase):
 		self.assertLogCritical("Unable to detect output format!")
 		self.assertLogCritical("Writing file 'test' failed.")
 
+	def test_convert_writeFileNotFound_txt(self):
+		outputFilename = "/test/7de8cf6f17bc4c9abb439e71adbec95d.txt"
+		glos = Glossary()
+		res = glos.convert(
+			inputFilename=self.downloadFile("100-en-fa.txt"),
+			outputFilename=outputFilename,
+		)
+		self.assertIsNone(res)
+		self.assertLogCritical(f"[Errno 2] No such file or directory: '{outputFilename}'")
+		self.assertLogCritical(f"Writing file '{outputFilename}' failed.")
+
+	def test_convert_writeFileNotFound_hdir(self):
+		outputFilename = "/test/40e20107f5b04087bfc0ec0d61510017.hdir"
+		glos = Glossary()
+		res = glos.convert(
+			inputFilename=self.downloadFile("100-en-fa.txt"),
+			outputFilename=outputFilename,
+		)
+		self.assertIsNone(res)
+		self.assertLogCritical(f"[Errno 2] No such file or directory: '{outputFilename}'")
+		self.assertLogCritical(f"Writing file '{outputFilename}' failed.")
+
 
 if __name__ == "__main__":
 	unittest.main()

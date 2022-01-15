@@ -1205,6 +1205,9 @@ class Glossary(GlossaryType):
 		self._updateIter()
 		try:
 			writer.open(filename)
+		except FileNotFoundError as e:
+			log.critical(str(e))
+			return False
 		except Exception:
 			log.exception("")
 			return False
@@ -1243,6 +1246,9 @@ class Glossary(GlossaryType):
 					gen.send(None)
 				except StopIteration:
 					pass
+		except FileNotFoundError as e:
+			log.critical(str(e))
+			return
 		except Exception:
 			log.exception("Exception while calling plugin\'s write function")
 			return
