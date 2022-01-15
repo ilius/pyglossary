@@ -110,21 +110,6 @@ class TestTextUtils(unittest.TestCase):
 		self.assertEqual(b"\\", f(b"\\\\"))
 		self.assertEqual(b"\\|", f(b"\\\\\\|"))
 
-	def test_firstByBarBytes(self):
-		f = firstByBarBytes
-		self.assertEqual(f(b""), b"")
-		self.assertEqual(f(b"|"), b"")
-		self.assertEqual(f(b"a"), b"a")
-		self.assertEqual(f(b"a|"), b"a")
-		self.assertEqual(f(b"|a"), b"")
-		self.assertEqual(f(b"a|b"), b"a")
-		self.assertEqual(f(b"a\\|b"), b"a|b")
-		self.assertEqual(f(b"a\\|b|c"), b"a|b")
-		self.assertEqual(f(b"a\\\\1|b|c"), b"a\\1")
-		self.assertEqual(f(b"a\\\\|b|c"), b"a\\")
-		self.assertEqual(f(b"a\\\\\\|b|c"), b"a\\|b")
-		self.assertEqual(f(b"a\\\\\\\\|b|c"), b"a\\\\")
-
 	def test_formatHMS(self):
 		f = formatHMS
 		self.assertEqual(f(0, 0, 0), "00")
