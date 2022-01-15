@@ -26,7 +26,7 @@ dataURL = (
 )
 
 dataDir = join(cacheDir, "test")
-
+appTmpDir = join(cacheDir, "tmp")
 
 class TestGlossaryBase(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
@@ -58,7 +58,12 @@ class TestGlossaryBase(unittest.TestCase):
 		log.setLevel(self.prevLogLevel)
 		if os.getenv("NO_CLEANUP"):
 			return
-		rmtree(self.tempDir)
+		for direc in [
+			self.tempDir,
+			appTmpDir,
+		]:
+			if isdir(direc):
+				rmtree(direc)
 
 	def downloadFile(self, filename):
 		_crc32 = self.dataFileCRC32[filename]
@@ -242,31 +247,91 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(err, "Conflictng arguments: direct=True, sqlite=True")
 
 	def test_txt_txt_bar(self):
-		self.convert_txt_txt(
-			"004-bar",
-			"004-bar",
-			infoOverride={
-				"name": None,
-				"input_file_size": None,
-			},
-		)
+		for direct in (None, False, True):
+			self.convert_txt_txt(
+				"004-bar",
+				"004-bar",
+				direct=direct,
+				infoOverride={
+					"name": None,
+					"input_file_size": None,
+				},
+			)
 
 	def test_txt_txt_bar_sort(self):
-		self.convert_txt_txt(
-			"004-bar",
-			"004-bar-sort",
-			sort=True,
-			defaultSortKey=Entry.defaultSortKey,
-		)
+		for sqlite in (None, False, True):
+			self.convert_txt_txt(
+				"004-bar",
+				"004-bar-sort",
+				sort=True,
+				defaultSortKey=Entry.defaultSortKey,
+				sqlite=sqlite,
+			)
 
-	def test_txt_txt_bar_sort_sqlite(self):
-		self.convert_txt_txt(
-			"004-bar",
-			"004-bar-sort",
-			sort=True,
-			defaultSortKey=Entry.defaultSortKey,
-			sqlite=True,
-		)
+
+	def test_init_infoDict(self):
+		glos = Glossary(info={"a": "b"})
+		self.assertEqual(list(glos.iterInfo()), [('a', 'b')])
+
+	def test_init_infoOrderedDict(self):
+		from collections import OrderedDict
+		glos = Glossary(info=OrderedDict([
+			("y", "z"),
+			("a", "b"),
+			("1", "2"),
+		]))
+		self.assertEqual(list(glos.iterInfo()), [('y', 'z'), ('a', 'b'), ('1', '2')])
+
+	def test_dataEntry_save(self):
+		glos = Glossary()
+		tmpFname = "test_dataEntry_save"
+		entry = glos.newDataEntry(tmpFname, b"test")
+		saveFpath = entry.save(self.tempDir)
+		self.assertTrue(isfile(saveFpath), msg=f"saved file does not exist: {saveFpath}")
+
+	def test_dataEntry_getFileName(self):
+		glos = Glossary()
+		tmpFname = "test_dataEntry_getFileName"
+		entry = glos.newDataEntry(tmpFname, b"test")
+		self.assertEqual(entry.getFileName(), tmpFname)
+
+	def test_cleanup_noFile(self):
+		glos = Glossary()
+		glos.cleanup()
+
+	def test_cleanup_cleanup(self):
+		glos = Glossary()
+		tmpFname = "test_cleanup_cleanup"
+		entry = glos.newDataEntry(tmpFname, b"test")
+
+		tmpFpath = entry._tmpPath
+		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
+		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
+
+		glos.cleanup()
+
+		self.assertTrue(not isfile(tmpFpath), msg=f"tmp file still exists: {tmpFpath}")
+
+	def test_cleanup_noCleanup(self):
+		glos = Glossary()
+		tmpFname = "test_cleanup_noCleanup"
+		entry = glos.newDataEntry(tmpFname, b"test")
+
+		tmpFpath = entry._tmpPath
+		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
+		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
+
+		glos.config = {"cleanup": False}
+		glos.cleanup()
+
+		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
+
+	def test_rawEntryCompress(self):
+		glos = Glossary()
+		glos.setRawEntryCompress(True)
+		self.assertTrue(glos.rawEntryCompress)
+		glos.setRawEntryCompress(False)
+		self.assertFalse(glos.rawEntryCompress)
 
 
 
