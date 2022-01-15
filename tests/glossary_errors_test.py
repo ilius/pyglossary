@@ -165,7 +165,7 @@ class TestGlossaryErrors(TestGlossaryBase):
 		self.assertEqual(res, ("test", "Tabfile", ""))
 		self.assertLogError("inputFilename is empty")
 
-	def test_Glossary_init_infoBadType(self):
+	def test_init_infoBadType(self):
 		try:
 			Glossary(info=["a"])
 		except Exception as e:
@@ -177,9 +177,9 @@ class TestGlossaryErrors(TestGlossaryBase):
 		else:
 			self.fail("did not raise an exception")
 
-	def test_Glossary_cleanup_removed(self):
+	def test_cleanup_removed(self):
 		glos = Glossary()
-		tmpFname = "test_Glossary_cleanup_removed"
+		tmpFname = "test_cleanup_removed"
 		entry = glos.newDataEntry(tmpFname, b"test")
 
 		tmpFpath = entry._tmpPath
@@ -189,6 +189,15 @@ class TestGlossaryErrors(TestGlossaryBase):
 		rmtree(appTmpDir)
 		glos.cleanup()
 		self.assertLogError(f"no such file or directory: {appTmpDir}")
+
+	def test_convert_sameFilename(self):
+		glos = Glossary()
+		res = glos.convert(
+			inputFilename="test.txt",
+			outputFilename="test.txt",
+		)
+		self.assertIsNone(res)
+		self.assertLogCritical("Input and output files are the same")
 
 	def test_convert_fileNotFound(self):
 		glos = Glossary()
