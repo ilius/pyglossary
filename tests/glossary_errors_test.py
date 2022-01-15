@@ -20,13 +20,15 @@ Glossary.init()
 
 class TestGlossaryErrors(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
-		unittest.TestCase.__init__(self, *args, **kwargs)
+		TestGlossaryBase.__init__(self, *args, **kwargs)
 		self.mockLog = getMockLogger()
 
 	def setUp(self):
+		TestGlossaryBase.setUp(self)
 		self.mockLog.clear()
 
 	def tearDown(self):
+		TestGlossaryBase.tearDown(self)
 		self.assertEqual(0, self.mockLog.printRemainingErrors())
 
 	def assertLogCritical(self, errorMsg):
@@ -199,6 +201,16 @@ class TestGlossaryErrors(TestGlossaryBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("Input and output files are the same")
 
+	def test_convert_dirExists(self):
+		glos = Glossary()
+		res = glos.convert(
+			inputFilename="test.txt",
+			outputFilename=self.tempDir,
+			outputFormat="Stardict",
+		)
+		self.assertIsNone(res)
+		self.assertLogCritical(f"Directory already exists: {self.tempDir}")
+
 	def test_convert_fileNotFound(self):
 		glos = Glossary()
 		res = glos.convert(
@@ -209,6 +221,16 @@ class TestGlossaryErrors(TestGlossaryBase):
 		self.assertLogCritical("[Errno 2] No such file or directory: '/abc/def/test.txt'")
 		self.assertLogCritical("Reading file '/abc/def/test.txt' failed.")
 
+	def test_convert_unableDetectOutputFormat(self):
+		glos = Glossary()
+		res = glos.convert(
+			inputFilename="test.txt",
+			outputFilename="test",
+			outputFormat="",
+		)
+		self.assertIsNone(res)
+		self.assertLogCritical("Unable to detect output format!")
+		self.assertLogCritical("Writing file 'test' failed.")
 
 
 if __name__ == "__main__":

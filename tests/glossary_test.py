@@ -48,14 +48,11 @@ class TestGlossaryBase(unittest.TestCase):
 	# will be executed before and after each test method.
 
 	def setUp(self):
-		self.prevLogLevel = log.level
-		log.setLevel(logging.ERROR)
 		if not isdir(dataDir):
 			os.makedirs(dataDir)
 		self.tempDir = tempfile.mkdtemp(dir=dataDir)
 
 	def tearDown(self):
-		log.setLevel(self.prevLogLevel)
 		if os.getenv("NO_CLEANUP"):
 			return
 		for direc in [
@@ -157,6 +154,15 @@ class TestGlossary(TestGlossaryBase):
 			"100-en-fa-rtl.txt": "25ede1e8",
 			"100-en-de-remove_font_b.txt": "727320ac",
 		})
+
+	def setUp(self):
+		TestGlossaryBase.setUp(self)
+		self.prevLogLevel = log.level
+		log.setLevel(logging.ERROR)
+
+	def tearDown(self):
+		TestGlossaryBase.tearDown(self)
+		log.setLevel(self.prevLogLevel)
 
 	def test_read_txt_1(self):
 		inputFilename = self.downloadFile("100-en-fa.txt")
