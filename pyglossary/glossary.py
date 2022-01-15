@@ -244,6 +244,13 @@ class Glossary(GlossaryType):
 
 		return filename, plugin.name, compression
 
+	def _closeReaders(self):
+		for reader in self._readers:
+			try:
+				reader.close()
+			except Exception:
+				log.exception("")
+
 	def clear(self) -> None:
 		self._info = odict()
 
@@ -1425,6 +1432,7 @@ class Glossary(GlossaryType):
 		log.info("")
 		if not finalOutputFile:
 			log.critical(f"Writing file {outputFilename!r} failed.")
+			self._closeReaders()
 			return
 
 		if compression:
