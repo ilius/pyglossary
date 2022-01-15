@@ -101,6 +101,17 @@ class Writer(object):
 
 	compressions = stdCompressions
 
+	# should be compatible with Entry.defaultSortKey
+	@classmethod
+	def sqliteSortKey(cls, options):
+		return [
+			(
+				"wordlower",
+				"TEXT",
+				lambda x: x[0][0].encode("utf-8").lower(),
+			),
+		]
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None

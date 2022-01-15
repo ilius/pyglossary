@@ -34,6 +34,8 @@ class TestGlossaryBase(unittest.TestCase):
 		self.maxDiff = None
 		self.dataFileCRC32 = {
 			"004-bar.txt": "6775e590",
+			"004-bar-sort.txt": "fe861123",
+
 			"100-en-de.txt": "f22fc392",
 			"100-en-fa.txt": "f5c53133",
 			"100-ja-en.txt": "93542e89",
@@ -248,6 +250,26 @@ class TestGlossary(TestGlossaryBase):
 				"input_file_size": None,
 			},
 		)
+
+	def test_txt_txt_bar_sort(self):
+		self.convert_txt_txt(
+			"004-bar",
+			"004-bar-sort",
+			sort=True,
+			defaultSortKey=Entry.defaultSortKey,
+		)
+
+	def test_txt_txt_bar_sort_sqlite(self):
+		self.convert_txt_txt(
+			"004-bar",
+			"004-bar-sort",
+			sort=True,
+			defaultSortKey=Entry.defaultSortKey,
+			sqlite=True,
+		)
+
+
+
 
 if __name__ == "__main__":
 	unittest.main()
