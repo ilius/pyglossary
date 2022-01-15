@@ -90,8 +90,8 @@ class TestGlossaryBase(unittest.TestCase):
 		self.assertTrue(isfile(fpath2))
 		with open(fpath1) as file1:
 			with open(fpath2) as file2:
-				text1 = file1.read()
-				text2 = file2.read()
+				text1 = file1.read().rstrip("\n")
+				text2 = file2.read().rstrip("\n")
 				self.assertEqual(
 					text1,
 					text2,
@@ -239,6 +239,15 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(res, "")
 		self.assertEqual(err, "Conflictng arguments: direct=True, sqlite=True")
 
+	def test_txt_txt_bar(self):
+		self.convert_txt_txt(
+			"004-bar",
+			"004-bar",
+			infoOverride={
+				"name": None,
+				"input_file_size": None,
+			},
+		)
 
 if __name__ == "__main__":
 	unittest.main()

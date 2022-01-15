@@ -14,8 +14,9 @@ file_size_check_every = 100
 class TextGlossaryWriter(object):
 	_encoding = "utf-8"
 	_newline = "\n"
-	_wordEscapeFunc: "Optional[Callable]" = None
-	_defiEscapeFunc: "Optional[Callable]" = None
+	_wordListEncodeFunc: "Optional[Callable[[List[str]], str]]" = None
+	_wordEscapeFunc: "Optional[Callable[[str], str]]" = None
+	_defiEscapeFunc: "Optional[Callable[[str], str]]" = None
 	_ext: str = ".txt"
 	_head: str = ""
 	_tail: str = ""
@@ -50,6 +51,7 @@ class TextGlossaryWriter(object):
 		self,
 		encoding=None,
 		newline=None,
+		wordListEncodeFunc=None,
 		wordEscapeFunc=None,
 		defiEscapeFunc=None,
 		ext=None,
@@ -63,6 +65,8 @@ class TextGlossaryWriter(object):
 			self._encoding = encoding
 		if newline is not None:
 			self._newline = newline
+		if wordListEncodeFunc is not None:
+			self._wordListEncodeFunc = wordListEncodeFunc
 		if wordEscapeFunc is not None:
 			self._wordEscapeFunc = wordEscapeFunc
 		if defiEscapeFunc is not None:
@@ -133,6 +137,7 @@ class TextGlossaryWriter(object):
 		glos = self._glos
 		_file = self._file
 		entryFmt = self._entryFmt
+		wordListEncodeFunc = self._wordListEncodeFunc
 		wordEscapeFunc = self._wordEscapeFunc
 		defiEscapeFunc = self._defiEscapeFunc
 		resources = self._resources
@@ -159,8 +164,12 @@ class TextGlossaryWriter(object):
 			if word_title:
 				defi = glos.wordTitleStr(entry.l_word[0]) + defi
 
-			if wordEscapeFunc is not None:
+
+			if wordListEncodeFunc is not None:
+				word = wordListEncodeFunc(entry.l_word)
+			elif wordEscapeFunc is not None:
 				word = wordEscapeFunc(word)
+
 			if defiEscapeFunc is not None:
 				defi = defiEscapeFunc(defi)
 			_file.write(entryFmt.format(word=word, defi=defi))

@@ -116,7 +116,7 @@ class Writer(object):
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
 		from pyglossary.text_writer import TextGlossaryWriter
-		from pyglossary.text_utils import escapeNTB
+		from pyglossary.text_utils import escapeNTB, joinByBar
 		writer = TextGlossaryWriter(
 			self._glos,
 			entryFmt="{word}\t{defi}\n",
@@ -125,6 +125,7 @@ class Writer(object):
 		)
 		writer.setAttrs(
 			encoding=self._encoding,
+			wordListEncodeFunc=joinByBar,
 			wordEscapeFunc=escapeNTB,
 			defiEscapeFunc=escapeNTB,
 			ext=".txt",
