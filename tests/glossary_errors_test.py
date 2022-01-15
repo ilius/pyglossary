@@ -190,6 +190,15 @@ class TestGlossaryErrors(TestGlossaryBase):
 		glos.cleanup()
 		self.assertLogError(f"no such file or directory: {appTmpDir}")
 
+	def test_convert_fileNotFound(self):
+		glos = Glossary()
+		res = glos.convert(
+			inputFilename="/abc/def/test.txt",
+			outputFilename="test2.txt",
+		)
+		self.assertIsNone(res)
+		self.assertLogCritical("[Errno 2] No such file or directory: '/abc/def/test.txt'")
+		self.assertLogCritical("Reading file '/abc/def/test.txt' failed.")
 
 
 

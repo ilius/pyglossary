@@ -862,6 +862,9 @@ class Glossary(GlossaryType):
 		reader = self._createReader(format, options)
 		try:
 			reader.open(filename)
+		except FileNotFoundError as e:
+			log.critical(str(e))
+			return False
 		except Exception:
 			log.exception("")
 			return False
