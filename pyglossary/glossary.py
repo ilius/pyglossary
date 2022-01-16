@@ -404,14 +404,10 @@ class Glossary(GlossaryType):
 	def _loadedEntryGen(self) -> "Iterator[BaseEntry]":
 		self.progressInit("Writing")
 
-		for index, rawEntry in enumerate(self._data):
+		for index, entry in enumerate(self._data):
 			if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
 				gc.collect()
-			yield Entry.fromRaw(
-				self,
-				rawEntry,
-				defaultDefiFormat=self._defaultDefiFormat
-			)
+			yield entry
 
 		self.progressEnd()
 

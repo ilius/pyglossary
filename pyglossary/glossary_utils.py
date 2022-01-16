@@ -37,17 +37,31 @@ from .entry import Entry
 log = logging.getLogger("pyglossary")
 
 
-class EntryList(list):
+class EntryList(object):
 	def __init__(self, glos):
-		list.__init__(self)
+		self._l = []
 		self._glos = glos
 		self._sortKey = None
 
 	def append(self, entry):
-		list.append(self, entry.getRaw(self._glos))
+		self._l.append(entry.getRaw(self._glos))
 
 	def insert(self, pos, entry):
-		list.insert(self, pos, entry.getRaw(self._glos))
+		self._l.insert(pos, entry.getRaw(self._glos))
+
+	def clear(self):
+		self._l.clear()
+
+	def __len__(self):
+		return len(self._l)
+
+	def __iter__(self):
+		glos = self._glos
+		for rawEntry in self._l:
+			yield Entry.fromRaw(
+				glos, rawEntry,
+				defaultDefiFormat=glos._defaultDefiFormat,
+			)
 
 	def setSortKey(self, sortKey, sampleItem):
 		self._sortKey = Entry.getRawEntrySortKey(self._glos, sortKey)
@@ -55,11 +69,11 @@ class EntryList(list):
 	def sort(self):
 		if self._sortKey is None:
 			raise ValueError("EntryList.sort: sortKey is not set")
-
-		list.sort(self, key=self._sortKey)
+		self._l.sort(key=self._sortKey)
 
 	def close(self):
 		pass
+
 
 
 def winZipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
