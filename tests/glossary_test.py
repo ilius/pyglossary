@@ -438,5 +438,26 @@ japonica""")
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 
 
+	def test_addEntries_sortWords_1(self):
+		glos = Glossary()
+
+		wordsList = self.addWords(glos, """comedic
+tubenose
+organosol
+divine right of kings
+adipocere
+gid
+next friend
+bitter apple
+caca|ca-ca
+darkling beetle
+japonica""")
+
+		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+
+		glos.sortWords()
+		self.assertEqual(sorted(wordsList), [entry.l_word for entry in glos])
+
+
 if __name__ == "__main__":
 	unittest.main()
