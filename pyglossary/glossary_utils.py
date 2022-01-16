@@ -32,17 +32,19 @@ from .compression import (
 	compressionOpenFunc,
 	stdCompressions,
 )
+from .entry import Entry
 
 log = logging.getLogger("pyglossary")
 
 
 class EntryList(list):
-	def __init__(self):
+	def __init__(self, glos):
 		list.__init__(self)
+		self._glos = glos
 		self._sortKey = None
 
 	def setSortKey(self, sortKey, sampleItem):
-		self._sortKey = sortKey
+		self._sortKey = Entry.getRawEntrySortKey(self._glos, sortKey)
 
 	def sort(self):
 		if self._sortKey is None:

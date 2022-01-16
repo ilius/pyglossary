@@ -289,7 +289,7 @@ class Glossary(GlossaryType):
 				we will not reference to it
 		"""
 		self._config = {}
-		self._data = EntryList()
+		self._data = EntryList(self)
 		self._sqlite = False
 		self._rawEntryCompress = True
 		self._cleanupPathList = set()
@@ -980,10 +980,7 @@ class Glossary(GlossaryType):
 					"can not use sortWords in SQLite mode"
 				)
 			t0 = now()
-			self._data.setSortKey(
-				Entry.getRawEntrySortKey(self, key),
-				["a", "b"],
-			)
+			self._data.setSortKey(key, ["a", "b"])
 			self._data.sort()
 			log.info(f"Sorting took {now() - t0:.1f} seconds")
 		self._sort = True
@@ -1195,10 +1192,7 @@ class Glossary(GlossaryType):
 			else:
 				t0 = now()
 				if not self._sqlite:
-					self._data.setSortKey(
-						Entry.getRawEntrySortKey(self, sortKey),
-						["a", "b"],
-					)
+					self._data.setSortKey(sortKey, ["a", "b"])
 				self._data.sort()
 				log.info(f"Sorting took {now() - t0:.1f} seconds")
 
