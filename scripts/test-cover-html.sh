@@ -7,4 +7,4 @@ rootDir=$(dirname "$myDir1")
 
 cd "$rootDir/tests"
 coverage run -m unittest *_test.py
-coverage html
+coverage html --include="$rootDir/pyglossary/*"
