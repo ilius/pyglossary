@@ -100,32 +100,32 @@ class TestGlossaryBase(unittest.TestCase):
 		self.assertTrue(isfile(fpath1))
 		self.assertTrue(isfile(fpath2))
 		with open(fpath1) as file1:
-			with open(fpath2) as file2:
-				text1 = file1.read().rstrip("\n")
-				text2 = file2.read().rstrip("\n")
-				self.assertEqual(
-					len(text1),
-					len(text2),
-					msg=f"{fpath1} differs from {fpath2}",
-				)
-				self.assertEqual(
-					text1,
-					text2,
-					msg=f"{fpath1} differs from {fpath2}",
-				)
+			text1 = file1.read().rstrip("\n")
+		with open(fpath2) as file2:
+			text2 = file2.read().rstrip("\n")
+		self.assertEqual(
+			len(text1),
+			len(text2),
+			msg=f"{fpath1} differs from {fpath2}",
+		)
+		self.assertEqual(
+			text1,
+			text2,
+			msg=f"{fpath1} differs from {fpath2}",
+		)
 
 	def compareBinaryFiles(self, fpath1, fpath2):
 		self.assertTrue(isfile(fpath1), f"File {fpath1} does not exist")
 		self.assertTrue(isfile(fpath2), f"File {fpath2} does not exist")
 		with open(fpath1, mode="rb") as file1:
-			with open(fpath2, mode="rb") as file2:
-				data1 = file1.read()
-				data2 = file2.read()
-				self.assertEqual(len(data1), len(data2), msg=f"{fpath1}")
-				self.assertTrue(
-					data1 == data2,
-					msg=f"{fpath1} differs from {fpath2}",
-				)
+			data1 = file1.read()
+		with open(fpath2, mode="rb") as file2:
+			data2 = file2.read()
+		self.assertEqual(len(data1), len(data2), msg=f"{fpath1}")
+		self.assertTrue(
+			data1 == data2,
+			msg=f"{fpath1} differs from {fpath2}",
+		)
 
 	def compareZipFiles(
 		self,
