@@ -5,6 +5,12 @@ myPath=$(realpath "$0")
 myDir1=$(dirname "$myPath")
 rootDir=$(dirname "$myDir1")
 
-find "$rootDir/tests" -name "*_test.py" -print -exec python3 '{}' \;
+echo "$rootDir/tests"
+cd "$rootDir/tests"
+python -m unittest *_test.py
 
-find "$rootDir/pyglossary/plugin_lib" -name "*_test.py" -print -exec python3 '{}' \;
+
+echo
+echo "$rootDir/pyglossary/plugin_lib"
+cd "$rootDir/pyglossary/plugin_lib"
+python -m unittest *_test.py
