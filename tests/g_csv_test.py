@@ -15,26 +15,30 @@ class TestGlossaryStarDict(TestGlossaryBase):
 
 		self.dataFileCRC32.update({
 			"100-en-de.csv": "b5283518",
+
 			"100-en-fa.csv": "eb8b0474",
+			"100-en-fa-semicolon.csv": "b3f04599",
+
 			"100-ja-en.csv": "7af18cf3",
 		})
 
-	def convert_txt_csv(self, fname):
+	def convert_txt_csv(self, fname, fname2, **convertArgs):
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname}-2.csv")
-		expectedFilename = self.downloadFile(f"{fname}.csv")
+		expectedFilename = self.downloadFile(f"{fname2}.csv")
 		glos = Glossary()
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
+			**convertArgs
 		)
 		self.assertEqual(outputFilename, res)
 		self.compareTextFiles(outputFilename, expectedFilename)
 
-	def convert_csv_txt_rw(self, fname):
+	def convert_csv_txt_rw(self, fname, fname2, infoOverride=None):
 		inputFilename = self.downloadFile(f"{fname}.csv")
 		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
-		expectedFilename = self.downloadFile(f"{fname}.txt")
+		expectedFilename = self.downloadFile(f"{fname2}.txt")
 		glos = Glossary()
 		# using glos.convert will add "input_file_size" info key
 		# perhaps add another optional argument to glos.convert named infoOverride
@@ -42,50 +46,81 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		rRes = glos.read(inputFilename, direct=True)
 		self.assertTrue(rRes)
 
-		glos.setInfo("input_file_size", None)
+		if infoOverride:
+			for key, value in infoOverride.items():
+				glos.setInfo(key, value)
 
 		wRes = glos.write(outputFilename, format="Tabfile")
 		self.assertEqual(outputFilename, wRes)
 
 		self.compareTextFiles(outputFilename, expectedFilename)
 
-	def convert_csv_txt(self, fname):
+	def convert_csv_txt(self, fname, fname2, **convertArgs):
 		inputFilename = self.downloadFile(f"{fname}.csv")
 		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
-		expectedFilename = self.downloadFile(f"{fname}.txt")
+		expectedFilename = self.downloadFile(f"{fname2}.txt")
 		glos = Glossary()
 
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
-			infoOverride={
-				"input_file_size": None,
-			},
+			**convertArgs
 		)
 		self.assertEqual(outputFilename, res)
 
 		self.compareTextFiles(outputFilename, expectedFilename)
 
 	def test_convert_txt_csv_1(self):
-		self.convert_txt_csv("100-en-fa")
+		self.convert_txt_csv("100-en-fa", "100-en-fa")
 
 	def test_convert_txt_csv_2(self):
-		self.convert_txt_csv("100-en-de")
+		self.convert_txt_csv("100-en-de", "100-en-de")
 
 	def test_convert_txt_csv_3(self):
-		self.convert_txt_csv("100-ja-en")
+		self.convert_txt_csv("100-ja-en", "100-ja-en")
+
+	def test_convert_txt_csv_4(self):
+		self.convert_txt_csv(
+			"100-en-fa",
+			"100-en-fa-semicolon",
+			writeOptions={"delimiter": ";"},
+		)
 
 	def test_convert_csv_txt_1(self):
-		self.convert_csv_txt("100-en-fa")
+		self.convert_csv_txt(
+			"100-en-fa",
+			"100-en-fa",
+			infoOverride={"input_file_size": None},
+		)
 
 	def test_convert_csv_txt_2(self):
-		self.convert_csv_txt("100-en-de")
+		self.convert_csv_txt(
+			"100-en-de",
+			"100-en-de",
+			infoOverride={"input_file_size": None},
+		)
 
 	def test_convert_csv_txt_3(self):
-		self.convert_csv_txt("100-ja-en")
+		self.convert_csv_txt(
+			"100-ja-en",
+			"100-ja-en",
+			infoOverride={"input_file_size": None},
+		)
 
 	def test_convert_csv_txt_4(self):
-		self.convert_csv_txt_rw("100-en-fa")
+		self.convert_csv_txt_rw(
+			"100-en-fa",
+			"100-en-fa",
+			infoOverride={"input_file_size": None},
+		)
+
+	def test_convert_txt_csv_5(self):
+		self.convert_csv_txt(
+			"100-en-fa-semicolon",
+			"100-en-fa",
+			readOptions={"delimiter": ";"},
+			infoOverride={"input_file_size": None},
+		)
 
 
 if __name__ == "__main__":

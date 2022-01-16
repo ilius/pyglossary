@@ -98,6 +98,11 @@ class TestGlossaryBase(unittest.TestCase):
 				text1 = file1.read().rstrip("\n")
 				text2 = file2.read().rstrip("\n")
 				self.assertEqual(
+					len(text1),
+					len(text2),
+					msg=f"{fpath1} differs from {fpath2}",
+				)
+				self.assertEqual(
 					text1,
 					text2,
 					msg=f"{fpath1} differs from {fpath2}",
