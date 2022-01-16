@@ -11,6 +11,48 @@ sys.path.insert(0, rootDir)
 from pyglossary.entry import *
 from pyglossary.core_test import getMockLogger
 
+class TestEntrySqliteSortKeyFrom(unittest.TestCase):
+	def sortKey1(self, words: "List[str]"):
+		return words[0]
+
+	def sortKey2(self, words: "List[str]"):
+		return [words[0].lower(), words[0]]
+
+	def sortKey3(self, words: "List[str]"):
+		return [len(words[0])] + words
+
+	def test_1(self):
+		sqliteSortKey = Entry.sqliteSortKeyFrom(self.sortKey1)
+		self.assertEqual(len(sqliteSortKey), 1)
+		self.assertEqual(sqliteSortKey[0][0], "sortkey")
+		self.assertEqual(sqliteSortKey[0][1], "TEXT")
+		self.assertEqual(sqliteSortKey[0][2](["a", "b"]), "a")
+
+	def test_2(self):
+		sqliteSortKey = Entry.sqliteSortKeyFrom(self.sortKey2)
+		self.assertEqual(len(sqliteSortKey), 2)
+		self.assertEqual(sqliteSortKey[0][0], "sortkey_p1")
+		self.assertEqual(sqliteSortKey[1][0], "sortkey_p2")
+		self.assertEqual(sqliteSortKey[0][1], "TEXT")
+		self.assertEqual(sqliteSortKey[1][1], "TEXT")
+		self.assertEqual(sqliteSortKey[0][2](["a", "b"]), "a")
+		self.assertEqual(sqliteSortKey[0][2](["AbC", "b"]), "abc")
+		self.assertEqual(sqliteSortKey[1][2](["a", "b"]), "a")
+		self.assertEqual(sqliteSortKey[1][2](["AbC", "b"]), "AbC")
+
+	def test_3(self):
+		sqliteSortKey = Entry.sqliteSortKeyFrom(self.sortKey3)
+		self.assertEqual(len(sqliteSortKey), 3)
+		self.assertEqual(sqliteSortKey[0][0], "sortkey_p1")
+		self.assertEqual(sqliteSortKey[1][0], "sortkey_p2")
+		self.assertEqual(sqliteSortKey[2][0], "sortkey_p3")
+		self.assertEqual(sqliteSortKey[0][1], "INTEGER")
+		self.assertEqual(sqliteSortKey[1][1], "TEXT")
+		self.assertEqual(sqliteSortKey[2][1], "TEXT")
+		self.assertEqual(sqliteSortKey[0][2](["a", "b"]), 1)
+		self.assertEqual(sqliteSortKey[1][2](["a", "b", "c"]), "a")
+		self.assertEqual(sqliteSortKey[2][2](["a", "b", "c"]), "b")
+
 
 class TestEntryStripFullHtml(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
