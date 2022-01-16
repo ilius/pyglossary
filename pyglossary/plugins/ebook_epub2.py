@@ -208,12 +208,12 @@ p.groupDefinition {
 			(
 				"wordprefix",
 				"TEXT",
-				lambda x: cls.cls_get_prefix(options, x[0][0]),
+				lambda words: cls.cls_get_prefix(options, words[0]),
 			),
 			(
 				"word",
 				"TEXT",
-				lambda x: x[0][0].encode("utf-8"),
+				lambda words: words[0].encode("utf-8"),
 			),
 		]
 

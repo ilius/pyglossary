@@ -43,6 +43,12 @@ class EntryList(list):
 		self._glos = glos
 		self._sortKey = None
 
+	def append(self, entry):
+		list.append(self, entry.getRaw(self._glos))
+
+	def insert(self, pos, entry):
+		list.insert(self, pos, entry.getRaw(self._glos))
+
 	def setSortKey(self, sortKey, sampleItem):
 		self._sortKey = Entry.getRawEntrySortKey(self._glos, sortKey)
 
@@ -51,6 +57,9 @@ class EntryList(list):
 			raise ValueError("EntryList.sort: sortKey is not set")
 
 		list.sort(self, key=self._sortKey)
+
+	def close(self):
+		pass
 
 
 def winZipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":

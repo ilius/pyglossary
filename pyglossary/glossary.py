@@ -714,7 +714,7 @@ class Glossary(GlossaryType):
 		return self._config.get(name, default)
 
 	def addEntryObj(self, entry: Entry) -> None:
-		self._data.append(entry.getRaw(self))
+		self._data.append(entry)
 
 	def newEntry(
 		self,
@@ -1279,7 +1279,7 @@ class Glossary(GlossaryType):
 		outputFormat: str,
 		writeOptions: "Dict[str, Any]",
 	) -> bool:
-		from pyglossary.sqlist import SqList
+		from pyglossary.sq_entry_list import SqEntryList
 
 		outputPlugin = self.plugins[outputFormat]
 		sqliteSortKeyFunc = outputPlugin.sqliteSortKey
@@ -1295,7 +1295,8 @@ class Glossary(GlossaryType):
 			log.info(f"Removing and re-creating {sq_fpath!r}")
 			os.remove(sq_fpath)
 
-		self._data = SqList(
+		self._data = SqEntryList(
+			self,
 			sq_fpath,
 			sqliteSortKey,
 			create=True,

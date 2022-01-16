@@ -1,3 +1,22 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright © 2008-2020 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# This file is part of PyGlossary project, https://github.com/ilius/pyglossary
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
+# If not, see <http://www.gnu.org/licenses/gpl.txt>.
+
 from pickle import dumps, loads
 import os
 from os.path import isfile
@@ -17,9 +36,10 @@ PICKLE_PROTOCOL = 4
 # https://docs.python.org/3/library/pickle.html
 
 
-class SqList(object):
+class SqEntryList(list):
 	def __init__(
 		self,
+		glos,
 		filename: str,
 		sortColumns: "List[Tuple[str, str, str]]",
 		create: bool = True,
@@ -31,12 +51,16 @@ class SqList(object):
 			persist: do not delete the file when variable is deleted
 		"""
 		from sqlite3 import connect
-		if not filename:
-			raise ValueError(f"invalid filename={filename!r}")
+
+		self._glos = glos
 		self._filename = filename
 		self._persist = persist
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
+
+		if not filename:
+			raise ValueError(f"invalid filename={filename!r}")
+
 		self._sortColumns = sortColumns
 		self._columnNames = ",".join([
 			col[0] for col in sortColumns
@@ -59,25 +83,26 @@ class SqList(object):
 	def __len__(self):
 		return self._len
 
-	def append(self, item):
+	def append(self, entry):
+		rawEntry = entry.getRaw(self._glos)
 		self._len += 1
 		colCount = len(self._sortColumns)
 		try:
 			values = [
-				col[2](item) for col in self._sortColumns
+				col[2](entry.l_word) for col in self._sortColumns
 			]
 		except Exception as e:
-			log.error(f"error in _sortColumns funcs for item = {item!r}")
+			log.error(f"error in _sortColumns funcs for rawEntry = {rawEntry!r}")
 			raise e
 		try:
-			item_pickle = dumps(item, protocol=PICKLE_PROTOCOL)
+			pickleEntry = dumps(rawEntry, protocol=PICKLE_PROTOCOL)
 		except Exception as e:
-			log.error(f"error in pickle.dumps for item = {item!r}")
+			log.error(f"error in pickle.dumps for rawEntry = {rawEntry!r}")
 			raise e
 		self._cur.execute(
 			f"insert into data({self._columnNames}, pickle)"
 			f" values (?{', ?' * colCount})",
-			values + [item_pickle],
+			values + [pickleEntry],
 		)
 		if self._len % 1000 == 0:
 			self._con.commit()
@@ -135,12 +160,17 @@ class SqList(object):
 		self._orderBy = columnNames
 		return True
 
-	def clear(self):
+	def deleteAll(self):
+		if self._con is None:
+			return
 		self._con.execute(
 			f"DELETE FROM data;"
 		)
 		self._con.commit()
 		self._len = 0
+
+	def clear(self):
+		self.close()
 
 	def close(self):
 		if self._con is None:
@@ -152,9 +182,12 @@ class SqList(object):
 		self._cur = None
 
 	def __del__(self):
-		self.close()
-		if not self._persist and isfile(self._filename):
-			os.remove(self._filename)
+		try:
+			self.close()
+			if not self._persist and isfile(self._filename):
+				os.remove(self._filename)
+		except AttributeError as e:
+			log.error(str(e))
 
 	def __iter__(self):
 		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"
