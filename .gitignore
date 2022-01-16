@@ -8,5 +8,6 @@
 /plugins
 /ui
 .coverage
+*,cover
 htmlcov
 vulture.*
