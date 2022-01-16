@@ -66,11 +66,9 @@ log = logging.getLogger("pyglossary")
 
 
 """
-sortKeyType = Optional[
-	Callable[
-		[[List[str]],
-		"Tuple[bytes, bytes]",
-	]
+sortKeyType = Callable[
+	[[List[str]],
+	Any,
 ]
 """
 
@@ -1079,8 +1077,8 @@ class Glossary(GlossaryType):
 		filename: str,
 		format: str,
 		sort: "Optional[bool]" = None,
-		sortKey: "sortKeyType" = None,
-		defaultSortKey: "sortKeyType" = None,
+		sortKey: "Optional[sortKeyType]" = None,
+		defaultSortKey: "Optional[sortKeyType]" = None,
 		sortCacheSize: int = 0,
 		**options
 	) -> "Optional[str]":
@@ -1348,8 +1346,8 @@ class Glossary(GlossaryType):
 		outputFilename: str = "",
 		outputFormat: str = "",
 		sort: "Optional[bool]" = None,
-		sortKey: "sortKeyType" = None,
-		defaultSortKey: "sortKeyType" = None,
+		sortKey: "Optional[sortKeyType]" = None,
+		defaultSortKey: "Optional[sortKeyType]" = None,
 		sortCacheSize: int = 0,
 		readOptions: "Optional[Dict[str, Any]]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
