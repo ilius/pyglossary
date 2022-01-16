@@ -373,6 +373,12 @@ class Glossary(GlossaryType):
 			entryFilter.prepare()
 
 	def removeHtmlTagsAll(self) -> None:
+		"""
+		Remove all HTML tags from definition
+
+		This should only be called from a plugin's Writer.__init__ method.
+		Does not apply on entries added with glos.addEntryObj
+		"""
 		if RemoveHtmlTagsAll.name in self._entryFiltersName:
 			return
 		self._entryFilters.append(RemoveHtmlTagsAll(self))
@@ -380,6 +386,9 @@ class Glossary(GlossaryType):
 	def preventDuplicateWords(self):
 		"""
 		Adds entry filter to prevent duplicate `entry.s_word`
+
+		This should only be called from a plugin's Writer.__init__ method.
+		Does not apply on entries added with glos.addEntryObj
 
 		Note: there may be still duplicate headwords or alternate words
 			but we only care about making the whole `entry.s_word`

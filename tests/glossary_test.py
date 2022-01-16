@@ -425,13 +425,16 @@ class TestGlossary(TestGlossaryBase):
 		glos.setRawEntryCompress(False)
 		self.assertFalse(glos.rawEntryCompress)
 
-	def addWords(self, glos, wordsStr):
+	def addWords(self, glos, wordsStr, newDefiFunc, defiFormat=""):
 		wordsList = []
-		for line in wordsStr.split("\n"):
+		for index, line in enumerate(wordsStr.split("\n")):
 			words = line.rstrip().split("|")
 			wordsList.append(words)
-			defi = str(random.randint(0, 10000))
-			glos.addEntryObj(glos.newEntry(words, defi))
+			glos.addEntryObj(glos.newEntry(
+				words,
+				newDefiFunc(index),
+				defiFormat=defiFormat,
+			))
 
 		glos.updateIter()
 		return wordsList
@@ -449,19 +452,31 @@ japonica"""
 
 	def test_addEntries_1(self):
 		glos = Glossary()
-		wordsList = self.addWords(glos, self.tenWordsStr)
+		wordsList = self.addWords(
+			glos,
+			self.tenWordsStr,
+			lambda i: str(random.randint(0, 10000)),
+		)
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 
-	def test_addEntries_sortWords_1(self):
+	def test_sortWords_1(self):
 		glos = Glossary()
-		wordsList = self.addWords(glos, self.tenWordsStr)
+		wordsList = self.addWords(
+			glos,
+			self.tenWordsStr,
+			lambda i: str(random.randint(0, 10000)),
+		)
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 		glos.sortWords()
 		self.assertEqual(sorted(wordsList), [entry.l_word for entry in glos])
 
-	def test_addEntries_sortWords_2(self):
+	def test_sortWords_2(self):
 		glos = Glossary()
-		wordsList = self.addWords(glos, self.tenWordsStr)
+		wordsList = self.addWords(
+			glos,
+			self.tenWordsStr,
+			lambda i: str(random.randint(0, 10000)),
+		)
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 		glos.sortWords(key=lambda words: (len(words[0]), words[0]))
 		self.assertEqual(
