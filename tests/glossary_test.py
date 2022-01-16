@@ -8,6 +8,7 @@ import tempfile
 import logging
 from urllib.request import urlopen
 import zipfile
+import random
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -415,7 +416,26 @@ class TestGlossary(TestGlossaryBase):
 		glos.setRawEntryCompress(False)
 		self.assertFalse(glos.rawEntryCompress)
 
+	def addWords(self, glos, wordsStr):
+		wordsList = []
+		for line in wordsStr.split("\n"):
+			words = line.rstrip().split("|")
+			wordsList.append(words)
+			defi = str(random.randint(0, 10000))
+			glos.addEntryObj(glos.newEntry(words, defi))
 
+		glos.updateIter()
+		return wordsList
+
+	def test_addEntries_1(self):
+		glos = Glossary()
+
+		wordsList = self.addWords(glos, """comedic
+tubenose
+organosol
+japonica""")
+
+		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 
 
 if __name__ == "__main__":

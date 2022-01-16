@@ -949,6 +949,11 @@ class Glossary(GlossaryType):
 
 		self._updateIterPartialSort()
 
+	def updateIter(self):
+		if self._readers:
+			raise RuntimeError("can not call this while having a reader")
+		self._updateIter()
+
 	def _updateIterPartialSort(self) -> None:
 		from .sort_stream import hsortStreamList
 		sortKey = self._sortKey
