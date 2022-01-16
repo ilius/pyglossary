@@ -1080,7 +1080,7 @@ class Glossary(GlossaryType):
 		format: str,
 		sort: "Optional[bool]" = None,
 		sortKey: "sortKeyType" = None,
-		defaultSortKey: "Optional[Callable[[bytes], Any]]" = None,
+		defaultSortKey: "sortKeyType" = None,
 		sortCacheSize: int = 0,
 		**options
 	) -> "Optional[str]":
@@ -1349,7 +1349,7 @@ class Glossary(GlossaryType):
 		outputFormat: str = "",
 		sort: "Optional[bool]" = None,
 		sortKey: "sortKeyType" = None,
-		defaultSortKey: "Optional[Callable[[bytes], Any]]" = None,
+		defaultSortKey: "sortKeyType" = None,
 		sortCacheSize: int = 0,
 		readOptions: "Optional[Dict[str, Any]]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
