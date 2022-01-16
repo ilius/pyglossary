@@ -7,6 +7,7 @@ import unittest
 import tempfile
 import logging
 from urllib.request import urlopen
+import zipfile
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -121,7 +122,6 @@ class TestGlossaryBase(unittest.TestCase):
 		fpath2,
 		dataReplaceFuncs: "Dict[str: Callable",
 	):
-		import zipfile
 		zf1 = zipfile.ZipFile(fpath1)
 		zf2 = zipfile.ZipFile(fpath2)
 		pathList1 = zf1.namelist()
@@ -182,28 +182,75 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(glos.sourceLangName, "Russian")
 		self.assertEqual(glos.targetLangName, "German")
 
-	def convert_txt_txt(self, fname, fname2, config=None, **convertArgs):
+	def convert_txt_txt(
+		self,
+		fname,  # input txt file without extension
+		fname2,  # expected output txt file without extension
+		testId="tmp",
+		config=None,
+		**convertArgs,
+	):
 		inputFilename = self.downloadFile(f"{fname}.txt")
-		outputFilename = self.newTempFilePath(f"{fname2}-tmp.txt")
+		outputFilename = self.newTempFilePath(f"{fname2}-{testId}.txt")
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
 		glos = Glossary()
-
 		if config is not None:
 			glos.config = config
-
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
 			**convertArgs
 		)
 		self.assertEqual(outputFilename, res)
-
 		self.compareTextFiles(outputFilename, expectedFilename)
+
+	def convert_to_txtZip(
+		self,
+		fname,  # input file with extension
+		fname2,  # expected output file without extensions
+		testId="tmp",
+		config=None,
+		**convertArgs,
+	):
+		inputFilename = self.downloadFile(fname)
+		outputTxtName = f"{fname2}-{testId}.txt"
+		outputFilename = self.newTempFilePath(f"{outputTxtName}.zip")
+		expectedFilename = self.downloadFile(f"{fname2}.txt")
+		glos = Glossary()
+		if config is not None:
+			glos.config = config
+		res = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+			**convertArgs
+		)
+		self.assertEqual(outputFilename, res)
+		zf = zipfile.ZipFile(outputFilename)
+		self.assertTrue(
+			outputTxtName in zf.namelist(),
+			msg=f"{outputTxtName} not in {zf.namelist()}",
+		)
+		with open(expectedFilename, encoding="utf-8") as expectedFile:
+			expectedText = expectedFile.read()
+		actualText = zf.read(outputTxtName).decode("utf-8")
+		self.assertEqual(len(actualText), len(expectedText))
+		self.assertEqual(actualText, expectedText)
+
+	def test_txt_txtZip_1(self):
+		self.convert_to_txtZip(
+			"100-en-fa.txt",
+			"100-en-fa",
+			testId="txt_txtZip_1",
+			infoOverride={
+				"input_file_size": None,
+			},
+		)
 
 	def test_sort_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-sort",
+			testId="sort_1",
 			sort=True,
 			defaultSortKey=Entry.defaultSortKey,
 		)
@@ -212,28 +259,32 @@ class TestGlossary(TestGlossaryBase):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-lower",
-			{"lower": True},
+			testId="lower_1",
+			config={"lower": True},
 		)
 
 	def test_rtl_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-rtl",
-			{"rtl": True},
+			testId="rtl_1",
+			config={"rtl": True},
 		)
 
 	def test_remove_html_all_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
 			"100-en-fa-remove_html_all",
-			{"remove_html_all": True},
+			testId="remove_html_all_1",
+			config={"remove_html_all": True},
 		)
 
 	def test_remove_html_1(self):
 		self.convert_txt_txt(
 			"100-en-de",
 			"100-en-de-remove_font_b",
-			{"remove_html": "font,b"},
+			testId="remove_html_1",
+			config={"remove_html": "font,b"},
 		)
 
 	def test_convert_sqlite_direct_error(self):
@@ -257,6 +308,7 @@ class TestGlossary(TestGlossaryBase):
 			self.convert_txt_txt(
 				"004-bar",
 				"004-bar",
+				testId="bar",
 				direct=direct,
 				infoOverride={
 					"name": None,
@@ -269,6 +321,7 @@ class TestGlossary(TestGlossaryBase):
 			self.convert_txt_txt(
 				"004-bar",
 				"004-bar-sort",
+				testId="bar_sort",
 				sort=True,
 				defaultSortKey=Entry.defaultSortKey,
 				sqlite=sqlite,
