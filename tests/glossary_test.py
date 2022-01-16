@@ -30,6 +30,7 @@ dataURL = (
 dataDir = join(cacheDir, "test")
 appTmpDir = join(cacheDir, "tmp")
 
+
 class TestGlossaryBase(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		unittest.TestCase.__init__(self, *args, **kwargs)
@@ -351,7 +352,6 @@ class TestGlossary(TestGlossaryBase):
 				sqlite=sqlite,
 			)
 
-
 	def test_init_infoDict(self):
 		glos = Glossary(info={"a": "b"})
 		self.assertEqual(list(glos.iterInfo()), [('a', 'b')])
@@ -370,7 +370,10 @@ class TestGlossary(TestGlossaryBase):
 		tmpFname = "test_dataEntry_save"
 		entry = glos.newDataEntry(tmpFname, b"test")
 		saveFpath = entry.save(self.tempDir)
-		self.assertTrue(isfile(saveFpath), msg=f"saved file does not exist: {saveFpath}")
+		self.assertTrue(
+			isfile(saveFpath),
+			msg=f"saved file does not exist: {saveFpath}",
+		)
 
 	def test_dataEntry_getFileName(self):
 		glos = Glossary()
@@ -389,11 +392,17 @@ class TestGlossary(TestGlossaryBase):
 
 		tmpFpath = entry._tmpPath
 		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
-		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
+		self.assertTrue(
+			isfile(tmpFpath),
+			msg=f"tmp file does not exist: {tmpFpath}",
+		)
 
 		glos.cleanup()
 
-		self.assertTrue(not isfile(tmpFpath), msg=f"tmp file still exists: {tmpFpath}")
+		self.assertTrue(
+			not isfile(tmpFpath),
+			msg=f"tmp file still exists: {tmpFpath}",
+		)
 
 	def test_cleanup_noCleanup(self):
 		glos = Glossary()
@@ -427,36 +436,42 @@ class TestGlossary(TestGlossaryBase):
 		glos.updateIter()
 		return wordsList
 
-	def test_addEntries_1(self):
-		glos = Glossary()
-
-		wordsList = self.addWords(glos, """comedic
+	tenWordsStr = """comedic
 tubenose
 organosol
-japonica""")
-
-		self.assertEqual(wordsList, [entry.l_word for entry in glos])
-
-
-	def test_addEntries_sortWords_1(self):
-		glos = Glossary()
-
-		wordsList = self.addWords(glos, """comedic
-tubenose
-organosol
-divine right of kings
 adipocere
 gid
 next friend
 bitter apple
 caca|ca-ca
 darkling beetle
-japonica""")
+japonica"""
 
+	def test_addEntries_1(self):
+		glos = Glossary()
+		wordsList = self.addWords(glos, self.tenWordsStr)
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 
+	def test_addEntries_sortWords_1(self):
+		glos = Glossary()
+		wordsList = self.addWords(glos, self.tenWordsStr)
+		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 		glos.sortWords()
 		self.assertEqual(sorted(wordsList), [entry.l_word for entry in glos])
+
+	def test_addEntries_sortWords_2(self):
+		glos = Glossary()
+		wordsList = self.addWords(glos, self.tenWordsStr)
+		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		glos.sortWords(key=lambda words: (len(words[0]), words[0]))
+		self.assertEqual(
+			[entry.l_word for entry in glos],
+			[
+				['gid'], ['caca', 'ca-ca'], ['comedic'], ['japonica'],
+				['tubenose'], ['adipocere'], ['organosol'], ['next friend'],
+				['bitter apple'], ['darkling beetle']
+			],
+		)
 
 
 if __name__ == "__main__":
