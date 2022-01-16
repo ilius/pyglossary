@@ -27,6 +27,7 @@ from os.path import (
 )
 import subprocess
 import logging
+import gc
 
 from .compression import (
 	compressionOpenFunc,
@@ -57,7 +58,9 @@ class EntryList(object):
 
 	def __iter__(self):
 		glos = self._glos
-		for rawEntry in self._l:
+		for index, rawEntry in enumerate(self._l):
+			if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
+				gc.collect()
 			yield Entry.fromRaw(
 				glos, rawEntry,
 				defaultDefiFormat=glos._defaultDefiFormat,

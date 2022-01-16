@@ -20,6 +20,7 @@
 from pickle import dumps, loads
 import os
 from os.path import isfile
+import gc
 from .entry import Entry
 
 import logging
@@ -194,7 +195,9 @@ class SqEntryList(list):
 		glos = self._glos
 		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"
 		self._cur.execute(query)
-		for row in self._cur:
+		for index, row in enumerate(self._cur):
+			if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
+				gc.collect()
 			yield Entry.fromRaw(
 				glos, loads(row[0]),
 				defaultDefiFormat=glos._defaultDefiFormat,
