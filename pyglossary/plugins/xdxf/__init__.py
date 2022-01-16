@@ -106,8 +106,9 @@ class Reader(object):
 		else:
 			self._glos.setDefaultDefiFormat("x")
 
+		_file = open(self._filename, mode="rb")
 		context = ET.iterparse(
-			filename,
+			_file,
 			events=("end",),
 		)
 		for action, elem in context:
@@ -122,6 +123,7 @@ class Reader(object):
 			key = self.infoKeyMap.get(elem.tag, elem.tag)
 			self._glos.setInfo(key, elem.text)
 
+		_file.close()
 		del context
 		self._fileSize = os.path.getsize(filename)
 		self._file = open(self._filename, mode="rb")
