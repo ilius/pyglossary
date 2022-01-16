@@ -41,6 +41,10 @@ class TestGlossaryBase(unittest.TestCase):
 			"100-en-fa.txt": "f5c53133",
 			"100-ja-en.txt": "93542e89",
 
+			"100-en-de.info": "718adeef",
+			"100-en-fa.info": "9bddb7bb",
+			"100-ja-en.info": "8cf5403c",
+
 			"res/stardict.png": "7e1447fa",
 			"res/test.json": "41f8cf31",
 		}
@@ -246,9 +250,7 @@ class TestGlossary(TestGlossaryBase):
 			"100-en-fa.txt",
 			"100-en-fa",
 			testId="txt_txtZip_1",
-			infoOverride={
-				"input_file_size": None,
-			},
+			infoOverride={"input_file_size": None},
 		)
 
 	def test_sort_1(self):
@@ -290,6 +292,22 @@ class TestGlossary(TestGlossaryBase):
 			"100-en-de-remove_font_b",
 			testId="remove_html_1",
 			config={"remove_html": "font,b"},
+		)
+
+	def test_save_info_json(self):
+		fname = "100-en-fa"
+		testId = "save_info_json"
+		infoPath = self.newTempFilePath(f"{fname}-{testId}.info")
+		self.convert_txt_txt(
+			fname,
+			fname,
+			testId=testId,
+			config={"save_info_json": True},
+			infoOverride={"input_file_size": None},
+		)
+		self.compareTextFiles(
+			infoPath,
+			self.downloadFile(f"{fname}.info"),
 		)
 
 	def test_convert_sqlite_direct_error(self):
