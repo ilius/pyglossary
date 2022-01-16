@@ -306,7 +306,7 @@ class Glossary(GlossaryType):
 	def cleanup(self):
 		if not self._cleanupPathList:
 			return
-		if not self.getConfig("cleanup", True):
+		if not self._config.get("cleanup", True):
 			log.info("Not cleaning up files:")
 			log.info("\n".join(self._cleanupPathList))
 			return
@@ -1221,7 +1221,7 @@ class Glossary(GlossaryType):
 			else:
 				genList.append(gen)
 
-			if self.getConfig("save_info_json", False):
+			if self._config.get("save_info_json", False):
 				infoWriter = self._createWriter("Info", {})
 				filenameNoExt, _, _, _ = splitFilenameExt(filename)
 				infoWriter.open(f"{filenameNoExt}.info")
