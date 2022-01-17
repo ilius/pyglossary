@@ -83,7 +83,9 @@ Legend:
 - ✔		Supported
 - ❌ 	Will not be supported
 
-Note: SQLite3 `.db` files are not detected by extension; So you need to specify the format.
+**Note**: SQLite-based formats are not detected by extension (`.db`);
+So you need to select the format (with UI or `--read-format` flag).
+**Also don't confuse SQLite-based formats with [SQLite mode](#sqlite-mode).**
 
 ## Requirements
 
@@ -188,27 +190,34 @@ Direct mode means entries are one-at-a-time read, processed and written into out
 Direct mode was added to limit the memory usage for large glossaries; But it may reduce the
 conversion time for most cases as well.
 
-Converting glossaries into some formats like [StarDict](./doc/p/stardict.md) and
-[EPUB-2](./doc/p/epub2.md) requires sorting entries.
-That's why direct mode will not work for these formats, and PyGlossary will use indirect
-mode. Otherwise direct mode will be the default. You may override this by `--indirect` flag.
+Converting glossaries into these formats requires sorting entries:
+
+- [StarDict](./doc/p/stardict.md)
+- [EPUB-2](./doc/p/epub2.md)
+- [Mobipocket E-Book](./doc/p/mobi.md)
+
+That's why direct mode will not work for these formats, and PyGlossary has to
+switch to indirect mode (or it previously had to, see [SQLite mode](#sqlite-mode)).
+
+For other formats, direct mode will be the default. You may override this by `--indirect` flag.
 
 ## SQLite mode
 
-As mentioned above, converting glossaries into some formats like [StarDict](./doc/p/stardict.md) will need
-them to loaded into RAM.
+As mentioned above, converting glossaries to some specific formats will
+need them to loaded into RAM.
 
 This can be problematic if the glossary is too big to fit into RAM. That's when
 you should try adding `--sqlite` flag to your command. Then it uses SQLite3 as intermediate
 storage for storing, sorting and then fetching entries. This fixes the memory issue, and may
 even reduce running time of conversion (depending on your home directory storage).
 
-The temporary SQLite file is stored in [cache directory](#cache-directory) then deleted after
-conversion (unless you pass `--no-cleanup` flag).
+The temporary SQLite file is stored in [cache directory](#cache-directory) then
+deleted after conversion (unless you pass `--no-cleanup` flag).
 
-SQLite mode is automatically enabled for writing StarDict if `auto_sqlite`
+SQLite mode is automatically enabled for writing these formats if `auto_sqlite`
 [config parameter](./doc/config.rst) is `true` (which is the default).
-You may use `--no-sqlite` to override this.
+This also applies to when you pass `--sort` flag for any format.
+You may use `--no-sqlite` to override this and switch to indirect mode.
 
 Currently you can not disable alternates in SQLite mode (`--no-alts` is ignored).
 
@@ -244,7 +253,7 @@ import sys
 import pyglossary
 from pyglossary import Glossary
 
-# Glossary.init() must be called only once, so make sure you put it
+# Glossary.init() should be called only once, so make sure you put it
 # in the right place
 Glossary.init()
 
