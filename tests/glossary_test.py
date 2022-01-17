@@ -43,6 +43,7 @@ class TestGlossaryBase(unittest.TestCase):
 			"004-bar-sort.txt": "fe861123",
 
 			"100-en-de.txt": "f22fc392",
+			"100-en-de-v2.txt": "70eff46c",
 			"100-en-fa.txt": "f5c53133",
 			"100-ja-en.txt": "93542e89",
 
