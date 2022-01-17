@@ -402,31 +402,42 @@ class Glossary(GlossaryType):
 		return "glossary.Glossary"
 
 	def _loadedEntryGen(self) -> "Iterator[BaseEntry]":
+		if not (self.ui and self._progressbar):
+			yield from self._data
+			return
+
+		pbFilter = ShowProgressBar(self)
 		self.progressInit("Writing")
-		yield from self._data
+		for entry in self._data:
+			pbFilter.run(entry)
+			yield entry
 		self.progressEnd()
 
 	def _readersEntryGen(self) -> "Iterator[BaseEntry]":
 		for reader in self._readers:
 			self.progressInit("Converting")
 			try:
-				for index, entry in enumerate(self._applyEntryFiltersGen(reader)):
-					if entry is not None:
-						yield entry
+				yield from self._applyEntryFiltersGen(reader)
 			finally:
 				reader.close()
 			self.progressEnd()
 
+	# This iterator/generator does not give None entries.
+	# And Entry is not falsable, so bool(entry) is always True.
+	# Since ProgressBar is already handled with an EntryFilter, there is
+	# no point of returning None entries anymore.
 	def _applyEntryFiltersGen(
 		self,
 		gen: "Iterator[BaseEntry]",
 	) -> "Iterator[BaseEntry]":
 		for index, entry in enumerate(gen):
-			if not entry:
+			if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
+				gc.collect()
+			if entry is None:
 				continue
 			for entryFilter in self._entryFilters:
-				entry = entryFilter.run(entry, index)
-				if not entry:
+				entry = entryFilter.run(entry)
+				if entry is None:
 					break
 			else:
 				yield entry
@@ -898,19 +909,11 @@ class Glossary(GlossaryType):
 		must call `reader.open(filename)` before calling this function
 		"""
 		showMemoryUsage()
-		progressbarFilter = None
-		if self.ui and self._progressbar:
-			progressbarFilter = ShowProgressBar(self)
 
 		self.progressInit("Reading")
 		try:
-			for index, entry in enumerate(self._applyEntryFiltersGen(reader)):
-				if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
-					gc.collect()
-				if entry:
-					self.addEntryObj(entry)
-				if progressbarFilter is not None:
-					progressbarFilter.run(entry, index)
+			for entry in self._applyEntryFiltersGen(reader):
+				self.addEntryObj(entry)
 		finally:
 			reader.close()
 
