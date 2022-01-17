@@ -476,12 +476,12 @@ class Writer(object):
 			(
 				"wordlower",
 				"TEXT",
-				lambda words: words[0].encode("utf-8").lower(),
+				lambda words: words[0].lower(),
 			),
 			(
 				"word",
 				"TEXT",
-				lambda words: words[0].encode("utf-8"),
+				lambda words: words[0],
 			),
 		]
 
