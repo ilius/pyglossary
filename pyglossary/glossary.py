@@ -551,7 +551,7 @@ class Glossary(GlossaryType):
 			raise TypeError(f"invalid key={key!r}, must be str")
 
 		key = fixUtf8(key)
-		value = fixUtf8(value)
+		value = fixUtf8(str(value))
 
 		key = infoKeysAliasDict.get(key.lower(), key)
 		self._info[key] = value

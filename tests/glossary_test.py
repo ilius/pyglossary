@@ -205,6 +205,53 @@ class TestGlossary(TestGlossaryBase):
 			"Glossary{filename: 'test.txt', name: 'Test Title'}",
 		)
 
+	def test_info_1(self):
+		glos = Glossary()
+		glos.setInfo("test", "ABC")
+		self.assertEqual(glos.getInfo("test"), "ABC")
+
+	def test_info_2(self):
+		glos = Glossary()
+		glos.setInfo("bookname", "Test Glossary")
+		self.assertEqual(glos.getInfo("title"), "Test Glossary")
+
+	def test_info_3(self):
+		glos = Glossary()
+		glos.setInfo("bookname", "Test Glossary")
+		glos.setInfo("title", "Test 2")
+		self.assertEqual(glos.getInfo("name"), "Test 2")
+		self.assertEqual(glos.getInfo("bookname"), "Test 2")
+		self.assertEqual(glos.getInfo("title"), "Test 2")
+
+	def test_info_4(self):
+		glos = Glossary()
+		glos.setInfo("test", 123)
+		self.assertEqual(glos.getInfo("test"), "123")
+
+	def test_setInfo_err1(self):
+		glos = Glossary()
+		err = ""
+		errType = ""
+		try:
+			glos.setInfo(1, "a")
+		except Exception as e:
+			err = str(e)
+			errType = e.__class__.__name__
+		self.assertEqual(err, "invalid key=1, must be str")
+		self.assertEqual(errType, "TypeError")
+
+	def test_getInfo_err1(self):
+		glos = Glossary()
+		err = ""
+		errType = ""
+		try:
+			glos.getInfo(1)
+		except Exception as e:
+			err = str(e)
+			errType = e.__class__.__name__
+		self.assertEqual(err, "invalid key=1, must be str")
+		self.assertEqual(errType, "TypeError")
+
 	def test_read_txt_1(self):
 		inputFilename = self.downloadFile("100-en-fa.txt")
 		glos = Glossary()
@@ -213,6 +260,19 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(glos.sourceLangName, "English")
 		self.assertEqual(glos.targetLangName, "Persian")
 		self.assertIn("Sample: ", glos.getInfo("name"))
+
+	def test_init_infoDict(self):
+		glos = Glossary(info={"a": "b"})
+		self.assertEqual(list(glos.iterInfo()), [('a', 'b')])
+
+	def test_init_infoOrderedDict(self):
+		from collections import OrderedDict
+		glos = Glossary(info=OrderedDict([
+			("y", "z"),
+			("a", "b"),
+			("1", "2"),
+		]))
+		self.assertEqual(list(glos.iterInfo()), [('y', 'z'), ('a', 'b'), ('1', '2')])
 
 	def test_langs(self):
 		glos = Glossary()
@@ -381,19 +441,6 @@ class TestGlossary(TestGlossaryBase):
 				defaultSortKey=Entry.defaultSortKey,
 				sqlite=sqlite,
 			)
-
-	def test_init_infoDict(self):
-		glos = Glossary(info={"a": "b"})
-		self.assertEqual(list(glos.iterInfo()), [('a', 'b')])
-
-	def test_init_infoOrderedDict(self):
-		from collections import OrderedDict
-		glos = Glossary(info=OrderedDict([
-			("y", "z"),
-			("a", "b"),
-			("1", "2"),
-		]))
-		self.assertEqual(list(glos.iterInfo()), [('y', 'z'), ('a', 'b'), ('1', '2')])
 
 	def test_dataEntry_save(self):
 		glos = Glossary()
