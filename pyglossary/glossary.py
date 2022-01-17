@@ -1463,8 +1463,6 @@ class Glossary(GlossaryType):
 			self.ui.progressInit(*args)
 
 	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
-		if not self.ui:
-			return
 		if total == 0:
 			log.warning(f"pos={pos}, total={total}")
 			return
