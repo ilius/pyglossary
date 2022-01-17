@@ -228,6 +228,18 @@ class TestGlossary(TestGlossaryBase):
 		glos.setInfo("test", 123)
 		self.assertEqual(glos.getInfo("test"), "123")
 
+	def test_info_del_1(self):
+		glos = Glossary()
+		glos.setInfo("test", "abc")
+		self.assertEqual(glos.getInfo("test"), "abc")
+		glos.setInfo("test", None)
+		self.assertEqual(glos.getInfo("test"), "")
+
+	def test_info_del_2(self):
+		glos = Glossary()
+		glos.setInfo("test", None)
+		self.assertEqual(glos.getInfo("test"), "")
+
 	def test_setInfo_err1(self):
 		glos = Glossary()
 		err = ""
