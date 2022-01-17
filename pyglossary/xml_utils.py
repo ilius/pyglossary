@@ -13,13 +13,3 @@ def xml_escape(data: str, quotation: bool = True) -> str:
 		data = data.replace("\"", "&quot;").replace("'", "&apos;")
 	return data
 
-
-def xml_unescape(data: str, quotation: bool = True) -> str:
-	"""Unescape &amp;, &lt;, and &gt; in a string of data.
-	"""
-	data = data.replace("&lt;", "<")
-	data = data.replace("&gt;", ">")
-	if quotation:
-		data = data.replace("&quot;", "\"").replace("&apos;", "'")
-	# must do ampersand last
-	return data.replace("&amp;", "&")
