@@ -1322,13 +1322,17 @@ class Glossary(GlossaryType):
 			_sort = sort
 			outputPlugin = self.plugins[outputFormat]
 			if outputPlugin.sortOnWrite == ALWAYS:
-				 _sort = True
+				_sort = True
 			sqlite = (
 				_sort and
 				self._config.get("auto_sqlite", True) and
 				bool(outputPlugin.sqliteSortKey)
 			)
-			log.info(f"Automatically switching to SQLite mode for writing {outputFormat}")
+			if sqlite:
+				log.info(
+					"Automatically switching to SQLite mode"
+					f" for writing {outputFormat}"
+				)
 
 		if sqlite:
 			if direct:
