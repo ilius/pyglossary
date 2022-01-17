@@ -2,6 +2,7 @@
 
 from formats_common import *
 import html
+from operator import itemgetter
 
 enable = True
 lname = "dict_cc"
@@ -135,7 +136,7 @@ class Reader(object):
 		glos = self._glos
 		for headword, groupsOrig in groupby(
 			self.iterRows(column1, column2),
-			key=lambda row: row[0],
+			key=itemgetter(0),
 		):
 			headword = html.unescape(headword)
 			groups = [

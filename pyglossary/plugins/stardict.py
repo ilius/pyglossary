@@ -11,6 +11,7 @@ import re
 import gzip
 from time import time as now
 from collections import Counter
+from operator import itemgetter
 
 from pyglossary.text_utils import (
 	uint32ToBytes,
@@ -481,7 +482,7 @@ class Writer(object):
 			(
 				"word",
 				"TEXT",
-				lambda words: words[0],
+				itemgetter(0),
 			),
 		]
 

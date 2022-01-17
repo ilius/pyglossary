@@ -29,6 +29,7 @@ import unicodedata
 import re
 from pickle import dumps, loads
 from gzip import compress, decompress
+from operator import itemgetter
 
 enable = True
 lname = "kobo"
@@ -196,7 +197,7 @@ class Writer:
 			del entry
 
 		log.info(f"Kobo: sorting entries...")
-		data.sort(key=lambda x: x[0])
+		data.sort(key=itemgetter(0))
 
 		log.info(f"Kobo: writing entries...")
 

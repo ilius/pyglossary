@@ -2,6 +2,7 @@ from .glossary_type import GlossaryType
 from .entry import Entry, BaseEntry
 
 import re
+from operator import itemgetter
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -163,7 +164,7 @@ def searchWordInDef(
 			else:
 				outRel.append((word, rel))
 	outRel.sort(
-		key=lambda x: x[1],
+		key=itemgetter(1),
 		reverse=True,
 	)
 	n = len(outRel)
