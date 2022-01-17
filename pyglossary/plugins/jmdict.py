@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from formats_common import *
-from pyglossary.xml_utils import xml_escape
 from io import BytesIO
 import re
 import html
