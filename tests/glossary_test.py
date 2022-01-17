@@ -264,6 +264,19 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(err, "invalid key=1, must be str")
 		self.assertEqual(errType, "TypeError")
 
+	def test_getExtraInfos_1(self):
+		glos = Glossary()
+		glos.setInfo("a", "test 1")
+		glos.setInfo("b", "test 2")
+		glos.setInfo("c", "test 3")
+		glos.setInfo("d", "test 4")
+		glos.setInfo("name", "my name")
+
+		self.assertEqual(
+			glos.getExtraInfos(["b", "c", "title"]),
+			{"a": "test 1", "d": "test 4"},
+		)
+
 	def test_read_txt_1(self):
 		inputFilename = self.downloadFile("100-en-fa.txt")
 		glos = Glossary()
@@ -286,7 +299,7 @@ class TestGlossary(TestGlossaryBase):
 		]))
 		self.assertEqual(list(glos.iterInfo()), [('y', 'z'), ('a', 'b'), ('1', '2')])
 
-	def test_langs(self):
+	def test_langs_1(self):
 		glos = Glossary()
 		self.assertEqual(glos.sourceLangName, "")
 		self.assertEqual(glos.targetLangName, "")
@@ -294,6 +307,16 @@ class TestGlossary(TestGlossaryBase):
 		glos.targetLangName = "de"
 		self.assertEqual(glos.sourceLangName, "Russian")
 		self.assertEqual(glos.targetLangName, "German")
+
+	def test_langs_2(self):
+		glos = Glossary()
+		glos.setInfo("sourcelang", "farsi")
+		self.assertEqual(glos.sourceLangName, "Persian")
+
+	def test_langs_3(self):
+		glos = Glossary()
+		glos.setInfo("targetlang", "malay")
+		self.assertEqual(glos.targetLangName, "Malay")
 
 	def convert_txt_txt(
 		self,

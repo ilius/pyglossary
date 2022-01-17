@@ -589,9 +589,6 @@ class Glossary(GlossaryType):
 		lang = langDict[st]
 		if lang:
 			return lang
-		lang = langDict[st.lower()]
-		if lang:
-			return lang
 		log.error(f"unknown language {st!r}")
 		return
 
