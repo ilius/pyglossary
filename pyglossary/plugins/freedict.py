@@ -802,10 +802,10 @@ class Reader(object):
 			raise e
 
 		self._filename = filename
-		self._file = compressionOpen(filename, mode="rb")
-		self._file.seek(0, 2)
-		self._fileSize = self._file.tell()
-		self._file.seek(0)
+		_file = compressionOpen(filename, mode="rb")
+		_file.seek(0, 2)
+		self._fileSize = _file.tell()
+		_file.seek(0)
 
 		self._glos.setDefaultDefiFormat("h")
 
@@ -815,13 +815,15 @@ class Reader(object):
 		self._glos.setInfo("input_file_size", f"{self._fileSize}")
 
 		context = ET.iterparse(
-			self._file,
+			_file,
 			events=("end",),
 			tag=f"{tei}teiHeader",
 		)
 		for action, elem in context:
 			self.setMetadata(elem)
-			return
+			break
+
+		_file.close()
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		from lxml import etree as ET
