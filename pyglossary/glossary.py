@@ -399,7 +399,12 @@ class Glossary(GlossaryType):
 		self._entryFilters.append(PreventDuplicateWords(self))
 
 	def __str__(self) -> str:
-		return "glossary.Glossary"
+		return (
+			"Glossary{"
+			f"filename: {self._filename!r}"
+			f", name: {self._info.get('name')!r}"
+			"}"
+		)
 
 	def _loadedEntryGen(self) -> "Iterator[BaseEntry]":
 		if not (self.ui and self._progressbar):

@@ -179,6 +179,32 @@ class TestGlossary(TestGlossaryBase):
 		TestGlossaryBase.tearDown(self)
 		log.setLevel(self.prevLogLevel)
 
+	def test__str__1(self):
+		glos = Glossary()
+		self.assertEqual(str(glos), "Glossary{filename: '', name: None}")
+
+	def test__str__2(self):
+		glos = Glossary()
+		glos._filename = "test.txt"
+		self.assertEqual(str(glos), "Glossary{filename: 'test.txt', name: None}")
+
+	def test__str__3(self):
+		glos = Glossary()
+		glos.setInfo("title", "Test Title")
+		self.assertEqual(
+			str(glos),
+			"Glossary{filename: '', name: 'Test Title'}",
+		)
+
+	def test__str__4(self):
+		glos = Glossary()
+		glos._filename = "test.txt"
+		glos.setInfo("title", "Test Title")
+		self.assertEqual(
+			str(glos),
+			"Glossary{filename: 'test.txt', name: 'Test Title'}",
+		)
+
 	def test_read_txt_1(self):
 		inputFilename = self.downloadFile("100-en-fa.txt")
 		glos = Glossary()
