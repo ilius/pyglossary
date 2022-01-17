@@ -9,6 +9,7 @@ import logging
 from urllib.request import urlopen
 import zipfile
 import random
+import tracemalloc
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -19,8 +20,10 @@ from pyglossary.core import cacheDir
 from pyglossary.os_utils import rmtree
 from pyglossary.text_utils import crc32hex
 
-Glossary.init()
 
+tracemalloc.start()
+
+Glossary.init()
 
 dataURL = (
 	"https://raw.githubusercontent.com/"
