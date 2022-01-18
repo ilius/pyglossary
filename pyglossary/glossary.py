@@ -1037,8 +1037,6 @@ class Glossary(GlossaryType):
 				return error(f"Invalid filename {filename!r}")
 			if not plugin:
 				return error("No filename nor format is given for output file")
-			if not plugin.canWrite:
-				return error(f"plugin {plugin.name} does not support writing")
 			filename = splitext(inputFilename)[0] + plugin.ext
 			return filename, plugin.name, ""
 
