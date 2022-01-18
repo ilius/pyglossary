@@ -477,7 +477,10 @@ class Writer(object):
 			(
 				"wordlower",
 				"TEXT",
-				lambda words: words[0].lower(),
+				lambda words: words[0].encode("utf-8").lower(),
+				# str.lower() does not work for StarDict
+				# because it also lowercases non-ASCII alphabet
+				# TODO: add test for this
 			),
 			(
 				"word",
