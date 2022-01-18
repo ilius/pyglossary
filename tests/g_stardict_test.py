@@ -33,6 +33,12 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"100-ja-en.sd/100-ja-en.idx": "adf0e552",
 			"100-ja-en.sd/100-ja-en.ifo": "b01e368c",
 			"100-ja-en.sd/100-ja-en.syn": "76e6df95",
+
+			"300-ru-en.txt": "77cfee2f",
+			"300-ru-en.sd/300-ru-en.dict": "8be7fa4c",
+			"300-ru-en.sd/300-ru-en.idx": "1cd30f1a",
+			"300-ru-en.sd/300-ru-en.ifo": "0b135812",
+			"300-ru-en.sd/300-ru-en.syn": "87ee3372",
 		})
 
 	def convert_txt_stardict(
@@ -142,6 +148,14 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		for sqlite in (None, False, True):
 			self.convert_txt_stardict(
 				"100-ja-en",
+				sqlite=sqlite,
+			)
+
+	def test_convert_txt_stardict_5(self):
+		for sqlite in (None, False, True):
+			self.convert_txt_stardict(
+				"300-ru-en",
+				syn=True,
 				sqlite=sqlite,
 			)
 
