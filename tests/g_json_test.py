@@ -24,7 +24,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname}-2.json")
 		expectedFilename = self.downloadFile(f"{fname}.json")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,

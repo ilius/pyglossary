@@ -29,7 +29,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			for resName in resFiles
 		}
 
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,

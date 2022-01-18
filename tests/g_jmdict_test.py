@@ -22,7 +22,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		inputFilename = self.downloadFile(fname)
 		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,

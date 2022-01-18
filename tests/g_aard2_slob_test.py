@@ -24,7 +24,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		fname = "100-en-fa"
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname}.slob")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		outputFilename2 = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
@@ -41,7 +41,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		}
 
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,

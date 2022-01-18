@@ -55,7 +55,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		)
 
 		expectedFilename = self.downloadFile(f"{ouputFname}.epub")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,

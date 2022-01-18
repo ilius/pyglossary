@@ -59,11 +59,14 @@ class TestGlossaryBase(unittest.TestCase):
 	# will be executed before and after each test method.
 
 	def setUp(self):
+		self.glos = None
 		if not isdir(dataDir):
 			os.makedirs(dataDir)
 		self.tempDir = tempfile.mkdtemp(dir=dataDir)
 
 	def tearDown(self):
+		if self.glos is not None:
+			self.glos.clear()
 		if os.getenv("NO_CLEANUP"):
 			return
 		for direc in [
@@ -180,16 +183,16 @@ class TestGlossary(TestGlossaryBase):
 		log.setLevel(self.prevLogLevel)
 
 	def test__str__1(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		self.assertEqual(str(glos), "Glossary{filename: '', name: None}")
 
 	def test__str__2(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos._filename = "test.txt"
 		self.assertEqual(str(glos), "Glossary{filename: 'test.txt', name: None}")
 
 	def test__str__3(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("title", "Test Title")
 		self.assertEqual(
 			str(glos),
@@ -197,7 +200,7 @@ class TestGlossary(TestGlossaryBase):
 		)
 
 	def test__str__4(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos._filename = "test.txt"
 		glos.setInfo("title", "Test Title")
 		self.assertEqual(
@@ -206,17 +209,17 @@ class TestGlossary(TestGlossaryBase):
 		)
 
 	def test_info_1(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("test", "ABC")
 		self.assertEqual(glos.getInfo("test"), "ABC")
 
 	def test_info_2(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("bookname", "Test Glossary")
 		self.assertEqual(glos.getInfo("title"), "Test Glossary")
 
 	def test_info_3(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("bookname", "Test Glossary")
 		glos.setInfo("title", "Test 2")
 		self.assertEqual(glos.getInfo("name"), "Test 2")
@@ -224,24 +227,24 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(glos.getInfo("title"), "Test 2")
 
 	def test_info_4(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("test", 123)
 		self.assertEqual(glos.getInfo("test"), "123")
 
 	def test_info_del_1(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("test", "abc")
 		self.assertEqual(glos.getInfo("test"), "abc")
 		glos.setInfo("test", None)
 		self.assertEqual(glos.getInfo("test"), "")
 
 	def test_info_del_2(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("test", None)
 		self.assertEqual(glos.getInfo("test"), "")
 
 	def test_setInfo_err1(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		try:
 			glos.setInfo(1, "a")
 		except TypeError as e:
@@ -250,7 +253,7 @@ class TestGlossary(TestGlossaryBase):
 			self.fail("must raise a TypeError")
 
 	def test_getInfo_err1(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		try:
 			glos.getInfo(1)
 		except TypeError as e:
@@ -259,7 +262,7 @@ class TestGlossary(TestGlossaryBase):
 			self.fail("must raise a TypeError")
 
 	def test_getExtraInfos_1(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("a", "test 1")
 		glos.setInfo("b", "test 2")
 		glos.setInfo("c", "test 3")
@@ -271,8 +274,20 @@ class TestGlossary(TestGlossaryBase):
 			{"a": "test 1", "d": "test 4"},
 		)
 
+	def test_infoKeys_1(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("a", "test 1")
+		glos.setInfo("b", "test 2")
+		glos.setInfo("name", "test name")
+		glos.setInfo("title", "test title")
+
+		self.assertEqual(
+			glos.infoKeys(),
+			["a", "b", "name"],
+		)
+
 	def test_config_attr_get(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		try:
 			glos.config
 		except NotImplementedError:
@@ -281,26 +296,38 @@ class TestGlossary(TestGlossaryBase):
 			self.fail("must raise NotImplementedError")
 
 	def test_config_attr_set(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.config = {"lower": True}
 		self.assertEqual(glos.getConfig("lower", False), True)
 
 	def test_read_txt_1(self):
 		inputFilename = self.downloadFile("100-en-fa.txt")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		res = glos.read(filename=inputFilename)
 		self.assertTrue(res)
 		self.assertEqual(glos.sourceLangName, "English")
 		self.assertEqual(glos.targetLangName, "Persian")
 		self.assertIn("Sample: ", glos.getInfo("name"))
+		self.assertEqual(len(glos), 100)
+
+	def test_read_txt_direct_1(self):
+		inputFilename = self.downloadFile("100-en-fa.txt")
+		glos = self.glos = Glossary()
+		res = glos.read(filename=inputFilename, direct=True)
+		self.assertTrue(res)
+		self.assertEqual(glos.sourceLangName, "English")
+		self.assertEqual(glos.targetLangName, "Persian")
+		self.assertIn("Sample: ", glos.getInfo("name"))
+		self.assertEqual(len(glos), 0)
+		glos.clear()
 
 	def test_init_infoDict(self):
-		glos = Glossary(info={"a": "b"})
+		glos = self.glos = Glossary(info={"a": "b"})
 		self.assertEqual(list(glos.iterInfo()), [('a', 'b')])
 
 	def test_init_infoOrderedDict(self):
 		from collections import OrderedDict
-		glos = Glossary(info=OrderedDict([
+		glos = self.glos = Glossary(info=OrderedDict([
 			("y", "z"),
 			("a", "b"),
 			("1", "2"),
@@ -308,7 +335,7 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(list(glos.iterInfo()), [('y', 'z'), ('a', 'b'), ('1', '2')])
 
 	def test_lang_1(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		self.assertEqual(glos.sourceLangName, "")
 		self.assertEqual(glos.targetLangName, "")
 		glos.sourceLangName = "ru"
@@ -317,32 +344,32 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(glos.targetLangName, "German")
 
 	def test_lang_get_source(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("sourcelang", "farsi")
 		self.assertEqual(glos.sourceLangName, "Persian")
 
 	def test_lang_get_target(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("targetlang", "malay")
 		self.assertEqual(glos.targetLangName, "Malay")
 
 	def test_lang_set_source(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.sourceLangName = "en"
 		self.assertEqual(glos.sourceLangName, "English")
 
 	def test_lang_set_target(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.targetLangName = "fa"
 		self.assertEqual(glos.targetLangName, "Persian")
 
 	def test_lang_getObj_source(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("sourcelang", "farsi")
 		self.assertEqual(glos.sourceLang.name, "Persian")
 
 	def test_lang_getObj_target(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setInfo("targetlang", "malay")
 		self.assertEqual(glos.targetLang.name, "Malay")
 
@@ -357,7 +384,7 @@ class TestGlossary(TestGlossaryBase):
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname2}-{testId}.txt")
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		if config is not None:
 			glos.config = config
 		res = glos.convert(
@@ -380,7 +407,7 @@ class TestGlossary(TestGlossaryBase):
 		outputTxtName = f"{fname2}-{testId}.txt"
 		outputFilename = self.newTempFilePath(f"{outputTxtName}.zip")
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		if config is not None:
 			glos.config = config
 		res = glos.convert(
@@ -466,7 +493,7 @@ class TestGlossary(TestGlossaryBase):
 		)
 
 	def test_convert_sqlite_direct_error(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		try:
 			res = glos.convert(
 				inputFilename="foo.txt",
@@ -504,7 +531,7 @@ class TestGlossary(TestGlossaryBase):
 			)
 
 	def test_dataEntry_save(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		tmpFname = "test_dataEntry_save"
 		entry = glos.newDataEntry(tmpFname, b"test")
 		saveFpath = entry.save(self.tempDir)
@@ -514,17 +541,17 @@ class TestGlossary(TestGlossaryBase):
 		)
 
 	def test_dataEntry_getFileName(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		tmpFname = "test_dataEntry_getFileName"
 		entry = glos.newDataEntry(tmpFname, b"test")
 		self.assertEqual(entry.getFileName(), tmpFname)
 
 	def test_cleanup_noFile(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.cleanup()
 
 	def test_cleanup_cleanup(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		tmpFname = "test_cleanup_cleanup"
 		entry = glos.newDataEntry(tmpFname, b"test")
 
@@ -543,7 +570,7 @@ class TestGlossary(TestGlossaryBase):
 		)
 
 	def test_cleanup_noCleanup(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		tmpFname = "test_cleanup_noCleanup"
 		entry = glos.newDataEntry(tmpFname, b"test")
 
@@ -557,7 +584,7 @@ class TestGlossary(TestGlossaryBase):
 		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
 
 	def test_rawEntryCompress(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		glos.setRawEntryCompress(True)
 		self.assertTrue(glos.rawEntryCompress)
 		glos.setRawEntryCompress(False)
@@ -589,7 +616,7 @@ darkling beetle
 japonica"""
 
 	def test_addEntries_1(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		wordsList = self.addWords(
 			glos,
 			self.tenWordsStr,
@@ -598,7 +625,7 @@ japonica"""
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 
 	def test_sortWords_1(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		wordsList = self.addWords(
 			glos,
 			self.tenWordsStr,
@@ -609,7 +636,7 @@ japonica"""
 		self.assertEqual(sorted(wordsList), [entry.l_word for entry in glos])
 
 	def test_sortWords_2(self):
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		wordsList = self.addWords(
 			glos,
 			self.tenWordsStr,

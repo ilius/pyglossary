@@ -55,7 +55,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			for ext in binExtList
 		}
 
-		glos = Glossary()
+		glos = self.glos = Glossary()
 
 		if config is not None:
 			glos.config = config
@@ -95,7 +95,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			f"{inputFname}-{testId}.txt"
 		)
 		expectedFilename = self.downloadFile(f"{ouputFname}.txt")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 
 		res = glos.convert(
 			inputFilename=inputFilename,

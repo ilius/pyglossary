@@ -26,7 +26,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname}-2.csv")
 		expectedFilename = self.downloadFile(f"{fname2}.csv")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
@@ -39,7 +39,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		inputFilename = self.downloadFile(f"{fname}.csv")
 		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 		# using glos.convert will add "input_file_size" info key
 		# perhaps add another optional argument to glos.convert named infoOverride
 
@@ -59,7 +59,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		inputFilename = self.downloadFile(f"{fname}.csv")
 		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
-		glos = Glossary()
+		glos = self.glos = Glossary()
 
 		res = glos.convert(
 			inputFilename=inputFilename,
