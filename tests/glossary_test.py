@@ -42,6 +42,9 @@ class TestGlossaryBase(unittest.TestCase):
 			"004-bar.txt": "6775e590",
 			"004-bar-sort.txt": "fe861123",
 
+			"006-empty.txt": "07ff224b",
+			"006-empty-filtered.txt": "2b3c1c0f",
+
 			"100-en-de.txt": "f22fc392",
 			"100-en-de-v2.txt": "70eff46c",
 			"100-en-fa.txt": "f5c53133",
@@ -530,6 +533,24 @@ class TestGlossary(TestGlossaryBase):
 				sqlite=sqlite,
 			)
 
+	def test_txt_txt_empty_filtered(self):
+		for direct in (None, False, True):
+			self.convert_txt_txt(
+				"006-empty",
+				"006-empty-filtered",
+				testId="empty_filtered",
+				direct=direct,
+			)
+
+	def test_txt_txt_empty_filtered_sqlite(self):
+		for sqlite in (None, False, True):
+			self.convert_txt_txt(
+				"006-empty",
+				"006-empty-filtered",
+				testId="empty_filtered_sqlite",
+				sqlite=sqlite,
+			)
+
 	def test_dataEntry_save(self):
 		glos = self.glos = Glossary()
 		tmpFname = "test_dataEntry_save"
@@ -623,6 +644,20 @@ japonica"""
 			lambda i: str(random.randint(0, 10000)),
 		)
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+
+	def test_addEntries_2(self):
+		# entry filters don't apply to loaded entries (added with addEntryObj)
+		glos = self.glos = Glossary()
+		glos.addEntryObj(glos.newEntry(["a"], "test 1"))
+		glos.addEntryObj(glos.newEntry([""], "test 2"))
+		glos.addEntryObj(glos.newEntry(["b"], "test 3"))
+		glos.addEntryObj(glos.newEntry([], "test 4"))
+		glos.updateEntryFilters()
+		glos.updateIter()
+		self.assertEqual(
+			[['a'], [''], ['b'], []],
+			[entry.l_word for entry in glos],
+		)
 
 	def test_sortWords_1(self):
 		glos = self.glos = Glossary()
