@@ -242,27 +242,21 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_setInfo_err1(self):
 		glos = Glossary()
-		err = ""
-		errType = ""
 		try:
 			glos.setInfo(1, "a")
-		except Exception as e:
-			err = str(e)
-			errType = e.__class__.__name__
-		self.assertEqual(err, "invalid key=1, must be str")
-		self.assertEqual(errType, "TypeError")
+		except TypeError as e:
+			self.assertEqual(str(e), "invalid key=1, must be str")
+		else:
+			self.fail("must raise a TypeError")
 
 	def test_getInfo_err1(self):
 		glos = Glossary()
-		err = ""
-		errType = ""
 		try:
 			glos.getInfo(1)
-		except Exception as e:
-			err = str(e)
-			errType = e.__class__.__name__
-		self.assertEqual(err, "invalid key=1, must be str")
-		self.assertEqual(errType, "TypeError")
+		except TypeError as e:
+			self.assertEqual(str(e), "invalid key=1, must be str")
+		else:
+			self.fail("must raise a TypeError")
 
 	def test_getExtraInfos_1(self):
 		glos = Glossary()
@@ -276,6 +270,20 @@ class TestGlossary(TestGlossaryBase):
 			glos.getExtraInfos(["b", "c", "title"]),
 			{"a": "test 1", "d": "test 4"},
 		)
+
+	def test_config_attr_get(self):
+		glos = Glossary()
+		try:
+			glos.config
+		except NotImplementedError:
+			pass
+		else:
+			self.fail("must raise NotImplementedError")
+
+	def test_config_attr_set(self):
+		glos = Glossary()
+		glos.config = {"lower": True}
+		self.assertEqual(glos.getConfig("lower", False), True)
 
 	def test_read_txt_1(self):
 		inputFilename = self.downloadFile("100-en-fa.txt")
@@ -299,7 +307,7 @@ class TestGlossary(TestGlossaryBase):
 		]))
 		self.assertEqual(list(glos.iterInfo()), [('y', 'z'), ('a', 'b'), ('1', '2')])
 
-	def test_langs_1(self):
+	def test_lang_1(self):
 		glos = Glossary()
 		self.assertEqual(glos.sourceLangName, "")
 		self.assertEqual(glos.targetLangName, "")
@@ -308,15 +316,35 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(glos.sourceLangName, "Russian")
 		self.assertEqual(glos.targetLangName, "German")
 
-	def test_langs_2(self):
+	def test_lang_get_source(self):
 		glos = Glossary()
 		glos.setInfo("sourcelang", "farsi")
 		self.assertEqual(glos.sourceLangName, "Persian")
 
-	def test_langs_3(self):
+	def test_lang_get_target(self):
 		glos = Glossary()
 		glos.setInfo("targetlang", "malay")
 		self.assertEqual(glos.targetLangName, "Malay")
+
+	def test_lang_set_source(self):
+		glos = Glossary()
+		glos.sourceLangName = "en"
+		self.assertEqual(glos.sourceLangName, "English")
+
+	def test_lang_set_target(self):
+		glos = Glossary()
+		glos.targetLangName = "fa"
+		self.assertEqual(glos.targetLangName, "Persian")
+
+	def test_lang_getObj_source(self):
+		glos = Glossary()
+		glos.setInfo("sourcelang", "farsi")
+		self.assertEqual(glos.sourceLang.name, "Persian")
+
+	def test_lang_getObj_target(self):
+		glos = Glossary()
+		glos.setInfo("targetlang", "malay")
+		self.assertEqual(glos.targetLang.name, "Malay")
 
 	def convert_txt_txt(
 		self,
@@ -439,7 +467,6 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_convert_sqlite_direct_error(self):
 		glos = Glossary()
-		err = ""
 		try:
 			res = glos.convert(
 				inputFilename="foo.txt",
@@ -447,11 +474,10 @@ class TestGlossary(TestGlossaryBase):
 				direct=True,
 				sqlite=True,
 			)
-		except Exception as e:
-			err = str(e)
-			res = ""
-		self.assertEqual(res, "")
-		self.assertEqual(err, "Conflictng arguments: direct=True, sqlite=True")
+		except ValueError as e:
+			self.assertEqual(str(e), "Conflictng arguments: direct=True, sqlite=True")
+		else:
+			self.fail("must raise a ValueError")
 
 	def test_txt_txt_bar(self):
 		for direct in (None, False, True):

@@ -192,6 +192,56 @@ class TestGlossaryErrors(TestGlossaryBase):
 		glos.cleanup()
 		self.assertLogError(f"no such file or directory: {appTmpDir}")
 
+	def test_lang_err_get_source(self):
+		glos = Glossary()
+		glos.setInfo("sourcelang", "test")
+		self.assertEqual(glos.sourceLangName, "")
+		self.assertLogError("unknown language 'test'")
+
+	def test_lang_err_get_target(self):
+		glos = Glossary()
+		glos.setInfo("targetlang", "test")
+		self.assertEqual(glos.targetLangName, "")
+		self.assertLogError("unknown language 'test'")
+
+	def test_lang_err_set_source(self):
+		glos = Glossary()
+		glos.sourceLangName = "foobar"
+		self.assertLogError("unknown language 'foobar'")
+		self.assertEqual(glos.sourceLangName, "")
+
+	def test_lang_err_set_target(self):
+		glos = Glossary()
+		glos.targetLangName = "foobar"
+		self.assertLogError("unknown language 'foobar'")
+		self.assertEqual(glos.targetLangName, "")
+
+	def test_lang_err_setObj_source(self):
+		glos = Glossary()
+		try:
+			glos.sourceLang = "foobar"
+		except TypeError as e:
+			self.assertEqual(str(e), "invalid lang=foobar, must be a Lang object")
+		else:
+			self.fail("must raise a TypeError")
+
+	def test_lang_err_setObj_target(self):
+		glos = Glossary()
+		try:
+			glos.targetLang = "foobar"
+		except TypeError as e:
+			self.assertEqual(str(e), "invalid lang=foobar, must be a Lang object")
+		else:
+			self.fail("must raise a TypeError")
+
+	def test_config_attr_set_twice(self):
+		glos = Glossary()
+		glos.config = {"lower": True}
+		self.assertEqual(glos.getConfig("lower", False), True)
+		glos.config = {"lower": False}
+		self.assertLogError("glos.config is set more than once")
+		self.assertEqual(glos.getConfig("lower", False), True)
+
 	def test_convert_sameFilename(self):
 		glos = Glossary()
 		res = glos.convert(
