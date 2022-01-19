@@ -431,12 +431,6 @@ def main():
 		action="store_false",
 		default=None,
 	)
-	parser.add_argument(
-		"--sort-cache-size",
-		dest="sortCacheSize",
-		type=int,
-		default=None,
-	)
 
 	# _______________________________
 
@@ -609,7 +603,6 @@ def main():
 		"direct",
 		"progressbar",
 		"sort",
-		"sortCacheSize",
 		# "sortKey",  # TODO
 		"sqlite",
 	)

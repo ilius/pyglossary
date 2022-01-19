@@ -269,7 +269,6 @@ class Glossary(GlossaryType):
 		self._entryFiltersName = set()
 		self._sort = False
 		self._sortKey = None
-		self._sortCacheSize = 0
 
 		self._filename = ""
 		self._defaultDefiFormat = "m"
@@ -941,7 +940,7 @@ class Glossary(GlossaryType):
 			1- Wheather or not direct mode is On (self._readers not empty)
 				or Off (self._readers empty)
 			2- Wheather sort is True, and if it is,
-				checks for self._sortKey and self._sortCacheSize
+				checks for self._sortKey
 		"""
 		if not self._readers:  # indirect mode
 			self._iter = self._loadedEntryGen()
@@ -959,29 +958,14 @@ class Glossary(GlossaryType):
 			raise RuntimeError("can not call this while having a reader")
 		self._updateIter()
 
-	def _updateIterPartialSort(self) -> None:
-		from .sort_stream import hsortStreamList
-		sortKey = self._sortKey
-		cacheSize = self._sortCacheSize
-		log.info(f"Stream sorting enabled, cache size: {cacheSize}")
-		# only sort by main word, or list of words + alternates? FIXME
-		self._iter = hsortStreamList(
-			self._readers,
-			cacheSize,
-			key=Entry.getEntrySortKey(sortKey),
-		)
-
 	def sortWords(
 		self,
 		key: "Optional[Callable[[bytes], Any]]" = None,
-		cacheSize: int = 0,
 	) -> None:
 		if key is None:
 			log.warning("sortWords: no key function is provided")
 		if self._readers:
 			self._sortKey = key
-			if cacheSize > 0:
-				self._sortCacheSize = cacheSize  # FIXME
 		else:
 			if self._sqlite:
 				raise TypeError(
@@ -1087,7 +1071,6 @@ class Glossary(GlossaryType):
 		sort: "Optional[bool]" = None,
 		sortKey: "Optional[sortKeyType]" = None,
 		defaultSortKey: "Optional[sortKeyType]" = None,
-		sortCacheSize: int = 0,
 		**options
 	) -> "Optional[str]":
 		"""
@@ -1131,7 +1114,6 @@ class Glossary(GlossaryType):
 					f", ignoring user sort=False option"
 				)
 			sort = True
-			sortCacheSize = 0
 		elif sortOnWrite == DEFAULT_YES:
 			if sort is None:
 				sort = True
@@ -1146,7 +1128,7 @@ class Glossary(GlossaryType):
 				)
 			sort = False
 
-		if self._readers and sort and sortCacheSize == 0:
+		if self._readers and sort:
 			log.warning(
 				f"Full sort enabled, falling back to indirect mode"
 			)
@@ -1193,8 +1175,6 @@ class Glossary(GlossaryType):
 
 			if self._readers:
 				self._sortKey = sortKey
-				if sortCacheSize > 0:
-					self._sortCacheSize = sortCacheSize  # FIXME
 			else:
 				t0 = now()
 				if not self._sqlite:
@@ -1361,7 +1341,6 @@ class Glossary(GlossaryType):
 		sort: "Optional[bool]" = None,
 		sortKey: "Optional[sortKeyType]" = None,
 		defaultSortKey: "Optional[sortKeyType]" = None,
-		sortCacheSize: int = 0,
 		readOptions: "Optional[Dict[str, Any]]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
 		sqlite: "Optional[bool]" = None,
@@ -1437,7 +1416,6 @@ class Glossary(GlossaryType):
 			sort=sort,
 			sortKey=sortKey,
 			defaultSortKey=defaultSortKey,
-			sortCacheSize=sortCacheSize,
 			**writeOptions
 		)
 		log.info("")

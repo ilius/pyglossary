@@ -160,7 +160,6 @@ convertOptionsFlags = {
 	"sqlite": ("", "sqlite"),
 	"progressbar": ("no-progress-bar", ""),
 	"sort": ("no-sort", "sort"),
-	"sortCacheSize": ("sort-cache-size", ""),
 	"defaultSortKey": None,
 }
 infoOverrideFlags = {
