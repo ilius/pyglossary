@@ -93,14 +93,14 @@ class SqEntryList(list):
 			values = [
 				col[2](entry.l_word) for col in self._sortColumns
 			]
-		except Exception as e:
-			log.error(f"error in _sortColumns funcs for rawEntry = {rawEntry!r}")
-			raise e
+		except Exception:
+			log.critical(f"error in _sortColumns funcs for rawEntry = {rawEntry!r}")
+			raise
 		try:
 			pickleEntry = dumps(rawEntry, protocol=PICKLE_PROTOCOL)
-		except Exception as e:
-			log.error(f"error in pickle.dumps for rawEntry = {rawEntry!r}")
-			raise e
+		except Exception:
+			log.critical(f"error in pickle.dumps for rawEntry = {rawEntry!r}")
+			raise
 		self._cur.execute(
 			f"insert into data({self._columnNames}, pickle)"
 			f" values (?{', ?' * colCount})",
@@ -119,12 +119,7 @@ class SqEntryList(list):
 		# FIXME
 		# sample = sortKey(sampleItem)
 
-	def sort(self, key=None, reverse=False):
-		if key is not None:
-			raise NotImplementedError(
-				"key= is not available,"
-				"use sortColumns= argument when instantiating"
-			)
+	def sort(self, reverse=False):
 		if self._sorted:
 			raise NotImplementedError("can not sort more than once")
 
