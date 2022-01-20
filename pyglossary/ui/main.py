@@ -621,7 +621,7 @@ def main():
 			continue
 		log.debug(f"config: {key} = {value}")
 		if not option.validate(value):
-			log.error("invalid config value: {key} = {value!r}")
+			log.error(f"invalid config value: {key} = {value!r}")
 			continue
 		config[key] = value
 

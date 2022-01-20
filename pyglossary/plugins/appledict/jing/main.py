@@ -63,7 +63,7 @@ def run(filename):
 		if returncode < 0:
 			log.error(f"Jing was terminated by signal {-returncode}")
 		elif returncode > 0:
-			log.error("Jing returned {returncode}")
+			log.error(f"Jing returned {returncode}")
 		raise JingTestError(returncode, cmd, output)
 	else:
 		log.info("Jing check successfully passed!")
