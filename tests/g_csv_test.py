@@ -9,7 +9,7 @@ from tests.glossary_test import TestGlossaryBase
 from pyglossary.glossary import Glossary
 
 
-class TestGlossaryStarDict(TestGlossaryBase):
+class TestGlossaryCSV(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
@@ -23,17 +23,12 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		})
 
 	def convert_txt_csv(self, fname, fname2, **convertArgs):
-		inputFilename = self.downloadFile(f"{fname}.txt")
-		outputFilename = self.newTempFilePath(f"{fname}-2.csv")
-		expectedFilename = self.downloadFile(f"{fname2}.csv")
-		glos = self.glos = Glossary()
-		res = glos.convert(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
+		self.convert(
+			f"{fname}.txt",
+			f"{fname}-2.csv",
+			compareText=f"{fname2}.csv",
 			**convertArgs
 		)
-		self.assertEqual(outputFilename, res)
-		self.compareTextFiles(outputFilename, expectedFilename)
 
 	def convert_csv_txt_rw(self, fname, fname2, infoOverride=None):
 		inputFilename = self.downloadFile(f"{fname}.csv")
@@ -56,19 +51,12 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		self.compareTextFiles(outputFilename, expectedFilename)
 
 	def convert_csv_txt(self, fname, fname2, **convertArgs):
-		inputFilename = self.downloadFile(f"{fname}.csv")
-		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
-		expectedFilename = self.downloadFile(f"{fname2}.txt")
-		glos = self.glos = Glossary()
-
-		res = glos.convert(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
+		self.convert(
+			f"{fname}.csv",
+			f"{fname}-2.txt",
+			compareText=f"{fname2}.txt",
 			**convertArgs
 		)
-		self.assertEqual(outputFilename, res)
-
-		self.compareTextFiles(outputFilename, expectedFilename)
 
 	def test_convert_txt_csv_1(self):
 		self.convert_txt_csv("100-en-fa", "100-en-fa")

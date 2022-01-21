@@ -9,6 +9,7 @@ import logging
 from urllib.request import urlopen
 import zipfile
 import random
+import hashlib
 import tracemalloc
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -162,6 +163,44 @@ class TestGlossaryBase(unittest.TestCase):
 				data1 == data2,
 				msg=f"zfpath={zfpath!r}",
 			)
+
+	def convert(
+		self,
+		fname,  # input file with extension
+		fname2,  # output file with extension
+		testId="tmp",
+		compareText="",
+		compareBinary="",
+		sha1sum=None,
+		md5sum=None,
+		config=None,
+		**convertArgs,
+	):
+		inputFilename = self.downloadFile(fname)
+		outputFilename = self.newTempFilePath(fname2)
+		glos = self.glos = Glossary()
+		if config is not None:
+			glos.config = config
+		res = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+			**convertArgs
+		)
+		self.assertEqual(outputFilename, res)
+
+		if compareText:
+			self.compareTextFiles(outputFilename, self.downloadFile(compareText))
+		elif compareBinary:
+			self.compareBinaryFiles(outputFilename, self.downloadFile(compareBinary))
+		elif sha1sum:
+			with open(outputFilename, mode="rb") as _file:
+				actualSha1 = hashlib.sha1(_file.read()).hexdigest()
+			self.assertEqual(actualSha1, sha1sum)
+
+		elif md5sum:
+			with open(outputFilename, mode="rb") as _file:
+				actualMd5 = hashlib.md5(_file.read()).hexdigest()
+			self.assertEqual(actualMd5, md5sum)
 
 
 class TestGlossary(TestGlossaryBase):
@@ -384,19 +423,15 @@ class TestGlossary(TestGlossaryBase):
 		config=None,
 		**convertArgs,
 	):
-		inputFilename = self.downloadFile(f"{fname}.txt")
-		outputFilename = self.newTempFilePath(f"{fname2}-{testId}.txt")
-		expectedFilename = self.downloadFile(f"{fname2}.txt")
-		glos = self.glos = Glossary()
-		if config is not None:
-			glos.config = config
-		res = glos.convert(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
-			**convertArgs
+		self.convert(
+			f"{fname}.txt",
+			f"{fname2}-{testId}.txt",
+			compareText=f"{fname2}.txt",
+			testId=testId,
+			config=config,
+			**convertArgs,
 		)
-		self.assertEqual(outputFilename, res)
-		self.compareTextFiles(outputFilename, expectedFilename)
+
 
 	def convert_to_txtZip(
 		self,

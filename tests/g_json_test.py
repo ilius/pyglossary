@@ -6,10 +6,9 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from tests.glossary_test import TestGlossaryBase
-from pyglossary.glossary import Glossary
 
 
-class TestGlossaryStarDict(TestGlossaryBase):
+class TestGlossaryJSON(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
@@ -21,16 +20,11 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		})
 
 	def convert_txt_json(self, fname):
-		inputFilename = self.downloadFile(f"{fname}.txt")
-		outputFilename = self.newTempFilePath(f"{fname}-2.json")
-		expectedFilename = self.downloadFile(f"{fname}.json")
-		glos = self.glos = Glossary()
-		res = glos.convert(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
+		self.convert(
+			f"{fname}.txt",
+			f"{fname}-2.json",
+			compareText=f"{fname}.json",
 		)
-		self.assertEqual(outputFilename, res)
-		self.compareTextFiles(outputFilename, expectedFilename)
 
 	def test_convert_txt_json_0(self):
 		self.convert_txt_json("004-bar")

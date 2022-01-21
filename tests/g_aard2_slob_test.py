@@ -6,11 +6,10 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from tests.glossary_test import TestGlossaryBase
-from pyglossary.glossary import Glossary
 from pyglossary.entry import Entry
 
 
-class TestGlossaryStarDict(TestGlossaryBase):
+class TestGlossarySlob(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
@@ -22,33 +21,25 @@ class TestGlossaryStarDict(TestGlossaryBase):
 
 	def test_convert_txt_slob_1(self):
 		fname = "100-en-fa"
-		inputFilename = self.downloadFile(f"{fname}.txt")
-		outputFilename = self.newTempFilePath(f"{fname}.slob")
-		glos = self.glos = Glossary()
-		outputFilename2 = glos.convert(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
+		self.convert(
+			f"{fname}.txt",
+			f"{fname}.slob",
+			compareBinary=f"",
+			# slob file is different each time (and so its sha1sum and md5sum)
 		)
-		self.assertEqual(outputFilename, outputFilename2)
 
 	def convert_slob_txt(self, fname, fname2, resFiles, **convertArgs):
-		inputFilename = self.downloadFile(f"{fname}.slob")
-		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
-
 		resFilesPath = {
 			resFileName: self.newTempFilePath(f"{fname}-2.txt_res/{resFileName}")
 			for resFileName in resFiles
 		}
 
-		expectedFilename = self.downloadFile(f"{fname2}.txt")
-		glos = self.glos = Glossary()
-		res = glos.convert(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
+		self.convert(
+			f"{fname}.slob",
+			f"{fname}-2.txt",
+			compareText=f"{fname2}.txt",
 			**convertArgs
 		)
-		self.assertEqual(outputFilename, res)
-		self.compareTextFiles(outputFilename, expectedFilename)
 
 		for resFileName in resFiles:
 			fpath1 = self.downloadFile(f"res/{resFileName}")

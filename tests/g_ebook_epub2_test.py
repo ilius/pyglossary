@@ -10,7 +10,7 @@ from tests.glossary_test import TestGlossaryBase
 from pyglossary.glossary import Glossary
 
 
-class TestGlossaryStarDict(TestGlossaryBase):
+class TestGlossaryEPUB2(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
