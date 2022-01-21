@@ -238,14 +238,6 @@ class Entry(BaseEntry):
 		)]
 
 	@staticmethod
-	def getEntrySortKey(
-		key: "Optional[Callable[[bytes], Any]]" = None,
-	) -> "Callable[[BaseEntry], Any]":
-		if key is None:
-			key = Entry.defaultSortKey
-		return lambda entry: key(entry.l_word)
-
-	@staticmethod
 	def getRawEntrySortKey(
 		glos: "GlossaryType",
 		key: "Optional[Callable[[bytes], Any]]" = None,
