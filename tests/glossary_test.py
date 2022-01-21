@@ -11,6 +11,7 @@ import zipfile
 import random
 import hashlib
 import tracemalloc
+import os
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -33,6 +34,8 @@ dataURL = (
 
 dataDir = join(cacheDir, "test")
 appTmpDir = join(cacheDir, "tmp")
+
+os.chdir(dataDir)
 
 
 class TestGlossaryBase(unittest.TestCase):

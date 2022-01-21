@@ -38,7 +38,7 @@ class MockLogHandler(logging.Handler):
 				continue
 			for record in self.recordsByLevel[level]:
 				count += 1
-				print(self.format(record))
+				print(repr(self.format(record)))
 		return count
 
 
