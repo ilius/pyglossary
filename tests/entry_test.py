@@ -11,6 +11,124 @@ sys.path.insert(0, rootDir)
 from pyglossary.entry import *
 from pyglossary.core_test import getMockLogger
 
+
+class TestEntryBasic(unittest.TestCase):
+	def test_exc_1(self):
+		try:
+			Entry(b"word", "defi")
+		except TypeError as e:
+			self.assertEqual(str(e), "invalid word type <class 'bytes'>")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_exc_2(self):
+		try:
+			Entry(("word",), "defi")
+		except TypeError as e:
+			self.assertEqual(str(e), "invalid word type <class 'tuple'>")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_exc_3(self):
+		try:
+			Entry("word", b"defi")
+		except TypeError as e:
+			self.assertEqual(str(e), "invalid defi type <class 'bytes'>")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_exc_4(self):
+		try:
+			Entry("word", ("defi",))
+		except TypeError as e:
+			self.assertEqual(str(e), "invalid defi type <class 'tuple'>")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_exc_5(self):
+		try:
+			Entry("word", "defi", "b")
+		except ValueError as e:
+			self.assertEqual(str(e), "invalid defiFormat 'b'")
+		else:
+			self.fail("must raise ValueError")
+
+	def test_1(self):
+		entry = Entry("test1", "something")
+		self.assertEqual(entry.l_word, ["test1"])
+		self.assertEqual(entry.defi, "something")
+
+	def test_2(self):
+		entry = Entry(["test1"], "something")
+		self.assertEqual(entry.l_word, ["test1"])
+		self.assertEqual(entry.defi, "something")
+
+	def test_3(self):
+		entry = Entry("test1", ["something"])
+		self.assertEqual(entry.l_word, ["test1"])
+		self.assertEqual(entry.defi, "something")
+
+	def test_repr_1(self):
+		entry = Entry("test1", "something")
+		self.assertEqual(
+			repr(entry),
+			"Entry('test1', 'something', defiFormat='m')",
+		)
+
+	def test_repr_1(self):
+		entry = Entry("test1", "something", defiFormat="h")
+		self.assertEqual(
+			repr(entry),
+			"Entry('test1', 'something', defiFormat='h')",
+		)
+
+	def test_defiFormat_1(self):
+		entry = Entry("test1", "something")
+		self.assertEqual(entry.defiFormat, "m")
+
+	def test_defiFormat_2(self):
+		entry = Entry("test1", "something", defiFormat="h")
+		self.assertEqual(entry.defiFormat, "h")
+
+	def test_defiFormat_3(self):
+		entry = Entry("test1", "something", defiFormat="h")
+		entry.defiFormat = "x"
+		self.assertEqual(entry.defiFormat, "x")
+
+	def test_addAlt_1(self):
+		entry = Entry("test1", "something")
+		self.assertEqual(entry.l_word, ["test1"])
+		entry.addAlt("test 1")
+		self.assertEqual(entry.l_word, ["test1", "test 1"])
+
+
+class TestEntryDetectDefiFormat(unittest.TestCase):
+	def test_1(self):
+		entry = Entry("test1", "something")
+		entry.detectDefiFormat()
+		self.assertEqual(entry.defiFormat, "m")
+
+	def test_2(self):
+		entry = Entry("test1", "something", defiFormat="h")
+		entry.detectDefiFormat()
+		self.assertEqual(entry.defiFormat, "h")
+
+	def test_3(self):
+		entry = Entry("test1", "something", defiFormat="x")
+		entry.detectDefiFormat()
+		self.assertEqual(entry.defiFormat, "x")
+
+	def test_4(self):
+		entry = Entry("test1", "<b>something</b>")
+		entry.detectDefiFormat()
+		self.assertEqual(entry.defiFormat, "h")
+
+	def test_5(self):
+		entry = Entry("test1", "<k>title</k>something")
+		entry.detectDefiFormat()
+		self.assertEqual(entry.defiFormat, "x")
+
+
 class TestEntrySqliteSortKeyFrom(unittest.TestCase):
 	def sortKey1(self, words: "List[str]"):
 		return words[0]
