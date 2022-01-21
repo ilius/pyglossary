@@ -7,32 +7,6 @@ from io import StringIO
 log = logging.getLogger("pyglossary")
 
 
-def xdxf_to_html_transformer():
-	from lxml import etree
-	from lxml.etree import tostring
-	from os.path import join
-	try:
-		from lxml import etree as ET
-	except ModuleNotFoundError as e:
-		e.msg += f", run `{core.pip} install lxml` to install"
-		raise e
-
-	with open(join(rootDir, "pyglossary", "xdxf.xsl"), "r") as f:
-		xslt_txt = f.read()
-
-	xslt = ET.XML(xslt_txt)
-	_transform = ET.XSLT(xslt)
-
-	def transform(input_text: str) -> str:
-		doc = etree.parse(StringIO(f"<ar>{input_text}</ar>"))
-		result_tree = _transform(doc)
-		text = tostring(result_tree, encoding="utf-8").decode("utf-8")
-		text = text.replace("<br/> ", "<br/>")
-		return text
-
-	return transform
-
-
 class XdxfTransformer(object):
 	_gram_color: str = "green"
 	_example_padding: int = 10
@@ -119,7 +93,6 @@ class XdxfTransformer(object):
 					continue
 				log.warning(f"unknown tag {child.tag} inside <ex>")
 
-
 	def writeIRef(
 		self,
 		hf: "lxml.etree.htmlfile",
@@ -170,7 +143,7 @@ class XdxfTransformer(object):
 			with hf.element(child.tag):
 				self.writeChildrenOf(hf, child)
 				# if child.text is not None:
-				#	hf.write(child.text.strip("\n"))
+				# 	hf.write(child.text.strip("\n"))
 			return
 
 		if child.tag == "blockquote":
