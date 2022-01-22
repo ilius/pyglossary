@@ -824,23 +824,21 @@ class Glossary(GlossaryType):
 		filename: str,
 		format: str = "",
 		direct: bool = False,
-		progressbar: bool = True,
-		**options
+		**kwargs
 	) -> bool:
 		"""
 		filename (str):	name/path of input file
 		format (str):	name of input format,
 						or "" to detect from file extension
 		direct (bool):	enable direct mode
+		progressbar (bool): enable progressbar
+
+		read-options can be passed as additional keyword arguments
 		"""
 		if type(filename) is not str:
 			raise TypeError("filename must be str")
 		if type(format) is not str:
 			raise TypeError("format must be str")
-
-		filename = abspath(filename)
-
-		self._setTmpDataDir(filename)
 
 		# don't allow direct=False when there are readers
 		# (read is called before with direct=True)
@@ -849,6 +847,25 @@ class Glossary(GlossaryType):
 				f"there are already {len(self._readers)} readers"
 				f", you can not read with direct=False mode"
 			)
+
+		return self._read(
+			filename=filename,
+			format=format,
+			direct=direct,
+			**kwargs
+		)
+
+	def _read(
+		self,
+		filename: str,
+		format: str = "",
+		direct: bool = False,
+		progressbar: bool = True,
+		**options
+	) -> bool:
+		filename = abspath(filename)
+
+		self._setTmpDataDir(filename)
 
 		###
 		inputArgs = self.detectInputFormat(filename, format=format)
@@ -1073,12 +1090,13 @@ class Glossary(GlossaryType):
 		self,
 		filename: str,
 		format: str,
-		sort: "Optional[bool]" = None,
-		sortKey: "Optional[sortKeyType]" = None,
-		defaultSortKey: "Optional[sortKeyType]" = None,
-		**options
+		**kwargs
 	) -> "Optional[str]":
 		"""
+		filename (str): file name or path to write
+
+		format (str): format name
+
 		sort (bool):
 			True (enable sorting),
 			False (disable sorting),
@@ -1091,7 +1109,7 @@ class Glossary(GlossaryType):
 		defaultSortKey (callable or None):
 			used when no sortKey was given, or found in plugin
 
-		You can pass read-options (of given format) as keyword arguments
+		You can pass write-options (of given format) as keyword arguments
 
 		returns absolute path of output file, or None if failed
 		"""
@@ -1100,6 +1118,21 @@ class Glossary(GlossaryType):
 		if type(format) is not str:
 			raise TypeError("format must be str")
 
+		return self._write(
+			filename=filename,
+			format=format,
+			**kwargs
+		)
+
+	def _write(
+		self,
+		filename: str,
+		format: str,
+		sort: "Optional[bool]" = None,
+		sortKey: "Optional[sortKeyType]" = None,
+		defaultSortKey: "Optional[sortKeyType]" = None,
+		**options
+	) -> "Optional[str]":
 		filename = abspath(filename)
 
 		validOptions = self.formatsWriteOptions.get(format)
@@ -1413,7 +1446,7 @@ class Glossary(GlossaryType):
 		showMemoryUsage()
 
 		tm0 = now()
-		if not self.read(
+		if not self._read(
 			inputFilename,
 			format=inputFormat,
 			direct=direct,
@@ -1430,7 +1463,7 @@ class Glossary(GlossaryType):
 			for key, value in infoOverride.items():
 				self.setInfo(key, value)
 
-		finalOutputFile = self.write(
+		finalOutputFile = self._write(
 			outputFilename,
 			outputFormat,
 			sort=sort,
