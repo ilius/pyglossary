@@ -836,7 +836,7 @@ class Glossary(GlossaryType):
 		"""
 		if type(filename) is not str:
 			raise TypeError("filename must be str")
-		if type(format) is not str:
+		if format is not None and type(format) is not str:
 			raise TypeError("format must be str")
 
 		# don't allow direct=False when there are readers
@@ -1110,7 +1110,7 @@ class Glossary(GlossaryType):
 		"""
 		if type(filename) is not str:
 			raise TypeError("filename must be str")
-		if type(format) is not str:
+		if format is not None and type(format) is not str:
 			raise TypeError("format must be str")
 
 		return self._write(
@@ -1391,9 +1391,9 @@ class Glossary(GlossaryType):
 		if type(outputFilename) is not str:
 			raise TypeError("outputFilename must be str")
 
-		if type(inputFormat) is not str:
+		if inputFormat is not None and type(inputFormat) is not str:
 			raise TypeError("inputFormat must be str")
-		if type(outputFormat) is not str:
+		if outputFormat is not None and type(outputFormat) is not str:
 			raise TypeError("outputFormat must be str")
 
 		if not readOptions:
