@@ -59,7 +59,9 @@ class TestGlossaryErrors(TestGlossaryBase):
 
 	def test_loadPlugin_moduleNotFound(self):
 		Glossary.loadPlugin("abc.def.ghe")
-		self.assertLogWarning("Module 'abc.def' not found, skipping plugin 'abc.def.ghe'")
+		self.assertLogWarning(
+			"Module 'abc.def' not found, skipping plugin 'abc.def.ghe'"
+		)
 
 	def test_detectInputFormat_err1(self):
 		res = Glossary.detectInputFormat(
@@ -246,6 +248,13 @@ class TestGlossaryErrors(TestGlossaryBase):
 		self.assertLogError("glos.config is set more than once")
 		self.assertEqual(glos.getConfig("lower", False), True)
 
+	def test_iter_empty(self):
+		glos = Glossary()
+		self.assertEqual(list(glos), [])
+		self.assertLogError(
+			"Trying to iterate over a blank Glossary, must call `glos.read` first"
+		)
+
 	def test_convert_typeErr_1(self):
 		glos = Glossary()
 		try:
@@ -281,7 +290,6 @@ class TestGlossaryErrors(TestGlossaryBase):
 			self.assertEqual(str(e), "inputFormat must be str")
 		else:
 			self.fail("must raise TypeError")
-
 
 	def test_convert_typeErr_4(self):
 		glos = Glossary()
@@ -370,7 +378,9 @@ class TestGlossaryErrors(TestGlossaryBase):
 			outputFilename="test2.txt",
 		)
 		self.assertIsNone(res)
-		self.assertLogCritical("[Errno 2] No such file or directory: '/abc/def/test.txt'")
+		self.assertLogCritical(
+			"[Errno 2] No such file or directory: '/abc/def/test.txt'"
+		)
 		self.assertLogCritical("Reading file '/abc/def/test.txt' failed.")
 
 	def test_convert_unableDetectOutputFormat(self):
@@ -392,7 +402,9 @@ class TestGlossaryErrors(TestGlossaryBase):
 			outputFilename=outputFilename,
 		)
 		self.assertIsNone(res)
-		self.assertLogCritical(f"[Errno 2] No such file or directory: '{outputFilename}'")
+		self.assertLogCritical(
+			f"[Errno 2] No such file or directory: '{outputFilename}'"
+		)
 		self.assertLogCritical(f"Writing file '{outputFilename}' failed.")
 
 	def test_convert_writeFileNotFound_hdir(self):
@@ -403,8 +415,18 @@ class TestGlossaryErrors(TestGlossaryBase):
 			outputFilename=outputFilename,
 		)
 		self.assertIsNone(res)
-		self.assertLogCritical(f"[Errno 2] No such file or directory: '{outputFilename}'")
+		self.assertLogCritical(
+			f"[Errno 2] No such file or directory: '{outputFilename}'"
+		)
 		self.assertLogCritical(f"Writing file '{outputFilename}' failed.")
+
+	def test_collectDefiFormat_direct(self):
+		fname = "100-en-fa.txt"
+		glos = self.glos = Glossary()
+		glos.read(self.downloadFile(fname), direct=True)
+		res = glos.collectDefiFormat(10)
+		self.assertIsNone(res)
+		self.assertLogError("collectDefiFormat: not supported in direct mode")
 
 
 if __name__ == "__main__":

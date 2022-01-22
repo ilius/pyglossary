@@ -709,7 +709,7 @@ class Glossary(GlossaryType):
 			sample = word
 		tag = self._getTitleTag(sample)
 		if _class:
-			return f'<{tag} class="{_class}">{word}</{tag}>'
+			return f'<{tag} class="{_class}">{word}</{tag}><br>'
 		return f'<{tag}>{word}</{tag}><br>'
 
 	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":

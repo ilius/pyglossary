@@ -403,10 +403,20 @@ class TestGlossary(TestGlossaryBase):
 		glos.sourceLangName = "en"
 		self.assertEqual(glos.sourceLangName, "English")
 
+	def test_lang_set_source_empty(self):
+		glos = self.glos = Glossary()
+		glos.sourceLangName = ""
+		self.assertEqual(glos.sourceLangName, "")
+
 	def test_lang_set_target(self):
 		glos = self.glos = Glossary()
 		glos.targetLangName = "fa"
 		self.assertEqual(glos.targetLangName, "Persian")
+
+	def test_lang_set_target_empty(self):
+		glos = self.glos = Glossary()
+		glos.targetLangName = ""
+		self.assertEqual(glos.targetLangName, "")
 
 	def test_lang_getObj_source(self):
 		glos = self.glos = Glossary()
@@ -735,6 +745,46 @@ japonica"""
 			self.assertEqual(str(e), "can not use sortWords in direct mode")
 		else:
 			self.fail("must raise NotImplementedError")
+
+	def test_read_filename(self):
+		glos = self.glos = Glossary()
+		glos.read(self.downloadFile("004-bar.txt"))
+		self.assertEqual(glos.filename, join(dataDir, "004-bar"))
+
+	def test_wordTitleStr_em1(self):
+		glos = self.glos = Glossary()
+		self.assertEqual(glos.wordTitleStr(""), "")
+
+	def test_wordTitleStr_em2(self):
+		glos = self.glos = Glossary()
+		glos._defiHasWordTitle = True
+		self.assertEqual(glos.wordTitleStr("test1"), "")
+
+	def test_wordTitleStr_b1(self):
+		glos = self.glos = Glossary()
+		self.assertEqual(glos.wordTitleStr("test1"), "<b>test1</b><br>")
+
+	def test_wordTitleStr_b2(self):
+		glos = self.glos = Glossary()
+		self.assertEqual(
+			glos.wordTitleStr("test1", _class="headword"),
+			'<b class="headword">test1</b><br>',
+		)
+
+	def test_wordTitleStr_cjk1(self):
+		glos = self.glos = Glossary()
+		self.assertEqual(
+			glos.wordTitleStr("test1", sample="くりかえし"),
+			"<big>test1</big><br>",
+		)
+
+	def test_wordTitleStr_cjk2(self):
+		glos = self.glos = Glossary()
+		self.assertEqual(
+			glos.wordTitleStr("くりかえし"),
+			"<big>くりかえし</big><br>",
+		)
+
 
 
 if __name__ == "__main__":
