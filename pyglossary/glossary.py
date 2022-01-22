@@ -833,6 +833,11 @@ class Glossary(GlossaryType):
 						or "" to detect from file extension
 		direct (bool):	enable direct mode
 		"""
+		if type(filename) is not str:
+			raise TypeError("filename must be str")
+		if type(format) is not str:
+			raise TypeError("format must be str")
+
 		filename = abspath(filename)
 
 		self._setTmpDataDir(filename)
@@ -1090,6 +1095,11 @@ class Glossary(GlossaryType):
 
 		returns absolute path of output file, or None if failed
 		"""
+		if type(filename) is not str:
+			raise TypeError("filename must be str")
+		if type(format) is not str:
+			raise TypeError("format must be str")
+
 		filename = abspath(filename)
 
 		validOptions = self.formatsWriteOptions.get(format)
@@ -1351,6 +1361,16 @@ class Glossary(GlossaryType):
 
 		defaultSortKey is used when no sortKey was given, or found in plugin
 		"""
+		if type(inputFilename) is not str:
+			raise TypeError("inputFilename must be str")
+		if type(outputFilename) is not str:
+			raise TypeError("outputFilename must be str")
+
+		if type(inputFormat) is not str:
+			raise TypeError("inputFormat must be str")
+		if type(outputFormat) is not str:
+			raise TypeError("outputFormat must be str")
+
 		if not readOptions:
 			readOptions = {}
 		if not writeOptions:

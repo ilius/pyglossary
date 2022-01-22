@@ -18,6 +18,10 @@ from pyglossary.os_utils import rmtree
 Glossary.init()
 
 
+class MyStr(str):
+	pass
+
+
 class TestGlossaryErrors(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
@@ -241,6 +245,104 @@ class TestGlossaryErrors(TestGlossaryBase):
 		glos.config = {"lower": False}
 		self.assertLogError("glos.config is set more than once")
 		self.assertEqual(glos.getConfig("lower", False), True)
+
+	def test_convert_typeErr_1(self):
+		glos = Glossary()
+		try:
+			glos.convert(
+				inputFilename=MyStr(""),
+			)
+		except TypeError as e:
+			self.assertEqual(str(e), "inputFilename must be str")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_convert_typeErr_2(self):
+		glos = Glossary()
+		try:
+			glos.convert(
+				inputFilename="",
+				outputFilename=MyStr(""),
+			)
+		except TypeError as e:
+			self.assertEqual(str(e), "outputFilename must be str")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_convert_typeErr_3(self):
+		glos = Glossary()
+		try:
+			glos.convert(
+				inputFilename="",
+				outputFilename="",
+				inputFormat=MyStr(""),
+			)
+		except TypeError as e:
+			self.assertEqual(str(e), "inputFormat must be str")
+		else:
+			self.fail("must raise TypeError")
+
+
+	def test_convert_typeErr_4(self):
+		glos = Glossary()
+		try:
+			glos.convert(
+				inputFilename="",
+				outputFilename="",
+				inputFormat="",
+				outputFormat=MyStr(""),
+			)
+		except TypeError as e:
+			self.assertEqual(str(e), "outputFormat must be str")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_read_typeErr_1(self):
+		glos = Glossary()
+		try:
+			glos.read(
+				filename=MyStr(""),
+			)
+		except TypeError as e:
+			self.assertEqual(str(e), "filename must be str")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_read_typeErr_2(self):
+		glos = Glossary()
+		try:
+			glos.read(
+				filename="",
+				format=MyStr(""),
+			)
+		except TypeError as e:
+			self.assertEqual(str(e), "format must be str")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_write_typeErr_1(self):
+		glos = Glossary()
+		try:
+			glos.write(
+				filename=MyStr(""),
+				format=""
+			)
+		except TypeError as e:
+			self.assertEqual(str(e), "filename must be str")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_write_typeErr_2(self):
+		glos = Glossary()
+		try:
+			glos.write(
+				filename="",
+				format=MyStr(""),
+			)
+		except TypeError as e:
+			self.assertEqual(str(e), "format must be str")
+		else:
+			self.fail("must raise TypeError")
 
 	def test_convert_sameFilename(self):
 		glos = Glossary()
