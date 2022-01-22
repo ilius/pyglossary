@@ -969,11 +969,7 @@ class Glossary(GlossaryType):
 			return
 
 		# direct mode
-		if not self._sort:
-			self._iter = self._readersEntryGen()
-			return
-
-		self._updateIterPartialSort()
+		self._iter = self._readersEntryGen()
 
 	def updateIter(self):
 		if self._readers:
