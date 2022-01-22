@@ -90,6 +90,43 @@ class TestGlossaryStarDict(TestGlossaryBase):
 				self.downloadFile(f"{fname}.sd/{fname}.{ext}")
 			)
 
+	def convert_txt_stardict_zip(
+		self,
+		fname,
+		sha1sumDict,
+		dictzip=False,
+		config=None,
+		rawEntryCompress=None,
+		**kwargs
+	):
+		inputFilename = self.downloadFile(f"{fname}.txt")
+		outputFilename = self.newTempFilePath(f"{fname}.zip")
+
+		glos = self.glos = Glossary()
+
+		if config is not None:
+			glos.config = config
+
+		if rawEntryCompress is not None:
+			glos.setRawEntryCompress(rawEntryCompress)
+
+		res = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+			outputFormat="Stardict",
+			writeOptions={
+				"dictzip": dictzip,
+			},
+			**kwargs
+		)
+		self.assertEqual(outputFilename, res)
+
+		self.checkZipFileSha1sum(
+			outputFilename,
+			sha1sumDict=sha1sumDict,
+		)
+
+
 	def convert_stardict_txt(
 		self,
 		inputFname: str,
@@ -126,6 +163,20 @@ class TestGlossaryStarDict(TestGlossaryBase):
 					rawEntryCompress=rawEntryCompress,
 					sqlite=sqlite,
 				)
+
+	def test_convert_txt_stardict_1_zip(self):
+		sha1sumDict = {
+			"100-en-fa.dict", "1e462e829f9e2bf854ceac2ef8bc55911460c79e",
+			"100-en-fa.idx", "943005945b35abf3a3e7b80375c76daa87e810f0",
+			"100-en-fa.ifo", "3e982a76f83eef66a8d4915e7a0018746f4180bc",
+			"100-en-fa.syn", "fcefc76628fed18b84b9aa83cd7139721b488545",
+		}
+		for sqlite in (None, False, True):
+			self.convert_txt_stardict_zip(
+				"100-en-fa",
+				sha1sumDict=sha1sumDict,
+				sqlite=sqlite,
+			)
 
 	def test_convert_txt_stardict_2(self):
 		for sqlite in (None, False, True):

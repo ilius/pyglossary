@@ -78,48 +78,29 @@ class EntryList(object):
 		pass
 
 
+def _zipFileAdd(zf, filename):
+	if isfile(filename):
+		zf.write(filename)
+		return
+	if not isdir(filename):
+		raise OSError("Not a file or directory: {filename}")
+	for subFname in os.listdir(filename):
+		_zipFileAdd(zf, join(filename, subFname))
 
-def winZipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
-	import shutil
-	from .os_utils import indir
-
-	tarCmd = shutil.which("tar")
-	if not tarCmd:
-		return "No tar command was found"
-
-	dirn, name = split(filename)
-	with indir(dirn):
-		output, error = subprocess.Popen(
-			[tarCmd, "-a", "-c", "-f", f"{name}.zip", name],
-			stdout=subprocess.PIPE,
-		).communicate()
-		if error:
-			return error
-
-	if isdir(filename):
-		shutil.rmtree(filename)
-	else:
-		os.remove(filename)
 
 def zipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
+	import zipfile
 	import shutil
 	from .os_utils import indir
 
-	zipCmd = shutil.which("zip")
-	if not zipCmd:
-		if os.sep == "\\":
-			return winZipFileOrDir(glos, filename)
-		return "No zip command was found"
+	zf = zipfile.ZipFile(f"{filename}.zip", mode="w")
 
 	if isdir(filename):
 		dirn, name = split(filename)
 		with indir(filename):
-			output, error = subprocess.Popen(
-				[zipCmd, "-r", f"../{name}.zip", ".", "-m"],
-				stdout=subprocess.PIPE,
-			).communicate()
-			if error:
-				return error
+			for subFname in os.listdir(filename):
+				_zipFileAdd(zf, subFname)
+
 		shutil.rmtree(filename)
 		return
 
@@ -130,12 +111,8 @@ def zipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
 		files.append(f"{name}_res")
 
 	with indir(dirn):
-		output, error = subprocess.Popen(
-			[zipCmd, "-mr", f"{filename}.zip"] + files,
-			stdout=subprocess.PIPE,
-		).communicate()
-		if error:
-			return error
+		for fname in files:
+			_zipFileAdd(zf, fname)
 
 
 def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
@@ -158,11 +135,11 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 			os.remove(compFilename)
 		except OSError:
 			pass
-		error = zipFileOrDir(glos, filename)
-		if error:
+		try:
+			error = zipFileOrDir(glos, filename)
+		except Exception as e:
 			log.error(
-				error + "\n" +
-				f"Failed to compress file \"{filename}\""
+				f"{e}\nFailed to compress file \"{filename}\""
 			)
 	else:
 		raise ValueError(f"unexpected compression={compression!r}")

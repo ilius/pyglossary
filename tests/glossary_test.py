@@ -167,6 +167,25 @@ class TestGlossaryBase(unittest.TestCase):
 				msg=f"zfpath={zfpath!r}",
 			)
 
+	def checkZipFileSha1sum(
+		self,
+		fpath,
+		sha1sumDict: "Dict[str, str]",
+		dataReplaceFuncs: "Optional[Dict[str, Callable]]" = None,
+	):
+		if dataReplaceFuncs is None:
+			dataReplaceFuncs = {}
+		zf = zipfile.ZipFile(fpath)
+		pathList = zf.namelist()
+		for zfpath in pathList:
+			expectedSha1 = sha1sumDict[zfpath]
+			data = zf.read(zfpath)
+			func = dataReplaceFuncs.get(zfpath)
+			if func is not None:
+				data = func(data1)
+			actualSha1 = hashlib.sha1(data).hexdigest()
+			self.assertTrue(actualSha1, expectedSha1)
+
 	def convert(
 		self,
 		fname,  # input file with extension
