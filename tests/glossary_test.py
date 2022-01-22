@@ -435,7 +435,6 @@ class TestGlossary(TestGlossaryBase):
 			**convertArgs,
 		)
 
-
 	def convert_to_txtZip(
 		self,
 		fname,  # input file with extension
@@ -725,6 +724,17 @@ japonica"""
 				['bitter apple'], ['darkling beetle']
 			],
 		)
+
+	def test_sortWords_exc_1(self):
+		fname = "100-en-fa.txt"
+		glos = self.glos = Glossary()
+		glos.read(self.downloadFile(fname), direct=True)
+		try:
+			glos.sortWords()
+		except NotImplementedError as e:
+			self.assertEqual(str(e), "can not use sortWords in direct mode")
+		else:
+			self.fail("must raise NotImplementedError")
 
 
 if __name__ == "__main__":

@@ -268,7 +268,6 @@ class Glossary(GlossaryType):
 		self._entryFilters = []
 		self._entryFiltersName = set()
 		self._sort = False
-		self._sortKey = None
 
 		self._filename = ""
 		self._defaultDefiFormat = "m"
@@ -961,8 +960,6 @@ class Glossary(GlossaryType):
 		depending on:
 			1- Wheather or not direct mode is On (self._readers not empty)
 				or Off (self._readers empty)
-			2- Wheather sort is True, and if it is,
-				checks for self._sortKey
 		"""
 		if not self._readers:  # indirect mode
 			self._iter = self._loadedEntryGen()
@@ -983,16 +980,18 @@ class Glossary(GlossaryType):
 		if key is None:
 			log.warning("sortWords: no key function is provided")
 		if self._readers:
-			self._sortKey = key
-		else:
-			if self._sqlite:
-				raise TypeError(
-					"can not use sortWords in SQLite mode"
-				)
-			t0 = now()
-			self._data.setSortKey(key, ["a", "b"])
-			self._data.sort()
-			log.info(f"Sorting took {now() - t0:.1f} seconds")
+			raise NotImplementedError(
+				"can not use sortWords in direct mode"
+			)
+
+		if self._sqlite:
+			raise NotImplementedError(
+				"can not use sortWords in SQLite mode"
+			)
+		t0 = now()
+		self._data.setSortKey(key, ["a", "b"])
+		self._data.sort()
+		log.info(f"Sorting took {now() - t0:.1f} seconds")
 		self._sort = True
 		self._updateIter()
 
@@ -1212,14 +1211,11 @@ class Glossary(GlossaryType):
 					)
 					return
 
-			if self._readers:
-				self._sortKey = sortKey
-			else:
-				t0 = now()
-				if not self._sqlite:
-					self._data.setSortKey(sortKey, ["a", "b"])
-				self._data.sort()
-				log.info(f"Sorting took {now() - t0:.1f} seconds")
+			t0 = now()
+			if not self._sqlite:
+				self._data.setSortKey(sortKey, ["a", "b"])
+			self._data.sort()
+			log.info(f"Sorting took {now() - t0:.1f} seconds")
 
 		self._updateIter()
 		try:
