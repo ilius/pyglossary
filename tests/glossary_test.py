@@ -35,6 +35,9 @@ dataURL = (
 dataDir = join(cacheDir, "test")
 appTmpDir = join(cacheDir, "tmp")
 
+
+if not isdir(dataDir):
+	os.makedirs(dataDir)
 os.chdir(dataDir)
 
 
@@ -58,6 +61,8 @@ class TestGlossaryBase(unittest.TestCase):
 			"100-en-fa.info": "9bddb7bb",
 			"100-ja-en.info": "8cf5403c",
 
+			"300-rand-en-fa.txt": "586617c8",
+
 			"res/stardict.png": "7e1447fa",
 			"res/test.json": "41f8cf31",
 		}
@@ -67,8 +72,6 @@ class TestGlossaryBase(unittest.TestCase):
 
 	def setUp(self):
 		self.glos = None
-		if not isdir(dataDir):
-			os.makedirs(dataDir)
 		self.tempDir = tempfile.mkdtemp(dir=dataDir)
 
 	def tearDown(self):
@@ -231,10 +234,17 @@ class TestGlossary(TestGlossaryBase):
 
 		self.dataFileCRC32.update({
 			"100-en-fa-sort.txt": "d7a82dc8",
+			"100-en-fa-sort-headword.txt": "4067a29f",
+
 			"100-en-fa-lower.txt": "62178940",
 			"100-en-fa-remove_html_all.txt": "d611c978",
 			"100-en-fa-rtl.txt": "25ede1e8",
+
 			"100-en-de-remove_font_b.txt": "727320ac",
+
+			"300-rand-en-fa-sort-headword-w1256.txt": "06d83bac",
+			"300-rand-en-fa-sort-headword.txt": "df0f8020",
+			"300-rand-en-fa-sort-w1256.txt": "9594aab3",
 		})
 
 	def setUp(self):
@@ -512,6 +522,53 @@ class TestGlossary(TestGlossaryBase):
 			sort=True,
 		)
 
+	def test_sort_2(self):
+		self.convert_txt_txt(
+			"100-en-fa",
+			"100-en-fa-sort",
+			testId="sort_2",
+			sort=True,
+			sortKeyName="headword_lower",
+		)
+
+	def test_sort_3(self):
+		self.convert_txt_txt(
+			"100-en-fa",
+			"100-en-fa-sort-headword",
+			testId="sort_3",
+			sort=True,
+			sortKeyName="headword",
+		)
+
+	def test_sort_4(self):
+		self.convert_txt_txt(
+			"300-rand-en-fa",
+			"300-rand-en-fa-sort-headword",
+			testId="sort_4",
+			sort=True,
+			sortKeyName="headword",
+		)
+
+	def test_sort_5(self):
+		self.convert_txt_txt(
+			"300-rand-en-fa",
+			"300-rand-en-fa-sort-headword-w1256",
+			testId="sort_5",
+			sort=True,
+			sortKeyName="headword",
+			sortEncoding="windows-1256",
+		)
+
+	def test_sort_6(self):
+		self.convert_txt_txt(
+			"300-rand-en-fa",
+			"300-rand-en-fa-sort-w1256",
+			testId="sort_6",
+			sort=True,
+			sortKeyName="headword_lower",
+			sortEncoding="windows-1256",
+		)
+
 	def test_lower_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
@@ -675,9 +732,9 @@ class TestGlossary(TestGlossaryBase):
 		glos.setRawEntryCompress(False)
 		self.assertFalse(glos.rawEntryCompress)
 
-	def addWords(self, glos, wordsStr, newDefiFunc, defiFormat=""):
+	def addWordsList(self, glos, words, newDefiFunc=str, defiFormat=""):
 		wordsList = []
-		for index, line in enumerate(wordsStr.split("\n")):
+		for index, line in enumerate(words):
 			words = line.rstrip().split("|")
 			wordsList.append(words)
 			glos.addEntryObj(glos.newEntry(
@@ -688,6 +745,9 @@ class TestGlossary(TestGlossaryBase):
 
 		glos.updateIter()
 		return wordsList
+
+	def addWords(self, glos, wordsStr, **kwargs):
+		return self.addWordsList(glos, wordsStr.split("\n"), **kwargs)
 
 	tenWordsStr = """comedic
 tubenose
@@ -700,12 +760,25 @@ caca|ca-ca
 darkling beetle
 japonica"""
 
+	tenWordsStr2 = """comedic
+Tubenose
+organosol
+Adipocere
+gid
+Next friend
+bitter apple
+Caca|ca-ca
+darkling beetle
+Japonica"""
+
+	tenWordsStrFa = "بیمارانه\nگالوانومتر\nنقاهت\nرشکمندی\nناکاستنی\nشگفتآفرینی\nچندپاری\nنامبارکی\nآماسش\nانگیزنده"
+
 	def test_addEntries_1(self):
 		glos = self.glos = Glossary()
 		wordsList = self.addWords(
 			glos,
 			self.tenWordsStr,
-			lambda i: str(random.randint(0, 10000)),
+			newDefiFunc=lambda i: str(random.randint(0, 10000)),
 		)
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 
@@ -728,7 +801,7 @@ japonica"""
 		wordsList = self.addWords(
 			glos,
 			self.tenWordsStr,
-			lambda i: str(random.randint(0, 10000)),
+			newDefiFunc=lambda i: str(random.randint(0, 10000)),
 		)
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 		glos.sortWords()
@@ -738,18 +811,79 @@ japonica"""
 		glos = self.glos = Glossary()
 		wordsList = self.addWords(
 			glos,
-			self.tenWordsStr,
-			lambda i: str(random.randint(0, 10000)),
+			self.tenWordsStr2,
+			newDefiFunc=lambda i: str(random.randint(0, 10000)),
 		)
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
-		glos.sortWords(key=lambda words: (len(words[0]), words[0]))
+		glos.sortWords(sortKeyName="headword")
 		self.assertEqual(
 			[entry.l_word for entry in glos],
 			[
-				['gid'], ['caca', 'ca-ca'], ['comedic'], ['japonica'],
-				['tubenose'], ['adipocere'], ['organosol'], ['next friend'],
-				['bitter apple'], ['darkling beetle']
+				['Adipocere'],
+				['Caca', 'ca-ca'],
+				['Japonica'],
+				['Next friend'],
+				['Tubenose'],
+				['bitter apple'],
+				['comedic'],
+				['darkling beetle'],
+				['gid'],
+				['organosol'],
 			],
+		)
+
+	def test_sortWords_3(self):
+		glos = self.glos = Glossary()
+		wordsList = self.addWords(
+			glos,
+			self.tenWordsStrFa,
+			newDefiFunc=lambda i: str(random.randint(0, 10000)),
+		)
+		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		glos.sortWords(sortKeyName="headword")
+		ls1 = ['آماسش', 'انگیزنده', 'بیمارانه', 'رشکمندی', 'شگفتآفرینی']
+		ls2 = ['نامبارکی', 'ناکاستنی', 'نقاهت', 'چندپاری', 'گالوانومتر']
+		self.assertEqual(
+			[entry.s_word for entry in glos],
+			ls1 + ls2,
+		)
+
+	def test_sortWords_4(self):
+		glos = self.glos = Glossary()
+		wordsList = self.addWords(
+			glos,
+			self.tenWordsStrFa,
+			newDefiFunc=lambda i: str(random.randint(0, 10000)),
+		)
+		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		glos.sortWords(
+			sortKeyName="headword",
+			sortEncoding="windows-1256",
+		)
+		ls1 = ['چندپاری', 'گالوانومتر', 'آماسش', 'انگیزنده', 'بیمارانه']
+		ls2 = ['رشکمندی', 'شگفتآفرینی', 'ناکاستنی', 'نامبارکی', 'نقاهت']
+		self.assertEqual(
+			[entry.s_word for entry in glos],
+			ls1 + ls2,
+		)
+
+	def test_sortWords_5(self):
+		glos = self.glos = Glossary()
+		alphabetW1256 = "ءآأئابتثجحخدذرزسشصضطظعغـفقكلمنهوىي"
+		alphabetW1256_shuf = "مفزنصـذرخوآظسقلدغطيعحءأتىئاجهضثشكب"
+		wordsList = self.addWordsList(
+			glos,
+			list(alphabetW1256_shuf),
+			newDefiFunc=lambda i: str(random.randint(0, 10000)),
+		)
+		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		glos.sortWords(
+			sortKeyName="headword",
+			sortEncoding="windows-1256",
+		)
+		self.assertEqual(
+			[entry.s_word for entry in glos],
+			list(alphabetW1256),
 		)
 
 	def test_sortWords_exc_1(self):
@@ -801,7 +935,6 @@ japonica"""
 			glos.wordTitleStr("くりかえし"),
 			"<big>くりかえし</big><br>",
 		)
-
 
 
 if __name__ == "__main__":

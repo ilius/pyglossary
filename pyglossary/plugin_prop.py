@@ -100,8 +100,8 @@ class PluginProp(object):
 		return getattr(self._mod, "sortOnWrite", DEFAULT_NO)
 
 	@property
-	def sqliteSortKey(self) -> "Optional[Callable]":
-		return getattr(self.writerClass, "sqliteSortKey", None)
+	def sortKeyName(self) -> "Optional[Callable]":
+		return getattr(self._mod, "sortKeyName", None)
 
 	@property
 	def path(self) -> "pathlib.Path":

@@ -33,6 +33,7 @@ description = "Mobipocket (.mobi) E-Book"
 extensions = (".mobi",)
 extensionCreate = ".mobi"
 sortOnWrite = DEFAULT_YES
+sortKeyName = "ebook"
 kind = "package"
 wiki = "https://en.wikipedia.org/wiki/Mobipocket"
 website = None
@@ -210,14 +211,6 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		if prefix[0] < "a":
 			return "SPECIAL"
 		return prefix
-
-	def sortKey(self, words: "List[str]") -> "Any":
-		# DO NOT change method name
-		word = words[0]
-		return (
-			self.get_prefix(word),
-			word,
-		)
 
 	def format_group_content(self, word: "List[str]", defi: str) -> str:
 		hide_word_index = self._hide_word_index

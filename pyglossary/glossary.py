@@ -58,6 +58,7 @@ from .glossary_utils import (
 	splitFilenameExt,
 	EntryList,
 )
+from .sort_keys import namedSortKeyByName, NamedSortKey
 from .os_utils import showMemoryUsage, rmtree
 from .glossary_type import GlossaryType
 from .info import *
@@ -71,6 +72,8 @@ sortKeyType = Callable[
 	Any,
 ]
 """
+
+defaultSortKeyName = "headword_lower"
 
 
 class Glossary(GlossaryType):
@@ -975,10 +978,10 @@ class Glossary(GlossaryType):
 
 	def sortWords(
 		self,
-		key: "Optional[Callable[[bytes], Any]]" = None,
+		sortKeyName: "str" = "headword_lower",
+		sortEncoding: "str" = "utf-8",
+		writeOptions: "Optional[Dict[str, Any]]" = None,
 	) -> None:
-		if key is None:
-			log.warning("sortWords: no key function is provided")
 		if self._readers:
 			raise NotImplementedError(
 				"can not use sortWords in direct mode"
@@ -988,9 +991,17 @@ class Glossary(GlossaryType):
 			raise NotImplementedError(
 				"can not use sortWords in SQLite mode"
 			)
+
+		namedSortKey = namedSortKeyByName.get(sortKeyName)
+		if namedSortKey is None:
+			log.critical(f"invalid sortKeyName = {sortKeyName!r}")
+			return
+
 		t0 = now()
-		self._data.setSortKey(key, ["a", "b"])
+
+		self._dataSetNamedSortKey(namedSortKey, sortEncoding, writeOptions)
 		self._data.sort()
+
 		log.info(f"Sorting took {now() - t0:.1f} seconds")
 		self._sort = True
 		self._updateIter()
@@ -1076,10 +1087,38 @@ class Glossary(GlossaryType):
 		format: str,
 		options: "Dict[str, Any]",
 	) -> "Any":
+		validOptions = self.formatsWriteOptions.get(format)
+		if validOptions is None:
+			log.critical(f"No write support for {format!r} format")
+			return
+		validOptionKeys = list(validOptions.keys())
+		for key in list(options.keys()):
+			if key not in validOptionKeys:
+				log.error(
+					f"Invalid write option {key!r}"
+					f" given for {format} format"
+				)
+				del options[key]
+
 		writer = self.plugins[format].writerClass(self)
 		for name, value in options.items():
 			setattr(writer, f"_{name}", value)
 		return writer
+
+	def _dataSetNamedSortKey(
+		self,
+		namedSortKey: "NamedSortKey",
+		sortEncoding: "Optional[str]",
+		writeOptions: "Dict[str, Any]",
+	):
+		if not sortEncoding:
+			sortEncoding = "utf-8"
+		if writeOptions is None:
+			writeOptions = {}
+		self._data.setSortKey(
+			namedSortKey.normal(sortEncoding, **writeOptions),
+			["a", "b"]
+		)
 
 	def write(
 		self,
@@ -1097,9 +1136,11 @@ class Glossary(GlossaryType):
 			False (disable sorting),
 			None (auto, get from UI)
 
-		sortKey (callable or None):
-			key function for sorting
-			takes words as argument, which is list of str (with alternates)
+		sortKeyName (str or None):
+			key function name for sorting
+
+		sortEncoding (str or None):
+			encoding for sorting, default utf-8
 
 		You can pass write-options (of given format) as keyword arguments
 
@@ -1121,59 +1162,23 @@ class Glossary(GlossaryType):
 		filename: str,
 		format: str,
 		sort: "Optional[bool]" = None,
-		sortKey: "Optional[sortKeyType]" = None,
+		namedSortKey: "Optional[NamedSortKey]" = None,
+		sortEncoding: "Optional[str]" = None,
 		**options
 	) -> "Optional[str]":
 		filename = abspath(filename)
 
-		defaultSortKey = Entry.defaultSortKey
-
-		validOptions = self.formatsWriteOptions.get(format)
-		if validOptions is None:
-			log.critical(f"No write support for {format!r} format")
+		if format not in self.plugins or not self.plugins[format].canWrite:
+			log.critical(f"No Writer class found for plugin {format}")
 			return
-		validOptionKeys = list(validOptions.keys())
-		for key in list(options.keys()):
-			if key not in validOptionKeys:
-				log.error(
-					f"Invalid write option {key!r}"
-					f" given for {format} format"
-				)
-				del options[key]
 
 		plugin = self.plugins[format]
-		sortOnWrite = plugin.sortOnWrite
-		if sortOnWrite == ALWAYS:
-			if sort is False:
-				log.warning(
-					f"Writing {format} requires sorting"
-					f", ignoring user sort=False option"
-				)
-			sort = True
-		elif sortOnWrite == DEFAULT_YES:
-			if sort is None:
-				sort = True
-		elif sortOnWrite == DEFAULT_NO:
-			if sort is None:
-				sort = False
-		elif sortOnWrite == NEVER:
-			if sort:
-				log.warning(
-					"Plugin prevents sorting before write" +
-					", ignoring user sort=True option"
-				)
-			sort = False
 
 		if self._readers and sort:
 			log.warning(
 				f"Full sort enabled, falling back to indirect mode"
 			)
 			self._inactivateDirectMode()
-
-		writer = None
-		if format not in self.plugins or not self.plugins[format].canWrite:
-			log.critical(f"No Writer class found for plugin {format}")
-			return
 
 		log.info(f"Writing to {format} file {filename!r}")
 
@@ -1182,36 +1187,9 @@ class Glossary(GlossaryType):
 		self._sort = sort
 
 		if sort:
-			writerSortKey = getattr(writer, "sortKey", None)
-			if sortOnWrite == ALWAYS:
-				if writerSortKey:
-					if sortKey:
-						log.warning(
-							f"Ignoring user-defined sort order, and "
-							f"using sortKey function from {format} plugin"
-						)
-					sortKey = writerSortKey
-				else:
-					log.critical(f"No sortKey was found in plugin")
-					return
-
-			if sortKey is None:
-				if writerSortKey:
-					log.info(f"Using sortKey from {format} plugin")
-					sortKey = writerSortKey
-				elif defaultSortKey:
-					log.info(f"Using default sortKey")
-					sortKey = defaultSortKey
-				else:
-					log.critical(
-						"No sortKey was found"
-						" (need to pass defaultSortKey argument)"
-					)
-					return
-
 			t0 = now()
 			if not self._sqlite:
-				self._data.setSortKey(sortKey, ["a", "b"])
+				self._dataSetNamedSortKey(namedSortKey, sortEncoding, options)
 			self._data.sort()
 			log.info(f"Sorting took {now() - t0:.1f} seconds")
 
@@ -1284,18 +1262,15 @@ class Glossary(GlossaryType):
 		self,
 		inputFilename: str,
 		outputFormat: str,
+		namedSortKey: "NamedSortKey",
+		sortEncoding: "Optional[str]",
 		writeOptions: "Dict[str, Any]",
 	) -> bool:
 		from pyglossary.sq_entry_list import SqEntryList
 
-		outputPlugin = self.plugins[outputFormat]
-		sqliteSortKeyFunc = outputPlugin.sqliteSortKey
-
-		if not sqliteSortKeyFunc:
-			log.warning(f"{outputFormat} writer does not support sqliteSortKey")
-			return False
-
-		sqliteSortKey = sqliteSortKeyFunc(writeOptions)
+		if not sortEncoding:
+			sortEncoding = "utf-8"
+		sqliteSortKey = namedSortKey.sqlite(sortEncoding, **writeOptions)
 
 		sq_fpath = join(cacheDir, f"{basename(inputFilename)}.db")
 		if isfile(sq_fpath):
@@ -1319,49 +1294,105 @@ class Glossary(GlossaryType):
 			)
 		self._config["enable_alts"] = True
 		self._sqlite = True
-		return True
 
 	def _resolveConvertSortParams(
 		self,
 		sort: "Optional[bool]",
+		sortKeyName: "Optional[str]",
+		sortEncoding: "Optional[str]",
 		direct: "Optional[bool]",
 		sqlite: "Optional[bool]",
 		inputFilename: str,
 		outputFormat: str,
 		writeOptions: "Dict[str, Any]",
-	) -> "Tuple[bool, bool]":
+	) -> "Tuple[bool, bool, Optional[NamedSortKey]]":
 		"""
-			returns (sort, direct)
+			returns (sort, direct, namedSortKey)
 		"""
+		plugin = self.plugins[outputFormat]
 
-		if not direct and sqlite is None:
-			_sort = sort
-			outputPlugin = self.plugins[outputFormat]
-			if outputPlugin.sortOnWrite == ALWAYS:
-				_sort = True
-			sqlite = (
-				_sort and
-				self._config.get("auto_sqlite", True) and
-				bool(outputPlugin.sqliteSortKey)
-			)
+		sortOnWrite = plugin.sortOnWrite
+		if sortOnWrite == ALWAYS:
+			if sort is False:
+				log.warning(
+					f"Writing {format} requires sorting"
+					f", ignoring user sort=False option"
+				)
+			sort = True
+		elif sortOnWrite == DEFAULT_YES:
+			if sort is None:
+				sort = True
+		elif sortOnWrite == DEFAULT_NO:
+			if sort is None:
+				sort = False
+		elif sortOnWrite == NEVER:
+			if sort:
+				log.warning(
+					"Plugin prevents sorting before write" +
+					", ignoring user sort=True option"
+				)
+			sort = False
+
+		if direct and sqlite:
+			raise ValueError(f"Conflictng arguments: direct={direct}, sqlite={sqlite}")
+
+		if not sort:
+			if direct is None:
+				direct = True
+			return direct, False, None
+
+		direct = False
+		# from this point, sort == True and direct == False
+
+		writerSortKeyName = plugin.sortKeyName
+		namedSortKey = None
+
+		writerSortEncoding = getattr(plugin, "sortEncoding", None)
+
+		if sqlite is None:
+			sqlite = sort and self._config.get("auto_sqlite", True)
 			if sqlite:
 				log.info(
 					"Automatically switching to SQLite mode"
 					f" for writing {outputFormat}"
 				)
 
+		if sortOnWrite == ALWAYS:
+			if writerSortKeyName:
+				if sortKeyName and sortKeyName != writerSortKeyName:
+					log.warning(
+						f"Ignoring user-defined sort order {sortKeyName!r}"
+						f", and using sortKey function from {format} plugin"
+					)
+				sortKeyName = writerSortKeyName
+			else:
+				log.critical(f"No sortKeyName was found in plugin")
+				return False, True, None
+			if writerSortEncoding:
+				sortEncoding = writerSortEncoding
+		elif not sortKeyName:
+			if writerSortKeyName:
+				sortKeyName = writerSortKeyName
+			else:
+				sortKeyName = defaultSortKeyName
+
+		namedSortKey = namedSortKeyByName.get(sortKeyName)
+		if namedSortKey is None:
+			log.critical(f"invalid sortKeyName = {sortKeyName!r}")
+			return False, True, None
+
+		log.info(f"Using sortKeyName = {namedSortKey.name!r}")
+
 		if sqlite:
-			if direct:
-				raise ValueError(f"Conflictng arguments: direct={direct}, sqlite={sqlite}")
-			direct = False
-			if self._switchToSQLite(inputFilename, outputFormat, writeOptions):
-				return sort, direct
+			self._switchToSQLite(
+				inputFilename=inputFilename,
+				outputFormat=outputFormat,
+				namedSortKey=namedSortKey,
+				sortEncoding=sortEncoding,
+				writeOptions=writeOptions,
+			)
 
-		if direct is None:
-			# if sort is in (False, None) ==> direct = True
-			direct = not sort
-
-		return sort, direct
+		return False, True, namedSortKey
 
 	def convert(
 		self,
@@ -1372,7 +1403,8 @@ class Glossary(GlossaryType):
 		outputFilename: str = "",
 		outputFormat: str = "",
 		sort: "Optional[bool]" = None,
-		sortKey: "Optional[sortKeyType]" = None,
+		sortKeyName: "Optional[str]" = None,
+		sortEncoding: "Optional[str]" = None,
 		readOptions: "Optional[Dict[str, Any]]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
 		sqlite: "Optional[bool]" = None,
@@ -1380,6 +1412,12 @@ class Glossary(GlossaryType):
 	) -> "Optional[str]":
 		"""
 		returns absolute path of output file, or None if failed
+
+		sortKeyName: name of sort key/algorithm
+			defaults to `defaultSortKeyName` in glossary.py
+			see sort_keys.py for other possible values
+
+		sortEncoding: encoding/charset for sorting, default to utf-8
 		"""
 		if type(inputFilename) is not str:
 			raise TypeError("inputFilename must be str")
@@ -1420,16 +1458,20 @@ class Glossary(GlossaryType):
 			log.critical(f"Directory already exists: {outputFilename}")
 			return
 
-		sort, direct = self._resolveConvertSortParams(
+		direct, sort, namedSortKey = self._resolveConvertSortParams(
 			sort=sort,
+			sortKeyName=sortKeyName,
+			sortEncoding=sortEncoding,
 			direct=direct,
 			sqlite=sqlite,
 			inputFilename=inputFilename,
 			outputFormat=outputFormat,
 			writeOptions=writeOptions,
 		)
-		del sqlite
+		if sort and namedSortKey is None:
+			return
 
+		del sqlite
 		showMemoryUsage()
 
 		tm0 = now()
@@ -1454,7 +1496,8 @@ class Glossary(GlossaryType):
 			outputFilename,
 			outputFormat,
 			sort=sort,
-			sortKey=sortKey,
+			namedSortKey=namedSortKey,
+			sortEncoding=sortEncoding,
 			**writeOptions
 		)
 		log.info("")

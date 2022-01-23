@@ -29,6 +29,7 @@ description = "EPUB-2 E-Book"
 extensions = (".epub",)
 extensionCreate = ".epub"
 sortOnWrite = ALWAYS
+sortKeyName = "ebook"
 kind = "package"
 wiki = "https://en.wikipedia.org/wiki/EPUB"
 website = None
@@ -203,21 +204,6 @@ p.groupDefinition {
 		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
 	@classmethod
-	def sqliteSortKey(cls, options):
-		return [
-			(
-				"wordprefix",
-				"TEXT",
-				lambda words: cls.cls_get_prefix(options, words[0]),
-			),
-			(
-				"word",
-				"TEXT",
-				lambda words: words[0].encode("utf-8"),
-			),
-		]
-
-	@classmethod
 	def cls_get_prefix(cls, options: "Dict[str, Any]", word: str) -> str:
 		if not word:
 			return None
@@ -235,14 +221,6 @@ p.groupDefinition {
 		if prefix[0] < "a":
 			return "SPECIAL"
 		return prefix
-
-	def sortKey(self, words: "List[str]") -> "Any":
-		# DO NOT change method name
-		word = words[0]
-		return (
-			self.get_prefix(word),
-			word,
-		)
 
 	def write_ncx(self, group_labels):
 		"""

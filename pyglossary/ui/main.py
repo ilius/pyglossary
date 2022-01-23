@@ -431,6 +431,20 @@ def main():
 		action="store_false",
 		default=None,
 	)
+	parser.add_argument(
+		"--sort-key",
+		action="store",
+		dest="sortKeyName",
+		default=None,
+		help="name of sort key",
+	)
+	parser.add_argument(
+		"--sort-encoding",
+		action="store",
+		dest="sortEncoding",
+		default=None,
+		help="encoding of sort (default utf-8)",
+	)
 
 	# _______________________________
 
@@ -529,6 +543,14 @@ def main():
 		# args.direct is None by default which means automatic
 		args.direct = False
 
+	if not args.sort:
+		if args.sortKeyName:
+			log.critical("Passed --sort-key without --sort")
+			sys.exit(1)
+		if args.sortEncoding:
+			log.critical("Passed --sort-encoding without --sort")
+			sys.exit(1)
+
 	core.checkCreateConfDir()
 
 	if sys.getdefaultencoding() != "utf-8":
@@ -604,7 +626,8 @@ def main():
 		"direct",
 		"progressbar",
 		"sort",
-		# "sortKey",  # TODO
+		"sortKeyName",
+		"sortEncoding",
 		"sqlite",
 	)
 	infoOverrideSpec = (

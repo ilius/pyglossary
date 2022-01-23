@@ -26,6 +26,11 @@ format = "Stardict"
 description = "StarDict (.ifo)"
 extensions = (".ifo",)
 extensionCreate = "-stardict/"
+
+sortOnWrite = ALWAYS
+sortKeyName = "stardict"
+sortEncoding = "utf-8"
+
 kind = "directory"
 wiki = "https://en.wikipedia.org/wiki/StarDict"
 website = (
@@ -65,12 +70,9 @@ optionsProp = {
 		comment="Add glossary's audio icon",
 	),
 }
-sortOnWrite = ALWAYS
-# sortKey is defined in Writer class
 
 if os.getenv("PYGLOSSARY_STARDICT_NO_FORCE_SORT") == "1":
 	sortOnWrite = DEFAULT_YES
-
 
 infoKeys = (
 	"bookname",
@@ -471,32 +473,6 @@ class Writer(object):
 	_audio_goldendict: bool = False
 	_audio_icon: bool = True
 
-	@classmethod
-	def sqliteSortKey(cls, options):
-		return [
-			(
-				"wordlower",
-				"TEXT",
-				lambda words: words[0].encode("utf-8").lower(),
-				# str.lower() does not work for StarDict
-				# because it also lowercases non-ASCII alphabet
-			),
-			(
-				"word",
-				"TEXT",
-				itemgetter(0),
-			),
-		]
-
-	"""
-		https://en.wikipedia.org/wiki/UTF-8#Comparison_with_other_encodings
-
-		Sorting order: The chosen values of the leading bytes means that a list
-		of UTF-8 strings can be sorted in code point order by sorting the
-		corresponding byte sequences.
-	"""
-
-
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
 		self._filename = None
@@ -516,15 +492,6 @@ class Writer(object):
 		)
 
 	def byteSortKey(self, b_word: bytes) -> "Tuple[bytes, bytes]":
-		return (
-			b_word.lower(),
-			b_word,
-		)
-
-	def sortKey(self, words: "List[str]") -> "Tuple[bytes, bytes]":
-		if not isinstance(words, list):
-			raise TypeError(f"words = {words!r}")
-		b_word = words[0].encode("utf-8")
 		return (
 			b_word.lower(),
 			b_word,

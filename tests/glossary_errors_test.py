@@ -420,6 +420,18 @@ class TestGlossaryErrors(TestGlossaryBase):
 		)
 		self.assertLogCritical(f"Writing file '{outputFilename}' failed.")
 
+	def test_convert_invalidSortKeyName(self):
+		glos = self.glos = Glossary()
+		outputFilename = self.newTempFilePath("none.txt")
+		res = glos.convert(
+			inputFilename=self.downloadFile("100-en-fa.txt"),
+			outputFilename=outputFilename,
+			sort=True,
+			sortKeyName="blah",
+		)
+		self.assertIsNone(res)
+		self.assertLogCritical("invalid sortKeyName = 'blah'")
+
 	def test_collectDefiFormat_direct(self):
 		fname = "100-en-fa.txt"
 		glos = self.glos = Glossary()
@@ -427,6 +439,13 @@ class TestGlossaryErrors(TestGlossaryBase):
 		res = glos.collectDefiFormat(10)
 		self.assertIsNone(res)
 		self.assertLogError("collectDefiFormat: not supported in direct mode")
+
+	def test_sortWords_invalidSortKeyName(self):
+		glos = self.glos = Glossary()
+		glos.sortWords(
+			sortKeyName="blah",
+		)
+		self.assertLogCritical("invalid sortKeyName = 'blah'")
 
 
 if __name__ == "__main__":

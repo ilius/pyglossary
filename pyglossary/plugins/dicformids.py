@@ -11,6 +11,8 @@ description = "DictionaryForMIDs"
 extensions = (".mids",)
 extensionCreate = ".mids/"
 sortOnWrite = ALWAYS
+sortKeyName = "dicformids"
+sortEncoding = "utf-8"
 kind = "directory"
 wiki = ""
 website = (
@@ -140,14 +142,6 @@ class Writer(object):
 		word = self.re_tabs.sub(" ", word)
 		word = word.lower()
 		return word
-
-	#def _sortKeyFunc(self, rawEntry: List[str, str, str]) -> Any:
-	#	pass
-
-	def sortKey(self, words: "List[str]") -> "Any":
-		# DO NOT change method name
-		# FIXME: confirm
-		return self.normateWord(words[0])
 
 	def writeProbs(self):
 		glos = self._glos
