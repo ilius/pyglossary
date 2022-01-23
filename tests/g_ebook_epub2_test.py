@@ -117,14 +117,22 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			)
 
 	def test_convert_to_epub_6(self):
-		for sqlite in (True, False):
-			self.convert_to_epub(
-				"300-rand-en-fa.txt",
-				"300-rand-en-fa-prefix3",
-				"6",
-				sqlite=sqlite,
-				writeOptions={"group_by_prefix_length": 3},
-			)
+		self.convert_to_epub(
+			"300-rand-en-fa.txt",
+			"300-rand-en-fa-prefix3",
+			"6",
+			sqlite=True,
+			writeOptions={"group_by_prefix_length": 3},
+		)
+
+	def test_convert_to_epub_7(self):
+		self.convert_to_epub(
+			"300-rand-en-fa.txt",
+			"300-rand-en-fa-prefix3",
+			"7",
+			sqlite=False,
+			writeOptions={"group_by_prefix_length": 3},
+		)
 
 
 if __name__ == "__main__":
