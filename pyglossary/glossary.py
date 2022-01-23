@@ -1101,9 +1101,6 @@ class Glossary(GlossaryType):
 			key function for sorting
 			takes words as argument, which is list of str (with alternates)
 
-		defaultSortKey (callable or None):
-			used when no sortKey was given, or found in plugin
-
 		You can pass write-options (of given format) as keyword arguments
 
 		returns absolute path of output file, or None if failed
@@ -1125,10 +1122,11 @@ class Glossary(GlossaryType):
 		format: str,
 		sort: "Optional[bool]" = None,
 		sortKey: "Optional[sortKeyType]" = None,
-		defaultSortKey: "Optional[sortKeyType]" = None,
 		**options
 	) -> "Optional[str]":
 		filename = abspath(filename)
+
+		defaultSortKey = Entry.defaultSortKey
 
 		validOptions = self.formatsWriteOptions.get(format)
 		if validOptions is None:
@@ -1375,7 +1373,6 @@ class Glossary(GlossaryType):
 		outputFormat: str = "",
 		sort: "Optional[bool]" = None,
 		sortKey: "Optional[sortKeyType]" = None,
-		defaultSortKey: "Optional[sortKeyType]" = None,
 		readOptions: "Optional[Dict[str, Any]]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
 		sqlite: "Optional[bool]" = None,
@@ -1383,8 +1380,6 @@ class Glossary(GlossaryType):
 	) -> "Optional[str]":
 		"""
 		returns absolute path of output file, or None if failed
-
-		defaultSortKey is used when no sortKey was given, or found in plugin
 		"""
 		if type(inputFilename) is not str:
 			raise TypeError("inputFilename must be str")
@@ -1460,7 +1455,6 @@ class Glossary(GlossaryType):
 			outputFormat,
 			sort=sort,
 			sortKey=sortKey,
-			defaultSortKey=defaultSortKey,
 			**writeOptions
 		)
 		log.info("")

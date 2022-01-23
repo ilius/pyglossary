@@ -633,9 +633,6 @@ def main():
 		if value is not None:
 			convertOptions[key] = value
 
-	if convertOptions.get("sort", False):
-		convertOptions["defaultSortKey"] = Entry.defaultSortKey
-
 	infoOverride = {}
 	for key, validate in infoOverrideSpec:
 		value = getattr(args, key, None)

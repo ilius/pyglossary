@@ -87,7 +87,6 @@ class TestGlossarySlob(TestGlossaryBase):
 				"test.json",
 			],
 			sort=True,
-			defaultSortKey=Entry.defaultSortKey,
 		)
 
 

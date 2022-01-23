@@ -510,7 +510,6 @@ class TestGlossary(TestGlossaryBase):
 			"100-en-fa-sort",
 			testId="sort_1",
 			sort=True,
-			defaultSortKey=Entry.defaultSortKey,
 		)
 
 	def test_lower_1(self):
@@ -595,7 +594,6 @@ class TestGlossary(TestGlossaryBase):
 				"004-bar-sort",
 				testId="bar_sort",
 				sort=True,
-				defaultSortKey=Entry.defaultSortKey,
 				sqlite=sqlite,
 			)
 

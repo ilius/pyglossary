@@ -167,7 +167,6 @@ convertOptionsFlags = {
 	"sqlite": ("", "sqlite"),
 	"progressbar": ("no-progress-bar", ""),
 	"sort": ("no-sort", "sort"),
-	"defaultSortKey": None,
 }
 infoOverrideFlags = {
 	"sourceLang": "source-lang",
@@ -819,8 +818,6 @@ class UI(ui_cmd.UI):
 		except (KeyboardInterrupt, EOFError):
 			return
 		self._convertOptions["sort"] = value
-		if value:
-			self._convertOptions["defaultSortKey"] = Entry.defaultSortKey
 
 	def askFinalAction(self) -> "Optional[str]":
 		history = FileHistory(join(histDir, "action"))
