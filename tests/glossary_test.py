@@ -185,7 +185,7 @@ class TestGlossaryBase(unittest.TestCase):
 			data = zf.read(zfpath)
 			func = dataReplaceFuncs.get(zfpath)
 			if func is not None:
-				data = func(data1)
+				data = func(data)
 			actualSha1 = hashlib.sha1(data).hexdigest()
 			self.assertEqual(actualSha1, expectedSha1, msg=f"file: {zfpath}")
 
