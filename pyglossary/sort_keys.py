@@ -173,10 +173,26 @@ def _ebook_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 		),
 	]
 
+
+def _ebook_length3_normal(encoding: str, **options) -> "sortKeyType":
+	return _ebook_normal(
+		encoding,
+		group_by_prefix_length=3,
+	)
+
+
+def _ebook_length3_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
+	return _ebook_sqlite(
+		encoding,
+		group_by_prefix_length=3,
+	)
+
+
 _dicformids_re_punc = re.compile(
 	r"[!\"$§$%&/()=?´`\\{}\[\]^°+*~#'-_.:,;<>@]*",
 	# FIXME: |
 )
+
 
 def _dicformids_normal(encoding: str, **options) -> "sortKeyType":
 	re_punc = _dicformids_re_punc
@@ -235,6 +251,11 @@ namedSortKeyList = [
 		name="ebook",
 		normal=_ebook_normal,
 		sqlite=_ebook_sqlite,
+	),
+	NamedSortKey(
+		name="ebook_length3",
+		normal=_ebook_length3_normal,
+		sqlite=_ebook_length3_sqlite,
 	),
 	NamedSortKey(
 		name="dicformids",

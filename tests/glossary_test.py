@@ -235,6 +235,8 @@ class TestGlossary(TestGlossaryBase):
 		self.dataFileCRC32.update({
 			"100-en-fa-sort.txt": "d7a82dc8",
 			"100-en-fa-sort-headword.txt": "4067a29f",
+			"100-en-fa-sort-ebook.txt": "aa620d07",
+			"100-en-fa-sort-ebook3.txt": "5a20f140",
 
 			"100-en-fa-lower.txt": "62178940",
 			"100-en-fa-remove_html_all.txt": "d611c978",
@@ -567,6 +569,24 @@ class TestGlossary(TestGlossaryBase):
 			sort=True,
 			sortKeyName="headword_lower",
 			sortEncoding="windows-1256",
+		)
+
+	def test_sort_7(self):
+		self.convert_txt_txt(
+			"100-en-fa",
+			"100-en-fa-sort-ebook",
+			testId="sort_7",
+			sort=True,
+			sortKeyName="ebook",
+		)
+
+	def test_sort_8(self):
+		self.convert_txt_txt(
+			"100-en-fa",
+			"100-en-fa-sort-ebook3",
+			testId="sort_8",
+			sort=True,
+			sortKeyName="ebook_length3",
 		)
 
 	def test_lower_1(self):
