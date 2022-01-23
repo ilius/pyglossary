@@ -16,7 +16,7 @@ class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
 			"100-en-fa.mids.zip": "32d1185f",
 		})
 
-	def convert_txt_mids(self, fname, fname2, **convertArgs):
+	def convert_txt_mids(self, fname, sha1sumDict, **convertArgs):
 		outputFname = f"{fname}-2.mids.zip"
 		outputFpath = self.newTempFilePath(outputFname)
 		# expectedFpath = self.downloadFile(f"{fname}.mids.zip")
@@ -25,6 +25,9 @@ class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
 			outputFname,
 			**convertArgs
 		)
+		self.checkZipFileSha1sum(outputFpath, sha1sumDict)
+
+	def test_convert_txt_mids_1(self):
 		sha1sumDict = {
 			"DictionaryForMIDs.properties": \
 				"4260a87d6cdd55622dcfe395880bc913f96102b8",
@@ -32,4 +35,8 @@ class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
 			"index1.csv": "5033902993e44257fce29df8443481958a101602",
 			"searchlist.csv": "d6f144dd001c7df79edb459fc9530515a747224d",
 		}
-		self.checkZipFileSha1sum(outputFpath, sha1sumDict)
+		self.convert_txt_mids("100-en-fa", sha1sumDict)
+
+
+if __name__ == "__main__":
+	unittest.main()

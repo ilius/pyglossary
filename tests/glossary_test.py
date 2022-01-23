@@ -187,7 +187,7 @@ class TestGlossaryBase(unittest.TestCase):
 			if func is not None:
 				data = func(data1)
 			actualSha1 = hashlib.sha1(data).hexdigest()
-			self.assertTrue(actualSha1, expectedSha1)
+			self.assertEqual(actualSha1, expectedSha1, msg=f"file: {zfpath}")
 
 	def convert(
 		self,
