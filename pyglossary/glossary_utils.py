@@ -83,7 +83,7 @@ def _zipFileAdd(zf, filename):
 		zf.write(filename)
 		return
 	if not isdir(filename):
-		raise OSError("Not a file or directory: {filename}")
+		raise OSError(f"Not a file or directory: {filename}")
 	for subFname in os.listdir(filename):
 		_zipFileAdd(zf, join(filename, subFname))
 
