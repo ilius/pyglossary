@@ -344,4 +344,4 @@ Like several filters in a pipe that connects a `reader` object to a `writer` obj
 You can enable/disable some of these filters using config parameters / command like flags, which
 are documented in [doc/config.rst](./doc/config.rst).
 
-The full list of entry filters is also documented in [doc/entry_filters.md](./doc/entry_filters.md).
+The full list of entry filters is also documented in [doc/entry-filters.md](./doc/entry-filters.md).
