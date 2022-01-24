@@ -152,7 +152,7 @@ class Writer:
 			nonlocal htmlContents
 			group_fname = fixFilename(lastPrefix)
 			htmlContents += "</html>"
-			log.debug(
+			log.trace(
 				f"writeGroup: {lastPrefix!r}, "
 				f"{group_fname!r}, count={groupCounter}"
 			)
