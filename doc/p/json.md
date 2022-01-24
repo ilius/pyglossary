@@ -13,6 +13,7 @@
 | Single-file     | Yes                                               |
 | Kind            | 📝 text                                            |
 | Sort-on-write   | default_no                                        |
+| Sort key        | (`headword_lower`)                                |
 | Wiki            | [JSON](https://en.wikipedia.org/wiki/JSON)        |
 | Website         | [www.json.org](https://www.json.org/json-en.html) |
 

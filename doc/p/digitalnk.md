@@ -13,6 +13,7 @@
 | Single-file     | No                                                       |
 | Kind            | 🔢 binary                                                 |
 | Sort-on-write   | default_no                                               |
+| Sort key        | (`headword_lower`)                                       |
 | Wiki            | ―                                                        |
 | Website         | [@digitalprk/dicrs](https://github.com/digitalprk/dicrs) |
 

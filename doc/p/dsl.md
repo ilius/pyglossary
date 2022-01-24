@@ -13,6 +13,7 @@
 | Single-file     | Yes                                                        |
 | Kind            | 📝 text                                                     |
 | Sort-on-write   | default_no                                                 |
+| Sort key        | (`headword_lower`)                                         |
 | Wiki            | [ABBYY Lingvo](https://ru.wikipedia.org/wiki/ABBYY_Lingvo) |
 | Website         | [www.lingvo.ru](https://www.lingvo.ru/)                    |
 

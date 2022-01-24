@@ -13,6 +13,7 @@
 | Single-file     | Yes                                                                                           |
 | Kind            | 🔢 binary                                                                                      |
 | Sort-on-write   | default_no                                                                                    |
+| Sort key        | (`headword_lower`)                                                                            |
 | Wiki            | ―                                                                                             |
 | Website         | [Dictionary User Guide for Mac](https://support.apple.com/en-gu/guide/dictionary/welcome/mac) |
 

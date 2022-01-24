@@ -12,7 +12,7 @@ import toml
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.glossary import Glossary
+from pyglossary.glossary import Glossary, defaultSortKeyName
 from pyglossary.core import userPluginsDir
 
 Glossary.init()
@@ -128,6 +128,13 @@ def makeDependsDoc(cls):
 		cls.depends.values()
 	)
 	return links, cmd
+
+
+def sortKeyName(p):
+	value = p.sortKeyName
+	if value:
+		return codeValue(value)
+	return "(" + codeValue(defaultSortKeyName) + ")"
 
 
 def renderCell(value):
@@ -250,6 +257,7 @@ for p in plugins:
 		("Single-file", yesNo(p.singleFile)),
 		("Kind", f"{kindEmoji(module.kind)} {module.kind}"),
 		("Sort-on-write", p.sortOnWrite),
+		("Sort key", sortKeyName(p)),
 		("Wiki", wiki_md),
 		("Website", website_md),
 	])

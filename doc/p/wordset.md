@@ -13,6 +13,7 @@
 | Single-file     | No                                                                           |
 | Kind            | 📁 directory                                                                  |
 | Sort-on-write   | default_no                                                                   |
+| Sort key        | (`headword_lower`)                                                           |
 | Wiki            | ―                                                                            |
 | Website         | [@wordset/wordset-dictionary](https://github.com/wordset/wordset-dictionary) |
 

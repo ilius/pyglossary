@@ -13,6 +13,7 @@
 | Single-file     | Yes                                                                                                        |
 | Kind            | 📝 text                                                                                                     |
 | Sort-on-write   | default_no                                                                                                 |
+| Sort key        | (`headword_lower`)                                                                                         |
 | Wiki            | [Dictd](https://directory.fsf.org/wiki/Dictd)                                                              |
 | Website         | [dictd/dictunformat.1.in - @cheusov/dictd](https://github.com/cheusov/dictd/blob/master/dictunformat.1.in) |
 

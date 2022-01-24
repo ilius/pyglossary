@@ -13,6 +13,7 @@
 | Single-file     | No                                                                       |
 | Kind            | 📁 directory                                                              |
 | Sort-on-write   | always                                                                   |
+| Sort key        | `dicformids`                                                             |
 | Wiki            | ―                                                                        |
 | Website         | [DictionaryForMIDs - SourceForge](http://dictionarymid.sourceforge.net/) |
 

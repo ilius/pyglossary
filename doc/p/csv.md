@@ -13,6 +13,7 @@
 | Single-file     | Yes                                                                            |
 | Kind            | 📝 text                                                                         |
 | Sort-on-write   | default_no                                                                     |
+| Sort key        | (`headword_lower`)                                                             |
 | Wiki            | [Comma-separated values](https://en.wikipedia.org/wiki/Comma-separated_values) |
 | Website         | ―                                                                              |
 

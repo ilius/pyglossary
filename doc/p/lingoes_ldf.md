@@ -13,6 +13,7 @@
 | Single-file     | Yes                                                                 |
 | Kind            | 📝 text                                                              |
 | Sort-on-write   | default_no                                                          |
+| Sort key        | (`headword_lower`)                                                  |
 | Wiki            | [Lingoes](https://en.wikipedia.org/wiki/Lingoes)                    |
 | Website         | [Lingoes.net](http://www.lingoes.net/en/dictionary/dict_format.php) |
 

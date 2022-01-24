@@ -13,6 +13,7 @@
 | Single-file     | No                                                                          |
 | Kind            | 📝 text                                                                      |
 | Sort-on-write   | default_no                                                                  |
+| Sort key        | (`headword_lower`)                                                          |
 | Wiki            | [Wiktionary:Main Page](https://en.wiktionary.org/wiki/Wiktionary:Main_Page) |
 | Website         | [dumps.wikimedia.org](https://dumps.wikimedia.org/mirrors.html)             |
 

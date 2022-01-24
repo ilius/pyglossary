@@ -13,6 +13,7 @@
 | Single-file     | Yes                                           |
 | Kind            | 📝 text                                        |
 | Sort-on-write   | default_no                                    |
+| Sort key        | (`headword_lower`)                            |
 | Wiki            | ―                                             |
 | Website         | [Sdictionary Project](http://swaj.net/sdict/) |
 

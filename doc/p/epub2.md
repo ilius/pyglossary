@@ -13,6 +13,7 @@
 | Single-file     | No                                         |
 | Kind            | 📦 package                                  |
 | Sort-on-write   | always                                     |
+| Sort key        | `ebook`                                    |
 | Wiki            | [EPUB](https://en.wikipedia.org/wiki/EPUB) |
 | Website         | ―                                          |
 

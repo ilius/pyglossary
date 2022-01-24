@@ -13,6 +13,7 @@
 | Single-file     | No                                                   |
 | Kind            | 📁 directory                                          |
 | Sort-on-write   | always                                               |
+| Sort key        | `stardict`                                           |
 | Wiki            | [StarDict](https://en.wikipedia.org/wiki/StarDict)   |
 | Website         | [huzheng.org/stardict](http://huzheng.org/stardict/) |
 

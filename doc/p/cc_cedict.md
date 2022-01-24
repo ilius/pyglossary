@@ -13,6 +13,7 @@
 | Single-file     | Yes                                                         |
 | Kind            | 📝 text                                                      |
 | Sort-on-write   | default_no                                                  |
+| Sort key        | (`headword_lower`)                                          |
 | Wiki            | [CEDICT](https://en.wikipedia.org/wiki/CEDICT)              |
 | Website         | [CC-CEDICT Editor](https://cc-cedict.org/editor/editor.php) |
 

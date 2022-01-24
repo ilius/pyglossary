@@ -13,6 +13,7 @@
 | Single-file     | Yes                                                                    |
 | Kind            | 🔢 binary                                                               |
 | Sort-on-write   | default_no                                                             |
+| Sort key        | (`headword_lower`)                                                     |
 | Wiki            | [ZIM (file format)](<https://en.wikipedia.org/wiki/ZIM_(file_format)>) |
 | Website         | [OpenZIM](https://wiki.openzim.org/wiki/OpenZIM)                       |
 

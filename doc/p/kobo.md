@@ -13,6 +13,7 @@
 | Single-file     | No                                                         |
 | Kind            | 📦 package                                                  |
 | Sort-on-write   | never                                                      |
+| Sort key        | (`headword_lower`)                                         |
 | Wiki            | [Kobo eReader](https://en.wikipedia.org/wiki/Kobo_eReader) |
 | Website         | [www.kobo.com](https://www.kobo.com)                       |
 

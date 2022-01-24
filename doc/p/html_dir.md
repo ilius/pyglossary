@@ -2,19 +2,20 @@
 
 ### General Information
 
-| Attribute       | Value          |
-| --------------- | -------------- |
-| Name            | HtmlDir        |
-| snake_case_name | html_dir       |
-| Description     | HTML Directory |
-| Extensions      | `.hdir`        |
-| Read support    | No             |
-| Write support   | Yes            |
-| Single-file     | No             |
-| Kind            | 📁 directory    |
-| Sort-on-write   | default_no     |
-| Wiki            | ―              |
-| Website         | ―              |
+| Attribute       | Value              |
+| --------------- | ------------------ |
+| Name            | HtmlDir            |
+| snake_case_name | html_dir           |
+| Description     | HTML Directory     |
+| Extensions      | `.hdir`            |
+| Read support    | No                 |
+| Write support   | Yes                |
+| Single-file     | No                 |
+| Kind            | 📁 directory        |
+| Sort-on-write   | default_no         |
+| Sort key        | (`headword_lower`) |
+| Wiki            | ―                  |
+| Website         | ―                  |
 
 ### Write options
 

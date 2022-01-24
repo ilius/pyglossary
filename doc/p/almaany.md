@@ -13,6 +13,7 @@
 | Single-file     | No                                                                                                            |
 | Kind            | 🔢 binary                                                                                                      |
 | Sort-on-write   | default_no                                                                                                    |
+| Sort key        | (`headword_lower`)                                                                                            |
 | Wiki            | ―                                                                                                             |
 | Website         | [Almaany.com Arabic Dictionary - Google Play](https://play.google.com/store/apps/details?id=com.almaany.arar) |
 

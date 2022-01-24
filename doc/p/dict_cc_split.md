@@ -13,6 +13,7 @@
 | Single-file     | No                                                                                               |
 | Kind            | 🔢 binary                                                                                         |
 | Sort-on-write   | default_no                                                                                       |
+| Sort key        | (`headword_lower`)                                                                               |
 | Wiki            | [Dict.cc](https://en.wikipedia.org/wiki/Dict.cc)                                                 |
 | Website         | [dict.cc dictionary - Google Play](https://play.google.com/store/apps/details?id=cc.dict.dictcc) |
 

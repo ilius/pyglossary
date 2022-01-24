@@ -13,6 +13,7 @@
 | Single-file     | No                                                                          |
 | Kind            | 📝 text                                                                      |
 | Sort-on-write   | default_no                                                                  |
+| Sort key        | (`headword_lower`)                                                          |
 | Wiki            | ―                                                                           |
 | Website         | [dictgen - dictutil](https://pgaskin.net/dictutil/dictgen/#dictfile-format) |
 

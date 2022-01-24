@@ -13,6 +13,7 @@
 | Single-file     | No                                                     |
 | Kind            | 📦 package                                              |
 | Sort-on-write   | default_yes                                            |
+| Sort key        | `ebook`                                                |
 | Wiki            | [Mobipocket](https://en.wikipedia.org/wiki/Mobipocket) |
 | Website         | ―                                                      |
 
