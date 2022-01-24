@@ -61,6 +61,7 @@ from pyglossary import core
 from pyglossary.core import confDir
 from pyglossary.glossary import Glossary
 from pyglossary.ui import ui_cmd
+from pyglossary.sort_keys import namedSortKeyList, namedSortKeyByName
 
 
 from prompt_toolkit import prompt as promptLow
@@ -313,6 +314,7 @@ class UI(ui_cmd.UI):
 			("sqlite", self.setSQLite),
 			("no-progressbar", self.setNoProgressbar),
 			("sort", self.setSort),
+			("sort-key", self.setSortKey),
 			("show-options", self.showOptions),
 			("back", None),
 		])
@@ -819,6 +821,35 @@ class UI(ui_cmd.UI):
 			return
 		self._convertOptions["sort"] = value
 
+	def setSortKey(self):
+		completer = WordCompleter(
+			[_sk.name for _sk in namedSortKeyList],
+			ignore_case=False,
+			match_middle=True,
+			sentence=True,
+		)
+		default = self._convertOptions.get("sortKeyName", "")
+		sortKeyName = self.prompt(
+			2, "SortKey",
+			history=FileHistory(join(histDir, f"sort-key")),
+			auto_suggest=AutoSuggestFromHistory(),
+			default=default,
+			completer=completer,
+		)
+		if not sortKeyName:
+			if "sortKeyName" in self._convertOptions:
+				del self._convertOptions["sortKeyName"]
+			return
+
+		if sortKeyName not in namedSortKeyByName:
+			log.error(f"invalid sortKeyName = {sortKeyName!r}")
+			return
+
+		self._convertOptions["sortKeyName"] = sortKeyName
+
+		if not self._convertOptions.get("sort"):
+			self.setSort()
+
 	def askFinalAction(self) -> "Optional[str]":
 		history = FileHistory(join(histDir, "action"))
 		auto_suggest = AutoSuggestFromHistory()
@@ -954,6 +985,10 @@ class UI(ui_cmd.UI):
 						log.error(f"unknow key {key} in infoOverride")
 						continue
 					cmd.append(f"--{flag}={value}")
+
+			if "sortKeyName" in self._convertOptions:
+				value = self._convertOptions.pop("sortKeyName")
+				cmd.append(f"--sort-key={value}")
 
 			for key, value in self._convertOptions.items():
 				if value is None:
