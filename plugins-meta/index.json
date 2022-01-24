@@ -1285,9 +1285,7 @@
 	{
 		"name": "WiktionaryDump",
 		"description": "Wiktionary Dump (.xml)",
-		"extensions": [
-			".xml"
-		],
+		"extensions": [],
 		"singleFile": false,
 		"optionsProp": {
 			"encoding": {
