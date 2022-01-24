@@ -2,7 +2,7 @@
 # Read Octopus MDict dictionary format, mdx(dictionary)/mdd(data)
 #
 # Copyright © 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
-# Copyright © 2013-2020 Saeed Rasooli <saeed.gnu@gmail.com>
+# Copyright © 2013-2021 Saeed Rasooli <saeed.gnu@gmail.com>
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

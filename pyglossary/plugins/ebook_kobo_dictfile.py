@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # The MIT License (MIT)
 
-# Copyright © 2020 Saeed Rasooli <saeed.gnu@gmail.com>
+# Copyright © 2020-2021 Saeed Rasooli <saeed.gnu@gmail.com>
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
