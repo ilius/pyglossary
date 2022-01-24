@@ -190,7 +190,7 @@ Direct mode means entries are one-at-a-time read, processed and written into out
 Direct mode was added to limit the memory usage for large glossaries; But it may reduce the
 conversion time for most cases as well.
 
-Converting glossaries into these formats requires sorting entries:
+Converting glossaries into these formats requires [sorting](#sorting) entries:
 
 - [StarDict](./doc/p/stardict.md)
 - [EPUB-2](./doc/p/epub2.md)
@@ -220,6 +220,20 @@ This also applies to when you pass `--sort` flag for any format.
 You may use `--no-sqlite` to override this and switch to indirect mode.
 
 Currently you can not disable alternates in SQLite mode (`--no-alts` is ignored).
+
+## Sorting
+
+There are two things than can activate sorting entries:
+
+- Output format requires sorting (as explained [above](#direct-and-indirect-modes))
+- You pass `--sort` flag in command line.
+
+In the case of passing `--sort`, you can also pass:
+- `--sort-key` to select sort key aka sorting order, see [doc/sort-key.md](./doc/sort-key.md)
+- `--sort-encoding` to change the encoding used for sort
+	- UTF-8 is the default encoding for all sort keys and all output formats (unless mentioned otherwise)
+	- This will only effect the order of entries, and will not corrupt words / definition
+	- Non-encodable characters are replaced with `?` byte (*only for sorting*)
 
 ## Cache directory
 
