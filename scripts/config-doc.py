@@ -51,7 +51,7 @@ For example:
     }
 """)
 
-with open(join(rootDir, "scripts/term_colors.json")) as _file:
+with open(join(rootDir, "scripts/term-colors.json")) as _file:
 	termColors = json.load(_file)
 
 
@@ -131,7 +131,7 @@ def optionComment(name, opt):
 	comment = re_flag.sub("\\1``\\2``", comment)
 
 	if name.startswith("color.cmd."):
-		comment = f"| {comment}\n| See `term_colors.md <./term_colors.md/>`_"
+		comment = f"| {comment}\n| See `term-colors.md <./term-colors.md/>`_"
 
 	return comment
 
