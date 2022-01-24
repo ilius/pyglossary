@@ -29,6 +29,7 @@ from pyglossary import core  # essential
 from pyglossary.entry import Entry
 from pyglossary.ui.base import UIBase
 from pyglossary.langs import langDict
+from pyglossary.sort_keys import namedSortKeyList, namedSortKeyByName
 
 # the first thing to do is to set up logger.
 # other modules also using logger "root", so it is essential to set it up prior
@@ -549,6 +550,15 @@ def main():
 			sys.exit(1)
 		if args.sortEncoding:
 			log.critical("Passed --sort-encoding without --sort")
+			sys.exit(1)
+
+	if args.sortKeyName:
+		if args.sortKeyName not in namedSortKeyByName:
+			_valuesStr = ", ".join([_sk.name for _sk in namedSortKeyList])
+			log.critical(
+				f"Invalid sortKeyName={args.sortKeyName!r}"
+				f". Supported values:\n{_valuesStr}"
+			)
 			sys.exit(1)
 
 	core.checkCreateConfDir()
