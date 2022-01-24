@@ -982,6 +982,9 @@ class Glossary(GlossaryType):
 		sortEncoding: "str" = "utf-8",
 		writeOptions: "Optional[Dict[str, Any]]" = None,
 	) -> None:
+		"""
+			sortKeyName: see doc/sort-key.md
+		"""
 		if self._readers:
 			raise NotImplementedError(
 				"can not use sortWords in direct mode"
@@ -1307,6 +1310,8 @@ class Glossary(GlossaryType):
 		writeOptions: "Dict[str, Any]",
 	) -> "Tuple[bool, bool, Optional[NamedSortKey]]":
 		"""
+			sortKeyName: see doc/sort-key.md
+
 			returns (sort, direct, namedSortKey)
 		"""
 		plugin = self.plugins[outputFormat]
@@ -1415,7 +1420,7 @@ class Glossary(GlossaryType):
 
 		sortKeyName: name of sort key/algorithm
 			defaults to `defaultSortKeyName` in glossary.py
-			see sort_keys.py for other possible values
+			see doc/sort-key.md or sort_keys.py for other possible values
 
 		sortEncoding: encoding/charset for sorting, default to utf-8
 		"""
