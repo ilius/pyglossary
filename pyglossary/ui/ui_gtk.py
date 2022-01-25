@@ -2,8 +2,6 @@
 # ui_gtk.py
 #
 # Copyright © 2008-2022 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-# Thanks to Pier Carteri <m3tr0@dei.unipd.it> for program Py_Shell.py
-# Thanks to Milad Rastian for program pySQLiteGUI
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +29,7 @@ from pyglossary.os_utils import click_website
 from pyglossary.glossary import (
 	Glossary,
 )
+from pyglossary.sort_keys import namedSortKeyList, namedSortKeyByName
 
 from .base import (
 	UIBase,
@@ -764,6 +763,209 @@ class BrowseButton(gtk.Button):
 		fcd.destroy()
 
 
+sortKeyNameByDesc = {
+	_sk.desc: _sk.name
+	for _sk in namedSortKeyList
+}
+sortKeyNames = [
+	_sk.name for _sk in namedSortKeyList
+]
+
+
+class SortOptionsBox(gtk.Box):
+	def __init__(self, ui):
+		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
+		self.ui = ui
+		###
+		hbox = gtk.HBox()
+		sortCheck = gtk.CheckButton("Sort entries by")
+		sortKeyCombo = gtk.ComboBoxText()
+		for _sk in namedSortKeyList:
+			sortKeyCombo.append_text(_sk.desc)
+		sortKeyCombo.set_active(0)
+		sortKeyCombo.set_border_width(0)
+		sortKeyCombo.set_sensitive(False)
+		# sortKeyCombo.connect("changed", self.sortKeyComboChanged)
+		self.sortCheck = sortCheck
+		self.sortKeyCombo = sortKeyCombo
+		sortCheck.connect("clicked", self.onSortCheckClicked)
+		pack(hbox, sortCheck, 0, 0, padding=5)
+		pack(hbox, sortKeyCombo, 0, 0, padding=5)
+		pack(self, hbox, 0, 0, padding=5)
+		###
+		hbox = self.encodingHBox = gtk.HBox()
+		label = gtk.Label(label="Sort Encoding")
+		encodingEntry = self.encodingEntry = gtk.Entry()
+		encodingEntry.set_text("utf-8")
+		encodingEntry.set_width_chars(15)
+		pack(hbox, label, 0, 0, padding=10)
+		pack(hbox, encodingEntry, 0, 0, padding=5)
+		pack(self, hbox, 0, 0, padding=5)
+		###
+		self.show_all()
+
+	def onSortCheckClicked(self, check):
+		sort = check.get_active()
+		self.sortKeyCombo.set_sensitive(sort)
+		self.encodingHBox.set_sensitive(sort)
+
+	def updateWidgets(self):
+		convertOptions = self.ui.convertOptions
+		sort = convertOptions.get("sort")
+		self.sortCheck.set_active(sort)
+		self.sortKeyCombo.set_sensitive(sort)
+		self.encodingHBox.set_sensitive(sort)
+		sortKeyName = convertOptions.get("sortKeyName")
+		if sortKeyName:
+			self.sortKeyCombo.set_active(sortKeyNames.index(sortKeyName))
+		sortEncoding = convertOptions.get("sortEncoding", "utf-8")
+		self.encodingEntry.set_text(sortEncoding)
+
+	def applyChanges(self):
+		convertOptions = self.ui.convertOptions
+		sort = self.sortCheck.get_active()
+		if not sort:
+			for param in ("sort", "sortKeyName", "sortEncoding"):
+				if param in convertOptions:
+					del convertOptions[param]
+			return
+
+		sortKeyDesc = self.sortKeyCombo.get_active_text()
+		convertOptions["sort"] = sort
+		convertOptions["sortKeyName"] = sortKeyNameByDesc[sortKeyDesc]
+		convertOptions["sortEncoding"] = self.encodingEntry.get_text()
+
+
+class GeneralOptionsDialog(gtk.Dialog):
+	def onDeleteEvent(self, widget, event):
+		self.hide()
+		return True
+
+	def onResponse(self, widget, event):
+		self.applyChanges()
+		self.hide()
+		return True
+
+	def __init__(self, ui, **kwargs):
+		gtk.Dialog.__init__(
+			self,
+			transient_for=ui,
+			**kwargs,
+		)
+		self.set_title("General Options")
+		self.ui = ui
+		##
+		self.resize(600, 500)
+		self.connect("delete-event", self.onDeleteEvent)
+		##
+		self.connect("response", self.onResponse)
+		dialog_add_button(
+			self,
+			"gtk-ok",
+			"_OK",
+			gtk.ResponseType.OK,
+		)
+		##
+		hpad = 10
+		vpad = 5
+		##
+		self.sortOptionsBox = SortOptionsBox(ui)
+		pack(self.vbox, self.sortOptionsBox, 0, 0, padding=vpad)
+		##
+		hbox = gtk.HBox()
+		self.sqliteCheck = gtk.CheckButton(label="SQLite mode")
+		pack(hbox, self.sqliteCheck, 0, 0, padding=hpad)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		##
+		hbox = gtk.HBox()
+		self.saveInfoCheck = gtk.CheckButton(
+			label="Save .info file alongside output file(s)"
+		)
+		pack(hbox, self.saveInfoCheck, 0, 0, padding=hpad)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		##
+		hbox = gtk.HBox()
+		self.lowerCheck = gtk.CheckButton(label="Lowercase words")
+		pack(hbox, self.lowerCheck, 0, 0, padding=hpad)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		##
+		hbox = gtk.HBox()
+		self.skipResCheck = gtk.CheckButton(label="Skip resource files")
+		pack(hbox, self.skipResCheck, 0, 0, padding=hpad)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		##
+		hbox = gtk.HBox()
+		self.rtlCheck = gtk.CheckButton(label="Right-To-Left definitions")
+		pack(hbox, self.rtlCheck, 0, 0, padding=hpad)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		##
+		hbox = gtk.HBox()
+		self.altsCheck = gtk.CheckButton(label="Enable alternates")
+		pack(hbox, self.altsCheck, 0, 0, padding=hpad)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		##
+		hbox = gtk.HBox()
+		self.cleanupCheck = gtk.CheckButton(label="Cleanup temporary files")
+		pack(hbox, self.cleanupCheck, 0, 0, padding=hpad)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		##
+		hbox = gtk.HBox()
+		self.removeAllHtml = gtk.CheckButton(label="Remove all HTML tags")
+		pack(hbox, self.removeAllHtml, 0, 0, padding=hpad)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		##
+		self.updateWidgets()
+		self.vbox.show_all()
+
+	def getSQLite(self) -> bool:
+		convertOptions = self.ui.convertOptions
+		sqlite = convertOptions.get("sqlite")
+		if sqlite is not None:
+			return sqlite
+		return self.ui.config.get("auto_sqlite", True)
+
+	def updateWidgets(self):
+		config = self.ui.config
+		self.sortOptionsBox.updateWidgets()
+		self.sqliteCheck.set_active(self.getSQLite())
+		self.saveInfoCheck.set_active(config.get("save_info_json", False))
+		self.lowerCheck.set_active(config.get("lower", False))
+		self.skipResCheck.set_active(config.get("skip_resources", False))
+		self.rtlCheck.set_active(config.get("rtl", False))
+		self.altsCheck.set_active(config.get("enable_alts", True))
+		self.cleanupCheck.set_active(config.get("cleanup", True))
+		self.removeAllHtml.set_active(config.get("remove_html_all", True))
+
+	def applyChanges(self):
+		# print("applyChanges")
+		self.sortOptionsBox.applyChanges()
+
+		convertOptions = self.ui.convertOptions
+		config = self.ui.config
+
+		convertOptions["sqlite"] = self.sqliteCheck.get_active()
+		config["save_info_json"] = self.saveInfoCheck.get_active()
+		config["lower"] = self.lowerCheck.get_active()
+		config["skip_resources"] = self.skipResCheck.get_active()
+		config["rtl"] = self.rtlCheck.get_active()
+		config["enable_alts"] = self.altsCheck.get_active()
+		config["cleanup"] = self.cleanupCheck.get_active()
+		config["remove_html_all"] = self.removeAllHtml.get_active()
+
+
+class GeneralOptionsButton(gtk.Button):
+	def __init__(self, ui):
+		gtk.Button.__init__(self, label="General Options")
+		self.ui = ui
+		self.connect("clicked", self.onClick)
+		self.dialog = None
+
+	def onClick(self, widget):
+		if self.dialog is None:
+			self.dialog = GeneralOptionsDialog(self.ui)
+		self.dialog.present()
+
+
 class UI(gtk.Dialog, MyDialog, UIBase):
 	def status(self, msg):
 		# try:
@@ -789,7 +991,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# self.statusNewId = 0
 		# self.statusMsgDict = {}## message -> id
 		#####
-		self._convertOptions = {}
+		self.convertOptions = {}
 		#####
 		self.styleProvider = gtk.CssProvider()
 		gtk.StyleContext.add_provider_for_screen(
@@ -802,8 +1004,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		#####
 		self.assert_quit = False
 		self.path = ""
-		self.glos = Glossary(ui=self)
-		self.glos.config = self.config
 		# ____________________ Tab 1 - Convert ____________________ #
 		labelSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		buttonSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
@@ -889,14 +1089,20 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		#####
 		hbox = HBox(spacing=10)
 		label = gtk.Label(label="")
-		pack(hbox, label, 1, 1, 10)
+		pack(hbox, label, 1, 1, 5)
+		##
+		button = GeneralOptionsButton(self)
+		button.set_size_request(300, 40)
+		pack(hbox, button, 0, 0, 0)
+		##
 		self.convertButton = gtk.Button()
 		self.convertButton.set_label("Convert")
 		self.convertButton.connect("clicked", self.convertClicked)
 		self.convertButton.set_size_request(300, 40)
 		pack(hbox, self.convertButton, 0, 0, 10)
+		##
 		pack(vbox, hbox, 0, 0, 15)
-		####
+		#####
 		self.convertConsoleTextview = textview = gtk.TextView()
 		swin = gtk.ScrolledWindow()
 		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
@@ -1147,9 +1353,9 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		if writeOptions:
 			self.convertOutputFormatCombo.setOptionsValues(writeOptions)
 
-		self._convertOptions = convertOptions
+		self.convertOptions = convertOptions
 		if convertOptions:
-			log.info(f"Using convertOptions={convertOptions}")
+			log.debug(f"Using convertOptions={convertOptions}")
 
 		self._glossarySetAttrs = glossarySetAttrs
 
@@ -1205,20 +1411,26 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		readOptions = self.convertInputFormatCombo.optionsValues
 		writeOptions = self.convertOutputFormatCombo.optionsValues
 
+		glos = Glossary(ui=self)
+		glos.config = self.config
+
 		for attr, value in self._glossarySetAttrs.items():
-			setattr(self.glos, attr, value)
+			setattr(glos, attr, value)
+
+		log.debug(f"readOptions: {readOptions}")
+		log.debug(f"writeOptions: {writeOptions}")
+		log.debug(f"convertOptions: {self.convertOptions}")
+		log.debug(f"config: {self.config}")
 
 		try:
-			log.debug(f"readOptions: {readOptions}")
-			log.debug(f"writeOptions: {writeOptions}")
-			finalOutputFile = self.glos.convert(
+			finalOutputFile = glos.convert(
 				inPath,
 				inputFormat=inFormat,
 				outputFilename=outPath,
 				outputFormat=outFormat,
 				readOptions=readOptions,
 				writeOptions=writeOptions,
-				**self._convertOptions,
+				**self.convertOptions,
 			)
 			if finalOutputFile:
 				self.status("Convert finished")
