@@ -323,6 +323,7 @@ class Glossary(GlossaryType):
 				rmtree(cleanupPath)
 			else:
 				log.error(f"no such file or directory: {cleanupPath}")
+		self._cleanupPathList = set()
 
 	@property
 	def rawEntryCompress(self) -> bool:
