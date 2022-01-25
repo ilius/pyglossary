@@ -1549,3 +1549,5 @@ class Glossary(GlossaryType):
 		cls.loadPlugins(join(dirname(__file__), "plugins"))
 		if os.path.exists(userPluginsDir):
 			cls.loadPlugins(userPluginsDir)
+		if not isdir(cacheDir):
+			os.makedirs(cacheDir)
