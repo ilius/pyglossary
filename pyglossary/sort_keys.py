@@ -26,6 +26,7 @@ NamedSortKey = namedtuple("NamedSortKey", [
 	"name",
 	"normal",
 	"sqlite",
+	"desc",
 ])
 
 
@@ -231,36 +232,43 @@ namedSortKeyList = [
 		name="headword",
 		normal=_headword_normal,
 		sqlite=_headword_sqlite,
+		desc="Headword",
 	),
 	NamedSortKey(
 		name="headword_lower",
 		normal=_headword_lower_normal,
 		sqlite=_headword_lower_sqlite,
+		desc="Lowercase Headword",
 	),
 	NamedSortKey(
 		name="headword_bytes_lower",
 		normal=_headword_bytes_lower_normal,
 		sqlite=_headword_bytes_lower_sqlite,
+		desc="ASCII-Lowercase Headword",
 	),
 	NamedSortKey(
 		name="stardict",
 		normal=_stardict_normal,
 		sqlite=_stardict_sqlite,
+		desc="StarDict",
 	),
 	NamedSortKey(
 		name="ebook",
 		normal=_ebook_normal,
 		sqlite=_ebook_sqlite,
+		desc="E-Book (prefix length: 2)",
 	),
 	NamedSortKey(
 		name="ebook_length3",
 		normal=_ebook_length3_normal,
 		sqlite=_ebook_length3_sqlite,
+		desc="E-Book (prefix length: 3)",
 	),
 	NamedSortKey(
 		name="dicformids",
 		normal=_dicformids_normal,
 		sqlite=_dicformids_sqlite,
+		desc="DictionaryForMIDs",
 	),
 ]
 
