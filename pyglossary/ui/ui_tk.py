@@ -95,6 +95,16 @@ def centerWindow(win):
 	win.deiconify()
 
 
+def centerWindowWithSize(win, parent, width, height):
+	px, py, pw, ph = decodeGeometry(parent.winfo_toplevel().geometry())
+	win.geometry(encodeGeometry(
+		px + pw // 2 - width // 2,
+		py + ph // 2 - height // 2,
+		width,
+		height,
+	))
+
+
 def newButton(*args, **kwargs):
 	button = tk.Button(*args, **kwargs)
 
@@ -334,17 +344,7 @@ class FormatDialog(tix.Toplevel):
 		set_window_icon(self)
 		self.bind("<Escape>", lambda _e: self.destroy())
 
-		px, py, pw, ph = decodeGeometry(button.winfo_toplevel().geometry())
-		width = 400
-		height = 400
-		self.geometry(
-			encodeGeometry(
-				px + pw // 2 - width // 2,
-				py + ph // 2 - height // 2,
-				width,
-				height,
-			),
-		)
+		centerWindowWithSize(self, button, 400, 400)
 
 		entryBox = tk.Frame(master=self)
 		label = tk.Label(master=entryBox, text="Search: ")
@@ -406,7 +406,7 @@ class FormatDialog(tix.Toplevel):
 		)
 		okButton.pack(side="right")
 
-		buttonBox.pack(fill="x")
+		buttonBox.pack(side="bottom", fill="x")
 
 		self.bind("<Return>", self.onReturnPress)
 		self.bind("<KP_Enter>", self.onReturnPress)
@@ -584,6 +584,8 @@ class FormatOptionsDialog(tix.Toplevel):
 		self.createOptionsList()
 
 		buttonBox = tix.Frame(self)
+		buttonBox.pack(side="bottom", fill="x")
+
 		okButton = newButton(
 			buttonBox,
 			text="  OK  ",
@@ -592,7 +594,6 @@ class FormatOptionsDialog(tix.Toplevel):
 			# activebackground="#ff5050",
 		)
 		okButton.pack(side="right")
-		buttonBox.pack(fill="x")
 
 	def createOptionsList(self):
 		values = self.values
@@ -668,17 +669,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		set_window_icon(dialog)
 		dialog.bind("<Escape>", lambda _e: dialog.destroy())
 
-		px, py, pw, ph = decodeGeometry(treev.winfo_toplevel().geometry())
-		width = 300
-		height = 100
-		dialog.geometry(
-			encodeGeometry(
-				px + pw // 2 - width // 2,
-				py + ph // 2 - height // 2,
-				width,
-				height,
-			),
-		)
+		centerWindowWithSize(dialog, treev, 300, 100)
 
 		frame = tix.Frame(master=dialog)
 
@@ -909,6 +900,41 @@ class FormatOptionsButton(tk.Button):
 		dialog.focus()
 
 
+class GeneralOptionsDialog(tix.Toplevel):
+	def __init__(
+		self,
+		ui,
+	):
+		tix.Toplevel.__init__(self)
+		# bg="#0f0" does not work
+		self.ui = ui
+		self.resizable(width=True, height=True)
+		self.title("General Options")
+		set_window_icon(self)
+		self.bind("<Escape>", lambda _e: self.destroy())
+
+		centerWindowWithSize(self, ui, 400, 400)
+
+		buttonBox = tix.Frame(master=self)
+		buttonBox.pack(side="bottom", fill="x")
+
+		okButton = newTTKButton(
+			buttonBox,
+			text="  OK  ",
+			command=self.okClicked,
+			# bg="#ff0000",
+			# activebackground="#ff5050",
+		)
+		okButton.pack(side="right")
+
+	def applyChanges(self):
+		pass
+
+	def okClicked(self):
+		self.applyChanges()
+		self.destroy()
+
+
 class UI(tix.Frame, UIBase):
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
@@ -946,7 +972,7 @@ class UI(tix.Frame, UIBase):
 			defaultFont.configure(size=int(defaultFont.cget("size") * 1.4))
 		####
 		self.biggerFont = defaultFont.copy()
-		self.biggerFont.configure(size=int(defaultFont.cget("size") * 1.8))
+		self.biggerFont.configure(size=int(defaultFont.cget("size") * 1.6))
 		######################
 		self.glos = Glossary(ui=self)
 		self.glos.config = self.config
@@ -997,12 +1023,11 @@ class UI(tix.Frame, UIBase):
 			# bg="#f0f000",
 			# activebackground="#f6f622",
 			borderwidth=3,
-		)
-		button.grid(
+		).grid(
 			row=row,
 			column=3,
 			sticky=tk.W + tk.E,
-			padx=5,
+			padx=0,
 		)
 		######################
 		row += 1
@@ -1105,35 +1130,52 @@ class UI(tix.Frame, UIBase):
 			# bg="#f0f000",
 			# activebackground="#f6f622",
 			borderwidth=3,
-		)
-		button.grid(
+		).grid(
 			row=row,
 			column=3,
 			sticky=tk.W + tk.E,
-			padx=5,
+			padx=0,
 		)
 		###################
 		row += 1
-		button = newButton(
+		#######
+		newButton(
+			convertFrame,
+			text="General Options",
+			command=self.generalOptionsClicked,
+			borderwidth=4,
+			padx=3, pady=3,  # inside the button
+		).grid(
+			row=row,
+			column=1,
+			columnspan=1,
+			sticky=tk.W + tk.E + tk.S + tk.N,
+			padx=0, pady=5,
+		)
+		#######
+		newButton(
 			convertFrame,
 			text="Convert",
 			command=self.convert,
 			# background="#00e000",
 			# activebackground="#22f022",
-			borderwidth=7,
+			# highlightbackground="#00ff00",
+			# highlightcolor="#22f022",
+			# highlightthickness=5,
+			borderwidth=5,
 			font=self.biggerFont,
 			padx=5,
 			pady=5,
+			# ^ inside the button
 		)
 		button.grid(
 			row=row,
 			column=2,
 			columnspan=3,
-			sticky=tk.W + tk.E + tk.S,
-			padx=5,
-			pady=5,
+			sticky=tk.W + tk.E + tk.S + tk.N,
+			padx=10,
+			pady=2,
 		)
-		# print(f"row number for Convert button: {row}")
 		######
 		convertFrame.pack(fill="x")
 		# convertFrame.grid(sticky=tk.W + tk.E + tk.N + tk.S)
@@ -1159,7 +1201,7 @@ class UI(tix.Frame, UIBase):
 			column=0,
 			columnspan=4,
 			sticky=tk.W + tk.E,
-			padx=5,
+			padx=0,
 			pady=0,
 		)
 		log.addHandler(
@@ -1239,9 +1281,10 @@ class UI(tix.Frame, UIBase):
 
 		######################
 		tk.Grid.columnconfigure(convertFrame, 0, weight=1)
-		tk.Grid.columnconfigure(convertFrame, 1, weight=30)
+		tk.Grid.columnconfigure(convertFrame, 1, weight=13)
 		tk.Grid.columnconfigure(convertFrame, 2, weight=20)
 		tk.Grid.columnconfigure(convertFrame, 3, weight=1)
+		tk.Grid.columnconfigure(convertFrame, 4, weight=1)
 		tk.Grid.rowconfigure(convertFrame, 0, weight=50)
 		tk.Grid.rowconfigure(convertFrame, 1, weight=50)
 		tk.Grid.rowconfigure(convertFrame, 2, weight=1)
@@ -1349,7 +1392,7 @@ class UI(tix.Frame, UIBase):
 				row=self.inputFormatRow,
 				column=3,
 				sticky=tk.W + tk.E,
-				padx=5,
+				padx=0,
 				pady=0,
 			)
 		else:
@@ -1372,7 +1415,7 @@ class UI(tix.Frame, UIBase):
 				row=self.outputFormatRow,
 				column=3,
 				sticky=tk.W + tk.E,
-				padx=5,
+				padx=0,
 				pady=0,
 			)
 		else:
@@ -1463,6 +1506,10 @@ class UI(tix.Frame, UIBase):
 			self.outputEntryChanged()
 			self.fcd_dir = os.path.dirname(path)
 			self.save_fcd_dir()
+
+	def generalOptionsClicked(self):
+		dialog = GeneralOptionsDialog(self)
+		dialog.focus()
 
 	def convert(self):
 		inPath = self.entryInputConvert.get()
