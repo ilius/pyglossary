@@ -233,6 +233,12 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		for entryFilter in self._entryFilters:
 			entryFilter.prepare()
 
+	def _addExtraEntryFilter(self, cls):
+		if cls.name in self._entryFiltersName:
+			return
+		self._entryFilters.append(cls(self))
+		self._entryFiltersName.add(cls.name)
+
 	def removeHtmlTagsAll(self) -> None:
 		"""
 		Remove all HTML tags from definition
@@ -240,9 +246,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		This should only be called from a plugin's Writer.__init__ method.
 		Does not apply on entries added with glos.addEntryObj
 		"""
-		if RemoveHtmlTagsAll.name in self._entryFiltersName:
-			return
-		self._entryFilters.append(RemoveHtmlTagsAll(self))
+		self._addExtraEntryFilter(RemoveHtmlTagsAll)
 
 	def preventDuplicateWords(self):
 		"""
@@ -255,9 +259,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			but we only care about making the whole `entry.s_word`
 			(aka entry key) unique
 		"""
-		if PreventDuplicateWords.name in self._entryFiltersName:
-			return
-		self._entryFilters.append(PreventDuplicateWords(self))
+		self._addExtraEntryFilter(PreventDuplicateWords)
 
 	def __str__(self) -> str:
 		return (
