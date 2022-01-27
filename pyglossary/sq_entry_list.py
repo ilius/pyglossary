@@ -43,12 +43,12 @@ class SqEntryList(list):
 		self,
 		glos,
 		filename: str,
-		sortColumns: "List[Tuple[str, str, str]]",
+		sqliteSortKey: "List[Tuple[str, str, Callable]]",
 		create: bool = True,
 		persist: bool = False,
 	):
 		"""
-			sortColumns[i] == (name, type, valueFunc)
+			sqliteSortKey[i] == (name, type, valueFunc)
 
 			persist: do not delete the file when variable is deleted
 		"""
@@ -63,9 +63,9 @@ class SqEntryList(list):
 		if not filename:
 			raise ValueError(f"invalid filename={filename!r}")
 
-		self._sortColumns = sortColumns
+		self._sqliteSortKey = sqliteSortKey
 		self._columnNames = ",".join([
-			col[0] for col in sortColumns
+			col[0] for col in sqliteSortKey
 		])
 		self._orderBy = "rowid"
 		self._sorted = False
@@ -74,7 +74,7 @@ class SqEntryList(list):
 		if create:
 			colDefs = ",".join([
 				f"{col[0]} {col[1]}"
-				for col in sortColumns
+				for col in sqliteSortKey
 			] + ["pickle BLOB"])
 			self._con.execute(
 				f"CREATE TABLE data ({colDefs})"
@@ -88,13 +88,13 @@ class SqEntryList(list):
 	def append(self, entry):
 		rawEntry = entry.getRaw(self._glos)
 		self._len += 1
-		colCount = len(self._sortColumns)
+		colCount = len(self._sqliteSortKey)
 		try:
 			values = [
-				col[2](entry.l_word) for col in self._sortColumns
+				col[2](entry.l_word) for col in self._sqliteSortKey
 			]
 		except Exception:
-			log.critical(f"error in _sortColumns funcs for rawEntry = {rawEntry!r}")
+			log.critical(f"error in _sqliteSortKey funcs for rawEntry = {rawEntry!r}")
 			raise
 		try:
 			pickleEntry = dumps(rawEntry, protocol=PICKLE_PROTOCOL)
@@ -129,7 +129,7 @@ class SqEntryList(list):
 		self._orderBy = sortColumnNames
 		if reverse:
 			self._orderBy = ",".join([
-				f"{col[0]} DESC" for col in self._sortColumns
+				f"{col[0]} DESC" for col in self._sqliteSortKey
 			])
 		self._con.commit()
 		self._con.execute(
