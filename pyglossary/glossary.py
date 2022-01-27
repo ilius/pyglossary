@@ -893,11 +893,11 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		inputFilename: str,
 		outputFormat: str,
 		writeOptions: "Dict[str, Any]",
-	) -> "Tuple[bool, bool, Optional[NamedSortKey]]":
+	) -> "Optional[Tuple[bool, bool]]":
 		"""
 			sortKeyName: see doc/sort-key.md
 
-			returns (sort, direct, namedSortKey)
+			returns (sort, direct) or None if fails
 		"""
 		plugin = self.plugins[outputFormat]
 
@@ -929,7 +929,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		if not sort:
 			if direct is None:
 				direct = True
-			return direct, False, None
+			return direct, False
 
 		direct = False
 		# from this point, sort == True and direct == False
@@ -957,7 +957,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				sortKeyName = writerSortKeyName
 			else:
 				log.critical(f"No sortKeyName was found in plugin")
-				return False, True, None
+				return None
 			if writerSortEncoding:
 				sortEncoding = writerSortEncoding
 		elif not sortKeyName:
@@ -969,7 +969,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		namedSortKey = namedSortKeyByName.get(sortKeyName)
 		if namedSortKey is None:
 			log.critical(f"invalid sortKeyName = {sortKeyName!r}")
-			return False, True, None
+			return None
 
 		log.info(f"Using sortKeyName = {namedSortKey.name!r}")
 
@@ -989,7 +989,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			writeOptions=writeOptions,
 		)
 
-		return False, True, namedSortKey
+		return False, True
 
 	def convert(
 		self,
@@ -1055,7 +1055,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			log.critical(f"Directory already exists: {outputFilename}")
 			return
 
-		direct, sort, namedSortKey = self._resolveConvertSortParams(
+		sortParams = self._resolveConvertSortParams(
 			sort=sort,
 			sortKeyName=sortKeyName,
 			sortEncoding=sortEncoding,
@@ -1065,8 +1065,9 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			outputFormat=outputFormat,
 			writeOptions=writeOptions,
 		)
-		if sort and namedSortKey is None:
+		if sortParams is None:
 			return
+		direct, sort = sortParams
 
 		del sqlite
 		showMemoryUsage()
