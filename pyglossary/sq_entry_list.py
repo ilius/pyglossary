@@ -43,7 +43,6 @@ class SqEntryList(list):
 		self,
 		glos,
 		filename: str,
-		sqliteSortKey: "List[Tuple[str, str, Callable]]",
 		create: bool = True,
 		persist: bool = False,
 	):
@@ -63,15 +62,34 @@ class SqEntryList(list):
 		if not filename:
 			raise ValueError(f"invalid filename={filename!r}")
 
-		self._sqliteSortKey = sqliteSortKey
-		self._columnNames = ",".join([
-			col[0] for col in sqliteSortKey
-		])
 		self._orderBy = "rowid"
 		self._sorted = False
 		self._reverse = False
 		self._len = 0
-		if create:
+		self._create = create
+		self._sqliteSortKey = None
+		self._columnNames = ""
+
+	def setSortKey(
+		self,
+		namedSortKey: "NamedSortKey",
+		sortEncoding: "Optional[str]",
+		writeOptions: "Dict[str, Any]",
+	):
+		"""
+			sqliteSortKey[i] == (name, type, valueFunc)
+		"""
+
+		if self._sqliteSortKey is not None:
+			raise RuntimeError("Called setSortKey twice")
+
+		sqliteSortKey = namedSortKey.sqlite(sortEncoding, **writeOptions)
+
+		self._sqliteSortKey = sqliteSortKey
+		self._columnNames = ",".join([
+			col[0] for col in sqliteSortKey
+		])
+		if self._create:
 			colDefs = ",".join([
 				f"{col[0]} {col[1]}"
 				for col in sqliteSortKey
@@ -113,11 +131,6 @@ class SqEntryList(list):
 		for item in other:
 			self.append(item)
 		return self
-
-	def setSortKey(self, sortKey, sampleItem):
-		log.warning(f"SqList: ignoring sortKey {sortKey}")
-		# FIXME
-		# sample = sortKey(sampleItem)
 
 	def sort(self, reverse=False):
 		if self._sorted:

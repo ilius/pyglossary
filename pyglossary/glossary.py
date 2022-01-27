@@ -680,12 +680,20 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			log.critical(f"invalid sortKeyName = {sortKeyName!r}")
 			return
 
+		if not sortEncoding:
+			sortEncoding = "utf-8"
+		if writeOptions is None:
+			writeOptions = {}
+
 		t0 = now()
-
-		self._dataSetNamedSortKey(namedSortKey, sortEncoding, writeOptions)
+		self._data.setSortKey(
+			namedSortKey=namedSortKey,
+			sortEncoding=sortEncoding,
+			writeOptions=writeOptions,
+		)
 		self._data.sort()
-
 		log.info(f"Sorting took {now() - t0:.1f} seconds")
+
 		self._sort = True
 		self._updateIter()
 
@@ -711,21 +719,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		for name, value in options.items():
 			setattr(writer, f"_{name}", value)
 		return writer
-
-	def _dataSetNamedSortKey(
-		self,
-		namedSortKey: "NamedSortKey",
-		sortEncoding: "Optional[str]",
-		writeOptions: "Dict[str, Any]",
-	):
-		if not sortEncoding:
-			sortEncoding = "utf-8"
-		if writeOptions is None:
-			writeOptions = {}
-		self._data.setSortKey(
-			namedSortKey.normal(sortEncoding, **writeOptions),
-			["a", "b"]
-		)
 
 	def write(
 		self,
@@ -769,8 +762,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		filename: str,
 		format: str,
 		sort: "Optional[bool]" = None,
-		namedSortKey: "Optional[NamedSortKey]" = None,
-		sortEncoding: "Optional[str]" = None,
 		**options
 	) -> "Optional[str]":
 		filename = abspath(filename)
@@ -795,8 +786,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		if sort:
 			t0 = now()
-			if not self._sqlite:
-				self._dataSetNamedSortKey(namedSortKey, sortEncoding, options)
 			self._data.sort()
 			log.info(f"Sorting took {now() - t0:.1f} seconds")
 
@@ -869,15 +858,8 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self,
 		inputFilename: str,
 		outputFormat: str,
-		namedSortKey: "NamedSortKey",
-		sortEncoding: "Optional[str]",
-		writeOptions: "Dict[str, Any]",
 	) -> bool:
 		from pyglossary.sq_entry_list import SqEntryList
-
-		if not sortEncoding:
-			sortEncoding = "utf-8"
-		sqliteSortKey = namedSortKey.sqlite(sortEncoding, **writeOptions)
 
 		sq_fpath = join(cacheDir, f"{basename(inputFilename)}.db")
 		if isfile(sq_fpath):
@@ -887,7 +869,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self._data = SqEntryList(
 			self,
 			sq_fpath,
-			sqliteSortKey,
 			create=True,
 			persist=True,
 		)
@@ -996,10 +977,17 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			self._switchToSQLite(
 				inputFilename=inputFilename,
 				outputFormat=outputFormat,
-				namedSortKey=namedSortKey,
-				sortEncoding=sortEncoding,
-				writeOptions=writeOptions,
 			)
+
+		if not sortEncoding:
+			sortEncoding = "utf-8"
+		if writeOptions is None:
+			writeOptions = {}
+		self._data.setSortKey(
+			namedSortKey=namedSortKey,
+			sortEncoding=sortEncoding,
+			writeOptions=writeOptions,
+		)
 
 		return False, True, namedSortKey
 
@@ -1105,8 +1093,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			outputFilename,
 			outputFormat,
 			sort=sort,
-			namedSortKey=namedSortKey,
-			sortEncoding=sortEncoding,
 			**writeOptions
 		)
 		log.info("")

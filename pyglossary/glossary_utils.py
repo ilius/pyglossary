@@ -63,7 +63,13 @@ class EntryList(object):
 				defaultDefiFormat=glos._defaultDefiFormat,
 			)
 
-	def setSortKey(self, sortKey, sampleItem):
+	def setSortKey(
+		self,
+		namedSortKey: "NamedSortKey",
+		sortEncoding: "Optional[str]",
+		writeOptions: "Dict[str, Any]",
+	):
+		sortKey = namedSortKey.normal(sortEncoding, **writeOptions)
 		self._sortKey = Entry.getRawEntrySortKey(self._glos, sortKey)
 
 	def sort(self):
