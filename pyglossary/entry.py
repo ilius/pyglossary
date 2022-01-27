@@ -194,49 +194,6 @@ class Entry(BaseEntry):
 	def defaultSortKey(words: "List[str]") -> "Any":
 		return words[0].encode("utf-8").lower()
 
-	@classmethod
-	def sqliteDataType(cls, sample):
-		if isinstance(sample, str):
-			return "TEXT"
-		elif isinstance(sample, bytes):
-			return "BLOB"
-		elif isinstance(sample, int):
-			return "INTEGER"
-		elif isinstance(sample, float):
-			return "REAL"
-		else:
-			raise TypeError(f"invalid type: {type(sample)}")
-
-	@classmethod
-	def sqliteSortKeyItemFrom(
-		cls,
-		sortKey: "sortKeyType",
-		sample: str,
-		index: int,
-		name: str,
-	):
-		return (
-			name,
-			cls.sqliteDataType(sample),
-			lambda words: sortKey(words)[index],
-		)
-
-	@classmethod
-	def sqliteSortKeyFrom(cls, sortKey: "sortKeyType"):
-		sample = sortKey(["a", "b"])
-
-		if isinstance(sample, (list, tuple)):
-			return [
-				cls.sqliteSortKeyItemFrom(sortKey, item, index, f"sortkey_p{index+1}")
-				for index, item in enumerate(sample)
-			]
-
-		return [(
-			"sortkey",
-			cls.sqliteDataType(sample),
-			sortKey,
-		)]
-
 	@staticmethod
 	def getRawEntrySortKey(
 		glos: "GlossaryType",
