@@ -878,7 +878,7 @@ class Glossary(GlossaryType):
 		filename, format, compression = inputArgs
 
 		if compression:
-			from pyglossary.glossary_utils import uncompress
+			from pyglossary.compression import uncompress
 			uncompress(origFilename, filename, compression)
 
 		validOptionKeys = list(self.formatsReadOptions[format].keys())
@@ -1259,7 +1259,7 @@ class Glossary(GlossaryType):
 		return filename
 
 	def _compressOutput(self, filename: str, compression: str) -> str:
-		from pyglossary.glossary_utils import compress
+		from pyglossary.compression import compress
 		return compress(self, filename, compression)
 
 	def _switchToSQLite(
