@@ -36,7 +36,6 @@ from os.path import (
 )
 
 from time import time as now
-import re
 
 from collections import OrderedDict as odict
 
@@ -48,17 +47,13 @@ from .core import userPluginsDir, cacheDir
 from .entry import Entry, DataEntry
 from .entry_filters import *
 
-from .langs import langDict, Lang
-
-from .text_utils import (
-	fixUtf8,
-)
 from .glossary_utils import (
 	splitFilenameExt,
 	EntryList,
 )
 from .sort_keys import namedSortKeyByName, NamedSortKey
 from .os_utils import showMemoryUsage, rmtree
+from .glossary_info import GlossaryInfo
 from .plugin_manager import PluginManager
 from .glossary_type import GlossaryType
 from .info import *
@@ -76,7 +71,7 @@ sortKeyType = Callable[
 defaultSortKeyName = "headword_lower"
 
 
-class Glossary(PluginManager, GlossaryType):
+class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	"""
 	Direct access to glos.data is droped
 	Use `glos.addEntryObj(glos.newEntry(word, defi, [defiFormat]))`
@@ -107,7 +102,6 @@ class Glossary(PluginManager, GlossaryType):
 		(None, NonEmptyDefiFilter),
 		(None, RemoveEmptyAndDuplicateAltWords),
 	]
-
 
 	def _closeReaders(self):
 		for reader in self._readers:
@@ -151,6 +145,7 @@ class Glossary(PluginManager, GlossaryType):
 				no need to copy OrderedDict instance before passing here
 				we will not reference to it
 		"""
+		GlossaryInfo.__init__(self)
 		self._config = {}
 		self._data = EntryList(self)
 		self._sqlite = False
@@ -389,81 +384,6 @@ class Glossary(PluginManager, GlossaryType):
 			len(reader) for reader in self._readers
 		)
 
-	def infoKeys(self) -> "List[str]":
-		return list(self._info.keys())
-
-	# def formatInfoKeys(self, format: str):# FIXME
-
-	def iterInfo(self) -> "Iterator[Tuple[str, str]]":
-		return self._info.items()
-
-	def getInfo(self, key: str) -> str:
-		if not isinstance(key, str):
-			raise TypeError(f"invalid key={key!r}, must be str")
-		return self._info.get(
-			infoKeysAliasDict.get(key.lower(), key),
-			"",
-		)
-
-	def setInfo(self, key: str, value: "Optional[str]") -> None:
-		if value is None:
-			try:
-				del self._info[key]
-			except KeyError:
-				pass
-			return
-
-		if not isinstance(key, str):
-			raise TypeError(f"invalid key={key!r}, must be str")
-
-		key = fixUtf8(key)
-		value = fixUtf8(str(value))
-
-		key = infoKeysAliasDict.get(key.lower(), key)
-		self._info[key] = value
-
-	def getExtraInfos(self, excludeKeys: "List[str]") -> "odict":
-		"""
-		excludeKeys: a list of (basic) info keys to be excluded
-		returns an OrderedDict including the rest of info keys,
-				with associated values
-		"""
-		excludeKeySet = set()
-		for key in excludeKeys:
-			excludeKeySet.add(key)
-			key2 = infoKeysAliasDict.get(key.lower())
-			if key2:
-				excludeKeySet.add(key2)
-
-		extra = odict()
-		for key, value in self._info.items():
-			if key in excludeKeySet:
-				continue
-			extra[key] = value
-
-		return extra
-
-	@property
-	def author(self) -> str:
-		for key in (c_author, c_publisher):
-			value = self._info.get(key, "")
-			if value:
-				return value
-		return ""
-
-	def _getLangByStr(self, st) -> "Optional[Lang]":
-		lang = langDict[st]
-		if lang:
-			return lang
-		log.error(f"unknown language {st!r}")
-		return
-
-	def _getLangByInfoKey(self, key: str) -> "Optional[Lang]":
-		st = self._info.get(key, "")
-		if not st:
-			return
-		return self._getLangByStr(st)
-
 	@property
 	def config(self):
 		raise NotImplementedError
@@ -482,77 +402,6 @@ class Glossary(PluginManager, GlossaryType):
 	@property
 	def filename(self):
 		return self._filename
-
-	@property
-	def sourceLang(self) -> "Optional[Lang]":
-		return self._getLangByInfoKey(c_sourceLang)
-
-	@property
-	def targetLang(self) -> "Optional[Lang]":
-		return self._getLangByInfoKey(c_targetLang)
-
-	@sourceLang.setter
-	def sourceLang(self, lang) -> None:
-		if not isinstance(lang, Lang):
-			raise TypeError(f"invalid lang={lang}, must be a Lang object")
-		self._info[c_sourceLang] = lang.name
-
-	@targetLang.setter
-	def targetLang(self, lang) -> None:
-		if not isinstance(lang, Lang):
-			raise TypeError(f"invalid lang={lang}, must be a Lang object")
-		self._info[c_targetLang] = lang.name
-
-	@property
-	def sourceLangName(self) -> str:
-		lang = self.sourceLang
-		if lang is None:
-			return ""
-		return lang.name
-
-	@sourceLangName.setter
-	def sourceLangName(self, langName: str) -> None:
-		if not langName:
-			self._info[c_sourceLang] = ""
-			return
-		lang = self._getLangByStr(langName)
-		if lang is None:
-			return
-		self._info[c_sourceLang] = lang.name
-
-	@property
-	def targetLangName(self) -> str:
-		lang = self.targetLang
-		if lang is None:
-			return ""
-		return lang.name
-
-	@targetLangName.setter
-	def targetLangName(self, langName: str) -> None:
-		if not langName:
-			self._info[c_targetLang] = ""
-			return
-		lang = self._getLangByStr(langName)
-		if lang is None:
-			return
-		self._info[c_targetLang] = lang.name
-
-	def _getTitleTag(self, sample: str) -> str:
-		from .langs.writing_system import getWritingSystemFromText
-		ws = getWritingSystemFromText(sample)
-		if ws and ws.name != "Latin":
-			return ws.titleTag
-		sourceLang = self.sourceLang
-		if sourceLang:
-			return sourceLang.titleTag
-		return "b"
-
-	def titleElement(
-		self,
-		hf: "lxml.etree.htmlfile",
-		sample: str = "",
-	) -> "lxml.etree._FileWriterElement":
-		return hf.element(self._getTitleTag(sample))
 
 	def wordTitleStr(
 		self,
@@ -634,40 +483,6 @@ class Glossary(PluginManager, GlossaryType):
 		for name, value in options.items():
 			setattr(reader, f"_{name}", value)
 		return reader
-
-	def detectLangsFromName(self):
-		"""
-		extract sourceLang and targetLang from glossary name/title
-		"""
-		name = self._info.get(c_name)
-		if not name:
-			return
-		if self._info.get(c_sourceLang):
-			return
-		for match in re.findall(
-			r"(\w\w\w*)\s*(-| to )\s*(\w\w\w*)",
-			name,
-			flags=re.I,
-		):
-			sourceLang = langDict[match[0]]
-			if sourceLang is None:
-				log.info(f"Invalid language code/name {match[0]!r} in match={match}")
-				continue
-			targetLang = langDict[match[2]]
-			if targetLang is None:
-				log.info(f"Invalid language code/name {match[2]!r} in match={match}")
-				continue
-			self.sourceLang = sourceLang
-			self.targetLang = targetLang
-			log.info(
-				f"Detected sourceLang={sourceLang.name!r}, "
-				f"targetLang={targetLang.name!r} "
-				f"from glossary name {name!r}"
-			)
-			return
-		log.info(
-			f"Failed to detect sourceLang and targetLang from glossary name {name!r}"
-		)
 
 	def _setTmpDataDir(self, filename):
 		# good thing about cacheDir is that we don't have to clean it up after

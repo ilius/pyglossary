@@ -1,0 +1,217 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright © 2008-2022 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# This file is part of PyGlossary project, https://github.com/ilius/pyglossary
+#
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
+# If not, see <http://www.gnu.org/licenses/gpl.txt>.
+
+import logging
+from collections import OrderedDict as odict
+
+from .info import *
+from .text_utils import (
+	fixUtf8,
+)
+from .langs import langDict, Lang
+
+
+log = logging.getLogger("pyglossary")
+
+
+class GlossaryInfo(object):
+	def __init__(self):
+		self._info = odict()
+
+	def infoKeys(self) -> "List[str]":
+		return list(self._info.keys())
+
+	# def formatInfoKeys(self, format: str):# FIXME
+
+	def iterInfo(self) -> "Iterator[Tuple[str, str]]":
+		return self._info.items()
+
+	def getInfo(self, key: str) -> str:
+		if not isinstance(key, str):
+			raise TypeError(f"invalid key={key!r}, must be str")
+		return self._info.get(
+			infoKeysAliasDict.get(key.lower(), key),
+			"",
+		)
+
+	def setInfo(self, key: str, value: "Optional[str]") -> None:
+		if value is None:
+			try:
+				del self._info[key]
+			except KeyError:
+				pass
+			return
+
+		if not isinstance(key, str):
+			raise TypeError(f"invalid key={key!r}, must be str")
+
+		key = fixUtf8(key)
+		value = fixUtf8(str(value))
+
+		key = infoKeysAliasDict.get(key.lower(), key)
+		self._info[key] = value
+
+	def getExtraInfos(self, excludeKeys: "List[str]") -> "odict":
+		"""
+		excludeKeys: a list of (basic) info keys to be excluded
+		returns an OrderedDict including the rest of info keys,
+				with associated values
+		"""
+		excludeKeySet = set()
+		for key in excludeKeys:
+			excludeKeySet.add(key)
+			key2 = infoKeysAliasDict.get(key.lower())
+			if key2:
+				excludeKeySet.add(key2)
+
+		extra = odict()
+		for key, value in self._info.items():
+			if key in excludeKeySet:
+				continue
+			extra[key] = value
+
+		return extra
+
+	@property
+	def author(self) -> str:
+		for key in (c_author, c_publisher):
+			value = self._info.get(key, "")
+			if value:
+				return value
+		return ""
+
+	def _getLangByStr(self, st) -> "Optional[Lang]":
+		lang = langDict[st]
+		if lang:
+			return lang
+		log.error(f"unknown language {st!r}")
+		return
+
+	def _getLangByInfoKey(self, key: str) -> "Optional[Lang]":
+		st = self._info.get(key, "")
+		if not st:
+			return
+		return self._getLangByStr(st)
+
+	@property
+	def sourceLang(self) -> "Optional[Lang]":
+		return self._getLangByInfoKey(c_sourceLang)
+
+	@property
+	def targetLang(self) -> "Optional[Lang]":
+		return self._getLangByInfoKey(c_targetLang)
+
+	@sourceLang.setter
+	def sourceLang(self, lang) -> None:
+		if not isinstance(lang, Lang):
+			raise TypeError(f"invalid lang={lang}, must be a Lang object")
+		self._info[c_sourceLang] = lang.name
+
+	@targetLang.setter
+	def targetLang(self, lang) -> None:
+		if not isinstance(lang, Lang):
+			raise TypeError(f"invalid lang={lang}, must be a Lang object")
+		self._info[c_targetLang] = lang.name
+
+	@property
+	def sourceLangName(self) -> str:
+		lang = self.sourceLang
+		if lang is None:
+			return ""
+		return lang.name
+
+	@sourceLangName.setter
+	def sourceLangName(self, langName: str) -> None:
+		if not langName:
+			self._info[c_sourceLang] = ""
+			return
+		lang = self._getLangByStr(langName)
+		if lang is None:
+			return
+		self._info[c_sourceLang] = lang.name
+
+	@property
+	def targetLangName(self) -> str:
+		lang = self.targetLang
+		if lang is None:
+			return ""
+		return lang.name
+
+	@targetLangName.setter
+	def targetLangName(self, langName: str) -> None:
+		if not langName:
+			self._info[c_targetLang] = ""
+			return
+		lang = self._getLangByStr(langName)
+		if lang is None:
+			return
+		self._info[c_targetLang] = lang.name
+
+	def _getTitleTag(self, sample: str) -> str:
+		from .langs.writing_system import getWritingSystemFromText
+		ws = getWritingSystemFromText(sample)
+		if ws and ws.name != "Latin":
+			return ws.titleTag
+		sourceLang = self.sourceLang
+		if sourceLang:
+			return sourceLang.titleTag
+		return "b"
+
+	def detectLangsFromName(self):
+		"""
+		extract sourceLang and targetLang from glossary name/title
+		"""
+		import re
+
+		name = self._info.get(c_name)
+		if not name:
+			return
+		if self._info.get(c_sourceLang):
+			return
+		for match in re.findall(
+			r"(\w\w\w*)\s*(-| to )\s*(\w\w\w*)",
+			name,
+			flags=re.I,
+		):
+			sourceLang = langDict[match[0]]
+			if sourceLang is None:
+				log.info(f"Invalid language code/name {match[0]!r} in match={match}")
+				continue
+			targetLang = langDict[match[2]]
+			if targetLang is None:
+				log.info(f"Invalid language code/name {match[2]!r} in match={match}")
+				continue
+			self.sourceLang = sourceLang
+			self.targetLang = targetLang
+			log.info(
+				f"Detected sourceLang={sourceLang.name!r}, "
+				f"targetLang={targetLang.name!r} "
+				f"from glossary name {name!r}"
+			)
+			return
+		log.info(
+			f"Failed to detect sourceLang and targetLang from glossary name {name!r}"
+		)
+
+	def titleElement(
+		self,
+		hf: "lxml.etree.htmlfile",
+		sample: str = "",
+	) -> "lxml.etree._FileWriterElement":
+		return hf.element(self._getTitleTag(sample))
