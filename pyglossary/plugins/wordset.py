@@ -2,6 +2,7 @@
 
 from formats_common import *
 from pyglossary.entry import Entry
+from pyglossary.sort_keys import namedSortKeyByName
 from os import listdir
 from os.path import isfile
 from json import load
@@ -84,7 +85,8 @@ class Reader(object):
 			with open(fpath, encoding=encoding) as fileObj:
 				data = load(fileObj)
 				words = list(data.keys())
-				words.sort(key=Entry.defaultSortKey)
+				sortKey = namedSortKeyByName["headword_lower"].normal("utf-8")
+				words.sort(key=sortKey)
 				for word in words:
 					entryDict = data[word]
 					defi = "".join(

@@ -95,6 +95,6 @@ class BaseEntry(object):
 	@staticmethod
 	def getRawEntrySortKey(
 		glos: "GlossaryType",
-		key: "Optional[Callable[[str], Any]]" = None,
+		key: "Callable[[str], Any]",
 	) -> "Callable[[Tuple], str]":
 		raise NotImplementedError

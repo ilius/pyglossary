@@ -191,21 +191,14 @@ class Entry(BaseEntry):
 		return False
 
 	@staticmethod
-	def defaultSortKey(words: "List[str]") -> "Any":
-		return words[0].encode("utf-8").lower()
-
-	@staticmethod
 	def getRawEntrySortKey(
 		glos: "GlossaryType",
-		key: "Optional[Callable[[bytes], Any]]" = None,
+		key: "Callable[[bytes], Any]",
 	) -> "Callable[[Tuple], Any]":
 		# here `x` is raw entity, meaning a tuple of form (word, defi) or
 		# (word, defi, defiFormat)
 		# so x[0] is word(s) in bytes, that can be a str (one word),
 		# or a list or tuple (one word with or more alternaties)
-		if key is None:
-			key = Entry.defaultSortKey
-
 		if glos.rawEntryCompress:
 			return lambda x: key(loads(decompress(x))[0])
 		else:
