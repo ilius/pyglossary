@@ -39,8 +39,6 @@ from time import time as now
 
 from collections import OrderedDict as odict
 
-import gc
-
 from .flags import *
 from . import core
 from .core import userPluginsDir, cacheDir
@@ -298,9 +296,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self,
 		gen: "Iterator[BaseEntry]",
 	) -> "Iterator[BaseEntry]":
-		for index, entry in enumerate(gen):
-			if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
-				gc.collect()
+		for entry in gen:
 			if entry is None:
 				continue
 			for entryFilter in self._entryFilters:

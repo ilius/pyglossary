@@ -25,7 +25,6 @@ from os.path import (
 )
 import subprocess
 import logging
-import gc
 
 from .compression import (
 	stdCompressions,
@@ -55,9 +54,7 @@ class EntryList(object):
 
 	def __iter__(self):
 		glos = self._glos
-		for index, rawEntry in enumerate(self._l):
-			if index & 0x7f == 0:  # 0x3f, 0x7f, 0xff
-				gc.collect()
+		for rawEntry in self._l:
 			yield Entry.fromRaw(
 				glos, rawEntry,
 				defaultDefiFormat=glos._defaultDefiFormat,
