@@ -229,11 +229,12 @@ There are two things than can activate sorting entries:
 - You pass `--sort` flag in command line.
 
 In the case of passing `--sort`, you can also pass:
+
 - `--sort-key` to select sort key aka sorting order, see [doc/sort-key.md](./doc/sort-key.md)
 - `--sort-encoding` to change the encoding used for sort
-	- UTF-8 is the default encoding for all sort keys and all output formats (unless mentioned otherwise)
-	- This will only effect the order of entries, and will not corrupt words / definition
-	- Non-encodable characters are replaced with `?` byte (*only for sorting*)
+  - UTF-8 is the default encoding for all sort keys and all output formats (unless mentioned otherwise)
+  - This will only effect the order of entries, and will not corrupt words / definition
+  - Non-encodable characters are replaced with `?` byte (*only for sorting*)
 
 ## Cache directory
 
