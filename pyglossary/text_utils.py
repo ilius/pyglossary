@@ -117,7 +117,8 @@ def unescapeBar(st: str) -> str:
 
 def splitByBar(st: str) -> "List[str]":
 	"""
-		splits by "|" (and not "\\|") then unescapes Baskslash (\\) and Bar (\\|) in each part
+		splits by "|" (and not "\\|")
+		then unescapes Baskslash (\\) and Bar (\\|) in each part
 	"""
 	return [
 		unescapeBar(part)

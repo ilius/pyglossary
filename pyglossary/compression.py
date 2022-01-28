@@ -138,4 +138,3 @@ def uncompress(srcFilename: str, dstFilename: str, compression: str) -> None:
 
 	# TODO: if compression == "zip":
 	raise ValueError(f"unexpected compression={compression!r}")
-

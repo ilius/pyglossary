@@ -87,7 +87,8 @@ def _headword_bytes_lower_normal(encoding: str, **options) -> "sortKeyType":
 	return sortKey
 
 
-def _headword_bytes_lower_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
+def _headword_bytes_lower_sqlite(encoding: str, **options) \
+	-> "sqliteSortKeyType":
 	def sortKey(words: "List[str]"):
 		return words[0].encode(encoding, errors="replace").lower()
 

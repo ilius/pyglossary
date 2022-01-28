@@ -44,6 +44,7 @@ class MockLogHandler(logging.Handler):
 
 mockLog = None
 
+
 def getMockLogger():
 	global mockLog
 

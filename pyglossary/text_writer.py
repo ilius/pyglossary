@@ -164,7 +164,6 @@ class TextGlossaryWriter(object):
 			if word_title:
 				defi = glos.wordTitleStr(entry.l_word[0]) + defi
 
-
 			if wordListEncodeFunc is not None:
 				word = wordListEncodeFunc(entry.l_word)
 			elif wordEscapeFunc is not None:
@@ -225,6 +224,7 @@ def writeTxt(
 	writer.open(filename)
 	yield from writer.write()
 	writer.finish()
+
 
 def writeTabfile(
 	glos: "GlossaryType",

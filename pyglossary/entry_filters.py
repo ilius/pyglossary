@@ -165,7 +165,7 @@ class RemoveHtmlTags(EntryFilter):
 
 
 # FIXME: It's is not safe to lowercases everything between < and >
-# including class name, element ids/names, scripts, <a href="bword://..."> 
+# including class name, element ids/names, scripts, <a href="bword://...">
 # etc. How can we fix that?
 class NormalizeHtml(EntryFilter):
 	name = "normalize_html"
