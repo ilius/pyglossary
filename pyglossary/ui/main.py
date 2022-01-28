@@ -568,7 +568,8 @@ def main():
 
 	##############################
 
-	from pyglossary.glossary import Glossary, langDict
+	from pyglossary.glossary import Glossary
+	from pyglossary.langs import langDict
 	from pyglossary.ui.ui_cmd import help, parseFormatOptionsStr
 
 	Glossary.init()
