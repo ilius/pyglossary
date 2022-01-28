@@ -228,6 +228,22 @@ def _dicformids_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 	]
 
 
+def _random_normal(encoding: str, **options) -> "sortKeyType":
+	from random import random
+	return lambda words: random()
+
+
+def _random_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
+	from random import random
+	return [
+		(
+			"random",
+			"REAL",
+			lambda words: random(),
+		),
+	]
+
+
 namedSortKeyList = [
 	NamedSortKey(
 		name="headword",
@@ -270,6 +286,12 @@ namedSortKeyList = [
 		normal=_dicformids_normal,
 		sqlite=_dicformids_sqlite,
 		desc="DictionaryForMIDs",
+	),
+	NamedSortKey(
+		name="random",
+		normal=_random_normal,
+		sqlite=_random_sqlite,
+		desc="Random",
 	),
 ]
 

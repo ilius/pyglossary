@@ -11,3 +11,4 @@
 | `ebook`                | E-Book (prefix length: 2) | [EPUB-2](./p/epub2.md), [Mobipocket](./p/mobi.md) |
 | `ebook_length3`        | E-Book (prefix length: 3) |                                                   |
 | `dicformids`           | DictionaryForMIDs         | [DictionaryForMIDs](./p/dicformids.md)            |
+| `random`               | Random                    |                                                   |
