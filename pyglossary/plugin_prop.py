@@ -65,6 +65,18 @@ class PluginProp(object):
 			else:
 				raise ValueError(msg)
 
+		if not isinstance(self.readDepends, dict):
+			log.error(
+				f"invalid depends={self.readDepends}"
+				f" in {self.name!r}.Reader class"
+			)
+
+		if not isinstance(self.writeDepends, dict):
+			log.error(
+				f"invalid depends={self.writeDepends}"
+				f" in {self.name!r}.Reader class"
+			)
+
 		for name, opt in self.optionsProp.items():
 			if name.lower() != name:
 				suggestName = "".join([
@@ -152,15 +164,6 @@ class PluginProp(object):
 				self.module.Reader = None
 				return None
 
-		if hasattr(cls, "depends"):
-			if not isinstance(cls.depends, dict):
-				log.error(
-					f"invalid depends={cls.depends}"
-					f" in {self.name!r}.Reader class"
-				)
-		else:
-			cls.depends = {}
-
 		return cls
 
 	@property
@@ -189,15 +192,6 @@ class PluginProp(object):
 				)
 				self.module.Writer = None
 				return None
-
-		if hasattr(cls, "depends"):
-			if not isinstance(cls.depends, dict):
-				log.error(
-					f"invalid depends={cls.depends}"
-					f" in {self.name!r}.Writer class"
-				)
-		else:
-			cls.depends = {}
 
 		return cls
 
