@@ -45,7 +45,7 @@ class PluginProp(object):
 		return getattr(self._mod, "enable", False)
 
 	def initCheck(self):
-		if log.level < logging.DEBUG:
+		if log.level > logging.DEBUG:
 			return
 
 		module = self._mod
