@@ -45,22 +45,41 @@ class PluginProp(object):
 		return getattr(self._mod, "enable", False)
 
 	def initCheck(self):
-		if log.level >= logging.DEBUG:
-			for name, opt in self.optionsProp.items():
-				if name.lower() != name:
-					suggestName = "".join([
-						"_" + x.lower() if x.isupper()
-						else x
-						for x in name
-					])
-					log.debug(
-						f"{self.name}: please rename option "
-						f"{name} to {suggestName}"
-					)
-				if not opt.comment:
-					log.debug(
-						f"{self.name}: please add comment for option {name}"
-					)
+		if log.level < logging.DEBUG:
+			return
+
+		module = self._mod
+
+		if hasattr(module, "write"):
+			log.error(
+				f"plugin {format} has write function, "
+				f"must migrate to Writer class"
+			)
+
+		extensions = module.extensions
+		if not isinstance(extensions, tuple):
+			msg = f"{format} plugin: extensions must be tuple"
+			if isinstance(extensions, list):
+				extensions = tuple(extensions)
+				log.error(msg)
+			else:
+				raise ValueError(msg)
+
+		for name, opt in self.optionsProp.items():
+			if name.lower() != name:
+				suggestName = "".join([
+					"_" + x.lower() if x.isupper()
+					else x
+					for x in name
+				])
+				log.debug(
+					f"{self.name}: please rename option "
+					f"{name} to {suggestName}"
+				)
+			if not opt.comment:
+				log.debug(
+					f"{self.name}: please add comment for option {name}"
+				)
 
 	@property
 	def module(self):

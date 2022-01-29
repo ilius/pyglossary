@@ -93,48 +93,31 @@ class PluginManager(object):
 			# log.debug(f"Plugin disabled or not a module: {moduleName}")
 			return
 
-		format = module.format
-
-		extensions = module.extensions
-		if not isinstance(extensions, tuple):
-			msg = f"{format} plugin: extensions must be tuple"
-			if isinstance(extensions, list):
-				extensions = tuple(extensions)
-				log.error(msg)
-			else:
-				raise ValueError(msg)
+		name = module.format
 
 		prop = PluginProp(module)
 
-		cls.plugins[format] = prop
+		cls.plugins[name] = prop
 		cls.loadedModules.add(moduleName)
 
 		if not enable:
 			return
 
-		for ext in extensions:
+		for ext in prop.extensions:
 			if ext.lower() != ext:
 				log.error(f"non-lowercase extension={ext!r} in {moduleName} plugin")
 			cls.pluginByExt[ext.lstrip(".")] = prop
 			cls.pluginByExt[ext] = prop
 
-		Reader = prop.readerClass
-		if Reader is not None:
+		if prop.canRead:
 			options = prop.getReadOptions()
-			cls.formatsReadOptions[format] = options
-			cls.readFormats.append(format)
+			cls.formatsReadOptions[name] = options
+			cls.readFormats.append(name)
 
-		Writer = prop.writerClass
-		if Writer is not None:
+		if prop.canWrite:
 			options = prop.getWriteOptions()
-			cls.formatsWriteOptions[format] = options
-			cls.writeFormats.append(format)
-
-		if hasattr(module, "write"):
-			log.error(
-				f"plugin {format} has write function, "
-				f"must migrate to Writer class"
-			)
+			cls.formatsWriteOptions[name] = options
+			cls.writeFormats.append(name)
 
 	@classmethod
 	def findPlugin(cls, query: str) -> "Optional[PluginProp]":
