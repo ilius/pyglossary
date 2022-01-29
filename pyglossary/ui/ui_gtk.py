@@ -29,6 +29,7 @@ from pyglossary.os_utils import click_website
 
 from pyglossary.glossary import (
 	Glossary,
+	defaultSortKeyName,
 )
 from pyglossary.sort_keys import namedSortKeyList, namedSortKeyByName
 
@@ -783,7 +784,7 @@ class SortOptionsBox(gtk.Box):
 		sortKeyCombo = gtk.ComboBoxText()
 		for _sk in namedSortKeyList:
 			sortKeyCombo.append_text(_sk.desc)
-		sortKeyCombo.set_active(0)
+		sortKeyCombo.set_active(sortKeyNames.index(defaultSortKeyName))
 		sortKeyCombo.set_border_width(0)
 		sortKeyCombo.set_sensitive(False)
 		# sortKeyCombo.connect("changed", self.sortKeyComboChanged)
