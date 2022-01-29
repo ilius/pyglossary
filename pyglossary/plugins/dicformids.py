@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
-from tabfile import Reader as TabfileReader
+from pyglossary.plugins.tabfile import Reader as TabfileReader
 from pyglossary.plugins.formats_common import *
 
 lname = "dicformids"
