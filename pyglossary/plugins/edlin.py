@@ -19,7 +19,7 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from pyglossary.text_utils import (
 	escapeNTB,
 	unescapeNTB,

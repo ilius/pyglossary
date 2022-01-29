@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from pyglossary.text_reader import TextGlossaryReader
 from pyglossary.text_utils import (
 	unescapeNTB,

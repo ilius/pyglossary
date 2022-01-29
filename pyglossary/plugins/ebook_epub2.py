@@ -19,7 +19,7 @@
 # SOFTWARE.
 
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from pyglossary.ebook_base import *
 
 enable = True

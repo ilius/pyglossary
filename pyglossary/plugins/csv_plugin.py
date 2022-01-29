@@ -17,7 +17,7 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 import csv
 
 

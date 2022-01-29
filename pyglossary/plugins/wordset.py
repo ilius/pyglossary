@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from pyglossary.entry import Entry
 from pyglossary.sort_keys import namedSortKeyByName
 from os import listdir

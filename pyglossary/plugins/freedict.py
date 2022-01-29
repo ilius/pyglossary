@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from pyglossary.html_utils import unescape_unicode
 from pyglossary.langs import langDict
 from pyglossary.langs.writing_system import getWritingSystemFromText

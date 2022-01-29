@@ -1,5 +1,5 @@
 import re
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from . import conv
 
 enable = True

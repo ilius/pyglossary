@@ -2,7 +2,7 @@
 # Source Glossary for "Sdictionary" (http://sdict.org)
 # It has extension ".sdct"
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 
 enable = True
 lname = "sdict_source"

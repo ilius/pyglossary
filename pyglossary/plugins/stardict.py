@@ -18,7 +18,7 @@ from pyglossary.text_utils import (
 	uint32FromBytes,
 )
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 
 enable = True
 lname = "stardict"

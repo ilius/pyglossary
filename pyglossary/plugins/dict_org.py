@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from pyglossary.file_utils import fileCountLines
 from pyglossary.plugin_lib.dictdlib import DictDB
 

@@ -22,7 +22,7 @@
 
 from os import path
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from pyglossary.xdxf_transform import *
 
 enable = True

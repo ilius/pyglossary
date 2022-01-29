@@ -14,7 +14,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 
 from struct import unpack
 from zlib import decompress

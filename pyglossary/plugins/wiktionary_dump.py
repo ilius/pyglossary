@@ -4,7 +4,7 @@ from time import time as now
 import re
 import html
 
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 
 enable = True
 lname = "wiktionary_dump"

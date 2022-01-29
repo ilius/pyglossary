@@ -1,4 +1,4 @@
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from pyglossary.text_reader import TextGlossaryReader
 
 enable = True

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from pyglossary.text_reader import TextGlossaryReader
 from io import BytesIO
 from os.path import dirname

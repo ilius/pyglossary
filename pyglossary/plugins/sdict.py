@@ -19,7 +19,7 @@
 # GNU General Public License for more details.
 
 from struct import unpack
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 
 enable = True
 lname = "sdict"

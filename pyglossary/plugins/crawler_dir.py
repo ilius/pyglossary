@@ -1,4 +1,4 @@
-from formats_common import *
+from pyglossary.plugins.formats_common import *
 from hashlib import sha1
 from os.path import dirname
 from os import makedirs, listdir
