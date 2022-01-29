@@ -43,7 +43,7 @@ class PluginManager(object):
 	@classmethod
 	def loadPlugins(cls: "ClassVar", directory: str) -> None:
 		"""
-		executed on startup.  as name implies, loads plugins from directory
+		executed on startup. as name implies, loads plugins from directory
 		"""
 		import pkgutil
 		from os.path import isdir
@@ -53,30 +53,30 @@ class PluginManager(object):
 			log.critical(f"Invalid plugin directory: {directory!r}")
 			return
 
-		pluginNames = [
-			pluginName
-			for _, pluginName, _ in pkgutil.iter_modules([directory])
+		moduleNames = [
+			moduleName
+			for _, moduleName, _ in pkgutil.iter_modules([directory])
 		]
-		pluginNames.sort()
+		moduleNames.sort()
 
 		sys.path.append(directory)
-		for pluginName in pluginNames:
-			cls.loadPlugin(pluginName)
+		for moduleName in moduleNames:
+			cls.loadPlugin(moduleName)
 		sys.path.pop()
 
 	@classmethod
-	def loadPlugin(cls: "ClassVar", pluginName: str) -> None:
+	def loadPlugin(cls: "ClassVar", moduleName: str) -> None:
 		try:
-			plugin = __import__(pluginName)
+			plugin = __import__(moduleName)
 		except ModuleNotFoundError as e:
-			log.warning(f"Module {e.name!r} not found, skipping plugin {pluginName!r}")
+			log.warning(f"Module {e.name!r} not found, skipping plugin {moduleName!r}")
 			return
 		except Exception as e:
-			log.exception(f"Error while importing plugin {pluginName}")
+			log.exception(f"Error while importing plugin {moduleName}")
 			return
 
 		if (not hasattr(plugin, "enable")) or (not plugin.enable):
-			# log.debug(f"Plugin disabled or not a plugin: {pluginName}")
+			# log.debug(f"Plugin disabled or not a plugin: {moduleName}")
 			return
 
 		format = plugin.format
@@ -101,7 +101,7 @@ class PluginManager(object):
 
 		for ext in extensions:
 			if ext.lower() != ext:
-				log.error(f"non-lowercase extension={ext!r} in {pluginName} plugin")
+				log.error(f"non-lowercase extension={ext!r} in {moduleName} plugin")
 			cls.pluginByExt[ext.lstrip(".")] = prop
 			cls.pluginByExt[ext] = prop
 
