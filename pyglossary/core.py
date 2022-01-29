@@ -361,6 +361,7 @@ else:
 		f", unknown operating system!"
 	)
 
+pluginsDir = join(rootDir, "pyglossary", "plugins")
 confJsonFile = join(confDir, "config.json")
 rootConfJsonFile = join(dataDir, "config.json")
 userPluginsDir = join(confDir, "plugins")

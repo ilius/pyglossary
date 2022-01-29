@@ -7,7 +7,29 @@ import logging
 log = logging.getLogger("pyglossary")
 
 
+def optionFromDict(data):
+	className = data.pop("class")
+	if className == "Option":
+		data["typ"] = data.pop("type")
+		optClass = Option
+	else:
+		data.pop("type")
+		optClass = Option.classes[className]
+	return optClass.fromDict(data)
+
+
 class Option(object):
+	classes = {}
+
+	@classmethod
+	def register(cls, optClass):
+		cls.classes[optClass.__name__] = optClass
+		return optClass
+
+	@classmethod
+	def fromDict(cls, data):
+		return cls(**data)
+
 	def __init__(
 		self,
 		typ: str,
@@ -100,6 +122,7 @@ class Option(object):
 		return None
 
 
+@Option.register
 class BoolOption(Option):
 	def __init__(self, allowNone=False, **kwargs):
 		values = [False, True]
@@ -132,6 +155,7 @@ class BoolOption(Option):
 		return None, False  # not valid
 
 
+@Option.register
 class StrOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(
@@ -155,6 +179,7 @@ class StrOption(Option):
 		return None
 
 
+@Option.register
 class IntOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(
@@ -172,6 +197,7 @@ class IntOption(Option):
 		return value, True
 
 
+@Option.register
 class FileSizeOption(IntOption):
 	factors = {
 		"KiB": 1024,
@@ -232,6 +258,7 @@ class FileSizeOption(IntOption):
 		return int(value * factor), True
 
 
+@Option.register
 class FloatOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(
@@ -253,6 +280,7 @@ class FloatOption(Option):
 			return value, True
 
 
+@Option.register
 class DictOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(
@@ -284,6 +312,7 @@ class DictOption(Option):
 		return value, True  # valid
 
 
+@Option.register
 class ListOption(Option):
 	def __init__(self, **kwargs):
 		Option.__init__(
@@ -313,6 +342,7 @@ class ListOption(Option):
 		return value, True  # valid
 
 
+@Option.register
 class EncodingOption(Option):
 	re_category = re.compile("^[a-z]+")
 
@@ -389,6 +419,7 @@ class EncodingOption(Option):
 		return groups
 
 
+@Option.register
 class NewlineOption(Option):
 	def __init__(
 		self,
@@ -416,6 +447,7 @@ class NewlineOption(Option):
 		)
 
 
+@Option.register
 class HtmlColorOption(Option):
 	def toDict(self):
 		data = Option.toDict(self)

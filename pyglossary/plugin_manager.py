@@ -25,6 +25,10 @@ from .plugin_prop import PluginProp
 from .glossary_utils import (
 	splitFilenameExt,
 )
+from . import core
+from .core import (
+	pluginsDir,
+)
 
 log = logging.getLogger("pyglossary")
 
@@ -40,6 +44,22 @@ class PluginManager(object):
 
 	readFormats = []  # type: List[str]
 	writeFormats = []  # type: List[str]
+
+	@classmethod
+	def loadPluginsFromJson(cls: "ClassVar", jsonPath: str) -> None:
+		import json
+		from os.path import dirname, join
+
+		with open(jsonPath) as _file:
+			data = json.load(_file)
+
+		for attrs in data:
+			moduleName = attrs["module"]
+			cls.loadPluginByDict(
+				attrs=attrs,
+				modulePath=join(pluginsDir, moduleName),
+			)
+			cls.loadedModules.add(moduleName)
 
 	@classmethod
 	def loadPlugins(
@@ -73,6 +93,43 @@ class PluginManager(object):
 		sys.path.pop()
 
 	@classmethod
+	def loadPluginByDict(
+		cls: "ClassVar",
+		attrs: "Dict[str, Any]",
+		modulePath: str,
+	) -> None:
+		format = attrs["name"]
+
+		extensions = attrs["extensions"]
+		prop = PluginProp.fromDict(
+			attrs=attrs,
+			modulePath=modulePath,
+		)
+
+		cls.plugins[format] = prop
+		cls.loadedModules.add(attrs["module"])
+
+		if not prop.enable:
+			return
+
+		for ext in extensions:
+			if ext.lower() != ext:
+				log.error(f"non-lowercase extension={ext!r} in {moduleName} plugin")
+			cls.pluginByExt[ext.lstrip(".")] = prop
+			cls.pluginByExt[ext] = prop
+
+		if attrs["canRead"]:
+			cls.formatsReadOptions[format] = attrs["readOptions"]
+			cls.readFormats.append(format)
+
+		if attrs["canWrite"]:
+			cls.formatsWriteOptions[format] = attrs["writeOptions"]
+			cls.writeFormats.append(format)
+
+		if log.level <= core.TRACE:
+			prop.module  # to make sure imporing works
+
+	@classmethod
 	def loadPlugin(
 		cls: "ClassVar",
 		moduleName: str,
@@ -95,7 +152,7 @@ class PluginManager(object):
 
 		name = module.format
 
-		prop = PluginProp(module)
+		prop = PluginProp.fromModule(module)
 
 		cls.plugins[name] = prop
 		cls.loadedModules.add(moduleName)

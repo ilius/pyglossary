@@ -16,7 +16,9 @@ def hasBar(entry):
 	return False
 
 
-Glossary.init()
+Glossary.init(
+	# usePluginsJson=False,
+)
 
 for direct in (True, False):
 	print(f"\n-------- direct={direct}")

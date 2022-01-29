@@ -15,7 +15,9 @@ sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary
 
-Glossary.init()
+Glossary.init(
+	# usePluginsJson=False,
+)
 
 """
 Mako template engine:

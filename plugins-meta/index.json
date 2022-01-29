@@ -201,6 +201,20 @@
 		}
 	},
 	{
+		"module": "babylon_bdc",
+		"lname": "babylon_bdc",
+		"name": "BabylonBdc",
+		"description": "Babylon (bdc)",
+		"extensions": [
+			".bdc"
+		],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": false,
+		"canWrite": false,
+		"enable": false
+	},
+	{
 		"module": "babylon_bgl",
 		"lname": "babylon_bgl",
 		"name": "BabylonBgl",
@@ -931,6 +945,20 @@
 		]
 	},
 	{
+		"module": "gettext_mo",
+		"lname": "gettext_mo",
+		"name": "GettextMo",
+		"description": "Gettext Binary (mo)",
+		"extensions": [
+			".mo"
+		],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": false,
+		"canWrite": false,
+		"enable": false
+	},
+	{
 		"module": "gettext_po",
 		"lname": "gettext_po",
 		"name": "GettextPo",
@@ -1442,6 +1470,23 @@
 			"bz2",
 			"lzma"
 		]
+	},
+	{
+		"module": "testformat",
+		"lname": "testformat",
+		"name": "Test",
+		"description": "Test Format File(.test)",
+		"extensions": [
+			".test",
+			".tst"
+		],
+		"singleFile": false,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {},
+		"writeOptions": {},
+		"enable": false
 	},
 	{
 		"module": "wiktionary_dump",

@@ -14,7 +14,9 @@ sys.path.insert(0, rootDir)
 from pyglossary.glossary import Glossary
 from pyglossary.core import userPluginsDir
 
-Glossary.init()
+Glossary.init(
+	# usePluginsJson=False,
+)
 
 userPluginsDirPath = Path(userPluginsDir)
 plugins = [

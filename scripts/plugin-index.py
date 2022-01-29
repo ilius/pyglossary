@@ -13,7 +13,10 @@ from pyglossary.glossary import Glossary
 from pyglossary.core import userPluginsDir
 from pyglossary.flags import DEFAULT_NO
 
-Glossary.init()
+Glossary.init(
+	usePluginsJson=False,
+	skipDisabledPlugins=False,
+)
 
 userPluginsDirPath = Path(userPluginsDir)
 plugins = [

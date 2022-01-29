@@ -41,7 +41,12 @@ from collections import OrderedDict as odict
 
 from .flags import *
 from . import core
-from .core import userPluginsDir, cacheDir
+from .core import (
+	rootDir,
+	pluginsDir,
+	userPluginsDir,
+	cacheDir,
+)
 from .entry import Entry, DataEntry
 from .entry_filters import *
 
@@ -1126,11 +1131,25 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	# ________________________________________________________________________#
 
 	@classmethod
-	def init(cls):
+	def init(
+		cls,
+		usePluginsJson: bool = True,
+		skipDisabledPlugins: bool = True,
+	):
 		cls.readFormats = []
 		cls.writeFormats = []
-		cls.loadPlugins(join(dirname(__file__), "plugins"))
+		pluginsJsonPath = join(rootDir, "plugins-meta", "index.json")
+
+		# even if usePluginsJson, we should still call loadPlugins to load
+		# possible new plugins that are not in json file
+
+		if usePluginsJson:
+			cls.loadPluginsFromJson(pluginsJsonPath)
+
+		cls.loadPlugins(pluginsDir, skipDisabled=skipDisabledPlugins)
+
 		if os.path.exists(userPluginsDir):
 			cls.loadPlugins(userPluginsDir)
+
 		if not isdir(cacheDir):
 			os.makedirs(cacheDir)

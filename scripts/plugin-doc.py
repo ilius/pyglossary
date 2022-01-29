@@ -15,7 +15,9 @@ sys.path.insert(0, rootDir)
 from pyglossary.glossary import Glossary, defaultSortKeyName
 from pyglossary.core import userPluginsDir
 
-Glossary.init()
+Glossary.init(
+	# usePluginsJson=False,
+)
 
 
 """
