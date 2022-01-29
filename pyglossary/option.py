@@ -264,6 +264,11 @@ class DictOption(Option):
 			**kwargs,
 		)
 
+	def toDict(self):
+		data = Option.toDict(self)
+		del data["customValue"]
+		return data
+
 	def evaluate(self, raw: "Union[str, dict]") -> "Tuple[Optional[Dict], bool]":
 		import ast
 		if isinstance(raw, dict):
@@ -289,6 +294,11 @@ class ListOption(Option):
 			multiline=True,
 			**kwargs,
 		)
+
+	def toDict(self):
+		data = Option.toDict(self)
+		del data["customValue"]
+		return data
 
 	def evaluate(self, raw: str) -> "Tuple[Optional[List], bool]":
 		import ast
@@ -407,6 +417,11 @@ class NewlineOption(Option):
 
 
 class HtmlColorOption(Option):
+	def toDict(self):
+		data = Option.toDict(self)
+		del data["customValue"]
+		return data
+
 	def __init__(self, **kwargs):
 		Option.__init__(
 			self,

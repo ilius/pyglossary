@@ -48,6 +48,15 @@ for p in plugins:
 		item["readOptions"] = p.getReadOptions()
 	if canWrite:
 		item["writeOptions"] = p.getWriteOptions()
+	if not p.enable:
+		item["enable"] = False
+	if p.readDepends:
+		item["readDepends"] = p.readDepends
+	if p.writeDepends:
+		item["writeDepends"] = p.writeDepends
+	if p.readCompressions:
+		item["readCompressions"] = p.readCompressions
+
 	data.append(item)
 
 

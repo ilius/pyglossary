@@ -57,6 +57,12 @@
 			"file_size_approx": 0,
 			"separate_alternates": false,
 			"word_title": false
+		},
+		"readDepends": {
+			"icu": "PyICU"
+		},
+		"writeDepends": {
+			"icu": "PyICU"
 		}
 	},
 	{
@@ -113,7 +119,6 @@
 			"default_prefs": {
 				"class": "DictOption",
 				"type": "dict",
-				"customValue": true,
 				"comment": "default prefs in python dict format"
 			},
 			"prefs_html": {
@@ -156,6 +161,11 @@
 			"front_back_matter": "",
 			"jing": false,
 			"indexes": ""
+		},
+		"writeDepends": {
+			"lxml": "lxml",
+			"bs4": "beautifulsoup4",
+			"html5lib": "html5lib"
 		}
 	},
 	{
@@ -185,6 +195,9 @@
 		"readOptions": {
 			"html": true,
 			"html_full": false
+		},
+		"readDepends": {
+			"lxml": "lxml"
 		}
 	},
 	{
@@ -218,7 +231,6 @@
 			"part_of_speech_color": {
 				"class": "HtmlColorOption",
 				"type": "str",
-				"customValue": true,
 				"comment": "Color for Part of Speech"
 			},
 			"no_control_sequence_in_defi": {
@@ -322,6 +334,9 @@
 		"readOptions": {
 			"encoding": "utf-8",
 			"traditional_title": false
+		},
+		"readDepends": {
+			"lxml": "lxml"
 		}
 	},
 	{
@@ -334,7 +349,11 @@
 		"optionsProp": {},
 		"canRead": true,
 		"canWrite": false,
-		"readOptions": {}
+		"readOptions": {},
+		"readDepends": {
+			"yaml": "PyYAML",
+			"lxml": "lxml"
+		}
 	},
 	{
 		"module": "crawler_dir",
@@ -427,7 +446,12 @@
 			"add_defi_format": false,
 			"enable_info": true,
 			"word_title": false
-		}
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
 	},
 	{
 		"module": "dicformids",
@@ -542,7 +566,12 @@
 		"canWrite": false,
 		"readOptions": {
 			"encoding": "utf-8"
-		}
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
 	},
 	{
 		"module": "digitalnk",
@@ -589,7 +618,13 @@
 			"encoding": "",
 			"audio": false,
 			"only_fix_markup": false
-		}
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma",
+			"dz"
+		]
 	},
 	{
 		"module": "ebook_epub2",
@@ -661,7 +696,10 @@
 		"canRead": false,
 		"canWrite": true,
 		"sortOnWrite": "never",
-		"writeOptions": {}
+		"writeOptions": {},
+		"writeDepends": {
+			"marisa_trie": "marisa-trie"
+		}
 	},
 	{
 		"module": "ebook_kobo_dictfile",
@@ -693,7 +731,15 @@
 		},
 		"writeOptions": {
 			"encoding": "utf-8"
-		}
+		},
+		"readDepends": {
+			"mistune": "mistune==2.0.0a5"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
 	},
 	{
 		"module": "ebook_mobi",
@@ -874,7 +920,15 @@
 			"pron_color": "gray",
 			"gram_color": "green",
 			"example_padding": 10
-		}
+		},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
 	},
 	{
 		"module": "gettext_po",
@@ -897,6 +951,12 @@
 		"readOptions": {},
 		"writeOptions": {
 			"resources": true
+		},
+		"readDepends": {
+			"polib": "polib"
+		},
+		"writeDepends": {
+			"polib": "polib"
 		}
 	},
 	{
@@ -965,6 +1025,9 @@
 			"dark": true,
 			"css": "",
 			"word_title": true
+		},
+		"writeDepends": {
+			"cachetools": "cachetools"
 		}
 	},
 	{
@@ -992,7 +1055,15 @@
 		"optionsProp": {},
 		"canRead": true,
 		"canWrite": false,
-		"readOptions": {}
+		"readOptions": {},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
 	},
 	{
 		"module": "json_plugin",
@@ -1076,7 +1147,12 @@
 		"writeOptions": {
 			"newline": "\n",
 			"resources": true
-		}
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
 	},
 	{
 		"module": "octopus_mdict_new",
@@ -1192,7 +1268,6 @@
 			"info_keys": {
 				"class": "ListOption",
 				"type": "list",
-				"customValue": true,
 				"comment": "List of dbinfo table columns"
 			},
 			"add_extra_info": {
@@ -1361,7 +1436,12 @@
 			"resources": true,
 			"file_size_approx": 0,
 			"word_title": false
-		}
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
 	},
 	{
 		"module": "wiktionary_dump",
@@ -1423,6 +1503,9 @@
 		"canWrite": false,
 		"readOptions": {
 			"html": true
+		},
+		"readDepends": {
+			"lxml": "lxml"
 		}
 	},
 	{
@@ -1445,6 +1528,9 @@
 		"canWrite": false,
 		"readOptions": {
 			"skip_duplicate_words": false
+		},
+		"readDepends": {
+			"libzim": "libzim==1.0"
 		}
 	}
 ]
