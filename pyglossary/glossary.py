@@ -903,7 +903,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		if sortOnWrite == ALWAYS:
 			if sort is False:
 				log.warning(
-					f"Writing {format} requires sorting"
+					f"Writing {outputFormat} requires sorting"
 					f", ignoring user sort=False option"
 				)
 			sort = True
@@ -950,7 +950,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				if sortKeyName and sortKeyName != writerSortKeyName:
 					log.warning(
 						f"Ignoring user-defined sort order {sortKeyName!r}"
-						f", and using sortKey function from {format} plugin"
+						f", and using sortKey function from {outputFormat} plugin"
 					)
 				sortKeyName = writerSortKeyName
 			else:
