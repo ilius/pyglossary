@@ -1,5 +1,7 @@
 [
 	{
+		"module": "aard2_slob",
+		"lname": "aard2_slob",
 		"name": "Aard2Slob",
 		"description": "Aard 2 (.slob)",
 		"extensions": [
@@ -58,6 +60,8 @@
 		}
 	},
 	{
+		"module": "abc_medical_notes",
+		"lname": "abc_medical_notes",
 		"name": "ABCMedicalNotes",
 		"description": "ABC Medical Notes (SQLite3)",
 		"extensions": [],
@@ -68,6 +72,8 @@
 		"readOptions": {}
 	},
 	{
+		"module": "almaany",
+		"lname": "almaany",
 		"name": "Almaany",
 		"description": "Almaany.com (SQLite3)",
 		"extensions": [],
@@ -78,6 +84,8 @@
 		"readOptions": {}
 	},
 	{
+		"module": "appledict",
+		"lname": "appledict",
 		"name": "AppleDict",
 		"description": "AppleDict Source",
 		"extensions": [
@@ -151,6 +159,8 @@
 		}
 	},
 	{
+		"module": "appledict_bin",
+		"lname": "appledict_bin",
 		"name": "AppleDictBin",
 		"description": "AppleDict Binary",
 		"extensions": [
@@ -178,6 +188,8 @@
 		}
 	},
 	{
+		"module": "babylon_bgl",
+		"lname": "babylon_bgl",
 		"name": "BabylonBgl",
 		"description": "Babylon (.BGL)",
 		"extensions": [
@@ -284,6 +296,8 @@
 		}
 	},
 	{
+		"module": "cc_cedict",
+		"lname": "cc_cedict",
 		"name": "CC-CEDICT",
 		"description": "CC-CEDICT",
 		"extensions": [
@@ -311,6 +325,8 @@
 		}
 	},
 	{
+		"module": "cc_kedict",
+		"lname": "cc_kedict",
 		"name": "cc-kedict",
 		"description": "cc-kedict",
 		"extensions": [],
@@ -321,6 +337,8 @@
 		"readOptions": {}
 	},
 	{
+		"module": "crawler_dir",
+		"lname": "crawler_dir",
 		"name": "CrawlerDir",
 		"description": "Crawler Directory",
 		"extensions": [
@@ -349,6 +367,8 @@
 		}
 	},
 	{
+		"module": "csv_plugin",
+		"lname": "csv",
 		"name": "Csv",
 		"description": "CSV (.csv)",
 		"extensions": [
@@ -410,6 +430,8 @@
 		}
 	},
 	{
+		"module": "dicformids",
+		"lname": "dicformids",
 		"name": "Dicformids",
 		"description": "DictionaryForMIDs",
 		"extensions": [
@@ -419,10 +441,14 @@
 		"optionsProp": {},
 		"canRead": true,
 		"canWrite": true,
+		"sortOnWrite": "always",
+		"sortKeyName": "dicformids",
 		"readOptions": {},
 		"writeOptions": {}
 	},
 	{
+		"module": "dict_cc",
+		"lname": "dict_cc",
 		"name": "Dictcc",
 		"description": "Dict.cc (SQLite3)",
 		"extensions": [],
@@ -433,6 +459,8 @@
 		"readOptions": {}
 	},
 	{
+		"module": "dict_cc_split",
+		"lname": "dict_cc_split",
 		"name": "Dictcc_split",
 		"description": "Dict.cc (SQLite3) - Split",
 		"extensions": [],
@@ -443,6 +471,8 @@
 		"readOptions": {}
 	},
 	{
+		"module": "dict_org",
+		"lname": "dict_org",
 		"name": "DictOrg",
 		"description": "DICT.org file format (.index)",
 		"extensions": [
@@ -470,6 +500,8 @@
 		}
 	},
 	{
+		"module": "dict_org_source",
+		"lname": "dict_org_source",
 		"name": "DictOrgSource",
 		"description": "DICT.org dictfmt source file",
 		"extensions": [
@@ -490,6 +522,8 @@
 		}
 	},
 	{
+		"module": "dictunformat",
+		"lname": "dictunformat",
 		"name": "Dictunformat",
 		"description": "dictunformat output file",
 		"extensions": [
@@ -511,6 +545,8 @@
 		}
 	},
 	{
+		"module": "digitalnk",
+		"lname": "digitalnk",
 		"name": "DigitalNK",
 		"description": "DigitalNK (SQLite3, N-Korean)",
 		"extensions": [],
@@ -521,6 +557,8 @@
 		"readOptions": {}
 	},
 	{
+		"module": "dsl",
+		"lname": "dsl",
 		"name": "ABBYYLingvoDSL",
 		"description": "ABBYY Lingvo DSL (.dsl)",
 		"extensions": [
@@ -554,6 +592,8 @@
 		}
 	},
 	{
+		"module": "ebook_epub2",
+		"lname": "epub2",
 		"name": "Epub2",
 		"description": "EPUB-2 E-Book",
 		"extensions": [
@@ -597,6 +637,8 @@
 		},
 		"canRead": false,
 		"canWrite": true,
+		"sortOnWrite": "always",
+		"sortKeyName": "ebook",
 		"writeOptions": {
 			"keep": false,
 			"group_by_prefix_length": 2,
@@ -607,6 +649,8 @@
 		}
 	},
 	{
+		"module": "ebook_kobo",
+		"lname": "kobo",
 		"name": "Kobo",
 		"description": "Kobo E-Reader Dictionary",
 		"extensions": [
@@ -616,9 +660,12 @@
 		"optionsProp": {},
 		"canRead": false,
 		"canWrite": true,
+		"sortOnWrite": "never",
 		"writeOptions": {}
 	},
 	{
+		"module": "ebook_kobo_dictfile",
+		"lname": "kobo_dictfile",
 		"name": "Dictfile",
 		"description": "Kobo E-Reader Dictfile (.df)",
 		"extensions": [
@@ -649,6 +696,8 @@
 		}
 	},
 	{
+		"module": "ebook_mobi",
+		"lname": "mobi",
 		"name": "Mobi",
 		"description": "Mobipocket (.mobi) E-Book",
 		"extensions": [
@@ -721,6 +770,8 @@
 		},
 		"canRead": false,
 		"canWrite": true,
+		"sortOnWrite": "default_yes",
+		"sortKeyName": "ebook",
 		"writeOptions": {
 			"keep": false,
 			"group_by_prefix_length": 2,
@@ -734,6 +785,8 @@
 		}
 	},
 	{
+		"module": "edlin",
+		"lname": "edlin",
 		"name": "Edlin",
 		"description": "EDLIN",
 		"extensions": [
@@ -764,6 +817,8 @@
 		}
 	},
 	{
+		"module": "freedict",
+		"lname": "freedict",
 		"name": "FreeDict",
 		"description": "FreeDict (.tei)",
 		"extensions": [
@@ -822,6 +877,8 @@
 		}
 	},
 	{
+		"module": "gettext_po",
+		"lname": "gettext_po",
 		"name": "GettextPo",
 		"description": "Gettext Source (.po)",
 		"extensions": [
@@ -843,6 +900,8 @@
 		}
 	},
 	{
+		"module": "html_dir",
+		"lname": "html_dir",
 		"name": "HtmlDir",
 		"description": "HTML Directory",
 		"extensions": [
@@ -909,6 +968,8 @@
 		}
 	},
 	{
+		"module": "info_plugin",
+		"lname": "info",
 		"name": "Info",
 		"description": "Glossary Info (.info)",
 		"extensions": [
@@ -922,6 +983,8 @@
 		"writeOptions": {}
 	},
 	{
+		"module": "jmdict",
+		"lname": "jmdict",
 		"name": "JMDict",
 		"description": "JMDict",
 		"extensions": [],
@@ -932,6 +995,8 @@
 		"readOptions": {}
 	},
 	{
+		"module": "json_plugin",
+		"lname": "json",
 		"name": "Json",
 		"description": "JSON (.json)",
 		"extensions": [
@@ -971,6 +1036,8 @@
 		}
 	},
 	{
+		"module": "lingoes_ldf",
+		"lname": "lingoes_ldf",
 		"name": "LingoesLDF",
 		"description": "Lingoes Source (.ldf)",
 		"extensions": [
@@ -1012,6 +1079,8 @@
 		}
 	},
 	{
+		"module": "octopus_mdict_new",
+		"lname": "octopus_mdict",
 		"name": "OctopusMdict",
 		"description": "Octopus MDict (.mdx)",
 		"extensions": [
@@ -1051,6 +1120,8 @@
 		}
 	},
 	{
+		"module": "sdict",
+		"lname": "sdict",
 		"name": "Sdict",
 		"description": "Sdictionary Binary(dct)",
 		"extensions": [
@@ -1063,6 +1134,8 @@
 		"readOptions": {}
 	},
 	{
+		"module": "sdict_source",
+		"lname": "sdict_source",
 		"name": "SdictSource",
 		"description": "Sdictionary Source (.sdct)",
 		"extensions": [
@@ -1101,6 +1174,8 @@
 		}
 	},
 	{
+		"module": "sql",
+		"lname": "sql",
 		"name": "Sql",
 		"description": "SQL (.sql)",
 		"extensions": [
@@ -1153,6 +1228,8 @@
 		}
 	},
 	{
+		"module": "stardict",
+		"lname": "stardict",
 		"name": "Stardict",
 		"description": "StarDict (.ifo)",
 		"extensions": [
@@ -1218,6 +1295,8 @@
 		},
 		"canRead": true,
 		"canWrite": true,
+		"sortOnWrite": "always",
+		"sortKeyName": "stardict",
 		"readOptions": {
 			"xdxf_to_html": true,
 			"unicode_errors": "strict"
@@ -1232,6 +1311,8 @@
 		}
 	},
 	{
+		"module": "tabfile",
+		"lname": "tabfile",
 		"name": "Tabfile",
 		"description": "Tabfile (.txt, .dic)",
 		"extensions": [
@@ -1283,6 +1364,8 @@
 		}
 	},
 	{
+		"module": "wiktionary_dump",
+		"lname": "wiktionary_dump",
 		"name": "WiktionaryDump",
 		"description": "Wiktionary Dump (.xml)",
 		"extensions": [],
@@ -1300,6 +1383,8 @@
 		"readOptions": {}
 	},
 	{
+		"module": "wordset",
+		"lname": "wordset",
 		"name": "Wordset",
 		"description": "Wordset.org JSON directory",
 		"extensions": [],
@@ -1319,6 +1404,8 @@
 		}
 	},
 	{
+		"module": "xdxf",
+		"lname": "xdxf",
 		"name": "Xdxf",
 		"description": "XDXF (.xdxf)",
 		"extensions": [
@@ -1339,6 +1426,8 @@
 		}
 	},
 	{
+		"module": "zimfile",
+		"lname": "zim",
 		"name": "Zim",
 		"description": "Zim (.zim, for Kiwix)",
 		"extensions": [

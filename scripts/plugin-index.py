@@ -11,6 +11,7 @@ sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary
 from pyglossary.core import userPluginsDir
+from pyglossary.flags import DEFAULT_NO
 
 Glossary.init()
 
@@ -26,6 +27,8 @@ for p in plugins:
 	canRead = p.canRead
 	canWrite = p.canWrite
 	item = odict([
+		("module", p.pluginModule.__name__),
+		("lname", p.lname),
 		("name", p.name),
 		("description", p.description),
 		("extensions", p.extensions),
@@ -37,6 +40,10 @@ for p in plugins:
 		("canRead", canRead),
 		("canWrite", canWrite),
 	])
+	if p.sortOnWrite != DEFAULT_NO:
+		item["sortOnWrite"] = p.sortOnWrite
+	if p.sortKeyName:
+		item["sortKeyName"] = p.sortKeyName
 	if canRead:
 		item["readOptions"] = p.getReadOptions()
 	if canWrite:
