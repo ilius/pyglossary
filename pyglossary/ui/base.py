@@ -92,35 +92,34 @@ class UIBase(object):
 		# 	comment="Use resources (images, audio, etc)"
 		("skip_resources", BoolOption(
 			hasFlag=True,
-			comment="Skip resources (images, audio, etc)",
+			comment="Skip resources (images, audio, css, etc)",
 		)),
 
 		("rtl", BoolOption(
 			hasFlag=True,
 			comment=(
-				"Mark all definitions as Right-To-Left\n"
-				"(definitions must be HTML)"
+				"Right-To-Left all (HTML) definitions"
 			),
 		)),
 		("remove_html", StrOption(
 			hasFlag=True,
 			comment=(
-				"Remove given html tags (comma-separated)\n"
+				"Remove given HTML tags (comma-separated)\n"
 				"from definitions"
 			),
 		)),
 		("remove_html_all", BoolOption(
 			hasFlag=True,
-			comment="Remove all html tags from definitions",
+			comment="Remove all HTML tags from definitions",
 		)),
 		("normalize_html", BoolOption(
 			hasFlag=True,
-			comment="Lowercase and normalize html tags in definitions",
+			comment="Lowercase and normalize HTML tags in definitions",
 		)),
 		("save_info_json", BoolOption(
 			hasFlag=True,
 			customFlag="info",
-			comment="Save glossary info as json file with .info extension",
+			comment="Save .info file alongside output file(s)",
 		)),
 
 		("color.enable.cmd.unix", BoolOption(

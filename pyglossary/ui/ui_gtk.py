@@ -22,6 +22,7 @@ import os
 from os.path import join, isfile, isabs, splitext, abspath
 import logging
 import traceback
+from collections import OrderedDict
 
 from pyglossary.text_utils import urlToPath
 from pyglossary.os_utils import click_website
@@ -877,42 +878,26 @@ class GeneralOptionsDialog(gtk.Dialog):
 		pack(hbox, self.sqliteCheck, 0, 0, padding=hpad)
 		pack(self.vbox, hbox, 0, 0, padding=vpad)
 		##
-		hbox = gtk.HBox()
-		self.saveInfoCheck = gtk.CheckButton(
-			label="Save .info file alongside output file(s)"
-		)
-		pack(hbox, self.saveInfoCheck, 0, 0, padding=hpad)
-		pack(self.vbox, hbox, 0, 0, padding=vpad)
-		##
-		hbox = gtk.HBox()
-		self.lowerCheck = gtk.CheckButton(label="Lowercase words")
-		pack(hbox, self.lowerCheck, 0, 0, padding=hpad)
-		pack(self.vbox, hbox, 0, 0, padding=vpad)
-		##
-		hbox = gtk.HBox()
-		self.skipResCheck = gtk.CheckButton(label="Skip resource files")
-		pack(hbox, self.skipResCheck, 0, 0, padding=hpad)
-		pack(self.vbox, hbox, 0, 0, padding=vpad)
-		##
-		hbox = gtk.HBox()
-		self.rtlCheck = gtk.CheckButton(label="Right-To-Left definitions")
-		pack(hbox, self.rtlCheck, 0, 0, padding=hpad)
-		pack(self.vbox, hbox, 0, 0, padding=vpad)
-		##
-		hbox = gtk.HBox()
-		self.altsCheck = gtk.CheckButton(label="Enable alternates")
-		pack(hbox, self.altsCheck, 0, 0, padding=hpad)
-		pack(self.vbox, hbox, 0, 0, padding=vpad)
-		##
-		hbox = gtk.HBox()
-		self.cleanupCheck = gtk.CheckButton(label="Cleanup temporary files")
-		pack(hbox, self.cleanupCheck, 0, 0, padding=hpad)
-		pack(self.vbox, hbox, 0, 0, padding=vpad)
-		##
-		hbox = gtk.HBox()
-		self.removeAllHtml = gtk.CheckButton(label="Remove all HTML tags")
-		pack(hbox, self.removeAllHtml, 0, 0, padding=hpad)
-		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		self.configParams = OrderedDict([
+			("save_info_json", False),
+			("lower", False),
+			("skip_resources", False),
+			("rtl", False),
+			("enable_alts", True),
+			("cleanup", True),
+			("remove_html_all", True),
+		])
+		self.configCheckButtons = {}
+		configDefDict = UIBase.configDefDict
+		for param, default in self.configParams.items():
+			hbox = gtk.HBox()
+			comment = configDefDict[param].comment
+			checkButton = gtk.CheckButton(
+				label=comment.split("\n")[0]
+			)
+			self.configCheckButtons[param] = checkButton
+			pack(hbox, checkButton, 0, 0, padding=hpad)
+			pack(self.vbox, hbox, 0, 0, padding=vpad)
 		##
 		self.updateWidgets()
 		self.vbox.show_all()
@@ -928,13 +913,9 @@ class GeneralOptionsDialog(gtk.Dialog):
 		config = self.ui.config
 		self.sortOptionsBox.updateWidgets()
 		self.sqliteCheck.set_active(self.getSQLite())
-		self.saveInfoCheck.set_active(config.get("save_info_json", False))
-		self.lowerCheck.set_active(config.get("lower", False))
-		self.skipResCheck.set_active(config.get("skip_resources", False))
-		self.rtlCheck.set_active(config.get("rtl", False))
-		self.altsCheck.set_active(config.get("enable_alts", True))
-		self.cleanupCheck.set_active(config.get("cleanup", True))
-		self.removeAllHtml.set_active(config.get("remove_html_all", True))
+		for param, check in self.configCheckButtons.items():
+			default = self.configParams[param]
+			check.set_active(config.get(param, default))
 
 	def applyChanges(self):
 		# print("applyChanges")
@@ -944,13 +925,9 @@ class GeneralOptionsDialog(gtk.Dialog):
 		config = self.ui.config
 
 		convertOptions["sqlite"] = self.sqliteCheck.get_active()
-		config["save_info_json"] = self.saveInfoCheck.get_active()
-		config["lower"] = self.lowerCheck.get_active()
-		config["skip_resources"] = self.skipResCheck.get_active()
-		config["rtl"] = self.rtlCheck.get_active()
-		config["enable_alts"] = self.altsCheck.get_active()
-		config["cleanup"] = self.cleanupCheck.get_active()
-		config["remove_html_all"] = self.removeAllHtml.get_active()
+
+		for param, check in self.configCheckButtons.items():
+			config[param] = check.get_active()
 
 
 class GeneralOptionsButton(gtk.Button):

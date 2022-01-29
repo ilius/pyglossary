@@ -21,19 +21,18 @@ Configuration Parameters
 | ``enable_alts``              | | ``--alts``          | bool  | ``true``      | Enable alternates                                       |
 |                              | | ``--no-alts``       |       |               |                                                         |
 +------------------------------+-----------------------+-------+---------------+---------------------------------------------------------+
-| ``skip_resources``           | ``--skip-resources``  | bool  | ``false``     | Skip resources (images, audio, etc)                     |
+| ``skip_resources``           | ``--skip-resources``  | bool  | ``false``     | Skip resources (images, audio, css, etc)                |
 +------------------------------+-----------------------+-------+---------------+---------------------------------------------------------+
-| ``rtl``                      | ``--rtl``             | bool  | ``false``     | Mark all definitions as Right-To-Left                   |
-|                              |                       |       |               | (definitions must be HTML)                              |
+| ``rtl``                      | ``--rtl``             | bool  | ``false``     | Right-To-Left all (HTML) definitions                    |
 +------------------------------+-----------------------+-------+---------------+---------------------------------------------------------+
-| ``remove_html``              | ``--remove-html``     | str   | ``""``        | Remove given html tags (comma-separated)                |
+| ``remove_html``              | ``--remove-html``     | str   | ``""``        | Remove given HTML tags (comma-separated)                |
 |                              |                       |       |               | from definitions                                        |
 +------------------------------+-----------------------+-------+---------------+---------------------------------------------------------+
-| ``remove_html_all``          | ``--remove-html-all`` | bool  | ``false``     | Remove all html tags from definitions                   |
+| ``remove_html_all``          | ``--remove-html-all`` | bool  | ``false``     | Remove all HTML tags from definitions                   |
 +------------------------------+-----------------------+-------+---------------+---------------------------------------------------------+
-| ``normalize_html``           | ``--normalize-html``  | bool  | ``false``     | Lowercase and normalize html tags in definitions        |
+| ``normalize_html``           | ``--normalize-html``  | bool  | ``false``     | Lowercase and normalize HTML tags in definitions        |
 +------------------------------+-----------------------+-------+---------------+---------------------------------------------------------+
-| ``save_info_json``           | ``--info``            | bool  | ``false``     | Save glossary info as json file with .info extension    |
+| ``save_info_json``           | ``--info``            | bool  | ``false``     | Save .info file alongside output file(s)                |
 +------------------------------+-----------------------+-------+---------------+---------------------------------------------------------+
 | ``color.enable.cmd.unix``    | ``--no-color``        | bool  | ``true``      | Enable colors in Linux/Unix command line                |
 +------------------------------+-----------------------+-------+---------------+---------------------------------------------------------+
