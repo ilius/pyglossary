@@ -26,11 +26,11 @@ plugins = [
 toolsDir = join(rootDir, "plugins-meta", "tools")
 
 for p in plugins:
-	module = p.pluginModule
+	module = p.module
 	optionsProp = p.optionsProp
 
 	tools = OrderedDict()
-	for tool in getattr(p.pluginModule, "tools", []):
+	for tool in getattr(p.module, "tools", []):
 		tools[tool.pop("name")] = tool
 
 	# if not tools:

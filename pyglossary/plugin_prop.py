@@ -38,7 +38,13 @@ class PluginProp(object):
 		self._ReaderLoaded = False
 		self._Writer = None
 		self._WriterLoaded = False
+		self.initCheck()
 
+	@property
+	def enable(self):
+		return getattr(self._mod, "enable", False)
+
+	def initCheck(self):
 		if log.level >= logging.DEBUG:
 			for name, opt in self.optionsProp.items():
 				if name.lower() != name:
@@ -57,24 +63,24 @@ class PluginProp(object):
 					)
 
 	@property
-	def pluginModule(self):
+	def module(self):
 		return self._mod
 
 	@property
 	def lname(self) -> str:
-		return self._mod.lname
+		return self.module.lname
 
 	@property
 	def name(self) -> str:
-		return self._mod.format
+		return self.module.format
 
 	@property
 	def description(self) -> str:
-		return self._mod.description
+		return self.module.description
 
 	@property
 	def extensions(self) -> "Tuple[str, ...]":
-		return self._mod.extensions
+		return self.module.extensions
 
 	@property
 	def ext(self) -> str:
@@ -85,11 +91,11 @@ class PluginProp(object):
 
 	@property
 	def extensionCreate(self) -> str:
-		return self._mod.extensionCreate
+		return self.module.extensionCreate
 
 	@property
 	def singleFile(self) -> bool:
-		return self._mod.singleFile
+		return self.module.singleFile
 
 	@property
 	def optionsProp(self) -> "Dict[str, Option]":
@@ -106,7 +112,7 @@ class PluginProp(object):
 	@property
 	def path(self) -> "pathlib.Path":
 		from pathlib import Path
-		return Path(self._mod.__file__)
+		return Path(self.module.__file__)
 
 	def _loadReaderClass(self) -> "Optional[Any]":
 		cls = getattr(self._mod, "Reader", None)
@@ -124,7 +130,7 @@ class PluginProp(object):
 					f"Invalid Reader class in {self.name!r} plugin"
 					f", no {attr!r} method"
 				)
-				self._mod.Reader = None
+				self.module.Reader = None
 				return None
 
 		if hasattr(cls, "depends"):
@@ -162,7 +168,7 @@ class PluginProp(object):
 					f"Invalid Writer class in {self.name!r} plugin"
 					f", no {attr!r} method"
 				)
-				self._mod.Writer = None
+				self.module.Writer = None
 				return None
 
 		if hasattr(cls, "depends"):
@@ -264,3 +270,15 @@ class PluginProp(object):
 		if extraOptNames:
 			log.warning(f"{format}: extraOptNames = {extraOptNames}")
 		return extraOptNames
+
+	@property
+	def readCompressions(self) -> "List[str]":
+		return getattr(self.readerClass, "compressions", [])
+
+	@property
+	def readDepends(self) -> "Dict[str, str]":
+		return getattr(self.readerClass, "depends", {})
+
+	@property
+	def writeDepends(self) -> "Dict[str, str]":
+		return getattr(self.writerClass, "depends", {})

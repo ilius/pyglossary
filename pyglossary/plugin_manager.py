@@ -32,6 +32,7 @@ log = logging.getLogger("pyglossary")
 class PluginManager(object):
 	plugins = {}  # type: Dict[str, PluginProp]
 	pluginByExt = {}  # type: Dict[str, PluginProp]
+	loadedModules = set()
 
 	formatsReadOptions = {}  # type: Dict[str, OrderedDict[str, Any]]
 	formatsWriteOptions = {}  # type: Dict[str, OrderedDict[str, Any]]
@@ -41,9 +42,14 @@ class PluginManager(object):
 	writeFormats = []  # type: List[str]
 
 	@classmethod
-	def loadPlugins(cls: "ClassVar", directory: str) -> None:
+	def loadPlugins(
+		cls: "ClassVar",
+		directory: str,
+		skipDisabled: bool = True,
+	) -> None:
 		"""
 		executed on startup. as name implies, loads plugins from directory
+		it skips importing plugin modules that are already loaded
 		"""
 		import pkgutil
 		from os.path import isdir
@@ -56,18 +62,25 @@ class PluginManager(object):
 		moduleNames = [
 			moduleName
 			for _, moduleName, _ in pkgutil.iter_modules([directory])
+			if moduleName not in cls.loadedModules and
+			moduleName not in ("paths", "formats_common")
 		]
 		moduleNames.sort()
 
 		sys.path.append(directory)
 		for moduleName in moduleNames:
-			cls.loadPlugin(moduleName)
+			cls.loadPlugin(moduleName, skipDisabled=skipDisabled)
 		sys.path.pop()
 
 	@classmethod
-	def loadPlugin(cls: "ClassVar", moduleName: str) -> None:
+	def loadPlugin(
+		cls: "ClassVar",
+		moduleName: str,
+		skipDisabled: bool = True,
+	) -> None:
+		log.debug(f"importing {moduleName} in loadPlugin")
 		try:
-			plugin = __import__(moduleName)
+			module = __import__(moduleName)
 		except ModuleNotFoundError as e:
 			log.warning(f"Module {e.name!r} not found, skipping plugin {moduleName!r}")
 			return
@@ -75,13 +88,14 @@ class PluginManager(object):
 			log.exception(f"Error while importing plugin {moduleName}")
 			return
 
-		if (not hasattr(plugin, "enable")) or (not plugin.enable):
-			# log.debug(f"Plugin disabled or not a plugin: {moduleName}")
+		enable = getattr(module, "enable", False)
+		if skipDisabled and not enable:
+			# log.debug(f"Plugin disabled or not a module: {moduleName}")
 			return
 
-		format = plugin.format
+		format = module.format
 
-		extensions = plugin.extensions
+		extensions = module.extensions
 		if not isinstance(extensions, tuple):
 			msg = f"{format} plugin: extensions must be tuple"
 			if isinstance(extensions, list):
@@ -90,14 +104,13 @@ class PluginManager(object):
 			else:
 				raise ValueError(msg)
 
-		if hasattr(plugin, "description"):
-			desc = plugin.description
-		else:
-			desc = f"{format} ({extensions[0]})"
-
-		prop = PluginProp(plugin)
+		prop = PluginProp(module)
 
 		cls.plugins[format] = prop
+		cls.loadedModules.add(moduleName)
+
+		if not enable:
+			return
 
 		for ext in extensions:
 			if ext.lower() != ext:
@@ -110,7 +123,6 @@ class PluginManager(object):
 			options = prop.getReadOptions()
 			cls.formatsReadOptions[format] = options
 			cls.readFormats.append(format)
-			Reader.formatName = format
 
 		Writer = prop.writerClass
 		if Writer is not None:
@@ -118,16 +130,11 @@ class PluginManager(object):
 			cls.formatsWriteOptions[format] = options
 			cls.writeFormats.append(format)
 
-		if not (Reader or Writer):
-			log.warning(f"plugin {format} has no Reader nor Writer")
-
-		if hasattr(plugin, "write"):
+		if hasattr(module, "write"):
 			log.error(
 				f"plugin {format} has write function, "
 				f"must migrate to Writer class"
 			)
-
-		return plugin
 
 	@classmethod
 	def findPlugin(cls, query: str) -> "Optional[PluginProp]":
@@ -176,7 +183,7 @@ class PluginManager(object):
 		if not plugin.canRead:
 			return error(f"plugin {plugin.name} does not support reading")
 
-		if compression in getattr(plugin.readerClass, "compressions", []):
+		if compression in plugin.readCompressions:
 			compression = ""
 			filename = filenameOrig
 

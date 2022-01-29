@@ -797,12 +797,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			log.exception("")
 			return False
 
-		for reader in self._readers:
-			log.info(
-				f"Using Reader class from {reader.formatName} plugin"
-				f" for direct conversion without loading into memory"
-			)
-
 		showMemoryUsage()
 
 		writerList = [writer]

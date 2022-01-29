@@ -186,18 +186,28 @@ def renderRWOptions(options):
 	)
 
 
+def pluginIsActive(p):
+	if not p.enable:
+		return False
+	if not (p.canRead or p.canWrite):
+		return False
+	if userPluginsDirPath in p.path.parents:
+		return False
+	return True
+
+
 userPluginsDirPath = Path(userPluginsDir)
 plugins = [
 	p
 	for p in Glossary.plugins.values()
-	if userPluginsDirPath not in p.path.parents
+	if pluginIsActive(p)
 ]
 
 toolsDir = join(rootDir, "plugins-meta", "tools")
 
 
 for p in plugins:
-	module = p.pluginModule
+	module = p.module
 	optionsProp = p.optionsProp
 
 	wiki = module.wiki
@@ -237,12 +247,15 @@ for p in plugins:
 	try:
 		with open(toolsFile) as _file:
 			tools_toml = toml.load(_file, _dict=OrderedDict)
+	except FileNotFoundError:
+		tools = []
 	except Exception as e:
 		print(f"\nFile: {toolsFile}")
 		raise e
-	for toolName, tool in tools_toml.items():
-		tool.update({"name": toolName})
-	tools = tools_toml.values()
+	else:
+		for toolName, tool in tools_toml.items():
+			tool.update({"name": toolName})
+		tools = tools_toml.values()
 
 	generalInfoTable = "### General Information\n\n" + renderTable([
 		("Attribute", "Value"),
@@ -263,10 +276,14 @@ for p in plugins:
 	])
 	topTables = generalInfoTable
 
-	optionsType = {
-		optName: opt.typ
-		for optName, opt in optionsProp.items()
-	}
+	try:
+		optionsType = {
+			optName: opt.typ
+			for optName, opt in optionsProp.items()
+		}
+	except:
+		print(f"optionsProp = {optionsProp}")
+		raise
 	optionsComment = {
 		optName: opt.comment.replace("\n", "<br />")
 		for optName, opt in optionsProp.items()

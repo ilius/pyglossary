@@ -623,12 +623,12 @@ class FormatBox(FormatButton):
 		kind = self.kind()
 		plugin = Glossary.plugins[name]
 		if kind == "r":
-			cls = plugin.readerClass
+			depends = plugin.readDepends
 		elif kind == "w":
-			cls = plugin.writerClass
+			depends = plugin.writeDepends
 		else:
 			raise RuntimeError(f"invalid kind={kind}")
-		uninstalled = checkDepends(cls.depends)
+		uninstalled = checkDepends(depends)
 
 		self.dependsButton.pkgNames = uninstalled
 		self.dependsButton.set_visible(bool(uninstalled))

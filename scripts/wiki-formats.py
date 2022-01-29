@@ -68,7 +68,7 @@ def iconImg(p):
 	return f'<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/icons/{p.lname}.png" height="32"/>'
 
 def kindEmoji(p):
-	kind = p.pluginModule.kind
+	kind = p.module.kind
 	if not kind:
 		return ""
 	return {

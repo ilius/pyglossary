@@ -27,7 +27,7 @@ for p in plugins:
 	canRead = p.canRead
 	canWrite = p.canWrite
 	item = odict([
-		("module", p.pluginModule.__name__),
+		("module", p.module.__name__),
 		("lname", p.lname),
 		("name", p.name),
 		("description", p.description),
