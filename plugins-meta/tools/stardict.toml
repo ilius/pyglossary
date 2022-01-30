@@ -60,3 +60,9 @@ license = "Freemium"
 web = "https://play.google.com/store/apps/details?id=com.ngc.fora.android"
 platforms = [ "Android",]
 license = "Proprietary"
+
+[KOReader]
+web = "http://koreader.rocks/"
+source = "https://github.com/koreader/koreader"
+platforms = [ "Android", "Amazon Kindle", "Kobo eReader", "PocketBook", "Cervantes",]
+license = "AGPLv3"
