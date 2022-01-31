@@ -15,7 +15,7 @@ def optionFromDict(data):
 	else:
 		data.pop("type")
 		optClass = Option.classes[className]
-	return optClass.fromDict(data)
+	return optClass(**data)
 
 
 class Option(object):
@@ -25,10 +25,6 @@ class Option(object):
 	def register(cls, optClass):
 		cls.classes[optClass.__name__] = optClass
 		return optClass
-
-	@classmethod
-	def fromDict(cls, data):
-		return cls(**data)
 
 	def __init__(
 		self,
