@@ -18,9 +18,12 @@
 from gi.repository import Pango as pango
 
 from . import *
+import logging
 from os.path import isabs, join
 from pyglossary.core import appResDir
 
+
+log = logging.getLogger("pyglossary")
 
 
 def VBox(**kwargs):
@@ -37,8 +40,8 @@ def set_tooltip(widget, text):
 	except AttributeError:
 		try:
 			widget.set_tooltip(gtk.Tooltips(), text)
-		except:
-			myRaise(__file__)
+		except Exception:
+			log.exception("")
 
 
 def imageFromFile(path):  # the file must exist
@@ -47,9 +50,10 @@ def imageFromFile(path):  # the file must exist
 	im = gtk.Image()
 	try:
 		im.set_from_file(path)
-	except:
-		myRaise()
+	except Exception:
+		log.exception("")
 	return im
+
 
 def imageFromIconName(iconName: str, size: int, nonStock=False) -> gtk.Image:
 	# So gtk.Image.new_from_stock is deprecated
@@ -64,7 +68,7 @@ def imageFromIconName(iconName: str, size: int, nonStock=False) -> gtk.Image:
 		return gtk.Image.new_from_icon_name(iconName, size)
 	try:
 		return gtk.Image.new_from_stock(iconName, size)
-	except:
+	except Exception:
 		return gtk.Image.new_from_icon_name(iconName, size)
 
 
@@ -88,13 +92,21 @@ def pack(box, child, expand=False, fill=False, padding=0):
 		raise TypeError(f"pack: unknown type {type(box)}")
 
 
-def dialog_add_button(dialog, iconName, label, resId, onClicked=None, tooltip=""):
+def dialog_add_button(
+	dialog,
+	iconName,
+	label,
+	resId,
+	onClicked=None,
+	tooltip="",
+):
 	b = dialog.add_button(label, resId)
 	if onClicked:
 		b.connect("clicked", onClicked)
 	if tooltip:
 		set_tooltip(b, tooltip)
 	return b
+
 
 def showMsg(
 	msg,
@@ -141,14 +153,18 @@ def showMsg(
 
 
 def showError(msg, **kwargs):
-	# gtk-dialog-error is deprecated since version 3.10: Use named icon “dialog-error”.
+	# gtk-dialog-error is deprecated since version 3.10:
+	# Use named icon “dialog-error”.
 	showMsg(msg, iconName="gtk-dialog-error", **kwargs)
 
+
 def showWarning(msg, **kwargs):
-	# gtk-dialog-warning is deprecated since version 3.10: Use named icon “dialog-warning”.
+	# gtk-dialog-warning is deprecated since version 3.10:
+	# Use named icon “dialog-warning”.
 	showMsg(msg, iconName="gtk-dialog-warning", **kwargs)
 
-def showInfo(msg, **kwargs):
-	# gtk-dialog-info is deprecated since version 3.10: Use named icon “dialog-information”.
-	showMsg(msg, iconName="gtk-dialog-info", **kwargs)
 
+def showInfo(msg, **kwargs):
+	# gtk-dialog-info is deprecated since version 3.10:
+	# Use named icon “dialog-information”.
+	showMsg(msg, iconName="gtk-dialog-info", **kwargs)
