@@ -1078,6 +1078,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			**readOptions
 		):
 			log.critical(f"Reading file {inputFilename!r} failed.")
+			self.cleanup()
 			return
 
 		del inputFilename, inputFormat, direct, readOptions
@@ -1097,6 +1098,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		if not finalOutputFile:
 			log.critical(f"Writing file {outputFilename!r} failed.")
 			self._closeReaders()
+			self.cleanup()
 			return
 
 		if compression:
