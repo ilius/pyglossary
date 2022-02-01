@@ -1148,8 +1148,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		cls.loadPlugins(pluginsDir, skipDisabled=skipDisabledPlugins)
 
-		if os.path.exists(userPluginsDir):
+		if isdir(userPluginsDir):
 			cls.loadPlugins(userPluginsDir)
 
-		if not isdir(cacheDir):
-			os.makedirs(cacheDir)
+		os.makedirs(cacheDir, mode=0o700, exist_ok=True)
