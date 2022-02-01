@@ -62,6 +62,9 @@ class Reader(TextGlossaryReader):
 
 	_extract_inline_images = True
 
+	def __init__(self, glos: "GlossaryType"):
+		TextGlossaryReader.__init__(self, glos, hasInfo=False)
+
 	def open(self, filename: str) -> None:
 		try:
 			import mistune
