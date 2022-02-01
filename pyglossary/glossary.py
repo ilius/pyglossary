@@ -1138,6 +1138,10 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		usePluginsJson: bool = True,
 		skipDisabledPlugins: bool = True,
 	):
+		"""
+		Glossary.init() must be called only once, so make sure you put it in the
+		right place. Probably in the top of your program's main function or module.
+		"""
 		cls.readFormats = []
 		cls.writeFormats = []
 		pluginsJsonPath = join(rootDir, "plugins-meta", "index.json")
