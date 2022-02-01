@@ -76,6 +76,7 @@ class TestGlossaryBase(unittest.TestCase):
 
 	def tearDown(self):
 		if self.glos is not None:
+			self.glos.cleanup()
 			self.glos.clear()
 		if os.getenv("NO_CLEANUP"):
 			return
