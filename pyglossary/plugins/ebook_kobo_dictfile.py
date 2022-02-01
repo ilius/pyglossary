@@ -77,18 +77,15 @@ class Reader(TextGlossaryReader):
 	def fixInfoWord(self, word):
 		raise NotImplementedError
 
-	def fixDefi(self, defi: str) -> str:
+	def fixDefi(self, defi: str, html: bool) -> str:
 		import mistune
 		defi = defi.replace("\n @", "\n@")\
 			.replace("\n :", "\n:")\
 			.replace("\n &", "\n&")\
 			.replace("</p></br>", "</p>")
 		defi = defi.lstrip()
-		if defi.startswith("<html>"):
-			defi = defi[len("<html>"):].lstrip()
-			i = defi.find("</html>")
-			if i >= 0:
-				defi = defi[:i]
+		if html:
+			pass
 		else:
 			defi = mistune.html(defi)
 		if self._extract_inline_images:
@@ -106,6 +103,7 @@ class Reader(TextGlossaryReader):
 			raise StopIteration
 		words = []
 		defiLines = []
+		html = False
 
 		while True:
 			line = self.readline()
@@ -115,7 +113,7 @@ class Reader(TextGlossaryReader):
 			if line.startswith("@"):
 				if words:
 					self._bufferLine = line
-					return words, self.fixDefi("\n".join(defiLines))
+					return words, self.fixDefi("\n".join(defiLines), html=html)
 				words = [line[1:]]
 				continue
 			if line.startswith(": "):
@@ -128,10 +126,11 @@ class Reader(TextGlossaryReader):
 				continue
 			if line.startswith("<html>"):
 				line = line[6:]
+				html = True
 			defiLines.append(line)
 
 		if words:
-			return words, self.fixDefi("\n".join(defiLines))
+			return words, self.fixDefi("\n".join(defiLines), html=html)
 
 		raise StopIteration
 
