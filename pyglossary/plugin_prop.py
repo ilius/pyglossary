@@ -132,8 +132,8 @@ class PluginProp(object):
 		self._name = mod.format
 		self._description = mod.description
 		self._extensions = mod.extensions
-		self._extensionCreate = getattr(mod, "extensionCreate")
-		self._singleFile = self.module.singleFile
+		self._extensionCreate = getattr(mod, "extensionCreate", "")
+		self._singleFile = getattr(mod, "singleFile", False)
 		self._optionsProp = getattr(mod, "optionsProp", {})
 		self._sortOnWrite = getattr(mod, "sortOnWrite", DEFAULT_NO)
 		self._sortKeyName = getattr(mod, "sortKeyName", None)
