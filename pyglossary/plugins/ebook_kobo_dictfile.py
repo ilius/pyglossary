@@ -81,7 +81,8 @@ class Reader(TextGlossaryReader):
 		import mistune
 		defi = defi.replace("\n @", "\n@")\
 			.replace("\n :", "\n:")\
-			.replace("\n &", "\n&")
+			.replace("\n &", "\n&")\
+			.replace("</p></br>", "</p>")
 		defi = defi.lstrip()
 		if defi.startswith("<html>"):
 			defi = defi[len("<html>"):].lstrip()
@@ -117,9 +118,16 @@ class Reader(TextGlossaryReader):
 					return words, self.fixDefi("\n".join(defiLines))
 				words = [line[1:]]
 				continue
+			if line.startswith(": "):
+				defiLines.append(line[2:])
+				continue
+			if line.startswith("::"):
+				continue
 			if line.startswith("&"):
 				words.append(line[1:])
 				continue
+			if line.startswith("<html>"):
+				line = line[6:]
 			defiLines.append(line)
 
 		if words:
