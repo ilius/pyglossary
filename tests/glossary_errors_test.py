@@ -97,17 +97,17 @@ class TestGlossaryErrors(TestGlossaryBase):
 
 	def test_detectInputFormat_ok1(self):
 		res = Glossary.detectInputFormat(
-			filename="test.txt.gz",
+			filename="test1.txt.gz",
 			format="",
 		)
-		self.assertEqual(res, ("test.txt.gz", "Tabfile", ""))
+		self.assertEqual(res, ("test1.txt.gz", "Tabfile", ""))
 
 	def test_detectInputFormat_ok2(self):
 		res = Glossary.detectInputFormat(
-			filename="test.txt.zip",
+			filename="test2.txt.zip",
 			format="",
 		)
-		self.assertEqual(res, ("test.txt", "Tabfile", "zip"))
+		self.assertEqual(res, ("test2.txt", "Tabfile", "zip"))
 
 	def test_detectOutputFormat_err1(self):
 		res = Glossary.detectOutputFormat(
@@ -140,7 +140,7 @@ class TestGlossaryErrors(TestGlossaryBase):
 		res = Glossary.detectOutputFormat(
 			filename="",
 			format="BabylonBgl",
-			inputFilename="test.txt"
+			inputFilename="test3.txt"
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("plugin BabylonBgl does not support writing")
@@ -355,8 +355,8 @@ class TestGlossaryErrors(TestGlossaryBase):
 	def test_convert_sameFilename(self):
 		glos = Glossary()
 		res = glos.convert(
-			inputFilename="test.txt",
-			outputFilename="test.txt",
+			inputFilename="test4.txt",
+			outputFilename="test4.txt",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Input and output files are the same")
@@ -364,7 +364,7 @@ class TestGlossaryErrors(TestGlossaryBase):
 	def test_convert_dirExists(self):
 		glos = Glossary()
 		res = glos.convert(
-			inputFilename="test.txt",
+			inputFilename="test5.txt",
 			outputFilename=self.tempDir,
 			outputFormat="Stardict",
 		)
@@ -374,19 +374,19 @@ class TestGlossaryErrors(TestGlossaryBase):
 	def test_convert_fileNotFound(self):
 		glos = Glossary()
 		res = glos.convert(
-			inputFilename="/abc/def/test.txt",
+			inputFilename="/abc/def/test6.txt",
 			outputFilename="test2.txt",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical(
-			"[Errno 2] No such file or directory: '/abc/def/test.txt'"
+			"[Errno 2] No such file or directory: '/abc/def/test6.txt'"
 		)
-		self.assertLogCritical("Reading file '/abc/def/test.txt' failed.")
+		self.assertLogCritical("Reading file '/abc/def/test6.txt' failed.")
 
 	def test_convert_unableDetectOutputFormat(self):
 		glos = Glossary()
 		res = glos.convert(
-			inputFilename="test.txt",
+			inputFilename="test7.txt",
 			outputFilename="test",
 			outputFormat="",
 		)
