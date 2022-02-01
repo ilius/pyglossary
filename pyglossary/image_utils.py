@@ -15,7 +15,7 @@ def extractInlineHtmlImages(
 	outDir: str,
 	fnamePrefix: str = "",
 ) -> "Tuple[str, List[Tuple[str, str]]]":
-	images = []  # type: List[Tuple[str, str]]
+	images = {}  # type: Dict[str, str]
 
 	def subFunc(m: "Match"):
 		nonlocal images
@@ -31,12 +31,13 @@ def extractInlineHtmlImages(
 		imgDataB64 = src[len("base64,"):]
 		imgData = base64.b64decode(imgDataB64)
 		imgFname = f"{fnamePrefix}{crc32hex(imgData)}.{imgFormat}"
-		imgPath = join(outDir, imgFname)
-		with open(imgPath, 'wb') as _file:
-			_file.write(imgData)
-		images.append((imgFname, imgPath))
+		if imgFname not in images:
+			imgPath = join(outDir, imgFname)
+			with open(imgPath, 'wb') as _file:
+				_file.write(imgData)
+			images[imgFname] = imgPath
 		return f'src="./{imgFname}"'
 
 	defi = re_inline_image.sub(subFunc, defi)
 
-	return defi, images
+	return defi, list(images.items())
