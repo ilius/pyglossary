@@ -84,6 +84,8 @@ class DataEntry(BaseEntry):
 			else:
 				with open(fpath, "wb") as toFile:
 					toFile.write(self._data)
+		except FileNotFoundError as e:
+			log.error(f"error in DataEntry.save: {e}")
 		except Exception:
 			log.exception(f"error while saving {fpath}")
 			return ""
