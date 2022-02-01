@@ -49,6 +49,7 @@ class TestGlossaryCSV(TestGlossaryBase):
 		self.assertEqual(outputFilename, wRes)
 
 		self.compareTextFiles(outputFilename, expectedFilename)
+		glos.cleanup()
 
 	def convert_csv_txt(self, fname, fname2, **convertArgs):
 		self.convert(
