@@ -141,7 +141,7 @@ class Reader(object):
 			defi = b_defi.decode("utf-8").strip()
 			if defi.startswith("@@@LINK="):
 				if not word:
-					log.warn(f"unexpected defi: {defi}")
+					log.warning(f"unexpected defi: {defi}")
 					continue
 				mainWord = defi[8:]
 				if mainWord in linksDict:

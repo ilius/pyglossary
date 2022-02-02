@@ -82,7 +82,7 @@ class Writer(object):
 			if not isdir(parentDir):
 				makedirs(parentDir)
 			if isfile(fpath):
-				log.warn(f"file exists: {fpath}")
+				log.warning(f"file exists: {fpath}")
 				fpath += f"-{sha1(entry.b_defi).hexdigest()[:4]}"
 			with c_open(fpath, "wt", encoding="utf-8") as _file:
 				_file.write(

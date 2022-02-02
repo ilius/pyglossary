@@ -222,7 +222,7 @@ class Writer:
 			writeGroup(lastPrefix)
 
 		if dataEntryCount > 0:
-			log.warn(
+			log.warning(
 				f"ignored {dataEntryCount} files (data entries)"
 				" and replaced '<img ...' tags in definitions with placeholders"
 			)

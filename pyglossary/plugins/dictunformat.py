@@ -72,7 +72,7 @@ class Reader(TextGlossaryReader):
 				if not word:
 					continue
 				if not defiLines:
-					log.warn(f"no definition/value for {word!r}")
+					log.warning(f"no definition/value for {word!r}")
 				defi = unescapeDefi("\n".join(defiLines))
 				return word, defi
 

@@ -150,7 +150,7 @@ class Reader(object):
 				continue
 
 			if mimetype not in self.resourceMimeTypes:
-				log.warn(f"Unrecognized mimetype={mimetype!r}")
+				log.warning(f"Unrecognized mimetype={mimetype!r}")
 
 			if len(word) > f_namemax:
 				fileNameTooLong.append(word)
