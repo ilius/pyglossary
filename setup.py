@@ -53,6 +53,9 @@ root_data_file_names = [
 
 package_data = {
 	"": root_data_file_names,
+	"plugins-meta": [
+		"index.json",
+	],
 	"pyglossary": [
 		"*.py",
 		"xdxf.xsl",
@@ -119,6 +122,7 @@ setup(
 	# `pip install --user` does not work
 	data_files=[
 		(relRootDir, root_data_file_names),
+		(f"{relRootDir}/plugins-meta", ["plugins-meta/index.json"]),
 		(f"{relRootDir}/res", glob.glob("res/*")),
 	],
 	extras_require={
