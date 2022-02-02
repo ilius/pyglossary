@@ -321,8 +321,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 		# run kindlegen
 		if not kindlegen_path:
-			log.warn(f"Not running kindlegen, the raw files are located in {filename}")
-			log.warn(
+			log.warning(f"Not running kindlegen, the raw files are located in {filename}")
+			log.warning(
 				"Provide KindleGen path with: "
 				"--write-options 'kindlegen_path=...'"
 			)

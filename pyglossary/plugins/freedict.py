@@ -654,14 +654,14 @@ class Reader(object):
 	def setWordCount(self, header):
 		extent_elem = header.find(".//extent", self.ns)
 		if extent_elem is None:
-			log.warn(
+			log.warning(
 				"did not find 'extent' tag in metedata"
 				", progress bar will not word"
 			)
 			return
 		extent = extent_elem.text
 		if not extent.endswith(" headwords"):
-			log.warn(f"unexpected extent={extent}")
+			log.warning(f"unexpected extent={extent}")
 			return
 		try:
 			self._wordCount = int(extent.split(" ")[0].replace(",", ""))
@@ -697,7 +697,7 @@ class Reader(object):
 	def setCopyright(self, header):
 		elems = header.findall(".//availability//p", self.ns)
 		if not elems:
-			log.warn("did not find copyright")
+			log.warning("did not find copyright")
 			return
 		copyright = self.stripParagList(elems)
 		copyright = self.replaceRefLink(copyright)
@@ -707,7 +707,7 @@ class Reader(object):
 	def setPublisher(self, header):
 		elem = header.find(".//publisher", self.ns)
 		if elem is None or not elem.text:
-			log.warn("did not find publisher")
+			log.warning("did not find publisher")
 			return
 		self.setGlosInfo("publisher", elem.text)
 

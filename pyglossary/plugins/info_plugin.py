@@ -79,7 +79,7 @@ class Writer(object):
 			defiFormatCounter[defiFormat] += 1
 			if defiFormat == "m":
 				if re_possible_html.match(defi):
-					log.warn(f"undetected html defi: {defi}")
+					log.warning(f"undetected html defi: {defi}")
 			elif defiFormat == "h":
 				match = re_possible_html.search(defi)
 				if match is not None:

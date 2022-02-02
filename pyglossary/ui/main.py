@@ -564,7 +564,7 @@ def main():
 	core.checkCreateConfDir()
 
 	if sys.getdefaultencoding() != "utf-8":
-		log.warn(f"System encoding is not utf-8, it's {sys.getdefaultencoding()!r}")
+		log.warning(f"System encoding is not utf-8, it's {sys.getdefaultencoding()!r}")
 
 	##############################
 

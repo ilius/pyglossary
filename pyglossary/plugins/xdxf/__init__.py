@@ -118,7 +118,7 @@ class Reader(object):
 			if elem.tag in ("abbr_def",):
 				continue
 			if not elem.text:
-				log.warn(f"empty tag <{elem.tag}>")
+				log.warning(f"empty tag <{elem.tag}>")
 				continue
 			key = self.infoKeyMap.get(elem.tag, elem.tag)
 			self._glos.setInfo(key, elem.text)
