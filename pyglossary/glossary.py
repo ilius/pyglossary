@@ -42,7 +42,7 @@ from collections import OrderedDict as odict
 from .flags import *
 from . import core
 from .core import (
-	rootDir,
+	dataDir,
 	pluginsDir,
 	userPluginsDir,
 	cacheDir,
@@ -1144,7 +1144,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		"""
 		cls.readFormats = []
 		cls.writeFormats = []
-		pluginsJsonPath = join(rootDir, "plugins-meta", "index.json")
+		pluginsJsonPath = join(dataDir, "plugins-meta", "index.json")
 
 		# even if usePluginsJson, we should still call loadPlugins to load
 		# possible new plugins that are not in json file
