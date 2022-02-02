@@ -220,13 +220,23 @@ def checkCreateConfDir() -> None:
 			usrF.write(srcF.read())
 
 
+
+def in_virtualenv():
+	if hasattr(sys, 'real_prefix'):
+		return True
+	if hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix:
+		return True
+	return False
+
+
 def getDataDir():
-	virtualEnv = os.getenv("VIRTUAL_ENV")
-	if virtualEnv:
-		return join(
-			dirname(dirname(dirname(rootDir))),
-			virtualEnv, "share", "pyglossary",
-		)
+	if in_virtualenv():
+		pass # TODO
+		# print(f"prefix={sys.prefix}, base_prefix={sys.base_prefix}")
+		# return join(
+		# 	dirname(dirname(dirname(rootDir))),
+		# 	os.getenv("VIRTUAL_ENV"), "share", "pyglossary",
+		# )
 
 	if not (
 		rootDir.endswith("dist-packages") or
