@@ -149,6 +149,7 @@ class TextGlossaryReader(object):
 				self._glos.setInfo("file_count", "")
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
+		resPathSet = set()
 		while True:
 			self._pos += 1
 			if self._pendingEntries:
@@ -170,6 +171,9 @@ class TextGlossaryReader(object):
 			if isinstance(defi, tuple):
 				defi, resList = defi
 				for relPath, fullPath in resList:
+					if relPath in resPathSet:
+						continue
+					resPathSet.add(relPath)
 					yield DataEntry(
 						fname=relPath,
 						tmpPath=fullPath,
