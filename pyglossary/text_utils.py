@@ -98,7 +98,7 @@ def splitByBarUnescapeNTB(st: str) -> "List[str]":
 
 
 def escapeBar(st: str) -> str:
-	"""
+	r"""
 		scapes vertical bar (\|)
 	"""
 	st = st.replace("\\", "\\\\")
@@ -107,7 +107,7 @@ def escapeBar(st: str) -> str:
 
 
 def unescapeBar(st: str) -> str:
-	"""
+	r"""
 		unscapes vertical bar (\|)
 	"""
 	st = pattern_bar_us.sub(r"\1|", st)
@@ -134,7 +134,7 @@ def joinByBar(parts: "List[str]") -> "str":
 
 
 def unescapeBarBytes(st: bytes) -> bytes:
-	"""
+	r"""
 		unscapes vertical bar (\|)
 	"""
 	st = b_pattern_bar_us.sub(b"\\1|", st)
