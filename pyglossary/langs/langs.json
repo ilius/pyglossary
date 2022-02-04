@@ -315,7 +315,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["de", "ger"],
+		"codes": ["de", "ger", "deu"],
 		"name": "German",
 		"alt_names": ["Deutsch"],
 		"script": ["Latin"],

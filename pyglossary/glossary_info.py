@@ -184,30 +184,40 @@ class GlossaryInfo(object):
 			return
 		if self._info.get(c_sourceLang):
 			return
-		for match in re.findall(
-			r"(\w\w\w*)\s*(-| to )\s*(\w\w\w*)",
-			name,
-			flags=re.I,
-		):
-			sourceLang = langDict[match[0]]
-			if sourceLang is None:
-				log.info(f"Invalid language code/name {match[0]!r} in match={match}")
-				continue
-			targetLang = langDict[match[2]]
-			if targetLang is None:
-				log.info(f"Invalid language code/name {match[2]!r} in match={match}")
-				continue
-			self.sourceLang = sourceLang
-			self.targetLang = targetLang
+
+		langNames = []
+
+		def checkPart(part: str):
+			for match in re.findall("\w\w\w*", part):
+				# print(f"match = {match!r}")
+				lang = langDict[match]
+				if lang is None:
+					continue
+				langNames.append(lang.name)
+
+		for part in re.split("-| to ", name):
+			# print(f"part = {part!r}")
+			checkPart(part)
+			if len(langNames) >= 2:
+				break
+
+		if len(langNames) < 2:
 			log.info(
-				f"Detected sourceLang={sourceLang.name!r}, "
-				f"targetLang={targetLang.name!r} "
-				f"from glossary name {name!r}"
+				f"Failed to detect sourceLang and targetLang"
+				f" from glossary name {name!r}"
 			)
 			return
+
+		if len(langNames) > 2:
+			log.warning(f"detectLangsFromName: langNames = {langNames!r}")
+
 		log.info(
-			f"Failed to detect sourceLang and targetLang from glossary name {name!r}"
+			f"Detected sourceLang={langNames[0]!r}, "
+			f"targetLang={langNames[1]!r} "
+			f"from glossary name {name!r}"
 		)
+		self.sourceLangName = langNames[0]
+		self.targetLangName = langNames[1]
 
 	def titleElement(
 		self,

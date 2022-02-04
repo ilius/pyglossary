@@ -396,7 +396,6 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(glos.targetLangName, "Persian")
 		self.assertIn("Sample: ", glos.getInfo("name"))
 		self.assertEqual(len(glos), 0)
-		glos.clear()
 
 	def test_init_infoDict(self):
 		glos = self.glos = Glossary(info={"a": "b"})
@@ -459,6 +458,51 @@ class TestGlossary(TestGlossaryBase):
 		glos = self.glos = Glossary()
 		glos.setInfo("targetlang", "malay")
 		self.assertEqual(glos.targetLang.name, "Malay")
+
+	def test_lang_detect_1(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "en-fa")
+		glos.detectLangsFromName()
+		self.assertEqual(
+			(glos.sourceLangName, glos.targetLangName),
+			("English", "Persian"),
+		)
+
+	def test_lang_detect_2(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "test-en-fa")
+		glos.detectLangsFromName()
+		self.assertEqual(
+			(glos.sourceLangName, glos.targetLangName),
+			("English", "Persian"),
+		)
+
+	def test_lang_detect_3(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "eng to per")
+		glos.detectLangsFromName()
+		self.assertEqual(
+			(glos.sourceLangName, glos.targetLangName),
+			("English", "Persian"),
+		)
+
+	def test_lang_detect_4(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "Test english to farsi")
+		glos.detectLangsFromName()
+		self.assertEqual(
+			(glos.sourceLangName, glos.targetLangName),
+			("English", "Persian"),
+		)
+
+	def test_lang_detect_5(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "freedict-eng-deu.index")
+		glos.detectLangsFromName()
+		self.assertEqual(
+			(glos.sourceLangName, glos.targetLangName),
+			("English", "German"),
+		)
 
 	def convert_txt_txt(
 		self,

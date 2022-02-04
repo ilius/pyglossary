@@ -15,7 +15,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 
 		self.dataFileCRC32.update({
 			"022-en-en.df": "edff6de1",
-			"022-en-en.df.txt": "677e225b",
+			"022-en-en.df.txt": "93a2450f",
 			"022-en-en.df.txt.df": "8e952e56",
 
 			"res/01cf5b41.gif": "01cf5b41",
