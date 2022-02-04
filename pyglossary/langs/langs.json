@@ -90,7 +90,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["arc"],
+		"codes": ["arc", "syc"],
 		"name": "Aramaic",
 		"alt_names": ["Classical Syriac", "ܐܪܡܝܐ"],
 		"rtl": 1,
@@ -115,7 +115,7 @@
 		"title_tag": "big"
 	},
 	{
-		"codes": ["av", "ava"],
+		"codes": ["av", "ava", "aya"],
 		"name": "Avar",
 		"alt_names": ["Avaric", "Авар", "Awar"],
 		"script": ["Cyrillic"],
@@ -203,7 +203,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["bo", "tib"],
+		"codes": ["bo", "tib", "bod"],
 		"name": "Tibetan",
 		"alt_names": ["Standard Tibetan"],
 		"script": ["Tibetan"],
@@ -275,7 +275,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["cs", "cze"],
+		"codes": ["cs", "cze", "ces"],
 		"name": "Czech",
 		"alt_names": [],
 		"script": ["Latin"],
@@ -299,7 +299,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["cy", "wel"],
+		"codes": ["cy", "wel", "cym"],
 		"name": "Welsh",
 		"alt_names": ["Cymraeg", "y Gymraeg"],
 		"script": ["Latin"],
@@ -396,7 +396,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["eu", "baq"],
+		"codes": ["eu", "baq", "eus"],
 		"name": "Basque",
 		"alt_names": ["Euskara"],
 		"script": ["Latin"],
@@ -404,7 +404,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["fa", "per"],
+		"codes": ["fa", "per", "fas", "prp"],
 		"name": "Persian",
 		"alt_names": ["Farsi", "فارسی", "Parsi", "Fārsī", "форсӣ", "Forsī", "Porsī"],
 		"rtl": 1,
@@ -413,7 +413,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["ff", "ful"],
+		"codes": ["ff", "ful", "fuc", "fuf"],
 		"name": "Fula",
 		"alt_names": ["Fulani", "Fulah", "Fulfulde", "𞤊𞤵𞤤𞤬𞤵𞤤𞤣𞤫", "Pulaar", "𞤆𞤵𞤤𞤢𞥄𞤪", "Pular", "𞤆𞤵𞤤𞤢𞤪", "Peul"],
 		"script": ["Latin", "Arabic", "Adlam"],
@@ -453,7 +453,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["fr", "fre"],
+		"codes": ["fr", "fre", "fra"],
 		"name": "French",
 		"alt_names": ["français", "langue française"],
 		"script": ["Latin"],
@@ -636,7 +636,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["hy", "arm"],
+		"codes": ["hy", "arm", "hye"],
 		"name": "Armenian",
 		"alt_names": ["հայերէն", "հայերեն", "hayeren"],
 		"script": ["Armenian"],
@@ -708,7 +708,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["is", "ice"],
+		"codes": ["is", "ice", "isl"],
 		"name": "Icelandic",
 		"alt_names": ["íslenska"],
 		"script": ["Latin"],
@@ -724,7 +724,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["iu", "iku"],
+		"codes": ["iu", "iku", "ike"],
 		"name": "Inuktitut",
 		"alt_names": ["Eastern Canadian Inuktitut", "ᐃᓄᒃᑎᑐᑦ"],
 		"script": ["Canadian syllabic", "Latin"],
@@ -756,7 +756,7 @@
 		"title_tag": "big"
 	},
 	{
-		"codes": ["ka", "geo"],
+		"codes": ["ka", "geo", "kat"],
 		"name": "Georgian",
 		"alt_names": ["Kartuli", "ქართული"],
 		"script": ["Georgian"],
@@ -964,7 +964,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["mas"],
+		"codes": ["mas", "cma"],
 		"name": "Maasai",
 		"alt_names": ["Masai", "Maa", "ɔl"],
 		"script": ["Latin"],
@@ -988,7 +988,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["mi", "mao"],
+		"codes": ["mi", "mao", "mri"],
 		"name": "Maori",
 		"alt_names": ["Māori", "Te reo Māori"],
 		"script": ["Latin"],
@@ -996,7 +996,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["mk", "mac"],
+		"codes": ["mk", "mac", "mkd"],
 		"name": "Macedonian",
 		"alt_names": ["македонски", "македонски јазик"],
 		"script": ["Cyrillic"],
@@ -1060,7 +1060,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["my", "bur"],
+		"codes": ["my", "bur", "mya"],
 		"name": "Burmese",
 		"alt_names": ["မြန်မာစာ", "မြန်မာစကား"],
 		"script": ["Burmese"],
@@ -1108,7 +1108,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["nl", "dut"],
+		"codes": ["nl", "dut", "nld"],
 		"name": "Dutch",
 		"alt_names": ["Flemish", "Nederlands"],
 		"script": ["Latin"],
@@ -1180,7 +1180,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["or", "ori"],
+		"codes": ["or", "ori", "ory"],
 		"name": "Odia",
 		"alt_names": ["Oriya", "ଓଡ଼ିଆ", "Oṛiā"],
 		"script": ["Odia"],
@@ -1260,7 +1260,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["ro", "rum"],
+		"codes": ["ro", "rum", "ron"],
 		"name": "Romanian",
 		"alt_names": ["Rumanian", "Roumanian", "Daco-Romanian", "limba română"],
 		"script": ["Latin", "Cyrillic"],
@@ -1324,7 +1324,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["sh", "shr"],
+		"codes": ["sh", "shr", "hbs"],
 		"name": "Serbo-Croatian",
 		"alt_names": ["Serbo-Croat", "Serbo-Croat-Bosnian", "Bosnian-Croatian-Serbian", "Bosnian-Croatian-Montenegrin-Serbian", "srpskohrvatski", "hrvatskosrpski", "српскохрватски", "хрватскосрпски", "naš jezik", "наш језик"],
 		"script": ["Latin", "Cyrillic"],
@@ -1340,7 +1340,7 @@
 		"title_tag": "big"
 	},
 	{
-		"codes": ["sk", "slo"],
+		"codes": ["sk", "slo", "slk"],
 		"name": "Slovak",
 		"alt_names": ["slovenčina", "slovenský jazyk"],
 		"script": ["Latin"],
@@ -1380,7 +1380,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["sq", "alb"],
+		"codes": ["sq", "alb", "sqi"],
 		"name": "Albanian",
 		"alt_names": ["shqip", "gjuha shqipe"],
 		"script": ["Latin"],
@@ -1670,7 +1670,7 @@
 		"title_tag": "big"
 	},
 	{
-		"codes": ["zh", "chi", "zho"],
+		"codes": ["zh", "chi", "zho", "cmn"],
 		"name": "Chinese",
 		"alt_names": ["汉语", "漢語", "Mandarin", "Standard Chinese", "Modern Standard Mandarin", "Standard Mandarin", "Mandarin Chinese", "普通话", "普通話", "国语", "國語", "华语", "華語"],
 		"script": ["CJK"],
