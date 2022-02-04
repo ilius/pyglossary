@@ -393,7 +393,7 @@ class PluginProp(object):
 					f"Invalid Reader class in {self.name!r} plugin"
 					f", no {attr!r} method"
 				)
-				self.Reader = None
+				self._Reader = None
 				return False
 
 		return True
@@ -411,7 +411,7 @@ class PluginProp(object):
 					f"Invalid Writer class in {self.name!r} plugin"
 					f", no {attr!r} method"
 				)
-				self.Writer = None
+				self._Writer = None
 				return False
 
 		return True
