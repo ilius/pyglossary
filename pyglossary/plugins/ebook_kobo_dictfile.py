@@ -85,6 +85,8 @@ class Reader(TextGlossaryReader):
 		defi = defi.replace("\n @", "\n@")\
 			.replace("\n :", "\n:")\
 			.replace("\n &", "\n&")\
+			.replace("</p><br />", "</p>")\
+			.replace("</p><br/>", "</p>")\
 			.replace("</p></br>", "</p>")
 		defi = defi.lstrip()
 		if html:
