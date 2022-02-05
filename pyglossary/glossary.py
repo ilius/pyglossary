@@ -25,14 +25,9 @@ import sys
 import os
 import os.path
 from os.path import (
-	split,
 	join,
-	splitext,
 	isfile,
 	isdir,
-	dirname,
-	basename,
-	abspath,
 )
 
 from time import time as now
@@ -479,7 +474,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	# def _hasWriteAccessToDir(self, dirPath: str) -> None:
 	# 	if isdir(dirPath):
 	# 		return os.access(dirPath, os.W_OK)
-	# 	return os.access(dirname(dirPath), os.W_OK)
+	# 	return os.access(os.path.dirname(dirPath), os.W_OK)
 
 	def _createReader(self, format: str, options: "Dict[str, Any]") -> "Any":
 		reader = self.plugins[format].readerClass(self)
@@ -499,7 +494,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		# if self._hasWriteAccessToDir(f"{filename}_res", os.W_OK):
 		# 	self.tmpDataDir = f"{filename}_res"
 		# else:
-		self.tmpDataDir = join(cacheDir, basename(filename) + "_res")
+		self.tmpDataDir = join(cacheDir, os.path.basename(filename) + "_res")
 		log.debug(f"tmpDataDir = {self.tmpDataDir}")
 		os.makedirs(self.tmpDataDir, mode=0o700, exist_ok=True)
 		self._cleanupPathList.add(self.tmpDataDir)
@@ -548,7 +543,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		progressbar: bool = True,
 		**options
 	) -> bool:
-		filename = abspath(filename)
+		filename = os.path.abspath(filename)
 
 		self._setTmpDataDir(filename)
 
@@ -572,13 +567,13 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				)
 				del options[key]
 
-		filenameNoExt, ext = splitext(filename)
+		filenameNoExt, ext = os.path.splitext(filename)
 		if not ext.lower() in self.plugins[format].extensions:
 			filenameNoExt = filename
 
 		self._filename = filenameNoExt
 		if not self._info.get(c_name):
-			self._info[c_name] = split(filename)[1]
+			self._info[c_name] = os.path.split(filename)[1]
 		self._progressbar = progressbar
 
 		self.updateEntryFilters()
@@ -767,7 +762,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		sort: "Optional[bool]" = None,
 		**options
 	) -> "Optional[str]":
-		filename = abspath(filename)
+		filename = os.path.abspath(filename)
 
 		if format not in self.plugins or not self.plugins[format].canWrite:
 			log.critical(f"No Writer class found for plugin {format}")
@@ -858,7 +853,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	) -> bool:
 		from pyglossary.sq_entry_list import SqEntryList
 
-		sq_fpath = join(cacheDir, f"{basename(inputFilename)}.db")
+		sq_fpath = join(cacheDir, f"{os.path.basename(inputFilename)}.db")
 		if isfile(sq_fpath):
 			log.info(f"Removing and re-creating {sq_fpath!r}")
 			os.remove(sq_fpath)
