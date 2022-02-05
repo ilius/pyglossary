@@ -100,6 +100,9 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		(None, NonEmptyDefiFilter),
 		(None, RemoveEmptyAndDuplicateAltWords),
 	]
+	# other entry filters that are added conditionally (other than with config):
+	#   - ShowProgressBar
+	#   - ShowMaxMemoryUsage
 
 	def _closeReaders(self):
 		for reader in self._readers:
