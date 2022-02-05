@@ -15,3 +15,8 @@
 | `non_empty_word`             | Yes             |                                      | Skip entries with empty word                |
 | `non_empty_defi`             | Yes             |                                      | Skip entries with empty definition          |
 | `remove_empty_dup_alt_words` | Yes             |                                      | Remove empty and duplicate alternate words  |
+
+## The full list of entry filters
+
+Some entry filters are used more than once, or added based on other conditions than config (though they don't actually filter or modify entries).
+You can see [Glossary.entryFiltersRules](https://github.com/ilius/pyglossary/blob/master/pyglossary/glossary.py#L84) for a more complete list.
