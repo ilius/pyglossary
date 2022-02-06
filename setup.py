@@ -22,15 +22,15 @@ class my_install(install):
 		install.run(self)
 		if os.sep == "/":
 			binPath = join(self.install_scripts, "pyglossary")
-			log.info("creating script file \"%s\"", binPath)
+			log.info(f"creating script file {binPath!r}")
 			if not exists(self.install_scripts):
 				os.makedirs(self.install_scripts)
 				# let it fail on wrong permissions.
 			else:
 				if not isdir(self.install_scripts):
 					raise OSError(
-						"installation path already exists " +
-						"but is not a directory: %s" % self.install_scripts
+						"installation path already exists "
+						f"but is not a directory: {self.install_scripts}"
 					)
 			open(binPath, "w").write("""#!/usr/bin/env python3
 import sys
@@ -50,6 +50,7 @@ root_data_file_names = [
 	"config.json",
 ]
 
+sep = "\\\\" if os.sep == "\\" else os.sep
 
 package_data = {
 	"": root_data_file_names,
@@ -72,7 +73,7 @@ package_data = {
 		# safest way found so far to include every resource of plugins
 		# producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
 		re.sub(
-			r"^.*?pyglossary%s(?=plugins)" % ("\\\\" if os.sep == "\\" else os.sep),
+			fr"^.*?pyglossary{sep}(?=plugins)",
 			"",
 			join(dirpath, f),
 		)
@@ -98,7 +99,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
 	name="pyglossary",
 	version=VERSION,
-	python_requires=">=3.7.0",
+	python_requires=">=3.8.0",
 	cmdclass={
 		"install": my_install,
 	},
@@ -113,13 +114,13 @@ setup(
 		"pyglossary",
 	],
 	entry_points={
-		'console_scripts': [
-			'pyglossary = pyglossary.ui.main:main',
+		"console_scripts": [
+			"pyglossary = pyglossary.ui.main:main",
 		],
 	},
 	package_data=package_data,
-	# FIXME: data_files is deprecated, but without it
-	# `pip install --user` does not work
+	# data_files is deprecated, but without it
+	# `pip install --user` does not work, tested with pip 22.0.2
 	data_files=[
 		(relRootDir, root_data_file_names),
 		(f"{relRootDir}/plugins-meta", ["plugins-meta/index.json"]),
