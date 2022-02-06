@@ -75,22 +75,16 @@ package_data = {
 		re.sub(
 			fr"^.*?pyglossary{sep}(?=plugins)",
 			"",
-			join(dirpath, f),
+			join(dirpath, fname),
 		)
 		for top in glob.glob(
 			join(dirname(__file__), "pyglossary", "plugins")
 		)
 		for dirpath, _, files in os.walk(top)
-		for f in files
-		if not (f.endswith(".pyc") or f.endswith(".pyo"))
+		for fname in files
+		if not fname.endswith((".pyc", ".pyo"))
 	],
 }
-
-
-def files(folder):
-	for path in glob.glob(folder + "/*"):
-		if os.path.isfile(path):
-			yield path
 
 
 with open("README.md", "r", encoding="utf-8") as fh:
