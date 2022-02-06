@@ -156,7 +156,7 @@ def prepare_content_with_soup(
 		if href.startswith("sound:"):
 			fix_sound_link(href, tag)
 
-		elif href.startswith("phonetics") or href.startswith("help:phonetics"):
+		elif href.startswith(("phonetics", "help:phonetics")):
 			# for oxford9
 			log.debug(f"phonetics: tag={tag}")
 			if tag.audio and "name" in tag.audio.attrs:

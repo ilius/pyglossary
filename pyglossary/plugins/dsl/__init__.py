@@ -411,7 +411,7 @@ class Reader(object):
 				continue
 
 			# texts
-			if line.startswith(" ") or line.startswith("\t"):
+			if line.startswith((" ", "\t")):
 				line_type = "text"
 				line = unfinished_line + line.lstrip()
 
