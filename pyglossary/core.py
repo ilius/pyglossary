@@ -238,10 +238,7 @@ def getDataDir():
 		# 	os.getenv("VIRTUAL_ENV"), "share", "pyglossary",
 		# )
 
-	if not (
-		rootDir.endswith("dist-packages") or
-		rootDir.endswith("site-packages")
-	):
+	if not rootDir.endswith(("dist-packages", "site-packages")):
 		return rootDir
 
 	parent3 = dirname(dirname(dirname(rootDir)))

@@ -340,7 +340,7 @@ class Entry(BaseEntry):
 		self._defi = func(self._defi)
 
 	def _stripTrailingBR(self, s: str) -> str:
-		while s.endswith('<BR>') or s.endswith('<br>'):
+		while s.endswith(("<BR>", "<br>")):
 			s = s[:-4]
 		return s
 
