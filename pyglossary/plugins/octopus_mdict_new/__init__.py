@@ -212,6 +212,8 @@ class Reader(object):
 				if ext in (".mdx", ".mdd"):
 					continue
 				fpath = join(dirPath, fname)
+				if not isfile(fpath):
+					continue
 				with open(fpath, mode="rb") as _file:
 					b_data = _file.read()
 				yield glos.newDataEntry(fname, b_data)
