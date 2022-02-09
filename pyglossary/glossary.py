@@ -28,6 +28,7 @@ from os.path import (
 	join,
 	isfile,
 	isdir,
+	relpath,
 )
 
 from time import time as now
@@ -584,7 +585,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		reader = self._createReader(format, options)
 		try:
 			reader.open(filename)
-		except FileNotFoundError as e:
+		except (FileNotFoundError, LookupError) as e:
 			log.critical(str(e))
 			return False
 		except Exception:
@@ -1041,13 +1042,13 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			inputFilename=inputFilename,
 		)
 		if not outputArgs:
-			log.critical(f"Writing file {outputFilename!r} failed.")
+			log.critical(f"Writing file {relpath(outputFilename)!r} failed.")
 			return
 		outputFilename, outputFormat, compression = outputArgs
 		del outputArgs
 
 		if isdir(outputFilename):
-			log.critical(f"Directory already exists: {outputFilename}")
+			log.critical(f"Directory already exists: {relpath(outputFilename)}")
 			return
 
 		sortParams = self._resolveConvertSortParams(
@@ -1075,7 +1076,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			progressbar=progressbar,
 			**readOptions
 		):
-			log.critical(f"Reading file {inputFilename!r} failed.")
+			log.critical(f"Reading file {relpath(inputFilename)!r} failed.")
 			self.cleanup()
 			return
 
@@ -1094,7 +1095,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		)
 		log.info("")
 		if not finalOutputFile:
-			log.critical(f"Writing file {outputFilename!r} failed.")
+			log.critical(f"Writing file {relpath(outputFilename)!r} failed.")
 			self._closeReaders()
 			self.cleanup()
 			return

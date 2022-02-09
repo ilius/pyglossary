@@ -2,7 +2,7 @@
 
 import sys
 import os
-from os.path import join, dirname, abspath, isdir, isfile
+from os.path import join, dirname, abspath, isdir, isfile, relpath
 import unittest
 import logging
 
@@ -369,19 +369,20 @@ class TestGlossaryErrors(TestGlossaryBase):
 			outputFormat="Stardict",
 		)
 		self.assertIsNone(res)
-		self.assertLogCritical(f"Directory already exists: {self.tempDir}")
+		self.assertLogCritical(f"Directory already exists: {relpath(self.tempDir)}")
 
 	def test_convert_fileNotFound(self):
 		glos = Glossary()
+		inputFilename = "/abc/def/test6.txt"
 		res = glos.convert(
-			inputFilename="/abc/def/test6.txt",
+			inputFilename=inputFilename,
 			outputFilename="test2.txt",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical(
 			"[Errno 2] No such file or directory: '/abc/def/test6.txt'"
 		)
-		self.assertLogCritical("Reading file '/abc/def/test6.txt' failed.")
+		self.assertLogCritical(f"Reading file {relpath(inputFilename)!r} failed.")
 
 	def test_convert_unableDetectOutputFormat(self):
 		glos = Glossary()
@@ -392,7 +393,7 @@ class TestGlossaryErrors(TestGlossaryBase):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect output format!")
-		self.assertLogCritical("Writing file 'test' failed.")
+		self.assertLogCritical(f"Writing file {relpath('test')!r} failed.")
 
 	def test_convert_writeFileNotFound_txt(self):
 		outputFilename = "/test/7de8cf6f17bc4c9abb439e71adbec95d.txt"
@@ -405,7 +406,7 @@ class TestGlossaryErrors(TestGlossaryBase):
 		self.assertLogCritical(
 			f"[Errno 2] No such file or directory: '{outputFilename}'"
 		)
-		self.assertLogCritical(f"Writing file '{outputFilename}' failed.")
+		self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
 
 	def test_convert_writeFileNotFound_hdir(self):
 		outputFilename = "/test/40e20107f5b04087bfc0ec0d61510017.hdir"
@@ -418,7 +419,7 @@ class TestGlossaryErrors(TestGlossaryBase):
 		self.assertLogCritical(
 			f"[Errno 2] No such file or directory: '{outputFilename}'"
 		)
-		self.assertLogCritical(f"Writing file '{outputFilename}' failed.")
+		self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
 
 	def test_convert_invalidSortKeyName(self):
 		glos = self.glos = Glossary()
