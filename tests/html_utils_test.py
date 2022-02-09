@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from os.path import join, dirname, abspath
+from os.path import dirname, abspath
 import sys
 import unittest
 
@@ -57,7 +57,7 @@ def benchmark_main():
 
 	for i in range(20):
 		text = ""
-		for j in range(10):
+		for _ in range(10):
 			text += choice(english_words_list) + " "
 		textList.append(text)
 

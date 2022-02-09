@@ -2,7 +2,7 @@
 
 import sys
 import os
-from os.path import join, dirname, abspath, isdir, isfile, relpath
+from os.path import dirname, abspath, isfile, relpath
 import unittest
 import logging
 

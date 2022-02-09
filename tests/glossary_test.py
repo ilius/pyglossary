@@ -36,8 +36,7 @@ dataDir = join(cacheDir, "test")
 appTmpDir = join(cacheDir, "tmp")
 
 
-if not isdir(dataDir):
-	os.makedirs(dataDir)
+os.makedirs(dataDir, exist_ok=True)
 os.chdir(dataDir)
 
 
