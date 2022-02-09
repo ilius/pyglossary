@@ -667,9 +667,10 @@ class OutputFormatBox(FormatBox):
 
 
 class GtkTextviewLogHandler(logging.Handler):
-	def __init__(self, treeview_dict):
+	def __init__(self, ui, treeview_dict):
 		logging.Handler.__init__(self)
 
+		self.ui = ui
 		self.buffers = {}
 		for levelNameCap in log.levelNamesCap[:-1]:
 			levelName = levelNameCap.upper()
@@ -711,10 +712,13 @@ class GtkTextviewLogHandler(logging.Handler):
 			record.levelname,
 		)
 
+		if record.levelno == logging.CRITICAL:
+			self.ui.status(record.getMessage())
+
 
 class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
-	def __init__(self, textview):
-		GtkTextviewLogHandler.__init__(self, {
+	def __init__(self, ui, textview):
+		GtkTextviewLogHandler.__init__(self, ui, {
 			"CRITICAL": textview,
 			"ERROR": textview,
 			"WARNING": textview,
@@ -1220,7 +1224,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# 		continue
 		# 	notebook.reorder_child(self.pages[i], j)
 		# ____________________________________________________________ #
-		handler = GtkSingleTextviewLogHandler(textview)
+		handler = GtkSingleTextviewLogHandler(self, textview)
 		log.addHandler(handler)
 		###
 		textview.override_background_color(
@@ -1359,7 +1363,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 	def convertClicked(self, widget=None):
 		inPath = self.convertInputEntry.get_text()
 		if not inPath:
-			self.status("Input file path is empty!")
 			log.critical("Input file path is empty!")
 			return
 		inFormat = self.convertInputFormatCombo.getActive()
@@ -1371,7 +1374,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 		outPath = self.convertOutputEntry.get_text()
 		if not outPath:
-			self.status("Output file path is empty!")
 			log.critical("Output file path is empty!")
 			return
 		outFormat = self.convertOutputFormatCombo.getActive()
@@ -1412,8 +1414,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			)
 			if finalOutputFile:
 				self.status("Convert finished")
-			else:
-				self.status("Convert failed")
 			return bool(finalOutputFile)
 
 		finally:
