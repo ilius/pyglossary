@@ -314,7 +314,7 @@ class PreventDuplicateWords(EntryFilter):
 		word = f"{word} ({n})"
 
 		wordSet.add(word)
-		entry._word = word
+		entry.l_word = [word]
 		# use entry.editFuncWord?
 
 		return entry

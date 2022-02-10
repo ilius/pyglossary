@@ -220,11 +220,11 @@ class Entry(BaseEntry):
 				"x": xdxf
 		"""
 
-		# memory optimization:
 		if isinstance(word, list):
-			if len(word) == 1:
-				word = word[0]
-		elif not isinstance(word, str):
+			pass
+		elif isinstance(word, str):
+			word = [word]
+		else:
 			raise TypeError(f"invalid word type {type(word)}")
 
 		if isinstance(defi, list):
@@ -243,7 +243,7 @@ class Entry(BaseEntry):
 
 	def __repr__(self):
 		return (
-			f"Entry({self._word!r}, {self._defi!r}, "
+			f"Entry({self.l_word!r}, {self._defi!r}, "
 			f"defiFormat={self._defiFormat!r})"
 		)
 
@@ -254,20 +254,18 @@ class Entry(BaseEntry):
 				and all the alternate words
 				separated by "|"
 		"""
-		if isinstance(self._word, str):
-			return self._word
-		else:
-			return joinByBar(self._word)
+		return joinByBar(self._word)
 
 	@property
 	def l_word(self) -> "List[str]":
 		"""
 			returns list of the word and all the alternate words
 		"""
-		if isinstance(self._word, str):
-			return [self._word]
-		else:
-			return self._word
+		return self._word
+
+	@l_word.setter
+	def l_word(self, l_word: "List[str]"):
+		self._word = l_word
 
 	@property
 	def defi(self) -> str:
@@ -321,12 +319,9 @@ class Entry(BaseEntry):
 			`func` must accept only one string as argument
 			and return the modified string
 		"""
-		if isinstance(self._word, str):
-			self._word = func(self._word)
-		else:
-			self._word = tuple(
-				func(st) for st in self._word
-			)
+		self._word = [
+			func(st) for st in self._word
+		]
 
 	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
 		"""
@@ -353,12 +348,9 @@ class Entry(BaseEntry):
 		"""
 			replace string `source` with `target` in all words
 		"""
-		if isinstance(self._word, str):
-			self._word = self._word.replace(source, target)
-		else:
-			self._word = tuple(
-				st.replace(source, target) for st in self._word
-			)
+		self._word = [
+			st.replace(source, target) for st in self._word
+		]
 
 	def replaceInDefi(self, source: str, target: str) -> None:
 		"""

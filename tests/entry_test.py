@@ -79,7 +79,7 @@ class TestEntryBasic(unittest.TestCase):
 		entry = Entry("test1", "something", defiFormat="h")
 		self.assertEqual(
 			repr(entry),
-			"Entry('test1', 'something', defiFormat='h')",
+			"Entry(['test1'], 'something', defiFormat='h')",
 		)
 
 	def test_defiFormat_1(self):
