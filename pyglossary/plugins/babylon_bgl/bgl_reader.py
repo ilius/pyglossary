@@ -850,7 +850,7 @@ class BglReader(object):
 		"""
 		pos += Len
 		self.wordLenMax = max(self.wordLenMax, len(u_word))
-		return True, pos, u_word, b_word
+		return True, pos, u_word.strip(), b_word.strip()
 
 	def readEntryDefi(self, block, pos, b_word):
 		"""
@@ -1309,6 +1309,10 @@ class BglReader(object):
 			u_defi_format += f"[{fields.u_transcription_60}]<br>\n"
 		if fields.u_defi:
 			u_defi_format += fields.u_defi
+
+		if u_defi_format.endswith(("<br>", "<BR>")):
+			u_defi_format = u_defi_format[:-4]
+
 		return u_defi_format
 
 	def processDefiStat(self, fields, b_defi, b_key):
