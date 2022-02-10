@@ -326,9 +326,9 @@ In PyGlossary, headword and alternates together are accessible as a single Pytho
 
 `entry.defi` is the definition as a Python Unicode `str`. Also `entry.b_defi` is definition in UTF-8 byte array.
 
-`entry.defiFormat` is definition format. If definition is plaintext (not rich text), the value is `m`. And if it's in HTML (contains any html tag), then `defiFormat` is `m`. The value `x` is also allowed for XFXF, but XDXF is not widely supported in dictionary applications.
+`entry.defiFormat` is definition format. If definition is plaintext (not rich text), the value is `m`. And if it's in HTML (contains any html tag), then `defiFormat` is `h`. The value `x` is also allowed for XFXF, but XDXF is not widely supported in dictionary applications.
 
-There is another type of `Entry` which is called **Data Entry**, and generally contains image files, TTL or other audio files, or any file that was included in input glossary. For data entries:
+There is another type of entry which is called **Data Entry**, and generally contains an image, audio, css, or any other file that was included in input glossary. For data entries:
 
 - `entry.s_word` is file name (and `l_word` is still a list containing this string),
 - `entry.defiFormat` is `b`
@@ -339,7 +339,7 @@ There is another type of `Entry` which is called **Data Entry**, and generally c
 Entry filters are internal objects that modify words/definition of entries,
 or remove entries (in some special cases).
 
-Like several filters in a pipe that connects a `reader` object to a `writer` object
+Like several filters in a pipe which connects a `reader` object to a `writer` object
 (with both of their classes defined in plugins and instantiated in `Glossary` class).
 
 You can enable/disable some of these filters using config parameters / command like flags, which
