@@ -83,7 +83,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	"""
 
 	entryFiltersRules = [
-		(None, StripWhitespaces),
+		(None, TrimWhitespaces),
 		(None, NonEmptyWordFilter),
 		(("skip_resources", False), SkipDataEntry),
 		(("utf8_check", False), FixUnicode),

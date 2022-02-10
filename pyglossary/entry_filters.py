@@ -36,9 +36,9 @@ class EntryFilter(object):
 		return entry
 
 
-class StripWhitespaces(EntryFilter):
-	name = "strip"
-	desc = "Strip whitespaces in word(s) and definition"
+class TrimWhitespaces(EntryFilter):
+	name = "trim_whitespaces"
+	desc = "Remove leading/trailing whitespaces from word(s) and definition"
 
 	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
 		entry.strip()
