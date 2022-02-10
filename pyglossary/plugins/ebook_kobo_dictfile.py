@@ -88,7 +88,7 @@ class Reader(TextGlossaryReader):
 			.replace("</p><br />", "</p>")\
 			.replace("</p><br/>", "</p>")\
 			.replace("</p></br>", "</p>")
-		defi = defi.lstrip()
+		defi = defi.strip()
 		if html:
 			pass
 		else:
@@ -119,7 +119,7 @@ class Reader(TextGlossaryReader):
 				if words:
 					self._bufferLine = line
 					return words, self.fixDefi("\n".join(defiLines), html=html)
-				words = [line[1:]]
+				words = [line[1:].strip()]
 				continue
 			if line.startswith(": "):
 				defiLines.append(line[2:])
@@ -127,7 +127,7 @@ class Reader(TextGlossaryReader):
 			if line.startswith("::"):
 				continue
 			if line.startswith("&"):
-				words.append(line[1:])
+				words.append(line[1:].strip())
 				continue
 			if line.startswith("<html>"):
 				line = line[6:]
