@@ -35,7 +35,12 @@ from time import time as now
 
 from collections import OrderedDict as odict
 
-from .flags import *
+from .flags import (
+	ALWAYS,
+	DEFAULT_NO,
+	DEFAULT_YES,
+	NEVER,
+)
 from . import core
 from .core import (
 	dataDir,
@@ -44,7 +49,24 @@ from .core import (
 	cacheDir,
 )
 from .entry import Entry, DataEntry
-from .entry_filters import *
+from .entry_filters import (
+	FixUnicode,
+	LanguageCleanup,
+	LowerWord,
+	NonEmptyDefiFilter,
+	NonEmptyWordFilter,
+	NormalizeHtml,
+	PreventDuplicateWords,
+	RTLDefi,
+	RemoveEmptyAndDuplicateAltWords,
+	RemoveHtmlTags,
+	RemoveHtmlTagsAll,
+	ShowMaxMemoryUsage,
+	ShowProgressBar,
+	SkipDataEntry,
+	# TextListSymbolCleanup,
+	TrimWhitespaces,
+)
 
 from .glossary_utils import (
 	splitFilenameExt,
@@ -55,7 +77,7 @@ from .os_utils import showMemoryUsage, rmtree
 from .glossary_info import GlossaryInfo
 from .plugin_manager import PluginManager
 from .glossary_type import GlossaryType
-from .info import *
+from .info import c_name
 
 log = logging.getLogger("pyglossary")
 

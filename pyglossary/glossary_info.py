@@ -20,7 +20,14 @@
 import logging
 from collections import OrderedDict as odict
 
-from .info import *
+from .info import (
+	infoKeysAliasDict,
+	c_author,
+	c_name,
+	c_publisher,
+	c_sourceLang,
+	c_targetLang,
+)
 from .text_utils import (
 	fixUtf8,
 )
