@@ -22,8 +22,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from datetime import datetime
+
 from pyglossary.plugins.formats_common import *
-from pyglossary.ebook_base import *
+from pyglossary.ebook_base import EbookWriter
 from pyglossary.langs import Lang
 
 enable = True

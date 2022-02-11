@@ -20,7 +20,7 @@
 
 
 from pyglossary.plugins.formats_common import *
-from pyglossary.ebook_base import *
+from pyglossary.ebook_base import EbookWriter
 
 enable = True
 lname = "epub2"
