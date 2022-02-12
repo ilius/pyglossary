@@ -1103,7 +1103,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			return
 
 		del inputFilename, inputFormat, direct, readOptions
-		log.info("")
 
 		if infoOverride:
 			for key, value in infoOverride.items():
@@ -1115,7 +1114,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			sort=sort,
 			**writeOptions
 		)
-		log.info("")
 		if not finalOutputFile:
 			log.critical(f"Writing file {relpath(outputFilename)!r} failed.")
 			self._closeReaders()
