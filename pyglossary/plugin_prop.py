@@ -232,7 +232,7 @@ class PluginProp(object):
 		cls = getattr(self.module, "Reader", None)
 		self._Reader = cls
 		self._ReaderLoaded = True
-		if log.isDebug():
+		if cls is not None and log.isDebug():
 			self.checkReaderClass()
 		return cls
 
@@ -243,7 +243,7 @@ class PluginProp(object):
 		cls = getattr(self.module, "Writer", None)
 		self._Writer = cls
 		self._WriterLoaded = True
-		if log.isDebug():
+		if cls is not None and log.isDebug():
 			self.checkWriterClass()
 		return cls
 
