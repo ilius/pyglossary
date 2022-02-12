@@ -128,6 +128,7 @@ class PluginProp(object):
 		elif self._modulePath.endswith(".py"):
 			self._modulePath = self._modulePath[:-3]
 
+		self._enable = getattr(mod, "enable", True)
 		self._lname = mod.lname
 		self._name = mod.format
 		self._description = mod.description
