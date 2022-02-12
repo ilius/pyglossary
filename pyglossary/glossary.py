@@ -816,12 +816,12 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self._updateIter()
 		try:
 			writer.open(filename)
-		except FileNotFoundError as e:
+		except (FileNotFoundError, LookupError) as e:
 			log.critical(str(e))
-			return False
+			return
 		except Exception:
 			log.exception("")
-			return False
+			return
 
 		showMemoryUsage()
 
@@ -851,7 +851,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 					gen.send(None)
 				except StopIteration:
 					pass
-		except FileNotFoundError as e:
+		except (FileNotFoundError, LookupError) as e:
 			log.critical(str(e))
 			return
 		except Exception:
