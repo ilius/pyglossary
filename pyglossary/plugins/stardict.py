@@ -277,25 +277,31 @@ class Reader(object):
 				log.error(f"Data file is corrupted. Word {b_word}")
 				continue
 
-			# rawDefiList is a list of (b_partDefi, defiFormatCode) tuples
+			# rawDefiList is a list of (b_defiPart, defiFormatCode) tuples
 
 			defis = []
 			defiFormats = []
-			for b_partDefi, defiFormatCode in rawDefiList:
-				partDefi = b_partDefi.decode("utf-8", errors=unicode_errors)
-				partDefiFormat = {
+			for b_defiPart, i_type in rawDefiList:
+				_type = chr(i_type)
+				_format = {
 					"m": "m",
 					"t": "m",
 					"y": "m",
 					"g": "h",
 					"h": "h",
 					"x": "x",
-				}.get(chr(defiFormatCode), "")
-				if partDefiFormat == "x" and self._xdxf_to_html:
-					partDefi = self.xdxf_transform(partDefi)
-					partDefiFormat = "h"
-				defis.append(partDefi)
-				defiFormats.append(partDefiFormat)
+				}.get(_type, "")
+
+				_defi = b_defiPart.decode("utf-8", errors=unicode_errors)
+
+				# log.info(f"{_type}->{_format}: {_defi}".replace("\n", "")[:120])
+
+				if _format == "x" and self._xdxf_to_html:
+					_defi = self.xdxf_transform(_defi)
+					_format = "h"
+
+				defis.append(_defi)
+				defiFormats.append(_format)
 
 			# FIXME
 			defiFormat = defiFormats[0]
