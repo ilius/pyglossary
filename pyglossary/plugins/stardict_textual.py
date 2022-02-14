@@ -13,7 +13,11 @@ sortKeyName = "stardict"
 singleFile = True
 kind = "text"
 wiki = ""
-website = None
+website = (
+	"https://github.com/huzheng001/stardict-3"
+	"/blob/master/dict/doc/TextualDictionaryFileFormat",
+	"TextualDictionaryFileFormat",
+)
 optionsProp = {
 	"encoding": EncodingOption(),
 }
