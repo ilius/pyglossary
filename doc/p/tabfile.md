@@ -35,4 +35,8 @@
 
 
 
+### Dictionary Applications/Tools
 
+| Name & Website                                                                               | License | Platforms           |
+| -------------------------------------------------------------------------------------------- | ------- | ------------------- |
+| [StarDict-Editor (Tools)](https://github.com/huzheng001/stardict-3/blob/master/tools/README) | GPL     | Linux, Windows, Mac |

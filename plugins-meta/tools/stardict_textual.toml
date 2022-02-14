@@ -3,3 +3,4 @@ web = "https://github.com/huzheng001/stardict-3/blob/master/tools/README"
 platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
 plang = "C"
+
