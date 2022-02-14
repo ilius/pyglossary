@@ -81,6 +81,9 @@ class Writer(object):
 			entry = yield
 			if entry is None:
 				break
+			if entry.isData():
+				# can save it with entry.save(directory)
+				continue
 			word = entry.s_word
 			defi = entry.defi
 			# here write word and defi to the output file (depending on
