@@ -35,6 +35,7 @@
 | Sdictionary Source (.sdct)    | SdictSource     | [sdict_source.md](./sdict_source.md)           |
 | SQL (.sql)                    | Sql             | [sql.md](./sql.md)                             |
 | StarDict (.ifo)               | Stardict        | [stardict.md](./stardict.md)                   |
+| StarDict Textual File (.xml)  | StardictTextual | [stardict_textual.md](./stardict_textual.md)   |
 | Tabfile (.txt, .dic)          | Tabfile         | [tabfile.md](./tabfile.md)                     |
 | Wiktionary Dump (.xml)        | WiktionaryDump  | [wiktionary_dump.md](./wiktionary_dump.md)     |
 | Wordset.org JSON directory    | Wordset         | [wordset.md](./wordset.md)                     |

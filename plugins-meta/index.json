@@ -1414,6 +1414,42 @@
 		}
 	},
 	{
+		"module": "stardict_textual",
+		"lname": "stardict_textual",
+		"name": "StardictTextual",
+		"description": "StarDict Textual File (.xml)",
+		"extensions": [],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Encoding/charset"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"sortKeyName": "stardict",
+		"readOptions": {
+			"encoding": "utf-8"
+		},
+		"writeOptions": {
+			"encoding": "utf-8"
+		},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"writeDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
 		"module": "tabfile",
 		"lname": "tabfile",
 		"name": "Tabfile",
