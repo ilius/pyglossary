@@ -17,7 +17,7 @@ optionsProp = {}
 
 
 class Reader(object):
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0
@@ -66,7 +66,7 @@ class Reader(object):
 
 
 class Writer(object):
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = None
 
