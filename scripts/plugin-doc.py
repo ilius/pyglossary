@@ -198,6 +198,16 @@ def pluginIsActive(p):
 	return True
 
 
+def getToolSourceLink(tool):
+	url = tool.get("source")
+	if not url:
+		return "―"
+	_, title = url.split("://")
+	if title.startswith("github.com/"):
+		title = "@" + title[len("github.com/"):]
+	return renderLink(title, url)
+
+
 userPluginsDirPath = Path(userPluginsDir)
 plugins = [
 	p
@@ -283,7 +293,7 @@ for p in plugins:
 			optName: opt.typ
 			for optName, opt in optionsProp.items()
 		}
-	except:
+	except Exception:
 		print(f"optionsProp = {optionsProp}")
 		raise
 	optionsComment = {
@@ -302,9 +312,10 @@ for p in plugins:
 	toolsTable = ""
 	if tools:
 		toolsTable = "### Dictionary Applications/Tools\n\n" + renderTable(
-			[("Name & Website", "License", "Platforms")] + [
+			[("Name & Website", "Source code", "License", "Platforms")] + [
 				(
 					f"[{tool['name']}]({tool['web']})",
+					getToolSourceLink(tool),
 					tool["license"],
 					", ".join(tool["platforms"]),
 				)

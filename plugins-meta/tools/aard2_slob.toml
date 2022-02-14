@@ -1,5 +1,6 @@
 ["Aard 2 for Android"]
 web = "http://aarddict.org/"
+source = "https://github.com/itkach/aard2-android"
 platforms = [ "Android",]
 license = "GPL"
 plang = "Java"
@@ -7,6 +8,7 @@ plang = "Java"
 
 ["Aard2 for Web"]
 web = "http://aarddict.org/"
+source = "https://github.com/itkach/aard2-web"
 platforms = [ "Web",]
 license = "MPL"
 plang = "Java"

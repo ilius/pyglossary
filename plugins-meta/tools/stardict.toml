@@ -1,11 +1,13 @@
 [GoldenDict]
 web = "http://goldendict.org/"
+source = "https://github.com/goldendict/goldendict"
 platforms = [ "Linux", "Windows",]
 license = "GPL"
 plang = "C++"
 
 [StarDict]
 web = "http://huzheng.org/stardict/"
+source = "https://github.com/huzheng001/stardict-3"
 platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
 plang = "C"

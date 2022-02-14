@@ -39,15 +39,15 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                                            | License     | Platforms                                                   |
-| ----------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------- |
-| [GoldenDict](http://goldendict.org/)                                                      | GPL         | Linux, Windows                                              |
-| [StarDict](http://huzheng.org/stardict/)                                                  | GPL         | Linux, Windows, Mac                                         |
-| [GoldenDict Mobile (Free)](http://goldendict.mobi/)                                       | Freemium    | Android                                                     |
-| [GoldenDict Mobile (Full)](http://goldendict.mobi/)                                       | Proprietary | Android                                                     |
-| [Twinkle Star Dictionary](https://play.google.com/store/apps/details?id=com.qtier.dict)   | Unknown     | Android                                                     |
-| [WordMateX](https://apkcombo.com/wordmatex/org.d1scw0rld.wordmatex/)                      | Proprietary | Android                                                     |
-| [QDict](https://play.google.com/store/apps/details?id=com.annie.dictionary)               | Apache 2.0  | Android                                                     |
-| [Fora Dictionary](https://play.google.com/store/apps/details?id=com.ngc.fora)             | Freemium    | Android                                                     |
-| [Fora Dictionary Pro](https://play.google.com/store/apps/details?id=com.ngc.fora.android) | Proprietary | Android                                                     |
-| [KOReader](http://koreader.rocks/)                                                        | AGPLv3      | Android, Amazon Kindle, Kobo eReader, PocketBook, Cervantes |
+| Name & Website                                                                            | Source code                                                        | License     | Platforms                                                   |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------- | ----------------------------------------------------------- |
+| [GoldenDict](http://goldendict.org/)                                                      | [@goldendict/goldendict](https://github.com/goldendict/goldendict) | GPL         | Linux, Windows                                              |
+| [StarDict](http://huzheng.org/stardict/)                                                  | [@huzheng001/stardict-3](https://github.com/huzheng001/stardict-3) | GPL         | Linux, Windows, Mac                                         |
+| [GoldenDict Mobile (Free)](http://goldendict.mobi/)                                       | ―                                                                  | Freemium    | Android                                                     |
+| [GoldenDict Mobile (Full)](http://goldendict.mobi/)                                       | ―                                                                  | Proprietary | Android                                                     |
+| [Twinkle Star Dictionary](https://play.google.com/store/apps/details?id=com.qtier.dict)   | ―                                                                  | Unknown     | Android                                                     |
+| [WordMateX](https://apkcombo.com/wordmatex/org.d1scw0rld.wordmatex/)                      | ―                                                                  | Proprietary | Android                                                     |
+| [QDict](https://play.google.com/store/apps/details?id=com.annie.dictionary)               | [@namndev/QDict](https://github.com/namndev/QDict)                 | Apache 2.0  | Android                                                     |
+| [Fora Dictionary](https://play.google.com/store/apps/details?id=com.ngc.fora)             | ―                                                                  | Freemium    | Android                                                     |
+| [Fora Dictionary Pro](https://play.google.com/store/apps/details?id=com.ngc.fora.android) | ―                                                                  | Proprietary | Android                                                     |
+| [KOReader](http://koreader.rocks/)                                                        | [@koreader/koreader](https://github.com/koreader/koreader)         | AGPLv3      | Android, Amazon Kindle, Kobo eReader, PocketBook, Cervantes |

@@ -43,7 +43,7 @@ See [doc/pyicu.md](../pyicu.md) file for more detailed instructions on how to in
 
 ### Dictionary Applications/Tools
 
-| Name & Website                             | License | Platforms |
-| ------------------------------------------ | ------- | --------- |
-| [Aard 2 for Android](http://aarddict.org/) | GPL     | Android   |
-| [Aard2 for Web](http://aarddict.org/)      | MPL     | Web       |
+| Name & Website                             | Source code                                                      | License | Platforms |
+| ------------------------------------------ | ---------------------------------------------------------------- | ------- | --------- |
+| [Aard 2 for Android](http://aarddict.org/) | [@itkach/aard2-android](https://github.com/itkach/aard2-android) | GPL     | Android   |
+| [Aard2 for Web](http://aarddict.org/)      | [@itkach/aard2-web](https://github.com/itkach/aard2-web)         | MPL     | Web       |

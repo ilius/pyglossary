@@ -21,6 +21,6 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                                                  | License | Platforms |
-| ----------------------------------------------------------------------------------------------- | ------- | --------- |
-| [Almaany.com Arabic Dictionary](https://play.google.com/store/apps/details?id=com.almaany.arar) | Unknown | Android   |
+| Name & Website                                                                                  | Source code | License | Platforms |
+| ----------------------------------------------------------------------------------------------- | ----------- | ------- | --------- |
+| [Almaany.com Arabic Dictionary](https://play.google.com/store/apps/details?id=com.almaany.arar) | ―           | Unknown | Android   |

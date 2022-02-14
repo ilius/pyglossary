@@ -29,6 +29,6 @@ pip3 install marisa-trie
 
 ### Dictionary Applications/Tools
 
-| Name & Website                       | License     | Platforms    |
-| ------------------------------------ | ----------- | ------------ |
-| [Kobo eReader](https://www.kobo.com) | Proprietary | Kobo eReader |
+| Name & Website                       | Source code | License     | Platforms    |
+| ------------------------------------ | ----------- | ----------- | ------------ |
+| [Kobo eReader](https://www.kobo.com) | ―           | Proprietary | Kobo eReader |

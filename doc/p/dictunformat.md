@@ -27,6 +27,6 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                           | License | Platforms |
-| -------------------------------------------------------- | ------- | --------- |
-| [dictunformat](https://linux.die.net/man/1/dictunformat) | GPL     | Linux     |
+| Name & Website                                           | Source code | License | Platforms |
+| -------------------------------------------------------- | ----------- | ------- | --------- |
+| [dictunformat](https://linux.die.net/man/1/dictunformat) | ―           | GPL     | Linux     |

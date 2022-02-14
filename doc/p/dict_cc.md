@@ -21,6 +21,6 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                                     | License     | Platforms |
-| ---------------------------------------------------------------------------------- | ----------- | --------- |
-| [dict.cc dictionary](https://play.google.com/store/apps/details?id=cc.dict.dictcc) | Proprietary | Android   |
+| Name & Website                                                                     | Source code | License     | Platforms |
+| ---------------------------------------------------------------------------------- | ----------- | ----------- | --------- |
+| [dict.cc dictionary](https://play.google.com/store/apps/details?id=cc.dict.dictcc) | ―           | Proprietary | Android   |

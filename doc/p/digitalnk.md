@@ -21,6 +21,6 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                | License      | Platforms |
-| --------------------------------------------- | ------------ | --------- |
-| [Dic.rs](https://github.com/digitalprk/dicrs) | BSD-2-Clause | Linux     |
+| Name & Website                                | Source code | License      | Platforms |
+| --------------------------------------------- | ----------- | ------------ | --------- |
+| [Dic.rs](https://github.com/digitalprk/dicrs) | ―           | BSD-2-Clause | Linux     |

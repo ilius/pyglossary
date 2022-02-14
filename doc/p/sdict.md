@@ -21,7 +21,7 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                     | License | Platforms           |
-| ------------------------------------------------------------------ | ------- | ------------------- |
-| [PTkSdict](http://swaj.net/sdict/)                                 | GPL     | Linux, Windows, Mac |
-| [Sdictionary for Symbian](http://swaj.net/epoc/symbian/index.html) | Unknown | Symbian             |
+| Name & Website                                                     | Source code | License | Platforms           |
+| ------------------------------------------------------------------ | ----------- | ------- | ------------------- |
+| [PTkSdict](http://swaj.net/sdict/)                                 | ―           | GPL     | Linux, Windows, Mac |
+| [Sdictionary for Symbian](http://swaj.net/epoc/symbian/index.html) | ―           | Unknown | Symbian             |

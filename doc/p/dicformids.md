@@ -21,6 +21,6 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                             | License | Platforms                         |
-| ---------------------------------------------------------- | ------- | --------------------------------- |
-| [DictionaryForMIDs](http://dictionarymid.sourceforge.net/) | GPL     | Android, Web, Windows, Linux, Mac |
+| Name & Website                                             | Source code | License | Platforms                         |
+| ---------------------------------------------------------- | ----------- | ------- | --------------------------------- |
+| [DictionaryForMIDs](http://dictionarymid.sourceforge.net/) | ―           | GPL     | Android, Web, Windows, Linux, Mac |

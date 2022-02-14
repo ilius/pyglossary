@@ -43,6 +43,6 @@ pip3 install mistune==2.0.0a5
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                   | License | Platforms           |
-| ------------------------------------------------ | ------- | ------------------- |
-| [dictgen](https://pgaskin.net/dictutil/dictgen/) | MIT     | Linux, Windows, Mac |
+| Name & Website                                   | Source code | License | Platforms           |
+| ------------------------------------------------ | ----------- | ------- | ------------------- |
+| [dictgen](https://pgaskin.net/dictutil/dictgen/) | ―           | MIT     | Linux, Windows, Mac |

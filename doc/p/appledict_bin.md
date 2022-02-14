@@ -37,6 +37,6 @@ pip3 install lxml
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                                   | License     | Platforms |
-| -------------------------------------------------------------------------------- | ----------- | --------- |
-| [Apple Dictionary](https://support.apple.com/en-gu/guide/dictionary/welcome/mac) | Proprietary | Mac       |
+| Name & Website                                                                   | Source code | License     | Platforms |
+| -------------------------------------------------------------------------------- | ----------- | ----------- | --------- |
+| [Apple Dictionary](https://support.apple.com/en-gu/guide/dictionary/welcome/mac) | ―           | Proprietary | Mac       |

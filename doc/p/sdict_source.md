@@ -29,6 +29,6 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                      | License | Platforms           |
-| --------------------------------------------------- | ------- | ------------------- |
-| [PTkSdict](http://swaj.net/sdict/create-dicts.html) | GPL     | Linux, Windows, Mac |
+| Name & Website                                      | Source code | License | Platforms           |
+| --------------------------------------------------- | ----------- | ------- | ------------------- |
+| [PTkSdict](http://swaj.net/sdict/create-dicts.html) | ―           | GPL     | Linux, Windows, Mac |

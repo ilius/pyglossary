@@ -39,7 +39,7 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                         | License     | Platforms           |
-| ---------------------------------------------------------------------- | ----------- | ------------------- |
-| [LibreOffice Calc](https://www.libreoffice.org/discover/calc/)         | MPL/GPL     | Linux, Windows, Mac |
-| [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel) | Proprietary | Windows             |
+| Name & Website                                                         | Source code | License     | Platforms           |
+| ---------------------------------------------------------------------- | ----------- | ----------- | ------------------- |
+| [LibreOffice Calc](https://www.libreoffice.org/discover/calc/)         | ―           | MPL/GPL     | Linux, Windows, Mac |
+| [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel) | ―           | Proprietary | Windows             |
