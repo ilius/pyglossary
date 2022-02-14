@@ -68,7 +68,7 @@ Android Termux - interactive command-line interface
 | [Sdictionary Source](./doc/p/sdict_source.md)           |  📝  |      .sdct      |      |   ✔   |
 | [SQL](./doc/p/sql.md)                                   |  📝  |      .sql       |  ❌   |   ✔   |
 | [StarDict](./doc/p/stardict.md)                         |  📁  |     (📝.ifo)     |  ✔   |   ✔   |
-| [StarDict Textual File](./stardict_textual.md)          |  📝  |     (.xml)      |  ✔   |   ✔   |
+| [StarDict Textual File](./doc/p/stardict_textual.md)    |  📝  |     (.xml)      |  ✔   |   ✔   |
 | [Tabfile](./doc/p/tabfile.md)                           |  📝  |   .txt, .tab    |  ✔   |   ✔   |
 | [Wiktionary Dump](./doc/p/wiktionary_dump.md)           |  📝  |      .xml       |  ✔   |   ❌   |
 | [Wordset.org](./doc/p/wordset.md)                       |  📁  |                 |  ✔   |       |
