@@ -179,6 +179,18 @@ class Writer(object):
 			pretty_print=pretty,
 		).decode(self._encoding) + "\n")
 
+	def writeDataEntry(self, maker, entry):
+		pass
+		# TODO: create article tag with "definition-r" in it?
+		# or just save the file to res/ directory? or both?
+		# article = maker.article(
+		# 	maker.key(entry.s_word),
+		# 	maker.definition_r(
+		# 		ET.CDATA(entry.defi),
+		# 		**{"type": ext})
+		# 	)
+		# )
+
 	def write(self) -> "Generator[None, BaseEntry, None]":
 		from lxml import etree as ET
 		from lxml import builder
@@ -199,6 +211,9 @@ class Writer(object):
 			entry = yield
 			if entry is None:
 				break
+			if entry.isData():
+				self.writeDataEntry(maker, entry)
+				continue
 			entry.detectDefiFormat()
 			article = maker.article(
 				maker.key(entry.l_word[0]),
