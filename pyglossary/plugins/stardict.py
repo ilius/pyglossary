@@ -266,22 +266,22 @@ class Reader(object):
 				continue
 
 			if sametypesequence:
-				defisData = self.parseDefiBlockCompact(
+				rawDefiList = self.parseDefiBlockCompact(
 					b_defiBlock,
 					sametypesequence,
 				)
 			else:
-				defisData = self.parseDefiBlockGeneral(b_defiBlock)
+				rawDefiList = self.parseDefiBlockGeneral(b_defiBlock)
 
-			if defisData is None:
+			if rawDefiList is None:
 				log.error(f"Data file is corrupted. Word {b_word}")
 				continue
 
-			# defisData is a list of (b_defi, defiFormatCode) tuples
+			# rawDefiList is a list of (b_partDefi, defiFormatCode) tuples
 
 			defis = []
 			defiFormats = []
-			for b_partDefi, defiFormatCode in defisData:
+			for b_partDefi, defiFormatCode in rawDefiList:
 				partDefi = b_partDefi.decode("utf-8", errors=unicode_errors)
 				partDefiFormat = {
 					"m": "m",
