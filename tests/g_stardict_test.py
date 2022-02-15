@@ -138,6 +138,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		ouputFname: str,
 		testId: str,
 		syn=True,
+		**convertOptions
 	):
 		binExtList = ["idx", "dict"]
 		if syn:
@@ -155,6 +156,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
+			**convertOptions
 		)
 		self.assertEqual(outputFilename, res)
 
@@ -236,12 +238,21 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"1",
 		)
 
-	def test_convert_stardict_txt_mixed_typed_1(self):
+	def test_convert_stardict_txt_mixed_types_1(self):
 		self.convert_stardict_txt(
 			"stardict-mixed-types-1",
 			"stardict-mixed-types-1.sd",
 			"mixed-types-1",
 			syn=False,
+		)
+
+	def test_convert_stardict_txt_mixed_types_2(self):
+		self.convert_stardict_txt(
+			"stardict-mixed-types-1",
+			"stardict-mixed-types-1.sd",
+			"mixed-types-1",
+			syn=False,
+			readOptions={"xdxf_to_html": False},
 		)
 
 
