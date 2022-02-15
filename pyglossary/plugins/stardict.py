@@ -322,23 +322,15 @@ class Reader(object):
 			log.error(f"empty defiFormatSet, rawDefiList={rawDefiList}")
 			return "", ""
 
-		if "h" in defiFormatSet:
-			# convert plaintext or xdxf to html
-			for _defi, _format in defisWithFormat:
-				if _format == "m":
-					_defi = _defi.replace("\n", "<br/>")
-					_defi = f"<pre>{_defi}</pre>"
-				elif _format == "x":
-					_defi = self.xdxf_transform(_defi)
-				defis.append(_defi)
-			return "\n<hr>\n".join(defis), "h"
-
-		if "x" in defiFormatSet:
-			# convert plaintext to xdxf?
-			return "\n".join(defis), "x"
-
-		log.warning(f"defiFormatSet = {defiFormatSet}")
-		return "\n".join(defis), "m"
+		# convert plaintext or xdxf to html
+		for _defi, _format in defisWithFormat:
+			if _format == "m":
+				_defi = _defi.replace("\n", "<br/>")
+				_defi = f"<pre>{_defi}</pre>"
+			elif _format == "x":
+				_defi = self.xdxf_transform(_defi)
+			defis.append(_defi)
+		return "\n<hr>\n".join(defis), "h"
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		indexData = self._indexData
