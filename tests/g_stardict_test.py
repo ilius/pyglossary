@@ -34,11 +34,17 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"100-ja-en.sd/100-ja-en.ifo": "b01e368c",
 			"100-ja-en.sd/100-ja-en.syn": "76e6df95",
 
+
 			"300-ru-en.txt": "77cfee2f",
 			"300-ru-en.sd/300-ru-en.dict": "8be7fa4c",
 			"300-ru-en.sd/300-ru-en.idx": "1cd30f1a",
 			"300-ru-en.sd/300-ru-en.ifo": "0b135812",
 			"300-ru-en.sd/300-ru-en.syn": "87ee3372",
+
+			"stardict-mixed-types-1.sd/stardict-mixed-types-1.dict": "def1c63d",
+			"stardict-mixed-types-1.sd/stardict-mixed-types-1.idx": "6eb274cd",
+			"stardict-mixed-types-1.sd/stardict-mixed-types-1.ifo": "04c074e8",
+			"stardict-mixed-types-1.sd.txt": "1ee27e75",
 		})
 
 	def convert_txt_stardict(
@@ -126,13 +132,19 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			sha1sumDict=sha1sumDict,
 		)
 
-
 	def convert_stardict_txt(
 		self,
 		inputFname: str,
 		ouputFname: str,
 		testId: str,
+		syn=True,
 	):
+		binExtList = ["idx", "dict"]
+		if syn:
+			binExtList.append("syn")
+		for ext in binExtList:
+			self.downloadFile(f"{inputFname}.sd/{inputFname}.{ext}")
+
 		inputFilename = self.downloadFile(f"{inputFname}.sd/{inputFname}.ifo")
 		outputFilename = self.newTempFilePath(
 			f"{inputFname}-{testId}.txt"
@@ -222,6 +234,14 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"100-en-fa",
 			"100-en-fa-sd",
 			"1",
+		)
+
+	def test_convert_stardict_txt_mixed_typed_1(self):
+		self.convert_stardict_txt(
+			"stardict-mixed-types-1",
+			"stardict-mixed-types-1.sd",
+			"mixed-types-1",
+			syn=False,
 		)
 
 

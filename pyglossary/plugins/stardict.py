@@ -271,6 +271,9 @@ class Reader(object):
 			"x": "x",
 		}.get(_type, "")
 
+		if not _format:
+			log.warning(f"Definition type {_type!r} is not supported")
+
 		_defi = b_defiPart.decode("utf-8", errors=unicode_errors)
 
 		# log.info(f"{_type}->{_format}: {_defi}".replace("\n", "")[:120])
@@ -281,6 +284,61 @@ class Reader(object):
 
 		return _format, _defi
 
+	def decodeRawDefiList(
+		self,
+		rawDefiList: "List[Tuple[bytes, int]]",
+		unicode_errors: str,
+	):
+		if len(rawDefiList) == 1:
+			b_defiPart, i_type = rawDefiList[0]
+			_format, _defi = self.decodeRawDefiPart(
+				b_defiPart=b_defiPart,
+				i_type=i_type,
+				unicode_errors=unicode_errors,
+			)
+			return _defi, _format
+
+		defis = []
+		defiFormatSet = set()
+		defisWithFormat = []
+		for b_defiPart, i_type in rawDefiList:
+			_format, _defi = self.decodeRawDefiPart(
+				b_defiPart=b_defiPart,
+				i_type=i_type,
+				unicode_errors=unicode_errors,
+			)
+			defisWithFormat.append((_defi, _format))
+			defiFormatSet.add(_format)
+
+		if len(defiFormatSet) == 1:
+			defis = [_defi for _defi, _ in defisWithFormat]
+			_format = defiFormatSet.pop()
+			if _format == "h":
+				return "\n<hr>".join(defis), _format
+			else:
+				return "\n".join(defis), _format
+
+		if len(defiFormatSet) == 0:
+			log.error(f"empty defiFormatSet, rawDefiList={rawDefiList}")
+			return "", ""
+
+		if "h" in defiFormatSet:
+			# convert plaintext or xdxf to html
+			for _defi, _format in defisWithFormat:
+				if _format == "m":
+					_defi = _defi.replace("\n", "<br/>")
+					_defi = f"<pre>{_defi}</pre>"
+				elif _format == "x":
+					_defi = self.xdxf_transform(_defi)
+				defis.append(_defi)
+			return "\n<hr>\n".join(defis), "h"
+
+		if "x" in defiFormatSet:
+			# convert plaintext to xdxf?
+			return "\n".join(defis), "x"
+
+		log.warning(f"defiFormatSet = {defiFormatSet}")
+		return "\n".join(defis), "m"
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		indexData = self._indexData
@@ -323,26 +381,6 @@ class Reader(object):
 				log.error(f"Data file is corrupted. Word {b_word}")
 				continue
 
-			# rawDefiList is a list of (b_defiPart, defiFormatCode) tuples
-
-			defis = []
-			defiFormats = []
-			for b_defiPart, i_type in rawDefiList:
-				_format, _defi = self.decodeRawDefiPart(
-					b_defiPart=b_defiPart,
-					i_type=i_type,
-					unicode_errors=unicode_errors,
-				)
-				defiFormats.append(_format)
-				defis.append(_defi)
-
-			# FIXME
-			defiFormat = defiFormats[0]
-			# defiFormat = Counter(defiFormats).most_common(1)[0][0]
-
-			if not defiFormat:
-				log.warning(f"Definition format {defiFormat!r} is not supported")
-
 			word = b_word.decode("utf-8", errors=unicode_errors)
 			try:
 				alts = synDict[entryIndex]
@@ -351,10 +389,10 @@ class Reader(object):
 			else:
 				word = [word] + alts
 
-			defiSep = "\n<hr>\n"
-			# if defiFormat == "x"
-			# 	defiSep = FIXME
-			defi = defiSep.join(defis)
+			defi, defiFormat = self.decodeRawDefiList(
+				rawDefiList,
+				unicode_errors,
+			)
 
 			# FIXME:
 			# defi = defi.replace(' src="./res/', ' src="./')
