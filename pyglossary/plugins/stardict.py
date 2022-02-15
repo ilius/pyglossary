@@ -236,6 +236,52 @@ class Reader(object):
 
 		return indexData
 
+	def decodeRawDefiPart(
+		self,
+		b_defiPart: bytes,
+		i_type: int,
+		unicode_errors: str,
+	) -> "Tuple[str, str]":
+		_type = chr(i_type)
+
+		"""
+		_type: 'r'
+		https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat#L431
+		Resource file list.
+		The content can be:
+		img:pic/example.jpg	// Image file
+		snd:apple.wav		// Sound file
+		vdo:film.avi		// Video file
+		att:file.bin		// Attachment file
+		More than one line is supported as a list of available files.
+		StarDict will find the files in the Resource Storage.
+		The image will be shown, the sound file will have a play button.
+		You can "save as" the attachment file and so on.
+		The file list must be a utf-8 string ending with '\0'.
+		Use '\n' for separating new lines.
+		Use '/' character as directory separator.
+		"""
+
+		_format = {
+			"m": "m",
+			"t": "m",
+			"y": "m",
+			"g": "h",
+			"h": "h",
+			"x": "x",
+		}.get(_type, "")
+
+		_defi = b_defiPart.decode("utf-8", errors=unicode_errors)
+
+		# log.info(f"{_type}->{_format}: {_defi}".replace("\n", "")[:120])
+
+		if _format == "x" and self._xdxf_to_html:
+			_defi = self.xdxf_transform(_defi)
+			_format = "h"
+
+		return _format, _defi
+
+
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		indexData = self._indexData
 		synDict = self._synDict
@@ -282,26 +328,13 @@ class Reader(object):
 			defis = []
 			defiFormats = []
 			for b_defiPart, i_type in rawDefiList:
-				_type = chr(i_type)
-				_format = {
-					"m": "m",
-					"t": "m",
-					"y": "m",
-					"g": "h",
-					"h": "h",
-					"x": "x",
-				}.get(_type, "")
-
-				_defi = b_defiPart.decode("utf-8", errors=unicode_errors)
-
-				# log.info(f"{_type}->{_format}: {_defi}".replace("\n", "")[:120])
-
-				if _format == "x" and self._xdxf_to_html:
-					_defi = self.xdxf_transform(_defi)
-					_format = "h"
-
-				defis.append(_defi)
+				_format, _defi = self.decodeRawDefiPart(
+					b_defiPart=b_defiPart,
+					i_type=i_type,
+					unicode_errors=unicode_errors,
+				)
 				defiFormats.append(_format)
+				defis.append(_defi)
 
 			# FIXME
 			defiFormat = defiFormats[0]
