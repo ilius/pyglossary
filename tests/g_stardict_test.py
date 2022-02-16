@@ -105,13 +105,13 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			writeOptions = {}
 		writeOptions["dictzip"] = dictzip
 
-		res = glos.convert(
+		result = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
 			writeOptions=writeOptions,
 			**convertArgs
 		)
-		self.assertEqual(outputFilename, res)
+		self.assertEqual(outputFilename, result)
 
 		self.compareTextFiles(
 			outputFilename,
@@ -144,7 +144,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		if rawEntryCompress is not None:
 			glos.setRawEntryCompress(rawEntryCompress)
 
-		res = glos.convert(
+		result = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
 			outputFormat="Stardict",
@@ -153,7 +153,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			},
 			**convertArgs
 		)
-		self.assertEqual(outputFilename, res)
+		self.assertEqual(outputFilename, result)
 
 		self.checkZipFileSha1sum(
 			outputFilename,
@@ -181,12 +181,12 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		expectedFilename = self.downloadFile(f"{ouputFname}.txt")
 		glos = self.glos = Glossary()
 
-		res = glos.convert(
+		result = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
 			**convertArgs
 		)
-		self.assertEqual(outputFilename, res)
+		self.assertEqual(outputFilename, result)
 
 		self.compareTextFiles(outputFilename, expectedFilename)
 
@@ -280,6 +280,14 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"100-en-fa",
 			"100-en-fa-sd",
 			"1",
+		)
+
+	def test_convert_stardict_txt_1_sametypesequence(self):
+		self.convert_stardict_txt(
+			"100-en-fa",
+			"100-en-fa-sd",
+			"1-sametypesequence",
+			readOptions={"sametypesequence": "h"},
 		)
 
 	def test_convert_stardict_txt_mixed_types_1(self):
