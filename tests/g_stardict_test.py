@@ -216,10 +216,10 @@ class TestGlossaryStarDict(TestGlossaryBase):
 
 	def test_convert_txt_stardict_1_zip(self):
 		sha1sumDict = {
-			"100-en-fa.dict", "1e462e829f9e2bf854ceac2ef8bc55911460c79e",
-			"100-en-fa.idx", "943005945b35abf3a3e7b80375c76daa87e810f0",
-			"100-en-fa.ifo", "3e982a76f83eef66a8d4915e7a0018746f4180bc",
-			"100-en-fa.syn", "fcefc76628fed18b84b9aa83cd7139721b488545",
+			"100-en-fa.dict": "1e462e829f9e2bf854ceac2ef8bc55911460c79e",
+			"100-en-fa.idx": "943005945b35abf3a3e7b80375c76daa87e810f0",
+			"100-en-fa.ifo": "3e982a76f83eef66a8d4915e7a0018746f4180bc",
+			"100-en-fa.syn": "fcefc76628fed18b84b9aa83cd7139721b488545",
 		}
 		for sqlite in (None, False, True):
 			self.convert_txt_stardict_zip(

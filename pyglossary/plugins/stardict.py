@@ -159,9 +159,10 @@ class Reader(object):
 
 	def open(self, filename: str) -> None:
 		if splitext(filename)[1].lower() == ".ifo":
-			self._filename = splitext(filename)[0]
-		else:
-			self._filename = filename
+			filename = splitext(filename)[0]
+		elif isdir(filename):
+			filename = join(filename, filename)
+		self._filename = filename
 		self._filename = realpath(self._filename)
 		self.readIfoFile()
 		sametypesequence = self._glos.getInfo("sametypesequence")

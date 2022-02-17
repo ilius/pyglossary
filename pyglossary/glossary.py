@@ -1108,6 +1108,9 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			for key, value in infoOverride.items():
 				self.setInfo(key, value)
 
+		if compression and not self.plugins[outputFormat].singleFile:
+			os.makedirs(outputFilename)
+
 		finalOutputFile = self._write(
 			outputFilename,
 			outputFormat,

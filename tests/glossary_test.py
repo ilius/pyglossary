@@ -180,8 +180,7 @@ class TestGlossaryBase(unittest.TestCase):
 			dataReplaceFuncs = {}
 		zf = zipfile.ZipFile(fpath)
 		pathList = zf.namelist()
-		for zfpath in pathList:
-			expectedSha1 = sha1sumDict[zfpath]
+		for zfpath, expectedSha1 in sha1sumDict.items():
 			data = zf.read(zfpath)
 			func = dataReplaceFuncs.get(zfpath)
 			if func is not None:
