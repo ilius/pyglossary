@@ -22,7 +22,7 @@ class MyStr(str):
 	pass
 
 
-class TestGlossaryErrors(TestGlossaryBase):
+class TestGlossaryErrorsBase(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 		self.mockLog = getMockLogger()
@@ -53,6 +53,8 @@ class TestGlossaryErrors(TestGlossaryBase):
 			errorMsg,
 		), msg=f"did not find warning log {errorMsg!r}")
 
+
+class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_loadPlugins_invalidDir(self):
 		Glossary.loadPlugins("/abc/def/ghe")
 		self.assertLogCritical("Invalid plugin directory: '/abc/def/ghe'")
