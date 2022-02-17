@@ -100,7 +100,7 @@ def verifySameTypeSequence(s: str) -> bool:
 	if not s:
 		return True
 	if not s.isalpha():
-		log.error("Invalid sametypesequence option")
+		log.critical("Invalid sametypesequence option")
 		return False
 	return True
 
