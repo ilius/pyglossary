@@ -282,14 +282,6 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"1",
 		)
 
-	def test_convert_stardict_txt_1_sametypesequence(self):
-		self.convert_stardict_txt(
-			"100-en-fa",
-			"100-en-fa-sd",
-			"1-sametypesequence",
-			readOptions={"sametypesequence": "h"},
-		)
-
 	def test_convert_stardict_txt_mixed_types_1(self):
 		self.convert_stardict_txt(
 			"stardict-mixed-types-1",
