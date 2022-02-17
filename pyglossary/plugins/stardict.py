@@ -99,8 +99,10 @@ def newlinesToBr(text: str) -> str:
 def verifySameTypeSequence(s: str) -> bool:
 	if not s:
 		return True
+	# maybe should just check it's in ("h", "m", "x")
 	if not s.isalpha():
-		log.critical("Invalid sametypesequence option")
+		return False
+	if len(s) > 1:
 		return False
 	return True
 
@@ -167,7 +169,7 @@ class Reader(object):
 		self.readIfoFile()
 		sametypesequence = self._glos.getInfo("sametypesequence")
 		if not verifySameTypeSequence(sametypesequence):
-			return False
+			raise LookupError(f"Invalid sametypesequence = {sametypesequence}")
 		self._indexData = self.readIdxFile()
 		self._wordCount = len(self._indexData)
 		self._synDict = self.readSynFile()

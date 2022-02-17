@@ -1,11 +1,12 @@
 import sys
-from os.path import dirname, abspath
+from os.path import dirname, abspath, relpath
 import unittest
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from tests.glossary_test import TestGlossaryBase
+from tests.glossary_errors_test import TestGlossaryErrorsBase
 from pyglossary.glossary import Glossary
 
 
@@ -325,6 +326,35 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			syn=False,
 			writeOptions={"merge_syns": True},
 		)
+
+
+class TestGlossaryErrorsStarDict(TestGlossaryErrorsBase):
+	def __init__(self, *args, **kwargs):
+		TestGlossaryErrorsBase.__init__(self, *args, **kwargs)
+
+	def test_convert_from_stardict_invalid_sametypesequence(self):
+		fname = "foobar"
+		inputFilename = self.newTempFilePath(f"{fname}.ifo")
+		outputFilename = self.newTempFilePath(f"{fname}.txt")
+
+		with open(inputFilename, mode="w") as _file:
+			_file.write("""StarDict's dict ifo file
+version=3.0.0
+bookname=Test
+wordcount=123
+idxfilesize=1234
+sametypesequence=abcd
+""")
+
+		glos = self.glos = Glossary()
+
+		result = glos.convert(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+		)
+		self.assertIsNone(result)
+		self.assertLogCritical("Invalid sametypesequence = abcd")
+		self.assertLogCritical(f"Reading file {relpath(inputFilename)!r} failed.")
 
 
 if __name__ == "__main__":
