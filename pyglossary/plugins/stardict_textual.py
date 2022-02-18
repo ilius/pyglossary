@@ -36,6 +36,16 @@ class Reader(object):
 		self._filename = ""
 		self._file = None
 		self._fileSize = 0
+		self._xdxfTr = None
+
+	def xdxf_setup(self):
+		from pyglossary.xdxf_transform import XdxfTransformer
+		self._xdxfTr = XdxfTransformer(encoding="utf-8")
+
+	def xdxf_transform(self, text: str):
+		if self._xdxfTr is None:
+			self.xdxf_setup()
+		return self._xdxfTr.transformByInnerString(text)
 
 	def __len__(self) -> int:
 		return 0
@@ -87,6 +97,38 @@ class Reader(object):
 		self.setGlosInfo("creationTime", header.find("./date").text)
 		# self.setGlosInfo("dicttype", header.find("./dicttype").text)
 
+	def renderDefiList(
+		self,
+		defisWithFormat: "List[Tuple[str, str]]",
+	) -> "Tuple[str, str]":
+		if len(defisWithFormat) == 1:
+			return defisWithFormat[0]
+		if len(defisWithFormat) == 0:
+			return "", ""
+
+		defiFormatSet = set()
+		for defi, _type in defisWithFormat:
+			defiFormatSet.add(_type)
+
+		if len(defiFormatSet) == 1:
+			defis = [_defi for _defi, _ in defisWithFormat]
+			_format = defiFormatSet.pop()
+			if _format == "h":
+				return "\n<hr>".join(defis), _format
+			else:
+				return "\n".join(defis), _format
+
+		# convert plaintext or xdxf to html
+		defis = []
+		for _defi, _format in defisWithFormat:
+			if _format == "m":
+				_defi = _defi.replace("\n", "<br/>")
+				_defi = f"<pre>{_defi}</pre>"
+			elif _format == "x":
+				_defi = self.xdxf_transform(_defi)
+			defis.append(_defi)
+		return "\n<hr>\n".join(defis), "h"
+
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		from lxml import etree as ET
 
@@ -100,19 +142,37 @@ class Reader(object):
 		)
 		for action, elem in context:
 			words = []
-			defi = ""
-			defiFormat = ""
+			defisWithFormat = []
 			for child in elem.getchildren():
 				if not child.text:
 					continue
 				if child.tag in ("key", "synonym"):
 					words.append(child.text)
 				elif child.tag == "definition":
-					defi = child.text
-					defiFormat = child.attrib.get("type", "")
+					_type = child.attrib.get("type", "")
+					if _type:
+						new_type = {
+							"m": "m",
+							"t": "m",
+							"y": "m",
+							"g": "h",
+							"h": "h",
+							"x": "x",
+						}.get(_type, "")
+						if not new_type:
+							log.warning(f"unsupported definition type {_type}")
+						_type = new_type
+					if not _type:
+						_type = "m"
+					defisWithFormat.append((
+						child.text.strip(),
+						_type,
+					))
 				# TODO: child.tag == "definition-r"
 				else:
 					log.warning(f"unknown tag {child.tag}")
+
+			defi, defiFormat = self.renderDefiList(defisWithFormat)
 
 			yield glos.newEntry(
 				words,
