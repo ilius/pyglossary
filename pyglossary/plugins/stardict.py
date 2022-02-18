@@ -287,7 +287,7 @@ class Reader(object):
 
 		return _format, _defi
 
-	def decodeRawDefiList(
+	def renderRawDefiList(
 		self,
 		rawDefiList: "List[Tuple[bytes, int]]",
 		unicode_errors: str,
@@ -301,7 +301,6 @@ class Reader(object):
 			)
 			return _defi, _format
 
-		defis = []
 		defiFormatSet = set()
 		defisWithFormat = []
 		for b_defiPart, i_type in rawDefiList:
@@ -326,6 +325,7 @@ class Reader(object):
 			return "", ""
 
 		# convert plaintext or xdxf to html
+		defis = []
 		for _defi, _format in defisWithFormat:
 			if _format == "m":
 				_defi = _defi.replace("\n", "<br/>")
@@ -384,7 +384,7 @@ class Reader(object):
 			else:
 				word = [word] + alts
 
-			defi, defiFormat = self.decodeRawDefiList(
+			defi, defiFormat = self.renderRawDefiList(
 				rawDefiList,
 				unicode_errors,
 			)
