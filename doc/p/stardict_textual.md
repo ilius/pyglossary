@@ -19,9 +19,10 @@
 
 ### Read options
 
-| Name     | Default | Type | Comment          |
-| -------- | ------- | ---- | ---------------- |
-| encoding | `utf-8` | str  | Encoding/charset |
+| Name         | Default | Type | Comment                      |
+| ------------ | ------- | ---- | ---------------------------- |
+| encoding     | `utf-8` | str  | Encoding/charset             |
+| xdxf_to_html | `True`  | bool | Convert XDXF entries to HTML |
 
 ### Write options
 

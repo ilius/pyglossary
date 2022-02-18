@@ -1426,13 +1426,19 @@
 				"type": "str",
 				"customValue": true,
 				"comment": "Encoding/charset"
+			},
+			"xdxf_to_html": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Convert XDXF entries to HTML"
 			}
 		},
 		"canRead": true,
 		"canWrite": true,
 		"sortKeyName": "stardict",
 		"readOptions": {
-			"encoding": "utf-8"
+			"encoding": "utf-8",
+			"xdxf_to_html": true
 		},
 		"writeOptions": {
 			"encoding": "utf-8"

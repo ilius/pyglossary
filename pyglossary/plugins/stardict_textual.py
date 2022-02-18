@@ -20,11 +20,15 @@ website = (
 )
 optionsProp = {
 	"encoding": EncodingOption(),
+	"xdxf_to_html": BoolOption(
+		comment="Convert XDXF entries to HTML",
+	),
 }
 
 
 class Reader(object):
 	_encoding: str = "utf-8"
+	_xdxf_to_html: bool = True
 
 	compressions = stdCompressions
 	depends = {
@@ -164,10 +168,11 @@ class Reader(object):
 						_type = new_type
 					if not _type:
 						_type = "m"
-					defisWithFormat.append((
-						child.text.strip(),
-						_type,
-					))
+					_defi = child.text.strip()
+					if _type == "x" and self._xdxf_to_html:
+						_defi = self.xdxf_transform(_defi)
+						_type = "h"
+					defisWithFormat.append((_defi, _type))
 				# TODO: child.tag == "definition-r"
 				else:
 					log.warning(f"unknown tag {child.tag}")
