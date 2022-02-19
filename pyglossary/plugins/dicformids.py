@@ -123,20 +123,17 @@ class Writer(object):
 		self.directoryPostfix = ""
 		self.indexPostfix = ""
 		self._dirname = ""
+		# looks like we need to remove tabs, because app gives error
+		# but based on the java code, all punctuations should be removed
+		# as well, including '|'
 		self.re_punc = re.compile(
-			r"[!\"$§$%&/()=?´`\\{}\[\]^°+*~#'-_.:,;<>@]*",
-			# FIXME: |
+			r"[!\"$§$%&/()=?´`\\{}\[\]^°+*~#'-_.:,;<>@|]*",
 		)
 		self.re_spaces = re.compile(" +")
 		self.re_tabs = re.compile("\t+")
 
 	def normateWord(self, word: str) -> str:
 		word = word.strip()
-		# looks like we need to remove tabs, because app gives error
-		# but based on the java code, all punctuations should be removed
-		# as well, including '|' which is used to separate alternate words
-		# FIXME
-		# word = word.replace("|", " ")
 		word = self.re_punc.sub("", word)
 		word = self.re_spaces.sub(" ", word)
 		word = self.re_tabs.sub(" ", word)

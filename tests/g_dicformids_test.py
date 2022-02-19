@@ -32,7 +32,7 @@ class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
 			"DictionaryForMIDs.properties": \
 				"4260a87d6cdd55622dcfe395880bc913f96102b8",
 			"directory1.csv": "70b0e683f2f4c9246500974a87467a3210d099c2",
-			"index1.csv": "5033902993e44257fce29df8443481958a101602",
+			"index1.csv": "b941ad049e50b5c14b07383c590cc2d79520c365",
 			"searchlist.csv": "d6f144dd001c7df79edb459fc9530515a747224d",
 		}
 		self.convert_txt_mids("100-en-fa", sha1sumDict)

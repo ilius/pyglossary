@@ -190,25 +190,16 @@ def _ebook_length3_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 	)
 
 
-_dicformids_re_punc = re.compile(
-	r"[!\"$§$%&/()=?´`\\{}\[\]^°+*~#'-_.:,;<>@]*",
-	# FIXME: |
-)
-
-
 def _dicformids_normal(encoding: str, **options) -> "sortKeyType":
-	re_punc = _dicformids_re_punc
+	re_punc = re.compile(
+		r"[!\"$§$%&/()=?´`\\{}\[\]^°+*~#'-_.:,;<>@|]*",
+	)
 	re_spaces = re.compile(" +")
 	re_tabs = re.compile("\t+")
 
 	def sortKey(words: "List[str]") -> "Any":
 		word = words[0]
 		word = word.strip()
-		# looks like we need to remove tabs, because app gives error
-		# but based on the java code, all punctuations should be removed
-		# as well, including '|' which is used to separate alternate words
-		# FIXME
-		# word = word.replace("|", " ")
 		word = re_punc.sub("", word)
 		word = re_spaces.sub(" ", word)
 		word = re_tabs.sub(" ", word)
