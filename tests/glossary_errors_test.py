@@ -365,13 +365,18 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 
 	def test_convert_dirExists(self):
 		glos = Glossary()
+		tempFilePath = self.newTempFilePath("test_convert_dirExists")
+		with open(tempFilePath, mode="w") as _file:
+			_file.write("")
 		res = glos.convert(
 			inputFilename="test5.txt",
 			outputFilename=self.tempDir,
 			outputFormat="Stardict",
 		)
 		self.assertIsNone(res)
-		self.assertLogCritical(f"Directory already exists: {relpath(self.tempDir)}")
+		self.assertLogCritical(
+			f"Directory already exists and not empty: {relpath(self.tempDir)}"
+		)
 
 	def test_convert_fileNotFound(self):
 		glos = Glossary()

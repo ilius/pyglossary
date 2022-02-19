@@ -1069,8 +1069,10 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		outputFilename, outputFormat, compression = outputArgs
 		del outputArgs
 
-		if isdir(outputFilename):
-			log.critical(f"Directory already exists: {relpath(outputFilename)}")
+		if isdir(outputFilename) and os.listdir(outputFilename):
+			log.critical(
+				f"Directory already exists and not empty: {relpath(outputFilename)}"
+			)
 			return
 
 		sortParams = self._resolveConvertSortParams(
@@ -1109,7 +1111,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				self.setInfo(key, value)
 
 		if compression and not self.plugins[outputFormat].singleFile:
-			os.makedirs(outputFilename)
+			os.makedirs(outputFilename, mode=0o700, exist_ok=True)
 
 		finalOutputFile = self._write(
 			outputFilename,
