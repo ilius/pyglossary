@@ -108,8 +108,8 @@ def verifySameTypeSequence(s: str) -> bool:
 
 
 class Reader(object):
-	_xdxf_to_html = True
-	_unicode_errors = "strict"
+	_xdxf_to_html: bool = True
+	_unicode_errors: str = "strict"
 
 	def __init__(self, glos: GlossaryType):
 

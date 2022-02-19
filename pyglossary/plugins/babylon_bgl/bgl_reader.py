@@ -275,12 +275,12 @@ class DefinitionFields(object):
 
 
 class BglReader(object):
-	_default_encoding_overwrite = ""
-	_source_encoding_overwrite = ""
-	_target_encoding_overwrite = ""
-	_part_of_speech_color = "007000"
-	_no_control_sequence_in_defi = False
-	_strict_string_convertion = False
+	_default_encoding_overwrite: str = ""
+	_source_encoding_overwrite: str = ""
+	_target_encoding_overwrite: str = ""
+	_part_of_speech_color: str = "007000"
+	_no_control_sequence_in_defi: bool = False
+	_strict_string_convertion: bool = False
 	# process keys and alternates as HTML
 	# Babylon does not interpret keys and alternates as HTML text,
 	# however you may encounter many keys containing character references
@@ -290,10 +290,10 @@ class BglReader(object):
 	# explicitly by user. Namely this option does the following:
 	# - resolve character references
 	# - strip HTML tags
-	_process_html_in_key = False
+	_process_html_in_key: bool = False
 	# a string of characters that will be stripped from the end of the
 	# key (and alternate), see str.rstrip function
-	_key_rstrip_chars = ""
+	_key_rstrip_chars: str = ""
 
 	##########################################################################
 	"""

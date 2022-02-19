@@ -29,7 +29,7 @@ class Reader(object):
 		"libzim": "libzim==1.0",
 	}
 
-	_skip_duplicate_words = False
+	_skip_duplicate_words: bool = False
 
 	resourceMimeTypes = {
 		"image/png",

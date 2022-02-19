@@ -36,7 +36,7 @@ class TextFilePosWrapper(object):
 
 
 class TextGlossaryReader(object):
-	_encoding = "utf-8"
+	_encoding: str = "utf-8"
 
 	compressions = stdCompressions
 

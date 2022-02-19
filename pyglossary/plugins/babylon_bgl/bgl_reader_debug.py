@@ -143,13 +143,13 @@ class GzipWithCheck(object):
 
 
 class DebugBglReader(BglReader):
-	_collect_metadata2 = False
-	_search_char_samples = False
-	_write_gz = False
-	_raw_dump_path = None
-	_unpacked_gzip_path = None
-	_char_samples_path = None
-	_msg_log_path = None
+	_collect_metadata2: bool = False
+	_search_char_samples: bool = False
+	_write_gz: bool = False
+	_raw_dump_path: str = ""
+	_unpacked_gzip_path: str = ""
+	_char_samples_path: str = ""
+	_msg_log_path: str = ""
 
 	def open(
 		self,

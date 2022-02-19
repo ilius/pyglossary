@@ -60,7 +60,7 @@ class Reader(TextGlossaryReader):
 		"mistune": "mistune==2.0.0a5",
 	}
 
-	_extract_inline_images = True
+	_extract_inline_images: bool = True
 
 	def __init__(self, glos: "GlossaryType"):
 		TextGlossaryReader.__init__(self, glos, hasInfo=False)

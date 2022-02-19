@@ -12,8 +12,8 @@ file_size_check_every = 100
 
 
 class TextGlossaryWriter(object):
-	_encoding = "utf-8"
-	_newline = "\n"
+	_encoding: str = "utf-8"
+	_newline: str = "\n"
 	_wordListEncodeFunc: "Optional[Callable[[List[str]], str]]" = None
 	_wordEscapeFunc: "Optional[Callable[[str], str]]" = None
 	_defiEscapeFunc: "Optional[Callable[[str], str]]" = None
