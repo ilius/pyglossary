@@ -73,7 +73,6 @@ class DataEntry(BaseEntry):
 
 	def save(self, directory: str) -> str:
 		fname = self._fname
-		# fix filename depending on operating system? FIXME
 		fpath = join(directory, fname)
 		fdir = dirname(fpath)
 		try:
@@ -122,8 +121,6 @@ class DataEntry(BaseEntry):
 
 	def editFuncWord(self, func: "Callable[[str], str]") -> None:
 		pass
-		# modify fname?
-		# FIXME
 
 	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
 		pass
