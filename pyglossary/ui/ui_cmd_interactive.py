@@ -1026,6 +1026,45 @@ class UI(ui_cmd.UI):
 		self.promptMsgColor = config.get("cmdi.prompt.msg.color", -1)
 		self.msgColor = config.get("cmdi.msg.color", -1)
 
+	def main(self, again=False):
+		if again or not self._inputFilename:
+			try:
+				self.askInputFile()
+			except (KeyboardInterrupt, EOFError):
+				return
+		if again or not self._inputFormat:
+			try:
+				self.checkInputFormat()
+			except (KeyboardInterrupt, EOFError):
+				return
+		if again or not self._outputFilename:
+			try:
+				self.askOutputFile()
+			except (KeyboardInterrupt, EOFError):
+				return
+		if again or not self._outputFormat:
+			try:
+				self.checkOutputFormat()
+			except (KeyboardInterrupt, EOFError):
+				return
+
+		while True:
+			status = self.askFinalOptions()
+			if status == back:
+				self.askInputOutputAgain()
+				continue
+			if not status:
+				return
+			try:
+				succeed = ui_cmd.UI.run(self, **self.getRunKeywordArgs())
+			except Exception as e:
+				log.exception("")
+			else:
+				self.printNonInteractiveCommand()
+				if succeed:
+					return succeed
+			print("Press Control + C to exit")
+
 	def run(
 		self,
 		inputFilename: str = "",
@@ -1069,42 +1108,17 @@ class UI(ui_cmd.UI):
 
 		self.setConfigAttrs()
 
-		if not self._inputFilename:
-			try:
-				self.askInputFile()
-			except (KeyboardInterrupt, EOFError):
-				return
-		if not self._inputFormat:
-			try:
-				self.checkInputFormat()
-			except (KeyboardInterrupt, EOFError):
-				return
-		if not self._outputFilename:
-			try:
-				self.askOutputFile()
-			except (KeyboardInterrupt, EOFError):
-				return
-		if not self._outputFormat:
-			try:
-				self.checkOutputFormat()
-			except (KeyboardInterrupt, EOFError):
-				return
+		self.main()
 
-		while True:
-			status = self.askFinalOptions()
-			if status == back:
-				self.askInputOutputAgain()
-				continue
-			if not status:
-				return
-			try:
-				succeed = ui_cmd.UI.run(self, **self.getRunKeywordArgs())
-			except Exception as e:
-				log.exception("")
-			else:
-				self.printNonInteractiveCommand()
-				if succeed:
-					if self.config != self.savedConfig and confirm("Save Config?"):
-						self.saveConfig()
-					return succeed
-			print("Press Control + C to exit")
+		try:
+			while self.prompt(
+				level=1,
+				msg="Press enter to exit, 'a' to convert again",
+				default="",
+			) == "a":
+				self.main(again=True)
+		except KeyboardInterrupt:
+			pass
+
+		if self.config != self.savedConfig and confirm("Save Config?"):
+			self.saveConfig()
