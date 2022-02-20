@@ -13,6 +13,14 @@ from os.path import isfile
 import logging
 log = logging.getLogger("pyglossary")
 
+nextBlockResultType = """Optional[
+	Tuple[
+		str,
+		str,
+		Optional[List[Tuple[str, str]]]
+	]
+]"""
+
 
 class TextFilePosWrapper(object):
 	def __init__(self, fileobj, encoding):
@@ -123,10 +131,10 @@ class TextGlossaryReader(object):
 		self._pendingEntries = []
 		try:
 			while True:
-				wordDefi = self.nextPair()
-				if not wordDefi:
+				block = self.nextBlock()
+				if not block:
 					continue
-				word, defi = wordDefi
+				word, defi, _ = block
 				if not self.isInfoWords(word):
 					self._pendingEntries.append(self.newEntry(word, defi))
 					break
@@ -157,19 +165,18 @@ class TextGlossaryReader(object):
 				continue
 			###
 			try:
-				wordDefi = self.nextPair()
+				block = self.nextBlock()
 			except StopIteration as e:
 				if self._fileCount == -1 or self._fileIndex < self._fileCount - 1:
 					if self.openNextFile():
 						continue
 				self._wordCount = self._pos
 				break
-			if not wordDefi:
+			if not block:
 				yield None
 				continue
-			word, defi = wordDefi
-			if isinstance(defi, tuple):
-				defi, resList = defi
+			word, defi, resList = block
+			if resList:
 				for relPath, fullPath in resList:
 					if relPath in resPathSet:
 						continue
@@ -196,5 +203,5 @@ class TextGlossaryReader(object):
 	def fixInfoWord(self, word: str) -> bool:
 		raise NotImplementedError
 
-	def nextPair(self) -> "Tuple[str, str]":
+	def nextBlock(self) -> nextBlockResultType:
 		raise NotImplementedError

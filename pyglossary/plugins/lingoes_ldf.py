@@ -49,7 +49,7 @@ class Reader(TextGlossaryReader):
 		else:
 			return word
 
-	def nextPair(self):
+	def nextBlock(self):
 		if not self._file:
 			raise StopIteration
 		entryLines = []
@@ -62,7 +62,8 @@ class Reader(TextGlossaryReader):
 				parts = line.split(":")
 				key = parts[0].strip()
 				value = ":".join(parts[1:]).strip()
-				return key, value
+				return key, value, None
+
 			if line:
 				entryLines.append(line)
 				continue
@@ -82,7 +83,7 @@ class Reader(TextGlossaryReader):
 
 			word = splitByBar(word)
 
-			return word, defi
+			return word, defi, None
 
 
 class Writer(object):

@@ -93,17 +93,16 @@ class Reader(TextGlossaryReader):
 			pass
 		else:
 			defi = mistune.html(defi)
+		images = None
 		if self._extract_inline_images:
 			defi, images = extractInlineHtmlImages(
 				defi,
 				self._glos.tmpDataDir,
 				fnamePrefix="",  # maybe f"{self._pos:06d}-"
 			)
-			if images:
-				defi = (defi, images)
-		return defi
+		return defi, images
 
-	def nextPair(self):
+	def nextBlock(self):
 		if not self._file:
 			raise StopIteration
 		words = []
@@ -118,7 +117,8 @@ class Reader(TextGlossaryReader):
 			if line.startswith("@"):
 				if words:
 					self._bufferLine = line
-					return words, self.fixDefi("\n".join(defiLines), html=html)
+					defi, images = self.fixDefi("\n".join(defiLines), html=html)
+					return words, defi, images
 				words = [line[1:].strip()]
 				continue
 			if line.startswith(": "):
@@ -135,7 +135,8 @@ class Reader(TextGlossaryReader):
 			defiLines.append(line)
 
 		if words:
-			return words, self.fixDefi("\n".join(defiLines), html=html)
+			defi, images = self.fixDefi("\n".join(defiLines), html=html)
+			return words, defi, images
 
 		raise StopIteration
 

@@ -220,7 +220,7 @@ class YamlReader(TextGlossaryReader):
 				skip_single=False,
 			)
 
-	def _createEntry(self, yamlBlock: str):
+	def _createEntry(self, yamlBlock: str) -> "Optional[Tuple[str, str, None]]":
 		from lxml import etree as ET
 		from yaml import load
 		try:
@@ -241,9 +241,9 @@ class YamlReader(TextGlossaryReader):
 				self._processEntry(hf, edict)
 
 		defi = f.getvalue().decode("utf-8")
-		return word, defi
+		return word, defi, None
 
-	def nextPair(self):
+	def nextBlock(self):
 		if not self._file:
 			raise StopIteration
 		lines = []

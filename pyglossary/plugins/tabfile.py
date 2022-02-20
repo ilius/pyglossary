@@ -63,7 +63,7 @@ class Reader(TextGlossaryReader):
 	def fixInfoWord(self, word: str) -> str:
 		return word.lstrip("#")
 
-	def nextPair(self) -> "Tuple[str, str]":
+	def nextBlock(self) -> "Optional[Tuple[str, str, None]]":
 		if not self._file:
 			raise StopIteration
 		line = self.readline()
@@ -89,7 +89,7 @@ class Reader(TextGlossaryReader):
 		###
 		defi = unescapeNTB(defi)
 		###
-		return word, defi
+		return word, defi, None
 
 
 class Writer(object):

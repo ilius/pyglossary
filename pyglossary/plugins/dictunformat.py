@@ -54,7 +54,7 @@ class Reader(TextGlossaryReader):
 			value = ":".join(parts[1:])
 			glos.setInfo(key, value)
 
-	def nextPair(self):
+	def nextBlock(self):
 		if not self._file:
 			raise StopIteration
 		word = ""
@@ -74,7 +74,7 @@ class Reader(TextGlossaryReader):
 				if not defiLines:
 					log.warning(f"no definition/value for {word!r}")
 				defi = unescapeDefi("\n".join(defiLines))
-				return word, defi
+				return word, defi, None
 
 			if not word:
 				word = line
@@ -93,6 +93,6 @@ class Reader(TextGlossaryReader):
 			if word.startswith("00-database-") and defi == "unknown":
 				log.info(f"ignoring {word} -> {defi}")
 				return
-			return word, defi
+			return word, defi, None
 
 		raise StopIteration
