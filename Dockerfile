@@ -4,18 +4,7 @@ LABEL Description="Dockefile to run PyGlossary inside a Debian-based Docker imag
 
 COPY . /opt/pyglossary
 
-RUN apt-get update
-RUN apt-get install --yes python3
-RUN apt-get install --yes python3-pip
-RUN apt-get install --yes python3-lxml
-RUN apt-get install --yes python3-lzo
-RUN apt-get install --yes python3-icu
-RUN apt-get install --yes pkg-config
-RUN pip3 install prompt_toolkit
-RUN pip3 install beautifulsoup4
-RUN pip3 install marisa-trie
-RUN pip3 install 'libzim==1.0'
-RUN pip3 install 'mistune==2.0'
+RUN /opt/pyglossary/scripts/docker-deb-setup.sh
 
 WORKDIR /root
 CMD python3 /opt/pyglossary/main.py --cmd
