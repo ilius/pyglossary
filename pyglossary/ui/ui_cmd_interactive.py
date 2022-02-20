@@ -1012,7 +1012,12 @@ class UI(ui_cmd.UI):
 			"If you want to repeat this conversion later, "
 			"you can use this command:"
 		)
-		print(shlex.join(cmd))
+		try:
+			print(shlex.join(cmd))
+		except AttributeError:
+			print(" ".join([
+				shlex.quote(arg) for arg in cmd
+			]))
 
 	def setConfigAttrs(self):
 		config = self.config
