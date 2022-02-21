@@ -26,7 +26,11 @@ myPath=$(realpath "$0")
 myDir=$(dirname "$myPath")
 cd "$myDir"
 
-version=$(./scripts/version)
+if [ -n "$1" ] ; then
+	version="$1"
+else
+	version=$(./scripts/version)
+fi
 echo "PyGlossary version: $version"
 
 set -x
