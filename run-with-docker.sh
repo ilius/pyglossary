@@ -10,6 +10,8 @@ echo "PyGlossary version: $version"
 
 set -x
 
+./scripts/create-conf-dir.py
+
 docker build . -f Dockerfile -t pyglossary:$version
 
 docker tag pyglossary:$version pyglossary:latest
