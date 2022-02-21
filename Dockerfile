@@ -5,7 +5,5 @@ LABEL Description="Dockefile to run PyGlossary inside a Debian-based Docker imag
 COPY . /opt/pyglossary
 
 RUN /opt/pyglossary/scripts/docker-deb-setup.sh
-RUN mkdir -p /root/home
 
-WORKDIR /root/home
 CMD python3 /opt/pyglossary/main.py --cmd

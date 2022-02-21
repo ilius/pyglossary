@@ -2,6 +2,8 @@
 
 rm /etc/apt/apt.conf.d/docker-clean
 
+set -e
+
 apt-get update
 
 apt-get install --yes python3

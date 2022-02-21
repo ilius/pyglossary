@@ -1,6 +1,27 @@
 #!/bin/bash
 set -e
 
+function shouldBuild() {
+	imageName=$1
+	if [ "$REBUILD" = 1 ] ; then
+		return 0
+	fi
+	imageCreated=$(docker inspect -f '{{ .Created }}' "$imageName" 2>/dev/null)
+	if [ -z "$imageCreated" ] ; then
+		return 0
+	fi
+	imageAge=$(($(/bin/date +%s) - $(/bin/date +%s -d "$imageCreated")))
+	if [ -z "$imageAge" ] ; then
+		return 0
+	fi
+	echo "Existing $imageName image is $imageAge seconds old"
+	if [[ "$imageAge" -gt 604800 ]] ; then
+		# more than a week old
+		return 0
+	fi
+	return 1
+}
+
 myPath=$(realpath "$0")
 myDir=$(dirname "$myPath")
 cd "$myDir"
@@ -10,11 +31,11 @@ echo "PyGlossary version: $version"
 
 set -x
 
-./scripts/create-conf-dir.py
+#./scripts/create-conf-dir.py
 
-docker build . -f Dockerfile -t pyglossary:$version
-
-docker tag pyglossary:$version pyglossary:latest
+if shouldBuild pyglossary:$version ; then
+	docker build . -f Dockerfile -t pyglossary:$version -t pyglossary:latest
+fi
 
 #cacheDir="$HOME/.cache/minideb"
 #mkdir -p "$cacheDir/var_cache"
@@ -35,6 +56,8 @@ docker tag pyglossary:$version pyglossary:latest
 # FIXME: gives error: container not found
 
 docker run -it \
-	--volume /root:/root/ \
-	--volume $HOME:/root/home \
+    --user $(id -u):$(id -g) \
+	--volume "$HOME:/home/$USER" \
+	--env "HOME=/home/$USER" \
+    --workdir "/home/$USER" \
 	pyglossary:$version
