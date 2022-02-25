@@ -17,12 +17,6 @@
 | Wiki            | [ZIM (file format)](<https://en.wikipedia.org/wiki/ZIM_(file_format)>) |
 | Website         | [OpenZIM](https://wiki.openzim.org/wiki/OpenZIM)                       |
 
-### Read options
-
-| Name                 | Default | Type | Comment                         |
-| -------------------- | ------- | ---- | ------------------------------- |
-| skip_duplicate_words | `False` | bool | Detect and skip duplicate words |
-
 ### Dependencies for reading
 
 PyPI Links: [libzim 1.0](https://pypi.org/project/libzim/1.0)

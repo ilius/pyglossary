@@ -15,11 +15,7 @@ website = (
 	"https://wiki.openzim.org/wiki/OpenZIM",
 	"OpenZIM",
 )
-optionsProp = {
-	"skip_duplicate_words": BoolOption(
-		comment="Detect and skip duplicate words",
-	),
-}
+optionsProp = {}
 
 # https://wiki.kiwix.org/wiki/Software
 
@@ -28,8 +24,6 @@ class Reader(object):
 	depends = {
 		"libzim": "libzim==1.0",
 	}
-
-	_skip_duplicate_words: bool = False
 
 	resourceMimeTypes = {
 		"image/png",
@@ -83,10 +77,7 @@ class Reader(object):
 		invalidMimeTypeCount = 0
 		entryCount = zimfile.entry_count
 
-		duplicateEntryCount = 0
 		redirectCount = 0
-		skip_dup = self._skip_duplicate_words
-		hashSet = set()
 
 		f_namemax = os.statvfs(cacheDir).f_namemax
 
@@ -108,13 +99,6 @@ class Reader(object):
 
 			zItem = zEntry.get_item()
 			b_content = zItem.content.tobytes()
-
-			if skip_dup:
-				if word in hashSet:
-					duplicateEntryCount += 1
-					yield None
-					continue
-				hashSet.add(word)
 
 			if not b_content:
 				emptyContentCount += 1
@@ -166,8 +150,6 @@ class Reader(object):
 		if len(fileNameTooLong) > 0:
 			log.error(f"Files with name too long: {len(fileNameTooLong)}")
 
-		if duplicateEntryCount > 0:
-			log.info(f"Duplicate Title Count: {duplicateEntryCount}")
 		if emptyContentCount > 0:
 			log.info(f"Empty Content Count: {emptyContentCount}")
 		if invalidMimeTypeCount > 0:
