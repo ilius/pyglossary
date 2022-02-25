@@ -7,6 +7,7 @@
 | `skip_resources`             | No              | `--skip-resources`                   | Skip resources / data files                                     |
 | `utf8_check`                 | No              | `--utf8-check`<br/>`--no-utf8-check` | Fix Unicode in word(s) and definition                           |
 | `lower`                      | No              | `--lower`<br/>`--no-lower`           | Lowercase word(s)                                               |
+| `skip_duplicate_headword`    | No              | `--skip-duplicate-headword`          | Skip entries with a duplicate headword                          |
 | `rtl`                        | No              | `--rtl`                              | Make definition right-to-left                                   |
 | `remove_html_all`            | No              | `--remove-html-all`                  | Remove all HTML tags from definition                            |
 | `remove_html`                | No              | `--remove-html`                      | Remove specific HTML tags from definition                       |

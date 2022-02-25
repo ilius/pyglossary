@@ -307,6 +307,21 @@ class PreventDuplicateWords(EntryFilter):
 
 		return entry
 
+class SkipEntriesWithDuplicateHeadword(EntryFilter):
+	name = "skip_duplicate_headword"
+	desc = "Skip entries with a duplicate headword"
+
+	def __init__(self, glos: "GlossaryType"):
+		EntryFilter.__init__(self, glos)
+		self._wset = set()
+
+	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+		word = entry.l_word[0]
+		if word in self._wset:
+			return
+		self._wset.add(word)
+		return entry
+
 
 class ShowProgressBar(EntryFilter):
 	name = "progressbar"

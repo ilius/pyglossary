@@ -14,6 +14,7 @@
 	"remove_html_all": false,
 	"normalize_html": false,
 	"save_info_json": false,
+	"skip_duplicate_headword": false,
 
 	"color.enable.cmd.unix": true,
 	"color.enable.cmd.windows": false,

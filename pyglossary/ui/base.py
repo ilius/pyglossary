@@ -121,6 +121,10 @@ class UIBase(object):
 			customFlag="info",
 			comment="Save .info file alongside output file(s)",
 		)),
+		("skip_duplicate_headword", BoolOption(
+			hasFlag=True,
+			comment="Skip entries with a duplicate headword",
+		)),
 
 		("color.enable.cmd.unix", BoolOption(
 			hasFlag=False,
