@@ -16,6 +16,7 @@ log = logging.getLogger("pyglossary")
 class EntryFilter(object):
 	name = ""
 	desc = ""
+	falseComment = ""
 
 	def __init__(self, glos: "GlossaryType"):
 		self.glos = glos
@@ -80,6 +81,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 class FixUnicode(EntryFilter):
 	name = "utf8_check"
 	desc = "Fix Unicode in word(s) and definition"
+	falseComment = "Do not fix Unicode in word(s) and definition",
 
 	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
 		entry.editFuncWord(fixUtf8)
@@ -90,6 +92,7 @@ class FixUnicode(EntryFilter):
 class LowerWord(EntryFilter):
 	name = "lower"
 	desc = "Lowercase word(s)"
+	falseComment = "Do not lowercase words before writing"
 
 	def __init__(self, glos: "GlossaryType"):
 		EntryFilter.__init__(self, glos)
@@ -146,7 +149,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 
 class RemoveHtmlTags(EntryFilter):
 	name = "remove_html"
-	desc = "Remove specific HTML tags from definition"
+	desc = "Remove given HTML tags (comma-separated) from definitions"
 
 	def __init__(self, glos: "GlossaryType", tagsStr: str):
 		import re
