@@ -34,6 +34,7 @@ from pyglossary.option import (
 	IntOption,
 	FloatOption,
 )
+from pyglossary.glossary import Glossary
 
 
 def fread(path):
@@ -49,6 +50,28 @@ authors = fread(join(dataDir, "AUTHORS")).split("\n")
 
 summary = "A tool for converting dictionary files aka glossaries with" \
 	" various formats for different dictionary applications"
+
+
+_entryFilterConfigDict = {
+	configRule[0]: (filterClass, configRule[1])
+	for configRule, filterClass in Glossary.entryFiltersRules
+	if configRule
+}
+
+
+def getEntryFilterConfigPair(name: str) -> "Tuple[str, Option]":
+	filterClass, default = _entryFilterConfigDict[name]
+	if isinstance(default, bool):
+		optClass = BoolOption
+	elif isinstance(default, str):
+		optClass = StrOption
+	else:
+		raise TypeError(f"default = {default!r}")
+	return name, optClass(
+		hasFlag=True,
+		comment=filterClass.desc,
+		falseComment=filterClass.falseComment,
+	)
 
 
 class UIBase(object):
@@ -72,16 +95,6 @@ class UIBase(object):
 			),
 		)),
 
-		("lower", BoolOption(
-			hasFlag=True,
-			comment="Lowercase words before writing",
-			falseComment="Do not lowercase words before writing",
-		)),
-		("utf8_check", BoolOption(
-			hasFlag=True,
-			comment="Ensure entries contain valid UTF-8 strings",
-			falseComment="Do not ensure entries contain valid UTF-8 strings",
-		)),
 		("enable_alts", BoolOption(
 			hasFlag=True,
 			customFlag="alts",
@@ -94,37 +107,19 @@ class UIBase(object):
 			hasFlag=True,
 			comment="Skip resources (images, audio, css, etc)",
 		)),
-
-		("rtl", BoolOption(
-			hasFlag=True,
-			comment=(
-				"Right-To-Left all (HTML) definitions"
-			),
-		)),
-		("remove_html", StrOption(
-			hasFlag=True,
-			comment=(
-				"Remove given HTML tags (comma-separated)\n"
-				"from definitions"
-			),
-		)),
-		("remove_html_all", BoolOption(
-			hasFlag=True,
-			comment="Remove all HTML tags from definitions",
-		)),
-		("normalize_html", BoolOption(
-			hasFlag=True,
-			comment="Lowercase and normalize HTML tags in definitions",
-		)),
 		("save_info_json", BoolOption(
 			hasFlag=True,
 			customFlag="info",
 			comment="Save .info file alongside output file(s)",
 		)),
-		("skip_duplicate_headword", BoolOption(
-			hasFlag=True,
-			comment="Skip entries with a duplicate headword",
-		)),
+
+		getEntryFilterConfigPair("lower"),
+		getEntryFilterConfigPair("utf8_check"),
+		getEntryFilterConfigPair("rtl"),
+		getEntryFilterConfigPair("remove_html"),
+		getEntryFilterConfigPair("remove_html_all"),
+		getEntryFilterConfigPair("normalize_html"),
+		getEntryFilterConfigPair("skip_duplicate_headword"),
 
 		("color.enable.cmd.unix", BoolOption(
 			hasFlag=False,
