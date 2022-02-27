@@ -326,6 +326,25 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 		return entry
 
 
+class TrimArabicDiacritics(EntryFilter):
+	name = "trim_arabic_diacritics"
+	desc = "Trim Arabic diacritics from headword"
+
+	def __init__(self, glos: "GlossaryType"):
+		EntryFilter.__init__(self, glos)
+		self._pat = re.compile("[\u064b-\u065f]")
+
+	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+		words = list(entry.l_word)
+		hw = words[0]
+		hw_t = self._pat.sub("", hw)
+		hw_t = hw_t.replace("\u0622", "\u0627").replace("\u0623", "\u0627")
+		if hw_t == hw or not hw_t:
+			return entry
+		entry._word = [hw_t] + words
+		return entry
+
+
 class ShowProgressBar(EntryFilter):
 	name = "progressbar"
 	desc = "Progress Bar"

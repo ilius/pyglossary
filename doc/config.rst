@@ -36,6 +36,8 @@ Configuration Parameters
 +------------------------------+-------------------------------+-------+---------------+---------------------------------------------------------+
 | ``skip_duplicate_headword``  | ``--skip-duplicate-headword`` | bool  | ``false``     | Skip entries with a duplicate headword                  |
 +------------------------------+-------------------------------+-------+---------------+---------------------------------------------------------+
+| ``trim_arabic_diacritics``   | ``--trim-arabic-diacritics``  | bool  | ``false``     | Trim Arabic diacritics from headword                    |
++------------------------------+-------------------------------+-------+---------------+---------------------------------------------------------+
 | ``color.enable.cmd.unix``    | ``--no-color``                | bool  | ``true``      | Enable colors in Linux/Unix command line                |
 +------------------------------+-------------------------------+-------+---------------+---------------------------------------------------------+
 | ``color.enable.cmd.windows`` | ``--no-color``                | bool  | ``false``     | Enable colors in Windows command line                   |

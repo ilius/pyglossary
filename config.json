@@ -15,6 +15,7 @@
 	"normalize_html": false,
 	"save_info_json": false,
 	"skip_duplicate_headword": false,
+	"trim_arabic_diacritics": false,
 
 	"color.enable.cmd.unix": true,
 	"color.enable.cmd.windows": false,

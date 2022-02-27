@@ -120,6 +120,7 @@ class UIBase(object):
 		getEntryFilterConfigPair("remove_html_all"),
 		getEntryFilterConfigPair("normalize_html"),
 		getEntryFilterConfigPair("skip_duplicate_headword"),
+		getEntryFilterConfigPair("trim_arabic_diacritics"),
 
 		("color.enable.cmd.unix", BoolOption(
 			hasFlag=False,
