@@ -125,7 +125,7 @@ writingSystemList = [
 		name="Greek",
 		iso=(200, "Grek"),
 		unicode=["GREEK"],
-		titleTag="big",
+		titleTag="b",
 		comma=", ",
 		pop=11,
 	),
