@@ -11,7 +11,7 @@
 | `trim_arabic_diacritics`     | No              | `--trim-arabic-diacritics`           | Trim Arabic diacritics from headword                            |
 | `rtl`                        | No              | `--rtl`                              | Make definition right-to-left                                   |
 | `remove_html_all`            | No              | `--remove-html-all`                  | Remove all HTML tags from definition                            |
-| `remove_html`                | No              | `--remove-html`                      | Remove specific HTML tags from definition                       |
+| `remove_html`                | No              | `--remove-html`                      | Remove given HTML tags (comma-separated) from definitions       |
 | `normalize_html`             | No              | `--normalize-html`                   | Normalize HTML tags in definition (WIP)                         |
 | `lang`                       | Yes             |                                      | Language-specific cleanup/fixes                                 |
 | `non_empty_word`             | Yes             |                                      | Skip entries with empty word                                    |
