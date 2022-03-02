@@ -1074,6 +1074,26 @@
 		"writeOptions": {}
 	},
 	{
+		"module": "iupac_goldbook",
+		"lname": "iupac_goldbook",
+		"name": "IUPACGoldbook",
+		"description": "IUPAC goldbook (.xml)",
+		"extensions": [],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
 		"module": "jmdict",
 		"lname": "jmdict",
 		"name": "JMDict",

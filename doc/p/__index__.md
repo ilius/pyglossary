@@ -27,6 +27,7 @@
 | Gettext Source (.po)          | GettextPo       | [gettext_po.md](./gettext_po.md)               |
 | HTML Directory                | HtmlDir         | [html_dir.md](./html_dir.md)                   |
 | Glossary Info (.info)         | Info            | [info.md](./info.md)                           |
+| IUPAC goldbook (.xml)         | IUPACGoldbook   | [iupac_goldbook.md](./iupac_goldbook.md)       |
 | JMDict                        | JMDict          | [jmdict.md](./jmdict.md)                       |
 | JSON (.json)                  | Json            | [json.md](./json.md)                           |
 | Lingoes Source (.ldf)         | LingoesLDF      | [lingoes_ldf.md](./lingoes_ldf.md)             |
