@@ -38,7 +38,6 @@
 | StarDict (.ifo)               | Stardict        | [stardict.md](./stardict.md)                   |
 | StarDict Textual File (.xml)  | StardictTextual | [stardict_textual.md](./stardict_textual.md)   |
 | Tabfile (.txt, .dic)          | Tabfile         | [tabfile.md](./tabfile.md)                     |
-| Wiktionary Dump (.xml)        | WiktionaryDump  | [wiktionary_dump.md](./wiktionary_dump.md)     |
 | Wordset.org JSON directory    | Wordset         | [wordset.md](./wordset.md)                     |
 | XDXF (.xdxf)                  | Xdxf            | [xdxf.md](./xdxf.md)                           |
 | Zim (.zim, for Kiwix)         | Zim             | [zim.md](./zim.md)                             |

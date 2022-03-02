@@ -1551,25 +1551,6 @@
 		"enable": false
 	},
 	{
-		"module": "wiktionary_dump",
-		"lname": "wiktionary_dump",
-		"name": "WiktionaryDump",
-		"description": "Wiktionary Dump (.xml)",
-		"extensions": [],
-		"singleFile": false,
-		"optionsProp": {
-			"encoding": {
-				"class": "EncodingOption",
-				"type": "str",
-				"customValue": true,
-				"comment": "Encoding/charset"
-			}
-		},
-		"canRead": true,
-		"canWrite": false,
-		"readOptions": {}
-	},
-	{
 		"module": "wordset",
 		"lname": "wordset",
 		"name": "Wordset",
