@@ -99,7 +99,7 @@ class Reader(object):
 
 	def open(self, filename):
 		self._defiFormat = "h" if self._html else "m"
-		parts = filename.split(os.sep)
+		parts = split(filename)
 		dbname = parts[-1]
 		if isdir(filename):
 			if parts[-1] == "Contents":
