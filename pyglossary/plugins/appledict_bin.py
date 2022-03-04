@@ -55,12 +55,47 @@ class Reader(object):
 		self._encoding = "utf-8"
 		self._buf = ""
 		self._defiFormat = "m"
+		self._re_link = re.compile(f'<a [^<>]*>')
 
 		try:
 			from lxml import etree
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install lxml` to install"
 			raise e
+
+	def sub_link(self, m: "Match"):
+		from lxml.html import fromstring, tostring
+
+		a_raw = m.group(0)
+		a = fromstring(a_raw)
+
+		href = a.attrib.get("href", "")
+		title = a.attrib.get("title", "")
+
+		if href.startswith("x-dictionary:d:"):
+			word = href[len("x-dictionary:d:"):]
+			a.attrib["href"] = href = f"bword://{word}"
+
+		elif href.startswith("x-dictionary:r:"):
+			# https://github.com/ilius/pyglossary/issues/343
+			if title:
+				a.attrib["href"] = href = f"bword://{title}"
+		elif href.startswith("http://") or href.startswith("https://"):
+			pass
+		else:
+			a.attrib["href"] = href = f"bword://{href}"
+
+
+		a_new = tostring(a).decode("utf-8")
+		a_new = a_new[:-4]  # remove '</a>'
+
+		#print(f"a_raw = {a_html!r}")
+		#print(f"a_new = {a_new!r}")
+		return a_new
+
+	def fixLinksInDefi(self, defi: str) -> str:
+		defi = self._re_link.sub(self.sub_link, defi)
+		return defi
 
 	def open(self, filename):
 		self._defiFormat = "h" if self._html else "m"
@@ -146,6 +181,7 @@ class Reader(object):
 			entryElem,
 			encoding="utf-8",
 		))
+		defi = self.fixLinksInDefi(defi)
 
 		if self._html_full:
 			defi = (
