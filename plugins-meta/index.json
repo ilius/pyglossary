@@ -574,12 +574,19 @@
 				"type": "str",
 				"customValue": true,
 				"comment": "Encoding/charset"
+			},
+			"headword_separator": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "separator for headword and alternates"
 			}
 		},
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
-			"encoding": "utf-8"
+			"encoding": "utf-8",
+			"headword_separator": ";   "
 		},
 		"readCompressions": [
 			"gz",

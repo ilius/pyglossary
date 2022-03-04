@@ -16,6 +16,9 @@ website = (
 )
 optionsProp = {
 	"encoding": EncodingOption(),
+	"headword_separator": StrOption(
+		comment="separator for headword and alternates",
+	)
 }
 
 
@@ -24,6 +27,9 @@ def unescapeDefi(defi: str) -> str:
 
 
 class Reader(TextGlossaryReader):
+	_headword_separator = ";   "
+	# https://github.com/cheusov/dictd/blob/master/dictfmt/dictunformat.in#L14
+
 	def isInfoWord(self, word):
 		return word.startswith("00-database-")
 
@@ -93,6 +99,7 @@ class Reader(TextGlossaryReader):
 			if word.startswith("00-database-") and defi == "unknown":
 				log.info(f"ignoring {word} -> {defi}")
 				return
+			word = word.split(self._headword_separator)
 			return word, defi, None
 
 		raise StopIteration
