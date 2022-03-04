@@ -80,6 +80,7 @@ class Reader(TextGlossaryReader):
 				if not defiLines:
 					log.warning(f"no definition/value for {word!r}")
 				defi = unescapeDefi("\n".join(defiLines))
+				word = word.split(self._headword_separator)
 				return word, defi, None
 
 			if not word:
