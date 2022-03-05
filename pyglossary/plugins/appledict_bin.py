@@ -146,9 +146,6 @@ class Reader(object):
 			self._file.close()
 			self._file = None
 
-	def decode(self, st: bytes) -> str:
-		return st.decode(self._encoding, errors="replace")
-
 	def getChunkSize(self, pos):
 		plus = self._buf[pos:pos + 12].find(b"<d:entry")
 		if plus < 1:
@@ -169,18 +166,18 @@ class Reader(object):
 		if not self._html:
 			# FIXME: this produces duplicate text for Idioms.dictionary, see #301
 			return "".join([
-				self.decode(etree.tostring(
+				etree.tostring(
 					child,
 					encoding="utf-8",
-				))
+				).decode("utf-8")
 				for child in entryElem.iterdescendants()
 			])
 
 
-		defi = self.decode(etree.tostring(
+		defi = etree.tostring(
 			entryElem,
 			encoding="utf-8",
-		))
+		).decode("utf-8")
 		defi = self.fixLinksInDefi(defi)
 
 		if self._html_full:
@@ -212,7 +209,7 @@ class Reader(object):
 		from lxml import etree
 
 		entryBytes, pos = self._readEntryData(pos)
-		entryFull = self.decode(entryBytes)
+		entryFull = entryBytes.decode(self._encoding, errors="replace")
 		entryFull = entryFull.strip()
 		if not entryFull:
 			return None, pos
