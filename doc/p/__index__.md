@@ -17,6 +17,7 @@
 | DICT.org dictfmt source file  | DictOrgSource   | [dict_org_source.md](./dict_org_source.md)     |
 | dictunformat output file      | Dictunformat    | [dictunformat.md](./dictunformat.md)           |
 | DigitalNK (SQLite3, N-Korean) | DigitalNK       | [digitalnk.md](./digitalnk.md)                 |
+| DIKT JSON (.json)             | DiktJson        | [dikt_json.md](./dikt_json.md)                 |
 | ABBYY Lingvo DSL (.dsl)       | ABBYYLingvoDSL  | [dsl.md](./dsl.md)                             |
 | EPUB-2 E-Book                 | Epub2           | [epub2.md](./epub2.md)                         |
 | Kobo E-Reader Dictionary      | Kobo            | [kobo.md](./kobo.md)                           |

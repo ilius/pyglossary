@@ -607,6 +607,45 @@
 		"readOptions": {}
 	},
 	{
+		"module": "dikt_json",
+		"lname": "dikt_json",
+		"name": "DiktJson",
+		"description": "DIKT JSON (.json)",
+		"extensions": [],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Encoding/charset"
+			},
+			"enable_info": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Enable glossary info / metedata"
+			},
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Enable resources / data files"
+			},
+			"word_title": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "add headwords title to begining of definition"
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {
+			"encoding": "utf-8",
+			"enable_info": true,
+			"resources": true,
+			"word_title": false
+		}
+	},
+	{
 		"module": "dsl",
 		"lname": "dsl",
 		"name": "ABBYYLingvoDSL",
