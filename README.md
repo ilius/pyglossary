@@ -71,7 +71,6 @@ Android Termux - interactive command-line interface
 | [StarDict](./doc/p/stardict.md)                         |  📁  |     (📝.ifo)     |  ✔   |   ✔   |
 | [StarDict Textual File](./doc/p/stardict_textual.md)    |  📝  |     (.xml)      |  ✔   |   ✔   |
 | [Tabfile](./doc/p/tabfile.md)                           |  📝  |   .txt, .tab    |  ✔   |   ✔   |
-| [Wiktionary Dump](./doc/p/wiktionary_dump.md)           |  📝  |      .xml       |  ✔   |   ❌   |
 | [Wordset.org](./doc/p/wordset.md)                       |  📁  |                 |  ✔   |       |
 | [XDXF](./doc/p/xdxf.md)                                 |  📝  |      .xdxf      |  ✔   |   ❌   |
 | [Zim (Kiwix)](./doc/p/zim.md)                           |  🔢  |      .zim       |  ✔   |       |
