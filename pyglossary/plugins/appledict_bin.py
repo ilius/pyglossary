@@ -73,7 +73,6 @@ class Reader(object):
 		a = fromstring(a_raw)
 
 		href = a.attrib.get("href", "")
-		title = a.attrib.get("title", "")
 
 		if href.startswith("x-dictionary:d:"):
 			word = href[len("x-dictionary:d:"):]
@@ -84,11 +83,13 @@ class Reader(object):
 			id_i = len("x-dictionary:r:")
 			id_j = href.find(":", id_i)
 			_id = href[id_i:id_j]
-			title2 = self._titleById.get(_id)
-			if title2:
-				a.attrib["href"] = href = f"bword://{title2}"
-			elif title:
+			title = self._titleById.get(_id)
+			if title:
 				a.attrib["href"] = href = f"bword://{title}"
+			else:
+				title = a.attrib.get("title")
+				if title:
+					a.attrib["href"] = href = f"bword://{title}"
 		elif href.startswith("http://") or href.startswith("https://"):
 			pass
 		else:
@@ -252,6 +253,7 @@ class Reader(object):
 		_file = self._file
 		limit = self._limit
 		titleById = {}
+
 		while True:
 			absPos = _file.tell()
 			if absPos >= limit:
@@ -284,8 +286,8 @@ class Reader(object):
 				if title_j < 0:
 					log.error(f"title closing not found: {b_entry.decode(self._encoding)}")
 					continue
-				title = b_entry[title_i + 9: title_j].decode(self._encoding)
-				titleById[_id] = title
+				titleById[_id] = b_entry[title_i + 9: title_j].decode(self._encoding)
+
 		self._titleById = titleById
 		_file.seek(0x60)
 		self._wordCount = len(titleById)
