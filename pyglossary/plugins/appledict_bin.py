@@ -192,13 +192,7 @@ class Reader(object):
 
 		return defi
 
-
-	def _readEntry(self, pos: int) -> "Tuple[BaseEntry, int]":
-		"""
-			returns (entry, pos)
-		"""
-		from lxml import etree
-
+	def _readEntryData(self, pos: int) -> "Tuple[bytes, int]":
 		chunkSize, plus = self.getChunkSize(pos)
 		pos += plus
 		if chunkSize == 0:
@@ -207,19 +201,28 @@ class Reader(object):
 				chunkSize = len(self._buf) - pos
 			else:
 				chunkSize = endI + 10
-		entryFull = self.decode(self._buf[pos:pos + chunkSize])
+		entryBytes = self._buf[pos:pos + chunkSize]
+		pos += chunkSize
+		return entryBytes, pos
+
+	def _readEntry(self, pos: int) -> "Tuple[BaseEntry, int]":
+		"""
+			returns (entry, pos)
+		"""
+		from lxml import etree
+
+		entryBytes, pos = self._readEntryData(pos)
+		entryFull = self.decode(entryBytes)
 		entryFull = entryFull.strip()
 		if not entryFull:
-			pos += chunkSize
 			return None, pos
 		try:
 			entryRoot = etree.fromstring(entryFull)
 		except etree.XMLSyntaxError as e:
-			log.error(f"{self._buf[pos-plus:pos+100]}")
 			log.error(
-				f"chunkSize={chunkSize}, plus={plus}, pos={pos}, len(buf)={len(self._buf)}"
+				f"pos={pos}, len(buf)={len(self._buf)}, "
+				f"entryFull={entryFull!r}"
 			)
-			log.error(f"entryFull={entryFull!r}")
 			raise e
 		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
 		if not entryElems:
@@ -228,7 +231,6 @@ class Reader(object):
 
 		defi = self._getDefi(entryElems[0])
 
-		pos += chunkSize
 		if self._limit <= 0:
 			raise ValueError(f"self._limit = {self._limit}")
 		return self._glos.newEntry(
