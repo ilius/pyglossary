@@ -52,6 +52,7 @@ Android Termux - interactive command-line interface
 | [dictunformat output file](./doc/p/dictunformat.md)     |  📝  | (.dictunformat) |  ✔   |       |
 | [DictionaryForMIDs](./doc/p/dicformids.md)              |  📁  |    (📁.mids)     |  ✔   |   ✔   |
 | [DigitalNK](./doc/p/digitalnk.md) (SQLite3, N-Korean)   |  🔢  |       .db       |  ✔   |       |
+| [DIKT JSON](./doc/p/dikt_json.md)                       |  📝  |     (.json)     |      |   ✔   |
 | [EDLIN](./doc/p/edlin.md)                               |  📁  |     .edlin      |  ✔   |   ✔   |
 | [EPUB-2 E-Book](./doc/p/epub2.md)                       |  📦  |      .epub      |  ❌   |   ✔   |
 | [FreeDict](./doc/p/freedict.md)                         |  📝  |      .tei       |  ✔   |   ❌   |
