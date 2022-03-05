@@ -18,6 +18,7 @@ from pyglossary.plugins.formats_common import *
 
 from struct import unpack
 from zlib import decompress
+from datetime import datetime
 
 enable = True
 lname = "appledict_bin"
@@ -56,6 +57,8 @@ class Reader(object):
 		self._buf = ""
 		self._defiFormat = "m"
 		self._re_link = re.compile(f'<a [^<>]*>')
+		self._titleById = {}
+		self._wordCount = 0
 
 		try:
 			from lxml import etree
@@ -78,19 +81,22 @@ class Reader(object):
 
 		elif href.startswith("x-dictionary:r:"):
 			# https://github.com/ilius/pyglossary/issues/343
-			if title:
+			id_i = len("x-dictionary:r:")
+			id_j = href.find(":", id_i)
+			_id = href[id_i:id_j]
+			title2 = self._titleById.get(_id)
+			if title2:
+				a.attrib["href"] = href = f"bword://{title2}"
+			elif title:
 				a.attrib["href"] = href = f"bword://{title}"
 		elif href.startswith("http://") or href.startswith("https://"):
 			pass
 		else:
 			a.attrib["href"] = href = f"bword://{href}"
 
-
 		a_new = tostring(a).decode("utf-8")
 		a_new = a_new[:-4]  # remove '</a>'
 
-		#print(f"a_raw = {a_html!r}")
-		#print(f"a_new = {a_new!r}")
 		return a_new
 
 	def fixLinksInDefi(self, defi: str) -> str:
@@ -137,9 +143,16 @@ class Reader(object):
 		self._limit = 0x40 + unpack("i", self._file.read(4))[0]
 		self._file.seek(0x60)
 
+		t0 = datetime.now()
+		self.readEntryIds()
+		dt = datetime.now() - t0
+		log.info(
+			f"Reading entry IDs took {int(dt.total_seconds() * 1000)} ms, "
+			f"number of entries: {self._wordCount}"
+		)
+
 	def __len__(self):
-		# FIXME: returning zero will disable the progress bar
-		return 0
+		return self._wordCount
 
 	def close(self):
 		if self._file is not None:
@@ -172,7 +185,6 @@ class Reader(object):
 				).decode("utf-8")
 				for child in entryElem.iterdescendants()
 			])
-
 
 		defi = etree.tostring(
 			entryElem,
@@ -235,6 +247,48 @@ class Reader(object):
 			defiFormat=self._defiFormat,
 			byteProgress=(self._absPos, self._limit),
 		), pos
+
+	def readEntryIds(self):
+		_file = self._file
+		limit = self._limit
+		titleById = {}
+		while True:
+			absPos = _file.tell()
+			if absPos >= limit:
+				break
+			bufSizeB = _file.read(4)  # type: bytes
+
+			bufSize, = unpack("i", bufSizeB)  # type: int
+			self._buf = decompress(_file.read(bufSize)[8:])
+
+			pos = 0
+			while pos < len(self._buf):
+				b_entry, pos = self._readEntryData(pos)
+				b_entry = b_entry.strip()
+				if not b_entry:
+					continue
+				id_i = b_entry.find(b'id="')
+				if id_i < 0:
+					log.error(f"id not found: {b_entry}, pos={pos}, buf={self._buf}")
+					continue
+				id_j = b_entry.find(b'"', id_i + 4)
+				if id_j < 0:
+					log.error(f"id closing not found: {b_entry.decode(self._encoding)}")
+					continue
+				_id = b_entry[id_i + 4: id_j].decode(self._encoding)
+				title_i = b_entry.find(b'd:title="')
+				if title_i < 0:
+					log.error(f"title not found: {b_entry.decode(self._encoding)}")
+					continue
+				title_j = b_entry.find(b'"', title_i + 9)
+				if title_j < 0:
+					log.error(f"title closing not found: {b_entry.decode(self._encoding)}")
+					continue
+				title = b_entry[title_i + 9: title_j].decode(self._encoding)
+				titleById[_id] = title
+		self._titleById = titleById
+		_file.seek(0x60)
+		self._wordCount = len(titleById)
 
 	def __iter__(self):
 		from os.path import dirname
