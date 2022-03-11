@@ -771,8 +771,8 @@ def main():
 					f"pyglossary.ui.ui_{ui_type2}",
 					fromlist=f"ui_{ui_type2}",
 				)
-			except ImportError:
-				log.exception("error while importing UI module:")
+			except ImportError as e:
+				log.error(str(e))
 			else:
 				break
 		if ui_module is None:
