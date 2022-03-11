@@ -579,10 +579,10 @@ def main():
 
 	##############################
 
-	ui_list = [
-		"gtk",
-		"tk",
-	]
+	ui_list = ["gtk", "tk"]
+	if os.sep == "\\":
+		ui_list = ["tk", "gtk"]
+
 
 	# log.info(f"PyGlossary {core.VERSION}")
 
