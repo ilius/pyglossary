@@ -430,5 +430,8 @@ class EbookWriter(object):
 			else:
 				if self._keep:
 					shutil.copytree(self._tmpDir, filename)
+				elif os.sep == "\\":
+					shutil.copytree(self._tmpDir, filename)
+					self._glos._cleanupPathList.add(self._tmpDir)
 				else:
 					shutil.move(self._tmpDir, filename)
