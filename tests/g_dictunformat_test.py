@@ -14,8 +14,8 @@ class TestGlossaryDictunformat(TestGlossaryBase):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
-			"100-en-fa.dictunformat": "f5f8a9bd",
-			"100-en-fa.dictunformat-2.txt": "aa1dee13",
+			"100-en-fa-2.dictunformat": "03a13c1a",
+			"100-en-fa-2.dictunformat.txt": "c88207ec",
 		})
 
 	def convert_dictunformat_txt(self, fname, fname2, **convertArgs):
@@ -28,8 +28,8 @@ class TestGlossaryDictunformat(TestGlossaryBase):
 
 	def test_convert_dictunformat_txt_1(self):
 		self.convert_dictunformat_txt(
-			"100-en-fa",
-			"100-en-fa.dictunformat-2",
+			"100-en-fa-2",
+			"100-en-fa-2.dictunformat",
 		)
 
 

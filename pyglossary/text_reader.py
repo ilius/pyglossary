@@ -124,8 +124,8 @@ class TextGlossaryReader(object):
 			byteProgress=byteProgress,
 		)
 
-	def setInfo(self, word: str, defi: str) -> None:
-		self._glos.setInfo(word, defi)
+	def setInfo(self, key: str, value: str) -> None:
+		self._glos.setInfo(key, value)
 
 	def loadInfo(self) -> None:
 		self._pendingEntries = []
@@ -134,19 +134,19 @@ class TextGlossaryReader(object):
 				block = self.nextBlock()
 				if not block:
 					continue
-				word, defi, _ = block
-				if not self.isInfoWords(word):
-					self._pendingEntries.append(self.newEntry(word, defi))
+				key, value, _ = block
+				origKey = key
+				if isinstance(key, list):
+					key = key[0]
+				if not self.isInfoWords(key):
+					self._pendingEntries.append(self.newEntry(origKey, value))
 					break
-				if isinstance(word, list):
-					word = [self.fixInfoWord(w) for w in word]
-				else:
-					word = self.fixInfoWord(word)
-				if not word:
+				if not value:
 					continue
-				if not defi:
+				key = self.fixInfoWord(key)
+				if not key:
 					continue
-				self.setInfo(word, defi)
+				self.setInfo(key, value)
 		except StopIteration:
 			pass
 
