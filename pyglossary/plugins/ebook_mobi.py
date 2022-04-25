@@ -335,7 +335,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		log.info(f"Creating .mobi file with kindlegen, using {kindlegen_path!r}")
 		opf_path_abs = join(filename, "OEBPS", "content.opf")
 		proc = subprocess.Popen(
-			[kindlegen_path, opf_path_abs, "-o", "content.mobi"],
+			[kindlegen_path, opf_path_abs, "-gen_ff_mobi7", "-o", "content.mobi"],
 			stdout=subprocess.PIPE,
 			stdin=subprocess.PIPE,
 			stderr=subprocess.PIPE
