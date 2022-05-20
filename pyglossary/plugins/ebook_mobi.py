@@ -216,6 +216,14 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 	def format_group_content(self, word: "List[str]", defi: str) -> str:
 		hide_word_index = self._hide_word_index
+		html_headword = None
+		if word[0][:9] == "HTML_HEAD":
+			html_headword = word[0][9:]
+			word.pop(0)
+
+		if hide_word_index:
+			html_headword = ''
+
 		if len(word) == 1:
 			infl = ''
 			mainword = word[0]
@@ -235,17 +243,10 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 		defi = self.escape_if_needed(defi)
 
-		if hide_word_index:
-			headword_visible = ""
-			value_headword = f' value="{headword}"'
-		else:
-			headword_visible = "\n" + self._glos.wordTitleStr(headword)
-			value_headword = ""
-
 		group_content = self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
 			spellcheck_str=' spell="yes"' if self._spellcheck else "",
-			headword_visible=headword_visible,
-			value_headword=value_headword,
+			headword_visible=f'\n{headword}' if html_headword is None else f'\n{html_headword}',
+			value_headword=f' value="{headword}"' if not html_headword is None else '',
 			definition=defi,
 			infl=infl,
 		)
