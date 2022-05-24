@@ -72,11 +72,12 @@ class XdxfTransformer(object):
 			if hasPrev:
 				addSep()
 
-		lines = child.split("\n")
-		for index, parag in enumerate(lines):
+		child = child.rstrip()
+		lines = [line for line in child.split("\n") if line]
+		for index, line in enumerate(lines):
 			if 0 < index < len(lines) - 1:
 				addSep()
-			hf.write(parag)
+			hf.write(line)
 		if trail:
 			addSep()
 		return
@@ -136,6 +137,8 @@ class XdxfTransformer(object):
 		from lxml import etree as ET
 
 		if isinstance(child, str):
+			if not child.strip():
+				return
 			self.writeString(hf, child, parent, prev, stringSep=stringSep)
 			return
 
