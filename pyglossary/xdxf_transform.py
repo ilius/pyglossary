@@ -45,10 +45,18 @@ class XdxfTransformer(object):
 		child: str,
 		parent: "lxml.etree.Element",
 		prev: "Union[None, str, lxml.etree.Element]",
+		stringSep: "Optional[str]" = None,
 	):
 		from lxml import etree as ET
+
+		def addSep():
+			if stringSep is None:
+				hf.write(ET.Element("br"))
+			else:
+				hf.write(stringSep)
+
 		hasPrev = self.hasPrevText(prev)
-		trailNL = False
+		trail = False
 		if parent.tag in ("ar", "font"):
 			if child.startswith("\n"):
 				child = child.lstrip("\n")
@@ -56,19 +64,19 @@ class XdxfTransformer(object):
 					hf.write(ET.Element("br"))
 			elif child.endswith("\n"):
 				child = child.rstrip("\n")
-				trailNL = True
+				trail = True
 			if not hasPrev:
 				child = child.lstrip()
 		elif child.startswith("\n"):
 			child = child.lstrip()
-			hf.write(ET.Element("br"))
+			addSep()
 
 		for index, parag in enumerate(child.split("\n")):
 			if index > 0:
-				hf.write(ET.Element("br"))
+				addSep()
 			hf.write(parag)
-		if trailNL:
-			hf.write(ET.Element("br"))
+		if trail:
+			addSep()
 		return
 
 	def writeExample(
@@ -89,7 +97,7 @@ class XdxfTransformer(object):
 					continue
 				if child.tag in ("ex_orig", "ex_tran"):
 					with hf.element("div"):
-						self.writeChildrenOf(hf, child)
+						self.writeChildrenOf(hf, child, stringSep=" ")
 					continue
 				log.warning(f"unknown tag {child.tag} inside <ex>")
 
@@ -99,13 +107,7 @@ class XdxfTransformer(object):
 		child: "Union[str, lxml.etree.Element]",
 	):
 		iref_url = child.attrib.get("href", "")
-		if child.text:
-			with hf.element("a", **{
-				"class": "iref",
-				"href": child.attrib.get("href", child.text),
-			}):
-				hf.write(child.text)
-		elif any(iref_url.endswith(ext) for ext in ("mp3", "wav", "aac", "ogg")):
+		if any(iref_url.endswith(ext) for ext in ("mp3", "wav", "aac", "ogg")):
 			#  with hf.element("audio", src=iref_url):
 			with hf.element("a", **{
 				"class": "iref",
@@ -113,14 +115,13 @@ class XdxfTransformer(object):
 			}):
 				hf.write("🔊")
 			return
-		elif iref_url:
+		else:
 			with hf.element("a", **{
 				"class": "iref",
-				"href": iref_url,
+				"href": child.attrib.get("href", child.text),
 			}):
-				hf.write("⎋")
-		else:
-			log.warning(f"iref with no text and no url: {self.tostring(child)}")
+				self.writeChildrenOf(hf, child, stringSep=" ")
+
 
 	def writeChild(
 		self,
@@ -128,11 +129,12 @@ class XdxfTransformer(object):
 		child: "Union[str, lxml.etree.Element]",
 		parent: "lxml.etree.Element",
 		prev: "Union[None, str, lxml.etree.Element]",
+		stringSep: "Optional[str]" = None,
 	):
 		from lxml import etree as ET
 
 		if isinstance(child, str):
-			self.writeString(hf, child, parent, prev)
+			self.writeString(hf, child, parent, prev, stringSep=stringSep)
 			return
 
 		if child.tag == f"br":
@@ -175,7 +177,7 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag == "mrkd":
-			if child.text:
+			if not child.text:
 				return
 			with hf.element("span", **{"class": child.tag}):
 				with hf.element("b"):
@@ -247,13 +249,18 @@ class XdxfTransformer(object):
 
 		if child.tag == "ex_orig":
 			with hf.element("i"):
-				hf.write(child.text)
+				self.writeChildrenOf(hf, child)
 			return
 
 		if child.tag == "ex_transl" and prev.tag == "ex_orig":
 			if child.text != prev.text:
 				with hf.element("i"):
-					hf.write(child.text)
+					self.writeChildrenOf(hf, child)
+			return
+
+		if child.tag == "categ":  # Category
+			with hf.element("span", style="background-color: green;"):
+				self.writeChildrenOf(hf, child, stringSep=" ")
 			return
 
 		if child.tag == "opt":
@@ -286,10 +293,11 @@ class XdxfTransformer(object):
 		self,
 		hf: "lxml.etree.htmlfile",
 		elem: "lxml.etree.Element",
+		stringSep: "Optional[str]" = None,
 	):
 		prev = None
 		for child in elem.xpath("child::node()"):
-			self.writeChild(hf, child, elem, prev)
+			self.writeChild(hf, child, elem, prev, stringSep=stringSep)
 			prev = child
 
 	def transform(self, article: "lxml.etree.Element") -> str:
