@@ -75,7 +75,8 @@ class XdxfTransformer(object):
 		child = child.rstrip()
 		lines = [line for line in child.split("\n") if line]
 		for index, line in enumerate(lines):
-			if 0 < index < len(lines) - 1:
+			if index > 0:
+				# and line[0] not in ".,;)"
 				addSep()
 			hf.write(line)
 		if trail:
@@ -162,6 +163,7 @@ class XdxfTransformer(object):
 			hf.write("[")
 			self.writeChildrenOf(hf, child)
 			hf.write("]")
+			hf.write(ET.Element("br"))
 			return
 
 		if child.tag == "k":
@@ -197,7 +199,7 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag in ("dtrn", "co"):
-			self.writeChildrenOf(hf, child)
+			self.writeChildrenOf(hf, child, sep=" ")
 			return
 
 		if child.tag == "c":
@@ -227,12 +229,14 @@ class XdxfTransformer(object):
 				return
 
 		if child.tag == "def":
+			# TODO: create a list (ol / ul) unless it has one item only
+			# like FreeDict reader
 			with hf.element("div"):
 				self.writeChildrenOf(hf, child)
 			return
 
 		if child.tag == "deftext":
-			self.writeChildrenOf(hf, child, stringSep=" ")
+			self.writeChildrenOf(hf, child, stringSep=" ", sep=" ")
 			return
 
 		if child.tag == "span":
@@ -251,6 +255,7 @@ class XdxfTransformer(object):
 		if child.tag == "gr":
 			with hf.element("font", color=self._gram_color):
 				hf.write(child.text)
+			hf.write(ET.Element("br"))
 			return
 
 		if child.tag == "ex_orig":
@@ -295,14 +300,37 @@ class XdxfTransformer(object):
 		log.warning(f"unknown tag {child.tag}")
 		self.writeChildrenOf(hf, child)
 
+	def shouldAddSep(
+		self,
+		child: "Union[str, lxml.etree.Element]",
+		prev: "Union[str, lxml.etree.Element]",
+	):
+		if isinstance(child, str):
+			if len(child) > 0 and child[0] in ".,;)":
+				return False
+			return True
+
+		if child.tag in ("sub", "sup"):
+			return False
+
+		if isinstance(prev, str):
+			pass
+		elif prev.tag in ("sub", "sup"):
+			return False
+
+		return True
+
 	def writeChildrenOf(
 		self,
 		hf: "lxml.etree.htmlfile",
 		elem: "lxml.etree.Element",
+		sep: "Optional[str]" = None,
 		stringSep: "Optional[str]" = None,
 	):
 		prev = None
-		for child in elem.xpath("child::node()"):
+		for index, child in enumerate(elem.xpath("child::node()")):
+			if sep and index > 0 and self.shouldAddSep(child, prev):
+				hf.write(sep)
 			self.writeChild(hf, child, elem, prev, stringSep=stringSep)
 			prev = child
 
