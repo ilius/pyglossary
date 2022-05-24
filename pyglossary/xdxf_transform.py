@@ -69,10 +69,12 @@ class XdxfTransformer(object):
 				child = child.lstrip()
 		elif child.startswith("\n"):
 			child = child.lstrip()
-			addSep()
+			if hasPrev:
+				addSep()
 
-		for index, parag in enumerate(child.split("\n")):
-			if index > 0:
+		lines = child.split("\n")
+		for index, parag in enumerate(lines):
+			if 0 < index < len(lines) - 1:
 				addSep()
 			hf.write(parag)
 		if trail:
@@ -222,11 +224,12 @@ class XdxfTransformer(object):
 				return
 
 		if child.tag == "def":
-			self.writeChildrenOf(hf, child)
+			with hf.element("div"):
+				self.writeChildrenOf(hf, child)
 			return
 
 		if child.tag == "deftext":
-			self.writeChildrenOf(hf, child)
+			self.writeChildrenOf(hf, child, stringSep=" ")
 			return
 
 		if child.tag == "span":
