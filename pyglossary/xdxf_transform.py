@@ -274,6 +274,11 @@ class XdxfTransformer(object):
 				hf.write(f"{child.text}")
 			return
 
+		if child.tag == "etm":  # Etymology (history and origin)
+			# TODO: formatting?
+			hf.write(f"{child.text}")
+			return
+
 		log.warning(f"unknown tag {child.tag}")
 		self.writeChildrenOf(hf, child)
 
