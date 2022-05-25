@@ -72,6 +72,12 @@ class AboutWidget(gtk.Box):
 		##
 		self.show_all()
 
+	def onTextViewVisibilityEvent(self, tv, _event):
+		print("onTextViewVisibilityEvent", tv)
+		buf = tv.get_buffer()
+		start = buf.get_start_iter()
+		buf.select_range(start, start)
+
 	# <a href="...">Something</a> does not work with TextView
 	@staticmethod
 	def newTabWidgetTextView(
@@ -88,11 +94,14 @@ class AboutWidget(gtk.Box):
 			tv.set_justification(justification)
 		tv.set_cursor_visible(False)
 		tv.set_border_width(10)
+		#tv.connect("visibility_notify_event", self.onTextViewVisibilityEvent)
+		#tv.connect("event", self.onTextViewVisibilityEvent)
+		#tv.connect("focus-in-event", self.onTextViewFocus)
 		buf = tv.get_buffer()
 		# buf.insert_markup(buf.get_end_iter(), markup=text,
 		# len=len(text.encode("utf-8")))
 		buf.set_text(text)
-		tv.show_all()
+		tv.show()
 		swin = gtk.ScrolledWindow()
 		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
 		swin.set_border_width(0)
