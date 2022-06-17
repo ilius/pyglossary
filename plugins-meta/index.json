@@ -1656,7 +1656,7 @@
 		"canWrite": false,
 		"readOptions": {},
 		"readDepends": {
-			"libzim": "libzim==1.0"
+			"libzim": "libzim>=1.0"
 		}
 	}
 ]

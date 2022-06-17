@@ -19,10 +19,17 @@ optionsProp = {}
 
 # https://wiki.kiwix.org/wiki/Software
 
+# to download zim files:
+# https://archive.org/details/zimarchive
+# https://dumps.wikimedia.org/other/kiwix/zim/
+
+# I can't find any way to download zim files from https://library.kiwix.org/
+# which wiki.openzim.org points at for downloaing zim files
+
 
 class Reader(object):
 	depends = {
-		"libzim": "libzim==1.0",
+		"libzim": "libzim>=1.0",
 	}
 
 	resourceMimeTypes = {
