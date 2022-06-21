@@ -123,7 +123,7 @@ class TestGlossaryBase(unittest.TestCase):
 		self.assertEqual(
 			len(text1),
 			len(text2),
-			msg=f"{fpath1} differs from {fpath2}",
+			msg=f"{fpath1} differs from {fpath2} in file size",
 		)
 		self.assertEqual(
 			text1,
