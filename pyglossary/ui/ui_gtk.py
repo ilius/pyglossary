@@ -86,6 +86,8 @@ def getWorkAreaSize():
 	display = gdk.Display.get_default()
 	rootWindow = gdk.get_default_root_window()
 	monitor = display.get_monitor_at_window(rootWindow)
+	if monitor is None:
+		monitor = display.get_primary_monitor()
 	rect = monitor.get_workarea()
 	return rect.width, rect.height
 
