@@ -1146,10 +1146,26 @@
 		"description": "JMDict",
 		"extensions": [],
 		"singleFile": true,
-		"optionsProp": {},
+		"optionsProp": {
+			"example_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Examples color"
+			},
+			"example_padding": {
+				"class": "IntOption",
+				"type": "int",
+				"customValue": true,
+				"comment": "Padding for examples (in px)"
+			}
+		},
 		"canRead": true,
 		"canWrite": false,
-		"readOptions": {},
+		"readOptions": {
+			"example_padding": 10,
+			"example_color": ""
+		},
 		"readDepends": {
 			"lxml": "lxml"
 		},

@@ -18,6 +18,12 @@ website = (
 	"The JMDict Project",
 )
 optionsProp = {
+	"example_color": StrOption(
+		comment="Examples color",
+	),
+	"example_padding": IntOption(
+		comment="Padding for examples (in px)",
+	),
 }
 
 
@@ -26,6 +32,10 @@ class Reader(object):
 	depends = {
 		"lxml": "lxml",
 	}
+
+	_example_padding: int = 10
+	_example_color: str = ""
+	# _example_color: str = "#008FE1"
 
 	tagStyle = (
 		"color:white;"
@@ -152,6 +162,42 @@ class Reader(object):
 				with hf.element("span", style=self.tagStyle):
 					hf.write(desc)
 			hf.write(br())
+
+		examples = sense.findall("example")
+		if examples:
+			with hf.element("div", **{
+				"class": "example",
+				"style": f"padding: {self._example_padding}px 0px;",
+			}):
+				hf.write("Examples:")
+				with hf.element("ul"):
+					for i, elem in enumerate(examples):
+						if not elem.text:
+							continue
+						if i > 0:
+							hf.write(" ")
+						# one ex_srce (id?), one ex_text, and two ex_sent tags
+						textElem = elem.find("ex_text")
+						if textElem is None:
+							continue
+						if not textElem.text:
+							continue
+						text = textElem.text
+						sentList = []  # type: List[str]
+						for sentElem in elem.findall("ex_sent"):
+							if not sentElem.text:
+								continue
+							sentList.append(sentElem.text)
+						with hf.element("li"):
+							style = {}
+							if self._example_color:
+								style["color"] = self._example_color
+							with hf.element("font", **style):
+								hf.write(text)
+								for sent in sentList:
+									hf.write(br())
+									hf.write(sent)
+
 
 	def getEntryByElem(self, entry: "lxml.etree.Element") -> "BaseEntry":
 		from lxml import etree as ET

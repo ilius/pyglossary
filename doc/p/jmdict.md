@@ -17,6 +17,13 @@
 | Wiki            | [JMdict](https://en.wikipedia.org/wiki/JMdict)                   |
 | Website         | [The JMDict Project](https://www.edrdg.org/jmdict/j_jmdict.html) |
 
+### Read options
+
+| Name            | Default | Type | Comment                      |
+| --------------- | ------- | ---- | ---------------------------- |
+| example_padding | `10`    | int  | Padding for examples (in px) |
+| example_color   |         | str  | Examples color               |
+
 ### Dependencies for reading
 
 PyPI Links: [lxml](https://pypi.org/project/lxml)
