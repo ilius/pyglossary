@@ -476,7 +476,11 @@ class MDD(MDict):
 				record_block = lzo.decompress(header + record_block_compressed[8:])
 			elif record_block_type == b'\x02\x00\x00\x00':
 				# decompress
-				record_block = zlib.decompress(record_block_compressed[8:])
+				try:
+					record_block = zlib.decompress(record_block_compressed[8:])
+				except zlib.error:
+					log.error("zlib decompress error")
+					continue
 
 			# notice that adler32 return signed value
 			assert(adler32 == zlib.adler32(record_block) & 0xffffffff)
@@ -498,7 +502,7 @@ class MDD(MDict):
 				yield key_text, data
 			offset += len(record_block)
 			size_counter += compressed_size
-		assert(size_counter == record_block_size)
+		# assert(size_counter == record_block_size)
 
 		f.close()
 
@@ -583,7 +587,11 @@ class MDX(MDict):
 			# zlib compression
 			elif record_block_type == b'\x02\x00\x00\x00':
 				# decompress
-				record_block = zlib.decompress(record_block_compressed[8:])
+				try:
+					record_block = zlib.decompress(record_block_compressed[8:])
+				except zlib.error:
+					log.error("zlib decompress error")
+					continue
 
 			# notice that adler32 return signed value
 			assert(adler32 == zlib.adler32(record_block) & 0xffffffff)
@@ -611,7 +619,7 @@ class MDX(MDict):
 				yield key_text, record
 			offset += len(record_block)
 			size_counter += compressed_size
-		assert(size_counter == record_block_size)
+		# assert(size_counter == record_block_size)
 
 		f.close()
 
