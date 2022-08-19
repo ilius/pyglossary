@@ -45,10 +45,10 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"300-ru-en.sd/300-ru-en.ifo": "0b135812",
 			"300-ru-en.sd/300-ru-en.syn": "87ee3372",
 
-			"stardict-mixed-types-1.sd/stardict-mixed-types-1.dict": "def1c63d",
-			"stardict-mixed-types-1.sd/stardict-mixed-types-1.idx": "6eb274cd",
-			"stardict-mixed-types-1.sd/stardict-mixed-types-1.ifo": "04c074e8",
-			"stardict-mixed-types-1.sd.txt": "1ee27e75",
+			"stardict-mixed-types-2.sd/stardict-mixed-types-2.dict": "2e43237a",
+			"stardict-mixed-types-2.sd/stardict-mixed-types-2.idx": "65a1f9fc",
+			"stardict-mixed-types-2.sd/stardict-mixed-types-2.ifo": "e1063b84",
+			"stardict-mixed-types-2.sd.txt": "94de4bc6",
 
 			"002-plain-html.txt": "75484314",
 			"002-plain-html.sd/002-plain-html.dict": "2e9d20d8",
@@ -283,24 +283,22 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			"1",
 		)
 
-	# 2 following tests disabled because of space/newline issues
-	# with XDXF rendering code, which probably requires refactoring/re-design
-	#def test_convert_stardict_txt_mixed_types_1(self):
-	#	self.convert_stardict_txt(
-	#		"stardict-mixed-types-1",
-	#		"stardict-mixed-types-1.sd",
-	#		"mixed-types-1",
-	#		syn=False,
-	#	)
+	def test_convert_stardict_txt_mixed_types_1(self):
+		self.convert_stardict_txt(
+			"stardict-mixed-types-2",
+			"stardict-mixed-types-2.sd",
+			"mixed-types-1",
+			syn=False,
+		)
 
-	#def test_convert_stardict_txt_mixed_types_2(self):
-	#	self.convert_stardict_txt(
-	#		"stardict-mixed-types-1",
-	#		"stardict-mixed-types-1.sd",
-	#		"mixed-types-1",
-	#		syn=False,
-	#		readOptions={"xdxf_to_html": False},
-	#	)
+	def test_convert_stardict_txt_mixed_types_2(self):
+		self.convert_stardict_txt(
+			"stardict-mixed-types-2",
+			"stardict-mixed-types-2.sd",
+			"mixed-types-1",
+			syn=False,
+			readOptions={"xdxf_to_html": False},
+		)
 
 	def test_convert_txt_stardict_general_1(self):
 		self.convert_txt_stardict(

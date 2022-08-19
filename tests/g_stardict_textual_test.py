@@ -17,12 +17,12 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			"100-en-fa-sdt.xml": "48cb3336",
 			"100-en-fa-sdt.xml.txt": "0c9b4025",
 
-			"stardict-mixed-types-1.xml": "55da713d",
-			"stardict-mixed-types-1.xml.txt": "0460bc7e",
+			"stardict-xdxf-2.xml": "b3285d5c",
+			"stardict-xdxf-2.xml-h.txt": "97b3a22b",
+			"stardict-xdxf-2.xml-x.txt": "de63f937",
 
-			"stardict-xdxf-1.xml": "f16aa276",
-			"stardict-xdxf-1.xml-h.txt": "8a778fb2",
-			"stardict-xdxf-1.xml-x.txt": "201d1043",
+			"stardict-mixed-types-2.xml": "51d9ceb2",
+			"stardict-mixed-types-2.xml.txt": "c896cf68",
 		})
 
 	def convert_txt_sdxml(self, fname, fname2, **convertArgs):
@@ -55,22 +55,22 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			"100-en-fa-sdt.xml",
 		)
 
-	#def test_convert_sdxml_txt_2(self):
-	#	self.convert_sdxml_txt(
-	#		"stardict-mixed-types-1",
-	#		"stardict-mixed-types-1.xml",
-	#	)
+	def test_convert_sdxml_txt_2(self):
+		self.convert_sdxml_txt(
+			"stardict-mixed-types-2",
+			"stardict-mixed-types-2.xml",
+		)
 
-	#def test_convert_sdxml_txt_3(self):
-	#	self.convert_sdxml_txt(
-	#		"stardict-xdxf-1",
-	#		"stardict-xdxf-1.xml-h",
-	#		readOptions={"xdxf_to_html": True},
-	#	)
+	def test_convert_sdxml_txt_3(self):
+		self.convert_sdxml_txt(
+			"stardict-xdxf-2",
+			"stardict-xdxf-2.xml-h",
+			readOptions={"xdxf_to_html": True},
+		)
 
 	def test_convert_sdxml_txt_4(self):
 		self.convert_sdxml_txt(
-			"stardict-xdxf-1",
-			"stardict-xdxf-1.xml-x",
+			"stardict-xdxf-2",
+			"stardict-xdxf-2.xml-x",
 			readOptions={"xdxf_to_html": False},
 		)
