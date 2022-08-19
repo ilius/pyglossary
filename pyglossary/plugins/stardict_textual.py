@@ -71,13 +71,18 @@ class Reader(object):
 		encoding = self._encoding
 
 		self._filename = filename
-		_file = compressionOpen(filename, mode="rb")
-		_file.seek(0, 2)
-		self._fileSize = _file.tell()
-		_file.seek(0)
+		cfile = compressionOpen(filename, mode="rb")
+
+		if cfile.seekable():
+			cfile.seek(0, 2)
+			self._fileSize = cfile.tell()
+			cfile.seek(0)
+			# self._glos.setInfo("input_file_size", f"{self._fileSize}")
+		else:
+			log.warning("StarDict Textual File Reader: file is not seekable")
 
 		context = ET.iterparse(
-			_file,
+			cfile,
 			events=("end",),
 			tag=f"info",
 		)
@@ -85,7 +90,7 @@ class Reader(object):
 			self.setMetadata(elem)
 			break
 
-		_file.close()
+		cfile.close()
 
 	def setGlosInfo(self, key: str, value: str) -> None:
 		if value is None:

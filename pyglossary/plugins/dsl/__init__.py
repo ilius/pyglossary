@@ -339,9 +339,15 @@ class Reader(object):
 			mode="rt",
 			encoding=encoding,
 		)
-		cfile.seek(0, 2)
-		self._fileSize = cfile.tell()
-		cfile.seek(0)
+
+		if cfile.seekable():
+			cfile.seek(0, 2)
+			self._fileSize = cfile.tell()
+			cfile.seek(0)
+			# self._glos.setInfo("input_file_size", f"{self._fileSize}")
+		else:
+			log.warning("DSL Reader: file is not seekable")
+
 		self._file = TextFilePosWrapper(cfile, encoding)
 
 		# read header
@@ -446,7 +452,11 @@ class Reader(object):
 				yield self._glos.newEntry(
 					[current_key] + current_key_alters,
 					"\n".join(current_text),
-					byteProgress=(self._file.tell(), self._fileSize),
+					byteProgress=(
+						(self._file.tell(), self._fileSize)
+						if self._fileSize
+						else None
+					),
 				)
 
 			# start new entry

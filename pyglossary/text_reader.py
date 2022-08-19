@@ -77,11 +77,14 @@ class TextGlossaryReader(object):
 		cfile = compressionOpen(filename, mode="rt", encoding=self._encoding)
 
 		if not self._wordCount:
-			cfile.seek(0, 2)
-			self._fileSize = cfile.tell()
-			cfile.seek(0)
-			log.debug(f"File size of {filename}: {self._fileSize}")
-			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+			if cfile.seekable():
+				cfile.seek(0, 2)
+				self._fileSize = cfile.tell()
+				cfile.seek(0)
+				log.debug(f"File size of {filename}: {self._fileSize}")
+				self._glos.setInfo("input_file_size", f"{self._fileSize}")
+			else:
+				log.warning("TextGlossaryReader: file is not seekable")
 
 		self._file = TextFilePosWrapper(cfile, self._encoding)
 		if self._hasInfo:

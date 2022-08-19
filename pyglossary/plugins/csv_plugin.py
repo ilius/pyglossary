@@ -68,6 +68,7 @@ class Reader(object):
 	def clear(self) -> None:
 		self._filename = ""
 		self._file = None
+		self._fileSize = 0
 		self._leadingLinesCount = 0
 		self._wordCount = None
 		self._pos = -1
@@ -83,9 +84,15 @@ class Reader(object):
 		from pyglossary.text_reader import TextFilePosWrapper
 		self._filename = filename
 		cfile = compressionOpen(filename, mode="rt", encoding=self._encoding)
-		cfile.seek(0, 2)
-		self._fileSize = cfile.tell()
-		cfile.seek(0)
+
+		if cfile.seekable():
+			cfile.seek(0, 2)
+			self._fileSize = cfile.tell()
+			cfile.seek(0)
+			# self._glos.setInfo("input_file_size", f"{self._fileSize}")
+		else:
+			log.warning("CSV Reader: file is not seekable")
+
 		self._file = TextFilePosWrapper(cfile, self._encoding)
 		self._csvReader = csv.reader(
 			self._file,
@@ -154,7 +161,11 @@ class Reader(object):
 		return self._glos.newEntry(
 			word,
 			defi,
-			byteProgress=(self._file.tell(), self._fileSize),
+			byteProgress=(
+				(self._file.tell(), self._fileSize)
+				if self._fileSize
+				else None
+			),
 		)
 
 	def __iter__(self) -> "Iterator[BaseEntry]":

@@ -801,20 +801,23 @@ class Reader(object):
 			raise e
 
 		self._filename = filename
-		_file = compressionOpen(filename, mode="rb")
-		_file.seek(0, 2)
-		self._fileSize = _file.tell()
-		_file.seek(0)
+		cfile = compressionOpen(filename, mode="rb")
+
+		if cfile.seekable():
+			cfile.seek(0, 2)
+			self._fileSize = cfile.tell()
+			cfile.seek(0)
+			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+		else:
+			log.warning("FreeDict Reader: file is not seekable")
 
 		self._glos.setDefaultDefiFormat("h")
 
 		if self._word_title:
 			self._glos.setInfo("definition_has_headwords", "True")
 
-		self._glos.setInfo("input_file_size", f"{self._fileSize}")
-
 		context = ET.iterparse(
-			_file,
+			cfile,
 			events=("end",),
 			tag=f"{tei}teiHeader",
 		)
@@ -822,7 +825,7 @@ class Reader(object):
 			self.setMetadata(elem)
 			break
 
-		_file.close()
+		cfile.close()
 
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		from lxml import etree as ET
