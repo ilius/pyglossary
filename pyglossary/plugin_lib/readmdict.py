@@ -18,7 +18,7 @@
 # GNU General Public License for more details.
 
 import logging
-log = logging.getLogger('root')
+log = logging.getLogger(__name__)
 
 from struct import pack, unpack
 from io import BytesIO
@@ -480,6 +480,7 @@ class MDD(MDict):
 					record_block = zlib.decompress(record_block_compressed[8:])
 				except zlib.error:
 					log.error("zlib decompress error")
+					log.debug(f"record_block_compressed = {record_block_compressed!r}")
 					continue
 
 			# notice that adler32 return signed value
@@ -591,6 +592,7 @@ class MDX(MDict):
 					record_block = zlib.decompress(record_block_compressed[8:])
 				except zlib.error:
 					log.error("zlib decompress error")
+					log.debug(f"record_block_compressed = {record_block_compressed!r}")
 					continue
 
 			# notice that adler32 return signed value
