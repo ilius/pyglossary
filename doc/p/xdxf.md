@@ -2,20 +2,20 @@
 
 ### General Information
 
-| Attribute       | Value                                                                                                                                    |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Name            | Xdxf                                                                                                                                     |
-| snake_case_name | xdxf                                                                                                                                     |
-| Description     | XDXF (.xdxf)                                                                                                                             |
-| Extensions      | `.xdxf`                                                                                                                                  |
-| Read support    | Yes                                                                                                                                      |
-| Write support   | No                                                                                                                                       |
-| Single-file     | Yes                                                                                                                                      |
-| Kind            | 📝 text                                                                                                                                   |
-| Sort-on-write   | default_no                                                                                                                               |
-| Sort key        | (`headword_lower`)                                                                                                                       |
-| Wiki            | [XDXF](https://en.wikipedia.org/wiki/XDXF)                                                                                               |
-| Website         | [xdxf_description.md - @soshial/xdxf_makedict](https://github.com/soshial/xdxf_makedict/blob/master/format_standard/xdxf_description.md) |
+| Attribute       | Value                                                                                                          |
+| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| Name            | Xdxf                                                                                                           |
+| snake_case_name | xdxf                                                                                                           |
+| Description     | XDXF (.xdxf)                                                                                                   |
+| Extensions      | `.xdxf`                                                                                                        |
+| Read support    | Yes                                                                                                            |
+| Write support   | No                                                                                                             |
+| Single-file     | Yes                                                                                                            |
+| Kind            | 📝 text                                                                                                         |
+| Sort-on-write   | default_no                                                                                                     |
+| Sort key        | (`headword_lower`)                                                                                             |
+| Wiki            | [XDXF](https://en.wikipedia.org/wiki/XDXF)                                                                     |
+| Website         | [XDXF standard - @soshial/xdxf_makedict](https://github.com/soshial/xdxf_makedict/tree/master/format_standard) |
 
 ### Read options
 
