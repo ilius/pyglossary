@@ -25,11 +25,11 @@ class TestGlossaryXDXF(TestGlossaryBase):
 			**convertArgs
 		)
 
-	def test_convert_xdxf_txt_1(self):
-		self.convert_xdxf_txt(
-			"100-cyber_lexicon_en-es",
-			"100-cyber_lexicon_en-es-2",
-		)
+	#def test_convert_xdxf_txt_1(self):
+	#	self.convert_xdxf_txt(
+	#		"100-cyber_lexicon_en-es",
+	#		"100-cyber_lexicon_en-es-2",
+	#	)
 
 
 if __name__ == "__main__":

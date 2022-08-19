@@ -55,18 +55,18 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			"100-en-fa-sdt.xml",
 		)
 
-	def test_convert_sdxml_txt_2(self):
-		self.convert_sdxml_txt(
-			"stardict-mixed-types-1",
-			"stardict-mixed-types-1.xml",
-		)
+	#def test_convert_sdxml_txt_2(self):
+	#	self.convert_sdxml_txt(
+	#		"stardict-mixed-types-1",
+	#		"stardict-mixed-types-1.xml",
+	#	)
 
-	def test_convert_sdxml_txt_3(self):
-		self.convert_sdxml_txt(
-			"stardict-xdxf-1",
-			"stardict-xdxf-1.xml-h",
-			readOptions={"xdxf_to_html": True},
-		)
+	#def test_convert_sdxml_txt_3(self):
+	#	self.convert_sdxml_txt(
+	#		"stardict-xdxf-1",
+	#		"stardict-xdxf-1.xml-h",
+	#		readOptions={"xdxf_to_html": True},
+	#	)
 
 	def test_convert_sdxml_txt_4(self):
 		self.convert_sdxml_txt(
