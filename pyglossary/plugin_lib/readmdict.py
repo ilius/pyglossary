@@ -109,7 +109,11 @@ class MDict(object):
 		# MDict 3.0 encryption key derives from UUID
 		elif self._version >= 3.0:
 			if xxhash is None:
-				raise RuntimeError('xxhash module is needed to read MDict 3.0 format')
+				raise RuntimeError(
+					"xxhash module is needed to read MDict 3.0 format"
+					"\n"
+					"Run `pip3 install xxhash` to install"
+				)
 			uuid = self.header[b'UUID']
 			mid = (len(uuid) + 1) // 2
 			self._encrypted_key = xxhash.xxh64_digest(uuid[:mid]) + xxhash.xxh64_digest(uuid[mid:])
