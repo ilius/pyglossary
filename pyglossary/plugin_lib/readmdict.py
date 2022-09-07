@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# readmdict.py
+# readmdict.py from https://bitbucket.org/xwang/mdict-analysis
 # Octopus MDict Dictionary File (.mdx) and Resource File (.mdd) Analyser
 #
-# Copyright (C) 2012, 2013, 2015 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
+# Copyright (C) 2012, 2013, 2015, 2022 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,12 @@ try:
 	import lzo
 except ImportError:
 	lzo = None
-	print("LZO compression support is not available")
+
+# xxhash is used for engine version >= 3.0
+try:
+	import xxhash
+except ImportError:
+	xxhash = None
 
 # 2x3 compatible
 if sys.hexversion >= 0x03000000:
@@ -54,6 +59,9 @@ def _unescape_entities(text):
 
 
 def _fast_decrypt(data, key):
+	"""
+	XOR decryption
+	"""
 	b = bytearray(data)
 	key = bytearray(key)
 	previous = 0x36
@@ -65,26 +73,17 @@ def _fast_decrypt(data, key):
 	return bytes(b)
 
 
-def _mdx_decrypt(comp_block):
-	key = ripemd128(comp_block[4:8] + pack(b'<L', 0x3695))
-	return comp_block[0:8] + _fast_decrypt(comp_block[8:], key)
-
-
 def _salsa_decrypt(ciphertext, encrypt_key):
+	"""
+	salsa20 (8 rounds) decryption
+	"""
 	s20 = Salsa20(key=encrypt_key, IV=b"\x00"*8, rounds=8)
 	return s20.encryptBytes(ciphertext)
 
 
-def _decrypt_regcode_by_deviceid(reg_code, deviceid):
-	deviceid_digest = ripemd128(deviceid)
-	s20 = Salsa20(key=deviceid_digest, IV=b"\x00"*8, rounds=8)
-	encrypt_key = s20.encryptBytes(reg_code)
-	return encrypt_key
-
-
-def _decrypt_regcode_by_email(reg_code, email):
-	email_digest = ripemd128(email.decode().encode('utf-16-le'))
-	s20 = Salsa20(key=email_digest, IV=b"\x00"*8, rounds=8)
+def _decrypt_regcode_by_userid(reg_code, userid):
+	userid_digest = ripemd128(userid)
+	s20 = Salsa20(key=userid_digest, IV=b"\x00"*8, rounds=8)
 	encrypt_key = s20.encryptBytes(reg_code)
 	return encrypt_key
 
@@ -97,14 +96,25 @@ class MDict(object):
 	def __init__(self, fname, encoding='', passcode=None):
 		self._fname = fname
 		self._encoding = encoding.upper()
-		self._passcode = passcode
+		self._encrypted_key = None
 
 		self.header = self._read_header()
-		try:
-			self._key_list = self._read_keys()
-		except:
-			print("Try Brutal Force on Encrypted Key Blocks")
-			self._key_list = self._read_keys_brutal()
+
+		# decrypt regcode to get the encrypted key
+		if passcode is not None:
+			regcode, userid = passcode
+			if isinstance(userid, unicode):
+				userid = userid.encode('utf8')
+			self._encrypted_key = _decrypt_regcode_by_userid(regcode, userid)
+		# MDict 3.0 encryption key derives from UUID
+		elif self._version >= 3.0:
+			if xxhash is None:
+				raise RuntimeError('xxhash module is needed to read MDict 3.0 format')
+			uuid = self.header[b'UUID']
+			mid = (len(uuid) + 1) // 2
+			self._encrypted_key = xxhash.xxh64_digest(uuid[:mid]) + xxhash.xxh64_digest(uuid[mid:])
+
+		self._key_list = self._read_keys()
 
 	def __repr__(self):
 		return (
@@ -132,6 +142,9 @@ class MDict(object):
 	def _read_number(self, f):
 		return unpack(self._number_format, f.read(self._number_width))[0]
 
+	def _read_int32(self, f):
+		return unpack('>I', f.read(4))[0]
+
 	def _parse_header(self, header):
 		"""
 		extract attributes from <Dict attr="value" ... >
@@ -142,13 +155,63 @@ class MDict(object):
 			tagdict[key] = _unescape_entities(value)
 		return tagdict
 
+	def _decode_block(self, block, decompressed_size):
+		# block info: compression, encryption
+		info = unpack('<L', block[:4])[0]
+		compression_method =  info & 0xf
+		encryption_method = (info >> 4) & 0xf
+		encryption_size = (info >> 8) & 0xff
+
+		# adler checksum of the block data used as the encryption key if none given
+		adler32 = unpack('>I', block[4:8])[0]
+		encrypted_key = self._encrypted_key
+		if encrypted_key is None:
+			encrypted_key = ripemd128(block[4:8])
+
+		# block data
+		data = block[8:]
+
+		# decrypt
+		if encryption_method == 0:
+			decrypted_block = data
+		elif encryption_method == 1:
+			decrypted_block = _fast_decrypt(data[:encryption_size], encrypted_key) + data[encryption_size:]
+		elif encryption_method == 2:
+			decrypted_block = _salsa_decrypt(data[:encryption_size], encrypted_key) + data[encryption_size:]
+		else:
+			raise Exception('encryption method %d not supported' % encryption_method)
+
+		# check adler checksum over decrypted data
+		if self._version >= 3:
+			assert(hex(adler32) == hex(zlib.adler32(decrypted_block) & 0xffffffff))
+
+		# decompress
+		if compression_method == 0:
+			decompressed_block = decrypted_block
+		elif compression_method == 1:
+			if lzo is None:
+				raise RuntimeError("LZO compression is not supported")
+			header = b'\xf0' + pack('>I', decompressed_size)
+			decompressed_block = lzo.decompress(header + decrypted_block)
+		elif compression_method == 2:
+			decompressed_block = zlib.decompress(decrypted_block)
+		else:
+			raise Exception('compression method %d not supported' % compression_method)
+
+		# check adler checksum over decompressed data
+		if self._version < 3:
+			assert(hex(adler32) == hex(zlib.adler32(decompressed_block) & 0xffffffff))
+
+		return decompressed_block
+
 	def _decode_key_block_info(self, key_block_info_compressed):
 		if self._version >= 2:
 			# zlib compression
 			assert(key_block_info_compressed[:4] == b'\x02\x00\x00\x00')
 			# decrypt if needed
 			if self._encrypt & 0x02:
-				key_block_info_compressed = _mdx_decrypt(key_block_info_compressed)
+				key = ripemd128(key_block_info_compressed[4:8] + pack(b'<L', 0x3695))
+				key_block_info_compressed = key_block_info_compressed[:8] + _fast_decrypt(key_block_info_compressed[8:], key)
 			# decompress
 			key_block_info = zlib.decompress(key_block_info_compressed[8:])
 			# adler checksum
@@ -206,29 +269,9 @@ class MDict(object):
 		key_list = []
 		i = 0
 		for compressed_size, decompressed_size in key_block_info_list:
-			start = i
-			end = i + compressed_size
-			# 4 bytes : compression type
-			key_block_type = key_block_compressed[start:start+4]
-			# 4 bytes : adler checksum of decompressed key block
-			adler32 = unpack('>I', key_block_compressed[start+4:start+8])[0]
-			if key_block_type == b'\x00\x00\x00\x00':
-				key_block = key_block_compressed[start+8:end]
-			elif key_block_type == b'\x01\x00\x00\x00':
-				if lzo is None:
-					print("LZO compression is not supported")
-					break
-				# decompress key block
-				header = b'\xf0' + pack('>I', decompressed_size)
-				key_block = lzo.decompress(header + key_block_compressed[start+8:end])
-			elif key_block_type == b'\x02\x00\x00\x00':
-				# decompress key block
-				key_block = zlib.decompress(key_block_compressed[start+8:end])
+			key_block = self._decode_block(key_block_compressed[i:i+compressed_size], decompressed_size)
 			# extract one single key block into a key list
 			key_list += self._split_key_block(key_block)
-			# notice that adler32 returns signed value
-			assert(adler32 == zlib.adler32(key_block) & 0xffffffff)
-
 			i += compressed_size
 		return key_list
 
@@ -270,20 +313,25 @@ class MDict(object):
 		f.close()
 
 		# header text in utf-16 encoding ending with '\x00\x00'
-		header_text = header_bytes[:-2].decode('utf-16').encode('utf-8')
+		if header_bytes[-2:] == b'\x00\x00':
+			header_text = header_bytes[:-2].decode('utf-16').encode('utf-8')
+		else:
+			header_text = header_bytes[:-1]
 		header_tag = self._parse_header(header_text)
+
 		if not self._encoding:
-			encoding = header_tag[b'Encoding']
+			encoding = header_tag.get(b'Encoding', b'utf-8')
 			if sys.hexversion >= 0x03000000:
 				encoding = encoding.decode('utf-8')
 			# GB18030 > GBK > GB2312
 			if encoding in ['GBK', 'GB2312']:
 				encoding = 'GB18030'
 			self._encoding = encoding
+
 		# encryption flag
-		#   0x00 - no encryption
-		#   0x01 - encrypt record block
-		#   0x02 - encrypt key info block
+		#	0x00 - no encryption, "Allow export to text" is checked in MdxBuilder 3.
+		#	0x01 - encrypt record block, "Encryption Key" is given in MdxBuilder 3.
+		#	0x02 - encrypt key info block, "Allow export to text" is unchecked in MdxBuilder 3.
 		if b'Encrypted' not in header_tag or header_tag[b'Encrypted'] == b'No':
 			self._encrypt = 0
 		elif header_tag[b'Encrypted'] == b'Yes':
@@ -292,9 +340,9 @@ class MDict(object):
 			self._encrypt = int(header_tag[b'Encrypted'])
 
 		# stylesheet attribute if present takes form of:
-		#   style_number # 1-255
-		#   style_begin  # or ''
-		#   style_end    # or ''
+		#	style_number # 1-255
+		#	style_begin  # or ''
+		#	style_end	 # or ''
 		# store stylesheet in dict in the form of
 		# {'number' : ('style_begin', 'style_end')}
 		self._stylesheet = {}
@@ -312,10 +360,70 @@ class MDict(object):
 		else:
 			self._number_width = 8
 			self._number_format = '>Q'
+			# version 3.0 uses UTF-8 only
+			if self._version >= 3:
+				self._encoding = 'UTF-8'
 
 		return header_tag
 
 	def _read_keys(self):
+		if self._version >= 3:
+			return self._read_keys_v3()
+		else:
+			# if no regcode is given, try brutal force (only for engine <= 2)
+			if (self._encrypt & 0x01) and self._encrypted_key is None:
+				print("Try Brutal Force on Encrypted Key Blocks")
+				return self._read_keys_brutal()
+			else:
+				return self._read_keys_v1v2()
+
+	def _read_keys_v3(self):
+		f = open(self._fname, 'rb')
+		f.seek(self._key_block_offset)
+
+		# find all blocks offset
+		while True:
+			block_type = self._read_int32(f)
+			block_size = self._read_number(f)
+			block_offset = f.tell()
+			# record data
+			if block_type == 0x01000000:
+				self._record_block_offset = block_offset
+			# record index
+			elif block_type == 0x02000000:
+				self._record_index_offset = block_offset
+			# key data
+			elif block_type == 0x03000000:
+				self._key_data_offset = block_offset
+			# key index
+			elif block_type == 0x04000000:
+				self._key_index_offset = block_offset
+			else:
+				raise RuntimeError("Unknown block type %d" % block_type)
+			f.seek(block_size, 1)
+			# test the end of file
+			if f.read(4):
+				f.seek(-4, 1)
+			else:
+				break
+
+		# read key data
+		f.seek(self._key_data_offset)
+		number = self._read_int32(f)
+		total_size = self._read_number(f)
+		key_list = []
+		for i in range(number):
+			decompressed_size = self._read_int32(f)
+			compressed_size = self._read_int32(f)
+			block_data = f.read(compressed_size)
+			decompressed_block_data = self._decode_block(block_data, decompressed_size)
+			key_list.extend(self._split_key_block(decompressed_block_data))
+
+		f.close()
+		self._num_entries = len(key_list)
+		return key_list
+
+	def _read_keys_v1v2(self):
 		f = open(self._fname, 'rb')
 		f.seek(self._key_block_offset)
 
@@ -327,16 +435,7 @@ class MDict(object):
 		block = f.read(num_bytes)
 
 		if self._encrypt & 1:
-			if self._passcode is None:
-				raise RuntimeError('user identification is needed to read encrypted file')
-			regcode, userid = self._passcode
-			if isinstance(userid, unicode):
-				userid = userid.encode('utf8')
-			if self.header[b'RegisterBy'] == b'EMail':
-				encrypted_key = _decrypt_regcode_by_email(regcode, userid)
-			else:
-				encrypted_key = _decrypt_regcode_by_deviceid(regcode, userid)
-			block = _salsa_decrypt(block, encrypted_key)
+			block = _salsa_decrypt(block, self._encrypted_key)
 
 		# decode this block
 		sf = BytesIO(block)
@@ -417,25 +516,50 @@ class MDict(object):
 		self._num_entries = len(key_list)
 		return key_list
 
-
-class MDD(MDict):
-	"""
-	MDict resource file format (*.MDD) reader.
-	>>> mdd = MDD('example.mdd')
-	>>> len(mdd)
-	208
-	>>> for filename,content in mdd.items():
-	... print filename, content[:10]
-	"""
-	def __init__(self, fname, passcode=None):
-		MDict.__init__(self, fname, encoding='UTF-16', passcode=passcode)
-
 	def items(self):
 		"""Return a generator which in turn produce tuples in the form of (filename, content)
 		"""
-		return self._decode_record_block()
+		return self._read_records()
 
-	def _decode_record_block(self):
+	def _read_records(self):
+		if self._version >= 3:
+			yield from self._read_records_v3()
+		else:
+			yield from self._read_records_v1v2()
+
+	def _read_records_v3(self):
+		f = open(self._fname, 'rb')
+		f.seek(self._record_block_offset)
+
+		offset = 0
+		i = 0
+		size_counter = 0
+
+		num_record_blocks = self._read_int32(f)
+		num_bytes = self._read_number(f)
+		for j in range(num_record_blocks):
+			decompressed_size = self._read_int32(f)
+			compressed_size = self._read_int32(f)
+			record_block = self._decode_block(f.read(compressed_size), decompressed_size)
+
+			# split record block according to the offset info from key block
+			while i < len(self._key_list):
+				record_start, key_text = self._key_list[i]
+				# reach the end of current record block
+				if record_start - offset >= len(record_block):
+					break
+				# record end index
+				if i < len(self._key_list)-1:
+					record_end = self._key_list[i+1][0]
+				else:
+					record_end = len(record_block) + offset
+				i += 1
+				data = record_block[record_start-offset:record_end-offset]
+				yield key_text, self._treat_record_data(data)
+			offset += len(record_block)
+			size_counter += compressed_size
+
+	def _read_records_v1v2(self):
 		f = open(self._fname, 'rb')
 		f.seek(self._record_block_offset)
 
@@ -461,32 +585,12 @@ class MDD(MDict):
 		size_counter = 0
 		for compressed_size, decompressed_size in record_block_info_list:
 			record_block_compressed = f.read(compressed_size)
-			# 4 bytes: compression type
-			record_block_type = record_block_compressed[:4]
-			# 4 bytes: adler32 checksum of decompressed record block
-			adler32 = unpack('>I', record_block_compressed[4:8])[0]
-			if record_block_type == b'\x00\x00\x00\x00':
-				record_block = record_block_compressed[8:]
-			elif record_block_type == b'\x01\x00\x00\x00':
-				if lzo is None:
-					print("LZO compression is not supported")
-					break
-				# decompress
-				header = b'\xf0' + pack('>I', decompressed_size)
-				record_block = lzo.decompress(header + record_block_compressed[8:])
-			elif record_block_type == b'\x02\x00\x00\x00':
-				# decompress
-				try:
-					record_block = zlib.decompress(record_block_compressed[8:])
-				except zlib.error:
-					log.error("zlib decompress error")
-					log.debug(f"record_block_compressed = {record_block_compressed!r}")
-					continue
-
-			# notice that adler32 return signed value
-			assert(adler32 == zlib.adler32(record_block) & 0xffffffff)
-
-			assert(len(record_block) == decompressed_size)
+			try:
+				record_block = self._decode_block(record_block_compressed, decompressed_size)
+			except zlib.error:
+				log.error("zlib decompress error")
+				log.debug(f"record_block_compressed = {record_block_compressed!r}")
+				continue
 			# split record block according to the offset info from key block
 			while i < len(self._key_list):
 				record_start, key_text = self._key_list[i]
@@ -500,12 +604,28 @@ class MDD(MDict):
 					record_end = len(record_block) + offset
 				i += 1
 				data = record_block[record_start-offset:record_end-offset]
-				yield key_text, data
+				yield key_text, self._treat_record_data(data)
 			offset += len(record_block)
 			size_counter += compressed_size
-		# assert(size_counter == record_block_size)
+		#assert(size_counter == record_block_size)
 
 		f.close()
+
+	def _treat_record_data(self, data):
+		return data
+
+
+class MDD(MDict):
+	"""
+	MDict resource file format (*.MDD) reader.
+	>>> mdd = MDD('example.mdd')
+	>>> len(mdd)
+	208
+	>>> for filename,content in mdd.items():
+	... print filename, content[:10]
+	"""
+	def __init__(self, fname, passcode=None):
+		MDict.__init__(self, fname, encoding='UTF-16', passcode=passcode)
 
 
 class MDX(MDict):
@@ -520,11 +640,6 @@ class MDX(MDict):
 	def __init__(self, fname, encoding='', substyle=False, passcode=None):
 		MDict.__init__(self, fname, encoding, passcode)
 		self._substyle = substyle
-
-	def items(self):
-		"""Return a generator which in turn produce tuples in the form of (key, value)
-		"""
-		return self._decode_record_block()
 
 	def _substitute_stylesheet(self, txt):
 		# substitute stylesheet definition
@@ -544,86 +659,13 @@ class MDX(MDict):
 				txt_styled = txt_styled + style[0] + p + style[1]
 		return txt_styled
 
-	def _decode_record_block(self):
-		f = open(self._fname, 'rb')
-		f.seek(self._record_block_offset)
-
-		num_record_blocks = self._read_number(f)
-		num_entries = self._read_number(f)
-		assert(num_entries == self._num_entries)
-		record_block_info_size = self._read_number(f)
-		record_block_size = self._read_number(f)
-
-		# record block info section
-		record_block_info_list = []
-		size_counter = 0
-		for i in range(num_record_blocks):
-			compressed_size = self._read_number(f)
-			decompressed_size = self._read_number(f)
-			record_block_info_list += [(compressed_size, decompressed_size)]
-			size_counter += self._number_width * 2
-		assert(size_counter == record_block_info_size)
-
-		# actual record block data
-		offset = 0
-		i = 0
-		size_counter = 0
-		for compressed_size, decompressed_size in record_block_info_list:
-			record_block_compressed = f.read(compressed_size)
-			# 4 bytes indicates block compression type
-			record_block_type = record_block_compressed[:4]
-			# 4 bytes adler checksum of uncompressed content
-			adler32 = unpack('>I', record_block_compressed[4:8])[0]
-			# no compression
-			if record_block_type == b'\x00\x00\x00\x00':
-				record_block = record_block_compressed[8:]
-			# lzo compression
-			elif record_block_type == b'\x01\x00\x00\x00':
-				if lzo is None:
-					print("LZO compression is not supported")
-					break
-				# decompress
-				header = b'\xf0' + pack('>I', decompressed_size)
-				record_block = lzo.decompress(header + record_block_compressed[8:])
-			# zlib compression
-			elif record_block_type == b'\x02\x00\x00\x00':
-				# decompress
-				try:
-					record_block = zlib.decompress(record_block_compressed[8:])
-				except zlib.error:
-					log.error("zlib decompress error")
-					log.debug(f"record_block_compressed = {record_block_compressed!r}")
-					continue
-
-			# notice that adler32 return signed value
-			assert(adler32 == zlib.adler32(record_block) & 0xffffffff)
-
-			assert(len(record_block) == decompressed_size)
-			# split record block according to the offset info from key block
-			while i < len(self._key_list):
-				record_start, key_text = self._key_list[i]
-				# reach the end of current record block
-				if record_start - offset >= len(record_block):
-					break
-				# record end index
-				if i < len(self._key_list)-1:
-					record_end = self._key_list[i+1][0]
-				else:
-					record_end = len(record_block) + offset
-				i += 1
-				record = record_block[record_start-offset:record_end-offset]
-				# convert to utf-8
-				record = record.decode(self._encoding, errors='ignore').strip(unicode('\x00')).encode('utf-8')
-				# substitute styles
-				if self._substyle and self._stylesheet:
-					record = self._substitute_stylesheet(record)
-
-				yield key_text, record
-			offset += len(record_block)
-			size_counter += compressed_size
-		# assert(size_counter == record_block_size)
-
-		f.close()
+	def _treat_record_data(self, data):
+		# convert to utf-8
+		data = data.decode(self._encoding, errors='ignore').strip(u'\x00').encode('utf-8')
+		# substitute styles
+		if self._substyle and self._stylesheet:
+			data = self._substitute_stylesheet(data)
+		return data
 
 
 if __name__ == '__main__':
