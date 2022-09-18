@@ -1529,7 +1529,7 @@ class UI(tix.Frame, UIBase):
 
 		self._convertOptions = convertOptions
 		if convertOptions:
-			log.info(f"Using convertOptions={convertOptions}")
+			log.info(f"Using {convertOptions=}")
 
 		self._glossarySetAttrs = glossarySetAttrs
 

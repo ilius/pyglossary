@@ -42,7 +42,7 @@ def make_entry(trad, simp, pinyin, eng, traditional_title):
 
 def colorize(hf, syllables, tones):
 	if len(syllables) != len(tones):
-		log.warning(f"unmatched tones: syllables={syllables!r}, tones={tones}")
+		log.warning(f"unmatched tones: {syllables=}, {tones=}")
 		with hf.element("div", style="display: inline-block"):
 			for syllable in syllables:
 				with hf.element("font", color=""):

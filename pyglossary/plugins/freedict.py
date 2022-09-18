@@ -661,12 +661,12 @@ class Reader(object):
 			return
 		extent = extent_elem.text
 		if not extent.endswith(" headwords"):
-			log.warning(f"unexpected extent={extent}")
+			log.warning(f"unexpected {extent=}")
 			return
 		try:
 			self._wordCount = int(extent.split(" ")[0].replace(",", ""))
 		except Exception:
-			log.exception(f"unexpected extent={extent}")
+			log.exception(f"unexpected {extent=}")
 
 	def tostring(self, elem: "lxml.etree.Element") -> str:
 		from lxml import etree as ET

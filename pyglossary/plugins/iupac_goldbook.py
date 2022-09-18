@@ -148,7 +148,7 @@ class Reader(object):
 			_id = elem.attrib.get("id")
 			termE = elem.find("./term")
 			if termE is None:
-				log.warning(f"no term, code={code}, id={_id}")
+				log.warning(f"no term, {code=}, {_id=}")
 				continue
 
 			term = self.getTerm(termE)
@@ -197,7 +197,7 @@ class Reader(object):
 				replacedbyCode = replacedby.split(".")[-1]
 				replacedbyTerm = termByCode.get(replacedbyCode)
 				if replacedbyTerm is None:
-					log.warning(f"{term}: replacedby={replacedby}")
+					log.warning(f"{term}: {replacedby=}")
 					replacedbyTerm = replacedbyCode
 				defiParts.append(
 					f'Replaced by: <a href="bword://{replacedbyTerm}">{replacedbyTerm}</a>'
@@ -211,7 +211,7 @@ class Reader(object):
 					relatedCode = relatedURL.split("/")[-1]
 					relatedTerm = termByCode.get(relatedCode)
 					if not relatedTerm:
-						log.warning(f"{term}: related={relatedURL}")
+						log.warning(f"{term}: {relatedURL=}")
 						relatedTerm = relatedCode
 					relatedLinkList.append(
 						f'<a href="bword://{relatedTerm}">{relatedTerm}</a>'
@@ -232,7 +232,7 @@ class Reader(object):
 			try:
 				defi = "<br/>".join(defiParts)
 			except Exception:
-				log.error(f"defiParts = {defiParts!r}")
+				log.error(f"{defiParts = }")
 				continue
 
 			yield glos.newEntry(

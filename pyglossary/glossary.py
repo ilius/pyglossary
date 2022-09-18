@@ -705,7 +705,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		namedSortKey = namedSortKeyByName.get(sortKeyName)
 		if namedSortKey is None:
-			log.critical(f"invalid sortKeyName = {sortKeyName!r}")
+			log.critical(f"invalid {sortKeyName = }")
 			return
 
 		if not sortEncoding:
@@ -946,7 +946,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			sort = False
 
 		if direct and sqlite:
-			raise ValueError(f"Conflictng arguments: direct={direct}, sqlite={sqlite}")
+			raise ValueError(f"Conflictng arguments: {direct=}, {sqlite=}")
 
 		if not sort:
 			if direct is None:
@@ -990,7 +990,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		namedSortKey = namedSortKeyByName.get(sortKeyName)
 		if namedSortKey is None:
-			log.critical(f"invalid sortKeyName = {sortKeyName!r}")
+			log.critical(f"invalid {sortKeyName = }")
 			return None
 
 		log.info(f"Using sortKeyName = {namedSortKey.name!r}")
@@ -1058,9 +1058,9 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			return
 
 		if readOptions:
-			log.info(f"readOptions = {readOptions}")
+			log.info(f"{readOptions = }")
 		if writeOptions:
-			log.info(f"writeOptions = {writeOptions}")
+			log.info(f"{writeOptions = }")
 
 		outputArgs = self.detectOutputFormat(
 			filename=outputFilename,
@@ -1147,7 +1147,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
 		if total == 0:
-			log.warning(f"pos={pos}, total={total}")
+			log.warning(f"{pos=}, {total=}")
 			return
 		self.ui.progress(
 			min(pos + 1, total) / total,

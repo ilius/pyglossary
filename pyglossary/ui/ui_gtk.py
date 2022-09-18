@@ -631,7 +631,7 @@ class FormatBox(FormatButton):
 		elif kind == "w":
 			depends = plugin.writeDepends
 		else:
-			raise RuntimeError(f"invalid kind={kind}")
+			raise RuntimeError(f"invalid {kind=}")
 		uninstalled = checkDepends(depends)
 
 		self.dependsButton.pkgNames = uninstalled
@@ -1340,7 +1340,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 		self.convertOptions = convertOptions
 		if convertOptions:
-			log.debug(f"Using convertOptions={convertOptions}")
+			log.debug(f"Using {convertOptions=}")
 
 		self._glossarySetAttrs = glossarySetAttrs
 

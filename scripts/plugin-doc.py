@@ -240,7 +240,7 @@ for p in plugins:
 			try:
 				url, title = website
 			except ValueError:
-				raise ValueError(f"website = {website!r}")
+				raise ValueError(f"{website = }")
 			website_md = renderLink(title, url)
 
 	(
@@ -294,7 +294,7 @@ for p in plugins:
 			for optName, opt in optionsProp.items()
 		}
 	except Exception:
-		print(f"optionsProp = {optionsProp}")
+		print(f"{optionsProp = }")
 		raise
 	optionsComment = {
 		optName: opt.comment.replace("\n", "<br />")

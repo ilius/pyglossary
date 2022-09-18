@@ -51,7 +51,7 @@ class GlossaryInfo(object):
 
 	def getInfo(self, key: str) -> str:
 		if not isinstance(key, str):
-			raise TypeError(f"invalid key={key!r}, must be str")
+			raise TypeError(f"invalid {key=}, must be str")
 		return self._info.get(
 			infoKeysAliasDict.get(key.lower(), key),
 			"",
@@ -66,7 +66,7 @@ class GlossaryInfo(object):
 			return
 
 		if not isinstance(key, str):
-			raise TypeError(f"invalid key={key!r}, must be str")
+			raise TypeError(f"invalid {key=}, must be str")
 
 		key = fixUtf8(key)
 		value = fixUtf8(str(value))
@@ -127,13 +127,13 @@ class GlossaryInfo(object):
 	@sourceLang.setter
 	def sourceLang(self, lang) -> None:
 		if not isinstance(lang, Lang):
-			raise TypeError(f"invalid lang={lang}, must be a Lang object")
+			raise TypeError(f"invalid {lang=}, must be a Lang object")
 		self._info[c_sourceLang] = lang.name
 
 	@targetLang.setter
 	def targetLang(self, lang) -> None:
 		if not isinstance(lang, Lang):
-			raise TypeError(f"invalid lang={lang}, must be a Lang object")
+			raise TypeError(f"invalid {lang=}, must be a Lang object")
 		self._info[c_targetLang] = lang.name
 
 	@property
@@ -196,14 +196,14 @@ class GlossaryInfo(object):
 
 		def checkPart(part: str):
 			for match in re.findall("\w\w\w*", part):
-				# print(f"match = {match!r}")
+				# print(f"{match = }")
 				lang = langDict[match]
 				if lang is None:
 					continue
 				langNames.append(lang.name)
 
 		for part in re.split("-| to ", name):
-			# print(f"part = {part!r}")
+			# print(f"{part = }")
 			checkPart(part)
 			if len(langNames) >= 2:
 				break
@@ -216,7 +216,7 @@ class GlossaryInfo(object):
 			return
 
 		if len(langNames) > 2:
-			log.warning(f"detectLangsFromName: langNames = {langNames!r}")
+			log.warning(f"detectLangsFromName: {langNames = }")
 
 		log.info(
 			f"Detected sourceLang={langNames[0]!r}, "

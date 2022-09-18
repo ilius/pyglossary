@@ -66,7 +66,7 @@ def getEntryFilterConfigPair(name: str) -> "Tuple[str, Option]":
 	elif isinstance(default, str):
 		optClass = StrOption
 	else:
-		raise TypeError(f"default = {default!r}")
+		raise TypeError(f"{default = }")
 	return name, optClass(
 		hasFlag=True,
 		comment=filterClass.desc,

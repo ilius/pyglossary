@@ -88,7 +88,7 @@ def reverseGlossary(
 						defi = ", ".join(result) + "."
 				except Exception:
 					log.exception("")
-					log.debug(f"result = {result}")
+					log.debug(f"{result = }")
 					return
 				saveFile.write(f"{word}\t{defi}\n")
 			yield wordI

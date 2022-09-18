@@ -120,7 +120,7 @@ class Reader(object):
 				defi = b_defi.decode("utf_8", 'ignore')
 				defi = self.prettifyDefinitionText(defi)
 			except Exception as e:
-				log.error(f"b_defi = {b_defi}")
+				log.error(f"{b_defi = }")
 				raise e
 			yield self._glos.newEntry(word, defi)
 

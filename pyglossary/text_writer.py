@@ -112,7 +112,7 @@ class TextGlossaryWriter(object):
 			for key, value in self._glos.iterInfo():
 				# both key and value are supposed to be non-empty string
 				if not (key and value):
-					log.warning(f"skipping info key={key!r}, value={value!r}")
+					log.warning(f"skipping info {key=}, {value=}")
 					continue
 				key = outInfoKeysAliasDict.get(key, key)
 				if not key:

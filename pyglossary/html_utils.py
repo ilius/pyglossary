@@ -328,7 +328,7 @@ def build_name2codepoint_dict():
 	for key in sorted(name2str.keys(), key=lambda s: (s.lower(), s)):
 		value = name2str[key]
 		if len(value) > 1:
-			raise ValueError(f"value = {value!r}")
+			raise ValueError(f"{value = }")
 		print(f"\t\"{key}\": 0x{ord(value):0>4x},  # {value}")
 
 

@@ -730,7 +730,7 @@ def main():
 			writeOptions[optName] = optValueNew
 
 	if convertOptions:
-		log.debug(f"convertOptions = {convertOptions}")
+		log.debug(f"{convertOptions = }")
 
 	runKeywordArgs = dict(
 		inputFilename=args.inputFilename,

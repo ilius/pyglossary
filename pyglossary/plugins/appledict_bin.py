@@ -230,8 +230,7 @@ class Reader(object):
 			entryRoot = etree.fromstring(entryFull)
 		except etree.XMLSyntaxError as e:
 			log.error(
-				f"pos={pos}, len(buf)={len(self._buf)}, "
-				f"entryFull={entryFull!r}"
+				f"{pos=}, len(buf)={len(self._buf)}, {entryFull=}"
 			)
 			raise e
 		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
@@ -271,7 +270,7 @@ class Reader(object):
 					continue
 				id_i = b_entry.find(b'id="')
 				if id_i < 0:
-					log.error(f"id not found: {b_entry}, pos={pos}, buf={self._buf}")
+					log.error(f"id not found: {b_entry}, {pos=}, buf={self._buf}")
 					continue
 				id_j = b_entry.find(b'"', id_i + 4)
 				if id_j < 0:

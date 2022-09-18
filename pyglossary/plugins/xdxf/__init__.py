@@ -154,7 +154,7 @@ class Reader(object):
 				defi = defi[4:-5].decode(self._encoding).strip()
 				defiFormat = "x"
 
-			# log.info(f"defi={defi}, words={words}")
+			# log.info(f"{defi=}, {words=}")
 			yield self._glos.newEntry(
 				words,
 				defi,

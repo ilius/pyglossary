@@ -112,7 +112,7 @@ class Reader(object):
 				yield None
 				# TODO: test with more zim files
 				# Looks like: zItem.path == zEntry.path == "-" + word
-				# print(f"b_content empty, word={word!r}, zEntry.path={zEntry.path!r}, zItem.path={zItem.path}")
+				# print(f"b_content empty, {word=}, {zEntry.path=}, {zItem.path=}")
 				# if zEntry.path == "-" + word:
 				# 	yield None
 				# else:
@@ -141,7 +141,7 @@ class Reader(object):
 				continue
 
 			if mimetype not in self.resourceMimeTypes:
-				log.warning(f"Unrecognized mimetype={mimetype!r}")
+				log.warning(f"Unrecognized {mimetype=}")
 
 			if len(word) > f_namemax:
 				fileNameTooLong.append(word)

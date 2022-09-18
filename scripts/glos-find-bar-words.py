@@ -21,7 +21,7 @@ Glossary.init(
 )
 
 for direct in (True, False):
-	print(f"\n-------- direct={direct}")
+	print(f"\n-------- {direct=}")
 
 	glos = Glossary()
 	glos.config = {

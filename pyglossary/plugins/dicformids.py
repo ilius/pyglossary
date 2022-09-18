@@ -186,8 +186,8 @@ class Writer(object):
 		def writeBucket(dicIndex: int, entryList: "List[BaseEntry]"):
 			nonlocal dicMaxSize
 			log.debug(
-				f"dicIndex={dicIndex}, len(entryList)={len(entryList)}"
-				f", dicMaxSize={dicMaxSize}"
+				f"{dicIndex=}, {len(entryList)=}"
+				f", {dicMaxSize=}"
 			)
 			dicFp = open(join(
 				self._dirname,

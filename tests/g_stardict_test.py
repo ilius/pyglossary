@@ -353,7 +353,7 @@ sametypesequence=abcd
 			outputFilename=outputFilename,
 		)
 		self.assertIsNone(result)
-		self.assertLogCritical("Invalid sametypesequence = abcd")
+		self.assertLogCritical("Invalid sametypesequence = 'abcd'")
 		self.assertLogCritical(f"Reading file {relpath(inputFilename)!r} failed.")
 
 

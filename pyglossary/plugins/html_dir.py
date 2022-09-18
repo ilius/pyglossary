@@ -361,7 +361,7 @@ class Writer(object):
 		tailSize = len(self._tail.encode(encoding))
 
 		if max_file_size < len(header) + tailSize:
-			raise ValueError(f"max_file_size={max_file_size} is too small")
+			raise ValueError(f"{max_file_size=} is too small")
 
 		max_file_size -= tailSize
 
@@ -421,7 +421,7 @@ class Writer(object):
 				continue
 
 			if entry.defi.startswith('<!DOCTYPE html>') and defiFormat != "h":
-				log.error(f"bad defiFormat={defiFormat}")
+				log.error(f"bad {defiFormat=}")
 				defiFormat = "h"
 
 			entry.detectDefiFormat()

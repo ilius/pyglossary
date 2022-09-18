@@ -155,7 +155,7 @@ class Reader(object):
 			"extracting links done, "
 			f"sizeof(linksDict)={sys.getsizeof(linksDict)}"
 		)
-		log.info(f"wordCount = {wordCount}")
+		log.info(f"{wordCount = }")
 		self._linksDict = linksDict
 		self._wordCount = wordCount
 		self._mdx = MDX(self._filename, self._encoding, self._substyle)

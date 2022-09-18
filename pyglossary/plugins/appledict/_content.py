@@ -158,7 +158,7 @@ def prepare_content_with_soup(
 
 		elif href.startswith(("phonetics", "help:phonetics")):
 			# for oxford9
-			log.debug(f"phonetics: tag={tag}")
+			log.debug(f"phonetics: {tag=}")
 			if tag.audio and "name" in tag.audio.attrs:
 				tag["onmousedown"] = f"this.lastChild.play(); return false;"
 				src_name = tag.audio["name"].replace("#", "_")

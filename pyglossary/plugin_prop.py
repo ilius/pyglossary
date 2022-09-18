@@ -36,7 +36,7 @@ def optionsPropFromDict(optionsPropDict):
 		try:
 			prop = optionFromDict(propDict)
 		except Exception:
-			log.exception(f"name={name!r}, propDict={propDict}\n")
+			log.exception(f"{name=}, {propDict=}\n")
 			continue
 		props[name] = prop
 	return props
@@ -283,9 +283,7 @@ class PluginProp(object):
 			default = getattr(rwclass, attrName)
 			if name not in optionsProp:
 				if not callable(default):
-					log.warning(
-						f"format={self.name}, attrName={attrName}, type={type(default)}"
-					)
+					log.warning(f"format={self.name}, {attrName=}, {type(default)=}")
 				continue
 			prop = optionsProp[name]
 			if prop.disabled:
@@ -442,5 +440,5 @@ class PluginProp(object):
 			if name not in ("filename", "dirname"):
 				extraOptNames.append(name)
 		if extraOptNames:
-			log.warning(f"{format}: extraOptNames = {extraOptNames}")
+			log.warning(f"{format}: {extraOptNames = }")
 		return extraOptNames

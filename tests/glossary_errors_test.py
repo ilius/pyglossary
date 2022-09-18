@@ -229,7 +229,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			glos.sourceLang = "foobar"
 		except TypeError as e:
-			self.assertEqual(str(e), "invalid lang=foobar, must be a Lang object")
+			self.assertEqual(str(e), "invalid lang='foobar', must be a Lang object")
 		else:
 			self.fail("must raise a TypeError")
 
@@ -238,7 +238,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			glos.targetLang = "foobar"
 		except TypeError as e:
-			self.assertEqual(str(e), "invalid lang=foobar, must be a Lang object")
+			self.assertEqual(str(e), "invalid lang='foobar', must be a Lang object")
 		else:
 			self.fail("must raise a TypeError")
 

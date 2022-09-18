@@ -120,7 +120,7 @@ def checkbox_prompt(
 		check.value = not check.value
 		# cursor_pos = check.formatMessage().find("[") + 1
 		# cur_cursor_pos = session.default_buffer.cursor_position
-		# print(f"cur_cursor_pos={cur_cursor_pos}, cursor_pos={cursor_pos}")
+		# print(f"{cur_cursor_pos=}, {cursor_pos=}")
 		# session.default_buffer.cursor_position = cursor_pos
 
 	@bindings.add(Keys.Any)
@@ -842,7 +842,7 @@ class UI(ui_cmd.UI):
 			return
 
 		if sortKeyName not in namedSortKeyByName:
-			log.error(f"invalid sortKeyName = {sortKeyName!r}")
+			log.error(f"invalid {sortKeyName = }")
 			return
 
 		self._convertOptions["sortKeyName"] = sortKeyName

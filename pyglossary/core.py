@@ -316,7 +316,7 @@ if os.getenv("WARNINGS"):
 
 if getattr(sys, "frozen", False):
 	# PyInstaller frozen executable
-	log.info(f"sys.frozen = {sys.frozen}")
+	log.info(f"{sys.frozen = }")
 	rootDir = dirname(sys.executable)
 	uiDir = join(rootDir, "pyglossary", "ui")
 else:

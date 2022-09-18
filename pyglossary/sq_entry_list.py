@@ -59,7 +59,7 @@ class SqEntryList(list):
 		self._cur = self._con.cursor()
 
 		if not filename:
-			raise ValueError(f"invalid filename={filename!r}")
+			raise ValueError(f"invalid {filename=}")
 
 		self._orderBy = "rowid"
 		self._sorted = False
@@ -111,12 +111,12 @@ class SqEntryList(list):
 				col[2](entry.l_word) for col in self._sqliteSortKey
 			]
 		except Exception:
-			log.critical(f"error in _sqliteSortKey funcs for rawEntry = {rawEntry!r}")
+			log.critical(f"error in _sqliteSortKey funcs for {rawEntry = }")
 			raise
 		try:
 			pickleEntry = dumps(rawEntry, protocol=PICKLE_PROTOCOL)
 		except Exception:
-			log.critical(f"error in pickle.dumps for rawEntry = {rawEntry!r}")
+			log.critical(f"error in pickle.dumps for {rawEntry = }")
 			raise
 		self._cur.execute(
 			f"insert into data({self._columnNames}, pickle)"
@@ -158,11 +158,11 @@ class SqEntryList(list):
 		# sql == "CREATE INDEX sortkey ON data(wordlower,word)"
 		i = sql.find("(")
 		if i < 0:
-			log.error(f"error parsing index sql={sql!r}")
+			log.error(f"error parsing index {sql=}")
 			return False
 		j = sql.find(")", i)
 		if j < 0:
-			log.error(f"error parsing index sql={sql!r}")
+			log.error(f"error parsing index {sql=}")
 			return False
 		columnNames = sql[i + 1:j]
 		self._sorted = True

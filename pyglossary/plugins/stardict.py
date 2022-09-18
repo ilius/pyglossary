@@ -169,7 +169,7 @@ class Reader(object):
 		self.readIfoFile()
 		sametypesequence = self._glos.getInfo("sametypesequence")
 		if not verifySameTypeSequence(sametypesequence):
-			raise LookupError(f"Invalid sametypesequence = {sametypesequence}")
+			raise LookupError(f"Invalid {sametypesequence = }")
 		self._indexData = self.readIdxFile()
 		self._wordCount = len(self._indexData)
 		self._synDict = self.readSynFile()
@@ -321,7 +321,7 @@ class Reader(object):
 				return "\n".join(defis), _format
 
 		if len(defiFormatSet) == 0:
-			log.error(f"empty defiFormatSet, rawDefiList={rawDefiList}")
+			log.error(f"empty defiFormatSet, {rawDefiList=}")
 			return "", ""
 
 		# convert plaintext or xdxf to html
@@ -576,7 +576,7 @@ class Writer(object):
 		self._targetLang = None
 
 	def open(self, filename: str) -> None:
-		log.debug(f"open: filename = {filename}")
+		log.debug(f"open: {filename = }")
 		fileBasePath = filename
 		##
 		if splitext(filename)[1].lower() == ".ifo":
@@ -660,7 +660,7 @@ class Writer(object):
 		Parameters:
 		defiFormat - format of article definition: h - html, m - plain text
 		"""
-		log.debug(f"writeCompact: defiFormat={defiFormat}")
+		log.debug(f"writeCompact: {defiFormat=}")
 		dictMark = 0
 		altIndexList = []  # list of tuples (b"alternate", entryIndex)
 
@@ -748,7 +748,7 @@ class Writer(object):
 			defiFormat = entry.defiFormat
 			defiFormatCounter[defiFormat] += 1
 			if defiFormat not in ("h", "m", "x"):
-				log.error(f"invalid defiFormat={defiFormat}, using 'm'")
+				log.error(f"invalid {defiFormat=}, using 'm'")
 				defiFormat = "m"
 
 			words = entry.l_word  # list of strs
@@ -825,7 +825,7 @@ class Writer(object):
 		Parameters:
 		defiFormat - format of article definition: h - html, m - plain text
 		"""
-		log.debug(f"writeCompactMergeSyns: defiFormat={defiFormat}")
+		log.debug(f"writeCompactMergeSyns: {defiFormat=}")
 		dictMark = 0
 		idxBlockList = []  # list of tuples (b"word", startAndLength)
 		altIndexList = []  # list of tuples (b"alternate", entryIndex)
@@ -907,7 +907,7 @@ class Writer(object):
 			defiFormat = entry.defiFormat
 			defiFormatCounter[defiFormat] += 1
 			if defiFormat not in ("h", "m", "x"):
-				log.error(f"invalid defiFormat={defiFormat}, using 'm'")
+				log.error(f"invalid {defiFormat=}, using 'm'")
 				defiFormat = "m"
 
 			words = entry.l_word  # list of strs

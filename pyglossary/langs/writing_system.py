@@ -410,7 +410,7 @@ def _getWritingSystemFromText(st: str, start: int, end: int):
 			unicodeWords = unicodedata.name(c).split(' ')
 		except ValueError as e:
 			# if c not in string.whitespace:
-			# 	print(f"c={c!r}, {e}")
+			# 	print(f"{c=}, {e}")
 			continue
 		alias = unicodeWords[0]
 		ws = writingSystemByUnicode.get(alias)

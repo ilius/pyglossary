@@ -99,7 +99,7 @@ class TestGlossaryBase(unittest.TestCase):
 			with urlopen(dataURL.format(filename=filename)) as res:
 				data = res.read()
 		except Exception as e:
-			e.msg += f", filename={filename}"
+			e.msg += f", {filename=}"
 			raise e
 		if crc32hex(data) != _crc32:
 			raise RuntimeError(f"CRC32 check failed for downloaded file: {filename}")
@@ -164,10 +164,10 @@ class TestGlossaryBase(unittest.TestCase):
 				data1 = func(data1)
 				data2 = func(data2)
 
-			self.assertEqual(len(data1), len(data2), msg=f"zfpath={zfpath!r}")
+			self.assertEqual(len(data1), len(data2), msg=f"{zfpath=}")
 			self.assertTrue(
 				data1 == data2,
-				msg=f"zfpath={zfpath!r}",
+				msg=f"{zfpath=}",
 			)
 
 	def checkZipFileSha1sum(

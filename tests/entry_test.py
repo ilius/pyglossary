@@ -153,7 +153,7 @@ class TestEntryStripFullHtml(unittest.TestCase):
 		self.assertEqual(entry.defi, fixedDefi)
 		if logMsg:
 			record = self.mockLog.popLog(logLevel, logMsg)
-			self.assertIsNotNone(record, msg=f"logMsg={logMsg!r}")
+			self.assertIsNotNone(record, msg=f"{logMsg=}")
 
 	def test_1(self):
 		self.case(
@@ -192,7 +192,7 @@ class TestEntryStripFullHtml(unittest.TestCase):
 			word="test5",
 			origDefi="<!DOCTYPE html><html><head></head>simple <i>html</i></html>",
 			fixedDefi="<!DOCTYPE html><html><head></head>simple <i>html</i></html>",
-			logMsg="<body not found: word=test5",
+			logMsg="<body not found: word='test5'",
 			logLevel=logging.WARNING,
 		)
 
@@ -201,7 +201,7 @@ class TestEntryStripFullHtml(unittest.TestCase):
 			word="test6",
 			origDefi="<html><head></head>no <body",
 			fixedDefi="<html><head></head>no <body",
-			logMsg="'>' after <body not found: word=test6",
+			logMsg="'>' after <body not found: word='test6'",
 		)
 
 	def test_7(self):
@@ -209,7 +209,7 @@ class TestEntryStripFullHtml(unittest.TestCase):
 			word="test7",
 			origDefi="<html><head></head><body>",
 			fixedDefi="<html><head></head><body>",
-			logMsg="</body close not found: word=test7",
+			logMsg="</body close not found: word='test7'",
 		)
 
 

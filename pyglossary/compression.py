@@ -114,7 +114,7 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 				f"{e}\nFailed to compress file \"{filename}\""
 			)
 	else:
-		raise ValueError(f"unexpected compression={compression!r}")
+		raise ValueError(f"unexpected {compression=}")
 
 	if isfile(compFilename):
 		return compFilename
@@ -137,4 +137,4 @@ def uncompress(srcFilename: str, dstFilename: str, compression: str) -> None:
 		return
 
 	# TODO: if compression == "zip":
-	raise ValueError(f"unexpected compression={compression!r}")
+	raise ValueError(f"unexpected {compression=}")

@@ -164,7 +164,7 @@ class YamlReader(TextGlossaryReader):
 		if self._spellKey and self._spellKey in edict:
 			spelling = edict[self._spellKey]
 			if not isinstance(spelling, str):
-				log.error(f"spelling = {spelling} type {type(spelling)}, edict={edict}")
+				log.error(f"{spelling=}, {type(spelling)=}, {edict=}")
 				if spelling is True:
 					# https://github.com/mhagiwara/cc-kedict/pull/1
 					spelling = "on"
