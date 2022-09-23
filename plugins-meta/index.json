@@ -1176,6 +1176,26 @@
 		]
 	},
 	{
+		"module": "jmnedict",
+		"lname": "jmnedict",
+		"name": "JMnedict",
+		"description": "JMnedict",
+		"extensions": [],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
 		"module": "json_plugin",
 		"lname": "json",
 		"name": "Json",

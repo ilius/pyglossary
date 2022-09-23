@@ -30,6 +30,7 @@
 | Glossary Info (.info)         | Info            | [info.md](./info.md)                           |
 | IUPAC goldbook (.xml)         | IUPACGoldbook   | [iupac_goldbook.md](./iupac_goldbook.md)       |
 | JMDict                        | JMDict          | [jmdict.md](./jmdict.md)                       |
+| JMnedict                      | JMnedict        | [jmnedict.md](./jmnedict.md)                   |
 | JSON (.json)                  | Json            | [json.md](./json.md)                           |
 | Lingoes Source (.ldf)         | LingoesLDF      | [lingoes_ldf.md](./lingoes_ldf.md)             |
 | Octopus MDict (.mdx)          | OctopusMdict    | [octopus_mdict.md](./octopus_mdict.md)         |
