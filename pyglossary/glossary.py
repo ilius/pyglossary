@@ -33,6 +33,7 @@ from os.path import (
 
 from time import time as now
 
+from contextlib import suppress
 from collections import OrderedDict as odict
 
 from .flags import (
@@ -141,7 +142,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	def clear(self) -> None:
 		self._info = odict()
 
-		self._data.clear()  # type: List[RawEntryType]
+		self._data.clear()
 
 		readers = getattr(self, "_readers", [])
 		for reader in readers:
@@ -175,7 +176,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		"""
 		GlossaryInfo.__init__(self)
 		self._config = {}
-		self._data = EntryList(self)
+		self._data = EntryList(self)  # type: List[RawEntryType]
 		self._sqlite = False
 		self._rawEntryCompress = True
 		self._cleanupPathList = set()
@@ -598,7 +599,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				del options[key]
 
 		filenameNoExt, ext = os.path.splitext(filename)
-		if not ext.lower() in self.plugins[format].extensions:
+		if ext.lower() not in self.plugins[format].extensions:
 			filenameNoExt = filename
 
 		self._filename = filenameNoExt
@@ -850,11 +851,10 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			for entry in self:
 				for gen in genList:
 					gen.send(entry)
+			# suppress() on the whole for-loop does not work
 			for gen in genList:
-				try:
+				with suppress(StopIteration):
 					gen.send(None)
-				except StopIteration:
-					pass
 		except (FileNotFoundError, LookupError) as e:
 			log.critical(str(e))
 			return
