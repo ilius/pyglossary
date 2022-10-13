@@ -689,6 +689,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self,
 		sortKeyName: "str" = "headword_lower",
 		sortEncoding: "str" = "utf-8",
+		sortLocale: "Optional[str]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
 	) -> None:
 		"""
@@ -718,6 +719,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self._data.setSortKey(
 			namedSortKey=namedSortKey,
 			sortEncoding=sortEncoding,
+			sortLocale=sortLocale,
 			writeOptions=writeOptions,
 		)
 		self._data.sort()
@@ -770,6 +772,9 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		sortEncoding (str or None):
 			encoding for sorting, default utf-8
+
+		sortLocale: (str or None):
+			locale name for sorting (conflicts with sortEncoding)
 
 		You can pass write-options (of given format) as keyword arguments
 
@@ -910,6 +915,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		sort: "Optional[bool]",
 		sortKeyName: "Optional[str]",
 		sortEncoding: "Optional[str]",
+		sortLocale: "Optional[str]",
 		direct: "Optional[bool]",
 		sqlite: "Optional[bool]",
 		inputFilename: str,
@@ -1008,6 +1014,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self._data.setSortKey(
 			namedSortKey=namedSortKey,
 			sortEncoding=sortEncoding,
+			sortLocale=sortLocale,
 			writeOptions=writeOptions,
 		)
 
@@ -1024,6 +1031,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		sort: "Optional[bool]" = None,
 		sortKeyName: "Optional[str]" = None,
 		sortEncoding: "Optional[str]" = None,
+		sortLocale: "Optional[str]" = None,
 		readOptions: "Optional[Dict[str, Any]]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
 		sqlite: "Optional[bool]" = None,
@@ -1032,11 +1040,13 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		"""
 		returns absolute path of output file, or None if failed
 
-		sortKeyName: name of sort key/algorithm
+		sortKeyName:
+			name of sort key/algorithm
 			defaults to `defaultSortKeyName` in glossary.py
 			see doc/sort-key.md or sort_keys.py for other possible values
 
-		sortEncoding: encoding/charset for sorting, default to utf-8
+		sortEncoding:
+			encoding/charset for sorting, default to utf-8
 		"""
 		if type(inputFilename) is not str:
 			raise TypeError("inputFilename must be str")
@@ -1083,6 +1093,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			sort=sort,
 			sortKeyName=sortKeyName,
 			sortEncoding=sortEncoding,
+			sortLocale=sortLocale,
 			direct=direct,
 			sqlite=sqlite,
 			inputFilename=inputFilename,

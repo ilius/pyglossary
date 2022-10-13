@@ -24,9 +24,11 @@ import re
 
 NamedSortKey = namedtuple("NamedSortKey", [
 	"name",
+	"desc",
 	"normal",
 	"sqlite",
-	"desc",
+	"locale",
+	"sqlite_locale",
 ])
 
 
@@ -47,6 +49,15 @@ def _headword_normal(encoding: str, **options) -> "sortKeyType":
 	return sortKey
 
 
+def _headword_locale(collator: "icu.Collator", **options) -> "sortKeyType":
+	cSortKey = collator.getSortKey
+
+	def sortKey(words: "List[str]"):
+		return cSortKey(words[0])
+
+	return sortKey
+
+
 def _headword_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 	def sortKey(words: "List[str]"):
 		return words[0].encode(encoding, errors="replace")
@@ -60,9 +71,27 @@ def _headword_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 	]
 
 
+def _headword_sqlite_locale(collator: "icu.Collator", **options) -> "sqliteSortKeyType":
+	cSortKey = collator.getSortKey
+
+	def sortKey(words: "List[str]"):
+		return cSortKey(words[0])
+
+	return [("sortkey", "BLOB", sortKey)]
+
+
 def _headword_lower_normal(encoding: str, **options) -> "sortKeyType":
 	def sortKey(words: "List[str]"):
 		return words[0].lower().encode(encoding, errors="replace")
+
+	return sortKey
+
+
+def _headword_lower_locale(collator: "icu.Collator", **options) -> "sortKeyType":
+	cSortKey = collator.getSortKey
+
+	def sortKey(words: "List[str]"):
+		return cSortKey(words[0].lower())
 
 	return sortKey
 
@@ -80,11 +109,24 @@ def _headword_lower_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 	]
 
 
+def _headword_lower_sqlite_locale(collator: "icu.Collator", **options) -> "sqliteSortKeyType":
+	cSortKey = collator.getSortKey
+
+	def sortKey(words: "List[str]"):
+		return cSortKey(words[0].lower())
+
+	return [("sortkey", "BLOB", sortKey)]
+
+
 def _headword_bytes_lower_normal(encoding: str, **options) -> "sortKeyType":
 	def sortKey(words: "List[str]"):
 		return words[0].encode(encoding, errors="replace").lower()
 
 	return sortKey
+
+
+#def _headword_bytes_lower_locale(collator: "icu.Collator", **options) -> "sortKeyType":
+#	raise NotImplementedError("")
 
 
 def _headword_bytes_lower_sqlite(encoding: str, **options) \
@@ -224,7 +266,23 @@ def _random_normal(encoding: str, **options) -> "sortKeyType":
 	return lambda words: random()
 
 
+def _random_locale(collator: "icu.Collator", **options) -> "sortKeyType":
+	from random import random
+	return lambda words: random()
+
+
 def _random_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
+	from random import random
+	return [
+		(
+			"random",
+			"REAL",
+			lambda words: random(),
+		),
+	]
+
+
+def _random_sqlite_locale(collator: "icu.Collator", **options) -> "sortKeyType":
 	from random import random
 	return [
 		(
@@ -238,51 +296,67 @@ def _random_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 namedSortKeyList = [
 	NamedSortKey(
 		name="headword",
+		desc="Headword",
 		normal=_headword_normal,
 		sqlite=_headword_sqlite,
-		desc="Headword",
+		locale=_headword_locale,
+		sqlite_locale=_headword_sqlite_locale,
 	),
 	NamedSortKey(
 		name="headword_lower",
+		desc="Lowercase Headword",
 		normal=_headword_lower_normal,
 		sqlite=_headword_lower_sqlite,
-		desc="Lowercase Headword",
+		locale=_headword_lower_locale,
+		sqlite_locale=_headword_lower_sqlite_locale,
 	),
 	NamedSortKey(
 		name="headword_bytes_lower",
+		desc="ASCII-Lowercase Headword",
 		normal=_headword_bytes_lower_normal,
 		sqlite=_headword_bytes_lower_sqlite,
-		desc="ASCII-Lowercase Headword",
+		locale=None,
+		sqlite_locale=None,
 	),
 	NamedSortKey(
 		name="stardict",
+		desc="StarDict",
 		normal=_stardict_normal,
 		sqlite=_stardict_sqlite,
-		desc="StarDict",
+		locale=None,
+		sqlite_locale=None,
 	),
 	NamedSortKey(
 		name="ebook",
+		desc="E-Book (prefix length: 2)",
 		normal=_ebook_normal,
 		sqlite=_ebook_sqlite,
-		desc="E-Book (prefix length: 2)",
+		locale=None,
+		sqlite_locale=None,
 	),
 	NamedSortKey(
 		name="ebook_length3",
+		desc="E-Book (prefix length: 3)",
 		normal=_ebook_length3_normal,
 		sqlite=_ebook_length3_sqlite,
-		desc="E-Book (prefix length: 3)",
+		locale=None,
+		sqlite_locale=None,
 	),
 	NamedSortKey(
 		name="dicformids",
+		desc="DictionaryForMIDs",
 		normal=_dicformids_normal,
 		sqlite=_dicformids_sqlite,
-		desc="DictionaryForMIDs",
+		locale=None,
+		sqlite_locale=None,
 	),
 	NamedSortKey(
 		name="random",
+		desc="Random",
 		normal=_random_normal,
 		sqlite=_random_sqlite,
-		desc="Random",
+		locale=_random_locale,
+		sqlite_locale=_random_sqlite_locale,
 	),
 ]
 

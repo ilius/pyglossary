@@ -60,13 +60,41 @@ class EntryList(object):
 				defaultDefiFormat=glos._defaultDefiFormat,
 			)
 
+	def _getLocaleSortKey(
+		self,
+		namedSortKey: "NamedSortKey",
+		sortLocale: str,
+		writeOptions: "Dict[str, Any]",
+	) -> "sortKey":
+		from icu import Locale, Collator
+
+		if namedSortKey.locale is None:
+			raise ValueError(
+				f"locale-sorting is not supported "
+				f"for sortKey={namedSortKey.name}"
+			)
+
+		localeObj = Locale(sortLocale)
+		if not localeObj.getISO3Language():
+			raise ValueError(f"invalid locale {sortLocale!r}")
+
+		log.info(f"Sorting based on locale {localeObj.getName()}")
+
+		collator = Collator.createInstance(localeObj)
+
+		return namedSortKey.locale(collator, **writeOptions)
+
 	def setSortKey(
 		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "Optional[str]",
+		sortLocale: "Optional[str]",
 		writeOptions: "Dict[str, Any]",
 	):
-		sortKey = namedSortKey.normal(sortEncoding, **writeOptions)
+		if sortLocale:
+			sortKey = self._getLocaleSortKey(namedSortKey, sortLocale, writeOptions)
+		else:
+			sortKey = namedSortKey.normal(sortEncoding, **writeOptions)
 		self._sortKey = Entry.getRawEntrySortKey(self._glos, sortKey)
 
 	def sort(self):

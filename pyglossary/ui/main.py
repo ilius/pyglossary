@@ -446,6 +446,13 @@ def main():
 		default=None,
 		help="encoding of sort (default utf-8)",
 	)
+	parser.add_argument(
+		"--sort-locale",
+		action="store",
+		dest="sortLocale",
+		default=None,
+		help="use given locale for sort (conflicts with --sort-encoding)",
+	)
 
 	# _______________________________
 
@@ -551,6 +558,9 @@ def main():
 		if args.sortEncoding:
 			log.critical("Passed --sort-encoding without --sort")
 			sys.exit(1)
+		if args.sortLocale:
+			log.critical("Passed --sort-locale without --sort")
+			sys.exit(1)
 
 	if args.sortKeyName:
 		if args.sortKeyName not in namedSortKeyByName:
@@ -560,6 +570,10 @@ def main():
 				f". Supported values:\n{_valuesStr}"
 			)
 			sys.exit(1)
+
+	if args.sortEncoding and args.sortLocale:
+		log.critical("--sort-locale conflicts with --sort-encoding")
+		sys.exit(1)
 
 	core.checkCreateConfDir()
 
@@ -639,6 +653,7 @@ def main():
 		"sort",
 		"sortKeyName",
 		"sortEncoding",
+		"sortLocale",
 		"sqlite",
 	)
 	infoOverrideSpec = (
