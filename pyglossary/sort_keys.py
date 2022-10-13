@@ -234,7 +234,7 @@ def _ebook_length3_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 
 def _dicformids_normal(encoding: str, **options) -> "sortKeyType":
 	re_punc = re.compile(
-		r"[!\"$§$%&/()=?´`\\{}\[\]^°+*~#'-_.:,;<>@|]*",
+		r"""[!"$§%&/()=?´`\\{}\[\]^°+*~#'\-_.:,;<>@|]*""",
 	)
 	re_spaces = re.compile(" +")
 	re_tabs = re.compile("\t+")
