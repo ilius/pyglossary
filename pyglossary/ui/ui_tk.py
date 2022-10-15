@@ -128,7 +128,7 @@ def newTTKButton(*args, **kwargs):
 
 def newLabelWithImage(parent, file=""):
 	image = tk.PhotoImage(file=file)
-	label = ttk.Label(parent, image=image)
+	label = tk.Label(parent, image=image)
 	label.image = image  # keep a reference!
 	return label
 
@@ -356,9 +356,9 @@ class FormatDialog(tix.Toplevel):
 		))
 
 		entryBox = tk.Frame(master=self)
-		label = ttk.Label(master=entryBox, text="Search: ")
+		label = tk.Label(master=entryBox, text="Search: ")
 		label.pack(side="left")
-		entry = self.entry = ttk.Entry(master=entryBox)
+		entry = self.entry = tk.Entry(master=entryBox)
 		entry.pack(fill="x", expand=True, side="left")
 		entryBox.pack(fill="x", padx=5, pady=5)
 
@@ -379,7 +379,7 @@ class FormatDialog(tix.Toplevel):
 			expand=True,
 		)
 
-		vsb = ttk.Scrollbar(
+		vsb = tk.Scrollbar(
 			master=treevBox,
 			orient="vertical",
 			command=treev.yview,
@@ -399,14 +399,14 @@ class FormatDialog(tix.Toplevel):
 
 		buttonBox = tix.Frame(master=self)
 
-		cancelButton = newTTKButton(
+		cancelButton = newButton(
 			buttonBox,
 			text="Cancel",
 			command=self.cancelClicked,
 		)
 		cancelButton.pack(side="right")
 
-		okButton = newTTKButton(
+		okButton = newButton(
 			buttonBox,
 			text="  OK  ",
 			command=self.okClicked,
@@ -513,7 +513,7 @@ class FormatDialog(tix.Toplevel):
 		self.destroy()
 
 
-class FormatButton(ttk.Button):
+class FormatButton(tk.Button):
 	noneLabel = "[Select Format]"
 
 	def __init__(
@@ -525,7 +525,7 @@ class FormatButton(ttk.Button):
 	):
 		self.var = tk.StringVar()
 		self.var.set(self.noneLabel)
-		ttk.Button.__init__(
+		tk.Button.__init__(
 			self,
 			master=master,
 			textvariable=self.var,
@@ -590,7 +590,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		self.createOptionsList()
 
 		buttonBox = tix.Frame(self)
-		okButton = newTTKButton(
+		okButton = newButton(
 			buttonBox,
 			text="  OK  ",
 			command=self.okClicked,
@@ -678,10 +678,10 @@ class FormatOptionsDialog(tix.Toplevel):
 
 		frame = tix.Frame(master=dialog)
 
-		label = ttk.Label(master=frame, text="Value for " + optName)
+		label = tk.Label(master=frame, text="Value for " + optName)
 		label.pack()
 
-		entry = ttk.Entry(master=frame)
+		entry = tk.Entry(master=frame)
 		entry.insert(0, value)
 		entry.pack(fill="x")
 
@@ -701,10 +701,10 @@ class FormatOptionsDialog(tix.Toplevel):
 
 		entry.bind("<Return>", customOkClicked)
 
-		label = ttk.Label(master=frame)
+		label = tk.Label(master=frame)
 		label.pack(fill="x")
 
-		customOkbutton = newTTKButton(
+		customOkbutton = newButton(
 			frame,
 			text="  OK  ",
 			command=customOkClicked,
@@ -925,6 +925,7 @@ class UI(tix.Frame, UIBase):
 		#           'xpnative')
 		# style = ttk.Style()
 		# style.theme_use("default")
+		# there is no tk.Style()
 		########
 		self.pack(fill="x")
 		# rootWin.bind("<Configure>", self.resized)
@@ -958,7 +959,7 @@ class UI(tix.Frame, UIBase):
 		aboutFrame = tix.Frame(notebook.tabAbout)
 		###################
 		row = 0
-		label = ttk.Label(convertFrame, text="Input File: ")
+		label = tk.Label(convertFrame, text="Input File: ")
 		label.grid(
 			row=row,
 			column=0,
@@ -993,7 +994,7 @@ class UI(tix.Frame, UIBase):
 		)
 		######################
 		row += 1
-		label = ttk.Label(convertFrame, text="Input Format: ")
+		label = tk.Label(convertFrame, text="Input Format: ")
 		label.grid(
 			row=row,
 			column=0,
@@ -1027,7 +1028,7 @@ class UI(tix.Frame, UIBase):
 		self.inputFormatRow = row
 		######################
 		row += 1
-		label = ttk.Label(convertFrame)
+		label = tk.Label(convertFrame)
 		label.grid(
 			row=row,
 			column=0,
@@ -1035,7 +1036,7 @@ class UI(tix.Frame, UIBase):
 		)
 		######################
 		row += 1
-		label = ttk.Label(convertFrame, text="Output Format: ")
+		label = tk.Label(convertFrame, text="Output Format: ")
 		label.grid(
 			row=row,
 			column=0,
@@ -1066,7 +1067,7 @@ class UI(tix.Frame, UIBase):
 		self.outputFormatRow = row
 		###################
 		row += 1
-		label = ttk.Label(convertFrame, text="Output File: ")
+		label = tk.Label(convertFrame, text="Output File: ")
 		label.grid(
 			row=row,
 			column=0,
@@ -1159,7 +1160,7 @@ class UI(tix.Frame, UIBase):
 		label.pack(side="left")
 		##
 		##
-		label = ttk.Label(aboutFrame2, text=f"PyGlossary\nVersion {core.VERSION}")
+		label = tk.Label(aboutFrame2, text=f"PyGlossary\nVersion {core.VERSION}")
 		label.pack(side="left")
 		##
 		aboutFrame2.pack(side="top", fill="x")
@@ -1169,6 +1170,7 @@ class UI(tix.Frame, UIBase):
 		# ws => to the left (west) and to the bottom (south)
 		# wn => to the left (west) and at top
 		aboutNotebook = ttk.Notebook(aboutFrame, style="TNotebook")
+		# aboutNotebook = tix.Notebook(aboutFrame)
 
 		aboutFrame3 = tk.Frame(aboutNotebook)
 		authorsFrame = tk.Frame(aboutNotebook)
@@ -1253,11 +1255,11 @@ class UI(tix.Frame, UIBase):
 		)
 		clearB.pack(side="left")
 		####
-		label = ttk.Label(statusBarframe, text="Verbosity")
+		label = tk.Label(statusBarframe, text="Verbosity")
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
-		combo = ttk.OptionMenu(
+		combo = tk.OptionMenu(
 			statusBarframe,
 			comboVar,
 			log.getVerbosity(),  # default
@@ -1266,6 +1268,7 @@ class UI(tix.Frame, UIBase):
 		comboVar.trace("w", self.verbosityChanged)
 		combo.pack(side="left")
 		self.verbosityCombo = comboVar
+		comboVar.set(log.getVerbosity())
 		#####
 		pbar = ProgressBar(statusBarframe, width=700, height=28)
 		pbar.pack(side="left", fill="x", expand=True)
