@@ -288,6 +288,7 @@ def main():
 		choices=(
 			"cmd",
 			"gtk",
+			"gtk4",
 			"tk",
 			# "qt",
 			"auto",
@@ -309,6 +310,14 @@ def main():
 		const="gtk",
 		default=None,
 		help="use Gtk-based user interface",
+	)
+	parser.add_argument(
+		"--gtk4",
+		dest="ui_type",
+		action="store_const",
+		const="gtk4",
+		default=None,
+		help="use Gtk4-based user interface",
 	)
 	parser.add_argument(
 		"--tk",
