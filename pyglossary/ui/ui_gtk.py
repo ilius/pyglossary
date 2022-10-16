@@ -813,14 +813,13 @@ class SortOptionsBox(gtk.Box):
 		pack(self, hbox, 0, 0, padding=5)
 		###
 		hbox = self.localeHBox = gtk.HBox()
-		localeRadio = self.localeRadio = gtk.RadioButton(label="Sort Locale")
-
-		localeRadio.join_group(encodingRadio)
+		localeRadio = self.localeRadio = gtk.RadioButton(label="Sort Locale", group=encodingRadio)
 
 		# RadioButton in Gtk3 is very unstable, I could not make set_group work at all!
 		# encodingRadio.get_group() == [encodingRadio]
 		# localeRadio.set_group(encodingRadio) says: TypeError: Must be sequence, not RadioButton
 		# localeRadio.set_group([encodingRadio]) causes a crash!!
+		# but localeRadio.join_group(encodingRadio) works, so does group= argument to RadioButton()
 		# Note: RadioButton does not exist in Gtk 4.0,
 		# you have to use CheckButton with its new set_group() method
 
