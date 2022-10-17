@@ -915,7 +915,14 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	) -> bool:
 		from pyglossary.sq_entry_list import SqEntryList
 
-		sq_fpath = join(cacheDir, f"{os.path.basename(inputFilename)}.db")
+		# sq_hash = hash((inputFilename, outputFormat))
+		# we don't have outputFilename
+		# should we include time in this?
+		# should we add a lock file to prevent accessing from 2 different proccesses?
+		sq_fpath = join(
+			cacheDir,
+			f"{os.path.basename(inputFilename)}.db",
+		)
 		if isfile(sq_fpath):
 			log.info(f"Removing and re-creating {sq_fpath!r}")
 			os.remove(sq_fpath)
