@@ -1312,11 +1312,12 @@ class MainWindow(gtk.Window):
 			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
 		)
 		css = """
-textview text {
+textview.console text {
 	background-color: rgb(0, 0, 0);
 }"""
 		self.styleProvider.load_from_data(css.encode("utf-8"))
 		##########
+		textview.get_style_context().add_class("console")
 		handler = GtkSingleTextviewLogHandler(self, textview)
 		log.addHandler(handler)
 		###
@@ -1657,7 +1658,6 @@ class Application(gtk.Application):
 		self.win = None
 
 	def do_activate(self):
-		print("do_activate")
 		win = self.props.active_window
 		if not win:
 			win = self.win
@@ -1675,7 +1675,6 @@ class UI(UIBase):
 		self.app.win = self.win
 
 	def run(self, **kwargs):
-		print("UI.run")
 		self.win.run(**kwargs)
 		self.app.run(None)
 		gtk_window_iteration_loop()

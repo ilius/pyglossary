@@ -22,6 +22,30 @@ from .utils import (
 	pack,
 )
 
+
+class AboutTabTitleBox(gtk.Box):
+	def __init__(self, title: str, icon: str):
+		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
+		self.set_spacing(8)
+		pack(self, gtk.Label())
+		if icon:
+			pack(self, imageFromFile(icon), expand=0)
+		if title:
+			pack(self, gtk.Label(label=title), expand=0)
+		pack(self, gtk.Label())
+		self.set_size_request(80, 80)
+
+	#def do_get_preferred_height_for_width(self, size: int) -> "Tuple[int, int]":
+	#	height = int(size * 1.5)
+	#	return height, height
+
+	# returns: (minimum: int, natural: int, minimum_baseline: int, natural_baseline: int)
+	#def do_measure(self, orientation, for_size):
+	#	return (for_size, for_size, for_size, for_size)
+
+
+
+
 class AboutWidget(gtk.Box):
 	def __init__(
 		self,
@@ -45,7 +69,7 @@ class AboutWidget(gtk.Box):
 		##
 		notebook = gtk.Notebook()
 		self.notebook = notebook
-		pack(self, notebook, padding=5)
+		pack(self, notebook, padding=5, expand=True)
 		notebook.set_tab_pos(gtk.PositionType.LEFT)
 		##
 		tab1_about = self.newTabLabelWidget(about)
@@ -115,11 +139,5 @@ class AboutWidget(gtk.Box):
 		return swin
 
 	def newTabTitle(self, title: str, icon: str):
-		box = gtk.Box(orientation=gtk.Orientation.VERTICAL)
-		if icon:
-			pack(box, imageFromFile(icon), padding=5)
-		if title:
-			pack(box, gtk.Label(label=title), padding=5)
-		box.show()
-		return box
+		return AboutTabTitleBox(title, icon)
 
