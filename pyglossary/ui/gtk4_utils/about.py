@@ -26,14 +26,19 @@ from .utils import (
 class AboutTabTitleBox(gtk.Box):
 	def __init__(self, title: str, icon: str):
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
-		self.set_spacing(8)
-		pack(self, gtk.Label())
+		self.set_spacing(10)
+		pack(self, VBox(), expand=0)
 		if icon:
-			pack(self, imageFromFile(icon), expand=0)
+			image = imageFromFile(icon)
+			size = image.get_pixel_size()
+			image.set_size_request(24, 24)
+			# I don't know how to stop Gtk from resizing the image
+			# I should probably use svg files to avoid blurry images
+			pack(self, image, expand=0)
 		if title:
 			pack(self, gtk.Label(label=title), expand=0)
-		pack(self, gtk.Label())
-		self.set_size_request(80, 80)
+		pack(self, VBox(), expand=0)
+		self.set_size_request(60, 60)
 
 	#def do_get_preferred_height_for_width(self, size: int) -> "Tuple[int, int]":
 	#	height = int(size * 1.5)
