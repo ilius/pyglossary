@@ -851,11 +851,18 @@ class SortOptionsBox(gtk.Box):
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)
 		self.localeHBox.set_sensitive(sort)
+
 		sortKeyName = convertOptions.get("sortKeyName")
 		if sortKeyName:
 			self.sortKeyCombo.set_active(sortKeyNames.index(sortKeyName))
+
 		sortEncoding = convertOptions.get("sortEncoding", "utf-8")
 		self.encodingEntry.set_text(sortEncoding)
+
+		sortLocale = convertOptions.get("sortLocale")
+		if sortLocale:
+			self.localeEntry.set_text(sortLocale)
+			self.localeRadio.set_active(True)
 
 	def applyChanges(self):
 		convertOptions = self.ui.convertOptions
@@ -871,8 +878,10 @@ class SortOptionsBox(gtk.Box):
 		convertOptions["sortKeyName"] = sortKeyNameByDesc[sortKeyDesc]
 		if self.encodingRadio.get_active():
 			convertOptions["sortEncoding"] = self.encodingEntry.get_text()
+			convertOptions["sortLocale"] = None
 		elif self.localeRadio.get_active():
 			convertOptions["sortLocale"] = self.localeEntry.get_text()
+			convertOptions["sortEncoding"] = None
 
 
 class GeneralOptionsDialog(gtk.Dialog):
