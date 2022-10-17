@@ -94,9 +94,17 @@ def buffer_get_text(b):
 	)
 
 
+"""
+GTK 4 has removed the GtkContainer::border-width property (together with the rest of GtkContainer).
+Use other means to influence the spacing of your containers,
+such as the CSS margin and padding properties on child widgets,
+or the CSS border-spacing property on containers.
+"""
+
+
 class FormatDialog(gtk.Dialog):
 	def __init__(self, descList: "List[str]", parent=None, **kwargs):
-		gtk.Dialog.__init__(self, parent=parent, **kwargs)
+		gtk.Dialog.__init__(self, transient_for=parent, **kwargs)
 		self.set_default_size(400, 400)
 		self.vbox = self.get_content_area()
 		##
@@ -139,7 +147,7 @@ class FormatDialog(gtk.Dialog):
 		self.descCol = col
 		############
 		hbox = HBox(spacing=15)
-		# hbox.set_border_width(10)
+		hbox.get_style_context().add_class("margin_05")
 		pack(hbox, gtk.Label(label="Search:"))
 		entry = self.entry = gtk.Entry()
 		pack(hbox, entry, 1, 1)
@@ -448,7 +456,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		if prop.comment:
 			optDesc += f" ({prop.comment})"
 		label = gtk.Label(label=f"Value for {optDesc}")
-		dialog = gtk.Dialog(parent=self, title="Option Value")
+		dialog = gtk.Dialog(transient_for=self, title="Option Value")
 		dialog.connect("response", lambda w, e: dialog.hide())
 		dialog_add_button(
 			dialog,
@@ -462,11 +470,11 @@ class FormatOptionsDialog(gtk.Dialog):
 			"_OK",
 			gtk.ResponseType.OK,
 		)
-		pack(dialog.vbox, label, 0, 0)
+		pack(dialog.vbox, label)
 		entry = gtk.Entry()
 		entry.set_text(currentValue)
 		entry.connect("activate", lambda w: dialog.response(gtk.ResponseType.OK))
-		pack(dialog.vbox, entry, 0, 0)
+		pack(dialog.vbox, entry)
 		dialog.vbox.show()
 		dialog.connect("response", self.valueCustomDialogResponse, entry)
 		dialog.present()
@@ -809,43 +817,44 @@ class SortOptionsBox(gtk.Box):
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		self.mainWin = mainWin
 		###
-		hbox = HBox()
+		self.set_spacing(5)
+		###
+		hbox = HBox(spacing=5)
 		sortCheck = gtk.CheckButton(label="Sort entries by")
 		sortKeyCombo = gtk.ComboBoxText()
 		for _sk in namedSortKeyList:
 			sortKeyCombo.append_text(_sk.desc)
 		sortKeyCombo.set_active(sortKeyNames.index(defaultSortKeyName))
-		# sortKeyCombo.set_border_width(0)
 		sortKeyCombo.set_sensitive(False)
 		# sortKeyCombo.connect("changed", self.sortKeyComboChanged)
 		self.sortCheck = sortCheck
 		self.sortKeyCombo = sortKeyCombo
 		sortCheck.connect("toggled", self.onSortCheckToggled)
-		pack(hbox, sortCheck, 0, 0, padding=5)
-		pack(hbox, sortKeyCombo, 0, 0, padding=5)
-		pack(self, hbox, 0, 0, padding=5)
+		pack(hbox, sortCheck)
+		pack(hbox, sortKeyCombo)
+		pack(self, hbox)
 		###
-		hbox = self.encodingHBox = HBox()
+		hbox = self.encodingHBox = HBox(spacing=5)
 		encodingRadio = self.encodingRadio = gtk.CheckButton(label="Sort Encoding")
 		encodingEntry = self.encodingEntry = gtk.Entry()
 		encodingEntry.set_text("utf-8")
 		encodingEntry.set_width_chars(15)
 		pack(hbox, gtk.Label(label="    "))
-		pack(hbox, encodingRadio, 0, 0)
-		pack(hbox, encodingEntry, 0, 0, padding=5)
-		pack(self, hbox, 0, 0, padding=5)
+		pack(hbox, encodingRadio)
+		pack(hbox, encodingEntry)
+		pack(self, hbox)
 		encodingRadio.set_active(True)
 		###
-		hbox = self.localeHBox = HBox()
+		hbox = self.localeHBox = HBox(spacing=5)
 		localeRadio = self.localeRadio = gtk.CheckButton(label="Sort Locale", group=encodingRadio)
 		localeEntry = self.localeEntry = gtk.Entry()
 		localeEntry.set_width_chars(15)
 		pack(hbox, gtk.Label(label="    "))
-		pack(hbox, localeRadio, 0, 0)
+		pack(hbox, localeRadio)
 		localeEntry = self.localeEntry = gtk.Entry()
-		pack(hbox, localeEntry, 0, 0, padding=5)
+		pack(hbox, localeEntry)
 		localeEntry.set_width_chars(15)
-		pack(self, hbox, 0, 0, padding=5)
+		pack(self, hbox)
 		###
 		sortRadioSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		sortRadioSizeGroup.add_widget(encodingRadio)
@@ -919,6 +928,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 		self.mainWin = mainWin
 		##
 		self.vbox = self.get_content_area()
+		self.vbox.set_spacing(5)
 		##
 		self.set_default_size(600, 500)
 		self.connect("close-request", self.onCloseRequest)
@@ -932,15 +942,14 @@ class GeneralOptionsDialog(gtk.Dialog):
 		)
 		##
 		hpad = 10
-		vpad = 5
 		##
 		self.sortOptionsBox = SortOptionsBox(mainWin)
-		pack(self.vbox, self.sortOptionsBox, 0, 0, padding=vpad)
+		pack(self.vbox, self.sortOptionsBox)
 		##
-		hbox = HBox()
+		hbox = HBox(spacing=hpad)
 		self.sqliteCheck = gtk.CheckButton(label="SQLite mode")
-		pack(hbox, self.sqliteCheck, 0, 0, padding=hpad)
-		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		pack(hbox, self.sqliteCheck)
+		pack(self.vbox, hbox)
 		##
 		self.configParams = OrderedDict([
 			("save_info_json", False),
@@ -954,14 +963,14 @@ class GeneralOptionsDialog(gtk.Dialog):
 		self.configCheckButtons = {}
 		configDefDict = UIBase.configDefDict
 		for param, default in self.configParams.items():
-			hbox = HBox()
+			hbox = HBox(spacing=hpad)
 			comment = configDefDict[param].comment
 			checkButton = gtk.CheckButton(
 				label=comment.split("\n")[0]
 			)
 			self.configCheckButtons[param] = checkButton
-			pack(hbox, checkButton, 0, 0, padding=hpad)
-			pack(self.vbox, hbox, 0, 0, padding=vpad)
+			pack(hbox, checkButton)
+			pack(self.vbox, hbox)
 		##
 		self.updateWidgets()
 		self.vbox.show()
@@ -1011,6 +1020,38 @@ class MainWindow(gtk.Window):
 	# @property
 	# def config(self):
 	# 	return self.ui.config
+
+	css = """
+textview.console text {
+	background-color: rgb(0, 0, 0);
+}
+
+check {
+	min-width: 1.25em;
+	min-height: 1.25em;
+}
+
+.margin_03 {
+	margin-top: 0.5em;
+	margin-right: 0.5em;
+	margin-bottom: 0.5em;
+	margin-left: 0.5em;
+}
+
+.margin_05 {
+	margin-top: 0.5em;
+	margin-right: 0.5em;
+	margin-bottom: 0.5em;
+	margin-left: 0.5em;
+}
+
+.margin_10 {
+	margin-top: 1em;
+	margin-right: 1em;
+	margin-bottom: 1em;
+	margin-left: 1em;
+}
+	"""
 
 	def status(self, msg):
 		# try:
@@ -1062,8 +1103,7 @@ class MainWindow(gtk.Window):
 		#	self.styleProvider,
 		#	gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
 		#)
-		css = "check {min-width: 1.25em; min-height: 1.25em;}\n"
-		self.styleProvider.load_from_data(css.encode("utf-8"))
+		self.styleProvider.load_from_data(self.css.encode("utf-8"))
 		#####
 		self.assert_quit = False
 		self.path = ""
@@ -1071,7 +1111,7 @@ class MainWindow(gtk.Window):
 		labelSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		buttonSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		####
-		vbox = VBox()
+		vbox = VBox(spacing=5)
 		vbox.label = _("Convert")
 		vbox.icon = ""  # "*.png"
 		self.pages.append(vbox)
@@ -1111,9 +1151,9 @@ class MainWindow(gtk.Window):
 		pack(hbox, self.convertInputFormatCombo.optionsButton)
 		pack(vbox, hbox)
 		#####
-		vbox.sep1 = gtk.Label(label="")
-		vbox.sep1.show()
-		pack(vbox, vbox.sep1)
+		hbox = HBox()
+		hbox.get_style_context().add_class("margin_03")
+		pack(vbox, hbox)
 		#####
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Output File:"))
@@ -1151,27 +1191,27 @@ class MainWindow(gtk.Window):
 		pack(vbox, hbox)
 		#####
 		hbox = HBox(spacing=10)
+		hbox.get_style_context().add_class("margin_03")
 		label = gtk.Label(label="")
-		pack(hbox, label, 1, 1, 5)
+		pack(hbox, label, expand=True)
 		##
 		button = GeneralOptionsButton(self)
 		button.set_size_request(300, 40)
-		pack(hbox, button, 0, 0, 0)
+		pack(hbox, button)
 		##
 		self.convertButton = gtk.Button()
 		self.convertButton.set_label("Convert")
 		self.convertButton.connect("clicked", self.convertClicked)
 		self.convertButton.set_size_request(300, 40)
-		pack(hbox, self.convertButton, 0, 0, 10)
+		pack(hbox, self.convertButton)
 		##
-		pack(vbox, hbox, 0, 0, 15)
+		pack(vbox, hbox)  # FIXME: padding=15
 		#####
 		self.convertConsoleTextview = textview = gtk.TextView()
 		swin = gtk.ScrolledWindow()
 		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
-		# swin.set_border_width(0)
 		swin.set_child(textview)
-		pack(vbox, swin, 1, 1)
+		pack(vbox, swin, expand=True)
 		# ____________________ Tab 2 - Reverse ____________________ #
 		self.reverseStatus = ""
 		####
@@ -1212,9 +1252,9 @@ class MainWindow(gtk.Window):
 			self.reverseInputEntryChanged,
 		)
 		#####
-		vbox.sep1 = gtk.Label(label="")
-		vbox.sep1.show()
-		pack(vbox, vbox.sep1)
+		hbox = HBox()
+		hbox.get_style_context().add_class("margin_03")
+		pack(vbox, hbox)
 		#####
 		hbox = HBox(spacing=3)
 		hbox.label = gtk.Label(label=_("Output Tabfile:"))
@@ -1237,34 +1277,34 @@ class MainWindow(gtk.Window):
 			self.reverseOutputEntryChanged,
 		)
 		#####
-		hbox = HBox(spacing=3)
+		hbox = HBox(spacing=5)
 		label = gtk.Label(label="")
-		pack(hbox, label, 1, 1, 5)
+		pack(hbox, label, expand=True)
 		###
 		self.reverseStartButton = gtk.Button()
 		self.reverseStartButton.set_label(_("Start"))
 		self.reverseStartButton.connect("clicked", self.reverseStartClicked)
-		pack(hbox, self.reverseStartButton, 1, 1, 2)
+		pack(hbox, self.reverseStartButton, expand=True)
 		###
 		self.reversePauseButton = gtk.Button()
 		self.reversePauseButton.set_label(_("Pause"))
 		self.reversePauseButton.set_sensitive(False)
 		self.reversePauseButton.connect("clicked", self.reversePauseClicked)
-		pack(hbox, self.reversePauseButton, 1, 1, 2)
+		pack(hbox, self.reversePauseButton, expand=True)
 		###
 		self.reverseResumeButton = gtk.Button()
 		self.reverseResumeButton.set_label(_("Resume"))
 		self.reverseResumeButton.set_sensitive(False)
 		self.reverseResumeButton.connect("clicked", self.reverseResumeClicked)
-		pack(hbox, self.reverseResumeButton, 1, 1, 2)
+		pack(hbox, self.reverseResumeButton, expand=True)
 		###
 		self.reverseStopButton = gtk.Button()
 		self.reverseStopButton.set_label(_("Stop"))
 		self.reverseStopButton.set_sensitive(False)
 		self.reverseStopButton.connect("clicked", self.reverseStopClicked)
-		pack(hbox, self.reverseStopButton, 1, 1, 2)
+		pack(hbox, self.reverseStopButton, expand=True)
 		###
-		pack(vbox, hbox, 0, 0, 5)
+		pack(vbox, hbox)  # FIXME: padding=5
 		######
 		about = AboutWidget(
 			logo=logo,
@@ -1305,17 +1345,6 @@ class MainWindow(gtk.Window):
 		# 		continue
 		# 	notebook.reorder_child(self.pages[i], j)
 		# ____________________________________________________________ #
-		self.styleProvider = gtk.CssProvider()
-		gtk.StyleContext.add_provider_for_display(
-			gdk.Display.get_default(),
-			self.styleProvider,
-			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
-		)
-		css = """
-textview.console text {
-	background-color: rgb(0, 0, 0);
-}"""
-		self.styleProvider.load_from_data(css.encode("utf-8"))
 		##########
 		textview.get_style_context().add_class("console")
 		handler = GtkSingleTextviewLogHandler(self, textview)
@@ -1337,7 +1366,7 @@ textview.console text {
 		# pbar.set_text(_("Progress Bar"))
 		# pbar.get_style_context()
 		# pbar.set_property("height-request", 20)
-		pack(self.vbox, pbar, 0, 0)
+		pack(self.vbox, pbar)
 		############
 		hbox = HBox(spacing=5)
 		clearButton = gtk.Button(
@@ -1349,24 +1378,22 @@ textview.console text {
 		# image = gtk.Image()
 		# image.set_icon_name(...)
 		# clearButton.add(image)
-		#clearButton.set_border_width(0)
 		clearButton.connect("clicked", self.consoleClearButtonClicked)
 		set_tooltip(clearButton, "Clear Console")
-		pack(hbox, clearButton, 0, 0)
+		pack(hbox, clearButton)
 		####
 		# hbox.sepLabel1 = gtk.Label(label="")
 		# pack(hbox, hbox.sepLabel1, 1, 1)
 		######
 		hbox.verbosityLabel = gtk.Label(label=_("Verbosity:"))
-		pack(hbox, hbox.verbosityLabel, 0, 0)
+		pack(hbox, hbox.verbosityLabel)
 		##
 		self.verbosityCombo = combo = gtk.ComboBoxText()
 		for level, levelName in enumerate(log.levelNamesCap):
 			combo.append_text(f"{level} - {_(levelName)}")
 		combo.set_active(log.getVerbosity())
-		#combo.set_border_width(0)
 		combo.connect("changed", self.verbosityComboChanged)
-		pack(hbox, combo, 0, 0)
+		pack(hbox, combo)
 		####
 		# hbox.sepLabel2 = gtk.Label(label="")
 		# pack(hbox, hbox.sepLabel2, 1, 1)
@@ -1376,9 +1403,9 @@ textview.console text {
 		####
 		# ResizeButton does not work in Gtk 4.0
 		# hbox.resizeButton = ResizeButton(self)
-		# pack(hbox, hbox.resizeButton, 0, 0)
+		# pack(hbox, hbox.resizeButton)
 		######
-		pack(self.vbox, hbox, 0, 0)
+		pack(self.vbox, hbox)
 		# ____________________________________________________________ #
 		self.vbox.show()
 		notebook.set_current_page(0)  # Convert tab

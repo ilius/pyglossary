@@ -101,6 +101,8 @@ def color_parse(colorStr):
 
 
 def pack(box, child, expand=False, fill=False, padding=0):
+	if padding > 0:
+		print(f"pack: padding={padding} ignored")
 	if isinstance(box, gtk.Box):
 		box.append(child)
 		if expand:

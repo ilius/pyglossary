@@ -62,19 +62,20 @@ class AboutWidget(gtk.Box):
 		**kwargs,
 	):
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
+		self.set_spacing(15)
 		##
 		headerBox = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
 		if logo:
 			pack(headerBox, imageFromFile(logo))
 		headerLabel = gtk.Label(label=header)
 		headerLabel.set_selectable(True)
-		pack(headerBox, headerLabel, padding=15)
+		pack(headerBox, headerLabel)
 		headerBox.show()
 		pack(self, headerBox)
 		##
 		notebook = gtk.Notebook()
 		self.notebook = notebook
-		pack(self, notebook, padding=5, expand=True)
+		pack(self, notebook, expand=True)
 		notebook.set_tab_pos(gtk.PositionType.LEFT)
 		##
 		tab1_about = self.newTabLabelWidget(about)
