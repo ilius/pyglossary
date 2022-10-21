@@ -117,18 +117,14 @@ class Reader(object):
 		# 	key = key.lower()
 		# 	self._glos.setInfo(key, value)
 		try:
-			title = self._mdx.header[b"Title"]
-			if isinstance(title, bytes):
-				title = title.decode("utf-8")
+			title = toStr(self._mdx.header[b"Title"])
 		except KeyError:
 			pass
 		else:
 			title = title.strip()
 			if title:
 				self._glos.setInfo("name", title)
-		desc = self._mdx.header.get(b"Description", "")
-		if isinstance(desc, bytes):
-			desc = desc.decode("utf-8")
+		desc = toStr(self._mdx.header.get(b"Description", ""))
 		if desc:
 			self._glos.setInfo("description", desc)
 
