@@ -42,5 +42,5 @@
 | Tabfile (.txt, .dic)          | Tabfile         | [tabfile.md](./tabfile.md)                     |
 | Wordset.org JSON directory    | Wordset         | [wordset.md](./wordset.md)                     |
 | XDXF (.xdxf)                  | Xdxf            | [xdxf.md](./xdxf.md)                           |
-| Zim (.zim, for Kiwix)         | Zim             | [zim.md](./zim.md)                             |
 | Yomichan (.zip)               | Yomichan        | [yomichan.md](./yomichan.md)                   |
+| Zim (.zim, for Kiwix)         | Zim             | [zim.md](./zim.md)                             |
