@@ -238,7 +238,7 @@ class TestGlossary(TestGlossaryBase):
 			"100-en-fa-sort-ebook3.txt": "5a20f140",
 
 			"100-en-fa-lower.txt": "62178940",
-			"100-en-fa-remove_html_all.txt": "d611c978",
+			"100-en-fa-remove_html_all-v2.txt": "b2208694",
 			"100-en-fa-rtl.txt": "25ede1e8",
 
 			"100-en-de-remove_font_b.txt": "727320ac",
@@ -651,7 +651,7 @@ class TestGlossary(TestGlossaryBase):
 	def test_remove_html_all_1(self):
 		self.convert_txt_txt(
 			"100-en-fa",
-			"100-en-fa-remove_html_all",
+			"100-en-fa-remove_html_all-v2",
 			testId="remove_html_all_1",
 			config={"remove_html_all": True},
 		)
