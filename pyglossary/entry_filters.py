@@ -128,6 +128,10 @@ class RemoveHtmlTagsAll(EntryFilter):
 			'<p( [^<>]*?)?>(.*?)</p>',
 			re.DOTALL,
 		)
+		self._div_pattern = re.compile(
+			'<div( [^<>]*?)?>(.*?)</div>',
+			re.DOTALL,
+		)
 		self._br_pattern = re.compile(
 			"<br[ /]*>",
 			re.IGNORECASE,
@@ -140,6 +144,11 @@ class RemoveHtmlTagsAll(EntryFilter):
 			st = self._p_pattern.sub("\\2\n", st)
 			# if there is </p> left without opening, replace with <br>
 			st = st.replace("</p>", "\n")
+
+			st = self._div_pattern.sub("\\2\n", st)
+			# if there is </div> left without opening, replace with <br>
+			st = st.replace("</div>", "\n")
+
 			st = self._br_pattern.sub("\n", st)
 			return BeautifulSoup(st, "lxml").text
 
