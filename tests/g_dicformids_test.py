@@ -31,9 +31,9 @@ class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
 		sha1sumDict = {
 			"DictionaryForMIDs.properties": \
 				"4260a87d6cdd55622dcfe395880bc913f96102b8",
-			"directory1.csv": "70b0e683f2f4c9246500974a87467a3210d099c2",
-			"index1.csv": "b941ad049e50b5c14b07383c590cc2d79520c365",
-			"searchlist.csv": "d6f144dd001c7df79edb459fc9530515a747224d",
+			"directory1.csv": "1f1ab12b107608a1513254fff3c323bbcdfbd5cf",
+			"index1.csv": "494268da410c520e56142b47610f6bbcfd53c79f",
+			"searchlist.csv": "4f4513d1550436e867e1a79dbd073a7e5bb38e32",
 		}
 		self.convert_txt_mids("100-en-fa", sha1sumDict)
 
