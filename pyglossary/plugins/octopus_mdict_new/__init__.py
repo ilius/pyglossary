@@ -118,6 +118,8 @@ class Reader(object):
 		# 	self._glos.setInfo(key, value)
 		try:
 			title = self._mdx.header[b"Title"]
+			if isinstance(title, bytes):
+				title = title.decode("utf-8")
 		except KeyError:
 			pass
 		else:
@@ -125,6 +127,8 @@ class Reader(object):
 			if title:
 				self._glos.setInfo("name", title)
 		desc = self._mdx.header.get(b"Description", "")
+		if isinstance(desc, bytes):
+			desc = desc.decode("utf-8")
 		if desc:
 			self._glos.setInfo("description", desc)
 
