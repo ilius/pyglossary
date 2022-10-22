@@ -88,12 +88,17 @@ class XdxfTransformer(object):
 		hf: "lxml.etree.htmlfile",
 		elem: "Union[str, lxml.etree.Element]",
 	):
+		prev = None
+		stringSep = " "
 		with hf.element("div", **{
 			"class": "example",
 			"style": f"padding: {self._example_padding}px 0px;",
 		}):
 			for child in elem.xpath("child::node()"):
 				if isinstance(child, str):
+					# if not child.strip():
+					# 	continue
+					self.writeString(hf, child, elem, prev, stringSep=stringSep)
 					continue
 				if child.tag == "iref":
 					with hf.element("div"):
@@ -101,9 +106,11 @@ class XdxfTransformer(object):
 					continue
 				if child.tag in ("ex_orig", "ex_tran"):
 					with hf.element("div"):
-						self.writeChildrenOf(hf, child, stringSep=" ")
+						self.writeChildrenOf(hf, child, stringSep=stringSep)
 					continue
-				log.warning(f"unknown tag {child.tag} inside <ex>")
+				# log.warning(f"unknown tag {child.tag} inside <ex>")
+				self.writeChild(hf, child, elem, prev, stringSep=stringSep)
+				prev = child
 
 	def writeIRef(
 		self,
@@ -125,7 +132,6 @@ class XdxfTransformer(object):
 				"href": child.attrib.get("href", child.text),
 			}):
 				self.writeChildrenOf(hf, child, stringSep=" ")
-
 
 	def writeChild(
 		self,
