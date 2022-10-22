@@ -73,7 +73,7 @@ Android Termux - interactive command-line interface
 | [Tabfile](./doc/p/tabfile.md)                           |  📝  |   .txt, .tab    |  ✔   |   ✔   |
 | [Wordset.org](./doc/p/wordset.md)                       |  📁  |                 |  ✔   |       |
 | [XDXF](./doc/p/xdxf.md)                                 |  📝  |      .xdxf      |  ✔   |   ❌   |
-| [Yomichan](./yomichan.md)                               |  📦  |     (.zip)      |      |   ✔   |
+| [Yomichan](./doc/p/yomichan.md)                         |  📦  |     (.zip)      |      |   ✔   |
 | [Zim (Kiwix)](./doc/p/zim.md)                           |  🔢  |      .zim       |  ✔   |       |
 
 Legend:
