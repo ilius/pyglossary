@@ -67,7 +67,7 @@ jsonText = json.dumps(
 	data,
 	sort_keys=False,
 	indent="\t",
-	ensure_ascii=False,
+	ensure_ascii=True,
 )
 with open(
 	join(rootDir, "plugins-meta", "index.json"),
