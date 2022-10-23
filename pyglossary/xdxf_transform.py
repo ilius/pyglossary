@@ -114,10 +114,12 @@ class XdxfTransformer(object):
 
 		child = child.rstrip()
 		lines = [line for line in child.split("\n") if line]
+		# parentTransparent = parent.tag in ("b", "i", "u", "c", "kref")
 		for index, line in enumerate(lines):
-			if index > 0:
+			#print(f"{index=}, {line=}, {parent=}, {prev=}")
+			#if index > 0 or parentTransparent:
 				# and line[0] not in ".,;)"
-				addSep()
+			addSep()
 			hf.write(line)
 		if trail:
 			addSep()
@@ -244,7 +246,12 @@ class XdxfTransformer(object):
 						self.writeChildrenOf(hf, child)  # NESTED 5
 			return
 
-		if child.tag in ("dtrn", "co"):
+		if child.tag == "co":
+			with hf.element("div"):
+				self.writeChildrenOf(hf, child, sep=" ")
+			return
+
+		if child.tag == "dtrn":
 			self.writeChildrenOf(hf, child, sep=" ")
 			return
 
