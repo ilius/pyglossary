@@ -288,6 +288,8 @@ class FormatButton(gtk.Button):
 
 
 class FormatOptionsDialog(gtk.Dialog):
+	commentLen = 60
+
 	def __init__(
 		self,
 		formatName: str,
@@ -372,6 +374,8 @@ class FormatOptionsDialog(gtk.Dialog):
 		for name in options:
 			prop = optionsProp[name]
 			comment = prop.longComment
+			if len(comment) > self.commentLen:
+				comment = comment[:self.commentLen] + "..."
 			if prop.typ != "bool" and not prop.values:
 				comment += " (double-click to edit)"
 			treeModel.append([
@@ -939,8 +943,9 @@ class GeneralOptionsDialog(gtk.Dialog):
 		for param, default in self.configParams.items():
 			hbox = gtk.HBox()
 			comment = configDefDict[param].comment
+			comment = comment.split("\n")[0]
 			checkButton = gtk.CheckButton(
-				label=comment.split("\n")[0]
+				label=comment,
 			)
 			self.configCheckButtons[param] = checkButton
 			pack(hbox, checkButton, 0, 0, padding=hpad)

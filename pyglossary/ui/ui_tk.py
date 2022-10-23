@@ -567,6 +567,7 @@ class FormatButton(tk.Button):
 
 
 class FormatOptionsDialog(tix.Toplevel):
+	commentLen = 60
 	kindFormatsOptions = {
 		"Read": Glossary.formatsReadOptions,
 		"Write": Glossary.formatsWriteOptions,
@@ -636,6 +637,8 @@ class FormatOptionsDialog(tix.Toplevel):
 		for optName in self.options:
 			prop = self.optionsProp[optName]
 			comment = prop.longComment
+			if len(comment) > self.commentLen:
+				comment = comment[:self.commentLen] + "..."
 			row = [
 				int(optName in values),
 				optName,

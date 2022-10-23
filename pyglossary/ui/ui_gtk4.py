@@ -297,6 +297,8 @@ class FormatButton(gtk.Button):
 
 
 class FormatOptionsDialog(gtk.Dialog):
+	commentLen = 60
+
 	def __init__(
 		self,
 		formatName: str,
@@ -386,6 +388,8 @@ class FormatOptionsDialog(gtk.Dialog):
 		for name in options:
 			prop = optionsProp[name]
 			comment = prop.longComment
+			if len(comment) > self.commentLen:
+				comment = comment[:self.commentLen] + "..."
 			if prop.typ != "bool" and not prop.values:
 				comment += " (double-click to edit)"
 			treeModel.append([
