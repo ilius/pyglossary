@@ -18,7 +18,7 @@ optionsProp = {
 	"enable_info": BoolOption(comment="Enable glossary info / metedata"),
 	"resources": BoolOption(comment="Enable resources / data files"),
 	"word_title": BoolOption(
-		comment="add headwords title to begining of definition",
+		comment="add headwords title to beginning of definition",
 	),
 }
 
@@ -62,8 +62,8 @@ class Writer(object):
 			st2 = re.sub(r'\n', '', st2)
 			st2 = re.sub(r'<div></div>', '', st2)
 			st2 = re.sub(r'<span></span>', '', st2)
-			# fix russina dictionary issues,
-			# such as hypenation in word (e.g. абб{[']}а{[/']}т)
+			# fix russian dictionary issues,
+			# such as hyphenation in word (e.g. абб{[']}а{[/']}т)
 			st2 = re.sub(r"\{\['\]\}", "", st2)
 			st2 = re.sub(r"\{\[/'\]\}", "", st2)
 			return dumps(st2, ensure_ascii=ascii)

@@ -28,7 +28,7 @@ To use this user interface:
 # https://github.com/prompt-toolkit/python-prompt-toolkit
 
 # The code for Python's cmd.Cmd was very ugly and hard to understand last I
-# cheched. But we don't use cmd module here, and nor does prompt_toolkit.
+# checked. But we don't use cmd module here, and nor does prompt_toolkit.
 
 # Completion func for Python's readline, silently (and stupidly) hides any
 # exception, and only shows the print if it's in the first line of function.
@@ -223,11 +223,11 @@ class MyPathCompleter(PathCompleter):
 		self.fs_action_names = fs_action_names
 
 	def file_filter(self, filename: str) -> bool:
-		# filename is full/absoule file path
+		# filename is full/absolute file path
 		return True
 
 	# def get_completions_exception(document, complete_event, e):
-	# 	log.error(f"Execption in get_completions: {e}")
+	# 	log.error(f"Exception in get_completions: {e}")
 
 	def get_completions(
 		self,
@@ -982,7 +982,7 @@ class UI(ui_cmd.UI):
 				for key, value in infoOverride.items():
 					flag = infoOverrideFlags.get(key)
 					if not flag:
-						log.error(f"unknow key {key} in infoOverride")
+						log.error(f"unknown key {key} in infoOverride")
 						continue
 					cmd.append(f"--{flag}={value}")
 
@@ -994,7 +994,7 @@ class UI(ui_cmd.UI):
 				if value is None:
 					continue
 				if key not in convertOptionsFlags:
-					log.error(f"unknow key {key} in convertOptions")
+					log.error(f"unknown key {key} in convertOptions")
 					continue
 				ftup = convertOptionsFlags[key]
 				if ftup is None:

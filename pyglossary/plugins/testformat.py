@@ -38,7 +38,7 @@ class Reader(object):
 		# log.info(f"some useful message")
 		# here read info from file and set to Glossary object
 		self._glos.setInfo("name", "Test")
-		desc = "Test glossary craeted by a PyGlossary plugin"
+		desc = "Test glossary created by a PyGlossary plugin"
 		self._glos.setInfo("description", desc)
 		self._glos.setInfo("author", "Me")
 		self._glos.setInfo("copyright", "GPL")

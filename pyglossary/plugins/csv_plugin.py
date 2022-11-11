@@ -50,7 +50,7 @@ optionsProp = {
 		comment="Enable glossary info / metedata",
 	),
 	"word_title": BoolOption(
-		comment="add headwords title to begining of definition",
+		comment="add headwords title to beginning of definition",
 	),
 }
 

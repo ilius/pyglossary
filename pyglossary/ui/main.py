@@ -539,12 +539,12 @@ def main():
 		args.noColor = True
 
 	core.noColor = args.noColor
-	logHanlder = core.StdLogHandler(
+	logHandler = core.StdLogHandler(
 		noColor=args.noColor
 	)
 	log.setVerbosity(args.verbosity)
-	log.addHandler(logHanlder)
-	# with the logger setted up, we can import other pyglossary modules, so they
+	log.addHandler(logHandler)
+	# with the logger set up, we can import other pyglossary modules, so they
 	# can do some logging in right way.
 
 	for param1, param2 in UIBase.conflictingParams:
@@ -683,7 +683,7 @@ def main():
 			continue
 		config[key] = value
 
-	logHanlder.config = config
+	logHandler.config = config
 
 	convertOptions = {}
 	for key in convertOptionsKeys:

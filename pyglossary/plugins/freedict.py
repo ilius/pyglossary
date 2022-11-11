@@ -33,7 +33,7 @@ optionsProp = {
 		comment="Auto-detect and mark Right-to-Left text",
 	),
 	"word_title": BoolOption(
-		comment="Add headwords title to begining of definition",
+		comment="Add headwords title to beginning of definition",
 	),
 	"pron_color": StrOption(
 		comment="Pronunciation color",
@@ -90,7 +90,7 @@ class Reader(object):
 		"pn": "pronoun",
 		"pron": "pronoun",
 		"prep": "preposition",
-		"conj": "conjuction",
+		"conj": "conjunction",
 		"adj": "adjective",
 		"adv": "adverb",
 		# "numeral", "interjection", "suffix", "particle"

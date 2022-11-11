@@ -40,7 +40,7 @@ optionsProp = {
 		comment="Path to css file",
 	),
 	"word_title": BoolOption(
-		comment="Add headwords title to begining of definition",
+		comment="Add headwords title to beginning of definition",
 	),
 }
 

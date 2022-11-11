@@ -133,7 +133,7 @@ class Reader(object):
 		_, ext = splitext(fpath)
 		c_open = compressionOpenFunc(ext.lstrip("."))
 		if not c_open:
-			log.error(f"invalid extention {ext}")
+			log.error(f"invalid extension {ext}")
 			c_open = open
 		with c_open(fpath, "rt", encoding="utf-8") as _file:
 			words = splitByBarUnescapeNTB(_file.readline().rstrip("\n"))

@@ -197,7 +197,7 @@ class Entry(BaseEntry):
 		# here `x` is raw entity, meaning a tuple of form (word, defi) or
 		# (word, defi, defiFormat)
 		# so x[0] is word(s) in bytes, that can be a str (one word),
-		# or a list or tuple (one word with or more alternaties)
+		# or a list or tuple (one word with or more alternatives)
 		if glos.rawEntryCompress:
 			return lambda x: key(loads(decompress(x))[0])
 		else:
@@ -252,7 +252,7 @@ class Entry(BaseEntry):
 		"""
 			returns string of word,
 				and all the alternate words
-				seperated by "|"
+				separated by "|"
 		"""
 		if isinstance(self._word, str):
 			return self._word

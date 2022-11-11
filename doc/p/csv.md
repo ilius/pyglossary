@@ -33,7 +33,7 @@
 | delimiter       | `,`     | str  | Column delimiter                              |
 | add_defi_format | `False` | bool | enable adding defiFormat (m/h/x)              |
 | enable_info     | `True`  | bool | Enable glossary info / metedata               |
-| word_title      | `False` | bool | add headwords title to begining of definition |
+| word_title      | `False` | bool | add headwords title to beginning of definition |
 
 
 

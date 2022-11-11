@@ -256,4 +256,4 @@ p.groupDefinition {
 			"application/x-dtbncx+xml",
 		)
 
-	# inherts write from EbookWriter
+	# inherits write from EbookWriter

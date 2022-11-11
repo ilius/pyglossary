@@ -45,7 +45,7 @@
 			"word_title": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "add headwords title to begining of definition"
+				"comment": "add headwords title to beginning of definition"
 			}
 		},
 		"canRead": true,
@@ -252,10 +252,10 @@
 				"type": "bool",
 				"comment": "No control sequence in definitions"
 			},
-			"strict_string_convertion": {
+			"strict_string_conversion": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "Strict string convertion"
+				"comment": "Strict string conversion"
 			},
 			"process_html_in_key": {
 				"class": "BoolOption",
@@ -316,7 +316,7 @@
 			"target_encoding_overwrite": "",
 			"part_of_speech_color": "007000",
 			"no_control_sequence_in_defi": false,
-			"strict_string_convertion": false,
+			"strict_string_conversion": false,
 			"process_html_in_key": false,
 			"key_rstrip_chars": ""
 		}
@@ -444,7 +444,7 @@
 			"word_title": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "add headwords title to begining of definition"
+				"comment": "add headwords title to beginning of definition"
 			}
 		},
 		"canRead": true,
@@ -633,7 +633,7 @@
 			"word_title": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "add headwords title to begining of definition"
+				"comment": "add headwords title to beginning of definition"
 			}
 		},
 		"canRead": false,
@@ -950,7 +950,7 @@
 			"word_title": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "Add headwords title to begining of definition"
+				"comment": "Add headwords title to beginning of definition"
 			},
 			"pron_color": {
 				"class": "StrOption",
@@ -1085,7 +1085,7 @@
 			"word_title": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "Add headwords title to begining of definition"
+				"comment": "Add headwords title to beginning of definition"
 			}
 		},
 		"canRead": false,
@@ -1224,7 +1224,7 @@
 			"word_title": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "add headwords title to begining of definition"
+				"comment": "add headwords title to beginning of definition"
 			}
 		},
 		"canRead": false,
@@ -1594,7 +1594,7 @@
 			"word_title": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "Add headwords title to begining of definition"
+				"comment": "Add headwords title to beginning of definition"
 			}
 		},
 		"canRead": true,

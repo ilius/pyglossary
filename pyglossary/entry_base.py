@@ -42,7 +42,7 @@ class BaseEntry(object):
 		"""
 			returns bytes of word,
 				and all the alternate words
-				seperated by b"|"
+				separated by b"|"
 		"""
 		return self.s_word.encode("utf-8")
 
@@ -51,7 +51,7 @@ class BaseEntry(object):
 		"""
 			returns bytes of definition,
 				and all the alternate definitions
-				seperated by b"|"
+				separated by b"|"
 		"""
 		return self.defi.encode("utf-8")
 

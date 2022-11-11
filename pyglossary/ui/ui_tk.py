@@ -821,7 +821,7 @@ class FormatOptionsDialog(tix.Toplevel):
 				event.y_root,
 			)
 			# do not pass the third argument (entry), so that the menu
-			# apears where the pointer is on its top-left corner
+			# appears where the pointer is on its top-left corner
 		finally:
 			# make sure to release the grab (Tk 8.0a1 only)
 			menu.grab_release()

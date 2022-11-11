@@ -213,7 +213,7 @@ infoType3ByCode = {
 		"bgl_firstUpdated",
 		decode=decodeBglBinTime,
 	),
-	# bgl_firstUpdated was prevously called middleUpdated
+	# bgl_firstUpdated was previously called middleUpdated
 	# in rare cases, bgl_firstUpdated is before creationTime
 	# but usually it looks like to be the first update (after creation)
 	# in some cases, it's the same as lastUpdated

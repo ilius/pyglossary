@@ -25,7 +25,7 @@
 | content_type        |         | str  | Content Type                                                    |
 | file_size_approx    | `0`     | int  | split up by given approximate file size<br />examples: 100m, 1g |
 | separate_alternates | `False` | bool | add alternate headwords as separate entries to slob             |
-| word_title          | `False` | bool | add headwords title to begining of definition                   |
+| word_title          | `False` | bool | add headwords title to beginning of definition                   |
 
 ### Dependencies for reading and writing
 

@@ -1,5 +1,5 @@
 To convert to a StarDict dictionary with the `sametypesequence` option, use
-`sametypesequence=[type of defnitions]` write option.
+`sametypesequence=[type of definitions]` write option.
 
 If the sametypesequence option is set, it tells StarDict that each
 word's data in the .dict file will have the same sequence of datatypes.

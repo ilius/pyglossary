@@ -307,7 +307,7 @@ class DSLParserTestCase(unittest.TestCase):
 		after = """...,,,+++"""
 		self.assertEqual(after, parse(before))
 
-	def test_startsWtihClosingAndEndsWithOpening(self):
+	def test_startsWithClosingAndEndsWithOpening(self):
 		before = """[/c]...[i]"""
 		after = """..."""
 		self.assertEqual(after, parse(before))
@@ -327,7 +327,7 @@ class DSLParserTestCase(unittest.TestCase):
 		after = """...,,,"""
 		self.assertEqual(after, parse(before))
 
-	def test_nestedWithBrokenOutter(self):
+	def test_nestedWithBrokenOuter(self):
 		before = """[i][p]...[/p][/c]"""
 		after = """[p]...[/p]"""
 		self.assertEqual(after, parse(before))
@@ -337,7 +337,7 @@ class DSLParserTestCase(unittest.TestCase):
 		after = """...[i],,,[/i]+++"""
 		self.assertEqual(after, parse(before))
 
-	def test_wrongOrder2_WithConent(self):
+	def test_wrongOrder2_WithContent(self):
 		before = """[b]...[c red]...[/b]...[/c]"""
 		after = """[b]...[c red]...[/c][/b][c red]...[/c]"""
 		self.assertEqual(after, parse(before))

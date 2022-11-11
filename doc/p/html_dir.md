@@ -28,7 +28,7 @@
 | escape_defi     | `False`        | bool | Escape definitions                            |
 | dark            | `True`         | bool | Use dark style                                |
 | css             |                | str  | Path to css file                              |
-| word_title      | `True`         | bool | Add headwords title to begining of definition |
+| word_title      | `True`         | bool | Add headwords title to beginning of definition |
 
 
 ### Dependencies for writing

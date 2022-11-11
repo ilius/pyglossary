@@ -127,7 +127,7 @@ class PluginManager(object):
 			cls.writeFormats.append(format)
 
 		if log.level <= core.TRACE:
-			prop.module  # to make sure imporing works
+			prop.module  # to make sure importing works
 
 	@classmethod
 	def loadPlugin(
@@ -179,7 +179,7 @@ class PluginManager(object):
 	@classmethod
 	def findPlugin(cls, query: str) -> "Optional[PluginProp]":
 		"""
-			find plugin by name or extention
+			find plugin by name or extension
 		"""
 		plugin = cls.plugins.get(query)
 		if plugin:

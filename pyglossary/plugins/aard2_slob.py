@@ -37,7 +37,7 @@ optionsProp = {
 		comment="add alternate headwords as separate entries to slob",
 	),
 	"word_title": BoolOption(
-		comment="add headwords title to begining of definition",
+		comment="add headwords title to beginning of definition",
 	),
 }
 

@@ -97,7 +97,7 @@ defaultSortKeyName = "headword_lower"
 
 class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	"""
-	Direct access to glos.data is droped
+	Direct access to glos.data is dropped
 	Use `glos.addEntryObj(glos.newEntry(word, defi, [defiFormat]))`
 		where both word and defi can be list (including alternates) or string
 	See help(glos.addEntryObj)
@@ -670,7 +670,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		"""
 		updates self._iter
 		depending on:
-			1- Wheather or not direct mode is On (self._readers not empty)
+			1- Whether or not direct mode is On (self._readers not empty)
 				or Off (self._readers empty)
 		"""
 		if not self._readers:  # indirect mode

@@ -90,8 +90,8 @@ optionsProp = {
 	"no_control_sequence_in_defi": BoolOption(
 		comment="No control sequence in definitions",
 	),
-	"strict_string_convertion": BoolOption(
-		comment="Strict string convertion",
+	"strict_string_conversion": BoolOption(
+		comment="Strict string conversion",
 	),
 	"process_html_in_key": BoolOption(
 		comment="Process HTML in (entry or info) key",
@@ -280,7 +280,7 @@ class BglReader(object):
 	_target_encoding_overwrite: str = ""
 	_part_of_speech_color: str = "007000"
 	_no_control_sequence_in_defi: bool = False
-	_strict_string_convertion: bool = False
+	_strict_string_conversion: bool = False
 	# process keys and alternates as HTML
 	# Babylon does not interpret keys and alternates as HTML text,
 	# however you may encounter many keys containing character references
@@ -656,7 +656,7 @@ class BglReader(object):
 		pos += Len
 		b_data = block.data[pos:]
 		# if b_name in (b"C2EEF3F6.html", b"8EAF66FD.bmp"):
-		# 	log.debug(f"Skipping non-useful file {b_name!r}")
+		# 	log.debug(f"Skipping useless file {b_name!r}")
 		# 	return
 		u_name = b_name.decode(self.sourceEncoding)
 		return self._glos.newDataEntry(
@@ -1056,7 +1056,7 @@ class BglReader(object):
 					self.charReferencesStat(b_text2, encoding)
 					if encoding == "cp1252":
 						b_text2 = replaceAsciiCharRefs(b_text2, encoding)
-					if self._strict_string_convertion:
+					if self._strict_string_conversion:
 						try:
 							u_text2 = b_text2.decode(encoding)
 						except UnicodeError:
@@ -1127,7 +1127,7 @@ class BglReader(object):
 				f"number of dollar indexes = {strip_count}",
 			)
 		# convert to unicode
-		if self._strict_string_convertion:
+		if self._strict_string_conversion:
 			try:
 				u_word_main = b_word_main.decode(self.sourceEncoding)
 			except UnicodeError:
@@ -1162,7 +1162,7 @@ class BglReader(object):
 		"""
 		b_word_main, strip_count = stripDollarIndexes(b_word)
 		# convert to unicode
-		if self._strict_string_convertion:
+		if self._strict_string_conversion:
 			try:
 				u_word_main = b_word_main.decode(self.sourceEncoding)
 			except UnicodeError:

@@ -26,7 +26,7 @@
 | target_encoding_overwrite   |          | str  | Target encoding (overwrite)                 |
 | part_of_speech_color        | `007000` | str  | Color for Part of Speech                    |
 | no_control_sequence_in_defi | `False`  | bool | No control sequence in definitions          |
-| strict_string_convertion    | `False`  | bool | Strict string convertion                    |
+| strict_string_conversion    | `False`  | bool | Strict string conversion                    |
 | process_html_in_key         | `False`  | bool | Process HTML in (entry or info) key         |
 | key_rstrip_chars            |          | str  | Characters to strip from right-side of keys |
 

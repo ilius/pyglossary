@@ -63,7 +63,7 @@ class AboutWidget(gtk.Box):
 		##
 		self.show_all()
 
-	# <a href="...">Somethig</a> does not work with TextView
+	# <a href="...">Something</a> does not work with TextView
 	def newTabWidgetTextView(
 		self,
 		text: str,

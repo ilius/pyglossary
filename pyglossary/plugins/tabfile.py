@@ -29,7 +29,7 @@ optionsProp = {
 		comment="Split up by given approximate file size\nexamples: 100m, 1g",
 	),
 	"word_title": BoolOption(
-		comment="Add headwords title to begining of definition",
+		comment="Add headwords title to beginning of definition",
 	),
 }
 

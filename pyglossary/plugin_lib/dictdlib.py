@@ -90,9 +90,9 @@ class DictDB:
 		read -- read-only access
 
 		write -- write-only access, truncates existing files, does not work
-		with .dz.  dict created if nonexistant.
+		with .dz.  dict created if nonexistent.
 
-		update -- read/write access, dict created if nonexistant.  Does not
+		update -- read/write access, dict created if nonexistent.  Does not
 		work with .dz.
 
 		Read can read dict or dict.dz files.  Write and update will NOT work
@@ -196,7 +196,7 @@ class DictDB:
 		retval = 0
 		entrylist = self.indexentries[word]
 		for i in range(len(entrylist) - 1, -1, -1):
-			# Go backwords so the del doesn't effect the index.
+			# Go backwards so the del doesn't effect the index.
 			if (start is None or start == entrylist[i][0]) and \
 				(size is None or size == entrylist[i][1]):
 				del(entrylist[i])

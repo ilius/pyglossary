@@ -20,7 +20,7 @@ optionsProp = {
 	"enable_info": BoolOption(comment="Enable glossary info / metedata"),
 	"resources": BoolOption(comment="Enable resources / data files"),
 	"word_title": BoolOption(
-		comment="add headwords title to begining of definition",
+		comment="add headwords title to beginning of definition",
 	),
 }
 

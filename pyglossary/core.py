@@ -364,7 +364,7 @@ elif os.sep == "\\":  # Operating system is Windows
 	pip = "pip3"
 else:
 	raise RuntimeError(
-		f"Unknown path seperator(os.sep=={os.sep!r})"
+		f"Unknown path separator(os.sep=={os.sep!r})"
 		f", unknown operating system!"
 	)
 

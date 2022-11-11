@@ -24,7 +24,7 @@
 | encoding    | `utf-8` | str  | Encoding/charset                              |
 | enable_info | `True`  | bool | Enable glossary info / metedata               |
 | resources   | `True`  | bool | Enable resources / data files                 |
-| word_title  | `False` | bool | add headwords title to begining of definition |
+| word_title  | `False` | bool | add headwords title to beginning of definition |
 
 
 

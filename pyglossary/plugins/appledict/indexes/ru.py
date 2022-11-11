@@ -34,7 +34,7 @@ morphy = pymorphy2.MorphAnalyzer()
 
 def ru(titles, _):
 	"""
-	gives a set of all declines, cases and other froms of word `title`.
+	gives a set of all declines, cases and other forms of word `title`.
 	note that it works only if title is one word.
 
 	:type titles: Sequence[str]
@@ -76,7 +76,7 @@ def _ru(title, a, a_norm):
 				# "й" and "и", "ё" and "е", so we're trying to avoid
 				# "* Duplicate index. Skipped..." warning.
 				# new: return indexes with original letters but check for
-				# occurence against "normal forms".
+				# occurrence against "normal forms".
 				word_norm = normalize(word)
 				if word_norm not in a_norm:
 					a.add(word)

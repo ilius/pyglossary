@@ -164,7 +164,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 	def convert_stardict_txt(
 		self,
 		inputFname: str,
-		ouputFname: str,
+		outputFname: str,
 		testId: str,
 		syn=True,
 		**convertArgs
@@ -179,7 +179,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		outputFilename = self.newTempFilePath(
 			f"{inputFname}-{testId}.txt"
 		)
-		expectedFilename = self.downloadFile(f"{ouputFname}.txt")
+		expectedFilename = self.downloadFile(f"{outputFname}.txt")
 		glos = self.glos = Glossary()
 
 		result = glos.convert(

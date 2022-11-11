@@ -1394,7 +1394,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 	def onDeleteEvent(self, widget, event):
 		self.destroy()
 		# gtk.main_quit()
-		# if callled while converting, main_quit does not exit program,
+		# if called while converting, main_quit does not exit program,
 		# it keeps printing warnings,
 		# and makes you close the terminal or force kill the process
 		sys.exit(0)

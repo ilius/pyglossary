@@ -44,7 +44,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 	def convert_to_epub(
 		self,
 		inputFname,
-		ouputFname,
+		outputFname,
 		testId,
 		**convertArgs
 	):
@@ -53,7 +53,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			f"{inputFname.replace('.', '_')}-{testId}.epub"
 		)
 
-		expectedFilename = self.downloadFile(f"{ouputFname}.epub")
+		expectedFilename = self.downloadFile(f"{outputFname}.epub")
 		glos = self.glos = Glossary()
 		res = glos.convert(
 			inputFilename=inputFilename,
