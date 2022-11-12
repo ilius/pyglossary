@@ -75,6 +75,7 @@ old format
 
 
 class Reader(object):
+	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
 	}
@@ -106,9 +107,10 @@ class Reader(object):
 		else:
 			self._glos.setDefaultDefiFormat("x")
 
-		_file = open(self._filename, mode="rb")
+		cfile = self._file = compressionOpen(self._filename, mode="rb")
+
 		context = ET.iterparse(
-			_file,
+			cfile,
 			events=("end",),
 		)
 		for action, elem in context:
@@ -123,11 +125,17 @@ class Reader(object):
 			key = self.infoKeyMap.get(elem.tag, elem.tag)
 			self._glos.setInfo(key, elem.text)
 
-		_file.close()
 		del context
-		self._fileSize = os.path.getsize(filename)
-		self._file = open(self._filename, mode="rb")
-		self._glos.setInfo("input_file_size", f"{self._fileSize}")
+
+		if cfile.seekable():
+			cfile.seek(0, 2)
+			self._fileSize = cfile.tell()
+			cfile.seek(0)
+			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+		else:
+			log.warning("XDXF Reader: file is not seekable")
+			self._file.close()
+			self._file = compressionOpen(self._filename, mode="rb")
 
 	def __len__(self):
 		return 0

@@ -1676,7 +1676,12 @@
 		},
 		"readDepends": {
 			"lxml": "lxml"
-		}
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
 	},
 	{
 		"module": "yomichan",
