@@ -99,7 +99,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Bengali-Assamese",
-		iso=(325, "Being"),
+		iso=(325, "Beng"),
 		unicode=["BENGALI"],
 		titleTag="big",
 		comma=", ",

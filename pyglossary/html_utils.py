@@ -85,7 +85,7 @@ name2codepoint = {
 	"copy": 0x00a9,  # ©
 	"crarr": 0x21b5,  # ↵
 	"cup": 0x222a,  # ∪
-	"current": 0x00a4,  # ¤
+	"curren": 0x00a4,  # ¤
 	"Dagger": 0x2021,  # ‡
 	"dagger": 0x2020,  # †
 	"dArr": 0x21d3,  # ⇓

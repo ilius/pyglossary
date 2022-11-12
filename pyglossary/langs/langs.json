@@ -1084,7 +1084,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["and", "nde"],
+		"codes": ["nd", "nde"],
 		"name": "North Ndebele",
 		"alt_names": ["Ndebele", "amaNdebele", "Zimbabwean Ndebele", "North Ndebele"],
 		"script": ["Latin"],
@@ -1372,7 +1372,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["so", "some"],
+		"codes": ["so", "som"],
 		"name": "Somali",
 		"alt_names": ["Af Soomaali"],
 		"script": ["Latin", "Arabic"],
