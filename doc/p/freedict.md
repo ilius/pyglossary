@@ -19,14 +19,14 @@
 
 ### Read options
 
-| Name            | Default | Type | Comment                                       |
-| --------------- | ------- | ---- | --------------------------------------------- |
-| discover        | `False` | bool | Find and show unsupported tags                |
-| auto_rtl        | `None`  | bool | Auto-detect and mark Right-to-Left text       |
+| Name            | Default | Type | Comment                                        |
+| --------------- | ------- | ---- | ---------------------------------------------- |
+| discover        | `False` | bool | Find and show unsupported tags                 |
+| auto_rtl        | `None`  | bool | Auto-detect and mark Right-to-Left text        |
 | word_title      | `False` | bool | Add headwords title to beginning of definition |
-| pron_color      | `gray`  | str  | Pronunciation color                           |
-| gram_color      | `green` | str  | Grammar color                                 |
-| example_padding | `10`    | int  | Padding for examples (in px)                  |
+| pron_color      | `gray`  | str  | Pronunciation color                            |
+| gram_color      | `green` | str  | Grammar color                                  |
+| example_padding | `10`    | int  | Padding for examples (in px)                   |
 
 ### Dependencies for reading
 
