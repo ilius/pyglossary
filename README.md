@@ -108,7 +108,7 @@ ways to use the program).
     - `pacman -S python-gobject gtk3`
     - https://aur.archlinux.org/packages/pyglossary/
   - Mac OS X: `brew install pygobject3 gtk+3`
-  - Nix / NixOS: `nix-shell -p gnome3.gobjectIntrospection python38Packages.pygobject3 python38Packages.pycairo`
+  - Nix / NixOS: `nix-shell -p pkgs.gobject-introspection python38Packages.pygobject3 python38Packages.pycairo`
 
 - **Tkinter-based interface**, works in the lack of Gtk. Specially on
   Windows where Tkinter library is installed with the Python itself.
