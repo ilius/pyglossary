@@ -311,7 +311,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		add_group(state)
 
 	def write(self):
-		import subprocess
+		import subprocess, shutil
 
 		filename = self._filename
 		kindlegen_path = self._kindlegen_path
@@ -322,6 +322,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		# https://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000765211
 
 		# run kindlegen
+		if not kindlegen_path:
+			kindlegen_path = shutil.which("kindlegen")
 		if not kindlegen_path:
 			log.warning(f"Not running kindlegen, the raw files are located in {filename}")
 			log.warning(
