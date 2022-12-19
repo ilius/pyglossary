@@ -12,7 +12,7 @@ ignore W504 "line break after binary operator"
 #ignore E261 "at least two spaces before inline comment"
 #ignore E262 "inline comment should start with '# '"
 #ignore E265 "block comment should start with '# '"
-#ignore E402 "module level import not at top of file"
+ignore E402 "module level import not at top of file"
 #ignore E702 "multiple statements on one line (semicolon)"
 
 #if [ -z $2 ] ; then
