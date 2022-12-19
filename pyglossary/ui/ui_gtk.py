@@ -77,17 +77,29 @@ writeDesc = [
 ]
 
 
-def getScreenSize():
-	rootWindow = gdk.get_default_root_window()
-	return rootWindow.get_width(), rootWindow.get_height()
-
-
-def getWorkAreaSize():
+def getMonitor():
 	display = gdk.Display.get_default()
-	rootWindow = gdk.get_default_root_window()
-	monitor = display.get_monitor_at_window(rootWindow)
+
+	monitor = display.get_monitor_at_point(1, 1)
+	if monitor is not None:
+		log.debug("getMonitor: using get_monitor_at_point")
+		return monitor
+
+	monitor = display.get_primary_monitor()
+	if monitor is not None:
+		log.debug("getMonitor: using get_primary_monitor")
+		return monitor
+
+	monitor = display.get_monitor_at_window(gdk.get_default_root_window())
+	if monitor is not None:
+		log.debug("getMonitor: using get_monitor_at_window")
+		return monitor
+
+
+def getWorkAreaSize() -> "Optional[Tuple[int, int]]":
+	monitor = getMonitor()
 	if monitor is None:
-		monitor = display.get_primary_monitor()
+		return
 	rect = monitor.get_workarea()
 	return rect.width, rect.height
 
@@ -1010,10 +1022,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		UIBase.__init__(self)
 		self.set_title("PyGlossary (Gtk3)")
 		#####
-		screenW, screenH = getWorkAreaSize()
-		winSize = min(800, screenW - 50, screenH - 50)
-		self.resize(winSize, winSize)
-		# print(f"{screenW}x{screenH}, {'%sx%s' % getScreenSize()}")
+		screenSize = getWorkAreaSize()
+		if screenSize:
+			winSize = min(800, screenSize[0] - 50, screenSize[1] - 50)
+			self.resize(winSize, winSize)
+			# print(f"{screenSize = }")
 		#####
 		self.connect("delete-event", self.onDeleteEvent)
 		self.pages = []
