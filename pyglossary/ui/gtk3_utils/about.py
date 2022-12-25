@@ -39,6 +39,7 @@ class AboutWidget(gtk.Box):
 			headerBox.pack_start(imageFromFile(logo), False, False, 0)
 		headerLabel = gtk.Label(label=header)
 		headerLabel.set_selectable(True)
+		headerLabel.set_can_focus(False)
 		headerBox.pack_start(headerLabel, False, False, 15)
 		headerBox.show_all()
 		self.pack_start(headerBox, False, False, 0)
@@ -47,6 +48,7 @@ class AboutWidget(gtk.Box):
 		self.notebook = notebook
 		self.pack_start(notebook, True, True, 5)
 		notebook.set_tab_pos(gtk.PositionType.LEFT)
+		notebook.set_can_focus(True)
 		##
 		tab1_about = self.newTabLabelWidget(about)
 		tab2_authors = self.newTabWidgetTextView(authors)
@@ -71,6 +73,8 @@ class AboutWidget(gtk.Box):
 		justification: "Optional[gtk.Justification]" = None,
 	):
 		tv = gtk.TextView()
+		tv.set_editable(False)
+		tv.set_can_focus(False)
 		if wrap:
 			tv.set_wrap_mode(gtk.WrapMode.WORD)
 		if justification is not None:
@@ -104,7 +108,7 @@ class AboutWidget(gtk.Box):
 		#	tv.set_wrap_mode(gtk.WrapMode.WORD)
 		#if justification is not None:
 		#	tv.set_justification(justification)
-		# label.set_cursor_visible(False)
+		label.set_can_focus(False)
 		# label.set_border_width(10)
 		label.set_markup(text)
 		label.show_all()
