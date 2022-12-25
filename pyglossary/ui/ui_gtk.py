@@ -1407,6 +1407,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 		self._glossarySetAttrs = glossarySetAttrs
 
+		self.convertInputEntry.grab_focus()
 		gtk.Dialog.present(self)
 		gtk.main()
 
