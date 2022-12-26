@@ -13,6 +13,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from typing import Tuple, Match
 
 from pyglossary.plugins.formats_common import *
 
@@ -141,7 +142,7 @@ class Reader(object):
 		self._file = open(filename, "rb")
 
 		self._file.seek(0x40)
-		self._limit = 0x40 + unpack("i", self._file.read(4))[0]
+		self._limit = 0x40 + self.read_int_from_file()
 		self._file.seek(0x60)
 
 		t0 = datetime.now()
@@ -257,9 +258,8 @@ class Reader(object):
 			absPos = _file.tell()
 			if absPos >= limit:
 				break
-			bufSizeB = _file.read(4)  # type: bytes
 
-			bufSize, = unpack("i", bufSizeB)  # type: int
+			bufSize = self.read_int_from_file()
 			self._buf = decompress(_file.read(bufSize)[8:])
 
 			pos = 0
@@ -291,6 +291,9 @@ class Reader(object):
 		_file.seek(0x60)
 		self._wordCount = len(titleById)
 
+	def read_int_from_file(self) -> int:
+		return unpack("i", self._file.read(4))[0]
+
 	def __iter__(self):
 		from os.path import dirname
 
@@ -310,7 +313,6 @@ class Reader(object):
 			self._absPos = _file.tell()
 			if self._absPos >= limit:
 				break
-			bufSizeB = _file.read(4)  # type: bytes
 			# alternative for buf, bufSize is calculated
 			# ~ flag = f.tell()
 			# ~ bufSize = 0
@@ -327,7 +329,7 @@ class Reader(object):
 			# ~			f.seek(flag)
 			# ~			bufSize = bufSize+1
 
-			bufSize, = unpack("i", bufSizeB)  # type: int
+			bufSize = self.read_int_from_file()
 			self._buf = decompress(_file.read(bufSize)[8:])
 
 			pos = 0
