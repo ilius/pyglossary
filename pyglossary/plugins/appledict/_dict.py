@@ -50,6 +50,16 @@ def id_generator() -> "Iterator[str]":
 		cnt += 1
 
 
+def quote_string(value: str, BeautifulSoup) -> str:
+	if BeautifulSoup:
+		return BeautifulSoup.dammit.EntitySubstitution.substitute_xml(
+			value,
+			True,
+		)
+
+	return '"' + value.replace(">", "&gt;").replace('"', "&quot;") + '"'
+
+
 def indexes_generator(indexes_lang: str) -> """Callable[
 	[str, List[str], str, Any],
 	str,
@@ -74,13 +84,7 @@ def indexes_generator(indexes_lang: str) -> """Callable[
 		indexes = [title]
 		indexes.extend(alts)
 
-		if BeautifulSoup:
-			quoted_title = BeautifulSoup.dammit.EntitySubstitution\
-				.substitute_xml(title, True)
-		else:
-			quoted_title = '"' + \
-				title.replace(">", "&gt;").replace('"', "&quot;") + \
-				'"'
+		quoted_title = quote_string(title, BeautifulSoup)
 
 		if indexer:
 			indexes = set(indexer(indexes, content))
@@ -96,16 +100,8 @@ def indexes_generator(indexes_lang: str) -> """Callable[
 		# skip empty titles.  everything could happen.
 
 		s = f"<d:index d:value={quoted_title} d:title={quoted_title}/>"
-		if BeautifulSoup:
-			for idx in normal_indexes:
-				quoted_idx = BeautifulSoup.dammit.\
-					EntitySubstitution.substitute_xml(idx, True)
-				s += f"<d:index d:value={quoted_idx} d:title={quoted_title}/>"
-		else:
-			for idx in normal_indexes:
-				quoted_idx = '"' + \
-					idx.replace(">", "&gt;").replace('"', "&quot;") + \
-					'"'
-				s += f"<d:index d:value={quoted_idx} d:title={quoted_title}/>"
+		for idx in normal_indexes:
+			quoted_idx = quote_string(idx, BeautifulSoup)
+			s += f"<d:index d:value={quoted_idx} d:title={quoted_title}/>"
 		return s
 	return generate_indexes

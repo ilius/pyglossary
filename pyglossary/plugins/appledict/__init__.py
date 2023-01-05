@@ -286,11 +286,7 @@ class Writer(object):
 					continue
 
 				_id = next(generate_id)
-				if BeautifulSoup:
-					title_attr = BeautifulSoup.dammit.EntitySubstitution\
-						.substitute_xml(long_title, True)
-				else:
-					title_attr = str(long_title)
+				quoted_title = quote_string(long_title, BeautifulSoup)
 
 				content_title = long_title
 				if entry.defiFormat == "x":
@@ -299,7 +295,7 @@ class Writer(object):
 				content = prepare_content(content_title, defi, BeautifulSoup)
 
 				toFile.write(
-					f'<d:entry id="{_id}" d:title={title_attr}>\n' +
+					f'<d:entry id="{_id}" d:title={quoted_title}>\n' +
 					generate_indexes(long_title, alts, content, BeautifulSoup) +
 					content +
 					"\n</d:entry>\n"
