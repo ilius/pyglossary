@@ -54,7 +54,7 @@ def quote_string(value: str, BeautifulSoup) -> str:
 	if BeautifulSoup:
 		return BeautifulSoup.dammit.EntitySubstitution.substitute_xml(
 			value,
-			True,
+			make_quoted_attribute=True
 		)
 
 	return '"' + value.replace(">", "&gt;").replace('"', "&quot;") + '"'
