@@ -121,7 +121,7 @@ class RTLDefi(EntryFilter):
 
 class RemoveHtmlTagsAll(EntryFilter):
 	name = "remove_html_all"
-	desc = "Remove all HTML tags from definition"
+	desc = "Remove all HTML tags (not their contents) from definition"
 
 	def __init__(self, glos: "GlossaryType"):
 		self._p_pattern = re.compile(
@@ -158,7 +158,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 
 class RemoveHtmlTags(EntryFilter):
 	name = "remove_html"
-	desc = "Remove given HTML tags (comma-separated) from definitions"
+	desc = "Remove given comma-separated HTML tags (not their contents) from definition"
 
 	def __init__(self, glos: "GlossaryType", tagsStr: str):
 		import re
