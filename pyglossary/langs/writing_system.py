@@ -397,6 +397,11 @@ writingSystemByName = {
 	for ws in writingSystemList
 }
 
+writingSystemByLowercaseName = {
+	ws.name.lower(): ws
+	for ws in writingSystemList
+}
+
 unicodeNextWord = {
 	"HALFWIDTH",
 	"FULLWIDTH",
@@ -404,7 +409,7 @@ unicodeNextWord = {
 }
 
 
-def _getWritingSystemFromText(st: str, start: int, end: int):
+def _getWritingSystemFromText(st: str, start: int, end: int) -> WritingSystem:
 	for c in st[start:end]:
 		try:
 			unicodeWords = unicodedata.name(c).split(' ')
@@ -422,13 +427,16 @@ def _getWritingSystemFromText(st: str, start: int, end: int):
 				return ws
 
 
-def getWritingSystemFromText(st: str):
+def getWritingSystemFromText(st: str, begining: bool = False) -> WritingSystem:
 	st = st.strip()
 	if not st:
 		return None
 	# some special first words in unicodedata.name(c):
 	# "RIGHT", "ASTERISK", "MODIFIER"
-	k = (len(st) + 1) // 2 - 1
+	if begining:
+		k = 0
+	else:
+		k = (len(st) + 1) // 2 - 1
 	ws = _getWritingSystemFromText(st, k, len(st))
 	if ws:
 		return ws
