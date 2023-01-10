@@ -108,7 +108,11 @@ class SqEntryList(list):
 			raise RuntimeError("Called setSortKey twice")
 
 		if sortLocale:
-			sqliteSortKey = self._getLocaleSortKey(namedSortKey, sortLocale, writeOptions)
+			sqliteSortKey = self._getLocaleSortKey(
+				namedSortKey,
+				sortLocale,
+				writeOptions,
+			)
 		else:
 			sqliteSortKey = namedSortKey.sqlite(sortEncoding, **writeOptions)
 
@@ -116,16 +120,18 @@ class SqEntryList(list):
 		self._columnNames = ",".join([
 			col[0] for col in sqliteSortKey
 		])
-		if self._create:
-			colDefs = ",".join([
-				f"{col[0]} {col[1]}"
-				for col in sqliteSortKey
-			] + ["pickle BLOB"])
-			self._con.execute(
-				f"CREATE TABLE data ({colDefs})"
-			)
-		else:
+
+		if not self._create:
 			self._parseExistingIndex()
+			return
+
+		colDefs = ",".join([
+			f"{col[0]} {col[1]}"
+			for col in sqliteSortKey
+		] + ["pickle BLOB"])
+		self._con.execute(
+			f"CREATE TABLE data ({colDefs})"
+		)
 
 	def __len__(self):
 		return self._len
