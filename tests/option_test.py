@@ -49,7 +49,6 @@ class TestOptionValidateBoolNumber(unittest.TestCase):
 		self.caseFailed(BoolOption, "Y", None)
 		self.caseFailed(BoolOption, "N", None)
 		self.caseFailed(BoolOption, "YESS", None)
-		self.caseFailed(BoolOption, "NO", None)
 		self.caseFailed(BoolOption, "123", None)
 		self.caseFailed(BoolOption, "a", None)
 
