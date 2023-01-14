@@ -69,6 +69,9 @@ optionsProp = {
 	"audio_icon": BoolOption(
 		comment="Add glossary's audio icon",
 	),
+	"sqlite": BoolOption(
+		comment="Use SQLite to limit memory usage",
+	),
 }
 
 if os.getenv("PYGLOSSARY_STARDICT_NO_FORCE_SORT") == "1":
@@ -105,6 +108,120 @@ def verifySameTypeSequence(s: str) -> bool:
 	if len(s) > 1:
 		return False
 	return True
+
+
+class MemList(list):
+	def sortKey(self, item: "Tuple[bytes, Any]") -> "Tuple[bytes, bytes]":
+		return (
+			item[0].lower(),
+			item[0],
+		)
+
+	def sort(self):
+		list.sort(self, key=self.sortKey)
+
+
+class BaseSqList(list):
+	def __init__(
+		self,
+		filename: str,
+	):
+		from sqlite3 import connect
+
+		if isfile(filename):
+			log.warning(f"Renaming {filename} to {filename}.bak")
+			os.rename(filename, filename + "bak")
+
+		self._filename = filename
+		self._con = connect(filename)
+		self._cur = self._con.cursor()
+
+		if not filename:
+			raise ValueError(f"invalid {filename=}")
+
+		self._orderBy = "word_lower, word"
+		self._sorted = False
+		self._len = 0
+
+		columns = self._columns = [
+			("word_lower", "TEXT"),
+			("word", "TEXT"),
+		] + self.getExtraColumns()
+
+		self._columnNames = ",".join([
+			col[0] for col in columns
+		])
+
+		colDefs = ",".join([
+			f"{col[0]} {col[1]}"
+			for col in columns
+		])
+		self._con.execute(
+			f"CREATE TABLE data ({colDefs})"
+		)
+		self._con.execute(
+			f"CREATE INDEX sortkey ON data({self._orderBy});"
+		)
+		self._con.commit()
+
+	def getExtraColumns(self) -> "List[Tuple[str, str]]":
+		# List[(columnName, dataType)]
+		return []
+
+	def __len__(self):
+		return self._len
+
+	def append(self, item):
+		self._len += 1
+		extraN = len(self._columns) - 1
+		self._cur.execute(
+			f"insert into data({self._columnNames})" +
+			f" values (?{', ?' * extraN})",
+			[item[0].lower()] + list(item),
+		)
+		if self._len % 1000 == 0:
+			self._con.commit()
+
+	def sort(self):
+		pass
+
+	def close(self):
+		if self._con is None:
+			return
+		self._con.commit()
+		self._cur.close()
+		self._con.close()
+		self._con = None
+		self._cur = None
+
+	def __del__(self):
+		try:
+			self.close()
+		except AttributeError as e:
+			log.error(str(e))
+
+	def __iter__(self):
+		from pickle import loads
+		query = f"SELECT * FROM data ORDER BY {self._orderBy}"
+		self._cur.execute(query)
+		for row in self._cur:
+			yield row[1:]
+
+
+class IdxSqList(BaseSqList):
+	def getExtraColumns(self) -> "List[Tuple[str, str]]":
+		# List[(columnName, dataType)]
+		return [
+			("idx_block", "BLOB"),
+		]
+
+
+class SynSqList(BaseSqList):
+	def getExtraColumns(self) -> "List[Tuple[str, str]]":
+		# List[(columnName, dataType)]
+		return [
+			("entry_index", "INTEGER"),
+		]
 
 
 class Reader(object):
@@ -550,6 +667,7 @@ class Writer(object):
 	_merge_syns: bool = False
 	_audio_goldendict: bool = False
 	_audio_icon: bool = True
+	_sqlite: bool = False
 
 	def __init__(self, glos: GlossaryType):
 		self._glos = glos
@@ -567,12 +685,6 @@ class Writer(object):
 		)
 		self._re_audio_link = re.compile(
 			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>'
-		)
-
-	def byteSortKey(self, b_word: bytes) -> "Tuple[bytes, bytes]":
-		return (
-			b_word.lower(),
-			b_word,
 		)
 
 	def finish(self) -> None:
@@ -657,6 +769,16 @@ class Writer(object):
 		# defi = defi.replace(' src="./', ' src="./res/')
 		return defi
 
+	def newIdxList(self):
+		if not self._sqlite:
+			return MemList()
+		return IdxSqList(join(self._glos.tmpDataDir, "stardict-idx.db"))
+
+	def newSynList(self):
+		if not self._sqlite:
+			return MemList()
+		return SynSqList(join(self._glos.tmpDataDir, "stardict-syn.db"))
+
 	def writeCompact(self, defiFormat):
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
@@ -668,7 +790,7 @@ class Writer(object):
 		"""
 		log.debug(f"writeCompact: {defiFormat=}")
 		dictMark = 0
-		altIndexList = []  # list of tuples (b"alternate", entryIndex)
+		altIndexList = self.newSynList()
 
 		dictFile = open(self._filename + ".dict", "wb")
 		idxFile = open(self._filename + ".idx", "wb")
@@ -729,7 +851,7 @@ class Writer(object):
 		"""
 		log.debug(f"writeGeneral")
 		dictMark = 0
-		altIndexList = []  # list of tuples (b"alternate", entryIndex)
+		altIndexList = self.newSynList()
 
 		dictFile = open(self._filename + ".dict", "wb")
 		idxFile = open(self._filename + ".idx", "wb")
@@ -801,9 +923,7 @@ class Writer(object):
 		log.info(f"Sorting {len(altIndexList)} synonyms...")
 		t0 = now()
 
-		altIndexList.sort(
-			key=lambda x: self.byteSortKey(x[0])
-		)
+		altIndexList.sort()
 		# 28 seconds with old sort key (converted from custom cmp)
 		# 0.63 seconds with my new sort key
 		# 0.20 seconds without key function (default sort)
@@ -833,8 +953,9 @@ class Writer(object):
 		"""
 		log.debug(f"writeCompactMergeSyns: {defiFormat=}")
 		dictMark = 0
-		idxBlockList = []  # list of tuples (b"word", startAndLength)
-		altIndexList = []  # list of tuples (b"alternate", entryIndex)
+
+		idxBlockList = self.newIdxList()
+		altIndexList = self.newSynList()
 
 		dictFile = open(self._filename + ".dict", "wb")
 
@@ -888,8 +1009,8 @@ class Writer(object):
 		"""
 		log.debug(f"writeGeneralMergeSyns")
 		dictMark = 0
-		idxBlockList = []  # list of tuples (b"word", startAndLength)
-		altIndexList = []  # list of tuples (b"alternate", entryIndex)
+		idxBlockList = self.newIdxList()
+		altIndexList = self.newSynList()
 
 		dictFile = open(self._filename + ".dict", "wb")
 
@@ -953,7 +1074,7 @@ class Writer(object):
 		log.info(f"Sorting {len(indexList)} items...")
 		t0 = now()
 
-		indexList.sort(key=lambda x: self.byteSortKey(x[0]))
+		indexList.sort()
 		log.info(
 			f"Sorting {len(indexList)} {filename} took {now()-t0:.2f} seconds",
 		)

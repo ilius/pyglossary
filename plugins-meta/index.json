@@ -1496,6 +1496,11 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Add glossary's audio icon"
+			},
+			"sqlite": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Use SQLite to limit memory usage"
 			}
 		},
 		"canRead": true,
@@ -1512,7 +1517,8 @@
 			"stardict_client": false,
 			"merge_syns": false,
 			"audio_goldendict": false,
-			"audio_icon": true
+			"audio_icon": true,
+			"sqlite": false
 		}
 	},
 	{

@@ -34,6 +34,7 @@
 | merge_syns       | `False` | bool | Write alternates to .idx instead of .syn       |
 | audio_goldendict | `False` | bool | Convert audio links for GoldenDict (desktop)   |
 | audio_icon       | `True`  | bool | Add glossary's audio icon                      |
+| sqlite           | `False` | bool | Use SQLite to limit memory usage               |
 
 
 
