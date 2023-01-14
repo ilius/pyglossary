@@ -406,12 +406,18 @@ class Reader(object):
 		"""
 		return synDict, a dict { entryIndex -> altList }
 		"""
-		if not isfile(self._filename + ".syn"):
-			return {}
 		unicode_errors = self._unicode_errors
 
-		with open(self._filename + ".syn", "rb") as synFile:
-			synBytes = synFile.read()
+		synBytes = ''
+		if isfile(self._filename + ".syn"):
+			with open(self._filename + ".syn", mode="rb") as synFile:
+				synBytes = synFile.read()
+		elif isfile(self._filename + ".syn.dz"):
+			with gzip.open(self._filename + ".syn.dz", mode="rb") as synFile:
+				synBytes = synFile.read()
+		else:
+			return {}
+
 		synBytesLen = len(synBytes)
 		synDict = {}
 		pos = 0
