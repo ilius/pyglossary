@@ -280,7 +280,6 @@ Here is a basic script that converts any supported glossary format to [Tabfile](
 
 ```python
 import sys
-import pyglossary
 from pyglossary import Glossary
 
 # Glossary.init() should be called only once, so make sure you put it
@@ -303,7 +302,7 @@ You may look at docstring of `Glossary.convert` for full list of keyword argumen
 If you need to add entries inside your Python program (rather than converting one glossary into another), then you use `write` instead of `convert`, here is an example:
 
 ```python
-from pyglossary.glossary import Glossary
+from pyglossary import Glossary
 
 Glossary.init()
 
