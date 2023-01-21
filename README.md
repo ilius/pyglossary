@@ -326,16 +326,14 @@ glos.write("test.ifo", format="Stardict")
 
 And if you need to read a glossary from file into a `Glossary` object in RAM (without immediately converting it), you can use `glos.read(filename, format=inputFormat)`. Be wary of RAM usage in this case.
 
-
 If you want to include images, css, js or other files in a glossary that you are creating, you need to add them as **Data Entries**, for example:
 
-```py
+```python
 with open(os.path.join(imageDir, "a.jpeg")) as fp:
 	glos.addEntryObj(glos.newDataEntry("img/a.jpeg", fp.read()))
 ```
 
 The first argument to `newDataEntry` must be the relative path (that generally html codes of your definitions points to).
-
 
 ## Internal glossary structure
 
