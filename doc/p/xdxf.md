@@ -19,9 +19,10 @@
 
 ### Read options
 
-| Name | Default | Type | Comment          |
-| ---- | ------- | ---- | ---------------- |
-| html | `True`  | bool | Entries are HTML |
+| Name | Default | Type | Comment                |
+| ---- | ------- | ---- | ---------------------- |
+| html | `True`  | bool | Entries are HTML       |
+| xsl  | `False` | bool | Use XSL transformation |
 
 ### Dependencies for reading
 

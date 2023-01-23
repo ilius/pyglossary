@@ -54,6 +54,9 @@ optionsProp = {
 	"xdxf_to_html": BoolOption(
 		comment="Convert XDXF entries to HTML",
 	),
+	"xsl": BoolOption(
+		comment="Use XSL transformation"
+	),
 	"unicode_errors": StrOption(
 		values=[
 			"strict",  # raise a UnicodeDecodeError exception
@@ -226,6 +229,7 @@ class SynSqList(BaseSqList):
 
 class Reader(object):
 	_xdxf_to_html: bool = True
+	_xsl: bool = False
 	_unicode_errors: str = "strict"
 
 	def __init__(self, glos: GlossaryType):
@@ -253,8 +257,11 @@ class Reader(object):
 		"""
 
 	def xdxf_setup(self):
-		from pyglossary.xdxf_transform import XdxfTransformer
-		self._xdxfTr = XdxfTransformer(encoding="utf-8")
+		from pyglossary.xdxf_transform import XslXdxfTransformer, XdxfTransformer
+		if self._xsl:
+			self._xdxfTr = XslXdxfTransformer(encoding="utf-8")
+		else:
+			self._xdxfTr = XdxfTransformer(encoding="utf-8")
 
 	def xdxf_transform(self, text: str):
 		if self._xdxfTr is None:

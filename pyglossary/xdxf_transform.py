@@ -3,8 +3,48 @@ from pyglossary.core import rootDir
 import logging
 from io import BytesIO
 from io import StringIO
+from os.path import join
 
 log = logging.getLogger("pyglossary")
+
+
+class XslXdxfTransformer(object):
+	_gram_color: str = "green"
+	_example_padding: int = 10
+
+	def __init__(self, encoding="utf-8"):
+		try:
+			from lxml import etree as ET
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{core.pip} install lxml` to install"
+			raise e
+
+		with open(join(rootDir, "pyglossary", "xdxf.xsl"), "r") as f:
+			xslt_txt = f.read()
+
+		xslt = ET.XML(xslt_txt)
+		self._transform = ET.XSLT(xslt)
+		self._encoding = encoding
+
+	def tostring(self, elem: "lxml.etree.Element") -> str:
+		from lxml import etree as ET
+		return ET.tostring(
+			elem,
+			method="html",
+			pretty_print=True,
+		).decode("utf-8").strip()
+
+	def transform(self, article: "lxml.etree.Element") -> str:
+		result_tree = self._transform(article)
+		text = self.tostring(result_tree)
+		text = text.replace("<br/> ", "<br/>")
+		return text
+
+	def transformByInnerString(self, articleInnerStr: str) -> str:
+		from lxml import etree as ET
+		return self.transform(
+			ET.fromstring(f"<ar>{articleInnerStr}</ar>")
+		)
 
 
 class XdxfTransformer(object):

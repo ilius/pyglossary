@@ -40,6 +40,9 @@ website = (
 )
 optionsProp = {
 	"html": BoolOption(comment="Entries are HTML"),
+	"xsl": BoolOption(
+		comment="Use XSL transformation"
+	),
 }
 
 
@@ -81,6 +84,7 @@ class Reader(object):
 	}
 
 	_html: bool = True
+	_xsl: bool = False
 
 	infoKeyMap = {
 		"full_name": "name",
@@ -102,7 +106,10 @@ class Reader(object):
 		from lxml import etree as ET
 		self._filename = filename
 		if self._html:
-			self._htmlTr = XdxfTransformer(encoding=self._encoding)
+			if self._xsl:
+				self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
+			else:
+				self._htmlTr = XdxfTransformer(encoding=self._encoding)
 			self._glos.setDefaultDefiFormat("h")
 		else:
 			self._glos.setDefaultDefiFormat("x")

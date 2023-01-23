@@ -1475,6 +1475,11 @@
 				"type": "bool",
 				"comment": "Convert XDXF entries to HTML"
 			},
+			"xsl": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Use XSL transformation"
+			},
 			"unicode_errors": {
 				"class": "StrOption",
 				"type": "str",
@@ -1509,6 +1514,7 @@
 		"sortKeyName": "stardict",
 		"readOptions": {
 			"xdxf_to_html": true,
+			"xsl": false,
 			"unicode_errors": "strict"
 		},
 		"writeOptions": {
@@ -1673,12 +1679,18 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Entries are HTML"
+			},
+			"xsl": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Use XSL transformation"
 			}
 		},
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
-			"html": true
+			"html": true,
+			"xsl": false
 		},
 		"readDepends": {
 			"lxml": "lxml"

@@ -22,6 +22,7 @@
 | Name           | Default  | Type | Comment                                 |
 | -------------- | -------- | ---- | --------------------------------------- |
 | xdxf_to_html   | `True`   | bool | Convert XDXF entries to HTML            |
+| xsl            | `False`  | bool | Use XSL transformation                  |
 | unicode_errors | `strict` | str  | What to do with Unicode decoding errors |
 
 ### Write options
