@@ -2,6 +2,7 @@
 # xdxf/__init__.py
 """xdxf file format reader and utils to convert xdxf to html."""
 #
+# Copyright © 2023 Saeed Rasooli
 # Copyright © 2016 Ratijas <ratijas.t@me.com>
 #
 # some parts of this file include code from:

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020 Saeed Rasooli -->
+<!-- Copyright (c) 2023 Saeed Rasooli -->
 <!-- Copyright (c) 2016 Ratijas -->
 <!-- Copyright (c) 2008-2011 Dmitry Zhuk. All rights reserved. -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -47,12 +47,40 @@
     <span class="tr">[<xsl:apply-templates/>]</span>
   </xsl:template>
 
-  <xsl:template match="k | ex">
-    <span class="{name()}"><xsl:apply-templates/></span>
+  <xsl:template match="k">
+    <span class="k"><b><xsl:apply-templates/></b></span>
   </xsl:template>
 
-  <xsl:template match="pos | abr">
+  <xsl:template match="sr">
+    <span class="sr"><xsl:apply-templates/></span>
+  </xsl:template>
+
+  <xsl:template match="ex">
+    <span class="example" style="padding: 10px 0px;"><xsl:apply-templates/></span>
+  </xsl:template>
+
+  <xsl:template match="ex_orig">
+    <i><xsl:apply-templates/></i>
+  </xsl:template>
+
+  <xsl:template match="ex_transl">
+    <i><xsl:apply-templates/></i>
+  </xsl:template>
+
+  <xsl:template match="mrkd">
+    <span class="mrkd"><b><xsl:apply-templates/></b></span>
+  </xsl:template>
+
+  <xsl:template match="pos | abr | abbr | gr">
     <span class="abr"><font color="green"><i><xsl:apply-templates/></i></font></span>
+  </xsl:template>
+
+  <xsl:template match="co">
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="dtrn">
+    <xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template match="c[@c]">
@@ -61,10 +89,6 @@
 
   <xsl:template match="c">
     <font color="green"><xsl:apply-templates/></font>
-  </xsl:template>
-
-  <xsl:template match="dtrn | co">
-    <xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template match="kref">
@@ -104,6 +128,14 @@
         <a class="pr" href="audio:{text()}"><img style="width:25px;height:22px;" src="res:///sound.png"/></a>
       </xsl:when>
     </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="categ">
+    <span class="category" style="background-color: green;"><xsl:apply-templates/></span>
+  </xsl:template>
+
+  <xsl:template match="opt">
+    (<xsl:apply-templates/>)
   </xsl:template>
 
   <!-- http://stackoverflow.com/questions/3309746/how-to-convert-newline-into-br-with-xslt -->
