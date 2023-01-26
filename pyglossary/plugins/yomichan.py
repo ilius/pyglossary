@@ -199,13 +199,13 @@ class Writer(object):
 	def _getDictionaryIndex(self):
 		# Schema: https://github.com/FooSoft/yomichan/blob/master/ext/data/schemas/dictionary-index-schema.json
 		return dict(
-			title=self._getInfo('title'),
+			title=self._getInfo("title"),
 			revision="PyGlossary export",
 			sequenced=True,
 			format=3,
 			author=self._getAuthor(),
-			url=self._getInfo('website'),
-			description=self._getInfo('description'),
+			url=self._getInfo("website"),
+			description=self._getInfo("description"),
 		)
 
 	def _compileRegex(self):
@@ -228,26 +228,21 @@ class Writer(object):
 		term_expressions = list(entry.l_word)
 		if self._alternates_from_word_pattern:
 			for word in entry.l_word:
-				for matches in re.findall(self._alternates_from_word_pattern, word):
-					if isinstance(matches, str):
-						matches = [matches]
-
-					term_expressions.extend(filter(None, matches))
+				term_expressions += re.findall(
+					self._alternates_from_word_pattern,
+					word,
+				)
 
 		if self._alternates_from_defi_pattern:
-			for matches in re.findall(
+			term_expressions += re.findall(
 				self._alternates_from_defi_pattern,
 				entry.defi,
 				re.MULTILINE,
-			):
-				if isinstance(matches, str):
-					matches = [matches]
-
-				term_expressions.extend(filter(None, matches))
+			)
 
 		if self._delete_word_pattern:
 			term_expressions = [
-				re.sub(self._delete_word_pattern, '', expression)
+				re.sub(self._delete_word_pattern, "", expression)
 				for expression in term_expressions
 			]
 
@@ -323,7 +318,7 @@ class Writer(object):
 
 	def write(self) -> Generator[None, BaseEntry, None]:
 		with os_utils.indir(self._filename, create=True):
-			with open('index.json', 'w', encoding='utf-8') as f:
+			with open("index.json", "w", encoding="utf-8") as f:
 				json.dump(self._getDictionaryIndex(), f, ensure_ascii=False)
 
 			entryCount = 0
@@ -336,8 +331,9 @@ class Writer(object):
 					return
 
 				with open(
-					f"term_bank_{termBankIndex}.json", 'w',
-					encoding='utf-8',
+					f"term_bank_{termBankIndex}.json",
+					mode="w",
+					encoding="utf-8",
 				) as _file:
 					json.dump(terms, _file, ensure_ascii=False)
 
