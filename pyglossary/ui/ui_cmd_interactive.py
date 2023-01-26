@@ -938,22 +938,21 @@ class UI(ui_cmd.UI):
 		self.checkOutputFormat(forceAsk=True)
 
 	def printNonInteractiveCommand(self):
-		from shlex import quote
 		cmd = [
 			ui_cmd.COMMAND,
-			quote(self._inputFilename),
-			quote(self._outputFilename),
-			quote(f"--read-format={self._inputFormat}"),
-			quote(f"--write-format={self._outputFormat}"),
+			self._inputFilename,
+			self._outputFilename,
+			f"--read-format={self._inputFormat}",
+			f"--write-format={self._outputFormat}",
 		]
 
 		if self._readOptions:
 			optionsJson = json.dumps(self._readOptions, ensure_ascii=True)
-			cmd.append(quote(f"--json-read-options={optionsJson}"))
+			cmd += ["--json-read-options", optionsJson]
 
 		if self._writeOptions:
 			optionsJson = json.dumps(self._writeOptions, ensure_ascii=True)
-			cmd.append(quote(f"--json-write-options={optionsJson}"))
+			cmd += ["--json-write-options", optionsJson]
 
 		if self.config:
 			for key, value in self.config.items():
@@ -974,7 +973,7 @@ class UI(ui_cmd.UI):
 						flag = f"no-{flag}"
 					cmd.append(f"--{flag}")
 				else:
-					cmd.append(quote(f"--{flag}={value}"))
+					cmd.append(f"--{flag}={value}")
 
 		if self._convertOptions:
 			if "infoOverride" in self._convertOptions:
@@ -1012,12 +1011,8 @@ class UI(ui_cmd.UI):
 			"If you want to repeat this conversion later, "
 			"you can use this command:"
 		)
-		try:
-			print(shlex.join(cmd))
-		except AttributeError:
-			print(" ".join([
-				shlex.quote(arg) for arg in cmd
-			]))
+		# shlex.join is added in Python 3.8
+		print(shlex.join(cmd))
 
 	def setConfigAttrs(self):
 		config = self.config
