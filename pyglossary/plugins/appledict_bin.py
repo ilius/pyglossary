@@ -21,6 +21,8 @@ from struct import unpack
 from zlib import decompress
 from datetime import datetime
 
+OFFSET_FILE_START = 0x40
+
 enable = True
 lname = "appledict_bin"
 format = "AppleDictBin"
@@ -57,6 +59,7 @@ class Reader(object):
 		self._encoding = "utf-8"
 		self._buf = ""
 		self._defiFormat = "m"
+		self._offsetData = OFFSET_FILE_START
 		self._re_link = re.compile(f'<a [^<>]*>')
 		self._titleById = {}
 		self._wordCount = 0
@@ -141,9 +144,7 @@ class Reader(object):
 		self._filename = filename
 		self._file = open(filename, "rb")
 
-		self._file.seek(0x40)
-		self._limit = 0x40 + self.read_int_from_file()
-		self._file.seek(0x60)
+		(self._offsetData, self._limit) = self.guess_file_offset_limit()
 
 		t0 = datetime.now()
 		self.readEntryIds()
@@ -254,6 +255,7 @@ class Reader(object):
 		limit = self._limit
 		titleById = {}
 
+		self._file.seek(self._offsetData)
 		while True:
 			absPos = _file.tell()
 			if absPos >= limit:
@@ -288,11 +290,22 @@ class Reader(object):
 				titleById[_id] = b_entry[title_i + 9: title_j].decode(self._encoding)
 
 		self._titleById = titleById
-		_file.seek(0x60)
+		_file.seek(self._offsetData)
 		self._wordCount = len(titleById)
 
 	def read_int_from_file(self) -> int:
 		return unpack("i", self._file.read(4))[0]
+
+	def guess_file_offset_limit(self) -> (int, int):
+		self._file.seek(OFFSET_FILE_START)
+		limit = OFFSET_FILE_START + self.read_int_from_file()
+		first_int = self.read_int_from_file()
+		second_int = self.read_int_from_file()
+		if first_int == 0 and second_int == -1:  # 0000 0000 FFFF FFFF
+			offset = OFFSET_FILE_START + 0x20
+		else:
+			offset = OFFSET_FILE_START + 0x4
+		return offset, limit
 
 	def __iter__(self):
 		from os.path import dirname
