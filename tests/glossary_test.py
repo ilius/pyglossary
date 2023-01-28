@@ -27,10 +27,12 @@ tracemalloc.start()
 
 Glossary.init()
 
-dataURL = (
-	"https://raw.githubusercontent.com/"
-	"ilius/pyglossary-test/main/{filename}"
+repo = os.getenv(
+	"PYGLOSSARY_TEST_REPO",
+	"ilius/pyglossary-test/main",
 )
+
+dataURL = f"https://raw.githubusercontent.com/{repo}/{{filename}}"
 
 dataDir = join(cacheDir, "test")
 appTmpDir = join(cacheDir, "tmp")
