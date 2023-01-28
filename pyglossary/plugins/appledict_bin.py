@@ -47,13 +47,14 @@ optionsProp = {
 class Reader(object):
 	depends = {
 		"lxml": "lxml",
+		"biplist": "biplist",
 	}
 
 	_html: bool = True
 	_html_full: bool = False
 
-	def __init__(self, glos):
-		self._glos = glos
+	def __init__(self, glos: GlossaryType):
+		self._glos: GlossaryType = glos
 		self._filename = ""
 		self._file = None
 		self._encoding = "utf-8"
@@ -68,6 +69,11 @@ class Reader(object):
 			from lxml import etree
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install lxml` to install"
+			raise e
+		try:
+			import biplist
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install biplist` to install"
 			raise e
 
 	def sub_link(self, m: "Match"):
@@ -108,41 +114,32 @@ class Reader(object):
 		defi = self._re_link.sub(self.sub_link, defi)
 		return defi
 
-	def open(self, filename):
+	def open(self, contents_path):
 		self._defiFormat = "h" if self._html else "m"
-		parts = split(filename)
-		dbname = parts[-1]
-		if isdir(filename):
-			if parts[-1] == "Contents":
-				filename = join(filename, "Body.data")
-				if len(parts) > 2:
-					dbname = parts[-2]
-			elif isfile(join(filename, "Contents/Body.data")):
-				filename = join(filename, "Contents/Body.data")
-			elif isfile(join(filename, "Contents/Resources/Body.data")):
-				filename = join(filename, "Contents/Resources/Body.data")
+		parts = split(contents_path)
+		infoplist_filepath: str
+		bodydata_filepath: str
+		if isdir(contents_path) and parts[-1] == "Contents":
+			infoplist_filepath = join(contents_path, "Info.plist")
+			if isfile(join(contents_path, "Body.data")):
+				bodydata_filepath = join(contents_path, "Body.data")
+			elif isfile(join(contents_path, "Resources/Body.data")):
+				bodydata_filepath = join(contents_path, "Resources/Body.data")
 			else:
 				raise IOError(
 					"could not find Body.data file, "
-					"please select Body.data file instead of directory"
+					"Please provide 'Contents/' folder of the dictionary"
 				)
-		elif dbname == "Body.data" and len(parts) > 1:
-			dbname = parts[-2]
-			if len(parts) > 2:
-				if dbname == "Contents":
-					dbname = parts[-3]
-				elif dbname == "Resources" and len(parts) > 3:
-					dbname = parts[-4]
+		else:
+			raise IOError(
+				f"{contents_path} is not a folder, "
+				"Please provide 'Contents/' folder of the dictionary"
+			)
 
-		if not isfile(filename):
-			raise IOError(f"no such file: {filename}")
+		self.extract_metadata(infoplist_filepath)
 
-		if dbname.endswith(".dictionary"):
-			dbname = dbname[:-len(".dictionary")]
-		self._glos.setInfo("name", dbname)
-
-		self._filename = filename
-		self._file = open(filename, "rb")
+		self._filename = bodydata_filepath
+		self._file = open(bodydata_filepath, "rb")
 
 		(self._offsetData, self._limit) = self.guess_file_offset_limit()
 
@@ -153,6 +150,23 @@ class Reader(object):
 			f"Reading entry IDs took {int(dt.total_seconds() * 1000)} ms, "
 			f"number of entries: {self._wordCount}"
 		)
+
+	def extract_metadata(self, infoplist_filepath: str):
+		if not isfile(infoplist_filepath):
+			raise IOError(
+				f"Could not find 'Info.plist' file, "
+				"Please provide 'Contents/' folder of the dictionary that contains"
+			)
+		import biplist
+		dictionary_metadata = biplist.readPlist(infoplist_filepath)
+		self._glos.setInfo('name', dictionary_metadata.get('CFBundleDisplayName'))
+		self._glos.setInfo('copyright', dictionary_metadata.get('DCSDictionaryCopyright'))
+		self._glos.setInfo('author', dictionary_metadata.get('DCSDictionaryManufacturerName'))
+		self._glos.setInfo('edition', dictionary_metadata.get('IDXDictionaryVersion'))
+		self._glos.setInfo('CFBundleIdentifier', dictionary_metadata.get('CFBundleIdentifier'))
+		dict_metadata_langs = dictionary_metadata.get('DCSDictionaryLanguages')[0]
+		self._glos.setInfo('sourceLang', dict_metadata_langs['DCSDictionaryDescriptionLanguage'])
+		self._glos.setInfo('targetLang', dict_metadata_langs['DCSDictionaryIndexLanguage'])
 
 	def __len__(self):
 		return self._wordCount
@@ -172,7 +186,7 @@ class Reader(object):
 		try:
 			chunkSize, = unpack("i", bs)
 		except Exception as e:
-			log.error(f"{self._buf[pos:pos+100]}")
+			log.error(f"{self._buf[pos:pos + 100]}")
 			raise e
 		return chunkSize, plus
 

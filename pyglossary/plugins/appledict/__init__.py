@@ -336,13 +336,14 @@ class Writer(object):
 				if front_back_matter
 				else ""
 			)
+			bundle_id = fileNameBase.replace(" ", "") if glos.getInfo("CFBundleIdentifier") is None else glos.getInfo("CFBundleIdentifier")
 			toFile.write(
 				toStr(pkgutil.get_data(
 					__name__,
 					"templates/Info.plist",
 				)).format(
 					# identifier must be unique
-					CFBundleIdentifier=fileNameBase.replace(" ", ""),
+					CFBundleIdentifier=bundle_id,
 					CFBundleDisplayName=glos.getInfo("name"),
 					CFBundleName=fileNameBase,
 					DCSDictionaryCopyright=copyright,
