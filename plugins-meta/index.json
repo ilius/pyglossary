@@ -197,7 +197,8 @@
 			"html_full": false
 		},
 		"readDepends": {
-			"lxml": "lxml"
+			"lxml": "lxml",
+			"biplist": "biplist"
 		}
 	},
 	{
