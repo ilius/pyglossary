@@ -165,7 +165,8 @@ class Reader(object):
 		except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
 			try:
 				import plistlib
-				dict_metadata = plistlib.loads(open(infoplist_filepath, 'rb').read())
+				with open(infoplist_filepath, 'rb') as plist_file:
+					dict_metadata = plistlib.loads(plist_file.read())
 			except Exception as e:
 				raise IOError(
 					"'Info.plist' file is malformed, "
@@ -178,8 +179,13 @@ class Reader(object):
 		self._glos.setInfo('CFBundleIdentifier', dict_metadata.get('CFBundleIdentifier'))
 		if 'DCSDictionaryLanguages' in dict_metadata:
 			dict_metadata_langs = dict_metadata.get('DCSDictionaryLanguages')[0]
-			self._glos.setInfo('sourceLang', dict_metadata_langs['DCSDictionaryDescriptionLanguage'])
-			self._glos.setInfo('targetLang', dict_metadata_langs['DCSDictionaryIndexLanguage'])
+			import locale
+			dict_locale = dict_metadata_langs['DCSDictionaryDescriptionLanguage']
+			lang_code = locale.normalize(dict_locale).split('_')[0]
+			self._glos.setInfo('sourceLang', lang_code)
+			dict_locale = dict_metadata_langs['DCSDictionaryIndexLanguage']
+			lang_code = locale.normalize(dict_locale).split('_')[0]
+			self._glos.setInfo('targetLang', lang_code)
 
 	def __len__(self):
 		return self._wordCount
