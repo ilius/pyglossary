@@ -13,7 +13,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-from typing import Tuple, Match
+from typing import Tuple, Match, Dict
 
 from pyglossary.plugins.formats_common import *
 
@@ -157,16 +157,29 @@ class Reader(object):
 				f"Could not find 'Info.plist' file, "
 				"Please provide 'Contents/' folder of the dictionary that contains"
 			)
+		dict_metadata: Dict
 		import biplist
-		dictionary_metadata = biplist.readPlist(infoplist_filepath)
-		self._glos.setInfo('name', dictionary_metadata.get('CFBundleDisplayName'))
-		self._glos.setInfo('copyright', dictionary_metadata.get('DCSDictionaryCopyright'))
-		self._glos.setInfo('author', dictionary_metadata.get('DCSDictionaryManufacturerName'))
-		self._glos.setInfo('edition', dictionary_metadata.get('IDXDictionaryVersion'))
-		self._glos.setInfo('CFBundleIdentifier', dictionary_metadata.get('CFBundleIdentifier'))
-		dict_metadata_langs = dictionary_metadata.get('DCSDictionaryLanguages')[0]
-		self._glos.setInfo('sourceLang', dict_metadata_langs['DCSDictionaryDescriptionLanguage'])
-		self._glos.setInfo('targetLang', dict_metadata_langs['DCSDictionaryIndexLanguage'])
+		try:
+			dict_metadata = biplist.readPlist(infoplist_filepath)
+			print(dict_metadata.get('CFBundleDisplayName'))
+		except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
+			try:
+				import plistlib
+				dict_metadata = plistlib.loads(open(infoplist_filepath, 'rb').read())
+			except Exception as e:
+				raise IOError(
+					"'Info.plist' file is malformed, "
+					f"Please provide 'Contents/' with a correct 'Info.plist'. {e}"
+				)
+		self._glos.setInfo('name', dict_metadata.get('CFBundleDisplayName'))
+		self._glos.setInfo('copyright', dict_metadata.get('DCSDictionaryCopyright'))
+		self._glos.setInfo('author', dict_metadata.get('DCSDictionaryManufacturerName'))
+		self._glos.setInfo('edition', dict_metadata.get('IDXDictionaryVersion'))
+		self._glos.setInfo('CFBundleIdentifier', dict_metadata.get('CFBundleIdentifier'))
+		if 'DCSDictionaryLanguages' in dict_metadata:
+			dict_metadata_langs = dict_metadata.get('DCSDictionaryLanguages')[0]
+			self._glos.setInfo('sourceLang', dict_metadata_langs['DCSDictionaryDescriptionLanguage'])
+			self._glos.setInfo('targetLang', dict_metadata_langs['DCSDictionaryIndexLanguage'])
 
 	def __len__(self):
 		return self._wordCount
