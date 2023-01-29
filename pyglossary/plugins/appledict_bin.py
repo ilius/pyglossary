@@ -115,48 +115,48 @@ class Reader(object):
 		defi = self._re_link.sub(self.sub_link, defi)
 		return defi
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		from os.path import dirname
 
 		self._defiFormat = "h" if self._html else "m"
 
-		contents_path: str
-		infoplist_filepath: str
-		bodydata_filepath: str
+		contentsPath: str
+		infoPlistPath: str
+		bodyDataPath: str
 
 		if isdir(filename):
 			if split(filename)[-1] == "Contents":
-				contents_path = filename
+				contentsPath = filename
 			elif isdir(join(filename, "Contents")):
-				contents_path = join(filename, "Contents")
+				contentsPath = join(filename, "Contents")
 			else:
 				raise IOError(f"invalid directory {filename}")
 		elif split(filename)[-1] == "Body.data":
-			contents_path = dirname(filename)
+			contentsPath = dirname(filename)
 		else:
 			raise IOError(f"invalid file path {filename}")
 
-		if not isdir(contents_path):
+		if not isdir(contentsPath):
 			raise IOError(
-				f"{contents_path} is not a folder, "
+				f"{contentsPath} is not a folder, "
 				"Please provide 'Contents/' folder of the dictionary"
 			)
 
-		infoplist_filepath = join(contents_path, "Info.plist")
-		if isfile(join(contents_path, "Body.data")):
-			bodydata_filepath = join(contents_path, "Body.data")
-		elif isfile(join(contents_path, "Resources/Body.data")):
-			bodydata_filepath = join(contents_path, "Resources/Body.data")
+		infoPlistPath = join(contentsPath, "Info.plist")
+		if isfile(join(contentsPath, "Body.data")):
+			bodyDataPath = join(contentsPath, "Body.data")
+		elif isfile(join(contentsPath, "Resources/Body.data")):
+			bodyDataPath = join(contentsPath, "Resources/Body.data")
 		else:
 			raise IOError(
 				"could not find Body.data file, "
 				"Please provide 'Contents/' folder of the dictionary"
 			)
 
-		self.extractMetadata(infoplist_filepath)
+		self.setMetadata(infoPlistPath)
 
-		self._filename = bodydata_filepath
-		self._file = open(bodydata_filepath, "rb")
+		self._filename = bodyDataPath
+		self._file = open(bodyDataPath, "rb")
 
 		self._entriesOffset, self._limit = self.guessFileOffsetLimit()
 
@@ -168,33 +168,49 @@ class Reader(object):
 			f"number of entries: {self._wordCount}"
 		)
 
-	def extractMetadata(self, infoplist_filepath: str):
+	def setMetadata(self, infoPlistPath: str):
 		import biplist
 
-		if not isfile(infoplist_filepath):
+		if not isfile(infoPlistPath):
 			raise IOError(
 				f"Could not find 'Info.plist' file, "
-				"Please provide 'Contents/' folder of the dictionary that contains"
+				"Please provide 'Contents/' folder of the dictionary"
 			)
 
 		metadata: Dict
 		try:
-			metadata = biplist.readPlist(infoplist_filepath)
+			metadata = biplist.readPlist(infoPlistPath)
 		except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
 			try:
 				import plistlib
-				with open(infoplist_filepath, 'rb') as plist_file:
+				with open(infoPlistPath, "rb") as plist_file:
 					metadata = plistlib.loads(plist_file.read())
 			except Exception as e:
 				raise IOError(
 					"'Info.plist' file is malformed, "
 					f"Please provide 'Contents/' with a correct 'Info.plist'. {e}"
 				)
-		self._glos.setInfo("name", metadata.get("CFBundleDisplayName"))
-		self._glos.setInfo("copyright", metadata.get("DCSDictionaryCopyright"))
-		self._glos.setInfo("author", metadata.get("DCSDictionaryManufacturerName"))
-		self._glos.setInfo("edition", metadata.get("IDXDictionaryVersion"))
-		self._glos.setInfo("CFBundleIdentifier", metadata.get("CFBundleIdentifier"))
+
+		self._glos.setInfo(
+			"name",
+			metadata.get("CFBundleDisplayName"),
+		)
+		self._glos.setInfo(
+			"copyright",
+			metadata.get("DCSDictionaryCopyright"),
+		)
+		self._glos.setInfo(
+			"author",
+			metadata.get("DCSDictionaryManufacturerName"),
+		)
+		self._glos.setInfo(
+			"edition",
+			metadata.get("IDXDictionaryVersion"),
+		)
+		self._glos.setInfo(
+			"CFBundleIdentifier",
+			metadata.get("CFBundleIdentifier"),
+		)
 
 		if "DCSDictionaryLanguages" in metadata:
 			self.setLangs(metadata)
@@ -321,7 +337,7 @@ class Reader(object):
 			if absPos >= limit:
 				break
 
-			bufSize = self.read_int_from_file()
+			bufSize = self.readInt()
 			self._buf = decompress(_file.read(bufSize)[8:])
 
 			pos = 0
@@ -353,19 +369,19 @@ class Reader(object):
 		_file.seek(self._entriesOffset)
 		self._wordCount = len(titleById)
 
-	def read_int_from_file(self) -> int:
+	def readInt(self) -> int:
 		return unpack("i", self._file.read(4))[0]
 
 	def guessFileOffsetLimit(self) -> (int, int):
 		self._file.seek(OFFSET_FILE_START)
-		limit = OFFSET_FILE_START + self.read_int_from_file()
-		first_int = self.read_int_from_file()
-		second_int = self.read_int_from_file()
-		if first_int == 0 and second_int == -1:  # 0000 0000 FFFF FFFF
-			offset = OFFSET_FILE_START + 0x20
-		else:
-			offset = OFFSET_FILE_START + 0x4
-		return offset, limit
+		limit = OFFSET_FILE_START + self.readInt()
+		firstInt = self.readInt()
+		secondInt = self.readInt()
+
+		if firstInt == 0 and secondInt == -1:  # 0000 0000 FFFF FFFF
+			return OFFSET_FILE_START + 0x20, limit
+
+		return OFFSET_FILE_START + 0x4, limit
 
 	def __iter__(self):
 		from os.path import dirname
@@ -402,7 +418,7 @@ class Reader(object):
 			# ~			f.seek(flag)
 			# ~			bufSize = bufSize+1
 
-			bufSize = self.read_int_from_file()
+			bufSize = self.readInt()
 			self._buf = decompress(_file.read(bufSize)[8:])
 
 			pos = 0
