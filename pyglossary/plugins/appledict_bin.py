@@ -372,13 +372,15 @@ class Reader(object):
 	def readInt(self) -> int:
 		return unpack("i", self._file.read(4))[0]
 
-	def guessFileOffsetLimit(self) -> (int, int):
+	def readIntPair(self) -> "Tuple[int, int]":
+		return unpack("ii", self._file.read(8))
+
+	def guessFileOffsetLimit(self) -> "Tuple[int, int]":
 		self._file.seek(OFFSET_FILE_START)
 		limit = OFFSET_FILE_START + self.readInt()
-		firstInt = self.readInt()
-		secondInt = self.readInt()
+		intPair = self.readIntPair()
 
-		if firstInt == 0 and secondInt == -1:  # 0000 0000 FFFF FFFF
+		if intPair == (0, -1):  # 0000 0000 FFFF FFFF
 			return OFFSET_FILE_START + 0x20, limit
 
 		return OFFSET_FILE_START + 0x4, limit
