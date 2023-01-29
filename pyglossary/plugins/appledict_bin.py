@@ -114,25 +114,41 @@ class Reader(object):
 		defi = self._re_link.sub(self.sub_link, defi)
 		return defi
 
-	def open(self, contents_path):
+	def open(self, filename):
+		from os.path import dirname
+
 		self._defiFormat = "h" if self._html else "m"
-		parts = split(contents_path)
+
+		contents_path: str
 		infoplist_filepath: str
 		bodydata_filepath: str
-		if isdir(contents_path) and parts[-1] == "Contents":
-			infoplist_filepath = join(contents_path, "Info.plist")
-			if isfile(join(contents_path, "Body.data")):
-				bodydata_filepath = join(contents_path, "Body.data")
-			elif isfile(join(contents_path, "Resources/Body.data")):
-				bodydata_filepath = join(contents_path, "Resources/Body.data")
+
+		if isdir(filename):
+			if split(filename)[-1] == "Contents":
+				contents_path = filename
+			elif isdir(join(filename, "Contents")):
+				contents_path = join(filename, "Contents")
 			else:
-				raise IOError(
-					"could not find Body.data file, "
-					"Please provide 'Contents/' folder of the dictionary"
-				)
+				raise IOError(f"invalid directory {filename}")
+		elif split(filename)[-1] == "Body.data":
+			contents_path = dirname(filename)
 		else:
+			raise IOError(f"invalid file path {filename}")
+
+		if not isdir(contents_path):
 			raise IOError(
 				f"{contents_path} is not a folder, "
+				"Please provide 'Contents/' folder of the dictionary"
+			)
+
+		infoplist_filepath = join(contents_path, "Info.plist")
+		if isfile(join(contents_path, "Body.data")):
+			bodydata_filepath = join(contents_path, "Body.data")
+		elif isfile(join(contents_path, "Resources/Body.data")):
+			bodydata_filepath = join(contents_path, "Resources/Body.data")
+		else:
+			raise IOError(
+				"could not find Body.data file, "
 				"Please provide 'Contents/' folder of the dictionary"
 			)
 
