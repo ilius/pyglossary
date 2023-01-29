@@ -156,8 +156,16 @@ def uint32ToBytes(n: int) -> bytes:
 	return struct.pack('>I', n)
 
 
+def uint64ToBytes(n: int) -> bytes:
+	return struct.pack('>Q', n)
+
+
 def uint32FromBytes(bs: bytes) -> int:
 	return struct.unpack('>I', bs)[0]
+
+
+def uint64FromBytes(bs: bytes) -> int:
+	return struct.unpack('>Q', bs)[0]
 
 
 def uintFromBytes(bs: bytes) -> int:

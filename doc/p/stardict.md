@@ -27,15 +27,16 @@
 
 ### Write options
 
-| Name             | Default | Type | Comment                                        |
-| ---------------- | ------- | ---- | ---------------------------------------------- |
-| dictzip          | `True`  | bool | Compress .dict file to .dict.dz                |
-| sametypesequence |         | str  | Definition format: h=html, m=plaintext, x=xdxf |
-| stardict_client  | `False` | bool | Modify html entries for StarDict 3.0           |
-| merge_syns       | `False` | bool | Write alternates to .idx instead of .syn       |
-| audio_goldendict | `False` | bool | Convert audio links for GoldenDict (desktop)   |
-| audio_icon       | `True`  | bool | Add glossary's audio icon                      |
-| sqlite           | `False` | bool | Use SQLite to limit memory usage               |
+| Name             | Default | Type | Comment                                         |
+| ---------------- | ------- | ---- | ----------------------------------------------- |
+| large_file       | `False` | bool | Use idxoffsetbits=64 bits, for large files only |
+| dictzip          | `True`  | bool | Compress .dict file to .dict.dz                 |
+| sametypesequence |         | str  | Definition format: h=html, m=plaintext, x=xdxf  |
+| stardict_client  | `False` | bool | Modify html entries for StarDict 3.0            |
+| merge_syns       | `False` | bool | Write alternates to .idx instead of .syn        |
+| audio_goldendict | `False` | bool | Convert audio links for GoldenDict (desktop)    |
+| audio_icon       | `True`  | bool | Add glossary's audio icon                       |
+| sqlite           | `False` | bool | Use SQLite to limit memory usage                |
 
 
 

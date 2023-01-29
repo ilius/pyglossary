@@ -16,7 +16,7 @@ from os.path import (
 )
 from pprint import pformat
 from time import time as now
-from typing import Any, Dict, Generator, Iterator, List, Sequence, Tuple
+from typing import Any, Callable, Dict, Generator, Iterator, List, Sequence, Tuple
 
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS, DEFAULT_YES
@@ -28,6 +28,8 @@ from pyglossary.option import (
 from pyglossary.text_utils import (
 	uint32FromBytes,
 	uint32ToBytes,
+	uint64FromBytes,
+	uint64ToBytes,
 )
 
 enable = True
@@ -47,7 +49,11 @@ website = (
 	"http://huzheng.org/stardict/",
 	"huzheng.org/stardict",
 )
+# https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat
 optionsProp = {
+	"large_file": BoolOption(
+		comment="Use idxoffsetbits=64 bits, for large files only",
+	),
 	"stardict_client": BoolOption(
 		comment="Modify html entries for StarDict 3.0",
 	),
@@ -247,6 +253,7 @@ class Reader(object):
 		self.clear()
 
 		self._xdxfTr = None
+		self._large_file = False
 
 		"""
 		indexData format
@@ -348,6 +355,15 @@ class Reader(object):
 					continue
 				self._glos.setInfo(key, value)
 
+		idxoffsetbits = self._glos.getInfo("idxoffsetbits")
+		if idxoffsetbits:
+			if idxoffsetbits == "32":
+				self._large_file = False
+			elif idxoffsetbits == "64":
+				self._large_file = True
+			else:
+				raise ValueError(f"invalid {idxoffsetbits = }")
+
 	def readIdxFile(self) -> "List[Tuple[bytes, int, int]]":
 		if isfile(self._filename + ".idx.gz"):
 			with gzip.open(self._filename + ".idx.gz") as idxFile:
@@ -358,6 +374,14 @@ class Reader(object):
 
 		indexData = []
 		pos = 0
+
+		if self._large_file:
+			def getOffset():
+				return uint64FromBytes(idxBytes[pos:pos + 8]), pos + 8
+		else:
+			def getOffset():
+				return uint32FromBytes(idxBytes[pos:pos + 4]), pos + 4
+
 		while pos < len(idxBytes):
 			beg = pos
 			pos = idxBytes.find(b"\x00", beg)
@@ -369,8 +393,7 @@ class Reader(object):
 			if pos + 8 > len(idxBytes):
 				log.error("Index file is corrupted")
 				break
-			offset = uint32FromBytes(idxBytes[pos:pos + 4])
-			pos += 4
+			offset, pos = getOffset()
 			size = uint32FromBytes(idxBytes[pos:pos + 4])
 			pos += 4
 			indexData.append((b_word, offset, size))
@@ -682,6 +705,7 @@ class Reader(object):
 
 
 class Writer(object):
+	_large_file: bool = False
 	_dictzip: bool = True
 	_sametypesequence: str = ""  # type: Literal["", "h", "m", "x", None]
 	_stardict_client: bool = False
@@ -800,6 +824,12 @@ class Writer(object):
 			return MemList()
 		return SynSqList(join(self._glos.tmpDataDir, "stardict-syn.db"))
 
+	def dictMarkToBytesFunc(self) -> "Tuple[Callable, int]":
+		if self._large_file:
+			return uint64ToBytes, 0xffffffffffffffff
+
+		return uint32ToBytes, 0xffffffff
+
 	def writeCompact(self, defiFormat: str) -> None:
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
@@ -815,6 +845,8 @@ class Writer(object):
 
 		dictFile = open(self._filename + ".dict", "wb")
 		idxFile = open(self._filename + ".idx", "wb")
+
+		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
 		t0 = now()
 		wordCount = 0
@@ -844,12 +876,19 @@ class Writer(object):
 			blockLen = len(b_dictBlock)
 
 			b_idxBlock = word.encode("utf-8") + b"\x00" + \
-				uint32ToBytes(dictMark) + \
+				dictMarkToBytes(dictMark) + \
 				uint32ToBytes(blockLen)
 			idxFile.write(b_idxBlock)
 
 			dictMark += blockLen
 			wordCount += 1
+
+			if dictMark > dictMarkMax:
+				log.error(
+					f"StarDict: {dictMark = } is too big, "
+					f"set option large_file=true",
+				)
+				break
 
 		dictFile.close()
 		idxFile.close()
@@ -883,6 +922,8 @@ class Writer(object):
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
+		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
+
 		entryIndex = -1
 		while True:
 			entry = yield
@@ -913,12 +954,19 @@ class Writer(object):
 			blockLen = len(b_dictBlock)
 
 			b_idxBlock = word.encode("utf-8") + b"\x00" + \
-				uint32ToBytes(dictMark) + \
+				dictMarkToBytes(dictMark) + \
 				uint32ToBytes(blockLen)
 			idxFile.write(b_idxBlock)
 
 			dictMark += blockLen
 			wordCount += 1
+
+			if dictMark > dictMarkMax:
+				log.error(
+					f"StarDict: {dictMark = } is too big, "
+					f"set option large_file=true",
+				)
+				break
 
 		dictFile.close()
 		idxFile.close()
@@ -984,6 +1032,8 @@ class Writer(object):
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
+		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
+
 		entryIndex = -1
 		while True:
 			entry = yield
@@ -1003,11 +1053,18 @@ class Writer(object):
 			dictFile.write(b_dictBlock)
 			blockLen = len(b_dictBlock)
 
-			blockData = uint32ToBytes(dictMark) + uint32ToBytes(blockLen)
+			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(blockLen)
 			for word in words:
 				idxBlockList.append((word.encode("utf-8"), blockData))
 
 			dictMark += blockLen
+
+			if dictMark > dictMarkMax:
+				log.error(
+					f"StarDict: {dictMark = } is too big, "
+					f"set option large_file=true",
+				)
+				break
 
 		wordCount = self.writeIdxFile(idxBlockList)
 
@@ -1041,6 +1098,8 @@ class Writer(object):
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
+		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
+
 		entryIndex = -1
 		while True:
 			entry = yield
@@ -1067,11 +1126,18 @@ class Writer(object):
 			dictFile.write(b_dictBlock)
 			blockLen = len(b_dictBlock)
 
-			blockData = uint32ToBytes(dictMark) + uint32ToBytes(blockLen)
+			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(blockLen)
 			for word in words:
 				idxBlockList.append((word.encode("utf-8"), blockData))
 
 			dictMark += blockLen
+
+			if dictMark > dictMarkMax:
+				log.error(
+					f"StarDict: {dictMark = } is too big, "
+					f"set option large_file=true",
+				)
+				break
 
 		wordCount = self.writeIdxFile(idxBlockList)
 
@@ -1138,6 +1204,8 @@ class Writer(object):
 			("wordcount", wordCount),
 			("idxfilesize", indexFileSize),
 		]
+		if self._large_file:
+			ifo.append(("idxoffsetbits", "64"))
 		if defiFormat:
 			ifo.append(("sametypesequence", defiFormat))
 		if synWordCount > 0:

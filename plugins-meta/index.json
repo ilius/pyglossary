@@ -1410,6 +1410,11 @@
 		],
 		"singleFile": false,
 		"optionsProp": {
+			"large_file": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Use idxoffsetbits=64 bits, for large files only"
+			},
 			"stardict_client": {
 				"class": "BoolOption",
 				"type": "bool",
@@ -1486,6 +1491,7 @@
 			"unicode_errors": "strict"
 		},
 		"writeOptions": {
+			"large_file": false,
 			"dictzip": true,
 			"sametypesequence": "",
 			"stardict_client": false,
