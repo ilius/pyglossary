@@ -21,8 +21,6 @@ from struct import unpack
 from zlib import decompress
 from datetime import datetime
 
-OFFSET_FILE_START = 0x40
-
 enable = True
 lname = "appledict_bin"
 format = "AppleDictBin"
@@ -44,6 +42,9 @@ optionsProp = {
 }
 
 
+OFFSET_FILE_START = 0x40
+
+
 class Reader(object):
 	depends = {
 		"lxml": "lxml",
@@ -60,7 +61,7 @@ class Reader(object):
 		self._encoding = "utf-8"
 		self._buf = ""
 		self._defiFormat = "m"
-		self._offsetData = OFFSET_FILE_START
+		self._entriesOffset = OFFSET_FILE_START
 		self._re_link = re.compile(f'<a [^<>]*>')
 		self._titleById = {}
 		self._wordCount = 0
@@ -152,12 +153,12 @@ class Reader(object):
 				"Please provide 'Contents/' folder of the dictionary"
 			)
 
-		self.extract_metadata(infoplist_filepath)
+		self.extractMetadata(infoplist_filepath)
 
 		self._filename = bodydata_filepath
 		self._file = open(bodydata_filepath, "rb")
 
-		(self._offsetData, self._limit) = self.guess_file_offset_limit()
+		self._entriesOffset, self._limit = self.guessFileOffsetLimit()
 
 		t0 = datetime.now()
 		self.readEntryIds()
@@ -167,41 +168,51 @@ class Reader(object):
 			f"number of entries: {self._wordCount}"
 		)
 
-	def extract_metadata(self, infoplist_filepath: str):
+	def extractMetadata(self, infoplist_filepath: str):
+		import biplist
+
 		if not isfile(infoplist_filepath):
 			raise IOError(
 				f"Could not find 'Info.plist' file, "
 				"Please provide 'Contents/' folder of the dictionary that contains"
 			)
-		dict_metadata: Dict
-		import biplist
+
+		metadata: Dict
 		try:
-			dict_metadata = biplist.readPlist(infoplist_filepath)
-			print(dict_metadata.get('CFBundleDisplayName'))
+			metadata = biplist.readPlist(infoplist_filepath)
 		except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
 			try:
 				import plistlib
 				with open(infoplist_filepath, 'rb') as plist_file:
-					dict_metadata = plistlib.loads(plist_file.read())
+					metadata = plistlib.loads(plist_file.read())
 			except Exception as e:
 				raise IOError(
 					"'Info.plist' file is malformed, "
 					f"Please provide 'Contents/' with a correct 'Info.plist'. {e}"
 				)
-		self._glos.setInfo('name', dict_metadata.get('CFBundleDisplayName'))
-		self._glos.setInfo('copyright', dict_metadata.get('DCSDictionaryCopyright'))
-		self._glos.setInfo('author', dict_metadata.get('DCSDictionaryManufacturerName'))
-		self._glos.setInfo('edition', dict_metadata.get('IDXDictionaryVersion'))
-		self._glos.setInfo('CFBundleIdentifier', dict_metadata.get('CFBundleIdentifier'))
-		if 'DCSDictionaryLanguages' in dict_metadata:
-			dict_metadata_langs = dict_metadata.get('DCSDictionaryLanguages')[0]
-			import locale
-			dict_locale = dict_metadata_langs['DCSDictionaryDescriptionLanguage']
-			lang_code = locale.normalize(dict_locale).split('_')[0]
-			self._glos.setInfo('sourceLang', lang_code)
-			dict_locale = dict_metadata_langs['DCSDictionaryIndexLanguage']
-			lang_code = locale.normalize(dict_locale).split('_')[0]
-			self._glos.setInfo('targetLang', lang_code)
+		self._glos.setInfo("name", metadata.get("CFBundleDisplayName"))
+		self._glos.setInfo("copyright", metadata.get("DCSDictionaryCopyright"))
+		self._glos.setInfo("author", metadata.get("DCSDictionaryManufacturerName"))
+		self._glos.setInfo("edition", metadata.get("IDXDictionaryVersion"))
+		self._glos.setInfo("CFBundleIdentifier", metadata.get("CFBundleIdentifier"))
+
+		if "DCSDictionaryLanguages" in metadata:
+			self.setLangs(metadata)
+
+	def setLangs(self, metadata: Dict):
+		import locale
+
+		langsList = metadata.get("DCSDictionaryLanguages")
+		if not langsList:
+			return
+
+		langs = langsList[0]
+
+		sourceLocale = langs["DCSDictionaryDescriptionLanguage"]
+		self._glos.sourceLangName = locale.normalize(sourceLocale).split("_")[0]
+
+		targetLocale = langs["DCSDictionaryIndexLanguage"]
+		self._glos.targetLangName = locale.normalize(targetLocale).split("_")[0]
 
 	def __len__(self):
 		return self._wordCount
@@ -304,7 +315,7 @@ class Reader(object):
 		limit = self._limit
 		titleById = {}
 
-		self._file.seek(self._offsetData)
+		self._file.seek(self._entriesOffset)
 		while True:
 			absPos = _file.tell()
 			if absPos >= limit:
@@ -339,13 +350,13 @@ class Reader(object):
 				titleById[_id] = b_entry[title_i + 9: title_j].decode(self._encoding)
 
 		self._titleById = titleById
-		_file.seek(self._offsetData)
+		_file.seek(self._entriesOffset)
 		self._wordCount = len(titleById)
 
 	def read_int_from_file(self) -> int:
 		return unpack("i", self._file.read(4))[0]
 
-	def guess_file_offset_limit(self) -> (int, int):
+	def guessFileOffsetLimit(self) -> (int, int):
 		self._file.seek(OFFSET_FILE_START)
 		limit = OFFSET_FILE_START + self.read_int_from_file()
 		first_int = self.read_int_from_file()
