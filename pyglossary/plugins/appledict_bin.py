@@ -13,7 +13,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-from typing import Tuple, Match, Dict
+from typing import Tuple, Match, Dict, Generator, Optional
 
 from pyglossary.plugins.formats_common import *
 
@@ -59,9 +59,9 @@ class Reader(object):
 		self._filename = ""
 		self._file = None
 		self._encoding = "utf-8"
-		self._buf = ""
+		self._buf: bytes
 		self._defiFormat = "m"
-		self._entriesOffset = OFFSET_FILE_START
+		self._entriesOffset: int
 		self._re_link = re.compile(f'<a [^<>]*>')
 		self._titleById = {}
 		self._wordCount = 0
@@ -293,27 +293,25 @@ class Reader(object):
 		pos += chunkSize
 		return entryBytes, pos
 
-	def _readEntry(self, pos: int) -> "Tuple[BaseEntry, int]":
+	def createEntry(self, entry_bytes: bytes) -> Optional[BaseEntry]:
 		"""
-			returns (entry, pos)
+			returns entry from bytes
 		"""
 		from lxml import etree
 
-		entryBytes, pos = self._readEntryData(pos)
-		entryFull = entryBytes.decode(self._encoding, errors="replace")
-		entryFull = entryFull.strip()
+		entryFull = entry_bytes.decode(self._encoding, errors="replace").strip()
 		if not entryFull:
-			return None, pos
+			return None
 		try:
 			entryRoot = etree.fromstring(entryFull)
 		except etree.XMLSyntaxError as e:
 			log.error(
-				f"{pos=}, len(buf)={len(self._buf)}, {entryFull=}"
+				f"len(buf)={len(self._buf)}, {entryFull=}"
 			)
 			raise e
 		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
 		if not entryElems:
-			return None, pos
+			return None
 		word = entryElems[0].xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
 
 		defi = self._getDefi(entryElems[0])
@@ -324,49 +322,35 @@ class Reader(object):
 			word, defi,
 			defiFormat=self._defiFormat,
 			byteProgress=(self._absPos, self._limit),
-		), pos
+		)
 
 	def readEntryIds(self):
-		_file = self._file
-		limit = self._limit
 		titleById = {}
 
-		self._file.seek(self._entriesOffset)
-		while True:
-			absPos = _file.tell()
-			if absPos >= limit:
-				break
-
-			bufSize = self.readInt()
-			self._buf = decompress(_file.read(bufSize)[8:])
-
-			pos = 0
-			while pos < len(self._buf):
-				b_entry, pos = self._readEntryData(pos)
-				b_entry = b_entry.strip()
-				if not b_entry:
-					continue
-				id_i = b_entry.find(b'id="')
-				if id_i < 0:
-					log.error(f"id not found: {b_entry}, {pos=}, buf={self._buf}")
-					continue
-				id_j = b_entry.find(b'"', id_i + 4)
-				if id_j < 0:
-					log.error(f"id closing not found: {b_entry.decode(self._encoding)}")
-					continue
-				_id = b_entry[id_i + 4: id_j].decode(self._encoding)
-				title_i = b_entry.find(b'd:title="')
-				if title_i < 0:
-					log.error(f"title not found: {b_entry.decode(self._encoding)}")
-					continue
-				title_j = b_entry.find(b'"', title_i + 9)
-				if title_j < 0:
-					log.error(f"title closing not found: {b_entry.decode(self._encoding)}")
-					continue
-				titleById[_id] = b_entry[title_i + 9: title_j].decode(self._encoding)
+		for entry_bytes in self.yieldEntryBytes():
+			b_entry = entry_bytes.strip()
+			if not b_entry:
+				continue
+			id_i = b_entry.find(b'id="')
+			if id_i < 0:
+				log.error(f"id not found: {b_entry}, buf={self._buf}")
+				continue
+			id_j = b_entry.find(b'"', id_i + 4)
+			if id_j < 0:
+				log.error(f"id closing not found: {b_entry.decode(self._encoding)}")
+				continue
+			_id = b_entry[id_i + 4: id_j].decode(self._encoding)
+			title_i = b_entry.find(b'd:title="')
+			if title_i < 0:
+				log.error(f"title not found: {b_entry.decode(self._encoding)}")
+				continue
+			title_j = b_entry.find(b'"', title_i + 9)
+			if title_j < 0:
+				log.error(f"title closing not found: {b_entry.decode(self._encoding)}")
+				continue
+			titleById[_id] = b_entry[title_i + 9: title_j].decode(self._encoding)
 
 		self._titleById = titleById
-		_file.seek(self._entriesOffset)
 		self._wordCount = len(titleById)
 
 	def readInt(self) -> int:
@@ -398,33 +382,24 @@ class Reader(object):
 				cssBytes = cssFile.read()
 			yield glos.newDataEntry("style.css", cssBytes)
 
+		for entryBytes in self.yieldEntryBytes():
+			entry = self.createEntry(entryBytes)
+			if entry is not None:
+				yield entry
+
+	def yieldEntryBytes(self) -> Generator[bytes, None, None]:
 		_file = self._file
 		limit = self._limit
+		self._file.seek(self._entriesOffset)
 		while True:
 			self._absPos = _file.tell()
 			if self._absPos >= limit:
 				break
-			# alternative for buf, bufSize is calculated
-			# ~ flag = f.tell()
-			# ~ bufSize = 0
-			# ~ while True:
-			# ~ 	zipp = f.read(bufSize)
-			# ~		try:
-			# ~			# print(zipp)
-			# ~			input(zipp.decode(self._encoding))
-			# ~			buf = decompress(zipp[8:])
-			# ~			# print(buf)
-			# ~			break
-			# ~		except:
-			# ~			print(bufSize)
-			# ~			f.seek(flag)
-			# ~			bufSize = bufSize+1
 
 			bufSize = self.readInt()
 			self._buf = decompress(_file.read(bufSize)[8:])
 
 			pos = 0
 			while pos < len(self._buf):
-				entry, pos = self._readEntry(pos)
-				if entry is not None:
-					yield entry
+				entryBytes, pos = self._readEntryData(pos)
+				yield entryBytes
