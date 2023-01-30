@@ -59,7 +59,6 @@ class Reader(object):
 		self._filename = ""
 		self._file = None
 		self._encoding = "utf-8"
-		self._buf: bytes
 		self._defiFormat = "m"
 		self._entriesOffset: int
 		self._re_link = re.compile(f'<a [^<>]*>')
@@ -238,19 +237,32 @@ class Reader(object):
 			self._file.close()
 			self._file = None
 
-	def getChunkSize(self, pos):
-		plus = self._buf[pos:pos + 12].find(b"<d:entry")
-		if plus < 1:
-			return 0, 0
-		bs = self._buf[pos:pos + plus]
-		if plus < 4:
-			bs = b"\x00" * (4 - plus) + bs
-		try:
-			chunkSize, = unpack("i", bs)
-		except Exception as e:
-			log.error(f"{self._buf[pos:pos + 100]}")
-			raise e
-		return chunkSize, plus
+	def getChunkLenOffset(self, pos, buffer: bytes):
+		"""
+		returns chunk byte length and offset
+
+		offset is usually 4 bytes integer, that contains chunk/entry byte length
+		"""
+		offset = buffer[pos:pos + 12].find(b"<d:entry")
+		if offset == -1:
+			raise IOError('Could not find entry tag <d:entry>')
+		elif offset == 0:
+			# when no such info (offset equals 0), we take all bytes till the closing tag or till section end
+			endI = buffer[pos:].find(b"</d:entry>")
+			if endI == -1:
+				chunkLen = len(buffer) - pos
+			else:
+				chunkLen = endI + 10
+		else:
+			bs = buffer[pos:pos + offset]
+			if offset < 4:
+				bs = b"\x00" * (4 - offset) + bs
+			try:
+				chunkLen, = unpack("i", bs)
+			except Exception as e:
+				log.error(f"{buffer[pos:pos + 100]}")
+				raise e
+		return chunkLen, offset
 
 	def _getDefi(self, entryElem: "Element") -> str:
 		from lxml import etree
@@ -280,19 +292,6 @@ class Reader(object):
 
 		return defi
 
-	def _readEntryData(self, pos: int) -> "Tuple[bytes, int]":
-		chunkSize, plus = self.getChunkSize(pos)
-		pos += plus
-		if chunkSize == 0:
-			endI = self._buf[pos:].find(b"</d:entry>")
-			if endI == -1:
-				chunkSize = len(self._buf) - pos
-			else:
-				chunkSize = endI + 10
-		entryBytes = self._buf[pos:pos + chunkSize]
-		pos += chunkSize
-		return entryBytes, pos
-
 	def createEntry(self, entry_bytes: bytes) -> Optional[BaseEntry]:
 		"""
 			returns entry from bytes
@@ -306,7 +305,7 @@ class Reader(object):
 			entryRoot = etree.fromstring(entryFull)
 		except etree.XMLSyntaxError as e:
 			log.error(
-				f"len(buf)={len(self._buf)}, {entryFull=}"
+				f"{entryFull=}"
 			)
 			raise e
 		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
@@ -333,7 +332,7 @@ class Reader(object):
 				continue
 			id_i = b_entry.find(b'id="')
 			if id_i < 0:
-				log.error(f"id not found: {b_entry}, buf={self._buf}")
+				log.error(f"id not found: {b_entry}")
 				continue
 			id_j = b_entry.find(b'"', id_i + 4)
 			if id_j < 0:
@@ -396,10 +395,15 @@ class Reader(object):
 			if self._absPos >= limit:
 				break
 
-			bufSize = self.readInt()
-			self._buf = decompress(_file.read(bufSize)[8:])
+			compressedSectionByteLen = self.readInt()
+			compressedSectionByteLen2 = self.readInt()  # `compressedSectionByteLen2` always =compressedSectionByteLen-4
+			decompressedSectionByteLen = self.readInt()
+			buffer = decompress(_file.read(compressedSectionByteLen - 8))
 
 			pos = 0
-			while pos < len(self._buf):
-				entryBytes, pos = self._readEntryData(pos)
+			while pos < decompressedSectionByteLen:
+				chunkLen, offset = self.getChunkLenOffset(pos, buffer)
+				pos += offset
+				entryBytes = buffer[pos:pos + chunkLen]
+				pos += chunkLen
 				yield entryBytes
