@@ -34,7 +34,7 @@ try:
 	).GzipFile
 except ImportError as e:
 	from gzip import GzipFile
-	log.warning(str(e))
+	log.debug(str(e))
 
 from pyglossary.text_utils import (
 	uintFromBytes,
