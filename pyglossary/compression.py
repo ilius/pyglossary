@@ -137,4 +137,4 @@ def uncompress(srcFilename: str, dstFilename: str, compression: str) -> None:
 		return
 
 	# TODO: if compression == "zip":
-	raise ValueError(f"unexpected {compression=}")
+	raise ValueError(f"unsupported compression {compression!r}")
