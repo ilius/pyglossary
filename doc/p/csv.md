@@ -22,6 +22,7 @@
 | Name      | Default | Type | Comment          |
 | --------- | ------- | ---- | ---------------- |
 | encoding  | `utf-8` | str  | Encoding/charset |
+| newline   | `\n`    | str  | Newline string   |
 | delimiter | `,`     | str  | Column delimiter |
 
 ### Write options
@@ -29,6 +30,7 @@
 | Name            | Default | Type | Comment                                        |
 | --------------- | ------- | ---- | ---------------------------------------------- |
 | encoding        | `utf-8` | str  | Encoding/charset                               |
+| newline         | `\n`    | str  | Newline string                                 |
 | resources       | `True`  | bool | Enable resources / data files                  |
 | delimiter       | `,`     | str  | Column delimiter                               |
 | add_defi_format | `False` | bool | enable adding defiFormat (m/h/x)               |

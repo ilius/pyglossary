@@ -416,6 +416,17 @@
 				"customValue": true,
 				"comment": "Encoding/charset"
 			},
+			"newline": {
+				"class": "NewlineOption",
+				"type": "str",
+				"customValue": true,
+				"values": [
+					"\r\n",
+					"\n",
+					"\r"
+				],
+				"comment": "Newline string"
+			},
 			"resources": {
 				"class": "BoolOption",
 				"type": "bool",
@@ -452,10 +463,12 @@
 		"canWrite": true,
 		"readOptions": {
 			"encoding": "utf-8",
+			"newline": "\n",
 			"delimiter": ","
 		},
 		"writeOptions": {
 			"encoding": "utf-8",
+			"newline": "\n",
 			"resources": true,
 			"delimiter": ",",
 			"add_defi_format": false,
