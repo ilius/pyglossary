@@ -34,6 +34,7 @@ website = None
 
 optionsProp = {
 	"encoding": EncodingOption(),
+	"newline": NewlineOption(),
 	"resources": BoolOption(
 		comment="Enable resources / data files",
 	),
@@ -59,6 +60,7 @@ class Reader(object):
 	compressions = stdCompressions
 
 	_encoding: str = "utf-8"
+	_newline: str = "\n"
 	_delimiter: str = ","
 
 	def __init__(self, glos: GlossaryType):
@@ -83,7 +85,12 @@ class Reader(object):
 	) -> None:
 		from pyglossary.text_reader import TextFilePosWrapper
 		self._filename = filename
-		cfile = compressionOpen(filename, mode="rt", encoding=self._encoding)
+		cfile = compressionOpen(
+			filename,
+			mode="rt",
+			encoding=self._encoding,
+			newline=self._newline,
+		)
 
 		if cfile.seekable():
 			cfile.seek(0, 2)
@@ -192,6 +199,7 @@ class Writer(object):
 	compressions = stdCompressions
 
 	_encoding: str = "utf-8"
+	_newline: str = "\n"
 	_resources: bool = True
 	_delimiter: str = ","
 	_add_defi_format: bool = False
@@ -203,7 +211,12 @@ class Writer(object):
 
 	def open(self, filename: str):
 		self._filename = filename
-		self._file = compressionOpen(filename, mode="wt", encoding=self._encoding)
+		self._file = compressionOpen(
+			filename,
+			mode="wt",
+			encoding=self._encoding,
+			newline=self._newline,
+		)
 		self._resDir = resDir = filename + "_res"
 		self._csvWriter = csv.writer(
 			self._file,
@@ -226,7 +239,6 @@ class Writer(object):
 			os.rmdir(self._resDir)
 
 	def write(self) -> "Generator[None, BaseEntry, None]":
-		encoding = self._encoding
 		resources = self._resources
 		add_defi_format = self._add_defi_format
 		glos = self._glos
