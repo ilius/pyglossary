@@ -212,9 +212,7 @@ def prepare_content_with_soup(
 
 
 def cleanup_link_target(href):
-	if href.startswith("bword://"):
-		href = href[len("bword://"):]
-	return href
+	return href.removeprefix("bword://")
 
 
 def href_sub(x: "typing.re.Pattern") -> str:

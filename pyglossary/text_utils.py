@@ -196,14 +196,12 @@ def urlToPath(url: str) -> str:
 
 
 def replacePostSpaceChar(st: str, ch: str) -> str:
-	st = (
+	return (
 		st.replace(f" {ch}", ch)
 		.replace(ch, f"{ch} ")
 		.replace(f"{ch}  ", f"{ch} ")
+		.removesuffix(" ")
 	)
-	if st.endswith(" "):
-		st = st[:-1]
-	return st
 
 
 def isASCII(data: str) -> bool:

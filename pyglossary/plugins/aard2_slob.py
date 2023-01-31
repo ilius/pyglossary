@@ -172,8 +172,7 @@ class Reader(object):
 			ctype = blob.content_type.split(";")[0]
 			if ctype not in (MIME_HTML, MIME_TEXT):
 				log.debug(f"unknown {blob.content_type=} in {word=}")
-				if word.startswith("~/"):
-					word = word[2:]
+				word = word.removeprefix("~/")
 				yield self._glos.newDataEntry(word, blob.content)
 				continue
 			defiFormat = ""

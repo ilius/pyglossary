@@ -1310,8 +1310,7 @@ class BglReader(object):
 		if fields.u_defi:
 			u_defi_format += fields.u_defi
 
-		if u_defi_format.endswith(("<br>", "<BR>")):
-			u_defi_format = u_defi_format[:-4]
+		u_defi_format = u_defi_format.removesuffix("<br>").removesuffix("<BR>")
 
 		return u_defi_format
 
