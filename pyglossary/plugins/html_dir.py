@@ -8,6 +8,7 @@ from pyglossary.text_utils import (
 import html
 import os
 import json
+import time
 
 enable = True
 lname = "html_dir"
@@ -199,6 +200,9 @@ class Writer(object):
 		del fileByWord, linkTargetSet
 		gc.collect()
 
+		if os.sep == "\\":
+			time.sleep(0.1)
+
 		entry_url_fmt = self._glos.getInfo("entry_url")
 
 		re_href = re.compile(
@@ -247,6 +251,7 @@ class Writer(object):
 
 					outFile.write(inFile.read())
 
+			os.remove(join(dirn, filename))
 			os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
 			os.remove(join(dirn, f"links{fileIndex}"))
 
@@ -492,6 +497,8 @@ class Writer(object):
 		fileObj.close()
 		self._fileObj = None
 		indexTxtFileObj.close()
+
+		linksTxtFileObj.close()
 
 		if linkTargetSet:
 			log.info(f"{len(linkTargetSet)} link targets found")
