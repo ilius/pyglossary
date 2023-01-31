@@ -158,7 +158,7 @@ class XdxfTransformer(object):
 		child: "Union[str, lxml.etree.Element]",
 	):
 		iref_url = child.attrib.get("href", "")
-		if any(iref_url.endswith(ext) for ext in ("mp3", "wav", "aac", "ogg")):
+		if iref_url.endswith((".mp3", ".wav", ".aac", ".ogg")):
 			#  with hf.element("audio", src=iref_url):
 			with hf.element("a", **{
 				"class": "iref",
