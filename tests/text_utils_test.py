@@ -127,6 +127,11 @@ class TestTextUtils(unittest.TestCase):
 
 	def test_uint32ToBytes(self):
 		f = uint32ToBytes
+
+		outOfRangeError = "'I' format requires 0 <= number <= 4294967295"
+		if os.sep == "\\":
+			outOfRangeError = "argument out of range"
+
 		self.assertEqual(f(0), bytes([0, 0, 0, 0]))
 		self.assertEqual(f(0x3e8), bytes([0, 0, 0x03, 0xe8]))
 		self.assertEqual(f(0x186a0), bytes([0, 1, 0x86, 0xa0]))
@@ -137,14 +142,14 @@ class TestTextUtils(unittest.TestCase):
 			f(0xffffffff + 1)
 		self.assertEqual(
 			str(ctx.exception),
-			"'I' format requires 0 <= number <= 4294967295",
+			outOfRangeError,
 		)
 
 		with self.assertRaises(struct.error) as ctx:
 			f(10000000000)
 		self.assertEqual(
 			str(ctx.exception),
-			"'I' format requires 0 <= number <= 4294967295",
+			outOfRangeError,
 		)
 
 		with self.assertRaises(struct.error) as ctx:
