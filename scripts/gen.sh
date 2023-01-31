@@ -6,9 +6,8 @@ myDir1=$(dirname "$myPath")
 
 set -x
 
-"$myDir1/plugin-index.py"
-"$myDir1/plugin-doc.py"
+python "$myDir1/plugin-index.py"
+python "$myDir1/plugin-doc.py"
 
-"$myDir1/config-doc.py"
-"$myDir1/entry-filters-doc.py"
-
+python "$myDir1/config-doc.py"
+python "$myDir1/entry-filters-doc.py"

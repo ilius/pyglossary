@@ -257,7 +257,7 @@ for p in plugins:
 
 	toolsFile = join(toolsDir, f"{p.lname}.toml")
 	try:
-		with open(toolsFile) as _file:
+		with open(toolsFile, encoding="utf-8") as _file:
 			tools_toml = toml.load(_file, _dict=OrderedDict)
 	except FileNotFoundError:
 		tools = []
@@ -340,7 +340,12 @@ for p in plugins:
 		extraDocs=extraDocs,
 		toolsTable=toolsTable,
 	)
-	with open(join(rootDir, "doc", "p", f"{p.lname}.md"), mode="w") as _file:
+	with open(
+		join(rootDir, "doc", "p", f"{p.lname}.md"),
+		mode="w",
+		encoding="utf-8",
+		newline="\n",
+	) as _file:
 		_file.write(text)
 
 indexText = renderTable(
@@ -354,5 +359,10 @@ indexText = renderTable(
 	]
 )
 
-with open(join(rootDir, "doc", "p", f"__index__.md"), mode="w") as _file:
+with open(
+	join(rootDir, "doc", "p", f"__index__.md"),
+	mode="w",
+	encoding="utf-8",
+	newline="\n",
+) as _file:
 	_file.write(indexText + "\n")
