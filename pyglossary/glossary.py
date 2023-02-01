@@ -194,7 +194,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			for key, value in info.items():
 				self.setInfo(key, value)
 
-		self.ui = ui
+		self._ui = ui
 
 	def cleanup(self) -> None:
 		if not self._cleanupPathList:
@@ -239,7 +239,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 					args = (value,)
 			entryFilters.append(filterClass(self, *args))
 
-		if self.ui and self._progressbar:
+		if self._ui and self._progressbar:
 			entryFilters.append(ShowProgressBar(self))
 
 		if log.level <= core.TRACE:
@@ -303,7 +303,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		)
 
 	def _loadedEntryGen(self) -> "Iterator[BaseEntry]":
-		if not (self.ui and self._progressbar):
+		if not (self._ui and self._progressbar):
 			yield from self._data
 			return
 
@@ -1176,21 +1176,21 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	# ________________________________________________________________________#
 
 	def progressInit(self, *args) -> None:
-		if self.ui and self._progressbar:
-			self.ui.progressInit(*args)
+		if self._ui and self._progressbar:
+			self._ui.progressInit(*args)
 
 	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
 		if total == 0:
 			log.warning(f"{pos=}, {total=}")
 			return
-		self.ui.progress(
+		self._ui.progress(
 			min(pos + 1, total) / total,
 			f"{pos:,} / {total:,} {unit}",
 		)
 
 	def progressEnd(self) -> None:
-		if self.ui and self._progressbar:
-			self.ui.progressEnd()
+		if self._ui and self._progressbar:
+			self._ui.progressEnd()
 
 	# ________________________________________________________________________#
 

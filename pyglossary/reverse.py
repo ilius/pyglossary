@@ -46,8 +46,6 @@ def reverseGlossary(
 	if saveStep < 2:
 		raise ValueError("saveStep must be more than 1")
 
-	ui = glos.ui
-
 	entries = []
 	for entry in glos:
 		entries.append(entry)
