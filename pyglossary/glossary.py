@@ -35,6 +35,7 @@ from time import time as now
 
 from contextlib import suppress
 from collections import OrderedDict as odict
+from typing import TypeVar
 
 from .flags import (
 	ALWAYS,
@@ -51,6 +52,7 @@ from .core import (
 )
 from .entry import Entry, DataEntry
 from .entry_filters import (
+	EntryFilter,
 	FixUnicode,
 	LanguageCleanup,
 	LowerWord,
@@ -94,6 +96,8 @@ sortKeyType = Callable[
 
 defaultSortKeyName = "headword_lower"
 
+EntryFilterType = TypeVar("EntryFilter", bound=EntryFilter)
+
 
 class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	"""
@@ -132,7 +136,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	#   - ShowProgressBar
 	#   - ShowMaxMemoryUsage
 
-	def _closeReaders(self):
+	def _closeReaders(self) -> None:
 		for reader in self._readers:
 			try:
 				reader.close()
@@ -192,7 +196,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		self.ui = ui
 
-	def cleanup(self):
+	def cleanup(self) -> None:
 		if not self._cleanupPathList:
 			return
 		if not self._config.get("cleanup", True):
@@ -262,7 +266,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		for entryFilter in self._entryFilters:
 			entryFilter.prepare()
 
-	def _addExtraEntryFilter(self, cls):
+	def _addExtraEntryFilter(self, cls: "Type[EntryFilterType]") -> None:
 		if cls.name in self._entryFiltersName:
 			return
 		self._entryFilters.append(cls(self))
@@ -277,7 +281,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		"""
 		self._addExtraEntryFilter(RemoveHtmlTagsAll)
 
-	def preventDuplicateWords(self):
+	def preventDuplicateWords(self) -> None:
 		"""
 		Adds entry filter to prevent duplicate `entry.s_word`
 
@@ -418,7 +422,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		raise NotImplementedError
 
 	@config.setter
-	def config(self, c: "Dict[str, Any]"):
+	def config(self, c: "Dict[str, Any]") -> None:
 		if self._config:
 			log.error(f"glos.config is set more than once")
 			return
@@ -429,7 +433,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		return self._config.get("enable_alts", True)
 
 	@property
-	def filename(self):
+	def filename(self) -> str:
 		return self._filename
 
 	@property
@@ -517,7 +521,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			setattr(reader, f"_{name}", value)
 		return reader
 
-	def _setTmpDataDir(self, filename):
+	def _setTmpDataDir(self, filename: str):
 		# good thing about cacheDir is that we don't have to clean it up after
 		# conversion is finished.
 		# specially since dataEntry.save(...) will move the file from cacheDir
@@ -684,7 +688,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		# direct mode
 		self._iter = self._readersEntryGen()
 
-	def updateIter(self):
+	def updateIter(self) -> None:
 		if self._readers:
 			raise RuntimeError("can not call this while having a reader")
 		self._updateIter()

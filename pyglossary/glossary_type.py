@@ -44,7 +44,7 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	@property
-	def filename(self):
+	def filename(self) -> str:
 		raise NotImplementedError
 
 	@property
