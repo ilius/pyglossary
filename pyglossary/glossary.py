@@ -498,15 +498,25 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 	def newDataEntry(self, fname: str, data: bytes) -> "DataEntry":
 		import uuid
-		tmpPath = None
-		if not self._readers:
-			if self._tmpDataDir:
-				tmpPath = join(self._tmpDataDir, fname.replace("/", "_"))
-			else:
-				os.makedirs(join(cacheDir, "tmp"), mode=0o700, exist_ok=True)
-				self._cleanupPathList.add(join(cacheDir, "tmp"))
-				tmpPath = join(cacheDir, "tmp", uuid.uuid1().hex)
-		return DataEntry(fname, data, tmpPath=tmpPath)
+
+		if self._readers:
+			return DataEntry(fname, data)
+
+		if self._tmpDataDir:
+			return DataEntry(
+				fname,
+				data,
+				tmpPath=join(self._tmpDataDir, fname.replace("/", "_")),
+			)
+
+		tmpDir = join(cacheDir, "tmp")
+		os.makedirs(tmpDir, mode=0o700, exist_ok=True)
+		self._cleanupPathList.add(tmpDir)
+		return DataEntry(
+			fname,
+			data,
+			tmpPath=join(tmpDir, uuid.uuid1().hex),
+		)
 
 	# ________________________________________________________________________#
 
