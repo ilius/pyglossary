@@ -2,7 +2,7 @@
 
 import sys
 import os
-from os.path import dirname, abspath, isfile, relpath
+from os.path import join, dirname, abspath, isfile, relpath
 import unittest
 import logging
 
@@ -54,10 +54,21 @@ class TestGlossaryErrorsBase(TestGlossaryBase):
 		), msg=f"did not find warning log {errorMsg!r}")
 
 
+def osRoot():
+	if os.sep == "\\":
+		return "C:\\"
+	return "/"
+
+if os.sep == "\\":
+	osNoSuchFileOrDir = "[WinError 3] The system cannot find the path specified:"
+else:
+	osNoSuchFileOrDir = "[Errno 2] No such file or directory:"
+
 class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_loadPlugins_invalidDir(self):
-		Glossary.loadPlugins("/abc/def/ghe")
-		self.assertLogCritical("Invalid plugin directory: '/abc/def/ghe'")
+		path = join(osRoot(), "abc", "def", "ghe")
+		Glossary.loadPlugins(path)
+		self.assertLogCritical(f"Invalid plugin directory: {path!r}")
 
 	def test_loadPlugin_moduleNotFound(self):
 		Glossary.loadPlugin("abc.def.ghe")
@@ -380,14 +391,14 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 
 	def test_convert_fileNotFound(self):
 		glos = Glossary()
-		inputFilename = "/abc/def/test6.txt"
+		inputFilename = join(osRoot(), "abc", "def", "test6.txt")
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename="test2.txt",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical(
-			"[Errno 2] No such file or directory: '/abc/def/test6.txt'"
+			f"[Errno 2] No such file or directory: {inputFilename!r}"
 		)
 		self.assertLogCritical(f"Reading file {relpath(inputFilename)!r} failed.")
 
@@ -403,7 +414,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertLogCritical(f"Writing file {relpath('test')!r} failed.")
 
 	def test_convert_writeFileNotFound_txt(self):
-		outputFilename = "/test/7de8cf6f17bc4c9abb439e71adbec95d.txt"
+		outputFilename = join(appTmpDir, "test" "7de8cf6f17bc4c9abb439e71adbec95d.txt")
 		glos = Glossary()
 		res = glos.convert(
 			inputFilename=self.downloadFile("100-en-fa.txt"),
@@ -411,12 +422,12 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical(
-			f"[Errno 2] No such file or directory: '{outputFilename}'"
+			f"[Errno 2] No such file or directory: {outputFilename!r}"
 		)
 		self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
 
 	def test_convert_writeFileNotFound_hdir(self):
-		outputFilename = "/test/40e20107f5b04087bfc0ec0d61510017.hdir"
+		outputFilename = join(osRoot(), "test", "40e20107f5b04087bfc0ec0d61510017.hdir")
 		glos = Glossary()
 		res = glos.convert(
 			inputFilename=self.downloadFile("100-en-fa.txt"),
@@ -424,7 +435,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical(
-			f"[Errno 2] No such file or directory: '{outputFilename}'"
+			f"{osNoSuchFileOrDir} {outputFilename!r}"
 		)
 		self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
 
