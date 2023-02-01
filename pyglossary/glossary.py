@@ -162,7 +162,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self._filename = ""
 		self._defaultDefiFormat = "m"
 		self._progressbar = True
-		self.tmpDataDir = ""
+		self._tmpDataDir = ""
 
 	def __init__(
 		self,
@@ -432,6 +432,10 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	def filename(self):
 		return self._filename
 
+	@property
+	def tmpDataDir(self) -> str:
+		return self._tmpDataDir
+
 	def wordTitleStr(
 		self,
 		word: str,
@@ -492,8 +496,8 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		import uuid
 		tmpPath = None
 		if not self._readers:
-			if self.tmpDataDir:
-				tmpPath = join(self.tmpDataDir, fname.replace("/", "_"))
+			if self._tmpDataDir:
+				tmpPath = join(self._tmpDataDir, fname.replace("/", "_"))
 			else:
 				os.makedirs(join(cacheDir, "tmp"), mode=0o700, exist_ok=True)
 				self._cleanupPathList.add(join(cacheDir, "tmp"))
@@ -523,12 +527,12 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		# that we don't have write access to.
 		# still maybe add a config key to decide if we should always use cacheDir
 		# if self._hasWriteAccessToDir(f"{filename}_res", os.W_OK):
-		# 	self.tmpDataDir = f"{filename}_res"
+		# 	self._tmpDataDir = f"{filename}_res"
 		# else:
-		self.tmpDataDir = join(cacheDir, os.path.basename(filename) + "_res")
-		log.debug(f"tmpDataDir = {self.tmpDataDir}")
-		os.makedirs(self.tmpDataDir, mode=0o700, exist_ok=True)
-		self._cleanupPathList.add(self.tmpDataDir)
+		self._tmpDataDir = join(cacheDir, os.path.basename(filename) + "_res")
+		log.debug(f"tmpDataDir = {self._tmpDataDir}")
+		os.makedirs(self._tmpDataDir, mode=0o700, exist_ok=True)
+		self._cleanupPathList.add(self._tmpDataDir)
 
 	def read(
 		self,

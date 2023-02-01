@@ -48,6 +48,10 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	@property
+	def tmpDataDir(self) -> str:
+		raise NotImplementedError
+
+	@property
 	def sourceLang(self) -> "Optional[Lang]":
 		raise NotImplementedError
 
