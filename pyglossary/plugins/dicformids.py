@@ -103,7 +103,7 @@ class Reader(object):
 		except IndexError:
 			raise StopIteration
 		self._tabFileReader = TabfileReader(self._glos, hasInfo=False)
-		self._tabFileReader.open(join(self._dirname, tabFileName))
+		self._tabFileReader.open(join(self._dirname, tabFileName), newline="\n")
 
 	def close(self):
 		if self._tabFileReader:
@@ -142,10 +142,11 @@ class Writer(object):
 
 	def writeProbs(self):
 		glos = self._glos
-		with open(join(
+		probsPath = join(
 			self._dirname,
 			"DictionaryForMIDs.properties",
-		), "w") as fileObj:
+		)
+		with open(probsPath, mode="w", newline="\n") as fileObj:
 			fileObj.write(PROP_TEMPLATE.format(
 				name=glos.getInfo("name"),
 				author=glos.author,
@@ -167,7 +168,7 @@ class Writer(object):
 		self.indexIndex += 1
 		fname = f"index{self.indexPostfix}{self.indexIndex}.csv"
 		fpath = join(self._dirname, fname)
-		self.indexFp = open(fpath, mode="w", encoding="utf-8")
+		self.indexFp = open(fpath, mode="w", encoding="utf-8", newline="\n")
 
 	def finish(self):
 		pass
@@ -192,7 +193,7 @@ class Writer(object):
 			dicFp = open(join(
 				self._dirname,
 				f"directory{self.directoryPostfix}{dicIndex+1}.csv",
-			), mode="w", encoding="utf-8")
+			), mode="w", encoding="utf-8", newline="\n")
 			for entry in entryList:
 				word = entry.s_word
 				n_word = self.normateWord(word)
@@ -233,7 +234,7 @@ class Writer(object):
 		langSearchListFp = open(join(
 			self._dirname,
 			f"searchlist{self.directoryPostfix}.csv"
-		), mode="w", encoding="utf-8")
+		), mode="w", newline="\n", encoding="utf-8")
 
 		langSearchListFp.write(f"{indexData[0][0]}\t{self.indexIndex}\n")
 
