@@ -321,7 +321,12 @@ class Reader(object):
 		"""
 		.ifo file is a text file in utf-8 encoding
 		"""
-		with open(self._filename + ".ifo", "r", encoding="utf-8") as ifoFile:
+		with open(
+			self._filename + ".ifo",
+			mode="r",
+			encoding="utf-8",
+			newline="\n",
+		) as ifoFile:
 			for line in ifoFile:
 				line = line.strip()
 				if not line:
@@ -1087,7 +1092,7 @@ class Writer(object):
 		)
 		log.info(f"Writing {len(indexList)} index entries...")
 		t0 = now()
-		with open(filename, "wb") as indexFile:
+		with open(filename, mode="wb") as indexFile:
 			indexFile.write(b"".join([
 				key + b"\x00" + value
 				for key, value in indexList
@@ -1154,5 +1159,10 @@ class Writer(object):
 		ifoStr = "StarDict's dict ifo file\n"
 		for key, value in ifo:
 			ifoStr += f"{key}={value}\n"
-		with open(self._filename + ".ifo", "w", encoding="utf-8") as ifoFile:
+		with open(
+			self._filename + ".ifo",
+			mode="w",
+			encoding="utf-8",
+			newline="\n",
+		) as ifoFile:
 			ifoFile.write(ifoStr)
