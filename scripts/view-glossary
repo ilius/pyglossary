@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+
+myPath=$(realpath "$0")
+myDir1=$(dirname "$myPath")
+rootDir=$(dirname "$myDir1")
+
+PYTHONPATH=$rootDir python $rootDir/pyglossary/ui/tools/view_glossary.py "$@"
