@@ -70,6 +70,14 @@ def colorize(
 				hf.write(syllable)
 
 
+def _render_english(hf, eng):
+	with hf.element("div"):
+		with hf.element("ul"):
+			for defn in eng:
+				with hf.element("li"):
+					hf.write(defn)
+
+
 def render_article(
 	trad: str,
 	simp: str,
@@ -114,10 +122,6 @@ def render_article(
 						tones,
 					)
 
-			with hf.element("div"):
-				with hf.element("ul"):
-					for defn in eng:
-						with hf.element("li"):
-							hf.write(defn)
+			_render_english(hf, eng)
 
 	return f.getvalue().decode("utf-8")

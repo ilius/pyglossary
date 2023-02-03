@@ -2,6 +2,7 @@
 
 import html
 from collections.abc import Callable, Iterator
+from io import BytesIO
 from operator import itemgetter
 from typing import TYPE_CHECKING, cast
 
@@ -188,17 +189,37 @@ class Reader:
 		headword = headword[:i] + headword[i + 4 :]
 		return gender, headword
 
+	def _createEntry(
+		self,
+		headword: str,
+		groups: "list[tuple[str, str]]",
+	) -> "EntryType":
+		from lxml import etree as ET
+
+		glos = self._glos
+		f = BytesIO()
+		gender, headword = self.parseGender(headword)
+		with ET.htmlfile(f, encoding="utf-8") as hf:
+			with hf.element("div"):
+				if gender:
+					with hf.element("i"):
+						hf.write(gender)
+					hf.write(ET.Element("br"))
+				self.makeGroupsList(
+					cast("T_htmlfile", hf),
+					groups,
+					self.writeSense,
+				)
+		defi = f.getvalue().decode("utf-8")
+		return glos.newEntry(headword, defi, defiFormat="h")
+
 	def _iterOneDirection(
 		self,
 		column1: str,
 		column2: str,
 	) -> "Iterator[EntryType]":
-		from io import BytesIO
 		from itertools import groupby
 
-		from lxml import etree as ET
-
-		glos = self._glos
 		for headwordEscaped, groupsOrig in groupby(
 			self.iterRows(column1, column2),
 			key=itemgetter(0),
@@ -207,21 +228,7 @@ class Reader:
 			groups: "list[tuple[str, str]]" = [
 				(term2, entry_type) for _, term2, entry_type in groupsOrig
 			]
-			f = BytesIO()
-			gender, headword = self.parseGender(headword)
-			with ET.htmlfile(f, encoding="utf-8") as hf:
-				with hf.element("div"):
-					if gender:
-						with hf.element("i"):
-							hf.write(gender)
-						hf.write(ET.Element("br"))
-					self.makeGroupsList(
-						cast("T_htmlfile", hf),
-						groups,
-						self.writeSense,
-					)
-			defi = f.getvalue().decode("utf-8")
-			yield glos.newEntry(headword, defi, defiFormat="h")
+			yield self._createEntry(headword, groups)
 
 	def __iter__(self) -> "Iterator[EntryType]":
 		yield from self._iterOneDirection("term1", "term2")
