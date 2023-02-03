@@ -103,8 +103,9 @@ class TestGlossaryBase(unittest.TestCase):
 		except Exception as e:
 			e.msg += f", {filename=}"
 			raise e
-		if crc32hex(data) != _crc32:
-			raise RuntimeError(f"CRC32 check failed for downloaded file: {filename}")
+		actual_crc32 = crc32hex(data)
+		if actual_crc32 != _crc32:
+			raise RuntimeError(f"CRC32 check failed for downloaded file: {filename}: {actual_crc32}")
 		with open(fpath, mode="wb") as _file:
 			_file.write(data)
 		return fpath
