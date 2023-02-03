@@ -40,10 +40,10 @@ class EntryList(object):
 		self._glos = glos
 		self._sortKey = None
 
-	def append(self, entry):
+	def append(self, entry: "BaseEntry"):
 		self._l.append(entry.getRaw(self._glos))
 
-	def insert(self, pos, entry):
+	def insert(self, pos, entry: "BaseEntry"):
 		self._l.insert(pos, entry.getRaw(self._glos))
 
 	def clear(self):
@@ -52,7 +52,7 @@ class EntryList(object):
 	def __len__(self):
 		return len(self._l)
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[BaseEntry]":
 		glos = self._glos
 		for rawEntry in self._l:
 			yield Entry.fromRaw(

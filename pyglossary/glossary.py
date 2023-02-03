@@ -438,6 +438,8 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 	@property
 	def tmpDataDir(self) -> str:
+		if not self._tmpDataDir:
+			self._setTmpDataDir(self._filename)
 		return self._tmpDataDir
 
 	def wordTitleStr(
@@ -532,6 +534,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		return reader
 
 	def _setTmpDataDir(self, filename: str):
+		import uuid
 		# good thing about cacheDir is that we don't have to clean it up after
 		# conversion is finished.
 		# specially since dataEntry.save(...) will move the file from cacheDir
@@ -543,6 +546,8 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		# if self._hasWriteAccessToDir(f"{filename}_res", os.W_OK):
 		# 	self._tmpDataDir = f"{filename}_res"
 		# else:
+		if not filename:
+			filename = uuid.uuid1().hex
 		self._tmpDataDir = join(cacheDir, os.path.basename(filename) + "_res")
 		log.debug(f"tmpDataDir = {self._tmpDataDir}")
 		os.makedirs(self._tmpDataDir, mode=0o700, exist_ok=True)

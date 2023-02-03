@@ -861,6 +861,30 @@ Japonica"""
 			[entry.l_word for entry in glos],
 		)
 
+	def test_addEntries_3(self):
+		glos = self.glos = Glossary()
+		glos.addEntryObj(glos.newEntry(["a"], "test 1"))
+		glos.addEntryObj(glos.newEntry(["b"], "test 3"))
+		glos.addEntryObj(glos.newDataEntry(
+			"file.bin",
+			b"hello\x00world",
+		))
+		glos.updateEntryFilters()
+		glos.updateIter()
+		wordListList = []
+		dataEntries = []
+		for entry in glos:
+			wordListList.append(entry.l_word)
+			if entry.isData():
+				dataEntries.append(entry)
+		self.assertEqual(
+			wordListList,
+			[['a'], ['b'], ["file.bin"]],
+		)
+		self.assertEqual(len(dataEntries), 1)
+		self.assertEqual(dataEntries[0].getFileName(), "file.bin")
+		self.assertEqual(dataEntries[0].data, b"hello\x00world")
+
 	def test_sortWords_1(self):
 		glos = self.glos = Glossary()
 		wordsList = self.addWords(
