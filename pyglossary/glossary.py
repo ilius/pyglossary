@@ -469,7 +469,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
 		return self._config.get(name, default)
 
-	def addEntryObj(self, entry: Entry) -> None:
+	def addEntryObj(self, entry: "BaseEntry") -> None:
 		self._data.append(entry)
 
 	def newEntry(
