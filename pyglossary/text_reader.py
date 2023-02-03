@@ -159,6 +159,16 @@ class TextGlossaryReader(object):
 				self._fileCount = int(fileCountStr)
 				self._glos.setInfo("file_count", "")
 
+	def _genDataEntries(self, resList, resPathSet) -> "Iterator[DataEntry]":
+		for relPath, fullPath in resList:
+			if relPath in resPathSet:
+				continue
+			resPathSet.add(relPath)
+			yield DataEntry(
+				fname=relPath,
+				tmpPath=fullPath,
+			)
+
 	def __iter__(self) -> "Iterator[BaseEntry]":
 		resPathSet = set()
 		while True:
@@ -172,22 +182,17 @@ class TextGlossaryReader(object):
 			except StopIteration as e:
 				if self._fileCount == -1 or self._fileIndex < self._fileCount - 1:
 					if self.openNextFile():
-						continue
+						continue  # NESTED 5
 				self._wordCount = self._pos
 				break
 			if not block:
 				yield None
 				continue
 			word, defi, resList = block
+
 			if resList:
-				for relPath, fullPath in resList:
-					if relPath in resPathSet:
-						continue
-					resPathSet.add(relPath)
-					yield DataEntry(
-						fname=relPath,
-						tmpPath=fullPath,
-					)
+				yield from self._genDataEntries(resList, resPathSet)
+
 			yield self.newEntry(word, defi)
 
 	def __len__(self) -> int:

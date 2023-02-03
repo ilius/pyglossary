@@ -58,6 +58,16 @@ class Lang(object):
 
 
 class LangDict(dict):
+	def _addLang(self, lang: "Lang") -> None:
+		for key in lang.codes:
+			if key in self:
+				log.error(f"duplicate language code: {key}")
+			self[key] = lang
+		for name in lang.names:
+			if name in self:
+				log.error(f"duplicate language name: {name}")
+			self[name.lower()] = lang
+
 	def load(self):
 		from time import time as now
 		if len(self) > 0:
@@ -67,20 +77,13 @@ class LangDict(dict):
 		with open(filename, "r", encoding="utf-8") as _file:
 			data = json.load(_file)
 			for row in data:
-				lang = Lang(
+				self._addLang(Lang(
 					codes=row["codes"],
 					names=[row["name"]] + row["alt_names"],
 					titleTag=row["title_tag"],
 					rtl=row.get("rtl", 0),
-				)
-				for key in lang.codes:
-					if key in self:
-						log.error(f"duplicate language code: {key}")
-					self[key] = lang
-				for name in lang.names:
-					if name in self:
-						log.error(f"duplicate language name: {name}")
-					self[name.lower()] = lang
+				))
+
 		log.debug(f"LangDict: loaded, {len(self)} keys, took {(now() - t0)*1000:.1f} ms")
 
 	def __getitem__(self, key: str) -> "Optional[Lang]":

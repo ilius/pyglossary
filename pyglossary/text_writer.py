@@ -93,6 +93,33 @@ class TextGlossaryWriter(object):
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
+	def _doWriteInfo(self, _file):
+		entryFmt = self._entryFmt
+		outInfoKeysAliasDict = self._outInfoKeysAliasDict
+		wordEscapeFunc = self._wordEscapeFunc
+		defiEscapeFunc = self._defiEscapeFunc
+		for key, value in self._glos.iterInfo():
+			# both key and value are supposed to be non-empty string
+			if not (key and value):
+				log.warning(f"skipping info {key=}, {value=}")
+				continue
+			key = outInfoKeysAliasDict.get(key, key)
+			if not key:
+				continue
+			word = f"##{key}"
+			if wordEscapeFunc is not None:
+				word = wordEscapeFunc(word)
+				if not word:
+					continue
+			if defiEscapeFunc is not None:
+				value = defiEscapeFunc(value)
+				if not value:
+					continue
+			_file.write(entryFmt.format(
+				word=word,
+				defi=value,
+			))
+
 	def _open(self, filename: str):
 		if not filename:
 			filename = self._glos.filename + self._ext
@@ -104,32 +131,10 @@ class TextGlossaryWriter(object):
 			newline=self._newline,
 		)
 		_file.write(self._head)
+
 		if self._writeInfo:
-			entryFmt = self._entryFmt
-			outInfoKeysAliasDict = self._outInfoKeysAliasDict
-			wordEscapeFunc = self._wordEscapeFunc
-			defiEscapeFunc = self._defiEscapeFunc
-			for key, value in self._glos.iterInfo():
-				# both key and value are supposed to be non-empty string
-				if not (key and value):
-					log.warning(f"skipping info {key=}, {value=}")
-					continue
-				key = outInfoKeysAliasDict.get(key, key)
-				if not key:
-					continue
-				word = f"##{key}"
-				if wordEscapeFunc is not None:
-					word = wordEscapeFunc(word)
-					if not word:
-						continue
-				if defiEscapeFunc is not None:
-					value = defiEscapeFunc(value)
-					if not value:
-						continue
-				_file.write(entryFmt.format(
-					word=word,
-					defi=value,
-				))
+			self._doWriteInfo(_file)
+
 		_file.flush()
 		return _file
 
@@ -175,10 +180,12 @@ class TextGlossaryWriter(object):
 
 			if file_size_approx > 0:
 				entryCount += 1
-				if entryCount % file_size_check_every == 0:
-					if _file.tell() >= file_size_approx:
-						fileIndex += 1
-						_file = self._open(f"{self._filename}.{fileIndex}")
+				if (
+					entryCount % file_size_check_every == 0 and
+					_file.tell() >= file_size_approx
+				):
+					fileIndex += 1
+					_file = self._open(f"{self._filename}.{fileIndex}")
 
 	def finish(self):
 		if self._tail:

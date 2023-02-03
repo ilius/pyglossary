@@ -142,11 +142,11 @@ class XdxfTransformer(object):
 					continue
 				if child.tag == "iref":
 					with hf.element("div"):
-						self.writeIRef(hf, child)
+						self.writeIRef(hf, child)  # NESTED 5
 					continue
 				if child.tag in ("ex_orig", "ex_tran"):
 					with hf.element("div"):
-						self.writeChildrenOf(hf, child, stringSep=stringSep)
+						self.writeChildrenOf(hf, child, stringSep=stringSep)  # NESTED 5
 					continue
 				# log.warning(f"unknown tag {child.tag} inside <ex>")
 				self.writeChild(hf, child, elem, prev, stringSep=stringSep)
@@ -241,7 +241,7 @@ class XdxfTransformer(object):
 			with hf.element("span", **{"class": "abr"}):
 				with hf.element("font", color="green"):
 					with hf.element("i"):
-						self.writeChildrenOf(hf, child)
+						self.writeChildrenOf(hf, child)  # NESTED 5
 			return
 
 		if child.tag in ("dtrn", "co"):

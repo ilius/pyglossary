@@ -183,19 +183,21 @@ class NormalizeHtml(EntryFilter):
 	name = "normalize_html"
 	desc = "Normalize HTML tags in definition (WIP)"
 
+	_tags = (
+		"a", "font", "i", "b", "u", "p", "sup",
+		"div", "span",
+		"table", "tr", "th", "td",
+		"ul", "ol", "li",
+		"img",
+		"br", "hr",
+	)
+
 	def __init__(self, glos: "GlossaryType"):
 		log.info("Normalizing HTML tags")
 		self._pattern = re.compile(
 			"(" + "|".join([
 				fr"</?{tag}[^<>]*?>"
-				for tag in (
-					"a", "font", "i", "b", "u", "p", "sup",
-					"div", "span",
-					"table", "tr", "th", "td",
-					"ul", "ol", "li",
-					"img",
-					"br", "hr",
-				)
+				for tag in self._tags
 			]) + ")",
 			re.S | re.I,
 		)
@@ -369,13 +371,11 @@ class ShowProgressBar(EntryFilter):
 		index = self._index
 		self._index = index + 1
 
-		if entry is not None:
-			bp = entry.byteProgress()
-			if bp:
-				if bp[0] > self._lastPos + 20000:
-					self.glos.progress(bp[0], bp[1], unit="bytes")
-					self._lastPos = bp[0]
-				return entry
+		if entry is not None and (bp := entry.byteProgress()):
+			if bp[0] > self._lastPos + 20000:
+				self.glos.progress(bp[0], bp[1], unit="bytes")
+				self._lastPos = bp[0]
+			return entry
 
 		if self._wordCount == -1:
 			self._wordCount = len(self.glos)

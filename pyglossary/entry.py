@@ -82,7 +82,7 @@ class DataEntry(BaseEntry):
 				self._tmpPath = fpath
 			else:
 				with open(fpath, "wb") as toFile:
-					toFile.write(self._data)
+					toFile.write(self._data)  # NESTED 4
 		except FileNotFoundError as e:
 			log.error(f"error in DataEntry.save: {e}")
 		except Exception:
@@ -459,7 +459,7 @@ class Entry(BaseEntry):
 			if defiFormat == "b":
 				fname = word
 				if isinstance(fname, list):
-					fname = fname[0]
+					fname = fname[0]  # NESTED 4
 				return DataEntry(fname, tmpPath=defi)
 		else:
 			defiFormat = defaultDefiFormat

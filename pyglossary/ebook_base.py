@@ -170,6 +170,8 @@ class EbookWriter(object):
 		})
 
 	def write_cover(self, cover_path):
+		if not cover_path:
+			return
 		basename = os.path.basename(cover_path)
 		with self.myOpen(cover_path, "rb") as cover_obj:
 			cover = cover_obj.read()
@@ -184,12 +186,14 @@ class EbookWriter(object):
 
 	def write_css(self, custom_css_path_absolute):
 		css = self.CSS_CONTENTS
-		if custom_css_path_absolute is not None:
+		if custom_css_path_absolute:
 			try:
 				with self.myOpen(custom_css_path_absolute, "rb") as css_obj:
-					css = css_obj.read()
+					css = css_obj.read()  # NESTED 4
 			except Exception:
 				log.exception("")
+		if not css:
+			return
 		self.add_file_manifest("OEBPS/style.css", "style.css", css, "text/css")
 
 	def add_file_manifest(self, relative_path, id, contents, mimetype):
@@ -203,7 +207,7 @@ class EbookWriter(object):
 		if index < self.GROUP_START_INDEX:
 			# or index >= groupCount + self.GROUP_START_INDEX:
 			# number of groups are not known, FIXME
-			# so we can not say if the current group is the last or not
+			# so we can191 not say if the current group is the last or not
 			return "#groupPage"
 		return f"g{index:06d}.xhtml"
 
@@ -213,43 +217,53 @@ class EbookWriter(object):
 	def sortKey(self, words: "List[str]") -> "Any":
 		raise NotImplementedError
 
+	def _add_group(self, group_labels: "List[str]", state: "GroupState") -> None:
+		if not state.last_prefix:
+			return
+		state.group_index += 1
+		index = state.group_index + self.GROUP_START_INDEX
+		group_label = state.last_prefix
+		if group_label != "SPECIAL":
+			group_label = state.first_word + "&#8211;" + state.last_word
+		log.debug(f"add_group: {state.group_index}, {state.last_prefix!r}")
+		group_labels.append(group_label)
+		previous_link = self.get_group_xhtml_file_name_from_index(index - 1)
+		next_link = self.get_group_xhtml_file_name_from_index(index + 1)
+		group_xhtml_path = self.get_group_xhtml_file_name_from_index(index)
+		contents = self.GROUP_XHTML_TEMPLATE.format(
+			title=group_label,
+			group_title=group_label,
+			previous_link=previous_link,
+			index_link=(
+				self.GROUP_XHTML_INDEX_LINK
+				if self._include_index_page else ""
+			),
+			next_link=next_link,
+			group_contents=self.GROUP_XHTML_WORD_DEFINITION_JOINER.join(
+				state.group_contents,
+			),
+		)
+		self.add_file_manifest(
+			"OEBPS/" + group_xhtml_path,
+			group_xhtml_path,
+			contents,
+			"application/xhtml+xml",
+		)
+
+	def write_data_entry(self, entry):
+		if entry.getFileName() == "style.css":
+			self.add_file_manifest(
+				"OEBPS/style.css",
+				"style.css",
+				entry.data.decode("utf-8"),
+				"text/css",
+			)
+
 	def write_groups(self):
 		# TODO: rtl=False option
 		# TODO: handle alternates better (now shows word1|word2... in title)
 
 		group_labels = []
-
-		def add_group(state):
-			if not state.last_prefix:
-				return
-			state.group_index += 1
-			index = state.group_index + self.GROUP_START_INDEX
-			group_label = state.last_prefix
-			if group_label != "SPECIAL":
-				group_label = state.first_word + "&#8211;" + state.last_word
-			log.debug(f"add_group: {state.group_index}, {state.last_prefix!r}")
-			group_labels.append(group_label)
-			previous_link = self.get_group_xhtml_file_name_from_index(index - 1)
-			next_link = self.get_group_xhtml_file_name_from_index(index + 1)
-			group_xhtml_path = self.get_group_xhtml_file_name_from_index(index)
-			self.add_file_manifest(
-				"OEBPS/" + group_xhtml_path,
-				group_xhtml_path,
-				self.GROUP_XHTML_TEMPLATE.format(
-					title=group_label,
-					group_title=group_label,
-					previous_link=previous_link,
-					index_link=(
-						self.GROUP_XHTML_INDEX_LINK
-						if self._include_index_page else ""
-					),
-					next_link=next_link,
-					group_contents=self.GROUP_XHTML_WORD_DEFINITION_JOINER.join(
-						state.group_contents,
-					),
-				),
-				"application/xhtml+xml",
-			)
 
 		state = GroupState(self)
 		while True:
@@ -257,23 +271,17 @@ class EbookWriter(object):
 			if entry is None:
 				break
 			if entry.isData():
-				if entry.getFileName() == "style.css":
-					self.add_file_manifest(
-						"OEBPS/style.css",
-						"style.css",
-						entry.data.decode("utf-8"),
-						"text/css",
-					)
+				self.write_data_entry(entry)
 				continue
 
 			prefix = self.get_prefix(entry.s_word)
 			if state.is_new(prefix):
-				add_group(state)
+				self._add_group(group_labels, state)
 				state.reset()
 
 			state.add(entry, prefix)
 
-		add_group(state)
+		self._add_group(group_labels, state)
 
 		self._group_labels = group_labels
 
@@ -298,10 +306,11 @@ class EbookWriter(object):
 		"""
 		links = []
 		for label_i, label in enumerate(group_labels):
+			ref = self.get_group_xhtml_file_name_from_index(
+				self.GROUP_START_INDEX + label_i
+			)
 			links.append(self.INDEX_XHTML_LINK_TEMPLATE.format(
-				ref=self.get_group_xhtml_file_name_from_index(
-					self.GROUP_START_INDEX + label_i
-				),
+				ref=ref,
 				label=label,
 			))
 		links = self.INDEX_XHTML_LINK_JOINER.join(links)
@@ -349,7 +358,7 @@ class EbookWriter(object):
 			))
 			if mi["mimetype"] == "application/xhtml+xml":
 				spine_lines.append(self.OPF_SPINE_ITEMREF_TEMPLATE.format(
-					id=mi["id"],
+					id=mi["id"],  # NESTED 4
 				))
 
 		manifest_contents = "\n".join(manifest_lines)
@@ -371,6 +380,21 @@ class EbookWriter(object):
 	def open(self, filename: str):
 		self._filename = filename
 		self._tmpDir = tempfile.mkdtemp()
+
+	def _doZip(self):
+		zipFp = zipfile.ZipFile(
+			self._filename,
+			"w",
+			compression=zipfile.ZIP_DEFLATED,
+		)
+		for fileDict in self.files:
+			zipFp.write(
+				fileDict["path"],
+				compress_type=fileDict["mode"],
+			)
+		zipFp.close()
+		if not self._keep:
+			rmtree(self._tmpDir)
 
 	def write(self):
 		filename = self._filename
@@ -394,13 +418,13 @@ class EbookWriter(object):
 			if self.CONTAINER_XML_CONTENTS:
 				self.add_file("META-INF/container.xml", self.CONTAINER_XML_CONTENTS)
 
-			if cover_path:
-				try:
-					self.write_cover(cover_path)
-				except Exception:
-					log.exception("")
+			try:
+				self.write_cover(cover_path)
+			except Exception:
+				log.exception("")
 
 			if css:
+				# FIXME: this check should be removed
 				self.write_css(css)
 
 			yield from self.write_groups()
@@ -414,24 +438,16 @@ class EbookWriter(object):
 			self.write_opf()
 
 			if self._compress:
-				zipFp = zipfile.ZipFile(
-					filename,
-					"w",
-					compression=zipfile.ZIP_DEFLATED,
-				)
-				for fileDict in self.files:
-					zipFp.write(
-						fileDict["path"],
-						compress_type=fileDict["mode"],
-					)
-				zipFp.close()
-				if not self._keep:
-					rmtree(self._tmpDir)
-			else:
-				if self._keep:
-					shutil.copytree(self._tmpDir, filename)
-				elif os.sep == "\\":
-					shutil.copytree(self._tmpDir, filename)
-					self._glos._cleanupPathList.add(self._tmpDir)
-				else:
-					shutil.move(self._tmpDir, filename)
+				self._doZip()
+				return
+
+			if self._keep:
+				shutil.copytree(self._tmpDir, filename)
+				return
+
+			if os.sep == "\\":
+				shutil.copytree(self._tmpDir, filename)
+				self._glos._cleanupPathList.add(self._tmpDir)
+				return
+
+			shutil.move(self._tmpDir, filename)

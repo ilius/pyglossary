@@ -563,7 +563,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		"""
 		filename (str):	name/path of input file
 		format (str):	name of input format,
-						or "" to detect from file extension
+		                or "" to detect from file extension
 		direct (bool):	enable direct mode
 		progressbar (bool): enable progressbar
 
@@ -1001,16 +1001,17 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				)
 
 		if sortOnWrite == ALWAYS:
-			if writerSortKeyName:
-				if sortKeyName and sortKeyName != writerSortKeyName:
-					log.warning(
-						f"Ignoring user-defined sort order {sortKeyName!r}"
-						f", and using sortKey function from {outputFormat} plugin"
-					)
-				sortKeyName = writerSortKeyName
-			else:
+			if not writerSortKeyName:
 				log.critical(f"No sortKeyName was found in plugin")
 				return None
+
+			if sortKeyName and sortKeyName != writerSortKeyName:
+				log.warning(
+					f"Ignoring user-defined sort order {sortKeyName!r}"
+					f", and using sortKey function from {outputFormat} plugin"
+				)
+			sortKeyName = writerSortKeyName
+
 			if writerSortEncoding:
 				sortEncoding = writerSortEncoding
 		elif not sortKeyName:
