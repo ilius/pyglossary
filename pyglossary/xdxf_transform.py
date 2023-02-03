@@ -238,7 +238,7 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag in ("pos", "abr"):
-			with hf.element("span", **{"class": "abr"}):
+			with hf.element("span", **{"class": child.tag}):
 				with hf.element("font", color="green"):
 					with hf.element("i"):
 						self.writeChildrenOf(hf, child)  # NESTED 5
