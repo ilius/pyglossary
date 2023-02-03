@@ -33,6 +33,9 @@ optionsProp = {
 	"file_size_approx": FileSizeOption(
 		comment="split up by given approximate file size\nexamples: 100m, 1g",
 	),
+	"file_size_approx_check_num_entries": IntOption(
+		comment="for file_size_approx, check every [?] entries",
+	),
 	"separate_alternates": BoolOption(
 		comment="add alternate headwords as separate entries to slob",
 	),
@@ -48,9 +51,6 @@ extraDocs = [
 		" instructions on how to install PyICU.",
 	),
 ]
-
-file_size_check_every = 100
-
 
 class Reader(object):
 	depends = {
@@ -194,6 +194,7 @@ class Writer(object):
 	_compression: str = "zlib"
 	_content_type: str = ""
 	_file_size_approx: int = 0
+	_file_size_approx_check_num_entries = 100
 	_separate_alternates: bool = False
 	_word_title: bool = False
 
@@ -349,8 +350,9 @@ class Writer(object):
 				self.addEntry(entry)
 
 			if file_size_approx > 0:
+				check_every = self._file_size_approx_check_num_entries
 				entryCount += 1
-				if entryCount % file_size_check_every == 0:
+				if entryCount % check_every == 0:
 					sumBlobSize = self._slobWriter.size_data()
 					if sumBlobSize >= file_size_approx:
 						self._slobWriter.finalize()

@@ -17,6 +17,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			"100-en-fa-res.slob": "0216d006",
 			"100-en-fa-res-slob.txt": "c73100b3",
 			"100-en-fa-res-slob-sort.txt": "8253fe96",
+            "300-ru-en.txt": "77cfee2f",
 		})
 
 	def test_convert_txt_slob_1(self):
@@ -27,6 +28,34 @@ class TestGlossarySlob(TestGlossaryBase):
 			compareBinary=f"",
 			# slob file is different each time (and so its sha1sum and md5sum)
 		)
+
+	def test_convert_txt_slob_2_file_size_approx(self):
+		fname = "300-ru-en"
+		file_size_approx = 25000
+		files = [
+			(35852, self.newTempFilePath("300-ru-en.slob")),
+			(35687, self.newTempFilePath("300-ru-en.1.slob")),
+			(33856, self.newTempFilePath("300-ru-en.2.slob")),
+			(29413, self.newTempFilePath("300-ru-en.3.slob")),
+		]
+		self.convert(
+			f"{fname}.txt",
+			f"{fname}.slob",
+			writeOptions={
+				"file_size_approx": file_size_approx,
+				"file_size_approx_check_num_entries": 1,
+			},
+			compareBinary=f"",
+			# slob file is different each time (and so its sha1sum and md5sum)
+		)
+		for size, fpath in files:
+			with open(fpath, mode="rb") as _file:
+				actualSize = len(_file.read())
+			delta = actualSize - size
+			self.assertLess(
+				delta, 100,
+				msg=f"size expected={size} actual={actualSize}, file {fpath}",
+			)
 
 	def convert_slob_txt(self, fname, fname2, resFiles, **convertArgs):
 		resFilesPath = {
