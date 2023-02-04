@@ -6,7 +6,7 @@
 - openSUSE: `sudo zypper install python3-PyICU`
 - Fedora: `sudo dnf install python3-pyicu`
 - Other distros:
-  - Install [ICU](http://site.icu-project.org/) >= 4.8
+  - Install [ICU](https://icu.unicode.org/) >= 4.8
   - Run `sudo pip3 install PyICU` or `pip3 install PyICU --user`
 
 ## Installation on Android with Termux

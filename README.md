@@ -126,7 +126,7 @@ ways to use the program).
   `python3 main.py --help`
 
   - **Interactive command-line interface**
-    - Requires: `pip3 install prompt_toolkit`
+    - Requires: `pip install prompt_toolkit`
     - Perfect for mobile devices (like Termux on Android) where no GUI is available
     - Automatically selected if output file argument is not passed **and** one of these:
       - On Linux and `$DISPLAY` environment variable is empty or not set
@@ -169,9 +169,11 @@ But you can explicitly determine the user interface type using `--ui`
 
 ## Feature-specific requirements
 
-- **Using `--remove-html-all` flag**
+- Using [--sort-locale](#sorting) flag requires [PyICU](./doc/pyicu.md)
 
-  `sudo pip3 install lxml beautifulsoup4`
+- Using `--remove-html-all` flag requires:
+
+  `pip install lxml beautifulsoup4`
 
 Some formats have additional requirements.
 If you have trouble with any format, please check the [link given for that format](#supported-formats) to see its documentations.
