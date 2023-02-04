@@ -409,25 +409,29 @@ unicodeNextWord = {
 }
 
 
-def _getWritingSystemFromText(st: str, start: int, end: int) -> WritingSystem:
-	for c in st[start:end]:
-		try:
-			unicodeWords = unicodedata.name(c).split(' ')
-		except ValueError as e:
-			# if c not in string.whitespace:
-			# 	print(f"{c=}, {e}")
-			continue
-		alias = unicodeWords[0]
-		ws = writingSystemByUnicode.get(alias)
+def _getWritingSystemFromChar(char: str) -> "Optional[WritingSystem]":
+	try:
+		unicodeWords = unicodedata.name(char).split(' ')
+	except ValueError as e:
+		# if c not in string.whitespace:
+		# 	print(f"{c=}, {e}")
+		return
+	alias = unicodeWords[0]
+	ws = writingSystemByUnicode.get(alias)
+	if ws:
+		return ws
+	if alias in unicodeNextWord:
+		return writingSystemByUnicode.get(" ".join(unicodeWords[:2]))
+
+
+def _getWritingSystemFromText(st: str, start: int, end: int) -> "Optional[WritingSystem]":
+	for char in st[start:end]:
+		ws = _getWritingSystemFromChar(char)
 		if ws:
 			return ws
-		if alias in unicodeNextWord:
-			ws = writingSystemByUnicode.get(" ".join(unicodeWords[:2]))
-			if ws:
-				return ws
 
 
-def getWritingSystemFromText(st: str, begining: bool = False) -> WritingSystem:
+def getWritingSystemFromText(st: str, begining: bool = False) -> "Optional[WritingSystem]":
 	st = st.strip()
 	if not st:
 		return None
@@ -441,3 +445,15 @@ def getWritingSystemFromText(st: str, begining: bool = False) -> WritingSystem:
 	if ws:
 		return ws
 	return _getWritingSystemFromText(st, 0, k)
+
+
+def getAllWritingSystemsFromText(st: str, begining: bool = False) -> "Set(str)":
+	st = st.strip()
+	if not st:
+		return set()
+	wsSet = set()
+	for char in st:
+		ws = _getWritingSystemFromChar(char)
+		if ws:
+			wsSet.add(ws.name)
+	return wsSet
