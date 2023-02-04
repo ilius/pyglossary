@@ -1,13 +1,20 @@
 import difflib
+import os
 import re
 import sys
 from collections.abc import Iterator
 
+from pyglossary.langs.writing_system import (
+	getAllWritingSystemsFromText,
+)
 from pyglossary.ui.tools.colors import green, red, reset
 
 __all__ = ["formatDiff", "xmlDiff"]
 
-wordRE = re.compile(r"(\W)", re.MULTILINE)
+# wordRE = re.compile(r"(\W)", re.M)
+# \W also includes ZWNJ which is bad for us
+wordRE = re.compile(r"([\s!\"#$%&'()*+,-./:;=?@\[\\\]^_`{|}~])", re.MULTILINE)
+
 xmlTagRE = re.compile(
 	"</?[a-z][0-9a-z]* *[^<>]*>",
 	re.IGNORECASE | re.MULTILINE,
@@ -48,12 +55,24 @@ def formatDiff(diff: "Iterator[str]") -> str:
 		if part[0] == " ":
 			res += part[2:]
 			continue
+		if part[0] == "?":
+			continue
+		color: str
 		if part[0] == "-":
-			res += red + part[2:] + reset
-			continue
-		if part[0] == "+":
-			res += green + part[2:] + reset
-			continue
+			color = red
+		elif part[0] == "+":
+			color = green
+		else:
+			raise ValueError(f"invalid diff part: {part!r}")
+		text = part[2:]
+		colored = color + text + reset
+
+		if os.getenv("BAD_BIDI_SUPPORT"):
+			wsSet = getAllWritingSystemsFromText(text)
+			if "Arabic" in wsSet:
+				colored = "\n" + colored + "\n"
+
+		res += colored
 	return res
 
 

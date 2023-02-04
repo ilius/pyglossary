@@ -5,6 +5,10 @@ myPath=$(realpath "$0")
 myDir1=$(dirname "$myPath")
 rootDir=$(dirname "$myDir1")
 
+if [ -n "$ConEmuDir" ] ; then
+    export BAD_BIDI_SUPPORT=1
+fi
+
 # There is a bug in pyenv 'python' script that splits up a (quoted) arguemnt that has spaces
 # So there is no way of passing a filename with spaces
 # That's why I changed `python` to `python3` to avoid pyenv
