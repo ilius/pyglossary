@@ -3,6 +3,7 @@
 	"cleanup": true,
 
 	"auto_sqlite": true,
+	"optimize_memory": false,
 
 	"lower": false,
 	"utf8_check": false,

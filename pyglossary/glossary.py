@@ -182,7 +182,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self._config = {}
 		self._data = EntryList(self)  # type: List[RawEntryType]
 		self._sqlite = False
-		self._rawEntryCompress = True
+		self._rawEntryCompress = False
 		self._cleanupPathList = set()
 		self.clear()
 		if info:
@@ -427,6 +427,8 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			log.error(f"glos.config is set more than once")
 			return
 		self._config = c
+		if "optimize_memory" in c:
+			self._rawEntryCompress = c["optimize_memory"]
 
 	@property
 	def alts(self) -> bool:

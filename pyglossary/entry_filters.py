@@ -408,5 +408,5 @@ class ShowMaxMemoryUsage(EntryFilter):
 			word = entry.s_word
 			if len(word) > 30:
 				word = word[:37] + "..."
-			log.trace(f"MaxMemUsage: {usage}, {word=}")
+			log.trace(f"MaxMemUsage: {usage:,}, {word=}")
 		return entry

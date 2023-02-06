@@ -85,7 +85,7 @@ def showMemoryUsage():
 	except ModuleNotFoundError:
 		return
 	usage = psutil.Process(os.getpid()).memory_info().rss // 1024
-	log.trace(f"Memory Usage: {usage} kB")
+	log.trace(f"Memory Usage: {usage:,} kB")
 
 
 def my_url_show(link: str) -> None:
