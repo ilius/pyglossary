@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import logging
+from typing import Optional
 
 
 class MockLogHandler(logging.Handler):

@@ -18,18 +18,19 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-import os
 from os.path import (
-	split,
 	splitext,
 )
-import subprocess
 import logging
 
 from .compression import (
 	stdCompressions,
 )
 from .entry import Entry
+from .glossary_type import EntryType
+from .sort_keys import NamedSortKey, sortKeyType
+
+from typing import Optional, Any, List, Tuple, Dict, Iterator
 
 log = logging.getLogger("pyglossary")
 
@@ -40,10 +41,10 @@ class EntryList(object):
 		self._glos = glos
 		self._sortKey = None
 
-	def append(self, entry: "BaseEntry"):
+	def append(self, entry: "EntryType"):
 		self._l.append(entry.getRaw(self._glos))
 
-	def insert(self, pos, entry: "BaseEntry"):
+	def insert(self, pos, entry: "EntryType"):
 		self._l.insert(pos, entry.getRaw(self._glos))
 
 	def clear(self):
@@ -52,7 +53,7 @@ class EntryList(object):
 	def __len__(self):
 		return len(self._l)
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		glos = self._glos
 		for rawEntry in self._l:
 			yield Entry.fromRaw(
@@ -65,7 +66,7 @@ class EntryList(object):
 		namedSortKey: "NamedSortKey",
 		sortLocale: str,
 		writeOptions: "Dict[str, Any]",
-	) -> "sortKey":
+	) -> "sortKeyType":
 		from icu import Locale, Collator
 
 		if namedSortKey.locale is None:

@@ -10,8 +10,15 @@ from os.path import (
 	exists,
 	realpath,
 	dirname,
+	abspath,
 )
 import platform
+import types
+from typing import (
+	Optional, Any,
+	Tuple, Dict,
+	Type,
+)
 
 VERSION = "4.5.0"
 
@@ -220,7 +227,6 @@ def checkCreateConfDir() -> None:
 			usrF.write(srcF.read())
 
 
-
 def in_virtualenv():
 	if hasattr(sys, 'real_prefix'):
 		return True
@@ -231,7 +237,7 @@ def in_virtualenv():
 
 def getDataDir():
 	if in_virtualenv():
-		pass # TODO
+		pass  # TODO
 		# print(f"prefix={sys.prefix}, base_prefix={sys.base_prefix}")
 		# return join(
 		# 	dirname(dirname(dirname(rootDir))),

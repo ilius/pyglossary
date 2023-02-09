@@ -1,10 +1,10 @@
-import sys
 try:
 	import json
 except ImportError:
 	import simplejson as json
 
 from collections import OrderedDict
+from typing import AnyStr
 
 JsonEncodable = "Union[Dict, List]"
 # OrderedDict is also subclass of Dict, issubclass(OrderedDict, Dict) is True

@@ -2,6 +2,7 @@
 from pyglossary.core import rootDir
 from os.path import join
 import json
+from typing import List, Optional
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -84,10 +85,14 @@ class LangDict(dict):
 					rtl=row.get("rtl", 0),
 				))
 
-		log.debug(f"LangDict: loaded, {len(self)} keys, took {(now() - t0)*1000:.1f} ms")
+		log.debug(
+			f"LangDict: loaded, {len(self)} keys, "
+			f"took {(now() - t0)*1000:.1f} ms"
+		)
 
 	def __getitem__(self, key: str) -> "Optional[Lang]":
 		self.load()
 		return self.get(key.lower(), None)
+
 
 langDict = LangDict()

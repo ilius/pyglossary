@@ -33,6 +33,7 @@ from .text_utils import (
 )
 from .langs import langDict, Lang
 
+from typing import Optional, List, Tuple, Iterator
 
 log = logging.getLogger("pyglossary")
 
@@ -195,7 +196,7 @@ class GlossaryInfo(object):
 		langNames = []
 
 		def checkPart(part: str):
-			for match in re.findall("\w\w\w*", part):
+			for match in re.findall(r"\w\w\w*", part):
 				# print(f"{match = }")
 				lang = langDict[match]
 				if lang is None:
@@ -228,7 +229,7 @@ class GlossaryInfo(object):
 
 	def titleElement(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "lxml.etree.htmlfile",  # noqa
 		sample: str = "",
-	) -> "lxml.etree._FileWriterElement":
+	) -> "lxml.etree._FileWriterElement":  # noqa
 		return hf.element(self._getTitleTag(sample))

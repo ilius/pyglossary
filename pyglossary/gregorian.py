@@ -24,6 +24,7 @@
 # http://en.wikipedia.org/wiki/Gregorian_calendar
 
 from datetime import datetime
+from typing import Tuple
 
 name = "gregorian"
 desc = "Gregorian"

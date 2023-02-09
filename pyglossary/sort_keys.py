@@ -18,8 +18,8 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 from collections import namedtuple
-from operator import itemgetter
 import re
+from typing import List, Any
 
 
 NamedSortKey = namedtuple("NamedSortKey", [
@@ -32,14 +32,12 @@ NamedSortKey = namedtuple("NamedSortKey", [
 ])
 
 
-"""
-sortKeyType = Callable[
+sortKeyType = """Callable[
 	[[List[str]],
 	Any,
-]
+]"""
 
-sqliteSortKeyType = List[Tuple[str, str, sortKeyType]]
-"""
+sqliteSortKeyType = "List[Tuple[str, str, sortKeyType]]"
 
 
 def _headword_normal(encoding: str, **options) -> "sortKeyType":
@@ -49,7 +47,10 @@ def _headword_normal(encoding: str, **options) -> "sortKeyType":
 	return sortKey
 
 
-def _headword_locale(collator: "icu.Collator", **options) -> "sortKeyType":
+def _headword_locale(
+	collator: "icu.Collator",  # noqa: F821
+	**options
+) -> "sortKeyType":
 	cSortKey = collator.getSortKey
 
 	def sortKey(words: "List[str]"):
@@ -71,7 +72,10 @@ def _headword_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 	]
 
 
-def _headword_sqlite_locale(collator: "icu.Collator", **options) -> "sqliteSortKeyType":
+def _headword_sqlite_locale(
+	collator: "icu.Collator",  # noqa: F821
+	**options
+) -> "sqliteSortKeyType":
 	cSortKey = collator.getSortKey
 
 	def sortKey(words: "List[str]"):
@@ -87,7 +91,10 @@ def _headword_lower_normal(encoding: str, **options) -> "sortKeyType":
 	return sortKey
 
 
-def _headword_lower_locale(collator: "icu.Collator", **options) -> "sortKeyType":
+def _headword_lower_locale(
+	collator: "icu.Collator",  # noqa: F821
+	**options
+) -> "sortKeyType":
 	cSortKey = collator.getSortKey
 
 	def sortKey(words: "List[str]"):
@@ -109,7 +116,10 @@ def _headword_lower_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 	]
 
 
-def _headword_lower_sqlite_locale(collator: "icu.Collator", **options) -> "sqliteSortKeyType":
+def _headword_lower_sqlite_locale(
+	collator: "icu.Collator",  # noqa: F821
+	**options
+) -> "sqliteSortKeyType":
 	cSortKey = collator.getSortKey
 
 	def sortKey(words: "List[str]"):
@@ -125,8 +135,11 @@ def _headword_bytes_lower_normal(encoding: str, **options) -> "sortKeyType":
 	return sortKey
 
 
-#def _headword_bytes_lower_locale(collator: "icu.Collator", **options) -> "sortKeyType":
-#	raise NotImplementedError("")
+# def _headword_bytes_lower_locale(
+# 	collator: "icu.Collator",  # noqa: F821
+# 	**options
+# ) -> "sortKeyType":
+# 	raise NotImplementedError("")
 
 
 def _headword_bytes_lower_sqlite(encoding: str, **options) \
@@ -266,7 +279,10 @@ def _random_normal(encoding: str, **options) -> "sortKeyType":
 	return lambda words: random()
 
 
-def _random_locale(collator: "icu.Collator", **options) -> "sortKeyType":
+def _random_locale(
+	collator: "icu.Collator",  # noqa: F821
+	**options
+) -> "sortKeyType":
 	from random import random
 	return lambda words: random()
 
@@ -282,7 +298,10 @@ def _random_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 	]
 
 
-def _random_sqlite_locale(collator: "icu.Collator", **options) -> "sortKeyType":
+def _random_sqlite_locale(
+	collator: "icu.Collator",  # noqa: F821
+	**options
+) -> "sortKeyType":
 	from random import random
 	return [
 		(

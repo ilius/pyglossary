@@ -8,7 +8,9 @@ from .text_utils import (
 )
 
 from .entry_base import BaseEntry
+from .glossary_type import GlossaryType
 
+from typing import Optional
 
 log = logging.getLogger("pyglossary")
 
@@ -158,7 +160,8 @@ class RemoveHtmlTagsAll(EntryFilter):
 
 class RemoveHtmlTags(EntryFilter):
 	name = "remove_html"
-	desc = "Remove given comma-separated HTML tags (not their contents) from definition"
+	desc = "Remove given comma-separated HTML tags" \
+		" (not their contents) from definition"
 
 	def __init__(self, glos: "GlossaryType", tagsStr: str):
 		import re
@@ -320,6 +323,7 @@ class PreventDuplicateWords(EntryFilter):
 		# use entry.editFuncWord?
 
 		return entry
+
 
 class SkipEntriesWithDuplicateHeadword(EntryFilter):
 	name = "skip_duplicate_headword"

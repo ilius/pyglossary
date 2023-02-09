@@ -19,7 +19,6 @@
 
 import logging
 import sys
-import os
 
 from .plugin_prop import PluginProp
 from .glossary_utils import (
@@ -29,6 +28,7 @@ from . import core
 from .core import (
 	pluginsDir,
 )
+from typing import Optional, Any, Tuple, Dict, ClassVar
 
 log = logging.getLogger("pyglossary")
 
@@ -48,7 +48,7 @@ class PluginManager(object):
 	@classmethod
 	def loadPluginsFromJson(cls: "ClassVar", jsonPath: str) -> None:
 		import json
-		from os.path import dirname, join
+		from os.path import join
 
 		with open(jsonPath) as _file:
 			data = json.load(_file)
@@ -114,7 +114,7 @@ class PluginManager(object):
 
 		for ext in extensions:
 			if ext.lower() != ext:
-				log.error(f"non-lowercase extension={ext!r} in {moduleName} plugin")
+				log.error(f"non-lowercase extension={ext!r} in {prop.name} plugin")
 			cls.pluginByExt[ext.lstrip(".")] = prop
 			cls.pluginByExt[ext] = prop
 
@@ -141,7 +141,7 @@ class PluginManager(object):
 		except ModuleNotFoundError as e:
 			log.warning(f"Module {e.name!r} not found, skipping plugin {moduleName!r}")
 			return
-		except Exception as e:
+		except Exception:
 			log.exception(f"Error while importing plugin {moduleName}")
 			return
 

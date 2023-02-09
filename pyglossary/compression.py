@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+from os.path import join
 import logging
+from .glossary_type import GlossaryType
+from typing import Optional
 
 stdCompressions = ("gz", "bz2", "lzma")
 
@@ -113,6 +116,9 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 			log.error(
 				f"{e}\nFailed to compress file \"{filename}\""
 			)
+		else:
+			if error:
+				log.error(error)
 	else:
 		raise ValueError(f"unexpected {compression=}")
 

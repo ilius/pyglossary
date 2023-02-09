@@ -1,6 +1,6 @@
 import unicodedata
 from collections import namedtuple
-import string
+from typing import Optional, Set
 
 
 WritingSystem = namedtuple(
@@ -412,7 +412,7 @@ unicodeNextWord = {
 def _getWritingSystemFromChar(char: str) -> "Optional[WritingSystem]":
 	try:
 		unicodeWords = unicodedata.name(char).split(' ')
-	except ValueError as e:
+	except ValueError:
 		# if c not in string.whitespace:
 		# 	print(f"{c=}, {e}")
 		return
@@ -424,14 +424,21 @@ def _getWritingSystemFromChar(char: str) -> "Optional[WritingSystem]":
 		return writingSystemByUnicode.get(" ".join(unicodeWords[:2]))
 
 
-def _getWritingSystemFromText(st: str, start: int, end: int) -> "Optional[WritingSystem]":
+def _getWritingSystemFromText(
+	st: str,
+	start: int,
+	end: int,
+) -> "Optional[WritingSystem]":
 	for char in st[start:end]:
 		ws = _getWritingSystemFromChar(char)
 		if ws:
 			return ws
 
 
-def getWritingSystemFromText(st: str, begining: bool = False) -> "Optional[WritingSystem]":
+def getWritingSystemFromText(
+	st: str,
+	begining: bool = False,
+) -> "Optional[WritingSystem]":
 	st = st.strip()
 	if not st:
 		return None
@@ -447,7 +454,10 @@ def getWritingSystemFromText(st: str, begining: bool = False) -> "Optional[Writi
 	return _getWritingSystemFromText(st, 0, k)
 
 
-def getAllWritingSystemsFromText(st: str, begining: bool = False) -> "Set(str)":
+def getAllWritingSystemsFromText(
+	st: str,
+	begining: bool = False,
+) -> "Set(str)":
 	st = st.strip()
 	if not st:
 		return set()

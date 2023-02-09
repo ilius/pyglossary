@@ -1,14 +1,13 @@
-from pyglossary.file_utils import fileCountLines
-from pyglossary.entry_base import BaseEntry
-from pyglossary.entry import Entry, DataEntry
+from pyglossary.entry import DataEntry
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
-from pyglossary.glossary_type import GlossaryType
+from pyglossary.glossary_type import GlossaryType, EntryType
 
-import os
 from os.path import isfile
+
+from typing import List, Iterator, Union
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -117,7 +116,7 @@ class TextGlossaryReader(object):
 			log.exception(f"error while closing file {self._filename!r}")
 		self._file = None
 
-	def newEntry(self, word, defi) -> "BaseEntry":
+	def newEntry(self, word, defi) -> "EntryType":
 		byteProgress = None
 		if self._fileSize:
 			byteProgress = (self._file.tell(), self._fileSize)
@@ -169,7 +168,7 @@ class TextGlossaryReader(object):
 				tmpPath=fullPath,
 			)
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		resPathSet = set()
 		while True:
 			self._pos += 1
@@ -179,7 +178,7 @@ class TextGlossaryReader(object):
 			###
 			try:
 				block = self.nextBlock()
-			except StopIteration as e:
+			except StopIteration:
 				if self._fileCount == -1 or self._fileIndex < self._fileCount - 1:
 					if self.openNextFile():
 						continue  # NESTED 5

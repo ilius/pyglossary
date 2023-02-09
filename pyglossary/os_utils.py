@@ -2,6 +2,7 @@ import os
 import shutil
 import logging
 from pyglossary import core
+from typing import Any
 
 log = logging.getLogger("pyglossary")
 

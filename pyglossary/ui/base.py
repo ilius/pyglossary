@@ -24,17 +24,19 @@ from collections import OrderedDict
 from pyglossary.core import (
 	rootConfJsonFile,
 	confJsonFile,
-	rootDir,
 	dataDir,
 	appResDir,
 )
 from pyglossary.option import (
+	Option,
 	BoolOption,
 	StrOption,
 	IntOption,
 	FloatOption,
 )
 from pyglossary.glossary import Glossary
+
+from typing import Tuple
 
 
 def fread(path):

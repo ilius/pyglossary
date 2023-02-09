@@ -2,6 +2,7 @@ def chBaseIntToStr(number, base):
 	"""
 		reverse function of int(str, base) and long(str, base)
 	"""
+	import string
 	if not 2 <= base <= 36:
 		raise ValueError('base must be in 2..36')
 	abc = string.digits + string.ascii_letters

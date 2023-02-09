@@ -21,6 +21,9 @@ from pickle import dumps, loads
 import os
 from os.path import isfile
 from .entry import Entry
+from .sort_keys import NamedSortKey, sqliteSortKeyType
+
+from typing import Any, Optional, List, Dict
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -245,9 +248,7 @@ class SqEntryList(list):
 	def deleteAll(self):
 		if self._con is None:
 			return
-		self._con.execute(
-			f"DELETE FROM data;"
-		)
+		self._con.execute("DELETE FROM data;")
 		self._con.commit()
 		self._len = 0
 

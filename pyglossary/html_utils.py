@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+from typing import AnyStr
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -176,7 +177,7 @@ name2codepoint = {
 	"Mu": 0x039c,  # Μ
 	"mu": 0x03bc,  # μ
 	"nabla": 0x2207,  # ∇
-	"nbsp": 0x00a0,  #  
+	"nbsp": 0x00a0,  # space
 	"ndash": 0x2013,  # –
 	"ne": 0x2260,  # ≠
 	"ni": 0x220b,  # ∋

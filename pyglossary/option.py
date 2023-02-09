@@ -2,6 +2,7 @@
 
 import re
 import logging
+from typing import Optional, Any, List, Tuple, Dict, Union
 
 
 log = logging.getLogger("pyglossary")

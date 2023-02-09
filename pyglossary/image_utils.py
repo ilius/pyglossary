@@ -2,6 +2,7 @@ import re
 import base64
 import logging
 from os.path import join
+from typing import List, Tuple
 
 from pyglossary.text_utils import crc32hex
 
@@ -17,7 +18,7 @@ def extractInlineHtmlImages(
 ) -> "Tuple[str, List[Tuple[str, str]]]":
 	imageDataDict = {}  # type: Dict[str, bytes]
 
-	def subFunc(m: "Match"):
+	def subFunc(m: "re.Match"):
 		nonlocal images
 		src = m.group(1)[len("data:image/"):]
 		i = src.find(";")

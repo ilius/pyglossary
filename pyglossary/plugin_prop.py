@@ -25,7 +25,8 @@ from .flags import (
 )
 import logging
 from collections import OrderedDict as odict
-from os.path import dirname
+from typing import Any, Optional, List, Tuple, Dict, Callable
+import pathlib
 
 log = logging.getLogger("pyglossary")
 
@@ -172,7 +173,7 @@ class PluginProp(object):
 				f", skipping plugin {moduleName!r}"
 			)
 			return
-		except Exception as e:
+		except Exception:
 			log.exception(f"Error while importing plugin {moduleName}")
 			return
 		else:
@@ -415,13 +416,13 @@ class PluginProp(object):
 
 		return True
 
-	def getReadExtraOptions(self):
+	def getReadExtraOptions(self):  # noqa: F811
 		return self.__class__.getExtraOptionsFromFunc(
 			self.readerClass.open,
 			self.name,
 		)
 
-	def getWriteExtraOptions(self):
+	def getWriteExtraOptions(self):  # noqa: F811
 		return self.__class__.getExtraOptionsFromFunc(
 			self.writerClass.write,
 			self.name,

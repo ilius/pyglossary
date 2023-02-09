@@ -2,8 +2,10 @@ from pyglossary import core
 from pyglossary.core import rootDir
 import logging
 from io import BytesIO
-from io import StringIO
 from os.path import join
+import lxml
+
+from typing import Optional, Union
 
 log = logging.getLogger("pyglossary")
 
@@ -189,7 +191,7 @@ class XdxfTransformer(object):
 			self.writeString(hf, child, parent, prev, stringSep=stringSep)
 			return
 
-		if child.tag == f"br":
+		if child.tag == "br":
 			hf.write(ET.Element("br"))
 			return
 
@@ -382,7 +384,7 @@ class XdxfTransformer(object):
 
 	def transform(self, article: "lxml.etree.Element") -> str:
 		from lxml import etree as ET
-		encoding = self._encoding
+		# encoding = self._encoding
 		f = BytesIO()
 		with ET.htmlfile(f, encoding="utf-8") as hf:
 			with hf.element("div", **{"class": "article"}):

@@ -38,7 +38,7 @@ from pyglossary.compression import (
 from pyglossary.os_utils import indir
 from pyglossary.entry_base import BaseEntry
 
-from pyglossary.glossary_type import GlossaryType
+from pyglossary.glossary_type import GlossaryType, EntryType
 
 enable = False
 lname = ""

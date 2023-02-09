@@ -2,9 +2,11 @@ import os
 import logging
 from os.path import (
 	isdir,
-	splitext,
 )
-from pyglossary.compression import compressionOpen as c_open
+from .compression import compressionOpen as c_open
+from .glossary_type import GlossaryType, EntryType
+
+from typing import Optional, List, Dict, Callable, Generator
 
 log = logging.getLogger("pyglossary")
 
@@ -210,7 +212,7 @@ def writeTxt(
 	newline: str = "\n",
 	resources: bool = True,
 	word_title: bool = False,
-) -> "Generator[None, BaseEntry, None]":
+) -> "Generator[None, EntryType, None]":
 	writer = TextGlossaryWriter(
 		glos,
 		entryFmt=entryFmt,
@@ -238,7 +240,7 @@ def writeTabfile(
 	filename: str = "",
 	encoding: str = "utf-8",
 	resources: bool = True,
-) -> "Generator[None, BaseEntry, None]":
+) -> "Generator[None, EntryType, None]":
 	from pyglossary.text_utils import escapeNTB
 	writer = TextGlossaryWriter(
 		glos,

@@ -174,7 +174,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	def __init__(
 		self,
 		info: "Optional[Dict[str, str]]" = None,
-		ui: "Optional[UIBase]" = None,
+		ui: "Optional[UIBase]" = None,  # noqa
 	) -> None:
 		"""
 		info:	OrderedDict or dict instance, or None

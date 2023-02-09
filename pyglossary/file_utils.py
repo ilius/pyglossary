@@ -2,8 +2,7 @@ from itertools import (
 	takewhile,
 	repeat,
 )
-
-from io import IOBase
+from typing import AnyStr
 
 
 def toBytes(s: "AnyStr") -> bytes:

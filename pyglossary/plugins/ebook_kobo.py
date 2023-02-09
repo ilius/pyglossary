@@ -23,7 +23,6 @@
 # SOFTWARE.
 
 from pyglossary.plugins.formats_common import *
-from itertools import groupby
 from pathlib import Path
 import unicodedata
 import re

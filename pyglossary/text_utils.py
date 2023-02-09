@@ -16,15 +16,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-import string
 import sys
-import os
 import re
 import struct
 import binascii
 import logging
 
-from . import core
+from typing import AnyStr, List, Tuple, Callable
 
 log = logging.getLogger("pyglossary")
 

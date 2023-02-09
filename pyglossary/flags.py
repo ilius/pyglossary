@@ -1,5 +1,6 @@
 flagsByName = {}
 
+
 class StrWithDesc(str):
 	def __new__(cls, name: str, desc: str):
 		s = str.__new__(cls, name)

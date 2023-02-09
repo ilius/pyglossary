@@ -1,8 +1,9 @@
-from .glossary_type import GlossaryType
-from .entry import Entry, BaseEntry
+from .glossary_type import GlossaryType, EntryType
 
 import re
 from operator import itemgetter
+
+from typing import List, Optional, Iterator
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -97,7 +98,7 @@ def reverseGlossary(
 
 def takeOutputWords(
 	glos: GlossaryType,
-	entryIter: "Iterator[BaseEntry]",
+	entryIter: "Iterator[EntryType]",
 	minWordLen: int = 3,
 ) -> "List[str]":
 	# fr"[\w]{{{minWordLen},}}"
@@ -113,7 +114,7 @@ def takeOutputWords(
 
 
 def searchWordInDef(
-	entryIter: "Iterator[BaseEntry]",
+	entryIter: "Iterator[EntryType]",
 	st: str,
 	matchWord: bool = True,
 	sepChars: str = ".,،",

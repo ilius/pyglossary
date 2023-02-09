@@ -22,7 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from itertools import groupby
 import os
 from os.path import join
 import zipfile
@@ -30,8 +29,11 @@ import tempfile
 from datetime import datetime
 import shutil
 
-from pyglossary.text_utils import toStr, toBytes
+from pyglossary.text_utils import toBytes
 from pyglossary.os_utils import indir, rmtree
+from pyglossary.glossary_type import EntryType
+
+from typing import Any, List
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -52,7 +54,7 @@ class GroupState(object):
 	def is_new(self, prefix: str) -> bool:
 		return self.last_prefix and prefix != self.last_prefix
 
-	def add(self, entry: "BaseEntry", prefix: str) -> None:
+	def add(self, entry: "EntryType", prefix: str) -> None:
 		word = entry.s_word
 		defi = entry.defi
 		if not self.first_word:
@@ -327,7 +329,7 @@ class EbookWriter(object):
 			"application/xhtml+xml",
 		)
 
-	def get_opf_contents(self, manifest_contents, spine_contents):
+	def get_opf_contents(self, manifest_contents, spine_contents):  # noqa: F811
 		cover = ""
 		if self.cover:
 			cover = self.COVER_TEMPLATE.format(cover=self.cover)
