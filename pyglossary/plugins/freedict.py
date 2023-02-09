@@ -578,7 +578,7 @@ class Reader(object):
 		log.warning(f"unrecognize GramGrp child tag: {self.tostring(elem)}")
 		return ""
 
-	def getEntryByElem(self, entry: "lxml.etree.Element") -> "BaseEntry":
+	def getEntryByElem(self, entry: "lxml.etree.Element") -> "EntryType":
 		from lxml import etree as ET
 		glos = self._glos
 		keywords = []
@@ -827,7 +827,7 @@ class Reader(object):
 
 		cfile.close()
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		if self._auto_rtl is None:

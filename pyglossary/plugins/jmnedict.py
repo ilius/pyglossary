@@ -109,7 +109,7 @@ class Reader(object):
 			hf.write(br())
 
 
-	def getEntryByElem(self, entry: "lxml.etree.Element") -> "BaseEntry":
+	def getEntryByElem(self, entry: "lxml.etree.Element") -> "EntryType":
 		from lxml import etree as ET
 		glos = self._glos
 		keywords = []
@@ -259,7 +259,7 @@ class Reader(object):
 
 		self._file = compressionOpen(filename, mode="rb")
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		context = ET.iterparse(

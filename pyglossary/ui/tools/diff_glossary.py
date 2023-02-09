@@ -46,7 +46,7 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 		entry2 = next(iter2)
 		index2 += 1
 
-	def printEntry(color: str, prefix: str, index: int, entry: "BaseEntry"):
+	def printEntry(color: str, prefix: str, index: int, entry: "EntryType"):
 		str = (
 			f"{color}{prefix}#{index} " +
 			formatEntry(entry).replace("\n", "\n" + color) +

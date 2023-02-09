@@ -105,7 +105,7 @@ class GroupStateBySize(object):
 		self.group_contents = []
 		self.group_size = 0
 
-	def add(self, entry: "BaseEntry") -> None:
+	def add(self, entry: "EntryType") -> None:
 		word = entry.l_word
 		defi = entry.defi
 		content = self.writer.format_group_content(word, defi)

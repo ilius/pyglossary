@@ -53,7 +53,7 @@ from .core import (
 	userPluginsDir,
 	cacheDir,
 )
-from .entry import Entry, DataEntry, BaseEntry
+from .entry import Entry, DataEntry
 from .entry_filters import (
 	EntryFilter,
 	FixUnicode,
@@ -84,7 +84,7 @@ from .sort_keys import namedSortKeyByName
 from .os_utils import showMemoryUsage, rmtree
 from .glossary_info import GlossaryInfo
 from .plugin_manager import PluginManager
-from .glossary_type import GlossaryType
+from .glossary_type import GlossaryType, EntryType
 from .info import c_name
 
 log = logging.getLogger("pyglossary")
@@ -305,7 +305,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			"}"
 		)
 
-	def _loadedEntryGen(self) -> "Iterator[BaseEntry]":
+	def _loadedEntryGen(self) -> "Iterator[EntryType]":
 		if not (self._ui and self._progressbar):
 			yield from self._data
 			return
@@ -317,7 +317,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			yield entry
 		self.progressEnd()
 
-	def _readersEntryGen(self) -> "Iterator[BaseEntry]":
+	def _readersEntryGen(self) -> "Iterator[EntryType]":
 		for reader in self._readers:
 			self.progressInit("Converting")
 			try:
@@ -332,8 +332,8 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	# no point of returning None entries anymore.
 	def _applyEntryFiltersGen(
 		self,
-		gen: "Iterator[BaseEntry]",
-	) -> "Iterator[BaseEntry]":
+		gen: "Iterator[EntryType]",
+	) -> "Iterator[EntryType]":
 		for entry in gen:
 			if entry is None:
 				continue
@@ -344,7 +344,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			else:
 				yield entry
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self._iter is None:
 			log.error(
 				"Trying to iterate over a blank Glossary"
@@ -476,7 +476,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
 		return self._config.get(name, default)
 
-	def addEntryObj(self, entry: "BaseEntry") -> None:
+	def addEntryObj(self, entry: "EntryType") -> None:
 		self._data.append(entry)
 
 	def newEntry(
