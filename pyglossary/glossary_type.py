@@ -1,8 +1,100 @@
 # -*- coding: utf-8 -*-
 
-from .entry_base import BaseEntry
-from .entry import Entry, DataEntry
 from .langs import Lang
+from collections import OrderedDict
+from typing import (
+	Optional, Any,
+	List, Tuple, Dict, Iterator, Callable,
+)
+
+
+RawEntryType = """Union[
+	bytes,  # compressed
+	Tuple[List[str], bytes],  # uncompressed, without defiFormat
+	Tuple[List[str], bytes, str],  # uncompressed, with defiFormat
+]"""
+
+
+class EntryType(object):
+	def isData(self) -> bool:
+		raise NotImplementedError
+
+	def getFileName(self) -> str:
+		raise NotImplementedError
+
+	@property
+	def data(self) -> bytes:
+		raise NotImplementedError
+
+	def size(self):
+		raise NotImplementedError
+
+	def save(self, directory: str) -> str:
+		raise NotImplementedError
+
+	@property
+	def s_word(self) -> str:
+		raise NotImplementedError
+
+	@property
+	def l_word(self) -> "List[str]":
+		raise NotImplementedError
+
+	@property
+	def defi(self) -> str:
+		raise NotImplementedError
+
+	@property
+	def b_word(self):
+		raise NotImplementedError
+
+	@property
+	def b_defi(self):
+		raise NotImplementedError
+
+	@property
+	def defiFormat(self) -> str:
+		# TODO: type: Literal["m", "h", "x", "b"]
+		raise NotImplementedError
+
+	@defiFormat.setter
+	def defiFormat(self, defiFormat: str) -> None:
+		# TODO: type: Literal["m", "h", "x", "b"]
+		raise NotImplementedError
+
+	def detectDefiFormat(self) -> None:
+		raise NotImplementedError
+
+	def addAlt(self, alt: str) -> None:
+		raise NotImplementedError
+
+	def editFuncWord(self, func: "Callable[[str], str]") -> None:
+		raise NotImplementedError
+
+	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
+		raise NotImplementedError
+
+	def strip(self) -> None:
+		raise NotImplementedError
+
+	def replaceInWord(self, source: str, target: str) -> None:
+		raise NotImplementedError
+
+	def replaceInDefi(self, source: str, target: str) -> None:
+		raise NotImplementedError
+
+	def replace(self, source: str, target: str) -> None:
+		raise NotImplementedError
+
+	def getRaw(self, glos: "GlossaryType") -> RawEntryType:
+		raise NotImplementedError
+
+	@staticmethod
+	def getRawEntrySortKey(
+		glos: "GlossaryType",
+		key: "Callable[[str], Any]",
+	) -> "Callable[[Tuple], str]":
+		raise NotImplementedError
 
 
 class GlossaryType(object):
@@ -77,9 +169,9 @@ class GlossaryType(object):
 
 	def titleElement(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "lxml.etree.htmlfile",  # noqa: F821
 		sample: str = "",
-	) -> "lxml.etree._FileWriterElement":
+	) -> "lxml.etree._FileWriterElement":  # noqa: F821
 		raise NotImplementedError
 
 	def wordTitleStr(
@@ -93,11 +185,11 @@ class GlossaryType(object):
 	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
 		raise NotImplementedError
 
-	def addEntryObj(self, entry: "BaseEntry") -> None:
+	def addEntryObj(self, entry: EntryType) -> None:
 		raise NotImplementedError
 
-	def newEntry(self, word: str, defi: str, defiFormat: str = "") -> "Entry":
+	def newEntry(self, word: str, defi: str, defiFormat: str = "") -> EntryType:
 		raise NotImplementedError
 
-	def newDataEntry(self, fname: str, data: bytes) -> DataEntry:
+	def newDataEntry(self, fname: str, data: bytes) -> EntryType:
 		raise NotImplementedError

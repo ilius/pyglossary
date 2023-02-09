@@ -8,7 +8,7 @@ from os.path import (
 	getsize,
 )
 
-from .entry_base import BaseEntry, MultiStr, RawEntryType
+from .entry_base import BaseEntry, MultiStr
 from .iter_utils import unique_everseen
 from .text_utils import (
 	joinByBar,
@@ -23,8 +23,7 @@ from typing import (
 	Literal, Callable,
 )
 
-# can not import GlossaryType from .glossary_type due to circular import
-GlossaryType = Any
+from .glossary_type import RawEntryType, GlossaryType
 
 import logging
 log = logging.getLogger("pyglossary")
