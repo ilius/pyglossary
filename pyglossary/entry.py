@@ -228,7 +228,7 @@ class Entry(BaseEntry):
 		"""
 
 		# memory optimization:
-		if isinstance(word, list):
+		if isinstance(word, (list, tuple)):
 			if len(word) == 1:
 				word = word[0]
 		elif not isinstance(word, str):

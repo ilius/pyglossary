@@ -22,12 +22,7 @@ class TestEntryBasic(unittest.TestCase):
 			self.fail("must raise TypeError")
 
 	def test_exc_2(self):
-		try:
-			Entry(("word",), "defi")
-		except TypeError as e:
-			self.assertEqual(str(e), "invalid word type <class 'tuple'>")
-		else:
-			self.fail("must raise TypeError")
+		Entry(("word",), "defi")
 
 	def test_exc_3(self):
 		try:
