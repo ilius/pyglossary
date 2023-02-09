@@ -1,16 +1,14 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
 import sys
 import json
 import re
 from os.path import join, dirname, abspath
-from pprint import pprint
 from mako.template import Template
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.core import userPluginsDir
 from pyglossary.ui.base import UIBase
 
 ui = UIBase()
@@ -45,10 +43,10 @@ For example:
 
 .. code:: python
 
-    glos = Glossary()
-    glos.config = {
-        "lower": True,
-    }
+	glos = Glossary()
+	glos.config = {
+		"lower": True,
+	}
 """)
 
 with open(join(rootDir, "scripts/term-colors.json")) as _file:
@@ -110,7 +108,7 @@ def renderTable(rows):
 
 def getCommandFlagsMD(name, opt):
 	if name.startswith("color.enable.cmd."):
-		return f"``--no-color``"
+		return "``--no-color``"
 
 	if not opt.hasFlag:
 		return ""

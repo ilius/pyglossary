@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 
 import sys
-import json
 from os.path import join, dirname, abspath
 from pathlib import Path
-from pprint import pprint
 from collections import OrderedDict
 from mako.template import Template
 import toml
@@ -360,7 +358,7 @@ indexText = renderTable(
 )
 
 with open(
-	join(rootDir, "doc", "p", f"__index__.md"),
+	join(rootDir, "doc", "p", "__index__.md"),
 	mode="w",
 	encoding="utf-8",
 	newline="\n",

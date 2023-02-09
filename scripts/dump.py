@@ -9,5 +9,3 @@ for entry in glos:
 	print('Words: ' + pformat(entry.l_word))
 	print('Definitions: ' + pformat(entry.defis))
 	print('-------------------------')
-
-

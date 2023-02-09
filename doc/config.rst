@@ -98,10 +98,10 @@ For example:
 
 .. code:: python
 
-    glos = Glossary()
-    glos.config = {
-        "lower": True,
-    }
+	glos = Glossary()
+	glos.config = {
+		"lower": True,
+	}
 
 
 .. |image0| image:: https://via.placeholder.com/20/ff0000/000000?text=+

@@ -1,12 +1,10 @@
 #!/usr/bin/python3
 
 import sys
-import json
 from os.path import join, dirname, abspath
 from pathlib import Path
 from collections import OrderedDict
 import toml
-from pprint import pprint
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -42,5 +40,3 @@ for p in plugins:
 
 	with open(join(toolsDir, f"{p.lname}.toml"), mode="w") as _file:
 		toml.dump(tools, _file)
-
-

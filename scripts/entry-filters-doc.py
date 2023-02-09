@@ -1,16 +1,13 @@
 #!/usr/bin/python3
 
 import sys
-import json
 from os.path import join, dirname, abspath
-from pprint import pprint
 from mako.template import Template
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary
-from pyglossary.core import userPluginsDir
 from pyglossary.ui.base import UIBase
 
 ui = UIBase()

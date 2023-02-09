@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import sys
-from os.path import join, dirname, abspath
+from os.path import dirname, abspath
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -36,4 +36,4 @@ for direct in (True, False):
 			print(f"+++ {entry.l_word!r} -> {entry.defi[:60]}")
 			continue
 
-		#print(f"--- {entry.l_word!r} -> {entry.defi[:60]}")
+		# print(f"--- {entry.l_word!r} -> {entry.defi[:60]}")
