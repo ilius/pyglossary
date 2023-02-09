@@ -15,8 +15,13 @@ ignore W504 "line break after binary operator"
 ignore E402 "module level import not at top of file"
 #ignore E702 "multiple statements on one line (semicolon)"
 
+TOOL=pycodestyle
+if which flake8 ; then
+	TOOL=flake8
+fi
+
 #if [ -z $2 ] ; then
-pycodestyle --ignore=$IGNORE "$@" | grep --color=always -P ':\d*:' 2>&1 | less -RU
+$TOOL --ignore=$IGNORE "$@" | grep --color=always -P ':\d*:' 2>&1 | less -RU
 #else
 #	pycodestyle --select "$@" | grep --color=always -P ':\d*:' 2>&1
 #fi

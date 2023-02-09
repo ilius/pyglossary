@@ -20,8 +20,6 @@
 
 import logging
 
-import sys
-
 import os
 import os.path
 from os.path import (
@@ -35,7 +33,12 @@ from time import time as now
 
 from contextlib import suppress
 from collections import OrderedDict as odict
-from typing import TypeVar
+from typing import (
+	Optional, Any,
+	List, Tuple, Dict,
+	Iterator,
+	Type, TypeVar,
+)
 
 from .flags import (
 	ALWAYS,
@@ -50,7 +53,7 @@ from .core import (
 	userPluginsDir,
 	cacheDir,
 )
-from .entry import Entry, DataEntry
+from .entry import Entry, DataEntry, BaseEntry
 from .entry_filters import (
 	EntryFilter,
 	FixUnicode,
@@ -77,7 +80,7 @@ from .glossary_utils import (
 	splitFilenameExt,
 	EntryList,
 )
-from .sort_keys import namedSortKeyByName, NamedSortKey
+from .sort_keys import namedSortKeyByName
 from .os_utils import showMemoryUsage, rmtree
 from .glossary_info import GlossaryInfo
 from .plugin_manager import PluginManager
@@ -244,7 +247,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		if log.level <= core.TRACE:
 			try:
-				import psutil
+				import psutil  # noqa
 			except ModuleNotFoundError:
 				pass
 			else:
@@ -422,13 +425,13 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		raise NotImplementedError
 
 	@config.setter
-	def config(self, c: "Dict[str, Any]") -> None:
+	def config(self, config: "Dict[str, Any]") -> None:
 		if self._config:
-			log.error(f"glos.config is set more than once")
+			log.error("glos.config is set more than once")
 			return
-		self._config = c
-		if "optimize_memory" in c:
-			self._rawEntryCompress = c["optimize_memory"]
+		self._config = config
+		if "optimize_memory" in config:
+			self._rawEntryCompress = config["optimize_memory"]
 
 	@property
 	def alts(self) -> bool:
@@ -565,7 +568,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		"""
 		filename (str):	name/path of input file
 		format (str):	name of input format,
-		                or "" to detect from file extension
+						or "" to detect from file extension
 		direct (bool):	enable direct mode
 		progressbar (bool): enable progressbar
 
@@ -830,11 +833,9 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			log.critical(f"No Writer class found for plugin {format}")
 			return
 
-		plugin = self.plugins[format]
-
 		if self._readers and sort:
 			log.warning(
-				f"Full sort enabled, falling back to indirect mode"
+				"Full sort enabled, falling back to indirect mode"
 			)
 			self._inactivateDirectMode()
 
@@ -930,8 +931,8 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		if not self.alts:
 			log.warning(
-				f"SQLite mode only works with enable_alts=True"
-				f", force-enabling it."
+				"SQLite mode only works with enable_alts=True"
+				", force-enabling it."
 			)
 		self._config["enable_alts"] = True
 		self._sqlite = True
@@ -1004,7 +1005,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		if sortOnWrite == ALWAYS:
 			if not writerSortKeyName:
-				log.critical(f"No sortKeyName was found in plugin")
+				log.critical("No sortKeyName was found in plugin")
 				return None
 
 			if sortKeyName and sortKeyName != writerSortKeyName:
@@ -1094,7 +1095,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			writeOptions = {}
 
 		if outputFilename == inputFilename:
-			log.critical(f"Input and output files are the same")
+			log.critical("Input and output files are the same")
 			return
 
 		if readOptions:

@@ -4,7 +4,6 @@ import shutil
 import os
 from os.path import (
 	join,
-	exists,
 	dirname,
 	getsize,
 )
@@ -17,6 +16,15 @@ from .text_utils import (
 
 from pickle import dumps, loads
 from zlib import compress, decompress
+
+from typing import (
+	Optional, Any,
+	Tuple, List,
+	Literal, Callable,
+)
+
+# can not import GlossaryType from .glossary_type due to circular import
+GlossaryType = Any
 
 import logging
 log = logging.getLogger("pyglossary")
@@ -200,9 +208,8 @@ class Entry(BaseEntry):
 		# or a list or tuple (one word with or more alternatives)
 		if glos.rawEntryCompress:
 			return lambda x: key(loads(decompress(x))[0])
-		else:
-			# x is rawEntry, so x[0] is list of words (entry.l_word)
-			return lambda x: key(x[0])
+		# x is rawEntry, so x[0] is list of words (entry.l_word)
+		return lambda x: key(x[0])
 
 	def __init__(
 		self,
@@ -256,8 +263,7 @@ class Entry(BaseEntry):
 		"""
 		if isinstance(self._word, str):
 			return self._word
-		else:
-			return joinByBar(self._word)
+		return joinByBar(self._word)
 
 	@property
 	def l_word(self) -> "List[str]":
@@ -266,8 +272,7 @@ class Entry(BaseEntry):
 		"""
 		if isinstance(self._word, str):
 			return [self._word]
-		else:
-			return self._word
+		return self._word
 
 	@property
 	def defi(self) -> str:
