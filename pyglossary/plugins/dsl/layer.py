@@ -81,7 +81,7 @@ def close_tags(stack, tags, layer_index=-1):
 		layer.text = "".join(
 			[f"[{x.opening}]" for x in ordered_tags] +
 			[layer.text] +
-			[f"[/{x.closing}]" for x in reversed(ordered_tags)]
+			[f"[/{x.closing}]" for x in reversed(ordered_tags)],
 		)
 
 	# remove tags from layer

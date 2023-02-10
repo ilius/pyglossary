@@ -18,12 +18,20 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+import os
+from os.path import dirname, isdir, isfile, join
+from typing import Generator, Iterator
 
-from pyglossary.plugins.formats_common import *
+from pyglossary.core import log
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+)
 from pyglossary.text_utils import (
 	escapeNTB,
-	unescapeNTB,
 	splitByBarUnescapeNTB,
+	unescapeNTB,
 )
 
 enable = True
@@ -74,7 +82,7 @@ class Reader(object):
 			filename = dirname(filename)
 		else:
 			raise ValueError(
-				f"error while opening {filename!r}: no such file or directory"
+				f"error while opening {filename!r}: no such file or directory",
 			)
 		self._filename = filename
 
@@ -99,7 +107,7 @@ class Reader(object):
 			return 0
 		return self._wordCount + len(self._resFileNames)
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if not self._rootPath:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -128,7 +136,7 @@ class Reader(object):
 				if not defi:
 					log.warning(
 						f"Edlin Reader: no definition for word {word!r}"
-						f", skipping"
+						f", skipping",
 					)
 					yield None  # update progressbar
 					continue
@@ -148,7 +156,7 @@ class Reader(object):
 		if wordCount != self._wordCount:
 			log.warning(
 				f"{wordCount} words found, "
-				f"wordCount in info.json was {self._wordCount}"
+				f"wordCount in info.json was {self._wordCount}",
 			)
 			self._wordCount = wordCount
 
@@ -188,7 +196,7 @@ class Writer(object):
 	def hashToPath(self, h: str) -> str:
 		return h[:2] + "/" + h[2:]
 
-	def getEntryHash(self, entry: BaseEntry) -> str:
+	def getEntryHash(self, entry: EntryType) -> str:
 		"""
 		return hash string for given entry
 		don't call it twice for one entry, if you do you will get a
@@ -209,7 +217,7 @@ class Writer(object):
 
 	def saveEntry(
 		self,
-		thisEntry: BaseEntry,
+		thisEntry: EntryType,
 		thisHash: str,
 		prevHash: str,
 		nextHash: str,
@@ -233,11 +241,10 @@ class Writer(object):
 				thisEntry.defi,
 			]))
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from collections import OrderedDict as odict
-		from pyglossary.json_utils import dataToPrettyJson
 
-		filename = self._filename
+		from pyglossary.json_utils import dataToPrettyJson
 
 		thisEntry = yield
 		if thisEntry is None:

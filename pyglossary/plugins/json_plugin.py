@@ -1,6 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
+from typing import Generator
+
+from pyglossary.compression import (
+	# compressionOpen,
+	stdCompressions,
+)
+from pyglossary.glossary_type import (
+	EntryType,
+	GlossaryType,
+)
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+)
 
 enable = True
 lname = "json"
@@ -44,8 +57,9 @@ class Writer(object):
 	def finish(self):
 		self._filename = None
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from json import dumps
+
 		from pyglossary.text_writer import writeTxt
 
 		glos = self._glos

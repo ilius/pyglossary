@@ -16,8 +16,19 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from .bgl_reader import BglReader
-from pyglossary.text_utils import toStr, isASCII
+import gzip
+import os
+import re
+from os.path import join
+
+from pyglossary.core import log
+from pyglossary.text_utils import (
+	isASCII,
+	toStr,
+	uintFromBytes,
+)
+
+from .bgl_reader import BGLGzipFile, BglReader, Block, FileOffS, tmpDir
 
 
 class MetaData(object):
@@ -179,7 +190,7 @@ class DebugBglReader(BglReader):
 				log.error(f"file pointer empty: {bglFile}")
 				return False
 			buf = bglFile.read(6)
-			if len(buf) < 6 or not buf[:4] in (
+			if len(buf) < 6 or buf[:4] not in (
 				b"\x12\x34\x00\x01",
 				b"\x12\x34\x00\x02",
 			):
@@ -199,10 +210,10 @@ class DebugBglReader(BglReader):
 					log.exception("error while opening gzip data file")
 					self.dataFile = join(
 						tmpDir,
-						os.path.split(self.m_filename)[-1] + "-data.gz"
+						os.path.split(self.m_filename)[-1] + "-data.gz",
 					)
 					f2 = open(self.dataFile, "wb")
-				bglFile.seek(i)
+				bglFile.seek(gzipOffset)
 				f2.write(bglFile.read())
 				f2.close()
 				self.file = gzip.open(self.dataFile, "rb")
@@ -291,27 +302,6 @@ class DebugBglReader(BglReader):
 			code = min(code, 256)
 			charRefs[code] += 1
 
-	def processDefiStat(self, fields, b_defi, b_key):
-		if fields.singleEncoding:
-			self.findAndPrintCharSamples(
-				fields.b_defi,
-				f"defi, key = {b_key}",
-				fields.encoding,
-			)
-			if self.metadata2:
-				self.metadata2.defiProcessedCount += 1
-				if isASCII(toStr(fields.b_defi)):
-					self.metadata2.defiAsciiCount += 1
-				try:
-					fields.b_defi.decode("utf-8")
-				except UnicodeError:
-					pass
-				else:
-					self.metadata2.defiUtf8Count += 1
-		if self.metadata2 and self.metadata2.isDefiASCII:
-			if not isASCII(fields.u_defi):
-				self.metadata2.isDefiASCII = False
-
 	# write text to dump file as is
 	def rawDumpFileWriteText(self, text):  # FIXME
 		text = toStr(text)
@@ -368,7 +358,7 @@ class DebugBglReader(BglReader):
 		while not self.isEndOfDictData():
 			log.debug(
 				f"readBlock: offset {self.file.tell():#02x}, "
-				f"unpacked offset {self.file.unpackedFile.tell():#02x}"
+				f"unpacked offset {self.file.unpackedFile.tell():#02x}",
 			)
 			if not self.readBlock(block):
 				break
@@ -454,6 +444,25 @@ class DebugBglReader(BglReader):
 			self.rawDumpFileWriteText(
 				f"\ndefi field_06: {fields.b_field_06}",
 			)
+		if fields.singleEncoding:
+			self.findAndPrintCharSamples(
+				fields.b_defi,
+				f"defi, key = {b_key}",
+				fields.encoding,
+			)
+			if self.metadata2:
+				self.metadata2.defiProcessedCount += 1
+				if isASCII(toStr(fields.b_defi)):
+					self.metadata2.defiAsciiCount += 1
+				try:
+					fields.b_defi.decode("utf-8")
+				except UnicodeError:
+					pass
+				else:
+					self.metadata2.defiUtf8Count += 1
+		if self.metadata2 and self.metadata2.isDefiASCII:
+			if not isASCII(fields.u_defi):
+				self.metadata2.isDefiASCII = False
 
 	# search for new chars in data
 	# if new chars are found, mark them with a special sequence in the text
@@ -498,13 +507,13 @@ class DebugBglReader(BglReader):
 			return res
 		if not self.targetCharsArray:
 			log.error(
-				"findCharSamples: self.targetCharsArray={self.targetCharsArray}"
+				"findCharSamples: self.targetCharsArray={self.targetCharsArray}",
 			)
 			return res
 		for i, char in enumerate(b_data):
-			if x < 128:
+			if char < 128:
 				continue
-			if not self.targetCharsArray[x]:
-				self.targetCharsArray[x] = True
+			if not self.targetCharsArray[char]:
+				self.targetCharsArray[char] = True
 				res.append(i)
 		return res

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from pyglossary.plugins.formats_common import *
 
 enable = False
 lname = "babylon_bdc"

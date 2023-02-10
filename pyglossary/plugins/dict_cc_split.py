@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
 import html
+
+from pyglossary.core import log
 
 enable = True
 lname = "dict_cc_split"
@@ -41,7 +42,7 @@ class Reader(object):
 	def iterRows(self, column1, column2):
 		self._cur.execute(
 			f"select {column1}, {column2}, entry_type from main_ft"
-			f" order by {column1}"
+			f" order by {column1}",
 		)
 		for row in self._cur.fetchall():
 			term1 = row[0]

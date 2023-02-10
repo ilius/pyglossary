@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
 import html
 from operator import itemgetter
+from typing import Callable, Tuple
+
+from pyglossary.core import log
 
 enable = True
 lname = "dict_cc"
@@ -37,17 +39,17 @@ class Reader(object):
 
 	def __len__(self):
 		self._cur.execute(
-			"select count(distinct term1)+count(distinct term2) from main_ft"
+			"select count(distinct term1)+count(distinct term2) from main_ft",
 		)
 		return self._cur.fetchone()[0]
 
 	def makeList(
 		self,
-		hf: "lxml.etree.htmlfile",
-		input_elements: "List[lxml.etree.Element]",
+		hf: "lxml.etree.htmlfile",  # noqa
+		input_elements: "List[lxml.etree.Element]",  # noqa
 		processor: "Callable",
 		single_prefix=None,
-		skip_single=True
+		skip_single=True,
 	):
 		""" Wrap elements into <ol> if more than one element """
 		if len(input_elements) == 0:
@@ -65,7 +67,7 @@ class Reader(object):
 
 	def writeSense(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "lxml.etree.htmlfile",  # noqa
 		row: "Tuple[str, str, str]",
 	):
 		from lxml import etree as ET
@@ -82,12 +84,12 @@ class Reader(object):
 		else:
 			with hf.element("big"):
 				with hf.element("a", href=f'bword://{trans}'):
-					hf.write(f"⏎")
+					hf.write("⏎")
 
 	def iterRows(self, column1, column2):
 		self._cur.execute(
 			f"select {column1}, {column2}, entry_type from main_ft"
-			f" order by {column1}"
+			f" order by {column1}",
 		)
 		for row in self._cur.fetchall():
 			term1 = row[0]
@@ -129,9 +131,10 @@ class Reader(object):
 		return gender, headword
 
 	def _iterOneDirection(self, column1, column2):
-		from itertools import groupby
-		from lxml import etree as ET
 		from io import BytesIO
+		from itertools import groupby
+
+		from lxml import etree as ET
 
 		glos = self._glos
 		for headword, groupsOrig in groupby(
@@ -157,7 +160,7 @@ class Reader(object):
 						self.writeSense,
 					)
 			defi = f.getvalue().decode("utf-8")
-			yield self._glos.newEntry(headword, defi, defiFormat="h")
+			yield glos.newEntry(headword, defi, defiFormat="h")
 
 	def __iter__(self):
 		yield from self._iterOneDirection("term1", "term2")

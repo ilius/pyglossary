@@ -1,8 +1,23 @@
 # -*- coding: utf-8 -*-
-from pyglossary.plugins.formats_common import *
-from io import BytesIO
+
+import os
 import re
-import html
+from io import BytesIO
+from typing import Callable, Iterator
+
+from pyglossary.compression import (
+	compressionOpen,
+	stdCompressions,
+)
+from pyglossary.core import pip
+from pyglossary.glossary_type import (
+	EntryType,
+	GlossaryType,
+)
+from pyglossary.option import (
+	IntOption,
+	StrOption,
+)
 
 enable = True
 lname = "jmdict"
@@ -55,11 +70,11 @@ class Reader(object):
 
 	def makeList(
 		self,
-		hf: "lxml.etree.htmlfile",
-		input_objects: "List[lxml.etree.Element]",
+		hf: "lxml.etree.htmlfile",  # noqa
+		input_objects: "List[lxml.etree.Element]",  # noqa
 		processor: "Callable",
 		single_prefix=None,
-		skip_single=True
+		skip_single=True,
 	):
 		""" Wrap elements into <ol> if more than one element """
 		if len(input_objects) == 0:
@@ -77,8 +92,8 @@ class Reader(object):
 
 	def writeSense(
 		self,
-		hf: "lxml.etree.htmlfile",
-		sense: "lxml.etree.Element",
+		hf: "lxml.etree.htmlfile",  # noqa
+		sense: "lxml.etree.Element",  # noqa
 	):
 		from lxml import etree as ET
 
@@ -198,8 +213,10 @@ class Reader(object):
 									hf.write(br())
 									hf.write(sent)
 
-
-	def getEntryByElem(self, entry: "lxml.etree.Element") -> "EntryType":
+	def getEntryByElem(
+		self,
+		entry: "lxml.etree.Element",  # noqa
+	) -> "EntryType":
 		from lxml import etree as ET
 		glos = self._glos
 		keywords = []
@@ -231,7 +248,7 @@ class Reader(object):
 					inf = r_ele.find("re_inf")
 					if inf is not None:
 						props.append(
-							self.re_inf_mapping.get(inf.text, inf.text)
+							self.re_inf_mapping.get(inf.text, inf.text),
 						)
 					rebList.append((reb.text, props))
 					keywords.append(reb.text)
@@ -285,7 +302,10 @@ class Reader(object):
 			byteProgress=byteProgress,
 		)
 
-	def tostring(self, elem: "lxml.etree.Element") -> str:
+	def tostring(
+		self,
+		elem: "lxml.etree.Element",  # noqa
+	) -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,
@@ -324,7 +344,7 @@ class Reader(object):
 		filename: str,
 	):
 		try:
-			from lxml import etree as ET
+			from lxml import etree as ET  # noqa
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install lxml` to install"
 			raise e
@@ -336,7 +356,7 @@ class Reader(object):
 
 		self._glos.setDefaultDefiFormat("h")
 		self._glos.setInfo("definition_has_headwords", "True")
-		self._glos.setInfo("entry_url", f"https://jisho.org/search/{{word}}")
+		self._glos.setInfo("entry_url", "https://jisho.org/search/{word}")
 		# also good: f"https://sakuradict.com/search?q={{word}}"
 
 		header = ""
@@ -355,7 +375,7 @@ class Reader(object):
 		context = ET.iterparse(
 			self._file,
 			events=("end",),
-			tag=f"entry",
+			tag="entry",
 		)
 		for action, elem in context:
 			yield self.getEntryByElem(elem)

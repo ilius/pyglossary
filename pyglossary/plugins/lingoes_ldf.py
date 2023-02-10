@@ -1,9 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
-from pyglossary.text_reader import TextGlossaryReader
-from pyglossary.text_utils import splitByBar
+from typing import Generator
+
+from pyglossary.compression import (
+	# compressionOpen,
+	stdCompressions,
+)
+from pyglossary.core import log
 from pyglossary.file_utils import fileCountLines
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+	NewlineOption,
+)
+from pyglossary.text_reader import TextGlossaryReader
+from pyglossary.text_utils import replaceStringTable, splitByBar
 
 enable = True
 lname = "lingoes_ldf"
@@ -73,8 +85,8 @@ class Reader(TextGlossaryReader):
 				return
 			if len(entryLines) < 2:
 				log.error(
-					f"invalid block near line {fileObj.line}"
-					f" in file {filename}"
+					f"invalid block near line {self._file.line}"
+					f" in file {self._filename}",
 				)
 				return
 			word = entryLines[0]
@@ -108,7 +120,7 @@ class Writer(object):
 	def open(self, filename: str):
 		self._filename = filename
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_writer import writeTxt
 		newline = self._newline
 		resources = self._resources

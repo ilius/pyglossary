@@ -1,13 +1,19 @@
-from pyglossary.plugins.formats_common import *
 from hashlib import sha1
-from os.path import dirname
-from os import makedirs, listdir
+from os import listdir, makedirs
+from os.path import dirname, isdir, isfile, join, splitext
+from typing import Optional, Set
+
+from pyglossary.compression import (
+	compressionOpenFunc,
+)
+from pyglossary.core import log
+from pyglossary.glossary_type import GlossaryType
+from pyglossary.option import (
+	StrOption,
+)
 from pyglossary.text_utils import (
 	escapeNTB,
 	splitByBarUnescapeNTB,
-)
-from pyglossary.compression import (
-	compressionOpenFunc,
 )
 
 enable = True
@@ -58,8 +64,9 @@ class Writer(object):
 			bw[4:8].hex() + "-" + sha1(b_word).hexdigest()[:8],
 		)
 
-	def write(self, ):
+	def write(self ):
 		from collections import OrderedDict as odict
+
 		from pyglossary.json_utils import dataToPrettyJson
 
 		filename = self._filename
@@ -68,7 +75,7 @@ class Writer(object):
 		compression = self._compression
 		c_open = compressionOpenFunc(compression)
 		if not c_open:
-			raise ValueError(f"invalid compression {c!r}")
+			raise ValueError(f"invalid compression {compression!r}")
 		while True:
 			entry = yield
 			if entry is None:
@@ -86,7 +93,7 @@ class Writer(object):
 				fpath += f"-{sha1(entry.b_defi).hexdigest()[:4]}"
 			with c_open(fpath, "wt", encoding="utf-8") as _file:
 				_file.write(
-					f"{escapeNTB(entry.s_word)}\n{entry.defi}"
+					f"{escapeNTB(entry.s_word)}\n{entry.defi}",
 				)
 			wordCount += 1
 

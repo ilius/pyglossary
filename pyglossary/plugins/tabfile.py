@@ -1,10 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
+import os
+from os.path import isdir, join
+from typing import Generator, Iterator, Optional, Tuple
+
+from pyglossary.compression import stdCompressions
+from pyglossary.core import log
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+	FileSizeOption,
+)
 from pyglossary.text_reader import TextGlossaryReader
 from pyglossary.text_utils import (
-	unescapeNTB,
 	splitByBarUnescapeNTB,
+	unescapeNTB,
 )
 
 enable = True
@@ -47,7 +58,7 @@ class Reader(TextGlossaryReader):
 			self._resDir = resDir
 			self._resFileNames = os.listdir(self._resDir)
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		yield from TextGlossaryReader.__iter__(self)
 		resDir = self._resDir
 		for fname in self._resFileNames:
@@ -76,7 +87,7 @@ class Reader(TextGlossaryReader):
 		word, tab, defi = line.partition("\t")
 		if not tab:
 			log.error(
-				f"Warning: line starting with {line[:10]!r} has no tab!"
+				f"Warning: line starting with {line[:10]!r} has no tab!",
 			)
 			return
 		###
@@ -114,9 +125,9 @@ class Writer(object):
 	def finish(self):
 		pass
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
-		from pyglossary.text_writer import TextGlossaryWriter
+	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_utils import escapeNTB, joinByBar
+		from pyglossary.text_writer import TextGlossaryWriter
 		writer = TextGlossaryWriter(
 			self._glos,
 			entryFmt="{word}\t{defi}\n",
@@ -131,7 +142,7 @@ class Writer(object):
 			ext=".txt",
 			resources=self._resources,
 			word_title=self._word_title,
-			file_size_approx=self._file_size_approx
+			file_size_approx=self._file_size_approx,
 		)
 		writer.open(self._filename)
 		yield from writer.write()

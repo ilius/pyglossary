@@ -1,9 +1,9 @@
 """Jing, a validator for RELAX NG and other schema languages."""
 
 import logging
-from os import path
 import subprocess
 import sys
+from os import path
 
 __all__ = ["JingTestError", "run", "main"]
 
@@ -12,9 +12,10 @@ log.setLevel(logging.DEBUG)
 
 
 class JingTestError(subprocess.CalledProcessError):
-	"""this exception raised when jing test failed, e.g. returned non-zero.
-	   the exit status will be stored in the `returncode` attribute.
-	   the `output` attribute also will store the output.
+	"""
+	this exception raised when jing test failed, e.g. returned non-zero.
+	the exit status will be stored in the `returncode` attribute.
+	the `output` attribute also will store the output.
 	"""
 
 	def __init__(self, returncode, cmd, output):
@@ -43,8 +44,7 @@ def run(filename):
 	jing_jar_path = path.join(here, "jing", "bin", "jing.jar")
 	rng_path = path.join(here, "DictionarySchema", "AppleDictionarySchema.rng")
 
-	# -Xmxn Specifies the maximum size, in bytes, of the memory allocation
-	#	   pool.
+	# -Xmxn Specifies the maximum size, in bytes, of the memory allocation pool
 	# -- from `man 1 java`
 	args = ["java", "-Xmx2G", "-jar", jing_jar_path, rng_path, filename]
 	cmd = " ".join(args)
@@ -53,9 +53,11 @@ def run(filename):
 	log.info(cmd)
 	log.info("...")
 
-	pipe = subprocess.Popen(args,
-							stdout=subprocess.PIPE,
-							stderr=subprocess.STDOUT)
+	pipe = subprocess.Popen(
+		args,
+		stdout=subprocess.PIPE,
+		stderr=subprocess.STDOUT,
+	)
 	returncode = pipe.wait()
 	output = pipe.communicate()[0]
 
@@ -70,8 +72,9 @@ def run(filename):
 
 
 def main():
-	"""a command-line utility, runs Jing test on given dictionary XML
-	   file with Apple Dictionary Schema.
+	"""
+	a command-line utility, runs Jing test on given dictionary XML
+	file with Apple Dictionary Schema.
 	"""
 	if len(sys.argv) < 2:
 		prog_name = path.basename(sys.argv[0])

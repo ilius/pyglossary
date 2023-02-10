@@ -21,10 +21,22 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from os import path
+import re
 
-from pyglossary.plugins.formats_common import *
-from pyglossary.xdxf_transform import *
+from pyglossary.compression import (
+	compressionOpen,
+	stdCompressions,
+)
+from pyglossary.core import log
+from pyglossary.glossary_type import GlossaryType
+from pyglossary.option import (
+	BoolOption,
+)
+from pyglossary.text_utils import toStr
+from pyglossary.xdxf_transform import (
+	XdxfTransformer,
+	XslXdxfTransformer,
+)
 
 enable = True
 lname = "xdxf"
@@ -42,7 +54,7 @@ website = (
 optionsProp = {
 	"html": BoolOption(comment="Entries are HTML"),
 	"xsl": BoolOption(
-		comment="Use XSL transformation"
+		comment="Use XSL transformation",
 	),
 }
 
@@ -149,8 +161,8 @@ class Reader(object):
 		return 0
 
 	def __iter__(self):
-		from lxml.etree import tostring
 		from lxml import etree as ET
+		from lxml.etree import tostring
 
 		context = ET.iterparse(
 			self._file,
@@ -210,7 +222,10 @@ class Reader(object):
 		if desc:
 			self._glos.setInfo("description", desc)
 
-	def tostring(self, elem: "lxml.etree.Element") -> str:
+	def tostring(
+		self,
+		elem: "lxml.etree.Element",  # noqa
+	) -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,

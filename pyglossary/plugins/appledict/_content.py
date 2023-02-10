@@ -23,9 +23,12 @@
 # should be moved to separate modules (like content processors) and enabled
 # per-glossary (by title or something else)
 
-import re
 import logging
-from xml.sax.saxutils import unescape, quoteattr
+import re
+import typing
+from typing import Any, Optional
+from xml.sax.saxutils import quoteattr, unescape
+
 from pyglossary.text_utils import toStr
 
 log = logging.getLogger("pyglossary")
@@ -160,7 +163,7 @@ def prepare_content_with_soup(
 			# for oxford9
 			log.debug(f"phonetics: {tag=}")
 			if tag.audio and "name" in tag.audio.attrs:
-				tag["onmousedown"] = f"this.lastChild.play(); return false;"
+				tag["onmousedown"] = "this.lastChild.play(); return false;"
 				src_name = tag.audio["name"].replace("#", "_")
 				tag.audio["src"] = f"{src_name}.mp3"
 
@@ -226,7 +229,7 @@ def href_sub(x: "typing.re.Pattern") -> str:
 		"x-dictionary:d:" + unescape(
 			href,
 			{"&quot;": '"'},
-		)
+		),
 	)
 
 

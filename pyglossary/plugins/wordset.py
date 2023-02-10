@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
-from pyglossary.entry import Entry
-from pyglossary.sort_keys import namedSortKeyByName
-from os import listdir
-from os.path import isfile
 from json import load
+from os import listdir
+from os.path import isfile, join, splitext
+from typing import Iterator
+
+from pyglossary.core import log
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	EncodingOption,
+)
+from pyglossary.sort_keys import namedSortKeyByName
 
 enable = True
 lname = "wordset"
@@ -71,7 +76,7 @@ class Reader(object):
 			return "\x80"
 		return fname
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if not self._filename:
 			raise RuntimeError("iterating over a reader while it's not open")
 

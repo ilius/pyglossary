@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
+from os.path import splitext
+from typing import Generator, Iterator
+
+from pyglossary.core import log
+from pyglossary.glossary_type import (
+	EntryType,
+	GlossaryType,
+)
 
 enable = True
 lname = "info"
@@ -33,9 +40,10 @@ class Writer(object):
 			self._file.close()
 			self._file = None
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		import re
 		from collections import Counter, OrderedDict
+
 		from pyglossary.json_utils import dataToPrettyJson
 		from pyglossary.langs.writing_system import getWritingSystemFromText
 
@@ -160,5 +168,5 @@ class Reader(object):
 	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		yield None

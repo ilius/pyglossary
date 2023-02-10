@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
+import os
+
+from pyglossary.core import cacheDir, log, pip
+from pyglossary.glossary_type import GlossaryType
 
 enable = True
 lname = "zim"
@@ -73,7 +76,7 @@ class Reader(object):
 
 	def __len__(self) -> int:
 		if self._zimfile is None:
-			log.error(f"len(reader) called before reader.open()")
+			log.error("len(reader) called before reader.open()")
 			return 0
 		return self._zimfile.entry_count
 

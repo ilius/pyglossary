@@ -16,12 +16,18 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from pyglossary.plugins.formats_common import *
-
-import os
-import sys
 import gc
-from os.path import splitext, isfile, isdir, extsep, basename, dirname
+import os
+import re
+import sys
+from os.path import dirname, extsep, isfile, join, splitext
+
+from pyglossary.core import log
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+)
+from pyglossary.text_utils import toStr
 
 enable = True
 lname = "octopus_mdict"
@@ -53,7 +59,7 @@ extraDocs = [
 	(
 		"`python-lzo` is required for **some** MDX glossaries.",
 		"""First try converting your MDX file, if failed (`AssertionError` probably),
-then try to install [LZO library and Python binding](./doc/lzo.md)."""
+then try to install [LZO library and Python binding](./doc/lzo.md).""",
 	),
 ]
 
@@ -69,7 +75,7 @@ class Reader(object):
 		self.clear()
 		self._re_internal_link = re.compile('href=(["\'])(entry://|[dx]:)')
 		self._re_audio_link = re.compile(
-			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>'
+			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>',
 		)
 
 	def clear(self):
@@ -83,7 +89,7 @@ class Reader(object):
 		self._linksDict = {}  # type: Dict[str, str]
 
 	def open(self, filename):
-		from pyglossary.plugin_lib.readmdict import MDX, MDD
+		from pyglossary.plugin_lib.readmdict import MDD, MDX
 		self._filename = filename
 		self._mdx = MDX(filename, self._encoding, self._substyle)
 
@@ -112,7 +118,8 @@ class Reader(object):
 		self._dataEntryCount = dataEntryCount
 		log.info(f"Found {len(self._mdd)} mdd files with {dataEntryCount} entries")
 
-		log.debug("mdx.header = " + pformat(self._mdx.header))
+		# from pprint import pformat
+		# log.debug("mdx.header = " + pformat(self._mdx.header))
 		# for key, value in self._mdx.header.items():
 		# 	key = key.lower()
 		# 	self._glos.setInfo(key, value)
@@ -153,7 +160,7 @@ class Reader(object):
 
 		log.info(
 			"extracting links done, "
-			f"sizeof(linksDict)={sys.getsizeof(linksDict)}"
+			f"sizeof(linksDict)={sys.getsizeof(linksDict)}",
 		)
 		log.info(f"{wordCount = }")
 		self._linksDict = linksDict
@@ -224,7 +231,7 @@ class Reader(object):
 					fname = toStr(b_fname)
 					fname = fname.replace("\\", os.sep).lstrip(os.sep)
 					yield glos.newDataEntry(fname, b_data)
-			except Exception as e:
+			except Exception:
 				log.exception(f"Error reading {mdd.filename}")
 		self._mdd = []
 

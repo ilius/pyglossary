@@ -1,7 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
+import os
+import re
 import shutil
+from os.path import isfile, splitext
+from typing import Generator
+
+from pyglossary.core import cacheDir, log, pip
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	BoolOption,
+	FileSizeOption,
+	IntOption,
+	StrOption,
+)
 
 enable = True
 lname = "aard2_slob"
@@ -52,6 +64,7 @@ extraDocs = [
 	),
 ]
 
+
 class Reader(object):
 	depends = {
 		"icu": "PyICU",  # >=1.5
@@ -64,11 +77,6 @@ class Reader(object):
 			'(<a href=[^<>]+?>)',
 			re.I,
 		)
-		try:
-			import icu
-		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install PyICU` to install"
-			raise e
 
 	def close(self):
 		if self._slobObj is not None:
@@ -80,6 +88,11 @@ class Reader(object):
 		self._slobObj = None  # slobObj is instance of slob.Slob class
 
 	def open(self, filename):
+		try:
+			import icu  # noqa
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install PyICU` to install"
+			raise e
 		from pyglossary.plugin_lib import slob
 		self._filename = filename
 		self._slobObj = slob.open(filename)
@@ -226,11 +239,13 @@ class Writer(object):
 		self._resPrefix = ""
 		self._slobWriter = None
 
-	def _slobObserver(self, event: "slob.WriterEvent"):
+	def _slobObserver(
+		self,
+		event: "slob.WriterEvent",  # noqa
+	):
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
 	def _open(self, filename: str, namePostfix: str) -> None:
-		import icu
 		from pyglossary.plugin_lib import slob
 		if isfile(filename):
 			shutil.move(filename, f"{filename}.bak")
@@ -241,13 +256,13 @@ class Writer(object):
 			filename,
 			observer=self._slobObserver,
 			workdir=cacheDir,
-			**kwargs
+			**kwargs,
 		)
 		slobWriter.tag("label", self._glos.getInfo("name") + namePostfix)
 
 	def open(self, filename: str) -> None:
 		try:
-			import icu
+			import icu  # noqa
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install PyICU` to install"
 			raise e
@@ -265,7 +280,7 @@ class Writer(object):
 			self._slobWriter.finalize()
 			self._slobWriter = None
 
-	def addDataEntry(self, entry: "DataEntry") -> None:
+	def addDataEntry(self, entry: "EntryType") -> None:
 		slobWriter = self._slobWriter
 		rel_path = entry.s_word
 		_, ext = splitext(rel_path)
@@ -283,7 +298,7 @@ class Writer(object):
 			return
 		slobWriter.add(content, key, content_type=content_type)
 
-	def addEntry(self, entry: "Entry") -> None:
+	def addEntry(self, entry: "EntryType") -> None:
 		words = entry.l_word
 		b_defi = entry.defi.encode("utf-8")
 		_ctype = self._content_type
@@ -333,7 +348,7 @@ class Writer(object):
 				content_type=_ctype,
 			)
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		file_size_approx = int(self._file_size_approx * 0.95)
 		entryCount = 0
 		sumBlobSize = 0

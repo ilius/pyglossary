@@ -2,11 +2,16 @@
 
 import json
 import re
-from typing import Generator, List, Any
+from typing import Any, Generator, List
 
 from pyglossary import os_utils
-from pyglossary.entry import BaseEntry, Entry
-from pyglossary.plugins.formats_common import BoolOption, StrOption, IntOption
+from pyglossary.glossary_type import GlossaryType
+from pyglossary.plugins.formats_common import (
+	BoolOption,
+	EntryType,
+	IntOption,
+	StrOption,
+)
 
 enable = True
 lname = "yomichan"
@@ -23,7 +28,7 @@ website = (
 )
 optionsProp = {
 	"term_bank_size": IntOption(
-		comment="The number of terms in each term bank json file."
+		comment="The number of terms in each term bank json file.",
 	),
 	"term_from_headword_only": BoolOption(comment=(
 		"If set to true, only create a term for the headword for each entry, "
@@ -184,9 +189,9 @@ class Writer(object):
 		self._glos = glos
 		self._filename = None
 		glos.preventDuplicateWords()
-		# Yomichan technically supports "structured content" that renders to HTML, but
-		# it doesn't seem widely used. So here we also strip HTML formatting for
-		# simplicity.
+		# Yomichan technically supports "structured content" that renders to
+		# HTML, but it doesn't seem widely used. So here we also strip HTML
+		# formatting for simplicity.
 		glos.removeHtmlTagsAll()
 
 	def _getInfo(self, key):
@@ -197,7 +202,8 @@ class Writer(object):
 		return self._glos.author.replace("\n", "<br>")
 
 	def _getDictionaryIndex(self):
-		# Schema: https://github.com/FooSoft/yomichan/blob/master/ext/data/schemas/dictionary-index-schema.json
+		# Schema: https://github.com/FooSoft/yomichan/
+		# blob/master/ext/data/schemas/dictionary-index-schema.json
 		return dict(
 			title=self._getInfo("title"),
 			revision="PyGlossary export",
@@ -224,7 +230,10 @@ class Writer(object):
 			if value and isinstance(value, str):
 				setattr(self, field_name, re.compile(value))
 
-	def _getExpressionsAndReadingFromEntry(self, entry: Entry) -> (List[str], str):
+	def _getExpressionsAndReadingFromEntry(
+		self,
+		entry: "EntryType",
+	) -> "(List[str], str)":
 		term_expressions = list(entry.l_word)
 		if self._alternates_from_word_pattern:
 			for word in entry.l_word:
@@ -276,7 +285,7 @@ class Writer(object):
 
 		return term_expressions, reading
 
-	def _getRuleIdentifiersFromEntry(self, entry: Entry) -> List[str]:
+	def _getRuleIdentifiersFromEntry(self, entry: EntryType) -> List[str]:
 		return [
 			r
 			for p, r in [
@@ -289,13 +298,18 @@ class Writer(object):
 			if p and re.search(p, entry.defi, re.MULTILINE)
 		]
 
-	def _getTermsFromEntry(self, entry: Entry, sequenceNumber: int) -> List[List[Any]]:
+	def _getTermsFromEntry(
+		self,
+		entry: "EntryType",
+		sequenceNumber: int,
+	) -> "List[List[Any]]":
 		termExpressions, reading = self._getExpressionsAndReadingFromEntry(entry)
 		ruleIdentifiers = self._getRuleIdentifiersFromEntry(entry)
 
 		entryTerms = []
 		for expression in termExpressions:
-			# Schema: https://github.com/FooSoft/yomichan/blob/master/ext/data/schemas/dictionary-term-bank-v3-schema.json
+			# Schema: https://github.com/FooSoft/yomichan/
+			# blob/master/ext/data/schemas/dictionary-term-bank-v3-schema.json
 			entryTerms.append([
 				expression,
 				# reading only added if expression contains kanji
@@ -316,7 +330,7 @@ class Writer(object):
 	def finish(self):
 		self._filename = None
 
-	def write(self) -> Generator[None, BaseEntry, None]:
+	def write(self) -> "Generator[None, EntryType, None]":
 		with os_utils.indir(self._filename, create=True):
 			with open("index.json", "w", encoding="utf-8") as f:
 				json.dump(self._getDictionaryIndex(), f, ensure_ascii=False)
@@ -341,13 +355,13 @@ class Writer(object):
 				termBankIndex += 1
 
 			while True:
+				entry: EntryType
 				entry = yield
 				if entry is None:
 					break
 
 				if entry.isData():
 					continue
-				entry: Entry
 
 				terms.extend(self._getTermsFromEntry(entry, entryCount))
 				entryCount += 1

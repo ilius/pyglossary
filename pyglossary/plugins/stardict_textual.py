@@ -1,7 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
+from typing import Generator, Iterator, List, Tuple
+
+from pyglossary.compression import (
+	compressionOpen,
+	stdCompressions,
+)
+from pyglossary.core import log, pip
+from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.html_utils import unescape_unicode
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+)
 
 enable = True
 lname = "stardict_textual"
@@ -68,8 +79,6 @@ class Reader(object):
 			e.msg += f", run `{pip} install lxml` to install"
 			raise e
 
-		encoding = self._encoding
-
 		self._filename = filename
 		cfile = compressionOpen(filename, mode="rb")
 
@@ -84,7 +93,7 @@ class Reader(object):
 		context = ET.iterparse(
 			cfile,
 			events=("end",),
-			tag=f"info",
+			tag="info",
 		)
 		for action, elem in context:
 			self.setMetadata(elem)
@@ -138,7 +147,7 @@ class Reader(object):
 			defis.append(_defi)
 		return "\n<hr>\n".join(defis), "h"
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -147,7 +156,7 @@ class Reader(object):
 		context = ET.iterparse(
 			self._file,
 			events=("end",),
-			tag=f"article",
+			tag="article",
 		)
 		for action, elem in context:
 			words = []
@@ -225,7 +234,6 @@ class Writer(object):
 
 	def writeInfo(self, maker, pretty: bool):
 		from lxml import etree as ET
-		from lxml import builder
 
 		glos = self._glos
 
@@ -265,11 +273,10 @@ class Writer(object):
 		# 	)
 		# )
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
-		from lxml import etree as ET
+	def write(self) -> "Generator[None, EntryType, None]":
 		from lxml import builder
+		from lxml import etree as ET
 
-		glos = self._glos
 		_file = self._file
 		encoding = self._encoding
 		maker = builder.ElementMaker()
@@ -296,7 +303,7 @@ class Writer(object):
 				article.append(maker.synonym(alt))
 			article.append(maker.definition(
 				ET.CDATA(entry.defi),
-				**{"type": entry.defiFormat})
+				**{"type": entry.defiFormat}),
 			)
 			ET.indent(article, space="")
 			articleStr = ET.tostring(

@@ -1,8 +1,10 @@
-import re
 import os
+import re
+
+from pyglossary.plugins.formats_common import log
+
 from .pinyin import convert
 from .summarize import summarize
-from pyglossary.plugins.formats_common import pip, log
 
 line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
 
@@ -34,7 +36,7 @@ def make_entry(trad, simp, pinyin, eng, traditional_title):
 	names = [
 		trad if traditional_title else simp,
 		simp if traditional_title else trad,
-		pinyin
+		pinyin,
 	] + eng_names
 	article = render_article(trad, simp, pinyin, eng, traditional_title)
 	return names, article
@@ -56,8 +58,9 @@ def colorize(hf, syllables, tones):
 
 
 def render_article(trad, simp, pinyin, eng, traditional_title):
-	from lxml import etree as ET
 	from io import BytesIO
+
+	from lxml import etree as ET
 
 	# pinyin_tones = [convert(syl) for syl in pinyin.split()]
 	pinyin_list = []

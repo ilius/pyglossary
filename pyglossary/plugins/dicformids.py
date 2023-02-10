@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+import os
 import re
+from os.path import join
+from typing import List
 
+from pyglossary.core import log
+from pyglossary.flags import ALWAYS
+from pyglossary.glossary_type import EntryType
 from pyglossary.plugins.tabfile import Reader as TabfileReader
-from pyglossary.plugins.formats_common import *
 
 lname = "dicformids"
 enable = True
@@ -184,11 +189,11 @@ class Writer(object):
 		dicMaxSize = 0
 		indexData = []
 
-		def writeBucket(dicIndex: int, entryList: "List[BaseEntry]"):
+		def writeBucket(dicIndex: int, entryList: "List[EntryType]"):
 			nonlocal dicMaxSize
 			log.debug(
 				f"{dicIndex=}, {len(entryList)=}"
-				f", {dicMaxSize=}"
+				f", {dicMaxSize=}",
 			)
 			dicFp = open(join(
 				self._dirname,
@@ -233,7 +238,7 @@ class Writer(object):
 
 		langSearchListFp = open(join(
 			self._dirname,
-			f"searchlist{self.directoryPostfix}.csv"
+			f"searchlist{self.directoryPostfix}.csv",
 		), mode="w", newline="\n", encoding="utf-8")
 
 		langSearchListFp.write(f"{indexData[0][0]}\t{self.indexIndex}\n")

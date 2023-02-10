@@ -17,9 +17,23 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from pyglossary.plugins.formats_common import *
 import csv
+import os
+from os.path import isdir, join
+from typing import Generator, Iterator
 
+from pyglossary.compression import (
+	compressionOpen,
+	stdCompressions,
+)
+from pyglossary.core import log
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+	NewlineOption,
+	Option,
+)
 
 enable = True
 lname = "csv"
@@ -175,7 +189,7 @@ class Reader(object):
 			),
 		)
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if not self._csvReader:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -238,7 +252,7 @@ class Writer(object):
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		resources = self._resources
 		add_defi_format = self._add_defi_format
 		glos = self._glos

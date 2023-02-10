@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
 import html
 
 enable = True
@@ -15,6 +14,7 @@ website = (
 	"https://github.com/digitalprk/dicrs",
 	"@digitalprk/dicrs",
 )
+
 
 class Reader(object):
 	def __init__(self, glos):
@@ -40,7 +40,7 @@ class Reader(object):
 	def __iter__(self):
 		self._cur.execute(
 			"select word, definition from dictionary"
-			" order by word"
+			" order by word",
 		)
 		# iteration over self._cur stops after one entry
 		# and self._cur.fetchone() returns None

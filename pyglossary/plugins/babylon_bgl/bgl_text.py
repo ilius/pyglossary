@@ -21,9 +21,9 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import re
+
 from pyglossary.plugins.formats_common import log
 from pyglossary.xml_utils import xml_escape
-
 
 u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.I)
 u_pat_html_entry_key = re.compile("(?:&#x|&#|&)(\\w+);", re.I)
@@ -83,7 +83,7 @@ def replaceHtmlEntryNoEscapeCB(u_match):
 			unknownHtmlEntries.add(u_text)
 			u_res = u_text
 	else:
-		raise ArgumentError()
+		raise ValueError(f"{u_text[0] =}")
 	return u_res
 
 
@@ -312,7 +312,7 @@ def stripDollarIndexes(b_word):
 			"""
 			log.debug(
 				f"stripDollarIndexes({b_word}):\n"
-				f"second $ is followed by non-space"
+				f"second $ is followed by non-space",
 			)
 			pass
 		b_word_main += b_word[i:d0]

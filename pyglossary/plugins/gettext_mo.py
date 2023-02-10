@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
-
 enable = False
 lname = "gettext_mo"
 format = "GettextMo"

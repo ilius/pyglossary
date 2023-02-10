@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
+from typing import Generator, Iterator
+
+from pyglossary.glossary_type import EntryType, GlossaryType
 
 enable = False
 lname = "testformat"
@@ -49,7 +51,7 @@ class Reader(object):
 		# if you need to clean up temp files, do it here
 		pass
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		# the easiest and simplest way to implement an Iterator is
 		# by writing a generator, by calling: yield glos.newEntry(word, defi)
 		# inside a loop (typically iterating over a file object for text file)
@@ -73,9 +75,9 @@ class Writer(object):
 	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		glos = self._glos
-		filename = self._filename
+		filename = self._filename  # noqa
 		# log.info(f"some useful message")
 		while True:
 			entry = yield
@@ -84,15 +86,15 @@ class Writer(object):
 			if entry.isData():
 				# can save it with entry.save(directory)
 				continue
-			word = entry.s_word
-			defi = entry.defi
+			word = entry.s_word  # noqa
+			defi = entry.defi  # noqa
 			# here write word and defi to the output file (depending on
 			# your format)
 		# here read info from Glossaey object
-		name = glos.getInfo("name")
-		desc = glos.getInfo("description")
-		author = glos.author
-		copyright = glos.getInfo("copyright")
+		name = glos.getInfo("name")  # noqa
+		desc = glos.getInfo("description")  # noqa
+		author = glos.author  # noqa
+		copyright = glos.getInfo("copyright")  # noqa
 		# if an info key doesn't exist, getInfo returns empty string
 		# now write info to the output file (depending on your output format)
 

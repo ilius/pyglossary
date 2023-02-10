@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
+from typing import Generator
+
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import BoolOption
+from pyglossary.text_utils import replaceStringTable
 
 enable = True
 lname = "dict_org_source"
@@ -37,7 +41,7 @@ class Writer(object):
 		# TODO: add another bool flag to only remove html tags that are not
 		# supported by GtkTextView
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_writer import writeTxt
 		yield from writeTxt(
 			self._glos,

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
 import html
 
 enable = True
@@ -41,7 +40,7 @@ class Reader(object):
 
 	def __iter__(self):
 		self._cur.execute(
-			"select _id, contents from NEW_TABLE where _id is not null"
+			"select _id, contents from NEW_TABLE where _id is not null",
 		)
 		# FIXME: iteration over self._cur stops after one entry
 		# and self._cur.fetchone() returns None

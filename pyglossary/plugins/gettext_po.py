@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
+import os
+from os.path import isdir
+from typing import Generator
+
+from pyglossary.core import log, pip
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	BoolOption,
+)
 
 enable = True
 lname = "gettext_po"
@@ -130,7 +138,7 @@ class Writer(object):
 			self._file.close()
 			self._file = None
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		try:
 			from polib import escape as po_escape
 		except ModuleNotFoundError as e:
@@ -138,6 +146,7 @@ class Writer(object):
 			raise e
 		resources = self._resources
 		_file = self._file
+		filename = self._filename
 		while True:
 			entry = yield
 			if entry is None:
@@ -148,5 +157,5 @@ class Writer(object):
 				continue
 			_file.write(
 				f"msgid {po_escape(entry.s_word)}\n"
-				f"msgstr {po_escape(entry.defi)}\n\n"
+				f"msgstr {po_escape(entry.defi)}\n\n",
 			)

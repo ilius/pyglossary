@@ -20,14 +20,16 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from .bgl_language import languageByCode
-from .bgl_charset import charsetByCode
+from typing import Any, Callable, Optional
 
-from pyglossary.plugins.formats_common import log
 import pyglossary.gregorian as gregorian
+from pyglossary.plugins.formats_common import log
 from pyglossary.text_utils import (
 	uintFromBytes,
 )
+
+from .bgl_charset import charsetByCode
+from .bgl_language import languageByCode
 
 
 class InfoItem(object):

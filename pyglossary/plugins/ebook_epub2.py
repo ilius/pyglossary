@@ -18,9 +18,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import Any, Dict
 
-from pyglossary.plugins.formats_common import *
 from pyglossary.ebook_base import EbookWriter
+from pyglossary.flags import ALWAYS
+from pyglossary.option import (
+	BoolOption,
+	IntOption,
+	StrOption,
+)
 
 enable = True
 lname = "epub2"

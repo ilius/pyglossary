@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import os
 import re
-from pyglossary.plugins.formats_common import *
-from pyglossary.file_utils import fileCountLines
+from os.path import isdir, splitext
+from typing import Generator, Iterator
+
+from pyglossary.core import log
+from pyglossary.flags import DEFAULT_NO
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import BoolOption
 from pyglossary.plugin_lib.dictdlib import DictDB
 
 enable = True
@@ -55,7 +61,7 @@ def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 	if subprocess.call(["/usr/sbin/dictdconfig", "-w"]) != 0:
 		log.error(
 			"failed to update /var/lib/dictd/db.list file"
-			", try manually running: sudo /usr/sbin/dictdconfig -w"
+			", try manually running: sudo /usr/sbin/dictdconfig -w",
 		)
 
 	log.info("don't forget to restart dictd server")
@@ -76,7 +82,6 @@ class Reader(object):
 		)
 
 	def open(self, filename: str) -> None:
-		import gzip
 		if filename.endswith(".index"):
 			filename = filename[:-6]
 		self._filename = filename
@@ -110,7 +115,7 @@ class Reader(object):
 			return 0
 		return len(self._dictdb.indexentries)
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self._dictdb is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 		dictdb = self._dictdb
@@ -154,7 +159,7 @@ class Writer(object):
 		self._dictdb = DictDB(filename, "write", 1)
 		self._filename = filename
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		dictdb = self._dictdb
 		while True:
 			entry = yield

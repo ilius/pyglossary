@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
 import html
 
 enable = True
@@ -50,7 +49,7 @@ class Reader(object):
 
 		self._cur.execute(
 			"select word, searchword, root, meaning from WordsTable"
-			" order by id"
+			" order by id",
 		)
 		# FIXME: iteration over self._cur stops after one entry
 		# and self._cur.fetchone() returns None

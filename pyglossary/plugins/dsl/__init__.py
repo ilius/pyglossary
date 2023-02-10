@@ -18,16 +18,24 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-import re
 import html
 import html.entities
+import re
+from typing import Iterator
 from xml.sax.saxutils import escape, quoteattr
 
-from pyglossary.plugins.formats_common import *
+from pyglossary.compression import (
+	compressionOpen,
+	stdCompressions,
+)
+from pyglossary.core import log
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+)
 from pyglossary.text_reader import TextFilePosWrapper
 
-from . import layer
-from . import tag
 from .main import (
 	DSLParser,
 )
@@ -47,8 +55,12 @@ website = (
 )
 optionsProp = {
 	"encoding": EncodingOption(),
-	"audio": BoolOption(comment="Enable audio objects"),
-	"only_fix_markup": BoolOption(comment="Only fix markup, without tag conversion"),
+	"audio": BoolOption(
+		comment="Enable audio objects",
+	),
+	"only_fix_markup": BoolOption(
+		comment="Only fix markup, without tag conversion",
+	),
 }
 
 # ABBYY is a Russian company
@@ -56,8 +68,6 @@ optionsProp = {
 # http://lingvo.helpmax.net/en/troubleshooting/dsl-compiler/compiling-a-dictionary/
 # https://www.abbyy.com/news/abbyy-lingvo-80-dictionaries-to-suit-every-taste/
 
-
-__all__ = ["read"]
 
 # {{{
 # modified to work around codepoints that are not supported by `unichr`.
@@ -115,18 +125,18 @@ shortcuts = [
 	# canonical: m > * > ex > i > c
 	(
 		"[m1](?:-{2,})[/m]",
-		"<hr/>"
+		"<hr/>",
 	),
 	(
 		"[m(\\d)](?:-{2,})[/m]",
-		"<hr style=\"margin-left:\\g<1>em\"/>"
+		"<hr style=\"margin-left:\\g<1>em\"/>",
 	),
 ]
 
 shortcuts = [
 	(
 		re.compile(repl.replace("[", "\\[").replace("*]", "\\*]")),
-		sub
+		sub,
 	) for (repl, sub) in shortcuts
 ]
 
@@ -214,7 +224,7 @@ def _clean_tags(line, audio):
 	# remove t tags
 	line = line.replace(
 		"[t]",
-		"<font face=\"Helvetica\" class=\"dsl_t\">"
+		"<font face=\"Helvetica\" class=\"dsl_t\">",
 	)
 	line = line.replace("[/t]", "</font>")
 
@@ -380,7 +390,7 @@ class Reader(object):
 					return testEncoding
 		raise ValueError(
 			"Could not detect encoding of DSL file"
-			", specify it by: --read-options encoding=ENCODING"
+			", specify it by: --read-options encoding=ENCODING",
 		)
 
 	def setInfo(self, key, value):
@@ -402,7 +412,7 @@ class Reader(object):
 		for line in self._file:
 			yield line
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		current_key = ""
 		current_key_alters = []
 		current_text = []

@@ -19,8 +19,8 @@
 # GNU General Public License for more details.
 
 import logging
-import re
 import string
+from typing import Any, Callable, Iterator, List
 
 from . import _normalize
 
@@ -54,7 +54,7 @@ def quote_string(value: str, BeautifulSoup) -> str:
 	if BeautifulSoup:
 		return BeautifulSoup.dammit.EntitySubstitution.substitute_xml(
 			value,
-			make_quoted_attribute=True
+			make_quoted_attribute=True,
 		)
 
 	return '"' + value.replace(">", "&gt;").replace('"', "&quot;") + '"'

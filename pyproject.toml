@@ -1,0 +1,66 @@
+[tool.ruff]
+# Enable Pyflakes `E` and `F` codes by default.
+select = [
+    "E", # pycodestyle Error
+    "W", # pycodestyle Warning
+    "F", # Pyflakes
+    "YTT", # flake8-2020
+    "TID", # flake8-tidy-imports
+    "I", # isort: unsorted-imports, missing-required-import
+    "COM", # flake8-commas
+    # "B", # flake8-bugbear
+    # "C4", # flake8-comprehensions
+    # "C90", # mccabe: C901: {name} is too complex ({complexity})
+    # "S", # flake8-bandit
+    # "N", # pep8-naming
+    # "D", # pydocstyle
+    # "UP", # pyupgrade
+    # "A", # flake8-builtins
+    # "ANN", # flake8-annotations
+    # "BLE", # flake8-blind-except
+    # "FBT", # flake8-boolean-trap
+    # "DTZ", # flake8-datetimez
+]
+ignore = [
+    "E402", # Module level import not at top of file
+]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = [
+    "I",
+    "COM",
+    # since which Python is comma after **kwargs allowd?
+]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "venv",
+]
+per-file-ignores = {}
+
+# Same as Black.
+line-length = 88
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+target-version = "py39"
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10

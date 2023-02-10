@@ -1,4 +1,5 @@
-from pyglossary.plugins.formats_common import *
+from pyglossary.core import log
+from pyglossary.option import EncodingOption, StrOption
 from pyglossary.text_reader import TextGlossaryReader
 
 enable = True
@@ -18,7 +19,7 @@ optionsProp = {
 	"encoding": EncodingOption(),
 	"headword_separator": StrOption(
 		comment="separator for headword and alternates",
-	)
+	),
 }
 
 
@@ -50,7 +51,7 @@ class Reader(TextGlossaryReader):
 		for line in defi.split("\n"):
 			if not line.startswith("##:"):
 				if lastKey:
-					glos.setInfo(key, f"{glos.getInfo(lastKey)}\n{line}")
+					glos.setInfo(word, f"{glos.getInfo(lastKey)}\n{line}")
 				continue
 
 			parts = line[3:].split(":")

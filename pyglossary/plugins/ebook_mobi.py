@@ -22,11 +22,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
 from datetime import datetime
+from os.path import join
+from typing import List
 
-from pyglossary.plugins.formats_common import *
+from pyglossary.core import log
 from pyglossary.ebook_base import EbookWriter
+from pyglossary.flags import DEFAULT_YES
+from pyglossary.glossary_type import EntryType
 from pyglossary.langs import Lang
+from pyglossary.option import (
+	BoolOption,
+	FileSizeOption,
+	IntOption,
+	StrOption,
+)
 
 enable = True
 lname = "mobi"
@@ -90,7 +101,7 @@ extraDocs = [
 	(
 		"Other Requirements",
 		"Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen)"
-		" for creating Mobipocket e-books."
+		" for creating Mobipocket e-books.",
 	),
 ]
 
@@ -311,7 +322,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		add_group(state)
 
 	def write(self):
-		import subprocess, shutil
+		import shutil
+		import subprocess
 
 		filename = self._filename
 		kindlegen_path = self._kindlegen_path
@@ -325,14 +337,17 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		if not kindlegen_path:
 			kindlegen_path = shutil.which("kindlegen")
 		if not kindlegen_path:
-			log.warning(f"Not running kindlegen, the raw files are located in {filename}")
+			log.warning(
+				"Not running kindlegen, "
+				f"the raw files are located in {filename}",
+			)
 			log.warning(
 				"Provide KindleGen path with: "
-				"--write-options 'kindlegen_path=...'"
+				"--write-options 'kindlegen_path=...'",
 			)
 			return
 
-		name = self._glos.getInfo("name")
+		# name = self._glos.getInfo("name")
 
 		log.info(f"Creating .mobi file with kindlegen, using {kindlegen_path!r}")
 		opf_path_abs = join(filename, "OEBPS", "content.opf")
@@ -340,7 +355,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			[kindlegen_path, opf_path_abs, "-gen_ff_mobi7", "-o", "content.mobi"],
 			stdout=subprocess.PIPE,
 			stdin=subprocess.PIPE,
-			stderr=subprocess.PIPE
+			stderr=subprocess.PIPE,
 		)
 		output = proc.communicate()
 		log.info(output[0].decode("utf-8"))

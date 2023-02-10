@@ -21,7 +21,6 @@ internal stuff. Tag class
 
 from collections import namedtuple
 
-
 Tag = namedtuple("Tag", ["opening", "closing"])
 
 Tag.__repr__ = lambda tag: \

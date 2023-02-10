@@ -1,5 +1,11 @@
 import re
-from pyglossary.plugins.formats_common import *
+
+from pyglossary.core import log
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+)
+
 from . import conv
 
 enable = True
@@ -73,7 +79,7 @@ class Reader:
 		if self.file is None:
 			raise RuntimeError(
 				"CC-CEDICT: tried to iterate over entries " +
-				"while reader is not open"
+				"while reader is not open",
 			)
 		for line in self.file:
 			if line.startswith("#"):

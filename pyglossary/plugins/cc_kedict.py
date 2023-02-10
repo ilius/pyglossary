@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-from pyglossary.plugins.formats_common import *
-from pyglossary.text_reader import TextGlossaryReader
 from io import BytesIO
-from os.path import dirname
+from os.path import isdir, join
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+from pyglossary.core import log, pip
+from pyglossary.glossary_type import GlossaryType
+from pyglossary.text_reader import TextGlossaryReader
 
 enable = True
 lname = "cc_kedict"
@@ -69,15 +72,13 @@ class YamlReader(TextGlossaryReader):
 
 	def _makeList(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "lxml.etree.htmlfile",  # noqa
 		input_objects: "List[Any]",
 		processor: "Callable",
 		single_prefix=None,
-		skip_single=True
+		skip_single=True,
 	):
 		""" Wrap elements into <ol> if more than one element """
-		from lxml import etree as ET
-
 		if not input_objects:
 			return
 
@@ -95,7 +96,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processExample(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "lxml.etree.htmlfile",  # noqa
 		exampleDict: "Dict",
 		count: int,
 	):
@@ -121,7 +122,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processDef(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "lxml.etree.htmlfile",  # noqa
 		defDict: "Dict",
 		count: int,
 	):
@@ -148,7 +149,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processNote(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "lxml.etree.htmlfile",  # noqa
 		note: str,
 		count: int,
 	):
@@ -156,7 +157,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processEntry(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "lxml.etree.htmlfile",  # noqa
 		edict: "Dict",
 	):
 		from lxml import etree as ET
@@ -288,6 +289,12 @@ class Reader(object):
 		return 0
 
 	def open(self, filename: str) -> None:
+		try:
+			from lxml import etree as ET  # noqa
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install lxml` to install"
+			raise e
+
 		if isdir(filename):
 			filename = join(filename, "kedict.yml")
 		self._filename = filename

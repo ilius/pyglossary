@@ -22,13 +22,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from pyglossary.plugins.formats_common import *
-from pathlib import Path
-import unicodedata
 import re
-from pickle import dumps, loads
+import unicodedata
 from gzip import compress, decompress
 from operator import itemgetter
+from pathlib import Path
+from pickle import dumps, loads
+from typing import Generator
+
+from pyglossary.core import log, pip
+from pyglossary.flags import NEVER
+from pyglossary.glossary_type import EntryType
+from pyglossary.os_utils import indir
 
 enable = True
 lname = "kobo"
@@ -97,11 +102,6 @@ class Writer:
 			re.DOTALL,
 		)
 		# img tag has no closing
-		try:
-			import marisa_trie
-		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install marisa-trie` to install"
-			raise e
 
 	def get_prefix(self, word: str) -> str:
 		if not word:
@@ -137,9 +137,7 @@ class Writer:
 	def write_groups(self):
 		import gzip
 		from collections import OrderedDict
-		from pyglossary.entry import Entry
 
-		glos = self._glos
 		dataEntryCount = 0
 
 		htmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
@@ -153,7 +151,7 @@ class Writer:
 			htmlContents += "</html>"
 			log.trace(
 				f"writeGroup: {lastPrefix!r}, "
-				f"{group_fname!r}, count={groupCounter}"
+				f"{group_fname!r}, count={groupCounter}",
 			)
 			with gzip.open(group_fname + ".html", mode="wb") as gzipFile:
 				gzipFile.write(htmlContents.encode("utf-8"))
@@ -191,14 +189,14 @@ class Writer:
 						headword,
 						variants,
 						defi,
-					)))
+					))),
 				))
 			del entry
 
-		log.info(f"Kobo: sorting entries...")
+		log.info("Kobo: sorting entries...")
 		data.sort(key=itemgetter(0))
 
-		log.info(f"Kobo: writing entries...")
+		log.info("Kobo: writing entries...")
 
 		lastPrefix = ""
 		for prefix, row in data:
@@ -223,15 +221,20 @@ class Writer:
 		if dataEntryCount > 0:
 			log.warning(
 				f"ignored {dataEntryCount} files (data entries)"
-				" and replaced '<img ...' tags in definitions with placeholders"
+				" and replaced '<img ...' tags in definitions with placeholders",
 			)
 
 		self._words = allWords
 
 	def open(self, filename: str) -> None:
+		try:
+			import marisa_trie  # noqa
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install marisa-trie` to install"
+			raise e
 		self._filename = filename
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		with indir(self._filename, create=True):
 			yield from self.write_groups()
 

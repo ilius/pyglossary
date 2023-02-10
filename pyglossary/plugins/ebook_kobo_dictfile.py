@@ -21,9 +21,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from pyglossary.plugins.formats_common import *
-from pyglossary.text_reader import TextGlossaryReader
+import os
+from os.path import isdir
+from typing import Generator
+
+from pyglossary.core import pip
+from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.image_utils import extractInlineHtmlImages
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+)
+from pyglossary.text_reader import TextGlossaryReader
 
 enable = True
 lname = "kobo_dictfile"
@@ -67,7 +76,7 @@ class Reader(TextGlossaryReader):
 
 	def open(self, filename: str) -> None:
 		try:
-			import mistune
+			import mistune  # noqa
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install mistune` to install"
 			raise e
@@ -164,7 +173,7 @@ class Writer(object):
 
 	def write(
 		self,
-	) -> "Generator[None, BaseEntry, None]":
+	) -> "Generator[None, EntryType, None]":
 		fileObj = self._file
 		resDir = self._resDir
 		while True:

@@ -13,19 +13,23 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-from typing import Tuple, Match, Dict
 
-from pyglossary.plugins.formats_common import *
-
-from struct import unpack
-from zlib import decompress
+import re
 from datetime import datetime
+from os.path import isdir, isfile, join, split
+from struct import unpack
+from typing import Dict, Match, Tuple
+from zlib import decompress
+
+from pyglossary.core import log, pip
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import BoolOption
 
 enable = True
 lname = "appledict_bin"
 format = "AppleDictBin"
 description = "AppleDict Binary"
-extensions = (".dictionary", ".data",)
+extensions = (".dictionary", ".data")
 extensionCreate = ""
 singleFile = True
 kind = "binary"
@@ -62,20 +66,9 @@ class Reader(object):
 		self._buf = ""
 		self._defiFormat = "m"
 		self._entriesOffset = OFFSET_FILE_START
-		self._re_link = re.compile(f'<a [^<>]*>')
+		self._re_link = re.compile('<a [^<>]*>')
 		self._titleById = {}
 		self._wordCount = 0
-
-		try:
-			from lxml import etree
-		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e
-		try:
-			import biplist
-		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install biplist` to install"
-			raise e
 
 	def sub_link(self, m: "Match"):
 		from lxml.html import fromstring, tostring
@@ -117,6 +110,16 @@ class Reader(object):
 
 	def open(self, filename: str) -> None:
 		from os.path import dirname
+		try:
+			from lxml import etree  # noqa
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install lxml` to install"
+			raise e
+		try:
+			import biplist  # noqa
+		except ModuleNotFoundError as e:
+			e.msg += f", run `{pip} install biplist` to install"
+			raise e
 
 		self._defiFormat = "h" if self._html else "m"
 
@@ -139,7 +142,7 @@ class Reader(object):
 		if not isdir(contentsPath):
 			raise IOError(
 				f"{contentsPath} is not a folder, "
-				"Please provide 'Contents/' folder of the dictionary"
+				"Please provide 'Contents/' folder of the dictionary",
 			)
 
 		infoPlistPath = join(contentsPath, "Info.plist")
@@ -150,7 +153,7 @@ class Reader(object):
 		else:
 			raise IOError(
 				"could not find Body.data file, "
-				"Please provide 'Contents/' folder of the dictionary"
+				"Please provide 'Contents/' folder of the dictionary",
 			)
 
 		self.setMetadata(infoPlistPath)
@@ -165,7 +168,7 @@ class Reader(object):
 		dt = datetime.now() - t0
 		log.info(
 			f"Reading entry IDs took {int(dt.total_seconds() * 1000)} ms, "
-			f"number of entries: {self._wordCount}"
+			f"number of entries: {self._wordCount}",
 		)
 
 	def setMetadata(self, infoPlistPath: str):
@@ -173,8 +176,8 @@ class Reader(object):
 
 		if not isfile(infoPlistPath):
 			raise IOError(
-				f"Could not find 'Info.plist' file, "
-				"Please provide 'Contents/' folder of the dictionary"
+				"Could not find 'Info.plist' file, "
+				"Please provide 'Contents/' folder of the dictionary",
 			)
 
 		metadata: Dict
@@ -188,7 +191,7 @@ class Reader(object):
 			except Exception as e:
 				raise IOError(
 					"'Info.plist' file is malformed, "
-					f"Please provide 'Contents/' with a correct 'Info.plist'. {e}"
+					f"Please provide 'Contents/' with a correct 'Info.plist'. {e}",
 				)
 
 		self._glos.setInfo(
@@ -252,7 +255,10 @@ class Reader(object):
 			raise e
 		return chunkSize, plus
 
-	def _getDefi(self, entryElem: "Element") -> str:
+	def _getDefi(
+		self,
+		entryElem: "lxml.etree.Element",  # noqa
+	) -> str:
 		from lxml import etree
 
 		if not self._html:
@@ -293,7 +299,7 @@ class Reader(object):
 		pos += chunkSize
 		return entryBytes, pos
 
-	def _readEntry(self, pos: int) -> "Tuple[BaseEntry, int]":
+	def _readEntry(self, pos: int) -> "Tuple[EntryType, int]":
 		"""
 			returns (entry, pos)
 		"""
@@ -308,7 +314,7 @@ class Reader(object):
 			entryRoot = etree.fromstring(entryFull)
 		except etree.XMLSyntaxError as e:
 			log.error(
-				f"{pos=}, len(buf)={len(self._buf)}, {entryFull=}"
+				f"{pos=}, len(buf)={len(self._buf)}, {entryFull=}",
 			)
 			raise e
 		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)

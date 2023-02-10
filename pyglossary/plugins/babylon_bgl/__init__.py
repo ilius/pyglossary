@@ -16,9 +16,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from pyglossary.plugins.formats_common import *
-from .bgl_reader import BglReader as Reader
-from .bgl_reader import optionsProp
+from .bgl_reader import BglReader as Reader  # noqa
+from .bgl_reader import optionsProp  # noqa
 
 enable = True
 lname = "babylon_bgl"

@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
+from typing import Generator, List, Optional
+
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	BoolOption,
+	EncodingOption,
+	ListOption,
+	NewlineOption,
+)
 
 enable = True
 lname = "sql"
@@ -69,12 +77,12 @@ class Writer(object):
 			fileObj.write(
 				"CREATE TABLE dbinfo_extra ("
 				"\'id\' INTEGER PRIMARY KEY NOT NULL, "
-				"\'name\' TEXT UNIQUE, \'value\' TEXT);\n"
+				"\'name\' TEXT UNIQUE, \'value\' TEXT);\n",
 			)
 
 		fileObj.write(
 			"CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, " +
-			"\'w\' TEXT, \'m\' TEXT);\n"
+			"\'w\' TEXT, \'m\' TEXT);\n",
 		)
 
 		if self._transaction:
@@ -88,7 +96,7 @@ class Writer(object):
 				value = value.replace("\'", "\'\'")
 				fileObj.write(
 					f"INSERT INTO dbinfo_extra VALUES({index+1}, "
-					f"\'{key}\', \'{value}\');\n"
+					f"\'{key}\', \'{value}\');\n",
 				)
 
 	def _getInfoKeys(self):
@@ -107,9 +115,7 @@ class Writer(object):
 			"description",
 		]
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
-		glos = self._glos
-
+	def write(self) -> "Generator[None, EntryType, None]":
 		newline = self._newline
 
 		fileObj = self._file
@@ -129,7 +135,7 @@ class Writer(object):
 			defi = defi.replace("\'", "\'\'")\
 				.replace("\r", "").replace("\n", newline)
 			fileObj.write(
-				f"INSERT INTO word VALUES({i+1}, \'{word}\', \'{defi}\');\n"
+				f"INSERT INTO word VALUES({i+1}, \'{word}\', \'{defi}\');\n",
 			)
 			i += 1
 		if self._transaction:

@@ -1,8 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.plugins.formats_common import *
-from pyglossary.html_utils import unescape_unicode
 from io import BytesIO
+from typing import Iterator
+
+from pyglossary.compression import (
+	compressionOpen,
+	stdCompressions,
+)
+from pyglossary.core import log, pip
+from pyglossary.glossary_type import (
+	EntryType,
+	GlossaryType,
+)
+from pyglossary.html_utils import unescape_unicode
 
 enable = True
 lname = "iupac_goldbook"
@@ -67,7 +77,7 @@ class Reader(object):
 		context = ET.iterparse(
 			_file,
 			events=("end",),
-			tag=f"entry",
+			tag="entry",
 		)
 		termByCode = {}
 		for action, elem in context:
@@ -95,7 +105,10 @@ class Reader(object):
 		self.setGlosInfo("doi", header.find("./doi").text)
 		self.setGlosInfo("creationTime", header.find("./accessdate").text)
 
-	def tostring(self, elem: "lxml.etree.Element") -> str:
+	def tostring(
+		self,
+		elem: "lxml.etree.Element",  # noqa
+	) -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,
@@ -107,8 +120,8 @@ class Reader(object):
 		from lxml import etree as ET
 		elemName = elem.xpath('name(/*)')
 		resultStr = ''
-		for e in elem.xpath('/'+ elemName + '/node()'):
-			if(isinstance(e, str) ):
+		for e in elem.xpath('/' + elemName + '/node()'):
+			if isinstance(e, str):
 				resultStr = resultStr + ''
 			else:
 				resultStr = resultStr + ET.tostring(e, encoding='unicode')
@@ -126,7 +139,7 @@ class Reader(object):
 		term = term.replace("<i>", "").replace("</i>", "")
 		return term
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -137,7 +150,7 @@ class Reader(object):
 		context = ET.iterparse(
 			self._file,
 			events=("end",),
-			tag=f"entry",
+			tag="entry",
 		)
 		for action, elem in context:
 			codeE = elem.find("./code")
@@ -159,8 +172,8 @@ class Reader(object):
 			if code:
 				words.append(code)
 
-			#if _id is not None:
-			#	words.append(f"id{_id}")
+			# if _id is not None:
+			# 	words.append(f"id{_id}")
 
 			identifierTerm = elem.find("./identifiers/term")
 			if identifierTerm is not None and identifierTerm.text:
@@ -200,9 +213,9 @@ class Reader(object):
 					log.warning(f"{term}: {replacedby=}")
 					replacedbyTerm = replacedbyCode
 				defiParts.append(
-					f'Replaced by: <a href="bword://{replacedbyTerm}">{replacedbyTerm}</a>'
+					f'Replaced by: <a href="bword://{replacedbyTerm}">{replacedbyTerm}</a>',
 				)
-			
+
 			relatedList = elem.findall("./related/entry")
 			if relatedList:
 				relatedLinkList = []
@@ -214,7 +227,7 @@ class Reader(object):
 						log.warning(f"{term}: {relatedURL=}")
 						relatedTerm = relatedCode
 					relatedLinkList.append(
-						f'<a href="bword://{relatedTerm}">{relatedTerm}</a>'
+						f'<a href="bword://{relatedTerm}">{relatedTerm}</a>',
 					)
 				defiParts.append("Related: " + ", ".join(relatedLinkList))
 

@@ -7,4 +7,4 @@ be checked.  otherwise, you need to import this module and call
 
 __all__ = ["run", "JingTestError"]
 
-from .main import run, JingTestError
+from .main import JingTestError, run

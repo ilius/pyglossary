@@ -18,17 +18,30 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-import sys
+import io
 import os
-from os.path import abspath, basename
-
-import re
 import pkgutil
 import shutil
+import sys
+from os.path import basename, isdir, join
+from typing import Dict, Generator, Optional
 
-from pyglossary.plugins.formats_common import *
-from ._dict import *
+from pyglossary.core import log, pip
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	BoolOption,
+	DictOption,
+	StrOption,
+)
+from pyglossary.text_utils import toStr
+
 from ._content import prepare_content
+from ._dict import (
+	_normalize,
+	id_generator,
+	indexes_generator,
+	quote_string,
+)
 
 sys.setrecursionlimit(10000)
 
@@ -95,7 +108,7 @@ def loadBeautifulSoup():
 		raise ImportError(
 			f"BeautifulSoup is too old, required at least version 4, "
 			f"{BeautifulSoup.__version__!r} found.\n"
-			f"Please run `{pip} install lxml beautifulsoup4 html5lib`"
+			f"Please run `{pip} install lxml beautifulsoup4 html5lib`",
 		)
 
 
@@ -105,14 +118,14 @@ def abspath_or_None(path):
 
 def write_header(
 	glos: "GlossaryType",
-	toFile: "TextIO",
+	toFile: "io.TextIOBase",
 	front_back_matter: "Optional[str]",
 ) -> None:
 	# write header
 	toFile.write(
 		'<?xml version="1.0" encoding="UTF-8"?>\n'
 		'<d:dictionary xmlns="http://www.w3.org/1999/xhtml" '
-		'xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\n'
+		'xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\n',
 	)
 
 	if front_back_matter:
@@ -139,7 +152,7 @@ def format_default_prefs(default_prefs):
 	if str(default_prefs.get("version", None)) != "1":
 		log.error(
 			"default prefs does not contain {'version': '1'}.  prefs "
-			"will not be persistent between Dictionary.app restarts."
+			"will not be persistent between Dictionary.app restarts.",
 		)
 	return "\n".join(
 		f"\t\t<key>{key}</key>\n\t\t<string>{value}</string>"
@@ -221,7 +234,7 @@ class Writer(object):
 		if not isdir(dirname):
 			os.mkdir(dirname)
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		global BeautifulSoup
 		from pyglossary.xdxf_transform import XdxfTransformer
 
@@ -244,7 +257,7 @@ class Writer(object):
 				log.warning(
 					"clean_html option passed but BeautifulSoup not found. "
 					f"to fix this run "
-					f"`{pip} install lxml beautifulsoup4 html5lib`"
+					f"`{pip} install lxml beautifulsoup4 html5lib`",
 				)
 		else:
 			BeautifulSoup = None
@@ -280,7 +293,7 @@ class Writer(object):
 				defi = entry.defi
 
 				long_title = _normalize.title_long(
-					_normalize.title(word, BeautifulSoup)
+					_normalize.title(word, BeautifulSoup),
 				)
 				if not long_title:
 					continue
@@ -298,7 +311,7 @@ class Writer(object):
 					f'<d:entry id="{_id}" d:title={quoted_title}>\n' +
 					generate_indexes(long_title, alts, content, BeautifulSoup) +
 					content +
-					"\n</d:entry>\n"
+					"\n</d:entry>\n",
 				)
 
 			toFile.write("</d:dictionary>\n")
@@ -316,7 +329,7 @@ class Writer(object):
 				toStr(pkgutil.get_data(
 					__name__,
 					"templates/Makefile",
-				)).format(dict_name=fileNameBase)
+				)).format(dict_name=fileNameBase),
 			)
 
 		copyright = glos.getInfo("copyright")
@@ -324,7 +337,7 @@ class Writer(object):
 			# strip html tags
 			copyright = str(BeautifulSoup.BeautifulSoup(
 				copyright,
-				features="lxml"
+				features="lxml",
 			).text)
 
 		# if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
@@ -355,7 +368,7 @@ class Writer(object):
 					DCSDictionaryDefaultPrefs=format_default_prefs(default_prefs),
 					DCSDictionaryPrefsHTML=basename(prefs_html) if prefs_html else "",
 					DCSDictionaryFrontMatterReferenceID=frontMatterReferenceID,
-				)
+				),
 			)
 
 		if jing:

@@ -22,8 +22,8 @@ exposed API lives here.
 import copy
 import re
 
-from . import tag as _tag
 from . import layer as _layer
+from . import tag as _tag
 
 
 def process_closing_tags(stack, tags):
@@ -254,7 +254,7 @@ class DSLParser(object):
 			openings = "|".join(f"{_[1]}{_[2]}" for _ in self.tags)
 			closings = "|".join(_[1] for _ in self.tags)
 			startswith_tag = re.compile(
-				fr"(?:(?:{openings})|/(?:{closings}))\]"
+				fr"(?:(?:{openings})|/(?:{closings}))\]",
 			)
 			_startswith_tag_cache[self.tags] = startswith_tag
 		for i, chunk in enumerate(re_non_escaped_bracket.split(line)):

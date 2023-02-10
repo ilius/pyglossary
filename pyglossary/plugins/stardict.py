@@ -1,24 +1,34 @@
 # -*- coding: utf-8 -*-
-import sys
 
+import gzip
 import os
+import re
+from collections import Counter
 from os.path import (
 	dirname,
 	getsize,
+	isdir,
+	isfile,
+	join,
 	realpath,
+	split,
+	splitext,
 )
-import re
-import gzip
+from pprint import pformat
 from time import time as now
-from collections import Counter
-from operator import itemgetter
+from typing import Any, Dict, Generator, Iterator, List, Tuple
 
-from pyglossary.text_utils import (
-	uint32ToBytes,
-	uint32FromBytes,
+from pyglossary.core import log
+from pyglossary.flags import ALWAYS, DEFAULT_YES
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
+	BoolOption,
+	StrOption,
 )
-
-from pyglossary.plugins.formats_common import *
+from pyglossary.text_utils import (
+	uint32FromBytes,
+	uint32ToBytes,
+)
 
 enable = True
 lname = "stardict"
@@ -55,7 +65,7 @@ optionsProp = {
 		comment="Convert XDXF entries to HTML",
 	),
 	"xsl": BoolOption(
-		comment="Use XSL transformation"
+		comment="Use XSL transformation",
 	),
 	"unicode_errors": StrOption(
 		values=[
@@ -67,7 +77,7 @@ optionsProp = {
 		comment="What to do with Unicode decoding errors",
 	),
 	"audio_goldendict": BoolOption(
-		comment="Convert audio links for GoldenDict (desktop)"
+		comment="Convert audio links for GoldenDict (desktop)",
 	),
 	"audio_icon": BoolOption(
 		comment="Add glossary's audio icon",
@@ -160,10 +170,10 @@ class BaseSqList(list):
 			for col in columns
 		])
 		self._con.execute(
-			f"CREATE TABLE data ({colDefs})"
+			f"CREATE TABLE data ({colDefs})",
 		)
 		self._con.execute(
-			f"CREATE INDEX sortkey ON data({self._orderBy});"
+			f"CREATE INDEX sortkey ON data({self._orderBy});",
 		)
 		self._con.commit()
 
@@ -204,7 +214,6 @@ class BaseSqList(list):
 			log.error(str(e))
 
 	def __iter__(self):
-		from pickle import loads
 		query = f"SELECT * FROM data ORDER BY {self._orderBy}"
 		self._cur.execute(query)
 		for row in self._cur:
@@ -257,7 +266,7 @@ class Reader(object):
 		"""
 
 	def xdxf_setup(self):
-		from pyglossary.xdxf_transform import XslXdxfTransformer, XdxfTransformer
+		from pyglossary.xdxf_transform import XdxfTransformer, XslXdxfTransformer
 		if self._xsl:
 			self._xdxfTr = XslXdxfTransformer(encoding="utf-8")
 		else:
@@ -313,7 +322,7 @@ class Reader(object):
 	def __len__(self) -> int:
 		if self._wordCount is None:
 			raise RuntimeError(
-				"StarDict: len(reader) called while reader is not open"
+				"StarDict: len(reader) called while reader is not open",
 			)
 		return self._wordCount + len(self._resFileNames)
 
@@ -464,7 +473,7 @@ class Reader(object):
 			defis.append(_defi)
 		return "\n<hr>\n".join(defis), "h"
 
-	def __iter__(self) -> "Iterator[BaseEntry]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		indexData = self._indexData
 		synDict = self._synDict
 		sametypesequence = self._sametypesequence
@@ -565,8 +574,8 @@ class Reader(object):
 			pos += 4
 			if entryIndex >= self._wordCount:
 				log.error(
-					f"Corrupted synonym file. " +
-					f"Word {b_alt} references invalid item"
+					"Corrupted synonym file. " +
+					f"Word {b_alt} references invalid item",
 				)
 				continue
 
@@ -696,7 +705,7 @@ class Writer(object):
 			re.IGNORECASE,
 		)
 		self._re_audio_link = re.compile(
-			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>'
+			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>',
 		)
 
 	def finish(self) -> None:
@@ -736,13 +745,13 @@ class Writer(object):
 			log.debug(f"defiFormat stat: {stat}")
 			if stat:
 				if stat["m"] > 0.97:
-					log.info(f"Auto-selecting sametypesequence=m")
+					log.info("Auto-selecting sametypesequence=m")
 					self._sametypesequence = "m"
 				elif stat["h"] > 0.5:
-					log.info(f"Auto-selecting sametypesequence=h")
+					log.info("Auto-selecting sametypesequence=h")
 					self._sametypesequence = "h"
 
-	def write(self) -> "Generator[None, BaseEntry, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.os_utils import runDictzip
 		if self._sametypesequence:
 			if self._merge_syns:
@@ -861,7 +870,7 @@ class Writer(object):
 		Every item definition may consist of an arbitrary number of articles.
 		sametypesequence option is not used.
 		"""
-		log.debug(f"writeGeneral")
+		log.debug("writeGeneral")
 		dictMark = 0
 		altIndexList = self.newSynList()
 
@@ -1019,7 +1028,7 @@ class Writer(object):
 		Every item definition may consist of an arbitrary number of articles.
 		sametypesequence option is not used.
 		"""
-		log.debug(f"writeGeneralMergeSyns")
+		log.debug("writeGeneralMergeSyns")
 		dictMark = 0
 		idxBlockList = self.newIdxList()
 		altIndexList = self.newSynList()

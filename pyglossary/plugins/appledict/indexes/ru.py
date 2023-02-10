@@ -18,8 +18,9 @@
 Russian indexes based on pymorphy.
 """
 
-from . import languages
 from pyglossary.plugins.formats_common import log, pip
+
+from . import languages
 
 try:
 	import pymorphy2
