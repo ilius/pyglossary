@@ -24,12 +24,13 @@ import sys
 import argparse
 import json
 import logging
+from typing import Optional, Dict, Callable
 
 from pyglossary import core  # essential
-from pyglossary.entry import Entry
 from pyglossary.ui.base import UIBase
 from pyglossary.langs import langDict
 from pyglossary.sort_keys import namedSortKeyList, namedSortKeyByName
+from pyglossary.option import Option
 
 # the first thing to do is to set up logger.
 # other modules also using logger "root", so it is essential to set it up prior
@@ -56,6 +57,10 @@ from pyglossary.sort_keys import namedSortKeyList, namedSortKeyByName
 
 log = None
 
+ui_list = ["gtk", "tk"]
+if os.sep == "\\":
+	ui_list = ["tk", "gtk"]
+
 
 def canRunGUI():
 	if core.sysName == "linux":
@@ -63,7 +68,7 @@ def canRunGUI():
 
 	if core.sysName == "darwin":
 		try:
-			import tkinter
+			import tkinter  # noqa
 		except ModuleNotFoundError:
 			return False
 
@@ -239,6 +244,59 @@ def validateLangStr(st) -> "Optional[str]":
 		return lang.name
 	log.error(f"unknown language {st!r}")
 	return
+
+
+def shouldUseCMD(args):
+	if not canRunGUI():
+		return True
+	if args.interactive:
+		return True
+	if args.inputFilename and args.outputFilename:
+		return True
+	return False
+
+
+def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
+	if ui_type == "none":
+		return base_ui_run
+
+	if ui_type == "auto" and shouldUseCMD(args):
+		ui_type = "cmd"
+
+	if ui_type == "cmd":
+		if args.interactive:
+			from pyglossary.ui.ui_cmd_interactive import UI
+		elif args.inputFilename and args.outputFilename:
+			from pyglossary.ui.ui_cmd import UI
+		elif not args.no_interactive:
+			from pyglossary.ui.ui_cmd_interactive import UI
+		else:
+			log.error("no input file given, try --help")
+			sys.exit(1)
+		return UI().run
+
+	if ui_type == "auto":
+		for ui_type2 in ui_list:
+			try:
+				ui_module = __import__(
+					f"pyglossary.ui.ui_{ui_type2}",
+					fromlist=f"ui_{ui_type2}",
+				)
+			except ImportError as e:
+				log.error(str(e))
+			else:
+				return ui_module.UI().run
+		log.error(
+			"no user interface module found! "
+			f"try \"{sys.argv[0]} -h\" to see command line usage"
+		)
+		sys.exit(1)
+
+	ui_module = __import__(
+		f"pyglossary.ui.ui_{ui_type}",
+		fromlist=f"ui_{ui_type}",
+	)
+	return ui_module.UI().run
 
 
 def main():
@@ -515,15 +573,6 @@ def main():
 		nargs="?",
 	)
 
-	def shouldUseCMD(args):
-		if not canRunGUI():
-			return True
-		if args.interactive:
-			return True
-		if args.inputFilename and args.outputFilename:
-			return True
-		return False
-
 	# _______________________________
 
 	for key, option in UIBase.configDefDict.items():
@@ -608,11 +657,6 @@ def main():
 		log.debug(f"en -> {langDict['en']!r}")
 
 	##############################
-
-	ui_list = ["gtk", "tk"]
-	if os.sep == "\\":
-		ui_list = ["tk", "gtk"]
-
 
 	# log.info(f"PyGlossary {core.VERSION}")
 
@@ -779,46 +823,10 @@ def main():
 		glossarySetAttrs=None,
 	)
 
-	if ui_type == "none":
-		sys.exit(0 if base_ui_run(**runKeywordArgs) else 1)
-
-	if ui_type == "auto" and shouldUseCMD(args):
-		ui_type = "cmd"
-
-	if ui_type == "cmd":
-		if args.interactive:
-			from pyglossary.ui.ui_cmd_interactive import UI
-		elif args.inputFilename and args.outputFilename:
-			from pyglossary.ui.ui_cmd import UI
-		elif not args.no_interactive:
-			from pyglossary.ui.ui_cmd_interactive import UI
-		else:
-			log.error("no input file given, try --help")
-			sys.exit(1)
-		sys.exit(0 if UI().run(**runKeywordArgs) else 1)
-
-	if ui_type == "auto":
-		ui_module = None
-		for ui_type2 in ui_list:
-			try:
-				ui_module = __import__(
-					f"pyglossary.ui.ui_{ui_type2}",
-					fromlist=f"ui_{ui_type2}",
-				)
-			except ImportError as e:
-				log.error(str(e))
-			else:
-				break
-		if ui_module is None:
-			log.error(
-				"no user interface module found! "
-				f"try \"{sys.argv[0]} -h\" to see command line usage"
-			)
-			sys.exit(1)
-	else:
-		ui_module = __import__(
-			f"pyglossary.ui.ui_{ui_type}",
-			fromlist=f"ui_{ui_type}",
-		)
-
-	sys.exit(0 if ui_module.UI().run(**runKeywordArgs) else 1)
+	run = getRunner(args, ui_type)
+	try:
+		ok = run(**runKeywordArgs)
+	except KeyboardInterrupt:
+		log.error("Cancelled")
+		ok = False
+	sys.exit(0 if ok else 1)
