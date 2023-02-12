@@ -1306,7 +1306,7 @@ class UI(tix.Frame, UIBase):
 		)
 
 	def resized(self, event):
-		dh = self.rootWin.winfo_height() - self.winfo_height()
+		self.rootWin.winfo_height() - self.winfo_height()
 		# log.debug(dh, self.consoleH)
 		# if dh > 20:
 		# 	self.consoleH += 1
@@ -1516,7 +1516,7 @@ class UI(tix.Frame, UIBase):
 			self.outputFormatChanged()
 
 		if reverse:
-			log.error(f"Tkinter interface does not support Reverse feature")
+			log.error("Tkinter interface does not support Reverse feature")
 
 		# must be before setting self.readOptions and self.writeOptions
 		self.anyEntryChanged()

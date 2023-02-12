@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import os
-import signal
 import sys
 from subprocess import PIPE, Popen
 

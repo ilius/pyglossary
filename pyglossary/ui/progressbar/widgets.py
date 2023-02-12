@@ -28,7 +28,8 @@ try:
     from abc import ABCMeta, abstractmethod
 except ImportError:
     AbstractWidget = object
-    abstractmethod = lambda fn: fn
+    def abstractmethod(fn):
+        return fn
 else:
     AbstractWidget = ABCMeta('AbstractWidget', (object,), {})
 

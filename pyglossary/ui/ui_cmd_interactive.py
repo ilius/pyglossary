@@ -45,7 +45,6 @@ import json
 import logging
 import os
 import shlex
-import sys
 from collections import OrderedDict
 from os.path import (
 	abspath,
@@ -466,7 +465,7 @@ class UI(ui_cmd.UI):
 				actionFunc, usage = self._fsActions[parts[0]]
 				try:
 					actionFunc(parts[1:])
-				except Exception as e:
+				except Exception:
 					log.exception("")
 					if usage:
 						print("\n" + usage)
@@ -573,7 +572,7 @@ class UI(ui_cmd.UI):
 		return None
 
 	def askReadOptions(self):
-		plugin = Glossary.plugins[self._inputFormat]
+		Glossary.plugins[self._inputFormat]
 		options = Glossary.formatsReadOptions.get(self._inputFormat)
 		if options is None:
 			log.error(f"internal error: invalid format {self._inputFormat!r}")
@@ -646,7 +645,7 @@ class UI(ui_cmd.UI):
 				break
 
 	def askWriteOptions(self):
-		plugin = Glossary.plugins[self._inputFormat]
+		Glossary.plugins[self._inputFormat]
 		options = Glossary.formatsWriteOptions.get(self._outputFormat)
 		if options is None:
 			log.error(f"internal error: invalid format {self._outputFormat!r}")
@@ -742,7 +741,7 @@ class UI(ui_cmd.UI):
 
 	def askConfig(self):
 		configKeys = list(sorted(self.configDefDict.keys()))
-		history = FileHistory(join(histDir, f"config-key"))
+		history = FileHistory(join(histDir, "config-key"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
 			configKeys,
@@ -808,10 +807,9 @@ class UI(ui_cmd.UI):
 		print("Disabled progress bar")
 
 	def setSort(self):
-		from pyglossary.entry import Entry
 		try:
 			value = self.checkbox_prompt(
-				2, f"Enable Sort",
+				2, "Enable Sort",
 				default=self._convertOptions.get("sort", False),
 			)
 		except (KeyboardInterrupt, EOFError):
@@ -828,7 +826,7 @@ class UI(ui_cmd.UI):
 		default = self._convertOptions.get("sortKeyName", "")
 		sortKeyName = self.prompt(
 			2, "SortKey",
-			history=FileHistory(join(histDir, f"sort-key")),
+			history=FileHistory(join(histDir, "sort-key")),
 			auto_suggest=AutoSuggestFromHistory(),
 			default=default,
 			completer=completer,
@@ -876,7 +874,7 @@ class UI(ui_cmd.UI):
 				action = self.askFinalAction()
 			except (KeyboardInterrupt, EOFError):
 				return False
-			except Exception as e:
+			except Exception:
 				log.exception("")
 				return False
 			if action == back:
@@ -1049,7 +1047,7 @@ class UI(ui_cmd.UI):
 				return
 			try:
 				succeed = ui_cmd.UI.run(self, **self.getRunKeywordArgs())
-			except Exception as e:
+			except Exception:
 				log.exception("")
 			else:
 				self.printNonInteractiveCommand()

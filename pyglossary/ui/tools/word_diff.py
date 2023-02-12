@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import difflib
-import os
 import re
 import sys
 

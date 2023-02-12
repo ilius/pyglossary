@@ -30,7 +30,7 @@ class AboutTabTitleBox(gtk.Box):
 		pack(self, VBox(), expand=0)
 		if icon:
 			image = imageFromFile(icon)
-			size = image.get_pixel_size()
+			image.get_pixel_size()
 			image.set_size_request(24, 24)
 			# I don't know how to stop Gtk from resizing the image
 			# I should probably use svg files to avoid blurry images

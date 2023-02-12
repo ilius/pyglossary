@@ -9,7 +9,6 @@ select = [
     "COM", # flake8-commas
     "B", # flake8-bugbear
     # "C90", # mccabe: C901: {name} is too complex ({complexity})
-    # "N", # pep8-naming
     # "D", # pydocstyle
     # "UP", # pyupgrade
     # "A", # flake8-builtins
@@ -18,16 +17,20 @@ select = [
     # "FBT", # flake8-boolean-trap
     # "DTZ", # flake8-datetimez
 
+    # "N", # pep8-naming
+
     # "S", # flake8-bandit
     # "C4", # flake8-comprehensions
     #   when did Python's sorted() start returning list?
 ]
 ignore = [
     "E402", # Module level import not at top of file
+    "UP009",
 ]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [
+    "E", "F", "W",
     "I",
     "COM",
     # since which Python is comma after **kwargs allowd?
@@ -36,8 +39,10 @@ unfixable = []
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
+    # "pyglossary/ui/gtk4_utils/*",
+    # "pyglossary/ui/gtk3_utils/*",
     "pyglossary/plugin_lib/*.py",
-    "wcwidth.py",
+    "wcwidth*",
     ".direnv",
     ".eggs",
     ".git",

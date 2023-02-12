@@ -17,12 +17,10 @@
 # GNU General Public License for more details.
 
 import logging
-import os
-import shutil
 import sys
 import traceback
 from collections import OrderedDict
-from os.path import abspath, isabs, isfile, join, splitext
+from os.path import abspath, isfile
 
 import gi
 
@@ -31,8 +29,7 @@ from pyglossary.glossary import (
 	Glossary,
 	defaultSortKeyName,
 )
-from pyglossary.os_utils import click_website
-from pyglossary.sort_keys import namedSortKeyByName, namedSortKeyList
+from pyglossary.sort_keys import namedSortKeyList
 from pyglossary.text_utils import urlToPath
 
 from .base import (
@@ -48,8 +45,6 @@ gi.require_version("Gtk", "4.0")
 
 from .gtk4_utils import *
 from .gtk4_utils.about import AboutWidget
-from .gtk4_utils.dialog import MyDialog
-from .gtk4_utils.resize_button import ResizeButton
 from .gtk4_utils.utils import *
 
 # from gi.repository import GdkPixbuf
@@ -1448,7 +1443,7 @@ check {
 			self.convertOutputFormatCombo.setActive(outputFormat)
 
 		if reverse:
-			log.error(f"Gtk interface does not support Reverse feature")
+			log.error("Gtk interface does not support Reverse feature")
 
 		if readOptions:
 			self.convertInputFormatCombo.setOptionsValues(readOptions)
@@ -1497,9 +1492,9 @@ check {
 			return
 		inFormat = self.convertInputFormatCombo.getActive()
 		if inFormat:
-			inFormatDesc = Glossary.plugins[inFormat].description
+			Glossary.plugins[inFormat].description
 		else:
-			inFormatDesc = ""
+			pass
 			# log.critical("Input format is empty!");return
 
 		outPath = self.convertOutputEntry.get_text()
@@ -1508,9 +1503,9 @@ check {
 			return
 		outFormat = self.convertOutputFormatCombo.getActive()
 		if outFormat:
-			outFormatDesc = Glossary.plugins[outFormat].description
+			Glossary.plugins[outFormat].description
 		else:
-			outFormatDesc = ""
+			pass
 			# log.critical("Output format is empty!");return
 
 		gtk_event_iteration_loop()

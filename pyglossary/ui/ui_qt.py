@@ -19,7 +19,6 @@
 
 from os.path import join
 
-from PyQt4 import QtCore as qc
 from PyQt4 import QtGui as qt
 
 from pyglossary.glossary import *
