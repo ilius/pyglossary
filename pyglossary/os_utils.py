@@ -49,7 +49,7 @@ def runDictzip(filename: str) -> None:
 		return False
 	(out, err) = subprocess.Popen(
 		[dictzipCmd, filename],
-		stdout=subprocess.PIPE
+		stdout=subprocess.PIPE,
 	).communicate()
 	log.debug(f"dictzip command: {dictzipCmd!r}")
 	if err:

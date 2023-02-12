@@ -211,7 +211,7 @@ class GlossaryInfo(object):
 		if len(langNames) < 2:
 			log.info(
 				f"Failed to detect sourceLang and targetLang"
-				f" from glossary name {name!r}"
+				f" from glossary name {name!r}",
 			)
 			return
 
@@ -221,7 +221,7 @@ class GlossaryInfo(object):
 		log.info(
 			f"Detected sourceLang={langNames[0]!r}, "
 			f"targetLang={langNames[1]!r} "
-			f"from glossary name {name!r}"
+			f"from glossary name {name!r}",
 		)
 		self.sourceLangName = langNames[0]
 		self.targetLangName = langNames[1]

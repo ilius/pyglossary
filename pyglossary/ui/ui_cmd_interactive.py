@@ -128,7 +128,7 @@ def checkbox_prompt(
 	complete_message = check
 	session: PromptSession[bool] = PromptSession(
 		complete_message,
-		key_bindings=bindings
+		key_bindings=bindings,
 	)
 	session.prompt()
 	return check.value
@@ -195,7 +195,7 @@ def prompt(
 		text = promptLow(
 			message="",
 			multiline=True,
-			**kwargs
+			**kwargs,
 		)
 	return text
 
@@ -208,12 +208,12 @@ class MyPathCompleter(PathCompleter):
 		self,
 		reading: bool,
 		fs_action_names=None,
-		**kwargs
+		**kwargs,
 	):
 		PathCompleter.__init__(
 			self,
 			file_filter=self.file_filter,
-			**kwargs
+			**kwargs,
 		)
 		if fs_action_names is None:
 			fs_action_names = []
@@ -638,7 +638,7 @@ class UI(ui_cmd.UI):
 				if not ok or not option.validate(valueNew):
 					log.error(
 						f"Invalid read option value {optName}={value!r}"
-						f" for format {self._inputFormat}"
+						f" for format {self._inputFormat}",
 					)
 					continue
 				print(f"Set read-option: {optName} = {valueNew!r}")
@@ -711,7 +711,7 @@ class UI(ui_cmd.UI):
 				if not ok or not option.validate(valueNew):
 					log.error(
 						f"Invalid write option value {optName}={value!r}"
-						f" for format {self._outputFormat}"
+						f" for format {self._outputFormat}",
 					)
 					continue
 				print(f"Set write-option: {optName} = {valueNew!r}")
@@ -778,7 +778,7 @@ class UI(ui_cmd.UI):
 				valueNew, ok = option.evaluate(value)
 				if not ok or not option.validate(valueNew):
 					log.error(
-						f"Invalid config value {configKey}={value!r}"
+						f"Invalid config value {configKey}={value!r}",
 					)
 					continue
 				print(f"Set config: {configKey} = {valueNew!r}")
@@ -1006,7 +1006,7 @@ class UI(ui_cmd.UI):
 		print()
 		print(
 			"If you want to repeat this conversion later, "
-			"you can use this command:"
+			"you can use this command:",
 		)
 		# shlex.join is added in Python 3.8
 		print(shlex.join(cmd))

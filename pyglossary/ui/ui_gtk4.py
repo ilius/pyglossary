@@ -727,7 +727,7 @@ class GtkTextviewLogHandler(logging.Handler):
 		if record.exc_info:
 			_type, value, tback = record.exc_info
 			tback_text = "".join(
-				traceback.format_exception(_type, value, tback)
+				traceback.format_exception(_type, value, tback),
 			)
 			if msg:
 				msg += "\n"
@@ -969,7 +969,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 			hbox = HBox(spacing=hpad)
 			comment = configDefDict[param].comment
 			checkButton = gtk.CheckButton(
-				label=comment.split("\n")[0]
+				label=comment.split("\n")[0],
 			)
 			self.configCheckButtons[param] = checkButton
 			pack(hbox, checkButton)
@@ -1474,7 +1474,7 @@ check {
 		ckey: "gtk.EventControllerKey",
 		keyval: int,
 		keycode: int,
-		state: "gdk.ModifierType"
+		state: "gdk.ModifierType",
 	):
 		if keyval == gdk.KEY_Escape:
 			self.exit()

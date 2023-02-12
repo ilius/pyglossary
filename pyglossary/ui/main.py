@@ -82,7 +82,7 @@ class StoreConstAction(argparse.Action):
 		same_dest="",
 		const_value=None,
 		nargs=0,
-		**kwargs
+		**kwargs,
 	):
 		if isinstance(option_strings, str):
 			option_strings = [option_strings]
@@ -90,7 +90,7 @@ class StoreConstAction(argparse.Action):
 			self,
 			option_strings=option_strings,
 			nargs=nargs,
-			**kwargs
+			**kwargs,
 		)
 		self.same_dest = same_dest
 		self.const_value = const_value
@@ -201,7 +201,7 @@ def base_ui_run(
 		outputFormat=outputFormat,
 		readOptions=readOptions,
 		writeOptions=writeOptions,
-		**convertOptions
+		**convertOptions,
 	)
 	return True
 
@@ -288,7 +288,7 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 				return ui_module.UI().run
 		log.error(
 			"no user interface module found! "
-			f"try \"{sys.argv[0]} -h\" to see command line usage"
+			f"try \"{sys.argv[0]} -h\" to see command line usage",
 		)
 		sys.exit(1)
 
@@ -596,7 +596,7 @@ def main():
 
 	core.noColor = args.noColor
 	logHandler = core.StdLogHandler(
-		noColor=args.noColor
+		noColor=args.noColor,
 	)
 	log.setVerbosity(args.verbosity)
 	log.addHandler(logHandler)
@@ -608,7 +608,7 @@ def main():
 			log.critical(
 				"Conflicting flags: "
 				f"--{param1.replace('_', '-')} and "
-				f"--{param2.replace('_', '-')}"
+				f"--{param2.replace('_', '-')}",
 			)
 			sys.exit(1)
 
@@ -632,7 +632,7 @@ def main():
 			_valuesStr = ", ".join([_sk.name for _sk in namedSortKeyList])
 			log.critical(
 				f"Invalid sortKeyName={args.sortKeyName!r}"
-				f". Supported values:\n{_valuesStr}"
+				f". Supported values:\n{_valuesStr}",
 			)
 			sys.exit(1)
 
@@ -675,7 +675,7 @@ def main():
 		else:
 			log.error(
 				f"invalid value for --json-read-options, "
-				f"must be an object/dict, not {type(newReadOptions)}"
+				f"must be an object/dict, not {type(newReadOptions)}",
 			)
 
 	writeOptions = parseFormatOptionsStr(args.writeOptions)
@@ -688,7 +688,7 @@ def main():
 		else:
 			log.error(
 				f"invalid value for --json-write-options, "
-				f"must be an object/dict, not {type(newWriteOptions)}"
+				f"must be an object/dict, not {type(newWriteOptions)}",
 			)
 
 	"""
@@ -764,7 +764,7 @@ def main():
 		)
 		if not inputArgs:
 			log.error(
-				f"Could not detect format for input file {args.inputFilename}"
+				f"Could not detect format for input file {args.inputFilename}",
 			)
 			sys.exit(1)
 		inputFormat = inputArgs[1]
@@ -778,7 +778,7 @@ def main():
 			if not ok or not prop.validate(optValueNew):
 				log.error(
 					f"Invalid option value {optName}={optValue!r}"
-					f" for format {inputFormat}"
+					f" for format {inputFormat}",
 				)
 				sys.exit(1)
 			readOptions[optName] = optValueNew
@@ -802,7 +802,7 @@ def main():
 			if not ok or not prop.validate(optValueNew):
 				log.error(
 					f"Invalid option value {optName}={optValue!r}"
-					f" for format {outputFormat}"
+					f" for format {outputFormat}",
 				)
 				sys.exit(1)
 			writeOptions[optName] = optValueNew

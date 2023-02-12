@@ -71,7 +71,7 @@ class EntryList(object):
 		if namedSortKey.locale is None:
 			raise ValueError(
 				f"locale-sorting is not supported "
-				f"for sortKey={namedSortKey.name}"
+				f"for sortKey={namedSortKey.name}",
 			)
 
 		localeObj = Locale(sortLocale)

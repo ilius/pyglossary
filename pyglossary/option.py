@@ -96,7 +96,7 @@ class Option(object):
 			if not self.values:
 				log.error(
 					f"invalid option: customValue={self.customValue!r}"
-					f", values={self.values!r}"
+					f", values={self.values!r}",
 				)
 				return False
 			return value in self.values
@@ -157,7 +157,7 @@ class StrOption(Option):
 		Option.__init__(
 			self,
 			typ="str",
-			**kwargs
+			**kwargs,
 		)
 
 	def validate(self, value):
@@ -165,7 +165,7 @@ class StrOption(Option):
 			if not self.values:
 				log.error(
 					f"invalid option: customValue={self.customValue!r}"
-					f", values={self.values!r}"
+					f", values={self.values!r}",
 				)
 				return False
 			return value in self.values
@@ -181,7 +181,7 @@ class IntOption(Option):
 		Option.__init__(
 			self,
 			typ="int",
-			**kwargs
+			**kwargs,
 		)
 
 	def evaluate(self, raw: "Union[str, int]") -> "Tuple[Optional[int], bool]":
@@ -260,7 +260,7 @@ class FloatOption(Option):
 		Option.__init__(
 			self,
 			typ="float",
-			**kwargs
+			**kwargs,
 		)
 
 	def evaluate(
@@ -347,7 +347,7 @@ class EncodingOption(Option):
 		customValue=True,
 		values=None,
 		comment=None,
-		**kwargs
+		**kwargs,
 	):
 		if values is None:
 			values = [
@@ -386,7 +386,7 @@ class EncodingOption(Option):
 			customValue=customValue,
 			values=values,
 			comment=comment,
-			**kwargs
+			**kwargs,
 		)
 
 	def toDict(self):
@@ -422,7 +422,7 @@ class NewlineOption(Option):
 		customValue=True,
 		values=None,
 		comment=None,
-		**kwargs
+		**kwargs,
 	):
 		if values is None:
 			values = [
@@ -439,7 +439,7 @@ class NewlineOption(Option):
 			values=values,
 			multiline=True,
 			comment=comment,
-			**kwargs
+			**kwargs,
 		)
 
 
@@ -455,6 +455,6 @@ class HtmlColorOption(Option):
 			self,
 			typ="str",
 			customValue=True,
-			**kwargs
+			**kwargs,
 		)
 		# TODO: use a specific type?

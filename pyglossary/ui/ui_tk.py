@@ -180,7 +180,7 @@ class TkTextLogHandler(logging.Handler):
 		if record.exc_info:
 			_type, value, tback = record.exc_info
 			tback_text = "".join(
-				traceback.format_exception(_type, value, tback)
+				traceback.format_exception(_type, value, tback),
 			)
 			if msg:
 				msg += "\n"
@@ -737,7 +737,7 @@ class FormatOptionsDialog(tix.Toplevel):
 			else:
 				log.error(
 					f"invalid option {optName}, values={propValues}"
-					f", customValue={prop.customValue}"
+					f", customValue={prop.customValue}",
 				)
 			return
 		if prop.typ == "bool":
@@ -1302,7 +1302,7 @@ class UI(tix.Frame, UIBase):
 
 	def verbosityChanged(self, index, value, op):
 		log.setVerbosity(
-			int(self.verbosityCombo.get())
+			int(self.verbosityCombo.get()),
 		)
 
 	def resized(self, event):
@@ -1410,7 +1410,7 @@ class UI(tix.Frame, UIBase):
 				if outputArgs:
 					outputFormat = outputArgs[1]
 					self.formatButtonOutputConvert.set(
-						Glossary.plugins[outputFormat].description
+						Glossary.plugins[outputFormat].description,
 					)
 					self.outputFormatChanged()
 		self.pathO = pathO
@@ -1471,7 +1471,7 @@ class UI(tix.Frame, UIBase):
 			outputFormat=outFormat,
 			readOptions=self.readOptions,
 			writeOptions=self.writeOptions,
-			**self._convertOptions
+			**self._convertOptions,
 		)
 		# if finalOutputFile:
 		# 	self.status("Convert finished")

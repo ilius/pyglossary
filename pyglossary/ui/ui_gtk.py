@@ -716,7 +716,7 @@ class GtkTextviewLogHandler(logging.Handler):
 		if record.exc_info:
 			_type, value, tback = record.exc_info
 			tback_text = "".join(
-				traceback.format_exception(_type, value, tback)
+				traceback.format_exception(_type, value, tback),
 			)
 			if msg:
 				msg += "\n"
@@ -780,7 +780,7 @@ class BrowseButton(gtk.Button):
 		fcd.connect("response", lambda w, e: fcd.hide())
 		fcd.connect(
 			"file-activated",
-			lambda w: fcd.response(gtk.ResponseType.OK)
+			lambda w: fcd.response(gtk.ResponseType.OK),
 		)
 		if fcd.run() == gtk.ResponseType.OK:
 			self.setFilePathFunc(fcd.get_filename())

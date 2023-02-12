@@ -83,7 +83,7 @@ class SqEntryList(list):
 		if namedSortKey.sqlite_locale is None:
 			raise ValueError(
 				f"locale-sorting is not supported "
-				f"for sortKey={namedSortKey.name}"
+				f"for sortKey={namedSortKey.name}",
 			)
 
 		localeObj = Locale(sortLocale)
@@ -172,7 +172,7 @@ class SqEntryList(list):
 			for col in sqliteSortKey
 		] + ["pickle BLOB"])
 		self._con.execute(
-			f"CREATE TABLE data ({colDefs})"
+			f"CREATE TABLE data ({colDefs})",
 		)
 
 	def __len__(self):
@@ -221,7 +221,7 @@ class SqEntryList(list):
 			])
 		self._con.commit()
 		self._con.execute(
-			f"CREATE INDEX sortkey ON data({sortColumnNames});"
+			f"CREATE INDEX sortkey ON data({sortColumnNames});",
 		)
 		self._con.commit()
 

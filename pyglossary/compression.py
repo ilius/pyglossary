@@ -116,7 +116,7 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 			error = zipFileOrDir(glos, filename)
 		except Exception as e:
 			log.error(
-				f"{e}\nFailed to compress file \"{filename}\""
+				f"{e}\nFailed to compress file \"{filename}\"",
 			)
 		else:
 			if error:

@@ -6,7 +6,7 @@ def formatEntry(entry):
     if words:
         headword = words[0]
     lines = [
-        f">>> {headword}"
+        f">>> {headword}",
     ]
     if len(words) > 1:
         alts = " | ".join(words[1:])

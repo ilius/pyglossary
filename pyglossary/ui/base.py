@@ -131,11 +131,11 @@ class UIBase(object):
 
 		("color.enable.cmd.unix", BoolOption(
 			hasFlag=False,
-			comment="Enable colors in Linux/Unix command line"
+			comment="Enable colors in Linux/Unix command line",
 		)),
 		("color.enable.cmd.windows", BoolOption(
 			hasFlag=False,
-			comment="Enable colors in Windows command line"
+			comment="Enable colors in Windows command line",
 		)),
 
 		("color.cmd.critical", IntOption(
@@ -189,7 +189,7 @@ class UIBase(object):
 	def loadConfig(
 		self,
 		user: bool = True,
-		**options
+		**options,
 	):
 		from pyglossary.json_utils import jsonToData
 		data = jsonToData(fread(rootConfJsonFile))
@@ -198,7 +198,7 @@ class UIBase(object):
 				userData = jsonToData(fread(confJsonFile))
 			except Exception:
 				log.exception(
-					f"error while loading user config file {confJsonFile!r}"
+					f"error while loading user config file {confJsonFile!r}",
 				)
 			else:
 				data.update(userData)
@@ -211,7 +211,7 @@ class UIBase(object):
 		for key, value in data.items():
 			log.warning(
 				f"unknown config key {key!r}, you may edit {confJsonFile}"
-				" file and remove this key"
+				" file and remove this key",
 			)
 
 		for key, value in options.items():

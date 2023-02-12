@@ -308,7 +308,7 @@ class EbookWriter(object):
 		links = []
 		for label_i, label in enumerate(group_labels):
 			ref = self.get_group_xhtml_file_name_from_index(
-				self.GROUP_START_INDEX + label_i
+				self.GROUP_START_INDEX + label_i,
 			)
 			links.append(self.INDEX_XHTML_LINK_TEMPLATE.format(
 				ref=ref,
@@ -355,7 +355,7 @@ class EbookWriter(object):
 			manifest_lines.append(self.OPF_MANIFEST_ITEM_TEMPLATE.format(
 				ref=mi["id"],
 				id=mi["id"],
-				mediaType=mi["mimetype"]
+				mediaType=mi["mimetype"],
 			))
 			if mi["mimetype"] == "application/xhtml+xml":
 				spine_lines.append(self.OPF_SPINE_ITEMREF_TEMPLATE.format(

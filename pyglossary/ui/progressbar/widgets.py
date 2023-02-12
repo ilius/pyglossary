@@ -245,7 +245,7 @@ class FormatLabel(Timer):
         'max': ('maxval', None),
         'seconds': ('seconds_elapsed', None),
         'start': ('start_time', None),
-        'value': ('currval', None)
+        'value': ('currval', None),
     }
 
     __slots__ = ('format_string',)

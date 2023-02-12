@@ -171,7 +171,7 @@ class PluginProp(object):
 		except ModuleNotFoundError as e:
 			log.warning(
 				f"Module {e.name!r} not found in {self._modulePath}"
-				f", skipping plugin {moduleName!r}"
+				f", skipping plugin {moduleName!r}",
 			)
 			return
 		except Exception:
@@ -294,7 +294,7 @@ class PluginProp(object):
 			if not prop.validate(default):
 				log.warning(
 					"invalid default value for option: "
-					f"{name} = {default!r} in plugin {self.name}"
+					f"{name} = {default!r} in plugin {self.name}",
 				)
 			options[name] = default
 
@@ -340,7 +340,7 @@ class PluginProp(object):
 		if hasattr(module, "write"):
 			log.error(
 				f"plugin {format} has write function, "
-				f"must migrate to Writer class"
+				f"must migrate to Writer class",
 			)
 
 		extensions = module.extensions
@@ -355,13 +355,13 @@ class PluginProp(object):
 		if not isinstance(self.readDepends, dict):
 			log.error(
 				f"invalid depends={self.readDepends}"
-				f" in {self.name!r}.Reader class"
+				f" in {self.name!r}.Reader class",
 			)
 
 		if not isinstance(self.writeDepends, dict):
 			log.error(
 				f"invalid depends={self.writeDepends}"
-				f" in {self.name!r}.Reader class"
+				f" in {self.name!r}.Reader class",
 			)
 
 		for name, opt in self.optionsProp.items():
@@ -373,11 +373,11 @@ class PluginProp(object):
 				])
 				log.debug(
 					f"{self.name}: please rename option "
-					f"{name} to {suggestName}"
+					f"{name} to {suggestName}",
 				)
 			if not opt.comment:
 				log.debug(
-					f"{self.name}: please add comment for option {name}"
+					f"{self.name}: please add comment for option {name}",
 				)
 
 	def checkReaderClass(self) -> bool:
@@ -392,7 +392,7 @@ class PluginProp(object):
 			if not hasattr(cls, attr):
 				log.error(
 					f"Invalid Reader class in {self.name!r} plugin"
-					f", no {attr!r} method"
+					f", no {attr!r} method",
 				)
 				self._Reader = None
 				return False
@@ -410,7 +410,7 @@ class PluginProp(object):
 			if not hasattr(cls, attr):
 				log.error(
 					f"Invalid Writer class in {self.name!r} plugin"
-					f", no {attr!r} method"
+					f", no {attr!r} method",
 				)
 				self._Writer = None
 				return False

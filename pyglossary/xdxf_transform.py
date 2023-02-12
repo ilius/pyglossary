@@ -46,7 +46,7 @@ class XslXdxfTransformer(object):
 	def transformByInnerString(self, articleInnerStr: str) -> str:
 		from lxml import etree as ET
 		return self.transform(
-			ET.fromstring(f"<ar>{articleInnerStr}</ar>")
+			ET.fromstring(f"<ar>{articleInnerStr}</ar>"),
 		)
 
 
@@ -398,5 +398,5 @@ class XdxfTransformer(object):
 	def transformByInnerString(self, articleInnerStr: str) -> str:
 		from lxml import etree as ET
 		return self.transform(
-			ET.fromstring(f"<ar>{articleInnerStr}</ar>")
+			ET.fromstring(f"<ar>{articleInnerStr}</ar>"),
 		)

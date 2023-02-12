@@ -48,7 +48,7 @@ def _headword_normal(encoding: str, **options) -> "sortKeyType":
 
 def _headword_locale(
 	collator: "icu.Collator",  # noqa: F821
-	**options
+	**options,
 ) -> "sortKeyType":
 	cSortKey = collator.getSortKey
 
@@ -73,7 +73,7 @@ def _headword_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 
 def _headword_sqlite_locale(
 	collator: "icu.Collator",  # noqa: F821
-	**options
+	**options,
 ) -> "sqliteSortKeyType":
 	cSortKey = collator.getSortKey
 
@@ -92,7 +92,7 @@ def _headword_lower_normal(encoding: str, **options) -> "sortKeyType":
 
 def _headword_lower_locale(
 	collator: "icu.Collator",  # noqa: F821
-	**options
+	**options,
 ) -> "sortKeyType":
 	cSortKey = collator.getSortKey
 
@@ -117,7 +117,7 @@ def _headword_lower_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 
 def _headword_lower_sqlite_locale(
 	collator: "icu.Collator",  # noqa: F821
-	**options
+	**options,
 ) -> "sqliteSortKeyType":
 	cSortKey = collator.getSortKey
 
@@ -280,7 +280,7 @@ def _random_normal(encoding: str, **options) -> "sortKeyType":
 
 def _random_locale(
 	collator: "icu.Collator",  # noqa: F821
-	**options
+	**options,
 ) -> "sortKeyType":
 	from random import random
 	return lambda words: random()
@@ -299,7 +299,7 @@ def _random_sqlite(encoding: str, **options) -> "sqliteSortKeyType":
 
 def _random_sqlite_locale(
 	collator: "icu.Collator",  # noqa: F821
-	**options
+	**options,
 ) -> "sortKeyType":
 	from random import random
 	return [

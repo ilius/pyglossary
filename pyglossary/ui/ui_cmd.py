@@ -73,23 +73,23 @@ def getFormatsTable(names, header):
 		" | ".join([
 			"Name".center(nameWidth),
 			"Description".center(descriptionWidth),
-			"Extensions".center(extensionsWidth)
-		])
+			"Extensions".center(extensionsWidth),
+		]),
 	)
 	lines.append(
 		"-+-".join([
 			"-" * nameWidth,
 			"-" * descriptionWidth,
 			"-" * extensionsWidth,
-		])
+		]),
 	)
 	for index, name in enumerate(names):
 		lines.append(
 			" | ".join([
 				name.ljust(nameWidth),
 				descriptions[index].ljust(descriptionWidth),
-				extensions[index].ljust(extensionsWidth)
-			])
+				extensions[index].ljust(extensionsWidth),
+			]),
 		)
 
 	return "\n".join(lines)
@@ -234,7 +234,7 @@ class UI(UIBase):
 			"saveStep",
 			"maxNum",
 			"minRel",
-			"minWordLen"
+			"minWordLen",
 		):
 			try:
 				reverseKwArgs[key] = self.config["reverse_" + key]
@@ -248,7 +248,7 @@ class UI(UIBase):
 			if self._toPause:
 				log.info(
 					"Reverse is paused."
-					" Press Enter to continue, and Ctrl+C to exit"
+					" Press Enter to continue, and Ctrl+C to exit",
 				)
 				input()
 				self._toPause = False
@@ -319,7 +319,7 @@ class UI(UIBase):
 			if not glos.read(
 				inputFilename,
 				format=inputFormat,
-				**readOptions
+				**readOptions,
 			):
 				log.error("reading input file was failed!")
 				return False
@@ -334,7 +334,7 @@ class UI(UIBase):
 				outputFormat=outputFormat,
 				readOptions=readOptions,
 				writeOptions=writeOptions,
-				**convertOptions
+				**convertOptions,
 			)
 			return bool(finalOutputFile)
 

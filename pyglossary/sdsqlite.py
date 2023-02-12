@@ -32,10 +32,10 @@ class Writer(object):
 			"alts TEXT,"
 			"defi TEXT,"
 			"defiFormat CHAR(1),"
-			"bindata BLOB)"
+			"bindata BLOB)",
 		)
 		self._con.execute(
-			"CREATE INDEX dict_sortkey ON dict(wordlower, word);"
+			"CREATE INDEX dict_sortkey ON dict(wordlower, word);",
 		)
 
 	def write(self):
@@ -99,7 +99,7 @@ class Reader(object):
 	def __iter__(self):
 		self._cur.execute(
 			"select word, alts, defi, defiFormat from dict"
-			" order by wordlower, word"
+			" order by wordlower, word",
 		)
 		for row in self._cur:
 			words = [row[0]] + splitByBar(row[1])

@@ -192,7 +192,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			if not isinstance(info, (dict, odict)):
 				raise TypeError(
 					"Glossary: `info` has invalid type"
-					", dict or OrderedDict expected"
+					", dict or OrderedDict expected",
 				)
 			for key, value in info.items():
 				self.setInfo(key, value)
@@ -348,7 +348,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		if self._iter is None:
 			log.error(
 				"Trying to iterate over a blank Glossary"
-				", must call `glos.read` first"
+				", must call `glos.read` first",
 			)
 			return iter([])
 		return self._iter
@@ -563,7 +563,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		filename: str,
 		format: str = "",
 		direct: bool = False,
-		**kwargs
+		**kwargs,
 	) -> bool:
 		"""
 		filename (str):	name/path of input file
@@ -584,14 +584,14 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		if self._readers and not direct:
 			raise ValueError(
 				f"there are already {len(self._readers)} readers"
-				f", you can not read with direct=False mode"
+				f", you can not read with direct=False mode",
 			)
 
 		return self._read(
 			filename=filename,
 			format=format,
 			direct=direct,
-			**kwargs
+			**kwargs,
 		)
 
 	def _read(
@@ -600,7 +600,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		format: str = "",
 		direct: bool = False,
 		progressbar: bool = True,
-		**options
+		**options,
 	) -> bool:
 		filename = os.path.abspath(filename)
 
@@ -622,7 +622,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			if key not in validOptionKeys:
 				log.error(
 					f"Invalid read option {key!r} "
-					f"given for {format} format"
+					f"given for {format} format",
 				)
 				del options[key]
 
@@ -725,12 +725,12 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		"""
 		if self._readers:
 			raise NotImplementedError(
-				"can not use sortWords in direct mode"
+				"can not use sortWords in direct mode",
 			)
 
 		if self._sqlite:
 			raise NotImplementedError(
-				"can not use sortWords in SQLite mode"
+				"can not use sortWords in SQLite mode",
 			)
 
 		namedSortKey = namedSortKeyByName.get(sortKeyName)
@@ -771,7 +771,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			if key not in validOptionKeys:
 				log.error(
 					f"Invalid write option {key!r}"
-					f" given for {format} format"
+					f" given for {format} format",
 				)
 				del options[key]
 
@@ -784,7 +784,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self,
 		filename: str,
 		format: str,
-		**kwargs
+		**kwargs,
 	) -> "Optional[str]":
 		"""
 		filename (str): file name or path to write
@@ -817,7 +817,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		return self._write(
 			filename=filename,
 			format=format,
-			**kwargs
+			**kwargs,
 		)
 
 	def _write(
@@ -825,7 +825,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		filename: str,
 		format: str,
 		sort: "Optional[bool]" = None,
-		**options
+		**options,
 	) -> "Optional[str]":
 		filename = os.path.abspath(filename)
 
@@ -835,7 +835,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		if self._readers and sort:
 			log.warning(
-				"Full sort enabled, falling back to indirect mode"
+				"Full sort enabled, falling back to indirect mode",
 			)
 			self._inactivateDirectMode()
 
@@ -932,7 +932,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		if not self.alts:
 			log.warning(
 				"SQLite mode only works with enable_alts=True"
-				", force-enabling it."
+				", force-enabling it.",
 			)
 		self._config["enable_alts"] = True
 		self._sqlite = True
@@ -962,7 +962,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			if sort is False:
 				log.warning(
 					f"Writing {outputFormat} requires sorting"
-					f", ignoring user sort=False option"
+					f", ignoring user sort=False option",
 				)
 			sort = True
 		elif sortOnWrite == DEFAULT_YES:
@@ -975,7 +975,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			if sort:
 				log.warning(
 					"Plugin prevents sorting before write" +
-					", ignoring user sort=True option"
+					", ignoring user sort=True option",
 				)
 			sort = False
 
@@ -1000,7 +1000,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			if sqlite:
 				log.info(
 					"Automatically switching to SQLite mode"
-					f" for writing {outputFormat}"
+					f" for writing {outputFormat}",
 				)
 
 		if sortOnWrite == ALWAYS:
@@ -1011,7 +1011,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			if sortKeyName and sortKeyName != writerSortKeyName:
 				log.warning(
 					f"Ignoring user-defined sort order {sortKeyName!r}"
-					f", and using sortKey function from {outputFormat} plugin"
+					f", and using sortKey function from {outputFormat} plugin",
 				)
 			sortKeyName = writerSortKeyName
 
@@ -1116,7 +1116,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		if isdir(outputFilename) and os.listdir(outputFilename):
 			log.critical(
-				f"Directory already exists and not empty: {relpath(outputFilename)}"
+				f"Directory already exists and not empty: {relpath(outputFilename)}",
 			)
 			return
 
@@ -1145,7 +1145,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			format=inputFormat,
 			direct=direct,
 			progressbar=progressbar,
-			**readOptions
+			**readOptions,
 		):
 			log.critical(f"Reading file {relpath(inputFilename)!r} failed.")
 			self.cleanup()
@@ -1164,7 +1164,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			outputFilename,
 			outputFormat,
 			sort=sort,
-			**writeOptions
+			**writeOptions,
 		)
 		if not finalOutputFile:
 			log.critical(f"Writing file {relpath(outputFilename)!r} failed.")

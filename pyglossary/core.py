@@ -306,7 +306,7 @@ else:
 			exc_info=exc_info,
 			add_locals=(log.level <= logging.DEBUG),
 			add_globals=False,
-		)
+		),
 	)
 
 
@@ -373,7 +373,7 @@ elif os.sep == "\\":  # Operating system is Windows
 else:
 	raise RuntimeError(
 		f"Unknown path separator(os.sep=={os.sep!r})"
-		f", unknown operating system!"
+		f", unknown operating system!",
 	)
 
 pluginsDir = join(rootDir, "pyglossary", "plugins")

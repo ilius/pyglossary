@@ -15,7 +15,7 @@ def reverseGlossary(
 	includeDefs: bool = False,
 	reportStep: int = 300,
 	saveStep: int = 1000,  # set this to zero to disable auto saving
-	**kwargs
+	**kwargs,
 ) -> "Iterator[int]":
 	"""
 	This is a generator
@@ -59,7 +59,7 @@ def reverseGlossary(
 	wordCount = len(words)
 	log.info(
 		f"Reversing to file {savePath!r}"
-		f", number of words: {wordCount}"
+		f", number of words: {wordCount}",
 	)
 	glos.progressInit("Reversing")
 	wcThreshold = wordCount // 200 + 1
@@ -76,7 +76,7 @@ def reverseGlossary(
 				entries,
 				word,
 				includeDefs=includeDefs,
-				**kwargs
+				**kwargs,
 			)
 			if result:
 				try:
@@ -148,12 +148,12 @@ def searchWordInDef(
 						continue
 					rel = max(
 						rel,
-						partWords.count(st) / len(partWords)
+						partWords.count(st) / len(partWords),
 					)
 				else:
 					rel = max(
 						rel,
-						part.count(st) * len(st) / len(part)
+						part.count(st) * len(st) / len(part),
 					)
 			if rel <= minRel:
 				continue
