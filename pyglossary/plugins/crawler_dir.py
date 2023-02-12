@@ -61,7 +61,7 @@ class Writer(object):
 		return join(
 			bw[:2].hex() + ".d",
 			bw[2:4].hex() + ".d",
-			bw[4:8].hex() + "-" + sha1(b_word).hexdigest()[:8],
+			bw[4:8].hex() + "-" + sha1(b_word).hexdigest()[:8],  # noqa: S324
 		)
 
 	def write(self ):
@@ -90,7 +90,7 @@ class Writer(object):
 				makedirs(parentDir)
 			if isfile(fpath):
 				log.warning(f"file exists: {fpath}")
-				fpath += f"-{sha1(entry.b_defi).hexdigest()[:4]}"
+				fpath += f"-{sha1(entry.b_defi).hexdigest()[:4]}"  # noqa: S324
 			with c_open(fpath, "wt", encoding="utf-8") as _file:
 				_file.write(
 					f"{escapeNTB(entry.s_word)}\n{entry.defi}",

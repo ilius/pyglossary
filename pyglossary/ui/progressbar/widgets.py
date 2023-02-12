@@ -262,7 +262,8 @@ class FormatLabel(Timer):
                    context[name] = value
                 else:
                    context[name] = transform(value)
-            except: pass
+            except:
+                pass  # noqa
 
         return self.format_string % context
 

@@ -138,7 +138,7 @@ optionsProp = {
 
 
 if os.sep == "/":  # Operating system is Unix-like
-	tmpDir = "/tmp"
+	tmpDir = "/tmp"  # noqa
 elif os.sep == "\\":  # Operating system is ms-windows
 	tmpDir = os.getenv("TEMP")
 else:

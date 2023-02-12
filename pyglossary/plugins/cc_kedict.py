@@ -229,7 +229,7 @@ class YamlReader(TextGlossaryReader):
 		except ImportError:
 			from yaml import Loader
 
-		edict = load(yamlBlock, Loader=Loader)
+		edict = load(yamlBlock, Loader=Loader)  # noqa
 		word = edict.get("word")
 		if not word:
 			log.error(f"no word in {edict}")

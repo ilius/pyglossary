@@ -1,5 +1,4 @@
 [tool.ruff]
-# Enable Pyflakes `E` and `F` codes by default.
 select = [
     "E", # pycodestyle Error
     "W", # pycodestyle Warning
@@ -9,9 +8,7 @@ select = [
     "I", # isort: unsorted-imports, missing-required-import
     "COM", # flake8-commas
     "B", # flake8-bugbear
-    # "C4", # flake8-comprehensions
     # "C90", # mccabe: C901: {name} is too complex ({complexity})
-    # "S", # flake8-bandit
     # "N", # pep8-naming
     # "D", # pydocstyle
     # "UP", # pyupgrade
@@ -20,6 +17,10 @@ select = [
     # "BLE", # flake8-blind-except
     # "FBT", # flake8-boolean-trap
     # "DTZ", # flake8-datetimez
+
+    # "S", # flake8-bandit
+    # "C4", # flake8-comprehensions
+    #   when did Python's sorted() start returning list?
 ]
 ignore = [
     "E402", # Module level import not at top of file

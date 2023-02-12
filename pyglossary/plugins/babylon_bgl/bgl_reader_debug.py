@@ -467,8 +467,7 @@ class DebugBglReader(BglReader):
 	# search for new chars in data
 	# if new chars are found, mark them with a special sequence in the text
 	# and print result into msg log
-	def findAndPrintCharSamples(self, b_data, hint, encoding):
-		assert isinstance(b_data, bytes)
+	def findAndPrintCharSamples(self, b_data: bytes, hint, encoding):
 		if not self.targetCharsArray:
 			return
 		offsets = self.findCharSamples(b_data)

@@ -780,7 +780,7 @@ class Reader(object):
 		self._file = None
 		self._fileSize = 0
 		self._wordCount = 0
-		self._discoveredTags = dict()
+		self._discoveredTags = {}
 
 		self._p_pattern = re.compile(
 			'<p( [^<>]*?)?>(.*?)</p>',

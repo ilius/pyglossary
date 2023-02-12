@@ -46,7 +46,7 @@ def viewGlossary(filename, format=None):
 			except (BrokenPipeError, IOError):
 				break
 	except (BrokenPipeError, IOError):
-		pass
+		pass  # noqa
 	except Exception as e:
 		print(e)
 	finally:

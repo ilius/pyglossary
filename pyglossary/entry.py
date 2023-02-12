@@ -48,9 +48,6 @@ class DataEntry(BaseEntry):
 		tmpPath: "Optional[str]" = None,
 		byteProgress: "Optional[Tuple[int, int]]" = None,
 	) -> None:
-		assert isinstance(fname, str)
-		assert isinstance(data, bytes)
-
 		if data and tmpPath:
 			with open(tmpPath, "wb") as toFile:
 				toFile.write(data)

@@ -115,7 +115,7 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 			printEntry(green, "+++ B", index2, entry)
 			index2 += 1
 	except (BrokenPipeError, IOError):
-		pass
+		pass  # noqa
 	except Exception as e:
 		print(e)
 	finally:

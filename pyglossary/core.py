@@ -338,7 +338,7 @@ appResDir = join(dataDir, "res")
 if os.sep == "/":  # Operating system is Unix-Like
 	homeDir = os.getenv("HOME")
 	user = os.getenv("USER")
-	tmpDir = os.getenv("TMPDIR", "/tmp")
+	tmpDir = os.getenv("TMPDIR", "/tmp")  # noqa
 	if sysName == "darwin":  # MacOS X
 		_libDir = join(homeDir, "Library")
 		confDir = join(_libDir, "Preferences", "PyGlossary")

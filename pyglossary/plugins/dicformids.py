@@ -115,7 +115,7 @@ class Reader(object):
 			try:
 				self._tabFileReader.close()
 			except Exception:
-				pass
+				pass  # noqa
 		self._tabFileReader = None
 		self._tabFileNames = []
 

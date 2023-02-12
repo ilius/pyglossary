@@ -137,7 +137,7 @@ optionsProp = {
 
 
 def _isKana(char: str):
-	assert len(char) == 1
+	assert len(char) == 1  # noqa
 	val = ord(char)
 	return (
 		0x3040 <= val <= 0x309F or  # Hiragana
@@ -147,7 +147,7 @@ def _isKana(char: str):
 
 
 def _isKanji(char: str):
-	assert len(char) == 1
+	assert len(char) == 1  # noqa
 	val = ord(char)
 	return (
 		0x3400 <= val <= 0x4DBF or  # CJK Unified Ideographs Extension A

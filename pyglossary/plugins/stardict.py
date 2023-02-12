@@ -601,7 +601,8 @@ class Reader(object):
 			and defiFormatCode is int, so: defiFormat = chr(defiFormatCode)
 		"""
 		b_sametypesequence = sametypesequence.encode("utf-8")
-		assert len(b_sametypesequence) > 0
+		if not b_sametypesequence:
+			raise ValueError(f"{b_sametypesequence = }")
 		res = []
 		i = 0
 		for t in b_sametypesequence[:-1]:
@@ -615,7 +616,7 @@ class Reader(object):
 				res.append((b_block[beg:i], t))
 				i += 1
 			else:
-				assert bytes([t]).isupper()
+				# assert bytes([t]).isupper()
 				if i + 4 > len(b_block):
 					return None
 				size = uint32FromBytes(b_block[i:i + 4])
@@ -633,7 +634,7 @@ class Reader(object):
 				return None
 			res.append((b_block[i:], t))
 		else:
-			assert bytes([t]).isupper()
+			# assert bytes([t]).isupper()
 			res.append((b_block[i:], t))
 
 		return res
@@ -661,7 +662,7 @@ class Reader(object):
 				res.append((b_block[beg:i], t))
 				i += 1
 			else:
-				assert bytes([t]).isupper()
+				# assert bytes([t]).isupper()
 				if i + 4 > len(b_block):
 					return None
 				size = uint32FromBytes(b_block[i:i + 4])
