@@ -83,7 +83,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 class FixUnicode(EntryFilter):
 	name = "utf8_check"
 	desc = "Fix Unicode in word(s) and definition"
-	falseComment = "Do not fix Unicode in word(s) and definition",
+	falseComment = "Do not fix Unicode in word(s) and definition"
 
 	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
 		entry.editFuncWord(fixUtf8)
