@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-import sys
 import json
 import re
-from os.path import join, dirname, abspath
+import sys
+from os.path import abspath, dirname, join
+
 from mako.template import Template
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -148,7 +149,7 @@ def defaultOptionValue(name, opt, images):
 		_hex = termColors[str(value)].lstrip("#")
 		imageI = f"image{len(images)}"
 		images.append(
-			f".. |{imageI}| image:: https://via.placeholder.com/20/{_hex}/000000?text=+"
+			f".. |{imageI}| image:: https://via.placeholder.com/20/{_hex}/000000?text=+",
 		)
 		valueMD += f"\n|{imageI}|"
 

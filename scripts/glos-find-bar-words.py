@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import sys
-from os.path import dirname, abspath
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)

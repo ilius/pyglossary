@@ -1,17 +1,18 @@
 #!/usr/bin/python3
 
 import sys
-from os.path import join, dirname, abspath
-from pathlib import Path
 from collections import OrderedDict
-from mako.template import Template
+from os.path import abspath, dirname, join
+from pathlib import Path
+
 import toml
+from mako.template import Template
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.glossary import Glossary, defaultSortKeyName
 from pyglossary.core import userPluginsDir
+from pyglossary.glossary import Glossary, defaultSortKeyName
 
 Glossary.init(
 	# usePluginsJson=False,
@@ -125,7 +126,7 @@ def makeDependsDoc(cls):
 		for pypiName in cls.depends.values()
 	])
 	cmd = "pip3 install " + " ".join(
-		cls.depends.values()
+		cls.depends.values(),
 	)
 	return links, cmd
 
@@ -182,7 +183,7 @@ def renderRWOptions(options):
 				optionsComment[optName],
 			)
 			for optName, default in options.items()
-		]
+		],
 	)
 
 
@@ -238,7 +239,7 @@ for p in plugins:
 			try:
 				url, title = website
 			except ValueError:
-				raise ValueError(f"{website = }")
+				raise ValueError(f"{website = }") from None
 			website_md = renderLink(title, url)
 
 	(
@@ -354,7 +355,7 @@ indexText = renderTable(
 			renderLink(f"{p.lname}.md", f"./{p.lname}.md"),
 		)
 		for p in plugins
-	]
+	],
 )
 
 with open(

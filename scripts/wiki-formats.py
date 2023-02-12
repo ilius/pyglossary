@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
-import sys
 import os
+import sys
 from os.path import join
+
 from mako.template import Template
 
 rootDir = join(

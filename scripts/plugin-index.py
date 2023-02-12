@@ -1,17 +1,17 @@
 #!/usr/bin/python3
 
-import sys
 import json
-from os.path import join, dirname, abspath
+import sys
 from collections import OrderedDict as odict
+from os.path import abspath, dirname, join
 from pathlib import Path
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.glossary import Glossary
 from pyglossary.core import userPluginsDir
 from pyglossary.flags import DEFAULT_NO
+from pyglossary.glossary import Glossary
 
 Glossary.init(
 	usePluginsJson=False,

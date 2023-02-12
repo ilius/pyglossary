@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 import sys
-from os.path import join, dirname, abspath
+from os.path import abspath, dirname, join
+
 from mako.template import Template
 
 rootDir = dirname(dirname(abspath(__file__)))

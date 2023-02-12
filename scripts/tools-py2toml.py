@@ -1,16 +1,17 @@
 #!/usr/bin/python3
 
 import sys
-from os.path import join, dirname, abspath
-from pathlib import Path
 from collections import OrderedDict
+from os.path import abspath, dirname, join
+from pathlib import Path
+
 import toml
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.glossary import Glossary
 from pyglossary.core import userPluginsDir
+from pyglossary.glossary import Glossary
 
 Glossary.init(
 	# usePluginsJson=False,
