@@ -1,10 +1,11 @@
 
-from pyglossary.core import rootDir
-from os.path import join
 import json
+import logging
+from os.path import join
 from typing import List, Optional
 
-import logging
+from pyglossary.core import rootDir
+
 log = logging.getLogger("pyglossary")
 
 

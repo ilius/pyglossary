@@ -17,10 +17,11 @@
 
 from . import *
 from .utils import (
-	imageFromFile,
 	VBox,
+	imageFromFile,
 	pack,
 )
+
 
 class AboutWidget(gtk.Box):
 	def __init__(

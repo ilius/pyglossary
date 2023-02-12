@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
-import sys
 import os
 import signal
-from subprocess import Popen, PIPE
+import sys
+from subprocess import PIPE, Popen
 
 from pyglossary import Glossary
-from pyglossary.ui.tools.format_entry import formatEntry
 from pyglossary.ui.tools.colors import *
-
+from pyglossary.ui.tools.format_entry import formatEntry
 
 Glossary.init()
 

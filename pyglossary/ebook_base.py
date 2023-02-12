@@ -22,20 +22,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import logging
 import os
-from os.path import join
-import zipfile
-import tempfile
-from datetime import datetime
 import shutil
-
-from pyglossary.text_utils import toBytes
-from pyglossary.os_utils import indir, rmtree
-from pyglossary.glossary_type import EntryType
-
+import tempfile
+import zipfile
+from datetime import datetime
+from os.path import join
 from typing import Any, List
 
-import logging
+from pyglossary.glossary_type import EntryType
+from pyglossary.os_utils import indir, rmtree
+from pyglossary.text_utils import toBytes
+
 log = logging.getLogger("pyglossary")
 
 

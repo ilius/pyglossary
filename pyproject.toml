@@ -35,6 +35,7 @@ unfixable = []
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
+    "pyglossary/plugin_lib/*.py",
     ".direnv",
     ".eggs",
     ".git",

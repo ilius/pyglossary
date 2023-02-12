@@ -1,6 +1,6 @@
 from itertools import (
-	takewhile,
 	repeat,
+	takewhile,
 )
 from typing import AnyStr
 

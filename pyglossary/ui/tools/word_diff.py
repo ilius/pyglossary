@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-import sys
+import difflib
 import os
 import re
-import difflib
+import sys
 
 from pyglossary.ui.tools.colors import *
 

@@ -19,41 +19,36 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import logging
-
 import os
 import os.path
+from collections import OrderedDict as odict
+from contextlib import suppress
 from os.path import (
-	join,
-	isfile,
 	isdir,
+	isfile,
+	join,
 	relpath,
 )
-
 from time import time as now
-
-from contextlib import suppress
-from collections import OrderedDict as odict
 from typing import (
-	Optional, Any,
-	List, Tuple, Dict,
+	Any,
+	Dict,
 	Iterator,
-	Type, TypeVar,
+	List,
+	Optional,
+	Tuple,
+	Type,
+	TypeVar,
 )
 
-from .flags import (
-	ALWAYS,
-	DEFAULT_NO,
-	DEFAULT_YES,
-	NEVER,
-)
 from . import core
 from .core import (
+	cacheDir,
 	dataDir,
 	pluginsDir,
 	userPluginsDir,
-	cacheDir,
 )
-from .entry import Entry, DataEntry
+from .entry import DataEntry, Entry
 from .entry_filters import (
 	EntryFilter,
 	FixUnicode,
@@ -63,29 +58,34 @@ from .entry_filters import (
 	NonEmptyWordFilter,
 	NormalizeHtml,
 	PreventDuplicateWords,
-	SkipEntriesWithDuplicateHeadword,
-	TrimArabicDiacritics,
-	RTLDefi,
 	RemoveEmptyAndDuplicateAltWords,
 	RemoveHtmlTags,
 	RemoveHtmlTagsAll,
+	RTLDefi,
 	ShowMaxMemoryUsage,
 	ShowProgressBar,
 	SkipDataEntry,
+	SkipEntriesWithDuplicateHeadword,
+	TrimArabicDiacritics,
 	# TextListSymbolCleanup,
 	TrimWhitespaces,
 )
-
-from .glossary_utils import (
-	splitFilenameExt,
-	EntryList,
+from .flags import (
+	ALWAYS,
+	DEFAULT_NO,
+	DEFAULT_YES,
+	NEVER,
 )
-from .sort_keys import namedSortKeyByName
-from .os_utils import showMemoryUsage, rmtree
 from .glossary_info import GlossaryInfo
-from .plugin_manager import PluginManager
-from .glossary_type import GlossaryType, EntryType
+from .glossary_type import EntryType, GlossaryType
+from .glossary_utils import (
+	EntryList,
+	splitFilenameExt,
+)
 from .info import c_name
+from .os_utils import rmtree, showMemoryUsage
+from .plugin_manager import PluginManager
+from .sort_keys import namedSortKeyByName
 
 log = logging.getLogger("pyglossary")
 

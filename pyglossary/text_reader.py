@@ -1,15 +1,14 @@
-from pyglossary.entry import DataEntry
+import logging
+from os.path import isfile
+from typing import Iterator, List, Union
+
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
-from pyglossary.glossary_type import GlossaryType, EntryType
+from pyglossary.entry import DataEntry
+from pyglossary.glossary_type import EntryType, GlossaryType
 
-from os.path import isfile
-
-from typing import List, Iterator, Union
-
-import logging
 log = logging.getLogger("pyglossary")
 
 nextBlockResultType = """Optional[

@@ -2,7 +2,6 @@ import unicodedata
 from collections import namedtuple
 from typing import Optional, Set
 
-
 WritingSystem = namedtuple(
 	"WritingSystem", [
 		"name",

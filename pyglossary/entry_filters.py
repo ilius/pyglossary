@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import re
 import logging
-
-from .text_utils import (
-	fixUtf8,
-)
+import re
+from typing import Optional
 
 from .entry_base import BaseEntry
 from .glossary_type import GlossaryType
-
-from typing import Optional
+from .text_utils import (
+	fixUtf8,
+)
 
 log = logging.getLogger("pyglossary")
 
@@ -405,6 +403,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 
 	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
 		import os
+
 		import psutil
 		usage = psutil.Process(os.getpid()).memory_info().rss // 1024
 		if usage > self._max_mem_usage:

@@ -16,32 +16,28 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from pyglossary import core
-from pyglossary.core import homeDir, confDir
+import logging
+import os
+import tkinter as tk
+import traceback
+from os.path import abspath, isfile, join, splitext
+from tkinter import filedialog, tix, ttk
+from tkinter import font as tkFont
 
+from pyglossary import core
+from pyglossary.core import confDir, homeDir
 from pyglossary.glossary import (
 	Glossary,
 )
+from pyglossary.text_utils import urlToPath
 
 from .base import (
 	UIBase,
-	logo,
 	aboutText,
 	authors,
 	licenseText,
+	logo,
 )
-
-from pyglossary.text_utils import urlToPath
-import os
-from os.path import join, isfile, abspath, splitext
-import logging
-import traceback
-
-import tkinter as tk
-from tkinter import filedialog
-from tkinter import tix
-from tkinter import ttk
-from tkinter import font as tkFont
 
 log = logging.getLogger("pyglossary")
 

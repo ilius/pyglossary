@@ -1,8 +1,9 @@
+import logging
 import os
 import shutil
-import logging
-from pyglossary import core
 from typing import Any
+
+from pyglossary import core
 
 log = logging.getLogger("pyglossary")
 

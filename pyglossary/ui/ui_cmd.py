@@ -18,12 +18,13 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from os.path import join
 import time
+from os.path import join
 
 from pyglossary.glossary import *
-from .base import *
+
 from . import progressbar as pb
+from .base import *
 from .wcwidth import wcswidth
 
 

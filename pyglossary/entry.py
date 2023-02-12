@@ -1,31 +1,31 @@
 # -*- coding: utf-8 -*-
+import logging
+import os
 import re
 import shutil
-import os
 from os.path import (
-	join,
 	dirname,
 	getsize,
+	join,
 )
+from pickle import dumps, loads
+from typing import (
+	Any,
+	Callable,
+	List,
+	Literal,
+	Optional,
+	Tuple,
+)
+from zlib import compress, decompress
 
 from .entry_base import BaseEntry, MultiStr
+from .glossary_type import GlossaryType, RawEntryType
 from .iter_utils import unique_everseen
 from .text_utils import (
 	joinByBar,
 )
 
-from pickle import dumps, loads
-from zlib import compress, decompress
-
-from typing import (
-	Optional, Any,
-	Tuple, List,
-	Literal, Callable,
-)
-
-from .glossary_type import RawEntryType, GlossaryType
-
-import logging
 log = logging.getLogger("pyglossary")
 
 

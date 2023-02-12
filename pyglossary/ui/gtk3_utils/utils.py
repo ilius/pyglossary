@@ -15,13 +15,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from gi.repository import Pango as pango
-
-from . import *
 import logging
 from os.path import isabs, join
+
+from gi.repository import Pango as pango
+
 from pyglossary.core import appResDir
 
+from . import *
 
 log = logging.getLogger("pyglossary")
 

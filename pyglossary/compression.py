@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 from os.path import join
-import logging
-from .glossary_type import GlossaryType
 from typing import Optional
+
+from .glossary_type import GlossaryType
 
 stdCompressions = ("gz", "bz2", "lzma")
 
@@ -48,13 +49,14 @@ def compressionOpen(filename, dz=False, **kwargs):
 
 
 def zipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
-	import zipfile
 	import shutil
+	import zipfile
 	from os.path import (
-		isfile,
 		isdir,
+		isfile,
 		split,
 	)
+
 	from .os_utils import indir
 
 	def _zipFileAdd(zf, filename):

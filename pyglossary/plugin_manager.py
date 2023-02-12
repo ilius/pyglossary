@@ -19,16 +19,16 @@
 
 import logging
 import sys
+from typing import Any, ClassVar, Dict, Optional, Tuple
 
-from .plugin_prop import PluginProp
-from .glossary_utils import (
-	splitFilenameExt,
-)
 from . import core
 from .core import (
 	pluginsDir,
 )
-from typing import Optional, Any, Tuple, Dict, ClassVar
+from .glossary_utils import (
+	splitFilenameExt,
+)
+from .plugin_prop import PluginProp
 
 log = logging.getLogger("pyglossary")
 

@@ -17,26 +17,25 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from os.path import join, isfile
 import logging
 from collections import OrderedDict
+from os.path import isfile, join
+from typing import Tuple
 
 from pyglossary.core import (
-	rootConfJsonFile,
+	appResDir,
 	confJsonFile,
 	dataDir,
-	appResDir,
-)
-from pyglossary.option import (
-	Option,
-	BoolOption,
-	StrOption,
-	IntOption,
-	FloatOption,
+	rootConfJsonFile,
 )
 from pyglossary.glossary import Glossary
-
-from typing import Tuple
+from pyglossary.option import (
+	BoolOption,
+	FloatOption,
+	IntOption,
+	Option,
+	StrOption,
+)
 
 
 def fread(path):

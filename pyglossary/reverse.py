@@ -1,11 +1,10 @@
-from .glossary_type import GlossaryType, EntryType
-
+import logging
 import re
 from operator import itemgetter
+from typing import Iterator, List, Optional
 
-from typing import List, Optional, Iterator
+from .glossary_type import EntryType, GlossaryType
 
-import logging
 log = logging.getLogger("pyglossary")
 
 

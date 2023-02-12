@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from os.path import isfile
+
 from pyglossary.text_utils import (
-	splitByBar,
 	joinByBar,
+	splitByBar,
 )
 
 

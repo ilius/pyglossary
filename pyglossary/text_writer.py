@@ -1,12 +1,12 @@
-import os
 import logging
+import os
 from os.path import (
 	isdir,
 )
-from .compression import compressionOpen as c_open
-from .glossary_type import GlossaryType, EntryType
+from typing import Callable, Dict, Generator, List, Optional
 
-from typing import Optional, List, Dict, Callable, Generator
+from .compression import compressionOpen as c_open
+from .glossary_type import EntryType, GlossaryType
 
 log = logging.getLogger("pyglossary")
 

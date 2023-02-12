@@ -19,21 +19,20 @@
 
 import logging
 from collections import OrderedDict as odict
+from typing import Iterator, List, Optional, Tuple
 
 from .info import (
-	infoKeysAliasDict,
 	c_author,
 	c_name,
 	c_publisher,
 	c_sourceLang,
 	c_targetLang,
+	infoKeysAliasDict,
 )
+from .langs import Lang, langDict
 from .text_utils import (
 	fixUtf8,
 )
-from .langs import langDict, Lang
-
-from typing import Optional, List, Tuple, Iterator
 
 log = logging.getLogger("pyglossary")
 

@@ -19,18 +19,18 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-import os
-import sys
 import argparse
 import json
 import logging
-from typing import Optional, Dict, Callable
+import os
+import sys
+from typing import Callable, Dict, Optional
 
 from pyglossary import core  # essential
-from pyglossary.ui.base import UIBase
 from pyglossary.langs import langDict
-from pyglossary.sort_keys import namedSortKeyList, namedSortKeyByName
 from pyglossary.option import Option
+from pyglossary.sort_keys import namedSortKeyByName, namedSortKeyList
+from pyglossary.ui.base import UIBase
 
 # the first thing to do is to set up logger.
 # other modules also using logger "root", so it is essential to set it up prior

@@ -22,7 +22,7 @@
 # ^ this takes about 3 seconds
 # installed_packages = set(r.decode().split('==')[0] for r in reqs.split())
 
-from typing import List, Dict
+from typing import Dict, List
 
 
 def checkDepends(depends: "Dict[str, str]") -> "List[str]":

@@ -16,42 +16,41 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+import logging
+import os
 import shutil
 import sys
-import os
-from os.path import join, isfile, isabs, splitext, abspath
-import logging
 import traceback
 from collections import OrderedDict
+from os.path import abspath, isabs, isfile, join, splitext
 
-from pyglossary.text_utils import urlToPath
-from pyglossary.os_utils import click_website
+import gi
 
+from pyglossary import core
 from pyglossary.glossary import (
 	Glossary,
 	defaultSortKeyName,
 )
-from pyglossary.sort_keys import namedSortKeyList, namedSortKeyByName
+from pyglossary.os_utils import click_website
+from pyglossary.sort_keys import namedSortKeyByName, namedSortKeyList
+from pyglossary.text_utils import urlToPath
 
 from .base import (
 	UIBase,
-	logo,
 	aboutText,
 	authors,
 	licenseText,
+	logo,
 )
-
-from pyglossary import core
 from .dependency import checkDepends
 
-import gi
 gi.require_version("Gtk", "4.0")
 
 from .gtk4_utils import *
-from .gtk4_utils.utils import *
+from .gtk4_utils.about import AboutWidget
 from .gtk4_utils.dialog import MyDialog
 from .gtk4_utils.resize_button import ResizeButton
-from .gtk4_utils.about import AboutWidget
+from .gtk4_utils.utils import *
 
 # from gi.repository import GdkPixbuf
 

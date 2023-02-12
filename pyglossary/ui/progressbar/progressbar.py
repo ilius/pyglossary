@@ -28,14 +28,14 @@ import sys
 import time
 
 try:
-    from fcntl import ioctl
-    from array import array
     import termios
+    from array import array
+    from fcntl import ioctl
 except ImportError:
     pass
 
-from .compat import *  # for: any, next
 from . import widgets
+from .compat import *  # for: any, next
 
 
 class ProgressBar(object):

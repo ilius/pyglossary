@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import re
 from typing import AnyStr
 
-import logging
 log = logging.getLogger("pyglossary")
 
 

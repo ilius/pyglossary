@@ -17,10 +17,9 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from collections import namedtuple
 import re
-from typing import List, Any
-
+from collections import namedtuple
+from typing import Any, List
 
 NamedSortKey = namedtuple("NamedSortKey", [
 	"name",

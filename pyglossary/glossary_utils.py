@@ -18,10 +18,11 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+import logging
 from os.path import (
 	splitext,
 )
-import logging
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from .compression import (
 	stdCompressions,
@@ -29,8 +30,6 @@ from .compression import (
 from .entry import Entry
 from .glossary_type import EntryType
 from .sort_keys import NamedSortKey, sortKeyType
-
-from typing import Optional, Any, List, Tuple, Dict, Iterator
 
 log = logging.getLogger("pyglossary")
 
@@ -67,7 +66,7 @@ class EntryList(object):
 		sortLocale: str,
 		writeOptions: "Dict[str, Any]",
 	) -> "sortKeyType":
-		from icu import Locale, Collator
+		from icu import Collator, Locale
 
 		if namedSortKey.locale is None:
 			raise ValueError(
@@ -91,8 +90,8 @@ class EntryList(object):
 		sortScript: "List[str]",
 	) -> "sortKeyType":
 		from pyglossary.langs.writing_system import (
-			writingSystemByLowercaseName,
 			getWritingSystemFromText,
+			writingSystemByLowercaseName,
 		)
 
 		wsNames = []

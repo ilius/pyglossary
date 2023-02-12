@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import re
 import logging
-from typing import Optional, Any, List, Tuple, Dict, Union
-
+import re
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 log = logging.getLogger("pyglossary")
 

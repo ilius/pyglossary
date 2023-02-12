@@ -40,43 +40,40 @@ To use this user interface:
 # prompt_toolkit also supports ncurses-like dialogs with buttons and widgets,
 # but I prefer this kind of UI with auto-completion and history
 
-import sys
-import os
-from os.path import (
-	dirname,
-	join,
-	abspath,
-	relpath,
-	isdir,
-	isabs,
-)
-import logging
-from collections import OrderedDict
 import argparse
-import shlex
-
 import json
+import logging
+import os
+import shlex
+import sys
+from collections import OrderedDict
+from os.path import (
+	abspath,
+	dirname,
+	isabs,
+	isdir,
+	join,
+	relpath,
+)
+
+from prompt_toolkit import ANSI
+from prompt_toolkit import prompt as promptLow
+from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
+from prompt_toolkit.completion import (
+	Completion,
+	PathCompleter,
+	WordCompleter,
+)
+from prompt_toolkit.history import FileHistory
+from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.keys import Keys
+from prompt_toolkit.shortcuts import PromptSession, confirm
 
 from pyglossary import core
 from pyglossary.core import confDir
 from pyglossary.glossary import Glossary
+from pyglossary.sort_keys import namedSortKeyByName, namedSortKeyList
 from pyglossary.ui import ui_cmd
-from pyglossary.sort_keys import namedSortKeyList, namedSortKeyByName
-
-
-from prompt_toolkit import prompt as promptLow
-from prompt_toolkit.history import FileHistory
-from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from prompt_toolkit.completion import (
-	WordCompleter,
-	PathCompleter,
-	Completion,
-)
-from prompt_toolkit import ANSI
-from prompt_toolkit.shortcuts import confirm, PromptSession
-from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.keys import Keys
-
 
 endFormat = "\x1b[0;0;0m"
 
@@ -329,9 +326,9 @@ class UI(ui_cmd.UI):
 		parentDir: str = "",
 		sizeWidth: int = 0,
 	) -> str:
-		import stat
-		import pwd
 		import grp
+		import pwd
+		import stat
 		import time
 		argPath = arg
 		if parentDir:

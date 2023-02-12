@@ -15,8 +15,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from gi.repository import Gtk as gtk
 from gi.repository import Gdk as gdk
+from gi.repository import Gtk as gtk
 
 from .utils import gtk_event_iteration_loop
 

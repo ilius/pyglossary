@@ -17,8 +17,8 @@
 
 from . import *
 from .utils import (
-	imageFromFile,
 	VBox,
+	imageFromFile,
 	pack,
 )
 

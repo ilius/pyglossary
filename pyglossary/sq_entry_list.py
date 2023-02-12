@@ -17,15 +17,15 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from pickle import dumps, loads
+import logging
 import os
 from os.path import isfile
+from pickle import dumps, loads
+from typing import Any, Dict, List, Optional
+
 from .entry import Entry
 from .sort_keys import NamedSortKey, sqliteSortKeyType
 
-from typing import Any, Optional, List, Dict
-
-import logging
 log = logging.getLogger("pyglossary")
 
 PICKLE_PROTOCOL = 4
@@ -78,7 +78,7 @@ class SqEntryList(list):
 		sortLocale: str,
 		writeOptions: "Dict[str, Any]",
 	) -> "sqliteSortKeyType":
-		from icu import Locale, Collator
+		from icu import Collator, Locale
 
 		if namedSortKey.sqlite_locale is None:
 			raise ValueError(
@@ -102,8 +102,8 @@ class SqEntryList(list):
 		sortScript: "List[str]",
 	) -> "sqliteSortKeyType":
 		from pyglossary.langs.writing_system import (
-			writingSystemByLowercaseName,
 			getWritingSystemFromText,
+			writingSystemByLowercaseName,
 		)
 
 		wsNames = []

@@ -1,11 +1,12 @@
-from pyglossary import core
-from pyglossary.core import rootDir
 import logging
 from io import BytesIO
 from os.path import join
+from typing import Optional, Union
+
 import lxml
 
-from typing import Optional, Union
+from pyglossary import core
+from pyglossary.core import rootDir
 
 log = logging.getLogger("pyglossary")
 

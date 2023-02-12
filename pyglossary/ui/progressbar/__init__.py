@@ -45,5 +45,5 @@ __date__ = '2011-05-14'
 __version__ = '2.5'
 
 from .compat import *
-from .widgets import *
 from .progressbar import *
+from .widgets import *

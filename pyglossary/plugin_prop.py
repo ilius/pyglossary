@@ -17,16 +17,17 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from .option import Option, optionFromDict
+import logging
+import pathlib
+from collections import OrderedDict as odict
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
 from .flags import (
-	YesNoAlwaysNever,
 	DEFAULT_NO,
+	YesNoAlwaysNever,
 	flagsByName,
 )
-import logging
-from collections import OrderedDict as odict
-from typing import Any, Optional, List, Tuple, Dict, Callable
-import pathlib
+from .option import Option, optionFromDict
 
 log = logging.getLogger("pyglossary")
 

@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from .langs import Lang
 from collections import OrderedDict
 from typing import (
-	Optional, Any,
-	List, Tuple, Dict, Iterator, Callable,
+	Any,
+	Callable,
+	Dict,
+	Iterator,
+	List,
+	Optional,
+	Tuple,
 )
 
+from .langs import Lang
 
 RawEntryType = """Union[
 	bytes,  # compressed
