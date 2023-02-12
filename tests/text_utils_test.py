@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import sys
+import os
 from os.path import dirname, abspath
 import unittest
 import struct
