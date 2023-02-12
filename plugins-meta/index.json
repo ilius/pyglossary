@@ -1347,60 +1347,6 @@
 		}
 	},
 	{
-		"module": "sdict",
-		"lname": "sdict",
-		"name": "Sdict",
-		"description": "Sdictionary Binary(dct)",
-		"extensions": [
-			".dct"
-		],
-		"singleFile": true,
-		"optionsProp": {},
-		"canRead": true,
-		"canWrite": false,
-		"readOptions": {}
-	},
-	{
-		"module": "sdict_source",
-		"lname": "sdict_source",
-		"name": "SdictSource",
-		"description": "Sdictionary Source (.sdct)",
-		"extensions": [
-			".sdct"
-		],
-		"singleFile": true,
-		"optionsProp": {
-			"enable_info": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "Enable glossary info / metedata"
-			},
-			"newline": {
-				"class": "NewlineOption",
-				"type": "str",
-				"customValue": true,
-				"values": [
-					"\r\n",
-					"\n",
-					"\r"
-				],
-				"comment": "Newline string"
-			},
-			"resources": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "Enable resources / data files"
-			}
-		},
-		"canRead": false,
-		"canWrite": true,
-		"writeOptions": {
-			"enable_info": true,
-			"newline": "\n",
-			"resources": true
-		}
-	},
-	{
 		"module": "sql",
 		"lname": "sql",
 		"name": "Sql",

@@ -65,8 +65,6 @@ Android Termux - interactive command-line interface
 | [Lingoes Source](./doc/p/lingoes_ldf.md)                |  📝  |      .ldf       |  ✔   |   ✔   |
 | [Mobipocket E-Book](./doc/p/mobi.md)                    |  🔢  |      .mobi      |  ❌   |   ✔   |
 | [Octopus MDict](./doc/p/octopus_mdict.md)               |  🔢  |      .mdx       |  ✔   |   ❌   |
-| [Sdictionary Binary](./doc/p/sdict.md)                  |  🔢  |      .dct       |  ✔   |       |
-| [Sdictionary Source](./doc/p/sdict_source.md)           |  📝  |      .sdct      |      |   ✔   |
 | [SQL](./doc/p/sql.md)                                   |  📝  |      .sql       |  ❌   |   ✔   |
 | [StarDict](./doc/p/stardict.md)                         |  📁  |     (📝.ifo)     |  ✔   |   ✔   |
 | [StarDict Textual File](./doc/p/stardict_textual.md)    |  📝  |     (.xml)      |  ✔   |   ✔   |

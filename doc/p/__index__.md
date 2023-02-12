@@ -34,8 +34,6 @@
 | JSON (.json)                  | Json            | [json.md](./json.md)                           |
 | Lingoes Source (.ldf)         | LingoesLDF      | [lingoes_ldf.md](./lingoes_ldf.md)             |
 | Octopus MDict (.mdx)          | OctopusMdict    | [octopus_mdict.md](./octopus_mdict.md)         |
-| Sdictionary Binary(dct)       | Sdict           | [sdict.md](./sdict.md)                         |
-| Sdictionary Source (.sdct)    | SdictSource     | [sdict_source.md](./sdict_source.md)           |
 | SQL (.sql)                    | Sql             | [sql.md](./sql.md)                             |
 | StarDict (.ifo)               | Stardict        | [stardict.md](./stardict.md)                   |
 | StarDict Textual File (.xml)  | StardictTextual | [stardict_textual.md](./stardict_textual.md)   |
