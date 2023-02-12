@@ -957,7 +957,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 		])
 		self.configCheckButtons = {}
 		configDefDict = UIBase.configDefDict
-		for param, default in self.configParams.items():
+		for param in self.configParams:
 			hbox = gtk.HBox()
 			comment = configDefDict[param].comment
 			comment = comment.split("\n")[0]

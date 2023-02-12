@@ -244,7 +244,7 @@ class UI(UIBase):
 
 		if not self._toPause:
 			log.info("Reversing glossary... (Press Ctrl+C to pause/stop)")
-		for wordI in reverseGlossary(self.glos, **reverseKwArgs):
+		for _ in reverseGlossary(self.glos, **reverseKwArgs):
 			if self._toPause:
 				log.info(
 					"Reverse is paused."

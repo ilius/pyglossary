@@ -95,7 +95,7 @@ class Reader(object):
 			events=("end",),
 			tag="info",
 		)
-		for action, elem in context:
+		for _, elem in context:
 			self.setMetadata(elem)
 			break
 
@@ -125,7 +125,7 @@ class Reader(object):
 			return "", ""
 
 		defiFormatSet = set()
-		for defi, _type in defisWithFormat:
+		for _, _type in defisWithFormat:
 			defiFormatSet.add(_type)
 
 		if len(defiFormatSet) == 1:
@@ -158,7 +158,7 @@ class Reader(object):
 			events=("end",),
 			tag="article",
 		)
-		for action, elem in context:
+		for _, elem in context:
 			words = []
 			defisWithFormat = []
 			for child in elem.getchildren():

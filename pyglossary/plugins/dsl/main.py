@@ -204,7 +204,7 @@ class DSLParser(object):
 						{t for t in layer.tags if t.closing not in closings}
 						for layer in stack
 					))
-					for i in range(len(stack)):
+					for _ in range(len(stack)):
 						_layer.close_layer(stack)
 					# assert len(stack) == 1
 					# assert not stack[0].tags

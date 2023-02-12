@@ -78,12 +78,12 @@ def pinyin_indexes(content):
 	indexes = set()
 
 	# multiple pronunciations
-	for pinyin in pinyinPattern.split(pinyin):
+	for pinyinPart in pinyinPattern.split(pinyin):
 
 		# find all pinyin ranges, use them to rip pinyin out
 		py = [
-			r._slice(pinyin)
-			for r in color.ranges_of_pinyin_in_string(pinyin)
+			r._slice(pinyinPart)
+			for r in color.ranges_of_pinyin_in_string(pinyinPart)
 		]
 
 		# maybe no pinyin here

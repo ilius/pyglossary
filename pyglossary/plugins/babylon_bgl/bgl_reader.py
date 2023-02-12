@@ -967,7 +967,7 @@ class BglReader(object):
 		# reading alts
 		# use set instead of list to prevent duplicates
 		u_alts = set()
-		for altIndex in range(altsCount):
+		for _ in range(altsCount):
 			if pos + 4 > len(block.data):
 				log.error(
 					f"reading block offset={block.offset:#02x}"

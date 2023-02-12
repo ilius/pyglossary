@@ -106,7 +106,7 @@ class Reader(object):
 		try:
 			tabFileName = self._tabFileNames.pop()
 		except IndexError:
-			raise StopIteration
+			raise StopIteration from None
 		self._tabFileReader = TabfileReader(self._glos, hasInfo=False)
 		self._tabFileReader.open(join(self._dirname, tabFileName), newline="\n")
 

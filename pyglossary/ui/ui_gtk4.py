@@ -965,7 +965,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 		])
 		self.configCheckButtons = {}
 		configDefDict = UIBase.configDefDict
-		for param, default in self.configParams.items():
+		for param in self.configParams:
 			hbox = HBox(spacing=hpad)
 			comment = configDefDict[param].comment
 			checkButton = gtk.CheckButton(
@@ -1100,7 +1100,7 @@ check {
 			gdk.Display.get_default(),
 			self.styleProvider,
 			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
-		) 
+		)
 		#gtk.StyleContext.add_provider_for_screen(
 		#	gdk.Screen.get_default(),
 		#	self.styleProvider,
@@ -1708,6 +1708,3 @@ class UI(UIBase):
 		self.win.run(**kwargs)
 		self.app.run(None)
 		gtk_window_iteration_loop()
-
-
-

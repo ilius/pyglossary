@@ -834,7 +834,7 @@ class Reader(object):
 			events=("end",),
 			tag=f"{tei}teiHeader",
 		)
-		for action, elem in context:
+		for _, elem in context:
 			self.setMetadata(elem)
 			break
 
@@ -858,7 +858,7 @@ class Reader(object):
 			events=("end",),
 			tag=f"{tei}entry",
 		)
-		for action, elem in context:
+		for _, elem in context:
 			yield self.getEntryByElem(elem)
 			# clean up preceding siblings to save memory
 			# this reduces memory usage from ~64 MB to ~30 MB
@@ -867,5 +867,5 @@ class Reader(object):
 
 		if self._discoveredTags:
 			log.info("Found unsupported tags")
-			for tag, elem in self._discoveredTags.items():
+			for _, elem in self._discoveredTags.items():
 				log.info(f"{self.tostring(elem)}\n")

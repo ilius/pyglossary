@@ -208,7 +208,7 @@ class UIBase(object):
 				self.config[key] = data.pop(key)
 			except KeyError:
 				pass
-		for key, value in data.items():
+		for key in data:
 			log.warning(
 				f"unknown config key {key!r}, you may edit {confJsonFile}"
 				" file and remove this key",

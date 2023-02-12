@@ -8,7 +8,7 @@ select = [
     "TID", # flake8-tidy-imports
     "I", # isort: unsorted-imports, missing-required-import
     "COM", # flake8-commas
-    # "B", # flake8-bugbear
+    "B", # flake8-bugbear
     # "C4", # flake8-comprehensions
     # "C90", # mccabe: C901: {name} is too complex ({complexity})
     # "S", # flake8-bandit
@@ -36,6 +36,7 @@ unfixable = []
 # Exclude a variety of commonly ignored directories.
 exclude = [
     "pyglossary/plugin_lib/*.py",
+    "wcwidth.py",
     ".direnv",
     ".eggs",
     ".git",

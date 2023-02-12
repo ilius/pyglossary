@@ -192,7 +192,7 @@ class Reader(object):
 				raise IOError(
 					"'Info.plist' file is malformed, "
 					f"Please provide 'Contents/' with a correct 'Info.plist'. {e}",
-				)
+				) from e
 
 		self._glos.setInfo(
 			"name",

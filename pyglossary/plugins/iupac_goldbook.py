@@ -80,7 +80,7 @@ class Reader(object):
 			tag="entry",
 		)
 		termByCode = {}
-		for action, elem in context:
+		for _, elem in context:
 			termE = elem.find("./term")
 			if termE is None:
 				continue
@@ -152,7 +152,7 @@ class Reader(object):
 			events=("end",),
 			tag="entry",
 		)
-		for action, elem in context:
+		for _, elem in context:
 			codeE = elem.find("./code")
 			if codeE is None:
 				continue

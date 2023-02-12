@@ -362,7 +362,7 @@ class Reader(object):
 
 		# read header
 		for line in self._file:
-			line = line.rstrip().lstrip('\ufeff')
+			line = line.rstrip().lstrip('\ufeff')  # noqa: B005
 			# \ufeff -> https://github.com/ilius/pyglossary/issues/306
 			if not line:
 				continue
@@ -380,7 +380,7 @@ class Reader(object):
 				encoding=testEncoding,
 			) as fileObj:
 				try:
-					for i in range(10):
+					for _ in range(10):
 						fileObj.readline()
 				except UnicodeDecodeError:
 					log.info(f"Encoding of DSL file is not {testEncoding}")

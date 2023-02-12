@@ -69,7 +69,7 @@ def rmtree(direc):
 	import shutil
 	from os.path import isdir
 	try:
-		for i in range(2):
+		for _ in range(2):
 			if isdir(direc):
 				shutil.rmtree(
 					direc,
