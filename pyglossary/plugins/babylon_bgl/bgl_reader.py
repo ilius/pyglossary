@@ -138,7 +138,7 @@ optionsProp = {
 
 
 if os.sep == "/":  # Operating system is Unix-like
-	tmpDir = "/tmp"  # noqa
+	tmpDir = "/tmp"  # noqa: S108
 elif os.sep == "\\":  # Operating system is ms-windows
 	tmpDir = os.getenv("TEMP")
 else:
@@ -184,8 +184,10 @@ class Block(object):
 		self.offset = -1
 
 	def __str__(self):
-		return f"Block type={self.type}, length={self.length}, " \
+		return (
+			f"Block type={self.type}, length={self.length}, "
 			f"len(data)={len(self.data)}"
+		)
 
 
 class FileOffS(file):
@@ -198,7 +200,7 @@ class FileOffS(file):
 	byte of the modeled file.
 	"""
 	def __init__(self, filename, offset=0):
-		fileObj = open(filename, "rb")
+		fileObj = open(filename, "rb")  # noqa: SIM115
 		file.__init__(self, fileObj)
 		self._fileObj = fileObj
 		self.offset = offset
@@ -498,10 +500,9 @@ class BglReader(object):
 		glos.setInfo("sourceCharset", "UTF-8")
 		glos.setInfo("targetCharset", "UTF-8")
 		###
-		if "lastUpdated" not in self.info:
-			if "bgl_firstUpdated" in self.info:
-				log.debug("replacing bgl_firstUpdated with lastUpdated")
-				self.info["lastUpdated"] = self.info.pop("bgl_firstUpdated")
+		if "lastUpdated" not in self.info and "bgl_firstUpdated" in self.info:
+			log.debug("replacing bgl_firstUpdated with lastUpdated")
+			self.info["lastUpdated"] = self.info.pop("bgl_firstUpdated")
 		###
 		for key, value in self.info.items():
 			if value == "":
@@ -658,7 +659,7 @@ class BglReader(object):
 		pos += 1
 		if pos + Len > len(block.data):
 			log.warning("reading block type 2: name too long")
-			return
+			return None
 		b_name = block.data[pos:pos + Len]
 		pos += Len
 		b_data = block.data[pos:]
@@ -1317,9 +1318,7 @@ class BglReader(object):
 		if fields.u_defi:
 			u_defi_format += fields.u_defi
 
-		u_defi_format = u_defi_format.removesuffix("<br>").removesuffix("<BR>")
-
-		return u_defi_format
+		return u_defi_format.removesuffix("<br>").removesuffix("<BR>")
 
 	def processDefiStat(self, fields, b_defi, b_key):
 		pass
@@ -1449,7 +1448,7 @@ class BglReader(object):
 					continue
 				if i + Len > len(b_defi):
 					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}\n" +
+						f"collecting definition fields, b_defi = {b_defi!r}\n"
 						f"b_key = {b_key!r}:\ntoo few data after \\x13",
 					)
 					return
@@ -1599,7 +1598,7 @@ class BglReader(object):
 					continue
 				if i + Len > len(b_defi):
 					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}" +
+						f"collecting definition fields, b_defi = {b_defi!r}"
 						f"\nb_key = {b_key!r}:\ntoo few data after \\x60",
 					)
 					return

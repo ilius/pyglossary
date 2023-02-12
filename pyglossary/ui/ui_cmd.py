@@ -18,12 +18,16 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+import os
+import sys
 from os.path import join
+from typing import Dict, Optional
 
-from pyglossary.glossary import *
+from pyglossary.core import dataDir, log
+from pyglossary.glossary import Glossary
 
 from . import progressbar as pb
-from .base import *
+from .base import UIBase, fread
 from .wcwidth import wcswidth
 
 
@@ -278,11 +282,11 @@ class UI(UIBase):
 
 		self.config = config
 
-		if inputFormat:
+		if inputFormat:  # noqa: SIM102
 			# inputFormat = inputFormat.capitalize()
 			if inputFormat not in Glossary.readFormats:
 				log.error(f"invalid read format {inputFormat}")
-		if outputFormat:
+		if outputFormat:  # noqa: SIM102
 			# outputFormat = outputFormat.capitalize()
 			if outputFormat not in Glossary.writeFormats:
 				log.error(f"invalid write format {outputFormat}")

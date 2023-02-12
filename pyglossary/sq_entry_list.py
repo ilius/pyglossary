@@ -21,10 +21,14 @@ import logging
 import os
 from os.path import isfile
 from pickle import dumps, loads
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	from typing import Any, Dict, List, Optional
+
+	from .sort_keys import NamedSortKey, sqliteSortKeyType
 
 from .entry import Entry
-from .sort_keys import NamedSortKey, sqliteSortKeyType
 
 log = logging.getLogger("pyglossary")
 

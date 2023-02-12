@@ -1,13 +1,17 @@
 import logging
 from os.path import isfile
-from typing import Iterator, List, Union
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	from typing import Iterator, List, Union
+
+	from pyglossary.glossary_type import EntryType, GlossaryType
 
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
 from pyglossary.entry import DataEntry
-from pyglossary.glossary_type import EntryType, GlossaryType
 
 log = logging.getLogger("pyglossary")
 
@@ -46,7 +50,7 @@ class TextGlossaryReader(object):
 
 	compressions = stdCompressions
 
-	def __init__(self, glos: GlossaryType, hasInfo: bool = True):
+	def __init__(self, glos: "GlossaryType", hasInfo: bool = True):
 		self._glos = glos
 		self._filename = ""
 		self._file = None
@@ -178,9 +182,11 @@ class TextGlossaryReader(object):
 			try:
 				block = self.nextBlock()
 			except StopIteration:
-				if self._fileCount == -1 or self._fileIndex < self._fileCount - 1:
-					if self.openNextFile():
-						continue  # NESTED 5
+				if (
+					self._fileCount == -1 or self._fileIndex < self._fileCount - 1
+					and self.openNextFile()
+				):
+					continue
 				self._wordCount = self._pos
 				break
 			if not block:

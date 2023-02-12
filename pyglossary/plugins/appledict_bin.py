@@ -18,7 +18,10 @@ import re
 from datetime import datetime
 from os.path import isdir, isfile, join, split
 from struct import unpack
-from typing import Dict, Match, Tuple
+from typing import TYPE_CHECKING, Dict, Match, Tuple
+
+if TYPE_CHECKING:
+	import lxml
 from zlib import decompress
 
 from pyglossary.core import log, pip
@@ -94,7 +97,7 @@ class Reader(object):
 				title = a.attrib.get("title")
 				if title:
 					a.attrib["href"] = href = f"bword://{title}"
-		elif href.startswith("http://") or href.startswith("https://"):
+		elif href.startswith(("http://", "https://")):
 			pass
 		else:
 			a.attrib["href"] = href = f"bword://{href}"
@@ -102,21 +105,20 @@ class Reader(object):
 		a_new = tostring(a).decode("utf-8")
 		a_new = a_new[:-4]  # remove '</a>'
 
-		return a_new
+		return a_new  # noqa: RET504
 
 	def fixLinksInDefi(self, defi: str) -> str:
-		defi = self._re_link.sub(self.sub_link, defi)
-		return defi
+		return self._re_link.sub(self.sub_link, defi)
 
 	def open(self, filename: str) -> None:
 		from os.path import dirname
 		try:
-			from lxml import etree  # noqa
+			from lxml import etree  # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install lxml` to install"
 			raise e
 		try:
-			import biplist  # noqa
+			import biplist  # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install biplist` to install"
 			raise e
@@ -257,7 +259,7 @@ class Reader(object):
 
 	def _getDefi(
 		self,
-		entryElem: "lxml.etree.Element",  # noqa
+		entryElem: "lxml.etree.Element",
 	) -> str:
 		from lxml import etree
 

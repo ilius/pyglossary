@@ -54,7 +54,12 @@ from os.path import (
 	join,
 	relpath,
 )
+from typing import TYPE_CHECKING, Dict, Iterable, List, Literal, Optional, Union
 
+if TYPE_CHECKING:
+	from pyglossary.option import Option
+
+import prompt_toolkit
 from prompt_toolkit import ANSI
 from prompt_toolkit import prompt as promptLow
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -71,6 +76,7 @@ from prompt_toolkit.shortcuts import PromptSession, confirm
 from pyglossary import core
 from pyglossary.core import confDir
 from pyglossary.glossary import Glossary
+from pyglossary.plugin_prop import PluginProp
 from pyglossary.sort_keys import namedSortKeyByName, namedSortKeyList
 from pyglossary.ui import ui_cmd
 
@@ -94,7 +100,7 @@ class MiniCheckBoxPrompt(object):
 			message=self.message,
 		)
 		# msg = ANSI(msg)  # NOT SUPPORTED
-		return msg
+		return msg  # noqa: RET504
 
 	def __pt_formatted_text__(self):
 		return [("", self.formatMessage())]
@@ -112,7 +118,7 @@ def checkbox_prompt(
 	check = MiniCheckBoxPrompt(message=message, value=default)
 
 	@bindings.add(" ")
-	def space(event: "E") -> None:
+	def space(event: "prompt_toolkit.E") -> None:
 		check.value = not check.value
 		# cursor_pos = check.formatMessage().find("[") + 1
 		# cur_cursor_pos = session.default_buffer.cursor_position
@@ -120,9 +126,8 @@ def checkbox_prompt(
 		# session.default_buffer.cursor_position = cursor_pos
 
 	@bindings.add(Keys.Any)
-	def _(event: "E") -> None:
+	def _(event: "prompt_toolkit.E") -> None:
 		" Disallow inserting other text. "
-		pass
 
 	complete_message = check
 	session: PromptSession[bool] = PromptSession(
@@ -196,7 +201,7 @@ def prompt(
 			multiline=True,
 			**kwargs,
 		)
-	return text
+	return text  # noqa: RET504
 
 
 back = "back"
@@ -227,8 +232,8 @@ class MyPathCompleter(PathCompleter):
 
 	def get_completions(
 		self,
-		document: "Document",
-		complete_event: "CompleteEvent",
+		document: "prompt_toolkit.Document",
+		complete_event: "prompt_toolkit.CompleteEvent",
 	) -> "Iterable[Completion]":
 		text = document.text_before_cursor
 
@@ -553,14 +558,14 @@ class UI(ui_cmd.UI):
 
 	# TODO: how to handle \r and \n in NewlineOption.values?
 
-	def getOptionValueSuggestValues(self, option: "option.Option"):
+	def getOptionValueSuggestValues(self, option: "Option"):
 		if option.values:
 			return [str(x) for x in option.values]
 		if option.typ == "bool":
 			return ["True", "False"]
 		return None
 
-	def getOptionValueCompleter(self, option: "option.Option"):
+	def getOptionValueCompleter(self, option: "Option"):
 		values = self.getOptionValueSuggestValues(option)
 		if values:
 			return WordCompleter(
@@ -1021,22 +1026,22 @@ class UI(ui_cmd.UI):
 			try:
 				self.askInputFile()
 			except (KeyboardInterrupt, EOFError):
-				return
+				return None
 		if again or not self._inputFormat:
 			try:
 				self.checkInputFormat()
 			except (KeyboardInterrupt, EOFError):
-				return
+				return None
 		if again or not self._outputFilename:
 			try:
 				self.askOutputFile()
 			except (KeyboardInterrupt, EOFError):
-				return
+				return None
 		if again or not self._outputFormat:
 			try:
 				self.checkOutputFormat()
 			except (KeyboardInterrupt, EOFError):
-				return
+				return None
 
 		while True:
 			status = self.askFinalOptions()
@@ -1044,7 +1049,7 @@ class UI(ui_cmd.UI):
 				self.askInputOutputAgain()
 				continue
 			if not status:
-				return
+				return None
 			try:
 				succeed = ui_cmd.UI.run(self, **self.getRunKeywordArgs())
 			except Exception:

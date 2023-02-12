@@ -15,7 +15,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from . import *
+from typing import Optional
+
+from . import gtk
 from .utils import (
 	VBox,
 	imageFromFile,
@@ -146,4 +148,3 @@ class AboutWidget(gtk.Box):
 
 	def newTabTitle(self, title: str, icon: str):
 		return AboutTabTitleBox(title, icon)
-

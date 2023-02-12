@@ -29,11 +29,16 @@ import tempfile
 import zipfile
 from datetime import datetime
 from os.path import join
-from typing import Any, List
+from typing import TYPE_CHECKING
 
-from pyglossary.glossary_type import EntryType
 from pyglossary.os_utils import indir, rmtree
 from pyglossary.text_utils import toBytes
+
+if TYPE_CHECKING:
+	from typing import Any, List
+
+	from pyglossary.glossary_type import EntryType
+
 
 log = logging.getLogger("pyglossary")
 
@@ -113,13 +118,17 @@ class EbookWriter(object):
 	</p>
 	</body>
 </html>"""
-	INDEX_XHTML_LINK_TEMPLATE = "   <span class=\"indexGroup\">" \
+	INDEX_XHTML_LINK_TEMPLATE = (
+		"   <span class=\"indexGroup\">"
 		"<a href=\"{ref}\">{label}</a></span>"
+	)
 
 	INDEX_XHTML_LINK_JOINER = " &#8226;\n"
 
-	OPF_MANIFEST_ITEM_TEMPLATE = "  <item href=\"{ref}\" id=\"{id}\"" \
+	OPF_MANIFEST_ITEM_TEMPLATE = (
+		"  <item href=\"{ref}\" id=\"{id}\""
 		" media-type=\"{mediaType}\" />"
+	)
 
 	OPF_SPINE_ITEMREF_TEMPLATE = "  <itemref idref=\"{id}\" />"
 
@@ -293,13 +302,14 @@ class EbookWriter(object):
 		)
 
 	def escape_if_needed(self, string):
-		if self._escape_strings:
-			string = string.replace("&", "&amp;")\
-				.replace('"', "&quot;")\
-				.replace("'", "&apos;")\
-				.replace(">", "&gt;")\
-				.replace("<", "&lt;")
-		return string
+		if not self._escape_strings:
+			return string
+
+		return string.replace("&", "&amp;")\
+			.replace('"', "&quot;")\
+			.replace("'", "&apos;")\
+			.replace(">", "&gt;")\
+			.replace("<", "&lt;")
 
 	def write_index(self, group_labels):
 		"""
@@ -376,7 +386,6 @@ class EbookWriter(object):
 			write_ncx
 			only for epub
 		"""
-		pass
 
 	def open(self, filename: str):
 		self._filename = filename

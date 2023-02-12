@@ -2,7 +2,10 @@
 
 import re
 from io import BytesIO
-from typing import Any, Callable, Iterator, List, Optional
+from typing import TYPE_CHECKING, Any, Callable, Iterator, List, Optional
+
+if TYPE_CHECKING:
+	import lxml
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -128,7 +131,7 @@ class Reader(object):
 
 	def makeList(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
+		hf: "lxml.etree.htmlfile",
 		input_objects: "List[Any]",
 		processor: "Callable",
 		single_prefix="",
@@ -164,8 +167,8 @@ class Reader(object):
 
 	def writeRef(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		ref: "lxml.etree.Element",  # noqa
+		hf: "lxml.etree.htmlfile",
+		ref: "lxml.etree.Element",
 	):
 		target = ref.get("target")
 		attrib = {}
@@ -179,15 +182,15 @@ class Reader(object):
 
 	def writeQuote(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		elem: "lxml.etree.Element",  # noqa
+		hf: "lxml.etree.htmlfile",
+		elem: "lxml.etree.Element",
 	):
 		self.writeWithDirection(hf, elem, "div")
 
 	def writeTransCit(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		elem: "lxml.etree.Element",  # noqa
+		hf: "lxml.etree.htmlfile",
+		elem: "lxml.etree.Element",
 	):
 		quotes = []
 		for child in elem.xpath("child::node()"):
@@ -219,8 +222,8 @@ class Reader(object):
 
 	def writeDef(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		elem: "lxml.etree.Element",  # noqa
+		hf: "lxml.etree.htmlfile",
+		elem: "lxml.etree.Element",
 	):
 		sep = ", "  # TODO: self.getCommaSep(sample)
 		# if self._cif_newline:
@@ -280,8 +283,8 @@ class Reader(object):
 
 	def writeRichText(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		el: "lxml.etree.Element",  # noqa
+		hf: "lxml.etree.htmlfile",
+		el: "lxml.etree.Element",
 	):
 		from lxml import etree as ET
 		for child in el.xpath("child::node()"):
@@ -313,7 +316,7 @@ class Reader(object):
 			langObj = langDict[lang]
 			if not langObj:
 				log.warning(f"unknown lang {lang!r} in {self.tostring(elem)}")
-				return
+				return None
 			return langObj.name
 
 		orig = elem.attrib.get("orig")
@@ -321,6 +324,7 @@ class Reader(object):
 			return orig
 
 		log.warning(f"unknown lang name in {self.tostring(elem)}")
+		return None
 
 	def writeLangTag(self, hf, elem):
 		langDesc = self.getLangDesc(elem)
@@ -337,8 +341,8 @@ class Reader(object):
 
 	def writeSenseSense(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		sense: "lxml.etree.Element",  # noqa
+		hf: "lxml.etree.htmlfile",
+		sense: "lxml.etree.Element",
 	):
 		# this <sense> element can be 1st-level (directly under <entry>)
 		# or 2nd-level
@@ -471,8 +475,8 @@ class Reader(object):
 
 	def writeGramGroups(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		gramGrpList: "List[lxml.etree.htmlfile]",  # noqa
+		hf: "lxml.etree.htmlfile",
+		gramGrpList: "List[lxml.etree.htmlfile]",
 	):
 		from lxml import etree as ET
 
@@ -495,15 +499,15 @@ class Reader(object):
 
 	def writeSenseGrams(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		sense: "lxml.etree.Element",  # noqa
+		hf: "lxml.etree.htmlfile",
+		sense: "lxml.etree.Element",
 	):
 		self.writeGramGroups(hf, sense.findall("gramGrp", self.ns))
 
 	def writeSense(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		sense: "lxml.etree.Element",  # noqa
+		hf: "lxml.etree.htmlfile",
+		sense: "lxml.etree.Element",
 	):
 		# this <sense> element is 1st-level (directly under <entry>)
 		self.writeSenseGrams(hf, sense)
@@ -515,7 +519,7 @@ class Reader(object):
 		)
 		self.writeSenseSense(hf, sense)
 
-	def getDirection(self, elem: "lxml.etree.Element"):  # noqa
+	def getDirection(self, elem: "lxml.etree.Element"):
 		lang = elem.get(self.xmlLang)
 		if lang is None:
 			return ""
@@ -529,8 +533,8 @@ class Reader(object):
 
 	def writeSenseList(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		senseList: "List[lxml.etree.Element]",  # noqa
+		hf: "lxml.etree.htmlfile",
+		senseList: "List[lxml.etree.Element]",
 	):
 		# these <sense> elements are 1st-level (directly under <entry>)
 		if not senseList:
@@ -576,9 +580,10 @@ class Reader(object):
 					return self.subcMapping.get(text.lower(), text)
 				log.warning(f"unrecognize type={_type!r}: {self.tostring(elem)}")
 				return text
-			else:
-				log.warning(f"<gram> with no type: {self.tostring(elem)}")
-				return text
+
+			log.warning(f"<gram> with no type: {self.tostring(elem)}")
+			return text
+
 		if tag == f"{tei}note":
 			return text
 		log.warning(f"unrecognize GramGrp child tag: {self.tostring(elem)}")
@@ -587,7 +592,7 @@ class Reader(object):
 	def getEntryByElem(
 		self,
 		entry:
-		"lxml.etree.Element",  # noqa
+		"lxml.etree.Element",
 	) -> "EntryType":
 		from lxml import etree as ET
 		glos = self._glos
@@ -678,7 +683,7 @@ class Reader(object):
 		except Exception:
 			log.exception(f"unexpected {extent=}")
 
-	def tostring(self, elem: "lxml.etree.Element") -> str:  # noqa
+	def tostring(self, elem: "lxml.etree.Element") -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,
@@ -686,14 +691,14 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def stripParag(self, elem: "lxml.etree.Element") -> str:  # noqa
+	def stripParag(self, elem: "lxml.etree.Element") -> str:
 		text = self.tostring(elem)
 		text = self._p_pattern.sub("\\2", text)
-		return text
+		return text  # noqa: RET504
 
 	def stripParagList(
 		self,
-		elems: "List[lxml.etree.Element]",  # noqa
+		elems: "List[lxml.etree.Element]",
 	) -> str:
 		lines = []
 		for elem in elems:
@@ -731,8 +736,7 @@ class Reader(object):
 		self.setGlosInfo("creationTime", elem.text)
 
 	def replaceRefLink(self, text: str) -> str:
-		text = self._ref_pattern.sub('<a href="\\1">\\2</a>', text)
-		return text
+		return self._ref_pattern.sub('<a href="\\1">\\2</a>', text)
 
 	def setDescription(self, header):
 		elems = []
@@ -808,7 +812,7 @@ class Reader(object):
 		filename: str,
 	):
 		try:
-			from lxml import etree as ET  # noqa
+			from lxml import etree as ET
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install lxml` to install"
 			raise e

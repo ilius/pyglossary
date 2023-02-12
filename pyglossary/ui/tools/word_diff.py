@@ -3,8 +3,9 @@
 import difflib
 import re
 import sys
+from typing import Iterator, List
 
-from pyglossary.ui.tools.colors import *
+from pyglossary.ui.tools.colors import green, red, reset
 
 wordRE = re.compile(r"(\W)", re.M)
 xmlTagRE = re.compile(

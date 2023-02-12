@@ -22,14 +22,18 @@ import logging
 from os.path import (
 	splitext,
 )
-from typing import Any, Dict, Iterator, List, Optional, Tuple
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	from typing import Any, Dict, Iterator, List, Optional, Tuple
+
+	from .glossary_type import EntryType
+	from .sort_keys import NamedSortKey, sortKeyType
 
 from .compression import (
 	stdCompressions,
 )
 from .entry import Entry
-from .glossary_type import EntryType
-from .sort_keys import NamedSortKey, sortKeyType
 
 log = logging.getLogger("pyglossary")
 

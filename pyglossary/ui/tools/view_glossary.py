@@ -4,7 +4,7 @@ import sys
 from subprocess import PIPE, Popen
 
 from pyglossary import Glossary
-from pyglossary.ui.tools.colors import *
+from pyglossary.ui.tools.colors import reset, yellow
 from pyglossary.ui.tools.format_entry import formatEntry
 
 Glossary.init()
@@ -44,7 +44,7 @@ def viewGlossary(filename, format=None):
 			except (BrokenPipeError, IOError):
 				break
 	except (BrokenPipeError, IOError):
-		pass  # noqa
+		pass  # noqa: S110
 	except Exception as e:
 		print(e)
 	finally:

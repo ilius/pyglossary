@@ -203,7 +203,7 @@ class PluginManager(object):
 		def error(msg: str) -> None:
 			if not quiet:
 				log.critical(msg)
-			return None
+			return
 
 		filenameOrig = filename
 		filenameNoExt, filename, ext, compression = splitFilenameExt(filename)
@@ -246,7 +246,7 @@ class PluginManager(object):
 		def error(msg: str) -> None:
 			if not quiet:
 				log.critical(msg)
-			return None
+			return
 
 		plugin = None
 		if format:

@@ -8,6 +8,18 @@ select = [
     "I", # isort: unsorted-imports, missing-required-import
     "COM", # flake8-commas
     "B", # flake8-bugbear
+    "T10", # flake8-debugger
+    "ISC", # flake8-implicit-str-concat
+    "PIE", # flake8-pie
+    "RET", # flake8-return
+    "TID", # flake8-tidy-imports
+    "PGH", # pygrep-hooks
+    # "TCH", # flake8-type-checking, not done for plugins
+    # "ARG", # flake8-unused-arguments
+
+    # "EXE", # flake8-executable TODO
+
+
     # "C90", # mccabe: C901: {name} is too complex ({complexity})
     # "D", # pydocstyle
     # "UP", # pyupgrade
@@ -19,21 +31,28 @@ select = [
 
     # "N", # pep8-naming
 
+    # "SIM", # flake8-simplify, mostly done, not sure about enforcing it
     # "S", # flake8-bandit
     # "C4", # flake8-comprehensions
     #   when did Python's sorted() start returning list?
 ]
 ignore = [
     "E402", # Module level import not at top of file
-    "UP009",
+    "UP009", # UTF-8 encoding declaration is unnecessary
+    "SIM105", # Use contextlib.suppress({exception}) instead of try-except-pass
+    "SIM108", # Use ternary operator {contents} instead of if-else-block
+    "SIM117", # Use a single with statement with multiple contexts...
+    # ERA, PD,
 ]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [
-    "E", "F", "W",
+    # "E", "F", "W",
+    "RET",
     "I",
     "COM",
     # since which Python is comma after **kwargs allowd?
+    "TCH",
 ]
 unfixable = []
 
@@ -41,7 +60,10 @@ unfixable = []
 exclude = [
     # "pyglossary/ui/gtk4_utils/*",
     # "pyglossary/ui/gtk3_utils/*",
+    "pyglossary/plugins/testformat.py",
     "pyglossary/plugin_lib/*.py",
+    "pyglossary/ui/gtk*_utils/__init__.py",
+    "pyglossary/ui/ui_qt.py",
     "wcwidth*",
     ".direnv",
     ".eggs",

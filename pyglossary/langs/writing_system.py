@@ -414,13 +414,14 @@ def _getWritingSystemFromChar(char: str) -> "Optional[WritingSystem]":
 	except ValueError:
 		# if c not in string.whitespace:
 		# 	print(f"{c=}, {e}")
-		return
+		return None
 	alias = unicodeWords[0]
 	ws = writingSystemByUnicode.get(alias)
 	if ws:
 		return ws
 	if alias in unicodeNextWord:
 		return writingSystemByUnicode.get(" ".join(unicodeWords[:2]))
+	return None
 
 
 def _getWritingSystemFromText(
@@ -432,6 +433,7 @@ def _getWritingSystemFromText(
 		ws = _getWritingSystemFromChar(char)
 		if ws:
 			return ws
+	return None
 
 
 def getWritingSystemFromText(

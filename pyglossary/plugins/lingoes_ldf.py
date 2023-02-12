@@ -52,14 +52,14 @@ class Reader(TextGlossaryReader):
 	def isInfoWord(self, word):
 		if isinstance(word, str):
 			return word.startswith("#")
-		else:
-			return False
+
+		return False
 
 	def fixInfoWord(self, word):
 		if isinstance(word, str):
 			return word.lstrip("#").lower()
-		else:
-			return word
+
+		return word
 
 	def nextBlock(self):
 		if not self._file:
@@ -82,13 +82,13 @@ class Reader(TextGlossaryReader):
 
 			# now `line` is empty, process `entryLines`
 			if not entryLines:
-				return
+				return None
 			if len(entryLines) < 2:
 				log.error(
 					f"invalid block near line {self._file.line}"
 					f" in file {self._filename}",
 				)
-				return
+				return None
 			word = entryLines[0]
 			defi = "\n".join(entryLines[1:])
 			defi = defi.replace("<br/>", "\n")  # FIXME

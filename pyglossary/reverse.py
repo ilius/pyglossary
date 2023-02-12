@@ -1,9 +1,10 @@
 import logging
 import re
 from operator import itemgetter
-from typing import Iterator, List, Optional
+from typing import TYPE_CHECKING, Iterator, List, Optional
 
-from .glossary_type import EntryType, GlossaryType
+if TYPE_CHECKING:
+	from .glossary_type import EntryType, GlossaryType
 
 log = logging.getLogger("pyglossary")
 

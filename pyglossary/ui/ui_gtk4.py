@@ -21,6 +21,7 @@ import sys
 import traceback
 from collections import OrderedDict
 from os.path import abspath, isfile
+from typing import Any, Dict, List, Optional
 
 import gi
 
@@ -29,6 +30,7 @@ from pyglossary.glossary import (
 	Glossary,
 	defaultSortKeyName,
 )
+from pyglossary.plugin_prop import PluginProp
 from pyglossary.sort_keys import namedSortKeyList
 from pyglossary.text_utils import urlToPath
 
@@ -43,9 +45,20 @@ from .dependency import checkDepends
 
 gi.require_version("Gtk", "4.0")
 
-from .gtk4_utils import *
+from .gtk4_utils import gdk, gio, gtk
 from .gtk4_utils.about import AboutWidget
-from .gtk4_utils.utils import *
+from .gtk4_utils.utils import (
+	HBox,
+	VBox,
+	dialog_add_button,
+	gtk_event_iteration_loop,
+	gtk_window_iteration_loop,
+	imageFromFile,
+	pack,
+	rgba_parse,
+	set_tooltip,
+	showInfo,
+)
 
 # from gi.repository import GdkPixbuf
 
@@ -89,7 +102,8 @@ def buffer_get_text(b):
 
 
 """
-GTK 4 has removed the GtkContainer::border-width property (together with the rest of GtkContainer).
+GTK 4 has removed the GtkContainer::border-width property
+(together with the rest of GtkContainer).
 Use other means to influence the spacing of your containers,
 such as the CSS margin and padding properties on child widgets,
 or the CSS border-spacing property on containers.
@@ -215,7 +229,7 @@ class FormatDialog(gtk.Dialog):
 	def getActive(self) -> "Optional[PluginProp]":
 		_iter = self.treev.get_selection().get_selected()[1]
 		if _iter is None:
-			return
+			return None
 		model = self.treev.get_model()
 		desc = model.get_value(_iter, 0)
 		return pluginByDesc[desc]
@@ -482,8 +496,10 @@ class FormatOptionsDialog(gtk.Dialog):
 			return
 		model = self.treev.get_model()
 		value = entry.get_text()
-		model.set_value(itr, self.valueCol, value)
-		model.set_value(itr, 0, True)  # enable it
+		print(model, value)
+		# FIXME
+		# model.set_value(itr, self.valueCol, value)
+		# model.set_value(itr, 0, True)  # enable it
 
 	def valueItemCustomActivate(self, item: "gtk.MenuItem", itr: gtk.TreeIter):
 		model = self.treev.get_model()
@@ -672,7 +688,7 @@ class InputFormatBox(FormatBox):
 	def getActiveOptions(self):
 		formatName = self.getActive()
 		if not formatName:
-			return
+			return None
 		return list(Glossary.formatsReadOptions[formatName].keys())
 
 
@@ -844,7 +860,10 @@ class SortOptionsBox(gtk.Box):
 		encodingRadio.set_active(True)
 		###
 		hbox = self.localeHBox = HBox(spacing=5)
-		localeRadio = self.localeRadio = gtk.CheckButton(label="Sort Locale", group=encodingRadio)
+		localeRadio = self.localeRadio = gtk.CheckButton(
+			label="Sort Locale",
+			group=encodingRadio,
+		)
 		localeEntry = self.localeEntry = gtk.Entry()
 		localeEntry.set_width_chars(15)
 		pack(hbox, gtk.Label(label="    "))
@@ -1396,7 +1415,7 @@ check {
 		# hbox.sepLabel2 = gtk.Label(label="")
 		# pack(hbox, hbox.sepLabel2, 1, 1)
 		####
-		self.statusBar = sbar = gtk.Statusbar()
+		self.statusBar = gtk.Statusbar()
 		pack(hbox, self.statusBar, 1, 1)
 		####
 		# ResizeButton does not work in Gtk 4.0
@@ -1489,7 +1508,7 @@ check {
 		inPath = self.convertInputEntry.get_text()
 		if not inPath:
 			log.critical("Input file path is empty!")
-			return
+			return None
 		inFormat = self.convertInputFormatCombo.getActive()
 		if inFormat:
 			Glossary.plugins[inFormat].description
@@ -1500,7 +1519,7 @@ check {
 		outPath = self.convertOutputEntry.get_text()
 		if not outPath:
 			log.critical("Output file path is empty!")
-			return
+			return None
 		outFormat = self.convertOutputFormatCombo.getActive()
 		if outFormat:
 			Glossary.plugins[outFormat].description

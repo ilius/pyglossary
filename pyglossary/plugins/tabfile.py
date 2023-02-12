@@ -82,14 +82,14 @@ class Reader(TextGlossaryReader):
 			raise StopIteration
 		line = line.rstrip("\n")
 		if not line:
-			return
+			return None
 		###
 		word, tab, defi = line.partition("\t")
 		if not tab:
 			log.error(
 				f"Warning: line starting with {line[:10]!r} has no tab!",
 			)
-			return
+			return None
 		###
 		if self._glos.alts:
 			word = splitByBarUnescapeNTB(word)

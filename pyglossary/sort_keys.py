@@ -258,7 +258,7 @@ def _dicformids_normal(encoding: str, **options) -> "sortKeyType":
 		word = re_spaces.sub(" ", word)
 		word = re_tabs.sub(" ", word)
 		word = word.lower()
-		return word
+		return word  # noqa: RET504
 
 	return sortKey
 

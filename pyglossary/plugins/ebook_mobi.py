@@ -253,14 +253,13 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			headword_visible = "\n" + self._glos.wordTitleStr(headword)
 			value_headword = ""
 
-		group_content = self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
+		return self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
 			spellcheck_str=' spell="yes"' if self._spellcheck else "",
 			headword_visible=headword_visible,
 			value_headword=value_headword,
 			definition=defi,
 			infl=infl,
 		)
-		return group_content
 
 	def getLangCode(self, lang) -> str:
 		return lang.code if isinstance(lang, Lang) else ""

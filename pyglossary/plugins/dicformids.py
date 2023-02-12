@@ -115,7 +115,7 @@ class Reader(object):
 			try:
 				self._tabFileReader.close()
 			except Exception:
-				pass  # noqa
+				pass  # noqa: S110
 		self._tabFileReader = None
 		self._tabFileNames = []
 
@@ -143,7 +143,7 @@ class Writer(object):
 		word = self.re_spaces.sub(" ", word)
 		word = self.re_tabs.sub(" ", word)
 		word = word.lower()
-		return word
+		return word  # noqa: RET504
 
 	def writeProbs(self):
 		glos = self._glos

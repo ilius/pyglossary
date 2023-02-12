@@ -81,7 +81,7 @@ class Writer(object):
 			)
 
 		fileObj.write(
-			"CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, " +
+			"CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, "
 			"\'w\' TEXT, \'m\' TEXT);\n",
 		)
 

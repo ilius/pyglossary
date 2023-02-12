@@ -35,7 +35,6 @@ except ImportError:
     pass
 
 from . import widgets
-from .compat import *  # for: any, next
 
 
 class ProgressBar(object):
@@ -112,8 +111,9 @@ class ProgressBar(object):
                 self._handle_resize()
                 signal.signal(signal.SIGWINCH, self._handle_resize)
                 self.signal_set = True
-            except (SystemExit, KeyboardInterrupt): raise
-            except:
+            except (SystemExit, KeyboardInterrupt):
+                raise
+            except:  # noqa: E722
                 self.term_width = self._env_size()
 
         self.__iterable = None
@@ -133,7 +133,7 @@ class ProgressBar(object):
 
         try:
             self.maxval = len(iterable)
-        except:
+        except TypeError:
             if self.maxval is None:
                 self.maxval = widgets.UnknownLength
 
@@ -221,13 +221,15 @@ class ProgressBar(object):
 
         widgets = ''.join(self._format_widgets())
 
-        if self.left_justify: return widgets.ljust(self.term_width)
-        else: return widgets.rjust(self.term_width)
+        if self.left_justify:
+            return widgets.ljust(self.term_width)
+        return widgets.rjust(self.term_width)
 
 
     def _need_update(self):
         """Returns whether the ProgressBar should redraw the line."""
-        if self.currval >= self.next_update or self.finished: return True
+        if self.currval >= self.next_update or self.finished:
+            return True
 
         delta = time.time() - self.last_update_time
         return self._time_sensitive and delta > self.poll
@@ -252,7 +254,8 @@ class ProgressBar(object):
             self.currval = value
 
 
-        if not self._need_update(): return
+        if not self._need_update():
+            return
         if self.start_time is None:
             raise RuntimeError('You must call "start" before calling "update"')
 
@@ -286,7 +289,8 @@ class ProgressBar(object):
         self.next_update = 0
 
         if self.maxval is not widgets.UnknownLength:
-            if self.maxval < 0: raise ValueError('Value out of range')
+            if self.maxval < 0:
+                raise ValueError('Value out of range')
             self.update_interval = self.maxval / self.num_intervals
 
 

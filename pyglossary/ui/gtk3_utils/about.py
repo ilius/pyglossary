@@ -15,7 +15,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from . import *
+from typing import Optional
+
+from . import gtk
 from .utils import (
 	VBox,
 	imageFromFile,
@@ -127,4 +129,3 @@ class AboutWidget(gtk.Box):
 			box.pack_start(gtk.Label(label=title), False, False, 5)
 		box.show_all()
 		return box
-

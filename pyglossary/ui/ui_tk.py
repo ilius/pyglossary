@@ -23,6 +23,7 @@ import traceback
 from os.path import abspath, isfile, join, splitext
 from tkinter import filedialog, tix, ttk
 from tkinter import font as tkFont
+from typing import Callable, Dict, List, Literal, Optional
 
 from pyglossary import core
 from pyglossary.core import confDir, homeDir
@@ -1292,12 +1293,12 @@ class UI(tix.Frame, UIBase):
 		# print(e.state, e.keysym)
 		if e.state > 0:
 			if e.keysym == "c":
-				return
+				return None
 			if e.keysym == "a":
 				self.textSelectAll(self.console)
 				return "break"
 		if e.keysym == "Escape":
-			return
+			return None
 		return "break"
 
 	def verbosityChanged(self, index, value, op):
@@ -1356,13 +1357,17 @@ class UI(tix.Frame, UIBase):
 			self.writeOptionsButton.grid_forget()
 
 		pathI = self.entryInputConvert.get()
-		if pathI and not self.entryOutputConvert.get():
-			if self.formatButtonInputConvert.get() and plugin.extensionCreate:
-				pathNoExt, ext = splitext(pathI)
-				self.entryOutputConvert.insert(
-					0,
-					pathNoExt + plugin.extensionCreate,
-				)
+		if (
+			pathI and
+			not self.entryOutputConvert.get() and
+			self.formatButtonInputConvert.get() and
+			plugin.extensionCreate
+		):
+			pathNoExt, ext = splitext(pathI)
+			self.entryOutputConvert.insert(
+				0,
+				pathNoExt + plugin.extensionCreate,
+			)
 
 	def anyEntryChanged(self, event=None):
 		self.inputEntryChanged()
@@ -1443,7 +1448,7 @@ class UI(tix.Frame, UIBase):
 		inPath = self.entryInputConvert.get()
 		if not inPath:
 			log.critical("Input file path is empty!")
-			return
+			return None
 		inFormatDesc = self.formatButtonInputConvert.get()
 		if not inFormatDesc:
 			# log.critical("Input format is empty!");return
@@ -1454,11 +1459,11 @@ class UI(tix.Frame, UIBase):
 		outPath = self.entryOutputConvert.get()
 		if not outPath:
 			log.critical("Output file path is empty!")
-			return
+			return None
 		outFormatDesc = self.formatButtonOutputConvert.get()
 		if not outFormatDesc:
 			log.critical("Output format is empty!")
-			return
+			return None
 		outFormat = pluginByDesc[outFormatDesc].name
 
 		for attr, value in self._glossarySetAttrs.items():

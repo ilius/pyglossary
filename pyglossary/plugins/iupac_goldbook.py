@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from io import BytesIO
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 
+if TYPE_CHECKING:
+	import lxml
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
@@ -107,7 +109,7 @@ class Reader(object):
 
 	def tostring(
 		self,
-		elem: "lxml.etree.Element",  # noqa
+		elem: "lxml.etree.Element",
 	) -> str:
 		from lxml import etree as ET
 		return ET.tostring(
@@ -137,7 +139,7 @@ class Reader(object):
 		).decode("utf-8").strip()[6:-7].strip()
 		term = unescape_unicode(term)
 		term = term.replace("<i>", "").replace("</i>", "")
-		return term
+		return term  # noqa: RET504
 
 	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET

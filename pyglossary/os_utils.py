@@ -46,7 +46,7 @@ def runDictzip(filename: str) -> None:
 	dictzipCmd = shutil.which("dictzip")
 	if not dictzipCmd:
 		log.warning("dictzip command was not found. Make sure it's in your $PATH")
-		return False
+		return
 	(out, err) = subprocess.Popen(
 		[dictzipCmd, filename],
 		stdout=subprocess.PIPE,

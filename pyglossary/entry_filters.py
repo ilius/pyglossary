@@ -2,13 +2,17 @@
 
 import logging
 import re
-from typing import Optional
+from typing import TYPE_CHECKING
 
-from .entry_base import BaseEntry
-from .glossary_type import GlossaryType
 from .text_utils import (
 	fixUtf8,
 )
+
+if TYPE_CHECKING:
+	from typing import Optional
+
+	from .glossary_type import EntryType, GlossaryType
+
 
 log = logging.getLogger("pyglossary")
 
@@ -25,9 +29,8 @@ class EntryFilter(object):
 		"""
 			run this after glossary info is set and ready
 		"""
-		pass
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		"""
 			returns an Entry object, or None to skip
 				may return the same `entry`,
@@ -41,7 +44,7 @@ class TrimWhitespaces(EntryFilter):
 	name = "trim_whitespaces"
 	desc = "Remove leading/trailing whitespaces from word(s) and definition"
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		entry.strip()
 		entry.replace("\r", "")
 		return entry
@@ -51,9 +54,9 @@ class NonEmptyWordFilter(EntryFilter):
 	name = "non_empty_word"
 	desc = "Skip entries with empty word"
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		if not entry.s_word:
-			return
+			return None
 		return entry
 
 
@@ -61,9 +64,9 @@ class NonEmptyDefiFilter(EntryFilter):
 	name = "non_empty_defi"
 	desc = "Skip entries with empty definition"
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		if not entry.defi:
-			return
+			return None
 		return entry
 
 
@@ -71,10 +74,10 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 	name = "remove_empty_dup_alt_words"
 	desc = "Remove empty and duplicate alternate words"
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		entry.removeEmptyAndDuplicateAltWords()
 		if not entry.l_word:
-			return
+			return None
 		return entry
 
 
@@ -83,7 +86,7 @@ class FixUnicode(EntryFilter):
 	desc = "Fix Unicode in word(s) and definition"
 	falseComment = "Do not fix Unicode in word(s) and definition"
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		entry.editFuncWord(fixUtf8)
 		entry.editFuncDefi(fixUtf8)
 		return entry
@@ -104,7 +107,7 @@ class LowerWord(EntryFilter):
 			defi,
 		)
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		entry.editFuncWord(str.lower)
 		entry.editFuncDefi(self.lowerWordRefs)
 		return entry
@@ -114,7 +117,7 @@ class RTLDefi(EntryFilter):
 	name = "rtl"
 	desc = "Make definition right-to-left"
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		entry.editFuncDefi(lambda defi: f'<div dir="rtl">{defi}</div>')
 		return entry
 
@@ -137,7 +140,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 			re.IGNORECASE,
 		)
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		from bs4 import BeautifulSoup
 
 		def fixStr(st: str) -> str:
@@ -158,8 +161,10 @@ class RemoveHtmlTagsAll(EntryFilter):
 
 class RemoveHtmlTags(EntryFilter):
 	name = "remove_html"
-	desc = "Remove given comma-separated HTML tags" \
+	desc = (
+		"Remove given comma-separated HTML tags"
 		" (not their contents) from definition"
+	)
 
 	def __init__(self, glos: "GlossaryType", tagsStr: str):
 		import re
@@ -169,7 +174,7 @@ class RemoveHtmlTags(EntryFilter):
 		tagsRE = "|".join(self.tags)
 		self.pattern = re.compile(f"</?({tagsRE})( [^>]*)?>")
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		def fixStr(st: str) -> str:
 			return self.pattern.sub("", st)
 
@@ -207,10 +212,9 @@ class NormalizeHtml(EntryFilter):
 		return m.group(0).lower()
 
 	def _fixDefi(self, st: str) -> str:
-		st = self._pattern.sub(self._subLower, st)
-		return st
+		return self._pattern.sub(self._subLower, st)
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		entry.editFuncDefi(self._fixDefi)
 		return entry
 
@@ -219,9 +223,9 @@ class SkipDataEntry(EntryFilter):
 	name = "skip_resources"
 	desc = "Skip resources / data files"
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		if entry.isData():
-			return
+			return None
 		return entry
 
 
@@ -231,7 +235,7 @@ class LanguageCleanup(EntryFilter):
 
 	def __init__(self, glos: "GlossaryType"):
 		EntryFilter.__init__(self, glos)
-		self._run_func = None  # type: Callable[[BaseEntry], [Optional[BaseEntry]]]
+		self._run_func = None  # type: Callable[[EntryType], [Optional[EntryType]]]
 
 	def prepare(self) -> None:
 		langCodes = {
@@ -243,7 +247,7 @@ class LanguageCleanup(EntryFilter):
 			self._run_func = self.run_fa
 			log.info("Using Persian filter")
 
-	def run_fa(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run_fa(self, entry: "EntryType") -> "Optional[EntryType]":
 		from pyglossary.persian_utils import faEditStr
 		entry.editFuncWord(faEditStr)
 		entry.editFuncDefi(faEditStr)
@@ -252,9 +256,9 @@ class LanguageCleanup(EntryFilter):
 		# for GoldenDict ^^ FIXME
 		return entry
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		if self._run_func:
-			entry = self._run_func(entry)
+			return self._run_func(entry)
 		return entry
 
 
@@ -285,9 +289,9 @@ class TextListSymbolCleanup(EntryFilter):
 		if st.endswith(","):
 			st = st[:-1]
 
-		return st
+		return st  # noqa: RET504
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		entry.editFuncDefi(self.cleanDefi)
 		return entry
 
@@ -300,7 +304,7 @@ class PreventDuplicateWords(EntryFilter):
 		EntryFilter.__init__(self, glos)
 		self._wordSet = set()
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		if entry.isData():
 			return entry
 
@@ -331,10 +335,10 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 		EntryFilter.__init__(self, glos)
 		self._wset = set()
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		word = entry.l_word[0]
 		if word in self._wset:
-			return
+			return None
 		self._wset.add(word)
 		return entry
 
@@ -347,7 +351,7 @@ class TrimArabicDiacritics(EntryFilter):
 		EntryFilter.__init__(self, glos)
 		self._pat = re.compile("[\u064b-\u065f]")
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		words = list(entry.l_word)
 		hw = words[0]
 		hw_t = self._pat.sub("", hw)
@@ -369,7 +373,7 @@ class ShowProgressBar(EntryFilter):
 		self._lastPos = 0
 		self._index = 0
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		index = self._index
 		self._index = index + 1
 
@@ -386,9 +390,8 @@ class ShowProgressBar(EntryFilter):
 				self._wordCount // 200,
 			))
 
-		if self._wordCount > 1:
-			if index % self._wordCountThreshold == 0:
-				self.glos.progress(index, self._wordCount)
+		if self._wordCount > 1 and index % self._wordCountThreshold == 0:
+			self.glos.progress(index, self._wordCount)
 
 		return entry
 
@@ -401,7 +404,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 		EntryFilter.__init__(self, glos)
 		self._max_mem_usage = 0
 
-	def run(self, entry: BaseEntry) -> "Optional[BaseEntry]":
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		import os
 
 		import psutil

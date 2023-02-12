@@ -76,7 +76,7 @@ class Reader(TextGlossaryReader):
 
 	def open(self, filename: str) -> None:
 		try:
-			import mistune  # noqa
+			import mistune  # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install mistune` to install"
 			raise e

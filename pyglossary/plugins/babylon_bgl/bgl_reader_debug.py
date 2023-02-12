@@ -96,7 +96,7 @@ class GzipWithCheck(object):
 			fileobj=fileobj,
 			closeFileobj=closeFileobj,
 		)
-		self.unpackedFile = open(unpackedPath, "rb")
+		self.unpackedFile = open(unpackedPath, "rb")  # noqa: SIM115
 		self.reader = reader
 
 	def __del__(self):
@@ -217,20 +217,23 @@ class DebugBglReader(BglReader):
 				f2.write(bglFile.read())
 				f2.close()
 				self.file = gzip.open(self.dataFile, "rb")
-			else:
-				f2 = FileOffS(self._filename, gzipOffset)
-				if self._unpacked_gzip_path:
-					self.file = GzipWithCheck(
-						f2,
-						self._unpacked_gzip_path,
-						self,
-						closeFileobj=True,
-					)
-				else:
-					self.file = BGLGzipFile(
-						fileobj=f2,
-						closeFileobj=True,
-					)
+				return None
+
+			f2 = FileOffS(self._filename, gzipOffset)
+			if self._unpacked_gzip_path:
+				self.file = GzipWithCheck(
+					f2,
+					self._unpacked_gzip_path,
+					self,
+					closeFileobj=True,
+				)
+				return None
+
+			self.file = BGLGzipFile(
+				fileobj=f2,
+				closeFileobj=True,
+			)
+			return None
 
 	def close(self):
 		BglReader.close(self)
@@ -460,9 +463,12 @@ class DebugBglReader(BglReader):
 					pass
 				else:
 					self.metadata2.defiUtf8Count += 1
-		if self.metadata2 and self.metadata2.isDefiASCII:
-			if not isASCII(fields.u_defi):
-				self.metadata2.isDefiASCII = False
+		if (
+			self.metadata2 and
+			self.metadata2.isDefiASCII and
+			not isASCII(fields.u_defi)
+		):
+			self.metadata2.isDefiASCII = False
 
 	# search for new chars in data
 	# if new chars are found, mark them with a special sequence in the text

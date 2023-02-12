@@ -131,8 +131,7 @@ class Writer:
 		# (if it's JPG, this is as simple as only keeping the Y channel)
 
 		# for now we just skip data entries and remove '<img' tags
-		defi = self._img_pattern.sub("[Image: \\1]", defi)
-		return defi
+		return self._img_pattern.sub("[Image: \\1]", defi)
 
 	def write_groups(self):
 		import gzip
@@ -228,7 +227,7 @@ class Writer:
 
 	def open(self, filename: str) -> None:
 		try:
-			import marisa_trie  # noqa
+			import marisa_trie  # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install marisa-trie` to install"
 			raise e

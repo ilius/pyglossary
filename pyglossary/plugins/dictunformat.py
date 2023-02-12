@@ -100,7 +100,7 @@ class Reader(TextGlossaryReader):
 			defi = unescapeDefi("\n".join(defiLines))
 			if word.startswith("00-database-") and defi == "unknown":
 				log.info(f"ignoring {word} -> {defi}")
-				return
+				return None
 			word = word.split(self._headword_separator)
 			return word, defi, None
 

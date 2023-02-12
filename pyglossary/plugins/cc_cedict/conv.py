@@ -88,6 +88,5 @@ def render_article(trad, simp, pinyin, eng, traditional_title):
 					for defn in eng:
 						with hf.element("li"):
 							hf.write(defn)
-
-	article = f.getvalue().decode("utf-8")
-	return article
+ 
+	return f.getvalue().decode("utf-8")

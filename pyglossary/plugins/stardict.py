@@ -188,7 +188,7 @@ class BaseSqList(list):
 		self._len += 1
 		extraN = len(self._columns) - 1
 		self._cur.execute(
-			f"insert into data({self._columnNames})" +
+			f"insert into data({self._columnNames})"
 			f" values (?{', ?' * extraN})",
 			[item[0].lower()] + list(item),
 		)
@@ -455,8 +455,7 @@ class Reader(object):
 			_format = defiFormatSet.pop()
 			if _format == "h":
 				return "\n<hr>".join(defis), _format
-			else:
-				return "\n".join(defis), _format
+			return "\n".join(defis), _format
 
 		if len(defiFormatSet) == 0:
 			log.error(f"empty defiFormatSet, {rawDefiList=}")
@@ -574,7 +573,7 @@ class Reader(object):
 			pos += 4
 			if entryIndex >= self._wordCount:
 				log.error(
-					"Corrupted synonym file. " +
+					"Corrupted synonym file. "
 					f"Word {b_alt} references invalid item",
 				)
 				continue

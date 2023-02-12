@@ -18,9 +18,12 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import logging
-import pathlib
 from collections import OrderedDict as odict
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	import pathlib
+	from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from .flags import (
 	DEFAULT_NO,
@@ -173,10 +176,10 @@ class PluginProp(object):
 				f"Module {e.name!r} not found in {self._modulePath}"
 				f", skipping plugin {moduleName!r}",
 			)
-			return
+			return None
 		except Exception:
 			log.exception(f"Error while importing plugin {moduleName}")
-			return
+			return None
 		else:
 			return _mod
 

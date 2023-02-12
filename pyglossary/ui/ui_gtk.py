@@ -21,6 +21,7 @@ import sys
 import traceback
 from collections import OrderedDict
 from os.path import abspath, isfile
+from typing import Any, Dict, List, Optional, Tuple
 
 import gi
 
@@ -29,6 +30,7 @@ from pyglossary.glossary import (
 	Glossary,
 	defaultSortKeyName,
 )
+from pyglossary.plugin_prop import PluginProp
 from pyglossary.sort_keys import namedSortKeyList
 from pyglossary.text_utils import urlToPath
 
@@ -43,11 +45,20 @@ from .dependency import checkDepends
 
 gi.require_version("Gtk", "3.0")
 
-from .gtk3_utils import *
+from .gtk3_utils import gdk, gtk
 from .gtk3_utils.about import AboutWidget
 from .gtk3_utils.dialog import MyDialog
 from .gtk3_utils.resize_button import ResizeButton
-from .gtk3_utils.utils import *
+from .gtk3_utils.utils import (
+	HBox,
+	VBox,
+	dialog_add_button,
+	imageFromFile,
+	pack,
+	rgba_parse,
+	set_tooltip,
+	showInfo,
+)
 
 # from gi.repository import GdkPixbuf
 
@@ -91,11 +102,13 @@ def getMonitor():
 		log.debug("getMonitor: using get_monitor_at_window")
 		return monitor
 
+	return None
+
 
 def getWorkAreaSize() -> "Optional[Tuple[int, int]]":
 	monitor = getMonitor()
 	if monitor is None:
-		return
+		return None
 	rect = monitor.get_workarea()
 	return rect.width, rect.height
 
@@ -225,7 +238,7 @@ class FormatDialog(gtk.Dialog):
 	def getActive(self) -> "Optional[PluginProp]":
 		_iter = self.treev.get_selection().get_selected()[1]
 		if _iter is None:
-			return
+			return None
 		model = self.treev.get_model()
 		desc = model.get_value(_iter, 0)
 		return pluginByDesc[desc]
@@ -663,7 +676,7 @@ class InputFormatBox(FormatBox):
 	def getActiveOptions(self):
 		formatName = self.getActive()
 		if not formatName:
-			return
+			return None
 		return list(Glossary.formatsReadOptions[formatName].keys())
 
 
@@ -1344,7 +1357,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# hbox.sepLabel2 = gtk.Label(label="")
 		# pack(hbox, hbox.sepLabel2, 1, 1)
 		####
-		self.statusBar = sbar = gtk.Statusbar()
+		self.statusBar = gtk.Statusbar()
 		pack(hbox, self.statusBar, 1, 1)
 		####
 		hbox.resizeButton = ResizeButton(self)
@@ -1427,7 +1440,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		inPath = self.convertInputEntry.get_text()
 		if not inPath:
 			log.critical("Input file path is empty!")
-			return
+			return None
 		inFormat = self.convertInputFormatCombo.getActive()
 		if inFormat:
 			Glossary.plugins[inFormat].description
@@ -1438,7 +1451,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		outPath = self.convertOutputEntry.get_text()
 		if not outPath:
 			log.critical("Output file path is empty!")
-			return
+			return None
 		outFormat = self.convertOutputFormatCombo.getActive()
 		if outFormat:
 			Glossary.plugins[outFormat].description

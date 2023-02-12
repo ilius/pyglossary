@@ -104,7 +104,7 @@ def truncate(text, length=449):
 		if pos == -1:
 			pos = length
 		text = text[:pos]
-	return text
+	return text  # noqa: RET504
 
 
 def title(title, BeautifulSoup):
@@ -125,7 +125,7 @@ def title(title, BeautifulSoup):
 		title = title.replace("&", "&amp;")
 	title = brackets(title)
 	title = truncate(title, 1126)
-	return title
+	return title  # noqa: RET504
 
 
 def title_long(s):

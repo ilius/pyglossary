@@ -77,7 +77,7 @@ def prepare_content(
 
 	content = content.replace("&nbsp;", "&#160;")
 	content = re_nonprintable.sub("", content)
-	return content
+	return content  # noqa: RET504
 
 
 def prepare_content_without_soup(
@@ -113,7 +113,7 @@ def prepare_content_without_soup(
 	content = f"<h1>{title}</h1>{body}" if title else body
 	content = re_brhr.sub(r"<\g<1> />", content)
 	content = re_img.sub(r"<img \g<1>/>", content)
-	return content
+	return content  # noqa: RET504
 
 
 def prepare_content_with_soup(
@@ -171,12 +171,16 @@ def prepare_content_with_soup(
 			tag["href"] = f"x-dictionary:d:{href}"
 
 	for thumb in soup.find_all("div", "pic_thumb"):
-		thumb["onclick"] = 'this.setAttribute("style", "display:none"); ' \
+		thumb["onclick"] = (
+			'this.setAttribute("style", "display:none"); '
 			'this.nextElementSibling.setAttribute("style", "display:block")'
+		)
 
 	for pic in soup.find_all("div", "big_pic"):
-		pic["onclick"] = 'this.setAttribute("style", "display:none"), ' \
+		pic["onclick"] = (
+			'this.setAttribute("style", "display:none"), '
 			'this.previousElementSibling.setAttribute("style", "display:block")'
+		)
 
 	# to unfold(expand) and fold(collapse) blocks
 	for pos in soup.find_all("pos", onclick="toggle_infl(this)"):
@@ -209,9 +213,8 @@ def prepare_content_with_soup(
 		soup.insert(0, h1)
 
 	# hence the name BeautifulSoup
-	# soup.insert(0,head)
-	content = toStr(soup.encode_contents())
-	return content
+	# soup.insert(0, head)
+	return toStr(soup.encode_contents())
 
 
 def cleanup_link_target(href):

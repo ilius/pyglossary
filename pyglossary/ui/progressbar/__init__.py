@@ -44,6 +44,5 @@ __author_email__ = 'nilton.volpato@gmail.com'
 __date__ = '2011-05-14'
 __version__ = '2.5'
 
-from .compat import *
-from .progressbar import *
-from .widgets import *
+from .progressbar import *  # noqa: F403
+from .widgets import *  # noqa: F403

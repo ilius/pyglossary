@@ -3,9 +3,13 @@
 import logging
 import os
 from os.path import join
-from typing import Optional
+from typing import TYPE_CHECKING
 
-from .glossary_type import GlossaryType
+if TYPE_CHECKING:
+	from typing import Optional
+
+	from .glossary_type import GlossaryType
+
 
 stdCompressions = ("gz", "bz2", "lzma")
 
@@ -45,7 +49,7 @@ def compressionOpen(filename, dz=False, **kwargs):
 		_file = compressionOpenFunc(ext)(filename, **kwargs)
 		_file.compression = ext
 		return _file
-	return open(filename, **kwargs)
+	return open(filename, **kwargs)  # noqa: SIM115
 
 
 def zipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
@@ -126,8 +130,8 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 
 	if isfile(compFilename):
 		return compFilename
-	else:
-		return filename
+
+	return filename
 
 
 def uncompress(srcFilename: str, dstFilename: str, compression: str) -> None:

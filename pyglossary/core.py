@@ -4,7 +4,6 @@ import os
 import platform
 import sys
 import traceback
-import types
 from os.path import (
 	abspath,
 	dirname,
@@ -14,13 +13,18 @@ from os.path import (
 	join,
 	realpath,
 )
-from typing import (
-	Any,
-	Dict,
-	Optional,
-	Tuple,
-	Type,
-)
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	import types
+	from typing import (
+		Any,
+		Dict,
+		Optional,
+		Tuple,
+		Type,
+	)
+
 
 VERSION = "4.5.0"
 
@@ -41,7 +45,7 @@ class Formatter(logging.Formatter):
 		msg = logging.Formatter.formatMessage(self, record)
 		if self.fill is not None:
 			msg = self.fill(msg)
-		return msg
+		return msg  # noqa: RET504
 
 
 class MyLogger(logging.Logger):
@@ -338,7 +342,7 @@ appResDir = join(dataDir, "res")
 if os.sep == "/":  # Operating system is Unix-Like
 	homeDir = os.getenv("HOME")
 	user = os.getenv("USER")
-	tmpDir = os.getenv("TMPDIR", "/tmp")  # noqa
+	tmpDir = os.getenv("TMPDIR", "/tmp")  # noqa: S108
 	if sysName == "darwin":  # MacOS X
 		_libDir = join(homeDir, "Library")
 		confDir = join(_libDir, "Preferences", "PyGlossary")

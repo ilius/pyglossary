@@ -22,6 +22,10 @@
 # GNU General Public License for more details.
 
 import re
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	import lxml
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -224,7 +228,7 @@ class Reader(object):
 
 	def tostring(
 		self,
-		elem: "lxml.etree.Element",  # noqa
+		elem: "lxml.etree.Element",
 	) -> str:
 		from lxml import etree as ET
 		return ET.tostring(

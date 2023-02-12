@@ -15,8 +15,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from . import *
-from .utils import *
+from . import gdk, gtk
+from .utils import imageFromFile
 
 
 class ResizeButton(gtk.Box):
@@ -33,10 +33,11 @@ class ResizeButton(gtk.Box):
 
 	def buttonPress(self, gesture, button, x, y):
 		# Gesture is subclass of EventController
-		self.win.begin_resize(
-			self.edge,
-			button,
-			int(gevent.x_root),
-			int(gevent.y_root),
-			gesture.get_current_event_time(),
-		)
+		pass  # FIXME
+		# self.win.begin_resize(
+		# 	self.edge,
+		# 	button,
+		# 	int(gevent.x_root),
+		# 	int(gevent.y_root),
+		# 	gesture.get_current_event_time(),
+		# )

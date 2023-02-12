@@ -49,9 +49,10 @@ aboutText = fread(join(dataDir, "about"))
 licenseText = fread(join(dataDir, "license-dialog"))
 authors = fread(join(dataDir, "AUTHORS")).split("\n")
 
-summary = "A tool for converting dictionary files aka glossaries with" \
+summary = (
+	"A tool for converting dictionary files aka glossaries with"
 	" various formats for different dictionary applications"
-
+)
 
 _entryFilterConfigDict = {
 	configRule[0]: (filterClass, configRule[1])

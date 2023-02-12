@@ -174,7 +174,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 	def __init__(
 		self,
 		info: "Optional[Dict[str, str]]" = None,
-		ui: "Optional[UIBase]" = None,  # noqa
+		ui: "Optional[UIBase]" = None,  # noqa: F821
 	) -> None:
 		"""
 		info:	OrderedDict or dict instance, or None
@@ -247,7 +247,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		if log.level <= core.TRACE:
 			try:
-				import psutil  # noqa
+				import psutil  # noqa: F401
 			except ModuleNotFoundError:
 				pass
 			else:
@@ -765,7 +765,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		validOptions = self.formatsWriteOptions.get(format)
 		if validOptions is None:
 			log.critical(f"No write support for {format!r} format")
-			return
+			return None
 		validOptionKeys = list(validOptions.keys())
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
@@ -831,7 +831,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		if format not in self.plugins or not self.plugins[format].canWrite:
 			log.critical(f"No Writer class found for plugin {format}")
-			return
+			return None
 
 		if self._readers and sort:
 			log.warning(
@@ -855,10 +855,10 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			writer.open(filename)
 		except (FileNotFoundError, LookupError) as e:
 			log.critical(str(e))
-			return
+			return None
 		except Exception:
 			log.exception("")
-			return
+			return None
 
 		showMemoryUsage()
 
@@ -889,10 +889,10 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 					gen.send(None)
 		except (FileNotFoundError, LookupError) as e:
 			log.critical(str(e))
-			return
+			return None
 		except Exception:
 			log.exception("Exception while calling plugin\'s write function")
-			return
+			return None
 		finally:
 			showMemoryUsage()
 			log.debug("Running writer.finish()")
@@ -974,7 +974,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		elif sortOnWrite == NEVER:
 			if sort:
 				log.warning(
-					"Plugin prevents sorting before write" +
+					"Plugin prevents sorting before write"
 					", ignoring user sort=True option",
 				)
 			sort = False
@@ -1096,7 +1096,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		if outputFilename == inputFilename:
 			log.critical("Input and output files are the same")
-			return
+			return None
 
 		if readOptions:
 			log.info(f"{readOptions = }")
@@ -1110,7 +1110,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		)
 		if not outputArgs:
 			log.critical(f"Writing file {relpath(outputFilename)!r} failed.")
-			return
+			return None
 		outputFilename, outputFormat, compression = outputArgs
 		del outputArgs
 
@@ -1118,7 +1118,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			log.critical(
 				f"Directory already exists and not empty: {relpath(outputFilename)}",
 			)
-			return
+			return None
 
 		sortParams = self._resolveConvertSortParams(
 			sort=sort,
@@ -1133,7 +1133,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			writeOptions=writeOptions,
 		)
 		if sortParams is None:
-			return
+			return None
 		direct, sort = sortParams
 
 		del sqlite
@@ -1149,7 +1149,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		):
 			log.critical(f"Reading file {relpath(inputFilename)!r} failed.")
 			self.cleanup()
-			return
+			return None
 
 		del inputFilename, inputFormat, direct, readOptions
 
@@ -1170,7 +1170,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			log.critical(f"Writing file {relpath(outputFilename)!r} failed.")
 			self._closeReaders()
 			self.cleanup()
-			return
+			return None
 
 		if compression:
 			finalOutputFile = self._compressOutput(finalOutputFile, compression)

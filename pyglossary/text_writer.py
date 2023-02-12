@@ -3,10 +3,14 @@ import os
 from os.path import (
 	isdir,
 )
-from typing import Callable, Dict, Generator, List, Optional
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	from typing import Callable, Dict, Generator, List, Optional
+
+	from .glossary_type import EntryType, GlossaryType
 
 from .compression import compressionOpen as c_open
-from .glossary_type import EntryType, GlossaryType
 
 log = logging.getLogger("pyglossary")
 

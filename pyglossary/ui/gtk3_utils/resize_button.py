@@ -15,8 +15,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from . import *
-from .utils import *
+from . import gdk, gtk
+from .utils import imageFromFile
 
 
 class ResizeButton(gtk.EventBox):

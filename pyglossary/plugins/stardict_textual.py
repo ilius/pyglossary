@@ -133,8 +133,7 @@ class Reader(object):
 			_format = defiFormatSet.pop()
 			if _format == "h":
 				return "\n<hr>".join(defis), _format
-			else:
-				return "\n".join(defis), _format
+			return "\n".join(defis), _format
 
 		# convert plaintext or xdxf to html
 		defis = []
@@ -303,8 +302,8 @@ class Writer(object):
 				article.append(maker.synonym(alt))
 			article.append(maker.definition(
 				ET.CDATA(entry.defi),
-				**{"type": entry.defiFormat}),
-			)
+				type=entry.defiFormat,
+			))
 			ET.indent(article, space="")
 			articleStr = ET.tostring(
 				article,

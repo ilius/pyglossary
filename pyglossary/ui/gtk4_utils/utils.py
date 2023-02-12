@@ -22,7 +22,7 @@ from gi.repository import Pango as pango
 
 from pyglossary.core import appResDir
 
-from . import *
+from . import gdk, glib, gtk
 
 log = logging.getLogger("pyglossary")
 

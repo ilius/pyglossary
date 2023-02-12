@@ -2,7 +2,10 @@
 import os
 import re
 from io import BytesIO
-from typing import Callable, Iterator
+from typing import TYPE_CHECKING, Callable, Iterator, List
+
+if TYPE_CHECKING:
+	import lxml
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -55,8 +58,8 @@ class Reader(object):
 
 	def makeList(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		input_objects: "List[lxml.etree.Element]",  # noqa
+		hf: "lxml.etree.htmlfile",
+		input_objects: "List[lxml.etree.Element]",
 		processor: "Callable",
 		single_prefix=None,
 		skip_single=True,
@@ -77,8 +80,8 @@ class Reader(object):
 
 	def writeTrans(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		trans: "lxml.etree.Element",  # noqa
+		hf: "lxml.etree.htmlfile",
+		trans: "lxml.etree.Element",
 	):
 		from lxml import etree as ET
 
@@ -120,7 +123,7 @@ class Reader(object):
 
 	def getEntryByElem(
 		self,
-		entry: "lxml.etree.Element",  # noqa
+		entry: "lxml.etree.Element",
 	) -> "EntryType":
 		from lxml import etree as ET
 		glos = self._glos
@@ -209,7 +212,7 @@ class Reader(object):
 
 	def tostring(
 		self,
-		elem: "lxml.etree.Element",  # noqa
+		elem: "lxml.etree.Element",
 	) -> str:
 		from lxml import etree as ET
 		return ET.tostring(
@@ -249,7 +252,7 @@ class Reader(object):
 		filename: str,
 	):
 		try:
-			from lxml import etree as ET  # noqa
+			from lxml import etree as ET  # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install lxml` to install"
 			raise e

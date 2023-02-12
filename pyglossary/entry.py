@@ -9,22 +9,25 @@ from os.path import (
 	join,
 )
 from pickle import dumps, loads
-from typing import (
-	Any,
-	Callable,
-	List,
-	Literal,
-	Optional,
-	Tuple,
-)
+from typing import TYPE_CHECKING
 from zlib import compress, decompress
 
 from .entry_base import BaseEntry, MultiStr
-from .glossary_type import GlossaryType, RawEntryType
 from .iter_utils import unique_everseen
-from .text_utils import (
-	joinByBar,
-)
+from .text_utils import joinByBar
+
+if TYPE_CHECKING:
+	from typing import (
+		Any,
+		Callable,
+		List,
+		Literal,
+		Optional,
+		Tuple,
+	)
+
+	from .glossary_type import GlossaryType, RawEntryType
+
 
 log = logging.getLogger("pyglossary")
 
@@ -72,8 +75,7 @@ class DataEntry(BaseEntry):
 	def size(self):
 		if self._tmpPath:
 			return getsize(self._tmpPath)
-		else:
-			return len(self._data)
+		return len(self._data)
 
 	def save(self, directory: str) -> str:
 		fname = self._fname
@@ -415,7 +417,7 @@ class Entry(BaseEntry):
 	def getRaw(
 		self,
 		glos: "GlossaryType",
-	) -> RawEntryType:
+	) -> "RawEntryType":
 		"""
 			returns a tuple (word, defi) or (word, defi, defiFormat)
 			where both word and defi might be string or list of strings
@@ -441,7 +443,7 @@ class Entry(BaseEntry):
 	def fromRaw(
 		cls,
 		glos: "GlossaryType",
-		rawEntry: RawEntryType,
+		rawEntry: "RawEntryType",
 		defaultDefiFormat: str = "m",
 	):
 		"""

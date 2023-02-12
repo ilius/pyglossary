@@ -67,8 +67,8 @@ def run(filename):
 		elif returncode > 0:
 			log.error(f"Jing returned {returncode}")
 		raise JingTestError(returncode, cmd, output)
-	else:
-		log.info("Jing check successfully passed!")
+
+	log.info("Jing check successfully passed!")
 
 
 def main():

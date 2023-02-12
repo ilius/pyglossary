@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from collections import OrderedDict
 from typing import (
+	TYPE_CHECKING,
 	Any,
 	Callable,
 	Dict,
@@ -10,6 +10,9 @@ from typing import (
 	Optional,
 	Tuple,
 )
+
+if TYPE_CHECKING:
+	from collections import OrderedDict
 
 from .langs import Lang
 

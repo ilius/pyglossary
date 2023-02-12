@@ -4,8 +4,16 @@ import sys
 from subprocess import PIPE, Popen
 
 from pyglossary import Glossary
+from pyglossary.glossary_type import EntryType
 from pyglossary.ui.tools.format_entry import formatEntry
-from pyglossary.ui.tools.word_diff import *
+from pyglossary.ui.tools.word_diff import (
+	formatDiff,
+	green,
+	red,
+	reset,
+	xmlDiff,
+	yellow,
+)
 
 Glossary.init()
 
@@ -113,7 +121,7 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 			printEntry(green, "+++ B", index2, entry)
 			index2 += 1
 	except (BrokenPipeError, IOError):
-		pass  # noqa
+		pass  # noqa: S110
 	except Exception as e:
 		print(e)
 	finally:

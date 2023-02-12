@@ -10,9 +10,12 @@ extensions = ()
 extensionCreate = ".db"
 kind = "binary"
 wiki = ""
+_url = (
+	"https://play.google.com/store/apps/details?id="
+	"com.pocketmednotes2014.secondapp"
+)
 website = (
-	"https://play.google.com/store/apps/details?id=" +
-	"com.pocketmednotes2014.secondapp",
+	_url,
 	"ABC Medical Notes 2021 - Google Play",
 )
 

@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from io import BytesIO
 from os.path import isdir, join
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple
+
+if TYPE_CHECKING:
+	import lxml
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_type import GlossaryType
@@ -72,7 +75,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _makeList(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
+		hf: "lxml.etree.htmlfile",
 		input_objects: "List[Any]",
 		processor: "Callable",
 		single_prefix=None,
@@ -96,7 +99,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processExample(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
+		hf: "lxml.etree.htmlfile",
 		exampleDict: "Dict",
 		count: int,
 	):
@@ -122,7 +125,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processDef(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
+		hf: "lxml.etree.htmlfile",
 		defDict: "Dict",
 		count: int,
 	):
@@ -149,7 +152,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processNote(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
+		hf: "lxml.etree.htmlfile",
 		note: str,
 		count: int,
 	):
@@ -157,7 +160,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processEntry(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
+		hf: "lxml.etree.htmlfile",
 		edict: "Dict",
 	):
 		from lxml import etree as ET
@@ -229,11 +232,11 @@ class YamlReader(TextGlossaryReader):
 		except ImportError:
 			from yaml import Loader
 
-		edict = load(yamlBlock, Loader=Loader)  # noqa
+		edict = load(yamlBlock, Loader=Loader)
 		word = edict.get("word")
 		if not word:
 			log.error(f"no word in {edict}")
-			return
+			return None
 
 		f = BytesIO()
 
@@ -290,7 +293,7 @@ class Reader(object):
 
 	def open(self, filename: str) -> None:
 		try:
-			from lxml import etree as ET  # noqa
+			from lxml import etree as ET  # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install lxml` to install"
 			raise e

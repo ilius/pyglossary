@@ -2,7 +2,10 @@
 
 import html
 from operator import itemgetter
-from typing import Callable, Tuple
+from typing import TYPE_CHECKING, Callable, List, Tuple
+
+if TYPE_CHECKING:
+	import lxml
 
 from pyglossary.core import log
 
@@ -45,8 +48,8 @@ class Reader(object):
 
 	def makeList(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
-		input_elements: "List[lxml.etree.Element]",  # noqa
+		hf: "lxml.etree.htmlfile",
+		input_elements: "List[lxml.etree.Element]",
 		processor: "Callable",
 		single_prefix=None,
 		skip_single=True,
@@ -67,7 +70,7 @@ class Reader(object):
 
 	def writeSense(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
+		hf: "lxml.etree.htmlfile",
 		row: "Tuple[str, str, str]",
 	):
 		from lxml import etree as ET

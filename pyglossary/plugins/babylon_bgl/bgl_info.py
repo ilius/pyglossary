@@ -67,7 +67,7 @@ def languageInfoDecode(b_value):
 		return languageByCode[intValue]
 	except IndexError:
 		log.warning(f"read_type_3: unknown language code = {intValue}")
-		return
+		return None
 
 
 def charsetInfoDecode(b_value):
@@ -80,11 +80,11 @@ def charsetInfoDecode(b_value):
 
 def aboutInfoDecode(b_value):
 	if not b_value:
-		return
+		return None
 	aboutExt, _, aboutContents = b_value.partition(b"\x00")
 	if not aboutExt:
 		log.warning("read_type_3: about: no file extension")
-		return
+		return None
 	return {
 		"about_extension": aboutExt,
 		"about": aboutContents,
@@ -107,20 +107,20 @@ def utf16InfoDecode(b_value):
 		log.warning(
 			f"utf16InfoDecode: b_value={b_value}, null expected at 0",
 		)
-		return
+		return None
 
 	if b_value[1] == 0:
 		if len(b_value) > 2:
 			log.warning(
 				f"utf16InfoDecode: unexpected b_value size: {len(b_value)}",
 			)
-		return
+		return None
 
-	elif b_value[1] > 1:
+	if b_value[1] > 1:
 		log.warning(
 			f"utf16InfoDecode: b_value={b_value!r}, unexpected byte at 1",
 		)
-		return
+		return None
 
 	# now b_value[1] == 1
 	size = 2 * uintFromBytes(b_value[2:6])

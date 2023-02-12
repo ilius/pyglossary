@@ -67,7 +67,7 @@ def escapeNTB(st: str, bar: bool = False) -> str:
 	st = st.replace("\n", r"\n")
 	if bar:
 		st = st.replace("|", r"\|")
-	return st
+	return st  # noqa: RET504
 
 
 def unescapeNTB(st: str, bar: bool = False) -> str:
@@ -79,7 +79,7 @@ def unescapeNTB(st: str, bar: bool = False) -> str:
 	if bar:
 		st = pattern_bar_us.sub(r"\1|", st)
 	st = st.replace("\\\\", "\\")  # probably faster than re.sub
-	return st
+	return st  # noqa: RET504
 
 
 def splitByBarUnescapeNTB(st: str) -> "List[str]":
@@ -98,18 +98,15 @@ def escapeBar(st: str) -> str:
 	r"""
 		scapes vertical bar (\|)
 	"""
-	st = st.replace("\\", "\\\\")
-	st = st.replace("|", r"\|")
-	return st
+	return st.replace("\\", "\\\\").replace("|", r"\|")
 
 
 def unescapeBar(st: str) -> str:
 	r"""
 		unscapes vertical bar (\|)
 	"""
-	st = pattern_bar_us.sub(r"\1|", st)
-	st = st.replace("\\\\", "\\")  # probably faster than re.sub
-	return st
+	# str.replace is probably faster than re.sub
+	return pattern_bar_us.sub(r"\1|", st).replace("\\\\", "\\")
 
 
 def splitByBar(st: str) -> "List[str]":
@@ -134,9 +131,8 @@ def unescapeBarBytes(st: bytes) -> bytes:
 	r"""
 		unscapes vertical bar (\|)
 	"""
-	st = b_pattern_bar_us.sub(b"\\1|", st)
-	st = st.replace(b"\\\\", b"\\")  # probably faster than re.sub
-	return st
+	# str.replace is probably faster than re.sub
+	return b_pattern_bar_us.sub(b"\\1|", st).replace(b"\\\\", b"\\")
 
 
 # return a message string describing the current exception
@@ -149,10 +145,8 @@ def formatHMS(h: int, m: int, s: int) -> str:
 	if h == 0:
 		if m == 0:
 			return f"{s:02d}"
-		else:
-			return f"{m:02d}:{s:02d}"
-	else:
-		return f"{h:02d}:{m:02d}:{s:02d}"
+		return f"{m:02d}:{s:02d}"
+	return f"{h:02d}:{m:02d}:{s:02d}"
 
 
 # ___________________________________________ #
@@ -202,7 +196,7 @@ def replacePostSpaceChar(st: str, ch: str) -> str:
 
 
 def isASCII(data: str) -> bool:
-	for c in data:
+	for c in data:  # noqa: SIM111
 		if ord(c) >= 128:
 			return False
 	return True

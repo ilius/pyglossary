@@ -278,10 +278,12 @@ def _clean_tags(line, audio):
 
 	# sound file
 	if audio:
-		sound_tag = r'<object type="audio/x-wav" data="\g<1>\g<2>" ' \
-			"width=\"40\" height=\"40\">" \
-			"<param name=\"autoplay\" value=\"false\" />" \
+		sound_tag = (
+			r'<object type="audio/x-wav" data="\g<1>\g<2>" '
+			"width=\"40\" height=\"40\">"
+			"<param name=\"autoplay\" value=\"false\" />"
 			"</object>"
+		)
 	else:
 		sound_tag = ""
 	line = re_sound.sub(sound_tag, line)
@@ -293,8 +295,7 @@ def _clean_tags(line, audio):
 	)
 
 	# \[...\]
-	line = line.replace("\\[", "[").replace("\\]", "]")
-	return line
+	return line.replace("\\[", "[").replace("\\]", "]")
 
 
 def unwrap_quotes(s):

@@ -131,8 +131,7 @@ class DSLParser(object):
 
 	def _parse(self, line):
 		items = self._split_line_by_tags(line)
-		line = self._tags_and_text_loop(items)
-		return line
+		return self._tags_and_text_loop(items)
 
 	def _split_line_by_tags(self, line):
 		"""
@@ -221,14 +220,14 @@ class DSLParser(object):
 				state = OPEN
 				continue
 
-			elif item_t is CLOSE:
+			if item_t is CLOSE:
 				if state in (OPEN, TEXT):
 					closings.clear()
 				closings.add(item)
 				state = CLOSE
 				continue
 
-			elif item_t is TEXT:
+			if item_t is TEXT:
 				if state is CLOSE:
 					process_closing_tags(stack, closings)
 

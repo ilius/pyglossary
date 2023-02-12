@@ -49,7 +49,7 @@ def replaceHtmlEntryNoEscapeCB(u_match):
 	u_text = u_match.group(0)
 	u_name = u_match.group(1)
 	if log.isDebug():
-		assert isinstance(u_text, str) and isinstance(u_name, str)  # noqa
+		assert isinstance(u_text, str) and isinstance(u_name, str)  # noqa: S101
 
 	u_res = None
 	if u_text[:2] == "&#":
@@ -97,9 +97,8 @@ def replaceHtmlEntryCB(u_match):
 	u_res = replaceHtmlEntryNoEscapeCB(u_match)
 	if u_match.group(0) == u_res:  # conversion failed
 		return u_res
-	else:
-		# FIXME: should " and ' be escaped?
-		return xml_escape(u_res, quotation=False)
+	# FIXME: should " and ' be escaped?
+	return xml_escape(u_res, quotation=False)
 
 
 def replaceDingbat(u_match):
@@ -131,7 +130,7 @@ def replaceHtmlEntries(u_text: str):
 	# &#0147;
 	# &#x010b;
 	if log.isDebug():
-		assert isinstance(u_text, str)  # noqa
+		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_html_entry.sub(
 		replaceHtmlEntryCB,
 		u_text,
@@ -143,7 +142,7 @@ def replaceHtmlEntriesInKeys(u_text: str):
 	# &#0147;
 	# &#x010b;
 	if log.isDebug():
-		assert isinstance(u_text, str)  # noqa
+		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_html_entry_key.sub(
 		replaceHtmlEntryNoEscapeCB,
 		u_text,
@@ -157,7 +156,7 @@ def escapeNewlines(u_text: str):
 	new line -> \n or \r
 	"""
 	if log.isDebug():
-		assert isinstance(u_text, str)  # noqa
+		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_newline_escape.sub(
 		escapeNewlinesCallback,
 		u_text,
@@ -166,7 +165,7 @@ def escapeNewlines(u_text: str):
 
 def stripHtmlTags(u_text: str):
 	if log.isDebug():
-		assert isinstance(u_text, str)  # noqa
+		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_strip_tags.sub(
 		" ",
 		u_text,
@@ -179,7 +178,7 @@ def removeControlChars(u_text: str):
 	# \x0b - vertical tab
 	# \x0d - carriage return
 	if log.isDebug():
-		assert isinstance(u_text, str)  # noqa
+		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_control_chars.sub(
 		"",
 		u_text,
@@ -188,7 +187,7 @@ def removeControlChars(u_text: str):
 
 def removeNewlines(u_text: str):
 	if log.isDebug():
-		assert isinstance(u_text, str)  # noqa
+		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_newline.sub(
 		" ",
 		u_text,
@@ -200,7 +199,7 @@ def normalizeNewlines(u_text: str):
 	convert new lines to unix style and remove consecutive new lines
 	"""
 	if log.isDebug():
-		assert isinstance(u_text, str)  # noqa
+		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_newline.sub(
 		"\n",
 		u_text,
@@ -211,7 +210,7 @@ def replaceAsciiCharRefs(b_text: bytes, encoding: str):
 	# &#0147;
 	# &#x010b;
 	if log.isDebug():
-		assert isinstance(b_text, bytes)  # noqa
+		assert isinstance(b_text, bytes)  # noqa: S101
 	b_parts = b_pat_ascii_char_ref.split(b_text)
 	for i_part, b_part in enumerate(b_parts):
 		if i_part % 2 != 1:
@@ -248,13 +247,13 @@ def fixImgLinks(u_text: str):
 	safely remove all of them, irrespective of context.
 	"""
 	if log.isDebug():
-		assert isinstance(u_text, str)  # noqa
+		assert isinstance(u_text, str)  # noqa: S101
 	return u_text.replace("\x1e", "").replace("\x1f", "")
 
 
 def stripDollarIndexes(b_word: bytes):
 	if log.isDebug():
-		assert isinstance(b_word, bytes)  # noqa
+		assert isinstance(b_word, bytes)  # noqa: S101
 	i = 0
 	b_word_main = b""
 	strip_count = 0  # number of sequences found

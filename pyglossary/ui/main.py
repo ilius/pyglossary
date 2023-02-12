@@ -24,11 +24,16 @@ import json
 import logging
 import os
 import sys
-from typing import Callable, Dict, Optional
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	from typing import Callable, Dict, Optional
+
+	from pyglossary.option import Option
+
 
 from pyglossary import core  # essential
 from pyglossary.langs import langDict
-from pyglossary.option import Option
 from pyglossary.sort_keys import namedSortKeyByName, namedSortKeyList
 from pyglossary.ui.base import UIBase
 
@@ -68,7 +73,7 @@ def canRunGUI():
 
 	if core.sysName == "darwin":
 		try:
-			import tkinter  # noqa
+			import tkinter  # noqa: F401
 		except ModuleNotFoundError:
 			return False
 
@@ -243,7 +248,7 @@ def validateLangStr(st) -> "Optional[str]":
 	if lang:
 		return lang.name
 	log.error(f"unknown language {st!r}")
-	return
+	return None
 
 
 def shouldUseCMD(args):
@@ -627,14 +632,13 @@ def main():
 			log.critical("Passed --sort-locale without --sort")
 			sys.exit(1)
 
-	if args.sortKeyName:
-		if args.sortKeyName not in namedSortKeyByName:
-			_valuesStr = ", ".join([_sk.name for _sk in namedSortKeyList])
-			log.critical(
-				f"Invalid sortKeyName={args.sortKeyName!r}"
-				f". Supported values:\n{_valuesStr}",
-			)
-			sys.exit(1)
+	if args.sortKeyName and args.sortKeyName not in namedSortKeyByName:
+		_valuesStr = ", ".join([_sk.name for _sk in namedSortKeyList])
+		log.critical(
+			f"Invalid sortKeyName={args.sortKeyName!r}"
+			f". Supported values:\n{_valuesStr}",
+		)
+		sys.exit(1)
 
 	if args.sortEncoding and args.sortLocale:
 		log.critical("--sort-locale conflicts with --sort-encoding")

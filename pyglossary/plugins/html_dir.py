@@ -103,7 +103,7 @@ class Writer(object):
 		self._filenameList = []
 
 	def open(self, filename: str):
-		from cachetools import LRUCache  # noqa
+		from cachetools import LRUCache  # noqa: F401
 
 		self._filename = filename
 		self._resDir = resDir = join(filename, "res")

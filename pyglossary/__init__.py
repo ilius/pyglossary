@@ -1,4 +1,4 @@
-from .core import log, VERSION  # noqa
-from .glossary import Glossary  # noqa
+from .core import VERSION, log  # noqa: F401
+from .glossary import Glossary  # noqa: F401
 
 __version__ = VERSION

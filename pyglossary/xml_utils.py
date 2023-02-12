@@ -11,4 +11,4 @@ def xml_escape(data: str, quotation: bool = True) -> str:
 	data = data.replace("<", "&lt;")
 	if quotation:
 		data = data.replace("\"", "&quot;").replace("'", "&apos;")
-	return data
+	return data  # noqa: RET504

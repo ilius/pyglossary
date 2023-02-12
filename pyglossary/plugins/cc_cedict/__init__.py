@@ -78,7 +78,7 @@ class Reader:
 	def __iter__(self):
 		if self.file is None:
 			raise RuntimeError(
-				"CC-CEDICT: tried to iterate over entries " +
+				"CC-CEDICT: tried to iterate over entries "
 				"while reader is not open",
 			)
 		for line in self.file:

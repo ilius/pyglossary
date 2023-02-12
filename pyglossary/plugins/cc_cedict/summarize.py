@@ -38,5 +38,4 @@ def summarize(phrase):
 	relevant_words = [word for word in words if word not in stops]
 	if not relevant_words:
 		relevant_words = words
-	summary = " ".join(relevant_words[:10])
-	return summary
+	return " ".join(relevant_words[:10])

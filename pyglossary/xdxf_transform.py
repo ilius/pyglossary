@@ -1,9 +1,10 @@
 import logging
 from io import BytesIO
 from os.path import join
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
-import lxml
+if TYPE_CHECKING:
+	import lxml
 
 from pyglossary import core
 from pyglossary.core import rootDir
@@ -41,7 +42,7 @@ class XslXdxfTransformer(object):
 		result_tree = self._transform(article)
 		text = self.tostring(result_tree)
 		text = text.replace("<br/> ", "<br/>")
-		return text
+		return text  # noqa: RET504
 
 	def transformByInnerString(self, articleInnerStr: str) -> str:
 		from lxml import etree as ET
@@ -169,12 +170,12 @@ class XdxfTransformer(object):
 			}):
 				hf.write("🔊")
 			return
-		else:
-			with hf.element("a", **{
-				"class": "iref",
-				"href": child.attrib.get("href", child.text),
-			}):
-				self.writeChildrenOf(hf, child, stringSep=" ")
+
+		with hf.element("a", **{
+			"class": "iref",
+			"href": child.attrib.get("href", child.text),
+		}):
+			self.writeChildrenOf(hf, child, stringSep=" ")
 
 	def writeChild(
 		self,
@@ -272,7 +273,7 @@ class XdxfTransformer(object):
 			self.writeIRef(hf, child)
 			return
 
-		if child.tag == "rref":
+		if child.tag == "rref":  # noqa: SIM102
 			if not child.text:
 				log.warning(f"rref with no text: {self.tostring(child)}")
 				return
@@ -393,7 +394,7 @@ class XdxfTransformer(object):
 
 		text = f.getvalue().decode("utf-8")
 		text = text.replace("<br>", "<br/>")  # for compatibility
-		return text
+		return text  # noqa: RET504
 
 	def transformByInnerString(self, articleInnerStr: str) -> str:
 		from lxml import etree as ET

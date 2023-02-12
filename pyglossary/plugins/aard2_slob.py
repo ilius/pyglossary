@@ -89,7 +89,7 @@ class Reader(object):
 
 	def open(self, filename):
 		try:
-			import icu  # noqa
+			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install PyICU` to install"
 			raise e
@@ -156,9 +156,8 @@ class Reader(object):
 		st = m.group(0)
 		if "//" in st:
 			return st
-		st = st.replace('href="', 'href="bword://')
-		st = st.replace("href='", "href='bword://")
-		return st
+		return st.replace('href="', 'href="bword://')\
+			.replace("href='", "href='bword://")
 
 	def __iter__(self):
 		from pyglossary.plugin_lib.slob import MIME_HTML, MIME_TEXT
@@ -241,7 +240,7 @@ class Writer(object):
 
 	def _slobObserver(
 		self,
-		event: "slob.WriterEvent",  # noqa
+		event: "slob.WriterEvent",  # noqa: F401, F821
 	):
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
@@ -262,7 +261,7 @@ class Writer(object):
 
 	def open(self, filename: str) -> None:
 		try:
-			import icu  # noqa
+			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install PyICU` to install"
 			raise e

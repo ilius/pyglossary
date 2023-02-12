@@ -19,7 +19,10 @@
 
 import logging
 from collections import OrderedDict as odict
-from typing import Iterator, List, Optional, Tuple
+from typing import TYPE_CHECKING, Iterator, List, Optional, Tuple
+
+if TYPE_CHECKING:
+	import lxml
 
 from .info import (
 	c_author,
@@ -108,12 +111,12 @@ class GlossaryInfo(object):
 		if lang:
 			return lang
 		log.error(f"unknown language {st!r}")
-		return
+		return None
 
 	def _getLangByInfoKey(self, key: str) -> "Optional[Lang]":
 		st = self._info.get(key, "")
 		if not st:
-			return
+			return None
 		return self._getLangByStr(st)
 
 	@property
@@ -228,7 +231,7 @@ class GlossaryInfo(object):
 
 	def titleElement(
 		self,
-		hf: "lxml.etree.htmlfile",  # noqa
+		hf: "lxml.etree.htmlfile",
 		sample: str = "",
-	) -> "lxml.etree._FileWriterElement":  # noqa
+	) -> "lxml.etree._FileWriterElement":
 		return hf.element(self._getTitleTag(sample))

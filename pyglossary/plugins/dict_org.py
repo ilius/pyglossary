@@ -107,8 +107,7 @@ class Reader(object):
 		)
 
 		# Use <br /> so it can be rendered as newline correctly
-		defi = defi.replace("\n", "<br />")
-		return defi
+		return defi.replace("\n", "<br />")
 
 	def __len__(self) -> int:
 		if self._dictdb is None:
