@@ -77,7 +77,7 @@ from pyglossary import core
 from pyglossary.core import confDir
 from pyglossary.glossary import Glossary
 from pyglossary.plugin_prop import PluginProp
-from pyglossary.sort_keys import namedSortKeyByName, namedSortKeyList
+from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 from pyglossary.ui import ui_cmd
 
 endFormat = "\x1b[0;0;0m"
@@ -841,7 +841,7 @@ class UI(ui_cmd.UI):
 				del self._convertOptions["sortKeyName"]
 			return
 
-		if sortKeyName not in namedSortKeyByName:
+		if not lookupSortKey(sortKeyName):
 			log.error(f"invalid {sortKeyName = }")
 			return
 

@@ -10,7 +10,7 @@ from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	EncodingOption,
 )
-from pyglossary.sort_keys import namedSortKeyByName
+from pyglossary.sort_keys import lookupSortKey
 
 enable = True
 lname = "wordset"
@@ -90,7 +90,7 @@ class Reader(object):
 			with open(fpath, encoding=encoding) as fileObj:
 				data = load(fileObj)
 				words = list(data.keys())
-				sortKey = namedSortKeyByName["headword_lower"].normal("utf-8")
+				sortKey = lookupSortKey("headword_lower").normal("utf-8")
 				words.sort(key=sortKey)
 				for word in words:
 					entryDict = data[word]

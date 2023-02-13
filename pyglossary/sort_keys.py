@@ -19,7 +19,7 @@
 
 import re
 from collections import namedtuple
-from typing import Any, List
+from typing import Any, List, Optional
 
 NamedSortKey = namedtuple("NamedSortKey", [
 	"name",
@@ -378,9 +378,12 @@ namedSortKeyList = [
 	),
 ]
 
-namedSortKeyByName = {
+_namedSortKeyByName = {
 	item.name: item for item in namedSortKeyList
 }
+
+def lookupSortKey(sortKeyId: str) -> "Optional[NamedSortKey]":
+	return _namedSortKeyByName.get(sortKeyId)
 
 """
 https://en.wikipedia.org/wiki/UTF-8#Comparison_with_other_encodings

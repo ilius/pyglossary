@@ -84,7 +84,7 @@ from .glossary_utils import (
 from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
 from .plugin_manager import PluginManager
-from .sort_keys import namedSortKeyByName
+from .sort_keys import lookupSortKey
 
 log = logging.getLogger("pyglossary")
 
@@ -732,7 +732,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				"can not use sortWords in SQLite mode",
 			)
 
-		namedSortKey = namedSortKeyByName.get(sortKeyName)
+		namedSortKey = lookupSortKey(sortKeyName)
 		if namedSortKey is None:
 			log.critical(f"invalid {sortKeyName = }")
 			return
@@ -1020,7 +1020,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			else:
 				sortKeyName = defaultSortKeyName
 
-		namedSortKey = namedSortKeyByName.get(sortKeyName)
+		namedSortKey = lookupSortKey(sortKeyName)
 		if namedSortKey is None:
 			log.critical(f"invalid {sortKeyName = }")
 			return None

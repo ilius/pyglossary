@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 
 from pyglossary import core  # essential
 from pyglossary.langs import langDict
-from pyglossary.sort_keys import namedSortKeyByName, namedSortKeyList
+from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 from pyglossary.ui.base import UIBase
 
 # the first thing to do is to set up logger.
@@ -625,7 +625,7 @@ def main():
 			log.critical("Passed --sort-locale without --sort")
 			sys.exit(1)
 
-	if args.sortKeyName and args.sortKeyName not in namedSortKeyByName:
+	if args.sortKeyName and not lookupSortKey(args.sortKeyName):
 		_valuesStr = ", ".join([_sk.name for _sk in namedSortKeyList])
 		log.critical(
 			f"Invalid sortKeyName={args.sortKeyName!r}"
