@@ -837,12 +837,6 @@ class SortOptionsBox(gtk.Box):
 		pack(hbox, encodingEntry, 0, 0, padding=5)
 		pack(self, hbox, 0, 0, padding=5)
 		###
-		hbox = self.localeHBox = gtk.HBox()
-		localeRadio = self.localeRadio = gtk.RadioButton(
-			label="Sort Locale",
-			group=encodingRadio,
-		)
-
 		# RadioButton in Gtk3 is very unstable,
 		# I could not make set_group work at all!
 		# encodingRadio.get_group() == [encodingRadio]
@@ -853,19 +847,11 @@ class SortOptionsBox(gtk.Box):
 		#     so does group= argument to RadioButton()
 		# Note: RadioButton does not exist in Gtk 4.0,
 		# you have to use CheckButton with its new set_group() method
-
-		localeEntry = self.localeEntry = gtk.Entry()
-		localeEntry.set_width_chars(15)
-		pack(hbox, gtk.Label(label="    "))
-		pack(hbox, localeRadio, 0, 0)
-		pack(hbox, localeEntry, 0, 0, padding=5)
-		pack(self, hbox, 0, 0, padding=5)
 		###
 		encodingRadio.set_active(True)
 		###
-		sortRadioSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
-		sortRadioSizeGroup.add_widget(encodingRadio)
-		sortRadioSizeGroup.add_widget(localeRadio)
+		# sortRadioSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
+		# sortRadioSizeGroup.add_widget(encodingRadio)
 		###
 		self.show_all()
 
@@ -890,10 +876,6 @@ class SortOptionsBox(gtk.Box):
 		sortEncoding = convertOptions.get("sortEncoding", "utf-8")
 		self.encodingEntry.set_text(sortEncoding)
 
-		sortLocale = convertOptions.get("sortLocale")
-		if sortLocale:
-			self.localeEntry.set_text(sortLocale)
-			self.localeRadio.set_active(True)
 
 	def applyChanges(self):
 		convertOptions = self.ui.convertOptions
@@ -909,10 +891,6 @@ class SortOptionsBox(gtk.Box):
 		convertOptions["sortKeyName"] = sortKeyNameByDesc[sortKeyDesc]
 		if self.encodingRadio.get_active():
 			convertOptions["sortEncoding"] = self.encodingEntry.get_text()
-			convertOptions["sortLocale"] = None
-		elif self.localeRadio.get_active():
-			convertOptions["sortLocale"] = self.localeEntry.get_text()
-			convertOptions["sortEncoding"] = None
 
 
 class GeneralOptionsDialog(gtk.Dialog):

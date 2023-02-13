@@ -60,20 +60,28 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 		)
 
 	def test_convert_txt_stardict_enfa_3(self):
-		try:
-			self.convert_txt_stardict_enfa(
-				"100-en-fa",
-				sortLocale="en_US.UTF-8",
-				sqlite=False,
-			)
-		except ValueError as e:
-			self.assertEqual(
-				str(e),
-				"locale-sorting is not supported for sortKey=stardict",
-			)
-		else:
-			self.fail("did not raise an exception")
+		sortKeyName = "stardict:en_US.UTF-8"
+		self.convert_txt_stardict_enfa(
+			"100-en-fa",
+			sortKeyName=sortKeyName,
+			sqlite=True,
+		)
+		self.assertLogWarning(
+			f"Ignoring user-defined sort order {sortKeyName!r}"
+			f", and using sortKey function from Stardict plugin",
+		)
 
+	def test_convert_txt_stardict_enfa_4(self):
+		sortKeyName = "stardict:fa_IR.UTF-8"
+		self.convert_txt_stardict_enfa(
+			"100-en-fa",
+			sortKeyName=sortKeyName,
+			sqlite=False,
+		)
+		self.assertLogWarning(
+			f"Ignoring user-defined sort order {sortKeyName!r}"
+			f", and using sortKey function from Stardict plugin",
+		)
 
 if __name__ == "__main__":
 	unittest.main()

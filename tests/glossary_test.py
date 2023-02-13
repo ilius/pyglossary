@@ -1075,8 +1075,7 @@ Japonica"""
 			compareText=f"sort-locale/{name}-sorted-en.txt",
 			testId="sorted-en",
 			sort=True,
-			sortKeyName="headword_lower",
-			sortLocale="en_US.UTF-8",
+			sortKeyName="headword_lower:en_US.UTF-8",
 		)
 
 	def test_convert_sortLocale_fa_1(self):
@@ -1087,8 +1086,7 @@ Japonica"""
 			compareText=f"sort-locale/{name}-sorted-fa.txt",
 			testId="sorted-fa",
 			sort=True,
-			sortKeyName="headword_lower",
-			sortLocale="fa_IR.UTF-8",
+			sortKeyName="headword_lower:fa_IR.UTF-8",
 		)
 
 	def test_convert_sortLocale_fa_2(self):
@@ -1099,8 +1097,7 @@ Japonica"""
 			compareText=f"sort-locale/{name}-sorted-latin-fa.txt",
 			testId="sorted-latin-fa",
 			sort=True,
-			sortKeyName="headword_lower",
-			sortLocale="fa-u-kr-latn-arab",
+			sortKeyName="headword_lower:fa-u-kr-latn-arab",
 		)
 
 if __name__ == "__main__":

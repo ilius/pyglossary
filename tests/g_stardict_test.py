@@ -281,7 +281,7 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			sqlite=True,
 		)
 		self.assertLogWarning(
-			"SQLite mode only works with enable_alts=True, force-enabling it."
+			"SQLite mode only works with enable_alts=True, force-enabling it.",
 		)
 
 	def test_convert_stardict_txt_1(self):

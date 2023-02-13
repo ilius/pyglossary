@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from typing import Any, Dict, Optional
 
-	from .sort_keys import NamedSortKey, sqliteSortKeyType
+	from .sort_keys import NamedSortKey
 
 from .entry import Entry
 
@@ -76,36 +76,10 @@ class SqEntryList(list):
 		self._sqliteSortKey = None
 		self._columnNames = ""
 
-	def _getLocaleSortKey(
-		self,
-		namedSortKey: "NamedSortKey",
-		sortLocale: str,
-		writeOptions: "Dict[str, Any]",
-	) -> "sqliteSortKeyType":
-		from icu import Collator, Locale
-
-		if namedSortKey.sqlite_locale is None:
-			raise ValueError(
-				f"locale-sorting is not supported "
-				f"for sortKey={namedSortKey.name}",
-			)
-
-		localeObj = Locale(sortLocale)
-		if not localeObj.getISO3Language():
-			raise ValueError(f"invalid locale {sortLocale!r}")
-
-		log.info(f"Sorting based on locale {localeObj.getName()}")
-
-		collator = Collator.createInstance(localeObj)
-
-		return namedSortKey.sqlite_locale(collator, **writeOptions)
-
-
 	def setSortKey(
 		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "Optional[str]",
-		sortLocale: "Optional[str]",
 		writeOptions: "Dict[str, Any]",
 	):
 		"""
@@ -115,14 +89,11 @@ class SqEntryList(list):
 		if self._sqliteSortKey is not None:
 			raise RuntimeError("Called setSortKey twice")
 
-		if sortLocale:
-			sqliteSortKey = self._getLocaleSortKey(
-				namedSortKey,
-				sortLocale,
-				writeOptions,
-			)
-		else:
-			sqliteSortKey = namedSortKey.sqlite(sortEncoding, **writeOptions)
+		kwargs = writeOptions.copy()
+		if sortEncoding:
+			kwargs["sortEncoding"] = sortEncoding
+
+		sqliteSortKey = namedSortKey.sqlite(**kwargs)
 
 		self._sqliteSortKey = sqliteSortKey
 		self._columnNames = ",".join([

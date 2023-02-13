@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 	from typing import Any, Dict, Iterator, Optional, Tuple
 
 	from .glossary_type import EntryType
-	from .sort_keys import NamedSortKey, sortKeyType
+	from .sort_keys import NamedSortKey
 
 from .compression import (
 	stdCompressions,
@@ -64,41 +64,16 @@ class EntryList(object):
 				defaultDefiFormat=glos._defaultDefiFormat,
 			)
 
-	def _getLocaleSortKey(
-		self,
-		namedSortKey: "NamedSortKey",
-		sortLocale: str,
-		writeOptions: "Dict[str, Any]",
-	) -> "sortKeyType":
-		from icu import Collator, Locale
-
-		if namedSortKey.locale is None:
-			raise ValueError(
-				f"locale-sorting is not supported "
-				f"for sortKey={namedSortKey.name}",
-			)
-
-		localeObj = Locale(sortLocale)
-		if not localeObj.getISO3Language():
-			raise ValueError(f"invalid locale {sortLocale!r}")
-
-		log.info(f"Sorting based on locale {localeObj.getName()}")
-
-		collator = Collator.createInstance(localeObj)
-
-		return namedSortKey.locale(collator, **writeOptions)
-
 	def setSortKey(
 		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "Optional[str]",
-		sortLocale: "Optional[str]",
 		writeOptions: "Dict[str, Any]",
 	):
-		if sortLocale:
-			sortKey = self._getLocaleSortKey(namedSortKey, sortLocale, writeOptions)
-		else:
-			sortKey = namedSortKey.normal(sortEncoding, **writeOptions)
+		kwargs = writeOptions.copy()
+		if sortEncoding:
+			kwargs["sortEncoding"] = sortEncoding
+		sortKey = namedSortKey.normal(**kwargs)
 		self._sortKey = Entry.getRawEntrySortKey(self._glos, sortKey)
 
 	def sort(self):

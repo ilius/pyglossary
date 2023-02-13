@@ -859,23 +859,8 @@ class SortOptionsBox(gtk.Box):
 		pack(self, hbox)
 		encodingRadio.set_active(True)
 		###
-		hbox = self.localeHBox = HBox(spacing=5)
-		localeRadio = self.localeRadio = gtk.CheckButton(
-			label="Sort Locale",
-			group=encodingRadio,
-		)
-		localeEntry = self.localeEntry = gtk.Entry()
-		localeEntry.set_width_chars(15)
-		pack(hbox, gtk.Label(label="    "))
-		pack(hbox, localeRadio)
-		localeEntry = self.localeEntry = gtk.Entry()
-		pack(hbox, localeEntry)
-		localeEntry.set_width_chars(15)
-		pack(self, hbox)
-		###
 		sortRadioSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		sortRadioSizeGroup.add_widget(encodingRadio)
-		sortRadioSizeGroup.add_widget(localeRadio)
 		###
 		self.show()
 
@@ -883,7 +868,6 @@ class SortOptionsBox(gtk.Box):
 		sort = self.sortCheck.get_active()
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)
-		self.localeHBox.set_sensitive(sort)
 
 	def updateWidgets(self):
 		convertOptions = self.mainWin.convertOptions
@@ -891,7 +875,6 @@ class SortOptionsBox(gtk.Box):
 		self.sortCheck.set_active(sort)
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)
-		self.localeHBox.set_sensitive(sort)
 
 		sortKeyName = convertOptions.get("sortKeyName")
 		if sortKeyName:
@@ -899,11 +882,6 @@ class SortOptionsBox(gtk.Box):
 
 		sortEncoding = convertOptions.get("sortEncoding", "utf-8")
 		self.encodingEntry.set_text(sortEncoding)
-
-		sortLocale = convertOptions.get("sortLocale")
-		if sortLocale:
-			self.localeEntry.set_text(sortLocale)
-			self.localeRadio.set_active(True)
 
 	def applyChanges(self):
 		convertOptions = self.mainWin.convertOptions
@@ -919,10 +897,6 @@ class SortOptionsBox(gtk.Box):
 		convertOptions["sortKeyName"] = sortKeyNameByDesc[sortKeyDesc]
 		if self.encodingRadio.get_active():
 			convertOptions["sortEncoding"] = self.encodingEntry.get_text()
-			convertOptions["sortLocale"] = None
-		elif self.localeRadio.get_active():
-			convertOptions["sortLocale"] = self.localeEntry.get_text()
-			convertOptions["sortEncoding"] = None
 
 
 class GeneralOptionsDialog(gtk.Dialog):

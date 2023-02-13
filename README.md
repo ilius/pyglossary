@@ -167,7 +167,7 @@ But you can explicitly determine the user interface type using `--ui`
 
 ## Feature-specific requirements
 
-- Using [--sort-locale](#sorting) flag requires [PyICU](./doc/pyicu.md)
+- Using [Sort by Locale](#sorting) feature requires [PyICU](./doc/pyicu.md)
 
 - Using `--remove-html-all` flag requires:
 
@@ -232,12 +232,7 @@ There are two things than can activate sorting entries:
 
 In the case of passing `--sort`, you can also pass:
 
-- `--sort-key` to select sort key aka sorting order, see [doc/sort-key.md](./doc/sort-key.md)
-
-- `--sort-locale` to sort based on a given locale, for example `--sort-locale=fa_IR.UTF-8`
-
-  - Sorts words in the given language in the **correct alphabetical order of that language**
-  - If this language uses a non-Latin script, all words in this language are sorted **before** ASCII/Latin words
+- `--sort-key` to select sort key aka sorting order (including locale), see [doc/sort-key.md](./doc/sort-key.md)
 
 - `--sort-encoding` to change the encoding used for sort
 

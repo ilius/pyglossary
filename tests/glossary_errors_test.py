@@ -38,7 +38,7 @@ class TestGlossaryErrorsBase(TestGlossaryBase):
 		if warnCount > 0:
 			print(
 				f"Got {warnCount} unhandled warnings "
-				f"from {self.__class__.__name__}: {self._testMethodName}\n"
+				f"from {self.__class__.__name__}: {self._testMethodName}\n",
 			)
 
 	def assertLogCritical(self, errorMsg):
