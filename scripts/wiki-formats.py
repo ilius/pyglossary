@@ -117,7 +117,7 @@ def readCheck(p):
 def writeCheck(p):
 	if p.lname in willNotSupportWrite:
 		return "❌"
-	return "✔" if p.canRead else ""
+	return "✔" if p.canWrite else ""
 
 
 template = Template("""
@@ -154,5 +154,5 @@ text = template.render(
 	readCheck=readCheck,
 	writeCheck=writeCheck,
 )
-with open("Formats.md", mode="w") as _file:
+with open("Formats.md", mode="w", encoding="utf-8") as _file:
 	_file.write(text)
