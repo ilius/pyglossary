@@ -88,9 +88,12 @@ class TestGlossaryBase(unittest.TestCase):
 			if isdir(direc):
 				rmtree(direc)
 
+	def fixDownloadFilename(self, filename):
+		return filename.replace("/", "__").replace("\\", "__")
+
 	def downloadFile(self, filename):
 		_crc32 = self.dataFileCRC32[filename]
-		fpath = join(dataDir, filename.replace("/", "__"))
+		fpath = join(dataDir, self.fixDownloadFilename(filename))
 		if isfile(fpath):
 			with open(fpath, mode="rb") as _file:
 				data = _file.read()
@@ -109,6 +112,15 @@ class TestGlossaryBase(unittest.TestCase):
 		with open(fpath, mode="wb") as _file:
 			_file.write(data)
 		return fpath
+
+	def downloadDir(self, dirName: str, files: "List[str]") -> str:
+		dirPath = join(dataDir, self.fixDownloadFilename(dirName))
+		for fileRelPath in files:
+			filePath = self.downloadFile(join(dirName, fileRelPath))
+			newFilePath = join(dirPath, fileRelPath)
+			os.makedirs(dirname(newFilePath), exist_ok=True)
+			os.rename(filePath, newFilePath)
+		return dirPath
 
 	def newTempFilePath(self, filename):
 		fpath = join(self.tempDir, filename)
