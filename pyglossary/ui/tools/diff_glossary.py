@@ -8,11 +8,13 @@ from pyglossary.glossary_type import EntryType
 from pyglossary.ui.tools.format_entry import formatEntry
 from pyglossary.ui.tools.word_diff import (
 	formatDiff,
+	xmlDiff,
+)
+from pyglossary.ui.tools.colors import (
 	green,
 	red,
-	reset,
-	xmlDiff,
 	yellow,
+	reset,
 )
 
 Glossary.init()
