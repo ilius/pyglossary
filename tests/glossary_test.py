@@ -92,7 +92,8 @@ class TestGlossaryBase(unittest.TestCase):
 		return filename.replace("/", "__").replace("\\", "__")
 
 	def downloadFile(self, filename):
-		_crc32 = self.dataFileCRC32[filename]
+		unixFilename = filename.replace("\\", "/")
+		_crc32 = self.dataFileCRC32[unixFilename]
 		fpath = join(dataDir, self.fixDownloadFilename(filename))
 		if isfile(fpath):
 			with open(fpath, mode="rb") as _file:
@@ -101,7 +102,7 @@ class TestGlossaryBase(unittest.TestCase):
 				raise RuntimeError(f"CRC32 check failed for existing file: {fpath}")
 			return fpath
 		try:
-			with urlopen(dataURL.format(filename=filename)) as res:
+			with urlopen(dataURL.format(filename=unixFilename)) as res:
 				data = res.read()
 		except Exception as e:
 			e.msg += f", {filename=}"
@@ -116,8 +117,11 @@ class TestGlossaryBase(unittest.TestCase):
 	def downloadDir(self, dirName: str, files: "List[str]") -> str:
 		dirPath = join(dataDir, self.fixDownloadFilename(dirName))
 		for fileRelPath in files:
-			filePath = self.downloadFile(join(dirName, fileRelPath))
 			newFilePath = join(dirPath, fileRelPath)
+			if isfile(newFilePath):
+				# TODO: check crc-32
+				continue
+			filePath = self.downloadFile(join(dirName, fileRelPath))
 			os.makedirs(dirname(newFilePath), exist_ok=True)
 			os.rename(filePath, newFilePath)
 		return dirPath
