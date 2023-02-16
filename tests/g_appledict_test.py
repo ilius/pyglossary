@@ -16,7 +16,10 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 
 		self.dataFileCRC32.update({
 			"appledict-src/002-no-morphology.txt": "4afadab4",
-			"appledict-src/002-no-morphology.xml": "60044894",
+			"appledict-src/002-no-morphology/002-no-morphology.css": "6818c1e5",
+			"appledict-src/002-no-morphology/002-no-morphology.plist": "7007f286",
+			"appledict-src/002-no-morphology/002-no-morphology.xml": "f34df9ac",
+			"appledict-src/002-no-morphology/Makefile": "ddc31a07",
 		})
 
 	def test_tabfile_without_morpho_to_appledict_source(self):
@@ -24,21 +27,22 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 
 		baseName = "002-no-morphology"
 		inputFilepath = self.downloadFile(f"appledict-src/{baseName}.txt")
+		outputDirPath = self.newTempFilePath(f"{baseName}")
+		outputXmlPath = join(outputDirPath, f"{baseName}.xml")
 
-		expectedOutputFilePath = self.downloadFile(f"appledict-src/{baseName}.xml")
+		expectedOutputXmlPath = self.downloadFile(f"appledict-src/{baseName}/{baseName}.xml")
 
-		outputDirPath = self.glos.convert(
+		result = self.glos.convert(
 			inputFilename=inputFilepath,
-			outputFilename=f"{baseName}-actual",
+			outputFilename=outputDirPath,
 			inputFormat="Tabfile",
 			outputFormat="AppleDict",
 		)
-
-		actualOutputFilePath = join(outputDirPath, f"{baseName}-actual.xml")
+		# self.assertIsNotNone(result)
 
 		self.compareTextFiles(
-			actualOutputFilePath,
-			expectedOutputFilePath,
+			outputXmlPath,
+			expectedOutputXmlPath,
 		)
 
 		shutil.rmtree(outputDirPath)

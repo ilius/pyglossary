@@ -133,8 +133,8 @@ class TestGlossaryBase(unittest.TestCase):
 		return fpath
 
 	def compareTextFiles(self, fpath1, fpath2):
-		self.assertTrue(isfile(fpath1))
-		self.assertTrue(isfile(fpath2))
+		self.assertTrue(isfile(fpath1), f"{fpath1 = }")
+		self.assertTrue(isfile(fpath2), f"{fpath2 = }")
 		with open(fpath1, encoding="utf-8") as file1:
 			text1 = file1.read().rstrip("\n")
 		with open(fpath2, encoding="utf-8") as file2:
