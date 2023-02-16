@@ -1,12 +1,11 @@
 import sys
-from os.path import dirname, abspath
 import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from tests.glossary_test import TestGlossaryBase
-from pyglossary.glossary import Glossary
 
 
 class TestGlossaryDictunformat(TestGlossaryBase):
@@ -23,7 +22,7 @@ class TestGlossaryDictunformat(TestGlossaryBase):
 			f"{fname}.dictunformat",
 			f"{fname}-tmp.txt",
 			compareText=f"{fname2}.txt",
-			**convertArgs
+			**convertArgs,
 		)
 
 	def test_convert_dictunformat_txt_1(self):

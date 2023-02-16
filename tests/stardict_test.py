@@ -1,6 +1,6 @@
-import unittest
 import locale
 import random
+import unittest
 from functools import cmp_to_key
 
 
@@ -191,7 +191,7 @@ class SortRandomTest(unittest.TestCase):
 				sorted(
 					bsList,
 					key=sortKeyBytes,
-				)
+				),
 			)
 
 

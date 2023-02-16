@@ -1,17 +1,18 @@
 #!/usr/bin/python3
 
-import sys
-import os
-from os.path import dirname, abspath
-import unittest
 import logging
+import os
+import sys
+import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
+from pyglossary.glossary import Glossary
 from tests.glossary_errors_test import TestGlossaryErrors
 from tests.glossary_test import dataDir
-from pyglossary.glossary import Glossary
+
 
 class TestGlossarySecurity(TestGlossaryErrors):
 	def __init__(self, *args, **kwargs):
@@ -24,9 +25,10 @@ class TestGlossarySecurity(TestGlossaryErrors):
 			inputFilename="os.system('abcd')",
 			outputFilename="os.system('abcd -l')",
 		)
+		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect output format!")
 		self.assertLogCritical(
-			'Writing file "os.system(\'abcd -l\')" failed.'
+			'Writing file "os.system(\'abcd -l\')" failed.',
 		)
 
 	def test_convert_2(self):
@@ -35,9 +37,10 @@ class TestGlossarySecurity(TestGlossaryErrors):
 			inputFilename="os.system('abcd');test.txt",
 			outputFilename="os.system('abcd -l')",
 		)
+		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect output format!")
 		self.assertLogCritical(
-			'Writing file "os.system(\'abcd -l\')" failed.'
+			'Writing file "os.system(\'abcd -l\')" failed.',
 		)
 
 	def test_convert_3(self):
@@ -46,21 +49,29 @@ class TestGlossarySecurity(TestGlossaryErrors):
 			inputFilename="os.system('abcd');test.txt",
 			outputFilename="os.system('abcd -l');test.csv",
 		)
-		self.assertLogCritical(
+		self.assertIsNone(res)
+		errMsg = (
 			f'[Errno 2] No such file or directory: '
-			f'"{dataDir}/os.system(\'abcd\');test.txt"'
+			f'"{dataDir}{os.sep}os.system(\'abcd\');test.txt"'
 		)
+		errMsg = errMsg.replace("\\", "\\\\")
+		self.assertLogCritical(errMsg)
 		self.assertLogCritical(
-			'Reading file "os.system(\'abcd\');test.txt" failed.'
+			'Reading file "os.system(\'abcd\');test.txt" failed.',
 		)
 
-	def test_convert_3(self):
+	def test_convert_4(self):
 		glos = Glossary()
 		res = glos.convert(
 			inputFilename="test.txt\nos.system('abcd')",
 			outputFilename="test.csv\nos.system('abcd -l')",
 		)
+		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect output format!")
 		self.assertLogCritical(
-			'Writing file "test.csv\\nos.system(\'abcd -l\')" failed.'
+			'Writing file "test.csv\\nos.system(\'abcd -l\')" failed.',
 		)
+
+
+if __name__ == "__main__":
+	unittest.main()

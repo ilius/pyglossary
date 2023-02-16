@@ -1,14 +1,31 @@
 #!/usr/bin/python3
-import sys
 import os
-from os.path import dirname, abspath
-import unittest
 import struct
+import sys
+import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.text_utils import *
+from pyglossary.text_utils import (
+	crc32hex,
+	escapeNTB,
+	fixUtf8,
+	formatHMS,
+	isASCII,
+	joinByBar,
+	replacePostSpaceChar,
+	splitByBar,
+	splitByBarUnescapeNTB,
+	uint32FromBytes,
+	uint32ToBytes,
+	uintFromBytes,
+	unescapeBar,
+	unescapeBarBytes,
+	unescapeNTB,
+	urlToPath,
+)
 
 
 class TestTextUtils(unittest.TestCase):

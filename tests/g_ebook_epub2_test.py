@@ -1,13 +1,13 @@
-import sys
-from os.path import dirname, abspath
-import unittest
 import re
+import sys
+import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from tests.glossary_test import TestGlossaryBase
 from pyglossary.glossary import Glossary
+from tests.glossary_test import TestGlossaryBase
 
 
 class TestGlossaryEPUB2(TestGlossaryBase):
@@ -46,11 +46,11 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 		inputFname,
 		outputFname,
 		testId,
-		**convertArgs
+		**convertArgs,
 	):
 		inputFilename = self.downloadFile(f"{inputFname}")
 		outputFilename = self.newTempFilePath(
-			f"{inputFname.replace('.', '_')}-{testId}.epub"
+			f"{inputFname.replace('.', '_')}-{testId}.epub",
 		)
 
 		expectedFilename = self.downloadFile(f"{outputFname}.epub")
@@ -58,7 +58,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
-			**convertArgs
+			**convertArgs,
 		)
 		self.assertEqual(outputFilename, res)
 

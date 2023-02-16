@@ -1,13 +1,13 @@
 import sys
-from os.path import dirname, abspath, relpath
 import unittest
+from os.path import abspath, dirname, relpath
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from tests.glossary_test import TestGlossaryBase
-from tests.glossary_errors_test import TestGlossaryErrorsBase
 from pyglossary.glossary import Glossary
+from tests.glossary_errors_test import TestGlossaryErrorsBase
+from tests.glossary_test import TestGlossaryBase
 
 
 class TestGlossaryStarDict(TestGlossaryBase):
@@ -78,7 +78,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		config=None,
 		rawEntryCompress=None,
 		writeOptions=None,
-		**convertArgs
+		**convertArgs,
 	):
 		if not fname2:
 			fname2 = fname
@@ -110,7 +110,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
 			writeOptions=writeOptions,
-			**convertArgs
+			**convertArgs,
 		)
 		self.assertEqual(outputFilename, result)
 
@@ -122,7 +122,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		for ext in binExtList:
 			self.compareBinaryFiles(
 				otherFiles[ext],
-				self.downloadFile(f"{fname2}.sd/{fname2}.{ext}")
+				self.downloadFile(f"{fname2}.sd/{fname2}.{ext}"),
 			)
 
 	def convert_txt_stardict_zip(
@@ -132,7 +132,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		dictzip=False,
 		config=None,
 		rawEntryCompress=None,
-		**convertArgs
+		**convertArgs,
 	):
 		inputFilename = self.downloadFile(f"{fname}.txt")
 		outputFilename = self.newTempFilePath(f"{fname}.zip")
@@ -152,7 +152,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			writeOptions={
 				"dictzip": dictzip,
 			},
-			**convertArgs
+			**convertArgs,
 		)
 		self.assertEqual(outputFilename, result)
 
@@ -167,7 +167,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		outputFname: str,
 		testId: str,
 		syn=True,
-		**convertArgs
+		**convertArgs,
 	):
 		binExtList = ["idx", "dict"]
 		if syn:
@@ -177,7 +177,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 
 		inputFilename = self.downloadFile(f"{inputFname}.sd/{inputFname}.ifo")
 		outputFilename = self.newTempFilePath(
-			f"{inputFname}-{testId}.txt"
+			f"{inputFname}-{testId}.txt",
 		)
 		expectedFilename = self.downloadFile(f"{outputFname}.txt")
 		glos = self.glos = Glossary()
@@ -185,7 +185,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		result = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
-			**convertArgs
+			**convertArgs,
 		)
 		self.assertEqual(outputFilename, result)
 

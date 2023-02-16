@@ -1,12 +1,11 @@
 import sys
-from os.path import dirname, abspath
 import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from tests.glossary_test import TestGlossaryBase
-from pyglossary.entry import Entry
 
 
 class TestGlossarySlob(TestGlossaryBase):
@@ -25,7 +24,7 @@ class TestGlossarySlob(TestGlossaryBase):
 		self.convert(
 			f"{fname}.txt",
 			f"{fname}.slob",
-			compareBinary=f"",
+			compareBinary="",
 			# slob file is different each time (and so its sha1sum and md5sum)
 		)
 
@@ -45,7 +44,7 @@ class TestGlossarySlob(TestGlossaryBase):
 				"file_size_approx": file_size_approx,
 				"file_size_approx_check_num_entries": 1,
 			},
-			compareBinary=f"",
+			compareBinary="",
 			# slob file is different each time (and so its sha1sum and md5sum)
 		)
 		for size, fpath in files:
@@ -67,7 +66,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			f"{fname}.slob",
 			f"{fname}-2.txt",
 			compareText=f"{fname2}.txt",
-			**convertArgs
+			**convertArgs,
 		)
 
 		for resFileName in resFiles:
@@ -96,7 +95,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			direct=False,
 		)
 
-	def test_convert_slob_txt_2(self):
+	def test_convert_slob_txt_3(self):
 		self.convert_slob_txt(
 			"100-en-fa-res",
 			"100-en-fa-res-slob",
@@ -107,7 +106,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			sqlite=True,
 		)
 
-	def test_convert_slob_txt_2(self):
+	def test_convert_slob_txt_4(self):
 		self.convert_slob_txt(
 			"100-en-fa-res",
 			"100-en-fa-res-slob-sort",

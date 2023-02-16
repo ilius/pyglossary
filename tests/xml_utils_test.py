@@ -1,6 +1,6 @@
 import sys
-from os.path import dirname, abspath
 import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)

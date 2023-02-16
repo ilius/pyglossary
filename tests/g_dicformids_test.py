@@ -1,12 +1,11 @@
 import sys
-from os.path import dirname, abspath
 import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from tests.glossary_test import TestGlossaryBase
-from pyglossary.glossary import Glossary
 
 
 class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
@@ -23,7 +22,7 @@ class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
 		self.convert(
 			f"{fname}.txt",
 			outputFname,
-			**convertArgs
+			**convertArgs,
 		)
 		self.checkZipFileSha1sum(outputFpath, sha1sumDict)
 

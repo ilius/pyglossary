@@ -1,12 +1,11 @@
 import sys
-from os.path import dirname, abspath
 import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from tests.glossary_test import TestGlossaryBase
-from pyglossary.glossary import Glossary
 
 
 class TestGlossaryLingoesLDF(TestGlossaryBase):
@@ -22,7 +21,7 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 			f"{fname}.txt",
 			f"{fname}-2.ldf",
 			compareText=f"{fname2}.ldf",
-			**convertArgs
+			**convertArgs,
 		)
 
 
@@ -31,7 +30,7 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 			f"{fname}.ldf",
 			f"{fname}-2.txt",
 			compareText=f"{fname2}.txt",
-			**convertArgs
+			**convertArgs,
 		)
 
 	def test_convert_txt_ldf_1(self):
@@ -49,3 +48,6 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 				"input_file_size": None,
 			},
 		)
+
+if __name__ == "__main__":
+	unittest.main()

@@ -1,14 +1,14 @@
-import sys
-from os.path import dirname, abspath
-import unittest
 import gzip
-import marisa_trie  # to ensure it's installed
+import sys
+import unittest
+from os.path import abspath, dirname
+
+import marisa_trie  # noqa: F401, to ensure it's installed
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from tests.glossary_test import TestGlossaryBase
-from pyglossary.glossary import Glossary
 
 
 class TestGlossaryKobo(TestGlossaryBase):
@@ -23,7 +23,7 @@ class TestGlossaryKobo(TestGlossaryBase):
 		self.convert(
 			f"{fname}.txt",
 			outputFname,
-			**convertArgs
+			**convertArgs,
 		)
 		dataReplaceFuncs = {
 			_zfname: gzip.decompress
@@ -33,7 +33,7 @@ class TestGlossaryKobo(TestGlossaryBase):
 		self.checkZipFileSha1sum(
 			outputFpath,
 			sha1sumDict=sha1sumDict,
-			dataReplaceFuncs=dataReplaceFuncs
+			dataReplaceFuncs=dataReplaceFuncs,
 		)
 
 	def test_convert_txt_kobo_1(self):
@@ -41,9 +41,10 @@ class TestGlossaryKobo(TestGlossaryBase):
 			"11.html": "39f0f46560da7398ab0d3b19cc1c2387ecd201dd",
 			"aa.html": "df9460450e8b46e913c57bf39dcc799ffdc2fb33",
 			"ab.html": "be4271a8508dbb499bafd439810af621a7b3474f",
-			"words": "d0f74e854f090fbaa8211bcfd162ad99ec4da0a3",  
+			"words": "d0f74e854f090fbaa8211bcfd162ad99ec4da0a3",
 		}
 		self.convert_txt_kobo("100-en-fa", sha1sumDict)
+
 
 if __name__ == "__main__":
 	unittest.main()

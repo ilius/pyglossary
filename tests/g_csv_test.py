@@ -1,12 +1,12 @@
 import sys
-from os.path import dirname, abspath
 import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from tests.glossary_test import TestGlossaryBase
 from pyglossary.glossary import Glossary
+from tests.glossary_test import TestGlossaryBase
 
 
 class TestGlossaryCSV(TestGlossaryBase):
@@ -27,7 +27,7 @@ class TestGlossaryCSV(TestGlossaryBase):
 			f"{fname}.txt",
 			f"{fname}-2.csv",
 			compareText=f"{fname2}.csv",
-			**convertArgs
+			**convertArgs,
 		)
 
 	def convert_csv_txt_rw(self, fname, fname2, infoOverride=None):
@@ -56,7 +56,7 @@ class TestGlossaryCSV(TestGlossaryBase):
 			f"{fname}.csv",
 			f"{fname}-2.txt",
 			compareText=f"{fname2}.txt",
-			**convertArgs
+			**convertArgs,
 		)
 
 	def test_convert_txt_csv_1(self):

@@ -1,6 +1,6 @@
 import sys
-from os.path import dirname, abspath, join
 import unittest
+from os.path import abspath, dirname, join
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -26,7 +26,7 @@ class TestGlossaryBGL(TestGlossaryBase):
 		sha1sum=None,
 		md5sum=None,
 		resFiles=None,
-		**convertArgs
+		**convertArgs,
 	):
 		if resFiles is None:
 			resFiles = {}
@@ -40,7 +40,7 @@ class TestGlossaryBGL(TestGlossaryBase):
 			f"{fname}-2.txt",
 			sha1sum=sha1sum,
 			md5sum=md5sum,
-			**convertArgs
+			**convertArgs,
 		)
 
 		for resName in resFiles:

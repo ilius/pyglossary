@@ -1,13 +1,12 @@
-import shutil
 import sys
-from os.path import dirname, abspath, join
 import unittest
+from os.path import abspath, dirname, join
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from tests.glossary_test import TestGlossaryBase
 from pyglossary.glossary import Glossary
+from tests.glossary_test import TestGlossaryBase
 
 
 class TestGlossaryAppleDict(TestGlossaryBase):
@@ -53,3 +52,6 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 				join(outputDirPath, fname),
 				fpath,
 			)
+
+if __name__ == "__main__":
+	unittest.main()

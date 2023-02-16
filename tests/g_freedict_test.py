@@ -1,6 +1,6 @@
 import sys
-from os.path import dirname, abspath
 import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -21,7 +21,7 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			f"{fname}.tei",
 			f"{fname}-2.txt",
 			compareText=f"{fname2}.txt",
-			**convertArgs
+			**convertArgs,
 		)
 
 	def test_convert_tei_txt_1(self):
@@ -31,3 +31,6 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			infoOverride={"input_file_size": None},
 		)
 
+
+if __name__ == "__main__":
+	unittest.main()

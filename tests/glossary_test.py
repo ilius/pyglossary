@@ -1,27 +1,25 @@
 #!/usr/bin/python3
 
-import sys
-import os
-from os.path import join, dirname, abspath, isdir, isfile
-import unittest
-import tempfile
-import logging
-from urllib.request import urlopen
-import zipfile
-import random
 import hashlib
-import tracemalloc
+import logging
 import os
+import random
+import sys
+import tempfile
+import tracemalloc
+import unittest
+import zipfile
+from os.path import abspath, dirname, isdir, isfile, join
+from typing import Callable, Dict, List, Optional
+from urllib.request import urlopen
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.glossary import Glossary, log
-from pyglossary.entry import Entry
 from pyglossary.core import cacheDir
+from pyglossary.glossary import Glossary, log
 from pyglossary.os_utils import rmtree
 from pyglossary.text_utils import crc32hex
-
 
 tracemalloc.start()
 
@@ -109,7 +107,10 @@ class TestGlossaryBase(unittest.TestCase):
 			raise e from None
 		actual_crc32 = crc32hex(data)
 		if actual_crc32 != _crc32:
-			raise RuntimeError(f"CRC32 check failed for downloaded file: {filename}: {actual_crc32}")
+			raise RuntimeError(
+				"CRC32 check failed for downloaded file: "
+				f"{filename}: {actual_crc32}",
+			)
 		with open(fpath, mode="wb") as _file:
 			_file.write(data)
 		return fpath
@@ -167,7 +168,7 @@ class TestGlossaryBase(unittest.TestCase):
 		self,
 		fpath1,
 		fpath2,
-		dataReplaceFuncs: "Dict[str: Callable",
+		dataReplaceFuncs: "Dict[str, Callable]",
 	):
 		zf1 = zipfile.ZipFile(fpath1)
 		zf2 = zipfile.ZipFile(fpath2)
@@ -198,7 +199,7 @@ class TestGlossaryBase(unittest.TestCase):
 		if dataReplaceFuncs is None:
 			dataReplaceFuncs = {}
 		zf = zipfile.ZipFile(fpath)
-		pathList = zf.namelist()
+		# pathList = zf.namelist()
 		for zfpath, expectedSha1 in sha1sumDict.items():
 			data = zf.read(zfpath)
 			func = dataReplaceFuncs.get(zfpath)
@@ -227,7 +228,7 @@ class TestGlossaryBase(unittest.TestCase):
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
-			**convertArgs
+			**convertArgs,
 		)
 		self.assertEqual(outputFilename, res)
 
@@ -556,7 +557,7 @@ class TestGlossary(TestGlossaryBase):
 		res = glos.convert(
 			inputFilename=inputFilename,
 			outputFilename=outputFilename,
-			**convertArgs
+			**convertArgs,
 		)
 		self.assertEqual(outputFilename, res)
 		zf = zipfile.ZipFile(outputFilename)
@@ -702,7 +703,7 @@ class TestGlossary(TestGlossaryBase):
 	def test_convert_sqlite_direct_error(self):
 		glos = self.glos = Glossary()
 		try:
-			res = glos.convert(
+			glos.convert(
 				inputFilename="foo.txt",
 				outputFilename="bar.txt",
 				direct=True,
@@ -853,7 +854,10 @@ Caca|ca-ca
 darkling beetle
 Japonica"""
 
-	tenWordsStrFa = "بیمارانه\nگالوانومتر\nنقاهت\nرشکمندی\nناکاستنی\nشگفتآفرینی\nچندپاری\nنامبارکی\nآماسش\nانگیزنده"
+	tenWordsStrFa = (
+		"بیمارانه\nگالوانومتر\nنقاهت\nرشک"
+		"مندی\nناکاستنی\nشگفتآفرینی\nچندپاری\nنامبارکی\nآماسش\nانگیزنده"
+	)
 
 	def test_addEntries_1(self):
 		glos = self.glos = Glossary()

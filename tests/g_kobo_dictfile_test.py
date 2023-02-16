@@ -1,13 +1,13 @@
 import sys
-from os.path import dirname, abspath
 import unittest
-import mistune  # to ensure it's installed
+from os.path import abspath, dirname
+
+import mistune  # noqa: F401, to ensure it's installed
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from tests.glossary_test import TestGlossaryBase
-from pyglossary.entry import Entry
 
 
 class TestGlossaryDictfile(TestGlossaryBase):
@@ -35,7 +35,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			f"{fname}.df",
 			f"{fname}-2.txt",
 			compareText=f"{fname2}.txt",
-			**convertArgs
+			**convertArgs,
 		)
 
 		for resFileName in resFiles:
@@ -48,7 +48,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			f"{fname}.txt",
 			f"{fname}-2.df",
 			compareText=f"{fname2}.df",
-			**convertArgs
+			**convertArgs,
 		)
 
 	def test_convert_df_txt_1(self):
@@ -69,3 +69,6 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			"022-en-en.df.txt",
 		)
 
+
+if __name__ == "__main__":
+	unittest.main()

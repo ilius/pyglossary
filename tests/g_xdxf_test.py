@@ -1,6 +1,6 @@
 import sys
-from os.path import dirname, abspath
 import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -14,7 +14,7 @@ class TestGlossaryXDXF(TestGlossaryBase):
 
 		self.dataFileCRC32.update({
 			"100-cyber_lexicon_en-es-2.txt": "67ab90ba",
-			"100-cyber_lexicon_en-es.xdxf": "8d9ba394"
+			"100-cyber_lexicon_en-es.xdxf": "8d9ba394",
 		})
 
 	def convert_xdxf_txt(self, fname, fname2, **convertArgs):
@@ -22,7 +22,7 @@ class TestGlossaryXDXF(TestGlossaryBase):
 			f"{fname}.xdxf",
 			f"{fname}-tmp.txt",
 			compareText=f"{fname2}.txt",
-			**convertArgs
+			**convertArgs,
 		)
 
 	#def test_convert_xdxf_txt_1(self):

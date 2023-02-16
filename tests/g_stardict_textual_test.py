@@ -1,12 +1,11 @@
 import sys
-from os.path import dirname, abspath
 import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from tests.glossary_test import TestGlossaryBase
-from pyglossary.glossary import Glossary
 
 
 class TestGlossaryStarDictTextual(TestGlossaryBase):
@@ -31,7 +30,7 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			f"{fname}-2.xml",
 			compareText=f"{fname2}.xml",
 			outputFormat="StardictTextual",
-			**convertArgs
+			**convertArgs,
 		)
 
 	def convert_sdxml_txt(self, fname, fname2, **convertArgs):
@@ -40,7 +39,7 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			f"{fname}-2.txt",
 			compareText=f"{fname2}.txt",
 			inputFormat="StardictTextual",
-			**convertArgs
+			**convertArgs,
 		)
 
 	def test_convert_txt_sdxml_1(self):
@@ -74,3 +73,7 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			"stardict-xdxf-2.xml-x",
 			readOptions={"xdxf_to_html": False},
 		)
+
+
+if __name__ == "__main__":
+	unittest.main()

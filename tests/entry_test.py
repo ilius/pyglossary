@@ -1,15 +1,15 @@
 #!/usr/bin/python3
 
-import sys
-from os.path import dirname, abspath
-import unittest
 import logging
+import sys
+import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.entry import *
 from pyglossary.core_test import getMockLogger
+from pyglossary.entry import Entry
 
 
 class TestEntryBasic(unittest.TestCase):
@@ -70,7 +70,7 @@ class TestEntryBasic(unittest.TestCase):
 			"Entry('test1', 'something', defiFormat='m')",
 		)
 
-	def test_repr_1(self):
+	def test_repr_2(self):
 		entry = Entry("test1", "something", defiFormat="h")
 		self.assertEqual(
 			repr(entry),

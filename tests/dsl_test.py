@@ -20,22 +20,20 @@ test everything.
 """
 
 
-import unittest
-
-import os
-from os.path import dirname, realpath
 import sys
+import unittest
 from functools import partial
+from os.path import dirname, realpath
 
 rootDir = dirname(dirname(realpath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.plugins.dsl import layer, tag
 from pyglossary.plugins.dsl.main import (
-	process_closing_tags,
-	DSLParser,
 	BRACKET_L,
 	BRACKET_R,
+	DSLParser,
+	process_closing_tags,
 )
 
 tag_i = tag.Tag("i", "i")
@@ -96,8 +94,10 @@ class LayerTestCase(unittest.TestCase):
 		l1, l2 = layer.Layer(expected), layer.Layer(expected)
 		l1.tags, l1.text = {tag_m}, "..."
 		l2.tags = {tag_i}
-		l2.text = f",,,[{tag_p.opening}][{tag_s.opening}]" \
+		l2.text = (
+			f",,,[{tag_p.opening}][{tag_s.opening}]"
 			f"+++[/{tag_s.closing}][/{tag_p.closing}]"
+		)
 
 		layer.close_layer(stack)
 		self.assertEqual(expected, stack)
@@ -348,8 +348,10 @@ class DSLParserTestCase(unittest.TestCase):
 		self.assertEqual(after, parse(before))
 
 	def test_respect_m_TagsProperly(self):
-		before = " [m1]for tags like: [p]n[/c][/i][/p]" \
+		before = (
+			" [m1]for tags like: [p]n[/c][/i][/p]"
 			", the line needs scan again[/m]"
+		)
 		after = " [m1]for tags like: [p]n[/p], the line needs scan again[/m]"
 		self.assertEqual(after, parse(before))
 
@@ -383,10 +385,12 @@ class DSLParserTestCase(unittest.TestCase):
 
 	def test_validRealDictionaryArticle(self):
 		# zh => ru, http://bkrs.info/slovo.php?ch=和田
-		before = after = "和田\n" \
-			"[m1][p]г. и уезд[/p] Хотан ([i]Синьцзян-Уйгурский[c] авт.[/c]" \
-			" р-н, КНР[/i])[/m]" \
+		before = after = (
+			"和田\n"
+			"[m1][p]г. и уезд[/p] Хотан ([i]Синьцзян-Уйгурский[c] авт.[/c]"
+			" р-н, КНР[/i])[/m]"
 			"[m2][*][ex]和田玉 Хотанский нефрит[/ex][/*][/m]"
+		)
 		self.assertEqual(after, parse(before))
 
 	def test_brokenRealDictionaryArticle(self):
@@ -401,18 +405,22 @@ yīyī xiāngyìng
 
 	def test_brokenManyRealDictionaryArticle(self):
 		# zh => ru, http://bkrs.info/slovo.php?ch=一轮
-		before = "一轮\nyīlún\n" \
-			"[m1]1) одна очередь[/m][m1]2) цикл ([i]в 12 лет[/i])[/m][m1]" \
-			"3) диск ([c][i]напр.[/c] луны[/i])[/m]" \
-			"[m1]4) [c] [i]спорт[/c][/i] раунд, круг" \
-			" ([i]встречи спортсменов[/i])[/m]" \
+		before = (
+			"一轮\nyīlún\n"
+			"[m1]1) одна очередь[/m][m1]2) цикл ([i]в 12 лет[/i])[/m][m1]"
+			"3) диск ([c][i]напр.[/c] луны[/i])[/m]"
+			"[m1]4) [c] [i]спорт[/c][/i] раунд, круг"
+			" ([i]встречи спортсменов[/i])[/m]"
 			"[m1]5) [c] [i]дипл.[/c][/i] раунд ([i]переговоров[/i])[/m]"
-		after = "一轮\nyīlún\n" \
-			"[m1]1) одна очередь[/m][m1]2) цикл ([i]в 12 лет[/i])[/m][m1]3)" \
-			" диск ([i][c]напр.[/c] луны[/i])[/m]" \
-			"[m1]4) [c] [i]спорт[/i][/c] раунд, круг" \
-			" ([i]встречи спортсменов[/i])[/m]" \
+		)
+		after = (
+			"一轮\nyīlún\n"
+			"[m1]1) одна очередь[/m][m1]2) цикл ([i]в 12 лет[/i])[/m][m1]3)"
+			" диск ([i][c]напр.[/c] луны[/i])[/m]"
+			"[m1]4) [c] [i]спорт[/i][/c] раунд, круг"
+			" ([i]встречи спортсменов[/i])[/m]"
 			"[m1]5) [c] [i]дипл.[/i][/c] раунд ([i]переговоров[/i])[/m]"
+		)
 		self.assertEqual(after, parse(before))
 
 	def test_sameTagsNested(self):
@@ -441,8 +449,10 @@ yīyī xiāngyìng
 
 	def test_tagMDeepInside(self):
 		before = "...[i],,,[b]+++[c green][/b]---[m1]```[/i][/c][/m]..."
-		after = "...[i],,,[b]+++[/b][c green]---[/c][/i][m1][i][c green]" \
+		after = (
+			"...[i],,,[b]+++[/b][c green]---[/c][/i][m1][i][c green]"
 			"```[/c][/i][/m]..."
+		)
 		self.assertEqual(after, parse(before))
 
 	def test_tagMInsideBroken(self):

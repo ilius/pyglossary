@@ -1,6 +1,6 @@
 import sys
-from os.path import dirname, abspath
 import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -23,7 +23,7 @@ class TestGlossaryJMdict(TestGlossaryBase):
 			f"{fname}-2.txt",
 			compareText=f"{fname2}.txt",
 			inputFormat="JMDict",
-			**convertArgs
+			**convertArgs,
 		)
 
 	def test_convert_jmdict_txt_1(self):

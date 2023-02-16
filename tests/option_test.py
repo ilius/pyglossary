@@ -1,14 +1,22 @@
 #!/usr/bin/python3
 
 import sys
-from os.path import dirname, abspath
 import unittest
-import random
+from os.path import abspath, dirname
+from typing import Dict, List, Optional
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.option import *
+from pyglossary.option import (
+	BoolOption,
+	DictOption,
+	FileSizeOption,
+	FloatOption,
+	IntOption,
+	ListOption,
+	StrOption,
+)
 
 
 class TestOptionValidateBoolNumber(unittest.TestCase):

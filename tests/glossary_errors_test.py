@@ -1,19 +1,18 @@
 #!/usr/bin/python3
 
-import sys
-import os
-from os.path import join, dirname, abspath, isfile, relpath
-import unittest
 import logging
+import os
+import sys
+import unittest
+from os.path import abspath, dirname, isfile, join, relpath
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from tests.glossary_test import TestGlossaryBase, appTmpDir
-from pyglossary.glossary import Glossary
 from pyglossary.core_test import getMockLogger
+from pyglossary.glossary import Glossary
 from pyglossary.os_utils import rmtree
-
+from tests.glossary_test import TestGlossaryBase, appTmpDir
 
 Glossary.init()
 
@@ -73,7 +72,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_loadPlugin_moduleNotFound(self):
 		Glossary.loadPlugin("abc.def.ghe")
 		self.assertLogWarning(
-			"Module 'abc.def' not found, skipping plugin 'abc.def.ghe'"
+			"Module 'abc.def' not found, skipping plugin 'abc.def.ghe'",
 		)
 
 	def test_detectInputFormat_err1(self):
@@ -126,7 +125,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		res = Glossary.detectOutputFormat(
 			filename="",
 			format="",
-			inputFilename=""
+			inputFilename="",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Invalid filename ''")
@@ -135,7 +134,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		res = Glossary.detectOutputFormat(
 			filename="test",
 			format="FooBar",
-			inputFilename=""
+			inputFilename="",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Invalid format FooBar")
@@ -144,7 +143,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		res = Glossary.detectOutputFormat(
 			filename="",
 			format="",
-			inputFilename="test"
+			inputFilename="test",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("No filename nor format is given for output file")
@@ -153,7 +152,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		res = Glossary.detectOutputFormat(
 			filename="",
 			format="BabylonBgl",
-			inputFilename="test3.txt"
+			inputFilename="test3.txt",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("plugin BabylonBgl does not support writing")
@@ -162,7 +161,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		res = Glossary.detectOutputFormat(
 			filename="test.bgl",
 			format="",
-			inputFilename=""
+			inputFilename="",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("plugin BabylonBgl does not support writing")
@@ -265,7 +264,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		glos = Glossary()
 		self.assertEqual(list(glos), [])
 		self.assertLogError(
-			"Trying to iterate over a blank Glossary, must call `glos.read` first"
+			"Trying to iterate over a blank Glossary, must call `glos.read` first",
 		)
 
 	def test_convert_typeErr_1(self):
@@ -346,7 +345,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			glos.write(
 				filename=MyStr(""),
-				format=""
+				format="",
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "filename must be str")
@@ -386,7 +385,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical(
-			f"Directory already exists and not empty: {relpath(self.tempDir)}"
+			f"Directory already exists and not empty: {relpath(self.tempDir)}",
 		)
 
 	def test_convert_fileNotFound(self):
@@ -398,7 +397,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical(
-			f"[Errno 2] No such file or directory: {inputFilename!r}"
+			f"[Errno 2] No such file or directory: {inputFilename!r}",
 		)
 		self.assertLogCritical(f"Reading file {relpath(inputFilename)!r} failed.")
 
@@ -414,7 +413,11 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertLogCritical(f"Writing file {relpath('test')!r} failed.")
 
 	def test_convert_writeFileNotFound_txt(self):
-		outputFilename = join(appTmpDir, "test" "7de8cf6f17bc4c9abb439e71adbec95d.txt")
+		outputFilename = join(
+			appTmpDir,
+			"test",
+			"7de8cf6f17bc4c9abb439e71adbec95d.txt",
+		)
 		glos = Glossary()
 		res = glos.convert(
 			inputFilename=self.downloadFile("100-en-fa.txt"),
@@ -422,7 +425,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical(
-			f"[Errno 2] No such file or directory: {outputFilename!r}"
+			f"[Errno 2] No such file or directory: {outputFilename!r}",
 		)
 		self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
 
@@ -435,7 +438,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical(
-			f"{osNoSuchFileOrDir} {outputFilename!r}"
+			f"{osNoSuchFileOrDir} {outputFilename!r}",
 		)
 		self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
 

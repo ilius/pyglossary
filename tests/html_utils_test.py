@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from os.path import dirname, abspath
 import sys
 import unittest
-
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.html_utils import *
+from pyglossary.html_utils import unescape_unicode
 
 
 class UnescapeUnicodeTest(unittest.TestCase):
@@ -51,11 +50,12 @@ class UnescapeUnicodeTest(unittest.TestCase):
 def benchmark_main():
 	import timeit
 	from random import choice
+
 	from english_words import english_words_set
 	english_words_list = list(english_words_set)
 	textList = []
 
-	for i in range(20):
+	for _ in range(20):
 		text = ""
 		for _ in range(10):
 			text += choice(english_words_list) + " "

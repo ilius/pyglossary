@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import unittest
 import sys
-from os.path import dirname, abspath
+import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -13,8 +13,7 @@ from pyglossary import gregorian
 def getMonthLen(y: int, m: int) -> int:
 	if m == 12:
 		return gregorian.to_jd(y + 1, 1, 1) - gregorian.to_jd(y, 12, 1)
-	else:
-		return gregorian.to_jd(y, m + 1, 1) - gregorian.to_jd(y, m, 1)
+	return gregorian.to_jd(y, m + 1, 1) - gregorian.to_jd(y, m, 1)
 
 
 class Testgregorian(unittest.TestCase):
