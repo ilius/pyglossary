@@ -38,7 +38,6 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 				"Makefile",
 			]
 		}
-		expectedOutputXmlPath = self.downloadFile(f"appledict-src/{baseName}/{baseName}.xml")
 
 		result = self.glos.convert(
 			inputFilename=inputFilepath,
@@ -46,12 +45,11 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 			inputFormat="Tabfile",
 			outputFormat="AppleDict",
 		)
-		# self.assertIsNotNone(result)
+		self.assertIsNotNone(result)
+		self.assertEqual(result, outputDirPath)
 
 		for fname, fpath in expectedFiles.items():
 			self.compareTextFiles(
 				join(outputDirPath, fname),
 				fpath,
 			)
-
-		shutil.rmtree(outputDirPath)
