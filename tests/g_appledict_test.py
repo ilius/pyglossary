@@ -28,8 +28,16 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 		baseName = "002-no-morphology"
 		inputFilepath = self.downloadFile(f"appledict-src/{baseName}.txt")
 		outputDirPath = self.newTempFilePath(f"{baseName}")
-		outputXmlPath = join(outputDirPath, f"{baseName}.xml")
 
+		expectedFiles = {
+			name: self.downloadFile(f"appledict-src/{baseName}/{name}")
+			for name in [
+				f"{baseName}.xml",
+				# f"{baseName}.plist",  # different each time
+				f"{baseName}.css",
+				"Makefile",
+			]
+		}
 		expectedOutputXmlPath = self.downloadFile(f"appledict-src/{baseName}/{baseName}.xml")
 
 		result = self.glos.convert(
@@ -40,9 +48,10 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 		)
 		# self.assertIsNotNone(result)
 
-		self.compareTextFiles(
-			outputXmlPath,
-			expectedOutputXmlPath,
-		)
+		for fname, fpath in expectedFiles.items():
+			self.compareTextFiles(
+				join(outputDirPath, fname),
+				fpath,
+			)
 
 		shutil.rmtree(outputDirPath)
