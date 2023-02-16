@@ -105,8 +105,8 @@ class TestGlossaryBase(unittest.TestCase):
 			with urlopen(dataURL.format(filename=unixFilename)) as res:
 				data = res.read()
 		except Exception as e:
-			e.msg += f", {filename=}"
-			raise e
+			print(f"{filename=}")
+			raise e from None
 		actual_crc32 = crc32hex(data)
 		if actual_crc32 != _crc32:
 			raise RuntimeError(f"CRC32 check failed for downloaded file: {filename}: {actual_crc32}")
