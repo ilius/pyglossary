@@ -5,7 +5,7 @@ from typing import Optional, Set
 WritingSystem = namedtuple(
 	"WritingSystem", [
 		"name",
-		"iso",
+		"iso",  # List[Tuple[int, str]]
 		"unicode",
 		"titleTag",
 		"direction",  # ltr | rtl | ttb
@@ -14,7 +14,7 @@ WritingSystem = namedtuple(
 	],
 	defaults=(
 		None,  # name
-		None,  # iso
+		[],  # iso
 		[],  # unicode
 		"b",  # titleTag
 		"ltr",  # direction
@@ -31,7 +31,7 @@ WritingSystem = namedtuple(
 writingSystemList = [
 	WritingSystem(
 		name="Latin",
-		iso=(215, "Latn"),
+		iso=[(215, "Latn")],
 		unicode=[
 			"LATIN",
 		],
@@ -42,7 +42,7 @@ writingSystemList = [
 
 	WritingSystem(
 		name="Arabic",
-		iso=(160, "Arab"),
+		iso=[(160, "Arab")],
 		unicode=["ARABIC"],
 		titleTag="b",
 		direction="rtl",
@@ -51,7 +51,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Cyrillic",
-		# iso=(220, "Cyrl"),
+		iso=[(220, "Cyrl")],
 		unicode=["CYRILLIC"],
 		titleTag="b",
 		comma=", ",
@@ -59,8 +59,16 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="CJK",
-		# iso: 286=Hang, 500=Hani, 410=Hira, 412=Hrkt, 411=Kana,
-		# 501=Hans, 502=Hant
+		iso=[
+			(286, "Hang", "HANGUL"),
+			(410, "Hira", "HIRAGANA"),
+			(411, "Kana", "KATAKANA"),
+			(412, "Hrkt", "KATAKANA OR HIRAGANA"),
+			(460, "Yiii", "​Yi"),
+			(500, "Hani", "​HAN"),  # aka Hanzi, Kanji, Hanja
+			(501, "Hans", "SIMPLIFIED HAN"),
+			(502, "Hant", "TRADITIONAL HAN"),
+		],
 		unicode=[
 			"CJK",
 			"HIRAGANA",
@@ -79,7 +87,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Devanagari",
-		# iso=(315 , "Deva"),
+		iso=[(315 , "Deva")],
 		unicode=["DEVANAGARI"],
 		titleTag="big",
 		comma=", ",
@@ -90,7 +98,7 @@ writingSystemList = [
 
 	WritingSystem(
 		name="Armenian",
-		iso=(230, "Armn"),
+		iso=[(230, "Armn")],
 		unicode=["ARMENIAN"],
 		titleTag="big",
 		comma=", ",
@@ -98,7 +106,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Bengali-Assamese",
-		iso=(325, "Beng"),
+		iso=[(325, "Beng")],
 		unicode=["BENGALI"],
 		titleTag="big",
 		comma=", ",
@@ -106,7 +114,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Burmese",
-		iso=(350, "Mymr"),
+		iso=[(350, "Mymr")],
 		unicode=["MYANMAR"],
 		titleTag="big",
 		comma=", ",  # almost not used except in English phrases
@@ -114,7 +122,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Ge'ez",
-		iso=(430, "Ethi"),
+		iso=[(430, "Ethi")],
 		unicode=["ETHIOPIC"],
 		titleTag="big",
 		comma=", ",
@@ -122,7 +130,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Greek",
-		iso=(200, "Grek"),
+		iso=[(200, "Grek")],
 		unicode=["GREEK"],
 		titleTag="b",
 		comma=", ",
@@ -130,7 +138,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Gujarati",
-		iso=(320, "Gujr"),
+		iso=[(320, "Gujr")],
 		unicode=["GUJARATI"],
 		titleTag="big",
 		comma=", ",
@@ -138,7 +146,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Gurmukhi",
-		iso=(310, "Guru"),
+		iso=[(310, "Guru")],
 		unicode=["GURMUKHI"],
 		titleTag="big",
 		comma=", ",
@@ -146,7 +154,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Hebrew",
-		iso=(125, "Hebr"),
+		iso=[(125, "Hebr")],
 		unicode=["HEBREW"],
 		titleTag="big",
 		direction="rtl",
@@ -155,7 +163,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Kannada",
-		iso=(345, "Knda"),
+		iso=[(345, "Knda")],
 		unicode=["KANNADA"],
 		titleTag="big",
 		comma=", ",
@@ -163,7 +171,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Khmer",
-		iso=(355, "Khmr"),
+		iso=[(355, "Khmr")],
 		unicode=["KHMER"],
 		titleTag="big",
 		comma=", ",
@@ -171,7 +179,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Lao",
-		iso=(356, "Laoo"),
+		iso=[(356, "Laoo")],
 		unicode=["LAO"],
 		titleTag="big",
 		comma=", ",
@@ -179,7 +187,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Malayalam",
-		iso=(347, "Mlym"),
+		iso=[(347, "Mlym")],
 		unicode=["MALAYALAM"],
 		titleTag="big",
 		comma=", ",
@@ -187,7 +195,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Odia",
-		iso=(327, "Orya"),
+		iso=[(327, "Orya")],
 		unicode=["ORIYA"],
 		titleTag="big",
 		comma=", ",
@@ -195,7 +203,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Sinhala",
-		iso=(348, "Sinh"),
+		iso=[(348, "Sinh")],
 		unicode=["SINHALA"],
 		titleTag="big",
 		comma=", ",
@@ -203,15 +211,26 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Sundanese",
-		iso=(362, "Sund"),
+		iso=[(362, "Sund")],
 		unicode=["SUNDANESE"],
 		titleTag="big",
 		comma=", ",
 		pop=38,
 	),
 	WritingSystem(
+		name="Brahmi",
+		iso=[
+			(300, "Brah", "​Brahmi"),
+		],
+		unicode=["BRAHMI"],
+		titleTag="big",
+		comma=", ",
+	),
+	WritingSystem(
 		name="Tamil",
-		iso=(346, "Taml"),
+		iso=[
+			(346, "Taml", "Tamil"),
+		],
 		unicode=["TAMIL"],
 		titleTag="big",
 		# Parent scripts: Brahmi, Tamil-Brahmi, Pallava
@@ -220,7 +239,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Telugu",
-		iso=(340, "Telu"),
+		iso=[(340, "Telu")],
 		unicode=["TELUGU"],
 		titleTag="big",
 		comma=", ",
@@ -228,7 +247,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Thai",
-		iso=(352, "Thai"),
+		iso=[(352, "Thai")],
 		unicode=["THAI"],
 		titleTag="big",
 		comma=", ",
@@ -239,7 +258,7 @@ writingSystemList = [
 
 	WritingSystem(
 		name="Syriac",
-		iso=(135, "Syrc"),
+		iso=[(135, "Syrc")],
 		unicode=["SYRIAC"],
 		titleTag="b",
 		direction="rtl",
@@ -250,7 +269,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Tibetan",
-		iso=(330, "Tibt"),
+		iso=[(330, "Tibt")],
 		unicode=["TIBETAN"],
 		titleTag="big",
 		comma=", ",  # almost not used expect in numbers!
@@ -258,7 +277,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Georgian",
-		iso=(240, "Geor"),
+		iso=[(240, "Geor")],
 		unicode=["GEORGIAN"],
 		titleTag="big",
 		comma=", ",
@@ -266,7 +285,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Mongolian",
-		iso=(145, "Mong"),
+		iso=[(145, "Mong")],
 		unicode=["MONGOLIAN"],
 		titleTag="big",
 		direction="ltr",  # historically ttb?
@@ -275,7 +294,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Thaana",
-		iso=(170, "Thaa"),
+		iso=[(170, "Thaa")],
 		unicode=["THAANA"],
 		titleTag="big",
 		direction="rtl",
@@ -287,22 +306,23 @@ writingSystemList = [
 
 	WritingSystem(
 		name="Javanese",
-		iso=(361, "Java"),
+		iso=[(361, "Java")],
 		unicode=["JAVANESE"],
 		titleTag="big",
 		# Since around 1945 Javanese script has largely been
 		# supplanted by Latin script to write Javanese.
 	),
 	WritingSystem(
+		# aka CANADIAN ABORIGINAL or UCAS
 		name="Canadian syllabic",
-		iso=(440, "Cans"),
+		iso=[(440, "Cans")],
 		unicode=["CANADIAN SYLLABICS"],
 		titleTag="big",
 		comma=", ",
 	),
 	WritingSystem(
 		name="Takri",
-		iso=(321, "Takr"),
+		iso=[(321, "Takr")],
 		unicode=["TAKRI"],
 		titleTag="b",
 		# comma="", FIXME
@@ -312,7 +332,7 @@ writingSystemList = [
 
 	WritingSystem(
 		name="SignWriting",
-		iso=(95, "Sgnw"),
+		iso=[(95, "Sgnw")],
 		unicode=["SIGNWRITING"],
 		titleTag="big",
 		direction="ttb",
@@ -323,39 +343,39 @@ writingSystemList = [
 
 	WritingSystem(
 		name="Adlam",
-		iso=(166, "Adlm"),
+		iso=[(166, "Adlm")],
 		unicode=["ADLAM"],
 		titleTag="big",
 		direction="rtl",
 	),
 	WritingSystem(
 		name="Avestan",
-		iso=(134, "Avst"),
+		iso=[(134, "Avst")],
 		unicode=["AVESTAN"],
 		titleTag="b",
 		direction="rtl",
 	),
 	WritingSystem(
 		name="Glagolitic",
-		iso=(225, "Glag"),
-		unicode=["GLAGOLITIC"],
+		iso=[(225, "Glag")],
+		unicode=["GLAGOLITIC"],  # Unicode 4.1
 		titleTag="b",
 	),
 	WritingSystem(
 		name="Khojki",
-		iso=(322, "Khoj"),
+		iso=[(322, "Khoj")],
 		unicode=["KHOJKI"],
 		titleTag="big",
 	),
 	WritingSystem(
 		name="Khudabadi",  # aka: "Khudawadi", "Sindhi"
-		iso=(318, "Sind"),
+		iso=[(318, "Sind")],
 		unicode=["KHUDAWADI"],
 		titleTag="big",
 	),
 	WritingSystem(
 		name="N'Ko",
-		iso=(165, "Nkoo"),
+		iso=[(165, "Nkoo")],
 		unicode=["NKO"],
 		titleTag="big",
 	),
@@ -364,10 +384,12 @@ writingSystemList = [
 
 	# WritingSystem(
 	# 	name="Baybayin",
-	# 	unicode=["TAGALOG"],
+	# 	iso=[(370, "Tglg")],
+	# 	unicode=["TAGALOG"],  # added in Unicode 3.2
 	# ),
 	# WritingSystem(
 	# 	name="Rejang",
+	# 	iso=[(363, "Rjng")],
 	# 	unicode=["REJANG"],
 	# ),
 	# WritingSystem(
