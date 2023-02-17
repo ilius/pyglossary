@@ -748,7 +748,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			namedSortKey=namedSortKey,
 			sortEncoding=sortEncoding,
 			sortLocale=sortLocale,
-			sortScript=None,
 			writeOptions=writeOptions,
 		)
 		self._data.sort()
@@ -943,7 +942,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		sortKeyName: "Optional[str]",
 		sortEncoding: "Optional[str]",
 		sortLocale: "Optional[str]",
-		sortScript: "Optional[List[str]]",
 		direct: "Optional[bool]",
 		sqlite: "Optional[bool]",
 		inputFilename: str,
@@ -1044,7 +1042,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			namedSortKey=namedSortKey,
 			sortEncoding=sortEncoding,
 			sortLocale=sortLocale,
-			sortScript=sortScript,
 			writeOptions=writeOptions,
 		)
 
@@ -1062,7 +1059,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		sortKeyName: "Optional[str]" = None,
 		sortEncoding: "Optional[str]" = None,
 		sortLocale: "Optional[str]" = None,
-		sortScript: "Optional[List[str]]" = None,
 		readOptions: "Optional[Dict[str, Any]]" = None,
 		writeOptions: "Optional[Dict[str, Any]]" = None,
 		sqlite: "Optional[bool]" = None,
@@ -1125,7 +1121,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			sortKeyName=sortKeyName,
 			sortEncoding=sortEncoding,
 			sortLocale=sortLocale,
-			sortScript=sortScript,
 			direct=direct,
 			sqlite=sqlite,
 			inputFilename=inputFilename,

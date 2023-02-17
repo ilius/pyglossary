@@ -525,13 +525,6 @@ def main():
 		default=None,
 		help="use given locale for sort (conflicts with --sort-encoding)",
 	)
-	parser.add_argument(
-		"--sort-script",
-		action="store",
-		dest="sortScriptStr",
-		default=None,
-		help="use given locale for sort (conflicts with --sort-encoding)",
-	)
 
 	# _______________________________
 
@@ -745,9 +738,6 @@ def main():
 		value = getattr(args, key, None)
 		if value is not None:
 			convertOptions[key] = value
-
-	if args.sortScriptStr:
-		convertOptions["sortScript"] = args.sortScriptStr.split(",")
 
 	infoOverride = {}
 	for key, validate in infoOverrideSpec:
