@@ -246,6 +246,10 @@ class TestGlossaryBase(unittest.TestCase):
 				actualMd5 = hashlib.md5(_file.read()).hexdigest()
 			self.assertEqual(actualMd5, md5sum)
 
+	def convert_sqlite_both(self, *args, **kwargs):
+		for sqlite in (None, True, False):
+			self.convert(*args, sqlite=sqlite, **kwargs)
+
 
 class TestGlossary(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
@@ -1054,7 +1058,7 @@ Japonica"""
 
 	def test_convert_sortLocale_default_1(self):
 		name = "092-en-fa-alphabet-sample"
-		self.convert(
+		self.convert_sqlite_both(
 			f"sort-locale/{name}.txt",
 			f"{name}-sorted-default.txt",
 			compareText=f"sort-locale/{name}-sorted-default.txt",
@@ -1065,7 +1069,7 @@ Japonica"""
 
 	def test_convert_sortLocale_en_1(self):
 		name = "092-en-fa-alphabet-sample"
-		self.convert(
+		self.convert_sqlite_both(
 			f"sort-locale/{name}.txt",
 			f"{name}-sorted-en.txt",
 			compareText=f"sort-locale/{name}-sorted-en.txt",
@@ -1077,7 +1081,7 @@ Japonica"""
 
 	def test_convert_sortLocale_fa_1(self):
 		name = "092-en-fa-alphabet-sample"
-		self.convert(
+		self.convert_sqlite_both(
 			f"sort-locale/{name}.txt",
 			f"{name}-sorted-fa.txt",
 			compareText=f"sort-locale/{name}-sorted-fa.txt",
@@ -1089,7 +1093,7 @@ Japonica"""
 
 	def test_convert_sortLocale_fa_2(self):
 		name = "092-en-fa-alphabet-sample"
-		self.convert(
+		self.convert_sqlite_both(
 			f"sort-locale/{name}.txt",
 			f"{name}-sorted-latin-fa.txt",
 			compareText=f"sort-locale/{name}-sorted-latin-fa.txt",
