@@ -27,8 +27,6 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 			data1 = plistlib.loads(_file.read())
 		with open(fpath2, "rb") as _file:
 			data2 = plistlib.loads(_file.read())
-		data1["CFBundleDisplayName"] = ""
-		data2["CFBundleDisplayName"] = ""
 		self.assertEqual(data1, data2)
 
 	def test_tabfile_without_morpho_to_appledict_source(self):
@@ -46,8 +44,8 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 				"Makefile",
 			]
 		}
-		# .plist file is different each time
 
+		self.glos.setInfo("name", "002-no-morphology.txt")
 		result = self.glos.convert(
 			inputFilename=inputFilepath,
 			outputFilename=outputDirPath,
