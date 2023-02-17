@@ -239,6 +239,11 @@ In the case of passing `--sort`, you can also pass:
   - Sorts words in the given language in the **correct alphabetical order of that language**
   - If this language uses a non-Latin script, all words in this language are sorted **before** ASCII/Latin words
 
+- `--sort-script` to change the order of entries based on writing system (script) of headword
+
+  For example with `--sort-script=latin,arabic`, entries with headword in Latin script will come before entries with headword in Arabic script.\
+  You can select many scripts, for example `--sort-script=latin,cyrillic,CJK,Devanagari,Greek` (script names are not case-sensitive).
+
 - `--sort-encoding` to change the encoding used for sort
 
   - UTF-8 is the default encoding for all sort keys and all output formats (unless mentioned otherwise)

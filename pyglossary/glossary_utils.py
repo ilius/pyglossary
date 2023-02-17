@@ -25,7 +25,7 @@ from os.path import (
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Dict, Iterator, Optional, Tuple
+	from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 	from .glossary_type import EntryType
 	from .sort_keys import NamedSortKey, sortKeyType
@@ -88,17 +88,52 @@ class EntryList(object):
 
 		return namedSortKey.locale(collator, **writeOptions)
 
+	def _applySortScript(
+		self,
+		sortKey: "sortKeyType",
+		sortScript: "List[str]",
+	) -> "sortKeyType":
+		from pyglossary.langs.writing_system import (
+			getWritingSystemFromText,
+			writingSystemByLowercaseName,
+		)
+
+		wsNames = []
+		for wsNameInput in sortScript:
+			ws = writingSystemByLowercaseName.get(wsNameInput.lower())
+			if ws is None:
+				log.error(f"invalid script name {wsNameInput!r}")
+				continue
+			wsNames.append(ws.name)
+
+		log.info(f"Sorting based on scripts: {wsNames}")
+
+		def newSortKey(words: "List[str]"):
+			ws = getWritingSystemFromText(words[0], True)
+			if ws is None:
+				return (-1, sortKey(words))  # FIXME
+			try:
+				index = wsNames.index(ws.name)
+			except ValueError:
+				index = len(wsNames)
+			return (index, sortKey(words))
+
+		return newSortKey
+
 	def setSortKey(
 		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "Optional[str]",
 		sortLocale: "Optional[str]",
+		sortScript: "Optional[List[str]]",
 		writeOptions: "Dict[str, Any]",
 	):
 		if sortLocale:
 			sortKey = self._getLocaleSortKey(namedSortKey, sortLocale, writeOptions)
 		else:
 			sortKey = namedSortKey.normal(sortEncoding, **writeOptions)
+		if sortScript:
+			sortKey = self._applySortScript(sortKey, sortScript)
 		self._sortKey = Entry.getRawEntrySortKey(self._glos, sortKey)
 
 	def sort(self):

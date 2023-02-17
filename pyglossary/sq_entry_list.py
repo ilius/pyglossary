@@ -24,7 +24,7 @@ from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Dict, Optional
+	from typing import Any, Dict, List, Optional
 
 	from .sort_keys import NamedSortKey, sqliteSortKeyType
 
@@ -100,12 +100,47 @@ class SqEntryList(list):
 
 		return namedSortKey.sqlite_locale(collator, **writeOptions)
 
+	def _applySortScript(
+		self,
+		sqliteSortKey: "sqliteSortKeyType",
+		sortScript: "List[str]",
+	) -> "sqliteSortKeyType":
+		from pyglossary.langs.writing_system import (
+			getWritingSystemFromText,
+			writingSystemByLowercaseName,
+		)
+
+		wsNames = []
+		for wsNameInput in sortScript:
+			ws = writingSystemByLowercaseName.get(wsNameInput.lower())
+			if ws is None:
+				log.error(f"invalid script name {wsNameInput!r}")
+				continue
+			wsNames.append(ws.name)
+
+		log.info(f"Sorting based on scripts: {wsNames}")
+
+		def getScriptIndex(words: "List[str]") -> int:
+			ws = getWritingSystemFromText(words[0], True)
+			if ws is None:
+				return -1  # FIXME
+			try:
+				return wsNames.index(ws.name)
+			except ValueError:
+				return len(wsNames)
+
+		return [(
+			"script_index",  # name
+			"INTEGER",  # type,
+			getScriptIndex,  # valueFunc
+		)] + sqliteSortKey
 
 	def setSortKey(
 		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "Optional[str]",
 		sortLocale: "Optional[str]",
+		sortScript: "Optional[List[str]]",
 		writeOptions: "Dict[str, Any]",
 	):
 		"""
@@ -123,6 +158,9 @@ class SqEntryList(list):
 			)
 		else:
 			sqliteSortKey = namedSortKey.sqlite(sortEncoding, **writeOptions)
+
+		if sortScript:
+			sqliteSortKey = self._applySortScript(sqliteSortKey, sortScript)
 
 		self._sqliteSortKey = sqliteSortKey
 		self._columnNames = ",".join([
