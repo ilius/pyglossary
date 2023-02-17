@@ -34,7 +34,6 @@ from typing import (
 	Any,
 	Dict,
 	Iterator,
-	List,
 	Optional,
 	Tuple,
 	Type,

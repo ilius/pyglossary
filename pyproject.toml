@@ -37,6 +37,7 @@ select = [
     #   when did Python's sorted() start returning list?
 ]
 ignore = [
+    # "E501", # Line too long (only a few left in template strings in scripts/)
     "E402", # Module level import not at top of file
     "UP009", # UTF-8 encoding declaration is unnecessary
     "SIM105", # Use contextlib.suppress({exception}) instead of try-except-pass
@@ -58,6 +59,7 @@ unfixable = []
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
+    "setup.py",
     # "pyglossary/ui/gtk4_utils/*",
     # "pyglossary/ui/gtk3_utils/*",
     "pyglossary/plugins/testformat.py",

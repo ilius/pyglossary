@@ -25,7 +25,7 @@ from os.path import (
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Dict, Iterator, List, Optional, Tuple
+	from typing import Any, Dict, Iterator, Optional, Tuple
 
 	from .glossary_type import EntryType
 	from .sort_keys import NamedSortKey, sortKeyType

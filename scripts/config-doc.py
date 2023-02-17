@@ -132,7 +132,7 @@ def optionComment(name, opt):
 	if name.startswith("color.cmd."):
 		comment = f"| {comment}\n| See `term-colors.md <./term-colors.md/>`_"
 
-	return comment
+	return comment  # noqa: RET504
 
 
 def jsonCodeValue(value):

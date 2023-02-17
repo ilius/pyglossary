@@ -24,7 +24,7 @@ from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Dict, List, Optional
+	from typing import Any, Dict, Optional
 
 	from .sort_keys import NamedSortKey, sqliteSortKeyType
 

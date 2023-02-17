@@ -5,16 +5,16 @@ from subprocess import PIPE, Popen
 
 from pyglossary import Glossary
 from pyglossary.glossary_type import EntryType
+from pyglossary.ui.tools.colors import (
+	green,
+	red,
+	reset,
+	yellow,
+)
 from pyglossary.ui.tools.format_entry import formatEntry
 from pyglossary.ui.tools.word_diff import (
 	formatDiff,
 	xmlDiff,
-)
-from pyglossary.ui.tools.colors import (
-	green,
-	red,
-	yellow,
-	reset,
 )
 
 Glossary.init()
