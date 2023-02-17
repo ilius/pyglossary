@@ -1,6 +1,6 @@
 import sys
 import unittest
-from os.path import abspath, dirname
+from os.path import abspath, dirname, join
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -35,8 +35,9 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 				"/Contents/MyDictionary.xsl": "023de1ea",
 			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
 				"/Contents/MyDictionary_prefs.html": "09a9f6e9",
-			"appledict-bin/002-appledict-bin-no-morphology.txt": "4afadab4",
-			"appledict-bin/002-appledict-bin-no-morphology.txt_res/style.css": "a83210cb",
+
+			"appledict-bin/002-appledict-bin-no-morphology-v2.txt": "384982a5",
+			"appledict-bin/002-appledict-bin-no-morphology-v2.txt_res/style.css": "a83210cb",
 		})
 
 	def test_fix_links(self):
@@ -91,7 +92,12 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			],
 		)
 		outputFilePath = self.newTempFilePath(f"{baseName}.txt")
-		expectedOutputFilePath = self.downloadFile(f"appledict-bin/{baseName}.txt")
+		expectedOutputFilePath = self.downloadFile(
+			f"appledict-bin/{baseName}-v2.txt",
+		)
+		expectedStylePath = self.downloadFile(
+			f"appledict-bin/{baseName}-v2.txt_res/style.css",
+		)
 
 		result = self.glos.convert(
 			inputFilename=inputDirPath,
@@ -106,6 +112,11 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			outputFilePath,
 			expectedOutputFilePath,
 		)
+		self.compareTextFiles(
+			join(outputFilePath + "_res", "style.css"),
+			expectedStylePath,
+		)
+
 
 
 if __name__ == "__main__":

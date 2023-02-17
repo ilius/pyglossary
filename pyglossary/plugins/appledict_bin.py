@@ -197,26 +197,28 @@ class Reader(object):
 					f"Please provide 'Contents/' with a correct 'Info.plist'. {e}",
 				) from e
 
-		self._glos.setInfo(
-			"name",
-			metadata.get("CFBundleDisplayName"),
-		)
-		self._glos.setInfo(
-			"copyright",
-			metadata.get("DCSDictionaryCopyright"),
-		)
-		self._glos.setInfo(
-			"author",
-			metadata.get("DCSDictionaryManufacturerName"),
-		)
-		self._glos.setInfo(
-			"edition",
-			metadata.get("IDXDictionaryVersion"),
-		)
-		self._glos.setInfo(
-			"CFBundleIdentifier",
-			metadata.get("CFBundleIdentifier"),
-		)
+		name = metadata.get("CFBundleDisplayName")
+		if not name:
+			name = metadata.get("CFBundleIdentifier")
+		if name:
+			self._glos.setInfo("name", name)
+
+		identifier = metadata.get("CFBundleIdentifier")
+		if identifier and identifier != name:
+			self._glos.setInfo("CFBundleIdentifier", identifier)
+
+		copyright = metadata.get("DCSDictionaryCopyright")
+		if copyright:
+			self._glos.setInfo("copyright", copyright)
+
+		author = metadata.get("DCSDictionaryManufacturerName")
+		if author:
+			self._glos.setInfo("author", author)
+
+
+		edition = metadata.get("IDXDictionaryVersion")
+		if edition:
+			self._glos.setInfo("edition", edition)
 
 		if "DCSDictionaryLanguages" in metadata:
 			self.setLangs(metadata)
