@@ -1,3 +1,4 @@
+import plistlib
 import sys
 import unittest
 from os.path import abspath, dirname, join
@@ -21,6 +22,15 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 			"appledict-src/002-no-morphology/Makefile": "ddc31a07",
 		})
 
+	def comparePlist(self, fpath1, fpath2):
+		with open(fpath1, "rb") as _file:
+			data1 = plistlib.loads(_file.read())
+		with open(fpath2, "rb") as _file:
+			data2 = plistlib.loads(_file.read())
+		data1["CFBundleDisplayName"] = ""
+		data2["CFBundleDisplayName"] = ""
+		self.assertEqual(data1, data2)
+
 	def test_tabfile_without_morpho_to_appledict_source(self):
 		self.glos = Glossary()
 
@@ -32,11 +42,11 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 			name: self.downloadFile(f"appledict-src/{baseName}/{name}")
 			for name in [
 				f"{baseName}.xml",
-				# f"{baseName}.plist",  # different each time
 				f"{baseName}.css",
 				"Makefile",
 			]
 		}
+		# .plist file is different each time
 
 		result = self.glos.convert(
 			inputFilename=inputFilepath,
@@ -52,6 +62,12 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 				join(outputDirPath, fname),
 				fpath,
 			)
+
+		self.comparePlist(
+			join(outputDirPath, f"{baseName}.plist"),
+			self.downloadFile(f"appledict-src/{baseName}/{baseName}.plist"),
+		)
+
 
 if __name__ == "__main__":
 	unittest.main()
