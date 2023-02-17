@@ -271,6 +271,7 @@ class TestGlossary(TestGlossaryBase):
 			"sort-locale/092-en-fa-alphabet-sample-sorted-default.txt": "e7b70589",
 			"sort-locale/092-en-fa-alphabet-sample-sorted-en.txt": "3d2bdf73",
 			"sort-locale/092-en-fa-alphabet-sample-sorted-fa.txt": "245419db",
+			"sort-locale/092-en-fa-alphabet-sample-sorted-latin-fa.txt": "261c03c0",
 		})
 
 	def setUp(self):
@@ -1086,6 +1087,17 @@ Japonica"""
 			sortLocale="fa_IR.UTF-8",
 		)
 
+	def test_convert_sortLocale_fa_2(self):
+		name = "092-en-fa-alphabet-sample"
+		self.convert(
+			f"sort-locale/{name}.txt",
+			f"{name}-sorted-latin-fa.txt",
+			compareText=f"sort-locale/{name}-sorted-latin-fa.txt",
+			testId="sorted-latin-fa",
+			sort=True,
+			sortKeyName="headword_lower",
+			sortLocale="fa-u-kr-latn-arab",
+		)
 
 if __name__ == "__main__":
 	unittest.main()
