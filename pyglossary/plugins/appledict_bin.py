@@ -56,6 +56,7 @@ class Reader(object):
 	depends = {
 		"lxml": "lxml",
 		"biplist": "biplist",
+		"plistlib": "plistlib",
 	}
 
 	_html: bool = True

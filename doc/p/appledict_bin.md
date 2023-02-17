@@ -26,12 +26,12 @@
 
 ### Dependencies for reading
 
-PyPI Links: [lxml](https://pypi.org/project/lxml), [biplist](https://pypi.org/project/biplist)
+PyPI Links: [lxml](https://pypi.org/project/lxml), [biplist](https://pypi.org/project/biplist), [plistlib](https://pypi.org/project/plistlib)
 
 To install, run:
 
 ```sh
-pip3 install lxml biplist
+pip3 install lxml biplist plistlib
 ```
 
 
