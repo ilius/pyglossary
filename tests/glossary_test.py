@@ -266,6 +266,11 @@ class TestGlossary(TestGlossaryBase):
 			"300-rand-en-fa-sort-headword-w1256.txt": "06d83bac",
 			"300-rand-en-fa-sort-headword.txt": "df0f8020",
 			"300-rand-en-fa-sort-w1256.txt": "9594aab3",
+
+			"sort-locale/092-en-fa-alphabet-sample.txt": "b4856532",
+			"sort-locale/092-en-fa-alphabet-sample-sorted-default.txt": "e7b70589",
+			"sort-locale/092-en-fa-alphabet-sample-sorted-en.txt": "3d2bdf73",
+			"sort-locale/092-en-fa-alphabet-sample-sorted-fa.txt": "245419db",
 		})
 
 	def setUp(self):
@@ -1044,6 +1049,41 @@ Japonica"""
 		self.assertEqual(
 			glos.wordTitleStr("くりかえし"),
 			"<big>くりかえし</big><br>",
+		)
+
+	def test_convert_sortLocale_default_1(self):
+		name = "092-en-fa-alphabet-sample"
+		self.convert(
+			f"sort-locale/{name}.txt",
+			f"{name}-sorted-default.txt",
+			compareText=f"sort-locale/{name}-sorted-default.txt",
+			testId="sorted-default",
+			sort=True,
+			sortKeyName="headword_lower",
+		)
+
+	def test_convert_sortLocale_en_1(self):
+		name = "092-en-fa-alphabet-sample"
+		self.convert(
+			f"sort-locale/{name}.txt",
+			f"{name}-sorted-en.txt",
+			compareText=f"sort-locale/{name}-sorted-en.txt",
+			testId="sorted-en",
+			sort=True,
+			sortKeyName="headword_lower",
+			sortLocale="en_US.UTF-8",
+		)
+
+	def test_convert_sortLocale_fa_1(self):
+		name = "092-en-fa-alphabet-sample"
+		self.convert(
+			f"sort-locale/{name}.txt",
+			f"{name}-sorted-fa.txt",
+			compareText=f"sort-locale/{name}-sorted-fa.txt",
+			testId="sorted-fa",
+			sort=True,
+			sortKeyName="headword_lower",
+			sortLocale="fa_IR.UTF-8",
 		)
 
 
