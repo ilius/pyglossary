@@ -28,19 +28,23 @@ class MockLogHandler(logging.Handler):
 				return records.pop(index)
 		return None
 
-	def printRemainingErrors(self) -> int:
+	def printRemainingLogs(self, level) -> int:
+		if level not in self.recordsByLevel:
+			return 0
 		count = 0
-		for level in (
-			logging.CRITICAL,
-			logging.ERROR,
-			logging.WARNING,
-		):
-			if level not in self.recordsByLevel:
-				continue
-			for record in self.recordsByLevel[level]:
-				count += 1
-				print(repr(self.format(record)))
+		for record in self.recordsByLevel[level]:
+			count += 1
+			msg = self.format(record)
+			print(f"unhandled log: {msg!r}")
 		return count
+
+	def printRemainingErrors(self) -> int:
+		count = self.printRemainingLogs(logging.CRITICAL)
+		count += self.printRemainingLogs(logging.ERROR)
+		return count
+
+	def printRemainingwWarnings(self) -> int:
+		return self.printRemainingLogs(logging.WARNING)
 
 
 mockLog = None

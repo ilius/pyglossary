@@ -7,68 +7,9 @@ sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary
 from tests.glossary_errors_test import TestGlossaryErrorsBase
-from tests.glossary_test import TestGlossaryBase
 
 
-class TestGlossaryStarDict(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
-		TestGlossaryBase.__init__(self, *args, **kwargs)
-
-		self.dataFileCRC32.update({
-			"004-bar.sd/004-bar.dict": "9ea397f8",
-			"004-bar.sd/004-bar.idx": "cf9440cf",
-			"004-bar.sd/004-bar.ifo": "ada870e4",
-			"004-bar.sd/004-bar.syn": "286b17bf",
-
-			"100-en-de.sd/100-en-de.dict": "d74bf277",
-			"100-en-de.sd/100-en-de.idx": "945b303c",
-			"100-en-de.sd/100-en-de.ifo": "6529871f",
-
-			"100-en-fa.sd/100-en-fa.dict": "223a0d1d",
-			"100-en-fa.sd/100-en-fa.idx": "6df43378",
-			"100-en-fa.sd/100-en-fa.ifo": "3f2086cd",
-			"100-en-fa.sd/100-en-fa.syn": "1160fa0b",
-			"100-en-fa-sd.txt": "85f9d3fc",
-
-			"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.dict": "223a0d1d",
-			"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.idx": "13f1c7af",
-			"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.ifo": "07338eed",
-
-			"100-ja-en.sd/100-ja-en.dict": "39715f01",
-			"100-ja-en.sd/100-ja-en.idx": "adf0e552",
-			"100-ja-en.sd/100-ja-en.ifo": "b01e368c",
-			"100-ja-en.sd/100-ja-en.syn": "76e6df95",
-
-			"300-ru-en.txt": "77cfee2f",
-			"300-ru-en.sd/300-ru-en.dict": "8be7fa4c",
-			"300-ru-en.sd/300-ru-en.idx": "1cd30f1a",
-			"300-ru-en.sd/300-ru-en.ifo": "0b135812",
-			"300-ru-en.sd/300-ru-en.syn": "87ee3372",
-
-			"stardict-mixed-types-2.sd/stardict-mixed-types-2.dict": "2e43237a",
-			"stardict-mixed-types-2.sd/stardict-mixed-types-2.idx": "65a1f9fc",
-			"stardict-mixed-types-2.sd/stardict-mixed-types-2.ifo": "e1063b84",
-			"stardict-mixed-types-2.sd.txt": "94de4bc6",
-
-			"002-plain-html.txt": "75484314",
-			"002-plain-html.sd/002-plain-html.dict": "2e9d20d8",
-			"002-plain-html.sd/002-plain-html.idx": "3956ad72",
-			"002-plain-html.sd/002-plain-html.ifo": "1991f125",
-
-			"004-plain-html-alts.txt": "505d4675",
-			"004-plain-html-alts.sd/004-plain-html-alts.dict": "889f11f8",
-			"004-plain-html-alts.sd/004-plain-html-alts.idx": "edbe368d",
-			"004-plain-html-alts.sd/004-plain-html-alts.ifo": "b9b92fa3",
-			"004-plain-html-alts.sd/004-plain-html-alts.syn": "c07f7111",
-
-			"004-plain-html-alts-merge-syns.sd/"
-			"004-plain-html-alts-merge-syns.dict": "889f11f8",
-			"004-plain-html-alts-merge-syns.sd/"
-			"004-plain-html-alts-merge-syns.idx": "092ba555",
-			"004-plain-html-alts-merge-syns.sd/"
-			"004-plain-html-alts-merge-syns.ifo": "628abe99",
-		})
-
+class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 	def convert_txt_stardict(
 		self,
 		fname,
@@ -78,6 +19,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 		config=None,
 		rawEntryCompress=None,
 		writeOptions=None,
+		info=None,
 		**convertArgs,
 	):
 		if not fname2:
@@ -94,7 +36,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 			for ext in binExtList
 		}
 
-		glos = self.glos = Glossary()
+		glos = self.glos = Glossary(info=info)
 
 		if config is not None:
 			glos.config = config
@@ -191,6 +133,66 @@ class TestGlossaryStarDict(TestGlossaryBase):
 
 		self.compareTextFiles(outputFilename, expectedFilename)
 
+
+class TestGlossaryStarDict(TestGlossaryStarDictBase):
+	def __init__(self, *args, **kwargs):
+		TestGlossaryErrorsBase.__init__(self, *args, **kwargs)
+
+		self.dataFileCRC32.update({
+			"004-bar.sd/004-bar.dict": "9ea397f8",
+			"004-bar.sd/004-bar.idx": "cf9440cf",
+			"004-bar.sd/004-bar.ifo": "ada870e4",
+			"004-bar.sd/004-bar.syn": "286b17bf",
+
+			"100-en-de.sd/100-en-de.dict": "d74bf277",
+			"100-en-de.sd/100-en-de.idx": "945b303c",
+			"100-en-de.sd/100-en-de.ifo": "6529871f",
+
+			"100-en-fa.sd/100-en-fa.dict": "223a0d1d",
+			"100-en-fa.sd/100-en-fa.idx": "6df43378",
+			"100-en-fa.sd/100-en-fa.ifo": "3f2086cd",
+			"100-en-fa.sd/100-en-fa.syn": "1160fa0b",
+			"100-en-fa-sd.txt": "85f9d3fc",
+
+			"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.dict": "223a0d1d",
+			"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.idx": "13f1c7af",
+			"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.ifo": "07338eed",
+
+			"100-ja-en.sd/100-ja-en.dict": "39715f01",
+			"100-ja-en.sd/100-ja-en.idx": "adf0e552",
+			"100-ja-en.sd/100-ja-en.ifo": "b01e368c",
+			"100-ja-en.sd/100-ja-en.syn": "76e6df95",
+
+			"300-ru-en.txt": "77cfee2f",
+			"300-ru-en.sd/300-ru-en.dict": "8be7fa4c",
+			"300-ru-en.sd/300-ru-en.idx": "1cd30f1a",
+			"300-ru-en.sd/300-ru-en.ifo": "0b135812",
+			"300-ru-en.sd/300-ru-en.syn": "87ee3372",
+
+			"stardict-mixed-types-2.sd/stardict-mixed-types-2.dict": "2e43237a",
+			"stardict-mixed-types-2.sd/stardict-mixed-types-2.idx": "65a1f9fc",
+			"stardict-mixed-types-2.sd/stardict-mixed-types-2.ifo": "e1063b84",
+			"stardict-mixed-types-2.sd.txt": "94de4bc6",
+
+			"002-plain-html.txt": "75484314",
+			"002-plain-html.sd/002-plain-html.dict": "2e9d20d8",
+			"002-plain-html.sd/002-plain-html.idx": "3956ad72",
+			"002-plain-html.sd/002-plain-html.ifo": "1991f125",
+
+			"004-plain-html-alts.txt": "505d4675",
+			"004-plain-html-alts.sd/004-plain-html-alts.dict": "889f11f8",
+			"004-plain-html-alts.sd/004-plain-html-alts.idx": "edbe368d",
+			"004-plain-html-alts.sd/004-plain-html-alts.ifo": "b9b92fa3",
+			"004-plain-html-alts.sd/004-plain-html-alts.syn": "c07f7111",
+
+			"004-plain-html-alts-merge-syns.sd/"
+			"004-plain-html-alts-merge-syns.dict": "889f11f8",
+			"004-plain-html-alts-merge-syns.sd/"
+			"004-plain-html-alts-merge-syns.idx": "092ba555",
+			"004-plain-html-alts-merge-syns.sd/"
+			"004-plain-html-alts-merge-syns.ifo": "628abe99",
+		})
+
 	def test_convert_txt_stardict_0(self):
 		self.convert_txt_stardict(
 			"100-en-fa",
@@ -206,6 +208,7 @@ class TestGlossaryStarDict(TestGlossaryBase):
 					rawEntryCompress=rawEntryCompress,
 					sqlite=sqlite,
 				)
+
 
 	def test_convert_txt_stardict_1_merge_syns(self):
 		self.convert_txt_stardict(

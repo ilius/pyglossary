@@ -33,6 +33,7 @@ class TestGlossaryErrorsBase(TestGlossaryBase):
 	def tearDown(self):
 		TestGlossaryBase.tearDown(self)
 		self.assertEqual(0, self.mockLog.printRemainingErrors())
+		self.mockLog.printRemainingwWarnings()
 
 	def assertLogCritical(self, errorMsg):
 		self.assertIsNotNone(self.mockLog.popLog(

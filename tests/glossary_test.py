@@ -16,8 +16,8 @@ from urllib.request import urlopen
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.core import cacheDir
-from pyglossary.glossary import Glossary, log
+from pyglossary.core import cacheDir, log
+from pyglossary.glossary import Glossary
 from pyglossary.os_utils import rmtree
 from pyglossary.text_utils import crc32hex
 
