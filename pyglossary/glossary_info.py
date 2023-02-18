@@ -219,7 +219,7 @@ class GlossaryInfo(object):
 			return
 
 		if len(langNames) > 2:
-			log.warning(f"detectLangsFromName: {langNames = }")
+			log.info(f"detectLangsFromName: {langNames = }")
 
 		log.info(
 			f"Detected sourceLang={langNames[0]!r}, "
