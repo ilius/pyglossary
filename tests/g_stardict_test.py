@@ -153,6 +153,8 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			"100-en-fa.sd/100-en-fa.ifo": "3f2086cd",
 			"100-en-fa.sd/100-en-fa.syn": "1160fa0b",
 			"100-en-fa-sd.txt": "85f9d3fc",
+			# FIXME: remove empty description line from 100-en-fa.ifo
+			# stardict-mixed-types-1.ifo, "stardict-mixed-types-2.ifo
 
 			"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.dict": "223a0d1d",
 			"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.idx": "13f1c7af",
@@ -277,6 +279,9 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			"100-en-fa",
 			config={"enable_alts": False},
 			sqlite=True,
+		)
+		self.assertLogWarning(
+			"SQLite mode only works with enable_alts=True, force-enabling it."
 		)
 
 	def test_convert_stardict_txt_1(self):

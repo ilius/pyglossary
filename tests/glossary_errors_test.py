@@ -33,7 +33,12 @@ class TestGlossaryErrorsBase(TestGlossaryBase):
 	def tearDown(self):
 		TestGlossaryBase.tearDown(self)
 		self.assertEqual(0, self.mockLog.printRemainingErrors())
-		self.mockLog.printRemainingwWarnings()
+		warnCount = self.mockLog.printRemainingwWarnings()
+		if warnCount > 0:
+			print(
+				f"\nGot {warnCount} unhandled warnings "
+				f"from {self.__class__.__name__}: {self._testMethodName}"
+			)
 
 	def assertLogCritical(self, errorMsg):
 		self.assertIsNotNone(self.mockLog.popLog(
