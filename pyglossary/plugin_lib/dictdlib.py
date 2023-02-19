@@ -119,14 +119,14 @@ class DictDB:
 			self.dictfilename = self.basename + ".dict"
 
 		if mode == 'read':
-			self.indexfile = open(self.indexfilename, "rt")
+			self.indexfile = open(self.indexfilename, "rt", encoding="utf-8")
 			if self.usecompression:
 				self.dictfile = gzip.GzipFile(self.dictfilename, "rb")
 			else:
 				self.dictfile = open(self.dictfilename, "rb")
 			self._initindex()
 		elif mode == 'write':
-			self.indexfile = open(self.indexfilename, "wt")
+			self.indexfile = open(self.indexfilename, "wt", encoding="utf-8")
 			if self.usecompression:
 				raise ValueError("'write' mode incompatible with .dz files")
 			else:
