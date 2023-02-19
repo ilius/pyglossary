@@ -20,7 +20,7 @@ from .utils import imageFromFile
 
 
 class ResizeButton(gtk.Box):
-	def __init__(self, win, edge=gdk.SurfaceEdge.SOUTH_EAST):
+	def __init__(self, win, edge=gdk.SurfaceEdge.SOUTH_EAST) -> None:
 		gtk.Box.__init__(self)
 		self.win = win
 		self.edge = edge

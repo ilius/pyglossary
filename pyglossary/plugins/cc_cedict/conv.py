@@ -1,10 +1,15 @@
 import os
 import re
+from typing import TYPE_CHECKING, List, Optional, Tuple
 
 from pyglossary.plugins.formats_common import log
 
 from .pinyin import convert
 from .summarize import summarize
+
+if TYPE_CHECKING:
+	import lxml
+
 
 line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
 
@@ -20,7 +25,7 @@ COLORS = {
 }
 
 
-def parse_line(line):
+def parse_line(line: str) -> "Optional[Tuple[str, str, str, str]]":
 	line = line.strip()
 	match = line_reg.match(line)
 	if match is None:
@@ -31,7 +36,13 @@ def parse_line(line):
 	return trad, simp, pinyin, eng
 
 
-def make_entry(trad, simp, pinyin, eng, traditional_title):
+def make_entry(
+	trad: str,
+	simp: str,
+	pinyin: str,
+	eng: str,
+	traditional_title: str,
+) -> "Tuple[List[str], str]":
 	eng_names = list(map(summarize, eng))
 	names = [
 		trad if traditional_title else simp,
@@ -42,7 +53,11 @@ def make_entry(trad, simp, pinyin, eng, traditional_title):
 	return names, article
 
 
-def colorize(hf, syllables, tones):
+def colorize(
+	hf: "lxml.etree.htmlfile",
+	syllables: str,
+	tones: str,
+) -> None:
 	if len(syllables) != len(tones):
 		log.warning(f"unmatched tones: {syllables=}, {tones=}")
 		with hf.element("div", style="display: inline-block"):
@@ -57,7 +72,13 @@ def colorize(hf, syllables, tones):
 				hf.write(syllable)
 
 
-def render_article(trad, simp, pinyin, eng, traditional_title):
+def render_article(
+	trad: str,
+	simp: str,
+	pinyin: str,
+	eng: str,
+	traditional_title: str,
+) -> str:
 	from io import BytesIO
 
 	from lxml import etree as ET
@@ -88,5 +109,5 @@ def render_article(trad, simp, pinyin, eng, traditional_title):
 					for defn in eng:
 						with hf.element("li"):
 							hf.write(defn)
- 
+
 	return f.getvalue().decode("utf-8")

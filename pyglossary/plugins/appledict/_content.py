@@ -26,7 +26,7 @@
 import logging
 import re
 import typing
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 from xml.sax.saxutils import quoteattr, unescape
 
 from pyglossary.text_utils import toStr
@@ -217,7 +217,7 @@ def prepare_content_with_soup(
 	return toStr(soup.encode_contents())
 
 
-def cleanup_link_target(href):
+def cleanup_link_target(href: str) -> str:
 	return href.removeprefix("bword://")
 
 
@@ -248,7 +248,7 @@ def remove_style(tag: dict, line: str) -> None:
 		del tag["style"]
 
 
-def fix_sound_link(href: str, tag: dict):
+def fix_sound_link(href: str, tag: "Dict[str, Any]") -> None:
 	tag["href"] = f'javascript:new Audio("{href[len("sound://"):]}").play();'
 
 

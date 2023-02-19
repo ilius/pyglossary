@@ -19,14 +19,16 @@
 # GNU General Public License for more details.
 
 import re
+from typing import Any
 
 re_spaces = re.compile(r"[ \t\n]{2,}")
 re_title = re.compile('<[^<]+?>|"|[<>]|\xef\xbb\xbf')
 re_title_short = re.compile(r"\[.*?\]")
 re_whitespace = re.compile("(\t|\n|\r)")
 
+# FIXME: rename all/most functions here, add a 'fix_' prefix
 
-def spaces(s):
+def spaces(s: str) -> str:
 	"""
 	strip off leading and trailing whitespaces and
 	replace contiguous whitespaces with just one space.
@@ -74,7 +76,7 @@ _brackets_sub = (
 )
 
 
-def brackets(s):
+def brackets(s: str) -> str:
 	r"""
 	replace all crazy brackets with square ones [].
 
@@ -90,7 +92,7 @@ def brackets(s):
 	return spaces(s)
 
 
-def truncate(text, length=449):
+def truncate(text: str, length: int = 449) -> str:
 	"""
 	trunct a string to given length
 	:param str text:
@@ -107,7 +109,7 @@ def truncate(text, length=449):
 	return text  # noqa: RET504
 
 
-def title(title, BeautifulSoup):
+def title(title: str, BeautifulSoup: "Any") -> str:
 	"""
 	strip double quotes and html tags.
 	"""
@@ -128,14 +130,14 @@ def title(title, BeautifulSoup):
 	return title  # noqa: RET504
 
 
-def title_long(s):
+def title_long(s: str) -> str:
 	"""
 	title_long("str[ing]") -> "string"
 	"""
 	return s.replace("[", "").replace("]", "")
 
 
-def title_short(s):
+def title_short(s: str) -> str:
 	"""
 	title_short("str[ing]") -> "str"
 	"""

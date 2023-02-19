@@ -80,7 +80,7 @@ def sortKey(x):
 
 
 class DictDB:
-	def __init__(self, basename, mode='read', quiet=0):
+	def __init__(self, basename, mode='read', quiet=0) -> None:
 		#, url = 'unknown', shortname = 'unknown',
 		#		 longinfo = 'unknown', quiet = 0):
 		"""Initialize a DictDB object.

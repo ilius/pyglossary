@@ -122,7 +122,7 @@ def buffer_get_text(b):
 
 
 class FormatDialog(gtk.Dialog):
-	def __init__(self, descList: "List[str]", parent=None, **kwargs):
+	def __init__(self, descList: "List[str]", parent=None, **kwargs) -> None:
 		gtk.Dialog.__init__(self, parent=parent, **kwargs)
 		self.descList = descList
 		self.items = descList
@@ -265,7 +265,7 @@ class FormatButton(gtk.Button):
 	noneLabel = "[Select Format]"
 	dialogTitle = "Select Format"
 
-	def __init__(self, descList: "List[str]", parent=None):
+	def __init__(self, descList: "List[str]", parent=None) -> None:
 		gtk.Button.__init__(self)
 		self.set_label(self.noneLabel)
 		###
@@ -578,7 +578,7 @@ class FormatOptionsDialog(gtk.Dialog):
 
 
 class FormatBox(FormatButton):
-	def __init__(self, descList: "List[str]", parent=None):
+	def __init__(self, descList: "List[str]", parent=None) -> None:
 		FormatButton.__init__(self, descList, parent=parent)
 
 		self.optionsValues = {}
@@ -666,7 +666,7 @@ class FormatBox(FormatButton):
 class InputFormatBox(FormatBox):
 	dialogTitle = "Select Input Format"
 
-	def __init__(self, **kwargs):
+	def __init__(self, **kwargs) -> None:
 		FormatBox.__init__(self, readDesc, **kwargs)
 
 	def kind(self):
@@ -683,7 +683,7 @@ class InputFormatBox(FormatBox):
 class OutputFormatBox(FormatBox):
 	dialogTitle = "Select Output Format"
 
-	def __init__(self, **kwargs):
+	def __init__(self, **kwargs) -> None:
 		FormatBox.__init__(self, writeDesc, **kwargs)
 
 	def kind(self):
@@ -695,7 +695,7 @@ class OutputFormatBox(FormatBox):
 
 
 class GtkTextviewLogHandler(logging.Handler):
-	def __init__(self, ui, treeview_dict):
+	def __init__(self, ui, treeview_dict) -> None:
 		logging.Handler.__init__(self)
 
 		self.ui = ui
@@ -745,7 +745,7 @@ class GtkTextviewLogHandler(logging.Handler):
 
 
 class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
-	def __init__(self, ui, textview):
+	def __init__(self, ui, textview) -> None:
 		GtkTextviewLogHandler.__init__(self, ui, {
 			"CRITICAL": textview,
 			"ERROR": textview,
@@ -807,7 +807,7 @@ sortKeyNames = [
 
 
 class SortOptionsBox(gtk.Box):
-	def __init__(self, ui):
+	def __init__(self, ui) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		self.ui = ui
 		###
@@ -903,7 +903,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 		self.hide()
 		return True
 
-	def __init__(self, ui, **kwargs):
+	def __init__(self, ui, **kwargs) -> None:
 		gtk.Dialog.__init__(
 			self,
 			transient_for=ui,
@@ -988,7 +988,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 
 
 class GeneralOptionsButton(gtk.Button):
-	def __init__(self, ui):
+	def __init__(self, ui) -> None:
 		gtk.Button.__init__(self, label="General Options")
 		self.ui = ui
 		self.connect("clicked", self.onClick)
@@ -1010,7 +1010,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		_id = self.statusBar.get_context_id(msg)
 		self.statusBar.push(_id, msg)
 
-	def __init__(self):
+	def __init__(self) -> None:
 		gtk.Dialog.__init__(self)
 		UIBase.__init__(self)
 		self.set_title("PyGlossary (Gtk3)")

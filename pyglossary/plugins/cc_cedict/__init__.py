@@ -1,6 +1,8 @@
 import re
+from typing import Iterator
 
 from pyglossary.core import log
+from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -39,12 +41,12 @@ class Reader:
 	_encoding: str = "utf-8"
 	_traditional_title: bool = False
 
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.file = None
 		self.total_entries = self.entries_left = None
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		if self.file is not None:
 			self.file.close()
 
@@ -62,20 +64,20 @@ class Reader:
 			self.close()
 			raise RuntimeError("CC-CEDICT: could not find entry count")
 
-	def close(self):
+	def close(self) -> None:
 		if self.file is not None:
 			self.file.close()
 		self.file = None
 		self.total_entries = self.entries_left = None
 
-	def __len__(self):
+	def __len__(self) -> int:
 		if self.total_entries is None:
 			raise RuntimeError(
 				"CC-CEDICT: len(reader) called while reader is not open",
 			)
 		return self.total_entries
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self.file is None:
 			raise RuntimeError(
 				"CC-CEDICT: tried to iterate over entries "

@@ -2,11 +2,11 @@
 import os
 import re
 from os.path import join
-from typing import List
+from typing import Iterator, List
 
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS
-from pyglossary.glossary_type import EntryType
+from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.plugins.tabfile import Reader as TabfileReader
 
 lname = "dicformids"
@@ -64,12 +64,12 @@ language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEn
 class Reader(object):
 	re_number = re.compile(r"\d+")
 
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._tabFileNames = []
 		self._tabFileReader = None
 
-	def open(self, dirname):
+	def open(self, dirname) -> None:
 		self._dirname = dirname
 		orderFileNames = []
 		for fname in os.listdir(dirname):
@@ -91,7 +91,7 @@ class Reader(object):
 	def __len__(self):  # FIXME
 		raise NotImplementedError
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		return self
 
 	def __next__(self):
@@ -110,7 +110,7 @@ class Reader(object):
 		self._tabFileReader = TabfileReader(self._glos, hasInfo=False)
 		self._tabFileReader.open(join(self._dirname, tabFileName), newline="\n")
 
-	def close(self):
+	def close(self) -> None:
 		if self._tabFileReader:
 			try:
 				self._tabFileReader.close()
@@ -121,7 +121,7 @@ class Reader(object):
 
 
 class Writer(object):
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.linesPerDirectoryFile = 500  # 200
 		self.indexFileMaxSize = 32722  # 30000
@@ -145,7 +145,7 @@ class Writer(object):
 		word = word.lower()
 		return word  # noqa: RET504
 
-	def writeProbs(self):
+	def writeProbs(self) -> None:
 		glos = self._glos
 		probsPath = join(
 			self._dirname,
@@ -175,21 +175,21 @@ class Writer(object):
 		fpath = join(self._dirname, fname)
 		self.indexFp = open(fpath, mode="w", encoding="utf-8", newline="\n")
 
-	def finish(self):
+	def finish(self) -> None:
 		pass
 
-	def open(self, dirname: str):
+	def open(self, dirname: str) -> None:
 		self._dirname = dirname
 		if not os.path.isdir(dirname):
 			os.mkdir(dirname)
 
-	def write(self):
+	def write(self) -> None:
 		self.nextIndex()
 
 		dicMaxSize = 0
 		indexData = []
 
-		def writeBucket(dicIndex: int, entryList: "List[EntryType]"):
+		def writeBucket(dicIndex: int, entryList: "List[EntryType]") -> None:
 			nonlocal dicMaxSize
 			log.debug(
 				f"{dicIndex=}, {len(entryList)=}"

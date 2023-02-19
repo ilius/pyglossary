@@ -34,7 +34,7 @@ class EntryType(object):
 	def data(self) -> bytes:
 		raise NotImplementedError
 
-	def size(self):
+	def size(self) -> int:
 		raise NotImplementedError
 
 	def save(self, directory: str) -> str:
@@ -53,11 +53,11 @@ class EntryType(object):
 		raise NotImplementedError
 
 	@property
-	def b_word(self):
+	def b_word(self) -> bytes:
 		raise NotImplementedError
 
 	@property
-	def b_defi(self):
+	def b_defi(self) -> bytes:
 		raise NotImplementedError
 
 	@property

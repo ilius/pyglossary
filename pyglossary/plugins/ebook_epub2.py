@@ -22,6 +22,7 @@ from typing import Any, Dict
 
 from pyglossary.ebook_base import EbookWriter
 from pyglossary.flags import ALWAYS
+from pyglossary.glossary_type import GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	IntOption,
@@ -201,7 +202,7 @@ p.groupDefinition {
 
 	COVER_TEMPLATE = "<meta name=\"cover\" content=\"{cover}\" />"
 
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		import uuid
 		EbookWriter.__init__(
 			self,
@@ -228,7 +229,7 @@ p.groupDefinition {
 			return "SPECIAL"
 		return prefix
 
-	def write_ncx(self, group_labels):
+	def write_ncx(self, group_labels) -> None:
 		"""
 			write_ncx
 			only for epub

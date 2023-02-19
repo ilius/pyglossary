@@ -31,10 +31,10 @@ class Reader(TextGlossaryReader):
 	_headword_separator = ";   "
 	# https://github.com/cheusov/dictd/blob/master/dictfmt/dictunformat.in#L14
 
-	def isInfoWord(self, word):
+	def isInfoWord(self, word: str) -> bool:
 		return word.startswith("00-database-")
 
-	def fixInfoWord(self, word):
+	def fixInfoWord(self, word: str):
 		return word
 
 	def setInfo(self, word: str, defi: str) -> None:

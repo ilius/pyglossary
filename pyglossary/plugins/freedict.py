@@ -230,7 +230,7 @@ class Reader(object):
 		# 	sep = ET.Element("br")
 		count = 0
 
-		def writeChild(item, depth):
+		def writeChild(item, depth) -> None:
 			nonlocal count
 			if isinstance(item, str):
 				item = item.strip()
@@ -256,7 +256,7 @@ class Reader(object):
 		for child in elem.xpath("child::node()"):
 			writeChild(child, 0)
 
-	def writeWithDirection(self, hf, child, tag):
+	def writeWithDirection(self, hf, child, tag) -> None:
 		attrib = child.attrib
 		try:
 			lang = attrib.pop(self.xmlLang)
@@ -326,7 +326,7 @@ class Reader(object):
 		log.warning(f"unknown lang name in {self.tostring(elem)}")
 		return None
 
-	def writeLangTag(self, hf, elem):
+	def writeLangTag(self, hf, elem) -> None:
 		langDesc = self.getLangDesc(elem)
 		if not langDesc:
 			return
@@ -336,7 +336,7 @@ class Reader(object):
 		else:
 			hf.write(f"{langDesc}")
 
-	def writeNote(self, hf, note):
+	def writeNote(self, hf, note) -> None:
 		self.writeRichText(hf, note)
 
 	def writeSenseSense(
@@ -666,7 +666,7 @@ class Reader(object):
 			byteProgress=(self._file.tell(), self._fileSize),
 		)
 
-	def setWordCount(self, header):
+	def setWordCount(self, header: str):
 		extent_elem = header.find(".//extent", self.ns)
 		if extent_elem is None:
 			log.warning(
@@ -712,7 +712,7 @@ class Reader(object):
 	def setGlosInfo(self, key: str, value: str) -> None:
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setCopyright(self, header):
+	def setCopyright(self, header: str):
 		elems = header.findall(".//availability//p", self.ns)
 		if not elems:
 			log.warning("did not find copyright")
@@ -722,14 +722,14 @@ class Reader(object):
 		self.setGlosInfo("copyright", copyright)
 		log.debug(f"Copyright: {copyright!r}")
 
-	def setPublisher(self, header):
+	def setPublisher(self, header: str):
 		elem = header.find(".//publisher", self.ns)
 		if elem is None or not elem.text:
 			log.warning("did not find publisher")
 			return
 		self.setGlosInfo("publisher", elem.text)
 
-	def setCreationTime(self, header):
+	def setCreationTime(self, header: str):
 		elem = header.find(".//publicationStmt/date", self.ns)
 		if elem is None or not elem.text:
 			return
@@ -738,7 +738,7 @@ class Reader(object):
 	def replaceRefLink(self, text: str) -> str:
 		return self._ref_pattern.sub('<a href="\\1">\\2</a>', text)
 
-	def setDescription(self, header):
+	def setDescription(self, header: str):
 		elems = []
 		for tag in ("sourceDesc", "projectDesc"):
 			elems += header.findall(f".//{tag}//p", self.ns)
@@ -765,7 +765,7 @@ class Reader(object):
 			"--------------------------------------",
 		)
 
-	def setMetadata(self, header):
+	def setMetadata(self, header: str) -> None:
 		self.setWordCount(header)
 		self.setGlosInfo("name", header.find(".//title", self.ns).text)
 
@@ -778,7 +778,7 @@ class Reader(object):
 		self.setCreationTime(header)
 		self.setDescription(header)
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None

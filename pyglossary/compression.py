@@ -6,7 +6,8 @@ from os.path import join
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Optional
+	import io
+	from typing import Callable, Optional
 
 	from .glossary_type import GlossaryType
 
@@ -16,7 +17,7 @@ stdCompressions = ("gz", "bz2", "lzma")
 log = logging.getLogger("pyglossary")
 
 
-def compressionOpenFunc(c: str):
+def compressionOpenFunc(c: str) -> "Optional[Callable]":
 	if not c:
 		return open
 	if c == "gz":
@@ -34,7 +35,11 @@ def compressionOpenFunc(c: str):
 	return None
 
 
-def compressionOpen(filename, dz=False, **kwargs):
+def compressionOpen(
+	filename: str,
+	dz: bool = False,
+	**kwargs,  # noqa: ANN003
+) -> "io.IOBase":
 	from os.path import splitext
 	filenameNoExt, ext = splitext(filename)
 	ext = ext.lower().lstrip(".")
@@ -63,7 +68,7 @@ def zipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
 
 	from .os_utils import indir
 
-	def _zipFileAdd(zf, filename):
+	def _zipFileAdd(zf: "zipfile.ZipFile", filename: str) -> None:
 		if isfile(filename):
 			zf.write(filename)
 			return

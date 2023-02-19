@@ -24,8 +24,9 @@ from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Dict, Optional
+	from typing import Any, Dict, Iterable, Iterator, Optional
 
+	from .glossary_type import EntryType, GlossaryType
 	from .sort_keys import NamedSortKey
 
 from .entry import Entry
@@ -47,11 +48,11 @@ PICKLE_PROTOCOL = 4
 class SqEntryList(list):
 	def __init__(
 		self,
-		glos,
+		glos: "GlossaryType",
 		filename: str,
 		create: bool = True,
 		persist: bool = False,
-	):
+	) -> None:
 		"""
 			sqliteSortKey[i] == (name, type, valueFunc)
 
@@ -81,7 +82,7 @@ class SqEntryList(list):
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "Optional[str]",
 		writeOptions: "Dict[str, Any]",
-	):
+	) -> None:
 		"""
 			sqliteSortKey[i] == (name, type, valueFunc)
 		"""
@@ -112,10 +113,10 @@ class SqEntryList(list):
 			f"CREATE TABLE data ({colDefs})",
 		)
 
-	def __len__(self):
+	def __len__(self) -> int:
 		return self._len
 
-	def append(self, entry):
+	def append(self, entry: "EntryType") -> None:
 		rawEntry = entry.getRaw(self._glos)
 		self._len += 1
 		colCount = len(self._sqliteSortKey)
@@ -139,12 +140,12 @@ class SqEntryList(list):
 		if self._len % 1000 == 0:
 			self._con.commit()
 
-	def __iadd__(self, other):
+	def __iadd__(self, other: "Iterable") -> "SqEntryList":
 		for item in other:
 			self.append(item)
 		return self
 
-	def sort(self, reverse=False):
+	def sort(self, reverse: bool = False) -> None:
 		if self._sorted:
 			raise NotImplementedError("can not sort more than once")
 
@@ -182,17 +183,17 @@ class SqEntryList(list):
 		self._orderBy = columnNames
 		return True
 
-	def deleteAll(self):
+	def deleteAll(self) -> None:
 		if self._con is None:
 			return
 		self._con.execute("DELETE FROM data;")
 		self._con.commit()
 		self._len = 0
 
-	def clear(self):
+	def clear(self) -> None:
 		self.close()
 
-	def close(self):
+	def close(self) -> None:
 		if self._con is None:
 			return
 		self._con.commit()
@@ -201,7 +202,7 @@ class SqEntryList(list):
 		self._con = None
 		self._cur = None
 
-	def __del__(self):
+	def __del__(self) -> None:
 		try:
 			self.close()
 			if not self._persist and isfile(self._filename):
@@ -209,7 +210,7 @@ class SqEntryList(list):
 		except AttributeError as e:
 			log.error(str(e))
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator":
 		glos = self._glos
 		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"
 		self._cur.execute(query)

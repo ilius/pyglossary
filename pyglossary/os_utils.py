@@ -1,7 +1,8 @@
 import logging
 import os
 import shutil
-from typing import Any
+import types
+from typing import Any, Callable, Optional, Tuple, Type
 
 from pyglossary import core
 
@@ -19,13 +20,18 @@ class indir(object):
 		>>> print(os.getcwd())  # -> "~/projects"
 		>>> # automatically return to previous directory.
 	"""
-	def __init__(self, directory: str, create: bool = False, clear: bool = False):
+	def __init__(
+		self,
+		directory: str,
+		create: bool = False,
+		clear: bool = False,
+	) -> None:
 		self.oldpwd = None
 		self.dir = directory
 		self.create = create
 		self.clear = clear
 
-	def __enter__(self):
+	def __enter__(self) -> None:
 		self.oldpwd = os.getcwd()
 		if os.path.exists(self.dir):
 			if self.clear:
@@ -35,7 +41,12 @@ class indir(object):
 			os.makedirs(self.dir)
 		os.chdir(self.dir)
 
-	def __exit__(self, exc_type, exc_val, exc_tb):
+	def __exit__(
+		self,
+		exc_type: "Type",
+		exc_val: "Exception",
+		exc_tb: "types.TracebackType",
+	) -> None:
 		os.chdir(self.oldpwd)
 		self.oldpwd = None
 
@@ -60,12 +71,16 @@ def runDictzip(filename: str) -> None:
 		log.error(f"dictzip error: {out}")
 
 
-def _rmtreeError(func, direc, exc_info):
-	exc_type, exc_val, exc_tb = exc_info
+def _rmtreeError(
+	func: "Callable",
+	direc: str,
+	exc_info: "Optional[Tuple[Type, Exception, types.TracebackType]]",
+) -> None:
+	_, exc_val, _ = exc_info
 	log.error(exc_val)
 
 
-def rmtree(direc):
+def rmtree(direc: str) -> str:
 	import shutil
 	from os.path import isdir
 	try:
@@ -79,7 +94,7 @@ def rmtree(direc):
 		log.exception(f"error removing directory: {direc}")
 
 
-def showMemoryUsage():
+def showMemoryUsage() -> str:
 	if log.level > core.TRACE:
 		return
 	try:

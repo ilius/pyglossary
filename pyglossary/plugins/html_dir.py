@@ -93,7 +93,7 @@ class Writer(object):
 	_css: str = ""
 	_word_title: bool = True
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		self._fileObj = None
@@ -102,7 +102,7 @@ class Writer(object):
 		self._tail = "</body></html>"
 		self._filenameList = []
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		from cachetools import LRUCache  # noqa: F401
 
 		self._filename = filename
@@ -118,7 +118,7 @@ class Writer(object):
 		import shutil
 		shutil.copy(self._css, join(self._filename, "style.css"))
 
-	def finish(self):
+	def finish(self) -> None:
 		pass
 
 	def getNextFilename(self):
@@ -270,7 +270,7 @@ class Writer(object):
 			os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
 			os.remove(join(dirn, f"links{fileIndex}"))
 
-	def writeInfo(self, filename, header):
+	def writeInfo(self, filename: str, header: str) -> None:
 		glos = self._glos
 		title = glos.getInfo("name")
 		customStyle = (

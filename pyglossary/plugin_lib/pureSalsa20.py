@@ -193,7 +193,7 @@ _version = 'p4.0'
 #----------- Salsa20 class which emulates pySalsa20.Salsa20 ---------------
 
 class Salsa20(object):
-	def __init__(self, key=None, IV=None, rounds=20 ):
+	def __init__(self, key=None, IV=None, rounds=20 ) -> None:
 		self._lastChunk64 = True
 		self._IVbitlen = 64             # must be 64 bits
 		self.ctx = [ 0 ] * 16

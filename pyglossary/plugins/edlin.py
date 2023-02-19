@@ -58,7 +58,7 @@ def makeDir(direc: str) -> None:
 class Reader(object):
 	_encoding: str = "utf-8"
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 
@@ -173,14 +173,14 @@ class Writer(object):
 	_encoding: str = "utf-8"
 	_prev_link: bool = True
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 
 	def finish(self) -> None:
 		self._clear()
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._resDir = join(filename, "res")
 		os.makedirs(filename)

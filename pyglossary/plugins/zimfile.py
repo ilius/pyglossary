@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+from typing import Iterator
 
 from pyglossary.core import cacheDir, log, pip
-from pyglossary.glossary_type import GlossaryType
+from pyglossary.glossary_type import EntryType, GlossaryType
 
 enable = True
 lname = "zim"
@@ -80,7 +81,7 @@ class Reader(object):
 			return 0
 		return self._zimfile.entry_count
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		glos = self._glos
 		zimfile = self._zimfile
 		emptyContentCount = 0

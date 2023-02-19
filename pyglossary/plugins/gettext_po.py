@@ -2,7 +2,7 @@
 
 import os
 from os.path import isdir
-from typing import Generator
+from typing import Generator, Iterator
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -33,18 +33,18 @@ class Reader(object):
 		"polib": "polib",
 	}
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self.clear()
 
-	def clear(self):
+	def clear(self) -> None:
 		self._filename = ""
 		self._file = None
 		self._wordCount = None
 		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename)
 		self._resDir = filename + "_res"
@@ -54,12 +54,12 @@ class Reader(object):
 			self._resDir = ""
 			self._resFileNames = []
 
-	def close(self):
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 		self.clear()
 
-	def __len__(self):
+	def __len__(self) -> int:
 		from pyglossary.file_utils import fileCountLines
 		if self._wordCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
@@ -69,7 +69,7 @@ class Reader(object):
 			)
 		return self._wordCount
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		try:
 			from polib import unescape as po_unescape
 		except ModuleNotFoundError as e:
@@ -120,19 +120,19 @@ class Writer(object):
 
 	_resources: bool = True
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		self._file = None
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = _file = open(filename, mode="wt", encoding="utf-8")
 		_file.write('#\nmsgid ""\nmsgstr ""\n')
 		for key, value in self._glos.iterInfo():
 			_file.write(f'"{key}: {value}\\n"\n')
 
-	def finish(self):
+	def finish(self) -> None:
 		self._filename = None
 		if self._file:
 			self._file.close()

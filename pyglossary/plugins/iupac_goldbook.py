@@ -54,7 +54,7 @@ class Reader(object):
 		self._fileSize = 0
 		self._termByCode = None
 
-	def open(self, filename) -> None:
+	def open(self, filename: str) -> None:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -100,7 +100,7 @@ class Reader(object):
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self, header):
+	def setMetadata(self, header: str) -> None:
 		self.setGlosInfo("name", header.find("./title").text)
 		self.setGlosInfo("publisher", header.find("./publisher").text)
 		self.setGlosInfo("isbn", header.find("./isbn").text)

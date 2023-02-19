@@ -6,6 +6,7 @@ from os.path import (
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	import io
 	from typing import Callable, Dict, Generator, List, Optional
 
 	from .glossary_type import EntryType, GlossaryType
@@ -55,18 +56,18 @@ class TextGlossaryWriter(object):
 
 	def setAttrs(
 		self,
-		encoding=None,
-		newline=None,
-		wordListEncodeFunc=None,
-		wordEscapeFunc=None,
-		defiEscapeFunc=None,
-		ext=None,
-		head=None,
-		tail=None,
-		resources=None,
-		word_title=None,
-		file_size_approx=None,
-	):
+		encoding: "Optional[str]" = None,
+		newline: "Optional[str]" = None,
+		wordListEncodeFunc: "Optional[Callable]" = None,
+		wordEscapeFunc: "Optional[Callable]" = None,
+		defiEscapeFunc: "Optional[Callable]" = None,
+		ext: "Optional[str]" = None,
+		head: "Optional[str]" = None,
+		tail: "Optional[str]" = None,
+		resources: "Optional[bool]" = None,
+		word_title: "Optional[bool]" = None,
+		file_size_approx: "Optional[int]" = None,
+	) -> None:
 		if encoding is not None:
 			self._encoding = encoding
 		if newline is not None:
@@ -99,7 +100,7 @@ class TextGlossaryWriter(object):
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
-	def _doWriteInfo(self, _file):
+	def _doWriteInfo(self, _file: "io.TextIOBase") -> None:
 		entryFmt = self._entryFmt
 		outInfoKeysAliasDict = self._outInfoKeysAliasDict
 		wordEscapeFunc = self._wordEscapeFunc
@@ -126,7 +127,7 @@ class TextGlossaryWriter(object):
 				defi=value,
 			))
 
-	def _open(self, filename: str):
+	def _open(self, filename: str) -> None:
 		if not filename:
 			filename = self._glos.filename + self._ext
 
@@ -144,7 +145,7 @@ class TextGlossaryWriter(object):
 		_file.flush()
 		return _file
 
-	def write(self):
+	def write(self) -> None:
 		glos = self._glos
 		_file = self._file
 		entryFmt = self._entryFmt
@@ -193,7 +194,7 @@ class TextGlossaryWriter(object):
 					fileIndex += 1
 					_file = self._open(f"{self._filename}.{fileIndex}")
 
-	def finish(self):
+	def finish(self) -> None:
 		if self._tail:
 			self._file.write(self._tail)
 		self._file.close()

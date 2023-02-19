@@ -23,7 +23,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import pathlib
-	from typing import Any, Callable, Dict, List, Optional, Tuple
+	from typing import Any, Callable, ClassVar, Dict, List, Optional, Tuple
+
+	from .flags import StrWithDesc
 
 from .flags import (
 	DEFAULT_NO,
@@ -35,7 +37,9 @@ from .option import Option, optionFromDict
 log = logging.getLogger("pyglossary")
 
 
-def optionsPropFromDict(optionsPropDict):
+def optionsPropFromDict(
+	optionsPropDict: "Dict[str, Any]",
+) -> "Dict[str, Option]":
 	props = {}
 	for name, propDict in optionsPropDict.items():
 		try:
@@ -47,7 +51,7 @@ def optionsPropFromDict(optionsPropDict):
 	return props
 
 
-def sortOnWriteFromStr(sortOnWriteStr):
+def sortOnWriteFromStr(sortOnWriteStr: "Optional[str]") -> "StrWithDesc":
 	if sortOnWriteStr is None:
 		return DEFAULT_NO
 	return flagsByName[sortOnWriteStr]
@@ -84,9 +88,9 @@ class PluginProp(object):
 
 	@classmethod
 	def fromDict(
-		cls,
-		attrs,
-		modulePath,
+		cls: "ClassVar",
+		attrs: "Dict[str, Any]",
+		modulePath: str,
 	) -> None:
 		self = cls()
 		self._mod = None
@@ -118,7 +122,7 @@ class PluginProp(object):
 		return self
 
 	@classmethod
-	def fromModule(cls, mod):
+	def fromModule(cls: "ClassVar", mod: "Any") -> "PluginProp":
 		self = cls()
 		self._mod = mod
 		self._Reader = None
@@ -157,11 +161,11 @@ class PluginProp(object):
 		return self
 
 	@property
-	def enable(self):
+	def enable(self) -> bool:
 		return self._enable
 
 	@property
-	def module(self):
+	def module(self) -> "Any":
 		if self._mod is not None:
 			return self._mod
 		moduleName = self._moduleName
@@ -261,7 +265,7 @@ class PluginProp(object):
 	def canWrite(self) -> bool:
 		return self._canWrite
 
-	def getOptionAttrNamesFromClass(self, rwclass):
+	def getOptionAttrNamesFromClass(self, rwclass: "ClassVar") -> "List[str]":
 		nameList = []
 
 		for cls in rwclass.__bases__ + (rwclass,):
@@ -277,7 +281,7 @@ class PluginProp(object):
 
 		return nameList
 
-	def getOptionsFromClass(self, rwclass):
+	def getOptionsFromClass(self, rwclass: "ClassVar") -> "Dict[str, Any]":
 		optionsProp = self.optionsProp
 		options = odict()
 		if rwclass is None:
@@ -303,20 +307,20 @@ class PluginProp(object):
 
 		return options
 
-	def getReadOptions(self):
+	def getReadOptions(self) -> "Dict[str, Any]":
 		if self._readOptions is None:
 			self._readOptions = self.getOptionsFromClass(self.readerClass)
 		return self._readOptions
 
-	def getWriteOptions(self):
+	def getWriteOptions(self) -> "Dict[str, Any]":
 		if self._writeOptions is None:
 			self._writeOptions = self.getOptionsFromClass(self.writerClass)
 		return self._writeOptions
 
-	def getReadExtraOptions(self):
+	def getReadExtraOptions(self) -> "List[str]":
 		return []
 
-	def getWriteExtraOptions(self):
+	def getWriteExtraOptions(self) -> "List[str]":
 		return []
 
 	@property
@@ -337,7 +341,7 @@ class PluginProp(object):
 			self._writeDepends = getattr(self.writerClass, "depends", {})
 		return self._writeDepends
 
-	def checkModule(self):
+	def checkModule(self) -> None:
 		module = self.module
 
 		if hasattr(module, "write"):
@@ -420,20 +424,24 @@ class PluginProp(object):
 
 		return True
 
-	def getReadExtraOptions(self):  # noqa: F811
+	def getReadExtraOptions(self) -> "List[str]":  # noqa: F811
 		return self.__class__.getExtraOptionsFromFunc(
 			self.readerClass.open,
 			self.name,
 		)
 
-	def getWriteExtraOptions(self):  # noqa: F811
+	def getWriteExtraOptions(self) -> "List[str]":  # noqa: F811
 		return self.__class__.getExtraOptionsFromFunc(
 			self.writerClass.write,
 			self.name,
 		)
 
 	@classmethod
-	def getExtraOptionsFromFunc(cls, func, format):
+	def getExtraOptionsFromFunc(
+		cls: "ClassVar",
+		func: "Callable",
+		format: str,
+	) -> "List[str]":
 		import inspect
 		extraOptNames = []
 		for name, param in inspect.signature(func).parameters.items():

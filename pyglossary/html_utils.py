@@ -314,7 +314,7 @@ name2codepoint = {
 }
 
 
-def build_name2codepoint_dict():
+def build_name2codepoint_dict() -> None:
 	"""
 		Builds name to codepoint dictionary
 		copy and paste the output to the name2codepoint dictionary
@@ -359,7 +359,7 @@ def _sub_unescape_unicode(m: "re.Match") -> str:
 	return text
 
 
-def unescape_unicode(text):
+def unescape_unicode(text: str) -> str:
 	"""
 		unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
 		leave these 3 special entities alone, since unescaping them

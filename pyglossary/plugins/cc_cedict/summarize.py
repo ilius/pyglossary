@@ -31,7 +31,7 @@ stops = {
 }
 
 
-def summarize(phrase):
+def summarize(phrase: str) -> str:
 	phrase = parenthetical.sub("", phrase)
 	phrase = phrase.translate(punct_table)
 	words = phrase.split()

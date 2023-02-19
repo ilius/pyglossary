@@ -1,6 +1,8 @@
 # coding=utf-8
 # based on https://github.com/zkoch/CEDICT_Parser
 
+from typing import Tuple
+
 TONES = {
 	"a1": "ā", "a2": "á", "a3": "ǎ", "a4": "à",
 	"e1": "ē", "e2": "é", "e3": "ě", "e4": "è",
@@ -14,7 +16,7 @@ TONES = {
 VOWELS = ("a", "e", "o", "iu", "ui", "i", "u", "v")
 
 
-def convert(word):
+def convert(word: str) -> "Tuple[str, str]":
 	tone = word[-1]
 	pinyin = word[0:-1].lower()
 	result = pinyin

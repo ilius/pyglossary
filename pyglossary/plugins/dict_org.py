@@ -68,7 +68,7 @@ def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 
 
 class Reader(object):
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._dictdb = None  # type: Optional[DictDB]
@@ -138,7 +138,7 @@ class Writer(object):
 		self._filename = None
 		self._dictdb = None
 
-	def finish(self):
+	def finish(self) -> None:
 		from pyglossary.os_utils import runDictzip
 		self._dictdb.finish(dosort=1)
 		if self._dictzip:
@@ -151,7 +151,7 @@ class Writer(object):
 			)
 		self._filename = None
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		filename_nox, ext = splitext(filename)
 		if ext.lower() == ".index":
 			filename = filename_nox

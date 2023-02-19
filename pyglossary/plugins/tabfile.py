@@ -46,7 +46,7 @@ optionsProp = {
 
 
 class Reader(TextGlossaryReader):
-	def __init__(self, glos: GlossaryType, hasInfo: bool = True):
+	def __init__(self, glos: GlossaryType, hasInfo: bool = True) -> None:
 		TextGlossaryReader.__init__(self, glos, hasInfo=hasInfo)
 		self._resDir = ""
 		self._resFileNames = []
@@ -122,7 +122,7 @@ class Writer(object):
 	):
 		self._filename = filename
 
-	def finish(self):
+	def finish(self) -> None:
 		pass
 
 	def write(self) -> "Generator[None, EntryType, None]":

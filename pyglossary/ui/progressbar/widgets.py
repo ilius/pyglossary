@@ -87,7 +87,7 @@ class Timer(Widget):
     __slots__ = ('format_string',)
     TIME_SENSITIVE = True
 
-    def __init__(self, format='Elapsed Time: %s'):
+    def __init__(self, format='Elapsed Time: %s') -> None:
         self.format_string = format
 
     @staticmethod
@@ -171,7 +171,7 @@ class FileTransferSpeed(Widget):
     PREFIXES = ' kMGTPEZY'
     __slots__ = ('unit',)
 
-    def __init__(self, unit='B'):
+    def __init__(self, unit='B') -> None:
         self.unit = unit
 
     def update(self, pbar):
@@ -194,7 +194,7 @@ class AnimatedMarker(Widget):
 
     __slots__ = ('markers', 'curmark')
 
-    def __init__(self, markers='|/-\\'):
+    def __init__(self, markers='|/-\\') -> None:
         self.markers = markers
         self.curmark = -1
 
@@ -217,7 +217,7 @@ class Counter(Widget):
 
     __slots__ = ('format_string',)
 
-    def __init__(self, format='%d'):
+    def __init__(self, format='%d') -> None:
         self.format_string = format
 
     def update(self, pbar):
@@ -227,7 +227,7 @@ class Counter(Widget):
 class Percentage(Widget):
     """Displays the current percentage as a number with a percent sign."""
 
-    def __init__(self, prefix="%"):
+    def __init__(self, prefix="%") -> None:
         Widget.__init__(self)
         self.prefix = prefix
 
@@ -250,7 +250,7 @@ class FormatLabel(Timer):
     }
 
     __slots__ = ('format_string',)
-    def __init__(self, format):
+    def __init__(self, format) -> None:
         self.format_string = format
 
     def update(self, pbar):
@@ -274,7 +274,7 @@ class SimpleProgress(Widget):
 
     __slots__ = ('sep',)
 
-    def __init__(self, sep=' of '):
+    def __init__(self, sep=' of ') -> None:
         self.sep = sep
 
     def update(self, pbar):

@@ -40,7 +40,7 @@ optionsProp = {
 class Reader(TextGlossaryReader):
 	compressions = stdCompressions
 
-	def __len__(self):
+	def __len__(self) -> int:
 		if self._wordCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(
@@ -49,13 +49,13 @@ class Reader(TextGlossaryReader):
 			) - self._leadingLinesCount
 		return self._wordCount
 
-	def isInfoWord(self, word):
+	def isInfoWord(self, word: str) -> bool:
 		if isinstance(word, str):
 			return word.startswith("#")
 
 		return False
 
-	def fixInfoWord(self, word):
+	def fixInfoWord(self, word: str):
 		if isinstance(word, str):
 			return word.lstrip("#").lower()
 
@@ -114,10 +114,10 @@ class Writer(object):
 	def getAuthor(self):
 		return self._glos.author.replace("\n", "<br>")
 
-	def finish(self):
+	def finish(self) -> None:
 		self._filename = None
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 
 	def write(self) -> "Generator[None, EntryType, None]":

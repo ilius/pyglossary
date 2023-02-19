@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from typing import Any, Dict, Iterator, Optional, Tuple
 
-	from .glossary_type import EntryType
+	from .glossary_type import EntryType, GlossaryType
 	from .sort_keys import NamedSortKey
 
 from .compression import (
@@ -39,21 +39,21 @@ log = logging.getLogger("pyglossary")
 
 
 class EntryList(object):
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._l = []
 		self._glos = glos
 		self._sortKey = None
 
-	def append(self, entry: "EntryType"):
+	def append(self, entry: "EntryType") -> None:
 		self._l.append(entry.getRaw(self._glos))
 
-	def insert(self, pos, entry: "EntryType"):
+	def insert(self, pos: int, entry: "EntryType") -> None:
 		self._l.insert(pos, entry.getRaw(self._glos))
 
-	def clear(self):
+	def clear(self) -> None:
 		self._l.clear()
 
-	def __len__(self):
+	def __len__(self) -> int:
 		return len(self._l)
 
 	def __iter__(self) -> "Iterator[EntryType]":
@@ -69,19 +69,19 @@ class EntryList(object):
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "Optional[str]",
 		writeOptions: "Dict[str, Any]",
-	):
+	) -> None:
 		kwargs = writeOptions.copy()
 		if sortEncoding:
 			kwargs["sortEncoding"] = sortEncoding
 		sortKey = namedSortKey.normal(**kwargs)
 		self._sortKey = Entry.getRawEntrySortKey(self._glos, sortKey)
 
-	def sort(self):
+	def sort(self) -> None:
 		if self._sortKey is None:
 			raise ValueError("EntryList.sort: sortKey is not set")
 		self._l.sort(key=self._sortKey)
 
-	def close(self):
+	def close(self) -> None:
 		pass
 
 

@@ -32,6 +32,7 @@ from os.path import (
 from time import time as now
 from typing import (
 	Any,
+	ClassVar,
 	Dict,
 	Iterator,
 	Optional,
@@ -418,7 +419,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		)
 
 	@property
-	def config(self):
+	def config(self) -> "Dict[str, Any]":
 		raise NotImplementedError
 
 	@config.setter
@@ -535,7 +536,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			setattr(reader, f"_{name}", value)
 		return reader
 
-	def _setTmpDataDir(self, filename: str):
+	def _setTmpDataDir(self, filename: str) -> None:
 		import uuid
 		# good thing about cacheDir is that we don't have to clean it up after
 		# conversion is finished.
@@ -560,7 +561,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		filename: str,
 		format: str = "",
 		direct: bool = False,
-		**kwargs,
+		**kwargs,  # noqa: ANN
 	) -> bool:
 		"""
 		filename (str):	name/path of input file
@@ -597,7 +598,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		format: str = "",
 		direct: bool = False,
 		progressbar: bool = True,
-		**options,
+		**options,  # noqa: ANN
 	) -> bool:
 		filename = os.path.abspath(filename)
 
@@ -778,7 +779,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self,
 		filename: str,
 		format: str,
-		**kwargs,
+		**kwargs,  # noqa: ANN
 	) -> "Optional[str]":
 		"""
 		filename (str): file name or path to write
@@ -816,7 +817,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		filename: str,
 		format: str,
 		sort: "Optional[bool]" = None,
-		**options,
+		**options,  # noqa: ANN
 	) -> "Optional[str]":
 		filename = os.path.abspath(filename)
 
@@ -1171,7 +1172,10 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 	# ________________________________________________________________________#
 
-	def progressInit(self, *args) -> None:
+	def progressInit(
+		self,
+		*args,  # noqa: ANN
+	) -> None:
 		if self._ui and self._progressbar:
 			self._ui.progressInit(*args)
 
@@ -1192,10 +1196,10 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 	@classmethod
 	def init(
-		cls,
+		cls: "ClassVar",
 		usePluginsJson: bool = True,
 		skipDisabledPlugins: bool = True,
-	):
+	) -> None:
 		"""
 		Glossary.init() must be called only once, so make sure you put it in the
 		right place. Probably in the top of your program's main function or module.

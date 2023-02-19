@@ -172,7 +172,7 @@ def sortkey(strength, maxlength=None):
 
 class MultiFileReader(io.BufferedIOBase):
 
-	def __init__(self, *args):
+	def __init__(self, *args) -> None:
 		filenames = []
 		for arg in args:
 			if isinstance(arg, str):
@@ -268,7 +268,7 @@ class MultiFileReader(io.BufferedIOBase):
 
 class CollationKeyList(object):
 
-	def __init__(self, lst, sortkey_):
+	def __init__(self, lst, sortkey_) -> None:
 		self.lst = lst
 		self.sortkey = sortkey_
 
@@ -281,7 +281,7 @@ class CollationKeyList(object):
 
 class KeydItemDict(object):
 
-	def __init__(self, lst, strength, maxlength=None):
+	def __init__(self, lst, strength, maxlength=None) -> None:
 		self.lst = lst
 		self.sortkey = sortkey(strength, maxlength=maxlength)
 		self.sortkeylist = CollationKeyList(lst, self.sortkey)
@@ -358,7 +358,7 @@ def read_byte_string(f, len_spec):
 
 class StructReader:
 
-	def __init__(self, file_, encoding=None):
+	def __init__(self, file_, encoding=None) -> None:
 		self._file = file_
 		self.encoding = encoding
 
@@ -398,7 +398,7 @@ class StructReader:
 
 class StructWriter:
 
-	def __init__(self, file_, encoding=None):
+	def __init__(self, file_, encoding=None) -> None:
 		self._file = file_
 		self.encoding = encoding
 
@@ -534,7 +534,7 @@ def unmeld_ints(c):
 
 class Slob(Sequence):
 
-	def __init__(self, file_or_filenames):
+	def __init__(self, file_or_filenames) -> None:
 		self._f = MultiFileReader(file_or_filenames)
 
 		try:
@@ -651,7 +651,7 @@ def open(file_or_filenames):
 
 class BinMemWriter:
 
-	def __init__(self):
+	def __init__(self) -> None:
 		self.content_type_ids = []
 		self.item_dir = []
 		self.items = []
@@ -730,7 +730,7 @@ class ItemList(Sequence):
 
 class RefList(ItemList):
 
-	def __init__(self, f, encoding, offset=0, count=None):
+	def __init__(self, f, encoding, offset=0, count=None) -> None:
 		super().__init__(
 			StructReader(f, encoding),
 			offset,
@@ -761,7 +761,7 @@ class RefList(ItemList):
 
 
 class Bin(ItemList):
-	def __init__(self, count, bin_bytes):
+	def __init__(self, count, bin_bytes) -> None:
 		super().__init__(
 			StructReader(io.BytesIO(bin_bytes)),
 			0,
@@ -780,7 +780,7 @@ StoreItem = namedtuple('StoreItem', 'content_type_ids compressed_content')
 
 class Store(ItemList):
 
-	def __init__(self, file_, offset, decompress, content_types):
+	def __init__(self, file_, offset, decompress, content_types) -> None:
 		super().__init__(
 			StructReader(file_),
 			offset,

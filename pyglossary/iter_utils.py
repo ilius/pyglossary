@@ -19,9 +19,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import Iterable, Iterator
+
 
 # from https://github.com/erikrose/more-itertools
-def unique_everseen(iterable):
+def unique_everseen(iterable: "Iterable") -> "Iterator":
 	from itertools import filterfalse
 	"List unique elements, preserving order. Remember all elements ever seen."
 	# unique_everseen('AAAABBBCCDAABBB') --> A B C D

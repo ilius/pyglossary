@@ -41,7 +41,7 @@ log = logging.getLogger("pyglossary")
 
 
 class GlossaryInfo(object):
-	def __init__(self):
+	def __init__(self) -> None:
 		self._info = odict()
 
 	def infoKeys(self) -> "List[str]":
@@ -106,7 +106,7 @@ class GlossaryInfo(object):
 				return value
 		return ""
 
-	def _getLangByStr(self, st) -> "Optional[Lang]":
+	def _getLangByStr(self, st: str) -> "Optional[Lang]":
 		lang = langDict[st]
 		if lang:
 			return lang
@@ -128,13 +128,13 @@ class GlossaryInfo(object):
 		return self._getLangByInfoKey(c_targetLang)
 
 	@sourceLang.setter
-	def sourceLang(self, lang) -> None:
+	def sourceLang(self, lang: Lang) -> None:
 		if not isinstance(lang, Lang):
 			raise TypeError(f"invalid {lang=}, must be a Lang object")
 		self._info[c_sourceLang] = lang.name
 
 	@targetLang.setter
-	def targetLang(self, lang) -> None:
+	def targetLang(self, lang: Lang) -> None:
 		if not isinstance(lang, Lang):
 			raise TypeError(f"invalid {lang=}, must be a Lang object")
 		self._info[c_targetLang] = lang.name
@@ -183,7 +183,7 @@ class GlossaryInfo(object):
 			return sourceLang.titleTag
 		return "b"
 
-	def detectLangsFromName(self):
+	def detectLangsFromName(self) -> None:
 		"""
 		extract sourceLang and targetLang from glossary name/title
 		"""
@@ -197,7 +197,7 @@ class GlossaryInfo(object):
 
 		langNames = []
 
-		def checkPart(part: str):
+		def checkPart(part: str) -> None:
 			for match in re.findall(r"\w\w\w*", part):
 				# print(f"{match = }")
 				lang = langDict[match]

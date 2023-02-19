@@ -30,7 +30,7 @@ from typing import List
 from pyglossary.core import log
 from pyglossary.ebook_base import EbookWriter
 from pyglossary.flags import DEFAULT_YES
-from pyglossary.glossary_type import EntryType
+from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.langs import Lang
 from pyglossary.option import (
 	BoolOption,
@@ -208,7 +208,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 <guide></guide>
 </package>"""
 
-	def __init__(self, glos, **kwargs):
+	def __init__(self, glos: "GlossaryType", **kwargs) -> None:
 		import uuid
 		EbookWriter.__init__(
 			self,
@@ -285,7 +285,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			spine=spine_contents,
 		)
 
-	def write_groups(self):
+	def write_groups(self) -> None:
 
 		def add_group(state):
 			if state.group_size <= 0:
@@ -320,7 +320,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 		add_group(state)
 
-	def write(self):
+	def write(self) -> None:
 		import shutil
 		import subprocess
 

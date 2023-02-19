@@ -50,7 +50,7 @@ def id_generator() -> "Iterator[str]":
 		cnt += 1
 
 
-def quote_string(value: str, BeautifulSoup) -> str:
+def quote_string(value: str, BeautifulSoup: "Any") -> str:
 	if BeautifulSoup:
 		return BeautifulSoup.dammit.EntitySubstitution.substitute_xml(
 			value,
@@ -82,7 +82,12 @@ def indexes_generator(indexes_lang: str) -> """Callable[
 			log.error(msg)
 			raise ValueError(msg)
 
-	def generate_indexes(title, alts, content, BeautifulSoup):
+	def generate_indexes(
+		title: str,
+		alts: "List[str]",
+		content: str,
+		BeautifulSoup: "Any",
+	) -> str:
 		indexes = [title]
 		indexes.extend(alts)
 

@@ -4,7 +4,7 @@ import os
 import re
 import shutil
 from os.path import isfile, splitext
-from typing import Generator
+from typing import Generator, Iterator
 
 from pyglossary.core import cacheDir, log, pip
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -70,7 +70,7 @@ class Reader(object):
 		"icu": "PyICU",  # >=1.5
 	}
 
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 		self._re_bword = re.compile(
@@ -78,16 +78,16 @@ class Reader(object):
 			re.I,
 		)
 
-	def close(self):
+	def close(self) -> None:
 		if self._slobObj is not None:
 			self._slobObj.close()
 		self._clear()
 
-	def _clear(self):
+	def _clear(self) -> None:
 		self._filename = ""
 		self._slobObj = None  # slobObj is instance of slob.Slob class
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		try:
 			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
@@ -146,7 +146,7 @@ class Reader(object):
 		for key, value in tags.items():
 			self._glos.setInfo(f"slob.{key}", value)
 
-	def __len__(self):
+	def __len__(self) -> int:
 		if self._slobObj is None:
 			log.error("called len() on a reader which is not open")
 			return 0
@@ -159,7 +159,7 @@ class Reader(object):
 		return st.replace('href="', 'href="bword://')\
 			.replace("href='", "href='bword://")
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		from pyglossary.plugin_lib.slob import MIME_HTML, MIME_TEXT
 		if self._slobObj is None:
 			raise RuntimeError("iterating over a reader while it's not open")
@@ -241,7 +241,7 @@ class Writer(object):
 	def _slobObserver(
 		self,
 		event: "slob.WriterEvent",  # noqa: F401, F821
-	):
+	) -> None:
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
 	def _open(self, filename: str, namePostfix: str) -> None:
@@ -273,7 +273,7 @@ class Writer(object):
 		self._open(filename, namePostfix)
 		self._filename = filename
 
-	def finish(self):
+	def finish(self) -> None:
 		self._filename = None
 		if self._slobWriter is not None:
 			self._slobWriter.finalize()

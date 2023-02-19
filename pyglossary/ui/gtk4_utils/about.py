@@ -26,7 +26,7 @@ from .utils import (
 
 
 class AboutTabTitleBox(gtk.Box):
-	def __init__(self, title: str, icon: str):
+	def __init__(self, title: str, icon: str) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		self.set_spacing(10)
 		pack(self, VBox(), expand=0)

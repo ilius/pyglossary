@@ -14,7 +14,7 @@ def dataToPrettyJson(
 	data: "JsonEncodable",
 	ensure_ascii: bool = False,
 	sort_keys: bool = False,
-):
+) -> str:
 	return json.dumps(
 		data,
 		sort_keys=sort_keys,

@@ -24,7 +24,7 @@ import pkgutil
 import shutil
 import sys
 from os.path import basename, isdir, join
-from typing import Dict, Generator, Optional
+from typing import Any, Dict, Generator, Optional
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -95,7 +95,7 @@ extraDocs = [
 BeautifulSoup = None
 
 
-def loadBeautifulSoup():
+def loadBeautifulSoup() -> None:
 	global BeautifulSoup
 	try:
 		import bs4 as BeautifulSoup
@@ -112,7 +112,7 @@ def loadBeautifulSoup():
 		)
 
 
-def abspath_or_None(path):
+def abspath_or_None(path: str) -> str:
 	return os.path.abspath(os.path.expanduser(path)) if path else None
 
 
@@ -137,7 +137,7 @@ def write_header(
 			toFile.write(front_back_matter.read())
 
 
-def format_default_prefs(default_prefs):
+def format_default_prefs(default_prefs: "Optional[Dict[str, Any]]") -> str:
 	"""
 	:type default_prefs: dict or None
 
@@ -160,7 +160,7 @@ def format_default_prefs(default_prefs):
 	).strip()
 
 
-def write_css(fname, css_file):
+def write_css(fname: str, css_file: str) -> None:
 	with open(fname, mode="wb") as toFile:
 		if css_file:
 			with open(css_file, mode="rb") as fromFile:
@@ -226,7 +226,7 @@ class Writer(object):
 		self._glos = glos
 		self._dirname = None
 
-	def finish(self):
+	def finish(self) -> None:
 		self._dirname = None
 
 	def open(self, dirname: str) -> None:

@@ -32,7 +32,7 @@ from typing import Generator
 
 from pyglossary.core import log, pip
 from pyglossary.flags import NEVER
-from pyglossary.glossary_type import EntryType
+from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.os_utils import indir
 
 enable = True
@@ -93,7 +93,7 @@ class Writer:
 		"marisa_trie": "marisa-trie",
 	}
 
-	def __init__(self, glos, **kwargs):
+	def __init__(self, glos: "GlossaryType", **kwargs) -> None:
 		self._glos = glos
 		self._filename = None
 		self._words = []
@@ -133,7 +133,7 @@ class Writer:
 		# for now we just skip data entries and remove '<img' tags
 		return self._img_pattern.sub("[Image: \\1]", defi)
 
-	def write_groups(self):
+	def write_groups(self) -> None:
 		import gzip
 		from collections import OrderedDict
 
@@ -144,7 +144,7 @@ class Writer:
 		groupCounter = 0
 		htmlContents = htmlHeader
 
-		def writeGroup(lastPrefix):
+		def writeGroup(lastPrefix) -> None:
 			nonlocal htmlContents
 			group_fname = fixFilename(lastPrefix)
 			htmlContents += "</html>"

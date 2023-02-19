@@ -25,7 +25,7 @@ class Layer(object):
 
 	__slots__ = ["tags", "text"]
 
-	def __init__(self, stack):
+	def __init__(self, stack) -> None:
 		stack.append(self)
 		self.tags = set()
 		self.text = ""

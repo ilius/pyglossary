@@ -18,7 +18,7 @@ import re
 from datetime import datetime
 from os.path import isdir, isfile, join, split
 from struct import unpack
-from typing import TYPE_CHECKING, Dict, Match, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Iterator, Match, Tuple
 
 if TYPE_CHECKING:
 	import lxml
@@ -62,7 +62,7 @@ class Reader(object):
 	_html: bool = True
 	_html_full: bool = False
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos: GlossaryType = glos
 		self._filename = ""
 		self._file = None
@@ -75,7 +75,7 @@ class Reader(object):
 		self._titleById = {}
 		self._wordCount = 0
 
-	def sub_link(self, m: "Match"):
+	def sub_link(self, m: "Match") -> str:
 		from lxml.html import fromstring, tostring
 
 		a_raw = m.group(0)
@@ -175,7 +175,7 @@ class Reader(object):
 			f"number of entries: {self._wordCount}",
 		)
 
-	def setMetadata(self, infoPlistPath: str):
+	def setMetadata(self, infoPlistPath: str) -> None:
 		import biplist
 
 		if not isfile(infoPlistPath):
@@ -184,7 +184,7 @@ class Reader(object):
 				"Please provide 'Contents/' folder of the dictionary",
 			)
 
-		metadata: Dict
+		metadata: "Dict[str, Any]"
 		try:
 			metadata = biplist.readPlist(infoPlistPath)
 		except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
@@ -224,7 +224,7 @@ class Reader(object):
 		if "DCSDictionaryLanguages" in metadata:
 			self.setLangs(metadata)
 
-	def setLangs(self, metadata: Dict):
+	def setLangs(self, metadata: "Dict[str, Any]") -> None:
 		import locale
 
 		langsList = metadata.get("DCSDictionaryLanguages")
@@ -239,15 +239,15 @@ class Reader(object):
 		targetLocale = langs["DCSDictionaryIndexLanguage"]
 		self._glos.targetLangName = locale.normalize(targetLocale).split("_")[0]
 
-	def __len__(self):
+	def __len__(self) -> int:
 		return self._wordCount
 
-	def close(self):
+	def close(self) -> None:
 		if self._file is not None:
 			self._file.close()
 			self._file = None
 
-	def getChunkSize(self, pos):
+	def getChunkSize(self, pos: int) -> "Tuple[int, int]":
 		plus = self._buf[pos:pos + 12].find(b"<d:entry")
 		if plus < 1:
 			return 0, 0
@@ -346,7 +346,7 @@ class Reader(object):
 			byteProgress=(self._absPos, self._limit),
 		), pos
 
-	def readEntryIds(self):
+	def readEntryIds(self) -> None:
 		_file = self._file
 		limit = self._limit
 		titleById = {}
@@ -405,7 +405,7 @@ class Reader(object):
 
 		return OFFSET_FILE_START + 0x4, limit
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		from os.path import dirname
 
 		if self._file is None:

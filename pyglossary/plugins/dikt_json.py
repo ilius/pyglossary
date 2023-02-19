@@ -47,10 +47,10 @@ class Writer(object):
 		self._filename = None
 		glos.preventDuplicateWords()
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def finish(self):
+	def finish(self) -> None:
 		self._filename = None
 
 	def write(self) -> "Generator[None, EntryType, None]":

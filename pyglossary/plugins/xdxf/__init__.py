@@ -22,7 +22,7 @@
 # GNU General Public License for more details.
 
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
 	import lxml
@@ -32,7 +32,7 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.core import log
-from pyglossary.glossary_type import GlossaryType
+from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 )
@@ -108,7 +108,7 @@ class Reader(object):
 		"full_title": "name",
 	}
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None
@@ -118,7 +118,7 @@ class Reader(object):
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		from lxml import etree as ET
 		self._filename = filename
@@ -161,10 +161,10 @@ class Reader(object):
 			self._file.close()
 			self._file = compressionOpen(self._filename, mode="rb")
 
-	def __len__(self):
+	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 		from lxml.etree import tostring
 

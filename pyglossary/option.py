@@ -2,12 +2,12 @@
 
 import logging
 import re
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Optional, Tuple, Union
 
 log = logging.getLogger("pyglossary")
 
 
-def optionFromDict(data):
+def optionFromDict(data: "Dict[str, Any]") -> "Option":
 	className = data.pop("class")
 	if className == "Option":
 		data["typ"] = data.pop("type")
@@ -22,7 +22,7 @@ class Option(object):
 	classes = {}
 
 	@classmethod
-	def register(cls, optClass):
+	def register(cls: "ClassVar", optClass: "ClassVar") -> "ClassVar":
 		cls.classes[optClass.__name__] = optClass
 		return optClass
 
@@ -54,11 +54,11 @@ class Option(object):
 		self.falseComment = falseComment
 
 	@property
-	def typeDesc(self):
+	def typeDesc(self) -> str:
 		return self.typ
 
 	@property
-	def longComment(self):
+	def longComment(self) -> str:
 		comment = self.typeDesc
 		if self.comment:
 			if comment:
@@ -66,7 +66,7 @@ class Option(object):
 			comment += self.comment
 		return comment
 
-	def toDict(self):
+	def toDict(self) -> "Dict[str, Any]":
 		data = {
 			"class": self.__class__.__name__,
 			"type": self.typ,
@@ -91,7 +91,7 @@ class Option(object):
 			return None, True
 		return raw, True
 
-	def validate(self, value):
+	def validate(self, value: "Any") -> bool:
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -120,7 +120,11 @@ class Option(object):
 
 @Option.register
 class BoolOption(Option):
-	def __init__(self, allowNone=False, **kwargs):
+	def __init__(
+		self,
+		allowNone: bool = False,
+		**kwargs,  # noqa: ANN
+	) -> None:
 		values = [False, True]
 		if allowNone:
 			values.append(None)
@@ -130,10 +134,10 @@ class BoolOption(Option):
 			customValue=False,
 			values=values,
 			allowNone=allowNone,
-			**kwargs,
+			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self):
+	def toDict(self) -> "Dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		del data["values"]
@@ -153,14 +157,17 @@ class BoolOption(Option):
 
 @Option.register
 class StrOption(Option):
-	def __init__(self, **kwargs):
+	def __init__(
+		self,
+		**kwargs,  # noqa: ANN
+	) -> None:
 		Option.__init__(
 			self,
 			typ="str",
 			**kwargs,
 		)
 
-	def validate(self, value):
+	def validate(self, value: "Any") -> bool:
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -177,7 +184,10 @@ class StrOption(Option):
 
 @Option.register
 class IntOption(Option):
-	def __init__(self, **kwargs):
+	def __init__(
+		self,
+		**kwargs,  # noqa: ANN
+	) -> None:
 		Option.__init__(
 			self,
 			typ="int",
@@ -232,7 +242,7 @@ class FileSizeOption(IntOption):
 	validPattern = "^([0-9.]+)([kKmMgG]i?[bB]?)$"
 
 	@property
-	def typeDesc(self):
+	def typeDesc(self) -> str:
 		return ""
 
 	def evaluate(self, raw: "Union[str, int]") -> "Tuple[Optional[int], bool]":
@@ -256,7 +266,10 @@ class FileSizeOption(IntOption):
 
 @Option.register
 class FloatOption(Option):
-	def __init__(self, **kwargs):
+	def __init__(
+		self,
+		**kwargs,  # noqa: noqa: ANN
+	) -> None:
 		Option.__init__(
 			self,
 			typ="float",
@@ -278,7 +291,10 @@ class FloatOption(Option):
 
 @Option.register
 class DictOption(Option):
-	def __init__(self, **kwargs):
+	def __init__(
+		self,
+		**kwargs,  # noqa: ANN
+	) -> None:
 		Option.__init__(
 			self,
 			typ="dict",
@@ -288,7 +304,7 @@ class DictOption(Option):
 			**kwargs,
 		)
 
-	def toDict(self):
+	def toDict(self) -> "Dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
@@ -310,17 +326,17 @@ class DictOption(Option):
 
 @Option.register
 class ListOption(Option):
-	def __init__(self, **kwargs):
+	def __init__(self, **kwargs) -> None:
 		Option.__init__(
 			self,
 			typ="list",
 			customValue=True,
 			allowNone=True,
 			multiline=True,
-			**kwargs,
+			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self):
+	def toDict(self) -> "Dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
@@ -344,11 +360,11 @@ class EncodingOption(Option):
 
 	def __init__(
 		self,
-		customValue=True,
-		values=None,
-		comment=None,
-		**kwargs,
-	):
+		customValue: bool = True,
+		values: "Optional[List[str]]" = None,
+		comment: "Optional[str]" = None,
+		**kwargs,  # noqa: ANN
+	) -> None:
 		if values is None:
 			values = [
 				"utf-8",
@@ -386,10 +402,10 @@ class EncodingOption(Option):
 			customValue=customValue,
 			values=values,
 			comment=comment,
-			**kwargs,
+			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self):
+	def toDict(self) -> "Dict[str, Any]":
 		data = Option.toDict(self)
 		del data["values"]
 		return data
@@ -419,11 +435,11 @@ class EncodingOption(Option):
 class NewlineOption(Option):
 	def __init__(
 		self,
-		customValue=True,
-		values=None,
-		comment=None,
-		**kwargs,
-	):
+		customValue: bool = True,
+		values: "Optional[List[str]]" = None,
+		comment: "Optional[str]" = None,
+		**kwargs,  # noqa: ANN
+	) -> None:
 		if values is None:
 			values = [
 				"\r\n",
@@ -439,22 +455,22 @@ class NewlineOption(Option):
 			values=values,
 			multiline=True,
 			comment=comment,
-			**kwargs,
+			**kwargs,  # noqa: ANN
 		)
 
 
 @Option.register
 class HtmlColorOption(Option):
-	def toDict(self):
+	def toDict(self) -> "Dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
 
-	def __init__(self, **kwargs):
+	def __init__(self, **kwargs) -> None:
 		Option.__init__(
 			self,
 			typ="str",
 			customValue=True,
-			**kwargs,
+			**kwargs,  # noqa: ANN
 		)
 		# TODO: use a specific type?

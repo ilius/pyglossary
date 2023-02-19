@@ -16,7 +16,7 @@ class XslXdxfTransformer(object):
 	_gram_color: str = "green"
 	_example_padding: int = 10
 
-	def __init__(self, encoding="utf-8"):
+	def __init__(self, encoding: str = "utf-8") -> None:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -55,7 +55,7 @@ class XdxfTransformer(object):
 	_gram_color: str = "green"
 	_example_padding: int = 10
 
-	def __init__(self, encoding="utf-8"):
+	def __init__(self, encoding: str = "utf-8") -> None:
 		self._encoding = encoding
 
 	def tostring(self, elem: "lxml.etree.Element") -> str:
@@ -66,7 +66,7 @@ class XdxfTransformer(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def hasPrevText(self, prev: "Union[None, str, lxml.etree.Element]"):
+	def hasPrevText(self, prev: "Union[None, str, lxml.etree.Element]") -> bool:
 		if isinstance(prev, str):
 			return True
 		if prev is None:
@@ -90,10 +90,10 @@ class XdxfTransformer(object):
 		parent: "lxml.etree.Element",
 		prev: "Union[None, str, lxml.etree.Element]",
 		stringSep: "Optional[str]" = None,
-	):
+	) -> None:
 		from lxml import etree as ET
 
-		def addSep():
+		def addSep() -> None:
 			if stringSep is None:
 				hf.write(ET.Element("br"))
 			else:
@@ -131,7 +131,7 @@ class XdxfTransformer(object):
 		self,
 		hf: "lxml.etree.htmlfile",
 		elem: "Union[str, lxml.etree.Element]",
-	):
+	) -> None:
 		prev = None
 		stringSep = " "
 		with hf.element("div", **{
@@ -160,7 +160,7 @@ class XdxfTransformer(object):
 		self,
 		hf: "lxml.etree.htmlfile",
 		child: "Union[str, lxml.etree.Element]",
-	):
+	) -> None:
 		iref_url = child.attrib.get("href", "")
 		if iref_url.endswith((".mp3", ".wav", ".aac", ".ogg")):
 			#  with hf.element("audio", src=iref_url):
@@ -184,7 +184,7 @@ class XdxfTransformer(object):
 		parent: "lxml.etree.Element",
 		prev: "Union[None, str, lxml.etree.Element]",
 		stringSep: "Optional[str]" = None,
-	):
+	) -> None:
 		from lxml import etree as ET
 
 		if isinstance(child, str):
@@ -354,7 +354,7 @@ class XdxfTransformer(object):
 		self,
 		child: "Union[str, lxml.etree.Element]",
 		prev: "Union[str, lxml.etree.Element]",
-	):
+	) -> bool:
 		if isinstance(child, str):
 			if len(child) > 0 and child[0] in ".,;)":
 				return False
@@ -376,7 +376,7 @@ class XdxfTransformer(object):
 		elem: "lxml.etree.Element",
 		sep: "Optional[str]" = None,
 		stringSep: "Optional[str]" = None,
-	):
+	) -> None:
 		prev = None
 		for index, child in enumerate(elem.xpath("child::node()")):
 			if sep and index > 0 and self.shouldAddSep(child, prev):

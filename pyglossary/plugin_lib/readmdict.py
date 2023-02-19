@@ -93,7 +93,7 @@ class MDict(object):
 	Base class which reads in header and key block.
 	It has no public methods and serves only as code sharing base class.
 	"""
-	def __init__(self, fname, encoding='', passcode=None):
+	def __init__(self, fname, encoding='', passcode=None) -> None:
 		self._fname = fname
 		self._encoding = encoding.upper()
 		self._encrypted_key = None
@@ -629,7 +629,7 @@ class MDD(MDict):
 	>>> for filename,content in mdd.items():
 	... print filename, content[:10]
 	"""
-	def __init__(self, fname, passcode=None):
+	def __init__(self, fname, passcode=None) -> None:
 		MDict.__init__(self, fname, encoding='UTF-16', passcode=passcode)
 
 
@@ -642,7 +642,7 @@ class MDX(MDict):
 	>>> for key,value in mdx.items():
 	... print key, value[:10]
 	"""
-	def __init__(self, fname, encoding='', substyle=False, passcode=None):
+	def __init__(self, fname, encoding='', substyle=False, passcode=None) -> None:
 		MDict.__init__(self, fname, encoding, passcode)
 		self._substyle = substyle
 

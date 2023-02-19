@@ -2,12 +2,13 @@
 
 import html
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, List, Tuple
+from typing import TYPE_CHECKING, Callable, Iterator, List, Tuple
 
 if TYPE_CHECKING:
 	import lxml
 
 from pyglossary.core import log
+from pyglossary.glossary_type import EntryType, GlossaryType
 
 enable = True
 lname = "dict_cc"
@@ -24,23 +25,23 @@ website = (
 
 
 class Reader(object):
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self):
+	def _clear(self) -> None:
 		self._filename = ''
 		self._con = None
 		self._cur = None
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("h")
 
-	def __len__(self):
+	def __len__(self) -> int:
 		self._cur.execute(
 			"select count(distinct term1)+count(distinct term2) from main_ft",
 		)
@@ -165,11 +166,11 @@ class Reader(object):
 			defi = f.getvalue().decode("utf-8")
 			yield glos.newEntry(headword, defi, defiFormat="h")
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		yield from self._iterOneDirection("term1", "term2")
 		yield from self._iterOneDirection("term2", "term1")
 
-	def close(self):
+	def close(self) -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:

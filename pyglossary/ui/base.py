@@ -175,7 +175,7 @@ class UIBase(object):
 		("remove_html", "remove_html_all"),
 	]
 
-	def __init__(self, **kwargs):
+	def __init__(self, **kwargs) -> None:
 		self.config = {}
 
 	def progressInit(self, title):

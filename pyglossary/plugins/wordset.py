@@ -33,7 +33,7 @@ optionsProp = {
 class Reader(object):
 	_encoding: str = "utf-8"
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 		self.defiTemplate = (

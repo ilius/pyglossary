@@ -159,13 +159,13 @@ re_ref = re.compile("<<(.*?)>>")
 _parse = DSLParser().parse
 
 
-def apply_shortcuts(line):
+def apply_shortcuts(line: str):
 	for pattern, sub in shortcuts:
 		line = pattern.sub(sub, line)
 	return line
 
 
-def _clean_tags(line, audio):
+def _clean_tags(line: str, audio):
 	r"""
 	[m{}] => <div style="margin-left:{}em">
 	[*]   => <span class="sec">
@@ -312,14 +312,14 @@ class Reader(object):
 	re_tags_open = re.compile(r"(?<!\\)\[(c |[cuib]\])")
 	re_tags_close = re.compile(r"\[/[cuib]\]")
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self.clean_tags = _clean_tags
 		self._file = None
 		self._fileSize = 0
 		self._bufferLine = ""
 
-	def close(self):
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 		self._file = None
@@ -328,7 +328,7 @@ class Reader(object):
 		# FIXME
 		return 0
 
-	def _clean_tags_only_markup(self, line, audio):
+	def _clean_tags_only_markup(self, line: str, audio):
 		return _parse(line)
 
 	def open(
@@ -397,7 +397,7 @@ class Reader(object):
 	def setInfo(self, key, value):
 		self._glos.setInfo(key, unwrap_quotes(value))
 
-	def processHeaderLine(self, line):
+	def processHeaderLine(self, line: str):
 		if line.startswith("#NAME"):
 			self.setInfo("name", unwrap_quotes(line[6:].strip()))
 		elif line.startswith("#INDEX_LANGUAGE"):

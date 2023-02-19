@@ -1,4 +1,5 @@
-def chBaseIntToStr(number, base):
+
+def chBaseIntToStr(number: int, base: int) -> str:
 	"""
 		reverse function of int(str, base) and long(str, base)
 	"""
@@ -17,3 +18,4 @@ def chBaseIntToStr(number, base):
 		result = abc[rdigit] + result
 		if number == 0:
 			return sign + result
+	return ""

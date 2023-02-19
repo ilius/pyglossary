@@ -266,7 +266,7 @@ class AbsolutePathHistory(FileHistory):
 
 
 class UI(ui_cmd.UI):
-	def __init__(self):
+	def __init__(self) -> None:
 		self._inputFilename = ""
 		self._outputFilename = ""
 		self._inputFormat = ""

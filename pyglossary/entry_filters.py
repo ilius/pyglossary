@@ -22,7 +22,7 @@ class EntryFilter(object):
 	desc = ""
 	falseComment = ""
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self.glos = glos
 
 	def prepare(self) -> None:
@@ -97,11 +97,11 @@ class LowerWord(EntryFilter):
 	desc = "Lowercase word(s)"
 	falseComment = "Do not lowercase words before writing"
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._re_word_ref = re.compile('href=["\'](bword://[^"\']+)["\']')
 
-	def lowerWordRefs(self, defi):
+	def lowerWordRefs(self, defi: str) -> str:
 		return self._re_word_ref.sub(
 			lambda m: m.group(0).lower(),
 			defi,
@@ -126,7 +126,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 	name = "remove_html_all"
 	desc = "Remove all HTML tags (not their contents) from definition"
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._p_pattern = re.compile(
 			'<p( [^<>]*?)?>(.*?)</p>',
 			re.DOTALL,
@@ -166,7 +166,7 @@ class RemoveHtmlTags(EntryFilter):
 		" (not their contents) from definition"
 	)
 
-	def __init__(self, glos: "GlossaryType", tagsStr: str):
+	def __init__(self, glos: "GlossaryType", tagsStr: str) -> None:
 		import re
 		tags = tagsStr.split(",")
 		self.glos = glos
@@ -198,7 +198,7 @@ class NormalizeHtml(EntryFilter):
 		"br", "hr",
 	)
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		log.info("Normalizing HTML tags")
 		self._pattern = re.compile(
 			"(" + "|".join([
@@ -208,7 +208,7 @@ class NormalizeHtml(EntryFilter):
 			re.S | re.I,
 		)
 
-	def _subLower(self, m) -> str:
+	def _subLower(self, m: "re.Match") -> str:
 		return m.group(0).lower()
 
 	def _fixDefi(self, st: str) -> str:
@@ -233,7 +233,7 @@ class LanguageCleanup(EntryFilter):
 	name = "lang"
 	desc = "Language-specific cleanup/fixes"
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._run_func = None  # type: Callable[[EntryType], [Optional[EntryType]]]
 
@@ -300,7 +300,7 @@ class PreventDuplicateWords(EntryFilter):
 	name = "prevent_duplicate_words"
 	desc = "Prevent duplicate words"
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._wordSet = set()
 
@@ -331,7 +331,7 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 	name = "skip_duplicate_headword"
 	desc = "Skip entries with a duplicate headword"
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._wset = set()
 
@@ -347,7 +347,7 @@ class TrimArabicDiacritics(EntryFilter):
 	name = "trim_arabic_diacritics"
 	desc = "Trim Arabic diacritics from headword"
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._pat = re.compile("[\u064b-\u065f]")
 
@@ -366,7 +366,7 @@ class ShowProgressBar(EntryFilter):
 	name = "progressbar"
 	desc = "Progress Bar"
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._wordCount = -1
 		self._wordCountThreshold = 0
@@ -400,7 +400,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 	name = "max_memory_usage"
 	desc = "Show Max Memory Usage"
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._max_mem_usage = 0
 

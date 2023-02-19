@@ -111,7 +111,7 @@ or the CSS border-spacing property on containers.
 
 
 class FormatDialog(gtk.Dialog):
-	def __init__(self, descList: "List[str]", parent=None, **kwargs):
+	def __init__(self, descList: "List[str]", parent=None, **kwargs) -> None:
 		gtk.Dialog.__init__(self, transient_for=parent, **kwargs)
 		self.set_default_size(400, 400)
 		self.vbox = self.get_content_area()
@@ -256,7 +256,7 @@ class FormatButton(gtk.Button):
 	noneLabel = "[Select Format]"
 	dialogTitle = "Select Format"
 
-	def __init__(self, descList: "List[str]", parent=None):
+	def __init__(self, descList: "List[str]", parent=None) -> None:
 		gtk.Button.__init__(self)
 		self.set_label(self.noneLabel)
 		###
@@ -587,7 +587,7 @@ class FormatOptionsDialog(gtk.Dialog):
 
 
 class FormatBox(FormatButton):
-	def __init__(self, descList: "List[str]", parent=None):
+	def __init__(self, descList: "List[str]", parent=None) -> None:
 		FormatButton.__init__(self, descList, parent=parent)
 
 		self.optionsValues = {}
@@ -678,7 +678,7 @@ class FormatBox(FormatButton):
 class InputFormatBox(FormatBox):
 	dialogTitle = "Select Input Format"
 
-	def __init__(self, **kwargs):
+	def __init__(self, **kwargs) -> None:
 		FormatBox.__init__(self, readDesc, **kwargs)
 
 	def kind(self):
@@ -695,7 +695,7 @@ class InputFormatBox(FormatBox):
 class OutputFormatBox(FormatBox):
 	dialogTitle = "Select Output Format"
 
-	def __init__(self, **kwargs):
+	def __init__(self, **kwargs) -> None:
 		FormatBox.__init__(self, writeDesc, **kwargs)
 
 	def kind(self):
@@ -707,7 +707,7 @@ class OutputFormatBox(FormatBox):
 
 
 class GtkTextviewLogHandler(logging.Handler):
-	def __init__(self, mainWin, treeview_dict):
+	def __init__(self, mainWin, treeview_dict) -> None:
 		logging.Handler.__init__(self)
 
 		self.mainWin = mainWin
@@ -757,7 +757,7 @@ class GtkTextviewLogHandler(logging.Handler):
 
 
 class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
-	def __init__(self, ui, textview):
+	def __init__(self, ui, textview) -> None:
 		GtkTextviewLogHandler.__init__(self, ui, {
 			"CRITICAL": textview,
 			"ERROR": textview,
@@ -827,7 +827,7 @@ sortKeyNames = [
 # Gtk.CheckButton is not a subclass of Gtk.Button! LOL
 
 class SortOptionsBox(gtk.Box):
-	def __init__(self, mainWin):
+	def __init__(self, mainWin) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		self.mainWin = mainWin
 		###
@@ -909,7 +909,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 		self.hide()
 		return True
 
-	def __init__(self, mainWin, **kwargs):
+	def __init__(self, mainWin, **kwargs) -> None:
 		gtk.Dialog.__init__(
 			self,
 			transient_for=mainWin,
@@ -995,7 +995,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 
 
 class GeneralOptionsButton(gtk.Button):
-	def __init__(self, mainWin):
+	def __init__(self, mainWin) -> None:
 		gtk.Button.__init__(self, label="General Options")
 		self.mainWin = mainWin
 		self.connect("clicked", self.onClick)
@@ -1053,7 +1053,7 @@ check {
 		_id = self.statusBar.get_context_id(msg)
 		self.statusBar.push(_id, msg)
 
-	def __init__(self, ui=None, **kwargs):
+	def __init__(self, ui=None, **kwargs) -> None:
 		self.ui = ui
 		#####
 		gtk.Window.__init__(self, **kwargs)
@@ -1667,7 +1667,7 @@ check {
 
 
 class Application(gtk.Application):
-	def __init__(self):
+	def __init__(self) -> None:
 		gtk.Application.__init__(
 			self,
 			application_id="apps.starcal",
@@ -1686,7 +1686,7 @@ class Application(gtk.Application):
 
 
 class UI(UIBase):
-	def __init__(self):
+	def __init__(self) -> None:
 		UIBase.__init__(self)
 		self.app = Application()
 		self.win =  MainWindow(ui=self)

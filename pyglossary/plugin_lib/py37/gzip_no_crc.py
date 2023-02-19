@@ -74,7 +74,7 @@ class _PaddedFile:
     of an actual file. Shouldn't be used outside of gzip.py, as it lacks
     essential functionality."""
 
-    def __init__(self, f, prepend=b''):
+    def __init__(self, f, prepend=b'') -> None:
         self._buffer = prepend
         self._length = len(prepend)
         self.file = f
@@ -378,7 +378,7 @@ class GzipFile(_compression.BaseStream):
 
 
 class _GzipReader(_compression.DecompressReader):
-    def __init__(self, fp):
+    def __init__(self, fp) -> None:
         super().__init__(_PaddedFile(fp), zlib.decompressobj,
                          wbits=-zlib.MAX_WBITS)
         # Set flag indicating start of a new member

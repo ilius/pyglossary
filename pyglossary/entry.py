@@ -20,13 +20,14 @@ if TYPE_CHECKING:
 	from typing import (
 		Any,
 		Callable,
+		ClassVar,
 		List,
 		Literal,
 		Optional,
 		Tuple,
 	)
 
-	from .glossary_type import GlossaryType, RawEntryType
+	from .glossary_type import EntryType, GlossaryType, RawEntryType
 
 
 log = logging.getLogger("pyglossary")
@@ -72,7 +73,7 @@ class DataEntry(BaseEntry):
 		else:
 			return self._data
 
-	def size(self):
+	def size(self) -> int:
 		if self._tmpPath:
 			return getsize(self._tmpPath)
 		return len(self._data)
@@ -108,7 +109,7 @@ class DataEntry(BaseEntry):
 	def defi(self) -> str:
 		return f"File: {self._fname}"
 
-	def byteProgress(self):
+	def byteProgress(self) -> "Optional[Tuple[int, int]]":
 		return self._byteProgress
 
 	@property
@@ -143,7 +144,7 @@ class DataEntry(BaseEntry):
 	def replace(self, source: str, target: str) -> None:
 		pass
 
-	def removeEmptyAndDuplicateAltWords(self):
+	def removeEmptyAndDuplicateAltWords(self) -> None:
 		pass
 
 	def getRaw(self, glos: "GlossaryType") -> "RawEntryType":
@@ -246,14 +247,14 @@ class Entry(BaseEntry):
 		self._defiFormat = defiFormat
 		self._byteProgress = byteProgress  # Optional[Tuple[int, int]]
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return (
 			f"Entry({self._word!r}, {self._defi!r}, "
 			f"defiFormat={self._defiFormat!r})"
 		)
 
 	@property
-	def s_word(self):
+	def s_word(self) -> str:
 		"""
 			returns string of word,
 				and all the alternate words
@@ -310,7 +311,7 @@ class Entry(BaseEntry):
 			self._defiFormat = "h"
 			return
 
-	def byteProgress(self):
+	def byteProgress(self) -> "Optional[Tuple[int, int]]":
 		return self._byteProgress
 
 	def addAlt(self, alt: str) -> None:
@@ -376,7 +377,7 @@ class Entry(BaseEntry):
 		self.replaceInWord(source, target)
 		self.replaceInDefi(source, target)
 
-	def removeEmptyAndDuplicateAltWords(self):
+	def removeEmptyAndDuplicateAltWords(self) -> None:
 		l_word = self.l_word
 		if len(l_word) == 1:
 			return
@@ -441,11 +442,11 @@ class Entry(BaseEntry):
 
 	@classmethod
 	def fromRaw(
-		cls,
+		cls: "ClassVar",
 		glos: "GlossaryType",
 		rawEntry: "RawEntryType",
 		defaultDefiFormat: str = "m",
-	):
+	) -> "EntryType":
 		"""
 			rawEntry can be (word, defi) or (word, defi, defiFormat)
 			where both word and defi can be string or list of strings

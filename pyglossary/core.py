@@ -37,11 +37,14 @@ noColor = False
 
 
 class Formatter(logging.Formatter):
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN
 		logging.Formatter.__init__(self, *args, **kwargs)
 		self.fill = None  # type: Optional[Callable[[str], str]]
 
-	def formatMessage(self, record):
+	def formatMessage(
+		self,
+		record: "logging.LogRecord",
+	) -> str:
 		msg = logging.Formatter.formatMessage(self, record)
 		if self.fill is not None:
 			msg = self.fill(msg)
@@ -68,7 +71,7 @@ class MyLogger(logging.Logger):
 		"All",  # "Not-Set",
 	]
 
-	def __init__(self, *args):
+	def __init__(self, *args) -> None:  # noqa: ANN
 		logging.Logger.__init__(self, *args)
 		self._verbosity = 3
 		self._timeEnable = False
@@ -80,7 +83,7 @@ class MyLogger(logging.Logger):
 	def getVerbosity(self) -> int:
 		return self._verbosity
 
-	def trace(self, msg: str):
+	def trace(self, msg: str) -> None:
 		self.log(TRACE, msg)
 
 	def pretty(self, data: "Any", header: str = "") -> None:
@@ -90,7 +93,7 @@ class MyLogger(logging.Logger):
 	def isDebug(self) -> bool:
 		return self.getVerbosity() >= 4
 
-	def newFormatter(self):
+	def newFormatter(self) -> Formatter:
 		timeEnable = self._timeEnable
 		if timeEnable:
 			fmt = "%(asctime)s [%(levelname)s] %(message)s"
@@ -98,13 +101,13 @@ class MyLogger(logging.Logger):
 			fmt = "[%(levelname)s] %(message)s"
 		return Formatter(fmt)
 
-	def setTimeEnable(self, timeEnable: bool):
+	def setTimeEnable(self, timeEnable: bool) -> None:
 		self._timeEnable = timeEnable
 		formatter = self.newFormatter()
 		for handler in self.handlers:
 			handler.setFormatter(formatter)
 
-	def addHandler(self, handler: "logging.Handler"):
+	def addHandler(self, handler: "logging.Handler") -> None:
 		# if want to add separate format (new config keys and flags) for ui_gtk
 		# and ui_tk, you need to remove this function and run handler.setFormatter
 		# in ui_gtk and ui_tk
@@ -166,14 +169,14 @@ class StdLogHandler(logging.Handler):
 	# 1: dark red (like 31m), 196: real red, 9: light red
 	# 15: white, 229: light yellow (#ffffaf), 226: real yellow (#ffff00)
 
-	def __init__(self, noColor: bool = False):
+	def __init__(self, noColor: bool = False) -> None:
 		logging.Handler.__init__(self)
 		self.set_name("std")
 		self.noColor = noColor
 		self.config = {}
 
 	@property
-	def endFormat(self):
+	def endFormat(self) -> str:
 		if self.noColor:
 			return ""
 		return "\x1b[0;0;0m"
@@ -233,7 +236,7 @@ def checkCreateConfDir() -> None:
 			usrF.write(srcF.read())
 
 
-def in_virtualenv():
+def in_virtualenv() -> bool:
 	if hasattr(sys, 'real_prefix'):
 		return True
 	if hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix:
@@ -241,7 +244,7 @@ def in_virtualenv():
 	return False
 
 
-def getDataDir():
+def getDataDir() -> str:
 	if in_virtualenv():
 		pass  # TODO
 		# print(f"prefix={sys.prefix}, base_prefix={sys.base_prefix}")
@@ -286,10 +289,15 @@ def getDataDir():
 	raise OSError("failed to detect dataDir")
 
 
-def windows_show_exception(*exc_info):
+# Tuple[Type, Exception, types.TracebackType
+def windows_show_exception(
+	_type: "Type",
+	exc: "Exception",
+	tb: "types.TracebackType",
+) -> None:
 	import ctypes
 	msg = format_exception(
-		exc_info=exc_info,
+		exc_info=(_type, exc, tb),
 		add_locals=(log.level <= logging.DEBUG),
 		add_globals=False,
 	)

@@ -25,16 +25,16 @@ optionsProp = {}
 
 
 class Writer(object):
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		self._file = None
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename, mode="wt", encoding="utf-8")
 
-	def finish(self):
+	def finish(self) -> None:
 		self._filename = None
 		if self._file:
 			self._file.close()
@@ -151,7 +151,7 @@ class Writer(object):
 
 
 class Reader(object):
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
 	def close(self) -> None:

@@ -16,7 +16,7 @@ class Lang(object):
 		names: "List[str]",
 		titleTag: str = "b",
 		rtl: int = 0,
-	):
+	) -> None:
 		self._codes = codes
 		self._names = names
 		self._titleTag = titleTag
@@ -70,7 +70,7 @@ class LangDict(dict):
 				log.error(f"duplicate language name: {name}")
 			self[name.lower()] = lang
 
-	def load(self):
+	def load(self) -> None:
 		from time import time as now
 		if len(self) > 0:
 			return

@@ -5,7 +5,7 @@ from typing import Optional
 
 
 class MockLogHandler(logging.Handler):
-	def __init__(self):
+	def __init__(self) -> None:
 		logging.Handler.__init__(self)
 		self.clear()
 

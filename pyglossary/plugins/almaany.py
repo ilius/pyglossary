@@ -15,29 +15,33 @@ website = (
 	"Almaany.com Arabic Dictionary - Google Play",
 )
 
+from typing import Iterator
+
+from pyglossary.glossary_type import EntryType, GlossaryType
+
 
 class Reader(object):
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self):
+	def _clear(self) -> None:
 		self._filename = ''
 		self._con = None
 		self._cur = None
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("h")
 
-	def __len__(self):
+	def __len__(self) -> int:
 		self._cur.execute("select count(*) from WordsTable")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		from pyglossary.langs.writing_system import getWritingSystemFromText
 		alternateDict = {}
 		self._cur.execute("select wordkey, searchwordkey from Keys")
@@ -78,7 +82,7 @@ class Reader(object):
 				defiFormat="h",
 			)
 
-	def close(self):
+	def close(self) -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:

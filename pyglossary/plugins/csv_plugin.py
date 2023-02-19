@@ -77,7 +77,7 @@ class Reader(object):
 	_newline: str = "\n"
 	_delimiter: str = ","
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self.clear()
 
@@ -220,10 +220,10 @@ class Writer(object):
 	_enable_info: bool = True
 	_word_title: bool = False
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = compressionOpen(
 			filename,
@@ -244,7 +244,7 @@ class Writer(object):
 			for key, value in self._glos.iterInfo():
 				self._csvWriter.writerow([f"#{key}", value])
 
-	def finish(self):
+	def finish(self) -> None:
 		self._filename = None
 		if self._file:
 			self._file.close()

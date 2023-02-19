@@ -1,13 +1,13 @@
 from hashlib import sha1
 from os import listdir, makedirs
 from os.path import dirname, isdir, isfile, join, splitext
-from typing import Optional, Set
+from typing import Generator, Iterator, Optional, Set
 
 from pyglossary.compression import (
 	compressionOpenFunc,
 )
 from pyglossary.core import log
-from pyglossary.glossary_type import GlossaryType
+from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	StrOption,
 )
@@ -41,10 +41,10 @@ class Writer(object):
 		self._glos = glos
 		self._filename = None
 
-	def finish(self):
+	def finish(self) -> None:
 		pass
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		if not isdir(filename):
 			makedirs(filename)
@@ -64,7 +64,7 @@ class Writer(object):
 			bw[4:8].hex() + "-" + sha1(b_word).hexdigest()[:8],  # noqa: S324
 		)
 
-	def write(self ):
+	def write(self) -> None:
 		from collections import OrderedDict as odict
 
 		from pyglossary.json_utils import dataToPrettyJson
@@ -119,7 +119,7 @@ class Reader(object):
 		self._filename = None
 		self._wordCount = 0
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		from pyglossary.json_utils import jsonToOrderedData
 
 		self._filename = filename
@@ -130,13 +130,13 @@ class Reader(object):
 		for key, value in info.items():
 			self._glos.setInfo(key, value)
 
-	def close(self):
+	def close(self) -> None:
 		pass
 
-	def __len__(self):
+	def __len__(self) -> int:
 		return self._wordCount
 
-	def _fromFile(self, fpath):
+	def _fromFile(self, fpath: str) -> "EntryType":
 		_, ext = splitext(fpath)
 		c_open = compressionOpenFunc(ext.lstrip("."))
 		if not c_open:
@@ -147,7 +147,7 @@ class Reader(object):
 			defi = _file.read()
 			return self._glos.newEntry(words, defi)
 
-	def _listdirSortKey(self, name):
+	def _listdirSortKey(self, name: str) -> str:
 		name_nox, ext = splitext(name)
 		if ext == ".d":
 			return name
@@ -157,7 +157,7 @@ class Reader(object):
 		self,
 		dpath: str,
 		exclude: "Optional[Set[str]]",
-	):
+	) -> "Generator[None, EntryType, None]":
 		children = listdir(dpath)
 		if exclude:
 			children = [
@@ -175,7 +175,7 @@ class Reader(object):
 				continue
 			log.error(f"Not a file nor a directory: {cpath}")
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		yield from self._readDir(
 			self._filename,
 			{

@@ -19,6 +19,7 @@ Chinese wildcard and pinyin indexes.
 """
 
 import re
+from typing import Optioal, Sequence, Set
 
 import bs4
 
@@ -40,7 +41,7 @@ pinyinPattern = re.compile(r",|;")
 nonHieroglyphPattern = re.compile(r"[^\u4e00-\u9fff]")
 
 
-def zh(titles, content):
+def zh(titles: "Sequence[str]", content: str) -> "Set[str]":
 	"""
 	Chinese indexes.
 
@@ -68,7 +69,7 @@ def zh(titles, content):
 	return indexes
 
 
-def pinyin_indexes(content):
+def pinyin_indexes(content: str) -> "Set[str]":
 	pinyin = find_pinyin(content)
 	# assert type(pinyin) == unicode
 
@@ -104,7 +105,7 @@ def pinyin_indexes(content):
 	return indexes
 
 
-def find_pinyin(content):
+def find_pinyin(content: str) -> "Optioal[str]":
 	# assume that content is HTML and pinyin is inside second tag
 	# (first is <h1>)
 	soup = bs4.BeautifulSoup(content.splitlines()[0], features="lxml")

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+ruff --select ANN ./pyglossary \
+    | grep -v 'Missing type annotation for `self` in method' \
+    | grep -v 'Missing type annotation for `\*\*' \
+    | grep -v _test.py \
+    | less -R

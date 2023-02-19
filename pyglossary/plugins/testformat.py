@@ -32,7 +32,7 @@ class Reader(object):
 		# iteration begins and __iter__ method is called
 		return self._wordCount
 
-	def open(self, filename) -> None:
+	def open(self, filename: str) -> None:
 		# open the file, read headers / info and set info to self._glos
 		# and set self._wordCount if you can
 		# read-options should be keyword arguments in this method
@@ -45,7 +45,7 @@ class Reader(object):
 		self._glos.setInfo("author", "Me")
 		self._glos.setInfo("copyright", "GPL")
 
-	def close(self):
+	def close(self) -> None:
 		# this is called after reading/conversion is finished
 		# if you have an open file object, close it here
 		# if you need to clean up temp files, do it here
@@ -98,5 +98,5 @@ class Writer(object):
 		# if an info key doesn't exist, getInfo returns empty string
 		# now write info to the output file (depending on your output format)
 
-	def finish(self):
+	def finish(self) -> None:
 		self._filename = None

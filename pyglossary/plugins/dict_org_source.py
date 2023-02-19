@@ -31,10 +31,10 @@ class Writer(object):
 		self._glos = glos
 		self._filename = None
 
-	def finish(self):
+	def finish(self) -> None:
 		self._filename = None
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		if self._remove_html_all:
 			self._glos.removeHtmlTagsAll()

@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+#sed -i -E 's/(def open\(.*\)):$/\1 -> None:/g' "$@"
+#sed -i -E 's/(def close\(.*\)):$/\1 -> None:/g' "$@"
+#sed -i -E 's/(def clear\(.*\)):$/\1 -> None:/g' "$@"
+#sed -i -E 's/(def _clear\(.*\)):$/\1 -> None:/g' "$@"
+#sed -i -E 's/(def finish\(.*\)):$/\1 -> None:/g' "$@"
+#sed -i -E 's/(def __len__\(.*\)):$/\1 -> int:/g' "$@"
+#sed -i -E 's/(def __iter__\(.*\)):$/\1 -> "Iterator[EntryType]":/g' "$@"
+
+#sed -i -E 's/(def write.*\)):$/\1 -> None:/g' "$@"
+
+sed -i -E 's/(def is.*\)):$/\1 -> bool:/g' "$@"
+
+#sed -i -E 's/(def setMetadata\(.*\)):$/\1 -> None:/g' "$@"
+
+
+#sed -i -E 's/(def .* filename)([^:])/\1: str\2/g' "$@"
+
+#sed -i -E 's/(def .*, glos)([^:])/\1: "GlossaryType"\2/g' "$@"
+
+#sed -i -E 's/(def .*header)([,)=])/\1: str\2/g' "$@"
+
+#sed -i -E 's/(def .* word)([^:])/\1: str\2/g' "$@"

@@ -9,7 +9,7 @@ class BaseEntry(EntryType):
 	__slots__ = []
 
 	@property
-	def b_word(self):
+	def b_word(self) -> bytes:
 		"""
 			returns bytes of word,
 				and all the alternate words
@@ -18,7 +18,7 @@ class BaseEntry(EntryType):
 		return self.s_word.encode("utf-8")
 
 	@property
-	def b_defi(self):
+	def b_defi(self) -> bytes:
 		"""
 			returns bytes of definition,
 				and all the alternate definitions

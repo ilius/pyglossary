@@ -181,7 +181,7 @@ class BaseSqList(list):
 		# List[(columnName, dataType)]
 		return []
 
-	def __len__(self):
+	def __len__(self) -> int:
 		return self._len
 
 	def append(self, item):
@@ -198,7 +198,7 @@ class BaseSqList(list):
 	def sort(self):
 		pass
 
-	def close(self):
+	def close(self) -> None:
 		if self._con is None:
 			return
 		self._con.commit()
@@ -213,7 +213,7 @@ class BaseSqList(list):
 		except AttributeError as e:
 			log.error(str(e))
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		query = f"SELECT * FROM data ORDER BY {self._orderBy}"
 		self._cur.execute(query)
 		for row in self._cur:
@@ -241,7 +241,7 @@ class Reader(object):
 	_xsl: bool = False
 	_unicode_errors: str = "strict"
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 
 		self._glos = glos
 		self.clear()
@@ -690,7 +690,7 @@ class Writer(object):
 	_audio_icon: bool = True
 	_sqlite: bool = False
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		self._resDir = None
@@ -800,7 +800,7 @@ class Writer(object):
 			return MemList()
 		return SynSqList(join(self._glos.tmpDataDir, "stardict-syn.db"))
 
-	def writeCompact(self, defiFormat):
+	def writeCompact(self, defiFormat) -> None:
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
 		Every item definition consists of a single article.
@@ -963,7 +963,7 @@ class Writer(object):
 			f"Writing {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
 		)
 
-	def writeCompactMergeSyns(self, defiFormat):
+	def writeCompactMergeSyns(self, defiFormat) -> None:
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
 		Every item definition consists of a single article.

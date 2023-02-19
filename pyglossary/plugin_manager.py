@@ -177,7 +177,7 @@ class PluginManager(object):
 			cls.writeFormats.append(name)
 
 	@classmethod
-	def findPlugin(cls, query: str) -> "Optional[PluginProp]":
+	def findPlugin(cls: "ClassVar", query: str) -> "Optional[PluginProp]":
 		"""
 			find plugin by name or extension
 		"""
@@ -191,7 +191,7 @@ class PluginManager(object):
 
 	@classmethod
 	def detectInputFormat(
-		cls,
+		cls: "ClassVar",
 		filename: str,
 		format: str = "",
 		quiet: bool = False,
@@ -231,7 +231,7 @@ class PluginManager(object):
 
 	@classmethod
 	def detectOutputFormat(
-		cls,
+		cls: "ClassVar",
 		filename: str = "",
 		format: str = "",
 		inputFilename: str = "",

@@ -4,6 +4,7 @@ import logging
 import subprocess
 import sys
 from os import path
+from typing import List
 
 __all__ = ["JingTestError", "run", "main"]
 
@@ -18,10 +19,15 @@ class JingTestError(subprocess.CalledProcessError):
 	the `output` attribute also will store the output.
 	"""
 
-	def __init__(self, returncode, cmd, output):
+	def __init__(
+		self,
+		returncode: int,
+		cmd: "List[str]",
+		output: bytes,
+	) -> None:
 		super(JingTestError, self).__init__(returncode, cmd, output)
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return "\n".join([
 			f"Jing check failed with exit code {self.returncode}:",
 			"-" * 80,
@@ -29,7 +35,7 @@ class JingTestError(subprocess.CalledProcessError):
 		])
 
 
-def run(filename):
+def run(filename: str) -> None:
 	"""run(filename)
 
 	check whether the file named `filename` conforms to
@@ -71,7 +77,7 @@ def run(filename):
 	log.info("Jing check successfully passed!")
 
 
-def main():
+def main() -> None:
 	"""
 	a command-line utility, runs Jing test on given dictionary XML
 	file with Apple Dictionary Schema.

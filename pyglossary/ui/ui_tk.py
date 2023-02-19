@@ -161,7 +161,7 @@ def newReadOnlyText(
 
 
 class TkTextLogHandler(logging.Handler):
-	def __init__(self, tktext):
+	def __init__(self, tktext) -> None:
 		logging.Handler.__init__(self)
 		#####
 		tktext.tag_config("CRITICAL", foreground="#ff0000")
@@ -570,7 +570,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		"Write": Glossary.formatsWriteOptions,
 	}
 
-	def __init__(self, format, kind, values, master=None):
+	def __init__(self, format, kind, values, master=None) -> None:
 		tix.Toplevel.__init__(self)
 		# bg="#0f0" does not work
 		self.resizable(width=True, height=True)
@@ -905,7 +905,7 @@ class FormatOptionsButton(tk.Button):
 class UI(tix.Frame, UIBase):
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
-	def __init__(self):
+	def __init__(self) -> None:
 		rootWin = self.rootWin = tix.Tk()
 		# a hack that hides the window until we move it to the center of screen
 		if os.sep == "\\":  # Windows

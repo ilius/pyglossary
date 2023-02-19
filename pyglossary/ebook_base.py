@@ -35,16 +35,17 @@ from pyglossary.os_utils import indir, rmtree
 from pyglossary.text_utils import toBytes
 
 if TYPE_CHECKING:
-	from typing import Any, List
+	import io
+	from typing import Any, List, Optional
 
-	from pyglossary.glossary_type import EntryType
+	from pyglossary.glossary_type import EntryType, GlossaryType
 
 
 log = logging.getLogger("pyglossary")
 
 
 class GroupState(object):
-	def __init__(self, writer) -> None:
+	def __init__(self, writer: "EbookWriter") -> None:
 		self.writer = writer
 		self.last_prefix = ""
 		self.group_index = -1
@@ -132,16 +133,16 @@ class EbookWriter(object):
 
 	OPF_SPINE_ITEMREF_TEMPLATE = "  <itemref idref=\"{id}\" />"
 
-	def get_opf_contents(self, manifest_contents, spine_contents):
+	def get_opf_contents(self, manifest_contents: str, spine_contents: str) -> str:
 		raise NotImplementedError
 
 	def __init__(
 		self,
-		glos,
-		escape_strings=False,
+		glos: "GlossaryType",
+		escape_strings: bool = False,
 		# ignore_synonyms=False,
 		# flatten_synonyms=False,
-	):
+	) -> None:
 		self._glos = glos
 		self._filename = None
 
@@ -161,13 +162,18 @@ class EbookWriter(object):
 		self.manifest_files = []
 		self._group_labels = []
 
-	def finish(self):
+	def finish(self) -> None:
 		self._filename = None
 
-	def myOpen(self, fname, mode):
+	def myOpen(self, fname: str, mode: str) -> "io.IOBase":
 		return open(join(self._tmpDir, fname), mode)
 
-	def add_file(self, relative_path, contents, mode=None):
+	def add_file(
+		self,
+		relative_path: str,
+		contents: str,
+		mode: "Optional[str]" = None,
+	) -> None:
 		if mode is None:
 			mode = zipfile.ZIP_DEFLATED
 		file_path = os.path.join(self._tmpDir, relative_path)
@@ -179,7 +185,7 @@ class EbookWriter(object):
 			"mode": mode,
 		})
 
-	def write_cover(self, cover_path):
+	def write_cover(self, cover_path: str) -> None:
 		if not cover_path:
 			return
 		basename = os.path.basename(cover_path)
@@ -194,7 +200,7 @@ class EbookWriter(object):
 		self.add_file_manifest("OEBPS/" + basename, basename, cover, mimetype)
 		self.cover = basename
 
-	def write_css(self, custom_css_path_absolute):
+	def write_css(self, custom_css_path_absolute: str) -> None:
 		css = self.CSS_CONTENTS
 		if custom_css_path_absolute:
 			try:
@@ -206,14 +212,20 @@ class EbookWriter(object):
 			return
 		self.add_file_manifest("OEBPS/style.css", "style.css", css, "text/css")
 
-	def add_file_manifest(self, relative_path, id, contents, mimetype):
+	def add_file_manifest(
+		self,
+		relative_path: str,
+		id: str,
+		contents: str,
+		mimetype: str,
+	) -> None:
 		self.add_file(relative_path, contents)
 		self.manifest_files.append({
 			"path": relative_path,
 			"id": id, "mimetype": mimetype,
 		})
 
-	def get_group_xhtml_file_name_from_index(self, index):
+	def get_group_xhtml_file_name_from_index(self, index: int) -> str:
 		if index < self.GROUP_START_INDEX:
 			# or index >= groupCount + self.GROUP_START_INDEX:
 			# number of groups are not known, FIXME
@@ -260,7 +272,7 @@ class EbookWriter(object):
 			"application/xhtml+xml",
 		)
 
-	def write_data_entry(self, entry):
+	def write_data_entry(self, entry: "EntryType") -> None:
 		if entry.getFileName() == "style.css":
 			self.add_file_manifest(
 				"OEBPS/style.css",
@@ -269,7 +281,7 @@ class EbookWriter(object):
 				"text/css",
 			)
 
-	def write_groups(self):
+	def write_groups(self) -> None:
 		# TODO: rtl=False option
 		# TODO: handle alternates better (now shows word1|word2... in title)
 
@@ -301,7 +313,7 @@ class EbookWriter(object):
 			definition=self.escape_if_needed(defi),
 		)
 
-	def escape_if_needed(self, string):
+	def escape_if_needed(self, string: str) -> str:
 		if not self._escape_strings:
 			return string
 
@@ -311,7 +323,7 @@ class EbookWriter(object):
 			.replace(">", "&gt;")\
 			.replace("<", "&lt;")
 
-	def write_index(self, group_labels):
+	def write_index(self, group_labels: "List[str]") -> None:
 		"""
 			group_labels: a list of labels
 		"""
@@ -338,7 +350,11 @@ class EbookWriter(object):
 			"application/xhtml+xml",
 		)
 
-	def get_opf_contents(self, manifest_contents, spine_contents):  # noqa: F811
+	def get_opf_contents(  # noqa: F811
+		self,
+		manifest_contents: str,
+		spine_contents: str,
+	) -> str:
 		cover = ""
 		if self.cover:
 			cover = self.COVER_TEMPLATE.format(cover=self.cover)
@@ -358,7 +374,7 @@ class EbookWriter(object):
 			spine=spine_contents,
 		)
 
-	def write_opf(self):
+	def write_opf(self) -> None:
 		manifest_lines = []
 		spine_lines = []
 		for mi in self.manifest_files:
@@ -381,17 +397,17 @@ class EbookWriter(object):
 
 		self.add_file("OEBPS/content.opf", opf_contents)
 
-	def write_ncx(self, group_labels):
+	def write_ncx(self, group_labels: "List[str]") -> None:
 		"""
 			write_ncx
 			only for epub
 		"""
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._tmpDir = tempfile.mkdtemp()
 
-	def _doZip(self):
+	def _doZip(self) -> None:
 		zipFp = zipfile.ZipFile(
 			self._filename,
 			"w",
@@ -406,7 +422,7 @@ class EbookWriter(object):
 		if not self._keep:
 			rmtree(self._tmpDir)
 
-	def write(self):
+	def write(self) -> None:
 		filename = self._filename
 		# self._group_by_prefix_length
 		# self._include_index_page

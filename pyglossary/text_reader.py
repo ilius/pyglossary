@@ -3,7 +3,8 @@ from os.path import isfile
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Iterator, List, Union
+	import io
+	from typing import Iterator, List, Set, Tuple, Union
 
 	from pyglossary.glossary_type import EntryType, GlossaryType
 
@@ -25,23 +26,23 @@ nextBlockResultType = """Optional[
 
 
 class TextFilePosWrapper(object):
-	def __init__(self, fileobj, encoding):
+	def __init__(self, fileobj: "io.TextIOBase", encoding: str) -> None:
 		self.fileobj = fileobj
 		self._encoding = encoding
 		self.pos = 0
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[str]":
 		return self
 
-	def close(self):
+	def close(self) -> None:
 		self.fileobj.close()
 
-	def __next__(self):
+	def __next__(self) -> str:
 		line = self.fileobj.__next__()
 		self.pos += len(line.encode(self._encoding))
 		return line
 
-	def tell(self):
+	def tell(self) -> int:
 		return self.pos
 
 
@@ -50,7 +51,7 @@ class TextGlossaryReader(object):
 
 	compressions = stdCompressions
 
-	def __init__(self, glos: "GlossaryType", hasInfo: bool = True):
+	def __init__(self, glos: "GlossaryType", hasInfo: bool = True) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None
@@ -63,7 +64,7 @@ class TextGlossaryReader(object):
 		self._fileIndex = -1
 		self._bufferLine = ""
 
-	def readline(self):
+	def readline(self) -> str:
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -119,7 +120,7 @@ class TextGlossaryReader(object):
 			log.exception(f"error while closing file {self._filename!r}")
 		self._file = None
 
-	def newEntry(self, word, defi) -> "EntryType":
+	def newEntry(self, word: str, defi: str) -> "EntryType":
 		byteProgress = None
 		if self._fileSize:
 			byteProgress = (self._file.tell(), self._fileSize)
@@ -161,7 +162,11 @@ class TextGlossaryReader(object):
 				self._fileCount = int(fileCountStr)
 				self._glos.setInfo("file_count", "")
 
-	def _genDataEntries(self, resList, resPathSet) -> "Iterator[DataEntry]":
+	def _genDataEntries(
+		self,
+		resList: "List[Tuple[str, str]]",
+		resPathSet: "Set[str]",
+	) -> "Iterator[DataEntry]":
 		for relPath, fullPath in resList:
 			if relPath in resPathSet:
 				continue

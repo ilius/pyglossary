@@ -20,7 +20,7 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Dict, Optional
 
 import pyglossary.gregorian as gregorian
 from pyglossary.plugins.formats_common import log
@@ -29,7 +29,7 @@ from pyglossary.text_utils import (
 )
 
 from .bgl_charset import charsetByCode
-from .bgl_language import languageByCode
+from .bgl_language import BabylonLanguage, languageByCode
 
 
 class InfoItem(object):
@@ -44,13 +44,13 @@ class InfoItem(object):
 		name: str,
 		decode: "Optional[Callable[[bytes], Any]]" = None,
 		attr: bool = False,
-	):
+	) -> None:
 		self.name = name
 		self.decode = decode
 		self.attr = attr
 
 
-def decodeBglBinTime(b_value):
+def decodeBglBinTime(b_value: bytes) -> str:
 	jd1970 = gregorian.to_jd(1970, 1, 1)
 	djd, hm = divmod(uintFromBytes(b_value), 24 * 60)
 	year, month, day = gregorian.jd_to(djd + jd1970)
@@ -58,7 +58,7 @@ def decodeBglBinTime(b_value):
 	return f"{year:04d}/{month:02d}/{day:02d}, {hour:02d}:{minute:02d}"
 
 
-def languageInfoDecode(b_value):
+def languageInfoDecode(b_value: bytes) -> "Optional[BabylonLanguage]":
 	"""
 		returns BabylonLanguage instance
 	"""
@@ -70,15 +70,16 @@ def languageInfoDecode(b_value):
 		return None
 
 
-def charsetInfoDecode(b_value):
+def charsetInfoDecode(b_value: bytes) -> "Optional[str]":
 	value = b_value[0]
 	try:
 		return charsetByCode[value]
 	except KeyError:
 		log.warning(f"read_type_3: unknown charset {value!r}")
+	return None
 
 
-def aboutInfoDecode(b_value):
+def aboutInfoDecode(b_value: bytes) -> "Dict[str, str]":
 	if not b_value:
 		return None
 	aboutExt, _, aboutContents = b_value.partition(b"\x00")
@@ -91,7 +92,7 @@ def aboutInfoDecode(b_value):
 	}
 
 
-def utf16InfoDecode(b_value):
+def utf16InfoDecode(b_value: bytes) -> "Optional[str]":
 	"""
 		b_value is byte array
 		returns str, or None (on errors)
@@ -136,7 +137,7 @@ def utf16InfoDecode(b_value):
 	return b_value[8:].decode("utf16")  # str
 
 
-def flagsInfoDecode(b_value):
+def flagsInfoDecode(b_value: bytes) -> "Dict[str, bool]":
 	"""
 		returns a dict with these keys:
 			utf8Encoding

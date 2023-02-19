@@ -72,7 +72,7 @@ class Reader(object):
 		self._filename = ""
 		self._fileSize = 0
 
-	def open(self, filename) -> None:
+	def open(self, filename: str) -> None:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -106,7 +106,7 @@ class Reader(object):
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self, header):
+	def setMetadata(self, header: str) -> None:
 		self.setGlosInfo("name", header.find("./bookname").text)
 		self.setGlosInfo("author", header.find("./author").text)
 		self.setGlosInfo("email", header.find("./email").text)
@@ -228,10 +228,10 @@ class Writer(object):
 			encoding=self._encoding,
 		)
 
-	def finish(self):
+	def finish(self) -> None:
 		self._file.close()
 
-	def writeInfo(self, maker, pretty: bool):
+	def writeInfo(self, maker, pretty: bool) -> None:
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -260,7 +260,7 @@ class Writer(object):
 			pretty_print=pretty,
 		).decode(self._encoding) + "\n")
 
-	def writeDataEntry(self, maker, entry):
+	def writeDataEntry(self, maker, entry) -> None:
 		pass
 		# TODO: create article tag with "definition-r" in it?
 		# or just save the file to res/ directory? or both?

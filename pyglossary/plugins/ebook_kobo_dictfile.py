@@ -71,7 +71,7 @@ class Reader(TextGlossaryReader):
 
 	_extract_inline_images: bool = True
 
-	def __init__(self, glos: "GlossaryType"):
+	def __init__(self, glos: "GlossaryType") -> None:
 		TextGlossaryReader.__init__(self, glos, hasInfo=False)
 
 	def open(self, filename: str) -> None:
@@ -83,10 +83,10 @@ class Reader(TextGlossaryReader):
 		TextGlossaryReader.open(self, filename)
 		self._glos.setDefaultDefiFormat("h")
 
-	def isInfoWord(self, word):
+	def isInfoWord(self, word: str) -> bool:
 		return False
 
-	def fixInfoWord(self, word):
+	def fixInfoWord(self, word: str):
 		raise NotImplementedError
 
 	def fixDefi(self, defi: str, html: bool) -> str:
@@ -157,7 +157,7 @@ class Writer(object):
 		self._glos = glos
 		self._file = None
 
-	def finish(self):
+	def finish(self) -> None:
 		if self._file is None:
 			return
 		self._file.close()

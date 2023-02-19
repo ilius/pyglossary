@@ -316,17 +316,17 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def setCreationTime(self, header):
+	def setCreationTime(self, header: str):
 		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)
 		if m is None:
 			return
 		self._glos.setInfo("creationTime", m.group(1))
 
-	def setMetadata(self, header: str):
+	def setMetadata(self, header: str) -> None:
 		# TODO: self.set_info("edition", ...)
 		self.setCreationTime(header)
 
-	def __init__(self, glos: GlossaryType):
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""

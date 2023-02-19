@@ -1,24 +1,30 @@
 # -*- coding: utf-8 -*-
 
 from os.path import isfile
+from typing import TYPE_CHECKING
 
-from pyglossary.text_utils import (
+if TYPE_CHECKING:
+	from typing import Iterator
+
+	from .glossary_type import EntryType, GlossaryType
+
+from .text_utils import (
 	joinByBar,
 	splitByBar,
 )
 
 
 class Writer(object):
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self):
+	def _clear(self) -> None:
 		self._filename = ''
 		self._con = None
 		self._cur = None
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 		if isfile(filename):
 			raise IOError(f"file {filename!r} already exists")
@@ -38,7 +44,7 @@ class Writer(object):
 			"CREATE INDEX dict_sortkey ON dict(wordlower, word);",
 		)
 
-	def write(self):
+	def write(self) -> None:
 		count = 0
 		while True:
 			entry = yield
@@ -67,7 +73,7 @@ class Writer(object):
 
 		self._con.commit()
 
-	def finish(self):
+	def finish(self) -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:
@@ -76,27 +82,27 @@ class Writer(object):
 
 
 class Reader(object):
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self):
+	def _clear(self) -> None:
 		self._filename = ''
 		self._con = None
 		self._cur = None
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
 		# self._glos.setDefaultDefiFormat("m")
 
-	def __len__(self):
+	def __len__(self) -> int:
 		self._cur.execute("select count(*) from dict")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		self._cur.execute(
 			"select word, alts, defi, defiFormat from dict"
 			" order by wordlower, word",
@@ -107,7 +113,7 @@ class Reader(object):
 			defiFormat = row[3]
 			yield self._glos.newEntry(words, defi, defiFormat=defiFormat)
 
-	def close(self):
+	def close(self) -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:

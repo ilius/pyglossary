@@ -32,7 +32,7 @@ from .bgl_reader import BGLGzipFile, BglReader, Block, FileOffS, tmpDir
 
 
 class MetaData(object):
-	def __init__(self):
+	def __init__(self) -> None:
 		self.blocks = []
 		self.numEntries = None
 		self.numBlocks = None
@@ -44,13 +44,13 @@ class MetaData(object):
 
 
 class MetaDataBlock(object):
-	def __init__(self, data, _type):
+	def __init__(self, data, _type) -> None:
 		self.data = data
 		self.type = _type
 
 
 class MetaDataRange(object):
-	def __init__(self, _type, count):
+	def __init__(self, _type, count) -> None:
 		self.type = _type
 		self.count = count
 
@@ -61,7 +61,7 @@ class MetaData2(object):
 	We need to scan all definitions in order to collect these
 	statistical data.
 	"""
-	def __init__(self):
+	def __init__(self) -> None:
 		# defiTrailingFields[i] - number of fields with code i found
 		self.defiTrailingFields = [0] * 256
 		self.isDefiASCII = True
@@ -84,7 +84,7 @@ class GzipWithCheck(object):
 	gzip.GzipFile with check.
 	It checks that unpacked data match what was packed.
 	"""
-	def __init__(self, fileobj, unpackedPath, reader, closeFileobj=False):
+	def __init__(self, fileobj, unpackedPath, reader, closeFileobj=False) -> None:
 		"""
 		constructor
 
@@ -102,7 +102,7 @@ class GzipWithCheck(object):
 	def __del__(self):
 		self.close()
 
-	def close(self):
+	def close(self) -> None:
 		if self.file:
 			self.file.close()
 			self.file = None
@@ -235,7 +235,7 @@ class DebugBglReader(BglReader):
 			)
 			return None
 
-	def close(self):
+	def close(self) -> None:
 		BglReader.close(self)
 		if self.rawDumpFile:
 			self.rawDumpFile.close()

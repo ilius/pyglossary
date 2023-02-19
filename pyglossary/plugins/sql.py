@@ -41,13 +41,13 @@ class Writer(object):
 		self._filename = None
 		self._file = None
 
-	def finish(self):
+	def finish(self) -> None:
 		self._filename = None
 		if self._file:
 			self._file.close()
 			self._file = None
 
-	def open(self, filename: str):
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename, "wt", encoding=self._encoding)
 		self._writeInfo()

@@ -21,6 +21,7 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import re
+from typing import Tuple
 
 from pyglossary.plugins.formats_common import log
 from pyglossary.xml_utils import xml_escape
@@ -36,7 +37,7 @@ u_pat_newline = re.compile("[\r\n]+")
 unknownHtmlEntries = set()
 
 
-def replaceHtmlEntryNoEscapeCB(u_match):
+def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
 	Replace character entity with the corresponding character
@@ -87,7 +88,7 @@ def replaceHtmlEntryNoEscapeCB(u_match):
 	return u_res
 
 
-def replaceHtmlEntryCB(u_match):
+def replaceHtmlEntryCB(u_match: "re.Match") -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
 	Same as replaceHtmlEntryNoEscapeCB, but escapes result string
@@ -101,7 +102,7 @@ def replaceHtmlEntryCB(u_match):
 	return xml_escape(u_res, quotation=False)
 
 
-def replaceDingbat(u_match):
+def replaceDingbat(u_match: "re.Match") -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
 	replace chars \\u008c-\\u0095 with \\u2776-\\u277f
@@ -111,7 +112,7 @@ def replaceDingbat(u_match):
 	return chr(code)
 
 
-def escapeNewlinesCallback(u_match):
+def escapeNewlinesCallback(u_match: "re.Match") -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
 	"""
@@ -125,7 +126,7 @@ def escapeNewlinesCallback(u_match):
 	return ch
 
 
-def replaceHtmlEntries(u_text: str):
+def replaceHtmlEntries(u_text: str) -> str:
 	# &ldash;
 	# &#0147;
 	# &#x010b;
@@ -137,7 +138,7 @@ def replaceHtmlEntries(u_text: str):
 	)
 
 
-def replaceHtmlEntriesInKeys(u_text: str):
+def replaceHtmlEntriesInKeys(u_text: str) -> str:
 	# &ldash;
 	# &#0147;
 	# &#x010b;
@@ -149,7 +150,7 @@ def replaceHtmlEntriesInKeys(u_text: str):
 	)
 
 
-def escapeNewlines(u_text: str):
+def escapeNewlines(u_text: str) -> str:
 	r"""
 	convert text to c-escaped string:
 	\ -> \\
@@ -163,7 +164,7 @@ def escapeNewlines(u_text: str):
 	)
 
 
-def stripHtmlTags(u_text: str):
+def stripHtmlTags(u_text: str) -> str:
 	if log.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_strip_tags.sub(
@@ -172,7 +173,7 @@ def stripHtmlTags(u_text: str):
 	)
 
 
-def removeControlChars(u_text: str):
+def removeControlChars(u_text: str) -> str:
 	# \x09 - tab
 	# \x0a - line feed
 	# \x0b - vertical tab
@@ -185,7 +186,7 @@ def removeControlChars(u_text: str):
 	)
 
 
-def removeNewlines(u_text: str):
+def removeNewlines(u_text: str) -> str:
 	if log.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_newline.sub(
@@ -194,7 +195,7 @@ def removeNewlines(u_text: str):
 	)
 
 
-def normalizeNewlines(u_text: str):
+def normalizeNewlines(u_text: str) -> str:
 	"""
 	convert new lines to unix style and remove consecutive new lines
 	"""
@@ -206,7 +207,7 @@ def normalizeNewlines(u_text: str):
 	)
 
 
-def replaceAsciiCharRefs(b_text: bytes, encoding: str):
+def replaceAsciiCharRefs(b_text: bytes, encoding: str) -> bytes:
 	# &#0147;
 	# &#x010b;
 	if log.isDebug():
@@ -232,7 +233,7 @@ def replaceAsciiCharRefs(b_text: bytes, encoding: str):
 	return b"".join(b_parts)
 
 
-def fixImgLinks(u_text: str):
+def fixImgLinks(u_text: str) -> str:
 	"""
 	Fix img tag links
 
@@ -251,7 +252,7 @@ def fixImgLinks(u_text: str):
 	return u_text.replace("\x1e", "").replace("\x1f", "")
 
 
-def stripDollarIndexes(b_word: bytes):
+def stripDollarIndexes(b_word: bytes) -> "Tuple[bytes, int]":
 	if log.isDebug():
 		assert isinstance(b_word, bytes)  # noqa: S101
 	i = 0

@@ -18,7 +18,7 @@ def extractInlineHtmlImages(
 ) -> "Tuple[str, List[Tuple[str, str]]]":
 	imageDataDict = {}  # type: Dict[str, bytes]
 
-	def subFunc(m: "re.Match"):
+	def subFunc(m: "re.Match") -> str:
 		nonlocal images
 		src = m.group(1)[len("data:image/"):]
 		i = src.find(";")

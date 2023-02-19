@@ -29,7 +29,7 @@ noneItem = 'Not Selected'
 
 
 class UI(qt.QWidget, UIBase):
-	def __init__(self):
+	def __init__(self) -> None:
 		qt.QWidget.__init__(self)
 		UIBase.__init__(self)
 		self.setWindowTitle('PyGlossary (Qt)')

@@ -116,7 +116,7 @@ class DSLParser(object):
 			tags_.add((tag, tag_re, ext_re, re_tag_open))
 		self.tags = frozenset(tags_)
 
-	def parse(self, line):
+	def parse(self, line: str):
 		r"""
 		parse dsl markup in `line` and return clean valid dsl markup.
 
@@ -129,11 +129,11 @@ class DSLParser(object):
 		line = self._parse(line)
 		return self.bring_brackets_back(line)
 
-	def _parse(self, line):
+	def _parse(self, line: str):
 		items = self._split_line_by_tags(line)
 		return self._tags_and_text_loop(items)
 
-	def _split_line_by_tags(self, line):
+	def _split_line_by_tags(self, line: str):
 		"""
 		split line into chunks, each chunk is whether opening / closing
 		tag or text.
@@ -242,7 +242,7 @@ class DSLParser(object):
 		# shutdown unclosed tags
 		return "".join([layer.text for layer in stack])
 
-	def put_brackets_away(self, line):
+	def put_brackets_away(self, line: str):
 		r"""put away \[, \] and brackets that does not belong to any of given tags.
 
 		:rtype: str
@@ -273,5 +273,5 @@ class DSLParser(object):
 		return clean_line
 
 	@staticmethod
-	def bring_brackets_back(line):
+	def bring_brackets_back(line: str):
 		return line.replace(BRACKET_L, "[").replace(BRACKET_R, "]")

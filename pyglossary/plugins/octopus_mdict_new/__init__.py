@@ -21,8 +21,10 @@ import os
 import re
 import sys
 from os.path import dirname, extsep, isfile, join, splitext
+from typing import Iterator
 
 from pyglossary.core import log
+from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -70,7 +72,7 @@ class Reader(object):
 	_same_dir_data_files: bool = False
 	_audio: bool = False
 
-	def __init__(self, glos):
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.clear()
 		self._re_internal_link = re.compile('href=(["\'])(entry://|[dx]:)')
@@ -78,7 +80,7 @@ class Reader(object):
 			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>',
 		)
 
-	def clear(self):
+	def clear(self) -> None:
 		self._filename = ""
 		self._mdx = None
 		self._mdd = []
@@ -88,7 +90,7 @@ class Reader(object):
 		# dict of mainWord -> newline-separated alternatives
 		self._linksDict = {}  # type: Dict[str, str]
 
-	def open(self, filename):
+	def open(self, filename: str) -> None:
 		from pyglossary.plugin_lib.readmdict import MDD, MDX
 		self._filename = filename
 		self._mdx = MDX(filename, self._encoding, self._substyle)
@@ -188,7 +190,7 @@ class Reader(object):
 
 		return defi
 
-	def __iter__(self):
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self._mdx is None:
 			log.error("trying to iterate on a closed MDX file")
 			return
@@ -235,8 +237,8 @@ class Reader(object):
 				log.exception(f"Error reading {mdd.filename}")
 		self._mdd = []
 
-	def __len__(self):
+	def __len__(self) -> int:
 		return self._wordCount + self._dataEntryCount
 
-	def close(self):
+	def close(self) -> None:
 		self.clear()

@@ -126,7 +126,15 @@ class BabylonLanguage(object):
 			(cp1250, cp1251, cp1252)
 		code - value of the type 3, code in .bgl file
 	"""
-	def __init__(self, name, charset, encoding, code, code2="", name2=""):
+	def __init__(
+		self,
+		name: str,
+		charset: str,
+		encoding: str,
+		code: str,
+		code2: str = "",
+		name2: str = "",
+	) -> None:
 		self.name = name
 		self.name2 = name2
 		self.charset = charset
