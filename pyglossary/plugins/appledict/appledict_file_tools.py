@@ -19,7 +19,7 @@ from typing import List, Tuple
 # GNU General Public License for more details.
 
 
-OFFSET_FILE_START = 0x40
+APPLEDICT_FILE_OFFSET = 0x40 # addressing of AppleDict binary files always ignores first 0x40 bytes
 
 
 def readIntAt(buffer: BufferedReader, address: int) -> int:
@@ -64,11 +64,17 @@ def read_x_bytes_as_int(buffer: BufferedReader, x) -> int:
 
 
 def guessFileOffsetLimit(file) -> "Tuple[int, int]":
-	file.seek(OFFSET_FILE_START)
-	limit = OFFSET_FILE_START + readInt(file)
+	"""returns address offset to start parsing from and EOF address"""
+	file.seek(APPLEDICT_FILE_OFFSET)
+	limit = APPLEDICT_FILE_OFFSET + readInt(file)
 	intPair = readIntPair(file)
 
 	if intPair == (0, -1):  # 0000 0000 FFFF FFFF
-		return OFFSET_FILE_START + 0x20, limit
+		return APPLEDICT_FILE_OFFSET + 0x20, limit
 
-	return OFFSET_FILE_START + 0x4, limit
+	return APPLEDICT_FILE_OFFSET + 0x4, limit
+
+
+def enumerate_reversed(list: list):
+	for i in range(len(list) - 1, -1, -1):
+		yield i, list[i]

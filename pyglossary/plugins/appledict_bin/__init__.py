@@ -16,11 +16,15 @@
 
 import re
 from datetime import datetime
+from io import BytesIO, BufferedReader
 from os.path import isdir, isfile, join, split
 from struct import unpack
-from typing import TYPE_CHECKING, Any, Dict, Iterator, Match, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Iterator, Match, Tuple, List
 
-from pyglossary.plugins.appledict.appledict_file_tools import readInt, guessFileOffsetLimit
+from pyglossary.plugins.appledict import appledict_file_tools
+from pyglossary.plugins.appledict.ArticleAddress import ArticleAddress
+from pyglossary.plugins.appledict.appledict_file_tools import readInt, guessFileOffsetLimit, APPLEDICT_FILE_OFFSET, \
+	enumerate_reversed
 
 if TYPE_CHECKING:
 	import lxml
@@ -66,7 +70,7 @@ class Reader(object):
 		self._filename = ""
 		self._file = None
 		self._encoding = "utf-8"
-		self._buf = ""
+		self._buf: bytes
 		self._defiFormat = "m"
 		self._entriesOffset: int
 		self._re_link = re.compile('<a [^<>]*>')
@@ -129,6 +133,7 @@ class Reader(object):
 		contentsPath: str
 		infoPlistPath: str
 		bodyDataPath: str
+		keyTextDataPath: str
 
 		if isdir(filename):
 			if split(filename)[-1] == "Contents":
@@ -151,15 +156,30 @@ class Reader(object):
 		infoPlistPath = join(contentsPath, "Info.plist")
 		if isfile(join(contentsPath, "Body.data")):
 			bodyDataPath = join(contentsPath, "Body.data")
+			keyTextDataPath = join(contentsPath, "KeyText.data")
 		elif isfile(join(contentsPath, "Resources/Body.data")):
 			bodyDataPath = join(contentsPath, "Resources/Body.data")
+			keyTextDataPath = join(contentsPath, "Resources/KeyText.data")
 		else:
 			raise IOError(
 				"could not find Body.data file, "
 				"Please provide 'Contents/' folder of the dictionary",
 			)
 
-		self.setMetadata(infoPlistPath)
+		metadata = self.parseMetadata(infoPlistPath)
+		self.setMetadata(metadata)
+
+		# KeyText.data contains:
+		# 1. morphological data (opens article "make" when user enters "making") and data that shows
+		# 2. data that encodes that searching "2 per cent", "2 percent", or "2%" returns the same article
+		# EXAMPLE: <d:index d:value="made" d:title="made (make)"/>
+		# If the entry for "make" contains these <d:index> definitions, the entry can be searched not only by "make" but also by "makes" or "made".
+		# On the search result list, title value texts like "made" are displayed.
+		# EXAMPLE: <d:index d:value="make it" d:title="make it" d:parental-control="1" d:anchor="xpointer(//*[@id='make_it'])"/>
+		# EXAMPLE: <d:index d:value="工夫する" d:title="工夫する" d:yomi="くふうする" d:anchor="xpointer(//*[@id='kufuu-suru'])" />
+		# EXAMPLE: <d:index d:value="'s finest" d:title="—'s finest" d:DCSEntryTitle="fine" d:anchor="xpointer(//*[@id='m_en_gbus0362750.070'])"/>
+		#     user entered "'s finest", search list we show "—'s finest", show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
+		self.keytext_data_xml: Dict[ArticleAddress, List[str]] = self.prepareKeyTextFile(keyTextDataPath, metadata)
 
 		self._filename = bodyDataPath
 		self._file = open(bodyDataPath, "rb")
@@ -174,7 +194,7 @@ class Reader(object):
 			f"number of entries: {self._wordCount}",
 		)
 
-	def setMetadata(self, infoPlistPath: str) -> None:
+	def parseMetadata(self, infoPlistPath: str) -> Dict:
 		import biplist
 
 		if not isfile(infoPlistPath):
@@ -196,7 +216,9 @@ class Reader(object):
 					"'Info.plist' file is malformed, "
 					f"Please provide 'Contents/' with a correct 'Info.plist'. {e}",
 				) from e
+		return metadata
 
+	def setMetadata(self, metadata: Dict):
 		name = metadata.get("CFBundleDisplayName")
 		if not name:
 			name = metadata.get("CFBundleIdentifier")
@@ -214,7 +236,6 @@ class Reader(object):
 		author = metadata.get("DCSDictionaryManufacturerName")
 		if author:
 			self._glos.setInfo("author", author)
-
 
 		edition = metadata.get("IDXDictionaryVersion")
 		if edition:
@@ -312,13 +333,13 @@ class Reader(object):
 		pos += chunkSize
 		return entryBytes, pos
 
-	def _readEntry(self, pos: int) -> "Tuple[EntryType, int]":
+	def _readEntry(self, section_offset: int, chunk_offset: int) -> "Tuple[EntryType, int]":
 		"""
 			returns (entry, pos)
 		"""
 		from lxml import etree
-
-		entryBytes, pos = self._readEntryData(pos)
+		# etree.register_namespace("d", "http://www.apple.com/DTDs/DictionaryService-1.0.rng")
+		entryBytes, pos = self._readEntryData(chunk_offset)
 		entryFull = entryBytes.decode(self._encoding, errors="replace")
 		entryFull = entryFull.strip()
 		if not entryFull:
@@ -330,6 +351,12 @@ class Reader(object):
 				f"{pos=}, len(buf)={len(self._buf)}, {entryFull=}",
 			)
 			raise e
+
+		article_address = ArticleAddress(section_offset, chunk_offset)
+		if article_address in self.keytext_data_xml:
+			morpho_xmls: List[str] = self.keytext_data_xml[article_address]
+			for i, morpho_xml in enumerate_reversed(morpho_xmls):
+				entryRoot.insert(0, etree.fromstring(morpho_xml))
 		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
 		if not entryElems:
 			return None, pos
@@ -388,6 +415,142 @@ class Reader(object):
 		_file.seek(self._entriesOffset)
 		self._wordCount = len(titleById)
 
+	def prepareKeyTextFile(self, morphoFilePath, metadata: Dict) -> Dict[ArticleAddress, List[str]]:
+		"""Prepare `KeyText.data` file for extracting morphological data"""
+		metadata_index_fields = metadata.get('IDXDictionaryIndexes')[0] \
+			.get('IDXIndexDataFields') \
+			.get('IDXVariableDataFields')
+		key_data_order = []
+		for index_field_info in metadata_index_fields:
+			key_data_order.append([index_field_info['IDXDataFieldName'], index_field_info['IDXDataSizeLength']])
+
+		with open(morphoFilePath, 'rb') as keyTextFile:
+			(buffer_offset, buffer_limit) = appledict_file_tools.guessFileOffsetLimit(keyTextFile)
+			keyTextFile.seek(APPLEDICT_FILE_OFFSET)
+			buffer = BytesIO(keyTextFile.read())
+
+			morpho_data = self.readMorphology(
+				f=buffer,
+				buffer_offset=buffer_offset - APPLEDICT_FILE_OFFSET,
+				buffer_limit=buffer_limit - APPLEDICT_FILE_OFFSET,
+				has_sections=False,
+				key_data_order=key_data_order,
+			)
+
+			morpho_data_xml: Dict[ArticleAddress, List[str]] = {}
+			for article_address in morpho_data:
+				morpho_xmls = [self.morpho_data_to_xml(morpho, key_data_order) for morpho in morpho_data[article_address]]
+				morpho_data_xml[article_address] = morpho_xmls
+			return morpho_data_xml
+
+	def readMorphology(self, f: BufferedReader, buffer_offset: int, buffer_limit: int,
+					   has_sections: bool,
+					   key_data_order):
+
+		f.seek(buffer_offset)
+		morpho_data: Dict[ArticleAddress, List[List[str]]] = {}
+		while f.tell() + 2 < buffer_limit:  # TODO check if +2 is a good solution
+			f.seek(buffer_offset)
+			jump = appledict_file_tools.read_2_bytes_here(f) + 4
+			zero1 = appledict_file_tools.read_2_bytes_here(f)  # 0x00
+			if not has_sections:
+				big_len = appledict_file_tools.read_2_bytes_here(f)  # 0x2c TODO might be here or might be not
+				zero2 = appledict_file_tools.read_2_bytes_here(f)  # 0x00 TODO might be here or might be not
+			# number of lexemes
+			word_forms_number = appledict_file_tools.read_2_bytes_here(f)  # 0x01
+			if zero1 != 0:
+				print('zero1')
+				quit()
+			next_lexeme_offset: int = 0
+			for word_form_n in range(0, word_forms_number):
+				# TODO fix quotes <d:index d:value=""mass produced"" d:title=""mass-produced""/>
+
+				zero3 = appledict_file_tools.read_2_bytes_here(f)  # 0x00 // TODO might be 1 or 2 or more zeros
+				if next_lexeme_offset != 0:
+					f.seek(next_lexeme_offset)
+				small_len = 0
+				while small_len == 0:
+					curr_offset = f.tell()
+					small_len = appledict_file_tools.read_2_bytes_here(f)  # 0x2c
+				next_lexeme_offset = curr_offset + small_len
+				# the resulting number must match with Contents/Body.data address of the entry
+				article_address: ArticleAddress
+				if has_sections:
+					chunk_offset = appledict_file_tools.readInt(f)
+					section_offset = appledict_file_tools.readInt(f)
+					article_address = ArticleAddress(section_offset=section_offset, chunk_offset=chunk_offset)
+				else:
+					chunk_offset = 0x0
+					section_offset = appledict_file_tools.readInt(f)
+					article_address = ArticleAddress(section_offset=section_offset, chunk_offset=chunk_offset)
+
+				keyword_list = []
+				priority_and_parental_control = appledict_file_tools.read_2_bytes_here(f)  # 0x13
+				if priority_and_parental_control > 0x20:
+					print('WRONG priority or parental control:', priority_and_parental_control, '// section: ',
+						  hex(buffer_offset))
+					quit()
+				# d:parental-control="1"
+				parental_control = priority_and_parental_control % 2
+				# d:priority=".." between 0x00..0x12, priority = [0..9]
+				priority = int((priority_and_parental_control - parental_control) / 2)
+
+				keyword_list.append(priority)
+				keyword_list.append(parental_control)
+
+				has_one_zero = False
+				for word_form_id, word_form_size_len_bytes in key_data_order:
+					# read length, or if value is zero then read again
+					word_form_len = appledict_file_tools.read_x_bytes_as_int(f, word_form_size_len_bytes)
+					if word_form_len == 0:
+						if has_one_zero:
+							break
+						else:
+							has_one_zero = True
+							continue
+					else:
+						has_one_zero = False
+					word_form = appledict_file_tools.read_x_bytes_as_word(f, word_form_len)
+					keyword_list.append(word_form)
+
+				if article_address in morpho_data:
+					morpho_data[article_address].append(keyword_list)
+				else:
+					morpho_data[article_address] = [keyword_list]
+			buffer_offset += jump
+		return morpho_data
+
+	keyword_data_id_xml = {
+		'DCSKeyword': 'd:value',  # Search key text of for the entry.
+		'DCSHeadword': 'd:title',
+		# Headword text that is displayed on the search result list.
+		# When the value is the same to the d:index value, it can be omitted.
+		# In that case, the value of the d:value is used also for the d:title.
+		'DCSEntryTitle': 'd:DCSEntryTitle',  #
+		'DCSAnchor': 'd:anchor',
+		# Used to highlight a specific part in an entry.
+		# For example, it is used to highlight an idiomatic phrase explanation in an entry for a word.
+		'DCSYomiWord': 'd:yomi',  # Used only in making Japanese dictionaries.
+	}
+
+	def morpho_data_to_xml(self, data: List, keyword_data_order) -> str:
+		d_index_xml = '<d:index xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng" '
+
+		for idx, value in enumerate(data):
+			if idx == 0:
+				priority: int = value
+				if priority != 0:
+					d_index_xml += f' d:priority="{priority}"'
+			elif idx == 1:
+				parental_control: int = value
+				if parental_control != 0:
+					d_index_xml += f' d:parental-control="{parental_control}"'
+			else:
+				word_form_id = keyword_data_order[idx - 2][0]
+				d_index_xml += f' {self.keyword_data_id_xml[word_form_id]}="{value}"'
+		d_index_xml += f' />'
+		return d_index_xml
+
 	def __iter__(self) -> "Iterator[EntryType]":
 		from os.path import dirname
 
@@ -405,6 +568,7 @@ class Reader(object):
 		limit = self._limit
 		while True:
 			self._absPos = _file.tell()
+			section_offset = _file.tell() - APPLEDICT_FILE_OFFSET
 			if self._absPos >= limit:
 				break
 			# alternative for buf, bufSize is calculated
@@ -428,6 +592,6 @@ class Reader(object):
 
 			pos = 0
 			while pos < len(self._buf):
-				entry, pos = self._readEntry(pos)
+				entry, pos = self._readEntry(section_offset, pos)
 				if entry is not None:
 					yield entry
