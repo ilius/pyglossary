@@ -19,7 +19,8 @@ from datetime import datetime
 from io import BytesIO, BufferedReader
 from os.path import isdir, isfile, join, split
 from struct import unpack
-from typing import TYPE_CHECKING, Any, Dict, Iterator, Match, Tuple, List
+from typing import TYPE_CHECKING, Any, Dict, Iterator, Match, Tuple, List, Optional
+from lxml import etree
 
 from pyglossary.plugins.appledict import appledict_file_tools
 from pyglossary.plugins.appledict.ArticleAddress import ArticleAddress
@@ -337,40 +338,53 @@ class Reader(object):
 		"""
 			returns (entry, pos)
 		"""
-		from lxml import etree
-		# etree.register_namespace("d", "http://www.apple.com/DTDs/DictionaryService-1.0.rng")
 		entryBytes, pos = self._readEntryData(chunk_offset)
-		entryFull = entryBytes.decode(self._encoding, errors="replace")
-		entryFull = entryFull.strip()
-		if not entryFull:
+		entryRoot = self.convertEntryBytesToXml(entryBytes)
+		if not entryRoot:
 			return None, pos
-		try:
-			entryRoot = etree.fromstring(entryFull)
-		except etree.XMLSyntaxError as e:
-			log.error(
-				f"{pos=}, len(buf)={len(self._buf)}, {entryFull=}",
-			)
-			raise e
 
 		article_address = ArticleAddress(section_offset, chunk_offset)
+		morpho_xmls: List[str]
 		if article_address in self.keytext_data_xml:
-			morpho_xmls: List[str] = self.keytext_data_xml[article_address]
-			for i, morpho_xml in enumerate_reversed(morpho_xmls):
-				entryRoot.insert(0, etree.fromstring(morpho_xml))
+			morpho_xmls = self.keytext_data_xml[article_address]
+		else:
+			morpho_xmls = []
+		entry = self.createEntry(entryRoot, morpho_xmls)
+		return entry, pos
+
+	def createEntry(self, entryRoot, morpho_xmls: List[str]) -> Optional[EntryType]:
 		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
 		if not entryElems:
-			return None, pos
+			return None
 		word = entryElems[0].xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
+
+		for i, morpho_xml in enumerate_reversed(morpho_xmls):
+			entryRoot.insert(0, etree.fromstring(morpho_xml))
 
 		defi = self._getDefi(entryElems[0])
 
-		if self._limit <= 0:
-			raise ValueError(f"self._limit = {self._limit}")
 		return self._glos.newEntry(
 			word, defi,
 			defiFormat=self._defiFormat,
 			byteProgress=(self._absPos, self._limit),
-		), pos
+		)
+
+	def convertEntryBytesToXml(self, entryBytes: bytes) -> Optional[etree.Element]:
+		# etree.register_namespace("d", "http://www.apple.com/DTDs/DictionaryService-1.0.rng")
+		entryFull = entryBytes.decode(self._encoding, errors="replace")
+		entryFull = entryFull.strip()
+		if not entryFull:
+			return None
+		try:
+			entryRoot = etree.fromstring(entryFull)
+		except etree.XMLSyntaxError as e:
+			log.error(
+				f"len(buf)={len(self._buf)}, {entryFull=}",
+			)
+			raise e
+		if self._limit <= 0:
+			raise ValueError(f"self._limit = {self._limit}")
+		return entryRoot
 
 	def readEntryIds(self) -> None:
 		_file = self._file
@@ -439,7 +453,8 @@ class Reader(object):
 
 			morpho_data_xml: Dict[ArticleAddress, List[str]] = {}
 			for article_address in morpho_data:
-				morpho_xmls = [self.morpho_data_to_xml(morpho, key_data_order) for morpho in morpho_data[article_address]]
+				morpho_xmls = [self.morpho_data_to_xml(morpho, key_data_order) for morpho in
+							   morpho_data[article_address]]
 				morpho_data_xml[article_address] = morpho_xmls
 			return morpho_data_xml
 
@@ -547,7 +562,8 @@ class Reader(object):
 					d_index_xml += f' d:parental-control="{parental_control}"'
 			else:
 				word_form_id = keyword_data_order[idx - 2][0]
-				d_index_xml += f' {self.keyword_data_id_xml[word_form_id]}="{value}"'
+				if word_form_id != 'DCSEntryTitle':
+					d_index_xml += f' {self.keyword_data_id_xml[word_form_id]}="{value}"'
 		d_index_xml += f' />'
 		return d_index_xml
 
