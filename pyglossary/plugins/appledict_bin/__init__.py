@@ -20,6 +20,8 @@ from os.path import isdir, isfile, join, split
 from struct import unpack
 from typing import TYPE_CHECKING, Any, Dict, Iterator, Match, Tuple
 
+from pyglossary.plugins.appledict.appledict_file_tools import readInt, guessFileOffsetLimit
+
 if TYPE_CHECKING:
 	import lxml
 from zlib import decompress
@@ -49,9 +51,6 @@ optionsProp = {
 }
 
 
-OFFSET_FILE_START = 0x40
-
-
 class Reader(object):
 	depends = {
 		"lxml": "lxml",
@@ -69,7 +68,7 @@ class Reader(object):
 		self._encoding = "utf-8"
 		self._buf = ""
 		self._defiFormat = "m"
-		self._entriesOffset = OFFSET_FILE_START
+		self._entriesOffset: int
 		self._re_link = re.compile('<a [^<>]*>')
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
 		self._titleById = {}
@@ -165,7 +164,7 @@ class Reader(object):
 		self._filename = bodyDataPath
 		self._file = open(bodyDataPath, "rb")
 
-		self._entriesOffset, self._limit = self.guessFileOffsetLimit()
+		self._entriesOffset, self._limit = guessFileOffsetLimit(self._file)
 
 		t0 = datetime.now()
 		self.readEntryIds()
@@ -357,7 +356,7 @@ class Reader(object):
 			if absPos >= limit:
 				break
 
-			bufSize = self.readInt()
+			bufSize = readInt(self._file)
 			self._buf = decompress(_file.read(bufSize)[8:])
 
 			pos = 0
@@ -388,22 +387,6 @@ class Reader(object):
 		self._titleById = titleById
 		_file.seek(self._entriesOffset)
 		self._wordCount = len(titleById)
-
-	def readInt(self) -> int:
-		return unpack("i", self._file.read(4))[0]
-
-	def readIntPair(self) -> "Tuple[int, int]":
-		return unpack("ii", self._file.read(8))
-
-	def guessFileOffsetLimit(self) -> "Tuple[int, int]":
-		self._file.seek(OFFSET_FILE_START)
-		limit = OFFSET_FILE_START + self.readInt()
-		intPair = self.readIntPair()
-
-		if intPair == (0, -1):  # 0000 0000 FFFF FFFF
-			return OFFSET_FILE_START + 0x20, limit
-
-		return OFFSET_FILE_START + 0x4, limit
 
 	def __iter__(self) -> "Iterator[EntryType]":
 		from os.path import dirname
@@ -440,7 +423,7 @@ class Reader(object):
 			# ~			f.seek(flag)
 			# ~			bufSize = bufSize+1
 
-			bufSize = self.readInt()
+			bufSize = readInt(self._file)
 			self._buf = decompress(_file.read(bufSize)[8:])
 
 			pos = 0
