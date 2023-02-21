@@ -305,14 +305,18 @@ class Writer(object):
 				if entry.defiFormat == "x":
 					defi = xdxf_to_html.transformByInnerString(defi)
 					content_title = None
-				content = prepare_content(content_title, defi, BeautifulSoup)
-
-				toFile.write(
-					f'<d:entry id="{_id}" d:title={quoted_title}>\n' +
-					generate_indexes(long_title, alts, content, BeautifulSoup) +
-					content +
-					"\n</d:entry>\n",
-				)
+				if entry.defiFormat == "h" and '<d:entry' in defi:
+					# if source format is AppleDict-bin, hence we don't need to add any tags or data
+					content = defi.replace('<d:entry xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng" ', '<d:entry ') + '\n'
+					toFile.write(content)
+				else:
+					content = prepare_content(content_title, defi, BeautifulSoup)
+					toFile.write(
+						f'<d:entry id="{_id}" d:title={quoted_title}>\n' +
+						generate_indexes(long_title, alts, content, BeautifulSoup) +
+						content +
+						"\n</d:entry>\n",
+					)
 
 			toFile.write("</d:dictionary>\n")
 

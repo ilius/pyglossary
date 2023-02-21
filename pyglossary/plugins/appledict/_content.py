@@ -110,7 +110,7 @@ def prepare_content_without_soup(
 		.replace("<s>", "<del>").replace("</s>", "</del>")
 
 	# nice header to display
-	content = f"<h1>{title}</h1>{body}" if title else body
+	content = f"<h1>{title}</h1>{body}" if title and "<h" not in body else body
 	content = re_brhr.sub(r"<\g<1> />", content)
 	content = re_img.sub(r"<img \g<1>/>", content)
 	return content  # noqa: RET504

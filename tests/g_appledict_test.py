@@ -58,8 +58,8 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 
 		for fname, fpath in expectedFiles.items():
 			self.compareTextFiles(
-				join(outputDirPath, fname),
 				fpath,
+				join(outputDirPath, fname),
 			)
 
 		self.comparePlist(
