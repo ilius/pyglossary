@@ -2,7 +2,7 @@ import os
 import re
 from typing import TYPE_CHECKING, List, Optional, Tuple
 
-from pyglossary.plugins.formats_common import log
+from pyglossary.core import log
 
 from .pinyin import convert
 from .summarize import summarize

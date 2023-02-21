@@ -5,10 +5,9 @@ import re
 from typing import Any, Generator, List
 
 from pyglossary import os_utils
-from pyglossary.glossary_type import GlossaryType
-from pyglossary.plugins.formats_common import (
+from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import (
 	BoolOption,
-	EntryType,
 	IntOption,
 	StrOption,
 )

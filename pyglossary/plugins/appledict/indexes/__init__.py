@@ -21,7 +21,7 @@ extended indexes generation with respect to source language.
 import os
 import pkgutil
 
-from pyglossary.plugins.formats_common import log
+from pyglossary.core import log
 
 __all__ = ["languages", "log"]
 

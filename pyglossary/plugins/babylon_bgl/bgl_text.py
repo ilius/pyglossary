@@ -23,7 +23,7 @@
 import re
 from typing import Tuple
 
-from pyglossary.plugins.formats_common import log
+from pyglossary.core import log
 from pyglossary.xml_utils import xml_escape
 
 u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.I)

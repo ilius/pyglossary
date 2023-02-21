@@ -23,7 +23,7 @@ from typing import Optioal, Sequence, Set
 
 import bs4
 
-from pyglossary.plugins.formats_common import log, pip
+from pyglossary.core import log, pip
 
 try:
 	import colorize_pinyin as color

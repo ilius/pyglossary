@@ -20,7 +20,7 @@ Russian indexes based on pymorphy.
 
 from typing import Sequence, Set
 
-from pyglossary.plugins.formats_common import log, pip
+from pyglossary.core import log, pip
 
 from . import languages
 

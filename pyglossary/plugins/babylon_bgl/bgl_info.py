@@ -23,7 +23,7 @@
 from typing import Any, Callable, Dict, Optional
 
 import pyglossary.gregorian as gregorian
-from pyglossary.plugins.formats_common import log
+from pyglossary.core import log
 from pyglossary.text_utils import (
 	uintFromBytes,
 )
