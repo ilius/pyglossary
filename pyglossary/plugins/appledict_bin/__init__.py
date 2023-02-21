@@ -26,6 +26,7 @@ from pyglossary.plugins.appledict import appledict_file_tools
 from pyglossary.plugins.appledict.ArticleAddress import ArticleAddress
 from pyglossary.plugins.appledict.appledict_file_tools import readInt, guessFileOffsetLimit, APPLEDICT_FILE_OFFSET, \
 	enumerate_reversed
+from pyglossary.xml_utils import xml_escape
 
 if TYPE_CHECKING:
 	import lxml
@@ -431,23 +432,47 @@ class Reader(object):
 
 	def prepareKeyTextFile(self, morphoFilePath, metadata: Dict) -> Dict[ArticleAddress, List[str]]:
 		"""Prepare `KeyText.data` file for extracting morphological data"""
-		metadata_index_fields = metadata.get('IDXDictionaryIndexes')[0] \
+		keyText_metadata = metadata.get('IDXDictionaryIndexes')[0]
+		metadata_index_fields = keyText_metadata \
 			.get('IDXIndexDataFields') \
 			.get('IDXVariableDataFields')
 		key_data_order = []
 		for index_field_info in metadata_index_fields:
 			key_data_order.append([index_field_info['IDXDataFieldName'], index_field_info['IDXDataSizeLength']])
 
+		is_compressed = 'TrieAuxiliaryDataOptions' in keyText_metadata and "HeapDataCompressionType" in keyText_metadata['TrieAuxiliaryDataOptions']
 		with open(morphoFilePath, 'rb') as keyTextFile:
-			(buffer_offset, buffer_limit) = appledict_file_tools.guessFileOffsetLimit(keyTextFile)
-			keyTextFile.seek(APPLEDICT_FILE_OFFSET)
-			buffer = BytesIO(keyTextFile.read())
+			(file_data_offset, file_limit) = appledict_file_tools.guessFileOffsetLimit(keyTextFile)
+
+			buffer = BytesIO()
+			if is_compressed:
+				keyTextFile.seek(file_data_offset)
+				section_len = appledict_file_tools.readInt(keyTextFile)
+				section_offset = keyTextFile.tell()
+				file_limit_decompressed = 0
+				while keyTextFile.tell() < file_limit:
+					compressedSectionByteLen = appledict_file_tools.readInt(keyTextFile)
+					decompressedSectionByteLen = appledict_file_tools.readInt(keyTextFile)
+					chunksection_bytes = decompress(keyTextFile.read(compressedSectionByteLen - 4))
+					buffer.write(chunksection_bytes)
+					file_limit_decompressed += decompressedSectionByteLen
+					section_offset += section_len
+					keyTextFile.seek(section_offset)
+				buffer_offset = 0
+				buffer_limit = file_limit_decompressed
+				has_sections = True
+			else:
+				keyTextFile.seek(APPLEDICT_FILE_OFFSET)
+				buffer.write(keyTextFile.read())
+				buffer_offset = file_data_offset - APPLEDICT_FILE_OFFSET
+				buffer_limit = file_limit - APPLEDICT_FILE_OFFSET
+				has_sections = False
 
 			morpho_data = self.readMorphology(
 				f=buffer,
-				buffer_offset=buffer_offset - APPLEDICT_FILE_OFFSET,
-				buffer_limit=buffer_limit - APPLEDICT_FILE_OFFSET,
-				has_sections=False,
+				buffer_offset=buffer_offset,
+				buffer_limit=buffer_limit,
+				has_sections=has_sections,
 				key_data_order=key_data_order,
 			)
 
@@ -564,7 +589,7 @@ class Reader(object):
 			else:
 				word_form_id = keyword_data_order[idx - 2][0]
 				if word_form_id != 'DCSEntryTitle' and word_form_id != 'DCSSortKey':
-					d_index_xml += f' {self.keyword_data_id_xml[word_form_id]}="{value}"'
+					d_index_xml += f' {self.keyword_data_id_xml[word_form_id]}="{xml_escape(value)}"'
 		d_index_xml += f' />'
 		return d_index_xml
 
