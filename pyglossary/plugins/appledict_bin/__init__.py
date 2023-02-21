@@ -536,16 +536,17 @@ class Reader(object):
 		return morpho_data
 
 	keyword_data_id_xml = {
-		'DCSKeyword': 'd:value',  # Search key text of for the entry.
+		'DCSKeyword': 'd:value',  # Search key -- if entered in search, this key will provide this definition.
 		'DCSHeadword': 'd:title',
 		# Headword text that is displayed on the search result list.
 		# When the value is the same to the d:index value, it can be omitted.
 		# In that case, the value of the d:value is used also for the d:title.
-		'DCSEntryTitle': 'd:DCSEntryTitle',  #
 		'DCSAnchor': 'd:anchor',
 		# Used to highlight a specific part in an entry.
 		# For example, it is used to highlight an idiomatic phrase explanation in an entry for a word.
 		'DCSYomiWord': 'd:yomi',  # Used only in making Japanese dictionaries.
+		'DCSSortKey': 'd:DCSSortKey',  # This value shows sorting (probably for non-english languages)
+		'DCSEntryTitle': 'd:DCSEntryTitle',  # Headword displayed as article title
 	}
 
 	def morpho_data_to_xml(self, data: List, keyword_data_order) -> str:
@@ -562,7 +563,7 @@ class Reader(object):
 					d_index_xml += f' d:parental-control="{parental_control}"'
 			else:
 				word_form_id = keyword_data_order[idx - 2][0]
-				if word_form_id != 'DCSEntryTitle':
+				if word_form_id != 'DCSEntryTitle' and word_form_id != 'DCSSortKey':
 					d_index_xml += f' {self.keyword_data_id_xml[word_form_id]}="{value}"'
 		d_index_xml += f' />'
 		return d_index_xml
