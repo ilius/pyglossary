@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterator, Match, Tuple, List, Optio
 from lxml import etree
 
 from pyglossary.plugins.appledict import appledict_file_tools
-from pyglossary.plugins.appledict.ArticleAddress import ArticleAddress
+from pyglossary.plugins.appledict.article_address import ArticleAddress
 from pyglossary.plugins.appledict.appledict_file_tools import readInt, guessFileOffsetLimit, APPLEDICT_FILE_OFFSET, \
 	enumerate_reversed
 from pyglossary.xml_utils import xml_escape
