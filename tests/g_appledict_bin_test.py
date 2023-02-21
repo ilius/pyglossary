@@ -36,8 +36,8 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
 				"/Contents/MyDictionary_prefs.html": "09a9f6e9",
 
-			"appledict-bin/002-appledict-bin-no-morphology-v2.txt": "384982a5",
-			"appledict-bin/002-appledict-bin-no-morphology-v2.txt_res/style.css": "a83210cb",
+			"appledict-bin/002-appledict-bin-no-morphology-v3.txt": "d8086fe8",
+			"appledict-bin/002-appledict-bin-no-morphology-v3.txt_res/style.css": "a83210cb",
 		})
 
 	def test_fix_links(self):
@@ -93,10 +93,10 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 		)
 		outputFilePath = self.newTempFilePath(f"{baseName}.txt")
 		expectedOutputFilePath = self.downloadFile(
-			f"appledict-bin/{baseName}-v2.txt",
+			f"appledict-bin/{baseName}-v3.txt",
 		)
 		expectedStylePath = self.downloadFile(
-			f"appledict-bin/{baseName}-v2.txt_res/style.css",
+			f"appledict-bin/{baseName}-v3.txt_res/style.css",
 		)
 
 		result = self.glos.convert(
