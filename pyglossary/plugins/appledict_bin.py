@@ -71,6 +71,7 @@ class Reader(object):
 		self._defiFormat = "m"
 		self._entriesOffset = OFFSET_FILE_START
 		self._re_link = re.compile('<a [^<>]*>')
+		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
 		self._titleById = {}
 		self._wordCount = 0
 
@@ -276,11 +277,19 @@ class Reader(object):
 				for child in entryElem.iterdescendants()
 			])
 
+
+		entryElem.tag = "div"
+		for attr in entryElem.attrib.keys():
+			#if attr == "id" or attr.endswith("title"):
+			del entryElem.attrib[attr]
+
 		defi = etree.tostring(
 			entryElem,
 			encoding="utf-8",
+			method="html",
 		).decode("utf-8")
 		defi = self.fixLinksInDefi(defi)
+		defi = self._re_xmlns.sub("", defi)
 
 		if self._html_full:
 			defi = (
