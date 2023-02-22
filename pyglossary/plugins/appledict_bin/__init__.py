@@ -33,7 +33,9 @@ from .appledict_file_tools import (
 	read_x_bytes_as_word,
 	readInt,
 )
+from .appledict_properties import from_metadata, AppleDictProperties
 from .article_address import ArticleAddress
+from .key_data import KeyData, RawKeyData
 
 if TYPE_CHECKING:
 	import lxml
@@ -195,10 +197,9 @@ class Reader(object):
 		# d:DCSEntryTitle="fine" d:anchor="xpointer(//*[@id='m_en_gbus0362750.070'])"/>
 		#     user entered "'s finest", search list we show "—'s finest",
 		# show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
-		self.keytext_data_xml: "Dict[ArticleAddress, List[str]]" = self.prepareKeyTextFile(
-			keyTextDataPath,
-			metadata,
-		)
+
+		# RawKeyData: tuple(priority, parental_control, key_text_fields)
+		self.key_text_data: dict[ArticleAddress, List[RawKeyData]] = self.getKeyTextDataFromFile(keyTextDataPath, self.appledict_properties)
 
 		self._filename = bodyDataPath
 		self._file = open(bodyDataPath, "rb")
@@ -256,12 +257,14 @@ class Reader(object):
 		if author:
 			self._glos.setInfo("author", author)
 
-		edition = metadata.get("IDXDictionaryVersion")
+		edition = metadata.get("CFBundleInfoDictionaryVersion")
 		if edition:
 			self._glos.setInfo("edition", edition)
 
 		if "DCSDictionaryLanguages" in metadata:
 			self.setLangs(metadata)
+
+		self.appledict_properties = from_metadata(metadata)
 
 	def setLangs(self, metadata: "Dict[str, Any]") -> None:
 		import locale
@@ -316,10 +319,9 @@ class Reader(object):
 				for child in entryElem.iterdescendants()
 			])
 
-
 		entryElem.tag = "div"
 		for attr in entryElem.attrib.keys():
-			#if attr == "id" or attr.endswith("title"):
+			# if attr == "id" or attr.endswith("title"):
 			del entryElem.attrib[attr]
 
 		defi = etree.tostring(
@@ -366,27 +368,29 @@ class Reader(object):
 			return None, pos
 
 		article_address = ArticleAddress(section_offset, chunk_offset)
-		morpho_xmls: List[str]
-		if article_address in self.keytext_data_xml:
-			morpho_xmls = self.keytext_data_xml[article_address]
-		else:
-			morpho_xmls = []
-		entry = self.createEntry(entryRoot, morpho_xmls)
+		key_text_field_order = self.appledict_properties.key_text_field_order
+		entry_key_data_list: List[KeyData] = []
+		if article_address in self.key_text_data:
+			raw_key_data_list = self.key_text_data[article_address]
+			for raw_key_data in raw_key_data_list:
+				entry_key_data_list.append(KeyData.from_raw_key_data(raw_key_data, key_text_field_order))
+		entry = self.createEntry(entryRoot, entry_key_data_list)
 		return entry, pos
 
-	def createEntry(self, entryRoot, morpho_xmls: List[str]) -> Optional[EntryType]:
+	def createEntry(self, entryRoot, entryKeys: list[KeyData]) -> Optional[EntryType]:
 		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
 		if not entryElems:
 			return None
 		word = entryElems[0].xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
 
-		for morpho_xml in reversed(morpho_xmls):
-			entryRoot.insert(0, etree.fromstring(morpho_xml))
+		if entryKeys:
+			word = [word] + [keyData.keyword for keyData in entryKeys]
 
 		defi = self._getDefi(entryElems[0])
 
 		return self._glos.newEntry(
-			word, defi,
+			word=word,
+			defi=defi,
 			defiFormat=self._defiFormat,
 			byteProgress=(self._absPos, self._limit),
 		)
@@ -451,32 +455,17 @@ class Reader(object):
 		_file.seek(self._entriesOffset)
 		self._wordCount = len(titleById)
 
-	def prepareKeyTextFile(
+	def getKeyTextDataFromFile(
 		self,
 		morphoFilePath: str,
-		metadata: "Dict",
-	) -> "Dict[ArticleAddress, List[str]]":
+		properties: AppleDictProperties,
+	) -> dict[ArticleAddress, List[RawKeyData]] :
 		"""Prepare `KeyText.data` file for extracting morphological data"""
-		keyText_metadata = metadata.get('IDXDictionaryIndexes')[0]
-		metadata_index_fields = keyText_metadata \
-			.get('IDXIndexDataFields') \
-			.get('IDXVariableDataFields')
-		key_data_order: "List[Tuple[str, int]]" = []
-		for index_field_info in metadata_index_fields:
-			key_data_order.append((
-				index_field_info['IDXDataFieldName'],
-				index_field_info['IDXDataSizeLength'],
-			))
-
-		is_compressed = (
-			'TrieAuxiliaryDataOptions' in keyText_metadata and
-			"HeapDataCompressionType" in keyText_metadata['TrieAuxiliaryDataOptions']
-		)
 		with open(morphoFilePath, 'rb') as keyTextFile:
 			file_data_offset, file_limit = guessFileOffsetLimit(keyTextFile)
 
 			buffer = BytesIO()
-			if is_compressed:
+			if properties.key_text_compression_type > 0:
 				keyTextFile.seek(file_data_offset)
 				section_len = readInt(keyTextFile)
 				section_offset = keyTextFile.tell()
@@ -499,78 +488,64 @@ class Reader(object):
 				buffer_limit = file_limit - APPLEDICT_FILE_OFFSET
 				has_sections = False
 
-			morpho_data = self.readMorphology(
-				f=buffer,
+			return self.readKeyTextData(
+				buffer=buffer,
 				buffer_offset=buffer_offset,
 				buffer_limit=buffer_limit,
 				has_sections=has_sections,
-				key_data_order=key_data_order,
 			)
 
-			morpho_data_xml: Dict[ArticleAddress, List[str]] = {}
-			for article_address in morpho_data:
-				morpho_xmls = [
-					self.morpho_data_to_xml(morpho, key_data_order)
-					for morpho in morpho_data[article_address]
-				]
-				morpho_data_xml[article_address] = morpho_xmls
-			return morpho_data_xml
-
-	def readMorphology(
+	def readKeyTextData(
 		self,
-		f: BufferedReader,
+		buffer: BufferedReader,
 		buffer_offset: int,
 		buffer_limit: int,
 		has_sections: bool,
-		key_data_order: "List[Tuple[str, int]]",
-	):
+	) -> Dict[ArticleAddress, List[RawKeyData]]:
+		buffer.seek(buffer_offset)
+		key_text_data: Dict[ArticleAddress, List[RawKeyData]] = {}
 
-		f.seek(buffer_offset)
-		morpho_data: Dict[ArticleAddress, List[List[str]]] = {}
-		while f.tell() + 2 < buffer_limit:  # TODO check if +2 is a good solution
-			f.seek(buffer_offset)
-			jump = read_2_bytes_here(f) + 4
-			zero1 = read_2_bytes_here(f)  # 0x00
+		while buffer.tell() + 2 < buffer_limit:  # TODO check if +2 is a good solution
+			buffer.seek(buffer_offset)
+			jump = read_2_bytes_here(buffer) + 4
+			zero1 = read_2_bytes_here(buffer)  # 0x00
 			if not has_sections:
-				big_len = read_2_bytes_here(f)  # noqa: F841
+				big_len = read_2_bytes_here(buffer)  # noqa: F841
 				# ^ 0x2c TODO might be here or might be not
-				zero2 = read_2_bytes_here(f)  # noqa: F841
-				# ^ 0x00 TODO might be here or might be not
+				zero2 = read_2_bytes_here(buffer)  # noqa: F841
+			# ^ 0x00 TODO might be here or might be not
 			# number of lexemes
-			word_forms_number = read_2_bytes_here(f)  # 0x01
+			word_forms_number = read_2_bytes_here(buffer)  # 0x01
 			if zero1 != 0:
 				raise RuntimeError("zero1")
 			next_lexeme_offset: int = 0
 			for _ in range(word_forms_number):
-				# TODO fix quotes <d:index d:value=""mass produced"" d:title=""mass-produced""/>
-
-				_ = read_2_bytes_here(f)  # 0x00 // TODO might be 1 or 2 or more zeros
+				_ = read_2_bytes_here(buffer)  # 0x00 // TODO might be 1 or 2 or more zeros
 				if next_lexeme_offset != 0:
-					f.seek(next_lexeme_offset)
+					buffer.seek(next_lexeme_offset)
 				small_len = 0
 				while small_len == 0:
-					curr_offset = f.tell()
-					small_len = read_2_bytes_here(f)  # 0x2c
+					curr_offset = buffer.tell()
+					small_len = read_2_bytes_here(buffer)  # 0x2c
 				next_lexeme_offset = curr_offset + small_len
 				# the resulting number must match with Contents/Body.data address of the entry
 				article_address: ArticleAddress
 				if has_sections:
-					chunk_offset = readInt(f)
-					section_offset = readInt(f)
+					chunk_offset = readInt(buffer)
+					section_offset = readInt(buffer)
 					article_address = ArticleAddress(
 						section_offset=section_offset,
 						chunk_offset=chunk_offset,
 					)
 				else:
 					chunk_offset = 0x0
-					section_offset = readInt(f)
+					section_offset = readInt(buffer)
 					article_address = ArticleAddress(
 						section_offset=section_offset,
 						chunk_offset=chunk_offset,
 					)
 
-				keyword_list = []
-				priority_and_parental_control = read_2_bytes_here(f)  # 0x13
+				priority_and_parental_control = read_2_bytes_here(buffer)  # 0x13
 				if priority_and_parental_control > 0x20:
 					raise RuntimeError(
 						'WRONG priority or parental control:' +
@@ -583,72 +558,26 @@ class Reader(object):
 				# d:priority=".." between 0x00..0x12, priority = [0..9]
 				priority = int((priority_and_parental_control - parental_control) / 2)
 
-				keyword_list.append(priority)
-				keyword_list.append(parental_control)
-
+				key_text_fields = []
 				has_one_zero = False
-				for _, word_form_size_len_bytes in key_data_order:
+				while True:
 					# read length, or if value is zero then read again
-					word_form_len = read_x_bytes_as_int(f, word_form_size_len_bytes)
+					word_form_len = read_2_bytes_here(buffer)
 					if word_form_len == 0:
 						if has_one_zero:
 							break
 						has_one_zero = True
 						continue
 					has_one_zero = False
-					word_form = read_x_bytes_as_word(f, word_form_len)
-					keyword_list.append(word_form)
-
-				if article_address in morpho_data:
-					morpho_data[article_address].append(keyword_list)
+					word_form = read_x_bytes_as_word(buffer, word_form_len)
+					key_text_fields.append(word_form)
+				entry_key_text_data: RawKeyData = (priority, parental_control, key_text_fields)
+				if article_address in key_text_data:
+					key_text_data[article_address].append(entry_key_text_data)
 				else:
-					morpho_data[article_address] = [keyword_list]
+					key_text_data[article_address] = [entry_key_text_data]
 			buffer_offset += jump
-		return morpho_data
-
-	keyword_data_id_xml = {
-		'DCSKeyword': 'd:value',
-		# Search key -- if entered in search, this key will provide this definition.
-
-		'DCSHeadword': 'd:title',
-		# Headword text that is displayed on the search result list.
-		# When the value is the same to the d:index value, it can be omitted.
-		# In that case, the value of the d:value is used also for the d:title.
-
-		'DCSAnchor': 'd:anchor',
-		# Used to highlight a specific part in an entry.
-		# For example, it is used to highlight an idiomatic phrase explanation
-		# in an entry for a word.
-
-		'DCSYomiWord': 'd:yomi',
-		# Used only in making Japanese dictionaries.
-
-		'DCSSortKey': 'd:DCSSortKey', 
-		# This value shows sorting (probably for non-english languages)
-
-		'DCSEntryTitle': 'd:DCSEntryTitle', 
-		# Headword displayed as article title
-	}
-
-	def morpho_data_to_xml(self, data: List, keyword_data_order) -> str:
-		# FIXME: just return alts: List[str]
-		d_index_xml = '<d:index xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng" '  # noqa: E501
-		# index: "List[Tuple[]]" = []
-		for idx, value in enumerate(data):
-			if idx == 0:
-				priority: int = value
-				if priority != 0:
-					d_index_xml += f' d:priority="{priority}"'
-			elif idx == 1:
-				parental_control: int = value
-				if parental_control != 0:
-					d_index_xml += f' d:parental-control="{parental_control}"'
-			else:
-				word_form_id = keyword_data_order[idx - 2][0]
-				if word_form_id != 'DCSEntryTitle' and word_form_id != 'DCSSortKey':
-					d_index_xml += f' {self.keyword_data_id_xml[word_form_id]}="{xml_escape(value)}"'
-		d_index_xml += ' />'
-		return d_index_xml
+		return key_text_data
 
 	def __iter__(self) -> "Iterator[EntryType]":
 		from os.path import dirname
