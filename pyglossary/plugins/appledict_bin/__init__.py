@@ -16,17 +16,23 @@
 
 import re
 from datetime import datetime
-from io import BytesIO, BufferedReader
+from io import BufferedReader, BytesIO
 from os.path import isdir, isfile, join, split
 from struct import unpack
-from typing import TYPE_CHECKING, Any, Dict, Iterator, Match, Tuple, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Match, Optional, Tuple
+
 from lxml import etree
 
-from pyglossary.plugins.appledict import appledict_file_tools
-from pyglossary.plugins.appledict.article_address import ArticleAddress
-from pyglossary.plugins.appledict.appledict_file_tools import readInt, guessFileOffsetLimit, APPLEDICT_FILE_OFFSET, \
-	enumerate_reversed
 from pyglossary.xml_utils import xml_escape
+
+from . import appledict_file_tools
+from .appledict_file_tools import (
+	APPLEDICT_FILE_OFFSET,
+	enumerate_reversed,
+	guessFileOffsetLimit,
+	readInt,
+)
+from .article_address import ArticleAddress
 
 if TYPE_CHECKING:
 	import lxml
