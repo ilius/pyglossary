@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import difflib
 import sys
 from subprocess import PIPE, Popen
 
@@ -55,12 +56,12 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 		index2 += 1
 
 	def printEntry(color: str, prefix: str, index: int, entry: "EntryType"):
-		str = (
+		formatted = (
 			f"{color}{prefix}#{index} " +
 			formatEntry(entry).replace("\n", "\n" + color) +
 			"\n______________________________________________\n\n"
 		)
-		proc.stdin.write(str.encode("utf-8"))
+		proc.stdin.write(formatted.encode("utf-8"))
 
 	def printChangedEntry(entry1, entry2):
 		defiDiff = formatDiff(xmlDiff(entry1.defi, entry2.defi))
@@ -69,12 +70,39 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 			ids = f"#{index1}"
 		else:
 			ids = f"A#{index1} B#{index2}"
-		str = (
+		formatted = (
 			f"=== {yellow}{ids}{reset} " +
 			formatEntry(entry1) +
 			"\n______________________________________________\n\n"
 		)
-		proc.stdin.write(str.encode("utf-8"))
+		proc.stdin.write(formatted.encode("utf-8"))
+
+	def printAltsChangedEntry(entry1, entry2):
+		if index1 == index2:
+			ids = f"#{index1}"
+		else:
+			ids = f"A#{index1} B#{index2}"
+
+		header = f"=== {yellow}{ids}{reset} "
+
+		altsDiff = difflib.ndiff(
+			[f"Alt: {alt}" for alt in entry1.l_word[1:]],
+			[f"Alt: {alt}" for alt in entry2.l_word[1:]],
+			linejunk=None,
+			charjunk=None,
+		)
+		entryFormatted = "\n".join([
+			f">>> {entry1.l_word[0]}",
+			formatDiff(altsDiff),
+			"",
+			entry1.defi,
+		])
+		formatted = (
+			header + entryFormatted +
+			"\n______________________________________________\n\n"
+		)
+		proc.stdin.write(formatted.encode("utf-8"))
+
 
 	count = 0
 	entry1 = None
@@ -94,6 +122,11 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 				entry1, entry2 = None, None
 				return
 			printChangedEntry(entry1, entry2)
+			entry1, entry2 = None, None
+			return
+
+		if words1[0] == words2[0] and entry1.defi == entry2.defi:
+			printAltsChangedEntry(entry1, entry2)
 			entry1, entry2 = None, None
 			return
 
