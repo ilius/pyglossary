@@ -40,13 +40,13 @@ def xmlWordSplit(text: str) -> "List[str]":
 	return words
 
 
-def xmlDiff(text1, text2) -> "Iterator":
+def xmlDiff(text1: str, text2: str) -> "Iterator[str]":
 	words1 = xmlWordSplit(text1)
 	words2 = xmlWordSplit(text2)
 	return difflib.ndiff(words1, words2, linejunk=None, charjunk=None)
 
 
-def formatDiff(diff) -> str:
+def formatDiff(diff: "Iterator[str]") -> str:
 	res = ""
 	for part in diff:
 		if part[0] == " ":
@@ -61,14 +61,14 @@ def formatDiff(diff) -> str:
 	return res
 
 
-def main_word_split():
+def main_word_split() -> None:
 	text = sys.argv[1]
 	print(text)
 	for word in xmlWordSplit(text):
 		print(f"word: {word!r}")
 
 
-def main():
+def main() -> None:
 	filename1 = sys.argv[1]
 	filename2 = sys.argv[2]
 	with open(filename1, mode="r", encoding="utf-8") as _file:

@@ -232,7 +232,7 @@ class ProgressBar(tix.Frame):
 		labelFormat="%d%%",
 		value=0,
 		bd=2,
-	):
+	) -> None:
 		# preserve various values
 		self.rootWin = rootWin
 		self.orientation = orientation
@@ -328,7 +328,7 @@ class FormatDialog(tix.Toplevel):
 		onOk: "Callable",
 		button: "FormatButton",
 		activeDesc: str = "",
-	):
+	) -> None:
 		tix.Toplevel.__init__(self)
 		# bg="#0f0" does not work
 		self.descList = descList
@@ -519,7 +519,7 @@ class FormatButton(tk.Button):
 		dialogTitle: str,
 		onChange: "Callable",
 		master=None,
-	):
+	) -> None:
 		self.var = tk.StringVar()
 		self.var.set(self.noneLabel)
 		tk.Button.__init__(
@@ -865,7 +865,7 @@ class FormatOptionsButton(tk.Button):
 		values: "Dict",
 		formatInput: "FormatButton",
 		master=None,
-	):
+	) -> None:
 		tk.Button.__init__(
 			self,
 			master=master,

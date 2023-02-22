@@ -317,7 +317,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		options: "List[str]",
 		optionsValues: "Dict[str, Any]",
 		parent=None,
-	):
+	) -> None:
 		gtk.Dialog.__init__(self, parent=parent)
 		optionsProp = Glossary.plugins[formatName].optionsProp
 		self.optionsProp = optionsProp
@@ -763,7 +763,7 @@ class BrowseButton(gtk.Button):
 		label="Browse",
 		actionSave=False,
 		title="Select File",
-	):
+	) -> None:
 		gtk.Button.__init__(self)
 
 		self.set_label(label)

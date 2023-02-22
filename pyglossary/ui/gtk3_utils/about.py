@@ -34,7 +34,7 @@ class AboutWidget(gtk.Box):
 		authors: str = "",
 		license: str = "",
 		**kwargs,
-	):
+	) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		##
 		headerBox = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)

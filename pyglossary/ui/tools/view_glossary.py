@@ -2,15 +2,17 @@
 
 import sys
 from subprocess import PIPE, Popen
+from typing import Optional
 
 from pyglossary import Glossary
+from pyglossary.glossary_type import EntryType
 from pyglossary.ui.tools.colors import reset, yellow
 from pyglossary.ui.tools.format_entry import formatEntry
 
 Glossary.init()
 
 
-def viewGlossary(filename, format=None):
+def viewGlossary(filename: str, format: "Optional[str]" = None) -> None:
 	glos = Glossary(ui=None)
 
 	if not glos.read(filename, format=format, direct=True):
@@ -25,7 +27,7 @@ def viewGlossary(filename, format=None):
 	)
 	index = 0
 
-	def handleEntry(entry):
+	def handleEntry(entry: "EntryType") -> None:
 		nonlocal index
 		str = (
 			f"{yellow}#{index}{reset} " +
@@ -55,7 +57,7 @@ def viewGlossary(filename, format=None):
 		sys.stdout.flush()
 
 
-def main():
+def main() -> None:
 	filename = sys.argv[1]
 	format = None
 	if len(sys.argv) > 2:

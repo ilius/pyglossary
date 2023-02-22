@@ -289,7 +289,7 @@ class Bar(WidgetHFill):
     __slots__ = ('marker', 'left', 'right', 'fill', 'fill_left')
 
     def __init__(self, marker='#', left='|', right='|', fill=' ',
-                 fill_left=True):
+                 fill_left=True) -> None:
         """Creates a customizable progress bar.
 
         marker - string or updatable object to use as a marker
@@ -328,7 +328,7 @@ class ReverseBar(Bar):
     """A bar which has a marker which bounces from side to side."""
 
     def __init__(self, marker='#', left='|', right='|', fill=' ',
-                 fill_left=False):
+                 fill_left=False) -> None:
         """Creates a customizable progress bar.
 
         marker - string or updatable object to use as a marker

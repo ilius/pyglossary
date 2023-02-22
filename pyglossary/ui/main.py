@@ -27,7 +27,7 @@ import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Callable, Dict, Optional
+	from typing import Callable, Dict, List, Optional
 
 	from pyglossary.option import Option
 
@@ -67,7 +67,7 @@ if os.sep == "\\":
 	ui_list = ["tk", "gtk"]
 
 
-def canRunGUI():
+def canRunGUI() -> bool:
 	if core.sysName == "linux":
 		return bool(os.getenv("DISPLAY"))
 
@@ -83,12 +83,12 @@ def canRunGUI():
 class StoreConstAction(argparse.Action):
 	def __init__(
 		self,
-		option_strings,
-		same_dest="",
-		const_value=None,
-		nargs=0,
+		option_strings: "List[str]",
+		same_dest: str = "",
+		const_value: "Optional[bool]" = None,
+		nargs: int = 0,
 		**kwargs,
-	):
+	) -> None:
 		if isinstance(option_strings, str):
 			option_strings = [option_strings]
 		argparse.Action.__init__(
@@ -102,13 +102,13 @@ class StoreConstAction(argparse.Action):
 
 	def __call__(
 		self,
-		parser=None,
-		namespace=None,
-		values=None,
-		option_strings=None,
-		required=False,
-		dest=None,
-	):
+		parser: "Optional[argparse.ArgumentParser]" = None,
+		namespace: "Optional[argparse.Namespace]" = None,
+		values: "List" = None,
+		option_strings: "List[str]" = None,
+		required: bool = False,
+		dest: "Optional[str]" = None,
+	) -> "StoreConstAction":
 		if not parser:
 			return self
 		dest = self.dest
@@ -122,7 +122,11 @@ class StoreConstAction(argparse.Action):
 		return self
 
 
-def registerConfigOption(parser, key: str, option: "Option"):
+def registerConfigOption(
+	parser: "argparse.ArgumentParser",
+	key: str,
+	option: "Option",
+) -> None:
 	if not option.hasFlag:
 		return
 	flag = option.customFlag
@@ -187,7 +191,7 @@ def base_ui_run(
 	writeOptions: "Optional[Dict]" = None,
 	convertOptions: "Optional[Dict]" = None,
 	glossarySetAttrs: "Optional[Dict]" = None,
-):
+) -> bool:
 	from pyglossary.glossary import Glossary
 	if reverse:
 		log.error("--reverse does not work with --ui=none")
@@ -211,7 +215,7 @@ def base_ui_run(
 	return True
 
 
-def getGitVersion(gitDir):
+def getGitVersion(gitDir: str) -> str:
 	import subprocess
 	try:
 		outputB, error = subprocess.Popen(
@@ -230,7 +234,7 @@ def getGitVersion(gitDir):
 	return outputB.decode("utf-8").strip()
 
 
-def getVersion():
+def getVersion() -> str:
 	from pyglossary.core import rootDir
 	gitDir = os.path.join(rootDir, ".git")
 	if os.path.isdir(gitDir):
@@ -240,7 +244,7 @@ def getVersion():
 	return core.VERSION
 
 
-def validateLangStr(st) -> "Optional[str]":
+def validateLangStr(st: str) -> "Optional[str]":
 	lang = langDict[st]
 	if lang:
 		return lang.name
@@ -251,7 +255,7 @@ def validateLangStr(st) -> "Optional[str]":
 	return None
 
 
-def shouldUseCMD(args):
+def shouldUseCMD(args: "argparse.Namespace") -> bool:
 	if not canRunGUI():
 		return True
 	if args.interactive:
@@ -304,7 +308,7 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 	return ui_module.UI().run
 
 
-def main():
+def main() -> None:
 	global log
 
 	uiBase = UIBase()

@@ -89,7 +89,7 @@ class MiniCheckBoxPrompt(object):
 		message: str = "",
 		fmt: str = "{message}: {check}",
 		value: bool = False,
-	):
+	) -> None:
 		self.message = message
 		self.fmt = fmt
 		self.value = value
@@ -213,7 +213,7 @@ class MyPathCompleter(PathCompleter):
 		reading: bool,
 		fs_action_names=None,
 		**kwargs,
-	):
+	) -> None:
 		PathCompleter.__init__(
 			self,
 			file_filter=self.file_filter,

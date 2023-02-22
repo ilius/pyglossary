@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-def formatEntry(entry):
+from pyglossary.glossary_type import EntryType
+
+
+def formatEntry(entry: "EntryType") -> str:
     words = entry.l_word
     headword = ""
     if words:

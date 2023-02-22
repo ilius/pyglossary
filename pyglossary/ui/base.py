@@ -38,7 +38,7 @@ from pyglossary.option import (
 )
 
 
-def fread(path):
+def fread(path: str) -> str:
 	with open(path, encoding="utf-8") as fp:
 		return fp.read()
 
@@ -178,20 +178,20 @@ class UIBase(object):
 	def __init__(self, **kwargs) -> None:
 		self.config = {}
 
-	def progressInit(self, title):
+	def progressInit(self, title: str) -> None:
 		pass
 
-	def progress(self, rat, text=""):
+	def progress(self, rat: float, text: str = "") -> None:
 		pass
 
-	def progressEnd(self):
+	def progressEnd(self) -> None:
 		self.progress(1.0)
 
 	def loadConfig(
 		self,
 		user: bool = True,
 		**options,
-	):
+	) -> None:
 		from pyglossary.json_utils import jsonToData
 		data = jsonToData(fread(rootConfJsonFile))
 		if user and isfile(confJsonFile):
@@ -222,9 +222,8 @@ class UIBase(object):
 		log.setTimeEnable(self.config["log_time"])
 
 		log.debug(f"loaded config: {self.config}")
-		return True
 
-	def saveConfig(self):
+	def saveConfig(self) -> None:
 		from pyglossary.json_utils import dataToPrettyJson
 		config = OrderedDict()
 		for key, option in self.configDefDict.items():

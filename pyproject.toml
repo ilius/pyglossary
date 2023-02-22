@@ -54,6 +54,7 @@ fixable = [
     "COM",
     # since which Python is comma after **kwargs allowd?
     "TCH",
+    "ANN",
 ]
 unfixable = []
 

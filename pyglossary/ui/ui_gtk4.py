@@ -313,7 +313,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		options: "List[str]",
 		optionsValues: "Dict[str, Any]",
 		**kwargs,
-	):
+	) -> None:
 		gtk.Dialog.__init__(self, **kwargs)
 		self.vbox = self.get_content_area()
 		##
@@ -775,7 +775,7 @@ class BrowseButton(gtk.Button):
 		label="Browse",
 		actionSave=False,
 		title="Select File",
-	):
+	) -> None:
 		gtk.Button.__init__(self)
 
 		self.set_label(label)

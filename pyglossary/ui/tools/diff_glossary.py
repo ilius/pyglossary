@@ -3,7 +3,7 @@
 import difflib
 import sys
 from subprocess import PIPE, Popen
-from typing import Tuple
+from typing import Iterator, Optional, Tuple
 
 from pyglossary import Glossary
 from pyglossary.entry import Entry
@@ -23,7 +23,7 @@ from pyglossary.ui.tools.word_diff import (
 Glossary.init()
 
 
-def formatInfoValueDiff(diff) -> str:
+def formatInfoValueDiff(diff: "Iterator[str]") -> str:
 	a = ""
 	b = ""
 	for part in diff:
@@ -40,7 +40,12 @@ def formatInfoValueDiff(diff) -> str:
 	return a + "\n" + b
 
 
-def diffGlossary(filename1, filename2, format1=None, format2=None):
+def diffGlossary(
+	filename1: str,
+	filename2: str,
+	format1: "Optional[str]" = None,
+	format2: "Optional[str]" = None,
+) -> None:
 	glos1 = Glossary(ui=None)
 	if not glos1.read(filename1, format=format1, direct=True):
 		return
@@ -70,17 +75,17 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 	index1 = -1
 	index2 = -1
 
-	def nextEntry1():
+	def nextEntry1() -> None:
 		nonlocal entry1, index1
 		entry1 = next(iter1)
 		index1 += 1
 
-	def nextEntry2():
+	def nextEntry2() -> None:
 		nonlocal entry2, index2
 		entry2 = next(iter2)
 		index2 += 1
 
-	def printEntry(color: str, prefix: str, index: int, entry: "EntryType"):
+	def printEntry(color: str, prefix: str, index: int, entry: "EntryType") -> None:
 		formatted = (
 			f"{color}{prefix}#{index} " +
 			formatEntry(entry).replace("\n", "\n" + color) +
@@ -88,7 +93,7 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 		)
 		proc.stdin.write(formatted.encode("utf-8"))
 
-	def printInfo(color: str, prefix: str, pair: "Tuple[str, str]"):
+	def printInfo(color: str, prefix: str, pair: "Tuple[str, str]") -> None:
 		key, value = pair
 		spaces = " " * (len(prefix) + 7)
 		valueColor = color + spaces + value.replace("\n", "\n" + spaces + color)
@@ -99,7 +104,7 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 		)
 		proc.stdin.write(formatted.encode("utf-8"))
 
-	def printChangedEntry(entry1, entry2):
+	def printChangedEntry(entry1: "EntryType", entry2: "EntryType") -> None:
 		defiDiff = formatDiff(xmlDiff(entry1.defi, entry2.defi))
 		entry1._defi = defiDiff
 		if index1 < 0:
@@ -116,7 +121,7 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 		proc.stdin.write(formatted.encode("utf-8"))
 
 
-	def printChangedInfo(key, value1, value2):
+	def printChangedInfo(key: str, value1: str, value2: str) -> str:
 		valueDiff = formatInfoValueDiff(xmlDiff(value1, value2))
 		printInfo(yellow, "=== ", (key, valueDiff))
 
@@ -124,11 +129,11 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 	infoPair1 = None
 	infoPair2 = None
 
-	def newInfoEntry(pair: "Tuple[str, str]"):
+	def newInfoEntry(pair: "Tuple[str, str]") -> "EntryType":
 		key, value = pair
 		return Entry(f"Info: {key}", f"Value: {value}")
 
-	def infoStep():
+	def infoStep() -> None:
 		nonlocal infoPair1, infoPair2
 		if infoPair1 is None:
 			infoPair1 = next(infoIter1)
@@ -152,7 +157,7 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 		printInfo(green, "+++ B: ", infoPair2)
 		infoPair2 = None
 
-	def printAltsChangedEntry(entry1, entry2):
+	def printAltsChangedEntry(entry1: "EntryType", entry2: "EntryType") -> None:
 		if index1 == index2:
 			ids = f"#{index1}"
 		else:
@@ -182,7 +187,7 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 	entry1 = None
 	entry2 = None
 
-	def step():
+	def step() -> None:
 		nonlocal count, entry1, entry2
 		if entry1 is None:
 			nextEntry1()
@@ -267,7 +272,7 @@ def diffGlossary(filename1, filename2, format1=None, format2=None):
 		sys.stdout.flush()
 
 
-def main():
+def main() -> None:
 	filename1 = sys.argv[1]
 	filename2 = sys.argv[2]
 	format1 = None
