@@ -52,7 +52,7 @@ class Writer(object):
 		self._file = open(filename, "wt", encoding=self._encoding)
 		self._writeInfo()
 
-	def _writeInfo(self):
+	def _writeInfo(self) -> None:
 		fileObj = self._file
 		newline = self._newline
 		info_keys = self._getInfoKeys()
@@ -99,7 +99,7 @@ class Writer(object):
 					f"\'{key}\', \'{value}\');\n",
 				)
 
-	def _getInfoKeys(self):
+	def _getInfoKeys(self) -> "List[str]":
 		info_keys = self._info_keys
 		if info_keys:
 			return info_keys

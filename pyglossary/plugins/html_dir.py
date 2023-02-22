@@ -5,7 +5,10 @@ import os
 import re
 import time
 from os.path import isdir, isfile, join
-from typing import Generator
+from typing import TYPE_CHECKING, Generator, Set
+
+if TYPE_CHECKING:
+	import io
 
 from pyglossary.core import log
 from pyglossary.glossary_type import (
@@ -114,19 +117,19 @@ class Writer(object):
 		if self._css:
 			self.copyCSS(self._css)
 
-	def copyCSS(self, cssPath):
+	def copyCSS(self, cssPath: str) -> None:
 		import shutil
 		shutil.copy(self._css, join(self._filename, "style.css"))
 
 	def finish(self) -> None:
 		pass
 
-	def getNextFilename(self):
+	def getNextFilename(self) -> str:
 		return self._filename_format.format(
 			n=len(self._filenameList),
 		)
 
-	def nextFile(self):
+	def nextFile(self) -> "io.TextIOBase":
 		if self._fileObj:
 			self._fileObj.write(self._tail)
 			self._fileObj.close()
@@ -142,7 +145,7 @@ class Writer(object):
 		)
 		return self._fileObj
 
-	def fixLinks(self, linkTargetSet):
+	def fixLinks(self, linkTargetSet: "Set[str]") -> None:
 		import gc
 
 		from cachetools import LRUCache
@@ -174,7 +177,7 @@ class Writer(object):
 		# with open(join(dirn, "fileByWord.json"), "w") as fileByWordFile:
 		# 	json.dump(fileByWord, fileByWordFile, ensure_ascii=False, indent="\t")
 
-		def getLinksByFile(fileIndex):
+		def getLinksByFile(fileIndex: int) -> "io.TextIOBase":
 			nonlocal linksByFile
 			_file = linksByFile.get(fileIndex)
 			if _file is not None:
@@ -320,7 +323,7 @@ class Writer(object):
 
 		entry_url_fmt = glos.getInfo("entry_url")
 
-		def getEntryWebLink(entry) -> str:
+		def getEntryWebLink(entry: "EntryType") -> str:
 			if not entry_url_fmt:
 				return ""
 			url = entry_url_fmt.format(word=html.escape(entry.l_word[0]))
@@ -359,7 +362,7 @@ class Writer(object):
 			'</meta></head><body>\n'
 		)
 
-		def pageHeader(n: int):
+		def pageHeader(n: int) -> str:
 			return header.format(
 				pageTitle=f"Page {n} of {title}",
 				customStyle="",
@@ -398,7 +401,7 @@ class Writer(object):
 
 		linkTargetSet = set()
 
-		def replaceBword(text) -> str:
+		def replaceBword(text: str) -> str:
 			return text.replace(
 				' href="bword://',
 				' href="#',

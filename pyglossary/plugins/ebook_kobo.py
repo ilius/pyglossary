@@ -144,7 +144,7 @@ class Writer:
 		groupCounter = 0
 		htmlContents = htmlHeader
 
-		def writeGroup(lastPrefix) -> None:
+		def writeGroup(lastPrefix: str) -> None:
 			nonlocal htmlContents
 			group_fname = fixFilename(lastPrefix)
 			htmlContents += "</html>"

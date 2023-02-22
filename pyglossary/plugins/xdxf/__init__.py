@@ -22,10 +22,10 @@
 # GNU General Public License for more details.
 
 import re
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING, Iterator, List, Optional, Sequence
 
 if TYPE_CHECKING:
-	import lxml
+	from lxml.etree import Element
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -203,7 +203,7 @@ class Reader(object):
 			self._file.close()
 			self._file = None
 
-	def read_metadata_old(self):
+	def read_metadata_old(self) -> None:
 		full_name = self._xdxf.find("full_name").text
 		desc = self._xdxf.find("description").text
 		if full_name:
@@ -211,7 +211,7 @@ class Reader(object):
 		if desc:
 			self._glos.setInfo("description", desc)
 
-	def read_metadata_new(self):
+	def read_metadata_new(self) -> None:
 		meta_info = self._xdxf.find("meta_info")
 		if meta_info is None:
 			raise ValueError("meta_info not found")
@@ -228,7 +228,7 @@ class Reader(object):
 
 	def tostring(
 		self,
-		elem: "lxml.etree.Element",
+		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
 		return ET.tostring(
@@ -237,14 +237,14 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def titles(self, article):
+	def titles(self, article: "Element") -> "List[str]":
 		"""
 
 		:param article: <ar> tag
 		:return: (title (str) | None, alternative titles (set))
 		"""
 		from itertools import combinations
-		titles = []
+		titles: "List[str]" = []
 		for title_element in article.findall("k"):
 			if title_element.text is None:
 				# TODO: look for <opt> tag?
@@ -260,7 +260,11 @@ class Reader(object):
 
 		return titles
 
-	def _mktitle(self, title_element, include_opts=None):
+	def _mktitle(
+		self,
+		title_element: "Element",
+		include_opts: "Optional[Sequence]" = None,
+	) -> str:
 		if include_opts is None:
 			include_opts = ()
 		title = title_element.text

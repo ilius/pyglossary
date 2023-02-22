@@ -2,7 +2,7 @@
 
 import json
 import re
-from typing import Any, Generator, List
+from typing import Any, Dict, Generator, List, Sequence
 
 from pyglossary import os_utils
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -135,7 +135,7 @@ optionsProp = {
 }
 
 
-def _isKana(char: str):
+def _isKana(char: str) -> bool:
 	assert len(char) == 1  # noqa: S101
 	val = ord(char)
 	return (
@@ -145,7 +145,7 @@ def _isKana(char: str):
 	)
 
 
-def _isKanji(char: str):
+def _isKanji(char: str) -> bool:
 	assert len(char) == 1  # noqa: S101
 	val = ord(char)
 	return (
@@ -159,7 +159,7 @@ def _isKanji(char: str):
 	)
 
 
-def _uniqueList(lst: Any) -> List[Any]:
+def _uniqueList(lst: "Sequence") -> "List[Any]":
 	seen = set()
 	result = []
 	for elem in lst:
@@ -193,14 +193,14 @@ class Writer(object):
 		# formatting for simplicity.
 		glos.removeHtmlTagsAll()
 
-	def _getInfo(self, key):
+	def _getInfo(self, key: str) -> str:
 		info = self._glos.getInfo(key)
 		return info.replace("\n", "<br>")
 
-	def _getAuthor(self):
+	def _getAuthor(self) -> str:
 		return self._glos.author.replace("\n", "<br>")
 
-	def _getDictionaryIndex(self):
+	def _getDictionaryIndex(self) -> "Dict[str, Any]":
 		# Schema: https://github.com/FooSoft/yomichan/
 		# blob/master/ext/data/schemas/dictionary-index-schema.json
 		return dict(
@@ -213,7 +213,7 @@ class Writer(object):
 			description=self._getInfo("description"),
 		)
 
-	def _compileRegex(self):
+	def _compileRegex(self) -> None:
 		for field_name in [
 			"_delete_word_pattern",
 			"_ignore_word_with_pattern",
@@ -338,7 +338,7 @@ class Writer(object):
 			termBankIndex = 0
 			terms = []
 
-			def flushTerms():
+			def flushTerms() -> None:
 				nonlocal termBankIndex
 				if not terms:
 					return

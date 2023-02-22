@@ -69,7 +69,7 @@ class Reader(object):
 		self._tabFileNames = []
 		self._tabFileReader = None
 
-	def open(self, dirname) -> None:
+	def open(self, dirname: str) -> None:
 		self._dirname = dirname
 		orderFileNames = []
 		for fname in os.listdir(dirname):
@@ -88,13 +88,13 @@ class Reader(object):
 		self._tabFileNames = [x[1] for x in orderFileNames]
 		self.nextTabFile()
 
-	def __len__(self):  # FIXME
-		raise NotImplementedError
+	def __len__(self) -> int:
+		raise NotImplementedError  # FIXME
 
 	def __iter__(self) -> "Iterator[EntryType]":
 		return self
 
-	def __next__(self):
+	def __next__(self) -> "EntryType":
 		for _ in range(10):
 			try:
 				return next(self._tabFileReader)
@@ -102,7 +102,7 @@ class Reader(object):
 				self._tabFileReader.close()
 				self.nextTabFile()
 
-	def nextTabFile(self):
+	def nextTabFile(self) -> None:
 		try:
 			tabFileName = self._tabFileNames.pop()
 		except IndexError:
@@ -164,7 +164,7 @@ class Writer(object):
 				targetLang=glos.targetLangName,
 			))
 
-	def nextIndex(self):
+	def nextIndex(self) -> None:
 		try:
 			self.indexFp.close()
 		except AttributeError:

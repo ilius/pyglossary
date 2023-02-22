@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Callable, Iterator, List
 
 if TYPE_CHECKING:
 	import lxml
+	from lxml.etree import Element
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -59,11 +60,11 @@ class Reader(object):
 	def makeList(
 		self,
 		hf: "lxml.etree.htmlfile",
-		input_objects: "List[lxml.etree.Element]",
+		input_objects: "List[Element]",
 		processor: "Callable",
-		single_prefix=None,
-		skip_single=True,
-	):
+		single_prefix: str = "",
+		skip_single: bool = True,
+	) -> None:
 		""" Wrap elements into <ol> if more than one element """
 		if len(input_objects) == 0:
 			return
@@ -81,11 +82,11 @@ class Reader(object):
 	def writeTrans(
 		self,
 		hf: "lxml.etree.htmlfile",
-		trans: "lxml.etree.Element",
-	):
+		trans: "Element",
+	) -> None:
 		from lxml import etree as ET
 
-		def br():
+		def br() -> "Element":
 			return ET.Element("br")
 
 		for elem in trans.findall("name_type"):
@@ -123,14 +124,14 @@ class Reader(object):
 
 	def getEntryByElem(
 		self,
-		entry: "lxml.etree.Element",
+		entry: "Element",
 	) -> "EntryType":
 		from lxml import etree as ET
 		glos = self._glos
 		keywords = []
 		f = BytesIO()
 
-		def br():
+		def br() -> "Element":
 			return ET.Element("br")
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
@@ -212,7 +213,7 @@ class Reader(object):
 
 	def tostring(
 		self,
-		elem: "lxml.etree.Element",
+		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
 		return ET.tostring(
@@ -221,7 +222,7 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def setCreationTime(self, header: str):
+	def setCreationTime(self, header: str) -> None:
 		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)
 		if m is None:
 			return
@@ -250,7 +251,7 @@ class Reader(object):
 	def open(
 		self,
 		filename: str,
-	):
+	) -> None:
 		try:
 			from lxml import etree as ET  # noqa: F401
 		except ModuleNotFoundError as e:

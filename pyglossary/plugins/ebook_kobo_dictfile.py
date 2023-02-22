@@ -23,7 +23,7 @@
 
 import os
 from os.path import isdir
-from typing import Generator
+from typing import Generator, List, Optional, Tuple
 
 from pyglossary.core import pip
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -32,7 +32,7 @@ from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
 )
-from pyglossary.text_reader import TextGlossaryReader
+from pyglossary.text_reader import TextGlossaryReader, nextBlockResultType
 
 enable = True
 lname = "kobo_dictfile"
@@ -86,10 +86,14 @@ class Reader(TextGlossaryReader):
 	def isInfoWord(self, word: str) -> bool:
 		return False
 
-	def fixInfoWord(self, word: str):
+	def fixInfoWord(self, word: str) -> str:
 		raise NotImplementedError
 
-	def fixDefi(self, defi: str, html: bool) -> str:
+	def fixDefi(
+		self,
+		defi: str,
+		html: bool,
+	) -> "nextBlockResultType":
 		import mistune
 		defi = defi.replace("\n @", "\n@")\
 			.replace("\n :", "\n:")\
@@ -102,7 +106,7 @@ class Reader(TextGlossaryReader):
 			pass
 		else:
 			defi = mistune.html(defi)
-		images = None
+		images: "Optional[List[Tuple[str, str]]]" = None
 		if self._extract_inline_images:
 			defi, images = extractInlineHtmlImages(
 				defi,
@@ -111,7 +115,7 @@ class Reader(TextGlossaryReader):
 			)
 		return defi, images
 
-	def nextBlock(self):
+	def nextBlock(self) -> "Tuple[List[str], str, Optional[List[Tuple[str, str]]]]":
 		if not self._file:
 			raise StopIteration
 		words = []

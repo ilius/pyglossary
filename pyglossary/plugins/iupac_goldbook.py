@@ -4,7 +4,7 @@ from io import BytesIO
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
-	import lxml
+	from lxml.etree import Element
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
@@ -109,7 +109,7 @@ class Reader(object):
 
 	def tostring(
 		self,
-		elem: "lxml.etree.Element",
+		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
 		return ET.tostring(
@@ -118,7 +118,7 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def innerXML(self, elem):
+	def innerXML(self, elem: "Element") -> str:
 		from lxml import etree as ET
 		elemName = elem.xpath('name(/*)')
 		resultStr = ''
@@ -130,7 +130,7 @@ class Reader(object):
 
 		return resultStr
 
-	def getTerm(self, termE):
+	def getTerm(self, termE: "Element") -> str:
 		from lxml import etree as ET
 		term = ET.tostring(
 			termE,

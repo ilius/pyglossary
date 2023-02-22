@@ -83,8 +83,8 @@ optionsProp = {
 htmlEntityPattern = re.compile(r"&#?\w+;")
 
 
-def unescape(text):
-	def fixup(m):
+def unescape(text: str) -> str:
+	def fixup(m: "re.Match") -> str:
 		text = m.group(0)
 		if text[:2] == "&#":
 			# character reference
@@ -112,11 +112,11 @@ def unescape(text):
 # }}}
 
 
-def make_a_href(s):
+def make_a_href(s: str) -> str:
 	return f"<a href={quoteattr(s)}>{escape(s)}</a>"
 
 
-def ref_sub(x):
+def ref_sub(x: "re.Match") -> str:
 	return make_a_href(unescape(x.groups()[0]))
 
 
@@ -159,13 +159,13 @@ re_ref = re.compile("<<(.*?)>>")
 _parse = DSLParser().parse
 
 
-def apply_shortcuts(line: str):
+def apply_shortcuts(line: str) -> str:
 	for pattern, sub in shortcuts:
 		line = pattern.sub(sub, line)
 	return line
 
 
-def _clean_tags(line: str, audio):
+def _clean_tags(line: str, audio: bool) -> str:
 	r"""
 	[m{}] => <div style="margin-left:{}em">
 	[*]   => <span class="sec">
@@ -298,7 +298,7 @@ def _clean_tags(line: str, audio):
 	return line.replace("\\[", "[").replace("\\]", "]")
 
 
-def unwrap_quotes(s):
+def unwrap_quotes(s: str) -> str:
 	return re_wrapped_in_quotes.sub("\\2", s)
 
 
@@ -328,7 +328,7 @@ class Reader(object):
 		# FIXME
 		return 0
 
-	def _clean_tags_only_markup(self, line: str, audio):
+	def _clean_tags_only_markup(self, line: str, audio: bool) -> str:
 		return _parse(line)
 
 	def open(
@@ -372,7 +372,7 @@ class Reader(object):
 				break
 			self.processHeaderLine(line)
 
-	def detectEncoding(self):
+	def detectEncoding(self) -> str:
 		for testEncoding in ("utf-8", "utf-16"):
 			with compressionOpen(
 				self._filename,
@@ -394,10 +394,10 @@ class Reader(object):
 			", specify it by: --read-options encoding=ENCODING",
 		)
 
-	def setInfo(self, key, value):
+	def setInfo(self, key: str, value: str) -> None:
 		self._glos.setInfo(key, unwrap_quotes(value))
 
-	def processHeaderLine(self, line: str):
+	def processHeaderLine(self, line: str) -> None:
 		if line.startswith("#NAME"):
 			self.setInfo("name", unwrap_quotes(line[6:].strip()))
 		elif line.startswith("#INDEX_LANGUAGE"):

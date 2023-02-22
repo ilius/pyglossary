@@ -119,7 +119,7 @@ class Writer(object):
 	def open(
 		self,
 		filename: str,
-	):
+	) -> None:
 		self._filename = filename
 
 	def finish(self) -> None:

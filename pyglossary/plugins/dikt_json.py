@@ -65,7 +65,7 @@ class Writer(object):
 
 		ascii = encoding == "ascii"
 
-		def escape(st):
+		def escape(st: str) -> str:
 			# remove styling from HTML tags
 			st2 = re.sub(r' style="[^"]*"', '', st)
 			st2 = re.sub(r' class="[^"]*"', '', st2)

@@ -1,3 +1,5 @@
+from typing import Optional, Tuple
+
 from pyglossary.core import log
 from pyglossary.option import EncodingOption, StrOption
 from pyglossary.text_reader import TextGlossaryReader
@@ -34,7 +36,7 @@ class Reader(TextGlossaryReader):
 	def isInfoWord(self, word: str) -> bool:
 		return word.startswith("00-database-")
 
-	def fixInfoWord(self, word: str):
+	def fixInfoWord(self, word: str) -> str:
 		return word
 
 	def setInfo(self, word: str, defi: str) -> None:
@@ -61,7 +63,7 @@ class Reader(TextGlossaryReader):
 			value = ":".join(parts[1:])
 			glos.setInfo(key, value)
 
-	def nextBlock(self):
+	def nextBlock(self) -> "Optional[Tuple[str, str, None]]":
 		if not self._file:
 			raise StopIteration
 		word = ""

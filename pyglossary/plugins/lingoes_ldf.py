@@ -14,7 +14,7 @@ from pyglossary.option import (
 	EncodingOption,
 	NewlineOption,
 )
-from pyglossary.text_reader import TextGlossaryReader
+from pyglossary.text_reader import TextGlossaryReader, nextBlockResultType
 from pyglossary.text_utils import replaceStringTable, splitByBar
 
 enable = True
@@ -55,13 +55,13 @@ class Reader(TextGlossaryReader):
 
 		return False
 
-	def fixInfoWord(self, word: str):
+	def fixInfoWord(self, word: str) -> str:
 		if isinstance(word, str):
 			return word.lstrip("#").lower()
 
 		return word
 
-	def nextBlock(self):
+	def nextBlock(self) -> "nextBlockResultType":
 		if not self._file:
 			raise StopIteration
 		entryLines = []
@@ -108,10 +108,10 @@ class Writer(object):
 		self._glos = glos
 		self._filename = None
 
-	def getInfo(self, key):
+	def getInfo(self, key: str) -> str:
 		return self._glos.getInfo(key).replace("\n", "<br>")
 
-	def getAuthor(self):
+	def getAuthor(self) -> None:
 		return self._glos.author.replace("\n", "<br>")
 
 	def finish(self) -> None:

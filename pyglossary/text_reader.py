@@ -16,12 +16,10 @@ from pyglossary.entry import DataEntry
 
 log = logging.getLogger("pyglossary")
 
-nextBlockResultType = """Optional[
-	Tuple[
-		str,
-		str,
-		Optional[List[Tuple[str, str]]]
-	]
+resListType = "Optional[List[Tuple[str, str]]]"
+
+nextBlockResultType = f"""Optional[
+	Tuple[str, str, {resListType}]
 ]"""
 
 

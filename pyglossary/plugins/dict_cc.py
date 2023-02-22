@@ -2,7 +2,7 @@
 
 import html
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterator, List, Tuple
+from typing import TYPE_CHECKING, Callable, Iterator, List, Optional, Tuple
 
 if TYPE_CHECKING:
 	import lxml
@@ -52,9 +52,9 @@ class Reader(object):
 		hf: "lxml.etree.htmlfile",
 		input_elements: "List[lxml.etree.Element]",
 		processor: "Callable",
-		single_prefix=None,
-		skip_single=True,
-	):
+		single_prefix: str = "",
+		skip_single: bool = True,
+	) -> None:
 		""" Wrap elements into <ol> if more than one element """
 		if len(input_elements) == 0:
 			return
@@ -73,7 +73,7 @@ class Reader(object):
 		self,
 		hf: "lxml.etree.htmlfile",
 		row: "Tuple[str, str, str]",
-	):
+	) -> None:
 		from lxml import etree as ET
 		trans, entry_type = row
 		if entry_type:
@@ -90,7 +90,7 @@ class Reader(object):
 				with hf.element("a", href=f'bword://{trans}'):
 					hf.write("⏎")
 
-	def iterRows(self, column1, column2):
+	def iterRows(self, column1: str, column2: str) -> "Iterator[Tuple[str, str, str]]":
 		self._cur.execute(
 			f"select {column1}, {column2}, entry_type from main_ft"
 			f" order by {column1}",
@@ -108,7 +108,7 @@ class Reader(object):
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
-	def parseGender(self, headword):
+	def parseGender(self, headword: str) -> "Tuple[Optional[str], str]":
 		# {m}	masc	masculine	German: maskulin
 		# {f}	fem 	feminine	German: feminin
 		# {n}	neut	neutral		German: neutral
@@ -134,7 +134,7 @@ class Reader(object):
 		headword = headword[:i] + headword[i + 4:]
 		return gender, headword
 
-	def _iterOneDirection(self, column1, column2):
+	def _iterOneDirection(self, column1: str, column2: str) -> "Iterator[str]":
 		from io import BytesIO
 		from itertools import groupby
 

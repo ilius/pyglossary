@@ -1,7 +1,13 @@
 #!/bin/bash
 
+myPath=$(realpath "$0")
+myDir1=$(dirname "$myPath")
+rootDir=$(dirname "$myDir1")
+
+
 if [ -z "$1" ] ; then
 	set .
 fi
 
+cd $rootDir
 ruff check "$@" | grep --color=always -P ':\d*:' 2>&1 | less -RU

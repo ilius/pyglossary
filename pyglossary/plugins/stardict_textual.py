@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from typing import Generator, Iterator, List, Tuple
+from typing import TYPE_CHECKING, Generator, Iterator, List, Tuple
+
+if TYPE_CHECKING:
+	from lxml import builder
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -53,11 +56,11 @@ class Reader(object):
 		self._fileSize = 0
 		self._xdxfTr = None
 
-	def xdxf_setup(self):
+	def xdxf_setup(self) -> None:
 		from pyglossary.xdxf_transform import XdxfTransformer
 		self._xdxfTr = XdxfTransformer(encoding="utf-8")
 
-	def xdxf_transform(self, text: str):
+	def xdxf_transform(self, text: str) -> str:
 		if self._xdxfTr is None:
 			self.xdxf_setup()
 		return self._xdxfTr.transformByInnerString(text)
@@ -220,7 +223,7 @@ class Writer(object):
 	def open(
 		self,
 		filename: str,
-	):
+	) -> None:
 		self._filename = filename
 		self._file = compressionOpen(
 			self._filename,
@@ -231,7 +234,7 @@ class Writer(object):
 	def finish(self) -> None:
 		self._file.close()
 
-	def writeInfo(self, maker, pretty: bool) -> None:
+	def writeInfo(self, maker: "builder.ElementMaker", pretty: bool) -> None:
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -260,7 +263,7 @@ class Writer(object):
 			pretty_print=pretty,
 		).decode(self._encoding) + "\n")
 
-	def writeDataEntry(self, maker, entry) -> None:
+	def writeDataEntry(self, maker: "builder.ElementMaker", entry: "EntryType") -> None:
 		pass
 		# TODO: create article tag with "definition-r" in it?
 		# or just save the file to res/ directory? or both?

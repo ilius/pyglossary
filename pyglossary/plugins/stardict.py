@@ -16,7 +16,7 @@ from os.path import (
 )
 from pprint import pformat
 from time import time as now
-from typing import Any, Dict, Generator, Iterator, List, Tuple
+from typing import Any, Dict, Generator, Iterator, List, Sequence, Tuple
 
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS, DEFAULT_YES
@@ -130,7 +130,7 @@ class MemList(list):
 			item[0],
 		)
 
-	def sort(self):
+	def sort(self) -> None:
 		list.sort(self, key=self.sortKey)
 
 
@@ -138,7 +138,7 @@ class BaseSqList(list):
 	def __init__(
 		self,
 		filename: str,
-	):
+	) -> None:
 		from sqlite3 import connect
 
 		if isfile(filename):
@@ -184,7 +184,7 @@ class BaseSqList(list):
 	def __len__(self) -> int:
 		return self._len
 
-	def append(self, item):
+	def append(self, item: "Sequence") -> None:
 		self._len += 1
 		extraN = len(self._columns) - 1
 		self._cur.execute(
@@ -195,7 +195,7 @@ class BaseSqList(list):
 		if self._len % 1000 == 0:
 			self._con.commit()
 
-	def sort(self):
+	def sort(self) -> None:
 		pass
 
 	def close(self) -> None:
@@ -207,7 +207,7 @@ class BaseSqList(list):
 		self._con = None
 		self._cur = None
 
-	def __del__(self):
+	def __del__(self) -> None:
 		try:
 			self.close()
 		except AttributeError as e:
@@ -265,14 +265,14 @@ class Reader(object):
 			a dict { entryIndex -> altList }
 		"""
 
-	def xdxf_setup(self):
+	def xdxf_setup(self) -> None:
 		from pyglossary.xdxf_transform import XdxfTransformer, XslXdxfTransformer
 		if self._xsl:
 			self._xdxfTr = XslXdxfTransformer(encoding="utf-8")
-		else:
-			self._xdxfTr = XdxfTransformer(encoding="utf-8")
+			return
+		self._xdxfTr = XdxfTransformer(encoding="utf-8")
 
-	def xdxf_transform(self, text: str):
+	def xdxf_transform(self, text: str) -> str:
 		if self._xdxfTr is None:
 			self.xdxf_setup()
 		return self._xdxfTr.transformByInnerString(text)
@@ -429,7 +429,7 @@ class Reader(object):
 		self,
 		rawDefiList: "List[Tuple[bytes, int]]",
 		unicode_errors: str,
-	):
+	) -> "Tuple[str, str]":
 		if len(rawDefiList) == 1:
 			b_defiPart, i_type = rawDefiList[0]
 			_format, _defi = self.decodeRawDefiPart(
@@ -790,17 +790,17 @@ class Writer(object):
 		# defi = defi.replace(' src="./', ' src="./res/')
 		return defi
 
-	def newIdxList(self):
+	def newIdxList(self) -> "IdxSqList":
 		if not self._sqlite:
 			return MemList()
 		return IdxSqList(join(self._glos.tmpDataDir, "stardict-idx.db"))
 
-	def newSynList(self):
+	def newSynList(self) -> "SynSqList":
 		if not self._sqlite:
 			return MemList()
 		return SynSqList(join(self._glos.tmpDataDir, "stardict-syn.db"))
 
-	def writeCompact(self, defiFormat) -> None:
+	def writeCompact(self, defiFormat: str) -> None:
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
 		Every item definition consists of a single article.
@@ -963,7 +963,7 @@ class Writer(object):
 			f"Writing {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
 		)
 
-	def writeCompactMergeSyns(self, defiFormat) -> None:
+	def writeCompactMergeSyns(self, defiFormat: str) -> None:
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
 		Every item definition consists of a single article.

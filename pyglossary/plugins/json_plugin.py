@@ -69,7 +69,7 @@ class Writer(object):
 
 		ascii = encoding == "ascii"
 
-		def escape(st):
+		def escape(st: str) -> str:
 			return dumps(st, ensure_ascii=ascii)
 
 		yield from writeTxt(

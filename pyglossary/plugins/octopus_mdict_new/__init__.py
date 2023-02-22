@@ -139,7 +139,7 @@ class Reader(object):
 
 		self.loadLinks()
 
-	def loadLinks(self):
+	def loadLinks(self) -> None:
 		from pyglossary.plugin_lib.readmdict import MDX
 		log.info("extracting links...")
 		linksDict = {}

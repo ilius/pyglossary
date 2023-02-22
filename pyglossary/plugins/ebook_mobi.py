@@ -107,7 +107,7 @@ extraDocs = [
 
 
 class GroupStateBySize(object):
-	def __init__(self, writer) -> None:
+	def __init__(self, writer: "Writer") -> None:
 		self.writer = writer
 		self.group_index = -1
 		self.reset()
@@ -261,10 +261,10 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			infl=infl,
 		)
 
-	def getLangCode(self, lang) -> str:
+	def getLangCode(self, lang: "Lang") -> str:
 		return lang.code if isinstance(lang, Lang) else ""
 
-	def get_opf_contents(self, manifest_contents, spine_contents):
+	def get_opf_contents(self, manifest_contents: str, spine_contents: str) -> str:
 		cover = ""
 		if self.cover:
 			cover = self.COVER_TEMPLATE.format(cover=self.cover)
@@ -287,7 +287,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 	def write_groups(self) -> None:
 
-		def add_group(state):
+		def add_group(state: "GroupStateBySize") -> None:
 			if state.group_size <= 0:
 				return
 			state.group_index += 1

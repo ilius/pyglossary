@@ -21,17 +21,18 @@ exposed API lives here.
 
 import copy
 import re
+from typing import Iterable, Set, Tuple, Union
 
 from . import layer as _layer
 from . import tag as _tag
 
 
-def process_closing_tags(stack, tags):
+def process_closing_tags(
+	stack: "Iterable[_layer.Layer]",
+	tags: "Iterable[str]",
+) -> None:
 	"""
 	close `tags`, closing some inner layers if necessary.
-
-	:param stack: Iterable[layer.Layer]
-	:param tags: Iterable[str]
 	"""
 	index = len(stack) - 1
 	for tag in copy.copy(tags):
@@ -66,6 +67,7 @@ def process_closing_tags(stack, tags):
 OPEN = 1
 CLOSE = 2
 TEXT = 3
+ACTION = "Literal[OPEN, CLOSE, TEXT]"
 
 BRACKET_L = "\0\1"
 BRACKET_R = "\0\2"
@@ -81,23 +83,25 @@ class DSLParser(object):
 	only clean dsl on output!
 	"""
 
-	def __init__(self, tags=frozenset({
-		("m", r"\d"),
-		"*",
-		"ex",
-		"i",
-		("c", r"(?: \w+)?"),
-		"p",
-		"\"",
-		"b",
-		"s",
-		"sup",
-		"sub",
-		"ref",
-		"url",
-	})):
+	def __init__(
+		self,
+		tags: "Set[Union[str, Tuple[str, str]]]" = frozenset({
+			("m", r"\d"),
+			"*",
+			"ex",
+			"i",
+			("c", r"(?: \w+)?"),
+			"p",
+			"\"",
+			"b",
+			"s",
+			"sup",
+			"sub",
+			"ref",
+			"url",
+		}),
+	) -> None:
 		r"""
-		:type tags: set[str | tuple[str]] | frozenset[str | tuple[str]]
 		:param tags: set (or any other iterable) of tags where each tag is a
 					string or two-tuple. if string, it is tag name without
 					brackets, must be constant, i.e. non-save regex characters
@@ -116,7 +120,7 @@ class DSLParser(object):
 			tags_.add((tag, tag_re, ext_re, re_tag_open))
 		self.tags = frozenset(tags_)
 
-	def parse(self, line: str):
+	def parse(self, line: str) -> str:
 		r"""
 		parse dsl markup in `line` and return clean valid dsl markup.
 
@@ -129,11 +133,14 @@ class DSLParser(object):
 		line = self._parse(line)
 		return self.bring_brackets_back(line)
 
-	def _parse(self, line: str):
+	def _parse(self, line: str) -> str:
 		items = self._split_line_by_tags(line)
 		return self._tags_and_text_loop(items)
 
-	def _split_line_by_tags(self, line: str):
+	def _split_line_by_tags(
+		self,
+		line: str,
+	) -> "Iterable[[OPEN, _tag.Tag] | [CLOSE, str] | [TEXT, str]]":
 		"""
 		split line into chunks, each chunk is whether opening / closing
 		tag or text.
@@ -176,13 +183,11 @@ class DSLParser(object):
 			ptr = bracket + 1
 
 	@staticmethod
-	def _tags_and_text_loop(tags_and_text):
+	def _tags_and_text_loop(
+		tags_and_text: "Iterable[[OPEN, _tag.Tag] | [CLOSE, str] | [TEXT, str]]",
+	) -> str:
 		"""
 		parse chunks one by one.
-
-		:param tags_and_text:
-			Iterable[["OPEN", Tag] | ["CLOSE", str] | ["TEXT", str]]
-		:return: str
 		"""
 		state = TEXT
 		stack = []
@@ -242,7 +247,7 @@ class DSLParser(object):
 		# shutdown unclosed tags
 		return "".join([layer.text for layer in stack])
 
-	def put_brackets_away(self, line: str):
+	def put_brackets_away(self, line: str) -> str:
 		r"""put away \[, \] and brackets that does not belong to any of given tags.
 
 		:rtype: str
@@ -273,5 +278,5 @@ class DSLParser(object):
 		return clean_line
 
 	@staticmethod
-	def bring_brackets_back(line: str):
+	def bring_brackets_back(line: str) -> str:
 		return line.replace(BRACKET_L, "[").replace(BRACKET_R, "]")

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import html
-from typing import Iterator
+from typing import Iterator, Tuple
 
 from pyglossary.core import log
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -41,7 +41,7 @@ class Reader(object):
 		self._cur.execute("select count(*) * 2 from main_ft")
 		return self._cur.fetchone()[0]
 
-	def iterRows(self, column1, column2):
+	def iterRows(self, column1: str, column2: str) -> "Iterator[Tuple[str, str, str]]":
 		self._cur.execute(
 			f"select {column1}, {column2}, entry_type from main_ft"
 			f" order by {column1}",
@@ -59,7 +59,7 @@ class Reader(object):
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
-	def _iterOneDirection(self, column1, column2):
+	def _iterOneDirection(self, column1: str, column2: str) -> "Iterator[EntryType]":
 		for word, defi, entry_type in self.iterRows(column1, column2):
 			if entry_type:
 				word = f"{word} {{{entry_type}}}"
