@@ -2,7 +2,7 @@
 
 from io import BufferedReader
 from struct import unpack
-from typing import List, Tuple
+from typing import Tuple
 
 # Copyright © 2023 soshial <soshial@gmail.com> (soshial)
 #
@@ -19,7 +19,8 @@ from typing import List, Tuple
 # GNU General Public License for more details.
 
 
-APPLEDICT_FILE_OFFSET = 0x40 # addressing of AppleDict binary files always ignores first 0x40 bytes
+APPLEDICT_FILE_OFFSET = 0x40
+# addressing of AppleDict binary files always ignores first 0x40 bytes
 
 
 def readIntAt(buffer: BufferedReader, address: int) -> int:
@@ -57,10 +58,9 @@ def read_2_bytes_here(buffer: BufferedReader) -> int:
 def read_x_bytes_as_int(buffer: BufferedReader, x) -> int:
 	if x == 2:
 		return read_2_bytes_here(buffer)
-	elif x == 4:
+	if x == 4:
 		return readInt(buffer)
-	else:
-		raise IOError
+	raise IOError
 
 
 def guessFileOffsetLimit(file) -> "Tuple[int, int]":

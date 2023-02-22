@@ -25,11 +25,14 @@ class ArticleAddress:
 	def __lt__(self, other):
 		if self.section_offset == other.section_offset:
 			return self.chunk_offset < other.chunk_offset
-		else:
-			return self.section_offset < other.section_offset
+		return self.section_offset < other.section_offset
 
-	def __eq__(self, other):
-		return (self.section_offset, self.chunk_offset) == (other.section_offset, other.chunk_offset)
+	def __eq__(self, other) -> bool:
+		if self.section_offset != other.section_offset:
+			return False
+		if self.chunk_offset != other.chunk_offset:
+			return False
+		return True
 
 	def __hash__(self):
 		return 31 * hash(self.section_offset) + self.chunk_offset
