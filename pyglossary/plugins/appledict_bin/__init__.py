@@ -19,7 +19,16 @@ from datetime import datetime
 from io import BufferedReader, BytesIO
 from os.path import isdir, isfile, join, split
 from struct import unpack
-from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Match, Optional, Tuple
+from typing import (
+	TYPE_CHECKING,
+	Any,
+	Dict,
+	Iterator,
+	List,
+	Match,
+	Optional,
+	Tuple,
+)
 
 from lxml import etree
 
@@ -27,11 +36,10 @@ from .appledict_file_tools import (
 	APPLEDICT_FILE_OFFSET,
 	guessFileOffsetLimit,
 	read_2_bytes_here,
-	read_x_bytes_as_int,
 	read_x_bytes_as_word,
 	readInt,
 )
-from .appledict_properties import from_metadata, AppleDictProperties
+from .appledict_properties import AppleDictProperties, from_metadata
 from .article_address import ArticleAddress
 from .key_data import KeyData, RawKeyData
 
@@ -195,7 +203,8 @@ class Reader(object):
 		# show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
 
 		# RawKeyData: tuple(priority, parental_control, key_text_fields)
-		self.key_text_data: dict[ArticleAddress, List[RawKeyData]] = self.getKeyTextDataFromFile(keyTextDataPath, self.appledict_properties)
+		self.key_text_data: dict[ArticleAddress, List[RawKeyData]] = \
+			self.getKeyTextDataFromFile(keyTextDataPath, self.appledict_properties)
 
 		self._filename = bodyDataPath
 		self._file = open(bodyDataPath, "rb")
@@ -347,8 +356,9 @@ class Reader(object):
 		if offset == -1:
 			print(buffer[pos:])
 			raise IOError('Could not find entry tag <d:entry>')
-		elif offset == 0:
-			# when no such info (offset equals 0), we take all bytes till the closing tag or till section end
+		if offset == 0:
+			# when no such info (offset equals 0) provided,
+			# we take all bytes till the closing tag or till section end
 			endI = buffer[pos:].find(b"</d:entry>\n")
 			if endI == -1:
 				chunkLen = len(buffer) - pos
@@ -417,7 +427,8 @@ class Reader(object):
 
 	def readEntryIds(self) -> None:
 		titleById = {}
-		for entry_bytes, article_address in self.yieldEntryBytes(self._file, self.appledict_properties):
+		for entry_bytes, article_address in \
+				self.yieldEntryBytes(self._file, self.appledict_properties):
 			entry_bytes = entry_bytes.strip()
 			if not entry_bytes:
 				continue
@@ -552,7 +563,7 @@ class Reader(object):
 			buffer_offset += next_section_jump + 4
 		return key_text_data
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		from os.path import dirname
 
 		if self._file is None:
@@ -565,12 +576,15 @@ class Reader(object):
 				cssBytes = cssFile.read()
 			yield glos.newDataEntry("style.css", cssBytes)
 
-		for entry_bytes, article_address in self.yieldEntryBytes(self._file, self.appledict_properties):
+		for entry_bytes, article_address in \
+				self.yieldEntryBytes(self._file, self.appledict_properties):
 			entry = self.createEntry(entry_bytes, article_address)
 			if entry is not None:
 				yield entry
 
-	def yieldEntryBytes(self, body_file, properties: AppleDictProperties) -> "Interator[tuple[bytes, ArticleAddress]]":
+	def yieldEntryBytes(self, body_file, properties: AppleDictProperties) -> Iterator[
+		tuple[bytes, ArticleAddress]
+	]:
 		file_data_offset, file_limit = guessFileOffsetLimit(body_file)
 		section_offset = file_data_offset
 		while section_offset < file_limit:
@@ -581,7 +595,7 @@ class Reader(object):
 			next_section_jump = readInt(body_file)
 			data_byte_len = readInt(body_file)
 			if properties.body_compression_type > 0:
-				decompressed_byte_len = readInt(body_file)
+				decompressed_byte_len = readInt(body_file)  # noqa: F841
 				decompressed_bytes = body_file.read(data_byte_len - 4)
 				buffer = decompress(decompressed_bytes)
 			else:

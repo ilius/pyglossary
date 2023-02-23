@@ -55,14 +55,6 @@ def read_2_bytes_here(buffer: BufferedReader) -> int:
 	return ord(higher_byte) * 0x100 + ord(lower_byte)
 
 
-def read_x_bytes_as_int(buffer: BufferedReader, x) -> int:
-	if x == 2:
-		return read_2_bytes_here(buffer)
-	if x == 4:
-		return readInt(buffer)
-	raise IOError
-
-
 def guessFileOffsetLimit(file) -> "Tuple[int, int]":
 	"""returns address offset to start parsing from and EOF address"""
 	file.seek(APPLEDICT_FILE_OFFSET)
