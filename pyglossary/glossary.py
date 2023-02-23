@@ -31,10 +31,12 @@ from os.path import (
 )
 from time import time as now
 from typing import (
+	TYPE_CHECKING,
 	Any,
 	ClassVar,
 	Dict,
 	Iterator,
+	List,
 	Optional,
 	Tuple,
 	Type,
@@ -72,7 +74,6 @@ from .entry_filters import (
 )
 from .flags import (
 	ALWAYS,
-	DEFAULT_NO,
 	DEFAULT_YES,
 	NEVER,
 )
@@ -86,6 +87,12 @@ from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
 from .plugin_manager import PluginManager
 from .sort_keys import defaultSortKeyName, lookupSortKey
+
+if TYPE_CHECKING:
+	# from .flags import StrWithDesc
+	from .plugin_prop import PluginProp
+	from .sort_keys import NamedSortKey
+
 
 log = logging.getLogger("pyglossary")
 
@@ -592,6 +599,43 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			**kwargs,
 		)
 
+	def _validateReadoptions(
+		self,
+		format: str,
+		options: "Dict[str, Any]",
+	):
+		validOptionKeys = set(self.formatsReadOptions[format].keys())
+		for key in list(options.keys()):
+			if key not in validOptionKeys:
+				log.error(
+					f"Invalid read option {key!r} "
+					f"given for {format} format",
+				)
+				del options[key]
+
+	def _openReader(self, reader: "Any", filename: str):
+		# reader.open returns "Optional[Iterator[Tuple[int, int]]]"
+		try:
+			openResult = reader.open(filename)
+			if openResult is not None:
+				for pos, total in openResult:
+					if self._ui:
+						self.progress(pos, total, unit="bytes")
+		except (FileNotFoundError, LookupError) as e:
+			log.critical(str(e))
+			return False
+		except Exception:
+			log.exception("")
+			return False
+
+		hasTitleStr = self._info.get("definition_has_headwords", "")
+		if hasTitleStr:
+			if hasTitleStr.lower() == "true":
+				self._defiHasWordTitle = True
+			else:
+				log.error(f"bad info value: definition_has_headwords={hasTitleStr!r}")
+		return True
+
 	def _read(
 		self,
 		filename: str,
@@ -615,14 +659,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			from pyglossary.compression import uncompress
 			uncompress(origFilename, filename, compression)
 
-		validOptionKeys = list(self.formatsReadOptions[format].keys())
-		for key in list(options.keys()):
-			if key not in validOptionKeys:
-				log.error(
-					f"Invalid read option {key!r} "
-					f"given for {format} format",
-				)
-				del options[key]
+		self._validateReadoptions(format, options)
 
 		filenameNoExt, ext = os.path.splitext(filename)
 		if ext.lower() not in self.plugins[format].extensions:
@@ -636,29 +673,11 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self.updateEntryFilters()
 
 		reader = self._createReader(format, options)
-		# reader.open returns "Optional[Iterator[Tuple[int, int]]]"
-		try:
-			openResult = reader.open(filename)
-			if openResult is not None:
-				for pos, total in openResult:
-					if self._ui:
-						self.progress(pos, total, unit="bytes")
-		except (FileNotFoundError, LookupError) as e:
-			log.critical(str(e))
-			return False
-		except Exception:
-			log.exception("")
+		if not self._openReader(reader, filename):
 			return False
 
 		self._readersOpenArgs[reader] = (filename, options)
 		self.prepareEntryFilters()
-
-		hasTitleStr = self._info.get("definition_has_headwords", "")
-		if hasTitleStr:
-			if hasTitleStr.lower() == "true":
-				self._defiHasWordTitle = True
-			else:
-				log.error(f"bad info value: definition_has_headwords={hasTitleStr!r}")
 
 		self._readers.append(reader)
 		if not direct:
@@ -818,6 +837,53 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			**kwargs,
 		)
 
+	def _writeEntries(
+		self,
+		writerList: "List[Any]",
+		filename: str,
+	) -> None:
+		writer = writerList[0]
+		genList = []
+		gen = writer.write()
+		if gen is None:
+			log.error(f"{format} write function is not a generator")
+		else:
+			genList.append(gen)
+
+		if self._config.get("save_info_json", False):
+			infoWriter = self._createWriter("Info", {})
+			filenameNoExt, _, _, _ = splitFilenameExt(filename)
+			infoWriter.open(f"{filenameNoExt}.info")
+			genList.append(infoWriter.write())
+			writerList.append(infoWriter)
+
+		for gen in genList:
+			gen.send(None)
+		for entry in self:
+			for gen in genList:
+				gen.send(entry)
+		# suppress() on the whole for-loop does not work
+		for gen in genList:
+			with suppress(StopIteration):
+				gen.send(None)
+
+		return writerList
+
+	def _openWriter(
+		self,
+		writer: "Any",
+		filename: str,
+	) -> bool:
+		try:
+			writer.open(filename)
+		except (FileNotFoundError, LookupError) as e:
+			log.critical(str(e))
+			return False
+		except Exception:
+			log.exception("")
+			return False
+		return True
+
 	def _write(
 		self,
 		filename: str,
@@ -849,42 +915,14 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			log.info(f"Sorting took {now() - t0:.1f} seconds")
 
 		self._updateIter()
-		try:
-			writer.open(filename)
-		except (FileNotFoundError, LookupError) as e:
-			log.critical(str(e))
-			return None
-		except Exception:
-			log.exception("")
+		if not self._openWriter(writer, filename):
 			return None
 
 		showMemoryUsage()
 
 		writerList = [writer]
 		try:
-			genList = []
-			gen = writer.write()
-			if gen is None:
-				log.error(f"{format} write function is not a generator")
-			else:
-				genList.append(gen)
-
-			if self._config.get("save_info_json", False):
-				infoWriter = self._createWriter("Info", {})
-				filenameNoExt, _, _, _ = splitFilenameExt(filename)
-				infoWriter.open(f"{filenameNoExt}.info")
-				genList.append(infoWriter.write())
-				writerList.append(infoWriter)
-
-			for gen in genList:
-				gen.send(None)
-			for entry in self:
-				for gen in genList:
-					gen.send(entry)
-			# suppress() on the whole for-loop does not work
-			for gen in genList:
-				with suppress(StopIteration):
-					gen.send(None)
+			self._writeEntries(writerList, filename)
 		except (FileNotFoundError, LookupError) as e:
 			log.critical(str(e))
 			return None
@@ -935,7 +973,35 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self._config["enable_alts"] = True
 		self._sqlite = True
 
-	def _resolveConvertSortParams(
+	def _checkSortFlag(
+		self,
+		plugin: "PluginProp",
+		sort: "Optional[bool]",
+	) -> "Optional[bool]":
+		sortOnWrite = plugin.sortOnWrite
+		if sortOnWrite == ALWAYS:
+			if sort is False:
+				log.warning(
+					f"Writing {plugin.name} requires sorting"
+					f", ignoring user sort=False option",
+				)
+			return True
+
+		if sortOnWrite == NEVER:
+			if sort:
+				log.warning(
+					"Plugin prevents sorting before write"
+					", ignoring user sort=True option",
+				)
+			return False
+
+		if sortOnWrite == DEFAULT_YES:
+			return sort or sort is None
+
+		# if sortOnWrite == DEFAULT_NO:
+		return bool(sort)
+
+	def _resolveSortParams(
 		self,
 		sort: "Optional[bool]",
 		sortKeyName: "Optional[str]",
@@ -951,55 +1017,50 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 			returns (sort, direct) or None if fails
 		"""
-		plugin = self.plugins[outputFormat]
-
-		sortOnWrite = plugin.sortOnWrite
-		if sortOnWrite == ALWAYS:
-			if sort is False:
-				log.warning(
-					f"Writing {outputFormat} requires sorting"
-					f", ignoring user sort=False option",
-				)
-			sort = True
-		elif sortOnWrite == DEFAULT_YES:
-			if sort is None:
-				sort = True
-		elif sortOnWrite == DEFAULT_NO:
-			if sort is None:
-				sort = False
-		elif sortOnWrite == NEVER:
-			if sort:
-				log.warning(
-					"Plugin prevents sorting before write"
-					", ignoring user sort=True option",
-				)
-			sort = False
-
 		if direct and sqlite:
 			raise ValueError(f"Conflictng arguments: {direct=}, {sqlite=}")
+
+		plugin = self.plugins[outputFormat]
+		sort = self._checkSortFlag(plugin, sort)
 
 		if not sort:
 			if direct is None:
 				direct = True
 			return direct, False
 
-		direct = False
-		# from this point, sort == True and direct == False
-
-		writerSortKeyName = plugin.sortKeyName
-		namedSortKey = None
-
-		writerSortEncoding = getattr(plugin, "sortEncoding", None)
+		del sort, direct
+		# from this point we can assume sort == True and direct == False
 
 		if sqlite is None:
-			sqlite = sort and self._config.get("auto_sqlite", True)
+			sqlite = self._config.get("auto_sqlite", True)
 			if sqlite:
 				log.info(
 					"Automatically switching to SQLite mode"
-					f" for writing {outputFormat}",
+					f" for writing {plugin.name}",
 				)
 
-		if sortOnWrite == ALWAYS:
+		return self._processSortParams(
+			plugin=plugin,
+			sortKeyName=sortKeyName,
+			sortEncoding=sortEncoding,
+			sqlite=sqlite,
+			inputFilename=inputFilename,
+			writeOptions=writeOptions,
+		)
+
+	def _checkSortKey(
+		self,
+		plugin: "PluginProp",
+		sortKeyName: "Optional[str]",
+		sortEncoding: "Optional[str]",
+	) -> "Optional[Tuple[NamedSortKey, str]]":
+		"""
+			checks sortKeyName, sortEncoding and (output) plugin's params
+			returns (namedSortKey, sortEncoding) or None
+		"""
+		writerSortKeyName = plugin.sortKeyName
+		writerSortEncoding = getattr(plugin, "sortEncoding", None)
+		if plugin.sortOnWrite == ALWAYS:
 			if not writerSortKeyName:
 				log.critical("No sortKeyName was found in plugin")
 				return None
@@ -1007,7 +1068,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			if sortKeyName and sortKeyName != writerSortKeyName:
 				log.warning(
 					f"Ignoring user-defined sort order {sortKeyName!r}"
-					f", and using sortKey function from {outputFormat} plugin",
+					f", and using sortKey function from {plugin.name} plugin",
 				)
 			sortKeyName = writerSortKeyName
 
@@ -1026,14 +1087,31 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		log.info(f"Using sortKeyName = {namedSortKey.name!r}")
 
+		if not sortEncoding:
+			sortEncoding = "utf-8"
+
+		return namedSortKey, sortEncoding
+
+	def _processSortParams(
+		self,
+		plugin: "PluginProp",
+		sortKeyName: "Optional[str]",
+		sortEncoding: "Optional[str]",
+		sqlite: "Optional[bool]",
+		inputFilename: str,
+		writeOptions: "Dict[str, Any]",
+	) -> "Optional[Tuple[bool, bool]]":
+		sortKeyTuple = self._checkSortKey(plugin, sortKeyName, sortEncoding)
+		if sortKeyTuple is None:
+			return None
+		namedSortKey, sortEncoding = sortKeyTuple
+
 		if sqlite:
 			self._switchToSQLite(
 				inputFilename=inputFilename,
-				outputFormat=outputFormat,
+				outputFormat=plugin.name,
 			)
 
-		if not sortEncoding:
-			sortEncoding = "utf-8"
 		if writeOptions is None:
 			writeOptions = {}
 		self._data.setSortKey(
@@ -1116,7 +1194,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			)
 			return None
 
-		sortParams = self._resolveConvertSortParams(
+		sortParams = self._resolveSortParams(
 			sort=sort,
 			sortKeyName=sortKeyName,
 			sortEncoding=sortEncoding,
