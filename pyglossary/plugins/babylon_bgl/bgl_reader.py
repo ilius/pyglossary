@@ -383,12 +383,10 @@ class BglReader(object):
 		self._filename = filename
 
 		if not self.openGzip():
-			return False
+			raise IOError("BGL: failed to read gzip header")
 
 		self.readInfo()
 		self.setGlossaryInfo()
-
-		return True
 
 	def openGzip(self) -> None:
 		with open(self._filename, "rb") as bglFile:
