@@ -23,8 +23,6 @@ from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Match, Optional, Tu
 
 from lxml import etree
 
-from pyglossary.xml_utils import xml_escape
-
 from .appledict_file_tools import (
 	APPLEDICT_FILE_OFFSET,
 	guessFileOffsetLimit,
@@ -202,7 +200,7 @@ class Reader(object):
 		self._filename = bodyDataPath
 		self._file = open(bodyDataPath, "rb")
 
-		self._entriesOffset, self._limit = guessFileOffsetLimit(self._file)
+		_, self._limit = guessFileOffsetLimit(self._file)
 
 		t0 = datetime.now()
 		self.readEntryIds()
@@ -456,11 +454,11 @@ class Reader(object):
 
 			buffer = BytesIO()
 			if properties.key_text_compression_type > 0:
-				keyTextFile.seek(file_data_offset)
+				keyTextFile.seek(file_data_offset + APPLEDICT_FILE_OFFSET)
 				section_len = readInt(keyTextFile)
 				section_offset = keyTextFile.tell()
 				file_limit_decompressed = 0
-				while keyTextFile.tell() < file_limit:
+				while keyTextFile.tell() < file_limit + APPLEDICT_FILE_OFFSET:
 					compressedSectionByteLen = readInt(keyTextFile)
 					decompressedSectionByteLen = readInt(keyTextFile)
 					chunksection_bytes = decompress(keyTextFile.read(compressedSectionByteLen - 4))
@@ -470,19 +468,17 @@ class Reader(object):
 					keyTextFile.seek(section_offset)
 				buffer_offset = 0
 				buffer_limit = file_limit_decompressed
-				has_sections = True
 			else:
 				keyTextFile.seek(APPLEDICT_FILE_OFFSET)
 				buffer.write(keyTextFile.read())
-				buffer_offset = file_data_offset - APPLEDICT_FILE_OFFSET
-				buffer_limit = file_limit - APPLEDICT_FILE_OFFSET
-				has_sections = False
+				buffer_offset = file_data_offset
+				buffer_limit = file_limit
 
 			return self.readKeyTextData(
 				buffer=buffer,
 				buffer_offset=buffer_offset,
 				buffer_limit=buffer_limit,
-				has_sections=has_sections,
+				properties=properties,
 			)
 
 	def readKeyTextData(
@@ -490,24 +486,17 @@ class Reader(object):
 		buffer: BufferedReader,
 		buffer_offset: int,
 		buffer_limit: int,
-		has_sections: bool,
+		properties: AppleDictProperties,
 	) -> Dict[ArticleAddress, List[RawKeyData]]:
 		buffer.seek(buffer_offset)
 		key_text_data: Dict[ArticleAddress, List[RawKeyData]] = {}
-
-		while buffer.tell() + 2 < buffer_limit:  # TODO check if +2 is a good solution
+		while buffer_offset < buffer_limit:
 			buffer.seek(buffer_offset)
-			jump = read_2_bytes_here(buffer) + 4
-			zero1 = read_2_bytes_here(buffer)  # 0x00
-			if not has_sections:
-				big_len = read_2_bytes_here(buffer)  # noqa: F841
-				# ^ 0x2c TODO might be here or might be not
-				zero2 = read_2_bytes_here(buffer)  # noqa: F841
-			# ^ 0x00 TODO might be here or might be not
+			next_section_jump = readInt(buffer)
+			if properties.key_text_compression_type == 0:
+				big_len = readInt(buffer)  # noqa: F841
 			# number of lexemes
 			word_forms_number = read_2_bytes_here(buffer)  # 0x01
-			if zero1 != 0:
-				raise RuntimeError("zero1")
 			next_lexeme_offset: int = 0
 			for _ in range(word_forms_number):
 				_ = read_2_bytes_here(buffer)  # 0x00 // TODO might be 1 or 2 or more zeros
@@ -520,7 +509,7 @@ class Reader(object):
 				next_lexeme_offset = curr_offset + small_len
 				# the resulting number must match with Contents/Body.data address of the entry
 				article_address: ArticleAddress
-				if has_sections:
+				if properties.body_has_sections:
 					chunk_offset = readInt(buffer)
 					section_offset = readInt(buffer)
 					article_address = ArticleAddress(
@@ -549,16 +538,10 @@ class Reader(object):
 				priority = int((priority_and_parental_control - parental_control) / 2)
 
 				key_text_fields = []
-				has_one_zero = False
 				while True:
-					# read length, or if value is zero then read again
 					word_form_len = read_2_bytes_here(buffer)
 					if word_form_len == 0:
-						if has_one_zero:
-							break
-						has_one_zero = True
-						continue
-					has_one_zero = False
+						break
 					word_form = read_x_bytes_as_word(buffer, word_form_len)
 					key_text_fields.append(word_form)
 				entry_key_text_data: RawKeyData = (priority, parental_control, key_text_fields)
@@ -566,7 +549,7 @@ class Reader(object):
 					key_text_data[article_address].append(entry_key_text_data)
 				else:
 					key_text_data[article_address] = [entry_key_text_data]
-			buffer_offset += jump
+			buffer_offset += next_section_jump + 4
 		return key_text_data
 
 	def __iter__(self) -> "Iterator[EntryType]":
@@ -589,24 +572,29 @@ class Reader(object):
 
 	def yieldEntryBytes(self, body_file, properties: AppleDictProperties) -> "Interator[tuple[bytes, ArticleAddress]]":
 		file_data_offset, file_limit = guessFileOffsetLimit(body_file)
-		body_file.seek(file_data_offset)
-		while True:
-			section_offset = body_file.tell() - APPLEDICT_FILE_OFFSET
+		section_offset = file_data_offset
+		while section_offset < file_limit:
+			body_file.seek(section_offset + APPLEDICT_FILE_OFFSET)
 			self._absPos = body_file.tell()
-			if self._absPos >= file_limit:
-				break
 
 			# at the start of each section byte lengths of the section are encoded
-			nextSectionOffsetIncrement = readInt(body_file)
-			compressedSectionByteLen2 = readInt(body_file)  # `compressedSectionByteLen2` always =nextSectionOffsetIncrement-4
-			decompressedSectionByteLen = readInt(body_file)
-			buffer = decompress(body_file.read(nextSectionOffsetIncrement - 8))
+			next_section_jump = readInt(body_file)
+			data_byte_len = readInt(body_file)
+			if properties.body_compression_type > 0:
+				decompressed_byte_len = readInt(body_file)
+				decompressed_bytes = body_file.read(data_byte_len - 4)
+				buffer = decompress(decompressed_bytes)
+			else:
+				buffer = body_file.read(data_byte_len)
 
 			pos = 0
 			while pos < len(buffer):
 				chunkLen, offset = self.getChunkLenOffset(pos, buffer)
-				pos += offset
 				article_address = ArticleAddress(section_offset, pos)
+				pos += offset
 				entryBytes = buffer[pos:pos + chunkLen]
+
 				pos += chunkLen
 				yield entryBytes, article_address
+
+			section_offset += next_section_jump + 4

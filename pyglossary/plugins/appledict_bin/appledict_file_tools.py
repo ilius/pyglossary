@@ -66,13 +66,12 @@ def read_x_bytes_as_int(buffer: BufferedReader, x) -> int:
 def guessFileOffsetLimit(file) -> "Tuple[int, int]":
 	"""returns address offset to start parsing from and EOF address"""
 	file.seek(APPLEDICT_FILE_OFFSET)
-	limit = APPLEDICT_FILE_OFFSET + readInt(file)
+	limit = readInt(file)
 	intPair = readIntPair(file)
 
 	if intPair == (0, -1):  # 0000 0000 FFFF FFFF
-		return APPLEDICT_FILE_OFFSET + 0x20, limit
-
-	return APPLEDICT_FILE_OFFSET + 0x4, limit
+		return 0x20, limit
+	return 0x4, limit
 
 
 def enumerate_reversed(list: list):
