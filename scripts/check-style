@@ -6,8 +6,14 @@ rootDir=$(dirname "$myDir1")
 
 
 if [ -z "$1" ] ; then
+	cd $rootDir
 	set .
 fi
 
-cd $rootDir
-ruff check "$@" | grep --color=always -P ':\d*:' 2>&1 | less -RU
+# ruff "$@" | grep -E --color=always '\:[0-9]+\:' | less -R
+# no 'grep -P' on *BSD / Mac
+
+if [ -z "$NO_COLOR" ] ; then
+	export CLICOLOR_FORCE=1
+fi
+ruff "$@" | less -R
