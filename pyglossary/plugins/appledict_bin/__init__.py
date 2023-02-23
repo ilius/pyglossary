@@ -45,6 +45,7 @@ from .key_data import KeyData, RawKeyData
 
 if TYPE_CHECKING:
 	import lxml
+
 from zlib import decompress
 
 from pyglossary.core import log, pip
@@ -92,6 +93,7 @@ class Reader(object):
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
 		self._titleById = {}
 		self._wordCount = 0
+		self.key_text_data: "Dict[ArticleAddress, List[RawKeyData]]"
 
 	def sub_link(self, m: "Match") -> str:
 		from lxml.html import fromstring, tostring
@@ -203,8 +205,10 @@ class Reader(object):
 		# show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
 
 		# RawKeyData: tuple(priority, parental_control, key_text_fields)
-		self.key_text_data: dict[ArticleAddress, List[RawKeyData]] = \
-			self.getKeyTextDataFromFile(keyTextDataPath, self.appledict_properties)
+		self.key_text_data = self.getKeyTextDataFromFile(
+			keyTextDataPath,
+			self.appledict_properties,
+		)
 
 		self._filename = bodyDataPath
 		self._file = open(bodyDataPath, "rb")
@@ -243,7 +247,7 @@ class Reader(object):
 				) from e
 		return metadata
 
-	def setMetadata(self, metadata: Dict):
+	def setMetadata(self, metadata: "Dict[str, Any]"):
 		name = metadata.get("CFBundleDisplayName")
 		if not name:
 			name = metadata.get("CFBundleIdentifier")
@@ -427,8 +431,10 @@ class Reader(object):
 
 	def readEntryIds(self) -> None:
 		titleById = {}
-		for entry_bytes, article_address in \
-				self.yieldEntryBytes(self._file, self.appledict_properties):
+		for entry_bytes, _ in self.yieldEntryBytes(
+			self._file,
+			self.appledict_properties,
+		):
 			entry_bytes = entry_bytes.strip()
 			if not entry_bytes:
 				continue
@@ -458,7 +464,7 @@ class Reader(object):
 		self,
 		morphoFilePath: str,
 		properties: AppleDictProperties,
-	) -> dict[ArticleAddress, List[RawKeyData]] :
+	) -> "Dict[ArticleAddress, List[RawKeyData]]" :
 		"""Prepare `KeyText.data` file for extracting morphological data"""
 		with open(morphoFilePath, 'rb') as keyTextFile:
 			file_data_offset, file_limit = guessFileOffsetLimit(keyTextFile)
@@ -498,9 +504,9 @@ class Reader(object):
 		buffer_offset: int,
 		buffer_limit: int,
 		properties: AppleDictProperties,
-	) -> Dict[ArticleAddress, List[RawKeyData]]:
+	) -> "Dict[ArticleAddress, List[RawKeyData]]":
 		buffer.seek(buffer_offset)
-		key_text_data: Dict[ArticleAddress, List[RawKeyData]] = {}
+		key_text_data: "Dict[ArticleAddress, List[RawKeyData]]" = {}
 		while buffer_offset < buffer_limit:
 			buffer.seek(buffer_offset)
 			next_section_jump = readInt(buffer)
@@ -576,8 +582,10 @@ class Reader(object):
 				cssBytes = cssFile.read()
 			yield glos.newDataEntry("style.css", cssBytes)
 
-		for entry_bytes, article_address in \
-				self.yieldEntryBytes(self._file, self.appledict_properties):
+		for entry_bytes, article_address in self.yieldEntryBytes(
+			self._file,
+			self.appledict_properties,
+		):
 			entry = self.createEntry(entry_bytes, article_address)
 			if entry is not None:
 				yield entry
