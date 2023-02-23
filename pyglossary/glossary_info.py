@@ -50,7 +50,7 @@ class GlossaryInfo(object):
 	# def formatInfoKeys(self, format: str):# FIXME
 
 	def iterInfo(self) -> "Iterator[Tuple[str, str]]":
-		return self._info.items()
+		return iter(self._info.items())
 
 	def getInfo(self, key: str) -> str:
 		if not isinstance(key, str):
