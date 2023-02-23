@@ -1126,6 +1126,75 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		return False, True
 
+	def _convertValidateStrings(
+		self,
+		inputFilename: str,
+		inputFormat: str,
+		outputFilename: str,
+		outputFormat: str,
+	):
+		if type(inputFilename) is not str:
+			raise TypeError("inputFilename must be str")
+		if type(outputFilename) is not str:
+			raise TypeError("outputFilename must be str")
+
+		if inputFormat is not None and type(inputFormat) is not str:
+			raise TypeError("inputFormat must be str")
+		if outputFormat is not None and type(outputFormat) is not str:
+			raise TypeError("outputFormat must be str")
+
+	def _convertPrepare(
+		self,
+		inputFilename: str,
+		inputFormat: str = "",
+		direct: "Optional[bool]" = None,
+		progressbar: bool = True,
+		outputFilename: str = "",
+		outputFormat: str = "",
+		sort: "Optional[bool]" = None,
+		sortKeyName: "Optional[str]" = None,
+		sortEncoding: "Optional[str]" = None,
+		readOptions: "Dict[str, Any]" = None,
+		writeOptions: "Dict[str, Any]" = None,
+		sqlite: "Optional[bool]" = None,
+	) -> "Optional[bool]":
+		if isdir(outputFilename) and os.listdir(outputFilename):
+			log.critical(
+				f"Directory already exists and not empty: {relpath(outputFilename)}",
+			)
+			return None
+
+		sortParams = self._resolveSortParams(
+			sort=sort,
+			sortKeyName=sortKeyName,
+			sortEncoding=sortEncoding,
+			direct=direct,
+			sqlite=sqlite,
+			inputFilename=inputFilename,
+			outputFormat=outputFormat,
+			writeOptions=writeOptions,
+		)
+		if sortParams is None:
+			return None
+		direct, sort = sortParams
+
+		del sqlite
+		showMemoryUsage()
+
+		if not self._read(
+			inputFilename,
+			format=inputFormat,
+			direct=direct,
+			progressbar=progressbar,
+			**readOptions,
+		):
+			log.critical(f"Reading file {relpath(inputFilename)!r} failed.")
+			self.cleanup()
+			return None
+
+		# del inputFilename, inputFormat, direct, readOptions
+		return sort
+
 	def convert(
 		self,
 		inputFilename: str,
@@ -1157,29 +1226,22 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		sortEncoding:
 			encoding/charset for sorting, default to utf-8
 		"""
-		if type(inputFilename) is not str:
-			raise TypeError("inputFilename must be str")
-		if type(outputFilename) is not str:
-			raise TypeError("outputFilename must be str")
-
-		if inputFormat is not None and type(inputFormat) is not str:
-			raise TypeError("inputFormat must be str")
-		if outputFormat is not None and type(outputFormat) is not str:
-			raise TypeError("outputFormat must be str")
+		self._convertValidateStrings(
+			inputFilename=inputFilename,
+			inputFormat=inputFormat,
+			outputFilename=outputFilename,
+			outputFormat=outputFormat,			
+		)
+		if outputFilename == inputFilename:
+			log.critical("Input and output files are the same")
+			return None
 
 		if not readOptions:
 			readOptions = {}
 		if not writeOptions:
 			writeOptions = {}
 
-		if outputFilename == inputFilename:
-			log.critical("Input and output files are the same")
-			return None
-
-		if readOptions:
-			log.info(f"{readOptions = }")
-		if writeOptions:
-			log.info(f"{writeOptions = }")
+		tm0 = now()
 
 		outputArgs = self.detectOutputFormat(
 			filename=outputFilename,
@@ -1190,44 +1252,23 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			log.critical(f"Writing file {relpath(outputFilename)!r} failed.")
 			return None
 		outputFilename, outputFormat, compression = outputArgs
-		del outputArgs
 
-		if isdir(outputFilename) and os.listdir(outputFilename):
-			log.critical(
-				f"Directory already exists and not empty: {relpath(outputFilename)}",
-			)
-			return None
-
-		sortParams = self._resolveSortParams(
+		sort = self._convertPrepare(
+			inputFilename=inputFilename,
+			inputFormat=inputFormat,
+			direct=direct,
+			progressbar=progressbar,
+			outputFilename=outputFilename,
+			outputFormat=outputFormat,
 			sort=sort,
 			sortKeyName=sortKeyName,
 			sortEncoding=sortEncoding,
-			direct=direct,
-			sqlite=sqlite,
-			inputFilename=inputFilename,
-			outputFormat=outputFormat,
+			readOptions=readOptions,
 			writeOptions=writeOptions,
+			sqlite=sqlite,
 		)
-		if sortParams is None:
+		if sort is None:
 			return None
-		direct, sort = sortParams
-
-		del sqlite
-		showMemoryUsage()
-
-		tm0 = now()
-		if not self._read(
-			inputFilename,
-			format=inputFormat,
-			direct=direct,
-			progressbar=progressbar,
-			**readOptions,
-		):
-			log.critical(f"Reading file {relpath(inputFilename)!r} failed.")
-			self.cleanup()
-			return None
-
-		del inputFilename, inputFormat, direct, readOptions
 
 		if infoOverride:
 			for key, value in infoOverride.items():
