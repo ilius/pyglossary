@@ -5,9 +5,17 @@ myPath=$(realpath "$0")
 myDir1=$(dirname "$myPath")
 rootDir=$(dirname "$myDir1")
 
-cd $rootDir/pyglossary
-ruff --fix .
-ruff --select ANN . \
+if [ -z "$1" ] ; then
+	cd $rootDir
+	set .
+fi
+
+if [ -z "$NO_COLOR" ] ; then
+	export CLICOLOR_FORCE=1
+fi
+
+ruff --fix "$@"
+ruff --select ANN "$@" \
     | grep -v 'Missing type annotation for `self` in method' \
     | grep -v 'Missing type annotation for `\*\*' \
     | grep -v _test.py \
