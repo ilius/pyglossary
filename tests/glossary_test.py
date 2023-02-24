@@ -133,6 +133,10 @@ class TestGlossaryBase(unittest.TestCase):
 			os.remove(fpath)
 		return fpath
 
+	def showGlossaryDiff(self, fpath1, fpath2) -> None:
+		from pyglossary.ui.tools.diff_glossary import diffGlossary
+		diffGlossary(fpath1, fpath2)
+
 	def compareTextFiles(self, fpath1, fpath2):
 		self.assertTrue(isfile(fpath1), f"{fpath1 = }")
 		self.assertTrue(isfile(fpath2), f"{fpath2 = }")
@@ -140,16 +144,21 @@ class TestGlossaryBase(unittest.TestCase):
 			text1 = file1.read().rstrip("\n")
 		with open(fpath2, encoding="utf-8") as file2:
 			text2 = file2.read().rstrip("\n")
-		self.assertEqual(
-			len(text1),
-			len(text2),
-			msg=f"{fpath1} differs from {fpath2} in file size",
-		)
-		self.assertEqual(
-			text1,
-			text2,
-			msg=f"{fpath1} differs from {fpath2}",
-		)
+
+		try:
+			self.assertEqual(
+				len(text1),
+				len(text2),
+				msg=f"{fpath1} differs from {fpath2} in file size",
+			)
+			self.assertEqual(
+				text1,
+				text2,
+				msg=f"{fpath1} differs from {fpath2}",
+			)
+		except AssertionError as e:
+			self.showGlossaryDiff(fpath1, fpath2)
+			raise e from None
 
 	def compareBinaryFiles(self, fpath1, fpath2):
 		self.assertTrue(isfile(fpath1), f"File {fpath1} does not exist")

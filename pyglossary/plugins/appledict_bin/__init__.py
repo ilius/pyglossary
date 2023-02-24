@@ -16,12 +16,36 @@
 
 import re
 from datetime import datetime
+from io import BufferedReader, BytesIO
 from os.path import isdir, isfile, join, split
 from struct import unpack
-from typing import TYPE_CHECKING, Any, Dict, Iterator, Match, Tuple
+from typing import (
+	TYPE_CHECKING,
+	Any,
+	Dict,
+	Iterator,
+	List,
+	Match,
+	Optional,
+	Tuple,
+)
+
+from lxml import etree
+
+from .appledict_file_tools import (
+	APPLEDICT_FILE_OFFSET,
+	guessFileOffsetLimit,
+	read_2_bytes_here,
+	read_x_bytes_as_word,
+	readInt,
+)
+from .appledict_properties import AppleDictProperties, from_metadata
+from .article_address import ArticleAddress
+from .key_data import KeyData, RawKeyData
 
 if TYPE_CHECKING:
 	import lxml
+
 from zlib import decompress
 
 from pyglossary.core import log, pip
@@ -49,9 +73,6 @@ optionsProp = {
 }
 
 
-OFFSET_FILE_START = 0x40
-
-
 class Reader(object):
 	depends = {
 		"lxml": "lxml",
@@ -67,13 +88,12 @@ class Reader(object):
 		self._filename = ""
 		self._file = None
 		self._encoding = "utf-8"
-		self._buf = ""
 		self._defiFormat = "m"
-		self._entriesOffset = OFFSET_FILE_START
 		self._re_link = re.compile('<a [^<>]*>')
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
 		self._titleById = {}
 		self._wordCount = 0
+		self.key_text_data: "Dict[ArticleAddress, List[RawKeyData]]"
 
 	def sub_link(self, m: "Match") -> str:
 		from lxml.html import fromstring, tostring
@@ -130,6 +150,7 @@ class Reader(object):
 		contentsPath: str
 		infoPlistPath: str
 		bodyDataPath: str
+		keyTextDataPath: str
 
 		if isdir(filename):
 			if split(filename)[-1] == "Contents":
@@ -152,20 +173,47 @@ class Reader(object):
 		infoPlistPath = join(contentsPath, "Info.plist")
 		if isfile(join(contentsPath, "Body.data")):
 			bodyDataPath = join(contentsPath, "Body.data")
+			keyTextDataPath = join(contentsPath, "KeyText.data")
 		elif isfile(join(contentsPath, "Resources/Body.data")):
 			bodyDataPath = join(contentsPath, "Resources/Body.data")
+			keyTextDataPath = join(contentsPath, "Resources/KeyText.data")
 		else:
 			raise IOError(
 				"could not find Body.data file, "
 				"Please provide 'Contents/' folder of the dictionary",
 			)
 
-		self.setMetadata(infoPlistPath)
+		metadata = self.parseMetadata(infoPlistPath)
+		self.setMetadata(metadata)
+
+		# KeyText.data contains:
+		# 1. morphological data (opens article "make" when user enters "making")
+		# and data that shows
+		# 2. data that encodes that searching "2 per cent", "2 percent",
+		# or "2%" returns the same article
+		# EXAMPLE: <d:index d:value="made" d:title="made (make)"/>
+		# If the entry for "make" contains these <d:index> definitions,
+		# the entry can be searched not only by "make" but also by "makes" or "made".
+		# On the search result list, title value texts like "made" are displayed.
+		# EXAMPLE: <d:index d:value="make it" d:title="make it" d:parental-control="1"
+		# d:anchor="xpointer(//*[@id='make_it'])"/>
+		# EXAMPLE: <d:index d:value="工夫する" d:title="工夫する" 
+		# d:yomi="くふうする" d:anchor="xpointer(//*[@id='kufuu-suru'])" />
+		# EXAMPLE: <d:index d:value="'s finest" d:title="—'s finest"
+		# d:DCSEntryTitle="fine" d:anchor="xpointer(//*[@id='m_en_gbus0362750.070'])"/>
+		#     user entered "'s finest", search list we show "—'s finest",
+		# show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
+
+		# RawKeyData: tuple(priority, parental_control, key_text_fields)
+		self.key_text_data = self.getKeyTextDataFromFile(
+			keyTextDataPath,
+			self.appledict_properties,
+		)
 
 		self._filename = bodyDataPath
 		self._file = open(bodyDataPath, "rb")
 
-		self._entriesOffset, self._limit = self.guessFileOffsetLimit()
+		_, self._limit = guessFileOffsetLimit(self._file)
 
 		t0 = datetime.now()
 		self.readEntryIds()
@@ -175,7 +223,7 @@ class Reader(object):
 			f"number of entries: {self._wordCount}",
 		)
 
-	def setMetadata(self, infoPlistPath: str) -> None:
+	def parseMetadata(self, infoPlistPath: str) -> Dict:
 		import biplist
 
 		if not isfile(infoPlistPath):
@@ -197,7 +245,9 @@ class Reader(object):
 					"'Info.plist' file is malformed, "
 					f"Please provide 'Contents/' with a correct 'Info.plist'. {e}",
 				) from e
+		return metadata
 
+	def setMetadata(self, metadata: "Dict[str, Any]"):
 		name = metadata.get("CFBundleDisplayName")
 		if not name:
 			name = metadata.get("CFBundleIdentifier")
@@ -216,13 +266,14 @@ class Reader(object):
 		if author:
 			self._glos.setInfo("author", author)
 
-
-		edition = metadata.get("IDXDictionaryVersion")
+		edition = metadata.get("CFBundleInfoDictionaryVersion")
 		if edition:
 			self._glos.setInfo("edition", edition)
 
 		if "DCSDictionaryLanguages" in metadata:
 			self.setLangs(metadata)
+
+		self.appledict_properties = from_metadata(metadata)
 
 	def setLangs(self, metadata: "Dict[str, Any]") -> None:
 		import locale
@@ -277,10 +328,9 @@ class Reader(object):
 				for child in entryElem.iterdescendants()
 			])
 
-
 		entryElem.tag = "div"
 		for attr in entryElem.attrib.keys():
-			#if attr == "id" or attr.endswith("title"):
+			# if attr == "id" or attr.endswith("title"):
 			del entryElem.attrib[attr]
 
 		defi = etree.tostring(
@@ -300,112 +350,226 @@ class Reader(object):
 
 		return defi
 
-	def _readEntryData(self, pos: int) -> "Tuple[bytes, int]":
-		chunkSize, plus = self.getChunkSize(pos)
-		pos += plus
-		if chunkSize == 0:
-			endI = self._buf[pos:].find(b"</d:entry>")
+	def getChunkLenOffset(self, pos, buffer: bytes):
+		"""
+		@return chunk byte length and offset
+
+		offset is usually 4 bytes integer, that contains chunk/entry byte length
+		"""
+		offset = buffer[pos:pos + 12].find(b"<d:entry")
+		if offset == -1:
+			print(buffer[pos:])
+			raise IOError('Could not find entry tag <d:entry>')
+		if offset == 0:
+			# when no such info (offset equals 0) provided,
+			# we take all bytes till the closing tag or till section end
+			endI = buffer[pos:].find(b"</d:entry>\n")
 			if endI == -1:
-				chunkSize = len(self._buf) - pos
+				chunkLen = len(buffer) - pos
 			else:
-				chunkSize = endI + 10
-		entryBytes = self._buf[pos:pos + chunkSize]
-		pos += chunkSize
-		return entryBytes, pos
+				chunkLen = endI + 11
+		else:
+			bs = buffer[pos:pos + offset]
+			if offset < 4:
+				bs = b"\x00" * (4 - offset) + bs
+			try:
+				chunkLen, = unpack("i", bs)
+			except Exception as e:
+				log.error(f"{buffer[pos:pos + 100]}")
+				raise e
+		return chunkLen, offset
 
-	def _readEntry(self, pos: int) -> "Tuple[EntryType, int]":
-		"""
-			returns (entry, pos)
-		"""
-		from lxml import etree
+	def createEntry(
+		self,
+		entry_bytes: bytes,
+		article_address: ArticleAddress,
+	) -> Optional[EntryType]:
+		# 1. create and validate XML of the entry's body
+		entryRoot = self.convertEntryBytesToXml(entry_bytes)
+		if entryRoot is None:
+			return None
+		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
+		if not entryElems:
+			return None
+		word = entryElems[0].xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
+		defi = self._getDefi(entryElems[0])
 
-		entryBytes, pos = self._readEntryData(pos)
+		# 2. add alts
+		key_text_field_order = self.appledict_properties.key_text_field_order
+		key_data_list: List[KeyData] = []
+		if article_address in self.key_text_data:
+			raw_key_data_list = self.key_text_data[article_address]
+			for raw_key_data in raw_key_data_list:
+				key_data_list.append(KeyData.from_raw_key_data(raw_key_data, key_text_field_order))
+
+		if key_data_list:
+			word = [word] + [keyData.keyword for keyData in key_data_list]
+
+		return self._glos.newEntry(
+			word=word,
+			defi=defi,
+			defiFormat=self._defiFormat,
+			byteProgress=(self._absPos, self._limit),
+		)
+
+	def convertEntryBytesToXml(self, entryBytes: bytes) -> Optional[etree.Element]:
+		# etree.register_namespace("d", "http://www.apple.com/DTDs/DictionaryService-1.0.rng")
 		entryFull = entryBytes.decode(self._encoding, errors="replace")
 		entryFull = entryFull.strip()
 		if not entryFull:
-			return None, pos
+			return None
 		try:
 			entryRoot = etree.fromstring(entryFull)
 		except etree.XMLSyntaxError as e:
 			log.error(
-				f"{pos=}, len(buf)={len(self._buf)}, {entryFull=}",
+				f"len(buf)={len(self._buf)}, {entryFull=}",
 			)
 			raise e
-		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
-		if not entryElems:
-			return None, pos
-		word = entryElems[0].xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
-
-		defi = self._getDefi(entryElems[0])
-
 		if self._limit <= 0:
 			raise ValueError(f"self._limit = {self._limit}")
-		return self._glos.newEntry(
-			word, defi,
-			defiFormat=self._defiFormat,
-			byteProgress=(self._absPos, self._limit),
-		), pos
+		return entryRoot
 
 	def readEntryIds(self) -> None:
-		_file = self._file
-		limit = self._limit
 		titleById = {}
-
-		self._file.seek(self._entriesOffset)
-		while True:
-			absPos = _file.tell()
-			if absPos >= limit:
-				break
-
-			bufSize = self.readInt()
-			self._buf = decompress(_file.read(bufSize)[8:])
-
-			pos = 0
-			while pos < len(self._buf):
-				b_entry, pos = self._readEntryData(pos)
-				b_entry = b_entry.strip()
-				if not b_entry:
-					continue
-				id_i = b_entry.find(b'id="')
-				if id_i < 0:
-					log.error(f"id not found: {b_entry}, {pos=}, buf={self._buf}")
-					continue
-				id_j = b_entry.find(b'"', id_i + 4)
-				if id_j < 0:
-					log.error(f"id closing not found: {b_entry.decode(self._encoding)}")
-					continue
-				_id = b_entry[id_i + 4: id_j].decode(self._encoding)
-				title_i = b_entry.find(b'd:title="')
-				if title_i < 0:
-					log.error(f"title not found: {b_entry.decode(self._encoding)}")
-					continue
-				title_j = b_entry.find(b'"', title_i + 9)
-				if title_j < 0:
-					log.error(f"title closing not found: {b_entry.decode(self._encoding)}")
-					continue
-				titleById[_id] = b_entry[title_i + 9: title_j].decode(self._encoding)
+		for entry_bytes, _ in self.yieldEntryBytes(
+			self._file,
+			self.appledict_properties,
+		):
+			entry_bytes = entry_bytes.strip()
+			if not entry_bytes:
+				continue
+			id_i = entry_bytes.find(b'id="')
+			if id_i < 0:
+				log.error(f"id not found: {entry_bytes}")
+				continue
+			id_j = entry_bytes.find(b'"', id_i + 4)
+			if id_j < 0:
+				log.error(f"id closing not found: {entry_bytes.decode(self._encoding)}")
+				continue
+			_id = entry_bytes[id_i + 4: id_j].decode(self._encoding)
+			title_i = entry_bytes.find(b'd:title="')
+			if title_i < 0:
+				log.error(f"title not found: {entry_bytes.decode(self._encoding)}")
+				continue
+			title_j = entry_bytes.find(b'"', title_i + 9)
+			if title_j < 0:
+				log.error(f"title closing not found: {entry_bytes.decode(self._encoding)}")
+				continue
+			titleById[_id] = entry_bytes[title_i + 9: title_j].decode(self._encoding)
 
 		self._titleById = titleById
-		_file.seek(self._entriesOffset)
 		self._wordCount = len(titleById)
 
-	def readInt(self) -> int:
-		return unpack("i", self._file.read(4))[0]
+	def getKeyTextDataFromFile(
+		self,
+		morphoFilePath: str,
+		properties: AppleDictProperties,
+	) -> "Dict[ArticleAddress, List[RawKeyData]]" :
+		"""Prepare `KeyText.data` file for extracting morphological data"""
+		with open(morphoFilePath, 'rb') as keyTextFile:
+			file_data_offset, file_limit = guessFileOffsetLimit(keyTextFile)
 
-	def readIntPair(self) -> "Tuple[int, int]":
-		return unpack("ii", self._file.read(8))
+			buffer = BytesIO()
+			if properties.key_text_compression_type > 0:
+				keyTextFile.seek(file_data_offset + APPLEDICT_FILE_OFFSET)
+				section_len = readInt(keyTextFile)
+				section_offset = keyTextFile.tell()
+				file_limit_decompressed = 0
+				while keyTextFile.tell() < file_limit + APPLEDICT_FILE_OFFSET:
+					compressedSectionByteLen = readInt(keyTextFile)
+					decompressedSectionByteLen = readInt(keyTextFile)
+					chunksection_bytes = decompress(keyTextFile.read(compressedSectionByteLen - 4))
+					buffer.write(chunksection_bytes)
+					file_limit_decompressed += decompressedSectionByteLen
+					section_offset += section_len
+					keyTextFile.seek(section_offset)
+				buffer_offset = 0
+				buffer_limit = file_limit_decompressed
+			else:
+				keyTextFile.seek(APPLEDICT_FILE_OFFSET)
+				buffer.write(keyTextFile.read())
+				buffer_offset = file_data_offset
+				buffer_limit = file_limit
 
-	def guessFileOffsetLimit(self) -> "Tuple[int, int]":
-		self._file.seek(OFFSET_FILE_START)
-		limit = OFFSET_FILE_START + self.readInt()
-		intPair = self.readIntPair()
+			return self.readKeyTextData(
+				buffer=buffer,
+				buffer_offset=buffer_offset,
+				buffer_limit=buffer_limit,
+				properties=properties,
+			)
 
-		if intPair == (0, -1):  # 0000 0000 FFFF FFFF
-			return OFFSET_FILE_START + 0x20, limit
+	def readKeyTextData(
+		self,
+		buffer: BufferedReader,
+		buffer_offset: int,
+		buffer_limit: int,
+		properties: AppleDictProperties,
+	) -> "Dict[ArticleAddress, List[RawKeyData]]":
+		buffer.seek(buffer_offset)
+		key_text_data: "Dict[ArticleAddress, List[RawKeyData]]" = {}
+		while buffer_offset < buffer_limit:
+			buffer.seek(buffer_offset)
+			next_section_jump = readInt(buffer)
+			if properties.key_text_compression_type == 0:
+				big_len = readInt(buffer)  # noqa: F841
+			# number of lexemes
+			word_forms_number = read_2_bytes_here(buffer)  # 0x01
+			next_lexeme_offset: int = 0
+			for _ in range(word_forms_number):
+				_ = read_2_bytes_here(buffer)  # 0x00 // TODO might be 1 or 2 or more zeros
+				if next_lexeme_offset != 0:
+					buffer.seek(next_lexeme_offset)
+				small_len = 0
+				while small_len == 0:
+					curr_offset = buffer.tell()
+					small_len = read_2_bytes_here(buffer)  # 0x2c
+				next_lexeme_offset = curr_offset + small_len
+				# the resulting number must match with Contents/Body.data address of the entry
+				article_address: ArticleAddress
+				if properties.body_has_sections:
+					chunk_offset = readInt(buffer)
+					section_offset = readInt(buffer)
+					article_address = ArticleAddress(
+						section_offset=section_offset,
+						chunk_offset=chunk_offset,
+					)
+				else:
+					chunk_offset = 0x0
+					section_offset = readInt(buffer)
+					article_address = ArticleAddress(
+						section_offset=section_offset,
+						chunk_offset=chunk_offset,
+					)
 
-		return OFFSET_FILE_START + 0x4, limit
+				priority_and_parental_control = read_2_bytes_here(buffer)  # 0x13
+				if priority_and_parental_control > 0x20:
+					raise RuntimeError(
+						'WRONG priority or parental control:' +
+						priority_and_parental_control +
+						'// section: ' +
+						hex(buffer_offset),
+					)
+				# d:parental-control="1"
+				parental_control = priority_and_parental_control % 2
+				# d:priority=".." between 0x00..0x12, priority = [0..9]
+				priority = int((priority_and_parental_control - parental_control) / 2)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+				key_text_fields = []
+				while True:
+					word_form_len = read_2_bytes_here(buffer)
+					if word_form_len == 0:
+						break
+					word_form = read_x_bytes_as_word(buffer, word_form_len)
+					key_text_fields.append(word_form)
+				entry_key_text_data: RawKeyData = (priority, parental_control, key_text_fields)
+				if article_address in key_text_data:
+					key_text_data[article_address].append(entry_key_text_data)
+				else:
+					key_text_data[article_address] = [entry_key_text_data]
+			buffer_offset += next_section_jump + 4
+		return key_text_data
+
+	def __iter__(self) -> Iterator[EntryType]:
 		from os.path import dirname
 
 		if self._file is None:
@@ -418,33 +582,41 @@ class Reader(object):
 				cssBytes = cssFile.read()
 			yield glos.newDataEntry("style.css", cssBytes)
 
-		_file = self._file
-		limit = self._limit
-		while True:
-			self._absPos = _file.tell()
-			if self._absPos >= limit:
-				break
-			# alternative for buf, bufSize is calculated
-			# ~ flag = f.tell()
-			# ~ bufSize = 0
-			# ~ while True:
-			# ~ 	zipp = f.read(bufSize)
-			# ~		try:
-			# ~			# print(zipp)
-			# ~			input(zipp.decode(self._encoding))
-			# ~			buf = decompress(zipp[8:])
-			# ~			# print(buf)
-			# ~			break
-			# ~		except:
-			# ~			print(bufSize)
-			# ~			f.seek(flag)
-			# ~			bufSize = bufSize+1
+		for entry_bytes, article_address in self.yieldEntryBytes(
+			self._file,
+			self.appledict_properties,
+		):
+			entry = self.createEntry(entry_bytes, article_address)
+			if entry is not None:
+				yield entry
 
-			bufSize = self.readInt()
-			self._buf = decompress(_file.read(bufSize)[8:])
+	def yieldEntryBytes(self, body_file, properties: AppleDictProperties) -> Iterator[
+		tuple[bytes, ArticleAddress]
+	]:
+		file_data_offset, file_limit = guessFileOffsetLimit(body_file)
+		section_offset = file_data_offset
+		while section_offset < file_limit:
+			body_file.seek(section_offset + APPLEDICT_FILE_OFFSET)
+			self._absPos = body_file.tell()
+
+			# at the start of each section byte lengths of the section are encoded
+			next_section_jump = readInt(body_file)
+			data_byte_len = readInt(body_file)
+			if properties.body_compression_type > 0:
+				decompressed_byte_len = readInt(body_file)  # noqa: F841
+				decompressed_bytes = body_file.read(data_byte_len - 4)
+				buffer = decompress(decompressed_bytes)
+			else:
+				buffer = body_file.read(data_byte_len)
 
 			pos = 0
-			while pos < len(self._buf):
-				entry, pos = self._readEntry(pos)
-				if entry is not None:
-					yield entry
+			while pos < len(buffer):
+				chunkLen, offset = self.getChunkLenOffset(pos, buffer)
+				article_address = ArticleAddress(section_offset, pos)
+				pos += offset
+				entryBytes = buffer[pos:pos + chunkLen]
+
+				pos += chunkLen
+				yield entryBytes, article_address
+
+			section_offset += next_section_jump + 4
