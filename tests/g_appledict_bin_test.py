@@ -15,29 +15,19 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
-			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
-				"/Contents/Body.data": "3c073986",
-			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
-				"/Contents/DefaultStyle.css": "a83210cb",
-			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
-				"/Contents/EntryID.data": "37305249",
-			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
-				"/Contents/EntryID.index": "8c30a3fa",
-			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
-				"/Contents/Images/_internal_dictionary.png": "da4d4eb1",
-			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
-				"/Contents/Info.plist": "fa73dd65",
-			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
-				"/Contents/KeyText.data": "aefe15e0",
-			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
-				"/Contents/KeyText.index": "b723c5b2",
-			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
-				"/Contents/MyDictionary.xsl": "023de1ea",
-			"appledict-bin/002-appledict-bin-no-morphology.dictionary"
-				"/Contents/MyDictionary_prefs.html": "09a9f6e9",
+			"appledict-bin/002-simple.dictionary/Contents/Body.data": "3c073986",
+			"appledict-bin/002-simple.dictionary/Contents/DefaultStyle.css": "a83210cb",
+			"appledict-bin/002-simple.dictionary/Contents/EntryID.data": "37305249",
+			"appledict-bin/002-simple.dictionary/Contents/EntryID.index": "8c30a3fa",
+			"appledict-bin/002-simple.dictionary/Contents/Images/_internal_dictionary.png": "da4d4eb1",
+			"appledict-bin/002-simple.dictionary/Contents/Info.plist": "fa73dd65",
+			"appledict-bin/002-simple.dictionary/Contents/KeyText.data": "aefe15e0",
+			"appledict-bin/002-simple.dictionary/Contents/KeyText.index": "b723c5b2",
+			"appledict-bin/002-simple.dictionary/Contents/MyDictionary.xsl": "023de1ea",
+			"appledict-bin/002-simple.dictionary/Contents/MyDictionary_prefs.html": "09a9f6e9",
+			"appledict-bin/002-simple.txt": "32a1dbc4",
+			"appledict-bin/002-simple.txt_res/style.css": "a83210cb",
 
-			"appledict-bin/002-appledict-bin-no-morphology-v3.txt": "d8086fe8",
-			"appledict-bin/002-appledict-bin-no-morphology-v3.txt_res/style.css": "a83210cb",
 		})
 
 	def test_fix_links(self):
@@ -75,7 +65,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 	def test_appledict_binary_to_txt(self):
 		self.glos = Glossary()
 
-		baseName = "002-appledict-bin-no-morphology"
+		baseName = "002-simple"
 		inputDirPath = self.downloadDir(
 			f"appledict-bin/{baseName}.dictionary",
 			[
@@ -93,10 +83,10 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 		)
 		outputFilePath = self.newTempFilePath(f"{baseName}.txt")
 		expectedOutputFilePath = self.downloadFile(
-			f"appledict-bin/{baseName}-v3.txt",
+			f"appledict-bin/{baseName}.txt",
 		)
 		expectedStylePath = self.downloadFile(
-			f"appledict-bin/{baseName}-v3.txt_res/style.css",
+			f"appledict-bin/{baseName}.txt_res/style.css",
 		)
 
 		result = self.glos.convert(
