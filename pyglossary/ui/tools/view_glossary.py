@@ -21,17 +21,20 @@ def viewGlossary(filename: str, format: "Optional[str]" = None) -> None:
 	else:
 		from pygments import highlight
 		from pygments.formatters import Terminal256Formatter as Formatter
-		from pygments.lexers import HtmlLexer as Lexer
+		from pygments.lexers import HtmlLexer, XmlLexer
 
-		lexer = Lexer()
 		formatter = Formatter()
+		h_lexer = HtmlLexer()
+		x_lexer = XmlLexer()
 
 		def highlightEntry(entry: "EntryType") -> None:
 			entry.detectDefiFormat()
-			if entry.defiFormat != "h":
+			if entry.defiFormat == "h":
+				entry._defi = highlight(entry.defi, h_lexer, formatter)
 				return
-			entry._defi = highlight(entry.defi, lexer, formatter)
-
+			if entry.defiFormat == "x":
+				entry._defi = highlight(entry.defi, x_lexer, formatter)
+				return
 
 	glos = Glossary(ui=None)
 
