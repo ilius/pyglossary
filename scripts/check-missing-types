@@ -1,12 +1,10 @@
 #!/bin/bash
 set -e
 
-myPath=$(realpath "$0")
-myDir1=$(dirname "$myPath")
-rootDir=$(dirname "$myDir1")
-
 if [ -z "$1" ] ; then
-	cd $rootDir
+    myPath=$(realpath "$0")
+    myDir1=$(dirname "$myPath")
+	cd $(dirname "$myDir1")
 	set .
 fi
 
