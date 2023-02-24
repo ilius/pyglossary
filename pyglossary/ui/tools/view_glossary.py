@@ -2,7 +2,7 @@
 
 import sys
 from subprocess import PIPE, Popen
-from typing import Optional
+from typing import Callable, Optional
 
 from pyglossary import Glossary
 from pyglossary.glossary_type import EntryType
@@ -13,6 +13,26 @@ Glossary.init()
 
 
 def viewGlossary(filename: str, format: "Optional[str]" = None) -> None:
+	highlightEntry: "Optional[Callable[[EntryType], None]]" = None
+	try:
+		import pygments  # noqa: F401
+	except ModuleNotFoundError:
+		pass
+	else:
+		from pygments import highlight
+		from pygments.formatters import Terminal256Formatter as Formatter
+		from pygments.lexers import HtmlLexer as Lexer
+
+		lexer = Lexer()
+		formatter = Formatter()
+
+		def highlightEntry(entry: "EntryType") -> None:
+			entry.detectDefiFormat()
+			if entry.defiFormat != "h":
+				return
+			entry._defi = highlight(entry.defi, lexer, formatter)
+
+
 	glos = Glossary(ui=None)
 
 	if not glos.read(filename, format=format, direct=True):
@@ -29,6 +49,8 @@ def viewGlossary(filename: str, format: "Optional[str]" = None) -> None:
 
 	def handleEntry(entry: "EntryType") -> None:
 		nonlocal index
+		if highlightEntry:
+			highlightEntry(entry)
 		str = (
 			f"{yellow}#{index}{reset} " +
 			formatEntry(entry) +
