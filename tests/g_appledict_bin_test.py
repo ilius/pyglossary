@@ -107,6 +107,54 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			expectedStylePath,
 		)
 
+	def test_raw_key_text(self):
+		v = '10.5'
+		for c in range(2):
+			for t in range(1):
+				baseName = f'006-en-oxfjord_v{v}_c{c}_t{t}'
+				self.test_oxfjord_KeyText_variant(baseName, '')
+		v = '10.6'
+		for c in range(0, 3):
+			for t in range(0, 4):
+				baseName = f'006-en-oxfjord_v{v}_c{c}_t{t}'
+				self.test_oxfjord_KeyText_variant(baseName, '')
+		v = '10.11'
+		baseName = f'006-en-oxfjord_v{v}_c{2}_t{3}'
+		self.test_oxfjord_KeyText_variant(baseName, 'Resources/')
+
+	def test_oxfjord_KeyText_variant(self, baseName, subfolder):
+		inputDirPath = self.downloadDir(
+			f"appledict-bin/{baseName}.dictionary",
+			[
+				"Contents/Info.plist",
+				f"Contents/{subfolder}Body.data",
+				f"Contents/{subfolder}DefaultStyle.css",
+				f"Contents/{subfolder}EntryID.data",
+				f"Contents/{subfolder}EntryID.index",
+				f"Contents/{subfolder}Images/_internal_dictionary.png",
+				f"Contents/{subfolder}KeyText.data",
+				f"Contents/{subfolder}KeyText.index",
+				f"Contents/{subfolder}MyDictionary.xsl",
+				f"Contents/{subfolder}MyDictionary_prefs.html",
+			],
+		)
+		glos = Glossary()
+		reader = Reader(glos)
+		metadata = reader.parseMetadata(join(inputDirPath, 'Contents/Info.plist'))
+		reader.setMetadata(metadata)
+		key_text_data = reader.getKeyTextDataFromFile(
+			join(inputDirPath, f'Contents/{subfolder}KeyText.data'),
+			reader._properties)
+
+		actualKeyTextOutputPath = f'{baseName}_KeyText.data_test.txt'
+		expectedKeyTextOutputPath = f'expected_KeyText.data_{baseName}.txt'
+		with open(actualKeyTextOutputPath, 'w') as fid:
+			for article_address in sorted(key_text_data.keys()):
+				fid.write(f'{article_address}\t{key_text_data[article_address]}\n')
+		self.compareTextFiles(
+			actualKeyTextOutputPath,
+			expectedKeyTextOutputPath,
+		)
 
 
 if __name__ == "__main__":
