@@ -136,7 +136,7 @@ class Reader(object):
 	def fixLinksInDefi(self, defi: str) -> str:
 		return self._re_link.sub(self.sub_link, defi)
 
-	def open(self, filename: str) -> None:
+	def open(self, filename: str) -> "Iterator[Tuple[int, int]]":
 		from os.path import dirname
 		try:
 			from lxml import etree  # noqa: F401
@@ -209,7 +209,7 @@ class Reader(object):
 		# show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
 
 		# RawKeyData: tuple(priority, parental_control, key_text_fields)
-		self._keyTextData = self.getKeyTextDataFromFile(
+		yield from self.setKeyTextData(
 			keyTextDataPath,
 			self._properties,
 		)
@@ -227,7 +227,7 @@ class Reader(object):
 			f"number of entries: {self._wordCount}",
 		)
 
-	def parseMetadata(self, infoPlistPath: str) -> Dict:
+	def parseMetadata(self, infoPlistPath: str) -> "Dict[str, Any]":
 		import biplist
 
 		if not isfile(infoPlistPath):
@@ -387,7 +387,7 @@ class Reader(object):
 		self,
 		entryBytes: bytes,
 		articleAddress: "ArticleAddress",
-	) -> Optional[EntryType]:
+	) -> "Optional[EntryType]":
 		# 1. create and validate XML of the entry's body
 		entryRoot = self.convertEntryBytesToXml(entryBytes)
 		if entryRoot is None:
@@ -464,13 +464,16 @@ class Reader(object):
 		self._titleById = titleById
 		self._wordCount = len(titleById)
 
-	def getKeyTextDataFromFile(
+	def setKeyTextData(
 		self,
 		morphoFilePath: str,
 		properties: "AppleDictProperties",
-	) -> "Dict[ArticleAddress, List[RawKeyData]]" :
+	) -> "Iterator[Tuple[int, int]]":
 		"""
 			Prepare `KeyText.data` file for extracting morphological data
+
+			Returns an iterator/generator for the progress
+			Sets self._keyTextData when done
 		"""
 		with open(morphoFilePath, 'rb') as keyTextFile:
 			fileDataOffset, fileLimit = guessFileOffsetLimit(keyTextFile)
@@ -491,6 +494,7 @@ class Reader(object):
 					fileLimitDecompressed += decompressedSectionByteLen
 					sectionOffset += sectionLength
 					keyTextFile.seek(sectionOffset)
+					# yield (sectionOffset, fileLimit + APPLEDICT_FILE_OFFSET)
 				bufferOffset = 0
 				bufferLimit = fileLimitDecompressed
 			else:
@@ -499,7 +503,7 @@ class Reader(object):
 				bufferOffset = fileDataOffset
 				bufferLimit = fileLimit
 
-		return self.readKeyTextData(
+		yield from self.readKeyTextData(
 			buff=buff,
 			bufferOffset=bufferOffset,
 			bufferLimit=bufferLimit,
@@ -512,10 +516,15 @@ class Reader(object):
 		bufferOffset: int,
 		bufferLimit: int,
 		properties: "AppleDictProperties",
-	) -> "Dict[ArticleAddress, List[RawKeyData]]":
+	) -> "Iterator[Tuple[int, int]]":
+		"""
+			Returns an iterator/generator for the progress
+			Sets self._keyTextData when done
+		"""
 		buff.seek(bufferOffset)
 		keyTextData: "Dict[ArticleAddress, List[RawKeyData]]" = {}
 		while bufferOffset < bufferLimit:
+			yield (bufferOffset, bufferLimit)
 			buff.seek(bufferOffset)
 			next_section_jump = readInt(buff)
 			if properties.key_text_compression_type == 0:
@@ -585,7 +594,8 @@ class Reader(object):
 				else:
 					keyTextData[articleAddress] = [entryKeyTextData]
 			bufferOffset += next_section_jump + 4
-		return keyTextData
+
+		self._keyTextData = keyTextData
 
 	def __iter__(self) -> Iterator[EntryType]:
 		from os.path import dirname
