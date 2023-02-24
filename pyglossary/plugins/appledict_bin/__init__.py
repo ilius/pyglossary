@@ -553,10 +553,8 @@ class Reader(object):
 				priorityAndParentalControl = read_2_bytes_here(buff)  # 0x13
 				if priorityAndParentalControl > 0x20:
 					raise RuntimeError(
-						'WRONG priority or parental control:' +
-						priorityAndParentalControl +
-						'// section: ' +
-						hex(bufferOffset),
+						"WRONG priority or parental control:"
+						f"{priorityAndParentalControl} (section: {hex(bufferOffset)})"
 					)
 				# d:parental-control="1"
 				parental_control = priorityAndParentalControl % 2
