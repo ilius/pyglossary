@@ -51,8 +51,8 @@ class Reader(TextGlossaryReader):
 		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self, filename: str) -> None:
-		TextGlossaryReader.open(self, filename)
+	def open(self, filename: str) -> "Iterator[Tuple[int, int]]":
+		yield from TextGlossaryReader.openGen(self, filename)
 		resDir = f"{filename}_res"
 		if isdir(resDir):
 			self._resDir = resDir
