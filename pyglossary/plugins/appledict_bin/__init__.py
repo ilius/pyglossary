@@ -16,7 +16,7 @@
 
 import re
 from datetime import datetime
-from io import BufferedReader, BytesIO
+from io import BytesIO
 from os.path import isdir, isfile, join, split
 from struct import unpack
 from typing import (
@@ -39,12 +39,16 @@ from .appledict_file_tools import (
 	read_x_bytes_as_word,
 	readInt,
 )
-from .appledict_properties import AppleDictProperties, from_metadata
+from .appledict_properties import from_metadata
 from .article_address import ArticleAddress
 from .key_data import KeyData, RawKeyData
 
 if TYPE_CHECKING:
+	from io import BufferedReader
+
 	import lxml
+
+	from .appledict_properties import AppleDictProperties
 
 from zlib import decompress
 
@@ -382,7 +386,7 @@ class Reader(object):
 	def createEntry(
 		self,
 		entry_bytes: bytes,
-		article_address: ArticleAddress,
+		article_address: "ArticleAddress",
 	) -> Optional[EntryType]:
 		# 1. create and validate XML of the entry's body
 		entryRoot = self.convertEntryBytesToXml(entry_bytes)
@@ -463,13 +467,15 @@ class Reader(object):
 	def getKeyTextDataFromFile(
 		self,
 		morphoFilePath: str,
-		properties: AppleDictProperties,
+		properties: "AppleDictProperties",
 	) -> "Dict[ArticleAddress, List[RawKeyData]]" :
-		"""Prepare `KeyText.data` file for extracting morphological data"""
+		"""
+			Prepare `KeyText.data` file for extracting morphological data
+		"""
 		with open(morphoFilePath, 'rb') as keyTextFile:
 			file_data_offset, file_limit = guessFileOffsetLimit(keyTextFile)
 
-			buffer = BytesIO()
+			buff = BytesIO()
 			if properties.key_text_compression_type > 0:
 				keyTextFile.seek(file_data_offset + APPLEDICT_FILE_OFFSET)
 				section_len = readInt(keyTextFile)
@@ -478,8 +484,10 @@ class Reader(object):
 				while keyTextFile.tell() < file_limit + APPLEDICT_FILE_OFFSET:
 					compressedSectionByteLen = readInt(keyTextFile)
 					decompressedSectionByteLen = readInt(keyTextFile)
-					chunksection_bytes = decompress(keyTextFile.read(compressedSectionByteLen - 4))
-					buffer.write(chunksection_bytes)
+					chunksection_bytes = decompress(
+						keyTextFile.read(compressedSectionByteLen - 4),
+					)
+					buff.write(chunksection_bytes)
 					file_limit_decompressed += decompressedSectionByteLen
 					section_offset += section_len
 					keyTextFile.seek(section_offset)
@@ -487,61 +495,62 @@ class Reader(object):
 				buffer_limit = file_limit_decompressed
 			else:
 				keyTextFile.seek(APPLEDICT_FILE_OFFSET)
-				buffer.write(keyTextFile.read())
+				buff.write(keyTextFile.read())
 				buffer_offset = file_data_offset
 				buffer_limit = file_limit
 
-			return self.readKeyTextData(
-				buffer=buffer,
-				buffer_offset=buffer_offset,
-				buffer_limit=buffer_limit,
-				properties=properties,
-			)
+		return self.readKeyTextData(
+			buff=buff,
+			buffer_offset=buffer_offset,
+			buffer_limit=buffer_limit,
+			properties=properties,
+		)
 
 	def readKeyTextData(
 		self,
-		buffer: BufferedReader,
+		buff: "BufferedReader",
 		buffer_offset: int,
 		buffer_limit: int,
-		properties: AppleDictProperties,
+		properties: "AppleDictProperties",
 	) -> "Dict[ArticleAddress, List[RawKeyData]]":
-		buffer.seek(buffer_offset)
+		buff.seek(buffer_offset)
 		key_text_data: "Dict[ArticleAddress, List[RawKeyData]]" = {}
 		while buffer_offset < buffer_limit:
-			buffer.seek(buffer_offset)
-			next_section_jump = readInt(buffer)
+			buff.seek(buffer_offset)
+			next_section_jump = readInt(buff)
 			if properties.key_text_compression_type == 0:
-				big_len = readInt(buffer)  # noqa: F841
+				big_len = readInt(buff)  # noqa: F841
 			# number of lexemes
-			word_forms_number = read_2_bytes_here(buffer)  # 0x01
+			word_forms_number = read_2_bytes_here(buff)  # 0x01
 			next_lexeme_offset: int = 0
 			for _ in range(word_forms_number):
-				_ = read_2_bytes_here(buffer)  # 0x00 // TODO might be 1 or 2 or more zeros
+				_ = read_2_bytes_here(buff)  # 0x00
+				# TODO might be 1 or 2 or more zeros
 				if next_lexeme_offset != 0:
-					buffer.seek(next_lexeme_offset)
+					buff.seek(next_lexeme_offset)
 				small_len = 0
 				while small_len == 0:
-					curr_offset = buffer.tell()
-					small_len = read_2_bytes_here(buffer)  # 0x2c
+					curr_offset = buff.tell()
+					small_len = read_2_bytes_here(buff)  # 0x2c
 				next_lexeme_offset = curr_offset + small_len
 				# the resulting number must match with Contents/Body.data address of the entry
 				article_address: ArticleAddress
 				if properties.body_has_sections:
-					chunk_offset = readInt(buffer)
-					section_offset = readInt(buffer)
+					chunk_offset = readInt(buff)
+					section_offset = readInt(buff)
 					article_address = ArticleAddress(
 						section_offset=section_offset,
 						chunk_offset=chunk_offset,
 					)
 				else:
 					chunk_offset = 0x0
-					section_offset = readInt(buffer)
+					section_offset = readInt(buff)
 					article_address = ArticleAddress(
 						section_offset=section_offset,
 						chunk_offset=chunk_offset,
 					)
 
-				priority_and_parental_control = read_2_bytes_here(buffer)  # 0x13
+				priority_and_parental_control = read_2_bytes_here(buff)  # 0x13
 				if priority_and_parental_control > 0x20:
 					raise RuntimeError(
 						'WRONG priority or parental control:' +
@@ -556,10 +565,10 @@ class Reader(object):
 
 				key_text_fields = []
 				while True:
-					word_form_len = read_2_bytes_here(buffer)
+					word_form_len = read_2_bytes_here(buff)
 					if word_form_len == 0:
 						break
-					word_form = read_x_bytes_as_word(buffer, word_form_len)
+					word_form = read_x_bytes_as_word(buff, word_form_len)
 					key_text_fields.append(word_form)
 				entry_key_text_data: RawKeyData = (priority, parental_control, key_text_fields)
 				if article_address in key_text_data:
@@ -567,6 +576,7 @@ class Reader(object):
 				else:
 					key_text_data[article_address] = [entry_key_text_data]
 			buffer_offset += next_section_jump + 4
+
 		return key_text_data
 
 	def __iter__(self) -> Iterator[EntryType]:
@@ -590,9 +600,11 @@ class Reader(object):
 			if entry is not None:
 				yield entry
 
-	def yieldEntryBytes(self, body_file, properties: AppleDictProperties) -> Iterator[
-		tuple[bytes, ArticleAddress]
-	]:
+	def yieldEntryBytes(
+		self,
+		body_file,
+		properties: "AppleDictProperties",
+	) -> "Iterator[Tuple[bytes, ArticleAddress]]":
 		file_data_offset, file_limit = guessFileOffsetLimit(body_file)
 		section_offset = file_data_offset
 		while section_offset < file_limit:
