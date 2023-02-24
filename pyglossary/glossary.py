@@ -639,16 +639,16 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		# reader.open returns "Optional[Iterator[Tuple[int, int]]]"
 		try:
 			openResult = reader.open(filename)
+			if openResult is not None:
+				for pos, total in openResult:
+					if self._ui:
+						self.progress(pos, total, unit="bytes")
 		except (FileNotFoundError, LookupError) as e:
 			log.critical(str(e))
 			return False
 		except Exception:
 			log.exception("")
 			return False
-
-		if openResult is not None and self._ui:
-			for pos, total in openResult:
-				self.progress(pos, total, unit="bytes")
 
 		self._readersOpenArgs[reader] = (filename, options)
 		self.prepareEntryFilters()
