@@ -17,12 +17,12 @@ from typing import Dict, List
 
 class AppleDictProperties:
 	def __init__(
-			self,
-			format_version: int,
-			body_compression_type: int,
-			body_has_sections: bool,
-			key_text_compression_type: int,
-			key_text_field_order: List[str],
+		self,
+		format_version: int,
+		body_compression_type: int,
+		body_has_sections: bool,
+		key_text_compression_type: int,
+		key_text_field_order: List[str],
 	):
 		# in plist file: "IDXDictionaryVersion"
 		# values := (1 | 2 | 3)
