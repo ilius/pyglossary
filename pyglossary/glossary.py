@@ -603,7 +603,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self,
 		format: str,
 		options: "Dict[str, Any]",
-	):
+	) -> None:
 		validOptionKeys = set(self.formatsReadOptions[format].keys())
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
@@ -613,7 +613,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				)
 				del options[key]
 
-	def _openReader(self, reader: "Any", filename: str):
+	def _openReader(self, reader: "Any", filename: str) -> bool:
 		# reader.open returns "Optional[Iterator[Tuple[int, int]]]"
 		try:
 			openResult = reader.open(filename)
