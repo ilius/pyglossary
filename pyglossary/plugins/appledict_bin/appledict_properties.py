@@ -22,7 +22,8 @@ class AppleDictProperties:
 		body_compression_type: int,
 		body_has_sections: bool,
 		key_text_compression_type: int,
-		key_text_field_order: List[str],
+		key_text_fixed_fields: List[str],
+		key_text_variable_fields: List[str],
 	):
 		# in plist file: "IDXDictionaryVersion"
 		# values := (1 | 2 | 3)
@@ -34,9 +35,13 @@ class AppleDictProperties:
 		# "IDXDataSize" value = 4 or 8
 		self.body_has_sections = body_has_sections
 
+		# in plist file: "IDXIndexDataFields" / "IDXFixedDataFields"
+		# Example: ["DCSPrivateFlag"]
+		self.key_text_fixed_fields = key_text_fixed_fields
+
 		# in plist file: "IDXIndexDataFields" / "IDXVariableDataFields"
 		# Example: ["DCSKeyword", "DCSHeadword", "DCSEntryTitle", "DCSAnchor", "DCSYomiWord"]
-		self.key_text_field_order = key_text_field_order
+		self.key_text_field_order = key_text_variable_fields
 
 		# in plist file for key_text_metadata:
 		# 'TrieAuxiliaryDataOptions' -> 'HeapDataCompressionType'
@@ -49,15 +54,22 @@ def from_metadata(metadata: Dict) -> AppleDictProperties:
 	body_metadata = metadata.get('IDXDictionaryIndexes')[2]
 
 	key_text_data_fields = key_text_metadata.get('IDXIndexDataFields')
-	key_text_field_order = [field_data['IDXDataFieldName'] for field_data in
+	key_text_variable_fields = [field_data['IDXDataFieldName'] for field_data in
 							key_text_data_fields.get('IDXVariableDataFields')]
+	key_text_fixed_field = []
+	if "IDXFixedDataFields" in key_text_data_fields:
+		for fixed_field in key_text_data_fields["IDXFixedDataFields"]:
+			key_text_fixed_field.append(fixed_field['IDXDataFieldName'])
 
 	external_data_fields = key_text_data_fields.get("IDXExternalDataFields")
-	body_has_sections = external_data_fields[0].get("IDXDataSize") == 8
 	if 'HeapDataCompressionType' in body_metadata:
 		body_compression_type = body_metadata['HeapDataCompressionType']
 	else:
 		body_compression_type = 0
+	body_has_sections = (
+		body_compression_type == 2 and
+		external_data_fields[0].get("IDXDataSize") == 8
+	)
 
 	if 'TrieAuxiliaryDataOptions' in key_text_metadata and 'HeapDataCompressionType' in \
 			key_text_metadata['TrieAuxiliaryDataOptions']:
@@ -71,5 +83,6 @@ def from_metadata(metadata: Dict) -> AppleDictProperties:
 		body_compression_type=body_compression_type,
 		body_has_sections=body_has_sections,
 		key_text_compression_type=key_text_compression_type,
-		key_text_field_order=key_text_field_order,
+		key_text_fixed_fields=key_text_fixed_field,
+		key_text_variable_fields=key_text_variable_fields,
 	)

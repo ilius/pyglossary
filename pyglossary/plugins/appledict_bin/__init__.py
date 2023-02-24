@@ -530,8 +530,8 @@ class Reader(object):
 					buff.seek(next_lexeme_offset)
 				small_len = 0
 				while small_len == 0:
-					curr_offset = buff.tell()
 					small_len = read_2_bytes_here(buff)  # 0x2c
+				curr_offset = buff.tell()
 				next_lexeme_offset = curr_offset + small_len
 				# the resulting number must match with Contents/Body.data address of the entry
 				articleAddress: ArticleAddress
@@ -550,26 +550,31 @@ class Reader(object):
 						chunkOffset=chunkOffset,
 					)
 
-				priorityAndParentalControl = read_2_bytes_here(buff)  # 0x13
-				if priorityAndParentalControl > 0x20:
-					log.error(
-						"WRONG priority or parental control:"
-						f"{priorityAndParentalControl} (section: {hex(bufferOffset)})"
-						", skipping KeyText.data file",
-					)
-					return {}
-				# d:parental-control="1"
-				parental_control = priorityAndParentalControl % 2
-				# d:priority=".." between 0x00..0x12, priority = [0..9]
-				priority = int((priorityAndParentalControl - parental_control) / 2)
+				if len(properties.key_text_fixed_fields) > 0:
+					priorityAndParentalControl = read_2_bytes_here(buff)  # 0x13
+					if priorityAndParentalControl > 0x20:
+						log.error(
+							"WRONG priority or parental control:"
+							f"{priorityAndParentalControl} (section: {hex(bufferOffset)})"
+							", skipping KeyText.data file",
+						)
+						return {}
+					# d:parental-control="1"
+					parental_control = priorityAndParentalControl % 2
+					# d:priority=".." between 0x00..0x12, priority = [0..9]
+					priority = int((priorityAndParentalControl - parental_control) / 2)
+				else:
+					priority = 0
+					parental_control = 0
 
 				key_text_fields = []
-				while True:
+				while buff.tell() < next_lexeme_offset:
 					word_form_len = read_2_bytes_here(buff)
 					if word_form_len == 0:
-						break
-					word_form = read_x_bytes_as_word(buff, word_form_len)
-					key_text_fields.append(word_form)
+						key_text_fields.append(None)
+					else:
+						word_form = read_x_bytes_as_word(buff, word_form_len)
+						key_text_fields.append(word_form)
 				entryKeyTextData: RawKeyData = (
 					priority,
 					parental_control,
@@ -580,7 +585,6 @@ class Reader(object):
 				else:
 					keyTextData[articleAddress] = [entryKeyTextData]
 			bufferOffset += next_section_jump + 4
-
 		return keyTextData
 
 	def __iter__(self) -> Iterator[EntryType]:
