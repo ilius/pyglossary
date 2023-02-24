@@ -619,9 +619,9 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 			openResult = reader.open(filename)
 			if openResult is not None:
 				self.progressInit("Reading info")
-				lastPos = -5000
+				lastPos = -100_000
 				for pos, total in openResult:
-					if self._ui and pos - lastPos > 5000:
+					if self._ui and pos - lastPos > 100_000:
 						self.progress(pos, total, unit="bytes")
 						lastPos = pos
 		except (FileNotFoundError, LookupError) as e:

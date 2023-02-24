@@ -378,7 +378,7 @@ class ShowProgressBar(EntryFilter):
 		self._index = index + 1
 
 		if entry is not None and (bp := entry.byteProgress()):
-			if bp[0] > self._lastPos + 20000:
+			if bp[0] > self._lastPos + 100_000:
 				self.glos.progress(bp[0], bp[1], unit="bytes")
 				self._lastPos = bp[0]
 			return entry
