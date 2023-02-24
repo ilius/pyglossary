@@ -552,10 +552,12 @@ class Reader(object):
 
 				priorityAndParentalControl = read_2_bytes_here(buff)  # 0x13
 				if priorityAndParentalControl > 0x20:
-					raise RuntimeError(
+					log.error(
 						"WRONG priority or parental control:"
 						f"{priorityAndParentalControl} (section: {hex(bufferOffset)})"
+						", skipping KeyText.data file",
 					)
+					return {}
 				# d:parental-control="1"
 				parental_control = priorityAndParentalControl % 2
 				# d:priority=".." between 0x00..0x12, priority = [0..9]
