@@ -166,15 +166,14 @@ def diffGlossary(
 		header = f"=== {yellow}{ids}{reset} "
 
 		altsDiff = difflib.ndiff(
-			[f"Alt: {alt}" for alt in entry1.l_word[1:]],
-			[f"Alt: {alt}" for alt in entry2.l_word[1:]],
+			[f"Alt: {alt}\n" for alt in entry1.l_word[1:]],
+			[f"Alt: {alt}\n" for alt in entry2.l_word[1:]],
 			linejunk=None,
 			charjunk=None,
 		)
 		entryFormatted = "\n".join([
 			f">>> {entry1.l_word[0]}",
 			formatDiff(altsDiff),
-			"",
 			entry1.defi,
 		])
 		formatted = (
