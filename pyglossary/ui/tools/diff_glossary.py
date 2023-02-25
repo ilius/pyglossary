@@ -40,11 +40,15 @@ def formatInfoValueDiff(diff: "Iterator[str]") -> str:
 	return a + "\n" + b
 
 
+entrySep = f"\n{'_' * 40}\n\n"
+
 def diffGlossary(
 	filename1: str,
 	filename2: str,
 	format1: "Optional[str]" = None,
 	format2: "Optional[str]" = None,
+	header: str = "",
+	pager: bool = True,
 ) -> None:
 	glos1 = Glossary(ui=None)
 	if not glos1.read(filename1, format=format1, direct=True):
@@ -55,13 +59,23 @@ def diffGlossary(
 	if not glos2.read(filename2, format=format2, direct=True):
 		return
 
-	proc = Popen(
-		[
-			"less",
-			"-R",
-		],
-		stdin=PIPE,
-	)
+	if pager:
+		proc = Popen(
+			[
+				"less",
+				"-R",
+			],
+			stdin=PIPE,
+		)
+		def write(msg: str):
+			proc.stdin.write(msg)
+	else:
+		proc = None
+		def write(msg: str):
+			print(msg, end="")
+
+	if header:
+		write(header + "\n")
 
 	iter1 = iter(glos1)
 	iter2 = iter(glos2)
@@ -89,9 +103,9 @@ def diffGlossary(
 		formatted = (
 			f"{color}{prefix}#{index} " +
 			formatEntry(entry).replace("\n", "\n" + color) +
-			"\n______________________________________________\n\n"
+			entrySep
 		)
-		proc.stdin.write(formatted.encode("utf-8"))
+		write(formatted)
 
 	def printInfo(color: str, prefix: str, pair: "Tuple[str, str]") -> None:
 		key, value = pair
@@ -99,10 +113,10 @@ def diffGlossary(
 		valueColor = color + spaces + value.replace("\n", "\n" + spaces + color)
 		formatted = (
 			f"{color}{prefix} Info: {key}\n"
-			f"{valueColor}"
-			"\n______________________________________________\n\n"
+			f"{valueColor}" +
+			entrySep
 		)
-		proc.stdin.write(formatted.encode("utf-8"))
+		write(formatted)
 
 	def printChangedEntry(entry1: "EntryType", entry2: "EntryType") -> None:
 		defiDiff = formatDiff(xmlDiff(entry1.defi, entry2.defi))
@@ -116,9 +130,9 @@ def diffGlossary(
 		formatted = (
 			f"=== {yellow}{ids}{reset} " +
 			formatEntry(entry1) +
-			"\n______________________________________________\n\n"
+			entrySep
 		)
-		proc.stdin.write(formatted.encode("utf-8"))
+		write(formatted)
 
 
 	def printChangedInfo(key: str, value1: str, value2: str) -> str:
@@ -178,9 +192,9 @@ def diffGlossary(
 		])
 		formatted = (
 			header + entryFormatted +
-			"\n______________________________________________\n\n"
+			entrySep
 		)
-		proc.stdin.write(formatted.encode("utf-8"))
+		write(formatted)
 
 	count = 0
 	entry1 = None
@@ -219,7 +233,9 @@ def diffGlossary(
 			sys.stdout.flush()
 		count += 1
 
-	try:
+	def run():
+		nonlocal index1, index2
+
 		while True:
 			try:
 				infoStep()
@@ -259,19 +275,53 @@ def diffGlossary(
 		for entry in iter2:
 			printEntry(green, "+++ B", index2, entry)
 			index2 += 1
+
+	try:
+		run()
 	except (BrokenPipeError, IOError):
 		pass  # noqa: S110
 	except Exception as e:
 		print(e)
 	finally:
-		proc.communicate()
-		# proc.wait()
-		# proc.terminate()
-		sys.stdin.flush()
-		sys.stdout.flush()
+		if proc:
+			proc.communicate()
+			# proc.wait()
+			# proc.terminate()
+			sys.stdin.flush()
+			sys.stdout.flush()
+
+
+# NOTE: make sure to set GIT_PAGER or config core.pager
+# for example GIT_PAGER=less
+# or GIT_PAGER='less -R -S -N'
+def gitDiffMain() -> None:
+	# print(sys.argv[1:])
+	# arguments:
+	# path old_file old_hex old_mode new_file new_hex new_mode
+	old_hex = sys.argv[3][:7]
+	new_hex = sys.argv[6][:7]
+
+	filename1 = sys.argv[2]
+	filename2 = sys.argv[1]
+	header = (
+		f"{'_' * 80}\n\n"
+		f"### File: {filename2}  ({old_hex}..{new_hex})\n"
+	)
+	diffGlossary(
+		filename1,
+		filename2,
+		format1=None,
+		format2=None,
+		pager=False,
+		header=header,
+	)
 
 
 def main() -> None:
+	import os
+	if os.getenv("GIT_DIFF_PATH_COUNTER"):
+		return gitDiffMain()
+
 	filename1 = sys.argv[1]
 	filename2 = sys.argv[2]
 	format1 = None
@@ -280,7 +330,14 @@ def main() -> None:
 		format1 = sys.argv[3]
 	if len(sys.argv) > 4:
 		format2 = sys.argv[4]
-	diffGlossary(filename1, filename2, format1=format1, format2=format2)
+	diffGlossary(
+		filename1,
+		filename2,
+		format1=format1,
+		format2=format2,
+		pager=True,
+	)
+	return None
 
 
 if __name__ == "__main__":
