@@ -302,20 +302,6 @@ class Reader(object):
 			self._file.close()
 			self._file = None
 
-	def getChunkSize(self, pos: int) -> "Tuple[int, int]":
-		plus = self._buf[pos:pos + 12].find(b"<d:entry")
-		if plus < 1:
-			return 0, 0
-		bs = self._buf[pos:pos + plus]
-		if plus < 4:
-			bs = b"\x00" * (4 - plus) + bs
-		try:
-			chunkSize, = unpack("i", bs)
-		except Exception as e:
-			log.error(f"{self._buf[pos:pos + 100]}")
-			raise e
-		return chunkSize, plus
-
 	def _getDefi(
 		self,
 		entryElem: "lxml.etree.Element",
