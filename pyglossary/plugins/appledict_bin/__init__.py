@@ -407,6 +407,9 @@ class Reader(object):
 				keyDataList.append(KeyData.fromRaw(rawKeyData, keyTextFieldOrder))
 
 		if keyDataList:
+			keyDataList.sort(
+				key=lambda keyData: -keyData.priority,
+			)
 			word = [word] + [keyData.keyword for keyData in keyDataList]
 
 		defi = self._getDefi(entryElems[0], keyDataList)
