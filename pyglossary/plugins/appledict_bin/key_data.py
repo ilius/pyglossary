@@ -15,8 +15,8 @@ from typing import TypeAlias
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-RawKeyData: TypeAlias = tuple[int, int, list[str]]
-"""tuple(priority, parental_control, key_text_fields)"""
+RawKeyData: TypeAlias = "tuple[int, int, list[str]]"
+"""tuple(priority, parentalControl, key_text_fields)"""
 
 
 class KeyData:
@@ -26,46 +26,46 @@ class KeyData:
 	"""
 
 	def __init__(
-			self,
-			priority: int,
-			parental_control: int,
-			keyword: str,
-			headword: str,
-			entry_title: str,
-			anchor: str,
+		self,
+		priority: int,
+		parentalControl: int,
+		keyword: str,
+		headword: str,
+		entryTitle: str,
+		anchor: str,
 	):
 		self.priority = priority
-		self.parental_control = parental_control
+		self.parentalControl = parentalControl
 		self.keyword = keyword
 		self.headword = headword
-		self.entry_title = entry_title
+		self.entryTitle = entryTitle
 		self.anchor = anchor
 
 	@staticmethod
-	def from_raw_key_data(raw_key_data: RawKeyData, key_text_field_order: list[str]):
-		priority, parental_control, key_text_fields = raw_key_data
+	def fromRaw(rawKeyData: RawKeyData, keyTextFieldOrder: "list[str]"):
+		priority, parentalControl, keyTextFields = rawKeyData
 		keyword = ''
 		headword = ''
-		entry_title = ''
+		entryTitle = ''
 		anchor = ''
 
-		for i, key_value in enumerate(key_text_fields):
-			key_type = key_text_field_order[i]
+		for i, key_value in enumerate(keyTextFields):
+			key_type = keyTextFieldOrder[i]
 			if key_type == 'DCSKeyword':
 				keyword = key_value
 			elif key_type == 'DCSHeadword':
 				headword = key_value
 			elif key_type == 'DCSEntryTitle':
-				entry_title = key_value
+				entryTitle = key_value
 			elif key_type == 'DCSAnchor':
 				anchor = key_value
 
 		return KeyData(
 			priority,
-			parental_control,
+			parentalControl,
 			keyword,
 			headword,
-			entry_title,
+			entryTitle,
 			anchor,
 		)
 
@@ -73,8 +73,8 @@ class KeyData:
 		d_index_xml = '<d:index xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng" '  # noqa: E501
 		if self.priority != 0:
 			d_index_xml += f' d:priority="{self.priority}"'
-		if self.parental_control != 0:
-			d_index_xml += f' d:parental-control="{self.parental_control}"'
+		if self.parentalControl != 0:
+			d_index_xml += f' d:parental-control="{self.parentalControl}"'
 		if self.keyword:
 			d_index_xml += f' d:value="{self.keyword}"'
 		if self.headword:

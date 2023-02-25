@@ -319,6 +319,7 @@ class Reader(object):
 	def _getDefi(
 		self,
 		entryElem: "lxml.etree.Element",
+		keyDataList: "List[KeyData]",
 	) -> str:
 		from lxml import etree
 
@@ -396,18 +397,19 @@ class Reader(object):
 		if not entryElems:
 			return None
 		word = entryElems[0].xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
-		defi = self._getDefi(entryElems[0])
 
 		# 2. add alts
 		keyTextFieldOrder = self._properties.key_text_field_order
-		keyDataList: List[KeyData] = []
+		keyDataList: "List[KeyData]" = []
 		if articleAddress in self._keyTextData:
-			raw_keyDataList = self._keyTextData[articleAddress]
-			for raw_key_data in raw_keyDataList:
-				keyDataList.append(KeyData.from_raw_key_data(raw_key_data, keyTextFieldOrder))
+			rawKeyDataList = self._keyTextData[articleAddress]
+			for rawKeyData in rawKeyDataList:
+				keyDataList.append(KeyData.fromRaw(rawKeyData, keyTextFieldOrder))
 
 		if keyDataList:
 			word = [word] + [keyData.keyword for keyData in keyDataList]
+
+		defi = self._getDefi(entryElems[0], keyDataList)
 
 		return self._glos.newEntry(
 			word=word,
