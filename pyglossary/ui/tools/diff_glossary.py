@@ -68,7 +68,7 @@ def diffGlossary(
 			stdin=PIPE,
 		)
 		def write(msg: str):
-			proc.stdin.write(msg)
+			proc.stdin.write(msg.encode("utf-8"))
 	else:
 		proc = None
 		def write(msg: str):
