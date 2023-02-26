@@ -93,11 +93,11 @@ class Reader(object):
 		self._file = None
 		self._encoding = "utf-8"
 		self._defiFormat = "m"
-		self._re_link = re.compile('<a [^<>]*>')
+		self._re_link = re.compile("<a [^<>]*>")
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
 		self._titleById = {}
 		self._wordCount = 0
-		self._keyTextData: "Dict[ArticleAddress, List[RawKeyData]]"
+		self._keyTextData: "Dict[ArticleAddress, List[RawKeyData]]" = {}
 
 	def sub_link(self, m: "Match") -> str:
 		from lxml.html import fromstring, tostring
@@ -129,7 +129,7 @@ class Reader(object):
 			a.attrib["href"] = href = f"bword://{href}"
 
 		a_new = tostring(a).decode("utf-8")
-		a_new = a_new[:-4]  # remove '</a>'
+		a_new = a_new[:-4]  # remove "</a>"
 
 		return a_new  # noqa: RET504
 
@@ -190,25 +190,7 @@ class Reader(object):
 		metadata = self.parseMetadata(infoPlistPath)
 		self.setMetadata(metadata)
 
-		# KeyText.data contains:
-		# 1. morphological data (opens article "make" when user enters "making")
-		# and data that shows
-		# 2. data that encodes that searching "2 per cent", "2 percent",
-		# or "2%" returns the same article
-		# EXAMPLE: <d:index d:value="made" d:title="made (make)"/>
-		# If the entry for "make" contains these <d:index> definitions,
-		# the entry can be searched not only by "make" but also by "makes" or "made".
-		# On the search result list, title value texts like "made" are displayed.
-		# EXAMPLE: <d:index d:value="make it" d:title="make it" d:parental-control="1"
-		# d:anchor="xpointer(//*[@id='make_it'])"/>
-		# EXAMPLE: <d:index d:value="工夫する" d:title="工夫する" 
-		# d:yomi="くふうする" d:anchor="xpointer(//*[@id='kufuu-suru'])" />
-		# EXAMPLE: <d:index d:value="'s finest" d:title="—'s finest"
-		# d:DCSEntryTitle="fine" d:anchor="xpointer(//*[@id='m_en_gbus0362750.070'])"/>
-		#     user entered "'s finest", search list we show "—'s finest",
-		# show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
 
-		# RawKeyData: tuple(priority, parental_control, key_text_fields)
 		yield from self.setKeyTextData(
 			keyTextDataPath,
 			self._properties,
@@ -466,7 +448,7 @@ class Reader(object):
 			Returns an iterator/generator for the progress
 			Sets self._keyTextData when done
 		"""
-		with open(morphoFilePath, 'rb') as keyTextFile:
+		with open(morphoFilePath, "rb") as keyTextFile:
 			fileDataOffset, fileLimit = guessFileOffsetLimit(keyTextFile)
 
 			buff = BytesIO()
