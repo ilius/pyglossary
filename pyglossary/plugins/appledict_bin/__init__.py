@@ -374,16 +374,30 @@ class Reader(object):
 			for rawKeyData in rawKeyDataList:
 				keyDataList.append(KeyData.fromRaw(rawKeyData, keyTextFieldOrder))
 
+		words = [word]
 		if keyDataList:
 			keyDataList.sort(
 				key=lambda keyData: -keyData.priority,
 			)
-			word = [word] + [keyData.keyword for keyData in keyDataList]
+			for keyData in keyDataList:
+				alt = keyData.keyword
+				try:
+					alt.encode("utf-8")
+				except UnicodeEncodeError as e:
+					# why is this happening?
+					# example glossaries: Emojipedia, Simplified_Chinese
+					log.error(
+						f"bad unicode in {alt!r}, "
+						f"keyData={keyData.__dict__}, \n"
+						f"error: {e}"
+					)
+					continue
+				words.append(alt)
 
 		defi = self._getDefi(entryElems[0], keyDataList)
 
 		return self._glos.newEntry(
-			word=word,
+			word=words,
 			defi=defi,
 			defiFormat=self._defiFormat,
 			byteProgress=(self._absPos, self._limit),
