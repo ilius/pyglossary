@@ -624,6 +624,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 					if self._ui and pos - lastPos > 100_000:
 						self.progress(pos, total, unit="bytes")
 						lastPos = pos
+				self.progressEnd()
 		except (FileNotFoundError, LookupError) as e:
 			log.critical(str(e))
 			return False
