@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import difflib
+import os
+import shlex
 import sys
 from subprocess import PIPE, Popen
 from typing import Iterator, Optional, Tuple
@@ -60,11 +62,11 @@ def diffGlossary(
 		return
 
 	if pager:
+		pagerCmd = ["less", "-R"]
+		if os.getenv("PAGER"):
+			pagerCmd = shlex.split(os.getenv("PAGER"))
 		proc = Popen(
-			[
-				"less",
-				"-R",
-			],
+			pagerCmd,
 			stdin=PIPE,
 		)
 		def write(msg: str):
