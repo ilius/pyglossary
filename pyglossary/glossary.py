@@ -618,7 +618,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		try:
 			openResult = reader.open(filename)
 			if openResult is not None:
-				self.progressInit("Reading info")
+				self.progressInit("Reading metadata")
 				lastPos = -100_000
 				for pos, total in openResult:
 					if self._ui and pos - lastPos > 100_000:
