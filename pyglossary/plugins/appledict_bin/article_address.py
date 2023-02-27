@@ -14,25 +14,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-class ArticleAddress:
-	def __init__(self, sectionOffset: int, chunkOffset: int) -> None:
-		self.sectionOffset = sectionOffset
-		self.chunkOffset = chunkOffset
+from collections import namedtuple
 
-	def __str__(self) -> str:
-		return f"Addr[{hex(self.sectionOffset)}, {hex(self.chunkOffset)}]"
+ArticleAddress = namedtuple(
+	"ArticleAddress",
+	["sectionOffset", "chunkOffset"],
+)
 
-	def __lt__(self, other: "ArticleAddress") -> bool:
-		if self.sectionOffset == other.sectionOffset:
-			return self.chunkOffset < other.chunkOffset
-		return self.sectionOffset < other.sectionOffset
-
-	def __eq__(self, other: "ArticleAddress") -> bool:
-		if self.sectionOffset != other.sectionOffset:
-			return False
-		if self.chunkOffset != other.chunkOffset:
-			return False
-		return True
-
-	def __hash__(self) -> int:
-		return 31 * hash(self.sectionOffset) + self.chunkOffset
+# def __str__(self) -> str:
+#	return f"Addr[{hex(self.sectionOffset)}, {hex(self.chunkOffset)}]"

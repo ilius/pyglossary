@@ -71,6 +71,15 @@ class KeyData:
 		# Headword displayed as article title
 	}
 
+	__slots__ = [
+		"priority",
+		"parentalControl",
+		"keyword",
+		"headword",
+		"entryTitle",
+		"anchor",
+	]
+
 	def __init__(
 		self,
 		priority: int,
