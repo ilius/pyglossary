@@ -79,7 +79,7 @@ class KeyData:
 		headword: str,
 		entryTitle: str,
 		anchor: str,
-	):
+	) -> None:
 		self.priority = priority
 		self.parentalControl = parentalControl
 		self.keyword = keyword
@@ -88,7 +88,7 @@ class KeyData:
 		self.anchor = anchor
 
 	@staticmethod
-	def fromRaw(rawKeyData: RawKeyData, keyTextFieldOrder: "list[str]"):
+	def fromRaw(rawKeyData: RawKeyData, keyTextFieldOrder: "list[str]") -> "KeyData":
 		priority, parentalControl, keyTextFields = rawKeyData
 		keyword = ""
 		headword = ""

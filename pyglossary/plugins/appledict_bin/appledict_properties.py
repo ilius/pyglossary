@@ -24,7 +24,7 @@ class AppleDictProperties:
 		key_text_compression_type: int,
 		key_text_fixed_fields: List[str],
 		key_text_variable_fields: List[str],
-	):
+	) -> None:
 		# in plist file: "IDXDictionaryVersion"
 		# values := (1 | 2 | 3)
 		self.format_version = format_version

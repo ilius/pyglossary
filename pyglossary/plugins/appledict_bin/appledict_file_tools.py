@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import io
 from io import BufferedReader
 from struct import unpack
 from typing import Tuple
@@ -55,7 +56,7 @@ def read_2_bytes_here(buffer: BufferedReader) -> int:
 	return ord(higher_byte) * 0x100 + ord(lower_byte)
 
 
-def guessFileOffsetLimit(file) -> "Tuple[int, int]":
+def guessFileOffsetLimit(file: "io.BufferedReader") -> "Tuple[int, int]":
 	"""returns address offset to start parsing from and EOF address"""
 	file.seek(APPLEDICT_FILE_OFFSET)
 	limit = readInt(file)
@@ -64,8 +65,3 @@ def guessFileOffsetLimit(file) -> "Tuple[int, int]":
 	if intPair == (0, -1):  # 0000 0000 FFFF FFFF
 		return 0x20, limit
 	return 0x4, limit
-
-
-def enumerate_reversed(list: list):
-	for i in range(len(list) - 1, -1, -1):
-		yield i, list[i]

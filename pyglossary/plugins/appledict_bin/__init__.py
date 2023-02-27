@@ -44,7 +44,7 @@ from .article_address import ArticleAddress
 from .key_data import KeyData, RawKeyData
 
 if TYPE_CHECKING:
-	from io import BufferedReader
+	import io
 
 	import lxml
 
@@ -233,7 +233,7 @@ class Reader(object):
 				) from e
 		return metadata
 
-	def setMetadata(self, metadata: "Dict[str, Any]"):
+	def setMetadata(self, metadata: "Dict[str, Any]") -> None:
 		name = metadata.get("CFBundleDisplayName")
 		if not name:
 			name = metadata.get("CFBundleIdentifier")
@@ -323,7 +323,7 @@ class Reader(object):
 
 		return defi
 
-	def getChunkLenOffset(self, pos, buffer: bytes):
+	def getChunkLenOffset(self, pos: int, buffer: bytes) -> "Tuple[int, int]":
 		"""
 		@return chunk byte length and offset
 
@@ -499,7 +499,7 @@ class Reader(object):
 
 	def readKeyTextData(
 		self,
-		buff: "BufferedReader",
+		buff: "io.BufferedReader",
 		bufferOffset: int,
 		bufferLimit: int,
 		properties: "AppleDictProperties",
@@ -607,7 +607,7 @@ class Reader(object):
 
 	def yieldEntryBytes(
 		self,
-		body_file,
+		body_file: "io.BufferedIOBase",
 		properties: "AppleDictProperties",
 	) -> "Iterator[Tuple[bytes, ArticleAddress]]":
 		fileDataOffset, fileLimit = guessFileOffsetLimit(body_file)

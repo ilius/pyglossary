@@ -376,10 +376,10 @@ class Reader(object):
 		pos = 0
 
 		if self._large_file:
-			def getOffset():
+			def getOffset() -> "Tuple[int, int]":
 				return uint64FromBytes(idxBytes[pos:pos + 8]), pos + 8
 		else:
-			def getOffset():
+			def getOffset() -> "Tuple[int, int]":
 				return uint32FromBytes(idxBytes[pos:pos + 4]), pos + 4
 
 		while pos < len(idxBytes):

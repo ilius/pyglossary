@@ -15,24 +15,24 @@
 # GNU General Public License for more details.
 
 class ArticleAddress:
-	def __init__(self, sectionOffset: int, chunkOffset: int):
+	def __init__(self, sectionOffset: int, chunkOffset: int) -> None:
 		self.sectionOffset = sectionOffset
 		self.chunkOffset = chunkOffset
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return f"Addr[{hex(self.sectionOffset)}, {hex(self.chunkOffset)}]"
 
-	def __lt__(self, other):
+	def __lt__(self, other: "ArticleAddress") -> bool:
 		if self.sectionOffset == other.sectionOffset:
 			return self.chunkOffset < other.chunkOffset
 		return self.sectionOffset < other.sectionOffset
 
-	def __eq__(self, other) -> bool:
+	def __eq__(self, other: "ArticleAddress") -> bool:
 		if self.sectionOffset != other.sectionOffset:
 			return False
 		if self.chunkOffset != other.chunkOffset:
 			return False
 		return True
 
-	def __hash__(self):
+	def __hash__(self) -> int:
 		return 31 * hash(self.sectionOffset) + self.chunkOffset
