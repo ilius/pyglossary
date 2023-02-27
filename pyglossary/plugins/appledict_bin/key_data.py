@@ -16,7 +16,7 @@ from typing import TypeAlias
 # GNU General Public License for more details.
 
 RawKeyData: TypeAlias = "tuple[int, int, list[str]]"
-"""tuple(priority, parentalControl, key_text_fields)"""
+"""tuple(priority, parentalControl, keyTextFields)"""
 
 
 """

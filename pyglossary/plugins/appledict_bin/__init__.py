@@ -556,25 +556,27 @@ class Reader(object):
 						)
 						return {}
 					# d:parental-control="1"
-					parental_control = priorityAndParentalControl % 2
+					parentalControl = priorityAndParentalControl % 2
 					# d:priority=".." between 0x00..0x12, priority = [0..9]
-					priority = int((priorityAndParentalControl - parental_control) / 2)
+					priority = (priorityAndParentalControl - parentalControl) // 2
 				else:
 					priority = 0
-					parental_control = 0
+					parentalControl = 0
 
-				key_text_fields = []
+				keyTextFields = []
 				while buff.tell() < next_lexeme_offset:
 					word_form_len = read_2_bytes_here(buff)
 					if word_form_len == 0:
-						key_text_fields.append(None)
-					else:
-						word_form = read_x_bytes_as_word(buff, word_form_len)
-						key_text_fields.append(word_form)
+						keyTextFields.append(None)
+						continue
+					word_form = read_x_bytes_as_word(buff, word_form_len)
+					keyTextFields.append(word_form)
+
+				keyTextFields = tuple(keyTextFields)
 				entryKeyTextData: RawKeyData = (
 					priority,
-					parental_control,
-					key_text_fields,
+					parentalControl,
+					keyTextFields,
 				)
 				if articleAddress in keyTextData:
 					keyTextData[articleAddress].append(entryKeyTextData)
