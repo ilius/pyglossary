@@ -389,7 +389,7 @@ class Reader(object):
 					log.error(
 						f"bad unicode in {alt!r}, "
 						f"keyData={keyData.__dict__}, \n"
-						f"error: {e}"
+						f"error: {e}",
 					)
 					continue
 				words.append(alt)
