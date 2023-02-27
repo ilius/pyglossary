@@ -137,7 +137,7 @@ class TestGlossaryBase(unittest.TestCase):
 		from pyglossary.ui.tools.diff_glossary import diffGlossary
 		diffGlossary(fpath1, fpath2)
 
-	def compareTextFiles(self, fpath1, fpath2):
+	def compareTextFiles(self, fpath1, fpath2, showDiff=False):
 		self.assertTrue(isfile(fpath1), f"{fpath1 = }")
 		self.assertTrue(isfile(fpath2), f"{fpath2 = }")
 		with open(fpath1, encoding="utf-8") as file1:
@@ -157,7 +157,8 @@ class TestGlossaryBase(unittest.TestCase):
 				msg=f"{fpath1} differs from {fpath2}",
 			)
 		except AssertionError as e:
-			self.showGlossaryDiff(fpath1, fpath2)
+			if showDiff:
+				self.showGlossaryDiff(fpath1, fpath2)
 			raise e from None
 
 	def compareBinaryFiles(self, fpath1, fpath2):
@@ -227,6 +228,7 @@ class TestGlossaryBase(unittest.TestCase):
 		sha1sum=None,
 		md5sum=None,
 		config=None,
+		showDiff=False,
 		**convertArgs,
 	):
 		inputFilename = self.downloadFile(fname)
@@ -242,7 +244,11 @@ class TestGlossaryBase(unittest.TestCase):
 		self.assertEqual(outputFilename, res)
 
 		if compareText:
-			self.compareTextFiles(outputFilename, self.downloadFile(compareText))
+			self.compareTextFiles(
+				outputFilename,
+				self.downloadFile(compareText),
+				showDiff=showDiff,
+			)
 		elif compareBinary:
 			self.compareBinaryFiles(outputFilename, self.downloadFile(compareBinary))
 		elif sha1sum:
