@@ -26,9 +26,8 @@ def takePhonetic_oxford_gb(glos):
 			i = defi.find(s, 2, 85)
 			if i == -1:
 				continue
-			else:
-				ph = defi[:i + 1]
-				break
+			ph = defi[:i + 1]
+			break
 		ph = ph.replace(";", "\t")\
 			.replace(",", "\t")\
 			.replace("     ", "\t")\

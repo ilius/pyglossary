@@ -14,17 +14,19 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
+		simple = "appledict-bin/002-simple.dictionary"
+
 		self.dataFileCRC32.update({
-			"appledict-bin/002-simple.dictionary/Contents/Body.data": "3c073986",
-			"appledict-bin/002-simple.dictionary/Contents/DefaultStyle.css": "a83210cb",
-			"appledict-bin/002-simple.dictionary/Contents/EntryID.data": "37305249",
-			"appledict-bin/002-simple.dictionary/Contents/EntryID.index": "8c30a3fa",
-			"appledict-bin/002-simple.dictionary/Contents/Images/_internal_dictionary.png": "da4d4eb1",
-			"appledict-bin/002-simple.dictionary/Contents/Info.plist": "fa73dd65",
-			"appledict-bin/002-simple.dictionary/Contents/KeyText.data": "aefe15e0",
-			"appledict-bin/002-simple.dictionary/Contents/KeyText.index": "b723c5b2",
-			"appledict-bin/002-simple.dictionary/Contents/MyDictionary.xsl": "023de1ea",
-			"appledict-bin/002-simple.dictionary/Contents/MyDictionary_prefs.html": "09a9f6e9",
+			f"{simple}/Contents/Body.data": "3c073986",
+			f"{simple}/Contents/DefaultStyle.css": "a83210cb",
+			f"{simple}/Contents/EntryID.data": "37305249",
+			f"{simple}/Contents/EntryID.index": "8c30a3fa",
+			f"{simple}/Contents/Images/_internal_dictionary.png": "da4d4eb1",
+			f"{simple}/Contents/Info.plist": "fa73dd65",
+			f"{simple}/Contents/KeyText.data": "aefe15e0",
+			f"{simple}/Contents/KeyText.index": "b723c5b2",
+			f"{simple}/Contents/MyDictionary.xsl": "023de1ea",
+			f"{simple}/Contents/MyDictionary_prefs.html": "09a9f6e9",
 			"appledict-bin/002-simple.txt": "32a1dbc4",
 			"appledict-bin/002-simple.txt_res/style.css": "a83210cb",
 

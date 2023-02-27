@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+
 from pyglossary import Glossary
 
 # Glossary.init() must be called only once, so make sure you put it
