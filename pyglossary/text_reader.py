@@ -144,26 +144,34 @@ class TextGlossaryReader(object):
 	def setInfo(self, key: str, value: str) -> None:
 		self._glos.setInfo(key, value)
 
+	def _loadNextInfo(self) -> bool:
+		"""
+			returns True when reached the end
+		"""
+		block = self.nextBlock()
+		if not block:
+			return False
+		key, value, _ = block
+		origKey = key
+		if isinstance(key, list):
+			key = key[0]
+		if not self.isInfoWords(key):
+			self._pendingEntries.append(self.newEntry(origKey, value))
+			return True
+		if not value:
+			return False
+		key = self.fixInfoWord(key)
+		if not key:
+			return False
+		self.setInfo(key, value)
+		return False
+
 	def loadInfo(self) -> "Generator[Tuple[int, int], None, None]":
 		self._pendingEntries = []
 		try:
 			while True:
-				block = self.nextBlock()
-				if not block:
-					continue
-				key, value, _ = block
-				origKey = key
-				if isinstance(key, list):
-					key = key[0]
-				if not self.isInfoWords(key):
-					self._pendingEntries.append(self.newEntry(origKey, value))
+				if self._loadNextInfo():
 					break
-				if not value:
-					continue
-				key = self.fixInfoWord(key)
-				if not key:
-					continue
-				self.setInfo(key, value)
 				yield (self._file.tell(), self._fileSize)
 		except StopIteration:
 			pass

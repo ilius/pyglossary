@@ -67,6 +67,7 @@ exclude = [
     "pyglossary/plugin_lib/*.py",
     "pyglossary/ui/gtk*_utils/__init__.py",
     "pyglossary/ui/ui_qt.py",
+    "pyglossary/reverse.py",
     "wcwidth*",
     ".direnv",
     ".eggs",
