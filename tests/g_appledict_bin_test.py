@@ -16,7 +16,11 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 
 		simple = "appledict-bin/002-simple.dictionary"
 
+		oxf1 = "appledict-bin/006-en-oxfjord_v10.11_c2_t3.dictionary"
+
 		self.dataFileCRC32.update({
+			"appledict-bin/002-simple.txt": "32a1dbc4",
+			"appledict-bin/002-simple.txt_res/style.css": "a83210cb",
 			f"{simple}/Contents/Body.data": "3c073986",
 			f"{simple}/Contents/DefaultStyle.css": "a83210cb",
 			f"{simple}/Contents/EntryID.data": "37305249",
@@ -27,9 +31,17 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			f"{simple}/Contents/KeyText.index": "b723c5b2",
 			f"{simple}/Contents/MyDictionary.xsl": "023de1ea",
 			f"{simple}/Contents/MyDictionary_prefs.html": "09a9f6e9",
-			"appledict-bin/002-simple.txt": "32a1dbc4",
-			"appledict-bin/002-simple.txt_res/style.css": "a83210cb",
 
+			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt": "2d3844bf",
+			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt_res/style.css": "6818c1e5",
+			f"{oxf1}/Contents/Info.plist": "328abb6f",
+			f"{oxf1}/Contents/Resources/Body.data": "03fe72e8",
+			f"{oxf1}/Contents/Resources/DefaultStyle.css": "6818c1e5",
+			f"{oxf1}/Contents/Resources/EntryID.data": "d31adec1",
+			f"{oxf1}/Contents/Resources/EntryID.index": "6eea272c",
+			f"{oxf1}/Contents/Resources/KeyText.data": "d4417c62",
+			f"{oxf1}/Contents/Resources/KeyText.index": "59f9ab67",
+			f"{oxf1}/Contents/Resources/style.css": "c243b56a",
 		})
 
 	def test_fix_links(self):
@@ -64,24 +76,11 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			'<a href="bword://test" title="test">',
 		)
 
-	def test_appledict_binary_to_txt(self):
+	def convert_appledict_binary_to_txt(self, baseName: str, files: "list[str]"):
 		self.glos = Glossary()
-
-		baseName = "002-simple"
 		inputDirPath = self.downloadDir(
 			f"appledict-bin/{baseName}.dictionary",
-			[
-				"Contents/Body.data",
-				"Contents/DefaultStyle.css",
-				"Contents/EntryID.data",
-				"Contents/EntryID.index",
-				"Contents/Images/_internal_dictionary.png",
-				"Contents/Info.plist",
-				"Contents/KeyText.data",
-				"Contents/KeyText.index",
-				"Contents/MyDictionary.xsl",
-				"Contents/MyDictionary_prefs.html",
-			],
+			files,
 		)
 		outputFilePath = self.newTempFilePath(f"{baseName}.txt")
 		expectedOutputFilePath = self.downloadFile(
@@ -109,6 +108,36 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			expectedStylePath,
 		)
 
+	def test_appledict_binary_to_txt_0(self):
+		baseName = "002-simple"
+		files = [
+			"Contents/Body.data",
+			"Contents/DefaultStyle.css",
+			"Contents/EntryID.data",
+			"Contents/EntryID.index",
+			"Contents/Images/_internal_dictionary.png",
+			"Contents/Info.plist",
+			"Contents/KeyText.data",
+			"Contents/KeyText.index",
+			"Contents/MyDictionary.xsl",
+			"Contents/MyDictionary_prefs.html",
+		]
+		self.convert_appledict_binary_to_txt(baseName, files)
+
+
+	def test_appledict_binary_to_txt_1(self):
+		baseName = "006-en-oxfjord_v10.11_c2_t3"
+		files = [
+			"Contents/Info.plist",
+			"Contents/Resources/Body.data",
+			"Contents/Resources/DefaultStyle.css",
+			"Contents/Resources/EntryID.data",
+			"Contents/Resources/EntryID.index",
+			"Contents/Resources/KeyText.data",
+			"Contents/Resources/KeyText.index",
+			"Contents/Resources/style.css",
+		]
+		self.convert_appledict_binary_to_txt(baseName, files)
 
 
 if __name__ == "__main__":
