@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import sys
 import json
+import sys
+
 import biplist
 
 plistPath = sys.argv[1]
@@ -19,4 +20,4 @@ except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
             f"Please provide 'Contents/' with a correct 'Info.plist'. {e}",
         ) from e
 
-print(json.dumps(data, indent="\t"))
+print(json.dumps(data, indent="\t", sort_keys=True))
