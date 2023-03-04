@@ -78,6 +78,7 @@ from .flags import (
 	NEVER,
 )
 from .glossary_info import GlossaryInfo
+from .glossary_progress import GlossaryProgress
 from .glossary_type import EntryType, GlossaryType
 from .glossary_utils import (
 	EntryList,
@@ -107,7 +108,7 @@ sortKeyType = Callable[
 EntryFilterType = TypeVar("EntryFilter", bound=EntryFilter)
 
 
-class Glossary(GlossaryInfo, PluginManager, GlossaryType):
+class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 	"""
 	Direct access to glos.data is dropped
 	Use `glos.addEntryObj(glos.newEntry(word, defi, [defiFormat]))`
@@ -152,6 +153,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				log.exception("")
 
 	def clear(self) -> None:
+		GlossaryProgress.clear(self)
 		self._info = odict()
 
 		self._data.clear()
@@ -173,7 +175,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 		self._filename = ""
 		self._defaultDefiFormat = "m"
-		self._progressbar = True
 		self._tmpDataDir = ""
 
 	def __init__(
@@ -187,6 +188,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				we will not reference to it
 		"""
 		GlossaryInfo.__init__(self)
+		GlossaryProgress.__init__(self, ui=ui)
 		self._config = {}
 		self._data = EntryList(self)  # type: List[RawEntryType]
 		self._sqlite = False
@@ -201,8 +203,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 				)
 			for key, value in info.items():
 				self.setInfo(key, value)
-
-		self._ui = ui
 
 	def cleanup(self) -> None:
 		if not self._cleanupPathList:
@@ -247,7 +247,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 					args = (value,)
 			entryFilters.append(filterClass(self, *args))
 
-		if self._ui and self._progressbar:
+		if self.hasProgress:
 			entryFilters.append(ShowProgressBar(self))
 
 		if log.level <= core.TRACE:
@@ -311,7 +311,7 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		)
 
 	def _loadedEntryGen(self) -> "Iterator[EntryType]":
-		if not (self._ui and self._progressbar):
+		if not self.hasProgress:
 			yield from self._data
 			return
 
@@ -615,13 +615,14 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 
 	def _openReader(self, reader: "Any", filename: str) -> bool:
 		# reader.open returns "Optional[Iterator[Tuple[int, int]]]"
+		hasProgress: bool = self.hasProgress
 		try:
 			openResult = reader.open(filename)
 			if openResult is not None:
 				self.progressInit("Reading metadata")
 				lastPos = -100_000
 				for pos, total in openResult:
-					if self._ui and pos - lastPos > 100_000:
+					if hasProgress and pos - lastPos > 100_000:
 						self.progress(pos, total, unit="bytes")
 						lastPos = pos
 				self.progressEnd()
@@ -1298,28 +1299,6 @@ class Glossary(GlossaryInfo, PluginManager, GlossaryType):
 		self.cleanup()
 
 		return finalOutputFile
-
-	# ________________________________________________________________________#
-
-	def progressInit(
-		self,
-		*args,  # noqa: ANN
-	) -> None:
-		if self._ui and self._progressbar:
-			self._ui.progressInit(*args)
-
-	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
-		if total == 0:
-			log.warning(f"{pos=}, {total=}")
-			return
-		self._ui.progress(
-			min(pos + 1, total) / total,
-			f"{pos:,} / {total:,} {unit}",
-		)
-
-	def progressEnd(self) -> None:
-		if self._ui and self._progressbar:
-			self._ui.progressEnd()
 
 	# ________________________________________________________________________#
 
