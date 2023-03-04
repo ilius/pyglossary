@@ -33,7 +33,6 @@ from time import time as now
 from typing import (
 	TYPE_CHECKING,
 	Any,
-	ClassVar,
 	Dict,
 	Iterator,
 	List,
@@ -46,9 +45,6 @@ from typing import (
 from . import core
 from .core import (
 	cacheDir,
-	dataDir,
-	pluginsDir,
-	userPluginsDir,
 )
 from .entry import DataEntry, Entry
 from .entry_filters import (
@@ -1264,29 +1260,12 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 
 	# ________________________________________________________________________#
 
-	@classmethod
-	def init(
-		cls: "ClassVar",
-		usePluginsJson: bool = True,
-		skipDisabledPlugins: bool = True,
-	) -> None:
-		"""
-		Glossary.init() must be called only once, so make sure you put it in the
-		right place. Probably in the top of your program's main function or module.
-		"""
-		cls.readFormats = []
-		cls.writeFormats = []
-		pluginsJsonPath = join(dataDir, "plugins-meta", "index.json")
+	"""
+	init method is inherited from PluginManager
+	arguments:
+		usePluginsJson: bool = True
+		skipDisabledPlugins: bool = True
 
-		# even if usePluginsJson, we should still call loadPlugins to load
-		# possible new plugins that are not in json file
-
-		if usePluginsJson:
-			cls.loadPluginsFromJson(pluginsJsonPath)
-
-		cls.loadPlugins(pluginsDir, skipDisabled=skipDisabledPlugins)
-
-		if isdir(userPluginsDir):
-			cls.loadPlugins(userPluginsDir)
-
-		os.makedirs(cacheDir, mode=0o700, exist_ok=True)
+	init() must be called only once, so make sure you put it in the
+	right place. Probably in the top of your program's main function or module.
+	"""

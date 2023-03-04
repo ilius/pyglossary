@@ -18,12 +18,17 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import logging
+import os
 import sys
+from os.path import isdir, join
 from typing import Any, ClassVar, Dict, Optional, Tuple
 
 from . import core
 from .core import (
+	cacheDir,
+	dataDir,
 	pluginsDir,
+	userPluginsDir,
 )
 from .glossary_utils import (
 	splitFilenameExt,
@@ -293,3 +298,31 @@ class PluginManager(object):
 				filename += plugin.ext
 
 		return filename, plugin.name, compression
+
+	@classmethod
+	def init(
+		cls: "ClassVar",
+		usePluginsJson: bool = True,
+		skipDisabledPlugins: bool = True,
+	) -> None:
+		"""
+		init() must be called only once, so make sure you put it in the
+		right place. Probably in the top of your program's main function or module.
+		"""
+
+		cls.readFormats = []
+		cls.writeFormats = []
+		pluginsJsonPath = join(dataDir, "plugins-meta", "index.json")
+
+		# even if usePluginsJson, we should still call loadPlugins to load
+		# possible new plugins that are not in json file
+
+		if usePluginsJson:
+			cls.loadPluginsFromJson(pluginsJsonPath)
+
+		cls.loadPlugins(pluginsDir, skipDisabled=skipDisabledPlugins)
+
+		if isdir(userPluginsDir):
+			cls.loadPlugins(userPluginsDir)
+
+		os.makedirs(cacheDir, mode=0o700, exist_ok=True)
