@@ -55,7 +55,7 @@ class PluginManager(object):
 
 		for attrs in data:
 			moduleName = attrs["module"]
-			cls.loadPluginByDict(
+			cls._loadPluginByDict(
 				attrs=attrs,
 				modulePath=join(pluginsDir, moduleName),
 			)
@@ -89,11 +89,11 @@ class PluginManager(object):
 
 		sys.path.append(directory)
 		for moduleName in moduleNames:
-			cls.loadPlugin(moduleName, skipDisabled=skipDisabled)
+			cls._loadPlugin(moduleName, skipDisabled=skipDisabled)
 		sys.path.pop()
 
 	@classmethod
-	def loadPluginByDict(
+	def _loadPluginByDict(
 		cls: "ClassVar",
 		attrs: "Dict[str, Any]",
 		modulePath: str,
@@ -130,7 +130,7 @@ class PluginManager(object):
 			prop.module  # to make sure importing works
 
 	@classmethod
-	def loadPlugin(
+	def _loadPlugin(
 		cls: "ClassVar",
 		moduleName: str,
 		skipDisabled: bool = True,
@@ -177,7 +177,7 @@ class PluginManager(object):
 			cls.writeFormats.append(name)
 
 	@classmethod
-	def findPlugin(cls: "ClassVar", query: str) -> "Optional[PluginProp]":
+	def _findPlugin(cls: "ClassVar", query: str) -> "Optional[PluginProp]":
 		"""
 			find plugin by name or extension
 		"""
@@ -216,7 +216,7 @@ class PluginManager(object):
 		else:
 			plugin = cls.pluginByExt.get(ext)
 			if not plugin:
-				plugin = cls.findPlugin(filename)
+				plugin = cls._findPlugin(filename)
 				if not plugin:
 					return error("Unable to detect input format!")
 
@@ -270,7 +270,7 @@ class PluginManager(object):
 		if not plugin:
 			plugin = cls.pluginByExt.get(ext)
 			if not plugin:
-				plugin = cls.findPlugin(filename)
+				plugin = cls._findPlugin(filename)
 
 		if not plugin:
 			return error("Unable to detect output format!")

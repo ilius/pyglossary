@@ -76,12 +76,6 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		Glossary.loadPlugins(path)
 		self.assertLogCritical(f"Invalid plugin directory: {path!r}")
 
-	def test_loadPlugin_moduleNotFound(self):
-		Glossary.loadPlugin("abc.def.ghe")
-		self.assertLogWarning(
-			"Module 'abc.def' not found, skipping plugin 'abc.def.ghe'",
-		)
-
 	def test_detectInputFormat_err1(self):
 		res = Glossary.detectInputFormat(
 			filename="",
