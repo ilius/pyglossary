@@ -28,7 +28,7 @@ from pyglossary.core import (
 	dataDir,
 	rootConfJsonFile,
 )
-from pyglossary.glossary import Glossary
+from pyglossary.entry_filters import entryFiltersRules
 from pyglossary.option import (
 	BoolOption,
 	FloatOption,
@@ -56,7 +56,7 @@ summary = (
 
 _entryFilterConfigDict = {
 	configRule[0]: (filterClass, configRule[1])
-	for configRule, filterClass in Glossary.entryFiltersRules
+	for configRule, filterClass in entryFiltersRules
 	if configRule
 }
 

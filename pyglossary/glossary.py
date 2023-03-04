@@ -53,24 +53,11 @@ from .core import (
 from .entry import DataEntry, Entry
 from .entry_filters import (
 	EntryFilter,
-	FixUnicode,
-	LanguageCleanup,
-	LowerWord,
-	NonEmptyDefiFilter,
-	NonEmptyWordFilter,
-	NormalizeHtml,
 	PreventDuplicateWords,
-	RemoveEmptyAndDuplicateAltWords,
-	RemoveHtmlTags,
 	RemoveHtmlTagsAll,
-	RTLDefi,
 	ShowMaxMemoryUsage,
 	ShowProgressBar,
-	SkipDataEntry,
-	SkipEntriesWithDuplicateHeadword,
-	TrimArabicDiacritics,
-	# TextListSymbolCleanup,
-	TrimWhitespaces,
+	entryFiltersRules,
 )
 from .flags import (
 	ALWAYS,
@@ -119,31 +106,6 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 	See help(pyglossary.entry.Entry) for details
 
 	"""
-
-	entryFiltersRules = [
-		(None, TrimWhitespaces),
-		(None, NonEmptyWordFilter),
-		(("skip_resources", False), SkipDataEntry),
-		(("utf8_check", False), FixUnicode),
-		(("lower", False), LowerWord),
-		(("skip_duplicate_headword", False), SkipEntriesWithDuplicateHeadword),
-		(("trim_arabic_diacritics", False), TrimArabicDiacritics),
-		(("rtl", False), RTLDefi),
-		(("remove_html_all", False), RemoveHtmlTagsAll),
-		(("remove_html", ""), RemoveHtmlTags),
-		(("normalize_html", False), NormalizeHtml),
-		(None, LanguageCleanup),
-
-		# TODO
-		# (("text_list_symbol_cleanup", False), TextListSymbolCleanup),
-
-		(None, NonEmptyWordFilter),
-		(None, NonEmptyDefiFilter),
-		(None, RemoveEmptyAndDuplicateAltWords),
-	]
-	# other entry filters that are added conditionally (other than with config):
-	#   - ShowProgressBar
-	#   - ShowMaxMemoryUsage
 
 	def _closeReaders(self) -> None:
 		for reader in self._readers:
@@ -236,7 +198,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		entryFilters = []
 		config = self._config
 
-		for configRule, filterClass in self.entryFiltersRules:
+		for configRule, filterClass in entryFiltersRules:
 			args = ()
 			if configRule is not None:
 				param, default = configRule
