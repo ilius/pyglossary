@@ -66,6 +66,10 @@ class TestGlossaryBase(unittest.TestCase):
 			"res/test.json": "41f8cf31",
 		}
 
+	def addDirCRC32(self, dirPath: str, files: "dict[str, str]") -> None:
+		for fpath, _hash in files.items():
+			self.dataFileCRC32[f"{dirPath}/{fpath}"] = _hash
+
 	# The setUp() and tearDown() methods allow you to define instructions that
 	# will be executed before and after each test method.
 
