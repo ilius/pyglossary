@@ -109,7 +109,7 @@ class ConvertArgs:
 
 
 class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
-	GLOSSARY_VERSION = "2.0"
+	GLOSSARY_API_VERSION = "2.0"
 
 	"""
 	Direct access to glos.data is dropped

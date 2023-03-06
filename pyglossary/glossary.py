@@ -28,7 +28,7 @@ from .sort_keys import lookupSortKey
 
 
 class Glossary(GlossaryV2):
-	GLOSSARY_VERSION = "1.0"
+	GLOSSARY_API_VERSION = "1.0"
 
 	def read(
 		self,
