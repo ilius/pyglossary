@@ -21,7 +21,7 @@ from os.path import join
 
 from PyQt4 import QtGui as qt
 
-from pyglossary.glossary import *
+from pyglossary.glossary_v2 import *
 
 from .base import *
 

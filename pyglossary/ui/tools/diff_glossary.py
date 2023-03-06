@@ -7,9 +7,9 @@ import sys
 from subprocess import PIPE, Popen
 from typing import Iterator, Optional, Tuple
 
-from pyglossary import Glossary
 from pyglossary.entry import Entry
 from pyglossary.glossary_type import EntryType
+from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.tools.colors import (
 	green,
 	red,
@@ -53,12 +53,12 @@ def diffGlossary(
 	pager: bool = True,
 ) -> None:
 	glos1 = Glossary(ui=None)
-	if not glos1.read(filename1, format=format1, direct=True):
+	if not glos1.directRead(filename1, format=format1):
 		return
 
 	glos2 = Glossary(ui=None)
 
-	if not glos2.read(filename2, format=format2, direct=True):
+	if not glos2.directRead(filename2, format=format2):
 		return
 
 	if pager:

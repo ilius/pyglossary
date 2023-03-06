@@ -13,8 +13,12 @@ class GlossaryProgress(object):
 		self._progressbar = True
 
 	@property
-	def hasProgress(self) -> bool:
+	def progressbar(self) -> bool:
 		return self._ui is not None and self._progressbar
+
+	@progressbar.setter
+	def progressbar(self, enabled: bool) -> None:
+		self._progressbar = enabled
 
 	def progressInit(
 		self,

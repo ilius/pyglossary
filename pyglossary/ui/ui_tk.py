@@ -27,9 +27,7 @@ from typing import Callable, Dict, List, Literal, Optional
 
 from pyglossary import core
 from pyglossary.core import confDir, homeDir
-from pyglossary.glossary import (
-	Glossary,
-)
+from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.text_utils import urlToPath
 
 from .base import (
@@ -905,7 +903,10 @@ class FormatOptionsButton(tk.Button):
 class UI(tix.Frame, UIBase):
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
-	def __init__(self) -> None:
+	def __init__(
+		self,
+		progressbar: bool = True,
+	) -> None:
 		rootWin = self.rootWin = tix.Tk()
 		# a hack that hides the window until we move it to the center of screen
 		if os.sep == "\\":  # Windows
@@ -916,6 +917,7 @@ class UI(tix.Frame, UIBase):
 		UIBase.__init__(self)
 		rootWin.title("PyGlossary (Tkinter)")
 		rootWin.resizable(True, False)
+		# self.progressbarEnable = progressbar
 		########
 		set_window_icon(rootWin)
 		rootWin.bind('<Escape>', lambda e: rootWin.quit())
@@ -939,6 +941,7 @@ class UI(tix.Frame, UIBase):
 		######################
 		self.glos = Glossary(ui=self)
 		self.glos.config = self.config
+		self.glos.progressbar = progressbar
 		self._convertOptions = {}
 		self.pathI = ""
 		self.pathO = ""
@@ -1469,7 +1472,7 @@ class UI(tix.Frame, UIBase):
 		for attr, value in self._glossarySetAttrs.items():
 			setattr(self.glos, attr, value)
 
-		finalOutputFile = self.glos.convert(
+		finalOutputFile = self.glos.convert(ConvertArgs(
 			inPath,
 			inputFormat=inFormat,
 			outputFilename=outPath,
@@ -1477,7 +1480,7 @@ class UI(tix.Frame, UIBase):
 			readOptions=self.readOptions,
 			writeOptions=self.writeOptions,
 			**self._convertOptions,
-		)
+		))
 		# if finalOutputFile:
 		# 	self.status("Convert finished")
 		# else:

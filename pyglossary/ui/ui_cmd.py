@@ -24,7 +24,7 @@ from os.path import join
 from typing import Dict, Optional
 
 from pyglossary.core import dataDir, log
-from pyglossary.glossary import Glossary
+from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
 from . import progressbar as pb
 from .base import UIBase, fread
@@ -268,6 +268,7 @@ class UI(UIBase):
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
 		glossarySetAttrs: "Optional[Dict]" = None,
+		progressbar: bool = True,
 	):
 		if config is None:
 			config = {}
@@ -310,7 +311,8 @@ class UI(UIBase):
 				return 1
 
 		glos = self.glos = Glossary(ui=self)
-		self.glos.config = self.config
+		glos.config = self.config
+		glos.progressbar = progressbar
 
 		for attr, value in glossarySetAttrs.items():
 			setattr(glos, attr, value)
@@ -330,7 +332,7 @@ class UI(UIBase):
 			self.pbar.update_step = 0.1
 			self.reverseLoop(savePath=outputFilename)
 		else:
-			finalOutputFile = self.glos.convert(
+			finalOutputFile = self.glos.convert(ConvertArgs(
 				inputFilename,
 				inputFormat=inputFormat,
 				outputFilename=outputFilename,
@@ -338,7 +340,7 @@ class UI(UIBase):
 				readOptions=readOptions,
 				writeOptions=writeOptions,
 				**convertOptions,
-			)
+			))
 			return bool(finalOutputFile)
 
 		return True

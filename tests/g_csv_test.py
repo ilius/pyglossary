@@ -5,8 +5,8 @@ from os.path import abspath, dirname
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.glossary import Glossary
-from tests.glossary_test import TestGlossaryBase
+from pyglossary.glossary import Glossary as GlossaryLegacy
+from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryCSV(TestGlossaryBase):
@@ -34,7 +34,7 @@ class TestGlossaryCSV(TestGlossaryBase):
 		inputFilename = self.downloadFile(f"{fname}.csv")
 		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
-		glos = self.glos = Glossary()
+		glos = self.glos = GlossaryLegacy()
 		# using glos.convert will add "input_file_size" info key
 		# perhaps add another optional argument to glos.convert named infoOverride
 

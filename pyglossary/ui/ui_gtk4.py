@@ -26,12 +26,9 @@ from typing import Any, Dict, List, Optional
 import gi
 
 from pyglossary import core
-from pyglossary.glossary import (
-	Glossary,
-	defaultSortKeyName,
-)
+from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.plugin_prop import PluginProp
-from pyglossary.sort_keys import namedSortKeyList
+from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import urlToPath
 
 from .base import (
@@ -1053,11 +1050,17 @@ check {
 		_id = self.statusBar.get_context_id(msg)
 		self.statusBar.push(_id, msg)
 
-	def __init__(self, ui=None, **kwargs) -> None:
+	def __init__(
+		self,
+		ui=None,
+		progressbar: bool = True,
+		**kwargs,
+	) -> None:
 		self.ui = ui
 		#####
 		gtk.Window.__init__(self, **kwargs)
 		self.set_title("PyGlossary (Gtk3)")
+		self.progressbarEnable = progressbar
 		#####
 		self.vbox = VBox()
 		self.set_child(self.vbox)
@@ -1510,6 +1513,7 @@ check {
 
 		glos = Glossary(ui=self.ui)
 		glos.config = self.config
+		glos.progressbar = self.progressbarEnable
 
 		for attr, value in self._glossarySetAttrs.items():
 			setattr(glos, attr, value)
@@ -1520,7 +1524,7 @@ check {
 		log.debug(f"config: {self.config}")
 
 		try:
-			finalOutputFile = glos.convert(
+			finalOutputFile = glos.convert(ConvertArgs(
 				inPath,
 				inputFormat=inFormat,
 				outputFilename=outPath,
@@ -1528,7 +1532,7 @@ check {
 				readOptions=readOptions,
 				writeOptions=writeOptions,
 				**self.convertOptions,
-			)
+			))
 			if finalOutputFile:
 				self.status("Convert finished")
 			return bool(finalOutputFile)
@@ -1686,10 +1690,16 @@ class Application(gtk.Application):
 
 
 class UI(UIBase):
-	def __init__(self) -> None:
+	def __init__(
+		self,
+		progressbar: bool = True,
+	) -> None:
 		UIBase.__init__(self)
 		self.app = Application()
-		self.win =  MainWindow(ui=self)
+		self.win =  MainWindow(
+			ui=self,
+			progressbar=progressbar,
+		)
 		self.app.win = self.win
 
 	def run(self, **kwargs):

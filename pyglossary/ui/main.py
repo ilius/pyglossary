@@ -192,7 +192,7 @@ def base_ui_run(
 	convertOptions: "Optional[Dict]" = None,
 	glossarySetAttrs: "Optional[Dict]" = None,
 ) -> bool:
-	from pyglossary.glossary import Glossary
+	from pyglossary.glossary_v2 import ConvertArgs, Glossary
 	if reverse:
 		log.error("--reverse does not work with --ui=none")
 		return False
@@ -203,7 +203,7 @@ def base_ui_run(
 	if glossarySetAttrs:
 		for attr, value in glossarySetAttrs.items():
 			setattr(glos, attr, value)
-	glos.convert(
+	glos.convert(ConvertArgs(
 		inputFilename=inputFilename,
 		outputFilename=outputFilename,
 		inputFormat=inputFormat,
@@ -211,7 +211,7 @@ def base_ui_run(
 		readOptions=readOptions,
 		writeOptions=writeOptions,
 		**convertOptions,
-	)
+	))
 	return True
 
 
@@ -272,6 +272,10 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 	if ui_type == "auto" and shouldUseCMD(args):
 		ui_type = "cmd"
 
+	uiArgs = {
+		"progressbar": args.progressbar is not False,
+	}
+
 	if ui_type == "cmd":
 		if args.interactive:
 			from pyglossary.ui.ui_cmd_interactive import UI
@@ -282,7 +286,7 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 		else:
 			log.error("no input file given, try --help")
 			sys.exit(1)
-		return UI().run
+		return UI(**uiArgs).run
 
 	if ui_type == "auto":
 		for ui_type2 in ui_list:
@@ -294,7 +298,7 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 			except ImportError as e:
 				log.error(str(e))
 			else:
-				return ui_module.UI().run
+				return ui_module.UI(**uiArgs).run
 		log.error(
 			"no user interface module found! "
 			f"try \"{sys.argv[0]} -h\" to see command line usage",
@@ -305,7 +309,7 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 		f"pyglossary.ui.ui_{ui_type}",
 		fromlist=f"ui_{ui_type}",
 	)
-	return ui_module.UI().run
+	return ui_module.UI(**uiArgs).run
 
 
 def main() -> None:
@@ -635,7 +639,7 @@ def main() -> None:
 
 	##############################
 
-	from pyglossary.glossary import Glossary
+	from pyglossary.glossary_v2 import Glossary
 	from pyglossary.langs import langDict
 	from pyglossary.ui.ui_cmd import help, parseFormatOptionsStr
 
@@ -697,7 +701,6 @@ def main() -> None:
 
 	convertOptionsKeys = (
 		"direct",
-		"progressbar",
 		"sort",
 		"sortKeyName",
 		"sortEncoding",

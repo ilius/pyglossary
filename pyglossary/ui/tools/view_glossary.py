@@ -4,8 +4,8 @@ import sys
 from subprocess import PIPE, Popen
 from typing import Callable, Optional
 
-from pyglossary import Glossary
 from pyglossary.glossary_type import EntryType
+from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.tools.colors import reset, yellow
 from pyglossary.ui.tools.format_entry import formatEntry
 
@@ -38,7 +38,7 @@ def viewGlossary(filename: str, format: "Optional[str]" = None) -> None:
 
 	glos = Glossary(ui=None)
 
-	if not glos.read(filename, format=format, direct=True):
+	if not glos.directRead(filename, format=format):
 		return
 
 	proc = Popen(

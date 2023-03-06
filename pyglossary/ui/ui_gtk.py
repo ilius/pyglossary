@@ -26,12 +26,9 @@ from typing import Any, Dict, List, Optional, Tuple
 import gi
 
 from pyglossary import core
-from pyglossary.glossary import (
-	Glossary,
-	defaultSortKeyName,
-)
+from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.plugin_prop import PluginProp
-from pyglossary.sort_keys import namedSortKeyList
+from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import urlToPath
 
 from .base import (
@@ -1010,10 +1007,15 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		_id = self.statusBar.get_context_id(msg)
 		self.statusBar.push(_id, msg)
 
-	def __init__(self) -> None:
+	def __init__(
+		self,
+		progressbar: bool = True,
+	) -> None:
 		gtk.Dialog.__init__(self)
 		UIBase.__init__(self)
 		self.set_title("PyGlossary (Gtk3)")
+		###
+		self.progressbarEnable = progressbar
 		#####
 		screenSize = getWorkAreaSize()
 		if screenSize:
@@ -1447,6 +1449,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 		glos = Glossary(ui=self)
 		glos.config = self.config
+		glos.progressbar = self.progressbarEnable
+
 
 		for attr, value in self._glossarySetAttrs.items():
 			setattr(glos, attr, value)
@@ -1457,7 +1461,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		log.debug(f"config: {self.config}")
 
 		try:
-			finalOutputFile = glos.convert(
+			finalOutputFile = glos.convert(ConvertArgs(
 				inPath,
 				inputFormat=inFormat,
 				outputFilename=outPath,
@@ -1465,7 +1469,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 				readOptions=readOptions,
 				writeOptions=writeOptions,
 				**self.convertOptions,
-			)
+			))
 			if finalOutputFile:
 				self.status("Convert finished")
 			return bool(finalOutputFile)

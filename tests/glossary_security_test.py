@@ -11,7 +11,7 @@ sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary
 from tests.glossary_errors_test import TestGlossaryErrors
-from tests.glossary_test import dataDir
+from tests.glossary_v2_test import dataDir
 
 
 class TestGlossarySecurity(TestGlossaryErrors):
