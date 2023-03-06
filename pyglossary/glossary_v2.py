@@ -109,6 +109,8 @@ class ConvertArgs:
 
 
 class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
+	GLOSSARY_VERSION = "2.0"
+
 	"""
 	Direct access to glos.data is dropped
 	Use `glos.addEntryObj(glos.newEntry(word, defi, [defiFormat]))`
@@ -117,6 +119,19 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 
 	Use `for entry in glos:` to iterate over entries (glossary data)
 	See help(pyglossary.entry.Entry) for details
+
+
+	The signature of 'convert' method is different in glossary_v2.py
+		See help(Glossary.convert)
+
+
+	These methods do not exist in glossary_v2.py (but still exist in glossary.py)
+
+		- read(): you can use directRead() then iterate over glossary
+
+		- sortWords(): you have to sort entries yourself (when adding or after directRead)
+
+		- updateIter(): no longer needed, and doens't do anything in glossary.py
 
 	"""
 
