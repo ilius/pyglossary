@@ -266,7 +266,10 @@ class AbsolutePathHistory(FileHistory):
 
 
 class UI(ui_cmd.UI):
-	def __init__(self) -> None:
+	def __init__(
+		self,
+		progressbar: bool = True,
+	) -> None:
 		self._inputFilename = ""
 		self._outputFilename = ""
 		self._inputFormat = ""
@@ -275,7 +278,10 @@ class UI(ui_cmd.UI):
 		self._readOptions = None
 		self._writeOptions = None
 		self._convertOptions = None
-		ui_cmd.UI.__init__(self)
+		ui_cmd.UI.__init__(
+			self,
+			progressbar=progressbar,
+		)
 
 		self.ls_parser = argparse.ArgumentParser(add_help=False)
 		self.ls_parser.add_argument(
