@@ -333,7 +333,6 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		log.error("Glossary: iterator is not set in direct mode")
 		return iter([])
 
-
 	# TODO: switch to @property defaultDefiFormat
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		"""
@@ -979,7 +978,6 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 
 		return namedSortKey, sortEncoding
 
-
 	def _convertValidateStrings(self, args: ConvertArgs):
 		if type(args.inputFilename) is not str:
 			raise TypeError("inputFilename must be str")
@@ -1044,7 +1042,6 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 			This can also include sort locale after a colon sign, for example:
 				sortKeyName=":fa_IR.UTF-8"
 				sortKeyName="headword:fa_IR.UTF-8"
-
 
 		sortEncoding:
 			encoding/charset for sorting, default to utf-8
