@@ -913,11 +913,28 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 					f" for writing {plugin.name}",
 				)
 
-		return self._processSortParams(
-			plugin=plugin,
-			args=args,
-			sqlite=sqlite,
+		sortKeyTuple = self._checkSortKey(
+			plugin,
+			args.sortKeyName,
+			args.sortEncoding,
 		)
+		if sortKeyTuple is None:
+			return None
+		namedSortKey, sortEncoding = sortKeyTuple
+
+		if sqlite:
+			self._switchToSQLite(
+				inputFilename=args.inputFilename,
+				outputFormat=plugin.name,
+			)
+
+		self._data.setSortKey(
+			namedSortKey=namedSortKey,
+			sortEncoding=sortEncoding,
+			writeOptions=args.writeOptions or {},
+		)
+
+		return False, True
 
 	def _checkSortKey(
 		self,
@@ -963,34 +980,6 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 
 		return namedSortKey, sortEncoding
 
-	def _processSortParams(
-		self,
-		plugin: "PluginProp",
-		args: ConvertArgs,
-		sqlite: "Optional[bool]",
-	) -> "Optional[Tuple[bool, bool]]":
-		sortKeyTuple = self._checkSortKey(
-			plugin,
-			args.sortKeyName,
-			args.sortEncoding,
-		)
-		if sortKeyTuple is None:
-			return None
-		namedSortKey, sortEncoding = sortKeyTuple
-
-		if sqlite:
-			self._switchToSQLite(
-				inputFilename=args.inputFilename,
-				outputFormat=plugin.name,
-			)
-
-		self._data.setSortKey(
-			namedSortKey=namedSortKey,
-			sortEncoding=sortEncoding,
-			writeOptions=args.writeOptions or {},
-		)
-
-		return False, True
 
 	def _convertValidateStrings(self, args: ConvertArgs):
 		if type(args.inputFilename) is not str:
