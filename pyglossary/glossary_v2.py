@@ -881,7 +881,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 	def _resolveSortParams(
 		self,
 		args: ConvertArgs,
-		outputFormat: str,
+		plugin: "PluginProp",
 	) -> "Optional[Tuple[bool, bool]]":
 		"""
 			sortKeyName: see doc/sort-key.md
@@ -894,7 +894,6 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 				f"sqlite={args.sqlite}",
 			)
 
-		plugin = self.plugins[outputFormat]
 		sort = self._checkSortFlag(plugin, args.sort)
 
 		if not sort:
@@ -1004,9 +1003,11 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 			)
 			return None
 
+		outputPlugin = self.plugins[outputFormat]
+
 		sortParams = self._resolveSortParams(
-			args,
-			outputFormat=outputFormat,
+			args=args,
+			plugin=outputPlugin,
 		)
 		if sortParams is None:
 			return None
