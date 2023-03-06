@@ -164,12 +164,16 @@ class NullObj(object):
 
 
 class UI(UIBase):
-	def __init__(self) -> None:
+	def __init__(
+		self,
+		progressbar: bool = True,
+	) -> None:
 		UIBase.__init__(self)
 		# log.debug(self.config)
 		self.pbar = NullObj()
 		self._toPause = False
 		self._resetLogFormatter = None
+		self._progressbar = progressbar
 
 	def onSigInt(self, *args):
 		log.info("")
@@ -268,7 +272,6 @@ class UI(UIBase):
 		writeOptions: "Optional[Dict]" = None,
 		convertOptions: "Optional[Dict]" = None,
 		glossarySetAttrs: "Optional[Dict]" = None,
-		progressbar: bool = True,
 	):
 		if config is None:
 			config = {}
@@ -312,7 +315,7 @@ class UI(UIBase):
 
 		glos = self.glos = Glossary(ui=self)
 		glos.config = self.config
-		glos.progressbar = progressbar
+		glos.progressbar = self._progressbar
 
 		for attr, value in glossarySetAttrs.items():
 			setattr(glos, attr, value)
