@@ -372,6 +372,14 @@
 		"title_tag": "b"
 	},
 	{
+		"codes": ["enm"],
+		"name": "Middle English",
+		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Middle_English",
+		"title_tag": "b"
+	},
+	{
 		"codes": ["eo", "epo"],
 		"name": "Esperanto",
 		"alt_names": [],
@@ -1683,6 +1691,94 @@
 		"alt_names": ["isiZulu"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Zulu_language",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["ast"],
+		"name": "Asturian",
+		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Asturian_language",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["ceb"],
+		"name": "Cebuano",
+		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Cebuano_language",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["got"],
+		"name": "Gothic",
+		"alt_names": [],
+		"script": ["Gothic"],
+		"wiki": "https://en.wikipedia.org/wiki/Gothic_language",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["ang"],
+		"name": "Old English",
+		"alt_names": [],
+		"script": ["Latin", "Runic"],
+		"wiki": "https://en.wikipedia.org/wiki/Old_English",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["non"],
+		"name": "Old Norse",
+		"alt_names": [],
+		"script": ["Latin", "Runic"],
+		"wiki": "https://en.wikipedia.org/wiki/Old_Norse",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["nrf"],
+		"name": "Norman",
+		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Norman_language",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["yue"],
+		"name": "Cantonese",
+		"alt_names": [],
+		"script": ["CJK"],
+		"wiki": "https://en.wikipedia.org/wiki/Cantonese",
+		"title_tag": "big"
+	},
+	{
+		"codes": ["fro"],
+		"name": "Old French",
+		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Old_French",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["lld"],
+		"name": "Ladin",
+		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Ladin_language",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["ady"],
+		"name": "Adyghe",
+		"alt_names": [],
+		"script": ["Cyrillic", "Latin", "Arabic"],
+		"wiki": "https://en.wikipedia.org/wiki/Adyghe_language",
+		"title_tag": "b"
+	},
+	{
+		"codes": ["xcl"],
+		"name": "Classical Armenian",
+		"alt_names": ["Old Armenian"],
+		"script": ["Armenian"],
+		"wiki": "https://en.wikipedia.org/wiki/Classical_Armenian",
 		"title_tag": "b"
 	}
 ]
