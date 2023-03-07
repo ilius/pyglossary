@@ -22,6 +22,7 @@ from time import time as now
 from typing import Any, Dict, Optional
 
 from .core import log
+from .glossary_type import EntryType
 from .glossary_v2 import ConvertArgs
 from .glossary_v2 import Glossary as GlossaryV2
 from .sort_keys import lookupSortKey
