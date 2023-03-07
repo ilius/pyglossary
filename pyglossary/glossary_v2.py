@@ -112,18 +112,10 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 	GLOSSARY_API_VERSION = "2.0"
 
 	"""
-	Direct access to glos.data is dropped
-	Use `glos.addEntryObj(glos.newEntry(word, defi, [defiFormat]))`
-		where both word and defi can be list (including alternates) or string
-	See help(glos.addEntryObj)
-
-	Use `for entry in glos:` to iterate over entries (glossary data)
-	See help(pyglossary.entry.Entry) for details
-
-
 	The signature of 'convert' method is different in glossary_v2.py
 		See help(Glossary.convert)
 
+	addEntryObj is renamed to addEntry in glossary_v2.py
 
 	These methods do not exist in glossary_v2.py (but still exist in glossary.py)
 
@@ -274,7 +266,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		Remove all HTML tags from definition
 
 		This should only be called from a plugin's Writer.__init__ method.
-		Does not apply on entries added with glos.addEntryObj
+		Does not apply on entries added with glos.addEntry
 		"""
 		self._addExtraEntryFilter(RemoveHtmlTagsAll)
 
@@ -283,7 +275,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		Adds entry filter to prevent duplicate `entry.s_word`
 
 		This should only be called from a plugin's Writer.__init__ method.
-		Does not apply on entries added with glos.addEntryObj
+		Does not apply on entries added with glos.addEntry
 
 		Note: there may be still duplicate headwords or alternate words
 			but we only care about making the whole `entry.s_word`
@@ -459,7 +451,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
 		return self._config.get(name, default)
 
-	def addEntryObj(self, entry: "EntryType") -> None:
+	def addEntry(self, entry: "EntryType") -> None:
 		self._data.append(entry)
 
 	def newEntry(
@@ -654,7 +646,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		self.progressInit("Reading")
 		try:
 			for entry in self._applyEntryFiltersGen(reader):
-				self.addEntryObj(entry)
+				self.addEntry(entry)
 		finally:
 			reader.close()
 

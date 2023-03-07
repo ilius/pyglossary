@@ -193,7 +193,7 @@ class GlossaryType(object):
 	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
 		raise NotImplementedError
 
-	def addEntryObj(self, entry: EntryType) -> None:
+	def addEntry(self, entry: EntryType) -> None:
 		raise NotImplementedError
 
 	def newEntry(self, word: str, defi: str, defiFormat: str = "") -> EntryType:

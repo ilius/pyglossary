@@ -841,7 +841,7 @@ class TestGlossary(TestGlossaryBase):
 		for index, line in enumerate(words):
 			words = line.rstrip().split("|")
 			wordsList.append(words)
-			glos.addEntryObj(glos.newEntry(
+			glos.addEntry(glos.newEntry(
 				words,
 				newDefiFunc(index),
 				defiFormat=defiFormat,
@@ -889,12 +889,12 @@ Japonica"""
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 
 	def test_addEntries_2(self):
-		# entry filters don't apply to loaded entries (added with addEntryObj)
+		# entry filters don't apply to loaded entries (added with addEntry)
 		glos = self.glos = Glossary()
-		glos.addEntryObj(glos.newEntry(["a"], "test 1"))
-		glos.addEntryObj(glos.newEntry([""], "test 2"))
-		glos.addEntryObj(glos.newEntry(["b"], "test 3"))
-		glos.addEntryObj(glos.newEntry([], "test 4"))
+		glos.addEntry(glos.newEntry(["a"], "test 1"))
+		glos.addEntry(glos.newEntry([""], "test 2"))
+		glos.addEntry(glos.newEntry(["b"], "test 3"))
+		glos.addEntry(glos.newEntry([], "test 4"))
 		glos.updateEntryFilters()
 		self.assertEqual(
 			[['a'], [''], ['b'], []],
@@ -903,9 +903,9 @@ Japonica"""
 
 	def test_addEntries_3(self):
 		glos = self.glos = Glossary()
-		glos.addEntryObj(glos.newEntry(["a"], "test 1"))
-		glos.addEntryObj(glos.newEntry(["b"], "test 3"))
-		glos.addEntryObj(glos.newDataEntry(
+		glos.addEntry(glos.newEntry(["a"], "test 1"))
+		glos.addEntry(glos.newEntry(["b"], "test 3"))
+		glos.addEntry(glos.newDataEntry(
 			"file.bin",
 			b"hello\x00world",
 		))

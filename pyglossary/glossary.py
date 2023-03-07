@@ -75,6 +75,9 @@ class Glossary(GlossaryV2):
 
 		return True
 
+	def addEntryObj(self, entry: "EntryType") -> None:
+		self._data.append(entry)
+
 	def updateIter(self) -> None:
 		log.warning("calling glos.updateIter() is no longer needed.")
 
