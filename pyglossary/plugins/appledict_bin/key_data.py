@@ -96,6 +96,16 @@ class KeyData:
 		self.entryTitle = entryTitle
 		self.anchor = anchor
 
+	def toDict(self):
+		return dict(
+			priority=self.priority,
+			parentalControl=self.parentalControl,
+			keyword=self.keyword,
+			headword=self.headword,
+			entryTitle=self.entryTitle,
+			anchor=self.anchor,
+		)
+
 	@staticmethod
 	def fromRaw(rawKeyData: RawKeyData, keyTextFieldOrder: "list[str]") -> "KeyData":
 		priority, parentalControl, keyTextFields = rawKeyData

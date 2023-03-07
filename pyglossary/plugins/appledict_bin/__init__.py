@@ -89,7 +89,8 @@ class Reader(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos: GlossaryType = glos
-		self._filename = ""
+		self._dictDirPath = ""
+		self._contentsPath = ""
 		self._file = None
 		self._encoding = "utf-8"
 		self._defiFormat = "m"
@@ -151,6 +152,7 @@ class Reader(object):
 
 		self._defiFormat = "h" if self._html else "m"
 
+		dictDirPath: str
 		contentsPath: str
 		infoPlistPath: str
 		bodyDataPath: str
@@ -159,12 +161,23 @@ class Reader(object):
 		if isdir(filename):
 			if split(filename)[-1] == "Contents":
 				contentsPath = filename
+				dictDirPath = dirname(filename)
 			elif isdir(join(filename, "Contents")):
 				contentsPath = join(filename, "Contents")
+				dictDirPath = filename
 			else:
 				raise IOError(f"invalid directory {filename}")
 		elif split(filename)[-1] == "Body.data":
-			contentsPath = dirname(filename)
+			# Maybe we should remove this support in a future release
+			parentPath = dirname(filename)
+			parentName = split(parentPath)[-1]
+			if parentName == "Contents":
+				contentsPath = parentPath
+			elif parentName == "Resources":
+				contentsPath = dirname(parentPath)
+			else:
+				raise IOError(f"invalid file path {filename}")
+			dictDirPath = dirname(contentsPath)
 		else:
 			raise IOError(f"invalid file path {filename}")
 
@@ -196,7 +209,8 @@ class Reader(object):
 			self._properties,
 		)
 
-		self._filename = bodyDataPath
+		self._dictDirPath = dictDirPath
+		self._contentsPath = contentsPath
 		self._file = open(bodyDataPath, "rb")
 
 		_, self._limit = guessFileOffsetLimit(self._file)
@@ -388,7 +402,7 @@ class Reader(object):
 					# example glossaries: Emojipedia, Simplified_Chinese
 					log.error(
 						f"bad unicode in {alt!r}, "
-						f"keyData={keyData.__dict__}, \n"
+						f"keyData={keyData.toDict()}, \n"
 						f"error: {e}",
 					)
 					continue
@@ -587,17 +601,22 @@ class Reader(object):
 		self._keyTextData = keyTextData
 
 	def __iter__(self) -> Iterator[EntryType]:
-		from os.path import dirname
-
 		if self._file is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 		glos = self._glos
 
-		cssFilename = join(dirname(self._filename), "DefaultStyle.css")
-		if isfile(cssFilename):
-			with open(cssFilename, mode="rb") as cssFile:
+		contentsPath = self._contentsPath
+		for cssFileName in (
+			"DefaultStyle.css",
+			join("Resources", "DefaultStyle.css"),
+		):
+			cssFilePath = join(contentsPath, cssFileName)
+			if not isfile(cssFilePath):
+				continue
+			with open(cssFilePath, mode="rb") as cssFile:
 				cssBytes = cssFile.read()
 			yield glos.newDataEntry("style.css", cssBytes)
+			break
 
 		for entryBytes, articleAddress in self.yieldEntryBytes(
 			self._file,
