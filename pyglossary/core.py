@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 	)
 
 
-VERSION = "4.5.0"
+VERSION = "4.6.0"
 
 homePage = "https://github.com/ilius/pyglossary"
 
