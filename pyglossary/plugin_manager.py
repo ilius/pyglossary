@@ -88,7 +88,7 @@ class PluginManager(object):
 			moduleName
 			for _, moduleName, _ in pkgutil.iter_modules([directory])
 			if moduleName not in cls.loadedModules and
-			moduleName not in ("paths", "formats_common")
+			moduleName not in ("formats_common",)
 		]
 		moduleNames.sort()
 
