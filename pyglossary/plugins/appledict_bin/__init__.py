@@ -605,16 +605,18 @@ class Reader(object):
 			raise RuntimeError("iterating over a reader while it's not open")
 		glos = self._glos
 
+		cssName = self._properties.css_name or "DefaultStyle.css"
 		contentsPath = self._contentsPath
-		for cssFileName in (
-			"DefaultStyle.css",
-			join("Resources", "DefaultStyle.css"),
+		for cssPathRel in (
+			cssName,
+			join("Resources", cssName),
 		):
-			cssFilePath = join(contentsPath, cssFileName)
-			if not isfile(cssFilePath):
+			cssPath = join(contentsPath, cssPathRel)
+			if not isfile(cssPath):
 				continue
-			with open(cssFilePath, mode="rb") as cssFile:
+			with open(cssPath, mode="rb") as cssFile:
 				cssBytes = cssFile.read()
+			log.info(f"Using {cssPath =}")
 			yield glos.newDataEntry("style.css", cssBytes)
 			break
 

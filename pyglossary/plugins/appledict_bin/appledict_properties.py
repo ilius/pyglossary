@@ -14,7 +14,7 @@
 # GNU General Public License for more details.
 
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 
 @dataclass
@@ -43,6 +43,8 @@ class AppleDictProperties:
 	# Example: ["DCSKeyword", "DCSHeadword", "DCSEntryTitle", "DCSAnchor", "DCSYomiWord"]
 	key_text_variable_fields: List[str]
 
+	# DCSDictionaryCSS, generally "DefaultStyle.css"
+	css_name: "Optional[str]"
 
 
 def from_metadata(metadata: Dict) -> AppleDictProperties:
@@ -75,6 +77,8 @@ def from_metadata(metadata: Dict) -> AppleDictProperties:
 	else:
 		key_text_compression_type = 0
 
+	css_name = metadata.get("DCSDictionaryCSS")
+
 	return AppleDictProperties(
 		format_version=format_version,
 		body_compression_type=body_compression_type,
@@ -82,4 +86,5 @@ def from_metadata(metadata: Dict) -> AppleDictProperties:
 		key_text_compression_type=key_text_compression_type,
 		key_text_fixed_fields=key_text_fixed_field,
 		key_text_variable_fields=key_text_variable_fields,
+		css_name=css_name,
 	)
