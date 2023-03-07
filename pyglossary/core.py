@@ -11,7 +11,6 @@ from os.path import (
 	isdir,
 	isfile,
 	join,
-	realpath,
 )
 from typing import TYPE_CHECKING
 
@@ -340,7 +339,7 @@ if getattr(sys, "frozen", False):
 	rootDir = dirname(sys.executable)
 	uiDir = join(rootDir, "pyglossary", "ui")
 else:
-	_srcDir = dirname(realpath(__file__))
+	_srcDir = dirname(abspath(__file__))
 	uiDir = join(_srcDir, "ui")
 	rootDir = dirname(_srcDir)
 
