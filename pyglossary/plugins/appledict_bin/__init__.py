@@ -381,7 +381,7 @@ class Reader(object):
 		word = entryElems[0].xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
 
 		# 2. add alts
-		keyTextFieldOrder = self._properties.key_text_field_order
+		keyTextFieldOrder = self._properties.key_text_variable_fields
 		keyDataList: "List[KeyData]" = []
 		if articleAddress in self._keyTextData:
 			rawKeyDataList = self._keyTextData[articleAddress]

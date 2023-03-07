@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, List
-
 # Copyright © 2023 soshial <soshial@gmail.com> (soshial)
 #
 # This program is a free software; you can redistribute it and/or modify
@@ -15,37 +13,36 @@ from typing import Dict, List
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+from dataclasses import dataclass
+from typing import Dict, List
+
+
+@dataclass
 class AppleDictProperties:
-	def __init__(
-		self,
-		format_version: int,
-		body_compression_type: int,
-		body_has_sections: bool,
-		key_text_compression_type: int,
-		key_text_fixed_fields: List[str],
-		key_text_variable_fields: List[str],
-	) -> None:
-		# in plist file: "IDXDictionaryVersion"
-		# values := (1 | 2 | 3)
-		self.format_version = format_version
 
-		# in plist file: "HeapDataCompressionType" values := (absent | 1 | 2)
-		self.body_compression_type = body_compression_type
-		# in plist file: for field with "IDXDataFieldName" equal "DCSExternalBodyID"
-		# "IDXDataSize" value = 4 or 8
-		self.body_has_sections = body_has_sections
+	# in plist file: "IDXDictionaryVersion"
+	# values := (1 | 2 | 3)
+	format_version: int
 
-		# in plist file: "IDXIndexDataFields" / "IDXFixedDataFields"
-		# Example: ["DCSPrivateFlag"]
-		self.key_text_fixed_fields = key_text_fixed_fields
+	# in plist file: "HeapDataCompressionType" values := (absent | 1 | 2)
+	body_compression_type: int
 
-		# in plist file: "IDXIndexDataFields" / "IDXVariableDataFields"
-		# Example: ["DCSKeyword", "DCSHeadword", "DCSEntryTitle", "DCSAnchor", "DCSYomiWord"]
-		self.key_text_field_order = key_text_variable_fields
+	# in plist file: for field with "IDXDataFieldName" equal "DCSExternalBodyID"
+	# "IDXDataSize" value = 4 or 8
+	body_has_sections: bool
 
-		# in plist file for key_text_metadata:
-		# 'TrieAuxiliaryDataOptions' -> 'HeapDataCompressionType'
-		self.key_text_compression_type = key_text_compression_type
+	# in plist file for key_text_metadata:
+	# 'TrieAuxiliaryDataOptions' -> 'HeapDataCompressionType'
+	key_text_compression_type: int
+
+	# in plist file: "IDXIndexDataFields" / "IDXFixedDataFields"
+	# Example: ["DCSPrivateFlag"]
+	key_text_fixed_fields: List[str]
+
+	# in plist file: "IDXIndexDataFields" / "IDXVariableDataFields"
+	# Example: ["DCSKeyword", "DCSHeadword", "DCSEntryTitle", "DCSAnchor", "DCSYomiWord"]
+	key_text_variable_fields: List[str]
+
 
 
 def from_metadata(metadata: Dict) -> AppleDictProperties:
