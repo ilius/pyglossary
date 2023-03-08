@@ -23,10 +23,11 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import pathlib
-	from typing import Any, Callable, ClassVar, Dict, List, Optional, Tuple
+	from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 
 	from .flags import StrWithDesc
 
+from . import core
 from .flags import (
 	DEFAULT_NO,
 	YesNoAlwaysNever,
@@ -34,7 +35,7 @@ from .flags import (
 )
 from .option import Option, optionFromDict
 
-log = logging.getLogger("pyglossary")
+log: core.MyLogger = logging.getLogger("pyglossary")
 
 
 def optionsPropFromDict(
@@ -88,7 +89,7 @@ class PluginProp(object):
 
 	@classmethod
 	def fromDict(
-		cls: "ClassVar",
+		cls: "Type",
 		attrs: "Dict[str, Any]",
 		modulePath: str,
 	) -> None:
@@ -122,7 +123,7 @@ class PluginProp(object):
 		return self
 
 	@classmethod
-	def fromModule(cls: "ClassVar", mod: "Any") -> "PluginProp":
+	def fromModule(cls: "Type", mod: "Any") -> "PluginProp":
 		self = cls()
 		self._mod = mod
 		self._Reader = None
@@ -265,7 +266,7 @@ class PluginProp(object):
 	def canWrite(self) -> bool:
 		return self._canWrite
 
-	def getOptionAttrNamesFromClass(self, rwclass: "ClassVar") -> "List[str]":
+	def getOptionAttrNamesFromClass(self, rwclass: "Type") -> "List[str]":
 		nameList = []
 
 		for cls in rwclass.__bases__ + (rwclass,):
@@ -281,7 +282,7 @@ class PluginProp(object):
 
 		return nameList
 
-	def getOptionsFromClass(self, rwclass: "ClassVar") -> "Dict[str, Any]":
+	def getOptionsFromClass(self, rwclass: "Type") -> "Dict[str, Any]":
 		optionsProp = self.optionsProp
 		options = odict()
 		if rwclass is None:
@@ -438,7 +439,7 @@ class PluginProp(object):
 
 	@classmethod
 	def getExtraOptionsFromFunc(
-		cls: "ClassVar",
+		cls: "Type",
 		func: "Callable",
 		format: str,
 	) -> "List[str]":

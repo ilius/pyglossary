@@ -18,11 +18,18 @@ if TYPE_CHECKING:
 	import types
 	from typing import (
 		Any,
+		Callable,
 		Dict,
 		Optional,
 		Tuple,
 		Type,
+		TypeAlias,
+		Union,
 	)
+	ExcInfoType: TypeAlias = Union[
+		Tuple[Type[BaseException], BaseException, types.TracebackType],
+		Tuple[None, None, None],
+	]
 
 
 VERSION = "4.6.0"
@@ -35,10 +42,11 @@ logging.addLevelName(TRACE, "TRACE")
 noColor = False
 
 
+
 class Formatter(logging.Formatter):
 	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN
 		logging.Formatter.__init__(self, *args, **kwargs)
-		self.fill = None  # type: Optional[Callable[[str], str]]
+		self.fill: "Optional[Callable[[str], str]]" = None
 
 	def formatMessage(
 		self,
@@ -136,14 +144,17 @@ def formatVarDict(
 
 
 def format_exception(
-	exc_info: "Optional[Tuple[Type, Exception, types.TracebackType]]" = None,
+	exc_info: "Optional[ExcInfoType]" = None,
 	add_locals: bool = False,
 	add_globals: bool = False,
 ) -> str:
-	if not exc_info:
+	if exc_info is None:
 		exc_info = sys.exc_info()
 	_type, value, tback = exc_info
 	text = "".join(traceback.format_exception(_type, value, tback))
+
+	if tback is None:
+		return text
 
 	if add_locals or add_globals:
 		try:
@@ -172,7 +183,7 @@ class StdLogHandler(logging.Handler):
 		logging.Handler.__init__(self)
 		self.set_name("std")
 		self.noColor = noColor
-		self.config = {}
+		self.config: "Dict[str, Any]" = {}
 
 	@property
 	def endFormat(self) -> str:
@@ -187,16 +198,16 @@ class StdLogHandler(logging.Handler):
 		###
 		if record.exc_info:
 			_type, value, tback = record.exc_info
-			tback_text = format_exception(
-				exc_info=record.exc_info,
-				add_locals=(log.level <= logging.DEBUG),
-				add_globals=False,
-			)
-
-			if not msg:
-				msg = "unhandled exception:"
-			msg += "\n"
-			msg += tback_text
+			if _type and tback and value:  # to fix mypy error
+				tback_text = format_exception(
+					exc_info=(_type, value, tback),
+					add_locals=(log.level <= logging.DEBUG),
+					add_globals=False,
+				)
+				if not msg:
+					msg = "unhandled exception:"
+				msg += "\n"
+				msg += tback_text
 		###
 		levelname = record.levelname
 
@@ -280,28 +291,12 @@ def getDataDir() -> str:
 	if isdir(_dir):
 		return _dir
 
-	if os.getenv("CONDA_PREFIX"):
-		_dir = join(os.getenv("CONDA_PREFIX"), "share", "pyglossary")
+	if (CONDA_PREFIX := os.getenv("CONDA_PREFIX")):
+		_dir = join(CONDA_PREFIX, "share", "pyglossary")
 		if isdir(_dir):
 			return _dir
 
 	raise OSError("failed to detect dataDir")
-
-
-# Tuple[Type, Exception, types.TracebackType
-def windows_show_exception(
-	_type: "Type",
-	exc: "Exception",
-	tb: "types.TracebackType",
-) -> None:
-	import ctypes
-	msg = format_exception(
-		exc_info=(_type, exc, tb),
-		add_locals=(log.level <= logging.DEBUG),
-		add_globals=False,
-	)
-	log.critical(msg)
-	ctypes.windll.user32.MessageBoxW(0, msg, "PyGlossary Error", 0)
 
 # __________________________________________________________________________ #
 
@@ -310,16 +305,39 @@ logging.setLoggerClass(MyLogger)
 log = logging.getLogger("pyglossary")
 
 if os.sep == "\\":
-	sys.excepthook = windows_show_exception
-else:
-	sys.excepthook = lambda *exc_info: log.critical(
-		format_exception(
-			exc_info=exc_info,
+	def windows_show_exception(
+		_type: "Type[BaseException]",
+		exc: "BaseException",
+		tback: "Optional[types.TracebackType]",
+	) -> None:
+		if not (_type and exc and tback):
+			return
+		import ctypes
+		msg = format_exception(
+			exc_info=(_type, exc, tback),
 			add_locals=(log.level <= logging.DEBUG),
 			add_globals=False,
-		),
-	)
+		)
+		log.critical(msg)
+		ctypes.windll.user32.MessageBoxW(0, msg, "PyGlossary Error", 0)
 
+	sys.excepthook = windows_show_exception
+
+else:
+	def unix_show_exception(
+		_type: "Type[BaseException]",
+		exc: "BaseException",
+		tback: "Optional[types.TracebackType]",
+	) -> None:
+		if not (_type and exc and tback):
+			return
+		log.critical(format_exception(
+			exc_info=(_type, exc, tback),
+			add_locals=(log.level <= logging.DEBUG),
+			add_globals=False,
+		))
+
+	sys.excepthook = unix_show_exception
 
 sysName = platform.system().lower()
 # platform.system() is in	["Linux", "Windows", "Darwin", "FreeBSD"]
@@ -328,9 +346,12 @@ sysName = platform.system().lower()
 
 # can set env var WARNINGS to:
 # "error", "ignore", "always", "default", "module", "once"
-if os.getenv("WARNINGS"):
-	import warnings
-	warnings.filterwarnings(os.getenv("WARNINGS"))
+if (WARNINGS := os.getenv("WARNINGS")):
+	if WARNINGS in ('default', 'error', 'ignore', 'always', 'module', 'once'):
+		import warnings
+		warnings.filterwarnings(WARNINGS)
+	else:
+		log.error(f"invalid env var {WARNINGS = }")
 
 
 if getattr(sys, "frozen", False):
@@ -347,8 +368,10 @@ dataDir = getDataDir()
 appResDir = join(dataDir, "res")
 
 if os.sep == "/":  # Operating system is Unix-Like
-	homeDir = os.getenv("HOME")
+	homeDir = os.getenv("HOME", "/")
 	user = os.getenv("USER")
+	if user is None:
+		raise OSError("no $USER")
 	tmpDir = os.getenv("TMPDIR", "/tmp")  # noqa: S108
 	if sysName == "darwin":  # MacOS X
 		_libDir = join(homeDir, "Library")
@@ -370,10 +393,13 @@ if os.sep == "/":  # Operating system is Unix-Like
 		else:
 			pip = "sudo pip3"
 elif os.sep == "\\":  # Operating system is Windows
-	homeDir = join(os.getenv("HOMEDRIVE"), os.getenv("HOMEPATH"))
-	user = os.getenv("USERNAME")
-	tmpDir = os.getenv("TEMP")
-	_appData = os.getenv("APPDATA")
+	# FIXME: default values
+	_HOMEDRIVE = os.getenv("HOMEDRIVE", "")
+	_HOMEPATH = os.getenv("HOMEPATH", "")
+	homeDir = join(_HOMEDRIVE, _HOMEPATH)
+	user = os.getenv("USERNAME", "")
+	tmpDir = os.getenv("TEMP", "")
+	_appData = os.getenv("APPDATA", "")
 	confDir = join(_appData, "PyGlossary")
 	_localAppData = os.getenv("LOCALAPPDATA")
 	if not _localAppData:

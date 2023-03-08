@@ -29,11 +29,15 @@ endFormat = "\x1b[0;0;0m"  # len=8
 
 
 def toBytes(s: "AnyStr") -> bytes:
-	return bytes(s, "utf-8") if isinstance(s, str) else bytes(s)
+	if isinstance(s, str):
+		return bytes(s, "utf-8")
+	return bytes(s)
 
 
 def toStr(s: "AnyStr") -> str:
-	return str(s, "utf-8") if isinstance(s, bytes) else str(s)
+	if isinstance(s, bytes):
+		return str(s, "utf-8")
+	return str(s)
 
 
 def fixUtf8(st: "AnyStr") -> str:
@@ -138,6 +142,8 @@ def unescapeBarBytes(st: bytes) -> bytes:
 # return a message string describing the current exception
 def excMessage() -> str:
 	i = sys.exc_info()
+	if not i[0]:
+		return ""
 	return f"{i[0].__name__}: {i[1]}"
 
 

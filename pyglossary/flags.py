@@ -1,10 +1,10 @@
 flagsByName = {}
 
-from typing import ClassVar
+from typing import Type
 
 
 class StrWithDesc(str):
-	def __new__(cls: "ClassVar", name: str, desc: str) -> "StrWithDesc":
+	def __new__(cls: "Type", name: str, desc: str) -> "StrWithDesc":
 		s = str.__new__(cls, name)
 		s.desc = desc
 		flagsByName[name] = s

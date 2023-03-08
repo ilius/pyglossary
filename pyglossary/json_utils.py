@@ -1,12 +1,8 @@
-try:
-	import json
-except ImportError:
-	import simplejson as json
-
+import json
 from collections import OrderedDict
-from typing import AnyStr
+from typing import AnyStr, Dict, List, TypeAlias, Union
 
-JsonEncodable = "Union[Dict, List]"
+JsonEncodable: TypeAlias = "Union[Dict, List]"
 # OrderedDict is also subclass of Dict, issubclass(OrderedDict, Dict) is True
 
 

@@ -2,7 +2,7 @@
 
 import logging
 import re
-from typing import Any, ClassVar, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 log = logging.getLogger("pyglossary")
 
@@ -19,10 +19,10 @@ def optionFromDict(data: "Dict[str, Any]") -> "Option":
 
 
 class Option(object):
-	classes = {}
+	classes: "Dict[str, Type]" = {}
 
 	@classmethod
-	def register(cls: "ClassVar", optClass: "ClassVar") -> "ClassVar":
+	def register(cls: "Type", optClass: "Type") -> "Type":
 		cls.classes[optClass.__name__] = optClass
 		return optClass
 
@@ -30,7 +30,7 @@ class Option(object):
 		self,
 		typ: str,
 		customValue: bool = False,
-		values: "Optional[List[str]]" = None,
+		values: "Optional[List[Any]]" = None,
 		allowNone: bool = False,
 		comment: str = "",
 		multiline: bool = False,
@@ -125,7 +125,7 @@ class BoolOption(Option):
 		allowNone: bool = False,
 		**kwargs,  # noqa: ANN
 	) -> None:
-		values = [False, True]
+		values: "List[Optional[bool]]" = [False, True]
 		if allowNone:
 			values.append(None)
 		Option.__init__(
@@ -144,14 +144,18 @@ class BoolOption(Option):
 		return data
 
 	def evaluate(self, raw: "Union[str, bool]") -> "Tuple[Optional[bool], bool]":
-		if raw is None or raw.lower() == "none":
+		if raw is None:
 			return None, True
 		if isinstance(raw, bool):
 			return raw, True
-		if raw.lower() in ("yes", "true", "1"):
-			return True, True
-		if raw.lower() in ("no", "false", "0"):
-			return False, True
+		if isinstance(raw, str):
+			raw = raw.lower()
+			if raw == "none":
+				return None, True
+			if raw in ("yes", "true", "1"):
+				return True, True
+			if raw in ("no", "false", "0"):
+				return False, True
 		return None, False  # not valid
 
 
@@ -247,14 +251,16 @@ class FileSizeOption(IntOption):
 
 	def evaluate(self, raw: "Union[str, int]") -> "Tuple[Optional[int], bool]":
 		if not raw:
-			return 0
+			return 0, True
 		factor = 1
-		m = re.match(self.validPattern, raw)
-		if m is not None:
-			raw, unit = m.groups()
-			factor = self.factors.get(unit)
-			if factor is None:
-				return None, False
+		if isinstance(raw, str):
+			m = re.match(self.validPattern, raw)
+			if m is not None:
+				raw, unit = m.groups()
+				factorTmp = self.factors.get(unit)
+				if factorTmp is None:
+					return None, False
+				factor = factorTmp
 		try:
 			value = float(raw)
 		except ValueError:
@@ -414,7 +420,7 @@ class EncodingOption(Option):
 		from collections import OrderedDict
 		groups = OrderedDict()  # type: Dict[str, List[str]]
 		others = []  # type: List[str]
-		for value in self.values:
+		for value in self.values or []:
 			cats = self.re_category.findall(value)
 			if not cats:
 				others.append(value)

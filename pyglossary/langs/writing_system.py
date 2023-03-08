@@ -480,7 +480,7 @@ def getWritingSystemFromText(
 def getAllWritingSystemsFromText(
 	st: str,
 	begining: bool = False,
-) -> "Set(str)":
+) -> "Set[str]":
 	st = st.strip()
 	if not st:
 		return set()

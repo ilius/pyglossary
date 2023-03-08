@@ -1,10 +1,14 @@
+from typing import TYPE_CHECKING, Optional
+
 from .core import log
 
+if TYPE_CHECKING:
+	from .ui_type import UIType
 
 class GlossaryProgress(object):
 	def __init__(
 		self,
-		ui: "Optional[UIBase]" = None,  # noqa: F821
+		ui: "Optional[UIType]" = None,  # noqa: F821
 	):
 		self._ui = ui
 		self._progressbar = True
@@ -30,6 +34,8 @@ class GlossaryProgress(object):
 	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
 		if total == 0:
 			log.warning(f"{pos=}, {total=}")
+			return
+		if self._ui is None:
 			return
 		self._ui.progress(
 			min(pos + 1, total) / total,
