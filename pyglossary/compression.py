@@ -51,13 +51,16 @@ def compressionOpen(
 		_, ext = splitext(filenameNoExt)
 		ext = ext.lower().lstrip(".")
 	if ext in stdCompressions or (dz and ext == "dz"):
-		_file = compressionOpenFunc(ext)(filename, **kwargs)
+		openFunc = compressionOpenFunc(ext)
+		if not openFunc:
+			raise RuntimeError(f"no compression found for {ext=}")
+		_file = openFunc(filename, **kwargs)
 		_file.compression = ext
 		return _file
 	return open(filename, **kwargs)  # noqa: SIM115
 
 
-def zipFileOrDir(glos: "GlossaryType", filename: str) -> "Optional[str]":
+def zipFileOrDir(glos: "GlossaryType", filename: str) -> None:
 	import shutil
 	import zipfile
 	from os.path import (
@@ -111,7 +114,10 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 
 	compFilename = f"{filename}.{compression}"
 	if compression in stdCompressions:
-		with compressionOpenFunc(compression)(compFilename, mode="wb") as dest:
+		openFunc = compressionOpenFunc(compression)
+		if not openFunc:
+			raise RuntimeError(f"invalid {compression=}")
+		with openFunc(compFilename, mode="wb") as dest:
 			with open(filename, mode="rb") as source:
 				shutil.copyfileobj(source, dest)
 		return compFilename
@@ -122,14 +128,14 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 		except OSError:
 			pass
 		try:
-			error = zipFileOrDir(glos, filename)
+			zipFileOrDir(glos, filename)
 		except Exception as e:
 			log.error(
 				f"{e}\nFailed to compress file \"{filename}\"",
 			)
-		else:
-			if error:
-				log.error(error)
+		#else:
+		#	if error:
+		#		log.error(error)
 	else:
 		raise ValueError(f"unexpected {compression=}")
 
@@ -148,7 +154,10 @@ def uncompress(srcFilename: str, dstFilename: str, compression: str) -> None:
 	log.info(f"Uncompressing {srcFilename!r} to {dstFilename!r}")
 
 	if compression in stdCompressions:
-		with compressionOpenFunc(compression)(srcFilename, mode="rb") as source:
+		openFunc = compressionOpenFunc(compression)
+		if not openFunc:
+			raise RuntimeError(f"invalid {compression=}")
+		with openFunc(srcFilename, mode="rb") as source:
 			with open(dstFilename, mode="wb") as dest:
 				shutil.copyfileobj(source, dest)
 		return

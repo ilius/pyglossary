@@ -20,10 +20,10 @@ if TYPE_CHECKING:
 	from typing import (
 		Any,
 		Callable,
-		ClassVar,
-		Literal,
 		Optional,
 		Tuple,
+		Type,
+		Union,
 	)
 
 	from .glossary_type import EntryType, GlossaryType, RawEntryType
@@ -112,7 +112,7 @@ class DataEntry(BaseEntry):
 		return self._byteProgress
 
 	@property
-	def defiFormat(self) -> 'Literal["b"]':
+	def defiFormat(self) -> str:
 		return "b"
 
 	@defiFormat.setter
@@ -200,6 +200,8 @@ class Entry(BaseEntry):
 		glos: "GlossaryType",
 		key: "Callable[[bytes], Any]",
 	) -> "Callable[[Tuple], Any]":
+		# FIXME: this type for `key` is only for rawEntryCompress=False
+		# for rawEntryCompress=True, it is Callable[[bytes], Any]
 		# here `x` is raw entity, meaning a tuple of form (word, defi) or
 		# (word, defi, defiFormat)
 		# so x[0] is word(s) in bytes, that can be a str (one word),
@@ -212,7 +214,7 @@ class Entry(BaseEntry):
 	def __init__(
 		self,
 		word: MultiStr,
-		defi: MultiStr,
+		defi: str,
 		defiFormat: str = "m",
 		byteProgress: "Optional[Tuple[int, int]]" = None,
 	) -> None:
@@ -326,10 +328,11 @@ class Entry(BaseEntry):
 		"""
 		if isinstance(self._word, str):
 			self._word = func(self._word)
-		else:
-			self._word = tuple(
-				func(st) for st in self._word
-			)
+			return
+
+		self._word = [
+			func(st) for st in self._word
+		]
 
 	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
 		"""
@@ -358,10 +361,11 @@ class Entry(BaseEntry):
 		"""
 		if isinstance(self._word, str):
 			self._word = self._word.replace(source, target)
-		else:
-			self._word = tuple(
-				st.replace(source, target) for st in self._word
-			)
+			return
+
+		self._word = [
+			st.replace(source, target) for st in self._word
+		]
 
 	def replaceInDefi(self, source: str, target: str) -> None:
 		"""
@@ -422,6 +426,7 @@ class Entry(BaseEntry):
 			returns a tuple (word, defi) or (word, defi, defiFormat)
 			where both word and defi might be string or list of strings
 		"""
+		tpl: "Union[Tuple[list[str], bytes, str], Tuple[list[str], bytes]]"
 		if self._defiFormat and self._defiFormat != glos.getDefaultDefiFormat():
 			tpl = (
 				self.l_word,
@@ -441,9 +446,9 @@ class Entry(BaseEntry):
 
 	@classmethod
 	def fromRaw(
-		cls: "ClassVar",
+		cls: "Type",
 		glos: "GlossaryType",
-		rawEntry: "RawEntryType",
+		rawEntryArg: "RawEntryType",
 		defaultDefiFormat: str = "m",
 	) -> "EntryType":
 		"""
@@ -453,8 +458,10 @@ class Entry(BaseEntry):
 
 			creates and return an Entry object from `rawEntry` tuple
 		"""
-		if isinstance(rawEntry, bytes):
-			rawEntry = loads(decompress(rawEntry))
+		if isinstance(rawEntryArg, bytes):
+			rawEntry = loads(decompress(rawEntryArg))
+		else:
+			rawEntry = rawEntryArg
 		word = rawEntry[0]
 		defi = rawEntry[1].decode("utf-8")
 		if len(rawEntry) > 2:

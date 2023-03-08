@@ -27,6 +27,9 @@ RawEntryType: TypeAlias = Union[
 
 
 class EntryType(object):
+	def __init__(self):
+		self._word: "Union[str, list[str]]"
+
 	def isData(self) -> bool:
 		raise NotImplementedError
 
@@ -103,8 +106,14 @@ class EntryType(object):
 	@staticmethod
 	def getRawEntrySortKey(
 		glos: "GlossaryType",
-		key: "Callable[[str], Any]",
-	) -> "Callable[[Tuple], str]":
+		key: "Callable[[bytes], Any]",
+	) -> "Callable[[Tuple], Any]":
+		raise NotImplementedError
+
+	def byteProgress(self) -> "Optional[Tuple[int, int]]":
+		raise NotImplementedError
+
+	def removeEmptyAndDuplicateAltWords(self) -> None:
 		raise NotImplementedError
 
 
@@ -113,6 +122,12 @@ class GlossaryType(object):
 	an abstract type class for Glossary class in plugins. it only
 	contains methods and properties that might be used in plugins
 	"""
+
+	def __iter__(self) -> "Iterator[EntryType]":
+		raise NotImplementedError
+
+	def __len__(self) -> int:
+		raise NotImplementedError
 
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		raise NotImplementedError
@@ -203,4 +218,30 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	def newDataEntry(self, fname: str, data: bytes) -> EntryType:
+		raise NotImplementedError
+
+	@property
+	def rawEntryCompress(self) -> bool:
+		raise NotImplementedError
+
+
+class GlossaryExtendedType(GlossaryType):
+	def progressInit(
+		self,
+		*args,  # noqa: ANN
+	) -> None:
+		raise NotImplementedError
+
+	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
+		raise NotImplementedError
+
+	def progressEnd(self) -> None:
+		raise NotImplementedError
+
+	@property
+	def progressbar(self) -> bool:
+		raise NotImplementedError
+
+	@progressbar.setter
+	def progressbar(self, enabled: bool) -> None:
 		raise NotImplementedError

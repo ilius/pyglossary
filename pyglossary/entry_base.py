@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from typing import TypeAlias, Union
+
 from .glossary_type import EntryType
 
-MultiStr = "Union[str, list[str]]"
+MultiStr: TypeAlias = Union[str, list[str]]
 
 
 class BaseEntry(EntryType):

@@ -25,9 +25,9 @@ from os.path import (
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Dict, Iterator, Optional, Tuple
+	from typing import Any, Callable, Dict, Iterator, Optional, Tuple
 
-	from .glossary_type import EntryType, GlossaryType
+	from .glossary_type import EntryType, GlossaryType, RawEntryType
 	from .sort_keys import NamedSortKey
 
 from .compression import (
@@ -40,9 +40,9 @@ log = logging.getLogger("pyglossary")
 
 class EntryList(object):
 	def __init__(self, glos: "GlossaryType") -> None:
-		self._l = []
+		self._l: "list[RawEntryType]" = []
 		self._glos = glos
-		self._sortKey = None
+		self._sortKey: "Optional[Callable[[Tuple], Any]]" = None
 
 	def append(self, entry: "EntryType") -> None:
 		self._l.append(entry.getRaw(self._glos))
@@ -58,10 +58,11 @@ class EntryList(object):
 
 	def __iter__(self) -> "Iterator[EntryType]":
 		glos = self._glos
+		defaultDefiFormat = glos.getDefaultDefiFormat()
 		for rawEntry in self._l:
 			yield Entry.fromRaw(
 				glos, rawEntry,
-				defaultDefiFormat=glos._defaultDefiFormat,
+				defaultDefiFormat=defaultDefiFormat,
 			)
 
 	def setSortKey(
@@ -87,9 +88,9 @@ class EntryList(object):
 
 def splitFilenameExt(
 	filename: str = "",
-) -> "Tuple[str, str, str]":
+) -> "Tuple[str, str, str, str]":
 	"""
-	returns (filenameNoExt, ext, compression)
+	returns (filenameNoExt, filename, ext, compression)
 	"""
 	compression = ""
 	filenameNoExt, ext = splitext(filename)

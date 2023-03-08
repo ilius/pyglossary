@@ -58,13 +58,13 @@ class SqEntryList(list):
 
 			persist: do not delete the file when variable is deleted
 		"""
-		from sqlite3 import connect
+		import sqlite3
 
 		self._glos = glos
 		self._filename = filename
 		self._persist = persist
-		self._con = connect(filename)
-		self._cur = self._con.cursor()
+		self._con: "Optional[sqlite3.Connection]" = sqlite3.connect(filename)
+		self._cur: "Optional[sqlite3.Cursor]" = self._con.cursor()
 
 		if not filename:
 			raise ValueError(f"invalid {filename=}")
@@ -117,6 +117,8 @@ class SqEntryList(list):
 		return self._len
 
 	def append(self, entry: "EntryType") -> None:
+		if self._sqliteSortKey is None:
+			raise RuntimeError("self._sqliteSortKey is None")
 		rawEntry = entry.getRaw(self._glos)
 		self._len += 1
 		colCount = len(self._sqliteSortKey)
@@ -148,6 +150,8 @@ class SqEntryList(list):
 	def sort(self, reverse: bool = False) -> None:
 		if self._sorted:
 			raise NotImplementedError("can not sort more than once")
+		if self._sqliteSortKey is None:
+			raise RuntimeError("self._sqliteSortKey is None")
 
 		self._reverse = reverse
 		self._sorted = True
@@ -164,6 +168,8 @@ class SqEntryList(list):
 		self._con.commit()
 
 	def _parseExistingIndex(self) -> bool:
+		if self._cur is None:
+			return False
 		self._cur.execute("select sql FROM sqlite_master WHERE name='sortkey'")
 		row = self._cur.fetchone()
 		if row is None:
@@ -194,7 +200,7 @@ class SqEntryList(list):
 		self.close()
 
 	def close(self) -> None:
-		if self._con is None:
+		if self._con is None or self._cur is None:
 			return
 		self._con.commit()
 		self._cur.close()
@@ -211,11 +217,14 @@ class SqEntryList(list):
 			log.error(str(e))
 
 	def __iter__(self) -> "Iterator":
+		if self._cur is None:
+			return
 		glos = self._glos
 		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"
 		self._cur.execute(query)
+		defaultDefiFormat = glos.getDefaultDefiFormat()
 		for row in self._cur:
 			yield Entry.fromRaw(
 				glos, loads(row[0]),
-				defaultDefiFormat=glos._defaultDefiFormat,
+				defaultDefiFormat=defaultDefiFormat,
 			)

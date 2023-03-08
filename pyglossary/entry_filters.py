@@ -11,13 +11,28 @@ from .text_utils import (
 if TYPE_CHECKING:
 	from typing import Optional
 
-	from .glossary_type import EntryType, GlossaryType
+	from .glossary_type import Callable, EntryType, GlossaryExtendedType, GlossaryType
 
 
 log = logging.getLogger("pyglossary")
 
 
-class EntryFilter(object):
+class EntryFilterType(object):
+	name = ""
+	desc = ""
+	falseComment = ""
+
+	def __init__(self, glos: "GlossaryType") -> None:
+		raise NotImplementedError
+
+	def prepare(self) -> None:
+		raise NotImplementedError
+
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
+		raise NotImplementedError
+
+
+class EntryFilter(EntryFilterType):
 	name = ""
 	desc = ""
 	falseComment = ""
@@ -235,7 +250,7 @@ class LanguageCleanup(EntryFilter):
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
-		self._run_func = None  # type: Callable[[EntryType], [Optional[EntryType]]]
+		self._run_func: "Optional[Callable[[EntryType], Optional[EntryType]]]" = None
 
 	def prepare(self) -> None:
 		langCodes = {
@@ -302,7 +317,7 @@ class PreventDuplicateWords(EntryFilter):
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
-		self._wordSet = set()
+		self._wordSet: "set[str]" = set()
 
 	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		if entry.isData():
@@ -333,7 +348,7 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
-		self._wset = set()
+		self._wset: "set[str]" = set()
 
 	def run(self, entry: "EntryType") -> "Optional[EntryType]":
 		word = entry.l_word[0]
@@ -366,8 +381,9 @@ class ShowProgressBar(EntryFilter):
 	name = "progressbar"
 	desc = "Progress Bar"
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryExtendedType") -> None:
 		EntryFilter.__init__(self, glos)
+		self.glos: "GlossaryExtendedType" = glos
 		self._wordCount = -1
 		self._wordCountThreshold = 0
 		self._lastPos = 0

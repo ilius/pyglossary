@@ -39,7 +39,6 @@ from typing import (
 	Optional,
 	Tuple,
 	Type,
-	TypeVar,
 )
 
 from . import core
@@ -48,7 +47,7 @@ from .core import (
 )
 from .entry import DataEntry, Entry
 from .entry_filters import (
-	EntryFilter,
+	EntryFilterType,
 	PreventDuplicateWords,
 	RemoveHtmlTagsAll,
 	ShowMaxMemoryUsage,
@@ -62,7 +61,7 @@ from .flags import (
 )
 from .glossary_info import GlossaryInfo
 from .glossary_progress import GlossaryProgress
-from .glossary_type import EntryType, GlossaryType
+from .glossary_type import EntryType, GlossaryExtendedType
 from .glossary_utils import (
 	EntryList,
 	splitFilenameExt,
@@ -76,6 +75,7 @@ if TYPE_CHECKING:
 	# from .flags import StrWithDesc
 	from .plugin_prop import PluginProp
 	from .sort_keys import NamedSortKey
+	from .ui_type import UIType
 
 
 log = logging.getLogger("pyglossary")
@@ -87,8 +87,6 @@ sortKeyType = Callable[
 	Any,
 ]
 """
-
-EntryFilterType = TypeVar("EntryFilter", bound=EntryFilter)
 
 
 @dataclass(frozen=True)
@@ -107,7 +105,7 @@ class ConvertArgs:
 	infoOverride: "Optional[Dict[str, str]]" = None
 
 
-class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
+class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedType):
 	GLOSSARY_API_VERSION = "2.0"
 
 	"""
@@ -145,12 +143,12 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 				reader.close()
 			except Exception:
 				log.exception("")
-		self._readers = []
+		self._readers: "list[Any]" = []
 		self._defiHasWordTitle = False
 
-		self._iter = None
-		self._entryFilters = []
-		self._entryFiltersName = set()
+		self._iter: "Optional[Iterator[EntryType]]" = None
+		self._entryFilters: "list[EntryFilterType]" = []
+		self._entryFiltersName: "set[str]" = set()
 		self._sort = False
 
 		self._filename = ""
@@ -160,7 +158,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 	def __init__(
 		self,
 		info: "Optional[Dict[str, str]]" = None,
-		ui: "Optional[UIBase]" = None,  # noqa: F821
+		ui: "Optional[UIType]" = None,  # noqa: F821
 	) -> None:
 		"""
 		info:	OrderedDict or dict instance, or None
@@ -169,11 +167,11 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		"""
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
-		self._config = {}
-		self._data = EntryList(self)  # type: list[RawEntryType]
+		self._config: "Dict[str, Any]" = {}
+		self._data = EntryList(self)
 		self._sqlite = False
 		self._rawEntryCompress = False
-		self._cleanupPathList = set()
+		self._cleanupPathList: "set[str]" = set()
 		self.clear()
 		if info:
 			if not isinstance(info, (dict, odict)):
@@ -209,7 +207,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 	def rawEntryCompress(self) -> bool:
 		return self._rawEntryCompress
 
-	def setRawEntryCompress(self, enable: bool) -> bool:
+	def setRawEntryCompress(self, enable: bool) -> None:
 		self._rawEntryCompress = enable
 
 	def updateEntryFilters(self) -> None:
@@ -217,15 +215,15 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		config = self._config
 
 		for configRule, filterClass in entryFiltersRules:
-			args = ()
+			args = []
 			if configRule is not None:
 				param, default = configRule
 				value = config.get(param, default)
 				if not value:
 					continue
 				if not isinstance(default, bool):
-					args = (value,)
-			entryFilters.append(filterClass(self, *args))
+					args = [value]
+			entryFilters.append(filterClass(self, *tuple(args)))
 
 		if self.progressbar:
 			entryFilters.append(ShowProgressBar(self))
@@ -319,6 +317,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		self,
 		gen: "Iterator[EntryType]",
 	) -> "Iterator[EntryType]":
+		entry: "Optional[EntryType]"
 		for entry in gen:
 			if entry is None:
 				continue
@@ -366,7 +365,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 			log.error("collectDefiFormat: not supported in direct mode")
 			return None
 
-		counter = Counter()
+		counter: "Dict[str, int]" = Counter()
 		count = 0
 		for entry in self:
 			if entry.isData():
@@ -507,7 +506,11 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 	# 	return os.access(os.path.dirname(dirPath), os.W_OK)
 
 	def _createReader(self, format: str, options: "Dict[str, Any]") -> "Any":
-		reader = self.plugins[format].readerClass(self)
+		readerClass = self.plugins[format].readerClass
+		if readerClass is None:
+			log.critical("_createReader: readerClass is None")
+			return None
+		reader = readerClass(self)
 		for name, value in options.items():
 			setattr(reader, f"_{name}", value)
 		return reader
@@ -672,7 +675,11 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 				)
 				del options[key]
 
-		writer = self.plugins[format].writerClass(self)
+		writerClass = self.plugins[format].writerClass
+		if writerClass is None:
+			log.critical("_createWriter: writerClass is None")
+			return None
+		writer = writerClass(self)
 		for name, value in options.items():
 			setattr(writer, f"_{name}", value)
 		return writer
@@ -744,8 +751,6 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 			with suppress(StopIteration):
 				gen.send(None)
 
-		return writerList
-
 	def _openWriter(
 		self,
 		writer: "Any",
@@ -765,7 +770,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		self,
 		filename: str,
 		format: str,
-		sort: "Optional[bool]" = None,
+		sort: bool = False,
 		**options,  # noqa: ANN
 	) -> "Optional[str]":
 		filename = os.path.abspath(filename)
@@ -830,7 +835,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		self,
 		inputFilename: str,
 		outputFormat: str,
-	) -> bool:
+	) -> None:
 		from pyglossary.sq_entry_list import SqEntryList
 
 		sq_fpath = join(cacheDir, f"{os.path.basename(inputFilename)}.db")

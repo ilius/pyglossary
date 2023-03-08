@@ -1,16 +1,16 @@
 import logging
 import re
 from operator import itemgetter
-from typing import TYPE_CHECKING, Iterator, List, Optional
+from typing import TYPE_CHECKING, Iterator, List, Optional, Iterable, Tuple, Union
 
 if TYPE_CHECKING:
-	from .glossary_type import EntryType, GlossaryType
+	from .glossary_type import EntryType, GlossaryExtendedType
 
 log = logging.getLogger("pyglossary")
 
 
 def reverseGlossary(
-	glos: GlossaryType,
+	glos: GlossaryExtendedType,
 	savePath: str = "",
 	words: "Optional[list[str]]" = None,
 	includeDefs: bool = False,
@@ -47,7 +47,7 @@ def reverseGlossary(
 	if saveStep < 2:
 		raise ValueError("saveStep must be more than 1")
 
-	entries = []
+	entries: "list[EntryType]" = []
 	for entry in glos:
 		entries.append(entry)
 	log.info(f"loaded {len(entries)} entries into memory")
@@ -97,24 +97,24 @@ def reverseGlossary(
 
 
 def takeOutputWords(
-	glos: GlossaryType,
-	entryIter: "Iterator[EntryType]",
+	glos: GlossaryExtendedType,
+	entryIter: "Iterable[EntryType]",
 	minWordLen: int = 3,
 ) -> "list[str]":
 	# fr"[\w]{{{minWordLen},}}"
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
 	words = set()
-	progressbar, glos._progressbar = glos._progressbar, False
+	progressbar, glos.progressbar = glos.progressbar, False
 	for entry in entryIter:
 		words.update(wordPattern.findall(
 			entry.defi,
 		))
-	glos._progressbar = progressbar
+	glos.progressbar = progressbar
 	return sorted(words)
 
 
 def searchWordInDef(
-	entryIter: "Iterator[EntryType]",
+	entryIter: "Iterable[EntryType]",
 	st: str,
 	matchWord: bool = True,
 	sepChars: str = ".,،",
@@ -130,14 +130,14 @@ def searchWordInDef(
 		re.U,
 	)
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
-	outRel = []
+	outRel: "list[Union[Tuple[str, float], Tuple[str, float, str]]]" = []
 	for entry in entryIter:
 		words = entry.l_word
 		defi = entry.defi
 		if st not in defi:
 			continue
 		for word in words:
-			rel = 0  # relation value of word (0 <= rel <= 1)
+			rel = 0.0  # relation value of word (0 <= rel <= 1)
 			for part in splitPattern.split(defi):
 				if not part:
 					continue

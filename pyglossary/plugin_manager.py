@@ -21,7 +21,7 @@ import logging
 import os
 import sys
 from os.path import isdir, join
-from typing import Any, ClassVar, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, Type
 
 from . import core
 from .core import (
@@ -43,15 +43,15 @@ class PluginManager(object):
 	pluginByExt = {}  # type: Dict[str, PluginProp]
 	loadedModules = set()
 
-	formatsReadOptions = {}  # type: Dict[str, OrderedDict[str, Any]]
-	formatsWriteOptions = {}  # type: Dict[str, OrderedDict[str, Any]]
+	formatsReadOptions: "Dict[str, Dict[str, Any]]" = {}
+	formatsWriteOptions: "Dict[str, Dict[str, Any]]" = {}
 	# for example formatsReadOptions[format][optName] gives you the default value
 
 	readFormats = []  # type: list[str]
 	writeFormats = []  # type: list[str]
 
 	@classmethod
-	def loadPluginsFromJson(cls: "ClassVar", jsonPath: str) -> None:
+	def loadPluginsFromJson(cls: "Type", jsonPath: str) -> None:
 		import json
 		from os.path import join
 
@@ -68,7 +68,7 @@ class PluginManager(object):
 
 	@classmethod
 	def loadPlugins(
-		cls: "ClassVar",
+		cls: "Type",
 		directory: str,
 		skipDisabled: bool = True,
 	) -> None:
@@ -99,7 +99,7 @@ class PluginManager(object):
 
 	@classmethod
 	def _loadPluginByDict(
-		cls: "ClassVar",
+		cls: "Type",
 		attrs: "Dict[str, Any]",
 		modulePath: str,
 	) -> None:
@@ -110,6 +110,8 @@ class PluginManager(object):
 			attrs=attrs,
 			modulePath=modulePath,
 		)
+		if prop is None:
+			return
 
 		cls.plugins[format] = prop
 		cls.loadedModules.add(attrs["module"])
@@ -136,7 +138,7 @@ class PluginManager(object):
 
 	@classmethod
 	def _loadPlugin(
-		cls: "ClassVar",
+		cls: "Type",
 		moduleName: str,
 		skipDisabled: bool = True,
 	) -> None:
@@ -182,7 +184,7 @@ class PluginManager(object):
 			cls.writeFormats.append(name)
 
 	@classmethod
-	def _findPlugin(cls: "ClassVar", query: str) -> "Optional[PluginProp]":
+	def _findPlugin(cls: "Type", query: str) -> "Optional[PluginProp]":
 		"""
 			find plugin by name or extension
 		"""
@@ -196,7 +198,7 @@ class PluginManager(object):
 
 	@classmethod
 	def detectInputFormat(
-		cls: "ClassVar",
+		cls: "Type",
 		filename: str,
 		format: str = "",
 		quiet: bool = False,
@@ -236,7 +238,7 @@ class PluginManager(object):
 
 	@classmethod
 	def detectOutputFormat(
-		cls: "ClassVar",
+		cls: "Type",
 		filename: str = "",
 		format: str = "",
 		inputFilename: str = "",
@@ -301,7 +303,7 @@ class PluginManager(object):
 
 	@classmethod
 	def init(
-		cls: "ClassVar",
+		cls: "Type",
 		usePluginsJson: bool = True,
 		skipDisabledPlugins: bool = True,
 	) -> None:
