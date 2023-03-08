@@ -3,7 +3,7 @@
 import os
 import re
 from io import BytesIO
-from typing import TYPE_CHECKING, Callable, Iterator, List
+from typing import TYPE_CHECKING, Callable, Iterator
 
 if TYPE_CHECKING:
 	import lxml
@@ -75,7 +75,7 @@ class Reader(object):
 	def makeList(
 		self,
 		hf: "lxml.etree.htmlfile",
-		input_objects: "List[Element]",
+		input_objects: "list[Element]",
 		processor: "Callable",
 		single_prefix: str = "",
 		skip_single: bool = True,
@@ -202,7 +202,7 @@ class Reader(object):
 						if not textElem.text:
 							continue
 						text = textElem.text
-						sentList = []  # type: List[str]
+						sentList = []  # type: list[str]
 						for sentElem in elem.findall("ex_sent"):
 							if not sentElem.text:
 								continue
@@ -230,8 +230,8 @@ class Reader(object):
 			return ET.Element("br")
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
-			kebList = []  # type: List[str]
-			rebList = []  # type: List[str]
+			kebList = []  # type: list[str]
+			rebList = []  # type: list[str]
 			with hf.element("div"):
 				for k_ele in entry.findall("k_ele"):
 					keb = k_ele.find("keb")

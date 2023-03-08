@@ -47,8 +47,8 @@ class PluginManager(object):
 	formatsWriteOptions = {}  # type: Dict[str, OrderedDict[str, Any]]
 	# for example formatsReadOptions[format][optName] gives you the default value
 
-	readFormats = []  # type: List[str]
-	writeFormats = []  # type: List[str]
+	readFormats = []  # type: list[str]
+	writeFormats = []  # type: list[str]
 
 	@classmethod
 	def loadPluginsFromJson(cls: "ClassVar", jsonPath: str) -> None:

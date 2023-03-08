@@ -19,7 +19,7 @@
 
 import logging
 from collections import OrderedDict as odict
-from typing import TYPE_CHECKING, Iterator, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, Iterator, Optional, Tuple
 
 if TYPE_CHECKING:
 	import lxml
@@ -42,9 +42,9 @@ log = logging.getLogger("pyglossary")
 
 class GlossaryInfo(object):
 	def __init__(self) -> None:
-		self._info = odict()
+		self._info: "Dict[str, str]" = odict()
 
-	def infoKeys(self) -> "List[str]":
+	def infoKeys(self) -> "list[str]":
 		return list(self._info.keys())
 
 	# def formatInfoKeys(self, format: str):# FIXME
@@ -77,7 +77,7 @@ class GlossaryInfo(object):
 		key = infoKeysAliasDict.get(key.lower(), key)
 		self._info[key] = value
 
-	def getExtraInfos(self, excludeKeys: "List[str]") -> "odict":
+	def getExtraInfos(self, excludeKeys: "list[str]") -> "odict":
 		"""
 		excludeKeys: a list of (basic) info keys to be excluded
 		returns an OrderedDict including the rest of info keys,
@@ -123,15 +123,15 @@ class GlossaryInfo(object):
 	def sourceLang(self) -> "Optional[Lang]":
 		return self._getLangByInfoKey(c_sourceLang)
 
-	@property
-	def targetLang(self) -> "Optional[Lang]":
-		return self._getLangByInfoKey(c_targetLang)
-
 	@sourceLang.setter
 	def sourceLang(self, lang: Lang) -> None:
 		if not isinstance(lang, Lang):
 			raise TypeError(f"invalid {lang=}, must be a Lang object")
 		self._info[c_sourceLang] = lang.name
+
+	@property
+	def targetLang(self) -> "Optional[Lang]":
+		return self._getLangByInfoKey(c_targetLang)
 
 	@targetLang.setter
 	def targetLang(self, lang: Lang) -> None:

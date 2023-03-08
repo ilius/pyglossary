@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import io
-	from typing import Generator, Iterator, List, Set, Tuple, Union
+	from typing import Generator, Iterator, Set, Tuple, Union
 
 	from pyglossary.glossary_type import EntryType, GlossaryType
 
@@ -16,7 +16,7 @@ from pyglossary.entry import DataEntry
 
 log = logging.getLogger("pyglossary")
 
-resListType = "Optional[List[Tuple[str, str]]]"
+resListType = "Optional[list[Tuple[str, str]]]"
 
 nextBlockResultType = f"""Optional[
 	Tuple[str, str, {resListType}]
@@ -184,7 +184,7 @@ class TextGlossaryReader(object):
 
 	def _genDataEntries(
 		self,
-		resList: "List[Tuple[str, str]]",
+		resList: "list[Tuple[str, str]]",
 		resPathSet: "Set[str]",
 	) -> "Iterator[DataEntry]":
 		for relPath, fullPath in resList:
@@ -230,7 +230,7 @@ class TextGlossaryReader(object):
 	def isInfoWord(self, word: str) -> bool:
 		raise NotImplementedError
 
-	def isInfoWords(self, arg: "Union[str, List[str]]") -> bool:
+	def isInfoWords(self, arg: "Union[str, list[str]]") -> bool:
 		if isinstance(arg, str):
 			return self.isInfoWord(arg)
 		if isinstance(arg, list):

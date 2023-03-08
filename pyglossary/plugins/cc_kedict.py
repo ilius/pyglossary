@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from io import BytesIO
 from os.path import isdir, join
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional, Tuple
 
 if TYPE_CHECKING:
 	import lxml
@@ -77,7 +77,7 @@ class YamlReader(TextGlossaryReader):
 	def _makeList(
 		self,
 		hf: "lxml.etree.htmlfile",
-		input_objects: "List[Any]",
+		input_objects: "list[Any]",
 		processor: "Callable",
 		single_prefix: "Optional[str]" = None,
 		skip_single: bool = True,

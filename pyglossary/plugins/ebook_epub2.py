@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict
 
 from pyglossary.ebook_base import EbookWriter
 from pyglossary.flags import ALWAYS
@@ -229,7 +229,7 @@ p.groupDefinition {
 			return "SPECIAL"
 		return prefix
 
-	def write_ncx(self, group_labels: "List[str]") -> None:
+	def write_ncx(self, group_labels: "list[str]") -> None:
 		"""
 			write_ncx
 			only for epub

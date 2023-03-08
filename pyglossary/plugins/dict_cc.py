@@ -2,7 +2,7 @@
 
 import html
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterator, List, Optional, Tuple
+from typing import TYPE_CHECKING, Callable, Iterator, Optional, Tuple
 
 if TYPE_CHECKING:
 	import lxml
@@ -50,7 +50,7 @@ class Reader(object):
 	def makeList(
 		self,
 		hf: "lxml.etree.htmlfile",
-		input_elements: "List[lxml.etree.Element]",
+		input_elements: "list[lxml.etree.Element]",
 		processor: "Callable",
 		single_prefix: str = "",
 		skip_single: bool = True,

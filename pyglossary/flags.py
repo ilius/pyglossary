@@ -1,6 +1,6 @@
 flagsByName = {}
 
-from typing import Type
+from typing import Literal, Type, TypeAlias, Union
 
 
 class StrWithDesc(str):
@@ -17,9 +17,9 @@ DEFAULT_NO = StrWithDesc("default_no", "No (by default)")
 NEVER = StrWithDesc("never", "Never")
 
 # typing.Literal is added in Python 3.8
-YesNoAlwaysNever = """Union[
+YesNoAlwaysNever: TypeAlias = Union[
 	"Literal[ALWAYS]",
 	"Literal[DEFAULT_YES]",
 	"Literal[DEFAULT_NO]",
 	"Literal[NEVER]",
-]"""
+]

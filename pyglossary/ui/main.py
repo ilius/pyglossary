@@ -83,7 +83,7 @@ def canRunGUI() -> bool:
 class StoreConstAction(argparse.Action):
 	def __init__(
 		self,
-		option_strings: "List[str]",
+		option_strings: "list[str]",
 		same_dest: str = "",
 		const_value: "Optional[bool]" = None,
 		nargs: int = 0,
@@ -105,7 +105,7 @@ class StoreConstAction(argparse.Action):
 		parser: "Optional[argparse.ArgumentParser]" = None,
 		namespace: "Optional[argparse.Namespace]" = None,
 		values: "List" = None,
-		option_strings: "List[str]" = None,
+		option_strings: "list[str]" = None,
 		required: bool = False,
 		dest: "Optional[str]" = None,
 	) -> "StoreConstAction":

@@ -23,7 +23,7 @@ import traceback
 from os.path import abspath, isfile, join, splitext
 from tkinter import filedialog, tix, ttk
 from tkinter import font as tkFont
-from typing import Callable, Dict, List, Literal, Optional
+from typing import Callable, Dict, Literal, Optional
 
 from pyglossary import core
 from pyglossary.core import confDir, homeDir
@@ -321,7 +321,7 @@ class ProgressBar(tix.Frame):
 class FormatDialog(tix.Toplevel):
 	def __init__(
 		self,
-		descList: "List[str]",
+		descList: "list[str]",
 		title: str,
 		onOk: "Callable",
 		button: "FormatButton",
@@ -513,7 +513,7 @@ class FormatButton(tk.Button):
 
 	def __init__(
 		self,
-		descList: "List[str]",
+		descList: "list[str]",
 		dialogTitle: str,
 		onChange: "Callable",
 		master=None,

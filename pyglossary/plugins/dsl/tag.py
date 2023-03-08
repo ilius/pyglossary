@@ -20,7 +20,7 @@ internal stuff. Tag class
 
 
 from collections import namedtuple
-from typing import Iterable, List, Optional
+from typing import Iterable, Optional
 
 from . import layer as _layer
 
@@ -51,7 +51,7 @@ def was_opened(stack: "Iterable[_layer.Layer]", tag: "Tag") -> bool:
 	return was_opened(stack[:-1], tag)
 
 
-def canonical_order(tags: "Iterable[Tag]") -> "List[Tag]":
+def canonical_order(tags: "Iterable[Tag]") -> "list[Tag]":
 	"""
 	arrange tags in canonical way, where (outermost to innermost):
 	m  >  *  >  ex  >  i  >  c

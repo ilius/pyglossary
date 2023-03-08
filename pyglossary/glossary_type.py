@@ -6,21 +6,24 @@ from typing import (
 	Callable,
 	Dict,
 	Iterator,
-	List,
 	Optional,
 	Tuple,
+	TypeAlias,
+	Union,
 )
 
 if TYPE_CHECKING:
 	from collections import OrderedDict
 
+	import lxml
+
 from .langs import Lang
 
-RawEntryType = """Union[
+RawEntryType: TypeAlias = Union[
 	bytes,  # compressed
-	Tuple[List[str], bytes],  # uncompressed, without defiFormat
-	Tuple[List[str], bytes, str],  # uncompressed, with defiFormat
-]"""
+	"Tuple[list[str], bytes]",  # uncompressed, without defiFormat
+	"Tuple[list[str], bytes, str]",  # uncompressed, with defiFormat
+]
 
 
 class EntryType(object):
@@ -45,7 +48,7 @@ class EntryType(object):
 		raise NotImplementedError
 
 	@property
-	def l_word(self) -> "List[str]":
+	def l_word(self) -> "list[str]":
 		raise NotImplementedError
 
 	@property
@@ -132,7 +135,7 @@ class GlossaryType(object):
 	def setInfo(self, key: str, value: str) -> None:
 		raise NotImplementedError
 
-	def getExtraInfos(self, excludeKeys: "List[str]") -> "OrderedDict":
+	def getExtraInfos(self, excludeKeys: "list[str]") -> "OrderedDict":
 		raise NotImplementedError
 
 	@property

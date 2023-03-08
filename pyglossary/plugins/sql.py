@@ -99,7 +99,7 @@ class Writer(object):
 					f"\'{key}\', \'{value}\');\n",
 				)
 
-	def _getInfoKeys(self) -> "List[str]":
+	def _getInfoKeys(self) -> "list[str]":
 		info_keys = self._info_keys
 		if info_keys:
 			return info_keys

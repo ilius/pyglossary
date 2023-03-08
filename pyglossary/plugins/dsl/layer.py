@@ -18,7 +18,7 @@
 internal stuff. Layer class
 """
 
-from typing import Iterable, List
+from typing import Iterable
 
 from . import tag
 
@@ -27,7 +27,7 @@ class Layer(object):
 
 	__slots__ = ["tags", "text"]
 
-	def __init__(self, stack: "List[Layer]") -> None:
+	def __init__(self, stack: "list[Layer]") -> None:
 		stack.append(self)
 		self.tags = set()
 		self.text = ""
@@ -90,7 +90,7 @@ def close_tags(
 	del stack[layer_index]
 
 
-def close_layer(stack: "List[Layer]") -> None:
+def close_layer(stack: "list[Layer]") -> None:
 	"""
 	close top layer on stack.
 	"""

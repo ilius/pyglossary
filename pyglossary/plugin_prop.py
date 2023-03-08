@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import pathlib
-	from typing import Any, Callable, Dict, List, Optional, Tuple, Type
+	from typing import Any, Callable, Dict, Optional, Type
 
 	from .flags import StrWithDesc
 
@@ -87,6 +87,34 @@ class PluginProp(object):
 		"_writeDepends",
 	]
 
+	def __init__(self) -> None:
+		self._mod: "Any"
+		self._Reader: "Any"
+		self._ReaderLoaded: bool
+		self._Writer: "Any"
+		self._WriterLoaded: bool
+
+		self._moduleName: str
+		self._modulePath: str
+		self._enable: bool
+		self._lname: str
+		self._name: str
+		self._description: str
+		self._extensions: "list[str]"
+		self._extensionCreate: str
+		self._singleFile: bool
+		self._optionsProp: "Dict[str, Option]"
+		self._sortOnWrite: bool
+		self._sortKeyName: "Optional[str]"
+		self._canRead: bool
+		self._canWrite: bool
+		self._readOptions: "Dict[str, Any]"
+		self._writeOptions: "Dict[str, Any]"
+		self._readCompressions: "list[str]"
+		self._readDepends: "Dict[str, str]"
+		self._writeDepends: "Dict[str, str]"
+
+
 	@classmethod
 	def fromDict(
 		cls: "Type",
@@ -114,8 +142,8 @@ class PluginProp(object):
 		self._sortKeyName = attrs.get("sortKeyName")
 		self._canRead = attrs["canRead"]
 		self._canWrite = attrs["canWrite"]
-		self._readOptions = attrs.get("readOptions", [])
-		self._writeOptions = attrs.get("writeOptions", [])
+		self._readOptions = attrs.get("readOptions", {})
+		self._writeOptions = attrs.get("writeOptions", {})
 		self._readCompressions = attrs.get("readCompressions", [])
 		self._readDepends = attrs.get("readDepends", {})
 		self._writeDepends = attrs.get("writeDepends", {})
@@ -142,7 +170,7 @@ class PluginProp(object):
 		self._lname = mod.lname
 		self._name = mod.format
 		self._description = mod.description
-		self._extensions = mod.extensions
+		self._extensions = list(mod.extensions)
 		self._extensionCreate = getattr(mod, "extensionCreate", "")
 		self._singleFile = getattr(mod, "singleFile", False)
 		self._optionsProp = getattr(mod, "optionsProp", {})
@@ -201,7 +229,7 @@ class PluginProp(object):
 		return self._description
 
 	@property
-	def extensions(self) -> "Tuple[str, ...]":
+	def extensions(self) -> "list[str]":
 		return self._extensions
 
 	@property
@@ -228,7 +256,7 @@ class PluginProp(object):
 		return self._sortOnWrite
 
 	@property
-	def sortKeyName(self) -> "Optional[Callable]":
+	def sortKeyName(self) -> "Optional[str]":
 		return self._sortKeyName
 
 	@property
@@ -266,7 +294,7 @@ class PluginProp(object):
 	def canWrite(self) -> bool:
 		return self._canWrite
 
-	def getOptionAttrNamesFromClass(self, rwclass: "Type") -> "List[str]":
+	def getOptionAttrNamesFromClass(self, rwclass: "Type") -> "list[str]":
 		nameList = []
 
 		for cls in rwclass.__bases__ + (rwclass,):
@@ -318,14 +346,8 @@ class PluginProp(object):
 			self._writeOptions = self.getOptionsFromClass(self.writerClass)
 		return self._writeOptions
 
-	def getReadExtraOptions(self) -> "List[str]":
-		return []
-
-	def getWriteExtraOptions(self) -> "List[str]":
-		return []
-
 	@property
-	def readCompressions(self) -> "List[str]":
+	def readCompressions(self) -> "list[str]":
 		if self._readCompressions is None:
 			self._readCompressions = getattr(self.readerClass, "compressions", [])
 		return self._readCompressions
@@ -425,24 +447,24 @@ class PluginProp(object):
 
 		return True
 
-	def getReadExtraOptions(self) -> "List[str]":  # noqa: F811
-		return self.__class__.getExtraOptionsFromFunc(
-			self.readerClass.open,
-			self.name,
-		)
+	def getReadExtraOptions(self) -> "list[str]":  # noqa: F811
+		cls = self.readerClass
+		if cls is None:
+			return []
+		return self.__class__.getExtraOptionsFromFunc(cls.open, self.name)
 
-	def getWriteExtraOptions(self) -> "List[str]":  # noqa: F811
-		return self.__class__.getExtraOptionsFromFunc(
-			self.writerClass.write,
-			self.name,
-		)
+	def getWriteExtraOptions(self) -> "list[str]":  # noqa: F811
+		cls = self.writerClass
+		if cls is None:
+			return []
+		return self.__class__.getExtraOptionsFromFunc(cls.write, self.name)
 
 	@classmethod
 	def getExtraOptionsFromFunc(
 		cls: "Type",
 		func: "Callable",
 		format: str,
-	) -> "List[str]":
+	) -> "list[str]":
 		import inspect
 		extraOptNames = []
 		for name, param in inspect.signature(func).parameters.items():

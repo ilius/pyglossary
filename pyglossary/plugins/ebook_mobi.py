@@ -25,7 +25,6 @@
 import os
 from datetime import datetime
 from os.path import join
-from typing import List
 
 from pyglossary.core import log
 from pyglossary.ebook_base import EbookWriter
@@ -225,7 +224,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			return "SPECIAL"
 		return prefix
 
-	def format_group_content(self, word: "List[str]", defi: str) -> str:
+	def format_group_content(self, word: "list[str]", defi: str) -> str:
 		hide_word_index = self._hide_word_index
 		if len(word) == 1:
 			infl = ''

@@ -54,7 +54,7 @@ from os.path import (
 	join,
 	relpath,
 )
-from typing import TYPE_CHECKING, Dict, Iterable, List, Literal, Optional, Union
+from typing import TYPE_CHECKING, Dict, Iterable, Literal, Optional, Union
 
 if TYPE_CHECKING:
 	from pyglossary.option import Option
@@ -326,7 +326,7 @@ class UI(ui_cmd.UI):
 			("back", None),
 		])
 
-	def fs_pwd(self, args: "List[str]"):
+	def fs_pwd(self, args: "list[str]"):
 		print(os.getcwd())
 
 	def get_ls_l(
@@ -358,7 +358,7 @@ class UI(ui_cmd.UI):
 			details.append(f"-> {os.readlink(argPath)}")
 		return "  ".join(details)
 
-	def fs_ls(self, args: "List[str]"):
+	def fs_ls(self, args: "list[str]"):
 		opts, args = self.ls_parser.parse_known_args(args=args)
 
 		if opts.help:
@@ -407,7 +407,7 @@ class UI(ui_cmd.UI):
 					sizeWidth=sizeWidth,
 				))
 
-	def fs_cd_parent(self, args: "List[str]"):
+	def fs_cd_parent(self, args: "list[str]"):
 		if args:
 			log.error("This command does not take arguments")
 			return
@@ -415,7 +415,7 @@ class UI(ui_cmd.UI):
 		os.chdir(newDir)
 		print(f"Changed current directory to: {newDir}")
 
-	def fs_cd(self, args: "List[str]"):
+	def fs_cd(self, args: "list[str]"):
 		if len(args) != 1:
 			log.error("This command takes exactly one argument")
 			return

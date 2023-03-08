@@ -36,7 +36,6 @@ from typing import (
 	Any,
 	Dict,
 	Iterator,
-	List,
 	Optional,
 	Tuple,
 	Type,
@@ -84,7 +83,7 @@ log = logging.getLogger("pyglossary")
 
 """
 sortKeyType = Callable[
-	[[List[str]],
+	[[list[str]],
 	Any,
 ]
 """
@@ -171,7 +170,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
 		self._config = {}
-		self._data = EntryList(self)  # type: List[RawEntryType]
+		self._data = EntryList(self)  # type: list[RawEntryType]
 		self._sqlite = False
 		self._rawEntryCompress = False
 		self._cleanupPathList = set()
@@ -717,7 +716,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryType):
 
 	def _writeEntries(
 		self,
-		writerList: "List[Any]",
+		writerList: "list[Any]",
 		filename: str,
 	) -> None:
 		writer = writerList[0]

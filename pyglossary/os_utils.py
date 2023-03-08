@@ -26,7 +26,7 @@ class indir(object):
 		create: bool = False,
 		clear: bool = False,
 	) -> None:
-		self.oldpwd = None
+		self.oldpwd: "Optional[str]" = None
 		self.dir = directory
 		self.create = create
 		self.clear = clear
@@ -47,7 +47,8 @@ class indir(object):
 		exc_val: "Exception",
 		exc_tb: "types.TracebackType",
 	) -> None:
-		os.chdir(self.oldpwd)
+		if self.oldpwd:
+			os.chdir(self.oldpwd)
 		self.oldpwd = None
 
 
@@ -58,16 +59,16 @@ def runDictzip(filename: str) -> None:
 	if not dictzipCmd:
 		log.warning("dictzip command was not found. Make sure it's in your $PATH")
 		return
-	(out, err) = subprocess.Popen(
+	b_out, b_err = subprocess.Popen(
 		[dictzipCmd, filename],
 		stdout=subprocess.PIPE,
 	).communicate()
 	log.debug(f"dictzip command: {dictzipCmd!r}")
-	if err:
-		err = err.replace('\n', ' ')
+	if b_err:
+		err = b_err.decode("utf-8").replace('\n', ' ')
 		log.error(f"dictzip error: {err}")
-	if out:
-		out = out.replace('\n', ' ')
+	if b_out:
+		out = b_out.decode("utf-8").replace('\n', ' ')
 		log.error(f"dictzip error: {out}")
 
 
@@ -76,11 +77,13 @@ def _rmtreeError(
 	direc: str,
 	exc_info: "Optional[Tuple[Type, Exception, types.TracebackType]]",
 ) -> None:
+	if exc_info is None:
+		return
 	_, exc_val, _ = exc_info
 	log.error(exc_val)
 
 
-def rmtree(direc: str) -> str:
+def rmtree(direc: str) -> None:
 	import shutil
 	from os.path import isdir
 	try:
@@ -94,7 +97,7 @@ def rmtree(direc: str) -> str:
 		log.exception(f"error removing directory: {direc}")
 
 
-def showMemoryUsage() -> str:
+def showMemoryUsage() -> None:
 	if log.level > core.TRACE:
 		return
 	try:

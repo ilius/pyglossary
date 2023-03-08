@@ -2,7 +2,7 @@ import base64
 import logging
 import re
 from os.path import join
-from typing import List, Tuple
+from typing import Tuple
 
 from pyglossary.text_utils import crc32hex
 
@@ -15,7 +15,7 @@ def extractInlineHtmlImages(
 	defi: str,
 	outDir: str,
 	fnamePrefix: str = "",
-) -> "Tuple[str, List[Tuple[str, str]]]":
+) -> "Tuple[str, list[Tuple[str, str]]]":
 	imageDataDict = {}  # type: Dict[str, bytes]
 
 	def subFunc(m: "re.Match") -> str:

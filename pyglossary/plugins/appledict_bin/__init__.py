@@ -24,7 +24,6 @@ from typing import (
 	Any,
 	Dict,
 	Iterator,
-	List,
 	Match,
 	Optional,
 	Tuple,
@@ -98,7 +97,7 @@ class Reader(object):
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
 		self._titleById = {}
 		self._wordCount = 0
-		self._keyTextData: "Dict[ArticleAddress, List[RawKeyData]]" = {}
+		self._keyTextData: "Dict[ArticleAddress, list[RawKeyData]]" = {}
 
 	def sub_link(self, m: "Match") -> str:
 		from lxml.html import fromstring, tostring
@@ -301,7 +300,7 @@ class Reader(object):
 	def _getDefi(
 		self,
 		entryElem: "lxml.etree.Element",
-		keyDataList: "List[KeyData]",
+		keyDataList: "list[KeyData]",
 	) -> str:
 		from lxml import etree
 
@@ -382,7 +381,7 @@ class Reader(object):
 
 		# 2. add alts
 		keyTextFieldOrder = self._properties.key_text_variable_fields
-		keyDataList: "List[KeyData]" = []
+		keyDataList: "list[KeyData]" = []
 		if articleAddress in self._keyTextData:
 			rawKeyDataList = self._keyTextData[articleAddress]
 			for rawKeyData in rawKeyDataList:
@@ -523,7 +522,7 @@ class Reader(object):
 			Sets self._keyTextData when done
 		"""
 		buff.seek(bufferOffset)
-		keyTextData: "Dict[ArticleAddress, List[RawKeyData]]" = {}
+		keyTextData: "Dict[ArticleAddress, list[RawKeyData]]" = {}
 		while bufferOffset < bufferLimit:
 			yield (bufferOffset, bufferLimit)
 			buff.seek(bufferOffset)

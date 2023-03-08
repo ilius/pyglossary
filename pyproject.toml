@@ -48,6 +48,7 @@ ignore = [
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [
+    "F401",
     # "E", "F", "W",
     "RET",
     "I",

@@ -12,7 +12,7 @@ log = logging.getLogger("pyglossary")
 def reverseGlossary(
 	glos: GlossaryType,
 	savePath: str = "",
-	words: "Optional[List[str]]" = None,
+	words: "Optional[list[str]]" = None,
 	includeDefs: bool = False,
 	reportStep: int = 300,
 	saveStep: int = 1000,  # set this to zero to disable auto saving
@@ -100,7 +100,7 @@ def takeOutputWords(
 	glos: GlossaryType,
 	entryIter: "Iterator[EntryType]",
 	minWordLen: int = 3,
-) -> "List[str]":
+) -> "list[str]":
 	# fr"[\w]{{{minWordLen},}}"
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
 	words = set()
@@ -123,7 +123,7 @@ def searchWordInDef(
 	minWordLen: int = 3,
 	includeDefs: bool = False,
 	showRel: str = "Percent",  # "Percent" | "Percent At First" | ""
-) -> "List[str]":
+) -> "list[str]":
 	# searches word "st" in definitions of the glossary
 	splitPattern = re.compile(
 		"|".join([re.escape(x) for x in sepChars]),

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import io
-	from typing import Callable, Dict, Generator, List, Optional
+	from typing import Callable, Dict, Generator, Optional
 
 	from .glossary_type import EntryType, GlossaryType
 
@@ -21,7 +21,7 @@ file_size_check_every = 100
 class TextGlossaryWriter(object):
 	_encoding: str = "utf-8"
 	_newline: str = "\n"
-	_wordListEncodeFunc: "Optional[Callable[[List[str]], str]]" = None
+	_wordListEncodeFunc: "Optional[Callable[[list[str]], str]]" = None
 	_wordEscapeFunc: "Optional[Callable[[str], str]]" = None
 	_defiEscapeFunc: "Optional[Callable[[str], str]]" = None
 	_ext: str = ".txt"

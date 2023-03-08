@@ -2,7 +2,7 @@
 import os
 import re
 from os.path import join
-from typing import Iterator, List
+from typing import Iterator
 
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS
@@ -189,7 +189,7 @@ class Writer(object):
 		dicMaxSize = 0
 		indexData = []
 
-		def writeBucket(dicIndex: int, entryList: "List[EntryType]") -> None:
+		def writeBucket(dicIndex: int, entryList: "list[EntryType]") -> None:
 			nonlocal dicMaxSize
 			log.debug(
 				f"{dicIndex=}, {len(entryList)=}"

@@ -3,7 +3,7 @@
 import difflib
 import re
 import sys
-from typing import Iterator, List
+from typing import Iterator
 
 from pyglossary.ui.tools.colors import green, red, reset
 
@@ -14,7 +14,7 @@ xmlTagRE = re.compile(
 )
 
 
-def plainWordSplit(text: str) -> "List[str]":
+def plainWordSplit(text: str) -> "list[str]":
 	return [
 		word
 		for word in wordRE.split(text)
@@ -22,7 +22,7 @@ def plainWordSplit(text: str) -> "List[str]":
 	]
 
 
-def xmlWordSplit(text: str) -> "List[str]":
+def xmlWordSplit(text: str) -> "list[str]":
 	pos = 0
 	words = []
 

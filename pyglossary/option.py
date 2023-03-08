@@ -30,7 +30,7 @@ class Option(object):
 		self,
 		typ: str,
 		customValue: bool = False,
-		values: "Optional[List[Any]]" = None,
+		values: "Optional[list[Any]]" = None,
 		allowNone: bool = False,
 		comment: str = "",
 		multiline: bool = False,
@@ -125,7 +125,7 @@ class BoolOption(Option):
 		allowNone: bool = False,
 		**kwargs,  # noqa: ANN
 	) -> None:
-		values: "List[Optional[bool]]" = [False, True]
+		values: "list[Optional[bool]]" = [False, True]
 		if allowNone:
 			values.append(None)
 		Option.__init__(
@@ -367,7 +367,7 @@ class EncodingOption(Option):
 	def __init__(
 		self,
 		customValue: bool = True,
-		values: "Optional[List[str]]" = None,
+		values: "Optional[list[str]]" = None,
 		comment: "Optional[str]" = None,
 		**kwargs,  # noqa: ANN
 	) -> None:
@@ -418,8 +418,8 @@ class EncodingOption(Option):
 
 	def groupValues(self) -> "Optional[Dict[str, Any]]":
 		from collections import OrderedDict
-		groups = OrderedDict()  # type: Dict[str, List[str]]
-		others = []  # type: List[str]
+		groups = OrderedDict()  # type: Dict[str, list[str]]
+		others = []  # type: list[str]
 		for value in self.values or []:
 			cats = self.re_category.findall(value)
 			if not cats:
@@ -442,7 +442,7 @@ class NewlineOption(Option):
 	def __init__(
 		self,
 		customValue: bool = True,
-		values: "Optional[List[str]]" = None,
+		values: "Optional[list[str]]" = None,
 		comment: "Optional[str]" = None,
 		**kwargs,  # noqa: ANN
 	) -> None:

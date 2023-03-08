@@ -21,7 +21,7 @@ import sys
 import traceback
 from collections import OrderedDict
 from os.path import abspath, isfile
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import gi
 
@@ -108,7 +108,7 @@ or the CSS border-spacing property on containers.
 
 
 class FormatDialog(gtk.Dialog):
-	def __init__(self, descList: "List[str]", parent=None, **kwargs) -> None:
+	def __init__(self, descList: "list[str]", parent=None, **kwargs) -> None:
 		gtk.Dialog.__init__(self, transient_for=parent, **kwargs)
 		self.set_default_size(400, 400)
 		self.vbox = self.get_content_area()
@@ -253,7 +253,7 @@ class FormatButton(gtk.Button):
 	noneLabel = "[Select Format]"
 	dialogTitle = "Select Format"
 
-	def __init__(self, descList: "List[str]", parent=None) -> None:
+	def __init__(self, descList: "list[str]", parent=None) -> None:
 		gtk.Button.__init__(self)
 		self.set_label(self.noneLabel)
 		###
@@ -307,7 +307,7 @@ class FormatOptionsDialog(gtk.Dialog):
 	def __init__(
 		self,
 		formatName: str,
-		options: "List[str]",
+		options: "list[str]",
 		optionsValues: "Dict[str, Any]",
 		**kwargs,
 	) -> None:
@@ -584,7 +584,7 @@ class FormatOptionsDialog(gtk.Dialog):
 
 
 class FormatBox(FormatButton):
-	def __init__(self, descList: "List[str]", parent=None) -> None:
+	def __init__(self, descList: "list[str]", parent=None) -> None:
 		FormatButton.__init__(self, descList, parent=parent)
 
 		self.optionsValues = {}

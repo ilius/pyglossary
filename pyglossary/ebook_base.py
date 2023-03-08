@@ -36,7 +36,7 @@ from pyglossary.text_utils import toBytes
 
 if TYPE_CHECKING:
 	import io
-	from typing import Any, List, Optional
+	from typing import Any, Optional
 
 	from pyglossary.glossary_type import EntryType, GlossaryType
 
@@ -236,10 +236,10 @@ class EbookWriter(object):
 	def get_prefix(self, word: str) -> str:
 		raise NotImplementedError
 
-	def sortKey(self, words: "List[str]") -> "Any":
+	def sortKey(self, words: "list[str]") -> "Any":
 		raise NotImplementedError
 
-	def _add_group(self, group_labels: "List[str]", state: "GroupState") -> None:
+	def _add_group(self, group_labels: "list[str]", state: "GroupState") -> None:
 		if not state.last_prefix:
 			return
 		state.group_index += 1
@@ -323,7 +323,7 @@ class EbookWriter(object):
 			.replace(">", "&gt;")\
 			.replace("<", "&lt;")
 
-	def write_index(self, group_labels: "List[str]") -> None:
+	def write_index(self, group_labels: "list[str]") -> None:
 		"""
 			group_labels: a list of labels
 		"""
@@ -397,7 +397,7 @@ class EbookWriter(object):
 
 		self.add_file("OEBPS/content.opf", opf_contents)
 
-	def write_ncx(self, group_labels: "List[str]") -> None:
+	def write_ncx(self, group_labels: "list[str]") -> None:
 		"""
 			write_ncx
 			only for epub

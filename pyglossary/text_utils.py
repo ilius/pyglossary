@@ -21,7 +21,7 @@ import logging
 import re
 import struct
 import sys
-from typing import AnyStr, Callable, List, Tuple
+from typing import AnyStr, Callable, Tuple
 
 log = logging.getLogger("pyglossary")
 
@@ -52,7 +52,7 @@ b_pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|".encode("ascii"))
 
 
 def replaceStringTable(
-	rplList: "List[Tuple[str, str]]",
+	rplList: "list[Tuple[str, str]]",
 ) -> "Callable[[str], str]":
 	def replace(st: str) -> str:
 		for rpl in rplList:
@@ -86,7 +86,7 @@ def unescapeNTB(st: str, bar: bool = False) -> str:
 	return st  # noqa: RET504
 
 
-def splitByBarUnescapeNTB(st: str) -> "List[str]":
+def splitByBarUnescapeNTB(st: str) -> "list[str]":
 	"""
 		splits by "|" (and not "\\|") then unescapes Newline (\\n),
 			Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
@@ -113,7 +113,7 @@ def unescapeBar(st: str) -> str:
 	return pattern_bar_us.sub(r"\1|", st).replace("\\\\", "\\")
 
 
-def splitByBar(st: str) -> "List[str]":
+def splitByBar(st: str) -> "list[str]":
 	"""
 		splits by "|" (and not "\\|")
 		then unescapes Baskslash (\\) and Bar (\\|) in each part
@@ -124,7 +124,7 @@ def splitByBar(st: str) -> "List[str]":
 	]
 
 
-def joinByBar(parts: "List[str]") -> "str":
+def joinByBar(parts: "list[str]") -> "str":
 	return "|".join([
 		escapeBar(part)
 		for part in parts

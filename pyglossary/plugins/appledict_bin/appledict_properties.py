@@ -14,7 +14,7 @@
 # GNU General Public License for more details.
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 
 @dataclass
@@ -37,11 +37,11 @@ class AppleDictProperties:
 
 	# in plist file: "IDXIndexDataFields" / "IDXFixedDataFields"
 	# Example: ["DCSPrivateFlag"]
-	key_text_fixed_fields: List[str]
+	key_text_fixed_fields: list[str]
 
 	# in plist file: "IDXIndexDataFields" / "IDXVariableDataFields"
 	# Example: ["DCSKeyword", "DCSHeadword", "DCSEntryTitle", "DCSAnchor", "DCSYomiWord"]
-	key_text_variable_fields: List[str]
+	key_text_variable_fields: list[str]
 
 	# DCSDictionaryCSS, generally "DefaultStyle.css"
 	css_name: "Optional[str]"

@@ -1,6 +1,6 @@
 import os
 import re
-from typing import TYPE_CHECKING, List, Optional, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple
 
 from pyglossary.core import log
 
@@ -42,7 +42,7 @@ def make_entry(
 	pinyin: str,
 	eng: str,
 	traditional_title: str,
-) -> "Tuple[List[str], str]":
+) -> "Tuple[list[str], str]":
 	eng_names = list(map(summarize, eng))
 	names = [
 		trad if traditional_title else simp,

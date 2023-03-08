@@ -5,7 +5,7 @@ from typing import Optional, Set
 WritingSystem = namedtuple(
 	"WritingSystem", [
 		"name",
-		"iso",  # List[Tuple[int, str]]
+		"iso",  # list[Tuple[int, str]]
 		"unicode",
 		"titleTag",
 		"direction",  # ltr | rtl | ttb

@@ -3,7 +3,7 @@
 import sys
 import unittest
 from os.path import abspath, dirname
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -115,7 +115,7 @@ class TestOptionValidateBoolNumber(unittest.TestCase):
 
 
 class TestOptionValidateStr(unittest.TestCase):
-	def newTester(self, customValue: bool, values: "List[str]"):
+	def newTester(self, customValue: bool, values: "list[str]"):
 		def test(raw: str, valid: bool):
 			opt = StrOption(customValue=customValue, values=values)
 			valueActual, evalOkActual = opt.evaluate(raw)

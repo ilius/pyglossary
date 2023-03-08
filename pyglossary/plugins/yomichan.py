@@ -2,7 +2,7 @@
 
 import json
 import re
-from typing import Any, Dict, Generator, List, Sequence
+from typing import Any, Dict, Generator, Sequence
 
 from pyglossary import os_utils
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -159,7 +159,7 @@ def _isKanji(char: str) -> bool:
 	)
 
 
-def _uniqueList(lst: "Sequence") -> "List[Any]":
+def _uniqueList(lst: "Sequence") -> "list[Any]":
 	seen = set()
 	result = []
 	for elem in lst:
@@ -232,7 +232,7 @@ class Writer(object):
 	def _getExpressionsAndReadingFromEntry(
 		self,
 		entry: "EntryType",
-	) -> "(List[str], str)":
+	) -> "(list[str], str)":
 		term_expressions = list(entry.l_word)
 		if self._alternates_from_word_pattern:
 			for word in entry.l_word:
@@ -284,7 +284,7 @@ class Writer(object):
 
 		return term_expressions, reading
 
-	def _getRuleIdentifiersFromEntry(self, entry: EntryType) -> List[str]:
+	def _getRuleIdentifiersFromEntry(self, entry: EntryType) -> list[str]:
 		return [
 			r
 			for p, r in [
@@ -301,7 +301,7 @@ class Writer(object):
 		self,
 		entry: "EntryType",
 		sequenceNumber: int,
-	) -> "List[List[Any]]":
+	) -> "list[list[Any]]":
 		termExpressions, reading = self._getExpressionsAndReadingFromEntry(entry)
 		ruleIdentifiers = self._getRuleIdentifiersFromEntry(entry)
 

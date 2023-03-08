@@ -4,7 +4,6 @@ import logging
 import subprocess
 import sys
 from os import path
-from typing import List
 
 __all__ = ["JingTestError", "run", "main"]
 
@@ -22,7 +21,7 @@ class JingTestError(subprocess.CalledProcessError):
 	def __init__(
 		self,
 		returncode: int,
-		cmd: "List[str]",
+		cmd: "list[str]",
 		output: bytes,
 	) -> None:
 		super(JingTestError, self).__init__(returncode, cmd, output)

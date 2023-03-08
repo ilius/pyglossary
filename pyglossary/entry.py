@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 		Any,
 		Callable,
 		ClassVar,
-		List,
 		Literal,
 		Optional,
 		Tuple,
@@ -102,7 +101,7 @@ class DataEntry(BaseEntry):
 		return self._fname
 
 	@property
-	def l_word(self) -> "List[str]":
+	def l_word(self) -> "list[str]":
 		return [self._fname]
 
 	@property
@@ -265,7 +264,7 @@ class Entry(BaseEntry):
 		return joinByBar(self._word)
 
 	@property
-	def l_word(self) -> "List[str]":
+	def l_word(self) -> "list[str]":
 		"""
 			returns list of the word and all the alternate words
 		"""

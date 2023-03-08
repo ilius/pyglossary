@@ -10,7 +10,7 @@ import tracemalloc
 import unittest
 import zipfile
 from os.path import abspath, dirname, isdir, isfile, join
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, Optional
 from urllib.request import urlopen
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -119,7 +119,7 @@ class TestGlossaryBase(unittest.TestCase):
 			_file.write(data)
 		return fpath
 
-	def downloadDir(self, dirName: str, files: "List[str]") -> str:
+	def downloadDir(self, dirName: str, files: "list[str]") -> str:
 		dirPath = join(dataDir, self.fixDownloadFilename(dirName))
 		for fileRelPath in files:
 			newFilePath = join(dirPath, fileRelPath)

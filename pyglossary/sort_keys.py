@@ -19,7 +19,10 @@
 
 import re
 from collections import namedtuple
-from typing import List, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional, Tuple, TypeAlias
+
+if TYPE_CHECKING:
+	import icu
 
 defaultSortKeyName = "headword_lower"
 
@@ -40,16 +43,16 @@ LocaleNamedSortKey = namedtuple("LocaleNamedSortKey", [
 ])
 
 
-sortKeyType = """Callable[
-	[[List[str]],
+sortKeyType: TypeAlias = Callable[
+	[list[str]],
 	Any,
-]"""
+]
 
-sqliteSortKeyType = "List[Tuple[str, str, sortKeyType]]"
+sqliteSortKeyType: TypeAlias = list[Tuple[str, str, sortKeyType]]
 
 
 def _headword_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> bytes:
 		return words[0].encode(sortEncoding, errors="replace")
 
 	return sortKey
@@ -60,14 +63,14 @@ def _headword_locale(
 ) -> "sortKeyType":
 	cSortKey = collator.getSortKey
 
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> bytes:
 		return cSortKey(words[0])
 
 	return lambda **options: sortKey
 
 
 def _headword_sqlite(sortEncoding: str = "utf-8", **options) -> "sqliteSortKeyType":
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> bytes:
 		return words[0].encode(sortEncoding, errors="replace")
 
 	return [
@@ -81,17 +84,17 @@ def _headword_sqlite(sortEncoding: str = "utf-8", **options) -> "sqliteSortKeyTy
 
 def _headword_sqlite_locale(
 	collator: "icu.Collator",  # noqa: F821
-) -> "sqliteSortKeyType":
+) -> "Callable[..., sqliteSortKeyType]":
 	cSortKey = collator.getSortKey
 
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> bytes:
 		return cSortKey(words[0])
 
 	return lambda **options: [("sortkey", "BLOB", sortKey)]
 
 
 def _headword_lower_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> bytes:
 		return words[0].lower().encode(sortEncoding, errors="replace")
 
 	return sortKey
@@ -102,7 +105,7 @@ def _headword_lower_locale(
 ) -> "sortKeyType":
 	cSortKey = collator.getSortKey
 
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> bytes:
 		return cSortKey(words[0].lower())
 
 	return lambda **options: sortKey
@@ -112,7 +115,7 @@ def _headword_lower_sqlite(
 	sortEncoding: str = "utf-8",
 	**options,
 ) -> "sqliteSortKeyType":
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> bytes:
 		return words[0].lower().encode(sortEncoding, errors="replace")
 
 	return [
@@ -126,10 +129,10 @@ def _headword_lower_sqlite(
 
 def _headword_lower_sqlite_locale(
 	collator: "icu.Collator",  # noqa: F821
-) -> "sqliteSortKeyType":
+) -> "Callable[..., sqliteSortKeyType]":
 	cSortKey = collator.getSortKey
 
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> bytes:
 		return cSortKey(words[0].lower())
 
 	return lambda **options: [("sortkey", "BLOB", sortKey)]
@@ -139,7 +142,7 @@ def _headword_bytes_lower_normal(
 	sortEncoding: str = "utf-8",
 	**options,
 ) -> "sortKeyType":
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> bytes:
 		return words[0].encode(sortEncoding, errors="replace").lower()
 
 	return sortKey
@@ -153,7 +156,7 @@ def _headword_bytes_lower_normal(
 
 def _headword_bytes_lower_sqlite(sortEncoding: str = "utf-8", **options) \
 	-> "sqliteSortKeyType":
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> bytes:
 		return words[0].encode(sortEncoding, errors="replace").lower()
 
 	return [
@@ -166,7 +169,7 @@ def _headword_bytes_lower_sqlite(sortEncoding: str = "utf-8", **options) \
 
 
 def _stardict_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
-	def sortKey(words: "List[str]") -> bytes:
+	def sortKey(words: "list[str]") -> "Tuple[bytes, bytes]":
 		b_word = words[0].encode(sortEncoding, errors="replace")
 		return (b_word.lower(), b_word)
 
@@ -174,10 +177,10 @@ def _stardict_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
 
 
 def _stardict_sqlite(sortEncoding: str = "utf-8", **options) -> "sqliteSortKeyType":
-	def headword_lower(words: "List[str]") -> bytes:
+	def headword_lower(words: "list[str]") -> bytes:
 		return words[0].encode(sortEncoding, errors="replace").lower()
 
-	def headword(words: "List[str]") -> bytes:
+	def headword(words: "list[str]") -> bytes:
 		return words[0].encode(sortEncoding, errors="replace")
 
 	_type = "TEXT" if sortEncoding == "utf-8" else "BLOB"
@@ -199,7 +202,7 @@ def _ebook_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
 	length = options.get("group_by_prefix_length", 2)
 
 	# FIXME: return bytes
-	def sortKey(words: "List[str]") -> str:
+	def sortKey(words: "list[str]") -> "Tuple[str, str]":
 		word = words[0]
 		if not word:
 			return "", ""
@@ -214,7 +217,7 @@ def _ebook_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
 def _ebook_sqlite(sortEncoding: str = "utf-8", **options) -> "sqliteSortKeyType":
 	length = options.get("group_by_prefix_length", 2)
 
-	def getPrefix(words: "List[str]") -> str:
+	def getPrefix(words: "list[str]") -> str:
 		word = words[0]
 		if not word:
 			return ""
@@ -223,7 +226,7 @@ def _ebook_sqlite(sortEncoding: str = "utf-8", **options) -> "sqliteSortKeyType"
 			return "SPECIAL"
 		return prefix
 
-	def headword(words: "List[str]") -> bytes:
+	def headword(words: "list[str]") -> bytes:
 		return words[0].encode(sortEncoding, errors="replace")
 
 	_type = "TEXT" if sortEncoding == "utf-8" else "BLOB"
@@ -265,7 +268,7 @@ def _dicformids_normal(**options) -> "sortKeyType":
 	re_spaces = re.compile(" +")
 	re_tabs = re.compile("\t+")
 
-	def sortKey(words: "List[str]") -> str:
+	def sortKey(words: "list[str]") -> str:
 		word = words[0]
 		word = word.strip()
 		word = re_punc.sub("", word)
@@ -313,7 +316,7 @@ def _random_sqlite(**options) -> "sqliteSortKeyType":
 def _random_sqlite_locale(
 	collator: "icu.Collator",  # noqa: F821
 	**options,
-) -> "sortKeyType":
+) -> "Callable[..., sqliteSortKeyType]":
 	from random import random
 	return lambda **options: [
 		(
@@ -395,7 +398,7 @@ _sortKeyByName = {
 	item.name: item for item in namedSortKeyList
 }
 
-def lookupSortKey(sortKeyId: str) -> "Optional[LocaleNamedSortKey]":
+def lookupSortKey(sortKeyId: str) -> "Optional[NamedSortKey]":
 	localeName: "Optional[str]" = None
 
 	parts = sortKeyId.split(":")

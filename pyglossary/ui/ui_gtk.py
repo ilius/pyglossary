@@ -21,7 +21,7 @@ import sys
 import traceback
 from collections import OrderedDict
 from os.path import abspath, isfile
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import gi
 
@@ -119,7 +119,7 @@ def buffer_get_text(b):
 
 
 class FormatDialog(gtk.Dialog):
-	def __init__(self, descList: "List[str]", parent=None, **kwargs) -> None:
+	def __init__(self, descList: "list[str]", parent=None, **kwargs) -> None:
 		gtk.Dialog.__init__(self, parent=parent, **kwargs)
 		self.descList = descList
 		self.items = descList
@@ -262,7 +262,7 @@ class FormatButton(gtk.Button):
 	noneLabel = "[Select Format]"
 	dialogTitle = "Select Format"
 
-	def __init__(self, descList: "List[str]", parent=None) -> None:
+	def __init__(self, descList: "list[str]", parent=None) -> None:
 		gtk.Button.__init__(self)
 		self.set_label(self.noneLabel)
 		###
@@ -311,7 +311,7 @@ class FormatOptionsDialog(gtk.Dialog):
 	def __init__(
 		self,
 		formatName: str,
-		options: "List[str]",
+		options: "list[str]",
 		optionsValues: "Dict[str, Any]",
 		parent=None,
 	) -> None:
@@ -575,7 +575,7 @@ class FormatOptionsDialog(gtk.Dialog):
 
 
 class FormatBox(FormatButton):
-	def __init__(self, descList: "List[str]", parent=None) -> None:
+	def __init__(self, descList: "list[str]", parent=None) -> None:
 		FormatButton.__init__(self, descList, parent=parent)
 
 		self.optionsValues = {}

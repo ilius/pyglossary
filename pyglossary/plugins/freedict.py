@@ -5,7 +5,7 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Callable, Iterator, List, Optional, Union
+	from typing import Any, Callable, Iterator, Optional, Union
 
 	import lxml
 	from lxml.etree import Element, htmlfile
@@ -136,7 +136,7 @@ class Reader(object):
 	def makeList(
 		self,
 		hf: "htmlfile",
-		input_objects: "List[Any]",
+		input_objects: "list[Any]",
 		processor: "Callable",
 		single_prefix: str = "",
 		skip_single: bool = True,
@@ -489,7 +489,7 @@ class Reader(object):
 	def writeGramGroups(
 		self,
 		hf: "htmlfile",
-		gramGrpList: "List[Element]",
+		gramGrpList: "list[Element]",
 	) -> None:
 		from lxml import etree as ET
 
@@ -547,7 +547,7 @@ class Reader(object):
 	def writeSenseList(
 		self,
 		hf: "htmlfile",
-		senseList: "List[lxml.etree.Element]",
+		senseList: "list[lxml.etree.Element]",
 	) -> None:
 		# these <sense> elements are 1st-level (directly under <entry>)
 		if not senseList:
@@ -711,7 +711,7 @@ class Reader(object):
 
 	def stripParagList(
 		self,
-		elems: "List[lxml.etree.Element]",
+		elems: "list[lxml.etree.Element]",
 	) -> str:
 		lines = []
 		for elem in elems:

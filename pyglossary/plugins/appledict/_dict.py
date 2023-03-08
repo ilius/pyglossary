@@ -20,7 +20,7 @@
 
 import logging
 import string
-from typing import Any, Callable, Iterator, List
+from typing import Any, Callable, Iterator
 
 from . import _normalize
 
@@ -61,7 +61,7 @@ def quote_string(value: str, BeautifulSoup: "Any") -> str:
 
 
 def indexes_generator(indexes_lang: str) -> """Callable[
-	[str, List[str], str, Any],
+	[str, list[str], str, Any],
 	str,
 ]""":
 	"""
@@ -84,7 +84,7 @@ def indexes_generator(indexes_lang: str) -> """Callable[
 
 	def generate_indexes(
 		title: str,
-		alts: "List[str]",
+		alts: "list[str]",
 		content: str,
 		BeautifulSoup: "Any",
 	) -> str:

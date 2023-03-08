@@ -16,7 +16,7 @@ from os.path import (
 )
 from pprint import pformat
 from time import time as now
-from typing import Any, Callable, Dict, Generator, Iterator, List, Sequence, Tuple
+from typing import Any, Callable, Dict, Generator, Iterator, Sequence, Tuple
 
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS, DEFAULT_YES
@@ -183,8 +183,8 @@ class BaseSqList(list):
 		)
 		self._con.commit()
 
-	def getExtraColumns(self) -> "List[Tuple[str, str]]":
-		# List[(columnName, dataType)]
+	def getExtraColumns(self) -> "list[Tuple[str, str]]":
+		# list[(columnName, dataType)]
 		return []
 
 	def __len__(self) -> int:
@@ -227,16 +227,16 @@ class BaseSqList(list):
 
 
 class IdxSqList(BaseSqList):
-	def getExtraColumns(self) -> "List[Tuple[str, str]]":
-		# List[(columnName, dataType)]
+	def getExtraColumns(self) -> "list[Tuple[str, str]]":
+		# list[(columnName, dataType)]
 		return [
 			("idx_block", "BLOB"),
 		]
 
 
 class SynSqList(BaseSqList):
-	def getExtraColumns(self) -> "List[Tuple[str, str]]":
-		# List[(columnName, dataType)]
+	def getExtraColumns(self) -> "list[Tuple[str, str]]":
+		# list[(columnName, dataType)]
 		return [
 			("entry_index", "INTEGER"),
 		]
@@ -364,7 +364,7 @@ class Reader(object):
 			else:
 				raise ValueError(f"invalid {idxoffsetbits = }")
 
-	def readIdxFile(self) -> "List[Tuple[bytes, int, int]]":
+	def readIdxFile(self) -> "list[Tuple[bytes, int, int]]":
 		if isfile(self._filename + ".idx.gz"):
 			with gzip.open(self._filename + ".idx.gz") as idxFile:
 				idxBytes = idxFile.read()
@@ -450,7 +450,7 @@ class Reader(object):
 
 	def renderRawDefiList(
 		self,
-		rawDefiList: "List[Tuple[bytes, int]]",
+		rawDefiList: "list[Tuple[bytes, int]]",
 		unicode_errors: str,
 	) -> "Tuple[str, str]":
 		if len(rawDefiList) == 1:
@@ -562,7 +562,7 @@ class Reader(object):
 						_file.read(),
 					)
 
-	def readSynFile(self) -> "Dict[int, List[str]]":
+	def readSynFile(self) -> "Dict[int, list[str]]":
 		"""
 		return synDict, a dict { entryIndex -> altList }
 		"""
@@ -614,7 +614,7 @@ class Reader(object):
 		self,
 		b_block: bytes,
 		sametypesequence: str,
-	) -> "List[Tuple[bytes, int]]":
+	) -> "list[Tuple[bytes, int]]":
 		"""
 		Parse definition block when sametypesequence option is specified.
 
@@ -661,7 +661,7 @@ class Reader(object):
 
 		return res
 
-	def parseDefiBlockGeneral(self, b_block: bytes) -> "List[Tuple[bytes, int]]":
+	def parseDefiBlockGeneral(self, b_block: bytes) -> "list[Tuple[bytes, int]]":
 		"""
 		Parse definition block when sametypesequence option is not specified.
 
@@ -982,7 +982,7 @@ class Writer(object):
 			defiFormat="",
 		)
 
-	def writeSynFile(self, altIndexList: "List[Tuple[bytes, int]]") -> None:
+	def writeSynFile(self, altIndexList: "list[Tuple[bytes, int]]") -> None:
 		"""
 		Build .syn file
 		"""
@@ -1153,7 +1153,7 @@ class Writer(object):
 			defiFormat="",
 		)
 
-	def writeIdxFile(self, indexList: "List[Tuple[bytes, bytes]]") -> int:
+	def writeIdxFile(self, indexList: "list[Tuple[bytes, bytes]]") -> int:
 		filename = self._filename + ".idx"
 		if not indexList:
 			return 0

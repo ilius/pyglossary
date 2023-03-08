@@ -25,7 +25,7 @@ import os
 import re
 import sys
 from collections import OrderedDict as odict
-from typing import Iterator, List, Optional, Tuple
+from typing import Iterator, Optional, Tuple
 
 from pyglossary.core import log
 
@@ -908,7 +908,7 @@ class BglReader(object):
 		pos: int,
 		b_word: bytes,
 		u_word: str,
-	) -> "Tuple[bool, Optional[int], Optional[List[str]]]":
+	) -> "Tuple[bool, Optional[int], Optional[list[str]]]":
 		"""
 		returns:
 			(False, None, None) if error
@@ -947,7 +947,7 @@ class BglReader(object):
 	def readEntry_Type11(
 		self,
 		block: "Block",
-	) -> "Tuple[bool, Optional[str], Optional[List[str]], Optional[str]]":
+	) -> "Tuple[bool, Optional[str], Optional[list[str]], Optional[str]]":
 		"""return (succeed, u_word, u_alts, u_defi)"""
 		Err = (False, None, None, None)
 		pos = 0

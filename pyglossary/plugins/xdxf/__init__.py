@@ -22,7 +22,7 @@
 # GNU General Public License for more details.
 
 import re
-from typing import TYPE_CHECKING, Iterator, List, Optional, Sequence
+from typing import TYPE_CHECKING, Iterator, Optional, Sequence
 
 if TYPE_CHECKING:
 	from lxml.etree import Element
@@ -237,14 +237,14 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def titles(self, article: "Element") -> "List[str]":
+	def titles(self, article: "Element") -> "list[str]":
 		"""
 
 		:param article: <ar> tag
 		:return: (title (str) | None, alternative titles (set))
 		"""
 		from itertools import combinations
-		titles: "List[str]" = []
+		titles: "list[str]" = []
 		for title_element in article.findall("k"):
 			if title_element.text is None:
 				# TODO: look for <opt> tag?

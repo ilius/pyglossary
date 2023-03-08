@@ -2,11 +2,11 @@
 
 from .glossary_type import EntryType
 
-MultiStr = "Union[str, List[str]]"
+MultiStr = "Union[str, list[str]]"
 
 
 class BaseEntry(EntryType):
-	__slots__ = []
+	__slots__: "list[str]" = []
 
 	@property
 	def b_word(self) -> bytes:

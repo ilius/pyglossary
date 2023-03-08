@@ -2,7 +2,7 @@
 import json
 import logging
 from os.path import join
-from typing import List, Optional
+from typing import Optional
 
 from pyglossary.core import rootDir
 
@@ -12,8 +12,8 @@ log = logging.getLogger("pyglossary")
 class Lang(object):
 	def __init__(
 		self,
-		codes: "List[str]",
-		names: "List[str]",
+		codes: "list[str]",
+		names: "list[str]",
 		titleTag: str = "b",
 		rtl: int = 0,
 	) -> None:
@@ -35,11 +35,11 @@ class Lang(object):
 		return f"Lang({self._codes + self._names})"
 
 	@property
-	def codes(self) -> "List[str]":
+	def codes(self) -> "list[str]":
 		return self._codes
 
 	@property
-	def names(self) -> "List[str]":
+	def names(self) -> "list[str]":
 		return self._names
 
 	@property
