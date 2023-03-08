@@ -19,7 +19,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			"appledict-bin/002-simple.txt_res/style.css": "a83210cb",
 
 			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt": "2d3844bf",
-			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt_res/style.css": "6818c1e5",
+			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt_res/style.css": "c243b56a",
 		})
 
 		self.addDirCRC32("appledict-bin/002-simple.dictionary", {
@@ -37,12 +37,11 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 		self.addDirCRC32("appledict-bin/006-en-oxfjord_v10.11_c2_t3.dictionary", {
 			"Contents/Info.plist": "328abb6f",
 			"Contents/Resources/Body.data": "03fe72e8",
-			"Contents/Resources/DefaultStyle.css": "6818c1e5",
+			"Contents/Resources/DefaultStyle.css": "c243b56a",
 			"Contents/Resources/EntryID.data": "d31adec1",
 			"Contents/Resources/EntryID.index": "6eea272c",
 			"Contents/Resources/KeyText.data": "d4417c62",
 			"Contents/Resources/KeyText.index": "59f9ab67",
-			"Contents/Resources/style.css": "c243b56a",
 		})
 
 	def test_fix_links(self):
@@ -136,7 +135,6 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			"Contents/Resources/EntryID.index",
 			"Contents/Resources/KeyText.data",
 			"Contents/Resources/KeyText.index",
-			"Contents/Resources/style.css",
 		]
 		self.convert_appledict_binary_to_txt(baseName, files)
 
