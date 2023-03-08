@@ -34,6 +34,7 @@ from time import time as now
 from typing import (
 	TYPE_CHECKING,
 	Any,
+	Callable,
 	Dict,
 	Iterator,
 	Optional,
@@ -52,6 +53,7 @@ from .entry_filters import (
 	RemoveHtmlTagsAll,
 	ShowMaxMemoryUsage,
 	ShowProgressBar,
+	StripFullHtml,
 	entryFiltersRules,
 )
 from .flags import (
@@ -266,6 +268,23 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		Does not apply on entries added with glos.addEntry
 		"""
 		self._addExtraEntryFilter(RemoveHtmlTagsAll)
+
+	def stripFullHtml(
+		self,
+		errorHandler: "Optional[Callable[[EntryType, str], None]]" = None,
+	):
+		"""
+		Adds entry filter "strip_full_html"
+		to replace a full HTML document with it's body in entry definition
+		"""
+		name = StripFullHtml.name
+		if name in self._entryFiltersName:
+			return
+		self._entryFilters.append(StripFullHtml(
+			self,
+			errorHandler=errorHandler,
+		))
+		self._entryFiltersName.add(name)
 
 	def preventDuplicateWords(self) -> None:
 		"""

@@ -96,6 +96,9 @@ class Writer(object):
 	_css: str = ""
 	_word_title: bool = True
 
+	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
+		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
@@ -104,6 +107,7 @@ class Writer(object):
 		self._filename_format = "{n:05d}.html"
 		self._tail = "</body></html>"
 		self._filenameList = []
+		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
 	def open(self, filename: str) -> None:
 		from cachetools import LRUCache  # noqa: F401
@@ -443,7 +447,6 @@ class Writer(object):
 				continue
 
 			entry.detectDefiFormat()
-			entry.stripFullHtml()
 			defi = entry.defi
 			defiFormat = entry.defiFormat
 

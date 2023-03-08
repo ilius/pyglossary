@@ -116,6 +116,8 @@ class EntryType(object):
 	def removeEmptyAndDuplicateAltWords(self) -> None:
 		raise NotImplementedError
 
+	def stripFullHtml(self) -> "Optional[str]":
+		raise NotImplementedError
 
 class GlossaryType(object):
 	"""

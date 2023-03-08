@@ -25,7 +25,7 @@ import os
 from os.path import isdir
 from typing import Generator, Optional, Tuple
 
-from pyglossary.core import pip
+from pyglossary.core import log, pip
 from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.image_utils import extractInlineHtmlImages
 from pyglossary.option import (
@@ -157,9 +157,13 @@ class Reader(TextGlossaryReader):
 class Writer(object):
 	_encoding: str = "utf-8"
 
+	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
+		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._file = None
+		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
 	def finish(self) -> None:
 		if self._file is None:
@@ -192,7 +196,6 @@ class Writer(object):
 
 			entry.detectDefiFormat()
 			if entry.defiFormat == "h":
-				entry.stripFullHtml()
 				defi = f"<html>{entry.defi}"
 
 			fileObj.write(f"@ {fixWord(words[0])}\n")

@@ -93,6 +93,9 @@ class Writer:
 		"marisa_trie": "marisa-trie",
 	}
 
+	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
+		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
+
 	def __init__(self, glos: "GlossaryType", **kwargs) -> None:
 		self._glos = glos
 		self._filename = None
@@ -102,6 +105,7 @@ class Writer:
 			re.DOTALL,
 		)
 		# img tag has no closing
+		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
 	def get_prefix(self, word: str) -> str:
 		if not word:
@@ -175,7 +179,6 @@ class Writer:
 					wordsByPrefix[prefix].append(word)
 				else:
 					wordsByPrefix[prefix] = [word]
-			entry.stripFullHtml()
 			defi = self.fix_defi(entry.defi)
 			mainHeadword = l_word[0]
 			for prefix, p_words in wordsByPrefix.items():

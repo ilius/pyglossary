@@ -146,6 +146,9 @@ class DataEntry(BaseEntry):
 	def removeEmptyAndDuplicateAltWords(self) -> None:
 		pass
 
+	def stripFullHtml(self) -> "Optional[str]":
+		pass
+
 	def getRaw(self, glos: "GlossaryType") -> "RawEntryType":
 		b_fpath = b""
 		if glos.tmpDataDir:
@@ -388,35 +391,34 @@ class Entry(BaseEntry):
 		l_word = list(unique_everseen(l_word))
 		self._word = l_word
 
-	def stripFullHtml(self) -> None:
+	def stripFullHtml(self) -> "Optional[str]":
+		"""
+		returns error
+		"""
 		defi = self._defi
 		if not defi.startswith('<'):
-			return
+			return None
 		if defi.startswith('<!DOCTYPE html>'):
 			defi = defi[len('<!DOCTYPE html>'):].strip()
 			if not defi.startswith('<html'):
-				log.error(f"<html> not found: word={self.s_word}")
-				log.error(f"defi={defi[:100]}...")
+				return "Has <!DOCTYPE html> but no <html>"
 		else:
 			if not defi.startswith('<html>'):
-				return
-		word = self.s_word
+				return None
 		i = defi.find('<body')
 		if i == -1:
-			log.warning(f"<body not found: {word=}")
-			return
+			return "<body not found"
 		defi = defi[i + 5:]
 		i = defi.find('>')
 		if i == -1:
-			log.error(f"'>' after <body not found: {word=}")
-			return
+			return "'>' after <body not found"
 		defi = defi[i + 1:]
 		i = defi.find('</body')
 		if i == -1:
-			log.error(f"</body close not found: {word=}")
-			return
+			return "</body close not found"
 		defi = defi[:i]
 		self._defi = defi
+		return None
 
 	def getRaw(
 		self,

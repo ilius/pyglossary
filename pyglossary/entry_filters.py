@@ -196,6 +196,23 @@ class RemoveHtmlTags(EntryFilter):
 		entry.editFuncDefi(fixStr)
 		return entry
 
+class StripFullHtml(EntryFilter):
+	name = "strip_full_html"
+	desc = "Replace a full HTML document with it's body"
+
+	def __init__(
+		self,
+		glos: "GlossaryType",
+		errorHandler: "Optional[Callable[[EntryType, str], None]]",
+	) -> None:
+		self._errorHandler = errorHandler
+
+	def run(self, entry: "EntryType") -> "Optional[EntryType]":
+		err = entry.stripFullHtml()
+		if err and self._errorHandler:
+			self._errorHandler(entry, err)
+		return entry
+
 
 # FIXME: It's is not safe to lowercases everything between < and >
 # including class name, element ids/names, scripts, <a href="bword://...">
@@ -461,4 +478,10 @@ some entry filters are added conditionally (other than with config):
 some entry filters are added by calling a Glossary method
 	- PreventDuplicateWords
 	- RemoveHtmlTagsAll
+	- StripFullHtml
+
+TODO: change None values to (None, True)
+and add filters that are enabled by plugins using glossary methods:
+	((None, False), PreventDuplicateWords),
+	((None, False), StripFullHtml),
 """
