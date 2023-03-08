@@ -12,7 +12,8 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.core import userPluginsDir
-from pyglossary.glossary import Glossary, defaultSortKeyName
+from pyglossary.glossary import Glossary
+from pyglossary.sort_keys import defaultSortKeyName
 
 Glossary.init(
 	# usePluginsJson=False,

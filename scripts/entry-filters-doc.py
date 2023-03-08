@@ -8,7 +8,7 @@ from mako.template import Template
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.glossary import Glossary
+from pyglossary.entry_filters import entryFiltersRules
 from pyglossary.ui.base import UIBase
 
 ui = UIBase()
@@ -19,7 +19,7 @@ template = Template("""${entryFiltersTable}
 ${"## The full list of entry filters"}
 
 Some entry filters are used more than once, or added based on other conditions than config (though they don't actually filter or modify entries).
-You can see [Glossary.entryFiltersRules](https://github.com/ilius/pyglossary/blob/master/pyglossary/glossary.py#L84) for a more complete list.
+You can see [entryFiltersRules](https://github.com/ilius/pyglossary/blob/master/pyglossary/entry_filters.py#L436) for a more complete list.
 """)
 
 
@@ -86,7 +86,7 @@ def getCommandFlagsMD(configRule):
 	return f"`--{flag}`"
 
 
-for configRule, filterClass in Glossary.entryFiltersRules:
+for configRule, filterClass in entryFiltersRules:
 	if configRule is None:
 		continue
 	name, default = configRule
@@ -107,7 +107,7 @@ entryFiltersTable = "## Entry Filters\n\n" + renderTable(
 			getCommandFlagsMD(configRule),
 			filterClass.desc,
 		)
-		for configRule, filterClass in Glossary.entryFiltersRules
+		for configRule, filterClass in entryFiltersRules
 	],
 )
 
