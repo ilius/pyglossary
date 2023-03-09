@@ -9,6 +9,7 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 
+from pyglossary.glossary_v2 import Glossary
 from pyglossary.plugins.ebook_kobo import (
 	Writer,
 )
@@ -16,7 +17,8 @@ from pyglossary.plugins.ebook_kobo import (
 
 class GetPrefixTest(unittest.TestCase):
 	def case(self, word, prefix):
-		w = Writer(None)
+		glos = Glossary()
+		w = Writer(glos)
 		self.assertEqual(
 			w.get_prefix(word),
 			prefix,
