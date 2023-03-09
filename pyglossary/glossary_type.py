@@ -18,6 +18,8 @@ if TYPE_CHECKING:
 
 from .langs import Lang
 
+MultiStr: TypeAlias = Union[str, list[str]]
+
 RawEntryType: TypeAlias = Union[
 	bytes,  # compressed
 	"tuple[list[str], bytes]",  # uncompressed, without defiFormat
@@ -215,7 +217,13 @@ class GlossaryType(object):
 	def addEntry(self, entry: EntryType) -> None:
 		raise NotImplementedError
 
-	def newEntry(self, word: str, defi: str, defiFormat: str = "") -> EntryType:
+	def newEntry(
+		self,
+		word: "MultiStr",
+		defi: str,
+		defiFormat: str = "",
+		byteProgress: "Optional[tuple[int, int]]" = None,
+	) -> EntryType:
 		raise NotImplementedError
 
 	def newDataEntry(self, fname: str, data: bytes) -> EntryType:
