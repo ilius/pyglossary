@@ -216,15 +216,16 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		entryFilters = []
 		config = self._config
 
-		for configRule, filterClass in entryFiltersRules:
+		for configParam, default, filterClass in entryFiltersRules:
 			args = []
-			if configRule is not None:
-				param, default = configRule
-				value = config.get(param, default)
-				if not value:
-					continue
-				if not isinstance(default, bool):
-					args = [value]
+			if configParam is None:
+				value = default
+			else:
+				value = config.get(configParam, default)
+			if not value:
+				continue
+			if not isinstance(default, bool):
+				args = [value]
 			entryFilters.append(filterClass(self, *tuple(args)))
 
 		if self.progressbar:

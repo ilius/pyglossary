@@ -451,37 +451,31 @@ class ShowMaxMemoryUsage(EntryFilter):
 		return entry
 
 entryFiltersRules = [
-	(None, TrimWhitespaces),
-	(None, NonEmptyWordFilter),
-	(("skip_resources", False), SkipDataEntry),
-	(("utf8_check", False), FixUnicode),
-	(("lower", False), LowerWord),
-	(("skip_duplicate_headword", False), SkipEntriesWithDuplicateHeadword),
-	(("trim_arabic_diacritics", False), TrimArabicDiacritics),
-	(("rtl", False), RTLDefi),
-	(("remove_html_all", False), RemoveHtmlTagsAll),
-	(("remove_html", ""), RemoveHtmlTags),
-	(("normalize_html", False), NormalizeHtml),
-	(None, LanguageCleanup),
+	(None, True, TrimWhitespaces),
+	(None, True, NonEmptyWordFilter),
+	("skip_resources", False, SkipDataEntry),
+	("utf8_check", False, FixUnicode),
+	("lower", False, LowerWord),
+	("skip_duplicate_headword", False, SkipEntriesWithDuplicateHeadword),
+	("trim_arabic_diacritics", False, TrimArabicDiacritics),
+	("rtl", False, RTLDefi),
+	("remove_html_all", False, RemoveHtmlTagsAll),
+	("remove_html", "", RemoveHtmlTags),
+	("normalize_html", False, NormalizeHtml),
+	(None, True, LanguageCleanup),
 
 	# TODO
-	# (("text_list_symbol_cleanup", False), TextListSymbolCleanup),
+	# ("text_list_symbol_cleanup", False, TextListSymbolCleanup),
 
-	(None, NonEmptyWordFilter),
-	(None, NonEmptyDefiFilter),
-	(None, RemoveEmptyAndDuplicateAltWords),
+	(None, True, NonEmptyWordFilter),
+	(None, True, NonEmptyDefiFilter),
+	(None, True, RemoveEmptyAndDuplicateAltWords),
+
+	# filters that are enabled by plugins using glossary methods:
+	(None, False, PreventDuplicateWords),
+	(None, False, StripFullHtml),
+
+	# filters are added conditionally (other than with config or glossary methods):
+	(None, False, ShowProgressBar),
+	(None, False, ShowMaxMemoryUsage),
 ]
-"""
-some entry filters are added conditionally (other than with config):
-	- ShowProgressBar
-	- ShowMaxMemoryUsage
-some entry filters are added by calling a Glossary method
-	- PreventDuplicateWords
-	- RemoveHtmlTagsAll
-	- StripFullHtml
-
-TODO: change None values to (None, True)
-and add filters that are enabled by plugins using glossary methods:
-	((None, False), PreventDuplicateWords),
-	((None, False), StripFullHtml),
-"""

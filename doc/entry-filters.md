@@ -17,8 +17,7 @@
 | `non_empty_word`             | Yes             |                                      | Skip entries with empty word                                                |
 | `non_empty_defi`             | Yes             |                                      | Skip entries with empty definition                                          |
 | `remove_empty_dup_alt_words` | Yes             |                                      | Remove empty and duplicate alternate words                                  |
-
-## The full list of entry filters
-
-Some entry filters are used more than once, or added based on other conditions than config (though they don't actually filter or modify entries).
-You can see [entryFiltersRules](https://github.com/ilius/pyglossary/blob/master/pyglossary/entry_filters.py#L436) for a more complete list.
+| `prevent_duplicate_words`    | No              |                                      | Prevent duplicate words                                                     |
+| `strip_full_html`            | No              |                                      | Replace a full HTML document with it's body                                 |
+| `progressbar`                | No              |                                      | Progress Bar                                                                |
+| `max_memory_usage`           | No              |                                      | Show Max Memory Usage                                                       |

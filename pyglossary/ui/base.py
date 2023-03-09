@@ -56,9 +56,9 @@ summary = (
 )
 
 _entryFilterConfigDict = {
-	configRule[0]: (filterClass, configRule[1])
-	for configRule, filterClass in entryFiltersRules
-	if configRule
+	configParam: (filterClass, default)
+	for configParam, default, filterClass in entryFiltersRules
+	if configParam
 }
 
 
