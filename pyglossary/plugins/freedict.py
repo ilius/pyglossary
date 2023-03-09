@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import re
-from io import BytesIO
+from io import BytesIO, IOBase
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, AsyncContextManager, Callable, Iterator, Optional, Union
+	from typing import Any, Callable, Iterator, Optional, Union
 
-	import lxml
-	from lxml.etree import Element
+	from lxml.etree import _Element as Element
 
 
 from pyglossary.compression import (
@@ -136,7 +135,7 @@ class Reader(object):
 
 	def makeList(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		input_objects: "list[Any]",
 		processor: "Callable",
 		single_prefix: str = "",
@@ -172,7 +171,7 @@ class Reader(object):
 
 	def writeRef(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		ref: "Element",
 	) -> None:
 		target = ref.get("target")
@@ -187,14 +186,14 @@ class Reader(object):
 
 	def writeQuote(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		elem: "Element",
 	) -> None:
 		self.writeWithDirection(hf, elem, "div")
 
 	def writeTransCit(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		elem: "Element",
 	) -> None:
 		quotes = []
@@ -227,7 +226,7 @@ class Reader(object):
 
 	def writeDef(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		elem: "Element",
 	) -> None:
 		sep = ", "  # TODO: self.getCommaSep(sample)
@@ -263,7 +262,7 @@ class Reader(object):
 
 	def writeWithDirection(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		child: "Element",
 		tag: str,
 	) -> None:
@@ -293,7 +292,7 @@ class Reader(object):
 
 	def writeRichText(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		el: "Element",
 	) -> None:
 		from lxml import etree as ET
@@ -336,7 +335,11 @@ class Reader(object):
 		log.warning(f"unknown lang name in {self.tostring(elem)}")
 		return None
 
-	def writeLangTag(self, hf: "AsyncContextManager", elem: "Element") -> None:
+	def writeLangTag(
+		self,
+		hf,  # type: ignore # noqa: PGH
+		elem: "Element",
+	) -> None:
 		langDesc = self.getLangDesc(elem)
 		if not langDesc:
 			return
@@ -348,16 +351,16 @@ class Reader(object):
 
 	def writeNote(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		note: "Element",
 	) -> None:
 		self.writeRichText(hf, note)
 
 	def writeSenseSense(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		sense: "Element",
-	) -> None:
+	) -> int:
 		# this <sense> element can be 1st-level (directly under <entry>)
 		# or 2nd-level
 		transCits = []
@@ -431,10 +434,11 @@ class Reader(object):
 		if gramList:
 			with hf.element("div"):
 				for i, gram in enumerate(gramList):
+					text = gram.text or ""
 					if i > 0:
-						hf.write(self.getCommaSep(gram.text))
+						hf.write(self.getCommaSep(text))
 					with hf.element("font", color=self._gram_color):
-						hf.write(gram.text)
+						hf.write(text)
 		self.makeList(
 			hf,
 			noteList,
@@ -462,9 +466,10 @@ class Reader(object):
 			with hf.element("div"):
 				hf.write("Usage: ")
 				for i, usg in enumerate(usgList):
+					text = usg.text or ""
 					if i > 0:
-						hf.write(self.getCommaSep(usg.text))
-					hf.write(usg.text)
+						hf.write(self.getCommaSep(text))
+					hf.write(text)
 		if exampleCits:
 			for cit in exampleCits:
 				with hf.element("div", **{
@@ -489,7 +494,7 @@ class Reader(object):
 
 	def writeGramGroups(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		gramGrpList: "list[Element]",
 	) -> None:
 		from lxml import etree as ET
@@ -513,14 +518,14 @@ class Reader(object):
 
 	def writeSenseGrams(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		sense: "Element",
 	) -> None:
 		self.writeGramGroups(hf, sense.findall("gramGrp", self.ns))
 
 	def writeSense(
 		self,
-		hf: "AsyncContextManager",
+		hf,  # type: ignore # noqa: PGH
 		sense: "Element",
 	) -> None:
 		# this <sense> element is 1st-level (directly under <entry>)
@@ -547,8 +552,8 @@ class Reader(object):
 
 	def writeSenseList(
 		self,
-		hf: "AsyncContextManager",
-		senseList: "list[lxml.etree.Element]",
+		hf,  # type: ignore # noqa: PGH
+		senseList: "list[Element]",
 	) -> None:
 		# these <sense> elements are 1st-level (directly under <entry>)
 		if not senseList:
@@ -572,7 +577,10 @@ class Reader(object):
 	def normalizeGramGrpChild(self, elem: "Element") -> str:
 		# child can be "pos" or "gen"
 		tag = elem.tag
-		text = elem.text.strip()
+		text = elem.text
+		if not text:
+			return ""
+		text = text.strip()
 		if tag == f"{tei}pos":
 			return self.posMapping.get(text.lower(), text)
 		if tag == f"{tei}gen":
@@ -673,14 +681,18 @@ class Reader(object):
 
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
+		# _file = cast(self._file, IOBase)
+		_file = self._file
+		if _file is None:
+			raise RuntimeError("_file is None")
 		return self._glos.newEntry(
 			keywords,
 			defi,
 			defiFormat="h",
-			byteProgress=(self._file.tell(), self._fileSize),
+			byteProgress=(_file.tell(), self._fileSize),
 		)
 
-	def setWordCount(self, header: str) -> None:
+	def setWordCount(self, header: "Element") -> None:
 		extent_elem = header.find(".//extent", self.ns)
 		if extent_elem is None:
 			log.warning(
@@ -688,7 +700,7 @@ class Reader(object):
 				", progress bar will not word",
 			)
 			return
-		extent = extent_elem.text
+		extent = extent_elem.text or ""
 		if not extent.endswith(" headwords"):
 			log.warning(f"unexpected {extent=}")
 			return
@@ -712,7 +724,7 @@ class Reader(object):
 
 	def stripParagList(
 		self,
-		elems: "list[lxml.etree.Element]",
+		elems: "list[Element]",
 	) -> str:
 		lines = []
 		for elem in elems:
@@ -726,7 +738,7 @@ class Reader(object):
 	def setGlosInfo(self, key: str, value: str) -> None:
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setCopyright(self, header: str) -> None:
+	def setCopyright(self, header: "Element") -> None:
 		elems = header.findall(".//availability//p", self.ns)
 		if not elems:
 			log.warning("did not find copyright")
@@ -736,14 +748,14 @@ class Reader(object):
 		self.setGlosInfo("copyright", copyright)
 		log.debug(f"Copyright: {copyright!r}")
 
-	def setPublisher(self, header: str) -> None:
+	def setPublisher(self, header: "Element") -> None:
 		elem = header.find(".//publisher", self.ns)
 		if elem is None or not elem.text:
 			log.warning("did not find publisher")
 			return
 		self.setGlosInfo("publisher", elem.text)
 
-	def setCreationTime(self, header: str) -> None:
+	def setCreationTime(self, header: "Element") -> None:
 		elem = header.find(".//publicationStmt/date", self.ns)
 		if elem is None or not elem.text:
 			return
@@ -752,7 +764,7 @@ class Reader(object):
 	def replaceRefLink(self, text: str) -> str:
 		return self._ref_pattern.sub('<a href="\\1">\\2</a>', text)
 
-	def setDescription(self, header: str) -> None:
+	def setDescription(self, header: "Element") -> None:
 		elems = []
 		for tag in ("sourceDesc", "projectDesc"):
 			elems += header.findall(f".//{tag}//p", self.ns)
@@ -779,9 +791,11 @@ class Reader(object):
 			"--------------------------------------",
 		)
 
-	def setMetadata(self, header: str) -> None:
+	def setMetadata(self, header: "Element") -> None:
 		self.setWordCount(header)
-		self.setGlosInfo("name", header.find(".//title", self.ns).text)
+		title = header.find(".//title", self.ns)
+		if title is not None and title.text:
+			self.setGlosInfo("name", title.text)
 
 		edition = header.find(".//edition", self.ns)
 		if edition is not None and edition.text:
@@ -795,10 +809,10 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file = None
+		self._file: "Optional[IOBase]" = None
 		self._fileSize = 0
 		self._wordCount = 0
-		self._discoveredTags = {}
+		self._discoveredTags: "dict[str, Element]" = {}
 
 		self._p_pattern = re.compile(
 			'<p( [^<>]*?)?>(.*?)</p>',
