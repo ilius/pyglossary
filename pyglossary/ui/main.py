@@ -338,7 +338,7 @@ def main() -> None:
 		type=int,
 		choices=(0, 1, 2, 3, 4, 5),
 		required=False,
-		default=3,
+		default=int(os.getenv("VERBOSITY", "3")),
 	)
 
 	parser.add_argument(
