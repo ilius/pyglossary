@@ -1013,20 +1013,6 @@
 		]
 	},
 	{
-		"module": "gettext_mo",
-		"lname": "gettext_mo",
-		"name": "GettextMo",
-		"description": "Gettext Binary (mo)",
-		"extensions": [
-			".mo"
-		],
-		"singleFile": true,
-		"optionsProp": {},
-		"canRead": false,
-		"canWrite": false,
-		"enable": false
-	},
-	{
 		"module": "gettext_po",
 		"lname": "gettext_po",
 		"name": "GettextPo",
