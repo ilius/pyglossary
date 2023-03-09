@@ -76,7 +76,12 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			'<a href="bword://test" title="test">',
 		)
 
-	def convert_appledict_binary_to_txt(self, baseName: str, files: "list[str]"):
+	def convert_appledict_binary_to_txt(
+		self,
+		baseName: str,
+		files: "list[str]",
+		html_full: bool = False,
+	):
 		self.glos = Glossary()
 		inputDirPath = self.downloadDir(
 			f"appledict-bin/{baseName}.dictionary",
@@ -95,6 +100,9 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			outputFilename=outputFilePath,
 			inputFormat="AppleDictBin",
 			outputFormat="Tabfile",
+			readOptions={
+				"html_full": html_full,
+			},
 		)
 		self.assertIsNotNone(result)
 		self.assertEqual(result, outputFilePath)

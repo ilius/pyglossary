@@ -201,7 +201,7 @@
 		"canWrite": false,
 		"readOptions": {
 			"html": true,
-			"html_full": false
+			"html_full": true
 		},
 		"readDepends": {
 			"lxml": "lxml",

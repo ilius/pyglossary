@@ -214,6 +214,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			glos,
 		)
 		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
+		# FIXME: check if full html pages/documents as entry do work
+		# glos.stripFullHtml(errorHandler=None)
 
 	def get_prefix(self, word: str) -> str:
 		if not word:

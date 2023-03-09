@@ -22,7 +22,7 @@
 | Name      | Default | Type | Comment                                             |
 | --------- | ------- | ---- | --------------------------------------------------- |
 | html      | `True`  | bool | Entries are HTML                                    |
-| html_full | `False` | bool | Turn every entry's definition into an HTML document |
+| html_full | `True`  | bool | Turn every entry's definition into an HTML document |
 
 ### Dependencies for reading
 

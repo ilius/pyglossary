@@ -84,7 +84,7 @@ class Reader(object):
 	}
 
 	_html: bool = True
-	_html_full: bool = False
+	_html_full: bool = True
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos: GlossaryType = glos
