@@ -136,8 +136,8 @@ class Reader(object):
 			return ET.Element("br")
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
-			kebList = []  # type: list[str]
-			rebList = []  # type: list[str]
+			kebList: "list[str]" = []
+			rebList: "list[str]" = []
 			with hf.element("div"):
 				for k_ele in entry.findall("k_ele"):
 					keb = k_ele.find("keb")

@@ -89,7 +89,7 @@ class Reader(object):
 		self._dataEntryCount = 0
 
 		# dict of mainWord -> newline-separated alternatives
-		self._linksDict = {}  # type: dict[str, str]
+		self._linksDict: "dict[str, str]" = {}
 
 	def open(self, filename: str) -> None:
 		from pyglossary.plugin_lib.readmdict import MDD, MDX

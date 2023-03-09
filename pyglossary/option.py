@@ -418,8 +418,8 @@ class EncodingOption(Option):
 
 	def groupValues(self) -> "Optional[dict[str, Any]]":
 		from collections import OrderedDict
-		groups = OrderedDict()  # type: dict[str, list[str]]
-		others = []  # type: list[str]
+		groups: "dict[str, list[str]]" = OrderedDict()
+		others: "list[str]" = []
 		for value in self.values or []:
 			cats = self.re_category.findall(value)
 			if not cats:

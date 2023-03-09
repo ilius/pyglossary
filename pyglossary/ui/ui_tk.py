@@ -23,7 +23,7 @@ import traceback
 from os.path import abspath, isfile, join, splitext
 from tkinter import filedialog, tix, ttk
 from tkinter import font as tkFont
-from typing import Callable, Dict, Literal, Optional
+from typing import Any, Callable, Dict, Literal, Optional
 
 from pyglossary import core
 from pyglossary.core import confDir, homeDir
@@ -1019,8 +1019,8 @@ class UI(tix.Frame, UIBase):
 			padx=0,
 		)
 		##
-		self.readOptions = {}  # type: dict[str, Any]
-		self.writeOptions = {}  # type: dict[str, Any]
+		self.readOptions: "dict[str, Any]" = {}
+		self.writeOptions: "dict[str, Any]" = {}
 		##
 		self.readOptionsButton = FormatOptionsButton(
 			"Read",

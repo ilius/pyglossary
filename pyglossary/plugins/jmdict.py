@@ -203,7 +203,7 @@ class Reader(object):
 						if not textElem.text:
 							continue
 						text = textElem.text
-						sentList = []  # type: list[str]
+						sentList: "list[str]" = []
 						for sentElem in elem.findall("ex_sent"):
 							if not sentElem.text:
 								continue
@@ -231,8 +231,8 @@ class Reader(object):
 			return ET.Element("br")
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
-			kebList = []  # type: list[str]
-			rebList = []  # type: list[str]
+			kebList: "list[str]" = []
+			rebList: "list[str]" = []
 			with hf.element("div"):
 				for k_ele in entry.findall("k_ele"):
 					keb = k_ele.find("keb")

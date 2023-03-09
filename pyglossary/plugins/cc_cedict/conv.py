@@ -8,7 +8,7 @@ from .pinyin import convert
 from .summarize import summarize
 
 if TYPE_CHECKING:
-	import lxml
+	import lxml.etree.htmlfile
 
 
 line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
@@ -25,22 +25,21 @@ COLORS = {
 }
 
 
-def parse_line(line: str) -> "Optional[tuple[str, str, str, str]]":
+def parse_line(line: str) -> "Optional[tuple[str, str, str, list[str]]]":
 	line = line.strip()
 	match = line_reg.match(line)
 	if match is None:
 		return None
 	trad, simp, pinyin, eng = match.groups()
 	pinyin = pinyin.replace("u:", "v")
-	eng = eng.split("/")
-	return trad, simp, pinyin, eng
+	return trad, simp, pinyin, eng.split("/")
 
 
 def make_entry(
 	trad: str,
 	simp: str,
 	pinyin: str,
-	eng: str,
+	eng: list[str],
 	traditional_title: str,
 ) -> "tuple[list[str], str]":
 	eng_names = list(map(summarize, eng))
@@ -76,7 +75,7 @@ def render_article(
 	trad: str,
 	simp: str,
 	pinyin: str,
-	eng: str,
+	eng: list[str],
 	traditional_title: str,
 ) -> str:
 	from io import BytesIO

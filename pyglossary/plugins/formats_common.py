@@ -59,8 +59,8 @@ enable = False
 lname = ""
 format = "Unknown"
 description = "Unknown"
-extensions = ()  # type: tuple[str, ...]
-extensionCreate = ""  # type: str
+extensions: "tuple[str, ...]" = ()
+extensionCreate = ""
 singleFile = False
 kind = ""
 wiki = ""
@@ -69,7 +69,7 @@ website = None
 # key is option/argument name, value is instance of Option
 optionsProp: "dict[str, Option]" = {}
 
-sortOnWrite = DEFAULT_NO  # type: YesNoAlwaysNever
+sortOnWrite: YesNoAlwaysNever = DEFAULT_NO
 
 __all__ = [
 	"ALWAYS",

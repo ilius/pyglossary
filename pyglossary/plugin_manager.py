@@ -40,16 +40,16 @@ log = logging.getLogger("pyglossary")
 
 
 class PluginManager(object):
-	plugins = {}  # type: dict[str, PluginProp]
-	pluginByExt = {}  # type: dict[str, PluginProp]
+	plugins: "dict[str, PluginProp]" = {}
+	pluginByExt: "dict[str, PluginProp]" = {}
 	loadedModules: "set[types.ModuleType]" = set()
 
 	formatsReadOptions: "dict[str, dict[str, Any]]" = {}
 	formatsWriteOptions: "dict[str, dict[str, Any]]" = {}
 	# for example formatsReadOptions[format][optName] gives you the default value
 
-	readFormats = []  # type: list[str]
-	writeFormats = []  # type: list[str]
+	readFormats: "list[str]" = []
+	writeFormats: "list[str]" = []
 
 	@classmethod
 	def loadPluginsFromJson(cls: "Type", jsonPath: str) -> None:
