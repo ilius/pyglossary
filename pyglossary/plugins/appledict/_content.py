@@ -25,7 +25,7 @@
 
 import logging
 import re
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 from typing.re import Pattern
 from xml.sax.saxutils import quoteattr, unescape
 
@@ -248,7 +248,7 @@ def remove_style(tag: dict, line: str) -> None:
 		del tag["style"]
 
 
-def fix_sound_link(href: str, tag: "Dict[str, Any]") -> None:
+def fix_sound_link(href: str, tag: "dict[str, Any]") -> None:
 	tag["href"] = f'javascript:new Audio("{href[len("sound://"):]}").play();'
 
 

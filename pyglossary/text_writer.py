@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import io
-	from typing import Callable, Dict, Generator, Optional
+	from typing import Callable, Generator, Optional
 
 	from .glossary_type import EntryType, GlossaryType
 
@@ -36,7 +36,7 @@ class TextGlossaryWriter(object):
 		glos: "GlossaryType",
 		entryFmt: str = "",  # contain {word} and {defi}
 		writeInfo: bool = True,
-		outInfoKeysAliasDict: "Optional[Dict[str, str]]" = None,
+		outInfoKeysAliasDict: "Optional[dict[str, str]]" = None,
 	) -> None:
 		self._glos = glos
 		self._filename = ""
@@ -212,7 +212,7 @@ def writeTxt(
 	ext: str = ".txt",
 	head: str = "",
 	tail: str = "",
-	outInfoKeysAliasDict: "Optional[Dict[str, str]]" = None,
+	outInfoKeysAliasDict: "Optional[dict[str, str]]" = None,
 	encoding: str = "utf-8",
 	newline: str = "\n",
 	resources: bool = True,

@@ -2,7 +2,6 @@ import base64
 import logging
 import re
 from os.path import join
-from typing import Tuple
 
 from pyglossary.text_utils import crc32hex
 
@@ -15,11 +14,10 @@ def extractInlineHtmlImages(
 	defi: str,
 	outDir: str,
 	fnamePrefix: str = "",
-) -> "Tuple[str, list[Tuple[str, str]]]":
-	imageDataDict = {}  # type: Dict[str, bytes]
+) -> "tuple[str, list[tuple[str, str]]]":
+	imageDataDict: "dict[str, bytes]" = {}
 
 	def subFunc(m: "re.Match") -> str:
-		nonlocal images
 		src = m.group(1)[len("data:image/"):]
 		i = src.find(";")
 		if i < 0:
@@ -37,7 +35,7 @@ def extractInlineHtmlImages(
 
 	defi = re_inline_image.sub(subFunc, defi)
 
-	images = []
+	images: "list[tuple[str, str]]" = []
 	for imgFname, imgData in imageDataDict.items():
 		imgPath = join(outDir, imgFname)
 		with open(imgPath, mode="wb") as _file:

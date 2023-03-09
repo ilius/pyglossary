@@ -20,7 +20,7 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Optional
 
 import pyglossary.gregorian as gregorian
 from pyglossary.core import log
@@ -79,7 +79,7 @@ def charsetInfoDecode(b_value: bytes) -> "Optional[str]":
 	return None
 
 
-def aboutInfoDecode(b_value: bytes) -> "Dict[str, str]":
+def aboutInfoDecode(b_value: bytes) -> "dict[str, str]":
 	if not b_value:
 		return None
 	aboutExt, _, aboutContents = b_value.partition(b"\x00")
@@ -137,7 +137,7 @@ def utf16InfoDecode(b_value: bytes) -> "Optional[str]":
 	return b_value[8:].decode("utf16")  # str
 
 
-def flagsInfoDecode(b_value: bytes) -> "Dict[str, bool]":
+def flagsInfoDecode(b_value: bytes) -> "dict[str, bool]":
 	"""
 		returns a dict with these keys:
 			utf8Encoding

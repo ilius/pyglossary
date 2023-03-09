@@ -22,11 +22,9 @@ from struct import unpack
 from typing import (
 	TYPE_CHECKING,
 	Any,
-	Dict,
 	Iterator,
 	Match,
 	Optional,
-	Tuple,
 )
 
 from lxml import etree
@@ -97,7 +95,7 @@ class Reader(object):
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
 		self._titleById = {}
 		self._wordCount = 0
-		self._keyTextData: "Dict[ArticleAddress, list[RawKeyData]]" = {}
+		self._keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}
 
 	def sub_link(self, m: "Match") -> str:
 		from lxml.html import fromstring, tostring
@@ -136,7 +134,7 @@ class Reader(object):
 	def fixLinksInDefi(self, defi: str) -> str:
 		return self._re_link.sub(self.sub_link, defi)
 
-	def open(self, filename: str) -> "Iterator[Tuple[int, int]]":
+	def open(self, filename: str) -> "Iterator[tuple[int, int]]":
 		from os.path import dirname
 		try:
 			from lxml import etree  # noqa: F401
@@ -222,7 +220,7 @@ class Reader(object):
 			f"number of entries: {self._wordCount}",
 		)
 
-	def parseMetadata(self, infoPlistPath: str) -> "Dict[str, Any]":
+	def parseMetadata(self, infoPlistPath: str) -> "dict[str, Any]":
 		import biplist
 
 		if not isfile(infoPlistPath):
@@ -231,7 +229,7 @@ class Reader(object):
 				"Please provide 'Contents/' folder of the dictionary",
 			)
 
-		metadata: "Dict[str, Any]"
+		metadata: "dict[str, Any]"
 		try:
 			metadata = biplist.readPlist(infoPlistPath)
 		except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
@@ -246,7 +244,7 @@ class Reader(object):
 				) from e
 		return metadata
 
-	def setMetadata(self, metadata: "Dict[str, Any]") -> None:
+	def setMetadata(self, metadata: "dict[str, Any]") -> None:
 		name = metadata.get("CFBundleDisplayName")
 		if not name:
 			name = metadata.get("CFBundleIdentifier")
@@ -274,7 +272,7 @@ class Reader(object):
 
 		self._properties = from_metadata(metadata)
 
-	def setLangs(self, metadata: "Dict[str, Any]") -> None:
+	def setLangs(self, metadata: "dict[str, Any]") -> None:
 		import locale
 
 		langsList = metadata.get("DCSDictionaryLanguages")
@@ -336,7 +334,7 @@ class Reader(object):
 
 		return defi
 
-	def getChunkLenOffset(self, pos: int, buffer: bytes) -> "Tuple[int, int]":
+	def getChunkLenOffset(self, pos: int, buffer: bytes) -> "tuple[int, int]":
 		"""
 		@return chunk byte length and offset
 
@@ -468,7 +466,7 @@ class Reader(object):
 		self,
 		morphoFilePath: str,
 		properties: "AppleDictProperties",
-	) -> "Iterator[Tuple[int, int]]":
+	) -> "Iterator[tuple[int, int]]":
 		"""
 			Prepare `KeyText.data` file for extracting morphological data
 
@@ -516,13 +514,13 @@ class Reader(object):
 		bufferOffset: int,
 		bufferLimit: int,
 		properties: "AppleDictProperties",
-	) -> "Iterator[Tuple[int, int]]":
+	) -> "Iterator[tuple[int, int]]":
 		"""
 			Returns an iterator/generator for the progress
 			Sets self._keyTextData when done
 		"""
 		buff.seek(bufferOffset)
-		keyTextData: "Dict[ArticleAddress, list[RawKeyData]]" = {}
+		keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}
 		while bufferOffset < bufferLimit:
 			yield (bufferOffset, bufferLimit)
 			buff.seek(bufferOffset)
@@ -631,7 +629,7 @@ class Reader(object):
 		self,
 		body_file: "io.BufferedIOBase",
 		properties: "AppleDictProperties",
-	) -> "Iterator[Tuple[bytes, ArticleAddress]]":
+	) -> "Iterator[tuple[bytes, ArticleAddress]]":
 		fileDataOffset, fileLimit = guessFileOffsetLimit(body_file)
 		sectionOffset = fileDataOffset
 		while sectionOffset < fileLimit:

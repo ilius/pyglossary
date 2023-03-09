@@ -19,16 +19,13 @@ if TYPE_CHECKING:
 	from typing import (
 		Any,
 		Callable,
-		Dict,
 		Optional,
-		Tuple,
-		Type,
 		TypeAlias,
 		Union,
 	)
 	ExcInfoType: TypeAlias = Union[
-		Tuple[Type[BaseException], BaseException, types.TracebackType],
-		Tuple[None, None, None],
+		tuple[type[BaseException], BaseException, types.TracebackType],
+		tuple[None, None, None],
 	]
 
 
@@ -123,7 +120,7 @@ class MyLogger(logging.Logger):
 
 
 def formatVarDict(
-	dct: "Dict[str, Any]",
+	dct: "dict[str, Any]",
 	indent: int = 4,
 	max_width: int = 80,
 ) -> str:
@@ -183,7 +180,7 @@ class StdLogHandler(logging.Handler):
 		logging.Handler.__init__(self)
 		self.set_name("std")
 		self.noColor = noColor
-		self.config: "Dict[str, Any]" = {}
+		self.config: "dict[str, Any]" = {}
 
 	@property
 	def endFormat(self) -> str:
@@ -306,7 +303,7 @@ log = logging.getLogger("pyglossary")
 
 if os.sep == "\\":
 	def windows_show_exception(
-		_type: "Type[BaseException]",
+		_type: "type[BaseException]",
 		exc: "BaseException",
 		tback: "Optional[types.TracebackType]",
 	) -> None:
@@ -325,7 +322,7 @@ if os.sep == "\\":
 
 else:
 	def unix_show_exception(
-		_type: "Type[BaseException]",
+		_type: "type[BaseException]",
 		exc: "BaseException",
 		tback: "Optional[types.TracebackType]",
 	) -> None:

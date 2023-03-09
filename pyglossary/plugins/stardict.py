@@ -19,13 +19,11 @@ from time import time as now
 from typing import (
 	Any,
 	Callable,
-	Dict,
 	Generator,
 	Iterator,
 	Literal,
 	Optional,
 	Sequence,
-	Tuple,
 )
 
 from pyglossary.core import log
@@ -141,7 +139,7 @@ def verifySameTypeSequence(s: str) -> bool:
 
 
 class MemList(list):
-	def sortKey(self, item: "Tuple[bytes, Any]") -> "Tuple[bytes, bytes]":
+	def sortKey(self, item: "tuple[bytes, Any]") -> "tuple[bytes, bytes]":
 		return (
 			item[0].lower(),
 			item[0],
@@ -194,7 +192,7 @@ class BaseSqList(list):
 		)
 		self._con.commit()
 
-	def getExtraColumns(self) -> "list[Tuple[str, str]]":
+	def getExtraColumns(self) -> "list[tuple[str, str]]":
 		# list[(columnName, dataType)]
 		return []
 
@@ -238,7 +236,7 @@ class BaseSqList(list):
 
 
 class IdxSqList(BaseSqList):
-	def getExtraColumns(self) -> "list[Tuple[str, str]]":
+	def getExtraColumns(self) -> "list[tuple[str, str]]":
 		# list[(columnName, dataType)]
 		return [
 			("idx_block", "BLOB"),
@@ -246,7 +244,7 @@ class IdxSqList(BaseSqList):
 
 
 class SynSqList(BaseSqList):
-	def getExtraColumns(self) -> "list[Tuple[str, str]]":
+	def getExtraColumns(self) -> "list[tuple[str, str]]":
 		# list[(columnName, dataType)]
 		return [
 			("entry_index", "INTEGER"),
@@ -375,7 +373,7 @@ class Reader(object):
 			else:
 				raise ValueError(f"invalid {idxoffsetbits = }")
 
-	def readIdxFile(self) -> "list[Tuple[bytes, int, int]]":
+	def readIdxFile(self) -> "list[tuple[bytes, int, int]]":
 		if isfile(self._filename + ".idx.gz"):
 			with gzip.open(self._filename + ".idx.gz") as idxFile:
 				idxBytes = idxFile.read()
@@ -387,10 +385,10 @@ class Reader(object):
 		pos = 0
 
 		if self._large_file:
-			def getOffset() -> "Tuple[int, int]":
+			def getOffset() -> "tuple[int, int]":
 				return uint64FromBytes(idxBytes[pos:pos + 8]), pos + 8
 		else:
-			def getOffset() -> "Tuple[int, int]":
+			def getOffset() -> "tuple[int, int]":
 				return uint32FromBytes(idxBytes[pos:pos + 4]), pos + 4
 
 		while pos < len(idxBytes):
@@ -416,7 +414,7 @@ class Reader(object):
 		b_defiPart: bytes,
 		i_type: int,
 		unicode_errors: str,
-	) -> "Tuple[str, str]":
+	) -> "tuple[str, str]":
 		_type = chr(i_type)
 
 		"""
@@ -461,9 +459,9 @@ class Reader(object):
 
 	def renderRawDefiList(
 		self,
-		rawDefiList: "list[Tuple[bytes, int]]",
+		rawDefiList: "list[tuple[bytes, int]]",
 		unicode_errors: str,
-	) -> "Tuple[str, str]":
+	) -> "tuple[str, str]":
 		if len(rawDefiList) == 1:
 			b_defiPart, i_type = rawDefiList[0]
 			_format, _defi = self.decodeRawDefiPart(
@@ -573,7 +571,7 @@ class Reader(object):
 						_file.read(),
 					)
 
-	def readSynFile(self) -> "Dict[int, list[str]]":
+	def readSynFile(self) -> "dict[int, list[str]]":
 		"""
 		return synDict, a dict { entryIndex -> altList }
 		"""
@@ -625,7 +623,7 @@ class Reader(object):
 		self,
 		b_block: bytes,
 		sametypesequence: str,
-	) -> "list[Tuple[bytes, int]]":
+	) -> "list[tuple[bytes, int]]":
 		"""
 		Parse definition block when sametypesequence option is specified.
 
@@ -672,7 +670,7 @@ class Reader(object):
 
 		return res
 
-	def parseDefiBlockGeneral(self, b_block: bytes) -> "list[Tuple[bytes, int]]":
+	def parseDefiBlockGeneral(self, b_block: bytes) -> "list[tuple[bytes, int]]":
 		"""
 		Parse definition block when sametypesequence option is not specified.
 
@@ -835,7 +833,7 @@ class Writer(object):
 			return MemList()
 		return SynSqList(join(self._glos.tmpDataDir, "stardict-syn.db"))
 
-	def dictMarkToBytesFunc(self) -> "Tuple[Callable, int]":
+	def dictMarkToBytesFunc(self) -> "tuple[Callable, int]":
 		if self._large_file:
 			return uint64ToBytes, 0xffffffffffffffff
 
@@ -993,7 +991,7 @@ class Writer(object):
 			defiFormat="",
 		)
 
-	def writeSynFile(self, altIndexList: "list[Tuple[bytes, int]]") -> None:
+	def writeSynFile(self, altIndexList: "list[tuple[bytes, int]]") -> None:
 		"""
 		Build .syn file
 		"""
@@ -1164,7 +1162,7 @@ class Writer(object):
 			defiFormat="",
 		)
 
-	def writeIdxFile(self, indexList: "list[Tuple[bytes, bytes]]") -> int:
+	def writeIdxFile(self, indexList: "list[tuple[bytes, bytes]]") -> int:
 		filename = self._filename + ".idx"
 		if not indexList:
 			return 0

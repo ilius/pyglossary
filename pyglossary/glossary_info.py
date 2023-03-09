@@ -19,7 +19,7 @@
 
 import logging
 from collections import OrderedDict as odict
-from typing import TYPE_CHECKING, AsyncContextManager, Dict, Iterator, Optional, Tuple
+from typing import TYPE_CHECKING, AsyncContextManager, Iterator, Optional
 
 if TYPE_CHECKING:
 	import lxml.etree.htmlfile
@@ -42,14 +42,14 @@ log = logging.getLogger("pyglossary")
 
 class GlossaryInfo(object):
 	def __init__(self) -> None:
-		self._info: "Dict[str, str]" = odict()
+		self._info: "dict[str, str]" = odict()
 
 	def infoKeys(self) -> "list[str]":
 		return list(self._info.keys())
 
 	# def formatInfoKeys(self, format: str):# FIXME
 
-	def iterInfo(self) -> "Iterator[Tuple[str, str]]":
+	def iterInfo(self) -> "Iterator[tuple[str, str]]":
 		return iter(self._info.items())
 
 	def getInfo(self, key: str) -> str:

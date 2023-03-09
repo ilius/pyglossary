@@ -25,7 +25,7 @@ import os
 import re
 import sys
 from collections import OrderedDict as odict
-from typing import Iterator, Optional, Tuple
+from typing import Iterator, Optional
 
 from pyglossary.core import log
 
@@ -821,7 +821,7 @@ class BglReader(object):
 		self,
 		block: "Block",
 		pos: int,
-	) -> "Tuple[bool, Optional[int], Optional[bytes], Optional[bytes]]":
+	) -> "tuple[bool, Optional[int], Optional[bytes], Optional[bytes]]":
 		"""
 			Read word part of entry.
 
@@ -870,7 +870,7 @@ class BglReader(object):
 		block: "Block",
 		pos: int,
 		b_word: bytes,
-	) -> "Tuple[bool, Optional[int], Optional[bytes], Optional[bytes]]":
+	) -> "tuple[bool, Optional[int], Optional[bytes], Optional[bytes]]":
 		"""
 		Read defi part of entry.
 
@@ -909,7 +909,7 @@ class BglReader(object):
 		pos: int,
 		b_word: bytes,
 		u_word: str,
-	) -> "Tuple[bool, Optional[int], Optional[list[str]]]":
+	) -> "tuple[bool, Optional[int], Optional[list[str]]]":
 		"""
 		returns:
 			(False, None, None) if error
@@ -948,7 +948,7 @@ class BglReader(object):
 	def readEntry_Type11(
 		self,
 		block: "Block",
-	) -> "Tuple[bool, Optional[str], Optional[list[str]], Optional[str]]":
+	) -> "tuple[bool, Optional[str], Optional[list[str]], Optional[str]]":
 		"""return (succeed, u_word, u_alts, u_defi)"""
 		Err = (False, None, None, None)
 		pos = 0
@@ -1045,7 +1045,7 @@ class BglReader(object):
 		self,
 		b_text: bytes,
 		defaultEncoding: str,
-	) -> "Tuple[str, str]":
+	) -> "tuple[str, str]":
 		"""
 		b_text is a bytes
 		Decode html text taking into account charset tags and default encoding

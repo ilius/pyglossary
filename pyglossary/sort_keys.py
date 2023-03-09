@@ -19,7 +19,7 @@
 
 import re
 from collections import namedtuple
-from typing import TYPE_CHECKING, Any, Callable, Optional, Tuple, TypeAlias
+from typing import TYPE_CHECKING, Any, Callable, Optional, TypeAlias
 
 if TYPE_CHECKING:
 	import icu
@@ -48,7 +48,7 @@ sortKeyType: TypeAlias = Callable[
 	Any,
 ]
 
-sqliteSortKeyType: TypeAlias = list[Tuple[str, str, sortKeyType]]
+sqliteSortKeyType: TypeAlias = list[tuple[str, str, sortKeyType]]
 
 
 def _headword_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
@@ -169,7 +169,7 @@ def _headword_bytes_lower_sqlite(sortEncoding: str = "utf-8", **options) \
 
 
 def _stardict_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
-	def sortKey(words: "list[str]") -> "Tuple[bytes, bytes]":
+	def sortKey(words: "list[str]") -> "tuple[bytes, bytes]":
 		b_word = words[0].encode(sortEncoding, errors="replace")
 		return (b_word.lower(), b_word)
 
@@ -202,7 +202,7 @@ def _ebook_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
 	length = options.get("group_by_prefix_length", 2)
 
 	# FIXME: return bytes
-	def sortKey(words: "list[str]") -> "Tuple[str, str]":
+	def sortKey(words: "list[str]") -> "tuple[str, str]":
 		word = words[0]
 		if not word:
 			return "", ""

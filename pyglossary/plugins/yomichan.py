@@ -2,7 +2,7 @@
 
 import json
 import re
-from typing import Any, Dict, Generator, Sequence
+from typing import Any, Generator, Sequence
 
 from pyglossary import os_utils
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -201,7 +201,7 @@ class Writer(object):
 	def _getAuthor(self) -> str:
 		return self._glos.author.replace("\n", "<br>")
 
-	def _getDictionaryIndex(self) -> "Dict[str, Any]":
+	def _getDictionaryIndex(self) -> "dict[str, Any]":
 		# Schema: https://github.com/FooSoft/yomichan/
 		# blob/master/ext/data/schemas/dictionary-index-schema.json
 		return dict(

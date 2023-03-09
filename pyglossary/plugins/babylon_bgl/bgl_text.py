@@ -21,7 +21,6 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import re
-from typing import Tuple
 
 from pyglossary.core import log
 from pyglossary.xml_utils import xml_escape
@@ -252,7 +251,7 @@ def fixImgLinks(u_text: str) -> str:
 	return u_text.replace("\x1e", "").replace("\x1f", "")
 
 
-def stripDollarIndexes(b_word: bytes) -> "Tuple[bytes, int]":
+def stripDollarIndexes(b_word: bytes) -> "tuple[bytes, int]":
 	if log.isDebug():
 		assert isinstance(b_word, bytes)  # noqa: S101
 	i = 0

@@ -22,10 +22,9 @@
 # ^ this takes about 3 seconds
 # installed_packages = set(r.decode().split('==')[0] for r in reqs.split())
 
-from typing import Dict
 
 
-def checkDepends(depends: "Dict[str, str]") -> "list[str]":
+def checkDepends(depends: "dict[str, str]") -> "list[str]":
 	"returns the list of uninstalled dependencies"
 	if not depends:
 		return []

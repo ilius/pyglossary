@@ -22,7 +22,7 @@ import logging
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Callable, Dict, Iterator, Optional
+	from typing import Any, Callable, Iterator, Optional
 
 	from .glossary_type import EntryType, GlossaryType, RawEntryType
 	from .sort_keys import NamedSortKey
@@ -51,7 +51,7 @@ class EntryListType(object):
 		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "Optional[str]",
-		writeOptions: "Dict[str, Any]",
+		writeOptions: "dict[str, Any]",
 	) -> None:
 		raise NotImplementedError
 
@@ -94,7 +94,7 @@ class EntryList(EntryListType):
 		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "Optional[str]",
-		writeOptions: "Dict[str, Any]",
+		writeOptions: "dict[str, Any]",
 	) -> None:
 		kwargs = writeOptions.copy()
 		if sortEncoding:

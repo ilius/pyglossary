@@ -21,7 +21,7 @@ import logging
 import re
 import struct
 import sys
-from typing import AnyStr, Callable, Tuple
+from typing import AnyStr, Callable
 
 log = logging.getLogger("pyglossary")
 
@@ -52,7 +52,7 @@ b_pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|".encode("ascii"))
 
 
 def replaceStringTable(
-	rplList: "list[Tuple[str, str]]",
+	rplList: "list[tuple[str, str]]",
 ) -> "Callable[[str], str]":
 	def replace(st: str) -> str:
 		for rpl in rplList:

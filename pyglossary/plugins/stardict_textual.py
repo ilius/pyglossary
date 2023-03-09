@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from typing import TYPE_CHECKING, Generator, Iterator, Tuple
+from typing import TYPE_CHECKING, Generator, Iterator
 
 if TYPE_CHECKING:
 	from lxml import builder
@@ -121,8 +121,8 @@ class Reader(object):
 
 	def renderDefiList(
 		self,
-		defisWithFormat: "list[Tuple[str, str]]",
-	) -> "Tuple[str, str]":
+		defisWithFormat: "list[tuple[str, str]]",
+	) -> "tuple[str, str]":
 		if len(defisWithFormat) == 1:
 			return defisWithFormat[0]
 		if len(defisWithFormat) == 0:

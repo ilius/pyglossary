@@ -20,7 +20,6 @@
 import logging
 from collections import OrderedDict
 from os.path import isfile, join
-from typing import Tuple
 
 from pyglossary.core import (
 	appResDir,
@@ -62,7 +61,7 @@ _entryFilterConfigDict = {
 }
 
 
-def getEntryFilterConfigPair(name: str) -> "Tuple[str, Option]":
+def getEntryFilterConfigPair(name: str) -> "tuple[str, Option]":
 	filterClass, default = _entryFilterConfigDict[name]
 	if isinstance(default, bool):
 		optClass = BoolOption

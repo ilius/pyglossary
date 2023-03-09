@@ -22,7 +22,6 @@ import logging
 from os.path import (
 	splitext,
 )
-from typing import Tuple
 
 from .compression import (
 	stdCompressions,
@@ -33,7 +32,7 @@ log = logging.getLogger("pyglossary")
 
 def splitFilenameExt(
 	filename: str = "",
-) -> "Tuple[str, str, str, str]":
+) -> "tuple[str, str, str, str]":
 	"""
 	returns (filenameNoExt, filename, ext, compression)
 	"""

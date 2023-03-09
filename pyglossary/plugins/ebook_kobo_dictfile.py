@@ -23,7 +23,7 @@
 
 import os
 from os.path import isdir
-from typing import Generator, Optional, Tuple
+from typing import Generator, Optional
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -107,7 +107,7 @@ class Reader(TextGlossaryReader):
 			pass
 		else:
 			defi = mistune.html(defi)
-		images: "Optional[list[Tuple[str, str]]]" = None
+		images: "Optional[list[tuple[str, str]]]" = None
 		if self._extract_inline_images:
 			defi, images = extractInlineHtmlImages(
 				defi,
@@ -116,7 +116,7 @@ class Reader(TextGlossaryReader):
 			)
 		return defi, images
 
-	def nextBlock(self) -> "Tuple[list[str], str, Optional[list[Tuple[str, str]]]]":
+	def nextBlock(self) -> "tuple[list[str], str, Optional[list[tuple[str, str]]]]":
 		if not self._file:
 			raise StopIteration
 		words = []

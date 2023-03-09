@@ -19,7 +19,7 @@ Chinese wildcard and pinyin indexes.
 """
 
 import re
-from typing import Optioal, Sequence, Set
+from typing import Optioal, Sequence
 
 import bs4
 
@@ -41,7 +41,7 @@ pinyinPattern = re.compile(r",|;")
 nonHieroglyphPattern = re.compile(r"[^\u4e00-\u9fff]")
 
 
-def zh(titles: "Sequence[str]", content: str) -> "Set[str]":
+def zh(titles: "Sequence[str]", content: str) -> "set[str]":
 	"""
 	Chinese indexes.
 
@@ -69,7 +69,7 @@ def zh(titles: "Sequence[str]", content: str) -> "Set[str]":
 	return indexes
 
 
-def pinyin_indexes(content: str) -> "Set[str]":
+def pinyin_indexes(content: str) -> "set[str]":
 	pinyin = find_pinyin(content)
 	# assert type(pinyin) == unicode
 

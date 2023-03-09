@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from io import BytesIO
 from os.path import isdir, join
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional
 
 if TYPE_CHECKING:
 	import lxml
@@ -226,7 +226,7 @@ class YamlReader(TextGlossaryReader):
 				skip_single=False,
 			)
 
-	def _createEntry(self, yamlBlock: str) -> "Optional[Tuple[str, str, None]]":
+	def _createEntry(self, yamlBlock: str) -> "Optional[tuple[str, str, None]]":
 		from lxml import etree as ET
 		from yaml import load
 		try:

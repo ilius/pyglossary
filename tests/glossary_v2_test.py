@@ -10,7 +10,7 @@ import tracemalloc
 import unittest
 import zipfile
 from os.path import abspath, dirname, isdir, isfile, join
-from typing import Callable, Dict, Optional
+from typing import Callable, Optional
 from urllib.request import urlopen
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -182,7 +182,7 @@ class TestGlossaryBase(unittest.TestCase):
 		self,
 		fpath1,
 		fpath2,
-		dataReplaceFuncs: "Dict[str, Callable]",
+		dataReplaceFuncs: "dict[str, Callable]",
 	):
 		zf1 = zipfile.ZipFile(fpath1)
 		zf2 = zipfile.ZipFile(fpath2)
@@ -207,8 +207,8 @@ class TestGlossaryBase(unittest.TestCase):
 	def checkZipFileSha1sum(
 		self,
 		fpath,
-		sha1sumDict: "Dict[str, str]",
-		dataReplaceFuncs: "Optional[Dict[str, Callable]]" = None,
+		sha1sumDict: "dict[str, str]",
+		dataReplaceFuncs: "Optional[dict[str, Callable]]" = None,
 	):
 		if dataReplaceFuncs is None:
 			dataReplaceFuncs = {}

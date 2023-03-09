@@ -1,6 +1,6 @@
 import os
 import re
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import TYPE_CHECKING, Optional
 
 from pyglossary.core import log
 
@@ -25,7 +25,7 @@ COLORS = {
 }
 
 
-def parse_line(line: str) -> "Optional[Tuple[str, str, str, str]]":
+def parse_line(line: str) -> "Optional[tuple[str, str, str, str]]":
 	line = line.strip()
 	match = line_reg.match(line)
 	if match is None:
@@ -42,7 +42,7 @@ def make_entry(
 	pinyin: str,
 	eng: str,
 	traditional_title: str,
-) -> "Tuple[list[str], str]":
+) -> "tuple[list[str], str]":
 	eng_names = list(map(summarize, eng))
 	names = [
 		trad if traditional_title else simp,

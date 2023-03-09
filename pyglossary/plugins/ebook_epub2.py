@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import Any, ClassVar, Dict
+from typing import Any, ClassVar
 
 from pyglossary.ebook_base import EbookWriter
 from pyglossary.flags import ALWAYS
@@ -212,7 +212,7 @@ p.groupDefinition {
 		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
 	@classmethod
-	def cls_get_prefix(cls: "ClassVar", options: "Dict[str, Any]", word: str) -> str:
+	def cls_get_prefix(cls: "ClassVar", options: "dict[str, Any]", word: str) -> str:
 		if not word:
 			return None
 		length = options.get("group_by_prefix_length", cls._group_by_prefix_length)

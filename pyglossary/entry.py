@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 		Any,
 		Callable,
 		Optional,
-		Tuple,
 		Type,
 		Union,
 	)
@@ -49,7 +48,7 @@ class DataEntry(BaseEntry):
 		fname: str,
 		data: bytes = b"",
 		tmpPath: "Optional[str]" = None,
-		byteProgress: "Optional[Tuple[int, int]]" = None,
+		byteProgress: "Optional[tuple[int, int]]" = None,
 	) -> None:
 		if data and tmpPath:
 			with open(tmpPath, "wb") as toFile:
@@ -59,7 +58,7 @@ class DataEntry(BaseEntry):
 		self._fname = fname
 		self._data = data  # bytes instance
 		self._tmpPath = tmpPath
-		self._byteProgress = byteProgress  # Optional[Tuple[int, int]]
+		self._byteProgress = byteProgress  # Optional[tuple[int, int]]
 
 	def getFileName(self) -> str:
 		return self._fname
@@ -108,7 +107,7 @@ class DataEntry(BaseEntry):
 	def defi(self) -> str:
 		return f"File: {self._fname}"
 
-	def byteProgress(self) -> "Optional[Tuple[int, int]]":
+	def byteProgress(self) -> "Optional[tuple[int, int]]":
 		return self._byteProgress
 
 	@property
@@ -219,7 +218,7 @@ class Entry(BaseEntry):
 		word: MultiStr,
 		defi: str,
 		defiFormat: str = "m",
-		byteProgress: "Optional[Tuple[int, int]]" = None,
+		byteProgress: "Optional[tuple[int, int]]" = None,
 	) -> None:
 		"""
 			word: string or a list of strings (including alternate words)
@@ -249,7 +248,7 @@ class Entry(BaseEntry):
 		self._word = word
 		self._defi = defi
 		self._defiFormat = defiFormat
-		self._byteProgress = byteProgress  # Optional[Tuple[int, int]]
+		self._byteProgress = byteProgress  # Optional[tuple[int, int]]
 
 	def __repr__(self) -> str:
 		return (
@@ -315,7 +314,7 @@ class Entry(BaseEntry):
 			self._defiFormat = "h"
 			return
 
-	def byteProgress(self) -> "Optional[Tuple[int, int]]":
+	def byteProgress(self) -> "Optional[tuple[int, int]]":
 		return self._byteProgress
 
 	def addAlt(self, alt: str) -> None:
@@ -428,7 +427,7 @@ class Entry(BaseEntry):
 			returns a tuple (word, defi) or (word, defi, defiFormat)
 			where both word and defi might be string or list of strings
 		"""
-		tpl: "Union[Tuple[list[str], bytes, str], Tuple[list[str], bytes]]"
+		tpl: "Union[tuple[list[str], bytes, str], tuple[list[str], bytes]]"
 		if self._defiFormat and self._defiFormat != glos.getDefaultDefiFormat():
 			tpl = (
 				self.l_word,

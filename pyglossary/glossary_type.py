@@ -5,10 +5,8 @@ from typing import (
 	Any,
 	AsyncContextManager,
 	Callable,
-	Dict,
 	Iterator,
 	Optional,
-	Tuple,
 	TypeAlias,
 	Union,
 )
@@ -22,8 +20,8 @@ from .langs import Lang
 
 RawEntryType: TypeAlias = Union[
 	bytes,  # compressed
-	"Tuple[list[str], bytes]",  # uncompressed, without defiFormat
-	"Tuple[list[str], bytes, str]",  # uncompressed, with defiFormat
+	"tuple[list[str], bytes]",  # uncompressed, without defiFormat
+	"tuple[list[str], bytes, str]",  # uncompressed, with defiFormat
 ]
 
 
@@ -111,7 +109,7 @@ class EntryType(object):
 	) -> "Callable[[RawEntryType], Any]":
 		raise NotImplementedError
 
-	def byteProgress(self) -> "Optional[Tuple[int, int]]":
+	def byteProgress(self) -> "Optional[tuple[int, int]]":
 		raise NotImplementedError
 
 	def removeEmptyAndDuplicateAltWords(self) -> None:
@@ -141,10 +139,10 @@ class GlossaryType(object):
 	def collectDefiFormat(
 		self,
 		maxCount: int,
-	) -> "Optional[Dict[str, float]]":
+	) -> "Optional[dict[str, float]]":
 		raise NotImplementedError
 
-	def iterInfo(self) -> "Iterator[Tuple[str, str]]":
+	def iterInfo(self) -> "Iterator[tuple[str, str]]":
 		raise NotImplementedError
 
 	def getInfo(self, key: str) -> str:

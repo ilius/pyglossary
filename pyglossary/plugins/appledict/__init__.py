@@ -138,7 +138,7 @@ def write_header(
 			toFile.write(front_back_matter.read())
 
 
-def format_default_prefs(default_prefs: "Optional[Dict[str, Any]]") -> str:
+def format_default_prefs(default_prefs: "Optional[dict[str, Any]]") -> str:
 	"""
 	:type default_prefs: dict or None
 

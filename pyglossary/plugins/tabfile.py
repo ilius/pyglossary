@@ -2,7 +2,7 @@
 
 import os
 from os.path import isdir, join
-from typing import Generator, Iterator, Optional, Tuple
+from typing import Generator, Iterator, Optional
 
 from pyglossary.compression import stdCompressions
 from pyglossary.core import log
@@ -52,7 +52,7 @@ class Reader(TextGlossaryReader):
 		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self, filename: str) -> "Iterator[Tuple[int, int]]":
+	def open(self, filename: str) -> "Iterator[tuple[int, int]]":
 		yield from TextGlossaryReader.openGen(self, filename)
 		resDir = f"{filename}_res"
 		if isdir(resDir):
@@ -75,7 +75,7 @@ class Reader(TextGlossaryReader):
 	def fixInfoWord(self, word: str) -> str:
 		return word.lstrip("#")
 
-	def nextBlock(self) -> "Optional[Tuple[str, str, None]]":
+	def nextBlock(self) -> "Optional[tuple[str, str, None]]":
 		if not self._file:
 			raise StopIteration
 		line = self.readline()

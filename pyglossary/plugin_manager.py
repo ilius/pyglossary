@@ -22,7 +22,7 @@ import os
 import sys
 import types
 from os.path import isdir, join
-from typing import Any, Dict, Optional, Tuple, Type
+from typing import Any, Optional, Type
 
 from . import core
 from .core import (
@@ -40,12 +40,12 @@ log = logging.getLogger("pyglossary")
 
 
 class PluginManager(object):
-	plugins = {}  # type: Dict[str, PluginProp]
-	pluginByExt = {}  # type: Dict[str, PluginProp]
+	plugins = {}  # type: dict[str, PluginProp]
+	pluginByExt = {}  # type: dict[str, PluginProp]
 	loadedModules: "set[types.ModuleType]" = set()
 
-	formatsReadOptions: "Dict[str, Dict[str, Any]]" = {}
-	formatsWriteOptions: "Dict[str, Dict[str, Any]]" = {}
+	formatsReadOptions: "dict[str, dict[str, Any]]" = {}
+	formatsWriteOptions: "dict[str, dict[str, Any]]" = {}
 	# for example formatsReadOptions[format][optName] gives you the default value
 
 	readFormats = []  # type: list[str]
@@ -101,7 +101,7 @@ class PluginManager(object):
 	@classmethod
 	def _loadPluginByDict(
 		cls: "Type",
-		attrs: "Dict[str, Any]",
+		attrs: "dict[str, Any]",
 		modulePath: str,
 	) -> None:
 		format = attrs["name"]
@@ -203,7 +203,7 @@ class PluginManager(object):
 		filename: str,
 		format: str = "",
 		quiet: bool = False,
-	) -> "Optional[Tuple[str, str, str]]":
+	) -> "Optional[tuple[str, str, str]]":
 		"""
 			returns (filename, format, compression) or None
 		"""
@@ -245,7 +245,7 @@ class PluginManager(object):
 		inputFilename: str = "",
 		quiet: bool = False,
 		addExt: bool = False,
-	) -> "Optional[Tuple[str, str, str]]":
+	) -> "Optional[tuple[str, str, str]]":
 		"""
 		returns (filename, format, compression) or None
 		"""

@@ -18,7 +18,7 @@
 Russian indexes based on pymorphy.
 """
 
-from typing import Sequence, Set
+from typing import Sequence
 
 from pyglossary.core import log, pip
 
@@ -35,7 +35,7 @@ Or by running: {pip} install pymorphy2""")
 morphy = pymorphy2.MorphAnalyzer()
 
 
-def ru(titles: "Sequence[str]", _: str) -> "Set[str]":
+def ru(titles: "Sequence[str]", _: str) -> "set[str]":
 	"""
 	gives a set of all declines, cases and other forms of word `title`.
 	note that it works only if title is one word.
@@ -48,7 +48,7 @@ def ru(titles: "Sequence[str]", _: str) -> "Set[str]":
 	return indexes
 
 
-def _ru(title: str, a: "Set[str]", a_norm: "Set[str]") -> None:
+def _ru(title: str, a: "set[str]", a_norm: "set[str]") -> None:
 	# uppercase abbreviature
 	if title.isupper():
 		return

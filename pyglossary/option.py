@@ -2,12 +2,12 @@
 
 import logging
 import re
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 log = logging.getLogger("pyglossary")
 
 
-def optionFromDict(data: "Dict[str, Any]") -> "Option":
+def optionFromDict(data: "dict[str, Any]") -> "Option":
 	className = data.pop("class")
 	if className == "Option":
 		data["typ"] = data.pop("type")
@@ -19,7 +19,7 @@ def optionFromDict(data: "Dict[str, Any]") -> "Option":
 
 
 class Option(object):
-	classes: "Dict[str, Type]" = {}
+	classes: "dict[str, Type]" = {}
 
 	@classmethod
 	def register(cls: "Type", optClass: "Type") -> "Type":
@@ -66,7 +66,7 @@ class Option(object):
 			comment += self.comment
 		return comment
 
-	def toDict(self) -> "Dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = {
 			"class": self.__class__.__name__,
 			"type": self.typ,
@@ -85,7 +85,7 @@ class Option(object):
 			data["falseComment"] = self.falseComment
 		return data
 
-	def evaluate(self, raw: str) -> "Tuple[Any, bool]":
+	def evaluate(self, raw: str) -> "tuple[Any, bool]":
 		"returns (value, isValid)"
 		if raw == "None":
 			return None, True
@@ -114,7 +114,7 @@ class Option(object):
 			return False
 		return True
 
-	def groupValues(self) -> "Optional[Dict[str, Any]]":
+	def groupValues(self) -> "Optional[dict[str, Any]]":
 		return None
 
 
@@ -137,13 +137,13 @@ class BoolOption(Option):
 			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self) -> "Dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		del data["values"]
 		return data
 
-	def evaluate(self, raw: "Union[str, bool]") -> "Tuple[Optional[bool], bool]":
+	def evaluate(self, raw: "Union[str, bool]") -> "tuple[Optional[bool], bool]":
 		if raw is None:
 			return None, True
 		if isinstance(raw, bool):
@@ -182,7 +182,7 @@ class StrOption(Option):
 			return value in self.values
 		return type(value).__name__ == "str"
 
-	def groupValues(self) -> "Optional[Dict[str, Any]]":
+	def groupValues(self) -> "Optional[dict[str, Any]]":
 		return None
 
 
@@ -198,7 +198,7 @@ class IntOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self, raw: "Union[str, int]") -> "Tuple[Optional[int], bool]":
+	def evaluate(self, raw: "Union[str, int]") -> "tuple[Optional[int], bool]":
 		"returns (value, isValid)"
 		try:
 			value = int(raw)
@@ -249,7 +249,7 @@ class FileSizeOption(IntOption):
 	def typeDesc(self) -> str:
 		return ""
 
-	def evaluate(self, raw: "Union[str, int]") -> "Tuple[Optional[int], bool]":
+	def evaluate(self, raw: "Union[str, int]") -> "tuple[Optional[int], bool]":
 		if not raw:
 			return 0, True
 		factor = 1
@@ -285,7 +285,7 @@ class FloatOption(Option):
 	def evaluate(
 		self,
 		raw: "Union[str, float, int]",
-	) -> "Tuple[Optional[float], bool]":
+	) -> "tuple[Optional[float], bool]":
 		"returns (value, isValid)"
 		try:
 			value = float(raw)
@@ -310,12 +310,12 @@ class DictOption(Option):
 			**kwargs,
 		)
 
-	def toDict(self) -> "Dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
 
-	def evaluate(self, raw: "Union[str, dict]") -> "Tuple[Optional[Dict], bool]":
+	def evaluate(self, raw: "Union[str, dict]") -> "tuple[Optional[Dict], bool]":
 		import ast
 		if isinstance(raw, dict):
 			return raw, True
@@ -342,12 +342,12 @@ class ListOption(Option):
 			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self) -> "Dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
 
-	def evaluate(self, raw: str) -> "Tuple[Optional[List], bool]":
+	def evaluate(self, raw: str) -> "tuple[Optional[List], bool]":
 		import ast
 		if raw == "":
 			return None, True  # valid
@@ -411,14 +411,14 @@ class EncodingOption(Option):
 			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self) -> "Dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["values"]
 		return data
 
-	def groupValues(self) -> "Optional[Dict[str, Any]]":
+	def groupValues(self) -> "Optional[dict[str, Any]]":
 		from collections import OrderedDict
-		groups = OrderedDict()  # type: Dict[str, list[str]]
+		groups = OrderedDict()  # type: dict[str, list[str]]
 		others = []  # type: list[str]
 		for value in self.values or []:
 			cats = self.re_category.findall(value)
@@ -467,7 +467,7 @@ class NewlineOption(Option):
 
 @Option.register
 class HtmlColorOption(Option):
-	def toDict(self) -> "Dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data

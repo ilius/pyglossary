@@ -5,7 +5,7 @@ import os
 import re
 import time
 from os.path import isdir, isfile, join
-from typing import TYPE_CHECKING, Generator, Set
+from typing import TYPE_CHECKING, Generator
 
 if TYPE_CHECKING:
 	import io
@@ -150,7 +150,7 @@ class Writer(object):
 		)
 		return self._fileObj
 
-	def fixLinks(self, linkTargetSet: "Set[str]") -> None:
+	def fixLinks(self, linkTargetSet: "set[str]") -> None:
 		import gc
 
 		from cachetools import LRUCache

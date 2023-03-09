@@ -5,7 +5,7 @@ import os
 import shlex
 import sys
 from subprocess import PIPE, Popen
-from typing import Iterator, Optional, Tuple
+from typing import Iterator, Optional
 
 from pyglossary.entry import Entry
 from pyglossary.glossary_type import EntryType
@@ -109,7 +109,7 @@ def diffGlossary(
 		)
 		write(formatted)
 
-	def printInfo(color: str, prefix: str, pair: "Tuple[str, str]") -> None:
+	def printInfo(color: str, prefix: str, pair: "tuple[str, str]") -> None:
 		key, value = pair
 		spaces = " " * (len(prefix) + 7)
 		valueColor = color + spaces + value.replace("\n", "\n" + spaces + color)
@@ -145,7 +145,7 @@ def diffGlossary(
 	infoPair1 = None
 	infoPair2 = None
 
-	def newInfoEntry(pair: "Tuple[str, str]") -> "EntryType":
+	def newInfoEntry(pair: "tuple[str, str]") -> "EntryType":
 		key, value = pair
 		return Entry(f"Info: {key}", f"Value: {value}")
 

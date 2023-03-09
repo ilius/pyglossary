@@ -1,11 +1,11 @@
 import unicodedata
 from collections import namedtuple
-from typing import Optional, Set
+from typing import Optional
 
 WritingSystem = namedtuple(
 	"WritingSystem", [
 		"name",
-		"iso",  # list[Tuple[int, str]]
+		"iso",  # list[tuple[int, str]]
 		"unicode",
 		"titleTag",
 		"direction",  # ltr | rtl | ttb
@@ -480,7 +480,7 @@ def getWritingSystemFromText(
 def getAllWritingSystemsFromText(
 	st: str,
 	begining: bool = False,
-) -> "Set[str]":
+) -> "set[str]":
 	st = st.strip()
 	if not st:
 		return set()

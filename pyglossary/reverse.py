@@ -130,7 +130,7 @@ def searchWordInDef(
 		re.U,
 	)
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
-	outRel: "list[Union[Tuple[str, float], Tuple[str, float, str]]]" = []
+	outRel: "list[Union[tuple[str, float], tuple[str, float, str]]]" = []
 	for entry in entryIter:
 		words = entry.l_word
 		defi = entry.defi

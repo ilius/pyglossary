@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 from .entry_list import EntryListType
 
 if TYPE_CHECKING:
-	from typing import Any, Dict, Iterable, Iterator, Optional
+	from typing import Any, Iterable, Iterator, Optional
 
 	from .glossary_type import EntryType, GlossaryType
 	from .sort_keys import NamedSortKey
@@ -83,7 +83,7 @@ class SqEntryList(EntryListType):
 		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "Optional[str]",
-		writeOptions: "Dict[str, Any]",
+		writeOptions: "dict[str, Any]",
 	) -> None:
 		"""
 			sqliteSortKey[i] == (name, type, valueFunc)

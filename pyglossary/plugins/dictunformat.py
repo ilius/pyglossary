@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 from pyglossary.core import log
 from pyglossary.option import EncodingOption, Option, StrOption
@@ -63,7 +63,7 @@ class Reader(TextGlossaryReader):
 			value = ":".join(parts[1:])
 			glos.setInfo(key, value)
 
-	def nextBlock(self) -> "Optional[Tuple[str, str, None]]":
+	def nextBlock(self) -> "Optional[tuple[str, str, None]]":
 		if not self._file:
 			raise StopIteration
 		word = ""

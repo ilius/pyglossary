@@ -21,7 +21,7 @@ exposed API lives here.
 
 import copy
 import re
-from typing import Iterable, Set, Tuple, Union
+from typing import Iterable, Union
 
 from . import layer as _layer
 from . import tag as _tag
@@ -85,7 +85,7 @@ class DSLParser(object):
 
 	def __init__(
 		self,
-		tags: "Set[Union[str, Tuple[str, str]]]" = frozenset({
+		tags: "set[Union[str, tuple[str, str]]]" = frozenset({
 			("m", r"\d"),
 			"*",
 			"ex",

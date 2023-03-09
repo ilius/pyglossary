@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import io
-	from typing import Generator, Iterator, Set, Tuple, Union
+	from typing import Generator, Iterator, Union
 
 	from pyglossary.glossary_type import EntryType, GlossaryType
 
@@ -16,10 +16,10 @@ from pyglossary.entry import DataEntry
 
 log = logging.getLogger("pyglossary")
 
-resListType = "Optional[list[Tuple[str, str]]]"
+resListType = "Optional[list[tuple[str, str]]]"
 
 nextBlockResultType = f"""Optional[
-	Tuple[str, str, {resListType}]
+	tuple[str, str, {resListType}]
 ]"""
 
 
@@ -72,7 +72,7 @@ class TextGlossaryReader(object):
 		except StopIteration:
 			return ""
 
-	def _openGen(self, filename: str) -> "Iterator[Tuple[int, int]]":
+	def _openGen(self, filename: str) -> "Iterator[tuple[int, int]]":
 		self._fileIndex += 1
 		log.info(f"Reading file: {filename}")
 		cfile = compressionOpen(filename, mode="rt", encoding=self._encoding)
@@ -99,7 +99,7 @@ class TextGlossaryReader(object):
 		self._filename = filename
 		self._open(filename)
 
-	def openGen(self, filename: str) -> "Iterator[Tuple[int, int]]":
+	def openGen(self, filename: str) -> "Iterator[tuple[int, int]]":
 		"""
 			like open() but return a generator / iterator to track the progress
 			example for reader.open:
@@ -166,7 +166,7 @@ class TextGlossaryReader(object):
 		self.setInfo(key, value)
 		return False
 
-	def loadInfo(self) -> "Generator[Tuple[int, int], None, None]":
+	def loadInfo(self) -> "Generator[tuple[int, int], None, None]":
 		self._pendingEntries = []
 		try:
 			while True:
@@ -184,8 +184,8 @@ class TextGlossaryReader(object):
 
 	def _genDataEntries(
 		self,
-		resList: "list[Tuple[str, str]]",
-		resPathSet: "Set[str]",
+		resList: "list[tuple[str, str]]",
+		resPathSet: "set[str]",
 	) -> "Iterator[DataEntry]":
 		for relPath, fullPath in resList:
 			if relPath in resPathSet:

@@ -21,7 +21,7 @@ import sys
 import traceback
 from collections import OrderedDict
 from os.path import abspath, isfile
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 
 import gi
 
@@ -102,7 +102,7 @@ def getMonitor():
 	return None
 
 
-def getWorkAreaSize() -> "Optional[Tuple[int, int]]":
+def getWorkAreaSize() -> "Optional[tuple[int, int]]":
 	monitor = getMonitor()
 	if monitor is None:
 		return None
@@ -312,7 +312,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		self,
 		formatName: str,
 		options: "list[str]",
-		optionsValues: "Dict[str, Any]",
+		optionsValues: "dict[str, Any]",
 		parent=None,
 	) -> None:
 		gtk.Dialog.__init__(self, parent=parent)
@@ -591,7 +591,7 @@ class FormatBox(FormatButton):
 		self.dependsButton.pkgNames = []
 		self.dependsButton.connect("clicked", self.dependsButtonClicked)
 
-	def setOptionsValues(self, optionsValues: "Dict[str, Any]"):
+	def setOptionsValues(self, optionsValues: "dict[str, Any]"):
 		self.optionsValues = optionsValues
 
 	def kind(self):

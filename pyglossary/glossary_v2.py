@@ -35,11 +35,8 @@ from typing import (
 	TYPE_CHECKING,
 	Any,
 	Callable,
-	Dict,
 	Iterator,
 	Optional,
-	Tuple,
-	Type,
 )
 
 from . import core
@@ -99,10 +96,10 @@ class ConvertArgs:
 	sort: "Optional[bool]" = None
 	sortKeyName: "Optional[str]" = None
 	sortEncoding: "Optional[str]" = None
-	readOptions: "Optional[Dict[str, Any]]" = None
-	writeOptions: "Optional[Dict[str, Any]]" = None
+	readOptions: "Optional[dict[str, Any]]" = None
+	writeOptions: "Optional[dict[str, Any]]" = None
 	sqlite: "Optional[bool]" = None
-	infoOverride: "Optional[Dict[str, str]]" = None
+	infoOverride: "Optional[dict[str, str]]" = None
 
 
 class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedType):
@@ -157,7 +154,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 	def __init__(
 		self,
-		info: "Optional[Dict[str, str]]" = None,
+		info: "Optional[dict[str, str]]" = None,
 		ui: "Optional[UIType]" = None,  # noqa: F821
 	) -> None:
 		"""
@@ -167,7 +164,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		"""
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
-		self._config: "Dict[str, Any]" = {}
+		self._config: "dict[str, Any]" = {}
 		self._data: "EntryListType" = EntryList(self)
 		self._sqlite = False
 		self._rawEntryCompress = False
@@ -253,7 +250,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		for entryFilter in self._entryFilters:
 			entryFilter.prepare()
 
-	def _addExtraEntryFilter(self, cls: "Type[EntryFilterType]") -> None:
+	def _addExtraEntryFilter(self, cls: "type[EntryFilterType]") -> None:
 		if cls.name in self._entryFiltersName:
 			return
 		self._entryFilters.append(cls(self))
@@ -372,7 +369,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	def collectDefiFormat(
 		self,
 		maxCount: int,
-	) -> "Optional[Dict[str, float]]":
+	) -> "Optional[dict[str, float]]":
 		"""
 			example return value:
 				[("h", 0.91), ("m", 0.09)]
@@ -383,7 +380,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			log.error("collectDefiFormat: not supported in direct mode")
 			return None
 
-		counter: "Dict[str, int]" = Counter()
+		counter: "dict[str, int]" = Counter()
 		count = 0
 		for entry in self:
 			if entry.isData():
@@ -412,11 +409,11 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		)
 
 	@property
-	def config(self) -> "Dict[str, Any]":
+	def config(self) -> "dict[str, Any]":
 		raise NotImplementedError
 
 	@config.setter
-	def config(self, config: "Dict[str, Any]") -> None:
+	def config(self, config: "dict[str, Any]") -> None:
 		if self._config:
 			log.error("glos.config is set more than once")
 			return
@@ -475,7 +472,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		word: str,
 		defi: str,
 		defiFormat: str = "",
-		byteProgress: "Optional[Tuple[int, int]]" = None,
+		byteProgress: "Optional[tuple[int, int]]" = None,
 	) -> "Entry":
 		"""
 		create and return a new entry object
@@ -523,7 +520,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	# 		return os.access(dirPath, os.W_OK)
 	# 	return os.access(os.path.dirname(dirPath), os.W_OK)
 
-	def _createReader(self, format: str, options: "Dict[str, Any]") -> "Any":
+	def _createReader(self, format: str, options: "dict[str, Any]") -> "Any":
 		readerClass = self.plugins[format].readerClass
 		if readerClass is None:
 			log.critical("_createReader: readerClass is None")
@@ -556,7 +553,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	def _validateReadoptions(
 		self,
 		format: str,
-		options: "Dict[str, Any]",
+		options: "dict[str, Any]",
 	) -> None:
 		validOptionKeys = set(self.formatsReadOptions[format].keys())
 		for key in list(options.keys()):
@@ -568,7 +565,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 				del options[key]
 
 	def _openReader(self, reader: "Any", filename: str) -> bool:
-		# reader.open returns "Optional[Iterator[Tuple[int, int]]]"
+		# reader.open returns "Optional[Iterator[tuple[int, int]]]"
 		progressbar: bool = self.progressbar
 		try:
 			openResult = reader.open(filename)
@@ -678,7 +675,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	def _createWriter(
 		self,
 		format: str,
-		options: "Dict[str, Any]",
+		options: "dict[str, Any]",
 	) -> "Any":
 		validOptions = self.formatsWriteOptions.get(format)
 		if validOptions is None:
@@ -910,7 +907,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		self,
 		args: ConvertArgs,
 		plugin: "PluginProp",
-	) -> "Optional[Tuple[bool, bool]]":
+	) -> "Optional[tuple[bool, bool]]":
 		"""
 			sortKeyName: see doc/sort-key.md
 
@@ -968,7 +965,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		plugin: "PluginProp",
 		sortKeyName: "Optional[str]",
 		sortEncoding: "Optional[str]",
-	) -> "Optional[Tuple[NamedSortKey, str]]":
+	) -> "Optional[tuple[NamedSortKey, str]]":
 		"""
 			checks sortKeyName, sortEncoding and (output) plugin's params
 			returns (namedSortKey, sortEncoding) or None

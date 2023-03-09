@@ -3,7 +3,6 @@
 import io
 from io import BufferedReader
 from struct import unpack
-from typing import Tuple
 
 # Copyright © 2023 soshial <soshial@gmail.com> (soshial)
 #
@@ -29,7 +28,7 @@ def readIntAt(buffer: BufferedReader, address: int) -> int:
 	return unpack('i', buffer.read(4))[0]
 
 
-def readIntPair(buffer: BufferedReader) -> "Tuple[int, int]":
+def readIntPair(buffer: BufferedReader) -> "tuple[int, int]":
 	# to statisfy mymy, put them in vars with declared type
 	a: int
 	b: int
@@ -60,7 +59,7 @@ def read_2_bytes_here(buffer: BufferedReader) -> int:
 	return ord(higher_byte) * 0x100 + ord(lower_byte)
 
 
-def guessFileOffsetLimit(file: "io.BufferedReader") -> "Tuple[int, int]":
+def guessFileOffsetLimit(file: "io.BufferedReader") -> "tuple[int, int]":
 	"""returns address offset to start parsing from and EOF address"""
 	file.seek(APPLEDICT_FILE_OFFSET)
 	limit = readInt(file)

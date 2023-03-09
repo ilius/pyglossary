@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import pathlib
-	from typing import Any, Callable, Dict, Optional, Type
+	from typing import Any, Callable, Optional, Type
 
 	from .flags import StrWithDesc
 
@@ -39,8 +39,8 @@ log: core.MyLogger = logging.getLogger("pyglossary")
 
 
 def optionsPropFromDict(
-	optionsPropDict: "Dict[str, Any]",
-) -> "Dict[str, Option]":
+	optionsPropDict: "dict[str, Any]",
+) -> "dict[str, Option]":
 	props = {}
 	for name, propDict in optionsPropDict.items():
 		try:
@@ -103,22 +103,22 @@ class PluginProp(object):
 		self._extensions: "list[str]"
 		self._extensionCreate: str
 		self._singleFile: bool
-		self._optionsProp: "Dict[str, Option]"
+		self._optionsProp: "dict[str, Option]"
 		self._sortOnWrite: YesNoAlwaysNever
 		self._sortKeyName: "Optional[str]"
 		self._canRead: bool
 		self._canWrite: bool
-		self._readOptions: "Dict[str, Any]"
-		self._writeOptions: "Dict[str, Any]"
+		self._readOptions: "dict[str, Any]"
+		self._writeOptions: "dict[str, Any]"
 		self._readCompressions: "list[str]"
-		self._readDepends: "Dict[str, str]"
-		self._writeDepends: "Dict[str, str]"
+		self._readDepends: "dict[str, str]"
+		self._writeDepends: "dict[str, str]"
 
 
 	@classmethod
 	def fromDict(
 		cls: "Type",
-		attrs: "Dict[str, Any]",
+		attrs: "dict[str, Any]",
 		modulePath: str,
 	) -> None:
 		self = cls()
@@ -248,7 +248,7 @@ class PluginProp(object):
 		return self._singleFile
 
 	@property
-	def optionsProp(self) -> "Dict[str, Option]":
+	def optionsProp(self) -> "dict[str, Option]":
 		return self._optionsProp
 
 	@property
@@ -310,7 +310,7 @@ class PluginProp(object):
 
 		return nameList
 
-	def getOptionsFromClass(self, rwclass: "Type") -> "Dict[str, Any]":
+	def getOptionsFromClass(self, rwclass: "Type") -> "dict[str, Any]":
 		optionsProp = self.optionsProp
 		options = odict()
 		if rwclass is None:
@@ -336,12 +336,12 @@ class PluginProp(object):
 
 		return options
 
-	def getReadOptions(self) -> "Dict[str, Any]":
+	def getReadOptions(self) -> "dict[str, Any]":
 		if self._readOptions is None:
 			self._readOptions = self.getOptionsFromClass(self.readerClass)
 		return self._readOptions
 
-	def getWriteOptions(self) -> "Dict[str, Any]":
+	def getWriteOptions(self) -> "dict[str, Any]":
 		if self._writeOptions is None:
 			self._writeOptions = self.getOptionsFromClass(self.writerClass)
 		return self._writeOptions
@@ -353,13 +353,13 @@ class PluginProp(object):
 		return self._readCompressions
 
 	@property
-	def readDepends(self) -> "Dict[str, str]":
+	def readDepends(self) -> "dict[str, str]":
 		if self._readDepends is None:
 			self._readDepends = getattr(self.readerClass, "depends", {})
 		return self._readDepends
 
 	@property
-	def writeDepends(self) -> "Dict[str, str]":
+	def writeDepends(self) -> "dict[str, str]":
 		if self._writeDepends is None:
 			self._writeDepends = getattr(self.writerClass, "depends", {})
 		return self._writeDepends

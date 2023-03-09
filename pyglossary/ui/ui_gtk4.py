@@ -308,7 +308,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		self,
 		formatName: str,
 		options: "list[str]",
-		optionsValues: "Dict[str, Any]",
+		optionsValues: "dict[str, Any]",
 		**kwargs,
 	) -> None:
 		gtk.Dialog.__init__(self, **kwargs)
@@ -601,7 +601,7 @@ class FormatBox(FormatButton):
 		self.dependsButton.pkgNames = []
 		self.dependsButton.connect("clicked", self.dependsButtonClicked)
 
-	def setOptionsValues(self, optionsValues: "Dict[str, Any]"):
+	def setOptionsValues(self, optionsValues: "dict[str, Any]"):
 		self.optionsValues = optionsValues
 
 	def kind(self):
