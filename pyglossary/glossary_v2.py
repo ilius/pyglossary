@@ -56,7 +56,7 @@ from .entry_filters import (
 	StripFullHtml,
 	entryFiltersRules,
 )
-from .entry_list import EntryList
+from .entry_list import EntryList, EntryListType
 from .flags import (
 	ALWAYS,
 	DEFAULT_YES,
@@ -168,7 +168,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
 		self._config: "Dict[str, Any]" = {}
-		self._data = EntryList(self)
+		self._data: "EntryListType" = EntryList(self)
 		self._sqlite = False
 		self._rawEntryCompress = False
 		self._cleanupPathList: "set[str]" = set()
@@ -625,7 +625,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		filename, format, compression = inputArgs
 
 		if compression:
-			from pyglossary.compression import uncompress
+			from .compression import uncompress
 			uncompress(origFilename, filename, compression)
 
 		self._validateReadoptions(format, options)
@@ -846,7 +846,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		return filename
 
 	def _compressOutput(self, filename: str, compression: str) -> str:
-		from pyglossary.compression import compress
+		from .compression import compress
 		return compress(self, filename, compression)
 
 	def _switchToSQLite(
@@ -854,7 +854,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		inputFilename: str,
 		outputFormat: str,
 	) -> None:
-		from pyglossary.sq_entry_list import SqEntryList
+		from .sq_entry_list import SqEntryList
 
 		sq_fpath = join(cacheDir, f"{os.path.basename(inputFilename)}.db")
 		if isfile(sq_fpath):

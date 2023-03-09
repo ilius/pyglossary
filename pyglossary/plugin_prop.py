@@ -104,7 +104,7 @@ class PluginProp(object):
 		self._extensionCreate: str
 		self._singleFile: bool
 		self._optionsProp: "Dict[str, Option]"
-		self._sortOnWrite: bool
+		self._sortOnWrite: YesNoAlwaysNever
 		self._sortKeyName: "Optional[str]"
 		self._canRead: bool
 		self._canWrite: bool

@@ -202,7 +202,7 @@ class Entry(BaseEntry):
 	def getRawEntrySortKey(
 		glos: "GlossaryType",
 		key: "Callable[[bytes], Any]",
-	) -> "Callable[[Tuple], Any]":
+	) -> "Callable[[RawEntryType], Any]":
 		# FIXME: this type for `key` is only for rawEntryCompress=False
 		# for rawEntryCompress=True, it is Callable[[bytes], Any]
 		# here `x` is raw entity, meaning a tuple of form (word, defi) or

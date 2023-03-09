@@ -3,6 +3,7 @@
 from typing import (
 	TYPE_CHECKING,
 	Any,
+	AsyncContextManager,
 	Callable,
 	Dict,
 	Iterator,
@@ -27,7 +28,7 @@ RawEntryType: TypeAlias = Union[
 
 
 class EntryType(object):
-	def __init__(self):
+	def __init__(self) -> None:
 		self._word: "Union[str, list[str]]"
 
 	def isData(self) -> bool:
@@ -107,7 +108,7 @@ class EntryType(object):
 	def getRawEntrySortKey(
 		glos: "GlossaryType",
 		key: "Callable[[bytes], Any]",
-	) -> "Callable[[Tuple], Any]":
+	) -> "Callable[[RawEntryType], Any]":
 		raise NotImplementedError
 
 	def byteProgress(self) -> "Optional[Tuple[int, int]]":
@@ -199,7 +200,7 @@ class GlossaryType(object):
 		self,
 		hf: "lxml.etree.htmlfile",  # noqa: F821
 		sample: str = "",
-	) -> "lxml.etree._FileWriterElement":  # noqa: F821
+	) -> "AsyncContextManager":  # noqa: F821
 		raise NotImplementedError
 
 	def wordTitleStr(

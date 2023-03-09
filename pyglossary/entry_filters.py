@@ -280,7 +280,7 @@ class LanguageCleanup(EntryFilter):
 			log.info("Using Persian filter")
 
 	def run_fa(self, entry: "EntryType") -> "Optional[EntryType]":
-		from pyglossary.persian_utils import faEditStr
+		from .persian_utils import faEditStr
 		entry.editFuncWord(faEditStr)
 		entry.editFuncDefi(faEditStr)
 		# RLM = "\xe2\x80\x8f"

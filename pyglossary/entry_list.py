@@ -22,7 +22,7 @@ import logging
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Callable, Dict, Iterator, Optional, Tuple
+	from typing import Any, Callable, Dict, Iterator, Optional
 
 	from .glossary_type import EntryType, GlossaryType, RawEntryType
 	from .sort_keys import NamedSortKey
@@ -67,7 +67,7 @@ class EntryList(EntryListType):
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._l: "list[RawEntryType]" = []
 		self._glos = glos
-		self._sortKey: "Optional[Callable[[Tuple], Any]]" = None
+		self._sortKey: "Optional[Callable[[RawEntryType], Any]]" = None
 
 	def append(self, entry: "EntryType") -> None:
 		self._l.append(entry.getRaw(self._glos))

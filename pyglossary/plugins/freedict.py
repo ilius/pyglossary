@@ -5,10 +5,10 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Callable, Iterator, Optional, Union
+	from typing import Any, AsyncContextManager, Callable, Iterator, Optional, Union
 
 	import lxml
-	from lxml.etree import Element, htmlfile
+	from lxml.etree import Element
 
 
 from pyglossary.compression import (
@@ -135,7 +135,7 @@ class Reader(object):
 
 	def makeList(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		input_objects: "list[Any]",
 		processor: "Callable",
 		single_prefix: str = "",
@@ -171,7 +171,7 @@ class Reader(object):
 
 	def writeRef(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		ref: "Element",
 	) -> None:
 		target = ref.get("target")
@@ -186,14 +186,14 @@ class Reader(object):
 
 	def writeQuote(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		elem: "Element",
 	) -> None:
 		self.writeWithDirection(hf, elem, "div")
 
 	def writeTransCit(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		elem: "Element",
 	) -> None:
 		quotes = []
@@ -226,7 +226,7 @@ class Reader(object):
 
 	def writeDef(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		elem: "Element",
 	) -> None:
 		sep = ", "  # TODO: self.getCommaSep(sample)
@@ -262,7 +262,7 @@ class Reader(object):
 
 	def writeWithDirection(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		child: "Element",
 		tag: str,
 	) -> None:
@@ -292,7 +292,7 @@ class Reader(object):
 
 	def writeRichText(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		el: "Element",
 	) -> None:
 		from lxml import etree as ET
@@ -335,7 +335,7 @@ class Reader(object):
 		log.warning(f"unknown lang name in {self.tostring(elem)}")
 		return None
 
-	def writeLangTag(self, hf: "htmlfile", elem: "Element") -> None:
+	def writeLangTag(self, hf: "AsyncContextManager", elem: "Element") -> None:
 		langDesc = self.getLangDesc(elem)
 		if not langDesc:
 			return
@@ -347,14 +347,14 @@ class Reader(object):
 
 	def writeNote(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		note: "Element",
 	) -> None:
 		self.writeRichText(hf, note)
 
 	def writeSenseSense(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		sense: "Element",
 	) -> None:
 		# this <sense> element can be 1st-level (directly under <entry>)
@@ -488,7 +488,7 @@ class Reader(object):
 
 	def writeGramGroups(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		gramGrpList: "list[Element]",
 	) -> None:
 		from lxml import etree as ET
@@ -512,14 +512,14 @@ class Reader(object):
 
 	def writeSenseGrams(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		sense: "Element",
 	) -> None:
 		self.writeGramGroups(hf, sense.findall("gramGrp", self.ns))
 
 	def writeSense(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		sense: "Element",
 	) -> None:
 		# this <sense> element is 1st-level (directly under <entry>)
@@ -546,7 +546,7 @@ class Reader(object):
 
 	def writeSenseList(
 		self,
-		hf: "htmlfile",
+		hf: "AsyncContextManager",
 		senseList: "list[lxml.etree.Element]",
 	) -> None:
 		# these <sense> elements are 1st-level (directly under <entry>)

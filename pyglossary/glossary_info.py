@@ -19,10 +19,10 @@
 
 import logging
 from collections import OrderedDict as odict
-from typing import TYPE_CHECKING, Dict, Iterator, Optional, Tuple
+from typing import TYPE_CHECKING, AsyncContextManager, Dict, Iterator, Optional, Tuple
 
 if TYPE_CHECKING:
-	import lxml
+	import lxml.etree.htmlfile
 
 from .info import (
 	c_author,
@@ -233,5 +233,5 @@ class GlossaryInfo(object):
 		self,
 		hf: "lxml.etree.htmlfile",
 		sample: str = "",
-	) -> "lxml.etree._FileWriterElement":
+	) -> "AsyncContextManager":
 		return hf.element(self._getTitleTag(sample))

@@ -20,6 +20,7 @@
 import logging
 import os
 import sys
+import types
 from os.path import isdir, join
 from typing import Any, Dict, Optional, Tuple, Type
 
@@ -41,7 +42,7 @@ log = logging.getLogger("pyglossary")
 class PluginManager(object):
 	plugins = {}  # type: Dict[str, PluginProp]
 	pluginByExt = {}  # type: Dict[str, PluginProp]
-	loadedModules = set()
+	loadedModules: "set[types.ModuleType]" = set()
 
 	formatsReadOptions: "Dict[str, Dict[str, Any]]" = {}
 	formatsWriteOptions: "Dict[str, Dict[str, Any]]" = {}
