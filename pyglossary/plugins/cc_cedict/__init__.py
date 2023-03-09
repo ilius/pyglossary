@@ -6,6 +6,7 @@ from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
+	Option,
 )
 
 from . import conv
@@ -23,7 +24,7 @@ website = (
 	"https://cc-cedict.org/editor/editor.php",
 	"CC-CEDICT Editor",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"traditional_title": BoolOption(
 		comment="Use traditional Chinese for entry titles/keys",

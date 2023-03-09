@@ -17,6 +17,7 @@ from pyglossary.glossary_type import (
 	EntryType,
 	GlossaryType,
 )
+from pyglossary.option import Option
 
 enable = True
 lname = "jmnedict"
@@ -31,7 +32,7 @@ website = (
 	"https://www.edrdg.org/wiki/index.php/Main_Page",
 	"EDRDG Wiki",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 }
 
 

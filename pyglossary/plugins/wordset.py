@@ -9,6 +9,7 @@ from pyglossary.core import log
 from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	EncodingOption,
+	Option,
 )
 from pyglossary.sort_keys import lookupSortKey
 
@@ -25,7 +26,7 @@ website = (
 	"https://github.com/wordset/wordset-dictionary",
 	"@wordset/wordset-dictionary",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 }
 

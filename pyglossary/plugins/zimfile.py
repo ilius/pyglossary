@@ -5,6 +5,7 @@ from typing import Iterator
 
 from pyglossary.core import cacheDir, log, pip
 from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import Option
 
 enable = True
 lname = "zim"
@@ -19,7 +20,7 @@ website = (
 	"https://wiki.openzim.org/wiki/OpenZIM",
 	"OpenZIM",
 )
-optionsProp = {}
+optionsProp: "dict[str, Option]" = {}
 
 # https://wiki.kiwix.org/wiki/Software
 

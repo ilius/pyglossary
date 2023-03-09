@@ -33,6 +33,7 @@ from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
+	Option,
 )
 from pyglossary.text_reader import TextFilePosWrapper
 
@@ -53,7 +54,7 @@ website = (
 	"https://www.lingvo.ru/",
 	"www.lingvo.ru",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"audio": BoolOption(
 		comment="Enable audio objects",

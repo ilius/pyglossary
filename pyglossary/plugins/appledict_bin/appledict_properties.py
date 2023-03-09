@@ -48,13 +48,20 @@ class AppleDictProperties:
 
 
 def from_metadata(metadata: Dict) -> AppleDictProperties:
-	format_version = metadata.get("IDXDictionaryVersion")
-	key_text_metadata = metadata.get('IDXDictionaryIndexes')[0]
-	body_metadata = metadata.get('IDXDictionaryIndexes')[2]
+	format_version: int = metadata.get("IDXDictionaryVersion", -1)
+	dictionaryIndexes: "Optional[list[dict]]" = metadata.get('IDXDictionaryIndexes')
+	if dictionaryIndexes:
+		key_text_metadata = dictionaryIndexes[0]
+		body_metadata = dictionaryIndexes[2]
+	else:
+		key_text_metadata = {}
+		body_metadata = {}
 
-	key_text_data_fields = key_text_metadata.get('IDXIndexDataFields')
-	key_text_variable_fields = [field_data['IDXDataFieldName'] for field_data in
-							key_text_data_fields.get('IDXVariableDataFields')]
+	key_text_data_fields = key_text_metadata.get('IDXIndexDataFields', {})
+	key_text_variable_fields = [
+		field_data['IDXDataFieldName']
+		for field_data in key_text_data_fields.get('IDXVariableDataFields', [])
+	]
 	key_text_fixed_field = []
 	if "IDXFixedDataFields" in key_text_data_fields:
 		for fixed_field in key_text_data_fields["IDXFixedDataFields"]:

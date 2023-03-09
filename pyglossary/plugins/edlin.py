@@ -27,6 +27,7 @@ from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
+	Option,
 )
 from pyglossary.text_utils import (
 	escapeNTB,
@@ -44,7 +45,7 @@ extensionCreate = ".edlin/"
 kind = "directory"
 wiki = ""
 website = None
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"prev_link": BoolOption(comment="Enable link to previous entry"),
 }

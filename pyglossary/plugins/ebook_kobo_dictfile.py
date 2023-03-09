@@ -31,6 +31,7 @@ from pyglossary.image_utils import extractInlineHtmlImages
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
+	Option,
 )
 from pyglossary.text_reader import TextGlossaryReader, nextBlockResultType
 
@@ -48,7 +49,7 @@ website = (
 )
 # https://github.com/pgaskin/dictutil
 
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"extract_inline_images": BoolOption(comment="Extract inline images"),
 }

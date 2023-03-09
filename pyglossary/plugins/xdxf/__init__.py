@@ -35,6 +35,7 @@ from pyglossary.core import log
 from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
+	Option,
 )
 from pyglossary.text_utils import toStr
 from pyglossary.xdxf_transform import (
@@ -55,7 +56,7 @@ website = (
 	"https://github.com/soshial/xdxf_makedict/tree/master/format_standard",
 	"XDXF standard - @soshial/xdxf_makedict",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"html": BoolOption(comment="Entries are HTML"),
 	"xsl": BoolOption(
 		comment="Use XSL transformation",

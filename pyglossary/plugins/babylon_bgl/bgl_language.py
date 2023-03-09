@@ -131,7 +131,7 @@ class BabylonLanguage(object):
 		name: str,
 		charset: str,
 		encoding: str,
-		code: str,
+		code: int,
 		code2: str = "",
 		name2: str = "",
 	) -> None:

@@ -19,6 +19,7 @@ from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
 	IntOption,
+	Option,
 	StrOption,
 )
 from pyglossary.text_utils import (
@@ -36,7 +37,7 @@ singleFile = False
 kind = "directory"
 wiki = ""
 website = None
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"resources": BoolOption(
 		comment="Enable resources / data files",

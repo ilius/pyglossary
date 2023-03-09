@@ -3,7 +3,7 @@
 from typing import Generator
 
 from pyglossary.glossary_type import EntryType, GlossaryType
-from pyglossary.option import BoolOption
+from pyglossary.option import BoolOption, Option
 from pyglossary.text_utils import replaceStringTable
 
 enable = True
@@ -19,7 +19,7 @@ website = (
 	"https://github.com/cheusov/dictd",
 	"@cheusov/dictd",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"remove_html_all": BoolOption(comment="Remove all HTML tags"),
 }
 

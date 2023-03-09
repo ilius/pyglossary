@@ -46,7 +46,7 @@ kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Comma-separated_values"
 website = None
 
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"newline": NewlineOption(),
 	"resources": BoolOption(

@@ -30,7 +30,11 @@ def readIntAt(buffer: BufferedReader, address: int) -> int:
 
 
 def readIntPair(buffer: BufferedReader) -> "Tuple[int, int]":
-	return unpack("ii", buffer.read(8))
+	# to statisfy mymy, put them in vars with declared type
+	a: int
+	b: int
+	a, b = unpack("ii", buffer.read(8))
+	return a, b
 
 
 def readInt(buffer: BufferedReader) -> int:

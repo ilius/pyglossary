@@ -8,6 +8,7 @@ from pyglossary.option import (
 	EncodingOption,
 	ListOption,
 	NewlineOption,
+	Option,
 )
 
 enable = True
@@ -20,7 +21,7 @@ singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/SQL"
 website = None
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"info_keys": ListOption(comment="List of dbinfo table columns"),
 	"add_extra_info": BoolOption(comment="Create dbinfo_extra table"),

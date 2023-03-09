@@ -8,6 +8,7 @@ from pyglossary.glossary_type import (
 	EntryType,
 	GlossaryType,
 )
+from pyglossary.option import Option
 
 enable = True
 lname = "info"
@@ -21,7 +22,7 @@ wiki = ""
 website = None
 
 # key is option/argument name, value is instance of Option
-optionsProp = {}
+optionsProp: "dict[str, Option]" = {}
 
 
 class Writer(object):

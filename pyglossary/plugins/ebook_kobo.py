@@ -33,6 +33,7 @@ from typing import Generator
 from pyglossary.core import log, pip
 from pyglossary.flags import NEVER
 from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import Option
 from pyglossary.os_utils import indir
 
 enable = True
@@ -52,7 +53,7 @@ website = (
 # https://help.kobo.com/hc/en-us/articles/360017640093-Add-new-dictionaries-to-your-Kobo-eReader
 
 
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 }
 
 

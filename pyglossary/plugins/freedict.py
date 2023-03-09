@@ -23,6 +23,7 @@ from pyglossary.langs.writing_system import getWritingSystemFromText
 from pyglossary.option import (
 	BoolOption,
 	IntOption,
+	Option,
 	StrOption,
 )
 
@@ -39,7 +40,7 @@ website = (
 	"https://freedict.org/",
 	"FreeDict.org",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"resources": BoolOption(
 		comment="Enable resources / data files",
 	),

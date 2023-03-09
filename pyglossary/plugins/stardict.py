@@ -16,13 +16,24 @@ from os.path import (
 )
 from pprint import pformat
 from time import time as now
-from typing import Any, Callable, Dict, Generator, Iterator, Sequence, Tuple
+from typing import (
+	Any,
+	Callable,
+	Dict,
+	Generator,
+	Iterator,
+	Literal,
+	Optional,
+	Sequence,
+	Tuple,
+)
 
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS, DEFAULT_YES
 from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
+	Option,
 	StrOption,
 )
 from pyglossary.text_utils import (
@@ -50,7 +61,7 @@ website = (
 	"huzheng.org/stardict",
 )
 # https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"large_file": BoolOption(
 		comment="Use idxoffsetbits=64 bits, for large files only",
 	),
@@ -707,7 +718,7 @@ class Reader(object):
 class Writer(object):
 	_large_file: bool = False
 	_dictzip: bool = True
-	_sametypesequence: str = ""  # type: Literal["", "h", "m", "x", None]
+	_sametypesequence: "Optional[Literal['', 'h', 'm', 'x']]" = ""
 	_stardict_client: bool = False
 	_merge_syns: bool = False
 	_audio_goldendict: bool = False
@@ -1181,7 +1192,7 @@ class Writer(object):
 		self,
 		wordCount: int,
 		synWordCount: int,
-		defiFormat: str = "",  # type: Literal["", "h", "m", "x"]
+		defiFormat: "Literal['', 'h', 'm', 'x']" = "", 
 	) -> None:
 		"""
 		Build .ifo file

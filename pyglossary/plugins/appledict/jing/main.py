@@ -51,15 +51,14 @@ def run(filename: str) -> None:
 
 	# -Xmxn Specifies the maximum size, in bytes, of the memory allocation pool
 	# -- from `man 1 java`
-	args = ["java", "-Xmx2G", "-jar", jing_jar_path, rng_path, filename]
-	cmd = " ".join(args)
+	cmd = ["java", "-Xmx2G", "-jar", jing_jar_path, rng_path, filename]
 
 	log.info("running Jing check:")
-	log.info(cmd)
+	log.info(f"{cmd}")
 	log.info("...")
 
 	pipe = subprocess.Popen(
-		args,
+		cmd,
 		stdout=subprocess.PIPE,
 		stderr=subprocess.STDOUT,
 	)

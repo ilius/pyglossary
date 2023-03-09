@@ -15,6 +15,7 @@ from pyglossary.html_utils import unescape_unicode
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
+	Option,
 )
 
 enable = True
@@ -32,7 +33,7 @@ website = (
 	"/blob/master/dict/doc/TextualDictionaryFileFormat",
 	"TextualDictionaryFileFormat",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"xdxf_to_html": BoolOption(
 		comment="Convert XDXF entries to HTML",

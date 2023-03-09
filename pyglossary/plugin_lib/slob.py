@@ -19,6 +19,7 @@ from struct import pack, unpack, calcsize
 from threading import RLock
 from types import MappingProxyType
 from uuid import uuid4, UUID
+from typing import Callable
 
 import icu
 from icu import Locale, Collator, UCollAttribute, UCollAttributeValue
@@ -652,9 +653,9 @@ def open(file_or_filenames):
 class BinMemWriter:
 
 	def __init__(self) -> None:
-		self.content_type_ids = []
-		self.item_dir = []
-		self.items = []
+		self.content_type_ids: "list[str]" = []
+		self.item_dir: "list[bytes]" = []
+		self.items: "list[bytes]" = []
 		self.current_offset = 0
 
 	def add(self, content_type_id, blob):
@@ -667,7 +668,11 @@ class BinMemWriter:
 	def __len__(self):
 		return len(self.item_dir)
 
-	def finalize(self, fout: 'output file', compress: 'function'):
+	def finalize(
+		self,
+		fout: "io.BufferedIOBase",
+		compress: "Callable[[bytes], bytes]",
+	):
 		count = len(self)
 		fout.write(pack(U_INT, count))
 		for content_type_id in self.content_type_ids:

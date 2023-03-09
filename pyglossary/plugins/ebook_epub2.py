@@ -26,6 +26,7 @@ from pyglossary.glossary_type import GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	IntOption,
+	Option,
 	StrOption,
 )
 
@@ -43,7 +44,7 @@ website = None
 
 # EPUB-3: https://www.w3.org/community/epub3/
 
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"group_by_prefix_length": IntOption(
 		comment="Prefix length for grouping",
 	),

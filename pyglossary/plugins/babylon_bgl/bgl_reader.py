@@ -44,6 +44,7 @@ from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
 	HtmlColorOption,
+	Option,
 	StrOption,
 )
 from pyglossary.text_utils import (
@@ -82,7 +83,7 @@ debugReadOptions = {
 	"unpacked_gzip_path",  # str, file path
 }
 
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"default_encoding_overwrite": EncodingOption(
 		comment="Default encoding (overwrite)",
 	),

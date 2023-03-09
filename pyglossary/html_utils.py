@@ -2,14 +2,8 @@
 
 import logging
 import re
-from typing import AnyStr
 
 log = logging.getLogger("pyglossary")
-
-
-def toStr(s: "AnyStr") -> str:
-	return str(s, "utf-8") if isinstance(s, bytes) else str(s)
-
 
 re_entity = re.compile(
 	r"&#?\w+;",

@@ -19,7 +19,7 @@ class MockLogHandler(logging.Handler):
 		else:
 			self.recordsByLevel[level] = [record]
 
-	def popLog(self, level: int, msg: str) -> "Optional[logging.Record]":
+	def popLog(self, level: int, msg: str) -> "Optional[logging.LogRecord]":
 		if level not in self.recordsByLevel:
 			return None
 		records = self.recordsByLevel[level]

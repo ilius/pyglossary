@@ -8,7 +8,7 @@ from typing import Generator, Iterator
 from pyglossary.core import log
 from pyglossary.flags import DEFAULT_NO
 from pyglossary.glossary_type import EntryType, GlossaryType
-from pyglossary.option import BoolOption
+from pyglossary.option import BoolOption, Option
 from pyglossary.plugin_lib.dictdlib import DictDB
 
 enable = True
@@ -16,7 +16,7 @@ lname = "dict_org"
 format = "DictOrg"
 description = "DICT.org file format (.index)"
 extensions = (".index",)
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"dictzip": BoolOption(comment="Compress .dict file to .dict.dz"),
 	"install": BoolOption(comment="Install dictionary to /usr/share/dictd/"),
 }

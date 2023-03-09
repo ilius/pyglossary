@@ -25,8 +25,8 @@
 
 import logging
 import re
-import typing
 from typing import Any, Dict, Optional
+from typing.re import Pattern
 from xml.sax.saxutils import quoteattr, unescape
 
 from pyglossary.text_utils import toStr
@@ -221,7 +221,7 @@ def cleanup_link_target(href: str) -> str:
 	return href.removeprefix("bword://")
 
 
-def href_sub(x: "typing.re.Pattern") -> str:
+def href_sub(x: "Pattern") -> str:
 	href = x.groups()[1]
 	if href.startswith("http"):
 		return x.group()

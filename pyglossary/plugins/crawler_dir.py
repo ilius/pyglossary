@@ -9,6 +9,7 @@ from pyglossary.compression import (
 from pyglossary.core import log
 from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
+	Option,
 	StrOption,
 )
 from pyglossary.text_utils import (
@@ -26,7 +27,7 @@ singleFile = True
 kind = "directory"
 wiki = ""
 website = None
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"compression": StrOption(
 		values=["", "gz", "bz2", "lzma"],
 		comment="Compression Algorithm",

@@ -53,7 +53,7 @@ from zlib import decompress
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_type import EntryType, GlossaryType
-from pyglossary.option import BoolOption
+from pyglossary.option import BoolOption, Option
 
 enable = True
 lname = "appledict_bin"
@@ -68,7 +68,7 @@ website = (
 	"https://support.apple.com/en-gu/guide/dictionary/welcome/mac",
 	"Dictionary User Guide for Mac",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"html": BoolOption(comment="Entries are HTML"),
 	"html_full": BoolOption(
 		comment="Turn every entry's definition into an HTML document",

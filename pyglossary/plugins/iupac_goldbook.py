@@ -15,6 +15,7 @@ from pyglossary.glossary_type import (
 	GlossaryType,
 )
 from pyglossary.html_utils import unescape_unicode
+from pyglossary.option import Option
 
 enable = True
 lname = "iupac_goldbook"
@@ -26,7 +27,7 @@ singleFile = True
 kind = "text"
 wiki = ""
 website = "https://goldbook.iupac.org/"
-optionsProp = {}
+optionsProp: "dict[str, Option]" = {}
 
 
 class Reader(object):

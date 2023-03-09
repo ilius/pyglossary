@@ -20,6 +20,7 @@ from pyglossary.glossary_type import (
 )
 from pyglossary.option import (
 	IntOption,
+	Option,
 	StrOption,
 )
 
@@ -36,7 +37,7 @@ website = (
 	"https://www.edrdg.org/jmdict/j_jmdict.html",
 	"The JMDict Project",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"example_color": StrOption(
 		comment="Examples color",
 	),

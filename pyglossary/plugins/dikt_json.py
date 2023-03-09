@@ -12,6 +12,7 @@ from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
+	Option,
 )
 
 enable = True
@@ -24,7 +25,7 @@ singleFile = True
 kind = "text"
 wiki = ""
 website = "https://github.com/maxim-saplin/dikt"
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"enable_info": BoolOption(comment="Enable glossary info / metedata"),
 	"resources": BoolOption(comment="Enable resources / data files"),

@@ -8,6 +8,7 @@ from pyglossary.core import log, pip
 from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
+	Option,
 )
 
 enable = True
@@ -23,7 +24,7 @@ website = (
 	"https://www.gnu.org/software/gettext",
 	"gettext - GNU Project",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"resources": BoolOption(comment="Enable resources / data files"),
 }
 
@@ -65,7 +66,7 @@ class Reader(object):
 			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(
 				self._filename,
-				newline="\nmsgid",
+				newline=b"\nmsgid",
 			)
 		return self._wordCount
 

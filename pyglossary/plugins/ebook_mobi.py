@@ -35,6 +35,7 @@ from pyglossary.option import (
 	BoolOption,
 	FileSizeOption,
 	IntOption,
+	Option,
 	StrOption,
 )
 
@@ -50,7 +51,7 @@ kind = "package"
 wiki = "https://en.wikipedia.org/wiki/Mobipocket"
 website = None
 
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"group_by_prefix_length": IntOption(
 		comment="Prefix length for grouping",
 	),

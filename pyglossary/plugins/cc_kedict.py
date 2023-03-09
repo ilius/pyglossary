@@ -7,6 +7,7 @@ if TYPE_CHECKING:
 	import lxml
 
 	from pyglossary.glossary_type import EntryType, GlossaryType
+	from pyglossary.option import Option
 
 from pyglossary.core import log, pip
 from pyglossary.text_reader import TextGlossaryReader
@@ -24,8 +25,7 @@ website = (
 	"https://github.com/mhagiwara/cc-kedict",
 	"@mhagiwara/cc-kedict",
 )
-optionsProp = {
-}
+optionsProp: "dict[str, Option]" = {}
 
 
 class YamlReader(TextGlossaryReader):

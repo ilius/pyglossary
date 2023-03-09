@@ -7,6 +7,7 @@ from typing import Iterator
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS
 from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import Option
 from pyglossary.plugins.tabfile import Reader as TabfileReader
 
 lname = "dicformids"
@@ -25,7 +26,7 @@ website = (
 	"DictionaryForMIDs - SourceForge",
 )
 
-optionsProp = {}
+optionsProp: "dict[str, Option]" = {}
 
 
 PROP_TEMPLATE = """#DictionaryForMIDs property file

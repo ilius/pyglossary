@@ -13,6 +13,7 @@ from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
 	NewlineOption,
+	Option,
 )
 from pyglossary.text_reader import TextGlossaryReader, nextBlockResultType
 from pyglossary.text_utils import replaceStringTable, splitByBar
@@ -30,7 +31,7 @@ website = (
 	"http://www.lingoes.net/en/dictionary/dict_format.php",
 	"Lingoes.net",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"newline": NewlineOption(),
 	"resources": BoolOption(comment="Enable resources / data files"),
 	"encoding": EncodingOption(),
@@ -45,7 +46,7 @@ class Reader(TextGlossaryReader):
 			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(
 				self._filename,
-				newline="\n\n",
+				newline=b"\n\n",
 			) - self._leadingLinesCount
 		return self._wordCount
 

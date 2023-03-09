@@ -28,6 +28,7 @@ from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
+	Option,
 )
 from pyglossary.text_utils import toStr
 
@@ -44,7 +45,7 @@ website = (
 	"https://www.mdict.cn/wp/?page_id=5325&lang=en",
 	"Download | MDict.cn",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"substyle": BoolOption(
 		comment="Enable substyle",

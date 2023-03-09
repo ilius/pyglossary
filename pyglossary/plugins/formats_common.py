@@ -45,6 +45,7 @@ from pyglossary.option import (
     IntOption,
     ListOption,
     NewlineOption,
+    Option,
     StrOption,
 )
 from pyglossary.os_utils import indir
@@ -66,7 +67,7 @@ wiki = ""
 website = None
 
 # key is option/argument name, value is instance of Option
-optionsProp = {}  # type: Dict[str, Option]
+optionsProp: "dict[str, Option]" = {}
 
 sortOnWrite = DEFAULT_NO  # type: YesNoAlwaysNever
 

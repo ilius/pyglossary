@@ -9,6 +9,7 @@ from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	IntOption,
+	Option,
 	StrOption,
 )
 
@@ -25,7 +26,7 @@ website = (
 	"https://foosoft.net/projects/yomichan/",
 	"foosoft.net",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"term_bank_size": IntOption(
 		comment="The number of terms in each term bank json file.",
 	),

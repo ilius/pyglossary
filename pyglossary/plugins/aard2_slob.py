@@ -12,6 +12,7 @@ from pyglossary.option import (
 	BoolOption,
 	FileSizeOption,
 	IntOption,
+	Option,
 	StrOption,
 )
 
@@ -28,7 +29,7 @@ website = (
 	"http://aarddict.org/",
 	"aarddict.org",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"compression": StrOption(
 		values=["", "bz2", "zlib", "lzma2"],
 		comment="Compression Algorithm",

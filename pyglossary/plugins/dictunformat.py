@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 
 from pyglossary.core import log
-from pyglossary.option import EncodingOption, StrOption
+from pyglossary.option import EncodingOption, Option, StrOption
 from pyglossary.text_reader import TextGlossaryReader
 
 enable = True
@@ -17,7 +17,7 @@ website = (
 	"https://github.com/cheusov/dictd/blob/master/dictunformat.1.in",
 	"dictd/dictunformat.1.in - @cheusov/dictd",
 )
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"headword_separator": StrOption(
 		comment="separator for headword and alternates",

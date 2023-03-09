@@ -11,6 +11,7 @@ from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
 	FileSizeOption,
+	Option,
 )
 from pyglossary.text_reader import TextGlossaryReader
 from pyglossary.text_utils import (
@@ -28,7 +29,7 @@ singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Tab-separated_values"
 website = None
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"encoding": EncodingOption(),
 	"enable_info": BoolOption(
 		comment="Enable glossary info / metedata",

@@ -31,6 +31,7 @@ from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	DictOption,
+	Option,
 	StrOption,
 )
 from pyglossary.text_utils import toStr
@@ -58,7 +59,7 @@ website = (
 	"Dictionary User Guide for Mac",
 )
 # FIXME: rename indexes arg/option to indexes_lang?
-optionsProp = {
+optionsProp: "dict[str, Option]" = {
 	"clean_html": BoolOption(comment="use BeautifulSoup parser"),
 	"css": StrOption(
 		comment="custom .css file path",
