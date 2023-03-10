@@ -1,10 +1,15 @@
 import logging
 from io import BytesIO
 from os.path import join
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	import lxml
+	from typing import Optional, Union
+
+	from lxml.etree import _Element as Element
+	from lxml.etree import _XSLTResultTree
+
+	from pyglossary.lxml_type import T_htmlfile
 
 from pyglossary import core
 from pyglossary.core import rootDir
@@ -30,7 +35,7 @@ class XslXdxfTransformer(object):
 		self._transform = ET.XSLT(xslt)
 		self._encoding = encoding
 
-	def tostring(self, elem: "lxml.etree.Element") -> str:
+	def tostring(self, elem: "Union[_XSLTResultTree, Element]") -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,
@@ -38,7 +43,7 @@ class XslXdxfTransformer(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def transform(self, article: "lxml.etree.Element") -> str:
+	def transform(self, article: "Element") -> str:
 		result_tree = self._transform(article)
 		text = self.tostring(result_tree)
 		text = text.replace("<br/> ", "<br/>")
@@ -58,7 +63,7 @@ class XdxfTransformer(object):
 	def __init__(self, encoding: str = "utf-8") -> None:
 		self._encoding = encoding
 
-	def tostring(self, elem: "lxml.etree.Element") -> str:
+	def tostring(self, elem: "Element") -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,
@@ -66,7 +71,7 @@ class XdxfTransformer(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def hasPrevText(self, prev: "Union[None, str, lxml.etree.Element]") -> bool:
+	def hasPrevText(self, prev: "Union[None, str, Element]") -> bool:
 		if isinstance(prev, str):
 			return True
 		if prev is None:
@@ -85,10 +90,10 @@ class XdxfTransformer(object):
 
 	def writeString(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "T_htmlfile",
 		child: str,
-		parent: "lxml.etree.Element",
-		prev: "Union[None, str, lxml.etree.Element]",
+		parent: "Element",
+		prev: "Union[None, str, Element]",
 		stringSep: "Optional[str]" = None,
 	) -> None:
 		from lxml import etree as ET
@@ -129,12 +134,12 @@ class XdxfTransformer(object):
 
 	def writeExample(
 		self,
-		hf: "lxml.etree.htmlfile",
-		elem: "Union[str, lxml.etree.Element]",
+		hf: "T_htmlfile",
+		elem: "Element",
 	) -> None:
 		prev = None
 		stringSep = " "
-		with hf.element("div", **{
+		with hf.element("div", attrib={
 			"class": "example",
 			"style": f"padding: {self._example_padding}px 0px;",
 		}):
@@ -158,40 +163,34 @@ class XdxfTransformer(object):
 
 	def writeIRef(
 		self,
-		hf: "lxml.etree.htmlfile",
-		child: "Union[str, lxml.etree.Element]",
+		hf: "T_htmlfile",
+		child: "Element",
 	) -> None:
 		iref_url = child.attrib.get("href", "")
 		if iref_url.endswith((".mp3", ".wav", ".aac", ".ogg")):
 			#  with hf.element("audio", src=iref_url):
-			with hf.element("a", **{
+			with hf.element("a", attrib={
 				"class": "iref",
 				"href": iref_url,
 			}):
 				hf.write("🔊")
 			return
 
-		with hf.element("a", **{
+		with hf.element("a", attrib={
 			"class": "iref",
-			"href": child.attrib.get("href", child.text),
+			"href": child.attrib.get("href", child.text or ""),
 		}):
 			self.writeChildrenOf(hf, child, stringSep=" ")
 
-	def writeChild(
+	def writeChildElem(
 		self,
-		hf: "lxml.etree.htmlfile",
-		child: "Union[str, lxml.etree.Element]",
-		parent: "lxml.etree.Element",
-		prev: "Union[None, str, lxml.etree.Element]",
+		hf: "T_htmlfile",
+		child: "Element",
+		parent: "Element",
+		prev: "Union[None, str, Element]",
 		stringSep: "Optional[str]" = None,
 	) -> None:
 		from lxml import etree as ET
-
-		if isinstance(child, str):
-			if not child.strip():
-				return
-			self.writeString(hf, child, parent, prev, stringSep=stringSep)
-			return
 
 		if child.tag == "br":
 			hf.write(ET.Element("br"))
@@ -205,7 +204,7 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag == "blockquote":
-			with hf.element("div", **{"class": "m"}):
+			with hf.element("div", attrib={"class": "m"}):
 				self.writeChildrenOf(hf, child)
 			return
 
@@ -217,7 +216,7 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag == "k":
-			with hf.element("div", **{"class": child.tag}):
+			with hf.element("div", attrib={"class": child.tag}):
 				# with hf.element(glos.titleTag(child.text)):
 				# ^ no glos object here!
 				with hf.element("b"):
@@ -225,7 +224,7 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag == "sr":
-			with hf.element("div", **{"class": child.tag}):
+			with hf.element("div", attrib={"class": child.tag}):
 				self.writeChildrenOf(hf, child)
 			return
 
@@ -236,13 +235,13 @@ class XdxfTransformer(object):
 		if child.tag == "mrkd":
 			if not child.text:
 				return
-			with hf.element("span", **{"class": child.tag}):
+			with hf.element("span", attrib={"class": child.tag}):
 				with hf.element("b"):
 					hf.write(child.text)
 			return
 
 		if child.tag in ("pos", "abr"):
-			with hf.element("span", **{"class": child.tag}):
+			with hf.element("span", attrib={"class": child.tag}):
 				with hf.element("font", color="green"):
 					with hf.element("i"):
 						self.writeChildrenOf(hf, child)  # NESTED 5
@@ -262,7 +261,7 @@ class XdxfTransformer(object):
 			if not child.text:
 				log.warning(f"kref with no text: {self.tostring(child)}")
 				return
-			with hf.element("a", **{
+			with hf.element("a", attrib={
 				"class": "kref",
 				"href": f"bword://{child.attrib.get('k', child.text)}",
 			}):
@@ -304,7 +303,7 @@ class XdxfTransformer(object):
 
 		if child.tag == "gr":
 			with hf.element("font", color=self._gram_color):
-				hf.write(child.text)
+				hf.write(child.text or "")
 			hf.write(ET.Element("br"))
 			return
 
@@ -313,11 +312,14 @@ class XdxfTransformer(object):
 				self.writeChildrenOf(hf, child)
 			return
 
-		if child.tag == "ex_transl" and prev.tag == "ex_orig":
-			if child.text != prev.text:
-				with hf.element("i"):
-					self.writeChildrenOf(hf, child)
-			return
+		if child.tag == "ex_transl" and prev is not None:
+			if isinstance(prev, str):
+				pass
+			elif prev.tag == "ex_orig":
+				if child.text != prev.text:
+					with hf.element("i"):
+						self.writeChildrenOf(hf, child)
+				return
 
 		if child.tag == "categ":  # Category
 			with hf.element("span", style="background-color: green;"):
@@ -332,7 +334,7 @@ class XdxfTransformer(object):
 			return
 
 		if child.tag == "img":
-			with hf.element("img", **child.attrib):
+			with hf.element("img", attrib=dict(child.attrib)):
 				pass
 			return
 
@@ -350,10 +352,32 @@ class XdxfTransformer(object):
 		log.warning(f"unknown tag {child.tag}")
 		self.writeChildrenOf(hf, child)
 
+
+	def writeChild(
+		self,
+		hf: "T_htmlfile",
+		child: "Union[str, Element]",
+		parent: "Element",
+		prev: "Union[None, str, Element]",
+		stringSep: "Optional[str]" = None,
+	) -> None:
+		if isinstance(child, str):
+			if not child.strip():
+				return
+			self.writeString(hf, child, parent, prev, stringSep=stringSep)
+			return
+		self.writeChildElem(
+			hf=hf,
+			child=child,
+			parent=parent,
+			prev=prev,
+			stringSep=stringSep,
+		) 
+
 	def shouldAddSep(
 		self,
-		child: "Union[str, lxml.etree.Element]",
-		prev: "Union[str, lxml.etree.Element]",
+		child: "Union[str, Element]",
+		prev: "Union[str, Element]",
 	) -> bool:
 		if isinstance(child, str):
 			if len(child) > 0 and child[0] in ".,;)":
@@ -372,25 +396,25 @@ class XdxfTransformer(object):
 
 	def writeChildrenOf(
 		self,
-		hf: "lxml.etree.htmlfile",
-		elem: "lxml.etree.Element",
+		hf: "T_htmlfile",
+		elem: "Element",
 		sep: "Optional[str]" = None,
 		stringSep: "Optional[str]" = None,
 	) -> None:
 		prev = None
-		for index, child in enumerate(elem.xpath("child::node()")):
-			if sep and index > 0 and self.shouldAddSep(child, prev):
+		for child in elem.xpath("child::node()"):
+			if sep and prev is not None and self.shouldAddSep(child, prev):
 				hf.write(sep)
 			self.writeChild(hf, child, elem, prev, stringSep=stringSep)
 			prev = child
 
-	def transform(self, article: "lxml.etree.Element") -> str:
+	def transform(self, article: "Element") -> str:
 		from lxml import etree as ET
 		# encoding = self._encoding
 		f = BytesIO()
 		with ET.htmlfile(f, encoding="utf-8") as hf:
-			with hf.element("div", **{"class": "article"}):
-				self.writeChildrenOf(hf, article)
+			with hf.element("div", attrib={"class": "article"}):
+				self.writeChildrenOf(cast("T_htmlfile", hf), article)
 
 		text = f.getvalue().decode("utf-8")
 		text = text.replace("<br>", "<br/>")  # for compatibility

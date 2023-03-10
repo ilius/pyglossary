@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from typing import TYPE_CHECKING, Generator, Iterator
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
+	import io
+	from typing import Generator, Iterator, Optional
+
 	from lxml import builder
+	from lxml.etree import _Element as Element
+
+	from pyglossary.xdxf_transform import XdxfTransformer
+
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -53,18 +60,20 @@ class Reader(object):
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file = None
+		self._file: "Optional[io.IOBase]" = None
 		self._fileSize = 0
-		self._xdxfTr = None
+		self._xdxfTr: "Optional[XdxfTransformer]" = None
 
-	def xdxf_setup(self) -> None:
+	def xdxf_setup(self) -> "XdxfTransformer":
 		from pyglossary.xdxf_transform import XdxfTransformer
-		self._xdxfTr = XdxfTransformer(encoding="utf-8")
+		self._xdxfTr = tr = XdxfTransformer(encoding="utf-8")
+		return tr
 
 	def xdxf_transform(self, text: str) -> str:
-		if self._xdxfTr is None:
-			self.xdxf_setup()
-		return self._xdxfTr.transformByInnerString(text)
+		tr = self._xdxfTr
+		if tr is None:
+			tr = self.xdxf_setup()
+		return tr.transformByInnerString(text)
 
 	def __len__(self) -> int:
 		return 0
@@ -94,7 +103,7 @@ class Reader(object):
 		else:
 			log.warning("StarDict Textual File Reader: file is not seekable")
 
-		context = ET.iterparse(
+		context = ET.iterparse(  # type: ignore # noqa: PGH003
 			cfile,
 			events=("end",),
 			tag="info",
@@ -110,14 +119,33 @@ class Reader(object):
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self, header: str) -> None:
-		self.setGlosInfo("name", header.find("./bookname").text)
-		self.setGlosInfo("author", header.find("./author").text)
-		self.setGlosInfo("email", header.find("./email").text)
-		self.setGlosInfo("website", header.find("./website").text)
-		self.setGlosInfo("description", header.find("./description").text)
-		self.setGlosInfo("creationTime", header.find("./date").text)
-		# self.setGlosInfo("dicttype", header.find("./dicttype").text)
+	def setMetadata(self, header: "Element") -> None:
+		if (elem := header.find("./bookname")) is not None and elem.text:
+			self.setGlosInfo("name", elem.text)
+
+		if (elem := header.find("./author")) is not None and elem.text:
+			self.setGlosInfo("author", elem.text)
+
+		if (elem := header.find("./email")) is not None and elem.text:
+			self.setGlosInfo("email", elem.text)
+
+		if (elem := header.find("./website")) is not None and elem.text:
+			self.setGlosInfo("website", elem.text)
+
+		if (elem := header.find("./description")) is not None and elem.text:
+			self.setGlosInfo("description", elem.text)
+
+		if (elem := header.find("./bookname")) is not None and elem.text:
+			self.setGlosInfo("name", elem.text)
+
+		if (elem := header.find("./bookname")) is not None and elem.text:
+			self.setGlosInfo("name", elem.text)
+
+		if (elem := header.find("./date")) is not None and elem.text:
+			self.setGlosInfo("creationTime", elem.text)
+
+		# if (elem := header.find("./dicttype")) is not None and elem.text:
+		# 	self.setGlosInfo("dicttype", elem.text)
 
 	def renderDefiList(
 		self,
@@ -156,7 +184,7 @@ class Reader(object):
 		glos = self._glos
 		fileSize = self._fileSize
 		self._file = _file = compressionOpen(self._filename, mode="rb")
-		context = ET.iterparse(
+		context = ET.iterparse(  # type: ignore # noqa: PGH003
 			self._file,
 			events=("end",),
 			tag="article",
@@ -219,7 +247,7 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 
 	def open(
 		self,
@@ -258,11 +286,14 @@ class Writer(object):
 			maker.date(glos.getInfo("creationTime")),
 			maker.dicttype(""),
 		)
-		self._file.write(ET.tostring(
+		_file = self._file
+		if _file is None:
+			raise RuntimeError("_file is None")
+		_file.write(cast(bytes, ET.tostring(
 			info,
 			encoding=self._encoding,
 			pretty_print=pretty,
-		).decode(self._encoding) + "\n")
+		)).decode(self._encoding) + "\n")
 
 	def writeDataEntry(self, maker: "builder.ElementMaker", entry: "EntryType") -> None:
 		pass
@@ -309,11 +340,11 @@ class Writer(object):
 				type=entry.defiFormat,
 			))
 			ET.indent(article, space="")
-			articleStr = ET.tostring(
+			articleStr = cast(bytes, ET.tostring(
 				article,
 				pretty_print=pretty,
 				encoding=encoding,
-			).decode(encoding)
+			)).decode(encoding)
 			# for some reason, "´k" becomes " ́k" (for example)
 			# stardict-text2bin tool also does this.
 			# https://en.wiktionary.org/wiki/%CB%88#Translingual
