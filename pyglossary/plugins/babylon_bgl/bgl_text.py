@@ -51,7 +51,6 @@ def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 	if log.isDebug():
 		assert isinstance(u_text, str) and isinstance(u_name, str)  # noqa: S101
 
-	u_res = None
 	if u_text[:2] == "&#":
 		# character reference
 		try:
@@ -61,9 +60,9 @@ def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 				code = int(u_name)
 			if code <= 0:
 				raise ValueError()
-			u_res = chr(code)
+			return chr(code)
 		except (ValueError, OverflowError):
-			u_res = chr(0xFFFD)  # replacement character
+			return chr(0xFFFD)  # replacement character
 	elif u_text[0] == "&":
 		"""
 		Babylon dictionaries contain a lot of non-standard entity,
@@ -78,13 +77,12 @@ def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 		"""
 		# named entity
 		try:
-			u_res = chr(name2codepoint[u_name.lower()])
+			return chr(name2codepoint[u_name.lower()])
 		except KeyError:
 			unknownHtmlEntries.add(u_text)
-			u_res = u_text
-	else:
-		raise ValueError(f"{u_text[0] =}")
-	return u_res
+			return u_text
+
+	raise ValueError(f"{u_text[0] =}")
 
 
 def replaceHtmlEntryCB(u_match: "re.Match") -> str:
@@ -310,7 +308,7 @@ def stripDollarIndexes(b_word: bytes) -> "tuple[bytes, int]":
 		Ihre$1$Ihres
 			"""
 			log.debug(
-				f"stripDollarIndexes({b_word}):\n"
+				f"stripDollarIndexes({b_word!r}):\n"
 				f"second $ is followed by non-space",
 			)
 			pass

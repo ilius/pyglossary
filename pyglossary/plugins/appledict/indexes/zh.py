@@ -19,7 +19,7 @@ Chinese wildcard and pinyin indexes.
 """
 
 import re
-from typing import Optioal, Sequence
+from typing import Optional, Sequence
 
 import bs4
 
@@ -74,7 +74,7 @@ def pinyin_indexes(content: str) -> "set[str]":
 	# assert type(pinyin) == unicode
 
 	if not pinyin or pinyin == "_":
-		return ()
+		return set()
 
 	indexes = set()
 
@@ -89,7 +89,7 @@ def pinyin_indexes(content: str) -> "set[str]":
 
 		# maybe no pinyin here
 		if not py:
-			return ()
+			return set()
 
 		# just pinyin, with diacritics, separated by whitespace
 		indexes.add(color.utf(" ".join(py)) + ".")
@@ -105,16 +105,16 @@ def pinyin_indexes(content: str) -> "set[str]":
 	return indexes
 
 
-def find_pinyin(content: str) -> "Optioal[str]":
+def find_pinyin(content: str) -> "Optional[str]":
 	# assume that content is HTML and pinyin is inside second tag
 	# (first is <h1>)
 	soup = bs4.BeautifulSoup(content.splitlines()[0], features="lxml")
 	if soup.body:
-		soup = soup.body
+		soup = soup.body  # type: ignore # noqa: PGH003
 	children = soup.children
 	try:
-		next(children)
-		pinyin = next(children)
+		next(children)  # type: ignore # noqa: PGH003
+		pinyin = next(children)  # type: ignore # noqa: PGH003
 	except StopIteration:
 		return None
 	return pinyin.text

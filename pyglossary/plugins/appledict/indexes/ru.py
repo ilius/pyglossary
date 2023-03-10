@@ -40,8 +40,8 @@ def ru(titles: "Sequence[str]", _: str) -> "set[str]":
 	gives a set of all declines, cases and other forms of word `title`.
 	note that it works only if title is one word.
 	"""
-	indexes = set()
-	indexes_norm = set()
+	indexes: "set[str]" = set()
+	indexes_norm: "set[str]" = set()
 	for title in titles:
 		# in-place modification
 		_ru(title, indexes, indexes_norm)

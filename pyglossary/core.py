@@ -12,7 +12,7 @@ from os.path import (
 	isfile,
 	join,
 )
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 	import types
@@ -299,7 +299,7 @@ def getDataDir() -> str:
 
 
 logging.setLoggerClass(MyLogger)
-log = logging.getLogger("pyglossary")
+log = cast(MyLogger, logging.getLogger("pyglossary"))
 
 if os.sep == "\\":
 	def windows_show_exception(
@@ -346,7 +346,7 @@ sysName = platform.system().lower()
 if (WARNINGS := os.getenv("WARNINGS")):
 	if WARNINGS in ('default', 'error', 'ignore', 'always', 'module', 'once'):
 		import warnings
-		warnings.filterwarnings(WARNINGS)
+		warnings.filterwarnings(WARNINGS)  # type: ignore # noqa: PGH003
 	else:
 		log.error(f"invalid env var {WARNINGS = }")
 

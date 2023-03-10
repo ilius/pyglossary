@@ -20,15 +20,14 @@ extended indexes generation with respect to source language.
 
 import os
 import pkgutil
+from typing import Callable, Sequence
 
 from pyglossary.core import log
 
 __all__ = ["languages", "log"]
 
-languages = {}
+languages: "dict[str, Callable[[Sequence[str], str], set[str]]]" = {}
 """
-Dict[str, Callable[[Sequence[str], str], Sequence[str]]]
-
 submodules must register languages by adding (language name -> function)
 pairs to the mapping.
 
@@ -47,5 +46,5 @@ use
 
 here = os.path.dirname(os.path.abspath(__file__))
 
-for _, module, _ in pkgutil.iter_modules([here]):
+for _, module, _ in pkgutil.iter_modules([here]):  # type: ignore # noqa: PGH003
 	__import__(f"{__name__}.{module}")

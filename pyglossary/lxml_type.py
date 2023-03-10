@@ -53,7 +53,7 @@ class IncrementalFileWriter(metaclass=Interface):
     def flush(self) -> None:
         ...
     def method(self, method: _OutputMethodArg | None) -> ContextManager[None]:
-        ...
+        raise NotImplementedError
     def element(
         self,
         tag: _TagName,
@@ -62,7 +62,7 @@ class IncrementalFileWriter(metaclass=Interface):
         method: _OutputMethodArg | None = ...,
         **_extra: AnyStr,
     ) -> ContextManager[None]:
-        ...
+        raise NotImplementedError
 
 class AsyncIncrementalFileWriter(metaclass=Interface):
     async def write_declaration(
@@ -85,7 +85,7 @@ class AsyncIncrementalFileWriter(metaclass=Interface):
     async def flush(self) -> None:
         ...
     def method(self, method: _OutputMethodArg | None) -> AsyncContextManager[None]:
-        ...
+        raise NotImplementedError
     def element(
         self,
         tag: _TagName,
@@ -94,24 +94,15 @@ class AsyncIncrementalFileWriter(metaclass=Interface):
         method: _OutputMethodArg | None = ...,
         **_extra: AnyStr,
     ) -> AsyncContextManager[None]:
-        ...
+        raise NotImplementedError
 
-class T_htmlfile(
+class T_htmlfile(  # type: ignore # noqa: PGH003
     IncrementalFileWriter,
-    AsyncIncrementalFileWriter,
     ContextManager[IncrementalFileWriter],
-    AsyncContextManager[AsyncIncrementalFileWriter],
+    # AsyncIncrementalFileWriter,
+    # AsyncContextManager[AsyncIncrementalFileWriter],
 ):
     pass
 
-
-# T_htmlfile: TypeAlias = AsyncContextManager[AsyncIncrementalFileWriter]
-
 # typing.AsyncContextManager
 # is generic version of contextlib.AbstractAsyncContextManager
-
-#T_htmlfile: TypeAlias = Union[
-#    ContextManager[IncrementalFileWriter],
-#    AsyncContextManager[AsyncIncrementalFileWriter],
-#]
-

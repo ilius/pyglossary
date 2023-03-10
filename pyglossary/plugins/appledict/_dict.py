@@ -94,7 +94,7 @@ def indexes_generator(indexes_lang: str) -> """Callable[
 		quoted_title = quote_string(title, BeautifulSoup)
 
 		if indexer:
-			indexes = set(indexer(indexes, content))
+			indexes = list(set(indexer(indexes, content)))
 
 		normal_indexes = set()
 		for idx in indexes:
@@ -103,11 +103,11 @@ def indexes_generator(indexes_lang: str) -> """Callable[
 			normal_indexes.add(_normalize.title_short(normal))
 		normal_indexes.discard(title)
 
-		normal_indexes = [s for s in normal_indexes if s.strip()]
-		# skip empty titles.  everything could happen.
-
 		s = f"<d:index d:value={quoted_title} d:title={quoted_title}/>"
 		for idx in normal_indexes:
+			if not idx.strip():
+				# skip empty titles. everything could happen.
+				continue
 			quoted_idx = quote_string(idx, BeautifulSoup)
 			s += f"<d:index d:value={quoted_idx} d:title={quoted_title}/>"
 		return s
