@@ -1,6 +1,6 @@
 import os
 import re
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, cast
 
 from pyglossary.core import log
 
@@ -8,7 +8,9 @@ from .pinyin import convert
 from .summarize import summarize
 
 if TYPE_CHECKING:
-	import lxml.etree.htmlfile
+	from typing import Optional, Sequence
+
+	from pyglossary.lxml_type import T_htmlfile
 
 
 line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
@@ -40,7 +42,7 @@ def make_entry(
 	simp: str,
 	pinyin: str,
 	eng: list[str],
-	traditional_title: str,
+	traditional_title: bool,
 ) -> "tuple[list[str], str]":
 	eng_names = list(map(summarize, eng))
 	names = [
@@ -53,9 +55,9 @@ def make_entry(
 
 
 def colorize(
-	hf: "lxml.etree.htmlfile",
-	syllables: str,
-	tones: str,
+	hf: "T_htmlfile",
+	syllables: "Sequence[str]",
+	tones: "Sequence[str]",
 ) -> None:
 	if len(syllables) != len(tones):
 		log.warning(f"unmatched tones: {syllables=}, {tones=}")
@@ -76,7 +78,7 @@ def render_article(
 	simp: str,
 	pinyin: str,
 	eng: list[str],
-	traditional_title: str,
+	traditional_title: bool,
 ) -> str:
 	from io import BytesIO
 
@@ -95,13 +97,25 @@ def render_article(
 		with hf.element("div", style="border: 1px solid; padding: 5px"):
 			with hf.element("div"):
 				with hf.element("big"):
-					colorize(hf, trad if traditional_title else simp, tones)
+					colorize(
+						cast("T_htmlfile", hf),
+						trad if traditional_title else simp,
+						tones,
+					)
 				if trad != simp:
 					hf.write("\xa0/\xa0")  # "\xa0" --> "&#160;" == "&nbsp;"
-					colorize(hf, simp if traditional_title else trad, tones)
+					colorize(
+						cast("T_htmlfile", hf),
+						simp if traditional_title else trad,
+						tones,
+					)
 				hf.write(ET.Element("br"))
 				with hf.element("big"):
-					colorize(hf, pinyin_list, tones)
+					colorize(
+						cast("T_htmlfile", hf),
+						pinyin_list,
+						tones,
+					)
 
 			with hf.element("div"):
 				with hf.element("ul"):

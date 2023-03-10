@@ -1,5 +1,6 @@
+import io
 import re
-from typing import Iterator
+from typing import Iterator, Optional
 
 from pyglossary.core import log
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -44,8 +45,9 @@ class Reader:
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
-		self.file = None
-		self.total_entries = self.entries_left = None
+		self.file: "Optional[io.TextIOBase]" = None
+		self.total_entries: "Optional[int]" = None
+		self.entries_left = 0
 
 	def open(self, filename: str) -> None:
 		if self.file is not None:
@@ -69,7 +71,8 @@ class Reader:
 		if self.file is not None:
 			self.file.close()
 		self.file = None
-		self.total_entries = self.entries_left = None
+		self.total_entries = None
+		self.entries_left = 0
 
 	def __len__(self) -> int:
 		if self.total_entries is None:
