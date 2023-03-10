@@ -2,10 +2,10 @@
 
 import re
 from io import BytesIO, IOBase
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	from typing import Any, Callable, Iterator, Optional, Union, cast
+	from typing import Any, Callable, Iterator, Optional, Union
 
 	from lxml.etree import _Element as Element
 
@@ -654,7 +654,6 @@ class Reader(object):
 		senseList = entry.findall("sense", self.ns)
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
-			# hf = cast("T_htmlfile", hf)
 			with hf.element("div"):
 				if self._word_title:
 					for keyword in keywords:
@@ -684,7 +683,6 @@ class Reader(object):
 
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
-		# _file = cast(self._file, IOBase)
 		_file = self._file
 		if _file is None:
 			raise RuntimeError("_file is None")
