@@ -31,6 +31,13 @@ from .sort_keys import lookupSortKey
 class Glossary(GlossaryV2):
 	GLOSSARY_API_VERSION = "1.0"
 
+	def titleElement(
+		self,
+		hf,  # type: ignore # noqa: PGH
+		sample: str = "",
+	):  # type: ignore # noqa: PGH
+		return hf.element(self.titleTag(sample))
+
 	def read(
 		self,
 		filename: str,

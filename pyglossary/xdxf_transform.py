@@ -218,7 +218,7 @@ class XdxfTransformer(object):
 
 		if child.tag == "k":
 			with hf.element("div", **{"class": child.tag}):
-				# with glos.titleElement(hf, child.text):
+				# with hf.element(glos.titleTag(child.text)):
 				# ^ no glos object here!
 				with hf.element("b"):
 					self.writeChildrenOf(hf, child)

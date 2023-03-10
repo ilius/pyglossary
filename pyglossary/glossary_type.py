@@ -3,7 +3,6 @@
 from typing import (
 	TYPE_CHECKING,
 	Any,
-	AsyncContextManager,
 	Callable,
 	Iterator,
 	Optional,
@@ -14,7 +13,6 @@ from typing import (
 if TYPE_CHECKING:
 	from collections import OrderedDict
 
-	import lxml
 
 from .langs import Lang
 
@@ -196,11 +194,7 @@ class GlossaryType(object):
 	def targetLangName(self, langName: str) -> None:
 		raise NotImplementedError
 
-	def titleElement(
-		self,
-		hf: "lxml.etree.htmlfile",  # noqa: F821
-		sample: str = "",
-	) -> "AsyncContextManager":  # noqa: F821
+	def titleTag(self, sample: str) -> str:
 		raise NotImplementedError
 
 	def wordTitleStr(

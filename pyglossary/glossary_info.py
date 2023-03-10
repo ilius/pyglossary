@@ -19,10 +19,10 @@
 
 import logging
 from collections import OrderedDict as odict
-from typing import TYPE_CHECKING, AsyncContextManager, Iterator, Optional
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	import lxml.etree.htmlfile
+	from typing import Iterator, Optional
 
 from .info import (
 	c_author,
@@ -173,7 +173,7 @@ class GlossaryInfo(object):
 			return
 		self._info[c_targetLang] = lang.name
 
-	def _getTitleTag(self, sample: str) -> str:
+	def titleTag(self, sample: str) -> str:
 		from .langs.writing_system import getWritingSystemFromText
 		ws = getWritingSystemFromText(sample)
 		if ws and ws.name != "Latin":
@@ -229,9 +229,3 @@ class GlossaryInfo(object):
 		self.sourceLangName = langNames[0]
 		self.targetLangName = langNames[1]
 
-	def titleElement(
-		self,
-		hf: "lxml.etree.htmlfile",
-		sample: str = "",
-	) -> "AsyncContextManager":
-		return hf.element(self._getTitleTag(sample))

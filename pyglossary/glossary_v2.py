@@ -456,7 +456,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			return ""
 		if not sample:
 			sample = word
-		tag = self._getTitleTag(sample)
+		tag = self.titleTag(sample)
 		if _class:
 			return f'<{tag} class="{_class}">{word}</{tag}><br>'
 		return f'<{tag}>{word}</{tag}><br>'
