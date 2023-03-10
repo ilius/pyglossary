@@ -5,9 +5,11 @@ from io import BytesIO, IOBase
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Callable, Iterator, Optional, Union
+	from typing import Any, Callable, Iterator, Optional, Union, cast
 
 	from lxml.etree import _Element as Element
+
+	from pyglossary.lxml_type import T_htmlfile
 
 
 from pyglossary.compression import (
@@ -135,7 +137,7 @@ class Reader(object):
 
 	def makeList(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		input_objects: "list[Any]",
 		processor: "Callable",
 		single_prefix: str = "",
@@ -154,11 +156,11 @@ class Reader(object):
 			processor(hf, input_objects[0])
 			return
 
-		kw = {}
+		attrib: "dict[str, str]" = {}
 		if list_type:
-			kw["type"] = list_type
+			attrib["type"] = list_type
 
-		with hf.element("ol" if ordered else "ul", **kw):
+		with hf.element("ol" if ordered else "ul", attrib=attrib):
 			for el in input_objects:
 				with hf.element("li"):
 					processor(hf, el)
@@ -171,29 +173,29 @@ class Reader(object):
 
 	def writeRef(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		ref: "Element",
 	) -> None:
 		target = ref.get("target")
-		attrib = {}
+		attrib: "dict[str, str]" = {}
 		if target:
 			if "://" in target:
 				attrib["class"] = "external"
 		else:
 			target = f"bword://{ref.text}"
-		with hf.element("a", href=target, **attrib):
-			hf.write(ref.text)
+		with hf.element("a", href=target, attrib=attrib):
+			hf.write(ref.text or "")
 
 	def writeQuote(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
 		self.writeWithDirection(hf, elem, "div")
 
 	def writeTransCit(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
 		quotes = []
@@ -226,7 +228,7 @@ class Reader(object):
 
 	def writeDef(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
 		sep = ", "  # TODO: self.getCommaSep(sample)
@@ -262,11 +264,11 @@ class Reader(object):
 
 	def writeWithDirection(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		child: "Element",
 		tag: str,
 	) -> None:
-		attrib = child.attrib
+		attrib = dict(child.attrib)
 		try:
 			lang = attrib.pop(self.xmlLang)
 		except KeyError:
@@ -287,12 +289,12 @@ class Reader(object):
 		else:
 			if _type not in ("trans",):
 				attrib["class"] = _type
-		with hf.element(tag, **attrib):
+		with hf.element(tag, attrib=attrib):
 			self.writeRichText(hf, child)
 
 	def writeRichText(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		el: "Element",
 	) -> None:
 		from lxml import etree as ET
@@ -337,7 +339,7 @@ class Reader(object):
 
 	def writeLangTag(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
 		langDesc = self.getLangDesc(elem)
@@ -351,14 +353,14 @@ class Reader(object):
 
 	def writeNote(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		note: "Element",
 	) -> None:
 		self.writeRichText(hf, note)
 
 	def writeSenseSense(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		sense: "Element",
 	) -> int:
 		# this <sense> element can be 1st-level (directly under <entry>)
@@ -472,7 +474,7 @@ class Reader(object):
 					hf.write(text)
 		if exampleCits:
 			for cit in exampleCits:
-				with hf.element("div", **{
+				with hf.element("div", attrib={
 					"class": "example",
 					"style": f"padding: {self._example_padding}px 0px;",
 				}):
@@ -494,7 +496,7 @@ class Reader(object):
 
 	def writeGramGroups(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		gramGrpList: "list[Element]",
 	) -> None:
 		from lxml import etree as ET
@@ -518,14 +520,14 @@ class Reader(object):
 
 	def writeSenseGrams(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		sense: "Element",
 	) -> None:
 		self.writeGramGroups(hf, sense.findall("gramGrp", self.ns))
 
 	def writeSense(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		sense: "Element",
 	) -> None:
 		# this <sense> element is 1st-level (directly under <entry>)
@@ -552,7 +554,7 @@ class Reader(object):
 
 	def writeSenseList(
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf: "T_htmlfile",
 		senseList: "list[Element]",
 	) -> None:
 		# these <sense> elements are 1st-level (directly under <entry>)
@@ -652,6 +654,7 @@ class Reader(object):
 		senseList = entry.findall("sense", self.ns)
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
+			# hf = cast("T_htmlfile", hf)
 			with hf.element("div"):
 				if self._word_title:
 					for keyword in keywords:
@@ -675,9 +678,9 @@ class Reader(object):
 					hf.write(br())
 					hf.write("\n")
 
-				self.writeGramGroups(hf, entry.findall("gramGrp", self.ns))
-
-				self.writeSenseList(hf, senseList)
+				_hf = cast("T_htmlfile", hf)
+				self.writeGramGroups(_hf, entry.findall("gramGrp", self.ns))
+				self.writeSenseList(_hf, senseList)
 
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
@@ -861,7 +864,7 @@ class Reader(object):
 		if self._word_title:
 			self._glos.setInfo("definition_has_headwords", "True")
 
-		context = ET.iterparse(
+		context = ET.iterparse(  # type: ignore # noqa: PGH003
 			cfile,
 			events=("end",),
 			tag=f"{tei}teiHeader",
@@ -885,7 +888,7 @@ class Reader(object):
 				self._auto_rtl = True
 
 		self._file = compressionOpen(self._filename, mode="rb")
-		context = ET.iterparse(
+		context = ET.iterparse(  # type: ignore # noqa: PGH003
 			self._file,
 			events=("end",),
 			tag=f"{tei}entry",
