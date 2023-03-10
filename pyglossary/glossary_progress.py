@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from .core import log
 
@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class GlossaryProgress(object):
 	def __init__(
 		self,
-		ui: "Optional[UIType]" = None,  # noqa: F821
+		ui: "UIType | None" = None,  # noqa: F821
 	):
 		self._ui = ui
 		self._progressbar = True

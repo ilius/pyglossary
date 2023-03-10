@@ -134,18 +134,18 @@ class Glossary(GlossaryV2):
 		self,
 		inputFilename: str,
 		inputFormat: str = "",
-		direct: "Optional[bool]" = None,
+		direct: "bool | None" = None,
 		progressbar: bool = True,
 		outputFilename: str = "",
 		outputFormat: str = "",
-		sort: "Optional[bool]" = None,
-		sortKeyName: "Optional[str]" = None,
-		sortEncoding: "Optional[str]" = None,
+		sort: "bool | None" = None,
+		sortKeyName: "str | None" = None,
+		sortEncoding: "str | None" = None,
 		readOptions: "Optional[dict[str, Any]]" = None,
 		writeOptions: "Optional[dict[str, Any]]" = None,
-		sqlite: "Optional[bool]" = None,
+		sqlite: "bool | None" = None,
 		infoOverride: "Optional[dict[str, str]]" = None,
-	) -> "Optional[str]":
+	) -> "str | None":
 		self.progressbar = progressbar
 		return GlossaryV2.convert(self, ConvertArgs(
 			inputFilename=inputFilename,

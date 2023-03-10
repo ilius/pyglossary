@@ -85,7 +85,7 @@ class StoreConstAction(argparse.Action):
 		self,
 		option_strings: "list[str]",
 		same_dest: str = "",
-		const_value: "Optional[bool]" = None,
+		const_value: "bool | None" = None,
 		nargs: int = 0,
 		**kwargs,
 	) -> None:
@@ -107,7 +107,7 @@ class StoreConstAction(argparse.Action):
 		values: "List" = None,
 		option_strings: "list[str]" = None,
 		required: bool = False,
-		dest: "Optional[str]" = None,
+		dest: "str | None" = None,
 	) -> "StoreConstAction":
 		if not parser:
 			return self
@@ -186,11 +186,11 @@ def base_ui_run(
 	inputFormat: str = "",
 	outputFormat: str = "",
 	reverse: bool = False,
-	config: "Optional[Dict]" = None,
-	readOptions: "Optional[Dict]" = None,
-	writeOptions: "Optional[Dict]" = None,
-	convertOptions: "Optional[Dict]" = None,
-	glossarySetAttrs: "Optional[Dict]" = None,
+	config: "Dict | None" = None,
+	readOptions: "Dict | None" = None,
+	writeOptions: "Dict | None" = None,
+	convertOptions: "Dict | None" = None,
+	glossarySetAttrs: "Dict | None" = None,
 ) -> bool:
 	from pyglossary.glossary_v2 import ConvertArgs, Glossary
 	if reverse:
@@ -244,7 +244,7 @@ def getVersion() -> str:
 	return core.VERSION
 
 
-def validateLangStr(st: str) -> "Optional[str]":
+def validateLangStr(st: str) -> "str | None":
 	lang = langDict[st]
 	if lang:
 		return lang.name

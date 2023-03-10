@@ -23,7 +23,7 @@ import traceback
 from os.path import abspath, isfile, join, splitext
 from tkinter import filedialog, tix, ttk
 from tkinter import font as tkFont
-from typing import Any, Callable, Dict, Literal, Optional
+from typing import Any, Callable, Dict, Literal
 
 from pyglossary import core
 from pyglossary.core import confDir, homeDir
@@ -1494,11 +1494,11 @@ class UI(tix.Frame, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "Optional[Dict]" = None,
-		readOptions: "Optional[Dict]" = None,
-		writeOptions: "Optional[Dict]" = None,
-		convertOptions: "Optional[Dict]" = None,
-		glossarySetAttrs: "Optional[Dict]" = None,
+		config: "Dict | None" = None,
+		readOptions: "Dict | None" = None,
+		writeOptions: "Dict | None" = None,
+		convertOptions: "Dict | None" = None,
+		glossarySetAttrs: "Dict | None" = None,
 	):
 		if glossarySetAttrs is None:
 			glossarySetAttrs = {}

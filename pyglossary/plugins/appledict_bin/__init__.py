@@ -367,7 +367,7 @@ class Reader(object):
 		self,
 		entryBytes: bytes,
 		articleAddress: "ArticleAddress",
-	) -> "Optional[EntryType]":
+	) -> "EntryType | None":
 		# 1. create and validate XML of the entry's body
 		entryRoot = self.convertEntryBytesToXml(entryBytes)
 		if entryRoot is None:

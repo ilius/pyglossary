@@ -4,7 +4,7 @@ from os.path import join
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	from typing import Optional, Union
+	from typing import Union
 
 	from lxml.etree import _Element as Element
 	from lxml.etree import _XSLTResultTree
@@ -94,7 +94,7 @@ class XdxfTransformer(object):
 		child: str,
 		parent: "Element",
 		prev: "Union[None, str, Element]",
-		stringSep: "Optional[str]" = None,
+		stringSep: "str | None" = None,
 	) -> None:
 		from lxml import etree as ET
 
@@ -188,7 +188,7 @@ class XdxfTransformer(object):
 		child: "Element",
 		parent: "Element",
 		prev: "Union[None, str, Element]",
-		stringSep: "Optional[str]" = None,
+		stringSep: "str | None" = None,
 	) -> None:
 		from lxml import etree as ET
 
@@ -359,7 +359,7 @@ class XdxfTransformer(object):
 		child: "Union[str, Element]",
 		parent: "Element",
 		prev: "Union[None, str, Element]",
-		stringSep: "Optional[str]" = None,
+		stringSep: "str | None" = None,
 	) -> None:
 		if isinstance(child, str):
 			if not child.strip():
@@ -398,8 +398,8 @@ class XdxfTransformer(object):
 		self,
 		hf: "T_htmlfile",
 		elem: "Element",
-		sep: "Optional[str]" = None,
-		stringSep: "Optional[str]" = None,
+		sep: "str | None" = None,
+		stringSep: "str | None" = None,
 	) -> None:
 		prev = None
 		for child in elem.xpath("child::node()"):

@@ -25,7 +25,7 @@
 
 import logging
 import re
-from typing import Any, Optional
+from typing import Any
 from typing.re import Pattern
 from xml.sax.saxutils import quoteattr, unescape
 
@@ -52,7 +52,7 @@ re_margin = re.compile(r"margin-left:(\d)em")
 
 
 def prepare_content(
-	title: "Optional[str]",
+	title: "str | None",
 	body: str,
 	BeautifulSoup: "Any",
 ) -> str:
@@ -81,7 +81,7 @@ def prepare_content(
 
 
 def prepare_content_without_soup(
-	title: "Optional[str]",
+	title: "str | None",
 	body: str,
 ) -> str:
 	# somewhat analogue to what BeautifulSoup suppose to do
@@ -117,7 +117,7 @@ def prepare_content_without_soup(
 
 
 def prepare_content_with_soup(
-	title: "Optional[str]",
+	title: "str | None",
 	body: str,
 	BeautifulSoup: "Any",
 ) -> str:

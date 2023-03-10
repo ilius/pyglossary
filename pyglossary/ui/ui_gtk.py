@@ -232,7 +232,7 @@ class FormatDialog(gtk.Dialog):
 		if self.activeDesc:
 			self.setCursor(self.activeDesc)
 
-	def getActive(self) -> "Optional[PluginProp]":
+	def getActive(self) -> "PluginProp | None":
 		_iter = self.treev.get_selection().get_selected()[1]
 		if _iter is None:
 			return None
@@ -1361,11 +1361,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "Optional[Dict]" = None,
-		readOptions: "Optional[Dict]" = None,
-		writeOptions: "Optional[Dict]" = None,
-		convertOptions: "Optional[Dict]" = None,
-		glossarySetAttrs: "Optional[Dict]" = None,
+		config: "Dict | None" = None,
+		readOptions: "Dict | None" = None,
+		writeOptions: "Dict | None" = None,
+		convertOptions: "Dict | None" = None,
+		glossarySetAttrs: "Dict | None" = None,
 	):
 		if glossarySetAttrs is None:
 			glossarySetAttrs = {}

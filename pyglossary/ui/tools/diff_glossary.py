@@ -5,7 +5,7 @@ import os
 import shlex
 import sys
 from subprocess import PIPE, Popen
-from typing import Iterator, Optional
+from typing import Iterator
 
 from pyglossary.entry import Entry
 from pyglossary.glossary_type import EntryType
@@ -47,8 +47,8 @@ entrySep = f"\n{'_' * 40}\n\n"
 def diffGlossary(
 	filename1: str,
 	filename2: str,
-	format1: "Optional[str]" = None,
-	format2: "Optional[str]" = None,
+	format1: "str | None" = None,
+	format2: "str | None" = None,
 	header: str = "",
 	pager: bool = True,
 ) -> None:

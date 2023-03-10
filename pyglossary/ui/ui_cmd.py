@@ -21,7 +21,7 @@
 import os
 import sys
 from os.path import join
-from typing import Dict, Optional
+from typing import Dict
 
 from pyglossary.core import dataDir, log
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
@@ -113,7 +113,7 @@ def help():
 	print(text)
 
 
-def parseFormatOptionsStr(st) -> "Optional[Dict]":
+def parseFormatOptionsStr(st) -> "Dict | None":
 	"""
 		prints error and returns None if failed to parse one option
 	"""
@@ -267,11 +267,11 @@ class UI(UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "Optional[Dict]" = None,
-		readOptions: "Optional[Dict]" = None,
-		writeOptions: "Optional[Dict]" = None,
-		convertOptions: "Optional[Dict]" = None,
-		glossarySetAttrs: "Optional[Dict]" = None,
+		config: "Dict | None" = None,
+		readOptions: "Dict | None" = None,
+		writeOptions: "Dict | None" = None,
+		convertOptions: "Dict | None" = None,
+		glossarySetAttrs: "Dict | None" = None,
 	):
 		if config is None:
 			config = {}

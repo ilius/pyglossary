@@ -3,7 +3,7 @@
 import os
 import re
 from os.path import isdir, splitext
-from typing import Generator, Iterator, Optional
+from typing import Generator, Iterator
 
 from pyglossary.core import log
 from pyglossary.flags import DEFAULT_NO
@@ -71,7 +71,7 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._dictdb: "Optional[DictDB]" = None
+		self._dictdb: "DictDB | None" = None
 
 		# regular expression patterns used to prettify definition text
 		self._re_newline_in_braces = re.compile(

@@ -22,7 +22,7 @@
 # GNU General Public License for more details.
 
 import re
-from typing import TYPE_CHECKING, Iterator, Optional, Sequence
+from typing import TYPE_CHECKING, Iterator, Sequence
 
 if TYPE_CHECKING:
 	from lxml.etree import Element
@@ -264,7 +264,7 @@ class Reader(object):
 	def _mktitle(
 		self,
 		title_element: "Element",
-		include_opts: "Optional[Sequence]" = None,
+		include_opts: "Sequence | None" = None,
 	) -> str:
 		if include_opts is None:
 			include_opts = ()

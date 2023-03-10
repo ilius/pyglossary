@@ -20,7 +20,7 @@
 import csv
 import os
 from os.path import isdir, join
-from typing import Generator, Iterator, Optional
+from typing import Generator, Iterator
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -161,7 +161,7 @@ class Reader(object):
 		for row in self._csvReader:
 			yield row
 
-	def _processRow(self, row: "list[str]") -> "Optional[EntryType]":
+	def _processRow(self, row: "list[str]") -> "EntryType | None":
 		if not row:
 			return None
 

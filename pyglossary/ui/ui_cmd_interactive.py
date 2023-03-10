@@ -501,7 +501,7 @@ class UI(ui_cmd.UI):
 			False,
 		)
 
-	def pluginByNameOrDesc(self, value: str) -> "Optional[PluginProp]":
+	def pluginByNameOrDesc(self, value: str) -> "PluginProp | None":
 		plugin = pluginByDesc.get(value)
 		if plugin:
 			return plugin
@@ -856,7 +856,7 @@ class UI(ui_cmd.UI):
 		if not self._convertOptions.get("sort"):
 			self.setSort()
 
-	def askFinalAction(self) -> "Optional[str]":
+	def askFinalAction(self) -> "str | None":
 		history = FileHistory(join(histDir, "action"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -1073,11 +1073,11 @@ class UI(ui_cmd.UI):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "Optional[Dict]" = None,
-		readOptions: "Optional[Dict]" = None,
-		writeOptions: "Optional[Dict]" = None,
-		convertOptions: "Optional[Dict]" = None,
-		glossarySetAttrs: "Optional[Dict]" = None,
+		config: "Dict | None" = None,
+		readOptions: "Dict | None" = None,
+		writeOptions: "Dict | None" = None,
+		convertOptions: "Dict | None" = None,
+		glossarySetAttrs: "Dict | None" = None,
 	):
 		if config is None:
 			config = {}

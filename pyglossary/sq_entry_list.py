@@ -82,7 +82,7 @@ class SqEntryList(EntryListType):
 	def setSortKey(
 		self,
 		namedSortKey: "NamedSortKey",
-		sortEncoding: "Optional[str]",
+		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
 	) -> None:
 		"""

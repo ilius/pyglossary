@@ -58,7 +58,7 @@ def decodeBglBinTime(b_value: bytes) -> str:
 	return f"{year:04d}/{month:02d}/{day:02d}, {hour:02d}:{minute:02d}"
 
 
-def languageInfoDecode(b_value: bytes) -> "Optional[BabylonLanguage]":
+def languageInfoDecode(b_value: bytes) -> "BabylonLanguage | None":
 	"""
 		returns BabylonLanguage instance
 	"""
@@ -70,7 +70,7 @@ def languageInfoDecode(b_value: bytes) -> "Optional[BabylonLanguage]":
 		return None
 
 
-def charsetInfoDecode(b_value: bytes) -> "Optional[str]":
+def charsetInfoDecode(b_value: bytes) -> "str | None":
 	value = b_value[0]
 	try:
 		return charsetByCode[value]
@@ -92,7 +92,7 @@ def aboutInfoDecode(b_value: bytes) -> "dict[str, str]":
 	}
 
 
-def utf16InfoDecode(b_value: bytes) -> "Optional[str]":
+def utf16InfoDecode(b_value: bytes) -> "str | None":
 	"""
 		b_value is byte array
 		returns str, or None (on errors)

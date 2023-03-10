@@ -5,7 +5,7 @@ from io import BytesIO, IOBase
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	from typing import Any, Callable, Iterator, Optional, Union
+	from typing import Any, Callable, Iterator, Union
 
 	from lxml.etree import _Element as Element
 
@@ -76,7 +76,7 @@ class Reader(object):
 	}
 
 	_discover: bool = False
-	_auto_rtl: "Optional[bool]" = None
+	_auto_rtl: "bool | None" = None
 	_word_title: bool = False
 	_pron_color: str = "gray"
 	_gram_color: str = "green"
@@ -321,7 +321,7 @@ class Reader(object):
 
 			self.writeRichText(hf, child)
 
-	def getLangDesc(self, elem: "Element") -> "Optional[str]":
+	def getLangDesc(self, elem: "Element") -> "str | None":
 		lang = elem.attrib.get(self.xmlLang)
 		if lang:
 			langObj = langDict[lang]
@@ -810,7 +810,7 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "Optional[IOBase]" = None
+		self._file: "IOBase | None" = None
 		self._fileSize = 0
 		self._wordCount = 0
 		self._discoveredTags: "dict[str, Element]" = {}

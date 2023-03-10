@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from typing import Generator, List, Optional
+from typing import Generator, List
 
 from pyglossary.glossary_type import EntryType, GlossaryType
 from pyglossary.option import (
@@ -32,7 +32,7 @@ optionsProp: "dict[str, Option]" = {
 
 class Writer(object):
 	_encoding: str = "utf-8"
-	_info_keys: "Optional[List]" = None
+	_info_keys: "List | None" = None
 	_add_extra_info: bool = True
 	_newline: str = "<br>"
 	_transaction: bool = False

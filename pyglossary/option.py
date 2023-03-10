@@ -125,7 +125,7 @@ class BoolOption(Option):
 		allowNone: bool = False,
 		**kwargs,  # noqa: ANN
 	) -> None:
-		values: "list[Optional[bool]]" = [False, True]
+		values: "list[bool | None]" = [False, True]
 		if allowNone:
 			values.append(None)
 		Option.__init__(
@@ -143,7 +143,7 @@ class BoolOption(Option):
 		del data["values"]
 		return data
 
-	def evaluate(self, raw: "Union[str, bool]") -> "tuple[Optional[bool], bool]":
+	def evaluate(self, raw: "Union[str, bool]") -> "tuple[bool | None, bool]":
 		if raw is None:
 			return None, True
 		if isinstance(raw, bool):
@@ -198,7 +198,7 @@ class IntOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self, raw: "Union[str, int]") -> "tuple[Optional[int], bool]":
+	def evaluate(self, raw: "Union[str, int]") -> "tuple[int | None, bool]":
 		"returns (value, isValid)"
 		try:
 			value = int(raw)
@@ -249,7 +249,7 @@ class FileSizeOption(IntOption):
 	def typeDesc(self) -> str:
 		return ""
 
-	def evaluate(self, raw: "Union[str, int]") -> "tuple[Optional[int], bool]":
+	def evaluate(self, raw: "Union[str, int]") -> "tuple[int | None, bool]":
 		if not raw:
 			return 0, True
 		factor = 1
@@ -285,7 +285,7 @@ class FloatOption(Option):
 	def evaluate(
 		self,
 		raw: "Union[str, float, int]",
-	) -> "tuple[Optional[float], bool]":
+	) -> "tuple[float | None, bool]":
 		"returns (value, isValid)"
 		try:
 			value = float(raw)
@@ -315,7 +315,7 @@ class DictOption(Option):
 		del data["customValue"]
 		return data
 
-	def evaluate(self, raw: "Union[str, dict]") -> "tuple[Optional[Dict], bool]":
+	def evaluate(self, raw: "Union[str, dict]") -> "tuple[Dict | None, bool]":
 		import ast
 		if isinstance(raw, dict):
 			return raw, True
@@ -347,7 +347,7 @@ class ListOption(Option):
 		del data["customValue"]
 		return data
 
-	def evaluate(self, raw: str) -> "tuple[Optional[List], bool]":
+	def evaluate(self, raw: str) -> "tuple[List | None, bool]":
 		import ast
 		if raw == "":
 			return None, True  # valid
@@ -368,7 +368,7 @@ class EncodingOption(Option):
 		self,
 		customValue: bool = True,
 		values: "Optional[list[str]]" = None,
-		comment: "Optional[str]" = None,
+		comment: "str | None" = None,
 		**kwargs,  # noqa: ANN
 	) -> None:
 		if values is None:
@@ -443,7 +443,7 @@ class NewlineOption(Option):
 		self,
 		customValue: bool = True,
 		values: "Optional[list[str]]" = None,
-		comment: "Optional[str]" = None,
+		comment: "str | None" = None,
 		**kwargs,  # noqa: ANN
 	) -> None:
 		if values is None:

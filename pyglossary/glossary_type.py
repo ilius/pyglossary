@@ -115,7 +115,7 @@ class EntryType(object):
 	def removeEmptyAndDuplicateAltWords(self) -> None:
 		raise NotImplementedError
 
-	def stripFullHtml(self) -> "Optional[str]":
+	def stripFullHtml(self) -> "str | None":
 		raise NotImplementedError
 
 class GlossaryType(object):
@@ -171,11 +171,11 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	@property
-	def sourceLang(self) -> "Optional[Lang]":
+	def sourceLang(self) -> "Lang | None":
 		raise NotImplementedError
 
 	@property
-	def targetLang(self) -> "Optional[Lang]":
+	def targetLang(self) -> "Lang | None":
 		raise NotImplementedError
 
 	@property
@@ -205,7 +205,7 @@ class GlossaryType(object):
 	) -> str:
 		raise NotImplementedError
 
-	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
+	def getConfig(self, name: str, default: "str | None") -> "str | None":
 		raise NotImplementedError
 
 	def addEntry(self, entry: EntryType) -> None:

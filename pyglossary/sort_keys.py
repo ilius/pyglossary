@@ -19,7 +19,7 @@
 
 import re
 from collections import namedtuple
-from typing import TYPE_CHECKING, Any, Callable, Optional, TypeAlias
+from typing import TYPE_CHECKING, Any, Callable, TypeAlias
 
 if TYPE_CHECKING:
 	import icu
@@ -398,8 +398,8 @@ _sortKeyByName = {
 	item.name: item for item in namedSortKeyList
 }
 
-def lookupSortKey(sortKeyId: str) -> "Optional[NamedSortKey]":
-	localeName: "Optional[str]" = None
+def lookupSortKey(sortKeyId: str) -> "NamedSortKey | None":
+	localeName: "str | None" = None
 
 	parts = sortKeyId.split(":")
 	if len(parts) == 1:

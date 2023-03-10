@@ -26,7 +26,7 @@ class indir(object):
 		create: bool = False,
 		clear: bool = False,
 	) -> None:
-		self.oldpwd: "Optional[str]" = None
+		self.oldpwd: "str | None" = None
 		self.dir = directory
 		self.create = create
 		self.clear = clear

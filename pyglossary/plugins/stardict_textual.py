@@ -62,7 +62,7 @@ class Reader(object):
 		self._filename = ""
 		self._file: "Optional[io.IOBase]" = None
 		self._fileSize = 0
-		self._xdxfTr: "Optional[XdxfTransformer]" = None
+		self._xdxfTr: "XdxfTransformer | None" = None
 
 	def xdxf_setup(self) -> "XdxfTransformer":
 		from pyglossary.xdxf_transform import XdxfTransformer

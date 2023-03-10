@@ -2,7 +2,7 @@
 
 import html
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterator, Optional
+from typing import TYPE_CHECKING, Callable, Iterator
 
 if TYPE_CHECKING:
 	import lxml
@@ -108,7 +108,7 @@ class Reader(object):
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
-	def parseGender(self, headword: str) -> "tuple[Optional[str], str]":
+	def parseGender(self, headword: str) -> "tuple[str | None, str]":
 		# {m}	masc	masculine	German: maskulin
 		# {f}	fem 	feminine	German: feminin
 		# {n}	neut	neutral		German: neutral

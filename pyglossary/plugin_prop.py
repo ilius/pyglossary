@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import pathlib
-	from typing import Any, Callable, Optional, Type
+	from typing import Any, Callable, Type
 
 	from .flags import StrWithDesc
 
@@ -52,7 +52,7 @@ def optionsPropFromDict(
 	return props
 
 
-def sortOnWriteFromStr(sortOnWriteStr: "Optional[str]") -> "StrWithDesc":
+def sortOnWriteFromStr(sortOnWriteStr: "str | None") -> "StrWithDesc":
 	if sortOnWriteStr is None:
 		return DEFAULT_NO
 	return flagsByName[sortOnWriteStr]
@@ -105,7 +105,7 @@ class PluginProp(object):
 		self._singleFile: bool
 		self._optionsProp: "dict[str, Option]"
 		self._sortOnWrite: YesNoAlwaysNever
-		self._sortKeyName: "Optional[str]"
+		self._sortKeyName: "str | None"
 		self._canRead: bool
 		self._canWrite: bool
 		self._readOptions: "dict[str, Any]"
@@ -256,7 +256,7 @@ class PluginProp(object):
 		return self._sortOnWrite
 
 	@property
-	def sortKeyName(self) -> "Optional[str]":
+	def sortKeyName(self) -> "str | None":
 		return self._sortKeyName
 
 	@property
@@ -265,7 +265,7 @@ class PluginProp(object):
 		return Path(self._modulePath)
 
 	@property
-	def readerClass(self) -> "Optional[Any]":
+	def readerClass(self) -> "Any | None":
 		if self._ReaderLoaded:
 			return self._Reader
 		cls = getattr(self.module, "Reader", None)
@@ -276,7 +276,7 @@ class PluginProp(object):
 		return cls
 
 	@property
-	def writerClass(self) -> "Optional[Any]":
+	def writerClass(self) -> "Any | None":
 		if self._WriterLoaded:
 			return self._Writer
 		cls = getattr(self.module, "Writer", None)

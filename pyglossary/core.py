@@ -141,7 +141,7 @@ def formatVarDict(
 
 
 def format_exception(
-	exc_info: "Optional[ExcInfoType]" = None,
+	exc_info: "ExcInfoType | None" = None,
 	add_locals: bool = False,
 	add_globals: bool = False,
 ) -> str:

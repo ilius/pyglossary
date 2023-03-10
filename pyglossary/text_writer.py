@@ -56,17 +56,17 @@ class TextGlossaryWriter(object):
 
 	def setAttrs(
 		self,
-		encoding: "Optional[str]" = None,
-		newline: "Optional[str]" = None,
-		wordListEncodeFunc: "Optional[Callable]" = None,
-		wordEscapeFunc: "Optional[Callable]" = None,
-		defiEscapeFunc: "Optional[Callable]" = None,
-		ext: "Optional[str]" = None,
-		head: "Optional[str]" = None,
-		tail: "Optional[str]" = None,
-		resources: "Optional[bool]" = None,
-		word_title: "Optional[bool]" = None,
-		file_size_approx: "Optional[int]" = None,
+		encoding: "str | None" = None,
+		newline: "str | None" = None,
+		wordListEncodeFunc: "Callable | None" = None,
+		wordEscapeFunc: "Callable | None" = None,
+		defiEscapeFunc: "Callable | None" = None,
+		ext: "str | None" = None,
+		head: "str | None" = None,
+		tail: "str | None" = None,
+		resources: "bool | None" = None,
+		word_title: "bool | None" = None,
+		file_size_approx: "int | None" = None,
 	) -> None:
 		if encoding is not None:
 			self._encoding = encoding
@@ -207,8 +207,8 @@ def writeTxt(
 	entryFmt: str = "",  # contain {word} and {defi}
 	filename: str = "",
 	writeInfo: bool = True,
-	wordEscapeFunc: "Optional[Callable]" = None,
-	defiEscapeFunc: "Optional[Callable]" = None,
+	wordEscapeFunc: "Callable | None" = None,
+	defiEscapeFunc: "Callable | None" = None,
 	ext: str = ".txt",
 	head: str = "",
 	tail: str = "",

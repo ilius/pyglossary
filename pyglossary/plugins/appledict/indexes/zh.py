@@ -19,7 +19,7 @@ Chinese wildcard and pinyin indexes.
 """
 
 import re
-from typing import Optional, Sequence
+from typing import Sequence
 
 import bs4
 
@@ -105,7 +105,7 @@ def pinyin_indexes(content: str) -> "set[str]":
 	return indexes
 
 
-def find_pinyin(content: str) -> "Optional[str]":
+def find_pinyin(content: str) -> "str | None":
 	# assume that content is HTML and pinyin is inside second tag
 	# (first is <h1>)
 	soup = bs4.BeautifulSoup(content.splitlines()[0], features="lxml")

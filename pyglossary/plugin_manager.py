@@ -185,7 +185,7 @@ class PluginManager(object):
 			cls.writeFormats.append(name)
 
 	@classmethod
-	def _findPlugin(cls: "Type", query: str) -> "Optional[PluginProp]":
+	def _findPlugin(cls: "Type", query: str) -> "PluginProp | None":
 		"""
 			find plugin by name or extension
 		"""

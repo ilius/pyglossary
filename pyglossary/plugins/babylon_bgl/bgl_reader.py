@@ -628,7 +628,7 @@ class BglReader(object):
 			return False
 		return True
 
-	def readType2(self, block: "Block") -> "Optional[EntryType]":
+	def readType2(self, block: "Block") -> "EntryType | None":
 		"""
 		Process type 2 block
 
@@ -821,7 +821,7 @@ class BglReader(object):
 		self,
 		block: "Block",
 		pos: int,
-	) -> "tuple[bool, Optional[int], Optional[bytes], Optional[bytes]]":
+	) -> "tuple[bool, int | None, bytes | None, bytes | None]":
 		"""
 			Read word part of entry.
 
@@ -870,7 +870,7 @@ class BglReader(object):
 		block: "Block",
 		pos: int,
 		b_word: bytes,
-	) -> "tuple[bool, Optional[int], Optional[bytes], Optional[bytes]]":
+	) -> "tuple[bool, int | None, bytes | None, bytes | None]":
 		"""
 		Read defi part of entry.
 
@@ -909,7 +909,7 @@ class BglReader(object):
 		pos: int,
 		b_word: bytes,
 		u_word: str,
-	) -> "tuple[bool, Optional[int], Optional[list[str]]]":
+	) -> "tuple[bool, int | None, Optional[list[str]]]":
 		"""
 		returns:
 			(False, None, None) if error
@@ -948,7 +948,7 @@ class BglReader(object):
 	def readEntry_Type11(
 		self,
 		block: "Block",
-	) -> "tuple[bool, Optional[str], Optional[list[str]], Optional[str]]":
+	) -> "tuple[bool, str | None, Optional[list[str]], str | None]":
 		"""return (succeed, u_word, u_alts, u_defi)"""
 		Err = (False, None, None, None)
 		pos = 0

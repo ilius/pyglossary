@@ -20,7 +20,7 @@ internal stuff. Tag class
 
 
 from collections import namedtuple
-from typing import Iterable, Optional
+from typing import Iterable
 
 from . import layer as _layer
 
@@ -71,7 +71,7 @@ def canonical_order(tags: "Iterable[Tag]") -> "list[Tag]":
 def index_of_layer_containing_tag(
 	stack: "Iterable[_layer.Layer]",
 	tag: str,
-) -> "Optional[int]":
+) -> "int | None":
 	"""
 	return zero based index of layer with `tag` or None
 	"""

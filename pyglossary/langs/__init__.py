@@ -2,7 +2,6 @@
 import json
 import logging
 from os.path import join
-from typing import Optional
 
 from pyglossary.core import rootDir
 
@@ -91,7 +90,7 @@ class LangDict(dict):
 			f"took {(now() - t0)*1000:.1f} ms",
 		)
 
-	def __getitem__(self, key: str) -> "Optional[Lang]":
+	def __getitem__(self, key: str) -> "Lang | None":
 		self.load()
 		return self.get(key.lower(), None)
 

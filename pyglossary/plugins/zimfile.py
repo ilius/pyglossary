@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from typing import TYPE_CHECKING, Iterator, Optional
+from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
 	from libzim.reader import Archive
@@ -63,7 +63,7 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._zimfile: "Optional[Archive]" = None
+		self._zimfile: "Archive | None" = None
 
 	def open(self, filename: str) -> None:
 		try:
@@ -85,7 +85,7 @@ class Reader(object):
 			return 0
 		return self._zimfile.entry_count
 
-	def __iter__(self) -> "Iterator[Optional[EntryType]]":
+	def __iter__(self) -> "Iterator[EntryType | None]":
 		glos = self._glos
 		zimfile = self._zimfile
 		if zimfile is None:

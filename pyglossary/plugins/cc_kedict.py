@@ -79,7 +79,7 @@ class YamlReader(TextGlossaryReader):
 		hf: "lxml.etree.htmlfile",
 		input_objects: "list[Any]",
 		processor: "Callable",
-		single_prefix: "Optional[str]" = None,
+		single_prefix: "str | None" = None,
 		skip_single: bool = True,
 	) -> None:
 		""" Wrap elements into <ol> if more than one element """

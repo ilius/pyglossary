@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import io
-	from typing import Callable, Optional
+	from typing import Callable
 
 	from .glossary_type import GlossaryType
 
@@ -17,7 +17,7 @@ stdCompressions = ("gz", "bz2", "lzma")
 log = logging.getLogger("pyglossary")
 
 
-def compressionOpenFunc(c: str) -> "Optional[Callable]":
+def compressionOpenFunc(c: str) -> "Callable | None":
 	if not c:
 		return open
 	if c == "gz":

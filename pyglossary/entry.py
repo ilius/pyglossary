@@ -47,7 +47,7 @@ class DataEntry(BaseEntry):
 		self,
 		fname: str,
 		data: bytes = b"",
-		tmpPath: "Optional[str]" = None,
+		tmpPath: "str | None" = None,
 		byteProgress: "Optional[tuple[int, int]]" = None,
 	) -> None:
 		if data and tmpPath:
@@ -145,7 +145,7 @@ class DataEntry(BaseEntry):
 	def removeEmptyAndDuplicateAltWords(self) -> None:
 		pass
 
-	def stripFullHtml(self) -> "Optional[str]":
+	def stripFullHtml(self) -> "str | None":
 		pass
 
 	def getRaw(self, glos: "GlossaryType") -> "RawEntryType":
@@ -390,7 +390,7 @@ class Entry(BaseEntry):
 		l_word = list(unique_everseen(l_word))
 		self._word = l_word
 
-	def stripFullHtml(self) -> "Optional[str]":
+	def stripFullHtml(self) -> "str | None":
 		"""
 		returns error
 		"""

@@ -50,7 +50,7 @@ class EntryListType(object):
 	def setSortKey(
 		self,
 		namedSortKey: "NamedSortKey",
-		sortEncoding: "Optional[str]",
+		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
 	) -> None:
 		raise NotImplementedError
@@ -93,7 +93,7 @@ class EntryList(EntryListType):
 	def setSortKey(
 		self,
 		namedSortKey: "NamedSortKey",
-		sortEncoding: "Optional[str]",
+		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
 	) -> None:
 		kwargs = writeOptions.copy()

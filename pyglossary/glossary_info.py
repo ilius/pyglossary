@@ -22,7 +22,7 @@ from collections import OrderedDict as odict
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Iterator, Optional
+	from typing import Iterator
 
 from .info import (
 	c_author,
@@ -60,7 +60,7 @@ class GlossaryInfo(object):
 			"",
 		)
 
-	def setInfo(self, key: str, value: "Optional[str]") -> None:
+	def setInfo(self, key: str, value: "str | None") -> None:
 		if value is None:
 			try:
 				del self._info[key]
@@ -106,21 +106,21 @@ class GlossaryInfo(object):
 				return value
 		return ""
 
-	def _getLangByStr(self, st: str) -> "Optional[Lang]":
+	def _getLangByStr(self, st: str) -> "Lang | None":
 		lang = langDict[st]
 		if lang:
 			return lang
 		log.error(f"unknown language {st!r}")
 		return None
 
-	def _getLangByInfoKey(self, key: str) -> "Optional[Lang]":
+	def _getLangByInfoKey(self, key: str) -> "Lang | None":
 		st = self._info.get(key, "")
 		if not st:
 			return None
 		return self._getLangByStr(st)
 
 	@property
-	def sourceLang(self) -> "Optional[Lang]":
+	def sourceLang(self) -> "Lang | None":
 		return self._getLangByInfoKey(c_sourceLang)
 
 	@sourceLang.setter
@@ -130,7 +130,7 @@ class GlossaryInfo(object):
 		self._info[c_sourceLang] = lang.name
 
 	@property
-	def targetLang(self) -> "Optional[Lang]":
+	def targetLang(self) -> "Lang | None":
 		return self._getLangByInfoKey(c_targetLang)
 
 	@targetLang.setter

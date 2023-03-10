@@ -90,15 +90,15 @@ sortKeyType = Callable[
 class ConvertArgs:
 	inputFilename: str
 	inputFormat: str = ""
-	direct: "Optional[bool]" = None
+	direct: "bool | None" = None
 	outputFilename: str = ""
 	outputFormat: str = ""
-	sort: "Optional[bool]" = None
-	sortKeyName: "Optional[str]" = None
-	sortEncoding: "Optional[str]" = None
+	sort: "bool | None" = None
+	sortKeyName: "str | None" = None
+	sortEncoding: "str | None" = None
 	readOptions: "Optional[dict[str, Any]]" = None
 	writeOptions: "Optional[dict[str, Any]]" = None
-	sqlite: "Optional[bool]" = None
+	sqlite: "bool | None" = None
 	infoOverride: "Optional[dict[str, str]]" = None
 
 
@@ -155,7 +155,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	def __init__(
 		self,
 		info: "Optional[dict[str, str]]" = None,
-		ui: "Optional[UIType]" = None,  # noqa: F821
+		ui: "UIType | None" = None,  # noqa: F821
 	) -> None:
 		"""
 		info:	OrderedDict or dict instance, or None
@@ -332,7 +332,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		self,
 		gen: "Iterator[EntryType]",
 	) -> "Iterator[EntryType]":
-		entry: "Optional[EntryType]"
+		entry: "EntryType | None"
 		for entry in gen:
 			if entry is None:
 				continue
@@ -461,7 +461,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			return f'<{tag} class="{_class}">{word}</{tag}><br>'
 		return f'<{tag}>{word}</{tag}><br>'
 
-	def getConfig(self, name: str, default: "Optional[str]") -> "Optional[str]":
+	def getConfig(self, name: str, default: "str | None") -> "str | None":
 		return self._config.get(name, default)
 
 	def addEntry(self, entry: "EntryType") -> None:
@@ -704,7 +704,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		filename: str,
 		format: str,
 		**kwargs,  # noqa: ANN
-	) -> "Optional[str]":
+	) -> "str | None":
 		"""
 		filename (str): file name or path to write
 
@@ -787,7 +787,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		format: str,
 		sort: bool = False,
 		**options,  # noqa: ANN
-	) -> "Optional[str]":
+	) -> "str | None":
 		filename = os.path.abspath(filename)
 
 		if format not in self.plugins or not self.plugins[format].canWrite:
@@ -878,8 +878,8 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	def _checkSortFlag(
 		self,
 		plugin: "PluginProp",
-		sort: "Optional[bool]",
-	) -> "Optional[bool]":
+		sort: "bool | None",
+	) -> "bool | None":
 		sortOnWrite = plugin.sortOnWrite
 		if sortOnWrite == ALWAYS:
 			if sort is False:
@@ -963,8 +963,8 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	def _checkSortKey(
 		self,
 		plugin: "PluginProp",
-		sortKeyName: "Optional[str]",
-		sortEncoding: "Optional[str]",
+		sortKeyName: "str | None",
+		sortEncoding: "str | None",
 	) -> "Optional[tuple[NamedSortKey, str]]":
 		"""
 			checks sortKeyName, sortEncoding and (output) plugin's params
@@ -1020,7 +1020,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		args: ConvertArgs,
 		outputFilename: str = "",
 		outputFormat: str = "",
-	) -> "Optional[bool]":
+	) -> "bool | None":
 		if isdir(outputFilename) and os.listdir(outputFilename):
 			log.critical(
 				f"Directory already exists and not empty: {relpath(outputFilename)}",
@@ -1057,7 +1057,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 		return sort
 
-	def convert(self, args: ConvertArgs) -> "Optional[str]":
+	def convert(self, args: ConvertArgs) -> "str | None":
 		"""
 		returns absolute path of output file, or None if failed
 

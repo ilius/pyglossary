@@ -44,7 +44,7 @@ class AppleDictProperties:
 	key_text_variable_fields: list[str]
 
 	# DCSDictionaryCSS, generally "DefaultStyle.css"
-	css_name: "Optional[str]"
+	css_name: "str | None"
 
 
 def from_metadata(metadata: Dict) -> AppleDictProperties:

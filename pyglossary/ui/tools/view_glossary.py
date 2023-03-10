@@ -12,7 +12,7 @@ from pyglossary.ui.tools.format_entry import formatEntry
 Glossary.init()
 
 
-def viewGlossary(filename: str, format: "Optional[str]" = None) -> None:
+def viewGlossary(filename: str, format: "str | None" = None) -> None:
 	highlightEntry: "Optional[Callable[[EntryType], None]]" = None
 	try:
 		import pygments  # noqa: F401

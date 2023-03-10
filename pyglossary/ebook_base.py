@@ -36,7 +36,7 @@ from pyglossary.text_utils import toBytes
 
 if TYPE_CHECKING:
 	import io
-	from typing import Any, Optional
+	from typing import Any
 
 	from pyglossary.glossary_type import EntryType, GlossaryType
 
@@ -172,7 +172,7 @@ class EbookWriter(object):
 		self,
 		relative_path: str,
 		contents: str,
-		mode: "Optional[str]" = None,
+		mode: "str | None" = None,
 	) -> None:
 		if mode is None:
 			mode = zipfile.ZIP_DEFLATED

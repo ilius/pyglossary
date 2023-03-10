@@ -113,7 +113,7 @@ def loadBeautifulSoup() -> None:
 		)
 
 
-def abspath_or_None(path: "Optional[str]") -> "Optional[str]":
+def abspath_or_None(path: "str | None") -> "str | None":
 	if not path:
 		return None
 	return os.path.abspath(os.path.expanduser(path))
@@ -122,7 +122,7 @@ def abspath_or_None(path: "Optional[str]") -> "Optional[str]":
 def write_header(
 	glos: "GlossaryType",
 	toFile: "io.TextIOBase",
-	front_back_matter: "Optional[str]",
+	front_back_matter: "str | None",
 ) -> None:
 	# write header
 	toFile.write(
@@ -222,7 +222,7 @@ class Writer(object):
 	_clean_html: bool = True
 	_css: str = ""
 	_xsl: str = ""
-	_default_prefs: "Optional[Dict]" = None
+	_default_prefs: "Dict | None" = None
 	_prefs_html: str = ""
 	_front_back_matter: str = ""
 	_jing: bool = False
@@ -246,11 +246,11 @@ class Writer(object):
 
 		glos = self._glos
 		clean_html = self._clean_html
-		css: "Optional[str]" = self._css
-		xsl: "Optional[str]" = self._xsl
+		css: "str | None" = self._css
+		xsl: "str | None" = self._xsl
 		default_prefs = self._default_prefs
-		prefs_html: "Optional[str]" = self._prefs_html
-		front_back_matter: "Optional[str]" = self._front_back_matter
+		prefs_html: "str | None" = self._prefs_html
+		front_back_matter: "str | None" = self._front_back_matter
 		jing = self._jing
 		indexes = self._indexes
 
@@ -307,7 +307,7 @@ class Writer(object):
 				_id = next(generate_id)
 				quoted_title = quote_string(long_title, BeautifulSoup)
 
-				content_title: "Optional[str]" = long_title
+				content_title: "str | None" = long_title
 				if entry.defiFormat == "x":
 					defi = xdxf_to_html.transformByInnerString(defi)
 					content_title = None
