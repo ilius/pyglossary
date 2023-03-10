@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator, Optional
+
+if TYPE_CHECKING:
+	from libzim.reader import Archive
 
 from pyglossary.core import cacheDir, log, pip
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -59,8 +62,8 @@ class Reader(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
-		self._zimfile = None
+		self._filename = ""
+		self._zimfile: "Optional[Archive]" = None
 
 	def open(self, filename: str) -> None:
 		try:
@@ -73,7 +76,7 @@ class Reader(object):
 		self._zimfile = Archive(filename)
 
 	def close(self) -> None:
-		self._filename = None
+		self._filename = ""
 		self._zimfile = None
 
 	def __len__(self) -> int:
@@ -82,9 +85,11 @@ class Reader(object):
 			return 0
 		return self._zimfile.entry_count
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[Optional[EntryType]]":
 		glos = self._glos
 		zimfile = self._zimfile
+		if zimfile is None:
+			return
 		emptyContentCount = 0
 		invalidMimeTypeCount = 0
 		entryCount = zimfile.entry_count

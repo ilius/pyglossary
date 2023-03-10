@@ -113,8 +113,10 @@ def loadBeautifulSoup() -> None:
 		)
 
 
-def abspath_or_None(path: str) -> str:
-	return os.path.abspath(os.path.expanduser(path)) if path else None
+def abspath_or_None(path: "Optional[str]") -> "Optional[str]":
+	if not path:
+		return None
+	return os.path.abspath(os.path.expanduser(path))
 
 
 def write_header(
@@ -134,8 +136,8 @@ def write_header(
 			front_back_matter,
 			mode="r",
 			encoding="utf-8",
-		) as front_back_matter:
-			toFile.write(front_back_matter.read())
+		) as _file:
+			toFile.write(_file.read())
 
 
 def format_default_prefs(default_prefs: "Optional[dict[str, Any]]") -> str:
@@ -167,10 +169,13 @@ def write_css(fname: str, css_file: str) -> None:
 			with open(css_file, mode="rb") as fromFile:
 				toFile.write(fromFile.read())
 		else:
-			toFile.write(pkgutil.get_data(
+			data = pkgutil.get_data(
 				__name__,
 				"templates/Dictionary.css",
-			))
+			)
+			if data is None:
+				raise RuntimeError("failed to load templates/Dictionary.css")
+			toFile.write(data)
 
 
 """
@@ -225,10 +230,10 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._dirname = None
+		self._dirname = ""
 
 	def finish(self) -> None:
-		self._dirname = None
+		self._dirname = ""
 
 	def open(self, dirname: str) -> None:
 		self._dirname = dirname
@@ -241,11 +246,11 @@ class Writer(object):
 
 		glos = self._glos
 		clean_html = self._clean_html
-		css = self._css
-		xsl = self._xsl
+		css: "Optional[str]" = self._css
+		xsl: "Optional[str]" = self._xsl
 		default_prefs = self._default_prefs
-		prefs_html = self._prefs_html
-		front_back_matter = self._front_back_matter
+		prefs_html: "Optional[str]" = self._prefs_html
+		front_back_matter: "Optional[str]" = self._front_back_matter
 		jing = self._jing
 		indexes = self._indexes
 
@@ -302,7 +307,7 @@ class Writer(object):
 				_id = next(generate_id)
 				quoted_title = quote_string(long_title, BeautifulSoup)
 
-				content_title = long_title
+				content_title: "Optional[str]" = long_title
 				if entry.defiFormat == "x":
 					defi = xdxf_to_html.transformByInnerString(defi)
 					content_title = None

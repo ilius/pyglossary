@@ -3,8 +3,11 @@
 from os.path import isfile
 from typing import TYPE_CHECKING
 
+from .core import log
+
 if TYPE_CHECKING:
-	from typing import Iterator
+	import sqlite3
+	from typing import Generator, Iterator, Optional
 
 	from .glossary_type import EntryType, GlossaryType
 
@@ -21,15 +24,15 @@ class Writer(object):
 
 	def _clear(self) -> None:
 		self._filename = ''
-		self._con = None
-		self._cur = None
+		self._con: "Optional[sqlite3.Connection]"
+		self._cur: "Optional[sqlite3.Cursor]"
 
 	def open(self, filename: str) -> None:
-		from sqlite3 import connect
+		import sqlite3
 		if isfile(filename):
 			raise IOError(f"file {filename!r} already exists")
 		self._filename = filename
-		self._con = connect(filename)
+		self._con = sqlite3.connect(filename)
 		self._cur = self._con.cursor()
 		self._con.execute(
 			"CREATE TABLE dict ("
@@ -44,7 +47,12 @@ class Writer(object):
 			"CREATE INDEX dict_sortkey ON dict(wordlower, word);",
 		)
 
-	def write(self) -> None:
+	def write(self) -> "Generator[None, EntryType, None]":
+		con = self._con
+		cur = self._cur
+		if not (con and cur):
+			log.error(f"write: {con=}, {cur=}")
+			return
 		count = 0
 		while True:
 			entry = yield
@@ -57,7 +65,7 @@ class Writer(object):
 			bindata = None
 			if entry.isData():
 				bindata = entry.data
-			self._cur.execute(
+			cur.execute(
 				"insert into dict("
 				"word, wordlower, alts, "
 				"defi, defiFormat, bindata)"
@@ -69,9 +77,9 @@ class Writer(object):
 			)
 			count += 1
 			if count % 1000 == 0:
-				self._con.commit()
+				con.commit()
 
-		self._con.commit()
+		con.commit()
 
 	def finish(self) -> None:
 		if self._cur:
@@ -87,9 +95,9 @@ class Reader(object):
 		self._clear()
 
 	def _clear(self) -> None:
-		self._filename = ''
-		self._con = None
-		self._cur = None
+		self._filename = ""
+		self._con: "Optional[sqlite3.Connection]"
+		self._cur: "Optional[sqlite3.Cursor]"
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
@@ -99,10 +107,14 @@ class Reader(object):
 		# self._glos.setDefaultDefiFormat("m")
 
 	def __len__(self) -> int:
+		if self._cur is None:
+			return 0
 		self._cur.execute("select count(*) from dict")
 		return self._cur.fetchone()[0]
 
 	def __iter__(self) -> "Iterator[EntryType]":
+		if self._cur is None:
+			return
 		self._cur.execute(
 			"select word, alts, defi, defiFormat from dict"
 			" order by wordlower, word",
