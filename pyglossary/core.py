@@ -19,7 +19,6 @@ if TYPE_CHECKING:
 	from typing import (
 		Any,
 		Callable,
-		Optional,
 		TypeAlias,
 		Union,
 	)
@@ -43,7 +42,7 @@ noColor = False
 class Formatter(logging.Formatter):
 	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN
 		logging.Formatter.__init__(self, *args, **kwargs)
-		self.fill: "Optional[Callable[[str], str]]" = None
+		self.fill: "Callable[[str], str] | None" = None
 
 	def formatMessage(
 		self,
@@ -305,7 +304,7 @@ if os.sep == "\\":
 	def windows_show_exception(
 		_type: "type[BaseException]",
 		exc: "BaseException",
-		tback: "Optional[types.TracebackType]",
+		tback: "types.TracebackType | None",
 	) -> None:
 		if not (_type and exc and tback):
 			return
@@ -324,7 +323,7 @@ else:
 	def unix_show_exception(
 		_type: "type[BaseException]",
 		exc: "BaseException",
-		tback: "Optional[types.TracebackType]",
+		tback: "types.TracebackType | None",
 	) -> None:
 		if not (_type and exc and tback):
 			return

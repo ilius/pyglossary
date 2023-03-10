@@ -36,7 +36,6 @@ from typing import (
 	Any,
 	Callable,
 	Iterator,
-	Optional,
 )
 
 from . import core
@@ -96,10 +95,10 @@ class ConvertArgs:
 	sort: "bool | None" = None
 	sortKeyName: "str | None" = None
 	sortEncoding: "str | None" = None
-	readOptions: "Optional[dict[str, Any]]" = None
-	writeOptions: "Optional[dict[str, Any]]" = None
+	readOptions: "dict[str, Any] | None" = None
+	writeOptions: "dict[str, Any] | None" = None
 	sqlite: "bool | None" = None
-	infoOverride: "Optional[dict[str, str]]" = None
+	infoOverride: "dict[str, str] | None" = None
 
 
 class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedType):
@@ -143,7 +142,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		self._readers: "list[Any]" = []
 		self._defiHasWordTitle = False
 
-		self._iter: "Optional[Iterator[EntryType]]" = None
+		self._iter: "Iterator[EntryType] | None" = None
 		self._entryFilters: "list[EntryFilterType]" = []
 		self._entryFiltersName: "set[str]" = set()
 		self._sort = False
@@ -154,7 +153,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 	def __init__(
 		self,
-		info: "Optional[dict[str, str]]" = None,
+		info: "dict[str, str] | None" = None,
 		ui: "UIType | None" = None,  # noqa: F821
 	) -> None:
 		"""
@@ -267,7 +266,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 	def stripFullHtml(
 		self,
-		errorHandler: "Optional[Callable[[EntryType, str], None]]" = None,
+		errorHandler: "Callable[[EntryType, str], None] | None" = None,
 	):
 		"""
 		Adds entry filter "strip_full_html"
@@ -369,7 +368,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	def collectDefiFormat(
 		self,
 		maxCount: int,
-	) -> "Optional[dict[str, float]]":
+	) -> "dict[str, float] | None":
 		"""
 			example return value:
 				[("h", 0.91), ("m", 0.09)]
@@ -472,7 +471,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		word: str,
 		defi: str,
 		defiFormat: str = "",
-		byteProgress: "Optional[tuple[int, int]]" = None,
+		byteProgress: "tuple[int, int] | None" = None,
 	) -> "Entry":
 		"""
 		create and return a new entry object
@@ -565,7 +564,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 				del options[key]
 
 	def _openReader(self, reader: "Any", filename: str) -> bool:
-		# reader.open returns "Optional[Iterator[tuple[int, int]]]"
+		# reader.open returns "Iterator[tuple[int, int]] | None"
 		progressbar: bool = self.progressbar
 		try:
 			openResult = reader.open(filename)
@@ -907,7 +906,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		self,
 		args: ConvertArgs,
 		plugin: "PluginProp",
-	) -> "Optional[tuple[bool, bool]]":
+	) -> "tuple[bool, bool] | None":
 		"""
 			sortKeyName: see doc/sort-key.md
 
@@ -965,7 +964,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		plugin: "PluginProp",
 		sortKeyName: "str | None",
 		sortEncoding: "str | None",
-	) -> "Optional[tuple[NamedSortKey, str]]":
+	) -> "tuple[NamedSortKey, str] | None":
 		"""
 			checks sortKeyName, sortEncoding and (output) plugin's params
 			returns (namedSortKey, sortEncoding) or None

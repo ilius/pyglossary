@@ -21,7 +21,7 @@ import sys
 import traceback
 from collections import OrderedDict
 from os.path import abspath, isfile
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import gi
 
@@ -102,7 +102,7 @@ def getMonitor():
 	return None
 
 
-def getWorkAreaSize() -> "Optional[tuple[int, int]]":
+def getWorkAreaSize() -> "tuple[int, int] | None":
 	monitor = getMonitor()
 	if monitor is None:
 		return None

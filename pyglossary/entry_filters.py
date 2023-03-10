@@ -9,7 +9,6 @@ from .text_utils import (
 )
 
 if TYPE_CHECKING:
-	from typing import Optional
 
 	from .glossary_type import Callable, EntryType, GlossaryExtendedType, GlossaryType
 
@@ -203,7 +202,7 @@ class StripFullHtml(EntryFilter):
 	def __init__(
 		self,
 		glos: "GlossaryType",
-		errorHandler: "Optional[Callable[[EntryType, str], None]]",
+		errorHandler: "Callable[[EntryType, str], None] | None",
 	) -> None:
 		self._errorHandler = errorHandler
 
@@ -267,7 +266,7 @@ class LanguageCleanup(EntryFilter):
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
-		self._run_func: "Optional[Callable[[EntryType], EntryType | None]]" = None
+		self._run_func: "Callable[[EntryType], EntryType | None] | None" = None
 
 	def prepare(self) -> None:
 		langCodes = {

@@ -19,7 +19,7 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 from time import time as now
-from typing import Any, Optional
+from typing import Any
 
 from .core import log
 from .glossary_type import EntryType
@@ -93,7 +93,7 @@ class Glossary(GlossaryV2):
 		self,
 		sortKeyName: "str" = "headword_lower",
 		sortEncoding: "str" = "utf-8",
-		writeOptions: "Optional[dict[str, Any]]" = None,
+		writeOptions: "dict[str, Any] | None" = None,
 	) -> None:
 		"""
 			sortKeyName: see doc/sort-key.md
@@ -141,10 +141,10 @@ class Glossary(GlossaryV2):
 		sort: "bool | None" = None,
 		sortKeyName: "str | None" = None,
 		sortEncoding: "str | None" = None,
-		readOptions: "Optional[dict[str, Any]]" = None,
-		writeOptions: "Optional[dict[str, Any]]" = None,
+		readOptions: "dict[str, Any] | None" = None,
+		writeOptions: "dict[str, Any] | None" = None,
 		sqlite: "bool | None" = None,
-		infoOverride: "Optional[dict[str, str]]" = None,
+		infoOverride: "dict[str, str] | None" = None,
 	) -> "str | None":
 		self.progressbar = progressbar
 		return GlossaryV2.convert(self, ConvertArgs(

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 	import io
-	from typing import Generator, Iterator, Optional
+	from typing import Generator, Iterator
 
 	from lxml import builder
 	from lxml.etree import _Element as Element
@@ -60,7 +60,7 @@ class Reader(object):
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "Optional[io.IOBase]" = None
+		self._file: "io.IOBase | None" = None
 		self._fileSize = 0
 		self._xdxfTr: "XdxfTransformer | None" = None
 

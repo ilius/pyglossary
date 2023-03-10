@@ -25,7 +25,7 @@ import os
 import re
 import sys
 from collections import OrderedDict as odict
-from typing import Iterator, Optional
+from typing import Iterator
 
 from pyglossary.core import log
 
@@ -167,7 +167,7 @@ class BGLGzipFile(GzipFile):
 	"""
 	def __init__(
 		self,
-		fileobj: "Optional[io.IOBase]" = None,
+		fileobj: "io.IOBase | None" = None,
 		closeFileobj: bool = False,
 		**kwargs,
 	) -> None:
@@ -909,7 +909,7 @@ class BglReader(object):
 		pos: int,
 		b_word: bytes,
 		u_word: str,
-	) -> "tuple[bool, int | None, Optional[list[str]]]":
+	) -> "tuple[bool, int | None, list[str] | None]":
 		"""
 		returns:
 			(False, None, None) if error
@@ -948,7 +948,7 @@ class BglReader(object):
 	def readEntry_Type11(
 		self,
 		block: "Block",
-	) -> "tuple[bool, str | None, Optional[list[str]], str | None]":
+	) -> "tuple[bool, str | None, list[str] | None, str | None]":
 		"""return (succeed, u_word, u_alts, u_defi)"""
 		Err = (False, None, None, None)
 		pos = 0

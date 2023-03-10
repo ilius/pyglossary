@@ -7,7 +7,7 @@ from .core import log
 
 if TYPE_CHECKING:
 	import sqlite3
-	from typing import Generator, Iterator, Optional
+	from typing import Generator, Iterator
 
 	from .glossary_type import EntryType, GlossaryType
 
@@ -24,8 +24,8 @@ class Writer(object):
 
 	def _clear(self) -> None:
 		self._filename = ''
-		self._con: "Optional[sqlite3.Connection]"
-		self._cur: "Optional[sqlite3.Cursor]"
+		self._con: "sqlite3.Connection | None"
+		self._cur: "sqlite3.Cursor | None"
 
 	def open(self, filename: str) -> None:
 		import sqlite3
@@ -96,8 +96,8 @@ class Reader(object):
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._con: "Optional[sqlite3.Connection]"
-		self._cur: "Optional[sqlite3.Cursor]"
+		self._con: "sqlite3.Connection | None"
+		self._cur: "sqlite3.Cursor | None"
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect

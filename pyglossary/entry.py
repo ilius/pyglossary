@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 	from typing import (
 		Any,
 		Callable,
-		Optional,
 		Type,
 		Union,
 	)
@@ -48,7 +47,7 @@ class DataEntry(BaseEntry):
 		fname: str,
 		data: bytes = b"",
 		tmpPath: "str | None" = None,
-		byteProgress: "Optional[tuple[int, int]]" = None,
+		byteProgress: "tuple[int, int] | None" = None,
 	) -> None:
 		if data and tmpPath:
 			with open(tmpPath, "wb") as toFile:
@@ -58,7 +57,7 @@ class DataEntry(BaseEntry):
 		self._fname = fname
 		self._data = data  # bytes instance
 		self._tmpPath = tmpPath
-		self._byteProgress = byteProgress  # Optional[tuple[int, int]]
+		self._byteProgress = byteProgress  # tuple[int, int] | None
 
 	def getFileName(self) -> str:
 		return self._fname
@@ -107,7 +106,7 @@ class DataEntry(BaseEntry):
 	def defi(self) -> str:
 		return f"File: {self._fname}"
 
-	def byteProgress(self) -> "Optional[tuple[int, int]]":
+	def byteProgress(self) -> "tuple[int, int] | None":
 		return self._byteProgress
 
 	@property
@@ -218,7 +217,7 @@ class Entry(BaseEntry):
 		word: MultiStr,
 		defi: str,
 		defiFormat: str = "m",
-		byteProgress: "Optional[tuple[int, int]]" = None,
+		byteProgress: "tuple[int, int] | None" = None,
 	) -> None:
 		"""
 			word: string or a list of strings (including alternate words)
@@ -248,7 +247,7 @@ class Entry(BaseEntry):
 		self._word = word
 		self._defi = defi
 		self._defiFormat = defiFormat
-		self._byteProgress = byteProgress  # Optional[tuple[int, int]]
+		self._byteProgress = byteProgress  # tuple[int, int] | None
 
 	def __repr__(self) -> str:
 		return (
@@ -314,7 +313,7 @@ class Entry(BaseEntry):
 			self._defiFormat = "h"
 			return
 
-	def byteProgress(self) -> "Optional[tuple[int, int]]":
+	def byteProgress(self) -> "tuple[int, int] | None":
 		return self._byteProgress
 
 	def addAlt(self, alt: str) -> None:

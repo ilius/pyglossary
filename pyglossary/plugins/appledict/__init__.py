@@ -24,7 +24,7 @@ import pkgutil
 import shutil
 import sys
 from os.path import basename, isdir, join
-from typing import Any, Dict, Generator, Optional
+from typing import Any, Dict, Generator
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -140,7 +140,7 @@ def write_header(
 			toFile.write(_file.read())
 
 
-def format_default_prefs(default_prefs: "Optional[dict[str, Any]]") -> str:
+def format_default_prefs(default_prefs: "dict[str, Any] | None") -> str:
 	"""
 	:type default_prefs: dict or None
 

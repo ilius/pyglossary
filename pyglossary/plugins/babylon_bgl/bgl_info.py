@@ -20,7 +20,7 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 import pyglossary.gregorian as gregorian
 from pyglossary.core import log
@@ -42,7 +42,7 @@ class InfoItem(object):
 	def __init__(
 		self,
 		name: str,
-		decode: "Optional[Callable[[bytes], Any]]" = None,
+		decode: "Callable[[bytes], Any] | None" = None,
 		attr: bool = False,
 	) -> None:
 		self.name = name

@@ -16,11 +16,9 @@ from pyglossary.entry import DataEntry
 
 log = logging.getLogger("pyglossary")
 
-resListType = "Optional[list[tuple[str, str]]]"
+resListType = "list[tuple[str, str]] | None"
 
-nextBlockResultType = f"""Optional[
-	tuple[str, str, {resListType}]
-]"""
+nextBlockResultType = f"tuple[str, str, {resListType}] | None"
 
 
 class TextFilePosWrapper(object):

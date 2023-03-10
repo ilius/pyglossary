@@ -22,7 +22,6 @@ from typing import (
 	Generator,
 	Iterator,
 	Literal,
-	Optional,
 	Sequence,
 )
 
@@ -716,7 +715,7 @@ class Reader(object):
 class Writer(object):
 	_large_file: bool = False
 	_dictzip: bool = True
-	_sametypesequence: "Optional[Literal['', 'h', 'm', 'x']]" = ""
+	_sametypesequence: "Literal['', 'h', 'm', 'x'] | None" = ""
 	_stardict_client: bool = False
 	_merge_syns: bool = False
 	_audio_goldendict: bool = False

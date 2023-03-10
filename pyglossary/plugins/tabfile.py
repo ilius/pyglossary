@@ -2,7 +2,7 @@
 
 import os
 from os.path import isdir, join
-from typing import Generator, Iterator, Optional
+from typing import Generator, Iterator
 
 from pyglossary.compression import stdCompressions
 from pyglossary.core import log
@@ -75,7 +75,7 @@ class Reader(TextGlossaryReader):
 	def fixInfoWord(self, word: str) -> str:
 		return word.lstrip("#")
 
-	def nextBlock(self) -> "Optional[tuple[str, str, None]]":
+	def nextBlock(self) -> "tuple[str, str, None] | None":
 		if not self._file:
 			raise StopIteration
 		line = self.readline()

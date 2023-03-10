@@ -15,7 +15,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-from typing import Optional
 
 from . import gtk
 from .utils import (
@@ -100,7 +99,7 @@ class AboutWidget(gtk.Box):
 		self,
 		text: str,
 		wrap: bool = False,
-		justification: "Optional[gtk.Justification]" = None,
+		justification: "gtk.Justification | None" = None,
 	):
 		tv = gtk.TextView()
 		if wrap:
@@ -123,7 +122,7 @@ class AboutWidget(gtk.Box):
 		self,
 		text: str,
 		wrap: bool = False,
-		justification: "Optional[gtk.Justification]" = None,
+		justification: "gtk.Justification | None" = None,
 	):
 		box = VBox()
 		#box.set_border_width(10)

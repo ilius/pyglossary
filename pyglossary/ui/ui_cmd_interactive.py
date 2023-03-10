@@ -54,7 +54,7 @@ from os.path import (
 	join,
 	relpath,
 )
-from typing import TYPE_CHECKING, Dict, Iterable, Literal, Optional, Union
+from typing import TYPE_CHECKING, Dict, Iterable, Literal, Union
 
 if TYPE_CHECKING:
 	from pyglossary.option import Option
@@ -332,7 +332,7 @@ class UI(ui_cmd.UI):
 	def get_ls_l(
 		self,
 		arg: str,
-		st: "Optional[os.stat_result]" = None,
+		st: "os.stat_result | None" = None,
 		parentDir: str = "",
 		sizeWidth: int = 0,
 	) -> str:

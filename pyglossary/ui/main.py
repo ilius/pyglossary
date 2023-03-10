@@ -27,7 +27,7 @@ import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Callable, Dict, List, Optional
+	from typing import Callable, Dict, List
 
 	from pyglossary.option import Option
 
@@ -102,8 +102,8 @@ class StoreConstAction(argparse.Action):
 
 	def __call__(
 		self,
-		parser: "Optional[argparse.ArgumentParser]" = None,
-		namespace: "Optional[argparse.Namespace]" = None,
+		parser: "argparse.ArgumentParser | None" = None,
+		namespace: "argparse.Namespace | None" = None,
 		values: "List" = None,
 		option_strings: "list[str]" = None,
 		required: bool = False,

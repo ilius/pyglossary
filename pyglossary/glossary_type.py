@@ -5,7 +5,6 @@ from typing import (
 	Any,
 	Callable,
 	Iterator,
-	Optional,
 	Union,
 )
 
@@ -109,7 +108,7 @@ class EntryType(object):
 	) -> "Callable[[RawEntryType], Any]":
 		raise NotImplementedError
 
-	def byteProgress(self) -> "Optional[tuple[int, int]]":
+	def byteProgress(self) -> "tuple[int, int] | None":
 		raise NotImplementedError
 
 	def removeEmptyAndDuplicateAltWords(self) -> None:
@@ -139,7 +138,7 @@ class GlossaryType(object):
 	def collectDefiFormat(
 		self,
 		maxCount: int,
-	) -> "Optional[dict[str, float]]":
+	) -> "dict[str, float] | None":
 		raise NotImplementedError
 
 	def iterInfo(self) -> "Iterator[tuple[str, str]]":
@@ -216,7 +215,7 @@ class GlossaryType(object):
 		word: "MultiStr",
 		defi: str,
 		defiFormat: str = "",
-		byteProgress: "Optional[tuple[int, int]]" = None,
+		byteProgress: "tuple[int, int] | None" = None,
 	) -> EntryType:
 		raise NotImplementedError
 

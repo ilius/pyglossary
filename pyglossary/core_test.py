@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import logging
-from typing import Optional
 
 
 class MockLogHandler(logging.Handler):
@@ -19,7 +18,7 @@ class MockLogHandler(logging.Handler):
 		else:
 			self.recordsByLevel[level] = [record]
 
-	def popLog(self, level: int, msg: str) -> "Optional[logging.LogRecord]":
+	def popLog(self, level: int, msg: str) -> "logging.LogRecord | None":
 		if level not in self.recordsByLevel:
 			return None
 		records = self.recordsByLevel[level]

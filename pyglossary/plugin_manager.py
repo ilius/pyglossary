@@ -22,7 +22,7 @@ import os
 import sys
 import types
 from os.path import isdir, join
-from typing import Any, Optional, Type
+from typing import Any, Type
 
 from . import core
 from .core import (
@@ -203,7 +203,7 @@ class PluginManager(object):
 		filename: str,
 		format: str = "",
 		quiet: bool = False,
-	) -> "Optional[tuple[str, str, str]]":
+	) -> "tuple[str, str, str] | None":
 		"""
 			returns (filename, format, compression) or None
 		"""
@@ -245,7 +245,7 @@ class PluginManager(object):
 		inputFilename: str = "",
 		quiet: bool = False,
 		addExt: bool = False,
-	) -> "Optional[tuple[str, str, str]]":
+	) -> "tuple[str, str, str] | None":
 		"""
 		returns (filename, format, compression) or None
 		"""

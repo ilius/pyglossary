@@ -12,7 +12,7 @@ log = logging.getLogger("pyglossary")
 def reverseGlossary(
 	glos: GlossaryExtendedType,
 	savePath: str = "",
-	words: "Optional[list[str]]" = None,
+	words: "list[str] | None" = None,
 	includeDefs: bool = False,
 	reportStep: int = 300,
 	saveStep: int = 1000,  # set this to zero to disable auto saving

@@ -14,7 +14,7 @@
 # GNU General Public License for more details.
 
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Dict
 
 
 @dataclass
@@ -49,7 +49,7 @@ class AppleDictProperties:
 
 def from_metadata(metadata: Dict) -> AppleDictProperties:
 	format_version: int = metadata.get("IDXDictionaryVersion", -1)
-	dictionaryIndexes: "Optional[list[dict]]" = metadata.get('IDXDictionaryIndexes')
+	dictionaryIndexes: "list[dict] | None" = metadata.get('IDXDictionaryIndexes')
 	if dictionaryIndexes:
 		key_text_metadata = dictionaryIndexes[0]
 		body_metadata = dictionaryIndexes[2]

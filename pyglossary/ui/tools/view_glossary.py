@@ -2,7 +2,7 @@
 
 import sys
 from subprocess import PIPE, Popen
-from typing import Callable, Optional
+from typing import Callable
 
 from pyglossary.glossary_type import EntryType
 from pyglossary.glossary_v2 import Glossary
@@ -13,7 +13,7 @@ Glossary.init()
 
 
 def viewGlossary(filename: str, format: "str | None" = None) -> None:
-	highlightEntry: "Optional[Callable[[EntryType], None]]" = None
+	highlightEntry: "Callable[[EntryType], None] | None" = None
 	try:
 		import pygments  # noqa: F401
 	except ModuleNotFoundError:

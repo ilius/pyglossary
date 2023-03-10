@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 	import io
-	from typing import Callable, Iterator, Optional
+	from typing import Callable, Iterator
 
 	from lxml.etree import _Element as Element
 
@@ -344,7 +344,7 @@ class Reader(object):
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""
-		self._file: "Optional[io.IOBase]" = None
+		self._file: "io.IOBase | None" = None
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 

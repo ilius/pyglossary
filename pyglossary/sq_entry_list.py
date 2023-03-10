@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 from .entry_list import EntryListType
 
 if TYPE_CHECKING:
-	from typing import Any, Iterable, Iterator, Optional
+	from typing import Any, Iterable, Iterator
 
 	from .glossary_type import EntryType, GlossaryType
 	from .sort_keys import NamedSortKey
@@ -65,8 +65,8 @@ class SqEntryList(EntryListType):
 		self._glos = glos
 		self._filename = filename
 		self._persist = persist
-		self._con: "Optional[sqlite3.Connection]" = sqlite3.connect(filename)
-		self._cur: "Optional[sqlite3.Cursor]" = self._con.cursor()
+		self._con: "sqlite3.Connection | None" = sqlite3.connect(filename)
+		self._cur: "sqlite3.Cursor | None" = self._con.cursor()
 
 		if not filename:
 			raise ValueError(f"invalid {filename=}")

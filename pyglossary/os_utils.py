@@ -2,7 +2,7 @@ import logging
 import os
 import shutil
 import types
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable, Type
 
 from pyglossary import core
 
@@ -75,7 +75,7 @@ def runDictzip(filename: str) -> None:
 def _rmtreeError(
 	func: "Callable",
 	direc: str,
-	exc_info: "Optional[tuple[Type, Exception, types.TracebackType]]",
+	exc_info: "tuple[Type, Exception, types.TracebackType] | None",
 ) -> None:
 	if exc_info is None:
 		return

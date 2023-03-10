@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import io
-	from typing import Callable, Generator, Optional
+	from typing import Callable, Generator
 
 	from .glossary_type import EntryType, GlossaryType
 
@@ -21,9 +21,9 @@ file_size_check_every = 100
 class TextGlossaryWriter(object):
 	_encoding: str = "utf-8"
 	_newline: str = "\n"
-	_wordListEncodeFunc: "Optional[Callable[[list[str]], str]]" = None
-	_wordEscapeFunc: "Optional[Callable[[str], str]]" = None
-	_defiEscapeFunc: "Optional[Callable[[str], str]]" = None
+	_wordListEncodeFunc: "Callable[[list[str]], str] | None" = None
+	_wordEscapeFunc: "Callable[[str], str] | None" = None
+	_defiEscapeFunc: "Callable[[str], str] | None" = None
 	_ext: str = ".txt"
 	_head: str = ""
 	_tail: str = ""
@@ -36,7 +36,7 @@ class TextGlossaryWriter(object):
 		glos: "GlossaryType",
 		entryFmt: str = "",  # contain {word} and {defi}
 		writeInfo: bool = True,
-		outInfoKeysAliasDict: "Optional[dict[str, str]]" = None,
+		outInfoKeysAliasDict: "dict[str, str] | None" = None,
 	) -> None:
 		self._glos = glos
 		self._filename = ""
@@ -212,7 +212,7 @@ def writeTxt(
 	ext: str = ".txt",
 	head: str = "",
 	tail: str = "",
-	outInfoKeysAliasDict: "Optional[dict[str, str]]" = None,
+	outInfoKeysAliasDict: "dict[str, str] | None" = None,
 	encoding: str = "utf-8",
 	newline: str = "\n",
 	resources: bool = True,

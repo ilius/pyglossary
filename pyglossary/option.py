@@ -2,7 +2,7 @@
 
 import logging
 import re
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Type, Union
 
 log = logging.getLogger("pyglossary")
 
@@ -30,7 +30,7 @@ class Option(object):
 		self,
 		typ: str,
 		customValue: bool = False,
-		values: "Optional[list[Any]]" = None,
+		values: "list[Any] | None" = None,
 		allowNone: bool = False,
 		comment: str = "",
 		multiline: bool = False,
@@ -114,7 +114,7 @@ class Option(object):
 			return False
 		return True
 
-	def groupValues(self) -> "Optional[dict[str, Any]]":
+	def groupValues(self) -> "dict[str, Any] | None":
 		return None
 
 
@@ -182,7 +182,7 @@ class StrOption(Option):
 			return value in self.values
 		return type(value).__name__ == "str"
 
-	def groupValues(self) -> "Optional[dict[str, Any]]":
+	def groupValues(self) -> "dict[str, Any] | None":
 		return None
 
 
@@ -367,7 +367,7 @@ class EncodingOption(Option):
 	def __init__(
 		self,
 		customValue: bool = True,
-		values: "Optional[list[str]]" = None,
+		values: "list[str] | None" = None,
 		comment: "str | None" = None,
 		**kwargs,  # noqa: ANN
 	) -> None:
@@ -416,7 +416,7 @@ class EncodingOption(Option):
 		del data["values"]
 		return data
 
-	def groupValues(self) -> "Optional[dict[str, Any]]":
+	def groupValues(self) -> "dict[str, Any] | None":
 		from collections import OrderedDict
 		groups: "dict[str, list[str]]" = OrderedDict()
 		others: "list[str]" = []
@@ -442,7 +442,7 @@ class NewlineOption(Option):
 	def __init__(
 		self,
 		customValue: bool = True,
-		values: "Optional[list[str]]" = None,
+		values: "list[str] | None" = None,
 		comment: "str | None" = None,
 		**kwargs,  # noqa: ANN
 	) -> None:

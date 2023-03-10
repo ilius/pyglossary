@@ -8,7 +8,7 @@ from .pinyin import convert
 from .summarize import summarize
 
 if TYPE_CHECKING:
-	from typing import Optional, Sequence
+	from typing import Sequence
 
 	from pyglossary.lxml_type import T_htmlfile
 
@@ -27,7 +27,7 @@ COLORS = {
 }
 
 
-def parse_line(line: str) -> "Optional[tuple[str, str, str, list[str]]]":
+def parse_line(line: str) -> "tuple[str, str, str, list[str]] | None":
 	line = line.strip()
 	match = line_reg.match(line)
 	if match is None:

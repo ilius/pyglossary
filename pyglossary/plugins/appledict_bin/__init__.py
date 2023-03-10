@@ -24,7 +24,6 @@ from typing import (
 	Any,
 	Iterator,
 	Match,
-	Optional,
 )
 
 from lxml import etree
@@ -414,7 +413,7 @@ class Reader(object):
 			byteProgress=(self._absPos, self._limit),
 		)
 
-	def convertEntryBytesToXml(self, entryBytes: bytes) -> Optional[etree.Element]:
+	def convertEntryBytesToXml(self, entryBytes: bytes) -> "etree.Element | None":
 		# etree.register_namespace("d", "http://www.apple.com/DTDs/DictionaryService-1.0.rng")
 		entryFull = entryBytes.decode(self._encoding, errors="replace")
 		entryFull = entryFull.strip()

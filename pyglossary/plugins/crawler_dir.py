@@ -1,7 +1,7 @@
 from hashlib import sha1
 from os import listdir, makedirs
 from os.path import dirname, isdir, isfile, join, splitext
-from typing import Generator, Iterator, Optional
+from typing import Generator, Iterator
 
 from pyglossary.compression import (
 	compressionOpenFunc,
@@ -157,7 +157,7 @@ class Reader(object):
 	def _readDir(
 		self,
 		dpath: str,
-		exclude: "Optional[set[str]]",
+		exclude: "set[str] | None",
 	) -> "Generator[None, EntryType, None]":
 		children = listdir(dpath)
 		if exclude:
