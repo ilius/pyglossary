@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import io
 from typing import Generator, List
 
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -39,11 +40,11 @@ class Writer(object):
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
-		self._filename = None
-		self._file = None
+		self._filename = ""
+		self._file: "io.IOBase | None" = None
 
 	def finish(self) -> None:
-		self._filename = None
+		self._filename = ""
 		if self._file:
 			self._file.close()
 			self._file = None
@@ -55,6 +56,8 @@ class Writer(object):
 
 	def _writeInfo(self) -> None:
 		fileObj = self._file
+		if fileObj is None:
+			raise ValueError("fileObj is None")
 		newline = self._newline
 		info_keys = self._getInfoKeys()
 		infoDefLine = "CREATE TABLE dbinfo ("
@@ -120,6 +123,8 @@ class Writer(object):
 		newline = self._newline
 
 		fileObj = self._file
+		if fileObj is None:
+			raise ValueError("fileObj is None")
 
 		i = 0
 		while True:

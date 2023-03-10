@@ -117,6 +117,7 @@ class EntryType(object):
 	def stripFullHtml(self) -> "str | None":
 		raise NotImplementedError
 
+
 class GlossaryType(object):
 	"""
 	an abstract type class for Glossary class in plugins. it only
@@ -224,6 +225,12 @@ class GlossaryType(object):
 
 	@property
 	def rawEntryCompress(self) -> bool:
+		raise NotImplementedError
+
+	def stripFullHtml(
+		self,
+		errorHandler: "Callable[[EntryType, str], None] | None" = None,
+	) -> None:
 		raise NotImplementedError
 
 

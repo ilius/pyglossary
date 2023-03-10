@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import io
 import os
 from os.path import isdir
 from typing import Generator, Iterator
@@ -40,10 +41,10 @@ class Reader(object):
 
 	def clear(self) -> None:
 		self._filename = ""
-		self._file = None
-		self._wordCount = None
+		self._file: "io.TextIOBase | None" = None
+		self._wordCount: "int | None" = None
 		self._resDir = ""
-		self._resFileNames = []
+		self._resFileNames: "list[str]" = []
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
@@ -76,11 +77,16 @@ class Reader(object):
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install polib` to install"
 			raise e
+		
+		_file = self._file
+		if _file is None:
+			raise ValueError("_file is None")
+		
 		word = ""
 		defi = ""
 		msgstr = False
 		wordCount = 0
-		for line in self._file:
+		for line in _file:
 			line = line.strip()
 			if not line:
 				continue
@@ -123,8 +129,8 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
-		self._file = None
+		self._filename = ""
+		self._file: "io.TextIOBase | None" = None
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
@@ -134,7 +140,7 @@ class Writer(object):
 			_file.write(f'"{key}: {value}\\n"\n')
 
 	def finish(self) -> None:
-		self._filename = None
+		self._filename = ""
 		if self._file:
 			self._file.close()
 			self._file = None
@@ -145,8 +151,12 @@ class Writer(object):
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install polib` to install"
 			raise e
-		resources = self._resources
+
 		_file = self._file
+		if _file is None:
+			raise ValueError("_file is None")
+
+		resources = self._resources
 		filename = self._filename
 		while True:
 			entry = yield

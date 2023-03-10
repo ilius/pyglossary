@@ -91,7 +91,10 @@ class Reader(object):
 			with open(fpath, encoding=encoding) as fileObj:
 				data = load(fileObj)
 				words = list(data.keys())
-				sortKey = lookupSortKey("headword_lower").normal("utf-8")
+				namedSortKey = lookupSortKey("headword_lower")
+				if namedSortKey is None:
+					raise RuntimeError("namedSortKey is None")
+				sortKey = namedSortKey.normal("utf-8")
 				words.sort(key=sortKey)
 				for word in words:
 					entryDict = data[word]

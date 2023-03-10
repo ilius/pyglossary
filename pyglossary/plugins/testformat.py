@@ -3,6 +3,7 @@
 from typing import Generator, Iterator
 
 from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.option import Option
 
 enable = False
 lname = "testformat"
@@ -70,7 +71,7 @@ class Reader(object):
 class Writer(object):
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
@@ -99,4 +100,4 @@ class Writer(object):
 		# now write info to the output file (depending on your output format)
 
 	def finish(self) -> None:
-		self._filename = None
+		self._filename = ""

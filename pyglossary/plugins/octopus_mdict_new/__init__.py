@@ -21,7 +21,11 @@ import os
 import re
 import sys
 from os.path import dirname, extsep, isfile, join, splitext
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
+
+if TYPE_CHECKING:
+	from pyglossary.plugin_lib.readmdict import MDD, MDX
+
 
 from pyglossary.core import log
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -83,8 +87,8 @@ class Reader(object):
 
 	def clear(self) -> None:
 		self._filename = ""
-		self._mdx = None
-		self._mdd = []
+		self._mdx: "MDX | None" = None
+		self._mdd: "list[MDD]" = []
 		self._wordCount = 0
 		self._dataEntryCount = 0
 
@@ -142,11 +146,16 @@ class Reader(object):
 
 	def loadLinks(self) -> None:
 		from pyglossary.plugin_lib.readmdict import MDX
+
+		mdx = self._mdx
+		if mdx is None:
+			raise ValueError("mdx is None")
+
 		log.info("extracting links...")
-		linksDict = {}
+		linksDict: "dict[str, str]" = {}
 		word = ""
 		wordCount = 0
-		for b_word, b_defi in self._mdx.items():
+		for b_word, b_defi in mdx.items():
 			word = b_word.decode("utf-8")
 			defi = b_defi.decode("utf-8").strip()
 			if defi.startswith("@@@LINK="):

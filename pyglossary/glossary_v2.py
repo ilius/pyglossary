@@ -267,7 +267,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	def stripFullHtml(
 		self,
 		errorHandler: "Callable[[EntryType, str], None] | None" = None,
-	):
+	) -> None:
 		"""
 		Adds entry filter "strip_full_html"
 		to replace a full HTML document with it's body in entry definition

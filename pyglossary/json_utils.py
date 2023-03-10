@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, AnyStr
 if TYPE_CHECKING:
 	from typing import TypeAlias
 
-JsonEncodable: "TypeAlias" = "Union[Dict, List]"
+JsonEncodable: "TypeAlias" = "Union[dict, list]"
 # OrderedDict is also subclass of Dict, issubclass(OrderedDict, Dict) is True
 
 

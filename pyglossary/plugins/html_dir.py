@@ -102,12 +102,12 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
-		self._fileObj = None
+		self._filename = ""
+		self._fileObj: "io.IOBase | None" = None
 		self._encoding = "utf-8"
 		self._filename_format = "{n:05d}.html"
 		self._tail = "</body></html>"
-		self._filenameList = []
+		self._filenameList: "list[str]" = []
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
 	def open(self, filename: str) -> None:
@@ -160,13 +160,13 @@ class Writer(object):
 
 		filenameList = self._filenameList
 
-		fileByWord = {}
+		fileByWord: "dict[str, list[tuple[str, int]]]" = {}
 		for line in open(join(dirn, "index.txt"), encoding="utf-8"):
 			line = line.rstrip("\n")
 			if not line:
 				continue
-			entryIndex, wordEsc, filename, _ = line.split("\t")
-			entryIndex = int(entryIndex)
+			entryIndexStr, wordEsc, filename, _ = line.split("\t")
+			entryIndex = int(entryIndexStr)
 			# entryId = f"entry{entryIndex}"
 			word = unescapeNTB(wordEsc)
 			if word not in linkTargetSet:
@@ -177,7 +177,7 @@ class Writer(object):
 			else:
 				fileByWord[word] = [(filename, entryIndex)]
 
-		linksByFile = LRUCache(maxsize=100)
+		linksByFile: "LRUCache" = LRUCache(maxsize=100)
 
 		# with open(join(dirn, "fileByWord.json"), "w") as fileByWordFile:
 		# 	json.dump(fileByWord, fileByWordFile, ensure_ascii=False, indent="\t")
@@ -200,7 +200,7 @@ class Writer(object):
 			line = line.rstrip("\n")
 			if not line:
 				continue
-			target, fileIndex, x_start, x_size = line.split("\t")
+			target, fileIndexStr, x_start, x_size = line.split("\t")
 			target = unescapeNTB(target)
 			if target not in fileByWord:
 				targetNew = ""
@@ -209,7 +209,7 @@ class Writer(object):
 				if targetFilename == filename:
 					continue
 				targetNew = f"{targetFilename}#entry{targetEntryIndex}"
-			_file = getLinksByFile(int(fileIndex))
+			_file = getLinksByFile(int(fileIndexStr))
 			_file.write(
 				f"{x_start}\t{x_size}\t{targetNew}\n",
 			)
@@ -241,15 +241,15 @@ class Writer(object):
 					for linkLine in open(join(dirn, f"links{fileIndex}"), "rb"):
 						outFile.flush()
 						linkLine = linkLine.rstrip(b"\n")
-						x_start, x_size, target = linkLine.split(b"\t")
+						b_x_start, b_x_size, b_target = linkLine.split(b"\t")
 						outFile.write(inFile.read(
-							int(x_start, 16) - inFile.tell(),
+							int(b_x_start, 16) - inFile.tell(),
 						))
-						curLink = inFile.read(int(x_size, 16))
+						curLink = inFile.read(int(b_x_size, 16))
 
-						if target:
+						if b_target:
 							outFile.write(re_href.sub(
-								b' href="./' + target + b'"',
+								b' href="./' + b_target + b'"',
 								curLink,
 							))
 							continue
@@ -412,7 +412,7 @@ class Writer(object):
 				' href="#',
 			)
 
-		def addLinks(text: str, pos: int) -> str:
+		def addLinks(text: str, pos: int) -> None:
 			for m in re_fixed_link.finditer(text):
 				if ' class="entry_link"' in m.group(0):
 					continue

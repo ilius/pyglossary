@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import io
 from os.path import splitext
 from typing import Generator, Iterator
 
@@ -28,15 +29,15 @@ optionsProp: "dict[str, Option]" = {}
 class Writer(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
-		self._file = None
+		self._filename = ""
+		self._file: "io.IOBase | None" = None
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename, mode="wt", encoding="utf-8")
 
 	def finish(self) -> None:
-		self._filename = None
+		self._filename = ""
 		if self._file:
 			self._file.close()
 			self._file = None
@@ -62,13 +63,13 @@ class Writer(object):
 		wordCount = 0
 		bwordCount = 0
 
-		styleByTagCounter = Counter()
+		styleByTagCounter: "dict[str, int]" = Counter()
 
-		defiFormatCounter = Counter()
-		firstTagCounter = Counter()
-		allTagsCounter = Counter()
-		sourceScriptCounter = Counter()
-		dataEntryExtCounter = Counter()
+		defiFormatCounter: "dict[str, int]" = Counter()
+		firstTagCounter: "dict[str, int]" = Counter()
+		allTagsCounter: "dict[str, int]" = Counter()
+		sourceScriptCounter: "dict[str, int]" = Counter()
+		dataEntryExtCounter: "dict[str, int]" = Counter()
 
 		while True:
 			entry = yield
@@ -169,5 +170,5 @@ class Reader(object):
 	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType | None]":
 		yield None

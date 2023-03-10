@@ -72,7 +72,7 @@ class Reader(object):
 		self._wordCount = None
 		self._rootPath = None
 		self._resDir = ""
-		self._resFileNames = []
+		self._resFileNames: "list[str]" = []
 
 	def open(self, filename: str) -> None:
 		from pyglossary.json_utils import jsonToOrderedData
@@ -188,10 +188,10 @@ class Writer(object):
 		os.mkdir(self._resDir)
 
 	def _clear(self) -> None:
-		self._filename = None
-		self._resDir = None
+		self._filename = ""
+		self._resDir = ""
 		self._encoding = "utf-8"
-		self._hashSet = set()
+		self._hashSet: "set[str]" = set()
 		# self._wordCount = None
 
 	def hashToPath(self, h: str) -> str:
@@ -220,8 +220,8 @@ class Writer(object):
 		self,
 		thisEntry: EntryType,
 		thisHash: str,
-		prevHash: str,
-		nextHash: str,
+		prevHash: "str | None",
+		nextHash: "str | None",
 	) -> None:
 		dpath = join(self._filename, thisHash[:2])
 		makeDir(dpath)
