@@ -3,11 +3,15 @@
 import os
 import re
 from io import BytesIO
-from typing import TYPE_CHECKING, Callable, Iterator
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	import lxml
-	from lxml.etree import Element
+	import io
+	from typing import Callable, Iterator, Optional
+
+	from lxml.etree import _Element as Element
+
+	from pyglossary.lxml_type import T_htmlfile
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -75,7 +79,7 @@ class Reader(object):
 
 	def makeList(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "T_htmlfile",
 		input_objects: "list[Element]",
 		processor: "Callable",
 		single_prefix: str = "",
@@ -97,7 +101,7 @@ class Reader(object):
 
 	def writeSense(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: "T_htmlfile",
 		sense: "Element",
 	) -> None:
 		from lxml import etree as ET
@@ -185,7 +189,7 @@ class Reader(object):
 
 		examples = sense.findall("example")
 		if examples:
-			with hf.element("div", **{
+			with hf.element("div", attrib={
 				"class": "example",
 				"style": f"padding: {self._example_padding}px 0px;",
 			}):
@@ -212,7 +216,7 @@ class Reader(object):
 							style = {}
 							if self._example_color:
 								style["color"] = self._example_color
-							with hf.element("font", **style):
+							with hf.element("font", attrib=style):
 								hf.write(text)
 								for sent in sentList:
 									hf.write(br())
@@ -232,11 +236,13 @@ class Reader(object):
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
 			kebList: "list[str]" = []
-			rebList: "list[str]" = []
+			rebList: "list[tuple[str, list[str]]]" = []
 			with hf.element("div"):
 				for k_ele in entry.findall("k_ele"):
 					keb = k_ele.find("keb")
 					if keb is None:
+						continue
+					if not keb.text:
 						continue
 					kebList.append(keb.text)
 					keywords.append(keb.text)
@@ -247,11 +253,13 @@ class Reader(object):
 					reb = r_ele.find("reb")
 					if reb is None:
 						continue
+					if not reb.text:
+						continue
 					props = []
 					if r_ele.find("re_nokanji") is not None:
 						props.append("no kanji")
 					inf = r_ele.find("re_inf")
-					if inf is not None:
+					if inf is not None and inf.text:
 						props.append(
 							self.re_inf_mapping.get(inf.text, inf.text),
 						)
@@ -265,26 +273,26 @@ class Reader(object):
 				# but we don't seem to have a choice
 				# except for scanning and indexing all words once
 				# and then starting over and fixing/optimizing links
-				for keb in kebList:
-					for reb, _ in rebList:
-						keywords.append(f"{keb}・{reb}")
+				for s_keb in kebList:
+					for s_reb, _ in rebList:
+						keywords.append(f"{s_keb}・{s_reb}")
 
 				if kebList:
 					with hf.element(glos.titleTag(kebList[0])):
-						for i, keb in enumerate(kebList):
+						for i, s_keb in enumerate(kebList):
 							if i > 0:
 								with hf.element("font", color="red"):
 									hf.write(" | ")
-							hf.write(keb)
+							hf.write(s_keb)
 					hf.write(br())
 
 				if rebList:
-					for i, (reb, props) in enumerate(rebList):
+					for i, (s_reb, props) in enumerate(rebList):
 						if i > 0:
 							with hf.element("font", color="red"):
 								hf.write(" | ")
 						with hf.element("font", color="green"):
-							hf.write(reb)
+							hf.write(s_reb)
 						for prop in props:
 							hf.write(" ")
 							with hf.element("small"):
@@ -292,14 +300,18 @@ class Reader(object):
 									hf.write(prop)
 					hf.write(br())
 
+				_hf = cast("T_htmlfile", hf)
 				self.makeList(
-					hf,
+					_hf,
 					entry.findall("sense"),
 					self.writeSense,
 				)
 
 		defi = f.getvalue().decode("utf-8")
-		byteProgress = (self._file.tell(), self._fileSize)
+		_file = self._file
+		if _file is None:
+			raise RuntimeError("_file is None")
+		byteProgress = (_file.tell(), self._fileSize)
 		return self._glos.newEntry(
 			keywords,
 			defi,
@@ -332,7 +344,7 @@ class Reader(object):
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""
-		self._file = None
+		self._file: "Optional[io.IOBase]" = None
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 
@@ -365,8 +377,9 @@ class Reader(object):
 		# also good: f"https://sakuradict.com/search?q={{word}}"
 
 		header = ""
-		with compressionOpen(filename, mode="rt", encoding="utf-8") as _file:
-			for line in _file:
+		with compressionOpen(filename, mode="rt", encoding="utf-8") as text_file:
+			text_file = cast("io.TextIOBase", text_file)
+			for line in text_file:
 				if "<JMdict>" in line:
 					break
 				header += line
@@ -377,7 +390,7 @@ class Reader(object):
 	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
-		context = ET.iterparse(
+		context = ET.iterparse(  # type: ignore # noqa: PGH003
 			self._file,
 			events=("end",),
 			tag="entry",
