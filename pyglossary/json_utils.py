@@ -1,8 +1,11 @@
 import json
 from collections import OrderedDict
-from typing import AnyStr, Dict, List, TypeAlias, Union
+from typing import TYPE_CHECKING, AnyStr
 
-JsonEncodable: TypeAlias = "Union[Dict, List]"
+if TYPE_CHECKING:
+	from typing import TypeAlias
+
+JsonEncodable: "TypeAlias" = "Union[Dict, List]"
 # OrderedDict is also subclass of Dict, issubclass(OrderedDict, Dict) is True
 
 

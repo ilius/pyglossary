@@ -19,9 +19,11 @@
 
 import re
 from collections import namedtuple
-from typing import TYPE_CHECKING, Any, Callable, TypeAlias
+from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
+	from typing import TypeAlias
+
 	import icu
 
 defaultSortKeyName = "headword_lower"
@@ -43,12 +45,12 @@ LocaleNamedSortKey = namedtuple("LocaleNamedSortKey", [
 ])
 
 
-sortKeyType: TypeAlias = Callable[
+sortKeyType: "TypeAlias" = Callable[
 	[list[str]],
 	Any,
 ]
 
-sqliteSortKeyType: TypeAlias = list[tuple[str, str, sortKeyType]]
+sqliteSortKeyType: "TypeAlias" = list[tuple[str, str, sortKeyType]]
 
 
 def _headword_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":

@@ -1,6 +1,9 @@
 flagsByName = {}
 
-from typing import Type, TypeAlias
+from typing import TYPE_CHECKING, Type
+
+if TYPE_CHECKING:
+	from typing import TypeAlias
 
 
 class StrWithDesc(str):
@@ -17,7 +20,7 @@ DEFAULT_NO = StrWithDesc("default_no", "No (by default)")
 NEVER = StrWithDesc("never", "Never")
 
 # to statisfy mypy:
-YesNoAlwaysNever: TypeAlias = StrWithDesc
+YesNoAlwaysNever: "TypeAlias" = StrWithDesc
 """
 YesNoAlwaysNever: TypeAlias = Union[
 	Literal[ALWAYS],

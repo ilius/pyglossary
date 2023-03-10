@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from typing import TypeAlias, Union
+from typing import TYPE_CHECKING, Union
+
+if TYPE_CHECKING:
+	from typing import TypeAlias
 
 from .glossary_type import EntryType
 
-MultiStr: TypeAlias = Union[str, list[str]]
+MultiStr: "TypeAlias" = Union[str, list[str]]
 
 
 class BaseEntry(EntryType):

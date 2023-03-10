@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from typing import TypeAlias
-
 # Copyright © 2023 soshial <soshial@gmail.com> (soshial)
 #
 # This program is a free software; you can redistribute it and/or modify
@@ -15,7 +13,12 @@ from typing import TypeAlias
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-RawKeyData: TypeAlias = "tuple[int, int, list[str]]"
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	from typing import TypeAlias
+
+RawKeyData: "TypeAlias" = "tuple[int, int, list[str]]"
 """tuple(priority, parentalControl, keyTextFields)"""
 
 

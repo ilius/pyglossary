@@ -6,19 +6,19 @@ from typing import (
 	Callable,
 	Iterator,
 	Optional,
-	TypeAlias,
 	Union,
 )
 
 if TYPE_CHECKING:
 	from collections import OrderedDict
+	from typing import TypeAlias
 
 
 from .langs import Lang
 
-MultiStr: TypeAlias = Union[str, list[str]]
+MultiStr: "TypeAlias" = Union[str, list[str]]
 
-RawEntryType: TypeAlias = Union[
+RawEntryType: "TypeAlias" = Union[
 	bytes,  # compressed
 	"tuple[list[str], bytes]",  # uncompressed, without defiFormat
 	"tuple[list[str], bytes, str]",  # uncompressed, with defiFormat
