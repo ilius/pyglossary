@@ -85,7 +85,13 @@ class GzipWithCheck(object):
 	gzip.GzipFile with check.
 	It checks that unpacked data match what was packed.
 	"""
-	def __init__(self: "typing.Self", fileobj, unpackedPath, reader, closeFileobj=False) -> None:
+	def __init__(
+		self: "typing.Self",
+		fileobj,
+		unpackedPath,
+		reader,
+		closeFileobj=False,
+	) -> None:
 		"""
 		constructor
 

@@ -109,7 +109,12 @@ or the CSS border-spacing property on containers.
 
 
 class FormatDialog(gtk.Dialog):
-	def __init__(self: "typing.Self", descList: "list[str]", parent=None, **kwargs) -> None:
+	def __init__(
+		self: "typing.Self",
+		descList: "list[str]",
+		parent=None,
+		**kwargs,
+	) -> None:
 		gtk.Dialog.__init__(self, transient_for=parent, **kwargs)
 		self.set_default_size(400, 400)
 		self.vbox = self.get_content_area()
@@ -499,7 +504,11 @@ class FormatOptionsDialog(gtk.Dialog):
 		# model.set_value(itr, self.valueCol, value)
 		# model.set_value(itr, 0, True)  # enable it
 
-	def valueItemCustomActivate(self: "typing.Self", item: "gtk.MenuItem", itr: gtk.TreeIter):
+	def valueItemCustomActivate(
+		self: "typing.Self",
+		item: "gtk.MenuItem",
+		itr: gtk.TreeIter,
+	):
 		model = self.treev.get_model()
 		optName = model.get_value(itr, 1)
 		self.valueCustomOpenDialog(itr, optName)

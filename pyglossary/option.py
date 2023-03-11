@@ -144,7 +144,10 @@ class BoolOption(Option):
 		del data["values"]
 		return data
 
-	def evaluate(self: "typing.Self", raw: "Union[str, bool]") -> "tuple[bool | None, bool]":
+	def evaluate(
+		self: "typing.Self",
+		raw: "Union[str, bool]",
+	) -> "tuple[bool | None, bool]":
 		if raw is None:
 			return None, True
 		if isinstance(raw, bool):
@@ -316,7 +319,10 @@ class DictOption(Option):
 		del data["customValue"]
 		return data
 
-	def evaluate(self: "typing.Self", raw: "Union[str, dict]") -> "tuple[Dict | None, bool]":
+	def evaluate(
+		self: "typing.Self",
+		raw: "Union[str, dict]",
+	) -> "tuple[Dict | None, bool]":
 		import ast
 		if isinstance(raw, dict):
 			return raw, True

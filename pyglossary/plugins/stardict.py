@@ -670,7 +670,10 @@ class Reader(object):
 
 		return res
 
-	def parseDefiBlockGeneral(self: "typing.Self", b_block: bytes) -> "list[tuple[bytes, int]]":
+	def parseDefiBlockGeneral(
+		self: "typing.Self",
+		b_block: bytes,
+	) -> "list[tuple[bytes, int]]":
 		"""
 		Parse definition block when sametypesequence option is not specified.
 

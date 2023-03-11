@@ -652,7 +652,13 @@ class FormatOptionsDialog(tix.Toplevel):
 				if treev.column(cols[col_i], width=None) < col_w:
 					treev.column(cols[col_i], width=col_w)
 
-	def valueMenuItemCustomSelected(self: "typing.Self", treev, format, optName, menu=None):
+	def valueMenuItemCustomSelected(
+		self: "typing.Self",
+		treev,
+		format: str,
+		optName: str,
+		menu=None,
+	):
 		if menu:
 			menu.destroy()
 			self.menu = None

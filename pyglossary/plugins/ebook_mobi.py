@@ -267,7 +267,11 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 	def getLangCode(self: "typing.Self", lang: "Lang") -> str:
 		return lang.code if isinstance(lang, Lang) else ""
 
-	def get_opf_contents(self: "typing.Self", manifest_contents: str, spine_contents: str) -> str:
+	def get_opf_contents(
+		self: "typing.Self",
+		manifest_contents: str,
+		spine_contents: str,
+	) -> str:
 		cover = ""
 		if self.cover:
 			cover = self.COVER_TEMPLATE.format(cover=self.cover)

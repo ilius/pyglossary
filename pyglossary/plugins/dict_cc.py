@@ -91,7 +91,11 @@ class Reader(object):
 				with hf.element("a", href=f'bword://{trans}'):
 					hf.write("⏎")
 
-	def iterRows(self: "typing.Self", column1: str, column2: str) -> "Iterator[tuple[str, str, str]]":
+	def iterRows(
+		self: "typing.Self",
+		column1: str,
+		column2: str,
+	) -> "Iterator[tuple[str, str, str]]":
 		self._cur.execute(
 			f"select {column1}, {column2}, entry_type from main_ft"
 			f" order by {column1}",
@@ -135,7 +139,11 @@ class Reader(object):
 		headword = headword[:i] + headword[i + 4:]
 		return gender, headword
 
-	def _iterOneDirection(self: "typing.Self", column1: str, column2: str) -> "Iterator[str]":
+	def _iterOneDirection(
+		self: "typing.Self",
+		column1: str,
+		column2: str,
+	) -> "Iterator[str]":
 		from io import BytesIO
 		from itertools import groupby
 

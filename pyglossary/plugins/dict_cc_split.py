@@ -42,7 +42,11 @@ class Reader(object):
 		self._cur.execute("select count(*) * 2 from main_ft")
 		return self._cur.fetchone()[0]
 
-	def iterRows(self: "typing.Self", column1: str, column2: str) -> "Iterator[tuple[str, str, str]]":
+	def iterRows(
+		self: "typing.Self",
+		column1: str,
+		column2: str,
+	) -> "Iterator[tuple[str, str, str]]":
 		self._cur.execute(
 			f"select {column1}, {column2}, entry_type from main_ft"
 			f" order by {column1}",
@@ -60,7 +64,11 @@ class Reader(object):
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
-	def _iterOneDirection(self: "typing.Self", column1: str, column2: str) -> "Iterator[EntryType]":
+	def _iterOneDirection(
+		self: "typing.Self",
+		column1: str,
+		column2: str,
+	) -> "Iterator[EntryType]":
 		for word, defi, entry_type in self.iterRows(column1, column2):
 			if entry_type:
 				word = f"{word} {{{entry_type}}}"

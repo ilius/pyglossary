@@ -229,7 +229,10 @@ class YamlReader(TextGlossaryReader):
 				skip_single=False,
 			)
 
-	def _createEntry(self: "typing.Self", yamlBlock: str) -> "tuple[str, str, None] | None":
+	def _createEntry(
+		self: "typing.Self",
+		yamlBlock: str,
+	) -> "tuple[str, str, None] | None":
 		from lxml import etree as ET
 		from yaml import load
 		try:

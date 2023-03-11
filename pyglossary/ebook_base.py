@@ -134,7 +134,11 @@ class EbookWriter(object):
 
 	OPF_SPINE_ITEMREF_TEMPLATE = "  <itemref idref=\"{id}\" />"
 
-	def get_opf_contents(self: "typing.Self", manifest_contents: str, spine_contents: str) -> str:
+	def get_opf_contents(
+		self: "typing.Self",
+		manifest_contents: str,
+		spine_contents: str,
+	) -> str:
 		raise NotImplementedError
 
 	def __init__(
@@ -240,7 +244,11 @@ class EbookWriter(object):
 	def sortKey(self: "typing.Self", words: "list[str]") -> "Any":
 		raise NotImplementedError
 
-	def _add_group(self: "typing.Self", group_labels: "list[str]", state: "GroupState") -> None:
+	def _add_group(
+		self: "typing.Self",
+		group_labels: "list[str]",
+		state: "GroupState",
+	) -> None:
 		if not state.last_prefix:
 			return
 		state.group_index += 1

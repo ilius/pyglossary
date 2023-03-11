@@ -91,8 +91,15 @@ class ProgressBar(object):
     _DEFAULT_TERMSIZE = 80
     _DEFAULT_WIDGETS = [widgets.Percentage(), ' ', widgets.Bar()]
 
-    def __init__(self: "typing.Self", maxval=None, widgets=None, term_width=None, poll=1,
-                 left_justify=True, fd=None) -> None:
+    def __init__(
+        self: "typing.Self",
+        maxval=None,
+        widgets=None,
+        term_width=None,
+        poll=1,
+        left_justify=True,
+        fd=None,
+    ) -> None:
         """Initializes a progress bar with sane defaults."""
 
         # Don't share a reference with any other progress bars

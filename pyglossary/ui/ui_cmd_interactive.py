@@ -452,7 +452,13 @@ class UI(ui_cmd.UI):
 		# msg, colored = self.formatPromptMsg(level, msg, colon)
 		return checkbox_prompt(msg, **kwargs)
 
-	def askFile(self: "typing.Self", kind: str, histName: str, varName: str, reading: bool):
+	def askFile(
+		self: "typing.Self",
+		kind: str,
+		histName: str,
+		varName: str,
+		reading: bool,
+	):
 		from shlex import split as shlex_split
 		history = AbsolutePathHistory(join(histDir, histName))
 		auto_suggest = AutoSuggestFromHistory()

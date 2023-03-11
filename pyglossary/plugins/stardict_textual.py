@@ -265,7 +265,11 @@ class Writer(object):
 	def finish(self) -> None:
 		self._file.close()
 
-	def writeInfo(self: "typing.Self", maker: "builder.ElementMaker", pretty: bool) -> None:
+	def writeInfo(
+		self: "typing.Self",
+		maker: "builder.ElementMaker",
+		pretty: bool,
+	) -> None:
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -297,7 +301,11 @@ class Writer(object):
 			pretty_print=pretty,
 		)).decode(self._encoding) + "\n")
 
-	def writeDataEntry(self: "typing.Self", maker: "builder.ElementMaker", entry: "EntryType") -> None:
+	def writeDataEntry(
+		self: "typing.Self",
+		maker: "builder.ElementMaker",
+		entry: "EntryType",
+	) -> None:
 		pass
 		# TODO: create article tag with "definition-r" in it?
 		# or just save the file to res/ directory? or both?

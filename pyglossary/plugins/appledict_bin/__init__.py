@@ -334,7 +334,11 @@ class Reader(object):
 
 		return defi
 
-	def getChunkLenOffset(self: "typing.Self", pos: int, buffer: bytes) -> "tuple[int, int]":
+	def getChunkLenOffset(
+		self: "typing.Self",
+		pos: int,
+		buffer: bytes,
+	) -> "tuple[int, int]":
 		"""
 		@return chunk byte length and offset
 
@@ -414,7 +418,10 @@ class Reader(object):
 			byteProgress=(self._absPos, self._limit),
 		)
 
-	def convertEntryBytesToXml(self: "typing.Self", entryBytes: bytes) -> "etree.Element | None":
+	def convertEntryBytesToXml(
+		self: "typing.Self",
+		entryBytes: bytes,
+	) -> "etree.Element | None":
 		# etree.register_namespace("d", "http://www.apple.com/DTDs/DictionaryService-1.0.rng")
 		entryFull = entryBytes.decode(self._encoding, errors="replace")
 		entryFull = entryFull.strip()

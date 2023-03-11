@@ -520,7 +520,11 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	# 		return os.access(dirPath, os.W_OK)
 	# 	return os.access(os.path.dirname(dirPath), os.W_OK)
 
-	def _createReader(self: "typing.Self", format: str, options: "dict[str, Any]") -> "Any":
+	def _createReader(
+		self: "typing.Self",
+		format: str,
+		options: "dict[str, Any]",
+	) -> "Any":
 		readerClass = self.plugins[format].readerClass
 		if readerClass is None:
 			log.critical("_createReader: readerClass is None")

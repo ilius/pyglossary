@@ -1,6 +1,3 @@
-
-import typing
-
 # -*- coding: utf-8 -*-
 #
 # Copyright © 2023 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
@@ -8,6 +5,8 @@ import typing
 # based on https://github.com/abelcheung/types-lxml
 # under Apache License, Version 2.0, January 2004
 # http://www.apache.org/licenses/
+
+import typing
 from typing import (
     AnyStr,
     AsyncContextManager,
@@ -54,7 +53,10 @@ class IncrementalFileWriter(metaclass=Interface):
         ...
     def flush(self) -> None:
         ...
-    def method(self: "typing.Self", method: "_OutputMethodArg | None") -> ContextManager[None]:
+    def method(
+        self: "typing.Self",
+        method: "_OutputMethodArg | None",
+    ) -> ContextManager[None]:
         raise NotImplementedError
     def element(
         self,
@@ -86,7 +88,10 @@ class AsyncIncrementalFileWriter(metaclass=Interface):
         ...
     async def flush(self) -> None:
         ...
-    def method(self: "typing.Self", method: "_OutputMethodArg | None") -> AsyncContextManager[None]:
+    def method(
+        self: "typing.Self",
+        method: "_OutputMethodArg | None",
+    ) -> AsyncContextManager[None]:
         raise NotImplementedError
     def element(
         self,

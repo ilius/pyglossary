@@ -120,7 +120,12 @@ def buffer_get_text(b):
 
 
 class FormatDialog(gtk.Dialog):
-	def __init__(self: "typing.Self", descList: "list[str]", parent=None, **kwargs) -> None:
+	def __init__(
+		self: "typing.Self",
+		descList: "list[str]",
+		parent=None,
+		**kwargs,
+	) -> None:
 		gtk.Dialog.__init__(self, parent=parent, **kwargs)
 		self.descList = descList
 		self.items = descList
@@ -491,7 +496,11 @@ class FormatOptionsDialog(gtk.Dialog):
 		model.set_value(itr, self.valueCol, value)
 		model.set_value(itr, 0, True)  # enable it
 
-	def valueItemCustomActivate(self: "typing.Self", item: gtk.MenuItem, itr: gtk.TreeIter):
+	def valueItemCustomActivate(
+		self: "typing.Self",
+		item: gtk.MenuItem,
+		itr: gtk.TreeIter,
+	):
 		model = self.treev.get_model()
 		optName = model.get_value(itr, 1)
 		self.valueCustomOpenDialog(itr, optName)
