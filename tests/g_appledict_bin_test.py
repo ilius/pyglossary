@@ -45,7 +45,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			"Contents/Resources/KeyText.index": "59f9ab67",
 		})
 
-	def test_fix_links(self):
+	def test_fix_links(self: "typing.Self"):
 		glos = Glossary()
 		reader = Reader(glos)
 		f = reader.fixLinksInDefi
@@ -117,7 +117,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			expectedStylePath,
 		)
 
-	def test_appledict_binary_to_txt_0(self):
+	def test_appledict_binary_to_txt_0(self: "typing.Self"):
 		baseName = "002-simple"
 		files = [
 			"Contents/Body.data",
@@ -134,7 +134,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 		self.convert_appledict_binary_to_txt(baseName, files)
 
 
-	def test_appledict_binary_to_txt_1(self):
+	def test_appledict_binary_to_txt_1(self: "typing.Self"):
 		baseName = "006-en-oxfjord_v10.11_c2_t3"
 		files = [
 			"Contents/Info.plist",

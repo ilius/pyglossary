@@ -26,7 +26,7 @@ class TestGlossaryDictunformat(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_dictunformat_txt_1(self):
+	def test_convert_dictunformat_txt_1(self: "typing.Self"):
 		self.convert_dictunformat_txt(
 			"100-en-fa-2",
 			"100-en-fa-2.dictunformat",

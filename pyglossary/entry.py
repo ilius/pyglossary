@@ -40,7 +40,7 @@ class DataEntry(BaseEntry):
 		"_byteProgress",
 	]
 
-	def isData(self) -> bool:
+	def isData(self: "typing.Self") -> bool:
 		return True
 
 	def __init__(
@@ -60,18 +60,18 @@ class DataEntry(BaseEntry):
 		self._tmpPath = tmpPath
 		self._byteProgress = byteProgress  # tuple[int, int] | None
 
-	def getFileName(self) -> str:
+	def getFileName(self: "typing.Self") -> str:
 		return self._fname
 
 	@property
-	def data(self) -> bytes:
+	def data(self: "typing.Self") -> bytes:
 		if self._tmpPath:
 			with open(self._tmpPath, "rb") as _file:
 				return _file.read()
 		else:
 			return self._data
 
-	def size(self) -> int:
+	def size(self: "typing.Self") -> int:
 		if self._tmpPath:
 			return getsize(self._tmpPath)
 		return len(self._data)
@@ -96,29 +96,29 @@ class DataEntry(BaseEntry):
 		return fpath
 
 	@property
-	def s_word(self) -> str:
+	def s_word(self: "typing.Self") -> str:
 		return self._fname
 
 	@property
-	def l_word(self) -> "list[str]":
+	def l_word(self: "typing.Self") -> "list[str]":
 		return [self._fname]
 
 	@property
-	def defi(self) -> str:
+	def defi(self: "typing.Self") -> str:
 		return f"File: {self._fname}"
 
-	def byteProgress(self) -> "tuple[int, int] | None":
+	def byteProgress(self: "typing.Self") -> "tuple[int, int] | None":
 		return self._byteProgress
 
 	@property
-	def defiFormat(self) -> str:
+	def defiFormat(self: "typing.Self") -> str:
 		return "b"
 
 	@defiFormat.setter
 	def defiFormat(self: "typing.Self", defiFormat: str) -> None:
 		pass
 
-	def detectDefiFormat(self) -> None:
+	def detectDefiFormat(self: "typing.Self") -> None:
 		pass
 
 	def addAlt(self: "typing.Self", alt: str) -> None:
@@ -130,7 +130,7 @@ class DataEntry(BaseEntry):
 	def editFuncDefi(self: "typing.Self", func: "Callable[[str], str]") -> None:
 		pass
 
-	def strip(self) -> None:
+	def strip(self: "typing.Self") -> None:
 		pass
 
 	def replaceInWord(self: "typing.Self", source: str, target: str) -> None:
@@ -142,10 +142,10 @@ class DataEntry(BaseEntry):
 	def replace(self: "typing.Self", source: str, target: str) -> None:
 		pass
 
-	def removeEmptyAndDuplicateAltWords(self) -> None:
+	def removeEmptyAndDuplicateAltWords(self: "typing.Self") -> None:
 		pass
 
-	def stripFullHtml(self) -> "str | None":
+	def stripFullHtml(self: "typing.Self") -> "str | None":
 		pass
 
 	def getRaw(self: "typing.Self", glos: "GlossaryType") -> "RawEntryType":
@@ -194,7 +194,7 @@ class Entry(BaseEntry):
 		"_byteProgress",
 	]
 
-	def isData(self) -> bool:
+	def isData(self: "typing.Self") -> bool:
 		return False
 
 	@staticmethod
@@ -250,14 +250,14 @@ class Entry(BaseEntry):
 		self._defiFormat = defiFormat
 		self._byteProgress = byteProgress  # tuple[int, int] | None
 
-	def __repr__(self) -> str:
+	def __repr__(self: "typing.Self") -> str:
 		return (
 			f"Entry({self._word!r}, {self._defi!r}, "
 			f"defiFormat={self._defiFormat!r})"
 		)
 
 	@property
-	def s_word(self) -> str:
+	def s_word(self: "typing.Self") -> str:
 		"""
 			returns string of word,
 				and all the alternate words
@@ -268,7 +268,7 @@ class Entry(BaseEntry):
 		return joinByBar(self._word)
 
 	@property
-	def l_word(self) -> "list[str]":
+	def l_word(self: "typing.Self") -> "list[str]":
 		"""
 			returns list of the word and all the alternate words
 		"""
@@ -277,14 +277,14 @@ class Entry(BaseEntry):
 		return self._word
 
 	@property
-	def defi(self) -> str:
+	def defi(self: "typing.Self") -> str:
 		"""
 			returns string of definition
 		"""
 		return self._defi
 
 	@property
-	def defiFormat(self) -> str:
+	def defiFormat(self: "typing.Self") -> str:
 		"""
 			returns definition format:
 				"m": plain text
@@ -304,7 +304,7 @@ class Entry(BaseEntry):
 		"""
 		self._defiFormat = defiFormat
 
-	def detectDefiFormat(self) -> None:
+	def detectDefiFormat(self: "typing.Self") -> None:
 		if self._defiFormat != "m":
 			return
 		if Entry.xdxfPattern.match(self.defi):
@@ -314,7 +314,7 @@ class Entry(BaseEntry):
 			self._defiFormat = "h"
 			return
 
-	def byteProgress(self) -> "tuple[int, int] | None":
+	def byteProgress(self: "typing.Self") -> "tuple[int, int] | None":
 		return self._byteProgress
 
 	def addAlt(self: "typing.Self", alt: str) -> None:
@@ -349,7 +349,7 @@ class Entry(BaseEntry):
 			s = s[:-4]
 		return s
 
-	def strip(self) -> None:
+	def strip(self: "typing.Self") -> None:
 		"""
 			strip whitespaces from all words and definitions
 		"""
@@ -382,7 +382,7 @@ class Entry(BaseEntry):
 		self.replaceInWord(source, target)
 		self.replaceInDefi(source, target)
 
-	def removeEmptyAndDuplicateAltWords(self) -> None:
+	def removeEmptyAndDuplicateAltWords(self: "typing.Self") -> None:
 		l_word = self.l_word
 		if len(l_word) == 1:
 			return
@@ -390,7 +390,7 @@ class Entry(BaseEntry):
 		l_word = list(unique_everseen(l_word))
 		self._word = l_word
 
-	def stripFullHtml(self) -> "str | None":
+	def stripFullHtml(self: "typing.Self") -> "str | None":
 		"""
 		returns error
 		"""

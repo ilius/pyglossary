@@ -26,7 +26,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_dsl_txt_1(self):
+	def test_convert_dsl_txt_1(self: "typing.Self"):
 		self.convert_dsl_txt(
 			"100-RussianAmericanEnglish-ru-en",
 			"100-RussianAmericanEnglish-ru-en",

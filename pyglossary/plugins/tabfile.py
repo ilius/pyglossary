@@ -60,7 +60,7 @@ class Reader(TextGlossaryReader):
 			self._resDir = resDir
 			self._resFileNames = os.listdir(self._resDir)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		yield from TextGlossaryReader.__iter__(self)
 		resDir = self._resDir
 		for fname in self._resFileNames:
@@ -76,7 +76,7 @@ class Reader(TextGlossaryReader):
 	def fixInfoWord(self: "typing.Self", word: str) -> str:
 		return word.lstrip("#")
 
-	def nextBlock(self) -> "tuple[str, str, None] | None":
+	def nextBlock(self: "typing.Self") -> "tuple[str, str, None] | None":
 		if not self._file:
 			raise StopIteration
 		line = self.readline()
@@ -124,10 +124,10 @@ class Writer(object):
 	) -> None:
 		self._filename = filename
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		pass
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		from pyglossary.text_utils import escapeNTB, joinByBar
 		from pyglossary.text_writer import TextGlossaryWriter
 		writer = TextGlossaryWriter(

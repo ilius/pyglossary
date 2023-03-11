@@ -163,10 +163,10 @@ class Reader(object):
 			self._file.close()
 			self._file = compressionOpen(self._filename, mode="rb")
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return 0
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		from lxml import etree as ET
 		from lxml.etree import tostring
 
@@ -200,12 +200,12 @@ class Reader(object):
 			while article.getprevious() is not None:
 				del article.getparent()[0]
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
 
-	def read_metadata_old(self) -> None:
+	def read_metadata_old(self: "typing.Self") -> None:
 		full_name = self._xdxf.find("full_name").text
 		desc = self._xdxf.find("description").text
 		if full_name:
@@ -213,7 +213,7 @@ class Reader(object):
 		if desc:
 			self._glos.setInfo("description", desc)
 
-	def read_metadata_new(self) -> None:
+	def read_metadata_new(self: "typing.Self") -> None:
 		meta_info = self._xdxf.find("meta_info")
 		if meta_info is None:
 			raise ValueError("meta_info not found")

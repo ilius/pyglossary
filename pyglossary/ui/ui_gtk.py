@@ -229,7 +229,7 @@ class FormatDialog(gtk.Dialog):
 				return
 			_iter = model.iter_next(_iter)
 
-	def updateTree(self):
+	def updateTree(self: "typing.Self"):
 		model = self.treev.get_model()
 		model.clear()
 		for desc in self.items:
@@ -238,7 +238,7 @@ class FormatDialog(gtk.Dialog):
 		if self.activeDesc:
 			self.setCursor(self.activeDesc)
 
-	def getActive(self) -> "PluginProp | None":
+	def getActive(self: "typing.Self") -> "PluginProp | None":
 		_iter = self.treev.get_selection().get_selected()[1]
 		if _iter is None:
 			return None
@@ -299,7 +299,7 @@ class FormatButton(gtk.Button):
 			self.set_label(self.noneLabel)
 		self.onChanged()
 
-	def getActive(self):
+	def getActive(self: "typing.Self"):
 		if self.activePlugin is None:
 			return ""
 		return self.activePlugin.name
@@ -567,7 +567,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		menu.popup(None, None, None, None, 3, etime)
 		return True
 
-	def getOptionsValues(self):
+	def getOptionsValues(self: "typing.Self"):
 		model = self.treev.get_model()
 		optionsValues = {}
 		for row in model:
@@ -604,11 +604,11 @@ class FormatBox(FormatButton):
 	def setOptionsValues(self: "typing.Self", optionsValues: "dict[str, Any]"):
 		self.optionsValues = optionsValues
 
-	def kind(self):
+	def kind(self: "typing.Self"):
 		"returns 'r' or 'w'"
 		raise NotImplementedError
 
-	def getActiveOptions(self):
+	def getActiveOptions(self: "typing.Self"):
 		raise NotImplementedError
 
 	def optionsButtonClicked(self: "typing.Self", button):
@@ -676,11 +676,11 @@ class InputFormatBox(FormatBox):
 	def __init__(self: "typing.Self", **kwargs) -> None:
 		FormatBox.__init__(self, readDesc, **kwargs)
 
-	def kind(self):
+	def kind(self: "typing.Self"):
 		"returns 'r' or 'w'"
 		return "r"
 
-	def getActiveOptions(self):
+	def getActiveOptions(self: "typing.Self"):
 		formatName = self.getActive()
 		if not formatName:
 			return None
@@ -693,11 +693,11 @@ class OutputFormatBox(FormatBox):
 	def __init__(self: "typing.Self", **kwargs) -> None:
 		FormatBox.__init__(self, writeDesc, **kwargs)
 
-	def kind(self):
+	def kind(self: "typing.Self"):
 		"returns 'r' or 'w'"
 		return "w"
 
-	def getActiveOptions(self):
+	def getActiveOptions(self: "typing.Self"):
 		return list(Glossary.formatsWriteOptions[self.getActive()].keys())
 
 
@@ -868,7 +868,7 @@ class SortOptionsBox(gtk.Box):
 		self.encodingHBox.set_sensitive(sort)
 		self.localeHBox.set_sensitive(sort)
 
-	def updateWidgets(self):
+	def updateWidgets(self: "typing.Self"):
 		convertOptions = self.ui.convertOptions
 		sort = convertOptions.get("sort")
 		self.sortCheck.set_active(sort)
@@ -884,7 +884,7 @@ class SortOptionsBox(gtk.Box):
 		self.encodingEntry.set_text(sortEncoding)
 
 
-	def applyChanges(self):
+	def applyChanges(self: "typing.Self"):
 		convertOptions = self.ui.convertOptions
 		sort = self.sortCheck.get_active()
 		if not sort:
@@ -966,14 +966,14 @@ class GeneralOptionsDialog(gtk.Dialog):
 		self.updateWidgets()
 		self.vbox.show_all()
 
-	def getSQLite(self) -> bool:
+	def getSQLite(self: "typing.Self") -> bool:
 		convertOptions = self.ui.convertOptions
 		sqlite = convertOptions.get("sqlite")
 		if sqlite is not None:
 			return sqlite
 		return self.ui.config.get("auto_sqlite", True)
 
-	def updateWidgets(self):
+	def updateWidgets(self: "typing.Self"):
 		config = self.ui.config
 		self.sortOptionsBox.updateWidgets()
 		self.sqliteCheck.set_active(self.getSQLite())
@@ -981,7 +981,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 			default = self.configParams[param]
 			check.set_active(config.get(param, default))
 
-	def applyChanges(self):
+	def applyChanges(self: "typing.Self"):
 		# print("applyChanges")
 		self.sortOptionsBox.applyChanges()
 
@@ -1533,13 +1533,13 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		else:
 			self.status("Select output format")
 
-	def reverseLoad(self):
+	def reverseLoad(self: "typing.Self"):
 		pass
 
-	def reverseStartLoop(self):
+	def reverseStartLoop(self: "typing.Self"):
 		pass
 
-	def reverseStart(self):
+	def reverseStart(self: "typing.Self"):
 		if not self.reverseLoad():
 			return
 		###
@@ -1554,7 +1554,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 	def reverseStartClicked(self: "typing.Self", widget=None):
 		self.waitingDo(self.reverseStart)
 
-	def reversePause(self):
+	def reversePause(self: "typing.Self"):
 		self.reverseStatus = "pause"
 		###
 		self.reverseStartButton.set_sensitive(False)
@@ -1565,7 +1565,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 	def reversePauseClicked(self: "typing.Self", widget=None):
 		self.waitingDo(self.reversePause)
 
-	def reverseResume(self):
+	def reverseResume(self: "typing.Self"):
 		self.reverseStatus = "doing"
 		###
 		self.reverseStartButton.set_sensitive(False)
@@ -1576,7 +1576,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 	def reverseResumeClicked(self: "typing.Self", widget=None):
 		self.waitingDo(self.reverseResume)
 
-	def reverseStop(self):
+	def reverseStop(self: "typing.Self"):
 		self.reverseStatus = "stop"
 		###
 		self.reverseStartButton.set_sensitive(True)

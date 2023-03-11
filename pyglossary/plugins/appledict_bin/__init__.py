@@ -287,10 +287,10 @@ class Reader(object):
 		targetLocale = langs["DCSDictionaryIndexLanguage"]
 		self._glos.targetLangName = locale.normalize(targetLocale).split("_")[0]
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return self._wordCount
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._file is not None:
 			self._file.close()
 			self._file = None
@@ -438,7 +438,7 @@ class Reader(object):
 			raise ValueError(f"self._limit = {self._limit}")
 		return entryRoot
 
-	def readEntryIds(self) -> None:
+	def readEntryIds(self: "typing.Self") -> None:
 		titleById = {}
 		for entryBytes, _ in self.yieldEntryBytes(
 			self._file,
@@ -604,7 +604,7 @@ class Reader(object):
 
 		self._keyTextData = keyTextData
 
-	def __iter__(self) -> Iterator[EntryType]:
+	def __iter__(self: "typing.Self") -> Iterator[EntryType]:
 		if self._file is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 		glos = self._glos

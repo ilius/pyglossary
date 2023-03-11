@@ -26,7 +26,7 @@ class Reader(object):
 		self._glos = glos
 		self._clear()
 
-	def _clear(self) -> None:
+	def _clear(self: "typing.Self") -> None:
 		self._filename = ''
 		self._con = None
 		self._cur = None
@@ -38,7 +38,7 @@ class Reader(object):
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("m")
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		self._cur.execute("select count(*) * 2 from main_ft")
 		return self._cur.fetchone()[0]
 
@@ -74,11 +74,11 @@ class Reader(object):
 				word = f"{word} {{{entry_type}}}"
 			yield self._glos.newEntry(word, defi, defiFormat="m")
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		yield from self._iterOneDirection("term1", "term2")
 		yield from self._iterOneDirection("term2", "term1")
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:

@@ -220,7 +220,7 @@ class FormatDialog(gtk.Dialog):
 				return
 			_iter = model.iter_next(_iter)
 
-	def updateTree(self):
+	def updateTree(self: "typing.Self"):
 		model = self.treev.get_model()
 		model.clear()
 		for desc in self.items:
@@ -229,7 +229,7 @@ class FormatDialog(gtk.Dialog):
 		if self.activeDesc:
 			self.setCursor(self.activeDesc)
 
-	def getActive(self) -> "PluginProp | None":
+	def getActive(self: "typing.Self") -> "PluginProp | None":
 		_iter = self.treev.get_selection().get_selected()[1]
 		if _iter is None:
 			return None
@@ -295,7 +295,7 @@ class FormatButton(gtk.Button):
 		dialog.connect("response", self.onDialogResponse)
 		dialog.present()
 
-	def getActive(self):
+	def getActive(self: "typing.Self"):
 		if self.activePlugin is None:
 			return ""
 		return self.activePlugin.name
@@ -576,7 +576,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		menu.popup(None, None, None, None, 3, etime)
 		return True
 
-	def getOptionsValues(self):
+	def getOptionsValues(self: "typing.Self"):
 		model = self.treev.get_model()
 		optionsValues = {}
 		for row in model:
@@ -614,11 +614,11 @@ class FormatBox(FormatButton):
 	def setOptionsValues(self: "typing.Self", optionsValues: "dict[str, Any]"):
 		self.optionsValues = optionsValues
 
-	def kind(self):
+	def kind(self: "typing.Self"):
 		"returns 'r' or 'w'"
 		raise NotImplementedError
 
-	def getActiveOptions(self):
+	def getActiveOptions(self: "typing.Self"):
 		raise NotImplementedError
 
 	def optionsButtonClicked(self: "typing.Self", button):
@@ -688,11 +688,11 @@ class InputFormatBox(FormatBox):
 	def __init__(self: "typing.Self", **kwargs) -> None:
 		FormatBox.__init__(self, readDesc, **kwargs)
 
-	def kind(self):
+	def kind(self: "typing.Self"):
 		"returns 'r' or 'w'"
 		return "r"
 
-	def getActiveOptions(self):
+	def getActiveOptions(self: "typing.Self"):
 		formatName = self.getActive()
 		if not formatName:
 			return None
@@ -705,11 +705,11 @@ class OutputFormatBox(FormatBox):
 	def __init__(self: "typing.Self", **kwargs) -> None:
 		FormatBox.__init__(self, writeDesc, **kwargs)
 
-	def kind(self):
+	def kind(self: "typing.Self"):
 		"returns 'r' or 'w'"
 		return "w"
 
-	def getActiveOptions(self):
+	def getActiveOptions(self: "typing.Self"):
 		return list(Glossary.formatsWriteOptions[self.getActive()].keys())
 
 
@@ -876,7 +876,7 @@ class SortOptionsBox(gtk.Box):
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)
 
-	def updateWidgets(self):
+	def updateWidgets(self: "typing.Self"):
 		convertOptions = self.mainWin.convertOptions
 		sort = convertOptions.get("sort")
 		self.sortCheck.set_active(sort)
@@ -890,7 +890,7 @@ class SortOptionsBox(gtk.Box):
 		sortEncoding = convertOptions.get("sortEncoding", "utf-8")
 		self.encodingEntry.set_text(sortEncoding)
 
-	def applyChanges(self):
+	def applyChanges(self: "typing.Self"):
 		convertOptions = self.mainWin.convertOptions
 		sort = self.sortCheck.get_active()
 		if not sort:
@@ -973,14 +973,14 @@ class GeneralOptionsDialog(gtk.Dialog):
 		self.updateWidgets()
 		self.vbox.show()
 
-	def getSQLite(self) -> bool:
+	def getSQLite(self: "typing.Self") -> bool:
 		convertOptions = self.mainWin.convertOptions
 		sqlite = convertOptions.get("sqlite")
 		if sqlite is not None:
 			return sqlite
 		return self.mainWin.config.get("auto_sqlite", True)
 
-	def updateWidgets(self):
+	def updateWidgets(self: "typing.Self"):
 		config = self.mainWin.config
 		self.sortOptionsBox.updateWidgets()
 		self.sqliteCheck.set_active(self.getSQLite())
@@ -988,7 +988,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 			default = self.configParams[param]
 			check.set_active(config.get(param, default))
 
-	def applyChanges(self):
+	def applyChanges(self: "typing.Self"):
 		# print("applyChanges")
 		self.sortOptionsBox.applyChanges()
 
@@ -1463,7 +1463,7 @@ check {
 		self._glossarySetAttrs = glossarySetAttrs
 		self.present()
 
-	def exit(self):
+	def exit(self: "typing.Self"):
 		self.destroy()
 		sys.exit(0)
 
@@ -1596,13 +1596,13 @@ check {
 		else:
 			self.status("Select output format")
 
-	def reverseLoad(self):
+	def reverseLoad(self: "typing.Self"):
 		pass
 
-	def reverseStartLoop(self):
+	def reverseStartLoop(self: "typing.Self"):
 		pass
 
-	def reverseStart(self):
+	def reverseStart(self: "typing.Self"):
 		if not self.reverseLoad():
 			return
 		###
@@ -1617,7 +1617,7 @@ check {
 	def reverseStartClicked(self: "typing.Self", widget=None):
 		self.waitingDo(self.reverseStart)
 
-	def reversePause(self):
+	def reversePause(self: "typing.Self"):
 		self.reverseStatus = "pause"
 		###
 		self.reverseStartButton.set_sensitive(False)
@@ -1628,7 +1628,7 @@ check {
 	def reversePauseClicked(self: "typing.Self", widget=None):
 		self.waitingDo(self.reversePause)
 
-	def reverseResume(self):
+	def reverseResume(self: "typing.Self"):
 		self.reverseStatus = "doing"
 		###
 		self.reverseStartButton.set_sensitive(False)
@@ -1639,7 +1639,7 @@ check {
 	def reverseResumeClicked(self: "typing.Self", widget=None):
 		self.waitingDo(self.reverseResume)
 
-	def reverseStop(self):
+	def reverseStop(self: "typing.Self"):
 		self.reverseStatus = "stop"
 		###
 		self.reverseStartButton.set_sensitive(True)
@@ -1681,7 +1681,7 @@ check {
 
 
 class Application(gtk.Application):
-	def __init__(self) -> None:
+	def __init__(self: "typing.Self") -> None:
 		gtk.Application.__init__(
 			self,
 			application_id="apps.starcal",
@@ -1689,7 +1689,7 @@ class Application(gtk.Application):
 		)
 		self.win = None
 
-	def do_activate(self):
+	def do_activate(self: "typing.Self"):
 		win = self.props.active_window
 		if not win:
 			win = self.win

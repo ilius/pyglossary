@@ -185,7 +185,7 @@ class UIBase(UIType):
 	def progress(self: "typing.Self", rat: float, text: str = "") -> None:
 		pass
 
-	def progressEnd(self) -> None:
+	def progressEnd(self: "typing.Self") -> None:
 		self.progress(1.0)
 
 	def loadConfig(
@@ -224,7 +224,7 @@ class UIBase(UIType):
 
 		log.debug(f"loaded config: {self.config}")
 
-	def saveConfig(self) -> None:
+	def saveConfig(self: "typing.Self") -> None:
 		from pyglossary.json_utils import dataToPrettyJson
 		config = OrderedDict()
 		for key, option in self.configDefDict.items():

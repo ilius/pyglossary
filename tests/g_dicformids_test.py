@@ -27,7 +27,7 @@ class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
 		)
 		self.checkZipFileSha1sum(outputFpath, sha1sumDict)
 
-	def test_convert_txt_mids_1(self):
+	def test_convert_txt_mids_1(self: "typing.Self"):
 		sha1sumDict = {
 			"DictionaryForMIDs.properties": \
 				"4260a87d6cdd55622dcfe395880bc913f96102b8",

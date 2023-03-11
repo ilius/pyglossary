@@ -233,7 +233,7 @@ class Writer(object):
 		self._glos = glos
 		self._dirname = ""
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._dirname = ""
 
 	def open(self: "typing.Self", dirname: str) -> None:
@@ -241,7 +241,7 @@ class Writer(object):
 		if not isdir(dirname):
 			os.mkdir(dirname)
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		global BeautifulSoup
 		from pyglossary.xdxf_transform import XdxfTransformer
 

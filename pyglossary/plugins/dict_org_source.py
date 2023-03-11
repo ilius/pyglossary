@@ -33,7 +33,7 @@ class Writer(object):
 		self._glos = glos
 		self._filename = None
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._filename = None
 
 	def open(self: "typing.Self", filename: str) -> None:
@@ -43,7 +43,7 @@ class Writer(object):
 		# TODO: add another bool flag to only remove html tags that are not
 		# supported by GtkTextView
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		from pyglossary.text_writer import writeTxt
 		yield from writeTxt(
 			self._glos,

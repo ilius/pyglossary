@@ -175,19 +175,19 @@ class BGLGzipFile(GzipFile):
 		GzipFile.__init__(self, fileobj=fileobj, **kwargs)
 		self.closeFileobj = closeFileobj
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self.closeFileobj:
 			self.fileobj.close()
 
 
 class Block(object):
-	def __init__(self) -> None:
+	def __init__(self: "typing.Self") -> None:
 		self.data = b""
 		self.type = ""
 		# block offset in the gzip stream, for debugging
 		self.offset = -1
 
-	def __str__(self) -> str:
+	def __str__(self: "typing.Self") -> str:
 		return (
 			f"Block type={self.type}, length={self.length}, "
 			f"len(data)={len(self.data)}"
@@ -210,7 +210,7 @@ class FileOffS(file):
 		self.offset = offset
 		file.seek(self, offset)  # OR self.seek(0)
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		self._fileObj.close()
 
 	def seek(self: "typing.Self", pos: int, whence: int = 0) -> None:
@@ -234,7 +234,7 @@ class FileOffS(file):
 		else:
 			raise ValueError(f"FileOffS.seek: bad whence={whence}")
 
-	def tell(self) -> int:
+	def tell(self: "typing.Self") -> int:
 		return file.tell(self) - self.offset
 
 
@@ -250,7 +250,7 @@ class DefinitionFields(object):
 	"""
 	# nameByCode = {
 	# }
-	def __init__(self) -> None:
+	def __init__(self: "typing.Self") -> None:
 		# self.bytesByCode = {}
 		# self.strByCode = {}
 
@@ -370,7 +370,7 @@ class BglReader(object):
 		# must be a in RRGGBB format
 		self.iconDataList = []
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		if self.numEntries is None:
 			log.warning("len(reader) called while numEntries=None")
 			return 0
@@ -390,7 +390,7 @@ class BglReader(object):
 		self.readInfo()
 		self.setGlossaryInfo()
 
-	def openGzip(self) -> None:
+	def openGzip(self: "typing.Self") -> None:
 		with open(self._filename, "rb") as bglFile:
 			if not bglFile:
 				log.error(f"file pointer empty: {bglFile}")
@@ -418,7 +418,7 @@ class BglReader(object):
 
 		return True
 
-	def readInfo(self) -> None:
+	def readInfo(self: "typing.Self") -> None:
 		"""
 		read meta information about the dictionary: author, description,
 		source and target languages, etc (articles are not read)
@@ -475,7 +475,7 @@ class BglReader(object):
 				else:
 					self.info[key] = value
 
-	def setGlossaryInfo(self) -> None:
+	def setGlossaryInfo(self: "typing.Self") -> None:
 		glos = self._glos
 		###
 		if self.sourceLang:
@@ -520,7 +520,7 @@ class BglReader(object):
 			except Exception:
 				log.exception(f"key = {key}")
 
-	def isEndOfDictData(self) -> bool:
+	def isEndOfDictData(self: "typing.Self") -> bool:
 		"""
 			Test for end of dictionary data.
 
@@ -546,12 +546,12 @@ class BglReader(object):
 		"""
 		return False
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self.file:
 			self.file.close()
 			self.file = None
 
-	def __del__(self) -> None:
+	def __del__(self: "typing.Self") -> None:
 		self.close()
 		while unknownHtmlEntries:
 			entity = unknownHtmlEntries.pop()
@@ -721,7 +721,7 @@ class BglReader(object):
 
 		self.info[key] = value
 
-	def detectEncoding(self) -> None:
+	def detectEncoding(self: "typing.Self") -> None:
 		"""
 			assign self.sourceEncoding and self.targetEncoding
 		"""
@@ -763,7 +763,7 @@ class BglReader(object):
 			f", data={block.data!r}",
 		)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		if not self.file:
 			raise RuntimeError("iterating over a reader while it's not open")
 

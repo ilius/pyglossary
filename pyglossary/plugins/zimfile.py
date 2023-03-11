@@ -76,17 +76,17 @@ class Reader(object):
 		self._filename = filename
 		self._zimfile = Archive(filename)
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		self._filename = ""
 		self._zimfile = None
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		if self._zimfile is None:
 			log.error("len(reader) called before reader.open()")
 			return 0
 		return self._zimfile.entry_count
 
-	def __iter__(self) -> "Iterator[EntryType | None]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType | None]":
 		glos = self._glos
 		zimfile = self._zimfile
 		if zimfile is None:

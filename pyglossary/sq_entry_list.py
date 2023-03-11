@@ -116,7 +116,7 @@ class SqEntryList(EntryListType):
 			f"CREATE TABLE data ({colDefs})",
 		)
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return self._len
 
 	def append(self: "typing.Self", entry: "EntryType") -> None:
@@ -170,7 +170,7 @@ class SqEntryList(EntryListType):
 		)
 		self._con.commit()
 
-	def _parseExistingIndex(self) -> bool:
+	def _parseExistingIndex(self: "typing.Self") -> bool:
 		if self._cur is None:
 			return False
 		self._cur.execute("select sql FROM sqlite_master WHERE name='sortkey'")
@@ -192,17 +192,17 @@ class SqEntryList(EntryListType):
 		self._orderBy = columnNames
 		return True
 
-	def deleteAll(self) -> None:
+	def deleteAll(self: "typing.Self") -> None:
 		if self._con is None:
 			return
 		self._con.execute("DELETE FROM data;")
 		self._con.commit()
 		self._len = 0
 
-	def clear(self) -> None:
+	def clear(self: "typing.Self") -> None:
 		self.close()
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._con is None or self._cur is None:
 			return
 		self._con.commit()
@@ -211,7 +211,7 @@ class SqEntryList(EntryListType):
 		self._con = None
 		self._cur = None
 
-	def __del__(self) -> None:
+	def __del__(self: "typing.Self") -> None:
 		try:
 			self.close()
 			if not self._persist and isfile(self._filename):
@@ -219,7 +219,7 @@ class SqEntryList(EntryListType):
 		except AttributeError as e:
 			log.error(str(e))
 
-	def __iter__(self) -> "Iterator":
+	def __iter__(self: "typing.Self") -> "Iterator":
 		if self._cur is None:
 			return
 		glos = self._glos

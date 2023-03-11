@@ -349,10 +349,10 @@ class Reader(object):
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return self._wordCount
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
@@ -388,7 +388,7 @@ class Reader(object):
 
 		self._file = compressionOpen(filename, mode="rb")
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		context = ET.iterparse(  # type: ignore # noqa: PGH003

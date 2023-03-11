@@ -55,11 +55,11 @@ class Option(object):
 		self.falseComment = falseComment
 
 	@property
-	def typeDesc(self) -> str:
+	def typeDesc(self: "typing.Self") -> str:
 		return self.typ
 
 	@property
-	def longComment(self) -> str:
+	def longComment(self: "typing.Self") -> str:
 		comment = self.typeDesc
 		if self.comment:
 			if comment:
@@ -67,7 +67,7 @@ class Option(object):
 			comment += self.comment
 		return comment
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self: "typing.Self") -> "dict[str, Any]":
 		data = {
 			"class": self.__class__.__name__,
 			"type": self.typ,
@@ -115,7 +115,7 @@ class Option(object):
 			return False
 		return True
 
-	def groupValues(self) -> "dict[str, Any] | None":
+	def groupValues(self: "typing.Self") -> "dict[str, Any] | None":
 		return None
 
 
@@ -138,7 +138,7 @@ class BoolOption(Option):
 			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self: "typing.Self") -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		del data["values"]
@@ -186,7 +186,7 @@ class StrOption(Option):
 			return value in self.values
 		return type(value).__name__ == "str"
 
-	def groupValues(self) -> "dict[str, Any] | None":
+	def groupValues(self: "typing.Self") -> "dict[str, Any] | None":
 		return None
 
 
@@ -250,7 +250,7 @@ class FileSizeOption(IntOption):
 	validPattern = "^([0-9.]+)([kKmMgG]i?[bB]?)$"
 
 	@property
-	def typeDesc(self) -> str:
+	def typeDesc(self: "typing.Self") -> str:
 		return ""
 
 	def evaluate(self: "typing.Self", raw: "Union[str, int]") -> "tuple[int | None, bool]":
@@ -314,7 +314,7 @@ class DictOption(Option):
 			**kwargs,
 		)
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self: "typing.Self") -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
@@ -349,7 +349,7 @@ class ListOption(Option):
 			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self: "typing.Self") -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
@@ -418,12 +418,12 @@ class EncodingOption(Option):
 			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self: "typing.Self") -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["values"]
 		return data
 
-	def groupValues(self) -> "dict[str, Any] | None":
+	def groupValues(self: "typing.Self") -> "dict[str, Any] | None":
 		from collections import OrderedDict
 		groups: "dict[str, list[str]]" = OrderedDict()
 		others: "list[str]" = []
@@ -474,7 +474,7 @@ class NewlineOption(Option):
 
 @Option.register
 class HtmlColorOption(Option):
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self: "typing.Self") -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data

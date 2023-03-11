@@ -117,7 +117,9 @@ class Reader(TextGlossaryReader):
 			)
 		return defi, images
 
-	def nextBlock(self) -> "tuple[list[str], str, list[tuple[str, str]] | None]":
+	def nextBlock(
+		self: "typing.Self",
+	) -> "tuple[list[str], str, list[tuple[str, str]] | None]":
 		if not self._file:
 			raise StopIteration
 		words = []
@@ -167,7 +169,7 @@ class Writer(object):
 		self._file = None
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		if self._file is None:
 			return
 		self._file.close()

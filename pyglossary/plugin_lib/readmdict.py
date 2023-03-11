@@ -123,7 +123,7 @@ class MDict(object):
 
 		self._key_list = self._read_keys()
 
-	def __repr__(self):
+	def __repr__(self: "typing.Self"):
 		return (
 			f"MDict({self._fname!r}, "
 			f"encoding={self._encoding!r}, "
@@ -131,16 +131,16 @@ class MDict(object):
 		)
 
 	@property
-	def filename(self):
+	def filename(self: "typing.Self"):
 		return self._fname
 
-	def __len__(self):
+	def __len__(self: "typing.Self"):
 		return self._num_entries
 
-	def __iter__(self):
+	def __iter__(self: "typing.Self"):
 		return self.keys()
 
-	def keys(self):
+	def keys(self: "typing.Self"):
 		"""
 		Return an iterator over dictionary keys.
 		"""
@@ -307,7 +307,7 @@ class MDict(object):
 			key_list += [(key_id, key_text)]
 		return key_list
 
-	def _read_header(self):
+	def _read_header(self: "typing.Self"):
 		f = open(self._fname, 'rb')
 		# number of bytes of header text
 		header_bytes_size = unpack('>I', f.read(4))[0]
@@ -373,7 +373,7 @@ class MDict(object):
 
 		return header_tag
 
-	def _read_keys(self):
+	def _read_keys(self: "typing.Self"):
 		if self._version >= 3:
 			return self._read_keys_v3()
 		else:
@@ -384,7 +384,7 @@ class MDict(object):
 			else:
 				return self._read_keys_v1v2()
 
-	def _read_keys_v3(self):
+	def _read_keys_v3(self: "typing.Self"):
 		f = open(self._fname, 'rb')
 		f.seek(self._key_block_offset)
 
@@ -430,7 +430,7 @@ class MDict(object):
 		self._num_entries = len(key_list)
 		return key_list
 
-	def _read_keys_v1v2(self):
+	def _read_keys_v1v2(self: "typing.Self"):
 		f = open(self._fname, 'rb')
 		f.seek(self._key_block_offset)
 
@@ -478,7 +478,7 @@ class MDict(object):
 
 		return key_list
 
-	def _read_keys_brutal(self):
+	def _read_keys_brutal(self: "typing.Self"):
 		f = open(self._fname, 'rb')
 		f.seek(self._key_block_offset)
 
@@ -523,18 +523,18 @@ class MDict(object):
 		self._num_entries = len(key_list)
 		return key_list
 
-	def items(self):
+	def items(self: "typing.Self"):
 		"""Return a generator which in turn produce tuples in the form of (filename, content)
 		"""
 		return self._read_records()
 
-	def _read_records(self):
+	def _read_records(self: "typing.Self"):
 		if self._version >= 3:
 			yield from self._read_records_v3()
 		else:
 			yield from self._read_records_v1v2()
 
-	def _read_records_v3(self):
+	def _read_records_v3(self: "typing.Self"):
 		f = open(self._fname, 'rb')
 		f.seek(self._record_block_offset)
 
@@ -566,7 +566,7 @@ class MDict(object):
 			offset += len(record_block)
 			size_counter += compressed_size
 
-	def _read_records_v1v2(self):
+	def _read_records_v1v2(self: "typing.Self"):
 		f = open(self._fname, 'rb')
 		f.seek(self._record_block_offset)
 

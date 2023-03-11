@@ -14,7 +14,6 @@ fi
 
 ruff --fix "$@"
 ruff --select ANN "$@" \
-    | grep -v 'Missing type annotation for `self` in method' \
     | grep -v 'Missing type annotation for `\*\*' \
     | grep -v _test.py \
     | grep -v _debug.py \

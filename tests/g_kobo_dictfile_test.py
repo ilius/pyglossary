@@ -52,7 +52,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_df_txt_1(self):
+	def test_convert_df_txt_1(self: "typing.Self"):
 		self.convert_df_txt(
 			"022-en-en",
 			"022-en-en.df",
@@ -64,7 +64,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			],
 		)
 
-	def test_convert_txt_df_1(self):
+	def test_convert_txt_df_1(self: "typing.Self"):
 		self.convert_txt_df(
 			"022-en-en.df",
 			"022-en-en.df.txt",

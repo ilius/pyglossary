@@ -34,13 +34,13 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_txt_ldf_1(self):
+	def test_convert_txt_ldf_1(self: "typing.Self"):
 		self.convert_txt_ldf(
 			"004-bar",
 			"004-bar",
 		)
 
-	def test_convert_ldf_txt_1(self):
+	def test_convert_ldf_txt_1(self: "typing.Self"):
 		self.convert_ldf_txt(
 			"004-bar",
 			"004-bar",

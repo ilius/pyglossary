@@ -64,10 +64,10 @@ class Reader(object):
 		self._glos = glos
 		self._clear()
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		self._clear()
 
-	def _clear(self) -> None:
+	def _clear(self: "typing.Self") -> None:
 		self._filename = ""
 		self._prev_link = True
 		self._wordCount = None
@@ -103,13 +103,13 @@ class Reader(object):
 			self._resDir = ""
 			self._resFileNames = []
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		if self._wordCount is None:
 			log.error("called len() on a reader which is not open")
 			return 0
 		return self._wordCount + len(self._resFileNames)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		if not self._rootPath:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -179,7 +179,7 @@ class Writer(object):
 		self._glos = glos
 		self._clear()
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._clear()
 
 	def open(self: "typing.Self", filename: str) -> None:
@@ -188,7 +188,7 @@ class Writer(object):
 		os.makedirs(filename)
 		os.mkdir(self._resDir)
 
-	def _clear(self) -> None:
+	def _clear(self: "typing.Self") -> None:
 		self._filename = ""
 		self._resDir = ""
 		self._encoding = "utf-8"
@@ -243,7 +243,7 @@ class Writer(object):
 				thisEntry.defi,
 			]))
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		from collections import OrderedDict as odict
 
 		from pyglossary.json_utils import dataToPrettyJson

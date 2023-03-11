@@ -9,5 +9,5 @@ class UIType:
 	def progress(self: "typing.Self", rat: float, text: str = "") -> None:
 		raise NotImplementedError
 
-	def progressEnd(self) -> None:
+	def progressEnd(self: "typing.Self") -> None:
 		raise NotImplementedError

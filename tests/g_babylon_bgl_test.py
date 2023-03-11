@@ -49,26 +49,26 @@ class TestGlossaryBGL(TestGlossaryBase):
 			resPathExpected = self.downloadFile(f"{fname}.txt_res/{resName}")
 			self.compareBinaryFiles(resPathActual, resPathExpected)
 
-	def test_convert_bgl_txt_1(self):
+	def test_convert_bgl_txt_1(self: "typing.Self"):
 		self.convert_bgl_txt(
 			"Flavours_of_Malaysia",
 			sha1sum="2b1fae135df2aaaeac23fb1dde497a4b6a22fd95",
 			resFiles=["icon1.ico"],
 		)
 
-	def test_convert_bgl_txt_2(self):
+	def test_convert_bgl_txt_2(self: "typing.Self"):
 		self.convert_bgl_txt(
 			"Currency_In_Each_Country",
 			sha1sum="731147c72092d813dfe1ab35d420477478832443",
 		)
 
-	def test_convert_bgl_txt_3(self):
+	def test_convert_bgl_txt_3(self: "typing.Self"):
 		self.convert_bgl_txt(
 			"Solar_Physics_Glossary",
 			sha1sum="f30b392c748c4c5bfa52bf7f9945c574617ff74a",
 		)
 
-	def test_convert_bgl_txt_4(self):
+	def test_convert_bgl_txt_4(self: "typing.Self"):
 		self.convert_bgl_txt(
 			"Farsi_Aviation_Dictionary",
 			sha1sum="b5741bf7ca4306f76ba414fe8efb637c59999d2b",

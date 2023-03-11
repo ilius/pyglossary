@@ -43,32 +43,32 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_txt_sdxml_1(self):
+	def test_convert_txt_sdxml_1(self: "typing.Self"):
 		self.convert_txt_sdxml(
 			"100-en-fa",
 			"100-en-fa-sdt",
 		)
 
-	def test_convert_sdxml_txt_1(self):
+	def test_convert_sdxml_txt_1(self: "typing.Self"):
 		self.convert_sdxml_txt(
 			"100-en-fa-sdt",
 			"100-en-fa-sdt.xml",
 		)
 
-	def test_convert_sdxml_txt_2(self):
+	def test_convert_sdxml_txt_2(self: "typing.Self"):
 		self.convert_sdxml_txt(
 			"stardict-mixed-types-2",
 			"stardict-mixed-types-2.xml",
 		)
 
-	def test_convert_sdxml_txt_3(self):
+	def test_convert_sdxml_txt_3(self: "typing.Self"):
 		self.convert_sdxml_txt(
 			"stardict-xdxf-2",
 			"stardict-xdxf-2.xml-h",
 			readOptions={"xdxf_to_html": True},
 		)
 
-	def test_convert_sdxml_txt_4(self):
+	def test_convert_sdxml_txt_4(self: "typing.Self"):
 		self.convert_sdxml_txt(
 			"stardict-xdxf-2",
 			"stardict-xdxf-2.xml-x",

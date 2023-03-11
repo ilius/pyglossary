@@ -1,5 +1,6 @@
 import locale
 import random
+import typing
 import unittest
 from functools import cmp_to_key
 
@@ -122,7 +123,7 @@ def getRandomBytes(avgLen, sigma):
 
 
 class AsciiLowerUpperTest(unittest.TestCase):
-	def set_locale_iter(self):
+	def set_locale_iter(self: "typing.Self"):
 		for localeName in locale.locale_alias.values():
 			try:
 				locale.setlocale(locale.LC_ALL, localeName)
@@ -132,7 +133,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 				continue
 			yield localeName
 
-	def test_isalpha(self):
+	def test_isalpha(self: "typing.Self"):
 		for _ in self.set_locale_iter():
 			for code in range(256):
 				self.assertEqual(
@@ -140,7 +141,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 					bytes([code]).isalpha(),
 				)
 
-	def test_islower(self):
+	def test_islower(self: "typing.Self"):
 		for _ in self.set_locale_iter():
 			for code in range(256):
 				self.assertEqual(
@@ -148,7 +149,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 					bytes([code]).islower(),
 				)
 
-	def test_isupper(self):
+	def test_isupper(self: "typing.Self"):
 		for _ in self.set_locale_iter():
 			for code in range(256):
 				self.assertEqual(
@@ -156,7 +157,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 					bytes([code]).isupper(),
 				)
 
-	def test_lower(self):
+	def test_lower(self: "typing.Self"):
 		for _ in self.set_locale_iter():
 			for code in range(256):
 				self.assertEqual(
@@ -166,7 +167,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 
 
 class SortRandomTest(unittest.TestCase):
-	def set_locale_iter(self):
+	def set_locale_iter(self: "typing.Self"):
 		for localeName in locale.locale_alias.values():
 			try:
 				locale.setlocale(locale.LC_ALL, localeName)
@@ -177,7 +178,7 @@ class SortRandomTest(unittest.TestCase):
 			# print(localeName)
 			yield localeName
 
-	def test_sort_1(self):
+	def test_sort_1(self: "typing.Self"):
 		bsList = [
 			getRandomBytes(30, 10)
 			for _ in range(100)

@@ -321,12 +321,12 @@ class Reader(object):
 		self._fileSize = 0
 		self._bufferLine = ""
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._file:
 			self._file.close()
 		self._file = None
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		# FIXME
 		return 0
 
@@ -374,7 +374,7 @@ class Reader(object):
 				break
 			self.processHeaderLine(line)
 
-	def detectEncoding(self) -> str:
+	def detectEncoding(self: "typing.Self") -> str:
 		for testEncoding in ("utf-8", "utf-16"):
 			with compressionOpen(
 				self._filename,
@@ -407,7 +407,7 @@ class Reader(object):
 		elif line.startswith("#CONTENTS_LANGUAGE"):
 			self._glos.targetLangName = unwrap_quotes(line[19:].strip())
 
-	def _iterLines(self) -> "Iterator[str]":
+	def _iterLines(self: "typing.Self") -> "Iterator[str]":
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -415,7 +415,7 @@ class Reader(object):
 		for line in self._file:
 			yield line
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		current_key = ""
 		current_key_alters = []
 		current_text = []

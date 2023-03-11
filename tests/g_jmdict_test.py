@@ -27,7 +27,7 @@ class TestGlossaryJMdict(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_jmdict_txt_1(self):
+	def test_convert_jmdict_txt_1(self: "typing.Self"):
 		self.convert_jmdict_txt(
 			"050-JMdict-English",
 			"050-JMdict-English",

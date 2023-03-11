@@ -29,18 +29,18 @@ class TextFilePosWrapper(object):
 		self._encoding = encoding
 		self.pos = 0
 
-	def __iter__(self) -> "Iterator[str]":
+	def __iter__(self: "typing.Self") -> "Iterator[str]":
 		return self
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		self.fileobj.close()
 
-	def __next__(self) -> str:
+	def __next__(self: "typing.Self") -> str:
 		line = self.fileobj.__next__()
 		self.pos += len(line.encode(self._encoding))
 		return line
 
-	def tell(self) -> int:
+	def tell(self: "typing.Self") -> int:
 		return self.pos
 
 
@@ -62,7 +62,7 @@ class TextGlossaryReader(object):
 		self._fileIndex = -1
 		self._bufferLine = ""
 
-	def readline(self) -> str:
+	def readline(self: "typing.Self") -> str:
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -108,7 +108,7 @@ class TextGlossaryReader(object):
 		self._filename = filename
 		yield from self._openGen(filename)
 
-	def openNextFile(self) -> bool:
+	def openNextFile(self: "typing.Self") -> bool:
 		self.close()
 		nextFilename = f"{self._filename}.{self._fileIndex + 1}"
 		if isfile(nextFilename):
@@ -122,7 +122,7 @@ class TextGlossaryReader(object):
 			log.warning(f"next file not found: {nextFilename}")
 		return False
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if not self._file:
 			return
 		try:
@@ -144,7 +144,7 @@ class TextGlossaryReader(object):
 	def setInfo(self: "typing.Self", key: str, value: str) -> None:
 		self._glos.setInfo(key, value)
 
-	def _loadNextInfo(self) -> bool:
+	def _loadNextInfo(self: "typing.Self") -> bool:
 		"""
 			returns True when reached the end
 		"""
@@ -166,7 +166,7 @@ class TextGlossaryReader(object):
 		self.setInfo(key, value)
 		return False
 
-	def loadInfo(self) -> "Generator[tuple[int, int], None, None]":
+	def loadInfo(self: "typing.Self") -> "Generator[tuple[int, int], None, None]":
 		self._pendingEntries = []
 		try:
 			while True:
@@ -196,7 +196,7 @@ class TextGlossaryReader(object):
 				tmpPath=fullPath,
 			)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		resPathSet = set()
 		while True:
 			self._pos += 1
@@ -224,7 +224,7 @@ class TextGlossaryReader(object):
 
 			yield self.newEntry(word, defi)
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return self._wordCount
 
 	def isInfoWord(self: "typing.Self", word: str) -> bool:
@@ -240,5 +240,5 @@ class TextGlossaryReader(object):
 	def fixInfoWord(self: "typing.Self", word: str) -> bool:
 		raise NotImplementedError
 
-	def nextBlock(self) -> nextBlockResultType:
+	def nextBlock(self: "typing.Self") -> nextBlockResultType:
 		raise NotImplementedError

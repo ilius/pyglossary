@@ -57,10 +57,10 @@ class Writer(object):
 	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._filename = None
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		from json import dumps
 
 		from pyglossary.text_writer import writeTxt

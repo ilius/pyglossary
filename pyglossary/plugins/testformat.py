@@ -27,7 +27,7 @@ class Reader(object):
 		self._filename = ""
 		self._wordCount = 0
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		# return the number of entries if you have it
 		# if you don't, return 0 and progressbar will be disabled
 		# self._wordCount can be set in self.open function
@@ -48,13 +48,13 @@ class Reader(object):
 		self._glos.setInfo("author", "Me")
 		self._glos.setInfo("copyright", "GPL")
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		# this is called after reading/conversion is finished
 		# if you have an open file object, close it here
 		# if you need to clean up temp files, do it here
 		pass
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		# the easiest and simplest way to implement an Iterator is
 		# by writing a generator, by calling: yield glos.newEntry(word, defi)
 		# inside a loop (typically iterating over a file object for text file)
@@ -78,7 +78,7 @@ class Writer(object):
 	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		glos = self._glos
 		filename = self._filename  # noqa
 		# log.info(f"some useful message")
@@ -101,5 +101,5 @@ class Writer(object):
 		# if an info key doesn't exist, getInfo returns empty string
 		# now write info to the output file (depending on your output format)
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._filename = ""

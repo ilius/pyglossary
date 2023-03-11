@@ -44,7 +44,7 @@ class Writer(object):
 		self._filename = ""
 		self._file: "io.IOBase | None" = None
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._filename = ""
 		if self._file:
 			self._file.close()
@@ -55,7 +55,7 @@ class Writer(object):
 		self._file = open(filename, "wt", encoding=self._encoding)
 		self._writeInfo()
 
-	def _writeInfo(self) -> None:
+	def _writeInfo(self: "typing.Self") -> None:
 		fileObj = self._file
 		if fileObj is None:
 			raise ValueError("fileObj is None")
@@ -104,7 +104,7 @@ class Writer(object):
 					f"\'{key}\', \'{value}\');\n",
 				)
 
-	def _getInfoKeys(self) -> "list[str]":
+	def _getInfoKeys(self: "typing.Self") -> "list[str]":
 		info_keys = self._info_keys
 		if info_keys:
 			return info_keys
@@ -120,7 +120,7 @@ class Writer(object):
 			"description",
 		]
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		newline = self._newline
 
 		fileObj = self._file

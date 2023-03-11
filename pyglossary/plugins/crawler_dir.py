@@ -44,7 +44,7 @@ class Writer(object):
 		self._glos = glos
 		self._filename = None
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		pass
 
 	def open(self: "typing.Self", filename: str) -> None:
@@ -67,7 +67,7 @@ class Writer(object):
 			bw[4:8].hex() + "-" + sha1(b_word).hexdigest()[:8],  # noqa: S324
 		)
 
-	def write(self) -> None:
+	def write(self: "typing.Self") -> None:
 		from collections import OrderedDict as odict
 
 		from pyglossary.json_utils import dataToPrettyJson
@@ -133,10 +133,10 @@ class Reader(object):
 		for key, value in info.items():
 			self._glos.setInfo(key, value)
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		pass
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return self._wordCount
 
 	def _fromFile(self: "typing.Self", fpath: str) -> "EntryType":
@@ -178,7 +178,7 @@ class Reader(object):
 				continue
 			log.error(f"Not a file nor a directory: {cpath}")
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		yield from self._readDir(
 			self._filename,
 			{

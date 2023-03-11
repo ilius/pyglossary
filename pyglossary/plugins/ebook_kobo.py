@@ -139,7 +139,7 @@ class Writer:
 		# for now we just skip data entries and remove '<img' tags
 		return self._img_pattern.sub("[Image: \\1]", defi)
 
-	def write_groups(self) -> None:
+	def write_groups(self: "typing.Self") -> None:
 		import gzip
 		from collections import OrderedDict
 
@@ -238,11 +238,11 @@ class Writer:
 			raise e
 		self._filename = filename
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		with indir(self._filename, create=True):
 			yield from self.write_groups()
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		import marisa_trie
 		with indir(self._filename, create=False):
 			trie = marisa_trie.Trie(self._words)

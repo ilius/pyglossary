@@ -37,7 +37,7 @@ class TestGlossaryKobo(TestGlossaryBase):
 			dataReplaceFuncs=dataReplaceFuncs,
 		)
 
-	def test_convert_txt_kobo_1(self):
+	def test_convert_txt_kobo_1(self: "typing.Self"):
 		sha1sumDict = {
 			"11.html": "39f0f46560da7398ab0d3b19cc1c2387ecd201dd",
 			"aa.html": "df9460450e8b46e913c57bf39dcc799ffdc2fb33",

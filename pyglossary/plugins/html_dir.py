@@ -127,15 +127,15 @@ class Writer(object):
 		import shutil
 		shutil.copy(self._css, join(self._filename, "style.css"))
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		pass
 
-	def getNextFilename(self) -> str:
+	def getNextFilename(self: "typing.Self") -> str:
 		return self._filename_format.format(
 			n=len(self._filenameList),
 		)
 
-	def nextFile(self) -> "io.TextIOBase":
+	def nextFile(self: "typing.Self") -> "io.TextIOBase":
 		if self._fileObj:
 			self._fileObj.write(self._tail)
 			self._fileObj.close()
@@ -309,7 +309,7 @@ class Writer(object):
 				)
 			_file.write("</table></body></html>")
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 
 		encoding = self._encoding
 		resources = self._resources

@@ -25,7 +25,7 @@ class EntryFilterType(object):
 	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		raise NotImplementedError
 
-	def prepare(self) -> None:
+	def prepare(self: "typing.Self") -> None:
 		raise NotImplementedError
 
 	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
@@ -40,7 +40,7 @@ class EntryFilter(EntryFilterType):
 	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self.glos = glos
 
-	def prepare(self) -> None:
+	def prepare(self: "typing.Self") -> None:
 		"""
 			run this after glossary info is set and ready
 		"""
@@ -269,7 +269,7 @@ class LanguageCleanup(EntryFilter):
 		EntryFilter.__init__(self, glos)
 		self._run_func: "Callable[[EntryType], EntryType | None] | None" = None
 
-	def prepare(self) -> None:
+	def prepare(self: "typing.Self") -> None:
 		langCodes = {
 			lang.code
 			for lang in (self.glos.sourceLang, self.glos.targetLang)

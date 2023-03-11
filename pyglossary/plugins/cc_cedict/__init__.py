@@ -68,21 +68,21 @@ class Reader:
 			self.close()
 			raise RuntimeError("CC-CEDICT: could not find entry count")
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self.file is not None:
 			self.file.close()
 		self.file = None
 		self.total_entries = None
 		self.entries_left = 0
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		if self.total_entries is None:
 			raise RuntimeError(
 				"CC-CEDICT: len(reader) called while reader is not open",
 			)
 		return self.total_entries
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		if self.file is None:
 			raise RuntimeError(
 				"CC-CEDICT: tried to iterate over entries "

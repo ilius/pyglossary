@@ -33,7 +33,7 @@ from .bgl_reader import BGLGzipFile, BglReader, Block, FileOffS, tmpDir
 
 
 class MetaData(object):
-	def __init__(self) -> None:
+	def __init__(self: "typing.Self") -> None:
 		self.blocks = []
 		self.numEntries = None
 		self.numBlocks = None
@@ -62,7 +62,7 @@ class MetaData2(object):
 	We need to scan all definitions in order to collect these
 	statistical data.
 	"""
-	def __init__(self) -> None:
+	def __init__(self: "typing.Self") -> None:
 		# defiTrailingFields[i] - number of fields with code i found
 		self.defiTrailingFields = [0] * 256
 		self.isDefiASCII = True
@@ -106,10 +106,10 @@ class GzipWithCheck(object):
 		self.unpackedFile = open(unpackedPath, "rb")  # noqa: SIM115
 		self.reader = reader
 
-	def __del__(self):
+	def __del__(self: "typing.Self"):
 		self.close()
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self.file:
 			self.file.close()
 			self.file = None
@@ -137,7 +137,7 @@ class GzipWithCheck(object):
 		# 	f"GzipWithCheck.seek: offset = {offset}, whence = {whence}",
 		# )
 
-	def tell(self):
+	def tell(self: "typing.Self"):
 		pos1 = self.file.tell()
 		pos2 = self.unpackedFile.tell()
 		if pos1 != pos2:
@@ -150,7 +150,7 @@ class GzipWithCheck(object):
 		# 	)
 		return pos1
 
-	def flush(self):
+	def flush(self: "typing.Self"):
 		if os.sep == "\\":
 			pass
 			# a bug in Windows
@@ -191,7 +191,7 @@ class DebugBglReader(BglReader):
 
 		self.charRefStatPattern = re.compile(b"(&#\\w+;)", re.I)
 
-	def openGzip(self):
+	def openGzip(self: "typing.Self"):
 		with open(self._filename, "rb") as bglFile:
 			if not bglFile:
 				log.error(f"file pointer empty: {bglFile}")
@@ -242,7 +242,7 @@ class DebugBglReader(BglReader):
 			)
 			return None
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		BglReader.close(self)
 		if self.rawDumpFile:
 			self.rawDumpFile.close()
@@ -254,7 +254,7 @@ class DebugBglReader(BglReader):
 			self.samplesDumpFile.close()
 			self.samplesDumpFile = None
 
-	def __del__(self):
+	def __del__(self: "typing.Self"):
 		BglReader.__del__(self)
 
 	def readEntryWord(self: "typing.Self", block, pos):

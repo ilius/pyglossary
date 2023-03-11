@@ -22,7 +22,7 @@ class Lang(object):
 		self._titleTag = titleTag
 		self._rtl = rtl
 
-	def __repr__(self) -> str:
+	def __repr__(self: "typing.Self") -> str:
 		return (
 			f'Lang('
 			f'codes={self._codes!r}, '
@@ -31,31 +31,31 @@ class Lang(object):
 			f')'
 		)
 
-	def __str__(self) -> str:
+	def __str__(self: "typing.Self") -> str:
 		return f"Lang({self._codes + self._names})"
 
 	@property
-	def codes(self) -> "list[str]":
+	def codes(self: "typing.Self") -> "list[str]":
 		return self._codes
 
 	@property
-	def names(self) -> "list[str]":
+	def names(self: "typing.Self") -> "list[str]":
 		return self._names
 
 	@property
-	def name(self) -> str:
+	def name(self: "typing.Self") -> str:
 		return self._names[0]
 
 	@property
-	def code(self) -> str:
+	def code(self: "typing.Self") -> str:
 		return self._codes[0]
 
 	@property
-	def titleTag(self) -> str:
+	def titleTag(self: "typing.Self") -> str:
 		return self._titleTag
 
 	@property
-	def rtl(self) -> int:
+	def rtl(self: "typing.Self") -> int:
 		return self._rtl
 
 
@@ -70,7 +70,7 @@ class LangDict(dict):
 				log.error(f"duplicate language name: {name}")
 			self[name.lower()] = lang
 
-	def load(self) -> None:
+	def load(self: "typing.Self") -> None:
 		from time import time as now
 		if len(self) > 0:
 			return

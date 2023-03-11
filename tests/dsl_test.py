@@ -21,6 +21,7 @@ test everything.
 
 
 import sys
+import typing
 import unittest
 from functools import partial
 from os.path import dirname, realpath
@@ -58,16 +59,16 @@ def parse(line, tags=None):
 
 
 class LayerTestCase(unittest.TestCase):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		pass
 
-	def test_new_layer(self):
+	def test_new_layer(self: "typing.Self"):
 		stack = []
 		lay = layer.Layer(stack)
 		self.assertEqual(1, len(stack))
 		self.assertEqual(lay, stack[0])
 
-	def test_was_opened_AND_close_tags(self):
+	def test_was_opened_AND_close_tags(self: "typing.Self"):
 		stack = []
 		l1, l2 = layer.Layer(stack), layer.Layer(stack)
 		l1.text = "..."
@@ -83,7 +84,7 @@ class LayerTestCase(unittest.TestCase):
 		lay.text = "...[i],,,[/i]"
 		self.assertEqual(expected, stack)
 
-	def test_close_layer(self):
+	def test_close_layer(self: "typing.Self"):
 		stack = []
 		l1, l2, l3 = layer.Layer(stack), layer.Layer(stack), layer.Layer(stack)
 		l1.tags, l1.text = {tag_m}, "..."
@@ -104,40 +105,40 @@ class LayerTestCase(unittest.TestCase):
 
 
 class CanonicalOrderTestCase(unittest.TestCase):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		pass
 
-	def test_no_tags(self):
+	def test_no_tags(self: "typing.Self"):
 		tags = {}
 		expected = []
 		result = tag.canonical_order(tags)
 		self.assertEqual(expected, result)
 
-	def test_one_tag_not_predefined(self):
+	def test_one_tag_not_predefined(self: "typing.Self"):
 		tags = {tag_p}
 		expected = [tag_p]
 		result = tag.canonical_order(tags)
 		self.assertEqual(expected, result)
 
-	def test_one_tag_predefined(self):
+	def test_one_tag_predefined(self: "typing.Self"):
 		tags = {tag_i}
 		expected = [tag_i]
 		result = tag.canonical_order(tags)
 		self.assertEqual(expected, result)
 
-	def test_many_tags_not_predefined(self):
+	def test_many_tags_not_predefined(self: "typing.Self"):
 		tags = {tag_p, tag_s}
 		expected = [tag_p, tag_s]
 		result = tag.canonical_order(tags)
 		self.assertEqual(expected, result)
 
-	def test_many_tags_predefined(self):
+	def test_many_tags_predefined(self: "typing.Self"):
 		tags = {tag_m, tag_p}
 		expected = [tag_m, tag_p]
 		result = tag.canonical_order(tags)
 		self.assertEqual(expected, result)
 
-	def test_many_tags_mixed(self):
+	def test_many_tags_mixed(self: "typing.Self"):
 		tags = {tag_m, tag_i, tag_s, tag_p}
 		expected = [tag_m, tag_i, tag_p, tag_s]
 		result = tag.canonical_order(tags)
@@ -145,10 +146,10 @@ class CanonicalOrderTestCase(unittest.TestCase):
 
 
 class ProcessClosingTagsTestCase(unittest.TestCase):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		pass
 
-	def test_index_of_layer_containing_tag(self):
+	def test_index_of_layer_containing_tag(self: "typing.Self"):
 		stack = []
 		l1, l2, l3 = layer.Layer(stack), layer.Layer(stack), layer.Layer(stack)
 		l1.tags, l1.text = {tag_m}, "..."
@@ -161,7 +162,7 @@ class ProcessClosingTagsTestCase(unittest.TestCase):
 		self.assertEqual(1, fn(tag_s.closing))
 		self.assertEqual(2, fn(tag_p.closing))
 
-	def test_close_one(self):
+	def test_close_one(self: "typing.Self"):
 		stack = []
 		l1, l2 = layer.Layer(stack), layer.Layer(stack)
 		l1.tags, l1.text = (), "..."
@@ -178,7 +179,7 @@ class ProcessClosingTagsTestCase(unittest.TestCase):
 
 
 class PutBracketsAwayTestCase(unittest.TestCase):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		tags = frozenset({
 			"b",
 			"'",
@@ -194,160 +195,160 @@ class PutBracketsAwayTestCase(unittest.TestCase):
 		parser = DSLParser(tags)
 		self.put_brackets_away = parser.put_brackets_away
 
-	def test_standaloneLeftEscapedAtTheBeginning(self):
+	def test_standaloneLeftEscapedAtTheBeginning(self: "typing.Self"):
 		before = "[..."
 		after = f"{BRACKET_L}..."
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_standaloneRightEscapedAtTheBeginning(self):
+	def test_standaloneRightEscapedAtTheBeginning(self: "typing.Self"):
 		before = "]..."
 		after = f"{BRACKET_R}..."
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_standaloneLeftEscaped(self):
+	def test_standaloneLeftEscaped(self: "typing.Self"):
 		before = r"...\[,,,"
 		after = fr"...\{BRACKET_L},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_standaloneRightEscaped(self):
+	def test_standaloneRightEscaped(self: "typing.Self"):
 		before = r"...\],,,"
 		after = fr"...\{BRACKET_R},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_standaloneLeftNonEscaped(self):
+	def test_standaloneLeftNonEscaped(self: "typing.Self"):
 		before = "...[,,,"
 		after = f"...{BRACKET_L},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_standaloneRightNonEscaped(self):
+	def test_standaloneRightNonEscaped(self: "typing.Self"):
 		before = "...],,,"
 		after = f"...{BRACKET_R},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_standaloneLeftNonEscapedBeforeTagName(self):
+	def test_standaloneLeftNonEscapedBeforeTagName(self: "typing.Self"):
 		before = "...[p ,,,"
 		after = f"...{BRACKET_L}p ,,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_standaloneRightNonEscapedAfterTagName(self):
+	def test_standaloneRightNonEscapedAfterTagName(self: "typing.Self"):
 		before = "c]..."
 		after = f"c{BRACKET_R}..."
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_pairEscaped(self):
+	def test_pairEscaped(self: "typing.Self"):
 		before = r"...\[the\],,,"
 		after = fr"...\{BRACKET_L}the\{BRACKET_R},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_pairEscapedAroundTagName(self):
+	def test_pairEscapedAroundTagName(self: "typing.Self"):
 		before = r"...\[i\],,,"
 		after = fr"...\{BRACKET_L}i\{BRACKET_R},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_pairEscapedAroundClosingTagName(self):
+	def test_pairEscapedAroundClosingTagName(self: "typing.Self"):
 		before = r"...\[/i\],,,"
 		after = fr"...\{BRACKET_L}/i\{BRACKET_R},,,"
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_mixed(self):
+	def test_mixed(self: "typing.Self"):
 		L, R = BRACKET_L, BRACKET_R
 		before = r"[i]...\[on \]\[the] to[p][/i]"
 		after = fr"[i]...\{L}on \{R}\{L}the{R} to[p][/i]"
 		self.assertEqual(after, self.put_brackets_away(before))
 
-	def test_everythingEscaped(self):
+	def test_everythingEscaped(self: "typing.Self"):
 		before = r" change it to \[b\]...\[c\]...\[/c\]\[/b\]\[c\]...\[/c\]"
 		after = before
 		self.assertEqual(after, parse(before))
 
 
 class DSLParserTestCase(unittest.TestCase):
-	def test_startsWithStandaloneClosed(self):
+	def test_startsWithStandaloneClosed(self: "typing.Self"):
 		before = """[/p]..."""
 		after = """..."""
 		self.assertEqual(after, parse(before))
 
-	def test_standaloneClosedAtTheBeginning(self):
+	def test_standaloneClosedAtTheBeginning(self: "typing.Self"):
 		before = """...[/p],,,"""
 		after = """...,,,"""
 		self.assertEqual(after, parse(before))
 
-	def test_standaloneClosedAtTheBeginningBeforeMarkup(self):
+	def test_standaloneClosedAtTheBeginningBeforeMarkup(self: "typing.Self"):
 		before = """...[/p],,,[i][b]+++[/b][/i]---"""
 		after = """...,,,[i][b]+++[/b][/i]---"""
 		self.assertEqual(after, parse(before))
 
-	def test_EndsWithStandaloneOpened(self):
+	def test_EndsWithStandaloneOpened(self: "typing.Self"):
 		before = """...[i]"""
 		after = """..."""
 		self.assertEqual(after, parse(before))
 
-	def test_standaloneOpenedAtTheEnd(self):
+	def test_standaloneOpenedAtTheEnd(self: "typing.Self"):
 		before = """...[i],,,"""
 		after = """...,,,"""
 		self.assertEqual(after, parse(before))
 
-	def test_standaloneOpenedAtTheEndAfterMarkup(self):
+	def test_standaloneOpenedAtTheEndAfterMarkup(self: "typing.Self"):
 		before = """...[i][b],,,[/b][/i]+++[i]---"""
 		after = """...[i][b],,,[/b][/i]+++---"""
 		self.assertEqual(after, parse(before))
 
-	def test_wrongOrder2(self):
+	def test_wrongOrder2(self: "typing.Self"):
 		before = """...[i][b],,,[/i][/b]+++"""
 		after = """...[i][b],,,[/b][/i]+++"""
 		self.assertEqual(after, parse(before))
 
-	def test_wrongOrder3(self):
+	def test_wrongOrder3(self: "typing.Self"):
 		before = """...[i][c],,,[b]+++[/i][/c][/b]---"""
 		after = """...[p],,,[b]+++[/b][/p]---"""
 		self.assertEqual(after, parse(before))
 
-	def test_openOneCloseAnother(self):
+	def test_openOneCloseAnother(self: "typing.Self"):
 		before = """...[i],,,[/p]+++"""
 		after = """...,,,+++"""
 		self.assertEqual(after, parse(before))
 
-	def test_startsWithClosingAndEndsWithOpening(self):
+	def test_startsWithClosingAndEndsWithOpening(self: "typing.Self"):
 		before = """[/c]...[i]"""
 		after = """..."""
 		self.assertEqual(after, parse(before))
 
-	def test_validEmptyTagsDestructionOne(self):
+	def test_validEmptyTagsDestructionOne(self: "typing.Self"):
 		before = """...[i][/i],,,"""
 		after = """...,,,"""
 		self.assertEqual(after, parse(before))
 
-	def test_validEmptyTagsDestructionMany(self):
+	def test_validEmptyTagsDestructionMany(self: "typing.Self"):
 		before = """...[b][c][i][/i][/c][/b],,,"""
 		after = """...,,,"""
 		self.assertEqual(after, parse(before))
 
-	def test_brokenEmptyTagsDestructionMany(self):
+	def test_brokenEmptyTagsDestructionMany(self: "typing.Self"):
 		before = """...[b][i][c][/b][/c][/i],,,"""
 		after = """...,,,"""
 		self.assertEqual(after, parse(before))
 
-	def test_nestedWithBrokenOuter(self):
+	def test_nestedWithBrokenOuter(self: "typing.Self"):
 		before = """[i][p]...[/p][/c]"""
 		after = """[p]...[/p]"""
 		self.assertEqual(after, parse(before))
 
-	def test_horriblyBrokenTags(self):
+	def test_horriblyBrokenTags(self: "typing.Self"):
 		before = """[/c]...[i][/p],,,[/i]+++[b]"""
 		after = """...[i],,,[/i]+++"""
 		self.assertEqual(after, parse(before))
 
-	def test_wrongOrder2_WithContent(self):
+	def test_wrongOrder2_WithContent(self: "typing.Self"):
 		before = """[b]...[c red]...[/b]...[/c]"""
 		after = """[b]...[c red]...[/c][/b][c red]...[/c]"""
 		self.assertEqual(after, parse(before))
 
-	def test_wrongOrderWithTextBefore(self):
+	def test_wrongOrderWithTextBefore(self: "typing.Self"):
 		before = "[c]...[i],,,[/c][/i]"
 		after = "[c]...[i],,,[/i][/c]"
 		self.assertEqual(after, parse(before))
 
-	def test_respect_m_TagsProperly(self):
+	def test_respect_m_TagsProperly(self: "typing.Self"):
 		before = (
 			" [m1]for tags like: [p]n[/c][/i][/p]"
 			", the line needs scan again[/m]"
@@ -355,35 +356,35 @@ class DSLParserTestCase(unittest.TestCase):
 		after = " [m1]for tags like: [p]n[/p], the line needs scan again[/m]"
 		self.assertEqual(after, parse(before))
 
-	def test_noTagsDoNothing(self):
+	def test_noTagsDoNothing(self: "typing.Self"):
 		before = after = """no tags, do nothing"""
 		self.assertEqual(after, parse(before))
 
-	def test_balidNestedTags(self):
+	def test_balidNestedTags(self: "typing.Self"):
 		before = """...[i][c][b]...[/b][/c][/i]..."""
 		after = """...[b][p]...[/p][/b]..."""
 		self.assertEqual(after, parse(before))
 
-	def test_brokenNestedTags(self):
+	def test_brokenNestedTags(self: "typing.Self"):
 		before = """...[b][i][c]...[/b][/c][/i]..."""
 		after = """...[b][p]...[/p][/b]..."""
 		self.assertEqual(after, parse(before))
 
-	def test_escapedBrackets(self):
+	def test_escapedBrackets(self: "typing.Self"):
 		before = after = r"""on \[the\] top"""
 		self.assertEqual(after, parse(before))
 
-	def test_poorlyEscapedBracketsWithTags(self):
+	def test_poorlyEscapedBracketsWithTags(self: "typing.Self"):
 		before = r"""...\[c],,,[/c]+++"""
 		after = r"""...\[c],,,+++"""
 		self.assertEqual(after, parse(before))
 
-	def test_poorlyEscapedBracketsWithTags2(self):
+	def test_poorlyEscapedBracketsWithTags2(self: "typing.Self"):
 		before = r"""on \[the\] [b]roof[/b]]"""
 		after = r"""on \[the\] [b]roof[/b]]"""
 		self.assertEqual(after, parse(before))
 
-	def test_validRealDictionaryArticle(self):
+	def test_validRealDictionaryArticle(self: "typing.Self"):
 		# zh => ru, http://bkrs.info/slovo.php?ch=和田
 		before = after = (
 			"和田\n"
@@ -393,7 +394,7 @@ class DSLParserTestCase(unittest.TestCase):
 		)
 		self.assertEqual(after, parse(before))
 
-	def test_brokenRealDictionaryArticle(self):
+	def test_brokenRealDictionaryArticle(self: "typing.Self"):
 		# zh => ru, http://bkrs.info/slovo.php?ch=一一相应
 		before = """一一相应
 yīyī xiāngyìng
@@ -403,7 +404,7 @@ yīyī xiāngyìng
 [m1][p]мат.[/p] взаимнооднозначное соответствие[/m]"""
 		self.assertEqual(after, parse(before))
 
-	def test_brokenManyRealDictionaryArticle(self):
+	def test_brokenManyRealDictionaryArticle(self: "typing.Self"):
 		# zh => ru, http://bkrs.info/slovo.php?ch=一轮
 		before = (
 			"一轮\nyīlún\n"
@@ -423,31 +424,31 @@ yīyī xiāngyìng
 		)
 		self.assertEqual(after, parse(before))
 
-	def test_sameTagsNested(self):
+	def test_sameTagsNested(self: "typing.Self"):
 		before = "...[p],,,[p]+++[/p]---[/p]```"
 		after = "...[p],,,+++[/p]---```"
 		self.assertEqual(after, parse(before))
 
-	def test_oneLastTextLetter(self):
+	def test_oneLastTextLetter(self: "typing.Self"):
 		before = after = "b"
 		self.assertEqual(after, parse(before))
 
-	def test_oneLastTextLetterAfterTag(self):
+	def test_oneLastTextLetterAfterTag(self: "typing.Self"):
 		before = after = "...[b],,,[/b]b"
 		self.assertEqual(after, parse(before))
 
-	def test_tagMInsideAnotherTag(self):
+	def test_tagMInsideAnotherTag(self: "typing.Self"):
 		# tag order.
 		before = "[c][m1]...[/m][/c]"
 		after = "[m1][c]...[/c][/m]"
 		self.assertEqual(after, parse(before))
 
-	def test_tagMInsideAnotherTagAfterText(self):
+	def test_tagMInsideAnotherTagAfterText(self: "typing.Self"):
 		before = "[c]...[m1],,,[/m][/c]"
 		after = "[c]...[/c][m1][c],,,[/c][/m]"
 		self.assertEqual(after, parse(before))
 
-	def test_tagMDeepInside(self):
+	def test_tagMDeepInside(self: "typing.Self"):
 		before = "...[i],,,[b]+++[c green][/b]---[m1]```[/i][/c][/m]..."
 		after = (
 			"...[i],,,[b]+++[/b][c green]---[/c][/i][m1][i][c green]"
@@ -455,7 +456,7 @@ yīyī xiāngyìng
 		)
 		self.assertEqual(after, parse(before))
 
-	def test_tagMInsideBroken(self):
+	def test_tagMInsideBroken(self: "typing.Self"):
 		before = "[m1][*]- [ref]...[/ref][/m][m1]- [ref],,,[/ref][/*][/m]"
 		after = "[m1][*]- [ref]...[/ref][/*][/m][m1][*]- [ref],,,[/ref][/*][/m]"
 		self.assertEqual(after, parse(before))

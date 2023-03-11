@@ -20,7 +20,7 @@ class TestGlossarySlob(TestGlossaryBase):
             "300-ru-en.txt": "77cfee2f",
 		})
 
-	def test_convert_txt_slob_1(self):
+	def test_convert_txt_slob_1(self: "typing.Self"):
 		fname = "100-en-fa"
 		self.convert(
 			f"{fname}.txt",
@@ -29,7 +29,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			# slob file is different each time (and so its sha1sum and md5sum)
 		)
 
-	def test_convert_txt_slob_2_file_size_approx(self):
+	def test_convert_txt_slob_2_file_size_approx(self: "typing.Self"):
 		fname = "300-ru-en"
 		file_size_approx = 25000
 		files = [
@@ -75,7 +75,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			fpath2 = resFilesPath[resFileName]
 			self.compareBinaryFiles(fpath1, fpath2)
 
-	def test_convert_slob_txt_1(self):
+	def test_convert_slob_txt_1(self: "typing.Self"):
 		self.convert_slob_txt(
 			"100-en-fa-res",
 			"100-en-fa-res-slob",
@@ -85,7 +85,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			],
 		)
 
-	def test_convert_slob_txt_2(self):
+	def test_convert_slob_txt_2(self: "typing.Self"):
 		self.convert_slob_txt(
 			"100-en-fa-res",
 			"100-en-fa-res-slob",
@@ -96,7 +96,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			direct=False,
 		)
 
-	def test_convert_slob_txt_3(self):
+	def test_convert_slob_txt_3(self: "typing.Self"):
 		self.convert_slob_txt(
 			"100-en-fa-res",
 			"100-en-fa-res-slob",
@@ -107,7 +107,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			sqlite=True,
 		)
 
-	def test_convert_slob_txt_4(self):
+	def test_convert_slob_txt_4(self: "typing.Self"):
 		self.convert_slob_txt(
 			"100-en-fa-res",
 			"100-en-fa-res-slob-sort",

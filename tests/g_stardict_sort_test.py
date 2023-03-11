@@ -36,7 +36,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 			**convertArgs,
 		)
 
-	def convert_txt_stardict_enfa_1(self):
+	def convert_txt_stardict_enfa_1(self: "typing.Self"):
 		sortKeyName = "headword"
 		self.convert_txt_stardict_enfa(
 			"100-en-fa",
@@ -48,7 +48,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 			f", and using sortKey function from Stardict plugin",
 		)
 
-	def test_convert_txt_stardict_enfa_2(self):
+	def test_convert_txt_stardict_enfa_2(self: "typing.Self"):
 		sortKeyName = "ebook"
 		self.convert_txt_stardict_enfa(
 			"100-en-fa",
@@ -60,7 +60,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 			f", and using sortKey function from Stardict plugin",
 		)
 
-	def test_convert_txt_stardict_enfa_3(self):
+	def test_convert_txt_stardict_enfa_3(self: "typing.Self"):
 		sortKeyName = "stardict:en_US.UTF-8"
 		self.convert_txt_stardict_enfa(
 			"100-en-fa",
@@ -72,7 +72,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 			f", and using sortKey function from Stardict plugin",
 		)
 
-	def test_convert_txt_stardict_enfa_4(self):
+	def test_convert_txt_stardict_enfa_4(self: "typing.Self"):
 		sortKeyName = "stardict:fa_IR.UTF-8"
 		self.convert_txt_stardict_enfa(
 			"100-en-fa",

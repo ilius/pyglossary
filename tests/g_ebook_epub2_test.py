@@ -72,14 +72,14 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			},
 		)
 
-	def test_convert_to_epub_1(self):
+	def test_convert_to_epub_1(self: "typing.Self"):
 		self.convert_to_epub(
 			"100-en-fa-res.slob",
 			"100-en-fa-res-slob",
 			"1",
 		)
 
-	def test_convert_to_epub_2(self):
+	def test_convert_to_epub_2(self: "typing.Self"):
 		for sort in (True, False):
 			self.convert_to_epub(
 				"100-en-fa-res.slob",
@@ -88,7 +88,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 				sort=sort,
 			)
 
-	def test_convert_to_epub_3(self):
+	def test_convert_to_epub_3(self: "typing.Self"):
 		for sqlite in (True, False):
 			self.convert_to_epub(
 				"100-en-fa-res.slob",
@@ -97,7 +97,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 				sqlite=sqlite,
 			)
 
-	def test_convert_to_epub_4(self):
+	def test_convert_to_epub_4(self: "typing.Self"):
 		for direct in (True, False):
 			self.convert_to_epub(
 				"100-en-fa-res.slob",
@@ -106,7 +106,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 				direct=direct,
 			)
 
-	def test_convert_to_epub_5(self):
+	def test_convert_to_epub_5(self: "typing.Self"):
 		for sqlite in (True, False):
 			self.convert_to_epub(
 				"100-en-fa.txt",
@@ -116,7 +116,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 				writeOptions={"group_by_prefix_length": 3},
 			)
 
-	def test_convert_to_epub_6(self):
+	def test_convert_to_epub_6(self: "typing.Self"):
 		self.convert_to_epub(
 			"300-rand-en-fa.txt",
 			"300-rand-en-fa-prefix3",
@@ -125,7 +125,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			writeOptions={"group_by_prefix_length": 3},
 		)
 
-	def test_convert_to_epub_7(self):
+	def test_convert_to_epub_7(self: "typing.Self"):
 		self.convert_to_epub(
 			"300-rand-en-fa.txt",
 			"300-rand-en-fa-prefix3",

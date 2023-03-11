@@ -26,7 +26,7 @@ class Reader(object):
 		self._glos = glos
 		self._clear()
 
-	def _clear(self) -> None:
+	def _clear(self: "typing.Self") -> None:
 		self._filename = ''
 		self._con = None
 		self._cur = None
@@ -38,11 +38,11 @@ class Reader(object):
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("h")
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		self._cur.execute("select count(*) from WordsTable")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		from pyglossary.langs.writing_system import getWritingSystemFromText
 		alternateDict = {}
 		self._cur.execute("select wordkey, searchwordkey from Keys")
@@ -83,7 +83,7 @@ class Reader(object):
 				defiFormat="h",
 			)
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:

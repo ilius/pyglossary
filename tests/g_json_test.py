@@ -27,16 +27,16 @@ class TestGlossaryJSON(TestGlossaryBase):
 			compareText=f"{fname}.json",
 		)
 
-	def test_convert_txt_json_0(self):
+	def test_convert_txt_json_0(self: "typing.Self"):
 		self.convert_txt_json("004-bar")
 
-	def test_convert_txt_json_1(self):
+	def test_convert_txt_json_1(self: "typing.Self"):
 		self.convert_txt_json("100-en-fa")
 
-	def test_convert_txt_json_2(self):
+	def test_convert_txt_json_2(self: "typing.Self"):
 		self.convert_txt_json("100-en-de")
 
-	def test_convert_txt_json_3(self):
+	def test_convert_txt_json_3(self: "typing.Self"):
 		self.convert_txt_json("100-ja-en")
 
 

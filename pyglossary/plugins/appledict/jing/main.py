@@ -27,7 +27,7 @@ class JingTestError(subprocess.CalledProcessError):
 	) -> None:
 		super(JingTestError, self).__init__(returncode, cmd, output)
 
-	def __str__(self) -> str:
+	def __str__(self: "typing.Self") -> str:
 		return "\n".join([
 			f"Jing check failed with exit code {self.returncode}:",
 			"-" * 80,

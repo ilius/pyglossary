@@ -37,7 +37,7 @@ class BaseTest(unittest.TestCase):
 
 class TestReadWrite(BaseTest):
 
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
@@ -85,7 +85,7 @@ class TestReadWrite(BaseTest):
 
 		self.w = w
 
-	def test_header(self):
+	def test_header(self: "typing.Self"):
 		with MultiFileReader(self.path) as f:
 			header = read_header(f)
 
@@ -102,7 +102,7 @@ class TestReadWrite(BaseTest):
 
 		self.assertEqual(header.blob_count, len(self.data))
 
-	def test_content(self):
+	def test_content(self: "typing.Self"):
 		with open(self.path) as r:
 			self.assertEqual(len(r), len(self.all_keys))
 			self.assertRaises(IndexError, r.__getitem__, len(self.all_keys))
@@ -116,12 +116,12 @@ class TestReadWrite(BaseTest):
 				self.assertEqual(
 					item.fragment, fragment)
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
 
 
 class TestSort(BaseTest):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
@@ -157,18 +157,18 @@ class TestSort(BaseTest):
 
 		self.r = open(self.path)
 
-	def test_sort_order(self):
+	def test_sort_order(self: "typing.Self"):
 		for i in range(len(self.r)):
 			self.assertEqual(self.r[i].key, self.data_sorted[i])
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.r.close()
 		self.tmpdir.cleanup()
 
 
 class TestFind(BaseTest):
 
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
@@ -188,7 +188,7 @@ class TestFind(BaseTest):
 	def get(self: "typing.Self", d, key):
 		return list(item.content.decode('ascii') for item in d[key])
 
-	def test_find_identical(self):
+	def test_find_identical(self: "typing.Self"):
 		d = self.r.as_dict(IDENTICAL)
 		self.assertEqual(
 			self.get(d, 'aa'),
@@ -210,7 +210,7 @@ class TestFind(BaseTest):
 			self.get(d, 'a a'),
 			['LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A'])
 
-	def test_find_quaternary(self):
+	def test_find_quaternary(self: "typing.Self"):
 		d = self.r.as_dict(QUATERNARY)
 		self.assertEqual(
 			self.get(d, 'a\u2032a'),
@@ -223,7 +223,7 @@ class TestFind(BaseTest):
 			],
 		)
 
-	def test_find_tertiary(self):
+	def test_find_tertiary(self: "typing.Self"):
 		d = self.r.as_dict(TERTIARY)
 		self.assertEqual(
 			self.get(d, 'aa'),
@@ -238,7 +238,7 @@ class TestFind(BaseTest):
 			],
 		)
 
-	def test_find_secondary(self):
+	def test_find_secondary(self: "typing.Self"):
 		d = self.r.as_dict(SECONDARY)
 		self.assertEqual(
 			self.get(d, 'aa'),
@@ -255,7 +255,7 @@ class TestFind(BaseTest):
 			],
 		)
 
-	def test_find_primary(self):
+	def test_find_primary(self: "typing.Self"):
 		d = self.r.as_dict(PRIMARY)
 
 		self.assertEqual(
@@ -275,13 +275,13 @@ class TestFind(BaseTest):
 			],
 		)
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.r.close()
 		self.tmpdir.cleanup()
 
 
 class TestPrefixFind(BaseTest):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 		self.data = ['a', 'ab', 'abc', 'abcd', 'abcde']
@@ -289,10 +289,10 @@ class TestPrefixFind(BaseTest):
 			for k in self.data:
 				w.add(k.encode('ascii'), k)
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
 
-	def test(self):
+	def test(self: "typing.Self"):
 		with open(self.path) as r:
 			for i, k in enumerate(self.data):
 				d = r.as_dict(IDENTICAL, len(k))
@@ -303,14 +303,14 @@ class TestPrefixFind(BaseTest):
 
 
 class TestAlias(BaseTest):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
 
-	def test_alias(self):
+	def test_alias(self: "typing.Self"):
 		too_many_redirects = []
 		target_not_found = []
 
@@ -386,7 +386,7 @@ class TestAlias(BaseTest):
 
 
 class TestBlobId(BaseTest):
-	def test(self):
+	def test(self: "typing.Self"):
 		max_i = 2**32 - 1
 		max_j = 2**16 - 1
 		i_values = [0, max_i] + [
@@ -403,13 +403,13 @@ class TestBlobId(BaseTest):
 
 
 class TestMultiFileReader(BaseTest):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
 
-	def test_read_all(self):
+	def test_read_all(self: "typing.Self"):
 		fnames = []
 		for name in 'abcdef':
 			path = os.path.join(self.tmpdir.name, name)
@@ -419,7 +419,7 @@ class TestMultiFileReader(BaseTest):
 		with MultiFileReader(fnames) as m:
 			self.assertEqual(m.read().decode(UTF8), 'abcdef')
 
-	def test_seek_and_read(self):
+	def test_seek_and_read(self: "typing.Self"):
 		def mkfile(basename, content):
 			part = os.path.join(self.tmpdir.name, basename)
 			with fopen(part, 'wb') as f:
@@ -446,19 +446,19 @@ class TestMultiFileReader(BaseTest):
 
 
 class TestFormatErrors(BaseTest):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
 
-	def test_wrong_file_type(self):
+	def test_wrong_file_type(self: "typing.Self"):
 		name = os.path.join(self.tmpdir.name, '1')
 		with fopen(name, 'wb') as f:
 			f.write(b'123')
 		self.assertRaises(UnknownFileFormat, open, name)
 
-	def test_truncated_file(self):
+	def test_truncated_file(self: "typing.Self"):
 		name = os.path.join(self.tmpdir.name, '1')
 
 		with self.create(name) as f:
@@ -481,13 +481,13 @@ class TestFormatErrors(BaseTest):
 
 
 class TestFindParts(BaseTest):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
 
-	def test_find_parts(self):
+	def test_find_parts(self: "typing.Self"):
 		names = [
 			os.path.join(self.tmpdir.name, name)
 			for name in ('abc-1', 'abc-2', 'abc-3')
@@ -500,14 +500,14 @@ class TestFindParts(BaseTest):
 
 
 class TestTooLongText(BaseTest):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
 
-	def test_too_long(self):
+	def test_too_long(self: "typing.Self"):
 		rejected_keys = []
 		rejected_aliases = []
 		rejected_alias_targets = []
@@ -607,17 +607,17 @@ class TestTooLongText(BaseTest):
 
 
 class TestEditTag(BaseTest):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 		with self.create(self.path) as w:
 			w.tag('a', '123456')
 			w.tag('b', '654321')
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
 
-	def test_edit_existing_tag(self):
+	def test_edit_existing_tag(self: "typing.Self"):
 		with open(self.path) as f:
 			self.assertEqual(f.tags['a'], '123456')
 			self.assertEqual(f.tags['b'], '654321')
@@ -627,19 +627,19 @@ class TestEditTag(BaseTest):
 			self.assertEqual(f.tags['a'], 'xyz')
 			self.assertEqual(f.tags['b'], 'efg')
 
-	def test_edit_nonexisting_tag(self):
+	def test_edit_nonexisting_tag(self: "typing.Self"):
 		self.assertRaises(TagNotFound, set_tag_value, self.path, 'z', 'abc')
 
 
 class TestBinItemNumberLimit(BaseTest):
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
 
-	def test_writing_more_then_max_number_of_bin_items(self):
+	def test_writing_more_then_max_number_of_bin_items(self: "typing.Self"):
 		with self.create(self.path) as w:
 			for _ in range(MAX_BIN_ITEM_COUNT + 2):
 				w.add(b'a', 'a')

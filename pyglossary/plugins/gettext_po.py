@@ -40,7 +40,7 @@ class Reader(object):
 		self._glos = glos
 		self.clear()
 
-	def clear(self) -> None:
+	def clear(self: "typing.Self") -> None:
 		self._filename = ""
 		self._file: "io.TextIOBase | None" = None
 		self._wordCount: "int | None" = None
@@ -57,12 +57,12 @@ class Reader(object):
 			self._resDir = ""
 			self._resFileNames = []
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._file:
 			self._file.close()
 		self.clear()
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		from pyglossary.file_utils import fileCountLines
 		if self._wordCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
@@ -72,7 +72,7 @@ class Reader(object):
 			)
 		return self._wordCount
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		try:
 			from polib import unescape as po_unescape
 		except ModuleNotFoundError as e:
@@ -140,13 +140,13 @@ class Writer(object):
 		for key, value in self._glos.iterInfo():
 			_file.write(f'"{key}: {value}\\n"\n')
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._filename = ""
 		if self._file:
 			self._file.close()
 			self._file = None
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		try:
 			from polib import escape as po_escape
 		except ModuleNotFoundError as e:

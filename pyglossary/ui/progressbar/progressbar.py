@@ -149,11 +149,11 @@ class ProgressBar(object):
         return self
 
 
-    def __iter__(self):
+    def __iter__(self: "typing.Self"):
         return self
 
 
-    def __next__(self):
+    def __next__(self: "typing.Self"):
         try:
             value = next(self.__iterable)
             if self.start_time is None:
@@ -173,7 +173,7 @@ class ProgressBar(object):
     next = __next__
 
 
-    def _env_size(self):
+    def _env_size(self: "typing.Self"):
         """Tries to find the term_width from the environment."""
 
         return int(os.environ.get('COLUMNS', self._DEFAULT_TERMSIZE)) - 1
@@ -186,7 +186,7 @@ class ProgressBar(object):
         self.term_width = w
 
 
-    def percentage(self):
+    def percentage(self: "typing.Self"):
         """Returns the progress as a percentage."""
         if self.maxval is widgets.UnknownLength:
                 return float("NaN")
@@ -197,7 +197,7 @@ class ProgressBar(object):
     percent = property(percentage)
 
 
-    def _format_widgets(self):
+    def _format_widgets(self: "typing.Self"):
         result = []
         expanding = []
         width = self.term_width
@@ -224,7 +224,7 @@ class ProgressBar(object):
         return result
 
 
-    def _format_line(self):
+    def _format_line(self: "typing.Self"):
         """Joins the widgets and justifies the line."""
 
         widgets = ''.join(self._format_widgets())
@@ -234,7 +234,7 @@ class ProgressBar(object):
         return widgets.rjust(self.term_width)
 
 
-    def _need_update(self):
+    def _need_update(self: "typing.Self"):
         """Returns whether the ProgressBar should redraw the line."""
         if self.currval >= self.next_update or self.finished:
             return True
@@ -243,7 +243,7 @@ class ProgressBar(object):
         return self._time_sensitive and delta > self.poll
 
 
-    def _update_widgets(self):
+    def _update_widgets(self: "typing.Self"):
         """Checks all widgets for the time sensitive bit."""
 
         self._time_sensitive = any(getattr(w, 'TIME_SENSITIVE', False)
@@ -308,7 +308,7 @@ class ProgressBar(object):
         return self
 
 
-    def finish(self):
+    def finish(self: "typing.Self"):
         """Puts the ProgressBar bar in the finished state."""
 
         if self.finished:

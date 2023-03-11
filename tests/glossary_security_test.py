@@ -20,7 +20,7 @@ class TestGlossarySecurity(TestGlossaryErrors):
 		TestGlossaryErrors.__init__(self, *args, **kwargs)
 		self.mockLog.setLevel(logging.INFO)
 
-	def test_convert_1(self):
+	def test_convert_1(self: "typing.Self"):
 		glos = Glossary()
 		res = glos.convert(
 			inputFilename="os.system('abcd')",
@@ -32,7 +32,7 @@ class TestGlossarySecurity(TestGlossaryErrors):
 			'Writing file "os.system(\'abcd -l\')" failed.',
 		)
 
-	def test_convert_2(self):
+	def test_convert_2(self: "typing.Self"):
 		glos = Glossary()
 		res = glos.convert(
 			inputFilename="os.system('abcd');test.txt",
@@ -44,7 +44,7 @@ class TestGlossarySecurity(TestGlossaryErrors):
 			'Writing file "os.system(\'abcd -l\')" failed.',
 		)
 
-	def test_convert_3(self):
+	def test_convert_3(self: "typing.Self"):
 		glos = Glossary()
 		res = glos.convert(
 			inputFilename="os.system('abcd');test.txt",
@@ -61,7 +61,7 @@ class TestGlossarySecurity(TestGlossaryErrors):
 			'Reading file "os.system(\'abcd\');test.txt" failed.',
 		)
 
-	def test_convert_4(self):
+	def test_convert_4(self: "typing.Self"):
 		glos = Glossary()
 		res = glos.convert(
 			inputFilename="test.txt\nos.system('abcd')",

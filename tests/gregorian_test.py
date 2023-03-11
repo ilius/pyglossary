@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -17,7 +18,7 @@ def getMonthLen(y: int, m: int) -> int:
 
 
 class Testgregorian(unittest.TestCase):
-	def notest_isLeap_negativeYear(self):
+	def notest_isLeap_negativeYear(self: "typing.Self"):
 		print()
 		isLeapFunc = gregorian.isLeap
 		for year in range(10, -101, -1):
@@ -311,7 +312,7 @@ class Testgregorian(unittest.TestCase):
 		(2017, 12, 1): 2458089,
 	}
 
-	def test_isLeap(self):
+	def test_isLeap(self: "typing.Self"):
 		for year, isLeapStr in self.isLeapDict.items():
 			isLeap = isLeapStr == "L"
 			isLeapActual = gregorian.isLeap(year)
@@ -321,7 +322,7 @@ class Testgregorian(unittest.TestCase):
 				f"{year=}, {isLeap=}, {isLeapActual=}",
 			)
 
-	def test_to_jd(self):
+	def test_to_jd(self: "typing.Self"):
 		for date, jd in self.dateToJdDict.items():
 			jdActual = gregorian.to_jd(*date)
 			self.assertEqual(
@@ -330,7 +331,7 @@ class Testgregorian(unittest.TestCase):
 				f"{date=}, {jd=}, {jdActual=}",
 			)
 
-	def test_convert(self):
+	def test_convert(self: "typing.Self"):
 		startYear = 1950
 		endYear = 2050
 		for year in range(startYear, endYear):

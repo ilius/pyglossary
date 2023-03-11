@@ -90,13 +90,13 @@ class Reader(object):
 		self._tabFileNames = [x[1] for x in orderFileNames]
 		self.nextTabFile()
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		raise NotImplementedError  # FIXME
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		return self
 
-	def __next__(self) -> "EntryType":
+	def __next__(self: "typing.Self") -> "EntryType":
 		for _ in range(10):
 			try:
 				return next(self._tabFileReader)
@@ -104,7 +104,7 @@ class Reader(object):
 				self._tabFileReader.close()
 				self.nextTabFile()
 
-	def nextTabFile(self) -> None:
+	def nextTabFile(self: "typing.Self") -> None:
 		try:
 			tabFileName = self._tabFileNames.pop()
 		except IndexError:
@@ -112,7 +112,7 @@ class Reader(object):
 		self._tabFileReader = TabfileReader(self._glos, hasInfo=False)
 		self._tabFileReader.open(join(self._dirname, tabFileName), newline="\n")
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._tabFileReader:
 			try:
 				self._tabFileReader.close()
@@ -147,7 +147,7 @@ class Writer(object):
 		word = word.lower()
 		return word  # noqa: RET504
 
-	def writeProbs(self) -> None:
+	def writeProbs(self: "typing.Self") -> None:
 		glos = self._glos
 		probsPath = join(
 			self._dirname,
@@ -166,7 +166,7 @@ class Writer(object):
 				targetLang=glos.targetLangName,
 			))
 
-	def nextIndex(self) -> None:
+	def nextIndex(self: "typing.Self") -> None:
 		try:
 			self.indexFp.close()
 		except AttributeError:
@@ -177,7 +177,7 @@ class Writer(object):
 		fpath = join(self._dirname, fname)
 		self.indexFp = open(fpath, mode="w", encoding="utf-8", newline="\n")
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		pass
 
 	def open(self: "typing.Self", dirname: str) -> None:
@@ -185,7 +185,7 @@ class Writer(object):
 		if not os.path.isdir(dirname):
 			os.mkdir(dirname)
 
-	def write(self) -> None:
+	def write(self: "typing.Self") -> None:
 		self.nextIndex()
 
 		dicMaxSize = 0

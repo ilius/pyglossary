@@ -84,7 +84,7 @@ class MyLogger(logging.Logger):
 		self.setLevel(self.levelsByVerbosity[verbosity])
 		self._verbosity = verbosity
 
-	def getVerbosity(self) -> int:
+	def getVerbosity(self: "typing.Self") -> int:
 		return self._verbosity
 
 	def trace(self: "typing.Self", msg: str) -> None:
@@ -94,10 +94,10 @@ class MyLogger(logging.Logger):
 		from pprint import pformat
 		self.debug(header + pformat(data))
 
-	def isDebug(self) -> bool:
+	def isDebug(self: "typing.Self") -> bool:
 		return self.getVerbosity() >= 4
 
-	def newFormatter(self) -> Formatter:
+	def newFormatter(self: "typing.Self") -> Formatter:
 		timeEnable = self._timeEnable
 		if timeEnable:
 			fmt = "%(asctime)s [%(levelname)s] %(message)s"
@@ -183,7 +183,7 @@ class StdLogHandler(logging.Handler):
 		self.config: "dict[str, Any]" = {}
 
 	@property
-	def endFormat(self) -> str:
+	def endFormat(self: "typing.Self") -> str:
 		if self.noColor:
 			return ""
 		return "\x1b[0;0;0m"

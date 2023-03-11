@@ -121,14 +121,14 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 	"""
 
-	def _closeReaders(self) -> None:
+	def _closeReaders(self: "typing.Self") -> None:
 		for reader in self._readers:
 			try:
 				reader.close()
 			except Exception:
 				log.exception("")
 
-	def clear(self) -> None:
+	def clear(self: "typing.Self") -> None:
 		GlossaryProgress.clear(self)
 		self._info = odict()
 
@@ -179,7 +179,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			for key, value in info.items():
 				self.setInfo(key, value)
 
-	def cleanup(self) -> None:
+	def cleanup(self: "typing.Self") -> None:
 		if not self._cleanupPathList:
 			return
 		if not self._config.get("cleanup", True):
@@ -201,13 +201,13 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		self._cleanupPathList = set()
 
 	@property
-	def rawEntryCompress(self) -> bool:
+	def rawEntryCompress(self: "typing.Self") -> bool:
 		return self._rawEntryCompress
 
 	def setRawEntryCompress(self: "typing.Self", enable: bool) -> None:
 		self._rawEntryCompress = enable
 
-	def updateEntryFilters(self) -> None:
+	def updateEntryFilters(self: "typing.Self") -> None:
 		entryFilters = []
 		config = self._config
 
@@ -241,7 +241,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			for entryFilter in entryFilters
 		}
 
-	def prepareEntryFilters(self) -> None:
+	def prepareEntryFilters(self: "typing.Self") -> None:
 		"""
 			call .prepare() method on all _entryFilters
 			run this after glossary info is set and ready
@@ -256,7 +256,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		self._entryFilters.append(cls(self))
 		self._entryFiltersName.add(cls.name)
 
-	def removeHtmlTagsAll(self) -> None:
+	def removeHtmlTagsAll(self: "typing.Self") -> None:
 		"""
 		Remove all HTML tags from definition
 
@@ -282,7 +282,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		))
 		self._entryFiltersName.add(name)
 
-	def preventDuplicateWords(self) -> None:
+	def preventDuplicateWords(self: "typing.Self") -> None:
 		"""
 		Adds entry filter to prevent duplicate `entry.s_word`
 
@@ -295,7 +295,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		"""
 		self._addExtraEntryFilter(PreventDuplicateWords)
 
-	def __str__(self) -> str:
+	def __str__(self: "typing.Self") -> str:
 		return (
 			"Glossary{"
 			f"filename: {self._filename!r}"
@@ -303,7 +303,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			"}"
 		)
 
-	def _loadedEntryGen(self) -> "Iterator[EntryType]":
+	def _loadedEntryGen(self: "typing.Self") -> "Iterator[EntryType]":
 		if not self.progressbar:
 			yield from self._data
 			return
@@ -315,7 +315,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			yield entry
 		self.progressEnd()
 
-	def _readersEntryGen(self) -> "Iterator[EntryType]":
+	def _readersEntryGen(self: "typing.Self") -> "Iterator[EntryType]":
 		for reader in self._readers:
 			self.progressInit("Converting")
 			try:
@@ -343,7 +343,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			else:
 				yield entry
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		if self._iter is not None:
 			return self._iter
 
@@ -363,7 +363,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		"""
 		self._defaultDefiFormat = defiFormat
 
-	def getDefaultDefiFormat(self) -> str:
+	def getDefaultDefiFormat(self: "typing.Self") -> str:
 		return self._defaultDefiFormat
 
 	def collectDefiFormat(
@@ -403,13 +403,13 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 		return result
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return len(self._data) + sum(
 			len(reader) for reader in self._readers
 		)
 
 	@property
-	def config(self) -> "dict[str, Any]":
+	def config(self: "typing.Self") -> "dict[str, Any]":
 		raise NotImplementedError
 
 	@config.setter
@@ -422,15 +422,15 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			self._rawEntryCompress = config["optimize_memory"]
 
 	@property
-	def alts(self) -> bool:
+	def alts(self: "typing.Self") -> bool:
 		return self._config.get("enable_alts", True)
 
 	@property
-	def filename(self) -> str:
+	def filename(self: "typing.Self") -> str:
 		return self._filename
 
 	@property
-	def tmpDataDir(self) -> str:
+	def tmpDataDir(self: "typing.Self") -> str:
 		if not self._tmpDataDir:
 			self._setTmpDataDir(self._filename)
 		return self._tmpDataDir

@@ -5,11 +5,11 @@ import typing
 
 
 class MockLogHandler(logging.Handler):
-	def __init__(self) -> None:
+	def __init__(self: "typing.Self") -> None:
 		logging.Handler.__init__(self)
 		self.clear()
 
-	def clear(self):
+	def clear(self: "typing.Self"):
 		self.recordsByLevel = {}
 
 	def emit(self: "typing.Self", record):

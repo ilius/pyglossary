@@ -425,7 +425,7 @@ class FormatDialog(tix.Toplevel):
 		self.treev.selection_set(desc)
 		self.treev.see(desc)
 
-	def updateTree(self):
+	def updateTree(self: "typing.Self"):
 		treev = self.treev
 		current = treev.get_children()
 		if current:
@@ -465,7 +465,7 @@ class FormatDialog(tix.Toplevel):
 	def onTreeDoubleClick(self: "typing.Self", event):
 		self.okClicked()
 
-	def cancelClicked(self):
+	def cancelClicked(self: "typing.Self"):
 		self.destroy()
 
 	def onReturnPress(self: "typing.Self", event):
@@ -498,7 +498,7 @@ class FormatDialog(tix.Toplevel):
 	def onKeyPress(self: "typing.Self", event):
 		print(f"FormatDialog: onKeyPress: {event}")
 
-	def okClicked(self):
+	def okClicked(self: "typing.Self"):
 		treev = self.treev
 		selectedList = treev.selection()
 		if selectedList:
@@ -541,7 +541,7 @@ class FormatButton(tk.Button):
 		self.set(desc)
 		self._onChange(desc)
 
-	def get(self):
+	def get(self: "typing.Self"):
 		return self.activeDesc
 
 	def set(self: "typing.Self", desc):
@@ -551,7 +551,7 @@ class FormatButton(tk.Button):
 			self.var.set(self.noneLabel)
 		self.activeDesc = desc
 
-	def onClick(self):
+	def onClick(self: "typing.Self"):
 		dialog = FormatDialog(
 			descList=self.descList,
 			title=self.dialogTitle,
@@ -597,7 +597,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		okButton.pack(side="right")
 		buttonBox.pack(fill="x")
 
-	def createOptionsList(self):
+	def createOptionsList(self: "typing.Self"):
 		values = self.values
 		self.valueCol = "#3"
 		cols = [
@@ -845,7 +845,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		if col == self.valueCol:
 			self.valueCellClicked(event, optName)
 
-	def okClicked(self):
+	def okClicked(self: "typing.Self"):
 		treev = self.treev
 		for optName in self.options:
 			enable = bool(int(treev.set(optName, "#1")))
@@ -887,7 +887,7 @@ class FormatOptionsButton(tk.Button):
 	def setOptionsValues(self: "typing.Self", values):
 		self.values = values
 
-	def buttonClicked(self):
+	def buttonClicked(self: "typing.Self"):
 		formatD = self.formatInput.get()
 		if not formatD:
 			return
@@ -1430,13 +1430,13 @@ class UI(tix.Frame, UIBase):
 					self.outputFormatChanged()
 		self.pathO = pathO
 
-	def save_fcd_dir(self):
+	def save_fcd_dir(self: "typing.Self"):
 		if not self.fcd_dir:
 			return
 		with open(self.fcd_dir_save_path, mode="w", encoding="utf-8") as fp:
 			fp.write(self.fcd_dir)
 
-	def browseInputConvert(self):
+	def browseInputConvert(self: "typing.Self"):
 		path = filedialog.askopenfilename(initialdir=self.fcd_dir)
 		if path:
 			self.entryInputConvert.delete(0, "end")
@@ -1445,7 +1445,7 @@ class UI(tix.Frame, UIBase):
 			self.fcd_dir = os.path.dirname(path)
 			self.save_fcd_dir()
 
-	def browseOutputConvert(self):
+	def browseOutputConvert(self: "typing.Self"):
 		path = filedialog.asksaveasfilename()
 		if path:
 			self.entryOutputConvert.delete(0, "end")
@@ -1454,7 +1454,7 @@ class UI(tix.Frame, UIBase):
 			self.fcd_dir = os.path.dirname(path)
 			self.save_fcd_dir()
 
-	def convert(self):
+	def convert(self: "typing.Self"):
 		inPath = self.entryInputConvert.get()
 		if not inPath:
 			log.critical("Input file path is empty!")

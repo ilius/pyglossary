@@ -86,7 +86,7 @@ class Reader(object):
 			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>',
 		)
 
-	def clear(self) -> None:
+	def clear(self: "typing.Self") -> None:
 		self._filename = ""
 		self._mdx: "MDX | None" = None
 		self._mdd: "list[MDD]" = []
@@ -145,7 +145,7 @@ class Reader(object):
 
 		self.loadLinks()
 
-	def loadLinks(self) -> None:
+	def loadLinks(self: "typing.Self") -> None:
 		from pyglossary.plugin_lib.readmdict import MDX
 
 		mdx = self._mdx
@@ -201,7 +201,7 @@ class Reader(object):
 
 		return defi
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		if self._mdx is None:
 			log.error("trying to iterate on a closed MDX file")
 			return
@@ -248,8 +248,8 @@ class Reader(object):
 				log.exception(f"Error reading {mdd.filename}")
 		self._mdd = []
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return self._wordCount + self._dataEntryCount
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		self.clear()

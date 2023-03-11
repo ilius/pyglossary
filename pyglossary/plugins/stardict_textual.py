@@ -66,7 +66,7 @@ class Reader(object):
 		self._fileSize = 0
 		self._xdxfTr: "XdxfTransformer | None" = None
 
-	def xdxf_setup(self) -> "XdxfTransformer":
+	def xdxf_setup(self: "typing.Self") -> "XdxfTransformer":
 		from pyglossary.xdxf_transform import XdxfTransformer
 		self._xdxfTr = tr = XdxfTransformer(encoding="utf-8")
 		return tr
@@ -77,10 +77,10 @@ class Reader(object):
 			tr = self.xdxf_setup()
 		return tr.transformByInnerString(text)
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return 0
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
@@ -180,7 +180,7 @@ class Reader(object):
 			defis.append(_defi)
 		return "\n<hr>\n".join(defis), "h"
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -262,7 +262,7 @@ class Writer(object):
 			encoding=self._encoding,
 		)
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._file.close()
 
 	def writeInfo(
@@ -317,7 +317,7 @@ class Writer(object):
 		# 	)
 		# )
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		from lxml import builder
 		from lxml import etree as ET
 

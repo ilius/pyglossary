@@ -17,7 +17,7 @@ class UnescapeUnicodeTest(unittest.TestCase):
 		actual = unescape_unicode(text)
 		self.assertEqual(actual, expected)
 
-	def test(self):
+	def test(self: "typing.Self"):
 		self.case("&lt;", "&lt;")
 		self.case("&gt;", "&gt;")
 		self.case("&amp;", "&amp;")

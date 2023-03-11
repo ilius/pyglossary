@@ -57,10 +57,10 @@ class Reader(object):
 		},
 		"""
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		self._clear()
 
-	def _clear(self) -> None:
+	def _clear(self: "typing.Self") -> None:
 		self._filename = ""
 
 	def open(self: "typing.Self", filename: str) -> None:
@@ -70,7 +70,7 @@ class Reader(object):
 			self._glos.setInfo("name", "Wordset.org")
 		self._glos.setDefaultDefiFormat("h")
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return 0
 
 	def fileNameSortKey(self: "typing.Self", fname: str) -> str:
@@ -79,7 +79,7 @@ class Reader(object):
 			return "\x80"
 		return fname
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		if not self._filename:
 			raise RuntimeError("iterating over a reader while it's not open")
 

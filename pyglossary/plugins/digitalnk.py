@@ -25,7 +25,7 @@ class Reader(object):
 		self._glos = glos
 		self._clear()
 
-	def _clear(self) -> None:
+	def _clear(self: "typing.Self") -> None:
 		self._filename = ''
 		self._con = None
 		self._cur = None
@@ -37,11 +37,11 @@ class Reader(object):
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("m")
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		self._cur.execute("select count(*) from dictionary")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		self._cur.execute(
 			"select word, definition from dictionary"
 			" order by word",
@@ -56,7 +56,7 @@ class Reader(object):
 			definition = row[1]
 			yield self._glos.newEntry(word, definition, defiFormat="m")
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:

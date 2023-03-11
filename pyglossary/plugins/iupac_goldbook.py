@@ -46,10 +46,10 @@ class Reader(object):
 		self._fileSize = 0
 		self._termByCode = None
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return 0
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
@@ -144,7 +144,7 @@ class Reader(object):
 		term = term.replace("<i>", "").replace("</i>", "")
 		return term  # noqa: RET504
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		glos = self._glos

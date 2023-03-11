@@ -113,7 +113,7 @@ class GroupStateBySize(object):
 		self.group_index = -1
 		self.reset()
 
-	def reset(self) -> None:
+	def reset(self: "typing.Self") -> None:
 		self.group_contents = []
 		self.group_size = 0
 
@@ -292,7 +292,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			spine=spine_contents,
 		)
 
-	def write_groups(self) -> None:
+	def write_groups(self: "typing.Self") -> None:
 
 		def add_group(state: "GroupStateBySize") -> None:
 			if state.group_size <= 0:
@@ -327,7 +327,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 		add_group(state)
 
-	def write(self) -> None:
+	def write(self: "typing.Self") -> None:
 		import shutil
 		import subprocess
 

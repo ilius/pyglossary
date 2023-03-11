@@ -15,11 +15,11 @@ class GlossaryProgress(object):
 		self._ui = ui
 		self._progressbar = True
 
-	def clear(self) -> None:
+	def clear(self: "typing.Self") -> None:
 		self._progressbar = True
 
 	@property
-	def progressbar(self) -> bool:
+	def progressbar(self: "typing.Self") -> bool:
 		return self._ui is not None and self._progressbar
 
 	@progressbar.setter
@@ -44,7 +44,7 @@ class GlossaryProgress(object):
 			f"{pos:,} / {total:,} {unit}",
 		)
 
-	def progressEnd(self) -> None:
+	def progressEnd(self: "typing.Self") -> None:
 		if self._ui and self._progressbar:
 			self._ui.progressEnd()
 

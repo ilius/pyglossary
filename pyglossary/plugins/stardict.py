@@ -145,7 +145,7 @@ class MemList(list):
 			item[0],
 		)
 
-	def sort(self) -> None:
+	def sort(self: "typing.Self") -> None:
 		list.sort(self, key=self.sortKey)
 
 
@@ -192,11 +192,11 @@ class BaseSqList(list):
 		)
 		self._con.commit()
 
-	def getExtraColumns(self) -> "list[tuple[str, str]]":
+	def getExtraColumns(self: "typing.Self") -> "list[tuple[str, str]]":
 		# list[(columnName, dataType)]
 		return []
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return self._len
 
 	def append(self: "typing.Self", item: "Sequence") -> None:
@@ -210,10 +210,10 @@ class BaseSqList(list):
 		if self._len % 1000 == 0:
 			self._con.commit()
 
-	def sort(self) -> None:
+	def sort(self: "typing.Self") -> None:
 		pass
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._con is None:
 			return
 		self._con.commit()
@@ -222,13 +222,13 @@ class BaseSqList(list):
 		self._con = None
 		self._cur = None
 
-	def __del__(self) -> None:
+	def __del__(self: "typing.Self") -> None:
 		try:
 			self.close()
 		except AttributeError as e:
 			log.error(str(e))
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		query = f"SELECT * FROM data ORDER BY {self._orderBy}"
 		self._cur.execute(query)
 		for row in self._cur:
@@ -236,7 +236,7 @@ class BaseSqList(list):
 
 
 class IdxSqList(BaseSqList):
-	def getExtraColumns(self) -> "list[tuple[str, str]]":
+	def getExtraColumns(self: "typing.Self") -> "list[tuple[str, str]]":
 		# list[(columnName, dataType)]
 		return [
 			("idx_block", "BLOB"),
@@ -244,7 +244,7 @@ class IdxSqList(BaseSqList):
 
 
 class SynSqList(BaseSqList):
-	def getExtraColumns(self) -> "list[tuple[str, str]]":
+	def getExtraColumns(self: "typing.Self") -> "list[tuple[str, str]]":
 		# list[(columnName, dataType)]
 		return [
 			("entry_index", "INTEGER"),
@@ -281,7 +281,7 @@ class Reader(object):
 			a dict { entryIndex -> altList }
 		"""
 
-	def xdxf_setup(self) -> None:
+	def xdxf_setup(self: "typing.Self") -> None:
 		from pyglossary.xdxf_transform import XdxfTransformer, XslXdxfTransformer
 		if self._xsl:
 			self._xdxfTr = XslXdxfTransformer(encoding="utf-8")
@@ -293,12 +293,12 @@ class Reader(object):
 			self.xdxf_setup()
 		return self._xdxfTr.transformByInnerString(text)
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._dictFile:
 			self._dictFile.close()
 		self.clear()
 
-	def clear(self) -> None:
+	def clear(self: "typing.Self") -> None:
 		self._dictFile = None
 		self._filename = ""  # base file path, no extension
 		self._indexData = []
@@ -335,14 +335,14 @@ class Reader(object):
 			self._resFileNames = []
 		# self.readResources()
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		if self._wordCount is None:
 			raise RuntimeError(
 				"StarDict: len(reader) called while reader is not open",
 			)
 		return self._wordCount + len(self._resFileNames)
 
-	def readIfoFile(self) -> None:
+	def readIfoFile(self: "typing.Self") -> None:
 		"""
 		.ifo file is a text file in utf-8 encoding
 		"""
@@ -373,7 +373,7 @@ class Reader(object):
 			else:
 				raise ValueError(f"invalid {idxoffsetbits = }")
 
-	def readIdxFile(self) -> "list[tuple[bytes, int, int]]":
+	def readIdxFile(self: "typing.Self") -> "list[tuple[bytes, int, int]]":
 		if isfile(self._filename + ".idx.gz"):
 			with gzip.open(self._filename + ".idx.gz") as idxFile:
 				idxBytes = idxFile.read()
@@ -504,7 +504,7 @@ class Reader(object):
 			defis.append(_defi)
 		return "\n<hr>\n".join(defis), "h"
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		indexData = self._indexData
 		synDict = self._synDict
 		sametypesequence = self._sametypesequence
@@ -571,7 +571,7 @@ class Reader(object):
 						_file.read(),
 					)
 
-	def readSynFile(self) -> "dict[int, list[str]]":
+	def readSynFile(self: "typing.Self") -> "dict[int, list[str]]":
 		"""
 		return synDict, a dict { entryIndex -> altList }
 		"""
@@ -744,7 +744,7 @@ class Writer(object):
 			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>',
 		)
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._filename = None
 		self._resDir = None
 		self._sourceLang = None
@@ -787,7 +787,7 @@ class Writer(object):
 					log.info("Auto-selecting sametypesequence=h")
 					self._sametypesequence = "h"
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		from pyglossary.os_utils import runDictzip
 		if self._sametypesequence:
 			if self._merge_syns:
@@ -826,17 +826,17 @@ class Writer(object):
 		# defi = defi.replace(' src="./', ' src="./res/')
 		return defi
 
-	def newIdxList(self) -> "IdxSqList":
+	def newIdxList(self: "typing.Self") -> "IdxSqList":
 		if not self._sqlite:
 			return MemList()
 		return IdxSqList(join(self._glos.tmpDataDir, "stardict-idx.db"))
 
-	def newSynList(self) -> "SynSqList":
+	def newSynList(self: "typing.Self") -> "SynSqList":
 		if not self._sqlite:
 			return MemList()
 		return SynSqList(join(self._glos.tmpDataDir, "stardict-syn.db"))
 
-	def dictMarkToBytesFunc(self) -> "tuple[Callable, int]":
+	def dictMarkToBytesFunc(self: "typing.Self") -> "tuple[Callable, int]":
 		if self._large_file:
 			return uint64ToBytes, 0xffffffffffffffff
 
@@ -915,7 +915,7 @@ class Writer(object):
 			defiFormat=defiFormat,
 		)
 
-	def writeGeneral(self) -> None:
+	def writeGeneral(self: "typing.Self") -> None:
 		"""
 		Build StarDict dictionary in general case.
 		Every item definition may consist of an arbitrary number of articles.
@@ -1091,7 +1091,7 @@ class Writer(object):
 			defiFormat=defiFormat,
 		)
 
-	def writeGeneralMergeSyns(self) -> None:
+	def writeGeneralMergeSyns(self: "typing.Self") -> None:
 		"""
 		Build StarDict dictionary in general case.
 		Every item definition may consist of an arbitrary number of articles.

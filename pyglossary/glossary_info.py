@@ -42,15 +42,15 @@ log = logging.getLogger("pyglossary")
 
 
 class GlossaryInfo(object):
-	def __init__(self) -> None:
+	def __init__(self: "typing.Self") -> None:
 		self._info: "dict[str, str]" = odict()
 
-	def infoKeys(self) -> "list[str]":
+	def infoKeys(self: "typing.Self") -> "list[str]":
 		return list(self._info.keys())
 
 	# def formatInfoKeys(self, format: str):# FIXME
 
-	def iterInfo(self) -> "Iterator[tuple[str, str]]":
+	def iterInfo(self: "typing.Self") -> "Iterator[tuple[str, str]]":
 		return iter(self._info.items())
 
 	def getInfo(self: "typing.Self", key: str) -> str:
@@ -100,7 +100,7 @@ class GlossaryInfo(object):
 		return extra
 
 	@property
-	def author(self) -> str:
+	def author(self: "typing.Self") -> str:
 		for key in (c_author, c_publisher):
 			value = self._info.get(key, "")
 			if value:
@@ -121,7 +121,7 @@ class GlossaryInfo(object):
 		return self._getLangByStr(st)
 
 	@property
-	def sourceLang(self) -> "Lang | None":
+	def sourceLang(self: "typing.Self") -> "Lang | None":
 		return self._getLangByInfoKey(c_sourceLang)
 
 	@sourceLang.setter
@@ -131,7 +131,7 @@ class GlossaryInfo(object):
 		self._info[c_sourceLang] = lang.name
 
 	@property
-	def targetLang(self) -> "Lang | None":
+	def targetLang(self: "typing.Self") -> "Lang | None":
 		return self._getLangByInfoKey(c_targetLang)
 
 	@targetLang.setter
@@ -141,7 +141,7 @@ class GlossaryInfo(object):
 		self._info[c_targetLang] = lang.name
 
 	@property
-	def sourceLangName(self) -> str:
+	def sourceLangName(self: "typing.Self") -> str:
 		lang = self.sourceLang
 		if lang is None:
 			return ""
@@ -158,7 +158,7 @@ class GlossaryInfo(object):
 		self._info[c_sourceLang] = lang.name
 
 	@property
-	def targetLangName(self) -> str:
+	def targetLangName(self: "typing.Self") -> str:
 		lang = self.targetLang
 		if lang is None:
 			return ""
@@ -184,7 +184,7 @@ class GlossaryInfo(object):
 			return sourceLang.titleTag
 		return "b"
 
-	def detectLangsFromName(self) -> None:
+	def detectLangsFromName(self: "typing.Self") -> None:
 		"""
 		extract sourceLang and targetLang from glossary name/title
 		"""

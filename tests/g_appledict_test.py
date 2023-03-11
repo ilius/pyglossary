@@ -31,7 +31,7 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 			data2 = plistlib.loads(_file.read())
 		self.assertEqual(data1, data2)
 
-	def test_tabfile_without_morpho_to_appledict_source(self):
+	def test_tabfile_without_morpho_to_appledict_source(self: "typing.Self"):
 		self.glos = Glossary()
 
 		baseName = "002-no-morphology-v3"

@@ -64,7 +64,7 @@ class Reader(TextGlossaryReader):
 			value = ":".join(parts[1:])
 			glos.setInfo(key, value)
 
-	def nextBlock(self) -> "tuple[str, str, None] | None":
+	def nextBlock(self: "typing.Self") -> "tuple[str, str, None] | None":
 		if not self._file:
 			raise StopIteration
 		word = ""

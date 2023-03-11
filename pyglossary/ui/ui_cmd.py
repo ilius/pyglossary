@@ -188,7 +188,7 @@ class UI(UIBase):
 	def setText(self: "typing.Self", text):
 		self.pbar.widgets[0] = text
 
-	def fixLogger(self):
+	def fixLogger(self: "typing.Self"):
 		for h in log.handlers:
 			if h.name == "std":
 				self.fixLogHandler(h)
@@ -225,7 +225,7 @@ class UI(UIBase):
 	def progress(self: "typing.Self", rat, text=""):
 		self.pbar.update(rat)
 
-	def progressEnd(self):
+	def progressEnd(self: "typing.Self"):
 		self.pbar.finish()
 		if self._resetLogFormatter:
 			self._resetLogFormatter()

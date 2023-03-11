@@ -25,7 +25,7 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_tei_txt_1(self):
+	def test_convert_tei_txt_1(self: "typing.Self"):
 		self.convert_tei_txt(
 			"100-en-de",
 			"100-en-de-v2",

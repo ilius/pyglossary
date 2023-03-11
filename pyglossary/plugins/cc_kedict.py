@@ -255,7 +255,7 @@ class YamlReader(TextGlossaryReader):
 		defi = f.getvalue().decode("utf-8")
 		return word, defi, None
 
-	def nextBlock(self) -> "EntryType":
+	def nextBlock(self: "typing.Self") -> "EntryType":
 		if not self._file:
 			raise StopIteration
 		lines = []
@@ -296,7 +296,7 @@ class Reader(object):
 			tagsKey="tags",
 		)
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return 0
 
 	def open(self: "typing.Self", filename: str) -> None:
@@ -316,9 +316,9 @@ class Reader(object):
 		self._glos.setDefaultDefiFormat("h")
 		self._yaml.open(filename)
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		self._yaml.close()
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		for entry in self._yaml:
 			yield entry

@@ -60,51 +60,51 @@ class TestGlossaryCSV(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_txt_csv_1(self):
+	def test_convert_txt_csv_1(self: "typing.Self"):
 		self.convert_txt_csv("100-en-fa", "100-en-fa")
 
-	def test_convert_txt_csv_2(self):
+	def test_convert_txt_csv_2(self: "typing.Self"):
 		self.convert_txt_csv("100-en-de", "100-en-de")
 
-	def test_convert_txt_csv_3(self):
+	def test_convert_txt_csv_3(self: "typing.Self"):
 		self.convert_txt_csv("100-ja-en", "100-ja-en")
 
-	def test_convert_txt_csv_4(self):
+	def test_convert_txt_csv_4(self: "typing.Self"):
 		self.convert_txt_csv(
 			"100-en-fa",
 			"100-en-fa-semicolon",
 			writeOptions={"delimiter": ";"},
 		)
 
-	def test_convert_csv_txt_1(self):
+	def test_convert_csv_txt_1(self: "typing.Self"):
 		self.convert_csv_txt(
 			"100-en-fa",
 			"100-en-fa",
 			infoOverride={"input_file_size": None},
 		)
 
-	def test_convert_csv_txt_2(self):
+	def test_convert_csv_txt_2(self: "typing.Self"):
 		self.convert_csv_txt(
 			"100-en-de",
 			"100-en-de",
 			infoOverride={"input_file_size": None},
 		)
 
-	def test_convert_csv_txt_3(self):
+	def test_convert_csv_txt_3(self: "typing.Self"):
 		self.convert_csv_txt(
 			"100-ja-en",
 			"100-ja-en",
 			infoOverride={"input_file_size": None},
 		)
 
-	def test_convert_csv_txt_4(self):
+	def test_convert_csv_txt_4(self: "typing.Self"):
 		self.convert_csv_txt_rw(
 			"100-en-fa",
 			"100-en-fa",
 			infoOverride={"input_file_size": None},
 		)
 
-	def test_convert_txt_csv_5(self):
+	def test_convert_txt_csv_5(self: "typing.Self"):
 		self.convert_csv_txt(
 			"100-en-fa-semicolon",
 			"100-en-fa",

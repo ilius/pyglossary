@@ -51,7 +51,7 @@ class IncrementalFileWriter(metaclass=Interface):
         method: _OutputMethodArg | None = ...,
     ) -> None:
         ...
-    def flush(self) -> None:
+    def flush(self: "typing.Self") -> None:
         ...
     def method(
         self: "typing.Self",

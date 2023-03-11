@@ -199,10 +199,10 @@ class Writer(object):
 		info = self._glos.getInfo(key)
 		return info.replace("\n", "<br>")
 
-	def _getAuthor(self) -> str:
+	def _getAuthor(self: "typing.Self") -> str:
 		return self._glos.author.replace("\n", "<br>")
 
-	def _getDictionaryIndex(self) -> "dict[str, Any]":
+	def _getDictionaryIndex(self: "typing.Self") -> "dict[str, Any]":
 		# Schema: https://github.com/FooSoft/yomichan/
 		# blob/master/ext/data/schemas/dictionary-index-schema.json
 		return dict(
@@ -215,7 +215,7 @@ class Writer(object):
 			description=self._getInfo("description"),
 		)
 
-	def _compileRegex(self) -> None:
+	def _compileRegex(self: "typing.Self") -> None:
 		for field_name in [
 			"_delete_word_pattern",
 			"_ignore_word_with_pattern",
@@ -328,10 +328,10 @@ class Writer(object):
 	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._filename = None
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		with os_utils.indir(self._filename, create=True):
 			with open("index.json", "w", encoding="utf-8") as f:
 				json.dump(self._getDictionaryIndex(), f, ensure_ascii=False)

@@ -39,13 +39,13 @@ class EntryListType(object):
 	def insert(self: "typing.Self", pos: int, entry: "EntryType") -> None:
 		raise NotImplementedError
 
-	def clear(self) -> None:
+	def clear(self: "typing.Self") -> None:
 		raise NotImplementedError
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		raise NotImplementedError
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		raise NotImplementedError
 
 	def setSortKey(
@@ -57,10 +57,10 @@ class EntryListType(object):
 		raise NotImplementedError
 
 
-	def sort(self) -> None:
+	def sort(self: "typing.Self") -> None:
 		raise NotImplementedError
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		raise NotImplementedError
 
 
@@ -76,13 +76,13 @@ class EntryList(EntryListType):
 	def insert(self: "typing.Self", pos: int, entry: "EntryType") -> None:
 		self._l.insert(pos, entry.getRaw(self._glos))
 
-	def clear(self) -> None:
+	def clear(self: "typing.Self") -> None:
 		self._l.clear()
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return len(self._l)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		glos = self._glos
 		defaultDefiFormat = glos.getDefaultDefiFormat()
 		for rawEntry in self._l:
@@ -103,10 +103,10 @@ class EntryList(EntryListType):
 		sortKey = namedSortKey.normal(**kwargs)
 		self._sortKey = Entry.getRawEntrySortKey(self._glos, sortKey)
 
-	def sort(self) -> None:
+	def sort(self: "typing.Self") -> None:
 		if self._sortKey is None:
 			raise ValueError("EntryList.sort: sortKey is not set")
 		self._l.sort(key=self._sortKey)
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		pass

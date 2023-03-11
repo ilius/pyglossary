@@ -88,7 +88,7 @@ class Glossary(GlossaryV2):
 	def addEntryObj(self: "typing.Self", entry: "EntryType") -> None:
 		self._data.append(entry)
 
-	def updateIter(self) -> None:
+	def updateIter(self: "typing.Self") -> None:
 		log.warning("calling glos.updateIter() is no longer needed.")
 
 	def sortWords(

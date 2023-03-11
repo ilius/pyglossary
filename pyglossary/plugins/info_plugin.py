@@ -37,13 +37,13 @@ class Writer(object):
 		self._filename = filename
 		self._file = open(filename, mode="wt", encoding="utf-8")
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._filename = ""
 		if self._file:
 			self._file.close()
 			self._file = None
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		import re
 		from collections import Counter, OrderedDict
 
@@ -157,7 +157,7 @@ class Reader(object):
 	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		pass
 
 	def open(self: "typing.Self", filename: str) -> None:
@@ -168,8 +168,8 @@ class Reader(object):
 		for key, value in info.items():
 			self._glos.setInfo(key, value)
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return 0
 
-	def __iter__(self) -> "Iterator[EntryType | None]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType | None]":
 		yield None

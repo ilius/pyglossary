@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
 
+import typing
+
+# -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
@@ -14,7 +16,7 @@ class BaseEntry(EntryType):
 	__slots__: "list[str]" = []
 
 	@property
-	def b_word(self) -> bytes:
+	def b_word(self: "typing.Self") -> bytes:
 		"""
 			returns bytes of word,
 				and all the alternate words
@@ -23,7 +25,7 @@ class BaseEntry(EntryType):
 		return self.s_word.encode("utf-8")
 
 	@property
-	def b_defi(self) -> bytes:
+	def b_defi(self: "typing.Self") -> bytes:
 		"""
 			returns bytes of definition,
 				and all the alternate definitions

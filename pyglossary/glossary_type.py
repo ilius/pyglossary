@@ -27,47 +27,47 @@ RawEntryType: "TypeAlias" = Union[
 
 
 class EntryType(object):
-	def __init__(self) -> None:
+	def __init__(self: "typing.Self") -> None:
 		self._word: "Union[str, list[str]]"
 
-	def isData(self) -> bool:
+	def isData(self: "typing.Self") -> bool:
 		raise NotImplementedError
 
-	def getFileName(self) -> str:
+	def getFileName(self: "typing.Self") -> str:
 		raise NotImplementedError
 
 	@property
-	def data(self) -> bytes:
+	def data(self: "typing.Self") -> bytes:
 		raise NotImplementedError
 
-	def size(self) -> int:
+	def size(self: "typing.Self") -> int:
 		raise NotImplementedError
 
 	def save(self: "typing.Self", directory: str) -> str:
 		raise NotImplementedError
 
 	@property
-	def s_word(self) -> str:
+	def s_word(self: "typing.Self") -> str:
 		raise NotImplementedError
 
 	@property
-	def l_word(self) -> "list[str]":
+	def l_word(self: "typing.Self") -> "list[str]":
 		raise NotImplementedError
 
 	@property
-	def defi(self) -> str:
+	def defi(self: "typing.Self") -> str:
 		raise NotImplementedError
 
 	@property
-	def b_word(self) -> bytes:
+	def b_word(self: "typing.Self") -> bytes:
 		raise NotImplementedError
 
 	@property
-	def b_defi(self) -> bytes:
+	def b_defi(self: "typing.Self") -> bytes:
 		raise NotImplementedError
 
 	@property
-	def defiFormat(self) -> str:
+	def defiFormat(self: "typing.Self") -> str:
 		# TODO: type: Literal["m", "h", "x", "b"]
 		raise NotImplementedError
 
@@ -76,7 +76,7 @@ class EntryType(object):
 		# TODO: type: Literal["m", "h", "x", "b"]
 		raise NotImplementedError
 
-	def detectDefiFormat(self) -> None:
+	def detectDefiFormat(self: "typing.Self") -> None:
 		raise NotImplementedError
 
 	def addAlt(self: "typing.Self", alt: str) -> None:
@@ -88,7 +88,7 @@ class EntryType(object):
 	def editFuncDefi(self: "typing.Self", func: "Callable[[str], str]") -> None:
 		raise NotImplementedError
 
-	def strip(self) -> None:
+	def strip(self: "typing.Self") -> None:
 		raise NotImplementedError
 
 	def replaceInWord(self: "typing.Self", source: str, target: str) -> None:
@@ -110,13 +110,13 @@ class EntryType(object):
 	) -> "Callable[[RawEntryType], Any]":
 		raise NotImplementedError
 
-	def byteProgress(self) -> "tuple[int, int] | None":
+	def byteProgress(self: "typing.Self") -> "tuple[int, int] | None":
 		raise NotImplementedError
 
-	def removeEmptyAndDuplicateAltWords(self) -> None:
+	def removeEmptyAndDuplicateAltWords(self: "typing.Self") -> None:
 		raise NotImplementedError
 
-	def stripFullHtml(self) -> "str | None":
+	def stripFullHtml(self: "typing.Self") -> "str | None":
 		raise NotImplementedError
 
 
@@ -126,16 +126,16 @@ class GlossaryType(object):
 	contains methods and properties that might be used in plugins
 	"""
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		raise NotImplementedError
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		raise NotImplementedError
 
 	def setDefaultDefiFormat(self: "typing.Self", defiFormat: str) -> None:
 		raise NotImplementedError
 
-	def getDefaultDefiFormat(self) -> str:
+	def getDefaultDefiFormat(self: "typing.Self") -> str:
 		raise NotImplementedError
 
 	def collectDefiFormat(
@@ -144,7 +144,7 @@ class GlossaryType(object):
 	) -> "dict[str, float] | None":
 		raise NotImplementedError
 
-	def iterInfo(self) -> "Iterator[tuple[str, str]]":
+	def iterInfo(self: "typing.Self") -> "Iterator[tuple[str, str]]":
 		raise NotImplementedError
 
 	def getInfo(self: "typing.Self", key: str) -> str:
@@ -157,31 +157,31 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	@property
-	def author(self) -> str:
+	def author(self: "typing.Self") -> str:
 		raise NotImplementedError
 
 	@property
-	def alts(self) -> bool:
+	def alts(self: "typing.Self") -> bool:
 		raise NotImplementedError
 
 	@property
-	def filename(self) -> str:
+	def filename(self: "typing.Self") -> str:
 		raise NotImplementedError
 
 	@property
-	def tmpDataDir(self) -> str:
+	def tmpDataDir(self: "typing.Self") -> str:
 		raise NotImplementedError
 
 	@property
-	def sourceLang(self) -> "Lang | None":
+	def sourceLang(self: "typing.Self") -> "Lang | None":
 		raise NotImplementedError
 
 	@property
-	def targetLang(self) -> "Lang | None":
+	def targetLang(self: "typing.Self") -> "Lang | None":
 		raise NotImplementedError
 
 	@property
-	def sourceLangName(self) -> str:
+	def sourceLangName(self: "typing.Self") -> str:
 		raise NotImplementedError
 
 	@sourceLangName.setter
@@ -189,7 +189,7 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	@property
-	def targetLangName(self) -> str:
+	def targetLangName(self: "typing.Self") -> str:
 		raise NotImplementedError
 
 	@targetLangName.setter
@@ -226,7 +226,7 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	@property
-	def rawEntryCompress(self) -> bool:
+	def rawEntryCompress(self: "typing.Self") -> bool:
 		raise NotImplementedError
 
 	def stripFullHtml(
@@ -246,11 +246,11 @@ class GlossaryExtendedType(GlossaryType):
 	def progress(self: "typing.Self", pos: int, total: int, unit: str = "entries") -> None:
 		raise NotImplementedError
 
-	def progressEnd(self) -> None:
+	def progressEnd(self: "typing.Self") -> None:
 		raise NotImplementedError
 
 	@property
-	def progressbar(self) -> bool:
+	def progressbar(self: "typing.Self") -> bool:
 		raise NotImplementedError
 
 	@progressbar.setter

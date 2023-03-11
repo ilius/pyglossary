@@ -88,7 +88,7 @@ class Reader(object):
 		self._filename = filename
 		self._dictdb = DictDB(filename, "read", 1)
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._dictdb is not None:
 			self._dictdb.indexfile.close()
 			self._dictdb.dictfile.close()
@@ -110,12 +110,12 @@ class Reader(object):
 		# Use <br /> so it can be rendered as newline correctly
 		return defi.replace("\n", "<br />")
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		if self._dictdb is None:
 			return 0
 		return len(self._dictdb.indexentries)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		if self._dictdb is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 		dictdb = self._dictdb
@@ -139,7 +139,7 @@ class Writer(object):
 		self._filename = None
 		self._dictdb = None
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		from pyglossary.os_utils import runDictzip
 		self._dictdb.finish(dosort=1)
 		if self._dictzip:
@@ -159,7 +159,7 @@ class Writer(object):
 		self._dictdb = DictDB(filename, "write", 1)
 		self._filename = filename
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		dictdb = self._dictdb
 		while True:
 			entry = yield

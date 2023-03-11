@@ -52,7 +52,7 @@ class GroupState(object):
 		self.group_index = -1
 		self.reset()
 
-	def reset(self) -> None:
+	def reset(self: "typing.Self") -> None:
 		self.first_word = ""
 		self.last_word = ""
 		self.group_contents = []
@@ -167,7 +167,7 @@ class EbookWriter(object):
 		self.manifest_files = []
 		self._group_labels = []
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._filename = None
 
 	def myOpen(self: "typing.Self", fname: str, mode: str) -> "io.IOBase":
@@ -290,7 +290,7 @@ class EbookWriter(object):
 				"text/css",
 			)
 
-	def write_groups(self) -> None:
+	def write_groups(self: "typing.Self") -> None:
 		# TODO: rtl=False option
 		# TODO: handle alternates better (now shows word1|word2... in title)
 
@@ -383,7 +383,7 @@ class EbookWriter(object):
 			spine=spine_contents,
 		)
 
-	def write_opf(self) -> None:
+	def write_opf(self: "typing.Self") -> None:
 		manifest_lines = []
 		spine_lines = []
 		for mi in self.manifest_files:
@@ -416,7 +416,7 @@ class EbookWriter(object):
 		self._filename = filename
 		self._tmpDir = tempfile.mkdtemp()
 
-	def _doZip(self) -> None:
+	def _doZip(self: "typing.Self") -> None:
 		zipFp = zipfile.ZipFile(
 			self._filename,
 			"w",
@@ -431,7 +431,7 @@ class EbookWriter(object):
 		if not self._keep:
 			rmtree(self._tmpDir)
 
-	def write(self) -> None:
+	def write(self: "typing.Self") -> None:
 		filename = self._filename
 		# self._group_by_prefix_length
 		# self._include_index_page

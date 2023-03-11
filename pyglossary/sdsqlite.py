@@ -24,7 +24,7 @@ class Writer(object):
 		self._glos = glos
 		self._clear()
 
-	def _clear(self) -> None:
+	def _clear(self: "typing.Self") -> None:
 		self._filename = ''
 		self._con: "sqlite3.Connection | None"
 		self._cur: "sqlite3.Cursor | None"
@@ -49,7 +49,7 @@ class Writer(object):
 			"CREATE INDEX dict_sortkey ON dict(wordlower, word);",
 		)
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		con = self._con
 		cur = self._cur
 		if not (con and cur):
@@ -83,7 +83,7 @@ class Writer(object):
 
 		con.commit()
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:
@@ -96,7 +96,7 @@ class Reader(object):
 		self._glos = glos
 		self._clear()
 
-	def _clear(self) -> None:
+	def _clear(self: "typing.Self") -> None:
 		self._filename = ""
 		self._con: "sqlite3.Connection | None"
 		self._cur: "sqlite3.Cursor | None"
@@ -108,13 +108,13 @@ class Reader(object):
 		self._cur = self._con.cursor()
 		# self._glos.setDefaultDefiFormat("m")
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		if self._cur is None:
 			return 0
 		self._cur.execute("select count(*) from dict")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		if self._cur is None:
 			return
 		self._cur.execute(
@@ -127,7 +127,7 @@ class Reader(object):
 			defiFormat = row[3]
 			yield self._glos.newEntry(words, defi, defiFormat=defiFormat)
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:

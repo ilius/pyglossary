@@ -155,7 +155,7 @@ class DictDB:
 		#				[short_headword])
 		#self.writeentry(info_headword + "\n" + longinfo, [info_headword])
 
-	def _initindex(self):
+	def _initindex(self: "typing.Self"):
 		"""Load the entire index off disk into memory."""
 		self.indexfile.seek(0)
 		for line in self.indexfile:
@@ -318,7 +318,7 @@ class DictDB:
 
 		self.update("Complete.\n")
 
-	def getdeflist(self):
+	def getdeflist(self: "typing.Self"):
 		"""Returns a list of strings naming all definitions contained
 		in this dictionary."""
 		return self.indexentries.keys()

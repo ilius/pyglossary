@@ -101,7 +101,7 @@ class KeyData:
 		self.entryTitle = entryTitle
 		self.anchor = anchor
 
-	def toDict(self):
+	def toDict(self: "typing.Self"):
 		return dict(
 			priority=self.priority,
 			parentalControl=self.parentalControl,

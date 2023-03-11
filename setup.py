@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import typing
+
 import glob
 import sys
 import os
@@ -18,7 +20,7 @@ relRootDir = "share/pyglossary"
 
 
 class my_install(install):
-	def run(self):
+	def run(self: "typing.Self"):
 		install.run(self)
 		if os.sep == "/":
 			binPath = join(self.install_scripts, "pyglossary")

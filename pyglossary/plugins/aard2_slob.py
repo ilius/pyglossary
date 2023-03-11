@@ -80,12 +80,12 @@ class Reader(object):
 			re.I,
 		)
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._slobObj is not None:
 			self._slobObj.close()
 		self._clear()
 
-	def _clear(self) -> None:
+	def _clear(self: "typing.Self") -> None:
 		self._filename = ""
 		self._slobObj = None  # slobObj is instance of slob.Slob class
 
@@ -148,7 +148,7 @@ class Reader(object):
 		for key, value in tags.items():
 			self._glos.setInfo(f"slob.{key}", value)
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		if self._slobObj is None:
 			log.error("called len() on a reader which is not open")
 			return 0
@@ -161,7 +161,7 @@ class Reader(object):
 		return st.replace('href="', 'href="bword://')\
 			.replace("href='", "href='bword://")
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		from pyglossary.plugin_lib.slob import MIME_HTML, MIME_TEXT
 		if self._slobObj is None:
 			raise RuntimeError("iterating over a reader while it's not open")
@@ -275,7 +275,7 @@ class Writer(object):
 		self._open(filename, namePostfix)
 		self._filename = filename
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		from time import time
 		self._filename = None
 		if self._slobWriter is None:
@@ -354,7 +354,7 @@ class Writer(object):
 				content_type=_ctype,
 			)
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		file_size_approx = int(self._file_size_approx * 0.95)
 		entryCount = 0
 		sumBlobSize = 0

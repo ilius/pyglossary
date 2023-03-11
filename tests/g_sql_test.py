@@ -27,7 +27,7 @@ class TestGlossarySQL(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_txt_sql_1(self):
+	def test_convert_txt_sql_1(self: "typing.Self"):
 		self.convert_txt_sql(
 			"100-en-fa",
 			"100-en-fa.txt",

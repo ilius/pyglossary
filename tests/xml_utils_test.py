@@ -1,4 +1,5 @@
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -9,7 +10,7 @@ from pyglossary.xml_utils import xml_escape
 
 
 class Test_xml_escape(unittest.TestCase):
-	def test(self):
+	def test(self: "typing.Self"):
 		f = xml_escape
 		self.assertEqual(f(''), '')
 		self.assertEqual(f('abc'), 'abc')

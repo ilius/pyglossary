@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import typing
+
 import sys
 import os
 from os.path import dirname, abspath
@@ -15,7 +17,7 @@ from pyglossary.plugin_lib.slob_test import BaseTest
 
 class TestBestMatch(BaseTest):
 
-	def setUp(self):
+	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path1 = os.path.join(self.tmpdir.name, 'test1.slob')
 		self.path2 = os.path.join(self.tmpdir.name, 'test2.slob')
@@ -31,7 +33,7 @@ class TestBestMatch(BaseTest):
 			for key in data2:
 				w.add(b'', key)
 
-	def test_best_match(self):
+	def test_best_match(self: "typing.Self"):
 		self.maxDiff = None
 		with open(self.path1) as s1, open(self.path2) as s2:
 			result = find('aa', [s1, s2], match_prefix=True)
@@ -53,7 +55,7 @@ class TestBestMatch(BaseTest):
 			]
 			self.assertEqual(expected, actual)
 
-	def tearDown(self):
+	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
 
 

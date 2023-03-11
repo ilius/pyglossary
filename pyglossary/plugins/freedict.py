@@ -827,10 +827,10 @@ class Reader(object):
 			'Home: <(ref|ptr) target="(.*)">(.*)</\\1>',
 		)
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		return self._wordCount
 
-	def close(self) -> None:
+	def close(self: "typing.Self") -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
@@ -874,7 +874,7 @@ class Reader(object):
 
 		cfile.close()
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		if self._auto_rtl is None:

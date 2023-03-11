@@ -38,7 +38,7 @@ class Layer(object):
 	def __contains__(self: "typing.Self", tag: "tag.Tag") -> bool:
 		return tag in self.tags
 
-	def __repr__(self) -> str:
+	def __repr__(self: "typing.Self") -> str:
 		tags = "{" + ", ".join(map(str, self.tags)) + "}"
 		return f"Layer({tags}, {self.text!r})"
 

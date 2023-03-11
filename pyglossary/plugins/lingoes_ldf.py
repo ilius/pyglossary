@@ -43,7 +43,7 @@ optionsProp: "dict[str, Option]" = {
 class Reader(TextGlossaryReader):
 	compressions = stdCompressions
 
-	def __len__(self) -> int:
+	def __len__(self: "typing.Self") -> int:
 		if self._wordCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(
@@ -64,7 +64,7 @@ class Reader(TextGlossaryReader):
 
 		return word
 
-	def nextBlock(self) -> "nextBlockResultType":
+	def nextBlock(self: "typing.Self") -> "nextBlockResultType":
 		if not self._file:
 			raise StopIteration
 		entryLines = []
@@ -114,16 +114,16 @@ class Writer(object):
 	def getInfo(self: "typing.Self", key: str) -> str:
 		return self._glos.getInfo(key).replace("\n", "<br>")
 
-	def getAuthor(self) -> None:
+	def getAuthor(self: "typing.Self") -> None:
 		return self._glos.author.replace("\n", "<br>")
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		self._filename = None
 
 	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		from pyglossary.text_writer import writeTxt
 		newline = self._newline
 		resources = self._resources

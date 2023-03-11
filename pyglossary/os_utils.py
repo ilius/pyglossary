@@ -32,7 +32,7 @@ class indir(object):
 		self.create = create
 		self.clear = clear
 
-	def __enter__(self) -> None:
+	def __enter__(self: "typing.Self") -> None:
 		self.oldpwd = os.getcwd()
 		if os.path.exists(self.dir):
 			if self.clear:

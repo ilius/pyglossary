@@ -146,7 +146,7 @@ class TextGlossaryWriter(object):
 		_file.flush()
 		return _file
 
-	def write(self) -> None:
+	def write(self: "typing.Self") -> None:
 		glos = self._glos
 		_file = self._file
 		entryFmt = self._entryFmt
@@ -195,7 +195,7 @@ class TextGlossaryWriter(object):
 					fileIndex += 1
 					_file = self._open(f"{self._filename}.{fileIndex}")
 
-	def finish(self) -> None:
+	def finish(self: "typing.Self") -> None:
 		if self._tail:
 			self._file.write(self._tail)
 		self._file.close()
