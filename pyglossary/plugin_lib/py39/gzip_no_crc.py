@@ -1,5 +1,6 @@
 
 import typing
+
 """Functions that read and write gzipped files.
 
 The user of the file doesn't have to worry about the compression,
@@ -8,12 +9,17 @@ but random access is not allowed."""
 # based on Andrew Kuchling's minigzip.py distributed with the zlib module
 
 import logging
+
 log = logging.getLogger('root')
 
-import struct, sys, time, os
-import zlib
 import builtins
 import io
+import os
+import struct
+import sys
+import time
+import zlib
+
 import _compression
 
 __all__ = ["BadGzipFile", "GzipFile", "open", "compress", "decompress"]

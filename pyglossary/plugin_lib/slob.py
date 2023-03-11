@@ -1,15 +1,12 @@
 # pylint: disable=C0111,C0103,C0302,R0903,R0904,R0914,R0201
-import typing
-
 import encodings
-import functools
 import io
 import os
 import pickle
 import sys
 import tempfile
+import typing
 import warnings
-
 from abc import abstractmethod
 from bisect import bisect_left
 from builtins import open as fopen
@@ -17,14 +14,14 @@ from collections import namedtuple
 from collections.abc import Sequence
 from datetime import datetime, timezone
 from functools import lru_cache
-from struct import pack, unpack, calcsize
+from struct import calcsize, pack, unpack
 from threading import RLock
 from types import MappingProxyType
-from uuid import uuid4, UUID
 from typing import Callable
+from uuid import UUID, uuid4
 
 import icu
-from icu import Locale, Collator, UCollAttribute, UCollAttributeValue
+from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 
 DEFAULT_COMPRESSION = 'lzma2'
 
@@ -81,10 +78,13 @@ def init_compressions():
 		try:
 			m = __import__(name)
 		except ImportError:
-			warnings.warn('%s is not available' % name)
-		else:
-			compressions[name] = Compression(
-				lambda x: m.compress(x, 9), m.decompress)
+			warnings.warning(f'{name} is not available')
+			continue
+
+		def compress_new(x, m=m):
+			return m.compress(x, 9)
+
+		compressions[name] = Compression(compress_new, m.decompress)
 
 	try:
 		import lzma
@@ -131,7 +131,7 @@ MIME_TYPES = {
 	"jpeg": "image/jpeg",
 	"gif": "image/gif",
 	"ttf": "application/x-font-ttf",
-	"otf": "application/x-font-opentype"
+	"otf": "application/x-font-opentype",
 }
 
 
@@ -169,8 +169,7 @@ def sortkey(strength, maxlength=None):
 	)
 	if maxlength is None:
 		return c.getSortKey
-	else:
-		return lambda x: c.getSortKey(x)[:maxlength]
+	return lambda x: c.getSortKey(x)[:maxlength]
 
 
 class MultiFileReader(io.BufferedIOBase):
@@ -417,7 +416,13 @@ class StructWriter:
 	def write_short(self: "typing.Self", value):
 		self._file.write(pack(U_SHORT, value))
 
-	def _write_text(self: "typing.Self", text, len_size_spec, encoding=None, pad_to_length=None):
+	def _write_text(
+		self: "typing.Self",
+		text,
+		len_size_spec,
+		encoding=None,
+		pad_to_length=None,
+	):
 		if encoding is None:
 			encoding = self.encoding
 		text_bytes = text.encode(encoding)
@@ -427,7 +432,7 @@ class StructWriter:
 			raise ValueError("Text is too long for size spec %s" % len_size_spec)
 		self._file.write(pack(
 			len_size_spec,
-			pad_to_length if pad_to_length else length
+			pad_to_length if pad_to_length else length,
 		))
 		self._file.write(text_bytes)
 		if pad_to_length:
@@ -621,7 +626,7 @@ class Slob(Sequence):
 		bin_index, bin_item_index = unmeld_ints(blob_id)
 		return self._store.get(bin_index, bin_item_index)
 
-	@lru_cache(maxsize=None)
+	@lru_cache(maxsize=None)  # noqa: B019
 	def as_dict(
 		self: "typing.Self",
 		strength=TERTIARY,
@@ -758,7 +763,7 @@ class RefList(ItemList):
 			fragment=fragment,
 		)
 
-	@lru_cache(maxsize=None)
+	@lru_cache(maxsize=None)  # noqa: B019
 	def as_dict(
 		self: "typing.Self",
 		strength=TERTIARY,
@@ -778,8 +783,7 @@ class Bin(ItemList):
 
 	def _read_item(self: "typing.Self"):
 		content_len = self._file.read_int()
-		content = self._file.read(content_len)
-		return content
+		return self._file.read(content_len)
 
 
 StoreItem = namedtuple('StoreItem', 'content_type_ids compressed_content')
@@ -821,7 +825,7 @@ class Store(ItemList):
 	def content_type(self: "typing.Self", bin_index, item_index):
 		return self._content_type(bin_index, item_index)[0]
 
-	@lru_cache(maxsize=16)
+	@lru_cache(maxsize=16)  # noqa: B019
 	def _decompress(self: "typing.Self", bin_index):
 		store_item = self[bin_index]
 		return self.decompress(store_item.compressed_content)
@@ -896,8 +900,8 @@ class Writer(object):
 			compression = ''
 		if compression not in COMPRESSIONS:
 			raise UnknownCompression(compression)
-		else:
-			self.compress = COMPRESSIONS[compression].compress
+
+		self.compress = COMPRESSIONS[compression].compress
 
 		self.compression = compression
 		self.content_types = {}
@@ -913,7 +917,7 @@ class Writer(object):
 			'version.python': sys.version.replace('\n', ' '),
 			'version.pyicu': icu.VERSION,
 			'version.icu': icu.ICU_VERSION,
-			'created.at': datetime.now(timezone.utc).isoformat()
+			'created.at': datetime.now(timezone.utc).isoformat(),
 		}
 		self.tags = MappingProxyType(self._tags)
 
@@ -1030,7 +1034,7 @@ class Writer(object):
 			sortkey_func = sortkey(IDENTICAL)
 			for i in sorted(
 				range(len(ref_list)),
-				key=lambda j: sortkey_func(ref_list[j].key)
+				key=lambda j: sortkey_func(ref_list[j].key),
 			):
 				ref_pos = ref_list.pos(i)
 				f_ref_positions_sorted.write_long(ref_pos)
@@ -1063,8 +1067,7 @@ class Writer(object):
 						key_frag = pickle.loads(item.content)
 						if isinstance(key_frag, str):
 							return key_frag, default_fragment
-						else:
-							return key_frag
+						return key_frag
 
 					for item in r:
 						from_key = item.key

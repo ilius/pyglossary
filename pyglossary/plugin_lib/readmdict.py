@@ -3,6 +3,7 @@
 # readmdict.py from https://bitbucket.org/xwang/mdict-analysis
 # Octopus MDict Dictionary File (.mdx) and Resource File (.mdd) Analyser
 #
+# Copyright (C) 2016-2023 Saeed Rasooli on https://github.com/ilius/pyglossary/
 # Copyright (C) 2012, 2013, 2015, 2022 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
 #
 # This program is a free software; you can redistribute it and/or modify
@@ -17,21 +18,22 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+import logging
 import typing
 
-import logging
 log = logging.getLogger(__name__)
 
-from struct import pack, unpack
-from io import BytesIO
 import re
 import sys
 
-from .ripemd128 import ripemd128
-from .pureSalsa20 import Salsa20
-
 # zlib compression is used for engine version >=2.0
 import zlib
+from io import BytesIO
+from struct import pack, unpack
+
+from .pureSalsa20 import Salsa20
+from .ripemd128 import ripemd128
+
 # LZO compression is used for engine version < 2.0
 try:
 	import lzo
@@ -57,7 +59,7 @@ def _unescape_entities(text):
 	text = text.replace(b'&gt;', b'>')
 	text = text.replace(b'&quot;', b'"')
 	text = text.replace(b'&amp;', b'&')
-	return text
+	return text  # noqa: RET504
 
 
 def _fast_decrypt(data, key):
@@ -83,11 +85,10 @@ def _salsa_decrypt(ciphertext, encrypt_key):
 	return s20.encryptBytes(ciphertext)
 
 
-def _decrypt_regcode_by_userid(reg_code, userid):
+def _decrypt_regcode_by_userid(reg_code: bytes, userid: bytes) -> bytes:
 	userid_digest = ripemd128(userid)
 	s20 = Salsa20(key=userid_digest, IV=b"\x00"*8, rounds=8)
-	encrypt_key = s20.encryptBytes(reg_code)
-	return encrypt_key
+	return s20.encryptBytes(reg_code)
 
 
 class MDict(object):
@@ -95,7 +96,12 @@ class MDict(object):
 	Base class which reads in header and key block.
 	It has no public methods and serves only as code sharing base class.
 	"""
-	def __init__(self: "typing.Self", fname, encoding='', passcode=None) -> None:
+	def __init__(
+		self: "typing.Self",
+		fname: str,
+		encoding: str = '',
+		passcode: "tuple[bytes, bytes] | None" = None,
+	) -> None:
 		self._fname = fname
 		self._encoding = encoding.upper()
 		self._encrypted_key = None
@@ -116,10 +122,13 @@ class MDict(object):
 					raise RuntimeError(
 						"xxhash module is needed to read MDict 3.0 format"
 						"\n"
-						"Run `pip3 install xxhash` to install"
+						"Run `pip3 install xxhash` to install",
 					)
 				mid = (len(uuid) + 1) // 2
-				self._encrypted_key = xxhash.xxh64_digest(uuid[:mid]) + xxhash.xxh64_digest(uuid[mid:])
+				self._encrypted_key = (
+					xxhash.xxh64_digest(uuid[:mid]) +
+					xxhash.xxh64_digest(uuid[mid:])
+				)
 
 		self._key_list = self._read_keys()
 
@@ -182,9 +191,15 @@ class MDict(object):
 		if encryption_method == 0:
 			decrypted_block = data
 		elif encryption_method == 1:
-			decrypted_block = _fast_decrypt(data[:encryption_size], encrypted_key) + data[encryption_size:]
+			decrypted_block = (
+				_fast_decrypt(data[:encryption_size], encrypted_key) +
+				data[encryption_size:]
+			)
 		elif encryption_method == 2:
-			decrypted_block = _salsa_decrypt(data[:encryption_size], encrypted_key) + data[encryption_size:]
+			decrypted_block = (
+				_salsa_decrypt(data[:encryption_size], encrypted_key) +
+				data[encryption_size:]
+			)
 		else:
 			raise Exception('encryption method %d not supported' % encryption_method)
 
@@ -218,7 +233,10 @@ class MDict(object):
 			# decrypt if needed
 			if self._encrypt & 0x02:
 				key = ripemd128(key_block_info_compressed[4:8] + pack(b'<L', 0x3695))
-				key_block_info_compressed = key_block_info_compressed[:8] + _fast_decrypt(key_block_info_compressed[8:], key)
+				key_block_info_compressed = (
+					key_block_info_compressed[:8] +
+					_fast_decrypt(key_block_info_compressed[8:], key)
+				)
 			# decompress
 			key_block_info = zlib.decompress(key_block_info_compressed[8:])
 			# adler checksum
@@ -261,10 +279,16 @@ class MDict(object):
 			else:
 				i += (text_tail_size + text_term) * 2
 			# key block compressed size
-			key_block_compressed_size = unpack(self._number_format, key_block_info[i:i+self._number_width])[0]
+			key_block_compressed_size = unpack(
+				self._number_format,
+				key_block_info[i:i+self._number_width],
+			)[0]
 			i += self._number_width
 			# key block decompressed size
-			key_block_decompressed_size = unpack(self._number_format, key_block_info[i:i+self._number_width])[0]
+			key_block_decompressed_size = unpack(
+				self._number_format,
+				key_block_info[i:i+self._number_width],
+			)[0]
 			i += self._number_width
 			key_block_info_list += [(key_block_compressed_size, key_block_decompressed_size)]
 
@@ -276,7 +300,10 @@ class MDict(object):
 		key_list = []
 		i = 0
 		for compressed_size, decompressed_size in key_block_info_list:
-			key_block = self._decode_block(key_block_compressed[i:i+compressed_size], decompressed_size)
+			key_block = self._decode_block(
+				key_block_compressed[i:i+compressed_size],
+				decompressed_size,
+			)
 			# extract one single key block into a key list
 			key_list += self._split_key_block(key_block)
 			i += compressed_size
@@ -287,7 +314,10 @@ class MDict(object):
 		key_start_index = 0
 		while key_start_index < len(key_block):
 			# the corresponding record's offset in record block
-			key_id = unpack(self._number_format, key_block[key_start_index:key_start_index+self._number_width])[0]
+			key_id = unpack(
+				self._number_format,
+				key_block[key_start_index:key_start_index+self._number_width],
+			)[0]
 			# key text ends with '\x00'
 			if self._encoding == 'UTF-16':
 				delimiter = b'\x00\x00'
@@ -376,13 +406,13 @@ class MDict(object):
 	def _read_keys(self: "typing.Self"):
 		if self._version >= 3:
 			return self._read_keys_v3()
-		else:
-			# if no regcode is given, try brutal force (only for engine <= 2)
-			if (self._encrypt & 0x01) and self._encrypted_key is None:
-				print("Try Brutal Force on Encrypted Key Blocks")
-				return self._read_keys_brutal()
-			else:
-				return self._read_keys_v1v2()
+
+		# if no regcode is given, try brutal force (only for engine <= 2)
+		if (self._encrypt & 0x01) and self._encrypted_key is None:
+			print("Try Brutal Force on Encrypted Key Blocks")
+			return self._read_keys_brutal()
+
+		return self._read_keys_v1v2()
 
 	def _read_keys_v3(self: "typing.Self"):
 		f = open(self._fname, 'rb')
@@ -417,9 +447,9 @@ class MDict(object):
 		# read key data
 		f.seek(self._key_data_offset)
 		number = self._read_int32(f)
-		total_size = self._read_number(f)
+		self._read_number(f)  # total_size
 		key_list = []
-		for i in range(number):
+		for _ in range(number):
 			decompressed_size = self._read_int32(f)
 			compressed_size = self._read_int32(f)
 			block_data = f.read(compressed_size)
@@ -452,7 +482,7 @@ class MDict(object):
 		self._num_entries = self._read_number(sf)
 		# number of bytes of key block info after decompression
 		if self._version >= 2.0:
-			key_block_info_decomp_size = self._read_number(sf)
+			self._read_number(sf)  # key_block_info_decomp_size
 		# number of bytes of key block info
 		key_block_info_size = self._read_number(sf)
 		# number of bytes of key block
@@ -489,12 +519,14 @@ class MDict(object):
 		else:
 			num_bytes = 4 * 4
 			key_block_type = b'\x01\x00\x00\x00'
-		block = f.read(num_bytes)
+
+		f.read(num_bytes)  # block
 
 		# key block info
 		# 4 bytes '\x02\x00\x00\x00'
 		# 4 bytes adler32 checksum
-		# unknown number of bytes follows until '\x02\x00\x00\x00' which marks the beginning of key block
+		# unknown number of bytes follows until '\x02\x00\x00\x00'
+		# which marks the beginning of key block
 		key_block_info = f.read(8)
 		if self._version >= 2.0:
 			assert key_block_info[:4] == b'\x02\x00\x00\x00'
@@ -506,8 +538,7 @@ class MDict(object):
 				key_block_info += t[:index]
 				f.seek(fpos + index)
 				break
-			else:
-				key_block_info += t
+			key_block_info += t
 
 		key_block_info_list = self._decode_key_block_info(key_block_info)
 		key_block_size = sum(list(zip(*key_block_info_list))[0])
@@ -543,8 +574,8 @@ class MDict(object):
 		size_counter = 0
 
 		num_record_blocks = self._read_int32(f)
-		num_bytes = self._read_number(f)
-		for j in range(num_record_blocks):
+		self._read_number(f)  # num_bytes
+		for _ in range(num_record_blocks):
 			decompressed_size = self._read_int32(f)
 			compressed_size = self._read_int32(f)
 			record_block = self._decode_block(f.read(compressed_size), decompressed_size)
@@ -574,12 +605,12 @@ class MDict(object):
 		num_entries = self._read_number(f)
 		assert(num_entries == self._num_entries)
 		record_block_info_size = self._read_number(f)
-		record_block_size = self._read_number(f)
+		self._read_number(f)  # record_block_size
 
 		# record block info section
 		record_block_info_list = []
 		size_counter = 0
-		for i in range(num_record_blocks):
+		for _ in range(num_record_blocks):
 			compressed_size = self._read_number(f)
 			decompressed_size = self._read_number(f)
 			record_block_info_list += [(compressed_size, decompressed_size)]
@@ -631,7 +662,11 @@ class MDD(MDict):
 	>>> for filename,content in mdd.items():
 	... print filename, content[:10]
 	"""
-	def __init__(self: "typing.Self", fname, passcode=None) -> None:
+	def __init__(
+		self: "typing.Self",
+		fname: str,
+		passcode: "tuple[bytes, bytes] | None" = None,
+	) -> None:
 		MDict.__init__(self, fname, encoding='UTF-16', passcode=passcode)
 
 
@@ -644,7 +679,13 @@ class MDX(MDict):
 	>>> for key,value in mdx.items():
 	... print key, value[:10]
 	"""
-	def __init__(self: "typing.Self", fname, encoding='', substyle=False, passcode=None) -> None:
+	def __init__(
+		self: "typing.Self",
+		fname: str,
+		encoding: str = '',
+		substyle: bool = False,
+		passcode = None,
+	) -> None:
 		MDict.__init__(self, fname, encoding, passcode)
 		self._substyle = substyle
 
@@ -672,25 +713,28 @@ class MDX(MDict):
 		# substitute styles
 		if self._substyle and self._stylesheet:
 			data = self._substitute_stylesheet(data)
-		return data
+		return data  # noqa: RET504
 
 
 if __name__ == '__main__':
-	import sys
+	import argparse
+	import binascii
+	import codecs
 	import os
 	import os.path
-	import argparse
-	import codecs
+	import sys
 
 	def passcode(s):
 		try:
 			regcode, userid = s.split(',')
-		except:
-			raise argparse.ArgumentTypeError("Passcode must be regcode,userid")
+		except ValueError as e:
+			raise argparse.ArgumentTypeError("Passcode must be regcode,userid") from e
 		try:
 			regcode = codecs.decode(regcode, 'hex')
-		except:
-			raise argparse.ArgumentTypeError("regcode must be a 32 bytes hexadecimal string")
+		except binascii.Error as e:
+			raise argparse.ArgumentTypeError(
+				"regcode must be a 32 bytes hexadecimal string",
+			) from e
 		return regcode, userid
 
 	parser = argparse.ArgumentParser()
@@ -713,8 +757,8 @@ if __name__ == '__main__':
 			import tkinter as tk
 			import tkinter.filedialog as filedialog
 		else:
-			import Tkinter as tk
 			import tkFileDialog as filedialog
+			import Tkinter as tk
 
 		root = tk.Tk()
 		root.withdraw()

@@ -1,5 +1,8 @@
 
-import typing
+import gzip
+import os
+import string
+
 # Dictionary creation library
 # Copyright (C) 2002 John Goerzen <jgoerzen@complete.org>
 # Copyright (C) 2020 Saeed Rasooli
@@ -17,11 +20,8 @@ import typing
 #	You should have received a copy of the GNU General Public License
 #	along with this program; if not, write to the Free Software
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 import sys
-import string
-import gzip
-import os
+import typing
 
 b64_list = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 url_headword = "00-database-url"
@@ -43,8 +43,7 @@ def b64_encode(val):
 		retval += b64_list[thispart]
 	if len(retval):
 		return retval
-	else:
-		return b64_list[0]
+	return b64_list[0]
 
 
 def b64_decode(str):
@@ -131,8 +130,7 @@ class DictDB:
 			self.indexfile = open(self.indexfilename, "wt", encoding="utf-8")
 			if self.usecompression:
 				raise ValueError("'write' mode incompatible with .dz files")
-			else:
-				self.dictfile = open(self.dictfilename, "wb")
+			self.dictfile = open(self.dictfilename, "wb")
 		elif mode == 'update':
 			try:
 				self.indexfile = open(self.indexfilename, "r+b")

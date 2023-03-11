@@ -1,21 +1,45 @@
 #!/usr/bin/env python3
-import typing
-
-import sys
-import os
-from os.path import dirname, abspath
-import unittest
-import random
-import unicodedata
 import logging
+import os
+import random
+import sys
 import tempfile
+import typing
+import unicodedata
+import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
 
-from pyglossary.plugin_lib.slob import *
 from pyglossary.core_test import MockLogHandler
-
+from pyglossary.plugin_lib.slob import (
+	IDENTICAL,
+	MAX_BIN_ITEM_COUNT,
+	MAX_TEXT_LEN,
+	MAX_TINY_TEXT_LEN,
+	MIME_HTML,
+	MIME_TEXT,
+	PRIMARY,
+	QUATERNARY,
+	SECONDARY,
+	TERTIARY,
+	UTF8,
+	IncorrectFileSize,
+	MultiFileReader,
+	TagNotFound,
+	UnknownFileFormat,
+	Writer,
+	find_parts,
+	fopen,
+	io,
+	meld_ints,
+	read_header,
+	set_tag_value,
+	slob,
+	sortkey,
+	unmeld_ints,
+)
 
 mockLog = MockLogHandler()
 log = logging.getLogger("pyglossary")
@@ -32,7 +56,7 @@ class BaseTest(unittest.TestCase):
 			observer = self._observer
 		w = Writer(*args, observer=observer, **kwargs)
 		# self._writers.append(w)
-		return w
+		return w  # noqa: RET504
 
 
 class TestReadWrite(BaseTest):
@@ -146,7 +170,7 @@ class TestSort(BaseTest):
 				'Е ё',
 				'А',
 				'э',
-				'ы'
+				'ы',
 			]
 
 			self.data_sorted = sorted(data, key=sortkey(IDENTICAL))
@@ -463,7 +487,7 @@ class TestFormatErrors(BaseTest):
 
 		with self.create(name) as f:
 			f.add(b'123', 'a')
-			f.add(b'234', 'b',)
+			f.add(b'234', 'b')
 
 		with fopen(name, 'rb') as f:
 			all_bytes = f.read()

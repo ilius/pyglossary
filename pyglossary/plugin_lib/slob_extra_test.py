@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
-import typing
-
-import sys
 import os
-from os.path import dirname, abspath
-import unittest
-import logging
+import sys
 import tempfile
+import typing
+import unittest
+from os.path import abspath, dirname
 
 rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
 
-from pyglossary.plugin_lib.slob_extra import *
+from pyglossary.plugin_lib.slob_extra import find
 from pyglossary.plugin_lib.slob_test import BaseTest
 
 

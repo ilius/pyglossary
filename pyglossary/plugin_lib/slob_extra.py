@@ -1,5 +1,15 @@
 
-from pyglossary.plugin_lib.slob import *
+from pyglossary.plugin_lib.slob import (
+	PRIMARY,
+	QUATERNARY,
+	SECONDARY,
+	TERTIARY,
+	Collator,
+	Locale,
+	Slob,
+	UCollAttribute,
+	UCollAttributeValue,
+)
 
 
 def sortkey_length(strength, word):

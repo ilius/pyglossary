@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright by https://github.com/zhansliu/writemdict
+# Copyright (C) 2016-2023 Saeed Rasooli on https://github.com/ilius/pyglossary/
+# Copyright (C) 2015 Z. H. Liu on https://github.com/zhansliu/writemdict
 
 # pureSalsa20.py -- a pure Python implementation of the Salsa20 cipher,
 # ported to Python 3
@@ -240,7 +241,7 @@ class Salsa20(object):
 		assert testing or rounds in [8, 12, 20], "rounds must be 8, 12, 20"
 		self.rounds = rounds
 
-	def encryptBytes(self: "typing.Self", data):
+	def encryptBytes(self: "typing.Self", data: bytes) -> bytes:
 		assert type(data) == bytes, "data must be byte string"
 		assert self._lastChunk64, "previous chunk not multiple of 64 bytes"
 		lendata = len(data)
