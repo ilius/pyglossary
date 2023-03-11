@@ -90,8 +90,7 @@ class Reader(object):
 
 	def close(self: "typing.Self") -> None:
 		if self._dictdb is not None:
-			self._dictdb.indexfile.close()
-			self._dictdb.dictfile.close()
+			self._dictdb.close()
 			# self._dictdb.finish()
 			self._dictdb = None
 
@@ -113,14 +112,14 @@ class Reader(object):
 	def __len__(self: "typing.Self") -> int:
 		if self._dictdb is None:
 			return 0
-		return len(self._dictdb.indexentries)
+		return len(self._dictdb)
 
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		if self._dictdb is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 		dictdb = self._dictdb
-		for word in dictdb.getdeflist():
-			b_defi = b"\n\n<hr>\n\n".join(dictdb.getdef(word))
+		for word in dictdb.getDefList():
+			b_defi = b"\n\n<hr>\n\n".join(dictdb.getDef(word))
 			try:
 				defi = b_defi.decode("utf_8", 'ignore')
 				defi = self.prettifyDefinitionText(defi)
@@ -168,4 +167,4 @@ class Writer(object):
 			if entry.isData():
 				# does dictd support resources? and how? FIXME
 				continue
-			dictdb.addentry(entry.b_defi, entry.l_word)
+			dictdb.addEntry(entry.b_defi, entry.l_word)
