@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -12,7 +13,7 @@ from pyglossary.html_utils import unescape_unicode
 
 
 class UnescapeUnicodeTest(unittest.TestCase):
-	def case(self, text, expected):
+	def case(self: "typing.Self", text, expected):
 		actual = unescape_unicode(text)
 		self.assertEqual(actual, expected)
 

@@ -1,3 +1,5 @@
+
+import typing
 from typing import TYPE_CHECKING
 
 from .core import log
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class GlossaryProgress(object):
 	def __init__(
-		self,
+		self: "typing.Self",
 		ui: "UIType | None" = None,  # noqa: F821
 	):
 		self._ui = ui
@@ -21,17 +23,17 @@ class GlossaryProgress(object):
 		return self._ui is not None and self._progressbar
 
 	@progressbar.setter
-	def progressbar(self, enabled: bool) -> None:
+	def progressbar(self: "typing.Self", enabled: bool) -> None:
 		self._progressbar = enabled
 
 	def progressInit(
-		self,
+		self: "typing.Self",
 		*args,  # noqa: ANN
 	) -> None:
 		if self._ui and self._progressbar:
 			self._ui.progressInit(*args)
 
-	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
+	def progress(self: "typing.Self", pos: int, total: int, unit: str = "entries") -> None:
 		if total == 0:
 			log.warning(f"{pos=}, {total=}")
 			return

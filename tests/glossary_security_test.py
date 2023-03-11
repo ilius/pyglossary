@@ -3,6 +3,7 @@
 import logging
 import os
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -15,7 +16,7 @@ from tests.glossary_v2_test import dataDir
 
 
 class TestGlossarySecurity(TestGlossaryErrors):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryErrors.__init__(self, *args, **kwargs)
 		self.mockLog.setLevel(logging.INFO)
 

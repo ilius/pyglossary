@@ -22,6 +22,7 @@
 # SOFTWARE.
 
 import os
+import typing
 from os.path import isdir
 from typing import Generator
 
@@ -72,10 +73,10 @@ class Reader(TextGlossaryReader):
 
 	_extract_inline_images: bool = True
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		TextGlossaryReader.__init__(self, glos, hasInfo=False)
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		try:
 			import mistune  # noqa: F401
 		except ModuleNotFoundError as e:
@@ -84,14 +85,14 @@ class Reader(TextGlossaryReader):
 		TextGlossaryReader.open(self, filename)
 		self._glos.setDefaultDefiFormat("h")
 
-	def isInfoWord(self, word: str) -> bool:
+	def isInfoWord(self: "typing.Self", word: str) -> bool:
 		return False
 
-	def fixInfoWord(self, word: str) -> str:
+	def fixInfoWord(self: "typing.Self", word: str) -> str:
 		raise NotImplementedError
 
 	def fixDefi(
-		self,
+		self: "typing.Self",
 		defi: str,
 		html: bool,
 	) -> "nextBlockResultType":
@@ -158,10 +159,10 @@ class Reader(TextGlossaryReader):
 class Writer(object):
 	_encoding: str = "utf-8"
 
-	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
+	def stripFullHtmlError(self: "typing.Self", entry: "EntryType", error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._file = None
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
@@ -173,7 +174,7 @@ class Writer(object):
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._file = open(filename, "w", encoding=self._encoding)
 		# dictgen's ParseDictFile does not seem to support glossary info / metedata
 		self._resDir = filename + "_res"
@@ -181,7 +182,7 @@ class Writer(object):
 			os.mkdir(self._resDir)
 
 	def write(
-		self,
+		self: "typing.Self",
 	) -> "Generator[None, EntryType, None]":
 		fileObj = self._file
 		resDir = self._resDir

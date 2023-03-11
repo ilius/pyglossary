@@ -21,6 +21,7 @@
 import logging
 import os
 import os.path
+import typing
 from collections import OrderedDict as odict
 from contextlib import suppress
 from dataclasses import dataclass
@@ -152,7 +153,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		self._tmpDataDir = ""
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		info: "dict[str, str] | None" = None,
 		ui: "UIType | None" = None,  # noqa: F821
 	) -> None:
@@ -203,7 +204,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	def rawEntryCompress(self) -> bool:
 		return self._rawEntryCompress
 
-	def setRawEntryCompress(self, enable: bool) -> None:
+	def setRawEntryCompress(self: "typing.Self", enable: bool) -> None:
 		self._rawEntryCompress = enable
 
 	def updateEntryFilters(self) -> None:
@@ -249,7 +250,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		for entryFilter in self._entryFilters:
 			entryFilter.prepare()
 
-	def _addExtraEntryFilter(self, cls: "type[EntryFilterType]") -> None:
+	def _addExtraEntryFilter(self: "typing.Self", cls: "type[EntryFilterType]") -> None:
 		if cls.name in self._entryFiltersName:
 			return
 		self._entryFilters.append(cls(self))
@@ -265,7 +266,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		self._addExtraEntryFilter(RemoveHtmlTagsAll)
 
 	def stripFullHtml(
-		self,
+		self: "typing.Self",
 		errorHandler: "Callable[[EntryType, str], None] | None" = None,
 	) -> None:
 		"""
@@ -328,7 +329,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	# Since ProgressBar is already handled with an EntryFilter, there is
 	# no point of returning None entries anymore.
 	def _applyEntryFiltersGen(
-		self,
+		self: "typing.Self",
 		gen: "Iterator[EntryType]",
 	) -> "Iterator[EntryType]":
 		entry: "EntryType | None"
@@ -353,7 +354,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		return iter([])
 
 	# TODO: switch to @property defaultDefiFormat
-	def setDefaultDefiFormat(self, defiFormat: str) -> None:
+	def setDefaultDefiFormat(self: "typing.Self", defiFormat: str) -> None:
 		"""
 		defiFormat must be empty or one of these:
 			"m": plain text
@@ -366,7 +367,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		return self._defaultDefiFormat
 
 	def collectDefiFormat(
-		self,
+		self: "typing.Self",
 		maxCount: int,
 	) -> "dict[str, float] | None":
 		"""
@@ -412,7 +413,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		raise NotImplementedError
 
 	@config.setter
-	def config(self, config: "dict[str, Any]") -> None:
+	def config(self: "typing.Self", config: "dict[str, Any]") -> None:
 		if self._config:
 			log.error("glos.config is set more than once")
 			return
@@ -435,7 +436,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		return self._tmpDataDir
 
 	def wordTitleStr(
-		self,
+		self: "typing.Self",
 		word: str,
 		sample: str = "",
 		_class: str = "",
@@ -460,14 +461,14 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			return f'<{tag} class="{_class}">{word}</{tag}><br>'
 		return f'<{tag}>{word}</{tag}><br>'
 
-	def getConfig(self, name: str, default: "str | None") -> "str | None":
+	def getConfig(self: "typing.Self", name: str, default: "str | None") -> "str | None":
 		return self._config.get(name, default)
 
-	def addEntry(self, entry: "EntryType") -> None:
+	def addEntry(self: "typing.Self", entry: "EntryType") -> None:
 		self._data.append(entry)
 
 	def newEntry(
-		self,
+		self: "typing.Self",
 		word: str,
 		defi: str,
 		defiFormat: str = "",
@@ -490,7 +491,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			byteProgress=byteProgress,
 		)
 
-	def newDataEntry(self, fname: str, data: bytes) -> "DataEntry":
+	def newDataEntry(self: "typing.Self", fname: str, data: bytes) -> "DataEntry":
 		import uuid
 
 		if self._readers:
@@ -519,7 +520,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 	# 		return os.access(dirPath, os.W_OK)
 	# 	return os.access(os.path.dirname(dirPath), os.W_OK)
 
-	def _createReader(self, format: str, options: "dict[str, Any]") -> "Any":
+	def _createReader(self: "typing.Self", format: str, options: "dict[str, Any]") -> "Any":
 		readerClass = self.plugins[format].readerClass
 		if readerClass is None:
 			log.critical("_createReader: readerClass is None")
@@ -529,7 +530,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			setattr(reader, f"_{name}", value)
 		return reader
 
-	def _setTmpDataDir(self, filename: str) -> None:
+	def _setTmpDataDir(self: "typing.Self", filename: str) -> None:
 		import uuid
 		# good thing about cacheDir is that we don't have to clean it up after
 		# conversion is finished.
@@ -550,7 +551,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		self._cleanupPathList.add(self._tmpDataDir)
 
 	def _validateReadoptions(
-		self,
+		self: "typing.Self",
 		format: str,
 		options: "dict[str, Any]",
 	) -> None:
@@ -563,7 +564,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 				)
 				del options[key]
 
-	def _openReader(self, reader: "Any", filename: str) -> bool:
+	def _openReader(self: "typing.Self", reader: "Any", filename: str) -> bool:
 		# reader.open returns "Iterator[tuple[int, int]] | None"
 		progressbar: bool = self.progressbar
 		try:
@@ -592,7 +593,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		return True
 
 	def directRead(
-		self,
+		self: "typing.Self",
 		filename: str,
 		format: str = "",
 		**options,  # noqa: ANN
@@ -606,7 +607,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		)
 
 	def _read(
-		self,
+		self: "typing.Self",
 		filename: str,
 		format: str = "",
 		direct: bool = False,
@@ -652,7 +653,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 		return True
 
-	def loadReader(self, reader: "Any") -> None:
+	def loadReader(self: "typing.Self", reader: "Any") -> None:
 		"""
 		iterates over `reader` object and loads the whole data into self._data
 		must call `reader.open(filename)` before calling this function
@@ -672,7 +673,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		showMemoryUsage()
 
 	def _createWriter(
-		self,
+		self: "typing.Self",
 		format: str,
 		options: "dict[str, Any]",
 	) -> "Any":
@@ -699,7 +700,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		return writer
 
 	def write(
-		self,
+		self: "typing.Self",
 		filename: str,
 		format: str,
 		**kwargs,  # noqa: ANN
@@ -736,7 +737,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		)
 
 	def _writeEntries(
-		self,
+		self: "typing.Self",
 		writerList: "list[Any]",
 		filename: str,
 	) -> None:
@@ -766,7 +767,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 				gen.send(None)
 
 	def _openWriter(
-		self,
+		self: "typing.Self",
 		writer: "Any",
 		filename: str,
 	) -> bool:
@@ -781,7 +782,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		return True
 
 	def _write(
-		self,
+		self: "typing.Self",
 		filename: str,
 		format: str,
 		sort: bool = False,
@@ -841,12 +842,12 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 		return filename
 
-	def _compressOutput(self, filename: str, compression: str) -> str:
+	def _compressOutput(self: "typing.Self", filename: str, compression: str) -> str:
 		from .compression import compress
 		return compress(self, filename, compression)
 
 	def _switchToSQLite(
-		self,
+		self: "typing.Self",
 		inputFilename: str,
 		outputFormat: str,
 	) -> None:
@@ -875,7 +876,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		self._sqlite = True
 
 	def _checkSortFlag(
-		self,
+		self: "typing.Self",
 		plugin: "PluginProp",
 		sort: "bool | None",
 	) -> "bool | None":
@@ -903,7 +904,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		return bool(sort)
 
 	def _resolveSortParams(
-		self,
+		self: "typing.Self",
 		args: ConvertArgs,
 		plugin: "PluginProp",
 	) -> "tuple[bool, bool] | None":
@@ -960,7 +961,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 		return False, True
 
 	def _checkSortKey(
-		self,
+		self: "typing.Self",
 		plugin: "PluginProp",
 		sortKeyName: "str | None",
 		sortEncoding: "str | None",
@@ -1003,7 +1004,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 		return namedSortKey, sortEncoding
 
-	def _convertValidateStrings(self, args: ConvertArgs):
+	def _convertValidateStrings(self: "typing.Self", args: ConvertArgs):
 		if type(args.inputFilename) is not str:
 			raise TypeError("inputFilename must be str")
 		if type(args.outputFilename) is not str:
@@ -1015,7 +1016,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 			raise TypeError("outputFormat must be str")
 
 	def _convertPrepare(
-		self,
+		self: "typing.Self",
 		args: ConvertArgs,
 		outputFilename: str = "",
 		outputFormat: str = "",
@@ -1056,7 +1057,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 		return sort
 
-	def convert(self, args: ConvertArgs) -> "str | None":
+	def convert(self: "typing.Self", args: ConvertArgs) -> "str | None":
 		"""
 		returns absolute path of output file, or None if failed
 

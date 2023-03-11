@@ -17,6 +17,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+import typing
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -93,7 +95,7 @@ class MDict(object):
 	Base class which reads in header and key block.
 	It has no public methods and serves only as code sharing base class.
 	"""
-	def __init__(self, fname, encoding='', passcode=None) -> None:
+	def __init__(self: "typing.Self", fname, encoding='', passcode=None) -> None:
 		self._fname = fname
 		self._encoding = encoding.upper()
 		self._encrypted_key = None
@@ -144,13 +146,13 @@ class MDict(object):
 		"""
 		return (key_value for key_id, key_value in self._key_list)
 
-	def _read_number(self, f):
+	def _read_number(self: "typing.Self", f):
 		return unpack(self._number_format, f.read(self._number_width))[0]
 
-	def _read_int32(self, f):
+	def _read_int32(self: "typing.Self", f):
 		return unpack('>I', f.read(4))[0]
 
-	def _parse_header(self, header):
+	def _parse_header(self: "typing.Self", header):
 		"""
 		extract attributes from <Dict attr="value" ... >
 		"""
@@ -160,7 +162,7 @@ class MDict(object):
 			tagdict[key] = _unescape_entities(value)
 		return tagdict
 
-	def _decode_block(self, block, decompressed_size):
+	def _decode_block(self: "typing.Self", block, decompressed_size):
 		# block info: compression, encryption
 		info = unpack('<L', block[:4])[0]
 		compression_method =  info & 0xf
@@ -209,7 +211,7 @@ class MDict(object):
 
 		return decompressed_block
 
-	def _decode_key_block_info(self, key_block_info_compressed):
+	def _decode_key_block_info(self: "typing.Self", key_block_info_compressed):
 		if self._version >= 2:
 			# zlib compression
 			assert(key_block_info_compressed[:4] == b'\x02\x00\x00\x00')
@@ -270,7 +272,7 @@ class MDict(object):
 
 		return key_block_info_list
 
-	def _decode_key_block(self, key_block_compressed, key_block_info_list):
+	def _decode_key_block(self: "typing.Self", key_block_compressed, key_block_info_list):
 		key_list = []
 		i = 0
 		for compressed_size, decompressed_size in key_block_info_list:
@@ -280,7 +282,7 @@ class MDict(object):
 			i += compressed_size
 		return key_list
 
-	def _split_key_block(self, key_block):
+	def _split_key_block(self: "typing.Self", key_block):
 		key_list = []
 		key_start_index = 0
 		while key_start_index < len(key_block):
@@ -616,7 +618,7 @@ class MDict(object):
 
 		f.close()
 
-	def _treat_record_data(self, data):
+	def _treat_record_data(self: "typing.Self", data):
 		return data
 
 
@@ -629,7 +631,7 @@ class MDD(MDict):
 	>>> for filename,content in mdd.items():
 	... print filename, content[:10]
 	"""
-	def __init__(self, fname, passcode=None) -> None:
+	def __init__(self: "typing.Self", fname, passcode=None) -> None:
 		MDict.__init__(self, fname, encoding='UTF-16', passcode=passcode)
 
 
@@ -642,11 +644,11 @@ class MDX(MDict):
 	>>> for key,value in mdx.items():
 	... print key, value[:10]
 	"""
-	def __init__(self, fname, encoding='', substyle=False, passcode=None) -> None:
+	def __init__(self: "typing.Self", fname, encoding='', substyle=False, passcode=None) -> None:
 		MDict.__init__(self, fname, encoding, passcode)
 		self._substyle = substyle
 
-	def _substitute_stylesheet(self, txt):
+	def _substitute_stylesheet(self: "typing.Self", txt):
 		# substitute stylesheet definition
 		txt_list = re.split(r'`\d+`', txt)
 		txt_tag = re.findall(r'`\d+`', txt)
@@ -664,7 +666,7 @@ class MDX(MDict):
 				txt_styled = txt_styled + style[0] + p + style[1]
 		return txt_styled
 
-	def _treat_record_data(self, data):
+	def _treat_record_data(self: "typing.Self", data):
 		# convert to utf-8
 		data = data.decode(self._encoding, errors='ignore').strip(u'\x00').encode('utf-8')
 		# substitute styles

@@ -1,4 +1,5 @@
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -10,7 +11,7 @@ from tests.glossary_errors_test import TestGlossaryErrorsBase
 
 
 class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryErrorsBase.__init__(self, *args, **kwargs)
 		self.dataFileCRC32.update({
 			"100-en-fa.sd/100-en-fa.dict": "223a0d1d",
@@ -21,7 +22,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 		})
 
 	def convert_txt_stardict_enfa(
-		self,
+		self: "typing.Self",
 		fname,
 		**convertArgs,
 	):

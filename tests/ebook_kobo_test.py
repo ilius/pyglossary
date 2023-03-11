@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -16,7 +17,7 @@ from pyglossary.plugins.ebook_kobo import (
 
 
 class GetPrefixTest(unittest.TestCase):
-	def case(self, word, prefix):
+	def case(self: "typing.Self", word, prefix):
 		glos = Glossary()
 		w = Writer(glos)
 		self.assertEqual(

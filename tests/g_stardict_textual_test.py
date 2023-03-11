@@ -1,4 +1,5 @@
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -9,7 +10,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryStarDictTextual(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -24,7 +25,7 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			"stardict-mixed-types-2.xml.txt": "c896cf68",
 		})
 
-	def convert_txt_sdxml(self, fname, fname2, **convertArgs):
+	def convert_txt_sdxml(self: "typing.Self", fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.txt",
 			f"{fname}-2.xml",
@@ -33,7 +34,7 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def convert_sdxml_txt(self, fname, fname2, **convertArgs):
+	def convert_sdxml_txt(self: "typing.Self", fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.xml",
 			f"{fname}-2.txt",

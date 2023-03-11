@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
 
+import typing
+
+# -*- coding: utf-8 -*-
 from os.path import isfile
 from typing import TYPE_CHECKING
 
@@ -18,7 +20,7 @@ from .text_utils import (
 
 
 class Writer(object):
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
@@ -27,7 +29,7 @@ class Writer(object):
 		self._con: "sqlite3.Connection | None"
 		self._cur: "sqlite3.Cursor | None"
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		import sqlite3
 		if isfile(filename):
 			raise IOError(f"file {filename!r} already exists")
@@ -90,7 +92,7 @@ class Writer(object):
 
 
 class Reader(object):
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
@@ -99,7 +101,7 @@ class Reader(object):
 		self._con: "sqlite3.Connection | None"
 		self._cur: "sqlite3.Cursor | None"
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)

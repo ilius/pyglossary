@@ -18,6 +18,7 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import logging
+import typing
 from collections import OrderedDict as odict
 from typing import TYPE_CHECKING
 
@@ -294,7 +295,7 @@ class PluginProp(object):
 	def canWrite(self) -> bool:
 		return self._canWrite
 
-	def getOptionAttrNamesFromClass(self, rwclass: "Type") -> "list[str]":
+	def getOptionAttrNamesFromClass(self: "typing.Self", rwclass: "Type") -> "list[str]":
 		nameList = []
 
 		for cls in rwclass.__bases__ + (rwclass,):
@@ -310,7 +311,7 @@ class PluginProp(object):
 
 		return nameList
 
-	def getOptionsFromClass(self, rwclass: "Type") -> "dict[str, Any]":
+	def getOptionsFromClass(self: "typing.Self", rwclass: "Type") -> "dict[str, Any]":
 		optionsProp = self.optionsProp
 		options = odict()
 		if rwclass is None:

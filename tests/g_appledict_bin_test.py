@@ -1,4 +1,5 @@
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname, join
 
@@ -11,7 +12,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryAppleDictBin(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -77,7 +78,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 		)
 
 	def convert_appledict_binary_to_txt(
-		self,
+		self: "typing.Self",
 		baseName: str,
 		files: "list[str]",
 		html_full: bool = False,

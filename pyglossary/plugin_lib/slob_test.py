@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import typing
+
 import sys
 import os
 from os.path import dirname, abspath
@@ -21,11 +23,11 @@ log.addHandler(mockLog)
 
 
 class BaseTest(unittest.TestCase):
-	def _observer(self, event: "slob.WriterEvent"):
+	def _observer(self: "typing.Self", event: "slob.WriterEvent"):
 		log.info(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 		# self._writers = []
 
-	def create(self, *args, observer=None, **kwargs):
+	def create(self: "typing.Self", *args, observer=None, **kwargs):
 		if observer is None:
 			observer = self._observer
 		w = Writer(*args, observer=observer, **kwargs)
@@ -183,7 +185,7 @@ class TestFind(BaseTest):
 
 		self.r = open(self.path)
 
-	def get(self, d, key):
+	def get(self: "typing.Self", d, key):
 		return list(item.content.decode('ascii') for item in d[key])
 
 	def test_find_identical(self):

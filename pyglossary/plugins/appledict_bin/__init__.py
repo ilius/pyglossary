@@ -15,6 +15,7 @@
 # GNU General Public License for more details.
 
 import re
+import typing
 from datetime import datetime
 from io import BytesIO
 from os.path import isdir, isfile, join, split
@@ -83,7 +84,7 @@ class Reader(object):
 	_html: bool = True
 	_html_full: bool = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos: GlossaryType = glos
 		self._dictDirPath = ""
 		self._contentsPath = ""
@@ -96,7 +97,7 @@ class Reader(object):
 		self._wordCount = 0
 		self._keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}
 
-	def sub_link(self, m: "Match") -> str:
+	def sub_link(self: "typing.Self", m: "Match") -> str:
 		from lxml.html import fromstring, tostring
 
 		a_raw = m.group(0)
@@ -130,10 +131,10 @@ class Reader(object):
 
 		return a_new  # noqa: RET504
 
-	def fixLinksInDefi(self, defi: str) -> str:
+	def fixLinksInDefi(self: "typing.Self", defi: str) -> str:
 		return self._re_link.sub(self.sub_link, defi)
 
-	def open(self, filename: str) -> "Iterator[tuple[int, int]]":
+	def open(self: "typing.Self", filename: str) -> "Iterator[tuple[int, int]]":
 		from os.path import dirname
 		try:
 			from lxml import etree  # noqa: F401
@@ -219,7 +220,7 @@ class Reader(object):
 			f"number of entries: {self._wordCount}",
 		)
 
-	def parseMetadata(self, infoPlistPath: str) -> "dict[str, Any]":
+	def parseMetadata(self: "typing.Self", infoPlistPath: str) -> "dict[str, Any]":
 		import biplist
 
 		if not isfile(infoPlistPath):
@@ -243,7 +244,7 @@ class Reader(object):
 				) from e
 		return metadata
 
-	def setMetadata(self, metadata: "dict[str, Any]") -> None:
+	def setMetadata(self: "typing.Self", metadata: "dict[str, Any]") -> None:
 		name = metadata.get("CFBundleDisplayName")
 		if not name:
 			name = metadata.get("CFBundleIdentifier")
@@ -271,7 +272,7 @@ class Reader(object):
 
 		self._properties = from_metadata(metadata)
 
-	def setLangs(self, metadata: "dict[str, Any]") -> None:
+	def setLangs(self: "typing.Self", metadata: "dict[str, Any]") -> None:
 		import locale
 
 		langsList = metadata.get("DCSDictionaryLanguages")
@@ -295,7 +296,7 @@ class Reader(object):
 			self._file = None
 
 	def _getDefi(
-		self,
+		self: "typing.Self",
 		entryElem: "lxml.etree.Element",
 		keyDataList: "list[KeyData]",
 	) -> str:
@@ -333,7 +334,7 @@ class Reader(object):
 
 		return defi
 
-	def getChunkLenOffset(self, pos: int, buffer: bytes) -> "tuple[int, int]":
+	def getChunkLenOffset(self: "typing.Self", pos: int, buffer: bytes) -> "tuple[int, int]":
 		"""
 		@return chunk byte length and offset
 
@@ -363,7 +364,7 @@ class Reader(object):
 		return chunkLen, offset
 
 	def createEntry(
-		self,
+		self: "typing.Self",
 		entryBytes: bytes,
 		articleAddress: "ArticleAddress",
 	) -> "EntryType | None":
@@ -413,7 +414,7 @@ class Reader(object):
 			byteProgress=(self._absPos, self._limit),
 		)
 
-	def convertEntryBytesToXml(self, entryBytes: bytes) -> "etree.Element | None":
+	def convertEntryBytesToXml(self: "typing.Self", entryBytes: bytes) -> "etree.Element | None":
 		# etree.register_namespace("d", "http://www.apple.com/DTDs/DictionaryService-1.0.rng")
 		entryFull = entryBytes.decode(self._encoding, errors="replace")
 		entryFull = entryFull.strip()
@@ -462,7 +463,7 @@ class Reader(object):
 		self._wordCount = len(titleById)
 
 	def setKeyTextData(
-		self,
+		self: "typing.Self",
 		morphoFilePath: str,
 		properties: "AppleDictProperties",
 	) -> "Iterator[tuple[int, int]]":
@@ -508,7 +509,7 @@ class Reader(object):
 		)
 
 	def readKeyTextData(
-		self,
+		self: "typing.Self",
 		buff: "io.BufferedReader",
 		bufferOffset: int,
 		bufferLimit: int,
@@ -625,7 +626,7 @@ class Reader(object):
 				yield entry
 
 	def yieldEntryBytes(
-		self,
+		self: "typing.Self",
 		body_file: "io.BufferedIOBase",
 		properties: "AppleDictProperties",
 	) -> "Iterator[tuple[bytes, ArticleAddress]]":

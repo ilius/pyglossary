@@ -19,6 +19,7 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import logging
+import typing
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -32,10 +33,10 @@ from .entry import Entry
 log = logging.getLogger("pyglossary")
 
 class EntryListType(object):
-	def append(self, entry: "EntryType") -> None:
+	def append(self: "typing.Self", entry: "EntryType") -> None:
 		raise NotImplementedError
 
-	def insert(self, pos: int, entry: "EntryType") -> None:
+	def insert(self: "typing.Self", pos: int, entry: "EntryType") -> None:
 		raise NotImplementedError
 
 	def clear(self) -> None:
@@ -48,7 +49,7 @@ class EntryListType(object):
 		raise NotImplementedError
 
 	def setSortKey(
-		self,
+		self: "typing.Self",
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
@@ -64,15 +65,15 @@ class EntryListType(object):
 
 
 class EntryList(EntryListType):
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._l: "list[RawEntryType]" = []
 		self._glos = glos
 		self._sortKey: "Callable[[RawEntryType], Any] | None" = None
 
-	def append(self, entry: "EntryType") -> None:
+	def append(self: "typing.Self", entry: "EntryType") -> None:
 		self._l.append(entry.getRaw(self._glos))
 
-	def insert(self, pos: int, entry: "EntryType") -> None:
+	def insert(self: "typing.Self", pos: int, entry: "EntryType") -> None:
 		self._l.insert(pos, entry.getRaw(self._glos))
 
 	def clear(self) -> None:
@@ -91,7 +92,7 @@ class EntryList(EntryListType):
 			)
 
 	def setSortKey(
-		self,
+		self: "typing.Self",
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",

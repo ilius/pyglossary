@@ -19,6 +19,7 @@
 import gzip
 import os
 import re
+import typing
 from os.path import join
 
 from pyglossary.core import log
@@ -44,13 +45,13 @@ class MetaData(object):
 
 
 class MetaDataBlock(object):
-	def __init__(self, data, _type) -> None:
+	def __init__(self: "typing.Self", data, _type) -> None:
 		self.data = data
 		self.type = _type
 
 
 class MetaDataRange(object):
-	def __init__(self, _type, count) -> None:
+	def __init__(self: "typing.Self", _type, count) -> None:
 		self.type = _type
 		self.count = count
 
@@ -84,7 +85,7 @@ class GzipWithCheck(object):
 	gzip.GzipFile with check.
 	It checks that unpacked data match what was packed.
 	"""
-	def __init__(self, fileobj, unpackedPath, reader, closeFileobj=False) -> None:
+	def __init__(self: "typing.Self", fileobj, unpackedPath, reader, closeFileobj=False) -> None:
 		"""
 		constructor
 
@@ -110,7 +111,7 @@ class GzipWithCheck(object):
 			self.unpackedFile.close()
 			self.unpackedFile = None
 
-	def read(self, size=-1):
+	def read(self: "typing.Self", size=-1):
 		buf1 = self.file.read(size)
 		buf2 = self.unpackedFile.read(size)
 		if buf1 != buf2:
@@ -123,7 +124,7 @@ class GzipWithCheck(object):
 		# 	)
 		return buf1
 
-	def seek(self, offset, whence=os.SEEK_SET):
+	def seek(self: "typing.Self", offset, whence=os.SEEK_SET):
 		self.file.seek(offset, whence)
 		self.unpackedFile.seek(offset, whence)
 		# self.reader.msgLogFileWrite(
@@ -163,7 +164,7 @@ class DebugBglReader(BglReader):
 	_msg_log_path: str = ""
 
 	def open(
-		self,
+		self: "typing.Self",
 		filename,
 	):
 		if not BglReader.open(self, filename):
@@ -250,7 +251,7 @@ class DebugBglReader(BglReader):
 	def __del__(self):
 		BglReader.__del__(self)
 
-	def readEntryWord(self, block, pos):
+	def readEntryWord(self: "typing.Self", block, pos):
 		succeed, pos, u_word, b_word = \
 			BglReader.readEntryWord(self, block, pos)
 		if not succeed:
@@ -258,7 +259,7 @@ class DebugBglReader(BglReader):
 		self.rawDumpFileWriteText(f"\n\nblock type = {block.type}\nkey = ")
 		self.rawDumpFileWriteData(b_word)
 
-	def readEntryDefi(self, block, pos, b_key):
+	def readEntryDefi(self: "typing.Self", block, pos, b_key):
 		succeed, pos, u_defi, b_defi = \
 			BglReader.readEntryDefi(self, block, pos, b_key)
 		if not succeed:
@@ -267,7 +268,7 @@ class DebugBglReader(BglReader):
 		self.rawDumpFileWriteData(b_defi)
 
 	"""
-	def readEntryAlts(self, block, pos, b_key, key):
+	def readEntryAlts(self: "typing.Self", block, pos, b_key, key):
 		succeed, pos, alts, b_alts = \
 			BglReader.readEntryAlts(self, block, pos, b_key, key)
 		if not succeed:
@@ -277,7 +278,7 @@ class DebugBglReader(BglReader):
 			self.rawDumpFileWriteData(b_alt)
 	"""
 
-	def charReferencesStat(self, b_text, encoding):
+	def charReferencesStat(self: "typing.Self", b_text, encoding):
 		"""
 			b_text is bytes instance
 		"""
@@ -306,7 +307,7 @@ class DebugBglReader(BglReader):
 			charRefs[code] += 1
 
 	# write text to dump file as is
-	def rawDumpFileWriteText(self, text):  # FIXME
+	def rawDumpFileWriteText(self: "typing.Self", text):  # FIXME
 		text = toStr(text)
 		if self.rawDumpFile:
 			self.rawDumpFile.write(text)
@@ -314,14 +315,14 @@ class DebugBglReader(BglReader):
 	# write data to dump file unambiguously representing control chars
 	# escape "\" with "\\"
 	# print control chars as "\xhh"
-	def rawDumpFileWriteData(self, text):
+	def rawDumpFileWriteData(self: "typing.Self", text):
 		text = toStr(text)
 		# the next function escapes too many chars, for example, it escapes äöü
 		# self.rawDumpFile.write(text.encode("unicode_escape"))
 		if self.rawDumpFile:
 			self.rawDumpFile.write(text)
 
-	def msgLogFileWrite(self, text):
+	def msgLogFileWrite(self: "typing.Self", text):
 		text = toStr(text)
 		if self.msgLogFile:
 			offset = self.msgLogFile.tell()
@@ -337,7 +338,7 @@ class DebugBglReader(BglReader):
 		else:
 			log.debug(text)
 
-	def samplesDumpFileWrite(self, text):
+	def samplesDumpFileWrite(self: "typing.Self", text):
 		text = toStr(text)
 		if self.samplesDumpFile:
 			offset = self.samplesDumpFile.tell()
@@ -346,7 +347,7 @@ class DebugBglReader(BglReader):
 		else:
 			log.debug(text)
 
-	def dumpBlocks(self, dumpPath):
+	def dumpBlocks(self: "typing.Self", dumpPath):
 		import pickle
 		self.file.seek(0)
 		metaData = MetaData()
@@ -407,14 +408,14 @@ class DebugBglReader(BglReader):
 
 		self.file.seek(0)
 
-	def dumpMetadata2(self, dumpPath):
+	def dumpMetadata2(self: "typing.Self", dumpPath):
 		import pickle
 		if not self.metadata2:
 			return
 		with open(dumpPath, "wb") as f:
 			pickle.dump(self.metadata2, f)
 
-	def processDefiStat(self, fields, defi, b_key):
+	def processDefiStat(self: "typing.Self", fields, defi, b_key):
 		BglReader.processDefiStat(self, fields, defi, b_key)
 
 		if fields.b_title:
@@ -473,7 +474,7 @@ class DebugBglReader(BglReader):
 	# search for new chars in data
 	# if new chars are found, mark them with a special sequence in the text
 	# and print result into msg log
-	def findAndPrintCharSamples(self, b_data: bytes, hint, encoding):
+	def findAndPrintCharSamples(self: "typing.Self", b_data: bytes, hint, encoding):
 		if not self.targetCharsArray:
 			return
 		offsets = self.findCharSamples(b_data)
@@ -497,7 +498,7 @@ class DebugBglReader(BglReader):
 			f"\nmarked = {res}\norig = {b_data}\n",
 		)
 
-	def findCharSamples(self, b_data):
+	def findCharSamples(self: "typing.Self", b_data):
 		"""
 		Find samples of chars in b_data.
 

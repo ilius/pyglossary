@@ -1,5 +1,6 @@
 import re
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -11,7 +12,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryEPUB2(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -21,14 +22,14 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			"300-rand-en-fa-prefix3.epub": "c0308c97",
 		})
 
-	def remove_toc_uid(self, data):
+	def remove_toc_uid(self: "typing.Self", data):
 		return re.sub(
 			b'<meta name="dtb:uid" content="[0-9a-f]{32}" />',
 			b'<meta name="dtb:uid" content="" />',
 			data,
 		)
 
-	def remove_content_extra(self, data):
+	def remove_content_extra(self: "typing.Self", data):
 		data = re.sub(
 			b'<dc:identifier id="uid" opf:scheme="uuid">[0-9a-f]{32}</dc:identifier>',
 			b'<dc:identifier id="uid" opf:scheme="uuid"></dc:identifier>',
@@ -42,7 +43,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 		return data
 
 	def convert_to_epub(
-		self,
+		self: "typing.Self",
 		inputFname,
 		outputFname,
 		testId,

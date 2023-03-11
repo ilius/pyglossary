@@ -1,3 +1,6 @@
+
+import typing
+
 # -*- coding: utf-8 -*-
 #
 # Copyright © 2016 Ratijas <ratijas.t@me.com>
@@ -27,19 +30,19 @@ class Layer(object):
 
 	__slots__ = ["tags", "text"]
 
-	def __init__(self, stack: "list[Layer]") -> None:
+	def __init__(self: "typing.Self", stack: "list[Layer]") -> None:
 		stack.append(self)
 		self.tags = set()
 		self.text = ""
 
-	def __contains__(self, tag: "tag.Tag") -> bool:
+	def __contains__(self: "typing.Self", tag: "tag.Tag") -> bool:
 		return tag in self.tags
 
 	def __repr__(self) -> str:
 		tags = "{" + ", ".join(map(str, self.tags)) + "}"
 		return f"Layer({tags}, {self.text!r})"
 
-	def __eq__(self, other: "Layer") -> bool:
+	def __eq__(self: "typing.Self", other: "Layer") -> bool:
 		"""
 		mostly for unittest.
 		"""

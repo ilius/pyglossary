@@ -21,6 +21,7 @@ exposed API lives here.
 
 import copy
 import re
+import typing
 from typing import Iterable, Union
 
 from . import layer as _layer
@@ -84,7 +85,7 @@ class DSLParser(object):
 	"""
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		tags: "set[Union[str, tuple[str, str]]]" = frozenset({
 			("m", r"\d"),
 			"*",
@@ -120,7 +121,7 @@ class DSLParser(object):
 			tags_.add((tag, tag_re, ext_re, re_tag_open))
 		self.tags = frozenset(tags_)
 
-	def parse(self, line: str) -> str:
+	def parse(self: "typing.Self", line: str) -> str:
 		r"""
 		parse dsl markup in `line` and return clean valid dsl markup.
 
@@ -133,12 +134,12 @@ class DSLParser(object):
 		line = self._parse(line)
 		return self.bring_brackets_back(line)
 
-	def _parse(self, line: str) -> str:
+	def _parse(self: "typing.Self", line: str) -> str:
 		items = self._split_line_by_tags(line)
 		return self._tags_and_text_loop(items)
 
 	def _split_line_by_tags(
-		self,
+		self: "typing.Self",
 		line: str,
 	) -> "Iterable[[OPEN, _tag.Tag] | [CLOSE, str] | [TEXT, str]]":
 		"""
@@ -247,7 +248,7 @@ class DSLParser(object):
 		# shutdown unclosed tags
 		return "".join([layer.text for layer in stack])
 
-	def put_brackets_away(self, line: str) -> str:
+	def put_brackets_away(self: "typing.Self", line: str) -> str:
 		r"""put away \[, \] and brackets that does not belong to any of given tags.
 
 		:rtype: str

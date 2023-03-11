@@ -1,5 +1,6 @@
 import io
 import re
+import typing
 from typing import Iterator
 
 from pyglossary.core import log
@@ -43,13 +44,13 @@ class Reader:
 	_encoding: str = "utf-8"
 	_traditional_title: bool = False
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.file: "io.TextIOBase | None" = None
 		self.total_entries: "int | None" = None
 		self.entries_left = 0
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		if self.file is not None:
 			self.file.close()
 

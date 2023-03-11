@@ -1,4 +1,5 @@
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname, join
 
@@ -9,7 +10,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryBGL(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -21,7 +22,7 @@ class TestGlossaryBGL(TestGlossaryBase):
 		})
 
 	def convert_bgl_txt(
-		self,
+		self: "typing.Self",
 		fname,
 		sha1sum=None,
 		md5sum=None,

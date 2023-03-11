@@ -18,6 +18,7 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import logging
+import typing
 from collections import OrderedDict as odict
 from typing import TYPE_CHECKING
 
@@ -52,7 +53,7 @@ class GlossaryInfo(object):
 	def iterInfo(self) -> "Iterator[tuple[str, str]]":
 		return iter(self._info.items())
 
-	def getInfo(self, key: str) -> str:
+	def getInfo(self: "typing.Self", key: str) -> str:
 		if not isinstance(key, str):
 			raise TypeError(f"invalid {key=}, must be str")
 		return self._info.get(
@@ -60,7 +61,7 @@ class GlossaryInfo(object):
 			"",
 		)
 
-	def setInfo(self, key: str, value: "str | None") -> None:
+	def setInfo(self: "typing.Self", key: str, value: "str | None") -> None:
 		if value is None:
 			try:
 				del self._info[key]
@@ -77,7 +78,7 @@ class GlossaryInfo(object):
 		key = infoKeysAliasDict.get(key.lower(), key)
 		self._info[key] = value
 
-	def getExtraInfos(self, excludeKeys: "list[str]") -> "odict":
+	def getExtraInfos(self: "typing.Self", excludeKeys: "list[str]") -> "odict":
 		"""
 		excludeKeys: a list of (basic) info keys to be excluded
 		returns an OrderedDict including the rest of info keys,
@@ -106,14 +107,14 @@ class GlossaryInfo(object):
 				return value
 		return ""
 
-	def _getLangByStr(self, st: str) -> "Lang | None":
+	def _getLangByStr(self: "typing.Self", st: str) -> "Lang | None":
 		lang = langDict[st]
 		if lang:
 			return lang
 		log.error(f"unknown language {st!r}")
 		return None
 
-	def _getLangByInfoKey(self, key: str) -> "Lang | None":
+	def _getLangByInfoKey(self: "typing.Self", key: str) -> "Lang | None":
 		st = self._info.get(key, "")
 		if not st:
 			return None
@@ -124,7 +125,7 @@ class GlossaryInfo(object):
 		return self._getLangByInfoKey(c_sourceLang)
 
 	@sourceLang.setter
-	def sourceLang(self, lang: Lang) -> None:
+	def sourceLang(self: "typing.Self", lang: Lang) -> None:
 		if not isinstance(lang, Lang):
 			raise TypeError(f"invalid {lang=}, must be a Lang object")
 		self._info[c_sourceLang] = lang.name
@@ -134,7 +135,7 @@ class GlossaryInfo(object):
 		return self._getLangByInfoKey(c_targetLang)
 
 	@targetLang.setter
-	def targetLang(self, lang: Lang) -> None:
+	def targetLang(self: "typing.Self", lang: Lang) -> None:
 		if not isinstance(lang, Lang):
 			raise TypeError(f"invalid {lang=}, must be a Lang object")
 		self._info[c_targetLang] = lang.name
@@ -147,7 +148,7 @@ class GlossaryInfo(object):
 		return lang.name
 
 	@sourceLangName.setter
-	def sourceLangName(self, langName: str) -> None:
+	def sourceLangName(self: "typing.Self", langName: str) -> None:
 		if not langName:
 			self._info[c_sourceLang] = ""
 			return
@@ -164,7 +165,7 @@ class GlossaryInfo(object):
 		return lang.name
 
 	@targetLangName.setter
-	def targetLangName(self, langName: str) -> None:
+	def targetLangName(self: "typing.Self", langName: str) -> None:
 		if not langName:
 			self._info[c_targetLang] = ""
 			return
@@ -173,7 +174,7 @@ class GlossaryInfo(object):
 			return
 		self._info[c_targetLang] = lang.name
 
-	def titleTag(self, sample: str) -> str:
+	def titleTag(self: "typing.Self", sample: str) -> str:
 		from .langs.writing_system import getWritingSystemFromText
 		ws = getWritingSystemFromText(sample)
 		if ws and ws.name != "Latin":

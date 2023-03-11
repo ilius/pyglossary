@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
 
+import typing
+
+# -*- coding: utf-8 -*-
 from typing import Generator
 
 from pyglossary.compression import (
@@ -50,13 +52,13 @@ class Reader(TextGlossaryReader):
 			) - self._leadingLinesCount
 		return self._wordCount
 
-	def isInfoWord(self, word: str) -> bool:
+	def isInfoWord(self: "typing.Self", word: str) -> bool:
 		if isinstance(word, str):
 			return word.startswith("#")
 
 		return False
 
-	def fixInfoWord(self, word: str) -> str:
+	def fixInfoWord(self: "typing.Self", word: str) -> str:
 		if isinstance(word, str):
 			return word.lstrip("#").lower()
 
@@ -105,11 +107,11 @@ class Writer(object):
 	_newline: str = "\n"
 	_resources: str = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 
-	def getInfo(self, key: str) -> str:
+	def getInfo(self: "typing.Self", key: str) -> str:
 		return self._glos.getInfo(key).replace("\n", "<br>")
 
 	def getAuthor(self) -> None:
@@ -118,7 +120,7 @@ class Writer(object):
 	def finish(self) -> None:
 		self._filename = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 
 	def write(self) -> "Generator[None, EntryType, None]":

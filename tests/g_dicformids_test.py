@@ -1,4 +1,5 @@
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -9,13 +10,13 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 		self.dataFileCRC32.update({
 			"100-en-fa.mids.zip": "32d1185f",
 		})
 
-	def convert_txt_mids(self, fname, sha1sumDict, **convertArgs):
+	def convert_txt_mids(self: "typing.Self", fname, sha1sumDict, **convertArgs):
 		outputFname = f"{fname}-2.mids.zip"
 		outputFpath = self.newTempFilePath(outputFname)
 		# expectedFpath = self.downloadFile(f"{fname}.mids.zip")

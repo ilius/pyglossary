@@ -1,4 +1,6 @@
 
+import typing
+
 from pyglossary.core import log
 from pyglossary.option import EncodingOption, Option, StrOption
 from pyglossary.text_reader import TextGlossaryReader
@@ -32,13 +34,13 @@ class Reader(TextGlossaryReader):
 	_headword_separator = ";   "
 	# https://github.com/cheusov/dictd/blob/master/dictfmt/dictunformat.in#L14
 
-	def isInfoWord(self, word: str) -> bool:
+	def isInfoWord(self: "typing.Self", word: str) -> bool:
 		return word.startswith("00-database-")
 
-	def fixInfoWord(self, word: str) -> str:
+	def fixInfoWord(self: "typing.Self", word: str) -> str:
 		return word
 
-	def setInfo(self, word: str, defi: str) -> None:
+	def setInfo(self: "typing.Self", word: str, defi: str) -> None:
 		if word == "00-database-short":
 			self._glos.setInfo("name", defi)
 			return

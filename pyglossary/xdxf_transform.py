@@ -1,4 +1,6 @@
+
 import logging
+import typing
 from io import BytesIO
 from os.path import join
 from typing import TYPE_CHECKING, cast
@@ -21,7 +23,7 @@ class XslXdxfTransformer(object):
 	_gram_color: str = "green"
 	_example_padding: int = 10
 
-	def __init__(self, encoding: str = "utf-8") -> None:
+	def __init__(self: "typing.Self", encoding: str = "utf-8") -> None:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -35,7 +37,7 @@ class XslXdxfTransformer(object):
 		self._transform = ET.XSLT(xslt)
 		self._encoding = encoding
 
-	def tostring(self, elem: "Union[_XSLTResultTree, Element]") -> str:
+	def tostring(self: "typing.Self", elem: "Union[_XSLTResultTree, Element]") -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,
@@ -43,13 +45,13 @@ class XslXdxfTransformer(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def transform(self, article: "Element") -> str:
+	def transform(self: "typing.Self", article: "Element") -> str:
 		result_tree = self._transform(article)
 		text = self.tostring(result_tree)
 		text = text.replace("<br/> ", "<br/>")
 		return text  # noqa: RET504
 
-	def transformByInnerString(self, articleInnerStr: str) -> str:
+	def transformByInnerString(self: "typing.Self", articleInnerStr: str) -> str:
 		from lxml import etree as ET
 		return self.transform(
 			ET.fromstring(f"<ar>{articleInnerStr}</ar>"),
@@ -60,10 +62,10 @@ class XdxfTransformer(object):
 	_gram_color: str = "green"
 	_example_padding: int = 10
 
-	def __init__(self, encoding: str = "utf-8") -> None:
+	def __init__(self: "typing.Self", encoding: str = "utf-8") -> None:
 		self._encoding = encoding
 
-	def tostring(self, elem: "Element") -> str:
+	def tostring(self: "typing.Self", elem: "Element") -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,
@@ -71,7 +73,7 @@ class XdxfTransformer(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def hasPrevText(self, prev: "Union[None, str, Element]") -> bool:
+	def hasPrevText(self: "typing.Self", prev: "Union[None, str, Element]") -> bool:
 		if isinstance(prev, str):
 			return True
 		if prev is None:
@@ -89,7 +91,7 @@ class XdxfTransformer(object):
 		return False
 
 	def writeString(
-		self,
+		self: "typing.Self",
 		hf: "T_htmlfile",
 		child: str,
 		parent: "Element",
@@ -133,7 +135,7 @@ class XdxfTransformer(object):
 		return
 
 	def writeExample(
-		self,
+		self: "typing.Self",
 		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
@@ -162,7 +164,7 @@ class XdxfTransformer(object):
 				prev = child
 
 	def writeIRef(
-		self,
+		self: "typing.Self",
 		hf: "T_htmlfile",
 		child: "Element",
 	) -> None:
@@ -183,7 +185,7 @@ class XdxfTransformer(object):
 			self.writeChildrenOf(hf, child, stringSep=" ")
 
 	def writeChildElem(
-		self,
+		self: "typing.Self",
 		hf: "T_htmlfile",
 		child: "Element",
 		parent: "Element",
@@ -354,7 +356,7 @@ class XdxfTransformer(object):
 
 
 	def writeChild(
-		self,
+		self: "typing.Self",
 		hf: "T_htmlfile",
 		child: "Union[str, Element]",
 		parent: "Element",
@@ -375,7 +377,7 @@ class XdxfTransformer(object):
 		) 
 
 	def shouldAddSep(
-		self,
+		self: "typing.Self",
 		child: "Union[str, Element]",
 		prev: "Union[str, Element]",
 	) -> bool:
@@ -395,7 +397,7 @@ class XdxfTransformer(object):
 		return True
 
 	def writeChildrenOf(
-		self,
+		self: "typing.Self",
 		hf: "T_htmlfile",
 		elem: "Element",
 		sep: "str | None" = None,
@@ -408,7 +410,7 @@ class XdxfTransformer(object):
 			self.writeChild(hf, child, elem, prev, stringSep=stringSep)
 			prev = child
 
-	def transform(self, article: "Element") -> str:
+	def transform(self: "typing.Self", article: "Element") -> str:
 		from lxml import etree as ET
 		# encoding = self._encoding
 		f = BytesIO()
@@ -420,7 +422,7 @@ class XdxfTransformer(object):
 		text = text.replace("<br>", "<br/>")  # for compatibility
 		return text  # noqa: RET504
 
-	def transformByInnerString(self, articleInnerStr: str) -> str:
+	def transformByInnerString(self: "typing.Self", articleInnerStr: str) -> str:
 		from lxml import etree as ET
 		return self.transform(
 			ET.fromstring(f"<ar>{articleInnerStr}</ar>"),

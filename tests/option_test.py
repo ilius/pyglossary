@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 from typing import Dict, Optional
@@ -20,7 +21,7 @@ from pyglossary.option import (
 
 
 class TestOptionValidateBoolNumber(unittest.TestCase):
-	def caseOK(self, cls, raw: str, value: "Optional[bool]"):
+	def caseOK(self: "typing.Self", cls, raw: str, value: "Optional[bool]"):
 		opt = cls()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertTrue(ok, "evaluate failed")
@@ -28,7 +29,7 @@ class TestOptionValidateBoolNumber(unittest.TestCase):
 		ok2 = opt.validate(valueActual)
 		self.assertEqual(ok2, True, "validate failed")
 
-	def caseFailed(self, cls, raw: str, value: "Optional[bool]"):
+	def caseFailed(self: "typing.Self", cls, raw: str, value: "Optional[bool]"):
 		opt = cls()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertFalse(ok)
@@ -115,7 +116,7 @@ class TestOptionValidateBoolNumber(unittest.TestCase):
 
 
 class TestOptionValidateStr(unittest.TestCase):
-	def newTester(self, customValue: bool, values: "list[str]"):
+	def newTester(self: "typing.Self", customValue: bool, values: "list[str]"):
 		def test(raw: str, valid: bool):
 			opt = StrOption(customValue=customValue, values=values)
 			valueActual, evalOkActual = opt.evaluate(raw)
@@ -143,7 +144,7 @@ class TestOptionValidateStr(unittest.TestCase):
 
 
 class TestOptionValidateDict(unittest.TestCase):
-	def caseOK(self, raw: str, value: "Optional[Dict]"):
+	def caseOK(self: "typing.Self", raw: str, value: "Optional[Dict]"):
 		opt = DictOption()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertTrue(ok, "evaluate failed")
@@ -151,7 +152,7 @@ class TestOptionValidateDict(unittest.TestCase):
 		ok2 = opt.validate(valueActual)
 		self.assertEqual(ok2, True, "validate failed")
 
-	def caseEvalFail(self, raw: str):
+	def caseEvalFail(self: "typing.Self", raw: str):
 		opt = DictOption()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertFalse(ok)
@@ -180,7 +181,7 @@ class TestOptionValidateDict(unittest.TestCase):
 
 
 class TestOptionValidateList(unittest.TestCase):
-	def caseOK(self, raw: str, value: "Optional[Dict]"):
+	def caseOK(self: "typing.Self", raw: str, value: "Optional[Dict]"):
 		opt = ListOption()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertTrue(ok, "evaluate failed")
@@ -188,7 +189,7 @@ class TestOptionValidateList(unittest.TestCase):
 		ok2 = opt.validate(valueActual)
 		self.assertEqual(ok2, True, "validate failed")
 
-	def caseEvalFail(self, raw: str):
+	def caseEvalFail(self: "typing.Self", raw: str):
 		opt = ListOption()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertFalse(ok, f"evaluale did not fail, {valueActual=}")

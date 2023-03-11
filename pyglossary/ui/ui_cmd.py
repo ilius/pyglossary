@@ -20,6 +20,7 @@
 
 import os
 import sys
+import typing
 from os.path import join
 from typing import Dict
 
@@ -150,22 +151,22 @@ def encodeFormatOptions(opt: "Dict") -> str:
 
 
 class NullObj(object):
-	def __getattr__(self, attr):
+	def __getattr__(self: "typing.Self", attr):
 		return self
 
-	def __setattr__(self, attr, value):
+	def __setattr__(self: "typing.Self", attr, value):
 		pass
 
-	def __setitem__(self, key, value):
+	def __setitem__(self: "typing.Self", key, value):
 		pass
 
-	def __call__(self, *args, **kwargs):
+	def __call__(self: "typing.Self", *args, **kwargs):
 		pass
 
 
 class UI(UIBase):
 	def __init__(
-		self,
+		self: "typing.Self",
 		progressbar: bool = True,
 	) -> None:
 		UIBase.__init__(self)
@@ -175,7 +176,7 @@ class UI(UIBase):
 		self._resetLogFormatter = None
 		self._progressbar = progressbar
 
-	def onSigInt(self, *args):
+	def onSigInt(self: "typing.Self", *args):
 		log.info("")
 		if self._toPause:
 			log.info("Operation Canceled")
@@ -184,7 +185,7 @@ class UI(UIBase):
 			self._toPause = True
 			log.info("Please wait...")
 
-	def setText(self, text):
+	def setText(self: "typing.Self", text):
 		self.pbar.widgets[0] = text
 
 	def fixLogger(self):
@@ -193,17 +194,17 @@ class UI(UIBase):
 				self.fixLogHandler(h)
 				return
 
-	def fillMessage(self, msg):
+	def fillMessage(self: "typing.Self", msg):
 		return wc_ljust(msg, self.pbar.term_width)
 
-	def fixLogHandler(self, h):
+	def fixLogHandler(self: "typing.Self", h):
 		def reset():
 			h.formatter.fill = None
 
 		self._resetLogFormatter = reset
 		h.formatter.fill = self.fillMessage
 
-	def progressInit(self, title):
+	def progressInit(self: "typing.Self", title):
 		rot = pb.RotatingMarker()
 		self.pbar = pb.ProgressBar(
 			maxval=1.0,
@@ -221,7 +222,7 @@ class UI(UIBase):
 		rot.pbar = self.pbar
 		self.fixLogger()
 
-	def progress(self, rat, text=""):
+	def progress(self: "typing.Self", rat, text=""):
 		self.pbar.update(rat)
 
 	def progressEnd(self):
@@ -229,7 +230,7 @@ class UI(UIBase):
 		if self._resetLogFormatter:
 			self._resetLogFormatter()
 
-	def reverseLoop(self, *args, **kwargs):
+	def reverseLoop(self: "typing.Self", *args, **kwargs):
 		from pyglossary.reverse import reverseGlossary
 		reverseKwArgs = {}
 		for key in (
@@ -261,7 +262,7 @@ class UI(UIBase):
 				self._toPause = False
 
 	def run(
-		self,
+		self: "typing.Self",
 		inputFilename: str = "",
 		outputFilename: str = "",
 		inputFormat: str = "",

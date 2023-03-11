@@ -45,6 +45,7 @@ import json
 import logging
 import os
 import shlex
+import typing
 from collections import OrderedDict
 from os.path import (
 	abspath,
@@ -85,7 +86,7 @@ endFormat = "\x1b[0;0;0m"
 
 class MiniCheckBoxPrompt(object):
 	def __init__(
-		self,
+		self: "typing.Self",
 		message: str = "",
 		fmt: str = "{message}: {check}",
 		value: bool = False,
@@ -209,7 +210,7 @@ back = "back"
 
 class MyPathCompleter(PathCompleter):
 	def __init__(
-		self,
+		self: "typing.Self",
 		reading: bool,
 		fs_action_names=None,
 		**kwargs,
@@ -223,7 +224,7 @@ class MyPathCompleter(PathCompleter):
 			fs_action_names = []
 		self.fs_action_names = fs_action_names
 
-	def file_filter(self, filename: str) -> bool:
+	def file_filter(self: "typing.Self", filename: str) -> bool:
 		# filename is full/absolute file path
 		return True
 
@@ -231,7 +232,7 @@ class MyPathCompleter(PathCompleter):
 	# 	log.error(f"Exception in get_completions: {e}")
 
 	def get_completions(
-		self,
+		self: "typing.Self",
 		document: "prompt_toolkit.Document",
 		complete_event: "prompt_toolkit.CompleteEvent",
 	) -> "Iterable[Completion]":
@@ -261,13 +262,13 @@ class AbsolutePathHistory(FileHistory):
 			for p in pathList
 		]
 
-	def store_string(self, string: str) -> None:
+	def store_string(self: "typing.Self", string: str) -> None:
 		FileHistory.store_string(self, abspath(string))
 
 
 class UI(ui_cmd.UI):
 	def __init__(
-		self,
+		self: "typing.Self",
 		progressbar: bool = True,
 	) -> None:
 		self._inputFilename = ""
@@ -326,11 +327,11 @@ class UI(ui_cmd.UI):
 			("back", None),
 		])
 
-	def fs_pwd(self, args: "list[str]"):
+	def fs_pwd(self: "typing.Self", args: "list[str]"):
 		print(os.getcwd())
 
 	def get_ls_l(
-		self,
+		self: "typing.Self",
 		arg: str,
 		st: "os.stat_result | None" = None,
 		parentDir: str = "",
@@ -358,7 +359,7 @@ class UI(ui_cmd.UI):
 			details.append(f"-> {os.readlink(argPath)}")
 		return "  ".join(details)
 
-	def fs_ls(self, args: "list[str]"):
+	def fs_ls(self: "typing.Self", args: "list[str]"):
 		opts, args = self.ls_parser.parse_known_args(args=args)
 
 		if opts.help:
@@ -407,7 +408,7 @@ class UI(ui_cmd.UI):
 					sizeWidth=sizeWidth,
 				))
 
-	def fs_cd_parent(self, args: "list[str]"):
+	def fs_cd_parent(self: "typing.Self", args: "list[str]"):
 		if args:
 			log.error("This command does not take arguments")
 			return
@@ -415,7 +416,7 @@ class UI(ui_cmd.UI):
 		os.chdir(newDir)
 		print(f"Changed current directory to: {newDir}")
 
-	def fs_cd(self, args: "list[str]"):
+	def fs_cd(self: "typing.Self", args: "list[str]"):
 		if len(args) != 1:
 			log.error("This command takes exactly one argument")
 			return
@@ -425,7 +426,7 @@ class UI(ui_cmd.UI):
 		os.chdir(newDir)
 		print(f"Changed current directory to: {newDir}")
 
-	def formatPromptMsg(self, level, msg, colon=":"):
+	def formatPromptMsg(self: "typing.Self", level, msg, colon=":"):
 		indent = self.promptIndentStr * level
 
 		if core.noColor:
@@ -439,19 +440,19 @@ class UI(ui_cmd.UI):
 
 		return f"{indent} {msg}{colon} ", True
 
-	def prompt(self, level, msg, colon=":", **kwargs):
+	def prompt(self: "typing.Self", level, msg, colon=":", **kwargs):
 		msg, colored = self.formatPromptMsg(level, msg, colon)
 		if colored:
 			msg = ANSI(msg)
 		return prompt(msg, **kwargs)
 
-	def checkbox_prompt(self, level, msg, colon=":", **kwargs):
+	def checkbox_prompt(self: "typing.Self", level, msg, colon=":", **kwargs):
 		# FIXME: colors are not working, they are being escaped
 		msg = f"{self.promptIndentStr * level} {msg}{colon} "
 		# msg, colored = self.formatPromptMsg(level, msg, colon)
 		return checkbox_prompt(msg, **kwargs)
 
-	def askFile(self, kind: str, histName: str, varName: str, reading: bool):
+	def askFile(self: "typing.Self", kind: str, histName: str, varName: str, reading: bool):
 		from shlex import split as shlex_split
 		history = AbsolutePathHistory(join(histDir, histName))
 		auto_suggest = AutoSuggestFromHistory()
@@ -501,7 +502,7 @@ class UI(ui_cmd.UI):
 			False,
 		)
 
-	def pluginByNameOrDesc(self, value: str) -> "PluginProp | None":
+	def pluginByNameOrDesc(self: "typing.Self", value: str) -> "PluginProp | None":
 		plugin = pluginByDesc.get(value)
 		if plugin:
 			return plugin
@@ -564,14 +565,14 @@ class UI(ui_cmd.UI):
 
 	# TODO: how to handle \r and \n in NewlineOption.values?
 
-	def getOptionValueSuggestValues(self, option: "Option"):
+	def getOptionValueSuggestValues(self: "typing.Self", option: "Option"):
 		if option.values:
 			return [str(x) for x in option.values]
 		if option.typ == "bool":
 			return ["True", "False"]
 		return None
 
-	def getOptionValueCompleter(self, option: "Option"):
+	def getOptionValueCompleter(self: "typing.Self", option: "Option"):
 		values = self.getOptionValueSuggestValues(option)
 		if values:
 			return WordCompleter(
@@ -734,7 +735,7 @@ class UI(ui_cmd.UI):
 	def resetWriteOptions(self):
 		self._writeOptions = {}
 
-	def askConfigValue(self, configKey, option):
+	def askConfigValue(self: "typing.Self", configKey, option):
 		default = self.config.get(configKey, "")
 		if option.typ == "bool":
 			return str(self.checkbox_prompt(
@@ -912,7 +913,7 @@ class UI(ui_cmd.UI):
 			glossarySetAttrs=self._glossarySetAttrs,
 		)
 
-	def checkInputFormat(self, forceAsk: bool = False):
+	def checkInputFormat(self: "typing.Self", forceAsk: bool = False):
 		if not forceAsk:
 			inputArgs = Glossary.detectInputFormat(self._inputFilename, quiet=True)
 			if inputArgs:
@@ -921,7 +922,7 @@ class UI(ui_cmd.UI):
 				return
 		self._inputFormat = self.askInputFormat()
 
-	def checkOutputFormat(self, forceAsk: bool = False):
+	def checkOutputFormat(self: "typing.Self", forceAsk: bool = False):
 		if not forceAsk:
 			outputArgs = Glossary.detectOutputFormat(
 				filename=self._outputFilename,
@@ -1027,7 +1028,7 @@ class UI(ui_cmd.UI):
 		self.promptMsgColor = config.get("cmdi.prompt.msg.color", -1)
 		self.msgColor = config.get("cmdi.msg.color", -1)
 
-	def main(self, again=False):
+	def main(self: "typing.Self", again=False):
 		if again or not self._inputFilename:
 			try:
 				self.askInputFile()
@@ -1067,7 +1068,7 @@ class UI(ui_cmd.UI):
 			print("Press Control + C to exit")
 
 	def run(
-		self,
+		self: "typing.Self",
 		inputFilename: str = "",
 		outputFilename: str = "",
 		inputFormat: str = "",

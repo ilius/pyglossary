@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
 
+import typing
+
+# -*- coding: utf-8 -*-
 from typing import (
 	TYPE_CHECKING,
 	Any,
@@ -41,7 +43,7 @@ class EntryType(object):
 	def size(self) -> int:
 		raise NotImplementedError
 
-	def save(self, directory: str) -> str:
+	def save(self: "typing.Self", directory: str) -> str:
 		raise NotImplementedError
 
 	@property
@@ -70,35 +72,35 @@ class EntryType(object):
 		raise NotImplementedError
 
 	@defiFormat.setter
-	def defiFormat(self, defiFormat: str) -> None:
+	def defiFormat(self: "typing.Self", defiFormat: str) -> None:
 		# TODO: type: Literal["m", "h", "x", "b"]
 		raise NotImplementedError
 
 	def detectDefiFormat(self) -> None:
 		raise NotImplementedError
 
-	def addAlt(self, alt: str) -> None:
+	def addAlt(self: "typing.Self", alt: str) -> None:
 		raise NotImplementedError
 
-	def editFuncWord(self, func: "Callable[[str], str]") -> None:
+	def editFuncWord(self: "typing.Self", func: "Callable[[str], str]") -> None:
 		raise NotImplementedError
 
-	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
+	def editFuncDefi(self: "typing.Self", func: "Callable[[str], str]") -> None:
 		raise NotImplementedError
 
 	def strip(self) -> None:
 		raise NotImplementedError
 
-	def replaceInWord(self, source: str, target: str) -> None:
+	def replaceInWord(self: "typing.Self", source: str, target: str) -> None:
 		raise NotImplementedError
 
-	def replaceInDefi(self, source: str, target: str) -> None:
+	def replaceInDefi(self: "typing.Self", source: str, target: str) -> None:
 		raise NotImplementedError
 
-	def replace(self, source: str, target: str) -> None:
+	def replace(self: "typing.Self", source: str, target: str) -> None:
 		raise NotImplementedError
 
-	def getRaw(self, glos: "GlossaryType") -> RawEntryType:
+	def getRaw(self: "typing.Self", glos: "GlossaryType") -> RawEntryType:
 		raise NotImplementedError
 
 	@staticmethod
@@ -130,14 +132,14 @@ class GlossaryType(object):
 	def __len__(self) -> int:
 		raise NotImplementedError
 
-	def setDefaultDefiFormat(self, defiFormat: str) -> None:
+	def setDefaultDefiFormat(self: "typing.Self", defiFormat: str) -> None:
 		raise NotImplementedError
 
 	def getDefaultDefiFormat(self) -> str:
 		raise NotImplementedError
 
 	def collectDefiFormat(
-		self,
+		self: "typing.Self",
 		maxCount: int,
 	) -> "dict[str, float] | None":
 		raise NotImplementedError
@@ -145,13 +147,13 @@ class GlossaryType(object):
 	def iterInfo(self) -> "Iterator[tuple[str, str]]":
 		raise NotImplementedError
 
-	def getInfo(self, key: str) -> str:
+	def getInfo(self: "typing.Self", key: str) -> str:
 		raise NotImplementedError
 
-	def setInfo(self, key: str, value: str) -> None:
+	def setInfo(self: "typing.Self", key: str, value: str) -> None:
 		raise NotImplementedError
 
-	def getExtraInfos(self, excludeKeys: "list[str]") -> "OrderedDict":
+	def getExtraInfos(self: "typing.Self", excludeKeys: "list[str]") -> "OrderedDict":
 		raise NotImplementedError
 
 	@property
@@ -183,7 +185,7 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	@sourceLangName.setter
-	def sourceLangName(self, langName: str) -> None:
+	def sourceLangName(self: "typing.Self", langName: str) -> None:
 		raise NotImplementedError
 
 	@property
@@ -191,28 +193,28 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	@targetLangName.setter
-	def targetLangName(self, langName: str) -> None:
+	def targetLangName(self: "typing.Self", langName: str) -> None:
 		raise NotImplementedError
 
-	def titleTag(self, sample: str) -> str:
+	def titleTag(self: "typing.Self", sample: str) -> str:
 		raise NotImplementedError
 
 	def wordTitleStr(
-		self,
+		self: "typing.Self",
 		word: str,
 		sample: str = "",
 		_class: str = "",
 	) -> str:
 		raise NotImplementedError
 
-	def getConfig(self, name: str, default: "str | None") -> "str | None":
+	def getConfig(self: "typing.Self", name: str, default: "str | None") -> "str | None":
 		raise NotImplementedError
 
-	def addEntry(self, entry: EntryType) -> None:
+	def addEntry(self: "typing.Self", entry: EntryType) -> None:
 		raise NotImplementedError
 
 	def newEntry(
-		self,
+		self: "typing.Self",
 		word: "MultiStr",
 		defi: str,
 		defiFormat: str = "",
@@ -220,7 +222,7 @@ class GlossaryType(object):
 	) -> EntryType:
 		raise NotImplementedError
 
-	def newDataEntry(self, fname: str, data: bytes) -> EntryType:
+	def newDataEntry(self: "typing.Self", fname: str, data: bytes) -> EntryType:
 		raise NotImplementedError
 
 	@property
@@ -228,7 +230,7 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 	def stripFullHtml(
-		self,
+		self: "typing.Self",
 		errorHandler: "Callable[[EntryType, str], None] | None" = None,
 	) -> None:
 		raise NotImplementedError
@@ -236,12 +238,12 @@ class GlossaryType(object):
 
 class GlossaryExtendedType(GlossaryType):
 	def progressInit(
-		self,
+		self: "typing.Self",
 		*args,  # noqa: ANN
 	) -> None:
 		raise NotImplementedError
 
-	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
+	def progress(self: "typing.Self", pos: int, total: int, unit: str = "entries") -> None:
 		raise NotImplementedError
 
 	def progressEnd(self) -> None:
@@ -252,5 +254,5 @@ class GlossaryExtendedType(GlossaryType):
 		raise NotImplementedError
 
 	@progressbar.setter
-	def progressbar(self, enabled: bool) -> None:
+	def progressbar(self: "typing.Self", enabled: bool) -> None:
 		raise NotImplementedError

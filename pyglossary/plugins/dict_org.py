@@ -2,6 +2,7 @@
 
 import os
 import re
+import typing
 from os.path import isdir, splitext
 from typing import Generator, Iterator
 
@@ -68,7 +69,7 @@ def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 
 
 class Reader(object):
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._dictdb: "DictDB | None" = None
@@ -81,7 +82,7 @@ class Reader(object):
 			r'\{(?P<word>.+?)\}',
 		)
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		if filename.endswith(".index"):
 			filename = filename[:-6]
 		self._filename = filename
@@ -94,7 +95,7 @@ class Reader(object):
 			# self._dictdb.finish()
 			self._dictdb = None
 
-	def prettifyDefinitionText(self, defi: str) -> str:
+	def prettifyDefinitionText(self: "typing.Self", defi: str) -> str:
 		# Handle words in {}
 		# First, we remove any \n in {} pairs
 		defi = self._re_newline_in_braces.sub(r'{\g<left>\g<right>}', defi)
@@ -133,7 +134,7 @@ class Writer(object):
 	_dictzip: bool = False
 	_install: bool = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		self._dictdb = None
@@ -151,7 +152,7 @@ class Writer(object):
 			)
 		self._filename = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		filename_nox, ext = splitext(filename)
 		if ext.lower() == ".index":
 			filename = filename_nox

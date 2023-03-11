@@ -1,3 +1,5 @@
+
+import typing
 from hashlib import sha1
 from os import listdir, makedirs
 from os.path import dirname, isdir, isfile, join, splitext
@@ -38,19 +40,19 @@ optionsProp: "dict[str, Option]" = {
 class Writer(object):
 	_compression: str = ""
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 
 	def finish(self) -> None:
 		pass
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 		if not isdir(filename):
 			makedirs(filename)
 
-	def filePathFromWord(self, b_word: bytes) -> str:
+	def filePathFromWord(self: "typing.Self", b_word: bytes) -> str:
 		bw = b_word.lower()
 		if len(bw) <= 2:
 			return bw.hex()
@@ -115,12 +117,12 @@ class Writer(object):
 
 
 class Reader(object):
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		self._wordCount = 0
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		from pyglossary.json_utils import jsonToOrderedData
 
 		self._filename = filename
@@ -137,7 +139,7 @@ class Reader(object):
 	def __len__(self) -> int:
 		return self._wordCount
 
-	def _fromFile(self, fpath: str) -> "EntryType":
+	def _fromFile(self: "typing.Self", fpath: str) -> "EntryType":
 		_, ext = splitext(fpath)
 		c_open = compressionOpenFunc(ext.lstrip("."))
 		if not c_open:
@@ -148,14 +150,14 @@ class Reader(object):
 			defi = _file.read()
 			return self._glos.newEntry(words, defi)
 
-	def _listdirSortKey(self, name: str) -> str:
+	def _listdirSortKey(self: "typing.Self", name: str) -> str:
 		name_nox, ext = splitext(name)
 		if ext == ".d":
 			return name
 		return name_nox
 
 	def _readDir(
-		self,
+		self: "typing.Self",
 		dpath: str,
 		exclude: "set[str] | None",
 	) -> "Generator[None, EntryType, None]":

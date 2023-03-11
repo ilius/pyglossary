@@ -1,3 +1,6 @@
+
+import typing
+
 # -*- coding: utf-8 -*-
 #
 # Copyright © 2023 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
@@ -5,7 +8,6 @@
 # based on https://github.com/abelcheung/types-lxml
 # under Apache License, Version 2.0, January 2004
 # http://www.apache.org/licenses/
-
 from typing import (
     AnyStr,
     AsyncContextManager,
@@ -40,7 +42,7 @@ class IncrementalFileWriter(metaclass=Interface):
         doctype: "AnyStr | None" = ...,
     ) -> None:
         ...
-    def write_doctype(self, doctype: AnyStr | None) -> None:
+    def write_doctype(self: "typing.Self", doctype: AnyStr | None) -> None:
         ...
     def write(
         self,
@@ -52,7 +54,7 @@ class IncrementalFileWriter(metaclass=Interface):
         ...
     def flush(self) -> None:
         ...
-    def method(self, method: "_OutputMethodArg | None") -> ContextManager[None]:
+    def method(self: "typing.Self", method: "_OutputMethodArg | None") -> ContextManager[None]:
         raise NotImplementedError
     def element(
         self,
@@ -84,7 +86,7 @@ class AsyncIncrementalFileWriter(metaclass=Interface):
         ...
     async def flush(self) -> None:
         ...
-    def method(self, method: "_OutputMethodArg | None") -> AsyncContextManager[None]:
+    def method(self: "typing.Self", method: "_OutputMethodArg | None") -> AsyncContextManager[None]:
         raise NotImplementedError
     def element(
         self,

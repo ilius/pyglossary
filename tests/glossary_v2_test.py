@@ -7,6 +7,7 @@ import random
 import sys
 import tempfile
 import tracemalloc
+import typing
 import unittest
 import zipfile
 from os.path import abspath, dirname, isdir, isfile, join
@@ -41,7 +42,7 @@ os.chdir(dataDir)
 
 
 class TestGlossaryBase(unittest.TestCase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		unittest.TestCase.__init__(self, *args, **kwargs)
 		self.maxDiff = None
 		self.dataFileCRC32 = {
@@ -66,7 +67,7 @@ class TestGlossaryBase(unittest.TestCase):
 			"res/test.json": "41f8cf31",
 		}
 
-	def addDirCRC32(self, dirPath: str, files: "dict[str, str]") -> None:
+	def addDirCRC32(self: "typing.Self", dirPath: str, files: "dict[str, str]") -> None:
 		for fpath, _hash in files.items():
 			self.dataFileCRC32[f"{dirPath}/{fpath}"] = _hash
 
@@ -90,10 +91,10 @@ class TestGlossaryBase(unittest.TestCase):
 			if isdir(direc):
 				rmtree(direc)
 
-	def fixDownloadFilename(self, filename):
+	def fixDownloadFilename(self: "typing.Self", filename):
 		return filename.replace("/", "__").replace("\\", "__")
 
-	def downloadFile(self, filename):
+	def downloadFile(self: "typing.Self", filename):
 		unixFilename = filename.replace("\\", "/")
 		_crc32 = self.dataFileCRC32[unixFilename]
 		fpath = join(dataDir, self.fixDownloadFilename(filename))
@@ -119,7 +120,7 @@ class TestGlossaryBase(unittest.TestCase):
 			_file.write(data)
 		return fpath
 
-	def downloadDir(self, dirName: str, files: "list[str]") -> str:
+	def downloadDir(self: "typing.Self", dirName: str, files: "list[str]") -> str:
 		dirPath = join(dataDir, self.fixDownloadFilename(dirName))
 		for fileRelPath in files:
 			newFilePath = join(dirPath, fileRelPath)
@@ -131,17 +132,17 @@ class TestGlossaryBase(unittest.TestCase):
 			os.rename(filePath, newFilePath)
 		return dirPath
 
-	def newTempFilePath(self, filename):
+	def newTempFilePath(self: "typing.Self", filename):
 		fpath = join(self.tempDir, filename)
 		if isfile(fpath):
 			os.remove(fpath)
 		return fpath
 
-	def showGlossaryDiff(self, fpath1, fpath2) -> None:
+	def showGlossaryDiff(self: "typing.Self", fpath1, fpath2) -> None:
 		from pyglossary.ui.tools.diff_glossary import diffGlossary
 		diffGlossary(fpath1, fpath2)
 
-	def compareTextFiles(self, fpath1, fpath2, showDiff=False):
+	def compareTextFiles(self: "typing.Self", fpath1, fpath2, showDiff=False):
 		self.assertTrue(isfile(fpath1), f"{fpath1 = }")
 		self.assertTrue(isfile(fpath2), f"{fpath2 = }")
 		with open(fpath1, encoding="utf-8") as file1:
@@ -165,7 +166,7 @@ class TestGlossaryBase(unittest.TestCase):
 				self.showGlossaryDiff(fpath1, fpath2)
 			raise e from None
 
-	def compareBinaryFiles(self, fpath1, fpath2):
+	def compareBinaryFiles(self: "typing.Self", fpath1, fpath2):
 		self.assertTrue(isfile(fpath1), f"File {fpath1} does not exist")
 		self.assertTrue(isfile(fpath2), f"File {fpath2} does not exist")
 		with open(fpath1, mode="rb") as file1:
@@ -179,7 +180,7 @@ class TestGlossaryBase(unittest.TestCase):
 		)
 
 	def compareZipFiles(
-		self,
+		self: "typing.Self",
 		fpath1,
 		fpath2,
 		dataReplaceFuncs: "dict[str, Callable]",
@@ -205,7 +206,7 @@ class TestGlossaryBase(unittest.TestCase):
 			)
 
 	def checkZipFileSha1sum(
-		self,
+		self: "typing.Self",
 		fpath,
 		sha1sumDict: "dict[str, str]",
 		dataReplaceFuncs: "Optional[dict[str, Callable]]" = None,
@@ -223,7 +224,7 @@ class TestGlossaryBase(unittest.TestCase):
 			self.assertEqual(actualSha1, expectedSha1, msg=f"file: {zfpath}")
 
 	def convert(
-		self,
+		self: "typing.Self",
 		fname,  # input file with extension
 		fname2,  # output file with extension
 		testId="tmp",
@@ -265,13 +266,13 @@ class TestGlossaryBase(unittest.TestCase):
 				actualMd5 = hashlib.md5(_file.read()).hexdigest()
 			self.assertEqual(actualMd5, md5sum)
 
-	def convert_sqlite_both(self, *args, **kwargs):
+	def convert_sqlite_both(self: "typing.Self", *args, **kwargs):
 		for sqlite in (None, True, False):
 			self.convert(*args, sqlite=sqlite, **kwargs)
 
 
 class TestGlossary(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -544,7 +545,7 @@ class TestGlossary(TestGlossaryBase):
 		)
 
 	def convert_txt_txt(
-		self,
+		self: "typing.Self",
 		fname,  # input txt file without extension
 		fname2,  # expected output txt file without extension
 		testId="tmp",
@@ -561,7 +562,7 @@ class TestGlossary(TestGlossaryBase):
 		)
 
 	def convert_to_txtZip(
-		self,
+		self: "typing.Self",
 		fname,  # input file with extension
 		fname2,  # expected output file without extensions
 		testId="tmp",
@@ -836,7 +837,7 @@ class TestGlossary(TestGlossaryBase):
 		glos.setRawEntryCompress(False)
 		self.assertFalse(glos.rawEntryCompress)
 
-	def addWordsList(self, glos, words, newDefiFunc=str, defiFormat=""):
+	def addWordsList(self: "typing.Self", glos, words, newDefiFunc=str, defiFormat=""):
 		wordsList = []
 		for index, line in enumerate(words):
 			words = line.rstrip().split("|")
@@ -849,7 +850,7 @@ class TestGlossary(TestGlossaryBase):
 
 		return wordsList
 
-	def addWords(self, glos, wordsStr, **kwargs):
+	def addWords(self: "typing.Self", glos, wordsStr, **kwargs):
 		return self.addWordsList(glos, wordsStr.split("\n"), **kwargs)
 
 	tenWordsStr = """comedic

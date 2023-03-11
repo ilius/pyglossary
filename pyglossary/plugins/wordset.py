@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
 
+import typing
+
+# -*- coding: utf-8 -*-
 from json import load
 from os import listdir
 from os.path import isfile, join, splitext
@@ -34,7 +36,7 @@ optionsProp: "dict[str, Option]" = {
 class Reader(object):
 	_encoding: str = "utf-8"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 		self.defiTemplate = (
@@ -61,7 +63,7 @@ class Reader(object):
 	def _clear(self) -> None:
 		self._filename = ""
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 		name = self._glos.getInfo("name")
 		if not name or name == "data":
@@ -71,7 +73,7 @@ class Reader(object):
 	def __len__(self) -> int:
 		return 0
 
-	def fileNameSortKey(self, fname: str) -> str:
+	def fileNameSortKey(self: "typing.Self", fname: str) -> str:
 		fname = splitext(fname)[0]
 		if fname == "misc":
 			return "\x80"

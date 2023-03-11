@@ -1,4 +1,5 @@
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -10,7 +11,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryCSV(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -22,7 +23,7 @@ class TestGlossaryCSV(TestGlossaryBase):
 			"100-ja-en.csv": "7af18cf3",
 		})
 
-	def convert_txt_csv(self, fname, fname2, **convertArgs):
+	def convert_txt_csv(self: "typing.Self", fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.txt",
 			f"{fname}-2.csv",
@@ -30,7 +31,7 @@ class TestGlossaryCSV(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def convert_csv_txt_rw(self, fname, fname2, infoOverride=None):
+	def convert_csv_txt_rw(self: "typing.Self", fname, fname2, infoOverride=None):
 		inputFilename = self.downloadFile(f"{fname}.csv")
 		outputFilename = self.newTempFilePath(f"{fname}-2.txt")
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
@@ -51,7 +52,7 @@ class TestGlossaryCSV(TestGlossaryBase):
 		self.compareTextFiles(outputFilename, expectedFilename)
 		glos.cleanup()
 
-	def convert_csv_txt(self, fname, fname2, **convertArgs):
+	def convert_csv_txt(self: "typing.Self", fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.csv",
 			f"{fname}-2.txt",

@@ -1,3 +1,6 @@
+
+import typing
+
 # -*- coding: utf-8 -*-
 # Copyright © 2023 soshial <soshial@gmail.com> (soshial)
 #
@@ -12,7 +15,6 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -84,7 +86,7 @@ class KeyData:
 	]
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		priority: int,
 		parentalControl: int,
 		keyword: str,

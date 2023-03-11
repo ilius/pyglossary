@@ -23,6 +23,7 @@
 # SOFTWARE.
 
 import re
+import typing
 import unicodedata
 from gzip import compress, decompress
 from operator import itemgetter
@@ -94,10 +95,10 @@ class Writer:
 		"marisa_trie": "marisa-trie",
 	}
 
-	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
+	def stripFullHtmlError(self: "typing.Self", entry: "EntryType", error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
-	def __init__(self, glos: "GlossaryType", **kwargs) -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType", **kwargs) -> None:
 		self._glos = glos
 		self._filename = None
 		self._words = []
@@ -108,7 +109,7 @@ class Writer:
 		# img tag has no closing
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
-	def get_prefix(self, word: str) -> str:
+	def get_prefix(self: "typing.Self", word: str) -> str:
 		if not word:
 			return "11"
 		wo = word[:2].strip().lower()
@@ -127,7 +128,7 @@ class Writer:
 		wo = wo.ljust(2, "a")
 		return wo
 
-	def fix_defi(self, defi: str) -> str:
+	def fix_defi(self: "typing.Self", defi: str) -> str:
 		# @pgaskin on #219: Kobo supports images in dictionaries,
 		# but these have a lot of gotchas
 		# (see https://pgaskin.net/dictutil/dicthtml/format.html).
@@ -229,7 +230,7 @@ class Writer:
 
 		self._words = allWords
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		try:
 			import marisa_trie  # noqa: F401
 		except ModuleNotFoundError as e:

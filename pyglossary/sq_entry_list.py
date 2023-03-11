@@ -19,6 +19,7 @@
 
 import logging
 import os
+import typing
 from os.path import isfile
 from pickle import dumps, loads
 from typing import TYPE_CHECKING
@@ -49,7 +50,7 @@ PICKLE_PROTOCOL = 4
 
 class SqEntryList(EntryListType):
 	def __init__(
-		self,
+		self: "typing.Self",
 		glos: "GlossaryType",
 		filename: str,
 		create: bool = True,
@@ -80,7 +81,7 @@ class SqEntryList(EntryListType):
 		self._columnNames = ""
 
 	def setSortKey(
-		self,
+		self: "typing.Self",
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
@@ -118,7 +119,7 @@ class SqEntryList(EntryListType):
 	def __len__(self) -> int:
 		return self._len
 
-	def append(self, entry: "EntryType") -> None:
+	def append(self: "typing.Self", entry: "EntryType") -> None:
 		if self._sqliteSortKey is None:
 			raise RuntimeError("self._sqliteSortKey is None")
 		rawEntry = entry.getRaw(self._glos)
@@ -144,12 +145,12 @@ class SqEntryList(EntryListType):
 		if self._len % 1000 == 0:
 			self._con.commit()
 
-	def __iadd__(self, other: "Iterable") -> "SqEntryList":
+	def __iadd__(self: "typing.Self", other: "Iterable") -> "SqEntryList":
 		for item in other:
 			self.append(item)
 		return self
 
-	def sort(self, reverse: bool = False) -> None:
+	def sort(self: "typing.Self", reverse: bool = False) -> None:
 		if self._sorted:
 			raise NotImplementedError("can not sort more than once")
 		if self._sqliteSortKey is None:

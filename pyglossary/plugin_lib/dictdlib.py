@@ -1,3 +1,5 @@
+
+import typing
 # Dictionary creation library
 # Copyright (C) 2002 John Goerzen <jgoerzen@complete.org>
 # Copyright (C) 2020 Saeed Rasooli
@@ -80,7 +82,7 @@ def sortKey(x):
 
 
 class DictDB:
-	def __init__(self, basename, mode='read', quiet=0) -> None:
+	def __init__(self: "typing.Self", basename, mode='read', quiet=0) -> None:
 		#, url = 'unknown', shortname = 'unknown',
 		#		 longinfo = 'unknown', quiet = 0):
 		"""Initialize a DictDB object.
@@ -165,7 +167,7 @@ class DictDB:
 				b64_decode(splits[2]),
 			])
 
-	def addindexentry(self, word, start, size):
+	def addindexentry(self: "typing.Self", word, start, size):
 		"""Adds an entry to the index.  word is the relevant word.
 		start is the starting position in the dictionary and size is the
 		size of the definition; both are integers."""
@@ -173,7 +175,7 @@ class DictDB:
 			self.indexentries[word] = []
 		self.indexentries[word].append([start, size])
 
-	def delindexentry(self, word, start=None, size=None):
+	def delindexentry(self: "typing.Self", word, start=None, size=None):
 		"""Removes an entry from the index; word is the word to search for.
 
 		start and size are optional.  If they are specified, only index
@@ -205,20 +207,20 @@ class DictDB:
 			del(self.indexentries[word])
 		return retval
 
-	def update(self, string):
+	def update(self: "typing.Self", string):
 		"""Writes string out, if not quiet."""
 		if not self.quiet:
 			sys.stdout.write(string)
 			sys.stdout.flush()
 
-	def seturl(self, url):
+	def seturl(self: "typing.Self", url):
 		"""Sets the URL attribute of this database.  If there was
 		already a URL specified, we will use delindexentry() on it
 		first."""
 		self.delindexentry(url_headword)
 		self.addentry(url_headword + "\n     " + url, [url_headword])
 
-	def setshortname(self, shortname):
+	def setshortname(self: "typing.Self", shortname):
 		"""Sets the shortname for this database.  If there was already
 		a shortname specified, we will use delindexentry() on it first."""
 		self.delindexentry(short_headword)
@@ -227,14 +229,14 @@ class DictDB:
 			[short_headword],
 		)
 
-	def setlonginfo(self, longinfo):
+	def setlonginfo(self: "typing.Self", longinfo):
 		"""Sets the extended information for this database.  If there was
 		already long info specified, we will use delindexentry() on it
 		first."""
 		self.delindexentry(info_headword)
 		self.addentry(info_headword + "\n" + longinfo, [info_headword])
 
-	def addentry(self, defstr, headwords):
+	def addentry(self: "typing.Self", defstr, headwords):
 		"""Writes an entry.  defstr holds the content of the definition.
 		headwords is a list specifying one or more words under which this
 		definition should be indexed.  This function always adds \\n
@@ -250,7 +252,7 @@ class DictDB:
 		if self.count % 1000 == 0:
 			self.update("Processed %d records\r" % self.count)
 
-	def finish(self, dosort=1):
+	def finish(self: "typing.Self", dosort=1):
 		"""Called to finish the writing process.
 		**REQUIRED IF OPENED WITH 'update' OR 'write' MODES**.
 		This will write the index and close the files.
@@ -321,10 +323,10 @@ class DictDB:
 		in this dictionary."""
 		return self.indexentries.keys()
 
-	def hasdef(self, word):
+	def hasdef(self: "typing.Self", word):
 		return word in self.indexentries
 
-	def getdef(self, word):
+	def getdef(self: "typing.Self", word):
 		"""Given a definition name, returns a list of strings with all
 		matching definitions.  This is an *exact* match, not a
 		case-insensitive one.  Returns [] if word is not in the dictionary."""

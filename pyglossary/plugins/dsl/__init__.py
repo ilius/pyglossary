@@ -21,6 +21,7 @@
 import html
 import html.entities
 import re
+import typing
 from typing import Iterator
 from xml.sax.saxutils import escape, quoteattr
 
@@ -313,7 +314,7 @@ class Reader(object):
 	re_tags_open = re.compile(r"(?<!\\)\[(c |[cuib]\])")
 	re_tags_close = re.compile(r"\[/[cuib]\]")
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self.clean_tags = _clean_tags
 		self._file = None
@@ -329,11 +330,11 @@ class Reader(object):
 		# FIXME
 		return 0
 
-	def _clean_tags_only_markup(self, line: str, audio: bool) -> str:
+	def _clean_tags_only_markup(self: "typing.Self", line: str, audio: bool) -> str:
 		return _parse(line)
 
 	def open(
-		self,
+		self: "typing.Self",
 		filename: str,
 	) -> None:
 		self._filename = filename
@@ -395,10 +396,10 @@ class Reader(object):
 			", specify it by: --read-options encoding=ENCODING",
 		)
 
-	def setInfo(self, key: str, value: str) -> None:
+	def setInfo(self: "typing.Self", key: str, value: str) -> None:
 		self._glos.setInfo(key, unwrap_quotes(value))
 
-	def processHeaderLine(self, line: str) -> None:
+	def processHeaderLine(self: "typing.Self", line: str) -> None:
 		if line.startswith("#NAME"):
 			self.setInfo("name", unwrap_quotes(line[6:].strip()))
 		elif line.startswith("#INDEX_LANGUAGE"):

@@ -18,6 +18,7 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import logging
+import typing
 from collections import OrderedDict
 from os.path import isfile, join
 
@@ -175,20 +176,20 @@ class UIBase(UIType):
 		("remove_html", "remove_html_all"),
 	]
 
-	def __init__(self, **kwargs) -> None:
+	def __init__(self: "typing.Self", **kwargs) -> None:
 		self.config = {}
 
-	def progressInit(self, title: str) -> None:
+	def progressInit(self: "typing.Self", title: str) -> None:
 		pass
 
-	def progress(self, rat: float, text: str = "") -> None:
+	def progress(self: "typing.Self", rat: float, text: str = "") -> None:
 		pass
 
 	def progressEnd(self) -> None:
 		self.progress(1.0)
 
 	def loadConfig(
-		self,
+		self: "typing.Self",
 		user: bool = True,
 		**options,
 	) -> None:

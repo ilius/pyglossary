@@ -20,6 +20,7 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+import typing
 from typing import Any, Callable
 
 import pyglossary.gregorian as gregorian
@@ -40,7 +41,7 @@ class InfoItem(object):
 	)
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		name: str,
 		decode: "Callable[[bytes], Any] | None" = None,
 		attr: bool = False,

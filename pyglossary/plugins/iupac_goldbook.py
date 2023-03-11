@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
 
+import typing
+
+# -*- coding: utf-8 -*-
 from io import BytesIO
 from typing import TYPE_CHECKING, Iterator
 
@@ -37,7 +39,7 @@ class Reader(object):
 		"lxml": "lxml",
 	}
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None
@@ -55,7 +57,7 @@ class Reader(object):
 		self._fileSize = 0
 		self._termByCode = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -96,12 +98,12 @@ class Reader(object):
 
 		_file.close()
 
-	def setGlosInfo(self, key: str, value: str) -> None:
+	def setGlosInfo(self: "typing.Self", key: str, value: str) -> None:
 		if value is None:
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self, header: str) -> None:
+	def setMetadata(self: "typing.Self", header: str) -> None:
 		self.setGlosInfo("name", header.find("./title").text)
 		self.setGlosInfo("publisher", header.find("./publisher").text)
 		self.setGlosInfo("isbn", header.find("./isbn").text)
@@ -109,7 +111,7 @@ class Reader(object):
 		self.setGlosInfo("creationTime", header.find("./accessdate").text)
 
 	def tostring(
-		self,
+		self: "typing.Self",
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -119,7 +121,7 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def innerXML(self, elem: "Element") -> str:
+	def innerXML(self: "typing.Self", elem: "Element") -> str:
 		from lxml import etree as ET
 		elemName = elem.xpath('name(/*)')
 		resultStr = ''
@@ -131,7 +133,7 @@ class Reader(object):
 
 		return resultStr
 
-	def getTerm(self, termE: "Element") -> str:
+	def getTerm(self: "typing.Self", termE: "Element") -> str:
 		from lxml import etree as ET
 		term = ET.tostring(
 			termE,

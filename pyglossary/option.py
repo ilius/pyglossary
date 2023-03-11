@@ -2,6 +2,7 @@
 
 import logging
 import re
+import typing
 from typing import Any, Dict, List, Type, Union
 
 log = logging.getLogger("pyglossary")
@@ -27,7 +28,7 @@ class Option(object):
 		return optClass
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		typ: str,
 		customValue: bool = False,
 		values: "list[Any] | None" = None,
@@ -85,13 +86,13 @@ class Option(object):
 			data["falseComment"] = self.falseComment
 		return data
 
-	def evaluate(self, raw: str) -> "tuple[Any, bool]":
+	def evaluate(self: "typing.Self", raw: str) -> "tuple[Any, bool]":
 		"returns (value, isValid)"
 		if raw == "None":
 			return None, True
 		return raw, True
 
-	def validate(self, value: "Any") -> bool:
+	def validate(self: "typing.Self", value: "Any") -> bool:
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -105,7 +106,7 @@ class Option(object):
 		valueType = type(value).__name__
 		return self.typ == valueType
 
-	def validateRaw(self, raw: str) -> bool:
+	def validateRaw(self: "typing.Self", raw: str) -> bool:
 		"returns isValid"
 		value, isValid = self.evaluate(raw)
 		if not isValid:
@@ -121,7 +122,7 @@ class Option(object):
 @Option.register
 class BoolOption(Option):
 	def __init__(
-		self,
+		self: "typing.Self",
 		allowNone: bool = False,
 		**kwargs,  # noqa: ANN
 	) -> None:
@@ -143,7 +144,7 @@ class BoolOption(Option):
 		del data["values"]
 		return data
 
-	def evaluate(self, raw: "Union[str, bool]") -> "tuple[bool | None, bool]":
+	def evaluate(self: "typing.Self", raw: "Union[str, bool]") -> "tuple[bool | None, bool]":
 		if raw is None:
 			return None, True
 		if isinstance(raw, bool):
@@ -162,7 +163,7 @@ class BoolOption(Option):
 @Option.register
 class StrOption(Option):
 	def __init__(
-		self,
+		self: "typing.Self",
 		**kwargs,  # noqa: ANN
 	) -> None:
 		Option.__init__(
@@ -171,7 +172,7 @@ class StrOption(Option):
 			**kwargs,
 		)
 
-	def validate(self, value: "Any") -> bool:
+	def validate(self: "typing.Self", value: "Any") -> bool:
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -189,7 +190,7 @@ class StrOption(Option):
 @Option.register
 class IntOption(Option):
 	def __init__(
-		self,
+		self: "typing.Self",
 		**kwargs,  # noqa: ANN
 	) -> None:
 		Option.__init__(
@@ -198,7 +199,7 @@ class IntOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self, raw: "Union[str, int]") -> "tuple[int | None, bool]":
+	def evaluate(self: "typing.Self", raw: "Union[str, int]") -> "tuple[int | None, bool]":
 		"returns (value, isValid)"
 		try:
 			value = int(raw)
@@ -249,7 +250,7 @@ class FileSizeOption(IntOption):
 	def typeDesc(self) -> str:
 		return ""
 
-	def evaluate(self, raw: "Union[str, int]") -> "tuple[int | None, bool]":
+	def evaluate(self: "typing.Self", raw: "Union[str, int]") -> "tuple[int | None, bool]":
 		if not raw:
 			return 0, True
 		factor = 1
@@ -273,7 +274,7 @@ class FileSizeOption(IntOption):
 @Option.register
 class FloatOption(Option):
 	def __init__(
-		self,
+		self: "typing.Self",
 		**kwargs,  # noqa: noqa: ANN
 	) -> None:
 		Option.__init__(
@@ -283,7 +284,7 @@ class FloatOption(Option):
 		)
 
 	def evaluate(
-		self,
+		self: "typing.Self",
 		raw: "Union[str, float, int]",
 	) -> "tuple[float | None, bool]":
 		"returns (value, isValid)"
@@ -298,7 +299,7 @@ class FloatOption(Option):
 @Option.register
 class DictOption(Option):
 	def __init__(
-		self,
+		self: "typing.Self",
 		**kwargs,  # noqa: ANN
 	) -> None:
 		Option.__init__(
@@ -315,7 +316,7 @@ class DictOption(Option):
 		del data["customValue"]
 		return data
 
-	def evaluate(self, raw: "Union[str, dict]") -> "tuple[Dict | None, bool]":
+	def evaluate(self: "typing.Self", raw: "Union[str, dict]") -> "tuple[Dict | None, bool]":
 		import ast
 		if isinstance(raw, dict):
 			return raw, True
@@ -332,7 +333,7 @@ class DictOption(Option):
 
 @Option.register
 class ListOption(Option):
-	def __init__(self, **kwargs) -> None:
+	def __init__(self: "typing.Self", **kwargs) -> None:
 		Option.__init__(
 			self,
 			typ="list",
@@ -347,7 +348,7 @@ class ListOption(Option):
 		del data["customValue"]
 		return data
 
-	def evaluate(self, raw: str) -> "tuple[List | None, bool]":
+	def evaluate(self: "typing.Self", raw: str) -> "tuple[List | None, bool]":
 		import ast
 		if raw == "":
 			return None, True  # valid
@@ -365,7 +366,7 @@ class EncodingOption(Option):
 	re_category = re.compile("^[a-z]+")
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		customValue: bool = True,
 		values: "list[str] | None" = None,
 		comment: "str | None" = None,
@@ -440,7 +441,7 @@ class EncodingOption(Option):
 @Option.register
 class NewlineOption(Option):
 	def __init__(
-		self,
+		self: "typing.Self",
 		customValue: bool = True,
 		values: "list[str] | None" = None,
 		comment: "str | None" = None,
@@ -472,7 +473,7 @@ class HtmlColorOption(Option):
 		del data["customValue"]
 		return data
 
-	def __init__(self, **kwargs) -> None:
+	def __init__(self: "typing.Self", **kwargs) -> None:
 		Option.__init__(
 			self,
 			typ="str",

@@ -1,5 +1,6 @@
 import gzip
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -12,11 +13,11 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryKobo(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 		# self.dataFileCRC32.update({})
 
-	def convert_txt_kobo(self, fname, sha1sumDict, **convertArgs):
+	def convert_txt_kobo(self: "typing.Self", fname, sha1sumDict, **convertArgs):
 		outputFname = f"{fname}-2.kobo.zip"
 		outputFpath = self.newTempFilePath(outputFname)
 		# expectedFpath = self.downloadFile(f"{fname}.kobo.zip")

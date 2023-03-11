@@ -3,6 +3,7 @@
 import gzip
 import os
 import re
+import typing
 from collections import Counter
 from os.path import (
 	dirname,
@@ -138,7 +139,7 @@ def verifySameTypeSequence(s: str) -> bool:
 
 
 class MemList(list):
-	def sortKey(self, item: "tuple[bytes, Any]") -> "tuple[bytes, bytes]":
+	def sortKey(self: "typing.Self", item: "tuple[bytes, Any]") -> "tuple[bytes, bytes]":
 		return (
 			item[0].lower(),
 			item[0],
@@ -150,7 +151,7 @@ class MemList(list):
 
 class BaseSqList(list):
 	def __init__(
-		self,
+		self: "typing.Self",
 		filename: str,
 	) -> None:
 		from sqlite3 import connect
@@ -198,7 +199,7 @@ class BaseSqList(list):
 	def __len__(self) -> int:
 		return self._len
 
-	def append(self, item: "Sequence") -> None:
+	def append(self: "typing.Self", item: "Sequence") -> None:
 		self._len += 1
 		extraN = len(self._columns) - 1
 		self._cur.execute(
@@ -255,7 +256,7 @@ class Reader(object):
 	_xsl: bool = False
 	_unicode_errors: str = "strict"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 
 		self._glos = glos
 		self.clear()
@@ -287,7 +288,7 @@ class Reader(object):
 			return
 		self._xdxfTr = XdxfTransformer(encoding="utf-8")
 
-	def xdxf_transform(self, text: str) -> str:
+	def xdxf_transform(self: "typing.Self", text: str) -> str:
 		if self._xdxfTr is None:
 			self.xdxf_setup()
 		return self._xdxfTr.transformByInnerString(text)
@@ -307,7 +308,7 @@ class Reader(object):
 		self._resFileNames = []
 		self._wordCount = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		if splitext(filename)[1].lower() == ".ifo":
 			filename = splitext(filename)[0]
 		elif isdir(filename):
@@ -409,7 +410,7 @@ class Reader(object):
 		return indexData
 
 	def decodeRawDefiPart(
-		self,
+		self: "typing.Self",
 		b_defiPart: bytes,
 		i_type: int,
 		unicode_errors: str,
@@ -457,7 +458,7 @@ class Reader(object):
 		return _format, _defi
 
 	def renderRawDefiList(
-		self,
+		self: "typing.Self",
 		rawDefiList: "list[tuple[bytes, int]]",
 		unicode_errors: str,
 	) -> "tuple[str, str]":
@@ -619,7 +620,7 @@ class Reader(object):
 		return synDict
 
 	def parseDefiBlockCompact(
-		self,
+		self: "typing.Self",
 		b_block: bytes,
 		sametypesequence: str,
 	) -> "list[tuple[bytes, int]]":
@@ -669,7 +670,7 @@ class Reader(object):
 
 		return res
 
-	def parseDefiBlockGeneral(self, b_block: bytes) -> "list[tuple[bytes, int]]":
+	def parseDefiBlockGeneral(self: "typing.Self", b_block: bytes) -> "list[tuple[bytes, int]]":
 		"""
 		Parse definition block when sametypesequence option is not specified.
 
@@ -722,7 +723,7 @@ class Writer(object):
 	_audio_icon: bool = True
 	_sqlite: bool = False
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		self._resDir = None
@@ -746,7 +747,7 @@ class Writer(object):
 		self._sourceLang = None
 		self._targetLang = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		log.debug(f"open: {filename = }")
 		fileBasePath = filename
 		##
@@ -798,7 +799,7 @@ class Writer(object):
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
 
-	def fixDefi(self, defi: str, defiFormat: str) -> str:
+	def fixDefi(self: "typing.Self", defi: str, defiFormat: str) -> str:
 		# for StarDict 3.0:
 		if self._stardict_client and defiFormat == "h":
 			defi = self._p_pattern.sub("\\2<br>", defi)
@@ -838,7 +839,7 @@ class Writer(object):
 
 		return uint32ToBytes, 0xffffffff
 
-	def writeCompact(self, defiFormat: str) -> None:
+	def writeCompact(self: "typing.Self", defiFormat: str) -> None:
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
 		Every item definition consists of a single article.
@@ -990,7 +991,7 @@ class Writer(object):
 			defiFormat="",
 		)
 
-	def writeSynFile(self, altIndexList: "list[tuple[bytes, int]]") -> None:
+	def writeSynFile(self: "typing.Self", altIndexList: "list[tuple[bytes, int]]") -> None:
 		"""
 		Build .syn file
 		"""
@@ -1019,7 +1020,7 @@ class Writer(object):
 			f"Writing {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
 		)
 
-	def writeCompactMergeSyns(self, defiFormat: str) -> None:
+	def writeCompactMergeSyns(self: "typing.Self", defiFormat: str) -> None:
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
 		Every item definition consists of a single article.
@@ -1161,7 +1162,7 @@ class Writer(object):
 			defiFormat="",
 		)
 
-	def writeIdxFile(self, indexList: "list[tuple[bytes, bytes]]") -> int:
+	def writeIdxFile(self: "typing.Self", indexList: "list[tuple[bytes, bytes]]") -> int:
 		filename = self._filename + ".idx"
 		if not indexList:
 			return 0
@@ -1186,7 +1187,7 @@ class Writer(object):
 		return len(indexList)
 
 	def writeIfoFile(
-		self,
+		self: "typing.Self",
 		wordCount: int,
 		synWordCount: int,
 		defiFormat: "Literal['', 'h', 'm', 'x']" = "", 

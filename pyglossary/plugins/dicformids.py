@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import typing
 from os.path import join
 from typing import Iterator
 
@@ -65,12 +66,12 @@ language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEn
 class Reader(object):
 	re_number = re.compile(r"\d+")
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._tabFileNames = []
 		self._tabFileReader = None
 
-	def open(self, dirname: str) -> None:
+	def open(self: "typing.Self", dirname: str) -> None:
 		self._dirname = dirname
 		orderFileNames = []
 		for fname in os.listdir(dirname):
@@ -122,7 +123,7 @@ class Reader(object):
 
 
 class Writer(object):
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.linesPerDirectoryFile = 500  # 200
 		self.indexFileMaxSize = 32722  # 30000
@@ -138,7 +139,7 @@ class Writer(object):
 		self.re_spaces = re.compile(" +")
 		self.re_tabs = re.compile("\t+")
 
-	def normateWord(self, word: str) -> str:
+	def normateWord(self: "typing.Self", word: str) -> str:
 		word = word.strip()
 		word = self.re_punc.sub("", word)
 		word = self.re_spaces.sub(" ", word)
@@ -179,7 +180,7 @@ class Writer(object):
 	def finish(self) -> None:
 		pass
 
-	def open(self, dirname: str) -> None:
+	def open(self: "typing.Self", dirname: str) -> None:
 		self._dirname = dirname
 		if not os.path.isdir(dirname):
 			os.mkdir(dirname)

@@ -3,6 +3,7 @@
 import logging
 import os
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname, isfile, join, relpath
 
@@ -22,7 +23,7 @@ class MyStr(str):
 
 
 class TestGlossaryErrorsBase(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 		self.mockLog = getMockLogger()
 
@@ -41,19 +42,19 @@ class TestGlossaryErrorsBase(TestGlossaryBase):
 				f"from {self.__class__.__name__}: {self._testMethodName}\n",
 			)
 
-	def assertLogCritical(self, errorMsg):
+	def assertLogCritical(self: "typing.Self", errorMsg):
 		self.assertIsNotNone(self.mockLog.popLog(
 			logging.CRITICAL,
 			errorMsg,
 		), msg=f"did not find critical log {errorMsg!r}")
 
-	def assertLogError(self, errorMsg):
+	def assertLogError(self: "typing.Self", errorMsg):
 		self.assertIsNotNone(self.mockLog.popLog(
 			logging.ERROR,
 			errorMsg,
 		), msg=f"did not find error log {errorMsg!r}")
 
-	def assertLogWarning(self, errorMsg):
+	def assertLogWarning(self: "typing.Self", errorMsg):
 		self.assertIsNotNone(self.mockLog.popLog(
 			logging.WARNING,
 			errorMsg,

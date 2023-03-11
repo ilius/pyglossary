@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import typing
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
@@ -60,12 +61,12 @@ class Reader(object):
 		"application/font-woff",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._zimfile: "Archive | None" = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		try:
 			from libzim.reader import Archive
 		except ModuleNotFoundError as e:

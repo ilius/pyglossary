@@ -1,3 +1,5 @@
+
+import typing
 # -*- coding: utf-8 -*-
 
 from typing import Generator, Iterator
@@ -20,7 +22,7 @@ optionsProp: "dict[str, Option]" = {}
 
 
 class Reader(object):
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0
@@ -33,7 +35,7 @@ class Reader(object):
 		# iteration begins and __iter__ method is called
 		return self._wordCount
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		# open the file, read headers / info and set info to self._glos
 		# and set self._wordCount if you can
 		# read-options should be keyword arguments in this method
@@ -69,11 +71,11 @@ class Reader(object):
 
 
 class Writer(object):
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 
 	def write(self) -> "Generator[None, EntryType, None]":

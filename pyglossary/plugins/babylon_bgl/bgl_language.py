@@ -1,3 +1,6 @@
+
+import typing
+
 # -*- coding: utf-8 -*-
 #
 # Copyright © 2008-2020 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
@@ -127,7 +130,7 @@ class BabylonLanguage(object):
 		code - value of the type 3, code in .bgl file
 	"""
 	def __init__(
-		self,
+		self: "typing.Self",
 		name: str,
 		charset: str,
 		encoding: str,

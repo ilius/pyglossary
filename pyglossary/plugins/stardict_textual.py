@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
 
+import typing
+
+# -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
@@ -57,7 +59,7 @@ class Reader(object):
 		"lxml": "lxml",
 	}
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "io.IOBase | None" = None
@@ -69,7 +71,7 @@ class Reader(object):
 		self._xdxfTr = tr = XdxfTransformer(encoding="utf-8")
 		return tr
 
-	def xdxf_transform(self, text: str) -> str:
+	def xdxf_transform(self: "typing.Self", text: str) -> str:
 		tr = self._xdxfTr
 		if tr is None:
 			tr = self.xdxf_setup()
@@ -85,7 +87,7 @@ class Reader(object):
 		self._filename = ""
 		self._fileSize = 0
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -114,12 +116,12 @@ class Reader(object):
 
 		cfile.close()
 
-	def setGlosInfo(self, key: str, value: str) -> None:
+	def setGlosInfo(self: "typing.Self", key: str, value: str) -> None:
 		if value is None:
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self, header: "Element") -> None:
+	def setMetadata(self: "typing.Self", header: "Element") -> None:
 		if (elem := header.find("./bookname")) is not None and elem.text:
 			self.setGlosInfo("name", elem.text)
 
@@ -148,7 +150,7 @@ class Reader(object):
 		# 	self.setGlosInfo("dicttype", elem.text)
 
 	def renderDefiList(
-		self,
+		self: "typing.Self",
 		defisWithFormat: "list[tuple[str, str]]",
 	) -> "tuple[str, str]":
 		if len(defisWithFormat) == 1:
@@ -245,12 +247,12 @@ class Writer(object):
 		"lxml": "lxml",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 
 	def open(
-		self,
+		self: "typing.Self",
 		filename: str,
 	) -> None:
 		self._filename = filename
@@ -263,7 +265,7 @@ class Writer(object):
 	def finish(self) -> None:
 		self._file.close()
 
-	def writeInfo(self, maker: "builder.ElementMaker", pretty: bool) -> None:
+	def writeInfo(self: "typing.Self", maker: "builder.ElementMaker", pretty: bool) -> None:
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -295,7 +297,7 @@ class Writer(object):
 			pretty_print=pretty,
 		)).decode(self._encoding) + "\n")
 
-	def writeDataEntry(self, maker: "builder.ElementMaker", entry: "EntryType") -> None:
+	def writeDataEntry(self: "typing.Self", maker: "builder.ElementMaker", entry: "EntryType") -> None:
 		pass
 		# TODO: create article tag with "definition-r" in it?
 		# or just save the file to res/ directory? or both?

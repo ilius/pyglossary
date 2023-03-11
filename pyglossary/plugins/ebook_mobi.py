@@ -23,6 +23,7 @@
 # SOFTWARE.
 
 import os
+import typing
 from datetime import datetime
 from os.path import join
 
@@ -107,7 +108,7 @@ extraDocs = [
 
 
 class GroupStateBySize(object):
-	def __init__(self, writer: "Writer") -> None:
+	def __init__(self: "typing.Self", writer: "Writer") -> None:
 		self.writer = writer
 		self.group_index = -1
 		self.reset()
@@ -116,7 +117,7 @@ class GroupStateBySize(object):
 		self.group_contents = []
 		self.group_size = 0
 
-	def add(self, entry: "EntryType") -> None:
+	def add(self: "typing.Self", entry: "EntryType") -> None:
 		word = entry.l_word
 		defi = entry.defi
 		content = self.writer.format_group_content(word, defi)
@@ -208,7 +209,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 <guide></guide>
 </package>"""
 
-	def __init__(self, glos: "GlossaryType", **kwargs) -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType", **kwargs) -> None:
 		import uuid
 		EbookWriter.__init__(
 			self,
@@ -218,7 +219,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		# FIXME: check if full html pages/documents as entry do work
 		# glos.stripFullHtml(errorHandler=None)
 
-	def get_prefix(self, word: str) -> str:
+	def get_prefix(self: "typing.Self", word: str) -> str:
 		if not word:
 			return None
 		length = self._group_by_prefix_length
@@ -227,7 +228,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			return "SPECIAL"
 		return prefix
 
-	def format_group_content(self, word: "list[str]", defi: str) -> str:
+	def format_group_content(self: "typing.Self", word: "list[str]", defi: str) -> str:
 		hide_word_index = self._hide_word_index
 		if len(word) == 1:
 			infl = ''
@@ -263,10 +264,10 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			infl=infl,
 		)
 
-	def getLangCode(self, lang: "Lang") -> str:
+	def getLangCode(self: "typing.Self", lang: "Lang") -> str:
 		return lang.code if isinstance(lang, Lang) else ""
 
-	def get_opf_contents(self, manifest_contents: str, spine_contents: str) -> str:
+	def get_opf_contents(self: "typing.Self", manifest_contents: str, spine_contents: str) -> str:
 		cover = ""
 		if self.cover:
 			cover = self.COVER_TEMPLATE.format(cover=self.cover)

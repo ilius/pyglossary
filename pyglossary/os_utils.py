@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import types
+import typing
 from typing import Any, Callable, Type
 
 from pyglossary import core
@@ -21,7 +22,7 @@ class indir(object):
 		>>> # automatically return to previous directory.
 	"""
 	def __init__(
-		self,
+		self: "typing.Self",
 		directory: str,
 		create: bool = False,
 		clear: bool = False,
@@ -42,7 +43,7 @@ class indir(object):
 		os.chdir(self.dir)
 
 	def __exit__(
-		self,
+		self: "typing.Self",
 		exc_type: "Type",
 		exc_val: "Exception",
 		exc_tb: "types.TracebackType",

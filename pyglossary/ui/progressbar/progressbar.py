@@ -26,6 +26,7 @@ import os
 import signal
 import sys
 import time
+import typing
 
 try:
     import termios
@@ -90,7 +91,7 @@ class ProgressBar(object):
     _DEFAULT_TERMSIZE = 80
     _DEFAULT_WIDGETS = [widgets.Percentage(), ' ', widgets.Bar()]
 
-    def __init__(self, maxval=None, widgets=None, term_width=None, poll=1,
+    def __init__(self: "typing.Self", maxval=None, widgets=None, term_width=None, poll=1,
                  left_justify=True, fd=None) -> None:
         """Initializes a progress bar with sane defaults."""
 
@@ -128,7 +129,7 @@ class ProgressBar(object):
         self.next_update = 0
 
 
-    def __call__(self, iterable):
+    def __call__(self: "typing.Self", iterable):
         """Use a ProgressBar to iterate through an iterable."""
 
         try:
@@ -171,7 +172,7 @@ class ProgressBar(object):
         return int(os.environ.get('COLUMNS', self._DEFAULT_TERMSIZE)) - 1
 
 
-    def _handle_resize(self, signum=None, frame=None):
+    def _handle_resize(self: "typing.Self", signum=None, frame=None):
         """Tries to catch resize signals sent from the terminal."""
 
         h, w = array('h', ioctl(self.fd, termios.TIOCGWINSZ, '\0' * 8))[:2]
@@ -242,7 +243,7 @@ class ProgressBar(object):
                                     for w in self.widgets)
 
 
-    def update(self, value=None):
+    def update(self: "typing.Self", value=None):
         """Updates the ProgressBar to a new value."""
 
         if value is not None and value is not widgets.UnknownLength:
@@ -267,7 +268,7 @@ class ProgressBar(object):
         self.last_update_time = now
 
 
-    def start(self, num_intervals=0):
+    def start(self: "typing.Self", num_intervals=0):
         """Starts measuring time, and prints the bar at 0%.
 
         It returns self so you can use it like this:

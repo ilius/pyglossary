@@ -22,6 +22,7 @@
 # GNU General Public License for more details.
 
 import re
+import typing
 from typing import TYPE_CHECKING, Iterator, Sequence
 
 if TYPE_CHECKING:
@@ -109,7 +110,7 @@ class Reader(object):
 		"full_title": "name",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None
@@ -119,7 +120,7 @@ class Reader(object):
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		from lxml import etree as ET
 		self._filename = filename
@@ -228,7 +229,7 @@ class Reader(object):
 			self._glos.setInfo("description", desc)
 
 	def tostring(
-		self,
+		self: "typing.Self",
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -238,7 +239,7 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def titles(self, article: "Element") -> "list[str]":
+	def titles(self: "typing.Self", article: "Element") -> "list[str]":
 		"""
 
 		:param article: <ar> tag
@@ -262,7 +263,7 @@ class Reader(object):
 		return titles
 
 	def _mktitle(
-		self,
+		self: "typing.Self",
 		title_element: "Element",
 		include_opts: "Sequence | None" = None,
 	) -> str:

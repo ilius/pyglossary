@@ -1,3 +1,6 @@
+
+import typing
+
 """
 Interface base class implementations.
 taken from https://github.com/mrogaski/pygopher-interfaces
@@ -63,7 +66,7 @@ class Interface(type):
     Metaclass that defines the subclass relationship without inheritance.
     """
 
-    def __subclasscheck__(self, subclass: type) -> bool:
+    def __subclasscheck__(self: "typing.Self", subclass: type) -> bool:
         """
 
         Args:
@@ -78,7 +81,7 @@ class Interface(type):
         class_methods = method_signatures(subclass)
         return interface_methods.issubset(class_methods)
 
-    def __instancecheck__(self, instance: type) -> bool:
+    def __instancecheck__(self: "typing.Self", instance: type) -> bool:
         """
 
         Args:

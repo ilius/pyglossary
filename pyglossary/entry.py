@@ -3,6 +3,7 @@ import logging
 import os
 import re
 import shutil
+import typing
 from os.path import (
 	dirname,
 	getsize,
@@ -43,7 +44,7 @@ class DataEntry(BaseEntry):
 		return True
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		fname: str,
 		data: bytes = b"",
 		tmpPath: "str | None" = None,
@@ -75,7 +76,7 @@ class DataEntry(BaseEntry):
 			return getsize(self._tmpPath)
 		return len(self._data)
 
-	def save(self, directory: str) -> str:
+	def save(self: "typing.Self", directory: str) -> str:
 		fname = self._fname
 		fpath = join(directory, fname)
 		fdir = dirname(fpath)
@@ -114,31 +115,31 @@ class DataEntry(BaseEntry):
 		return "b"
 
 	@defiFormat.setter
-	def defiFormat(self, defiFormat: str) -> None:
+	def defiFormat(self: "typing.Self", defiFormat: str) -> None:
 		pass
 
 	def detectDefiFormat(self) -> None:
 		pass
 
-	def addAlt(self, alt: str) -> None:
+	def addAlt(self: "typing.Self", alt: str) -> None:
 		pass
 
-	def editFuncWord(self, func: "Callable[[str], str]") -> None:
+	def editFuncWord(self: "typing.Self", func: "Callable[[str], str]") -> None:
 		pass
 
-	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
+	def editFuncDefi(self: "typing.Self", func: "Callable[[str], str]") -> None:
 		pass
 
 	def strip(self) -> None:
 		pass
 
-	def replaceInWord(self, source: str, target: str) -> None:
+	def replaceInWord(self: "typing.Self", source: str, target: str) -> None:
 		pass
 
-	def replaceInDefi(self, source: str, target: str) -> None:
+	def replaceInDefi(self: "typing.Self", source: str, target: str) -> None:
 		pass
 
-	def replace(self, source: str, target: str) -> None:
+	def replace(self: "typing.Self", source: str, target: str) -> None:
 		pass
 
 	def removeEmptyAndDuplicateAltWords(self) -> None:
@@ -147,7 +148,7 @@ class DataEntry(BaseEntry):
 	def stripFullHtml(self) -> "str | None":
 		pass
 
-	def getRaw(self, glos: "GlossaryType") -> "RawEntryType":
+	def getRaw(self: "typing.Self", glos: "GlossaryType") -> "RawEntryType":
 		b_fpath = b""
 		if glos.tmpDataDir:
 			b_fpath = self.save(glos.tmpDataDir).encode("utf-8")
@@ -213,7 +214,7 @@ class Entry(BaseEntry):
 		return lambda x: key(x[0])
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		word: MultiStr,
 		defi: str,
 		defiFormat: str = "m",
@@ -294,7 +295,7 @@ class Entry(BaseEntry):
 		return self._defiFormat
 
 	@defiFormat.setter
-	def defiFormat(self, defiFormat: str) -> None:
+	def defiFormat(self: "typing.Self", defiFormat: str) -> None:
 		"""
 			defiFormat:
 				"m": plain text
@@ -316,12 +317,12 @@ class Entry(BaseEntry):
 	def byteProgress(self) -> "tuple[int, int] | None":
 		return self._byteProgress
 
-	def addAlt(self, alt: str) -> None:
+	def addAlt(self: "typing.Self", alt: str) -> None:
 		l_word = self.l_word
 		l_word.append(alt)
 		self._word = l_word
 
-	def editFuncWord(self, func: "Callable[[str], str]") -> None:
+	def editFuncWord(self: "typing.Self", func: "Callable[[str], str]") -> None:
 		"""
 			run function `func` on all the words
 			`func` must accept only one string as argument
@@ -335,7 +336,7 @@ class Entry(BaseEntry):
 			func(st) for st in self._word
 		]
 
-	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
+	def editFuncDefi(self: "typing.Self", func: "Callable[[str], str]") -> None:
 		"""
 			run function `func` on all the definitions
 			`func` must accept only one string as argument
@@ -343,7 +344,7 @@ class Entry(BaseEntry):
 		"""
 		self._defi = func(self._defi)
 
-	def _stripTrailingBR(self, s: str) -> str:
+	def _stripTrailingBR(self: "typing.Self", s: str) -> str:
 		while s.endswith(("<BR>", "<br>")):
 			s = s[:-4]
 		return s
@@ -356,7 +357,7 @@ class Entry(BaseEntry):
 		self.editFuncDefi(str.strip)
 		self.editFuncDefi(self._stripTrailingBR)
 
-	def replaceInWord(self, source: str, target: str) -> None:
+	def replaceInWord(self: "typing.Self", source: str, target: str) -> None:
 		"""
 			replace string `source` with `target` in all words
 		"""
@@ -368,13 +369,13 @@ class Entry(BaseEntry):
 			st.replace(source, target) for st in self._word
 		]
 
-	def replaceInDefi(self, source: str, target: str) -> None:
+	def replaceInDefi(self: "typing.Self", source: str, target: str) -> None:
 		"""
 			replace string `source` with `target` in all definitions
 		"""
 		self._defi = self._defi.replace(source, target)
 
-	def replace(self, source: str, target: str) -> None:
+	def replace(self: "typing.Self", source: str, target: str) -> None:
 		"""
 			replace string `source` with `target` in all words and definitions
 		"""
@@ -419,7 +420,7 @@ class Entry(BaseEntry):
 		return None
 
 	def getRaw(
-		self,
+		self: "typing.Self",
 		glos: "GlossaryType",
 	) -> "RawEntryType":
 		"""

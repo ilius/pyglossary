@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import html
+import typing
 from typing import Iterator
 
 from pyglossary.core import log
@@ -21,7 +22,7 @@ website = (
 
 
 class Reader(object):
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
@@ -30,7 +31,7 @@ class Reader(object):
 		self._con = None
 		self._cur = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)
@@ -41,7 +42,7 @@ class Reader(object):
 		self._cur.execute("select count(*) * 2 from main_ft")
 		return self._cur.fetchone()[0]
 
-	def iterRows(self, column1: str, column2: str) -> "Iterator[tuple[str, str, str]]":
+	def iterRows(self: "typing.Self", column1: str, column2: str) -> "Iterator[tuple[str, str, str]]":
 		self._cur.execute(
 			f"select {column1}, {column2}, entry_type from main_ft"
 			f" order by {column1}",
@@ -59,7 +60,7 @@ class Reader(object):
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
-	def _iterOneDirection(self, column1: str, column2: str) -> "Iterator[EntryType]":
+	def _iterOneDirection(self: "typing.Self", column1: str, column2: str) -> "Iterator[EntryType]":
 		for word, defi, entry_type in self.iterRows(column1, column2):
 			if entry_type:
 				word = f"{word} {{{entry_type}}}"

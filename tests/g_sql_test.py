@@ -1,4 +1,5 @@
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -9,7 +10,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossarySQL(TestGlossaryBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -18,7 +19,7 @@ class TestGlossarySQL(TestGlossaryBase):
 		})
 
 
-	def convert_txt_sql(self, fname, fname2, **convertArgs):
+	def convert_txt_sql(self: "typing.Self", fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.txt",
 			f"{fname}-2.sql",

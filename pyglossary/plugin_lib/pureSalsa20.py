@@ -170,6 +170,8 @@
 	Steve Witham sw at remove-this tiac dot net
 	February, 2010
 """
+import typing
+
 import sys
 assert(sys.version_info >= (2, 6))
 
@@ -193,7 +195,7 @@ _version = 'p4.0'
 #----------- Salsa20 class which emulates pySalsa20.Salsa20 ---------------
 
 class Salsa20(object):
-	def __init__(self, key=None, IV=None, rounds=20 ) -> None:
+	def __init__(self: "typing.Self", key=None, IV=None, rounds=20 ) -> None:
 		self._lastChunk64 = True
 		self._IVbitlen = 64             # must be 64 bits
 		self.ctx = [ 0 ] * 16
@@ -205,7 +207,7 @@ class Salsa20(object):
 		self.setRounds(rounds)
 
 
-	def setKey(self, key):
+	def setKey(self: "typing.Self", key):
 		assert type(key) == bytes
 		ctx = self.ctx
 		if len( key ) == 32:  # recommended
@@ -221,7 +223,7 @@ class Salsa20(object):
 		ctx[0],ctx[5],ctx[10],ctx[15] = little4_i32.unpack( constants )
 
 		
-	def setIV(self, IV):
+	def setIV(self: "typing.Self", IV):
 		assert type(IV) == bytes
 		assert len(IV)*8 == 64, 'nonce (IV) not 64 bits'
 		self.IV = IV
@@ -242,12 +244,12 @@ class Salsa20(object):
 		return little_u64.unpack( little2_i32.pack( *self.ctx[ 8:10 ] ) ) [0]
 
 
-	def setRounds(self, rounds, testing=False ):
+	def setRounds(self: "typing.Self", rounds, testing=False ):
 		assert testing or rounds in [8, 12, 20], 'rounds must be 8, 12, 20'
 		self.rounds = rounds
 
 
-	def encryptBytes(self, data):
+	def encryptBytes(self: "typing.Self", data):
 		assert type(data) == bytes, 'data must be byte string'
 		assert self._lastChunk64, 'previous chunk not multiple of 64 bytes'
 		lendata = len(data)

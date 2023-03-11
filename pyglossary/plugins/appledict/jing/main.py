@@ -3,6 +3,7 @@
 import logging
 import subprocess
 import sys
+import typing
 from os import path
 
 __all__ = ["JingTestError", "run", "main"]
@@ -19,7 +20,7 @@ class JingTestError(subprocess.CalledProcessError):
 	"""
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		returncode: int,
 		cmd: "list[str]",
 		output: bytes,

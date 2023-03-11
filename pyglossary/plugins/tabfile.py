@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import typing
 from os.path import isdir, join
 from typing import Generator, Iterator
 
@@ -47,12 +48,12 @@ optionsProp: "dict[str, Option]" = {
 
 
 class Reader(TextGlossaryReader):
-	def __init__(self, glos: GlossaryType, hasInfo: bool = True) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType, hasInfo: bool = True) -> None:
 		TextGlossaryReader.__init__(self, glos, hasInfo=hasInfo)
 		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self, filename: str) -> "Iterator[tuple[int, int]]":
+	def open(self: "typing.Self", filename: str) -> "Iterator[tuple[int, int]]":
 		yield from TextGlossaryReader.openGen(self, filename)
 		resDir = f"{filename}_res"
 		if isdir(resDir):
@@ -69,10 +70,10 @@ class Reader(TextGlossaryReader):
 					_file.read(),
 				)
 
-	def isInfoWord(self, word: str) -> bool:
+	def isInfoWord(self: "typing.Self", word: str) -> bool:
 		return word.startswith("#")
 
-	def fixInfoWord(self, word: str) -> str:
+	def fixInfoWord(self: "typing.Self", word: str) -> str:
 		return word.lstrip("#")
 
 	def nextBlock(self) -> "tuple[str, str, None] | None":
@@ -113,12 +114,12 @@ class Writer(object):
 
 	compressions = stdCompressions
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 
 	def open(
-		self,
+		self: "typing.Self",
 		filename: str,
 	) -> None:
 		self._filename = filename

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import html
+import typing
 from operator import itemgetter
 from typing import TYPE_CHECKING, Callable, Iterator
 
@@ -25,7 +26,7 @@ website = (
 
 
 class Reader(object):
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
@@ -34,7 +35,7 @@ class Reader(object):
 		self._con = None
 		self._cur = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)
@@ -48,7 +49,7 @@ class Reader(object):
 		return self._cur.fetchone()[0]
 
 	def makeList(
-		self,
+		self: "typing.Self",
 		hf: "lxml.etree.htmlfile",
 		input_elements: "list[lxml.etree.Element]",
 		processor: "Callable",
@@ -70,7 +71,7 @@ class Reader(object):
 					processor(hf, el)
 
 	def writeSense(
-		self,
+		self: "typing.Self",
 		hf: "lxml.etree.htmlfile",
 		row: "tuple[str, str, str]",
 	) -> None:
@@ -90,7 +91,7 @@ class Reader(object):
 				with hf.element("a", href=f'bword://{trans}'):
 					hf.write("⏎")
 
-	def iterRows(self, column1: str, column2: str) -> "Iterator[tuple[str, str, str]]":
+	def iterRows(self: "typing.Self", column1: str, column2: str) -> "Iterator[tuple[str, str, str]]":
 		self._cur.execute(
 			f"select {column1}, {column2}, entry_type from main_ft"
 			f" order by {column1}",
@@ -108,7 +109,7 @@ class Reader(object):
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
-	def parseGender(self, headword: str) -> "tuple[str | None, str]":
+	def parseGender(self: "typing.Self", headword: str) -> "tuple[str | None, str]":
 		# {m}	masc	masculine	German: maskulin
 		# {f}	fem 	feminine	German: feminin
 		# {n}	neut	neutral		German: neutral
@@ -134,7 +135,7 @@ class Reader(object):
 		headword = headword[:i] + headword[i + 4:]
 		return gender, headword
 
-	def _iterOneDirection(self, column1: str, column2: str) -> "Iterator[str]":
+	def _iterOneDirection(self: "typing.Self", column1: str, column2: str) -> "Iterator[str]":
 		from io import BytesIO
 		from itertools import groupby
 

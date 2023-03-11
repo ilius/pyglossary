@@ -2,6 +2,7 @@
 # from https://github.com/maxim-saplin/pyglossary
 
 import re
+import typing
 from typing import Generator
 
 from pyglossary.compression import (
@@ -43,12 +44,12 @@ class Writer(object):
 
 	compressions = stdCompressions
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		glos.preventDuplicateWords()
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 
 	def finish(self) -> None:

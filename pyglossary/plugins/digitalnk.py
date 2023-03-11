@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import html
+import typing
 from typing import Iterator
 
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -20,7 +21,7 @@ website = (
 
 
 class Reader(object):
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
@@ -29,7 +30,7 @@ class Reader(object):
 		self._con = None
 		self._cur = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)

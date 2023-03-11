@@ -1,4 +1,5 @@
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname, relpath
 
@@ -11,7 +12,7 @@ from tests.glossary_errors_test import TestGlossaryErrorsBase
 
 class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 	def convert_txt_stardict(
-		self,
+		self: "typing.Self",
 		fname,
 		fname2="",
 		syn=True,
@@ -68,7 +69,7 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 			)
 
 	def convert_txt_stardict_zip(
-		self,
+		self: "typing.Self",
 		fname,
 		sha1sumDict,
 		dictzip=False,
@@ -104,7 +105,7 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 		)
 
 	def convert_stardict_txt(
-		self,
+		self: "typing.Self",
 		inputFname: str,
 		outputFname: str,
 		testId: str,
@@ -135,7 +136,7 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 
 
 class TestGlossaryStarDict(TestGlossaryStarDictBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryErrorsBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -337,7 +338,7 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 
 
 class TestGlossaryErrorsStarDict(TestGlossaryErrorsBase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		TestGlossaryErrorsBase.__init__(self, *args, **kwargs)
 
 	def test_convert_from_stardict_invalid_sametypesequence(self):

@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import typing
 import unittest
 from os.path import abspath, dirname
 from typing import Optional
@@ -124,7 +125,7 @@ class TestEntryDetectDefiFormat(unittest.TestCase):
 
 
 class TestEntryStripFullHtml(unittest.TestCase):
-	def __init__(self, *args, **kwargs):
+	def __init__(self: "typing.Self", *args, **kwargs):
 		unittest.TestCase.__init__(self, *args, **kwargs)
 
 	def setUp(self):
@@ -134,7 +135,7 @@ class TestEntryStripFullHtml(unittest.TestCase):
 		pass
 
 	def case(
-		self,
+		self: "typing.Self",
 		word: str,
 		origDefi: str,
 		fixedDefi: str,

@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
 
+import typing
+
+# -*- coding: utf-8 -*-
 from typing import Generator
 
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -27,14 +29,14 @@ optionsProp: "dict[str, Option]" = {
 class Writer(object):
 	_remove_html_all: bool = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 
 	def finish(self) -> None:
 		self._filename = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 		if self._remove_html_all:
 			self._glos.removeHtmlTagsAll()

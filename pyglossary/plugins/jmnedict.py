@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import typing
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
@@ -63,7 +64,7 @@ class Reader(object):
 	}
 
 	def makeList(
-		self,
+		self: "typing.Self",
 		hf: "T_htmlfile",
 		input_objects: "list[Element]",
 		processor: "Callable",
@@ -85,7 +86,7 @@ class Reader(object):
 					processor(hf, el)
 
 	def writeTrans(
-		self,
+		self: "typing.Self",
 		hf: "T_htmlfile",
 		trans: "Element",
 	) -> None:
@@ -128,7 +129,7 @@ class Reader(object):
 			hf.write(br())
 
 	def getEntryByElem(
-		self,
+		self: "typing.Self",
 		entry: "Element",
 	) -> "EntryType":
 		from lxml import etree as ET
@@ -225,7 +226,7 @@ class Reader(object):
 		)
 
 	def tostring(
-		self,
+		self: "typing.Self",
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -235,17 +236,17 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def setCreationTime(self, header: str) -> None:
+	def setCreationTime(self: "typing.Self", header: str) -> None:
 		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)
 		if m is None:
 			return
 		self._glos.setInfo("creationTime", m.group(1))
 
-	def setMetadata(self, header: str) -> None:
+	def setMetadata(self: "typing.Self", header: str) -> None:
 		# TODO: self.set_info("edition", ...)
 		self.setCreationTime(header)
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""
@@ -262,7 +263,7 @@ class Reader(object):
 			self._file = None
 
 	def open(
-		self,
+		self: "typing.Self",
 		filename: str,
 	) -> None:
 		try:

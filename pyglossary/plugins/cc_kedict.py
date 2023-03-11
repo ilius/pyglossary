@@ -1,3 +1,6 @@
+
+import typing
+
 # -*- coding: utf-8 -*-
 from io import BytesIO
 from os.path import isdir, join
@@ -39,7 +42,7 @@ class YamlReader(TextGlossaryReader):
 	)
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		glos: "GlossaryType",
 		spellKey: str = "",
 		posKey: str = "",
@@ -68,14 +71,14 @@ class YamlReader(TextGlossaryReader):
 			"pref": "prefix",
 		}
 
-	def isInfoWord(self, word: str) -> bool:
+	def isInfoWord(self: "typing.Self", word: str) -> bool:
 		return False
 
-	def fixInfoWord(self, word: str) -> str:
+	def fixInfoWord(self: "typing.Self", word: str) -> str:
 		return ""
 
 	def _makeList(
-		self,
+		self: "typing.Self",
 		hf: "lxml.etree.htmlfile",
 		input_objects: "list[Any]",
 		processor: "Callable",
@@ -100,7 +103,7 @@ class YamlReader(TextGlossaryReader):
 					processor(hf, el, len(input_objects))
 
 	def _processExample(
-		self,
+		self: "typing.Self",
 		hf: "lxml.etree.htmlfile",
 		exampleDict: "Dict",
 		count: int,
@@ -126,7 +129,7 @@ class YamlReader(TextGlossaryReader):
 				hf.write(f"{translation}")
 
 	def _processDef(
-		self,
+		self: "typing.Self",
 		hf: "lxml.etree.htmlfile",
 		defDict: "Dict",
 		count: int,
@@ -153,7 +156,7 @@ class YamlReader(TextGlossaryReader):
 			)
 
 	def _processNote(
-		self,
+		self: "typing.Self",
 		hf: "lxml.etree.htmlfile",
 		note: str,
 		count: int,
@@ -161,7 +164,7 @@ class YamlReader(TextGlossaryReader):
 		hf.write(note)
 
 	def _processEntry(
-		self,
+		self: "typing.Self",
 		hf: "lxml.etree.htmlfile",
 		edict: "Dict",
 	) -> None:
@@ -226,7 +229,7 @@ class YamlReader(TextGlossaryReader):
 				skip_single=False,
 			)
 
-	def _createEntry(self, yamlBlock: str) -> "tuple[str, str, None] | None":
+	def _createEntry(self: "typing.Self", yamlBlock: str) -> "tuple[str, str, None] | None":
 		from lxml import etree as ET
 		from yaml import load
 		try:
@@ -280,7 +283,7 @@ class Reader(object):
 		"lxml": "lxml",
 	}
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._yaml = YamlReader(
 			glos,
@@ -293,7 +296,7 @@ class Reader(object):
 	def __len__(self) -> int:
 		return 0
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		try:
 			from lxml import etree as ET  # noqa: F401
 		except ModuleNotFoundError as e:

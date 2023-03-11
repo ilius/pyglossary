@@ -20,6 +20,7 @@ import gc
 import os
 import re
 import sys
+import typing
 from os.path import dirname, extsep, isfile, join, splitext
 from typing import TYPE_CHECKING, Iterator
 
@@ -77,7 +78,7 @@ class Reader(object):
 	_same_dir_data_files: bool = False
 	_audio: bool = False
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.clear()
 		self._re_internal_link = re.compile('href=(["\'])(entry://|[dx]:)')
@@ -95,7 +96,7 @@ class Reader(object):
 		# dict of mainWord -> newline-separated alternatives
 		self._linksDict: "dict[str, str]" = {}
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		from pyglossary.plugin_lib.readmdict import MDD, MDX
 		self._filename = filename
 		self._mdx = MDX(filename, self._encoding, self._substyle)
@@ -179,7 +180,7 @@ class Reader(object):
 		self._wordCount = wordCount
 		self._mdx = MDX(self._filename, self._encoding, self._substyle)
 
-	def fixDefi(self, defi: str) -> str:
+	def fixDefi(self: "typing.Self", defi: str) -> str:
 		defi = self._re_internal_link.sub(r'href=\1bword://', defi)
 		defi = defi.replace(' src="file://', ' src=".')
 

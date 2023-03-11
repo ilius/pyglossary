@@ -2,6 +2,7 @@
 
 import io
 import os
+import typing
 from os.path import isdir
 from typing import Generator, Iterator
 
@@ -35,7 +36,7 @@ class Reader(object):
 		"polib": "polib",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self.clear()
 
@@ -46,7 +47,7 @@ class Reader(object):
 		self._resDir = ""
 		self._resFileNames: "list[str]" = []
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename)
 		self._resDir = filename + "_res"
@@ -127,12 +128,12 @@ class Writer(object):
 
 	_resources: bool = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "io.TextIOBase | None" = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 		self._file = _file = open(filename, mode="wt", encoding="utf-8")
 		_file.write('#\nmsgid ""\nmsgstr ""\n')

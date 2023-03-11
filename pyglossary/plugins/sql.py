@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import io
+import typing
 from typing import Generator, List
 
 from pyglossary.glossary_type import EntryType, GlossaryType
@@ -38,7 +39,7 @@ class Writer(object):
 	_newline: str = "<br>"
 	_transaction: bool = False
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "io.IOBase | None" = None
@@ -49,7 +50,7 @@ class Writer(object):
 			self._file.close()
 			self._file = None
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename, "wt", encoding=self._encoding)
 		self._writeInfo()

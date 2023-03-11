@@ -23,6 +23,7 @@ import os
 import pkgutil
 import shutil
 import sys
+import typing
 from os.path import basename, isdir, join
 from typing import Any, Dict, Generator
 
@@ -228,14 +229,14 @@ class Writer(object):
 	_jing: bool = False
 	_indexes: str = ""  # FIXME: rename to indexes_lang?
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._dirname = ""
 
 	def finish(self) -> None:
 		self._dirname = ""
 
-	def open(self, dirname: str) -> None:
+	def open(self: "typing.Self", dirname: str) -> None:
 		self._dirname = dirname
 		if not isdir(dirname):
 			os.mkdir(dirname)

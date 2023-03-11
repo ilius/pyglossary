@@ -19,6 +19,7 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import os
+import typing
 from os.path import dirname, isdir, isfile, join
 from typing import Generator, Iterator
 
@@ -59,7 +60,7 @@ def makeDir(direc: str) -> None:
 class Reader(object):
 	_encoding: str = "utf-8"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 
@@ -74,7 +75,7 @@ class Reader(object):
 		self._resDir = ""
 		self._resFileNames: "list[str]" = []
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		from pyglossary.json_utils import jsonToOrderedData
 		if isdir(filename):
 			infoFname = join(filename, "info.json")
@@ -174,14 +175,14 @@ class Writer(object):
 	_encoding: str = "utf-8"
 	_prev_link: bool = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 
 	def finish(self) -> None:
 		self._clear()
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 		self._resDir = join(filename, "res")
 		os.makedirs(filename)
@@ -194,10 +195,10 @@ class Writer(object):
 		self._hashSet: "set[str]" = set()
 		# self._wordCount = None
 
-	def hashToPath(self, h: str) -> str:
+	def hashToPath(self: "typing.Self", h: str) -> str:
 		return h[:2] + "/" + h[2:]
 
-	def getEntryHash(self, entry: EntryType) -> str:
+	def getEntryHash(self: "typing.Self", entry: EntryType) -> str:
 		"""
 		return hash string for given entry
 		don't call it twice for one entry, if you do you will get a
@@ -217,7 +218,7 @@ class Writer(object):
 			index += 1
 
 	def saveEntry(
-		self,
+		self: "typing.Self",
 		thisEntry: EntryType,
 		thisHash: str,
 		prevHash: "str | None",

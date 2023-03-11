@@ -24,6 +24,7 @@ import io
 import os
 import re
 import sys
+import typing
 from collections import OrderedDict as odict
 from typing import Iterator
 
@@ -166,7 +167,7 @@ class BGLGzipFile(GzipFile):
 	Some dictionaries do not use CRC code, it is set to 0.
 	"""
 	def __init__(
-		self,
+		self: "typing.Self",
 		fileobj: "io.IOBase | None" = None,
 		closeFileobj: bool = False,
 		**kwargs,
@@ -202,7 +203,7 @@ class FileOffS(file):
 	file. offset parameter of the constructor specifies the offset of the first
 	byte of the modeled file.
 	"""
-	def __init__(self, filename: str, offset: int = 0) -> None:
+	def __init__(self: "typing.Self", filename: str, offset: int = 0) -> None:
 		fileObj = open(filename, "rb")  # noqa: SIM115
 		file.__init__(self, fileObj)
 		self._fileObj = fileObj
@@ -212,7 +213,7 @@ class FileOffS(file):
 	def close(self) -> None:
 		self._fileObj.close()
 
-	def seek(self, pos: int, whence: int = 0) -> None:
+	def seek(self: "typing.Self", pos: int, whence: int = 0) -> None:
 		if whence == 0:  # relative to start of file
 			file.seek(
 				self,
@@ -335,7 +336,7 @@ class BglReader(object):
 	selected encoding, so the user may fix the encoding if needed.
 	"""
 
-	def __init__(self, glos: "GlossaryType") -> None:  # no more arguments
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:  # no more arguments
 		self._glos = glos
 		self._filename = ""
 		self.info = odict()
@@ -378,7 +379,7 @@ class BglReader(object):
 	# open .bgl file, read signature, find and open gzipped content
 	# self.file - ungzipped content
 	def open(
-		self,
+		self: "typing.Self",
 		filename: str,
 	) -> None:
 		self._filename = filename
@@ -557,7 +558,7 @@ class BglReader(object):
 			log.debug(f"BGL: unknown html entity: {entity}")
 
 	# returns False if error
-	def readBlock(self, block: "Block") -> bool:
+	def readBlock(self: "typing.Self", block: "Block") -> bool:
 		block.offset = self.file.tell()
 		length = self.readBytes(1)
 		if length == -1:
@@ -591,7 +592,7 @@ class BglReader(object):
 			block.data = b""
 		return True
 
-	def readBytes(self, num: int) -> int:
+	def readBytes(self: "typing.Self", num: int) -> int:
 		"""
 			return -1 if error
 		"""
@@ -611,7 +612,7 @@ class BglReader(object):
 			return -1
 		return uintFromBytes(buf)
 
-	def readType0(self, block: "Block") -> bool:
+	def readType0(self: "typing.Self", block: "Block") -> bool:
 		code = block.data[0]
 		if code == 2:
 			# this number is vary close to self.bgl_numEntries,
@@ -628,7 +629,7 @@ class BglReader(object):
 			return False
 		return True
 
-	def readType2(self, block: "Block") -> "EntryType | None":
+	def readType2(self: "typing.Self", block: "Block") -> "EntryType | None":
 		"""
 		Process type 2 block
 
@@ -673,7 +674,7 @@ class BglReader(object):
 			b_data,
 		)
 
-	def readType3(self, block: "Block") -> None:
+	def readType3(self: "typing.Self", block: "Block") -> None:
 		"""
 			reads block with type 3, and updates self.info
 			returns None
@@ -755,7 +756,7 @@ class BglReader(object):
 		else:
 			self.targetEncoding = self.defaultEncoding
 
-	def logUnknownBlock(self, block: "Block") -> None:
+	def logUnknownBlock(self: "typing.Self", block: "Block") -> None:
 		log.debug(
 			f"Unknown block: type={block.type}"
 			f", number={self.numBlocks}"
@@ -818,7 +819,7 @@ class BglReader(object):
 				)
 
 	def readEntryWord(
-		self,
+		self: "typing.Self",
 		block: "Block",
 		pos: int,
 	) -> "tuple[bool, int | None, bytes | None, bytes | None]":
@@ -866,7 +867,7 @@ class BglReader(object):
 		return True, pos, u_word.strip(), b_word.strip()
 
 	def readEntryDefi(
-		self,
+		self: "typing.Self",
 		block: "Block",
 		pos: int,
 		b_word: bytes,
@@ -904,7 +905,7 @@ class BglReader(object):
 		return True, pos, u_defi, b_defi
 
 	def readEntryAlts(
-		self,
+		self: "typing.Self",
 		block: "Block",
 		pos: int,
 		b_word: bytes,
@@ -946,7 +947,7 @@ class BglReader(object):
 		return True, pos, list(sorted(u_alts))
 
 	def readEntry_Type11(
-		self,
+		self: "typing.Self",
 		block: "Block",
 	) -> "tuple[bool, str | None, list[str] | None, str | None]":
 		"""return (succeed, u_word, u_alts, u_defi)"""
@@ -1038,11 +1039,11 @@ class BglReader(object):
 
 		return True, u_word, u_alts, u_defi
 
-	def charReferencesStat(self, b_text: bytes, encoding: str) -> None:
+	def charReferencesStat(self: "typing.Self", b_text: bytes, encoding: str) -> None:
 		pass
 
 	def decodeCharsetTags(
-		self,
+		self: "typing.Self",
 		b_text: bytes,
 		defaultEncoding: str,
 	) -> "tuple[str, str]":
@@ -1146,7 +1147,7 @@ class BglReader(object):
 			)
 		return u_text, defaultEncodingOnly
 
-	def processKey(self, b_word: bytes) -> str:
+	def processKey(self: "typing.Self", b_word: bytes) -> str:
 		"""
 			b_word is a bytes instance
 			returns u_word_main, as str instance (utf-8 encoding)
@@ -1186,7 +1187,7 @@ class BglReader(object):
 			u_word_main = u_word_main.rstrip(self._key_rstrip_chars)
 		return u_word_main
 
-	def processAlternativeKey(self, b_word: bytes, b_key: bytes) -> str:
+	def processAlternativeKey(self: "typing.Self", b_word: bytes, b_key: bytes) -> str:
 		"""
 			b_word is a bytes instance
 			returns u_word_main, as str instance (utf-8 encoding)
@@ -1224,7 +1225,7 @@ class BglReader(object):
 		u_word_main = u_word_main.rstrip(self._key_rstrip_chars)
 		return u_word_main
 
-	def processDefi(self, b_defi: bytes, b_key: bytes) -> str:
+	def processDefi(self: "typing.Self", b_defi: bytes, b_key: bytes) -> str:
 		"""
 		b_defi: bytes
 		b_key: bytes
@@ -1344,14 +1345,14 @@ class BglReader(object):
 		return u_defi_format.removesuffix("<br>").removesuffix("<BR>")
 
 	def processDefiStat(
-		self,
+		self: "typing.Self",
 		fields: DefinitionFields,
 		b_defi: bytes,
 		b_key: bytes,
 	) -> None:
 		pass
 
-	def findDefiFieldsStart(self, b_defi: bytes) -> int:
+	def findDefiFieldsStart(self: "typing.Self", b_defi: bytes) -> int:
 		"""
 		b_defi is a bytes instance
 
@@ -1383,7 +1384,7 @@ class BglReader(object):
 		return index
 
 	def collectDefiFields(
-		self,
+		self: "typing.Self",
 		b_defi: bytes,
 		b_key: bytes,
 		fields: DefinitionFields,

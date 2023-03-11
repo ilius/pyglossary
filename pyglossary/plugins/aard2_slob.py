@@ -3,6 +3,7 @@
 import os
 import re
 import shutil
+import typing
 from os.path import isfile, splitext
 from typing import Generator, Iterator
 
@@ -71,7 +72,7 @@ class Reader(object):
 		"icu": "PyICU",  # >=1.5
 	}
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 		self._re_bword = re.compile(
@@ -88,7 +89,7 @@ class Reader(object):
 		self._filename = ""
 		self._slobObj = None  # slobObj is instance of slob.Slob class
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		try:
 			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
@@ -153,7 +154,7 @@ class Reader(object):
 			return 0
 		return len(self._slobObj)
 
-	def _href_sub(self, m: "re.Match") -> str:
+	def _href_sub(self: "typing.Self", m: "re.Match") -> str:
 		st = m.group(0)
 		if "//" in st:
 			return st
@@ -233,19 +234,19 @@ class Writer(object):
 		"pdf": "application/pdf",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		self._resPrefix = ""
 		self._slobWriter = None
 
 	def _slobObserver(
-		self,
+		self: "typing.Self",
 		event: "slob.WriterEvent",  # noqa: F401, F821
 	) -> None:
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
-	def _open(self, filename: str, namePostfix: str) -> None:
+	def _open(self: "typing.Self", filename: str, namePostfix: str) -> None:
 		from pyglossary.plugin_lib import slob
 		if isfile(filename):
 			shutil.move(filename, f"{filename}.bak")
@@ -260,7 +261,7 @@ class Writer(object):
 		)
 		slobWriter.tag("label", self._glos.getInfo("name") + namePostfix)
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		try:
 			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
@@ -285,7 +286,7 @@ class Writer(object):
 		log.info(f"Finalizing slob file took {time() - t0:.1f} seconds")
 		self._slobWriter = None
 
-	def addDataEntry(self, entry: "EntryType") -> None:
+	def addDataEntry(self: "typing.Self", entry: "EntryType") -> None:
 		slobWriter = self._slobWriter
 		rel_path = entry.s_word
 		_, ext = splitext(rel_path)
@@ -303,7 +304,7 @@ class Writer(object):
 			return
 		slobWriter.add(content, key, content_type=content_type)
 
-	def addEntry(self, entry: "EntryType") -> None:
+	def addEntry(self: "typing.Self", entry: "EntryType") -> None:
 		words = entry.l_word
 		b_defi = entry.defi.encode("utf-8")
 		_ctype = self._content_type

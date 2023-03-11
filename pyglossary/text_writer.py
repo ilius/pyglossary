@@ -1,5 +1,6 @@
 import logging
 import os
+import typing
 from os.path import (
 	isdir,
 )
@@ -32,7 +33,7 @@ class TextGlossaryWriter(object):
 	_word_title: bool = False
 
 	def __init__(
-		self,
+		self: "typing.Self",
 		glos: "GlossaryType",
 		entryFmt: str = "",  # contain {word} and {defi}
 		writeInfo: bool = True,
@@ -55,7 +56,7 @@ class TextGlossaryWriter(object):
 		# TODO: replace outInfoKeysAliasDict arg with a func?
 
 	def setAttrs(
-		self,
+		self: "typing.Self",
 		encoding: "str | None" = None,
 		newline: "str | None" = None,
 		wordListEncodeFunc: "Callable | None" = None,
@@ -91,7 +92,7 @@ class TextGlossaryWriter(object):
 		if file_size_approx is not None:
 			self._file_size_approx = file_size_approx
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		if self._file_size_approx > 0:
 			self._glos.setInfo("file_count", "-1")
 		self._open(filename)
@@ -100,7 +101,7 @@ class TextGlossaryWriter(object):
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
-	def _doWriteInfo(self, _file: "io.TextIOBase") -> None:
+	def _doWriteInfo(self: "typing.Self", _file: "io.TextIOBase") -> None:
 		entryFmt = self._entryFmt
 		outInfoKeysAliasDict = self._outInfoKeysAliasDict
 		wordEscapeFunc = self._wordEscapeFunc
@@ -127,7 +128,7 @@ class TextGlossaryWriter(object):
 				defi=value,
 			))
 
-	def _open(self, filename: str) -> None:
+	def _open(self: "typing.Self", filename: str) -> None:
 		if not filename:
 			filename = self._glos.filename + self._ext
 

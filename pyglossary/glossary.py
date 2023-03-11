@@ -1,3 +1,6 @@
+
+import typing
+
 # -*- coding: utf-8 -*-
 # glossary.py
 #
@@ -17,7 +20,6 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
-
 from time import time as now
 from typing import Any
 
@@ -32,14 +34,14 @@ class Glossary(GlossaryV2):
 	GLOSSARY_API_VERSION = "1.0"
 
 	def titleElement(
-		self,
+		self: "typing.Self",
 		hf,  # type: ignore # noqa: PGH
 		sample: str = "",
 	):  # type: ignore # noqa: PGH
 		return hf.element(self.titleTag(sample))
 
 	def read(
-		self,
+		self: "typing.Self",
 		filename: str,
 		format: str = "",
 		direct: bool = False,
@@ -83,14 +85,14 @@ class Glossary(GlossaryV2):
 
 		return True
 
-	def addEntryObj(self, entry: "EntryType") -> None:
+	def addEntryObj(self: "typing.Self", entry: "EntryType") -> None:
 		self._data.append(entry)
 
 	def updateIter(self) -> None:
 		log.warning("calling glos.updateIter() is no longer needed.")
 
 	def sortWords(
-		self,
+		self: "typing.Self",
 		sortKeyName: "str" = "headword_lower",
 		sortEncoding: "str" = "utf-8",
 		writeOptions: "dict[str, Any] | None" = None,
@@ -131,7 +133,7 @@ class Glossary(GlossaryV2):
 		self._iter = self._loadedEntryGen()
 
 	def convert(
-		self,
+		self: "typing.Self",
 		inputFilename: str,
 		inputFormat: str = "",
 		direct: "bool | None" = None,

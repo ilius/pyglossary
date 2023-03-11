@@ -19,6 +19,7 @@
 
 import csv
 import os
+import typing
 from os.path import isdir, join
 from typing import Generator, Iterator
 
@@ -77,7 +78,7 @@ class Reader(object):
 	_newline: str = "\n"
 	_delimiter: str = ","
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self.clear()
 
@@ -94,7 +95,7 @@ class Reader(object):
 		self._bufferRow = None
 
 	def open(
-		self,
+		self: "typing.Self",
 		filename: str,
 	) -> None:
 		from pyglossary.text_reader import TextFilePosWrapper
@@ -161,7 +162,7 @@ class Reader(object):
 		for row in self._csvReader:
 			yield row
 
-	def _processRow(self, row: "list[str]") -> "EntryType | None":
+	def _processRow(self: "typing.Self", row: "list[str]") -> "EntryType | None":
 		if not row:
 			return None
 
@@ -220,10 +221,10 @@ class Writer(object):
 	_enable_info: bool = True
 	_word_title: bool = False
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		self._filename = filename
 		self._file = compressionOpen(
 			filename,

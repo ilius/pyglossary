@@ -1,6 +1,7 @@
 
 import json
 import logging
+import typing
 from os.path import join
 
 from pyglossary.core import rootDir
@@ -10,7 +11,7 @@ log = logging.getLogger("pyglossary")
 
 class Lang(object):
 	def __init__(
-		self,
+		self: "typing.Self",
 		codes: "list[str]",
 		names: "list[str]",
 		titleTag: str = "b",
@@ -59,7 +60,7 @@ class Lang(object):
 
 
 class LangDict(dict):
-	def _addLang(self, lang: "Lang") -> None:
+	def _addLang(self: "typing.Self", lang: "Lang") -> None:
 		for key in lang.codes:
 			if key in self:
 				log.error(f"duplicate language code: {key}")
@@ -90,7 +91,7 @@ class LangDict(dict):
 			f"took {(now() - t0)*1000:.1f} ms",
 		)
 
-	def __getitem__(self, key: str) -> "Lang | None":
+	def __getitem__(self: "typing.Self", key: str) -> "Lang | None":
 		self.load()
 		return self.get(key.lower(), None)
 

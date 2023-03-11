@@ -23,6 +23,7 @@ from __future__ import division
 
 import datetime
 import math
+import typing
 
 try:
     from abc import ABCMeta, abstractmethod
@@ -57,7 +58,7 @@ class Widget(AbstractWidget):
     __slots__ = ()
 
     @abstractmethod
-    def update(self, pbar):
+    def update(self: "typing.Self", pbar):
         """Updates the widget.
 
         pbar - a reference to the calling ProgressBar
@@ -73,7 +74,7 @@ class WidgetHFill(Widget):
     """
 
     @abstractmethod
-    def update(self, pbar, width):
+    def update(self: "typing.Self", pbar, width):
         """Updates the widget providing the total width the widget must fill.
 
         pbar - a reference to the calling ProgressBar
@@ -87,7 +88,7 @@ class Timer(Widget):
     __slots__ = ('format_string',)
     TIME_SENSITIVE = True
 
-    def __init__(self, format='Elapsed Time: %s') -> None:
+    def __init__(self: "typing.Self", format='Elapsed Time: %s') -> None:
         self.format_string = format
 
     @staticmethod
@@ -97,7 +98,7 @@ class Timer(Widget):
         return str(datetime.timedelta(seconds=int(seconds)))
 
 
-    def update(self, pbar):
+    def update(self: "typing.Self", pbar):
         """Updates the widget to show the elapsed time."""
 
         return self.format_string % self.format_time(pbar.seconds_elapsed)
@@ -108,7 +109,7 @@ class ETA(Timer):
 
     TIME_SENSITIVE = True
 
-    def update(self, pbar):
+    def update(self: "typing.Self", pbar):
         """Updates the widget to show the ETA or total time when finished."""
 
         if pbar.maxval is UnknownLength or pbar.currval == 0:
@@ -135,7 +136,7 @@ class AdaptiveETA(Timer):
     TIME_SENSITIVE = True
     NUM_SAMPLES = 10
 
-    def _update_samples(self, currval, elapsed):
+    def _update_samples(self: "typing.Self", currval, elapsed):
         sample = (currval, elapsed)
         if not hasattr(self, 'samples'):
             self.samples = [sample] * (self.NUM_SAMPLES + 1)
@@ -143,10 +144,10 @@ class AdaptiveETA(Timer):
             self.samples.append(sample)
         return self.samples.pop(0)
 
-    def _eta(self, maxval, currval, elapsed):
+    def _eta(self: "typing.Self", maxval, currval, elapsed):
         return elapsed * maxval / float(currval) - elapsed
 
-    def update(self, pbar):
+    def update(self: "typing.Self", pbar):
         """Updates the widget to show the ETA or total time when finished."""
         if pbar.maxval is UnknownLength or pbar.currval == 0:
             return 'ETA:  --:--:--'
@@ -171,10 +172,10 @@ class FileTransferSpeed(Widget):
     PREFIXES = ' kMGTPEZY'
     __slots__ = ('unit',)
 
-    def __init__(self, unit='B') -> None:
+    def __init__(self: "typing.Self", unit='B') -> None:
         self.unit = unit
 
-    def update(self, pbar):
+    def update(self: "typing.Self", pbar):
         """Updates the widget with the current SI prefixed speed."""
 
         if pbar.seconds_elapsed < 2e-6 or pbar.currval < 2e-6: # =~ 0
@@ -194,11 +195,11 @@ class AnimatedMarker(Widget):
 
     __slots__ = ('markers', 'curmark')
 
-    def __init__(self, markers='|/-\\') -> None:
+    def __init__(self: "typing.Self", markers='|/-\\') -> None:
         self.markers = markers
         self.curmark = -1
 
-    def update(self, pbar):
+    def update(self: "typing.Self", pbar):
         """Updates the widget to show the next marker or the first marker when
         finished"""
 
@@ -217,21 +218,21 @@ class Counter(Widget):
 
     __slots__ = ('format_string',)
 
-    def __init__(self, format='%d') -> None:
+    def __init__(self: "typing.Self", format='%d') -> None:
         self.format_string = format
 
-    def update(self, pbar):
+    def update(self: "typing.Self", pbar):
         return self.format_string % pbar.currval
 
 
 class Percentage(Widget):
     """Displays the current percentage as a number with a percent sign."""
 
-    def __init__(self, prefix="%") -> None:
+    def __init__(self: "typing.Self", prefix="%") -> None:
         Widget.__init__(self)
         self.prefix = prefix
 
-    def update(self, pbar):
+    def update(self: "typing.Self", pbar):
         return f"{self.prefix}{pbar.percentage():.1f}"\
             .rjust(5 + len(self.prefix))
 
@@ -250,10 +251,10 @@ class FormatLabel(Timer):
     }
 
     __slots__ = ('format_string',)
-    def __init__(self, format) -> None:
+    def __init__(self: "typing.Self", format) -> None:
         self.format_string = format
 
-    def update(self, pbar):
+    def update(self: "typing.Self", pbar):
         context = {}
         for name, (key, transform) in self.mapping.items():
             try:
@@ -274,10 +275,10 @@ class SimpleProgress(Widget):
 
     __slots__ = ('sep',)
 
-    def __init__(self, sep=' of ') -> None:
+    def __init__(self: "typing.Self", sep=' of ') -> None:
         self.sep = sep
 
-    def update(self, pbar):
+    def update(self: "typing.Self", pbar):
         if pbar.maxval is UnknownLength:
             return '%d%s?' % (pbar.currval, self.sep)
         return '%d%s%s' % (pbar.currval, self.sep, pbar.maxval)
@@ -288,7 +289,7 @@ class Bar(WidgetHFill):
 
     __slots__ = ('marker', 'left', 'right', 'fill', 'fill_left')
 
-    def __init__(self, marker='#', left='|', right='|', fill=' ',
+    def __init__(self: "typing.Self", marker='#', left='|', right='|', fill=' ',
                  fill_left=True) -> None:
         """Creates a customizable progress bar.
 
@@ -305,7 +306,7 @@ class Bar(WidgetHFill):
         self.fill_left = fill_left
 
 
-    def update(self, pbar, width):
+    def update(self: "typing.Self", pbar, width):
         """Updates the progress bar and its subcomponents."""
 
         left, marked, right = (format_updatable(i, pbar) for i in
@@ -327,7 +328,7 @@ class Bar(WidgetHFill):
 class ReverseBar(Bar):
     """A bar which has a marker which bounces from side to side."""
 
-    def __init__(self, marker='#', left='|', right='|', fill=' ',
+    def __init__(self: "typing.Self", marker='#', left='|', right='|', fill=' ',
                  fill_left=False) -> None:
         """Creates a customizable progress bar.
 
@@ -345,7 +346,7 @@ class ReverseBar(Bar):
 
 
 class BouncingBar(Bar):
-    def update(self, pbar, width):
+    def update(self: "typing.Self", pbar, width):
         """Updates the progress bar and its subcomponents."""
 
         left, marker, right = (format_updatable(i, pbar) for i in

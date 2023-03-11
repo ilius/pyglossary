@@ -4,6 +4,7 @@ import html
 import os
 import re
 import time
+import typing
 from os.path import isdir, isfile, join
 from typing import TYPE_CHECKING, Generator
 
@@ -97,10 +98,10 @@ class Writer(object):
 	_css: str = ""
 	_word_title: bool = True
 
-	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
+	def stripFullHtmlError(self: "typing.Self", entry: "EntryType", error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._fileObj: "io.IOBase | None" = None
@@ -110,7 +111,7 @@ class Writer(object):
 		self._filenameList: "list[str]" = []
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
-	def open(self, filename: str) -> None:
+	def open(self: "typing.Self", filename: str) -> None:
 		from cachetools import LRUCache  # noqa: F401
 
 		self._filename = filename
@@ -122,7 +123,7 @@ class Writer(object):
 		if self._css:
 			self.copyCSS(self._css)
 
-	def copyCSS(self, cssPath: str) -> None:
+	def copyCSS(self: "typing.Self", cssPath: str) -> None:
 		import shutil
 		shutil.copy(self._css, join(self._filename, "style.css"))
 
@@ -150,7 +151,7 @@ class Writer(object):
 		)
 		return self._fileObj
 
-	def fixLinks(self, linkTargetSet: "set[str]") -> None:
+	def fixLinks(self: "typing.Self", linkTargetSet: "set[str]") -> None:
 		import gc
 
 		from cachetools import LRUCache
@@ -278,7 +279,7 @@ class Writer(object):
 			os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
 			os.remove(join(dirn, f"links{fileIndex}"))
 
-	def writeInfo(self, filename: str, header: str) -> None:
+	def writeInfo(self: "typing.Self", filename: str, header: str) -> None:
 		glos = self._glos
 		title = glos.getInfo("name")
 		customStyle = (
