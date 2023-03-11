@@ -1008,7 +1008,10 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedTy
 
 		return namedSortKey, sortEncoding
 
-	def _convertValidateStrings(self: "typing.Self", args: ConvertArgs):
+	def _convertValidateStrings(
+		self: "typing.Self",
+		args: ConvertArgs,
+	) -> None:
 		if type(args.inputFilename) is not str:
 			raise TypeError("inputFilename must be str")
 		if type(args.outputFilename) is not str:

@@ -18,11 +18,12 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+import logging
 import os
 import sys
 import typing
 from os.path import join
-from typing import Dict
+from typing import Any, Dict, Mapping
 
 from pyglossary.core import dataDir, log
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
@@ -32,7 +33,7 @@ from .base import UIBase, fread
 from .wcwidth import wcswidth
 
 
-def wc_ljust(text, length, padding=' '):
+def wc_ljust(text: str, length: int, padding: str = ' ') -> str:
 	return text + padding * max(0, (length - wcswidth(text)))
 
 
@@ -50,13 +51,13 @@ else:
 COMMAND = "pyglossary"
 
 
-def getColWidth(subject, strings):
+def getColWidth(subject: str, strings: "list[str]") -> int:
 	return max(
 		len(x) for x in [subject] + strings
 	)
 
 
-def getFormatsTable(names, header):
+def getFormatsTable(names: "list[str]", header: str) -> str:
 	descriptions = [
 		Glossary.plugins[name].description
 		for name in names
@@ -99,7 +100,7 @@ def getFormatsTable(names, header):
 	return "\n".join(lines)
 
 
-def help():
+def help() -> None:
 	import string
 	text = fread(join(dataDir, "help"))
 	text = text.replace("<b>", startBold)\
@@ -114,7 +115,7 @@ def help():
 	print(text)
 
 
-def parseFormatOptionsStr(st) -> "Dict | None":
+def parseFormatOptionsStr(st: str) -> "dict[str, Any] | None":
 	"""
 		prints error and returns None if failed to parse one option
 	"""
@@ -151,16 +152,20 @@ def encodeFormatOptions(opt: "Dict") -> str:
 
 
 class NullObj(object):
-	def __getattr__(self: "typing.Self", attr):
+	def __getattr__(self: "typing.Self", attr: str) -> "NullObj":
 		return self
 
-	def __setattr__(self: "typing.Self", attr, value):
+	def __setattr__(self: "typing.Self", attr: str, value: "Any") -> None:
 		pass
 
-	def __setitem__(self: "typing.Self", key, value):
+	def __setitem__(self: "typing.Self", key: str, value: "Any") -> None:
 		pass
 
-	def __call__(self: "typing.Self", *args, **kwargs):
+	def __call__(
+		self: "typing.Self",
+		*args: "tuple[Any]",
+		**kwargs: "Mapping[Any]",
+	) -> None:
 		pass
 
 
@@ -176,7 +181,10 @@ class UI(UIBase):
 		self._resetLogFormatter = None
 		self._progressbar = progressbar
 
-	def onSigInt(self: "typing.Self", *args):
+	def onSigInt(
+		self: "typing.Self",
+		*args: "tuple[Any]",
+	) -> None:
 		log.info("")
 		if self._toPause:
 			log.info("Operation Canceled")
@@ -185,26 +193,26 @@ class UI(UIBase):
 			self._toPause = True
 			log.info("Please wait...")
 
-	def setText(self: "typing.Self", text):
+	def setText(self: "typing.Self", text: str) -> None:
 		self.pbar.widgets[0] = text
 
-	def fixLogger(self: "typing.Self"):
+	def fixLogger(self: "typing.Self") -> None:
 		for h in log.handlers:
 			if h.name == "std":
 				self.fixLogHandler(h)
 				return
 
-	def fillMessage(self: "typing.Self", msg):
+	def fillMessage(self: "typing.Self", msg: str) -> str:
 		return wc_ljust(msg, self.pbar.term_width)
 
-	def fixLogHandler(self: "typing.Self", h):
-		def reset():
+	def fixLogHandler(self: "typing.Self", h: "logging.Handler") -> None:
+		def reset() -> None:
 			h.formatter.fill = None
 
 		self._resetLogFormatter = reset
 		h.formatter.fill = self.fillMessage
 
-	def progressInit(self: "typing.Self", title):
+	def progressInit(self: "typing.Self", title: str) -> None:
 		rot = pb.RotatingMarker()
 		self.pbar = pb.ProgressBar(
 			maxval=1.0,
@@ -222,15 +230,19 @@ class UI(UIBase):
 		rot.pbar = self.pbar
 		self.fixLogger()
 
-	def progress(self: "typing.Self", rat, text=""):
-		self.pbar.update(rat)
+	def progress(self: "typing.Self", ratio: float, text: str = "") -> None:
+		self.pbar.update(ratio)
 
-	def progressEnd(self: "typing.Self"):
+	def progressEnd(self: "typing.Self") -> None:
 		self.pbar.finish()
 		if self._resetLogFormatter:
 			self._resetLogFormatter()
 
-	def reverseLoop(self: "typing.Self", *args, **kwargs):
+	def reverseLoop(
+		self: "typing.Self",
+		*args: "tuple[Any]",
+		**kwargs: "Mapping[Any]",
+	) -> None:
 		from pyglossary.reverse import reverseGlossary
 		reverseKwArgs = {}
 		for key in (
@@ -273,7 +285,7 @@ class UI(UIBase):
 		writeOptions: "Dict | None" = None,
 		convertOptions: "Dict | None" = None,
 		glossarySetAttrs: "Dict | None" = None,
-	):
+	) -> bool:
 		if config is None:
 			config = {}
 		if readOptions is None:
@@ -296,7 +308,7 @@ class UI(UIBase):
 			if outputFormat not in Glossary.writeFormats:
 				log.error(f"invalid write format {outputFormat}")
 				log.error(f"try: {COMMAND} --help")
-				return 1
+				return False
 		if not outputFilename:
 			if reverse:
 				pass
@@ -306,13 +318,13 @@ class UI(UIBase):
 				except (KeyError, IndexError):
 					log.error(f"invalid write format {outputFormat}")
 					log.error(f"try: {COMMAND} --help")
-					return 1
+					return False
 				else:
 					outputFilename = os.path.splitext(inputFilename)[0] + ext
 			else:
 				log.error("neither output file nor output format is given")
 				log.error(f"try: {COMMAND} --help")
-				return 1
+				return False
 
 		glos = self.glos = Glossary(ui=self)
 		glos.config = self.config

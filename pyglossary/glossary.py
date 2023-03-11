@@ -33,7 +33,7 @@ from .sort_keys import lookupSortKey
 class Glossary(GlossaryV2):
 	GLOSSARY_API_VERSION = "1.0"
 
-	def titleElement(
+	def titleElement(  # noqa: ANN
 		self: "typing.Self",
 		hf,  # type: ignore # noqa: PGH
 		sample: str = "",

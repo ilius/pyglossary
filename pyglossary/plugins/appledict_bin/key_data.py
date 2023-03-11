@@ -18,7 +18,7 @@ import typing
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import TypeAlias
+	from typing import Any, TypeAlias
 
 RawKeyData: "TypeAlias" = "tuple[int, int, list[str]]"
 """tuple(priority, parentalControl, keyTextFields)"""
@@ -101,7 +101,7 @@ class KeyData:
 		self.entryTitle = entryTitle
 		self.anchor = anchor
 
-	def toDict(self: "typing.Self"):
+	def toDict(self: "typing.Self") -> "dict[str, Any]":
 		return dict(
 			priority=self.priority,
 			parentalControl=self.parentalControl,

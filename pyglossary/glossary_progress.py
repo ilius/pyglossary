@@ -11,7 +11,7 @@ class GlossaryProgress(object):
 	def __init__(
 		self: "typing.Self",
 		ui: "UIType | None" = None,  # noqa: F821
-	):
+	) -> None:
 		self._ui = ui
 		self._progressbar = True
 
