@@ -13,6 +13,7 @@ rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
 
 from pyglossary.core_test import MockLogHandler
+from pyglossary.plugin_lib import slob
 from pyglossary.plugin_lib.slob import (
 	IDENTICAL,
 	MAX_BIN_ITEM_COUNT,
@@ -36,7 +37,6 @@ from pyglossary.plugin_lib.slob import (
 	meld_ints,
 	read_header,
 	set_tag_value,
-	slob,
 	sortkey,
 	unmeld_ints,
 )
@@ -127,7 +127,7 @@ class TestReadWrite(BaseTest):
 		self.assertEqual(header.blob_count, len(self.data))
 
 	def test_content(self: "typing.Self"):
-		with open(self.path) as r:
+		with slob.open(self.path) as r:
 			self.assertEqual(len(r), len(self.all_keys))
 			self.assertRaises(IndexError, r.__getitem__, len(self.all_keys))
 			for i, item in enumerate(r):
@@ -179,7 +179,7 @@ class TestSort(BaseTest):
 				v = ';'.join(unicodedata.name(c) for c in k)
 				w.add(v.encode('ascii'), k)
 
-		self.r = open(self.path)
+		self.r = slob.open(self.path)
 
 	def test_sort_order(self: "typing.Self"):
 		for i in range(len(self.r)):
@@ -207,7 +207,7 @@ class TestFind(BaseTest):
 				v = ';'.join(unicodedata.name(c) for c in k)
 				w.add(v.encode('ascii'), k)
 
-		self.r = open(self.path)
+		self.r = slob.open(self.path)
 
 	def get(self: "typing.Self", d, key):
 		return list(item.content.decode('ascii') for item in d[key])
@@ -317,7 +317,7 @@ class TestPrefixFind(BaseTest):
 		self.tmpdir.cleanup()
 
 	def test(self: "typing.Self"):
-		with open(self.path) as r:
+		with slob.open(self.path) as r:
 			for i, k in enumerate(self.data):
 				d = r.as_dict(IDENTICAL, len(k))
 				self.assertEqual(
@@ -370,7 +370,7 @@ class TestAlias(BaseTest):
 		self.assertEqual(too_many_redirects, ['l1', 'l2', 'l3'])
 		self.assertEqual(target_not_found, ['l2', 'l3', 'l1', 'YYY'])
 
-		with open(self.path) as r:
+		with slob.open(self.path) as r:
 			d = r.as_dict()
 
 			def get(key):
@@ -480,7 +480,7 @@ class TestFormatErrors(BaseTest):
 		name = os.path.join(self.tmpdir.name, '1')
 		with fopen(name, 'wb') as f:
 			f.write(b'123')
-		self.assertRaises(UnknownFileFormat, open, name)
+		self.assertRaises(UnknownFileFormat, slob.open, name)
 
 	def test_truncated_file(self: "typing.Self"):
 		name = os.path.join(self.tmpdir.name, '1')
@@ -495,13 +495,13 @@ class TestFormatErrors(BaseTest):
 		with fopen(name, 'wb') as f:
 			f.write(all_bytes[:-1])
 
-		self.assertRaises(IncorrectFileSize, open, name)
+		self.assertRaises(IncorrectFileSize, slob.open, name)
 
 		with fopen(name, 'wb') as f:
 			f.write(all_bytes)
 			f.write(b'\n')
 
-		self.assertRaises(IncorrectFileSize, open, name)
+		self.assertRaises(IncorrectFileSize, slob.open, name)
 
 
 class TestFindParts(BaseTest):
@@ -607,7 +607,7 @@ class TestTooLongText(BaseTest):
 			[long_content_type],
 		)
 
-		with open(self.path) as r:
+		with slob.open(self.path) as r:
 			self.assertEqual(r.tags['t2'], 't2 value')
 			self.assertFalse(tag_with_long_name[0] in r.tags)
 			self.assertTrue(tag_with_long_value[0] in r.tags)
@@ -642,12 +642,12 @@ class TestEditTag(BaseTest):
 		self.tmpdir.cleanup()
 
 	def test_edit_existing_tag(self: "typing.Self"):
-		with open(self.path) as f:
+		with slob.open(self.path) as f:
 			self.assertEqual(f.tags['a'], '123456')
 			self.assertEqual(f.tags['b'], '654321')
 		set_tag_value(self.path, 'b', 'efg')
 		set_tag_value(self.path, 'a', 'xyz')
-		with open(self.path) as f:
+		with slob.open(self.path) as f:
 			self.assertEqual(f.tags['a'], 'xyz')
 			self.assertEqual(f.tags['b'], 'efg')
 
