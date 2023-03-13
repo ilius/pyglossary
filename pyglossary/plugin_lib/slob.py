@@ -5,6 +5,7 @@ import os
 import pickle
 import sys
 import tempfile
+import types
 import typing
 import warnings
 from abc import abstractmethod
@@ -13,6 +14,7 @@ from builtins import open as fopen
 from collections import namedtuple
 from datetime import datetime, timezone
 from functools import lru_cache
+from io import IOBase
 from os.path import isdir
 from struct import calcsize, pack, unpack
 from threading import RLock
@@ -22,7 +24,9 @@ from typing import (
 	Callable,
 	Generic,
 	Iterator,
+	Mapping,
 	Sequence,
+	Type,
 	TypeVar,
 	Union,
 	cast,
@@ -31,6 +35,8 @@ from uuid import UUID, uuid4
 
 import icu
 from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
+
+from .interfaces import Interface
 
 DEFAULT_COMPRESSION = 'lzma2'
 
@@ -64,7 +70,7 @@ U_LONG_LONG = '>Q'
 U_LONG_LONG_SIZE = calcsize(U_LONG_LONG)
 
 
-def calcmax(len_size_spec):
+def calcmax(len_size_spec: str) -> int:
 	return 2 ** (calcsize(len_size_spec) * 8) - 1
 
 
@@ -81,19 +87,49 @@ QUATERNARY = Collator.QUATERNARY
 IDENTICAL = Collator.IDENTICAL
 
 
-def init_compressions():
-	def ident(x):
+class CompressionModule(metaclass=Interface):
+	# gzip.compress(data, compresslevel=9, *, mtime=None)
+	# bz2.compress(data, compresslevel=9)
+	# zlib.compress(data, /, level=-1, wbits=15)
+	# lzma.compress(data, format=1, check=-1, preset=None, filters=None)
+	@staticmethod
+	def compress(data: bytes, compresslevel: int = 9) -> bytes:
+		raise NotImplementedError
+
+	# gzip.decompress(data)
+	# bz2.decompress(data)
+	# zlib.decompress(data, /, wbits=15, bufsize=16384)
+	# lzma.decompress(data, format=0, memlimit=None, filters=None)
+	@staticmethod
+	def decompress(
+		data: bytes,
+		**kwargs: "Mapping[str, Any]",
+	) -> bytes:
+		raise NotImplementedError
+
+
+
+def init_compressions() -> "dict[str, Compression]":
+	def ident(x: bytes) -> bytes:
 		return x
 
-	compressions = {'': Compression(ident, ident)}
+	compressions: "dict[str, Compression]" = {
+		'': Compression(ident, ident),
+	}
 	for name in ('bz2', 'zlib'):
+		m: CompressionModule
 		try:
-			m = __import__(name)
+			m = cast(CompressionModule, __import__(name))
 		except ImportError:
-			warnings.warning(f'{name} is not available')
+			warnings.showwarning(
+				message=f'{name} is not available',
+				category=ImportWarning,
+				filename=__file__,
+				lineno=0,
+			)
 			continue
 
-		def compress_new(x, m=m):
+		def compress_new(x: bytes, m: CompressionModule = m) -> bytes:
 			return m.compress(x, 9)
 
 		compressions[name] = Compression(compress_new, m.decompress)
@@ -211,9 +247,13 @@ class MultiFileReader(io.BufferedIOBase):
 	def __enter__(self: "typing.Self") -> "MultiFileReader":
 		return self
 
-	def __exit__(self: "typing.Self", exc_type, exc_val, exc_tb):
+	def __exit__(
+		self: "typing.Self",
+		exc_type: "Type[BaseException] | None",
+		exc_val: "BaseException | None",
+		exc_tb: "types.TracebackType | None",
+	) -> None:
 		self.close()
-		return False
 
 	def close(self: "typing.Self") -> None:
 		for f in self._files:
@@ -231,7 +271,11 @@ class MultiFileReader(io.BufferedIOBase):
 	def readable(self: "typing.Self") -> bool:
 		return True
 
-	def seek(self: "typing.Self", offset, whence=io.SEEK_SET):
+	def seek(
+		self: "typing.Self",
+		offset: int,
+		whence: int = io.SEEK_SET,
+	) -> int:
 		if whence == io.SEEK_SET:
 			self._offset = offset
 		elif whence == io.SEEK_CUR:
@@ -242,16 +286,16 @@ class MultiFileReader(io.BufferedIOBase):
 			raise ValueError('Invalid value for parameter whence: %r' % whence)
 		return self._offset
 
-	def seekable(self: "typing.Self"):
+	def seekable(self: "typing.Self") -> bool:
 		return True
 
-	def tell(self: "typing.Self"):
+	def tell(self: "typing.Self") -> int:
 		return self._offset
 
-	def writable(self: "typing.Self"):
+	def writable(self: "typing.Self") -> bool:
 		return False
 
-	def read(self: "typing.Self", n=-1):
+	def read(self: "typing.Self", n: "int | None" = -1) -> bytes:
 		file_index = -1
 		actual_offset = 0
 		for i, r in enumerate(self._ranges):
@@ -260,7 +304,7 @@ class MultiFileReader(io.BufferedIOBase):
 				actual_offset = self._offset - r.start
 				break
 		result = b''
-		if (n == -1 or n is None):
+		if n == -1 or n is None:
 			to_read = self.size
 		else:
 			to_read = n
@@ -327,7 +371,7 @@ class Blob(object):
 		fragment: str,
 		read_content_type_func: "Callable[[], str]",
 		read_func: "Callable",
-	):
+	) -> None:
 		# print(f"read_func is {type(read_func)}")
 		# read_func is <class 'functools._lru_cache_wrapper'>
 		self._content_id = content_id
@@ -337,33 +381,33 @@ class Blob(object):
 		self._read = read_func
 
 	@property
-	def id(self: "typing.Self"):
+	def id(self: "typing.Self") -> int:
 		return self._content_id
 
 	@property
-	def key(self: "typing.Self"):
+	def key(self: "typing.Self") -> str:
 		return self._key
 
 	@property
-	def fragment(self: "typing.Self"):
+	def fragment(self: "typing.Self") -> str:
 		return self._fragment
 
 	@property
-	def content_type(self: "typing.Self"):
+	def content_type(self: "typing.Self") -> str:
 		return self._read_content_type()
 
 	@property
-	def content(self: "typing.Self"):
+	def content(self: "typing.Self") -> bytes:
 		return self._read()
 
 	def __str__(self: "typing.Self") -> str:
 		return self.key
 
-	def __repr__(self: "typing.Self"):
+	def __repr__(self: "typing.Self") -> str:
 		return f'<{self.__class__.__module__}.{self.__class__.__name__} {self.key}>'
 
 
-def read_byte_string(f, len_spec):
+def read_byte_string(f: "IOBase", len_spec: str) -> bytes:
 	length = unpack(len_spec, f.read(calcsize(len_spec)))[0]
 	return f.read(length)
 
@@ -371,28 +415,30 @@ def read_byte_string(f, len_spec):
 class StructReader():
 	def __init__(
 		self: "typing.Self",
-		_file: "io.IOBase",
-		encoding=None,	
+		_file: "IOBase",
+		encoding: "str | None" = None,	
 	) -> None:
 		self._file = _file
 		self.encoding = encoding
 
-	def read_int(self: "typing.Self"):
+	def read_int(self: "typing.Self") -> int:
 		s = self.read(U_INT_SIZE)
 		return unpack(U_INT, s)[0]
 
-	def read_long(self: "typing.Self"):
+	def read_long(self: "typing.Self") -> int:
 		b = self.read(U_LONG_LONG_SIZE)
 		return unpack(U_LONG_LONG, b)[0]
 
-	def read_byte(self: "typing.Self"):
+	def read_byte(self: "typing.Self") -> int:
 		s = self.read(U_CHAR_SIZE)
 		return unpack(U_CHAR, s)[0]
 
-	def read_short(self: "typing.Self"):
+	def read_short(self: "typing.Self") -> int:
 		return unpack(U_SHORT, self._file.read(U_SHORT_SIZE))[0]
 
-	def _read_text(self: "typing.Self", len_spec):
+	def _read_text(self: "typing.Self", len_spec: str) -> str:
+		if self.encoding is None:
+			raise ValueError("self.encoding is None")
 		max_len = 2 ** (8 * calcsize(len_spec)) - 1
 		byte_string = read_byte_string(self._file, len_spec)
 		if len(byte_string) == max_len:
@@ -401,53 +447,63 @@ class StructReader():
 				byte_string = byte_string[:terminator]
 		return byte_string.decode(self.encoding)
 
-	def read_tiny_text(self: "typing.Self"):
+	def read_tiny_text(self: "typing.Self") -> str:
 		return self._read_text(U_CHAR)
 
-	def read_text(self: "typing.Self"):
+	def read_text(self: "typing.Self") -> str:
 		return self._read_text(U_SHORT)
 
-	def read(self, n: int) -> bytes:
+	def read(self: "typing.Self", n: int) -> bytes:
 		return self._file.read(n)
 
-	def write(self, data: bytes) -> int:
+	def write(self: "typing.Self", data: bytes) -> int:
 		return self._file.write(data)
 
-	def seek(self, pos: int) -> None:
+	def seek(self: "typing.Self", pos: int) -> None:
 		self._file.seek(pos)
 
-	def tell(self) -> int:
+	def tell(self: "typing.Self") -> int:
 		return self._file.tell()
 
+	def close(self: "typing.Self") -> None:
+		self._file.close()
+
+	def flush(self: "typing.Self") -> None:
+		self._file.flush()
 
 
-class StructWriter:
-
-	def __init__(self: "typing.Self", _file, encoding=None) -> None:
+class StructWriter():
+	def __init__(
+		self: "typing.Self",
+		_file: "io.BufferedWriter",
+		encoding: "str | None" = None,
+	) -> None:
 		self._file = _file
 		self.encoding = encoding
 
-	def write_int(self: "typing.Self", value):
+	def write_int(self: "typing.Self", value: int) -> None:
 		self._file.write(pack(U_INT, value))
 
-	def write_long(self: "typing.Self", value):
+	def write_long(self: "typing.Self", value: int) -> None:
 		self._file.write(pack(U_LONG_LONG, value))
 
-	def write_byte(self: "typing.Self", value):
+	def write_byte(self: "typing.Self", value: int) -> None:
 		self._file.write(pack(U_CHAR, value))
 
-	def write_short(self: "typing.Self", value):
+	def write_short(self: "typing.Self", value: int) -> None:
 		self._file.write(pack(U_SHORT, value))
 
 	def _write_text(
 		self: "typing.Self",
-		text,
-		len_size_spec,
-		encoding=None,
-		pad_to_length=None,
-	):
+		text: str,
+		len_size_spec: str,
+		encoding: "str | None" = None,
+		pad_to_length: "int | None" = None,
+	) -> None:
 		if encoding is None:
 			encoding = self.encoding
+			if encoding is None:
+				raise ValueError("encoding is None")
 		text_bytes = text.encode(encoding)
 		length = len(text_bytes)
 		max_length = calcmax(len_size_spec)
@@ -462,7 +518,12 @@ class StructWriter:
 			for _ in range(pad_to_length - length):
 				self._file.write(pack(U_CHAR, 0))
 
-	def write_tiny_text(self: "typing.Self", text, encoding=None, editable=False):
+	def write_tiny_text(
+		self: "typing.Self",
+		text: str,
+		encoding: "str | None" = None,
+		editable: bool = False,
+	) -> None:
 		pad_to_length = 255 if editable else None
 		self._write_text(
 			text,
@@ -471,11 +532,55 @@ class StructWriter:
 			pad_to_length=pad_to_length,
 		)
 
-	def write_text(self: "typing.Self", text, encoding=None):
+	def write_text(
+		self: "typing.Self",
+		text: str,
+		encoding: "str | None" = None,
+	) -> None:
 		self._write_text(text, U_SHORT, encoding=encoding)
 
-	def __getattr__(self: "typing.Self", name):
-		return getattr(self._file, name)
+	def close(self: "typing.Self") -> None:
+		self._file.close()
+
+	def flush(self: "typing.Self") -> None:
+		self._file.flush()
+
+	@property
+	def name(self: "typing.Self") -> str:
+		return self._file.name
+
+	def tell(self: "typing.Self") -> int:
+		return self._file.tell()
+
+	def write(self: "typing.Self", data: bytes) -> int:
+		return self._file.write(data)
+
+
+class StructReaderWriter(StructWriter):
+	def __init__(
+		self: "typing.Self",
+		_file: "io.BufferedWriter",
+		reader: "StructReader",
+		encoding: "str | None" = None,
+	) -> None:
+		super().__init__(
+			_file=_file,
+			encoding=encoding,
+		)
+		self._reader = reader
+
+	def tell(self: "typing.Self") -> int:
+		return self._file.tell()
+
+	def write(self: "typing.Self", data: bytes) -> int:
+		return self._file.write(data)
+
+	def read_byte(self: "typing.Self") -> int:
+		return self._reader.read_byte()
+
+	def read_tiny_text(self: "typing.Self") -> str:
+		return self._reader.read_tiny_text()
+
 
 
 def set_tag_value(filename, name, value):
@@ -484,8 +589,9 @@ def set_tag_value(filename, name, value):
 		encoding = read_byte_string(_file, U_CHAR).decode(UTF8)
 		if encodings.search_function(encoding) is None:
 			raise UnknownEncoding(encoding)
-		reader = StructWriter(
-			StructReader(_file, encoding=encoding),
+		reader = StructReaderWriter(
+			_file=_file,
+			reader=StructReader(_file, encoding=encoding),
 			encoding=encoding,
 		)
 		reader.read_tiny_text()
@@ -1005,7 +1111,8 @@ class Writer(object):
 	def _wbfopen(self: "typing.Self", name):
 		return StructWriter(
 			fopen(os.path.join(self.tmpdir.name, name), 'wb'),
-			encoding=self.encoding)
+			encoding=self.encoding,
+		)
 
 	def tag(self: "typing.Self", name, value=''):
 		if len(name.encode(self.encoding)) > MAX_TINY_TEXT_LEN:
@@ -1129,7 +1236,8 @@ class Writer(object):
 		os.rename(f_ref_positions_sorted.name, self.f_ref_positions.name)
 		self.f_ref_positions = StructWriter(
 			fopen(self.f_ref_positions.name, 'ab'),
-			encoding=self.encoding)
+			encoding=self.encoding,
+		)
 		self._fire_event('end_sort')
 
 	def _resolve_aliases(self: "typing.Self"):
