@@ -10,7 +10,7 @@ from .summarize import summarize
 if TYPE_CHECKING:
 	from typing import Sequence
 
-	from pyglossary.lxml_type import T_htmlfile
+	from pyglossary.lxml_types import T_htmlfile
 
 
 line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")

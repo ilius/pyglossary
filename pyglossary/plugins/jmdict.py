@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 	from lxml.etree import _Element as Element
 
-	from pyglossary.lxml_type import T_htmlfile
+	from pyglossary.lxml_types import T_htmlfile
 
 from pyglossary.compression import (
 	compressionOpen,

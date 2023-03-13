@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	from lxml.etree import _Element as Element
 	from lxml.etree import _XSLTResultTree
 
-	from pyglossary.lxml_type import T_htmlfile
+	from pyglossary.lxml_types import T_htmlfile
 
 from pyglossary import core
 from pyglossary.core import rootDir
