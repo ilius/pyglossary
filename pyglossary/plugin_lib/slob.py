@@ -17,7 +17,16 @@ from os.path import isdir
 from struct import calcsize, pack, unpack
 from threading import RLock
 from types import MappingProxyType
-from typing import Any, Callable, Iterator, Sequence, Union, cast
+from typing import (
+	Any,
+	Callable,
+	Generic,
+	Iterator,
+	Sequence,
+	TypeVar,
+	Union,
+	cast,
+)
 from uuid import UUID, uuid4
 
 import icu
@@ -725,7 +734,9 @@ class BinMemWriter:
 		self.items.clear()
 
 
-class ItemList():
+ItemT = TypeVar("ItemT")
+
+class ItemList(Generic[ItemT]):
 	def __init__(
 		self: "typing.Self",
 		reader: "StructReader",
@@ -758,35 +769,32 @@ class ItemList():
 			self.reader.seek(self.pos_offset + self.pos_size * i)
 			return unpack(self.pos_spec, self.reader.read(self.pos_size))[0]
 
-	def read(self: "typing.Self", pos: int) -> bytes:
+	def read(self: "typing.Self", pos: int) -> ItemT:
 		with self.lock:
 			self.reader.seek(self.data_offset + pos)
 			return self._read_item()
 
 	@abstractmethod
-	def _read_item(self: "typing.Self") -> bytes:
+	def _read_item(self: "typing.Self") -> ItemT:
 		pass
 
-	def __getitem__(self: "typing.Self", i: int) -> bytes:
+	def __getitem__(self: "typing.Self", i: int) -> ItemT:
 		if i >= len(self) or i < 0:
 			raise IndexError('index out of range')
 		return self.read(self.pos(i))
 
 
-class RefList(ItemList):
+class RefList(ItemList[Ref]):
 	def __init__(self: "typing.Self", f, encoding, offset=0, count=None) -> None:
-		ItemList.__init__(
-			self,
+		super().__init__(
 			reader=StructReader(f, encoding),
 			offset=offset,
 			count_or_spec=U_INT if count is None else count,
 			pos_spec=U_LONG_LONG,
 		)
 
-	# FIXME: confirmed that this returns "Ref"
-	# while parent class ItemList.__getitem__ returns bytes
 	@lru_cache(maxsize=512)  # noqa: B019
-	def __getitem__(  # type: ignore # noqa: PGH003
+	def __getitem__(
 		self: "typing.Self",
 		i: int,
 	) -> "Ref":
@@ -794,7 +802,7 @@ class RefList(ItemList):
 			raise IndexError('index out of range')
 		return cast(Ref, self.read(self.pos(i)))
 
-	def _read_item(self: "typing.Self") -> "Ref":  # type: ignore # noqa: PGH003
+	def _read_item(self: "typing.Self") -> "Ref":
 		key = self.reader.read_text()
 		bin_index = self.reader.read_int()
 		item_index = self.reader.read_short()
@@ -819,7 +827,7 @@ class RefList(ItemList):
 		)
 
 
-class Bin(ItemList):
+class Bin(ItemList[bytes]):
 	def __init__(
 		self: "typing.Self",
 		count: int,
@@ -832,7 +840,7 @@ class Bin(ItemList):
 			pos_spec=U_INT,
 		)
 
-	def _read_item(self: "typing.Self"):
+	def _read_item(self: "typing.Self") -> bytes:
 		content_len = self.reader.read_int()
 		return self.reader.read(content_len)
 
@@ -840,7 +848,7 @@ class Bin(ItemList):
 StoreItem = namedtuple('StoreItem', 'content_type_ids compressed_content')
 
 
-class Store(ItemList):
+class Store(ItemList[StoreItem]):
 	def __init__(
 		self: "typing.Self",
 		_file,
@@ -857,10 +865,8 @@ class Store(ItemList):
 		self.decompress = decompress
 		self.content_types = content_types
 
-	# FIXME: confirmed: this returns StoreItem
-	# unlike the parent class ItemList.__getitem__
 	@lru_cache(maxsize=32)  # noqa: B019
-	def __getitem__(  # type: ignore # noqa: PGH003
+	def __getitem__(
 		self: "typing.Self",
 		i: int,
 	) -> "StoreItem":
@@ -868,7 +874,7 @@ class Store(ItemList):
 			raise IndexError('index out of range')
 		return cast(StoreItem, self.read(self.pos(i)))
 
-	def _read_item(self: "typing.Self") -> "StoreItem":  # type: ignore # noqa: PGH003
+	def _read_item(self: "typing.Self") -> "StoreItem":
 		bin_item_count = self.reader.read_int()
 		packed_content_type_ids = self.reader.read(bin_item_count * U_CHAR_SIZE)
 		content_type_ids = []
@@ -881,7 +887,6 @@ class Store(ItemList):
 			content_type_ids=content_type_ids,
 			compressed_content=content,
 		)
-		# FIXME: parent class ItemList._read_item returns bytes
 
 	def _content_type(
 		self: "typing.Self",
