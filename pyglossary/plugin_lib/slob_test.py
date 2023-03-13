@@ -66,48 +66,49 @@ class TestReadWrite(BaseTest):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
-		with self.create(self.path) as w:
+		writer = self.create(self.path)
 
-			self.tags = {
-				'a': 'abc',
-				'bb': 'xyz123',
-				'ccc': 'lkjlk',
-			}
-			for name, value in self.tags.items():
-				w.tag(name, value)
+		self.tags = {
+			'a': 'abc',
+			'bb': 'xyz123',
+			'ccc': 'lkjlk',
+		}
+		for name, value in self.tags.items():
+			writer.tag(name, value)
 
-			self.tag2 = 'bb', 'xyz123'
+		self.tag2 = 'bb', 'xyz123'
 
-			self.blob_encoding = 'ascii'
+		self.blob_encoding = 'ascii'
 
-			self.data = [
-				(('c', 'cc', 'ccc'), MIME_TEXT, 'Hello C 1'),
-				('a', MIME_TEXT, 'Hello A 12'),
-				('z', MIME_TEXT, 'Hello Z 123'),
-				('b', MIME_TEXT, 'Hello B 1234'),
-				('d', MIME_TEXT, 'Hello D 12345'),
-				('uuu', MIME_HTML, '<html><body>Hello U!</body></html>'),
-				((('yy', 'frag1'),), MIME_HTML, '<h1 name="frag1">Section 1</h1>'),
-			]
+		self.data = [
+			(('c', 'cc', 'ccc'), MIME_TEXT, 'Hello C 1'),
+			('a', MIME_TEXT, 'Hello A 12'),
+			('z', MIME_TEXT, 'Hello Z 123'),
+			('b', MIME_TEXT, 'Hello B 1234'),
+			('d', MIME_TEXT, 'Hello D 12345'),
+			('uuu', MIME_HTML, '<html><body>Hello U!</body></html>'),
+			((('yy', 'frag1'),), MIME_HTML, '<h1 name="frag1">Section 1</h1>'),
+		]
 
-			self.all_keys = []
+		self.all_keys = []
 
-			self.data_as_dict = {}
+		self.data_as_dict = {}
 
-			for k, t, v in self.data:
-				if isinstance(k, str):
-					k = (k,)
-				for key in k:
-					if isinstance(key, tuple):
-						key, fragment = key
-					else:
-						fragment = ''
-					self.all_keys.append(key)
-					self.data_as_dict[key] = (t, v, fragment)
-				w.add(v.encode(self.blob_encoding), *k, content_type=t)
-			self.all_keys.sort()
+		for k, t, v in self.data:
+			if isinstance(k, str):
+				k = (k,)
+			for key in k:
+				if isinstance(key, tuple):
+					key, fragment = key
+				else:
+					fragment = ''
+				self.all_keys.append(key)
+				self.data_as_dict[key] = (t, v, fragment)
+			writer.add(v.encode(self.blob_encoding), *k, content_type=t)
+		self.all_keys.sort()
 
-		self.w = w
+		writer.finalize()
+		self.w = writer
 
 	def test_header(self: "typing.Self"):
 		with MultiFileReader(self.path) as f:
@@ -149,35 +150,20 @@ class TestSort(BaseTest):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
-		with self.create(self.path) as w:
-			data = [
-				'Ф, ф',
-				'Ф ф',
-				'Ф',
-				'Э',
-				'Е е',
-				'г',
-				'н',
-				'ф',
-				'а',
-				'Ф, Ф',
-				'е',
-				'Е',
-				'Ее',
-				'ё',
-				'Ё',
-				'Её',
-				'Е ё',
-				'А',
-				'э',
-				'ы',
-			]
+		writer = self.create(self.path)
+		data = [
+			'Ф, ф', 'Ф ф', 'Ф', 'Э', 'Е е', 'г', 'н',
+			'ф', 'а', 'Ф, Ф', 'е', 'Е', 'Ее', 'ё', 'Ё',
+			'Её', 'Е ё', 'А', 'э', 'ы',
+		]
 
-			self.data_sorted = sorted(data, key=sortkey(IDENTICAL))
+		self.data_sorted = sorted(data, key=sortkey(IDENTICAL))
 
-			for k in data:
-				v = ';'.join(unicodedata.name(c) for c in k)
-				w.add(v.encode('ascii'), k)
+		for k in data:
+			v = ';'.join(unicodedata.name(c) for c in k)
+			writer.add(v.encode('ascii'), k)
+
+		writer.finalize()
 
 		self.r = slob.open(self.path)
 
@@ -197,15 +183,17 @@ class TestFind(BaseTest):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
-		with self.create(self.path) as w:
-			data = [
-				'Cc', 'aA', 'aa', 'Aa', 'Bb', 'cc', 'Äā', 'ăÀ',
-				'a\u00A0a', 'a-a', 'a\u2019a', 'a\u2032a', 'a,a', 'a a',
-			]
+		writer = self.create(self.path)
+		data = [
+			'Cc', 'aA', 'aa', 'Aa', 'Bb', 'cc', 'Äā', 'ăÀ',
+			'a\u00A0a', 'a-a', 'a\u2019a', 'a\u2032a', 'a,a', 'a a',
+		]
 
-			for k in data:
-				v = ';'.join(unicodedata.name(c) for c in k)
-				w.add(v.encode('ascii'), k)
+		for k in data:
+			v = ';'.join(unicodedata.name(c) for c in k)
+			writer.add(v.encode('ascii'), k)
+
+		writer.finalize()
 
 		self.r = slob.open(self.path)
 
@@ -309,9 +297,10 @@ class TestPrefixFind(BaseTest):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 		self.data = ['a', 'ab', 'abc', 'abcd', 'abcde']
-		with self.create(self.path) as w:
-			for k in self.data:
-				w.add(k.encode('ascii'), k)
+		writer = self.create(self.path)
+		for k in self.data:
+			writer.add(k.encode('ascii'), k)
+		writer.finalize()
 
 	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
@@ -344,28 +333,29 @@ class TestAlias(BaseTest):
 			elif event.name == 'alias_target_not_found':
 				target_not_found.append(event.data)
 
-		with self.create(self.path, observer=observer) as w:
-			data = ['z', 'b', 'q', 'a', 'u', 'g', 'p', 'n']
-			for k in data:
-				v = ';'.join(unicodedata.name(c) for c in k)
-				w.add(v.encode('ascii'), k)
+		w = self.create(self.path, observer=observer)
+		data = ['z', 'b', 'q', 'a', 'u', 'g', 'p', 'n']
+		for k in data:
+			v = ';'.join(unicodedata.name(c) for c in k)
+			w.add(v.encode('ascii'), k)
 
-			w.add_alias('w', 'u')
-			w.add_alias('y1', 'y2')
-			w.add_alias('y2', 'y3')
-			w.add_alias('y3', 'z')
-			w.add_alias('ZZZ', 'YYY')
+		w.add_alias('w', 'u')
+		w.add_alias('y1', 'y2')
+		w.add_alias('y2', 'y3')
+		w.add_alias('y3', 'z')
+		w.add_alias('ZZZ', 'YYY')
 
-			w.add_alias('l3', 'l1')
-			w.add_alias('l1', 'l2')
-			w.add_alias('l2', 'l3')
+		w.add_alias('l3', 'l1')
+		w.add_alias('l1', 'l2')
+		w.add_alias('l2', 'l3')
 
-			w.add_alias('a1', ('a', 'a-frag1'))
-			w.add_alias('a2', 'a1')
-			w.add_alias('a3', ('a2', 'a-frag2'))
+		w.add_alias('a1', ('a', 'a-frag1'))
+		w.add_alias('a2', 'a1')
+		w.add_alias('a3', ('a2', 'a-frag2'))
 
-			w.add_alias('g1', 'g')
-			w.add_alias('g2', ('g1', 'g-frag1'))
+		w.add_alias('g1', 'g')
+		w.add_alias('g2', ('g1', 'g-frag1'))
+		w.finalize()
 
 		self.assertEqual(too_many_redirects, ['l1', 'l2', 'l3'])
 		self.assertEqual(target_not_found, ['l2', 'l3', 'l1', 'YYY'])
@@ -440,7 +430,7 @@ class TestMultiFileReader(BaseTest):
 			fnames.append(path)
 			with fopen(path, 'wb') as f:
 				f.write(name.encode(UTF8))
-		with MultiFileReader(fnames) as m:
+		with MultiFileReader(*fnames) as m:
 			self.assertEqual(m.read().decode(UTF8), 'abcdef')
 
 	def test_seek_and_read(self: "typing.Self"):
@@ -485,9 +475,10 @@ class TestFormatErrors(BaseTest):
 	def test_truncated_file(self: "typing.Self"):
 		name = os.path.join(self.tmpdir.name, '1')
 
-		with self.create(name) as f:
-			f.add(b'123', 'a')
-			f.add(b'234', 'b')
+		writer = self.create(name)
+		writer.add(b'123', 'a')
+		writer.add(b'234', 'b')
+		writer.finalize()
 
 		with fopen(name, 'rb') as f:
 			all_bytes = f.read()
@@ -563,28 +554,28 @@ class TestTooLongText(BaseTest):
 		long_alias_target = long_key
 		long_alias_target_frag = key_with_long_frag
 
-		with self.create(self.path, observer=observer) as w:
+		w = self.create(self.path, observer=observer)
+		w.tag(*tag_with_long_value)
+		w.tag('t2', 't2 value')
+		w.tag(*tag_with_long_name)
 
-			w.tag(*tag_with_long_value)
-			w.tag('t2', 't2 value')
-			w.tag(*tag_with_long_name)
+		data = ['a', 'b', long_key, key_with_long_frag]
 
-			data = ['a', 'b', long_key, key_with_long_frag]
+		for k in data:
+			if isinstance(k, str):
+				v = k.encode('ascii')
+			else:
+				v = '#'.join(k).encode('ascii')
+			w.add(v, k)
 
-			for k in data:
-				if isinstance(k, str):
-					v = k.encode('ascii')
-				else:
-					v = '#'.join(k).encode('ascii')
-				w.add(v, k)
+		w.add_alias('e', 'a')
+		w.add_alias(long_alias, 'a')
+		w.add_alias(alias_with_long_frag, 'a')
+		w.add_alias('g', long_alias_target)
+		w.add_alias('h', long_alias_target_frag)
 
-			w.add_alias('e', 'a')
-			w.add_alias(long_alias, 'a')
-			w.add_alias(alias_with_long_frag, 'a')
-			w.add_alias('g', long_alias_target)
-			w.add_alias('h', long_alias_target_frag)
-
-			w.add(b'Hello', 'hello', content_type=long_content_type)
+		w.add(b'Hello', 'hello', content_type=long_content_type)
+		w.finalize()
 
 		self.assertEqual(
 			rejected_keys,
@@ -634,9 +625,10 @@ class TestEditTag(BaseTest):
 	def setUp(self: "typing.Self"):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
-		with self.create(self.path) as w:
-			w.tag('a', '123456')
-			w.tag('b', '654321')
+		writer = self.create(self.path)
+		writer.tag('a', '123456')
+		writer.tag('b', '654321')
+		writer.finalize()
 
 	def tearDown(self: "typing.Self"):
 		self.tmpdir.cleanup()
@@ -664,11 +656,11 @@ class TestBinItemNumberLimit(BaseTest):
 		self.tmpdir.cleanup()
 
 	def test_writing_more_then_max_number_of_bin_items(self: "typing.Self"):
-		with self.create(self.path) as w:
-			for _ in range(MAX_BIN_ITEM_COUNT + 2):
-				w.add(b'a', 'a')
-			self.assertEqual(w.bin_count, 2)
-
+		writer = self.create(self.path)
+		for _ in range(MAX_BIN_ITEM_COUNT + 2):
+			writer.add(b'a', 'a')
+		self.assertEqual(writer.bin_count, 2)
+		writer.finalize()
 
 if __name__ == '__main__':
 	unittest.main()
