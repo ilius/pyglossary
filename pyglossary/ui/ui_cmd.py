@@ -28,7 +28,6 @@ from typing import Any, Dict, Mapping
 from pyglossary.core import dataDir, log
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
-from . import progressbar as pb
 from .base import UIBase, fread
 from .wcwidth import wcswidth
 
@@ -213,21 +212,8 @@ class UI(UIBase):
 		h.formatter.fill = self.fillMessage
 
 	def progressInit(self: "typing.Self", title: str) -> None:
-		rot = pb.RotatingMarker()
-		self.pbar = pb.ProgressBar(
-			maxval=1.0,
-			# update_step=0.5, removed
-		)
-		self.pbar.widgets = [
-			title + " ",
-			pb.AnimatedMarker(),
-			" ",
-			pb.Bar(marker="█"),
-			pb.Percentage(), " ",
-			pb.ETA(),
-		]
-		self.pbar.start(num_intervals=1000)
-		rot.pbar = self.pbar
+		from .pbar_legacy import createProgressBar
+		self.pbar = createProgressBar(title)
 		self.fixLogger()
 
 	def progress(self: "typing.Self", ratio: float, text: str = "") -> None:
