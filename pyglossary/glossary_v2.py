@@ -61,7 +61,7 @@ from .flags import (
 )
 from .glossary_info import GlossaryInfo
 from .glossary_progress import GlossaryProgress
-from .glossary_type import EntryType, GlossaryExtendedType
+from .glossary_types import EntryType, GlossaryExtendedType
 from .glossary_utils import splitFilenameExt
 from .info import c_name
 from .os_utils import rmtree, showMemoryUsage

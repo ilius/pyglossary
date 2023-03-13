@@ -8,7 +8,7 @@ from pyglossary.compression import (
 	# compressionOpen,
 	stdCompressions,
 )
-from pyglossary.glossary_type import (
+from pyglossary.glossary_types import (
 	EntryType,
 	GlossaryType,
 )

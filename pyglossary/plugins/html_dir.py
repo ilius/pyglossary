@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 	import io
 
 from pyglossary.core import log
-from pyglossary.glossary_type import (
+from pyglossary.glossary_types import (
 	EntryType,
 	GlossaryType,
 )

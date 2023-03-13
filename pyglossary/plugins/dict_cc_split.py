@@ -5,7 +5,7 @@ import typing
 from typing import Iterator
 
 from pyglossary.core import log
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 
 enable = True
 lname = "dict_cc_split"

@@ -4,7 +4,7 @@ import typing
 
 from typing import Generator, Iterator
 
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import Option
 
 enable = False

@@ -22,7 +22,7 @@ website = (
 
 from typing import Iterator
 
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 
 
 class Reader(object):

@@ -4,7 +4,7 @@ from operator import itemgetter
 from typing import TYPE_CHECKING, Iterator, List, Optional, Iterable, Tuple, Union
 
 if TYPE_CHECKING:
-	from .glossary_type import EntryType, GlossaryExtendedType
+	from .glossary_types import EntryType, GlossaryExtendedType
 
 log = logging.getLogger("pyglossary")
 

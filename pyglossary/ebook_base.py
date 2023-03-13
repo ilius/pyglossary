@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 	import io
 	from typing import Any
 
-	from pyglossary.glossary_type import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 
 log = logging.getLogger("pyglossary")

@@ -12,7 +12,7 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.core import log, pip
-from pyglossary.glossary_type import (
+from pyglossary.glossary_types import (
 	EntryType,
 	GlossaryType,
 )

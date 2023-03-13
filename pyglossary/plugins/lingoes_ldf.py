@@ -10,7 +10,7 @@ from pyglossary.compression import (
 )
 from pyglossary.core import log
 from pyglossary.file_utils import fileCountLines
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,

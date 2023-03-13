@@ -8,7 +8,7 @@ from subprocess import PIPE, Popen
 from typing import Iterator
 
 from pyglossary.entry import Entry
-from pyglossary.glossary_type import EntryType
+from pyglossary.glossary_types import EntryType
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.tools.colors import (
 	green,

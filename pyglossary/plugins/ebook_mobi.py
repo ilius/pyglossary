@@ -30,7 +30,7 @@ from os.path import join
 from pyglossary.core import log
 from pyglossary.ebook_base import EbookWriter
 from pyglossary.flags import DEFAULT_YES
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.langs import Lang
 from pyglossary.option import (
 	BoolOption,

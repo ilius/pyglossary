@@ -19,7 +19,7 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.core import log, pip
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.html_utils import unescape_unicode
 from pyglossary.option import (
 	BoolOption,

@@ -28,7 +28,7 @@ from os.path import basename, isdir, join
 from typing import Any, Dict, Generator
 
 from pyglossary.core import log, pip
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	DictOption,

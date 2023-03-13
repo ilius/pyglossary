@@ -24,7 +24,7 @@ from typing import Any, ClassVar
 
 from pyglossary.ebook_base import EbookWriter
 from pyglossary.flags import ALWAYS
-from pyglossary.glossary_type import GlossaryType
+from pyglossary.glossary_types import GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	IntOption,

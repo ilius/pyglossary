@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	import sqlite3
 	from typing import Generator, Iterator
 
-	from .glossary_type import EntryType, GlossaryType
+	from .glossary_types import EntryType, GlossaryType
 
 from .text_utils import (
 	joinByBar,

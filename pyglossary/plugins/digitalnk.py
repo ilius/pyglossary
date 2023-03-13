@@ -4,7 +4,7 @@ import html
 import typing
 from typing import Iterator
 
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 
 enable = True
 lname = "digitalnk"

@@ -11,7 +11,7 @@ from .text_utils import (
 
 if TYPE_CHECKING:
 
-	from .glossary_type import Callable, EntryType, GlossaryExtendedType, GlossaryType
+	from .glossary_types import Callable, EntryType, GlossaryExtendedType, GlossaryType
 
 
 log = logging.getLogger("pyglossary")

@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 		Union,
 	)
 
-	from .glossary_type import EntryType, GlossaryType, RawEntryType
+	from .glossary_types import EntryType, GlossaryType, RawEntryType
 
 
 log = logging.getLogger("pyglossary")

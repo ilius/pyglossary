@@ -6,7 +6,7 @@ from os.path import splitext
 from typing import Generator, Iterator
 
 from pyglossary.core import log
-from pyglossary.glossary_type import (
+from pyglossary.glossary_types import (
 	EntryType,
 	GlossaryType,
 )

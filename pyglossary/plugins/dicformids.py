@@ -7,7 +7,7 @@ from typing import Iterator
 
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import Option
 from pyglossary.plugins.tabfile import Reader as TabfileReader
 

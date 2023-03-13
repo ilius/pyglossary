@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 	import io
 	from typing import Callable
 
-	from .glossary_type import GlossaryType
+	from .glossary_types import GlossaryType
 
 
 stdCompressions = ("gz", "bz2", "lzma")

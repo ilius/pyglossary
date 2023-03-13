@@ -4,7 +4,7 @@ import typing
 # -*- coding: utf-8 -*-
 from typing import Generator
 
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import BoolOption, Option
 from pyglossary.text_utils import replaceStringTable
 

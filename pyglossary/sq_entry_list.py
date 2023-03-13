@@ -29,7 +29,7 @@ from .entry_list import EntryListType
 if TYPE_CHECKING:
 	from typing import Any, Iterable, Iterator
 
-	from .glossary_type import EntryType, GlossaryType
+	from .glossary_types import EntryType, GlossaryType
 	from .sort_keys import NamedSortKey
 
 from .entry import Entry

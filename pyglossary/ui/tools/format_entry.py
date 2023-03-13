@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from pyglossary.glossary_type import EntryType
+from pyglossary.glossary_types import EntryType
 
 
 def formatEntry(entry: "EntryType") -> str:

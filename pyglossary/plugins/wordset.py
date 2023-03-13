@@ -8,7 +8,7 @@ from os.path import isfile, join, splitext
 from typing import Iterator
 
 from pyglossary.core import log
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	EncodingOption,
 	Option,

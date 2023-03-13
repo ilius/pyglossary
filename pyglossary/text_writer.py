@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 	import io
 	from typing import Callable, Generator
 
-	from .glossary_type import EntryType, GlossaryType
+	from .glossary_types import EntryType, GlossaryType
 
 from .compression import compressionOpen as c_open
 

@@ -40,7 +40,7 @@ except ImportError as e:
 	from gzip import GzipFile
 	log.debug(str(e))
 
-from pyglossary.glossary_type import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,

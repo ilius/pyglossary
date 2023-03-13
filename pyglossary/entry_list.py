@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from typing import Any, Callable, Iterator
 
-	from .glossary_type import EntryType, GlossaryType, RawEntryType
+	from .glossary_types import EntryType, GlossaryType, RawEntryType
 	from .sort_keys import NamedSortKey
 
 from .entry import Entry
