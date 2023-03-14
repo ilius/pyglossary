@@ -7,12 +7,11 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from typing import TypeAlias
 
-from .glossary_types import EntryType
 
 MultiStr: "TypeAlias" = "str | list[str]"
 
 
-class BaseEntry(EntryType):
+class BaseEntry:
 	__slots__: "list[str]" = []
 
 	@property

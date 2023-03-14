@@ -5,6 +5,7 @@ import re
 import typing
 from typing import TYPE_CHECKING
 
+from .interfaces import Interface
 from .text_utils import (
 	fixUtf8,
 )
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
 log = logging.getLogger("pyglossary")
 
 
-class EntryFilterType(object):
+class EntryFilterType(metaclass=Interface):
 	name = ""
 	desc = ""
 	falseComment = ""
@@ -32,7 +33,7 @@ class EntryFilterType(object):
 		raise NotImplementedError
 
 
-class EntryFilter(EntryFilterType):
+class EntryFilter:
 	name = ""
 	desc = ""
 	falseComment = ""

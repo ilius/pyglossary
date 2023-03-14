@@ -61,7 +61,7 @@ from .flags import (
 )
 from .glossary_info import GlossaryInfo
 from .glossary_progress import GlossaryProgress
-from .glossary_types import EntryType, GlossaryExtendedType
+from .glossary_types import EntryType
 from .glossary_utils import splitFilenameExt
 from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
@@ -102,7 +102,7 @@ class ConvertArgs:
 	infoOverride: "dict[str, str] | None" = None
 
 
-class Glossary(GlossaryInfo, GlossaryProgress, PluginManager, GlossaryExtendedType):
+class Glossary(GlossaryInfo, GlossaryProgress, PluginManager):
 	GLOSSARY_API_VERSION = "2.0"
 
 	"""

@@ -24,8 +24,6 @@ from os.path import isfile
 from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
-from .entry_list import EntryListType
-
 if TYPE_CHECKING:
 	from typing import Any, Iterable, Iterator
 
@@ -48,7 +46,7 @@ PICKLE_PROTOCOL = 4
 # https://docs.python.org/3/library/pickle.html
 
 
-class SqEntryList(EntryListType):
+class SqEntryList:
 	def __init__(
 		self: "typing.Self",
 		glos: "GlossaryType",

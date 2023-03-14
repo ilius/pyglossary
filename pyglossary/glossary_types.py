@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 	from typing import TypeAlias
 
 
+from .interfaces import Interface
 from .langs import Lang
 
 MultiStr: "TypeAlias" = "str | list[str]"
@@ -29,7 +30,7 @@ RawEntryType: "TypeAlias" = (
 )
 
 
-class EntryType(object):
+class EntryType(metaclass=Interface):
 	def __init__(self: "typing.Self") -> None:
 		self._word: "str | list[str]"
 
@@ -123,7 +124,7 @@ class EntryType(object):
 		raise NotImplementedError
 
 
-class GlossaryType(object):
+class GlossaryType(metaclass=Interface):
 	"""
 	an abstract type class for Glossary class in plugins. it only
 	contains methods and properties that might be used in plugins
@@ -239,7 +240,7 @@ class GlossaryType(object):
 		raise NotImplementedError
 
 
-class GlossaryExtendedType(GlossaryType):
+class GlossaryExtendedType(GlossaryType, metaclass=Interface):
 	def progressInit(
 		self: "typing.Self",
 		*args,  # noqa: ANN

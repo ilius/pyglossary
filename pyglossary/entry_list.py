@@ -22,6 +22,8 @@ import logging
 import typing
 from typing import TYPE_CHECKING
 
+from .interfaces import Interface
+
 if TYPE_CHECKING:
 	from typing import Any, Callable, Iterator
 
@@ -32,7 +34,7 @@ from .entry import Entry
 
 log = logging.getLogger("pyglossary")
 
-class EntryListType(object):
+class EntryListType(metaclass=Interface):
 	def append(self: "typing.Self", entry: "EntryType") -> None:
 		raise NotImplementedError
 
@@ -64,7 +66,7 @@ class EntryListType(object):
 		raise NotImplementedError
 
 
-class EntryList(EntryListType):
+class EntryList:
 	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._l: "list[RawEntryType]" = []
 		self._glos = glos
