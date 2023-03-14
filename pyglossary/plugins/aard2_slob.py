@@ -249,7 +249,7 @@ class Writer(object):
 	) -> None:
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
-	def _open(self: "typing.Self", filename: str, namePostfix: str) -> None:
+	def _open(self: "typing.Self", filename: str, namePostfix: str) -> "slob.Writer":
 		from pyglossary.plugin_lib import slob
 		if isfile(filename):
 			shutil.move(filename, f"{filename}.bak")
@@ -261,6 +261,7 @@ class Writer(object):
 			compression=self._compression,
 		)
 		slobWriter.tag("label", self._glos.getInfo("name") + namePostfix)
+		return slobWriter
 
 	def open(self: "typing.Self", filename: str) -> None:
 		try:
@@ -386,6 +387,9 @@ class Writer(object):
 					if sumBlobSize >= file_size_approx:
 						slobWriter.finalize()
 						fileIndex += 1
-						self._open(f"{filenameNoExt}.{fileIndex}.slob", f" (part {fileIndex+1})")
+						slobWriter = self._open(
+							f"{filenameNoExt}.{fileIndex}.slob",
+							f" (part {fileIndex+1})",
+						)
 						sumBlobSize = 0
 						entryCount = 0
