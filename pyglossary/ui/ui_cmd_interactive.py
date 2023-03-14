@@ -55,7 +55,7 @@ from os.path import (
 	join,
 	relpath,
 )
-from typing import TYPE_CHECKING, Dict, Iterable, Literal, Union
+from typing import TYPE_CHECKING, Dict, Iterable, Literal
 
 if TYPE_CHECKING:
 	from pyglossary.option import Option
@@ -886,7 +886,7 @@ class UI(ui_cmd.UI):
 				continue
 			return action
 
-	def askFinalOptions(self: "typing.Self") -> "Union[bool, Literal[back]]":
+	def askFinalOptions(self: "typing.Self") -> "bool | Literal['back']":
 		while True:
 			try:
 				action = self.askFinalAction()

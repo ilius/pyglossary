@@ -1,7 +1,7 @@
 import logging
 import re
 from operator import itemgetter
-from typing import TYPE_CHECKING, Iterator, List, Optional, Iterable, Tuple, Union
+from typing import TYPE_CHECKING, Iterable, Iterator
 
 if TYPE_CHECKING:
 	from .glossary_types import EntryType, GlossaryExtendedType
@@ -130,7 +130,7 @@ def searchWordInDef(
 		re.U,
 	)
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
-	outRel: "list[Union[tuple[str, float], tuple[str, float, str]]]" = []
+	outRel: "list[tuple[str, float] | tuple[str, float, str]]" = []
 	for entry in entryIter:
 		words = entry.l_word
 		defi = entry.defi

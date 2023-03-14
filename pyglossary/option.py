@@ -3,7 +3,7 @@
 import logging
 import re
 import typing
-from typing import Any, Dict, List, Type, Union
+from typing import Any, Dict, List, Type
 
 log = logging.getLogger("pyglossary")
 
@@ -146,7 +146,7 @@ class BoolOption(Option):
 
 	def evaluate(
 		self: "typing.Self",
-		raw: "Union[str, bool]",
+		raw: "str | bool",
 	) -> "tuple[bool | None, bool]":
 		if raw is None:
 			return None, True
@@ -202,7 +202,7 @@ class IntOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self: "typing.Self", raw: "Union[str, int]") -> "tuple[int | None, bool]":
+	def evaluate(self: "typing.Self", raw: "str | int") -> "tuple[int | None, bool]":
 		"returns (value, isValid)"
 		try:
 			value = int(raw)
@@ -253,7 +253,7 @@ class FileSizeOption(IntOption):
 	def typeDesc(self: "typing.Self") -> str:
 		return ""
 
-	def evaluate(self: "typing.Self", raw: "Union[str, int]") -> "tuple[int | None, bool]":
+	def evaluate(self: "typing.Self", raw: "str | int") -> "tuple[int | None, bool]":
 		if not raw:
 			return 0, True
 		factor = 1
@@ -288,7 +288,7 @@ class FloatOption(Option):
 
 	def evaluate(
 		self: "typing.Self",
-		raw: "Union[str, float, int]",
+		raw: "str | float | int",
 	) -> "tuple[float | None, bool]":
 		"returns (value, isValid)"
 		try:
@@ -321,7 +321,7 @@ class DictOption(Option):
 
 	def evaluate(
 		self: "typing.Self",
-		raw: "Union[str, dict]",
+		raw: "str | dict",
 	) -> "tuple[Dict | None, bool]":
 		import ast
 		if isinstance(raw, dict):

@@ -28,7 +28,6 @@ from typing import (
 	Sequence,
 	Type,
 	TypeVar,
-	Union,
 	cast,
 )
 from uuid import UUID, uuid4
@@ -858,7 +857,7 @@ class ItemList(Generic[ItemT]):
 		self: "typing.Self",
 		reader: "StructReader",
 		offset: int,
-		count_or_spec: "Union[str, int]",
+		count_or_spec: "str | int",
 		pos_spec: str,
 	) -> None:
 		self.lock = RLock()

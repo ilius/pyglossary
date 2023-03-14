@@ -6,7 +6,7 @@ from io import BytesIO, IOBase
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	from typing import Any, Callable, Iterator, Union
+	from typing import Any, Callable, Iterator
 
 	from lxml.etree import _Element as Element
 
@@ -237,7 +237,7 @@ class Reader(object):
 		# 	sep = ET.Element("br")
 		count = 0
 
-		def writeChild(item: "Union[str, Element]", depth: int) -> None:
+		def writeChild(item: "str | Element", depth: int) -> None:
 			nonlocal count
 			if isinstance(item, str):
 				item = item.strip()

@@ -21,11 +21,3 @@ NEVER = StrWithDesc("never", "Never")
 
 # to statisfy mypy:
 YesNoAlwaysNever: "TypeAlias" = StrWithDesc
-"""
-YesNoAlwaysNever: TypeAlias = Union[
-	Literal[ALWAYS],
-	Literal[DEFAULT_YES],
-	Literal[DEFAULT_NO],
-	Literal[NEVER],
-]
-"""

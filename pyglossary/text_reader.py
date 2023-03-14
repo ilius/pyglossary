@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import io
-	from typing import Generator, Iterator, Union
+	from typing import Generator, Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
@@ -230,7 +230,7 @@ class TextGlossaryReader(object):
 	def isInfoWord(self: "typing.Self", word: str) -> bool:
 		raise NotImplementedError
 
-	def isInfoWords(self: "typing.Self", arg: "Union[str, list[str]]") -> bool:
+	def isInfoWords(self: "typing.Self", arg: "str | list[str]") -> bool:
 		if isinstance(arg, str):
 			return self.isInfoWord(arg)
 		if isinstance(arg, list):

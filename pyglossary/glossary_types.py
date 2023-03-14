@@ -7,7 +7,6 @@ from typing import (
 	Any,
 	Callable,
 	Iterator,
-	Union,
 )
 
 if TYPE_CHECKING:
@@ -17,18 +16,22 @@ if TYPE_CHECKING:
 
 from .langs import Lang
 
-MultiStr: "TypeAlias" = Union[str, list[str]]
+MultiStr: "TypeAlias" = "str | list[str]"
 
-RawEntryType: "TypeAlias" = Union[
-	bytes,  # compressed
-	"tuple[list[str], bytes]",  # uncompressed, without defiFormat
-	"tuple[list[str], bytes, str]",  # uncompressed, with defiFormat
-]
+# 3 different types in order:
+# - compressed
+# - uncompressed, without defiFormat
+# - uncompressed, with defiFormat
+RawEntryType: "TypeAlias" = (
+	"bytes |"
+	"tuple[list[str], bytes] |"
+	"tuple[list[str], bytes, str]"
+)
 
 
 class EntryType(object):
 	def __init__(self: "typing.Self") -> None:
-		self._word: "Union[str, list[str]]"
+		self._word: "str | list[str]"
 
 	def isData(self: "typing.Self") -> bool:
 		raise NotImplementedError

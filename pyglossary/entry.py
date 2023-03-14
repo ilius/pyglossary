@@ -22,7 +22,6 @@ if TYPE_CHECKING:
 		Any,
 		Callable,
 		Type,
-		Union,
 	)
 
 	from .glossary_types import EntryType, GlossaryType, RawEntryType
@@ -427,7 +426,7 @@ class Entry(BaseEntry):
 			returns a tuple (word, defi) or (word, defi, defiFormat)
 			where both word and defi might be string or list of strings
 		"""
-		tpl: "Union[tuple[list[str], bytes, str], tuple[list[str], bytes]]"
+		tpl: "tuple[list[str], bytes, str] | tuple[list[str], bytes]"
 		if self._defiFormat and self._defiFormat != glos.getDefaultDefiFormat():
 			tpl = (
 				self.l_word,

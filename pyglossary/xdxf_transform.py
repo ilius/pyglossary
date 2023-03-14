@@ -6,7 +6,6 @@ from os.path import join
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	from typing import Union
 
 	from lxml.etree import _Element as Element
 	from lxml.etree import _XSLTResultTree
@@ -37,7 +36,7 @@ class XslXdxfTransformer(object):
 		self._transform = ET.XSLT(xslt)
 		self._encoding = encoding
 
-	def tostring(self: "typing.Self", elem: "Union[_XSLTResultTree, Element]") -> str:
+	def tostring(self: "typing.Self", elem: "_XSLTResultTree | Element") -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,
@@ -73,7 +72,7 @@ class XdxfTransformer(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def hasPrevText(self: "typing.Self", prev: "Union[None, str, Element]") -> bool:
+	def hasPrevText(self: "typing.Self", prev: "None | str | Element") -> bool:
 		if isinstance(prev, str):
 			return True
 		if prev is None:
@@ -95,7 +94,7 @@ class XdxfTransformer(object):
 		hf: "T_htmlfile",
 		child: str,
 		parent: "Element",
-		prev: "Union[None, str, Element]",
+		prev: "None | str | Element",
 		stringSep: "str | None" = None,
 	) -> None:
 		from lxml import etree as ET
@@ -189,7 +188,7 @@ class XdxfTransformer(object):
 		hf: "T_htmlfile",
 		child: "Element",
 		parent: "Element",
-		prev: "Union[None, str, Element]",
+		prev: "None | str | Element",
 		stringSep: "str | None" = None,
 	) -> None:
 		from lxml import etree as ET
@@ -358,9 +357,9 @@ class XdxfTransformer(object):
 	def writeChild(
 		self: "typing.Self",
 		hf: "T_htmlfile",
-		child: "Union[str, Element]",
+		child: "str | Element",
 		parent: "Element",
-		prev: "Union[None, str, Element]",
+		prev: "None | str | Element",
 		stringSep: "str | None" = None,
 	) -> None:
 		if isinstance(child, str):
@@ -378,8 +377,8 @@ class XdxfTransformer(object):
 
 	def shouldAddSep(
 		self: "typing.Self",
-		child: "Union[str, Element]",
-		prev: "Union[str, Element]",
+		child: "str | Element",
+		prev: "str | Element",
 	) -> bool:
 		if isinstance(child, str):
 			if len(child) > 0 and child[0] in ".,;)":

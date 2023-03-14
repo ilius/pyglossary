@@ -13,20 +13,19 @@ from os.path import (
 	isfile,
 	join,
 )
+from types import TracebackType
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	import types
 	from typing import (
 		Any,
 		Callable,
 		TypeAlias,
-		Union,
 	)
-	ExcInfoType: TypeAlias = Union[
-		tuple[type[BaseException], BaseException, types.TracebackType],
-		tuple[None, None, None],
-	]
+	ExcInfoType: TypeAlias = (
+		"tuple[type[BaseException], BaseException, TracebackType]"
+		" | tuple[None, None, None]"
+	)
 
 
 VERSION = "4.6.1"
@@ -305,7 +304,7 @@ if os.sep == "\\":
 	def windows_show_exception(
 		_type: "type[BaseException]",
 		exc: "BaseException",
-		tback: "types.TracebackType | None",
+		tback: "TracebackType | None",
 	) -> None:
 		if not (_type and exc and tback):
 			return
@@ -324,7 +323,7 @@ else:
 	def unix_show_exception(
 		_type: "type[BaseException]",
 		exc: "BaseException",
-		tback: "types.TracebackType | None",
+		tback: "TracebackType | None",
 	) -> None:
 		if not (_type and exc and tback):
 			return

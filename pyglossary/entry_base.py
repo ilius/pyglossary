@@ -2,14 +2,14 @@
 import typing
 
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from typing import TypeAlias
 
 from .glossary_types import EntryType
 
-MultiStr: "TypeAlias" = Union[str, list[str]]
+MultiStr: "TypeAlias" = "str | list[str]"
 
 
 class BaseEntry(EntryType):
