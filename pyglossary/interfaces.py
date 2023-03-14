@@ -1,6 +1,3 @@
-
-import typing
-
 """
 Interface base class implementations.
 taken from https://github.com/mrogaski/pygopher-interfaces
@@ -29,7 +26,6 @@ SOFTWARE.
 """
 import inspect
 import sys
-import typing as tp
 
 if sys.version_info < (3, 8):
     from importlib_metadata import version
@@ -39,7 +35,7 @@ else:
 __version__ = version("pygopher-interfaces")
 
 
-def method_signatures(obj: type) -> tp.Set[inspect.Signature]:
+def method_signatures(obj: type) -> "set[inspect.Signature]":
     """
     Return the set of public method signatures for a class.
 
