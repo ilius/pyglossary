@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from typing import Any, TypeAlias
 
-RawKeyData: "TypeAlias" = "tuple[int, int, list[str]]"
+RawKeyData: "TypeAlias" = "tuple[int, int, Sequence[str]]"
 """tuple(priority, parentalControl, keyTextFields)"""
 
 

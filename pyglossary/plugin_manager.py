@@ -220,16 +220,19 @@ class PluginManager(object):
 		if format:
 			plugin = cls.plugins.get(format)
 			if plugin is None:
-				return error(f"Invalid format {format!r}")
+				error(f"Invalid format {format!r}")
+				return None
 		else:
 			plugin = cls.pluginByExt.get(ext)
 			if not plugin:
 				plugin = cls._findPlugin(filename)
 				if not plugin:
-					return error("Unable to detect input format!")
+					error("Unable to detect input format!")
+					return None
 
 		if not plugin.canRead:
-			return error(f"plugin {plugin.name} does not support reading")
+			error(f"plugin {plugin.name} does not support reading")
+			return None
 
 		if compression in plugin.readCompressions:
 			compression = ""

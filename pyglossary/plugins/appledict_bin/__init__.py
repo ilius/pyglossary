@@ -25,6 +25,7 @@ from typing import (
 	Any,
 	Iterator,
 	Match,
+	cast,
 )
 
 from lxml import etree
@@ -43,7 +44,13 @@ from .key_data import KeyData, RawKeyData
 if TYPE_CHECKING:
 	import io
 
-	import lxml
+	from lxml.etree import _Element as Element
+	from lxml.html import (
+		HtmlComment,
+		HtmlElement,
+		HtmlEntity,
+		HtmlProcessingInstruction,
+	)
 
 	from .appledict_properties import AppleDictProperties
 
@@ -88,17 +95,29 @@ class Reader(object):
 		self._glos: GlossaryType = glos
 		self._dictDirPath = ""
 		self._contentsPath = ""
-		self._file = None
+		self._file: "io.BufferedIOBase | None" = None
 		self._encoding = "utf-8"
 		self._defiFormat = "m"
 		self._re_link = re.compile("<a [^<>]*>")
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
-		self._titleById = {}
+		self._titleById: "dict[str, str]" = {}
 		self._wordCount = 0
 		self._keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}
 
+	def tostring(
+		self: "typing.Self",
+		elem: "Element | HtmlComment | HtmlElement | HtmlEntity | HtmlProcessingInstruction",
+	) -> str:
+		from lxml.html import tostring as tostring
+
+		return tostring(
+			cast("HtmlElement", elem),
+			encoding="utf-8",
+			method="html",
+		).decode("utf-8")
+
 	def sub_link(self: "typing.Self", m: "Match") -> str:
-		from lxml.html import fromstring, tostring
+		from lxml.html import fromstring
 
 		a_raw = m.group(0)
 		a = fromstring(a_raw)
@@ -126,7 +145,7 @@ class Reader(object):
 		else:
 			a.attrib["href"] = href = f"bword://{href}"
 
-		a_new = tostring(a).decode("utf-8")
+		a_new = self.tostring(a)
 		a_new = a_new[:-4]  # remove "</a>"
 
 		return a_new  # noqa: RET504
@@ -297,18 +316,14 @@ class Reader(object):
 
 	def _getDefi(
 		self: "typing.Self",
-		entryElem: "lxml.etree.Element",
+		entryElem: "Element",
 		keyDataList: "list[KeyData]",
 	) -> str:
-		from lxml import etree
 
 		if not self._html:
 			# FIXME: this produces duplicate text for Idioms.dictionary, see #301
 			return "".join([
-				etree.tostring(
-					child,
-					encoding="utf-8",
-				).decode("utf-8")
+				self.tostring(child)
 				for child in entryElem.iterdescendants()
 			])
 
@@ -317,11 +332,7 @@ class Reader(object):
 			# if attr == "id" or attr.endswith("title"):
 			del entryElem.attrib[attr]
 
-		defi = etree.tostring(
-			entryElem,
-			encoding="utf-8",
-			method="html",
-		).decode("utf-8")
+		defi = self.tostring(entryElem)
 		defi = self.fixLinksInDefi(defi)
 		defi = self._re_xmlns.sub("", defi)
 
@@ -363,7 +374,7 @@ class Reader(object):
 			try:
 				chunkLen, = unpack("i", bs)
 			except Exception as e:
-				log.error(f"{buffer[pos:pos + 100]}")
+				log.error(f"{buffer[pos:pos + 100]!r}")
 				raise e
 		return chunkLen, offset
 
@@ -376,10 +387,15 @@ class Reader(object):
 		entryRoot = self.convertEntryBytesToXml(entryBytes)
 		if entryRoot is None:
 			return None
-		entryElems = entryRoot.xpath("/d:entry", namespaces=entryRoot.nsmap)
+		namespaces: "dict[str, str]" = {
+			key: value
+			for key, value in entryRoot.nsmap.items()
+			if key and value
+		}
+		entryElems = entryRoot.xpath("/d:entry", namespaces=namespaces)
 		if not entryElems:
 			return None
-		word = entryElems[0].xpath("./@d:title", namespaces=entryRoot.nsmap)[0]
+		word = entryElems[0].xpath("./@d:title", namespaces=namespaces)[0]
 
 		# 2. add alts
 		keyTextFieldOrder = self._properties.key_text_variable_fields
@@ -421,7 +437,7 @@ class Reader(object):
 	def convertEntryBytesToXml(
 		self: "typing.Self",
 		entryBytes: bytes,
-	) -> "etree.Element | None":
+	) -> "Element | None":
 		# etree.register_namespace("d", "http://www.apple.com/DTDs/DictionaryService-1.0.rng")
 		entryFull = entryBytes.decode(self._encoding, errors="replace")
 		entryFull = entryFull.strip()
@@ -431,7 +447,7 @@ class Reader(object):
 			entryRoot = etree.fromstring(entryFull)
 		except etree.XMLSyntaxError as e:
 			log.error(
-				f"len(buf)={len(self._buf)}, {entryFull=}",
+				f"{entryFull=}",
 			)
 			raise e
 		if self._limit <= 0:
@@ -439,6 +455,8 @@ class Reader(object):
 		return entryRoot
 
 	def readEntryIds(self: "typing.Self") -> None:
+		if self._file is None:
+			raise ValueError("self._file is None")
 		titleById = {}
 		for entryBytes, _ in self.yieldEntryBytes(
 			self._file,
@@ -449,7 +467,7 @@ class Reader(object):
 				continue
 			id_i = entryBytes.find(b'id="')
 			if id_i < 0:
-				log.error(f"id not found: {entryBytes}")
+				log.error(f"id not found: {entryBytes!r}")
 				continue
 			id_j = entryBytes.find(b'"', id_i + 4)
 			if id_j < 0:
@@ -517,7 +535,7 @@ class Reader(object):
 
 	def readKeyTextData(
 		self: "typing.Self",
-		buff: "io.BufferedReader",
+		buff: "io.BufferedIOBase",
 		bufferOffset: int,
 		bufferLimit: int,
 		properties: "AppleDictProperties",
@@ -581,20 +599,19 @@ class Reader(object):
 					priority = 0
 					parentalControl = 0
 
-				keyTextFields = []
+				keyTextFields: "list[str]" = []
 				while buff.tell() < next_lexeme_offset:
 					word_form_len = read_2_bytes_here(buff)
 					if word_form_len == 0:
-						keyTextFields.append(None)
+						keyTextFields.append("")
 						continue
 					word_form = read_x_bytes_as_word(buff, word_form_len)
 					keyTextFields.append(word_form)
 
-				keyTextFields = tuple(keyTextFields)
 				entryKeyTextData: RawKeyData = (
 					priority,
 					parentalControl,
-					keyTextFields,
+					tuple(keyTextFields),
 				)
 				if articleAddress in keyTextData:
 					keyTextData[articleAddress].append(entryKeyTextData)

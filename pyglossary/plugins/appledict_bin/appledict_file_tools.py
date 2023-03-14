@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import io
-from io import BufferedReader
 from struct import unpack
 
 # Copyright © 2023 soshial <soshial@gmail.com> (soshial)
@@ -23,12 +22,12 @@ APPLEDICT_FILE_OFFSET = 0x40
 # addressing of AppleDict binary files always ignores first 0x40 bytes
 
 
-def readIntAt(buffer: BufferedReader, address: int) -> int:
+def readIntAt(buffer: "io.BufferedIOBase", address: int) -> int:
 	buffer.seek(address)
 	return unpack('i', buffer.read(4))[0]
 
 
-def readIntPair(buffer: BufferedReader) -> "tuple[int, int]":
+def readIntPair(buffer: "io.BufferedIOBase") -> "tuple[int, int]":
 	# to statisfy mymy, put them in vars with declared type
 	a: int
 	b: int
@@ -36,11 +35,11 @@ def readIntPair(buffer: BufferedReader) -> "tuple[int, int]":
 	return a, b
 
 
-def readInt(buffer: BufferedReader) -> int:
+def readInt(buffer: "io.BufferedIOBase") -> int:
 	return unpack('i', buffer.read(4))[0]
 
 
-def read_x_bytes_as_word(buffer: BufferedReader, x: int) -> str:
+def read_x_bytes_as_word(buffer: "io.BufferedIOBase", x: int) -> str:
 	word = ''
 	while x > 0:
 		word += chr(read_2_bytes_here(buffer))
@@ -48,18 +47,18 @@ def read_x_bytes_as_word(buffer: BufferedReader, x: int) -> str:
 	return word
 
 
-def read_2_bytes(buffer: BufferedReader, address: int) -> int:
+def read_2_bytes(buffer: "io.BufferedIOBase", address: int) -> int:
 	buffer.seek(address)
 	return read_2_bytes_here(buffer)
 
 
-def read_2_bytes_here(buffer: BufferedReader) -> int:
+def read_2_bytes_here(buffer: "io.BufferedIOBase") -> int:
 	lower_byte = buffer.read(1)
 	higher_byte = buffer.read(1)
 	return ord(higher_byte) * 0x100 + ord(lower_byte)
 
 
-def guessFileOffsetLimit(file: "io.BufferedReader") -> "tuple[int, int]":
+def guessFileOffsetLimit(file: "io.BufferedIOBase") -> "tuple[int, int]":
 	"""returns address offset to start parsing from and EOF address"""
 	file.seek(APPLEDICT_FILE_OFFSET)
 	limit = readInt(file)

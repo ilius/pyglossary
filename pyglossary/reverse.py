@@ -175,7 +175,7 @@ def searchWordInDef(
 	if includeDefs:
 		for j in range(n):
 			numP = num
-			w, num, m = outRel[j]
+			w, num, m = outRel[j]  # type: ignore
 			m = m.replace("\n", "\\n").replace("\t", "\\t")
 			onePer = int(1.0 / num)
 			if onePer == 1.0:
@@ -192,7 +192,7 @@ def searchWordInDef(
 		return out
 	for j in range(n):
 		numP = num
-		w, num = outRel[j]
+		w, num = outRel[j]  # type: ignore
 		onePer = int(1.0 / num)
 		if onePer == 1.0:
 			out.append(w)

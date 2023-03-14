@@ -5,7 +5,10 @@ import re
 import shutil
 import typing
 from os.path import isfile, splitext
-from typing import Generator, Iterator
+from typing import TYPE_CHECKING, Generator, Iterator
+
+if TYPE_CHECKING:
+	from pyglossary.plugin_lib import slob
 
 from pyglossary.core import cacheDir, log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -87,7 +90,7 @@ class Reader(object):
 
 	def _clear(self: "typing.Self") -> None:
 		self._filename = ""
-		self._slobObj = None  # slobObj is instance of slob.Slob class
+		self._slobObj: "slob.Slob | None" = None
 
 	def open(self: "typing.Self", filename: str) -> None:
 		try:
@@ -161,7 +164,7 @@ class Reader(object):
 		return st.replace('href="', 'href="bword://')\
 			.replace("href='", "href='bword://")
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType | None]":
 		from pyglossary.plugin_lib.slob import MIME_HTML, MIME_TEXT
 		if self._slobObj is None:
 			raise RuntimeError("iterating over a reader while it's not open")
@@ -236,9 +239,9 @@ class Writer(object):
 
 	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 		self._resPrefix = ""
-		self._slobWriter = None
+		self._slobWriter: "slob.Writer | None" = None
 
 	def _slobObserver(
 		self: "typing.Self",
@@ -251,13 +254,11 @@ class Writer(object):
 		if isfile(filename):
 			shutil.move(filename, f"{filename}.bak")
 			log.warning(f"renamed existing {filename!r} to {filename+'.bak'!r}")
-		kwargs = {}
-		kwargs["compression"] = self._compression
 		self._slobWriter = slobWriter = slob.Writer(
 			filename,
 			observer=self._slobObserver,
 			workdir=cacheDir,
-			**kwargs,
+			compression=self._compression,
 		)
 		slobWriter.tag("label", self._glos.getInfo("name") + namePostfix)
 
@@ -277,7 +278,7 @@ class Writer(object):
 
 	def finish(self: "typing.Self") -> None:
 		from time import time
-		self._filename = None
+		self._filename = ""
 		if self._slobWriter is None:
 			return
 		log.info("Finalizing slob file...")
@@ -288,6 +289,8 @@ class Writer(object):
 
 	def addDataEntry(self: "typing.Self", entry: "EntryType") -> None:
 		slobWriter = self._slobWriter
+		if slobWriter is None:
+			raise ValueError("slobWriter is None")
 		rel_path = entry.s_word
 		_, ext = splitext(rel_path)
 		ext = ext.lstrip(os.path.extsep).lower()
@@ -309,6 +312,8 @@ class Writer(object):
 		b_defi = entry.defi.encode("utf-8")
 		_ctype = self._content_type
 		writer = self._slobWriter
+		if writer is None:
+			raise ValueError("slobWriter is None")
 
 		entry.detectDefiFormat()
 		defiFormat = entry.defiFormat
@@ -355,6 +360,9 @@ class Writer(object):
 			)
 
 	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+		slobWriter = self._slobWriter
+		if slobWriter is None:
+			raise ValueError("slobWriter is None")
 		file_size_approx = int(self._file_size_approx * 0.95)
 		entryCount = 0
 		sumBlobSize = 0
@@ -374,9 +382,9 @@ class Writer(object):
 				check_every = self._file_size_approx_check_num_entries
 				entryCount += 1
 				if entryCount % check_every == 0:
-					sumBlobSize = self._slobWriter.size_data()
+					sumBlobSize = slobWriter.size_data()
 					if sumBlobSize >= file_size_approx:
-						self._slobWriter.finalize()
+						slobWriter.finalize()
 						fileIndex += 1
 						self._open(f"{filenameNoExt}.{fileIndex}.slob", f" (part {fileIndex+1})")
 						sumBlobSize = 0

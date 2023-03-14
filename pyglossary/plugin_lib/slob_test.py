@@ -8,6 +8,7 @@ import typing
 import unicodedata
 import unittest
 from os.path import abspath, dirname
+from typing import cast
 
 rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
@@ -26,6 +27,7 @@ from pyglossary.plugin_lib.slob import (
 	SECONDARY,
 	TERTIARY,
 	UTF8,
+	Blob,
 	IncorrectFileSize,
 	MultiFileReader,
 	TagNotFound,
@@ -310,7 +312,7 @@ class TestPrefixFind(BaseTest):
 			for i, k in enumerate(self.data):
 				d = r.as_dict(IDENTICAL, len(k))
 				self.assertEqual(
-					[v.content.decode('ascii') for v in d[k]],
+					[cast(Blob, v).content.decode('ascii') for v in d[k]],
 					self.data[i:],
 				)
 
@@ -378,23 +380,23 @@ class TestAlias(BaseTest):
 			self.assertEqual(get('l2'), [])
 			self.assertEqual(get('l3'), [])
 
-			item_a1 = next(d['a1'])
+			item_a1 = cast(Blob, next(d['a1']))
 			self.assertEqual(item_a1.content, b'LATIN SMALL LETTER A')
 			self.assertEqual(item_a1.fragment, 'a-frag1')
 
-			item_a2 = next(d['a2'])
+			item_a2 = cast(Blob, next(d['a2']))
 			self.assertEqual(item_a2.content, b'LATIN SMALL LETTER A')
 			self.assertEqual(item_a2.fragment, 'a-frag1')
 
-			item_a3 = next(d['a3'])
+			item_a3 = cast(Blob, next(d['a3']))
 			self.assertEqual(item_a3.content, b'LATIN SMALL LETTER A')
 			self.assertEqual(item_a3.fragment, 'a-frag1')
 
-			item_g1 = next(d['g1'])
+			item_g1 = cast(Blob, next(d['g1']))
 			self.assertEqual(item_g1.content, b'LATIN SMALL LETTER G')
 			self.assertEqual(item_g1.fragment, '')
 
-			item_g2 = next(d['g2'])
+			item_g2 = cast(Blob, next(d['g2']))
 			self.assertEqual(item_g2.content, b'LATIN SMALL LETTER G')
 			self.assertEqual(item_g2.fragment, 'g-frag1')
 

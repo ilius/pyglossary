@@ -2,6 +2,12 @@
 
 import html
 import typing
+from typing import TYPE_CHECKING, Iterator
+
+from pyglossary.glossary_types import EntryType, GlossaryType
+
+if TYPE_CHECKING:
+	import sqlite3
 
 enable = True
 lname = "almaany"
@@ -16,9 +22,7 @@ website = (
 	"Almaany.com Arabic Dictionary - Google Play",
 )
 
-from typing import Iterator
 
-from pyglossary.glossary_types import EntryType, GlossaryType
 
 
 class Reader(object):
@@ -27,9 +31,9 @@ class Reader(object):
 		self._clear()
 
 	def _clear(self: "typing.Self") -> None:
-		self._filename = ''
-		self._con = None
-		self._cur = None
+		self._filename = ""
+		self._con: "sqlite3.Connection | None" = None
+		self._cur: "sqlite3.Cursor | None" = None
 
 	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
@@ -39,12 +43,16 @@ class Reader(object):
 		self._glos.setDefaultDefiFormat("h")
 
 	def __len__(self: "typing.Self") -> int:
+		if self._cur is None:
+			raise ValueError("cur is None")
 		self._cur.execute("select count(*) from WordsTable")
 		return self._cur.fetchone()[0]
 
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+		if self._cur is None:
+			raise ValueError("cur is None")
 		from pyglossary.langs.writing_system import getWritingSystemFromText
-		alternateDict = {}
+		alternateDict: "dict[str, list[str]]" = {}
 		self._cur.execute("select wordkey, searchwordkey from Keys")
 		for row in self._cur.fetchall():
 			if row[0] in alternateDict:

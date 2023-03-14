@@ -2,7 +2,10 @@
 
 import html
 import typing
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
+
+if TYPE_CHECKING:
+	import sqlite3
 
 from pyglossary.glossary_types import EntryType, GlossaryType
 
@@ -26,9 +29,9 @@ class Reader(object):
 		self._clear()
 
 	def _clear(self: "typing.Self") -> None:
-		self._filename = ''
-		self._con = None
-		self._cur = None
+		self._filename = ""
+		self._con: "sqlite3.Connection | None" = None
+		self._cur: "sqlite3.Cursor | None" = None
 
 	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
@@ -38,10 +41,14 @@ class Reader(object):
 		self._glos.setDefaultDefiFormat("m")
 
 	def __len__(self: "typing.Self") -> int:
+		if self._cur is None:
+			raise ValueError("cur is None")
 		self._cur.execute("select count(*) from dictionary")
 		return self._cur.fetchone()[0]
 
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+		if self._cur is None:
+			raise ValueError("cur is None")
 		self._cur.execute(
 			"select word, definition from dictionary"
 			" order by word",

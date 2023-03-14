@@ -2,7 +2,10 @@
 
 import html
 import typing
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
+
+if TYPE_CHECKING:
+	import sqlite3
 
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -28,8 +31,8 @@ class Reader(object):
 
 	def _clear(self: "typing.Self") -> None:
 		self._filename = ''
-		self._con = None
-		self._cur = None
+		self._con: "sqlite3.Connection | None" = None
+		self._cur: "sqlite3.Cursor | None" = None
 
 	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
@@ -39,6 +42,8 @@ class Reader(object):
 		self._glos.setDefaultDefiFormat("m")
 
 	def __len__(self: "typing.Self") -> int:
+		if self._cur is None:
+			raise ValueError("cur is None")
 		self._cur.execute("select count(*) * 2 from main_ft")
 		return self._cur.fetchone()[0]
 
@@ -47,6 +52,8 @@ class Reader(object):
 		column1: str,
 		column2: str,
 	) -> "Iterator[tuple[str, str, str]]":
+		if self._cur is None:
+			raise ValueError("cur is None")
 		self._cur.execute(
 			f"select {column1}, {column2}, entry_type from main_ft"
 			f" order by {column1}",
