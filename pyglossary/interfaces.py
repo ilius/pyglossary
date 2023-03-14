@@ -4,6 +4,7 @@ taken from https://github.com/mrogaski/pygopher-interfaces
 
 MIT License
 
+Copyright (c) 2023 Saeed Rasooli
 Copyright (c) 2021 Mark Rogaski
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,13 +25,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import inspect
-import sys
 
-if sys.version_info < (3, 8):
-    from importlib_metadata import version
-else:
-    from importlib.metadata import version
+import inspect
+from importlib.metadata import version
 
 __version__ = version("pygopher-interfaces")
 
