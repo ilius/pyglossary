@@ -102,9 +102,7 @@ class ConvertArgs:
 	infoOverride: "dict[str, str] | None" = None
 
 
-class Glossary(GlossaryInfo, GlossaryProgress, PluginManager):
-	GLOSSARY_API_VERSION = "2.0"
-
+class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 	"""
 	The signature of 'convert' method is different in glossary_v2.py
 		See help(Glossary.convert)
@@ -1064,7 +1062,7 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager):
 
 		return sort
 
-	def convert(self: "typing.Self", args: ConvertArgs) -> "str | None":
+	def convertV2(self: "typing.Self", args: ConvertArgs) -> "str | None":
 		"""
 		returns absolute path of output file, or None if failed
 
@@ -1146,3 +1144,10 @@ class Glossary(GlossaryInfo, GlossaryProgress, PluginManager):
 	init() must be called only once, so make sure you put it in the
 	right place. Probably in the top of your program's main function or module.
 	"""
+
+
+class Glossary(GlossaryCommon):
+	GLOSSARY_API_VERSION = "2.0"
+
+	def convert(self: "typing.Self", args: ConvertArgs) -> "str | None":
+		return self.convertV2(args)

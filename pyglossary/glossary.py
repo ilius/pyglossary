@@ -25,12 +25,11 @@ from typing import Any
 
 from .core import log
 from .glossary_types import EntryType
-from .glossary_v2 import ConvertArgs
-from .glossary_v2 import Glossary as GlossaryV2
+from .glossary_v2 import ConvertArgs, GlossaryCommon
 from .sort_keys import lookupSortKey
 
 
-class Glossary(GlossaryV2):
+class Glossary(GlossaryCommon):
 	GLOSSARY_API_VERSION = "1.0"
 
 	def titleElement(  # noqa: ANN
@@ -149,7 +148,7 @@ class Glossary(GlossaryV2):
 		infoOverride: "dict[str, str] | None" = None,
 	) -> "str | None":
 		self.progressbar = progressbar
-		return GlossaryV2.convert(self, ConvertArgs(
+		return GlossaryCommon.convertV2(self, ConvertArgs(
 			inputFilename=inputFilename,
 			inputFormat=inputFormat,
 			direct=direct,
