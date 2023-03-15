@@ -89,7 +89,7 @@ class EntryList:
 		defaultDefiFormat = glos.getDefaultDefiFormat()
 		for rawEntry in self._l:
 			yield Entry.fromRaw(
-				glos, rawEntry,
+				rawEntry,
 				defaultDefiFormat=defaultDefiFormat,
 			)
 

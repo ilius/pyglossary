@@ -447,7 +447,6 @@ class Entry(BaseEntry):
 	@classmethod
 	def fromRaw(
 		cls: "Type",
-		glos: "GlossaryType",
 		rawEntryArg: "RawEntryType",
 		defaultDefiFormat: str = "m",
 	) -> "EntryType":

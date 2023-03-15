@@ -226,6 +226,6 @@ class SqEntryList:
 		defaultDefiFormat = glos.getDefaultDefiFormat()
 		for row in self._cur:
 			yield Entry.fromRaw(
-				glos, loads(row[0]),
+				loads(row[0]),
 				defaultDefiFormat=defaultDefiFormat,
 			)
