@@ -31,6 +31,7 @@ from os.path import (
 	join,
 	relpath,
 )
+from pickle import dumps as pickle_dumps
 from time import time as now
 from typing import (
 	TYPE_CHECKING,
@@ -38,6 +39,7 @@ from typing import (
 	Callable,
 	Iterator,
 )
+from zlib import compress as zlib_compress
 
 from . import core
 from .core import (
@@ -61,7 +63,7 @@ from .flags import (
 )
 from .glossary_info import GlossaryInfo
 from .glossary_progress import GlossaryProgress
-from .glossary_types import EntryType
+from .glossary_types import EntryType, RawEntryType
 from .glossary_utils import splitFilenameExt
 from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
@@ -163,7 +165,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
 		self._config: "dict[str, Any]" = {}
-		self._data: "EntryListType" = EntryList(self)
+		self._data: "EntryListType" = EntryList(
+			glos=self,
+			entryToRaw=self._entryToRaw,
+		)
 		self._sqlite = False
 		self._rawEntryCompress = False
 		self._cleanupPathList: "set[str]" = set()
@@ -197,6 +202,47 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			else:
 				log.error(f"no such file or directory: {cleanupPath}")
 		self._cleanupPathList = set()
+
+	def _dataEntryToRaw(self, entry: "DataEntry") -> "RawEntryType":
+		b_fpath = b""
+		if self.tmpDataDir:
+			b_fpath = entry.save(self.tmpDataDir).encode("utf-8")
+		tpl = (
+			[entry.getFileName()],
+			b_fpath,
+			"b",
+		)
+		if self._rawEntryCompress:
+			return zlib_compress(pickle_dumps(tpl), level=9)
+		return tpl
+
+	def _entryToRaw(self, entry: "EntryType") -> "RawEntryType":
+		"""
+			returns a tuple (word, defi) or (word, defi, defiFormat)
+			where both word and defi might be string or list of strings
+		"""
+
+		if entry.isData():
+			return self._dataEntryToRaw(entry)
+
+		tpl: "tuple[list[str], bytes, str] | tuple[list[str], bytes]"
+		defiFormat = entry.defiFormat
+		if defiFormat and defiFormat != self._defaultDefiFormat:
+			tpl = (
+				entry.l_word,
+				entry.b_defi,
+				defiFormat,
+			)
+		else:
+			tpl = (
+				entry.l_word,
+				entry.b_defi,
+			)
+
+		if self.rawEntryCompress:
+			return zlib_compress(pickle_dumps(tpl), level=9)
+
+		return tpl
 
 	@property
 	def rawEntryCompress(self: "typing.Self") -> bool:
@@ -861,8 +907,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			os.remove(sq_fpath)
 
 		self._data = SqEntryList(
-			self,
-			sq_fpath,
+			glos=self,
+			entryToRaw=self._entryToRaw,
+			filename=sq_fpath,
 			create=True,
 			persist=True,
 		)

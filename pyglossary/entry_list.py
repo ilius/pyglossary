@@ -38,9 +38,6 @@ class EntryListType(metaclass=Interface):
 	def append(self: "typing.Self", entry: "EntryType") -> None:
 		raise NotImplementedError
 
-	def insert(self: "typing.Self", pos: int, entry: "EntryType") -> None:
-		raise NotImplementedError
-
 	def clear(self: "typing.Self") -> None:
 		raise NotImplementedError
 
@@ -67,16 +64,18 @@ class EntryListType(metaclass=Interface):
 
 
 class EntryList:
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(
+		self: "typing.Self",
+		glos: "GlossaryType",
+		entryToRaw: "Callable[[EntryType], RawEntryType]",
+	) -> None:
 		self._l: "list[RawEntryType]" = []
 		self._glos = glos
+		self._entryToRaw = entryToRaw
 		self._sortKey: "Callable[[RawEntryType], Any] | None" = None
 
 	def append(self: "typing.Self", entry: "EntryType") -> None:
-		self._l.append(entry.getRaw(self._glos))
-
-	def insert(self: "typing.Self", pos: int, entry: "EntryType") -> None:
-		self._l.insert(pos, entry.getRaw(self._glos))
+		self._l.append(self._entryToRaw(entry))
 
 	def clear(self: "typing.Self") -> None:
 		self._l.clear()

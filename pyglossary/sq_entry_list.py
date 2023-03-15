@@ -25,9 +25,9 @@ from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Iterable, Iterator
+	from typing import Any, Callable, Iterable, Iterator
 
-	from .glossary_types import EntryType, GlossaryType
+	from .glossary_types import EntryType, GlossaryType, RawEntryType
 	from .sort_keys import NamedSortKey
 
 from .entry import Entry
@@ -50,6 +50,7 @@ class SqEntryList:
 	def __init__(
 		self: "typing.Self",
 		glos: "GlossaryType",
+		entryToRaw: "Callable[[EntryType], RawEntryType]",
 		filename: str,
 		create: bool = True,
 		persist: bool = False,
@@ -62,6 +63,7 @@ class SqEntryList:
 		import sqlite3
 
 		self._glos = glos
+		self._entryToRaw = entryToRaw
 		self._filename = filename
 		self._persist = persist
 		self._con: "sqlite3.Connection | None" = sqlite3.connect(filename)
@@ -120,7 +122,7 @@ class SqEntryList:
 	def append(self: "typing.Self", entry: "EntryType") -> None:
 		if self._sqliteSortKey is None:
 			raise RuntimeError("self._sqliteSortKey is None")
-		rawEntry = entry.getRaw(self._glos)
+		rawEntry = self._entryToRaw(entry)
 		self._len += 1
 		colCount = len(self._sqliteSortKey)
 		try:

@@ -9,9 +9,9 @@ from os.path import (
 	getsize,
 	join,
 )
-from pickle import dumps, loads
+from pickle import loads
 from typing import TYPE_CHECKING
-from zlib import compress, decompress
+from zlib import decompress
 
 from .entry_base import BaseEntry, MultiStr
 from .iter_utils import unique_everseen
@@ -146,19 +146,6 @@ class DataEntry(BaseEntry):
 
 	def stripFullHtml(self: "typing.Self") -> "str | None":
 		pass
-
-	def getRaw(self: "typing.Self", glos: "GlossaryType") -> "RawEntryType":
-		b_fpath = b""
-		if glos.tmpDataDir:
-			b_fpath = self.save(glos.tmpDataDir).encode("utf-8")
-		tpl = (
-			[self._fname],
-			b_fpath,
-			"b",
-		)
-		if glos.rawEntryCompress:
-			return compress(dumps(tpl), level=9)
-		return tpl
 
 
 class Entry(BaseEntry):
@@ -417,32 +404,6 @@ class Entry(BaseEntry):
 		defi = defi[:i]
 		self._defi = defi
 		return None
-
-	def getRaw(
-		self: "typing.Self",
-		glos: "GlossaryType",
-	) -> "RawEntryType":
-		"""
-			returns a tuple (word, defi) or (word, defi, defiFormat)
-			where both word and defi might be string or list of strings
-		"""
-		tpl: "tuple[list[str], bytes, str] | tuple[list[str], bytes]"
-		if self._defiFormat and self._defiFormat != glos.getDefaultDefiFormat():
-			tpl = (
-				self.l_word,
-				self.b_defi,
-				self._defiFormat,
-			)
-		else:
-			tpl = (
-				self.l_word,
-				self.b_defi,
-			)
-
-		if glos.rawEntryCompress:
-			return compress(dumps(tpl), level=9)
-
-		return tpl
 
 	@classmethod
 	def fromRaw(
