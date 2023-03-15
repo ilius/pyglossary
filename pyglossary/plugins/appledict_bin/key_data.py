@@ -1,6 +1,3 @@
-
-import typing
-
 # -*- coding: utf-8 -*-
 # Copyright © 2023 soshial <soshial@gmail.com> (soshial)
 #
@@ -15,12 +12,9 @@ import typing
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-from typing import TYPE_CHECKING
+import typing
 
-if TYPE_CHECKING:
-	from typing import Any, TypeAlias
-
-RawKeyData: "TypeAlias" = "tuple[int, int, Sequence[str]]"
+RawKeyData: "typing.TypeAlias" = "tuple[int, int, typing.Sequence[str]]"
 """tuple(priority, parentalControl, keyTextFields)"""
 
 
@@ -101,7 +95,7 @@ class KeyData:
 		self.entryTitle = entryTitle
 		self.anchor = anchor
 
-	def toDict(self: "typing.Self") -> "dict[str, Any]":
+	def toDict(self: "typing.Self") -> "dict[str, typing.Any]":
 		return dict(
 			priority=self.priority,
 			parentalControl=self.parentalControl,
