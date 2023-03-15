@@ -126,7 +126,11 @@ class EntryType(metaclass=Interface):
 
 
 class EntryListType(metaclass=Interface):
-	def __init__(self: "typing.Self") -> None:
+	def __init__(
+		self: "typing.Self",
+		entryToRaw: "Callable[[EntryType], RawEntryType]",
+		entryFromRaw: "Callable[[RawEntryType], EntryType]",
+	) -> None:
 		raise NotImplementedError
 
 	@property

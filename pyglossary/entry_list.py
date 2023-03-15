@@ -22,6 +22,8 @@ import logging
 import typing
 from typing import TYPE_CHECKING
 
+from .glossary_types import EntryListType
+
 if TYPE_CHECKING:
 	from typing import Any, Callable, Iterator
 
@@ -33,7 +35,10 @@ from .entry import Entry
 log = logging.getLogger("pyglossary")
 
 
-class EntryList:
+# although issubclass(EntryListType, EntryList) is true without inheriting
+# from EntryListType, mypy does not understand this (IDK why),
+# so I have to inherit from it to make mypy happy!
+class EntryList(EntryListType):
 	def __init__(
 		self: "typing.Self",
 		entryToRaw: "Callable[[EntryType], RawEntryType]",

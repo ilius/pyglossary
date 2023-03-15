@@ -33,7 +33,7 @@ class EntryFilterType(metaclass=Interface):
 		raise NotImplementedError
 
 
-class EntryFilter:
+class EntryFilter(EntryFilterType):
 	name = ""
 	desc = ""
 	falseComment = ""

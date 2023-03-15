@@ -4,6 +4,8 @@ import typing
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING
 
+from .glossary_types import EntryType
+
 if TYPE_CHECKING:
 	from typing import TypeAlias
 
@@ -11,7 +13,7 @@ if TYPE_CHECKING:
 MultiStr: "TypeAlias" = "str | list[str]"
 
 
-class BaseEntry:
+class BaseEntry(EntryType):
 	__slots__: "list[str]" = []
 
 	@property

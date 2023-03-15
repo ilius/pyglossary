@@ -231,7 +231,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		"""
 
 		if entry.isData():
-			return self._dataEntryToRaw(entry)
+			return self._dataEntryToRaw(cast("DataEntry", entry))
 
 		tpl: "tuple[list[str], bytes, str] | tuple[list[str], bytes]"
 		defiFormat = entry.defiFormat
