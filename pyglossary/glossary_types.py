@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 from .interfaces import Interface
 from .langs import Lang
+from .sort_keys import NamedSortKey
 
 MultiStr: "TypeAlias" = "str | list[str]"
 
@@ -121,6 +122,45 @@ class EntryType(metaclass=Interface):
 		raise NotImplementedError
 
 	def stripFullHtml(self: "typing.Self") -> "str | None":
+		raise NotImplementedError
+
+
+class EntryListType(metaclass=Interface):
+	def __init__(self: "typing.Self") -> None:
+		raise NotImplementedError
+
+	@property
+	def rawEntryCompress(self: "typing.Self") -> bool:
+		raise NotImplementedError
+
+	@rawEntryCompress.setter
+	def rawEntryCompress(self: "typing.Self", enable: bool) -> None:
+		raise NotImplementedError
+
+	def append(self: "typing.Self", entry: "EntryType") -> None:
+		raise NotImplementedError	
+
+	def clear(self: "typing.Self") -> None:
+		raise NotImplementedError
+
+	def __len__(self: "typing.Self") -> int:
+		raise NotImplementedError
+
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+		raise NotImplementedError
+
+	def setSortKey(
+		self: "typing.Self",
+		namedSortKey: "NamedSortKey",
+		sortEncoding: "str | None",
+		writeOptions: "dict[str, Any]",
+	) -> None:
+		raise NotImplementedError
+
+	def sort(self: "typing.Self") -> None:
+		raise NotImplementedError
+
+	def close(self: "typing.Self") -> None:
 		raise NotImplementedError
 
 

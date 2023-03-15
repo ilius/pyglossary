@@ -9,9 +9,9 @@ from os.path import (
 	getsize,
 	join,
 )
-from pickle import loads
+from pickle import loads as pickle_loads
 from typing import TYPE_CHECKING
-from zlib import decompress
+from zlib import decompress as zlib_decompress
 
 from .entry_base import BaseEntry, MultiStr
 from .iter_utils import unique_everseen
@@ -21,10 +21,9 @@ if TYPE_CHECKING:
 	from typing import (
 		Any,
 		Callable,
-		Type,
 	)
 
-	from .glossary_types import EntryType, GlossaryType, RawEntryType
+	from .glossary_types import RawEntryType
 
 
 log = logging.getLogger("pyglossary")
@@ -185,8 +184,8 @@ class Entry(BaseEntry):
 
 	@staticmethod
 	def getRawEntrySortKey(
-		glos: "GlossaryType",
 		key: "Callable[[bytes], Any]",
+		rawEntryCompress: bool,
 	) -> "Callable[[RawEntryType], Any]":
 		# FIXME: this type for `key` is only for rawEntryCompress=False
 		# for rawEntryCompress=True, it is Callable[[bytes], Any]
@@ -194,8 +193,8 @@ class Entry(BaseEntry):
 		# (word, defi, defiFormat)
 		# so x[0] is word(s) in bytes, that can be a str (one word),
 		# or a list or tuple (one word with or more alternatives)
-		if glos.rawEntryCompress:
-			return lambda x: key(loads(decompress(x))[0])
+		if rawEntryCompress:
+			return lambda x: key(pickle_loads(zlib_decompress(x))[0])
 		# x is rawEntry, so x[0] is list of words (entry.l_word)
 		return lambda x: key(x[0])
 
@@ -404,38 +403,3 @@ class Entry(BaseEntry):
 		defi = defi[:i]
 		self._defi = defi
 		return None
-
-	@classmethod
-	def fromRaw(
-		cls: "Type",
-		rawEntryArg: "RawEntryType",
-		defaultDefiFormat: str = "m",
-	) -> "EntryType":
-		"""
-			rawEntry can be (word, defi) or (word, defi, defiFormat)
-			where both word and defi can be string or list of strings
-			if defiFormat is missing, defaultDefiFormat will be used
-
-			creates and return an Entry object from `rawEntry` tuple
-		"""
-		if isinstance(rawEntryArg, bytes):
-			rawEntry = loads(decompress(rawEntryArg))
-		else:
-			rawEntry = rawEntryArg
-		word = rawEntry[0]
-		defi = rawEntry[1].decode("utf-8")
-		if len(rawEntry) > 2:
-			defiFormat = rawEntry[2]
-			if defiFormat == "b":
-				fname = word
-				if isinstance(fname, list):
-					fname = fname[0]  # NESTED 4
-				return DataEntry(fname, tmpPath=defi)
-		else:
-			defiFormat = defaultDefiFormat
-
-		return cls(
-			word,
-			defi,
-			defiFormat=defiFormat,
-		)

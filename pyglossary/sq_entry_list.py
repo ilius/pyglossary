@@ -24,13 +24,14 @@ from os.path import isfile
 from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
+from .glossary_types import EntryListType
+
 if TYPE_CHECKING:
 	from typing import Any, Callable, Iterable, Iterator
 
-	from .glossary_types import EntryType, GlossaryType, RawEntryType
+	from .glossary_types import EntryType, RawEntryType
 	from .sort_keys import NamedSortKey
 
-from .entry import Entry
 
 log = logging.getLogger("pyglossary")
 
@@ -46,11 +47,11 @@ PICKLE_PROTOCOL = 4
 # https://docs.python.org/3/library/pickle.html
 
 
-class SqEntryList:
+class SqEntryList(EntryListType):
 	def __init__(
 		self: "typing.Self",
-		glos: "GlossaryType",
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
+		entryFromRaw: "Callable[[RawEntryType], EntryType]",
 		filename: str,
 		create: bool = True,
 		persist: bool = False,
@@ -62,9 +63,10 @@ class SqEntryList:
 		"""
 		import sqlite3
 
-		self._glos = glos
 		self._entryToRaw = entryToRaw
+		self._entryFromRaw = entryFromRaw
 		self._filename = filename
+
 		self._persist = persist
 		self._con: "sqlite3.Connection | None" = sqlite3.connect(filename)
 		self._cur: "sqlite3.Cursor | None" = self._con.cursor()
@@ -79,6 +81,15 @@ class SqEntryList:
 		self._create = create
 		self._sqliteSortKey = None
 		self._columnNames = ""
+
+	@property
+	def rawEntryCompress(self: "typing.Self") -> bool:
+		return False
+
+	@rawEntryCompress.setter
+	def rawEntryCompress(self: "typing.Self", enable: bool) -> None:
+		# just to comply with EntryListType
+		pass
 
 	def setSortKey(
 		self: "typing.Self",
@@ -222,12 +233,8 @@ class SqEntryList:
 	def __iter__(self: "typing.Self") -> "Iterator":
 		if self._cur is None:
 			return
-		glos = self._glos
 		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"
 		self._cur.execute(query)
-		defaultDefiFormat = glos.getDefaultDefiFormat()
+		entryFromRaw = self._entryFromRaw
 		for row in self._cur:
-			yield Entry.fromRaw(
-				loads(row[0]),
-				defaultDefiFormat=defaultDefiFormat,
-			)
+			yield entryFromRaw(loads(row[0]))

@@ -22,57 +22,36 @@ import logging
 import typing
 from typing import TYPE_CHECKING
 
-from .interfaces import Interface
-
 if TYPE_CHECKING:
 	from typing import Any, Callable, Iterator
 
-	from .glossary_types import EntryType, GlossaryType, RawEntryType
+	from .glossary_types import EntryType, RawEntryType
 	from .sort_keys import NamedSortKey
 
 from .entry import Entry
 
 log = logging.getLogger("pyglossary")
 
-class EntryListType(metaclass=Interface):
-	def append(self: "typing.Self", entry: "EntryType") -> None:
-		raise NotImplementedError
-
-	def clear(self: "typing.Self") -> None:
-		raise NotImplementedError
-
-	def __len__(self: "typing.Self") -> int:
-		raise NotImplementedError
-
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
-		raise NotImplementedError
-
-	def setSortKey(
-		self: "typing.Self",
-		namedSortKey: "NamedSortKey",
-		sortEncoding: "str | None",
-		writeOptions: "dict[str, Any]",
-	) -> None:
-		raise NotImplementedError
-
-
-	def sort(self: "typing.Self") -> None:
-		raise NotImplementedError
-
-	def close(self: "typing.Self") -> None:
-		raise NotImplementedError
-
 
 class EntryList:
 	def __init__(
 		self: "typing.Self",
-		glos: "GlossaryType",
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
+		entryFromRaw: "Callable[[RawEntryType], EntryType]",
 	) -> None:
 		self._l: "list[RawEntryType]" = []
-		self._glos = glos
 		self._entryToRaw = entryToRaw
+		self._entryFromRaw = entryFromRaw
 		self._sortKey: "Callable[[RawEntryType], Any] | None" = None
+		self._rawEntryCompress = False
+
+	@property
+	def rawEntryCompress(self: "typing.Self") -> bool:
+		return self._rawEntryCompress
+
+	@rawEntryCompress.setter
+	def rawEntryCompress(self: "typing.Self", enable: bool) -> None:
+		self._rawEntryCompress = enable
 
 	def append(self: "typing.Self", entry: "EntryType") -> None:
 		self._l.append(self._entryToRaw(entry))
@@ -84,13 +63,9 @@ class EntryList:
 		return len(self._l)
 
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
-		glos = self._glos
-		defaultDefiFormat = glos.getDefaultDefiFormat()
+		entryFromRaw = self._entryFromRaw
 		for rawEntry in self._l:
-			yield Entry.fromRaw(
-				rawEntry,
-				defaultDefiFormat=defaultDefiFormat,
-			)
+			yield entryFromRaw(rawEntry)
 
 	def setSortKey(
 		self: "typing.Self",
@@ -102,7 +77,10 @@ class EntryList:
 		if sortEncoding:
 			kwargs["sortEncoding"] = sortEncoding
 		sortKey = namedSortKey.normal(**kwargs)
-		self._sortKey = Entry.getRawEntrySortKey(self._glos, sortKey)
+		self._sortKey = Entry.getRawEntrySortKey(
+			key=sortKey,
+			rawEntryCompress=self._rawEntryCompress,
+		)
 
 	def sort(self: "typing.Self") -> None:
 		if self._sortKey is None:

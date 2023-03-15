@@ -18,7 +18,6 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-import logging
 import os
 import os.path
 import typing
@@ -32,18 +31,22 @@ from os.path import (
 	relpath,
 )
 from pickle import dumps as pickle_dumps
+from pickle import loads as pickle_loads
 from time import time as now
 from typing import (
 	TYPE_CHECKING,
 	Any,
 	Callable,
 	Iterator,
+	cast,
 )
 from zlib import compress as zlib_compress
+from zlib import decompress as zlib_decompress
 
 from . import core
 from .core import (
 	cacheDir,
+	log,
 )
 from .entry import DataEntry, Entry
 from .entry_filters import (
@@ -55,7 +58,7 @@ from .entry_filters import (
 	StripFullHtml,
 	entryFiltersRules,
 )
-from .entry_list import EntryList, EntryListType
+from .entry_list import EntryList
 from .flags import (
 	ALWAYS,
 	DEFAULT_YES,
@@ -63,7 +66,13 @@ from .flags import (
 )
 from .glossary_info import GlossaryInfo
 from .glossary_progress import GlossaryProgress
-from .glossary_types import EntryType, RawEntryType
+from .glossary_types import (
+	EntryListType,
+	EntryType,
+	GlossaryExtendedType,
+	GlossaryType,
+	RawEntryType,
+)
 from .glossary_utils import splitFilenameExt
 from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
@@ -75,9 +84,6 @@ if TYPE_CHECKING:
 	from .plugin_prop import PluginProp
 	from .sort_keys import NamedSortKey
 	from .ui_type import UIType
-
-
-log = logging.getLogger("pyglossary")
 
 
 """
@@ -166,13 +172,15 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		GlossaryProgress.__init__(self, ui=ui)
 		self._config: "dict[str, Any]" = {}
 		self._data: "EntryListType" = EntryList(
-			glos=self,
 			entryToRaw=self._entryToRaw,
+			entryFromRaw=self._entryFromRaw,
 		)
 		self._sqlite = False
 		self._rawEntryCompress = False
 		self._cleanupPathList: "set[str]" = set()
+
 		self.clear()
+
 		if info:
 			if not isinstance(info, (dict, odict)):
 				raise TypeError(
@@ -228,21 +236,33 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		tpl: "tuple[list[str], bytes, str] | tuple[list[str], bytes]"
 		defiFormat = entry.defiFormat
 		if defiFormat and defiFormat != self._defaultDefiFormat:
-			tpl = (
-				entry.l_word,
-				entry.b_defi,
-				defiFormat,
-			)
+			tpl = (entry.l_word, entry.b_defi, defiFormat)
 		else:
-			tpl = (
-				entry.l_word,
-				entry.b_defi,
-			)
+			tpl = (entry.l_word, entry.b_defi)
 
 		if self.rawEntryCompress:
 			return zlib_compress(pickle_dumps(tpl), level=9)
 
 		return tpl
+
+	def _entryFromRaw(self, rawEntryArg: "RawEntryType") -> "EntryType":
+		if isinstance(rawEntryArg, bytes):
+			rawEntry = pickle_loads(zlib_decompress(rawEntryArg))
+		else:
+			rawEntry = rawEntryArg
+		word = rawEntry[0]
+		defi = rawEntry[1].decode("utf-8")
+		if len(rawEntry) > 2:
+			defiFormat = rawEntry[2]
+			if defiFormat == "b":
+				fname = word
+				if isinstance(fname, list):
+					fname = fname[0]  # NESTED 4
+				return DataEntry(fname, tmpPath=defi)
+		else:
+			defiFormat = self._defaultDefiFormat
+
+		return Entry(word, defi, defiFormat=defiFormat)
 
 	@property
 	def rawEntryCompress(self: "typing.Self") -> bool:
@@ -250,10 +270,13 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def setRawEntryCompress(self: "typing.Self", enable: bool) -> None:
 		self._rawEntryCompress = enable
+		self._data.rawEntryCompress = enable
 
 	def updateEntryFilters(self: "typing.Self") -> None:
 		entryFilters = []
 		config = self._config
+
+		glosArg = cast(GlossaryExtendedType, self)
 
 		for configParam, default, filterClass in entryFiltersRules:
 			args = []
@@ -265,10 +288,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 				continue
 			if not isinstance(default, bool):
 				args = [value]
-			entryFilters.append(filterClass(self, *tuple(args)))
+			entryFilters.append(filterClass(glosArg, *tuple(args)))
 
 		if self.progressbar:
-			entryFilters.append(ShowProgressBar(self))
+			entryFilters.append(ShowProgressBar(glosArg))
 
 		if log.level <= core.TRACE:
 			try:
@@ -276,7 +299,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			except ModuleNotFoundError:
 				pass
 			else:
-				entryFilters.append(ShowMaxMemoryUsage(self))
+				entryFilters.append(ShowMaxMemoryUsage(glosArg))
 
 		self._entryFilters = entryFilters
 
@@ -297,7 +320,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 	def _addExtraEntryFilter(self: "typing.Self", cls: "type[EntryFilterType]") -> None:
 		if cls.name in self._entryFiltersName:
 			return
-		self._entryFilters.append(cls(self))
+		self._entryFilters.append(cls(cast(GlossaryType, self)))
 		self._entryFiltersName.add(cls.name)
 
 	def removeHtmlTagsAll(self: "typing.Self") -> None:
@@ -321,7 +344,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		if name in self._entryFiltersName:
 			return
 		self._entryFilters.append(StripFullHtml(
-			self,
+			cast(GlossaryType, self),
 			errorHandler=errorHandler,
 		))
 		self._entryFiltersName.add(name)
@@ -352,7 +375,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			yield from self._data
 			return
 
-		pbFilter = ShowProgressBar(self)
+		pbFilter = ShowProgressBar(cast(GlossaryExtendedType, self))
 		self.progressInit("Writing")
 		for entry in self._data:
 			pbFilter.run(entry)
@@ -463,7 +486,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			return
 		self._config = config
 		if "optimize_memory" in config:
-			self._rawEntryCompress = config["optimize_memory"]
+			self.setRawEntryCompress(config["optimize_memory"])
 
 	@property
 	def alts(self: "typing.Self") -> bool:
@@ -892,7 +915,11 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def _compressOutput(self: "typing.Self", filename: str, compression: str) -> str:
 		from .compression import compress
-		return compress(self, filename, compression)
+		return compress(
+			cast(GlossaryType, self),
+			filename,
+			compression,
+		)
 
 	def _switchToSQLite(
 		self: "typing.Self",
@@ -907,13 +934,12 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			os.remove(sq_fpath)
 
 		self._data = SqEntryList(
-			glos=self,
 			entryToRaw=self._entryToRaw,
+			entryFromRaw=self._entryFromRaw,
 			filename=sq_fpath,
 			create=True,
 			persist=True,
 		)
-		self._rawEntryCompress = False
 		self._cleanupPathList.add(sq_fpath)
 
 		if not self.alts:
