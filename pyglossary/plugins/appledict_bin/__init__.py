@@ -56,6 +56,7 @@ if TYPE_CHECKING:
 
 from zlib import decompress
 
+from pyglossary.apple_utils import substituteAppleCSS
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import BoolOption, Option
@@ -635,10 +636,11 @@ class Reader(object):
 			cssPath = join(contentsPath, cssPathRel)
 			if not isfile(cssPath):
 				continue
-			with open(cssPath, mode="rb") as cssFile:
-				cssBytes = cssFile.read()
+			with open(cssPath, mode="r", encoding="utf-8") as cssFile:
+				cssText = cssFile.read()
 			log.info(f"Using {cssPath =}")
-			yield glos.newDataEntry("style.css", cssBytes)
+			cssText = substituteAppleCSS(cssText)
+			yield glos.newDataEntry("style.css", cssText.encode("utf-8"))
 			break
 
 		for entryBytes, articleAddress in self.yieldEntryBytes(
