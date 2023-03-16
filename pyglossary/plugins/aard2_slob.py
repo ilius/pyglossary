@@ -59,6 +59,9 @@ optionsProp: "dict[str, Option]" = {
 	"word_title": BoolOption(
 		comment="add headwords title to beginning of definition",
 	),
+	"version_info": BoolOption(
+		comment="add version info tags to slob file",
+	),
 }
 
 extraDocs = [
@@ -214,6 +217,7 @@ class Writer(object):
 	_file_size_approx_check_num_entries = 100
 	_separate_alternates: bool = False
 	_word_title: bool = False
+	_version_info: bool = False
 
 	resourceMimeTypes = {
 		"png": "image/png",
@@ -259,6 +263,7 @@ class Writer(object):
 			observer=self._slobObserver,
 			workdir=cacheDir,
 			compression=self._compression,
+			version_info=self._version_info,
 		)
 		slobWriter.tag("label", self._glos.getInfo("name") + namePostfix)
 		return slobWriter

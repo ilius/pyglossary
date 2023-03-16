@@ -1,3 +1,4 @@
+import os
 import sys
 import typing
 import unittest
@@ -22,11 +23,15 @@ class TestGlossarySlob(TestGlossaryBase):
 
 	def test_convert_txt_slob_1(self: "typing.Self"):
 		fname = "100-en-fa"
+		os.environ["SLOB_TIMESTAMP"] = "2023-01-01T12:00:00.000000+00:00"
 		self.convert(
 			f"{fname}.txt",
 			f"{fname}.slob",
-			compareBinary="",
+			# sha1sum="",
+			# compareBinary="",
 			# slob file is different each time (and so its sha1sum and md5sum)
+			# even with same exact tags!
+			# writeOptions={"compression": ""},
 		)
 
 	def test_convert_txt_slob_2_file_size_approx(self: "typing.Self"):

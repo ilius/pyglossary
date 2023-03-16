@@ -27,6 +27,7 @@
 | file_size_approx_check_num_entries | `100`   | int  | for file_size_approx, check every [?] entries                   |
 | separate_alternates                | `False` | bool | add alternate headwords as separate entries to slob             |
 | word_title                         | `False` | bool | add headwords title to beginning of definition                  |
+| version_info                       | `False` | bool | add version info tags to slob file                              |
 
 ### Dependencies for reading and writing
 

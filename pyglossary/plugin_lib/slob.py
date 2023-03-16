@@ -1102,6 +1102,7 @@ class Writer(object):
 				workdir=tmpdir.name,
 				max_redirects=0,
 				compression=None,
+				version_info=False,
 			)
 
 		if compression is None:
@@ -1304,6 +1305,7 @@ class Writer(object):
 					workdir=self.tmpdir.name,
 					max_redirects=0,
 					compression=None,
+					version_info=False,
 				)
 
 				def read_key_frag(item: "Blob", default_fragment: str) -> "tuple[str, str]":
