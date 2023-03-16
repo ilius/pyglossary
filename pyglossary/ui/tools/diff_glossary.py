@@ -2,6 +2,7 @@
 
 import difflib
 import os
+import os.path
 import shlex
 import sys
 from subprocess import PIPE, Popen
@@ -332,6 +333,8 @@ def main() -> None:
 		format1 = sys.argv[3]
 	if len(sys.argv) > 4:
 		format2 = sys.argv[4]
+	filename1 = os.path.expanduser(filename1)
+	filename2 = os.path.expanduser(filename2)
 	diffGlossary(
 		filename1,
 		filename2,

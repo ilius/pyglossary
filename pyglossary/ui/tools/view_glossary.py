@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os.path
 import sys
 from subprocess import PIPE, Popen
 from typing import Callable
@@ -87,6 +88,7 @@ def main() -> None:
 	format = None
 	if len(sys.argv) > 2:
 		format = sys.argv[2]
+	filename = os.path.expanduser(filename)
 	viewGlossary(filename, format=format)
 
 
