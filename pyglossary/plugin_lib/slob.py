@@ -1066,6 +1066,7 @@ class Writer(object):
 		min_bin_size: int = 512 * 1024,
 		max_redirects: int = 5,
 		observer: "Callable[[WriterEvent], None] | None" = None,
+		version_info: bool = True,
 	) -> None:
 		self.filename = filename
 		self.observer = observer
@@ -1117,15 +1118,20 @@ class Writer(object):
 
 		self.current_bin: "BinMemWriter | None" = None
 
+		created_at = os.getenv("SLOB_TIMESTAMP") or datetime.now(timezone.utc).isoformat()
+
 		self.blob_count = 0
 		self.ref_count = 0
 		self.bin_count = 0
 		self._tags = {
-			'version.python': sys.version.replace('\n', ' '),
-			'version.pyicu': icu.VERSION,
-			'version.icu': icu.ICU_VERSION,
-			'created.at': datetime.now(timezone.utc).isoformat(),
+			'created.at': created_at,
 		}
+		if version_info:
+			self._tags.update({
+				'version.python': sys.version.replace('\n', ' '),
+				'version.pyicu': icu.VERSION,
+				'version.icu': icu.ICU_VERSION,
+			})
 		self.tags = MappingProxyType(self._tags)
 
 	def _wbfopen(self: "typing.Self", name: str) -> StructWriter:
