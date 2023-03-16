@@ -10,12 +10,12 @@ import unittest
 from os.path import abspath, dirname
 from typing import cast
 
-rootDir = dirname(dirname(dirname(abspath(__file__))))
+rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
+from pyglossary import slob
 from pyglossary.core_test import MockLogHandler
-from pyglossary.plugin_lib import slob
-from pyglossary.plugin_lib.slob import (
+from pyglossary.slob import (
 	IDENTICAL,
 	MAX_BIN_ITEM_COUNT,
 	MAX_TEXT_LEN,

@@ -8,7 +8,7 @@ from os.path import isfile, splitext
 from typing import TYPE_CHECKING, Generator, Iterator
 
 if TYPE_CHECKING:
-	from pyglossary.plugin_lib import slob
+	from pyglossary import slob
 
 from pyglossary.core import cacheDir, log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -101,7 +101,7 @@ class Reader(object):
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install PyICU` to install"
 			raise e
-		from pyglossary.plugin_lib import slob
+		from pyglossary import slob
 		self._filename = filename
 		self._slobObj = slob.open(filename)
 		tags = dict(self._slobObj.tags.items())
@@ -168,7 +168,7 @@ class Reader(object):
 			.replace("href='", "href='bword://")
 
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType | None]":
-		from pyglossary.plugin_lib.slob import MIME_HTML, MIME_TEXT
+		from pyglossary.slob import MIME_HTML, MIME_TEXT
 		if self._slobObj is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -254,7 +254,7 @@ class Writer(object):
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
 	def _open(self: "typing.Self", filename: str, namePostfix: str) -> "slob.Writer":
-		from pyglossary.plugin_lib import slob
+		from pyglossary import slob
 		if isfile(filename):
 			shutil.move(filename, f"{filename}.bak")
 			log.warning(f"renamed existing {filename!r} to {filename+'.bak'!r}")

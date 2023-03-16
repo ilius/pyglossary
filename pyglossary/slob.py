@@ -1,4 +1,22 @@
-# pylint: disable=C0111,C0103,C0302,R0903,R0904,R0914,R0201
+# slob.py 
+# Copyright (C) 2020-2023 Saeed Rasooli
+# Copyright (C) 2019 Igor Tkach <itkach@gmail.com>
+# 	as part of https://github.com/itkach/slob
+# 
+# This program is a free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
+# If not, see <http://www.gnu.org/licenses/gpl.txt>.
+
 import encodings
 import io
 import os
