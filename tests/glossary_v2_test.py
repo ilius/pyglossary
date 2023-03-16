@@ -254,17 +254,25 @@ class TestGlossaryBase(unittest.TestCase):
 				self.downloadFile(compareText),
 				showDiff=showDiff,
 			)
-		elif compareBinary:
+			return
+
+		if compareBinary:
 			self.compareBinaryFiles(outputFilename, self.downloadFile(compareBinary))
-		elif sha1sum:
+			return
+
+		msg = f"{outputFilename=}"
+
+		if sha1sum:
 			with open(outputFilename, mode="rb") as _file:
 				actualSha1 = hashlib.sha1(_file.read()).hexdigest()
-			self.assertEqual(actualSha1, sha1sum)
+			self.assertEqual(sha1sum, actualSha1, msg)
+			return
 
-		elif md5sum:
+		if md5sum:
 			with open(outputFilename, mode="rb") as _file:
 				actualMd5 = hashlib.md5(_file.read()).hexdigest()
-			self.assertEqual(actualMd5, md5sum)
+			self.assertEqual(md5sum, actualMd5, msg)
+			return
 
 	def convert_sqlite_both(self: "typing.Self", *args, **kwargs):
 		for sqlite in (None, True, False):
