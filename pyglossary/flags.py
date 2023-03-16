@@ -1,13 +1,13 @@
 flagsByName = {}
 
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from typing import TypeAlias
 
 
 class StrWithDesc(str):
-	def __new__(cls: "Type", name: str, desc: str) -> "StrWithDesc":
+	def __new__(cls: "type", name: str, desc: str) -> "StrWithDesc":
 		s = str.__new__(cls, name)
 		s.desc = desc
 		flagsByName[name] = s

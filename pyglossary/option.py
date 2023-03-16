@@ -3,7 +3,7 @@
 import logging
 import re
 import typing
-from typing import Any, Dict, List, Type
+from typing import Any, Dict, List
 
 log = logging.getLogger("pyglossary")
 
@@ -20,10 +20,10 @@ def optionFromDict(data: "dict[str, Any]") -> "Option":
 
 
 class Option(object):
-	classes: "dict[str, Type]" = {}
+	classes: "dict[str, type]" = {}
 
 	@classmethod
-	def register(cls: "Type", optClass: "Type") -> "Type":
+	def register(cls: "type", optClass: "type") -> "type":
 		cls.classes[optClass.__name__] = optClass
 		return optClass
 

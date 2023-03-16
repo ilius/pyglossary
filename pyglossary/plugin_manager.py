@@ -22,7 +22,7 @@ import os
 import sys
 import types
 from os.path import isdir, join
-from typing import Any, Type
+from typing import Any
 
 from . import core
 from .core import (
@@ -52,7 +52,7 @@ class PluginManager(object):
 	writeFormats: "list[str]" = []
 
 	@classmethod
-	def loadPluginsFromJson(cls: "Type", jsonPath: str) -> None:
+	def loadPluginsFromJson(cls: "type", jsonPath: str) -> None:
 		import json
 		from os.path import join
 
@@ -69,7 +69,7 @@ class PluginManager(object):
 
 	@classmethod
 	def loadPlugins(
-		cls: "Type",
+		cls: "type",
 		directory: str,
 		skipDisabled: bool = True,
 	) -> None:
@@ -100,7 +100,7 @@ class PluginManager(object):
 
 	@classmethod
 	def _loadPluginByDict(
-		cls: "Type",
+		cls: "type",
 		attrs: "dict[str, Any]",
 		modulePath: str,
 	) -> None:
@@ -139,7 +139,7 @@ class PluginManager(object):
 
 	@classmethod
 	def _loadPlugin(
-		cls: "Type",
+		cls: "type",
 		moduleName: str,
 		skipDisabled: bool = True,
 	) -> None:
@@ -185,7 +185,7 @@ class PluginManager(object):
 			cls.writeFormats.append(name)
 
 	@classmethod
-	def _findPlugin(cls: "Type", query: str) -> "PluginProp | None":
+	def _findPlugin(cls: "type", query: str) -> "PluginProp | None":
 		"""
 			find plugin by name or extension
 		"""
@@ -199,7 +199,7 @@ class PluginManager(object):
 
 	@classmethod
 	def detectInputFormat(
-		cls: "Type",
+		cls: "type",
 		filename: str,
 		format: str = "",
 		quiet: bool = False,
@@ -242,7 +242,7 @@ class PluginManager(object):
 
 	@classmethod
 	def detectOutputFormat(
-		cls: "Type",
+		cls: "type",
 		filename: str = "",
 		format: str = "",
 		inputFilename: str = "",
@@ -307,7 +307,7 @@ class PluginManager(object):
 
 	@classmethod
 	def init(
-		cls: "Type",
+		cls: "type",
 		usePluginsJson: bool = True,
 		skipDisabledPlugins: bool = True,
 	) -> None:

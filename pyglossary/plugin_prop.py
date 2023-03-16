@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import pathlib
-	from typing import Any, Callable, Type
+	from typing import Any, Callable
 
 	from .flags import StrWithDesc
 
@@ -118,7 +118,7 @@ class PluginProp(object):
 
 	@classmethod
 	def fromDict(
-		cls: "Type",
+		cls: "type",
 		attrs: "dict[str, Any]",
 		modulePath: str,
 	) -> None:
@@ -152,7 +152,7 @@ class PluginProp(object):
 		return self
 
 	@classmethod
-	def fromModule(cls: "Type", mod: "Any") -> "PluginProp":
+	def fromModule(cls: "type", mod: "Any") -> "PluginProp":
 		self = cls()
 		self._mod = mod
 		self._Reader = None
@@ -295,7 +295,7 @@ class PluginProp(object):
 	def canWrite(self: "typing.Self") -> bool:
 		return self._canWrite
 
-	def getOptionAttrNamesFromClass(self: "typing.Self", rwclass: "Type") -> "list[str]":
+	def getOptionAttrNamesFromClass(self: "typing.Self", rwclass: "type") -> "list[str]":
 		nameList = []
 
 		for cls in rwclass.__bases__ + (rwclass,):
@@ -311,7 +311,7 @@ class PluginProp(object):
 
 		return nameList
 
-	def getOptionsFromClass(self: "typing.Self", rwclass: "Type") -> "dict[str, Any]":
+	def getOptionsFromClass(self: "typing.Self", rwclass: "type") -> "dict[str, Any]":
 		optionsProp = self.optionsProp
 		options = odict()
 		if rwclass is None:
@@ -462,7 +462,7 @@ class PluginProp(object):
 
 	@classmethod
 	def getExtraOptionsFromFunc(
-		cls: "Type",
+		cls: "type",
 		func: "Callable",
 		format: str,
 	) -> "list[str]":

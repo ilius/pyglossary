@@ -45,7 +45,6 @@ from typing import (
 	Iterator,
 	Mapping,
 	Sequence,
-	Type,
 	TypeVar,
 	cast,
 )
@@ -270,7 +269,7 @@ class MultiFileReader(BufferedIOBase):
 
 	def __exit__(
 		self: "typing.Self",
-		exc_type: "Type[BaseException] | None",
+		exc_type: "type[BaseException] | None",
 		exc_val: "BaseException | None",
 		exc_tb: "types.TracebackType | None",
 	) -> None:
@@ -728,7 +727,7 @@ class Slob(object):
 
 	def __exit__(
 		self: "typing.Self",
-		exc_type: "Type[BaseException] | None",
+		exc_type: "type[BaseException] | None",
 		exc_val: "BaseException | None",
 		exc_tb: "types.TracebackType | None",
 	) -> None:
@@ -1552,7 +1551,7 @@ class Writer(object):
 
 	def __exit__(
 		self: "typing.Self",
-		exc_type: "Type[BaseException] | None",
+		exc_type: "type[BaseException] | None",
 		exc_val: "BaseException | None",
 		exc_tb: "types.TracebackType | None",
 	) -> None:

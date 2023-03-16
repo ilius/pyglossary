@@ -3,7 +3,7 @@ import os
 import shutil
 import types
 import typing
-from typing import Any, Callable, Type
+from typing import Any, Callable
 
 from pyglossary import core
 
@@ -44,7 +44,7 @@ class indir(object):
 
 	def __exit__(
 		self: "typing.Self",
-		exc_type: "Type",
+		exc_type: "type",
 		exc_val: "Exception",
 		exc_tb: "types.TracebackType",
 	) -> None:
@@ -76,7 +76,7 @@ def runDictzip(filename: str) -> None:
 def _rmtreeError(
 	func: "Callable",
 	direc: str,
-	exc_info: "tuple[Type, Exception, types.TracebackType] | None",
+	exc_info: "tuple[type, Exception, types.TracebackType] | None",
 ) -> None:
 	if exc_info is None:
 		return
