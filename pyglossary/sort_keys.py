@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING, Any, Callable
 if TYPE_CHECKING:
 	from typing import TypeAlias
 
-	import icu
+	from .icu_types import T_Collator, T_Locale
 
 defaultSortKeyName = "headword_lower"
 
@@ -61,7 +61,7 @@ def _headword_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
 
 
 def _headword_locale(
-	collator: "icu.Collator",  # noqa: F821
+	collator: "T_Collator",  # noqa: F821
 ) -> "sortKeyType":
 	cSortKey = collator.getSortKey
 
@@ -85,7 +85,7 @@ def _headword_sqlite(sortEncoding: str = "utf-8", **options) -> "sqliteSortKeyTy
 
 
 def _headword_sqlite_locale(
-	collator: "icu.Collator",  # noqa: F821
+	collator: "T_Collator",  # noqa: F821
 ) -> "Callable[..., sqliteSortKeyType]":
 	cSortKey = collator.getSortKey
 
@@ -103,7 +103,7 @@ def _headword_lower_normal(sortEncoding: str = "utf-8", **options) -> "sortKeyTy
 
 
 def _headword_lower_locale(
-	collator: "icu.Collator",  # noqa: F821
+	collator: "T_Collator",  # noqa: F821
 ) -> "sortKeyType":
 	cSortKey = collator.getSortKey
 
@@ -130,7 +130,7 @@ def _headword_lower_sqlite(
 
 
 def _headword_lower_sqlite_locale(
-	collator: "icu.Collator",  # noqa: F821
+	collator: "T_Collator",  # noqa: F821
 ) -> "Callable[..., sqliteSortKeyType]":
 	cSortKey = collator.getSortKey
 
@@ -151,7 +151,7 @@ def _headword_bytes_lower_normal(
 
 
 # def _headword_bytes_lower_locale(
-# 	collator: "icu.Collator",  # noqa: F821
+# 	collator: "T_Collator",  # noqa: F821
 # ) -> "sortKeyType":
 # 	raise NotImplementedError("")
 
@@ -298,7 +298,7 @@ def _random_normal(**options) -> "sortKeyType":
 
 
 def _random_locale(
-	collator: "icu.Collator",  # noqa: F821
+	collator: "T_Collator",  # noqa: F821
 ) -> "sortKeyType":
 	from random import random
 	return lambda **options: lambda words: random()
@@ -316,7 +316,7 @@ def _random_sqlite(**options) -> "sqliteSortKeyType":
 
 
 def _random_sqlite_locale(
-	collator: "icu.Collator",  # noqa: F821
+	collator: "T_Collator",  # noqa: F821
 	**options,
 ) -> "Callable[..., sqliteSortKeyType]":
 	from random import random
@@ -428,9 +428,9 @@ def lookupSortKey(sortKeyId: str) -> "NamedSortKey | None":
 
 	from icu import Collator, Locale
 
-	localeObj = Locale(localeName)
+	localeObj: "T_Locale" = Locale(localeName)
 	localeNameFull = localeObj.getName()
-	collator = Collator.createInstance(localeObj)
+	collator: "T_Collator" = Collator.createInstance(localeObj)
 
 	return NamedSortKey(
 		name=f"{localeSK.name}:{localeNameFull}",

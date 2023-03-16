@@ -38,6 +38,7 @@ from struct import calcsize, pack, unpack
 from threading import RLock
 from types import MappingProxyType
 from typing import (
+	TYPE_CHECKING,
 	Any,
 	Callable,
 	Generic,
@@ -54,6 +55,9 @@ import icu
 from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 
 from .interfaces import Interface
+
+if TYPE_CHECKING:
+	from .icu_types import T_Collator
 
 DEFAULT_COMPRESSION = 'lzma2'
 
@@ -97,11 +101,11 @@ MAX_LARGE_BYTE_STRING_LEN = calcmax(U_INT)
 MAX_BIN_ITEM_COUNT = calcmax(U_SHORT)
 
 
-PRIMARY = Collator.PRIMARY
-SECONDARY = Collator.SECONDARY
-TERTIARY = Collator.TERTIARY
-QUATERNARY = Collator.QUATERNARY
-IDENTICAL = Collator.IDENTICAL
+PRIMARY: int = Collator.PRIMARY
+SECONDARY: int = Collator.SECONDARY
+TERTIARY: int = Collator.TERTIARY
+QUATERNARY: int = Collator.QUATERNARY
+IDENTICAL: int = Collator.IDENTICAL
 
 
 class CompressionModule(metaclass=Interface):
@@ -229,7 +233,7 @@ def sortkey(
 	strength: int,
 	maxlength: "int | None" = None,
 ) -> "Callable":
-	c = Collator.createInstance(Locale())
+	c: "T_Collator" = Collator.createInstance(Locale())
 	c.setStrength(strength)
 	c.setAttribute(
 		UCollAttribute.ALTERNATE_HANDLING,

@@ -27,10 +27,10 @@ class T_Collator(metaclass=Interface):
 	def getSortKey(self: "typing.Self") -> Callable[[AnyStr], bytes]:
 		pass
 
-	def setStrength(strength: int) -> None:
+	def setStrength(self: "typing.Self", strength: int) -> None:
 		pass
 
-	def setAttribute(attr: int, value: int) -> None:
+	def setAttribute(self: "typing.Self", attr: int, value: int) -> None:
 		pass
 
 
