@@ -27,9 +27,6 @@ SOFTWARE.
 """
 
 import inspect
-from importlib.metadata import version
-
-__version__ = version("pygopher-interfaces")
 
 
 def method_signatures(obj: type) -> "set[inspect.Signature]":
