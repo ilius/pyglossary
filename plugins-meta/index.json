@@ -1611,6 +1611,62 @@
 		"enable": false
 	},
 	{
+		"module": "wiktextract",
+		"lname": "wiktextract",
+		"name": "Wiktextract",
+		"description": "Wiktextract (.jsonl)",
+		"extensions": [
+			".jsonl"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Enable resources / data files"
+			},
+			"word_title": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Add headwords title to beginning of definition"
+			},
+			"pron_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Pronunciation color"
+			},
+			"gram_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Grammar color"
+			},
+			"example_padding": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Padding for examples (css value)"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"word_title": false,
+			"pron_color": "gray",
+			"gram_color": "green",
+			"example_padding": "10px 20px"
+		},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
 		"module": "wordset",
 		"lname": "wordset",
 		"name": "Wordset",
