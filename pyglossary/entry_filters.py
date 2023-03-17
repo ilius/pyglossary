@@ -435,14 +435,16 @@ class ShowMaxMemoryUsage(EntryFilter):
 	desc = "Show Max Memory Usage"
 
 	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
-		EntryFilter.__init__(self, glos)
-		self._max_mem_usage = 0
-
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
 		import os
 
 		import psutil
-		usage = psutil.Process(os.getpid()).memory_info().rss // 1024
+
+		EntryFilter.__init__(self, glos)
+		self._process = psutil.Process(os.getpid())
+		self._max_mem_usage = 0
+
+	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+		usage = self._process.memory_info().rss // 1024
 		if usage > self._max_mem_usage:
 			self._max_mem_usage = usage
 			word = entry.s_word
