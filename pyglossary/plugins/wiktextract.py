@@ -182,6 +182,10 @@ class Reader(object):
 
 				self.writeAntonyms(_hf, data.get("antonyms"))
 
+				# TODO: data.get("translations")
+				# list[dict[str, str]]
+				# dict keys: "code", "lang", "sense", "word"
+
 				etymology: str = data.get("etymology_text", "")
 				if etymology:
 					with hf.element("div"):
@@ -208,15 +212,25 @@ class Reader(object):
 
 		if not soundList:
 			return
+
+		# "homophone" key found in Dutch and Arabic dictionaries
+		# (similar-sounding words for Arabic)
+
+		# TODO: add a read-option for audio
+		# keys for audio:
+		# "audio" (file name), "text" (link text), "ogg_url", "mp3_url"
+		# possible "tags" (list[str])
+
 		pron_color = self._pron_color
 		for i, sound in enumerate(soundList):
 			if i > 0:
 				hf.write(", ")
-			ipa = sound.get("ipa")
-			if not ipa:
-				continue
-			with hf.element("font", color=pron_color):
-				hf.write(f"{ipa}")
+			for key in ("ipa", "other"):
+				value = sound.get(key)
+				if not value:
+					continue
+				with hf.element("font", color=pron_color):
+					hf.write(f"{value}")
 		hf.write(ET.Element("br"))
 
 	def writeSenseList(
@@ -485,6 +499,9 @@ class Reader(object):
 		self.writeAntonyms(hf, sense.get("antonyms"))
 
 		self.writeRelated(hf, sense.get("related"))
+
+		# TODO
+		# sense.get("links")
 
 		self.writeSenseExamples(hf, sense.get("examples"))
 
