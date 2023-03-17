@@ -170,6 +170,12 @@ class Reader(object):
 
 				self.writeSoundList(_hf, data.get("sounds"))
 
+				pos: "str | None" = data.get("pos")
+				if pos:
+					with hf.element("div", attrib={"class": "pos"}):
+						with hf.element("font", color=self._gram_color):
+							hf.write(pos)
+
 				self.writeSenseList(_hf, data.get("senses"))
 
 				self.writeSynonyms(_hf, data.get("synonyms"))
