@@ -12,30 +12,41 @@ from pyglossary.ui.tools.format_entry import formatEntry
 
 Glossary.init()
 
+noColor = bool(os.getenv("NO_COLOR"))
+if noColor:
+	yellow = reset = ""  # noqa: F811
 
-def viewGlossary(filename: str, format: "str | None" = None) -> None:
-	highlightEntry: "Callable[[EntryType], None] | None" = None
+
+def getEntryHighlighter() -> "Callable[[EntryType], None] | None":
+	if noColor:
+		return None
 	try:
 		import pygments  # noqa: F401
 	except ModuleNotFoundError:
-		pass
-	else:
-		from pygments import highlight
-		from pygments.formatters import Terminal256Formatter as Formatter
-		from pygments.lexers import HtmlLexer, XmlLexer
+		return None
 
-		formatter = Formatter()
-		h_lexer = HtmlLexer()
-		x_lexer = XmlLexer()
+	from pygments import highlight
+	from pygments.formatters import Terminal256Formatter as Formatter
+	from pygments.lexers import HtmlLexer, XmlLexer
 
-		def highlightEntry(entry: "EntryType") -> None:
-			entry.detectDefiFormat()
-			if entry.defiFormat == "h":
-				entry._defi = highlight(entry.defi, h_lexer, formatter)
-				return
-			if entry.defiFormat == "x":
-				entry._defi = highlight(entry.defi, x_lexer, formatter)
-				return
+	formatter = Formatter()
+	h_lexer = HtmlLexer()
+	x_lexer = XmlLexer()
+
+	def highlightEntry(entry: "EntryType") -> None:
+		entry.detectDefiFormat()
+		if entry.defiFormat == "h":
+			entry._defi = highlight(entry.defi, h_lexer, formatter)
+			return
+		if entry.defiFormat == "x":
+			entry._defi = highlight(entry.defi, x_lexer, formatter)
+			return
+
+	return highlightEntry
+
+
+def viewGlossary(filename: str, format: "str | None" = None) -> None:
+	highlightEntry = getEntryHighlighter()
 
 	glos = Glossary(ui=None)
 
