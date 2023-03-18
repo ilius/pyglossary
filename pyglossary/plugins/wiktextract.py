@@ -203,35 +203,74 @@ class Reader(object):
 			byteProgress=(_file.tell(), self._fileSize),
 		)
 
-	def writeSoundList(
+	def writeSoundPron(
 		self: "typing.Self",
 		hf: "T_htmlfile",
-		soundList: "list[dict[str, Any]] | None",
+		sound: "dict[str, Any]",
 	) -> None:
-		from lxml import etree as ET
-
-		if not soundList:
-			return
-
 		# "homophone" key found in Dutch and Arabic dictionaries
 		# (similar-sounding words for Arabic)
+		for key in ("ipa", "other", "rhymes", "homophone"):
+			value = sound.get(key)
+			if not value:
+				continue
+			with hf.element("font", color=self._pron_color):
+				hf.write(f"{value}")
+			hf.write(f" ({key})")
 
+	def writeSoundAudio(
+		self: "typing.Self",
+		hf: "T_htmlfile",
+		sound: "dict[str, Any]",
+	) -> None:
 		# TODO: add a read-option for audio
 		# keys for audio:
 		# "audio" (file name), "text" (link text), "ogg_url", "mp3_url"
 		# possible "tags" (list[str])
 
-		pron_color = self._pron_color
-		for i, sound in enumerate(soundList):
-			if i > 0:
-				hf.write(", ")
-			for key in ("ipa", "other"):
-				value = sound.get(key)
-				if not value:
+		text = sound.get("text")
+		if text:
+			hf.write(f"{text}: ")
+		with hf.element("audio", attrib={"controls": ""}):
+			for _format in ("ogg", "mp3"):
+				url = sound.get(f"{_format}_url")
+				if not url:
 					continue
-				with hf.element("font", color=pron_color):
-					hf.write(f"{value}")
-		hf.write(ET.Element("br"))
+				with hf.element("source", attrib={
+					"src": url,
+					"type": f"audio/{_format}",
+				}):
+					pass
+
+	def writeSoundList(
+		self: "typing.Self",
+		hf: "T_htmlfile",
+		soundList: "list[dict[str, Any]] | None",
+	) -> None:
+		if not soundList:
+			return
+
+		pronList: "list[dict[str, Any]]" = []
+		audioList: "list[dict[str, Any]]" = []
+
+		for sound in soundList:
+			if "audio" in sound:
+				audioList.append(sound)
+				continue
+			pronList.append(sound)
+			# can it contain both audio and pronunciation?
+
+		if pronList:
+			with hf.element("div", attrib={"class": "pronunciations"}):
+				for i, sound in enumerate(pronList):
+					if i > 0:
+						hf.write(", ")
+					self.writeSoundPron(hf, sound)
+
+		for sound in audioList:
+			with hf.element("div", attrib={"class": "audio"}):
+				self.writeSoundAudio(hf, sound)
+
 
 	def writeSenseList(
 		self: "typing.Self",
