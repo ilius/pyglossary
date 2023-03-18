@@ -62,6 +62,8 @@ def viewGlossary(filename: str, format: "str | None" = None) -> None:
 	)
 	index = 0
 
+	entrySep = "_" * 50
+
 	def handleEntry(entry: "EntryType") -> None:
 		nonlocal index
 		if highlightEntry:
@@ -69,7 +71,7 @@ def viewGlossary(filename: str, format: "str | None" = None) -> None:
 		str = (
 			f"{yellow}#{index}{reset} " +
 			formatEntry(entry) +
-			"\n______________________________________________\n\n"
+			"\n" + entrySep + "\n\n"
 		)
 		proc.stdin.write(str.encode("utf-8"))
 		if (index + 1) % 50 == 0:
