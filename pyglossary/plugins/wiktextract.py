@@ -530,6 +530,8 @@ class Reader(object):
 		#   "glosses": ["story, fable, play"],
 
 		glosses: "list[str] | None" = sense.get("raw_glosses")
+		if not glosses:
+			glosses = sense.get("glosses")
 		if glosses:
 			self.makeList(hf, glosses, self.writeSenseGloss)
 
