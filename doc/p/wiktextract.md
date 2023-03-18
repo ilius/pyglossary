@@ -25,6 +25,7 @@
 | pron_color      | `gray`      | str  | Pronunciation color                            |
 | gram_color      | `green`     | str  | Grammar color                                  |
 | example_padding | `10px 20px` | str  | Padding for examples (css value)               |
+| audio           | `True`      | bool | Enable audio                                   |
 
 ### Dependencies for reading
 

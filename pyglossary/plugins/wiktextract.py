@@ -55,6 +55,9 @@ optionsProp: "dict[str, Option]" = {
 	"example_padding": StrOption(
 		comment="Padding for examples (css value)",
 	),
+	"audio": BoolOption(
+		comment="Enable audio",
+	),
 }
 
 class Reader(object):
@@ -69,6 +72,8 @@ class Reader(object):
 
 	# 'top right' or 'top right bottom left'
 	_example_padding: str = "10px 20px"
+
+	_audio: bool = True
 
 	topicStyle = (
 		"color:white;"
@@ -255,7 +260,8 @@ class Reader(object):
 
 		for sound in soundList:
 			if "audio" in sound:
-				audioList.append(sound)
+				if self._audio:
+					audioList.append(sound)
 				continue
 			pronList.append(sound)
 			# can it contain both audio and pronunciation?

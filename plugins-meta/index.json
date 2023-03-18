@@ -1647,6 +1647,11 @@
 				"type": "str",
 				"customValue": true,
 				"comment": "Padding for examples (css value)"
+			},
+			"audio": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Enable audio"
 			}
 		},
 		"canRead": true,
@@ -1655,7 +1660,8 @@
 			"word_title": false,
 			"pron_color": "gray",
 			"gram_color": "green",
-			"example_padding": "10px 20px"
+			"example_padding": "10px 20px",
+			"audio": true
 		},
 		"readDepends": {
 			"lxml": "lxml"
