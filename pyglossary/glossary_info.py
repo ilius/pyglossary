@@ -213,10 +213,6 @@ class GlossaryInfo(object):
 				break
 
 		if len(langNames) < 2:
-			log.info(
-				f"Failed to detect sourceLang and targetLang"
-				f" from glossary name {name!r}",
-			)
 			return
 
 		if len(langNames) > 2:
