@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os.path
+import shlex
 import sys
 from subprocess import PIPE, Popen
 from typing import Callable
@@ -53,11 +54,11 @@ def viewGlossary(filename: str, format: "str | None" = None) -> None:
 	if not glos.directRead(filename, format=format):
 		return
 
+	pagerCmd = ["less", "-R"]
+	if os.getenv("PAGER"):
+		pagerCmd = shlex.split(os.getenv("PAGER"))
 	proc = Popen(
-		[
-			"less",
-			"-R",
-		],
+		pagerCmd,
 		stdin=PIPE,
 	)
 	index = 0
