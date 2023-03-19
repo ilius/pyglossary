@@ -384,17 +384,20 @@ class Writer(object):
 			else:
 				self.addEntry(entry)
 
-			if file_size_approx > 0:
-				check_every = self._file_size_approx_check_num_entries
-				entryCount += 1
-				if entryCount % check_every == 0:
-					sumBlobSize = slobWriter.size_data()
-					if sumBlobSize >= file_size_approx:
-						slobWriter.finalize()
-						fileIndex += 1
-						slobWriter = self._open(
-							f"{filenameNoExt}.{fileIndex}.slob",
-							f" (part {fileIndex+1})",
-						)
-						sumBlobSize = 0
-						entryCount = 0
+			if file_size_approx <= 0:
+				continue
+
+			# handle file_size_approx
+			check_every = self._file_size_approx_check_num_entries
+			entryCount += 1
+			if entryCount % check_every == 0:
+				sumBlobSize = slobWriter.size_data()
+				if sumBlobSize >= file_size_approx:
+					slobWriter.finalize()
+					fileIndex += 1
+					slobWriter = self._open(
+						f"{filenameNoExt}.{fileIndex}.slob",
+						f" (part {fileIndex+1})",
+					)
+					sumBlobSize = 0
+					entryCount = 0

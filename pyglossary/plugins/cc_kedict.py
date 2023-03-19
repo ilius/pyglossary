@@ -213,7 +213,7 @@ class YamlReader(TextGlossaryReader):
 			for i, word in enumerate(edict[self._synsKey]):
 				if i > 0:
 					with hf.element("big"):
-						hf.write(" | ")
+						hf.write(" | ")  # NESTED: 5
 				with hf.element("a", href=f"bword://{word}"):
 					hf.write(word)
 			hf.write(ET.Element("br"))

@@ -173,14 +173,16 @@ class DSLParser(object):
 			bracket = line.find("]", ptr + 2)
 			if line[ptr + 1] == "/":
 				yield CLOSE, line[ptr + 2:bracket]
+				ptr = bracket + 1
+				continue
+
+			for tag, _, _, re_tag_open in self.tags:
+				if re_tag_open.match(line[ptr:bracket + 1]):
+					yield OPEN, _tag.Tag(line[ptr + 1:bracket], tag)
+					break
 			else:
-				for tag, _, _, re_tag_open in self.tags:
-					if re_tag_open.match(line[ptr:bracket + 1]):
-						yield OPEN, _tag.Tag(line[ptr + 1:bracket], tag)
-						break
-				else:
-					tag = line[ptr + 1:bracket]
-					yield OPEN, _tag.Tag(tag, tag)
+				tag = line[ptr + 1:bracket]
+				yield OPEN, _tag.Tag(tag, tag)
 			ptr = bracket + 1
 
 	@staticmethod
@@ -195,7 +197,8 @@ class DSLParser(object):
 		closings = set()
 
 		for item_t, item in tags_and_text:
-
+			# TODO: break into functions like:
+			# state = handle_tag_open(_tag, stack, closings, state)
 			if item_t is OPEN:
 				if _tag.was_opened(stack, item) and item.closing not in closings:
 					continue
