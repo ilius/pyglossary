@@ -42,6 +42,7 @@ hasIconSet = set([
 	"jmdict",
 	"kobo",
 	"lingoes_ldf",
+	"mobi",
 	"octopus_mdict",
 	"sql",
 	"stardict",
@@ -105,6 +106,8 @@ willNotSupportWrite = set([
 	"octopus_mdict",
 	"wiktionary_dump",
 	"xdxf",
+	"wiktextract",
+	"jmnedict",
 ])
 
 
