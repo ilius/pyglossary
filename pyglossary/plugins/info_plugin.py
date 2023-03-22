@@ -64,6 +64,8 @@ class Writer(object):
 		wordCount = 0
 		bwordCount = 0
 
+		nonLowercaseWordCount = 0
+
 		styleByTagCounter: "dict[str, int]" = Counter()
 
 		defiFormatCounter: "dict[str, int]" = Counter()
@@ -80,6 +82,10 @@ class Writer(object):
 
 			wordCount += 1
 			bwordCount += defi.count("bword://")
+
+			for word in entry.l_word:
+				if word.lower() != word:
+					nonLowercaseWordCount += 1
 
 			for m in re_style.finditer(defi):
 				tag = m.group(1)
@@ -119,6 +125,7 @@ class Writer(object):
 			info[key] = value
 		info["word_count"] = wordCount
 		info["bword_count"] = bwordCount
+		info["non_lowercase_word_count"] = nonLowercaseWordCount
 		info["data_entry_count"] = data_entry_count
 		info["data_entry_extension_count"] = ", ".join(
 			f"{ext}={count}"

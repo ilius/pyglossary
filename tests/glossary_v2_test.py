@@ -59,6 +59,7 @@ class TestGlossaryBase(unittest.TestCase):
 
 			"100-en-de.info": "718adeef",
 			"100-en-fa.info": "9bddb7bb",
+			"100-en-fa-v2.info": "7c0f646b",
 			"100-ja-en.info": "8cf5403c",
 
 			"300-rand-en-fa.txt": "586617c8",
@@ -727,7 +728,7 @@ class TestGlossary(TestGlossaryBase):
 		)
 		self.compareTextFiles(
 			infoPath,
-			self.downloadFile(f"{fname}.info"),
+			self.downloadFile(f"{fname}-v2.info"),
 		)
 
 	def test_convert_sqlite_direct_error(self: "typing.Self"):
