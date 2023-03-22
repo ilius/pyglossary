@@ -168,6 +168,7 @@ class Entry(BaseEntry):
 			r"<ol[ >]",
 			r"<li[ >]",
 			r"<h[1-6][ >]",
+			r"<audio[ >]",
 		]) + "|&[a-z]{2,8};|&#x?[0-9]{2,5};)",
 		re.S | re.I,
 	)
