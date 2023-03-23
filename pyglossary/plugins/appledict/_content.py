@@ -25,8 +25,7 @@
 
 import logging
 import re
-from typing import Any
-from typing.re import Pattern
+from typing import Any, Pattern
 from xml.sax.saxutils import quoteattr, unescape
 
 from pyglossary.text_utils import toStr
