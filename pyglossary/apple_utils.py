@@ -10,7 +10,6 @@
 # in all operating systems
 
 import re
-import typing.re
 
 from .core import log
 
@@ -70,7 +69,7 @@ cssParamPattern = re.compile(
 	r"(-(apple|webkit)-[a-z\-]+)",
 )
 
-def _subCSS(m: "typing.re.Match") -> str:
+def _subCSS(m: "re.Match") -> str:
 	key = m.group(0)
 	value = cssMapping.get(key)
 	if value is None:
