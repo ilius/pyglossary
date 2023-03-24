@@ -46,7 +46,7 @@ LocaleNamedSortKey = namedtuple("LocaleNamedSortKey", [
 
 
 sortKeyType: "TypeAlias" = Callable[
-	[list[str]],
+	"[list[str]]",
 	Any,
 ]
 
