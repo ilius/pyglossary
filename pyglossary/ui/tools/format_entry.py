@@ -9,7 +9,7 @@ def formatEntry(entry: "EntryType") -> str:
 	if words:
 		headword = words[0]
 	lines = [
-		f">>> {headword}",
+		f">> {headword}",
 	]
 	if len(words) > 1:
 		for alt in words[1:]:

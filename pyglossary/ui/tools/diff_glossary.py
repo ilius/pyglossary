@@ -189,7 +189,7 @@ def diffGlossary(
 			charjunk=None,
 		)
 		entryFormatted = "\n".join([
-			f">>> {entry1.l_word[0]}",
+			f">> {entry1.l_word[0]}",
 			formatDiff(altsDiff),
 			entry1.defi,
 		])
