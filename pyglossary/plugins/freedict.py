@@ -435,12 +435,18 @@ class Reader(object):
 			single_prefix="",
 		)
 		if gramList:
+			color = self._gram_color
+			attrib = {
+				"class": "grammer",
+			}
+			if color:
+				attrib["color"] = color
 			with hf.element("div"):
 				for i, gram in enumerate(gramList):
 					text = gram.text or ""
 					if i > 0:
 						hf.write(self.getCommaSep(text))
-					with hf.element("font", color=self._gram_color):
+					with hf.element("font", attrib=attrib):
 						hf.write(text)
 		self.makeList(
 			hf,
@@ -503,6 +509,12 @@ class Reader(object):
 		from lxml import etree as ET
 
 		color = self._gram_color
+		attrib = {
+			"class": "grammer",
+		}
+		if color:
+			attrib["color"] = color
+
 		for gramGrp in gramGrpList:
 			parts = []
 			for child in gramGrp.iterchildren():
@@ -514,7 +526,8 @@ class Reader(object):
 
 			sep = self.getCommaSep(parts[0])
 			text = sep.join(parts)
-			with hf.element("font", color=color):
+
+			with hf.element("font", attrib=attrib):
 				hf.write(text)
 
 			hf.write(ET.Element("br"))
