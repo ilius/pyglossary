@@ -41,5 +41,6 @@
 | Wiktextract (.jsonl)          | Wiktextract     | [wiktextract.md](./wiktextract.md)             |
 | Wordset.org JSON directory    | Wordset         | [wordset.md](./wordset.md)                     |
 | XDXF (.xdxf)                  | Xdxf            | [xdxf.md](./xdxf.md)                           |
+| XDXF Lax (.xdxf)              | XdxfLax         | [xdxf_lax.md](./xdxf_lax.md)                   |
 | Yomichan (.zip)               | Yomichan        | [yomichan.md](./yomichan.md)                   |
 | Zim (.zim, for Kiwix)         | Zim             | [zim.md](./zim.md)                             |

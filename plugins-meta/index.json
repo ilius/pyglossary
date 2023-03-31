@@ -1730,6 +1730,40 @@
 		]
 	},
 	{
+		"module": "xdxf_lax",
+		"lname": "xdxf_lax",
+		"name": "XdxfLax",
+		"description": "XDXF Lax (.xdxf)",
+		"extensions": [],
+		"singleFile": true,
+		"optionsProp": {
+			"html": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Entries are HTML"
+			},
+			"xsl": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Use XSL transformation"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"html": true,
+			"xsl": false
+		},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
 		"module": "yomichan",
 		"lname": "yomichan",
 		"name": "Yomichan",
