@@ -145,9 +145,9 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			"004-bar.sd/004-bar.ifo": "ada870e4",
 			"004-bar.sd/004-bar.syn": "286b17bf",
 
-			"100-en-de.sd/100-en-de.dict": "d74bf277",
-			"100-en-de.sd/100-en-de.idx": "945b303c",
-			"100-en-de.sd/100-en-de.ifo": "6529871f",
+			"100-en-de-v4.sd/100-en-de-v4.dict": "5a97476f",
+			"100-en-de-v4.sd/100-en-de-v4.idx": "a99f29d2",
+			"100-en-de-v4.sd/100-en-de-v4.ifo": "6529871f",
 
 			"100-en-fa.sd/100-en-fa.dict": "223a0d1d",
 			"100-en-fa.sd/100-en-fa.idx": "6df43378",
@@ -247,14 +247,14 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 	def test_convert_txt_stardict_3(self: "typing.Self"):
 		for sqlite in (None, False, True):
 			self.convert_txt_stardict(
-				"100-en-de",
+				"100-en-de-v4",
 				syn=False,
 				sqlite=sqlite,
 			)
 
 	def test_convert_txt_stardict_3_merge_syns(self: "typing.Self"):
 		self.convert_txt_stardict(
-			"100-en-de",
+			"100-en-de-v4",
 			syn=False,
 			writeOptions={"merge_syns": True},
 		)

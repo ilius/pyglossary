@@ -15,7 +15,7 @@ class TestGlossaryCSV(TestGlossaryBase):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
-			"100-en-de.csv": "b5283518",
+			"100-en-de-v4.csv": "2890fb3e",
 
 			"100-en-fa.csv": "eb8b0474",
 			"100-en-fa-semicolon.csv": "b3f04599",
@@ -64,7 +64,7 @@ class TestGlossaryCSV(TestGlossaryBase):
 		self.convert_txt_csv("100-en-fa", "100-en-fa")
 
 	def test_convert_txt_csv_2(self: "typing.Self"):
-		self.convert_txt_csv("100-en-de", "100-en-de")
+		self.convert_txt_csv("100-en-de-v4", "100-en-de-v4")
 
 	def test_convert_txt_csv_3(self: "typing.Self"):
 		self.convert_txt_csv("100-ja-en", "100-ja-en")
@@ -85,9 +85,8 @@ class TestGlossaryCSV(TestGlossaryBase):
 
 	def test_convert_csv_txt_2(self: "typing.Self"):
 		self.convert_csv_txt(
-			"100-en-de",
-			"100-en-de",
-			infoOverride={"input_file_size": None},
+			"100-en-de-v4",
+			"100-en-de-v4",
 		)
 
 	def test_convert_csv_txt_3(self: "typing.Self"):

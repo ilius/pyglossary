@@ -52,12 +52,13 @@ class TestGlossaryBase(unittest.TestCase):
 			"006-empty.txt": "07ff224b",
 			"006-empty-filtered.txt": "2b3c1c0f",
 
-			"100-en-de.txt": "f22fc392",
-			"100-en-de-v2.txt": "70eff46c",
+			"100-en-de-v4.txt": "d420a669",
 			"100-en-fa.txt": "f5c53133",
 			"100-ja-en.txt": "93542e89",
 
-			"100-en-de.info": "718adeef",
+			"100-en-de-v4-remove_font_b.txt": "a3144e2f",
+
+			"100-en-de-v4.info": "f2cfb284",
 			"100-en-fa.info": "9bddb7bb",
 			"100-en-fa-v2.info": "7c0f646b",
 			"100-ja-en.info": "8cf5403c",
@@ -285,8 +286,6 @@ class TestGlossary(TestGlossaryBase):
 			"100-en-fa-lower.txt": "62178940",
 			"100-en-fa-remove_html_all-v2.txt": "b2208694",
 			"100-en-fa-rtl.txt": "25ede1e8",
-
-			"100-en-de-remove_font_b.txt": "727320ac",
 
 			"300-rand-en-fa-sort-headword-w1256.txt": "06d83bac",
 			"300-rand-en-fa-sort-headword.txt": "df0f8020",
@@ -709,8 +708,8 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_remove_html_1(self: "typing.Self"):
 		self.convert_txt_txt(
-			"100-en-de",
-			"100-en-de-remove_font_b",
+			"100-en-de-v4",
+			"100-en-de-v4-remove_font_b",
 			testId="remove_html_1",
 			config={"remove_html": "font,b"},
 		)
