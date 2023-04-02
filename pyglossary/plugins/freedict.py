@@ -135,6 +135,7 @@ class Reader(object):
 		"t": "transitive",
 		"i": "intransitive",
 	}
+	gramClass = "grammar"
 
 	def makeList(
 		self: "typing.Self",
@@ -437,7 +438,7 @@ class Reader(object):
 		if gramList:
 			color = self._gram_color
 			attrib = {
-				"class": "grammar",
+				"class": self.gramClass,
 			}
 			if color:
 				attrib["color"] = color
@@ -510,7 +511,7 @@ class Reader(object):
 
 		color = self._gram_color
 		attrib = {
-			"class": "grammer",
+			"class": self.gramClass,
 		}
 		if color:
 			attrib["color"] = color
