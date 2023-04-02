@@ -437,7 +437,7 @@ class Reader(object):
 		if gramList:
 			color = self._gram_color
 			attrib = {
-				"class": "grammer",
+				"class": "grammar",
 			}
 			if color:
 				attrib["color"] = color
