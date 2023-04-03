@@ -45,7 +45,7 @@ See [doc/pyicu.md](../pyicu.md) file for more detailed instructions on how to in
 
 ### Dictionary Applications/Tools
 
-| Name & Website                             | Source code                                                      | License | Platforms |
-| ------------------------------------------ | ---------------------------------------------------------------- | ------- | --------- |
-| [Aard 2 for Android](http://aarddict.org/) | [@itkach/aard2-android](https://github.com/itkach/aard2-android) | GPL     | Android   |
-| [Aard2 for Web](http://aarddict.org/)      | [@itkach/aard2-web](https://github.com/itkach/aard2-web)         | MPL     | Web       |
+| Name & Website                             | Source code                                                      | License | Platforms | Language |
+| ------------------------------------------ | ---------------------------------------------------------------- | ------- | --------- | -------- |
+| [Aard 2 for Android](http://aarddict.org/) | [@itkach/aard2-android](https://github.com/itkach/aard2-android) | GPL     | Android   | Java     |
+| [Aard2 for Web](http://aarddict.org/)      | [@itkach/aard2-web](https://github.com/itkach/aard2-web)         | MPL     | Web       | Java     |

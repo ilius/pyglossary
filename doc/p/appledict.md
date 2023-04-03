@@ -46,6 +46,6 @@ See [doc/apple.md](../apple.md) for additional AppleDict instructions.
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                                              | Source code | License | Platforms |
-| ------------------------------------------------------------------------------------------- | ----------- | ------- | --------- |
-| [Dictionary Development Kit](https://github.com/SebastianSzturo/Dictionary-Development-Kit) | ―           | Unknown | Mac       |
+| Name & Website                                                                              | Source code | License | Platforms | Language |
+| ------------------------------------------------------------------------------------------- | ----------- | ------- | --------- | -------- |
+| [Dictionary Development Kit](https://github.com/SebastianSzturo/Dictionary-Development-Kit) | ―           | Unknown | Mac       |          |

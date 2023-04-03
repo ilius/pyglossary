@@ -312,12 +312,19 @@ for p in plugins:
 	toolsTable = ""
 	if tools:
 		toolsTable = "### Dictionary Applications/Tools\n\n" + renderTable(
-			[("Name & Website", "Source code", "License", "Platforms")] + [
+			[(
+				"Name & Website",
+				"Source code",
+				"License",
+				"Platforms",
+				"Language",
+			)] + [
 				(
 					f"[{tool['name']}]({tool['web']})",
 					getToolSourceLink(tool),
 					tool["license"],
 					", ".join(tool["platforms"]),
+					tool.get("plang", ""),
 				)
 				for tool in tools
 			],

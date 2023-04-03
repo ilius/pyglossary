@@ -35,7 +35,7 @@ pip3 install polib
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                   | Source code | License         | Platforms           |
-| ------------------------------------------------ | ----------- | --------------- | ------------------- |
-| [gettext](https://www.gnu.org/software/gettext/) | ―           | GPL             | Linux, Windows      |
-| [poEdit](https://github.com/vslavik/poedit)      | ―           | MIT / Shareware | Linux, Windows, Mac |
+| Name & Website                                   | Source code | License         | Platforms           | Language |
+| ------------------------------------------------ | ----------- | --------------- | ------------------- | -------- |
+| [gettext](https://www.gnu.org/software/gettext/) | ―           | GPL             | Linux, Windows      |          |
+| [poEdit](https://github.com/vslavik/poedit)      | ―           | MIT / Shareware | Linux, Windows, Mac |          |

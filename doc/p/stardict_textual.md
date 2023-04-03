@@ -42,6 +42,6 @@ pip3 install lxml
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                                               | Source code                                                        | License | Platforms           |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------- | ------------------- |
-| [StarDict-Editor (Tools)](https://github.com/huzheng001/stardict-3/blob/master/tools/README) | [@huzheng001/stardict-3](https://github.com/huzheng001/stardict-3) | GPL     | Linux, Windows, Mac |
+| Name & Website                                                                               | Source code                                                        | License | Platforms           | Language |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------- | ------------------- | -------- |
+| [StarDict-Editor (Tools)](https://github.com/huzheng001/stardict-3/blob/master/tools/README) | [@huzheng001/stardict-3](https://github.com/huzheng001/stardict-3) | GPL     | Linux, Windows, Mac | C        |

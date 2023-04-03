@@ -29,6 +29,6 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                         | Source code | License     | Platforms                                           |
-| -------------------------------------- | ----------- | ----------- | --------------------------------------------------- |
-| [ABBYY Lingvo](https://www.lingvo.ru/) | ―           | Proprietary | Windows, Mac, Android, iOS, Windows Mobile, Symbian |
+| Name & Website                         | Source code | License     | Platforms                                           | Language |
+| -------------------------------------- | ----------- | ----------- | --------------------------------------------------- | -------- |
+| [ABBYY Lingvo](https://www.lingvo.ru/) | ―           | Proprietary | Windows, Mac, Android, iOS, Windows Mobile, Symbian |          |

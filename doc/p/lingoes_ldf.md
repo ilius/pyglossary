@@ -34,6 +34,6 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                                     | Source code | License | Platforms |
-| ---------------------------------------------------------------------------------- | ----------- | ------- | --------- |
-| [Lingoes Dictionary Creator](http://www.lingoes.net/en/dictionary/dict_format.php) | ―           | Unknown |           |
+| Name & Website                                                                     | Source code | License | Platforms | Language |
+| ---------------------------------------------------------------------------------- | ----------- | ------- | --------- | -------- |
+| [Lingoes Dictionary Creator](http://www.lingoes.net/en/dictionary/dict_format.php) | ―           | Unknown |           |          |

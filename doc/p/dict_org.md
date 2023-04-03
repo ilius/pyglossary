@@ -28,9 +28,9 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                  | Source code | License | Platforms |
-| --------------------------------------------------------------- | ----------- | ------- | --------- |
-| [Dictd](https://directory.fsf.org/wiki/Dictd)                   | ―           | GPL     | Linux     |
-| [GNOME Dictionary](https://wiki.gnome.org/Apps/Dictionary)      | ―           | GPL     | Linux     |
-| [Xfce4 Dictionary](https://docs.xfce.org/apps/xfce4-dict/start) | ―           | GPL     | linux     |
-| [Ding](https://www-user.tu-chemnitz.de/~fri/ding/)              | ―           | GPL     | linux     |
+| Name & Website                                                  | Source code | License | Platforms | Language |
+| --------------------------------------------------------------- | ----------- | ------- | --------- | -------- |
+| [Dictd](https://directory.fsf.org/wiki/Dictd)                   | ―           | GPL     | Linux     |          |
+| [GNOME Dictionary](https://wiki.gnome.org/Apps/Dictionary)      | ―           | GPL     | Linux     |          |
+| [Xfce4 Dictionary](https://docs.xfce.org/apps/xfce4-dict/start) | ―           | GPL     | linux     |          |
+| [Ding](https://www-user.tu-chemnitz.de/~fri/ding/)              | ―           | GPL     | linux     |          |

@@ -21,6 +21,6 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                                                           | Source code | License | Platforms |
-| -------------------------------------------------------------------------------------------------------- | ----------- | ------- | --------- |
-| [ABC Medical Notes 2020](https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp) | ―           | Unknown | Android   |
+| Name & Website                                                                                           | Source code | License | Platforms | Language |
+| -------------------------------------------------------------------------------------------------------- | ----------- | ------- | --------- | -------- |
+| [ABC Medical Notes 2020](https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp) | ―           | Unknown | Android   |          |

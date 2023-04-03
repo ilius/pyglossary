@@ -37,8 +37,8 @@ pip3 install lxml
 
 ### Dictionary Applications/Tools
 
-| Name & Website                               | Source code | License     | Platforms                    |
-| -------------------------------------------- | ----------- | ----------- | ---------------------------- |
-| [GoldenDict](http://goldendict.org/)         | ―           | GPL         | Linux, Windows               |
-| [QTranslate](https://quest-app.appspot.com/) | ―           | Proprietary | Windows                      |
-| [Alpus](https://alpusapp.com/)               | ―           | Freeware    | Windows, Mac, Linux, Android |
+| Name & Website                               | Source code | License     | Platforms                    | Language |
+| -------------------------------------------- | ----------- | ----------- | ---------------------------- | -------- |
+| [GoldenDict](http://goldendict.org/)         | ―           | GPL         | Linux, Windows               | C++      |
+| [QTranslate](https://quest-app.appspot.com/) | ―           | Proprietary | Windows                      | C++      |
+| [Alpus](https://alpusapp.com/)               | ―           | Freeware    | Windows, Mac, Linux, Android | Java     |

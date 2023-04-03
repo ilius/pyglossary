@@ -35,6 +35,6 @@ then try to install [LZO library and Python binding](../lzo.md).
 
 ### Dictionary Applications/Tools
 
-| Name & Website                 | Source code | License     | Platforms                  |
-| ------------------------------ | ----------- | ----------- | -------------------------- |
-| [MDict](https://www.mdict.cn/) | ―           | Proprietary | Android, iOS, Windows, Mac |
+| Name & Website                 | Source code | License     | Platforms                  | Language |
+| ------------------------------ | ----------- | ----------- | -------------------------- | -------- |
+| [MDict](https://www.mdict.cn/) | ―           | Proprietary | Android, iOS, Windows, Mac |          |
