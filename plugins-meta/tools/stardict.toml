@@ -1,7 +1,16 @@
+["GoldenDict by xiaoyifang"]
+web = "https://github.com/xiaoyifang/goldendict"
+source = "https://github.com/xiaoyifang/goldendict"
+# https://xiaoyifang.github.io/goldendict/
+platforms = [ "Linux", "Windows", "Mac",]
+license = "GPL"
+plang = "C++"
+
 [GoldenDict]
 web = "http://goldendict.org/"
 source = "https://github.com/goldendict/goldendict"
-platforms = [ "Linux", "Windows",]
+wiki = "https://github.com/goldendict/goldendict/wiki"
+platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
 plang = "C++"
 
@@ -10,7 +19,14 @@ web = "http://huzheng.org/stardict/"
 source = "https://github.com/huzheng001/stardict-3"
 platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
-plang = "C"
+plang = "C++"
+
+[AyanDict]
+web = "https://github.com/ilius/ayandict"
+source = "https://github.com/ilius/ayandict"
+platforms = [ "Linux", "Windows", "Mac",]
+license = "GPL"
+plang = "Go"
 
 ["GoldenDict Mobile (Free)"]
 web = "http://goldendict.mobi/"
@@ -46,6 +62,7 @@ web = "https://play.google.com/store/apps/details?id=com.annie.dictionary"
 source = "https://github.com/namndev/QDict"
 platforms = [ "Android",]
 license = "Apache 2.0"
+plang = "Java"
 # last release: 2017/04/16 (keeps crashing on my device, unusable)
 # last commit: 2020/06/24
 
@@ -68,3 +85,11 @@ web = "http://koreader.rocks/"
 source = "https://github.com/koreader/koreader"
 platforms = [ "Android", "Amazon Kindle", "Kobo eReader", "PocketBook", "Cervantes",]
 license = "AGPLv3"
+plang = "Lua"
+
+[sdcv]
+web = "https://dushistov.github.io/sdcv/"
+source = "https://github.com/Dushistov/sdcv"
+platforms = [ "Linux", "Windows", "Mac", "Android",]
+license = "GPLv2"
+plang = "C++"

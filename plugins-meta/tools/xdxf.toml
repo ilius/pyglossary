@@ -1,6 +1,16 @@
+["GoldenDict by xiaoyifang"]
+web = "https://github.com/xiaoyifang/goldendict"
+source = "https://github.com/xiaoyifang/goldendict"
+# https://xiaoyifang.github.io/goldendict/
+platforms = [ "Linux", "Windows", "Mac",]
+license = "GPL"
+plang = "C++"
+
 [GoldenDict]
 web = "http://goldendict.org/"
-platforms = [ "Linux", "Windows",]
+source = "https://github.com/goldendict/goldendict"
+wiki = "https://github.com/goldendict/goldendict/wiki"
+platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
 plang = "C++"
 
