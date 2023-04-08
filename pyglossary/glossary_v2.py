@@ -157,6 +157,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		self._filename = ""
 		self._defaultDefiFormat = "m"
 		self._tmpDataDir = ""
+		self._entryFiltersAreSet = False
 
 	def __init__(
 		self: "typing.Self",
@@ -307,6 +308,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			entryFilter.name
 			for entryFilter in entryFilters
 		}
+
+		self._entryFiltersAreSet = True
 
 	def prepareEntryFilters(self: "typing.Self") -> None:
 		"""
@@ -706,7 +709,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		if not self._info.get(c_name):
 			self._info[c_name] = os.path.split(filename)[1]
 
-		self.updateEntryFilters()
+		if not self._entryFiltersAreSet:
+			self.updateEntryFilters()
 
 		reader = self._createReader(format, options)
 		if not self._openReader(reader, filename):
