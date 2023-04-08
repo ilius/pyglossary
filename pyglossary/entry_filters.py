@@ -169,7 +169,9 @@ class RemoveHtmlTagsAll(EntryFilter):
 			st = st.replace("</div>", "\n")
 
 			st = self._br_pattern.sub("\n", st)
-			return BeautifulSoup(st, "lxml").text
+			st = BeautifulSoup(st, "lxml").text
+			st = st.strip()
+			return st  # noqa: RET504
 
 		entry.editFuncDefi(fixStr)
 		return entry
