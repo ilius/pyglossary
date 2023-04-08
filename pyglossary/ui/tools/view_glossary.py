@@ -4,9 +4,11 @@ import os.path
 import shlex
 import sys
 from subprocess import PIPE, Popen
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
-from pyglossary.glossary_types import EntryType
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
+
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.tools.colors import reset, yellow
 from pyglossary.ui.tools.format_entry import formatEntry
@@ -46,10 +48,15 @@ def getEntryHighlighter() -> "Callable[[EntryType], None] | None":
 	return highlightEntry
 
 
-def viewGlossary(filename: str, format: "str | None" = None) -> None:
+def viewGlossary(
+	filename: str,
+	format: "str | None" = None,
+	glos: "GlossaryType | None" = None,
+) -> None:
 	highlightEntry = getEntryHighlighter()
 
-	glos = Glossary(ui=None)
+	if glos is None:
+		glos = Glossary(ui=None)
 
 	if not glos.directRead(filename, format=format):
 		return
