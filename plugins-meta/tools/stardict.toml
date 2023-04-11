@@ -1,3 +1,10 @@
+[AyanDict]
+web = "https://github.com/ilius/ayandict"
+source = "https://github.com/ilius/ayandict"
+platforms = [ "Linux", "Windows", "Mac",]
+license = "GPL"
+plang = "Go"
+
 ["GoldenDict by xiaoyifang"]
 web = "https://github.com/xiaoyifang/goldendict"
 source = "https://github.com/xiaoyifang/goldendict"
@@ -21,12 +28,12 @@ platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
 plang = "C++"
 
-[AyanDict]
-web = "https://github.com/ilius/ayandict"
-source = "https://github.com/ilius/ayandict"
+[QStarDict]
+web = "https://github.com/a-rodin/qstardict"
+source = "https://github.com/a-rodin/qstardict"
 platforms = [ "Linux", "Windows", "Mac",]
-license = "GPL"
-plang = "Go"
+license = "GPLv2"
+plang = "C++"
 
 ["GoldenDict Mobile (Free)"]
 web = "http://goldendict.mobi/"
