@@ -39,6 +39,7 @@
 | StarDict Textual File (.xml)  | StardictTextual | [stardict_textual.md](./stardict_textual.md)   |
 | Tabfile (.txt, .dic)          | Tabfile         | [tabfile.md](./tabfile.md)                     |
 | Wiktextract (.jsonl)          | Wiktextract     | [wiktextract.md](./wiktextract.md)             |
+| WordNet                       | Wordnet         | [wordnet.md](./wordnet.md)                     |
 | Wordset.org JSON directory    | Wordset         | [wordset.md](./wordset.md)                     |
 | XDXF (.xdxf)                  | Xdxf            | [xdxf.md](./xdxf.md)                           |
 | XDXF Lax (.xdxf)              | XdxfLax         | [xdxf_lax.md](./xdxf_lax.md)                   |
