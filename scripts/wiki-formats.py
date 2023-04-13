@@ -3,6 +3,7 @@
 import os
 import sys
 from os.path import join
+from pathlib import Path
 
 from mako.template import Template
 
@@ -12,6 +13,7 @@ rootDir = join(
 )
 sys.path.insert(0, rootDir)
 
+from pyglossary.core import userPluginsDir
 from pyglossary.glossary import Glossary
 
 Glossary.init(
@@ -50,6 +52,15 @@ hasIconSet = set([
 	"wiktionary_dump",
 	"zim",
 ])
+
+def pluginIsActive(p):
+	if not p.enable:
+		return False
+	if not (p.canRead or p.canWrite):
+		return False
+	if userPluginsDirPath in p.path.parents:
+		return False
+	return True
 
 
 def codeValue(x):
@@ -150,8 +161,15 @@ Legend:
 # 	website_md = module.website
 
 
+userPluginsDirPath = Path(userPluginsDir)
+plugins = [
+	p
+	for p in Glossary.plugins.values()
+	if pluginIsActive(p)
+]
+
 text = template.render(
-	plugins=Glossary.plugins.values(),
+	plugins=plugins,
 	iconImg=iconImg,
 	kindEmoji=kindEmoji,
 	readCheck=readCheck,
