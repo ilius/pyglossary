@@ -176,14 +176,14 @@ class BaseSqList(list):
 			("word", "TEXT"),
 		] + self.getExtraColumns()
 
-		self._columnNames = ",".join([
+		self._columnNames = ",".join(
 			col[0] for col in columns
-		])
+		)
 
-		colDefs = ",".join([
+		colDefs = ",".join(
 			f"{col[0]} {col[1]}"
 			for col in columns
-		])
+		)
 		self._con.execute(
 			f"CREATE TABLE data ({colDefs})",
 		)
@@ -1015,10 +1015,10 @@ class Writer(object):
 		log.info(f"Writing {len(altIndexList)} synonyms...")
 		t0 = now()
 		with open(self._filename + ".syn", "wb") as synFile:
-			synFile.write(b"".join([
+			synFile.write(b"".join(
 				b_alt + b"\x00" + uint32ToBytes(entryIndex)
 				for b_alt, entryIndex in altIndexList
-			]))
+			))
 		log.info(
 			f"Writing {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
 		)
@@ -1180,10 +1180,10 @@ class Writer(object):
 		log.info(f"Writing {len(indexList)} index entries...")
 		t0 = now()
 		with open(filename, mode="wb") as indexFile:
-			indexFile.write(b"".join([
+			indexFile.write(b"".join(
 				key + b"\x00" + value
 				for key, value in indexList
-			]))
+			))
 		log.info(
 			f"Writing {len(indexList)} {filename} took {now()-t0:.2f} seconds",
 		)

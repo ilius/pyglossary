@@ -625,7 +625,7 @@ def main() -> None:
 			sys.exit(1)
 
 	if args.sortKeyName and not lookupSortKey(args.sortKeyName):
-		_valuesStr = ", ".join([_sk.name for _sk in namedSortKeyList])
+		_valuesStr = ", ".join(_sk.name for _sk in namedSortKeyList)
 		log.critical(
 			f"Invalid sortKeyName={args.sortKeyName!r}"
 			f". Supported values:\n{_valuesStr}",

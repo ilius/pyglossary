@@ -111,9 +111,9 @@ class SqEntryList(EntryListType):
 		sqliteSortKey = namedSortKey.sqlite(**kwargs)
 
 		self._sqliteSortKey = sqliteSortKey
-		self._columnNames = ",".join([
+		self._columnNames = ",".join(
 			col[0] for col in sqliteSortKey
-		])
+		)
 
 		if not self._create:
 			self._parseExistingIndex()
@@ -172,9 +172,9 @@ class SqEntryList(EntryListType):
 		sortColumnNames = self._columnNames
 		self._orderBy = sortColumnNames
 		if reverse:
-			self._orderBy = ",".join([
+			self._orderBy = ",".join(
 				f"{col[0]} DESC" for col in self._sqliteSortKey
-			])
+			)
 		self._con.commit()
 		self._con.execute(
 			f"CREATE INDEX sortkey ON data({sortColumnNames});",

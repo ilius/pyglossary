@@ -397,11 +397,11 @@ class PluginProp(object):
 
 		for name, opt in self.optionsProp.items():
 			if name.lower() != name:
-				suggestName = "".join([
+				suggestName = "".join(
 					"_" + x.lower() if x.isupper()
 					else x
 					for x in name
-				])
+				)
 				log.debug(
 					f"{self.name}: please rename option "
 					f"{name} to {suggestName}",

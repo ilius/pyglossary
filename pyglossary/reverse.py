@@ -126,7 +126,7 @@ def searchWordInDef(
 ) -> "list[str]":
 	# searches word "st" in definitions of the glossary
 	splitPattern = re.compile(
-		"|".join([re.escape(x) for x in sepChars]),
+		"|".join(re.escape(x) for x in sepChars),
 		re.U,
 	)
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)

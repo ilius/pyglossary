@@ -249,7 +249,7 @@ class DSLParser(object):
 		if state is CLOSE and closings:
 			process_closing_tags(stack, closings)
 		# shutdown unclosed tags
-		return "".join([layer.text for layer in stack])
+		return "".join(layer.text for layer in stack)
 
 	def put_brackets_away(self: "typing.Self", line: str) -> str:
 		r"""put away \[, \] and brackets that does not belong to any of given tags.

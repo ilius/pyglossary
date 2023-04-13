@@ -125,10 +125,10 @@ def splitByBar(st: str) -> "list[str]":
 
 
 def joinByBar(parts: "list[str]") -> "str":
-	return "|".join([
+	return "|".join(
 		escapeBar(part)
 		for part in parts
-	])
+	)
 
 
 def unescapeBarBytes(st: bytes) -> bytes:
