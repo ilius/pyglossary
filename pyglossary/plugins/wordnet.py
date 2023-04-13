@@ -47,12 +47,12 @@ optionsProp: "dict[str, Option]" = {}
 # "(?:[^\\"]+|\\.)*"
 # some examples don't have closing quote which
 # make the subn with this expression hang
-# quoted_text = re.compile(r'"(?:[^"]+|\.)*["|\n]')
+# quotedTextPattern = re.compile(r'"(?:[^"]+|\.)*["|\n]')
 
 # make it a capturing group so that we can get rid of quotes
-quoted_text = re.compile(r'"([^"]+|\.)*["|\n]')
+quotedTextPattern = re.compile(r'"([^"]+|\.)*["|\n]')
 
-ref = re.compile(r"`(\w+)'")
+refPattern = re.compile(r"`(\w+)'")
 
 class SynSet(object):
 	def __init__(self, line):
@@ -181,6 +181,20 @@ class WordNet(object):
 	article_template = (
 		"<h1>%s</h1><span>%s</span>"
 	)
+	synSetTypes = {
+		"n": "n.",
+		"v": "v.",
+		"a": "adj.",
+		"s": "adj. satellite",
+		"r": "adv.",
+	}
+
+	file2pos = {
+		"data.adj": ["a", "s"],
+		"data.adv": ["r"],
+		"data.noun": ["n"],
+		"data.verb": ["v"],
+	}
 
 	def __init__(self, wordnetdir):
 		self.wordnetdir = wordnetdir
@@ -196,21 +210,8 @@ class WordNet(object):
 						yield line
 
 	def prepare(self):
-
-		ss_types = {
-			"n": "n.",
-			"v": "v.",
-			"a": "adj.",
-			"s": "adj. satellite",
-			"r": "adv.",
-		}
-
-		file2pos = {
-			"data.adj": ["a", "s"],
-			"data.adv": ["r"],
-			"data.noun": ["n"],
-			"data.verb": ["v"],
-		}
+		synSetTypes = self.synSetTypes
+		file2pos = self.file2pos
 
 		dict_dir = self.wordnetdir
 
@@ -235,10 +236,10 @@ class WordNet(object):
 			if not line or not line.strip():
 				continue
 			synset = SynSet(line)
-			gloss_with_examples, _ = quoted_text.subn(
+			gloss_with_examples, _ = quotedTextPattern.subn(
 				lambda x: '<cite class="ex">%s</cite>' % x.group(1), synset.gloss,
 			)
-			gloss_with_examples, _ = ref.subn(
+			gloss_with_examples, _ = refPattern.subn(
 				lambda x: a(x.group(1)), gloss_with_examples,
 			)
 
@@ -247,7 +248,7 @@ class WordNet(object):
 				synonyms = [w for w in words if w != word]
 				synonyms_str = (
 					'<br/><small class="co">Synonyms:</small> %s'
-					% ", ".join([a(w) for w in synonyms])
+					% ", ".join(a(w) for w in synonyms)
 					if synonyms
 					else ""
 				)
@@ -285,11 +286,11 @@ class WordNet(object):
 						pointers_str += (
 							'<br/><small class="co">%s:</small> ' % symbol_desc
 						)
-						pointers_str += ", ".join([a(w) for w in referenced_words])
+						pointers_str += ", ".join(a(w) for w in referenced_words)
 				self.collector[word].append(
 					'<i class="pos grammar">%s</i> %s%s%s'
 					% (
-						ss_types[synset.ss_type],
+						synSetTypes[synset.ss_type],
 						gloss_with_examples,
 						synonyms_str,
 						pointers_str,
