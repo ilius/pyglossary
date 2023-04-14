@@ -458,9 +458,7 @@ class EbookWriter(object):
 			except Exception:
 				log.exception("")
 
-			if css:
-				# FIXME: this check should be removed
-				self.write_css(css)
+			self.write_css(css)
 
 			yield from self.write_groups()
 			group_labels = self._group_labels
