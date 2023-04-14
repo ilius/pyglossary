@@ -50,7 +50,7 @@ optionsProp: "dict[str, Option]" = {}
 # quotedTextPattern = re.compile(r'"(?:[^"]+|\.)*["|\n]')
 
 # make it a capturing group so that we can get rid of quotes
-quotedTextPattern = re.compile(r'"([^"]+|\.)*["|\n]')
+quotedTextPattern = re.compile(r'"([^"]+)"')
 
 refPattern = re.compile(r"`(\w+)'")
 
