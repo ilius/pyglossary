@@ -2,7 +2,7 @@
 
 import os
 import typing
-from os.path import isdir, join
+from os.path import isdir, isfile, join
 from typing import Generator, Iterator
 
 from pyglossary.compression import stdCompressions
@@ -64,7 +64,11 @@ class Reader(TextGlossaryReader):
 		yield from TextGlossaryReader.__iter__(self)
 		resDir = self._resDir
 		for fname in self._resFileNames:
-			with open(join(resDir, fname), "rb") as _file:
+			fpath = join(resDir, fname)
+			if not isfile(fpath):
+				log.error(f"No such file: {fpath}")
+				continue
+			with open(fpath, "rb") as _file:
 				yield self._glos.newDataEntry(
 					fname,
 					_file.read(),
