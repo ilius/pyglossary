@@ -22,6 +22,7 @@ from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.langs.writing_system import getWritingSystemFromText
 from pyglossary.option import (
 	BoolOption,
+	ListOption,
 	Option,
 	StrOption,
 )
@@ -58,6 +59,9 @@ optionsProp: "dict[str, Option]" = {
 	"audio": BoolOption(
 		comment="Enable audio",
 	),
+	"audio_formats": ListOption(
+		comment="List of audio formats to use",
+	),
 }
 
 class Reader(object):
@@ -74,6 +78,8 @@ class Reader(object):
 	_example_padding: str = "10px 20px"
 
 	_audio: bool = True
+
+	_audio_formats: "list[str]" = ["ogg", "mp3"]
 
 	topicStyle = (
 		"color:white;"
@@ -237,7 +243,7 @@ class Reader(object):
 		if text:
 			hf.write(f"{text}: ")
 		with hf.element("audio", attrib={"controls": ""}):
-			for _format in ("ogg", "mp3"):
+			for _format in self._audio_formats:
 				url = sound.get(f"{_format}_url")
 				if not url:
 					continue

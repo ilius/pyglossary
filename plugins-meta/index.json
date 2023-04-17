@@ -1652,6 +1652,11 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Enable audio"
+			},
+			"audio_formats": {
+				"class": "ListOption",
+				"type": "list",
+				"comment": "List of audio formats to use"
 			}
 		},
 		"canRead": true,
@@ -1661,7 +1666,11 @@
 			"pron_color": "gray",
 			"gram_color": "green",
 			"example_padding": "10px 20px",
-			"audio": true
+			"audio": true,
+			"audio_formats": [
+				"ogg",
+				"mp3"
+			]
 		},
 		"readDepends": {
 			"lxml": "lxml"

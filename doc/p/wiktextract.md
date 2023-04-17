@@ -19,13 +19,14 @@
 
 ### Read options
 
-| Name            | Default     | Type | Comment                                        |
-| --------------- | ----------- | ---- | ---------------------------------------------- |
-| word_title      | `False`     | bool | Add headwords title to beginning of definition |
-| pron_color      | `gray`      | str  | Pronunciation color                            |
-| gram_color      | `green`     | str  | Grammar color                                  |
-| example_padding | `10px 20px` | str  | Padding for examples (css value)               |
-| audio           | `True`      | bool | Enable audio                                   |
+| Name            | Default          | Type | Comment                                        |
+| --------------- | ---------------- | ---- | ---------------------------------------------- |
+| word_title      | `False`          | bool | Add headwords title to beginning of definition |
+| pron_color      | `gray`           | str  | Pronunciation color                            |
+| gram_color      | `green`          | str  | Grammar color                                  |
+| example_padding | `10px 20px`      | str  | Padding for examples (css value)               |
+| audio           | `True`           | bool | Enable audio                                   |
+| audio_formats   | `['ogg', 'mp3']` | list | List of audio formats to use                   |
 
 ### Dependencies for reading
 
