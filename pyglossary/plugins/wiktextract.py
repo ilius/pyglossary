@@ -102,7 +102,7 @@ class Reader(object):
 			raise e
 
 		self._filename = filename
-		cfile = compressionOpen(filename, mode="r", encoding="utf-8")
+		cfile = compressionOpen(filename, mode="rt", encoding="utf-8")
 
 		if cfile.seekable():
 			cfile.seek(0, 2)
