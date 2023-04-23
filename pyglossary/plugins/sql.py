@@ -89,6 +89,11 @@ class Writer(object):
 			"CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, "
 			"\'w\' TEXT, \'m\' TEXT);\n",
 		)
+		fileObj.write(
+			"CREATE TABLE alt (\'id\' INTEGER NOT NULL, "
+			"\'w\' TEXT);\n",
+		)
+
 
 		if self._transaction:
 			fileObj.write("BEGIN TRANSACTION;\n")
@@ -127,7 +132,11 @@ class Writer(object):
 		if fileObj is None:
 			raise ValueError("fileObj is None")
 
-		i = 0
+		def fixStr(word: str) -> str:
+			return word.replace("\'", "\'\'")\
+				.replace("\r", "").replace("\n", newline)
+
+		_id = 1
 		while True:
 			entry = yield
 			if entry is None:
@@ -135,16 +144,22 @@ class Writer(object):
 			if entry.isData():
 				# FIXME
 				continue
-			word = entry.s_word
-			defi = entry.defi
-			word = word.replace("\'", "\'\'")\
-				.replace("\r", "").replace("\n", newline)
-			defi = defi.replace("\'", "\'\'")\
-				.replace("\r", "").replace("\n", newline)
+			words = entry.l_word
+			word = fixStr(words[0])
+			defi = fixStr(entry.defi)
 			fileObj.write(
-				f"INSERT INTO word VALUES({i+1}, \'{word}\', \'{defi}\');\n",
+				f"INSERT INTO word VALUES({_id}, \'{word}\', \'{defi}\');\n",
 			)
-			i += 1
+			for alt in words[1:]:
+				alt = fixStr(alt)
+				fileObj.write(
+					f"INSERT INTO alt VALUES({_id}, \'{alt}\');\n",
+				)
+			_id += 1
+
 		if self._transaction:
 			fileObj.write("END TRANSACTION;\n")
+
 		fileObj.write("CREATE INDEX ix_word_w ON word(w COLLATE NOCASE);\n")
+		fileObj.write("CREATE INDEX ix_alt_id ON alt(id COLLATE NOCASE);\n")
+		fileObj.write("CREATE INDEX ix_alt_w ON alt(w COLLATE NOCASE);\n")
