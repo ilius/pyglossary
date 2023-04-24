@@ -5,10 +5,10 @@ platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
 plang = "Go"
 
-["GoldenDict by xiaoyifang"]
-web = "https://github.com/xiaoyifang/goldendict"
-source = "https://github.com/xiaoyifang/goldendict"
-# https://xiaoyifang.github.io/goldendict/
+["The Next Generation GoldenDict"]
+web = "https://github.com/xiaoyifang/goldendict-ng"
+source = "https://github.com/xiaoyifang/goldendict-ng"
+# https://xiaoyifang.github.io/goldendict-ng/
 platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
 plang = "C++"
