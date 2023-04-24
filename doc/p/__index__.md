@@ -5,6 +5,7 @@
 | Almaany.com (SQLite3)         | Almaany         | [almaany.md](./almaany.md)                     |
 | AppleDict Source              | AppleDict       | [appledict.md](./appledict.md)                 |
 | AppleDict Binary              | AppleDictBin    | [appledict_bin.md](./appledict_bin.md)         |
+| AyanDict SQLite               | AyanDictSQLite  | [ayandict_sqlite.md](./ayandict_sqlite.md)     |
 | Babylon (.BGL)                | BabylonBgl      | [babylon_bgl.md](./babylon_bgl.md)             |
 | CC-CEDICT                     | CC-CEDICT       | [cc_cedict.md](./cc_cedict.md)                 |
 | cc-kedict                     | cc-kedict       | [cc_kedict.md](./cc_kedict.md)                 |

@@ -216,6 +216,18 @@
 		}
 	},
 	{
+		"module": "ayandict_sqlite",
+		"lname": "ayandict_sqlite",
+		"name": "AyanDictSQLite",
+		"description": "AyanDict SQLite",
+		"extensions": [],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": false,
+		"canWrite": true,
+		"writeOptions": {}
+	},
+	{
 		"module": "babylon_bdc",
 		"lname": "babylon_bdc",
 		"name": "BabylonBdc",
