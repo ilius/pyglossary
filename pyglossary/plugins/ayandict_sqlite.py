@@ -28,7 +28,7 @@ website = (
 
 class Writer(object):
 	depends = {
-		# "sqlite-spellfix": "sqlite-spellfix",
+		# "sqlite_spellfix": "sqlite-spellfix",
 	}
 
 	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
@@ -39,6 +39,7 @@ class Writer(object):
 		self._filename = ""
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
+		self._fuzzy = False
 
 	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
@@ -56,25 +57,39 @@ class Writer(object):
 			"CREATE INDEX idx_entry_term ON entry(term COLLATE NOCASE);",
 			"CREATE INDEX idx_alt_id ON alt(id);",
 			"CREATE INDEX idx_alt_term ON alt(term COLLATE NOCASE);",
-			# "CREATE VIRTUAL TABLE fuzzy USING spellfix1;",
-			# "INSERT INTO fuzzy(id, term) SELECT id, term FROM entry;",
 		):
 			try:
 				con.execute(query)
 			except Exception as e:
 				log.error(f"query: {query}")
 				raise e
-		# con.commit()
+
 		for key, value in self._glos.iterInfo():
 			con.execute(
 				"INSERT	INTO meta (key, value) VALUES (?, ?);",
 				(key, value),
 			)
+
 		con.commit()
+
+		try:
+			import sqlite_spellfix
+		except ImportError:
+			log.warning("sqlite_spellfix is not installed, fuzzy table is not created")
+		else:
+			self._fuzzy = True
+			log.info(f"Using sqlite spellfix: {sqlite_spellfix.extension_path()}")
+			con.load_extension(sqlite_spellfix.extension_path())
 
 	def finish(self):
 		if self._con is None or self._cur is None:
 			return
+
+		if self._fuzzy:
+			self._con.execute("CREATE VIRTUAL TABLE fuzzy USING spellfix1;")
+			self._con.execute("INSERT INTO fuzzy(word, rank) SELECT term, id FROM entry;")
+			self._con.commit()
+
 		self._con.commit()
 		self._con.close()
 		self._con = None
