@@ -96,7 +96,10 @@ class Writer(object):
 		self._cur = None
 
 	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+		import hashlib
+
 		cur = self._cur
+		_hash = hashlib.md5()
 		while True:
 			entry = yield
 			if entry is None:
@@ -113,3 +116,9 @@ class Writer(object):
 					"INSERT INTO alt(id, term) VALUES (?, ?);",
 					(cur.lastrowid, alt),
 				)
+			_hash.update(entry.s_word.encode("utf-8"))
+
+		cur.execute(
+			"INSERT INTO meta (key, value) VALUES (?, ?);",
+			("hash", _hash.hexdigest()),
+		)
