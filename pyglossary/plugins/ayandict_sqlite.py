@@ -44,6 +44,7 @@ class Writer(object):
 		self._filename = ""
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
+		self._xdxfTr = None
 
 	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
@@ -94,6 +95,18 @@ class Writer(object):
 		self._con = None
 		self._cur = None
 
+	def xdxf_setup(self: "typing.Self") -> None:
+		from pyglossary.xdxf_transform import XdxfTransformer
+		# if self._xsl:
+		# 	self._xdxfTr = XslXdxfTransformer(encoding="utf-8")
+		# 	return
+		self._xdxfTr = XdxfTransformer(encoding="utf-8")
+
+	def xdxf_transform(self: "typing.Self", text: str) -> str:
+		if self._xdxfTr is None:
+			self.xdxf_setup()
+		return self._xdxfTr.transformByInnerString(text)
+
 	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		import hashlib
 
@@ -106,9 +119,17 @@ class Writer(object):
 			if entry.isData():
 				# can save it with entry.save(directory)
 				continue
+			defi = entry.defi
+			entry.detectDefiFormat()
+			if entry.defiFormat == "m":
+				if "\n" in defi:
+					defi = f"<pre>{defi}</pre>"
+			elif entry.defiFormat == "x":
+				defi = self.xdxf_transform(defi)
+
 			cur.execute(
 				"INSERT INTO entry(term, article) VALUES (?, ?);",
-				(entry.l_word[0], entry.defi),
+				(entry.l_word[0], defi),
 			)
 			_id = cur.lastrowid
 			for alt in entry.l_word[1:]:
