@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.option import BoolOption, Option
 
 enable = True
 lname = "ayandict_sqlite"
@@ -25,11 +26,15 @@ website = (
 	"https://github.com/ilius/ayandict",
 	"ilius/ayandict",
 )
+optionsProp: "dict[str, Option]" = {
+	"fuzzy": BoolOption(
+		comment="Create fuzzy search data",
+	),
+}
+
 
 class Writer(object):
-	depends = {
-		# "sqlite_spellfix": "sqlite-spellfix",
-	}
+	_fuzzy: int = True
 
 	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
@@ -39,7 +44,6 @@ class Writer(object):
 		self._filename = ""
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
-		self._fuzzy = False
 
 	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
@@ -70,25 +74,20 @@ class Writer(object):
 				(key, value),
 			)
 
-		con.commit()
+		if self._fuzzy:
+			con.execute(
+				"CREATE TABLE fuzzy3 ('sub' TEXT NOT NULL, "
+				"'term' TEXT NOT NULL, id INTEGER NOT NULL);",
+			)
+			con.execute(
+				"CREATE INDEX idx_fuzzy3 ON fuzzy3(sub COLLATE NOCASE);",
+			)
 
-		try:
-			import sqlite_spellfix
-		except ImportError:
-			log.warning("sqlite_spellfix is not installed, fuzzy table is not created")
-		else:
-			self._fuzzy = True
-			log.info(f"Using sqlite spellfix: {sqlite_spellfix.extension_path()}")
-			con.load_extension(sqlite_spellfix.extension_path())
+		con.commit()
 
 	def finish(self):
 		if self._con is None or self._cur is None:
 			return
-
-		if self._fuzzy:
-			self._con.execute("CREATE VIRTUAL TABLE fuzzy USING spellfix1;")
-			self._con.execute("INSERT INTO fuzzy(word, rank) SELECT term, id FROM entry;")
-			self._con.commit()
 
 		self._con.commit()
 		self._con.close()
@@ -111,14 +110,27 @@ class Writer(object):
 				"INSERT INTO entry(term, article) VALUES (?, ?);",
 				(entry.l_word[0], entry.defi),
 			)
+			_id = cur.lastrowid
 			for alt in entry.l_word[1:]:
 				cur.execute(
 					"INSERT INTO alt(id, term) VALUES (?, ?);",
-					(cur.lastrowid, alt),
+					(_id, alt),
 				)
 			_hash.update(entry.s_word.encode("utf-8"))
+			if self._fuzzy:
+				self.addFuzzy(_id, entry.l_word)
 
 		cur.execute(
 			"INSERT INTO meta (key, value) VALUES (?, ?);",
 			("hash", _hash.hexdigest()),
 		)
+
+	def addFuzzy(self, _id: int, terms: list[str]):
+		cur = self._cur
+		for term in terms:
+			eterm = "\n" + term
+			for i in range(len(eterm)-2):
+				cur.execute(
+					"INSERT INTO fuzzy3(sub, term, id) VALUES (?, ?, ?);",
+					(eterm[i:i+3], term, _id),
+				)

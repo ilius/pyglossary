@@ -222,10 +222,18 @@
 		"description": "AyanDict SQLite",
 		"extensions": [],
 		"singleFile": true,
-		"optionsProp": {},
+		"optionsProp": {
+			"fuzzy": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Create fuzzy search data"
+			}
+		},
 		"canRead": false,
 		"canWrite": true,
-		"writeOptions": {}
+		"writeOptions": {
+			"fuzzy": true
+		}
 	},
 	{
 		"module": "babylon_bdc",

@@ -17,6 +17,12 @@
 | Wiki            | ―                                                   |
 | Website         | [ilius/ayandict](https://github.com/ilius/ayandict) |
 
+### Write options
+
+| Name  | Default | Type | Comment                  |
+| ----- | ------- | ---- | ------------------------ |
+| fuzzy | `True`  | bool | Create fuzzy search data |
+
 
 
 
