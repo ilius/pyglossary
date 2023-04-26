@@ -13,6 +13,7 @@
 | `remove_html_all`            | No              | `--remove-html-all`                  | Remove all HTML tags (not their contents) from definition                   |
 | `remove_html`                | No              | `--remove-html`                      | Remove given comma-separated HTML tags (not their contents) from definition |
 | `normalize_html`             | No              | `--normalize-html`                   | Normalize HTML tags in definition (WIP)                                     |
+| `unescape_word_links`        | No              | `--unescape-word-links`              | Unescape Word Links                                                         |
 | `lang`                       | Yes             |                                      | Language-specific cleanup/fixes                                             |
 | `non_empty_word`             | Yes             |                                      | Skip entries with empty word                                                |
 | `non_empty_defi`             | Yes             |                                      | Skip entries with empty definition                                          |

@@ -397,6 +397,28 @@ class TrimArabicDiacritics(EntryFilter):
 		return entry
 
 
+class UnescapeWordLinks(EntryFilter):
+	name = "unescape_word_links"
+	desc = "Unescape Word Links"
+
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+		from pyglossary.html_utils import unescape_unicode
+
+		EntryFilter.__init__(self, glos)
+		self._pat = re.compile(
+			r'href="bword://[^<>"]*&#?\w+;[^<>"]*"',
+			re.I,
+		)
+		self._unescape = unescape_unicode
+
+	def _sub(self, m: "re.Match"):
+		return self._unescape(m.group(0))
+
+	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+		entry._defi = self._pat.sub(self._sub, entry.defi)
+		return entry
+
+
 class ShowProgressBar(EntryFilter):
 	name = "progressbar"
 	desc = "Progress Bar"
@@ -467,6 +489,7 @@ entryFiltersRules = [
 	("remove_html_all", False, RemoveHtmlTagsAll),
 	("remove_html", "", RemoveHtmlTags),
 	("normalize_html", False, NormalizeHtml),
+	("unescape_word_links", False, UnescapeWordLinks),
 	(None, True, LanguageCleanup),
 
 	# TODO

@@ -130,6 +130,7 @@ class UIBase(UIType):
 		getEntryFilterConfigPair("normalize_html"),
 		getEntryFilterConfigPair("skip_duplicate_headword"),
 		getEntryFilterConfigPair("trim_arabic_diacritics"),
+		getEntryFilterConfigPair("unescape_word_links"),
 
 		("color.enable.cmd.unix", BoolOption(
 			hasFlag=False,
