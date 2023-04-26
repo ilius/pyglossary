@@ -132,6 +132,9 @@ class Reader(object):
 		self._filename = ""
 		self._fileSize = 0
 
+	def __len__(self: "typing.Self") -> int:
+		return 0
+
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 
 		while (line := self._file.readline()):
