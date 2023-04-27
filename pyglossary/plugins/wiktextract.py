@@ -441,6 +441,21 @@ class Reader(object):
 				with hf.element("span", style=self.topicStyle):
 					hf.write(topic)
 
+	def addWordLink(
+		self: "typing.Self",
+		hf: "T_htmlfile",
+		word: str,
+	):
+		i = word.find(" [")
+		if i >= 0:
+			word = word[:i]
+		if not word:
+			return
+		with hf.element("a", attrib={
+			"href": f"bword://{word}",
+		}):
+			hf.write(word)
+
 	def writeSynonyms(
 		self: "typing.Self",
 		hf: "T_htmlfile",
@@ -464,10 +479,7 @@ class Reader(object):
 				word = item.get("word")
 				if not word:
 					continue
-				with hf.element("a", attrib={
-					"href": f"bword://{word}",
-				}):
-					hf.write(word)
+				self.addWordLink(hf, word)
 
 	def writeAntonyms(
 		self: "typing.Self",
@@ -485,10 +497,7 @@ class Reader(object):
 				word = item.get("word")
 				if not word:
 					continue
-				with hf.element("a", attrib={
-					"href": f"bword://{word}",
-				}):
-					hf.write(word)
+				self.addWordLink(hf, word)
 
 	def writeRelated(
 		self: "typing.Self",
@@ -506,12 +515,9 @@ class Reader(object):
 				word = item.get("word")
 				if not word:
 					continue
-				with hf.element("a", attrib={
-					"href": f"bword://{word}",
-				}):
-					hf.write(word)
+				self.addWordLink(hf, word)
 
-	def writeLinks(
+	def writeSenseLinks(
 		self: "typing.Self",
 		hf: "T_htmlfile",
 		linkList: "list[list[str]] | None",
@@ -531,10 +537,7 @@ class Reader(object):
 				ref = ref[:sq]
 			if i > 0:
 				hf.write(", ")
-			with hf.element("a", attrib={
-				"href": f"bword://{ref}",
-			}):
-				hf.write(text)
+			self.addWordLink(hf, ref)
 
 	def writeSense(
 		self: "typing.Self",
@@ -584,7 +587,7 @@ class Reader(object):
 
 		self.writeRelated(hf, sense.get("related"))
 
-		self.writeLinks(hf, sense.get("links"))
+		self.writeSenseLinks(hf, sense.get("links"))
 
 		self.writeSenseExamples(hf, sense.get("examples"))
 
