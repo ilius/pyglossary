@@ -78,10 +78,11 @@ class Writer(object):
 		if self._fuzzy:
 			con.execute(
 				"CREATE TABLE fuzzy3 ('sub' TEXT NOT NULL, "
-				"'term' TEXT NOT NULL, id INTEGER NOT NULL);",
+				"'term' TEXT NOT NULL, "
+				"id INTEGER NOT NULL);",
 			)
 			con.execute(
-				"CREATE INDEX idx_fuzzy3 ON fuzzy3(sub COLLATE NOCASE);",
+				"CREATE INDEX idx_fuzzy3_sub ON fuzzy3(sub COLLATE NOCASE);",
 			)
 
 		con.commit()
@@ -149,9 +150,14 @@ class Writer(object):
 	def addFuzzy(self, _id: int, terms: list[str]):
 		cur = self._cur
 		for term in terms:
-			eterm = "\n" + term
-			for i in range(len(eterm)-2):
+			subs = set()
+			for word in term.split(" "):
+				eword = "\n" + word
+				for i in range(len(eword)-2):
+					subs.add(eword[i:i+3])
+			for sub in subs:
 				cur.execute(
-					"INSERT INTO fuzzy3(sub, term, id) VALUES (?, ?, ?);",
-					(eterm[i:i+3], term, _id),
+					"INSERT INTO fuzzy3"
+					"(sub, term, id) VALUES (?, ?, ?);",
+					(sub, term, _id),
 				)
