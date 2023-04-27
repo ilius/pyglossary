@@ -163,6 +163,9 @@ class Reader(object):
 			form: str = formDict.get("form", "")
 			if not form:
 				continue
+			if len(form) > 80:
+				log.warn(f"'form' too long: {form}")
+				continue
 			source: str = formDict.get("source", "")
 			# tags = formDict.get("tags", [])
 			if source == "Inflection":
