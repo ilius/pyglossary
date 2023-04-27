@@ -508,6 +508,31 @@ class Reader(object):
 				}):
 					hf.write(word)
 
+	def writeLinks(
+		self: "typing.Self",
+		hf: "T_htmlfile",
+		linkList: "list[list[str]] | None",
+	) -> None:
+		if not linkList:
+			return
+		hf.write("Links: ")
+		for i, link in enumerate(linkList):
+			if len(link) != 2:
+				log.warn(f"unexpected {link =}")
+				continue
+			text, ref = link
+			sq = ref.find("#")
+			if sq == 0:
+				ref = text
+			elif sq > 0:
+				ref = ref[:sq]
+			if i > 0:
+				hf.write(", ")
+			with hf.element("a", attrib={
+				"href": f"bword://{ref}",
+			}):
+				hf.write(text)
+
 	def writeSense(
 		self: "typing.Self",
 		hf: "T_htmlfile",
@@ -556,8 +581,7 @@ class Reader(object):
 
 		self.writeRelated(hf, sense.get("related"))
 
-		# TODO
-		# sense.get("links")
+		self.writeLinks(hf, sense.get("links"))
 
 		self.writeSenseExamples(hf, sense.get("examples"))
 
