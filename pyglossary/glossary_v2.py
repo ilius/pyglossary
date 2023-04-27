@@ -198,6 +198,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			log.info("Not cleaning up files:")
 			log.info("\n".join(self._cleanupPathList))
 			return
+		self._data.close()
 		for cleanupPath in self._cleanupPathList:
 			if isfile(cleanupPath):
 				log.debug(f"Removing file {cleanupPath}")
