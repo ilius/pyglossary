@@ -938,13 +938,17 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			log.info(f"Removing and re-creating {sq_fpath!r}")
 			os.remove(sq_fpath)
 
-		self._data = SqEntryList(
-			entryToRaw=self._entryToRaw,
-			entryFromRaw=self._entryFromRaw,
-			filename=sq_fpath,
-			create=True,
-			persist=True,
-		)
+		try:
+			self._data = SqEntryList(
+				entryToRaw=self._entryToRaw,
+				entryFromRaw=self._entryFromRaw,
+				filename=sq_fpath,
+				create=True,
+				persist=True,
+			)
+		except Exception:
+			log.exception("Failed to create SQLite file")
+			return
 		self._cleanupPathList.add(sq_fpath)
 
 		if not self.alts:
