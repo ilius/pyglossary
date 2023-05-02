@@ -24,7 +24,7 @@ cssMapping: "dict[str, str]" = {
 	"-webkit-border-radius": "5",
 	"-webkit-border-top-left-radius": "5",
 	"-webkit-border-top-right-radius": "5",
-	# "-webkit-hyphens"  # used as key
+	"-webkit-hyphens": "hyphens",  # used as key
 	"-webkit-link": "rgb(0, 0, 238)",  # color of <a> links
 
 	"-webkit-control": "normal normal normal normal 13px/normal system-ui",
