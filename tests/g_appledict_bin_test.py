@@ -20,7 +20,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			"appledict-bin/002-simple.txt_res/style.css": "a83210cb",
 
 			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt": "2d3844bf",
-			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt_res/style.css": "d80d12f9",
+			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt_res/style.css": "4aa2979f",
 		})
 
 		self.addDirCRC32("appledict-bin/002-simple.dictionary", {
