@@ -108,7 +108,7 @@ class TestGlossaryBase(unittest.TestCase):
 			with open(fpath, mode="rb") as _file:
 				data = _file.read()
 			if crc32hex(data) != _crc32:
-				raise RuntimeError(f"CRC32 check failed for existing file: {fpath}")
+				raise RuntimeError(f"CRC32 check failed for existing file: {fpath!r}")
 			return fpath
 		try:
 			with urlopen(dataURL.format(filename=unixFilename)) as res:
@@ -120,7 +120,7 @@ class TestGlossaryBase(unittest.TestCase):
 		if actual_crc32 != _crc32:
 			raise RuntimeError(
 				"CRC32 check failed for downloaded file: "
-				f"{filename}: {actual_crc32}",
+				f"{filename!r}: {actual_crc32}",
 			)
 		with open(fpath, mode="wb") as _file:
 			_file.write(data)
@@ -160,12 +160,12 @@ class TestGlossaryBase(unittest.TestCase):
 			self.assertEqual(
 				len(text1),
 				len(text2),
-				msg=f"{fpath1} differs from {fpath2} in file size",
+				msg=f"{fpath1!r} differs from {fpath2!r} in file size",
 			)
 			self.assertEqual(
 				text1,
 				text2,
-				msg=f"{fpath1} differs from {fpath2}",
+				msg=f"{fpath1!r} differs from {fpath2!r}",
 			)
 		except AssertionError as e:
 			if showDiff:
@@ -173,16 +173,16 @@ class TestGlossaryBase(unittest.TestCase):
 			raise e from None
 
 	def compareBinaryFiles(self: "typing.Self", fpath1, fpath2):
-		self.assertTrue(isfile(fpath1), f"File {fpath1} does not exist")
-		self.assertTrue(isfile(fpath2), f"File {fpath2} does not exist")
+		self.assertTrue(isfile(fpath1), f"File {fpath1!r} does not exist")
+		self.assertTrue(isfile(fpath2), f"File {fpath2!r} does not exist")
 		with open(fpath1, mode="rb") as file1:
 			data1 = file1.read()
 		with open(fpath2, mode="rb") as file2:
 			data2 = file2.read()
-		self.assertEqual(len(data1), len(data2), msg=f"{fpath1}")
+		self.assertEqual(len(data1), len(data2), msg=f"{fpath1!r}")
 		self.assertTrue(
 			data1 == data2,
-			msg=f"{fpath1} differs from {fpath2}",
+			msg=f"{fpath1!r} differs from {fpath2!r}",
 		)
 
 	def compareZipFiles(
