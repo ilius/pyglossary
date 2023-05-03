@@ -82,7 +82,10 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 		baseName: str,
 		files: "list[str]",
 		html_full: bool = False,
+		resFiles: "dict[str, str] | None" = None,
 	):
+		if resFiles is None:
+			resFiles = {}
 		self.glos = Glossary()
 		inputDirPath = self.downloadDir(
 			f"appledict-bin/{baseName}.dictionary",
@@ -116,6 +119,11 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			join(outputFilePath + "_res", "style.css"),
 			expectedStylePath,
 		)
+		for relPath, inputRelPath in resFiles.items():
+			self.compareBinaryFiles(
+				join(outputFilePath + "_res", relPath),
+				join(inputDirPath, inputRelPath),
+			)
 
 	def test_appledict_binary_to_txt_0(self: "typing.Self"):
 		baseName = "002-simple"
@@ -131,7 +139,10 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			"Contents/MyDictionary.xsl",
 			"Contents/MyDictionary_prefs.html",
 		]
-		self.convert_appledict_binary_to_txt(baseName, files)
+		resFiles = {
+			"Images/_internal_dictionary.png": "Contents/Images/_internal_dictionary.png",
+		}
+		self.convert_appledict_binary_to_txt(baseName, files, resFiles=resFiles)
 
 
 	def test_appledict_binary_to_txt_1(self: "typing.Self"):
