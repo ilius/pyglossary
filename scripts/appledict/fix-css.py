@@ -10,10 +10,10 @@ for fpath in sys.argv[1:]:
 		continue
 	fpathNoExt, _ = splitext(fpath)
 	fpathNew = fpathNoExt + "-fixed.css"
-	with open(fpath, "rt", encoding="utf-8") as _file:
+	with open(fpath, "rb") as _file:
 		text = _file.read()
 	text = substituteAppleCSS(text)
-	with open(fpathNew, "wt", encoding="utf-8") as _file:
+	with open(fpathNew, "wb") as _file:
 		_file.write(text)
 	print("Created", fpathNew)
 	print()

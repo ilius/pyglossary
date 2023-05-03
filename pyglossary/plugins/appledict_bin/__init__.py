@@ -630,12 +630,7 @@ class Reader(object):
 			data = _file.read()
 		if ext == ".css":
 			log.debug(f"substituting apple css: {fname}: {fpath}")
-			try:
-				text = data.decode("utf-8")
-			except UnicodeDecodeError:
-				log.error(f"CSS file {fpath!r} is not valid UTF-8")
-			else:
-				data = substituteAppleCSS(text).encode("utf-8")
+			data = substituteAppleCSS(data)
 		return self._glos.newDataEntry(fname, data)
 
 	def readResDir(

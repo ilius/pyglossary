@@ -69,16 +69,16 @@ cssMapping: "dict[str, str]" = {
 }
 
 cssParamPattern = re.compile(
-	r"(-(apple|webkit)-[a-z\-]+)",
+	rb"(-(apple|webkit)-[a-z\-]+)",
 )
 
-def _subCSS(m: "re.Match") -> str:
-	key = m.group(0)
-	value = cssMapping.get(key)
+def _subCSS(m: "re.Match") -> bytes:
+	b_key = m.group(0)
+	value = cssMapping.get(b_key.decode("ascii"))
 	if value is None:
-		log.warning(f"unrecognized CSS param: {key!r}")
-		return key
-	return value
+		log.warning(f"unrecognized CSS param: {b_key.decode('ascii')!r}")
+		return b_key
+	return value.encode("ascii")
 
-def substituteAppleCSS(cssText: str) -> str:
+def substituteAppleCSS(cssText: bytes) -> bytes:
 	return cssParamPattern.sub(_subCSS, cssText)
