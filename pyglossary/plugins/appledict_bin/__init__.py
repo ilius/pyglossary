@@ -635,24 +635,36 @@ class Reader(object):
 
 	def readResDir(
 		self: "typing.Self",
-		dirPath: str, recurse: bool,
+		dirPath: str,
+		recurse: bool = False,
+		relPath: str = "",
 	) -> Iterator[EntryType]:
 		if not isdir(dirPath):
 			return
 		for fname in os.listdir(dirPath):
+			if fname == "Resources":
+				continue
 			_, ext = splitext(fname)
 			if ext in (".data", ".index", ".plist", ".xsl", ".html"):
 				continue
 			fpath = join(dirPath, fname)
 			if isdir(fpath):
 				if recurse:
-					yield from self.readResDir(fpath)
+					yield from self.readResDir(
+						fpath,
+						recurse=True,
+						relPath=join(relPath, fname),
+					)
 				continue
 			if not isfile(fpath):
 				continue
 			if fname == self._cssName:
 				fname = "style.css"
-			log.trace(f"Using resource file: {fpath}")
+			if relPath:
+				fname = relPath + "/" + fname
+			if os.path == "\\":
+				fname = fname.replace("\\", "/")
+			log.trace(f"Using resource {fpath!r} as {fname!r}")
 			yield self.readResFile(fname, fpath, ext)
 
 	def __iter__(self: "typing.Self") -> Iterator[EntryType]:
@@ -661,7 +673,7 @@ class Reader(object):
 
 		yield from self.readResDir(
 			self._contentsPath,
-			recurse=False,
+			recurse=True,
 		)
 		yield from self.readResDir(
 			join(self._contentsPath, "Resources"),
