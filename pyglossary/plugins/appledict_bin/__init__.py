@@ -14,11 +14,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+import os
 import re
 import typing
 from datetime import datetime
 from io import BytesIO
-from os.path import isdir, isfile, join, split
+from os.path import isdir, isfile, join, split, splitext
 from struct import unpack
 from typing import (
 	TYPE_CHECKING,
@@ -104,6 +105,7 @@ class Reader(object):
 		self._titleById: "dict[str, str]" = {}
 		self._wordCount = 0
 		self._keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}
+		self._cssName = ""
 
 	def tostring(
 		self: "typing.Self",
@@ -291,6 +293,7 @@ class Reader(object):
 			self.setLangs(metadata)
 
 		self._properties = from_metadata(metadata)
+		self._cssName = self._properties.css_name or "DefaultStyle.css"
 
 	def setLangs(self: "typing.Self", metadata: "dict[str, Any]") -> None:
 		import locale
@@ -622,26 +625,48 @@ class Reader(object):
 
 		self._keyTextData = keyTextData
 
+	def readResFile(self: "typing.Self", fname: str, fpath: str, ext: str) -> EntryType:
+		with open(fpath, "rb") as _file:
+			data = _file.read()
+		if ext == ".css":
+			log.debug(f"substituting apple css: {fname}: {fpath}")
+			data = substituteAppleCSS(data.decode("utf-8")).encode("utf-8")
+		return self._glos.newDataEntry(fname, data)
+
+	def readResDir(
+		self: "typing.Self",
+		dirPath: str, recurse: bool,
+	) -> Iterator[EntryType]:
+		if not isdir(dirPath):
+			return
+		for fname in os.listdir(dirPath):
+			_, ext = splitext(fname)
+			if ext in (".data", ".index", ".plist", ".xsl", ".html"):
+				continue
+			fpath = join(dirPath, fname)
+			if isdir(fpath):
+				if recurse:
+					yield from self.readResDir(fpath)
+				continue
+			if not isfile(fpath):
+				continue
+			if fname == self._cssName:
+				fname = "style.css"
+			log.trace(f"Using resource file: {fpath}")
+			yield self.readResFile(fname, fpath, ext)
+
 	def __iter__(self: "typing.Self") -> Iterator[EntryType]:
 		if self._file is None:
 			raise RuntimeError("iterating over a reader while it's not open")
-		glos = self._glos
 
-		cssName = self._properties.css_name or "DefaultStyle.css"
-		contentsPath = self._contentsPath
-		for cssPathRel in (
-			cssName,
-			join("Resources", cssName),
-		):
-			cssPath = join(contentsPath, cssPathRel)
-			if not isfile(cssPath):
-				continue
-			with open(cssPath, mode="r", encoding="utf-8") as cssFile:
-				cssText = cssFile.read()
-			log.info(f"Using {cssPath =}")
-			cssText = substituteAppleCSS(cssText)
-			yield glos.newDataEntry("style.css", cssText.encode("utf-8"))
-			break
+		yield from self.readResDir(
+			self._contentsPath,
+			recurse=False,
+		)
+		yield from self.readResDir(
+			join(self._contentsPath, "Resources"),
+			recurse=True,
+		)
 
 		for entryBytes, articleAddress in self.yieldEntryBytes(
 			self._file,
