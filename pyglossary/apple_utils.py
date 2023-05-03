@@ -31,6 +31,9 @@ cssMapping: "dict[str, str]" = {
 	"-webkit-mini-control": "normal normal normal normal 9px/normal system-ui",
 	"-webkit-small-control": "normal normal normal normal 11px/normal system-ui",
 
+	# not so sure about this
+	"-webkit-padding-start": "padding-inline-start",
+
 	"-apple-system-alternate-selected-text": "rgb(255, 255, 255)",
 	"-apple-system-blue": "rgb(0, 122, 255)",
 	"-apple-system-brown": "rgb(162, 132, 94)",
