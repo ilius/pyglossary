@@ -524,20 +524,21 @@ class Reader(object):
 	) -> None:
 		if not linkList:
 			return
-		hf.write("Links: ")
-		for i, link in enumerate(linkList):
-			if len(link) != 2:
-				log.warn(f"unexpected {link =}")
-				continue
-			text, ref = link
-			sq = ref.find("#")
-			if sq == 0:
-				ref = text
-			elif sq > 0:
-				ref = ref[:sq]
-			if i > 0:
-				hf.write(", ")
-			self.addWordLink(hf, ref)
+		with hf.element("div"):
+			hf.write("Links: ")
+			for i, link in enumerate(linkList):
+				if len(link) != 2:
+					log.warn(f"unexpected {link =}")
+					continue
+				text, ref = link
+				sq = ref.find("#")
+				if sq == 0:
+					ref = text
+				elif sq > 0:
+					ref = ref[:sq]
+				if i > 0:
+					hf.write(", ")
+				self.addWordLink(hf, ref)
 
 	def writeSense(
 		self: "typing.Self",
