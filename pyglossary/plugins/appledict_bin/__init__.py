@@ -93,6 +93,15 @@ class Reader(object):
 	_html: bool = True
 	_html_full: bool = True
 
+	resNoExt = {
+		".data",
+		".index",
+		".plist",
+		".xsl",
+		".html",
+		".strings",
+	}
+
 	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos: GlossaryType = glos
 		self._dictDirPath = ""
@@ -641,11 +650,12 @@ class Reader(object):
 	) -> Iterator[EntryType]:
 		if not isdir(dirPath):
 			return
+		resNoExt = self.resNoExt
 		for fname in os.listdir(dirPath):
 			if fname == "Resources":
 				continue
 			_, ext = splitext(fname)
-			if ext in (".data", ".index", ".plist", ".xsl", ".html"):
+			if ext in resNoExt:
 				continue
 			fpath = join(dirPath, fname)
 			if isdir(fpath):
