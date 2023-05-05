@@ -2,7 +2,8 @@
 
 ## Installation on Linux
 
-- Debian/Ubuntu: `sudo apt install pyicu`
+- Debian `sudo apt-get install python3-icu`
+- Ubuntu: `sudo apt install pyicu`
 - openSUSE: `sudo zypper install python3-PyICU`
 - Fedora: `sudo dnf install python3-pyicu`
 - Other distros:
