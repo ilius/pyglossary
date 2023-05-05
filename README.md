@@ -40,7 +40,7 @@ Android Termux - interactive command-line interface
 | [Aard 2 (slob)](./doc/p/aard2_slob.md)                  |  🔢  |      .slob      |  ✔   |   ✔   |
 | [ABBYY Lingvo DSL](./doc/p/dsl.md)                      |  📝  |      .dsl       |  ✔   |       |
 | [Almaany.com](./doc/p/almaany.md) (SQLite3, Arabic)     |  🔢  |       .db       |  ✔   |       |
-| [AppleDict Binary](./doc/p/appledict_bin.md)            |  🔢  |   .dictionary   |  ✔   |   ❌   |
+| [AppleDict Binary](./doc/p/appledict_bin.md)            |  📁  |   .dictionary   |  ✔   |   ❌   |
 | [AppleDict Source](./doc/p/appledict.md)                |  📁  |                 |      |   ✔   |
 | [Babylon BGL](./doc/p/babylon_bgl.md)                   |  🔢  |      .bgl       |  ✔   |   ❌   |
 | [CC-CEDICT](./doc/p/cc_cedict.md) (Chinese)             |  📝  |                 |  ✔   |   ❌   |
