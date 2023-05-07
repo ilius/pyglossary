@@ -17,12 +17,6 @@
 | Wiki            | ―                                                   |
 | Website         | [ilius/ayandict](https://github.com/ilius/ayandict) |
 
-### Read options
-
-| Name    | Default | Type | Comment                                                      |
-| ------- | ------- | ---- | ------------------------------------------------------------ |
-| alt_sep | `|`     | str  | Separator for alternative terms (must not be in any of them) |
-
 ### Write options
 
 | Name  | Default | Type | Comment                  |

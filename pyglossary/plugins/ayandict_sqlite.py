@@ -31,14 +31,9 @@ optionsProp: "dict[str, Option]" = {
 	"fuzzy": BoolOption(
 		comment="Create fuzzy search data",
 	),
-	"alt_sep": StrOption(
-		comment="Separator for alternative terms (must not be in any of them)",
-	),
 }
 
 class Reader(object):
-	_alt_sep: str = "|"
-
 	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
@@ -68,21 +63,22 @@ class Reader(object):
 		return self._cur.fetchone()[0]
 
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+		from json import loads
+
 		if self._cur is None:
 			raise ValueError("cur is None")
-		sep = self._alt_sep
 		self._cur.execute(
 			"SELECT entry.term, entry.article, "
-			f"group_concat(alt.term,'{sep}')"
+			"json_group_array(alt.term)"
 			"FROM entry LEFT JOIN alt ON entry.id=alt.id "
 			"GROUP BY entry.id;",
 		)
 		for row in self._cur.fetchall():
 			terms = [row[0]]
 			article = row[1]
-			alts = row[2]
-			if alts:
-				terms += alts.split(sep)
+			for alt in loads(row[2]):
+				if alt:
+					terms.append(alt)
 			yield self._glos.newEntry(terms, article, defiFormat="h")
 
 	def close(self: "typing.Self") -> None:
