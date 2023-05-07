@@ -3,6 +3,7 @@
 import os
 import re
 import typing
+import unicodedata
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
@@ -251,11 +252,14 @@ class Reader(object):
 						continue
 					if not keb.text:
 						continue
-					keywords.append(keb.text)
 					keb_text = keb.text
+					keb_text_norm = unicodedata.normalize("NFKC", keb_text)
+					keywords.append(keb_text_norm)
+					if keb_text != keb_text_norm:
+						keywords.append(keb_text)
 					if translit:
 						import romkan
-						t_keb = romkan.to_roma(keb.text)
+						t_keb = romkan.to_roma(keb_text)
 						if t_keb and t_keb.isascii():
 							keywords.append(t_keb)
 							keb_text += f" ({t_keb})"
