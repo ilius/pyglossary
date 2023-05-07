@@ -4,6 +4,7 @@ import typing
 from typing import (
 	TYPE_CHECKING,
 	Generator,
+	Iterator,
 )
 
 if TYPE_CHECKING:
@@ -11,7 +12,7 @@ if TYPE_CHECKING:
 
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
-from pyglossary.option import BoolOption, Option
+from pyglossary.option import BoolOption, Option, StrOption
 
 enable = True
 lname = "ayandict_sqlite"
@@ -30,7 +31,66 @@ optionsProp: "dict[str, Option]" = {
 	"fuzzy": BoolOption(
 		comment="Create fuzzy search data",
 	),
+	"alt_sep": StrOption(
+		comment="Separator for alternative terms (must not be in any of them)",
+	),
 }
+
+class Reader(object):
+	_alt_sep: str = "|"
+
+	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+		self._glos = glos
+		self._clear()
+
+	def _clear(self: "typing.Self") -> None:
+		self._filename = ''
+		self._con: "sqlite3.Connection | None" = None
+		self._cur: "sqlite3.Cursor | None" = None
+
+	def open(self: "typing.Self", filename: str) -> None:
+		from sqlite3 import connect
+		self._filename = filename
+		self._con = connect(filename)
+		self._cur = self._con.cursor()
+		self._glos.setDefaultDefiFormat("h")
+
+		self._cur.execute("SELECT key, value FROM meta;")
+		for row in self._cur.fetchall():
+			if row[0] == "hash":
+				continue
+			self._glos.setInfo(row[0], row[1])
+
+	def __len__(self: "typing.Self") -> int:
+		if self._cur is None:
+			raise ValueError("cur is None")
+		self._cur.execute("select count(id) from entry")
+		return self._cur.fetchone()[0]
+
+	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+		if self._cur is None:
+			raise ValueError("cur is None")
+		sep = self._alt_sep
+		self._cur.execute(
+			"SELECT entry.term, entry.article, "
+			f"group_concat(alt.term,'{sep}')"
+			"FROM entry LEFT JOIN alt ON entry.id=alt.id "
+			"GROUP BY entry.id;",
+		)
+		for row in self._cur.fetchall():
+			terms = [row[0]]
+			article = row[1]
+			alts = row[2]
+			if alts:
+				terms += alts.split(sep)
+			yield self._glos.newEntry(terms, article, defiFormat="h")
+
+	def close(self: "typing.Self") -> None:
+		if self._cur:
+			self._cur.close()
+		if self._con:
+			self._con.close()
+		self._clear()
 
 
 class Writer(object):

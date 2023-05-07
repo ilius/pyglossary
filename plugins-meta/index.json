@@ -227,10 +227,19 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Create fuzzy search data"
+			},
+			"alt_sep": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Separator for alternative terms (must not be in any of them)"
 			}
 		},
-		"canRead": false,
+		"canRead": true,
 		"canWrite": true,
+		"readOptions": {
+			"alt_sep": "|"
+		},
 		"writeOptions": {
 			"fuzzy": true
 		}
