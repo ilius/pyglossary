@@ -244,7 +244,9 @@ class Reader(object):
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
 			kebList: "list[str]" = []
-			rebList: "list[tuple[str, list[str]]]" = []
+			rebList: "list[str]" = []
+			kebDisplayList: "list[str]" = []
+			rebDisplayList: "list[tuple[str, list[str]]]" = []
 			with hf.element("div"):
 				for k_ele in entry.findall("k_ele"):
 					keb = k_ele.find("keb")
@@ -257,13 +259,15 @@ class Reader(object):
 					keywords.append(keb_text_norm)
 					if keb_text != keb_text_norm:
 						keywords.append(keb_text)
+					kebList.append(keb_text)
+					keb_display = keb_text
 					if translit:
 						import romkan
 						t_keb = romkan.to_roma(keb_text)
 						if t_keb and t_keb.isascii():
 							keywords.append(t_keb)
-							keb_text += f" ({t_keb})"
-					kebList.append(keb_text)
+							keb_display += f" ({t_keb})"
+					kebDisplayList.append(keb_display)
 					# for elem in k_ele.findall("ke_pri"):
 					# 	log.info(elem.text)
 
@@ -283,13 +287,15 @@ class Reader(object):
 						)
 					keywords.append(reb.text)
 					reb_text = reb.text
+					rebList.append(reb_text)
+					reb_display = reb_text
 					if translit:
 						import romkan
 						t_reb = romkan.to_roma(reb.text)
 						if t_reb and t_reb.isascii():
 							keywords.append(t_reb)
-							reb_text += f" ({t_reb})"
-					rebList.append((reb_text, props))					
+							reb_display += f" ({t_reb})"
+					rebDisplayList.append((reb_display, props))
 					# for elem in r_ele.findall("re_pri"):
 					# 	log.info(elem.text)
 
@@ -299,20 +305,20 @@ class Reader(object):
 				# except for scanning and indexing all words once
 				# and then starting over and fixing/optimizing links
 				for s_keb in kebList:
-					for s_reb, _ in rebList:
+					for s_reb in rebList:
 						keywords.append(f"{s_keb}・{s_reb}")
 
-				if kebList:
-					with hf.element(glos.titleTag(kebList[0])):
-						for i, s_keb in enumerate(kebList):
+				if kebDisplayList:
+					with hf.element(glos.titleTag(kebDisplayList[0])):
+						for i, s_keb in enumerate(kebDisplayList):
 							if i > 0:
 								with hf.element("font", color="red"):
 									hf.write(" | ")
 							hf.write(s_keb)
 					hf.write(br())
 
-				if rebList:
-					for i, (s_reb, props) in enumerate(rebList):
+				if rebDisplayList:
+					for i, (s_reb, props) in enumerate(rebDisplayList):
 						if i > 0:
 							with hf.element("font", color="red"):
 								hf.write(" | ")
