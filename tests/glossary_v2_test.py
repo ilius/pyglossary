@@ -194,8 +194,9 @@ class TestGlossaryBase(unittest.TestCase):
 		zf1 = zipfile.ZipFile(fpath1)
 		zf2 = zipfile.ZipFile(fpath2)
 		pathList1 = zf1.namelist()
-		pathList2 = zf1.namelist()
-		self.assertEqual(pathList1, pathList2)
+		pathList2 = zf2.namelist()
+		if not self.assertEqual(pathList1, pathList2):
+			return
 		for zfpath in pathList1:
 			data1 = zf1.read(zfpath)
 			data2 = zf2.read(zfpath)
