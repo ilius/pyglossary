@@ -365,9 +365,6 @@ appResDir = join(dataDir, "res")
 
 if os.sep == "/":  # Operating system is Unix-Like
 	homeDir = os.getenv("HOME", "/")
-	user = os.getenv("USER")
-	if user is None:
-		raise OSError("no $USER")
 	tmpDir = os.getenv("TMPDIR", "/tmp")  # noqa: S108
 	if sysName == "darwin":  # MacOS X
 		_libDir = join(homeDir, "Library")
@@ -393,7 +390,6 @@ elif os.sep == "\\":  # Operating system is Windows
 	_HOMEDRIVE = os.getenv("HOMEDRIVE", "")
 	_HOMEPATH = os.getenv("HOMEPATH", "")
 	homeDir = join(_HOMEDRIVE, _HOMEPATH)
-	user = os.getenv("USERNAME", "")
 	tmpDir = os.getenv("TEMP", "")
 	_appData = os.getenv("APPDATA", "")
 	confDir = join(_appData, "PyGlossary")
