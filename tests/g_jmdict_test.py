@@ -15,7 +15,7 @@ class TestGlossaryJMdict(TestGlossaryBase):
 
 		self.dataFileCRC32.update({
 			"050-JMdict-English": "aec9ad8c",
-			"050-JMdict-English.txt": "edd13a27",
+			"050-JMdict-English-v2.txt": "cc87ff65",
 		})
 
 	def convert_jmdict_txt(self: "typing.Self", fname, fname2, **convertArgs):
@@ -30,7 +30,7 @@ class TestGlossaryJMdict(TestGlossaryBase):
 	def test_convert_jmdict_txt_1(self: "typing.Self"):
 		self.convert_jmdict_txt(
 			"050-JMdict-English",
-			"050-JMdict-English",
+			"050-JMdict-English-v2",
 		)
 
 
