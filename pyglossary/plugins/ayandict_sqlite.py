@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
-from pyglossary.option import BoolOption, Option, StrOption
+from pyglossary.option import BoolOption, Option
 
 enable = True
 lname = "ayandict_sqlite"
