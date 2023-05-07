@@ -1192,13 +1192,19 @@
 				"type": "int",
 				"customValue": true,
 				"comment": "Padding for examples (in px)"
+			},
+			"translitation": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Add translitation (romaji) of keywords"
 			}
 		},
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
 			"example_padding": 10,
-			"example_color": ""
+			"example_color": "",
+			"translitation": false
 		},
 		"readDepends": {
 			"lxml": "lxml"

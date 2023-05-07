@@ -24,6 +24,7 @@ from pyglossary.glossary_types import (
 	GlossaryType,
 )
 from pyglossary.option import (
+	BoolOption,
 	IntOption,
 	Option,
 	StrOption,
@@ -49,6 +50,9 @@ optionsProp: "dict[str, Option]" = {
 	"example_padding": IntOption(
 		comment="Padding for examples (in px)",
 	),
+	"translitation": BoolOption(
+		comment="Add translitation (romaji) of keywords",
+	),
 }
 
 
@@ -61,6 +65,7 @@ class Reader(object):
 	_example_padding: int = 10
 	_example_color: str = ""
 	# _example_color: str = "#008FE1"
+	_translitation: bool = False
 
 	tagStyle = (
 		"color:white;"
@@ -231,6 +236,7 @@ class Reader(object):
 		glos = self._glos
 		keywords = []
 		f = BytesIO()
+		translit = self._translitation
 
 		def br() -> "Element":
 			return ET.Element("br")
@@ -245,8 +251,15 @@ class Reader(object):
 						continue
 					if not keb.text:
 						continue
-					kebList.append(keb.text)
 					keywords.append(keb.text)
+					keb_text = keb.text
+					if translit:
+						import romkan
+						t_keb = romkan.to_roma(keb.text)
+						if t_keb and t_keb.isascii():
+							keywords.append(t_keb)
+							keb_text += f" ({t_keb})"
+					kebList.append(keb_text)
 					# for elem in k_ele.findall("ke_pri"):
 					# 	log.info(elem.text)
 
@@ -264,8 +277,15 @@ class Reader(object):
 						props.append(
 							self.re_inf_mapping.get(inf.text, inf.text),
 						)
-					rebList.append((reb.text, props))
 					keywords.append(reb.text)
+					reb_text = reb.text
+					if translit:
+						import romkan
+						t_reb = romkan.to_roma(reb.text)
+						if t_reb and t_reb.isascii():
+							keywords.append(t_reb)
+							reb_text += f" ({t_reb})"
+					rebList.append((reb_text, props))					
 					# for elem in r_ele.findall("re_pri"):
 					# 	log.info(elem.text)
 

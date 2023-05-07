@@ -19,10 +19,11 @@
 
 ### Read options
 
-| Name            | Default | Type | Comment                      |
-| --------------- | ------- | ---- | ---------------------------- |
-| example_padding | `10`    | int  | Padding for examples (in px) |
-| example_color   |         | str  | Examples color               |
+| Name            | Default | Type | Comment                                |
+| --------------- | ------- | ---- | -------------------------------------- |
+| example_padding | `10`    | int  | Padding for examples (in px)           |
+| example_color   |         | str  | Examples color                         |
+| translitation   | `False` | bool | Add translitation (romaji) of keywords |
 
 ### Dependencies for reading
 
