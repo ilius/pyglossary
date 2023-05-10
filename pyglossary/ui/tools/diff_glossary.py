@@ -8,6 +8,7 @@ import sys
 from subprocess import PIPE, Popen
 from typing import Iterator
 
+from pyglossary.core import log
 from pyglossary.entry import Entry
 from pyglossary.glossary_types import EntryType
 from pyglossary.glossary_v2 import Glossary
@@ -24,6 +25,8 @@ from pyglossary.ui.tools.word_diff import (
 )
 
 Glossary.init()
+
+log.setVerbosity(1)
 
 
 def formatInfoValueDiff(diff: "Iterator[str]") -> str:

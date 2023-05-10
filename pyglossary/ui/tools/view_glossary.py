@@ -9,11 +9,14 @@ from typing import TYPE_CHECKING, Callable
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
+from pyglossary.core import log
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.tools.colors import reset, yellow
 from pyglossary.ui.tools.format_entry import formatEntry
 
 Glossary.init()
+
+log.setVerbosity(1)
 
 noColor = bool(os.getenv("NO_COLOR"))
 if noColor:
