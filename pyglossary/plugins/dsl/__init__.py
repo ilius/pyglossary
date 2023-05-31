@@ -158,6 +158,7 @@ re_m = re.compile(r"\[m(\d)\](.*?)")
 re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
 re_end = re.compile(r"\\$")
 re_ref = re.compile("<<(.*?)>>")
+# re_ref = re.compile("<<(?<!\\<<)(.*?)>>(?<!\\>>)")  # or maybe "[^\\]<<([^>]*?[^\\])>>"
 
 
 # single instance of parser
@@ -294,7 +295,7 @@ def _clean_tags(
 	line = line.replace("[p]", "<i class=\"p\"><font color=\"green\">")
 	line = line.replace("[/p]", "</font></i>")
 
-	# cross reference
+	# cross-reference
 	line = line.replace("[ref]", "<<").replace("[/ref]", ">>")
 	line = line.replace("[url]", "<<").replace("[/url]", ">>")
 	line = line.replace("&lt;&lt;", "<<").replace("&gt;&gt;", ">>")
@@ -319,7 +320,8 @@ def _clean_tags(
 	)
 
 	# \[...\]
-	return line.replace("\\[", "[").replace("\\]", "]")
+	# \{...\}
+	return line.replace("\\[", "[").replace("\\]", "]").replace("\\{", "{").replace("\\}", "}")
 
 
 def unwrap_quotes(s: str) -> str:
