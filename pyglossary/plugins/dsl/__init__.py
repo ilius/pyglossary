@@ -267,13 +267,12 @@ def _clean_tags(
 
 	# text formats
 
-	line = line.replace("[']", "<u>").replace("[/']", "</u>")
+	line = line.replace("[']", '<u class="accent">').replace("[/']", "</u>")
 	line = line.replace("[b]", "<b>").replace("[/b]", "</b>")
 	line = line.replace("[i]", "<i>").replace("[/i]", "</i>")
 	line = line.replace("[u]", "<u>").replace("[/u]", "</u>")
 	line = line.replace("[sup]", "<sup>").replace("[/sup]", "</sup>")
 	line = line.replace("[sub]", "<sub>").replace("[/sub]", "</sub>")
-	line = line.replace("[']", "<b>").replace("[/']", "</b>")
 
 	# color
 	line = line.replace("[c]", "<font color=\"green\">")
