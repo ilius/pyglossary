@@ -268,7 +268,7 @@ def _clean_tags(
 
 	# text formats
 
-	line = line.replace("[']", '<u class="accent">').replace("[/']", "</u>")
+	line = line.replace("[&#x27;]", '<u class="accent">').replace("[/&#x27;]", "</u>")
 	line = line.replace("[b]", "<b>").replace("[/b]", "</b>")
 	line = line.replace("[i]", "<i>").replace("[/i]", "</i>")
 	line = line.replace("[u]", "<u>").replace("[/u]", "</u>")
