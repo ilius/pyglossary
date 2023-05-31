@@ -35,6 +35,7 @@ from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
 	Option,
+	StrOption,
 )
 from pyglossary.text_reader import TextFilePosWrapper
 
@@ -62,6 +63,9 @@ optionsProp: "dict[str, Option]" = {
 	),
 	"only_fix_markup": BoolOption(
 		comment="Only fix markup, without tag conversion",
+	),
+	"example_color": StrOption(
+		comment="Examples color",
 	),
 }
 
@@ -167,11 +171,15 @@ def apply_shortcuts(line: str) -> str:
 	return line
 
 
-def _clean_tags(line: str, audio: bool) -> str:
+def _clean_tags(
+	line: str,
+	audio: bool,
+	example_color: str,
+) -> str:
 	r"""
 	[m{}] => <div style="margin-left:{}em">
 	[*]   => <span class="sec">
-	[ex]  => <span class="ex"><font color="steelblue">
+	[ex]  => <span class="ex"><font color="{example_color}">
 	[c]   => <font color="green">
 	[p]   => <i class="p"><font color="green">
 
@@ -262,7 +270,10 @@ def _clean_tags(line: str, audio: bool) -> str:
 	line = line.replace("[/c]", "</font>")
 
 	# example zone
-	line = line.replace("[ex]", "<span class=\"ex\"><font color=\"steelblue\">")
+	line = line.replace(
+		"[ex]",
+		f"<span class=\"ex\"><font color=\"{example_color}\">",
+	)
 	line = line.replace("[/ex]", "</font></span>")
 
 	# secondary zone
@@ -310,6 +321,7 @@ class Reader(object):
 	_encoding: str = ""
 	_audio: bool = False
 	_only_fix_markup: bool = False
+	_example_color: str = "steelblue"
 
 	re_tags_open = re.compile(r"(?<!\\)\[(c |[cuib]\])")
 	re_tags_close = re.compile(r"\[/[cuib]\]")
@@ -446,7 +458,11 @@ class Reader(object):
 				unfinished_line = ""
 
 				# convert DSL tags to HTML tags
-				line = self.clean_tags(line, self._audio)
+				line = self.clean_tags(
+					line=line,
+					audio=self._audio,
+					example_color=self._example_color,
+				)
 				current_text.append(line)
 				continue
 
@@ -461,7 +477,11 @@ class Reader(object):
 			if line_type == "text":
 				if unfinished_line:
 					# line may be skipped if ill formatted
-					current_text.append(self.clean_tags(unfinished_line, self._audio))
+					current_text.append(self.clean_tags(
+						line=unfinished_line,
+						audio=self._audio,
+						example_color=self._example_color,
+					))
 				yield self._glos.newEntry(
 					[current_key] + current_key_alters,
 					"\n".join(current_text),
