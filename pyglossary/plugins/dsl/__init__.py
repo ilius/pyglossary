@@ -130,12 +130,12 @@ def ref_sub(x: "re.Match") -> str:
 shortcuts = [
 	# canonical: m > * > ex > i > c
 	(
-		"[m1](?:-{2,})[/m]",
+		"[m1](?:-{2,})",
 		"<hr/>",
 	),
 	(
-		"[m(\\d)](?:-{2,})[/m]",
-		"<hr style=\"margin-left:\\g<1>em\"/>",
+		"[m(\\d)](?:-{2,})",
+		"<hr style=\"padding-left:\\g<1>em\"/>",
 	),
 ]
 
@@ -154,7 +154,7 @@ re_m_open = re.compile(r"(?<!\\)\[m\d\]")
 re_c_open_color = re.compile(r"\[c (\w+)\]")
 re_sound = re.compile(r"\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]")
 re_img = re.compile(r"\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]")
-re_m = re.compile(r"\[m(\d)\](.*?)\[/m\]")
+re_m = re.compile(r"\[m(\d)\](.*?)")
 re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
 re_end = re.compile(r"\\$")
 re_ref = re.compile("<<(.*?)>>")
@@ -177,7 +177,7 @@ def _clean_tags(
 	example_color: str,
 ) -> str:
 	r"""
-	[m{}] => <div style="margin-left:{}em">
+	[m{}] => <p style="padding-left:{}em;margin:0">
 	[*]   => <span class="sec">
 	[ex]  => <span class="ex"><font color="{example_color}">
 	[c]   => <font color="green">
@@ -248,12 +248,16 @@ def _clean_tags(
 	# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
 	# then leave it alone.  only wrap in "[m1]" when no "m" tag found at all.
 	if not re_m_open.search(line):
-		line = f"[m1]{line}[/m]"
+		line = f"[m1]{line}"
 
 	line = apply_shortcuts(line)
 
 	# paragraph, part two: if any not shourcuted [m] left?
-	line = re_m.sub(r'<div style="margin-left:\g<1>em">\g<2></div>', line)
+	line = re_m.sub(
+		r'<p style="padding-left:\g<1>em;margin:0">\g<2>',
+		line,
+	)
+	line = line.replace("[/m]", "")
 
 	# text formats
 
