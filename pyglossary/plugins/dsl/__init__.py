@@ -249,11 +249,12 @@ def _clean_tags(
 
 	# paragraph, part one: before shortcuts.
 	line = line.replace("[m]", "[m1]")
+	line = line.replace("[m0]", "<p>")
 	# if line somewhere contains "[m_]" tag like
 	# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
 	# then leave it alone.  only wrap in "[m1]" when no "m" tag found at all.
 	if not re_m_open.search(line):
-		line = f"[m1]{line}"
+		line = f"<p>{line}"
 
 	line = apply_shortcuts(line)
 
