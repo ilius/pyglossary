@@ -719,6 +719,12 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Only fix markup, without tag conversion"
+			},
+			"example_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Examples color"
 			}
 		},
 		"canRead": true,
@@ -726,7 +732,8 @@
 		"readOptions": {
 			"encoding": "",
 			"audio": false,
-			"only_fix_markup": false
+			"only_fix_markup": false,
+			"example_color": "steelblue"
 		},
 		"readCompressions": [
 			"gz",
