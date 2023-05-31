@@ -287,6 +287,7 @@ def _clean_tags(
 	# cross reference
 	line = line.replace("[ref]", "<<").replace("[/ref]", ">>")
 	line = line.replace("[url]", "<<").replace("[/url]", ">>")
+	line = line.replace("&lt;&lt;", "<<").replace("&gt;&gt;", ">>")
 	line = re_ref.sub(ref_sub, line)
 
 	# sound file
@@ -456,7 +457,6 @@ class Reader(object):
 					continue
 
 				unfinished_line = ""
-
 				# convert DSL tags to HTML tags
 				line = self.clean_tags(
 					line=line,
