@@ -150,7 +150,7 @@ shortcuts = [
 # precompiled regexs
 re_brackets_blocks = re.compile(r"\{\{[^}]*\}\}")
 re_lang_open = re.compile(r"(?<!\\)\[lang[^\]]*\]")
-re_m_open = re.compile(r"(?<!\\)\[m\d\]")
+re_m_open = re.compile(r"(?<!\\)\[m\d?\]")
 re_c_open_color = re.compile(r"\[c (\w+)\]")
 re_sound = re.compile(r"\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]")
 re_img = re.compile(r"\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]")
@@ -248,13 +248,13 @@ def _clean_tags(
 	line = re_end.sub("<br/>", line)
 
 	# paragraph, part one: before shortcuts.
+	if not re_m_open.search(line):
+		line = "[m0]" + line
 	line = line.replace("[m]", "[m1]")
-	line = line.replace("[m0]", "<p>")
+	line = line.replace("[m0]", '<p style="margin:0.3em">')
 	# if line somewhere contains "[m_]" tag like
 	# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
 	# then leave it alone.  only wrap in "[m1]" when no "m" tag found at all.
-	if not re_m_open.search(line):
-		line = f"<p>{line}"
 
 	line = apply_shortcuts(line)
 
