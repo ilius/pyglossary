@@ -209,6 +209,11 @@ def _clean_tags(
 	[lang ...] |
 	[com]     /
 	"""
+	# unescape escaped special characters
+	line = line.replace(r"\~", "~")
+	line = line.replace(r"\@", "@")
+	line = line.replace(r"\ ", "&nbsp;")
+
 	# remove {{...}} blocks
 	line = re_brackets_blocks.sub("", line)
 	# remove trn tags
@@ -267,6 +272,7 @@ def _clean_tags(
 	line = line.replace("[u]", "<u>").replace("[/u]", "</u>")
 	line = line.replace("[sup]", "<sup>").replace("[/sup]", "</sup>")
 	line = line.replace("[sub]", "<sub>").replace("[/sub]", "</sub>")
+	line = line.replace("[']", "<b>").replace("[/']", "</b>")
 
 	# color
 	line = line.replace("[c]", "<font color=\"green\">")
