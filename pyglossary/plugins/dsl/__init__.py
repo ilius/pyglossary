@@ -160,7 +160,8 @@ re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
 re_end = re.compile(r"\\$")
 re_ref_tag = re.compile(r"\[ref(?: [^\[\]]*)?\]([^[]*)")
 re_ref = re.compile("<<(.*?)>>")
-# re_ref = re.compile("<<(?<!\\<<)(.*?)>>(?<!\\>>)")  # or maybe "[^\\]<<([^>]*?[^\\])>>"
+# re_ref = re.compile("<<(?<!\\<<)(.*?)>>(?<!\\>>)")
+# or maybe "[^\\]<<([^>]*?[^\\])>>"
 
 
 # single instance of parser
@@ -323,7 +324,8 @@ def _clean_tags(
 
 	# \[...\]
 	# \{...\}
-	return line.replace("\\[", "[").replace("\\]", "]").replace("\\{", "{").replace("\\}", "}")
+	return line.replace("\\[", "[").replace("\\]", "]")\
+		.replace("\\{", "{").replace("\\}", "}")
 
 
 def unwrap_quotes(s: str) -> str:
@@ -446,7 +448,7 @@ class Reader(object):
 		line = m.group(0)[1:-1]
 		line = line.replace("[']", "") # FIXME
 		line = line.replace("[/']", "")
-		return line
+		return line  # noqa: RET504
 
 	def fix_title_line(self, line: str) -> str:
 		# find {...} and apply acute accents
