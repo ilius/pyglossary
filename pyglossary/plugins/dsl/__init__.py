@@ -122,8 +122,8 @@ def make_a_href(s: str) -> str:
 	return f"<a href={quoteattr(s)}>{escape(s)}</a>"
 
 
-def ref_sub(x: "re.Match") -> str:
-	return make_a_href(unescape(x.groups()[0]))
+def ref_sub(m: "re.Match") -> str:
+	return make_a_href(unescape(m.group(1)))
 
 
 # order matters, a lot.
@@ -158,6 +158,7 @@ re_img = re.compile(r"\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff|png|bmp)\s*\[/s\]")
 re_m = re.compile(r"\[m(\d)\](.*?)")
 re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
 re_end = re.compile(r"\\$")
+re_ref_tag = re.compile(r"\[ref(?: [^\[\]]*)?\]([^[]*)")
 re_ref = re.compile("<<(.*?)>>")
 # re_ref = re.compile("<<(?<!\\<<)(.*?)>>(?<!\\>>)")  # or maybe "[^\\]<<([^>]*?[^\\])>>"
 
@@ -247,6 +248,12 @@ def _clean_tags(
 
 	line = _parse(line)
 
+	# cross-reference
+	line = re_ref_tag.sub(ref_sub, line).replace("[/ref]", "")
+	line = line.replace("[url]", "<<").replace("[/url]", ">>")
+	line = line.replace("&lt;&lt;", "<<").replace("&gt;&gt;", ">>")
+	line = re_ref.sub(ref_sub, line)
+
 	line = re_end.sub("<br/>", line)
 
 	# paragraph, part one: before shortcuts.
@@ -295,12 +302,6 @@ def _clean_tags(
 	# abbrev. label
 	line = line.replace("[p]", "<i class=\"p\"><font color=\"green\">")
 	line = line.replace("[/p]", "</font></i>")
-
-	# cross-reference
-	line = line.replace("[ref]", "<<").replace("[/ref]", ">>")
-	line = line.replace("[url]", "<<").replace("[/url]", ">>")
-	line = line.replace("&lt;&lt;", "<<").replace("&gt;&gt;", ">>")
-	line = re_ref.sub(ref_sub, line)
 
 	# sound file
 	if audio:

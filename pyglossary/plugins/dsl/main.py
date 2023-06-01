@@ -98,6 +98,7 @@ class DSLParser(object):
 			"s",
 			"sup",
 			"sub",
+			# ("ref", r"\[ref(?: [^\[\]]*)?\]"),
 			"ref",
 			"url",
 		}),
