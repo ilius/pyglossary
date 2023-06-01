@@ -59,11 +59,13 @@ writingSystemList = [
 	WritingSystem(
 		name="CJK",
 		iso=[
+			(285, "Bopo", "BOPOMOFO"),
 			(286, "Hang", "HANGUL"),
 			(410, "Hira", "HIRAGANA"),
 			(411, "Kana", "KATAKANA"),
 			(412, "Hrkt", "KATAKANA OR HIRAGANA"),
 			(460, "Yiii", "​Yi"),
+			(499, "Nshu", "NUSHU"),
 			(500, "Hani", "​HAN"),  # aka Hanzi, Kanji, Hanja
 			(501, "Hans", "SIMPLIFIED HAN"),
 			(502, "Hant", "TRADITIONAL HAN"),
@@ -79,6 +81,8 @@ writingSystemList = [
 			"HALFWIDTH HANGUL",
 			"YI",  # https://en.wikipedia.org/wiki/Yi_script
 			"FULLWIDTH LATIN",
+			"BOPOMOFO",
+			"NUSHU",
 		],
 		titleTag="big",
 		comma="、",
