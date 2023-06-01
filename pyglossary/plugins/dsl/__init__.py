@@ -130,12 +130,12 @@ def ref_sub(x: "re.Match") -> str:
 shortcuts = [
 	# canonical: m > * > ex > i > c
 	(
-		"[m1](?:-{2,})[/m]",
+		"[m1](?:-{2,})",
 		"<hr/>",
 	),
 	(
-		"[m(\\d)](?:-{2,})[/m]",
-		"<hr style=\"margin-left:\\g<1>em\"/>",
+		"[m(\\d)](?:-{2,})",
+		"<hr style=\"padding-left:\\g<1>em\"/>",
 	),
 ]
 
@@ -148,16 +148,18 @@ shortcuts = [
 
 
 # precompiled regexs
-re_brackets_blocks = re.compile(r"\{\{[^}]*\}\}")
+re_brackets_blocks = re.compile(r"\{[^}]*\}")
+re_double_brackets_blocks = re.compile(r"\{\{[^}]*\}\}")
 re_lang_open = re.compile(r"(?<!\\)\[lang[^\]]*\]")
-re_m_open = re.compile(r"(?<!\\)\[m\d\]")
+re_m_open = re.compile(r"(?<!\\)\[m\d?\]")
 re_c_open_color = re.compile(r"\[c (\w+)\]")
 re_sound = re.compile(r"\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]")
-re_img = re.compile(r"\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff)\s*\[/s\]")
-re_m = re.compile(r"\[m(\d)\](.*?)\[/m\]")
+re_img = re.compile(r"\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff|png|bmp)\s*\[/s\]")
+re_m = re.compile(r"\[m(\d)\](.*?)")
 re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
 re_end = re.compile(r"\\$")
 re_ref = re.compile("<<(.*?)>>")
+# re_ref = re.compile("<<(?<!\\<<)(.*?)>>(?<!\\>>)")  # or maybe "[^\\]<<([^>]*?[^\\])>>"
 
 
 # single instance of parser
@@ -177,7 +179,7 @@ def _clean_tags(
 	example_color: str,
 ) -> str:
 	r"""
-	[m{}] => <div style="margin-left:{}em">
+	[m{}] => <p style="padding-left:{}em;margin:0">
 	[*]   => <span class="sec">
 	[ex]  => <span class="ex"><font color="{example_color}">
 	[c]   => <font color="green">
@@ -209,8 +211,13 @@ def _clean_tags(
 	[lang ...] |
 	[com]     /
 	"""
+	# unescape escaped special characters
+	line = line.replace(r"\~", "~")
+	line = line.replace(r"\@", "@")
+	line = line.replace(r"\ ", "&nbsp;")
+
 	# remove {{...}} blocks
-	line = re_brackets_blocks.sub("", line)
+	line = re_double_brackets_blocks.sub("", line)
 	# remove trn tags
 	# re_trn = re.compile("\[\/?!?tr[ns]\]")
 	line = line \
@@ -243,21 +250,26 @@ def _clean_tags(
 	line = re_end.sub("<br/>", line)
 
 	# paragraph, part one: before shortcuts.
+	if not re_m_open.search(line):
+		line = "[m0]" + line
 	line = line.replace("[m]", "[m1]")
+	line = line.replace("[m0]", '<p style="margin:0.3em">')
 	# if line somewhere contains "[m_]" tag like
 	# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
 	# then leave it alone.  only wrap in "[m1]" when no "m" tag found at all.
-	if not re_m_open.search(line):
-		line = f"[m1]{line}[/m]"
 
 	line = apply_shortcuts(line)
 
 	# paragraph, part two: if any not shourcuted [m] left?
-	line = re_m.sub(r'<div style="margin-left:\g<1>em">\g<2></div>', line)
+	line = re_m.sub(
+		r'<p style="padding-left:\g<1>em;margin:0">\g<2>',
+		line,
+	)
+	line = line.replace("[/m]", "")
 
 	# text formats
 
-	line = line.replace("[']", "<u>").replace("[/']", "</u>")
+	line = line.replace("[&#x27;]", '<u class="accent">').replace("[/&#x27;]", "</u>")
 	line = line.replace("[b]", "<b>").replace("[/b]", "</b>")
 	line = line.replace("[i]", "<i>").replace("[/i]", "</i>")
 	line = line.replace("[u]", "<u>").replace("[/u]", "</u>")
@@ -284,7 +296,7 @@ def _clean_tags(
 	line = line.replace("[p]", "<i class=\"p\"><font color=\"green\">")
 	line = line.replace("[/p]", "</font></i>")
 
-	# cross reference
+	# cross-reference
 	line = line.replace("[ref]", "<<").replace("[/ref]", ">>")
 	line = line.replace("[url]", "<<").replace("[/url]", ">>")
 	line = line.replace("&lt;&lt;", "<<").replace("&gt;&gt;", ">>")
@@ -309,7 +321,8 @@ def _clean_tags(
 	)
 
 	# \[...\]
-	return line.replace("\\[", "[").replace("\\]", "]")
+	# \{...\}
+	return line.replace("\\[", "[").replace("\\]", "]").replace("\\{", "{").replace("\\}", "}")
 
 
 def unwrap_quotes(s: str) -> str:
@@ -428,6 +441,16 @@ class Reader(object):
 		for line in self._file:
 			yield line
 
+	def sub_title_line(self, m) -> str:
+		line = m.group(0)[1:-1]
+		line = line.replace("[']", "") # FIXME
+		line = line.replace("[/']", "")
+		return line
+
+	def fix_title_line(self, line: str) -> str:
+		# find {...} and apply acute accents
+		return re_brackets_blocks.sub(self.sub_title_line, line)
+
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		current_key = ""
 		current_key_alters = []
@@ -469,6 +492,7 @@ class Reader(object):
 			# title word(s)
 			# alternative titles
 			if line_type == "title":
+				line = self.fix_title_line(line)
 				current_key_alters.append(line)
 				continue
 
@@ -491,6 +515,9 @@ class Reader(object):
 						else None
 					),
 				)
+
+			line = self.fix_title_line(line)
+			current_key_alters.append(line)
 
 			# start new entry
 			current_key = line
