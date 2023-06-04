@@ -211,8 +211,7 @@
 		},
 		"readDepends": {
 			"lxml": "lxml",
-			"biplist": "biplist",
-			"plistlib": "plistlib"
+			"biplist": "biplist"
 		}
 	},
 	{
