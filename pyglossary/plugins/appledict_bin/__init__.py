@@ -423,19 +423,7 @@ class Reader(object):
 				key=lambda keyData: -keyData.priority,
 			)
 			for keyData in keyDataList:
-				alt = keyData.keyword
-				try:
-					alt.encode("utf-8")
-				except UnicodeEncodeError as e:
-					# why is this happening?
-					# example glossaries: Emojipedia, Simplified_Chinese
-					log.error(
-						f"bad unicode in {alt!r}, "
-						f"keyData={keyData.toDict()}, \n"
-						f"error: {e}",
-					)
-					continue
-				words.append(alt)
+				words.append(keyData.keyword)
 
 		defi = self._getDefi(entryElems[0], keyDataList)
 
@@ -621,6 +609,11 @@ class Reader(object):
 						keyTextFields.append("")
 						continue
 					word_form = read_x_bytes_as_word(buff, word_form_len)
+					word_form = word_form.encode("utf-16", "surrogatepass").decode("utf-16")
+					# some glossaries where this is needed:
+					# Emojipedia, Simplified_Chinese, "Sanseido Super Daijirin.dictionary"
+					# can also use json, but it's a bit slower:
+					# word_form = json.loads(json.dumps(word_form))
 					keyTextFields.append(word_form)
 
 				entryKeyTextData: RawKeyData = (
