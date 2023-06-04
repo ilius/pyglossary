@@ -457,11 +457,14 @@ class Reader(object):
 			return None
 		try:
 			entryRoot = etree.fromstring(entryFull)
-		except etree.XMLSyntaxError as e:
-			log.error(
-				f"{entryFull=}",
-			)
-			raise e
+		except etree.XMLSyntaxError:
+			try:
+				entryRoot = etree.fromstring(entryFull.encode("utf-16"))
+			except etree.XMLSyntaxError as e:
+				log.error(
+					f"{entryFull=}",
+				)
+				raise e from None
 		if self._limit <= 0:
 			raise ValueError(f"self._limit = {self._limit}")
 		return entryRoot
