@@ -456,7 +456,7 @@ class Reader(object):
 		if not entryFull:
 			return None
 		try:
-			entryRoot = etree.fromstring(entryFull)
+			entryRoot = etree.parse(BytesIO(entryBytes))
 		except etree.XMLSyntaxError as e:
 			log.error(
 				f"{entryFull=}",
@@ -724,7 +724,6 @@ class Reader(object):
 				articleAddress = ArticleAddress(sectionOffset, pos)
 				pos += offset
 				entryBytes = buffer[pos:pos + chunkLen]
-				entryBytes = entryBytes.replace(b"\x00", b"")
 
 				pos += chunkLen
 				yield entryBytes, articleAddress
