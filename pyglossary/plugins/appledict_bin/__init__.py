@@ -724,7 +724,6 @@ class Reader(object):
 				articleAddress = ArticleAddress(sectionOffset, pos)
 				pos += offset
 				entryBytes = buffer[pos:pos + chunkLen]
-				entryBytes = entryBytes.replace(b"\x00", b"")
 
 				pos += chunkLen
 				yield entryBytes, articleAddress
