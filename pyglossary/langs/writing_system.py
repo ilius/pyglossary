@@ -64,9 +64,9 @@ writingSystemList = [
 			(410, "Hira", "HIRAGANA"),
 			(411, "Kana", "KATAKANA"),
 			(412, "Hrkt", "KATAKANA OR HIRAGANA"),
-			(460, "Yiii", "​Yi"),
+			(460, "Yiii", "Yi"),
 			(499, "Nshu", "NUSHU"),
-			(500, "Hani", "​HAN"),  # aka Hanzi, Kanji, Hanja
+			(500, "Hani", "HAN"),  # aka Hanzi, Kanji, Hanja
 			(501, "Hans", "SIMPLIFIED HAN"),
 			(502, "Hant", "TRADITIONAL HAN"),
 		],
