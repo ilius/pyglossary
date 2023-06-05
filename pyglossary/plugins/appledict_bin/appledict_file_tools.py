@@ -40,11 +40,7 @@ def readInt(buffer: "io.BufferedIOBase") -> int:
 
 
 def read_x_bytes_as_word(buffer: "io.BufferedIOBase", x: int) -> str:
-	word = ''
-	while x > 0:
-		word += chr(read_2_bytes_here(buffer))
-		x -= 2
-	return word
+	return buffer.read(x).decode('UTF-16LE')
 
 
 def read_2_bytes(buffer: "io.BufferedIOBase", address: int) -> int:
