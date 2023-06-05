@@ -177,7 +177,11 @@ def diffGlossary(
 		printInfo(green, "+++ B: ", infoPair2)
 		infoPair2 = None
 
-	def printAltsChangedEntry(entry1: "EntryType", entry2: "EntryType") -> None:
+	def printAltsChangedEntry(
+		entry1: "EntryType",
+		entry2: "EntryType",
+		showDefi: bool = True,
+	) -> None:
 		if index1 == index2:
 			ids = f"#{index1}"
 		else:
@@ -191,10 +195,17 @@ def diffGlossary(
 			linejunk=None,
 			charjunk=None,
 		)
+		if entry1.l_word[0] == entry2.l_word[0]:
+			firstWordLine = f">> {entry1.l_word[0]}"
+		else:
+			firstWordLine = (
+				f">> {entry1.l_word[0]} (A)\n"
+				f">> {entry2.l_word[0]} (B)"
+			)
 		entryFormatted = "\n".join([
-			f">> {entry1.l_word[0]}",
+			firstWordLine,
 			formatDiff(altsDiff),
-			entry1.defi,
+			entry1.defi if showDefi else "",
 		])
 		formatted = (
 			header + entryFormatted +
@@ -223,10 +234,11 @@ def diffGlossary(
 			entry1, entry2 = None, None
 			return
 
-		if words1[0] == words2[0] and entry1.defi == entry2.defi:
-			printAltsChangedEntry(entry1, entry2)
-			entry1, entry2 = None, None
-			return
+		if entry1.defi == entry2.defi:
+			if words1[0] in words2 or words2[0] in words1:
+				printAltsChangedEntry(entry1, entry2)
+				entry1, entry2 = None, None
+				return
 
 		if words1 < words2:
 			printEntry(red, "--- A", index1, entry1)
