@@ -170,12 +170,12 @@ class Reader(object):
 			from lxml import etree  # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install lxml` to install"
-			raise e
+			raise e from None
 		try:
 			import biplist  # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install biplist` to install"
-			raise e
+			raise e from None
 
 		self._defiFormat = "h" if self._html else "m"
 
@@ -387,7 +387,7 @@ class Reader(object):
 				chunkLen, = unpack("i", bs)
 			except Exception as e:
 				log.error(f"{buffer[pos:pos + 100]!r}")
-				raise e
+				raise e from None
 		return chunkLen, offset
 
 	def createEntry(
@@ -446,7 +446,7 @@ class Reader(object):
 			log.error(
 				f"{entryBytes=}",
 			)
-			raise e
+			raise e from None
 		if self._limit <= 0:
 			raise ValueError(f"self._limit = {self._limit}")
 		return entryRoot
