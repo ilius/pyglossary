@@ -438,21 +438,15 @@ class Reader(object):
 		self: "typing.Self",
 		entryBytes: bytes,
 	) -> "Element | None":
-		# etree.register_namespace("d", "http://www.apple.com/DTDs/DictionaryService-1.0.rng")
-		entryFull = entryBytes.decode(self._encoding, errors="replace")
-		entryFull = entryFull.strip()
-		if not entryFull:
+		if not entryBytes.strip():
 			return None
 		try:
-			entryRoot = etree.fromstring(entryFull)
-		except etree.XMLSyntaxError:
-			try:
-				entryRoot = etree.fromstring(entryFull.encode("utf-16"))
-			except etree.XMLSyntaxError as e:
-				log.error(
-					f"{entryFull=}",
-				)
-				raise e from None
+			entryRoot = etree.fromstring(entryBytes)
+		except etree.XMLSyntaxError as e:
+			log.error(
+				f"{entryBytes=}",
+			)
+			raise e
 		if self._limit <= 0:
 			raise ValueError(f"self._limit = {self._limit}")
 		return entryRoot
@@ -609,11 +603,6 @@ class Reader(object):
 						keyTextFields.append("")
 						continue
 					word_form = read_x_bytes_as_word(buff, word_form_len)
-					word_form = word_form.encode("utf-16", "surrogatepass").decode("utf-16")
-					# some glossaries where this is needed:
-					# Emojipedia, Simplified_Chinese, "Sanseido Super Daijirin.dictionary"
-					# can also use json, but it's a bit slower:
-					# word_form = json.loads(json.dumps(word_form))
 					keyTextFields.append(word_form)
 
 				entryKeyTextData: RawKeyData = (
