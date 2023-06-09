@@ -232,7 +232,9 @@ def sortkey(
 	strength: int,
 	maxlength: "int | None" = None,
 ) -> "Callable":
-	c: "T_Collator" = Collator.createInstance(Locale())
+	# pass empty locale to use root locale
+	# if you pass no arg, it will use system locale
+	c: "T_Collator" = Collator.createInstance(Locale(""))
 	c.setStrength(strength)
 	c.setAttribute(
 		UCollAttribute.ALTERNATE_HANDLING,
