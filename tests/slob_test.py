@@ -9,6 +9,7 @@ import unicodedata
 import unittest
 from os.path import abspath, dirname
 from typing import cast
+import icu
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -176,6 +177,34 @@ class TestSort(BaseTest):
 	def tearDown(self: "typing.Self"):
 		self.r.close()
 		self.tmpdir.cleanup()
+
+
+class TestSortKey(BaseTest):
+	def setUp(self: "typing.Self"):
+		self.data = [
+			'Ф, ф', 'Ф ф', 'Ф', 'Э', 'Е е', 'г', 'н',
+			'ф', 'а', 'Ф, Ф', 'е', 'Е', 'Ее', 'ё', 'Ё',
+			'Её', 'Е ё', 'А', 'э', 'ы',
+		]
+		self.data_sorted = [
+			'а', 'А', 'г', 'е', 'Е', 'ё', 'Ё', 'Е е',
+			'Ее', 'Е ё', 'Её', 'н', 'ф', 'Ф', 'Ф ф',
+			'Ф, ф', 'Ф, Ф', 'ы', 'э' , 'Э',
+		]
+
+	def test_sort_order(self: "typing.Self"):
+		for locName in (
+			# en_US_POSIX on Mac OS X
+			# https://github.com/ilius/pyglossary/issues/458
+			"en_US_POSIX",
+			"en_US",
+			"en_CA",
+			"fa_IR.UTF-8",
+		):
+			icu.Locale.setDefault(icu.Locale(locName))
+			sortkey.cache_clear()
+			data_sorted = sorted(self.data, key=sortkey(IDENTICAL))
+			self.assertEqual(self.data_sorted, data_sorted)
 
 
 class TestFind(BaseTest):
