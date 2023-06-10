@@ -108,7 +108,6 @@ class Reader(object):
 		self._file: "io.BufferedIOBase | None" = None
 		self._encoding = "utf-8"
 		self._defiFormat = "m"
-		self._re_link = re.compile("<a [^<>]*>")
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
 		self._titleById: "dict[str, str]" = {}
 		self._wordCount = 0
@@ -497,14 +496,14 @@ class Reader(object):
 				while keyTextFile.tell() < fileLimit + APPLEDICT_FILE_OFFSET:
 					compressedSectionByteLen = readInt(keyTextFile)
 					decompressedSectionByteLen = readInt(keyTextFile)
-					chunksection_bytes = decompress(
-						keyTextFile.read(compressedSectionByteLen - 4),
-					)
+					if compressedSectionByteLen == 0x0 and decompressedSectionByteLen == 0x0:
+						break
+					chunk_section_compressed = keyTextFile.read(compressedSectionByteLen - 4)
+					chunksection_bytes = decompress(chunk_section_compressed, )
 					buff.write(chunksection_bytes)
 					fileLimitDecompressed += decompressedSectionByteLen
-					sectionOffset += sectionLength
+					sectionOffset += max(sectionLength, compressedSectionByteLen + 4)
 					keyTextFile.seek(sectionOffset)
-					# yield (sectionOffset, fileLimit + APPLEDICT_FILE_OFFSET)
 				bufferOffset = 0
 				bufferLimit = fileLimitDecompressed
 			else:
