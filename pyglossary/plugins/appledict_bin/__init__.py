@@ -579,22 +579,32 @@ class Reader(object):
 						chunkOffset=chunkOffset,
 					)
 
-				if len(properties.key_text_fixed_fields) > 0:
+				if len(properties.key_text_fixed_fields) == 0:
+					priority = 0
+					parentalControl = 0
+				elif len(properties.key_text_fixed_fields) == 1:
 					priorityAndParentalControl = read_2_bytes_here(buff)  # 0x13
-					if priorityAndParentalControl > 0x20:
+					# "DCSDictionaryLanguages" array inside plist file has a list of dictionaries inside this file
+					# This DCSPrivateFlag per each article provides not only priority and parental control, but also
+					# a flag of translation direction:
+					# 0x0-0x1f values are reserved for the first language from the DCSDictionaryLanguages array
+					# 0x20-0x3f values are reserved for the second language etc.
+					if priorityAndParentalControl >= 0x40:
 						log.error(
 							"WRONG priority or parental control:"
 							f"{priorityAndParentalControl} (section: {hex(bufferOffset)})"
 							", skipping KeyText.data file",
 						)
 						return {}
+					if priorityAndParentalControl >= 0x20:
+						priorityAndParentalControl -= 0x20
 					# d:parental-control="1"
 					parentalControl = priorityAndParentalControl % 2
 					# d:priority=".." between 0x00..0x12, priority = [0..9]
 					priority = (priorityAndParentalControl - parentalControl) // 2
 				else:
-					priority = 0
-					parentalControl = 0
+					log.error(f"Unknown private field: {properties.key_text_fixed_fields}")
+					return {}
 
 				keyTextFields: "list[str]" = []
 				while buff.tell() < next_lexeme_offset:
