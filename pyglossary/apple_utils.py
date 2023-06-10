@@ -23,7 +23,13 @@ cssKeyRemove = {
 
 	b"-apple-color-filter",
 	# value: apple-invert-lightness()
+
+	b"-webkit-overflow-scrolling",
+	# controls whether or not touch devices use momentum-based scrolling
+	# https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-overflow-scrolling
+	# values: touch, auto
 }
+
 
 cssKeyRemovePattern = re.compile(
 	rb"[ \t]*(" + b"|".join(cssKeyRemove) + rb")\s*:[^;}]*;\s*",
@@ -39,6 +45,9 @@ cssMapping: "dict[str, str]" = {
 	"-webkit-mini-control": "normal normal normal normal 9px/normal system-ui",
 	"-webkit-small-control": "normal normal normal normal 11px/normal system-ui",
 
+	"-webkit-isolate": "isolate",  # value for "unicode-bidi"
+	"-webkit-isolate-override": "isolate-override",  # value for "unicode-bidi"
+
 	"-webkit-border-bottom-left-radius": "border-bottom-left-radius",  # key
 	"-webkit-border-bottom-right-radius": "border-bottom-right-radius",  # key
 	"-webkit-border-radius": "border-radius",  # key
@@ -50,6 +59,7 @@ cssMapping: "dict[str, str]" = {
 	"-webkit-column-rule-color": "column-rule-color",  # key
 	"-webkit-column-rule-style": "column-rule-style",  # key
 	"-webkit-column-rule-width": "column-rule-width",  # key
+	"-webkit-ruby-position": "ruby-position", # key
 
 	# not so sure about this
 	"-webkit-padding-start": "padding-inline-start",  # key
