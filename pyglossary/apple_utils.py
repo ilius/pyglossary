@@ -16,14 +16,18 @@ import re
 
 from .core import log
 
-# TODO: remove these keys along with their value
+# remove these keys along with their value
 cssKeyRemove = {
-	"-webkit-text-combine",
+	b"-webkit-text-combine",
 	# value: horizontal
 
-	"-apple-color-filter",
+	b"-apple-color-filter",
 	# value: apple-invert-lightness()
 }
+
+cssKeyRemovePattern = re.compile(
+	rb"[ \t]*(" + b"|".join(cssKeyRemove) + rb")\s*:[^;}]*;\s*",
+)
 
 cssMapping: "dict[str, str]" = {
 	# I didn't actually find these font values:
@@ -96,5 +100,6 @@ def _subCSS(m: "re.Match") -> bytes:
 		return b_key
 	return value.encode("ascii")
 
-def substituteAppleCSS(cssText: bytes) -> bytes:
-	return cssParamPattern.sub(_subCSS, cssText)
+def substituteAppleCSS(css: bytes) -> bytes:
+	css = cssKeyRemovePattern.sub(b"", css)
+	return cssParamPattern.sub(_subCSS, css)
