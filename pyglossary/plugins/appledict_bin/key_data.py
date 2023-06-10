@@ -52,7 +52,7 @@ class KeyData:
 
 		"DCSHeadword": "d:title",
 		# Headword text that is displayed on the search result list.
-		# When the value is the same to the d:index value, it can be omitted.
+		# When the value is the same as d:value, it can be omitted.
 		# In that case, the value of the d:value is used also for the d:title.
 
 		"DCSAnchor": "d:anchor",
