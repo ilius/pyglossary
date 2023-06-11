@@ -127,12 +127,7 @@ class Reader(object):
 			method="html",
 		).decode("utf-8")
 
-	def sub_link(self: "typing.Self", m: "Match") -> str:
-		from lxml.html import fromstring
-
-		a_raw = m.group(0)
-		a = fromstring(a_raw)
-
+	def fixLinksInDefi(self: "typing.Self", a: etree.Element) -> etree.Element:
 		href = a.attrib.get("href", "")
 
 		if href.startswith("x-dictionary:d:"):
@@ -154,15 +149,8 @@ class Reader(object):
 		elif href.startswith(("http://", "https://")):
 			pass
 		else:
-			a.attrib["href"] = href = f"bword://{href}"
-
-		a_new = self.tostring(a)
-		a_new = a_new[:-4]  # remove "</a>"
-
-		return a_new  # noqa: RET504
-
-	def fixLinksInDefi(self: "typing.Self", defi: str) -> str:
-		return self._re_link.sub(self.sub_link, defi)
+			a.attrib["href"] = f"bword://{href}"
+		return a
 
 	def open(self: "typing.Self", filename: str) -> "Iterator[tuple[int, int]]":
 		from os.path import dirname
@@ -344,8 +332,10 @@ class Reader(object):
 			# if attr == "id" or attr.endswith("title"):
 			del entryElem.attrib[attr]
 
+		for a_link in entryElem.xpath('//a'):
+			self.fixLinksInDefi(a_link)
+
 		defi = self.tostring(entryElem)
-		defi = self.fixLinksInDefi(defi)
 		defi = self._re_xmlns.sub("", defi)
 
 		if self._html_full:
