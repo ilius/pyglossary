@@ -127,7 +127,7 @@ class Reader(object):
 			method="html",
 		).decode("utf-8")
 
-	def fixLinksInDefi(self: "typing.Self", a: etree.Element) -> etree.Element:
+	def fixLink(self: "typing.Self", a: "Element") -> "Element":
 		href = a.attrib.get("href", "")
 
 		if href.startswith("x-dictionary:d:"):
@@ -333,7 +333,7 @@ class Reader(object):
 			del entryElem.attrib[attr]
 
 		for a_link in entryElem.xpath('//a'):
-			self.fixLinksInDefi(a_link)
+			self.fixLink(a_link)
 
 		defi = self.tostring(entryElem)
 		defi = self._re_xmlns.sub("", defi)
