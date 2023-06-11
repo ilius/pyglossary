@@ -45,38 +45,6 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			"Contents/Resources/KeyText.index": "59f9ab67",
 		})
 
-	def test_fix_links(self: "typing.Self"):
-		glos = Glossary()
-		reader = Reader(glos)
-		f = reader.fixLinksInDefi
-		self.assertEqual(
-			f('foo <a id="123" href="hello">test</a> bar'),
-			'foo <a id="123" href="bword://hello">test</a> bar',
-		)
-		self.assertEqual(
-			f('foo <a href="http://github.com" id="123">test</a> bar'),
-			'foo <a href="http://github.com" id="123">test</a> bar',
-		)
-		self.assertEqual(
-			f('foo <a href="https://github.com" id="123">test</a> bar'),
-			'foo <a href="https://github.com" id="123">test</a> bar',
-		)
-		self.assertEqual(
-			f('foo <a id="123" href="hello">test</a> bar'),
-			'foo <a id="123" href="bword://hello">test</a> bar',
-		)
-		self.assertEqual(
-			f('foo <a id="123" href="x-dictionary:d:hello">test</a> bar'),
-			'foo <a id="123" href="bword://hello">test</a> bar',
-		)
-		self.assertEqual(
-			f(
-				'<a href="x-dictionary:r:123:com.apple.dictionary.no.oup'
-				'#xpointer(//*[@id=\'234\'])" title="test">',
-			),
-			'<a href="bword://test" title="test">',
-		)
-
 	def convert_appledict_binary_to_txt(
 		self: "typing.Self",
 		baseName: str,
