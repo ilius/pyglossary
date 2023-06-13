@@ -235,6 +235,7 @@ class Writer(object):
 		"ttf": "application/x-font-ttf",
 		"otf": "application/x-font-opentype",
 		"mp3": "audio/mpeg",
+		"ogg": "audio/ogg",
 		"ini": "text/plain",
 		# "application/octet-stream+xapian",
 		"eot": "application/vnd.ms-fontobject",
