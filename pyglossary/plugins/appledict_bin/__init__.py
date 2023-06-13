@@ -498,7 +498,7 @@ class Reader(object):
 					if compressedSectionByteLen == 0x0 and decompressedSectionByteLen == 0x0:
 						break
 					chunk_section_compressed = keyTextFile.read(compressedSectionByteLen - 4)
-					chunksection_bytes = decompress(chunk_section_compressed, )
+					chunksection_bytes = decompress(chunk_section_compressed )
 					buff.write(chunksection_bytes)
 					fileLimitDecompressed += decompressedSectionByteLen
 					sectionOffset += max(sectionLength, compressedSectionByteLen + 4)
