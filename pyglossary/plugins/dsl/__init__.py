@@ -179,6 +179,7 @@ def _clean_tags(
 	line: str,
 	audio: bool,
 	example_color: str,
+	current_key: str,
 ) -> str:
 	r"""
 	[m{}] => <p style="padding-left:{}em;margin:0">
@@ -213,8 +214,12 @@ def _clean_tags(
 	[lang ...] |
 	[com]     /
 	"""
-	# unescape escaped special characters
+
+	# substitute ~ with main key of the article (except for escaped tilda \~)
+	line = re.sub(r"(?<!\\)~", current_key, string=line)
 	line = line.replace(r"\~", "~")
+
+	# unescape escaped special characters
 	line = line.replace(r"\@", "@")
 	line = line.replace(r"\ ", "&nbsp;")
 
@@ -488,6 +493,7 @@ class Reader(object):
 					line=line,
 					audio=self._audio,
 					example_color=self._example_color,
+					current_key=current_key,
 				)
 				current_text.append(line)
 				continue
