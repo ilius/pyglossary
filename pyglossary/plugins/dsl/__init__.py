@@ -252,6 +252,26 @@ def _clean_tags(
 	)
 	line = line.replace("[/t]", "</font>")
 
+	# paragraph, part one: before shortcuts.
+	m_matches = re_m_open.findall(line)
+	if not m_matches:
+		# wrap in "[m0]" when no "m" tag found at all.
+		line = f"[m0]{line}[/m]"
+	elif len(m_matches) == 1:
+		# [mN] tags should be closed, but sometimes they are not
+		# TODO auto-close all unclosed [mN] tags in main.py
+		line = line.replace("[m]", "[m1]")
+		if not line.endswith("[/m]"):
+			line += "[/m]"
+	else:
+		# if line somewhere contains "[m_]" tag like
+		# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
+		# [m6][b]{{cl}}use{{/cl}} [/b]{{x_in_cl_g}} your mind/intelligence/brain/wits/smarts{{/x_in_cl_g}} [m3] 
+		# then leave it alone.
+		pass
+
+	line = line.replace("[m0]", '<p style="margin:0.3em">')
+
 	line = _parse(line)
 
 	# cross-reference
@@ -261,15 +281,6 @@ def _clean_tags(
 	line = re_ref.sub(ref_sub, line)
 
 	line = re_end.sub("<br/>", line)
-
-	# paragraph, part one: before shortcuts.
-	if not re_m_open.search(line):
-		line = "[m0]" + line
-	line = line.replace("[m]", "[m1]")
-	line = line.replace("[m0]", '<p style="margin:0.3em">')
-	# if line somewhere contains "[m_]" tag like
-	# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
-	# then leave it alone.  only wrap in "[m1]" when no "m" tag found at all.
 
 	line = apply_shortcuts(line)
 
