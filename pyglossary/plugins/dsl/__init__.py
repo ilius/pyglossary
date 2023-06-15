@@ -175,164 +175,6 @@ def apply_shortcuts(line: str) -> str:
 	return line
 
 
-def _clean_tags(
-	line: str,
-	audio: bool,
-	example_color: str,
-	current_key: str,
-) -> str:
-	r"""
-	[m{}] => <p style="padding-left:{}em;margin:0">
-	[*]   => <span class="sec">
-	[ex]  => <span class="ex"><font color="{example_color}">
-	[c]   => <font color="green">
-	[p]   => <i class="p"><font color="green">
-
-	[']   => <u>
-	[b]   => <b>
-	[i]   => <i>
-	[u]   => <u>
-	[sup] => <sup>
-	[sub] => <sub>
-
-	[ref]   \
-	[url]    } => <a href={}>{}</a>
-	<<...>> /
-
-	[s] =>  <object type="audio/x-wav" data="{}" width="40" height="40">
-				<param name="autoplay" value="false" />
-			</object>
-	[s] =>  <img align="top" src="{}" alt="{}" />
-
-	[t] => <font face="Helvetica" class="dsl_t">
-
-	{{...}}   \
-	[trn]      |
-	[!trn]     |
-	[trs]      } => remove
-	[!trs]     |
-	[lang ...] |
-	[com]     /
-	"""
-
-	# substitute ~ with main key of the article (except for escaped tilda \~)
-	line = re.sub(r"(?<!\\)~", current_key, string=line)
-	line = line.replace(r"\~", "~")
-
-	# unescape escaped special characters
-	line = line.replace(r"\@", "@")
-	line = line.replace(r"\ ", "&nbsp;")
-
-	# remove {{...}} blocks
-	line = re_double_brackets_blocks.sub("", line)
-	# remove trn tags
-	# re_trn = re.compile("\[\/?!?tr[ns]\]")
-	line = line \
-		.replace("[trn]", "") \
-		.replace("[/trn]", "") \
-		.replace("[trs]", "") \
-		.replace("[/trs]", "") \
-		.replace("[!trn]", "") \
-		.replace("[/!trn]", "") \
-		.replace("[!trs]", "") \
-		.replace("[/!trs]", "")
-
-	# remove lang tags
-	line = re_lang_open.sub("", line).replace("[/lang]", "")
-	# remove com tags
-	line = line.replace("[com]", "").replace("[/com]", "")
-
-	# escape html special characters like '<' and '>'
-	line = html.escape(html.unescape(line))
-
-	# remove t tags
-	line = line.replace(
-		"[t]",
-		"<font face=\"Helvetica\" class=\"dsl_t\">",
-	)
-	line = line.replace("[/t]", "</font>")
-
-	line = _parse(line)
-
-	# cross-reference
-	line = re_ref_tag.sub(ref_sub, line).replace("[/ref]", "")
-	line = line.replace("[url]", "<<").replace("[/url]", ">>")
-	line = line.replace("&lt;&lt;", "<<").replace("&gt;&gt;", ">>")
-	line = re_ref.sub(ref_sub, line)
-
-	line = re_end.sub("<br/>", line)
-
-	# paragraph, part one: before shortcuts.
-	if not re_m_open.search(line):
-		line = "[m0]" + line
-	line = line.replace("[m]", "[m1]")
-	line = line.replace("[m0]", '<p style="margin:0.3em">')
-	# if line somewhere contains "[m_]" tag like
-	# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
-	# then leave it alone.  only wrap in "[m1]" when no "m" tag found at all.
-
-	line = apply_shortcuts(line)
-
-	# paragraph, part two: if any not shourcuted [m] left?
-	line = re_m.sub(
-		r'<p style="padding-left:\g<1>em;margin:0">\g<2>',
-		line,
-	)
-	line = line.replace("[/m]", "")
-
-	# text formats
-
-	line = line.replace("[&#x27;]", '<u class="accent">').replace("[/&#x27;]", "</u>")
-	line = line.replace("[b]", "<b>").replace("[/b]", "</b>")
-	line = line.replace("[i]", "<i>").replace("[/i]", "</i>")
-	line = line.replace("[u]", "<u>").replace("[/u]", "</u>")
-	line = line.replace("[sup]", "<sup>").replace("[/sup]", "</sup>")
-	line = line.replace("[sub]", "<sub>").replace("[/sub]", "</sub>")
-
-	# color
-	line = line.replace("[c]", "<font color=\"green\">")
-	line = re_c_open_color.sub("<font color=\"\\g<1>\">", line)
-	line = line.replace("[/c]", "</font>")
-
-	# example zone
-	line = line.replace(
-		"[ex]",
-		f"<span class=\"ex\"><font color=\"{example_color}\">",
-	)
-	line = line.replace("[/ex]", "</font></span>")
-
-	# secondary zone
-	line = line.replace("[*]", "<span class=\"sec\">")\
-		.replace("[/*]", "</span>")
-
-	# abbrev. label
-	line = line.replace("[p]", "<i class=\"p\"><font color=\"green\">")
-	line = line.replace("[/p]", "</font></i>")
-
-	# sound file
-	if audio:
-		sound_tag = (
-			r'<object type="audio/x-wav" data="\g<1>\g<2>" '
-			"width=\"40\" height=\"40\">"
-			"<param name=\"autoplay\" value=\"false\" />"
-			"</object>"
-		)
-	else:
-		sound_tag = ""
-	line = re_sound.sub(sound_tag, line)
-
-	# image file
-	line = re_img.sub(
-		r'<img align="top" src="\g<1>\g<2>" alt="\g<1>\g<2>" />',
-		line,
-	)
-
-	# \[...\]
-	# \{...\}
-	return line.replace("\\[", "[").replace("\\]", "]")\
-		.replace("\\{", "{").replace("\\}", "}")
-
-
 def unwrap_quotes(s: str) -> str:
 	return re_wrapped_in_quotes.sub("\\2", s)
 
@@ -350,10 +192,169 @@ class Reader(object):
 
 	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
-		self.clean_tags = _clean_tags
+		self.clean_tags = self._clean_tags
 		self._file = None
 		self._fileSize = 0
 		self._bufferLine = ""
+
+	def _clean_tags(
+		self: "typing.Self",
+		line: str,
+		audio: bool,
+		example_color: str,
+		current_key: str,
+	) -> str:
+		r"""
+		[m{}] => <p style="padding-left:{}em;margin:0">
+		[*]   => <span class="sec">
+		[ex]  => <span class="ex"><font color="{example_color}">
+		[c]   => <font color="green">
+		[p]   => <i class="p"><font color="green">
+
+		[']   => <u>
+		[b]   => <b>
+		[i]   => <i>
+		[u]   => <u>
+		[sup] => <sup>
+		[sub] => <sub>
+
+		[ref]   \
+		[url]    } => <a href={}>{}</a>
+		<<...>> /
+
+		[s] =>  <object type="audio/x-wav" data="{}" width="40" height="40">
+					<param name="autoplay" value="false" />
+				</object>
+		[s] =>  <img align="top" src="{}" alt="{}" />
+
+		[t] => <font face="Helvetica" class="dsl_t">
+
+		{{...}}   \
+		[trn]      |
+		[!trn]     |
+		[trs]      } => remove
+		[!trs]     |
+		[lang ...] |
+		[com]     /
+		"""
+
+		# substitute ~ with main key of the article (except for escaped tilda \~)
+		line = re.sub(r"(?<!\\)~", current_key, string=line)
+		line = line.replace(r"\~", "~")
+
+		# unescape escaped special characters
+		line = line.replace(r"\@", "@")
+		line = line.replace(r"\ ", "&nbsp;")
+
+		# remove {{...}} blocks
+		line = re_double_brackets_blocks.sub("", line)
+		# remove trn tags
+		# re_trn = re.compile("\[\/?!?tr[ns]\]")
+		line = line \
+			.replace("[trn]", "") \
+			.replace("[/trn]", "") \
+			.replace("[trs]", "") \
+			.replace("[/trs]", "") \
+			.replace("[!trn]", "") \
+			.replace("[/!trn]", "") \
+			.replace("[!trs]", "") \
+			.replace("[/!trs]", "")
+
+		# remove lang tags
+		line = re_lang_open.sub("", line).replace("[/lang]", "")
+		# remove com tags
+		line = line.replace("[com]", "").replace("[/com]", "")
+
+		# escape html special characters like '<' and '>'
+		line = html.escape(html.unescape(line))
+
+		# remove t tags
+		line = line.replace(
+			"[t]",
+			"<font face=\"Helvetica\" class=\"dsl_t\">",
+		)
+		line = line.replace("[/t]", "</font>")
+
+		line = _parse(line)
+
+		# cross-reference
+		line = re_ref_tag.sub(ref_sub, line).replace("[/ref]", "")
+		line = line.replace("[url]", "<<").replace("[/url]", ">>")
+		line = line.replace("&lt;&lt;", "<<").replace("&gt;&gt;", ">>")
+		line = re_ref.sub(ref_sub, line)
+
+		line = re_end.sub("<br/>", line)
+
+		# paragraph, part one: before shortcuts.
+		if not re_m_open.search(line):
+			line = "[m0]" + line
+		line = line.replace("[m]", "[m1]")
+		line = line.replace("[m0]", '<p style="margin:0.3em">')
+		# if line somewhere contains "[m_]" tag like
+		# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
+		# then leave it alone.  only wrap in "[m1]" when no "m" tag found at all.
+
+		line = apply_shortcuts(line)
+
+		# paragraph, part two: if any not shourcuted [m] left?
+		line = re_m.sub(
+			r'<p style="padding-left:\g<1>em;margin:0">\g<2>',
+			line,
+		)
+		line = line.replace("[/m]", "")
+
+		# text formats
+
+		line = line.replace("[&#x27;]", '<u class="accent">').replace("[/&#x27;]", "</u>")
+		line = line.replace("[b]", "<b>").replace("[/b]", "</b>")
+		line = line.replace("[i]", "<i>").replace("[/i]", "</i>")
+		line = line.replace("[u]", "<u>").replace("[/u]", "</u>")
+		line = line.replace("[sup]", "<sup>").replace("[/sup]", "</sup>")
+		line = line.replace("[sub]", "<sub>").replace("[/sub]", "</sub>")
+
+		# color
+		line = line.replace("[c]", "<font color=\"green\">")
+		line = re_c_open_color.sub("<font color=\"\\g<1>\">", line)
+		line = line.replace("[/c]", "</font>")
+
+		# example zone
+		line = line.replace(
+			"[ex]",
+			f"<span class=\"ex\"><font color=\"{example_color}\">",
+		)
+		line = line.replace("[/ex]", "</font></span>")
+
+		# secondary zone
+		line = line.replace("[*]", "<span class=\"sec\">")\
+			.replace("[/*]", "</span>")
+
+		# abbrev. label
+		line = line.replace("[p]", "<i class=\"p\"><font color=\"green\">")
+		line = line.replace("[/p]", "</font></i>")
+
+		# sound file
+		if audio:
+			sound_tag = (
+				r'<object type="audio/x-wav" data="\g<1>\g<2>" '
+				"width=\"40\" height=\"40\">"
+				"<param name=\"autoplay\" value=\"false\" />"
+				"</object>"
+			)
+		else:
+			sound_tag = ""
+		line = re_sound.sub(sound_tag, line)
+
+		# image file
+		line = re_img.sub(
+			r'<img align="top" src="\g<1>\g<2>" alt="\g<1>\g<2>" />',
+			line,
+		)
+
+		# \[...\]
+		# \{...\}
+		return line.replace("\\[", "[").replace("\\]", "]")\
+			.replace("\\{", "{").replace("\\}", "}")
+
 
 	def close(self: "typing.Self") -> None:
 		if self._file:
@@ -375,7 +376,7 @@ class Reader(object):
 		if self._only_fix_markup:
 			self.clean_tags = self._clean_tags_only_markup
 		else:
-			self.clean_tags = _clean_tags
+			self.clean_tags = self._clean_tags
 
 		encoding = self._encoding
 		if not encoding:
