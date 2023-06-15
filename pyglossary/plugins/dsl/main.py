@@ -20,9 +20,9 @@ exposed API lives here.
 
 
 import copy
-from enum import IntEnum
 import re
 import typing
+from enum import IntEnum
 from typing import Any, Dict, FrozenSet, Iterable, List, Literal, Set, Tuple, Union
 
 from . import layer as _layer
@@ -164,6 +164,7 @@ class DSLParser(object):
 		:return: Iterable
 		"""
 		ptr = 0
+		m_open = False
 		while ptr < len(line):
 			bracket = line.find("[", ptr)
 			if bracket != -1:
@@ -181,18 +182,32 @@ class DSLParser(object):
 			# at least two chars after opening bracket:
 			bracket = line.find("]", ptr + 2)
 			if line[ptr + 1] == "/":
-				yield State.CLOSE, line[ptr + 2:bracket]
+				tag = line[ptr + 2:bracket]
+				yield State.CLOSE, tag
 				ptr = bracket + 1
+				if tag[0] == "m":
+					m_open = False
 				continue
 
 			for tag, _, _, re_tag_open in self.tags:
 				if re_tag_open.match(line[ptr:bracket + 1]):
-					yield State.OPEN, _tag.Tag(line[ptr + 1:bracket], tag)
+					tagObj = _tag.Tag(line[ptr + 1:bracket], tag)
 					break
-			else:
+			else: # FIXME: is this needed?
 				tag = line[ptr + 1:bracket]
-				yield State.OPEN, _tag.Tag(tag, tag)
+				tagObj = _tag.Tag(tag, tag)
+
+			if tagObj.closing == "m":
+				if m_open:
+					yield State.CLOSE, "m"
+				else:
+					m_open = True
+			yield State.OPEN, tagObj
+
 			ptr = bracket + 1
+
+		if m_open:
+			yield State.CLOSE, "m"
 
 	@staticmethod
 	def _tags_and_text_loop(

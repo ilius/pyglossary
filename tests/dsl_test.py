@@ -461,6 +461,17 @@ yīyī xiāngyìng
 		after = "[m1][*]- [ref]...[/ref][/*][/m][m1][*]- [ref],,,[/ref][/*][/m]"
 		self.assertEqual(after, parse(before))
 
+	def test_unclosed_m_1(self: "typing.Self"):
+		before = "[m1]test"
+		after = "[m1]test[/m]"
+		self.assertEqual(after, parse(before))
+
+	def test_unclosed_m_2(self: "typing.Self"):
+		before = "[m1]test[m2]test2"
+		after = "[m1]test[/m][m2]test2[/m]"
+		self.assertEqual(after, parse(before))
+
+
 
 if __name__ == "__main__":
 	unittest.main()

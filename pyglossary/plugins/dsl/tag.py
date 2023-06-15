@@ -19,7 +19,6 @@ internal stuff. Tag class
 """
 
 
-from collections import namedtuple
 import typing
 from typing import Iterable, List, NamedTuple
 
@@ -33,8 +32,7 @@ class Tag(NamedTuple):
 	def __repr__(self: "typing.Self") -> str:
 		if self.opening == self.closing:
 			return f"Tag({self.opening!r})"
-		else:
-			return f"Tag({self.opening!r}, {self.closing!r})"
+		return f"Tag({self.opening!r}, {self.closing!r})"
 
 predefined = [
 	"m",
