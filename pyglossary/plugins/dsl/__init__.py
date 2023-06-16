@@ -3,7 +3,7 @@
 # Read ABBYY Lingvo DSL dictionary format
 #
 # Copyright © 2013-2020 Saeed Rasooli <saeed.gnu@gmail.com>
-# Copyright © 2016 Ratijas <ratijas.t@me.com>
+# Copyright © 2016 ivan tkachenko me@ratijas.tk
 # Copyright © 2013 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
 #
 # This program is a free software; you can redistribute it and/or modify

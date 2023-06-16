@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2016 Ratijas <ratijas.t@me.com>
+# Copyright © 2016 ivan tkachenko me@ratijas.tk
 # Copyright © 2016-2022 Saeed Rasooli <saeed.gnu@gmail.com>
 #
 # This program is a free software; you can redistribute it and/or modify

@@ -1,5 +1,5 @@
 <!-- Copyright (c) 2023 Saeed Rasooli -->
-<!-- Copyright (c) 2016 Ratijas -->
+<!-- Copyright (c) 2016 ivan tkachenko me@ratijas.tk -->
 <!-- Copyright (c) 2008-2011 Dmitry Zhuk. All rights reserved. -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
