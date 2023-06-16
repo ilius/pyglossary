@@ -21,7 +21,7 @@ import typing
 internal stuff. Layer class
 """
 
-from typing import Iterable
+from typing import List, Set
 
 from . import tag
 
@@ -30,7 +30,7 @@ class Layer(object):
 
 	__slots__ = ["tags", "text"]
 
-	def __init__(self: "typing.Self", stack: "list[Layer]") -> None:
+	def __init__(self: "typing.Self", stack: "List[Layer]") -> None:
 		stack.append(self)
 		self.tags = set()
 		self.text = ""
@@ -54,9 +54,9 @@ p_tag = tag.Tag("p", "p")
 
 
 def close_tags(
-	stack: "Iterable[Layer]",
-	tags: "Iterable[tag.Tag]",
-	layer_index: bool = -1,
+	stack: "List[Layer]",
+	tags: "Set[tag.Tag]",
+	layer_index: int = -1,
 ) -> None:
 	"""
 	close given tags on layer with index `layer_index`.
@@ -93,7 +93,7 @@ def close_tags(
 	del stack[layer_index]
 
 
-def close_layer(stack: "list[Layer]") -> None:
+def close_layer(stack: "List[Layer]") -> None:
 	"""
 	close top layer on stack.
 	"""

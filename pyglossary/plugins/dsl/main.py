@@ -20,17 +20,18 @@ exposed API lives here.
 
 
 import copy
+from enum import IntEnum
 import re
 import typing
-from typing import Iterable
+from typing import Any, Dict, FrozenSet, Iterable, List, Literal, Set, Tuple, Union
 
 from . import layer as _layer
 from . import tag as _tag
 
 
 def process_closing_tags(
-	stack: "Iterable[_layer.Layer]",
-	tags: "Iterable[str]",
+	stack: "List[_layer.Layer]",
+	tags: "Set[str]",
 ) -> None:
 	"""
 	close `tags`, closing some inner layers if necessary.
@@ -65,10 +66,11 @@ def process_closing_tags(
 		stack[-1].tags = to_open
 
 
-OPEN = 1
-CLOSE = 2
-TEXT = 3
-ACTION = "Literal[OPEN, CLOSE, TEXT]"
+class State(IntEnum):
+	OPEN = 1
+	CLOSE = 2
+	TEXT = 3
+
 
 BRACKET_L = "\0\1"
 BRACKET_R = "\0\2"
@@ -76,7 +78,7 @@ BRACKET_R = "\0\2"
 # precompiled regexs
 # re_m_tag_with_content = re.compile(r"(\[m\d\])(.*?)(\[/m\])")
 re_non_escaped_bracket = re.compile(r"(?<!\\)\[")
-_startswith_tag_cache = {}
+_startswith_tag_cache: Dict[Any, re.Pattern[str]] = {}
 
 
 class DSLParser(object):
@@ -84,9 +86,15 @@ class DSLParser(object):
 	only clean dsl on output!
 	"""
 
+	EVENT = Union[
+		Tuple[Literal[State.OPEN], _tag.Tag],
+		Tuple[Literal[State.CLOSE], str],
+		Tuple[Literal[State.TEXT], str],
+	]
+
 	def __init__(
 		self: "typing.Self",
-		tags: "set[str | tuple[str, str]]" = frozenset({
+		tags: "FrozenSet[str | Tuple[str, str]]" = frozenset({
 			("m", r"\d"),
 			"*",
 			"ex",
@@ -108,11 +116,11 @@ class DSLParser(object):
 					string or two-tuple. if string, it is tag name without
 					brackets, must be constant, i.e. non-save regex characters
 					will be escaped, e.g.: "i", "sub", "*".
-					if 2-tuple, then first item is tag"s base name, and
+					if 2-tuple, then first item is tag's base name, and
 					second is its extension for opening tag,
 					e.g.: ("c", r" (\w+)"), ("m", r"\d")
 		"""
-		tags_ = set()
+		tags_: Set[Tuple[str, str, str, re.Pattern[str]]] = set()
 		for tag, ext_re in (
 			t if isinstance(t, tuple) else (t, "")
 			for t in tags
@@ -142,7 +150,7 @@ class DSLParser(object):
 	def _split_line_by_tags(
 		self: "typing.Self",
 		line: str,
-	) -> "Iterable[[OPEN, _tag.Tag] | [CLOSE, str] | [TEXT, str]]":
+	) -> "Iterable[DSLParser.EVENT]":
 		"""
 		split line into chunks, each chunk is whether opening / closing
 		tag or text.
@@ -164,7 +172,7 @@ class DSLParser(object):
 				chunk = line[ptr:]
 
 			if chunk:
-				yield TEXT, chunk
+				yield State.TEXT, chunk
 
 			if bracket == -1:
 				break
@@ -173,34 +181,36 @@ class DSLParser(object):
 			# at least two chars after opening bracket:
 			bracket = line.find("]", ptr + 2)
 			if line[ptr + 1] == "/":
-				yield CLOSE, line[ptr + 2:bracket]
+				yield State.CLOSE, line[ptr + 2:bracket]
 				ptr = bracket + 1
 				continue
 
 			for tag, _, _, re_tag_open in self.tags:
 				if re_tag_open.match(line[ptr:bracket + 1]):
-					yield OPEN, _tag.Tag(line[ptr + 1:bracket], tag)
+					yield State.OPEN, _tag.Tag(line[ptr + 1:bracket], tag)
 					break
 			else:
 				tag = line[ptr + 1:bracket]
-				yield OPEN, _tag.Tag(tag, tag)
+				yield State.OPEN, _tag.Tag(tag, tag)
 			ptr = bracket + 1
 
 	@staticmethod
 	def _tags_and_text_loop(
-		tags_and_text: "Iterable[[OPEN, _tag.Tag] | [CLOSE, str] | [TEXT, str]]",
+		tags_and_text: "Iterable[DSLParser.EVENT]",
 	) -> str:
 		"""
 		parse chunks one by one.
 		"""
-		state = TEXT
-		stack = []
-		closings = set()
+		state: State = State.TEXT
+		stack: List[_layer.Layer] = []
+		closings: Set[str] = set()
 
-		for item_t, item in tags_and_text:
+		for event, item in tags_and_text:
 			# TODO: break into functions like:
 			# state = handle_tag_open(_tag, stack, closings, state)
-			if item_t is OPEN:
+			if event is State.OPEN:
+				assert isinstance(item, _tag.Tag)  # linter is not smart enough to infer this fact
+
 				if _tag.was_opened(stack, item) and item.closing not in closings:
 					continue
 
@@ -220,34 +230,38 @@ class DSLParser(object):
 					_layer.Layer(stack)
 					stack[-1].tags = to_open
 
-				elif state is CLOSE:
+				elif state is State.CLOSE:
 					process_closing_tags(stack, closings)
 
 				if not stack or stack[-1].text:
 					_layer.Layer(stack)
 
 				stack[-1].tags.add(item)
-				state = OPEN
+				state = State.OPEN
 				continue
 
-			if item_t is CLOSE:
-				if state in (OPEN, TEXT):
+			if event is State.CLOSE:
+				assert isinstance(item, str)  # linter is not smart enough to infer this fact
+
+				if state in (State.OPEN, State.TEXT):
 					closings.clear()
 				closings.add(item)
-				state = CLOSE
+				state = State.CLOSE
 				continue
 
-			if item_t is TEXT:
-				if state is CLOSE:
+			if event is State.TEXT:
+				assert isinstance(item, str)  # linter is not smart enough to infer this fact
+
+				if state is State.CLOSE:
 					process_closing_tags(stack, closings)
 
 				if not stack:
 					_layer.Layer(stack)
 				stack[-1].text += item
-				state = TEXT
+				state = State.TEXT
 				continue
 
-		if state is CLOSE and closings:
+		if state is State.CLOSE and closings:
 			process_closing_tags(stack, closings)
 		# shutdown unclosed tags
 		return "".join(layer.text for layer in stack)

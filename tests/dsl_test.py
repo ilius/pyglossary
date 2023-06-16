@@ -165,13 +165,13 @@ class ProcessClosingTagsTestCase(unittest.TestCase):
 	def test_close_one(self: "typing.Self"):
 		stack = []
 		l1, l2 = layer.Layer(stack), layer.Layer(stack)
-		l1.tags, l1.text = (), "..."
+		l1.tags, l1.text = set(), "..."
 		l2.tags, l2.text = {tag_p}, ",,,"
 
 		expected = []
 		lay = layer.Layer(expected)
 		lay.text = f"...[{tag_p.opening}],,,[/{tag_p.closing}]"
-		lay.tags = ()
+		lay.tags = set()
 
 		closings = {tag_p.closing}
 		process_closing_tags(stack, closings)
