@@ -730,7 +730,7 @@
 		"canWrite": false,
 		"readOptions": {
 			"encoding": "",
-			"audio": false,
+			"audio": true,
 			"only_fix_markup": false,
 			"example_color": "steelblue"
 		},

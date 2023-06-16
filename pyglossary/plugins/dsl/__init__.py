@@ -22,6 +22,7 @@ import html
 import html.entities
 import re
 import typing
+from os.path import dirname, isfile, join
 from typing import Iterator
 from xml.sax.saxutils import escape, quoteattr
 
@@ -153,7 +154,7 @@ re_double_brackets_blocks = re.compile(r"\{\{[^}]*\}\}")
 re_lang_open = re.compile(r"(?<!\\)\[lang[^\]]*\]")
 re_m_open = re.compile(r"(?<!\\)\[m\d?\]")
 re_c_open_color = re.compile(r"\[c (\w+)\]")
-re_sound = re.compile(r"\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]")
+re_audio = re.compile(r"\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]")
 re_img = re.compile(r"\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff|png|bmp)\s*\[/s\]")
 re_m = re.compile(r"\[m(\d)\](.*?)")
 re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
@@ -183,7 +184,7 @@ class Reader(object):
 	compressions = stdCompressions + ("dz",)
 
 	_encoding: str = ""
-	_audio: bool = False
+	_audio: bool = True
 	_only_fix_markup: bool = False
 	_example_color: str = "steelblue"
 
@@ -196,6 +197,7 @@ class Reader(object):
 		self._file = None
 		self._fileSize = 0
 		self._bufferLine = ""
+		self._resFileSet = set()
 
 	def _clean_tags(
 		self: "typing.Self",
@@ -334,27 +336,32 @@ class Reader(object):
 
 		# sound file
 		if audio:
-			sound_tag = (
-				r'<object type="audio/x-wav" data="\g<1>\g<2>" '
-				"width=\"40\" height=\"40\">"
-				"<param name=\"autoplay\" value=\"false\" />"
-				"</object>"
-			)
+			line = re_audio.sub(self.sub_audio, line)
 		else:
-			sound_tag = ""
-		line = re_sound.sub(sound_tag, line)
+			line = re_audio.sub("", line)
 
 		# image file
-		line = re_img.sub(
-			r'<img align="top" src="\g<1>\g<2>" alt="\g<1>\g<2>" />',
-			line,
-		)
+		line = re_img.sub(self.sub_img, line)
 
 		# \[...\]
 		# \{...\}
 		return line.replace("\\[", "[").replace("\\]", "]")\
 			.replace("\\{", "{").replace("\\}", "}")
 
+	def sub_img(self: "typing.Self", m: "re.Match"):
+		fname = m.group(1) + m.group(2)
+		self._resFileSet.add(fname)
+		return rf'<img align="top" src="{fname}" alt="{fname}" />'
+
+	def sub_audio(self: "typing.Self", m: "re.Match"):
+		fname = m.group(1) + m.group(2)
+		self._resFileSet.add(fname)
+		return (
+			rf'<object type="audio/x-wav" data="{fname}" '
+			"width=\"40\" height=\"40\">"
+			"<param name=\"autoplay\" value=\"false\" />"
+			"</object>"
+		)
 
 	def close(self: "typing.Self") -> None:
 		if self._file:
@@ -542,3 +549,13 @@ class Reader(object):
 				[current_key] + current_key_alters,
 				"\n".join(current_text),
 			)
+
+		resDir = dirname(self._filename)
+		for fname in sorted(self._resFileSet):
+			fpath = join(resDir, fname)
+			if not isfile(fpath):
+				log.warning(f"resource file not found: {fname}")
+				continue
+			with open(fpath, mode="rb") as _file:
+				data = _file.read()
+			yield self._glos.newDataEntry(fname, data)
