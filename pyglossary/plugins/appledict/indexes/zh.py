@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # appledict/indexes/zh.py
 #
-# Copyright © 2016 Ratijas <ratijas.t@me.com>
+# Copyright © 2016 ivan tkachenko me@ratijas.tk
 #
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

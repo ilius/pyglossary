@@ -3,7 +3,7 @@
 """Lax implementation of xdxf reader."""
 #
 # Copyright © 2023 Saeed Rasooli
-# Copyright © 2016 Ratijas <ratijas.t@me.com>
+# Copyright © 2016 ivan tkachenko me@ratijas.tk
 #
 # some parts of this file include code from:
 # Aard Dictionary Tools <http://aarddict.org>.
