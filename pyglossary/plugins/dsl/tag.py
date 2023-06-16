@@ -20,15 +20,21 @@ internal stuff. Tag class
 
 
 from collections import namedtuple
-from typing import Iterable
+import typing
+from typing import Iterable, List, NamedTuple
 
 from . import layer as _layer
 
-Tag = namedtuple("Tag", ["opening", "closing"])
 
-Tag.__repr__ = lambda tag: \
-	f"Tag({tag.opening!r})" if tag.opening == tag.closing \
-	else f"Tag({tag.opening!r}, {tag.closing!r})"
+class Tag(NamedTuple):
+	opening: str
+	closing: str
+
+	def __repr__(self: "typing.Self") -> str:
+		if self.opening == self.closing:
+			return f"Tag({self.opening!r})"
+		else:
+			return f"Tag({self.opening!r}, {self.closing!r})"
 
 predefined = [
 	"m",
@@ -39,7 +45,7 @@ predefined = [
 ]
 
 
-def was_opened(stack: "Iterable[_layer.Layer]", tag: "Tag") -> bool:
+def was_opened(stack: "List[_layer.Layer]", tag: "Tag") -> bool:
 	"""
 	check if tag was opened at some layer before.
 	"""
@@ -51,7 +57,7 @@ def was_opened(stack: "Iterable[_layer.Layer]", tag: "Tag") -> bool:
 	return was_opened(stack[:-1], tag)
 
 
-def canonical_order(tags: "Iterable[Tag]") -> "list[Tag]":
+def canonical_order(tags: "Iterable[Tag]") -> "List[Tag]":
 	"""
 	arrange tags in canonical way, where (outermost to innermost):
 	m  >  *  >  ex  >  i  >  c
@@ -69,7 +75,7 @@ def canonical_order(tags: "Iterable[Tag]") -> "list[Tag]":
 
 
 def index_of_layer_containing_tag(
-	stack: "Iterable[_layer.Layer]",
+	stack: "List[_layer.Layer]",
 	tag: str,
 ) -> "int | None":
 	"""
