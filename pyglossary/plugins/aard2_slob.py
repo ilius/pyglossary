@@ -228,6 +228,7 @@ class Writer(object):
 		"webp": "image/webp",
 		"tiff": "image/tiff",
 		"tif": "image/tiff",
+		"bmp": "image/bmp",
 		"css": "text/css",
 		"js": "application/javascript",
 		"json": "application/json",
@@ -303,7 +304,7 @@ class Writer(object):
 		ext = ext.lstrip(os.path.extsep).lower()
 		content_type = self.resourceMimeTypes.get(ext)
 		if not content_type:
-			log.error(f'unknown content type for {rel_path!r}')
+			log.error(f"Aard2 slob: unknown content type for {rel_path!r}")
 			return
 		content = entry.data
 		key = self._resPrefix + rel_path
