@@ -471,6 +471,20 @@ yīyī xiāngyìng
 		after = "[m1]test[/m][m2]test2[/m]"
 		self.assertEqual(after, parse(before))
 
+	def test_unclosed_m_with_last_closed(self: "typing.Self"):
+		before = "[m1]unclosed1[m2]unclosed2[m1]unclosed3[m3]unclosed4[m4]closed[/m]"
+		after = "[m1]unclosed1[/m][m2]unclosed2[/m][m1]unclosed3[/m][m3]unclosed4[/m][m4]closed[/m]"
+		self.assertEqual(after, parse(before))
+
+	def test_unclosed_m_with_empty_line(self: "typing.Self"):
+		before = "[m1]test1[m2]test2 [m0] "
+		after = "[m1]test1[/m][m2]test2 [/m][m0] [/m]"
+		self.assertEqual(after, parse(before))
+
+	def test_unclosed_m_with_unclosed_children(self: "typing.Self"):
+		before = "[m1]first unclosed m[b]unclosed bold[m2]second unclosed m [m0]"
+		after = "[m1]first unclosed m[b]unclosed bold[/b][/m][m2][b]second unclosed m [/b][/m]"
+		self.assertEqual(after, parse(before))
 
 
 if __name__ == "__main__":

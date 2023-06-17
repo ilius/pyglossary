@@ -290,7 +290,7 @@ class Reader(object):
 		# paragraph, part one: before shortcuts.
 		if not re_m_open.search(line):
 			line = "[m0]" + line
-		line = line.replace("[m]", "[m1]")
+		line = line.replace("[m]", "[m0]")
 		line = line.replace("[m0]", '<p style="margin:0.3em">')
 		# if line somewhere contains "[m_]" tag like
 		# "[b]I[/b][m1] [c][i]conj.[/i][/c][/m][m1]1) ...[/m]"
