@@ -714,11 +714,6 @@
 				"type": "bool",
 				"comment": "Enable audio objects"
 			},
-			"only_fix_markup": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "Only fix markup, without tag conversion"
-			},
 			"example_color": {
 				"class": "StrOption",
 				"type": "str",
@@ -731,7 +726,6 @@
 		"readOptions": {
 			"encoding": "",
 			"audio": true,
-			"only_fix_markup": false,
 			"example_color": "steelblue"
 		},
 		"readCompressions": [

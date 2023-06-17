@@ -19,12 +19,11 @@
 
 ### Read options
 
-| Name            | Default     | Type | Comment                                 |
-| --------------- | ----------- | ---- | --------------------------------------- |
-| encoding        |             | str  | Encoding/charset                        |
-| audio           | `True`      | bool | Enable audio objects                    |
-| only_fix_markup | `False`     | bool | Only fix markup, without tag conversion |
-| example_color   | `steelblue` | str  | Examples color                          |
+| Name          | Default     | Type | Comment              |
+| ------------- | ----------- | ---- | -------------------- |
+| encoding      |             | str  | Encoding/charset     |
+| audio         | `True`      | bool | Enable audio objects |
+| example_color | `steelblue` | str  | Examples color       |
 
 
 

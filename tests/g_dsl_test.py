@@ -15,7 +15,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 
 		self.dataFileCRC32.update({
 			"100-RussianAmericanEnglish-ru-en.dsl": "c24491e0",
-			"100-RussianAmericanEnglish-ru-en-v3.txt": "1de45acb",
+			"100-RussianAmericanEnglish-ru-en-v4.txt": "5db01289",
 		})
 
 	def convert_dsl_txt(self: "typing.Self", fname, fname2, **convertArgs):
@@ -29,7 +29,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_convert_dsl_txt_1(self: "typing.Self"):
 		self.convert_dsl_txt(
 			"100-RussianAmericanEnglish-ru-en",
-			"100-RussianAmericanEnglish-ru-en-v3",
+			"100-RussianAmericanEnglish-ru-en-v4",
 		)
 
 
