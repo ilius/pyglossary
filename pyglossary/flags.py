@@ -19,5 +19,5 @@ DEFAULT_YES = StrWithDesc("default_yes", "Yes (by default)")
 DEFAULT_NO = StrWithDesc("default_no", "No (by default)")
 NEVER = StrWithDesc("never", "Never")
 
-# to statisfy mypy:
+# to satisfy mypy:
 YesNoAlwaysNever: "TypeAlias" = StrWithDesc

@@ -28,7 +28,7 @@ def readIntAt(buffer: "io.BufferedIOBase", address: int) -> int:
 
 
 def readIntPair(buffer: "io.BufferedIOBase") -> "tuple[int, int]":
-	# to statisfy mymy, put them in vars with declared type
+	# to satisfy mymy, put them in vars with declared type
 	a: int
 	b: int
 	a, b = unpack("ii", buffer.read(8))

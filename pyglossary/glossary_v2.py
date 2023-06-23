@@ -123,7 +123,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 		- sortWords(): you have to sort entries yourself (when adding or after directRead)
 
-		- updateIter(): no longer needed, and doens't do anything in glossary.py
+		- updateIter(): no longer needed, and does't do anything in glossary.py
 
 	"""
 

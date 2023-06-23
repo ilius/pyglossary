@@ -7,7 +7,6 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary
-from pyglossary.plugins.appledict_bin import Reader
 from tests.glossary_v2_test import TestGlossaryBase
 
 

@@ -463,14 +463,14 @@ def _getWritingSystemFromText(
 
 def getWritingSystemFromText(
 	st: str,
-	begining: bool = False,
+	beginning: bool = False,
 ) -> "WritingSystem | None":
 	st = st.strip()
 	if not st:
 		return None
 	# some special first words in unicodedata.name(c):
 	# "RIGHT", "ASTERISK", "MODIFIER"
-	if begining:
+	if beginning:
 		k = 0
 	else:
 		k = (len(st) + 1) // 2 - 1
@@ -482,7 +482,6 @@ def getWritingSystemFromText(
 
 def getAllWritingSystemsFromText(
 	st: str,
-	begining: bool = False,
 ) -> "set[str]":
 	st = st.strip()
 	if not st:

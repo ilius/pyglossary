@@ -334,7 +334,7 @@ class Reader(object):
 	) -> None:
 		if not categories:
 			return
-		# long names, mostly about grammer?
+		# long names, mostly about grammar?
 		with hf.element("div", attrib={"class": "categories"}):
 			hf.write("Categories: ")
 			self.makeList(hf, categories, self.writeSenseCategory)
@@ -547,7 +547,7 @@ class Reader(object):
 	) -> None:
 		from lxml import etree as ET
 
-		# tags seem to be mostly about grammer, so with format it like grammer
+		# tags seem to be mostly about grammar, so with format it like grammar
 		self.writeTags(
 			hf,
 			sense.get("tags"),

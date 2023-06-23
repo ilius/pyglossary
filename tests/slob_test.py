@@ -9,6 +9,7 @@ import unicodedata
 import unittest
 from os.path import abspath, dirname
 from typing import cast
+
 import icu
 
 rootDir = dirname(dirname(abspath(__file__)))

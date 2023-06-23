@@ -8,6 +8,7 @@ sys.path.insert(0, rootDir)
 
 from pyglossary.apple_utils import substituteAppleCSS
 
+
 class Test_substituteAppleCSS(unittest.TestCase):
 	def test_remove(self: "typing.Self"):
 		css = b""".test { -webkit-text-combine: horizontal; color: black }
