@@ -39,10 +39,8 @@ from pyglossary.option import (
 	Option,
 )
 from pyglossary.text_utils import toStr
-from pyglossary.xdxf_transform import (
-	XdxfTransformer,
-	XslXdxfTransformer,
-)
+from pyglossary.xdxf.transform import XdxfTransformer
+from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 
 enable = True
 lname = "xdxf_lax"

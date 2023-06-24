@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	from lxml import builder
 	from lxml.etree import _Element as Element
 
-	from pyglossary.xdxf_transform import XdxfTransformer
+	from pyglossary.xdxf.transform import XdxfTransformer
 
 
 from pyglossary.compression import (
@@ -67,7 +67,7 @@ class Reader(object):
 		self._xdxfTr: "XdxfTransformer | None" = None
 
 	def xdxf_setup(self: "typing.Self") -> "XdxfTransformer":
-		from pyglossary.xdxf_transform import XdxfTransformer
+		from pyglossary.xdxf.transform import XdxfTransformer
 		self._xdxfTr = tr = XdxfTransformer(encoding="utf-8")
 		return tr
 

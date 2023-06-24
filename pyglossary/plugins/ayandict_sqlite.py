@@ -153,7 +153,7 @@ class Writer(object):
 		self._cur = None
 
 	def xdxf_setup(self: "typing.Self") -> None:
-		from pyglossary.xdxf_transform import XdxfTransformer
+		from pyglossary.xdxf.transform import XdxfTransformer
 		# if self._xsl:
 		# 	self._xdxfTr = XslXdxfTransformer(encoding="utf-8")
 		# 	return

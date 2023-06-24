@@ -39,10 +39,6 @@ from pyglossary.option import (
 	Option,
 )
 from pyglossary.text_utils import toStr
-from pyglossary.xdxf_transform import (
-	XdxfTransformer,
-	XslXdxfTransformer,
-)
 
 enable = True
 lname = "xdxf"
@@ -120,15 +116,20 @@ class Reader(object):
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
 
+	def makeTransformer(self: "typing.Self") -> None:
+		if self._xsl:
+			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
+			self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
+
+		from pyglossary.xdxf.transform import XdxfTransformer
+		self._htmlTr = XdxfTransformer(encoding=self._encoding)
+
 	def open(self: "typing.Self", filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		from lxml import etree as ET
 		self._filename = filename
 		if self._html:
-			if self._xsl:
-				self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
-			else:
-				self._htmlTr = XdxfTransformer(encoding=self._encoding)
+			self.makeTransformer()
 			self._glos.setDefaultDefiFormat("h")
 		else:
 			self._glos.setDefaultDefiFormat("x")

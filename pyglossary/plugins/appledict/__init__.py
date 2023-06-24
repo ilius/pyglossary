@@ -243,7 +243,7 @@ class Writer(object):
 
 	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		global BeautifulSoup
-		from pyglossary.xdxf_transform import XdxfTransformer
+		from pyglossary.xdxf.transform import XdxfTransformer
 
 		glos = self._glos
 		clean_html = self._clean_html

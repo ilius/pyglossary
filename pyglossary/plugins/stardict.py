@@ -282,10 +282,11 @@ class Reader(object):
 		"""
 
 	def xdxf_setup(self: "typing.Self") -> None:
-		from pyglossary.xdxf_transform import XdxfTransformer, XslXdxfTransformer
 		if self._xsl:
+			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 			self._xdxfTr = XslXdxfTransformer(encoding="utf-8")
 			return
+		from pyglossary.xdxf.transform import XdxfTransformer
 		self._xdxfTr = XdxfTransformer(encoding="utf-8")
 
 	def xdxf_transform(self: "typing.Self", text: str) -> str:
