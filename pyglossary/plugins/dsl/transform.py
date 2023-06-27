@@ -53,14 +53,7 @@ class Transformer:
 		return c  # noqa: RET504
 
 	def followsString(self: "typing.Self", st: str, skip: str = "") -> bool:
-		pos = self.pos + 1
-		if skip:
-			while True:
-				if pos >= len(self.input):
-					return False
-				if self.input[pos] not in skip:
-					break
-				pos += 1
+		pos = self.pos
 		for c in st:
 			if pos >= len(self.input):
 				return False
@@ -69,16 +62,15 @@ class Transformer:
 			pos += 1
 		return True
 
-	def skipChars(self: "typing.Self", chars: str):
+	def skipChars(self: "typing.Self", chars: str) -> None:
 		pos = self.pos
 		while True:
 			if pos >= len(self.input):
-				return False
+				break
 			if self.input[pos] not in chars:
 				break
 			pos += 1
 		self.pos = pos
-		return None
 
 	def addText(self: "typing.Self", st: str) -> None:
 		self.output += escape(st)
