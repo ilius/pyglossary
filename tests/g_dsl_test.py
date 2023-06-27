@@ -15,7 +15,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 
 		self.dataFileCRC32.update({
 			"dsl/100-RussianAmericanEnglish-ru-en.dsl": "c24491e0",
-			"dsl/100-RussianAmericanEnglish-ru-en.txt": "723e0d2c",
+			"dsl/100-RussianAmericanEnglish-ru-en-v2.txt": "258050fb",
 			"dsl/001-empty-lines-br.dsl": "6f2fca1a",
 			"dsl/001-empty-lines-br.txt": "74e578ff",
 			"dsl/002-m-tag_multiline-paragraph.dsl": "c7b924f5",
@@ -33,7 +33,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_convert_dsl_txt_1(self: "typing.Self"):
 		self.convert_dsl_txt(
 			"100-RussianAmericanEnglish-ru-en",
-			"100-RussianAmericanEnglish-ru-en",
+			"100-RussianAmericanEnglish-ru-en-v2",
 		)
 
 	def test_convert_dsl_txt_2(self: "typing.Self"):

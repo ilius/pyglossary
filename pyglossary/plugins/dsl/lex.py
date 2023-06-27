@@ -165,6 +165,30 @@ def lexRef(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 			break
 		target += c
 
+	tr.output += f'<a href={quoteattr("bword://"+target)}>{escape(target)}</a>'
+	return lexRoot, None
+
+
+def lexUrl(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+	if tr.end():
+		return None, None
+
+	target = ""
+	while not tr.end():
+		c = tr.next()
+		if c == "\\":
+			if tr.end():
+				break
+			target += tr.next()
+			continue
+		if c == "[":
+			tr.move(-1)
+			break
+		target += c
+
+	if "://" not in target:
+		target = "http://" + target
+
 	tr.output += f'<a href={quoteattr(target)}>{escape(target)}</a>'
 	return lexRoot, None
 
@@ -216,9 +240,13 @@ def processTag(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 	tagParts = tag.split(" ")
 	tag = tagParts[0]
 
-	if tag in ("ref", "url"):
+	if tag == "ref":
 		tr.buff = ""
 		return lexRef(tr)
+
+	if tag == "url":
+		tr.buff = ""
+		return lexUrl(tr)
 
 	if tag == "s":
 		tr.buff = ""
