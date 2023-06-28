@@ -478,7 +478,11 @@ class UI(ui_cmd.UI):
 			)
 			if not filename:
 				continue
-			parts = shlex_split(filename)
+			try:
+				parts = shlex_split(filename)
+			except ValueError:
+				# file name can have single/double quote
+				return filename
 			if parts[0] in self._fsActions:
 				actionFunc, usage = self._fsActions[parts[0]]
 				try:
