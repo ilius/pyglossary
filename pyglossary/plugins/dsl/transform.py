@@ -35,6 +35,9 @@ class Transformer:
 		self.output = ""
 		self.resFileSet: "set[str]" = set()
 
+		self.attrs: dict[str, str] = {}
+		self.attrName = ""
+
 		self.current_key = current_key
 		self.example_color = example_color
 		self.audio = audio
@@ -54,6 +57,8 @@ class Transformer:
 
 	def resetBuf(self: "typing.Self") -> str:
 		self.start = self.pos
+		self.attrName = ""
+		self.attrs = {}
 
 	def followsString(self: "typing.Self", st: str, skip: str = "") -> bool:
 		pos = self.pos

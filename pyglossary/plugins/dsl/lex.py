@@ -65,10 +65,13 @@ def lexBackslash(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 
 def lexTag(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	if tr.end():
-		return None, f"'[' not closed near pos {tr.pos}"
+		return None, f"'[' not closed near pos {tr.pos} in lexTag"
 	c = tr.next()
 	if c == '[':
 		return None, f"nested '[' near pos {tr.pos}"
+	if c in " \t":
+		tr.skipChars(" \t")
+		return lexTagAttr, None
 	if c == ']':
 		tag = tr.input[tr.start:tr.pos-1]
 		if not tag:
@@ -77,6 +80,58 @@ def lexTag(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	# if c == '\\':
 	# 	return lexTagBackslash, None
 	# do not advance tr.start
+	return lexTag, None
+
+
+def lexTagAttr(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+	if tr.end():
+		tr.attrs[tr.attrName] = None
+		tr.resetBuf()
+		return lexRoot, None
+	c = tr.next()
+	if c == ']':
+		tr.attrs[tr.attrName] = None
+		tr.move(-1)
+		return lexTag, None
+	if c == "=":
+		tr.skipChars(" \t")
+		return lexTagAttrValue, None
+	tr.attrName += c
+	return lexTagAttr, None
+
+
+def lexTagAttrValue(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+	if tr.end():
+		return None, f"'[' not closed near pos {tr.pos} in lexTagAttrValue(1)"
+	c = tr.next()
+	quote = ""
+	value = ""
+	if c in "'\"":
+		if tr.end():
+			return None, f"'[' not closed near pos {tr.pos} in lexTagAttrValue(2)"
+		quote = c
+	else:
+		value += c
+	while True:
+		if tr.end():
+			return None, f"'[' not closed near pos {tr.pos} in lexTagAttrValue(3)"
+		c = tr.next()
+		if c == "\\":
+			if tr.end():
+				return None, f"'[' not closed near pos {tr.pos} in lexTagAttrValue(3)"
+			c = tr.next()
+			value += c
+			continue
+		if c == "]":
+			tr.move(-1)
+			break
+		if c == quote:
+			break	
+		if not quote:
+			if c in " \t":
+				break
+		value += c
+	tr.attrs[tr.attrName] = value
 	return lexTag, None
 
 
@@ -117,7 +172,7 @@ def processTagClose(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 	):
 		pass
 	else:
-		print(f"unknown close tag {tag!r}")
+		log.warning(f"unknown close tag {tag!r}")
 	return lexRoot, None
 
 
@@ -155,49 +210,57 @@ r"""
 [com]     /
 """
 
-def lexRef(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexRefText(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	if tr.end():
 		return None, None
 
-	target = ""
+	text = ""
 	while not tr.end():
 		c = tr.next()
 		if c == "\\":
 			if tr.end():
 				break
-			target += tr.next()
+			text += tr.next()
 			continue
 		if c == "[":
 			tr.move(-1)
 			break
-		target += c
+		text += c
 
-	tr.output += f'<a href={quoteattr("bword://"+target)}>{escape(target)}</a>'
+	target = tr.attrs.get("target")
+	if not target:
+		target = text
+
+	tr.output += f'<a href={quoteattr("bword://"+target)}>{escape(text)}</a>'
 	tr.resetBuf()
 	return lexRoot, None
 
 
-def lexUrl(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexUrlText(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	if tr.end():
 		return None, None
 
-	target = ""
+	text = ""
 	while not tr.end():
 		c = tr.next()
 		if c == "\\":
 			if tr.end():
 				break
-			target += tr.next()
+			text += tr.next()
 			continue
 		if c == "[":
 			tr.move(-1)
 			break
-		target += c
+		text += c
+
+	target = tr.attrs.get("target")
+	if not target:
+		target = text
 
 	if "://" not in target:
 		target = "http://" + target
 
-	tr.output += f'<a href={quoteattr(target)}>{escape(target)}</a>'
+	tr.output += f'<a href={quoteattr(target)}>{escape(text)}</a>'
 	tr.resetBuf()
 	return lexRoot, None
 
@@ -227,7 +290,7 @@ def lexS(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	elif ext in ("jpg", "jpeg", "gif", "tif", "tiff", "png", "bmp"):
 		tr.output += rf'<img align="top" src="{fname}" alt="{fname}" />'
 	else:
-		print(f"unknown file extension in {fname!r}")
+		log.warning(f"unknown file extension in {fname!r}")
 
 	tr.resFileSet.add(fname)
 
@@ -236,6 +299,7 @@ def lexS(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 
 
 def processTag(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
+	tr.attrName = ""
 	if not tag:
 		tr.resetBuf()
 		return lexRoot, None
@@ -246,15 +310,13 @@ def processTag(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 		tr.resetBuf()
 		return lex, None
 
-	tagFull = tag
-	tagParts = tag.split(" ")
-	tag = tagParts[0]
+	tag = tag.split(" ")[0]
 
 	if tag == "ref":
-		return lexRef(tr)
+		return lexRefText(tr)
 
 	if tag == "url":
-		return lexUrl(tr)
+		return lexUrlText(tr)
 
 	if tag == "s":
 		return lexS(tr)
@@ -274,10 +336,12 @@ def processTag(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 		tr.output += f'<span class="ex"><font color="{tr.example_color}">'
 
 	elif tag == "c":
-		if len(tagParts) > 1:
-			tr.output += f'<font color="{tagFull[2:]}">'
-		else:
-			tr.output += '<font color="green">'
+		color = "green"
+		for key, value in tr.attrs.items():
+			if value is None:
+				color = key
+				break
+		tr.output += f'<font color="{color}">'
 
 	elif tag == "t":
 		tr.output += '<font face="Helvetica" class="dsl_t">'
@@ -306,7 +370,7 @@ def processTag(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 	):
 		pass
 	else:
-		print(f"unknown tag {tag!r}")
+		log.warning(f"unknown tag {tag!r}")
 
 	tr.resetBuf()
 	return lexRoot, None

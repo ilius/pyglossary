@@ -20,6 +20,8 @@ class TestGlossaryDSL(TestGlossaryBase):
 			"dsl/001-empty-lines-br.txt": "74e578ff",
 			"dsl/002-m-tag_multiline-paragraph.dsl": "c7b924f5",
 			"dsl/002-m-tag_multiline-paragraph.txt": "427f8a5d",
+			"dsl/003-ref-target-c.dsl": "9c1396c4",
+			"dsl/003-ref-target-c.txt": "ab41cedf",
 		})
 
 	def convert_dsl_txt(self: "typing.Self", fname, fname2, **convertArgs):
@@ -46,6 +48,12 @@ class TestGlossaryDSL(TestGlossaryBase):
 		self.convert_dsl_txt(
 			"002-m-tag_multiline-paragraph",
 			"002-m-tag_multiline-paragraph",
+		)
+
+	def test_convert_dsl_txt_4(self: "typing.Self"):
+		self.convert_dsl_txt(
+			"003-ref-target-c",
+			"003-ref-target-c",
 		)
 
 
