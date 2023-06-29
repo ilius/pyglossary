@@ -2,13 +2,15 @@ from os.path import splitext
 from typing import Tuple
 from xml.sax.saxutils import escape, quoteattr
 
+from pyglossary.core import log
+
 from ._types import ErrorType, LexType, TransformerType
 
 
 # rename to lexText?
 def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
-	if tr.buff:
-		return None, f"incomplete buffer {tr.buff!r} near pos {tr.pos}"
+	if tr.start < tr.pos:
+		log.warning(f"incomplete buffer near pos {tr.pos}")
 
 	if tr.end():
 		# if tr.openParenth > 0:
@@ -27,24 +29,27 @@ def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		# if tr.openBracket:
 		# 	return None, "nested '['"
 		# tr.openBracket = true
+		tr.resetBuf()
 		return lexTag, None
 
 	if c == "~":
 		tr.addText(tr.current_key)
+		tr.resetBuf()
 		return lexRoot, None
 
 	if c == "\n":
 		return lexRootNewline, None
 
 	tr.addText(c)
+	tr.resetBuf()
 	return lexRoot, None
 
 
 def lexRootNewline(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	tr.skipChars(" \t")
-	if tr.followsString("[m"):
-		return lexRoot, None
-	tr.output += "<br/>"
+	if not tr.followsString("[m"):
+		tr.output += "<br/>"
+	tr.resetBuf()
 	return lexRoot, None
 
 
@@ -54,6 +59,7 @@ def lexBackslash(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		tr.output += "&nbsp;"
 	else:
 		tr.addText(c)
+	tr.resetBuf()
 	return lexRoot, None
 
 
@@ -64,12 +70,13 @@ def lexTag(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	if c == '[':
 		return None, f"nested '[' near pos {tr.pos}"
 	if c == ']':
-		if not tr.buff:
-			return None, f"empty tag {tr.buff!r}"
-		return processTag(tr, tr.buff)
+		tag = tr.input[tr.start:tr.pos-1]
+		if not tag:
+			return None, f"empty tag near pos {tr.pos}"
+		return processTag(tr, tag)
 	# if c == '\\':
 	# 	return lexTagBackslash, None
-	tr.buff += c
+	# do not advance tr.start
 	return lexTag, None
 
 
@@ -166,6 +173,7 @@ def lexRef(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		target += c
 
 	tr.output += f'<a href={quoteattr("bword://"+target)}>{escape(target)}</a>'
+	tr.resetBuf()
 	return lexRoot, None
 
 
@@ -190,6 +198,7 @@ def lexUrl(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		target = "http://" + target
 
 	tr.output += f'<a href={quoteattr(target)}>{escape(target)}</a>'
+	tr.resetBuf()
 	return lexRoot, None
 
 
@@ -222,18 +231,19 @@ def lexS(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 
 	tr.resFileSet.add(fname)
 
+	tr.resetBuf()
 	return lexRoot, None
 
 
 def processTag(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 	if not tag:
-		tr.buff = ""
+		tr.resetBuf()
 		return lexRoot, None
 	if tag[0] == "/":
 		lex, err = processTagClose(tr, tag[1:])
 		if err:
 			return None, err
-		tr.buff = ""
+		tr.resetBuf()
 		return lex, None
 
 	tagFull = tag
@@ -241,15 +251,12 @@ def processTag(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 	tag = tagParts[0]
 
 	if tag == "ref":
-		tr.buff = ""
 		return lexRef(tr)
 
 	if tag == "url":
-		tr.buff = ""
 		return lexUrl(tr)
 
 	if tag == "s":
-		tr.buff = ""
 		return lexS(tr)
 
 	if tag[0] == "m":
@@ -301,7 +308,7 @@ def processTag(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 	else:
 		print(f"unknown tag {tag!r}")
 
-	tr.buff = ""
+	tr.resetBuf()
 	return lexRoot, None
 
 

@@ -30,8 +30,8 @@ class Transformer:
 		audio: bool = True,
 	):
 		self.input = input
+		self.start = 0
 		self.pos = 0
-		self.buff = ""  # can replace by adding a self.start: int
 		self.output = ""
 		self.resFileSet: "set[str]" = set()
 
@@ -51,6 +51,9 @@ class Transformer:
 		self.pos += 1
 		# self.absPos += 1
 		return c  # noqa: RET504
+
+	def resetBuf(self: "typing.Self") -> str:
+		self.start = self.pos
 
 	def followsString(self: "typing.Self", st: str, skip: str = "") -> bool:
 		pos = self.pos
