@@ -202,7 +202,11 @@ class UI(UIBase):
 				return
 
 	def fillMessage(self: "typing.Self", msg: str) -> str:
-		return "\r" + wc_ljust(msg, self.pbar.term_width)
+		term_width = self.pbar.term_width
+		if term_width is None:
+			# FIXME: why?
+			return msg
+		return "\r" + wc_ljust(msg, term_width)
 
 	def fixLogHandler(self: "typing.Self", h: "logging.Handler") -> None:
 		def reset() -> None:
