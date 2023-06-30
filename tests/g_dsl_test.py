@@ -67,61 +67,75 @@ class TestGlossaryDSL(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_dsl_txt_1(self: "typing.Self"):
+	def test_russianAmericanEnglish(self: "typing.Self"):
 		self.convert_dsl_txt(
 			"100-RussianAmericanEnglish-ru-en",
 			"100-RussianAmericanEnglish-ru-en-v2",
 		)
 
-	def test_convert_dsl_txt_2(self: "typing.Self"):
+	def test_empty_lines_br(self: "typing.Self"):
 		self.convert_dsl_txt(
 			"001-empty-lines-br",
 			"001-empty-lines-br",
 		)
 
-	def test_convert_dsl_txt_3(self: "typing.Self"):
+	def test_m_tag_multiline_paragraph(self: "typing.Self"):
 		self.convert_dsl_txt(
 			"002-m-tag_multiline-paragraph",
 			"002-m-tag_multiline-paragraph",
 		)
 
-	def test_convert_dsl_txt_4(self: "typing.Self"):
+	def test_ref_target_c(self: "typing.Self"):
 		self.convert_dsl_txt(
 			"003-ref-target-c",
 			"003-ref-target-c",
 		)
 
-	def test_convert_dsl_txt_title_1(self: "typing.Self"):
+	def test_bashkir_basque_headword_formatting(self: "typing.Self"):
+		# from Bashkir -> Basque dict (001-headword-with-formatting.dsl)
+		dsl = (
+			"{[c slategray]}{to }{[/c]}tell {[c slategray]}smb{[/c]} how to do "
+			"{[c slategray]}smth{[/c]}\n    [m1][trn]"
+			"рассказать кому-либо, как что-либо делать[/trn][/m]"
+		)
+		txt = (
+			"tell smb how to do smth\t"
+			'<p style="padding-left:1em;margin:0">'
+			"рассказать кому-либо, как что-либо делать</p>"
+		)
+		self.convert_string_dsl_txt(dsl, txt)
+
+	def test_headword_paran(self: "typing.Self"):
 		self.convert_string_dsl_txt(
 			"headword with (parenthesis)\n    test",
 			'headword with (parenthesis)|headword with\ttest',
 		)
 
-	def test_convert_dsl_txt_title_1a(self: "typing.Self"):
+	def test_headword_paran_2(self: "typing.Self"):
 		self.convert_string_dsl_txt(
 			"(headword with) parenthesis\n    test",
 			'(headword with) parenthesis|parenthesis\ttest',
 		)
 
-	def test_convert_dsl_txt_title_2(self: "typing.Self"):
+	def test_headword_paran_escaped(self: "typing.Self"):
 		self.convert_string_dsl_txt(
 			"headword \\(with escaped parenthesis\\)\n    test",
 			'headword (with escaped parenthesis)\ttest',
 		)
 
-	def test_convert_dsl_txt_title_3(self: "typing.Self"):
+	def test_headword_paran_escaped_2(self: "typing.Self"):
 		self.convert_string_dsl_txt(
 			"headword (with escaped right \\) parenthesis)\n    test",
 			'headword (with escaped right \\\\) parenthesis)|headword\ttest',
 		)
 
-	def test_convert_dsl_txt_title_4(self: "typing.Self"):
+	def test_headword_curly(self: "typing.Self"):
 		self.convert_string_dsl_txt(
 			"headword with {[b]}curly brackets{[/b]}\n    test",
 			'headword with curly brackets\ttest',
 		)
 
-	def test_convert_dsl_txt_title_5(self: "typing.Self"):
+	def test_headword_curly_escaped(self: "typing.Self"):
 		self.convert_string_dsl_txt(
 			"headword with escaped \\{\\}curly brackets\\{\n    test",
 			'headword with escaped {}curly brackets{\ttest',
