@@ -35,7 +35,25 @@ class TransformerType(metaclass=Interface):
 		pass
 
 
+def TitleTransformerType(TransformerType, metaclass=Interface):
+	@property
+	def outputAlt(self: "typing.Self") -> str:
+		pass
+
+	@outputAlt.setter
+	def outputAlt(self: "typing.Self", st: str) -> str:
+		pass
+
+	def addText2(self: "typing.Self", st: str) -> None:
+		pass
+
+
 ErrorType = Optional[str]
 
 # it is an State Function (state as in state machine)
-LexType = "Optional[Callable[[StateType], Tuple[LexType, ErrorType]]]"
+LexType = "Optional[Callable[[TransformerType], Tuple[LexType, ErrorType]]]"
+
+TitleLexType = (
+	"Optional[Callable[[TitleTransformerType], "
+	"Tuple[TitleLexType, ErrorType]]]"
+)

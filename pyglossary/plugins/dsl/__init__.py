@@ -39,6 +39,7 @@ from pyglossary.option import (
 )
 from pyglossary.text_reader import TextFilePosWrapper
 
+from .title import TitleTransformer
 from .transform import Transformer
 
 enable = True
@@ -116,7 +117,6 @@ def unescape(text: str) -> str:
 
 
 # precompiled regexs
-re_brackets_blocks = re.compile(r"\{[^}]*\}")
 re_audio = re.compile(r"\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]")
 re_img = re.compile(r"\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff|png|bmp)\s*\[/s\]")
 re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
@@ -261,9 +261,6 @@ class Reader(object):
 		line = line.replace("[/']", "")
 		return line  # noqa: RET504
 
-	def fix_title_line(self, line: str) -> str:
-		# find {...} and apply acute accents
-		return re_brackets_blocks.sub(self.sub_title_line, line).strip()
 
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		term_lines: "list[str]" = []
@@ -303,7 +300,16 @@ class Reader(object):
 	) -> EntryType:
 		terms = []
 		for line in term_lines:
-			terms.append(self.fix_title_line(line))
+			ttr = TitleTransformer(line)
+			res, err = ttr.transform()
+			if err:
+				log.error(err)
+				continue
+			title = res.output.strip()
+			terms.append(title)
+			title2 = res.outputAlt.strip()
+			if title2 != title:
+				terms.append(title2)
 
 		defi = self.transform(
 			text="".join(text_lines),
