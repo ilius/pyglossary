@@ -33,7 +33,7 @@ def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		return lexTag, None
 
 	if c == "~":
-		tr.addText(tr.current_key)
+		tr.addText(tr.currentKey)
 		tr.resetBuf()
 		return lexRoot, None
 
@@ -179,7 +179,7 @@ def processTagClose(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 r"""
 [m{}] => <p style="padding-left:{}em;margin:0">
 [*]   => <span class="sec">
-[ex]  => <span class="ex"><font color="{example_color}">
+[ex]  => <span class="ex"><font color="{exampleColor}">
 [c]   => <font color="green">
 [p]   => <i class="p"><font color="green">
 
@@ -333,7 +333,7 @@ def processTag(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 		tr.output += '<span class="sec">'
 
 	elif tag == "ex":
-		tr.output += f'<span class="ex"><font color="{tr.example_color}">'
+		tr.output += f'<span class="ex"><font color="{tr.exampleColor}">'
 
 	elif tag == "c":
 		color = "green"

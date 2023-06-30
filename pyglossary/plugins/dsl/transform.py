@@ -25,8 +25,8 @@ class Transformer:
 	def __init__(
 		self: "typing.Self",
 		input: str,
-		current_key: str = "",
-		example_color: str = "steelblue",
+		currentKey: str = "",
+		exampleColor: str = "steelblue",
 		audio: bool = True,
 	):
 		self.input = input
@@ -38,8 +38,8 @@ class Transformer:
 		self.attrs: dict[str, str] = {}
 		self.attrName = ""
 
-		self.current_key = current_key
-		self.example_color = example_color
+		self.currentKey = currentKey
+		self.exampleColor = exampleColor
 		self.audio = audio
 
 	def end(self: "typing.Self") -> bool:
@@ -84,6 +84,7 @@ class Transformer:
 		self.output += escape(st)
 
 	def transform(self: "typing.Self") -> Tuple[Optional[Result], ErrorType]:
+		# TODO: implement these 2 with lex functions
 		self.input = re_comment_block.sub("", self.input)
 		self.input = re_ref_short.sub(r"[ref]\1[/ref]", self.input)
 

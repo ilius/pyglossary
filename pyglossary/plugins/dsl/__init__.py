@@ -114,13 +114,8 @@ def unescape(text: str) -> str:
 # }}}
 
 
-
-
 # precompiled regexs
-re_audio = re.compile(r"\[s\]([^\[]*?)(wav|mp3)\s*\[/s\]")
-re_img = re.compile(r"\[s\]([^\[]*?)(jpg|jpeg|gif|tif|tiff|png|bmp)\s*\[/s\]")
 re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
-
 
 
 def unwrap_quotes(s: str) -> str:
@@ -133,9 +128,6 @@ class Reader(object):
 	_encoding: str = ""
 	_audio: bool = True
 	_example_color: str = "steelblue"
-
-	re_tags_open = re.compile(r"(?<!\\)\[(c |[cuib]\])")
-	re_tags_close = re.compile(r"\[/[cuib]\]")
 
 	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
 		self._glos = glos
@@ -151,9 +143,9 @@ class Reader(object):
 	) -> str:
 		tr = Transformer(
 			text,
-			current_key=header,
+			currentKey=header,
 			audio=self._audio,
-			example_color=self._example_color,
+			exampleColor=self._example_color,
 		)
 		try:
 			result, err = tr.transform()
@@ -175,7 +167,6 @@ class Reader(object):
 	def __len__(self: "typing.Self") -> int:
 		# FIXME
 		return 0
-
 
 	def open(
 		self: "typing.Self",
@@ -260,7 +251,6 @@ class Reader(object):
 		line = line.replace("[']", "") # FIXME
 		line = line.replace("[/']", "")
 		return line  # noqa: RET504
-
 
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
 		term_lines: "list[str]" = []
