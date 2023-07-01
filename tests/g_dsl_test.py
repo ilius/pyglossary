@@ -1,14 +1,14 @@
 import sys
+import tempfile
 import typing
 import unittest
-import tempfile
-from os.path import abspath, dirname
+from os.path import abspath, dirname, join
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from tests.glossary_v2_test import TestGlossaryBase
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
+from tests.glossary_v2_test import TestGlossaryBase, testTmpDir
 
 
 class TestGlossaryDSL(TestGlossaryBase):
@@ -33,8 +33,9 @@ class TestGlossaryDSL(TestGlossaryBase):
 		removeInfo: bool = True,
 		**convertArgs,
 	):
-		dsl_fname = tempfile.mktemp(suffix=".dsl")
-		txt_fname = tempfile.mktemp(suffix=".txt")
+		prefix = join(testTmpDir, "")
+		dsl_fname = tempfile.mktemp(suffix=".dsl", prefix=prefix)
+		txt_fname = tempfile.mktemp(suffix=".txt", prefix=prefix)
 		with open(dsl_fname, "wt", encoding="utf-8") as _file:
 			_file.write(dsl)
 
@@ -91,19 +92,41 @@ class TestGlossaryDSL(TestGlossaryBase):
 			"003-ref-target-c",
 		)
 
-	def test_bashkir_basque_headword_formatting(self: "typing.Self"):
+	def test_headword_formatting_bashkir_basque(self: "typing.Self"):
 		# from Bashkir -> Basque dict (001-headword-with-formatting.dsl)
 		dsl = (
-			"{[c slategray]}{to }{[/c]}tell {[c slategray]}smb{[/c]} how to do "
-			"{[c slategray]}smth{[/c]}\n    [m1][trn]"
-			"рассказать кому-либо, как что-либо делать[/trn][/m]"
+			'{[c slategray]}{to }{[/c]}tell '
+			'{[c slategray]}smb{[/c]} how to do '
+			'{[c slategray]}smth{[/c]}\n    [m1][trn]'
+			'рассказать кому-либо, как что-либо делать[/trn][/m]'
 		)
 		txt = (
-			"tell smb how to do smth\t"
-			'<b><font color="slategray">to </font>tell <font color="slategray">'
-			'smb</font> how to do <font color="slategray">smth</font></b><br/>'
+			'tell smb how to do smth\t'
+			'<b><font color="slategray">to </font>tell '
+			'<font color="slategray">smb</font> how to do '
+			'<font color="slategray">smth</font></b><br/>'
 			'<p style="padding-left:1em;margin:0">'
-			"рассказать кому-либо, как что-либо делать</p>"
+			'рассказать кому-либо, как что-либо делать</p>'
+		)
+		self.convert_string_dsl_txt(dsl, txt)
+
+	def test_headword_formatting_english(self: "typing.Self"):
+		dsl = (
+			'{[c slategray]}{to }{[/c]}tell'
+			' {[c violet]}smb{[/c]} {[u]}how{[/u]}'
+			' to do {[c violet]}smth{[/c]} {[sub]subscript[/sub]}\n'
+			'   [m1]1. main meaning[/m]\n'
+			'   [m2]a. first submeaning[/m]\n'
+			'   [m2]b. second submeaning[/m]\n'
+		)
+		txt = (
+			'tell smb how to do smth\t'
+			'<b><font color="slategray">to </font>tell'
+			' <font color="violet">smb</font> <u>how</u>'
+			' to do <font color="violet">smth</font> <sub>subscript</sub></b><br/>'
+			'<p style="padding-left:1em;margin:0">1. main meaning</p>'
+			'<p style="padding-left:2em;margin:0">a. first submeaning</p>'
+			'<p style="padding-left:2em;margin:0">b. second submeaning</p>'
 		)
 		self.convert_string_dsl_txt(dsl, txt)
 

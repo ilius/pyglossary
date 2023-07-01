@@ -35,10 +35,12 @@ dataURL = f"https://raw.githubusercontent.com/{repo}/{{filename}}"
 
 dataDir = join(cacheDir, "test")
 appTmpDir = join(cacheDir, "tmp")
+testTmpDir = join(cacheDir, "test-tmp")
 
 
 os.makedirs(dataDir, exist_ok=True)
 os.chdir(dataDir)
+os.makedirs(testTmpDir, exist_ok=True)
 
 
 class TestGlossaryBase(unittest.TestCase):
