@@ -155,7 +155,7 @@ class Reader(object):
 		if err:
 			log.error(f"error in transforming {text!r}: {err}")
 			return ""
-		resText = result.output
+		resText = result.output.strip()
 		self._resFileSet.update(tr.resFileSet)
 		return resText
 
@@ -289,22 +289,28 @@ class Reader(object):
 		text_lines: "list[str]",
 	) -> EntryType:
 		terms = []
+		defiTitles = []
 		for line in term_lines:
-			ttr = TitleTransformer(line)
-			res, err = ttr.transform()
+			tr = TitleTransformer(line)
+			res, err = tr.transform()
 			if err:
 				log.error(err)
 				continue
-			title = res.output.strip()
-			terms.append(title)
-			title2 = res.outputAlt.strip()
-			if title2 != title:
-				terms.append(title2)
+			term = res.output.strip()
+			terms.append(term)
+			term2 = res.outputAlt.strip()
+			if term2 != term:
+				terms.append(term2)
+			title = tr.title.strip()
+			if title != term:
+				defiTitles.append("<b>" + title + "</b>")
 
 		defi = self.transform(
 			text="".join(text_lines),
 			header=terms[0],
 		)
+		if defiTitles:
+			defi = "<br/>".join(defiTitles + [defi])
 
 		return self._glos.newEntry(
 			terms,

@@ -17,7 +17,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 
 		self.dataFileCRC32.update({
 			"dsl/100-RussianAmericanEnglish-ru-en.dsl": "c24491e0",
-			"dsl/100-RussianAmericanEnglish-ru-en-v2.txt": "258050fb",
+			"dsl/100-RussianAmericanEnglish-ru-en-v3.txt": "43b6d58e",
 			"dsl/001-empty-lines-br.dsl": "6f2fca1a",
 			"dsl/001-empty-lines-br.txt": "74e578ff",
 			"dsl/002-m-tag_multiline-paragraph.dsl": "c7b924f5",
@@ -70,7 +70,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_russianAmericanEnglish(self: "typing.Self"):
 		self.convert_dsl_txt(
 			"100-RussianAmericanEnglish-ru-en",
-			"100-RussianAmericanEnglish-ru-en-v2",
+			"100-RussianAmericanEnglish-ru-en-v3",
 		)
 
 	def test_empty_lines_br(self: "typing.Self"):
@@ -100,6 +100,8 @@ class TestGlossaryDSL(TestGlossaryBase):
 		)
 		txt = (
 			"tell smb how to do smth\t"
+			'<b><font color="slategray">to </font>tell <font color="slategray">'
+			'smb</font> how to do <font color="slategray">smth</font></b><br/>'
 			'<p style="padding-left:1em;margin:0">'
 			"рассказать кому-либо, как что-либо делать</p>"
 		)
@@ -130,9 +132,13 @@ class TestGlossaryDSL(TestGlossaryBase):
 		)
 
 	def test_headword_curly(self: "typing.Self"):
+		txt = (
+			'headword with curly brackets\t'
+			'<b>headword with <b>curly brackets</b></b><br/>test'
+		)
 		self.convert_string_dsl_txt(
 			"headword with {[b]}curly brackets{[/b]}\n    test",
-			'headword with curly brackets\ttest',
+			txt,
 		)
 
 	def test_headword_curly_escaped(self: "typing.Self"):

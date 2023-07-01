@@ -10,6 +10,7 @@ from ._types import (
 )
 from ._types import TitleLexType as LexType
 from ._types import TitleTransformerType as TransformerType
+from .transform import Transformer
 
 
 def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
@@ -68,6 +69,7 @@ def lexParan(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 
 
 def lexCurly(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+	start = tr.pos
 	while True:
 		if tr.end():
 			log.warning("unclosed '{{' near pos {tr.pos}")
@@ -84,6 +86,12 @@ def lexCurly(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 
 		if c == "}":
 			break
+
+	tr2 = Transformer(tr.input[start:tr.pos-1])
+	res, err = tr2.transform()
+	if err:
+		return None, err
+	tr.title += res.output
 
 	return lexRoot, None 
 
@@ -106,7 +114,7 @@ class TitleTransformer:
 		self.pos = 0
 		self.output = ""
 		self.outputAlt = ""
-		# TODO: self.outputRich?
+		self.title = ""
 
 	def end(self: "typing.Self") -> bool:
 		return self.pos >= len(self.input)
@@ -124,11 +132,13 @@ class TitleTransformer:
 
 	def addText(self: "typing.Self", st: str) -> None:
 		self.output += escape(st)
+		self.title += escape(st)
 
 	def addText2(self: "typing.Self", st: str) -> None:
 		esc = escape(st)
 		self.output += esc
 		self.outputAlt += esc
+		self.title += esc
 
 	def transform(self: "typing.Self") -> Tuple[Optional[TitleResult], ErrorType]:
 		lex = lexRoot
