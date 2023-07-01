@@ -108,13 +108,13 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_headword_paran(self: "typing.Self"):
 		self.convert_string_dsl_txt(
 			"headword with (parenthesis)\n    test",
-			'headword with (parenthesis)|headword with\ttest',
+			'headword with parenthesis|headword with\ttest',
 		)
 
 	def test_headword_paran_2(self: "typing.Self"):
 		self.convert_string_dsl_txt(
 			"(headword with) parenthesis\n    test",
-			'(headword with) parenthesis|parenthesis\ttest',
+			'headword with parenthesis|parenthesis\ttest',
 		)
 
 	def test_headword_paran_escaped(self: "typing.Self"):
@@ -126,7 +126,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_headword_paran_escaped_2(self: "typing.Self"):
 		self.convert_string_dsl_txt(
 			"headword (with escaped right \\) parenthesis)\n    test",
-			'headword (with escaped right \\\\) parenthesis)|headword\ttest',
+			'headword with escaped right \\\\) parenthesis|headword\ttest',
 		)
 
 	def test_headword_curly(self: "typing.Self"):

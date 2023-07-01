@@ -29,7 +29,6 @@ def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 
 	if c == "(":
 		# tr.resetBuf()
-		tr.addText(c)
 		return lexParan, None
 
 	if c == "{":
@@ -61,9 +60,9 @@ def lexParan(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 			tr.addText("\\" + tr.next())
 			continue
 
-		tr.addText(c)
 		if c == ')':
 			break
+		tr.addText(c)
 
 	return lexRoot, None 
 
