@@ -111,6 +111,8 @@ class Writer(object):
 		self._filenameList: "list[str]" = []
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
+		self._resSrcPattern = re.compile(' src="([^"]*)"')
+
 	def open(self: "typing.Self", filename: str) -> None:
 		from cachetools import LRUCache  # noqa: F401
 
@@ -309,6 +311,13 @@ class Writer(object):
 				)
 			_file.write("</table></body></html>")
 
+	def _subResSrc(self, m: "re.Match") -> str:
+		url = m.group(1)
+		if "://" in url:
+			return m.group(0)
+		url = "res/" + url
+		return f' src="{url}"'
+
 	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 
 		encoding = self._encoding
@@ -463,9 +472,9 @@ class Writer(object):
 					# FIXME: this changes the font to a monospace
 					defi = f'<pre>{defi}</pre>'
 			elif defiFormat == "h":
+				defi = self._resSrcPattern.sub(self._subResSrc, defi)
 				if escape_defi:
 					defi = html.escape(defi)
-				defi = defi.replace(' src="./', ' src="./res/')
 
 			entryId = f"entry{entryIndex}"
 
