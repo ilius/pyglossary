@@ -349,19 +349,23 @@ class Reader(object):
 		"""
 		with open(
 			self._filename + ".ifo",
-			mode="r",
-			encoding="utf-8",
-			newline="\n",
+			mode="rb",
 		) as ifoFile:
 			for line in ifoFile:
 				line = line.strip()
 				if not line:
 					continue
-				if line == "StarDict's dict ifo file":
+				if line == b"StarDict's dict ifo file":
 					continue
-				key, _, value = line.partition("=")
-				if not (key and value):
+				b_key, _, b_value = line.partition(b"=")
+				if not (b_key and b_value):
 					log.warning(f"Invalid ifo file line: {line}")
+					continue
+				try:
+					key = b_key.decode("utf-8")
+					value = b_value.decode("utf-8", errors=self._unicode_errors)
+				except UnicodeDecodeError :
+					log.error(f"ifo line is not UTF-8: {line}")
 					continue
 				self._glos.setInfo(key, value)
 
