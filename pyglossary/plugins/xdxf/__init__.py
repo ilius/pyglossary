@@ -146,6 +146,23 @@ class Reader(object):
 			# every other tag before </meta_info> or </ar> is considered info
 			if elem.tag in ("abbr_def",):
 				continue
+			# in case of multiple <from> or multiple <to> tags, the last one
+			# will take effect.
+			# Most formats do not support more than one language pair in their
+			# metadata (if they have it at all) so it's not very useful to have
+			# multiple
+			if elem.tag == "from":
+				for key, value in elem.attrib.items():
+					if key.endswith("}lang"):
+						self._glos.sourceLangName = value.split("-")[0]
+						break
+				continue
+			if elem.tag == "to":
+				for key, value in elem.attrib.items():
+					if key.endswith("}lang"):
+						self._glos.targetLangName = value.split("-")[0]
+						break
+				continue
 			if not elem.text:
 				log.warning(f"empty tag <{elem.tag}>")
 				continue
