@@ -17,7 +17,7 @@ from urllib.request import urlopen
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.core import cacheDir, log
+from pyglossary.core import cacheDir, log, tmpDir
 from pyglossary.glossary import Glossary
 from pyglossary.os_utils import rmtree
 from pyglossary.text_utils import crc32hex
@@ -33,12 +33,12 @@ repo = os.getenv(
 
 dataURL = f"https://raw.githubusercontent.com/{repo}/{{filename}}"
 
-dataDir = join(cacheDir, "test")
+testCacheDir = join(cacheDir, "test")
 appTmpDir = join(cacheDir, "tmp")
 
 
-os.makedirs(dataDir, exist_ok=True)
-os.chdir(dataDir)
+os.makedirs(testCacheDir, exist_ok=True)
+os.chdir(testCacheDir)
 
 
 class TestGlossaryBase(unittest.TestCase):
@@ -78,7 +78,7 @@ class TestGlossaryBase(unittest.TestCase):
 
 	def setUp(self: "typing.Self"):
 		self.glos = None
-		self.tempDir = tempfile.mkdtemp(dir=dataDir)
+		self.tempDir = tempfile.mkdtemp(dir=join(tmpDir, "pyglossary"))
 
 	def tearDown(self: "typing.Self"):
 		if self.glos is not None:
@@ -99,7 +99,7 @@ class TestGlossaryBase(unittest.TestCase):
 	def downloadFile(self: "typing.Self", filename):
 		unixFilename = filename.replace("\\", "/")
 		_crc32 = self.dataFileCRC32[unixFilename]
-		fpath = join(dataDir, self.fixDownloadFilename(filename))
+		fpath = join(testCacheDir, self.fixDownloadFilename(filename))
 		if isfile(fpath):
 			with open(fpath, mode="rb") as _file:
 				data = _file.read()
@@ -123,7 +123,7 @@ class TestGlossaryBase(unittest.TestCase):
 		return fpath
 
 	def downloadDir(self: "typing.Self", dirName: str, files: "list[str]") -> str:
-		dirPath = join(dataDir, self.fixDownloadFilename(dirName))
+		dirPath = join(testCacheDir, self.fixDownloadFilename(dirName))
 		for fileRelPath in files:
 			newFilePath = join(dirPath, fileRelPath)
 			if isfile(newFilePath):
@@ -1042,7 +1042,7 @@ Japonica"""
 	def test_read_filename(self: "typing.Self"):
 		glos = self.glos = Glossary()
 		glos.read(self.downloadFile("004-bar.txt"))
-		self.assertEqual(glos.filename, join(dataDir, "004-bar"))
+		self.assertEqual(glos.filename, join(testCacheDir, "004-bar"))
 
 	def test_wordTitleStr_em1(self: "typing.Self"):
 		glos = self.glos = Glossary()

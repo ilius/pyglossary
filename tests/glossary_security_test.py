@@ -12,7 +12,7 @@ sys.path.insert(0, rootDir)
 
 from pyglossary.glossary import Glossary
 from tests.glossary_errors_test import TestGlossaryErrors
-from tests.glossary_v2_test import dataDir
+from tests.glossary_v2_test import testCacheDir
 
 
 class TestGlossarySecurity(TestGlossaryErrors):
@@ -53,7 +53,7 @@ class TestGlossarySecurity(TestGlossaryErrors):
 		self.assertIsNone(res)
 		errMsg = (
 			f'[Errno 2] No such file or directory: '
-			f'"{dataDir}{os.sep}os.system(\'abcd\');test.txt"'
+			f'"{testCacheDir}{os.sep}os.system(\'abcd\');test.txt"'
 		)
 		errMsg = errMsg.replace("\\", "\\\\")
 		self.assertLogCritical(errMsg)

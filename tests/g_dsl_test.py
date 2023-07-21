@@ -8,7 +8,7 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
-from tests.glossary_v2_test import TestGlossaryBase, testTmpDir
+from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryDSL(TestGlossaryBase):
@@ -33,7 +33,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 		removeInfo: bool = True,
 		**convertArgs,
 	):
-		prefix = join(testTmpDir, "")
+		prefix = join(self.tempDir, "")
 		dsl_fname = tempfile.mktemp(suffix=".dsl", prefix=prefix)
 		txt_fname = tempfile.mktemp(suffix=".txt", prefix=prefix)
 		with open(dsl_fname, "wt", encoding="utf-8") as _file:

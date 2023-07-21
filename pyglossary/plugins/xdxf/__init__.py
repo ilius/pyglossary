@@ -147,10 +147,9 @@ class Reader(object):
 			if elem.tag in ("abbr_def",):
 				continue
 			# in case of multiple <from> or multiple <to> tags, the last one
-			# will take effect.
-			# Most formats do not support more than one language pair in their
-			# metadata (if they have it at all) so it's not very useful to have
-			# multiple
+			# will be stored.
+			# Very few formats support more than one language pair in their
+			# metadata, so it's not very useful to have multiple
 			if elem.tag == "from":
 				for key, value in elem.attrib.items():
 					if key.endswith("}lang"):
