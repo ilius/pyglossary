@@ -26,11 +26,16 @@ def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		return lexBackslash, None
 
 	if c == "[":
-		# if tr.openBracket:
-		# 	return None, "nested '['"
-		# tr.openBracket = true
 		tr.resetBuf()
 		return lexTag, None
+
+	if c == "]":
+		tr.next()
+		if tr.followsString("["):
+			tr.next()
+		tr.output += c
+		tr.resetBuf()
+		return lexRoot, None
 
 	if c == "~":
 		tr.addText(tr.currentKey)
@@ -68,7 +73,9 @@ def lexTag(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		return None, f"'[' not closed near pos {tr.pos} in lexTag"
 	c = tr.next()
 	if c == '[':
-		return None, f"nested '[' near pos {tr.pos}"
+		tr.output += c
+		tr.resetBuf()
+		return lexRoot, None
 	if c in " \t":
 		tr.skipChars(" \t")
 		return lexTagAttr, None

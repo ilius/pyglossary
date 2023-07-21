@@ -170,6 +170,23 @@ class TestGlossaryDSL(TestGlossaryBase):
 			'headword with escaped {}curly brackets{\ttest',
 		)
 
+	def test_double_brackets_1(self: "typing.Self"):
+		self.convert_string_dsl_txt(
+			"test\n    hello [[world]]",
+			'test\thello [world]',
+		)
+
+	def test_double_brackets_2(self: "typing.Self"):
+		self.convert_string_dsl_txt(
+			"test\n    hello [[",
+			'test\thello [',
+		)
+
+	def test_double_brackets_3(self: "typing.Self"):
+		self.convert_string_dsl_txt(
+			"test\n    hello ]]",
+			'test\thello ]',
+		)
 
 
 if __name__ == "__main__":
