@@ -197,7 +197,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_ref_double_ltgt_escaped(self: "typing.Self"):
 		self.convert_string_dsl_txt(
 			"test\n    hello \\<<world\\>>",
-			'test\thello <<world>>',
+			'test\thello &lt;&lt;world&gt;&gt;',
 		)
 
 

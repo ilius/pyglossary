@@ -68,7 +68,7 @@ def lexBackslash(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		tr.output += "&nbsp;"
 	elif c in "<>" and tr.followsString(c):
 		tr.next()
-		tr.output += 2 * c
+		tr.addText(2 * c)
 	else:
 		tr.addText(c)
 	tr.resetBuf()
