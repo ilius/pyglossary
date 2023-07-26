@@ -1,10 +1,8 @@
 import typing
 from typing import AnyStr, Callable
 
-from .interfaces import Interface
 
-
-class T_Locale(metaclass=Interface):
+class T_Locale(typing.Protocol):
 	def __init__(self: "typing.Self", _id: str) -> None:
 		pass
 
@@ -12,12 +10,12 @@ class T_Locale(metaclass=Interface):
 		pass
 
 
-class T_Collator(metaclass=Interface):
-	PRIMARY = 0
-	SECONDARY = 1
-	TERTIARY = 2
-	QUATERNARY = 3
-	IDENTICAL = 15
+class T_Collator(typing.Protocol):
+	PRIMARY: int = 0
+	SECONDARY: int = 1
+	TERTIARY: int = 2
+	QUATERNARY: int = 3
+	IDENTICAL: int = 15
 
 	@classmethod
 	def createInstance(loc: "T_Locale | None" = None) -> "T_Collator":
@@ -34,30 +32,30 @@ class T_Collator(metaclass=Interface):
 		pass
 
 
-class T_UCollAttribute(metaclass=Interface):
-	ALTERNATE_HANDLING = 1
-	CASE_FIRST = 2
-	CASE_LEVEL = 3
-	DECOMPOSITION_MODE = 4
-	FRENCH_COLLATION = 0
-	HIRAGANA_QUATERNARY_MODE = 6
-	NORMALIZATION_MODE = 4
-	NUMERIC_COLLATION = 7
-	STRENGTH = 5
+class T_UCollAttribute(typing.Protocol):
+	ALTERNATE_HANDLING: int = 1
+	CASE_FIRST: int = 2
+	CASE_LEVEL: int = 3
+	DECOMPOSITION_MODE: int = 4
+	FRENCH_COLLATION: int = 0
+	HIRAGANA_QUATERNARY_MODE: int = 6
+	NORMALIZATION_MODE: int = 4
+	NUMERIC_COLLATION: int = 7
+	STRENGTH: int = 5
 
 
-class T_UCollAttributeValue(metaclass=Interface):
-	DEFAULT = -1
-	DEFAULT_STRENGTH = 2
-	IDENTICAL = 15
-	LOWER_FIRST = 24
-	NON_IGNORABLE = 21
-	OFF = 16
-	ON = 17
-	PRIMARY = 0
-	QUATERNARY = 3
-	SECONDARY = 1
-	SHIFTED = 20
-	TERTIARY = 2
-	UPPER_FIRST = 25
+class T_UCollAttributeValue(typing.Protocol):
+	DEFAULT: int = -1
+	DEFAULT_STRENGTH: int = 2
+	IDENTICAL: int = 15
+	LOWER_FIRST: int = 24
+	NON_IGNORABLE: int = 21
+	OFF: int = 16
+	ON: int = 17
+	PRIMARY: int = 0
+	QUATERNARY: int = 3
+	SECONDARY: int = 1
+	SHIFTED: int = 20
+	TERTIARY: int = 2
+	UPPER_FIRST: int = 25
 

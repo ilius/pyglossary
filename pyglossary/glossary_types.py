@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 	from typing import TypeAlias
 
 
-from .interfaces import Interface
 from .langs import Lang
 from .sort_keys import NamedSortKey
 
@@ -31,7 +30,7 @@ RawEntryType: "TypeAlias" = (
 )
 
 
-class EntryType(metaclass=Interface):
+class EntryType(typing.Protocol):
 	def __init__(self: "typing.Self") -> None:
 		self._word: "str | list[str]"
 
@@ -105,16 +104,6 @@ class EntryType(metaclass=Interface):
 	def replace(self: "typing.Self", source: str, target: str) -> None:
 		raise NotImplementedError
 
-	def getRaw(self: "typing.Self", glos: "GlossaryType") -> RawEntryType:
-		raise NotImplementedError
-
-	@staticmethod
-	def getRawEntrySortKey(
-		glos: "GlossaryType",
-		key: "Callable[[bytes], Any]",
-	) -> "Callable[[RawEntryType], Any]":
-		raise NotImplementedError
-
 	def byteProgress(self: "typing.Self") -> "tuple[int, int] | None":
 		raise NotImplementedError
 
@@ -125,7 +114,7 @@ class EntryType(metaclass=Interface):
 		raise NotImplementedError
 
 
-class EntryListType(metaclass=Interface):
+class EntryListType(typing.Protocol):
 	def __init__(
 		self: "typing.Self",
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
@@ -168,7 +157,7 @@ class EntryListType(metaclass=Interface):
 		raise NotImplementedError
 
 
-class GlossaryType(metaclass=Interface):
+class GlossaryType(typing.Protocol):
 	"""
 	an abstract type class for Glossary class in plugins. it only
 	contains methods and properties that might be used in plugins
@@ -284,7 +273,7 @@ class GlossaryType(metaclass=Interface):
 		raise NotImplementedError
 
 
-class GlossaryExtendedType(GlossaryType, metaclass=Interface):
+class GlossaryExtendedType(GlossaryType, typing.Protocol):
 	def progressInit(
 		self: "typing.Self",
 		*args,  # noqa: ANN

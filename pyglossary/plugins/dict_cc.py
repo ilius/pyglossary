@@ -8,9 +8,7 @@ from typing import TYPE_CHECKING, Callable, Iterator, cast
 if TYPE_CHECKING:
 	import sqlite3
 
-	from lxml.etree import _Element as Element
-
-	from pyglossary.lxml_types import T_htmlfile
+	from pyglossary.lxml_types import Element, T_htmlfile
 
 
 from pyglossary.core import log

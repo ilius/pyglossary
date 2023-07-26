@@ -1,10 +1,8 @@
 import typing
-from typing import Optional
-
-from pyglossary.interfaces import Interface
+from typing import Callable, Optional, Tuple
 
 
-class TransformerType(metaclass=Interface):
+class TransformerType(typing.Protocol):
 	def __init__(self: "typing.Self") -> None:
 		pass
 
@@ -35,7 +33,7 @@ class TransformerType(metaclass=Interface):
 		pass
 
 
-def TitleTransformerType(TransformerType, metaclass=Interface):
+class TitleTransformerType(TransformerType, typing.Protocol):
 	@property
 	def outputAlt(self: "typing.Self") -> str:
 		pass
@@ -51,9 +49,9 @@ def TitleTransformerType(TransformerType, metaclass=Interface):
 ErrorType = Optional[str]
 
 # it is an State Function (state as in state machine)
-LexType = "Optional[Callable[[TransformerType], Tuple[LexType, ErrorType]]]"
+LexType = Optional[Callable[[TransformerType], Tuple["LexType", ErrorType]]]
 
-TitleLexType = (
-	"Optional[Callable[[TitleTransformerType], "
-	"Tuple[TitleLexType, ErrorType]]]"
-)
+TitleLexType = Optional[
+	Callable[[TitleTransformerType], Tuple["TitleLexType", ErrorType]]
+]
+

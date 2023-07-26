@@ -6,9 +6,7 @@ from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 
-	from lxml.etree import _Element as Element
-
-	from pyglossary.lxml_types import T_htmlfile
+	from pyglossary.lxml_types import Element, T_htmlfile
 
 
 log = logging.getLogger("pyglossary")

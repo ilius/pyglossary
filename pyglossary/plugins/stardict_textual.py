@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 	from typing import Generator, Iterator
 
 	from lxml import builder
-	from lxml.etree import _Element as Element
 
+	from pyglossary.lxml_types import Element
 	from pyglossary.xdxf.transform import XdxfTransformer
 
 

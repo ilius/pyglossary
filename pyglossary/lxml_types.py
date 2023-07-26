@@ -18,8 +18,6 @@ from typing import (
 
 from lxml.etree import QName, _Element
 
-from .interfaces import Interface
-
 _TextArg: TypeAlias = "str | bytes | QName"
 _TagName: TypeAlias = _TextArg
 
@@ -33,7 +31,13 @@ _OutputMethodArg = Literal[
 	"XML",
 ]
 
-class IncrementalFileWriter(metaclass=Interface):
+
+# Element type can not be a protocol or interface or anything
+# it's stupid!
+Element = _Element
+
+
+class IncrementalFileWriter(typing.Protocol):
 	def write_declaration(
 		self: "typing.Self",
 		version: "AnyStr | None" = ...,
@@ -48,7 +52,7 @@ class IncrementalFileWriter(metaclass=Interface):
 		...
 	def write(
 		self: "typing.Self",
-		*args: "AnyStr | _Element",
+		*args: "AnyStr | Element",
 		with_tail: bool = ...,
 		pretty_print: bool = ...,
 		method: _OutputMethodArg | None = ...,
@@ -71,7 +75,7 @@ class IncrementalFileWriter(metaclass=Interface):
 	) -> ContextManager[None]:
 		raise NotImplementedError
 
-class AsyncIncrementalFileWriter(metaclass=Interface):
+class AsyncIncrementalFileWriter(typing.Protocol):
 	async def write_declaration(
 		self: "typing.Self",
 		version: "AnyStr | None" = ...,
@@ -86,7 +90,7 @@ class AsyncIncrementalFileWriter(metaclass=Interface):
 		...
 	async def write(
 		self: "typing.Self",
-		*args: "AnyStr | _Element | None",
+		*args: "AnyStr | Element | None",
 		with_tail: bool = ...,
 		pretty_print: bool = ...,
 		method: "_OutputMethodArg | None" = ...,

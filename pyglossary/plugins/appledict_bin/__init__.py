@@ -44,13 +44,14 @@ from .key_data import KeyData, RawKeyData
 if TYPE_CHECKING:
 	import io
 
-	from lxml.etree import _Element as Element
 	from lxml.html import (
 		HtmlComment,
 		HtmlElement,
 		HtmlEntity,
 		HtmlProcessingInstruction,
 	)
+
+	from pyglossary.lxml_types import Element
 
 	from .appledict_properties import AppleDictProperties
 

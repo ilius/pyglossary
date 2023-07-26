@@ -6,8 +6,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 
-	from lxml.etree import _Element as Element
 	from lxml.etree import _XSLTResultTree
+
+	from pyglossary.lxml_types import Element
 
 
 from pyglossary import core

@@ -36,7 +36,6 @@ from pyglossary.option import (
 	Option,
 	StrOption,
 )
-from pyglossary.ui_type import UIType
 
 
 def fread(path: str) -> str:
@@ -77,7 +76,7 @@ def getEntryFilterConfigPair(name: str) -> "tuple[str, Option]":
 	)
 
 
-class UIBase(UIType):
+class UIBase:
 	configDefDict = OrderedDict([
 		("log_time", BoolOption(
 			hasFlag=True,

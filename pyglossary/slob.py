@@ -53,8 +53,6 @@ from uuid import UUID, uuid4
 import icu
 from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 
-from .interfaces import Interface
-
 if TYPE_CHECKING:
 	from .icu_types import T_Collator
 
@@ -107,7 +105,7 @@ QUATERNARY: int = Collator.QUATERNARY
 IDENTICAL: int = Collator.IDENTICAL
 
 
-class CompressionModule(metaclass=Interface):
+class CompressionModule(typing.Protocol):
 	# gzip.compress(data, compresslevel=9, *, mtime=None)
 	# bz2.compress(data, compresslevel=9)
 	# zlib.compress(data, /, level=-1, wbits=15)

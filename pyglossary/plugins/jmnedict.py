@@ -9,9 +9,7 @@ if TYPE_CHECKING:
 	import io
 	from typing import Callable, Iterator
 
-	from lxml.etree import _Element as Element
-
-	from pyglossary.lxml_types import T_htmlfile
+	from pyglossary.lxml_types import Element, T_htmlfile
 
 from pyglossary.compression import (
 	compressionOpen,

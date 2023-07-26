@@ -26,7 +26,7 @@ import typing
 from typing import TYPE_CHECKING, Iterator, Sequence
 
 if TYPE_CHECKING:
-	from lxml.etree import Element
+	from pyglossary.lxml_types import Element
 
 from pyglossary.compression import (
 	compressionOpen,

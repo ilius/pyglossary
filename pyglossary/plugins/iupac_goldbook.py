@@ -6,7 +6,7 @@ from io import BytesIO
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
-	from lxml.etree import Element
+	from pyglossary.lxml_types import Element
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
@@ -103,12 +103,29 @@ class Reader(object):
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self: "typing.Self", header: str) -> None:
-		self.setGlosInfo("name", header.find("./title").text)
-		self.setGlosInfo("publisher", header.find("./publisher").text)
-		self.setGlosInfo("isbn", header.find("./isbn").text)
-		self.setGlosInfo("doi", header.find("./doi").text)
-		self.setGlosInfo("creationTime", header.find("./accessdate").text)
+	def setMetadata(self: "typing.Self", header: "Element") -> None:
+		if header is None:
+			return
+
+		title = header.find("./title")
+		if title:
+			self.setGlosInfo("name", title.text)
+
+		publisher = header.find("./publisher")
+		if publisher:
+			self.setGlosInfo("publisher", publisher.text)
+
+		isbn = header.find("./isbn")
+		if isbn:
+			self.setGlosInfo("isbn", isbn.text)
+
+		doi = header.find("./doi")
+		if doi:
+			self.setGlosInfo("doi", doi.text)
+
+		accessdate = header.find("./accessdate")
+		if accessdate:
+			self.setGlosInfo("creationTime", accessdate.text)
 
 	def tostring(
 		self: "typing.Self",

@@ -8,9 +8,7 @@ from typing import TYPE_CHECKING, cast
 if TYPE_CHECKING:
 	from typing import Any, Callable, Iterator
 
-	from lxml.etree import _Element as Element
-
-	from pyglossary.lxml_types import T_htmlfile
+	from pyglossary.lxml_types import Element, T_htmlfile
 
 
 from pyglossary.compression import (
