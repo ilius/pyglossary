@@ -188,6 +188,18 @@ class TestGlossaryDSL(TestGlossaryBase):
 			'test\thello ]',
 		)
 
+	def test_ref_double_ltgt(self: "typing.Self"):
+		self.convert_string_dsl_txt(
+			"test\n    hello <<world>>",
+			'test\thello <a href="bword://world">world</a>',
+		)
+
+	def test_ref_double_ltgt_escaped(self: "typing.Self"):
+		self.convert_string_dsl_txt(
+			"test\n    hello \\<<world\\>>",
+			'test\thello <<world>>',
+		)
+
 
 if __name__ == "__main__":
 	unittest.main()

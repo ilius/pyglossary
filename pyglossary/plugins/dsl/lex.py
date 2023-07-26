@@ -45,6 +45,10 @@ def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	if c == "\n":
 		return lexRootNewline, None
 
+	if c == "<" and tr.followsString("<"):
+		tr.next()
+		return lexRefText, None
+
 	tr.addText(c)
 	tr.resetBuf()
 	return lexRoot, None
@@ -62,6 +66,9 @@ def lexBackslash(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	c = tr.next()
 	if c == " ":
 		tr.output += "&nbsp;"
+	elif c in "<>" and tr.followsString(c):
+		tr.next()
+		tr.output += 2 * c
 	else:
 		tr.addText(c)
 	tr.resetBuf()
@@ -231,6 +238,9 @@ def lexRefText(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 			continue
 		if c == "[":
 			tr.move(-1)
+			break
+		if c == ">" and tr.followsString(">"):
+			tr.next()
 			break
 		text += c
 

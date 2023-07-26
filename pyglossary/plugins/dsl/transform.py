@@ -8,7 +8,6 @@ from ._types import ErrorType
 from .lex import lexRoot
 
 re_comment_block = re.compile(r"\{\{([^}]*)\}\}")
-re_ref_short = re.compile(r"<<([^<>]*)>>")
 
 
 
@@ -86,7 +85,6 @@ class Transformer:
 	def transform(self: "typing.Self") -> Tuple[Optional[Result], ErrorType]:
 		# TODO: implement these 2 with lex functions
 		self.input = re_comment_block.sub("", self.input)
-		self.input = re_ref_short.sub(r"[ref]\1[/ref]", self.input)
 
 		lex = lexRoot
 		while lex is not None:
