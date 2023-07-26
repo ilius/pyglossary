@@ -31,7 +31,7 @@ def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 
 	if c == "]":
 		tr.next()
-		if tr.followsString("["):
+		if tr.follows("["):
 			tr.next()
 		tr.output += c
 		tr.resetBuf()
@@ -45,7 +45,7 @@ def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	if c == "\n":
 		return lexRootNewline, None
 
-	if c == "<" and tr.followsString("<"):
+	if c == "<" and tr.follows("<"):
 		tr.next()
 		return lexRefText, None
 
@@ -55,8 +55,8 @@ def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 
 
 def lexRootNewline(tr: TransformerType) -> Tuple[LexType, ErrorType]:
-	tr.skipChars(" \t")
-	if not tr.followsString("[m"):
+	tr.skipAny(" \t")
+	if not tr.follows("[m"):
 		tr.output += "<br/>"
 	tr.resetBuf()
 	return lexRoot, None
@@ -66,7 +66,7 @@ def lexBackslash(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	c = tr.next()
 	if c == " ":
 		tr.output += "&nbsp;"
-	elif c in "<>" and tr.followsString(c):
+	elif c in "<>" and tr.follows(c):
 		tr.next()
 		tr.addText(2 * c)
 	else:
@@ -84,7 +84,7 @@ def lexTag(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		tr.resetBuf()
 		return lexRoot, None
 	if c in " \t":
-		tr.skipChars(" \t")
+		tr.skipAny(" \t")
 		return lexTagAttr, None
 	if c == ']':
 		tag = tr.input[tr.start:tr.pos-1]
@@ -108,7 +108,7 @@ def lexTagAttr(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		tr.move(-1)
 		return lexTag, None
 	if c == "=":
-		tr.skipChars(" \t")
+		tr.skipAny(" \t")
 		return lexTagAttrValue, None
 	tr.attrName += c
 	return lexTagAttr, None
@@ -239,7 +239,7 @@ def lexRefText(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		if c == "[":
 			tr.move(-1)
 			break
-		if c == ">" and tr.followsString(">"):
+		if c == ">" and tr.follows(">"):
 			tr.next()
 			break
 		text += c

@@ -59,7 +59,10 @@ class Transformer:
 		self.attrName = ""
 		self.attrs = {}
 
-	def followsString(self: "typing.Self", st: str, skip: str = "") -> bool:
+	def follows(self: "typing.Self", st: str) -> bool:
+		'''
+		check if current position follows the string `st`
+		'''
 		pos = self.pos
 		for c in st:
 			if pos >= len(self.input):
@@ -69,7 +72,10 @@ class Transformer:
 			pos += 1
 		return True
 
-	def skipChars(self: "typing.Self", chars: str) -> None:
+	def skipAny(self: "typing.Self", chars: str) -> None:
+		'''
+		skip any of the characters that are in `chars`
+		'''
 		pos = self.pos
 		while True:
 			if pos >= len(self.input):

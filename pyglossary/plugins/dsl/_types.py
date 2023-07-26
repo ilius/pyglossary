@@ -17,10 +17,10 @@ class TransformerType(metaclass=Interface):
 	def next(self: "typing.Self") -> str:
 		pass
 
-	def followsString(self: "typing.Self", st: str, skip: str = "") -> bool:
+	def follows(self: "typing.Self", st: str) -> bool:
 		pass
 
-	def skipChars(self: "typing.Self", chars: str):
+	def skipAny(self: "typing.Self", chars: str):
 		pass
 
 	def addText(self: "typing.Self", st: str) -> None:
