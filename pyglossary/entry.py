@@ -195,9 +195,9 @@ class Entry(BaseEntry):
 		# so x[0] is word(s) in bytes, that can be a str (one word),
 		# or a list or tuple (one word with or more alternatives)
 		if rawEntryCompress:
-			return lambda x: key(pickle_loads(zlib_decompress(x))[0])
+			return lambda x: key(pickle_loads(zlib_decompress(x))[0])  # type: ignore
 		# x is rawEntry, so x[0] is list of words (entry.l_word)
-		return lambda x: key(x[0])
+		return lambda x: key(x[0])  # type: ignore
 
 	def __init__(
 		self: "typing.Self",

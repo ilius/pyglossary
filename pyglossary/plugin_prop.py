@@ -36,7 +36,7 @@ from .flags import (
 )
 from .option import Option, optionFromDict
 
-log: core.MyLogger = logging.getLogger("pyglossary")
+log = logging.getLogger("pyglossary")
 
 
 def optionsPropFromDict(
@@ -185,7 +185,7 @@ class PluginProp(object):
 		self._readDepends = None
 		self._writeDepends = None
 
-		if log.isDebug():
+		if core.isDebug():
 			self.checkModule()
 
 		return self
@@ -272,7 +272,7 @@ class PluginProp(object):
 		cls = getattr(self.module, "Reader", None)
 		self._Reader = cls
 		self._ReaderLoaded = True
-		if cls is not None and log.isDebug():
+		if cls is not None and core.isDebug():
 			self.checkReaderClass()
 		return cls
 
@@ -283,7 +283,7 @@ class PluginProp(object):
 		cls = getattr(self.module, "Writer", None)
 		self._Writer = cls
 		self._WriterLoaded = True
-		if cls is not None and log.isDebug():
+		if cls is not None and core.isDebug():
 			self.checkWriterClass()
 		return cls
 
@@ -326,7 +326,7 @@ class PluginProp(object):
 				continue
 			prop = optionsProp[name]
 			if prop.disabled:
-				log.trace(f"skipping disabled option {name} in {self.name} plugin")
+				core.trace(log, f"skipping disabled option {name} in {self.name} plugin")
 				continue
 			if not prop.validate(default):
 				log.warning(

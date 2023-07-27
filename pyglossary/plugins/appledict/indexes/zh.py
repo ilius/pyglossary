@@ -26,7 +26,7 @@ import bs4
 from pyglossary.core import log, pip
 
 try:
-	import colorize_pinyin as color
+	import colorize_pinyin as color  # type: ignore
 except ImportError:
 	log.error(
 		"module colorize_pinyin is required to build extended Chinese"

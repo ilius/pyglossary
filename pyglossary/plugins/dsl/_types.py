@@ -3,6 +3,17 @@ from typing import Callable, Optional, Tuple
 
 
 class TransformerType(typing.Protocol):
+	start: int
+	pos: int
+	input: str
+	output: str
+	currentKey: str
+	attrs: "dict[str, str | None]"
+	attrName: str
+	audio: bool
+	resFileSet: "set[str]"
+	exampleColor: str
+
 	def __init__(self: "typing.Self") -> None:
 		pass
 
@@ -24,23 +35,13 @@ class TransformerType(typing.Protocol):
 	def addText(self: "typing.Self", st: str) -> None:
 		pass
 
-	@property
-	def output(self: "typing.Self") -> str:
-		pass
-
-	@output.setter
-	def output(self: "typing.Self", st: str) -> str:
+	def resetBuf(self: "typing.Self") -> str:
 		pass
 
 
 class TitleTransformerType(TransformerType, typing.Protocol):
-	@property
-	def outputAlt(self: "typing.Self") -> str:
-		pass
-
-	@outputAlt.setter
-	def outputAlt(self: "typing.Self", st: str) -> str:
-		pass
+	title: str
+	outputAlt: str
 
 	def addText2(self: "typing.Self", st: str) -> None:
 		pass

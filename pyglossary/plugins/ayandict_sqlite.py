@@ -10,6 +10,8 @@ from typing import (
 if TYPE_CHECKING:
 	import sqlite3
 
+	from pyglossary.xdxf.transform import XdxfTransformer
+
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import BoolOption, Option
@@ -100,7 +102,7 @@ class Writer(object):
 		self._filename = ""
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
-		self._xdxfTr = None
+		self._xdxfTr: "XdxfTransformer | None" = None
 
 	def open(self: "typing.Self", filename: str) -> None:
 		from sqlite3 import connect
@@ -162,12 +164,14 @@ class Writer(object):
 	def xdxf_transform(self: "typing.Self", text: str) -> str:
 		if self._xdxfTr is None:
 			self.xdxf_setup()
-		return self._xdxfTr.transformByInnerString(text)
+		return self._xdxfTr.transformByInnerString(text)  # type: ignore
 
 	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
 		import hashlib
 
 		cur = self._cur
+		if cur is None:
+			raise ValueError("cur is None")
 		_hash = hashlib.md5()
 		while True:
 			entry = yield
@@ -189,6 +193,8 @@ class Writer(object):
 				(entry.l_word[0], defi),
 			)
 			_id = cur.lastrowid
+			if _id is None:
+				raise ValueError("lastrowid is None")
 			for alt in entry.l_word[1:]:
 				cur.execute(
 					"INSERT INTO alt(id, term) VALUES (?, ?);",
@@ -205,6 +211,8 @@ class Writer(object):
 
 	def addFuzzy(self, _id: int, terms: list[str]):
 		cur = self._cur
+		if cur is None:
+			raise ValueError("cur is None")
 		for term in terms:
 			subs = set()
 			for word in term.split(" "):

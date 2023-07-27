@@ -220,7 +220,7 @@ def cleanup_link_target(href: str) -> str:
 	return href.removeprefix("bword://")
 
 
-def href_sub(x: "re.Pattern") -> str:
+def href_sub(x: "re.Match") -> str:
 	href = x.groups()[1]
 	if href.startswith("http"):
 		return x.group()

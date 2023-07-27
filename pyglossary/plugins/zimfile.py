@@ -5,7 +5,7 @@ import typing
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
-	from libzim.reader import Archive
+	from libzim.reader import Archive  # type: ignore
 
 from pyglossary.core import cacheDir, log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -97,7 +97,11 @@ class Reader(object):
 
 		redirectCount = 0
 
-		f_namemax = os.statvfs(cacheDir).f_namemax
+		try:
+			f_namemax = os.statvfs(cacheDir).f_namemax # type: ignore
+		except AttributeError:
+			# FIXME
+			raise OSError("Unsupported operating system (no os.statvfs)") from None
 
 		fileNameTooLong = []
 

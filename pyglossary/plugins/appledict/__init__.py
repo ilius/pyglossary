@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# appledict/__init__.py
+# mypy: ignore-errors
+#
 # Output to Apple Dictionary xml sources for Dictionary Development Kit.
 #
-# Copyright © 2016-2021 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
-# Copyright © 2016 ivan tkachenko me@ratijas.tk
+# Copyright © 2016-2023 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# Copyright © 2016 ivan tkachenko <me@ratijas.tk>
 # Copyright © 2012-2015 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
 #
 # This program is a free software; you can redistribute it and/or modify

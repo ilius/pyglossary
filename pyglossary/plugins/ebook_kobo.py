@@ -31,6 +31,7 @@ from pathlib import Path
 from pickle import dumps, loads
 from typing import Generator
 
+from pyglossary import core
 from pyglossary.core import log, pip
 from pyglossary.flags import NEVER
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -154,7 +155,8 @@ class Writer:
 			nonlocal htmlContents
 			group_fname = fixFilename(lastPrefix)
 			htmlContents += "</html>"
-			log.trace(
+			core.trace(
+				log,
 				f"writeGroup: {lastPrefix!r}, "
 				f"{group_fname!r}, count={groupCounter}",
 			)

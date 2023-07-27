@@ -98,6 +98,8 @@ class SqEntryList:
 		"""
 			sqliteSortKey[i] == (name, type, valueFunc)
 		"""
+		if self._con is None:
+			raise RuntimeError("self._con is None")
 
 		if self._sqliteSortKey is not None:
 			raise RuntimeError("Called setSortKey twice")

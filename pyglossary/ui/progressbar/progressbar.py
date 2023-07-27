@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 #
 # progressbar  - Text progress bar library for Python.
 # Copyright (c) 2005 Nilton Volpato

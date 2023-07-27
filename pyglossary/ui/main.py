@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# main.py
+# mypy: ignore-errors
+# ui/main.py
 #
 # Copyright © 2008-2022 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # This file is part of PyGlossary project, https://github.com/ilius/pyglossary
@@ -646,7 +647,7 @@ def main() -> None:
 
 	Glossary.init()
 
-	if log.isDebug():
+	if core.isDebug():
 		log.debug(f"en -> {langDict['en']!r}")
 
 	##############################

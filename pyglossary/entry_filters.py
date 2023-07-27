@@ -5,6 +5,7 @@ import re
 import typing
 from typing import TYPE_CHECKING
 
+from . import core
 from .text_utils import (
 	fixUtf8,
 )
@@ -355,7 +356,7 @@ class PreventDuplicateWords(EntryFilter):
 		word = f"{word} ({n})"
 
 		wordSet.add(word)
-		entry._word = word
+		entry._word = word  # type: ignore
 		# use entry.editFuncWord?
 
 		return entry
@@ -392,7 +393,7 @@ class TrimArabicDiacritics(EntryFilter):
 		hw_t = hw_t.replace("\u0622", "\u0627").replace("\u0623", "\u0627")
 		if hw_t == hw or not hw_t:
 			return entry
-		entry._word = [hw_t] + words
+		entry._word = [hw_t] + words  # type: ignore
 		return entry
 
 
@@ -414,7 +415,7 @@ class UnescapeWordLinks(EntryFilter):
 		return self._unescape(m.group(0))
 
 	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
-		entry._defi = self._pat.sub(self._sub, entry.defi)
+		entry._defi = self._pat.sub(self._sub, entry.defi)  # type: ignore
 		return entry
 
 
@@ -473,7 +474,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 			word = entry.s_word
 			if len(word) > 30:
 				word = word[:37] + "..."
-			log.trace(f"MaxMemUsage: {usage:,}, {word=}")
+			core.trace(log, f"MaxMemUsage: {usage:,}, {word=}")
 		return entry
 
 entryFiltersRules = [

@@ -1,6 +1,5 @@
-
-import typing
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 # ui_qk.py
 #
 # Copyright © 2010-2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
@@ -18,6 +17,7 @@ import typing
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the
 # GNU General Public License for more details.
 
+import typing
 
 from os.path import join
 

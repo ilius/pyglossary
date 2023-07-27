@@ -745,7 +745,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 		self.progressEnd()
 
-		log.trace(f"Loaded {len(self._data)} entries")
+		core.trace(log, f"Loaded {len(self._data)} entries")
 		showMemoryUsage()
 
 	def _createWriter(

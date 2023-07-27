@@ -25,7 +25,7 @@ from pyglossary.core import log, pip
 from . import languages
 
 try:
-	import pymorphy2
+	import pymorphy2  # type: ignore
 except ImportError:
 	log.error(f"""module pymorphy2 is required to build extended Russian indexes.
 You can download it here: http://pymorphy2.readthedocs.org/en/latest/.

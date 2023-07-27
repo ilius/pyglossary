@@ -38,6 +38,13 @@ logging.addLevelName(TRACE, "TRACE")
 noColor = False
 
 
+def trace(log: logging.Logger, msg: str) -> None:
+	func = getattr(log, "trace", None)
+	if func is None:
+		log.error(f"Logger {log} has no 'trace' method")
+		return
+	func(msg)
+
 
 class Formatter(logging.Formatter):
 	def __init__(self: "typing.Self", *args, **kwargs) -> None:  # noqa: ANN
@@ -92,9 +99,6 @@ class MyLogger(logging.Logger):
 	def pretty(self: "typing.Self", data: "Any", header: str = "") -> None:
 		from pprint import pformat
 		self.debug(header + pformat(data))
-
-	def isDebug(self: "typing.Self") -> bool:
-		return self.getVerbosity() >= 4
 
 	def newFormatter(self: "typing.Self") -> Formatter:
 		timeEnable = self._timeEnable
@@ -299,6 +303,9 @@ def getDataDir() -> str:
 
 logging.setLoggerClass(MyLogger)
 log = cast(MyLogger, logging.getLogger("pyglossary"))
+
+def isDebug() -> bool:
+	return log.getVerbosity() >= 4
 
 if os.sep == "\\":
 	def windows_show_exception(

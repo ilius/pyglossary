@@ -20,7 +20,6 @@
 import logging
 import os
 import sys
-import types
 from os.path import isdir, join
 from typing import Any
 
@@ -42,7 +41,7 @@ log = logging.getLogger("pyglossary")
 class PluginManager(object):
 	plugins: "dict[str, PluginProp]" = {}
 	pluginByExt: "dict[str, PluginProp]" = {}
-	loadedModules: "set[types.ModuleType]" = set()
+	loadedModules: "set[str]" = set()
 
 	formatsReadOptions: "dict[str, dict[str, Any]]" = {}
 	formatsWriteOptions: "dict[str, dict[str, Any]]" = {}
@@ -52,7 +51,7 @@ class PluginManager(object):
 	writeFormats: "list[str]" = []
 
 	@classmethod
-	def loadPluginsFromJson(cls: "type", jsonPath: str) -> None:
+	def loadPluginsFromJson(cls: "type[PluginManager]", jsonPath: str) -> None:
 		import json
 		from os.path import join
 
@@ -69,7 +68,7 @@ class PluginManager(object):
 
 	@classmethod
 	def loadPlugins(
-		cls: "type",
+		cls: "type[PluginManager]",
 		directory: str,
 		skipDisabled: bool = True,
 	) -> None:
@@ -100,7 +99,7 @@ class PluginManager(object):
 
 	@classmethod
 	def _loadPluginByDict(
-		cls: "type",
+		cls: "type[PluginManager]",
 		attrs: "dict[str, Any]",
 		modulePath: str,
 	) -> None:
@@ -139,7 +138,7 @@ class PluginManager(object):
 
 	@classmethod
 	def _loadPlugin(
-		cls: "type",
+		cls: "type[PluginManager]",
 		moduleName: str,
 		skipDisabled: bool = True,
 	) -> None:
@@ -185,7 +184,10 @@ class PluginManager(object):
 			cls.writeFormats.append(name)
 
 	@classmethod
-	def _findPlugin(cls: "type", query: str) -> "PluginProp | None":
+	def _findPlugin(
+		cls: "type[PluginManager]",
+		query: str,
+	) -> "PluginProp | None":
 		"""
 			find plugin by name or extension
 		"""
@@ -199,7 +201,7 @@ class PluginManager(object):
 
 	@classmethod
 	def detectInputFormat(
-		cls: "type",
+		cls: "type[PluginManager]",
 		filename: str,
 		format: str = "",
 		quiet: bool = False,
@@ -242,7 +244,7 @@ class PluginManager(object):
 
 	@classmethod
 	def detectOutputFormat(
-		cls: "type",
+		cls: "type[PluginManager]",
 		filename: str = "",
 		format: str = "",
 		inputFilename: str = "",
@@ -259,19 +261,27 @@ class PluginManager(object):
 				log.critical(msg)
 			return
 
+		# Ugh, mymy
+		# https://github.com/python/mypy/issues/6549
+		# > Mypy assumes that the return value of methods that return None should not
+		# > be used. This helps guard against mistakes where you accidentally use the
+		# > return value of such a method (e.g., saying new_list = old_list.sort()).
+		# > I don't think there's a bug here.
+		# Sorry, but that's not the job of a type checker at all!
+
 		plugin = None
 		if format:
 			plugin = cls.plugins.get(format)
 			if not plugin:
-				return error(f"Invalid format {format}")
+				return error(f"Invalid format {format}")  # type: ignore
 			if not plugin.canWrite:
-				return error(f"plugin {plugin.name} does not support writing")
+				return error(f"plugin {plugin.name} does not support writing")  # type: ignore
 
 		if not filename:
 			if not inputFilename:
-				return error(f"Invalid filename {filename!r}")
+				return error(f"Invalid filename {filename!r}")  # type: ignore
 			if not plugin:
-				return error("No filename nor format is given for output file")
+				return error("No filename nor format is given for output file")  # type: ignore
 			filename = splitext(inputFilename)[0] + plugin.ext
 			return filename, plugin.name, ""
 
@@ -284,10 +294,10 @@ class PluginManager(object):
 				plugin = cls._findPlugin(filename)
 
 		if not plugin:
-			return error("Unable to detect output format!")
+			return error("Unable to detect output format!")  # type: ignore
 
 		if not plugin.canWrite:
-			return error(f"plugin {plugin.name} does not support writing")
+			return error(f"plugin {plugin.name} does not support writing")  # type: ignore
 
 		if compression in getattr(plugin.writerClass, "compressions", []):
 			compression = ""
@@ -307,7 +317,7 @@ class PluginManager(object):
 
 	@classmethod
 	def init(
-		cls: "type",
+		cls: "type[PluginManager]",
 		usePluginsJson: bool = True,
 		skipDisabledPlugins: bool = True,
 	) -> None:

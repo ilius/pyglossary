@@ -10,6 +10,7 @@ log = logging.getLogger("pyglossary")
 
 def optionFromDict(data: "dict[str, Any]") -> "Option":
 	className = data.pop("class")
+	optClass: type
 	if className == "Option":
 		data["typ"] = data.pop("type")
 		optClass = Option
@@ -23,7 +24,7 @@ class Option(object):
 	classes: "dict[str, type]" = {}
 
 	@classmethod
-	def register(cls: "type", optClass: "type") -> "type":
+	def register(cls: "type[Option]", optClass: "type") -> "type":
 		cls.classes[optClass.__name__] = optClass
 		return optClass
 

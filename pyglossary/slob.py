@@ -50,7 +50,7 @@ from typing import (
 )
 from uuid import UUID, uuid4
 
-import icu
+import icu  # type: ignore
 from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 
 if TYPE_CHECKING:

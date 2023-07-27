@@ -57,6 +57,7 @@ if TYPE_CHECKING:
 
 from zlib import decompress
 
+from pyglossary import core
 from pyglossary.apple_utils import substituteAppleCSS
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -159,7 +160,7 @@ class Reader(object):
 			e.msg += f", run `{pip} install lxml` to install"
 			raise e from None
 		try:
-			import biplist  # noqa: F401
+			import biplist  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install biplist` to install"
 			raise e from None
@@ -659,7 +660,7 @@ class Reader(object):
 				fname = relPath + "/" + fname
 			if os.path == "\\":
 				fname = fname.replace("\\", "/")
-			log.trace(f"Using resource {fpath!r} as {fname!r}")
+			core.trace(log, f"Using resource {fpath!r} as {fname!r}")
 			yield self.readResFile(fname, fpath, ext)
 
 	def __iter__(self: "typing.Self") -> Iterator[EntryType]:

@@ -1,7 +1,5 @@
-
-import typing
-
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 #
 # Copyright © 2020 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 #
@@ -17,6 +15,9 @@ import typing
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+
+import typing
+
 from . import gtk
 from .utils import (
 	VBox,

@@ -10,7 +10,7 @@ class MockLogHandler(logging.Handler):
 		self.clear()
 
 	def clear(self: "typing.Self"):
-		self.recordsByLevel = {}
+		self.recordsByLevel: dict[int, list[logging.LogRecord]] = {}
 
 	def emit(self: "typing.Self", record):
 		level = record.levelno

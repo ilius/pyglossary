@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 #
 # Copyright © 2012-2022 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # This file is part of PyGlossary project, https://github.com/ilius/pyglossary

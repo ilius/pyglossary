@@ -1,6 +1,6 @@
 import typing
 from collections import namedtuple
-from typing import Optional, Tuple
+from typing import Optional, Tuple, cast
 from xml.sax.saxutils import escape
 
 from pyglossary.core import log
@@ -89,7 +89,7 @@ def lexCurly(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 
 	tr2 = Transformer(tr.input[start:tr.pos-1])
 	res, err = tr2.transform()
-	if err:
+	if err or res is None:
 		return None, err
 	tr.title += res.output
 
@@ -141,9 +141,10 @@ class TitleTransformer:
 		self.title += esc
 
 	def transform(self: "typing.Self") -> Tuple[Optional[TitleResult], ErrorType]:
-		lex = lexRoot
+		lex: LexType = lexRoot
+		tr = cast(TransformerType, self)
 		while lex is not None:
-			lex, err = lex(self)
+			lex, err = lex(tr)
 			if err:
 				return None, err
 		return TitleResult(

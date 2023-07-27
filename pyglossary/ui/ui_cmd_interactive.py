@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 # ui_cmd_interactive.py
 #
 # Copyright © 2008-2022 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)

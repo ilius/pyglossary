@@ -17,8 +17,10 @@ class T_Collator(typing.Protocol):
 	QUATERNARY: int = 3
 	IDENTICAL: int = 15
 
+	# mypy: error: Self argument missing for a non-static method
+	# (or an invalid type for self)  [misc]
 	@classmethod
-	def createInstance(loc: "T_Locale | None" = None) -> "T_Collator":
+	def createInstance(loc: "T_Locale | None" = None) -> "T_Collator":  # type: ignore
 		pass
 
 	@property

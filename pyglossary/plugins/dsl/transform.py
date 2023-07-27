@@ -1,10 +1,10 @@
 import re
 import typing
 from collections import namedtuple
-from typing import Optional, Tuple
+from typing import Optional, Tuple, cast
 from xml.sax.saxutils import escape
 
-from ._types import ErrorType
+from ._types import ErrorType, LexType, TransformerType
 from .lex import lexRoot
 
 re_comment_block = re.compile(r"\{\{([^}]*)\}\}")
@@ -54,7 +54,7 @@ class Transformer:
 		# self.absPos += 1
 		return c  # noqa: RET504
 
-	def resetBuf(self: "typing.Self") -> str:
+	def resetBuf(self: "typing.Self") -> None:
 		self.start = self.pos
 		self.attrName = ""
 		self.attrs = {}
@@ -92,9 +92,10 @@ class Transformer:
 		# TODO: implement these 2 with lex functions
 		self.input = re_comment_block.sub("", self.input)
 
-		lex = lexRoot
+		lex: LexType = lexRoot
+		tr = cast(TransformerType, self)
 		while lex is not None:
-			lex, err = lex(self)
+			lex, err = lex(tr)
 			if err:
 				return None, err
 		return Result(self.output, self.resFileSet), None

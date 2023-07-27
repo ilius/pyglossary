@@ -14,6 +14,17 @@ MultiStr: "TypeAlias" = "str | list[str]"
 class BaseEntry:
 	__slots__: "list[str]" = []
 
+	def __init__(self: "typing.Self") -> None:
+		self._word: "str | list[str]"
+
+	@property
+	def s_word(self: "typing.Self") -> str:
+		raise NotImplementedError
+
+	@property
+	def defi(self: "typing.Self") -> str:
+		raise NotImplementedError
+
 	@property
 	def b_word(self: "typing.Self") -> bytes:
 		"""

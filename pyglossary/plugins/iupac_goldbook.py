@@ -1,7 +1,8 @@
 
-import typing
-
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
+
+import typing
 from io import BytesIO
 from typing import TYPE_CHECKING, Iterator
 

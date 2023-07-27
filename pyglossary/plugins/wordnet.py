@@ -323,6 +323,7 @@ class Reader(object):
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0
+		self.wordnet: "WordNet | None" = None
 
 	def __len__(self: "typing.Self") -> int:
 		return self._wordCount
@@ -338,6 +339,8 @@ class Reader(object):
 		self.wordnet = None
 
 	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+		if self.wordnet is None:
+			raise ValueError("self.wordnet is None")
 		glos = self._glos
 		for word, defi in self.wordnet.process():
 			yield glos.newEntry(word, defi)

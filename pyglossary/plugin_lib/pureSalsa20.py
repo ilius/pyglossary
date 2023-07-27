@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
+# mypy: ignore-errors
 
 # Copyright (C) 2016-2023 Saeed Rasooli on https://github.com/ilius/pyglossary/
 # Copyright (C) 2015 Z. H. Liu on https://github.com/zhansliu/writemdict
