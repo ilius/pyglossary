@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import typing
 from os.path import isdir, isfile, join
 from typing import Generator, Iterator
 
@@ -48,19 +47,19 @@ optionsProp: "dict[str, Option]" = {
 
 
 class Reader(TextGlossaryReader):
-	def __init__(self: "typing.Self", glos: GlossaryType, hasInfo: bool = True) -> None:
+	def __init__(self, glos: GlossaryType, hasInfo: bool = True) -> None:
 		TextGlossaryReader.__init__(self, glos, hasInfo=hasInfo)
 		self._resDir = ""
 		self._resFileNames = []
 
-	def open(self: "typing.Self", filename: str) -> "Iterator[tuple[int, int]]":
+	def open(self, filename: str) -> "Iterator[tuple[int, int]]":
 		yield from TextGlossaryReader.openGen(self, filename)
 		resDir = f"{filename}_res"
 		if isdir(resDir):
 			self._resDir = resDir
 			self._resFileNames = os.listdir(self._resDir)
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		yield from TextGlossaryReader.__iter__(self)
 		resDir = self._resDir
 		for fname in self._resFileNames:
@@ -74,13 +73,13 @@ class Reader(TextGlossaryReader):
 					_file.read(),
 				)
 
-	def isInfoWord(self: "typing.Self", word: str) -> bool:
+	def isInfoWord(self, word: str) -> bool:
 		return word.startswith("#")
 
-	def fixInfoWord(self: "typing.Self", word: str) -> str:
+	def fixInfoWord(self, word: str) -> str:
 		return word.lstrip("#")
 
-	def nextBlock(self: "typing.Self") -> "tuple[str, str, None] | None":
+	def nextBlock(self) -> "tuple[str, str, None] | None":
 		if not self._file:
 			raise StopIteration
 		line = self.readline()
@@ -118,20 +117,20 @@ class Writer(object):
 
 	compressions = stdCompressions
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 
 	def open(
-		self: "typing.Self",
+		self,
 		filename: str,
 	) -> None:
 		self._filename = filename
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		pass
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_utils import escapeNTB, joinByBar
 		from pyglossary.text_writer import TextGlossaryWriter
 		writer = TextGlossaryWriter(

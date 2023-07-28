@@ -19,7 +19,6 @@
 
 import csv
 import os
-import typing
 from os.path import isdir, join
 from typing import Generator, Iterator
 
@@ -78,11 +77,11 @@ class Reader(object):
 	_newline: str = "\n"
 	_delimiter: str = ","
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self.clear()
 
-	def clear(self: "typing.Self") -> None:
+	def clear(self) -> None:
 		self._filename = ""
 		self._file = None
 		self._fileSize = 0
@@ -95,7 +94,7 @@ class Reader(object):
 		self._bufferRow = None
 
 	def open(
-		self: "typing.Self",
+		self,
 		filename: str,
 	) -> None:
 		from pyglossary.text_reader import TextFilePosWrapper
@@ -138,7 +137,7 @@ class Reader(object):
 				continue
 			self._glos.setInfo(row[0].lstrip("#"), row[1])
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			try:
 				self._file.close()
@@ -146,7 +145,7 @@ class Reader(object):
 				log.exception("error while closing csv file")
 		self.clear()
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		from pyglossary.file_utils import fileCountLines
 		if self._wordCount is None:
 			if hasattr(self._file, "compression"):
@@ -156,13 +155,13 @@ class Reader(object):
 				self._leadingLinesCount
 		return self._wordCount + len(self._resFileNames)
 
-	def _iterRows(self: "typing.Self") -> "Iterator[list[str]]":
+	def _iterRows(self) -> "Iterator[list[str]]":
 		if self._bufferRow:
 			yield self._bufferRow
 		for row in self._csvReader:
 			yield row
 
-	def _processRow(self: "typing.Self", row: "list[str]") -> "EntryType | None":
+	def _processRow(self, row: "list[str]") -> "EntryType | None":
 		if not row:
 			return None
 
@@ -190,7 +189,7 @@ class Reader(object):
 			),
 		)
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if not self._csvReader:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -221,10 +220,10 @@ class Writer(object):
 	_enable_info: bool = True
 	_word_title: bool = False
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = compressionOpen(
 			filename,
@@ -245,7 +244,7 @@ class Writer(object):
 			for key, value in self._glos.iterInfo():
 				self._csvWriter.writerow([f"#{key}", value])
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		self._filename = None
 		if self._file:
 			self._file.close()
@@ -253,7 +252,7 @@ class Writer(object):
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		resources = self._resources
 		add_defi_format = self._add_defi_format
 		glos = self._glos

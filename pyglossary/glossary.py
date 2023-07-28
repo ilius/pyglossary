@@ -1,5 +1,4 @@
 
-import typing
 
 # -*- coding: utf-8 -*-
 # glossary.py
@@ -33,14 +32,14 @@ class Glossary(GlossaryCommon):
 	GLOSSARY_API_VERSION = "1.0"
 
 	def titleElement(  # noqa: ANN
-		self: "typing.Self",
+		self,
 		hf,  # type: ignore # noqa: PGH
 		sample: str = "",
 	):  # type: ignore # noqa: PGH
 		return hf.element(self.titleTag(sample))
 
 	def read(
-		self: "typing.Self",
+		self,
 		filename: str,
 		format: str = "",
 		direct: bool = False,
@@ -84,14 +83,14 @@ class Glossary(GlossaryCommon):
 
 		return True
 
-	def addEntryObj(self: "typing.Self", entry: "EntryType") -> None:
+	def addEntryObj(self, entry: "EntryType") -> None:
 		self._data.append(entry)
 
-	def updateIter(self: "typing.Self") -> None:
+	def updateIter(self) -> None:
 		log.warning("calling glos.updateIter() is no longer needed.")
 
 	def sortWords(
-		self: "typing.Self",
+		self,
 		sortKeyName: "str" = "headword_lower",
 		sortEncoding: "str" = "utf-8",
 		writeOptions: "dict[str, Any] | None" = None,
@@ -132,7 +131,7 @@ class Glossary(GlossaryCommon):
 		self._iter = self._loadedEntryGen()
 
 	def convert(
-		self: "typing.Self",
+		self,
 		inputFilename: str,
 		inputFormat: str = "",
 		direct: "bool | None" = None,

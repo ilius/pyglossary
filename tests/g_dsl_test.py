@@ -12,7 +12,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryDSL(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -27,7 +27,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 		})
 
 	def convert_string_dsl_txt(
-		self: "typing.Self",
+		self,
 		dsl: str,
 		txtExpected: str,
 		removeInfo: bool = True,
@@ -60,7 +60,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 
 		self.assertEqual(txtExpected, txtActual)
 
-	def convert_dsl_txt(self: "typing.Self", fname, fname2, **convertArgs):
+	def convert_dsl_txt(self, fname, fname2, **convertArgs):
 		self.convert(
 			f"dsl/{fname}.dsl",
 			f"{fname}-2.txt",
@@ -68,31 +68,31 @@ class TestGlossaryDSL(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_russianAmericanEnglish(self: "typing.Self"):
+	def test_russianAmericanEnglish(self):
 		self.convert_dsl_txt(
 			"100-RussianAmericanEnglish-ru-en",
 			"100-RussianAmericanEnglish-ru-en-v3",
 		)
 
-	def test_empty_lines_br(self: "typing.Self"):
+	def test_empty_lines_br(self):
 		self.convert_dsl_txt(
 			"001-empty-lines-br",
 			"001-empty-lines-br",
 		)
 
-	def test_m_tag_multiline_paragraph(self: "typing.Self"):
+	def test_m_tag_multiline_paragraph(self):
 		self.convert_dsl_txt(
 			"002-m-tag_multiline-paragraph",
 			"002-m-tag_multiline-paragraph-v2",
 		)
 
-	def test_ref_target_c(self: "typing.Self"):
+	def test_ref_target_c(self):
 		self.convert_dsl_txt(
 			"003-ref-target-c",
 			"003-ref-target-c",
 		)
 
-	def test_headword_formatting_bashkir_basque(self: "typing.Self"):
+	def test_headword_formatting_bashkir_basque(self):
 		# from Bashkir -> Basque dict (001-headword-with-formatting.dsl)
 		dsl = (
 			'{[c slategray]}{to }{[/c]}tell '
@@ -110,7 +110,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 		)
 		self.convert_string_dsl_txt(dsl, txt)
 
-	def test_headword_formatting_english(self: "typing.Self"):
+	def test_headword_formatting_english(self):
 		dsl = (
 			'{[c slategray]}{to }{[/c]}tell'
 			' {[c violet]}smb{[/c]} {[u]}how{[/u]}'
@@ -130,31 +130,31 @@ class TestGlossaryDSL(TestGlossaryBase):
 		)
 		self.convert_string_dsl_txt(dsl, txt)
 
-	def test_headword_paran(self: "typing.Self"):
+	def test_headword_paran(self):
 		self.convert_string_dsl_txt(
 			"headword with (parenthesis)\n    test",
 			'headword with parenthesis|headword with\ttest',
 		)
 
-	def test_headword_paran_2(self: "typing.Self"):
+	def test_headword_paran_2(self):
 		self.convert_string_dsl_txt(
 			"(headword with) parenthesis\n    test",
 			'headword with parenthesis|parenthesis\ttest',
 		)
 
-	def test_headword_paran_escaped(self: "typing.Self"):
+	def test_headword_paran_escaped(self):
 		self.convert_string_dsl_txt(
 			"headword \\(with escaped parenthesis\\)\n    test",
 			'headword (with escaped parenthesis)\ttest',
 		)
 
-	def test_headword_paran_escaped_2(self: "typing.Self"):
+	def test_headword_paran_escaped_2(self):
 		self.convert_string_dsl_txt(
 			"headword (with escaped right \\) parenthesis)\n    test",
 			'headword with escaped right \\\\) parenthesis|headword\ttest',
 		)
 
-	def test_headword_curly(self: "typing.Self"):
+	def test_headword_curly(self):
 		txt = (
 			'headword with curly brackets\t'
 			'<b>headword with <b>curly brackets</b></b><br/>test'
@@ -164,37 +164,37 @@ class TestGlossaryDSL(TestGlossaryBase):
 			txt,
 		)
 
-	def test_headword_curly_escaped(self: "typing.Self"):
+	def test_headword_curly_escaped(self):
 		self.convert_string_dsl_txt(
 			"headword with escaped \\{\\}curly brackets\\{\n    test",
 			'headword with escaped {}curly brackets{\ttest',
 		)
 
-	def test_double_brackets_1(self: "typing.Self"):
+	def test_double_brackets_1(self):
 		self.convert_string_dsl_txt(
 			"test\n    hello [[world]]",
 			'test\thello [world]',
 		)
 
-	def test_double_brackets_2(self: "typing.Self"):
+	def test_double_brackets_2(self):
 		self.convert_string_dsl_txt(
 			"test\n    hello [[",
 			'test\thello [',
 		)
 
-	def test_double_brackets_3(self: "typing.Self"):
+	def test_double_brackets_3(self):
 		self.convert_string_dsl_txt(
 			"test\n    hello ]]",
 			'test\thello ]',
 		)
 
-	def test_ref_double_ltgt(self: "typing.Self"):
+	def test_ref_double_ltgt(self):
 		self.convert_string_dsl_txt(
 			"test\n    hello <<world>>",
 			'test\thello <a href="bword://world">world</a>',
 		)
 
-	def test_ref_double_ltgt_escaped(self: "typing.Self"):
+	def test_ref_double_ltgt_escaped(self):
 		self.convert_string_dsl_txt(
 			"test\n    hello \\<<world\\>>",
 			'test\thello &lt;&lt;world&gt;&gt;',

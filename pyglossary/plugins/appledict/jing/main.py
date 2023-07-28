@@ -3,7 +3,6 @@
 import logging
 import subprocess
 import sys
-import typing
 from os import path
 
 __all__ = ["JingTestError", "run", "main"]
@@ -20,14 +19,14 @@ class JingTestError(subprocess.CalledProcessError):
 	"""
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		returncode: int,
 		cmd: "list[str]",
 		output: bytes,
 	) -> None:
 		super(JingTestError, self).__init__(returncode, cmd, output)
 
-	def __str__(self: "typing.Self") -> str:
+	def __str__(self) -> str:
 		return "\n".join([
 			f"Jing check failed with exit code {self.returncode}:",
 			"-" * 80,

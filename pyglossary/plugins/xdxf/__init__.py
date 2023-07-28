@@ -22,7 +22,6 @@
 # GNU General Public License for more details.
 
 import re
-import typing
 from typing import TYPE_CHECKING, Iterator, Sequence
 
 if TYPE_CHECKING:
@@ -106,7 +105,7 @@ class Reader(object):
 		"full_title": "name",
 	}
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None
@@ -116,7 +115,7 @@ class Reader(object):
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
 
-	def makeTransformer(self: "typing.Self") -> None:
+	def makeTransformer(self) -> None:
 		if self._xsl:
 			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 			self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
@@ -124,7 +123,7 @@ class Reader(object):
 		from pyglossary.xdxf.transform import XdxfTransformer
 		self._htmlTr = XdxfTransformer(encoding=self._encoding)
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		from lxml import etree as ET
 		self._filename = filename
@@ -180,10 +179,10 @@ class Reader(object):
 			self._file.close()
 			self._file = compressionOpen(self._filename, mode="rb")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 		from lxml.etree import tostring
 
@@ -217,12 +216,12 @@ class Reader(object):
 			while article.getprevious() is not None:
 				del article.getparent()[0]
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
 
-	def read_metadata_old(self: "typing.Self") -> None:
+	def read_metadata_old(self) -> None:
 		full_name = self._xdxf.find("full_name").text
 		desc = self._xdxf.find("description").text
 		if full_name:
@@ -230,7 +229,7 @@ class Reader(object):
 		if desc:
 			self._glos.setInfo("description", desc)
 
-	def read_metadata_new(self: "typing.Self") -> None:
+	def read_metadata_new(self) -> None:
 		meta_info = self._xdxf.find("meta_info")
 		if meta_info is None:
 			raise ValueError("meta_info not found")
@@ -246,7 +245,7 @@ class Reader(object):
 			self._glos.setInfo("description", desc)
 
 	def tostring(
-		self: "typing.Self",
+		self,
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -256,7 +255,7 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def titles(self: "typing.Self", article: "Element") -> "list[str]":
+	def titles(self, article: "Element") -> "list[str]":
 		"""
 
 		:param article: <ar> tag
@@ -280,7 +279,7 @@ class Reader(object):
 		return titles
 
 	def _mktitle(
-		self: "typing.Self",
+		self,
 		title_element: "Element",
 		include_opts: "Sequence | None" = None,
 	) -> str:

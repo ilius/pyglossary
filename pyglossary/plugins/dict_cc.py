@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import html
-import typing
 from operator import itemgetter
 from typing import TYPE_CHECKING, Callable, Iterator, cast
 
@@ -29,23 +28,23 @@ website = (
 
 
 class Reader(object):
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self: "typing.Self") -> None:
+	def _clear(self) -> None:
 		self._filename = ''
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("h")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self._cur is None:
 			raise ValueError("cur is None")
 		self._cur.execute(
@@ -54,7 +53,7 @@ class Reader(object):
 		return self._cur.fetchone()[0]
 
 	def makeList(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		input_elements: "list[Element]",
 		processor: "Callable",
@@ -76,7 +75,7 @@ class Reader(object):
 					processor(hf, el)
 
 	def makeGroupsList(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		groups: "list[tuple[str, str]]",
 		processor: "Callable[[T_htmlfile, tuple[str, str]], None]",
@@ -98,7 +97,7 @@ class Reader(object):
 					processor(hf, el)
 
 	def writeSense(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		row: "tuple[str, str]",
 	) -> None:
@@ -119,7 +118,7 @@ class Reader(object):
 					hf.write("⏎")
 
 	def iterRows(
-		self: "typing.Self",
+		self,
 		column1: str,
 		column2: str,
 	) -> "Iterator[tuple[str, str, str]]":
@@ -142,7 +141,7 @@ class Reader(object):
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
-	def parseGender(self: "typing.Self", headword: str) -> "tuple[str | None, str]":
+	def parseGender(self, headword: str) -> "tuple[str | None, str]":
 		# {m}	masc	masculine	German: maskulin
 		# {f}	fem 	feminine	German: feminin
 		# {n}	neut	neutral		German: neutral
@@ -169,7 +168,7 @@ class Reader(object):
 		return gender, headword
 
 	def _iterOneDirection(
-		self: "typing.Self",
+		self,
 		column1: str,
 		column2: str,
 	) -> "Iterator[EntryType]":
@@ -204,11 +203,11 @@ class Reader(object):
 			defi = f.getvalue().decode("utf-8")
 			yield glos.newEntry(headword, defi, defiFormat="h")
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		yield from self._iterOneDirection("term1", "term2")
 		yield from self._iterOneDirection("term2", "term1")
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:

@@ -22,7 +22,6 @@
 # GNU General Public License for more details.
 
 import re
-import typing
 from typing import TYPE_CHECKING, Iterator, Sequence
 
 if TYPE_CHECKING:
@@ -77,7 +76,7 @@ class Reader(object):
 		"full_title": "name",
 	}
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None
@@ -102,7 +101,7 @@ class Reader(object):
 			return index, buf[:index]
 		return -1, buf
 
-	def readMetadata(self: "typing.Self"):
+	def readMetadata(self):
 		from lxml.etree import XML
 
 		descStart, _ = self.readUntil(b"<description")
@@ -122,7 +121,7 @@ class Reader(object):
 			key = self.infoKeyMap.get(elem.tag, elem.tag)
 			self._glos.setInfo(key, elem.text)
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		self._filename = filename
 		if self._html:
@@ -143,10 +142,10 @@ class Reader(object):
 		cfile.seek(0)
 		self._glos.setInfo("input_file_size", f"{self._fileSize}")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml.html import fromstring, tostring
 
 		while True:
@@ -183,13 +182,13 @@ class Reader(object):
 			)
 
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
 
 	def tostring(
-		self: "typing.Self",
+		self,
 		elem: "Element",
 	) -> str:
 		from lxml.html import tostring
@@ -199,7 +198,7 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def titles(self: "typing.Self", article: "Element") -> "list[str]":
+	def titles(self, article: "Element") -> "list[str]":
 		"""
 
 		:param article: <ar> tag
@@ -224,7 +223,7 @@ class Reader(object):
 		return titles
 
 	def _mktitle(
-		self: "typing.Self",
+		self,
 		title_element: "Element",
 		include_opts: "Sequence | None" = None,
 	) -> str:

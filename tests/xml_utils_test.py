@@ -10,7 +10,7 @@ from pyglossary.xml_utils import xml_escape
 
 
 class Test_xml_escape(unittest.TestCase):
-	def test(self: "typing.Self"):
+	def test(self):
 		f = xml_escape
 		self.assertEqual(f(''), '')
 		self.assertEqual(f('abc'), 'abc')

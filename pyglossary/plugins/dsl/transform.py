@@ -1,5 +1,4 @@
 import re
-import typing
 from collections import namedtuple
 from typing import Optional, Tuple, cast
 from xml.sax.saxutils import escape
@@ -22,7 +21,7 @@ Result = namedtuple(
 # called Lexer by Rob Pike in "Lexical Scanning" video)
 class Transformer:
 	def __init__(
-		self: "typing.Self",
+		self,
 		input: str,
 		currentKey: str = "",
 		exampleColor: str = "steelblue",
@@ -41,25 +40,25 @@ class Transformer:
 		self.exampleColor = exampleColor
 		self.audio = audio
 
-	def end(self: "typing.Self") -> bool:
+	def end(self) -> bool:
 		return self.pos >= len(self.input)
 
-	def move(self: "typing.Self", chars: int) -> None:
+	def move(self, chars: int) -> None:
 		self.pos += chars
 		# self.absPos += chars
 
-	def next(self: "typing.Self") -> str:
+	def next(self) -> str:
 		c = self.input[self.pos]
 		self.pos += 1
 		# self.absPos += 1
 		return c  # noqa: RET504
 
-	def resetBuf(self: "typing.Self") -> None:
+	def resetBuf(self) -> None:
 		self.start = self.pos
 		self.attrName = ""
 		self.attrs = {}
 
-	def follows(self: "typing.Self", st: str) -> bool:
+	def follows(self, st: str) -> bool:
 		'''
 		check if current position follows the string `st`
 		'''
@@ -72,7 +71,7 @@ class Transformer:
 			pos += 1
 		return True
 
-	def skipAny(self: "typing.Self", chars: str) -> None:
+	def skipAny(self, chars: str) -> None:
 		'''
 		skip any of the characters that are in `chars`
 		'''
@@ -85,10 +84,10 @@ class Transformer:
 			pos += 1
 		self.pos = pos
 
-	def addText(self: "typing.Self", st: str) -> None:
+	def addText(self, st: str) -> None:
 		self.output += escape(st)
 
-	def transform(self: "typing.Self") -> Tuple[Optional[Result], ErrorType]:
+	def transform(self) -> Tuple[Optional[Result], ErrorType]:
 		# TODO: implement these 2 with lex functions
 		self.input = re_comment_block.sub("", self.input)
 

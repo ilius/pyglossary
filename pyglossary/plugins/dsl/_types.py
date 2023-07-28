@@ -14,28 +14,28 @@ class TransformerType(typing.Protocol):
 	resFileSet: "set[str]"
 	exampleColor: str
 
-	def __init__(self: "typing.Self") -> None:
+	def __init__(self) -> None:
 		pass
 
-	def end(self: "typing.Self") -> bool:
+	def end(self) -> bool:
 		pass
 
-	def move(self: "typing.Self", chars: int) -> None:
+	def move(self, chars: int) -> None:
 		pass
 
-	def next(self: "typing.Self") -> str:
+	def next(self) -> str:
 		pass
 
-	def follows(self: "typing.Self", st: str) -> bool:
+	def follows(self, st: str) -> bool:
 		pass
 
-	def skipAny(self: "typing.Self", chars: str):
+	def skipAny(self, chars: str):
 		pass
 
-	def addText(self: "typing.Self", st: str) -> None:
+	def addText(self, st: str) -> None:
 		pass
 
-	def resetBuf(self: "typing.Self") -> str:
+	def resetBuf(self) -> str:
 		pass
 
 
@@ -43,7 +43,7 @@ class TitleTransformerType(TransformerType, typing.Protocol):
 	title: str
 	outputAlt: str
 
-	def addText2(self: "typing.Self", st: str) -> None:
+	def addText2(self, st: str) -> None:
 		pass
 
 

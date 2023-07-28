@@ -1,7 +1,6 @@
 
 import json
 import logging
-import typing
 from os.path import join
 
 from pyglossary.core import rootDir
@@ -11,7 +10,7 @@ log = logging.getLogger("pyglossary")
 
 class Lang(object):
 	def __init__(
-		self: "typing.Self",
+		self,
 		codes: "list[str]",
 		names: "list[str]",
 		titleTag: str = "b",
@@ -22,7 +21,7 @@ class Lang(object):
 		self._titleTag = titleTag
 		self._rtl = rtl
 
-	def __repr__(self: "typing.Self") -> str:
+	def __repr__(self) -> str:
 		return (
 			f'Lang('
 			f'codes={self._codes!r}, '
@@ -31,36 +30,36 @@ class Lang(object):
 			f')'
 		)
 
-	def __str__(self: "typing.Self") -> str:
+	def __str__(self) -> str:
 		return f"Lang({self._codes + self._names})"
 
 	@property
-	def codes(self: "typing.Self") -> "list[str]":
+	def codes(self) -> "list[str]":
 		return self._codes
 
 	@property
-	def names(self: "typing.Self") -> "list[str]":
+	def names(self) -> "list[str]":
 		return self._names
 
 	@property
-	def name(self: "typing.Self") -> str:
+	def name(self) -> str:
 		return self._names[0]
 
 	@property
-	def code(self: "typing.Self") -> str:
+	def code(self) -> str:
 		return self._codes[0]
 
 	@property
-	def titleTag(self: "typing.Self") -> str:
+	def titleTag(self) -> str:
 		return self._titleTag
 
 	@property
-	def rtl(self: "typing.Self") -> int:
+	def rtl(self) -> int:
 		return self._rtl
 
 
 class LangDict(dict):
-	def _addLang(self: "typing.Self", lang: "Lang") -> None:
+	def _addLang(self, lang: "Lang") -> None:
 		for key in lang.codes:
 			if key in self:
 				log.error(f"duplicate language code: {key}")
@@ -70,7 +69,7 @@ class LangDict(dict):
 				log.error(f"duplicate language name: {name}")
 			self[name.lower()] = lang
 
-	def load(self: "typing.Self") -> None:
+	def load(self) -> None:
 		from time import time as now
 		if len(self) > 0:
 			return
@@ -91,7 +90,7 @@ class LangDict(dict):
 			f"took {(now() - t0)*1000:.1f} ms",
 		)
 
-	def __getitem__(self: "typing.Self", key: str) -> "Lang | None":
+	def __getitem__(self, key: str) -> "Lang | None":
 		self.load()
 		return self.get(key.lower(), None)
 

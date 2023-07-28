@@ -1,5 +1,4 @@
 
-import typing
 
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING
@@ -14,19 +13,19 @@ MultiStr: "TypeAlias" = "str | list[str]"
 class BaseEntry:
 	__slots__: "list[str]" = []
 
-	def __init__(self: "typing.Self") -> None:
+	def __init__(self) -> None:
 		self._word: "str | list[str]"
 
 	@property
-	def s_word(self: "typing.Self") -> str:
+	def s_word(self) -> str:
 		raise NotImplementedError
 
 	@property
-	def defi(self: "typing.Self") -> str:
+	def defi(self) -> str:
 		raise NotImplementedError
 
 	@property
-	def b_word(self: "typing.Self") -> bytes:
+	def b_word(self) -> bytes:
 		"""
 			returns bytes of word,
 				and all the alternate words
@@ -35,7 +34,7 @@ class BaseEntry:
 		return self.s_word.encode("utf-8")
 
 	@property
-	def b_defi(self: "typing.Self") -> bytes:
+	def b_defi(self) -> bytes:
 		"""
 			returns bytes of definition,
 				and all the alternate definitions

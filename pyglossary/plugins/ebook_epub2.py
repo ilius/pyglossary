@@ -1,5 +1,4 @@
 
-import typing
 
 # -*- coding: utf-8 -*-
 # The MIT License (MIT)
@@ -205,7 +204,7 @@ p.groupDefinition {
 
 	COVER_TEMPLATE = "<meta name=\"cover\" content=\"{cover}\" />"
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		import uuid
 		EbookWriter.__init__(
 			self,
@@ -223,7 +222,7 @@ p.groupDefinition {
 			return "SPECIAL"
 		return prefix
 
-	def get_prefix(self: "typing.Self", word: str) -> str:
+	def get_prefix(self, word: str) -> str:
 		if not word:
 			return None
 		length = self._group_by_prefix_length
@@ -232,7 +231,7 @@ p.groupDefinition {
 			return "SPECIAL"
 		return prefix
 
-	def write_ncx(self: "typing.Self", group_labels: "list[str]") -> None:
+	def write_ncx(self, group_labels: "list[str]") -> None:
 		"""
 			write_ncx
 			only for epub

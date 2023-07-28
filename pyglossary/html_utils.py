@@ -97,8 +97,8 @@ name2codepoint = {
 	"Egrave": 0x00c8,  # È
 	"egrave": 0x00e8,  # è
 	"empty": 0x2205,  # ∅
-	"emsp": 0x2003,  #  
-	"ensp": 0x2002,  #  
+	"emsp": 0x2003,  #
+	"ensp": 0x2002,  #
 	"Epsilon": 0x0395,  # Ε
 	"epsilon": 0x03b5,  # ε
 	"equiv": 0x2261,  # ≡
@@ -265,7 +265,7 @@ name2codepoint = {
 	"Theta": 0x0398,  # Θ
 	"theta": 0x03b8,  # θ
 	"thetasym": 0x03d1,  # ϑ
-	"thinsp": 0x2009,  #  
+	"thinsp": 0x2009,  #
 	"THORN": 0x00de,  # Þ
 	"thorn": 0x00fe,  # þ
 	"tilde": 0x02dc,  # ˜

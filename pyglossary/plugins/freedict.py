@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import typing
 from io import BytesIO, IOBase
 from typing import TYPE_CHECKING, cast
 
@@ -136,7 +135,7 @@ class Reader(object):
 	gramClass = "grammar"
 
 	def makeList(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		input_objects: "list[Any]",
 		processor: "Callable",
@@ -165,14 +164,14 @@ class Reader(object):
 				with hf.element("li"):
 					processor(hf, el)
 
-	def getTitleTag(self: "typing.Self", sample: str) -> str:
+	def getTitleTag(self, sample: str) -> str:
 		ws = getWritingSystemFromText(sample)
 		if ws:
 			return ws.titleTag
 		return "b"
 
 	def writeRef(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		ref: "Element",
 	) -> None:
@@ -187,14 +186,14 @@ class Reader(object):
 			hf.write(ref.text or "")
 
 	def writeQuote(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
 		self.writeWithDirection(hf, elem, "div")
 
 	def writeTransCit(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
@@ -227,7 +226,7 @@ class Reader(object):
 		)
 
 	def writeDef(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
@@ -263,7 +262,7 @@ class Reader(object):
 			writeChild(child, 0)
 
 	def writeWithDirection(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		child: "Element",
 		tag: str,
@@ -293,7 +292,7 @@ class Reader(object):
 			self.writeRichText(hf, child)
 
 	def writeRichText(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		el: "Element",
 	) -> None:
@@ -321,7 +320,7 @@ class Reader(object):
 
 			self.writeRichText(hf, child)
 
-	def getLangDesc(self: "typing.Self", elem: "Element") -> "str | None":
+	def getLangDesc(self, elem: "Element") -> "str | None":
 		lang = elem.attrib.get(self.xmlLang)
 		if lang:
 			langObj = langDict[lang]
@@ -338,7 +337,7 @@ class Reader(object):
 		return None
 
 	def writeLangTag(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
@@ -352,14 +351,14 @@ class Reader(object):
 			hf.write(f"{langDesc}")
 
 	def writeNote(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		note: "Element",
 	) -> None:
 		self.writeRichText(hf, note)
 
 	def writeSenseSense(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		sense: "Element",
 	) -> int:
@@ -493,7 +492,7 @@ class Reader(object):
 
 		return len(transCits) + len(exampleCits)
 
-	def getCommaSep(self: "typing.Self", sample: str) -> str:
+	def getCommaSep(self, sample: str) -> str:
 		if self._auto_rtl:
 			ws = getWritingSystemFromText(sample)
 			if ws:
@@ -501,7 +500,7 @@ class Reader(object):
 		return ", "
 
 	def writeGramGroups(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		gramGrpList: "list[Element]",
 	) -> None:
@@ -532,14 +531,14 @@ class Reader(object):
 			hf.write(ET.Element("br"))
 
 	def writeSenseGrams(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		sense: "Element",
 	) -> None:
 		self.writeGramGroups(hf, sense.findall("gramGrp", self.ns))
 
 	def writeSense(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		sense: "Element",
 	) -> None:
@@ -553,7 +552,7 @@ class Reader(object):
 		)
 		self.writeSenseSense(hf, sense)
 
-	def getDirection(self: "typing.Self", elem: "Element") -> str:
+	def getDirection(self, elem: "Element") -> str:
 		lang = elem.get(self.xmlLang)
 		if lang is None:
 			return ""
@@ -566,7 +565,7 @@ class Reader(object):
 		return ""
 
 	def writeSenseList(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		senseList: "list[Element]",
 	) -> None:
@@ -589,7 +588,7 @@ class Reader(object):
 			# list_type="A",
 		)
 
-	def normalizeGramGrpChild(self: "typing.Self", elem: "Element") -> str:
+	def normalizeGramGrpChild(self, elem: "Element") -> str:
 		# child can be "pos" or "gen"
 		tag = elem.tag
 		text = elem.text
@@ -627,7 +626,7 @@ class Reader(object):
 		return ""
 
 	def getEntryByElem(
-		self: "typing.Self",
+		self,
 		entry:
 		"Element",
 	) -> "EntryType":
@@ -706,7 +705,7 @@ class Reader(object):
 			byteProgress=(_file.tell(), self._fileSize),
 		)
 
-	def setWordCount(self: "typing.Self", header: "Element") -> None:
+	def setWordCount(self, header: "Element") -> None:
 		extent_elem = header.find(".//extent", self.ns)
 		if extent_elem is None:
 			log.warning(
@@ -723,7 +722,7 @@ class Reader(object):
 		except Exception:
 			log.exception(f"unexpected {extent=}")
 
-	def tostring(self: "typing.Self", elem: "Element") -> str:
+	def tostring(self, elem: "Element") -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,
@@ -731,13 +730,13 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def stripParag(self: "typing.Self", elem: "Element") -> str:
+	def stripParag(self, elem: "Element") -> str:
 		text = self.tostring(elem)
 		text = self._p_pattern.sub("\\2", text)
 		return text  # noqa: RET504
 
 	def stripParagList(
-		self: "typing.Self",
+		self,
 		elems: "list[Element]",
 	) -> str:
 		lines = []
@@ -749,10 +748,10 @@ class Reader(object):
 				lines.append(line)
 		return "\n".join(lines)
 
-	def setGlosInfo(self: "typing.Self", key: str, value: str) -> None:
+	def setGlosInfo(self, key: str, value: str) -> None:
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setCopyright(self: "typing.Self", header: "Element") -> None:
+	def setCopyright(self, header: "Element") -> None:
 		elems = header.findall(".//availability//p", self.ns)
 		if not elems:
 			log.warning("did not find copyright")
@@ -762,23 +761,23 @@ class Reader(object):
 		self.setGlosInfo("copyright", copyright)
 		log.debug(f"Copyright: {copyright!r}")
 
-	def setPublisher(self: "typing.Self", header: "Element") -> None:
+	def setPublisher(self, header: "Element") -> None:
 		elem = header.find(".//publisher", self.ns)
 		if elem is None or not elem.text:
 			log.warning("did not find publisher")
 			return
 		self.setGlosInfo("publisher", elem.text)
 
-	def setCreationTime(self: "typing.Self", header: "Element") -> None:
+	def setCreationTime(self, header: "Element") -> None:
 		elem = header.find(".//publicationStmt/date", self.ns)
 		if elem is None or not elem.text:
 			return
 		self.setGlosInfo("creationTime", elem.text)
 
-	def replaceRefLink(self: "typing.Self", text: str) -> str:
+	def replaceRefLink(self, text: str) -> str:
 		return self._ref_pattern.sub('<a href="\\1">\\2</a>', text)
 
-	def setDescription(self: "typing.Self", header: "Element") -> None:
+	def setDescription(self, header: "Element") -> None:
 		elems = []
 		for tag in ("sourceDesc", "projectDesc"):
 			elems += header.findall(f".//{tag}//p", self.ns)
@@ -805,7 +804,7 @@ class Reader(object):
 			"--------------------------------------",
 		)
 
-	def setMetadata(self: "typing.Self", header: "Element") -> None:
+	def setMetadata(self, header: "Element") -> None:
 		self.setWordCount(header)
 		title = header.find(".//title", self.ns)
 		if title is not None and title.text:
@@ -820,7 +819,7 @@ class Reader(object):
 		self.setCreationTime(header)
 		self.setDescription(header)
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "IOBase | None" = None
@@ -839,10 +838,10 @@ class Reader(object):
 			'Home: <(ref|ptr) target="(.*)">(.*)</\\1>',
 		)
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return self._wordCount
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
@@ -850,7 +849,7 @@ class Reader(object):
 		self._fileSize = 0
 
 	def open(
-		self: "typing.Self",
+		self,
 		filename: str,
 	) -> None:
 		try:
@@ -886,7 +885,7 @@ class Reader(object):
 
 		cfile.close()
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		if self._auto_rtl is None:

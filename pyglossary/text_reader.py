@@ -1,6 +1,5 @@
 
 import logging
-import typing
 from os.path import isfile
 from typing import TYPE_CHECKING
 
@@ -24,23 +23,23 @@ nextBlockResultType = f"tuple[str, str, {resListType}] | None"
 
 
 class TextFilePosWrapper(object):
-	def __init__(self: "typing.Self", fileobj: "io.TextIOBase", encoding: str) -> None:
+	def __init__(self, fileobj: "io.TextIOBase", encoding: str) -> None:
 		self.fileobj = fileobj
 		self._encoding = encoding
 		self.pos = 0
 
-	def __iter__(self: "typing.Self") -> "Iterator[str]":
+	def __iter__(self) -> "Iterator[str]":
 		return self
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self.fileobj.close()
 
-	def __next__(self: "typing.Self") -> str:
+	def __next__(self) -> str:
 		line = self.fileobj.__next__()
 		self.pos += len(line.encode(self._encoding))
 		return line
 
-	def tell(self: "typing.Self") -> int:
+	def tell(self) -> int:
 		return self.pos
 
 
@@ -49,7 +48,7 @@ class TextGlossaryReader(object):
 
 	compressions = stdCompressions
 
-	def __init__(self: "typing.Self", glos: "GlossaryType", hasInfo: bool = True) -> None:
+	def __init__(self, glos: "GlossaryType", hasInfo: bool = True) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None
@@ -62,7 +61,7 @@ class TextGlossaryReader(object):
 		self._fileIndex = -1
 		self._bufferLine = ""
 
-	def readline(self: "typing.Self") -> str:
+	def readline(self) -> str:
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -72,7 +71,7 @@ class TextGlossaryReader(object):
 		except StopIteration:
 			return ""
 
-	def _openGen(self: "typing.Self", filename: str) -> "Iterator[tuple[int, int]]":
+	def _openGen(self, filename: str) -> "Iterator[tuple[int, int]]":
 		self._fileIndex += 1
 		log.info(f"Reading file: {filename}")
 		cfile = compressionOpen(filename, mode="rt", encoding=self._encoding)
@@ -91,15 +90,15 @@ class TextGlossaryReader(object):
 		if self._hasInfo:
 			yield from self.loadInfo()
 
-	def _open(self: "typing.Self", filename: str) -> None:
+	def _open(self, filename: str) -> None:
 		for _ in self._openGen(filename):
 			pass
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._open(filename)
 
-	def openGen(self: "typing.Self", filename: str) -> "Iterator[tuple[int, int]]":
+	def openGen(self, filename: str) -> "Iterator[tuple[int, int]]":
 		"""
 			like open() but return a generator / iterator to track the progress
 			example for reader.open:
@@ -108,7 +107,7 @@ class TextGlossaryReader(object):
 		self._filename = filename
 		yield from self._openGen(filename)
 
-	def openNextFile(self: "typing.Self") -> bool:
+	def openNextFile(self) -> bool:
 		self.close()
 		nextFilename = f"{self._filename}.{self._fileIndex + 1}"
 		if isfile(nextFilename):
@@ -122,7 +121,7 @@ class TextGlossaryReader(object):
 			log.warning(f"next file not found: {nextFilename}")
 		return False
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if not self._file:
 			return
 		try:
@@ -131,7 +130,7 @@ class TextGlossaryReader(object):
 			log.exception(f"error while closing file {self._filename!r}")
 		self._file = None
 
-	def newEntry(self: "typing.Self", word: str, defi: str) -> "EntryType":
+	def newEntry(self, word: str, defi: str) -> "EntryType":
 		byteProgress = None
 		if self._fileSize:
 			byteProgress = (self._file.tell(), self._fileSize)
@@ -141,10 +140,10 @@ class TextGlossaryReader(object):
 			byteProgress=byteProgress,
 		)
 
-	def setInfo(self: "typing.Self", key: str, value: str) -> None:
+	def setInfo(self, key: str, value: str) -> None:
 		self._glos.setInfo(key, value)
 
-	def _loadNextInfo(self: "typing.Self") -> bool:
+	def _loadNextInfo(self) -> bool:
 		"""
 			returns True when reached the end
 		"""
@@ -166,7 +165,7 @@ class TextGlossaryReader(object):
 		self.setInfo(key, value)
 		return False
 
-	def loadInfo(self: "typing.Self") -> "Generator[tuple[int, int], None, None]":
+	def loadInfo(self) -> "Generator[tuple[int, int], None, None]":
 		self._pendingEntries = []
 		try:
 			while True:
@@ -183,7 +182,7 @@ class TextGlossaryReader(object):
 				self._glos.setInfo("file_count", "")
 
 	def _genDataEntries(
-		self: "typing.Self",
+		self,
 		resList: "list[tuple[str, str]]",
 		resPathSet: "set[str]",
 	) -> "Iterator[DataEntry]":
@@ -196,7 +195,7 @@ class TextGlossaryReader(object):
 				tmpPath=fullPath,
 			)
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		resPathSet = set()
 		while True:
 			self._pos += 1
@@ -224,21 +223,21 @@ class TextGlossaryReader(object):
 
 			yield self.newEntry(word, defi)
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return self._wordCount
 
-	def isInfoWord(self: "typing.Self", word: str) -> bool:
+	def isInfoWord(self, word: str) -> bool:
 		raise NotImplementedError
 
-	def isInfoWords(self: "typing.Self", arg: "str | list[str]") -> bool:
+	def isInfoWords(self, arg: "str | list[str]") -> bool:
 		if isinstance(arg, str):
 			return self.isInfoWord(arg)
 		if isinstance(arg, list):
 			return self.isInfoWord(arg[0])
 		raise TypeError(f"bad argument {arg}")
 
-	def fixInfoWord(self: "typing.Self", word: str) -> bool:
+	def fixInfoWord(self, word: str) -> bool:
 		raise NotImplementedError
 
-	def nextBlock(self: "typing.Self") -> nextBlockResultType:
+	def nextBlock(self) -> nextBlockResultType:
 		raise NotImplementedError

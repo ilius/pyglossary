@@ -16,14 +16,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-import typing
 
 from . import gdk, gtk
 from .utils import imageFromFile
 
 
 class ResizeButton(gtk.Box):
-	def __init__(self: "typing.Self", win, edge=gdk.SurfaceEdge.SOUTH_EAST) -> None:
+	def __init__(self, win, edge=gdk.SurfaceEdge.SOUTH_EAST) -> None:
 		gtk.Box.__init__(self)
 		self.win = win
 		self.edge = edge
@@ -34,7 +33,7 @@ class ResizeButton(gtk.Box):
 		gesture.connect("pressed", self.buttonPress)
 		self.add_controller(gesture)
 
-	def buttonPress(self: "typing.Self", gesture, button, x, y):
+	def buttonPress(self, gesture, button, x, y):
 		# Gesture is subclass of EventController
 		pass  # FIXME
 		# self.win.begin_resize(

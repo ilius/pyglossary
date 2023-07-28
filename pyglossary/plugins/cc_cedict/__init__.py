@@ -1,6 +1,5 @@
 import io
 import re
-import typing
 from typing import Iterator
 
 from pyglossary.core import log
@@ -44,13 +43,13 @@ class Reader:
 	_encoding: str = "utf-8"
 	_traditional_title: bool = False
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.file: "io.TextIOBase | None" = None
 		self.total_entries: "int | None" = None
 		self.entries_left = 0
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		if self.file is not None:
 			self.file.close()
 
@@ -68,21 +67,21 @@ class Reader:
 			self.close()
 			raise RuntimeError("CC-CEDICT: could not find entry count")
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self.file is not None:
 			self.file.close()
 		self.file = None
 		self.total_entries = None
 		self.entries_left = 0
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self.total_entries is None:
 			raise RuntimeError(
 				"CC-CEDICT: len(reader) called while reader is not open",
 			)
 		return self.total_entries
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self.file is None:
 			raise RuntimeError(
 				"CC-CEDICT: tried to iterate over entries "

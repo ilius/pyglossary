@@ -22,7 +22,6 @@
 import logging
 import os
 import sys
-import typing
 from os.path import join
 from typing import Any, Dict, Mapping
 
@@ -152,17 +151,17 @@ def encodeFormatOptions(opt: "Dict") -> str:
 
 
 class NullObj(object):
-	def __getattr__(self: "typing.Self", attr: str) -> "NullObj":
+	def __getattr__(self, attr: str) -> "NullObj":
 		return self
 
-	def __setattr__(self: "typing.Self", attr: str, value: "Any") -> None:
+	def __setattr__(self, attr: str, value: "Any") -> None:
 		pass
 
-	def __setitem__(self: "typing.Self", key: str, value: "Any") -> None:
+	def __setitem__(self, key: str, value: "Any") -> None:
 		pass
 
 	def __call__(
-		self: "typing.Self",
+		self,
 		*args: "tuple[Any]",
 		**kwargs: "Mapping[Any]",
 	) -> None:
@@ -171,7 +170,7 @@ class NullObj(object):
 
 class UI(UIBase):
 	def __init__(
-		self: "typing.Self",
+		self,
 		progressbar: bool = True,
 	) -> None:
 		UIBase.__init__(self)
@@ -182,7 +181,7 @@ class UI(UIBase):
 		self._progressbar = progressbar
 
 	def onSigInt(
-		self: "typing.Self",
+		self,
 		*args: "tuple[Any]",
 	) -> None:
 		log.info("")
@@ -193,30 +192,30 @@ class UI(UIBase):
 			self._toPause = True
 			log.info("Please wait...")
 
-	def setText(self: "typing.Self", text: str) -> None:
+	def setText(self, text: str) -> None:
 		self.pbar.widgets[0] = text
 
-	def fixLogger(self: "typing.Self") -> None:
+	def fixLogger(self) -> None:
 		for h in log.handlers:
 			if h.name == "std":
 				self.fixLogHandler(h)
 				return
 
-	def fillMessage(self: "typing.Self", msg: str) -> str:
+	def fillMessage(self, msg: str) -> str:
 		term_width = self.pbar.term_width
 		if term_width is None:
 			# FIXME: why?
 			return msg
 		return "\r" + wc_ljust(msg, term_width)
 
-	def fixLogHandler(self: "typing.Self", h: "logging.Handler") -> None:
+	def fixLogHandler(self, h: "logging.Handler") -> None:
 		def reset() -> None:
 			h.formatter.fill = None
 
 		self._resetLogFormatter = reset
 		h.formatter.fill = self.fillMessage
 
-	def progressInit(self: "typing.Self", title: str) -> None:
+	def progressInit(self, title: str) -> None:
 		try:
 			from .pbar_tqdm import createProgressBar
 		except ModuleNotFoundError:
@@ -224,16 +223,16 @@ class UI(UIBase):
 		self.pbar = createProgressBar(title)
 		self.fixLogger()
 
-	def progress(self: "typing.Self", ratio: float, text: str = "") -> None:
+	def progress(self, ratio: float, text: str = "") -> None:
 		self.pbar.update(ratio)
 
-	def progressEnd(self: "typing.Self") -> None:
+	def progressEnd(self) -> None:
 		self.pbar.finish()
 		if self._resetLogFormatter:
 			self._resetLogFormatter()
 
 	def reverseLoop(
-		self: "typing.Self",
+		self,
 		*args: "tuple[Any]",
 		**kwargs: "Mapping[Any]",
 	) -> None:
@@ -268,7 +267,7 @@ class UI(UIBase):
 				self._toPause = False
 
 	def run(
-		self: "typing.Self",
+		self,
 		inputFilename: str = "",
 		outputFilename: str = "",
 		inputFormat: str = "",

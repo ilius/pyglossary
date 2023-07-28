@@ -31,129 +31,129 @@ RawEntryType: "TypeAlias" = (
 
 
 class EntryType(typing.Protocol):
-	def __init__(self: "typing.Self") -> None:
+	def __init__(self) -> None:
 		...
 
-	def isData(self: "typing.Self") -> bool:
+	def isData(self) -> bool:
 		...
 
-	def getFileName(self: "typing.Self") -> str:
-		...
-
-	@property
-	def data(self: "typing.Self") -> bytes:
-		...
-
-	def size(self: "typing.Self") -> int:
-		...
-
-	def save(self: "typing.Self", directory: str) -> str:
+	def getFileName(self) -> str:
 		...
 
 	@property
-	def s_word(self: "typing.Self") -> str:
+	def data(self) -> bytes:
+		...
+
+	def size(self) -> int:
+		...
+
+	def save(self, directory: str) -> str:
 		...
 
 	@property
-	def l_word(self: "typing.Self") -> "list[str]":
+	def s_word(self) -> str:
 		...
 
 	@property
-	def defi(self: "typing.Self") -> str:
+	def l_word(self) -> "list[str]":
 		...
 
 	@property
-	def b_word(self: "typing.Self") -> bytes:
+	def defi(self) -> str:
 		...
 
 	@property
-	def b_defi(self: "typing.Self") -> bytes:
+	def b_word(self) -> bytes:
 		...
 
 	@property
-	def defiFormat(self: "typing.Self") -> str:
+	def b_defi(self) -> bytes:
+		...
+
+	@property
+	def defiFormat(self) -> str:
 		# TODO: type: Literal["m", "h", "x", "b"]
 		...
 
 	@defiFormat.setter
-	def defiFormat(self: "typing.Self", defiFormat: str) -> None:
+	def defiFormat(self, defiFormat: str) -> None:
 		# TODO: type: Literal["m", "h", "x", "b"]
 		...
 
-	def detectDefiFormat(self: "typing.Self") -> None:
+	def detectDefiFormat(self) -> None:
 		...
 
-	def addAlt(self: "typing.Self", alt: str) -> None:
+	def addAlt(self, alt: str) -> None:
 		...
 
-	def editFuncWord(self: "typing.Self", func: "Callable[[str], str]") -> None:
+	def editFuncWord(self, func: "Callable[[str], str]") -> None:
 		...
 
-	def editFuncDefi(self: "typing.Self", func: "Callable[[str], str]") -> None:
+	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
 		...
 
-	def strip(self: "typing.Self") -> None:
+	def strip(self) -> None:
 		...
 
-	def replaceInWord(self: "typing.Self", source: str, target: str) -> None:
+	def replaceInWord(self, source: str, target: str) -> None:
 		...
 
-	def replaceInDefi(self: "typing.Self", source: str, target: str) -> None:
+	def replaceInDefi(self, source: str, target: str) -> None:
 		...
 
-	def replace(self: "typing.Self", source: str, target: str) -> None:
+	def replace(self, source: str, target: str) -> None:
 		...
 
-	def byteProgress(self: "typing.Self") -> "tuple[int, int] | None":
+	def byteProgress(self) -> "tuple[int, int] | None":
 		...
 
-	def removeEmptyAndDuplicateAltWords(self: "typing.Self") -> None:
+	def removeEmptyAndDuplicateAltWords(self) -> None:
 		...
 
-	def stripFullHtml(self: "typing.Self") -> "str | None":
+	def stripFullHtml(self) -> "str | None":
 		...
 
 
 class EntryListType(typing.Protocol):
 	def __init__(
-		self: "typing.Self",
+		self,
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
 		entryFromRaw: "Callable[[RawEntryType], EntryType]",
 	) -> None:
 		...
 
 	@property
-	def rawEntryCompress(self: "typing.Self") -> bool:
+	def rawEntryCompress(self) -> bool:
 		...
 
 	@rawEntryCompress.setter
-	def rawEntryCompress(self: "typing.Self", enable: bool) -> None:
+	def rawEntryCompress(self, enable: bool) -> None:
 		...
 
-	def append(self: "typing.Self", entry: "EntryType") -> None:
-		...	
-
-	def clear(self: "typing.Self") -> None:
+	def append(self, entry: "EntryType") -> None:
 		...
 
-	def __len__(self: "typing.Self") -> int:
+	def clear(self) -> None:
 		...
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __len__(self) -> int:
+		...
+
+	def __iter__(self) -> "Iterator[EntryType]":
 		...
 
 	def setSortKey(
-		self: "typing.Self",
+		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
 	) -> None:
 		...
 
-	def sort(self: "typing.Self") -> None:
+	def sort(self) -> None:
 		...
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		...
 
 
@@ -163,95 +163,95 @@ class GlossaryType(typing.Protocol):
 	contains methods and properties that might be used in plugins
 	"""
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		...
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		...
 
-	def setDefaultDefiFormat(self: "typing.Self", defiFormat: str) -> None:
+	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		...
 
-	def getDefaultDefiFormat(self: "typing.Self") -> str:
+	def getDefaultDefiFormat(self) -> str:
 		...
 
 	def collectDefiFormat(
-		self: "typing.Self",
+		self,
 		maxCount: int,
 	) -> "dict[str, float] | None":
 		...
 
-	def iterInfo(self: "typing.Self") -> "Iterator[tuple[str, str]]":
+	def iterInfo(self) -> "Iterator[tuple[str, str]]":
 		...
 
-	def getInfo(self: "typing.Self", key: str) -> str:
+	def getInfo(self, key: str) -> str:
 		...
 
-	def setInfo(self: "typing.Self", key: str, value: str) -> None:
+	def setInfo(self, key: str, value: str) -> None:
 		...
 
-	def getExtraInfos(self: "typing.Self", excludeKeys: "list[str]") -> "OrderedDict":
-		...
-
-	@property
-	def author(self: "typing.Self") -> str:
+	def getExtraInfos(self, excludeKeys: "list[str]") -> "OrderedDict":
 		...
 
 	@property
-	def alts(self: "typing.Self") -> bool:
+	def author(self) -> str:
 		...
 
 	@property
-	def filename(self: "typing.Self") -> str:
+	def alts(self) -> bool:
 		...
 
 	@property
-	def tmpDataDir(self: "typing.Self") -> str:
+	def filename(self) -> str:
 		...
 
 	@property
-	def sourceLang(self: "typing.Self") -> "Lang | None":
+	def tmpDataDir(self) -> str:
 		...
 
 	@property
-	def targetLang(self: "typing.Self") -> "Lang | None":
+	def sourceLang(self) -> "Lang | None":
 		...
 
 	@property
-	def sourceLangName(self: "typing.Self") -> str:
+	def targetLang(self) -> "Lang | None":
+		...
+
+	@property
+	def sourceLangName(self) -> str:
 		...
 
 	@sourceLangName.setter
-	def sourceLangName(self: "typing.Self", langName: str) -> None:
+	def sourceLangName(self, langName: str) -> None:
 		...
 
 	@property
-	def targetLangName(self: "typing.Self") -> str:
+	def targetLangName(self) -> str:
 		...
 
 	@targetLangName.setter
-	def targetLangName(self: "typing.Self", langName: str) -> None:
+	def targetLangName(self, langName: str) -> None:
 		...
 
-	def titleTag(self: "typing.Self", sample: str) -> str:
+	def titleTag(self, sample: str) -> str:
 		...
 
 	def wordTitleStr(
-		self: "typing.Self",
+		self,
 		word: str,
 		sample: str = "",
 		_class: str = "",
 	) -> str:
 		...
 
-	def getConfig(self: "typing.Self", name: str, default: "str | None") -> "str | None":
+	def getConfig(self, name: str, default: "str | None") -> "str | None":
 		...
 
-	def addEntry(self: "typing.Self", entry: EntryType) -> None:
+	def addEntry(self, entry: EntryType) -> None:
 		...
 
 	def newEntry(
-		self: "typing.Self",
+		self,
 		word: "MultiStr",
 		defi: str,
 		defiFormat: str = "",
@@ -259,15 +259,15 @@ class GlossaryType(typing.Protocol):
 	) -> EntryType:
 		...
 
-	def newDataEntry(self: "typing.Self", fname: str, data: bytes) -> EntryType:
+	def newDataEntry(self, fname: str, data: bytes) -> EntryType:
 		...
 
 	@property
-	def rawEntryCompress(self: "typing.Self") -> bool:
+	def rawEntryCompress(self) -> bool:
 		...
 
 	def stripFullHtml(
-		self: "typing.Self",
+		self,
 		errorHandler: "Callable[[EntryType, str], None] | None" = None,
 	) -> None:
 		...
@@ -275,21 +275,21 @@ class GlossaryType(typing.Protocol):
 
 class GlossaryExtendedType(GlossaryType, typing.Protocol):
 	def progressInit(
-		self: "typing.Self",
+		self,
 		*args,  # noqa: ANN
 	) -> None:
 		...
 
-	def progress(self: "typing.Self", pos: int, total: int, unit: str = "entries") -> None:
+	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
 		...
 
-	def progressEnd(self: "typing.Self") -> None:
+	def progressEnd(self) -> None:
 		...
 
 	@property
-	def progressbar(self: "typing.Self") -> bool:
+	def progressbar(self) -> bool:
 		...
 
 	@progressbar.setter
-	def progressbar(self: "typing.Self", enabled: bool) -> None:
+	def progressbar(self, enabled: bool) -> None:
 		...

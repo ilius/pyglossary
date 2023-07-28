@@ -1,5 +1,4 @@
 
-import typing
 
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, cast
@@ -59,35 +58,35 @@ class Reader(object):
 		"lxml": "lxml",
 	}
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "io.IOBase | None" = None
 		self._fileSize = 0
 		self._xdxfTr: "XdxfTransformer | None" = None
 
-	def xdxf_setup(self: "typing.Self") -> "XdxfTransformer":
+	def xdxf_setup(self) -> "XdxfTransformer":
 		from pyglossary.xdxf.transform import XdxfTransformer
 		self._xdxfTr = tr = XdxfTransformer(encoding="utf-8")
 		return tr
 
-	def xdxf_transform(self: "typing.Self", text: str) -> str:
+	def xdxf_transform(self, text: str) -> str:
 		tr = self._xdxfTr
 		if tr is None:
 			tr = self.xdxf_setup()
 		return tr.transformByInnerString(text)
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return 0
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
 		self._filename = ""
 		self._fileSize = 0
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -116,12 +115,12 @@ class Reader(object):
 
 		cfile.close()
 
-	def setGlosInfo(self: "typing.Self", key: str, value: str) -> None:
+	def setGlosInfo(self, key: str, value: str) -> None:
 		if value is None:
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self: "typing.Self", header: "Element") -> None:
+	def setMetadata(self, header: "Element") -> None:
 		if (elem := header.find("./bookname")) is not None and elem.text:
 			self.setGlosInfo("name", elem.text)
 
@@ -150,7 +149,7 @@ class Reader(object):
 		# 	self.setGlosInfo("dicttype", elem.text)
 
 	def renderDefiList(
-		self: "typing.Self",
+		self,
 		defisWithFormat: "list[tuple[str, str]]",
 	) -> "tuple[str, str]":
 		if len(defisWithFormat) == 1:
@@ -180,7 +179,7 @@ class Reader(object):
 			defis.append(_defi)
 		return "\n<hr>\n".join(defis), "h"
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -247,12 +246,12 @@ class Writer(object):
 		"lxml": "lxml",
 	}
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 
 	def open(
-		self: "typing.Self",
+		self,
 		filename: str,
 	) -> None:
 		self._filename = filename
@@ -262,11 +261,11 @@ class Writer(object):
 			encoding=self._encoding,
 		)
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		self._file.close()
 
 	def writeInfo(
-		self: "typing.Self",
+		self,
 		maker: "builder.ElementMaker",
 		pretty: bool,
 	) -> None:
@@ -302,7 +301,7 @@ class Writer(object):
 		)).decode(self._encoding) + "\n")
 
 	def writeDataEntry(
-		self: "typing.Self",
+		self,
 		maker: "builder.ElementMaker",
 		entry: "EntryType",
 	) -> None:
@@ -317,7 +316,7 @@ class Writer(object):
 		# 	)
 		# )
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from lxml import builder
 		from lxml import etree as ET
 

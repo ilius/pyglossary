@@ -1,5 +1,4 @@
 
-import typing
 
 # -*- coding: utf-8 -*-
 from json import load
@@ -36,7 +35,7 @@ optionsProp: "dict[str, Option]" = {
 class Reader(object):
 	_encoding: str = "utf-8"
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 		self.defiTemplate = (
@@ -57,29 +56,29 @@ class Reader(object):
 		},
 		"""
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self._clear()
 
-	def _clear(self: "typing.Self") -> None:
+	def _clear(self) -> None:
 		self._filename = ""
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		name = self._glos.getInfo("name")
 		if not name or name == "data":
 			self._glos.setInfo("name", "Wordset.org")
 		self._glos.setDefaultDefiFormat("h")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return 0
 
-	def fileNameSortKey(self: "typing.Self", fname: str) -> str:
+	def fileNameSortKey(self, fname: str) -> str:
 		fname = splitext(fname)[0]
 		if fname == "misc":
 			return "\x80"
 		return fname
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if not self._filename:
 			raise RuntimeError("iterating over a reader while it's not open")
 

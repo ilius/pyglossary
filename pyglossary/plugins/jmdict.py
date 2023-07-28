@@ -2,7 +2,6 @@
 
 import os
 import re
-import typing
 import unicodedata
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
@@ -83,7 +82,7 @@ class Reader(object):
 	}
 
 	def makeList(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		input_objects: "list[Element]",
 		processor: "Callable",
@@ -105,7 +104,7 @@ class Reader(object):
 					processor(hf, el)
 
 	def writeSense(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		sense: "Element",
 	) -> None:
@@ -228,7 +227,7 @@ class Reader(object):
 									hf.write(sent)
 
 	def getEntryByElem(
-		self: "typing.Self",
+		self,
 		entry: "Element",
 	) -> "EntryType":
 		from lxml import etree as ET
@@ -349,7 +348,7 @@ class Reader(object):
 		)
 
 	def tostring(
-		self: "typing.Self",
+		self,
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -359,17 +358,17 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def setCreationTime(self: "typing.Self", header: str) -> None:
+	def setCreationTime(self, header: str) -> None:
 		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)
 		if m is None:
 			return
 		self._glos.setInfo("creationTime", m.group(1))
 
-	def setMetadata(self: "typing.Self", header: str) -> None:
+	def setMetadata(self, header: str) -> None:
 		# TODO: self.set_info("edition", ...)
 		self.setCreationTime(header)
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""
@@ -377,16 +376,16 @@ class Reader(object):
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return self._wordCount
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
 
 	def open(
-		self: "typing.Self",
+		self,
 		filename: str,
 	) -> None:
 		try:
@@ -416,7 +415,7 @@ class Reader(object):
 
 		self._file = compressionOpen(filename, mode="rb")
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		context = ET.iterparse(  # type: ignore # noqa: PGH003

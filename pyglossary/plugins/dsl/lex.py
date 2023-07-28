@@ -140,7 +140,7 @@ def lexTagAttrValue(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 			tr.move(-1)
 			break
 		if c == quote:
-			break	
+			break
 		if not quote:
 			if c in " \t":
 				break

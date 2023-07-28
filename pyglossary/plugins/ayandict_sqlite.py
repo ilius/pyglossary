@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import typing
 from typing import (
 	TYPE_CHECKING,
 	Generator,
@@ -36,16 +35,16 @@ optionsProp: "dict[str, Option]" = {
 }
 
 class Reader(object):
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self: "typing.Self") -> None:
+	def _clear(self) -> None:
 		self._filename = ''
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)
@@ -58,13 +57,13 @@ class Reader(object):
 				continue
 			self._glos.setInfo(row[0], row[1])
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self._cur is None:
 			raise ValueError("cur is None")
 		self._cur.execute("select count(id) from entry")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from json import loads
 
 		if self._cur is None:
@@ -83,7 +82,7 @@ class Reader(object):
 					terms.append(alt)
 			yield self._glos.newEntry(terms, article, defiFormat="h")
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:
@@ -94,17 +93,17 @@ class Reader(object):
 class Writer(object):
 	_fuzzy: int = True
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self: "typing.Self") -> None:
+	def _clear(self) -> None:
 		self._filename = ""
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
 		self._xdxfTr: "XdxfTransformer | None" = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 
 		self._filename = filename
@@ -154,19 +153,19 @@ class Writer(object):
 		self._con = None
 		self._cur = None
 
-	def xdxf_setup(self: "typing.Self") -> None:
+	def xdxf_setup(self) -> None:
 		from pyglossary.xdxf.transform import XdxfTransformer
 		# if self._xsl:
 		# 	self._xdxfTr = XslXdxfTransformer(encoding="utf-8")
 		# 	return
 		self._xdxfTr = XdxfTransformer(encoding="utf-8")
 
-	def xdxf_transform(self: "typing.Self", text: str) -> str:
+	def xdxf_transform(self, text: str) -> str:
 		if self._xdxfTr is None:
 			self.xdxf_setup()
 		return self._xdxfTr.transformByInnerString(text)  # type: ignore
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		import hashlib
 
 		cur = self._cur

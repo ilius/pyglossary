@@ -26,7 +26,6 @@ import logging
 import os
 import shutil
 import tempfile
-import typing
 import zipfile
 from datetime import datetime
 from os.path import join
@@ -46,21 +45,21 @@ log = logging.getLogger("pyglossary")
 
 
 class GroupState(object):
-	def __init__(self: "typing.Self", writer: "EbookWriter") -> None:
+	def __init__(self, writer: "EbookWriter") -> None:
 		self.writer = writer
 		self.last_prefix = ""
 		self.group_index = -1
 		self.reset()
 
-	def reset(self: "typing.Self") -> None:
+	def reset(self) -> None:
 		self.first_word = ""
 		self.last_word = ""
 		self.group_contents = []
 
-	def is_new(self: "typing.Self", prefix: str) -> bool:
+	def is_new(self, prefix: str) -> bool:
 		return self.last_prefix and prefix != self.last_prefix
 
-	def add(self: "typing.Self", entry: "EntryType", prefix: str) -> None:
+	def add(self, entry: "EntryType", prefix: str) -> None:
 		word = entry.s_word
 		defi = entry.defi
 		if not self.first_word:
@@ -135,14 +134,14 @@ class EbookWriter(object):
 	OPF_SPINE_ITEMREF_TEMPLATE = "  <itemref idref=\"{id}\" />"
 
 	def get_opf_contents(
-		self: "typing.Self",
+		self,
 		manifest_contents: str,
 		spine_contents: str,
 	) -> str:
 		raise NotImplementedError
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		glos: "GlossaryType",
 		escape_strings: bool = False,
 		# ignore_synonyms=False,
@@ -167,14 +166,14 @@ class EbookWriter(object):
 		self.manifest_files = []
 		self._group_labels = []
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		self._filename = None
 
-	def myOpen(self: "typing.Self", fname: str, mode: str) -> "io.IOBase":
+	def myOpen(self, fname: str, mode: str) -> "io.IOBase":
 		return open(join(self._tmpDir, fname), mode)
 
 	def add_file(
-		self: "typing.Self",
+		self,
 		relative_path: str,
 		contents: str,
 		mode: "str | None" = None,
@@ -190,7 +189,7 @@ class EbookWriter(object):
 			"mode": mode,
 		})
 
-	def write_cover(self: "typing.Self", cover_path: str) -> None:
+	def write_cover(self, cover_path: str) -> None:
 		if not cover_path:
 			return
 		basename = os.path.basename(cover_path)
@@ -205,7 +204,7 @@ class EbookWriter(object):
 		self.add_file_manifest("OEBPS/" + basename, basename, cover, mimetype)
 		self.cover = basename
 
-	def write_css(self: "typing.Self", custom_css_path_absolute: str) -> None:
+	def write_css(self, custom_css_path_absolute: str) -> None:
 		css = self.CSS_CONTENTS
 		if custom_css_path_absolute:
 			try:
@@ -218,7 +217,7 @@ class EbookWriter(object):
 		self.add_file_manifest("OEBPS/style.css", "style.css", css, "text/css")
 
 	def add_file_manifest(
-		self: "typing.Self",
+		self,
 		relative_path: str,
 		id: str,
 		contents: str,
@@ -230,7 +229,7 @@ class EbookWriter(object):
 			"id": id, "mimetype": mimetype,
 		})
 
-	def get_group_xhtml_file_name_from_index(self: "typing.Self", index: int) -> str:
+	def get_group_xhtml_file_name_from_index(self, index: int) -> str:
 		if index < self.GROUP_START_INDEX:
 			# or index >= groupCount + self.GROUP_START_INDEX:
 			# number of groups are not known, FIXME
@@ -238,14 +237,14 @@ class EbookWriter(object):
 			return "#groupPage"
 		return f"g{index:06d}.xhtml"
 
-	def get_prefix(self: "typing.Self", word: str) -> str:
+	def get_prefix(self, word: str) -> str:
 		raise NotImplementedError
 
-	def sortKey(self: "typing.Self", words: "list[str]") -> "Any":
+	def sortKey(self, words: "list[str]") -> "Any":
 		raise NotImplementedError
 
 	def _add_group(
-		self: "typing.Self",
+		self,
 		group_labels: "list[str]",
 		state: "GroupState",
 	) -> None:
@@ -281,7 +280,7 @@ class EbookWriter(object):
 			"application/xhtml+xml",
 		)
 
-	def write_data_entry(self: "typing.Self", entry: "EntryType") -> None:
+	def write_data_entry(self, entry: "EntryType") -> None:
 		if entry.getFileName() == "style.css":
 			self.add_file_manifest(
 				"OEBPS/style.css",
@@ -290,7 +289,7 @@ class EbookWriter(object):
 				"text/css",
 			)
 
-	def write_groups(self: "typing.Self") -> None:
+	def write_groups(self) -> None:
 		# TODO: rtl=False option
 		# TODO: handle alternates better (now shows word1|word2... in title)
 
@@ -316,13 +315,13 @@ class EbookWriter(object):
 
 		self._group_labels = group_labels
 
-	def format_group_content(self: "typing.Self", word: str, defi: str) -> str:
+	def format_group_content(self, word: str, defi: str) -> str:
 		return self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
 			headword=self.escape_if_needed(word),
 			definition=self.escape_if_needed(defi),
 		)
 
-	def escape_if_needed(self: "typing.Self", string: str) -> str:
+	def escape_if_needed(self, string: str) -> str:
 		if not self._escape_strings:
 			return string
 
@@ -332,7 +331,7 @@ class EbookWriter(object):
 			.replace(">", "&gt;")\
 			.replace("<", "&lt;")
 
-	def write_index(self: "typing.Self", group_labels: "list[str]") -> None:
+	def write_index(self, group_labels: "list[str]") -> None:
 		"""
 			group_labels: a list of labels
 		"""
@@ -360,7 +359,7 @@ class EbookWriter(object):
 		)
 
 	def get_opf_contents(  # noqa: F811
-		self: "typing.Self",
+		self,
 		manifest_contents: str,
 		spine_contents: str,
 	) -> str:
@@ -383,7 +382,7 @@ class EbookWriter(object):
 			spine=spine_contents,
 		)
 
-	def write_opf(self: "typing.Self") -> None:
+	def write_opf(self) -> None:
 		manifest_lines = []
 		spine_lines = []
 		for mi in self.manifest_files:
@@ -406,17 +405,17 @@ class EbookWriter(object):
 
 		self.add_file("OEBPS/content.opf", opf_contents)
 
-	def write_ncx(self: "typing.Self", group_labels: "list[str]") -> None:
+	def write_ncx(self, group_labels: "list[str]") -> None:
 		"""
 			write_ncx
 			only for epub
 		"""
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._tmpDir = tempfile.mkdtemp()
 
-	def _doZip(self: "typing.Self") -> None:
+	def _doZip(self) -> None:
 		zipFp = zipfile.ZipFile(
 			self._filename,
 			"w",
@@ -431,7 +430,7 @@ class EbookWriter(object):
 		if not self._keep:
 			rmtree(self._tmpDir)
 
-	def write(self: "typing.Self") -> None:
+	def write(self) -> None:
 		filename = self._filename
 		# self._group_by_prefix_length
 		# self._include_index_page

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import html
-import typing
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
@@ -24,29 +23,29 @@ website = (
 
 
 class Reader(object):
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self: "typing.Self") -> None:
+	def _clear(self) -> None:
 		self._filename = ""
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("m")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self._cur is None:
 			raise ValueError("cur is None")
 		self._cur.execute("select count(*) from dictionary")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self._cur is None:
 			raise ValueError("cur is None")
 		self._cur.execute(
@@ -63,7 +62,7 @@ class Reader(object):
 			definition = row[1]
 			yield self._glos.newEntry(word, definition, defiFormat="m")
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:

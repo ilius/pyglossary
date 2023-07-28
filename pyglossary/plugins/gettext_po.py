@@ -2,7 +2,6 @@
 
 import io
 import os
-import typing
 from os.path import isdir
 from typing import Generator, Iterator
 
@@ -36,18 +35,18 @@ class Reader(object):
 		"polib": "polib",
 	}
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self.clear()
 
-	def clear(self: "typing.Self") -> None:
+	def clear(self) -> None:
 		self._filename = ""
 		self._file: "io.TextIOBase | None" = None
 		self._wordCount: "int | None" = None
 		self._resDir = ""
 		self._resFileNames: "list[str]" = []
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename)
 		self._resDir = filename + "_res"
@@ -57,12 +56,12 @@ class Reader(object):
 			self._resDir = ""
 			self._resFileNames = []
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 		self.clear()
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		from pyglossary.file_utils import fileCountLines
 		if self._wordCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
@@ -72,17 +71,17 @@ class Reader(object):
 			)
 		return self._wordCount
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		try:
 			from polib import unescape as po_unescape
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install polib` to install"
 			raise e
-		
+
 		_file = self._file
 		if _file is None:
 			raise ValueError("_file is None")
-		
+
 		word = ""
 		defi = ""
 		msgstr = False
@@ -128,25 +127,25 @@ class Writer(object):
 
 	_resources: bool = True
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "io.TextIOBase | None" = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = _file = open(filename, mode="wt", encoding="utf-8")
 		_file.write('#\nmsgid ""\nmsgstr ""\n')
 		for key, value in self._glos.iterInfo():
 			_file.write(f'"{key}: {value}\\n"\n')
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		self._filename = ""
 		if self._file:
 			self._file.close()
 			self._file = None
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		try:
 			from polib import escape as po_escape
 		except ModuleNotFoundError as e:

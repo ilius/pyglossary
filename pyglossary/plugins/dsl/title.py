@@ -1,4 +1,3 @@
-import typing
 from collections import namedtuple
 from typing import Optional, Tuple, cast
 from xml.sax.saxutils import escape
@@ -65,7 +64,7 @@ def lexParan(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 			break
 		tr.addText(c)
 
-	return lexRoot, None 
+	return lexRoot, None
 
 
 def lexCurly(tr: TransformerType) -> Tuple[LexType, ErrorType]:
@@ -93,7 +92,7 @@ def lexCurly(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 		return None, err
 	tr.title += res.output
 
-	return lexRoot, None 
+	return lexRoot, None
 
 
 TitleResult = namedtuple(
@@ -116,31 +115,31 @@ class TitleTransformer:
 		self.outputAlt = ""
 		self.title = ""
 
-	def end(self: "typing.Self") -> bool:
+	def end(self) -> bool:
 		return self.pos >= len(self.input)
 
-	def move(self: "typing.Self", chars: int) -> None:
+	def move(self, chars: int) -> None:
 		self.pos += chars
 
-	def next(self: "typing.Self") -> str:
+	def next(self) -> str:
 		c = self.input[self.pos]
 		self.pos += 1
 		return c  # noqa: RET504
 
-	# def resetBuf(self: "typing.Self") -> str:
+	# def resetBuf(self) -> str:
 	# 	self.start = self.pos
 
-	def addText(self: "typing.Self", st: str) -> None:
+	def addText(self, st: str) -> None:
 		self.output += escape(st)
 		self.title += escape(st)
 
-	def addText2(self: "typing.Self", st: str) -> None:
+	def addText2(self, st: str) -> None:
 		esc = escape(st)
 		self.output += esc
 		self.outputAlt += esc
 		self.title += esc
 
-	def transform(self: "typing.Self") -> Tuple[Optional[TitleResult], ErrorType]:
+	def transform(self) -> Tuple[Optional[TitleResult], ErrorType]:
 		lex: LexType = lexRoot
 		tr = cast(TransformerType, self)
 		while lex is not None:

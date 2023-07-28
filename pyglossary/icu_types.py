@@ -3,10 +3,10 @@ from typing import AnyStr, Callable
 
 
 class T_Locale(typing.Protocol):
-	def __init__(self: "typing.Self", _id: str) -> None:
+	def __init__(self, _id: str) -> None:
 		pass
 
-	def getName(self: "typing.Self") -> str:
+	def getName(self) -> str:
 		pass
 
 
@@ -24,13 +24,13 @@ class T_Collator(typing.Protocol):
 		pass
 
 	@property
-	def getSortKey(self: "typing.Self") -> Callable[[AnyStr], bytes]:
+	def getSortKey(self) -> Callable[[AnyStr], bytes]:
 		pass
 
-	def setStrength(self: "typing.Self", strength: int) -> None:
+	def setStrength(self, strength: int) -> None:
 		pass
 
-	def setAttribute(self: "typing.Self", attr: int, value: int) -> None:
+	def setAttribute(self, attr: int, value: int) -> None:
 		pass
 
 

@@ -13,11 +13,11 @@ from pyglossary.html_utils import unescape_unicode
 
 
 class UnescapeUnicodeTest(unittest.TestCase):
-	def case(self: "typing.Self", text, expected):
+	def case(self, text, expected):
 		actual = unescape_unicode(text)
 		self.assertEqual(actual, expected)
 
-	def test(self: "typing.Self"):
+	def test(self):
 		self.case("&lt;", "&lt;")
 		self.case("&gt;", "&gt;")
 		self.case("&amp;", "&amp;")

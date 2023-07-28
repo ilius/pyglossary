@@ -10,7 +10,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryStarDictTextual(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -25,7 +25,7 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			"stardict-mixed-types-2.xml.txt": "c896cf68",
 		})
 
-	def convert_txt_sdxml(self: "typing.Self", fname, fname2, **convertArgs):
+	def convert_txt_sdxml(self, fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.txt",
 			f"{fname}-2.xml",
@@ -34,7 +34,7 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def convert_sdxml_txt(self: "typing.Self", fname, fname2, **convertArgs):
+	def convert_sdxml_txt(self, fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.xml",
 			f"{fname}-2.txt",
@@ -43,32 +43,32 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_txt_sdxml_1(self: "typing.Self"):
+	def test_convert_txt_sdxml_1(self):
 		self.convert_txt_sdxml(
 			"100-en-fa",
 			"100-en-fa-sdt",
 		)
 
-	def test_convert_sdxml_txt_1(self: "typing.Self"):
+	def test_convert_sdxml_txt_1(self):
 		self.convert_sdxml_txt(
 			"100-en-fa-sdt",
 			"100-en-fa-sdt.xml",
 		)
 
-	def test_convert_sdxml_txt_2(self: "typing.Self"):
+	def test_convert_sdxml_txt_2(self):
 		self.convert_sdxml_txt(
 			"stardict-mixed-types-2",
 			"stardict-mixed-types-2.xml",
 		)
 
-	def test_convert_sdxml_txt_3(self: "typing.Self"):
+	def test_convert_sdxml_txt_3(self):
 		self.convert_sdxml_txt(
 			"stardict-xdxf-2",
 			"stardict-xdxf-2.xml-h",
 			readOptions={"xdxf_to_html": True},
 		)
 
-	def test_convert_sdxml_txt_4(self: "typing.Self"):
+	def test_convert_sdxml_txt_4(self):
 		self.convert_sdxml_txt(
 			"stardict-xdxf-2",
 			"stardict-xdxf-2.xml-x",

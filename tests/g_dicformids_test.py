@@ -10,13 +10,13 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 		self.dataFileCRC32.update({
 			"100-en-fa.mids.zip": "32d1185f",
 		})
 
-	def convert_txt_mids(self: "typing.Self", fname, sha1sumDict, **convertArgs):
+	def convert_txt_mids(self, fname, sha1sumDict, **convertArgs):
 		outputFname = f"{fname}-2.mids.zip"
 		outputFpath = self.newTempFilePath(outputFname)
 		# expectedFpath = self.downloadFile(f"{fname}.mids.zip")
@@ -27,7 +27,7 @@ class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
 		)
 		self.checkZipFileSha1sum(outputFpath, sha1sumDict)
 
-	def test_convert_txt_mids_1(self: "typing.Self"):
+	def test_convert_txt_mids_1(self):
 		sha1sumDict = {
 			"DictionaryForMIDs.properties": \
 				"4260a87d6cdd55622dcfe395880bc913f96102b8",

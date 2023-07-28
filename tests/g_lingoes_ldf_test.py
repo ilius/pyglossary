@@ -10,14 +10,14 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryLingoesLDF(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
 			"004-bar.ldf": "b1aa776d",
 		})
 
-	def convert_txt_ldf(self: "typing.Self", fname, fname2, **convertArgs):
+	def convert_txt_ldf(self, fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.txt",
 			f"{fname}-2.ldf",
@@ -26,7 +26,7 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 		)
 
 
-	def convert_ldf_txt(self: "typing.Self", fname, fname2, **convertArgs):
+	def convert_ldf_txt(self, fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.ldf",
 			f"{fname}-2.txt",
@@ -34,13 +34,13 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_txt_ldf_1(self: "typing.Self"):
+	def test_convert_txt_ldf_1(self):
 		self.convert_txt_ldf(
 			"004-bar",
 			"004-bar",
 		)
 
-	def test_convert_ldf_txt_1(self: "typing.Self"):
+	def test_convert_ldf_txt_1(self):
 		self.convert_ldf_txt(
 			"004-bar",
 			"004-bar",

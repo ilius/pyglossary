@@ -3,7 +3,6 @@
 
 import os
 import re
-import typing
 from os.path import join
 from typing import Iterator
 
@@ -68,12 +67,12 @@ language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEn
 class Reader(object):
 	re_number = re.compile(r"\d+")
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._tabFileNames = []
 		self._tabFileReader = None
 
-	def open(self: "typing.Self", dirname: str) -> None:
+	def open(self, dirname: str) -> None:
 		self._dirname = dirname
 		orderFileNames = []
 		for fname in os.listdir(dirname):
@@ -92,21 +91,22 @@ class Reader(object):
 		self._tabFileNames = [x[1] for x in orderFileNames]
 		self.nextTabFile()
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		raise NotImplementedError  # FIXME
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		return self
 
-	def __next__(self: "typing.Self") -> "EntryType":
+	def __next__(self) -> "EntryType":
 		for _ in range(10):
 			try:
 				return next(self._tabFileReader)
 			except StopIteration:
 				self._tabFileReader.close()
 				self.nextTabFile()
+		return None
 
-	def nextTabFile(self: "typing.Self") -> None:
+	def nextTabFile(self) -> None:
 		try:
 			tabFileName = self._tabFileNames.pop()
 		except IndexError:
@@ -114,7 +114,7 @@ class Reader(object):
 		self._tabFileReader = TabfileReader(self._glos, hasInfo=False)
 		self._tabFileReader.open(join(self._dirname, tabFileName), newline="\n")
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._tabFileReader:
 			try:
 				self._tabFileReader.close()
@@ -125,7 +125,7 @@ class Reader(object):
 
 
 class Writer(object):
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.linesPerDirectoryFile = 500  # 200
 		self.indexFileMaxSize = 32722  # 30000
@@ -141,7 +141,7 @@ class Writer(object):
 		self.re_spaces = re.compile(" +")
 		self.re_tabs = re.compile("\t+")
 
-	def normateWord(self: "typing.Self", word: str) -> str:
+	def normateWord(self, word: str) -> str:
 		word = word.strip()
 		word = self.re_punc.sub("", word)
 		word = self.re_spaces.sub(" ", word)
@@ -149,7 +149,7 @@ class Writer(object):
 		word = word.lower()
 		return word  # noqa: RET504
 
-	def writeProbs(self: "typing.Self") -> None:
+	def writeProbs(self) -> None:
 		glos = self._glos
 		probsPath = join(
 			self._dirname,
@@ -168,7 +168,7 @@ class Writer(object):
 				targetLang=glos.targetLangName,
 			))
 
-	def nextIndex(self: "typing.Self") -> None:
+	def nextIndex(self) -> None:
 		try:
 			self.indexFp.close()
 		except AttributeError:
@@ -179,15 +179,15 @@ class Writer(object):
 		fpath = join(self._dirname, fname)
 		self.indexFp = open(fpath, mode="w", encoding="utf-8", newline="\n")
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		pass
 
-	def open(self: "typing.Self", dirname: str) -> None:
+	def open(self, dirname: str) -> None:
 		self._dirname = dirname
 		if not os.path.isdir(dirname):
 			os.mkdir(dirname)
 
-	def write(self: "typing.Self") -> None:
+	def write(self) -> None:
 		self.nextIndex()
 
 		dicMaxSize = 0

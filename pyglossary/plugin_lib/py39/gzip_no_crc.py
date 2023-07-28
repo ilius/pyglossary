@@ -88,13 +88,13 @@ class _PaddedFile:
     of an actual file. Shouldn't be used outside of gzip.py, as it lacks
     essential functionality."""
 
-    def __init__(self: "typing.Self", f, prepend=b'') -> None:
+    def __init__(self, f, prepend=b'') -> None:
         self._buffer = prepend
         self._length = len(prepend)
         self.file = f
         self._read = 0
 
-    def read(self: "typing.Self", size):
+    def read(self, size):
         if self._read is None:
             return self.file.read(size)
         if self._read + size <= self._length:
@@ -107,7 +107,7 @@ class _PaddedFile:
             return self._buffer[read:] + \
                    self.file.read(size-self._length+read)
 
-    def prepend(self: "typing.Self", prepend=b''):
+    def prepend(self, prepend=b''):
         if self._read is None:
             self._buffer = prepend
         else:  # Assume data was read since the last prepend() call
@@ -116,12 +116,12 @@ class _PaddedFile:
         self._length = len(self._buffer)
         self._read = 0
 
-    def seek(self: "typing.Self", off):
+    def seek(self, off):
         self._read = None
         self._buffer = None
         return self.file.seek(off)
 
-    def seekable(self: "typing.Self"):
+    def seekable(self):
         return True  # Allows fast-forwarding even in unseekable streams
 
 
@@ -142,7 +142,7 @@ class GzipFile(_compression.BaseStream):
     # is passed in
     myfileobj = None
 
-    def __init__(self: "typing.Self", filename=None, mode=None,
+    def __init__(self, filename=None, mode=None,
                  compresslevel=_COMPRESS_LEVEL_BEST, fileobj=None, mtime=None):
         """Constructor for the GzipFile class.
 
@@ -224,7 +224,7 @@ class GzipFile(_compression.BaseStream):
             self._write_gzip_header(compresslevel)
 
     @property
-    def filename(self: "typing.Self"):
+    def filename(self):
         import warnings
         warnings.warn("use the name attribute", DeprecationWarning, 2)
         if self.mode == WRITE and self.name[-3:] != ".gz":
@@ -232,15 +232,15 @@ class GzipFile(_compression.BaseStream):
         return self.name
 
     @property
-    def mtime(self: "typing.Self"):
+    def mtime(self):
         """Last modification time read from stream, or None"""
         return self._buffer.raw._last_mtime
 
-    def __repr__(self: "typing.Self"):
+    def __repr__(self):
         s = repr(self.fileobj)
         return '<gzip ' + s[1:-1] + ' ' + hex(id(self)) + '>'
 
-    def _init_write(self: "typing.Self", filename):
+    def _init_write(self, filename):
         self.name = filename
         self.crc = zlib.crc32(b"")
         self.size = 0
@@ -248,7 +248,7 @@ class GzipFile(_compression.BaseStream):
         self.bufsize = 0
         self.offset = 0  # Current file offset for seek(), tell(), etc
 
-    def _write_gzip_header(self: "typing.Self", compresslevel):
+    def _write_gzip_header(self, compresslevel):
         self.fileobj.write(b'\037\213')             # magic header
         self.fileobj.write(b'\010')                 # compression method
         try:
@@ -280,7 +280,7 @@ class GzipFile(_compression.BaseStream):
         if fname:
             self.fileobj.write(fname + b'\000')
 
-    def write(self: "typing.Self",data):
+    def write(self,data):
         self._check_not_closed()
         if self.mode != WRITE:
             import errno
@@ -304,14 +304,14 @@ class GzipFile(_compression.BaseStream):
 
         return length
 
-    def read(self: "typing.Self", size=-1):
+    def read(self, size=-1):
         self._check_not_closed()
         if self.mode != READ:
             import errno
             raise OSError(errno.EBADF, "read() on write-only GzipFile object")
         return self._buffer.read(size)
 
-    def read1(self: "typing.Self", size=-1):
+    def read1(self, size=-1):
         """Implements BufferedIOBase.read1()
 
         Reads up to a buffer's worth of data if size is negative."""
@@ -324,7 +324,7 @@ class GzipFile(_compression.BaseStream):
             size = io.DEFAULT_BUFFER_SIZE
         return self._buffer.read1(size)
 
-    def peek(self: "typing.Self", n):
+    def peek(self, n):
         self._check_not_closed()
         if self.mode != READ:
             import errno
@@ -332,10 +332,10 @@ class GzipFile(_compression.BaseStream):
         return self._buffer.peek(n)
 
     @property
-    def closed(self: "typing.Self"):
+    def closed(self):
         return self.fileobj is None
 
-    def close(self: "typing.Self"):
+    def close(self):
         fileobj = self.fileobj
         if fileobj is None:
             return
@@ -354,14 +354,14 @@ class GzipFile(_compression.BaseStream):
                 self.myfileobj = None
                 myfileobj.close()
 
-    def flush(self: "typing.Self",zlib_mode=zlib.Z_SYNC_FLUSH):
+    def flush(self,zlib_mode=zlib.Z_SYNC_FLUSH):
         self._check_not_closed()
         if self.mode == WRITE:
             # Ensure the compressor's buffer is flushed
             self.fileobj.write(self.compress.flush(zlib_mode))
             self.fileobj.flush()
 
-    def fileno(self: "typing.Self"):
+    def fileno(self):
         """Invoke the underlying file object's fileno() method.
 
         This will raise AttributeError if the underlying file object
@@ -369,23 +369,23 @@ class GzipFile(_compression.BaseStream):
         """
         return self.fileobj.fileno()
 
-    def rewind(self: "typing.Self"):
+    def rewind(self):
         '''Return the uncompressed stream file position indicator to the
         beginning of the file'''
         if self.mode != READ:
             raise OSError("Can't rewind in write mode")
         self._buffer.seek(0)
 
-    def readable(self: "typing.Self"):
+    def readable(self):
         return self.mode == READ
 
-    def writable(self: "typing.Self"):
+    def writable(self):
         return self.mode == WRITE
 
-    def seekable(self: "typing.Self"):
+    def seekable(self):
         return True
 
-    def seek(self: "typing.Self", offset, whence=io.SEEK_SET):
+    def seek(self, offset, whence=io.SEEK_SET):
         if self.mode == WRITE:
             if whence != io.SEEK_SET:
                 if whence == io.SEEK_CUR:
@@ -405,24 +405,24 @@ class GzipFile(_compression.BaseStream):
 
         return self.offset
 
-    def readline(self: "typing.Self", size=-1):
+    def readline(self, size=-1):
         self._check_not_closed()
         return self._buffer.readline(size)
 
 
 class _GzipReader(_compression.DecompressReader):
-    def __init__(self: "typing.Self", fp) -> None:
+    def __init__(self, fp) -> None:
         super().__init__(_PaddedFile(fp), zlib.decompressobj,
                          wbits=-zlib.MAX_WBITS)
         # Set flag indicating start of a new member
         self._new_member = True
         self._last_mtime = None
 
-    def _init_read(self: "typing.Self"):
+    def _init_read(self):
         self._crc = zlib.crc32(b"")
         self._stream_size = 0  # Decompressed size of unconcatenated stream
 
-    def _read_exact(self: "typing.Self", n):
+    def _read_exact(self, n):
         '''Read exactly *n* bytes from `self._fp`
 
         This method is required because self._fp may be unbuffered,
@@ -438,7 +438,7 @@ class _GzipReader(_compression.DecompressReader):
             data += b
         return data
 
-    def _read_gzip_header(self: "typing.Self"):
+    def _read_gzip_header(self):
         magic = self._fp.read(2)
         if magic == b'':
             return False
@@ -471,7 +471,7 @@ class _GzipReader(_compression.DecompressReader):
             self._read_exact(2)     # Read & discard the 16-bit header CRC
         return True
 
-    def read(self: "typing.Self", size=-1):
+    def read(self, size=-1):
         if size < 0:
             return self.readall()
         # size=0 is special because decompress(max_length=0) is not supported
@@ -522,11 +522,11 @@ class _GzipReader(_compression.DecompressReader):
         self._pos += len(uncompress)
         return uncompress
 
-    def _add_read_data(self: "typing.Self", data):
+    def _add_read_data(self, data):
         self._crc = zlib.crc32(data, self._crc)
         self._stream_size = self._stream_size + len(data)
 
-    def _read_eof(self: "typing.Self"):
+    def _read_eof(self):
         # We've read to the end of the file
         # We check the that the computed CRC and size of the
         # uncompressed data matches the stored values.  Note that the size
@@ -547,7 +547,7 @@ class _GzipReader(_compression.DecompressReader):
         if c:
             self._fp.prepend(c)
 
-    def _rewind(self: "typing.Self"):
+    def _rewind(self):
         super()._rewind()
         self._new_member = True
 

@@ -25,7 +25,6 @@ import json
 import logging
 import os
 import sys
-import typing
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -84,7 +83,7 @@ def canRunGUI() -> bool:
 
 class StoreConstAction(argparse.Action):
 	def __init__(
-		self: "typing.Self",
+		self,
 		option_strings: "list[str]",
 		same_dest: str = "",
 		const_value: "bool | None" = None,
@@ -103,7 +102,7 @@ class StoreConstAction(argparse.Action):
 		self.const_value = const_value
 
 	def __call__(
-		self: "typing.Self",
+		self,
 		parser: "argparse.ArgumentParser | None" = None,
 		namespace: "argparse.Namespace | None" = None,
 		values: "List" = None,

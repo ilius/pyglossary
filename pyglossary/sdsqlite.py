@@ -1,5 +1,4 @@
 
-import typing
 
 # -*- coding: utf-8 -*-
 from os.path import isfile
@@ -20,16 +19,16 @@ from .text_utils import (
 
 
 class Writer(object):
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self: "typing.Self") -> None:
+	def _clear(self) -> None:
 		self._filename = ''
 		self._con: "sqlite3.Connection | None"
 		self._cur: "sqlite3.Cursor | None"
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		import sqlite3
 		if isfile(filename):
 			raise IOError(f"file {filename!r} already exists")
@@ -49,7 +48,7 @@ class Writer(object):
 			"CREATE INDEX dict_sortkey ON dict(wordlower, word);",
 		)
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		con = self._con
 		cur = self._cur
 		if not (con and cur):
@@ -83,7 +82,7 @@ class Writer(object):
 
 		con.commit()
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:
@@ -92,29 +91,29 @@ class Writer(object):
 
 
 class Reader(object):
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self: "typing.Self") -> None:
+	def _clear(self) -> None:
 		self._filename = ""
 		self._con: "sqlite3.Connection | None"
 		self._cur: "sqlite3.Cursor | None"
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
 		# self._glos.setDefaultDefiFormat("m")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self._cur is None:
 			return 0
 		self._cur.execute("select count(*) from dict")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self._cur is None:
 			return
 		self._cur.execute(
@@ -127,7 +126,7 @@ class Reader(object):
 			defiFormat = row[3]
 			yield self._glos.newEntry(words, defi, defiFormat=defiFormat)
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:

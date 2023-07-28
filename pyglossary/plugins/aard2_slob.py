@@ -3,7 +3,6 @@
 import os
 import re
 import shutil
-import typing
 from os.path import isfile, splitext
 from typing import TYPE_CHECKING, Generator, Iterator
 
@@ -78,7 +77,7 @@ class Reader(object):
 		"icu": "PyICU",  # >=1.5
 	}
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 		self._re_bword = re.compile(
@@ -86,16 +85,16 @@ class Reader(object):
 			re.I,
 		)
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._slobObj is not None:
 			self._slobObj.close()
 		self._clear()
 
-	def _clear(self: "typing.Self") -> None:
+	def _clear(self) -> None:
 		self._filename = ""
 		self._slobObj: "slob.Slob | None" = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		try:
 			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
@@ -154,20 +153,20 @@ class Reader(object):
 		for key, value in tags.items():
 			self._glos.setInfo(f"slob.{key}", value)
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self._slobObj is None:
 			log.error("called len() on a reader which is not open")
 			return 0
 		return len(self._slobObj)
 
-	def _href_sub(self: "typing.Self", m: "re.Match") -> str:
+	def _href_sub(self, m: "re.Match") -> str:
 		st = m.group(0)
 		if "//" in st:
 			return st
 		return st.replace('href="', 'href="bword://')\
 			.replace("href='", "href='bword://")
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType | None]":
+	def __iter__(self) -> "Iterator[EntryType | None]":
 		from pyglossary.slob import MIME_HTML, MIME_TEXT
 		if self._slobObj is None:
 			raise RuntimeError("iterating over a reader while it's not open")
@@ -243,19 +242,19 @@ class Writer(object):
 		"pdf": "application/pdf",
 	}
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._resPrefix = ""
 		self._slobWriter: "slob.Writer | None" = None
 
 	def _slobObserver(
-		self: "typing.Self",
+		self,
 		event: "slob.WriterEvent",  # noqa: F401, F821
 	) -> None:
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
-	def _open(self: "typing.Self", filename: str, namePostfix: str) -> "slob.Writer":
+	def _open(self, filename: str, namePostfix: str) -> "slob.Writer":
 		from pyglossary import slob
 		if isfile(filename):
 			shutil.move(filename, f"{filename}.bak")
@@ -270,7 +269,7 @@ class Writer(object):
 		slobWriter.tag("label", self._glos.getInfo("name") + namePostfix)
 		return slobWriter
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		try:
 			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
@@ -284,7 +283,7 @@ class Writer(object):
 		self._open(filename, namePostfix)
 		self._filename = filename
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		from time import time
 		self._filename = ""
 		if self._slobWriter is None:
@@ -295,7 +294,7 @@ class Writer(object):
 		log.info(f"Finalizing slob file took {time() - t0:.1f} seconds")
 		self._slobWriter = None
 
-	def addDataEntry(self: "typing.Self", entry: "EntryType") -> None:
+	def addDataEntry(self, entry: "EntryType") -> None:
 		slobWriter = self._slobWriter
 		if slobWriter is None:
 			raise ValueError("slobWriter is None")
@@ -315,7 +314,7 @@ class Writer(object):
 			return
 		slobWriter.add(content, key, content_type=content_type)
 
-	def addEntry(self: "typing.Self", entry: "EntryType") -> None:
+	def addEntry(self, entry: "EntryType") -> None:
 		words = entry.l_word
 		b_defi = entry.defi.encode("utf-8")
 		_ctype = self._content_type
@@ -367,7 +366,7 @@ class Writer(object):
 				content_type=_ctype,
 			)
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		slobWriter = self._slobWriter
 		if slobWriter is None:
 			raise ValueError("slobWriter is None")

@@ -23,7 +23,6 @@ import gzip
 import os
 import string
 import sys
-import typing
 
 b64_list = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 url_headword = "00-database-url"
@@ -83,7 +82,7 @@ def sortKey(x: str) -> "list[str]":
 
 class DictDB(object):
 	def __init__(
-		self: "typing.Self",
+		self,
 		basename: str,
 		mode: str = 'read',
 		quiet: int = 0,
@@ -160,10 +159,10 @@ class DictDB(object):
 		#				[short_headword])
 		#self.writeentry(info_headword + "\n" + longinfo, [info_headword])
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return len(self.indexEntries)
 
-	def _initIndex(self: "typing.Self") -> None:
+	def _initIndex(self) -> None:
 		"""Load the entire index off disk into memory."""
 		self.indexFile.seek(0)
 		for line in self.indexFile:
@@ -176,7 +175,7 @@ class DictDB(object):
 			))
 
 	def addIndexEntry(
-		self: "typing.Self",
+		self,
 		word: str,
 		start: int,
 		size: int,
@@ -189,7 +188,7 @@ class DictDB(object):
 		self.indexEntries[word].append((start, size))
 
 	def deleteIndexEntry(
-		self: "typing.Self",
+		self,
 		word: str,
 		start: "int | None" = None,
 		size: "int | None" = None,
@@ -225,20 +224,20 @@ class DictDB(object):
 			del(self.indexEntries[word])
 		return retval
 
-	def update(self: "typing.Self", text: str) -> None:
+	def update(self, text: str) -> None:
 		"""Writes string out, if not quiet."""
 		if not self.quiet:
 			sys.stdout.write(text)
 			sys.stdout.flush()
 
-	def setUrl(self: "typing.Self", url: str) -> None:
+	def setUrl(self, url: str) -> None:
 		"""Sets the URL attribute of this database.  If there was
 		already a URL specified, we will use deleteIndexEntry() on it
 		first."""
 		self.deleteIndexEntry(url_headword)
 		self.addEntry(url_headword + "\n     " + url, [url_headword])
 
-	def setShortName(self: "typing.Self", shortname: str) -> None:
+	def setShortName(self, shortname: str) -> None:
 		"""Sets the shortname for this database.  If there was already
 		a shortname specified, we will use deleteIndexEntry() on it first."""
 		self.deleteIndexEntry(short_headword)
@@ -247,7 +246,7 @@ class DictDB(object):
 			[short_headword],
 		)
 
-	def setLongInfo(self: "typing.Self", longinfo: str) -> None:
+	def setLongInfo(self, longinfo: str) -> None:
 		"""Sets the extended information for this database.  If there was
 		already long info specified, we will use deleteIndexEntry() on it
 		first."""
@@ -255,7 +254,7 @@ class DictDB(object):
 		self.addEntry(info_headword + "\n" + longinfo, [info_headword])
 
 	def addEntry(
-		self: "typing.Self",
+		self,
 		defstr: bytes,
 		headwords: "list[str]",
 	) -> None:
@@ -274,7 +273,7 @@ class DictDB(object):
 		if self.count % 1000 == 0:
 			self.update("Processed %d records\r" % self.count)
 
-	def finish(self: "typing.Self", dosort: bool = True) -> None:
+	def finish(self, dosort: bool = True) -> None:
 		"""Called to finish the writing process.
 		**REQUIRED IF OPENED WITH 'update' OR 'write' MODES**.
 		This will write the index and close the files.
@@ -340,19 +339,19 @@ class DictDB(object):
 
 		self.update("Complete.\n")
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self.indexFile.close()
 		self.dictFile.close()
 
-	def getDefList(self: "typing.Self") -> "list[str]":
+	def getDefList(self) -> "list[str]":
 		"""Returns a list of strings naming all definitions contained
 		in this dictionary."""
 		return self.indexEntries.keys()
 
-	def hasDef(self: "typing.Self", word: str) -> None:
+	def hasDef(self, word: str) -> None:
 		return word in self.indexEntries
 
-	def getDef(self: "typing.Self", word: str) -> "list[bytes]":
+	def getDef(self, word: str) -> "list[bytes]":
 		"""Given a definition name, returns a list of strings with all
 		matching definitions.  This is an *exact* match, not a
 		case-insensitive one.  Returns [] if word is not in the dictionary."""

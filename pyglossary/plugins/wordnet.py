@@ -18,7 +18,6 @@
 import os
 import re
 import sys
-import typing
 from collections import defaultdict
 from typing import Iterator, Tuple
 
@@ -319,26 +318,26 @@ class WordNet(object):
 
 
 class Reader(object):
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0
 		self.wordnet: "WordNet | None" = None
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return self._wordCount
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self.wordnet = WordNet(filename)
 		log.info("Running wordnet.prepare()")
 		self.wordnet.prepare()
 
 		# TODO: metadata
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self.wordnet = None
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self.wordnet is None:
 			raise ValueError("self.wordnet is None")
 		glos = self._glos

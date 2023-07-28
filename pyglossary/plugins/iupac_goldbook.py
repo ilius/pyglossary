@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
 
-import typing
 from io import BytesIO
 from typing import TYPE_CHECKING, Iterator
 
@@ -40,17 +39,17 @@ class Reader(object):
 		"lxml": "lxml",
 	}
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None
 		self._fileSize = 0
 		self._termByCode = None
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return 0
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
@@ -58,7 +57,7 @@ class Reader(object):
 		self._fileSize = 0
 		self._termByCode = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -99,12 +98,12 @@ class Reader(object):
 
 		_file.close()
 
-	def setGlosInfo(self: "typing.Self", key: str, value: str) -> None:
+	def setGlosInfo(self, key: str, value: str) -> None:
 		if value is None:
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self: "typing.Self", header: "Element") -> None:
+	def setMetadata(self, header: "Element") -> None:
 		if header is None:
 			return
 
@@ -129,7 +128,7 @@ class Reader(object):
 			self.setGlosInfo("creationTime", accessdate.text)
 
 	def tostring(
-		self: "typing.Self",
+		self,
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -139,7 +138,7 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def innerXML(self: "typing.Self", elem: "Element") -> str:
+	def innerXML(self, elem: "Element") -> str:
 		from lxml import etree as ET
 		elemName = elem.xpath('name(/*)')
 		resultStr = ''
@@ -151,7 +150,7 @@ class Reader(object):
 
 		return resultStr
 
-	def getTerm(self: "typing.Self", termE: "Element") -> str:
+	def getTerm(self, termE: "Element") -> str:
 		from lxml import etree as ET
 		term = ET.tostring(
 			termE,
@@ -162,7 +161,7 @@ class Reader(object):
 		term = term.replace("<i>", "").replace("</i>", "")
 		return term  # noqa: RET504
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		glos = self._glos

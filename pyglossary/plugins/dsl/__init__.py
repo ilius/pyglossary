@@ -21,7 +21,6 @@
 import html
 import html.entities
 import re
-import typing
 from os.path import dirname, isfile, join
 from typing import Iterator
 
@@ -129,7 +128,7 @@ class Reader(object):
 	_audio: bool = True
 	_example_color: str = "steelblue"
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._file = None
 		self._fileSize = 0
@@ -137,7 +136,7 @@ class Reader(object):
 		self._resFileSet = set()
 
 	def transform(
-		self: "typing.Self",
+		self,
 		text: str,
 		header: str,
 	) -> str:
@@ -159,17 +158,17 @@ class Reader(object):
 		self._resFileSet.update(tr.resFileSet)
 		return resText
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 		self._file = None
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		# FIXME
 		return 0
 
 	def open(
-		self: "typing.Self",
+		self,
 		filename: str,
 	) -> None:
 		self._filename = filename
@@ -205,7 +204,7 @@ class Reader(object):
 				break
 			self.processHeaderLine(line)
 
-	def detectEncoding(self: "typing.Self") -> str:
+	def detectEncoding(self) -> str:
 		for testEncoding in ("utf-8", "utf-16"):
 			with compressionOpen(
 				self._filename,
@@ -227,10 +226,10 @@ class Reader(object):
 			", specify it by: --read-options encoding=ENCODING",
 		)
 
-	def setInfo(self: "typing.Self", key: str, value: str) -> None:
+	def setInfo(self, key: str, value: str) -> None:
 		self._glos.setInfo(key, unwrap_quotes(value))
 
-	def processHeaderLine(self: "typing.Self", line: str) -> None:
+	def processHeaderLine(self, line: str) -> None:
 		if line.startswith("#NAME"):
 			self.setInfo("name", unwrap_quotes(line[6:].strip()))
 		elif line.startswith("#INDEX_LANGUAGE"):
@@ -238,7 +237,7 @@ class Reader(object):
 		elif line.startswith("#CONTENTS_LANGUAGE"):
 			self._glos.targetLangName = unwrap_quotes(line[19:].strip())
 
-	def _iterLines(self: "typing.Self") -> "Iterator[str]":
+	def _iterLines(self) -> "Iterator[str]":
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -252,7 +251,7 @@ class Reader(object):
 		line = line.replace("[/']", "")
 		return line  # noqa: RET504
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		term_lines: "list[str]" = []
 		text_lines: "list[str]" = []
 		for line in self._iterLines():

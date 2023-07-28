@@ -1,5 +1,4 @@
 
-import typing
 
 # -*- coding: utf-8 -*-
 from typing import Generator
@@ -29,21 +28,21 @@ optionsProp: "dict[str, Option]" = {
 class Writer(object):
 	_remove_html_all: bool = True
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		self._filename = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		if self._remove_html_all:
 			self._glos.removeHtmlTagsAll()
 		# TODO: add another bool flag to only remove html tags that are not
 		# supported by GtkTextView
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_writer import writeTxt
 		yield from writeTxt(
 			self._glos,

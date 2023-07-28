@@ -10,7 +10,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossarySQL(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -19,7 +19,7 @@ class TestGlossarySQL(TestGlossaryBase):
 		})
 
 
-	def convert_txt_sql(self: "typing.Self", fname, fname2, **convertArgs):
+	def convert_txt_sql(self, fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.txt",
 			f"{fname}-2.sql",
@@ -27,7 +27,7 @@ class TestGlossarySQL(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_txt_sql_1(self: "typing.Self"):
+	def test_convert_txt_sql_1(self):
 		self.convert_txt_sql(
 			"100-en-fa",
 			"100-en-fa.txt-v2",

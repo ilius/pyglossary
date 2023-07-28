@@ -51,11 +51,11 @@ log.addHandler(mockLog)
 
 
 class BaseTest(unittest.TestCase):
-	def _observer(self: "typing.Self", event: "slob.WriterEvent"):
+	def _observer(self, event: "slob.WriterEvent"):
 		log.info(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 		# self._writers = []
 
-	def create(self: "typing.Self", *args, observer=None, **kwargs):
+	def create(self, *args, observer=None, **kwargs):
 		if observer is None:
 			observer = self._observer
 		w = Writer(*args, observer=observer, **kwargs)
@@ -65,7 +65,7 @@ class BaseTest(unittest.TestCase):
 
 class TestReadWrite(BaseTest):
 
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
@@ -114,7 +114,7 @@ class TestReadWrite(BaseTest):
 		writer.finalize()
 		self.w = writer
 
-	def test_header(self: "typing.Self"):
+	def test_header(self):
 		with MultiFileReader(self.path) as f:
 			header = read_header(f)
 
@@ -131,7 +131,7 @@ class TestReadWrite(BaseTest):
 
 		self.assertEqual(header.blob_count, len(self.data))
 
-	def test_content(self: "typing.Self"):
+	def test_content(self):
 		with slob.open(self.path) as r:
 			self.assertEqual(len(r), len(self.all_keys))
 			self.assertRaises(IndexError, r.__getitem__, len(self.all_keys))
@@ -145,12 +145,12 @@ class TestReadWrite(BaseTest):
 				self.assertEqual(
 					item.fragment, fragment)
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.tmpdir.cleanup()
 
 
 class TestSort(BaseTest):
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
@@ -171,17 +171,17 @@ class TestSort(BaseTest):
 
 		self.r = slob.open(self.path)
 
-	def test_sort_order(self: "typing.Self"):
+	def test_sort_order(self):
 		for i in range(len(self.r)):
 			self.assertEqual(self.r[i].key, self.data_sorted[i])
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.r.close()
 		self.tmpdir.cleanup()
 
 
 class TestSortKey(BaseTest):
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		self.data = [
 			'Ф, ф', 'Ф ф', 'Ф', 'Э', 'Е е', 'г', 'н',
 			'ф', 'а', 'Ф, Ф', 'е', 'Е', 'Ее', 'ё', 'Ё',
@@ -193,7 +193,7 @@ class TestSortKey(BaseTest):
 			'Ф, ф', 'Ф, Ф', 'ы', 'э' , 'Э',
 		]
 
-	def test_sort_order(self: "typing.Self"):
+	def test_sort_order(self):
 		for locName in (
 			# en_US_POSIX on Mac OS X
 			# https://github.com/ilius/pyglossary/issues/458
@@ -210,7 +210,7 @@ class TestSortKey(BaseTest):
 
 class TestFind(BaseTest):
 
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
@@ -229,10 +229,10 @@ class TestFind(BaseTest):
 
 		self.r = slob.open(self.path)
 
-	def get(self: "typing.Self", d, key):
+	def get(self, d, key):
 		return list(item.content.decode('ascii') for item in d[key])
 
-	def test_find_identical(self: "typing.Self"):
+	def test_find_identical(self):
 		d = self.r.as_dict(IDENTICAL)
 		self.assertEqual(
 			self.get(d, 'aa'),
@@ -254,7 +254,7 @@ class TestFind(BaseTest):
 			self.get(d, 'a a'),
 			['LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A'])
 
-	def test_find_quaternary(self: "typing.Self"):
+	def test_find_quaternary(self):
 		d = self.r.as_dict(QUATERNARY)
 		self.assertEqual(
 			self.get(d, 'a\u2032a'),
@@ -267,7 +267,7 @@ class TestFind(BaseTest):
 			],
 		)
 
-	def test_find_tertiary(self: "typing.Self"):
+	def test_find_tertiary(self):
 		d = self.r.as_dict(TERTIARY)
 		self.assertEqual(
 			self.get(d, 'aa'),
@@ -282,7 +282,7 @@ class TestFind(BaseTest):
 			],
 		)
 
-	def test_find_secondary(self: "typing.Self"):
+	def test_find_secondary(self):
 		d = self.r.as_dict(SECONDARY)
 		self.assertEqual(
 			self.get(d, 'aa'),
@@ -299,7 +299,7 @@ class TestFind(BaseTest):
 			],
 		)
 
-	def test_find_primary(self: "typing.Self"):
+	def test_find_primary(self):
 		d = self.r.as_dict(PRIMARY)
 
 		self.assertEqual(
@@ -319,13 +319,13 @@ class TestFind(BaseTest):
 			],
 		)
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.r.close()
 		self.tmpdir.cleanup()
 
 
 class TestPrefixFind(BaseTest):
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 		self.data = ['a', 'ab', 'abc', 'abcd', 'abcde']
@@ -334,10 +334,10 @@ class TestPrefixFind(BaseTest):
 			writer.add(k.encode('ascii'), k)
 		writer.finalize()
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.tmpdir.cleanup()
 
-	def test(self: "typing.Self"):
+	def test(self):
 		with slob.open(self.path) as r:
 			for i, k in enumerate(self.data):
 				d = r.as_dict(IDENTICAL, len(k))
@@ -348,14 +348,14 @@ class TestPrefixFind(BaseTest):
 
 
 class TestAlias(BaseTest):
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.tmpdir.cleanup()
 
-	def test_alias(self: "typing.Self"):
+	def test_alias(self):
 		too_many_redirects = []
 		target_not_found = []
 
@@ -432,7 +432,7 @@ class TestAlias(BaseTest):
 
 
 class TestBlobId(BaseTest):
-	def test(self: "typing.Self"):
+	def test(self):
 		max_i = 2**32 - 1
 		max_j = 2**16 - 1
 		i_values = [0, max_i] + [
@@ -449,13 +449,13 @@ class TestBlobId(BaseTest):
 
 
 class TestMultiFileReader(BaseTest):
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.tmpdir.cleanup()
 
-	def test_read_all(self: "typing.Self"):
+	def test_read_all(self):
 		fnames = []
 		for name in 'abcdef':
 			path = os.path.join(self.tmpdir.name, name)
@@ -465,7 +465,7 @@ class TestMultiFileReader(BaseTest):
 		with MultiFileReader(*fnames) as m:
 			self.assertEqual(m.read().decode(UTF8), 'abcdef')
 
-	def test_seek_and_read(self: "typing.Self"):
+	def test_seek_and_read(self):
 		def mkfile(basename, content):
 			part = os.path.join(self.tmpdir.name, basename)
 			with fopen(part, 'wb') as f:
@@ -492,19 +492,19 @@ class TestMultiFileReader(BaseTest):
 
 
 class TestFormatErrors(BaseTest):
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.tmpdir.cleanup()
 
-	def test_wrong_file_type(self: "typing.Self"):
+	def test_wrong_file_type(self):
 		name = os.path.join(self.tmpdir.name, '1')
 		with fopen(name, 'wb') as f:
 			f.write(b'123')
 		self.assertRaises(UnknownFileFormat, slob.open, name)
 
-	def test_truncated_file(self: "typing.Self"):
+	def test_truncated_file(self):
 		name = os.path.join(self.tmpdir.name, '1')
 
 		writer = self.create(name)
@@ -528,13 +528,13 @@ class TestFormatErrors(BaseTest):
 
 
 class TestFindParts(BaseTest):
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.tmpdir.cleanup()
 
-	def test_find_parts(self: "typing.Self"):
+	def test_find_parts(self):
 		names = [
 			os.path.join(self.tmpdir.name, name)
 			for name in ('abc-1', 'abc-2', 'abc-3')
@@ -547,14 +547,14 @@ class TestFindParts(BaseTest):
 
 
 class TestTooLongText(BaseTest):
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.tmpdir.cleanup()
 
-	def test_too_long(self: "typing.Self"):
+	def test_too_long(self):
 		rejected_keys = []
 		rejected_aliases = []
 		rejected_alias_targets = []
@@ -654,7 +654,7 @@ class TestTooLongText(BaseTest):
 
 
 class TestEditTag(BaseTest):
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 		writer = self.create(self.path)
@@ -662,10 +662,10 @@ class TestEditTag(BaseTest):
 		writer.tag('b', '654321')
 		writer.finalize()
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.tmpdir.cleanup()
 
-	def test_edit_existing_tag(self: "typing.Self"):
+	def test_edit_existing_tag(self):
 		with slob.open(self.path) as f:
 			self.assertEqual(f.tags['a'], '123456')
 			self.assertEqual(f.tags['b'], '654321')
@@ -675,19 +675,19 @@ class TestEditTag(BaseTest):
 			self.assertEqual(f.tags['a'], 'xyz')
 			self.assertEqual(f.tags['b'], 'efg')
 
-	def test_edit_nonexisting_tag(self: "typing.Self"):
+	def test_edit_nonexisting_tag(self):
 		self.assertRaises(TagNotFound, set_tag_value, self.path, 'z', 'abc')
 
 
 class TestBinItemNumberLimit(BaseTest):
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		self.tmpdir.cleanup()
 
-	def test_writing_more_then_max_number_of_bin_items(self: "typing.Self"):
+	def test_writing_more_then_max_number_of_bin_items(self):
 		writer = self.create(self.path)
 		for _ in range(MAX_BIN_ITEM_COUNT + 2):
 			writer.add(b'a', 'a')

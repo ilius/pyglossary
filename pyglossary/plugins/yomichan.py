@@ -2,7 +2,6 @@
 
 import json
 import re
-import typing
 from typing import Any, Generator, Sequence
 
 from pyglossary import os_utils
@@ -186,7 +185,7 @@ class Writer(object):
 	_rule_vk_defi_pattern = ""
 	_rule_adji_defi_pattern = ""
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = None
 		glos.preventDuplicateWords()
@@ -195,14 +194,14 @@ class Writer(object):
 		# formatting for simplicity.
 		glos.removeHtmlTagsAll()
 
-	def _getInfo(self: "typing.Self", key: str) -> str:
+	def _getInfo(self, key: str) -> str:
 		info = self._glos.getInfo(key)
 		return info.replace("\n", "<br>")
 
-	def _getAuthor(self: "typing.Self") -> str:
+	def _getAuthor(self) -> str:
 		return self._glos.author.replace("\n", "<br>")
 
-	def _getDictionaryIndex(self: "typing.Self") -> "dict[str, Any]":
+	def _getDictionaryIndex(self) -> "dict[str, Any]":
 		# Schema: https://github.com/FooSoft/yomichan/
 		# blob/master/ext/data/schemas/dictionary-index-schema.json
 		return dict(
@@ -215,7 +214,7 @@ class Writer(object):
 			description=self._getInfo("description"),
 		)
 
-	def _compileRegex(self: "typing.Self") -> None:
+	def _compileRegex(self) -> None:
 		for field_name in [
 			"_delete_word_pattern",
 			"_ignore_word_with_pattern",
@@ -232,7 +231,7 @@ class Writer(object):
 				setattr(self, field_name, re.compile(value))
 
 	def _getExpressionsAndReadingFromEntry(
-		self: "typing.Self",
+		self,
 		entry: "EntryType",
 	) -> "(list[str], str)":
 		term_expressions = list(entry.l_word)
@@ -286,7 +285,7 @@ class Writer(object):
 
 		return term_expressions, reading
 
-	def _getRuleIdentifiersFromEntry(self: "typing.Self", entry: EntryType) -> list[str]:
+	def _getRuleIdentifiersFromEntry(self, entry: EntryType) -> list[str]:
 		return [
 			r
 			for p, r in [
@@ -300,7 +299,7 @@ class Writer(object):
 		]
 
 	def _getTermsFromEntry(
-		self: "typing.Self",
+		self,
 		entry: "EntryType",
 		sequenceNumber: int,
 	) -> "list[list[Any]]":
@@ -325,13 +324,13 @@ class Writer(object):
 
 		return entryTerms
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		self._filename = None
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		with os_utils.indir(self._filename, create=True):
 			with open("index.json", "w", encoding="utf-8") as f:
 				json.dump(self._getDictionaryIndex(), f, ensure_ascii=False)

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import io
-import typing
 from os.path import splitext
 from typing import Generator, Iterator
 
@@ -28,22 +27,22 @@ optionsProp: "dict[str, Option]" = {}
 
 
 class Writer(object):
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "io.IOBase | None" = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename, mode="wt", encoding="utf-8")
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		self._filename = ""
 		if self._file:
 			self._file.close()
 			self._file = None
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		import re
 		from collections import Counter, OrderedDict
 
@@ -161,13 +160,13 @@ class Writer(object):
 
 
 class Reader(object):
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		pass
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		from pyglossary.json_utils import jsonToOrderedData
 
 		with open(filename, "r", encoding="utf-8") as infoFp:
@@ -175,8 +174,8 @@ class Reader(object):
 		for key, value in info.items():
 			self._glos.setInfo(key, value)
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType | None]":
+	def __iter__(self) -> "Iterator[EntryType | None]":
 		yield None

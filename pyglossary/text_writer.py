@@ -1,6 +1,5 @@
 import logging
 import os
-import typing
 from os.path import (
 	isdir,
 )
@@ -33,7 +32,7 @@ class TextGlossaryWriter(object):
 	_word_title: bool = False
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		glos: "GlossaryType",
 		entryFmt: str = "",  # contain {word} and {defi}
 		writeInfo: bool = True,
@@ -56,7 +55,7 @@ class TextGlossaryWriter(object):
 		# TODO: replace outInfoKeysAliasDict arg with a func?
 
 	def setAttrs(
-		self: "typing.Self",
+		self,
 		encoding: "str | None" = None,
 		newline: "str | None" = None,
 		wordListEncodeFunc: "Callable | None" = None,
@@ -92,7 +91,7 @@ class TextGlossaryWriter(object):
 		if file_size_approx is not None:
 			self._file_size_approx = file_size_approx
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		if self._file_size_approx > 0:
 			self._glos.setInfo("file_count", "-1")
 		self._open(filename)
@@ -101,7 +100,7 @@ class TextGlossaryWriter(object):
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
-	def _doWriteInfo(self: "typing.Self", _file: "io.TextIOBase") -> None:
+	def _doWriteInfo(self, _file: "io.TextIOBase") -> None:
 		entryFmt = self._entryFmt
 		outInfoKeysAliasDict = self._outInfoKeysAliasDict
 		wordEscapeFunc = self._wordEscapeFunc
@@ -128,7 +127,7 @@ class TextGlossaryWriter(object):
 				defi=value,
 			))
 
-	def _open(self: "typing.Self", filename: str) -> None:
+	def _open(self, filename: str) -> None:
 		if not filename:
 			filename = self._glos.filename + self._ext
 
@@ -146,7 +145,7 @@ class TextGlossaryWriter(object):
 		_file.flush()
 		return _file
 
-	def write(self: "typing.Self") -> None:
+	def write(self) -> None:
 		glos = self._glos
 		_file = self._file
 		entryFmt = self._entryFmt
@@ -195,7 +194,7 @@ class TextGlossaryWriter(object):
 					fileIndex += 1
 					_file = self._open(f"{self._filename}.{fileIndex}")
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		if self._tail:
 			self._file.write(self._tail)
 		self._file.close()

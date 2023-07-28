@@ -39,34 +39,34 @@ Element = _Element
 
 class IncrementalFileWriter(typing.Protocol):
 	def write_declaration(
-		self: "typing.Self",
+		self,
 		version: "AnyStr | None" = ...,
 		standalone: "bool | None" = ...,
 		doctype: "AnyStr | None" = ...,
 	) -> None:
 		...
 	def write_doctype(
-		self: "typing.Self",
+		self,
 		doctype: "AnyStr | None",
 	) -> None:
 		...
 	def write(
-		self: "typing.Self",
+		self,
 		*args: "AnyStr | Element",
 		with_tail: bool = ...,
 		pretty_print: bool = ...,
 		method: _OutputMethodArg | None = ...,
 	) -> None:
 		...
-	def flush(self: "typing.Self") -> None:
+	def flush(self) -> None:
 		...
 	def method(
-		self: "typing.Self",
+		self,
 		method: "_OutputMethodArg | None",
 	) -> ContextManager[None]:
 		raise NotImplementedError
 	def element(
-		self: "typing.Self",
+		self,
 		tag: _TagName,
 		attrib: "Mapping[str, AnyStr] | None" = ...,
 		nsmap: "dict[str | None, AnyStr] | None" = ...,
@@ -77,34 +77,34 @@ class IncrementalFileWriter(typing.Protocol):
 
 class AsyncIncrementalFileWriter(typing.Protocol):
 	async def write_declaration(
-		self: "typing.Self",
+		self,
 		version: "AnyStr | None" = ...,
 		standalone: "bool | None" = ...,
 		doctype: "AnyStr | None" = ...,
 	) -> None:
 		...
 	async def write_doctype(
-		self: "typing.Self",
+		self,
 		doctype: "AnyStr | None",
 	) -> None:
 		...
 	async def write(
-		self: "typing.Self",
+		self,
 		*args: "AnyStr | Element | None",
 		with_tail: bool = ...,
 		pretty_print: bool = ...,
 		method: "_OutputMethodArg | None" = ...,
 	) -> None:
 		...
-	async def flush(self: "typing.Self") -> None:
+	async def flush(self) -> None:
 		...
 	def method(
-		self: "typing.Self",
+		self,
 		method: "_OutputMethodArg | None",
 	) -> AsyncContextManager[None]:
 		raise NotImplementedError
 	def element(
-		self: "typing.Self",
+		self,
 		tag: _TagName,
 		attrib: "Mapping[str, AnyStr] | None" = ...,
 		nsmap: "dict[str | None, AnyStr] | None" = ...,

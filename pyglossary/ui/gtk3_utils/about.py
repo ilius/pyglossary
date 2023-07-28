@@ -16,7 +16,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-import typing
 
 from . import gtk
 from .utils import (
@@ -28,7 +27,7 @@ from .utils import (
 
 class AboutWidget(gtk.Box):
 	def __init__(
-		self: "typing.Self",
+		self,
 		logo: str = "",
 		header: str = "",
 		about: str = "",
@@ -71,7 +70,7 @@ class AboutWidget(gtk.Box):
 
 	# <a href="...">Something</a> does not work with TextView
 	def newTabWidgetTextView(
-		self: "typing.Self",
+		self,
 		text: str,
 		wrap: bool = False,
 		justification: "gtk.Justification | None" = None,
@@ -96,7 +95,7 @@ class AboutWidget(gtk.Box):
 		return swin
 
 	def newTabLabelWidget(
-		self: "typing.Self",
+		self,
 		text: str,
 		wrap: bool = False,
 		justification: "gtk.Justification | None" = None,
@@ -122,7 +121,7 @@ class AboutWidget(gtk.Box):
 		swin.add(box)
 		return swin
 
-	def newTabTitle(self: "typing.Self", title: str, icon: str):
+	def newTabTitle(self, title: str, icon: str):
 		box = gtk.Box(orientation=gtk.Orientation.VERTICAL)
 		if icon:
 			box.pack_start(imageFromFile(icon), False, False, 5)

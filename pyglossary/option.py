@@ -2,7 +2,6 @@
 
 import logging
 import re
-import typing
 from typing import Any, Dict, List
 
 log = logging.getLogger("pyglossary")
@@ -29,7 +28,7 @@ class Option(object):
 		return optClass
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		typ: str,
 		customValue: bool = False,
 		values: "list[Any] | None" = None,
@@ -56,11 +55,11 @@ class Option(object):
 		self.falseComment = falseComment
 
 	@property
-	def typeDesc(self: "typing.Self") -> str:
+	def typeDesc(self) -> str:
 		return self.typ
 
 	@property
-	def longComment(self: "typing.Self") -> str:
+	def longComment(self) -> str:
 		comment = self.typeDesc
 		if self.comment:
 			if comment:
@@ -68,7 +67,7 @@ class Option(object):
 			comment += self.comment
 		return comment
 
-	def toDict(self: "typing.Self") -> "dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = {
 			"class": self.__class__.__name__,
 			"type": self.typ,
@@ -87,13 +86,13 @@ class Option(object):
 			data["falseComment"] = self.falseComment
 		return data
 
-	def evaluate(self: "typing.Self", raw: str) -> "tuple[Any, bool]":
+	def evaluate(self, raw: str) -> "tuple[Any, bool]":
 		"returns (value, isValid)"
 		if raw == "None":
 			return None, True
 		return raw, True
 
-	def validate(self: "typing.Self", value: "Any") -> bool:
+	def validate(self, value: "Any") -> bool:
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -107,7 +106,7 @@ class Option(object):
 		valueType = type(value).__name__
 		return self.typ == valueType
 
-	def validateRaw(self: "typing.Self", raw: str) -> bool:
+	def validateRaw(self, raw: str) -> bool:
 		"returns isValid"
 		value, isValid = self.evaluate(raw)
 		if not isValid:
@@ -116,14 +115,14 @@ class Option(object):
 			return False
 		return True
 
-	def groupValues(self: "typing.Self") -> "dict[str, Any] | None":
+	def groupValues(self) -> "dict[str, Any] | None":
 		return None
 
 
 @Option.register
 class BoolOption(Option):
 	def __init__(
-		self: "typing.Self",
+		self,
 		allowNone: bool = False,
 		**kwargs,  # noqa: ANN
 	) -> None:
@@ -139,14 +138,14 @@ class BoolOption(Option):
 			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self: "typing.Self") -> "dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		del data["values"]
 		return data
 
 	def evaluate(
-		self: "typing.Self",
+		self,
 		raw: "str | bool",
 	) -> "tuple[bool | None, bool]":
 		if raw is None:
@@ -167,7 +166,7 @@ class BoolOption(Option):
 @Option.register
 class StrOption(Option):
 	def __init__(
-		self: "typing.Self",
+		self,
 		**kwargs,  # noqa: ANN
 	) -> None:
 		Option.__init__(
@@ -176,7 +175,7 @@ class StrOption(Option):
 			**kwargs,
 		)
 
-	def validate(self: "typing.Self", value: "Any") -> bool:
+	def validate(self, value: "Any") -> bool:
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -187,14 +186,14 @@ class StrOption(Option):
 			return value in self.values
 		return type(value).__name__ == "str"
 
-	def groupValues(self: "typing.Self") -> "dict[str, Any] | None":
+	def groupValues(self) -> "dict[str, Any] | None":
 		return None
 
 
 @Option.register
 class IntOption(Option):
 	def __init__(
-		self: "typing.Self",
+		self,
 		**kwargs,  # noqa: ANN
 	) -> None:
 		Option.__init__(
@@ -203,7 +202,7 @@ class IntOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self: "typing.Self", raw: "str | int") -> "tuple[int | None, bool]":
+	def evaluate(self, raw: "str | int") -> "tuple[int | None, bool]":
 		"returns (value, isValid)"
 		try:
 			value = int(raw)
@@ -251,10 +250,10 @@ class FileSizeOption(IntOption):
 	validPattern = "^([0-9.]+)([kKmMgG]i?[bB]?)$"
 
 	@property
-	def typeDesc(self: "typing.Self") -> str:
+	def typeDesc(self) -> str:
 		return ""
 
-	def evaluate(self: "typing.Self", raw: "str | int") -> "tuple[int | None, bool]":
+	def evaluate(self, raw: "str | int") -> "tuple[int | None, bool]":
 		if not raw:
 			return 0, True
 		factor = 1
@@ -278,7 +277,7 @@ class FileSizeOption(IntOption):
 @Option.register
 class FloatOption(Option):
 	def __init__(
-		self: "typing.Self",
+		self,
 		**kwargs,  # noqa: noqa: ANN
 	) -> None:
 		Option.__init__(
@@ -288,7 +287,7 @@ class FloatOption(Option):
 		)
 
 	def evaluate(
-		self: "typing.Self",
+		self,
 		raw: "str | float | int",
 	) -> "tuple[float | None, bool]":
 		"returns (value, isValid)"
@@ -303,7 +302,7 @@ class FloatOption(Option):
 @Option.register
 class DictOption(Option):
 	def __init__(
-		self: "typing.Self",
+		self,
 		**kwargs,  # noqa: ANN
 	) -> None:
 		Option.__init__(
@@ -315,13 +314,13 @@ class DictOption(Option):
 			**kwargs,
 		)
 
-	def toDict(self: "typing.Self") -> "dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
 
 	def evaluate(
-		self: "typing.Self",
+		self,
 		raw: "str | dict",
 	) -> "tuple[Dict | None, bool]":
 		import ast
@@ -340,7 +339,7 @@ class DictOption(Option):
 
 @Option.register
 class ListOption(Option):
-	def __init__(self: "typing.Self", **kwargs) -> None:
+	def __init__(self, **kwargs) -> None:
 		Option.__init__(
 			self,
 			typ="list",
@@ -350,12 +349,12 @@ class ListOption(Option):
 			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self: "typing.Self") -> "dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
 
-	def evaluate(self: "typing.Self", raw: str) -> "tuple[List | None, bool]":
+	def evaluate(self, raw: str) -> "tuple[List | None, bool]":
 		import ast
 		if raw == "":
 			return None, True  # valid
@@ -373,7 +372,7 @@ class EncodingOption(Option):
 	re_category = re.compile("^[a-z]+")
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		customValue: bool = True,
 		values: "list[str] | None" = None,
 		comment: "str | None" = None,
@@ -419,12 +418,12 @@ class EncodingOption(Option):
 			**kwargs,  # noqa: ANN
 		)
 
-	def toDict(self: "typing.Self") -> "dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["values"]
 		return data
 
-	def groupValues(self: "typing.Self") -> "dict[str, Any] | None":
+	def groupValues(self) -> "dict[str, Any] | None":
 		from collections import OrderedDict
 		groups: "dict[str, list[str]]" = OrderedDict()
 		others: "list[str]" = []
@@ -448,7 +447,7 @@ class EncodingOption(Option):
 @Option.register
 class NewlineOption(Option):
 	def __init__(
-		self: "typing.Self",
+		self,
 		customValue: bool = True,
 		values: "list[str] | None" = None,
 		comment: "str | None" = None,
@@ -475,12 +474,12 @@ class NewlineOption(Option):
 
 @Option.register
 class HtmlColorOption(Option):
-	def toDict(self: "typing.Self") -> "dict[str, Any]":
+	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
 
-	def __init__(self: "typing.Self", **kwargs) -> None:
+	def __init__(self, **kwargs) -> None:
 		Option.__init__(
 			self,
 			typ="str",

@@ -19,7 +19,6 @@
 
 import logging
 import os
-import typing
 from os.path import isfile
 from pickle import dumps, loads
 from typing import TYPE_CHECKING
@@ -47,7 +46,7 @@ PICKLE_PROTOCOL = 4
 
 class SqEntryList:
 	def __init__(
-		self: "typing.Self",
+		self,
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
 		entryFromRaw: "Callable[[RawEntryType], EntryType]",
 		filename: str,
@@ -81,16 +80,16 @@ class SqEntryList:
 		self._columnNames = ""
 
 	@property
-	def rawEntryCompress(self: "typing.Self") -> bool:
+	def rawEntryCompress(self) -> bool:
 		return False
 
 	@rawEntryCompress.setter
-	def rawEntryCompress(self: "typing.Self", enable: bool) -> None:
+	def rawEntryCompress(self, enable: bool) -> None:
 		# just to comply with EntryListType
 		pass
 
 	def setSortKey(
-		self: "typing.Self",
+		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
@@ -127,10 +126,10 @@ class SqEntryList:
 			f"CREATE TABLE data ({colDefs})",
 		)
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return self._len
 
-	def append(self: "typing.Self", entry: "EntryType") -> None:
+	def append(self, entry: "EntryType") -> None:
 		if self._sqliteSortKey is None:
 			raise RuntimeError("self._sqliteSortKey is None")
 		rawEntry = self._entryToRaw(entry)
@@ -156,12 +155,12 @@ class SqEntryList:
 		if self._len % 1000 == 0:
 			self._con.commit()
 
-	def __iadd__(self: "typing.Self", other: "Iterable") -> "SqEntryList":
+	def __iadd__(self, other: "Iterable") -> "SqEntryList":
 		for item in other:
 			self.append(item)
 		return self
 
-	def sort(self: "typing.Self", reverse: bool = False) -> None:
+	def sort(self, reverse: bool = False) -> None:
 		if self._sorted:
 			raise NotImplementedError("can not sort more than once")
 		if self._sqliteSortKey is None:
@@ -181,7 +180,7 @@ class SqEntryList:
 		)
 		self._con.commit()
 
-	def _parseExistingIndex(self: "typing.Self") -> bool:
+	def _parseExistingIndex(self) -> bool:
 		if self._cur is None:
 			return False
 		self._cur.execute("select sql FROM sqlite_master WHERE name='sortkey'")
@@ -203,17 +202,17 @@ class SqEntryList:
 		self._orderBy = columnNames
 		return True
 
-	def deleteAll(self: "typing.Self") -> None:
+	def deleteAll(self) -> None:
 		if self._con is None:
 			return
 		self._con.execute("DELETE FROM data;")
 		self._con.commit()
 		self._len = 0
 
-	def clear(self: "typing.Self") -> None:
+	def clear(self) -> None:
 		self.close()
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._con is None or self._cur is None:
 			return
 		self._con.commit()
@@ -222,7 +221,7 @@ class SqEntryList:
 		self._con = None
 		self._cur = None
 
-	def __del__(self: "typing.Self") -> None:
+	def __del__(self) -> None:
 		try:
 			self.close()
 			if not self._persist and isfile(self._filename):
@@ -230,7 +229,7 @@ class SqEntryList:
 		except AttributeError as e:
 			log.error(str(e))
 
-	def __iter__(self: "typing.Self") -> "Iterator":
+	def __iter__(self) -> "Iterator":
 		if self._cur is None:
 			return
 		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"

@@ -1,5 +1,4 @@
 
-import typing
 
 # -*- coding: utf-8 -*-
 #
@@ -130,7 +129,7 @@ class BabylonLanguage(object):
 		code - value of the type 3, code in .bgl file
 	"""
 	def __init__(
-		self: "typing.Self",
+		self,
 		name: str,
 		charset: str,
 		encoding: str,

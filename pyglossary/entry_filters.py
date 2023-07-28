@@ -23,13 +23,13 @@ class EntryFilterType(typing.Protocol):
 	desc: str = ""
 	falseComment: str = ""
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		raise NotImplementedError
 
-	def prepare(self: "typing.Self") -> None:
+	def prepare(self) -> None:
 		raise NotImplementedError
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		raise NotImplementedError
 
 
@@ -38,15 +38,15 @@ class EntryFilter:
 	desc: str = ""
 	falseComment: str = ""
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self.glos = glos
 
-	def prepare(self: "typing.Self") -> None:
+	def prepare(self) -> None:
 		"""
 			run this after glossary info is set and ready
 		"""
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		"""
 			returns an Entry object, or None to skip
 				may return the same `entry`,
@@ -60,7 +60,7 @@ class TrimWhitespaces(EntryFilter):
 	name = "trim_whitespaces"
 	desc = "Remove leading/trailing whitespaces from word(s) and definition"
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		entry.strip()
 		entry.replace("\r", "")
 		return entry
@@ -70,7 +70,7 @@ class NonEmptyWordFilter(EntryFilter):
 	name = "non_empty_word"
 	desc = "Skip entries with empty word"
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		if not entry.s_word:
 			return None
 		return entry
@@ -80,7 +80,7 @@ class NonEmptyDefiFilter(EntryFilter):
 	name = "non_empty_defi"
 	desc = "Skip entries with empty definition"
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		if not entry.defi:
 			return None
 		return entry
@@ -90,7 +90,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 	name = "remove_empty_dup_alt_words"
 	desc = "Remove empty and duplicate alternate words"
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		entry.removeEmptyAndDuplicateAltWords()
 		if not entry.l_word:
 			return None
@@ -102,7 +102,7 @@ class FixUnicode(EntryFilter):
 	desc = "Fix Unicode in word(s) and definition"
 	falseComment = "Do not fix Unicode in word(s) and definition"
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		entry.editFuncWord(fixUtf8)
 		entry.editFuncDefi(fixUtf8)
 		return entry
@@ -113,17 +113,17 @@ class LowerWord(EntryFilter):
 	desc = "Lowercase word(s)"
 	falseComment = "Do not lowercase words before writing"
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._re_word_ref = re.compile('href=["\'](bword://[^"\']+)["\']')
 
-	def lowerWordRefs(self: "typing.Self", defi: str) -> str:
+	def lowerWordRefs(self, defi: str) -> str:
 		return self._re_word_ref.sub(
 			lambda m: m.group(0).lower(),
 			defi,
 		)
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		entry.editFuncWord(str.lower)
 		entry.editFuncDefi(self.lowerWordRefs)
 		return entry
@@ -133,7 +133,7 @@ class RTLDefi(EntryFilter):
 	name = "rtl"
 	desc = "Make definition right-to-left"
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		entry.editFuncDefi(lambda defi: f'<div dir="rtl">{defi}</div>')
 		return entry
 
@@ -142,7 +142,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 	name = "remove_html_all"
 	desc = "Remove all HTML tags (not their contents) from definition"
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._p_pattern = re.compile(
 			'<p( [^<>]*?)?>(.*?)</p>',
 			re.DOTALL,
@@ -156,7 +156,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 			re.IGNORECASE,
 		)
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		from bs4 import BeautifulSoup
 
 		def fixStr(st: str) -> str:
@@ -184,7 +184,7 @@ class RemoveHtmlTags(EntryFilter):
 		" (not their contents) from definition"
 	)
 
-	def __init__(self: "typing.Self", glos: "GlossaryType", tagsStr: str) -> None:
+	def __init__(self, glos: "GlossaryType", tagsStr: str) -> None:
 		import re
 		tags = tagsStr.split(",")
 		self.glos = glos
@@ -192,7 +192,7 @@ class RemoveHtmlTags(EntryFilter):
 		tagsRE = "|".join(self.tags)
 		self.pattern = re.compile(f"</?({tagsRE})( [^>]*)?>")
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		def fixStr(st: str) -> str:
 			return self.pattern.sub("", st)
 
@@ -204,13 +204,13 @@ class StripFullHtml(EntryFilter):
 	desc = "Replace a full HTML document with it's body"
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		glos: "GlossaryType",
 		errorHandler: "Callable[[EntryType, str], None] | None",
 	) -> None:
 		self._errorHandler = errorHandler
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		err = entry.stripFullHtml()
 		if err and self._errorHandler:
 			self._errorHandler(entry, err)
@@ -233,7 +233,7 @@ class NormalizeHtml(EntryFilter):
 		"br", "hr",
 	)
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		log.info("Normalizing HTML tags")
 		self._pattern = re.compile(
 			"(" + "|".join(
@@ -243,13 +243,13 @@ class NormalizeHtml(EntryFilter):
 			re.S | re.I,
 		)
 
-	def _subLower(self: "typing.Self", m: "re.Match") -> str:
+	def _subLower(self, m: "re.Match") -> str:
 		return m.group(0).lower()
 
-	def _fixDefi(self: "typing.Self", st: str) -> str:
+	def _fixDefi(self, st: str) -> str:
 		return self._pattern.sub(self._subLower, st)
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		entry.editFuncDefi(self._fixDefi)
 		return entry
 
@@ -258,7 +258,7 @@ class SkipDataEntry(EntryFilter):
 	name = "skip_resources"
 	desc = "Skip resources / data files"
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		if entry.isData():
 			return None
 		return entry
@@ -268,11 +268,11 @@ class LanguageCleanup(EntryFilter):
 	name = "lang"
 	desc = "Language-specific cleanup/fixes"
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._run_func: "Callable[[EntryType], EntryType | None] | None" = None
 
-	def prepare(self: "typing.Self") -> None:
+	def prepare(self) -> None:
 		langCodes = {
 			lang.code
 			for lang in (self.glos.sourceLang, self.glos.targetLang)
@@ -282,7 +282,7 @@ class LanguageCleanup(EntryFilter):
 			self._run_func = self.run_fa
 			log.info("Using Persian filter")
 
-	def run_fa(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run_fa(self, entry: "EntryType") -> "EntryType | None":
 		from .persian_utils import faEditStr
 		entry.editFuncWord(faEditStr)
 		entry.editFuncDefi(faEditStr)
@@ -291,7 +291,7 @@ class LanguageCleanup(EntryFilter):
 		# for GoldenDict ^^ FIXME
 		return entry
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		if self._run_func:
 			return self._run_func(entry)
 		return entry
@@ -312,7 +312,7 @@ class TextListSymbolCleanup(EntryFilter):
 	spacesNewlinePattern = re.compile(" *\n *")
 	blocksNewlinePattern = re.compile("♦\n+♦")
 
-	def cleanDefi(self: "typing.Self", st: str) -> str:
+	def cleanDefi(self, st: str) -> str:
 		st = st.replace("♦  ", "♦ ")
 		st = self.winNewlinePattern.sub("\n", st)
 		st = self.spacesNewlinePattern.sub("\n", st)
@@ -326,7 +326,7 @@ class TextListSymbolCleanup(EntryFilter):
 
 		return st  # noqa: RET504
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		entry.editFuncDefi(self.cleanDefi)
 		return entry
 
@@ -335,11 +335,11 @@ class PreventDuplicateWords(EntryFilter):
 	name = "prevent_duplicate_words"
 	desc = "Prevent duplicate words"
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._wordSet: "set[str]" = set()
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		if entry.isData():
 			return entry
 
@@ -366,11 +366,11 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 	name = "skip_duplicate_headword"
 	desc = "Skip entries with a duplicate headword"
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._wset: "set[str]" = set()
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		word = entry.l_word[0]
 		if word in self._wset:
 			return None
@@ -382,11 +382,11 @@ class TrimArabicDiacritics(EntryFilter):
 	name = "trim_arabic_diacritics"
 	desc = "Trim Arabic diacritics from headword"
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
 		self._pat = re.compile("[\u064b-\u065f]")
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		words = list(entry.l_word)
 		hw = words[0]
 		hw_t = self._pat.sub("", hw)
@@ -401,7 +401,7 @@ class UnescapeWordLinks(EntryFilter):
 	name = "unescape_word_links"
 	desc = "Unescape Word Links"
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		from pyglossary.html_utils import unescape_unicode
 
 		EntryFilter.__init__(self, glos)
@@ -414,7 +414,7 @@ class UnescapeWordLinks(EntryFilter):
 	def _sub(self, m: "re.Match"):
 		return self._unescape(m.group(0))
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		entry._defi = self._pat.sub(self._sub, entry.defi)  # type: ignore
 		return entry
 
@@ -423,7 +423,7 @@ class ShowProgressBar(EntryFilter):
 	name = "progressbar"
 	desc = "Progress Bar"
 
-	def __init__(self: "typing.Self", glos: "GlossaryExtendedType") -> None:
+	def __init__(self, glos: "GlossaryExtendedType") -> None:
 		EntryFilter.__init__(self, glos)
 		self.glos: "GlossaryExtendedType" = glos
 		self._wordCount = -1
@@ -431,7 +431,7 @@ class ShowProgressBar(EntryFilter):
 		self._lastPos = 0
 		self._index = 0
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		index = self._index
 		self._index = index + 1
 
@@ -458,7 +458,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 	name = "max_memory_usage"
 	desc = "Show Max Memory Usage"
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		import os
 
 		import psutil
@@ -467,7 +467,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 		self._process = psutil.Process(os.getpid())
 		self._max_mem_usage = 0
 
-	def run(self: "typing.Self", entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":
 		usage = self._process.memory_info().rss // 1024
 		if usage > self._max_mem_usage:
 			self._max_mem_usage = usage

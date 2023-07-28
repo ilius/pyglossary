@@ -10,7 +10,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryXDXF(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -18,7 +18,7 @@ class TestGlossaryXDXF(TestGlossaryBase):
 			"100-cyber_lexicon_en-es.xdxf": "8d9ba394",
 		})
 
-	def convert_xdxf_txt(self: "typing.Self", fname, fname2, **convertArgs):
+	def convert_xdxf_txt(self, fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.xdxf",
 			f"{fname}-tmp.txt",

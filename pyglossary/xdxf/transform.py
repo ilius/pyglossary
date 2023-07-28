@@ -1,6 +1,5 @@
 
 import logging
-import typing
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
@@ -16,10 +15,10 @@ class XdxfTransformer(object):
 	_gram_color: str = "green"
 	_example_padding: int = 10
 
-	def __init__(self: "typing.Self", encoding: str = "utf-8") -> None:
+	def __init__(self, encoding: str = "utf-8") -> None:
 		self._encoding = encoding
 
-	def tostring(self: "typing.Self", elem: "Element") -> str:
+	def tostring(self, elem: "Element") -> str:
 		from lxml import etree as ET
 		return ET.tostring(
 			elem,
@@ -27,7 +26,7 @@ class XdxfTransformer(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def hasPrevText(self: "typing.Self", prev: "None | str | Element") -> bool:
+	def hasPrevText(self, prev: "None | str | Element") -> bool:
 		if isinstance(prev, str):
 			return True
 		if prev is None:
@@ -45,7 +44,7 @@ class XdxfTransformer(object):
 		return False
 
 	def writeString(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		child: str,
 		parent: "Element",
@@ -89,7 +88,7 @@ class XdxfTransformer(object):
 		return
 
 	def writeExample(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
@@ -118,7 +117,7 @@ class XdxfTransformer(object):
 				prev = child
 
 	def writeIRef(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		child: "Element",
 	) -> None:
@@ -139,7 +138,7 @@ class XdxfTransformer(object):
 			self.writeChildrenOf(hf, child, stringSep=" ")
 
 	def writeChildElem(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		child: "Element",
 		parent: "Element",
@@ -310,7 +309,7 @@ class XdxfTransformer(object):
 
 
 	def writeChild(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		child: "str | Element",
 		parent: "Element",
@@ -328,10 +327,10 @@ class XdxfTransformer(object):
 			parent=parent,
 			prev=prev,
 			stringSep=stringSep,
-		) 
+		)
 
 	def shouldAddSep(
-		self: "typing.Self",
+		self,
 		child: "str | Element",
 		prev: "str | Element",
 	) -> bool:
@@ -351,7 +350,7 @@ class XdxfTransformer(object):
 		return True
 
 	def writeChildrenOf(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		elem: "Element",
 		sep: "str | None" = None,
@@ -364,7 +363,7 @@ class XdxfTransformer(object):
 			self.writeChild(hf, child, elem, prev, stringSep=stringSep)
 			prev = child
 
-	def transform(self: "typing.Self", article: "Element") -> str:
+	def transform(self, article: "Element") -> str:
 		from lxml import etree as ET
 		# encoding = self._encoding
 		f = BytesIO()
@@ -376,7 +375,7 @@ class XdxfTransformer(object):
 		text = text.replace("<br>", "<br/>")  # for compatibility
 		return text  # noqa: RET504
 
-	def transformByInnerString(self: "typing.Self", articleInnerStr: str) -> str:
+	def transformByInnerString(self, articleInnerStr: str) -> str:
 		from lxml import etree as ET
 		return self.transform(
 			ET.fromstring(f"<ar>{articleInnerStr}</ar>"),

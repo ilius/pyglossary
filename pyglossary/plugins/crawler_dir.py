@@ -1,6 +1,5 @@
 # mypy: ignore-errors
 
-import typing
 from hashlib import sha1
 from os import listdir, makedirs
 from os.path import dirname, isdir, isfile, join, splitext
@@ -41,19 +40,19 @@ optionsProp: "dict[str, Option]" = {
 class Writer(object):
 	_compression: str = ""
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		pass
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		if not isdir(filename):
 			makedirs(filename)
 
-	def filePathFromWord(self: "typing.Self", b_word: bytes) -> str:
+	def filePathFromWord(self, b_word: bytes) -> str:
 		bw = b_word.lower()
 		if len(bw) <= 2:
 			return bw.hex()
@@ -68,7 +67,7 @@ class Writer(object):
 			bw[4:8].hex() + "-" + sha1(b_word).hexdigest()[:8],  # noqa: S324
 		)
 
-	def write(self: "typing.Self") -> None:
+	def write(self) -> None:
 		from collections import OrderedDict as odict
 
 		from pyglossary.json_utils import dataToPrettyJson
@@ -118,12 +117,12 @@ class Writer(object):
 
 
 class Reader(object):
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		self._wordCount = 0
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		from pyglossary.json_utils import jsonToOrderedData
 
 		self._filename = filename
@@ -134,13 +133,13 @@ class Reader(object):
 		for key, value in info.items():
 			self._glos.setInfo(key, value)
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		pass
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return self._wordCount
 
-	def _fromFile(self: "typing.Self", fpath: str) -> "EntryType":
+	def _fromFile(self, fpath: str) -> "EntryType":
 		_, ext = splitext(fpath)
 		c_open = compressionOpenFunc(ext.lstrip("."))
 		if not c_open:
@@ -151,14 +150,14 @@ class Reader(object):
 			defi = _file.read()
 			return self._glos.newEntry(words, defi)
 
-	def _listdirSortKey(self: "typing.Self", name: str) -> str:
+	def _listdirSortKey(self, name: str) -> str:
 		name_nox, ext = splitext(name)
 		if ext == ".d":
 			return name
 		return name_nox
 
 	def _readDir(
-		self: "typing.Self",
+		self,
 		dpath: str,
 		exclude: "set[str] | None",
 	) -> "Generator[None, EntryType, None]":
@@ -179,7 +178,7 @@ class Reader(object):
 				continue
 			log.error(f"Not a file nor a directory: {cpath}")
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		yield from self._readDir(
 			self._filename,
 			{

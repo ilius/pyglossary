@@ -11,7 +11,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryAppleDictBin(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -45,7 +45,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 		})
 
 	def convert_appledict_binary_to_txt(
-		self: "typing.Self",
+		self,
 		baseName: str,
 		files: "list[str]",
 		html_full: bool = False,
@@ -92,7 +92,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 				join(inputDirPath, inputRelPath),
 			)
 
-	def test_appledict_binary_to_txt_0(self: "typing.Self"):
+	def test_appledict_binary_to_txt_0(self):
 		baseName = "002-simple"
 		files = [
 			"Contents/Body.data",
@@ -112,7 +112,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 		self.convert_appledict_binary_to_txt(baseName, files, resFiles=resFiles)
 
 
-	def test_appledict_binary_to_txt_1(self: "typing.Self"):
+	def test_appledict_binary_to_txt_1(self):
 		baseName = "006-en-oxfjord_v10.11_c2_t3"
 		files = [
 			"Contents/Info.plist",

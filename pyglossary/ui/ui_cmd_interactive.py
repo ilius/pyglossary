@@ -46,7 +46,6 @@ import json
 import logging
 import os
 import shlex
-import typing
 from collections import OrderedDict
 from os.path import (
 	abspath,
@@ -87,7 +86,7 @@ endFormat = "\x1b[0;0;0m"
 
 class MiniCheckBoxPrompt(object):
 	def __init__(
-		self: "typing.Self",
+		self,
 		message: str = "",
 		fmt: str = "{message}: {check}",
 		value: bool = False,
@@ -96,7 +95,7 @@ class MiniCheckBoxPrompt(object):
 		self.fmt = fmt
 		self.value = value
 
-	def formatMessage(self: "typing.Self"):
+	def formatMessage(self):
 		msg = self.fmt.format(
 			check="[x]" if self.value else "[ ]",
 			message=self.message,
@@ -104,7 +103,7 @@ class MiniCheckBoxPrompt(object):
 		# msg = ANSI(msg)  # NOT SUPPORTED
 		return msg  # noqa: RET504
 
-	def __pt_formatted_text__(self: "typing.Self"):
+	def __pt_formatted_text__(self):
 		return [("", self.formatMessage())]
 
 
@@ -211,7 +210,7 @@ back = "back"
 
 class MyPathCompleter(PathCompleter):
 	def __init__(
-		self: "typing.Self",
+		self,
 		reading: bool,
 		fs_action_names=None,
 		**kwargs,
@@ -225,7 +224,7 @@ class MyPathCompleter(PathCompleter):
 			fs_action_names = []
 		self.fs_action_names = fs_action_names
 
-	def file_filter(self: "typing.Self", filename: str) -> bool:
+	def file_filter(self, filename: str) -> bool:
 		# filename is full/absolute file path
 		return True
 
@@ -233,7 +232,7 @@ class MyPathCompleter(PathCompleter):
 	# 	log.error(f"Exception in get_completions: {e}")
 
 	def get_completions(
-		self: "typing.Self",
+		self,
 		document: "prompt_toolkit.Document",
 		complete_event: "prompt_toolkit.CompleteEvent",
 	) -> "Iterable[Completion]":
@@ -255,7 +254,7 @@ class MyPathCompleter(PathCompleter):
 
 
 class AbsolutePathHistory(FileHistory):
-	def load_history_strings(self: "typing.Self") -> "Iterable[str]":
+	def load_history_strings(self) -> "Iterable[str]":
 		# pwd = os.getcwd()
 		pathList = FileHistory.load_history_strings(self)
 		return [
@@ -263,13 +262,13 @@ class AbsolutePathHistory(FileHistory):
 			for p in pathList
 		]
 
-	def store_string(self: "typing.Self", string: str) -> None:
+	def store_string(self, string: str) -> None:
 		FileHistory.store_string(self, abspath(string))
 
 
 class UI(ui_cmd.UI):
 	def __init__(
-		self: "typing.Self",
+		self,
 		progressbar: bool = True,
 	) -> None:
 		self._inputFilename = ""
@@ -328,11 +327,11 @@ class UI(ui_cmd.UI):
 			("back", None),
 		])
 
-	def fs_pwd(self: "typing.Self", args: "list[str]"):
+	def fs_pwd(self, args: "list[str]"):
 		print(os.getcwd())
 
 	def get_ls_l(
-		self: "typing.Self",
+		self,
 		arg: str,
 		st: "os.stat_result | None" = None,
 		parentDir: str = "",
@@ -360,7 +359,7 @@ class UI(ui_cmd.UI):
 			details.append(f"-> {os.readlink(argPath)}")
 		return "  ".join(details)
 
-	def fs_ls(self: "typing.Self", args: "list[str]"):
+	def fs_ls(self, args: "list[str]"):
 		opts, args = self.ls_parser.parse_known_args(args=args)
 
 		if opts.help:
@@ -409,7 +408,7 @@ class UI(ui_cmd.UI):
 					sizeWidth=sizeWidth,
 				))
 
-	def fs_cd_parent(self: "typing.Self", args: "list[str]"):
+	def fs_cd_parent(self, args: "list[str]"):
 		if args:
 			log.error("This command does not take arguments")
 			return
@@ -417,7 +416,7 @@ class UI(ui_cmd.UI):
 		os.chdir(newDir)
 		print(f"Changed current directory to: {newDir}")
 
-	def fs_cd(self: "typing.Self", args: "list[str]"):
+	def fs_cd(self, args: "list[str]"):
 		if len(args) != 1:
 			log.error("This command takes exactly one argument")
 			return
@@ -427,7 +426,7 @@ class UI(ui_cmd.UI):
 		os.chdir(newDir)
 		print(f"Changed current directory to: {newDir}")
 
-	def formatPromptMsg(self: "typing.Self", level, msg, colon=":"):
+	def formatPromptMsg(self, level, msg, colon=":"):
 		indent = self.promptIndentStr * level
 
 		if core.noColor:
@@ -441,20 +440,20 @@ class UI(ui_cmd.UI):
 
 		return f"{indent} {msg}{colon} ", True
 
-	def prompt(self: "typing.Self", level, msg, colon=":", **kwargs):
+	def prompt(self, level, msg, colon=":", **kwargs):
 		msg, colored = self.formatPromptMsg(level, msg, colon)
 		if colored:
 			msg = ANSI(msg)
 		return prompt(msg, **kwargs)
 
-	def checkbox_prompt(self: "typing.Self", level, msg, colon=":", **kwargs):
+	def checkbox_prompt(self, level, msg, colon=":", **kwargs):
 		# FIXME: colors are not working, they are being escaped
 		msg = f"{self.promptIndentStr * level} {msg}{colon} "
 		# msg, colored = self.formatPromptMsg(level, msg, colon)
 		return checkbox_prompt(msg, **kwargs)
 
 	def askFile(
-		self: "typing.Self",
+		self,
 		kind: str,
 		histName: str,
 		varName: str,
@@ -498,7 +497,7 @@ class UI(ui_cmd.UI):
 			return filename
 		raise ValueError(f"{kind} is not given")
 
-	def askInputFile(self: "typing.Self"):
+	def askInputFile(self):
 		return self.askFile(
 			"Input file",
 			"filename-input",
@@ -506,7 +505,7 @@ class UI(ui_cmd.UI):
 			True,
 		)
 
-	def askOutputFile(self: "typing.Self"):
+	def askOutputFile(self):
 		return self.askFile(
 			"Output file",
 			"filename-output",
@@ -514,7 +513,7 @@ class UI(ui_cmd.UI):
 			False,
 		)
 
-	def pluginByNameOrDesc(self: "typing.Self", value: str) -> "PluginProp | None":
+	def pluginByNameOrDesc(self, value: str) -> "PluginProp | None":
 		plugin = pluginByDesc.get(value)
 		if plugin:
 			return plugin
@@ -524,7 +523,7 @@ class UI(ui_cmd.UI):
 		log.error(f"internal error: invalid format name/desc {value!r}")
 		return None
 
-	def askInputFormat(self: "typing.Self") -> str:
+	def askInputFormat(self) -> str:
 		history = FileHistory(join(histDir, "format-input"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -548,7 +547,7 @@ class UI(ui_cmd.UI):
 				return plugin.name
 		raise ValueError("input format is not given")
 
-	def askOutputFormat(self: "typing.Self") -> str:
+	def askOutputFormat(self) -> str:
 		history = FileHistory(join(histDir, "format-output"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -572,19 +571,19 @@ class UI(ui_cmd.UI):
 				return plugin.name
 		raise ValueError("output format is not given")
 
-	def finish(self: "typing.Self"):
+	def finish(self):
 		pass
 
 	# TODO: how to handle \r and \n in NewlineOption.values?
 
-	def getOptionValueSuggestValues(self: "typing.Self", option: "Option"):
+	def getOptionValueSuggestValues(self, option: "Option"):
 		if option.values:
 			return [str(x) for x in option.values]
 		if option.typ == "bool":
 			return ["True", "False"]
 		return None
 
-	def getOptionValueCompleter(self: "typing.Self", option: "Option"):
+	def getOptionValueCompleter(self, option: "Option"):
 		values = self.getOptionValueSuggestValues(option)
 		if values:
 			return WordCompleter(
@@ -595,7 +594,7 @@ class UI(ui_cmd.UI):
 			)
 		return None
 
-	def askReadOptions(self: "typing.Self"):
+	def askReadOptions(self):
 		Glossary.plugins[self._inputFormat]
 		options = Glossary.formatsReadOptions.get(self._inputFormat)
 		if options is None:
@@ -668,7 +667,7 @@ class UI(ui_cmd.UI):
 				self._readOptions[optName] = valueNew
 				break
 
-	def askWriteOptions(self: "typing.Self"):
+	def askWriteOptions(self):
 		Glossary.plugins[self._inputFormat]
 		options = Glossary.formatsWriteOptions.get(self._outputFormat)
 		if options is None:
@@ -741,13 +740,13 @@ class UI(ui_cmd.UI):
 				self._writeOptions[optName] = valueNew
 				break
 
-	def resetReadOptions(self: "typing.Self"):
+	def resetReadOptions(self):
 		self._readOptions = {}
 
-	def resetWriteOptions(self: "typing.Self"):
+	def resetWriteOptions(self):
 		self._writeOptions = {}
 
-	def askConfigValue(self: "typing.Self", configKey, option):
+	def askConfigValue(self, configKey, option):
 		default = self.config.get(configKey, "")
 		if option.typ == "bool":
 			return str(self.checkbox_prompt(
@@ -763,7 +762,7 @@ class UI(ui_cmd.UI):
 			completer=self.getOptionValueCompleter(option),
 		)
 
-	def askConfig(self: "typing.Self"):
+	def askConfig(self):
 		configKeys = list(sorted(self.configDefDict.keys()))
 		history = FileHistory(join(histDir, "config-key"))
 		auto_suggest = AutoSuggestFromHistory()
@@ -809,28 +808,28 @@ class UI(ui_cmd.UI):
 				self.config[configKey] = valueNew
 				break
 
-	def showOptions(self: "typing.Self"):
+	def showOptions(self):
 		print(f"readOptions = {self._readOptions}")
 		print(f"writeOptions = {self._writeOptions}")
 		print(f"convertOptions = {self._convertOptions}")
 		print(f"config = {self.config}")
 		print()
 
-	def setIndirect(self: "typing.Self"):
+	def setIndirect(self):
 		self._convertOptions["direct"] = False
 		self._convertOptions["sqlite"] = None
 		print("Switched to indirect mode")
 
-	def setSQLite(self: "typing.Self"):
+	def setSQLite(self):
 		self._convertOptions["direct"] = None
 		self._convertOptions["sqlite"] = True
 		print("Switched to SQLite mode")
 
-	def setNoProgressbar(self: "typing.Self"):
+	def setNoProgressbar(self):
 		self._convertOptions["progressbar"] = False
 		print("Disabled progress bar")
 
-	def setSort(self: "typing.Self"):
+	def setSort(self):
 		try:
 			value = self.checkbox_prompt(
 				2, "Enable Sort",
@@ -840,7 +839,7 @@ class UI(ui_cmd.UI):
 			return
 		self._convertOptions["sort"] = value
 
-	def setSortKey(self: "typing.Self"):
+	def setSortKey(self):
 		completer = WordCompleter(
 			[_sk.name for _sk in namedSortKeyList],
 			ignore_case=False,
@@ -869,7 +868,7 @@ class UI(ui_cmd.UI):
 		if not self._convertOptions.get("sort"):
 			self.setSort()
 
-	def askFinalAction(self: "typing.Self") -> "str | None":
+	def askFinalAction(self) -> "str | None":
 		history = FileHistory(join(histDir, "action"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -892,7 +891,7 @@ class UI(ui_cmd.UI):
 				continue
 			return action
 
-	def askFinalOptions(self: "typing.Self") -> "bool | Literal['back']":
+	def askFinalOptions(self) -> "bool | Literal['back']":
 		while True:
 			try:
 				action = self.askFinalAction()
@@ -912,7 +911,7 @@ class UI(ui_cmd.UI):
 
 		return True  # convert
 
-	def getRunKeywordArgs(self: "typing.Self") -> "Dict":
+	def getRunKeywordArgs(self) -> "Dict":
 		return dict(
 			inputFilename=self._inputFilename,
 			outputFilename=self._outputFilename,
@@ -925,7 +924,7 @@ class UI(ui_cmd.UI):
 			glossarySetAttrs=self._glossarySetAttrs,
 		)
 
-	def checkInputFormat(self: "typing.Self", forceAsk: bool = False):
+	def checkInputFormat(self, forceAsk: bool = False):
 		if not forceAsk:
 			inputArgs = Glossary.detectInputFormat(self._inputFilename, quiet=True)
 			if inputArgs:
@@ -934,7 +933,7 @@ class UI(ui_cmd.UI):
 				return
 		self._inputFormat = self.askInputFormat()
 
-	def checkOutputFormat(self: "typing.Self", forceAsk: bool = False):
+	def checkOutputFormat(self, forceAsk: bool = False):
 		if not forceAsk:
 			outputArgs = Glossary.detectOutputFormat(
 				filename=self._outputFilename,
@@ -946,17 +945,17 @@ class UI(ui_cmd.UI):
 				return
 		self._outputFormat = self.askOutputFormat()
 
-	def askFormats(self: "typing.Self"):
+	def askFormats(self):
 		self.checkInputFormat(forceAsk=True)
 		self.checkOutputFormat(forceAsk=True)
 
-	def askInputOutputAgain(self: "typing.Self"):
+	def askInputOutputAgain(self):
 		self.askInputFile()
 		self.checkInputFormat(forceAsk=True)
 		self.askOutputFile()
 		self.checkOutputFormat(forceAsk=True)
 
-	def printNonInteractiveCommand(self: "typing.Self"):
+	def printNonInteractiveCommand(self):
 		cmd = [
 			ui_cmd.COMMAND,
 			self._inputFilename,
@@ -1033,14 +1032,14 @@ class UI(ui_cmd.UI):
 		# shlex.join is added in Python 3.8
 		print(shlex.join(cmd))
 
-	def setConfigAttrs(self: "typing.Self"):
+	def setConfigAttrs(self):
 		config = self.config
 		self.promptIndentStr = config.get("cmdi.prompt.indent.str", ">")
 		self.promptIndentColor = config.get("cmdi.prompt.indent.color", 2)
 		self.promptMsgColor = config.get("cmdi.prompt.msg.color", -1)
 		self.msgColor = config.get("cmdi.msg.color", -1)
 
-	def main(self: "typing.Self", again=False):
+	def main(self, again=False):
 		if again or not self._inputFilename:
 			try:
 				self.askInputFile()
@@ -1080,7 +1079,7 @@ class UI(ui_cmd.UI):
 			print("Press Control + C to exit")
 
 	def run(
-		self: "typing.Self",
+		self,
 		inputFilename: str = "",
 		outputFilename: str = "",
 		inputFormat: str = "",
