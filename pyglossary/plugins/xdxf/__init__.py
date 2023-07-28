@@ -22,9 +22,12 @@
 # GNU General Public License for more details.
 
 import re
-from typing import TYPE_CHECKING, Iterator, Sequence
+import typing
+from typing import TYPE_CHECKING, Iterator, Sequence, cast
 
 if TYPE_CHECKING:
+	import io
+
 	from pyglossary.lxml_types import Element
 
 from pyglossary.compression import (
@@ -91,6 +94,11 @@ old format
 """
 
 
+class TransformerType(typing.Protocol):
+	def transform(self, article: "Element") -> str:
+		...
+
+
 class Reader(object):
 	compressions = stdCompressions
 	depends = {
@@ -108,9 +116,9 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file = None
+		self._file: "io.IOBase | None" = None
 		self._encoding = "utf-8"
-		self._htmlTr = None
+		self._htmlTr: "TransformerType | None" = None
 		self._re_span_k = re.compile(
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
@@ -133,9 +141,12 @@ class Reader(object):
 		else:
 			self._glos.setDefaultDefiFormat("x")
 
-		cfile = self._file = compressionOpen(self._filename, mode="rb")
+		cfile = self._file = cast("io.IOBase", compressionOpen(
+			self._filename,
+			mode="rb",
+		))
 
-		context = ET.iterparse(
+		context = ET.iterparse(  # type: ignore
 			cfile,
 			events=("end",),
 		)
@@ -186,7 +197,10 @@ class Reader(object):
 		from lxml import etree as ET
 		from lxml.etree import tostring
 
-		context = ET.iterparse(
+		if self._file is None:
+			raise ValueError("self._file is None")
+
+		context = ET.iterparse(  # type: ignore
 			self._file,
 			events=("end",),
 			tag="ar",
@@ -200,8 +214,8 @@ class Reader(object):
 				if len(words) == 1:
 					defi = self._re_span_k.sub("", defi)
 			else:
-				defi = tostring(article, encoding=self._encoding)
-				defi = defi[4:-5].decode(self._encoding).strip()
+				b_defi = cast(bytes, tostring(article, encoding=self._encoding))
+				defi = b_defi[4:-5].decode(self._encoding).strip()
 				defiFormat = "x"
 
 			# log.info(f"{defi=}, {words=}")
@@ -220,29 +234,6 @@ class Reader(object):
 		if self._file:
 			self._file.close()
 			self._file = None
-
-	def read_metadata_old(self) -> None:
-		full_name = self._xdxf.find("full_name").text
-		desc = self._xdxf.find("description").text
-		if full_name:
-			self._glos.setInfo("name", full_name)
-		if desc:
-			self._glos.setInfo("description", desc)
-
-	def read_metadata_new(self) -> None:
-		meta_info = self._xdxf.find("meta_info")
-		if meta_info is None:
-			raise ValueError("meta_info not found")
-
-		title = meta_info.find("full_title").text
-		if not title:
-			title = meta_info.find("title").text
-		desc = meta_info.find("description").text
-
-		if title:
-			self._glos.setInfo("name", title)
-		if desc:
-			self._glos.setInfo("description", desc)
 
 	def tostring(
 		self,
@@ -285,7 +276,7 @@ class Reader(object):
 	) -> str:
 		if include_opts is None:
 			include_opts = ()
-		title = title_element.text
+		title = title_element.text or ""
 		opt_i = -1
 		for c in title_element:
 			if c.tag == "nu" and c.tail:
@@ -293,16 +284,10 @@ class Reader(object):
 					title += c.tail
 				else:
 					title = c.tail
-			if c.tag == "opt":
+			if c.tag == "opt" and c.text is not None:
 				opt_i += 1
 				if opt_i in include_opts:
-					if title:
-						title += c.text
-					else:
-						title = c.text
+					title += c.text
 				if c.tail:
-					if title:
-						title += c.tail
-					else:
-						title = c.tail
+					title += c.tail
 		return title.strip()

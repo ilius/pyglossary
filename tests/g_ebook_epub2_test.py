@@ -1,6 +1,5 @@
 import re
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -35,12 +34,11 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			b'<dc:identifier id="uid" opf:scheme="uuid"></dc:identifier>',
 			data,
 		)
-		data = re.sub(
+		return re.sub(
 			b'<dc:date opf:event="creation">[0-9-]{10}</dc:date>',
 			b'<dc:date opf:event="creation"></dc:date>',
 			data,
 		)
-		return data
 
 	def convert_to_epub(
 		self,

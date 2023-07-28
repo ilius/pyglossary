@@ -321,7 +321,7 @@ if os.sep == "\\":
 			add_globals=False,
 		)
 		log.critical(msg)
-		ctypes.windll.user32.MessageBoxW(0, msg, "PyGlossary Error", 0)
+		ctypes.windll.user32.MessageBoxW(0, msg, "PyGlossary Error", 0)  # type: ignore
 
 	sys.excepthook = windows_show_exception
 

@@ -50,16 +50,16 @@ class Reader(TextGlossaryReader):
 	def __init__(self, glos: GlossaryType, hasInfo: bool = True) -> None:
 		TextGlossaryReader.__init__(self, glos, hasInfo=hasInfo)
 		self._resDir = ""
-		self._resFileNames = []
+		self._resFileNames: "list[str]" = []
 
-	def open(self, filename: str) -> "Iterator[tuple[int, int]]":
+	def open(self, filename: str) -> "Iterator[tuple[int, int]] | None":
 		yield from TextGlossaryReader.openGen(self, filename)
 		resDir = f"{filename}_res"
 		if isdir(resDir):
 			self._resDir = resDir
 			self._resFileNames = os.listdir(self._resDir)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType | None]":
 		yield from TextGlossaryReader.__iter__(self)
 		resDir = self._resDir
 		for fname in self._resFileNames:
@@ -79,7 +79,7 @@ class Reader(TextGlossaryReader):
 	def fixInfoWord(self, word: str) -> str:
 		return word.lstrip("#")
 
-	def nextBlock(self) -> "tuple[str, str, None] | None":
+	def nextBlock(self) -> "tuple[str | list[str], str, None] | None":
 		if not self._file:
 			raise StopIteration
 		line = self.readline()
@@ -89,6 +89,7 @@ class Reader(TextGlossaryReader):
 		if not line:
 			return None
 		###
+		word: "str | list[str]"
 		word, tab, defi = line.partition("\t")
 		if not tab:
 			log.warning(
@@ -119,7 +120,7 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 
 	def open(
 		self,

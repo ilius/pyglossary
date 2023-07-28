@@ -3,7 +3,7 @@ import os
 from os.path import (
 	isdir,
 )
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 	import io
@@ -40,7 +40,7 @@ class TextGlossaryWriter(object):
 	) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file = None
+		self._file: "io.TextIOBase | None" = None
 		self._resDir = ""
 
 		if not entryFmt:
@@ -127,16 +127,16 @@ class TextGlossaryWriter(object):
 				defi=value,
 			))
 
-	def _open(self, filename: str) -> None:
+	def _open(self, filename: str) -> "io.TextIOBase":
 		if not filename:
 			filename = self._glos.filename + self._ext
 
-		_file = self._file = c_open(
+		_file = self._file = cast("io.TextIOBase", c_open(
 			filename,
 			mode="wt",
 			encoding=self._encoding,
 			newline=self._newline,
-		)
+		))
 		_file.write(self._head)
 
 		if self._writeInfo:
@@ -145,9 +145,11 @@ class TextGlossaryWriter(object):
 		_file.flush()
 		return _file
 
-	def write(self) -> None:
+	def write(self) -> "Generator[None, EntryType, None]":
 		glos = self._glos
 		_file = self._file
+		if _file is None:
+			raise ValueError("_file is None")
 		entryFmt = self._entryFmt
 		wordListEncodeFunc = self._wordListEncodeFunc
 		wordEscapeFunc = self._wordEscapeFunc
@@ -195,6 +197,8 @@ class TextGlossaryWriter(object):
 					_file = self._open(f"{self._filename}.{fileIndex}")
 
 	def finish(self) -> None:
+		if self._file is None:
+			raise ValueError("_file is None")
 		if self._tail:
 			self._file.write(self._tail)
 		self._file.close()

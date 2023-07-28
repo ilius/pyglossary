@@ -8,10 +8,10 @@ class MockLogHandler(logging.Handler):
 		logging.Handler.__init__(self)
 		self.clear()
 
-	def clear(self):
+	def clear(self) -> None:
 		self.recordsByLevel: dict[int, list[logging.LogRecord]] = {}
 
-	def emit(self, record):
+	def emit(self, record: logging.LogRecord) -> None:
 		level = record.levelno
 		if level in self.recordsByLevel:
 			self.recordsByLevel[level].append(record)

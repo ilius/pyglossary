@@ -4,7 +4,6 @@ import os
 import random
 import sys
 import tempfile
-import typing
 import unicodedata
 import unittest
 from os.path import abspath, dirname

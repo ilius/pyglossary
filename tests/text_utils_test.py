@@ -2,7 +2,6 @@
 import os
 import struct
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname
 

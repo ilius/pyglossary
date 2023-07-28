@@ -63,11 +63,11 @@ class Reader(TextGlossaryReader):
 			value = ":".join(parts[1:])
 			glos.setInfo(key, value)
 
-	def nextBlock(self) -> "tuple[str, str, None] | None":
+	def nextBlock(self) -> "tuple[str | list[str], str, None] | None":
 		if not self._file:
 			raise StopIteration
 		word = ""
-		defiLines = []
+		defiLines: "list[str]" = []
 
 		while True:
 			line = self.readline()
@@ -83,8 +83,8 @@ class Reader(TextGlossaryReader):
 				if not defiLines:
 					log.warning(f"no definition/value for {word!r}")
 				defi = unescapeDefi("\n".join(defiLines))
-				word = word.split(self._headword_separator)
-				return word, defi, None
+				words = word.split(self._headword_separator)
+				return words, defi, None
 
 			if not word:
 				word = line
@@ -103,7 +103,7 @@ class Reader(TextGlossaryReader):
 			if word.startswith("00-database-") and defi == "unknown":
 				log.info(f"ignoring {word} -> {defi}")
 				return None
-			word = word.split(self._headword_separator)
-			return word, defi, None
+			words = word.split(self._headword_separator)
+			return words, defi, None
 
 		raise StopIteration

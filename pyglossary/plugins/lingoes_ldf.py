@@ -1,6 +1,6 @@
-
-
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
+
 from typing import Generator
 
 from pyglossary.compression import (

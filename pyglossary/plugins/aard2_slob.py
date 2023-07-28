@@ -96,7 +96,7 @@ class Reader(object):
 
 	def open(self, filename: str) -> None:
 		try:
-			import icu  # noqa: F401
+			import icu  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install PyICU` to install"
 			raise e

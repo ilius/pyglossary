@@ -20,9 +20,10 @@
 
 import html
 import html.entities
+import io
 import re
 from os.path import dirname, isfile, join
-from typing import Iterator
+from typing import Iterator, cast
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -130,10 +131,10 @@ class Reader(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._file = None
+		self._file: "io.TextIOBase | None" = None
 		self._fileSize = 0
 		self._bufferLine = ""
-		self._resFileSet = set()
+		self._resFileSet: "set[str]" = set()
 
 	def transform(
 		self,
@@ -153,6 +154,9 @@ class Reader(object):
 			return ""
 		if err:
 			log.error(f"error in transforming {text!r}: {err}")
+			return ""
+		if result is None:
+			log.error(f"error in transforming {text!r}: result is None")
 			return ""
 		resText = result.output.strip()
 		self._resFileSet.update(tr.resFileSet)
@@ -176,12 +180,12 @@ class Reader(object):
 		encoding = self._encoding
 		if not encoding:
 			encoding = self.detectEncoding()
-		cfile = compressionOpen(
+		cfile = cast("io.TextIOBase", compressionOpen(
 			filename,
 			dz=True,
 			mode="rt",
 			encoding=encoding,
-		)
+		))
 
 		if cfile.seekable():
 			cfile.seek(0, 2)
@@ -238,6 +242,8 @@ class Reader(object):
 			self._glos.targetLangName = unwrap_quotes(line[19:].strip())
 
 	def _iterLines(self) -> "Iterator[str]":
+		if self._file is None:
+			raise RuntimeError("self._file is None")
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -287,6 +293,8 @@ class Reader(object):
 		term_lines: "list[str]",
 		text_lines: "list[str]",
 	) -> EntryType:
+		if self._file is None:
+			raise RuntimeError("self._file is None")
 		terms = []
 		defiTitles = []
 		for line in term_lines:
@@ -294,6 +302,9 @@ class Reader(object):
 			res, err = tr.transform()
 			if err:
 				log.error(err)
+				continue
+			if res is None:
+				log.error("res is None for line={line!r}")
 				continue
 			term = res.output.strip()
 			terms.append(term)

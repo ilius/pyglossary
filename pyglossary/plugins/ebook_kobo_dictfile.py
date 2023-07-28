@@ -21,6 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import io
 import os
 from os.path import isdir
 from typing import Generator
@@ -33,7 +34,7 @@ from pyglossary.option import (
 	EncodingOption,
 	Option,
 )
-from pyglossary.text_reader import TextGlossaryReader, nextBlockResultType
+from pyglossary.text_reader import TextGlossaryReader
 
 enable = True
 lname = "kobo_dictfile"
@@ -77,7 +78,7 @@ class Reader(TextGlossaryReader):
 
 	def open(self, filename: str) -> None:
 		try:
-			import mistune  # noqa: F401
+			import mistune  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install mistune` to install"
 			raise e
@@ -94,7 +95,7 @@ class Reader(TextGlossaryReader):
 		self,
 		defi: str,
 		html: bool,
-	) -> "nextBlockResultType":
+	) -> "tuple[str, list[tuple[str, str]] | None]":
 		import mistune
 		defi = defi.replace("\n @", "\n@")\
 			.replace("\n :", "\n:")\
@@ -121,8 +122,8 @@ class Reader(TextGlossaryReader):
 	) -> "tuple[list[str], str, list[tuple[str, str]] | None]":
 		if not self._file:
 			raise StopIteration
-		words = []
-		defiLines = []
+		words: "list[str]" = []
+		defiLines: "list[str]" = []
 		html = False
 
 		while True:
@@ -165,7 +166,7 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._file = None
+		self._file: "io.TextIOBase | None" = None
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
 	def finish(self) -> None:
@@ -186,6 +187,8 @@ class Writer(object):
 		self,
 	) -> "Generator[None, EntryType, None]":
 		fileObj = self._file
+		if fileObj is None:
+			raise RuntimeError("self._file is None")
 		resDir = self._resDir
 		while True:
 			entry = yield

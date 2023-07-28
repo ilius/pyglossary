@@ -100,8 +100,8 @@ class Writer:
 
 	def __init__(self, glos: "GlossaryType", **kwargs) -> None:
 		self._glos = glos
-		self._filename = None
-		self._words = []
+		self._filename = ""
+		self._words: "list[str]" = []
 		self._img_pattern = re.compile(
 			'<img src="([^<>"]*?)"( [^<>]*?)?>',
 			re.DOTALL,
@@ -138,7 +138,7 @@ class Writer:
 		# for now we just skip data entries and remove '<img' tags
 		return self._img_pattern.sub("[Image: \\1]", defi)
 
-	def write_groups(self) -> None:
+	def write_groups(self) -> "Generator[None, EntryType, None]":
 		import gzip
 		from collections import OrderedDict
 
@@ -174,7 +174,7 @@ class Writer:
 				continue
 			l_word = entry.l_word
 			allWords += l_word
-			wordsByPrefix = OrderedDict()
+			wordsByPrefix: "dict[str, list[str]]" = OrderedDict()
 			for word in l_word:
 				prefix = self.get_prefix(word)
 				if prefix in wordsByPrefix:
@@ -232,7 +232,7 @@ class Writer:
 
 	def open(self, filename: str) -> None:
 		try:
-			import marisa_trie  # noqa: F401
+			import marisa_trie  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install marisa-trie` to install"
 			raise e
@@ -247,4 +247,4 @@ class Writer:
 		with indir(self._filename, create=False):
 			trie = marisa_trie.Trie(self._words)
 			trie.save(self.WORDS_FILE_NAME)
-		self._filename = None
+		self._filename = ""

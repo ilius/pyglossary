@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname
 from typing import Dict, Optional

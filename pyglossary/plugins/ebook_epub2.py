@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from typing import Any, ClassVar
+from typing import Any
 
 from pyglossary.ebook_base import EbookWriter
 from pyglossary.flags import ALWAYS
@@ -110,7 +110,7 @@ class Writer(EbookWriter):
 		<content src="{src}" />
 	</navPoint>"""
 
-	CSS_CONTENTS = """@charset "UTF-8";
+	CSS_CONTENTS = b"""@charset "UTF-8";
 body {
 	margin: 10px 25px 10px 25px;
 }
@@ -213,9 +213,13 @@ p.groupDefinition {
 		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
 
 	@classmethod
-	def cls_get_prefix(cls: "ClassVar", options: "dict[str, Any]", word: str) -> str:
+	def cls_get_prefix(
+		cls: "type[EbookWriter]",
+		options: "dict[str, Any]",
+		word: str,
+	) -> str:
 		if not word:
-			return None
+			return ""
 		length = options.get("group_by_prefix_length", cls._group_by_prefix_length)
 		prefix = word[:length].lower()
 		if prefix[0] < "a":
@@ -224,7 +228,7 @@ p.groupDefinition {
 
 	def get_prefix(self, word: str) -> str:
 		if not word:
-			return None
+			return ""
 		length = self._group_by_prefix_length
 		prefix = word[:length].lower()
 		if prefix[0] < "a":
@@ -257,7 +261,7 @@ p.groupDefinition {
 			identifier=self._glos.getInfo("uuid"),
 			title=self._glos.getInfo("name"),
 			ncx_items=ncx_items_unicode,
-		)
+		).encode("utf-8")
 		self.add_file_manifest(
 			"OEBPS/toc.ncx",
 			"toc.ncx",

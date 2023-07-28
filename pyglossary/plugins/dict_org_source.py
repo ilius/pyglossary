@@ -1,5 +1,3 @@
-
-
 # -*- coding: utf-8 -*-
 from typing import Generator
 
@@ -30,10 +28,10 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 
 	def finish(self) -> None:
-		self._filename = None
+		self._filename = ""
 
 	def open(self, filename: str) -> None:
 		self._filename = filename

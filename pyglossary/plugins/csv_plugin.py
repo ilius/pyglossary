@@ -18,9 +18,10 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import csv
+import io
 import os
 from os.path import isdir, join
-from typing import Generator, Iterator
+from typing import Generator, Iterable, Iterator, cast
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -83,15 +84,15 @@ class Reader(object):
 
 	def clear(self) -> None:
 		self._filename = ""
-		self._file = None
+		self._file: "io.TextIOBase | None" = None
 		self._fileSize = 0
 		self._leadingLinesCount = 0
-		self._wordCount = None
+		self._wordCount: "int | None" = None
 		self._pos = -1
-		self._csvReader = None
+		self._csvReader: "Iterable[list[str]] | None" = None
 		self._resDir = ""
-		self._resFileNames = []
-		self._bufferRow = None
+		self._resFileNames: "list[str]" = []
+		self._bufferRow: "list[str] | None" = None
 
 	def open(
 		self,
@@ -99,12 +100,12 @@ class Reader(object):
 	) -> None:
 		from pyglossary.text_reader import TextFilePosWrapper
 		self._filename = filename
-		cfile = compressionOpen(
+		cfile = cast("io.TextIOBase", compressionOpen(
 			filename,
 			mode="rt",
 			encoding=self._encoding,
 			newline=self._newline,
-		)
+		))
 
 		if cfile.seekable():
 			cfile.seek(0, 2)
@@ -156,6 +157,8 @@ class Reader(object):
 		return self._wordCount + len(self._resFileNames)
 
 	def _iterRows(self) -> "Iterator[list[str]]":
+		if self._csvReader is None:
+			raise RuntimeError("self._csvReader is None")
 		if self._bufferRow:
 			yield self._bufferRow
 		for row in self._csvReader:
@@ -164,7 +167,10 @@ class Reader(object):
 	def _processRow(self, row: "list[str]") -> "EntryType | None":
 		if not row:
 			return None
+		if self._file is None:
+			raise RuntimeError("self._file is None")
 
+		word: "str | list[str]"
 		try:
 			word = row[0]
 			defi = row[1]
@@ -189,7 +195,7 @@ class Reader(object):
 			),
 		)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType | None]":
 		if not self._csvReader:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -222,15 +228,16 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._file: "io.TextIOBase | None" = None
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._file = compressionOpen(
+		self._file = cast("io.TextIOBase", compressionOpen(
 			filename,
 			mode="wt",
 			encoding=self._encoding,
 			newline=self._newline,
-		)
+		))
 		self._resDir = resDir = filename + "_res"
 		self._csvWriter = csv.writer(
 			self._file,
@@ -245,7 +252,7 @@ class Writer(object):
 				self._csvWriter.writerow([f"#{key}", value])
 
 	def finish(self) -> None:
-		self._filename = None
+		self._filename = ""
 		if self._file:
 			self._file.close()
 			self._file = None

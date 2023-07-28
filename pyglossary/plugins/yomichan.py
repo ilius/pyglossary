@@ -187,7 +187,7 @@ class Writer(object):
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 		glos.preventDuplicateWords()
 		# Yomichan technically supports "structured content" that renders to
 		# HTML, but it doesn't seem widely used. So here we also strip HTML
@@ -233,7 +233,7 @@ class Writer(object):
 	def _getExpressionsAndReadingFromEntry(
 		self,
 		entry: "EntryType",
-	) -> "(list[str], str)":
+	) -> "tuple[list[str], str]":
 		term_expressions = list(entry.l_word)
 		if self._alternates_from_word_pattern:
 			for word in entry.l_word:
@@ -328,7 +328,7 @@ class Writer(object):
 		self._filename = filename
 
 	def finish(self) -> None:
-		self._filename = None
+		self._filename = ""
 
 	def write(self) -> "Generator[None, EntryType, None]":
 		with os_utils.indir(self._filename, create=True):
@@ -337,7 +337,7 @@ class Writer(object):
 
 			entryCount = 0
 			termBankIndex = 0
-			terms = []
+			terms: "list[list[Any]]" = []
 
 			def flushTerms() -> None:
 				nonlocal termBankIndex

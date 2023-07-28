@@ -48,6 +48,7 @@ from .core import (
 	log,
 )
 from .entry import DataEntry, Entry
+from .entry_base import MultiStr
 from .entry_filters import (
 	EntryFilterType,
 	PreventDuplicateWords,
@@ -539,7 +540,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def newEntry(
 		self,
-		word: str,
+		word: "MultiStr",
 		defi: str,
 		defiFormat: str = "",
 		byteProgress: "tuple[int, int] | None" = None,

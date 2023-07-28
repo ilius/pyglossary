@@ -1,5 +1,3 @@
-
-
 # -*- coding: utf-8 -*-
 # glossary.py
 #
@@ -19,6 +17,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+
 from time import time as now
 from typing import Any
 

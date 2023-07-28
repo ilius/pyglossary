@@ -1,17 +1,17 @@
-
-
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-	from typing import TypeAlias
+import typing
+
+# from typing import TYPE_CHECKING
 
 
-MultiStr: "TypeAlias" = "str | list[str]"
+MultiStr: "typing.TypeAlias" = "str | list[str]"
 
 
 class BaseEntry:
-	__slots__: "list[str]" = []
+	__slots__: "list[str]" = [
+		"_word",
+	]
 
 	def __init__(self) -> None:
 		self._word: "str | list[str]"

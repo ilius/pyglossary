@@ -259,7 +259,7 @@ class Reader(object):
 					kebList.append(keb_text)
 					keb_display = keb_text
 					if translit:
-						import romkan
+						import romkan  # type: ignore
 						t_keb = romkan.to_roma(keb_text)
 						if t_keb and t_keb.isascii():
 							keywords.append(t_keb)

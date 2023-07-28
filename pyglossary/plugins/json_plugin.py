@@ -1,6 +1,5 @@
-
-
 # -*- coding: utf-8 -*-
+
 from typing import Generator
 
 from pyglossary.compression import (
@@ -50,14 +49,14 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 		glos.preventDuplicateWords()
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
 
 	def finish(self) -> None:
-		self._filename = None
+		self._filename = ""
 
 	def write(self) -> "Generator[None, EntryType, None]":
 		from json import dumps

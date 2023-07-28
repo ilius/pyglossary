@@ -7,7 +7,6 @@ import random
 import sys
 import tempfile
 import tracemalloc
-import typing
 import unittest
 import zipfile
 from os.path import abspath, dirname, isdir, isfile, join
@@ -39,6 +38,8 @@ appTmpDir = join(cacheDir, "tmp")
 
 os.makedirs(testCacheDir, exist_ok=True)
 os.chdir(testCacheDir)
+
+os.makedirs(join(tmpDir, "pyglossary"), exist_ok=True)
 
 
 class TestGlossaryBase(unittest.TestCase):

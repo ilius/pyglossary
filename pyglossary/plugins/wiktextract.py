@@ -133,7 +133,8 @@ class Reader(object):
 		return 0
 
 	def __iter__(self) -> "Iterator[EntryType]":
-
+		if self._file is None:
+			raise ValueError("self._file is None")
 		while (line := self._file.readline()):
 			line = line.strip()
 			if not line:
@@ -190,11 +191,11 @@ class Reader(object):
 						with hf.element("font", color=self._gram_color):
 							hf.write(pos)
 
-				self.writeSenseList(_hf, data.get("senses"))
+				self.writeSenseList(_hf, data.get("senses"))  # type: ignore
 
-				self.writeSynonyms(_hf, data.get("synonyms"))
+				self.writeSynonyms(_hf, data.get("synonyms"))  # type: ignore
 
-				self.writeAntonyms(_hf, data.get("antonyms"))
+				self.writeAntonyms(_hf, data.get("antonyms"))  # type: ignore
 
 				# TODO: data.get("translations")
 				# list[dict[str, str]]
@@ -548,7 +549,7 @@ class Reader(object):
 		self.writeTags(
 			hf,
 			sense.get("tags"),
-			toRemove=("form-of",),
+			toRemove=["form-of"],
 		)
 
 		# for key in ("english",):

@@ -1,10 +1,11 @@
 
+import io
 import logging
+import typing
 from os.path import isfile
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	import io
 	from typing import Generator, Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
@@ -14,27 +15,33 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.entry import DataEntry
+from pyglossary.entry_base import MultiStr
 
 log = logging.getLogger("pyglossary")
 
-resListType = "list[tuple[str, str]] | None"
+nextBlockResultType: "typing.TypeAlias" = (
+	"tuple[str | list[str], str, list[tuple[str, str]] | None] | None"
+)
+# (
+# 	word: str | list[str],
+# 	defi: str,
+# 	images: list[tuple[str, str]] | None
+# )
 
-nextBlockResultType = f"tuple[str, str, {resListType}] | None"
 
-
-class TextFilePosWrapper(object):
+class TextFilePosWrapper(io.TextIOBase):
 	def __init__(self, fileobj: "io.TextIOBase", encoding: str) -> None:
 		self.fileobj = fileobj
 		self._encoding = encoding
 		self.pos = 0
 
-	def __iter__(self) -> "Iterator[str]":
+	def __iter__(self) -> "Iterator[str]":  # type: ignore
 		return self
 
 	def close(self) -> None:
 		self.fileobj.close()
 
-	def __next__(self) -> str:
+	def __next__(self) -> str:  # type: ignore
 		line = self.fileobj.__next__()
 		self.pos += len(line.encode(self._encoding))
 		return line
@@ -51,9 +58,9 @@ class TextGlossaryReader(object):
 	def __init__(self, glos: "GlossaryType", hasInfo: bool = True) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file = None
+		self._file: "io.TextIOBase | None" = None
 		self._hasInfo = hasInfo
-		self._pendingEntries = []
+		self._pendingEntries: "list[EntryType]" = []
 		self._wordCount = 0
 		self._fileSize = 0
 		self._pos = -1
@@ -62,6 +69,8 @@ class TextGlossaryReader(object):
 		self._bufferLine = ""
 
 	def readline(self) -> str:
+		if self._file is None:
+			raise ValueError("self._file is None")
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -74,7 +83,11 @@ class TextGlossaryReader(object):
 	def _openGen(self, filename: str) -> "Iterator[tuple[int, int]]":
 		self._fileIndex += 1
 		log.info(f"Reading file: {filename}")
-		cfile = compressionOpen(filename, mode="rt", encoding=self._encoding)
+		cfile = cast("io.TextIOBase", compressionOpen(
+			filename,
+			mode="rt",
+			encoding=self._encoding,
+		))
 
 		if not self._wordCount:
 			if cfile.seekable():
@@ -94,9 +107,10 @@ class TextGlossaryReader(object):
 		for _ in self._openGen(filename):
 			pass
 
-	def open(self, filename: str) -> None:
+	def open(self, filename: str) -> "Iterator[tuple[int, int]] | None":
 		self._filename = filename
 		self._open(filename)
+		return None
 
 	def openGen(self, filename: str) -> "Iterator[tuple[int, int]]":
 		"""
@@ -130,9 +144,9 @@ class TextGlossaryReader(object):
 			log.exception(f"error while closing file {self._filename!r}")
 		self._file = None
 
-	def newEntry(self, word: str, defi: str) -> "EntryType":
-		byteProgress = None
-		if self._fileSize:
+	def newEntry(self, word: MultiStr, defi: str) -> "EntryType":
+		byteProgress: "tuple[int, int] | None" = None
+		if self._fileSize and self._file is not None:
 			byteProgress = (self._file.tell(), self._fileSize)
 		return self._glos.newEntry(
 			word,
@@ -166,6 +180,8 @@ class TextGlossaryReader(object):
 		return False
 
 	def loadInfo(self) -> "Generator[tuple[int, int], None, None]":
+		if self._file is None:
+			raise ValueError("self._file is None")
 		self._pendingEntries = []
 		try:
 			while True:
@@ -195,8 +211,8 @@ class TextGlossaryReader(object):
 				tmpPath=fullPath,
 			)
 
-	def __iter__(self) -> "Iterator[EntryType]":
-		resPathSet = set()
+	def __iter__(self) -> "Iterator[EntryType | None]":
+		resPathSet: "set[str]" = set()
 		while True:
 			self._pos += 1
 			if self._pendingEntries:
@@ -236,7 +252,7 @@ class TextGlossaryReader(object):
 			return self.isInfoWord(arg[0])
 		raise TypeError(f"bad argument {arg}")
 
-	def fixInfoWord(self, word: str) -> bool:
+	def fixInfoWord(self, word: str) -> str:
 		raise NotImplementedError
 
 	def nextBlock(self) -> nextBlockResultType:

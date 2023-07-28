@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname
 

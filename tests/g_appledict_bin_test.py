@@ -1,5 +1,4 @@
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname, join
 

@@ -1,6 +1,5 @@
 import locale
 import random
-import typing
 import unittest
 from functools import cmp_to_key
 

@@ -7,7 +7,6 @@ import random
 import sys
 import tempfile
 import tracemalloc
-import typing
 import unittest
 import zipfile
 from os.path import abspath, dirname, isdir, isfile, join

@@ -272,6 +272,13 @@ class GlossaryType(typing.Protocol):
 	) -> None:
 		...
 
+	def preventDuplicateWords(self) -> None:
+		...
+
+	def removeHtmlTagsAll(self) -> None:
+		...
+
+
 
 class GlossaryExtendedType(GlossaryType, typing.Protocol):
 	def progressInit(
