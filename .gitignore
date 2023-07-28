@@ -1,4 +1,5 @@
-.vscode
+.pyre
+#.vscode
 *~
 *.py[oc]
 /build
