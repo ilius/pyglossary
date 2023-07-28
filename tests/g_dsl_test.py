@@ -20,8 +20,8 @@ class TestGlossaryDSL(TestGlossaryBase):
 			"dsl/100-RussianAmericanEnglish-ru-en-v3.txt": "43b6d58e",
 			"dsl/001-empty-lines-br.dsl": "6f2fca1a",
 			"dsl/001-empty-lines-br.txt": "74e578ff",
-			"dsl/002-m-tag_multiline-paragraph.dsl": "c7b924f5",
-			"dsl/002-m-tag_multiline-paragraph.txt": "427f8a5d",
+			"dsl/002-m-tag_multiline-paragraph.dsl": "334079e3",
+			"dsl/002-m-tag_multiline-paragraph-v2.txt": "d5001afd",
 			"dsl/003-ref-target-c.dsl": "9c1396c4",
 			"dsl/003-ref-target-c.txt": "ab41cedf",
 		})
@@ -83,7 +83,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_m_tag_multiline_paragraph(self: "typing.Self"):
 		self.convert_dsl_txt(
 			"002-m-tag_multiline-paragraph",
-			"002-m-tag_multiline-paragraph",
+			"002-m-tag_multiline-paragraph-v2",
 		)
 
 	def test_ref_target_c(self: "typing.Self"):
