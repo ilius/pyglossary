@@ -90,7 +90,7 @@ So you need to select the format (with UI or `--read-format` flag).
 
 ## Requirements
 
-PyGlossary requires **Python 3.9 or higher**, and works in practically all
+PyGlossary requires **Python 3.10 or higher**, and works in practically all
 modern operating systems. While primarily designed for *GNU/Linux*, it works
 on *Windows*, *Mac OS X* and other Unix-based operating systems as well.
 

@@ -357,6 +357,8 @@ class KeydItemDict(object):
 	def __len__(self: "typing.Self") -> int:
 		return len(self.blobs)
 
+	# https://docs.python.org/3/library/bisect.html
+	# key= parameter to bisect_left is added in Python 3.10
 	def __getitem__(self: "typing.Self", key: str) -> "Iterator[Blob | Ref]":
 		blobs = self.blobs
 		key_as_sk = self.sortkey(key)
