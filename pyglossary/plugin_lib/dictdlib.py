@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# mypy: ignore-errors
 #
 # Dictionary creation library
 # Copyright (C) 2002 John Goerzen <jgoerzen@complete.org>
@@ -23,6 +22,9 @@ import gzip
 import os
 import string
 import sys
+import io
+import typing
+from typing import Iterable
 
 b64_list = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 url_headword = "00-database-url"
@@ -110,7 +112,7 @@ class DictDB(object):
 		self.mode = mode
 		self.quiet = quiet
 		self.indexEntries: "dict[str, list[tuple[int, int]]]" = {}
-		# indexEntries[index] is a list of (start: int, size: int)
+		# indexEntries[word] is a list of (start: int, size: int)
 		self.count = 0
 		self.basename = basename
 
@@ -125,15 +127,17 @@ class DictDB(object):
 		else:
 			self.dictFilename = self.basename + ".dict"
 
+		self.dictFile: "io.IOBase"
+		self.indexFile: "io.IOBase"
 		if mode == 'read':
-			self.indexFile = open(self.indexFilename, "rt", encoding="utf-8")
+			self.indexFile = open(self.indexFilename, "rb")
 			if self.useCompression:
 				self.dictFile = gzip.GzipFile(self.dictFilename, "rb")
 			else:
 				self.dictFile = open(self.dictFilename, "rb")
 			self._initIndex()
 		elif mode == 'write':
-			self.indexFile = open(self.indexFilename, "wt", encoding="utf-8")
+			self.indexFile = open(self.indexFilename, "wb")
 			if self.useCompression:
 				raise ValueError("'write' mode incompatible with .dz files")
 			self.dictFile = open(self.dictFilename, "wb")
@@ -166,12 +170,12 @@ class DictDB(object):
 		"""Load the entire index off disk into memory."""
 		self.indexFile.seek(0)
 		for line in self.indexFile:
-			splits = line.rstrip().split("\t")
-			if splits[0] not in self.indexEntries:
-				self.indexEntries[splits[0]] = []
-			self.indexEntries[splits[0]].append((
-				b64_decode(splits[1]),
-				b64_decode(splits[2]),
+			parts = line.decode("utf-8").rstrip().split("\t")
+			if parts[0] not in self.indexEntries:
+				self.indexEntries[parts[0]] = []
+			self.indexEntries[parts[0]].append((
+				b64_decode(parts[1]),
+				b64_decode(parts[2]),
 			))
 
 	def addIndexEntry(
@@ -192,7 +196,7 @@ class DictDB(object):
 		word: str,
 		start: "int | None" = None,
 		size: "int | None" = None,
-	) -> None:
+	) -> int:
 		"""Removes an entry from the index; word is the word to search for.
 
 		start and size are optional.  If they are specified, only index
@@ -255,7 +259,7 @@ class DictDB(object):
 
 	def addEntry(
 		self,
-		defstr: bytes,
+		s_defi: str,
 		headwords: "list[str]",
 	) -> None:
 		"""Writes an entry.  defstr holds the content of the definition.
@@ -264,10 +268,11 @@ class DictDB(object):
 		to the end of defstr."""
 		self.dictFile.seek(0, 2)        # Seek to end of file
 		start = self.dictFile.tell()
-		defstr += b"\n"
-		self.dictFile.write(defstr)
+		s_defi += "\n"
+		b_defi = s_defi.encode("utf-8")
+		self.dictFile.write(b_defi)
 		for word in headwords:
-			self.addIndexEntry(word, start, len(defstr))
+			self.addIndexEntry(word, start, len(b_defi))
 			self.count += 1
 
 		if self.count % 1000 == 0:
@@ -298,7 +303,7 @@ class DictDB(object):
 
 			self.update(" mapping")
 
-			sortmap = {}
+			sortmap: "dict[str, list[str]]" = {}
 			for entry in indexList:
 				norm = sortNormalize(entry)
 				if norm in sortmap:
@@ -329,7 +334,7 @@ class DictDB(object):
 		self.indexFile.seek(0)
 
 		for entry in indexList:
-			self.indexFile.write(entry + "\n")
+			self.indexFile.write(entry.encode("utf-8") + b"\n")
 
 		if self.mode == 'update':
 			# In case things were deleted
@@ -343,19 +348,19 @@ class DictDB(object):
 		self.indexFile.close()
 		self.dictFile.close()
 
-	def getDefList(self) -> "list[str]":
+	def getDefList(self) -> "Iterable[str]":
 		"""Returns a list of strings naming all definitions contained
 		in this dictionary."""
 		return self.indexEntries.keys()
 
-	def hasDef(self, word: str) -> None:
+	def hasDef(self, word: str) -> bool:
 		return word in self.indexEntries
 
 	def getDef(self, word: str) -> "list[bytes]":
 		"""Given a definition name, returns a list of strings with all
 		matching definitions.  This is an *exact* match, not a
 		case-insensitive one.  Returns [] if word is not in the dictionary."""
-		retval = []
+		retval: "list[bytes]" = []
 		if not self.hasDef(word):
 			return retval
 		for start, length in self.indexEntries[word]:
@@ -365,5 +370,5 @@ class DictDB(object):
 
 # print("------------------------ ", __name__)
 if __name__ == "__main__":
-	db = DictDB()
+	db = DictDB("test")
 	print(db)

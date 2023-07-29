@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# mypy: ignore-errors
 
 import os
 import re
@@ -135,12 +134,15 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
-		self._dictdb = None
+		self._filename = ""
+		self._dictdb: "DictDB | None" = None
 
 	def finish(self) -> None:
 		from pyglossary.os_utils import runDictzip
-		self._dictdb.finish(dosort=1)
+		if self._dictdb is None:
+			raise RuntimeError("self._dictdb is None")
+
+		self._dictdb.finish(dosort=True)
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
 		if self._install:
@@ -149,7 +151,7 @@ class Writer(object):
 				self._dictzip,
 				self._glos.getInfo("name").replace(" ", "_"),
 			)
-		self._filename = None
+		self._filename = ""
 
 	def open(self, filename: str) -> None:
 		filename_nox, ext = splitext(filename)
@@ -160,6 +162,8 @@ class Writer(object):
 
 	def write(self) -> "Generator[None, EntryType, None]":
 		dictdb = self._dictdb
+		if dictdb is None:
+			raise RuntimeError("self._dictdb is None")
 		while True:
 			entry = yield
 			if entry is None:
@@ -167,4 +171,4 @@ class Writer(object):
 			if entry.isData():
 				# does dictd support resources? and how? FIXME
 				continue
-			dictdb.addEntry(entry.b_defi, entry.l_word)
+			dictdb.addEntry(entry.defi, entry.l_word)
