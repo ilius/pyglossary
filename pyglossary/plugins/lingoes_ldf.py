@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# mypy: ignore-errors
 
 from typing import Generator
 
@@ -87,7 +86,7 @@ class Reader(TextGlossaryReader):
 				return None
 			if len(entryLines) < 2:
 				log.error(
-					f"invalid block near line {self._file.line}"
+					f"invalid block near pos {self._file.tell()}"
 					f" in file {self._filename}",
 				)
 				return None
@@ -95,29 +94,29 @@ class Reader(TextGlossaryReader):
 			defi = "\n".join(entryLines[1:])
 			defi = defi.replace("<br/>", "\n")  # FIXME
 
-			word = splitByBar(word)
+			words = splitByBar(word)
 
-			return word, defi, None
+			return words, defi, None
 
 
 class Writer(object):
 	compressions = stdCompressions
 
 	_newline: str = "\n"
-	_resources: str = True
+	_resources: bool = True
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 
 	def getInfo(self, key: str) -> str:
 		return self._glos.getInfo(key).replace("\n", "<br>")
 
-	def getAuthor(self) -> None:
+	def getAuthor(self) -> str:
 		return self._glos.author.replace("\n", "<br>")
 
 	def finish(self) -> None:
-		self._filename = None
+		self._filename = ""
 
 	def open(self, filename: str) -> None:
 		self._filename = filename

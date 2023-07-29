@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# mypy: ignore-errors
 #
 # Output to Apple Dictionary xml sources for Dictionary Development Kit.
 #
@@ -103,13 +102,14 @@ def loadBeautifulSoup() -> None:
 		import bs4 as BeautifulSoup
 	except ImportError:
 		try:
-			import BeautifulSoup
+			import BeautifulSoup  # type: ignore
 		except ImportError:
 			return
-	if int(BeautifulSoup.__version__.split(".")[0]) < 4:
+	_version: str = BeautifulSoup.__version__  # type: ignore
+	if int(_version.split(".")[0]) < 4:
 		raise ImportError(
 			f"BeautifulSoup is too old, required at least version 4, "
-			f"{BeautifulSoup.__version__!r} found.\n"
+			f"{_version!r} found.\n"
 			f"Please run `{pip} install lxml beautifulsoup4 html5lib`",
 		)
 
