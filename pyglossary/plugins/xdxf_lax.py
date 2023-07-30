@@ -111,25 +111,34 @@ class Reader(object):
 			return index, buf[:index]
 		return -1, buf
 
-	def readMetadata(self):
+	def _readOneMetadata(self, tag: str, infoKey: str):
 		from lxml.etree import XML
 
-		descStart, _ = self.readUntil(b"<description")
+		endTag = f"</{tag}>".encode("ascii")
+		descStart, _ = self.readUntil(f"<{tag}>".encode("ascii"))
 		if descStart < 0:
+			log.warning(f"did not find {tag} open")
 			return
 
-		descEnd, desc = self.readUntil(b"</description>")
+		descEnd, desc = self.readUntil(endTag)
 		if descEnd < 0:
+			log.warning(f"did not find {tag} close")
 			return
 
-		desc += b"</description>"
-		xml = XML(desc)
-		for elem in xml.iterchildren():
-			if not elem.text:
-				log.warning(f"empty tag <{elem.tag}>")
-				continue
-			key = self.infoKeyMap.get(elem.tag, elem.tag)
-			self._glos.setInfo(key, elem.text)
+		desc += endTag
+		elem = XML(desc)
+		if elem.text:
+			self._glos.setInfo(infoKey, elem.text)
+
+	def readMetadata(self):
+		_file = self._file
+		if _file is None:
+			raise RuntimeError("self._file is None")
+
+		pos = _file.tell()
+		self._readOneMetadata("full_name", "title")
+		_file.seek(pos)
+		self._readOneMetadata("description", "description")
 
 	def open(self, filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
