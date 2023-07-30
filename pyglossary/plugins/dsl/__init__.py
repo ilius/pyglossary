@@ -31,6 +31,7 @@ from pyglossary.compression import (
 )
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -131,7 +132,7 @@ class Reader(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._file: "io.TextIOBase | None" = None
+		self._file: "io.TextIOBase" = nullTextIO
 		self._fileSize = 0
 		self._bufferLine = ""
 		self._resFileSet: "set[str]" = set()
@@ -163,9 +164,8 @@ class Reader(object):
 		return resText
 
 	def close(self) -> None:
-		if self._file:
-			self._file.close()
-		self._file = None
+		self._file.close()
+		self._file = nullTextIO
 
 	def __len__(self) -> int:
 		# FIXME
@@ -242,8 +242,6 @@ class Reader(object):
 			self._glos.targetLangName = unwrap_quotes(line[19:].strip())
 
 	def _iterLines(self) -> "Iterator[str]":
-		if self._file is None:
-			raise RuntimeError("self._file is None")
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -293,8 +291,6 @@ class Reader(object):
 		term_lines: "list[str]",
 		text_lines: "list[str]",
 	) -> EntryType:
-		if self._file is None:
-			raise RuntimeError("self._file is None")
 		terms = []
 		defiTitles = []
 		for line in term_lines:

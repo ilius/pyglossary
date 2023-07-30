@@ -16,6 +16,7 @@ from pyglossary.compression import (
 )
 from pyglossary.entry import DataEntry
 from pyglossary.entry_base import MultiStr
+from pyglossary.io_utils import nullTextIO
 
 log = logging.getLogger("pyglossary")
 
@@ -58,7 +59,7 @@ class TextGlossaryReader(object):
 	def __init__(self, glos: "GlossaryType", hasInfo: bool = True) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.TextIOBase | None" = None
+		self._file: "io.TextIOBase" = nullTextIO
 		self._hasInfo = hasInfo
 		self._pendingEntries: "list[EntryType]" = []
 		self._wordCount = 0
@@ -69,8 +70,6 @@ class TextGlossaryReader(object):
 		self._bufferLine = ""
 
 	def readline(self) -> str:
-		if self._file is None:
-			raise ValueError("self._file is None")
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -136,13 +135,11 @@ class TextGlossaryReader(object):
 		return False
 
 	def close(self) -> None:
-		if not self._file:
-			return
 		try:
 			self._file.close()
 		except Exception:
 			log.exception(f"error while closing file {self._filename!r}")
-		self._file = None
+		self._file = nullTextIO
 
 	def newEntry(self, word: MultiStr, defi: str) -> "EntryType":
 		byteProgress: "tuple[int, int] | None" = None
@@ -180,8 +177,6 @@ class TextGlossaryReader(object):
 		return False
 
 	def loadInfo(self) -> "Generator[tuple[int, int], None, None]":
-		if self._file is None:
-			raise ValueError("self._file is None")
 		self._pendingEntries = []
 		try:
 			while True:

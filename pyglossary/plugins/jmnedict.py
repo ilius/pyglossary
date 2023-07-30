@@ -19,6 +19,7 @@ from pyglossary.glossary_types import (
 	EntryType,
 	GlossaryType,
 )
+from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import Option
 
 enable = True
@@ -212,8 +213,6 @@ class Reader(object):
 
 		defi = f.getvalue().decode("utf-8")
 		_file = self._file
-		if _file is None:
-			raise RuntimeError("_file is None")
 		byteProgress = (_file.tell(), self._fileSize)
 		return self._glos.newEntry(
 			keywords,
@@ -247,7 +246,7 @@ class Reader(object):
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""
-		self._file: "io.IOBase | None" = None
+		self._file: "io.IOBase" = nullBinaryIO
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 
@@ -257,7 +256,7 @@ class Reader(object):
 	def close(self) -> None:
 		if self._file:
 			self._file.close()
-			self._file = None
+			self._file = nullBinaryIO
 
 	def open(
 		self,

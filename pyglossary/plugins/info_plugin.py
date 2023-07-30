@@ -9,6 +9,7 @@ from pyglossary.glossary_types import (
 	EntryType,
 	GlossaryType,
 )
+from pyglossary.io_utils import nullTextIO
 from pyglossary.option import Option
 
 enable = True
@@ -30,7 +31,7 @@ class Writer(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.IOBase | None" = None
+		self._file: "io.TextIOBase" = nullTextIO
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
@@ -38,9 +39,8 @@ class Writer(object):
 
 	def finish(self) -> None:
 		self._filename = ""
-		if self._file:
-			self._file.close()
-			self._file = None
+		self._file.close()
+		self._file = nullTextIO
 
 	def write(self) -> "Generator[None, EntryType, None]":
 		import re

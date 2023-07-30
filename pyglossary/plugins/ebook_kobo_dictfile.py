@@ -29,6 +29,7 @@ from typing import Generator
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.image_utils import extractInlineHtmlImages
+from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -120,8 +121,6 @@ class Reader(TextGlossaryReader):
 	def nextBlock(
 		self,
 	) -> "tuple[list[str], str, list[tuple[str, str]] | None]":
-		if not self._file:
-			raise StopIteration
 		words: "list[str]" = []
 		defiLines: "list[str]" = []
 		html = False
@@ -166,12 +165,10 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._file: "io.TextIOBase | None" = None
+		self._file: "io.TextIOBase" = nullTextIO
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
 	def finish(self) -> None:
-		if self._file is None:
-			return
 		self._file.close()
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
@@ -187,8 +184,6 @@ class Writer(object):
 		self,
 	) -> "Generator[None, EntryType, None]":
 		fileObj = self._file
-		if fileObj is None:
-			raise RuntimeError("self._file is None")
 		resDir = self._resDir
 		while True:
 			entry = yield

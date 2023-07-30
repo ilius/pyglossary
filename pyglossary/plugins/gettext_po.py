@@ -7,6 +7,7 @@ from typing import Generator, Iterator
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
 	Option,
@@ -41,7 +42,7 @@ class Reader(object):
 
 	def clear(self) -> None:
 		self._filename = ""
-		self._file: "io.TextIOBase | None" = None
+		self._file: "io.TextIOBase" = nullTextIO
 		self._wordCount: "int | None" = None
 		self._resDir = ""
 		self._resFileNames: "list[str]" = []
@@ -57,8 +58,8 @@ class Reader(object):
 			self._resFileNames = []
 
 	def close(self) -> None:
-		if self._file:
-			self._file.close()
+		self._file.close()
+		self._file = nullTextIO
 		self.clear()
 
 	def __len__(self) -> int:
@@ -79,8 +80,6 @@ class Reader(object):
 			raise e
 
 		_file = self._file
-		if _file is None:
-			raise ValueError("_file is None")
 
 		word = ""
 		defi = ""
@@ -130,7 +129,7 @@ class Writer(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.TextIOBase | None" = None
+		self._file: "io.TextIOBase" = nullTextIO
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
@@ -141,9 +140,8 @@ class Writer(object):
 
 	def finish(self) -> None:
 		self._filename = ""
-		if self._file:
-			self._file.close()
-			self._file = None
+		self._file.close()
+		self._file = nullTextIO
 
 	def write(self) -> "Generator[None, EntryType, None]":
 		try:
@@ -153,8 +151,6 @@ class Writer(object):
 			raise e
 
 		_file = self._file
-		if _file is None:
-			raise ValueError("_file is None")
 
 		resources = self._resources
 		filename = self._filename

@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 	from .glossary_types import EntryType, GlossaryType
 
 from .compression import compressionOpen as c_open
+from .io_utils import nullTextIO
 
 log = logging.getLogger("pyglossary")
 
@@ -40,7 +41,7 @@ class TextGlossaryWriter(object):
 	) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.TextIOBase | None" = None
+		self._file: "io.TextIOBase" = nullTextIO
 		self._resDir = ""
 
 		if not entryFmt:
@@ -148,8 +149,6 @@ class TextGlossaryWriter(object):
 	def write(self) -> "Generator[None, EntryType, None]":
 		glos = self._glos
 		_file = self._file
-		if _file is None:
-			raise ValueError("_file is None")
 		entryFmt = self._entryFmt
 		wordListEncodeFunc = self._wordListEncodeFunc
 		wordEscapeFunc = self._wordEscapeFunc
@@ -197,8 +196,6 @@ class TextGlossaryWriter(object):
 					_file = self._open(f"{self._filename}.{fileIndex}")
 
 	def finish(self) -> None:
-		if self._file is None:
-			raise ValueError("_file is None")
 		if self._tail:
 			self._file.write(self._tail)
 		self._file.close()

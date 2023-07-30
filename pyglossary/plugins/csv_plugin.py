@@ -29,6 +29,7 @@ from pyglossary.compression import (
 )
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -84,7 +85,7 @@ class Reader(object):
 
 	def clear(self) -> None:
 		self._filename = ""
-		self._file: "io.TextIOBase | None" = None
+		self._file: "io.TextIOBase" = nullTextIO
 		self._fileSize = 0
 		self._leadingLinesCount = 0
 		self._wordCount: "int | None" = None
@@ -167,8 +168,6 @@ class Reader(object):
 	def _processRow(self, row: "list[str]") -> "EntryType | None":
 		if not row:
 			return None
-		if self._file is None:
-			raise RuntimeError("self._file is None")
 
 		word: "str | list[str]"
 		try:
@@ -228,7 +227,7 @@ class Writer(object):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._file: "io.TextIOBase | None" = None
+		self._file: "io.TextIOBase" = nullTextIO
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
@@ -253,9 +252,8 @@ class Writer(object):
 
 	def finish(self) -> None:
 		self._filename = ""
-		if self._file:
-			self._file.close()
-			self._file = None
+		self._file.close()
+		self._file = nullTextIO
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
 

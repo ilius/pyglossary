@@ -60,6 +60,7 @@ from pyglossary import core
 from pyglossary.apple_utils import substituteAppleCSS
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import BoolOption, Option
 
 enable = True
@@ -105,7 +106,7 @@ class Reader(object):
 		self._glos: GlossaryType = glos
 		self._dictDirPath = ""
 		self._contentsPath = ""
-		self._file: "io.BufferedIOBase | None" = None
+		self._file: "io.BufferedIOBase" = nullBinaryIO
 		self._encoding = "utf-8"
 		self._defiFormat = "m"
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
@@ -309,9 +310,8 @@ class Reader(object):
 		return self._wordCount
 
 	def close(self) -> None:
-		if self._file is not None:
-			self._file.close()
-			self._file = None
+		self._file.close()
+		self._file = nullBinaryIO
 
 	def _getDefi(
 		self,
@@ -441,8 +441,6 @@ class Reader(object):
 		return entryRoot
 
 	def readEntryIds(self) -> None:
-		if self._file is None:
-			raise ValueError("self._file is None")
 		titleById = {}
 		for entryBytes, _ in self.yieldEntryBytes(
 			self._file,
@@ -663,9 +661,6 @@ class Reader(object):
 			yield self.readResFile(fname, fpath, ext)
 
 	def __iter__(self) -> Iterator[EntryType]:
-		if self._file is None:
-			raise RuntimeError("iterating over a reader while it's not open")
-
 		yield from self.readResDir(
 			self._contentsPath,
 			recurse=True,

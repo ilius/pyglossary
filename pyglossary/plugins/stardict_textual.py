@@ -20,6 +20,7 @@ from pyglossary.compression import (
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.html_utils import unescape_unicode
+from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -61,7 +62,7 @@ class Reader(object):
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.IOBase | None" = None
+		self._file: "io.IOBase" = nullBinaryIO
 		self._fileSize = 0
 		self._xdxfTr: "XdxfTransformer | None" = None
 
@@ -80,9 +81,8 @@ class Reader(object):
 		return 0
 
 	def close(self) -> None:
-		if self._file:
-			self._file.close()
-			self._file = None
+		self._file.close()
+		self._file = nullBinaryIO
 		self._filename = ""
 		self._fileSize = 0
 
@@ -292,8 +292,6 @@ class Writer(object):
 			maker.dicttype(""),
 		)
 		_file = self._file
-		if _file is None:
-			raise RuntimeError("_file is None")
 		_file.write(cast(bytes, ET.tostring(
 			info,
 			encoding=self._encoding,

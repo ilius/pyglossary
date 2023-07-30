@@ -4,6 +4,7 @@ from typing import Iterator
 
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -45,14 +46,11 @@ class Reader:
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
-		self.file: "io.TextIOBase | None" = None
+		self.file: "io.TextIOBase" = nullTextIO
 		self.total_entries: "int | None" = None
 		self.entries_left = 0
 
 	def open(self, filename: str) -> None:
-		if self.file is not None:
-			self.file.close()
-
 		self._glos.sourceLangName = "Chinese"
 		self._glos.targetLangName = "English"
 
@@ -68,9 +66,8 @@ class Reader:
 			raise RuntimeError("CC-CEDICT: could not find entry count")
 
 	def close(self) -> None:
-		if self.file is not None:
-			self.file.close()
-		self.file = None
+		self.file.close()
+		self.file = nullTextIO
 		self.total_entries = None
 		self.entries_left = 0
 
@@ -82,11 +79,6 @@ class Reader:
 		return self.total_entries
 
 	def __iter__(self) -> "Iterator[EntryType]":
-		if self.file is None:
-			raise RuntimeError(
-				"CC-CEDICT: tried to iterate over entries "
-				"while reader is not open",
-			)
 		for line in self.file:
 			if line.startswith("#"):
 				continue

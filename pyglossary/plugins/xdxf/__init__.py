@@ -36,6 +36,7 @@ from pyglossary.compression import (
 )
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import (
 	BoolOption,
 	Option,
@@ -117,7 +118,7 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.IOBase | None" = None
+		self._file: "io.IOBase" = nullBinaryIO
 		self._encoding = "utf-8"
 		self._htmlTr: "TransformerType | None" = None
 		self._re_span_k = re.compile(
@@ -198,9 +199,6 @@ class Reader(object):
 		from lxml import etree as ET
 		from lxml.etree import tostring
 
-		if self._file is None:
-			raise ValueError("self._file is None")
-
 		context = ET.iterparse(  # type: ignore
 			self._file,
 			events=("end",),
@@ -232,9 +230,8 @@ class Reader(object):
 				del article.getparent()[0]
 
 	def close(self) -> None:
-		if self._file:
-			self._file.close()
-			self._file = None
+		self._file.close()
+		self._file = nullBinaryIO
 
 	def tostring(
 		self,

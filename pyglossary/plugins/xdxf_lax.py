@@ -35,6 +35,7 @@ from pyglossary.compression import (
 )
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import (
 	BoolOption,
 	Option,
@@ -87,7 +88,7 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.IOBase | None" = None
+		self._file: "io.IOBase" = nullBinaryIO
 		self._encoding = "utf-8"
 		self._htmlTr: "TransformerType | None" = None
 		self._re_span_k = re.compile(
@@ -96,8 +97,6 @@ class Reader(object):
 
 	def readUntil(self, untilByte: bytes) -> "tuple[int, bytes]":
 		_file = self._file
-		if _file is None:
-			raise RuntimeError("_file is None")
 		buf = b""
 		while True:
 			tmp = _file.read(100)
@@ -132,9 +131,6 @@ class Reader(object):
 
 	def readMetadata(self):
 		_file = self._file
-		if _file is None:
-			raise RuntimeError("self._file is None")
-
 		pos = _file.tell()
 		self._readOneMetadata("full_name", "title")
 		_file.seek(pos)
@@ -166,9 +162,6 @@ class Reader(object):
 
 	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml.html import fromstring, tostring
-
-		if self._file is None:
-			raise ValueError("self._file is None")
 
 		while True:
 			start, _ = self.readUntil(b"<ar")
@@ -207,7 +200,7 @@ class Reader(object):
 	def close(self) -> None:
 		if self._file:
 			self._file.close()
-			self._file = None
+			self._file = nullBinaryIO
 
 	def tostring(
 		self,
