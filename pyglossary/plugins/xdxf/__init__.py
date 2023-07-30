@@ -94,9 +94,10 @@ old format
 """
 
 
-class TransformerType(typing.Protocol):
-	def transform(self, article: "Element") -> str:
-		...
+if TYPE_CHECKING:
+	class TransformerType(typing.Protocol):
+		def transform(self, article: "Element") -> str:
+			...
 
 
 class Reader(object):
