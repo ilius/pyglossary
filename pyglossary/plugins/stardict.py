@@ -415,7 +415,6 @@ class Reader(object):
 					continue
 				b_key, _, b_value = line.partition(b"=")
 				if not (b_key and b_value):
-					log.warning(f"Invalid ifo file line: {line!r}")
 					continue
 				try:
 					key = b_key.decode("utf-8")
