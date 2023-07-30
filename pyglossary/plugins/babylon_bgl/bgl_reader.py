@@ -24,22 +24,10 @@
 import io
 import os
 import re
-import sys
 from collections import OrderedDict as odict
 from typing import Iterator
 
 from pyglossary.core import log
-
-try:
-	vmajor, vminor = sys.version_info[:2]
-	GzipFile = __import__(
-		f"pyglossary.plugin_lib.py{vmajor}{vminor}.gzip_no_crc",
-		fromlist="GzipFile",
-	).GzipFile
-except ImportError as e:
-	from gzip import GzipFile
-	log.debug(str(e))
-
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
@@ -54,6 +42,7 @@ from pyglossary.text_utils import (
 )
 from pyglossary.xml_utils import xml_escape
 
+from .bgl_gzip import GzipFile
 from .bgl_info import (
 	charsetInfoDecode,
 	infoType3ByCode,
