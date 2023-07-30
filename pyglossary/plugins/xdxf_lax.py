@@ -95,7 +95,7 @@ class Reader(object):
 			if not tmp:
 				break
 			buf += tmp
-			index = buf.rfind(untilByte)
+			index = buf.find(untilByte)
 			if index < 0:
 				continue
 			_file.seek(_file.tell() - len(buf) + index)
