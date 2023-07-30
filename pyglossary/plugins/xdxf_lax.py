@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# mypy: ignore-errors
 #
 """Lax implementation of xdxf reader."""
 #
@@ -22,8 +21,10 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+import io
 import re
-from typing import TYPE_CHECKING, Iterator, Sequence
+import typing
+from typing import TYPE_CHECKING, Iterator, Sequence, cast
 
 if TYPE_CHECKING:
 	from lxml.html import HtmlElement as Element
@@ -63,6 +64,12 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
+if TYPE_CHECKING:
+	class TransformerType(typing.Protocol):
+		def transform(self, article: "Element") -> str:
+			...
+
+
 class Reader(object):
 	compressions = stdCompressions
 	depends = {
@@ -80,15 +87,17 @@ class Reader(object):
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file = None
+		self._file: "io.IOBase | None" = None
 		self._encoding = "utf-8"
-		self._htmlTr = None
+		self._htmlTr: "TransformerType | None" = None
 		self._re_span_k = re.compile(
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
 
-	def readUntil(self, untilByte: bytes) -> bytes:
+	def readUntil(self, untilByte: bytes) -> "tuple[int, bytes]":
 		_file = self._file
+		if _file is None:
+			raise RuntimeError("_file is None")
 		buf = b""
 		while True:
 			tmp = _file.read(100)
@@ -149,6 +158,9 @@ class Reader(object):
 	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml.html import fromstring, tostring
 
+		if self._file is None:
+			raise ValueError("self._file is None")
+
 		while True:
 			start, _ = self.readUntil(b"<ar")
 			if start < 0:
@@ -159,7 +171,7 @@ class Reader(object):
 			b_article += b"</ar>"
 			s_article = b_article.decode("utf-8")
 			try:
-				article = fromstring(s_article)
+				article = cast("Element", fromstring(s_article))
 			except Exception as e:
 				log.exception(s_article)
 				raise e from None
@@ -170,8 +182,8 @@ class Reader(object):
 				if len(words) == 1:
 					defi = self._re_span_k.sub("", defi)
 			else:
-				defi = tostring(article, encoding=self._encoding)
-				defi = defi[4:-5].decode(self._encoding).strip()
+				b_defi = cast(bytes, tostring(article, encoding=self._encoding))
+				defi = b_defi[4:-5].decode(self._encoding).strip()
 				defiFormat = "x"
 
 			# log.info(f"{defi=}, {words=}")
@@ -205,7 +217,6 @@ class Reader(object):
 		:param article: <ar> tag
 		:return: (title (str) | None, alternative titles (set))
 		"""
-		print(type(article))
 		from itertools import combinations
 		titles: "list[str]" = []
 		for title_element in article.findall("k"):
@@ -230,7 +241,7 @@ class Reader(object):
 	) -> str:
 		if include_opts is None:
 			include_opts = ()
-		title = title_element.text
+		title = title_element.text or ""
 		opt_i = -1
 		for c in title_element:
 			if c.tag == "nu" and c.tail:
@@ -238,16 +249,10 @@ class Reader(object):
 					title += c.tail
 				else:
 					title = c.tail
-			if c.tag == "opt":
+			if c.tag == "opt" and c.text is not None:
 				opt_i += 1
 				if opt_i in include_opts:
-					if title:
-						title += c.text
-					else:
-						title = c.text
+					title += c.text
 				if c.tail:
-					if title:
-						title += c.tail
-					else:
-						title = c.tail
+					title += c.tail
 		return title.strip()
