@@ -1,0 +1,8 @@
+7a8,10
+> import logging
+> log = logging.getLogger('root')
+> 
+524c527
+<             raise BadGzipFile("CRC check failed %s != %s" % (hex(crc32),
+---
+>             log.warning("CRC check failed %s != %s" % (hex(crc32),
