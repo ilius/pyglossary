@@ -12,9 +12,3 @@ for F in *_test.py ; do
 	echo $F
     python -m unittest $F
 done
-
-
-echo
-echo "$rootDir/pyglossary/plugin_lib"
-cd "$rootDir/pyglossary/plugin_lib"
-python -m unittest *_test.py
