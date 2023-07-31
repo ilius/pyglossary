@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import io
 from struct import unpack
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	import io
 
 # Copyright © 2023 soshial <soshial@gmail.com> (soshial)
 #

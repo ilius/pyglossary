@@ -12,10 +12,10 @@ from os.path import (
 	isfile,
 	join,
 )
-from types import TracebackType
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
+	from types import TracebackType
 	from typing import (
 		Any,
 		Callable,

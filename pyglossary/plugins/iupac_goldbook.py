@@ -6,18 +6,18 @@ from io import BytesIO
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
+	from pyglossary.glossary_types import (
+		EntryType,
+		GlossaryType,
+	)
 	from pyglossary.lxml_types import Element
+	from pyglossary.option import Option
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
 from pyglossary.core import log, pip
-from pyglossary.glossary_types import (
-	EntryType,
-	GlossaryType,
-)
 from pyglossary.html_utils import unescape_unicode
-from pyglossary.option import Option
 
 enable = True
 lname = "iupac_goldbook"

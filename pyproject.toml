@@ -14,7 +14,7 @@ select = [
     "RET", # flake8-return
     "TID", # flake8-tidy-imports
     "PGH", # pygrep-hooks
-    # "TCH", # flake8-type-checking, not done for plugins
+    "TCH", # flake8-type-checking, not done for plugins
     # "ARG", # flake8-unused-arguments
 
     # "EXE", # flake8-executable TODO

@@ -1,10 +1,12 @@
 import logging
 import os
 import shutil
-import types
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 from pyglossary import core
+
+if TYPE_CHECKING:
+	import types
 
 log = logging.getLogger("pyglossary")
 

@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 	from typing import Callable, Iterator
 
 	from pyglossary.lxml_types import Element, T_htmlfile
+	from pyglossary.option import Option
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -20,7 +21,6 @@ from pyglossary.glossary_types import (
 	GlossaryType,
 )
 from pyglossary.io_utils import nullBinaryIO
-from pyglossary.option import Option
 
 enable = True
 lname = "jmnedict"

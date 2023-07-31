@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import io
-from typing import Generator, List
+from typing import TYPE_CHECKING, Generator, List
 
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -11,6 +9,11 @@ from pyglossary.option import (
 	NewlineOption,
 	Option,
 )
+
+if TYPE_CHECKING:
+	import io
+
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 enable = True
 lname = "sql"

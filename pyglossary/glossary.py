@@ -19,12 +19,14 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 from time import time as now
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .core import log
-from .glossary_types import EntryType
 from .glossary_v2 import ConvertArgs, GlossaryCommon
 from .sort_keys import lookupSortKey
+
+if TYPE_CHECKING:
+	from .glossary_types import EntryType
 
 
 class Glossary(GlossaryCommon):

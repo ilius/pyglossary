@@ -1,9 +1,7 @@
-import io
 import re
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
@@ -12,6 +10,11 @@ from pyglossary.option import (
 )
 
 from . import conv
+
+if TYPE_CHECKING:
+	import io
+
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 enable = True
 lname = "cc_cedict"

@@ -6,8 +6,9 @@ from typing import TYPE_CHECKING, Iterator
 if TYPE_CHECKING:
 	import sqlite3
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
+
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 
 enable = True
 lname = "dict_cc_split"

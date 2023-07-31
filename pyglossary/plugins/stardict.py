@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import gzip
-import io
 import os
 import re
 import typing
@@ -31,6 +30,7 @@ from typing import (
 )
 
 if TYPE_CHECKING:
+	import io
 	import sqlite3
 
 	from pyglossary.langs import Lang

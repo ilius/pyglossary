@@ -3,10 +3,10 @@
 import html
 from typing import TYPE_CHECKING, Iterator
 
-from pyglossary.glossary_types import EntryType, GlossaryType
-
 if TYPE_CHECKING:
 	import sqlite3
+
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 enable = True
 lname = "almaany"

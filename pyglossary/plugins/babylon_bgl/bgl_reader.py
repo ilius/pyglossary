@@ -25,10 +25,9 @@ import io
 import os
 import re
 from collections import OrderedDict as odict
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -60,6 +59,9 @@ from .bgl_text import (
 	stripHtmlTags,
 	unknownHtmlEntries,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 file = io.BufferedReader
 

@@ -24,11 +24,11 @@ from os.path import dirname, extsep, isfile, join, splitext
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.plugin_lib.readmdict import MDD, MDX
 
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,

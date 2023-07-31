@@ -7,11 +7,11 @@ from typing import TYPE_CHECKING, Callable, Iterator, cast
 if TYPE_CHECKING:
 	import sqlite3
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.lxml_types import Element, T_htmlfile
 
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 
 enable = True
 lname = "dict_cc"

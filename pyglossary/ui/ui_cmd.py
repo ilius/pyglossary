@@ -19,17 +19,19 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-import logging
 import os
 import sys
 from os.path import join
-from typing import Any, Dict, Mapping
+from typing import TYPE_CHECKING, Any, Dict, Mapping
 
 from pyglossary.core import dataDir, log
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
 from .base import UIBase, fread
 from .wcwidth import wcswidth
+
+if TYPE_CHECKING:
+	import logging
 
 
 def wc_ljust(text: str, length: int, padding: str = ' ') -> str:

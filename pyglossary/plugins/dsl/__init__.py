@@ -20,10 +20,9 @@
 
 import html
 import html.entities
-import io
 import re
 from os.path import dirname, isfile, join
-from typing import Iterator, cast
+from typing import TYPE_CHECKING, Iterator, cast
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -42,6 +41,9 @@ from pyglossary.text_reader import TextFilePosWrapper
 
 from .title import TitleTransformer
 from .transform import Transformer
+
+if TYPE_CHECKING:
+	import io
 
 enable = True
 lname = "dsl"

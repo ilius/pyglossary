@@ -21,10 +21,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import io
 import os
 from os.path import isdir
-from typing import Generator
+from typing import TYPE_CHECKING, Generator
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -36,6 +35,9 @@ from pyglossary.option import (
 	Option,
 )
 from pyglossary.text_reader import TextGlossaryReader
+
+if TYPE_CHECKING:
+	import io
 
 enable = True
 lname = "kobo_dictfile"

@@ -25,12 +25,11 @@
 import os
 from datetime import datetime
 from os.path import join
-from typing import Generator
+from typing import TYPE_CHECKING, Generator
 
 from pyglossary.core import log
 from pyglossary.ebook_base import EbookWriter
 from pyglossary.flags import DEFAULT_YES
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.langs import Lang
 from pyglossary.option import (
 	BoolOption,
@@ -39,6 +38,9 @@ from pyglossary.option import (
 	Option,
 	StrOption,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 enable = True
 lname = "mobi"

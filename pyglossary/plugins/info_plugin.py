@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import io
 from os.path import splitext
-from typing import Generator, Iterator
+from typing import TYPE_CHECKING, Generator, Iterator
 
 from pyglossary.core import log
 from pyglossary.glossary_types import (
@@ -10,7 +9,11 @@ from pyglossary.glossary_types import (
 	GlossaryType,
 )
 from pyglossary.io_utils import nullTextIO
-from pyglossary.option import Option
+
+if TYPE_CHECKING:
+	import io
+
+	from pyglossary.option import Option
 
 enable = True
 lname = "info"

@@ -21,12 +21,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-import io
 import re
 import typing
 from typing import TYPE_CHECKING, Iterator, Sequence, cast
 
 if TYPE_CHECKING:
+	import io
+
 	from lxml.html import HtmlElement as Element
 
 from pyglossary.compression import (

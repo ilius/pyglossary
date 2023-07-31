@@ -48,7 +48,6 @@ from .core import (
 	log,
 )
 from .entry import DataEntry, Entry
-from .entry_base import MultiStr
 from .entry_filters import (
 	EntryFilterType,
 	PreventDuplicateWords,
@@ -81,6 +80,7 @@ from .sort_keys import defaultSortKeyName, lookupSortKey
 
 if TYPE_CHECKING:
 	# from .flags import StrWithDesc
+	from .entry_base import MultiStr
 	from .plugin_prop import PluginProp
 	from .sort_keys import NamedSortKey
 	from .ui_type import UIType

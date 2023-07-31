@@ -18,13 +18,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-import io
 import os
 import pkgutil
 import shutil
 import sys
 from os.path import basename, isdir, join
-from typing import Any, Dict, Generator
+from typing import TYPE_CHECKING, Any, Dict, Generator
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -43,6 +42,9 @@ from ._dict import (
 	indexes_generator,
 	quote_string,
 )
+
+if TYPE_CHECKING:
+	import io
 
 sys.setrecursionlimit(10000)
 

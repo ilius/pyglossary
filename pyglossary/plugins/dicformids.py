@@ -4,13 +4,15 @@
 import os
 import re
 from os.path import join
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS
-from pyglossary.glossary_types import EntryType, GlossaryType
-from pyglossary.option import Option
 from pyglossary.plugins.tabfile import Reader as TabfileReader
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.option import Option
 
 lname = "dicformids"
 enable = True

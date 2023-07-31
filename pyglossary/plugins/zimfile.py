@@ -6,9 +6,10 @@ from typing import TYPE_CHECKING, Iterator
 if TYPE_CHECKING:
 	from libzim.reader import Archive  # type: ignore
 
+	from pyglossary.option import Option
+
 from pyglossary.core import cacheDir, log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
-from pyglossary.option import Option
 
 enable = True
 lname = "zim"

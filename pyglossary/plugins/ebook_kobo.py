@@ -28,14 +28,16 @@ from gzip import compress, decompress
 from operator import itemgetter
 from pathlib import Path
 from pickle import dumps, loads
-from typing import Generator
+from typing import TYPE_CHECKING, Generator
 
 from pyglossary import core
 from pyglossary.core import log, pip
 from pyglossary.flags import NEVER
-from pyglossary.glossary_types import EntryType, GlossaryType
-from pyglossary.option import Option
 from pyglossary.os_utils import indir
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.option import Option
 
 enable = True
 lname = "kobo"

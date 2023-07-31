@@ -18,10 +18,9 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import csv
-import io
 import os
 from os.path import isdir, join
-from typing import Generator, Iterable, Iterator, cast
+from typing import TYPE_CHECKING, Generator, Iterable, Iterator, cast
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -36,6 +35,9 @@ from pyglossary.option import (
 	NewlineOption,
 	Option,
 )
+
+if TYPE_CHECKING:
+	import io
 
 enable = True
 lname = "csv"

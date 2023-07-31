@@ -9,10 +9,10 @@ from typing import (
 if TYPE_CHECKING:
 	import sqlite3
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.xdxf.transform import XdxfTransformer
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import BoolOption, Option
 
 enable = True

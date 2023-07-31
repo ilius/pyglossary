@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import io
 import os
 from os.path import isdir
-from typing import Generator, Iterator
+from typing import TYPE_CHECKING, Generator, Iterator
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -12,6 +11,9 @@ from pyglossary.option import (
 	BoolOption,
 	Option,
 )
+
+if TYPE_CHECKING:
+	import io
 
 enable = True
 lname = "gettext_po"

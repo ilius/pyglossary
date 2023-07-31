@@ -13,9 +13,10 @@ if TYPE_CHECKING:
 	from collections import OrderedDict
 	from typing import TypeAlias
 
+	from .langs import Lang
+	from .sort_keys import NamedSortKey
 
-from .langs import Lang
-from .sort_keys import NamedSortKey
+
 
 MultiStr: "TypeAlias" = "str | list[str]"
 

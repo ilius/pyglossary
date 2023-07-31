@@ -19,17 +19,19 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pyglossary.ebook_base import EbookWriter
 from pyglossary.flags import ALWAYS
-from pyglossary.glossary_types import GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	IntOption,
 	Option,
 	StrOption,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import GlossaryType
 
 enable = True
 lname = "epub2"

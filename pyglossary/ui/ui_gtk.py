@@ -22,13 +22,12 @@ import sys
 import traceback
 from collections import OrderedDict
 from os.path import abspath, isfile
-from typing import Any, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
 import gi
 
 from pyglossary import core
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
-from pyglossary.plugin_prop import PluginProp
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import urlToPath
 
@@ -57,6 +56,9 @@ from .gtk3_utils.utils import (
 	set_tooltip,
 	showInfo,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.plugin_prop import PluginProp
 
 # from gi.repository import GdkPixbuf
 

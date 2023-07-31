@@ -19,11 +19,13 @@ import os
 import re
 import sys
 from collections import defaultdict
-from typing import Iterator, Tuple
+from typing import TYPE_CHECKING, Iterator, Tuple
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
-from pyglossary.option import Option
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.option import Option
 
 enable = True
 lname = "wordnet"

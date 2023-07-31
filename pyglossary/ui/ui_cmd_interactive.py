@@ -59,6 +59,7 @@ from typing import TYPE_CHECKING, Dict, Iterable, Literal
 
 if TYPE_CHECKING:
 	from pyglossary.option import Option
+	from pyglossary.plugin_prop import PluginProp
 
 import prompt_toolkit
 from prompt_toolkit import ANSI
@@ -77,7 +78,6 @@ from prompt_toolkit.shortcuts import PromptSession, confirm
 from pyglossary import core
 from pyglossary.core import confDir
 from pyglossary.glossary_v2 import Glossary
-from pyglossary.plugin_prop import PluginProp
 from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 from pyglossary.ui import ui_cmd
 
