@@ -206,14 +206,15 @@ class Entry(BaseEntry):
 		byteProgress: "tuple[int, int] | None" = None,
 	) -> None:
 		"""
-			word: string or a list of strings (including alternate words)
-			defi: string or a list of strings (including alternate definitions)
-			defiFormat (optional): definition format:
-				"m": plain text
-				"h": html
-				"x": xdxf
-		"""
+		Create a new Entry.
 
+		word: string or a list of strings (including alternate words)
+		defi: string or a list of strings (including alternate definitions)
+		defiFormat (optional): definition format:
+			"m": plain text
+			"h": html
+			"x": xdxf.
+		"""
 		# memory optimization:
 		if isinstance(word, (list, tuple)):
 			if len(word) == 1:
@@ -243,38 +244,32 @@ class Entry(BaseEntry):
 
 	@property
 	def s_word(self) -> str:
-		"""
-			returns string of word,
-				and all the alternate words
-				separated by "|"
-		"""
+		"""Returns string of word, and all the alternate words separated by "|"."""
 		if isinstance(self._word, str):
 			return self._word
 		return joinByBar(self._word)
 
 	@property
 	def l_word(self) -> "list[str]":
-		"""
-			returns list of the word and all the alternate words
-		"""
+		"""Returns list of the word and all the alternate words."""
 		if isinstance(self._word, str):
 			return [self._word]
 		return self._word
 
 	@property
 	def defi(self) -> str:
-		"""
-			returns string of definition
-		"""
+		"""Returns string of definition."""
 		return self._defi
 
 	@property
 	def defiFormat(self) -> str:
 		"""
-			returns definition format:
-				"m": plain text
-				"h": html
-				"x": xdxf
+		Returns definition format.
+
+		Values:
+			"m": plain text
+			"h": html
+			"x": xdxf.
 		"""
 		# TODO: type: Literal["m", "h", "x"]
 		return self._defiFormat
@@ -282,10 +277,12 @@ class Entry(BaseEntry):
 	@defiFormat.setter
 	def defiFormat(self, defiFormat: str) -> None:
 		"""
-			defiFormat:
-				"m": plain text
-				"h": html
-				"x": xdxf
+		Set definition format.
+
+		defiFormat:
+			"m": plain text
+			"h": html
+			"x": xdxf.
 		"""
 		self._defiFormat = defiFormat
 
@@ -309,9 +306,10 @@ class Entry(BaseEntry):
 
 	def editFuncWord(self, func: "Callable[[str], str]") -> None:
 		"""
-			run function `func` on all the words
-			`func` must accept only one string as argument
-			and return the modified string
+		Run function `func` on all the words.
+
+		`func` must accept only one string as argument
+		and return the modified string.
 		"""
 		if isinstance(self._word, str):
 			self._word = func(self._word)
@@ -323,9 +321,10 @@ class Entry(BaseEntry):
 
 	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
 		"""
-			run function `func` on all the definitions
-			`func` must accept only one string as argument
-			and return the modified string
+		Run function `func` on all the definitions.
+
+		`func` must accept only one string as argument
+		and return the modified string.
 		"""
 		self._defi = func(self._defi)
 
@@ -335,17 +334,13 @@ class Entry(BaseEntry):
 		return s
 
 	def strip(self) -> None:
-		"""
-			strip whitespaces from all words and definitions
-		"""
+		"""Strip whitespaces from all words and definitions."""
 		self.editFuncWord(str.strip)
 		self.editFuncDefi(str.strip)
 		self.editFuncDefi(self._stripTrailingBR)
 
 	def replaceInWord(self, source: str, target: str) -> None:
-		"""
-			replace string `source` with `target` in all words
-		"""
+		"""Replace string `source` with `target` in all words."""
 		if isinstance(self._word, str):
 			self._word = self._word.replace(source, target)
 			return
@@ -355,15 +350,11 @@ class Entry(BaseEntry):
 		]
 
 	def replaceInDefi(self, source: str, target: str) -> None:
-		"""
-			replace string `source` with `target` in all definitions
-		"""
+		"""Replace string `source` with `target` in all definitions."""
 		self._defi = self._defi.replace(source, target)
 
 	def replace(self, source: str, target: str) -> None:
-		"""
-			replace string `source` with `target` in all words and definitions
-		"""
+		"""Replace string `source` with `target` in all words and definitions."""
 		self.replaceInWord(source, target)
 		self.replaceInDefi(source, target)
 
@@ -376,9 +367,7 @@ class Entry(BaseEntry):
 		self._word = l_word
 
 	def stripFullHtml(self) -> "str | None":
-		"""
-		returns error
-		"""
+		"""Remove <html><head><body> tags and returns error."""
 		defi = self._defi
 		if not defi.startswith('<'):
 			return None

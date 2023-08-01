@@ -517,8 +517,8 @@ class FormatOptionsDialog(gtk.Dialog):
 
 	def valueCellClicked(self, path, forceMenu=False) -> bool:
 		"""
-		returns True if event is handled, False if not handled
-		(need to enter edit mode)
+		Returns True if event is handled, False if not handled
+		(need to enter edit mode).
 		"""
 		model = self.treev.get_model()
 		itr = model.get_iter(path)
@@ -617,7 +617,7 @@ class FormatBox(FormatButton):
 		self.optionsValues = optionsValues
 
 	def kind(self):
-		"returns 'r' or 'w'"
+		"""Return 'r' or 'w'."""
 		raise NotImplementedError
 
 	def getActiveOptions(self):
@@ -691,7 +691,7 @@ class InputFormatBox(FormatBox):
 		FormatBox.__init__(self, readDesc, **kwargs)
 
 	def kind(self):
-		"returns 'r' or 'w'"
+		"""Return 'r' or 'w'."""
 		return "r"
 
 	def getActiveOptions(self):
@@ -708,7 +708,7 @@ class OutputFormatBox(FormatBox):
 		FormatBox.__init__(self, writeDesc, **kwargs)
 
 	def kind(self):
-		"returns 'r' or 'w'"
+		"""Return 'r' or 'w'."""
 		return "w"
 
 	def getActiveOptions(self):

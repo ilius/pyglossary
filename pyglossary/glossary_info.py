@@ -81,7 +81,7 @@ class GlossaryInfo(object):
 		"""
 		excludeKeys: a list of (basic) info keys to be excluded
 		returns an OrderedDict including the rest of info keys,
-				with associated values
+				with associated values.
 		"""
 		excludeKeySet = set()
 		for key in excludeKeys:
@@ -184,9 +184,7 @@ class GlossaryInfo(object):
 		return "b"
 
 	def detectLangsFromName(self) -> None:
-		"""
-		extract sourceLang and targetLang from glossary name/title
-		"""
+		"""Extract sourceLang and targetLang from glossary name/title."""
 		import re
 
 		name = self._info.get(c_name)

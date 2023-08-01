@@ -40,7 +40,7 @@ unknownHtmlEntries = set()
 def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
-	Replace character entity with the corresponding character
+	Replace character entity with the corresponding character.
 
 	Return the original string if conversion fails.
 	Use this as a replace function of re.sub.
@@ -89,7 +89,7 @@ def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 def replaceHtmlEntryCB(u_match: "re.Match") -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
-	Same as replaceHtmlEntryNoEscapeCB, but escapes result string
+	Same as replaceHtmlEntryNoEscapeCB, but escapes result string.
 
 	Only <, >, & characters are escaped.
 	"""
@@ -101,19 +101,14 @@ def replaceHtmlEntryCB(u_match: "re.Match") -> str:
 
 
 def replaceDingbat(u_match: "re.Match") -> str:
-	"""
-	u_match: instance of _sre.SRE_Match
-	replace chars \\u008c-\\u0095 with \\u2776-\\u277f
-	"""
+	r"""Replace chars \\u008c-\\u0095 with \\u2776-\\u277f."""
 	ch = u_match.group(0)
 	code = ch + 0x2776 - 0x8c
 	return chr(code)
 
 
 def escapeNewlinesCallback(u_match: "re.Match") -> str:
-	"""
-	u_match: instance of _sre.SRE_Match
-	"""
+	"""u_match: instance of _sre.SRE_Match."""
 	ch = u_match.group(0)
 	if ch == "\n":
 		return "\\n"
@@ -150,9 +145,9 @@ def replaceHtmlEntriesInKeys(u_text: str) -> str:
 
 def escapeNewlines(u_text: str) -> str:
 	r"""
-	convert text to c-escaped string:
+	Convert text to c-escaped string:
 	\ -> \\
-	new line -> \n or \r
+	new line -> \n or \r.
 	"""
 	if core.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
@@ -194,9 +189,7 @@ def removeNewlines(u_text: str) -> str:
 
 
 def normalizeNewlines(u_text: str) -> str:
-	"""
-	convert new lines to unix style and remove consecutive new lines
-	"""
+	"""Convert new lines to unix style and remove consecutive new lines."""
 	if core.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_newline.sub(
@@ -232,8 +225,8 @@ def replaceAsciiCharRefs(b_text: bytes, encoding: str) -> bytes:
 
 
 def fixImgLinks(u_text: str) -> str:
-	"""
-	Fix img tag links
+	r"""
+	Fix img tag links.
 
 	src attribute value of image tag is often enclosed in \x1e - \x1f
 	characters.

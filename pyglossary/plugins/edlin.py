@@ -199,9 +199,9 @@ class Writer(object):
 
 	def getEntryHash(self, entry: EntryType) -> str:
 		"""
-		return hash string for given entry
+		Return hash string for given entry
 		don't call it twice for one entry, if you do you will get a
-		different hash string
+		different hash string.
 		"""
 		from hashlib import sha1
 		_hash = sha1(entry.s_word.encode("utf-8")).hexdigest()[:8]  # noqa: S324

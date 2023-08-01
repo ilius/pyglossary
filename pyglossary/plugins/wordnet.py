@@ -56,7 +56,7 @@ quotedTextPattern = re.compile(r'"([^"]+)"')
 refPattern = re.compile(r"`(\w+)'")
 
 class SynSet(object):
-	def __init__(self, line):
+	def __init__(self, line) -> None:
 		self.line = line
 		if isinstance(line, bytes):
 			line = line.decode("utf-8")
@@ -94,7 +94,7 @@ class SynSet(object):
 			for i in range(pointer_count)
 		]
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return "SynSet(%r)" % self.line
 
 
@@ -161,7 +161,7 @@ class PointerSymbols(object):
 
 
 class Pointer(object):
-	def __init__(self, symbol, offset, pos, source_target):
+	def __init__(self, symbol, offset, pos, source_target) -> None:
 		self.symbol = symbol
 		self.offset = int(offset)
 		self.pos = pos
@@ -169,7 +169,7 @@ class Pointer(object):
 		self.source = int(source_target[:2], 16)
 		self.target = int(source_target[2:], 16)
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return "Pointer(%r, %r, %r, %r)" % (
 			self.symbol,
 			self.offset,
@@ -197,7 +197,7 @@ class WordNet(object):
 		"data.verb": ["v"],
 	}
 
-	def __init__(self, wordnetdir):
+	def __init__(self, wordnetdir) -> None:
 		self.wordnetdir = wordnetdir
 		self.collector = defaultdict(list)
 

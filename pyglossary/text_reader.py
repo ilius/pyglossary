@@ -113,9 +113,9 @@ class TextGlossaryReader(object):
 
 	def openGen(self, filename: str) -> "Iterator[tuple[int, int]]":
 		"""
-			like open() but return a generator / iterator to track the progress
-			example for reader.open:
-				yield from TextGlossaryReader.openGen(self, filename)
+		Like open() but return a generator / iterator to track the progress
+		example for reader.open:
+		yield from TextGlossaryReader.openGen(self, filename).
 		"""
 		self._filename = filename
 		yield from self._openGen(filename)
@@ -155,9 +155,7 @@ class TextGlossaryReader(object):
 		self._glos.setInfo(key, value)
 
 	def _loadNextInfo(self) -> bool:
-		"""
-			returns True when reached the end
-		"""
+		"""Returns True when reached the end."""
 		block = self.nextBlock()
 		if not block:
 			return False

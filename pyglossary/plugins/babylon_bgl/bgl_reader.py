@@ -150,6 +150,7 @@ re_b_reference = re.compile(b"^[0-9a-fA-F]{4}$")
 
 
 class BGLGzipFile(GzipFile):
+
 	"""
 	gzip_no_crc.py contains GzipFile class without CRC check.
 
@@ -157,6 +158,7 @@ class BGLGzipFile(GzipFile):
 	The original method raises an exception in this case.
 	Some dictionaries do not use CRC code, it is set to 0.
 	"""
+
 	def __init__(
 		self,
 		fileobj: "io.IOBase | None" = None,
@@ -186,6 +188,7 @@ class Block(object):
 
 
 class FileOffS(file):
+
 	"""
 	A file class with an offset.
 
@@ -194,6 +197,7 @@ class FileOffS(file):
 	file. offset parameter of the constructor specifies the offset of the first
 	byte of the modeled file.
 	"""
+
 	def __init__(self, filename: str, offset: int = 0) -> None:
 		fileObj = open(filename, "rb")  # noqa: SIM115
 		file.__init__(self, fileObj)
@@ -230,15 +234,17 @@ class FileOffS(file):
 
 
 class DefinitionFields(object):
-	"""
-		Fields of entry definition
 
-		Entry definition consists of a number of fields.
-		The most important of them are:
-		defi - the main definition, mandatory, comes first.
-		part of speech
-		title
 	"""
+	Fields of entry definition.
+
+	Entry definition consists of a number of fields.
+	The most important of them are:
+	defi - the main definition, mandatory, comes first.
+	part of speech
+	title
+	"""
+
 	# nameByCode = {
 	# }
 	def __init__(self) -> None:
@@ -411,8 +417,8 @@ class BglReader(object):
 
 	def readInfo(self) -> None:
 		"""
-		read meta information about the dictionary: author, description,
-		source and target languages, etc (articles are not read)
+		Read meta information about the dictionary: author, description,
+		source and target languages, etc (articles are not read).
 		"""
 		self.numEntries = 0
 		self.numBlocks = 0
@@ -513,27 +519,27 @@ class BglReader(object):
 
 	def isEndOfDictData(self) -> bool:
 		"""
-			Test for end of dictionary data.
+		Test for end of dictionary data.
 
-			A bgl file stores dictionary data as a gzip compressed block.
-			In other words, a bgl file stores a gzip data file inside.
-			A gzip file consists of a series of "members".
-			gzip data block in bgl consists of one member (I guess).
-			Testing for block type returned by self.readBlock is not a
-			reliable way to detect the end of gzip member.
-			For example, consider "Airport Code Dictionary.BGL" dictionary.
-			To reliably test for end of gzip member block we must use a number
-			of undocumented variables of gzip.GzipFile class.
-			self.file._new_member - true if the current member has been
-			completely read from the input file
-			self.file.extrasize - size of buffered data
-			self.file.offset - offset in the input file
+		A bgl file stores dictionary data as a gzip compressed block.
+		In other words, a bgl file stores a gzip data file inside.
+		A gzip file consists of a series of "members".
+		gzip data block in bgl consists of one member (I guess).
+		Testing for block type returned by self.readBlock is not a
+		reliable way to detect the end of gzip member.
+		For example, consider "Airport Code Dictionary.BGL" dictionary.
+		To reliably test for end of gzip member block we must use a number
+		of undocumented variables of gzip.GzipFile class.
+		self.file._new_member - true if the current member has been
+		completely read from the input file
+		self.file.extrasize - size of buffered data
+		self.file.offset - offset in the input file
 
-			after reading one gzip member current position in the input file
-			is set to the first byte after gzip data
-			We may get this offset: self.file_bgl.tell()
-			The last 4 bytes of gzip block contains the size of the original
-			(uncompressed) input data modulo 2^32
+		after reading one gzip member current position in the input file
+		is set to the first byte after gzip data
+		We may get this offset: self.file_bgl.tell()
+		The last 4 bytes of gzip block contains the size of the original
+		(uncompressed) input data modulo 2^32
 		"""
 		return False
 
@@ -584,9 +590,7 @@ class BglReader(object):
 		return True
 
 	def readBytes(self, num: int) -> int:
-		"""
-			return -1 if error
-		"""
+		"""Return -1 if error."""
 		if num < 1 or num > 4:
 			log.error(f"invalid argument num={num}")
 			return -1
@@ -622,7 +626,7 @@ class BglReader(object):
 
 	def readType2(self, block: "Block") -> "EntryType | None":
 		"""
-		Process type 2 block
+		Process type 2 block.
 
 		Type 2 block is an embedded file (mostly Image or HTML).
 		pass_num - pass number, may be 1 or 2
@@ -667,8 +671,8 @@ class BglReader(object):
 
 	def readType3(self, block: "Block") -> None:
 		"""
-			reads block with type 3, and updates self.info
-			returns None
+		Reads block with type 3, and updates self.info
+		returns None.
 		"""
 		code, b_value = uintFromBytes(block.data[:2]), block.data[2:]
 		if not b_value:
@@ -713,9 +717,7 @@ class BglReader(object):
 		self.info[key] = value
 
 	def detectEncoding(self) -> None:
-		"""
-			assign self.sourceEncoding and self.targetEncoding
-		"""
+		"""Assign self.sourceEncoding and self.targetEncoding."""
 		utf8Encoding = self.info.get("utf8Encoding", False)
 
 		if self._default_encoding_overwrite:
@@ -815,13 +817,13 @@ class BglReader(object):
 		pos: int,
 	) -> "tuple[bool, int | None, bytes | None, bytes | None]":
 		"""
-			Read word part of entry.
+		Read word part of entry.
 
-			Return value is a list.
-			(False, None, None, None) if error
-			(True, pos, u_word, b_word) if OK
-				u_word is a str instance (utf-8)
-				b_word is a bytes instance
+		Return value is a list.
+		(False, None, None, None) if error
+		(True, pos, u_word, b_word) if OK
+		u_word is a str instance (utf-8)
+		b_word is a bytes instance
 		"""
 		Err = (False, None, None, None)
 		if pos + 1 > len(block.data):
@@ -903,10 +905,11 @@ class BglReader(object):
 		u_word: str,
 	) -> "tuple[bool, int | None, list[str] | None]":
 		"""
-		returns:
-			(False, None, None) if error
-			(True, pos, u_alts) if succeed
-				u_alts is a sorted list, items are str (utf-8)
+		Returns
+		-------
+		(False, None, None) if error
+		(True, pos, u_alts) if succeed
+		u_alts is a sorted list, items are str (utf-8).
 		"""
 		Err = (False, None, None)
 		# use set instead of list to prevent duplicates
@@ -941,7 +944,7 @@ class BglReader(object):
 		self,
 		block: "Block",
 	) -> "tuple[bool, str | None, list[str] | None, str | None]":
-		"""return (succeed, u_word, u_alts, u_defi)"""
+		"""Return (succeed, u_word, u_alts, u_defi)."""
 		Err = (False, None, None, None)
 		pos = 0
 
@@ -1040,7 +1043,7 @@ class BglReader(object):
 	) -> "tuple[str, str]":
 		"""
 		b_text is a bytes
-		Decode html text taking into account charset tags and default encoding
+		Decode html text taking into account charset tags and default encoding.
 
 		Return value: (u_text, defaultEncodingOnly)
 		u_text is str
@@ -1140,8 +1143,8 @@ class BglReader(object):
 
 	def processKey(self, b_word: bytes) -> str:
 		"""
-			b_word is a bytes instance
-			returns u_word_main, as str instance (utf-8 encoding)
+		b_word is a bytes instance
+		returns u_word_main, as str instance (utf-8 encoding).
 		"""
 		b_word_main, strip_count = stripDollarIndexes(b_word)
 		if strip_count > 1:
@@ -1180,8 +1183,8 @@ class BglReader(object):
 
 	def processAlternativeKey(self, b_word: bytes, b_key: bytes) -> str:
 		"""
-			b_word is a bytes instance
-			returns u_word_main, as str instance (utf-8 encoding)
+		b_word is a bytes instance
+		returns u_word_main, as str instance (utf-8 encoding).
 		"""
 		b_word_main, strip_count = stripDollarIndexes(b_word)
 		# convert to unicode
@@ -1218,11 +1221,10 @@ class BglReader(object):
 	def processDefi(self, b_defi: bytes, b_key: bytes) -> str:
 		"""
 		b_defi: bytes
-		b_key: bytes
+		b_key: bytes.
 
 		return: u_defi_format
 		"""
-
 		fields = DefinitionFields()
 		self.collectDefiFields(b_defi, b_key, fields)
 
@@ -1343,10 +1345,8 @@ class BglReader(object):
 		pass
 
 	def findDefiFieldsStart(self, b_defi: bytes) -> int:
-		"""
-		b_defi is a bytes instance
-
-		Finds the beginning of the definition trailing fields.
+		r"""
+		Find the beginning of the definition trailing fields.
 
 		Return value is the index of the first chars of the field set,
 		or -1 if the field set is not found.
@@ -1379,11 +1379,11 @@ class BglReader(object):
 		b_key: bytes,
 		fields: DefinitionFields,
 	) -> None:
-		"""
-		entry definition structure:
+		r"""
+		Entry definition structure:
 		<main definition>['\x14'[{field_code}{field_data}]*]
 		{field_code} is one character
-		{field_data} has arbitrary length
+		{field_data} has arbitrary length.
 		"""
 		# d0 is index of the '\x14 char in b_defi
 		# d0 may be the last char of the string

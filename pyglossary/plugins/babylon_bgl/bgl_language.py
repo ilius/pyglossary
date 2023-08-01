@@ -23,7 +23,7 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 """
-language properties
+language properties.
 
 In this short note we describe how Babylon select encoding for key words,
 alternates and definitions.
@@ -117,17 +117,19 @@ utility confirmed the cp932 and cp950 encodings, I got 100% match.
 
 
 class BabylonLanguage(object):
-	"""
-		Babylon language properties.
 
-		name - bab:SourceLanguage, bab:TargetLanguage .gpr tags
-			(English, French, Japanese)
-		charset - bab:SourceCharset, bab:TargetCharset .gpr tags
-			(Latin, Arabic, Cyrillic)
-		encoding - Windows code page
-			(cp1250, cp1251, cp1252)
-		code - value of the type 3, code in .bgl file
 	"""
+	Babylon language properties.
+
+	name - bab:SourceLanguage, bab:TargetLanguage .gpr tags
+	(English, French, Japanese)
+	charset - bab:SourceCharset, bab:TargetCharset .gpr tags
+	(Latin, Arabic, Cyrillic)
+	encoding - Windows code page
+	(cp1250, cp1251, cp1252)
+	code - value of the type 3, code in .bgl file
+	"""
+
 	def __init__(
 		self,
 		name: str,

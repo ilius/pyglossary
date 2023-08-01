@@ -84,7 +84,7 @@ class YamlReader(TextGlossaryReader):
 		single_prefix: "str | None" = None,
 		skip_single: bool = True,
 	) -> None:
-		""" Wrap elements into <ol> if more than one element """
+		"""Wrap elements into <ol> if more than one element."""
 		if not input_objects:
 			return
 

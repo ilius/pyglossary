@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 class Glossary(GlossaryCommon):
 	GLOSSARY_API_VERSION = "1.0"
 
-	def titleElement(  # noqa: ANN
+	def titleElement(  # noqa: ANN201
 		self,
 		hf,  # type: ignore # noqa: PGH
 		sample: str = "",
@@ -48,11 +48,15 @@ class Glossary(GlossaryCommon):
 		**kwargs,  # noqa: ANN
 	) -> bool:
 		"""
+		Read from a given glossary file.
+
+		Parameters
+		----------
 		filename (str):	name/path of input file
 		format (str):	name of input format,
 						or "" to detect from file extension
 		direct (bool):	enable direct mode
-		progressbar (bool): enable progressbar
+		progressbar (bool): enable progressbar.
 
 		read-options can be passed as additional keyword arguments
 		"""
@@ -96,9 +100,7 @@ class Glossary(GlossaryCommon):
 		sortEncoding: "str" = "utf-8",
 		writeOptions: "dict[str, Any] | None" = None,
 	) -> None:
-		"""
-			sortKeyName: see doc/sort-key.md
-		"""
+		"""sortKeyName: see doc/sort-key.md."""
 		if self._readers:
 			raise NotImplementedError(
 				"can not use sortWords in direct mode",

@@ -352,7 +352,7 @@ class Reader(object):
 		buffer: bytes,
 	) -> "tuple[int, int]":
 		"""
-		@return chunk byte length and offset
+		@return chunk byte length and offset.
 
 		offset is usually 4 bytes integer, that contains chunk/entry byte length
 		"""
@@ -477,10 +477,10 @@ class Reader(object):
 		properties: "AppleDictProperties",
 	) -> "Iterator[tuple[int, int]]":
 		"""
-			Prepare `KeyText.data` file for extracting morphological data
+		Prepare `KeyText.data` file for extracting morphological data.
 
-			Returns an iterator/generator for the progress
-			Sets self._keyTextData when done
+		Returns an iterator/generator for the progress
+		Sets self._keyTextData when done
 		"""
 		with open(morphoFilePath, "rb") as keyTextFile:
 			fileDataOffset, fileLimit = guessFileOffsetLimit(keyTextFile)
@@ -525,8 +525,8 @@ class Reader(object):
 		properties: "AppleDictProperties",
 	) -> "Iterator[tuple[int, int]]":
 		"""
-			Returns an iterator/generator for the progress
-			Sets self._keyTextData when done
+		Returns an iterator/generator for the progress
+		Sets self._keyTextData when done.
 		"""
 		buff.seek(bufferOffset)
 		keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}

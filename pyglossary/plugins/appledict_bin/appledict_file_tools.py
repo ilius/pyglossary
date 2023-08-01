@@ -58,7 +58,7 @@ def read_2_bytes_here(buffer: "io.BufferedIOBase") -> int:
 
 
 def guessFileOffsetLimit(file: "io.BufferedIOBase") -> "tuple[int, int]":
-	"""returns address offset to start parsing from and EOF address"""
+	"""Returns address offset to start parsing from and EOF address."""
 	file.seek(APPLEDICT_FILE_OFFSET)
 	limit = readInt(file)
 	intPair = readIntPair(file)

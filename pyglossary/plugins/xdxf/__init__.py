@@ -246,7 +246,6 @@ class Reader(object):
 
 	def titles(self, article: "Element") -> "list[str]":
 		"""
-
 		:param article: <ar> tag
 		:return: (title (str) | None, alternative titles (set))
 		"""

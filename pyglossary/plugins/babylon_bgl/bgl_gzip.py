@@ -1,7 +1,8 @@
 """Functions that read and write gzipped files.
 
 The user of the file doesn't have to worry about the compression,
-but random access is not allowed."""
+but random access is not allowed.
+"""
 
 # based on Andrew Kuchling's minigzip.py distributed with the zlib module
 
@@ -39,7 +40,8 @@ def write32u(output, value):
 class _PaddedFile:
     """Minimal read-only file object that prepends a string to the contents
     of an actual file. Shouldn't be used outside of gzip.py, as it lacks
-    essential functionality."""
+    essential functionality.
+    """
 
     def __init__(self, f, prepend=b''):
         self._buffer = prepend
@@ -130,7 +132,6 @@ class GzipFile(_compression.BaseStream):
         If omitted or None, the current time is used.
 
         """
-
         if mode and ('t' in mode or 'U' in mode):
             raise ValueError("Invalid mode: {!r}".format(mode))
         if mode and 'b' not in mode:
@@ -187,7 +188,7 @@ class GzipFile(_compression.BaseStream):
 
     @property
     def mtime(self):
-        """Last modification time read from stream, or None"""
+        """Last modification time read from stream, or None."""
         return self._buffer.raw._last_mtime
 
     def __repr__(self):
@@ -264,9 +265,10 @@ class GzipFile(_compression.BaseStream):
         return self._buffer.read(size)
 
     def read1(self, size=-1):
-        """Implements BufferedIOBase.read1()
+        """Implements BufferedIOBase.read1().
 
-        Reads up to a buffer's worth of data if size is negative."""
+        Reads up to a buffer's worth of data if size is negative.
+        """
         self._check_not_closed()
         if self.mode != READ:
             import errno
@@ -323,7 +325,8 @@ class GzipFile(_compression.BaseStream):
 
     def rewind(self):
         '''Return the uncompressed stream file position indicator to the
-        beginning of the file'''
+        beginning of the file.
+        '''
         if self.mode != READ:
             raise OSError("Can't rewind in write mode")
         self._buffer.seek(0)
@@ -363,7 +366,7 @@ class GzipFile(_compression.BaseStream):
 
 
 def _read_exact(fp, n):
-    '''Read exactly *n* bytes from `fp`
+    '''Read exactly *n* bytes from `fp`.
 
     This method is required because fp may be unbuffered,
     i.e. return short reads.

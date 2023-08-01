@@ -21,7 +21,7 @@ select = [
 
 
     # "C90", # mccabe: C901: {name} is too complex ({complexity})
-    # "D", # pydocstyle
+    "D", # pydocstyle
     # "UP", # pyupgrade
     # "A", # flake8-builtins
     # "ANN", # flake8-annotations
@@ -48,6 +48,19 @@ ignore = [
     # ERA, PD,
     "B018", # Found useless expression. Either assign it to a variable or remove it.
     "B028", # No explicit `stacklevel` keyword argument found. Huh???
+    "D104", # Missing docstring in public package
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D103", # Missing docstring in public function
+    "D105", # Missing docstring in magic method
+    "D107", # Missing docstring in `__init__`
+    "D206", # Docstring should be indented with spaces, not tabs
+    "D205", # 1 blank line required between summary line and description
+    "D211", # (Do not enable) no-blank-line-before-class
+    "D401", # First line of docstring should be in imperative mood
+    "D212",  # multi-line-summary-first-line, conflicts with D213:multi-line-summary-second-line
+    "D417", # Missing argument descriptions in the docstring
 ]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
@@ -62,6 +75,7 @@ fixable = [
     "ANN",
     "W291",
     "W293",
+    "D",
 ]
 unfixable = []
 
@@ -70,10 +84,12 @@ exclude = [
     "setup.py",
     # "pyglossary/ui/gtk4_utils/*",
     # "pyglossary/ui/gtk3_utils/*",
+    "pyglossary/plugins/babylon_bgl/bgl_gzip.py",
     "pyglossary/plugins/testformat.py",
     "pyglossary/plugin_lib/*",
     "pyglossary/ui/gtk*_utils/__init__.py",
     "pyglossary/ui/ui_qt.py",
+    "pyglossary/ui/progressbar/widgets.py",
     "pyglossary/reverse.py",
     "wcwidth*",
     ".direnv",

@@ -25,7 +25,7 @@
 
 
 def checkDepends(depends: "dict[str, str]") -> "list[str]":
-	"returns the list of uninstalled dependencies"
+	"""Return the list of uninstalled dependencies."""
 	if not depends:
 		return []
 	uninstalled = []

@@ -30,9 +30,7 @@ website = (
 
 
 def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
-	"""
-	filename is without extension (neither .index or .dict or .dict.dz)
-	"""
+	"""Filename is without extension (neither .index or .dict or .dict.dz)."""
 	import shutil
 	import subprocess
 	targetDir = "/usr/share/dictd/"

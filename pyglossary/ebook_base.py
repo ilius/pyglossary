@@ -70,6 +70,7 @@ class GroupState(object):
 
 
 class EbookWriter(object):
+
 	"""
 	A class representing a generic ebook containing a dictionary.
 
@@ -336,9 +337,7 @@ class EbookWriter(object):
 			.replace("<", "&lt;")
 
 	def write_index(self, group_labels: "list[str]") -> None:
-		"""
-			group_labels: a list of labels
-		"""
+		"""group_labels: a list of labels."""
 		links = []
 		for label_i, label in enumerate(group_labels):
 			ref = self.get_group_xhtml_file_name_from_index(
@@ -411,8 +410,9 @@ class EbookWriter(object):
 
 	def write_ncx(self, group_labels: "list[str]") -> None:
 		"""
-			write_ncx
-			only for epub
+		write_ncx.
+
+		only for epub.
 		"""
 
 	def open(self, filename: str) -> None:

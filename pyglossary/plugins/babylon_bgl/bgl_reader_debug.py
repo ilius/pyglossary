@@ -57,11 +57,13 @@ class MetaDataRange(object):
 
 
 class MetaData2(object):
+
 	"""
 	Second pass metadata.
 	We need to scan all definitions in order to collect these
 	statistical data.
 	"""
+
 	def __init__(self) -> None:
 		# defiTrailingFields[i] - number of fields with code i found
 		self.defiTrailingFields = [0] * 256
@@ -81,10 +83,12 @@ class MetaData2(object):
 
 
 class GzipWithCheck(object):
+
 	"""
 	gzip.GzipFile with check.
 	It checks that unpacked data match what was packed.
 	"""
+
 	def __init__(
 		self,
 		fileobj,
@@ -93,7 +97,7 @@ class GzipWithCheck(object):
 		closeFileobj=False,
 	) -> None:
 		"""
-		constructor
+		constructor.
 
 		fileobj - gzip file - archive
 		unpackedPath - path of a file containing original data, for testing.
@@ -106,7 +110,7 @@ class GzipWithCheck(object):
 		self.unpackedFile = open(unpackedPath, "rb")  # noqa: SIM115
 		self.reader = reader
 
-	def __del__(self):
+	def __del__(self) -> None:
 		self.close()
 
 	def close(self) -> None:
@@ -254,7 +258,7 @@ class DebugBglReader(BglReader):
 			self.samplesDumpFile.close()
 			self.samplesDumpFile = None
 
-	def __del__(self):
+	def __del__(self) -> None:
 		BglReader.__del__(self)
 
 	def readEntryWord(self, block, pos):
@@ -285,9 +289,7 @@ class DebugBglReader(BglReader):
 	"""
 
 	def charReferencesStat(self, b_text, encoding):
-		"""
-			b_text is bytes instance
-		"""
+		"""b_text is bytes instance."""
 		# &#0147;
 		# &#x010b;
 		if not self.metadata2:

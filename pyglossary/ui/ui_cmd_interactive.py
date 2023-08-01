@@ -22,7 +22,7 @@
 
 """
 To use this user interface:
-	sudo pip3 install prompt_toolkit
+sudo pip3 install prompt_toolkit.
 """
 
 # GitHub repo for prompt_toolkit
@@ -111,9 +111,7 @@ def checkbox_prompt(
 	message: str,
 	default: bool,
 ) -> PromptSession[bool]:
-	"""
-	Create a `PromptSession` object for the 'confirm' function.
-	"""
+	"""Create a `PromptSession` object for the 'confirm' function."""
 	bindings = KeyBindings()
 
 	check = MiniCheckBoxPrompt(message=message, value=default)
@@ -128,7 +126,7 @@ def checkbox_prompt(
 
 	@bindings.add(Keys.Any)
 	def _(event: "prompt_toolkit.E") -> None:
-		" Disallow inserting other text. "
+		"""Disallow inserting other text."""
 
 	complete_message = check
 	session: PromptSession[bool] = PromptSession(

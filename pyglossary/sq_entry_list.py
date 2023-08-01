@@ -54,9 +54,9 @@ class SqEntryList:
 		persist: bool = False,
 	) -> None:
 		"""
-			sqliteSortKey[i] == (name, type, valueFunc)
+		sqliteSortKey[i] == (name, type, valueFunc).
 
-			persist: do not delete the file when variable is deleted
+		persist: do not delete the file when variable is deleted
 		"""
 		import sqlite3
 
@@ -94,9 +94,7 @@ class SqEntryList:
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
 	) -> None:
-		"""
-			sqliteSortKey[i] == (name, type, valueFunc)
-		"""
+		"""sqliteSortKey[i] == (name, type, valueFunc)."""
 		if self._con is None:
 			raise RuntimeError("self._con is None")
 

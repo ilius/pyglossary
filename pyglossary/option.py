@@ -87,7 +87,7 @@ class Option(object):
 		return data
 
 	def evaluate(self, raw: str) -> "tuple[Any, bool]":
-		"returns (value, isValid)"
+		"""Return (value, isValid)."""
 		if raw == "None":
 			return None, True
 		return raw, True
@@ -107,7 +107,7 @@ class Option(object):
 		return self.typ == valueType
 
 	def validateRaw(self, raw: str) -> bool:
-		"returns isValid"
+		"""Return isValid."""
 		value, isValid = self.evaluate(raw)
 		if not isValid:
 			return False
@@ -203,7 +203,7 @@ class IntOption(Option):
 		)
 
 	def evaluate(self, raw: "str | int") -> "tuple[int | None, bool]":
-		"returns (value, isValid)"
+		"""Return (value, isValid)."""
 		try:
 			value = int(raw)
 		except ValueError:
@@ -290,7 +290,7 @@ class FloatOption(Option):
 		self,
 		raw: "str | float | int",
 	) -> "tuple[float | None, bool]":
-		"returns (value, isValid)"
+		"""Return (value, isValid)."""
 		try:
 			value = float(raw)
 		except ValueError:

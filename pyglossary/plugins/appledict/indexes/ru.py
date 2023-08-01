@@ -14,9 +14,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-"""
-Russian indexes based on pymorphy.
-"""
+"""Russian indexes based on pymorphy."""
 
 from typing import Sequence
 
@@ -37,7 +35,7 @@ morphy = pymorphy2.MorphAnalyzer()
 
 def ru(titles: "Sequence[str]", _: str) -> "set[str]":
 	"""
-	gives a set of all declines, cases and other forms of word `title`.
+	Give a set of all declines, cases and other forms of word `title`.
 	note that it works only if title is one word.
 	"""
 	indexes: "set[str]" = set()

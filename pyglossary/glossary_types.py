@@ -159,9 +159,10 @@ class EntryListType(typing.Protocol):
 
 
 class GlossaryType(typing.Protocol):
+
 	"""
 	an abstract type class for Glossary class in plugins. it only
-	contains methods and properties that might be used in plugins
+	contains methods and properties that might be used in plugins.
 	"""
 
 	def __iter__(self) -> "Iterator[EntryType]":

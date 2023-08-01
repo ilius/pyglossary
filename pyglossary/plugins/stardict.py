@@ -400,9 +400,7 @@ class Reader(object):
 		return self._wordCount + len(self._resFileNames)
 
 	def readIfoFile(self) -> None:
-		"""
-		.ifo file is a text file in utf-8 encoding
-		"""
+		""".ifo file is a text file in utf-8 encoding."""
 		with open(
 			self._filename + ".ifo",
 			mode="rb",
@@ -633,9 +631,7 @@ class Reader(object):
 					)
 
 	def readSynFile(self) -> "dict[int, list[str]]":
-		"""
-		return synDict, a dict { entryIndex -> altList }
-		"""
+		"""Return synDict, a dict { entryIndex -> altList }."""
 		if self._wordCount is None:
 			raise RuntimeError("self._wordCount is None")
 
@@ -912,8 +908,7 @@ class Writer(object):
 		Every item definition consists of a single article.
 		All articles have the same format, specified in defiFormat parameter.
 
-		Parameters:
-		defiFormat - format of article definition: h - html, m - plain text
+		defiFormat: format of article definition: h - html, m - plain text
 		"""
 		log.debug(f"writeCompact: {defiFormat=}")
 		dictMark = 0
@@ -1059,9 +1054,7 @@ class Writer(object):
 		)
 
 	def writeSynFile(self, altIndexList: "T_SdList[tuple[bytes, int]]") -> None:
-		"""
-		Build .syn file
-		"""
+		"""Build .syn file."""
 		if not altIndexList:
 			return
 
@@ -1096,7 +1089,6 @@ class Writer(object):
 		Every item definition consists of a single article.
 		All articles have the same format, specified in defiFormat parameter.
 
-		Parameters:
 		defiFormat - format of article definition: h - html, m - plain text
 		"""
 		log.debug(f"writeCompactMergeSyns: {defiFormat=}")
@@ -1262,9 +1254,7 @@ class Writer(object):
 		synWordCount: int,
 		defiFormat: str = "",
 	) -> None:
-		"""
-		Build .ifo file
-		"""
+		"""Build .ifo file."""
 		glos = self._glos
 		bookname = newlinesToSpace(glos.getInfo("name"))
 		indexFileSize = getsize(self._filename + ".idx")

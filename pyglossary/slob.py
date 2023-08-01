@@ -799,9 +799,7 @@ class Slob(object):
 		)
 
 	def get(self, blob_id: int) -> "tuple[str, bytes]":
-		"""
-		returns (content_type: str, content: bytes)
-		"""
+		"""Returns (content_type: str, content: bytes)."""
 		bin_index, bin_item_index = unmeld_ints(blob_id)
 		return self._store.get(bin_index, bin_item_index)
 
@@ -1558,9 +1556,9 @@ class Writer(object):
 		exc_tb: "types.TracebackType | None",
 	) -> None:
 		"""
-		it used to call self.finalize() here
+		It used to call self.finalize() here
 		that was bad!
 		__exit__ is not meant for doing so much as finalize() is doing!
-		so make sure to call writer.finalize() after you are done!
+		so make sure to call writer.finalize() after you are done!.
 		"""
 		self.close()

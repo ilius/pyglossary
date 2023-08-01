@@ -1,8 +1,6 @@
 
 def chBaseIntToStr(number: int, base: int) -> str:
-	"""
-		reverse function of int(str, base) and long(str, base)
-	"""
+	"""Reverse function of int(str, base) and long(str, base)."""
 	import string
 	if not 2 <= base <= 36:
 		raise ValueError('base must be in 2..36')

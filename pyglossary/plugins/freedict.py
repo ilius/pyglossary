@@ -145,8 +145,7 @@ class Reader(object):
 		ordered: bool = True,
 		list_type: str = "",
 	) -> None:
-		""" Wrap elements into <ol> if more than one element """
-
+		"""Wrap elements into <ol> if more than one element."""
 		if not input_objects:
 			return
 

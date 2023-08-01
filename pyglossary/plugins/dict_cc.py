@@ -60,7 +60,7 @@ class Reader(object):
 		single_prefix: str = "",
 		skip_single: bool = True,
 	) -> None:
-		""" Wrap elements into <ol> if more than one element """
+		"""Wrap elements into <ol> if more than one element."""
 		if len(input_elements) == 0:
 			return
 
@@ -82,7 +82,7 @@ class Reader(object):
 		single_prefix: str = "",
 		skip_single: bool = True,
 	) -> None:
-		""" Wrap elements into <ol> if more than one element """
+		"""Wrap elements into <ol> if more than one element."""
 		if len(groups) == 0:
 			return
 

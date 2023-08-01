@@ -26,18 +26,10 @@ class BaseEntry:
 
 	@property
 	def b_word(self) -> bytes:
-		"""
-			returns bytes of word,
-				and all the alternate words
-				separated by b"|"
-		"""
+		"""Returns bytes of word and all the alternate words separated by b"|"."""
 		return self.s_word.encode("utf-8")
 
 	@property
 	def b_defi(self) -> bytes:
-		"""
-			returns bytes of definition,
-				and all the alternate definitions
-				separated by b"|"
-		"""
+		"""Returns definition in bytes."""
 		return self.defi.encode("utf-8")

@@ -111,9 +111,10 @@ class ConvertArgs:
 
 
 class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
+
 	"""
 	The signature of 'convert' method is different in glossary_v2.py
-		See help(Glossary.convert)
+		See help(Glossary.convert).
 
 	addEntryObj is renamed to addEntry in glossary_v2.py
 
@@ -166,8 +167,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 	) -> None:
 		"""
 		info:	OrderedDict or dict instance, or None
-				no need to copy OrderedDict instance before passing here
-				we will not reference to it
+		no need to copy OrderedDict instance before passing here
+		we will not reference to it.
 		"""
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
@@ -228,10 +229,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def _entryToRaw(self, entry: "EntryType") -> "RawEntryType":
 		"""
-			returns a tuple (word, defi) or (word, defi, defiFormat)
-			where both word and defi might be string or list of strings
+		Return a tuple (word, defi) or (word, defi, defiFormat)
+		where both word and defi might be string or list of strings.
 		"""
-
 		if entry.isData():
 			return self._dataEntryToRaw(cast("DataEntry", entry))
 
@@ -314,9 +314,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def prepareEntryFilters(self) -> None:
 		"""
-			call .prepare() method on all _entryFilters
-			run this after glossary info is set and ready
-			for most entry filters, it won't do anything
+		Call .prepare() method on all _entryFilters
+		run this after glossary info is set and ready
+		for most entry filters, it won't do anything.
 		"""
 		for entryFilter in self._entryFilters:
 			entryFilter.prepare()
@@ -329,7 +329,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def removeHtmlTagsAll(self) -> None:
 		"""
-		Remove all HTML tags from definition
+		Remove all HTML tags from definition.
 
 		This should only be called from a plugin's Writer.__init__ method.
 		Does not apply on entries added with glos.addEntry
@@ -341,8 +341,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		errorHandler: "Callable[[EntryType, str], None] | None" = None,
 	) -> None:
 		"""
-		Adds entry filter "strip_full_html"
-		to replace a full HTML document with it's body in entry definition
+		Add entry filter "strip_full_html"
+		to replace a full HTML document with it's body in entry definition.
 		"""
 		name = StripFullHtml.name
 		if name in self._entryFiltersName:
@@ -355,7 +355,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def preventDuplicateWords(self) -> None:
 		"""
-		Adds entry filter to prevent duplicate `entry.s_word`
+		Add entry filter to prevent duplicate `entry.s_word`.
 
 		This should only be called from a plugin's Writer.__init__ method.
 		Does not apply on entries added with glos.addEntry
@@ -427,10 +427,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 	# TODO: switch to @property defaultDefiFormat
 	def setDefaultDefiFormat(self, defiFormat: str) -> None:
 		"""
-		defiFormat must be empty or one of these:
-			"m": plain text
-			"h": html
-			"x": xdxf
+		DefiFormat must be empty or one of these:
+		"m": plain text
+		"h": html
+		"x": xdxf.
 		"""
 		self._defaultDefiFormat = defiFormat
 
@@ -442,8 +442,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		maxCount: int,
 	) -> "dict[str, float] | None":
 		"""
-			example return value:
-				[("h", 0.91), ("m", 0.09)]
+		Collect definition format.
+
+		Example return value:
+		[("h", 0.91), ("m", 0.09)].
 		"""
 		from collections import Counter
 		readers = self._readers
@@ -513,13 +515,16 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		_class: str = "",
 	) -> str:
 		"""
-		notes:
-			- `word` needs to be escaped before passing
-			- `word` can contain html code (multiple words, colors, etc)
-			- if input format (reader) indicates that words are already included
-				in definition (as title), this method will return empty string
-			- depending on glossary's `sourceLang` or writing system of `word`,
-				(or sample if given) either '<b>' or '<big>' will be used
+		Return title tag for words.
+
+		Notes
+		-----
+		- `word` needs to be escaped before passing
+		- `word` can contain html code (multiple words, colors, etc)
+		- if input format (reader) indicates that words are already included
+		in definition (as title), this method will return empty string
+		- depending on glossary's `sourceLang` or writing system of `word`,
+		(or sample if given) either '<b>' or '<big>' will be used.
 		"""
 		if self._defiHasWordTitle:
 			return ""
@@ -546,7 +551,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		byteProgress: "tuple[int, int] | None" = None,
 	) -> "Entry":
 		"""
-		create and return a new entry object
+		Create and return a new entry object.
 
 		defiFormat must be empty or one of these:
 			"m": plain text
@@ -731,8 +736,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def loadReader(self, reader: "Any") -> None:
 		"""
-		iterates over `reader` object and loads the whole data into self._data
-		must call `reader.open(filename)` before calling this function
+		Iterate over `reader` object and loads the whole data into self._data
+		must call `reader.open(filename)` before calling this function.
 		"""
 		showMemoryUsage()
 
@@ -782,24 +787,23 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		**kwargs,
 	) -> "str | None":
 		"""
-		filename (str): file name or path to write
+		Write to a given glossary file, with given format (optional).
+		Return absolute path of output file, or None if failed.
 
+		Parameters
+		----------
+		filename (str): file name or path to write.
 		format (str): format name
-
 		sort (bool):
 			True (enable sorting),
 			False (disable sorting),
 			None (auto, get from UI)
-
 		sortKeyName (str or None):
 			key function name for sorting
-
 		sortEncoding (str or None):
 			encoding for sorting, default utf-8
 
 		You can pass write-options (of given format) as keyword arguments
-
-		returns absolute path of output file, or None if failed
 		"""
 		if type(filename) is not str:
 			raise TypeError("filename must be str")
@@ -993,9 +997,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		plugin: "PluginProp",
 	) -> "tuple[bool, bool] | None":
 		"""
-			sortKeyName: see doc/sort-key.md
+		sortKeyName: see doc/sort-key.md.
 
-			returns (sort, direct) or None if fails
+		returns (sort, direct) or None if fails
 		"""
 		if args.direct and args.sqlite:
 			raise ValueError(
@@ -1051,8 +1055,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		sortEncoding: "str | None",
 	) -> "tuple[NamedSortKey, str] | None":
 		"""
-			checks sortKeyName, sortEncoding and (output) plugin's params
-			returns (namedSortKey, sortEncoding) or None
+		Check sortKeyName, sortEncoding and (output) plugin's params
+		returns (namedSortKey, sortEncoding) or None.
 		"""
 		writerSortKeyName = plugin.sortKeyName
 		writerSortEncoding = getattr(plugin, "sortEncoding", None)
@@ -1146,7 +1150,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def convertV2(self, args: ConvertArgs) -> "str | None":
 		"""
-		returns absolute path of output file, or None if failed
+		Return absolute path of output file, or None if failed.
 
 		sortKeyName:
 			name of sort key/algorithm

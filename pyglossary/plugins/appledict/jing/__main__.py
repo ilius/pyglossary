@@ -1,4 +1,4 @@
-"""main entry point"""
+"""main entry point."""
 
 import logging
 import os

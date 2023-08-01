@@ -66,8 +66,8 @@ def set_window_icon(window):
 
 def decodeGeometry(gs):
 	"""
-		example for gs: "253x252+30+684"
-		returns (x, y, w, h)
+	Example for gs: "253x252+30+684"
+	returns (x, y, w, h).
 	"""
 	p = gs.split("+")
 	w, h = p[0].split("x")
@@ -84,8 +84,8 @@ def encodeLocation(x, y):
 
 def centerWindow(win):
 	"""
-	centers a tkinter window
-	:param win: the root or Toplevel window to center
+	Centers a tkinter window
+	:param win: the root or Toplevel window to center.
 	"""
 	win.update_idletasks()
 	width = win.winfo_width()
@@ -196,9 +196,7 @@ class TkTextLogHandler(logging.Handler):
 # Monkey-patch Tkinter
 # http://stackoverflow.com/questions/5191830/python-exception-logging
 def CallWrapper__call__(self, *args):
-	"""
-		Apply first function SUBST to arguments, than FUNC.
-	"""
+	"""Apply first function SUBST to arguments, than FUNC."""
 	if self.subst:
 		args = self.subst(*args)
 	try:
@@ -211,10 +209,12 @@ tk.CallWrapper.__call__ = CallWrapper__call__
 
 
 class ProgressBar(tix.Frame):
+
 	"""
-	This comes from John Grayson's book "Python and Tkinter programming"
-	Edited by Saeed Rasooli
+	Comes from John Grayson's book "Python and Tkinter programming"
+	Edited by Saeed Rasooli.
 	"""
+
 	def __init__(
 		self,
 		rootWin=None,

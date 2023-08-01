@@ -39,7 +39,9 @@ from . import widgets
 
 
 class ProgressBar(object):
-    """The ProgressBar class which updates and prints the bar.
+
+    """
+    The ProgressBar class which updates and prints the bar.
 
     A common way of using it is like:
     >>> pbar = ProgressBar().start()
@@ -101,7 +103,6 @@ class ProgressBar(object):
         fd=None,
     ) -> None:
         """Initializes a progress bar with sane defaults."""
-
         # Don't share a reference with any other progress bars
         if widgets is None:
             widgets = list(self._DEFAULT_WIDGETS)
@@ -138,7 +139,6 @@ class ProgressBar(object):
 
     def __call__(self, iterable):
         """Use a ProgressBar to iterate through an iterable."""
-
         try:
             self.maxval = len(iterable)
         except TypeError:
@@ -175,13 +175,11 @@ class ProgressBar(object):
 
     def _env_size(self):
         """Tries to find the term_width from the environment."""
-
         return int(os.environ.get('COLUMNS', self._DEFAULT_TERMSIZE)) - 1
 
 
     def _handle_resize(self, signum=None, frame=None):
         """Tries to catch resize signals sent from the terminal."""
-
         h, w = array('h', ioctl(self.fd, termios.TIOCGWINSZ, '\0' * 8))[:2]
         self.term_width = w
 
@@ -226,7 +224,6 @@ class ProgressBar(object):
 
     def _format_line(self):
         """Joins the widgets and justifies the line."""
-
         widgets = ''.join(self._format_widgets())
 
         if self.left_justify:
@@ -245,14 +242,12 @@ class ProgressBar(object):
 
     def _update_widgets(self):
         """Checks all widgets for the time sensitive bit."""
-
         self._time_sensitive = any(getattr(w, 'TIME_SENSITIVE', False)
                                     for w in self.widgets)
 
 
     def update(self, value=None):
         """Updates the ProgressBar to a new value."""
-
         if value is not None and value is not widgets.UnknownLength:
             if (self.maxval is not widgets.UnknownLength
                 and not 0 <= value <= self.maxval):
@@ -276,7 +271,8 @@ class ProgressBar(object):
 
 
     def start(self, num_intervals=0):
-        """Starts measuring time, and prints the bar at 0%.
+        """
+        Starts measuring time, and prints the bar at 0%.
 
         It returns self so you can use it like this:
         >>> pbar = ProgressBar().start()
@@ -286,7 +282,6 @@ class ProgressBar(object):
         ...
         >>> pbar.finish()
         """
-
         if self.maxval is None:
             self.maxval = self._DEFAULT_MAXVAL
 
@@ -310,7 +305,6 @@ class ProgressBar(object):
 
     def finish(self):
         """Puts the ProgressBar bar in the finished state."""
-
         if self.finished:
             return
         self.finished = True

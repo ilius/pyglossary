@@ -239,8 +239,8 @@ p.groupDefinition {
 
 	def write_ncx(self, group_labels: "list[str]") -> None:
 		"""
-			write_ncx
-			only for epub
+		write_ncx
+		only for epub.
 		"""
 		ncx_items = []
 		index = 1

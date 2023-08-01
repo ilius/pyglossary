@@ -73,8 +73,8 @@ class PluginManager(object):
 		skipDisabled: bool = True,
 	) -> None:
 		"""
-		executed on startup. as name implies, loads plugins from directory
-		it skips importing plugin modules that are already loaded
+		Load plugins from directory on startup.
+		Skip importing plugin modules that are already loaded.
 		"""
 		import pkgutil
 		from os.path import isdir
@@ -188,9 +188,7 @@ class PluginManager(object):
 		cls: "type[PluginManager]",
 		query: str,
 	) -> "PluginProp | None":
-		"""
-			find plugin by name or extension
-		"""
+		"""Find plugin by name or extension."""
 		plugin = cls.plugins.get(query)
 		if plugin:
 			return plugin
@@ -206,9 +204,7 @@ class PluginManager(object):
 		format: str = "",
 		quiet: bool = False,
 	) -> "tuple[str, str, str] | None":
-		"""
-			returns (filename, format, compression) or None
-		"""
+		"""Return (filename, format, compression) or None."""
 
 		def error(msg: str) -> None:
 			if not quiet:
@@ -251,9 +247,7 @@ class PluginManager(object):
 		quiet: bool = False,
 		addExt: bool = False,
 	) -> "tuple[str, str, str] | None":
-		"""
-		returns (filename, format, compression) or None
-		"""
+		"""Return (filename, format, compression) or None."""
 		from os.path import splitext
 
 		def error(msg: str) -> None:
@@ -322,10 +316,10 @@ class PluginManager(object):
 		skipDisabledPlugins: bool = True,
 	) -> None:
 		"""
-		init() must be called only once, so make sure you put it in the
-		right place. Probably in the top of your program's main function or module.
+		Initialize the glossary class (not an insatnce).
+		Must be called only once, so make sure you put it in the right place.
+		Probably in the top of your program's main function or module.
 		"""
-
 		cls.readFormats = []
 		cls.writeFormats = []
 		pluginsJsonPath = join(dataDir, "plugins-meta", "index.json")

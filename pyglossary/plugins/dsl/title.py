@@ -107,7 +107,7 @@ class TitleTransformer:
 	def __init__(
 		self,
 		input: str,
-	):
+	) -> None:
 		self.input = input
 		# self.start = 0
 		self.pos = 0

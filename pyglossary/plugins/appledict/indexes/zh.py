@@ -14,9 +14,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-"""
-Chinese wildcard and pinyin indexes.
-"""
+"""Chinese wildcard and pinyin indexes."""
 
 import re
 from typing import Sequence
@@ -53,7 +51,6 @@ def zh(titles: "Sequence[str]", content: str) -> "set[str]":
 
 	multiple pronunciations separated by comma or semicolon are supported.
 	"""
-
 	indexes = set()
 
 	for title in titles:

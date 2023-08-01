@@ -14,9 +14,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-"""
-extended indexes generation with respect to source language.
-"""
+"""extended indexes generation with respect to source language."""
 
 import os
 import pkgutil

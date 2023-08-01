@@ -57,10 +57,7 @@ def prepare_content(
 ) -> str:
 	# heavily integrated with output of dsl reader plugin!
 	# and with xdxf also.
-	"""
-	:param title: str | None
-	"""
-
+	""":param title: str | None"""
 	# class="sec" => d:priority="2"
 	# style="color:steelblue" => class="ex"
 	# class="p" style="color:green" => class="p"

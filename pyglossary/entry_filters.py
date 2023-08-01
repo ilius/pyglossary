@@ -42,16 +42,15 @@ class EntryFilter:
 		self.glos = glos
 
 	def prepare(self) -> None:
-		"""
-			run this after glossary info is set and ready
-		"""
+		"""Run this after glossary info is set and ready."""
 
 	def run(self, entry: "EntryType") -> "EntryType | None":
 		"""
-			returns an Entry object, or None to skip
-				may return the same `entry`,
-				or modify and return it,
-				or return a new Entry object
+		Return an Entry object, or None to skip.
+
+		may return the same `entry`,
+		or modify and return it,
+		or return a new Entry object.
 		"""
 		return entry
 
@@ -298,6 +297,7 @@ class LanguageCleanup(EntryFilter):
 
 
 class TextListSymbolCleanup(EntryFilter):
+
 	"""
 	Symbols like ♦ (diamond) ● (black circle) or * (star) are used in some
 	plaintext or even html glossaries to represent items of a list

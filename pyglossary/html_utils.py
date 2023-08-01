@@ -310,9 +310,9 @@ name2codepoint = {
 
 def build_name2codepoint_dict() -> None:
 	"""
-		Builds name to codepoint dictionary
-		copy and paste the output to the name2codepoint dictionary
-		name2str - name to utf-8 string dictionary
+	Build name -> codepoint dictionary
+	copy and paste the output to the name2codepoint dictionary
+	name2str - name to utf-8 string dictionary.
 	"""
 	import html.entities
 	name2str = {}
@@ -355,10 +355,10 @@ def _sub_unescape_unicode(m: "re.Match") -> str:
 
 def unescape_unicode(text: str) -> str:
 	"""
-		unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
-		leave these 3 special entities alone, since unescaping them
-		creates invalid html
-		we also ignore quotations: "&quot;" and "&#x27;"
+	Unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
+	leave these 3 special entities alone, since unescaping them
+	creates invalid html
+	we also ignore quotations: "&quot;" and "&#x27;".
 	"""
 	return re_entity.sub(_sub_unescape_unicode, text)
 

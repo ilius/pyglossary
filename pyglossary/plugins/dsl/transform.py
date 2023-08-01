@@ -26,7 +26,7 @@ class Transformer:
 		currentKey: str = "",
 		exampleColor: str = "steelblue",
 		audio: bool = True,
-	):
+	) -> None:
 		self.input = input
 		self.start = 0
 		self.pos = 0
@@ -59,9 +59,7 @@ class Transformer:
 		self.attrs = {}
 
 	def follows(self, st: str) -> bool:
-		'''
-		check if current position follows the string `st`
-		'''
+		"""Check if current position follows the string `st`."""
 		pos = self.pos
 		for c in st:
 			if pos >= len(self.input):
@@ -72,9 +70,7 @@ class Transformer:
 		return True
 
 	def skipAny(self, chars: str) -> None:
-		'''
-		skip any of the characters that are in `chars`
-		'''
+		"""Skip any of the characters that are in `chars`."""
 		pos = self.pos
 		while True:
 			if pos >= len(self.input):

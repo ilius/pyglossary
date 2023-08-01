@@ -12,16 +12,18 @@ log = logging.getLogger("pyglossary")
 
 
 class indir(object):
+
 	"""
 	mkdir + chdir shortcut to use with `with` statement.
 
-		>>> print(os.getcwd())  # -> "~/projects"
-		>>> with indir('my_directory', create=True):
-		>>>     print(os.getcwd())  # -> "~/projects/my_directory"
-		>>>     # do some work inside new 'my_directory'...
-		>>> print(os.getcwd())  # -> "~/projects"
-		>>> # automatically return to previous directory.
+	>>> print(os.getcwd())  # -> "~/projects"
+	>>> with indir('my_directory', create=True):
+	>>>     print(os.getcwd())  # -> "~/projects/my_directory"
+	>>>     # do some work inside new 'my_directory'...
+	>>> print(os.getcwd())  # -> "~/projects"
+	>>> # automatically return to previous directory.
 	"""
+
 	def __init__(
 		self,
 		directory: str,

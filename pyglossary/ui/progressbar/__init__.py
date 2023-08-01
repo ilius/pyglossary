@@ -18,7 +18,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-"""Text progress bar library for Python.
+"""
+Text progress bar library for Python.
 
 A text progress bar is typically used to display the progress of a long
 running operation, providing a visual cue that processing is underway.
