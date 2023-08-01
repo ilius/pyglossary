@@ -101,7 +101,7 @@ if TYPE_CHECKING:
 			...
 
 
-class Reader(object):
+class Reader:
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",

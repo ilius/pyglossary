@@ -15,7 +15,7 @@ from pyglossary.core import rootDir
 
 log = logging.getLogger("pyglossary")
 
-class XslXdxfTransformer(object):
+class XslXdxfTransformer:
 	_gram_color: str = "green"
 	_example_padding: int = 10
 
@@ -26,7 +26,7 @@ class XslXdxfTransformer(object):
 			e.msg += f", run `{core.pip} install lxml` to install"
 			raise e
 
-		with open(join(rootDir, "pyglossary", "xdxf", "xdxf.xsl"), "r") as f:
+		with open(join(rootDir, "pyglossary", "xdxf", "xdxf.xsl")) as f:
 			xslt_txt = f.read()
 
 		xslt = ET.XML(xslt_txt)

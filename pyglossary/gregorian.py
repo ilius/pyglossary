@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright © 2008-2019 Saeed Rasooli <saeed.gnu@gmail.com>

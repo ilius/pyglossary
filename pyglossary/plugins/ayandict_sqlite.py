@@ -34,7 +34,7 @@ optionsProp: "dict[str, Option]" = {
 	),
 }
 
-class Reader(object):
+class Reader:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
@@ -90,7 +90,7 @@ class Reader(object):
 		self._clear()
 
 
-class Writer(object):
+class Writer:
 	_fuzzy: int = True
 
 	def __init__(self, glos: "GlossaryType") -> None:

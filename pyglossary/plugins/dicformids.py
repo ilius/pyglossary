@@ -66,7 +66,7 @@ language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEn
 """
 
 
-class Reader(object):
+class Reader:
 	re_number = re.compile(r"\d+")
 
 	def __init__(self, glos: "GlossaryType") -> None:
@@ -126,7 +126,7 @@ class Reader(object):
 		self._tabFileNames = []
 
 
-class Writer(object):
+class Writer:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.linesPerDirectoryFile = 500  # 200

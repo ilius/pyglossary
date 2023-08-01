@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from typing import TYPE_CHECKING, Generator, List
+from typing import TYPE_CHECKING, Generator
 
 from pyglossary.option import (
 	BoolOption,
@@ -34,9 +34,9 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Writer(object):
+class Writer:
 	_encoding: str = "utf-8"
-	_info_keys: "List | None" = None
+	_info_keys: "list | None" = None
 	_add_extra_info: bool = True
 	_newline: str = "<br>"
 	_transaction: bool = False

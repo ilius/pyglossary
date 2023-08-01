@@ -26,7 +26,7 @@ website = (
 )
 
 
-class Reader(object):
+class Reader:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()

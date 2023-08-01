@@ -8,7 +8,7 @@ from pyglossary.core import rootDir
 log = logging.getLogger("pyglossary")
 
 
-class Lang(object):
+class Lang:
 	def __init__(
 		self,
 		codes: "list[str]",
@@ -75,7 +75,7 @@ class LangDict(dict):
 			return
 		t0 = now()
 		filename = join(rootDir, "pyglossary", "langs", "langs.json")
-		with open(filename, "r", encoding="utf-8") as _file:
+		with open(filename, encoding="utf-8") as _file:
 			data = json.load(_file)
 			for row in data:
 				self._addLang(Lang(

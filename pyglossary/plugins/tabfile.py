@@ -109,7 +109,7 @@ class Reader(TextGlossaryReader):
 		return word, defi, None
 
 
-class Writer(object):
+class Writer:
 	_encoding: str = "utf-8"
 	_enable_info: bool = True
 	_resources: bool = True

@@ -38,7 +38,7 @@ from .plugin_prop import PluginProp
 log = logging.getLogger("pyglossary")
 
 
-class PluginManager(object):
+class PluginManager:
 	plugins: "dict[str, PluginProp]" = {}
 	pluginByExt: "dict[str, PluginProp]" = {}
 	loadedModules: "set[str]" = set()

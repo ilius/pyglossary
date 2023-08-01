@@ -32,7 +32,7 @@ from pyglossary.text_utils import (
 from .bgl_reader import BGLGzipFile, BglReader, Block, FileOffS, tmpDir
 
 
-class MetaData(object):
+class MetaData:
 	def __init__(self) -> None:
 		self.blocks = []
 		self.numEntries = None
@@ -44,19 +44,19 @@ class MetaData(object):
 		self.bglHeader = None  # data before gzip header
 
 
-class MetaDataBlock(object):
+class MetaDataBlock:
 	def __init__(self, data, _type) -> None:
 		self.data = data
 		self.type = _type
 
 
-class MetaDataRange(object):
+class MetaDataRange:
 	def __init__(self, _type, count) -> None:
 		self.type = _type
 		self.count = count
 
 
-class MetaData2(object):
+class MetaData2:
 
 	"""
 	Second pass metadata.
@@ -82,7 +82,7 @@ class MetaData2(object):
 		self.charRefs = dict()  # encoding -> [ 0 ] * 257
 
 
-class GzipWithCheck(object):
+class GzipWithCheck:
 
 	"""
 	gzip.GzipFile with check.
@@ -217,7 +217,7 @@ class DebugBglReader(BglReader):
 				self.dataFile = self._filename + "-data.gz"
 				try:
 					f2 = open(self.dataFile, "wb")
-				except IOError:
+				except OSError:
 					log.exception("error while opening gzip data file")
 					self.dataFile = join(
 						tmpDir,

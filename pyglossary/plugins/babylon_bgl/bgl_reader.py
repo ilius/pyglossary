@@ -173,7 +173,7 @@ class BGLGzipFile(GzipFile):
 			self.fileobj.close()
 
 
-class Block(object):
+class Block:
 	def __init__(self) -> None:
 		self.data = b""
 		self.type = ""
@@ -233,7 +233,7 @@ class FileOffS(file):
 		return file.tell(self) - self.offset
 
 
-class DefinitionFields(object):
+class DefinitionFields:
 
 	"""
 	Fields of entry definition.
@@ -284,7 +284,7 @@ class DefinitionFields(object):
 		self.b_field_13 = None  # bytes
 
 
-class BglReader(object):
+class BglReader:
 	_default_encoding_overwrite: str = ""
 	_source_encoding_overwrite: str = ""
 	_target_encoding_overwrite: str = ""
@@ -382,7 +382,7 @@ class BglReader(object):
 		self._filename = filename
 
 		if not self.openGzip():
-			raise IOError("BGL: failed to read gzip header")
+			raise OSError("BGL: failed to read gzip header")
 
 		self.readInfo()
 		self.setGlossaryInfo()
@@ -938,7 +938,7 @@ class BglReader(object):
 			pos += Len
 		if u_word in u_alts:
 			u_alts.remove(u_word)
-		return True, pos, list(sorted(u_alts))
+		return True, pos, sorted(u_alts)
 
 	def readEntry_Type11(
 		self,
@@ -1014,7 +1014,6 @@ class BglReader(object):
 			pos += altLen
 		if u_word in u_alts:
 			u_alts.remove(u_word)
-		u_alts = list(sorted(u_alts))
 
 		# reading defi
 		defiLen = uintFromBytes(block.data[pos:pos + 4])
@@ -1031,7 +1030,7 @@ class BglReader(object):
 		self.defiMaxBytes = max(self.defiMaxBytes, len(b_defi))
 		pos += defiLen
 
-		return True, u_word, u_alts, u_defi
+		return True, u_word, sorted(u_alts), u_defi
 
 	def charReferencesStat(self, b_text: bytes, encoding: str) -> None:
 		pass
@@ -1115,7 +1114,7 @@ class BglReader(object):
 						encodings.append("babylon-reference")
 					elif b_type == b"u":
 						encodings.append("utf-8")
-					elif b_type == b"k":
+					elif b_type == b"k":  # noqa: SIM114
 						encodings.append(self.sourceEncoding)
 					elif b_type == b"e":
 						encodings.append(self.sourceEncoding)

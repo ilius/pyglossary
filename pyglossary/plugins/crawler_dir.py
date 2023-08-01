@@ -37,7 +37,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Writer(object):
+class Writer:
 	_compression: str = ""
 
 	def __init__(self, glos: GlossaryType) -> None:
@@ -116,7 +116,7 @@ class Writer(object):
 			infoFile.write(dataToPrettyJson(info))
 
 
-class Reader(object):
+class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None

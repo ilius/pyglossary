@@ -22,7 +22,7 @@
 import os
 import sys
 from os.path import join
-from typing import TYPE_CHECKING, Any, Dict, Mapping
+from typing import TYPE_CHECKING, Any, Mapping
 
 from pyglossary.core import dataDir, log
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
@@ -140,7 +140,7 @@ def parseFormatOptionsStr(st: str) -> "dict[str, Any] | None":
 	return opt
 
 
-def encodeFormatOptions(opt: "Dict") -> str:
+def encodeFormatOptions(opt: "dict") -> str:
 	if not opt:
 		return ""
 	parts = []
@@ -149,7 +149,7 @@ def encodeFormatOptions(opt: "Dict") -> str:
 	return ";".join(parts)
 
 
-class NullObj(object):
+class NullObj:
 	def __getattr__(self, attr: str) -> "NullObj":
 		return self
 
@@ -272,11 +272,11 @@ class UI(UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "Dict | None" = None,
-		readOptions: "Dict | None" = None,
-		writeOptions: "Dict | None" = None,
-		convertOptions: "Dict | None" = None,
-		glossarySetAttrs: "Dict | None" = None,
+		config: "dict | None" = None,
+		readOptions: "dict | None" = None,
+		writeOptions: "dict | None" = None,
+		convertOptions: "dict | None" = None,
+		glossarySetAttrs: "dict | None" = None,
 	) -> bool:
 		if config is None:
 			config = {}

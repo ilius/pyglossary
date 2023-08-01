@@ -2,7 +2,7 @@
 
 import logging
 import re
-from typing import Any, Dict, List
+from typing import Any
 
 log = logging.getLogger("pyglossary")
 
@@ -19,7 +19,7 @@ def optionFromDict(data: "dict[str, Any]") -> "Option":
 	return optClass(**data)
 
 
-class Option(object):
+class Option:
 	classes: "dict[str, type]" = {}
 
 	@classmethod
@@ -322,7 +322,7 @@ class DictOption(Option):
 	def evaluate(
 		self,
 		raw: "str | dict",
-	) -> "tuple[Dict | None, bool]":
+	) -> "tuple[dict | None, bool]":
 		import ast
 		if isinstance(raw, dict):
 			return raw, True
@@ -354,7 +354,7 @@ class ListOption(Option):
 		del data["customValue"]
 		return data
 
-	def evaluate(self, raw: str) -> "tuple[List | None, bool]":
+	def evaluate(self, raw: str) -> "tuple[list | None, bool]":
 		import ast
 		if raw == "":
 			return None, True  # valid

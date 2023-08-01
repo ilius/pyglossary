@@ -1,67 +1,68 @@
 [tool.ruff]
 select = [
-    "E", # pycodestyle Error
-    "W", # pycodestyle Warning
-    "F", # Pyflakes
-    "YTT", # flake8-2020
-    "TID", # flake8-tidy-imports
-    "I", # isort: unsorted-imports, missing-required-import
-    "COM", # flake8-commas
     "B", # flake8-bugbear
-    "T10", # flake8-debugger
+    "C4", # flake8-comprehensions
+    "COM", # flake8-commas
+    "D", # pydocstyle
+    "E", # pycodestyle Error
+    "EXE", # flake8-executable
+    "F", # Pyflakes
+    "I", # isort: unsorted-imports, missing-required-import
     "ISC", # flake8-implicit-str-concat
+    "PGH", # pygrep-hooks
     "PIE", # flake8-pie
     "RET", # flake8-return
-    "TID", # flake8-tidy-imports
-    "PGH", # pygrep-hooks
+    "SIM", # flake8-simplify
+    "T10", # flake8-debugger
     "TCH", # flake8-type-checking, not done for plugins
-    # "ARG", # flake8-unused-arguments
-
-    # "EXE", # flake8-executable TODO
-
+    "TID", # flake8-tidy-imports
+    "TID", # flake8-tidy-imports
+    "UP", # pyupgrade
+    "W", # pycodestyle Warning
+    "YTT", # flake8-2020
 
     # "C90", # mccabe: C901: {name} is too complex ({complexity})
-    "D", # pydocstyle
-    # "UP", # pyupgrade
-    # "A", # flake8-builtins
-    # "ANN", # flake8-annotations
-    # "BLE", # flake8-blind-except
-    # "FBT", # flake8-boolean-trap
-    # "DTZ", # flake8-datetimez
-
+    # "ANN", # flake8-annotationsq
     # "N", # pep8-naming
-
-    # "SIM", # flake8-simplify, mostly done, not sure about enforcing it
+    # "ARG", # flake8-unused-arguments: ARG001 Unused function argument
+    # "A", # flake8-builtins
     # "S", # flake8-bandit
-    # "C4", # flake8-comprehensions
-    #   when did Python's sorted() start returning list?
 ]
 ignore = [
-    "W191",
-    # "E501", # Line too long (only a few left in template strings in scripts/)
-    "E402", # Module level import not at top of file
-    "UP009", # UTF-8 encoding declaration is unnecessary
-    "SIM105", # Use contextlib.suppress({exception}) instead of try-except-pass
-    "SIM108", # Use ternary operator {contents} instead of if-else-block
-    "SIM117", # Use a single with statement with multiple contexts...
 	"PGH003", # Use specific rule codes when ignoring type issues
-    # ERA, PD,
     "B018", # Found useless expression. Either assign it to a variable or remove it.
+    "B019", # Use of `functools.lru_cache` or `functools.cache` on methods can lead to memory leaks
     "B028", # No explicit `stacklevel` keyword argument found. Huh???
-    "D104", # Missing docstring in public package
+    "C408", # Unnecessary `dict` call (rewrite as a literal)
     "D100", # Missing docstring in public module
     "D101", # Missing docstring in public class
     "D102", # Missing docstring in public method
     "D103", # Missing docstring in public function
+    "D104", # Missing docstring in public package
     "D105", # Missing docstring in magic method
     "D107", # Missing docstring in `__init__`
-    "D206", # Docstring should be indented with spaces, not tabs
     "D205", # 1 blank line required between summary line and description
+    "D206", # Docstring should be indented with spaces, not tabs
     "D211", # (Do not enable) no-blank-line-before-class
+    "D212", # multi-line-summary-first-line, conflicts with D213:multi-line-summary-second-line
     "D401", # First line of docstring should be in imperative mood
-    "D212",  # multi-line-summary-first-line, conflicts with D213:multi-line-summary-second-line
     "D417", # Missing argument descriptions in the docstring
+    "E402", # Module level import not at top of file
+    "SIM105", # Use contextlib.suppress({exception}) instead of try-except-pass
+    "SIM108", # Use ternary operator {contents} instead of if-else-block
+    "SIM117", # Use a single with statement with multiple contexts...
+    "UP009", # UTF-8 encoding declaration is unnecessary
+    "UP010", # Unnecessary `__future__`"
+    "UP035", # Import from `collections.abc` instead: `Generator`
+    "UP037", # Remove quotes from type annotation
+    "W191",
+    # ERA, PD,
 ]
+
+# UP033: (Since Python 3.9) Use `@functools.cache`
+# instead of `@functools.lru_cache(maxsize=None)`
+
+# since which Python is comma after **kwargs allowd?
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [
@@ -70,12 +71,23 @@ fixable = [
     "RET",
     "I",
     "COM",
-    # since which Python is comma after **kwargs allowd?
     "TCH",
     "ANN",
     "W291",
     "W293",
     "D",
+    "UP004",
+    "UP006",
+    "UP008",
+    "UP015",
+    "UP024",
+    "UP028",
+    "UP030",
+    "UP031",
+    "UP032",
+    "UP033",
+    "UP034",
+    "UP039",
 ]
 unfixable = []
 

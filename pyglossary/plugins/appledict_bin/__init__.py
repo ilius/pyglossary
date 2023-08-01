@@ -84,7 +84,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Reader(object):
+class Reader:
 	depends = {
 		"lxml": "lxml",
 		"biplist": "biplist",
@@ -181,7 +181,7 @@ class Reader(object):
 				contentsPath = join(filename, "Contents")
 				dictDirPath = filename
 			else:
-				raise IOError(f"invalid directory {filename}")
+				raise OSError(f"invalid directory {filename}")
 		elif split(filename)[-1] == "Body.data":
 			# Maybe we should remove this support in a future release
 			parentPath = dirname(filename)
@@ -191,13 +191,13 @@ class Reader(object):
 			elif parentName == "Resources":
 				contentsPath = dirname(parentPath)
 			else:
-				raise IOError(f"invalid file path {filename}")
+				raise OSError(f"invalid file path {filename}")
 			dictDirPath = dirname(contentsPath)
 		else:
-			raise IOError(f"invalid file path {filename}")
+			raise OSError(f"invalid file path {filename}")
 
 		if not isdir(contentsPath):
-			raise IOError(
+			raise OSError(
 				f"{contentsPath} is not a folder, "
 				"Please provide 'Contents/' folder of the dictionary",
 			)
@@ -210,7 +210,7 @@ class Reader(object):
 			bodyDataPath = join(contentsPath, "Resources/Body.data")
 			keyTextDataPath = join(contentsPath, "Resources/KeyText.data")
 		else:
-			raise IOError(
+			raise OSError(
 				"could not find Body.data file, "
 				"Please provide 'Contents/' folder of the dictionary",
 			)
@@ -242,7 +242,7 @@ class Reader(object):
 		import biplist
 
 		if not isfile(infoPlistPath):
-			raise IOError(
+			raise OSError(
 				"Could not find 'Info.plist' file, "
 				"Please provide 'Contents/' folder of the dictionary",
 			)
@@ -256,7 +256,7 @@ class Reader(object):
 				with open(infoPlistPath, "rb") as plist_file:
 					metadata = plistlib.loads(plist_file.read())
 			except Exception as e:
-				raise IOError(
+				raise OSError(
 					"'Info.plist' file is malformed, "
 					f"Please provide 'Contents/' with a correct 'Info.plist'. {e}",
 				) from e
@@ -327,7 +327,7 @@ class Reader(object):
 			)
 
 		entryElem.tag = "div"
-		for attr in entryElem.attrib.keys():
+		for attr in entryElem.attrib:
 			# if attr == "id" or attr.endswith("title"):
 			del entryElem.attrib[attr]
 
@@ -359,7 +359,7 @@ class Reader(object):
 		offset = buffer[pos:pos + 12].find(b"<d:entry")
 		if offset == -1:
 			print(buffer[pos:])
-			raise IOError('Could not find entry tag <d:entry>')
+			raise OSError('Could not find entry tag <d:entry>')
 		if offset == 0:
 			# when no such info (offset equals 0) provided,
 			# we take all bytes till the closing tag or till section end

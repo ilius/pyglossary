@@ -33,7 +33,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Reader(object):
+class Reader:
 	depends = {
 		"polib": "polib",
 	}
@@ -121,7 +121,7 @@ class Reader(object):
 		self._wordCount = wordCount
 
 
-class Writer(object):
+class Writer:
 	depends = {
 		"polib": "polib",
 	}

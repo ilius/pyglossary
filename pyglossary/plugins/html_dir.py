@@ -83,7 +83,7 @@ h6 {{ font-size: 1.0em;}}
 """
 
 
-class Writer(object):
+class Writer:
 	depends = {
 		"cachetools": "cachetools",
 	}
@@ -503,13 +503,12 @@ class Writer(object):
 				'<hr>\n'
 			)
 			pos = fileObj.tell()
-			if pos > initFileSizeMax:
-				if pos > max_file_size - len(text.encode(encoding)):
-					fileObj = self.nextFile()
-					fileObj.write(pageHeader(
-						len(self._filenameList) - 1,
-					))
-					fileObj.write(navBar())
+			if pos > initFileSizeMax and pos > max_file_size - len(text.encode(encoding)):
+				fileObj = self.nextFile()
+				fileObj.write(pageHeader(
+					len(self._filenameList) - 1,
+				))
+				fileObj.write(navBar())
 			pos = fileObj.tell()
 			tmpFilename = escapeNTB(self._filenameList[-1])
 			for word in entry.l_word:

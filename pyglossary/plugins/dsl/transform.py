@@ -1,6 +1,6 @@
 import re
 from collections import namedtuple
-from typing import Optional, Tuple, cast
+from typing import Optional, cast
 from xml.sax.saxutils import escape
 
 from ._types import ErrorType, LexType, TransformerType
@@ -83,7 +83,7 @@ class Transformer:
 	def addText(self, st: str) -> None:
 		self.output += escape(st)
 
-	def transform(self) -> Tuple[Optional[Result], ErrorType]:
+	def transform(self) -> tuple[Optional[Result], ErrorType]:
 		# TODO: implement these 2 with lex functions
 		self.input = re_comment_block.sub("", self.input)
 

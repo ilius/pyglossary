@@ -38,7 +38,7 @@ except ImportError:
 from . import widgets
 
 
-class ProgressBar(object):
+class ProgressBar:
 
     """
     The ProgressBar class which updates and prints the bar.

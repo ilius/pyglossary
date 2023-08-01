@@ -65,7 +65,7 @@ def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 	log.info("don't forget to restart dictd server")
 
 
-class Reader(object):
+class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
@@ -126,7 +126,7 @@ class Reader(object):
 			yield self._glos.newEntry(word, defi)
 
 
-class Writer(object):
+class Writer:
 	_dictzip: bool = False
 	_install: bool = True
 

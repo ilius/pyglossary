@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 log = logging.getLogger("pyglossary")
 
 
-class XdxfTransformer(object):
+class XdxfTransformer:
 	_gram_color: str = "green"
 	_example_padding: int = 10
 

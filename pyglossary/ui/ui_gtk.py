@@ -22,7 +22,7 @@ import sys
 import traceback
 from collections import OrderedDict
 from os.path import abspath, isfile
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any
 
 import gi
 
@@ -1373,11 +1373,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "Dict | None" = None,
-		readOptions: "Dict | None" = None,
-		writeOptions: "Dict | None" = None,
-		convertOptions: "Dict | None" = None,
-		glossarySetAttrs: "Dict | None" = None,
+		config: "dict | None" = None,
+		readOptions: "dict | None" = None,
+		writeOptions: "dict | None" = None,
+		convertOptions: "dict | None" = None,
+		glossarySetAttrs: "dict | None" = None,
 	):
 		if glossarySetAttrs is None:
 			glossarySetAttrs = {}

@@ -308,7 +308,7 @@ class SynSqList(BaseSqList):
 		]
 
 
-class Reader(object):
+class Reader:
 	_xdxf_to_html: bool = True
 	_xsl: bool = False
 	_unicode_errors: str = "strict"
@@ -776,7 +776,7 @@ class Reader(object):
 	# 			)
 
 
-class Writer(object):
+class Writer:
 	_large_file: bool = False
 	_dictzip: bool = True
 	_sametypesequence: "Literal['', 'h', 'm', 'x'] | None" = ""

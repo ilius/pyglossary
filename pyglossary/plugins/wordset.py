@@ -32,7 +32,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Reader(object):
+class Reader:
 	_encoding: str = "utf-8"
 
 	def __init__(self, glos: GlossaryType) -> None:

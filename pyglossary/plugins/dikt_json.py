@@ -36,7 +36,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Writer(object):
+class Writer:
 	_encoding: str = "utf-8"
 	_enable_info: bool = True
 	_resources: bool = True

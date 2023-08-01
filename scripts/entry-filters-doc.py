@@ -38,9 +38,7 @@ def renderCell(value):
 
 
 def renderTable(rows):
-	"""
-		rows[0] must be headers
-	"""
+	"""rows[0] must be headers."""
 	rows = [
 		[
 			renderCell(cell) for cell in row

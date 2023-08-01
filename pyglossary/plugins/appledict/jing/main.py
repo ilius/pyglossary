@@ -25,7 +25,7 @@ class JingTestError(subprocess.CalledProcessError):
 		cmd: "list[str]",
 		output: bytes,
 	) -> None:
-		super(JingTestError, self).__init__(returncode, cmd, output)
+		super().__init__(returncode, cmd, output)
 
 	def __str__(self) -> str:
 		return "\n".join([

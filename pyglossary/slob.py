@@ -31,7 +31,7 @@ from bisect import bisect_left
 from builtins import open as fopen
 from collections import namedtuple
 from datetime import datetime, timezone
-from functools import lru_cache
+from functools import cache, lru_cache
 from io import BufferedIOBase, IOBase
 from os.path import isdir
 from struct import calcsize, pack, unpack
@@ -225,7 +225,7 @@ class TagNotFound(Exception):
 	pass
 
 
-@lru_cache(maxsize=None)
+@cache
 def sortkey(
 	strength: int,
 	maxlength: "int | None" = None,
@@ -344,7 +344,7 @@ class MultiFileReader(BufferedIOBase):
 		return result
 
 
-class KeydItemDict(object):
+class KeydItemDict:
 	def __init__(
 		self,
 		blobs: "Sequence[Blob | Ref]",
@@ -385,7 +385,7 @@ class KeydItemDict(object):
 		return True
 
 
-class Blob(object):
+class Blob:
 	def __init__(
 		self,
 		content_id: int,
@@ -434,7 +434,7 @@ def read_byte_string(f: "IOBase", len_spec: str) -> bytes:
 	return f.read(length)
 
 
-class StructReader():
+class StructReader:
 	def __init__(
 		self,
 		_file: "IOBase",
@@ -494,7 +494,7 @@ class StructReader():
 		self._file.flush()
 
 
-class StructWriter():
+class StructWriter:
 	def __init__(
 		self,
 		_file: "io.BufferedWriter",
@@ -693,7 +693,7 @@ def unmeld_ints(c: int) -> "tuple[int, int]":
 	return int(a, 2), int(b, 2)
 
 
-class Slob(object):
+class Slob:
 	def __init__(
 		self,
 		*filenames: str,
@@ -704,8 +704,7 @@ class Slob(object):
 			self._header = read_header(self._f)
 			if (self._f.size != self._header.size):
 				raise IncorrectFileSize(
-					'File size should be {0}, {1} bytes found'
-					.format(self._header.size, self._f.size))
+					f'File size should be {self._header.size}, {self._f.size} bytes found')
 		except FileFormatException:
 			self._f.close()
 			raise
@@ -803,7 +802,7 @@ class Slob(object):
 		bin_index, bin_item_index = unmeld_ints(blob_id)
 		return self._store.get(bin_index, bin_item_index)
 
-	@lru_cache(maxsize=None)  # noqa: B019
+	@cache
 	def as_dict(
 		self: "Slob",
 		strength: int = TERTIARY,
@@ -936,7 +935,7 @@ class RefList(ItemList[Ref]):
 			pos_spec=U_LONG_LONG,
 		)
 
-	@lru_cache(maxsize=512)  # noqa: B019
+	@lru_cache(maxsize=512)
 	def __getitem__(
 		self,
 		i: int,
@@ -957,7 +956,7 @@ class RefList(ItemList[Ref]):
 			fragment=fragment,
 		)
 
-	@lru_cache(maxsize=None)  # noqa: B019
+	@cache
 	def as_dict(
 		self: "RefList",
 		strength: int = TERTIARY,
@@ -1008,7 +1007,7 @@ class Store(ItemList[StoreItem]):
 		self.decompress = decompress
 		self.content_types = content_types
 
-	@lru_cache(maxsize=32)  # noqa: B019
+	@lru_cache(maxsize=32)
 	def __getitem__(
 		self,
 		i: int,
@@ -1048,7 +1047,7 @@ class Store(ItemList[StoreItem]):
 	) -> str:
 		return self._content_type(bin_index, item_index)[0]
 
-	@lru_cache(maxsize=16)  # noqa: B019
+	@lru_cache(maxsize=16)
 	def _decompress(self, bin_index: int) -> bytes:
 		store_item = self[bin_index]
 		return self.decompress(store_item.compressed_content)
@@ -1076,7 +1075,7 @@ class KeyTooLongException(Exception):
 		return self.args[0]
 
 
-class Writer(object):
+class Writer:
 
 	def __init__(
 		self,
@@ -1106,7 +1105,7 @@ class Writer(object):
 		self.workdir = workdir
 
 		self.tmpdir = tmpdir = tempfile.TemporaryDirectory(
-			prefix='{0}-'.format(os.path.basename(filename)),
+			prefix=f'{os.path.basename(filename)}-',
 			dir=workdir,
 		)
 
@@ -1454,7 +1453,7 @@ class Writer(object):
 				U_LONG_LONG_SIZE +  # file size value
 				2 * U_INT_SIZE  # ref count and bin count
 			)
-			file_size += sum((os.stat(f.name).st_size for f in files))
+			file_size += sum(os.stat(f.name).st_size for f in files)
 			out.write_long(file_size)
 
 			def mv(src: "StructWriter", out: "StructWriter") -> None:
@@ -1526,7 +1525,7 @@ class Writer(object):
 			self.f_store_positions,
 			self.f_store,
 		)
-		return sum((os.stat(f.name).st_size for f in files))
+		return sum(os.stat(f.name).st_size for f in files)
 
 	def __enter__(self) -> "Slob":
 		return cast("Slob", self)

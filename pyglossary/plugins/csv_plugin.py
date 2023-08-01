@@ -74,7 +74,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Reader(object):
+class Reader:
 	compressions = stdCompressions
 
 	_encoding: str = "utf-8"
@@ -164,8 +164,7 @@ class Reader(object):
 			raise RuntimeError("self._csvReader is None")
 		if self._bufferRow:
 			yield self._bufferRow
-		for row in self._csvReader:
-			yield row
+		yield from self._csvReader
 
 	def _processRow(self, row: "list[str]") -> "EntryType | None":
 		if not row:
@@ -216,7 +215,7 @@ class Reader(object):
 				)
 
 
-class Writer(object):
+class Writer:
 	compressions = stdCompressions
 
 	_encoding: str = "utf-8"

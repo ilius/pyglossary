@@ -36,7 +36,7 @@ optionsProp: "dict[str, Option]" = {}
 # which wiki.openzim.org points at for downloaing zim files
 
 
-class Reader(object):
+class Reader:
 	depends = {
 		"libzim": "libzim>=1.0",
 	}

@@ -99,7 +99,7 @@ class Reader(TextGlossaryReader):
 			return words, defi, None
 
 
-class Writer(object):
+class Writer:
 	compressions = stdCompressions
 
 	_newline: str = "\n"

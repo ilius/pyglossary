@@ -125,7 +125,7 @@ def unwrap_quotes(s: str) -> str:
 	return re_wrapped_in_quotes.sub("\\2", s)
 
 
-class Reader(object):
+class Reader:
 	compressions = stdCompressions + ("dz",)
 
 	_encoding: str = ""

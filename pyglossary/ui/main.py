@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
 # ui/main.py
@@ -28,7 +27,7 @@ import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Callable, Dict, List
+	from typing import Callable
 
 	from pyglossary.option import Option
 
@@ -105,7 +104,7 @@ class StoreConstAction(argparse.Action):
 		self,
 		parser: "argparse.ArgumentParser | None" = None,
 		namespace: "argparse.Namespace | None" = None,
-		values: "List" = None,
+		values: "list" = None,
 		option_strings: "list[str]" = None,
 		required: bool = False,
 		dest: "str | None" = None,
@@ -187,11 +186,11 @@ def base_ui_run(
 	inputFormat: str = "",
 	outputFormat: str = "",
 	reverse: bool = False,
-	config: "Dict | None" = None,
-	readOptions: "Dict | None" = None,
-	writeOptions: "Dict | None" = None,
-	convertOptions: "Dict | None" = None,
-	glossarySetAttrs: "Dict | None" = None,
+	config: "dict | None" = None,
+	readOptions: "dict | None" = None,
+	writeOptions: "dict | None" = None,
+	convertOptions: "dict | None" = None,
+	glossarySetAttrs: "dict | None" = None,
 ) -> bool:
 	from pyglossary.glossary_v2 import ConvertArgs, Glossary
 	if reverse:

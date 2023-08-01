@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 log = logging.getLogger("pyglossary")
 
 
-class indir(object):
+class indir:
 
 	"""
 	mkdir + chdir shortcut to use with `with` statement.

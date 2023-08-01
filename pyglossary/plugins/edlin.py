@@ -56,7 +56,7 @@ def makeDir(direc: str) -> None:
 		os.makedirs(direc)
 
 
-class Reader(object):
+class Reader:
 	_encoding: str = "utf-8"
 
 	def __init__(self, glos: GlossaryType) -> None:
@@ -170,7 +170,7 @@ class Reader(object):
 				)
 
 
-class Writer(object):
+class Writer:
 	_encoding: str = "utf-8"
 	_prev_link: bool = True
 

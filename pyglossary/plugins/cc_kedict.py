@@ -3,7 +3,7 @@
 
 from io import BytesIO
 from os.path import isdir, join
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator
+from typing import TYPE_CHECKING, Any, Callable, Iterator
 
 if TYPE_CHECKING:
 	import lxml
@@ -104,7 +104,7 @@ class YamlReader(TextGlossaryReader):
 	def _processExample(
 		self,
 		hf: "lxml.etree.htmlfile",
-		exampleDict: "Dict",
+		exampleDict: "dict",
 		count: int,
 	) -> None:
 		from lxml import etree as ET
@@ -130,7 +130,7 @@ class YamlReader(TextGlossaryReader):
 	def _processDef(
 		self,
 		hf: "lxml.etree.htmlfile",
-		defDict: "Dict",
+		defDict: "dict",
 		count: int,
 	) -> None:
 		from lxml import etree as ET
@@ -165,7 +165,7 @@ class YamlReader(TextGlossaryReader):
 	def _processEntry(
 		self,
 		hf: "lxml.etree.htmlfile",
-		edict: "Dict",
+		edict: "dict",
 	) -> None:
 		from lxml import etree as ET
 
@@ -279,7 +279,7 @@ class YamlReader(TextGlossaryReader):
 		raise StopIteration
 
 
-class Reader(object):
+class Reader:
 	depends = {
 		"yaml": "PyYAML",
 		"lxml": "lxml",
@@ -319,5 +319,4 @@ class Reader(object):
 		self._yaml.close()
 
 	def __iter__(self) -> "Iterator[EntryType]":
-		for entry in self._yaml:
-			yield entry
+		yield from self._yaml

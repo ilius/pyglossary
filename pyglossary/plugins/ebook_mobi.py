@@ -109,7 +109,7 @@ extraDocs = [
 ]
 
 
-class GroupStateBySize(object):
+class GroupStateBySize:
 	def __init__(self, writer: "Writer") -> None:
 		self.writer = writer
 		self.group_index = -1

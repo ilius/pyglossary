@@ -19,7 +19,7 @@ log = logging.getLogger("pyglossary")
 file_size_check_every = 100
 
 
-class TextGlossaryWriter(object):
+class TextGlossaryWriter:
 	_encoding: str = "utf-8"
 	_newline: str = "\n"
 	_wordListEncodeFunc: "Callable[[list[str]], str] | None" = None

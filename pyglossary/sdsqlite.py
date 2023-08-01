@@ -18,7 +18,7 @@ from .text_utils import (
 )
 
 
-class Writer(object):
+class Writer:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
@@ -31,7 +31,7 @@ class Writer(object):
 	def open(self, filename: str) -> None:
 		import sqlite3
 		if isfile(filename):
-			raise IOError(f"file {filename!r} already exists")
+			raise OSError(f"file {filename!r} already exists")
 		self._filename = filename
 		self._con = sqlite3.connect(filename)
 		self._cur = self._con.cursor()
@@ -90,7 +90,7 @@ class Writer(object):
 		self._clear()
 
 
-class Reader(object):
+class Reader:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()

@@ -12,7 +12,7 @@ def createProgressBar(title: str):
 class MyTqdm(tqdm):
 	@property
 	def format_dict(self):
-		d = super(MyTqdm, self).format_dict
+		d = super().format_dict
 		"""
 		return dict(
 			n=self.n, total=self.total,

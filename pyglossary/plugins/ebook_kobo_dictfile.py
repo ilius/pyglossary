@@ -159,7 +159,7 @@ class Reader(TextGlossaryReader):
 		raise StopIteration
 
 
-class Writer(object):
+class Writer:
 	_encoding: str = "utf-8"
 
 	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:

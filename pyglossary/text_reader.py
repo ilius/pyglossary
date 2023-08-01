@@ -51,7 +51,7 @@ class TextFilePosWrapper(io.TextIOBase):
 		return self.pos
 
 
-class TextGlossaryReader(object):
+class TextGlossaryReader:
 	_encoding: str = "utf-8"
 
 	compressions = stdCompressions

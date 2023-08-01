@@ -23,7 +23,7 @@ import pkgutil
 import shutil
 import sys
 from os.path import basename, isdir, join
-from typing import TYPE_CHECKING, Any, Dict, Generator
+from typing import TYPE_CHECKING, Any, Generator
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -137,7 +137,6 @@ def write_header(
 	if front_back_matter:
 		with open(
 			front_back_matter,
-			mode="r",
 			encoding="utf-8",
 		) as _file:
 			toFile.write(_file.read())
@@ -215,7 +214,7 @@ additional indexes to dictionary entries.
 """
 
 
-class Writer(object):
+class Writer:
 	depends = {
 		"lxml": "lxml",
 		"bs4": "beautifulsoup4",
@@ -225,7 +224,7 @@ class Writer(object):
 	_clean_html: bool = True
 	_css: str = ""
 	_xsl: str = ""
-	_default_prefs: "Dict | None" = None
+	_default_prefs: "dict | None" = None
 	_prefs_html: str = ""
 	_front_back_matter: str = ""
 	_jing: bool = False

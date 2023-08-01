@@ -19,7 +19,7 @@ import os
 import re
 import sys
 from collections import defaultdict
-from typing import TYPE_CHECKING, Iterator, Tuple
+from typing import TYPE_CHECKING, Iterator
 
 from pyglossary.core import log
 
@@ -55,7 +55,7 @@ quotedTextPattern = re.compile(r'"([^"]+)"')
 
 refPattern = re.compile(r"`(\w+)'")
 
-class SynSet(object):
+class SynSet:
 	def __init__(self, line) -> None:
 		self.line = line
 		if isinstance(line, bytes):
@@ -98,7 +98,7 @@ class SynSet(object):
 		return "SynSet(%r)" % self.line
 
 
-class PointerSymbols(object):
+class PointerSymbols:
 	n = {
 		"!": "Antonyms",
 		"@": "Hypernyms",
@@ -160,7 +160,7 @@ class PointerSymbols(object):
 	}
 
 
-class Pointer(object):
+class Pointer:
 	def __init__(self, symbol, offset, pos, source_target) -> None:
 		self.symbol = symbol
 		self.offset = int(offset)
@@ -170,7 +170,7 @@ class Pointer(object):
 		self.target = int(source_target[2:], 16)
 
 	def __repr__(self) -> str:
-		return "Pointer(%r, %r, %r, %r)" % (
+		return "Pointer({!r}, {!r}, {!r}, {!r})".format(
 			self.symbol,
 			self.offset,
 			self.pos,
@@ -178,7 +178,7 @@ class Pointer(object):
 		)
 
 
-class WordNet(object):
+class WordNet:
 	article_template = (
 		"<h1>%s</h1><span>%s</span>"
 	)
@@ -218,14 +218,13 @@ class WordNet(object):
 
 		files = {}
 		for name in os.listdir(dict_dir):
-			if name.startswith("data."):
-				if name in file2pos:
-					f = open(os.path.join(dict_dir, name), "r")
-					for key in file2pos[name]:
-						files[key] = f
+			if name.startswith("data.") and name in file2pos:
+				f = open(os.path.join(dict_dir, name))  # noqa: SIM115
+				for key in file2pos[name]:
+					files[key] = f
 
 		def a(word):
-			return '<a href="%s">%s</a>' % (word, word)
+			return f'<a href="{word}">{word}</a>'
 
 		for i, line in enumerate(self.iterlines(dict_dir)):
 			if i % 100 == 0 and i > 0:
@@ -264,8 +263,7 @@ class WordNet(object):
 						symbol_desc = getattr(PointerSymbols, synset.ss_type)[symbol]
 					except KeyError:
 						print(
-							"WARNING: unknown pointer symbol %s for %s "
-							% (symbol, synset.ss_type),
+							f"WARNING: unknown pointer symbol {symbol} for {synset.ss_type} ",
 						)
 						symbol_desc = symbol
 
@@ -289,8 +287,7 @@ class WordNet(object):
 						)
 						pointers_str += ", ".join(a(w) for w in referenced_words)
 				self.collector[word].append(
-					'<i class="pos grammar">%s</i> %s%s%s'
-					% (
+					'<i class="pos grammar">{}</i> {}{}{}'.format(
 						synSetTypes[synset.ss_type],
 						gloss_with_examples,
 						synonyms_str,
@@ -300,7 +297,7 @@ class WordNet(object):
 		sys.stdout.write("\n")
 		sys.stdout.flush()
 
-	def process(self) -> "Iterator[Tuple[str, str]]":
+	def process(self) -> "Iterator[tuple[str, str]]":
 		article_template = self.article_template
 
 		for title in self.collector:
@@ -319,7 +316,7 @@ class WordNet(object):
 				yield title, text
 
 
-class Reader(object):
+class Reader:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""

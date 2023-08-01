@@ -24,7 +24,7 @@ import traceback
 from os.path import abspath, isfile, join, splitext
 from tkinter import filedialog, tix, ttk
 from tkinter import font as tkFont
-from typing import Any, Callable, Dict, Literal
+from typing import Any, Callable, Literal
 
 from pyglossary import core
 from pyglossary.core import confDir, homeDir
@@ -867,7 +867,7 @@ class FormatOptionsButton(tk.Button):
 	def __init__(
 		self,
 		kind: "Literal['Read', 'Write']",
-		values: "Dict",
+		values: "dict",
 		formatInput: "FormatButton",
 		master=None,
 	) -> None:
@@ -1501,11 +1501,11 @@ class UI(tix.Frame, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "Dict | None" = None,
-		readOptions: "Dict | None" = None,
-		writeOptions: "Dict | None" = None,
-		convertOptions: "Dict | None" = None,
-		glossarySetAttrs: "Dict | None" = None,
+		config: "dict | None" = None,
+		readOptions: "dict | None" = None,
+		writeOptions: "dict | None" = None,
+		convertOptions: "dict | None" = None,
+		glossarySetAttrs: "dict | None" = None,
 	):
 		if glossarySetAttrs is None:
 			glossarySetAttrs = {}

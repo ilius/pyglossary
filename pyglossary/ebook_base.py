@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 log = logging.getLogger("pyglossary")
 
 
-class GroupState(object):
+class GroupState:
 	def __init__(self, writer: "EbookWriter") -> None:
 		self.writer = writer
 		self.last_prefix = ""
@@ -69,7 +69,7 @@ class GroupState(object):
 		self.group_contents.append(self.writer.format_group_content(word, defi))
 
 
-class EbookWriter(object):
+class EbookWriter:
 
 	"""
 	A class representing a generic ebook containing a dictionary.

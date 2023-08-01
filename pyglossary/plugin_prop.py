@@ -58,7 +58,7 @@ def sortOnWriteFromStr(sortOnWriteStr: "str | None") -> "StrWithDesc":
 	return flagsByName[sortOnWriteStr]
 
 
-class PluginProp(object):
+class PluginProp:
 	__slots__ = [
 		"_mod",
 		"_Reader",

@@ -23,7 +23,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Writer(object):
+class Writer:
 	_remove_html_all: bool = True
 
 	def __init__(self, glos: GlossaryType) -> None:

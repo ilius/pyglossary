@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import Optional, Tuple, cast
+from typing import Optional, cast
 from xml.sax.saxutils import escape
 
 from pyglossary.core import log
@@ -12,7 +12,7 @@ from ._types import TitleTransformerType as TransformerType
 from .transform import Transformer
 
 
-def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexRoot(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	# if tr.start < tr.pos:
 	# 	log.warning(f"incomplete buffer near pos {tr.pos}")
 
@@ -39,14 +39,14 @@ def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def lexBackslash(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexBackslash(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	c = tr.next()
 	tr.addText2(c)
 	# tr.resetBuf()
 	return lexRoot, None
 
 
-def lexParan(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexParan(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	while True:
 		if tr.end():
 			log.warning(f"unclosed '(' near pos {tr.pos}")
@@ -67,7 +67,7 @@ def lexParan(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def lexCurly(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexCurly(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	start = tr.pos
 	while True:
 		if tr.end():
@@ -139,7 +139,7 @@ class TitleTransformer:
 		self.outputAlt += esc
 		self.title += esc
 
-	def transform(self) -> Tuple[Optional[TitleResult], ErrorType]:
+	def transform(self) -> tuple[Optional[TitleResult], ErrorType]:
 		lex: LexType = lexRoot
 		tr = cast(TransformerType, self)
 		while lex is not None:

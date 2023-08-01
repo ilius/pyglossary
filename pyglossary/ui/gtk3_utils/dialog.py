@@ -21,7 +21,7 @@ from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
 
 
-class MyDialog(object):
+class MyDialog:
 	def startWaiting(self):
 		self.queue_draw()
 		self.vbox.set_sensitive(False)

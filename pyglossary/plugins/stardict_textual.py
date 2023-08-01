@@ -50,7 +50,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Reader(object):
+class Reader:
 	_encoding: str = "utf-8"
 	_xdxf_to_html: bool = True
 
@@ -238,7 +238,7 @@ class Reader(object):
 				del elem.getparent()[0]
 
 
-class Writer(object):
+class Writer:
 	_encoding: str = "utf-8"
 
 	compressions = stdCompressions

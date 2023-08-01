@@ -237,6 +237,6 @@ class UIBase:
 				continue
 			config[key] = value
 		jsonStr = dataToPrettyJson(config)
-		with open(confJsonFile, mode="wt", encoding="utf-8") as _file:
+		with open(confJsonFile, mode="w", encoding="utf-8") as _file:
 			_file.write(jsonStr)
 		log.info(f"saved {confJsonFile!r}")

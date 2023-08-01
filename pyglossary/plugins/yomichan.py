@@ -171,7 +171,7 @@ def _uniqueList(lst: "Sequence") -> "list[Any]":
 	return result
 
 
-class Writer(object):
+class Writer:
 	_term_bank_size = 10_000
 	_term_from_headword_only = True
 	_no_term_from_reading = True

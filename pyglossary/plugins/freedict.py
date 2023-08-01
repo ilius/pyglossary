@@ -68,7 +68,7 @@ optionsProp: "dict[str, Option]" = {
 tei = "{http://www.tei-c.org/ns/1.0}"
 
 
-class Reader(object):
+class Reader:
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",

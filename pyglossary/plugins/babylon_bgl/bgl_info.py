@@ -33,7 +33,7 @@ from .bgl_charset import charsetByCode
 from .bgl_language import BabylonLanguage, languageByCode
 
 
-class InfoItem(object):
+class InfoItem:
 	__slots__ = (
 		"name",
 		"decode",

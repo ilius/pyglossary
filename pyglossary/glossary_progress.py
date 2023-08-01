@@ -6,7 +6,7 @@ from .core import log
 if TYPE_CHECKING:
 	from .ui_type import UIType
 
-class GlossaryProgress(object):
+class GlossaryProgress:
 	def __init__(
 		self,
 		ui: "UIType | None" = None,  # noqa: F821

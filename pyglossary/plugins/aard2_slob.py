@@ -72,7 +72,7 @@ extraDocs = [
 ]
 
 
-class Reader(object):
+class Reader:
 	depends = {
 		"icu": "PyICU",  # >=1.5
 	}
@@ -205,7 +205,7 @@ class Reader(object):
 			yield self._glos.newEntry(word, defi, defiFormat=defiFormat)
 
 
-class Writer(object):
+class Writer:
 	depends = {
 		"icu": "PyICU",
 	}
@@ -276,7 +276,7 @@ class Writer(object):
 			e.msg += f", run `{pip} install PyICU` to install"
 			raise e
 		if isfile(filename):
-			raise IOError(f"File '{filename}' already exists")
+			raise OSError(f"File '{filename}' already exists")
 		namePostfix = ""
 		if self._file_size_approx > 0:
 			namePostfix = " (part 1)"
@@ -310,7 +310,7 @@ class Writer(object):
 		try:
 			key.encode(slobWriter.encoding)
 		except UnicodeEncodeError:
-			log.error('Failed to add, broken unicode in key: {!a}'.format(key))
+			log.error(f'Failed to add, broken unicode in key: {key!a}')
 			return
 		slobWriter.add(content, key, content_type=content_type)
 

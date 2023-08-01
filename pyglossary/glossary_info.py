@@ -40,7 +40,7 @@ from .text_utils import (
 log = logging.getLogger("pyglossary")
 
 
-class GlossaryInfo(object):
+class GlossaryInfo:
 	def __init__(self) -> None:
 		self._info: "dict[str, str]" = odict()
 

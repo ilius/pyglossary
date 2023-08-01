@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
 # ui_cmd_interactive.py
@@ -55,7 +54,7 @@ from os.path import (
 	join,
 	relpath,
 )
-from typing import TYPE_CHECKING, Dict, Iterable, Literal
+from typing import TYPE_CHECKING, Iterable, Literal
 
 if TYPE_CHECKING:
 	from pyglossary.option import Option
@@ -84,7 +83,7 @@ from pyglossary.ui import ui_cmd
 endFormat = "\x1b[0;0;0m"
 
 
-class MiniCheckBoxPrompt(object):
+class MiniCheckBoxPrompt:
 	def __init__(
 		self,
 		message: str = "",
@@ -761,7 +760,7 @@ class UI(ui_cmd.UI):
 		)
 
 	def askConfig(self):
-		configKeys = list(sorted(self.configDefDict.keys()))
+		configKeys = sorted(self.configDefDict.keys())
 		history = FileHistory(join(histDir, "config-key"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -909,7 +908,7 @@ class UI(ui_cmd.UI):
 
 		return True  # convert
 
-	def getRunKeywordArgs(self) -> "Dict":
+	def getRunKeywordArgs(self) -> "dict":
 		return dict(
 			inputFilename=self._inputFilename,
 			outputFilename=self._outputFilename,
@@ -1083,11 +1082,11 @@ class UI(ui_cmd.UI):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "Dict | None" = None,
-		readOptions: "Dict | None" = None,
-		writeOptions: "Dict | None" = None,
-		convertOptions: "Dict | None" = None,
-		glossarySetAttrs: "Dict | None" = None,
+		config: "dict | None" = None,
+		readOptions: "dict | None" = None,
+		writeOptions: "dict | None" = None,
+		convertOptions: "dict | None" = None,
+		glossarySetAttrs: "dict | None" = None,
 	):
 		if config is None:
 			config = {}

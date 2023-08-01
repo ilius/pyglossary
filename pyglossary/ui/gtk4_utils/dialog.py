@@ -22,7 +22,7 @@ from gi.repository import Gdk as gdk
 from .utils import gtk_event_iteration_loop
 
 
-class MyDialog(object):
+class MyDialog:
 	def startWaiting(self):
 		self.queue_draw()
 		self.vbox.set_sensitive(False)

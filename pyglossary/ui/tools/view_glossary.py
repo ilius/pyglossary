@@ -94,9 +94,9 @@ def viewGlossary(
 		for entry in glos:
 			try:
 				handleEntry(entry)
-			except (BrokenPipeError, IOError):
+			except (OSError, BrokenPipeError):
 				break
-	except (BrokenPipeError, IOError):
+	except (OSError, BrokenPipeError):
 		pass  # noqa: S110
 	except Exception as e:
 		print(e)

@@ -116,7 +116,7 @@ utility confirmed the cp932 and cp950 encodings, I got 100% match.
 """
 
 
-class BabylonLanguage(object):
+class BabylonLanguage:
 
 	"""
 	Babylon language properties.

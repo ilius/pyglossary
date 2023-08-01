@@ -15,7 +15,7 @@ except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
         with open(plistPath, mode="rb") as plist_file:
             data = plistlib.loads(plist_file.read())
     except Exception as e:
-        raise IOError(
+        raise OSError(
             "'Info.plist' file is malformed, "
             f"Please provide 'Contents/' with a correct 'Info.plist'. {e}",
         ) from e

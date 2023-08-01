@@ -1,5 +1,4 @@
 from os.path import splitext
-from typing import Tuple
 from xml.sax.saxutils import escape, quoteattr
 
 from pyglossary.core import log
@@ -8,7 +7,7 @@ from ._types import ErrorType, LexType, TransformerType
 
 
 # rename to lexText?
-def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexRoot(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.start < tr.pos:
 		log.warning(f"incomplete buffer near pos {tr.pos}")
 
@@ -54,7 +53,7 @@ def lexRoot(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def lexRootNewline(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexRootNewline(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	tr.skipAny(" \t")
 	if not tr.follows("[m"):
 		tr.output += "<br/>"
@@ -62,7 +61,7 @@ def lexRootNewline(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def lexBackslash(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexBackslash(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	c = tr.next()
 	if c == " ":
 		tr.output += "&nbsp;"
@@ -75,7 +74,7 @@ def lexBackslash(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def lexTag(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexTag(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.end():
 		return None, f"'[' not closed near pos {tr.pos} in lexTag"
 	c = tr.next()
@@ -97,7 +96,7 @@ def lexTag(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	return lexTag, None
 
 
-def lexTagAttr(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexTagAttr(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.end():
 		tr.attrs[tr.attrName] = None
 		tr.resetBuf()
@@ -114,7 +113,7 @@ def lexTagAttr(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	return lexTagAttr, None
 
 
-def lexTagAttrValue(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexTagAttrValue(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.end():
 		return None, f"'[' not closed near pos {tr.pos} in lexTagAttrValue(1)"
 	c = tr.next()
@@ -141,15 +140,14 @@ def lexTagAttrValue(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 			break
 		if c == quote:
 			break
-		if not quote:
-			if c in " \t":
-				break
+		if not quote and c in " \t":
+			break
 		value += c
 	tr.attrs[tr.attrName] = value
 	return lexTag, None
 
 
-def processTagClose(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
+def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 	if not tag:
 		return None, f"empty close tag {tag!r}"
 	if tag == "m":
@@ -164,9 +162,7 @@ def processTagClose(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 		tr.output += "</sup>"
 	elif tag == "sub":
 		tr.output += "</sub>"
-	elif tag == "c":
-		tr.output += "</font>"
-	elif tag == "t":
+	elif tag in ("c", "t"):
 		tr.output += "</font>"
 	elif tag == "p":
 		tr.output += "</font></i>"
@@ -174,13 +170,9 @@ def processTagClose(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
 		tr.output += "</span>"
 	elif tag == "ex":
 		tr.output += "</font></span>"
-	elif tag in ("ref", "url", "s"):
-		pass
 	elif tag in (
-		"trn",
-		"!trn",
-		"trs",
-		"!trs",
+		"ref", "url", "s",
+		"trn", "!trn", "trs", "!trs",
 		"lang",
 		"com",
 	):
@@ -224,7 +216,7 @@ r"""
 [com]     /
 """
 
-def lexRefText(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexRefText(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.end():
 		return None, None
 
@@ -253,7 +245,7 @@ def lexRefText(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def lexUrlText(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexUrlText(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.end():
 		return None, None
 
@@ -282,7 +274,7 @@ def lexUrlText(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def lexS(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+def lexS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.end():
 		return None, None
 
@@ -315,7 +307,7 @@ def lexS(tr: TransformerType) -> Tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def processTag(tr: TransformerType, tag: str) -> Tuple[LexType, ErrorType]:
+def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 	tr.attrName = ""
 	if not tag:
 		tr.resetBuf()

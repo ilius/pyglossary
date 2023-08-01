@@ -3,7 +3,7 @@
 import sys
 import unittest
 from os.path import abspath, dirname
-from typing import Dict, Optional
+from typing import Optional
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -143,7 +143,7 @@ class TestOptionValidateStr(unittest.TestCase):
 
 
 class TestOptionValidateDict(unittest.TestCase):
-	def caseOK(self, raw: str, value: "Optional[Dict]"):
+	def caseOK(self, raw: str, value: "Optional[dict]"):
 		opt = DictOption()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertTrue(ok, "evaluate failed")
@@ -180,7 +180,7 @@ class TestOptionValidateDict(unittest.TestCase):
 
 
 class TestOptionValidateList(unittest.TestCase):
-	def caseOK(self, raw: str, value: "Optional[Dict]"):
+	def caseOK(self, raw: str, value: "Optional[dict]"):
 		opt = ListOption()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertTrue(ok, "evaluate failed")

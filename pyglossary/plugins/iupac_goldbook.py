@@ -32,7 +32,7 @@ website = "https://goldbook.iupac.org/"
 optionsProp: "dict[str, Option]" = {}
 
 
-class Reader(object):
+class Reader:
 
 	compressions = stdCompressions
 	depends = {

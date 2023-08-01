@@ -20,7 +20,7 @@ def sortKeyBytes(ba: bytes):
 def stardictStrCmp(s1, s2):
 	"""
 	use this function to sort index items in StarDict dictionary
-	s1 and s2 must be utf-8 encoded strings
+	s1 and s2 must be utf-8 encoded strings.
 	"""
 	s1 = toBytes(s1)
 	s2 = toBytes(s2)
@@ -37,7 +37,7 @@ sortKeyOld = cmp_to_key(stardictStrCmp)  # TOO SLOW
 def asciiStrCaseCmp(ba1, ba2):
 	"""
 	ba1 and ba2 are instances of bytes
-	imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file
+	imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file.
 	"""
 	commonLen = min(len(ba1), len(ba2))
 	for i in range(commonLen):
@@ -51,7 +51,7 @@ def asciiStrCaseCmp(ba1, ba2):
 def strCmp(ba1, ba2):
 	"""
 	ba1 and ba2 are instances of bytes
-	imitate strcmp of standard C library
+	imitate strcmp of standard C library.
 
 	Attention! You may have a temptation to replace this function with
 	built-in cmp() function. Hold on! Most probably these two function behave
@@ -71,9 +71,7 @@ def strCmp(ba1, ba2):
 
 
 def isAsciiAlpha(c):
-	"""
-	c is int
-	"""
+	"""C is int."""
 	return ord("A") <= c <= ord("Z") or ord("a") <= c <= ord("z")
 
 
@@ -84,7 +82,7 @@ def isAsciiLower(c):
 def isAsciiUpper(c):
 	"""
 	c is int
-	imitate ISUPPER macro of glib library gstrfuncs.c file
+	imitate ISUPPER macro of glib library gstrfuncs.c file.
 	"""
 	return ord("A") <= c <= ord("Z")
 
@@ -92,7 +90,7 @@ def isAsciiUpper(c):
 def asciiLower(c):
 	"""
 	c is int
-	returns int (ascii character code)
+	returns int (ascii character code).
 
 	imitate TOLOWER macro of glib library gstrfuncs.c file
 
