@@ -403,7 +403,7 @@ class Blob:
 		self._read = read_func
 
 	@property
-	def id(self) -> int:
+	def identity(self) -> int:
 		return self._content_id
 
 	@property
@@ -735,7 +735,7 @@ class Slob:
 		self.close()
 
 	@property
-	def id(self) -> str:
+	def identity(self) -> str:
 		return self._header.uuid.hex
 
 	@property

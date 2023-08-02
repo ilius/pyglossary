@@ -179,7 +179,7 @@ class Reader:
 		# are not all consecutive. so we have to keep a set of blob IDs
 
 		for blob in slobObj:
-			_id = blob.id
+			_id = blob.identity
 			if _id in blobSet:
 				yield None  # update progressbar
 				continue
