@@ -925,7 +925,7 @@ class UI(ui_cmd.UI):
 		if not forceAsk:
 			inputArgs = Glossary.detectInputFormat(self._inputFilename, quiet=True)
 			if inputArgs:
-				inputFormat = inputArgs[1]
+				inputFormat = inputArgs.formatName
 				self._inputFormat = inputFormat
 				return
 		self._inputFormat = self.askInputFormat()
@@ -938,7 +938,7 @@ class UI(ui_cmd.UI):
 				quiet=True,
 			)
 			if outputArgs:
-				self._outputFormat = outputArgs[1]
+				self._outputFormat = outputArgs.formatName
 				return
 		self._outputFormat = self.askOutputFormat()
 

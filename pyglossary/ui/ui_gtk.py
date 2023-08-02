@@ -1503,8 +1503,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		if self.config["ui_autoSetFormat"] and not inFormat:
 			inputArgs = Glossary.detectInputFormat(inPath, quiet=True)
 			if inputArgs:
-				inFormatNew = inputArgs[1]
-				self.convertInputFormatCombo.setActive(inFormatNew)
+				self.convertInputFormatCombo.setActive(inputArgs.formatName)
 
 		if not isfile(inPath):
 			return
@@ -1527,7 +1526,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 				quiet=True,
 			)
 			if outputArgs:
-				outFormat = outputArgs[1]
+				outFormat = outputArgs.formatName
 				self.convertOutputFormatCombo.setActive(outFormat)
 
 		if outFormat:
@@ -1591,12 +1590,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 	def reverseInputEntryChanged(self, widget=None):
 		inPath = self.reverseInputEntry.get_text()
-		inFormat = self.reverseInputFormatCombo.getActive()
 		if inPath.startswith("file://"):
 			inPath = urlToPath(inPath)
 			self.reverseInputEntry.set_text(inPath)
 
-		if not inFormat and self.config["ui_autoSetFormat"]:
+		if self.config["ui_autoSetFormat"] and not self.reverseInputFormatCombo.getActive():
 			inputArgs = Glossary.detectInputFormat(inPath, quiet=True)
 			if inputArgs:
 				inFormat = inputArgs[1]

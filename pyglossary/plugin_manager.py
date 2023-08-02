@@ -20,6 +20,7 @@
 import logging
 import os
 import sys
+from collections import namedtuple
 from os.path import isdir, join
 from typing import Any
 
@@ -37,6 +38,13 @@ from .plugin_prop import PluginProp
 
 log = logging.getLogger("pyglossary")
 
+DetectedFormat = namedtuple(
+	"DetectedFormat", [
+		"filename",  # str
+		"formatName",  # str
+		"compression",  # str
+	],
+)
 
 class PluginManager:
 	plugins: "dict[str, PluginProp]" = {}
@@ -203,9 +211,7 @@ class PluginManager:
 		filename: str,
 		format: str = "",
 		quiet: bool = False,
-	) -> "tuple[str, str, str] | None":
-		"""Return (filename, format, compression) or None."""
-
+	) -> "DetectedFormat | None":
 		def error(msg: str) -> None:
 			if not quiet:
 				log.critical(msg)
@@ -236,24 +242,36 @@ class PluginManager:
 			compression = ""
 			filename = filenameOrig
 
-		return filename, plugin.name, compression
+		return DetectedFormat(filename, plugin.name, compression)
 
+	@classmethod
+	def _outputPluginByFormat(
+		cls: "type[PluginManager]",
+		format: str,
+	) -> "tuple[PluginProp | None, str]":
+		if not format:
+			return None, ""
+		plugin = cls.plugins.get(format, None)
+		if not plugin:
+			return None, f"Invalid format {format}"
+		if not plugin.canWrite:
+			return None, f"plugin {plugin.name} does not support writing"
+		return plugin, ""
+
+	# TODO: breaking change:
+	# return "tuple[DetectedFormat | None, str]"
+	# where the str is error
+	# and remove `quiet` argument, and local `error` function
 	@classmethod
 	def detectOutputFormat(
 		cls: "type[PluginManager]",
 		filename: str = "",
 		format: str = "",
 		inputFilename: str = "",
-		quiet: bool = False,
+		quiet: bool = False,  # TODO: remove
 		addExt: bool = False,
-	) -> "tuple[str, str, str] | None":
-		"""Return (filename, format, compression) or None."""
+	) -> "DetectedFormat | None":
 		from os.path import splitext
-
-		def error(msg: str) -> None:
-			if not quiet:
-				log.critical(msg)
-			return
 
 		# Ugh, mymy
 		# https://github.com/python/mypy/issues/6549
@@ -263,13 +281,14 @@ class PluginManager:
 		# > I don't think there's a bug here.
 		# Sorry, but that's not the job of a type checker at all!
 
-		plugin = None
-		if format:
-			plugin = cls.plugins.get(format)
-			if not plugin:
-				return error(f"Invalid format {format}")  # type: ignore
-			if not plugin.canWrite:
-				return error(f"plugin {plugin.name} does not support writing")  # type: ignore
+		def error(msg: str) -> None:
+			if not quiet:
+				log.critical(msg)
+			return
+
+		plugin, err = cls._outputPluginByFormat(format)
+		if err:
+			return error(err)
 
 		if not filename:
 			if not inputFilename:
@@ -307,7 +326,7 @@ class PluginManager:
 			if not ext and plugin.ext:
 				filename += plugin.ext
 
-		return filename, plugin.name, compression
+		return DetectedFormat(filename, plugin.name, compression)
 
 	@classmethod
 	def init(

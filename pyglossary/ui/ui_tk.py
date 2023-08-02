@@ -1398,8 +1398,7 @@ class UI(tix.Frame, UIBase):
 			if not formatDesc:
 				inputArgs = Glossary.detectInputFormat(pathI, quiet=True)
 				if inputArgs:
-					format = inputArgs[1]
-					plugin = Glossary.plugins.get(format)
+					plugin = Glossary.plugins.get(inputArgs.formatName)
 					if plugin:
 						self.formatButtonInputConvert.set(plugin.description)
 						self.inputFormatChanged()
@@ -1423,9 +1422,8 @@ class UI(tix.Frame, UIBase):
 					quiet=True,
 				)
 				if outputArgs:
-					outputFormat = outputArgs[1]
 					self.formatButtonOutputConvert.set(
-						Glossary.plugins[outputFormat].description,
+						Glossary.plugins[outputArgs.formatName].description,
 					)
 					self.outputFormatChanged()
 		self.pathO = pathO

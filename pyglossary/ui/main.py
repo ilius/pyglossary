@@ -754,7 +754,7 @@ def main() -> None:
 				f"Could not detect format for input file {args.inputFilename}",
 			)
 			sys.exit(1)
-		inputFormat = inputArgs[1]
+		inputFormat = inputArgs.formatName
 		readOptionsProp = Glossary.plugins[inputFormat].optionsProp
 		for optName, optValue in readOptions.items():
 			if optName not in Glossary.formatsReadOptions[inputFormat]:
@@ -778,7 +778,7 @@ def main() -> None:
 		)
 		if outputArgs is None:
 			sys.exit(1)
-		_, outputFormat, _ = outputArgs
+		outputFormat = outputArgs.formatName
 		writeOptionsProp = Glossary.plugins[outputFormat].optionsProp
 		for optName, optValue in writeOptions.items():
 			if optName not in Glossary.formatsWriteOptions[outputFormat]:

@@ -1595,8 +1595,7 @@ check {
 		if self.config["ui_autoSetFormat"] and not inFormat:
 			inputArgs = Glossary.detectInputFormat(inPath, quiet=True)
 			if inputArgs:
-				inFormatNew = inputArgs[1]
-				self.convertInputFormatCombo.setActive(inFormatNew)
+				self.convertInputFormatCombo.setActive(inputArgs.formatName)
 
 		if not isfile(inPath):
 			return
@@ -1619,7 +1618,7 @@ check {
 				quiet=True,
 			)
 			if outputArgs:
-				outFormat = outputArgs[1]
+				outFormat = outputArgs.formatName
 				self.convertOutputFormatCombo.setActive(outFormat)
 
 		if outFormat:
@@ -1683,16 +1682,14 @@ check {
 
 	def reverseInputEntryChanged(self, widget=None):
 		inPath = self.reverseInputEntry.get_text()
-		inFormat = self.reverseInputFormatCombo.getActive()
 		if inPath.startswith("file://"):
 			inPath = urlToPath(inPath)
 			self.reverseInputEntry.set_text(inPath)
 
-		if not inFormat and self.config["ui_autoSetFormat"]:
+		if self.config["ui_autoSetFormat"] and not self.reverseInputFormatCombo.getActive():
 			inputArgs = Glossary.detectInputFormat(inPath, quiet=True)
 			if inputArgs:
-				inFormat = inputArgs[1]
-				self.reverseInputFormatCombo.setActive(inFormat)
+				self.reverseInputFormatCombo.setActive(inputArgs.formatName)
 
 	def reverseOutputEntryChanged(self, widget=None):
 		pass
