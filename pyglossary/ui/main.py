@@ -641,7 +641,7 @@ def main() -> None:
 
 	from pyglossary.glossary_v2 import Glossary
 	from pyglossary.langs import langDict
-	from pyglossary.ui.ui_cmd import help, parseFormatOptionsStr
+	from pyglossary.ui.ui_cmd import parseFormatOptionsStr, printHelp
 
 	Glossary.init()
 
@@ -653,7 +653,7 @@ def main() -> None:
 	# log.info(f"PyGlossary {core.VERSION}")
 
 	if args.help:
-		help()
+		printHelp()
 		sys.exit(0)
 
 	# only used in ui_cmd for now

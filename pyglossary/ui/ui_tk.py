@@ -538,13 +538,13 @@ class FormatButton(tk.Button):
 		self.invoke()
 
 	def onChange(self, desc):
-		self.set(desc)
+		self.setValue(desc)
 		self._onChange(desc)
 
 	def get(self):
 		return self.activeDesc
 
-	def set(self, desc):
+	def setValue(self, desc):
 		if desc:
 			self.var.set(desc)
 		else:

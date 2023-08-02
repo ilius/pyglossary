@@ -2,6 +2,7 @@
 # mypy: ignore-errors
 #
 # progressbar  - Text progress bar library for Python.
+# Copyright (c) 2023 Saeed Rasooli
 # Copyright (c) 2005 Nilton Volpato
 #
 # This library is free software; you can redistribute it and/or
@@ -166,12 +167,6 @@ class ProgressBar:
                 self.start()
             self.finish()
             raise
-
-
-    # Create an alias so that Python 2.x won't complain about not being
-    # an iterator.
-    next = __next__
-
 
     def _env_size(self):
         """Tries to find the term_width from the environment."""

@@ -1258,7 +1258,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			# about=summary,
 			about=f'{aboutText}\n<a href="{core.homePage}">{core.homePage}</a>',
 			authors="\n".join(authors),
-			license=licenseText,
+			license_text=licenseText,
 		)
 		about.label = _("About")
 		about.icon = ""  # "*.png"

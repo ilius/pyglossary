@@ -80,12 +80,12 @@ def viewGlossary(
 		nonlocal index
 		if highlightEntry:
 			highlightEntry(entry)
-		str = (
+		entryStr = (
 			f"{yellow}#{index}{reset} " +
 			formatEntry(entry) +
 			"\n" + entrySep + "\n\n"
 		)
-		proc.stdin.write(str.encode("utf-8"))
+		proc.stdin.write(entryStr.encode("utf-8"))
 		if (index + 1) % 50 == 0:
 			sys.stdout.flush()
 		index += 1

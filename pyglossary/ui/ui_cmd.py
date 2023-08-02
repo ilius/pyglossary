@@ -101,7 +101,7 @@ def getFormatsTable(names: "list[str]", header: str) -> str:
 	return "\n".join(lines)
 
 
-def help() -> None:
+def printHelp() -> None:
 	import string
 	text = fread(join(dataDir, "help"))
 	text = text.replace("<b>", startBold)\

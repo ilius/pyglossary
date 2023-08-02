@@ -32,7 +32,7 @@ class AboutWidget(gtk.Box):
 		header: str = "",
 		about: str = "",
 		authors: str = "",
-		license: str = "",
+		license_text: str = "",
 		**kwargs,
 	) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
@@ -55,7 +55,7 @@ class AboutWidget(gtk.Box):
 		##
 		tab1_about = self.newTabLabelWidget(about)
 		tab2_authors = self.newTabWidgetTextView(authors)
-		tab3_license = self.newTabWidgetTextView(license)
+		tab3_license = self.newTabWidgetTextView(license_text)
 		##
 		tabs = [
 			(tab1_about, self.newTabTitle("About", "dialog-information-22.png")),
