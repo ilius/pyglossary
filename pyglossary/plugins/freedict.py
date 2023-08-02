@@ -754,10 +754,10 @@ class Reader:
 		if not elems:
 			log.warning("did not find copyright")
 			return
-		copyright = self.stripParagList(elems)
-		copyright = self.replaceRefLink(copyright)
-		self.setGlosInfo("copyright", copyright)
-		log.debug(f"Copyright: {copyright!r}")
+		_copyright = self.stripParagList(elems)
+		_copyright = self.replaceRefLink(_copyright)
+		self.setGlosInfo("copyright", _copyright)
+		log.debug(f"Copyright: {_copyright!r}")
 
 	def setPublisher(self, header: "Element") -> None:
 		elem = header.find(".//publisher", self.ns)

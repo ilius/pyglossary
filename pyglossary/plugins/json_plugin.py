@@ -68,10 +68,10 @@ class Writer:
 		enable_info = self._enable_info
 		resources = self._resources
 
-		ascii = encoding == "ascii"
+		ensure_ascii = encoding == "ascii"
 
 		def escape(st: str) -> str:
-			return dumps(st, ensure_ascii=ascii)
+			return dumps(st, ensure_ascii=ensure_ascii)
 
 		yield from writeTxt(
 			glos,

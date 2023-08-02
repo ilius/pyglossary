@@ -1281,9 +1281,9 @@ class Writer:
 			ifo.append(("synwordcount", str(synWordCount)))
 
 		desc = glos.getInfo("description")
-		copyright = glos.getInfo("copyright")
-		if copyright:
-			desc = f"{copyright}\n{desc}"
+		_copyright = glos.getInfo("copyright")
+		if _copyright:
+			desc = f"{_copyright}\n{desc}"
 		publisher = glos.getInfo("publisher")
 		if publisher:
 			desc = f"Publisher: {publisher}\n{desc}"

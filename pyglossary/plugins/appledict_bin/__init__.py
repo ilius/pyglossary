@@ -273,9 +273,9 @@ class Reader:
 		if identifier and identifier != name:
 			self._glos.setInfo("CFBundleIdentifier", identifier)
 
-		copyright = metadata.get("DCSDictionaryCopyright")
-		if copyright:
-			self._glos.setInfo("copyright", copyright)
+		_copyright = metadata.get("DCSDictionaryCopyright")
+		if _copyright:
+			self._glos.setInfo("copyright", _copyright)
 
 		author = metadata.get("DCSDictionaryManufacturerName")
 		if author:

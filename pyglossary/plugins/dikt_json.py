@@ -65,7 +65,7 @@ class Writer:
 		enable_info = self._enable_info
 		resources = self._resources
 
-		ascii = encoding == "ascii"
+		ensure_ascii = encoding == "ascii"
 
 		def escape(st: str) -> str:
 			# remove styling from HTML tags
@@ -80,7 +80,7 @@ class Writer:
 			# such as hyphenation in word (e.g. абб{[']}а{[/']}т)
 			st2 = re.sub(r"\{\['\]\}", "", st2)
 			st2 = re.sub(r"\{\[/'\]\}", "", st2)
-			return dumps(st2, ensure_ascii=ascii)
+			return dumps(st2, ensure_ascii=ensure_ascii)
 
 		yield from writeTxt(
 			glos,

@@ -340,11 +340,11 @@ class Writer:
 				)).format(dict_name=fileNameBase),
 			)
 
-		copyright = glos.getInfo("copyright")
+		_copyright = glos.getInfo("copyright")
 		if BeautifulSoup:
 			# strip html tags
-			copyright = str(BeautifulSoup.BeautifulSoup(
-				copyright,
+			_copyright = str(BeautifulSoup.BeautifulSoup(
+				_copyright,
 				features="lxml",
 			).text)
 
@@ -370,7 +370,7 @@ class Writer:
 					CFBundleIdentifier=bundle_id,
 					CFBundleDisplayName=glos.getInfo("name"),
 					CFBundleName=fileNameBase,
-					DCSDictionaryCopyright=copyright,
+					DCSDictionaryCopyright=_copyright,
 					DCSDictionaryManufacturerName=glos.author,
 					DCSDictionaryXSL=basename(xsl) if xsl else "",
 					DCSDictionaryDefaultPrefs=format_default_prefs(default_prefs),
