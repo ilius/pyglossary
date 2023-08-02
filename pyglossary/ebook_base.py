@@ -218,14 +218,14 @@ class EbookWriter:
 	def add_file_manifest(
 		self,
 		relative_path: str,
-		id: str,
+		_id: str,
 		contents: bytes,
 		mimetype: str,
 	) -> None:
 		self.add_file(relative_path, contents)
 		self.manifest_files.append({
 			"path": relative_path,
-			"id": id,
+			"id": _id,
 			"mimetype": mimetype,
 		})
 
