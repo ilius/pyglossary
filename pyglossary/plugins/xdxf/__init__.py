@@ -152,7 +152,8 @@ class Reader:
 			cfile,
 			events=("end",),
 		)
-		for _, elem in context:
+		for _, _elem in context:
+			elem = cast("Element", _elem)
 			if elem.tag in ("meta_info", "ar", "k", "abr", "dtrn"):
 				break
 			# every other tag before </meta_info> or </ar> is considered info
@@ -204,7 +205,8 @@ class Reader:
 			events=("end",),
 			tag="ar",
 		)
-		for _, article in context:
+		for _, _article in context:
+			article = cast("Element", _article)
 			article.tail = None
 			words = [toStr(w) for w in self.titles(article)]
 			if self._htmlTr:
@@ -225,9 +227,12 @@ class Reader:
 				byteProgress=(self._file.tell(), self._fileSize),
 			)
 			# clean up preceding siblings to save memory
-			# this reduces memory usage from ~64 MB to ~30 MB
+			# this can reduce memory usage from 1 GB to ~25 MB
+			parent = article.getparent()
+			if parent is None:
+				continue
 			while article.getprevious() is not None:
-				del article.getparent()[0]
+				del parent[0]
 
 	def close(self) -> None:
 		self._file.close()

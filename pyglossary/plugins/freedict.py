@@ -877,7 +877,7 @@ class Reader:
 			tag=f"{tei}teiHeader",
 		)
 		for _, elem in context:
-			self.setMetadata(elem)
+			self.setMetadata(elem)  # type: ignore
 			break
 
 		cfile.close()
@@ -900,12 +900,16 @@ class Reader:
 			events=("end",),
 			tag=f"{tei}entry",
 		)
-		for _, elem in context:
+		for _, _elem in context:
+			elem = cast("Element", _elem)
 			yield self.getEntryByElem(elem)
 			# clean up preceding siblings to save memory
-			# this reduces memory usage from ~64 MB to ~30 MB
+			# this can reduce memory usage from 1 GB to ~25 MB
+			parent = elem.getparent()
+			if parent is None:
+				continue
 			while elem.getprevious() is not None:
-				del elem.getparent()[0]
+				del parent[0]
 
 		if self._discoveredTags:
 			log.info("Found unsupported tags")

@@ -32,7 +32,7 @@ _OutputMethodArg = Literal[
 ]
 
 
-# Element type can not be a protocol or interface or anything
+# Element type can not be a protocol or interface or even TypeAlias
 # it's stupid!
 Element = _Element
 

@@ -422,9 +422,13 @@ class Reader:
 			events=("end",),
 			tag="entry",
 		)
-		for _, elem in context:
+		for _, _elem in context:
+			elem = cast("Element", _elem)
 			yield self.getEntryByElem(elem)
 			# clean up preceding siblings to save memory
 			# this reduces memory usage from ~64 MB to ~30 MB
+			parent = elem.getparent()
+			if parent is None:
+				continue
 			while elem.getprevious() is not None:
-				del elem.getparent()[0]
+				del parent[0]

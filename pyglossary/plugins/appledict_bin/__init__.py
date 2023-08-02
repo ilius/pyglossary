@@ -43,7 +43,7 @@ from .key_data import KeyData, RawKeyData
 if TYPE_CHECKING:
 	import io
 
-	from lxml.html import (
+	from lxml.html import (  # type: ignore
 		HtmlComment,
 		HtmlElement,
 		HtmlEntity,

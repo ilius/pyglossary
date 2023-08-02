@@ -288,9 +288,10 @@ class PluginManager:
 
 		plugin, err = cls._outputPluginByFormat(format)
 		if err:
-			return error(err)
+			return error(err)  # type: ignore
 
 		if not filename:
+			# FIXME: not covered in tests
 			if not inputFilename:
 				return error(f"Invalid filename {filename!r}")  # type: ignore
 			if not plugin:

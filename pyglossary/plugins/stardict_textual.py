@@ -110,7 +110,7 @@ class Reader:
 			tag="info",
 		)
 		for _, elem in context:
-			self.setMetadata(elem)
+			self.setMetadata(elem)  # type: ignore
 			break
 
 		cfile.close()
@@ -190,7 +190,8 @@ class Reader:
 			events=("end",),
 			tag="article",
 		)
-		for _, elem in context:
+		for _, _elem in context:
+			elem = cast("Element", _elem)
 			words = []
 			defisWithFormat = []
 			for child in elem.getchildren():
@@ -235,7 +236,10 @@ class Reader:
 			# clean up preceding siblings to save memory
 			# this can reduce memory usage from >300 MB to ~25 MB
 			while elem.getprevious() is not None:
-				del elem.getparent()[0]
+				parent = elem.getparent()
+				if parent is None:
+					break
+				del parent[0]
 
 
 class Writer:

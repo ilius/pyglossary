@@ -199,7 +199,7 @@ class WordNet:
 
 	def __init__(self, wordnetdir) -> None:
 		self.wordnetdir = wordnetdir
-		self.collector = defaultdict(list)
+		self.collector: "dict[str, list[str]]" = defaultdict(list)
 
 	def iterlines(self, dict_dir):
 		for name in os.listdir(dict_dir):

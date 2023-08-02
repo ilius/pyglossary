@@ -279,5 +279,8 @@ class Reader:
 
 			# clean up preceding siblings to save memory
 			# this can reduce memory usage from >300 MB to ~25 MB
+			parent = elem.getparent()
+			if parent is None:
+				continue
 			while elem.getprevious() is not None:
-				del elem.getparent()[0]
+				del parent[0]
