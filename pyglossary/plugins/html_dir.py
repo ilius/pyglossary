@@ -4,6 +4,7 @@ import html
 import os
 import re
 import time
+from functools import lru_cache
 from os.path import isdir, isfile, join
 from typing import TYPE_CHECKING, Generator
 
@@ -85,7 +86,6 @@ h6 {{ font-size: 1.0em;}}
 
 class Writer:
 	depends = {
-		"cachetools": "cachetools",
 	}
 
 	_encoding: str = "utf-8"
@@ -113,8 +113,6 @@ class Writer:
 		self._resSrcPattern = re.compile(' src="([^"]*)"')
 
 	def open(self, filename: str) -> None:
-		from cachetools import LRUCache  # noqa: F401
-
 		self._filename = filename
 		self._resDir = resDir = join(filename, "res")
 		if not isdir(filename):
@@ -155,8 +153,6 @@ class Writer:
 	def fixLinks(self, linkTargetSet: "set[str]") -> None:
 		import gc
 
-		from cachetools import LRUCache
-
 		gc.collect()
 		dirn = self._filename
 
@@ -179,23 +175,16 @@ class Writer:
 			else:
 				fileByWord[word] = [(filename, entryIndex)]
 
-		linksByFile: "LRUCache" = LRUCache(maxsize=100)
-
 		# with open(join(dirn, "fileByWord.json"), "w") as fileByWordFile:
 		# 	json.dump(fileByWord, fileByWordFile, ensure_ascii=False, indent="\t")
 
+		@lru_cache(maxsize=10)
 		def getLinksByFile(fileIndex: int) -> "io.TextIOBase":
-			nonlocal linksByFile
-			_file = linksByFile.get(fileIndex)
-			if _file is not None:
-				return _file
-			_file = open(
+			return open(
 				join(dirn, f"links{fileIndex}"),
 				mode="a",
 				encoding="utf-8",
 			)
-			linksByFile[fileIndex] = _file
-			return _file
 
 		log.info("")
 		for line in open(join(dirn, "links.txt"), encoding="utf-8"):
@@ -216,10 +205,6 @@ class Writer:
 				f"{x_start}\t{x_size}\t{targetNew}\n",
 			)
 			_file.flush()
-
-		for _, _file in linksByFile.items():
-			_file.close()
-		del linksByFile
 
 		linkTargetSet.clear()
 		del fileByWord, linkTargetSet
