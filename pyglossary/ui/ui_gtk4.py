@@ -1347,7 +1347,7 @@ check {
 			# about=summary,
 			about=f'{aboutText}\n<a href="{core.homePage}">{core.homePage}</a>',
 			authors="\n".join(authors),
-			license=licenseText,
+			license_text=licenseText,
 		)
 		about.label = _("About")
 		about.icon = ""  # "*.png"
@@ -1494,12 +1494,12 @@ check {
 		self._glossarySetAttrs = glossarySetAttrs
 		self.present()
 
-	def exit(self):
+	def exitApp(self):
 		self.destroy()
 		sys.exit(0)
 
 	def onCloseRequest(self, widget):
-		self.exit()
+		self.exitApp()
 
 	def onKeyPress(
 		self,
@@ -1509,7 +1509,7 @@ check {
 		state: "gdk.ModifierType",
 	):
 		if keyval == gdk.KEY_Escape:
-			self.exit()
+			self.exitApp()
 
 	def onButtonPress(self, gesture, n_press, x, y):
 		print(f"MainWindow.onButtonPress: {gesture}")
