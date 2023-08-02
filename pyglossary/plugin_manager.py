@@ -296,7 +296,7 @@ class PluginManager:
 			if not plugin:
 				return error("No filename nor format is given for output file")  # type: ignore
 			filename = splitext(inputFilename)[0] + plugin.ext
-			return filename, plugin.name, ""
+			return DetectedFormat(filename, plugin.name, "")
 
 		filenameOrig = filename
 		filenameNoExt, filename, ext, compression = splitFilenameExt(filename)
