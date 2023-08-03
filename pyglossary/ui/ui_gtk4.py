@@ -1138,7 +1138,7 @@ check {
 		#	self.styleProvider,
 		#	gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
 		#)
-		self.styleProvider.load_from_data(self.css.encode("utf-8"))
+		self.styleProvider.load_from_data(self.css, len(self.css.encode("utf-8")))
 		#####
 		self.assert_quit = False
 		self.path = ""
