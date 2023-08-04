@@ -22,9 +22,11 @@ import gzip
 import os
 import string
 import sys
-import io
 import typing
 from typing import Iterable
+
+if typing.TYPE_CHECKING:
+	import io
 
 b64_list = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 url_headword = "00-database-url"
@@ -37,8 +39,10 @@ validdict = set(
 
 
 def b64_encode(val: int) -> str:
-	"""Takes as input an integer val and returns a string of it encoded
-	with the base64 algorithm used by dict indexes."""
+	"""
+	Takes as input an integer val and returns a string of it encoded
+	with the base64 algorithm used by dict indexes.
+	"""
 	startfound = 0
 	retval = ""
 	for i in range(5, -1, -1):
@@ -48,28 +52,32 @@ def b64_encode(val: int) -> str:
 			continue
 		startfound = 1
 		retval += b64_list[thispart]
-	if len(retval):
+	if retval:
 		return retval
 	return b64_list[0]
 
 
-def b64_decode(str: str) -> int:
-	"""Takes as input a string and returns an integer value of it decoded
-	with the base64 algorithm used by dict indexes."""
-	if not len(str):
+def b64_decode(text: str) -> int:
+	"""
+	Takes as input a string and returns an integer value of it decoded
+	with the base64 algorithm used by dict indexes.
+	"""
+	if not text:
 		return 0
 	retval = 0
 	shiftval = 0
-	for i in range(len(str) - 1, -1, -1):
-		val = b64_list.index(str[i])
+	for i in range(len(text) - 1, -1, -1):
+		val = b64_list.index(text[i])
 		retval = retval | (val << shiftval)
 		shiftval += 6
 	return retval
 
 
 def sortNormalize(x: str) -> str:
-	"""Returns a value such that x is mapped to a format that sorts properly
-	with standard comparison."""
+	"""
+	Returns a value such that x is mapped to a format that sorts properly
+	with standard comparison.
+	"""
 	x2 = ''
 	for i in range(len(x)):
 		if x[i] in validdict:
@@ -82,7 +90,7 @@ def sortKey(x: str) -> "list[str]":
 	return x.split("\0")
 
 
-class DictDB(object):
+class DictDB:
 	def __init__(
 		self,
 		basename: str,
@@ -91,7 +99,8 @@ class DictDB(object):
 	) -> None:
 		#, url = 'unknown', shortname = 'unknown',
 		#		 longinfo = 'unknown', quiet = 0):
-		"""Initialize a DictDB object.
+		"""
+		Initialize a DictDB object.
 
 		Mode must be one of:
 
@@ -107,8 +116,8 @@ class DictDB(object):
 		with dict.dz files.
 
 		If quiet is nonzero, status messages
-		will be suppressed."""
-
+		will be suppressed.
+		"""
 		self.mode = mode
 		self.quiet = quiet
 		self.indexEntries: "dict[str, list[tuple[int, int]]]" = {}
@@ -144,7 +153,7 @@ class DictDB(object):
 		elif mode == 'update':
 			try:
 				self.indexFile = open(self.indexFilename, "r+b")
-			except IOError:
+			except OSError:
 				self.indexFile = open(self.indexFilename, "w+b")
 			if self.useCompression:
 				# Open it read-only since we don't support mods.
@@ -152,7 +161,7 @@ class DictDB(object):
 			else:
 				try:
 					self.dictFile = open(self.dictFilename, "r+b")
-				except IOError:
+				except OSError:
 					self.dictFile = open(self.dictFilename, "w+b")
 			self._initIndex()
 		else:
@@ -184,9 +193,11 @@ class DictDB(object):
 		start: int,
 		size: int,
 	) -> None:
-		"""Adds an entry to the index.  word is the relevant word.
+		"""
+		Adds an entry to the index.  word is the relevant word.
 		start is the starting position in the dictionary and size is the
-		size of the definition; both are integers."""
+		size of the definition; both are integers.
+		"""
 		if word not in self.indexEntries:
 			self.indexEntries[word] = []
 		self.indexEntries[word].append((start, size))
@@ -197,7 +208,8 @@ class DictDB(object):
 		start: "int | None" = None,
 		size: "int | None" = None,
 	) -> int:
-		"""Removes an entry from the index; word is the word to search for.
+		"""
+		Removes an entry from the index; word is the word to search for.
 
 		start and size are optional.  If they are specified, only index
 		entries matching the specified values will be removed.
@@ -212,8 +224,8 @@ class DictDB(object):
 		exist on-disk in the .dict file, but the dict server will just
 		not "see" it -- there will be no way to get to it anymore.
 
-		Returns a count of the deleted entries."""
-
+		Returns a count of the deleted entries.
+		"""
 		if word not in self.indexEntries:
 			return 0
 		retval = 0
@@ -224,7 +236,7 @@ class DictDB(object):
 				(size is None or size == entrylist[i][1]):
 				del(entrylist[i])
 				retval += 1
-		if len(entrylist) == 0:         # If we emptied it, del it completely
+		if not entrylist:  # if we emptied it, del it completely
 			del(self.indexEntries[word])
 		return retval
 
@@ -235,15 +247,19 @@ class DictDB(object):
 			sys.stdout.flush()
 
 	def setUrl(self, url: str) -> None:
-		"""Sets the URL attribute of this database.  If there was
+		"""
+		Sets the URL attribute of this database.  If there was
 		already a URL specified, we will use deleteIndexEntry() on it
-		first."""
+		first.
+		"""
 		self.deleteIndexEntry(url_headword)
 		self.addEntry(url_headword + "\n     " + url, [url_headword])
 
 	def setShortName(self, shortname: str) -> None:
-		"""Sets the shortname for this database.  If there was already
-		a shortname specified, we will use deleteIndexEntry() on it first."""
+		"""
+		Sets the shortname for this database.  If there was already
+		a shortname specified, we will use deleteIndexEntry() on it first.
+		"""
 		self.deleteIndexEntry(short_headword)
 		self.addEntry(
 			short_headword + "\n     " + shortname,
@@ -251,9 +267,11 @@ class DictDB(object):
 		)
 
 	def setLongInfo(self, longinfo: str) -> None:
-		"""Sets the extended information for this database.  If there was
+		"""
+		Sets the extended information for this database.  If there was
 		already long info specified, we will use deleteIndexEntry() on it
-		first."""
+		first.
+		"""
 		self.deleteIndexEntry(info_headword)
 		self.addEntry(info_headword + "\n" + longinfo, [info_headword])
 
@@ -262,10 +280,12 @@ class DictDB(object):
 		s_defi: str,
 		headwords: "list[str]",
 	) -> None:
-		"""Writes an entry.  defstr holds the content of the definition.
+		"""
+		Writes an entry.  defstr holds the content of the definition.
 		headwords is a list specifying one or more words under which this
 		definition should be indexed.  This function always adds \\n
-		to the end of defstr."""
+		to the end of defstr.
+		"""
 		self.dictFile.seek(0, 2)        # Seek to end of file
 		start = self.dictFile.tell()
 		s_defi += "\n"
@@ -279,14 +299,15 @@ class DictDB(object):
 			self.update("Processed %d records\r" % self.count)
 
 	def finish(self, dosort: bool = True) -> None:
-		"""Called to finish the writing process.
+		"""
+		Called to finish the writing process.
 		**REQUIRED IF OPENED WITH 'update' OR 'write' MODES**.
 		This will write the index and close the files.
 
 		dosort is optional and defaults to true.  If set to false,
 		dictlib will not sort the index file.  In this case, you
-		MUST manually sort it through "sort -df" before it can be used."""
-
+		MUST manually sort it through "sort -df" before it can be used.
+		"""
 		self.update("Processed %d records.\n" % self.count)
 
 		if dosort:
@@ -295,11 +316,7 @@ class DictDB(object):
 			indexList: "list[str]" = []
 			for word, defs in self.indexEntries.items():
 				for thisdef in defs:
-					indexList.append("%s\t%s\t%s" % (
-						word,
-						b64_encode(thisdef[0]),
-						b64_encode(thisdef[1]),
-					))
+					indexList.append(f"{word}\t{b64_encode(thisdef[0])}\t{b64_encode(thisdef[1])}")
 
 			self.update(" mapping")
 
@@ -349,17 +366,21 @@ class DictDB(object):
 		self.dictFile.close()
 
 	def getDefList(self) -> "Iterable[str]":
-		"""Returns a list of strings naming all definitions contained
-		in this dictionary."""
+		"""
+		Returns a list of strings naming all definitions contained
+		in this dictionary.
+		"""
 		return self.indexEntries.keys()
 
 	def hasDef(self, word: str) -> bool:
 		return word in self.indexEntries
 
 	def getDef(self, word: str) -> "list[bytes]":
-		"""Given a definition name, returns a list of strings with all
+		"""
+		Given a definition name, returns a list of strings with all
 		matching definitions.  This is an *exact* match, not a
-		case-insensitive one.  Returns [] if word is not in the dictionary."""
+		case-insensitive one.  Returns [] if word is not in the dictionary.
+		"""
 		retval: "list[bytes]" = []
 		if not self.hasDef(word):
 			return retval

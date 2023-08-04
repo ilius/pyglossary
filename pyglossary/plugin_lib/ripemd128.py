@@ -150,4 +150,4 @@ def ripemd128(message: bytes) -> bytes:
 
 
 def hexstr(bstr):
-	return "".join("{0:02x}".format(b) for b in bstr)
+	return "".join(f"{b:02x}" for b in bstr)

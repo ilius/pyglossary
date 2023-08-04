@@ -53,9 +53,7 @@ if sys.hexversion >= 0x03000000:
 
 
 def _unescape_entities(text):
-	"""
-	unescape offending tags < > " &
-	"""
+	"""Unescape offending tags < > " &."""
 	text = text.replace(b'&lt;', b'<')
 	text = text.replace(b'&gt;', b'>')
 	text = text.replace(b'&quot;', b'"')
@@ -64,9 +62,7 @@ def _unescape_entities(text):
 
 
 def _fast_decrypt(data, key):
-	"""
-	XOR decryption
-	"""
+	"""XOR decryption."""
 	b = bytearray(data)
 	key = bytearray(key)
 	previous = 0x36
@@ -79,9 +75,7 @@ def _fast_decrypt(data, key):
 
 
 def _salsa_decrypt(ciphertext, encrypt_key):
-	"""
-	salsa20 (8 rounds) decryption
-	"""
+	"""salsa20 (8 rounds) decryption."""
 	s20 = Salsa20(key=encrypt_key, IV=b"\x00"*8, rounds=8)
 	return s20.encryptBytes(ciphertext)
 
@@ -92,11 +86,13 @@ def _decrypt_regcode_by_userid(reg_code: bytes, userid: bytes) -> bytes:
 	return s20.encryptBytes(reg_code)
 
 
-class MDict(object):
+class MDict:
+
 	"""
 	Base class which reads in header and key block.
 	It has no public methods and serves only as code sharing base class.
 	"""
+
 	def __init__(
 		self,
 		fname: str,
@@ -151,9 +147,7 @@ class MDict(object):
 		return self.keys()
 
 	def keys(self):
-		"""
-		Return an iterator over dictionary keys.
-		"""
+		"""Return an iterator over dictionary keys."""
 		return (key_value for key_id, key_value in self._key_list)
 
 	def _read_number(self, f):
@@ -163,9 +157,7 @@ class MDict(object):
 		return unpack('>I', f.read(4))[0]
 
 	def _parse_header(self, header):
-		"""
-		extract attributes from <Dict attr="value" ... >
-		"""
+		"""Extract attributes from <Dict attr="value" ... >."""
 		taglist = re.findall(rb'(\w+)="(.*?)"', header, re.DOTALL)
 		tagdict = {}
 		for key, value in taglist:
@@ -362,7 +354,7 @@ class MDict(object):
 			if sys.hexversion >= 0x03000000:
 				encoding = encoding.decode('utf-8')
 			# GB18030 > GBK > GB2312
-			if encoding in ['GBK', 'GB2312']:
+			if encoding in ('GBK', 'GB2312'):
 				encoding = 'GB18030'
 			self._encoding = encoding
 
@@ -556,8 +548,7 @@ class MDict(object):
 		return key_list
 
 	def items(self):
-		"""Return a generator which in turn produce tuples in the form of (filename, content)
-		"""
+		"""Return a generator which in turn produce tuples in the form of (filename, content)."""
 		return self._read_records()
 
 	def _read_records(self):
@@ -655,14 +646,16 @@ class MDict(object):
 
 
 class MDD(MDict):
+
 	"""
 	MDict resource file format (*.MDD) reader.
 	>>> mdd = MDD('example.mdd')
 	>>> len(mdd)
 	208
 	>>> for filename,content in mdd.items():
-	... print filename, content[:10]
+	... print filename, content[:10].
 	"""
+
 	def __init__(
 		self,
 		fname: str,
@@ -672,14 +665,16 @@ class MDD(MDict):
 
 
 class MDX(MDict):
+
 	"""
 	MDict dictionary file format (*.MDD) reader.
 	>>> mdx = MDX('example.mdx')
 	>>> len(mdx)
 	42481
 	>>> for key,value in mdx.items():
-	... print key, value[:10]
+	... print key, value[:10].
 	"""
+
 	def __init__(
 		self,
 		fname: str,
@@ -781,7 +776,7 @@ if __name__ == '__main__':
 		print('======== %s ========' % bfname)
 		print('  Number of Entries : %d' % len(mdx))
 		for key, value in mdx.header.items():
-			print('  %s : %s' % (key, value))
+			print(f'  {key} : {value}')
 	else:
 		mdx = None
 
@@ -796,7 +791,7 @@ if __name__ == '__main__':
 		print('======== %s ========' % bfname)
 		print('  Number of Entries : %d' % len(mdd))
 		for key, value in mdd.header.items():
-			print('  %s : %s' % (key, value))
+			print(f'  {key} : {value}')
 	else:
 		mdd = None
 
