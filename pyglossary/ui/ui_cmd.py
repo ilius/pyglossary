@@ -72,23 +72,20 @@ def getFormatsTable(names: "list[str]", header: str) -> str:
 	descriptionWidth = getColWidth("Description", descriptions)
 	extensionsWidth = getColWidth("Extensions", extensions)
 
-	lines = ["\n"]
-	lines.append(startBold + header + endFormat)
-
-	lines.append(
+	lines = [
+		"\n",
+		startBold + header + endFormat,
 		" | ".join([
 			"Name".center(nameWidth),
 			"Description".center(descriptionWidth),
 			"Extensions".center(extensionsWidth),
 		]),
-	)
-	lines.append(
 		"-+-".join([
 			"-" * nameWidth,
 			"-" * descriptionWidth,
 			"-" * extensionsWidth,
 		]),
-	)
+	]
 	for index, name in enumerate(names):
 		lines.append(
 			" | ".join([
@@ -138,15 +135,6 @@ def parseFormatOptionsStr(st: str) -> "dict[str, Any] | None":
 		value = part[eq + 1:].strip()
 		opt[key] = value
 	return opt
-
-
-def encodeFormatOptions(opt: "dict") -> str:
-	if not opt:
-		return ""
-	parts = []
-	for key, value in opt.items():
-		parts.append(f"{key}={value}")
-	return ";".join(parts)
 
 
 class NullObj:

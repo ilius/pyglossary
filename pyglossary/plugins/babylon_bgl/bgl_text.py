@@ -26,9 +26,9 @@ from pyglossary import core
 from pyglossary.core import log
 from pyglossary.xml_utils import xml_escape
 
-u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.I)
-u_pat_html_entry_key = re.compile("(?:&#x|&#|&)(\\w+);", re.I)
-b_pat_ascii_char_ref = re.compile(b"(&#\\w+;)", re.I)
+u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.IGNORECASE)
+u_pat_html_entry_key = re.compile("(?:&#x|&#|&)(\\w+);", re.IGNORECASE)
+b_pat_ascii_char_ref = re.compile(b"(&#\\w+;)", re.IGNORECASE)
 u_pat_newline_escape = re.compile("[\\r\\n\\\\]")
 u_pat_strip_tags = re.compile("(?:<[/a-zA-Z].*?(?:>|$))+")
 u_pat_control_chars = re.compile("[\x00-\x08\x0c\x0e-\x1f]")

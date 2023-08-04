@@ -547,7 +547,7 @@ class Reader:
 				return "\n<hr>".join(defis), _format
 			return "\n".join(defis), _format
 
-		if len(defiFormatSet) == 0:
+		if not defiFormatSet:
 			log.error(f"empty defiFormatSet, {rawDefiList=}")
 			return "", ""
 

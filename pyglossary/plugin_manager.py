@@ -96,7 +96,7 @@ class PluginManager:
 			moduleName
 			for _, moduleName, _ in pkgutil.iter_modules([directory])
 			if moduleName not in cls.loadedModules and
-			moduleName not in ("formats_common",)
+			moduleName != "formats_common"
 		]
 		moduleNames.sort()
 
@@ -215,7 +215,6 @@ class PluginManager:
 		def error(msg: str) -> None:
 			if not quiet:
 				log.critical(msg)
-			return
 
 		filenameOrig = filename
 		filenameNoExt, filename, ext, compression = splitFilenameExt(filename)
@@ -284,7 +283,6 @@ class PluginManager:
 		def error(msg: str) -> None:
 			if not quiet:
 				log.critical(msg)
-			return
 
 		plugin, err = cls._outputPluginByFormat(format)
 		if err:

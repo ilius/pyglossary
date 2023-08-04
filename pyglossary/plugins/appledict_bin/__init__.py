@@ -494,7 +494,7 @@ class Reader:
 				while keyTextFile.tell() < fileLimit + APPLEDICT_FILE_OFFSET:
 					compressedSectionByteLen = readInt(keyTextFile)
 					decompressedSectionByteLen = readInt(keyTextFile)
-					if compressedSectionByteLen == 0x0 and decompressedSectionByteLen == 0x0:
+					if compressedSectionByteLen == decompressedSectionByteLen == 0:
 						break
 					chunk_section_compressed = keyTextFile.read(compressedSectionByteLen - 4)
 					chunksection_bytes = decompress(chunk_section_compressed )
@@ -581,7 +581,7 @@ class Reader:
 					if priorityAndParentalControl >= 0x40:
 						log.error(
 							"WRONG priority or parental control:"
-							f"{priorityAndParentalControl} (section: {hex(bufferOffset)})"
+							f"{priorityAndParentalControl} (section: {bufferOffset:#x})"
 							", skipping KeyText.data file",
 						)
 						return {}

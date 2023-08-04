@@ -214,7 +214,7 @@ class Writer:
 
 		re_href = re.compile(
 			b' href="[^<>"]*?"',
-			re.I,
+			re.IGNORECASE,
 		)
 
 		for fileIndex, filename in enumerate(filenameList):
@@ -368,8 +368,10 @@ class Writer:
 			links = []
 			if len(self._filenameList) > 1:
 				links.append(f'<a href="./{self._filenameList[-2]}">&#9664;</a>')
-			links.append(f'<a href="./{self.getNextFilename()}">&#9654;</a>')
-			links.append('<a href="./info.html">ℹ️</a></div>')
+			links.extend([
+				f'<a href="./{self.getNextFilename()}">&#9654;</a>',
+				'<a href="./info.html">ℹ️</a></div>',
+			])
 			return (
 				'<nav style="text-align: center; font-size: 2.5em;">' +
 				f'{nbsp}{nbsp}{nbsp}'.join(links) +
@@ -392,7 +394,7 @@ class Writer:
 
 		re_fixed_link = re.compile(
 			r'<a (?:[^<>]*? )?href="#([^<>"]+?)">[^<>]+?</a>',
-			re.I,
+			re.IGNORECASE,
 		)
 
 		linkTargetSet = set()
@@ -417,8 +419,8 @@ class Writer:
 				linksTxtFileObj.write(
 					f"{escapeNTB(target)}\t"
 					f"{len(self._filenameList)-1}\t"
-					f"{hex(pos+b_start)[2:]}\t"
-					f"{hex(b_size)[2:]}\n",
+					f"{pos+b_start:x}\t"
+					f"{b_size:x}\n",
 				)
 				linksTxtFileObj.flush()
 

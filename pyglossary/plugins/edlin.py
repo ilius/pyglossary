@@ -210,7 +210,7 @@ class Writer:
 			return _hash
 		index = 0
 		while True:
-			tmp_hash = _hash + hex(index)[2:]
+			tmp_hash = _hash + f"{index:x}"
 			if tmp_hash not in self._hashSet:
 				self._hashSet.add(tmp_hash)
 				return tmp_hash

@@ -300,7 +300,7 @@ class Reader:
 	def writeSenseGloss(
 		self,
 		hf: "T_htmlfile",
-		text: str,
+		text: "str | None",
 	):
 		hf.write(text or "")
 
@@ -344,7 +344,7 @@ class Reader:
 			hf.write(text)
 		example.pop("ref", "")
 		example.pop("type", "")
-		for _, text in example.items():
+		for text in example.values():
 			if not text:
 				continue
 			hf.write(text)

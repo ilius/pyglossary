@@ -61,7 +61,7 @@ class Reader:
 		skip_single: bool = True,
 	) -> None:
 		"""Wrap elements into <ol> if more than one element."""
-		if len(input_elements) == 0:
+		if not input_elements:
 			return
 
 		if len(input_elements) == 1:
@@ -83,7 +83,7 @@ class Reader:
 		skip_single: bool = True,
 	) -> None:
 		"""Wrap elements into <ol> if more than one element."""
-		if len(groups) == 0:
+		if not groups:
 			return
 
 		if len(groups) == 1:

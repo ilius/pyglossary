@@ -375,7 +375,6 @@ class KeydItemDict:
 			else:
 				break
 			i += 1
-		return
 
 	def __contains__(self, key: str) -> bool:
 		try:
@@ -533,7 +532,7 @@ class StructWriter:
 			raise ValueError("Text is too long for size spec %s" % len_size_spec)
 		self._file.write(pack(
 			len_size_spec,
-			pad_to_length if pad_to_length else length,
+			pad_to_length or length,
 		))
 		self._file.write(text_bytes)
 		if pad_to_length:
@@ -823,11 +822,11 @@ def find_parts(fname: str) -> "list[str]":
 	fname = os.path.expanduser(fname)
 	dirname = os.path.dirname(fname) or os.getcwd()
 	basename = os.path.basename(fname)
-	candidates: "list[str]" = []
-	for name in os.listdir(dirname):
-		if name.startswith(basename):
-			candidates.append(os.path.join(dirname, name))
-	return sorted(candidates)
+	return sorted([
+		os.path.join(dirname, name)
+		for name in os.listdir(dirname)
+		if name.startswith(basename)
+	])
 
 
 def open(*filenames: str) -> Slob:
@@ -1210,7 +1209,7 @@ class Writer:
 			else:
 				actual_keys.append((actual_key, fragment))
 
-		if len(actual_keys) == 0:
+		if not actual_keys:
 			return
 
 		current_bin = self.current_bin

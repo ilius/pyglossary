@@ -120,7 +120,6 @@ class XdxfTransformer:
 			hf.write(line)
 		if trail:
 			addSep()
-		return
 
 	def _write_example(self, hf: "T_htmlfile", elem: "Element") -> None:
 		prev = None

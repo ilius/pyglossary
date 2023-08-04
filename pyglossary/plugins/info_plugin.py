@@ -56,11 +56,11 @@ class Writer:
 
 		re_possible_html = re.compile(
 			r"<[a-z1-6]+[ />]",
-			re.I,
+			re.IGNORECASE,
 		)
 		re_style = re.compile(
 			r"<([a-z1-6]+)[^<>]* style=",
-			re.I | re.DOTALL,
+			re.IGNORECASE | re.DOTALL,
 		)
 
 		wordCount = 0

@@ -213,11 +213,13 @@ class Writer:
 		if cur is None:
 			raise ValueError("cur is None")
 		for term in terms:
-			subs = set()
+			subs: "set[str]" = set()
 			for word in term.split(" "):
 				eword = "\n" + word
-				for i in range(len(eword)-2):
-					subs.add(eword[i:i+3])
+				subs.update(
+					eword[i:i+3]
+					for i in range(len(eword)-2)
+				)
 			for sub in subs:
 				cur.execute(
 					"INSERT INTO fuzzy3"

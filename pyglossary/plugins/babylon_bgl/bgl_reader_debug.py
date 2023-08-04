@@ -193,7 +193,7 @@ class DebugBglReader(BglReader):
 		if self._msg_log_path:
 			self.msgLogFile = open(self._msg_log_path, "w")
 
-		self.charRefStatPattern = re.compile(b"(&#\\w+;)", re.I)
+		self.charRefStatPattern = re.compile(b"(&#\\w+;)", re.IGNORECASE)
 
 	def openGzip(self):
 		with open(self._filename, "rb") as bglFile:

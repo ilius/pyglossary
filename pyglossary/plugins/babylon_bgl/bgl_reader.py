@@ -144,7 +144,7 @@ else:
 
 re_charset_decode = re.compile(
 	b"(<charset\\s+c\\=[\'\"]?(\\w)[\"\"]?>|</charset>)",
-	re.I,
+	re.IGNORECASE,
 )
 re_b_reference = re.compile(b"^[0-9a-fA-F]{4}$")
 
@@ -358,8 +358,8 @@ class BglReader:
 		self.msgLogFile = None
 		self.samplesDumpFile = None
 		##
-		self.stripSlashAltKeyPattern = re.compile(r"(^|\s)/(\w)", re.U)
-		self.specialCharPattern = re.compile(r"[^\s\w.]", re.U)
+		self.stripSlashAltKeyPattern = re.compile(r"(^|\s)/(\w)", re.UNICODE)
+		self.specialCharPattern = re.compile(r"[^\s\w.]", re.UNICODE)
 		###
 		self.file = None
 		# offset of gzip header, set in self.open()
@@ -936,8 +936,7 @@ class BglReader:
 			# so do we.
 			u_alts.add(u_alt)
 			pos += Len
-		if u_word in u_alts:
-			u_alts.remove(u_word)
+		u_alts.discard(u_word)
 		return True, pos, sorted(u_alts)
 
 	def readEntry_Type11(
@@ -1012,8 +1011,8 @@ class BglReader:
 			# so do we.
 			u_alts.add(u_alt)
 			pos += altLen
-		if u_word in u_alts:
-			u_alts.remove(u_word)
+
+		u_alts.discard(u_word)
 
 		# reading defi
 		defiLen = uintFromBytes(block.data[pos:pos + 4])

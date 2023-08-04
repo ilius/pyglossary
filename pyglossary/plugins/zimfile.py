@@ -169,7 +169,7 @@ class Reader:
 
 		log.info(f"ZIM Entry Count: {entryCount}")
 
-		if len(fileNameTooLong) > 0:
+		if not fileNameTooLong:
 			log.error(f"Files with name too long: {len(fileNameTooLong)}")
 
 		if emptyContentCount > 0:

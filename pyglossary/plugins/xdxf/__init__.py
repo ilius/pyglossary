@@ -157,7 +157,7 @@ class Reader:
 			if elem.tag in ("meta_info", "ar", "k", "abr", "dtrn"):
 				break
 			# every other tag before </meta_info> or </ar> is considered info
-			if elem.tag in ("abbr_def",):
+			if elem.tag == "abbr_def":
 				continue
 			# in case of multiple <from> or multiple <to> tags, the last one
 			# will be stored.

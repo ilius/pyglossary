@@ -270,7 +270,7 @@ class WordNet:
 					data_file = files[pointer.pos]
 					data_file.seek(pointer.offset)
 					referenced_synset = SynSet(data_file.readline())
-					if pointer.source == 0 and pointer.target == 0:
+					if pointer.source == pointer.target == 0:
 						pointers[symbol_desc] = [
 							w for w in referenced_synset.words if w not in words
 						]

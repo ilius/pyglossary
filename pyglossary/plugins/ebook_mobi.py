@@ -242,12 +242,13 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		hide_word_index = self._hide_word_index
 		infl = ""
 		if variants:
-			iforms_list = []
-			for variant in variants:
-				iforms_list.append(self.GROUP_XHTML_WORD_IFORM_TEMPLATE.format(
+			iforms_list = [
+				self.GROUP_XHTML_WORD_IFORM_TEMPLATE.format(
 					inflword=variant,
 					exact_str=' exact="yes"' if self._exact else '',
-				))
+				)
+				for variant in variants
+			]
 			infl = "\n" + \
 				self.GROUP_XHTML_WORD_INFL_TEMPLATE.format(
 					iforms_str="\n".join(iforms_list))

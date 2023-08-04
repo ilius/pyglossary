@@ -147,7 +147,7 @@ class DataEntry(BaseEntry):
 
 
 class Entry(BaseEntry):
-	xdxfPattern = re.compile("^<k>[^<>]*</k>", re.S | re.I)
+	xdxfPattern = re.compile("^<k>[^<>]*</k>", re.DOTALL | re.IGNORECASE)
 	htmlPattern = re.compile(
 		".*(?:" + "|".join([
 			r"<font[ >]",
@@ -169,7 +169,7 @@ class Entry(BaseEntry):
 			r"<h[1-6][ >]",
 			r"<audio[ >]",
 		]) + "|&[a-z]{2,8};|&#x?[0-9]{2,5};)",
-		re.S | re.I,
+		re.DOTALL | re.IGNORECASE,
 	)
 
 	__slots__ = [

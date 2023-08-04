@@ -70,7 +70,7 @@ class Reader:
 		skip_single: bool = True,
 	) -> None:
 		"""Wrap elements into <ol> if more than one element."""
-		if len(input_objects) == 0:
+		if not input_objects:
 			return
 
 		if len(input_objects) == 1:

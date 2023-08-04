@@ -152,10 +152,10 @@ class Reader:
 		self,
 		defisWithFormat: "list[tuple[str, str]]",
 	) -> "tuple[str, str]":
+		if not defisWithFormat:
+			return "", ""
 		if len(defisWithFormat) == 1:
 			return defisWithFormat[0]
-		if len(defisWithFormat) == 0:
-			return "", ""
 
 		defiFormatSet = set()
 		for _, _type in defisWithFormat:

@@ -286,7 +286,7 @@ class Reader:
 		except KeyError:
 			pass
 		else:
-			if _type not in ("trans",):
+			if _type != "trans":
 				attrib["class"] = _type
 		with hf.element(tag, attrib=attrib):
 			self.writeRichText(hf, child)

@@ -239,7 +239,7 @@ class NormalizeHtml(EntryFilter):
 				fr"</?{tag}[^<>]*?>"
 				for tag in self._tags
 			) + ")",
-			re.S | re.I,
+			re.DOTALL | re.IGNORECASE,
 		)
 
 	def _subLower(self, m: "re.Match") -> str:
@@ -407,7 +407,7 @@ class UnescapeWordLinks(EntryFilter):
 		EntryFilter.__init__(self, glos)
 		self._pat = re.compile(
 			r'href="bword://[^<>"]*&#?\w+;[^<>"]*"',
-			re.I,
+			re.IGNORECASE,
 		)
 		self._unescape = unescape_unicode
 

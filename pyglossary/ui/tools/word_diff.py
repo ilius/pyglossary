@@ -5,10 +5,10 @@ from typing import Iterator
 
 from pyglossary.ui.tools.colors import green, red, reset
 
-wordRE = re.compile(r"(\W)", re.M)
+wordRE = re.compile(r"(\W)", re.MULTILINE)
 xmlTagRE = re.compile(
 	"</?[a-z][0-9a-z]* *[^<>]*>",
-	re.I | re.M,
+	re.IGNORECASE | re.MULTILINE,
 )
 
 

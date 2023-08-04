@@ -215,7 +215,7 @@ class Writer:
 		)
 
 	def _compileRegex(self) -> None:
-		for field_name in [
+		for field_name in (
 			"_delete_word_pattern",
 			"_ignore_word_with_pattern",
 			"_alternates_from_word_pattern",
@@ -225,7 +225,7 @@ class Writer:
 			"_rule_vs_defi_pattern",
 			"_rule_vk_defi_pattern",
 			"_rule_adji_defi_pattern",
-		]:
+		):
 			value = getattr(self, field_name)
 			if value and isinstance(value, str):
 				setattr(self, field_name, re.compile(value))
@@ -288,13 +288,13 @@ class Writer:
 	def _getRuleIdentifiersFromEntry(self, entry: EntryType) -> list[str]:
 		return [
 			r
-			for p, r in [
+			for p, r in (
 				(self._rule_v1_defi_pattern, "v1"),
 				(self._rule_v5_defi_pattern, "v5"),
 				(self._rule_vs_defi_pattern, "vs"),
 				(self._rule_vk_defi_pattern, "vk"),
 				(self._rule_adji_defi_pattern, "adj-i"),
-			]
+			)
 			if p and re.search(p, entry.defi, re.MULTILINE)
 		]
 
@@ -306,11 +306,10 @@ class Writer:
 		termExpressions, reading = self._getExpressionsAndReadingFromEntry(entry)
 		ruleIdentifiers = self._getRuleIdentifiersFromEntry(entry)
 
-		entryTerms = []
-		for expression in termExpressions:
-			# Schema: https://github.com/FooSoft/yomichan/
-			# blob/master/ext/data/schemas/dictionary-term-bank-v3-schema.json
-			entryTerms.append([
+		# Schema: https://github.com/FooSoft/yomichan/
+		# blob/master/ext/data/schemas/dictionary-term-bank-v3-schema.json
+		return [
+			[
 				expression,
 				# reading only added if expression contains kanji
 				reading if any(map(_isKanji, expression)) else "",
@@ -320,9 +319,9 @@ class Writer:
 				[entry.defi],
 				sequenceNumber,
 				"",  # term tags
-			])
-
-		return entryTerms
+			]
+			for expression in termExpressions
+		]
 
 	def open(self, filename: str) -> None:
 		self._filename = filename

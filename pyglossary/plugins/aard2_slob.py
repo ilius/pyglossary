@@ -82,7 +82,7 @@ class Reader:
 		self._clear()
 		self._re_bword = re.compile(
 			'(<a href=[^<>]+?>)',
-			re.I,
+			re.IGNORECASE,
 		)
 
 	def close(self) -> None:
