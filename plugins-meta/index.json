@@ -1364,6 +1364,46 @@
 		}
 	},
 	{
+		"module": "quickdic6",
+		"lname": "quickdic6",
+		"name": "QuickDic6",
+		"description": "QuickDic version 6 (.quickdic)",
+		"extensions": [
+			".quickdic",
+			".quickdic.v006.zip"
+		],
+		"singleFile": false,
+		"optionsProp": {
+			"normalizer_rules": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "ICU normalizer rules to use for index sorting"
+			},
+			"source_lang": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "The language of the tokens in the dictionary index"
+			},
+			"target_lang": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "The language of the dictionary entries"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"sortOnWrite": "never",
+		"readOptions": {},
+		"writeOptions": {
+			"normalizer_rules": "",
+			"source_lang": "",
+			"target_lang": ""
+		}
+	},
+	{
 		"module": "sql",
 		"lname": "sql",
 		"name": "Sql",
