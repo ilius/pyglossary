@@ -1,0 +1,13 @@
+[Dictionary]
+web = "https://play.google.com/store/apps/details?id=de.reimardoeffinger.quickdic"
+source = "https://github.com/rdoeffinger/Dictionary"
+platforms = [ "Android",]
+license = "Apache License 2.0"
+plang = "Java"
+
+[DictionaryPC]
+web = "https://github.com/rdoeffinger/DictionaryPC"
+source = "https://github.com/rdoeffinger/DictionaryPC"
+platforms = [ "Windows",]
+license = "Apache License 2.0"
+plang = "Java"

@@ -1,0 +1,646 @@
+# -*- coding: utf-8 -*-
+
+import datetime as dt
+import functools
+import gzip
+import io
+import math
+import pathlib
+import struct
+import zipfile
+
+import icu
+
+from pyglossary.core import log
+from pyglossary.flags import NEVER
+from pyglossary.glossary_types import GlossaryType
+from pyglossary.langs import langDict
+from pyglossary.option import (
+    BoolOption,
+    Option,
+    StrOption,
+)
+from pyglossary.plugin_lib import mutf8
+
+enable = True
+lname = "quickdic6"
+format = "QuickDic6"
+description = "QuickDic version 6 (.quickdic)"
+extensions = (".quickdic", ".quickdic.v006.zip")
+extensionCreate = ".quickdic"
+
+sortOnWrite = NEVER
+
+kind = "binary"
+wiki = ""
+website = (
+    "https://github.com/rdoeffinger/Dictionary",
+    "github.com/rdoeffinger/Dictionary",
+)
+# https://github.com/rdoeffinger/Dictionary/blob/master/dictionary-format-v6.txt
+optionsProp: "dict[str, Option]" = {
+    "normalizer_rules": StrOption(
+        comment="ICU normalizer rules to use for index sorting",
+    ),
+    "source_lang": StrOption(
+        comment="The language of the tokens in the dictionary index",
+    ),
+    "target_lang": StrOption(
+        comment="The language of the dictionary entries",
+    ),
+}
+
+HASH_SET_INIT = (
+    b"\xac\xed" # magic
+    b"\x00\x05" # version
+    b"\x73" # object
+    b"\x72" # class
+    # Java String "java.util.HashSet":
+    b"\x00\x11\x6a\x61\x76\x61\x2e\x75\x74\x69"
+    b"\x6c\x2e\x48\x61\x73\x68\x53\x65\x74"
+)
+"""First part of Java serialization of java.util.HashSet"""
+
+HASH_SET_INIT2 = (
+    # serialization ID:
+    b"\xba\x44\x85\x95\x96\xb8\xb7\x34"
+    b"\x03" # flags: serialized, custom serialization function
+    b"\x00\x00" # fields count
+    b"\x78" # blockdata end
+    b"\x70" # null (superclass)
+    b"\x77\x0c" # blockdata short, 0xc bytes
+)
+"""Second part of Java serialization of java.util.HashSet"""
+
+LINKED_HASH_SET_INIT = (
+    b"\xac\xed" # magic
+    b"\x00\x05" # version
+    b"\x73" # object
+    b"\x72" # class
+    # Java String "java.util.LinkedHashSet":
+    b"\x00\x17\x6a\x61\x76\x61\x2e\x75\x74\x69"
+    b"\x6c\x2e\x4c\x69\x6e\x6b\x65\x64"
+    b"\x48\x61\x73\x68\x53\x65\x74"
+    # serialization ID:
+    b"\xd8\x6c\xd7\x5a\x95\xdd\x2a\x1e"
+    b"\x02" # flags: serialized, custom serialization function
+    b"\x00\x00" # fields count
+    b"\x78" # blockdata end
+    b"\x72" # superclass (java.util.HashSet)
+    b"\x00\x11\x6a\x61\x76\x61\x2e\x75\x74\x69"
+    b"\x6c\x2e\x48\x61\x73\x68\x53\x65\x74"
+) + HASH_SET_INIT2
+"""Header of Java serialization of java.util.LinkedHashSet"""
+
+HASH_SET_CAPACITY_FACTOR = 0.75
+"""Capacity factor used to determine the hash set's capacity from its length"""
+
+def read_byte(fp):
+    return struct.unpack(">b", fp.read(1))[0]
+
+def write_byte(fp, val):
+    return fp.write(struct.pack(">b", val))
+
+def read_bool(fp):
+    return bool(read_byte(fp))
+
+def write_bool(fp, val):
+    return write_byte(fp, val)
+
+def read_short(fp):
+    return struct.unpack(">h", fp.read(2))[0]
+
+def write_short(fp, val):
+    return fp.write(struct.pack(">h", val))
+
+def read_int(fp):
+    return struct.unpack(">i", fp.read(4))[0]
+
+def write_int(fp, val):
+    return fp.write(struct.pack(">i", val))
+
+def read_long(fp):
+    return struct.unpack(">q", fp.read(8))[0]
+
+def write_long(fp, val):
+    return fp.write(struct.pack(">q", val))
+
+def read_float(fp):
+    return struct.unpack(">f", fp.read(4))[0]
+
+def write_float(fp, val):
+    return fp.write(struct.pack(">f", val))
+
+def read_string(fp):
+    length = read_short(fp)
+    return mutf8.decode_modified_utf8(fp.read(length))
+
+def write_string(fp, val):
+    b_string = mutf8.encode_modified_utf8(val)
+    return write_short(fp, len(b_string)) + fp.write(b_string)
+
+def read_hashset(fp):
+    hash_set_init = fp.read(len(HASH_SET_INIT))
+    if hash_set_init == HASH_SET_INIT:
+        hash_set_init2 = fp.read(len(HASH_SET_INIT2))
+        assert hash_set_init2 == HASH_SET_INIT2
+    else:
+        n_extra = len(LINKED_HASH_SET_INIT) - len(HASH_SET_INIT)
+        hash_set_init += fp.read(n_extra)
+        assert hash_set_init == LINKED_HASH_SET_INIT
+    capacity = read_int(fp)
+    capacity_factor = read_float(fp)
+    assert capacity_factor == HASH_SET_CAPACITY_FACTOR
+    num_entries = read_int(fp)
+    data = []
+    while len(data) < num_entries:
+        assert read_byte(fp) == 0x74
+        data.append(read_string(fp))
+    assert read_byte(fp) == 0x78
+    return data
+
+def write_hashset(fp, data, linked_hash_set=False):
+    write_start_offset = fp.tell()
+    if linked_hash_set:
+        fp.write(LINKED_HASH_SET_INIT)
+    else:
+        fp.write(HASH_SET_INIT + HASH_SET_INIT2)
+    num_entries = len(data)
+    capacity = (
+        2**math.ceil(math.log(num_entries / HASH_SET_CAPACITY_FACTOR, 2))
+        if num_entries > 0 else 128
+    )
+    write_int(fp, capacity)
+    write_float(fp, HASH_SET_CAPACITY_FACTOR)
+    write_int(fp, num_entries)
+    for string in data:
+        write_byte(fp, 0x74)
+        write_string(fp, string)
+    write_byte(fp, 0x78)
+    return fp.tell() - write_start_offset
+
+def read_list(fp, fun):
+    size = read_int(fp)
+    toc = struct.unpack(f">{size + 1}q", fp.read(8 * (size + 1)))
+    entries = []
+    for offset in toc[:-1]:
+        fp.seek(offset)
+        entries.append(fun(fp))
+    fp.seek(toc[-1])
+    return entries
+
+def write_list(fp, fun, entries):
+    write_start_offset = fp.tell()
+    size = len(entries)
+    write_int(fp, size)
+    toc_offset = fp.tell()
+    fp.seek(toc_offset + 8 * (size + 1))
+    toc = [fp.tell()]
+    for e in entries:
+        fun(fp, e)
+        toc.append(fp.tell())
+    fp.seek(toc_offset)
+    fp.write(struct.pack(f">{size + 1}q", *toc))
+    fp.seek(toc[-1])
+    return fp.tell() - write_start_offset
+
+def read_entry_int(fp):
+    return read_int(fp)
+
+def write_entry_int(fp, entry):
+    return write_int(fp, entry)
+
+def read_entry_source(fp):
+    name = read_string(fp)
+    count = read_int(fp)
+    return name, count
+
+def write_entry_source(fp, entry):
+    name, count = entry
+    return write_string(fp, name) + write_int(fp, count)
+
+def read_entry_pairs(fp):
+    src_idx = read_short(fp)
+    count = read_int(fp)
+    pairs = [(read_string(fp), read_string(fp)) for i in range(count)]
+    return src_idx, pairs
+
+def write_entry_pairs(fp, entry):
+    write_start_offset = fp.tell()
+    src_idx, pairs = entry
+    write_short(fp, src_idx)
+    write_int(fp, len(pairs))
+    for p in pairs:
+        write_string(fp, p[0])
+        write_string(fp, p[1])
+    return fp.tell() - write_start_offset
+
+def read_entry_text(fp):
+    src_idx = read_short(fp)
+    txt = read_string(fp)
+    return src_idx, txt
+
+def write_entry_text(fp, entry):
+    src_idx, txt = entry
+    return write_short(fp, src_idx) + write_string(fp, txt)
+
+def read_entry_html(fp):
+    src_idx = read_short(fp)
+    title = read_string(fp)
+    len_raw = read_int(fp)
+    len_compr = read_int(fp)
+    b_compr = fp.read(len_compr)
+    with gzip.open(io.BytesIO(b_compr), "r") as zf:
+        # this is not modified UTF-8 (read_string), but actual UTF-8
+        html = zf.read().decode()
+    return src_idx, title, html
+
+def write_entry_html(fp, entry):
+    write_start_offset = fp.tell()
+    src_idx, title, html = entry
+    b_html = html.encode()
+    b_compr = io.BytesIO()
+    with gzip.GzipFile(fileobj=b_compr, mode="wb") as zf:
+        # note that the compressed bytes might differ from the original Java
+        # implementation that uses GZIPOutputStream
+        zf.write(b_html)
+    b_compr.seek(0)
+    b_compr = b_compr.read()
+    write_short(fp, src_idx)
+    write_string(fp, title)
+    write_int(fp, len(b_html))
+    write_int(fp, len(b_compr))
+    fp.write(b_compr)
+    return fp.tell() - write_start_offset
+
+def read_entry_index(fp):
+    short_name = read_string(fp)
+    long_name = read_string(fp)
+    iso = read_string(fp)
+    normalizer_rules = read_string(fp)
+    swap_flag = read_bool(fp)
+    main_token_count = read_int(fp)
+    index_entries = read_list(fp, read_entry_indexentry)
+
+    stop_list_size = read_int(fp)
+    stop_list_offset = fp.tell()
+    stop_list = read_hashset(fp)
+    assert fp.tell() == stop_list_offset + stop_list_size
+
+    num_rows = read_int(fp)
+    row_size = read_int(fp)
+    row_data = fp.read(num_rows * row_size)
+    rows = [
+        # <type>, <index>
+        # <type> means:
+        # 1: index into list_of([pair_entry])
+        # 2: index into list_of([index_entry]) (mark as "main word header" entry)
+        # 3: index into list_of([text_entry])
+        # 4: index into list_of([index_entry]) (mark as "extra info/translation" entry)
+        # 5: index into list_of([html_entry])
+        struct.unpack(">bi", row_data[j:j + row_size])
+        for j in range(0, len(row_data), row_size)
+    ]
+    return (
+        short_name, long_name, iso, normalizer_rules, swap_flag, main_token_count,
+        index_entries, stop_list, rows,
+    )
+
+def write_entry_index(fp, entry):
+    write_start_offset = fp.tell()
+    (
+        short_name, long_name, iso, normalizer_rules, swap_flag, main_token_count,
+        index_entries, stop_list, rows,
+    ) = entry
+    write_string(fp, short_name)
+    write_string(fp, long_name)
+    write_string(fp, iso)
+    write_string(fp, normalizer_rules)
+    write_bool(fp, swap_flag)
+    write_int(fp, main_token_count)
+    write_list(fp, write_entry_indexentry, index_entries)
+
+    stop_list_size_offset = fp.tell()
+    stop_list_offset = stop_list_size_offset + write_int(fp, 0)
+    stop_list_size = write_hashset(fp, stop_list, linked_hash_set=True)
+    fp.seek(stop_list_size_offset)
+    write_int(fp, stop_list_size)
+    fp.seek(stop_list_offset + stop_list_size)
+
+    write_int(fp, len(rows))
+    write_int(fp, 5)
+    row_data = b"".join([struct.pack(">bi", t, i) for t, i in rows])
+    fp.write(row_data)
+    return fp.tell() - write_start_offset
+
+def read_entry_indexentry(fp):
+    token = read_string(fp)
+    start_index = read_int(fp)
+    count = read_int(fp)
+    has_normalized = read_bool(fp)
+    token_norm = read_string(fp) if has_normalized else ""
+    html_indices = read_list(fp, read_entry_int)
+    return token, start_index, count, token_norm, html_indices
+
+def write_entry_indexentry(fp, entry):
+    token, start_index, count, token_norm, html_indices = entry
+    has_normalized = token_norm != ""
+    write_string(fp, token)
+    write_int(fp, start_index)
+    write_int(fp, count)
+    write_bool(fp, has_normalized)
+    if has_normalized:
+        write_string(fp, token_norm)
+    write_list(fp, write_entry_int, html_indices)
+
+class Comparator:
+    def __init__(self, locale_str, normalizer_rules, version):
+        self.version = version
+        self.locale = icu.Locale(locale_str)
+        self._comparator = icu.Collator.createInstance(self.locale)
+        self._comparator.setStrength(icu.Collator.IDENTICAL)
+        self.normalizer_rules = normalizer_rules
+        self.normalize = icu.Transliterator.createFromRules(
+            "", self.normalizer_rules, icu.UTransDirection.FORWARD,
+        ).transliterate
+
+    def compare(self, s1, s2):
+        s1, n1 = s1 if isinstance(s1, tuple) else (s1, self.normalize(s1))
+        s2, n2 = s2 if isinstance(s2, tuple) else (s2, self.normalize(s2))
+        return self._compare_normalized(s1, s2, n1, n2)
+
+    def _compare_normalized(self, s1, s2, n1, n2):
+        cn = self._compare_without_dash(n1, n2)
+        if cn != 0:
+            return cn
+        cn = self._comparator.compare(n1, n2)
+        if cn != 0:
+            return cn
+        return self._comparator.compare(s1, s2)
+
+    def _compare_without_dash(self, a, b):
+        if self.version < 7:
+            return 0
+        s1 = self._without_dash(a)
+        s2 = self._without_dash(b)
+        return self._comparator.compare(s1, s2)
+
+    def _without_dash(self, a):
+        return a.replace("-", "").replace("þ", "th").replace("Þ", "Th")
+
+class QuickDic:
+    def __init__(self, name, sources, pairs, texts, htmls, version=6, indices=None, created=None):
+        self.name = name
+        self.sources = sources
+        self.pairs = pairs
+        self.texts = texts
+        self.htmls = htmls
+        self.version = version
+        self.indices = [] if indices is None else indices
+        self.created = dt.datetime.now() if created is None else created
+
+    @classmethod
+    def from_path(cls, path):
+        path = pathlib.Path(path)
+        if path.suffix != ".zip":
+            with open(path, "rb") as fp:
+                return cls.from_fp(fp)
+        with zipfile.ZipFile(path, mode="r") as zf:
+            fname = [n for n in zf.namelist() if n.endswith(".quickdic")][0]
+            with zf.open(fname) as fp:
+                return cls.from_fp(fp)
+
+    @classmethod
+    def from_fp(cls, fp):
+        version = read_int(fp)
+        created = dt.datetime.fromtimestamp(float(read_long(fp)) / 1000.0)
+        name = read_string(fp)
+        sources = read_list(fp, read_entry_source)
+        pairs = read_list(fp, read_entry_pairs)
+        texts = read_list(fp, read_entry_text)
+        htmls = read_list(fp, read_entry_html)
+        indices = read_list(fp, read_entry_index)
+        assert fp.read(19) == b"\x00\x11END OF DICTIONARY"
+        return cls(
+            name, sources, pairs, texts, htmls, version=version,
+            indices=indices, created=created,
+        )
+
+    def add_index(
+        self, short_name, long_name, iso, normalizer_rules, swap_flag, synonyms=None,
+    ):
+        synonyms = {} if synonyms is None else synonyms
+        n_synonyms = sum(len(v) for v in synonyms.values())
+        log.info(f"Adding an index for {iso} with {n_synonyms} synonyms ...")
+
+        # since we don't tokenize, the stop list is always empty
+        stop_list = []
+        if self.indices is None:
+            self.indices = []
+
+        log.info("Initialize token list ...")
+        tokens = [
+            (pair[1 if swap_flag else 0], 1, idx)
+            for idx, (_, pairs) in enumerate(self.pairs)
+            for pair in pairs
+        ]
+        if not swap_flag:
+            tokens.extend([(title, 5, idx) for idx, (_, title, _) in enumerate(self.htmls)])
+        tokens = [(t.strip(), ttype, tidx) for t, ttype, tidx in tokens]
+
+        log.info(f"Sort list with {len(tokens)} tokens ...")
+        comparator = Comparator(iso, normalizer_rules, self.version)
+        key_fun = functools.cmp_to_key(comparator.compare)
+        tokens = sorted((
+            ((t, comparator.normalize(t)), ttype, tidx)
+            for t, ttype, tidx in tokens
+            if t != ""
+        ), key=lambda x: key_fun(x[0]))
+
+        log.info("Convert tokens to index entries ...")
+        index_entries = []
+        rows = []
+        for (name, normed), ttype, idx in tokens:
+            prev_normed = None if len(index_entries) == 0 else index_entries[-1][3]
+            index_entry = (
+                # token, start_index, count, token_norm, html_indices
+                [name, len(rows), 0, normed, []]
+                if normed != prev_normed else
+                list(index_entries.pop())
+            )
+            index_entry[2] += 1
+            if ttype == 5:
+                index_entry[4].append(idx)
+            index_entries.append(tuple(index_entry))
+            rows.append((ttype, idx))
+        main_token_count = len(index_entries)
+
+        if len(synonyms) > 0:
+            log.info(f"Insert synonyms into index ({len(index_entries)} entries) ...")
+            index_entries.extend([
+                (s, e[1], e[2], comparator.normalize(s), e[4])
+                for e in index_entries if e[0] in synonyms
+                for s in synonyms[e[0]]
+            ])
+            log.info(f"Sort index with synonyms ({len(index_entries)} entries) ...")
+            index_entries = sorted(index_entries, key=lambda e: key_fun((e[0], e[3])))
+
+        self.indices.append((
+            short_name, long_name, iso, normalizer_rules, swap_flag,
+            main_token_count, index_entries, stop_list, rows,
+        ))
+
+    def write(self, path):
+        with open(path, "wb") as fp:
+            log.info(f"Writing to {path} ...")
+            write_int(fp, self.version)
+            write_long(fp, int(self.created.timestamp() * 1000))
+            write_string(fp, self.name)
+            write_list(fp, write_entry_source, self.sources)
+            write_list(fp, write_entry_pairs, self.pairs)
+            write_list(fp, write_entry_text, self.texts)
+            write_list(fp, write_entry_html, self.htmls)
+            write_list(fp, write_entry_index, self.indices)
+            fp.write(b"\x00\x11END OF DICTIONARY")
+
+class Reader(object):
+    def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+        self._glos = glos
+        self._dic = None
+
+    def open(self: "typing.Self", filename: str) -> None:
+        self._filename = filename
+        self._dic = QuickDic.from_path(self._filename)
+        self._glos.setDefaultDefiFormat("h")
+        self._extract_synonyms_from_indices()
+
+    def _extract_synonyms_from_indices(self):
+        self._synonyms = {}
+        for _, _, _, _, swap_flag, _, index_entries, _, rows in self._dic.indices:
+            if swap_flag:
+                continue
+            for token, start_index, count, token_norm, html_indices in index_entries:
+                l_entry_ids = (
+                    [(5, idx) for idx in html_indices]
+                    + [
+                        (entry_type, entry_idx)
+                        for entry_type, entry_idx in rows[start_index:start_index + count]
+                        if entry_type in [1, 5]
+                    ]
+                )
+                for entry_id in l_entry_ids:
+                    if entry_id not in self._synonyms:
+                        self._synonyms[entry_id] = set()
+                    self._synonyms[entry_id].add(token)
+                    self._synonyms[entry_id].add(token_norm)
+
+
+    def close(self: "typing.Self") -> None:
+        self.clear()
+
+    def clear(self: "typing.Self") -> None:
+        self._filename = ""
+        self._dic = None
+
+    def __len__(self: "typing.Self") -> int:
+        return (
+            sum(len(p) for _, p in self._dic.pairs)
+            + len(self._dic.htmls)
+        )
+
+    def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+        for idx, (_, pairs) in enumerate(self._dic.pairs):
+            syns = sorted(self._synonyms.get((1, idx), []))
+            for word, defi in pairs:
+                yield self._glos.newEntry([word] + syns, defi, defiFormat="m")
+        for idx, (_, word, defi) in enumerate(self._dic.htmls):
+            syns = sorted(self._synonyms.get((5, idx), []))
+            yield self._glos.newEntry([word] + syns, defi, defiFormat="h")
+
+class Writer(object):
+    _normalizer_rules = ""
+    _source_lang = ""
+    _target_lang = ""
+
+    def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+        self._glos = glos
+        self._filename = None
+        self._dic = None
+
+    def finish(self: "typing.Self") -> None:
+        self._filename = None
+        self._dic = None
+
+    def open(self: "typing.Self", filename: str) -> None:
+        self._filename = filename
+
+    def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+        synonyms = {}
+        htmls = []
+        log.info("Converting individual entries ...")
+        while True:
+            entry = yield
+            if entry is None:
+                break
+            if entry.isData():
+                log.warn(f"Ignoring binary data entry {entry.l_word[0]}")
+                continue
+
+            entry.detectDefiFormat()  # call no more than once
+            if entry.defiFormat not in ["h", "m"]:
+                log.error(f"invalid {entry.defiFormat}, using 'm'")
+                defiFormat = "m"
+
+            words = entry.l_word
+            if words[0] in synonyms:
+                synonyms[words[0]].extend(words[1:])
+            else:
+                synonyms[words[0]] = words[1:]
+            htmls.append((0, words[0], entry.defi))
+
+        log.info("Collecting meta data ...")
+        name = self._glos.getInfo("bookname")
+        if name == "":
+            name = self._glos.getInfo("description")
+
+        sourceLang = (
+            self._glos.sourceLang
+            if self._source_lang == "" else
+            langDict[self._source_lang]
+        )
+        targetLang = (
+            self._glos.targetLang
+            if self._target_lang == "" else
+            langDict[self._target_lang]
+        )
+        if sourceLang and targetLang:
+            sourceLang = sourceLang.code
+            targetLang = targetLang.code
+        else:
+            # fallback if no languages are specified
+            sourceLang = targetLang = "EN"
+        langs = f"{sourceLang}->{targetLang}"
+        if langs not in name.lower():
+            name = f"{self._glos.getInfo('name')} ({langs})"
+
+        sources = [("", len(htmls))]
+        pairs = []
+        texts = []
+        self._dic = QuickDic(name, sources, pairs, texts, htmls)
+
+        short_name = sourceLang
+        long_name = langs
+        iso = sourceLang
+        normalizer_rules = (
+            self._normalizer_rules
+            if self._normalizer_rules != "" else
+            ":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
+            if iso == "DE" else
+            ":: Any-Latin; ' ' > ; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;"
+        )
+        self._dic.add_index(
+            short_name, long_name, iso, normalizer_rules, False,
+            synonyms=synonyms,
+        )
+
+        self._dic.write(self._filename)
