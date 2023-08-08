@@ -258,7 +258,7 @@ def read_entry_html(fp):
 def write_entry_html(fp, entry):
     write_start_offset = fp.tell()
     src_idx, title, html = entry
-    b_html = html.encode()
+    b_html = "".join(c if ord(c) < 128 else f"&#{ord(c)};" for c in html).encode()
     b_compr = io.BytesIO()
     with gzip.GzipFile(fileobj=b_compr, mode="wb") as zf:
         # note that the compressed bytes might differ from the original Java
@@ -357,7 +357,11 @@ class Comparator:
     def __init__(self, locale_str, normalizer_rules, version):
         self.version = version
         self.locale = icu.Locale(locale_str)
-        self._comparator = icu.Collator.createInstance(self.locale)
+        self._comparator = (
+            icu.RuleBasedCollator("&z<ȝ")
+            if self.locale.getLanguage() == "en" else
+            icu.Collator.createInstance(self.locale)
+        )
         self._comparator.setStrength(icu.Collator.IDENTICAL)
         self.normalizer_rules = normalizer_rules
         self.normalize = icu.Transliterator.createFromRules(
@@ -374,7 +378,7 @@ class Comparator:
         if cn != 0:
             return cn
         cn = self._comparator.compare(n1, n2)
-        if cn != 0:
+        if cn != 0 or self.version < 7:
             return cn
         return self._comparator.compare(s1, s2)
 
@@ -429,6 +433,8 @@ class QuickDic:
     def add_index(
         self, short_name, long_name, iso, normalizer_rules, swap_flag, synonyms=None,
     ):
+        comparator = Comparator(iso, normalizer_rules, self.version)
+
         synonyms = {} if synonyms is None else synonyms
         n_synonyms = sum(len(v) for v in synonyms.values())
         log.info(f"Adding an index for {iso} with {n_synonyms} synonyms ...")
@@ -448,42 +454,50 @@ class QuickDic:
             tokens.extend([(title, 5, idx) for idx, (_, title, _) in enumerate(self.htmls)])
         tokens = [(t.strip(), ttype, tidx) for t, ttype, tidx in tokens]
 
-        log.info(f"Sort list with {len(tokens)} tokens ...")
-        comparator = Comparator(iso, normalizer_rules, self.version)
-        key_fun = functools.cmp_to_key(comparator.compare)
-        tokens = sorted((
-            ((t, comparator.normalize(t)), ttype, tidx)
+        log.info("Normalize tokens ...")
+        tokens = [
+            (t, comparator.normalize(t), ttype, tidx)
             for t, ttype, tidx in tokens
             if t != ""
-        ), key=lambda x: key_fun(x[0]))
-
-        log.info("Convert tokens to index entries ...")
-        index_entries = []
-        rows = []
-        for (name, normed), ttype, idx in tokens:
-            prev_normed = None if len(index_entries) == 0 else index_entries[-1][3]
-            index_entry = (
-                # token, start_index, count, token_norm, html_indices
-                [name, len(rows), 0, normed, []]
-                if normed != prev_normed else
-                list(index_entries.pop())
-            )
-            index_entry[2] += 1
-            if ttype == 5:
-                index_entry[4].append(idx)
-            index_entries.append(tuple(index_entry))
-            rows.append((ttype, idx))
-        main_token_count = len(index_entries)
+        ]
 
         if len(synonyms) > 0:
-            log.info(f"Insert synonyms into index ({len(index_entries)} entries) ...")
-            index_entries.extend([
-                (s, e[1], e[2], comparator.normalize(s), e[4])
-                for e in index_entries if e[0] in synonyms
-                for s in synonyms[e[0]]
+            log.info(f"Insert synonyms into token list ({len(tokens)} entries) ...")
+            tokens.extend([
+                (s, comparator.normalize(s)) + t[2:]
+                for t in tokens if t[0] in synonyms
+                for s in synonyms[t[0]] if s != ""
             ])
-            log.info(f"Sort index with synonyms ({len(index_entries)} entries) ...")
-            index_entries = sorted(index_entries, key=lambda e: key_fun((e[0], e[3])))
+
+        log.info(f"Sort tokens with synonyms ({len(tokens)} entries) ...")
+        key_fun = functools.cmp_to_key(comparator.compare)
+        tokens = sorted(tokens, key=lambda t: key_fun((t[0], t[1])))
+
+        log.info(f"Build mid-layer index ...")
+        rows = []
+        index_entries = []
+        for token, token_norm, ttype, tidx in tokens:
+            prev_token = "" if len(index_entries) == 0 else index_entries[-1][0]
+            if prev_token == token:
+                token, index_start, count, token_norm, html_indices = index_entries.pop()
+            else:
+                i_entry = len(index_entries)
+                index_start = len(rows)
+                count = 0
+                token_norm = "" if token == token_norm else token_norm
+                html_indices = []
+                rows.append((1, i_entry))
+            if ttype == 5:
+                if tidx not in html_indices:
+                    html_indices.append(tidx)
+            else:
+                if (ttype, tidx) not in rows[index_start + 1:]:
+                    rows.append((ttype, tidx))
+                    count += 1
+            index_entries.append((token, index_start, count, token_norm, html_indices))
+
+        # the exact meaning of this parameter is unknown, and it seems to be ignored by readers
+        main_token_count = len(index_entries)
 
         self.indices.append((
             short_name, long_name, iso, normalizer_rules, swap_flag,
@@ -628,9 +642,7 @@ class Writer(object):
         texts = []
         self._dic = QuickDic(name, sources, pairs, texts, htmls)
 
-        short_name = sourceLang
-        long_name = langs
-        iso = sourceLang
+        short_name = long_name = iso = sourceLang
         normalizer_rules = (
             self._normalizer_rules
             if self._normalizer_rules != "" else
