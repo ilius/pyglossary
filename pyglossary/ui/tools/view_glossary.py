@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# mypy: ignore-errors
 
 import os.path
 import shlex
@@ -79,12 +80,12 @@ def viewGlossary(
 		nonlocal index
 		if highlightEntry:
 			highlightEntry(entry)
-		str = (
+		entryStr = (
 			f"{yellow}#{index}{reset} " +
 			formatEntry(entry) +
 			"\n" + entrySep + "\n\n"
 		)
-		proc.stdin.write(str.encode("utf-8"))
+		proc.stdin.write(entryStr.encode("utf-8"))
 		if (index + 1) % 50 == 0:
 			sys.stdout.flush()
 		index += 1
@@ -93,9 +94,9 @@ def viewGlossary(
 		for entry in glos:
 			try:
 				handleEntry(entry)
-			except (BrokenPipeError, IOError):
+			except (OSError, BrokenPipeError):
 				break
-	except (BrokenPipeError, IOError):
+	except (OSError, BrokenPipeError):
 		pass  # noqa: S110
 	except Exception as e:
 		print(e)

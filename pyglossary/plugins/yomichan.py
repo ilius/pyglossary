@@ -2,7 +2,6 @@
 
 import json
 import re
-import typing
 from typing import Any, Generator, Sequence
 
 from pyglossary import os_utils
@@ -172,7 +171,7 @@ def _uniqueList(lst: "Sequence") -> "list[Any]":
 	return result
 
 
-class Writer(object):
+class Writer:
 	_term_bank_size = 10_000
 	_term_from_headword_only = True
 	_no_term_from_reading = True
@@ -186,23 +185,23 @@ class Writer(object):
 	_rule_vk_defi_pattern = ""
 	_rule_adji_defi_pattern = ""
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 		glos.preventDuplicateWords()
 		# Yomichan technically supports "structured content" that renders to
 		# HTML, but it doesn't seem widely used. So here we also strip HTML
 		# formatting for simplicity.
 		glos.removeHtmlTagsAll()
 
-	def _getInfo(self: "typing.Self", key: str) -> str:
+	def _getInfo(self, key: str) -> str:
 		info = self._glos.getInfo(key)
 		return info.replace("\n", "<br>")
 
-	def _getAuthor(self: "typing.Self") -> str:
+	def _getAuthor(self) -> str:
 		return self._glos.author.replace("\n", "<br>")
 
-	def _getDictionaryIndex(self: "typing.Self") -> "dict[str, Any]":
+	def _getDictionaryIndex(self) -> "dict[str, Any]":
 		# Schema: https://github.com/FooSoft/yomichan/
 		# blob/master/ext/data/schemas/dictionary-index-schema.json
 		return dict(
@@ -215,8 +214,8 @@ class Writer(object):
 			description=self._getInfo("description"),
 		)
 
-	def _compileRegex(self: "typing.Self") -> None:
-		for field_name in [
+	def _compileRegex(self) -> None:
+		for field_name in (
 			"_delete_word_pattern",
 			"_ignore_word_with_pattern",
 			"_alternates_from_word_pattern",
@@ -226,15 +225,15 @@ class Writer(object):
 			"_rule_vs_defi_pattern",
 			"_rule_vk_defi_pattern",
 			"_rule_adji_defi_pattern",
-		]:
+		):
 			value = getattr(self, field_name)
 			if value and isinstance(value, str):
 				setattr(self, field_name, re.compile(value))
 
 	def _getExpressionsAndReadingFromEntry(
-		self: "typing.Self",
+		self,
 		entry: "EntryType",
-	) -> "(list[str], str)":
+	) -> "tuple[list[str], str]":
 		term_expressions = list(entry.l_word)
 		if self._alternates_from_word_pattern:
 			for word in entry.l_word:
@@ -286,32 +285,31 @@ class Writer(object):
 
 		return term_expressions, reading
 
-	def _getRuleIdentifiersFromEntry(self: "typing.Self", entry: EntryType) -> list[str]:
+	def _getRuleIdentifiersFromEntry(self, entry: EntryType) -> list[str]:
 		return [
 			r
-			for p, r in [
+			for p, r in (
 				(self._rule_v1_defi_pattern, "v1"),
 				(self._rule_v5_defi_pattern, "v5"),
 				(self._rule_vs_defi_pattern, "vs"),
 				(self._rule_vk_defi_pattern, "vk"),
 				(self._rule_adji_defi_pattern, "adj-i"),
-			]
+			)
 			if p and re.search(p, entry.defi, re.MULTILINE)
 		]
 
 	def _getTermsFromEntry(
-		self: "typing.Self",
+		self,
 		entry: "EntryType",
 		sequenceNumber: int,
 	) -> "list[list[Any]]":
 		termExpressions, reading = self._getExpressionsAndReadingFromEntry(entry)
 		ruleIdentifiers = self._getRuleIdentifiersFromEntry(entry)
 
-		entryTerms = []
-		for expression in termExpressions:
-			# Schema: https://github.com/FooSoft/yomichan/
-			# blob/master/ext/data/schemas/dictionary-term-bank-v3-schema.json
-			entryTerms.append([
+		# Schema: https://github.com/FooSoft/yomichan/
+		# blob/master/ext/data/schemas/dictionary-term-bank-v3-schema.json
+		return [
+			[
 				expression,
 				# reading only added if expression contains kanji
 				reading if any(map(_isKanji, expression)) else "",
@@ -321,24 +319,24 @@ class Writer(object):
 				[entry.defi],
 				sequenceNumber,
 				"",  # term tags
-			])
+			]
+			for expression in termExpressions
+		]
 
-		return entryTerms
-
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def finish(self: "typing.Self") -> None:
-		self._filename = None
+	def finish(self) -> None:
+		self._filename = ""
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		with os_utils.indir(self._filename, create=True):
 			with open("index.json", "w", encoding="utf-8") as f:
 				json.dump(self._getDictionaryIndex(), f, ensure_ascii=False)
 
 			entryCount = 0
 			termBankIndex = 0
-			terms = []
+			terms: "list[list[Any]]" = []
 
 			def flushTerms() -> None:
 				nonlocal termBankIndex

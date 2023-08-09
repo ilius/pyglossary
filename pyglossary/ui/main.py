@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# main.py
+# mypy: ignore-errors
+# ui/main.py
 #
 # Copyright © 2008-2022 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # This file is part of PyGlossary project, https://github.com/ilius/pyglossary
@@ -24,11 +24,10 @@ import json
 import logging
 import os
 import sys
-import typing
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Callable, Dict, List
+	from typing import Callable
 
 	from pyglossary.option import Option
 
@@ -83,7 +82,7 @@ def canRunGUI() -> bool:
 
 class StoreConstAction(argparse.Action):
 	def __init__(
-		self: "typing.Self",
+		self,
 		option_strings: "list[str]",
 		same_dest: str = "",
 		const_value: "bool | None" = None,
@@ -102,10 +101,10 @@ class StoreConstAction(argparse.Action):
 		self.const_value = const_value
 
 	def __call__(
-		self: "typing.Self",
+		self,
 		parser: "argparse.ArgumentParser | None" = None,
 		namespace: "argparse.Namespace | None" = None,
-		values: "List" = None,
+		values: "list" = None,
 		option_strings: "list[str]" = None,
 		required: bool = False,
 		dest: "str | None" = None,
@@ -187,11 +186,11 @@ def base_ui_run(
 	inputFormat: str = "",
 	outputFormat: str = "",
 	reverse: bool = False,
-	config: "Dict | None" = None,
-	readOptions: "Dict | None" = None,
-	writeOptions: "Dict | None" = None,
-	convertOptions: "Dict | None" = None,
-	glossarySetAttrs: "Dict | None" = None,
+	config: "dict | None" = None,
+	readOptions: "dict | None" = None,
+	writeOptions: "dict | None" = None,
+	convertOptions: "dict | None" = None,
+	glossarySetAttrs: "dict | None" = None,
 ) -> bool:
 	from pyglossary.glossary_v2 import ConvertArgs, Glossary
 	if reverse:
@@ -642,11 +641,11 @@ def main() -> None:
 
 	from pyglossary.glossary_v2 import Glossary
 	from pyglossary.langs import langDict
-	from pyglossary.ui.ui_cmd import help, parseFormatOptionsStr
+	from pyglossary.ui.ui_cmd import parseFormatOptionsStr, printHelp
 
 	Glossary.init()
 
-	if log.isDebug():
+	if core.isDebug():
 		log.debug(f"en -> {langDict['en']!r}")
 
 	##############################
@@ -654,7 +653,7 @@ def main() -> None:
 	# log.info(f"PyGlossary {core.VERSION}")
 
 	if args.help:
-		help()
+		printHelp()
 		sys.exit(0)
 
 	# only used in ui_cmd for now
@@ -755,7 +754,7 @@ def main() -> None:
 				f"Could not detect format for input file {args.inputFilename}",
 			)
 			sys.exit(1)
-		inputFormat = inputArgs[1]
+		inputFormat = inputArgs.formatName
 		readOptionsProp = Glossary.plugins[inputFormat].optionsProp
 		for optName, optValue in readOptions.items():
 			if optName not in Glossary.formatsReadOptions[inputFormat]:
@@ -779,7 +778,7 @@ def main() -> None:
 		)
 		if outputArgs is None:
 			sys.exit(1)
-		_, outputFormat, _ = outputArgs
+		outputFormat = outputArgs.formatName
 		writeOptionsProp = Glossary.plugins[outputFormat].optionsProp
 		for optName, optValue in writeOptions.items():
 			if optName not in Glossary.formatsWriteOptions[outputFormat]:

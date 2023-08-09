@@ -1,4 +1,1 @@
-pip install lxml beautifulsoup4
-pip install biplist marisa-trie mistune
-pip install html5lib cachetools
-pip install PyICU
+python -m pip install  lxml beautifulsoup4 biplist marisa-trie mistune html5lib PyICU

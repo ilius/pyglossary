@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 # from https://github.com/maxim-saplin/pyglossary
 
 import re
-import typing
 from typing import Generator
 
 from pyglossary.compression import (
@@ -36,7 +36,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Writer(object):
+class Writer:
 	_encoding: str = "utf-8"
 	_enable_info: bool = True
 	_resources: bool = True
@@ -44,18 +44,18 @@ class Writer(object):
 
 	compressions = stdCompressions
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		glos.preventDuplicateWords()
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		self._filename = None
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from json import dumps
 
 		from pyglossary.text_writer import writeTxt
@@ -65,7 +65,7 @@ class Writer(object):
 		enable_info = self._enable_info
 		resources = self._resources
 
-		ascii = encoding == "ascii"
+		ensure_ascii = encoding == "ascii"
 
 		def escape(st: str) -> str:
 			# remove styling from HTML tags
@@ -80,7 +80,7 @@ class Writer(object):
 			# such as hyphenation in word (e.g. абб{[']}а{[/']}т)
 			st2 = re.sub(r"\{\['\]\}", "", st2)
 			st2 = re.sub(r"\{\[/'\]\}", "", st2)
-			return dumps(st2, ensure_ascii=ascii)
+			return dumps(st2, ensure_ascii=ensure_ascii)
 
 		yield from writeTxt(
 			glos,

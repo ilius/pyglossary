@@ -1,6 +1,7 @@
-#!/usr/bin/env python
+from typing import TYPE_CHECKING
 
-from pyglossary.glossary_types import EntryType
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType
 
 
 def formatEntry(entry: "EntryType") -> str:

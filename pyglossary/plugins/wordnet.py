@@ -18,13 +18,14 @@
 import os
 import re
 import sys
-import typing
 from collections import defaultdict
-from typing import Iterator, Tuple
+from typing import TYPE_CHECKING, Iterator
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
-from pyglossary.option import Option
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.option import Option
 
 enable = True
 lname = "wordnet"
@@ -54,8 +55,8 @@ quotedTextPattern = re.compile(r'"([^"]+)"')
 
 refPattern = re.compile(r"`(\w+)'")
 
-class SynSet(object):
-	def __init__(self, line):
+class SynSet:
+	def __init__(self, line) -> None:
 		self.line = line
 		if isinstance(line, bytes):
 			line = line.decode("utf-8")
@@ -93,11 +94,11 @@ class SynSet(object):
 			for i in range(pointer_count)
 		]
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return "SynSet(%r)" % self.line
 
 
-class PointerSymbols(object):
+class PointerSymbols:
 	n = {
 		"!": "Antonyms",
 		"@": "Hypernyms",
@@ -159,8 +160,8 @@ class PointerSymbols(object):
 	}
 
 
-class Pointer(object):
-	def __init__(self, symbol, offset, pos, source_target):
+class Pointer:
+	def __init__(self, symbol, offset, pos, source_target) -> None:
 		self.symbol = symbol
 		self.offset = int(offset)
 		self.pos = pos
@@ -168,8 +169,8 @@ class Pointer(object):
 		self.source = int(source_target[:2], 16)
 		self.target = int(source_target[2:], 16)
 
-	def __repr__(self):
-		return "Pointer(%r, %r, %r, %r)" % (
+	def __repr__(self) -> str:
+		return "Pointer({!r}, {!r}, {!r}, {!r})".format(
 			self.symbol,
 			self.offset,
 			self.pos,
@@ -177,7 +178,7 @@ class Pointer(object):
 		)
 
 
-class WordNet(object):
+class WordNet:
 	article_template = (
 		"<h1>%s</h1><span>%s</span>"
 	)
@@ -196,9 +197,9 @@ class WordNet(object):
 		"data.verb": ["v"],
 	}
 
-	def __init__(self, wordnetdir):
+	def __init__(self, wordnetdir) -> None:
 		self.wordnetdir = wordnetdir
-		self.collector = defaultdict(list)
+		self.collector: "dict[str, list[str]]" = defaultdict(list)
 
 	def iterlines(self, dict_dir):
 		for name in os.listdir(dict_dir):
@@ -217,14 +218,13 @@ class WordNet(object):
 
 		files = {}
 		for name in os.listdir(dict_dir):
-			if name.startswith("data."):
-				if name in file2pos:
-					f = open(os.path.join(dict_dir, name), "r")
-					for key in file2pos[name]:
-						files[key] = f
+			if name.startswith("data.") and name in file2pos:
+				f = open(os.path.join(dict_dir, name))  # noqa: SIM115
+				for key in file2pos[name]:
+					files[key] = f
 
 		def a(word):
-			return '<a href="%s">%s</a>' % (word, word)
+			return f'<a href="{word}">{word}</a>'
 
 		for i, line in enumerate(self.iterlines(dict_dir)):
 			if i % 100 == 0 and i > 0:
@@ -263,15 +263,14 @@ class WordNet(object):
 						symbol_desc = getattr(PointerSymbols, synset.ss_type)[symbol]
 					except KeyError:
 						print(
-							"WARNING: unknown pointer symbol %s for %s "
-							% (symbol, synset.ss_type),
+							f"WARNING: unknown pointer symbol {symbol} for {synset.ss_type} ",
 						)
 						symbol_desc = symbol
 
 					data_file = files[pointer.pos]
 					data_file.seek(pointer.offset)
 					referenced_synset = SynSet(data_file.readline())
-					if pointer.source == 0 and pointer.target == 0:
+					if pointer.source == pointer.target == 0:
 						pointers[symbol_desc] = [
 							w for w in referenced_synset.words if w not in words
 						]
@@ -288,8 +287,7 @@ class WordNet(object):
 						)
 						pointers_str += ", ".join(a(w) for w in referenced_words)
 				self.collector[word].append(
-					'<i class="pos grammar">%s</i> %s%s%s'
-					% (
+					'<i class="pos grammar">{}</i> {}{}{}'.format(
 						synSetTypes[synset.ss_type],
 						gloss_with_examples,
 						synonyms_str,
@@ -299,7 +297,7 @@ class WordNet(object):
 		sys.stdout.write("\n")
 		sys.stdout.flush()
 
-	def process(self) -> "Iterator[Tuple[str, str]]":
+	def process(self) -> "Iterator[tuple[str, str]]":
 		article_template = self.article_template
 
 		for title in self.collector:
@@ -318,26 +316,29 @@ class WordNet(object):
 				yield title, text
 
 
-class Reader(object):
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+class Reader:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0
+		self.wordnet: "WordNet | None" = None
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return self._wordCount
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self.wordnet = WordNet(filename)
 		log.info("Running wordnet.prepare()")
 		self.wordnet.prepare()
 
 		# TODO: metadata
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self.wordnet = None
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
+		if self.wordnet is None:
+			raise ValueError("self.wordnet is None")
 		glos = self._glos
 		for word, defi in self.wordnet.process():
 			yield glos.newEntry(word, defi)

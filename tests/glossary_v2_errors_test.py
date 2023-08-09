@@ -3,7 +3,6 @@
 import logging
 import os
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname, isfile, join, relpath
 
@@ -23,15 +22,15 @@ class MyStr(str):
 
 
 class TestGlossaryErrorsBase(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 		self.mockLog = getMockLogger()
 
-	def setUp(self: "typing.Self"):
+	def setUp(self):
 		TestGlossaryBase.setUp(self)
 		self.mockLog.clear()
 
-	def tearDown(self: "typing.Self"):
+	def tearDown(self):
 		TestGlossaryBase.tearDown(self)
 		method = self._testMethodName
 		self.assertEqual(0, self.mockLog.printRemainingErrors(method))
@@ -42,19 +41,19 @@ class TestGlossaryErrorsBase(TestGlossaryBase):
 				f"from {self.__class__.__name__}: {self._testMethodName}\n",
 			)
 
-	def assertLogCritical(self: "typing.Self", errorMsg):
+	def assertLogCritical(self, errorMsg):
 		self.assertIsNotNone(self.mockLog.popLog(
 			logging.CRITICAL,
 			errorMsg,
 		), msg=f"did not find critical log {errorMsg!r}")
 
-	def assertLogError(self: "typing.Self", errorMsg):
+	def assertLogError(self, errorMsg):
 		self.assertIsNotNone(self.mockLog.popLog(
 			logging.ERROR,
 			errorMsg,
 		), msg=f"did not find error log {errorMsg!r}")
 
-	def assertLogWarning(self: "typing.Self", errorMsg):
+	def assertLogWarning(self, errorMsg):
 		self.assertIsNotNone(self.mockLog.popLog(
 			logging.WARNING,
 			errorMsg,
@@ -72,12 +71,12 @@ else:
 	osNoSuchFileOrDir = "[Errno 2] No such file or directory:"
 
 class TestGlossaryErrors(TestGlossaryErrorsBase):
-	def test_loadPlugins_invalidDir(self: "typing.Self"):
+	def test_loadPlugins_invalidDir(self):
 		path = join(osRoot(), "abc", "def", "ghe")
 		Glossary.loadPlugins(path)
 		self.assertLogCritical(f"Invalid plugin directory: {path!r}")
 
-	def test_detectInputFormat_err1(self: "typing.Self"):
+	def test_detectInputFormat_err1(self):
 		res = Glossary.detectInputFormat(
 			filename="",
 			format="",
@@ -85,7 +84,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect input format!")
 
-	def test_detectInputFormat_err2(self: "typing.Self"):
+	def test_detectInputFormat_err2(self):
 		res = Glossary.detectInputFormat(
 			filename="test.abcd",
 			format="",
@@ -93,7 +92,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect input format!")
 
-	def test_detectInputFormat_err3(self: "typing.Self"):
+	def test_detectInputFormat_err3(self):
 		res = Glossary.detectInputFormat(
 			filename="test.sql",
 			format="",
@@ -101,7 +100,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("plugin Sql does not support reading")
 
-	def test_detectInputFormat_err4(self: "typing.Self"):
+	def test_detectInputFormat_err4(self):
 		res = Glossary.detectInputFormat(
 			filename="test",
 			format="FooBar",
@@ -109,21 +108,21 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("Invalid format 'FooBar'")
 
-	def test_detectInputFormat_ok1(self: "typing.Self"):
+	def test_detectInputFormat_ok1(self):
 		res = Glossary.detectInputFormat(
 			filename="test1.txt.gz",
 			format="",
 		)
 		self.assertEqual(res, ("test1.txt.gz", "Tabfile", ""))
 
-	def test_detectInputFormat_ok2(self: "typing.Self"):
+	def test_detectInputFormat_ok2(self):
 		res = Glossary.detectInputFormat(
 			filename="test2.txt.zip",
 			format="",
 		)
 		self.assertEqual(res, ("test2.txt", "Tabfile", "zip"))
 
-	def test_detectOutputFormat_err1(self: "typing.Self"):
+	def test_detectOutputFormat_err1(self):
 		res = Glossary.detectOutputFormat(
 			filename="",
 			format="",
@@ -132,7 +131,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("Invalid filename ''")
 
-	def test_detectOutputFormat_err2(self: "typing.Self"):
+	def test_detectOutputFormat_err2(self):
 		res = Glossary.detectOutputFormat(
 			filename="test",
 			format="FooBar",
@@ -141,7 +140,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("Invalid format FooBar")
 
-	def test_detectOutputFormat_err3(self: "typing.Self"):
+	def test_detectOutputFormat_err3(self):
 		res = Glossary.detectOutputFormat(
 			filename="",
 			format="",
@@ -150,7 +149,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("No filename nor format is given for output file")
 
-	def test_detectOutputFormat_err4_1(self: "typing.Self"):
+	def test_detectOutputFormat_err4_1(self):
 		res = Glossary.detectOutputFormat(
 			filename="",
 			format="BabylonBgl",
@@ -159,7 +158,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("plugin BabylonBgl does not support writing")
 
-	def test_detectOutputFormat_err4_2(self: "typing.Self"):
+	def test_detectOutputFormat_err4_2(self):
 		res = Glossary.detectOutputFormat(
 			filename="test.bgl",
 			format="",
@@ -168,7 +167,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("plugin BabylonBgl does not support writing")
 
-	def test_detectOutputFormat_err5(self: "typing.Self"):
+	def test_detectOutputFormat_err5(self):
 		res = Glossary.detectOutputFormat(
 			filename="test",
 			format="",
@@ -177,7 +176,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect output format!")
 
-	def test_detectOutputFormat_err6(self: "typing.Self"):
+	def test_detectOutputFormat_err6(self):
 		res = Glossary.detectOutputFormat(
 			filename="test",
 			format="Tabfile",
@@ -187,7 +186,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertEqual(res, ("test", "Tabfile", ""))
 		self.assertLogError("inputFilename is empty")
 
-	def test_init_infoBadType(self: "typing.Self"):
+	def test_init_infoBadType(self):
 		try:
 			Glossary(info=["a"])
 		except Exception as e:
@@ -199,7 +198,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("did not raise an exception")
 
-	def test_cleanup_removed(self: "typing.Self"):
+	def test_cleanup_removed(self):
 		glos = Glossary()
 		tmpFname = "test_cleanup_removed"
 		entry = glos.newDataEntry(tmpFname, b"test")
@@ -212,31 +211,31 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		glos.cleanup()
 		self.assertLogError(f"no such file or directory: {appTmpDir}")
 
-	def test_lang_err_get_source(self: "typing.Self"):
+	def test_lang_err_get_source(self):
 		glos = Glossary()
 		glos.setInfo("sourcelang", "test")
 		self.assertEqual(glos.sourceLangName, "")
 		self.assertLogError("unknown language 'test'")
 
-	def test_lang_err_get_target(self: "typing.Self"):
+	def test_lang_err_get_target(self):
 		glos = Glossary()
 		glos.setInfo("targetlang", "test")
 		self.assertEqual(glos.targetLangName, "")
 		self.assertLogError("unknown language 'test'")
 
-	def test_lang_err_set_source(self: "typing.Self"):
+	def test_lang_err_set_source(self):
 		glos = Glossary()
 		glos.sourceLangName = "foobar"
 		self.assertLogError("unknown language 'foobar'")
 		self.assertEqual(glos.sourceLangName, "")
 
-	def test_lang_err_set_target(self: "typing.Self"):
+	def test_lang_err_set_target(self):
 		glos = Glossary()
 		glos.targetLangName = "foobar"
 		self.assertLogError("unknown language 'foobar'")
 		self.assertEqual(glos.targetLangName, "")
 
-	def test_lang_err_setObj_source(self: "typing.Self"):
+	def test_lang_err_setObj_source(self):
 		glos = Glossary()
 		try:
 			glos.sourceLang = "foobar"
@@ -245,7 +244,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise a TypeError")
 
-	def test_lang_err_setObj_target(self: "typing.Self"):
+	def test_lang_err_setObj_target(self):
 		glos = Glossary()
 		try:
 			glos.targetLang = "foobar"
@@ -254,7 +253,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise a TypeError")
 
-	def test_config_attr_set_twice(self: "typing.Self"):
+	def test_config_attr_set_twice(self):
 		glos = Glossary()
 		glos.config = {"lower": True}
 		self.assertEqual(glos.getConfig("lower", False), True)
@@ -262,11 +261,11 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertLogError("glos.config is set more than once")
 		self.assertEqual(glos.getConfig("lower", False), True)
 
-	def test_iter_empty(self: "typing.Self"):
+	def test_iter_empty(self):
 		glos = Glossary()
 		self.assertEqual(list(glos), [])
 
-	def test_convert_typeErr_1(self: "typing.Self"):
+	def test_convert_typeErr_1(self):
 		glos = Glossary()
 		try:
 			glos.convert(ConvertArgs(
@@ -277,7 +276,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise TypeError")
 
-	def test_convert_typeErr_2(self: "typing.Self"):
+	def test_convert_typeErr_2(self):
 		glos = Glossary()
 		try:
 			glos.convert(ConvertArgs(
@@ -289,7 +288,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise TypeError")
 
-	def test_convert_typeErr_3(self: "typing.Self"):
+	def test_convert_typeErr_3(self):
 		glos = Glossary()
 		try:
 			glos.convert(ConvertArgs(
@@ -302,7 +301,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise TypeError")
 
-	def test_convert_typeErr_4(self: "typing.Self"):
+	def test_convert_typeErr_4(self):
 		glos = Glossary()
 		try:
 			glos.convert(ConvertArgs(
@@ -316,7 +315,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise TypeError")
 
-	def test_write_typeErr_1(self: "typing.Self"):
+	def test_write_typeErr_1(self):
 		glos = Glossary()
 		try:
 			glos.write(
@@ -328,7 +327,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise TypeError")
 
-	def test_write_typeErr_2(self: "typing.Self"):
+	def test_write_typeErr_2(self):
 		glos = Glossary()
 		try:
 			glos.write(
@@ -340,7 +339,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise TypeError")
 
-	def test_convert_sameFilename(self: "typing.Self"):
+	def test_convert_sameFilename(self):
 		glos = Glossary()
 		res = glos.convert(ConvertArgs(
 			inputFilename="test4.txt",
@@ -349,7 +348,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("Input and output files are the same")
 
-	def test_convert_dirExists(self: "typing.Self"):
+	def test_convert_dirExists(self):
 		glos = Glossary()
 		tempFilePath = self.newTempFilePath("test_convert_dirExists")
 		with open(tempFilePath, mode="w") as _file:
@@ -364,7 +363,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 			f"Directory already exists and not empty: {relpath(self.tempDir)}",
 		)
 
-	def test_convert_fileNotFound(self: "typing.Self"):
+	def test_convert_fileNotFound(self):
 		glos = Glossary()
 		inputFilename = join(osRoot(), "abc", "def", "test6.txt")
 		res = glos.convert(ConvertArgs(
@@ -377,7 +376,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertLogCritical(f"Reading file {relpath(inputFilename)!r} failed.")
 
-	def test_convert_unableDetectOutputFormat(self: "typing.Self"):
+	def test_convert_unableDetectOutputFormat(self):
 		glos = Glossary()
 		res = glos.convert(ConvertArgs(
 			inputFilename="test7.txt",
@@ -388,7 +387,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertLogCritical("Unable to detect output format!")
 		self.assertLogCritical(f"Writing file {relpath('test')!r} failed.")
 
-	def test_convert_writeFileNotFound_txt(self: "typing.Self"):
+	def test_convert_writeFileNotFound_txt(self):
 		outputFilename = join(
 			appTmpDir,
 			"test",
@@ -405,7 +404,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
 
-	def test_convert_writeFileNotFound_hdir(self: "typing.Self"):
+	def test_convert_writeFileNotFound_hdir(self):
 		outputFilename = join(osRoot(), "test", "40e20107f5b04087bfc0ec0d61510017.hdir")
 		glos = Glossary()
 		res = glos.convert(ConvertArgs(
@@ -418,7 +417,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
 
-	def test_convert_invalidSortKeyName(self: "typing.Self"):
+	def test_convert_invalidSortKeyName(self):
 		glos = self.glos = Glossary()
 		outputFilename = self.newTempFilePath("none.txt")
 		res = glos.convert(ConvertArgs(

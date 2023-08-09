@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
+#
 # Copyright (C) 2016-2023 Saeed Rasooli on https://github.com/ilius/pyglossary/
 # Copyright (C) 2015 Z. H. Liu on https://github.com/zhansliu/writemdict
 #
@@ -148,4 +150,4 @@ def ripemd128(message: bytes) -> bytes:
 
 
 def hexstr(bstr):
-	return "".join("{0:02x}".format(b) for b in bstr)
+	return "".join(f"{b:02x}" for b in bstr)

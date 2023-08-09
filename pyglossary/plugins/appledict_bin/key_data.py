@@ -31,7 +31,7 @@ the entry can be searched not only by "make" but also by "makes" or "made".
 On the search result list, title value texts like "made" are displayed.
 EXAMPLE: <d:index d:value="make it" d:title="make it" d:parental-control="1"
 d:anchor="xpointer(//*[@id='make_it'])"/>
-EXAMPLE: <d:index d:value="工夫する" d:title="工夫する" 
+EXAMPLE: <d:index d:value="工夫する" d:title="工夫する"
 d:yomi="くふうする" d:anchor="xpointer(//*[@id='kufuu-suru'])" />
 EXAMPLE: <d:index d:value="'s finest" d:title="—'s finest"
 d:DCSEntryTitle="fine" d:anchor="xpointer(//*[@id='m_en_gbus0362750.070'])"/>
@@ -41,6 +41,7 @@ show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
 
 
 class KeyData:
+
 	"""
 	Dictionary entries are opened by entering different search texts.
 	This class contains texts by which entry is searchable and other properties.
@@ -80,7 +81,7 @@ class KeyData:
 	]
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		priority: int,
 		parentalControl: int,
 		keyword: str,
@@ -95,7 +96,7 @@ class KeyData:
 		self.entryTitle = entryTitle
 		self.anchor = anchor
 
-	def toDict(self: "typing.Self") -> "dict[str, typing.Any]":
+	def toDict(self) -> "dict[str, typing.Any]":
 		return dict(
 			priority=self.priority,
 			parentalControl=self.parentalControl,

@@ -4,7 +4,6 @@ import os
 import platform
 import sys
 import traceback
-import typing
 from os.path import (
 	abspath,
 	dirname,
@@ -13,10 +12,10 @@ from os.path import (
 	isfile,
 	join,
 )
-from types import TracebackType
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
+	from types import TracebackType
 	from typing import (
 		Any,
 		Callable,
@@ -38,14 +37,21 @@ logging.addLevelName(TRACE, "TRACE")
 noColor = False
 
 
+def trace(log: logging.Logger, msg: str) -> None:
+	func = getattr(log, "trace", None)
+	if func is None:
+		log.error(f"Logger {log} has no 'trace' method")
+		return
+	func(msg)
+
 
 class Formatter(logging.Formatter):
-	def __init__(self: "typing.Self", *args, **kwargs) -> None:  # noqa: ANN
+	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN
 		logging.Formatter.__init__(self, *args, **kwargs)
 		self.fill: "Callable[[str], str] | None" = None
 
 	def formatMessage(
-		self: "typing.Self",
+		self,
 		record: "logging.LogRecord",
 	) -> str:
 		msg = logging.Formatter.formatMessage(self, record)
@@ -74,29 +80,26 @@ class MyLogger(logging.Logger):
 		"All",  # "Not-Set",
 	]
 
-	def __init__(self: "typing.Self", *args) -> None:  # noqa: ANN
+	def __init__(self, *args) -> None:  # noqa: ANN
 		logging.Logger.__init__(self, *args)
 		self._verbosity = 3
 		self._timeEnable = False
 
-	def setVerbosity(self: "typing.Self", verbosity: int) -> None:
+	def setVerbosity(self, verbosity: int) -> None:
 		self.setLevel(self.levelsByVerbosity[verbosity])
 		self._verbosity = verbosity
 
-	def getVerbosity(self: "typing.Self") -> int:
+	def getVerbosity(self) -> int:
 		return self._verbosity
 
-	def trace(self: "typing.Self", msg: str) -> None:
+	def trace(self, msg: str) -> None:
 		self.log(TRACE, msg)
 
-	def pretty(self: "typing.Self", data: "Any", header: str = "") -> None:
+	def pretty(self, data: "Any", header: str = "") -> None:
 		from pprint import pformat
 		self.debug(header + pformat(data))
 
-	def isDebug(self: "typing.Self") -> bool:
-		return self.getVerbosity() >= 4
-
-	def newFormatter(self: "typing.Self") -> Formatter:
+	def newFormatter(self) -> Formatter:
 		timeEnable = self._timeEnable
 		if timeEnable:
 			fmt = "%(asctime)s [%(levelname)s] %(message)s"
@@ -104,13 +107,13 @@ class MyLogger(logging.Logger):
 			fmt = "[%(levelname)s] %(message)s"
 		return Formatter(fmt)
 
-	def setTimeEnable(self: "typing.Self", timeEnable: bool) -> None:
+	def setTimeEnable(self, timeEnable: bool) -> None:
 		self._timeEnable = timeEnable
 		formatter = self.newFormatter()
 		for handler in self.handlers:
 			handler.setFormatter(formatter)
 
-	def addHandler(self: "typing.Self", handler: "logging.Handler") -> None:
+	def addHandler(self, handler: "logging.Handler") -> None:
 		# if want to add separate format (new config keys and flags) for ui_gtk
 		# and ui_tk, you need to remove this function and run handler.setFormatter
 		# in ui_gtk and ui_tk
@@ -175,19 +178,19 @@ class StdLogHandler(logging.Handler):
 	# 1: dark red (like 31m), 196: real red, 9: light red
 	# 15: white, 229: light yellow (#ffffaf), 226: real yellow (#ffff00)
 
-	def __init__(self: "typing.Self", noColor: bool = False) -> None:
+	def __init__(self, noColor: bool = False) -> None:
 		logging.Handler.__init__(self)
 		self.set_name("std")
 		self.noColor = noColor
 		self.config: "dict[str, Any]" = {}
 
 	@property
-	def endFormat(self: "typing.Self") -> str:
+	def endFormat(self) -> str:
 		if self.noColor:
 			return ""
 		return "\x1b[0;0;0m"
 
-	def emit(self: "typing.Self", record: logging.LogRecord) -> None:
+	def emit(self, record: logging.LogRecord) -> None:
 		msg = ""
 		if record.getMessage():
 			msg = self.format(record)
@@ -300,6 +303,9 @@ def getDataDir() -> str:
 logging.setLoggerClass(MyLogger)
 log = cast(MyLogger, logging.getLogger("pyglossary"))
 
+def isDebug() -> bool:
+	return log.getVerbosity() >= 4
+
 if os.sep == "\\":
 	def windows_show_exception(
 		_type: "type[BaseException]",
@@ -315,7 +321,7 @@ if os.sep == "\\":
 			add_globals=False,
 		)
 		log.critical(msg)
-		ctypes.windll.user32.MessageBoxW(0, msg, "PyGlossary Error", 0)
+		ctypes.windll.user32.MessageBoxW(0, msg, "PyGlossary Error", 0)  # type: ignore
 
 	sys.excepthook = windows_show_exception
 

@@ -1,10 +1,8 @@
-import io
 import re
-import typing
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -12,6 +10,11 @@ from pyglossary.option import (
 )
 
 from . import conv
+
+if TYPE_CHECKING:
+	import io
+
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 enable = True
 lname = "cc_cedict"
@@ -44,16 +47,13 @@ class Reader:
 	_encoding: str = "utf-8"
 	_traditional_title: bool = False
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
-		self.file: "io.TextIOBase | None" = None
+		self.file: "io.TextIOBase" = nullTextIO
 		self.total_entries: "int | None" = None
 		self.entries_left = 0
 
-	def open(self: "typing.Self", filename: str) -> None:
-		if self.file is not None:
-			self.file.close()
-
+	def open(self, filename: str) -> None:
 		self._glos.sourceLangName = "Chinese"
 		self._glos.targetLangName = "English"
 
@@ -68,26 +68,20 @@ class Reader:
 			self.close()
 			raise RuntimeError("CC-CEDICT: could not find entry count")
 
-	def close(self: "typing.Self") -> None:
-		if self.file is not None:
-			self.file.close()
-		self.file = None
+	def close(self) -> None:
+		self.file.close()
+		self.file = nullTextIO
 		self.total_entries = None
 		self.entries_left = 0
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self.total_entries is None:
 			raise RuntimeError(
 				"CC-CEDICT: len(reader) called while reader is not open",
 			)
 		return self.total_entries
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
-		if self.file is None:
-			raise RuntimeError(
-				"CC-CEDICT: tried to iterate over entries "
-				"while reader is not open",
-			)
+	def __iter__(self) -> "Iterator[EntryType]":
 		for line in self.file:
 			if line.startswith("#"):
 				continue

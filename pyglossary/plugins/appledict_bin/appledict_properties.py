@@ -14,7 +14,6 @@
 # GNU General Public License for more details.
 
 from dataclasses import dataclass
-from typing import Dict
 
 
 @dataclass
@@ -47,7 +46,7 @@ class AppleDictProperties:
 	css_name: "str | None"
 
 
-def from_metadata(metadata: Dict) -> AppleDictProperties:
+def from_metadata(metadata: dict) -> AppleDictProperties:
 	format_version: int = metadata.get("IDXDictionaryVersion", -1)
 	dictionaryIndexes: "list[dict] | None" = metadata.get('IDXDictionaryIndexes')
 	if dictionaryIndexes:
@@ -68,10 +67,7 @@ def from_metadata(metadata: Dict) -> AppleDictProperties:
 			key_text_fixed_field.append(fixed_field['IDXDataFieldName'])
 
 	external_data_fields = key_text_data_fields.get("IDXExternalDataFields")
-	if 'HeapDataCompressionType' in body_metadata:
-		body_compression_type = body_metadata['HeapDataCompressionType']
-	else:
-		body_compression_type = 0
+	body_compression_type = body_metadata.get("HeapDataCompressionType", 0)
 	body_has_sections = (
 		body_compression_type == 2 and
 		external_data_fields[0].get("IDXDataSize") == 8

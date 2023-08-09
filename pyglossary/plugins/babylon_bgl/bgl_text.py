@@ -22,12 +22,13 @@
 
 import re
 
+from pyglossary import core
 from pyglossary.core import log
 from pyglossary.xml_utils import xml_escape
 
-u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.I)
-u_pat_html_entry_key = re.compile("(?:&#x|&#|&)(\\w+);", re.I)
-b_pat_ascii_char_ref = re.compile(b"(&#\\w+;)", re.I)
+u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.IGNORECASE)
+u_pat_html_entry_key = re.compile("(?:&#x|&#|&)(\\w+);", re.IGNORECASE)
+b_pat_ascii_char_ref = re.compile(b"(&#\\w+;)", re.IGNORECASE)
 u_pat_newline_escape = re.compile("[\\r\\n\\\\]")
 u_pat_strip_tags = re.compile("(?:<[/a-zA-Z].*?(?:>|$))+")
 u_pat_control_chars = re.compile("[\x00-\x08\x0c\x0e-\x1f]")
@@ -39,7 +40,7 @@ unknownHtmlEntries = set()
 def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
-	Replace character entity with the corresponding character
+	Replace character entity with the corresponding character.
 
 	Return the original string if conversion fails.
 	Use this as a replace function of re.sub.
@@ -48,7 +49,7 @@ def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 
 	u_text = u_match.group(0)
 	u_name = u_match.group(1)
-	if log.isDebug():
+	if core.isDebug():
 		assert isinstance(u_text, str) and isinstance(u_name, str)  # noqa: S101
 
 	if u_text[:2] == "&#":
@@ -88,7 +89,7 @@ def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 def replaceHtmlEntryCB(u_match: "re.Match") -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
-	Same as replaceHtmlEntryNoEscapeCB, but escapes result string
+	Same as replaceHtmlEntryNoEscapeCB, but escapes result string.
 
 	Only <, >, & characters are escaped.
 	"""
@@ -100,19 +101,14 @@ def replaceHtmlEntryCB(u_match: "re.Match") -> str:
 
 
 def replaceDingbat(u_match: "re.Match") -> str:
-	"""
-	u_match: instance of _sre.SRE_Match
-	replace chars \\u008c-\\u0095 with \\u2776-\\u277f
-	"""
+	r"""Replace chars \\u008c-\\u0095 with \\u2776-\\u277f."""
 	ch = u_match.group(0)
 	code = ch + 0x2776 - 0x8c
 	return chr(code)
 
 
 def escapeNewlinesCallback(u_match: "re.Match") -> str:
-	"""
-	u_match: instance of _sre.SRE_Match
-	"""
+	"""u_match: instance of _sre.SRE_Match."""
 	ch = u_match.group(0)
 	if ch == "\n":
 		return "\\n"
@@ -127,7 +123,7 @@ def replaceHtmlEntries(u_text: str) -> str:
 	# &ldash;
 	# &#0147;
 	# &#x010b;
-	if log.isDebug():
+	if core.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_html_entry.sub(
 		replaceHtmlEntryCB,
@@ -139,7 +135,7 @@ def replaceHtmlEntriesInKeys(u_text: str) -> str:
 	# &ldash;
 	# &#0147;
 	# &#x010b;
-	if log.isDebug():
+	if core.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_html_entry_key.sub(
 		replaceHtmlEntryNoEscapeCB,
@@ -149,11 +145,11 @@ def replaceHtmlEntriesInKeys(u_text: str) -> str:
 
 def escapeNewlines(u_text: str) -> str:
 	r"""
-	convert text to c-escaped string:
+	Convert text to c-escaped string:
 	\ -> \\
-	new line -> \n or \r
+	new line -> \n or \r.
 	"""
-	if log.isDebug():
+	if core.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_newline_escape.sub(
 		escapeNewlinesCallback,
@@ -162,7 +158,7 @@ def escapeNewlines(u_text: str) -> str:
 
 
 def stripHtmlTags(u_text: str) -> str:
-	if log.isDebug():
+	if core.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_strip_tags.sub(
 		" ",
@@ -175,7 +171,7 @@ def removeControlChars(u_text: str) -> str:
 	# \x0a - line feed
 	# \x0b - vertical tab
 	# \x0d - carriage return
-	if log.isDebug():
+	if core.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_control_chars.sub(
 		"",
@@ -184,7 +180,7 @@ def removeControlChars(u_text: str) -> str:
 
 
 def removeNewlines(u_text: str) -> str:
-	if log.isDebug():
+	if core.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_newline.sub(
 		" ",
@@ -193,10 +189,8 @@ def removeNewlines(u_text: str) -> str:
 
 
 def normalizeNewlines(u_text: str) -> str:
-	"""
-	convert new lines to unix style and remove consecutive new lines
-	"""
-	if log.isDebug():
+	"""Convert new lines to unix style and remove consecutive new lines."""
+	if core.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_pat_newline.sub(
 		"\n",
@@ -207,7 +201,7 @@ def normalizeNewlines(u_text: str) -> str:
 def replaceAsciiCharRefs(b_text: bytes, encoding: str) -> bytes:
 	# &#0147;
 	# &#x010b;
-	if log.isDebug():
+	if core.isDebug():
 		assert isinstance(b_text, bytes)  # noqa: S101
 	b_parts = b_pat_ascii_char_ref.split(b_text)
 	for i_part, b_part in enumerate(b_parts):
@@ -231,8 +225,8 @@ def replaceAsciiCharRefs(b_text: bytes, encoding: str) -> bytes:
 
 
 def fixImgLinks(u_text: str) -> str:
-	"""
-	Fix img tag links
+	r"""
+	Fix img tag links.
 
 	src attribute value of image tag is often enclosed in \x1e - \x1f
 	characters.
@@ -244,13 +238,13 @@ def fixImgLinks(u_text: str) -> str:
 	Control characters \x1e and \x1f are useless in html text, so we may
 	safely remove all of them, irrespective of context.
 	"""
-	if log.isDebug():
+	if core.isDebug():
 		assert isinstance(u_text, str)  # noqa: S101
 	return u_text.replace("\x1e", "").replace("\x1f", "")
 
 
 def stripDollarIndexes(b_word: bytes) -> "tuple[bytes, int]":
-	if log.isDebug():
+	if core.isDebug():
 		assert isinstance(b_word, bytes)  # noqa: S101
 	i = 0
 	b_word_main = b""

@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import io
-import typing
-from typing import Generator, List
+from typing import TYPE_CHECKING, Generator
 
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -12,6 +9,11 @@ from pyglossary.option import (
 	NewlineOption,
 	Option,
 )
+
+if TYPE_CHECKING:
+	import io
+
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 enable = True
 lname = "sql"
@@ -32,30 +34,30 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Writer(object):
+class Writer:
 	_encoding: str = "utf-8"
-	_info_keys: "List | None" = None
+	_info_keys: "list | None" = None
 	_add_extra_info: bool = True
 	_newline: str = "<br>"
 	_transaction: bool = False
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "io.IOBase | None" = None
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		self._filename = ""
 		if self._file:
 			self._file.close()
 			self._file = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename, "wt", encoding=self._encoding)
 		self._writeInfo()
 
-	def _writeInfo(self: "typing.Self") -> None:
+	def _writeInfo(self) -> None:
 		fileObj = self._file
 		if fileObj is None:
 			raise ValueError("fileObj is None")
@@ -109,7 +111,7 @@ class Writer(object):
 					f"\'{key}\', \'{value}\');\n",
 				)
 
-	def _getInfoKeys(self: "typing.Self") -> "list[str]":
+	def _getInfoKeys(self) -> "list[str]":
 		info_keys = self._info_keys
 		if info_keys:
 			return info_keys
@@ -125,7 +127,7 @@ class Writer(object):
 			"description",
 		]
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		newline = self._newline
 
 		fileObj = self._file

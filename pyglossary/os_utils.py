@@ -1,28 +1,31 @@
 import logging
 import os
 import shutil
-import types
-import typing
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 from pyglossary import core
+
+if TYPE_CHECKING:
+	import types
 
 log = logging.getLogger("pyglossary")
 
 
-class indir(object):
+class indir:
+
 	"""
 	mkdir + chdir shortcut to use with `with` statement.
 
-		>>> print(os.getcwd())  # -> "~/projects"
-		>>> with indir('my_directory', create=True):
-		>>>     print(os.getcwd())  # -> "~/projects/my_directory"
-		>>>     # do some work inside new 'my_directory'...
-		>>> print(os.getcwd())  # -> "~/projects"
-		>>> # automatically return to previous directory.
+	>>> print(os.getcwd())  # -> "~/projects"
+	>>> with indir('my_directory', create=True):
+	>>>     print(os.getcwd())  # -> "~/projects/my_directory"
+	>>>     # do some work inside new 'my_directory'...
+	>>> print(os.getcwd())  # -> "~/projects"
+	>>> # automatically return to previous directory.
 	"""
+
 	def __init__(
-		self: "typing.Self",
+		self,
 		directory: str,
 		create: bool = False,
 		clear: bool = False,
@@ -32,7 +35,7 @@ class indir(object):
 		self.create = create
 		self.clear = clear
 
-	def __enter__(self: "typing.Self") -> None:
+	def __enter__(self) -> None:
 		self.oldpwd = os.getcwd()
 		if os.path.exists(self.dir):
 			if self.clear:
@@ -43,7 +46,7 @@ class indir(object):
 		os.chdir(self.dir)
 
 	def __exit__(
-		self: "typing.Self",
+		self,
 		exc_type: "type",
 		exc_val: "Exception",
 		exc_tb: "types.TracebackType",
@@ -106,7 +109,7 @@ def showMemoryUsage() -> None:
 	except ModuleNotFoundError:
 		return
 	usage = psutil.Process(os.getpid()).memory_info().rss // 1024
-	log.trace(f"Memory Usage: {usage:,} kB")
+	core.trace(log, f"Memory Usage: {usage:,} kB")
 
 
 def my_url_show(link: str) -> None:

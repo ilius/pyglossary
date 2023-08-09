@@ -23,10 +23,12 @@
 
 import re
 import typing
-from typing import TYPE_CHECKING, Iterator, Sequence
+from typing import TYPE_CHECKING, Iterator, Sequence, cast
 
 if TYPE_CHECKING:
-	from lxml.etree import Element
+	import io
+
+	from pyglossary.lxml_types import Element
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -34,6 +36,7 @@ from pyglossary.compression import (
 )
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import (
 	BoolOption,
 	Option,
@@ -92,7 +95,13 @@ old format
 """
 
 
-class Reader(object):
+if TYPE_CHECKING:
+	class TransformerType(typing.Protocol):
+		def transform(self, article: "Element") -> str:
+			...
+
+
+class Reader:
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
@@ -106,17 +115,17 @@ class Reader(object):
 		"full_title": "name",
 	}
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file = None
+		self._file: "io.IOBase" = nullBinaryIO
 		self._encoding = "utf-8"
-		self._htmlTr = None
+		self._htmlTr: "TransformerType | None" = None
 		self._re_span_k = re.compile(
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
 
-	def makeTransformer(self: "typing.Self") -> None:
+	def makeTransformer(self) -> None:
 		if self._xsl:
 			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 			self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
@@ -124,7 +133,7 @@ class Reader(object):
 		from pyglossary.xdxf.transform import XdxfTransformer
 		self._htmlTr = XdxfTransformer(encoding=self._encoding)
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		from lxml import etree as ET
 		self._filename = filename
@@ -134,17 +143,21 @@ class Reader(object):
 		else:
 			self._glos.setDefaultDefiFormat("x")
 
-		cfile = self._file = compressionOpen(self._filename, mode="rb")
+		cfile = self._file = cast("io.IOBase", compressionOpen(
+			self._filename,
+			mode="rb",
+		))
 
-		context = ET.iterparse(
+		context = ET.iterparse(  # type: ignore
 			cfile,
 			events=("end",),
 		)
-		for _, elem in context:
+		for _, _elem in context:
+			elem = cast("Element", _elem)
 			if elem.tag in ("meta_info", "ar", "k", "abr", "dtrn"):
 				break
 			# every other tag before </meta_info> or </ar> is considered info
-			if elem.tag in ("abbr_def",):
+			if elem.tag == "abbr_def":
 				continue
 			# in case of multiple <from> or multiple <to> tags, the last one
 			# will be stored.
@@ -180,19 +193,20 @@ class Reader(object):
 			self._file.close()
 			self._file = compressionOpen(self._filename, mode="rb")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 		from lxml.etree import tostring
 
-		context = ET.iterparse(
+		context = ET.iterparse(  # type: ignore
 			self._file,
 			events=("end",),
 			tag="ar",
 		)
-		for _, article in context:
+		for _, _article in context:
+			article = cast("Element", _article)
 			article.tail = None
 			words = [toStr(w) for w in self.titles(article)]
 			if self._htmlTr:
@@ -201,8 +215,8 @@ class Reader(object):
 				if len(words) == 1:
 					defi = self._re_span_k.sub("", defi)
 			else:
-				defi = tostring(article, encoding=self._encoding)
-				defi = defi[4:-5].decode(self._encoding).strip()
+				b_defi = cast(bytes, tostring(article, encoding=self._encoding))
+				defi = b_defi[4:-5].decode(self._encoding).strip()
 				defiFormat = "x"
 
 			# log.info(f"{defi=}, {words=}")
@@ -213,40 +227,19 @@ class Reader(object):
 				byteProgress=(self._file.tell(), self._fileSize),
 			)
 			# clean up preceding siblings to save memory
-			# this reduces memory usage from ~64 MB to ~30 MB
+			# this can reduce memory usage from 1 GB to ~25 MB
+			parent = article.getparent()
+			if parent is None:
+				continue
 			while article.getprevious() is not None:
-				del article.getparent()[0]
+				del parent[0]
 
-	def close(self: "typing.Self") -> None:
-		if self._file:
-			self._file.close()
-			self._file = None
-
-	def read_metadata_old(self: "typing.Self") -> None:
-		full_name = self._xdxf.find("full_name").text
-		desc = self._xdxf.find("description").text
-		if full_name:
-			self._glos.setInfo("name", full_name)
-		if desc:
-			self._glos.setInfo("description", desc)
-
-	def read_metadata_new(self: "typing.Self") -> None:
-		meta_info = self._xdxf.find("meta_info")
-		if meta_info is None:
-			raise ValueError("meta_info not found")
-
-		title = meta_info.find("full_title").text
-		if not title:
-			title = meta_info.find("title").text
-		desc = meta_info.find("description").text
-
-		if title:
-			self._glos.setInfo("name", title)
-		if desc:
-			self._glos.setInfo("description", desc)
+	def close(self) -> None:
+		self._file.close()
+		self._file = nullBinaryIO
 
 	def tostring(
-		self: "typing.Self",
+		self,
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -256,9 +249,8 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def titles(self: "typing.Self", article: "Element") -> "list[str]":
+	def titles(self, article: "Element") -> "list[str]":
 		"""
-
 		:param article: <ar> tag
 		:return: (title (str) | None, alternative titles (set))
 		"""
@@ -280,13 +272,13 @@ class Reader(object):
 		return titles
 
 	def _mktitle(
-		self: "typing.Self",
+		self,
 		title_element: "Element",
 		include_opts: "Sequence | None" = None,
 	) -> str:
 		if include_opts is None:
 			include_opts = ()
-		title = title_element.text
+		title = title_element.text or ""
 		opt_i = -1
 		for c in title_element:
 			if c.tag == "nu" and c.tail:
@@ -294,16 +286,10 @@ class Reader(object):
 					title += c.tail
 				else:
 					title = c.tail
-			if c.tag == "opt":
+			if c.tag == "opt" and c.text is not None:
 				opt_i += 1
 				if opt_i in include_opts:
-					if title:
-						title += c.text
-					else:
-						title = c.text
+					title += c.text
 				if c.tail:
-					if title:
-						title += c.tail
-					else:
-						title = c.tail
+					title += c.tail
 		return title.strip()

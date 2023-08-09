@@ -1134,9 +1134,6 @@
 			"dark": true,
 			"css": "",
 			"word_title": true
-		},
-		"writeDepends": {
-			"cachetools": "cachetools"
 		}
 	},
 	{

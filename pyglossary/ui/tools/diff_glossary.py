@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# mypy: ignore-errors
 
 import difflib
 import os
@@ -6,11 +7,10 @@ import os.path
 import shlex
 import sys
 from subprocess import PIPE, Popen
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 
 from pyglossary.core import log
 from pyglossary.entry import Entry
-from pyglossary.glossary_types import EntryType
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.tools.colors import (
 	green,
@@ -23,6 +23,9 @@ from pyglossary.ui.tools.word_diff import (
 	formatDiff,
 	xmlDiff,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType
 
 Glossary.init()
 
@@ -234,11 +237,10 @@ def diffGlossary(
 			entry1, entry2 = None, None
 			return
 
-		if entry1.defi == entry2.defi:
-			if words1[0] in words2 or words2[0] in words1:
-				printAltsChangedEntry(entry1, entry2)
-				entry1, entry2 = None, None
-				return
+		if entry1.defi == entry2.defi and (words1[0] in words2 or words2[0] in words1):
+			printAltsChangedEntry(entry1, entry2)
+			entry1, entry2 = None, None
+			return
 
 		if words1 < words2:
 			printEntry(red, "--- A", index1, entry1)
@@ -259,7 +261,7 @@ def diffGlossary(
 				infoStep()
 			except StopIteration:
 				break
-			except (BrokenPipeError, IOError):
+			except (OSError, BrokenPipeError):
 				break
 
 		if infoPair1:
@@ -277,7 +279,7 @@ def diffGlossary(
 				step()
 			except StopIteration:
 				break
-			except (BrokenPipeError, IOError):
+			except (OSError, BrokenPipeError):
 				break
 
 		if entry1:
@@ -296,7 +298,7 @@ def diffGlossary(
 
 	try:
 		run()
-	except (BrokenPipeError, IOError):
+	except (OSError, BrokenPipeError):
 		pass  # noqa: S110
 	except Exception as e:
 		print(e)

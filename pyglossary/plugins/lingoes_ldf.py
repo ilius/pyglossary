@@ -1,7 +1,5 @@
-
-import typing
-
 # -*- coding: utf-8 -*-
+
 from typing import Generator
 
 from pyglossary.compression import (
@@ -43,7 +41,7 @@ optionsProp: "dict[str, Option]" = {
 class Reader(TextGlossaryReader):
 	compressions = stdCompressions
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self._wordCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(
@@ -52,19 +50,19 @@ class Reader(TextGlossaryReader):
 			) - self._leadingLinesCount
 		return self._wordCount
 
-	def isInfoWord(self: "typing.Self", word: str) -> bool:
+	def isInfoWord(self, word: str) -> bool:
 		if isinstance(word, str):
 			return word.startswith("#")
 
 		return False
 
-	def fixInfoWord(self: "typing.Self", word: str) -> str:
+	def fixInfoWord(self, word: str) -> str:
 		if isinstance(word, str):
 			return word.lstrip("#").lower()
 
 		return word
 
-	def nextBlock(self: "typing.Self") -> "nextBlockResultType":
+	def nextBlock(self) -> "nextBlockResultType":
 		if not self._file:
 			raise StopIteration
 		entryLines = []
@@ -88,7 +86,7 @@ class Reader(TextGlossaryReader):
 				return None
 			if len(entryLines) < 2:
 				log.error(
-					f"invalid block near line {self._file.line}"
+					f"invalid block near pos {self._file.tell()}"
 					f" in file {self._filename}",
 				)
 				return None
@@ -96,34 +94,34 @@ class Reader(TextGlossaryReader):
 			defi = "\n".join(entryLines[1:])
 			defi = defi.replace("<br/>", "\n")  # FIXME
 
-			word = splitByBar(word)
+			words = splitByBar(word)
 
-			return word, defi, None
+			return words, defi, None
 
 
-class Writer(object):
+class Writer:
 	compressions = stdCompressions
 
 	_newline: str = "\n"
-	_resources: str = True
+	_resources: bool = True
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 
-	def getInfo(self: "typing.Self", key: str) -> str:
+	def getInfo(self, key: str) -> str:
 		return self._glos.getInfo(key).replace("\n", "<br>")
 
-	def getAuthor(self: "typing.Self") -> None:
+	def getAuthor(self) -> str:
 		return self._glos.author.replace("\n", "<br>")
 
-	def finish(self: "typing.Self") -> None:
-		self._filename = None
+	def finish(self) -> None:
+		self._filename = ""
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_writer import writeTxt
 		newline = self._newline
 		resources = self._resources

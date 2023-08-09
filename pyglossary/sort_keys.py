@@ -46,7 +46,7 @@ LocaleNamedSortKey = namedtuple("LocaleNamedSortKey", [
 
 
 sortKeyType: "TypeAlias" = Callable[
-	"[list[str]]",
+	[list[str]],
 	Any,
 ]
 
@@ -426,7 +426,7 @@ def lookupSortKey(sortKeyId: str) -> "NamedSortKey | None":
 			sqlite=localeSK.sqlite,
 		)
 
-	from icu import Collator, Locale
+	from icu import Collator, Locale  # type: ignore
 
 	localeObj: "T_Locale" = Locale(localeName)
 	localeNameFull = localeObj.getName()

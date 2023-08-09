@@ -33,9 +33,7 @@ log = logging.getLogger("pyglossary")
 def splitFilenameExt(
 	filename: str = "",
 ) -> "tuple[str, str, str, str]":
-	"""
-	returns (filenameNoExt, filename, ext, compression)
-	"""
+	"""Return (filenameNoExt, filename, ext, compression)."""
 	compression = ""
 	filenameNoExt, ext = splitext(filename)
 	ext = ext.lower()

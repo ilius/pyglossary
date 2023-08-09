@@ -19,10 +19,7 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import logging
-import typing
 from typing import TYPE_CHECKING
-
-from .glossary_types import EntryListType
 
 if TYPE_CHECKING:
 	from typing import Any, Callable, Iterator
@@ -35,12 +32,9 @@ from .entry import Entry
 log = logging.getLogger("pyglossary")
 
 
-# although issubclass(EntryListType, EntryList) is true without inheriting
-# from EntryListType, mypy does not understand this (IDK why),
-# so I have to inherit from it to make mypy happy!
-class EntryList(EntryListType):
+class EntryList:
 	def __init__(
-		self: "typing.Self",
+		self,
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
 		entryFromRaw: "Callable[[RawEntryType], EntryType]",
 	) -> None:
@@ -51,29 +45,29 @@ class EntryList(EntryListType):
 		self._rawEntryCompress = False
 
 	@property
-	def rawEntryCompress(self: "typing.Self") -> bool:
+	def rawEntryCompress(self) -> bool:
 		return self._rawEntryCompress
 
 	@rawEntryCompress.setter
-	def rawEntryCompress(self: "typing.Self", enable: bool) -> None:
+	def rawEntryCompress(self, enable: bool) -> None:
 		self._rawEntryCompress = enable
 
-	def append(self: "typing.Self", entry: "EntryType") -> None:
+	def append(self, entry: "EntryType") -> None:
 		self._l.append(self._entryToRaw(entry))
 
-	def clear(self: "typing.Self") -> None:
+	def clear(self) -> None:
 		self._l.clear()
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return len(self._l)
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		entryFromRaw = self._entryFromRaw
 		for rawEntry in self._l:
 			yield entryFromRaw(rawEntry)
 
 	def setSortKey(
-		self: "typing.Self",
+		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
@@ -87,10 +81,10 @@ class EntryList(EntryListType):
 			rawEntryCompress=self._rawEntryCompress,
 		)
 
-	def sort(self: "typing.Self") -> None:
+	def sort(self) -> None:
 		if self._sortKey is None:
 			raise ValueError("EntryList.sort: sortKey is not set")
 		self._l.sort(key=self._sortKey)
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		pass

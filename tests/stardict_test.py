@@ -1,6 +1,5 @@
 import locale
 import random
-import typing
 import unittest
 from functools import cmp_to_key
 
@@ -21,7 +20,7 @@ def sortKeyBytes(ba: bytes):
 def stardictStrCmp(s1, s2):
 	"""
 	use this function to sort index items in StarDict dictionary
-	s1 and s2 must be utf-8 encoded strings
+	s1 and s2 must be utf-8 encoded strings.
 	"""
 	s1 = toBytes(s1)
 	s2 = toBytes(s2)
@@ -38,7 +37,7 @@ sortKeyOld = cmp_to_key(stardictStrCmp)  # TOO SLOW
 def asciiStrCaseCmp(ba1, ba2):
 	"""
 	ba1 and ba2 are instances of bytes
-	imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file
+	imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file.
 	"""
 	commonLen = min(len(ba1), len(ba2))
 	for i in range(commonLen):
@@ -52,7 +51,7 @@ def asciiStrCaseCmp(ba1, ba2):
 def strCmp(ba1, ba2):
 	"""
 	ba1 and ba2 are instances of bytes
-	imitate strcmp of standard C library
+	imitate strcmp of standard C library.
 
 	Attention! You may have a temptation to replace this function with
 	built-in cmp() function. Hold on! Most probably these two function behave
@@ -72,9 +71,7 @@ def strCmp(ba1, ba2):
 
 
 def isAsciiAlpha(c):
-	"""
-	c is int
-	"""
+	"""C is int."""
 	return ord("A") <= c <= ord("Z") or ord("a") <= c <= ord("z")
 
 
@@ -85,7 +82,7 @@ def isAsciiLower(c):
 def isAsciiUpper(c):
 	"""
 	c is int
-	imitate ISUPPER macro of glib library gstrfuncs.c file
+	imitate ISUPPER macro of glib library gstrfuncs.c file.
 	"""
 	return ord("A") <= c <= ord("Z")
 
@@ -93,7 +90,7 @@ def isAsciiUpper(c):
 def asciiLower(c):
 	"""
 	c is int
-	returns int (ascii character code)
+	returns int (ascii character code).
 
 	imitate TOLOWER macro of glib library gstrfuncs.c file
 
@@ -123,7 +120,7 @@ def getRandomBytes(avgLen, sigma):
 
 
 class AsciiLowerUpperTest(unittest.TestCase):
-	def set_locale_iter(self: "typing.Self"):
+	def set_locale_iter(self):
 		for localeName in locale.locale_alias.values():
 			try:
 				locale.setlocale(locale.LC_ALL, localeName)
@@ -133,7 +130,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 				continue
 			yield localeName
 
-	def test_isalpha(self: "typing.Self"):
+	def test_isalpha(self):
 		for _ in self.set_locale_iter():
 			for code in range(256):
 				self.assertEqual(
@@ -141,7 +138,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 					bytes([code]).isalpha(),
 				)
 
-	def test_islower(self: "typing.Self"):
+	def test_islower(self):
 		for _ in self.set_locale_iter():
 			for code in range(256):
 				self.assertEqual(
@@ -149,7 +146,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 					bytes([code]).islower(),
 				)
 
-	def test_isupper(self: "typing.Self"):
+	def test_isupper(self):
 		for _ in self.set_locale_iter():
 			for code in range(256):
 				self.assertEqual(
@@ -157,7 +154,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 					bytes([code]).isupper(),
 				)
 
-	def test_lower(self: "typing.Self"):
+	def test_lower(self):
 		for _ in self.set_locale_iter():
 			for code in range(256):
 				self.assertEqual(
@@ -167,7 +164,7 @@ class AsciiLowerUpperTest(unittest.TestCase):
 
 
 class SortRandomTest(unittest.TestCase):
-	def set_locale_iter(self: "typing.Self"):
+	def set_locale_iter(self):
 		for localeName in locale.locale_alias.values():
 			try:
 				locale.setlocale(locale.LC_ALL, localeName)
@@ -178,7 +175,7 @@ class SortRandomTest(unittest.TestCase):
 			# print(localeName)
 			yield localeName
 
-	def test_sort_1(self: "typing.Self"):
+	def test_sort_1(self):
 		bsList = [
 			getRandomBytes(30, 10)
 			for _ in range(100)

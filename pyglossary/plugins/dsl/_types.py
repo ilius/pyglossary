@@ -1,59 +1,58 @@
 import typing
-from typing import Optional
-
-from pyglossary.interfaces import Interface
+from typing import Callable, Optional
 
 
-class TransformerType(metaclass=Interface):
-	def __init__(self: "typing.Self") -> None:
+class TransformerType(typing.Protocol):
+	start: int
+	pos: int
+	input: str
+	output: str
+	currentKey: str
+	attrs: "dict[str, str | None]"
+	attrName: str
+	audio: bool
+	resFileSet: "set[str]"
+	exampleColor: str
+
+	def __init__(self) -> None:
 		pass
 
-	def end(self: "typing.Self") -> bool:
+	def end(self) -> bool:
 		pass
 
-	def move(self: "typing.Self", chars: int) -> None:
+	def move(self, chars: int) -> None:
 		pass
 
-	def next(self: "typing.Self") -> str:
+	def next(self) -> str:
 		pass
 
-	def followsString(self: "typing.Self", st: str, skip: str = "") -> bool:
+	def follows(self, st: str) -> bool:
 		pass
 
-	def skipChars(self: "typing.Self", chars: str):
+	def skipAny(self, chars: str):
 		pass
 
-	def addText(self: "typing.Self", st: str) -> None:
+	def addText(self, st: str) -> None:
 		pass
 
-	@property
-	def output(self: "typing.Self") -> str:
-		pass
-
-	@output.setter
-	def output(self: "typing.Self", st: str) -> str:
+	def resetBuf(self) -> str:
 		pass
 
 
-def TitleTransformerType(TransformerType, metaclass=Interface):
-	@property
-	def outputAlt(self: "typing.Self") -> str:
-		pass
+class TitleTransformerType(TransformerType, typing.Protocol):
+	title: str
+	outputAlt: str
 
-	@outputAlt.setter
-	def outputAlt(self: "typing.Self", st: str) -> str:
-		pass
-
-	def addText2(self: "typing.Self", st: str) -> None:
+	def addText2(self, st: str) -> None:
 		pass
 
 
 ErrorType = Optional[str]
 
 # it is an State Function (state as in state machine)
-LexType = "Optional[Callable[[TransformerType], Tuple[LexType, ErrorType]]]"
+LexType = Optional[Callable[[TransformerType], tuple["LexType", ErrorType]]]
 
-TitleLexType = (
-	"Optional[Callable[[TitleTransformerType], "
-	"Tuple[TitleLexType, ErrorType]]]"
-)
+TitleLexType = Optional[
+	Callable[[TitleTransformerType], tuple["TitleLexType", ErrorType]]
+]
+

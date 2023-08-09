@@ -1,5 +1,4 @@
 
-import typing
 
 from pyglossary.core import log
 from pyglossary.option import EncodingOption, Option, StrOption
@@ -34,13 +33,13 @@ class Reader(TextGlossaryReader):
 	_headword_separator = ";   "
 	# https://github.com/cheusov/dictd/blob/master/dictfmt/dictunformat.in#L14
 
-	def isInfoWord(self: "typing.Self", word: str) -> bool:
+	def isInfoWord(self, word: str) -> bool:
 		return word.startswith("00-database-")
 
-	def fixInfoWord(self: "typing.Self", word: str) -> str:
+	def fixInfoWord(self, word: str) -> str:
 		return word
 
-	def setInfo(self: "typing.Self", word: str, defi: str) -> None:
+	def setInfo(self, word: str, defi: str) -> None:
 		if word == "00-database-short":
 			self._glos.setInfo("name", defi)
 			return
@@ -64,11 +63,11 @@ class Reader(TextGlossaryReader):
 			value = ":".join(parts[1:])
 			glos.setInfo(key, value)
 
-	def nextBlock(self: "typing.Self") -> "tuple[str, str, None] | None":
+	def nextBlock(self) -> "tuple[str | list[str], str, None] | None":
 		if not self._file:
 			raise StopIteration
 		word = ""
-		defiLines = []
+		defiLines: "list[str]" = []
 
 		while True:
 			line = self.readline()
@@ -84,8 +83,8 @@ class Reader(TextGlossaryReader):
 				if not defiLines:
 					log.warning(f"no definition/value for {word!r}")
 				defi = unescapeDefi("\n".join(defiLines))
-				word = word.split(self._headword_separator)
-				return word, defi, None
+				words = word.split(self._headword_separator)
+				return words, defi, None
 
 			if not word:
 				word = line
@@ -104,7 +103,7 @@ class Reader(TextGlossaryReader):
 			if word.startswith("00-database-") and defi == "unknown":
 				log.info(f"ignoring {word} -> {defi}")
 				return None
-			word = word.split(self._headword_separator)
-			return word, defi, None
+			words = word.split(self._headword_separator)
+			return words, defi, None
 
 		raise StopIteration

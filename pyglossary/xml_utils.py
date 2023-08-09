@@ -3,8 +3,7 @@
 
 
 def xml_escape(data: str, quotation: bool = True) -> str:
-	"""Escape &, <, and > in a string of data.
-	"""
+	"""Escape &, <, and > in a string of data."""
 	# must do ampersand first
 	data = data.replace("&", "&amp;")
 	data = data.replace(">", "&gt;")

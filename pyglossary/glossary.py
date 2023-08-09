@@ -1,6 +1,3 @@
-
-import typing
-
 # -*- coding: utf-8 -*-
 # glossary.py
 #
@@ -20,27 +17,30 @@ import typing
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+
 from time import time as now
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .core import log
-from .glossary_types import EntryType
 from .glossary_v2 import ConvertArgs, GlossaryCommon
 from .sort_keys import lookupSortKey
+
+if TYPE_CHECKING:
+	from .glossary_types import EntryType
 
 
 class Glossary(GlossaryCommon):
 	GLOSSARY_API_VERSION = "1.0"
 
-	def titleElement(  # noqa: ANN
-		self: "typing.Self",
+	def titleElement(  # noqa: ANN201
+		self,
 		hf,  # type: ignore # noqa: PGH
 		sample: str = "",
 	):  # type: ignore # noqa: PGH
 		return hf.element(self.titleTag(sample))
 
 	def read(
-		self: "typing.Self",
+		self,
 		filename: str,
 		format: str = "",
 		direct: bool = False,
@@ -48,11 +48,15 @@ class Glossary(GlossaryCommon):
 		**kwargs,  # noqa: ANN
 	) -> bool:
 		"""
+		Read from a given glossary file.
+
+		Parameters
+		----------
 		filename (str):	name/path of input file
 		format (str):	name of input format,
 						or "" to detect from file extension
 		direct (bool):	enable direct mode
-		progressbar (bool): enable progressbar
+		progressbar (bool): enable progressbar.
 
 		read-options can be passed as additional keyword arguments
 		"""
@@ -84,21 +88,19 @@ class Glossary(GlossaryCommon):
 
 		return True
 
-	def addEntryObj(self: "typing.Self", entry: "EntryType") -> None:
+	def addEntryObj(self, entry: "EntryType") -> None:
 		self._data.append(entry)
 
-	def updateIter(self: "typing.Self") -> None:
+	def updateIter(self) -> None:
 		log.warning("calling glos.updateIter() is no longer needed.")
 
 	def sortWords(
-		self: "typing.Self",
+		self,
 		sortKeyName: "str" = "headword_lower",
 		sortEncoding: "str" = "utf-8",
 		writeOptions: "dict[str, Any] | None" = None,
 	) -> None:
-		"""
-			sortKeyName: see doc/sort-key.md
-		"""
+		"""sortKeyName: see doc/sort-key.md."""
 		if self._readers:
 			raise NotImplementedError(
 				"can not use sortWords in direct mode",
@@ -132,7 +134,7 @@ class Glossary(GlossaryCommon):
 		self._iter = self._loadedEntryGen()
 
 	def convert(
-		self: "typing.Self",
+		self,
 		inputFilename: str,
 		inputFormat: str = "",
 		direct: "bool | None" = None,

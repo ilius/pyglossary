@@ -10,10 +10,12 @@ if __name__ == "__main__":
 	input = sys.argv[1]
 	tr = Transformer(
 		input,
-		current_key="HEADWORD",
+		currentKey="HEADWORD",
 	)
 	result, err = tr.transform()
 	if err:
 		print(f"Error: {err} in {input!r}")
+	elif result is None:
+		print("ERROR: result is None")
 	else:
 		print(result.output)

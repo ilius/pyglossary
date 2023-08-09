@@ -13,10 +13,10 @@ if TYPE_CHECKING:
 	from collections import OrderedDict
 	from typing import TypeAlias
 
+	from .langs import Lang
+	from .sort_keys import NamedSortKey
 
-from .interfaces import Interface
-from .langs import Lang
-from .sort_keys import NamedSortKey
+
 
 MultiStr: "TypeAlias" = "str | list[str]"
 
@@ -31,276 +31,274 @@ RawEntryType: "TypeAlias" = (
 )
 
 
-class EntryType(metaclass=Interface):
-	def __init__(self: "typing.Self") -> None:
-		self._word: "str | list[str]"
+class EntryType(typing.Protocol):
+	def __init__(self) -> None:
+		...
 
-	def isData(self: "typing.Self") -> bool:
-		raise NotImplementedError
+	def isData(self) -> bool:
+		...
 
-	def getFileName(self: "typing.Self") -> str:
-		raise NotImplementedError
-
-	@property
-	def data(self: "typing.Self") -> bytes:
-		raise NotImplementedError
-
-	def size(self: "typing.Self") -> int:
-		raise NotImplementedError
-
-	def save(self: "typing.Self", directory: str) -> str:
-		raise NotImplementedError
+	def getFileName(self) -> str:
+		...
 
 	@property
-	def s_word(self: "typing.Self") -> str:
-		raise NotImplementedError
+	def data(self) -> bytes:
+		...
+
+	def size(self) -> int:
+		...
+
+	def save(self, directory: str) -> str:
+		...
 
 	@property
-	def l_word(self: "typing.Self") -> "list[str]":
-		raise NotImplementedError
+	def s_word(self) -> str:
+		...
 
 	@property
-	def defi(self: "typing.Self") -> str:
-		raise NotImplementedError
+	def l_word(self) -> "list[str]":
+		...
 
 	@property
-	def b_word(self: "typing.Self") -> bytes:
-		raise NotImplementedError
+	def defi(self) -> str:
+		...
 
 	@property
-	def b_defi(self: "typing.Self") -> bytes:
-		raise NotImplementedError
+	def b_word(self) -> bytes:
+		...
 
 	@property
-	def defiFormat(self: "typing.Self") -> str:
+	def b_defi(self) -> bytes:
+		...
+
+	@property
+	def defiFormat(self) -> str:
 		# TODO: type: Literal["m", "h", "x", "b"]
-		raise NotImplementedError
+		...
 
 	@defiFormat.setter
-	def defiFormat(self: "typing.Self", defiFormat: str) -> None:
+	def defiFormat(self, defiFormat: str) -> None:
 		# TODO: type: Literal["m", "h", "x", "b"]
-		raise NotImplementedError
+		...
 
-	def detectDefiFormat(self: "typing.Self") -> None:
-		raise NotImplementedError
+	def detectDefiFormat(self) -> None:
+		...
 
-	def addAlt(self: "typing.Self", alt: str) -> None:
-		raise NotImplementedError
+	def addAlt(self, alt: str) -> None:
+		...
 
-	def editFuncWord(self: "typing.Self", func: "Callable[[str], str]") -> None:
-		raise NotImplementedError
+	def editFuncWord(self, func: "Callable[[str], str]") -> None:
+		...
 
-	def editFuncDefi(self: "typing.Self", func: "Callable[[str], str]") -> None:
-		raise NotImplementedError
+	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
+		...
 
-	def strip(self: "typing.Self") -> None:
-		raise NotImplementedError
+	def strip(self) -> None:
+		...
 
-	def replaceInWord(self: "typing.Self", source: str, target: str) -> None:
-		raise NotImplementedError
+	def replaceInWord(self, source: str, target: str) -> None:
+		...
 
-	def replaceInDefi(self: "typing.Self", source: str, target: str) -> None:
-		raise NotImplementedError
+	def replaceInDefi(self, source: str, target: str) -> None:
+		...
 
-	def replace(self: "typing.Self", source: str, target: str) -> None:
-		raise NotImplementedError
+	def replace(self, source: str, target: str) -> None:
+		...
 
-	def getRaw(self: "typing.Self", glos: "GlossaryType") -> RawEntryType:
-		raise NotImplementedError
+	def byteProgress(self) -> "tuple[int, int] | None":
+		...
 
-	@staticmethod
-	def getRawEntrySortKey(
-		glos: "GlossaryType",
-		key: "Callable[[bytes], Any]",
-	) -> "Callable[[RawEntryType], Any]":
-		raise NotImplementedError
+	def removeEmptyAndDuplicateAltWords(self) -> None:
+		...
 
-	def byteProgress(self: "typing.Self") -> "tuple[int, int] | None":
-		raise NotImplementedError
-
-	def removeEmptyAndDuplicateAltWords(self: "typing.Self") -> None:
-		raise NotImplementedError
-
-	def stripFullHtml(self: "typing.Self") -> "str | None":
-		raise NotImplementedError
+	def stripFullHtml(self) -> "str | None":
+		...
 
 
-class EntryListType(metaclass=Interface):
+class EntryListType(typing.Protocol):
 	def __init__(
-		self: "typing.Self",
+		self,
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
 		entryFromRaw: "Callable[[RawEntryType], EntryType]",
 	) -> None:
-		raise NotImplementedError
+		...
 
 	@property
-	def rawEntryCompress(self: "typing.Self") -> bool:
-		raise NotImplementedError
+	def rawEntryCompress(self) -> bool:
+		...
 
 	@rawEntryCompress.setter
-	def rawEntryCompress(self: "typing.Self", enable: bool) -> None:
-		raise NotImplementedError
+	def rawEntryCompress(self, enable: bool) -> None:
+		...
 
-	def append(self: "typing.Self", entry: "EntryType") -> None:
-		raise NotImplementedError	
+	def append(self, entry: "EntryType") -> None:
+		...
 
-	def clear(self: "typing.Self") -> None:
-		raise NotImplementedError
+	def clear(self) -> None:
+		...
 
-	def __len__(self: "typing.Self") -> int:
-		raise NotImplementedError
+	def __len__(self) -> int:
+		...
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
-		raise NotImplementedError
+	def __iter__(self) -> "Iterator[EntryType]":
+		...
 
 	def setSortKey(
-		self: "typing.Self",
+		self,
 		namedSortKey: "NamedSortKey",
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
 	) -> None:
-		raise NotImplementedError
+		...
 
-	def sort(self: "typing.Self") -> None:
-		raise NotImplementedError
+	def sort(self) -> None:
+		...
 
-	def close(self: "typing.Self") -> None:
-		raise NotImplementedError
+	def close(self) -> None:
+		...
 
 
-class GlossaryType(metaclass=Interface):
+class GlossaryType(typing.Protocol):
+
 	"""
 	an abstract type class for Glossary class in plugins. it only
-	contains methods and properties that might be used in plugins
+	contains methods and properties that might be used in plugins.
 	"""
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
-		raise NotImplementedError
+	def __iter__(self) -> "Iterator[EntryType]":
+		...
 
-	def __len__(self: "typing.Self") -> int:
-		raise NotImplementedError
+	def __len__(self) -> int:
+		...
 
-	def setDefaultDefiFormat(self: "typing.Self", defiFormat: str) -> None:
-		raise NotImplementedError
+	def setDefaultDefiFormat(self, defiFormat: str) -> None:
+		...
 
-	def getDefaultDefiFormat(self: "typing.Self") -> str:
-		raise NotImplementedError
+	def getDefaultDefiFormat(self) -> str:
+		...
 
 	def collectDefiFormat(
-		self: "typing.Self",
+		self,
 		maxCount: int,
 	) -> "dict[str, float] | None":
-		raise NotImplementedError
+		...
 
-	def iterInfo(self: "typing.Self") -> "Iterator[tuple[str, str]]":
-		raise NotImplementedError
+	def iterInfo(self) -> "Iterator[tuple[str, str]]":
+		...
 
-	def getInfo(self: "typing.Self", key: str) -> str:
-		raise NotImplementedError
+	def getInfo(self, key: str) -> str:
+		...
 
-	def setInfo(self: "typing.Self", key: str, value: str) -> None:
-		raise NotImplementedError
+	def setInfo(self, key: str, value: str) -> None:
+		...
 
-	def getExtraInfos(self: "typing.Self", excludeKeys: "list[str]") -> "OrderedDict":
-		raise NotImplementedError
-
-	@property
-	def author(self: "typing.Self") -> str:
-		raise NotImplementedError
+	def getExtraInfos(self, excludeKeys: "list[str]") -> "OrderedDict":
+		...
 
 	@property
-	def alts(self: "typing.Self") -> bool:
-		raise NotImplementedError
+	def author(self) -> str:
+		...
 
 	@property
-	def filename(self: "typing.Self") -> str:
-		raise NotImplementedError
+	def alts(self) -> bool:
+		...
 
 	@property
-	def tmpDataDir(self: "typing.Self") -> str:
-		raise NotImplementedError
+	def filename(self) -> str:
+		...
 
 	@property
-	def sourceLang(self: "typing.Self") -> "Lang | None":
-		raise NotImplementedError
+	def tmpDataDir(self) -> str:
+		...
 
 	@property
-	def targetLang(self: "typing.Self") -> "Lang | None":
-		raise NotImplementedError
+	def sourceLang(self) -> "Lang | None":
+		...
 
 	@property
-	def sourceLangName(self: "typing.Self") -> str:
-		raise NotImplementedError
+	def targetLang(self) -> "Lang | None":
+		...
+
+	@property
+	def sourceLangName(self) -> str:
+		...
 
 	@sourceLangName.setter
-	def sourceLangName(self: "typing.Self", langName: str) -> None:
-		raise NotImplementedError
+	def sourceLangName(self, langName: str) -> None:
+		...
 
 	@property
-	def targetLangName(self: "typing.Self") -> str:
-		raise NotImplementedError
+	def targetLangName(self) -> str:
+		...
 
 	@targetLangName.setter
-	def targetLangName(self: "typing.Self", langName: str) -> None:
-		raise NotImplementedError
+	def targetLangName(self, langName: str) -> None:
+		...
 
-	def titleTag(self: "typing.Self", sample: str) -> str:
-		raise NotImplementedError
+	def titleTag(self, sample: str) -> str:
+		...
 
 	def wordTitleStr(
-		self: "typing.Self",
+		self,
 		word: str,
 		sample: str = "",
 		_class: str = "",
 	) -> str:
-		raise NotImplementedError
+		...
 
-	def getConfig(self: "typing.Self", name: str, default: "str | None") -> "str | None":
-		raise NotImplementedError
+	def getConfig(self, name: str, default: "str | None") -> "str | None":
+		...
 
-	def addEntry(self: "typing.Self", entry: EntryType) -> None:
-		raise NotImplementedError
+	def addEntry(self, entry: EntryType) -> None:
+		...
 
 	def newEntry(
-		self: "typing.Self",
+		self,
 		word: "MultiStr",
 		defi: str,
 		defiFormat: str = "",
 		byteProgress: "tuple[int, int] | None" = None,
 	) -> EntryType:
-		raise NotImplementedError
+		...
 
-	def newDataEntry(self: "typing.Self", fname: str, data: bytes) -> EntryType:
-		raise NotImplementedError
+	def newDataEntry(self, fname: str, data: bytes) -> EntryType:
+		...
 
 	@property
-	def rawEntryCompress(self: "typing.Self") -> bool:
-		raise NotImplementedError
+	def rawEntryCompress(self) -> bool:
+		...
 
 	def stripFullHtml(
-		self: "typing.Self",
+		self,
 		errorHandler: "Callable[[EntryType, str], None] | None" = None,
 	) -> None:
-		raise NotImplementedError
+		...
+
+	def preventDuplicateWords(self) -> None:
+		...
+
+	def removeHtmlTagsAll(self) -> None:
+		...
 
 
-class GlossaryExtendedType(GlossaryType, metaclass=Interface):
+
+class GlossaryExtendedType(GlossaryType, typing.Protocol):
 	def progressInit(
-		self: "typing.Self",
+		self,
 		*args,  # noqa: ANN
 	) -> None:
-		raise NotImplementedError
+		...
 
-	def progress(self: "typing.Self", pos: int, total: int, unit: str = "entries") -> None:
-		raise NotImplementedError
+	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
+		...
 
-	def progressEnd(self: "typing.Self") -> None:
-		raise NotImplementedError
+	def progressEnd(self) -> None:
+		...
 
 	@property
-	def progressbar(self: "typing.Self") -> bool:
-		raise NotImplementedError
+	def progressbar(self) -> bool:
+		...
 
 	@progressbar.setter
-	def progressbar(self: "typing.Self", enabled: bool) -> None:
-		raise NotImplementedError
+	def progressbar(self, enabled: bool) -> None:
+		...

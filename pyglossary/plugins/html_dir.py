@@ -4,7 +4,7 @@ import html
 import os
 import re
 import time
-import typing
+from functools import lru_cache
 from os.path import isdir, isfile, join
 from typing import TYPE_CHECKING, Generator
 
@@ -84,11 +84,7 @@ h6 {{ font-size: 1.0em;}}
 """
 
 
-class Writer(object):
-	depends = {
-		"cachetools": "cachetools",
-	}
-
+class Writer:
 	_encoding: str = "utf-8"
 	_resources: bool = True
 	_max_file_size: int = 102400
@@ -98,10 +94,10 @@ class Writer(object):
 	_css: str = ""
 	_word_title: bool = True
 
-	def stripFullHtmlError(self: "typing.Self", entry: "EntryType", error: str) -> None:
+	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._fileObj: "io.IOBase | None" = None
@@ -113,9 +109,7 @@ class Writer(object):
 
 		self._resSrcPattern = re.compile(' src="([^"]*)"')
 
-	def open(self: "typing.Self", filename: str) -> None:
-		from cachetools import LRUCache  # noqa: F401
-
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._resDir = resDir = join(filename, "res")
 		if not isdir(filename):
@@ -125,19 +119,19 @@ class Writer(object):
 		if self._css:
 			self.copyCSS(self._css)
 
-	def copyCSS(self: "typing.Self", cssPath: str) -> None:
+	def copyCSS(self, cssPath: str) -> None:
 		import shutil
 		shutil.copy(self._css, join(self._filename, "style.css"))
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		pass
 
-	def getNextFilename(self: "typing.Self") -> str:
+	def getNextFilename(self) -> str:
 		return self._filename_format.format(
 			n=len(self._filenameList),
 		)
 
-	def nextFile(self: "typing.Self") -> "io.TextIOBase":
+	def nextFile(self) -> "io.TextIOBase":
 		if self._fileObj:
 			self._fileObj.write(self._tail)
 			self._fileObj.close()
@@ -153,10 +147,8 @@ class Writer(object):
 		)
 		return self._fileObj
 
-	def fixLinks(self: "typing.Self", linkTargetSet: "set[str]") -> None:
+	def fixLinks(self, linkTargetSet: "set[str]") -> None:
 		import gc
-
-		from cachetools import LRUCache
 
 		gc.collect()
 		dirn = self._filename
@@ -180,23 +172,16 @@ class Writer(object):
 			else:
 				fileByWord[word] = [(filename, entryIndex)]
 
-		linksByFile: "LRUCache" = LRUCache(maxsize=100)
-
 		# with open(join(dirn, "fileByWord.json"), "w") as fileByWordFile:
 		# 	json.dump(fileByWord, fileByWordFile, ensure_ascii=False, indent="\t")
 
+		@lru_cache(maxsize=10)
 		def getLinksByFile(fileIndex: int) -> "io.TextIOBase":
-			nonlocal linksByFile
-			_file = linksByFile.get(fileIndex)
-			if _file is not None:
-				return _file
-			_file = open(
+			return open(
 				join(dirn, f"links{fileIndex}"),
 				mode="a",
 				encoding="utf-8",
 			)
-			linksByFile[fileIndex] = _file
-			return _file
 
 		log.info("")
 		for line in open(join(dirn, "links.txt"), encoding="utf-8"):
@@ -218,10 +203,6 @@ class Writer(object):
 			)
 			_file.flush()
 
-		for _, _file in linksByFile.items():
-			_file.close()
-		del linksByFile
-
 		linkTargetSet.clear()
 		del fileByWord, linkTargetSet
 		gc.collect()
@@ -233,7 +214,7 @@ class Writer(object):
 
 		re_href = re.compile(
 			b' href="[^<>"]*?"',
-			re.I,
+			re.IGNORECASE,
 		)
 
 		for fileIndex, filename in enumerate(filenameList):
@@ -281,7 +262,7 @@ class Writer(object):
 			os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
 			os.remove(join(dirn, f"links{fileIndex}"))
 
-	def writeInfo(self: "typing.Self", filename: str, header: str) -> None:
+	def writeInfo(self, filename: str, header: str) -> None:
 		glos = self._glos
 		title = glos.getInfo("name")
 		customStyle = (
@@ -318,7 +299,7 @@ class Writer(object):
 		url = "res/" + url
 		return f' src="{url}"'
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 
 		encoding = self._encoding
 		resources = self._resources
@@ -387,8 +368,10 @@ class Writer(object):
 			links = []
 			if len(self._filenameList) > 1:
 				links.append(f'<a href="./{self._filenameList[-2]}">&#9664;</a>')
-			links.append(f'<a href="./{self.getNextFilename()}">&#9654;</a>')
-			links.append('<a href="./info.html">ℹ️</a></div>')
+			links.extend([
+				f'<a href="./{self.getNextFilename()}">&#9654;</a>',
+				'<a href="./info.html">ℹ️</a></div>',
+			])
 			return (
 				'<nav style="text-align: center; font-size: 2.5em;">' +
 				f'{nbsp}{nbsp}{nbsp}'.join(links) +
@@ -411,7 +394,7 @@ class Writer(object):
 
 		re_fixed_link = re.compile(
 			r'<a (?:[^<>]*? )?href="#([^<>"]+?)">[^<>]+?</a>',
-			re.I,
+			re.IGNORECASE,
 		)
 
 		linkTargetSet = set()
@@ -436,8 +419,8 @@ class Writer(object):
 				linksTxtFileObj.write(
 					f"{escapeNTB(target)}\t"
 					f"{len(self._filenameList)-1}\t"
-					f"{hex(pos+b_start)[2:]}\t"
-					f"{hex(b_size)[2:]}\n",
+					f"{pos+b_start:x}\t"
+					f"{b_size:x}\n",
 				)
 				linksTxtFileObj.flush()
 
@@ -504,13 +487,12 @@ class Writer(object):
 				'<hr>\n'
 			)
 			pos = fileObj.tell()
-			if pos > initFileSizeMax:
-				if pos > max_file_size - len(text.encode(encoding)):
-					fileObj = self.nextFile()
-					fileObj.write(pageHeader(
-						len(self._filenameList) - 1,
-					))
-					fileObj.write(navBar())
+			if pos > initFileSizeMax and pos > max_file_size - len(text.encode(encoding)):
+				fileObj = self.nextFile()
+				fileObj.write(pageHeader(
+					len(self._filenameList) - 1,
+				))
+				fileObj.write(navBar())
 			pos = fileObj.tell()
 			tmpFilename = escapeNTB(self._filenameList[-1])
 			for word in entry.l_word:

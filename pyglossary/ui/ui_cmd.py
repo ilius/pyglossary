@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 # ui_cmd.py
 #
 # Copyright © 2008-2021 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
@@ -18,18 +19,19 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-import logging
 import os
 import sys
-import typing
 from os.path import join
-from typing import Any, Dict, Mapping
+from typing import TYPE_CHECKING, Any, Mapping
 
 from pyglossary.core import dataDir, log
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
 from .base import UIBase, fread
 from .wcwidth import wcswidth
+
+if TYPE_CHECKING:
+	import logging
 
 
 def wc_ljust(text: str, length: int, padding: str = ' ') -> str:
@@ -70,23 +72,20 @@ def getFormatsTable(names: "list[str]", header: str) -> str:
 	descriptionWidth = getColWidth("Description", descriptions)
 	extensionsWidth = getColWidth("Extensions", extensions)
 
-	lines = ["\n"]
-	lines.append(startBold + header + endFormat)
-
-	lines.append(
+	lines = [
+		"\n",
+		startBold + header + endFormat,
 		" | ".join([
 			"Name".center(nameWidth),
 			"Description".center(descriptionWidth),
 			"Extensions".center(extensionsWidth),
 		]),
-	)
-	lines.append(
 		"-+-".join([
 			"-" * nameWidth,
 			"-" * descriptionWidth,
 			"-" * extensionsWidth,
 		]),
-	)
+	]
 	for index, name in enumerate(names):
 		lines.append(
 			" | ".join([
@@ -99,7 +98,7 @@ def getFormatsTable(names: "list[str]", header: str) -> str:
 	return "\n".join(lines)
 
 
-def help() -> None:
+def printHelp() -> None:
 	import string
 	text = fread(join(dataDir, "help"))
 	text = text.replace("<b>", startBold)\
@@ -115,10 +114,7 @@ def help() -> None:
 
 
 def parseFormatOptionsStr(st: str) -> "dict[str, Any] | None":
-	"""
-		prints error and returns None if failed to parse one option
-	"""
-
+	"""Prints error and returns None if failed to parse one option."""
 	st = st.strip()
 	if not st:
 		return {}
@@ -141,27 +137,18 @@ def parseFormatOptionsStr(st: str) -> "dict[str, Any] | None":
 	return opt
 
 
-def encodeFormatOptions(opt: "Dict") -> str:
-	if not opt:
-		return ""
-	parts = []
-	for key, value in opt.items():
-		parts.append(f"{key}={value}")
-	return ";".join(parts)
-
-
-class NullObj(object):
-	def __getattr__(self: "typing.Self", attr: str) -> "NullObj":
+class NullObj:
+	def __getattr__(self, attr: str) -> "NullObj":
 		return self
 
-	def __setattr__(self: "typing.Self", attr: str, value: "Any") -> None:
+	def __setattr__(self, attr: str, value: "Any") -> None:
 		pass
 
-	def __setitem__(self: "typing.Self", key: str, value: "Any") -> None:
+	def __setitem__(self, key: str, value: "Any") -> None:
 		pass
 
 	def __call__(
-		self: "typing.Self",
+		self,
 		*args: "tuple[Any]",
 		**kwargs: "Mapping[Any]",
 	) -> None:
@@ -170,7 +157,7 @@ class NullObj(object):
 
 class UI(UIBase):
 	def __init__(
-		self: "typing.Self",
+		self,
 		progressbar: bool = True,
 	) -> None:
 		UIBase.__init__(self)
@@ -181,7 +168,7 @@ class UI(UIBase):
 		self._progressbar = progressbar
 
 	def onSigInt(
-		self: "typing.Self",
+		self,
 		*args: "tuple[Any]",
 	) -> None:
 		log.info("")
@@ -192,30 +179,30 @@ class UI(UIBase):
 			self._toPause = True
 			log.info("Please wait...")
 
-	def setText(self: "typing.Self", text: str) -> None:
+	def setText(self, text: str) -> None:
 		self.pbar.widgets[0] = text
 
-	def fixLogger(self: "typing.Self") -> None:
+	def fixLogger(self) -> None:
 		for h in log.handlers:
 			if h.name == "std":
 				self.fixLogHandler(h)
 				return
 
-	def fillMessage(self: "typing.Self", msg: str) -> str:
+	def fillMessage(self, msg: str) -> str:
 		term_width = self.pbar.term_width
 		if term_width is None:
 			# FIXME: why?
 			return msg
 		return "\r" + wc_ljust(msg, term_width)
 
-	def fixLogHandler(self: "typing.Self", h: "logging.Handler") -> None:
+	def fixLogHandler(self, h: "logging.Handler") -> None:
 		def reset() -> None:
 			h.formatter.fill = None
 
 		self._resetLogFormatter = reset
 		h.formatter.fill = self.fillMessage
 
-	def progressInit(self: "typing.Self", title: str) -> None:
+	def progressInit(self, title: str) -> None:
 		try:
 			from .pbar_tqdm import createProgressBar
 		except ModuleNotFoundError:
@@ -223,16 +210,16 @@ class UI(UIBase):
 		self.pbar = createProgressBar(title)
 		self.fixLogger()
 
-	def progress(self: "typing.Self", ratio: float, text: str = "") -> None:
+	def progress(self, ratio: float, text: str = "") -> None:
 		self.pbar.update(ratio)
 
-	def progressEnd(self: "typing.Self") -> None:
+	def progressEnd(self) -> None:
 		self.pbar.finish()
 		if self._resetLogFormatter:
 			self._resetLogFormatter()
 
 	def reverseLoop(
-		self: "typing.Self",
+		self,
 		*args: "tuple[Any]",
 		**kwargs: "Mapping[Any]",
 	) -> None:
@@ -267,17 +254,17 @@ class UI(UIBase):
 				self._toPause = False
 
 	def run(
-		self: "typing.Self",
+		self,
 		inputFilename: str = "",
 		outputFilename: str = "",
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "Dict | None" = None,
-		readOptions: "Dict | None" = None,
-		writeOptions: "Dict | None" = None,
-		convertOptions: "Dict | None" = None,
-		glossarySetAttrs: "Dict | None" = None,
+		config: "dict | None" = None,
+		readOptions: "dict | None" = None,
+		writeOptions: "dict | None" = None,
+		convertOptions: "dict | None" = None,
+		glossarySetAttrs: "dict | None" = None,
 	) -> bool:
 		if config is None:
 			config = {}

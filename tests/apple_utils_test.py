@@ -1,5 +1,4 @@
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -10,7 +9,7 @@ from pyglossary.apple_utils import substituteAppleCSS
 
 
 class Test_substituteAppleCSS(unittest.TestCase):
-	def test_remove(self: "typing.Self"):
+	def test_remove(self):
 		css = b""".test { -webkit-text-combine: horizontal; color: black }
 .test2 {
 	-apple-color-filter: none;
@@ -21,7 +20,7 @@ class Test_substituteAppleCSS(unittest.TestCase):
 		fixed_actual = substituteAppleCSS(css)
 		self.assertEqual(fixed_actual, fixed_expected)
 
-	def test_1(self: "typing.Self"):
+	def test_1(self):
 		css = b"""html.apple_display-separateview
 {
 	-webkit-column-width: 25em;

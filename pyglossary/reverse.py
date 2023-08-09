@@ -47,9 +47,9 @@ def reverseGlossary(
 	if saveStep < 2:
 		raise ValueError("saveStep must be more than 1")
 
-	entries: "list[EntryType]" = []
-	for entry in glos:
-		entries.append(entry)
+	entries: "list[EntryType]" = [
+		entry for entry in glos
+	]
 	log.info(f"loaded {len(entries)} entries into memory")
 
 	if words:
@@ -102,7 +102,7 @@ def takeOutputWords(
 	minWordLen: int = 3,
 ) -> "list[str]":
 	# fr"[\w]{{{minWordLen},}}"
-	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
+	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.UNICODE)
 	words = set()
 	progressbar, glos.progressbar = glos.progressbar, False
 	for entry in entryIter:
@@ -127,9 +127,9 @@ def searchWordInDef(
 	# searches word "st" in definitions of the glossary
 	splitPattern = re.compile(
 		"|".join(re.escape(x) for x in sepChars),
-		re.U,
+		re.UNICODE,
 	)
-	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.U)
+	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.UNICODE)
 	outRel: "list[tuple[str, float] | tuple[str, float, str]]" = []
 	for entry in entryIter:
 		words = entry.l_word

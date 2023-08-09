@@ -7,8 +7,10 @@ if TYPE_CHECKING:
 
 
 class StrWithDesc(str):
+	desc: str
+
 	def __new__(cls: "type", name: str, desc: str) -> "StrWithDesc":
-		s = str.__new__(cls, name)
+		s: StrWithDesc = str.__new__(cls, name)
 		s.desc = desc
 		flagsByName[name] = s
 		return s

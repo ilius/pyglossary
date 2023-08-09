@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright © 2008-2019 Saeed Rasooli <saeed.gnu@gmail.com>
@@ -96,7 +95,7 @@ def to_jd(year: int, month: int, day: int) -> int:
 
 
 def jd_to(jd: int) -> "tuple[int, int, int]":
-	ordinal = int(jd) - 1721425
+	ordinal = jd - 1721425
 	if 0 < ordinal < 3652060:  # > 4x faster
 		# datetime(9999, 12, 31).toordinal() == 3652059
 		dt = datetime.fromordinal(ordinal)
@@ -125,4 +124,4 @@ def jd_to(jd: int) -> "tuple[int, int, int]":
 
 	month = ((yearday + leapadj) * 12 + 373) // 367
 	day = jd - to_jd(year, month, 1) + 1
-	return int(year), int(month), int(day)
+	return year, month, day

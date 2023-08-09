@@ -1,6 +1,5 @@
 import os
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -11,7 +10,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossarySlob(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -21,7 +20,7 @@ class TestGlossarySlob(TestGlossaryBase):
             "300-ru-en.txt": "77cfee2f",
 		})
 
-	def test_convert_txt_slob_1(self: "typing.Self"):
+	def test_convert_txt_slob_1(self):
 		fname = "100-en-fa"
 		os.environ["SLOB_TIMESTAMP"] = "2023-01-01T12:00:00.000000+00:00"
 		self.convert(
@@ -34,7 +33,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			# writeOptions={"compression": ""},
 		)
 
-	def test_convert_txt_slob_2_file_size_approx(self: "typing.Self"):
+	def test_convert_txt_slob_2_file_size_approx(self):
 		fname = "300-ru-en"
 		file_size_approx = 25000
 		files = [
@@ -62,7 +61,7 @@ class TestGlossarySlob(TestGlossaryBase):
 				msg=f"size expected={size} actual={actualSize}, file {fpath}",
 			)
 
-	def convert_slob_txt(self: "typing.Self", fname, fname2, resFiles, **convertArgs):
+	def convert_slob_txt(self, fname, fname2, resFiles, **convertArgs):
 		resFilesPath = {
 			resFileName: self.newTempFilePath(f"{fname}-2.txt_res/{resFileName}")
 			for resFileName in resFiles
@@ -80,7 +79,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			fpath2 = resFilesPath[resFileName]
 			self.compareBinaryFiles(fpath1, fpath2)
 
-	def test_convert_slob_txt_1(self: "typing.Self"):
+	def test_convert_slob_txt_1(self):
 		self.convert_slob_txt(
 			"100-en-fa-res",
 			"100-en-fa-res-slob",
@@ -90,7 +89,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			],
 		)
 
-	def test_convert_slob_txt_2(self: "typing.Self"):
+	def test_convert_slob_txt_2(self):
 		self.convert_slob_txt(
 			"100-en-fa-res",
 			"100-en-fa-res-slob",
@@ -101,7 +100,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			direct=False,
 		)
 
-	def test_convert_slob_txt_3(self: "typing.Self"):
+	def test_convert_slob_txt_3(self):
 		self.convert_slob_txt(
 			"100-en-fa-res",
 			"100-en-fa-res-slob",
@@ -112,7 +111,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			sqlite=True,
 		)
 
-	def test_convert_slob_txt_4(self: "typing.Self"):
+	def test_convert_slob_txt_4(self):
 		self.convert_slob_txt(
 			"100-en-fa-res",
 			"100-en-fa-res-slob-sort",

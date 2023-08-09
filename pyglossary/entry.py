@@ -3,7 +3,6 @@ import logging
 import os
 import re
 import shutil
-import typing
 from os.path import (
 	dirname,
 	getsize,
@@ -38,11 +37,11 @@ class DataEntry(BaseEntry):
 		"_byteProgress",
 	]
 
-	def isData(self: "typing.Self") -> bool:
+	def isData(self) -> bool:
 		return True
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		fname: str,
 		data: bytes = b"",
 		tmpPath: "str | None" = None,
@@ -58,23 +57,23 @@ class DataEntry(BaseEntry):
 		self._tmpPath = tmpPath
 		self._byteProgress = byteProgress  # tuple[int, int] | None
 
-	def getFileName(self: "typing.Self") -> str:
+	def getFileName(self) -> str:
 		return self._fname
 
 	@property
-	def data(self: "typing.Self") -> bytes:
+	def data(self) -> bytes:
 		if self._tmpPath:
 			with open(self._tmpPath, "rb") as _file:
 				return _file.read()
 		else:
 			return self._data
 
-	def size(self: "typing.Self") -> int:
+	def size(self) -> int:
 		if self._tmpPath:
 			return getsize(self._tmpPath)
 		return len(self._data)
 
-	def save(self: "typing.Self", directory: str) -> str:
+	def save(self, directory: str) -> str:
 		fname = self._fname
 		fpath = join(directory, fname)
 		fdir = dirname(fpath)
@@ -94,61 +93,61 @@ class DataEntry(BaseEntry):
 		return fpath
 
 	@property
-	def s_word(self: "typing.Self") -> str:
+	def s_word(self) -> str:
 		return self._fname
 
 	@property
-	def l_word(self: "typing.Self") -> "list[str]":
+	def l_word(self) -> "list[str]":
 		return [self._fname]
 
 	@property
-	def defi(self: "typing.Self") -> str:
+	def defi(self) -> str:
 		return f"File: {self._fname}"
 
-	def byteProgress(self: "typing.Self") -> "tuple[int, int] | None":
+	def byteProgress(self) -> "tuple[int, int] | None":
 		return self._byteProgress
 
 	@property
-	def defiFormat(self: "typing.Self") -> str:
+	def defiFormat(self) -> str:
 		return "b"
 
 	@defiFormat.setter
-	def defiFormat(self: "typing.Self", defiFormat: str) -> None:
+	def defiFormat(self, defiFormat: str) -> None:
 		pass
 
-	def detectDefiFormat(self: "typing.Self") -> None:
+	def detectDefiFormat(self) -> None:
 		pass
 
-	def addAlt(self: "typing.Self", alt: str) -> None:
+	def addAlt(self, alt: str) -> None:
 		pass
 
-	def editFuncWord(self: "typing.Self", func: "Callable[[str], str]") -> None:
+	def editFuncWord(self, func: "Callable[[str], str]") -> None:
 		pass
 
-	def editFuncDefi(self: "typing.Self", func: "Callable[[str], str]") -> None:
+	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
 		pass
 
-	def strip(self: "typing.Self") -> None:
+	def strip(self) -> None:
 		pass
 
-	def replaceInWord(self: "typing.Self", source: str, target: str) -> None:
+	def replaceInWord(self, source: str, target: str) -> None:
 		pass
 
-	def replaceInDefi(self: "typing.Self", source: str, target: str) -> None:
+	def replaceInDefi(self, source: str, target: str) -> None:
 		pass
 
-	def replace(self: "typing.Self", source: str, target: str) -> None:
+	def replace(self, source: str, target: str) -> None:
 		pass
 
-	def removeEmptyAndDuplicateAltWords(self: "typing.Self") -> None:
+	def removeEmptyAndDuplicateAltWords(self) -> None:
 		pass
 
-	def stripFullHtml(self: "typing.Self") -> "str | None":
+	def stripFullHtml(self) -> "str | None":
 		pass
 
 
 class Entry(BaseEntry):
-	xdxfPattern = re.compile("^<k>[^<>]*</k>", re.S | re.I)
+	xdxfPattern = re.compile("^<k>[^<>]*</k>", re.DOTALL | re.IGNORECASE)
 	htmlPattern = re.compile(
 		".*(?:" + "|".join([
 			r"<font[ >]",
@@ -170,7 +169,7 @@ class Entry(BaseEntry):
 			r"<h[1-6][ >]",
 			r"<audio[ >]",
 		]) + "|&[a-z]{2,8};|&#x?[0-9]{2,5};)",
-		re.S | re.I,
+		re.DOTALL | re.IGNORECASE,
 	)
 
 	__slots__ = [
@@ -180,7 +179,7 @@ class Entry(BaseEntry):
 		"_byteProgress",
 	]
 
-	def isData(self: "typing.Self") -> bool:
+	def isData(self) -> bool:
 		return False
 
 	@staticmethod
@@ -195,26 +194,27 @@ class Entry(BaseEntry):
 		# so x[0] is word(s) in bytes, that can be a str (one word),
 		# or a list or tuple (one word with or more alternatives)
 		if rawEntryCompress:
-			return lambda x: key(pickle_loads(zlib_decompress(x))[0])
+			return lambda x: key(pickle_loads(zlib_decompress(x))[0])  # type: ignore
 		# x is rawEntry, so x[0] is list of words (entry.l_word)
-		return lambda x: key(x[0])
+		return lambda x: key(x[0])  # type: ignore
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		word: MultiStr,
 		defi: str,
 		defiFormat: str = "m",
 		byteProgress: "tuple[int, int] | None" = None,
 	) -> None:
 		"""
-			word: string or a list of strings (including alternate words)
-			defi: string or a list of strings (including alternate definitions)
-			defiFormat (optional): definition format:
-				"m": plain text
-				"h": html
-				"x": xdxf
-		"""
+		Create a new Entry.
 
+		word: string or a list of strings (including alternate words)
+		defi: string or a list of strings (including alternate definitions)
+		defiFormat (optional): definition format:
+			"m": plain text
+			"h": html
+			"x": xdxf.
+		"""
 		# memory optimization:
 		if isinstance(word, (list, tuple)):
 			if len(word) == 1:
@@ -236,61 +236,57 @@ class Entry(BaseEntry):
 		self._defiFormat = defiFormat
 		self._byteProgress = byteProgress  # tuple[int, int] | None
 
-	def __repr__(self: "typing.Self") -> str:
+	def __repr__(self) -> str:
 		return (
 			f"Entry({self._word!r}, {self._defi!r}, "
 			f"defiFormat={self._defiFormat!r})"
 		)
 
 	@property
-	def s_word(self: "typing.Self") -> str:
-		"""
-			returns string of word,
-				and all the alternate words
-				separated by "|"
-		"""
+	def s_word(self) -> str:
+		"""Returns string of word, and all the alternate words separated by "|"."""
 		if isinstance(self._word, str):
 			return self._word
 		return joinByBar(self._word)
 
 	@property
-	def l_word(self: "typing.Self") -> "list[str]":
-		"""
-			returns list of the word and all the alternate words
-		"""
+	def l_word(self) -> "list[str]":
+		"""Returns list of the word and all the alternate words."""
 		if isinstance(self._word, str):
 			return [self._word]
 		return self._word
 
 	@property
-	def defi(self: "typing.Self") -> str:
-		"""
-			returns string of definition
-		"""
+	def defi(self) -> str:
+		"""Returns string of definition."""
 		return self._defi
 
 	@property
-	def defiFormat(self: "typing.Self") -> str:
+	def defiFormat(self) -> str:
 		"""
-			returns definition format:
-				"m": plain text
-				"h": html
-				"x": xdxf
+		Returns definition format.
+
+		Values:
+			"m": plain text
+			"h": html
+			"x": xdxf.
 		"""
 		# TODO: type: Literal["m", "h", "x"]
 		return self._defiFormat
 
 	@defiFormat.setter
-	def defiFormat(self: "typing.Self", defiFormat: str) -> None:
+	def defiFormat(self, defiFormat: str) -> None:
 		"""
-			defiFormat:
-				"m": plain text
-				"h": html
-				"x": xdxf
+		Set definition format.
+
+		defiFormat:
+			"m": plain text
+			"h": html
+			"x": xdxf.
 		"""
 		self._defiFormat = defiFormat
 
-	def detectDefiFormat(self: "typing.Self") -> None:
+	def detectDefiFormat(self) -> None:
 		if self._defiFormat != "m":
 			return
 		if Entry.xdxfPattern.match(self.defi):
@@ -300,19 +296,20 @@ class Entry(BaseEntry):
 			self._defiFormat = "h"
 			return
 
-	def byteProgress(self: "typing.Self") -> "tuple[int, int] | None":
+	def byteProgress(self) -> "tuple[int, int] | None":
 		return self._byteProgress
 
-	def addAlt(self: "typing.Self", alt: str) -> None:
+	def addAlt(self, alt: str) -> None:
 		l_word = self.l_word
 		l_word.append(alt)
 		self._word = l_word
 
-	def editFuncWord(self: "typing.Self", func: "Callable[[str], str]") -> None:
+	def editFuncWord(self, func: "Callable[[str], str]") -> None:
 		"""
-			run function `func` on all the words
-			`func` must accept only one string as argument
-			and return the modified string
+		Run function `func` on all the words.
+
+		`func` must accept only one string as argument
+		and return the modified string.
 		"""
 		if isinstance(self._word, str):
 			self._word = func(self._word)
@@ -322,31 +319,28 @@ class Entry(BaseEntry):
 			func(st) for st in self._word
 		]
 
-	def editFuncDefi(self: "typing.Self", func: "Callable[[str], str]") -> None:
+	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
 		"""
-			run function `func` on all the definitions
-			`func` must accept only one string as argument
-			and return the modified string
+		Run function `func` on all the definitions.
+
+		`func` must accept only one string as argument
+		and return the modified string.
 		"""
 		self._defi = func(self._defi)
 
-	def _stripTrailingBR(self: "typing.Self", s: str) -> str:
+	def _stripTrailingBR(self, s: str) -> str:
 		while s.endswith(("<BR>", "<br>")):
 			s = s[:-4]
 		return s
 
-	def strip(self: "typing.Self") -> None:
-		"""
-			strip whitespaces from all words and definitions
-		"""
+	def strip(self) -> None:
+		"""Strip whitespaces from all words and definitions."""
 		self.editFuncWord(str.strip)
 		self.editFuncDefi(str.strip)
 		self.editFuncDefi(self._stripTrailingBR)
 
-	def replaceInWord(self: "typing.Self", source: str, target: str) -> None:
-		"""
-			replace string `source` with `target` in all words
-		"""
+	def replaceInWord(self, source: str, target: str) -> None:
+		"""Replace string `source` with `target` in all words."""
 		if isinstance(self._word, str):
 			self._word = self._word.replace(source, target)
 			return
@@ -355,20 +349,16 @@ class Entry(BaseEntry):
 			st.replace(source, target) for st in self._word
 		]
 
-	def replaceInDefi(self: "typing.Self", source: str, target: str) -> None:
-		"""
-			replace string `source` with `target` in all definitions
-		"""
+	def replaceInDefi(self, source: str, target: str) -> None:
+		"""Replace string `source` with `target` in all definitions."""
 		self._defi = self._defi.replace(source, target)
 
-	def replace(self: "typing.Self", source: str, target: str) -> None:
-		"""
-			replace string `source` with `target` in all words and definitions
-		"""
+	def replace(self, source: str, target: str) -> None:
+		"""Replace string `source` with `target` in all words and definitions."""
 		self.replaceInWord(source, target)
 		self.replaceInDefi(source, target)
 
-	def removeEmptyAndDuplicateAltWords(self: "typing.Self") -> None:
+	def removeEmptyAndDuplicateAltWords(self) -> None:
 		l_word = self.l_word
 		if len(l_word) == 1:
 			return
@@ -376,10 +366,8 @@ class Entry(BaseEntry):
 		l_word = list(unique_everseen(l_word))
 		self._word = l_word
 
-	def stripFullHtml(self: "typing.Self") -> "str | None":
-		"""
-		returns error
-		"""
+	def stripFullHtml(self) -> "str | None":
+		"""Remove <html><head><body> tags and returns error."""
 		defi = self._defi
 		if not defi.startswith('<'):
 			return None

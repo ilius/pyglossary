@@ -1,7 +1,5 @@
-
-import typing
-
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 #
 # Copyright © 2020 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 #
@@ -17,6 +15,8 @@ import typing
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+
+
 from . import gtk
 from .utils import (
 	VBox,
@@ -26,7 +26,7 @@ from .utils import (
 
 
 class AboutTabTitleBox(gtk.Box):
-	def __init__(self: "typing.Self", title: str, icon: str) -> None:
+	def __init__(self, title: str, icon: str) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		self.set_spacing(10)
 		pack(self, VBox(), expand=0)
@@ -55,12 +55,12 @@ class AboutTabTitleBox(gtk.Box):
 
 class AboutWidget(gtk.Box):
 	def __init__(
-		self: "typing.Self",
+		self,
 		logo: str = "",
 		header: str = "",
 		about: str = "",
 		authors: str = "",
-		license: str = "",
+		license_text: str = "",
 		**kwargs,
 	) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
@@ -82,7 +82,7 @@ class AboutWidget(gtk.Box):
 		##
 		tab1_about = self.newTabLabelWidget(about)
 		tab2_authors = self.newTabWidgetTextView(authors)
-		tab3_license = self.newTabWidgetTextView(license)
+		tab3_license = self.newTabWidgetTextView(license_text)
 		##
 		tabs = [
 			(tab1_about, self.newTabTitle("About", "dialog-information-22.png")),
@@ -97,7 +97,7 @@ class AboutWidget(gtk.Box):
 
 	# <a href="...">Something</a> does not work with TextView
 	def newTabWidgetTextView(
-		self: "typing.Self",
+		self,
 		text: str,
 		wrap: bool = False,
 		justification: "gtk.Justification | None" = None,
@@ -120,7 +120,7 @@ class AboutWidget(gtk.Box):
 		return swin
 
 	def newTabLabelWidget(
-		self: "typing.Self",
+		self,
 		text: str,
 		wrap: bool = False,
 		justification: "gtk.Justification | None" = None,
@@ -146,5 +146,5 @@ class AboutWidget(gtk.Box):
 		swin.set_child(box)
 		return swin
 
-	def newTabTitle(self: "typing.Self", title: str, icon: str):
+	def newTabTitle(self, title: str, icon: str):
 		return AboutTabTitleBox(title, icon)

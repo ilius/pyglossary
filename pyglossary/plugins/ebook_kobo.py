@@ -23,19 +23,21 @@
 # SOFTWARE.
 
 import re
-import typing
 import unicodedata
 from gzip import compress, decompress
 from operator import itemgetter
 from pathlib import Path
 from pickle import dumps, loads
-from typing import Generator
+from typing import TYPE_CHECKING, Generator
 
+from pyglossary import core
 from pyglossary.core import log, pip
 from pyglossary.flags import NEVER
-from pyglossary.glossary_types import EntryType, GlossaryType
-from pyglossary.option import Option
 from pyglossary.os_utils import indir
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.option import Option
 
 enable = True
 lname = "kobo"
@@ -95,13 +97,13 @@ class Writer:
 		"marisa_trie": "marisa-trie",
 	}
 
-	def stripFullHtmlError(self: "typing.Self", entry: "EntryType", error: str) -> None:
+	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
-	def __init__(self: "typing.Self", glos: "GlossaryType", **kwargs) -> None:
+	def __init__(self, glos: "GlossaryType", **kwargs) -> None:
 		self._glos = glos
-		self._filename = None
-		self._words = []
+		self._filename = ""
+		self._words: "list[str]" = []
 		self._img_pattern = re.compile(
 			'<img src="([^<>"]*?)"( [^<>]*?)?>',
 			re.DOTALL,
@@ -109,7 +111,7 @@ class Writer:
 		# img tag has no closing
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
-	def get_prefix(self: "typing.Self", word: str) -> str:
+	def get_prefix(self, word: str) -> str:
 		if not word:
 			return "11"
 		wo = word[:2].strip().lower()
@@ -125,10 +127,9 @@ class Writer:
 		for c in wo:
 			if not unicodedata.category(c).startswith("L"):
 				return "11"
-		wo = wo.ljust(2, "a")
-		return wo
+		return wo.ljust(2, "a")
 
-	def fix_defi(self: "typing.Self", defi: str) -> str:
+	def fix_defi(self, defi: str) -> str:
 		# @pgaskin on #219: Kobo supports images in dictionaries,
 		# but these have a lot of gotchas
 		# (see https://pgaskin.net/dictutil/dicthtml/format.html).
@@ -139,7 +140,7 @@ class Writer:
 		# for now we just skip data entries and remove '<img' tags
 		return self._img_pattern.sub("[Image: \\1]", defi)
 
-	def write_groups(self: "typing.Self") -> None:
+	def write_groups(self) -> "Generator[None, EntryType, None]":
 		import gzip
 		from collections import OrderedDict
 
@@ -154,7 +155,8 @@ class Writer:
 			nonlocal htmlContents
 			group_fname = fixFilename(lastPrefix)
 			htmlContents += "</html>"
-			log.trace(
+			core.trace(
+				log,
 				f"writeGroup: {lastPrefix!r}, "
 				f"{group_fname!r}, count={groupCounter}",
 			)
@@ -174,7 +176,7 @@ class Writer:
 				continue
 			l_word = entry.l_word
 			allWords += l_word
-			wordsByPrefix = OrderedDict()
+			wordsByPrefix: "dict[str, list[str]]" = OrderedDict()
 			for word in l_word:
 				prefix = self.get_prefix(word)
 				if prefix in wordsByPrefix:
@@ -230,21 +232,21 @@ class Writer:
 
 		self._words = allWords
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		try:
-			import marisa_trie  # noqa: F401
+			import marisa_trie  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install marisa-trie` to install"
 			raise e
 		self._filename = filename
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		with indir(self._filename, create=True):
 			yield from self.write_groups()
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		import marisa_trie
 		with indir(self._filename, create=False):
 			trie = marisa_trie.Trie(self._words)
 			trie.save(self.WORDS_FILE_NAME)
-		self._filename = None
+		self._filename = ""

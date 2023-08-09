@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
+#
 # readmdict.py from https://bitbucket.org/xwang/mdict-analysis
 # Octopus MDict Dictionary File (.mdx) and Resource File (.mdd) Analyser
 #
@@ -19,7 +21,6 @@
 # GNU General Public License for more details.
 
 import logging
-import typing
 
 log = logging.getLogger(__name__)
 
@@ -52,9 +53,7 @@ if sys.hexversion >= 0x03000000:
 
 
 def _unescape_entities(text):
-	"""
-	unescape offending tags < > " &
-	"""
+	"""Unescape offending tags < > " &."""
 	text = text.replace(b'&lt;', b'<')
 	text = text.replace(b'&gt;', b'>')
 	text = text.replace(b'&quot;', b'"')
@@ -63,9 +62,7 @@ def _unescape_entities(text):
 
 
 def _fast_decrypt(data, key):
-	"""
-	XOR decryption
-	"""
+	"""XOR decryption."""
 	b = bytearray(data)
 	key = bytearray(key)
 	previous = 0x36
@@ -78,9 +75,7 @@ def _fast_decrypt(data, key):
 
 
 def _salsa_decrypt(ciphertext, encrypt_key):
-	"""
-	salsa20 (8 rounds) decryption
-	"""
+	"""salsa20 (8 rounds) decryption."""
 	s20 = Salsa20(key=encrypt_key, IV=b"\x00"*8, rounds=8)
 	return s20.encryptBytes(ciphertext)
 
@@ -91,13 +86,15 @@ def _decrypt_regcode_by_userid(reg_code: bytes, userid: bytes) -> bytes:
 	return s20.encryptBytes(reg_code)
 
 
-class MDict(object):
+class MDict:
+
 	"""
 	Base class which reads in header and key block.
 	It has no public methods and serves only as code sharing base class.
 	"""
+
 	def __init__(
-		self: "typing.Self",
+		self,
 		fname: str,
 		encoding: str = '',
 		passcode: "tuple[bytes, bytes] | None" = None,
@@ -132,7 +129,7 @@ class MDict(object):
 
 		self._key_list = self._read_keys()
 
-	def __repr__(self: "typing.Self"):
+	def __repr__(self):
 		return (
 			f"MDict({self._fname!r}, "
 			f"encoding={self._encoding!r}, "
@@ -140,38 +137,34 @@ class MDict(object):
 		)
 
 	@property
-	def filename(self: "typing.Self"):
+	def filename(self):
 		return self._fname
 
-	def __len__(self: "typing.Self"):
+	def __len__(self):
 		return self._num_entries
 
-	def __iter__(self: "typing.Self"):
+	def __iter__(self):
 		return self.keys()
 
-	def keys(self: "typing.Self"):
-		"""
-		Return an iterator over dictionary keys.
-		"""
+	def keys(self):
+		"""Return an iterator over dictionary keys."""
 		return (key_value for key_id, key_value in self._key_list)
 
-	def _read_number(self: "typing.Self", f):
+	def _read_number(self, f):
 		return unpack(self._number_format, f.read(self._number_width))[0]
 
-	def _read_int32(self: "typing.Self", f):
+	def _read_int32(self, f):
 		return unpack('>I', f.read(4))[0]
 
-	def _parse_header(self: "typing.Self", header):
-		"""
-		extract attributes from <Dict attr="value" ... >
-		"""
+	def _parse_header(self, header):
+		"""Extract attributes from <Dict attr="value" ... >."""
 		taglist = re.findall(rb'(\w+)="(.*?)"', header, re.DOTALL)
 		tagdict = {}
 		for key, value in taglist:
 			tagdict[key] = _unescape_entities(value)
 		return tagdict
 
-	def _decode_block(self: "typing.Self", block, decompressed_size):
+	def _decode_block(self, block, decompressed_size):
 		# block info: compression, encryption
 		info = unpack('<L', block[:4])[0]
 		compression_method =  info & 0xf
@@ -226,7 +219,7 @@ class MDict(object):
 
 		return decompressed_block
 
-	def _decode_key_block_info(self: "typing.Self", key_block_info_compressed):
+	def _decode_key_block_info(self, key_block_info_compressed):
 		if self._version >= 2:
 			# zlib compression
 			assert(key_block_info_compressed[:4] == b'\x02\x00\x00\x00')
@@ -296,7 +289,7 @@ class MDict(object):
 
 		return key_block_info_list
 
-	def _decode_key_block(self: "typing.Self", key_block_compressed, key_block_info_list):
+	def _decode_key_block(self, key_block_compressed, key_block_info_list):
 		key_list = []
 		i = 0
 		for compressed_size, decompressed_size in key_block_info_list:
@@ -309,7 +302,7 @@ class MDict(object):
 			i += compressed_size
 		return key_list
 
-	def _split_key_block(self: "typing.Self", key_block):
+	def _split_key_block(self, key_block):
 		key_list = []
 		key_start_index = 0
 		while key_start_index < len(key_block):
@@ -337,7 +330,7 @@ class MDict(object):
 			key_list += [(key_id, key_text)]
 		return key_list
 
-	def _read_header(self: "typing.Self"):
+	def _read_header(self):
 		f = open(self._fname, 'rb')
 		# number of bytes of header text
 		header_bytes_size = unpack('>I', f.read(4))[0]
@@ -361,7 +354,7 @@ class MDict(object):
 			if sys.hexversion >= 0x03000000:
 				encoding = encoding.decode('utf-8')
 			# GB18030 > GBK > GB2312
-			if encoding in ['GBK', 'GB2312']:
+			if encoding in ('GBK', 'GB2312'):
 				encoding = 'GB18030'
 			self._encoding = encoding
 
@@ -403,7 +396,7 @@ class MDict(object):
 
 		return header_tag
 
-	def _read_keys(self: "typing.Self"):
+	def _read_keys(self):
 		if self._version >= 3:
 			return self._read_keys_v3()
 
@@ -414,7 +407,7 @@ class MDict(object):
 
 		return self._read_keys_v1v2()
 
-	def _read_keys_v3(self: "typing.Self"):
+	def _read_keys_v3(self):
 		f = open(self._fname, 'rb')
 		f.seek(self._key_block_offset)
 
@@ -460,7 +453,7 @@ class MDict(object):
 		self._num_entries = len(key_list)
 		return key_list
 
-	def _read_keys_v1v2(self: "typing.Self"):
+	def _read_keys_v1v2(self):
 		f = open(self._fname, 'rb')
 		f.seek(self._key_block_offset)
 
@@ -508,7 +501,7 @@ class MDict(object):
 
 		return key_list
 
-	def _read_keys_brutal(self: "typing.Self"):
+	def _read_keys_brutal(self):
 		f = open(self._fname, 'rb')
 		f.seek(self._key_block_offset)
 
@@ -554,18 +547,17 @@ class MDict(object):
 		self._num_entries = len(key_list)
 		return key_list
 
-	def items(self: "typing.Self"):
-		"""Return a generator which in turn produce tuples in the form of (filename, content)
-		"""
+	def items(self):
+		"""Return a generator which in turn produce tuples in the form of (filename, content)."""
 		return self._read_records()
 
-	def _read_records(self: "typing.Self"):
+	def _read_records(self):
 		if self._version >= 3:
 			yield from self._read_records_v3()
 		else:
 			yield from self._read_records_v1v2()
 
-	def _read_records_v3(self: "typing.Self"):
+	def _read_records_v3(self):
 		f = open(self._fname, 'rb')
 		f.seek(self._record_block_offset)
 
@@ -597,7 +589,7 @@ class MDict(object):
 			offset += len(record_block)
 			size_counter += compressed_size
 
-	def _read_records_v1v2(self: "typing.Self"):
+	def _read_records_v1v2(self):
 		f = open(self._fname, 'rb')
 		f.seek(self._record_block_offset)
 
@@ -649,21 +641,23 @@ class MDict(object):
 
 		f.close()
 
-	def _treat_record_data(self: "typing.Self", data):
+	def _treat_record_data(self, data):
 		return data
 
 
 class MDD(MDict):
+
 	"""
 	MDict resource file format (*.MDD) reader.
 	>>> mdd = MDD('example.mdd')
 	>>> len(mdd)
 	208
 	>>> for filename,content in mdd.items():
-	... print filename, content[:10]
+	... print filename, content[:10].
 	"""
+
 	def __init__(
-		self: "typing.Self",
+		self,
 		fname: str,
 		passcode: "tuple[bytes, bytes] | None" = None,
 	) -> None:
@@ -671,16 +665,18 @@ class MDD(MDict):
 
 
 class MDX(MDict):
+
 	"""
 	MDict dictionary file format (*.MDD) reader.
 	>>> mdx = MDX('example.mdx')
 	>>> len(mdx)
 	42481
 	>>> for key,value in mdx.items():
-	... print key, value[:10]
+	... print key, value[:10].
 	"""
+
 	def __init__(
-		self: "typing.Self",
+		self,
 		fname: str,
 		encoding: str = '',
 		substyle: bool = False,
@@ -689,7 +685,7 @@ class MDX(MDict):
 		MDict.__init__(self, fname, encoding, passcode)
 		self._substyle = substyle
 
-	def _substitute_stylesheet(self: "typing.Self", txt):
+	def _substitute_stylesheet(self, txt):
 		# substitute stylesheet definition
 		txt_list = re.split(r'`\d+`', txt)
 		txt_tag = re.findall(r'`\d+`', txt)
@@ -707,7 +703,7 @@ class MDX(MDict):
 				txt_styled = txt_styled + style[0] + p + style[1]
 		return txt_styled
 
-	def _treat_record_data(self: "typing.Self", data):
+	def _treat_record_data(self, data):
 		# convert to utf-8
 		data = data.decode(self._encoding, errors='ignore').strip(u'\x00').encode('utf-8')
 		# substitute styles
@@ -780,7 +776,7 @@ if __name__ == '__main__':
 		print('======== %s ========' % bfname)
 		print('  Number of Entries : %d' % len(mdx))
 		for key, value in mdx.header.items():
-			print('  %s : %s' % (key, value))
+			print(f'  {key} : {value}')
 	else:
 		mdx = None
 
@@ -795,7 +791,7 @@ if __name__ == '__main__':
 		print('======== %s ========' % bfname)
 		print('  Number of Entries : %d' % len(mdd))
 		for key, value in mdd.header.items():
-			print('  %s : %s' % (key, value))
+			print(f'  {key} : {value}')
 	else:
 		mdd = None
 

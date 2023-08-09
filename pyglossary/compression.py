@@ -104,8 +104,9 @@ def zipFileOrDir(glos: "GlossaryType", filename: str) -> None:
 
 def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 	"""
-	filename is the existing file path
-	supported compressions: "gz", "bz2", "lzma", "zip"
+	Filename is the existing file path.
+
+	supported compressions: "gz", "bz2", "lzma", "zip".
 	"""
 	import shutil
 	from os.path import isfile
@@ -147,8 +148,9 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 
 def uncompress(srcFilename: str, dstFilename: str, compression: str) -> None:
 	"""
-	filename is the existing file path
-	supported compressions: "gz", "bz2", "lzma"
+	Filename is the existing file path.
+
+	supported compressions: "gz", "bz2", "lzma".
 	"""
 	import shutil
 	log.info(f"Uncompressing {srcFilename!r} to {dstFilename!r}")

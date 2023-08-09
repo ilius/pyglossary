@@ -1,8 +1,8 @@
-# slob.py 
+# slob.py
 # Copyright (C) 2020-2023 Saeed Rasooli
 # Copyright (C) 2019 Igor Tkach <itkach@gmail.com>
 # 	as part of https://github.com/itkach/slob
-# 
+#
 # This program is a free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3, or (at your option)
@@ -31,7 +31,7 @@ from bisect import bisect_left
 from builtins import open as fopen
 from collections import namedtuple
 from datetime import datetime, timezone
-from functools import lru_cache
+from functools import cache, lru_cache
 from io import BufferedIOBase, IOBase
 from os.path import isdir
 from struct import calcsize, pack, unpack
@@ -50,10 +50,8 @@ from typing import (
 )
 from uuid import UUID, uuid4
 
-import icu
+import icu  # type: ignore
 from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
-
-from .interfaces import Interface
 
 if TYPE_CHECKING:
 	from .icu_types import T_Collator
@@ -107,7 +105,7 @@ QUATERNARY: int = Collator.QUATERNARY
 IDENTICAL: int = Collator.IDENTICAL
 
 
-class CompressionModule(metaclass=Interface):
+class CompressionModule(typing.Protocol):
 	# gzip.compress(data, compresslevel=9, *, mtime=None)
 	# bz2.compress(data, compresslevel=9)
 	# zlib.compress(data, /, level=-1, wbits=15)
@@ -227,7 +225,7 @@ class TagNotFound(Exception):
 	pass
 
 
-@lru_cache(maxsize=None)
+@cache
 def sortkey(
 	strength: int,
 	maxlength: "int | None" = None,
@@ -247,7 +245,7 @@ def sortkey(
 
 class MultiFileReader(BufferedIOBase):
 	def __init__(
-		self: "typing.Self",
+		self,
 		*args: str,
 	) -> None:
 		filenames: "list[str]" = list(args)
@@ -266,35 +264,35 @@ class MultiFileReader(BufferedIOBase):
 		self._offset = -1
 		self.seek(0)
 
-	def __enter__(self: "typing.Self") -> "MultiFileReader":
+	def __enter__(self) -> "MultiFileReader":
 		return self
 
 	def __exit__(
-		self: "typing.Self",
+		self,
 		exc_type: "type[BaseException] | None",
 		exc_val: "BaseException | None",
 		exc_tb: "types.TracebackType | None",
 	) -> None:
 		self.close()
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		for f in self._files:
 			f.close()
 		self._files.clear()
 		self._ranges.clear()
 
 	@property
-	def closed(self: "typing.Self") -> bool:
+	def closed(self) -> bool:
 		return len(self._ranges) == 0
 
-	def isatty(self: "typing.Self") -> bool:
+	def isatty(self) -> bool:
 		return False
 
-	def readable(self: "typing.Self") -> bool:
+	def readable(self) -> bool:
 		return True
 
 	def seek(
-		self: "typing.Self",
+		self,
 		offset: int,
 		whence: int = io.SEEK_SET,
 	) -> int:
@@ -308,16 +306,16 @@ class MultiFileReader(BufferedIOBase):
 			raise ValueError('Invalid value for parameter whence: %r' % whence)
 		return self._offset
 
-	def seekable(self: "typing.Self") -> bool:
+	def seekable(self) -> bool:
 		return True
 
-	def tell(self: "typing.Self") -> int:
+	def tell(self) -> int:
 		return self._offset
 
-	def writable(self: "typing.Self") -> bool:
+	def writable(self) -> bool:
 		return False
 
-	def read(self: "typing.Self", n: "int | None" = -1) -> bytes:
+	def read(self, n: "int | None" = -1) -> bytes:
 		file_index = -1
 		actual_offset = 0
 		for i, r in enumerate(self._ranges):
@@ -346,9 +344,9 @@ class MultiFileReader(BufferedIOBase):
 		return result
 
 
-class KeydItemDict(object):
+class KeydItemDict:
 	def __init__(
-		self: "typing.Self",
+		self,
 		blobs: "Sequence[Blob | Ref]",
 		strength: int,
 		maxlength: "int | None" = None,
@@ -356,10 +354,12 @@ class KeydItemDict(object):
 		self.blobs = blobs
 		self.sortkey = sortkey(strength, maxlength=maxlength)
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return len(self.blobs)
 
-	def __getitem__(self: "typing.Self", key: str) -> "Iterator[Blob | Ref]":
+	# https://docs.python.org/3/library/bisect.html
+	# key= parameter to bisect_left is added in Python 3.10
+	def __getitem__(self, key: str) -> "Iterator[Blob | Ref]":
 		blobs = self.blobs
 		key_as_sk = self.sortkey(key)
 		i = bisect_left(
@@ -375,9 +375,8 @@ class KeydItemDict(object):
 			else:
 				break
 			i += 1
-		return
 
-	def __contains__(self: "typing.Self", key: str) -> bool:
+	def __contains__(self, key: str) -> bool:
 		try:
 			next(self[key])
 		except StopIteration:
@@ -385,9 +384,9 @@ class KeydItemDict(object):
 		return True
 
 
-class Blob(object):
+class Blob:
 	def __init__(
-		self: "typing.Self",
+		self,
 		content_id: int,
 		key: str,
 		fragment: str,
@@ -403,29 +402,29 @@ class Blob(object):
 		self._read = read_func
 
 	@property
-	def id(self: "typing.Self") -> int:
+	def identity(self) -> int:
 		return self._content_id
 
 	@property
-	def key(self: "typing.Self") -> str:
+	def key(self) -> str:
 		return self._key
 
 	@property
-	def fragment(self: "typing.Self") -> str:
+	def fragment(self) -> str:
 		return self._fragment
 
 	@property
-	def content_type(self: "typing.Self") -> str:
+	def content_type(self) -> str:
 		return self._read_content_type()
 
 	@property
-	def content(self: "typing.Self") -> bytes:
+	def content(self) -> bytes:
 		return self._read()
 
-	def __str__(self: "typing.Self") -> str:
+	def __str__(self) -> str:
 		return self.key
 
-	def __repr__(self: "typing.Self") -> str:
+	def __repr__(self) -> str:
 		return f'<{self.__class__.__module__}.{self.__class__.__name__} {self.key}>'
 
 
@@ -434,31 +433,31 @@ def read_byte_string(f: "IOBase", len_spec: str) -> bytes:
 	return f.read(length)
 
 
-class StructReader():
+class StructReader:
 	def __init__(
-		self: "typing.Self",
+		self,
 		_file: "IOBase",
-		encoding: "str | None" = None,	
+		encoding: "str | None" = None,
 	) -> None:
 		self._file = _file
 		self.encoding = encoding
 
-	def read_int(self: "typing.Self") -> int:
+	def read_int(self) -> int:
 		s = self.read(U_INT_SIZE)
 		return unpack(U_INT, s)[0]
 
-	def read_long(self: "typing.Self") -> int:
+	def read_long(self) -> int:
 		b = self.read(U_LONG_LONG_SIZE)
 		return unpack(U_LONG_LONG, b)[0]
 
-	def read_byte(self: "typing.Self") -> int:
+	def read_byte(self) -> int:
 		s = self.read(U_CHAR_SIZE)
 		return unpack(U_CHAR, s)[0]
 
-	def read_short(self: "typing.Self") -> int:
+	def read_short(self) -> int:
 		return unpack(U_SHORT, self._file.read(U_SHORT_SIZE))[0]
 
-	def _read_text(self: "typing.Self", len_spec: str) -> str:
+	def _read_text(self, len_spec: str) -> str:
 		if self.encoding is None:
 			raise ValueError("self.encoding is None")
 		max_len = 2 ** (8 * calcsize(len_spec)) - 1
@@ -469,54 +468,54 @@ class StructReader():
 				byte_string = byte_string[:terminator]
 		return byte_string.decode(self.encoding)
 
-	def read_tiny_text(self: "typing.Self") -> str:
+	def read_tiny_text(self) -> str:
 		return self._read_text(U_CHAR)
 
-	def read_text(self: "typing.Self") -> str:
+	def read_text(self) -> str:
 		return self._read_text(U_SHORT)
 
-	def read(self: "typing.Self", n: int) -> bytes:
+	def read(self, n: int) -> bytes:
 		return self._file.read(n)
 
-	def write(self: "typing.Self", data: bytes) -> int:
+	def write(self, data: bytes) -> int:
 		return self._file.write(data)
 
-	def seek(self: "typing.Self", pos: int) -> None:
+	def seek(self, pos: int) -> None:
 		self._file.seek(pos)
 
-	def tell(self: "typing.Self") -> int:
+	def tell(self) -> int:
 		return self._file.tell()
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self._file.close()
 
-	def flush(self: "typing.Self") -> None:
+	def flush(self) -> None:
 		self._file.flush()
 
 
-class StructWriter():
+class StructWriter:
 	def __init__(
-		self: "typing.Self",
+		self,
 		_file: "io.BufferedWriter",
 		encoding: "str | None" = None,
 	) -> None:
 		self._file = _file
 		self.encoding = encoding
 
-	def write_int(self: "typing.Self", value: int) -> None:
+	def write_int(self, value: int) -> None:
 		self._file.write(pack(U_INT, value))
 
-	def write_long(self: "typing.Self", value: int) -> None:
+	def write_long(self, value: int) -> None:
 		self._file.write(pack(U_LONG_LONG, value))
 
-	def write_byte(self: "typing.Self", value: int) -> None:
+	def write_byte(self, value: int) -> None:
 		self._file.write(pack(U_CHAR, value))
 
-	def write_short(self: "typing.Self", value: int) -> None:
+	def write_short(self, value: int) -> None:
 		self._file.write(pack(U_SHORT, value))
 
 	def _write_text(
-		self: "typing.Self",
+		self,
 		text: str,
 		len_size_spec: str,
 		encoding: "str | None" = None,
@@ -533,7 +532,7 @@ class StructWriter():
 			raise ValueError("Text is too long for size spec %s" % len_size_spec)
 		self._file.write(pack(
 			len_size_spec,
-			pad_to_length if pad_to_length else length,
+			pad_to_length or length,
 		))
 		self._file.write(text_bytes)
 		if pad_to_length:
@@ -541,7 +540,7 @@ class StructWriter():
 				self._file.write(pack(U_CHAR, 0))
 
 	def write_tiny_text(
-		self: "typing.Self",
+		self,
 		text: str,
 		encoding: "str | None" = None,
 		editable: bool = False,
@@ -555,32 +554,32 @@ class StructWriter():
 		)
 
 	def write_text(
-		self: "typing.Self",
+		self,
 		text: str,
 		encoding: "str | None" = None,
 	) -> None:
 		self._write_text(text, U_SHORT, encoding=encoding)
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self._file.close()
 
-	def flush(self: "typing.Self") -> None:
+	def flush(self) -> None:
 		self._file.flush()
 
 	@property
-	def name(self: "typing.Self") -> str:
+	def name(self) -> str:
 		return self._file.name
 
-	def tell(self: "typing.Self") -> int:
+	def tell(self) -> int:
 		return self._file.tell()
 
-	def write(self: "typing.Self", data: bytes) -> int:
+	def write(self, data: bytes) -> int:
 		return self._file.write(data)
 
 
 class StructReaderWriter(StructWriter):
 	def __init__(
-		self: "typing.Self",
+		self,
 		_file: "io.BufferedWriter",
 		reader: "StructReader",
 		encoding: "str | None" = None,
@@ -591,16 +590,16 @@ class StructReaderWriter(StructWriter):
 		)
 		self._reader = reader
 
-	def tell(self: "typing.Self") -> int:
+	def tell(self) -> int:
 		return self._file.tell()
 
-	def write(self: "typing.Self", data: bytes) -> int:
+	def write(self, data: bytes) -> int:
 		return self._file.write(data)
 
-	def read_byte(self: "typing.Self") -> int:
+	def read_byte(self) -> int:
 		return self._reader.read_byte()
 
-	def read_tiny_text(self: "typing.Self") -> str:
+	def read_tiny_text(self) -> str:
 		return self._reader.read_tiny_text()
 
 
@@ -693,9 +692,9 @@ def unmeld_ints(c: int) -> "tuple[int, int]":
 	return int(a, 2), int(b, 2)
 
 
-class Slob(object):
+class Slob:
 	def __init__(
-		self: "typing.Self",
+		self,
 		*filenames: str,
 	) -> None:
 		self._f = MultiFileReader(*filenames)
@@ -704,8 +703,7 @@ class Slob(object):
 			self._header = read_header(self._f)
 			if (self._f.size != self._header.size):
 				raise IncorrectFileSize(
-					'File size should be {0}, {1} bytes found'
-					.format(self._header.size, self._f.size))
+					f'File size should be {self._header.size}, {self._f.size} bytes found')
 		except FileFormatException:
 			self._f.close()
 			raise
@@ -724,11 +722,11 @@ class Slob(object):
 			self._header.content_types,
 		)
 
-	def __enter__(self: "typing.Self") -> "Slob":
+	def __enter__(self) -> "Slob":
 		return self
 
 	def __exit__(
-		self: "typing.Self",
+		self,
 		exc_type: "type[BaseException] | None",
 		exc_val: "BaseException | None",
 		exc_tb: "types.TracebackType | None",
@@ -736,49 +734,49 @@ class Slob(object):
 		self.close()
 
 	@property
-	def id(self: "typing.Self") -> str:
+	def identity(self) -> str:
 		return self._header.uuid.hex
 
 	@property
-	def content_types(self: "typing.Self") -> "Sequence[str]":
+	def content_types(self) -> "Sequence[str]":
 		return self._header.content_types
 
 	@property
-	def tags(self: "typing.Self") -> "dict[str, str]":
+	def tags(self) -> "dict[str, str]":
 		return self._header.tags
 
 	@property
-	def blob_count(self: "typing.Self") -> int:
+	def blob_count(self) -> int:
 		return self._header.blob_count
 
 	@property
-	def compression(self: "typing.Self") -> Compression:
+	def compression(self) -> Compression:
 		return self._header.compression
 
 	@property
-	def encoding(self: "typing.Self") -> str:
+	def encoding(self) -> str:
 		return self._header.encoding
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return len(self._refs)
 
-	def __getitem__(self: "typing.Self", i: int) -> "Any":
+	def __getitem__(self, i: int) -> "Any":
 		# this is called by bisect_left
 		return self.getBlobByIndex(i)
 
-	def __iter__(self: "typing.Self") -> "Iterator[Blob]":
+	def __iter__(self) -> "Iterator[Blob]":
 		for i in range(len(self._refs)):
 			yield self.getBlobByIndex(i)
 
-	def count(self: "typing.Self") -> int:
+	def count(self) -> int:
 		# just to comply with Sequence and make type checker happy
 		raise NotImplementedError
 
-	def index(self: "typing.Self", x: "Blob") -> int:
+	def index(self, x: "Blob") -> int:
 		# just to comply with Sequence and make type checker happy
 		raise NotImplementedError
 
-	def getBlobByIndex(self: "typing.Self", i: int) -> "Blob":
+	def getBlobByIndex(self, i: int) -> "Blob":
 		ref = self._refs[i]
 
 		def read_func() -> bytes:
@@ -798,14 +796,12 @@ class Slob(object):
 			read_func=read_func,
 		)
 
-	def get(self: "typing.Self", blob_id: int) -> "tuple[str, bytes]":
-		"""
-		returns (content_type: str, content: bytes)
-		"""
+	def get(self, blob_id: int) -> "tuple[str, bytes]":
+		"""Returns (content_type: str, content: bytes)."""
 		bin_index, bin_item_index = unmeld_ints(blob_id)
 		return self._store.get(bin_index, bin_item_index)
 
-	@lru_cache(maxsize=None)  # noqa: B019
+	@cache
 	def as_dict(
 		self: "Slob",
 		strength: int = TERTIARY,
@@ -817,7 +813,7 @@ class Slob(object):
 			maxlength=maxlength,
 		)
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self._f.close()
 		self._g.close()
 
@@ -826,11 +822,11 @@ def find_parts(fname: str) -> "list[str]":
 	fname = os.path.expanduser(fname)
 	dirname = os.path.dirname(fname) or os.getcwd()
 	basename = os.path.basename(fname)
-	candidates: "list[str]" = []
-	for name in os.listdir(dirname):
-		if name.startswith(basename):
-			candidates.append(os.path.join(dirname, name))
-	return sorted(candidates)
+	return sorted([
+		os.path.join(dirname, name)
+		for name in os.listdir(dirname)
+		if name.startswith(basename)
+	])
 
 
 def open(*filenames: str) -> Slob:
@@ -839,24 +835,24 @@ def open(*filenames: str) -> Slob:
 
 class BinMemWriter:
 
-	def __init__(self: "typing.Self") -> None:
+	def __init__(self) -> None:
 		self.content_type_ids: "list[int]" = []
 		self.item_dir: "list[bytes]" = []
 		self.items: "list[bytes]" = []
 		self.current_offset = 0
 
-	def add(self: "typing.Self", content_type_id: int, blob_bytes: bytes) -> None:
+	def add(self, content_type_id: int, blob_bytes: bytes) -> None:
 		self.content_type_ids.append(content_type_id)
 		self.item_dir.append(pack(U_INT, self.current_offset))
 		length_and_bytes = pack(U_INT, len(blob_bytes)) + blob_bytes
 		self.items.append(length_and_bytes)
 		self.current_offset += len(length_and_bytes)
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return len(self.item_dir)
 
 	def finalize(
-		self: "typing.Self",
+		self,
 		fout: "BufferedIOBase",
 		compress: "Callable[[bytes], bytes]",
 	) -> None:
@@ -877,7 +873,7 @@ ItemT = TypeVar("ItemT")
 
 class ItemList(Generic[ItemT]):
 	def __init__(
-		self: "typing.Self",
+		self,
 		reader: "StructReader",
 		offset: int,
 		count_or_spec: "str | int",
@@ -900,24 +896,24 @@ class ItemList(Generic[ItemT]):
 		self.pos_size = calcsize(pos_spec)
 		self.data_offset = self.pos_offset + self.pos_size * count
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return self._count
 
-	def pos(self: "typing.Self", i: int) -> int:
+	def pos(self, i: int) -> int:
 		with self.lock:
 			self.reader.seek(self.pos_offset + self.pos_size * i)
 			return unpack(self.pos_spec, self.reader.read(self.pos_size))[0]
 
-	def read(self: "typing.Self", pos: int) -> ItemT:
+	def read(self, pos: int) -> ItemT:
 		with self.lock:
 			self.reader.seek(self.data_offset + pos)
 			return self._read_item()
 
 	@abstractmethod
-	def _read_item(self: "typing.Self") -> ItemT:
+	def _read_item(self) -> ItemT:
 		pass
 
-	def __getitem__(self: "typing.Self", i: int) -> ItemT:
+	def __getitem__(self, i: int) -> ItemT:
 		if i >= len(self) or i < 0:
 			raise IndexError('index out of range')
 		return self.read(self.pos(i))
@@ -925,7 +921,7 @@ class ItemList(Generic[ItemT]):
 
 class RefList(ItemList[Ref]):
 	def __init__(
-		self: "typing.Self",
+		self,
 		f: "IOBase",
 		encoding: str,
 		offset: int = 0,
@@ -938,16 +934,16 @@ class RefList(ItemList[Ref]):
 			pos_spec=U_LONG_LONG,
 		)
 
-	@lru_cache(maxsize=512)  # noqa: B019
+	@lru_cache(maxsize=512)
 	def __getitem__(
-		self: "typing.Self",
+		self,
 		i: int,
 	) -> "Ref":
 		if i >= len(self) or i < 0:
 			raise IndexError('index out of range')
 		return cast(Ref, self.read(self.pos(i)))
 
-	def _read_item(self: "typing.Self") -> "Ref":
+	def _read_item(self) -> "Ref":
 		key = self.reader.read_text()
 		bin_index = self.reader.read_int()
 		item_index = self.reader.read_short()
@@ -959,7 +955,7 @@ class RefList(ItemList[Ref]):
 			fragment=fragment,
 		)
 
-	@lru_cache(maxsize=None)  # noqa: B019
+	@cache
 	def as_dict(
 		self: "RefList",
 		strength: int = TERTIARY,
@@ -974,7 +970,7 @@ class RefList(ItemList[Ref]):
 
 class Bin(ItemList[bytes]):
 	def __init__(
-		self: "typing.Self",
+		self,
 		count: int,
 		bin_bytes: bytes,
 	) -> None:
@@ -985,7 +981,7 @@ class Bin(ItemList[bytes]):
 			pos_spec=U_INT,
 		)
 
-	def _read_item(self: "typing.Self") -> bytes:
+	def _read_item(self) -> bytes:
 		content_len = self.reader.read_int()
 		return self.reader.read(content_len)
 
@@ -995,7 +991,7 @@ StoreItem = namedtuple('StoreItem', 'content_type_ids compressed_content')
 
 class Store(ItemList[StoreItem]):
 	def __init__(
-		self: "typing.Self",
+		self,
 		_file: "IOBase",
 		offset: int,
 		decompress: "Callable[[bytes], bytes]",
@@ -1010,16 +1006,16 @@ class Store(ItemList[StoreItem]):
 		self.decompress = decompress
 		self.content_types = content_types
 
-	@lru_cache(maxsize=32)  # noqa: B019
+	@lru_cache(maxsize=32)
 	def __getitem__(
-		self: "typing.Self",
+		self,
 		i: int,
 	) -> "StoreItem":
 		if i >= len(self) or i < 0:
 			raise IndexError('index out of range')
 		return cast(StoreItem, self.read(self.pos(i)))
 
-	def _read_item(self: "typing.Self") -> "StoreItem":
+	def _read_item(self) -> "StoreItem":
 		bin_item_count = self.reader.read_int()
 		packed_content_type_ids = self.reader.read(bin_item_count * U_CHAR_SIZE)
 		content_type_ids = []
@@ -1034,7 +1030,7 @@ class Store(ItemList[StoreItem]):
 		)
 
 	def _content_type(
-		self: "typing.Self",
+		self,
 		bin_index: int,
 		item_index: int,
 	) -> "tuple[str, StoreItem]":
@@ -1044,19 +1040,19 @@ class Store(ItemList[StoreItem]):
 		return content_type, store_item
 
 	def content_type(
-		self: "typing.Self",
+		self,
 		bin_index: int,
 		item_index: int,
 	) -> str:
 		return self._content_type(bin_index, item_index)[0]
 
-	@lru_cache(maxsize=16)  # noqa: B019
-	def _decompress(self: "typing.Self", bin_index: int) -> bytes:
+	@lru_cache(maxsize=16)
+	def _decompress(self, bin_index: int) -> bytes:
 		store_item = self[bin_index]
 		return self.decompress(store_item.compressed_content)
 
 	def get(
-		self: "typing.Self",
+		self,
 		bin_index: int,
 		item_index: int,
 	) -> "tuple[str, bytes]":
@@ -1074,14 +1070,14 @@ WriterEvent = namedtuple('WriterEvent', 'name data')
 class KeyTooLongException(Exception):
 
 	@property
-	def key(self: "typing.Self") -> str:
+	def key(self) -> str:
 		return self.args[0]
 
 
-class Writer(object):
+class Writer:
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		filename: str,
 		workdir: "str | None" = None,
 		encoding: str = UTF8,
@@ -1108,7 +1104,7 @@ class Writer(object):
 		self.workdir = workdir
 
 		self.tmpdir = tmpdir = tempfile.TemporaryDirectory(
-			prefix='{0}-'.format(os.path.basename(filename)),
+			prefix=f'{os.path.basename(filename)}-',
 			dir=workdir,
 		)
 
@@ -1158,13 +1154,13 @@ class Writer(object):
 			})
 		self.tags = MappingProxyType(self._tags)
 
-	def _wbfopen(self: "typing.Self", name: str) -> StructWriter:
+	def _wbfopen(self, name: str) -> StructWriter:
 		return StructWriter(
 			fopen(os.path.join(self.tmpdir.name, name), 'wb'),
 			encoding=self.encoding,
 		)
 
-	def tag(self: "typing.Self", name: str, value: str = '') -> None:
+	def tag(self, name: str, value: str = '') -> None:
 		if len(name.encode(self.encoding)) > MAX_TINY_TEXT_LEN:
 			self._fire_event('tag_name_too_long', (name, value))
 			return
@@ -1176,7 +1172,7 @@ class Writer(object):
 		self._tags[name] = value
 
 	def _split_key(
-		self: "typing.Self",
+		self,
 		key: "str | tuple[str, str]",
 	) -> "tuple[str, str]":
 		if isinstance(key, str):
@@ -1189,7 +1185,7 @@ class Writer(object):
 		return actual_key, fragment
 
 	def add(
-		self: "typing.Self",
+		self,
 		blob: bytes,
 		*keys: str,
 		content_type: str = '',
@@ -1213,7 +1209,7 @@ class Writer(object):
 			else:
 				actual_keys.append((actual_key, fragment))
 
-		if len(actual_keys) == 0:
+		if not actual_keys:
 			return
 
 		current_bin = self.current_bin
@@ -1239,7 +1235,7 @@ class Writer(object):
 		):
 			self._write_current_bin()
 
-	def add_alias(self: "typing.Self", key: str, target_key: str) -> None:
+	def add_alias(self, key: str, target_key: str) -> None:
 		if not self.max_redirects:
 			raise NotImplementedError()
 
@@ -1256,14 +1252,14 @@ class Writer(object):
 		self.f_aliases.add(pickle.dumps(target_key), key)
 
 	def _fire_event(
-		self: "typing.Self",
+		self,
 		name: str,
 		data: "Any" = None,
 	) -> None:
 		if self.observer:
 			self.observer(WriterEvent(name, data))
 
-	def _write_current_bin(self: "typing.Self") -> None:
+	def _write_current_bin(self) -> None:
 		current_bin = self.current_bin
 		if current_bin is None:
 			return
@@ -1275,7 +1271,7 @@ class Writer(object):
 		self.current_bin = None
 
 	def _write_ref(
-		self: "typing.Self",
+		self,
 		key: str,
 		bin_index: int,
 		item_index: int,
@@ -1288,7 +1284,7 @@ class Writer(object):
 		self.f_refs.write_tiny_text(fragment)
 		self.ref_count += 1
 
-	def _sort(self: "typing.Self") -> None:
+	def _sort(self) -> None:
 		self._fire_event('begin_sort')
 		f_ref_positions_sorted = self._wbfopen('ref-positions-sorted')
 		self.f_refs.flush()
@@ -1311,7 +1307,7 @@ class Writer(object):
 		)
 		self._fire_event('end_sort')
 
-	def _resolve_aliases(self: "typing.Self") -> None:
+	def _resolve_aliases(self) -> None:
 		self._fire_event('begin_resolve_aliases')
 		self.f_aliases.finalize()
 		with MultiFileReader(
@@ -1392,7 +1388,7 @@ class Writer(object):
 		self._sort()
 		self._fire_event('end_resolve_aliases')
 
-	def finalize(self: "typing.Self") -> None:
+	def finalize(self) -> None:
 		self._fire_event('begin_finalize')
 		if self.current_bin is not None:
 			self._write_current_bin()
@@ -1456,7 +1452,7 @@ class Writer(object):
 				U_LONG_LONG_SIZE +  # file size value
 				2 * U_INT_SIZE  # ref count and bin count
 			)
-			file_size += sum((os.stat(f.name).st_size for f in files))
+			file_size += sum(os.stat(f.name).st_size for f in files)
 			out.write_long(file_size)
 
 			def mv(src: "StructWriter", out: "StructWriter") -> None:
@@ -1488,7 +1484,7 @@ class Writer(object):
 		self.tmpdir.cleanup()
 		self._fire_event('end_finalize')
 
-	def size_header(self: "typing.Self") -> int:
+	def size_header(self) -> int:
 		size = 0
 		size += len(MAGIC)
 		size += 16  # uuid bytes
@@ -1508,32 +1504,32 @@ class Writer(object):
 
 		return size
 
-	def size_tags(self: "typing.Self") -> int:
+	def size_tags(self) -> int:
 		size = 0
 		for key, _ in self.tags.items():
 			size += U_CHAR_SIZE + len(key.encode(self.encoding))
 			size += 255
 		return size
 
-	def size_content_types(self: "typing.Self") -> int:
+	def size_content_types(self) -> int:
 		size = 0
 		for content_type in self.content_types:
 			size += U_CHAR_SIZE + len(content_type.encode(self.encoding))
 		return size
 
-	def size_data(self: "typing.Self") -> int:
+	def size_data(self) -> int:
 		files = (
 			self.f_ref_positions,
 			self.f_refs,
 			self.f_store_positions,
 			self.f_store,
 		)
-		return sum((os.stat(f.name).st_size for f in files))
+		return sum(os.stat(f.name).st_size for f in files)
 
-	def __enter__(self: "typing.Self") -> "Slob":
+	def __enter__(self) -> "Slob":
 		return cast("Slob", self)
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		for _file in (
 			self.f_ref_positions,
 			self.f_refs,
@@ -1552,15 +1548,15 @@ class Writer(object):
 		self.tmpdir = None  # type: ignore # noqa: PGH003
 
 	def __exit__(
-		self: "typing.Self",
+		self,
 		exc_type: "type[BaseException] | None",
 		exc_val: "BaseException | None",
 		exc_tb: "types.TracebackType | None",
 	) -> None:
 		"""
-		it used to call self.finalize() here
+		It used to call self.finalize() here
 		that was bad!
 		__exit__ is not meant for doing so much as finalize() is doing!
-		so make sure to call writer.finalize() after you are done!
+		so make sure to call writer.finalize() after you are done!.
 		"""
 		self.close()

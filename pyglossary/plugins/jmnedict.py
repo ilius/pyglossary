@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-import typing
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
@@ -9,9 +8,8 @@ if TYPE_CHECKING:
 	import io
 	from typing import Callable, Iterator
 
-	from lxml.etree import _Element as Element
-
-	from pyglossary.lxml_types import T_htmlfile
+	from pyglossary.lxml_types import Element, T_htmlfile
+	from pyglossary.option import Option
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -22,7 +20,7 @@ from pyglossary.glossary_types import (
 	EntryType,
 	GlossaryType,
 )
-from pyglossary.option import Option
+from pyglossary.io_utils import nullBinaryIO
 
 enable = True
 lname = "jmnedict"
@@ -41,7 +39,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Reader(object):
+class Reader:
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
@@ -64,15 +62,15 @@ class Reader(object):
 	}
 
 	def makeList(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		input_objects: "list[Element]",
 		processor: "Callable",
 		single_prefix: str = "",
 		skip_single: bool = True,
 	) -> None:
-		""" Wrap elements into <ol> if more than one element """
-		if len(input_objects) == 0:
+		"""Wrap elements into <ol> if more than one element."""
+		if not input_objects:
 			return
 
 		if len(input_objects) == 1:
@@ -86,7 +84,7 @@ class Reader(object):
 					processor(hf, el)
 
 	def writeTrans(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		trans: "Element",
 	) -> None:
@@ -129,7 +127,7 @@ class Reader(object):
 			hf.write(br())
 
 	def getEntryByElem(
-		self: "typing.Self",
+		self,
 		entry: "Element",
 	) -> "EntryType":
 		from lxml import etree as ET
@@ -215,8 +213,6 @@ class Reader(object):
 
 		defi = f.getvalue().decode("utf-8")
 		_file = self._file
-		if _file is None:
-			raise RuntimeError("_file is None")
 		byteProgress = (_file.tell(), self._fileSize)
 		return self._glos.newEntry(
 			keywords,
@@ -226,7 +222,7 @@ class Reader(object):
 		)
 
 	def tostring(
-		self: "typing.Self",
+		self,
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -236,34 +232,34 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def setCreationTime(self: "typing.Self", header: str) -> None:
+	def setCreationTime(self, header: str) -> None:
 		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)
 		if m is None:
 			return
 		self._glos.setInfo("creationTime", m.group(1))
 
-	def setMetadata(self: "typing.Self", header: str) -> None:
+	def setMetadata(self, header: str) -> None:
 		# TODO: self.set_info("edition", ...)
 		self.setCreationTime(header)
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""
-		self._file: "io.IOBase | None" = None
+		self._file: "io.IOBase" = nullBinaryIO
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return self._wordCount
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
-			self._file = None
+			self._file = nullBinaryIO
 
 	def open(
-		self: "typing.Self",
+		self,
 		filename: str,
 	) -> None:
 		try:
@@ -293,7 +289,7 @@ class Reader(object):
 
 		self._file = compressionOpen(filename, mode="rb")
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		context = ET.iterparse(  # type: ignore # noqa: PGH003
@@ -301,9 +297,13 @@ class Reader(object):
 			events=("end",),
 			tag="entry",
 		)
-		for _, elem in context:
+		for _, _elem in context:
+			elem = cast("Element", _elem)
 			yield self.getEntryByElem(elem)
 			# clean up preceding siblings to save memory
 			# this reduces memory usage from ~64 MB to ~30 MB
+			parent = elem.getparent()
+			if parent is None:
+				continue
 			while elem.getprevious() is not None:
-				del elem.getparent()[0]
+				del parent[0]

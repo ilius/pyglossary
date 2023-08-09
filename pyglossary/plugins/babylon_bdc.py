@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from pyglossary.option import Option
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pyglossary.option import Option
 
 enable = False
 lname = "babylon_bdc"

@@ -1,23 +1,23 @@
 
-import typing
-
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
+
 from io import BytesIO
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
-	from lxml.etree import Element
+	from pyglossary.glossary_types import (
+		EntryType,
+		GlossaryType,
+	)
+	from pyglossary.lxml_types import Element
+	from pyglossary.option import Option
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
 from pyglossary.core import log, pip
-from pyglossary.glossary_types import (
-	EntryType,
-	GlossaryType,
-)
 from pyglossary.html_utils import unescape_unicode
-from pyglossary.option import Option
 
 enable = True
 lname = "iupac_goldbook"
@@ -32,24 +32,24 @@ website = "https://goldbook.iupac.org/"
 optionsProp: "dict[str, Option]" = {}
 
 
-class Reader(object):
+class Reader:
 
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
 	}
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None
 		self._fileSize = 0
 		self._termByCode = None
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return 0
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
 			self._file = None
@@ -57,7 +57,7 @@ class Reader(object):
 		self._fileSize = 0
 		self._termByCode = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -98,20 +98,37 @@ class Reader(object):
 
 		_file.close()
 
-	def setGlosInfo(self: "typing.Self", key: str, value: str) -> None:
+	def setGlosInfo(self, key: str, value: str) -> None:
 		if value is None:
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self: "typing.Self", header: str) -> None:
-		self.setGlosInfo("name", header.find("./title").text)
-		self.setGlosInfo("publisher", header.find("./publisher").text)
-		self.setGlosInfo("isbn", header.find("./isbn").text)
-		self.setGlosInfo("doi", header.find("./doi").text)
-		self.setGlosInfo("creationTime", header.find("./accessdate").text)
+	def setMetadata(self, header: "Element") -> None:
+		if header is None:
+			return
+
+		title = header.find("./title")
+		if title:
+			self.setGlosInfo("name", title.text)
+
+		publisher = header.find("./publisher")
+		if publisher:
+			self.setGlosInfo("publisher", publisher.text)
+
+		isbn = header.find("./isbn")
+		if isbn:
+			self.setGlosInfo("isbn", isbn.text)
+
+		doi = header.find("./doi")
+		if doi:
+			self.setGlosInfo("doi", doi.text)
+
+		accessdate = header.find("./accessdate")
+		if accessdate:
+			self.setGlosInfo("creationTime", accessdate.text)
 
 	def tostring(
-		self: "typing.Self",
+		self,
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -121,7 +138,7 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def innerXML(self: "typing.Self", elem: "Element") -> str:
+	def innerXML(self, elem: "Element") -> str:
 		from lxml import etree as ET
 		elemName = elem.xpath('name(/*)')
 		resultStr = ''
@@ -133,7 +150,7 @@ class Reader(object):
 
 		return resultStr
 
-	def getTerm(self: "typing.Self", termE: "Element") -> str:
+	def getTerm(self, termE: "Element") -> str:
 		from lxml import etree as ET
 		term = ET.tostring(
 			termE,
@@ -144,7 +161,7 @@ class Reader(object):
 		term = term.replace("<i>", "").replace("</i>", "")
 		return term  # noqa: RET504
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -262,5 +279,8 @@ class Reader(object):
 
 			# clean up preceding siblings to save memory
 			# this can reduce memory usage from >300 MB to ~25 MB
+			parent = elem.getparent()
+			if parent is None:
+				continue
 			while elem.getprevious() is not None:
-				del elem.getparent()[0]
+				del parent[0]

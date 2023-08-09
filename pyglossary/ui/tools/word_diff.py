@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import difflib
 import re
 import sys
@@ -7,10 +5,10 @@ from typing import Iterator
 
 from pyglossary.ui.tools.colors import green, red, reset
 
-wordRE = re.compile(r"(\W)", re.M)
+wordRE = re.compile(r"(\W)", re.MULTILINE)
 xmlTagRE = re.compile(
 	"</?[a-z][0-9a-z]* *[^<>]*>",
-	re.I | re.M,
+	re.IGNORECASE | re.MULTILINE,
 )
 
 
@@ -71,9 +69,9 @@ def main_word_split() -> None:
 def main() -> None:
 	filename1 = sys.argv[1]
 	filename2 = sys.argv[2]
-	with open(filename1, mode="r", encoding="utf-8") as _file:
+	with open(filename1, encoding="utf-8") as _file:
 		text1 = _file.read()
-	with open(filename2, mode="r", encoding="utf-8") as _file:
+	with open(filename2, encoding="utf-8") as _file:
 		text2 = _file.read()
 	print(formatDiff(xmlDiff(text1, text2)))
 

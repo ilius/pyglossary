@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import typing
 from io import BytesIO, IOBase
 from json import loads as json_loads
 from typing import TYPE_CHECKING, cast
@@ -8,9 +7,7 @@ from typing import TYPE_CHECKING, cast
 if TYPE_CHECKING:
 	from typing import Any, Callable, Iterator
 
-	from lxml.etree import _Element as Element
-
-	from pyglossary.lxml_types import T_htmlfile
+	from pyglossary.lxml_types import Element, T_htmlfile
 
 
 from pyglossary.compression import (
@@ -19,6 +16,7 @@ from pyglossary.compression import (
 )
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullBinaryIO
 from pyglossary.langs.writing_system import getWritingSystemFromText
 from pyglossary.option import (
 	BoolOption,
@@ -64,7 +62,7 @@ optionsProp: "dict[str, Option]" = {
 	),
 }
 
-class Reader(object):
+class Reader:
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
@@ -90,15 +88,15 @@ class Reader(object):
 		# 0.5ex ~= 0.3em, but "ex" is recommended
 	)
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "IOBase | None" = None
+		self._file: "IOBase" = nullBinaryIO
 		self._fileSize = 0
 		self._wordCount = 0
 
 	def open(
-		self: "typing.Self",
+		self,
 		filename: str,
 	) -> None:
 		try:
@@ -125,18 +123,16 @@ class Reader(object):
 
 		self._file = cfile
 
-	def close(self: "typing.Self") -> None:
-		if self._file:
-			self._file.close()
-			self._file = None
+	def close(self) -> None:
+		self._file.close()
+		self._file = nullBinaryIO
 		self._filename = ""
 		self._fileSize = 0
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
-
+	def __iter__(self) -> "Iterator[EntryType]":
 		while (line := self._file.readline()):
 			line = line.strip()
 			if not line:
@@ -193,11 +189,11 @@ class Reader(object):
 						with hf.element("font", color=self._gram_color):
 							hf.write(pos)
 
-				self.writeSenseList(_hf, data.get("senses"))
+				self.writeSenseList(_hf, data.get("senses"))  # type: ignore
 
-				self.writeSynonyms(_hf, data.get("synonyms"))
+				self.writeSynonyms(_hf, data.get("synonyms"))  # type: ignore
 
-				self.writeAntonyms(_hf, data.get("antonyms"))
+				self.writeAntonyms(_hf, data.get("antonyms"))  # type: ignore
 
 				# TODO: data.get("translations")
 				# list[dict[str, str]]
@@ -211,8 +207,6 @@ class Reader(object):
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
 		_file = self._file
-		if _file is None:
-			raise RuntimeError("_file is None")
 		return self._glos.newEntry(
 			keywords,
 			defi,
@@ -221,7 +215,7 @@ class Reader(object):
 		)
 
 	def writeSoundPron(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		sound: "dict[str, Any]",
 	) -> None:
@@ -236,7 +230,7 @@ class Reader(object):
 			hf.write(f" ({key})")
 
 	def writeSoundAudio(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		sound: "dict[str, Any]",
 	) -> None:
@@ -260,7 +254,7 @@ class Reader(object):
 					pass
 
 	def writeSoundList(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		soundList: "list[dict[str, Any]] | None",
 	) -> None:
@@ -291,7 +285,7 @@ class Reader(object):
 
 
 	def writeSenseList(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		senseList: "list[dict[str, Any]]",
 	) -> None:
@@ -306,12 +300,12 @@ class Reader(object):
 	def writeSenseGloss(
 		self,
 		hf: "T_htmlfile",
-		text: str,
+		text: "str | None",
 	):
 		hf.write(text or "")
 
 	def writeSenseCategory(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		category: "dict[str, Any]",
 	) -> None:
@@ -328,7 +322,7 @@ class Reader(object):
 		hf.write(desc)
 
 	def writeSenseCategories(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		categories: "list[dict[str, Any]] | None",
 	) -> None:
@@ -340,7 +334,7 @@ class Reader(object):
 			self.makeList(hf, categories, self.writeSenseCategory)
 
 	def writeSenseExample(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		example: "dict[str, str]",
 	) -> None:
@@ -350,13 +344,13 @@ class Reader(object):
 			hf.write(text)
 		example.pop("ref", "")
 		example.pop("type", "")
-		for _, text in example.items():
+		for text in example.values():
 			if not text:
 				continue
 			hf.write(text)
 
 	def writeSenseExamples(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		examples: "list[dict[str, str]] | None",
 	) -> None:
@@ -377,12 +371,12 @@ class Reader(object):
 
 
 	def writeSenseFormOf(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		form_of: "dict[str, str]",
 	) -> None:
 		from lxml import etree as ET
-		# {"word": ..., "extra": ...} 
+		# {"word": ..., "extra": ...}
 		word = form_of.get("word")
 		if not word:
 			return
@@ -393,7 +387,7 @@ class Reader(object):
 			hf.write(extra)
 
 	def writeSenseFormOfList(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		form_of_list: "list[dict[str, str]] | None",
 	) -> None:
@@ -404,7 +398,7 @@ class Reader(object):
 			self.makeList(hf, form_of_list, self.writeSenseFormOf)
 
 	def writeTags(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		tags: "list[str] | None",
 		toRemove: "list[str] | None",
@@ -427,7 +421,7 @@ class Reader(object):
 					hf.write(tag)
 
 	def writeTopics(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		topics: "list[str] | None",
 	) -> None:
@@ -442,7 +436,7 @@ class Reader(object):
 					hf.write(topic)
 
 	def addWordLink(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		word: str,
 	):
@@ -457,7 +451,7 @@ class Reader(object):
 			hf.write(word)
 
 	def writeSynonyms(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		synonyms: "list[dict[str, Any]] | None",
 	) -> None:
@@ -482,7 +476,7 @@ class Reader(object):
 				self.addWordLink(hf, word)
 
 	def writeAntonyms(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		antonyms: "list[dict[str, str]] | None",
 	) -> None:
@@ -500,7 +494,7 @@ class Reader(object):
 				self.addWordLink(hf, word)
 
 	def writeRelated(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		relatedList: "list[dict[str, str]] | None",
 	) -> None:
@@ -518,7 +512,7 @@ class Reader(object):
 				self.addWordLink(hf, word)
 
 	def writeSenseLinks(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		linkList: "list[list[str]] | None",
 	) -> None:
@@ -541,7 +535,7 @@ class Reader(object):
 				self.addWordLink(hf, ref)
 
 	def writeSense(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		sense: "dict[str, Any]",
 	) -> None:
@@ -551,7 +545,7 @@ class Reader(object):
 		self.writeTags(
 			hf,
 			sense.get("tags"),
-			toRemove=("form-of",),
+			toRemove=["form-of"],
 		)
 
 		# for key in ("english",):
@@ -605,7 +599,7 @@ class Reader(object):
 		hf.write(ET.Element("br"))
 
 	def makeList(
-		self: "typing.Self",
+		self,
 		hf: "T_htmlfile",
 		input_objects: "list[Any]",
 		processor: "Callable",
@@ -614,8 +608,7 @@ class Reader(object):
 		ordered: bool = True,
 		list_type: str = "",
 	) -> None:
-		""" Wrap elements into <ol> if more than one element """
-
+		"""Wrap elements into <ol> if more than one element."""
 		if not input_objects:
 			return
 
@@ -634,7 +627,7 @@ class Reader(object):
 				with hf.element("li"):
 					processor(hf, el)
 
-	def getTitleTag(self: "typing.Self", sample: str) -> str:
+	def getTitleTag(self, sample: str) -> str:
 		ws = getWritingSystemFromText(sample)
 		if ws:
 			return ws.titleTag

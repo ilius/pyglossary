@@ -30,7 +30,7 @@ re_whitespace = re.compile("(\t|\n|\r)")
 
 def spaces(s: str) -> str:
 	"""
-	strip off leading and trailing whitespaces and
+	Strip off leading and trailing whitespaces and
 	replace contiguous whitespaces with just one space.
 	"""
 	return re_spaces.sub(" ", s.strip())
@@ -78,7 +78,7 @@ _brackets_sub = (
 
 def brackets(s: str) -> str:
 	r"""
-	replace all crazy brackets with square ones [].
+	Replace all crazy brackets with square ones [].
 
 	following combinations are to replace:
 		{ \[ ... \] }
@@ -94,10 +94,10 @@ def brackets(s: str) -> str:
 
 def truncate(text: str, length: int = 449) -> str:
 	"""
-	trunct a string to given length
+	Trunct a string to given length
 	:param str text:
 	:return: truncated text
-	:rtype: str
+	:rtype: str.
 	"""
 	content = re_whitespace.sub(" ", text)
 	if len(text) > length:
@@ -110,9 +110,7 @@ def truncate(text: str, length: int = 449) -> str:
 
 
 def title(title: str, BeautifulSoup: "Any") -> str:
-	"""
-	strip double quotes and html tags.
-	"""
+	"""Strip double quotes and html tags."""
 	if BeautifulSoup:
 		title = title.replace("\xef\xbb\xbf", "")
 		if len(title) > 1:
@@ -132,13 +130,21 @@ def title(title: str, BeautifulSoup: "Any") -> str:
 
 def title_long(s: str) -> str:
 	"""
-	title_long("str[ing]") -> "string"
+	Return long title line.
+
+	Example:
+	-------
+	title_long("str[ing]") -> "string".
 	"""
 	return s.replace("[", "").replace("]", "")
 
 
 def title_short(s: str) -> str:
 	"""
-	title_short("str[ing]") -> "str"
+	Return short title line.
+
+	Example:
+	-------
+	title_short("str[ing]") -> "str".
 	"""
 	return spaces(re_title_short.sub("", s))

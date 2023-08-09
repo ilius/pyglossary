@@ -57,10 +57,7 @@ def prepare_content(
 ) -> str:
 	# heavily integrated with output of dsl reader plugin!
 	# and with xdxf also.
-	"""
-	:param title: str | None
-	"""
-
+	""":param title: str | None"""
 	# class="sec" => d:priority="2"
 	# style="color:steelblue" => class="ex"
 	# class="p" style="color:green" => class="p"
@@ -220,7 +217,7 @@ def cleanup_link_target(href: str) -> str:
 	return href.removeprefix("bword://")
 
 
-def href_sub(x: "re.Pattern") -> str:
+def href_sub(x: "re.Match") -> str:
 	href = x.groups()[1]
 	if href.startswith("http"):
 		return x.group()

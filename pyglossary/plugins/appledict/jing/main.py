@@ -3,7 +3,6 @@
 import logging
 import subprocess
 import sys
-import typing
 from os import path
 
 __all__ = ["JingTestError", "run", "main"]
@@ -13,21 +12,22 @@ log.setLevel(logging.DEBUG)
 
 
 class JingTestError(subprocess.CalledProcessError):
+
 	"""
-	this exception raised when jing test failed, e.g. returned non-zero.
+	A exception that is raised when jing test failed, e.g. returned non-zero.
 	the exit status will be stored in the `returncode` attribute.
 	the `output` attribute also will store the output.
 	"""
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		returncode: int,
 		cmd: "list[str]",
 		output: bytes,
 	) -> None:
-		super(JingTestError, self).__init__(returncode, cmd, output)
+		super().__init__(returncode, cmd, output)
 
-	def __str__(self: "typing.Self") -> str:
+	def __str__(self) -> str:
 		return "\n".join([
 			f"Jing check failed with exit code {self.returncode}:",
 			"-" * 80,
@@ -36,9 +36,8 @@ class JingTestError(subprocess.CalledProcessError):
 
 
 def run(filename: str) -> None:
-	"""run(filename)
-
-	check whether the file named `filename` conforms to
+	"""
+	Check whether the file named `filename` conforms to
 	`AppleDictionarySchema.rng`.
 
 	:returns: None
@@ -78,8 +77,8 @@ def run(filename: str) -> None:
 
 def main() -> None:
 	"""
-	a command-line utility, runs Jing test on given dictionary XML
-	file with Apple Dictionary Schema.
+	Run Jing test on given dictionary XML file with Apple Dictionary Schema.
+	It's a command-line utility.
 	"""
 	if len(sys.argv) < 2:
 		prog_name = path.basename(sys.argv[0])

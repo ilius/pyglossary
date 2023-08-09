@@ -1,7 +1,5 @@
-
-import typing
-
 # -*- coding: utf-8 -*-
+
 from typing import Generator
 
 from pyglossary.compression import (
@@ -41,7 +39,7 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Writer(object):
+class Writer:
 	_encoding: str = "utf-8"
 	_enable_info: bool = True
 	_resources: bool = True
@@ -49,18 +47,18 @@ class Writer(object):
 
 	compressions = stdCompressions
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 		glos.preventDuplicateWords()
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def finish(self: "typing.Self") -> None:
-		self._filename = None
+	def finish(self) -> None:
+		self._filename = ""
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		from json import dumps
 
 		from pyglossary.text_writer import writeTxt
@@ -70,10 +68,10 @@ class Writer(object):
 		enable_info = self._enable_info
 		resources = self._resources
 
-		ascii = encoding == "ascii"
+		ensure_ascii = encoding == "ascii"
 
 		def escape(st: str) -> str:
-			return dumps(st, ensure_ascii=ascii)
+			return dumps(st, ensure_ascii=ensure_ascii)
 
 		yield from writeTxt(
 			glos,

@@ -1,5 +1,4 @@
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -12,7 +11,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryDictfile(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -26,7 +25,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			"res/6684158d.gif": "6684158d",
 		})
 
-	def convert_df_txt(self: "typing.Self", fname, fname2, resFiles, **convertArgs):
+	def convert_df_txt(self, fname, fname2, resFiles, **convertArgs):
 		resFilesPath = {
 			resFileName: self.newTempFilePath(f"{fname}-2.txt_res/{resFileName}")
 			for resFileName in resFiles
@@ -44,7 +43,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			fpath2 = resFilesPath[resFileName]
 			self.compareBinaryFiles(fpath1, fpath2)
 
-	def convert_txt_df(self: "typing.Self", fname, fname2, **convertArgs):
+	def convert_txt_df(self, fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.txt",
 			f"{fname}-2.df",
@@ -52,7 +51,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_df_txt_1(self: "typing.Self"):
+	def test_convert_df_txt_1(self):
 		self.convert_df_txt(
 			"022-en-en",
 			"022-en-en.df",
@@ -64,7 +63,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			],
 		)
 
-	def test_convert_txt_df_1(self: "typing.Self"):
+	def test_convert_txt_df_1(self):
 		self.convert_txt_df(
 			"022-en-en.df",
 			"022-en-en.df.txt",

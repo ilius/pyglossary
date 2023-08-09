@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 #
 # Copyright © 2008-2021 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # Copyright © 2011-2012 kubtek <kubtek@gmail.com>
@@ -20,7 +21,6 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-import typing
 from typing import Any, Callable
 
 import pyglossary.gregorian as gregorian
@@ -33,7 +33,7 @@ from .bgl_charset import charsetByCode
 from .bgl_language import BabylonLanguage, languageByCode
 
 
-class InfoItem(object):
+class InfoItem:
 	__slots__ = (
 		"name",
 		"decode",
@@ -41,7 +41,7 @@ class InfoItem(object):
 	)
 
 	def __init__(
-		self: "typing.Self",
+		self,
 		name: str,
 		decode: "Callable[[bytes], Any] | None" = None,
 		attr: bool = False,
@@ -60,9 +60,7 @@ def decodeBglBinTime(b_value: bytes) -> str:
 
 
 def languageInfoDecode(b_value: bytes) -> "BabylonLanguage | None":
-	"""
-		returns BabylonLanguage instance
-	"""
+	"""Returns BabylonLanguage instance."""
 	intValue = uintFromBytes(b_value)
 	try:
 		return languageByCode[intValue]
@@ -94,16 +92,17 @@ def aboutInfoDecode(b_value: bytes) -> "dict[str, str]":
 
 
 def utf16InfoDecode(b_value: bytes) -> "str | None":
-	"""
-		b_value is byte array
-		returns str, or None (on errors)
+	r"""
+	Decode info values from UTF-16.
 
-		block type = 3
-		block format: <2 byte code1><2 byte code2>
-		if code2 == 0: then the block ends
-		if code2 == 1: then the block continues as follows:
-		<4 byte len1> \x00 \x00 <message in utf-16>
-		len1 - length of message in 2-byte chars
+	Return str, or None (on errors).
+
+	block type = 3
+	block format: <2 byte code1><2 byte code2>
+	if code2 == 0: then the block ends
+	if code2 == 1: then the block continues as follows:
+	<4 byte len1> \x00 \x00 <message in utf-16>
+	len1 - length of message in 2-byte chars
 	"""
 	if b_value[0] != 0:
 		log.warning(
@@ -140,18 +139,18 @@ def utf16InfoDecode(b_value: bytes) -> "str | None":
 
 def flagsInfoDecode(b_value: bytes) -> "dict[str, bool]":
 	"""
-		returns a dict with these keys:
-			utf8Encoding
-				when this flag is set utf8 encoding is used for all articles
-				when false, the encoding is set according to the source and
-					target alphabet
-			bgl_spellingAlternatives
-				determines whether the glossary offers spelling alternatives
-				for searched terms
-			bgl_caseSensitive
-				defines if the search for terms in this glossary is
-					case sensitive
-				see code 0x20 as well
+	Returns a dict with these keys:
+	utf8Encoding
+	when this flag is set utf8 encoding is used for all articles
+	when false, the encoding is set according to the source and
+	target alphabet
+	bgl_spellingAlternatives
+	determines whether the glossary offers spelling alternatives
+	for searched terms
+	bgl_caseSensitive
+	defines if the search for terms in this glossary is
+	case sensitive
+	see code 0x20 as well.
 
 	"""
 	flags = uintFromBytes(b_value)

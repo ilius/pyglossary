@@ -20,16 +20,15 @@ import gc
 import os
 import re
 import sys
-import typing
 from os.path import dirname, extsep, isfile, join, splitext
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.plugin_lib.readmdict import MDD, MDX
 
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -72,13 +71,13 @@ then try to install [LZO library and Python binding](./doc/lzo.md).""",
 ]
 
 
-class Reader(object):
+class Reader:
 	_encoding: str = ""
 	_substyle: bool = True
 	_same_dir_data_files: bool = False
 	_audio: bool = False
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.clear()
 		self._re_internal_link = re.compile('href=(["\'])(entry://|[dx]:)')
@@ -86,7 +85,7 @@ class Reader(object):
 			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>',
 		)
 
-	def clear(self: "typing.Self") -> None:
+	def clear(self) -> None:
 		self._filename = ""
 		self._mdx: "MDX | None" = None
 		self._mdd: "list[MDD]" = []
@@ -96,7 +95,7 @@ class Reader(object):
 		# dict of mainWord -> newline-separated alternatives
 		self._linksDict: "dict[str, str]" = {}
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		from pyglossary.plugin_lib.readmdict import MDD, MDX
 		self._filename = filename
 		self._mdx = MDX(filename, self._encoding, self._substyle)
@@ -145,7 +144,7 @@ class Reader(object):
 
 		self.loadLinks()
 
-	def loadLinks(self: "typing.Self") -> None:
+	def loadLinks(self) -> None:
 		from pyglossary.plugin_lib.readmdict import MDX
 
 		mdx = self._mdx
@@ -180,7 +179,7 @@ class Reader(object):
 		self._wordCount = wordCount
 		self._mdx = MDX(self._filename, self._encoding, self._substyle)
 
-	def fixDefi(self: "typing.Self", defi: str) -> str:
+	def fixDefi(self, defi: str) -> str:
 		defi = self._re_internal_link.sub(r'href=\1bword://', defi)
 		defi = defi.replace(' src="file://', ' src=".')
 
@@ -201,7 +200,7 @@ class Reader(object):
 
 		return defi
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self._mdx is None:
 			log.error("trying to iterate on a closed MDX file")
 			return
@@ -248,8 +247,8 @@ class Reader(object):
 				log.exception(f"Error reading {mdd.filename}")
 		self._mdd = []
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return self._wordCount + self._dataEntryCount
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self.clear()

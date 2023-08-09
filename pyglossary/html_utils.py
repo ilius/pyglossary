@@ -97,8 +97,8 @@ name2codepoint = {
 	"Egrave": 0x00c8,  # È
 	"egrave": 0x00e8,  # è
 	"empty": 0x2205,  # ∅
-	"emsp": 0x2003,  #  
-	"ensp": 0x2002,  #  
+	"emsp": 0x2003,  #
+	"ensp": 0x2002,  #
 	"Epsilon": 0x0395,  # Ε
 	"epsilon": 0x03b5,  # ε
 	"equiv": 0x2261,  # ≡
@@ -265,7 +265,7 @@ name2codepoint = {
 	"Theta": 0x0398,  # Θ
 	"theta": 0x03b8,  # θ
 	"thetasym": 0x03d1,  # ϑ
-	"thinsp": 0x2009,  #  
+	"thinsp": 0x2009,  #
 	"THORN": 0x00de,  # Þ
 	"thorn": 0x00fe,  # þ
 	"tilde": 0x02dc,  # ˜
@@ -310,9 +310,9 @@ name2codepoint = {
 
 def build_name2codepoint_dict() -> None:
 	"""
-		Builds name to codepoint dictionary
-		copy and paste the output to the name2codepoint dictionary
-		name2str - name to utf-8 string dictionary
+	Build name -> codepoint dictionary
+	copy and paste the output to the name2codepoint dictionary
+	name2str - name to utf-8 string dictionary.
 	"""
 	import html.entities
 	name2str = {}
@@ -355,10 +355,10 @@ def _sub_unescape_unicode(m: "re.Match") -> str:
 
 def unescape_unicode(text: str) -> str:
 	"""
-		unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
-		leave these 3 special entities alone, since unescaping them
-		creates invalid html
-		we also ignore quotations: "&quot;" and "&#x27;"
+	Unscape unicode entities, but not "&lt;", "&gt;" and "&amp;"
+	leave these 3 special entities alone, since unescaping them
+	creates invalid html
+	we also ignore quotations: "&quot;" and "&#x27;".
 	"""
 	return re_entity.sub(_sub_unescape_unicode, text)
 

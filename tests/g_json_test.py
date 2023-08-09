@@ -1,5 +1,4 @@
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname
 
@@ -10,7 +9,7 @@ from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryJSON(TestGlossaryBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -20,23 +19,23 @@ class TestGlossaryJSON(TestGlossaryBase):
 			"100-ja-en.json": "fab2c106",
 		})
 
-	def convert_txt_json(self: "typing.Self", fname):
+	def convert_txt_json(self, fname):
 		self.convert(
 			f"{fname}.txt",
 			f"{fname}-2.json",
 			compareText=f"{fname}.json",
 		)
 
-	def test_convert_txt_json_0(self: "typing.Self"):
+	def test_convert_txt_json_0(self):
 		self.convert_txt_json("004-bar")
 
-	def test_convert_txt_json_1(self: "typing.Self"):
+	def test_convert_txt_json_1(self):
 		self.convert_txt_json("100-en-fa")
 
-	def test_convert_txt_json_2(self: "typing.Self"):
+	def test_convert_txt_json_2(self):
 		self.convert_txt_json("100-en-de-v4")
 
-	def test_convert_txt_json_3(self: "typing.Self"):
+	def test_convert_txt_json_3(self):
 		self.convert_txt_json("100-ja-en")
 
 

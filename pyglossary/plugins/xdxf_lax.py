@@ -23,9 +23,11 @@
 
 import re
 import typing
-from typing import TYPE_CHECKING, Iterator, Sequence
+from typing import TYPE_CHECKING, Iterator, Sequence, cast
 
 if TYPE_CHECKING:
+	import io
+
 	from lxml.html import HtmlElement as Element
 
 from pyglossary.compression import (
@@ -34,6 +36,7 @@ from pyglossary.compression import (
 )
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import (
 	BoolOption,
 	Option,
@@ -63,7 +66,13 @@ optionsProp: "dict[str, Option]" = {
 }
 
 
-class Reader(object):
+if TYPE_CHECKING:
+	class TransformerType(typing.Protocol):
+		def transform(self, article: "Element") -> str:
+			...
+
+
+class Reader:
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
@@ -77,17 +86,17 @@ class Reader(object):
 		"full_title": "name",
 	}
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file = None
+		self._file: "io.IOBase" = nullBinaryIO
 		self._encoding = "utf-8"
-		self._htmlTr = None
+		self._htmlTr: "TransformerType | None" = None
 		self._re_span_k = re.compile(
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
 
-	def readUntil(self, untilByte: bytes) -> bytes:
+	def readUntil(self, untilByte: bytes) -> "tuple[int, bytes]":
 		_file = self._file
 		buf = b""
 		while True:
@@ -95,34 +104,40 @@ class Reader(object):
 			if not tmp:
 				break
 			buf += tmp
-			index = buf.rfind(untilByte)
+			index = buf.find(untilByte)
 			if index < 0:
 				continue
 			_file.seek(_file.tell() - len(buf) + index)
 			return index, buf[:index]
 		return -1, buf
 
-	def readMetadata(self: "typing.Self"):
+	def _readOneMetadata(self, tag: str, infoKey: str):
 		from lxml.etree import XML
 
-		descStart, _ = self.readUntil(b"<description")
+		endTag = f"</{tag}>".encode("ascii")
+		descStart, _ = self.readUntil(f"<{tag}>".encode("ascii"))
 		if descStart < 0:
+			log.warning(f"did not find {tag} open")
 			return
 
-		descEnd, desc = self.readUntil(b"</description>")
+		descEnd, desc = self.readUntil(endTag)
 		if descEnd < 0:
+			log.warning(f"did not find {tag} close")
 			return
 
-		desc += b"</description>"
-		xml = XML(desc)
-		for elem in xml.iterchildren():
-			if not elem.text:
-				log.warning(f"empty tag <{elem.tag}>")
-				continue
-			key = self.infoKeyMap.get(elem.tag, elem.tag)
-			self._glos.setInfo(key, elem.text)
+		desc += endTag
+		elem = XML(desc)
+		if elem.text:
+			self._glos.setInfo(infoKey, elem.text)
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def readMetadata(self):
+		_file = self._file
+		pos = _file.tell()
+		self._readOneMetadata("full_name", "title")
+		_file.seek(pos)
+		self._readOneMetadata("description", "description")
+
+	def open(self, filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		self._filename = filename
 		if self._html:
@@ -143,10 +158,10 @@ class Reader(object):
 		cfile.seek(0)
 		self._glos.setInfo("input_file_size", f"{self._fileSize}")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml.html import fromstring, tostring
 
 		while True:
@@ -159,7 +174,7 @@ class Reader(object):
 			b_article += b"</ar>"
 			s_article = b_article.decode("utf-8")
 			try:
-				article = fromstring(s_article)
+				article = cast("Element", fromstring(s_article))
 			except Exception as e:
 				log.exception(s_article)
 				raise e from None
@@ -170,8 +185,8 @@ class Reader(object):
 				if len(words) == 1:
 					defi = self._re_span_k.sub("", defi)
 			else:
-				defi = tostring(article, encoding=self._encoding)
-				defi = defi[4:-5].decode(self._encoding).strip()
+				b_defi = cast(bytes, tostring(article, encoding=self._encoding))
+				defi = b_defi[4:-5].decode(self._encoding).strip()
 				defiFormat = "x"
 
 			# log.info(f"{defi=}, {words=}")
@@ -183,13 +198,13 @@ class Reader(object):
 			)
 
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._file:
 			self._file.close()
-			self._file = None
+			self._file = nullBinaryIO
 
 	def tostring(
-		self: "typing.Self",
+		self,
 		elem: "Element",
 	) -> str:
 		from lxml.html import tostring
@@ -199,13 +214,11 @@ class Reader(object):
 			pretty_print=True,
 		).decode("utf-8").strip()
 
-	def titles(self: "typing.Self", article: "Element") -> "list[str]":
+	def titles(self, article: "Element") -> "list[str]":
 		"""
-
 		:param article: <ar> tag
 		:return: (title (str) | None, alternative titles (set))
 		"""
-		print(type(article))
 		from itertools import combinations
 		titles: "list[str]" = []
 		for title_element in article.findall("k"):
@@ -224,13 +237,13 @@ class Reader(object):
 		return titles
 
 	def _mktitle(
-		self: "typing.Self",
+		self,
 		title_element: "Element",
 		include_opts: "Sequence | None" = None,
 	) -> str:
 		if include_opts is None:
 			include_opts = ()
-		title = title_element.text
+		title = title_element.text or ""
 		opt_i = -1
 		for c in title_element:
 			if c.tag == "nu" and c.tail:
@@ -238,16 +251,10 @@ class Reader(object):
 					title += c.tail
 				else:
 					title = c.tail
-			if c.tag == "opt":
+			if c.tag == "opt" and c.text is not None:
 				opt_i += 1
 				if opt_i in include_opts:
-					if title:
-						title += c.text
-					else:
-						title = c.text
+					title += c.text
 				if c.tail:
-					if title:
-						title += c.tail
-					else:
-						title = c.tail
+					title += c.tail
 		return title.strip()

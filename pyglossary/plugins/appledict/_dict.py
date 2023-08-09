@@ -31,8 +31,8 @@ digs = string.digits + string.ascii_letters
 
 def base36(x: int) -> str:
 	"""
-	simplified version of int2base
-	http://stackoverflow.com/questions/2267362/convert-integer-to-a-string-in-a-given-numeric-base-in-python#2267446
+	Simplified version of int2base
+	http://stackoverflow.com/questions/2267362/convert-integer-to-a-string-in-a-given-numeric-base-in-python#2267446.
 	"""
 	digits = []
 	while x:
@@ -64,9 +64,7 @@ def indexes_generator(indexes_lang: str) -> """Callable[
 	[str, list[str], str, Any],
 	str,
 ]""":
-	"""
-	factory that acts according to glossary language
-	"""
+	"""Generate indexes according to glossary language."""
 	indexer = None
 	"""Callable[[Sequence[str], str], Sequence[str]]"""
 	if indexes_lang:

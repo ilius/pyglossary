@@ -21,9 +21,8 @@
 import html
 import html.entities
 import re
-import typing
 from os.path import dirname, isfile, join
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator, cast
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -31,6 +30,7 @@ from pyglossary.compression import (
 )
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -41,6 +41,9 @@ from pyglossary.text_reader import TextFilePosWrapper
 
 from .title import TitleTransformer
 from .transform import Transformer
+
+if TYPE_CHECKING:
+	import io
 
 enable = True
 lname = "dsl"
@@ -122,22 +125,22 @@ def unwrap_quotes(s: str) -> str:
 	return re_wrapped_in_quotes.sub("\\2", s)
 
 
-class Reader(object):
+class Reader:
 	compressions = stdCompressions + ("dz",)
 
 	_encoding: str = ""
 	_audio: bool = True
 	_example_color: str = "steelblue"
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._file = None
+		self._file: "io.TextIOBase" = nullTextIO
 		self._fileSize = 0
 		self._bufferLine = ""
-		self._resFileSet = set()
+		self._resFileSet: "set[str]" = set()
 
 	def transform(
-		self: "typing.Self",
+		self,
 		text: str,
 		header: str,
 	) -> str:
@@ -155,21 +158,23 @@ class Reader(object):
 		if err:
 			log.error(f"error in transforming {text!r}: {err}")
 			return ""
+		if result is None:
+			log.error(f"error in transforming {text!r}: result is None")
+			return ""
 		resText = result.output.strip()
 		self._resFileSet.update(tr.resFileSet)
 		return resText
 
-	def close(self: "typing.Self") -> None:
-		if self._file:
-			self._file.close()
-		self._file = None
+	def close(self) -> None:
+		self._file.close()
+		self._file = nullTextIO
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		# FIXME
 		return 0
 
 	def open(
-		self: "typing.Self",
+		self,
 		filename: str,
 	) -> None:
 		self._filename = filename
@@ -177,12 +182,12 @@ class Reader(object):
 		encoding = self._encoding
 		if not encoding:
 			encoding = self.detectEncoding()
-		cfile = compressionOpen(
+		cfile = cast("io.TextIOBase", compressionOpen(
 			filename,
 			dz=True,
 			mode="rt",
 			encoding=encoding,
-		)
+		))
 
 		if cfile.seekable():
 			cfile.seek(0, 2)
@@ -205,7 +210,7 @@ class Reader(object):
 				break
 			self.processHeaderLine(line)
 
-	def detectEncoding(self: "typing.Self") -> str:
+	def detectEncoding(self) -> str:
 		for testEncoding in ("utf-8", "utf-16"):
 			with compressionOpen(
 				self._filename,
@@ -227,10 +232,10 @@ class Reader(object):
 			", specify it by: --read-options encoding=ENCODING",
 		)
 
-	def setInfo(self: "typing.Self", key: str, value: str) -> None:
+	def setInfo(self, key: str, value: str) -> None:
 		self._glos.setInfo(key, unwrap_quotes(value))
 
-	def processHeaderLine(self: "typing.Self", line: str) -> None:
+	def processHeaderLine(self, line: str) -> None:
 		if line.startswith("#NAME"):
 			self.setInfo("name", unwrap_quotes(line[6:].strip()))
 		elif line.startswith("#INDEX_LANGUAGE"):
@@ -238,7 +243,7 @@ class Reader(object):
 		elif line.startswith("#CONTENTS_LANGUAGE"):
 			self._glos.targetLangName = unwrap_quotes(line[19:].strip())
 
-	def _iterLines(self: "typing.Self") -> "Iterator[str]":
+	def _iterLines(self) -> "Iterator[str]":
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -252,7 +257,7 @@ class Reader(object):
 		line = line.replace("[/']", "")
 		return line  # noqa: RET504
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		term_lines: "list[str]" = []
 		text_lines: "list[str]" = []
 		for line in self._iterLines():
@@ -295,6 +300,9 @@ class Reader(object):
 			res, err = tr.transform()
 			if err:
 				log.error(err)
+				continue
+			if res is None:
+				log.error("res is None for line={line!r}")
 				continue
 			term = res.output.strip()
 			terms.append(term)

@@ -68,9 +68,7 @@ def tableRowSep(width, c="-"):
 
 
 def renderTable(rows):
-	"""
-		rows[0] must be headers
-	"""
+	"""rows[0] must be headers."""
 	colN = len(rows[0])
 	width = [
 		max(

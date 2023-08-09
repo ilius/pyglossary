@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 #
 # Copyright © 2008-2021 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # Copyright © 2011-2012 kubtek <kubtek@gmail.com>
@@ -23,24 +24,10 @@
 import io
 import os
 import re
-import sys
-import typing
 from collections import OrderedDict as odict
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 
 from pyglossary.core import log
-
-try:
-	vmajor, vminor = sys.version_info[:2]
-	GzipFile = __import__(
-		f"pyglossary.plugin_lib.py{vmajor}{vminor}.gzip_no_crc",
-		fromlist="GzipFile",
-	).GzipFile
-except ImportError as e:
-	from gzip import GzipFile
-	log.debug(str(e))
-
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -54,6 +41,7 @@ from pyglossary.text_utils import (
 )
 from pyglossary.xml_utils import xml_escape
 
+from .bgl_gzip import GzipFile
 from .bgl_info import (
 	charsetInfoDecode,
 	infoType3ByCode,
@@ -71,6 +59,9 @@ from .bgl_text import (
 	stripHtmlTags,
 	unknownHtmlEntries,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 file = io.BufferedReader
 
@@ -153,12 +144,13 @@ else:
 
 re_charset_decode = re.compile(
 	b"(<charset\\s+c\\=[\'\"]?(\\w)[\"\"]?>|</charset>)",
-	re.I,
+	re.IGNORECASE,
 )
 re_b_reference = re.compile(b"^[0-9a-fA-F]{4}$")
 
 
 class BGLGzipFile(GzipFile):
+
 	"""
 	gzip_no_crc.py contains GzipFile class without CRC check.
 
@@ -166,8 +158,9 @@ class BGLGzipFile(GzipFile):
 	The original method raises an exception in this case.
 	Some dictionaries do not use CRC code, it is set to 0.
 	"""
+
 	def __init__(
-		self: "typing.Self",
+		self,
 		fileobj: "io.IOBase | None" = None,
 		closeFileobj: bool = False,
 		**kwargs,
@@ -175,19 +168,19 @@ class BGLGzipFile(GzipFile):
 		GzipFile.__init__(self, fileobj=fileobj, **kwargs)
 		self.closeFileobj = closeFileobj
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self.closeFileobj:
 			self.fileobj.close()
 
 
-class Block(object):
-	def __init__(self: "typing.Self") -> None:
+class Block:
+	def __init__(self) -> None:
 		self.data = b""
 		self.type = ""
 		# block offset in the gzip stream, for debugging
 		self.offset = -1
 
-	def __str__(self: "typing.Self") -> str:
+	def __str__(self) -> str:
 		return (
 			f"Block type={self.type}, length={self.length}, "
 			f"len(data)={len(self.data)}"
@@ -195,6 +188,7 @@ class Block(object):
 
 
 class FileOffS(file):
+
 	"""
 	A file class with an offset.
 
@@ -203,17 +197,18 @@ class FileOffS(file):
 	file. offset parameter of the constructor specifies the offset of the first
 	byte of the modeled file.
 	"""
-	def __init__(self: "typing.Self", filename: str, offset: int = 0) -> None:
+
+	def __init__(self, filename: str, offset: int = 0) -> None:
 		fileObj = open(filename, "rb")  # noqa: SIM115
 		file.__init__(self, fileObj)
 		self._fileObj = fileObj
 		self.offset = offset
 		file.seek(self, offset)  # OR self.seek(0)
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self._fileObj.close()
 
-	def seek(self: "typing.Self", pos: int, whence: int = 0) -> None:
+	def seek(self, pos: int, whence: int = 0) -> None:
 		if whence == 0:  # relative to start of file
 			file.seek(
 				self,
@@ -234,23 +229,25 @@ class FileOffS(file):
 		else:
 			raise ValueError(f"FileOffS.seek: bad whence={whence}")
 
-	def tell(self: "typing.Self") -> int:
+	def tell(self) -> int:
 		return file.tell(self) - self.offset
 
 
-class DefinitionFields(object):
-	"""
-		Fields of entry definition
+class DefinitionFields:
 
-		Entry definition consists of a number of fields.
-		The most important of them are:
-		defi - the main definition, mandatory, comes first.
-		part of speech
-		title
 	"""
+	Fields of entry definition.
+
+	Entry definition consists of a number of fields.
+	The most important of them are:
+	defi - the main definition, mandatory, comes first.
+	part of speech
+	title
+	"""
+
 	# nameByCode = {
 	# }
-	def __init__(self: "typing.Self") -> None:
+	def __init__(self) -> None:
 		# self.bytesByCode = {}
 		# self.strByCode = {}
 
@@ -287,7 +284,7 @@ class DefinitionFields(object):
 		self.b_field_13 = None  # bytes
 
 
-class BglReader(object):
+class BglReader:
 	_default_encoding_overwrite: str = ""
 	_source_encoding_overwrite: str = ""
 	_target_encoding_overwrite: str = ""
@@ -336,7 +333,7 @@ class BglReader(object):
 	selected encoding, so the user may fix the encoding if needed.
 	"""
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:  # no more arguments
+	def __init__(self, glos: "GlossaryType") -> None:  # no more arguments
 		self._glos = glos
 		self._filename = ""
 		self.info = odict()
@@ -361,8 +358,8 @@ class BglReader(object):
 		self.msgLogFile = None
 		self.samplesDumpFile = None
 		##
-		self.stripSlashAltKeyPattern = re.compile(r"(^|\s)/(\w)", re.U)
-		self.specialCharPattern = re.compile(r"[^\s\w.]", re.U)
+		self.stripSlashAltKeyPattern = re.compile(r"(^|\s)/(\w)", re.UNICODE)
+		self.specialCharPattern = re.compile(r"[^\s\w.]", re.UNICODE)
 		###
 		self.file = None
 		# offset of gzip header, set in self.open()
@@ -370,7 +367,7 @@ class BglReader(object):
 		# must be a in RRGGBB format
 		self.iconDataList = []
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self.numEntries is None:
 			log.warning("len(reader) called while numEntries=None")
 			return 0
@@ -379,18 +376,18 @@ class BglReader(object):
 	# open .bgl file, read signature, find and open gzipped content
 	# self.file - ungzipped content
 	def open(
-		self: "typing.Self",
+		self,
 		filename: str,
 	) -> None:
 		self._filename = filename
 
 		if not self.openGzip():
-			raise IOError("BGL: failed to read gzip header")
+			raise OSError("BGL: failed to read gzip header")
 
 		self.readInfo()
 		self.setGlossaryInfo()
 
-	def openGzip(self: "typing.Self") -> None:
+	def openGzip(self) -> None:
 		with open(self._filename, "rb") as bglFile:
 			if not bglFile:
 				log.error(f"file pointer empty: {bglFile}")
@@ -418,10 +415,10 @@ class BglReader(object):
 
 		return True
 
-	def readInfo(self: "typing.Self") -> None:
+	def readInfo(self) -> None:
 		"""
-		read meta information about the dictionary: author, description,
-		source and target languages, etc (articles are not read)
+		Read meta information about the dictionary: author, description,
+		source and target languages, etc (articles are not read).
 		"""
 		self.numEntries = 0
 		self.numBlocks = 0
@@ -475,7 +472,7 @@ class BglReader(object):
 				else:
 					self.info[key] = value
 
-	def setGlossaryInfo(self: "typing.Self") -> None:
+	def setGlossaryInfo(self) -> None:
 		glos = self._glos
 		###
 		if self.sourceLang:
@@ -520,45 +517,45 @@ class BglReader(object):
 			except Exception:
 				log.exception(f"key = {key}")
 
-	def isEndOfDictData(self: "typing.Self") -> bool:
+	def isEndOfDictData(self) -> bool:
 		"""
-			Test for end of dictionary data.
+		Test for end of dictionary data.
 
-			A bgl file stores dictionary data as a gzip compressed block.
-			In other words, a bgl file stores a gzip data file inside.
-			A gzip file consists of a series of "members".
-			gzip data block in bgl consists of one member (I guess).
-			Testing for block type returned by self.readBlock is not a
-			reliable way to detect the end of gzip member.
-			For example, consider "Airport Code Dictionary.BGL" dictionary.
-			To reliably test for end of gzip member block we must use a number
-			of undocumented variables of gzip.GzipFile class.
-			self.file._new_member - true if the current member has been
-			completely read from the input file
-			self.file.extrasize - size of buffered data
-			self.file.offset - offset in the input file
+		A bgl file stores dictionary data as a gzip compressed block.
+		In other words, a bgl file stores a gzip data file inside.
+		A gzip file consists of a series of "members".
+		gzip data block in bgl consists of one member (I guess).
+		Testing for block type returned by self.readBlock is not a
+		reliable way to detect the end of gzip member.
+		For example, consider "Airport Code Dictionary.BGL" dictionary.
+		To reliably test for end of gzip member block we must use a number
+		of undocumented variables of gzip.GzipFile class.
+		self.file._new_member - true if the current member has been
+		completely read from the input file
+		self.file.extrasize - size of buffered data
+		self.file.offset - offset in the input file
 
-			after reading one gzip member current position in the input file
-			is set to the first byte after gzip data
-			We may get this offset: self.file_bgl.tell()
-			The last 4 bytes of gzip block contains the size of the original
-			(uncompressed) input data modulo 2^32
+		after reading one gzip member current position in the input file
+		is set to the first byte after gzip data
+		We may get this offset: self.file_bgl.tell()
+		The last 4 bytes of gzip block contains the size of the original
+		(uncompressed) input data modulo 2^32
 		"""
 		return False
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self.file:
 			self.file.close()
 			self.file = None
 
-	def __del__(self: "typing.Self") -> None:
+	def __del__(self) -> None:
 		self.close()
 		while unknownHtmlEntries:
 			entity = unknownHtmlEntries.pop()
 			log.debug(f"BGL: unknown html entity: {entity}")
 
 	# returns False if error
-	def readBlock(self: "typing.Self", block: "Block") -> bool:
+	def readBlock(self, block: "Block") -> bool:
 		block.offset = self.file.tell()
 		length = self.readBytes(1)
 		if length == -1:
@@ -592,10 +589,8 @@ class BglReader(object):
 			block.data = b""
 		return True
 
-	def readBytes(self: "typing.Self", num: int) -> int:
-		"""
-			return -1 if error
-		"""
+	def readBytes(self, num: int) -> int:
+		"""Return -1 if error."""
 		if num < 1 or num > 4:
 			log.error(f"invalid argument num={num}")
 			return -1
@@ -612,7 +607,7 @@ class BglReader(object):
 			return -1
 		return uintFromBytes(buf)
 
-	def readType0(self: "typing.Self", block: "Block") -> bool:
+	def readType0(self, block: "Block") -> bool:
 		code = block.data[0]
 		if code == 2:
 			# this number is vary close to self.bgl_numEntries,
@@ -629,9 +624,9 @@ class BglReader(object):
 			return False
 		return True
 
-	def readType2(self: "typing.Self", block: "Block") -> "EntryType | None":
+	def readType2(self, block: "Block") -> "EntryType | None":
 		"""
-		Process type 2 block
+		Process type 2 block.
 
 		Type 2 block is an embedded file (mostly Image or HTML).
 		pass_num - pass number, may be 1 or 2
@@ -674,10 +669,10 @@ class BglReader(object):
 			b_data,
 		)
 
-	def readType3(self: "typing.Self", block: "Block") -> None:
+	def readType3(self, block: "Block") -> None:
 		"""
-			reads block with type 3, and updates self.info
-			returns None
+		Reads block with type 3, and updates self.info
+		returns None.
 		"""
 		code, b_value = uintFromBytes(block.data[:2]), block.data[2:]
 		if not b_value:
@@ -721,10 +716,8 @@ class BglReader(object):
 
 		self.info[key] = value
 
-	def detectEncoding(self: "typing.Self") -> None:
-		"""
-			assign self.sourceEncoding and self.targetEncoding
-		"""
+	def detectEncoding(self) -> None:
+		"""Assign self.sourceEncoding and self.targetEncoding."""
 		utf8Encoding = self.info.get("utf8Encoding", False)
 
 		if self._default_encoding_overwrite:
@@ -756,14 +749,14 @@ class BglReader(object):
 		else:
 			self.targetEncoding = self.defaultEncoding
 
-	def logUnknownBlock(self: "typing.Self", block: "Block") -> None:
+	def logUnknownBlock(self, block: "Block") -> None:
 		log.debug(
 			f"Unknown block: type={block.type}"
 			f", number={self.numBlocks}"
 			f", data={block.data!r}",
 		)
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if not self.file:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -819,18 +812,18 @@ class BglReader(object):
 				)
 
 	def readEntryWord(
-		self: "typing.Self",
+		self,
 		block: "Block",
 		pos: int,
 	) -> "tuple[bool, int | None, bytes | None, bytes | None]":
 		"""
-			Read word part of entry.
+		Read word part of entry.
 
-			Return value is a list.
-			(False, None, None, None) if error
-			(True, pos, u_word, b_word) if OK
-				u_word is a str instance (utf-8)
-				b_word is a bytes instance
+		Return value is a list.
+		(False, None, None, None) if error
+		(True, pos, u_word, b_word) if OK
+		u_word is a str instance (utf-8)
+		b_word is a bytes instance
 		"""
 		Err = (False, None, None, None)
 		if pos + 1 > len(block.data):
@@ -867,7 +860,7 @@ class BglReader(object):
 		return True, pos, u_word.strip(), b_word.strip()
 
 	def readEntryDefi(
-		self: "typing.Self",
+		self,
 		block: "Block",
 		pos: int,
 		b_word: bytes,
@@ -905,17 +898,18 @@ class BglReader(object):
 		return True, pos, u_defi, b_defi
 
 	def readEntryAlts(
-		self: "typing.Self",
+		self,
 		block: "Block",
 		pos: int,
 		b_word: bytes,
 		u_word: str,
 	) -> "tuple[bool, int | None, list[str] | None]":
 		"""
-		returns:
-			(False, None, None) if error
-			(True, pos, u_alts) if succeed
-				u_alts is a sorted list, items are str (utf-8)
+		Returns
+		-------
+		(False, None, None) if error
+		(True, pos, u_alts) if succeed
+		u_alts is a sorted list, items are str (utf-8).
 		"""
 		Err = (False, None, None)
 		# use set instead of list to prevent duplicates
@@ -942,15 +936,14 @@ class BglReader(object):
 			# so do we.
 			u_alts.add(u_alt)
 			pos += Len
-		if u_word in u_alts:
-			u_alts.remove(u_word)
-		return True, pos, list(sorted(u_alts))
+		u_alts.discard(u_word)
+		return True, pos, sorted(u_alts)
 
 	def readEntry_Type11(
-		self: "typing.Self",
+		self,
 		block: "Block",
 	) -> "tuple[bool, str | None, list[str] | None, str | None]":
-		"""return (succeed, u_word, u_alts, u_defi)"""
+		"""Return (succeed, u_word, u_alts, u_defi)."""
 		Err = (False, None, None, None)
 		pos = 0
 
@@ -1018,9 +1011,8 @@ class BglReader(object):
 			# so do we.
 			u_alts.add(u_alt)
 			pos += altLen
-		if u_word in u_alts:
-			u_alts.remove(u_word)
-		u_alts = list(sorted(u_alts))
+
+		u_alts.discard(u_word)
 
 		# reading defi
 		defiLen = uintFromBytes(block.data[pos:pos + 4])
@@ -1037,19 +1029,19 @@ class BglReader(object):
 		self.defiMaxBytes = max(self.defiMaxBytes, len(b_defi))
 		pos += defiLen
 
-		return True, u_word, u_alts, u_defi
+		return True, u_word, sorted(u_alts), u_defi
 
-	def charReferencesStat(self: "typing.Self", b_text: bytes, encoding: str) -> None:
+	def charReferencesStat(self, b_text: bytes, encoding: str) -> None:
 		pass
 
 	def decodeCharsetTags(
-		self: "typing.Self",
+		self,
 		b_text: bytes,
 		defaultEncoding: str,
 	) -> "tuple[str, str]":
 		"""
 		b_text is a bytes
-		Decode html text taking into account charset tags and default encoding
+		Decode html text taking into account charset tags and default encoding.
 
 		Return value: (u_text, defaultEncodingOnly)
 		u_text is str
@@ -1121,7 +1113,7 @@ class BglReader(object):
 						encodings.append("babylon-reference")
 					elif b_type == b"u":
 						encodings.append("utf-8")
-					elif b_type == b"k":
+					elif b_type == b"k":  # noqa: SIM114
 						encodings.append(self.sourceEncoding)
 					elif b_type == b"e":
 						encodings.append(self.sourceEncoding)
@@ -1147,10 +1139,10 @@ class BglReader(object):
 			)
 		return u_text, defaultEncodingOnly
 
-	def processKey(self: "typing.Self", b_word: bytes) -> str:
+	def processKey(self, b_word: bytes) -> str:
 		"""
-			b_word is a bytes instance
-			returns u_word_main, as str instance (utf-8 encoding)
+		b_word is a bytes instance
+		returns u_word_main, as str instance (utf-8 encoding).
 		"""
 		b_word_main, strip_count = stripDollarIndexes(b_word)
 		if strip_count > 1:
@@ -1187,10 +1179,10 @@ class BglReader(object):
 			u_word_main = u_word_main.rstrip(self._key_rstrip_chars)
 		return u_word_main
 
-	def processAlternativeKey(self: "typing.Self", b_word: bytes, b_key: bytes) -> str:
+	def processAlternativeKey(self, b_word: bytes, b_key: bytes) -> str:
 		"""
-			b_word is a bytes instance
-			returns u_word_main, as str instance (utf-8 encoding)
+		b_word is a bytes instance
+		returns u_word_main, as str instance (utf-8 encoding).
 		"""
 		b_word_main, strip_count = stripDollarIndexes(b_word)
 		# convert to unicode
@@ -1222,17 +1214,15 @@ class BglReader(object):
 		u_word_main = removeControlChars(u_word_main)
 		u_word_main = removeNewlines(u_word_main)
 		u_word_main = u_word_main.lstrip()
-		u_word_main = u_word_main.rstrip(self._key_rstrip_chars)
-		return u_word_main
+		return u_word_main.rstrip(self._key_rstrip_chars)
 
-	def processDefi(self: "typing.Self", b_defi: bytes, b_key: bytes) -> str:
+	def processDefi(self, b_defi: bytes, b_key: bytes) -> str:
 		"""
 		b_defi: bytes
-		b_key: bytes
+		b_key: bytes.
 
 		return: u_defi_format
 		"""
-
 		fields = DefinitionFields()
 		self.collectDefiFields(b_defi, b_key, fields)
 
@@ -1345,18 +1335,16 @@ class BglReader(object):
 		return u_defi_format.removesuffix("<br>").removesuffix("<BR>")
 
 	def processDefiStat(
-		self: "typing.Self",
+		self,
 		fields: DefinitionFields,
 		b_defi: bytes,
 		b_key: bytes,
 	) -> None:
 		pass
 
-	def findDefiFieldsStart(self: "typing.Self", b_defi: bytes) -> int:
-		"""
-		b_defi is a bytes instance
-
-		Finds the beginning of the definition trailing fields.
+	def findDefiFieldsStart(self, b_defi: bytes) -> int:
+		r"""
+		Find the beginning of the definition trailing fields.
 
 		Return value is the index of the first chars of the field set,
 		or -1 if the field set is not found.
@@ -1384,16 +1372,16 @@ class BglReader(object):
 		return index
 
 	def collectDefiFields(
-		self: "typing.Self",
+		self,
 		b_defi: bytes,
 		b_key: bytes,
 		fields: DefinitionFields,
 	) -> None:
-		"""
-		entry definition structure:
+		r"""
+		Entry definition structure:
 		<main definition>['\x14'[{field_code}{field_data}]*]
 		{field_code} is one character
-		{field_data} has arbitrary length
+		{field_data} has arbitrary length.
 		"""
 		# d0 is index of the '\x14 char in b_defi
 		# d0 may be the last char of the string

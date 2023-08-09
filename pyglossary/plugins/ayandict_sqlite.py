@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import typing
 from typing import (
 	TYPE_CHECKING,
 	Generator,
@@ -10,8 +9,10 @@ from typing import (
 if TYPE_CHECKING:
 	import sqlite3
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.xdxf.transform import XdxfTransformer
+
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import BoolOption, Option
 
 enable = True
@@ -33,17 +34,17 @@ optionsProp: "dict[str, Option]" = {
 	),
 }
 
-class Reader(object):
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+class Reader:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self: "typing.Self") -> None:
+	def _clear(self) -> None:
 		self._filename = ''
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 		self._filename = filename
 		self._con = connect(filename)
@@ -56,13 +57,13 @@ class Reader(object):
 				continue
 			self._glos.setInfo(row[0], row[1])
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self._cur is None:
 			raise ValueError("cur is None")
 		self._cur.execute("select count(id) from entry")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		from json import loads
 
 		if self._cur is None:
@@ -81,7 +82,7 @@ class Reader(object):
 					terms.append(alt)
 			yield self._glos.newEntry(terms, article, defiFormat="h")
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._cur:
 			self._cur.close()
 		if self._con:
@@ -89,20 +90,20 @@ class Reader(object):
 		self._clear()
 
 
-class Writer(object):
+class Writer:
 	_fuzzy: int = True
 
-	def __init__(self: "typing.Self", glos: "GlossaryType") -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._clear()
 
-	def _clear(self: "typing.Self") -> None:
+	def _clear(self) -> None:
 		self._filename = ""
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
-		self._xdxfTr = None
+		self._xdxfTr: "XdxfTransformer | None" = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		from sqlite3 import connect
 
 		self._filename = filename
@@ -152,22 +153,24 @@ class Writer(object):
 		self._con = None
 		self._cur = None
 
-	def xdxf_setup(self: "typing.Self") -> None:
+	def xdxf_setup(self) -> None:
 		from pyglossary.xdxf.transform import XdxfTransformer
 		# if self._xsl:
 		# 	self._xdxfTr = XslXdxfTransformer(encoding="utf-8")
 		# 	return
 		self._xdxfTr = XdxfTransformer(encoding="utf-8")
 
-	def xdxf_transform(self: "typing.Self", text: str) -> str:
+	def xdxf_transform(self, text: str) -> str:
 		if self._xdxfTr is None:
 			self.xdxf_setup()
-		return self._xdxfTr.transformByInnerString(text)
+		return self._xdxfTr.transformByInnerString(text)  # type: ignore
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		import hashlib
 
 		cur = self._cur
+		if cur is None:
+			raise ValueError("cur is None")
 		_hash = hashlib.md5()
 		while True:
 			entry = yield
@@ -189,6 +192,8 @@ class Writer(object):
 				(entry.l_word[0], defi),
 			)
 			_id = cur.lastrowid
+			if _id is None:
+				raise ValueError("lastrowid is None")
 			for alt in entry.l_word[1:]:
 				cur.execute(
 					"INSERT INTO alt(id, term) VALUES (?, ?);",
@@ -205,12 +210,16 @@ class Writer(object):
 
 	def addFuzzy(self, _id: int, terms: list[str]):
 		cur = self._cur
+		if cur is None:
+			raise ValueError("cur is None")
 		for term in terms:
-			subs = set()
+			subs: "set[str]" = set()
 			for word in term.split(" "):
 				eword = "\n" + word
-				for i in range(len(eword)-2):
-					subs.add(eword[i:i+3])
+				subs.update(
+					eword[i:i+3]
+					for i in range(len(eword)-2)
+				)
 			for sub in subs:
 				cur.execute(
 					"INSERT INTO fuzzy3"

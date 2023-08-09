@@ -62,9 +62,7 @@ def replaceStringTable(
 
 
 def escapeNTB(st: str, bar: bool = False) -> str:
-	"""
-		scapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
-	"""
+	"""Scapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)."""
 	st = st.replace("\\", "\\\\")
 	st = st.replace("\t", r"\t")
 	st = st.replace("\r", "")
@@ -75,9 +73,7 @@ def escapeNTB(st: str, bar: bool = False) -> str:
 
 
 def unescapeNTB(st: str, bar: bool = False) -> str:
-	"""
-		unscapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)
-	"""
+	"""Unscapes Newline, Tab, Baskslash, and vertical Bar (if bar=True)."""
 	st = pattern_n_us.sub("\\1\n", st)
 	st = pattern_t_us.sub("\\1\t", st)
 	if bar:
@@ -87,10 +83,10 @@ def unescapeNTB(st: str, bar: bool = False) -> str:
 
 
 def splitByBarUnescapeNTB(st: str) -> "list[str]":
-	"""
-		splits by "|" (and not "\\|") then unescapes Newline (\\n),
-			Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
-		returns a list
+	r"""
+	Split by "|" (and not "\\|") then unescapes Newline (\\n),
+	Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
+	returns a list.
 	"""
 	return [
 		unescapeNTB(part, bar=True)
@@ -99,24 +95,20 @@ def splitByBarUnescapeNTB(st: str) -> "list[str]":
 
 
 def escapeBar(st: str) -> str:
-	r"""
-		scapes vertical bar (\|)
-	"""
+	r"""Scapes vertical bar (\|)."""
 	return st.replace("\\", "\\\\").replace("|", r"\|")
 
 
 def unescapeBar(st: str) -> str:
-	r"""
-		unscapes vertical bar (\|)
-	"""
+	r"""Unscapes vertical bar (\|)."""
 	# str.replace is probably faster than re.sub
 	return pattern_bar_us.sub(r"\1|", st).replace("\\\\", "\\")
 
 
 def splitByBar(st: str) -> "list[str]":
-	"""
-		splits by "|" (and not "\\|")
-		then unescapes Baskslash (\\) and Bar (\\|) in each part
+	r"""
+	Split by "|" (and not "\\|")
+	then unescapes Baskslash (\\) and Bar (\\|) in each part.
 	"""
 	return [
 		unescapeBar(part)
@@ -132,9 +124,7 @@ def joinByBar(parts: "list[str]") -> "str":
 
 
 def unescapeBarBytes(st: bytes) -> bytes:
-	r"""
-		unscapes vertical bar (\|)
-	"""
+	r"""Unscapes vertical bar (\|)."""
 	# str.replace is probably faster than re.sub
 	return b_pattern_bar_us.sub(b"\\1|", st).replace(b"\\\\", b"\\")
 

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import os
-import typing
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
-	from libzim.reader import Archive
+	from libzim.reader import Archive  # type: ignore
+
+	from pyglossary.option import Option
 
 from pyglossary.core import cacheDir, log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
-from pyglossary.option import Option
 
 enable = True
 lname = "zim"
@@ -36,7 +36,7 @@ optionsProp: "dict[str, Option]" = {}
 # which wiki.openzim.org points at for downloaing zim files
 
 
-class Reader(object):
+class Reader:
 	depends = {
 		"libzim": "libzim>=1.0",
 	}
@@ -61,12 +61,12 @@ class Reader(object):
 		"application/font-woff",
 	}
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._zimfile: "Archive | None" = None
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		try:
 			from libzim.reader import Archive
 		except ModuleNotFoundError as e:
@@ -76,17 +76,17 @@ class Reader(object):
 		self._filename = filename
 		self._zimfile = Archive(filename)
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		self._filename = ""
 		self._zimfile = None
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self._zimfile is None:
 			log.error("len(reader) called before reader.open()")
 			return 0
 		return self._zimfile.entry_count
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType | None]":
+	def __iter__(self) -> "Iterator[EntryType | None]":
 		glos = self._glos
 		zimfile = self._zimfile
 		if zimfile is None:
@@ -97,7 +97,11 @@ class Reader(object):
 
 		redirectCount = 0
 
-		f_namemax = os.statvfs(cacheDir).f_namemax
+		try:
+			f_namemax = os.statvfs(cacheDir).f_namemax # type: ignore
+		except AttributeError:
+			# FIXME
+			raise OSError("Unsupported operating system (no os.statvfs)") from None
 
 		fileNameTooLong = []
 
@@ -165,7 +169,7 @@ class Reader(object):
 
 		log.info(f"ZIM Entry Count: {entryCount}")
 
-		if len(fileNameTooLong) > 0:
+		if not fileNameTooLong:
 			log.error(f"Files with name too long: {len(fileNameTooLong)}")
 
 		if emptyContentCount > 0:

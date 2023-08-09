@@ -1,5 +1,4 @@
 import sys
-import typing
 import unittest
 from os.path import abspath, dirname, relpath
 
@@ -12,7 +11,7 @@ from tests.glossary_errors_test import TestGlossaryErrorsBase
 
 class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 	def convert_txt_stardict(
-		self: "typing.Self",
+		self,
 		fname,
 		fname2="",
 		syn=True,
@@ -69,7 +68,7 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 			)
 
 	def convert_txt_stardict_zip(
-		self: "typing.Self",
+		self,
 		fname,
 		sha1sumDict,
 		dictzip=False,
@@ -105,7 +104,7 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 		)
 
 	def convert_stardict_txt(
-		self: "typing.Self",
+		self,
 		inputFname: str,
 		outputFname: str,
 		testId: str,
@@ -136,7 +135,7 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 
 
 class TestGlossaryStarDict(TestGlossaryStarDictBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryErrorsBase.__init__(self, *args, **kwargs)
 
 		self.dataFileCRC32.update({
@@ -196,14 +195,14 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			"004-plain-html-alts-merge-syns.ifo": "628abe99",
 		})
 
-	def test_convert_txt_stardict_0(self: "typing.Self"):
+	def test_convert_txt_stardict_0(self):
 		self.convert_txt_stardict(
 			"100-en-fa",
 			config={"auto_sqlite": True},
 			direct=True,
 		)
 
-	def test_convert_txt_stardict_1(self: "typing.Self"):
+	def test_convert_txt_stardict_1(self):
 		for sqlite in (None, False, True):
 			for rawEntryCompress in (None, True, False):
 				self.convert_txt_stardict(
@@ -213,7 +212,7 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				)
 
 
-	def test_convert_txt_stardict_1_merge_syns(self: "typing.Self"):
+	def test_convert_txt_stardict_1_merge_syns(self):
 		self.convert_txt_stardict(
 			"100-en-fa",
 			fname2="100-en-fa-merge-syns",
@@ -221,7 +220,7 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			writeOptions={"merge_syns": True},
 		)
 
-	def test_convert_txt_stardict_1_zip(self: "typing.Self"):
+	def test_convert_txt_stardict_1_zip(self):
 		sha1sumDict = {
 			"100-en-fa.dict": "1e462e829f9e2bf854ceac2ef8bc55911460c79e",
 			"100-en-fa.idx": "943005945b35abf3a3e7b80375c76daa87e810f0",
@@ -235,7 +234,7 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				sqlite=sqlite,
 			)
 
-	def test_convert_txt_stardict_2(self: "typing.Self"):
+	def test_convert_txt_stardict_2(self):
 		for sqlite in (None, False, True):
 			for rawEntryCompress in (None, True, False):
 				self.convert_txt_stardict(
@@ -244,7 +243,7 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 					sqlite=sqlite,
 				)
 
-	def test_convert_txt_stardict_3(self: "typing.Self"):
+	def test_convert_txt_stardict_3(self):
 		for sqlite in (None, False, True):
 			self.convert_txt_stardict(
 				"100-en-de-v4",
@@ -252,14 +251,14 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				sqlite=sqlite,
 			)
 
-	def test_convert_txt_stardict_3_merge_syns(self: "typing.Self"):
+	def test_convert_txt_stardict_3_merge_syns(self):
 		self.convert_txt_stardict(
 			"100-en-de-v4",
 			syn=False,
 			writeOptions={"merge_syns": True},
 		)
 
-	def test_convert_txt_stardict_4(self: "typing.Self"):
+	def test_convert_txt_stardict_4(self):
 		for sqlite in (None, False, True):
 			self.convert_txt_stardict(
 				"100-ja-en",
@@ -267,7 +266,7 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				sqlite=sqlite,
 			)
 
-	def test_convert_txt_stardict_5(self: "typing.Self"):
+	def test_convert_txt_stardict_5(self):
 		for sqlite in (None, False, True):
 			self.convert_txt_stardict(
 				"300-ru-en",
@@ -275,7 +274,7 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				sqlite=sqlite,
 			)
 
-	def test_convert_txt_stardict_sqlite_no_alts(self: "typing.Self"):
+	def test_convert_txt_stardict_sqlite_no_alts(self):
 		self.convert_txt_stardict(
 			"100-en-fa",
 			config={"enable_alts": False},
@@ -285,14 +284,14 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			"SQLite mode only works with enable_alts=True, force-enabling it.",
 		)
 
-	def test_convert_stardict_txt_1(self: "typing.Self"):
+	def test_convert_stardict_txt_1(self):
 		self.convert_stardict_txt(
 			"100-en-fa",
 			"100-en-fa-sd",
 			"1",
 		)
 
-	def test_convert_stardict_txt_mixed_types_1(self: "typing.Self"):
+	def test_convert_stardict_txt_mixed_types_1(self):
 		self.convert_stardict_txt(
 			"stardict-mixed-types-2",
 			"stardict-mixed-types-2.sd",
@@ -300,7 +299,7 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			syn=False,
 		)
 
-	def test_convert_stardict_txt_mixed_types_2(self: "typing.Self"):
+	def test_convert_stardict_txt_mixed_types_2(self):
 		self.convert_stardict_txt(
 			"stardict-mixed-types-2",
 			"stardict-mixed-types-2.sd",
@@ -309,26 +308,26 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			readOptions={"xdxf_to_html": False},
 		)
 
-	def test_convert_txt_stardict_general_1(self: "typing.Self"):
+	def test_convert_txt_stardict_general_1(self):
 		self.convert_txt_stardict(
 			"002-plain-html",
 			syn=False,
 		)
 
-	def test_convert_txt_stardict_general_1_merge_syns(self: "typing.Self"):
+	def test_convert_txt_stardict_general_1_merge_syns(self):
 		self.convert_txt_stardict(
 			"002-plain-html",
 			syn=False,
 			writeOptions={"merge_syns": True},
 		)
 
-	def test_convert_txt_stardict_general_2(self: "typing.Self"):
+	def test_convert_txt_stardict_general_2(self):
 		self.convert_txt_stardict(
 			"004-plain-html-alts",
 			syn=True,
 		)
 
-	def test_convert_txt_stardict_general_2_merge_syns(self: "typing.Self"):
+	def test_convert_txt_stardict_general_2_merge_syns(self):
 		self.convert_txt_stardict(
 			"004-plain-html-alts",
 			fname2="004-plain-html-alts-merge-syns",
@@ -338,10 +337,10 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 
 
 class TestGlossaryErrorsStarDict(TestGlossaryErrorsBase):
-	def __init__(self: "typing.Self", *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		TestGlossaryErrorsBase.__init__(self, *args, **kwargs)
 
-	def test_convert_from_stardict_invalid_sametypesequence(self: "typing.Self"):
+	def test_convert_from_stardict_invalid_sametypesequence(self):
 		fname = "foobar"
 		inputFilename = self.newTempFilePath(f"{fname}.ifo")
 		outputFilename = self.newTempFilePath(f"{fname}.txt")

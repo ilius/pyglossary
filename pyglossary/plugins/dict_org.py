@@ -2,7 +2,6 @@
 
 import os
 import re
-import typing
 from os.path import isdir, splitext
 from typing import Generator, Iterator
 
@@ -31,9 +30,7 @@ website = (
 
 
 def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
-	"""
-	filename is without extension (neither .index or .dict or .dict.dz)
-	"""
+	"""Filename is without extension (neither .index or .dict or .dict.dz)."""
 	import shutil
 	import subprocess
 	targetDir = "/usr/share/dictd/"
@@ -68,8 +65,8 @@ def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
 	log.info("don't forget to restart dictd server")
 
 
-class Reader(object):
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+class Reader:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._dictdb: "DictDB | None" = None
@@ -82,19 +79,19 @@ class Reader(object):
 			r'\{(?P<word>.+?)\}',
 		)
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		if filename.endswith(".index"):
 			filename = filename[:-6]
 		self._filename = filename
 		self._dictdb = DictDB(filename, "read", 1)
 
-	def close(self: "typing.Self") -> None:
+	def close(self) -> None:
 		if self._dictdb is not None:
 			self._dictdb.close()
 			# self._dictdb.finish()
 			self._dictdb = None
 
-	def prettifyDefinitionText(self: "typing.Self", defi: str) -> str:
+	def prettifyDefinitionText(self, defi: str) -> str:
 		# Handle words in {}
 		# First, we remove any \n in {} pairs
 		defi = self._re_newline_in_braces.sub(r'{\g<left>\g<right>}', defi)
@@ -109,12 +106,12 @@ class Reader(object):
 		# Use <br /> so it can be rendered as newline correctly
 		return defi.replace("\n", "<br />")
 
-	def __len__(self: "typing.Self") -> int:
+	def __len__(self) -> int:
 		if self._dictdb is None:
 			return 0
 		return len(self._dictdb)
 
-	def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self._dictdb is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 		dictdb = self._dictdb
@@ -129,18 +126,21 @@ class Reader(object):
 			yield self._glos.newEntry(word, defi)
 
 
-class Writer(object):
+class Writer:
 	_dictzip: bool = False
 	_install: bool = True
 
-	def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
-		self._dictdb = None
+		self._filename = ""
+		self._dictdb: "DictDB | None" = None
 
-	def finish(self: "typing.Self") -> None:
+	def finish(self) -> None:
 		from pyglossary.os_utils import runDictzip
-		self._dictdb.finish(dosort=1)
+		if self._dictdb is None:
+			raise RuntimeError("self._dictdb is None")
+
+		self._dictdb.finish(dosort=True)
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
 		if self._install:
@@ -149,17 +149,19 @@ class Writer(object):
 				self._dictzip,
 				self._glos.getInfo("name").replace(" ", "_"),
 			)
-		self._filename = None
+		self._filename = ""
 
-	def open(self: "typing.Self", filename: str) -> None:
+	def open(self, filename: str) -> None:
 		filename_nox, ext = splitext(filename)
 		if ext.lower() == ".index":
 			filename = filename_nox
 		self._dictdb = DictDB(filename, "write", 1)
 		self._filename = filename
 
-	def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":
 		dictdb = self._dictdb
+		if dictdb is None:
+			raise RuntimeError("self._dictdb is None")
 		while True:
 			entry = yield
 			if entry is None:
@@ -167,4 +169,4 @@ class Writer(object):
 			if entry.isData():
 				# does dictd support resources? and how? FIXME
 				continue
-			dictdb.addEntry(entry.b_defi, entry.l_word)
+			dictdb.addEntry(entry.defi, entry.l_word)
