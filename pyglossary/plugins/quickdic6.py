@@ -83,7 +83,7 @@ LINKED_HASH_SET_INIT = (
     b"\x48\x61\x73\x68\x53\x65\x74"
     # serialization ID:
     b"\xd8\x6c\xd7\x5a\x95\xdd\x2a\x1e"
-    b"\x02" # flags: serialized, custom serialization function
+    b"\x02" # flags
     b"\x00\x00" # fields count
     b"\x78" # blockdata end
     b"\x72" # superclass (java.util.HashSet)
@@ -292,12 +292,6 @@ def read_entry_index(fp):
     row_data = fp.read(num_rows * row_size)
     rows = [
         # <type>, <index>
-        # <type> means:
-        # 1: index into list_of([pair_entry])
-        # 2: index into list_of([index_entry]) (mark as "main word header" entry)
-        # 3: index into list_of([text_entry])
-        # 4: index into list_of([index_entry]) (mark as "extra info/translation" entry)
-        # 5: index into list_of([html_entry])
         struct.unpack(">bi", row_data[j:j + row_size])
         for j in range(0, len(row_data), row_size)
     ]
@@ -424,7 +418,7 @@ class QuickDic:
         texts = read_list(fp, read_entry_text)
         htmls = read_list(fp, read_entry_html)
         indices = read_list(fp, read_entry_index)
-        assert fp.read(19) == b"\x00\x11END OF DICTIONARY"
+        assert read_string(fp) == "END OF DICTIONARY"
         return cls(
             name, sources, pairs, texts, htmls, version=version,
             indices=indices, created=created,
@@ -446,12 +440,12 @@ class QuickDic:
 
         log.info("Initialize token list ...")
         tokens = [
-            (pair[1 if swap_flag else 0], 1, idx)
+            (pair[1 if swap_flag else 0], 0, idx)
             for idx, (_, pairs) in enumerate(self.pairs)
             for pair in pairs
         ]
         if not swap_flag:
-            tokens.extend([(title, 5, idx) for idx, (_, title, _) in enumerate(self.htmls)])
+            tokens.extend([(title, 4, idx) for idx, (_, title, _) in enumerate(self.htmls)])
         tokens = [(t.strip(), ttype, tidx) for t, ttype, tidx in tokens]
 
         log.info("Normalize tokens ...")
@@ -487,7 +481,7 @@ class QuickDic:
                 token_norm = "" if token == token_norm else token_norm
                 html_indices = []
                 rows.append((1, i_entry))
-            if ttype == 5:
+            if ttype == 4:
                 if tidx not in html_indices:
                     html_indices.append(tidx)
             else:
@@ -515,7 +509,7 @@ class QuickDic:
             write_list(fp, write_entry_text, self.texts)
             write_list(fp, write_entry_html, self.htmls)
             write_list(fp, write_entry_index, self.indices)
-            fp.write(b"\x00\x11END OF DICTIONARY")
+            write_string(fp, "END OF DICTIONARY")
 
 class Reader(object):
     def __init__(self: "typing.Self", glos: GlossaryType) -> None:
@@ -529,24 +523,50 @@ class Reader(object):
         self._extract_synonyms_from_indices()
 
     def _extract_synonyms_from_indices(self):
+        self._text_tokens = {}
         self._synonyms = {}
-        for _, _, _, _, swap_flag, _, index_entries, _, rows in self._dic.indices:
+        for index in self._dic.indices:
+            _, _, _, _, swap_flag, _, index_entries, _, rows = index
+
+            # Note that we ignore swapped indices because pyglossary assumes uni-directional
+            # dictionaries. It might make sense to add an option in the future to read only the
+            # swapped indices (create a dictionary with reversed direction).
             if swap_flag:
                 continue
-            for token, start_index, count, token_norm, html_indices in index_entries:
-                l_entry_ids = (
-                    [(5, idx) for idx in html_indices]
-                    + [
-                        (entry_type, entry_idx)
-                        for entry_type, entry_idx in rows[start_index:start_index + count]
-                        if entry_type in [1, 5]
-                    ]
-                )
-                for entry_id in l_entry_ids:
+
+            for i_entry, index_entry in enumerate(index_entries):
+                e_rows = self._extract_rows_from_indexentry(index, i_entry)
+                token, _, _, token_norm, _ = index_entry
+                for entry_id in e_rows:
                     if entry_id not in self._synonyms:
                         self._synonyms[entry_id] = set()
                     self._synonyms[entry_id].add(token)
-                    self._synonyms[entry_id].add(token_norm)
+                    if token_norm != "":
+                        self._synonyms[entry_id].add(token_norm)
+
+    def _extract_rows_from_indexentry(self, index, i_entry, recurse=None):
+        recurse = [] if recurse is None else recurse
+        recurse.append(i_entry)
+        _, _, _, _, _, _, index_entries, _, rows = index
+        token, start_index, count, _, html_indices = index_entries[i_entry]
+        block_rows = rows[start_index:start_index + count + 1]
+        assert block_rows[0][0] in [1, 3] and block_rows[0][1] == i
+        e_rows = []
+        for entry_type, entry_idx in block_rows[1:]:
+            if entry_type in [1, 3]:
+                # avoid an endless recursion
+                if entry_idx not in recurse:
+                    e_rows.extend(
+                        self._extract_rows_from_indexentry(index, entry_idx, recurse=recurse)
+                    )
+            else:
+                e_rows.append((entry_type, entry_idx))
+                if entry_type == 2 and entry_idx not in self._text_tokens:
+                    self._text_tokens[entry_idx] = token
+        for idx in html_indices:
+            if (4, idx) not in e_rows:
+                e_rows.append((4, idx))
+        return e_rows
 
 
     def close(self: "typing.Self") -> None:
@@ -564,12 +584,23 @@ class Reader(object):
 
     def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
         for idx, (_, pairs) in enumerate(self._dic.pairs):
-            syns = sorted(self._synonyms.get((1, idx), []))
+            syns = self._synonyms.get((0, idx), set())
             for word, defi in pairs:
-                yield self._glos.newEntry([word] + syns, defi, defiFormat="m")
+                l_word = [word] + sorted(syns.difference({word}))
+                yield self._glos.newEntry(l_word, defi, defiFormat="m")
+        for idx, (_, defi) in enumerate(self._dic.texts):
+            if idx not in self._text_tokens:
+                # Ignore this text entry since it is not mentioned in the index at all so that
+                # we don't even have a token or title for it.
+                continue
+            word = self._text_tokens[idx]
+            syns = self._synonyms.get((2, idx), set())
+            l_word = [word] + sorted(syns.difference({word}))
+            yield self._glos.newEntry(l_word, defi, defiFormat="m")
         for idx, (_, word, defi) in enumerate(self._dic.htmls):
-            syns = sorted(self._synonyms.get((5, idx), []))
-            yield self._glos.newEntry([word] + syns, defi, defiFormat="h")
+            syns = self._synonyms.get((4, idx), set())
+            l_word = [word] + sorted(syns.difference({word}))
+            yield self._glos.newEntry(l_word, defi, defiFormat="h")
 
 class Writer(object):
     _normalizer_rules = ""
@@ -600,16 +631,19 @@ class Writer(object):
                 log.warn(f"Ignoring binary data entry {entry.l_word[0]}")
                 continue
 
-            entry.detectDefiFormat()  # call no more than once
+            entry.detectDefiFormat()
             if entry.defiFormat not in ["h", "m"]:
-                log.error(f"invalid {entry.defiFormat}, using 'm'")
-                defiFormat = "m"
+                log.error(f"Unsupported {entry.defiFormat}, assuming 'h'")
 
             words = entry.l_word
             if words[0] in synonyms:
                 synonyms[words[0]].extend(words[1:])
             else:
                 synonyms[words[0]] = words[1:]
+
+            # Note that we currently write out all entries as "html" type entries.
+            # In the future, it might make sense to add an option that somehow
+            # specifies the entry type to use.
             htmls.append((0, words[0], entry.defi))
 
         log.info("Collecting meta data ...")
