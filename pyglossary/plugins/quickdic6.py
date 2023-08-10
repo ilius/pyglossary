@@ -7,16 +7,16 @@ import io
 import math
 import pathlib
 import struct
+import typing
 import zipfile
 
 import icu
 
 from pyglossary.core import log
 from pyglossary.flags import NEVER
-from pyglossary.glossary_types import GlossaryType
+from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.langs import langDict
 from pyglossary.option import (
-    BoolOption,
     Option,
     StrOption,
 )
@@ -148,7 +148,7 @@ def read_hashset(fp):
         n_extra = len(LINKED_HASH_SET_INIT) - len(HASH_SET_INIT)
         hash_set_init += fp.read(n_extra)
         assert hash_set_init == LINKED_HASH_SET_INIT
-    capacity = read_int(fp)
+    read_int(fp)  # capacity
     capacity_factor = read_float(fp)
     assert capacity_factor == HASH_SET_CAPACITY_FACTOR
     num_entries = read_int(fp)
@@ -247,7 +247,7 @@ def write_entry_text(fp, entry):
 def read_entry_html(fp):
     src_idx = read_short(fp)
     title = read_string(fp)
-    len_raw = read_int(fp)
+    read_int(fp)  # len_raw
     len_compr = read_int(fp)
     b_compr = fp.read(len_compr)
     with gzip.open(io.BytesIO(b_compr), "r") as zf:
@@ -387,7 +387,13 @@ class Comparator:
         return a.replace("-", "").replace("þ", "th").replace("Þ", "Th")
 
 class QuickDic:
-    def __init__(self, name, sources, pairs, texts, htmls, version=6, indices=None, created=None):
+    def __init__(
+        self,
+        name, sources, pairs, texts, htmls,
+        version=6,
+        indices=None,
+        created=None,
+    ):
         self.name = name
         self.sources = sources
         self.pairs = pairs
@@ -445,7 +451,10 @@ class QuickDic:
             for pair in pairs
         ]
         if not swap_flag:
-            tokens.extend([(title, 4, idx) for idx, (_, title, _) in enumerate(self.htmls)])
+            tokens.extend([
+                (title, 4, idx)
+                for idx, (_, title, _) in enumerate(self.htmls)
+            ])
         tokens = [(t.strip(), ttype, tidx) for t, ttype, tidx in tokens]
 
         log.info("Normalize tokens ...")
@@ -467,13 +476,15 @@ class QuickDic:
         key_fun = functools.cmp_to_key(comparator.compare)
         tokens = sorted(tokens, key=lambda t: key_fun((t[0], t[1])))
 
-        log.info(f"Build mid-layer index ...")
+        log.info("Build mid-layer index ...")
         rows = []
         index_entries = []
         for token, token_norm, ttype, tidx in tokens:
             prev_token = "" if len(index_entries) == 0 else index_entries[-1][0]
             if prev_token == token:
-                token, index_start, count, token_norm, html_indices = index_entries.pop()
+                (
+                    token, index_start, count, token_norm, html_indices,
+                ) = index_entries.pop()
             else:
                 i_entry = len(index_entries)
                 index_start = len(rows)
@@ -490,7 +501,8 @@ class QuickDic:
                     count += 1
             index_entries.append((token, index_start, count, token_norm, html_indices))
 
-        # the exact meaning of this parameter is unknown, and it seems to be ignored by readers
+        # the exact meaning of this parameter is unknown,
+        # and it seems to be ignored by readers
         main_token_count = len(index_entries)
 
         self.indices.append((
@@ -511,12 +523,12 @@ class QuickDic:
             write_list(fp, write_entry_index, self.indices)
             write_string(fp, "END OF DICTIONARY")
 
-class Reader(object):
-    def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+class Reader:
+    def __init__(self, glos: GlossaryType) -> None:
         self._glos = glos
         self._dic = None
 
-    def open(self: "typing.Self", filename: str) -> None:
+    def open(self, filename: str) -> None:
         self._filename = filename
         self._dic = QuickDic.from_path(self._filename)
         self._glos.setDefaultDefiFormat("h")
@@ -528,8 +540,9 @@ class Reader(object):
         for index in self._dic.indices:
             _, _, _, _, swap_flag, _, index_entries, _, rows = index
 
-            # Note that we ignore swapped indices because pyglossary assumes uni-directional
-            # dictionaries. It might make sense to add an option in the future to read only the
+            # Note that we ignore swapped indices because pyglossary assumes
+            # uni-directional dictionaries.
+            # It might make sense to add an option in the future to read only the
             # swapped indices (create a dictionary with reversed direction).
             if swap_flag:
                 continue
@@ -550,15 +563,17 @@ class Reader(object):
         _, _, _, _, _, _, index_entries, _, rows = index
         token, start_index, count, _, html_indices = index_entries[i_entry]
         block_rows = rows[start_index:start_index + count + 1]
-        assert block_rows[0][0] in [1, 3] and block_rows[0][1] == i
+        assert block_rows[0][0] in [1, 3] and block_rows[0][1] == i_entry
         e_rows = []
         for entry_type, entry_idx in block_rows[1:]:
             if entry_type in [1, 3]:
                 # avoid an endless recursion
                 if entry_idx not in recurse:
-                    e_rows.extend(
-                        self._extract_rows_from_indexentry(index, entry_idx, recurse=recurse)
-                    )
+                    e_rows.extend(self._extract_rows_from_indexentry(
+                        index,
+                        entry_idx,
+                        recurse=recurse,
+                    ))
             else:
                 e_rows.append((entry_type, entry_idx))
                 if entry_type == 2 and entry_idx not in self._text_tokens:
@@ -569,20 +584,20 @@ class Reader(object):
         return e_rows
 
 
-    def close(self: "typing.Self") -> None:
+    def close(self) -> None:
         self.clear()
 
-    def clear(self: "typing.Self") -> None:
+    def clear(self) -> None:
         self._filename = ""
         self._dic = None
 
-    def __len__(self: "typing.Self") -> int:
+    def __len__(self) -> int:
         return (
             sum(len(p) for _, p in self._dic.pairs)
             + len(self._dic.htmls)
         )
 
-    def __iter__(self: "typing.Self") -> "Iterator[EntryType]":
+    def __iter__(self) -> "typing.Iterator[EntryType]":
         for idx, (_, pairs) in enumerate(self._dic.pairs):
             syns = self._synonyms.get((0, idx), set())
             for word, defi in pairs:
@@ -590,8 +605,8 @@ class Reader(object):
                 yield self._glos.newEntry(l_word, defi, defiFormat="m")
         for idx, (_, defi) in enumerate(self._dic.texts):
             if idx not in self._text_tokens:
-                # Ignore this text entry since it is not mentioned in the index at all so that
-                # we don't even have a token or title for it.
+                # Ignore this text entry since it is not mentioned in the index at all
+                # so that we don't even have a token or title for it.
                 continue
             word = self._text_tokens[idx]
             syns = self._synonyms.get((2, idx), set())
@@ -602,24 +617,24 @@ class Reader(object):
             l_word = [word] + sorted(syns.difference({word}))
             yield self._glos.newEntry(l_word, defi, defiFormat="h")
 
-class Writer(object):
+class Writer:
     _normalizer_rules = ""
     _source_lang = ""
     _target_lang = ""
 
-    def __init__(self: "typing.Self", glos: GlossaryType) -> None:
+    def __init__(self, glos: GlossaryType) -> None:
         self._glos = glos
         self._filename = None
         self._dic = None
 
-    def finish(self: "typing.Self") -> None:
+    def finish(self) -> None:
         self._filename = None
         self._dic = None
 
-    def open(self: "typing.Self", filename: str) -> None:
+    def open(self, filename: str) -> None:
         self._filename = filename
 
-    def write(self: "typing.Self") -> "Generator[None, EntryType, None]":
+    def write(self) -> "typing.Generator[None, EntryType, None]":
         synonyms = {}
         htmls = []
         log.info("Converting individual entries ...")
@@ -682,7 +697,8 @@ class Writer(object):
             if self._normalizer_rules != "" else
             ":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
             if iso == "DE" else
-            ":: Any-Latin; ' ' > ; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;"
+            ":: Any-Latin; ' ' > ; :: Lower; :: NFD;"
+            " :: [:Nonspacing Mark:] Remove; :: NFC ;"
         )
         self._dic.add_index(
             short_name, long_name, iso, normalizer_rules, False,
