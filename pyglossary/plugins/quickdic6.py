@@ -474,7 +474,7 @@ class QuickDic:
 
 		log.info(f"Sort tokens with synonyms ({len(tokens)} entries) ...")
 		key_fun = functools.cmp_to_key(comparator.compare)
-		tokens = sorted(tokens, key=lambda t: key_fun((t[0], t[1])))
+		tokens.sort(key=lambda t: key_fun((t[0], t[1])))
 
 		log.info("Build mid-layer index ...")
 		rows = []
