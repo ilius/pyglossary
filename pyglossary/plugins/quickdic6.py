@@ -10,8 +10,6 @@ import struct
 import typing
 import zipfile
 
-import icu
-
 from pyglossary.core import log
 from pyglossary.flags import NEVER
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -399,6 +397,7 @@ def write_entry_indexentry(fp, entry):
 
 class Comparator:
 	def __init__(self, locale_str: str, normalizer_rules: str, version: int):
+		import icu
 		self.version = version
 		self.locale = icu.Locale(locale_str)
 		self._comparator = (
