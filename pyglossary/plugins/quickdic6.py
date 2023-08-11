@@ -51,10 +51,10 @@ optionsProp: "dict[str, Option]" = {
 }
 
 HASH_SET_INIT = (
-	b"\xac\xed" # magic
-	b"\x00\x05" # version
-	b"\x73" # object
-	b"\x72" # class
+	b"\xac\xed"  # magic
+	b"\x00\x05"  # version
+	b"\x73"  # object
+	b"\x72"  # class
 	# Java String "java.util.HashSet":
 	b"\x00\x11\x6a\x61\x76\x61\x2e\x75\x74\x69"
 	b"\x6c\x2e\x48\x61\x73\x68\x53\x65\x74"
@@ -64,29 +64,29 @@ HASH_SET_INIT = (
 HASH_SET_INIT2 = (
 	# serialization ID:
 	b"\xba\x44\x85\x95\x96\xb8\xb7\x34"
-	b"\x03" # flags: serialized, custom serialization function
-	b"\x00\x00" # fields count
-	b"\x78" # blockdata end
-	b"\x70" # null (superclass)
-	b"\x77\x0c" # blockdata short, 0xc bytes
+	b"\x03"  # flags: serialized, custom serialization function
+	b"\x00\x00"  # fields count
+	b"\x78"  # blockdata end
+	b"\x70"  # null (superclass)
+	b"\x77\x0c"  # blockdata short, 0xc bytes
 )
 """Second part of Java serialization of java.util.HashSet"""
 
 LINKED_HASH_SET_INIT = (
-	b"\xac\xed" # magic
-	b"\x00\x05" # version
-	b"\x73" # object
-	b"\x72" # class
+	b"\xac\xed"  # magic
+	b"\x00\x05"  # version
+	b"\x73"  # object
+	b"\x72"  # class
 	# Java String "java.util.LinkedHashSet":
 	b"\x00\x17\x6a\x61\x76\x61\x2e\x75\x74\x69"
 	b"\x6c\x2e\x4c\x69\x6e\x6b\x65\x64"
 	b"\x48\x61\x73\x68\x53\x65\x74"
 	# serialization ID:
 	b"\xd8\x6c\xd7\x5a\x95\xdd\x2a\x1e"
-	b"\x02" # flags
-	b"\x00\x00" # fields count
-	b"\x78" # blockdata end
-	b"\x72" # superclass (java.util.HashSet)
+	b"\x02"  # flags
+	b"\x00\x00"  # fields count
+	b"\x78"  # blockdata end
+	b"\x72"  # superclass (java.util.HashSet)
 	b"\x00\x11\x6a\x61\x76\x61\x2e\x75\x74\x69"
 	b"\x6c\x2e\x48\x61\x73\x68\x53\x65\x74"
 ) + HASH_SET_INIT2
@@ -95,49 +95,64 @@ LINKED_HASH_SET_INIT = (
 HASH_SET_CAPACITY_FACTOR = 0.75
 """Capacity factor used to determine the hash set's capacity from its length"""
 
+
 def read_byte(fp):
 	return struct.unpack(">b", fp.read(1))[0]
+
 
 def write_byte(fp, val):
 	return fp.write(struct.pack(">b", val))
 
+
 def read_bool(fp):
 	return bool(read_byte(fp))
+
 
 def write_bool(fp, val):
 	return write_byte(fp, val)
 
+
 def read_short(fp):
 	return struct.unpack(">h", fp.read(2))[0]
+
 
 def write_short(fp, val):
 	return fp.write(struct.pack(">h", val))
 
+
 def read_int(fp):
 	return struct.unpack(">i", fp.read(4))[0]
+
 
 def write_int(fp, val):
 	return fp.write(struct.pack(">i", val))
 
+
 def read_long(fp):
 	return struct.unpack(">q", fp.read(8))[0]
+
 
 def write_long(fp, val):
 	return fp.write(struct.pack(">q", val))
 
+
 def read_float(fp):
 	return struct.unpack(">f", fp.read(4))[0]
 
+
 def write_float(fp, val):
 	return fp.write(struct.pack(">f", val))
+
 
 def read_string(fp):
 	length = read_short(fp)
 	return mutf8.decode_modified_utf8(fp.read(length))
 
+
 def write_string(fp, val):
 	b_string = mutf8.encode_modified_utf8(val)
 	return write_short(fp, len(b_string)) + fp.write(b_string)
+
 
 def read_hashset(fp):
 	hash_set_init = fp.read(len(HASH_SET_INIT))
@@ -159,6 +174,7 @@ def read_hashset(fp):
 	assert read_byte(fp) == 0x78
 	return data
 
+
 def write_hashset(fp, data, linked_hash_set=False):
 	write_start_offset = fp.tell()
 	if linked_hash_set:
@@ -167,8 +183,9 @@ def write_hashset(fp, data, linked_hash_set=False):
 		fp.write(HASH_SET_INIT + HASH_SET_INIT2)
 	num_entries = len(data)
 	capacity = (
-		2**math.ceil(math.log(num_entries / HASH_SET_CAPACITY_FACTOR, 2))
-		if num_entries > 0 else 128
+		2 ** math.ceil(math.log(num_entries / HASH_SET_CAPACITY_FACTOR, 2))
+		if num_entries > 0
+		else 128
 	)
 	write_int(fp, capacity)
 	write_float(fp, HASH_SET_CAPACITY_FACTOR)
@@ -179,6 +196,7 @@ def write_hashset(fp, data, linked_hash_set=False):
 	write_byte(fp, 0x78)
 	return fp.tell() - write_start_offset
 
+
 def read_list(fp, fun):
 	size = read_int(fp)
 	toc = struct.unpack(f">{size + 1}q", fp.read(8 * (size + 1)))
@@ -188,6 +206,7 @@ def read_list(fp, fun):
 		entries.append(fun(fp))
 	fp.seek(toc[-1])
 	return entries
+
 
 def write_list(fp, fun, entries):
 	write_start_offset = fp.tell()
@@ -204,26 +223,32 @@ def write_list(fp, fun, entries):
 	fp.seek(toc[-1])
 	return fp.tell() - write_start_offset
 
+
 def read_entry_int(fp):
 	return read_int(fp)
 
+
 def write_entry_int(fp, entry):
 	return write_int(fp, entry)
+
 
 def read_entry_source(fp):
 	name = read_string(fp)
 	count = read_int(fp)
 	return name, count
 
+
 def write_entry_source(fp, entry):
 	name, count = entry
 	return write_string(fp, name) + write_int(fp, count)
+
 
 def read_entry_pairs(fp):
 	src_idx = read_short(fp)
 	count = read_int(fp)
 	pairs = [(read_string(fp), read_string(fp)) for i in range(count)]
 	return src_idx, pairs
+
 
 def write_entry_pairs(fp, entry):
 	write_start_offset = fp.tell()
@@ -235,14 +260,17 @@ def write_entry_pairs(fp, entry):
 		write_string(fp, p[1])
 	return fp.tell() - write_start_offset
 
+
 def read_entry_text(fp):
 	src_idx = read_short(fp)
 	txt = read_string(fp)
 	return src_idx, txt
 
+
 def write_entry_text(fp, entry):
 	src_idx, txt = entry
 	return write_short(fp, src_idx) + write_string(fp, txt)
+
 
 def read_entry_html(fp):
 	src_idx = read_short(fp)
@@ -255,10 +283,13 @@ def read_entry_html(fp):
 		html = zf.read().decode()
 	return src_idx, title, html
 
+
 def write_entry_html(fp, entry):
 	write_start_offset = fp.tell()
 	src_idx, title, html = entry
-	b_html = "".join(c if ord(c) < 128 else f"&#{ord(c)};" for c in html).encode()
+	b_html = "".join(
+		c if ord(c) < 128 else f"&#{ord(c)};" for c in html
+	).encode()
 	b_compr = io.BytesIO()
 	with gzip.GzipFile(fileobj=b_compr, mode="wb") as zf:
 		# note that the compressed bytes might differ from the original Java
@@ -272,6 +303,7 @@ def write_entry_html(fp, entry):
 	write_int(fp, len(b_compr))
 	fp.write(b_compr)
 	return fp.tell() - write_start_offset
+
 
 def read_entry_index(fp):
 	short_name = read_string(fp)
@@ -292,19 +324,34 @@ def read_entry_index(fp):
 	row_data = fp.read(num_rows * row_size)
 	rows = [
 		# <type>, <index>
-		struct.unpack(">bi", row_data[j:j + row_size])
+		struct.unpack(">bi", row_data[j : j + row_size])
 		for j in range(0, len(row_data), row_size)
 	]
 	return (
-		short_name, long_name, iso, normalizer_rules, swap_flag, main_token_count,
-		index_entries, stop_list, rows,
+		short_name,
+		long_name,
+		iso,
+		normalizer_rules,
+		swap_flag,
+		main_token_count,
+		index_entries,
+		stop_list,
+		rows,
 	)
+
 
 def write_entry_index(fp, entry):
 	write_start_offset = fp.tell()
 	(
-		short_name, long_name, iso, normalizer_rules, swap_flag, main_token_count,
-		index_entries, stop_list, rows,
+		short_name,
+		long_name,
+		iso,
+		normalizer_rules,
+		swap_flag,
+		main_token_count,
+		index_entries,
+		stop_list,
+		rows,
 	) = entry
 	write_string(fp, short_name)
 	write_string(fp, long_name)
@@ -327,6 +374,7 @@ def write_entry_index(fp, entry):
 	fp.write(row_data)
 	return fp.tell() - write_start_offset
 
+
 def read_entry_indexentry(fp):
 	token = read_string(fp)
 	start_index = read_int(fp)
@@ -335,6 +383,7 @@ def read_entry_indexentry(fp):
 	token_norm = read_string(fp) if has_normalized else ""
 	html_indices = read_list(fp, read_entry_int)
 	return token, start_index, count, token_norm, html_indices
+
 
 def write_entry_indexentry(fp, entry):
 	token, start_index, count, token_norm, html_indices = entry
@@ -347,19 +396,22 @@ def write_entry_indexentry(fp, entry):
 		write_string(fp, token_norm)
 	write_list(fp, write_entry_int, html_indices)
 
+
 class Comparator:
 	def __init__(self, locale_str, normalizer_rules, version):
 		self.version = version
 		self.locale = icu.Locale(locale_str)
 		self._comparator = (
 			icu.RuleBasedCollator("&z<ȝ")
-			if self.locale.getLanguage() == "en" else
-			icu.Collator.createInstance(self.locale)
+			if self.locale.getLanguage() == "en"
+			else icu.Collator.createInstance(self.locale)
 		)
 		self._comparator.setStrength(icu.Collator.IDENTICAL)
 		self.normalizer_rules = normalizer_rules
 		self.normalize = icu.Transliterator.createFromRules(
-			"", self.normalizer_rules, icu.UTransDirection.FORWARD,
+			"",
+			self.normalizer_rules,
+			icu.UTransDirection.FORWARD,
 		).transliterate
 
 	def compare(self, s1, s2):
@@ -386,10 +438,15 @@ class Comparator:
 	def _without_dash(self, a):
 		return a.replace("-", "").replace("þ", "th").replace("Þ", "Th")
 
+
 class QuickDic:
 	def __init__(
 		self,
-		name, sources, pairs, texts, htmls,
+		name,
+		sources,
+		pairs,
+		texts,
+		htmls,
 		version=6,
 		indices=None,
 		created=None,
@@ -426,12 +483,24 @@ class QuickDic:
 		indices = read_list(fp, read_entry_index)
 		assert read_string(fp) == "END OF DICTIONARY"
 		return cls(
-			name, sources, pairs, texts, htmls, version=version,
-			indices=indices, created=created,
+			name,
+			sources,
+			pairs,
+			texts,
+			htmls,
+			version=version,
+			indices=indices,
+			created=created,
 		)
 
 	def add_index(
-		self, short_name, long_name, iso, normalizer_rules, swap_flag, synonyms=None,
+		self,
+		short_name,
+		long_name,
+		iso,
+		normalizer_rules,
+		swap_flag,
+		synonyms=None,
 	):
 		comparator = Comparator(iso, normalizer_rules, self.version)
 
@@ -451,10 +520,12 @@ class QuickDic:
 			for pair in pairs
 		]
 		if not swap_flag:
-			tokens.extend([
-				(title, 4, idx)
-				for idx, (_, title, _) in enumerate(self.htmls)
-			])
+			tokens.extend(
+				[
+					(title, 4, idx)
+					for idx, (_, title, _) in enumerate(self.htmls)
+				]
+			)
 		tokens = [(t.strip(), ttype, tidx) for t, ttype, tidx in tokens]
 
 		log.info("Normalize tokens ...")
@@ -465,12 +536,18 @@ class QuickDic:
 		]
 
 		if len(synonyms) > 0:
-			log.info(f"Insert synonyms into token list ({len(tokens)} entries) ...")
-			tokens.extend([
-				(s, comparator.normalize(s)) + t[2:]
-				for t in tokens if t[0] in synonyms
-				for s in synonyms[t[0]] if s != ""
-			])
+			log.info(
+				f"Insert synonyms into token list ({len(tokens)} entries) ..."
+			)
+			tokens.extend(
+				[
+					(s, comparator.normalize(s)) + t[2:]
+					for t in tokens
+					if t[0] in synonyms
+					for s in synonyms[t[0]]
+					if s != ""
+				]
+			)
 
 		log.info(f"Sort tokens with synonyms ({len(tokens)} entries) ...")
 		key_fun = functools.cmp_to_key(comparator.compare)
@@ -480,10 +557,16 @@ class QuickDic:
 		rows = []
 		index_entries = []
 		for token, token_norm, ttype, tidx in tokens:
-			prev_token = "" if len(index_entries) == 0 else index_entries[-1][0]
+			prev_token = (
+				"" if len(index_entries) == 0 else index_entries[-1][0]
+			)
 			if prev_token == token:
 				(
-					token, index_start, count, token_norm, html_indices,
+					token,
+					index_start,
+					count,
+					token_norm,
+					html_indices,
 				) = index_entries.pop()
 			else:
 				i_entry = len(index_entries)
@@ -496,19 +579,30 @@ class QuickDic:
 				if tidx not in html_indices:
 					html_indices.append(tidx)
 			else:
-				if (ttype, tidx) not in rows[index_start + 1:]:
+				if (ttype, tidx) not in rows[index_start + 1 :]:
 					rows.append((ttype, tidx))
 					count += 1
-			index_entries.append((token, index_start, count, token_norm, html_indices))
+			index_entries.append(
+				(token, index_start, count, token_norm, html_indices)
+			)
 
 		# the exact meaning of this parameter is unknown,
 		# and it seems to be ignored by readers
 		main_token_count = len(index_entries)
 
-		self.indices.append((
-			short_name, long_name, iso, normalizer_rules, swap_flag,
-			main_token_count, index_entries, stop_list, rows,
-		))
+		self.indices.append(
+			(
+				short_name,
+				long_name,
+				iso,
+				normalizer_rules,
+				swap_flag,
+				main_token_count,
+				index_entries,
+				stop_list,
+				rows,
+			)
+		)
 
 	def write(self, path):
 		with open(path, "wb") as fp:
@@ -522,6 +616,7 @@ class QuickDic:
 			write_list(fp, write_entry_html, self.htmls)
 			write_list(fp, write_entry_index, self.indices)
 			write_string(fp, "END OF DICTIONARY")
+
 
 class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
@@ -562,18 +657,20 @@ class Reader:
 		recurse.append(i_entry)
 		_, _, _, _, _, _, index_entries, _, rows = index
 		token, start_index, count, _, html_indices = index_entries[i_entry]
-		block_rows = rows[start_index:start_index + count + 1]
+		block_rows = rows[start_index : start_index + count + 1]
 		assert block_rows[0][0] in [1, 3] and block_rows[0][1] == i_entry
 		e_rows = []
 		for entry_type, entry_idx in block_rows[1:]:
 			if entry_type in [1, 3]:
 				# avoid an endless recursion
 				if entry_idx not in recurse:
-					e_rows.extend(self._extract_rows_from_indexentry(
-						index,
-						entry_idx,
-						recurse=recurse,
-					))
+					e_rows.extend(
+						self._extract_rows_from_indexentry(
+							index,
+							entry_idx,
+							recurse=recurse,
+						)
+					)
 			else:
 				e_rows.append((entry_type, entry_idx))
 				if entry_type == 2 and entry_idx not in self._text_tokens:
@@ -583,7 +680,6 @@ class Reader:
 				e_rows.append((4, idx))
 		return e_rows
 
-
 	def close(self) -> None:
 		self.clear()
 
@@ -592,10 +688,7 @@ class Reader:
 		self._dic = None
 
 	def __len__(self) -> int:
-		return (
-			sum(len(p) for _, p in self._dic.pairs)
-			+ len(self._dic.htmls)
-		)
+		return sum(len(p) for _, p in self._dic.pairs) + len(self._dic.htmls)
 
 	def __iter__(self) -> "typing.Iterator[EntryType]":
 		for idx, (_, pairs) in enumerate(self._dic.pairs):
@@ -616,6 +709,7 @@ class Reader:
 			syns = self._synonyms.get((4, idx), set())
 			l_word = [word] + sorted(syns.difference({word}))
 			yield self._glos.newEntry(l_word, defi, defiFormat="h")
+
 
 class Writer:
 	_normalizer_rules = ""
@@ -668,13 +762,13 @@ class Writer:
 
 		sourceLang = (
 			self._glos.sourceLang
-			if self._source_lang == "" else
-			langDict[self._source_lang]
+			if self._source_lang == ""
+			else langDict[self._source_lang]
 		)
 		targetLang = (
 			self._glos.targetLang
-			if self._target_lang == "" else
-			langDict[self._target_lang]
+			if self._target_lang == ""
+			else langDict[self._target_lang]
 		)
 		if sourceLang and targetLang:
 			sourceLang = sourceLang.code
@@ -694,14 +788,18 @@ class Writer:
 		short_name = long_name = iso = sourceLang
 		normalizer_rules = (
 			self._normalizer_rules
-			if self._normalizer_rules != "" else
-			":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
-			if iso == "DE" else
-			":: Any-Latin; ' ' > ; :: Lower; :: NFD;"
+			if self._normalizer_rules != ""
+			else ":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
+			if iso == "DE"
+			else ":: Any-Latin; ' ' > ; :: Lower; :: NFD;"
 			" :: [:Nonspacing Mark:] Remove; :: NFC ;"
 		)
 		self._dic.add_index(
-			short_name, long_name, iso, normalizer_rules, False,
+			short_name,
+			long_name,
+			iso,
+			normalizer_rules,
+			False,
 			synonyms=synonyms,
 		)
 
