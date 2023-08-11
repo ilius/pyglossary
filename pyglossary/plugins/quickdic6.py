@@ -398,7 +398,7 @@ def write_entry_indexentry(fp, entry):
 
 
 class Comparator:
-	def __init__(self, locale_str, normalizer_rules, version):
+	def __init__(self, locale_str: str, normalizer_rules: str, version: int):
 		self.version = version
 		self.locale = icu.Locale(locale_str)
 		self._comparator = (
@@ -414,12 +414,14 @@ class Comparator:
 			icu.UTransDirection.FORWARD,
 		).transliterate
 
-	def compare(self, s1, s2):
-		s1, n1 = s1 if isinstance(s1, tuple) else (s1, self.normalize(s1))
-		s2, n2 = s2 if isinstance(s2, tuple) else (s2, self.normalize(s2))
+	def compare(self, tup1: "tuple[str, str]", tup2: "tuple[str, str]") -> "0 | 1 | -1":
+		# assert isinstance(tup1, tuple)
+		# assert isinstance(tup2, tuple)
+		s1, n1 = tup1
+		s2, n2 = tup2
 		return self._compare_normalized(s1, s2, n1, n2)
 
-	def _compare_normalized(self, s1, s2, n1, n2):
+	def _compare_normalized(self, s1, s2, n1, n2) -> "0 | 1 | -1":
 		cn = self._compare_without_dash(n1, n2)
 		if cn != 0:
 			return cn
@@ -428,14 +430,14 @@ class Comparator:
 			return cn
 		return self._comparator.compare(s1, s2)
 
-	def _compare_without_dash(self, a, b):
+	def _compare_without_dash(self, a, b) -> "0 | 1 | -1":
 		if self.version < 7:
 			return 0
 		s1 = self._without_dash(a)
 		s2 = self._without_dash(b)
 		return self._comparator.compare(s1, s2)
 
-	def _without_dash(self, a):
+	def _without_dash(self, a: str) -> str:
 		return a.replace("-", "").replace("þ", "th").replace("Þ", "Th")
 
 
@@ -524,7 +526,7 @@ class QuickDic:
 				[
 					(title, 4, idx)
 					for idx, (_, title, _) in enumerate(self.htmls)
-				]
+				],
 			)
 		tokens = [(t.strip(), ttype, tidx) for t, ttype, tidx in tokens]
 
@@ -537,7 +539,7 @@ class QuickDic:
 
 		if len(synonyms) > 0:
 			log.info(
-				f"Insert synonyms into token list ({len(tokens)} entries) ..."
+				f"Insert synonyms into token list ({len(tokens)} entries) ...",
 			)
 			tokens.extend(
 				[
@@ -546,7 +548,7 @@ class QuickDic:
 					if t[0] in synonyms
 					for s in synonyms[t[0]]
 					if s != ""
-				]
+				],
 			)
 
 		log.info(f"Sort tokens with synonyms ({len(tokens)} entries) ...")
@@ -583,7 +585,7 @@ class QuickDic:
 					rows.append((ttype, tidx))
 					count += 1
 			index_entries.append(
-				(token, index_start, count, token_norm, html_indices)
+				(token, index_start, count, token_norm, html_indices),
 			)
 
 		# the exact meaning of this parameter is unknown,
@@ -601,7 +603,7 @@ class QuickDic:
 				index_entries,
 				stop_list,
 				rows,
-			)
+			),
 		)
 
 	def write(self, path):
@@ -669,7 +671,7 @@ class Reader:
 							index,
 							entry_idx,
 							recurse=recurse,
-						)
+						),
 					)
 			else:
 				e_rows.append((entry_type, entry_idx))
