@@ -37,8 +37,8 @@ set -x
 
 #./scripts/create-conf-dir.py
 
-if shouldBuild pyglossary:$version ; then
-	docker build . -f Dockerfile -t pyglossary:$version -t pyglossary:latest
+if shouldBuild "pyglossary:$version" ; then
+	docker build . -f Dockerfile -t "pyglossary:$version" -t pyglossary:latest
 fi
 
 #cacheDir="$HOME/.cache/minideb"
@@ -60,8 +60,8 @@ fi
 # FIXME: gives error: container not found
 
 docker run -it \
-    --user $(id -u):$(id -g) \
+    --user "$(id -u):$(id -g)" \
 	--volume "$HOME:/home/$USER" \
 	--env "HOME=/home/$USER" \
     --workdir "/home/$USER" \
-	pyglossary:$version
+	"pyglossary:$version"
