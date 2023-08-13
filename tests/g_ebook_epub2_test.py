@@ -1,3 +1,13 @@
+import logging
+import sys
+
+skip_module = False
+if sys.version_info < (3, 10):
+	logging.getLogger("pyglossary-test").warning(
+		f"Skipping {__file__} due to old Python version (need 3.10).",
+	)
+	skip_module = True
+
 import re
 import sys
 import unittest
@@ -20,6 +30,11 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			"100-en-fa-prefix3-v2.epub": "1b7244ca",
 			"300-rand-en-fa-prefix3-v2.epub": "b5dd9ec6",
 		})
+
+	def setUp(self):
+		if skip_module:
+			self.skipTest("module is skipped")
+		TestGlossaryBase.setUp(self)
 
 	def remove_toc_uid(self, data):
 		return re.sub(

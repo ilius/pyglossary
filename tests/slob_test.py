@@ -6,7 +6,7 @@ import sys
 skip_module = False
 if sys.version_info < (3, 10):
 	logging.getLogger("pyglossary-test").warning(
-		"Skipping slob_test.py due to old Python version (need 3.10).",
+		f"Skipping {__file__} due to old Python version (need 3.10).",
 	)
 	skip_module = True
 
