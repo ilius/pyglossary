@@ -1,5 +1,14 @@
-import os
+import logging
 import sys
+
+skip_module = False
+if sys.version_info < (3, 10):
+	logging.getLogger("pyglossary-test").warning(
+		"Skipping slob_test.py due to old Python version (need 3.10).",
+	)
+	skip_module = True
+
+import os
 import unittest
 from os.path import abspath, dirname
 
@@ -19,6 +28,11 @@ class TestGlossarySlob(TestGlossaryBase):
 			"100-en-fa-res-slob-sort.txt": "8253fe96",
             "300-ru-en.txt": "77cfee2f",
 		})
+
+	def setUp(self):
+		if skip_module:
+			self.skipTest("module is skipped")
+		TestGlossaryBase.setUp(self)
 
 	def test_convert_txt_slob_1(self):
 		fname = "100-en-fa"
