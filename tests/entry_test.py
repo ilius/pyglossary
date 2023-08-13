@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import sys
 import unittest
 from os.path import abspath, dirname

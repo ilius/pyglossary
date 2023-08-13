@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import hashlib
 import logging
 import os
