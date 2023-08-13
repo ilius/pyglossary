@@ -1,48 +1,33 @@
 #!/usr/bin/env python3
+
 import logging
+import sys
+
+skip_module = False
+if sys.version_info < (3, 10):
+	logging.getLogger("pyglossary-test").warning(
+		"Skipping slob_test.py due to old Python version (need 3.10).",
+	)
+	skip_module = True
+
+import io
 import os
 import random
-import sys
 import tempfile
 import unicodedata
 import unittest
 from os.path import abspath, dirname
 from typing import cast
 
-import icu
-
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary import slob
+if not skip_module:
+	import icu
+
+	from pyglossary import slob
+
 from pyglossary.core_test import MockLogHandler
-from pyglossary.slob import (
-	IDENTICAL,
-	MAX_BIN_ITEM_COUNT,
-	MAX_TEXT_LEN,
-	MAX_TINY_TEXT_LEN,
-	MIME_HTML,
-	MIME_TEXT,
-	PRIMARY,
-	QUATERNARY,
-	SECONDARY,
-	TERTIARY,
-	UTF8,
-	Blob,
-	IncorrectFileSize,
-	MultiFileReader,
-	TagNotFound,
-	UnknownFileFormat,
-	Writer,
-	find_parts,
-	fopen,
-	io,
-	meld_ints,
-	read_header,
-	set_tag_value,
-	sortkey,
-	unmeld_ints,
-)
 
 mockLog = MockLogHandler()
 log = logging.getLogger("pyglossary")
@@ -50,23 +35,34 @@ log.addHandler(mockLog)
 
 
 class BaseTest(unittest.TestCase):
+	def setUp(self):
+		if skip_module:
+			self.skipTest("module is skipped")
+
+		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
+		self._writers = []
+
+	def tearDown(self):
+		for w in self._writers:
+			w.close()
+		self.tmpdir.cleanup()
+
 	def _observer(self, event: "slob.WriterEvent"):
 		log.info(f"slob: {event.name}{': ' + event.data if event.data else ''}")
-		# self._writers = []
 
 	def create(self, *args, observer=None, **kwargs):
 		if observer is None:
 			observer = self._observer
-		w = Writer(*args, observer=observer, **kwargs)
-		# self._writers.append(w)
-		return w  # noqa: RET504
+		w = slob.Writer(*args, observer=observer, **kwargs)
+		self._writers.append(w)
+		return w
 
 
 class TestReadWrite(BaseTest):
 
 	def setUp(self):
+		BaseTest.setUp(self)
 
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
 		writer = self.create(self.path)
@@ -84,13 +80,13 @@ class TestReadWrite(BaseTest):
 		self.blob_encoding = 'ascii'
 
 		self.data = [
-			(('c', 'cc', 'ccc'), MIME_TEXT, 'Hello C 1'),
-			('a', MIME_TEXT, 'Hello A 12'),
-			('z', MIME_TEXT, 'Hello Z 123'),
-			('b', MIME_TEXT, 'Hello B 1234'),
-			('d', MIME_TEXT, 'Hello D 12345'),
-			('uuu', MIME_HTML, '<html><body>Hello U!</body></html>'),
-			((('yy', 'frag1'),), MIME_HTML, '<h1 name="frag1">Section 1</h1>'),
+			(('c', 'cc', 'ccc'), slob.MIME_TEXT, 'Hello C 1'),
+			('a', slob.MIME_TEXT, 'Hello A 12'),
+			('z', slob.MIME_TEXT, 'Hello Z 123'),
+			('b', slob.MIME_TEXT, 'Hello B 1234'),
+			('d', slob.MIME_TEXT, 'Hello D 12345'),
+			('uuu', slob.MIME_HTML, '<html><body>Hello U!</body></html>'),
+			((('yy', 'frag1'),), slob.MIME_HTML, '<h1 name="frag1">Section 1</h1>'),
 		]
 
 		self.all_keys = []
@@ -114,13 +110,13 @@ class TestReadWrite(BaseTest):
 		self.w = writer
 
 	def test_header(self):
-		with MultiFileReader(self.path) as f:
-			header = read_header(f)
+		with slob.MultiFileReader(self.path) as f:
+			header = slob.read_header(f)
 
 		for key, value in self.tags.items():
 			self.assertEqual(header.tags[key], value)
 
-		self.assertEqual(self.w.encoding, UTF8)
+		self.assertEqual(self.w.encoding, slob.UTF8)
 		self.assertEqual(header.encoding, self.w.encoding)
 
 		self.assertEqual(header.compression, self.w.compression)
@@ -144,13 +140,13 @@ class TestReadWrite(BaseTest):
 				self.assertEqual(
 					item.fragment, fragment)
 
-	def tearDown(self):
-		self.tmpdir.cleanup()
+
 
 
 class TestSort(BaseTest):
 	def setUp(self):
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
+		BaseTest.setUp(self)
+
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
 		writer = self.create(self.path)
@@ -160,7 +156,7 @@ class TestSort(BaseTest):
 			'Её', 'Е ё', 'А', 'э', 'ы',
 		]
 
-		self.data_sorted = sorted(data, key=sortkey(IDENTICAL))
+		self.data_sorted = sorted(data, key=slob.sortkey(slob.IDENTICAL))
 
 		for k in data:
 			v = ';'.join(unicodedata.name(c) for c in k)
@@ -176,11 +172,13 @@ class TestSort(BaseTest):
 
 	def tearDown(self):
 		self.r.close()
-		self.tmpdir.cleanup()
+		BaseTest.tearDown(self)
 
 
 class TestSortKey(BaseTest):
 	def setUp(self):
+		BaseTest.setUp(self)
+
 		self.data = [
 			'Ф, ф', 'Ф ф', 'Ф', 'Э', 'Е е', 'г', 'н',
 			'ф', 'а', 'Ф, Ф', 'е', 'Е', 'Ее', 'ё', 'Ё',
@@ -202,16 +200,16 @@ class TestSortKey(BaseTest):
 			"fa_IR.UTF-8",
 		):
 			icu.Locale.setDefault(icu.Locale(locName))
-			sortkey.cache_clear()
-			data_sorted = sorted(self.data, key=sortkey(IDENTICAL))
+			slob.sortkey.cache_clear()
+			data_sorted = sorted(self.data, key=slob.sortkey(slob.IDENTICAL))
 			self.assertEqual(self.data_sorted, data_sorted)
 
 
 class TestFind(BaseTest):
 
 	def setUp(self):
+		BaseTest.setUp(self)
 
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
 		writer = self.create(self.path)
@@ -229,10 +227,10 @@ class TestFind(BaseTest):
 		self.r = slob.open(self.path)
 
 	def get(self, d, key):
-		return list(item.content.decode('ascii') for item in d[key])
+		return [item.content.decode('ascii') for item in d[key]]
 
 	def test_find_identical(self):
-		d = self.r.as_dict(IDENTICAL)
+		d = self.r.as_dict(slob.IDENTICAL)
 		self.assertEqual(
 			self.get(d, 'aa'),
 			['LATIN SMALL LETTER A;LATIN SMALL LETTER A'])
@@ -254,7 +252,7 @@ class TestFind(BaseTest):
 			['LATIN SMALL LETTER A;SPACE;LATIN SMALL LETTER A'])
 
 	def test_find_quaternary(self):
-		d = self.r.as_dict(QUATERNARY)
+		d = self.r.as_dict(slob.QUATERNARY)
 		self.assertEqual(
 			self.get(d, 'a\u2032a'),
 			['LATIN SMALL LETTER A;PRIME;LATIN SMALL LETTER A'])
@@ -267,7 +265,7 @@ class TestFind(BaseTest):
 		)
 
 	def test_find_tertiary(self):
-		d = self.r.as_dict(TERTIARY)
+		d = self.r.as_dict(slob.TERTIARY)
 		self.assertEqual(
 			self.get(d, 'aa'),
 			[
@@ -282,7 +280,7 @@ class TestFind(BaseTest):
 		)
 
 	def test_find_secondary(self):
-		d = self.r.as_dict(SECONDARY)
+		d = self.r.as_dict(slob.SECONDARY)
 		self.assertEqual(
 			self.get(d, 'aa'),
 			[
@@ -299,7 +297,7 @@ class TestFind(BaseTest):
 		)
 
 	def test_find_primary(self):
-		d = self.r.as_dict(PRIMARY)
+		d = self.r.as_dict(slob.PRIMARY)
 
 		self.assertEqual(
 			self.get(d, 'aa'),
@@ -320,12 +318,13 @@ class TestFind(BaseTest):
 
 	def tearDown(self):
 		self.r.close()
-		self.tmpdir.cleanup()
+		BaseTest.tearDown(self)
 
 
 class TestPrefixFind(BaseTest):
 	def setUp(self):
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
+		BaseTest.setUp(self)
+
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 		self.data = ['a', 'ab', 'abc', 'abcd', 'abcde']
 		writer = self.create(self.path)
@@ -333,26 +332,21 @@ class TestPrefixFind(BaseTest):
 			writer.add(k.encode('ascii'), k)
 		writer.finalize()
 
-	def tearDown(self):
-		self.tmpdir.cleanup()
-
 	def test(self):
 		with slob.open(self.path) as r:
 			for i, k in enumerate(self.data):
-				d = r.as_dict(IDENTICAL, len(k))
+				d = r.as_dict(slob.IDENTICAL, len(k))
 				self.assertEqual(
-					[cast(Blob, v).content.decode('ascii') for v in d[k]],
+					[cast(slob.Blob, v).content.decode('ascii') for v in d[k]],
 					self.data[i:],
 				)
 
 
 class TestAlias(BaseTest):
 	def setUp(self):
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
-		self.path = os.path.join(self.tmpdir.name, 'test.slob')
+		BaseTest.setUp(self)
 
-	def tearDown(self):
-		self.tmpdir.cleanup()
+		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 
 	def test_alias(self):
 		too_many_redirects = []
@@ -409,23 +403,23 @@ class TestAlias(BaseTest):
 			self.assertEqual(get('l2'), [])
 			self.assertEqual(get('l3'), [])
 
-			item_a1 = cast(Blob, next(d['a1']))
+			item_a1 = cast(slob.Blob, next(d['a1']))
 			self.assertEqual(item_a1.content, b'LATIN SMALL LETTER A')
 			self.assertEqual(item_a1.fragment, 'a-frag1')
 
-			item_a2 = cast(Blob, next(d['a2']))
+			item_a2 = cast(slob.Blob, next(d['a2']))
 			self.assertEqual(item_a2.content, b'LATIN SMALL LETTER A')
 			self.assertEqual(item_a2.fragment, 'a-frag1')
 
-			item_a3 = cast(Blob, next(d['a3']))
+			item_a3 = cast(slob.Blob, next(d['a3']))
 			self.assertEqual(item_a3.content, b'LATIN SMALL LETTER A')
 			self.assertEqual(item_a3.fragment, 'a-frag1')
 
-			item_g1 = cast(Blob, next(d['g1']))
+			item_g1 = cast(slob.Blob, next(d['g1']))
 			self.assertEqual(item_g1.content, b'LATIN SMALL LETTER G')
 			self.assertEqual(item_g1.fragment, '')
 
-			item_g2 = cast(Blob, next(d['g2']))
+			item_g2 = cast(slob.Blob, next(d['g2']))
 			self.assertEqual(item_g2.content, b'LATIN SMALL LETTER G')
 			self.assertEqual(item_g2.fragment, 'g-frag1')
 
@@ -444,30 +438,24 @@ class TestBlobId(BaseTest):
 		]
 		for i in i_values:
 			for j in j_values:
-				self.assertEqual(unmeld_ints(meld_ints(i, j)), (i, j))
+				self.assertEqual(slob.unmeld_ints(slob.meld_ints(i, j)), (i, j))
 
 
 class TestMultiFileReader(BaseTest):
-	def setUp(self):
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
-
-	def tearDown(self):
-		self.tmpdir.cleanup()
-
 	def test_read_all(self):
 		fnames = []
 		for name in 'abcdef':
 			path = os.path.join(self.tmpdir.name, name)
 			fnames.append(path)
-			with fopen(path, 'wb') as f:
-				f.write(name.encode(UTF8))
-		with MultiFileReader(*fnames) as m:
-			self.assertEqual(m.read().decode(UTF8), 'abcdef')
+			with slob.fopen(path, 'wb') as f:
+				f.write(name.encode(slob.UTF8))
+		with slob.MultiFileReader(*fnames) as m:
+			self.assertEqual(m.read().decode(slob.UTF8), 'abcdef')
 
 	def test_seek_and_read(self):
 		def mkfile(basename, content):
 			part = os.path.join(self.tmpdir.name, basename)
-			with fopen(part, 'wb') as f:
+			with slob.fopen(part, 'wb') as f:
 				f.write(content)
 			return part
 
@@ -476,7 +464,7 @@ class TestMultiFileReader(BaseTest):
 		part2 = mkfile('2', content[4:5])
 		part3 = mkfile('3', content[5:])
 
-		with MultiFileReader(part1, part2, part3) as m:
+		with slob.MultiFileReader(part1, part2, part3) as m:
 			self.assertEqual(m.size, len(content))
 			m.seek(2)
 			self.assertEqual(m.read(2), content[2:4])
@@ -491,17 +479,11 @@ class TestMultiFileReader(BaseTest):
 
 
 class TestFormatErrors(BaseTest):
-	def setUp(self):
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
-
-	def tearDown(self):
-		self.tmpdir.cleanup()
-
 	def test_wrong_file_type(self):
 		name = os.path.join(self.tmpdir.name, '1')
-		with fopen(name, 'wb') as f:
+		with slob.fopen(name, 'wb') as f:
 			f.write(b'123')
-		self.assertRaises(UnknownFileFormat, slob.open, name)
+		self.assertRaises(slob.UnknownFileFormat, slob.open, name)
 
 	def test_truncated_file(self):
 		name = os.path.join(self.tmpdir.name, '1')
@@ -511,47 +493,38 @@ class TestFormatErrors(BaseTest):
 		writer.add(b'234', 'b')
 		writer.finalize()
 
-		with fopen(name, 'rb') as f:
+		with slob.fopen(name, 'rb') as f:
 			all_bytes = f.read()
 
-		with fopen(name, 'wb') as f:
+		with slob.fopen(name, 'wb') as f:
 			f.write(all_bytes[:-1])
 
-		self.assertRaises(IncorrectFileSize, slob.open, name)
+		self.assertRaises(slob.IncorrectFileSize, slob.open, name)
 
-		with fopen(name, 'wb') as f:
+		with slob.fopen(name, 'wb') as f:
 			f.write(all_bytes)
 			f.write(b'\n')
 
-		self.assertRaises(IncorrectFileSize, slob.open, name)
+		self.assertRaises(slob.IncorrectFileSize, slob.open, name)
 
 
 class TestFindParts(BaseTest):
-	def setUp(self):
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
-
-	def tearDown(self):
-		self.tmpdir.cleanup()
-
 	def test_find_parts(self):
 		names = [
 			os.path.join(self.tmpdir.name, name)
 			for name in ('abc-1', 'abc-2', 'abc-3')
 		]
 		for name in names:
-			with fopen(name, 'wb'):
+			with slob.fopen(name, 'wb'):
 				pass
-		parts = find_parts(os.path.join(self.tmpdir.name, 'abc'))
+		parts = slob.find_parts(os.path.join(self.tmpdir.name, 'abc'))
 		self.assertEqual(names, parts)
 
 
 class TestTooLongText(BaseTest):
 	def setUp(self):
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
+		BaseTest.setUp(self)
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
-
-	def tearDown(self):
-		self.tmpdir.cleanup()
 
 	def test_too_long(self):
 		rejected_keys = []
@@ -572,15 +545,15 @@ class TestTooLongText(BaseTest):
 			elif event.name == 'content_type_too_long':
 				rejected_content_types.append(event.data)
 
-		long_tag_name = 't' * (MAX_TINY_TEXT_LEN + 1)
-		long_tag_value = 'v' * (MAX_TINY_TEXT_LEN + 1)
-		long_content_type = 'T' * (MAX_TEXT_LEN + 1)
-		long_key = 'c' * (MAX_TEXT_LEN + 1)
-		long_frag = 'd' * (MAX_TINY_TEXT_LEN + 1)
+		long_tag_name = 't' * (slob.MAX_TINY_TEXT_LEN + 1)
+		long_tag_value = 'v' * (slob.MAX_TINY_TEXT_LEN + 1)
+		long_content_type = 'T' * (slob.MAX_TEXT_LEN + 1)
+		long_key = 'c' * (slob.MAX_TEXT_LEN + 1)
+		long_frag = 'd' * (slob.MAX_TINY_TEXT_LEN + 1)
 		key_with_long_frag = ('d', long_frag)
 		tag_with_long_name = (long_tag_name, 't3 value')
 		tag_with_long_value = ('t1', long_tag_value)
-		long_alias = 'f' * (MAX_TEXT_LEN + 1)
+		long_alias = 'f' * (slob.MAX_TEXT_LEN + 1)
 		alias_with_long_frag = ('i', long_frag)
 		long_alias_target = long_key
 		long_alias_target_frag = key_with_long_frag
@@ -645,7 +618,7 @@ class TestTooLongText(BaseTest):
 
 		self.assertRaises(
 			ValueError,
-			set_tag_value,
+			slob.set_tag_value,
 			self.path,
 			't1',
 			'ы' * 128,
@@ -654,41 +627,35 @@ class TestTooLongText(BaseTest):
 
 class TestEditTag(BaseTest):
 	def setUp(self):
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
+		BaseTest.setUp(self)
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
 		writer = self.create(self.path)
 		writer.tag('a', '123456')
 		writer.tag('b', '654321')
 		writer.finalize()
 
-	def tearDown(self):
-		self.tmpdir.cleanup()
-
 	def test_edit_existing_tag(self):
 		with slob.open(self.path) as f:
 			self.assertEqual(f.tags['a'], '123456')
 			self.assertEqual(f.tags['b'], '654321')
-		set_tag_value(self.path, 'b', 'efg')
-		set_tag_value(self.path, 'a', 'xyz')
+		slob.set_tag_value(self.path, 'b', 'efg')
+		slob.set_tag_value(self.path, 'a', 'xyz')
 		with slob.open(self.path) as f:
 			self.assertEqual(f.tags['a'], 'xyz')
 			self.assertEqual(f.tags['b'], 'efg')
 
 	def test_edit_nonexisting_tag(self):
-		self.assertRaises(TagNotFound, set_tag_value, self.path, 'z', 'abc')
+		self.assertRaises(slob.TagNotFound, slob.set_tag_value, self.path, 'z', 'abc')
 
 
 class TestBinItemNumberLimit(BaseTest):
 	def setUp(self):
-		self.tmpdir = tempfile.TemporaryDirectory(prefix='test')
+		BaseTest.setUp(self)
 		self.path = os.path.join(self.tmpdir.name, 'test.slob')
-
-	def tearDown(self):
-		self.tmpdir.cleanup()
 
 	def test_writing_more_then_max_number_of_bin_items(self):
 		writer = self.create(self.path)
-		for _ in range(MAX_BIN_ITEM_COUNT + 2):
+		for _ in range(slob.MAX_BIN_ITEM_COUNT + 2):
 			writer.add(b'a', 'a')
 		self.assertEqual(writer.bin_count, 2)
 		writer.finalize()
