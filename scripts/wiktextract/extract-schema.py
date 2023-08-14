@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import json
 import sys
 from collections import Counter
@@ -54,14 +52,13 @@ valueSet: "dict[str, set]" = {}
 
 
 def addToValueSet(value: "str | int | float | bool", path: "list[str]"):
-	if isinstance(value, str):
-		if "://" in value:
-			return
+	if isinstance(value, str) and "://" in value:
+		return
 	pathStr = ".".join(path)
 	if pathStr in valueSet:
 		valueSet[pathStr].add(value)
 		return
-	valueSet[pathStr] = set([value])
+	valueSet[pathStr] = {value}
 
 
 def getSchemaNode(path: "list[str]"):
@@ -146,16 +143,17 @@ def parseDict(data: "dict[str, Any]", path: "list[str]", node: Node):
 
 jsonl_path = sys.argv[1]
 
-for line in open(jsonl_path, encoding="utf-8"):
-	line = line.strip()
-	if not line:
-		continue
-	try:
-		data = json.loads(line)
-	except Exception:
-		print(f"bad line: {line}")
-		continue
-	parseDict(data, [], schema)
+with open(jsonl_path, encoding="utf-8") as _file:
+	for line in _file:
+		line = line.strip()
+		if not line:
+			continue
+		try:
+			data = json.loads(line)
+		except Exception:
+			print(f"bad line: {line}")
+			continue
+		parseDict(data, [], schema)
 
 with open(f"{jsonl_path}.schema.json", mode="w", encoding="utf-8") as _file:
 	json.dump(

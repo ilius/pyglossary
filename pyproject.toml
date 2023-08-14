@@ -56,6 +56,8 @@ ignore = [
     "UP035", # Import from `collections.abc` instead: `Generator`
     "UP037", # Remove quotes from type annotation
     "W191",
+    "SIM110", # Use any(...)
+    "SIM111", # Use all(...)
     # ERA, PD,
 ]
 

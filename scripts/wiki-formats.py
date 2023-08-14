@@ -28,7 +28,7 @@ Mako template engine:
 	Package python3-mako in Debian repos
 """
 
-hasIconSet = set([
+hasIconSet = {
 	"aard2_slob",
 	"appledict_bin",
 	"appledict",
@@ -51,7 +51,7 @@ hasIconSet = set([
 	"tabfile",
 	"wiktionary_dump",
 	"zim",
-])
+}
 
 def pluginIsActive(p):
 	if not p.enable:
@@ -99,15 +99,15 @@ def kindEmoji(p):
 	}[kind]
 
 
-willNotSupportRead = set([
+willNotSupportRead = {
 	"epub2",
 	"kobo",
 	"mobi",
 	# "html_dir",
 	"info",
 	"sql",
-])
-willNotSupportWrite = set([
+}
+willNotSupportWrite = {
 	"appledict_bin",
 	"babylon_bgl",
 	"cc_cedict",
@@ -119,7 +119,7 @@ willNotSupportWrite = set([
 	"xdxf",
 	"wiktextract",
 	"jmnedict",
-])
+}
 
 
 def readCheck(p):
