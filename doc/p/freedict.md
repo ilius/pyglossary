@@ -37,6 +37,3 @@ To install, run:
 ```sh
 pip3 install lxml
 ```
-
-
-

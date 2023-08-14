@@ -25,8 +25,6 @@
 | source_lang      |         | str  | The language of the tokens in the dictionary index |
 | target_lang      |         | str  | The language of the dictionary entries             |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                                                           | Source code                                                              | License            | Platforms | Language |

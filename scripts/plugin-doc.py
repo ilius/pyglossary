@@ -61,6 +61,7 @@ ${"### Dependencies for writing"}
 PyPI Links: ${writeDependsLinks}
 
 To install, run
+
 ```sh
 ${writeDependsCmd}
 ```
@@ -347,6 +348,10 @@ for p in plugins:
 		extraDocs=extraDocs,
 		toolsTable=toolsTable,
 	)
+	for _i in range(3):
+		text = text.replace("\n\n\n", "\n\n")
+	if text.endswith("\n\n"):
+		text = text[:-1]
 	with open(
 		join(rootDir, "doc", "p", f"{p.lname}.md"),
 		mode="w",

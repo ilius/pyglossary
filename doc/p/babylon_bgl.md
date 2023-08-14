@@ -30,8 +30,6 @@
 | process_html_in_key         | `False`  | bool | Process HTML in (entry or info) key         |
 | key_rstrip_chars            |          | str  | Characters to strip from right-side of keys |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                          | Source code | License     | Platforms      | Language |

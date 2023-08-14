@@ -27,7 +27,6 @@ To install, run:
 pip3 install libzim>=1.0
 ```
 
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                              | Source code | License | Platforms      | Language |

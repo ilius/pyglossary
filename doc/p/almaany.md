@@ -17,8 +17,6 @@
 | Wiki            | ―                                                                                                             |
 | Website         | [Almaany.com Arabic Dictionary - Google Play](https://play.google.com/store/apps/details?id=com.almaany.arar) |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                                                                  | Source code | License | Platforms | Language |

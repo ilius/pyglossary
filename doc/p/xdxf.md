@@ -34,7 +34,6 @@ To install, run:
 pip3 install lxml
 ```
 
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                                       | Source code                                                        | License     | Platforms                    | Language |

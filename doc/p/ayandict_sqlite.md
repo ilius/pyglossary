@@ -22,7 +22,3 @@
 | Name  | Default | Type | Comment                  |
 | ----- | ------- | ---- | ------------------------ |
 | fuzzy | `True`  | bool | Create fuzzy search data |
-
-
-
-

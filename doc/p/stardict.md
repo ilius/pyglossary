@@ -38,8 +38,6 @@
 | audio_icon       | `True`  | bool | Add glossary's audio icon                       |
 | sqlite           | `False` | bool | Use SQLite to limit memory usage                |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                                                            | Source code                                                              | License     | Platforms                                                   | Language |

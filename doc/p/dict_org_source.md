@@ -23,8 +23,6 @@
 | --------------- | ------- | ---- | -------------------- |
 | remove_html_all | `True`  | bool | Remove all HTML tags |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                 | Source code | License | Platforms | Language |

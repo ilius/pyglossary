@@ -24,8 +24,6 @@
 | encoding           | `utf-8` | str  | Encoding/charset                      |
 | headword_separator | `;   `  | str  | separator for headword and alternates |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                           | Source code | License | Platforms | Language |

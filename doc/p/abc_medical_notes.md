@@ -17,8 +17,6 @@
 | Wiki            | ―                                                                                                                      |
 | Website         | [ABC Medical Notes 2021 - Google Play](https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp) |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                                                                           | Source code | License | Platforms | Language |

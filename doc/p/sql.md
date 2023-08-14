@@ -26,7 +26,3 @@
 | add_extra_info | `True`  | bool | Create dbinfo_extra table    |
 | newline        | `<br>`  | str  | Newline string               |
 | transaction    | `False` | bool | Use TRANSACTION              |
-
-
-
-

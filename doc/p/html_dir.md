@@ -29,7 +29,3 @@
 | dark            | `True`         | bool | Use dark style                                 |
 | css             |                | str  | Path to css file                               |
 | word_title      | `True`         | bool | Add headwords title to beginning of definition |
-
-
-
-

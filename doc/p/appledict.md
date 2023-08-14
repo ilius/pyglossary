@@ -30,12 +30,12 @@
 | jing              | `False` | bool | run Jing check on generated XML          |
 | indexes           |         | str  | Additional indexes to dictionary entries |
 
-
 ### Dependencies for writing
 
 PyPI Links: [lxml](https://pypi.org/project/lxml), [beautifulsoup4](https://pypi.org/project/beautifulsoup4), [html5lib](https://pypi.org/project/html5lib)
 
 To install, run
+
 ```sh
 pip3 install lxml beautifulsoup4 html5lib
 ```

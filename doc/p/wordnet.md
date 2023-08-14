@@ -16,7 +16,3 @@
 | Sort key        | (`headword_lower`)                                                         |
 | Wiki            | [WordNet](https://en.wikipedia.org/wiki/WordNet)                           |
 | Website         | [WordNet - A Lexical Database for English](https://wordnet.princeton.edu/) |
-
-
-
-

@@ -16,7 +16,3 @@
 | Sort key        | (`headword_lower`)    |
 | Wiki            | ―                     |
 | Website         | ―                     |
-
-
-
-

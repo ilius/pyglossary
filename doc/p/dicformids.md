@@ -17,8 +17,6 @@
 | Wiki            | ―                                                                        |
 | Website         | [DictionaryForMIDs - SourceForge](http://dictionarymid.sourceforge.net/) |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                             | Source code | License | Platforms                         | Language |

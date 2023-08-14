@@ -31,8 +31,6 @@
 | spellcheck             | `True`   | bool | Enable wildcard search and spell correction during word lookup |
 | exact                  | `False`  | bool | Exact-match Parameter                                          |
 
-
-
 ### Other Requirements
 
 Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen) for creating Mobipocket e-books.

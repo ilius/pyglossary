@@ -30,8 +30,6 @@
 | newline   | `\n`    | str  | Newline string                |
 | resources | `True`  | bool | Enable resources / data files |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                                                     | Source code | License | Platforms | Language |

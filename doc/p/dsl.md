@@ -25,8 +25,6 @@
 | audio         | `True`      | bool | Enable audio objects |
 | example_color | `steelblue` | str  | Examples color       |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                         | Source code | License     | Platforms                                           | Language |

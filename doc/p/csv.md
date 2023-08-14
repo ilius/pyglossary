@@ -37,8 +37,6 @@
 | enable_info     | `True`  | bool | Enable glossary info / metedata                |
 | word_title      | `False` | bool | add headwords title to beginning of definition |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                                         | Source code | License     | Platforms           | Language |

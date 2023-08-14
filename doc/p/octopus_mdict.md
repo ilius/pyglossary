@@ -26,8 +26,6 @@
 | same_dir_data_files | `False` | bool | Read data files from same directory |
 | audio               | `False` | bool | Enable audio objects                |
 
-
-
 ### `python-lzo` is required for **some** MDX glossaries.
 
 First try converting your MDX file, if failed (`AssertionError` probably),

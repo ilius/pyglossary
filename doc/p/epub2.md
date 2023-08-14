@@ -28,8 +28,6 @@
 | css                    |         | str  | Path to css file           |
 | cover_path             |         | str  | Path to cover file         |
 
-
-
 ### Dictionary Applications/Tools
 
 | Name & Website                                                             | Source code | License     | Platforms           | Language |
