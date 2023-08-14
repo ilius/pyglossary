@@ -113,9 +113,11 @@ def renderLink(title, url):
 
 
 def pypiLink(pypiName):
+	urlPath = pypiName.replace('==', '/')
+	urlPath = urlPath.replace(">", "%3E")
 	return renderLink(
 		pypiName.replace('==', ' '),
-		f"https://pypi.org/project/{pypiName.replace('==', '/')}",
+		f"https://pypi.org/project/{urlPath}",
 	)
 
 
