@@ -41,7 +41,7 @@
 				"class": "IntOption",
 				"type": "int",
 				"customValue": true,
-				"comment": "for file_size_approx, check every [?] entries"
+				"comment": "for file_size_approx, check every `[?]` entries"
 			},
 			"separate_alternates": {
 				"class": "BoolOption",

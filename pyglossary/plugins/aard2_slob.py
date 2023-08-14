@@ -50,7 +50,7 @@ optionsProp: "dict[str, Option]" = {
 		comment="split up by given approximate file size\nexamples: 100m, 1g",
 	),
 	"file_size_approx_check_num_entries": IntOption(
-		comment="for file_size_approx, check every [?] entries",
+		comment="for file_size_approx, check every `[?]` entries",
 	),
 	"separate_alternates": BoolOption(
 		comment="add alternate headwords as separate entries to slob",
