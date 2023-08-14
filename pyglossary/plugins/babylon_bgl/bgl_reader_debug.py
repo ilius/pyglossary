@@ -79,7 +79,7 @@ class MetaData2:
 		self.defiProcessedCount = 0
 		self.defiUtf8Count = 0
 		self.defiAsciiCount = 0
-		self.charRefs = dict()  # encoding -> [ 0 ] * 257
+		self.charRefs = {}  # encoding -> [ 0 ] * 257
 
 
 class GzipWithCheck:

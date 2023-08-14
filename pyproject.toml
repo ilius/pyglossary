@@ -145,7 +145,6 @@ ignore = [
     103, # Replace `with open(x, ...) as f: f.write(y)` with `Path(x).write_bytes(y)`
     104, # Replace `os.getcwd()` with `Path.cwd()`
     107, # Replace `try: ... except OSError: pass` with `with suppress(OSError): ...`
-    112, # Replace `dict()` with `{}`
     141, # Replace `os.path.exists(x)` with `Path(x).exists()`
     144, # Replace `os.remove(x)` with `Path(x).unlink()`
     146, # Replace `os.path.isfile(x)` with `Path(x).is_file()`

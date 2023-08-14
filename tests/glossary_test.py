@@ -85,10 +85,10 @@ class TestGlossaryBase(unittest.TestCase):
 			self.glos.clear()
 		if os.getenv("NO_CLEANUP"):
 			return
-		for direc in [
+		for direc in (
 			self.tempDir,
 			appTmpDir,
-		]:
+		):
 			if isdir(direc):
 				rmtree(direc)
 
