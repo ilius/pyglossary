@@ -181,7 +181,7 @@ def write_hashset(fp, data, linked_hash_set=False):
 		fp.write(HASH_SET_INIT + HASH_SET_INIT2)
 	num_entries = len(data)
 	capacity = (
-		2 ** math.ceil(math.log(num_entries / HASH_SET_CAPACITY_FACTOR, 2))
+		2 ** math.ceil(math.log2(num_entries / HASH_SET_CAPACITY_FACTOR))
 		if num_entries > 0
 		else 128
 	)
@@ -659,10 +659,10 @@ class Reader:
 		_, _, _, _, _, _, index_entries, _, rows = index
 		token, start_index, count, _, html_indices = index_entries[i_entry]
 		block_rows = rows[start_index : start_index + count + 1]
-		assert block_rows[0][0] in [1, 3] and block_rows[0][1] == i_entry
+		assert block_rows[0][0] in (1, 3) and block_rows[0][1] == i_entry
 		e_rows = []
 		for entry_type, entry_idx in block_rows[1:]:
-			if entry_type in [1, 3]:
+			if entry_type in (1, 3):
 				# avoid an endless recursion
 				if entry_idx not in recurse:
 					e_rows.extend(
@@ -742,8 +742,8 @@ class Writer:
 				continue
 
 			entry.detectDefiFormat()
-			if entry.defiFormat not in ["h", "m"]:
-				log.error(f"Unsupported {entry.defiFormat}, assuming 'h'")
+			if entry.defiFormat not in ("h", "m"):
+				log.error(f"Unsupported defiFormat={entry.defiFormat}, assuming 'h'")
 
 			words = entry.l_word
 			if words[0] in synonyms:
