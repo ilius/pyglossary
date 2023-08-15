@@ -470,10 +470,7 @@ def getWritingSystemFromText(
 		return None
 	# some special first words in unicodedata.name(c):
 	# "RIGHT", "ASTERISK", "MODIFIER"
-	if beginning:
-		k = 0
-	else:
-		k = (len(st) + 1) // 2 - 1
+	k = 0 if beginning else (len(st) + 1) // 2 - 1
 	ws = _getWritingSystemFromText(st, k, len(st))
 	if ws:
 		return ws

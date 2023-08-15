@@ -564,10 +564,7 @@ class TestTooLongText(BaseTest):
 		data = ['a', 'b', long_key, key_with_long_frag]
 
 		for k in data:
-			if isinstance(k, str):
-				v = k.encode('ascii')
-			else:
-				v = '#'.join(k).encode('ascii')
+			v = k.encode("ascii") if isinstance(k, str) else "#".join(k).encode("ascii")
 			w.add(v, k)
 
 		w.add_alias('e', 'a')

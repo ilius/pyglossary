@@ -204,15 +204,15 @@ class Writer:
 	def _getDictionaryIndex(self) -> "dict[str, Any]":
 		# Schema: https://github.com/FooSoft/yomichan/
 		# blob/master/ext/data/schemas/dictionary-index-schema.json
-		return dict(
-			title=self._getInfo("title"),
-			revision="PyGlossary export",
-			sequenced=True,
-			format=3,
-			author=self._getAuthor(),
-			url=self._getInfo("website"),
-			description=self._getInfo("description"),
-		)
+		return {
+			"title": self._getInfo("title"),
+			"revision": "PyGlossary export",
+			"sequenced": True,
+			"format": 3,
+			"author": self._getAuthor(),
+			"url": self._getInfo("website"),
+			"description": self._getInfo("description"),
+		}
 
 	def _compileRegex(self) -> None:
 		for field_name in (

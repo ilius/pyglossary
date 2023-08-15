@@ -324,10 +324,7 @@ class MultiFileReader(BufferedIOBase):
 				actual_offset = self._offset - r.start
 				break
 		result = b''
-		if n == -1 or n is None:
-			to_read = self.size
-		else:
-			to_read = n
+		to_read = self.size if n == -1 or n is None else n
 		while -1 < file_index < self._fcount:
 			f = self._files[file_index]
 			f.seek(actual_offset)

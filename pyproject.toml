@@ -33,7 +33,6 @@ ignore = [
     "B018", # Found useless expression. Either assign it to a variable or remove it.
     "B019", # Use of `functools.lru_cache` or `functools.cache` on methods can lead to memory leaks
     "B028", # No explicit `stacklevel` keyword argument found. Huh???
-    "C408", # Unnecessary `dict` call (rewrite as a literal)
     "D100", # Missing docstring in public module
     "D101", # Missing docstring in public class
     "D102", # Missing docstring in public method
@@ -49,15 +48,13 @@ ignore = [
     "D417", # Missing argument descriptions in the docstring
     "E402", # Module level import not at top of file
     "SIM105", # Use contextlib.suppress({exception}) instead of try-except-pass
-    "SIM108", # Use ternary operator {contents} instead of if-else-block
     "SIM117", # Use a single with statement with multiple contexts...
     "UP009", # UTF-8 encoding declaration is unnecessary
-    "UP010", # Unnecessary `__future__`"
     "UP035", # Import from `collections.abc` instead: `Generator`
     "UP037", # Remove quotes from type annotation
-    "W191",
+    "W191", # Indentation contains tabs
     "SIM110", # Use any(...)
-    "SIM111", # Use all(...)
+    # "SIM111", # Use all(...): warning: `SIM111` has been remapped to `SIM110`.
     # ERA, PD,
 ]
 
@@ -68,6 +65,9 @@ ignore = [
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [
+    "UP010", # Unnecessary `__future__`"
+    "SIM108", # Use ternary operator {contents} instead of if-else-block
+    "C408", # Unnecessary `dict` call (rewrite as a literal)
     "F401",
     # "E", "F", "W",
     "RET",

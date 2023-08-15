@@ -21,7 +21,6 @@
 
 """Main ProgressBar class."""
 
-from __future__ import division
 
 import math
 import os

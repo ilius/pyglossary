@@ -501,10 +501,7 @@ class FormatDialog(tix.Toplevel):
 	def okClicked(self):
 		treev = self.treev
 		selectedList = treev.selection()
-		if selectedList:
-			desc = selectedList[0]
-		else:
-			desc = ""
+		desc = selectedList[0] if selectedList else ""
 		self.onOk(desc)
 		self.destroy()
 
@@ -1458,11 +1455,9 @@ class UI(tix.Frame, UIBase):
 			log.critical("Input file path is empty!")
 			return None
 		inFormatDesc = self.formatButtonInputConvert.get()
-		if not inFormatDesc:
-			# log.critical("Input format is empty!");return
-			inFormat = ""
-		else:
-			inFormat = pluginByDesc[inFormatDesc].name
+		#if not inFormatDesc:
+		#	log.critical("Input format is empty!");return
+		inFormat = pluginByDesc[inFormatDesc].name if inFormatDesc else ""
 
 		outPath = self.entryOutputConvert.get()
 		if not outPath:
@@ -1580,9 +1575,6 @@ class UI(tix.Frame, UIBase):
 
 if __name__ == "__main__":
 	import sys
-	if len(sys.argv) > 1:
-		path = sys.argv[1]
-	else:
-		path = ""
+	path = sys.argv[1] if len(sys.argv) > 1 else ""
 	ui = UI(path)
 	ui.run()

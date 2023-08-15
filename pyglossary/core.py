@@ -210,10 +210,7 @@ class StdLogHandler(logging.Handler):
 		###
 		levelname = record.levelname
 
-		if levelname in ("CRITICAL", "ERROR"):
-			fp = sys.stderr
-		else:
-			fp = sys.stdout
+		fp = sys.stderr if levelname in ("CRITICAL", "ERROR") else sys.stdout
 
 		if not self.noColor and levelname in self.colorsConfig:
 			key, default = self.colorsConfig[levelname]
@@ -387,10 +384,7 @@ if os.sep == "/":  # Operating system is Unix-Like
 		# which generally means ~/.config/pyglossary
 		confDir = join(homeDir, ".pyglossary")
 		cacheDir = join(homeDir, ".cache", "pyglossary")
-		if "/com.termux/" in homeDir:
-			pip = "pip3"
-		else:
-			pip = "sudo pip3"
+		pip = "pip3" if "/com.termux/" in homeDir else "sudo pip3"
 elif os.sep == "\\":  # Operating system is Windows
 	# FIXME: default values
 	_HOMEDRIVE = os.getenv("HOMEDRIVE", "")

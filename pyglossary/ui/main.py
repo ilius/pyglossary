@@ -797,18 +797,18 @@ def main() -> None:
 	if convertOptions:
 		log.debug(f"{convertOptions = }")
 
-	runKeywordArgs = dict(
-		inputFilename=args.inputFilename,
-		outputFilename=args.outputFilename,
-		inputFormat=args.inputFormat,
-		outputFormat=args.outputFormat,
-		reverse=args.reverse,
-		config=config,
-		readOptions=readOptions,
-		writeOptions=writeOptions,
-		convertOptions=convertOptions,
-		glossarySetAttrs=None,
-	)
+	runKeywordArgs = {
+		"inputFilename": args.inputFilename,
+		"outputFilename": args.outputFilename,
+		"inputFormat": args.inputFormat,
+		"outputFormat": args.outputFormat,
+		"reverse": args.reverse,
+		"config": config,
+		"readOptions": readOptions,
+		"writeOptions": writeOptions,
+		"convertOptions": convertOptions,
+		"glossarySetAttrs": None,
+	}
 
 	run = getRunner(args, ui_type)
 	try:

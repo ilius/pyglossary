@@ -185,10 +185,7 @@ def diffGlossary(
 		entry2: "EntryType",
 		showDefi: bool = True,
 	) -> None:
-		if index1 == index2:
-			ids = f"#{index1}"
-		else:
-			ids = f"A#{index1} B#{index2}"
+		ids = f"#{index1}" if index1 == index2 else f"A#{index1} B#{index2}"
 
 		header = f"=== {yellow}{ids}{reset} "
 

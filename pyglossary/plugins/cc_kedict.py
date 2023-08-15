@@ -173,11 +173,8 @@ class YamlReader(TextGlossaryReader):
 			spelling = edict[self._spellKey]
 			if not isinstance(spelling, str):
 				log.error(f"{spelling=}, {type(spelling)=}, {edict=}")
-				if spelling is True:
-					# https://github.com/mhagiwara/cc-kedict/pull/1
-					spelling = "on"
-				else:
-					spelling = ""
+				# https://github.com/mhagiwara/cc-kedict/pull/1
+				spelling = "on" if spelling is True else ""
 			if spelling:
 				with hf.element("font", color="green"):
 					hf.write(spelling)

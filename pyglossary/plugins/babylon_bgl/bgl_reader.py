@@ -696,10 +696,7 @@ class BglReader:
 			return
 
 		value = None
-		if decode is None:
-			value = b_value
-		else:
-			value = decode(b_value)
+		value = b_value if decode is None else decode(b_value)
 
 		# `value` can be None, str, bytes or dict
 

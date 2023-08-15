@@ -909,17 +909,17 @@ class UI(ui_cmd.UI):
 		return True  # convert
 
 	def getRunKeywordArgs(self) -> "dict":
-		return dict(
-			inputFilename=self._inputFilename,
-			outputFilename=self._outputFilename,
-			inputFormat=self._inputFormat,
-			outputFormat=self._outputFormat,
-			config=self.config,
-			readOptions=self._readOptions,
-			writeOptions=self._writeOptions,
-			convertOptions=self._convertOptions,
-			glossarySetAttrs=self._glossarySetAttrs,
-		)
+		return {
+			"inputFilename": self._inputFilename,
+			"outputFilename": self._outputFilename,
+			"inputFormat": self._inputFormat,
+			"outputFormat": self._outputFormat,
+			"config": self.config,
+			"readOptions": self._readOptions,
+			"writeOptions": self._writeOptions,
+			"convertOptions": self._convertOptions,
+			"glossarySetAttrs": self._glossarySetAttrs,
+		}
 
 	def checkInputFormat(self, forceAsk: bool = False):
 		if not forceAsk:

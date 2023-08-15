@@ -282,10 +282,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 		for configParam, default, filterClass in entryFiltersRules:
 			args = []
-			if configParam is None:
-				value = default
-			else:
-				value = config.get(configParam, default)
+			value = default if configParam is None else config.get(configParam, default)
 			if not value:
 				continue
 			if not isinstance(default, bool):
@@ -1075,10 +1072,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			if writerSortEncoding:
 				sortEncoding = writerSortEncoding
 		elif not sortKeyName:
-			if writerSortKeyName:
-				sortKeyName = writerSortKeyName
-			else:
-				sortKeyName = defaultSortKeyName
+			sortKeyName = writerSortKeyName if writerSortKeyName else defaultSortKeyName
 
 		namedSortKey = lookupSortKey(sortKeyName)
 		if namedSortKey is None:

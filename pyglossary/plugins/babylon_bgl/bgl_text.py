@@ -55,10 +55,7 @@ def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 	if u_text[:2] == "&#":
 		# character reference
 		try:
-			if u_text[:3].lower() == "&#x":
-				code = int(u_name, 16)
-			else:
-				code = int(u_name)
+			code = int(u_name, 16) if u_text[:3].lower() == "&#x" else int(u_name)
 			if code <= 0:
 				raise ValueError()
 			return chr(code)

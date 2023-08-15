@@ -94,10 +94,7 @@ def unescape(text: str) -> str:
 		if text[:2] == "&#":
 			# character reference
 			try:
-				if text[:3] == "&#x":
-					i = int(text[3:-1], 16)
-				else:
-					i = int(text[2:-1])
+				i = int(text[3:-1], 16) if text[:3] == "&#x" else int(text[2:-1])
 			except ValueError:
 				pass
 			else:

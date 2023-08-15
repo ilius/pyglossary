@@ -331,10 +331,7 @@ def _sub_unescape_unicode(m: "re.Match") -> str:
 	text = m.group(0)
 	if text[:2] == "&#":
 		# character reference
-		if text.startswith("&#x"):
-			code = int(text[3:-1], 16)
-		else:
-			code = int(text[2:-1])
+		code = int(text[3:-1], 16) if text.startswith("&#x") else int(text[2:-1])
 		try:
 			char = chr(code)
 		except ValueError:

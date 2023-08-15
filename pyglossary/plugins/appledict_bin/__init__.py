@@ -364,10 +364,7 @@ class Reader:
 			# when no such info (offset equals 0) provided,
 			# we take all bytes till the closing tag or till section end
 			endI = buffer[pos:].find(b"</d:entry>\n")
-			if endI == -1:
-				chunkLen = len(buffer) - pos
-			else:
-				chunkLen = endI + 11
+			chunkLen = len(buffer) - pos if endI == -1 else endI + 11
 		else:
 			bs = buffer[pos:pos + offset]
 			if offset < 4:

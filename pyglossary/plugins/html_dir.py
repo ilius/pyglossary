@@ -344,10 +344,7 @@ class Writer:
 		if self._dark:
 			style = darkStyle
 
-		if self._css:
-			cssLink = '<link rel="stylesheet" href="style.css" />'
-		else:
-			cssLink = ""
+		cssLink = '<link rel="stylesheet" href="style.css" />' if self._css else ""
 
 		header = (
 			'<!DOCTYPE html>\n'
