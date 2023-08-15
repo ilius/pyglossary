@@ -84,11 +84,11 @@ def imageFromIconName(iconName: str, size: int, nonStock=False) -> gtk.Image:
 	# But we do not use either of these two outside this function
 	# So that it's easy to switch
 	if nonStock:
-		return gtk.Image.new_from_icon_name(iconName, size)
+		return gtk.Image.new_from_icon_name(iconName)
 	try:
 		return gtk.Image.new_from_stock(iconName, size)
 	except Exception:
-		return gtk.Image.new_from_icon_name(iconName, size)
+		return gtk.Image.new_from_icon_name(iconName)
 
 
 def rgba_parse(colorStr):
@@ -161,30 +161,36 @@ def showMsg(
 	if title:
 		win.set_title(title)
 	hbox = HBox(spacing=10)
-	hbox.set_border_width(borderWidth)
+	# hbox.set_border_width(borderWidth)
 	if iconName:
 		# win.set_icon(...)
 		pack(hbox, imageFromIconName(iconName, iconSize))
 	label = gtk.Label(label=msg)
 	# set_line_wrap(True) makes the window go crazy tall (taller than screen)
 	# and that's the reason for label.set_size_request and win.resize
-	label.set_line_wrap(True)
-	label.set_line_wrap_mode(pango.WrapMode.WORD)
+	# label.set_line_wrap(True)
+	# label.set_line_wrap_mode(pango.WrapMode.WORD)
 	label.set_size_request(500, 1)
 	if selectable:
 		label.set_selectable(True)
 	pack(hbox, label)
-	hbox.show_all()
-	pack(win.vbox, hbox)
+	hbox.show()
+	content_area = win.get_content_area()
+	pack(content_area, hbox)
 	dialog_add_button(
 		win,
 		"gtk-close",
 		"_Close",
 		gtk.ResponseType.OK,
 	)
-	win.resize(600, 1)
-	win.run()
-	win.destroy()
+
+	def onResponse(w, response_id):
+		win.destroy()
+
+	win.connect("response", onResponse)
+
+	# win.resize(600, 1)
+	win.show()
 
 
 def showError(msg, **kwargs):
