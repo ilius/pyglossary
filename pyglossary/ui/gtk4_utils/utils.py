@@ -19,8 +19,6 @@
 import logging
 from os.path import isabs, join
 
-from gi.repository import Pango as pango
-
 from pyglossary.core import appResDir
 
 from . import gdk, glib, gtk
