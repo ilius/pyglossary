@@ -286,7 +286,7 @@ class WordNet:
 						pointers_str += ", ".join(a(w) for w in referenced_words)
 				self.collector[word].append(
 					f'<i class="pos grammar">{synSetTypes[synset.ss_type]}</i>'
-					f' {gloss_with_examples}{synonyms_str}{pointers_str}'
+					f' {gloss_with_examples}{synonyms_str}{pointers_str}',
 				)
 		sys.stdout.write("\n")
 		sys.stdout.flush()
