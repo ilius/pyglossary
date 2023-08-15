@@ -170,11 +170,9 @@ class Pointer:
 		self.target = int(source_target[2:], 16)
 
 	def __repr__(self) -> str:
-		return "Pointer({!r}, {!r}, {!r}, {!r})".format(
-			self.symbol,
-			self.offset,
-			self.pos,
-			self.source_target,
+		return (
+			f"Pointer({self.symbol!r}, {self.offset!r}, "
+			f"{self.pos!r}, {self.source_target!r})"
 		)
 
 
@@ -287,12 +285,8 @@ class WordNet:
 						)
 						pointers_str += ", ".join(a(w) for w in referenced_words)
 				self.collector[word].append(
-					'<i class="pos grammar">{}</i> {}{}{}'.format(
-						synSetTypes[synset.ss_type],
-						gloss_with_examples,
-						synonyms_str,
-						pointers_str,
-					),
+					f'<i class="pos grammar">{synSetTypes[synset.ss_type]}</i>'
+					f' {gloss_with_examples}{synonyms_str}{pointers_str}'
 				)
 		sys.stdout.write("\n")
 		sys.stdout.flush()

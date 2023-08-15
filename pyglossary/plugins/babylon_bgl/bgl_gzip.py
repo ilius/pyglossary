@@ -133,7 +133,7 @@ class GzipFile(_compression.BaseStream):
 
         """
         if mode and ('t' in mode or 'U' in mode):
-            raise ValueError("Invalid mode: {!r}".format(mode))
+            raise ValueError(f"Invalid mode: {mode!r}")
         if mode and 'b' not in mode:
             mode += 'b'
         if fileobj is None:
@@ -171,7 +171,7 @@ class GzipFile(_compression.BaseStream):
                                              0)
             self._write_mtime = mtime
         else:
-            raise ValueError("Invalid mode: {!r}".format(mode))
+            raise ValueError(f"Invalid mode: {mode!r}")
 
         self.fileobj = fileobj
 
