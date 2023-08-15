@@ -1072,7 +1072,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			if writerSortEncoding:
 				sortEncoding = writerSortEncoding
 		elif not sortKeyName:
-			sortKeyName = writerSortKeyName if writerSortKeyName else defaultSortKeyName
+			sortKeyName = writerSortKeyName or defaultSortKeyName
 
 		namedSortKey = lookupSortKey(sortKeyName)
 		if namedSortKey is None:
