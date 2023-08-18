@@ -57,7 +57,6 @@ class indir:
 
 
 def runDictzip(filename: str) -> None:
-	import shutil
 	import subprocess
 	dictzipCmd = shutil.which("dictzip")
 	if not dictzipCmd:
@@ -88,7 +87,6 @@ def _rmtreeError(
 
 
 def rmtree(direc: str) -> None:
-	import shutil
 	from os.path import isdir
 	try:
 		for _ in range(2):

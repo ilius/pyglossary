@@ -10,7 +10,7 @@ log = logging.getLogger("pyglossary")
 
 
 def reverseGlossary(
-	glos: GlossaryExtendedType,
+	glos: "GlossaryExtendedType",
 	savePath: str = "",
 	words: "list[str] | None" = None,
 	includeDefs: bool = False,
@@ -47,9 +47,7 @@ def reverseGlossary(
 	if saveStep < 2:
 		raise ValueError("saveStep must be more than 1")
 
-	entries: "list[EntryType]" = [
-		entry for entry in glos
-	]
+	entries: "list[EntryType]" = list(glos)
 	log.info(f"loaded {len(entries)} entries into memory")
 
 	if words:
@@ -65,7 +63,7 @@ def reverseGlossary(
 	glos.progressInit("Reversing")
 	wcThreshold = wordCount // 200 + 1
 
-	with open(savePath, "w") as saveFile:
+	with open(savePath, "w", encoding="utf-8") as saveFile:
 		for wordI in range(wordCount):
 			word = words[wordI]
 			if wordI % wcThreshold == 0:
@@ -97,7 +95,7 @@ def reverseGlossary(
 
 
 def takeOutputWords(
-	glos: GlossaryExtendedType,
+	glos: "GlossaryExtendedType",
 	entryIter: "Iterable[EntryType]",
 	minWordLen: int = 3,
 ) -> "list[str]":

@@ -159,3 +159,42 @@ ignore = [
 #]
 #load = ["some_module"]
 #quiet = true
+
+[tool.pylint.messages_control]
+max-line-length = 88
+disable = [
+    "missing-module-docstring",
+    "bad-indentation",
+    "invalid-name",
+    "logging-fstring-interpolation",
+    "too-many-arguments",
+    "broad-exception-caught",
+    "missing-function-docstring",
+    "unused-argument",
+    "import-outside-toplevel",
+    "missing-class-docstring",
+    "too-many-instance-attributes",
+    "fixme",
+    "no-name-in-module",
+    "redefined-builtin",
+    "too-many-branches",
+    "too-many-return-statements",
+    "pointless-statement",
+    "too-few-public-methods",
+    "global-statement",
+    "abstract-method",
+    "unidiomatic-typecheck",
+    "attribute-defined-outside-init",
+    "unspecified-encoding",
+    "super-init-not-called",
+    "redefined-slots-in-subclass",
+    "redefined-outer-name",
+    "wrong-import-position",
+    "too-many-lines",
+    "too-many-public-methods",
+]
+[tool.pylint.master]
+ignore-paths = [
+    "^pyglossary/reverse.py$",
+    "^pyglossary/ui/progressbar/.*",
+]

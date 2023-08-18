@@ -442,10 +442,7 @@ def lookupSortKey(sortKeyId: str) -> "NamedSortKey | None":
 
 
 
-"""
-https://en.wikipedia.org/wiki/UTF-8#Comparison_with_other_encodings
-
-Sorting order: The chosen values of the leading bytes means that a list
-of UTF-8 strings can be sorted in code point order by sorting the
-corresponding byte sequences.
-"""
+# https://en.wikipedia.org/wiki/UTF-8#Comparison_with_other_encodings
+# Sorting order: The chosen values of the leading bytes means that a list
+# of UTF-8 strings can be sorted in code point order by sorting the
+# corresponding byte sequences.

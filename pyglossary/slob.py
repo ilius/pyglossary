@@ -23,7 +23,6 @@ import os
 import pickle
 import sys
 import tempfile
-import types
 import typing
 import warnings
 from abc import abstractmethod
@@ -54,6 +53,8 @@ import icu  # type: ignore
 from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 
 if TYPE_CHECKING:
+	from types import TracebackType
+
 	from .icu_types import T_Collator
 
 DEFAULT_COMPRESSION = 'lzma2'
@@ -271,7 +272,7 @@ class MultiFileReader(BufferedIOBase):
 		self,
 		exc_type: "type[BaseException] | None",
 		exc_val: "BaseException | None",
-		exc_tb: "types.TracebackType | None",
+		exc_tb: "TracebackType | None",
 	) -> None:
 		self.close()
 
@@ -726,7 +727,7 @@ class Slob:
 		self,
 		exc_type: "type[BaseException] | None",
 		exc_val: "BaseException | None",
-		exc_tb: "types.TracebackType | None",
+		exc_tb: "TracebackType | None",
 	) -> None:
 		self.close()
 
@@ -1548,7 +1549,7 @@ class Writer:
 		self,
 		exc_type: "type[BaseException] | None",
 		exc_val: "BaseException | None",
-		exc_tb: "types.TracebackType | None",
+		exc_tb: "TracebackType | None",
 	) -> None:
 		"""
 		It used to call self.finalize() here

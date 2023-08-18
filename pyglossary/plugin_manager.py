@@ -61,9 +61,8 @@ class PluginManager:
 	@classmethod
 	def loadPluginsFromJson(cls: "type[PluginManager]", jsonPath: str) -> None:
 		import json
-		from os.path import join
 
-		with open(jsonPath) as _file:
+		with open(jsonPath, encoding="utf-8") as _file:
 			data = json.load(_file)
 
 		for attrs in data:
@@ -85,7 +84,6 @@ class PluginManager:
 		Skip importing plugin modules that are already loaded.
 		"""
 		import pkgutil
-		from os.path import isdir
 
 		# log.debug(f"Loading plugins from directory: {directory!r}")
 		if not isdir(directory):
@@ -217,7 +215,7 @@ class PluginManager:
 				log.critical(msg)
 
 		filenameOrig = filename
-		filenameNoExt, filename, ext, compression = splitFilenameExt(filename)
+		_, filename, ext, compression = splitFilenameExt(filename)
 
 		plugin = None
 		if format:

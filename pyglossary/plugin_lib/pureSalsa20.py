@@ -204,7 +204,7 @@ class Salsa20:
 		self.setRounds(rounds)
 
 	def setKey(self, key):
-		assert type(key) == bytes
+		assert isinstance(key, bytes)
 		ctx = self.ctx
 		if len(key) == 32:  # recommended
 			constants = b"expand 32-byte k"
@@ -219,7 +219,7 @@ class Salsa20:
 		ctx[0], ctx[5], ctx[10], ctx[15] = little4_i32.unpack(constants)
 
 	def setIV(self, IV):
-		assert type(IV) == bytes
+		assert isinstance(IV, bytes)
 		assert len(IV) * 8 == 64, "nonce (IV) not 64 bits"
 		self.IV = IV
 		ctx = self.ctx
@@ -242,7 +242,7 @@ class Salsa20:
 		self.rounds = rounds
 
 	def encryptBytes(self, data: bytes) -> bytes:
-		assert type(data) == bytes, "data must be byte string"
+		assert isinstance(data, bytes), "data must be byte string"
 		assert self._lastChunk64, "previous chunk not multiple of 64 bytes"
 		lendata = len(data)
 		munged = bytearray(lendata)
@@ -268,7 +268,7 @@ def salsa20_wordtobyte(input, nRounds=20, checkRounds=True):
 			input: list or tuple of 16 ints treated as little-endian unsigneds.
 	Returns a 64-byte string.
 	"""
-	assert type(input) in (list, tuple) and len(input) == 16
+	assert isinstance(input, (list, tuple)) and len(input) == 16
 	assert not checkRounds or nRounds in (8, 12, 20)
 
 	x = list(input)
@@ -329,7 +329,7 @@ def trunc32(w):
 	This creates longs temporarily, but returns an int.
 	"""
 	w = int((w & 0x7FFFFFFF) | -(w & 0x80000000))
-	assert type(w) == int
+	assert isinstance(w, int)
 	return w
 
 

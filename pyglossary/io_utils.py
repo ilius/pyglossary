@@ -3,10 +3,10 @@ from typing import Iterator
 
 
 class _NullBinaryIO(io.BufferedIOBase):
-	def __enter__(*args):
+	def __enter__(self, *args):
 		raise NotImplementedError
 
-	def __exit__(*args):
+	def __exit__(self, *args):
 		raise NotImplementedError
 
 	def close(self) -> None:
@@ -75,10 +75,10 @@ class _NullBinaryIO(io.BufferedIOBase):
 
 
 class _NullTextIO(io.TextIOBase):
-	def __enter__(*args):
+	def __enter__(self, *args):
 		raise NotImplementedError
 
-	def __exit__(*args):
+	def __exit__(self, *args):
 		raise NotImplementedError
 
 	def close(self) -> None:

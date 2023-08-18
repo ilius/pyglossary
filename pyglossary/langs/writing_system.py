@@ -406,9 +406,9 @@ writingSystemList = [
 
 ]
 
-for ws in writingSystemList:
-	if not ws.name:
-		raise ValueError(f"empty name in {ws}")
+for _ws in writingSystemList:
+	if not _ws.name:
+		raise ValueError(f"empty name in {_ws}")
 
 writingSystemByUnicode = {
 	uni: ws

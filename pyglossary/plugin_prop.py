@@ -213,8 +213,8 @@ class PluginProp:
 		except Exception:
 			log.exception(f"Error while importing plugin {moduleName}")
 			return None
-		else:
-			return _mod
+
+		return _mod
 
 	@property
 	def lname(self) -> str:

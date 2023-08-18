@@ -80,26 +80,25 @@ def zipFileOrDir(glos: "GlossaryType", filename: str) -> None:
 		for subFname in os.listdir(filename):
 			_zipFileAdd(zf, join(filename, subFname))
 
-	zf = zipfile.ZipFile(f"{filename}.zip", mode="w")
+	with zipfile.ZipFile(f"{filename}.zip", mode="w") as zf:
+		if isdir(filename):
+			dirn, name = split(filename)
+			with indir(filename):
+				for subFname in os.listdir(filename):
+					_zipFileAdd(zf, subFname)
 
-	if isdir(filename):
+			shutil.rmtree(filename)
+			return
+
 		dirn, name = split(filename)
-		with indir(filename):
-			for subFname in os.listdir(filename):
-				_zipFileAdd(zf, subFname)
+		files = [name]
 
-		shutil.rmtree(filename)
-		return
+		if isdir(f"{filename}_res"):
+			files.append(f"{name}_res")
 
-	dirn, name = split(filename)
-	files = [name]
-
-	if isdir(f"{filename}_res"):
-		files.append(f"{name}_res")
-
-	with indir(dirn):
-		for fname in files:
-			_zipFileAdd(zf, fname)
+		with indir(dirn):
+			for fname in files:
+				_zipFileAdd(zf, fname)
 
 
 def compress(glos: "GlossaryType", filename: str, compression: str) -> str:

@@ -20,7 +20,7 @@ class T_Collator(typing.Protocol):
 	# mypy: error: Self argument missing for a non-static method
 	# (or an invalid type for self)  [misc]
 	@classmethod
-	def createInstance(loc: "T_Locale | None" = None) -> "T_Collator":  # type: ignore
+	def createInstance(cls: "T_Locale | None" = None) -> "T_Collator":  # type: ignore
 		pass
 
 	@property
@@ -60,4 +60,3 @@ class T_UCollAttributeValue(typing.Protocol):
 	SHIFTED: int = 20
 	TERTIARY: int = 2
 	UPPER_FIRST: int = 25
-

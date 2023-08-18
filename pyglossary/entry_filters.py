@@ -184,7 +184,6 @@ class RemoveHtmlTags(EntryFilter):
 	)
 
 	def __init__(self, glos: "GlossaryType", tagsStr: str) -> None:
-		import re
 		tags = tagsStr.split(",")
 		self.glos = glos
 		self.tags = tags

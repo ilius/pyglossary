@@ -1575,6 +1575,6 @@ class UI(tix.Frame, UIBase):
 
 if __name__ == "__main__":
 	import sys
-	path = sys.argv[1] if len(sys.argv) > 1 else ""
-	ui = UI(path)
-	ui.run()
+	_path = sys.argv[1] if len(sys.argv) > 1 else ""
+	_ui = UI(_path)
+	_ui.run()

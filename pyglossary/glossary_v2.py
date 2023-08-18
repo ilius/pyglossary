@@ -34,9 +34,6 @@ from pickle import loads as pickle_loads
 from time import time as now
 from typing import (
 	TYPE_CHECKING,
-	Any,
-	Callable,
-	Iterator,
 	cast,
 )
 from zlib import compress as zlib_compress
@@ -79,19 +76,22 @@ from .plugin_manager import PluginManager
 from .sort_keys import defaultSortKeyName, lookupSortKey
 
 if TYPE_CHECKING:
-	# from .flags import StrWithDesc
+	from typing import (
+		Any,
+		Callable,
+		Iterator,
+	)
+
 	from .entry_base import MultiStr
 	from .plugin_prop import PluginProp
 	from .sort_keys import NamedSortKey
 	from .ui_type import UIType
 
 
-"""
-sortKeyType = Callable[
-	[[list[str]],
-	Any,
-]
-"""
+# sortKeyType = Callable[
+# 	[[list[str]],
+# 	Any,
+# ]
 
 
 @dataclass(frozen=True)

@@ -424,18 +424,18 @@ class UI(ui_cmd.UI):
 		print(f"Changed current directory to: {newDir}")
 
 	def formatPromptMsg(self, level, msg, colon=":"):
-		indent = self.promptIndentStr * level
+		_indent = self.promptIndentStr * level
 
 		if core.noColor:
-			return f"{indent} {msg}{colon} ", False
+			return f"{_indent} {msg}{colon} ", False
 
 		if self.promptIndentColor >= 0:
-			indent = f"\x1b[38;5;{self.promptIndentColor}m{indent}{endFormat}"
+			_indent = f"\x1b[38;5;{self.promptIndentColor}m{_indent}{endFormat}"
 
 		if self.promptMsgColor >= 0:
 			msg = f"\x1b[38;5;{self.promptMsgColor}m{msg}{endFormat}"
 
-		return f"{indent} {msg}{colon} ", True
+		return f"{_indent} {msg}{colon} ", True
 
 	def prompt(self, level, msg, colon=":", **kwargs):
 		msg, colored = self.formatPromptMsg(level, msg, colon)
@@ -592,7 +592,6 @@ class UI(ui_cmd.UI):
 		return None
 
 	def askReadOptions(self):
-		Glossary.plugins[self._inputFormat]
 		options = Glossary.formatsReadOptions.get(self._inputFormat)
 		if options is None:
 			log.error(f"internal error: invalid format {self._inputFormat!r}")
@@ -665,7 +664,6 @@ class UI(ui_cmd.UI):
 				break
 
 	def askWriteOptions(self):
-		Glossary.plugins[self._inputFormat]
 		options = Glossary.formatsWriteOptions.get(self._outputFormat)
 		if options is None:
 			log.error(f"internal error: invalid format {self._outputFormat!r}")

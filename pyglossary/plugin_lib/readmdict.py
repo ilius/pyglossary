@@ -769,11 +769,7 @@ if __name__ == '__main__':
 	# read mdx file
 	if ext.lower() == os.path.extsep + 'mdx':
 		mdx = MDX(args.filename, args.encoding, args.substyle, args.passcode)
-		if type(args.filename) is unicode:
-			bfname = args.filename.encode('utf-8')
-		else:
-			bfname = args.filename
-		print('======== %s ========' % bfname)
+		print('======== %s ========' % args.filename)
 		print('  Number of Entries : %d' % len(mdx))
 		for key, value in mdx.header.items():
 			print(f'  {key} : {value}')
@@ -784,11 +780,7 @@ if __name__ == '__main__':
 	mdd_filename = ''.join([base, os.path.extsep, 'mdd'])
 	if os.path.exists(mdd_filename):
 		mdd = MDD(mdd_filename, args.passcode)
-		if type(mdd_filename) is unicode:
-			bfname = mdd_filename.encode('utf-8')
-		else:
-			bfname = mdd_filename
-		print('======== %s ========' % bfname)
+		print('======== %s ========' % args.filename)
 		print('  Number of Entries : %d' % len(mdd))
 		for key, value in mdd.header.items():
 			print(f'  {key} : {value}')

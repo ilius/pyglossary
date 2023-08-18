@@ -113,12 +113,12 @@ class MyLogger(logging.Logger):
 		for handler in self.handlers:
 			handler.setFormatter(formatter)
 
-	def addHandler(self, handler: "logging.Handler") -> None:
+	def addHandler(self, hdlr: "logging.Handler") -> None:
 		# if want to add separate format (new config keys and flags) for ui_gtk
 		# and ui_tk, you need to remove this function and run handler.setFormatter
 		# in ui_gtk and ui_tk
-		logging.Logger.addHandler(self, handler)
-		handler.setFormatter(self.newFormatter())
+		logging.Logger.addHandler(self, hdlr)
+		hdlr.setFormatter(self.newFormatter())
 
 
 def formatVarDict(
