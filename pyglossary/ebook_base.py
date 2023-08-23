@@ -419,17 +419,16 @@ class EbookWriter:
 		self._filename = filename
 
 	def _doZip(self) -> None:
-		zipFp = zipfile.ZipFile(
+		with zipfile.ZipFile(
 			self._filename,
-			"w",
+			mode="w",
 			compression=zipfile.ZIP_DEFLATED,
-		)
-		for fileDict in self.files:
-			zipFp.write(
-				fileDict["path"],
-				compress_type=fileDict["mode"],
-			)
-		zipFp.close()
+		) as zipFp:
+			for fileDict in self.files:
+				zipFp.write(
+					fileDict["path"],
+					compress_type=fileDict["mode"],
+				)
 		if not self._keep:
 			rmtree(self._tmpDir)
 

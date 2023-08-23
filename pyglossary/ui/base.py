@@ -182,7 +182,7 @@ class UIBase:
 	def progressInit(self, title: str) -> None:
 		pass
 
-	def progress(self, rat: float, text: str = "") -> None:
+	def progress(self, ratio: float, text: str = "") -> None:
 		pass
 
 	def progressEnd(self) -> None:

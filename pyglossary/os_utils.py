@@ -123,15 +123,13 @@ def my_url_show(link: str) -> None:
 			break
 
 
-"""
-try:
-	from gnome import url_show
-except:
-	try:
-		from gnomevfs import url_show
-	except:
-		url_show = my_url_show
-"""
+# try:
+# 	from gnome import url_show
+# except:
+# 	try:
+# 		from gnomevfs import url_show
+# 	except:
+# 		url_show = my_url_show
 
 
 def click_website(widget: "Any", link: str) -> None:

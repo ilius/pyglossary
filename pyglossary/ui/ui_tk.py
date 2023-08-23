@@ -1313,17 +1313,17 @@ class UI(tix.Frame, UIBase):
 			int(self.verbosityCombo.get()),
 		)
 
-	def resized(self, event):
-		self.rootWin.winfo_height() - self.winfo_height()
-		# log.debug(dh, self.consoleH)
-		# if dh > 20:
-		# 	self.consoleH += 1
-		# 	self.console["height"] = self.consoleH
-		# 	self.console["width"] = int(self.console["width"]) + 1
-		# 	self.console.grid()
-		# for x in dir(self):
-		# 	if "info" in x:
-		# 		log.debug(x)
+	# def resized(self, event):
+	# 	self.rootWin.winfo_height() - self.winfo_height()
+	# 	log.debug(dh, self.consoleH)
+	# 	if dh > 20:
+	# 		self.consoleH += 1
+	# 		self.console["height"] = self.consoleH
+	# 		self.console["width"] = int(self.console["width"]) + 1
+	# 		self.console.grid()
+	# 	for x in dir(self):
+	# 		if "info" in x:
+	# 			log.debug(x)
 
 	def inputFormatChanged(self, *args):
 		formatDesc = self.formatButtonInputConvert.get()
@@ -1370,7 +1370,7 @@ class UI(tix.Frame, UIBase):
 			self.formatButtonInputConvert.get() and
 			plugin.extensionCreate
 		):
-			pathNoExt, ext = splitext(pathI)
+			pathNoExt, _ext = splitext(pathI)
 			self.entryOutputConvert.insert(
 				0,
 				pathNoExt + plugin.extensionCreate,
@@ -1550,12 +1550,12 @@ class UI(tix.Frame, UIBase):
 	def progressInit(self, title):
 		self.progressTitle = title
 
-	def progress(self, rat, text=""):
+	def progress(self, ratio, text=""):
 		if not text:
-			text = "%" + str(int(rat * 100))
+			text = "%" + str(int(ratio * 100))
 		text += " - " + self.progressTitle
-		self.pbar.updateProgress(rat * 100, None, text)
-		# self.pbar.value = rat * 100
+		self.pbar.updateProgress(ratio * 100, None, text)
+		# self.pbar.value = ratio * 100
 		# self.pbar.update()
 		self.rootWin.update()
 

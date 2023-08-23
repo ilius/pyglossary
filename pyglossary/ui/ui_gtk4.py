@@ -101,13 +101,11 @@ def buffer_get_text(b):
 	)
 
 
-"""
-GTK 4 has removed the GtkContainer::border-width property
-(together with the rest of GtkContainer).
-Use other means to influence the spacing of your containers,
-such as the CSS margin and padding properties on child widgets,
-or the CSS border-spacing property on containers.
-"""
+# GTK 4 has removed the GtkContainer::border-width property
+# (together with the rest of GtkContainer).
+# Use other means to influence the spacing of your containers,
+# such as the CSS margin and padding properties on child widgets,
+# or the CSS border-spacing property on containers.
 
 
 class FormatDialog(gtk.Dialog):
@@ -1697,11 +1695,11 @@ check {
 	def progressInit(self, title):
 		self.progressTitle = title
 
-	def progress(self, rat, text=None):
+	def progress(self, ratio, text=None):
 		if not text:
-			text = "%" + str(int(rat * 100))
+			text = "%" + str(int(ratio * 100))
 		text += " - " + self.progressTitle
-		self.progressBar.set_fraction(rat)
+		self.progressBar.set_fraction(ratio)
 		# self.progressBar.set_text(text)  # not working
 		self.status(text)
 		gtk_event_iteration_loop()

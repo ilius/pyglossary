@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
 #
@@ -66,11 +65,11 @@ def _fast_decrypt(data, key):
 	b = bytearray(data)
 	key = bytearray(key)
 	previous = 0x36
-	for i in range(len(b)):
-		t = (b[i] >> 4 | b[i] << 4) & 0xff
+	for i, bi in enumerate(b):
+		t = (bi >> 4 | bi << 4) & 0xff
 		t = t ^ previous ^ (i & 0xff) ^ key[i % len(key)]
-		previous = b[i]
-		b[i] = t
+		previous = bi
+		bi = t
 	return bytes(b)
 
 
@@ -194,11 +193,11 @@ class MDict:
 				data[encryption_size:]
 			)
 		else:
-			raise Exception('encryption method %d not supported' % encryption_method)
+			raise ValueError(f'encryption method {encryption_method} not supported')
 
 		# check adler checksum over decrypted data
 		if self._version >= 3:
-			assert(hex(adler32) == hex(zlib.adler32(decrypted_block) & 0xffffffff))
+			assert hex(adler32) == hex(zlib.adler32(decrypted_block) & 0xffffffff)
 
 		# decompress
 		if compression_method == 0:
@@ -211,18 +210,18 @@ class MDict:
 		elif compression_method == 2:
 			decompressed_block = zlib.decompress(decrypted_block)
 		else:
-			raise Exception('compression method %d not supported' % compression_method)
+			raise ValueError(f'compression method {compression_method} not supported')
 
 		# check adler checksum over decompressed data
 		if self._version < 3:
-			assert(hex(adler32) == hex(zlib.adler32(decompressed_block) & 0xffffffff))
+			assert hex(adler32) == hex(zlib.adler32(decompressed_block) & 0xffffffff)
 
 		return decompressed_block
 
 	def _decode_key_block_info(self, key_block_info_compressed):
 		if self._version >= 2:
 			# zlib compression
-			assert(key_block_info_compressed[:4] == b'\x02\x00\x00\x00')
+			assert key_block_info_compressed[:4] == b'\x02\x00\x00\x00'
 			# decrypt if needed
 			if self._encrypt & 0x02:
 				key = ripemd128(key_block_info_compressed[4:8] + pack(b'<L', 0x3695))
@@ -234,7 +233,7 @@ class MDict:
 			key_block_info = zlib.decompress(key_block_info_compressed[8:])
 			# adler checksum
 			adler32 = unpack('>I', key_block_info_compressed[4:8])[0]
-			assert(adler32 == zlib.adler32(key_block_info) & 0xffffffff)
+			assert adler32 == zlib.adler32(key_block_info) & 0xffffffff
 		else:
 			# no compression
 			key_block_info = key_block_info_compressed
@@ -253,7 +252,10 @@ class MDict:
 
 		while i < len(key_block_info):
 			# number of entries in current key block
-			num_entries += unpack(self._number_format, key_block_info[i:i+self._number_width])[0]
+			num_entries += unpack(
+				self._number_format,
+				key_block_info[i:i+self._number_width],
+			)[0]
 			i += self._number_width
 			# text head size
 			text_head_size = unpack(byte_format, key_block_info[i:i+byte_width])[0]
@@ -285,7 +287,7 @@ class MDict:
 			i += self._number_width
 			key_block_info_list += [(key_block_compressed_size, key_block_decompressed_size)]
 
-		#assert(num_entries == self._num_entries)
+		# assert num_entries == self._num_entries
 
 		return key_block_info_list
 
@@ -337,7 +339,7 @@ class MDict:
 		header_bytes = f.read(header_bytes_size)
 		# 4 bytes: adler32 checksum of header, in little endian
 		adler32 = unpack('<I', f.read(4))[0]
-		assert(adler32 == zlib.adler32(header_bytes) & 0xffffffff)
+		assert adler32 == zlib.adler32(header_bytes) & 0xffffffff
 		# mark down key block offset
 		self._key_block_offset = f.tell()
 		f.close()
@@ -429,7 +431,7 @@ class MDict:
 			elif block_type == 0x04000000:
 				self._key_index_offset = block_offset
 			else:
-				raise RuntimeError("Unknown block type %d" % block_type)
+				raise RuntimeError(f"Unknown block type {block_type}")
 			f.seek(block_size, 1)
 			# test the end of file
 			if f.read(4):
@@ -458,10 +460,7 @@ class MDict:
 		f.seek(self._key_block_offset)
 
 		# the following numbers could be encrypted
-		if self._version >= 2.0:
-			num_bytes = 8 * 5
-		else:
-			num_bytes = 4 * 4
+		num_bytes = 8 * 5 if self._version >= 2.0 else 4 * 4
 		block = f.read(num_bytes)
 
 		if self._encrypt & 1:
@@ -489,7 +488,7 @@ class MDict:
 		# read key block info, which indicates key block's compressed and decompressed size
 		key_block_info = f.read(key_block_info_size)
 		key_block_info_list = self._decode_key_block_info(key_block_info)
-		assert(num_key_blocks == len(key_block_info_list))
+		assert num_key_blocks == len(key_block_info_list)
 
 		# read key block
 		key_block_compressed = f.read(key_block_size)
@@ -548,7 +547,10 @@ class MDict:
 		return key_list
 
 	def items(self):
-		"""Return a generator which in turn produce tuples in the form of (filename, content)."""
+		"""
+		Return a generator which in turn produce tuples in the
+		form of (filename, content).
+		"""
 		return self._read_records()
 
 	def _read_records(self):
@@ -595,7 +597,7 @@ class MDict:
 
 		num_record_blocks = self._read_number(f)
 		num_entries = self._read_number(f)
-		assert(num_entries == self._num_entries)
+		assert num_entries == self._num_entries
 		record_block_info_size = self._read_number(f)
 		self._read_number(f)  # record_block_size
 
@@ -607,7 +609,7 @@ class MDict:
 			decompressed_size = self._read_number(f)
 			record_block_info_list += [(compressed_size, decompressed_size)]
 			size_counter += self._number_width * 2
-		assert(size_counter == record_block_info_size)
+		assert size_counter == record_block_info_size
 
 		# actual record block
 		offset = 0
@@ -637,7 +639,7 @@ class MDict:
 				yield key_text, self._treat_record_data(data)
 			offset += len(record_block)
 			size_counter += compressed_size
-		#assert(size_counter == record_block_size)
+		# assert size_counter == record_block_size
 
 		f.close()
 
@@ -695,7 +697,7 @@ class MDX(MDict):
 			try:
 				style = self._stylesheet[key]
 			except KeyError:
-				log.error('invalid stylesheet key "%s"'%key)
+				log.error(f'invalid stylesheet key "{key}"')
 				continue
 			if p and p[-1] == '\n':
 				txt_styled = txt_styled + style[0] + p.rstrip() + style[1] + '\r\n'
@@ -705,7 +707,8 @@ class MDX(MDict):
 
 	def _treat_record_data(self, data):
 		# convert to utf-8
-		data = data.decode(self._encoding, errors='ignore').strip(u'\x00').encode('utf-8')
+		data = data.decode(self._encoding, errors='ignore')\
+			.strip('\x00').encode('utf-8')
 		# substitute styles
 		if self._substyle and self._stylesheet:
 			data = self._substitute_stylesheet(data)
@@ -718,7 +721,6 @@ if __name__ == '__main__':
 	import codecs
 	import os
 	import os.path
-	import sys
 
 	def passcode(s):
 		try:
@@ -751,7 +753,7 @@ if __name__ == '__main__':
 	if not args.filename:
 		if sys.hexversion >= 0x03000000:
 			import tkinter as tk
-			import tkinter.filedialog as filedialog
+			from tkinter import filedialog
 		else:
 			import tkFileDialog as filedialog
 			import Tkinter as tk
@@ -769,8 +771,8 @@ if __name__ == '__main__':
 	# read mdx file
 	if ext.lower() == os.path.extsep + 'mdx':
 		mdx = MDX(args.filename, args.encoding, args.substyle, args.passcode)
-		print('======== %s ========' % args.filename)
-		print('  Number of Entries : %d' % len(mdx))
+		print(f'======== {args.filename} ========')
+		print(f'  Number of Entries : {len(mdx)}')
 		for key, value in mdx.header.items():
 			print(f'  {key} : {value}')
 	else:
@@ -780,8 +782,8 @@ if __name__ == '__main__':
 	mdd_filename = ''.join([base, os.path.extsep, 'mdd'])
 	if os.path.exists(mdd_filename):
 		mdd = MDD(mdd_filename, args.passcode)
-		print('======== %s ========' % args.filename)
-		print('  Number of Entries : %d' % len(mdd))
+		print(f'======== {args.filename} ========')
+		print(f'  Number of Entries : {len(mdd)}')
 		for key, value in mdd.header.items():
 			print(f'  {key} : {value}')
 	else:

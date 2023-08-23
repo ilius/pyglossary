@@ -222,4 +222,3 @@ class GlossaryInfo:
 		)
 		self.sourceLangName = langNames[0]
 		self.targetLangName = langNames[1]
-

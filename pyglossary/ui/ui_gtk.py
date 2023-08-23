@@ -1606,11 +1606,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 	def progressInit(self, title):
 		self.progressTitle = title
 
-	def progress(self, rat, text=None):
+	def progress(self, ratio, text=None):
 		if not text:
-			text = "%" + str(int(rat * 100))
+			text = "%" + str(int(ratio * 100))
 		text += " - " + self.progressTitle
-		self.progressBar.set_fraction(rat)
+		self.progressBar.set_fraction(ratio)
 		# self.progressBar.set_text(text)  # not working
 		self.status(text)
 		while gtk.events_pending():

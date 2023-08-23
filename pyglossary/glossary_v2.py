@@ -1213,20 +1213,21 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 		return finalOutputFile
 
-	# ________________________________________________________________________#
-
-	"""
-	init method is inherited from PluginManager
-	arguments:
-		usePluginsJson: bool = True
-		skipDisabledPlugins: bool = True
-
-	init() must be called only once, so make sure you put it in the
-	right place. Probably in the top of your program's main function or module.
-	"""
+# ________________________________________________________________________#
 
 
 class Glossary(GlossaryCommon):
+
+	"""
+	init method is inherited from PluginManager
+		arguments:
+			usePluginsJson: bool = True
+			skipDisabledPlugins: bool = True.
+
+		init() must be called only once, so make sure you put it in the
+		right place. Probably in the top of your program's main function or module.
+	"""
+
 	GLOSSARY_API_VERSION = "2.0"
 
 	def convert(self, args: ConvertArgs) -> "str | None":

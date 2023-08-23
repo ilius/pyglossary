@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding: utf-8
 # mypy: ignore-errors
 
@@ -215,7 +214,7 @@ class Salsa20:
 			ctx[1], ctx[2], ctx[3], ctx[4] = little4_i32.unpack(key[0:16])
 			ctx[11], ctx[12], ctx[13], ctx[14] = little4_i32.unpack(key[0:16])
 		else:
-			raise Exception("key length isn't 32 or 16 bytes.")
+			raise ValueError("key length isn't 32 or 16 bytes.")
 		ctx[0], ctx[5], ctx[10], ctx[15] = little4_i32.unpack(constants)
 
 	def setIV(self, IV):
@@ -315,8 +314,8 @@ def salsa20_wordtobyte(input, nRounds=20, checkRounds=True):
 		x[14] = XOR(x[14], ROTATE(PLUS(x[13], x[12]), 13))
 		x[15] = XOR(x[15], ROTATE(PLUS(x[14], x[13]), 18))
 
-	for idx in range(len(input)):
-		x[idx] = PLUS(x[idx], input[idx])
+	for idx, item in enumerate(input):
+		x[idx] = PLUS(x[idx], item)
 	return little16_i32.pack(*x)
 
 

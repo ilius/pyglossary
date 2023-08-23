@@ -295,8 +295,7 @@ class FloatOption(Option):
 			value = float(raw)
 		except ValueError:
 			return None, False
-		else:
-			return value, True
+		return value, True
 
 
 @Option.register

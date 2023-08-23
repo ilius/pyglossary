@@ -223,7 +223,7 @@ writingSystemList = [
 	WritingSystem(
 		name="Brahmi",
 		iso=[
-			(300, "Brah", "​Brahmi"),
+			(300, "Brah", "Brahmi"),
 		],
 		unicode=["BRAHMI"],
 		titleTag="big",

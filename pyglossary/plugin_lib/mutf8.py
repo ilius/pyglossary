@@ -46,7 +46,7 @@ def decode_modified_utf8(s: bytes) -> str:
                 s,
                 s_ix - 1,
                 s_ix,
-                'Embedded NULL byte in input.'
+                'Embedded NULL byte in input.',
             )
         if b1 < 0x80:
             # ASCII/one-byte codepoint.
@@ -60,14 +60,14 @@ def decode_modified_utf8(s: bytes) -> str:
                         s_ix - 1,
                         s_ix,
                         '2-byte codepoint started, but input too short to'
-                        ' finish.'
+                        ' finish.',
                     )
 
             s_out.append(
                 chr(
                     (b1 & 0x1F) << 0x06 |
-                    (s[s_ix] & 0x3F)
-                )
+                    (s[s_ix] & 0x3F),
+                ),
             )
             s_ix += 1
         elif (b1 & 0xF0) == 0xE0:
@@ -79,7 +79,7 @@ def decode_modified_utf8(s: bytes) -> str:
                         s_ix - 1,
                         s_ix,
                         '3-byte or 6-byte codepoint started, but input too'
-                        ' short to finish.'
+                        ' short to finish.',
                     )
 
             b2 = s[s_ix]
@@ -94,7 +94,7 @@ def decode_modified_utf8(s: bytes) -> str:
                             s_ix - 1,
                             s_ix,
                             '3-byte or 6-byte codepoint started, but input too'
-                            ' short to finish.'
+                            ' short to finish.',
                         )
 
                 b4 = s[s_ix + 2]
@@ -110,8 +110,8 @@ def decode_modified_utf8(s: bytes) -> str:
                             (b3 & 0x3F) << 0x0A |
                             (b5 & 0x0F) << 0x06 |
                             (b6 & 0x3F)
-                            )
-                        )
+                            ),
+                        ),
                     )
                     s_ix += 5
                     continue
@@ -120,14 +120,14 @@ def decode_modified_utf8(s: bytes) -> str:
                 chr(
                     (b1 & 0x0F) << 0x0C |
                     (b2 & 0x3F) << 0x06 |
-                    (b3 & 0x3F)
-                )
+                    (b3 & 0x3F),
+                ),
             )
             s_ix += 2
         else:
             raise RuntimeError
 
-    return u''.join(s_out)
+    return ''.join(s_out)
 
 
 def encode_modified_utf8(u: str) -> bytes:
@@ -151,14 +151,14 @@ def encode_modified_utf8(u: str) -> bytes:
             # Two-byte codepoint.
             final_string.extend([
                 (0xC0 | (0x1F & (c >> 0x06))),
-                (0x80 | (0x3F & c))
+                (0x80 | (0x3F & c)),
             ])
         elif c <= 0xFFFF:
             # Three-byte codepoint.
             final_string.extend([
                 (0xE0 | (0x0F & (c >> 0x0C))),
                 (0x80 | (0x3F & (c >> 0x06))),
-                (0x80 | (0x3F & c))
+                (0x80 | (0x3F & c)),
             ])
         else:
             # Six-byte codepoint.
@@ -168,7 +168,7 @@ def encode_modified_utf8(u: str) -> bytes:
                 0x80 | ((c >> 0x0A) & 0x3f),
                 0xED,
                 0xb0 | ((c >> 0x06) & 0x0f),
-                0x80 | (c & 0x3f)
+                0x80 | (c & 0x3f),
             ])
 
     return bytes(final_string)

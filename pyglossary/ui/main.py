@@ -218,7 +218,7 @@ def base_ui_run(
 def getGitVersion(gitDir: str) -> str:
 	import subprocess
 	try:
-		outputB, error = subprocess.Popen(
+		outputB, _err = subprocess.Popen(
 			[
 				"git",
 				"--git-dir", gitDir,
@@ -230,7 +230,7 @@ def getGitVersion(gitDir: str) -> str:
 	except Exception as e:
 		sys.stderr.write(str(e) + "\n")
 		return ""
-	# if error is None:
+	# if _err is None:
 	return outputB.decode("utf-8").strip()
 
 
@@ -682,21 +682,20 @@ def main() -> None:
 				f"must be an object/dict, not {type(newWriteOptions)}",
 			)
 
-	"""
-		examples for read and write options:
-		--read-options testOption=stringValue
-		--read-options enableFoo=True
-		--read-options fooList=[1,2,3]
-		--read-options 'fooList=[1, 2, 3]'
-		--read-options 'testOption=stringValue; enableFoo=True; fooList=[1, 2, 3]'
-		--read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
 
-		if a desired value contains ";", you can use --json-read-options
-		or --json-write-options flags instead, with json object as value,
-		quoted for command line. for example:
-			'--json-write-options={"delimiter": ";"}'
+	# examples for read and write options:
+	# --read-options testOption=stringValue
+	# --read-options enableFoo=True
+	# --read-options fooList=[1,2,3]
+	# --read-options 'fooList=[1, 2, 3]'
+	# --read-options 'testOption=stringValue; enableFoo=True; fooList=[1, 2, 3]'
+	# --read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
 
-	"""
+	# if a desired value contains ";", you can use --json-read-options
+	# or --json-write-options flags instead, with json object as value,
+	# quoted for command line. for example:
+	# 	'--json-write-options={"delimiter": ";"}'
+
 
 	convertOptionsKeys = (
 		"direct",

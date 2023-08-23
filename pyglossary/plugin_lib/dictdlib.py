@@ -73,16 +73,16 @@ def b64_decode(text: str) -> int:
 	return retval
 
 
-def sortNormalize(x: str) -> str:
+def sortNormalize(inp: str) -> str:
 	"""
 	Returns a value such that x is mapped to a format that sorts properly
 	with standard comparison.
 	"""
-	x2 = ''
-	for i in range(len(x)):
-		if x[i] in validdict:
-			x2 += x[i]
-	return x2.upper() + "\0" + x.upper()
+	st2 = ""
+	for char in inp:
+		if char in validdict:
+			st2 += char
+	return st2.upper() + "\0" + inp.upper()
 
 
 def sortKey(x: str) -> "list[str]":
@@ -234,10 +234,10 @@ class DictDB:
 			# Go backwards so the del doesn't effect the index.
 			if (start is None or start == entrylist[i][0]) and \
 				(size is None or size == entrylist[i][1]):
-				del(entrylist[i])
+				del entrylist[i]
 				retval += 1
 		if not entrylist:  # if we emptied it, del it completely
-			del(self.indexEntries[word])
+			del self.indexEntries[word]
 		return retval
 
 	def update(self, text: str) -> None:
@@ -280,10 +280,10 @@ class DictDB:
 		s_defi: str,
 		headwords: "list[str]",
 	) -> None:
-		"""
+		r"""
 		Writes an entry.  defstr holds the content of the definition.
 		headwords is a list specifying one or more words under which this
-		definition should be indexed.  This function always adds \\n
+		definition should be indexed.  This function always adds \n
 		to the end of defstr.
 		"""
 		self.dictFile.seek(0, 2)        # Seek to end of file
@@ -296,7 +296,7 @@ class DictDB:
 			self.count += 1
 
 		if self.count % 1000 == 0:
-			self.update("Processed %d records\r" % self.count)
+			self.update(f"Processed {self.count} records\r")
 
 	def finish(self, dosort: bool = True) -> None:
 		"""
@@ -308,7 +308,7 @@ class DictDB:
 		dictlib will not sort the index file.  In this case, you
 		MUST manually sort it through "sort -df" before it can be used.
 		"""
-		self.update("Processed %d records.\n" % self.count)
+		self.update(f"Processed {self.count} records.\n")
 
 		if dosort:
 			self.update("Sorting index: converting")

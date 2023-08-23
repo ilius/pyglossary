@@ -46,4 +46,3 @@ class GlossaryProgress:
 	def progressEnd(self) -> None:
 		if self._ui and self._progressbar:
 			self._ui.progressEnd()
-

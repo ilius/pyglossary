@@ -54,9 +54,11 @@ from os.path import (
 	join,
 	relpath,
 )
-from typing import TYPE_CHECKING, Iterable, Literal
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from typing import Iterable, Literal
+
 	from pyglossary.option import Option
 	from pyglossary.plugin_prop import PluginProp
 
@@ -392,10 +394,10 @@ class UI(ui_cmd.UI):
 				os.lstat(join(arg, _path))
 				for _path in contents
 			]
-			maxFileSize = max([
+			maxFileSize = max(
 				st.st_size
 				for st in statList
-			])
+			)
 			sizeWidth = len(str(maxFileSize))
 			for i, _path in enumerate(contents):
 				print(self.get_ls_l(

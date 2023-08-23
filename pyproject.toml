@@ -54,6 +54,7 @@ ignore = [
     "UP037", # Remove quotes from type annotation
     "W191", # Indentation contains tabs
     "SIM110", # Use any(...)
+    "SIM115", # Use context handler for opening files
     # "SIM111", # Use all(...): warning: `SIM111` has been remapped to `SIM110`.
     # ERA, PD,
 ]
@@ -100,7 +101,7 @@ exclude = [
     # "pyglossary/ui/gtk3_utils/*",
     "pyglossary/plugins/babylon_bgl/bgl_gzip.py",
     "pyglossary/plugins/testformat.py",
-    "pyglossary/plugin_lib/*",
+    # "pyglossary/plugin_lib/*",
     "pyglossary/ui/gtk*_utils/__init__.py",
     "pyglossary/ui/ui_qt.py",
     "pyglossary/ui/progressbar/widgets.py",
@@ -163,6 +164,8 @@ ignore = [
 [tool.pylint.messages_control]
 max-line-length = 88
 disable = [
+    "no-member",
+    "no-name-in-module",
     "missing-module-docstring",
     "bad-indentation",
     "invalid-name",
@@ -175,13 +178,8 @@ disable = [
     "missing-class-docstring",
     "too-many-instance-attributes",
     "fixme",
-    "no-name-in-module",
     "redefined-builtin",
-    "too-many-branches",
-    "too-many-return-statements",
     "pointless-statement",
-    "too-few-public-methods",
-    "global-statement",
     "abstract-method",
     "unidiomatic-typecheck",
     "attribute-defined-outside-init",
@@ -190,11 +188,31 @@ disable = [
     "redefined-slots-in-subclass",
     "redefined-outer-name",
     "wrong-import-position",
+    "too-few-public-methods",
     "too-many-lines",
     "too-many-public-methods",
+    "too-many-statements",
+    "too-many-locals",
+    "too-many-branches",
+    "too-many-return-statements",
+    "unused-import",
+    "import-error",
+    "protected-access",
+    "consider-using-with",
+    "disallowed-name",
+    "useless-return",
+    "method-cache-max-size-none",
+    "global-statement",
+    "R0801", # Similar lines in 2 files
+    "ungrouped-imports", # C0412: Imports from package pyglossary are not grouped
+    "inconsistent-return-statements", # R1710: Either all return statements in a function should return an expression, or none of them should
+    "too-many-ancestors", # R0901: Too many ancestors
 ]
+
 [tool.pylint.master]
 ignore-paths = [
     "^pyglossary/reverse.py$",
     "^pyglossary/ui/progressbar/.*",
+    "^pyglossary/ui/ui_qt.py$",
+    "^pyglossary/ui/wcwidth/",
 ]

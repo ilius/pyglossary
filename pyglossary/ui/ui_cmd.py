@@ -299,8 +299,7 @@ class UI(UIBase):
 					log.error(f"invalid write format {outputFormat}")
 					log.error(f"try: {COMMAND} --help")
 					return False
-				else:
-					outputFilename = os.path.splitext(inputFilename)[0] + ext
+				outputFilename = os.path.splitext(inputFilename)[0] + ext
 			else:
 				log.error("neither output file nor output format is given")
 				log.error(f"try: {COMMAND} --help")

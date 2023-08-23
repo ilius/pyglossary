@@ -304,7 +304,7 @@ class MultiFileReader(BufferedIOBase):
 		elif whence == io.SEEK_END:
 			self._offset = self.size + offset
 		else:
-			raise ValueError('Invalid value for parameter whence: %r' % whence)
+			raise ValueError(f'Invalid value for parameter whence: {whence!r}')
 		return self._offset
 
 	def seekable(self) -> bool:
@@ -527,7 +527,7 @@ class StructWriter:
 		length = len(text_bytes)
 		max_length = calcmax(len_size_spec)
 		if length > max_length:
-			raise ValueError("Text is too long for size spec %s" % len_size_spec)
+			raise ValueError(f"Text is too long for size spec {len_size_spec}")
 		self._file.write(pack(
 			len_size_spec,
 			pad_to_length or length,
@@ -628,7 +628,7 @@ def read_header(_file: "MultiFileReader") -> Header:
 	_file.seek(0)
 
 	magic = _file.read(len(MAGIC))
-	if (magic != MAGIC):
+	if magic != MAGIC:
 		raise UnknownFileFormat(f"magic {magic!r} != {MAGIC!r}")
 
 	uuid = UUID(bytes=_file.read(16))
@@ -699,9 +699,11 @@ class Slob:
 
 		try:
 			self._header = read_header(self._f)
-			if (self._f.size != self._header.size):
+			if self._f.size != self._header.size:
 				raise IncorrectFileSize(
-					f'File size should be {self._header.size}, {self._f.size} bytes found')
+					f'File size should be {self._header.size}, '
+					f'{self._f.size} bytes found',
+				)
 		except FileFormatException:
 			self._f.close()
 			raise
@@ -1088,7 +1090,7 @@ class Writer:
 		self.filename = filename
 		self.observer = observer
 		if os.path.exists(self.filename):
-			raise SystemExit('File %r already exists' % self.filename)
+			raise SystemExit('File {self.filename!r} already exists')
 
 		# make sure we can write
 		with fopen(self.filename, 'wb'):

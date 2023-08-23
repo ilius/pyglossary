@@ -236,7 +236,7 @@ name2codepoint = {
 	"rfloor": 0x230b,  # ⌋
 	"Rho": 0x03a1,  # Ρ
 	"rho": 0x03c1,  # ρ
-	"rlm": 0x200f,  # ‏
+	"rlm": 0x200f,  # U+200F
 	"rsaquo": 0x203a,  # ›
 	"rsquo": 0x2019,  # ’
 	"sbquo": 0x201a,  # ‚
