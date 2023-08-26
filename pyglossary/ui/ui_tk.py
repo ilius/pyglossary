@@ -1397,7 +1397,7 @@ class UI(tix.Frame, UIBase):
 				if inputArgs:
 					plugin = Glossary.plugins.get(inputArgs.formatName)
 					if plugin:
-						self.formatButtonInputConvert.set(plugin.description)
+						self.formatButtonInputConvert.setValue(plugin.description)
 						self.inputFormatChanged()
 		self.pathI = pathI
 
@@ -1419,7 +1419,7 @@ class UI(tix.Frame, UIBase):
 					quiet=True,
 				)
 				if outputArgs:
-					self.formatButtonOutputConvert.set(
+					self.formatButtonOutputConvert.setValue(
 						Glossary.plugins[outputArgs.formatName].description,
 					)
 					self.outputFormatChanged()
@@ -1513,12 +1513,12 @@ class UI(tix.Frame, UIBase):
 			self.outputEntryChanged()
 
 		if inputFormat:
-			self.formatButtonInputConvert.set(
+			self.formatButtonInputConvert.setValue(
 				Glossary.plugins[inputFormat].description,
 			)
 			self.inputFormatChanged()
 		if outputFormat:
-			self.formatButtonOutputConvert.set(
+			self.formatButtonOutputConvert.setValue(
 				Glossary.plugins[outputFormat].description,
 			)
 			self.outputFormatChanged()
