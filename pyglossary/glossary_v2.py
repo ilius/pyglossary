@@ -1232,3 +1232,24 @@ class Glossary(GlossaryCommon):
 
 	def convert(self, args: ConvertArgs) -> "str | None":
 		return self.convertV2(args)
+
+	def newEntryList(self, sqlite: bool = True) -> "EntryListType":
+		if not sqlite:
+			return EntryList(
+				entryToRaw=self._entryToRaw,
+				entryFromRaw=self._entryFromRaw,
+			)
+
+		import tempfile
+
+		from .sq_entry_list import SqEntryList
+
+		_, fpath = tempfile.mkstemp(dir=cacheDir, suffix=".db")
+		# mkstemp creates an empty file, but sqlite won't complain about it
+		return SqEntryList(
+			entryToRaw=self._entryToRaw,
+			entryFromRaw=self._entryFromRaw,
+			filename=fpath,
+			create=True,
+			persist=False,
+		)
