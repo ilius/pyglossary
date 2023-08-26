@@ -868,7 +868,6 @@ class SortOptionsBox(gtk.Box):
 		sort = check.get_active()
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)
-		self.localeHBox.set_sensitive(sort)
 
 	def updateWidgets(self):
 		convertOptions = self.ui.convertOptions
@@ -876,7 +875,6 @@ class SortOptionsBox(gtk.Box):
 		self.sortCheck.set_active(sort)
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)
-		self.localeHBox.set_sensitive(sort)
 
 		sortKeyName = convertOptions.get("sortKeyName")
 		if sortKeyName:
