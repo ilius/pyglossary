@@ -5,8 +5,9 @@ from os.path import abspath, dirname, relpath
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
+from glossary_errors_test import TestGlossaryErrorsBase
+
 from pyglossary.glossary import Glossary
-from tests.glossary_errors_test import TestGlossaryErrorsBase
 
 
 class TestGlossaryStarDictBase(TestGlossaryErrorsBase):

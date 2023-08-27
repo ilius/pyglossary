@@ -1,14 +1,8 @@
 import gzip
-import sys
 import unittest
-from os.path import abspath, dirname
 
 import marisa_trie  # noqa: F401, to ensure it's installed
-
-rootDir = dirname(dirname(abspath(__file__)))
-sys.path.insert(0, rootDir)
-
-from tests.glossary_v2_test import TestGlossaryBase
+from glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryKobo(TestGlossaryBase):

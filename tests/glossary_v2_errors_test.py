@@ -7,10 +7,11 @@ from os.path import abspath, dirname, isfile, join, relpath
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
+from glossary_v2_test import TestGlossaryBase, appTmpDir
+
 from pyglossary.core_test import getMockLogger
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.os_utils import rmtree
-from tests.glossary_v2_test import TestGlossaryBase, appTmpDir
 
 Glossary.init()
 

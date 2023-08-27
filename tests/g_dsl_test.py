@@ -6,8 +6,9 @@ from os.path import abspath, dirname, join
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
+from glossary_v2_test import TestGlossaryBase
+
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
-from tests.glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryDSL(TestGlossaryBase):

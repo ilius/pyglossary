@@ -1,12 +1,7 @@
-import sys
 import unittest
-from os.path import abspath, dirname
 
-rootDir = dirname(dirname(abspath(__file__)))
-sys.path.insert(0, rootDir)
-
-from tests.g_stardict_test import TestGlossaryStarDictBase
-from tests.glossary_errors_test import TestGlossaryErrorsBase
+from g_stardict_test import TestGlossaryStarDictBase
+from glossary_errors_test import TestGlossaryErrorsBase
 
 
 class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):

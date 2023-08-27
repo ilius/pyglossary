@@ -7,9 +7,10 @@ from os.path import abspath, dirname
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
+from glossary_errors_test import TestGlossaryErrors
+from glossary_v2_test import testCacheDir
+
 from pyglossary.glossary import Glossary
-from tests.glossary_errors_test import TestGlossaryErrors
-from tests.glossary_v2_test import testCacheDir
 
 
 class TestGlossarySecurity(TestGlossaryErrors):

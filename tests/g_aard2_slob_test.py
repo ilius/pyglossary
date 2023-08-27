@@ -10,12 +10,8 @@ if sys.version_info < (3, 10):
 
 import os
 import unittest
-from os.path import abspath, dirname
 
-rootDir = dirname(dirname(abspath(__file__)))
-sys.path.insert(0, rootDir)
-
-from tests.glossary_v2_test import TestGlossaryBase
+from glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossarySlob(TestGlossaryBase):
