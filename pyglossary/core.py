@@ -27,6 +27,35 @@ if TYPE_CHECKING:
 	)
 
 
+__all__ = [
+    'StdLogHandler',
+    'TRACE',
+    'VERSION',
+    'appResDir',
+    'cacheDir',
+    'checkCreateConfDir',
+    'confDir',
+    'confJsonFile',
+    'dataDir',
+    'format_exception',
+    'getDataDir',
+    'homeDir',
+    'homePage',
+    'isDebug',
+    'log',
+    'noColor',
+    'pip',
+    'pluginsDir',
+    'rootConfJsonFile',
+    'rootDir',
+    'sysName',
+    'tmpDir',
+    'trace',
+    'uiDir',
+    'userPluginsDir',
+]
+
+
 VERSION = "4.6.1"
 
 homePage = "https://github.com/ilius/pyglossary"
@@ -45,7 +74,7 @@ def trace(log: logging.Logger, msg: str) -> None:
 	func(msg)
 
 
-class Formatter(logging.Formatter):
+class _Formatter(logging.Formatter):
 	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN
 		logging.Formatter.__init__(self, *args, **kwargs)
 		self.fill: "Callable[[str], str] | None" = None
@@ -60,7 +89,7 @@ class Formatter(logging.Formatter):
 		return msg  # noqa: RET504
 
 
-class MyLogger(logging.Logger):
+class _MyLogger(logging.Logger):
 	levelsByVerbosity = (
 		logging.CRITICAL,
 		logging.ERROR,
@@ -99,13 +128,13 @@ class MyLogger(logging.Logger):
 		from pprint import pformat
 		self.debug(header + pformat(data))
 
-	def newFormatter(self) -> Formatter:
+	def newFormatter(self) -> _Formatter:
 		timeEnable = self._timeEnable
 		if timeEnable:
 			fmt = "%(asctime)s [%(levelname)s] %(message)s"
 		else:
 			fmt = "[%(levelname)s] %(message)s"
-		return Formatter(fmt)
+		return _Formatter(fmt)
 
 	def setTimeEnable(self, timeEnable: bool) -> None:
 		self._timeEnable = timeEnable
@@ -121,7 +150,7 @@ class MyLogger(logging.Logger):
 		hdlr.setFormatter(self.newFormatter())
 
 
-def formatVarDict(
+def _formatVarDict(
 	dct: "dict[str, Any]",
 	indent: int = 4,
 	max_width: int = 80,
@@ -162,9 +191,9 @@ def format_exception(
 			pass
 		else:
 			if add_locals:
-				text += f"Traceback locals:\n{formatVarDict(frame.f_locals)}\n"
+				text += f"Traceback locals:\n{_formatVarDict(frame.f_locals)}\n"
 			if add_globals:
-				text += f"Traceback globals:\n{formatVarDict(frame.f_globals)}\n"
+				text += f"Traceback globals:\n{_formatVarDict(frame.f_globals)}\n"
 
 	return text
 
@@ -242,7 +271,7 @@ def checkCreateConfDir() -> None:
 			usrF.write(srcF.read())
 
 
-def in_virtualenv() -> bool:
+def _in_virtualenv() -> bool:
 	if hasattr(sys, 'real_prefix'):
 		return True
 	if hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix:
@@ -251,7 +280,7 @@ def in_virtualenv() -> bool:
 
 
 def getDataDir() -> str:
-	if in_virtualenv():
+	if _in_virtualenv():
 		pass  # TODO
 		# print(f"prefix={sys.prefix}, base_prefix={sys.base_prefix}")
 		# return join(
@@ -297,14 +326,14 @@ def getDataDir() -> str:
 # __________________________________________________________________________ #
 
 
-logging.setLoggerClass(MyLogger)
-log = cast(MyLogger, logging.getLogger("pyglossary"))
+logging.setLoggerClass(_MyLogger)
+log = cast(_MyLogger, logging.getLogger("pyglossary"))
 
 def isDebug() -> bool:
 	return log.getVerbosity() >= 4
 
 if os.sep == "\\":
-	def windows_show_exception(
+	def _windows_show_exception(
 		_type: "type[BaseException]",
 		exc: "BaseException",
 		tback: "TracebackType | None",
@@ -320,10 +349,10 @@ if os.sep == "\\":
 		log.critical(msg)
 		ctypes.windll.user32.MessageBoxW(0, msg, "PyGlossary Error", 0)  # type: ignore
 
-	sys.excepthook = windows_show_exception
+	sys.excepthook = _windows_show_exception
 
 else:
-	def unix_show_exception(
+	def _unix_show_exception(
 		_type: "type[BaseException]",
 		exc: "BaseException",
 		tback: "TracebackType | None",
@@ -336,7 +365,7 @@ else:
 			add_globals=False,
 		))
 
-	sys.excepthook = unix_show_exception
+	sys.excepthook = _unix_show_exception
 
 sysName = platform.system().lower()
 # platform.system() is in	["Linux", "Windows", "Darwin", "FreeBSD"]

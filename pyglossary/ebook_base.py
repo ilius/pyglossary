@@ -40,6 +40,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
+__all__ = ["EbookWriter"]
 
 log = logging.getLogger("pyglossary")
 

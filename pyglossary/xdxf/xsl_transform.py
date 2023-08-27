@@ -15,6 +15,11 @@ from pyglossary.core import rootDir
 
 log = logging.getLogger("pyglossary")
 
+__all__ = [
+	"XslXdxfTransformer",
+]
+
+
 class XslXdxfTransformer:
 	_gram_color: str = "green"
 	_example_padding: int = 10

@@ -16,6 +16,15 @@ stdCompressions = ("gz", "bz2", "lzma")
 
 log = logging.getLogger("pyglossary")
 
+__all__ = [
+	'compress',
+	'compressionOpen',
+	'compressionOpenFunc',
+	'stdCompressions',
+	'uncompress',
+	'zipFileOrDir',
+]
+
 
 def compressionOpenFunc(c: str) -> "Callable | None":
 	if not c:

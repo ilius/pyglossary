@@ -10,6 +10,9 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("pyglossary")
 
+__all__ = [
+	"XdxfTransformer",
+]
 
 class XdxfTransformer:
 	_gram_color: str = "green"

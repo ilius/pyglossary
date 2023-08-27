@@ -1,5 +1,9 @@
 import logging
 
+__all__ = [
+	"MockLogHandler",
+	"getMockLogger",
+]
 
 class MockLogHandler(logging.Handler):
 	def __init__(self) -> None:
