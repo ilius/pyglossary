@@ -26,6 +26,16 @@ if TYPE_CHECKING:
 
 	from .icu_types import T_Collator, T_Locale
 
+__all__ = [
+	"lookupSortKey",
+	"NamedSortKey",
+	"LocaleNamedSortKey",
+	"defaultSortKeyName",
+	"namedSortKeyList",
+	"sortKeyType",
+	"sqliteSortKeyType",
+]
+
 defaultSortKeyName = "headword_lower"
 
 NamedSortKey = namedtuple("NamedSortKey", [
