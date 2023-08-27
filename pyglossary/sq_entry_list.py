@@ -227,7 +227,7 @@ class SqEntryList:
 		except AttributeError as e:
 			log.error(str(e))
 
-	def __iter__(self) -> "Iterator":
+	def __iter__(self) -> "Iterator[EntryType]":
 		if self._cur is None:
 			return
 		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"
