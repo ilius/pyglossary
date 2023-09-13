@@ -229,6 +229,7 @@ class XdxfTransformer:
 	def _write_br(self, hf: "T_htmlfile", child: "Element") -> None:
 		from lxml import etree as ET
 		hf.write(ET.Element("br"))
+		self.writeChildrenOf(hf, child)
 
 	def _write_c(self, hf: "T_htmlfile", child: "Element") -> None:
 		color = child.attrib.get("c", "green")
