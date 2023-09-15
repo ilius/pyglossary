@@ -71,7 +71,7 @@ def escapeDefi(defi: str) -> str:
 
 class Reader(TextGlossaryReader):
 	depends = {
-		"mistune": "mistune==2.0.0a5",
+		"mistune": "mistune==3.0.1",
 	}
 
 	_extract_inline_images: bool = True

@@ -32,12 +32,12 @@
 
 ### Dependencies for reading
 
-PyPI Links: [mistune 2.0.0a5](https://pypi.org/project/mistune/2.0.0a5)
+PyPI Links: [mistune 3.0.1](https://pypi.org/project/mistune/3.0.1)
 
 To install, run:
 
 ```sh
-pip3 install mistune==2.0.0a5
+pip3 install mistune==3.0.1
 ```
 
 ### Dictionary Applications/Tools

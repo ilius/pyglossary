@@ -16,6 +16,6 @@ apt-get install --yes pkg-config
 pip3 install prompt_toolkit
 pip3 install beautifulsoup4
 pip3 install marisa-trie
-pip3 install 'libzim==1.0'
-pip3 install 'mistune==2.0'
+pip3 install 'libzim>=1.0'
+pip3 install 'mistune==3.0.1'
 
