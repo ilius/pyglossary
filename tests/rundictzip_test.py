@@ -1,7 +1,8 @@
 import gzip
 import tempfile
-import unittest
 from pathlib import Path
+
+from glossary_errors_test import TestGlossaryErrorsBase
 
 from pyglossary.os_utils import runDictzip
 
@@ -15,7 +16,7 @@ culpa qui officia deserunt mollit anim id est laborum.
 """
 
 
-class AsciiLowerUpperTest(unittest.TestCase):
+class AsciiLowerUpperTest(TestGlossaryErrorsBase):
 	def make_dz(self, path: Path) -> Path:
 		"""Get path of dzipped file contains TEXT."""
 		test_file_path = Path(path)/"test_file.txt"
@@ -31,9 +32,15 @@ class AsciiLowerUpperTest(unittest.TestCase):
 			self.assertTrue(result_file_path.exists())
 			self.assertTrue(result_file_path.is_file())
 
-	def test_compressing_text(self):
+	def test_compressed_matches(self):
 		with tempfile.TemporaryDirectory() as tmp_dir:
 			result_file_path = self.make_dz(tmp_dir)
 			with gzip.open(result_file_path, 'r') as file:
 				result = file.read().decode()
 		self.assertEqual(result, TEXT)
+
+	def test_missing_target(self):
+		filename = 'NOT_EXISTED_PATH/file.txt'
+		expected_msg = f"{filename} is not a regular file"
+		runDictzip(filename)
+		self.assertLogError(expected_msg)

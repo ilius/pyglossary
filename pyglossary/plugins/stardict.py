@@ -861,6 +861,9 @@ class Writer:
 				yield from self.writeGeneral()
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
+			syn_file = f"{self._filename}.syn"
+			if not self._merge_syns and os.path.exists(syn_file):
+				runDictzip(syn_file)
 
 	def fixDefi(self, defi: str, defiFormat: str) -> str:
 		# for StarDict 3.0:
