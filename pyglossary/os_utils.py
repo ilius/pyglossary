@@ -1,7 +1,8 @@
 import logging
 import os
 import shutil
-from typing import TYPE_CHECKING, Any, Callable
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Callable, Union
 
 from pyglossary import core
 
@@ -56,23 +57,30 @@ class indir:
 		self.oldpwd = None
 
 
-def runDictzip(filename: str) -> None:
-	import subprocess
-	dictzipCmd = shutil.which("dictzip")
-	if not dictzipCmd:
-		log.warning("dictzip command was not found. Make sure it's in your $PATH")
+def runDictzip(filename: Union[str, Path]) -> None:
+	"""Compress file into dictzip format."""
+	try:
+		import idzip
+	except ModuleNotFoundError:
+		log.warning(
+			"Dictzip compression requires idzip module,"
+			f" run `{core.pip} install python-idzip` to install")
 		return
-	b_out, b_err = subprocess.Popen(
-		[dictzipCmd, filename],
-		stdout=subprocess.PIPE,
-	).communicate()
-	log.debug(f"dictzip command: {dictzipCmd!r}")
-	if b_err:
-		err = b_err.decode("utf-8").replace('\n', ' ')
-		log.error(f"dictzip error: {err}")
-	if b_out:
-		out = b_out.decode("utf-8").replace('\n', ' ')
-		log.error(f"dictzip error: {out}")
+
+	filename = Path(filename)
+	destination = filename.parent/(filename.name + ".dz")
+
+	with open(filename, "rb") as inp_file, open(destination, "wb") as out_file:
+		inputinfo = os.fstat(inp_file.fileno())
+		log.debug("compressing %s to %s", filename, destination)
+		idzip.compressor.compress(
+			inp_file,
+			inputinfo.st_size,
+			out_file,
+			filename.name,
+			int(inputinfo.st_mtime))
+
+	filename.unlink()
 
 
 def _rmtreeError(
