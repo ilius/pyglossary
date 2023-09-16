@@ -68,6 +68,9 @@ def runDictzip(filename: Union[str, Path]) -> None:
 		return
 
 	filename = Path(filename)
+	if not filename.is_file():
+		log.error(f"{filename} is not a regular file")
+		return
 	destination = filename.parent/(filename.name + ".dz")
 
 	with open(filename, "rb") as inp_file, open(destination, "wb") as out_file:
