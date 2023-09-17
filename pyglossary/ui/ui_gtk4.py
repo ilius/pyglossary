@@ -1684,7 +1684,10 @@ check {
 			inPath = urlToPath(inPath)
 			self.reverseInputEntry.set_text(inPath)
 
-		if self.config["ui_autoSetFormat"] and not self.reverseInputFormatCombo.getActive():
+		if (
+			self.config["ui_autoSetFormat"] and
+			not self.reverseInputFormatCombo.getActive()
+		):
 			inputArgs = Glossary.detectInputFormat(inPath, quiet=True)
 			if inputArgs:
 				self.reverseInputFormatCombo.setActive(inputArgs.formatName)

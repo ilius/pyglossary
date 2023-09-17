@@ -46,7 +46,8 @@ class AboutTabTitleBox(gtk.Box):
 	#	height = int(size * 1.5)
 	#	return height, height
 
-	# returns: (minimum: int, natural: int, minimum_baseline: int, natural_baseline: int)
+	# returns: (minimum: int, natural: int,
+	# 	minimum_baseline: int, natural_baseline: int)
 	#def do_measure(self, orientation, for_size):
 	#	return (for_size, for_size, for_size, for_size)
 
@@ -110,7 +111,8 @@ class AboutWidget(gtk.Box):
 		tv.set_cursor_visible(False)
 		#tv.set_border_width(10)
 		buf = tv.get_buffer()
-		# buf.insert_markup(buf.get_end_iter(), markup=text, len=len(text.encode("utf-8")))
+		# buf.insert_markup(buf.get_end_iter(), markup=text,
+		# len=len(text.encode("utf-8")))
 		buf.set_text(text)
 		tv.show()
 		swin = gtk.ScrolledWindow()

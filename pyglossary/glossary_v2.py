@@ -120,11 +120,14 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	These methods do not exist in glossary_v2.py (but still exist in glossary.py)
 
-		- read(): you can use directRead() then iterate over glossary
+		- read():
+			you can use directRead() then iterate over glossary
 
-		- sortWords(): you have to sort entries yourself (when adding or after directRead)
+		- sortWords():
+			you have to sort entries yourself (when adding or after directRead)
 
-		- updateIter(): no longer needed, and does't do anything in glossary.py
+		- updateIter():
+			no longer needed, and does't do anything in glossary.py
 
 	"""
 

@@ -127,7 +127,7 @@ class Reader:
 
 		self._filename = filename
 
-		with open(join(filename, "info.json"), "r", encoding="utf-8") as infoFp:
+		with open(join(filename, "info.json"), encoding="utf-8") as infoFp:
 			info = jsonToOrderedData(infoFp.read())
 		self._wordCount = info.pop("wordCount")
 		for key, value in info.items():

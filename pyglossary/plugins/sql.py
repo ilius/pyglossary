@@ -54,7 +54,7 @@ class Writer:
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._file = open(filename, "wt", encoding=self._encoding)
+		self._file = open(filename, "w", encoding=self._encoding)
 		self._writeInfo()
 
 	def _writeInfo(self) -> None:

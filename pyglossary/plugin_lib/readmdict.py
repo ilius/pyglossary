@@ -285,7 +285,9 @@ class MDict:
 				key_block_info[i:i+self._number_width],
 			)[0]
 			i += self._number_width
-			key_block_info_list += [(key_block_compressed_size, key_block_decompressed_size)]
+			key_block_info_list.append(
+				(key_block_compressed_size, key_block_decompressed_size),
+			)
 
 		# assert num_entries == self._num_entries
 
@@ -363,7 +365,8 @@ class MDict:
 		# encryption flag
 		#	0x00 - no encryption, "Allow export to text" is checked in MdxBuilder 3.
 		#	0x01 - encrypt record block, "Encryption Key" is given in MdxBuilder 3.
-		#	0x02 - encrypt key info block, "Allow export to text" is unchecked in MdxBuilder 3.
+		#	0x02 - encrypt key info block,
+		# 			"Allow export to text" is unchecked in MdxBuilder 3.
 		if b'Encrypted' not in header_tag or header_tag[b'Encrypted'] == b'No':
 			self._encrypt = 0
 		elif header_tag[b'Encrypted'] == b'Yes':
@@ -485,7 +488,8 @@ class MDict:
 			adler32 = unpack('>I', f.read(4))[0]
 			assert adler32 == (zlib.adler32(block) & 0xffffffff)
 
-		# read key block info, which indicates key block's compressed and decompressed size
+		# read key block info, which indicates key block's compressed
+		# and decompressed size
 		key_block_info = f.read(key_block_info_size)
 		key_block_info_list = self._decode_key_block_info(key_block_info)
 		assert num_key_blocks == len(key_block_info_list)
@@ -572,7 +576,10 @@ class MDict:
 		for _ in range(num_record_blocks):
 			decompressed_size = self._read_int32(f)
 			compressed_size = self._read_int32(f)
-			record_block = self._decode_block(f.read(compressed_size), decompressed_size)
+			record_block = self._decode_block(
+				f.read(compressed_size),
+				decompressed_size,
+			)
 
 			# split record block according to the offset info from key block
 			while i < len(self._key_list):
@@ -618,7 +625,10 @@ class MDict:
 		for compressed_size, decompressed_size in record_block_info_list:
 			record_block_compressed = f.read(compressed_size)
 			try:
-				record_block = self._decode_block(record_block_compressed, decompressed_size)
+				record_block = self._decode_block(
+					record_block_compressed,
+					decompressed_size,
+				)
 			except zlib.error:
 				log.error("zlib decompress error")
 				log.debug(f"record_block_compressed = {record_block_compressed!r}")
