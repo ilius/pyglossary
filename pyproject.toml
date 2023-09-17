@@ -47,6 +47,7 @@ ignore = [
     "D401", # First line of docstring should be in imperative mood
     "D417", # Missing argument descriptions in the docstring
     "E402", # Module level import not at top of file
+    "E721", # Do not compare types, use `isinstance()`
     "SIM105", # Use contextlib.suppress({exception}) instead of try-except-pass
     "SIM117", # Use a single with statement with multiple contexts...
     "UP009", # UTF-8 encoding declaration is unnecessary
