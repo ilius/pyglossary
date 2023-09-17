@@ -261,7 +261,8 @@ class WordNet:
 						symbol_desc = getattr(PointerSymbols, synset.ss_type)[symbol]
 					except KeyError:
 						print(
-							f"WARNING: unknown pointer symbol {symbol} for {synset.ss_type} ",
+							f"WARNING: unknown pointer symbol {symbol}"
+							f" for {synset.ss_type} ",
 						)
 						symbol_desc = symbol
 

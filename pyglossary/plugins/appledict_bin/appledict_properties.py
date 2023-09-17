@@ -39,7 +39,8 @@ class AppleDictProperties:
 	key_text_fixed_fields: list[str]
 
 	# in plist file: "IDXIndexDataFields" / "IDXVariableDataFields"
-	# Example: ["DCSKeyword", "DCSHeadword", "DCSEntryTitle", "DCSAnchor", "DCSYomiWord"]
+	# Example: ["DCSKeyword", "DCSHeadword", "DCSEntryTitle",
+	# "DCSAnchor", "DCSYomiWord"]
 	key_text_variable_fields: list[str]
 
 	# DCSDictionaryCSS, generally "DefaultStyle.css"
@@ -73,8 +74,10 @@ def from_metadata(metadata: dict) -> AppleDictProperties:
 		external_data_fields[0].get("IDXDataSize") == 8
 	)
 
-	if 'TrieAuxiliaryDataOptions' in key_text_metadata and 'HeapDataCompressionType' in \
-			key_text_metadata['TrieAuxiliaryDataOptions']:
+	if (
+		'TrieAuxiliaryDataOptions' in key_text_metadata and
+		'HeapDataCompressionType' in key_text_metadata['TrieAuxiliaryDataOptions']
+	):
 		key_text_compression_type = \
 			key_text_metadata['TrieAuxiliaryDataOptions']['HeapDataCompressionType']
 	else:

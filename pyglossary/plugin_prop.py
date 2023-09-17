@@ -325,7 +325,10 @@ class PluginProp:
 				continue
 			prop = optionsProp[name]
 			if prop.disabled:
-				core.trace(log, f"skipping disabled option {name} in {self.name} plugin")
+				core.trace(
+					log,
+					f"skipping disabled option {name} in {self.name} plugin",
+				)
 				continue
 			if not prop.validate(default):
 				log.warning(

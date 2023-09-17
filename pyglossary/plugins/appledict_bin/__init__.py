@@ -117,7 +117,8 @@ class Reader:
 
 	def tostring(
 		self,
-		elem: "Element | HtmlComment | HtmlElement | HtmlEntity | HtmlProcessingInstruction",
+		elem: "Element | HtmlComment | HtmlElement"
+			" | HtmlEntity | HtmlProcessingInstruction",
 	) -> str:
 		from lxml.html import tostring as tostring
 
@@ -461,7 +462,9 @@ class Reader:
 				continue
 			title_j = entryBytes.find(b'"', title_i + 9)
 			if title_j < 0:
-				log.error(f"title closing not found: {entryBytes.decode(self._encoding)}")
+				log.error(
+					f"title closing not found: {entryBytes.decode(self._encoding)}",
+				)
 				continue
 			titleById[_id] = entryBytes[title_i + 9: title_j].decode(self._encoding)
 
@@ -493,7 +496,9 @@ class Reader:
 					decompressedSectionByteLen = readInt(keyTextFile)
 					if compressedSectionByteLen == decompressedSectionByteLen == 0:
 						break
-					chunk_section_compressed = keyTextFile.read(compressedSectionByteLen - 4)
+					chunk_section_compressed = keyTextFile.read(
+						compressedSectionByteLen - 4,
+					)
 					chunksection_bytes = decompress(chunk_section_compressed )
 					buff.write(chunksection_bytes)
 					fileLimitDecompressed += decompressedSectionByteLen
@@ -546,7 +551,8 @@ class Reader:
 					small_len = read_2_bytes_here(buff)  # 0x2c
 				curr_offset = buff.tell()
 				next_lexeme_offset = curr_offset + small_len
-				# the resulting number must match with Contents/Body.data address of the entry
+				# the resulting number must match with Contents/Body.data
+				# address of the entry
 				articleAddress: ArticleAddress
 				if properties.body_has_sections:
 					chunkOffset = readInt(buff)
@@ -589,7 +595,9 @@ class Reader:
 					# d:priority=".." between 0x00..0x12, priority = [0..9]
 					priority = (priorityAndParentalControl - parentalControl) // 2
 				else:
-					log.error(f"Unknown private field: {properties.key_text_fixed_fields}")
+					log.error(
+						f"Unknown private field: {properties.key_text_fixed_fields}",
+					)
 					return {}
 
 				keyTextFields: "list[str]" = []

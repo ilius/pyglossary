@@ -87,7 +87,7 @@ class Reader:
 			)
 		self._filename = filename
 
-		with open(infoFname, "r", encoding=self._encoding) as infoFp:
+		with open(infoFname, encoding=self._encoding) as infoFp:
 			info = jsonToOrderedData(infoFp.read())
 		self._wordCount = info.pop("wordCount")
 		self._prev_link = info.pop("prev_link")
@@ -121,7 +121,6 @@ class Reader:
 
 			with open(
 				join(self._filename, nextPath),
-				"r",
 				encoding=self._encoding,
 			) as _file:
 				header = _file.readline().rstrip()

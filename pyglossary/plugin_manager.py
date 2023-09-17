@@ -291,7 +291,9 @@ class PluginManager:
 			if not inputFilename:
 				return error(f"Invalid filename {filename!r}")  # type: ignore
 			if not plugin:
-				return error("No filename nor format is given for output file")  # type: ignore
+				return error(
+					"No filename nor format is given for output file",
+				)  # type: ignore
 			filename = splitext(inputFilename)[0] + plugin.ext
 			return DetectedFormat(filename, plugin.name, "")
 
@@ -307,7 +309,9 @@ class PluginManager:
 			return error("Unable to detect output format!")  # type: ignore
 
 		if not plugin.canWrite:
-			return error(f"plugin {plugin.name} does not support writing")  # type: ignore
+			return error(
+				f"plugin {plugin.name} does not support writing",
+			)  # type: ignore
 
 		if compression in getattr(plugin.writerClass, "compressions", []):
 			compression = ""

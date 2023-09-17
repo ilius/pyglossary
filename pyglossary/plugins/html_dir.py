@@ -167,7 +167,6 @@ class Writer:
 			if word not in linkTargetSet:
 				continue
 			if word in fileByWord:
-				# log.info(f'fileByWord[{word}]={fileByWord[word]}, filename={filename}')
 				fileByWord[word].append((filename, entryIndex))
 			else:
 				fileByWord[word] = [(filename, entryIndex)]
@@ -484,7 +483,10 @@ class Writer:
 				'<hr>\n'
 			)
 			pos = fileObj.tell()
-			if pos > initFileSizeMax and pos > max_file_size - len(text.encode(encoding)):
+			if (
+				pos > initFileSizeMax and
+				pos > max_file_size - len(text.encode(encoding))
+			):
 				fileObj = self.nextFile()
 				fileObj.write(pageHeader(
 					len(self._filenameList) - 1,

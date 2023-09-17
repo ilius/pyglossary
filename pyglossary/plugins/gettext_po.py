@@ -135,7 +135,7 @@ class Writer:
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._file = _file = open(filename, mode="wt", encoding="utf-8")
+		self._file = _file = open(filename, mode="w", encoding="utf-8")
 		_file.write('#\nmsgid ""\nmsgstr ""\n')
 		for key, value in self._glos.iterInfo():
 			_file.write(f'"{key}: {value}\\n"\n')
