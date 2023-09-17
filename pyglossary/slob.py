@@ -1138,7 +1138,8 @@ class Writer:
 
 		self.current_bin: "BinMemWriter | None" = None
 
-		created_at = os.getenv("SLOB_TIMESTAMP") or datetime.now(timezone.utc).isoformat()
+		created_at = os.getenv("SLOB_TIMESTAMP") or \
+			datetime.now(timezone.utc).isoformat()
 
 		self.blob_count = 0
 		self.ref_count = 0
@@ -1310,6 +1311,14 @@ class Writer:
 	def _resolve_aliases(self) -> None:
 		self._fire_event('begin_resolve_aliases')
 		self.f_aliases.finalize()
+
+		def read_key_frag(item: "Blob", default_fragment: str) -> "tuple[str, str]":
+			key_frag = pickle.loads(item.content)
+			if isinstance(key_frag, str):
+				return key_frag, default_fragment
+			to_key, fragment = key_frag
+			return to_key, fragment
+
 		with MultiFileReader(
 			self.f_ref_positions.name,
 			self.f_refs.name,
@@ -1326,13 +1335,6 @@ class Writer:
 					compression=None,
 					version_info=False,
 				)
-
-				def read_key_frag(item: "Blob", default_fragment: str) -> "tuple[str, str]":
-					key_frag = pickle.loads(item.content)
-					if isinstance(key_frag, str):
-						return key_frag, default_fragment
-					to_key, fragment = key_frag
-					return to_key, fragment
 
 				for item in aliasesSlob:
 					from_key = item.key
@@ -1408,18 +1410,18 @@ class Writer:
 
 		buf_size = 10 * 1024 * 1024
 
+		def write_tags(tags: "MappingProxyType[str, Any]", f: "StructWriter") -> None:
+			f.write(pack(U_CHAR, len(tags)))
+			for key, value in tags.items():
+				f.write_tiny_text(key)
+				f.write_tiny_text(value, editable=True)
+
 		with fopen(self.filename, mode='wb') as output_file:
 			out = StructWriter(output_file, self.encoding)
 			out.write(MAGIC)
 			out.write(uuid4().bytes)
 			out.write_tiny_text(self.encoding, encoding=UTF8)
 			out.write_tiny_text(self.compression)
-
-			def write_tags(tags: "MappingProxyType[str, Any]", f: "StructWriter") -> None:
-				f.write(pack(U_CHAR, len(tags)))
-				for key, value in tags.items():
-					f.write_tiny_text(key)
-					f.write_tiny_text(value, editable=True)
 
 			write_tags(self.tags, out)
 
