@@ -68,22 +68,21 @@ def runDictzip(filename: Union[str, Path]) -> None:
 		return
 
 	filename = Path(filename)
-	if not filename.is_file():
-		log.error(f"{filename} is not a regular file")
-		return
 	destination = filename.parent/(filename.name + ".dz")
 
-	with open(filename, "rb") as inp_file, open(destination, "wb") as out_file:
-		inputinfo = os.fstat(inp_file.fileno())
-		log.debug("compressing %s to %s", filename, destination)
-		idzip.compressor.compress(
-			inp_file,
-			inputinfo.st_size,
-			out_file,
-			filename.name,
-			int(inputinfo.st_mtime))
-
-	filename.unlink()
+	try:
+		with open(filename, "rb") as inp_file, open(destination, "wb") as out_file:
+			inputinfo = os.fstat(inp_file.fileno())
+			log.debug("compressing %s to %s", filename, destination)
+			idzip.compressor.compress(
+				inp_file,
+				inputinfo.st_size,
+				out_file,
+				filename.name,
+				int(inputinfo.st_mtime))
+		filename.unlink()
+	except OSError as error:
+		log.error(str(error))
 
 
 def _rmtreeError(
