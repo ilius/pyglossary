@@ -41,6 +41,6 @@ class AsciiLowerUpperTest(TestGlossaryErrorsBase):
 
 	def test_missing_target(self):
 		filename = 'NOT_EXISTED_PATH/file.txt'
-		expected_msg = f"{filename} is not a regular file"
+		expected_msg = f"[Errno 2] No such file or directory: '{filename}'"
 		runDictzip(filename)
 		self.assertLogError(expected_msg)
