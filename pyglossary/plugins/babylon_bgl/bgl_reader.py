@@ -366,6 +366,8 @@ class BglReader:
 		self.gzipOffset = None
 		# must be a in RRGGBB format
 		self.iconDataList = []
+		self.aboutBytes: "bytes | None" = None
+		self.aboutExt = ""
 
 	def __len__(self) -> int:
 		if self.numEntries is None:
@@ -695,12 +697,16 @@ class BglReader:
 			self.iconDataList.append((key, b_value))
 			return
 
-		value = None
 		value = b_value if decode is None else decode(b_value)
 
 		# `value` can be None, str, bytes or dict
 
 		if not value:
+			return
+
+		if key == "bgl_about":
+			self.aboutBytes = value["about"]
+			self.aboutExt = value["about_extension"]
 			return
 
 		if isinstance(value, dict):
@@ -759,6 +765,12 @@ class BglReader:
 
 		for fname, iconData in self.iconDataList:
 			yield self._glos.newDataEntry(fname, iconData)
+
+		if self.aboutBytes:
+			yield self._glos.newDataEntry(
+				"about" + self.aboutExt,
+				self.aboutBytes,
+			)
 
 		block = Block()
 		while not self.isEndOfDictData():

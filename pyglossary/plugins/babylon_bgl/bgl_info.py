@@ -78,13 +78,18 @@ def charsetInfoDecode(b_value: bytes) -> "str | None":
 	return None
 
 
-def aboutInfoDecode(b_value: bytes) -> "dict[str, str]":
+def aboutInfoDecode(b_value: bytes) -> "dict[str, any]":
 	if not b_value:
 		return None
-	aboutExt, _, aboutContents = b_value.partition(b"\x00")
-	if not aboutExt:
+	b_aboutExt, _, aboutContents = b_value.partition(b"\x00")
+	if not b_aboutExt:
 		log.warning("read_type_3: about: no file extension")
 		return None
+	try:
+		aboutExt = b_aboutExt.decode("ascii")
+	except UnicodeDecodeError as e:
+		log.error(f"{b_aboutExt=}: {e}")
+		aboutExt = ""
 	return {
 		"about_extension": aboutExt,
 		"about": aboutContents,
