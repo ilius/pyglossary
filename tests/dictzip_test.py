@@ -2,6 +2,7 @@ import gzip
 import tempfile
 from pathlib import Path
 
+import idzip as _idzip  # noqa: F401
 from glossary_errors_test import TestGlossaryErrorsBase
 
 from pyglossary.os_utils import runDictzip
@@ -42,7 +43,7 @@ class AsciiLowerUpperTest(TestGlossaryErrorsBase):
 		self.assertEqual(result, TEXT)
 
 	def test_missing_target(self):
-		filename = 'NOT_EXISTED_PATH/file.txt'
+		filename = "/NOT_EXISTING_PATH/file.txt"
 		expected_msg = f"[Errno 2] No such file or directory: '{filename}'"
 		runDictzip(filename)
 		self.assertLogError(expected_msg)

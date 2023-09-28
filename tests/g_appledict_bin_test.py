@@ -107,7 +107,8 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			"Contents/MyDictionary_prefs.html",
 		]
 		resFiles = {
-			"Images/_internal_dictionary.png": "Contents/Images/_internal_dictionary.png",
+			"Images/_internal_dictionary.png":
+				"Contents/Images/_internal_dictionary.png",
 		}
 		self.convert_appledict_binary_to_txt(baseName, files, resFiles=resFiles)
 

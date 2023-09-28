@@ -162,7 +162,10 @@ class TestEntryStripFullHtml(unittest.TestCase):
 	def test_3(self):
 		self.case(
 			word="test3",
-			origDefi="<!DOCTYPE html><html><head></head><body>simple <i>html</i></body></html>",
+			origDefi=(
+				"<!DOCTYPE html><html><head></head><body>simple "
+				"<i>html</i></body></html>"
+			),
 			fixedDefi="simple <i>html</i>",
 			error=None,
 		)

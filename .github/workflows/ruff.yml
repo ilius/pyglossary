@@ -26,4 +26,4 @@ jobs:
           ls -l ruff
           chmod a+x ruff
       - name: Run ruff
-        run: ./ruff ./pyglossary
+        run: ./ruff ./pyglossary ./tests/
