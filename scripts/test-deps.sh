@@ -1,1 +1,2 @@
-python -m pip install  lxml beautifulsoup4 biplist marisa-trie mistune html5lib PyICU
+python -m pip install \
+  PyICU beautifulsoup4 biplist html5lib python-idzip lxml marisa-trie mistune
