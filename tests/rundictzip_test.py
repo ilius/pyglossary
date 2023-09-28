@@ -16,6 +16,8 @@ culpa qui officia deserunt mollit anim id est laborum.
 """
 
 
+# TODO Test also dictzip func
+# TODO Check if dictzip in GH Action and avoid if not
 class AsciiLowerUpperTest(TestGlossaryErrorsBase):
 	def make_dz(self, path: Path) -> Path:
 		"""Get path of dzipped file contains TEXT."""
