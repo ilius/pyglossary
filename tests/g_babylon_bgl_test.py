@@ -66,7 +66,10 @@ class TestGlossaryBGL(TestGlossaryBase):
 	def test_convert_bgl_txt_4(self):
 		self.convert_bgl_txt(
 			"Farsi_Aviation_Dictionary",
-			sha1sum="b5741bf7ca4306f76ba414fe8efb637c59999d2b",
+			sha1sum="34729e2542085c6026090e9e3f49d10291393113",
+			readOptions={
+				"process_html_in_key": True,
+			},
 		)
 
 
