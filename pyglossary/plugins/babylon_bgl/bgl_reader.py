@@ -506,7 +506,8 @@ class BglReader:
 			self.info["lastUpdated"] = self.info.pop("bgl_firstUpdated")
 		###
 		for key, value in self.info.items():
-			if value == "":
+			s_value = str(value).strip("\x00")
+			if not s_value:
 				continue
 				# TODO: a bool flag to add empty value infos?
 			# leave "creationTime" and "lastUpdated" as is
@@ -515,7 +516,7 @@ class BglReader:
 			}:
 				key = "bgl_" + key
 			try:
-				glos.setInfo(key, str(value))
+				glos.setInfo(key, s_value)
 			except Exception:
 				log.exception(f"key = {key}")
 
