@@ -352,7 +352,7 @@
 			"part_of_speech_color": "007000",
 			"no_control_sequence_in_defi": false,
 			"strict_string_conversion": false,
-			"process_html_in_key": false,
+			"process_html_in_key": true,
 			"key_rstrip_chars": ""
 		}
 	},

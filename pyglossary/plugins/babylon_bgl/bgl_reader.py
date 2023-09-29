@@ -300,7 +300,7 @@ class BglReader:
 	# explicitly by user. Namely this option does the following:
 	# - resolve character references
 	# - strip HTML tags
-	_process_html_in_key: bool = False
+	_process_html_in_key: bool = True
 	# a string of characters that will be stripped from the end of the
 	# key (and alternate), see str.rstrip function
 	_key_rstrip_chars: str = ""
