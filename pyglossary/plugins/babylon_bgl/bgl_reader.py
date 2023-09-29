@@ -914,6 +914,11 @@ class BglReader:
 			return Err
 		b_defi = block.data[pos:pos + Len]
 		u_defi = self.processDefi(b_defi, word.b_word)
+		# I was going to add this u_word_html or "formatted headword" to defi,
+		# so to lose this information, but after looking at the diff
+		# for 8 such glossaries, I decided it's not useful enough!
+		# if word.u_word_html:
+		# 	u_defi = f"<div><b>{word.u_word_html}</b></div>" + u_defi
 
 		self.defiMaxBytes = max(self.defiMaxBytes, len(b_defi))
 
