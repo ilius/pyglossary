@@ -149,6 +149,18 @@ re_charset_decode = re.compile(
 re_b_reference = re.compile(b"^[0-9a-fA-F]{4}$")
 
 
+from collections import namedtuple
+
+EntryWordData = namedtuple(
+	"EntryWordData", [
+		"pos",  # int
+		"b_word",  # bytes
+		"u_word",  # str
+		"u_word_html", # str
+	],
+)
+
+
 class BGLGzipFile(GzipFile):
 
 	"""
@@ -784,26 +796,27 @@ class BglReader:
 				yield self.readType2(block)
 
 			elif block.type == 11:
-				succeed, u_word, u_alts, u_defi = self.readEntry_Type11(block)
+				succeed, _u_word, u_alts, u_defi = self.readEntry_Type11(block)
 				if not succeed:
 					continue
 
 				yield self._glos.newEntry(
-					[u_word] + u_alts,
+					[_u_word] + u_alts,
 					u_defi,
 				)
 
 			elif block.type in (1, 7, 10, 11, 13):
 				pos = 0
 				# word:
-				succeed, pos, u_word, b_word = self.readEntryWord(block, pos)
-				if not succeed:
+				wordData = self.readEntryWord(block, pos)
+				if not wordData:
 					continue
+				pos = wordData.pos
 				# defi:
 				succeed, pos, u_defi, b_defi = self.readEntryDefi(
 					block,
 					pos,
-					b_word,
+					wordData,
 				)
 				if not succeed:
 					continue
@@ -811,13 +824,12 @@ class BglReader:
 				succeed, pos, u_alts = self.readEntryAlts(
 					block,
 					pos,
-					b_word,
-					u_word,
+					wordData,
 				)
 				if not succeed:
 					continue
 				yield self._glos.newEntry(
-					[u_word] + u_alts,
+					[wordData.u_word] + u_alts,
 					u_defi,
 				)
 
@@ -825,23 +837,18 @@ class BglReader:
 		self,
 		block: "Block",
 		pos: int,
-	) -> "tuple[bool, int | None, bytes | None, bytes | None]":
+	) -> "EntryWordData | None":
 		"""
 		Read word part of entry.
 
-		Return value is a list.
-		(False, None, None, None) if error
-		(True, pos, u_word, b_word) if OK
-		u_word is a str instance (utf-8)
-		b_word is a bytes instance
+		Return None on error
 		"""
-		Err = (False, None, None, None)
 		if pos + 1 > len(block.data):
 			log.error(
 				f"reading block offset={block.offset:#02x}"
 				f", reading word size: pos + 1 > len(block.data)",
 			)
-			return Err
+			return None
 		Len = block.data[pos]
 		pos += 1
 		if pos + Len > len(block.data):
@@ -850,9 +857,9 @@ class BglReader:
 				f", block.type={block.type}"
 				f", reading word: pos + Len > len(block.data)",
 			)
-			return Err
+			return None
 		b_word = block.data[pos:pos + Len]
-		u_word = self.processKey(b_word)
+		u_word, u_word_html = self.processKey(b_word)
 		"""
 		Entry keys may contain html text, for example:
 		ante<font face'Lucida Sans Unicode'>&lt; meridiem
@@ -867,13 +874,18 @@ class BglReader:
 		"""
 		pos += Len
 		self.wordLenMax = max(self.wordLenMax, len(u_word))
-		return True, pos, u_word.strip(), b_word.strip()
+		return EntryWordData(
+			pos=pos,
+			u_word=u_word.strip(),
+			b_word=b_word.strip(),
+			u_word_html=u_word_html,
+		)
 
 	def readEntryDefi(
 		self,
 		block: "Block",
 		pos: int,
-		b_word: bytes,
+		word: EntryWordData,
 	) -> "tuple[bool, int | None, bytes | None, bytes | None]":
 		"""
 		Read defi part of entry.
@@ -901,7 +913,8 @@ class BglReader:
 			)
 			return Err
 		b_defi = block.data[pos:pos + Len]
-		u_defi = self.processDefi(b_defi, b_word)
+		u_defi = self.processDefi(b_defi, word.b_word)
+
 		self.defiMaxBytes = max(self.defiMaxBytes, len(b_defi))
 
 		pos += Len
@@ -911,8 +924,7 @@ class BglReader:
 		self,
 		block: "Block",
 		pos: int,
-		b_word: bytes,
-		u_word: str,
+		word: EntryWordData,
 	) -> "tuple[bool, int | None, list[str] | None]":
 		"""
 		Returns
@@ -941,12 +953,12 @@ class BglReader:
 				)
 				return Err
 			b_alt = block.data[pos:pos + Len]
-			u_alt = self.processAlternativeKey(b_alt, b_word)
+			u_alt = self.processAlternativeKey(b_alt, word.b_word)
 			# Like entry key, alt is not processed as html by babylon,
 			# so do we.
 			u_alts.add(u_alt)
 			pos += Len
-		u_alts.discard(u_word)
+		u_alts.discard(word.u_word)
 		return True, pos, sorted(u_alts)
 
 	def readEntry_Type11(
@@ -974,7 +986,7 @@ class BglReader:
 			)
 			return Err
 		b_word = block.data[pos:pos + wordLen]
-		u_word = self.processKey(b_word)
+		u_word, u_word_html = self.processKey(b_word)
 		pos += wordLen
 		self.wordLenMax = max(self.wordLenMax, len(u_word))
 
@@ -1149,12 +1161,13 @@ class BglReader:
 			)
 		return u_text, defaultEncodingOnly
 
-	def processKey(self, b_word: bytes) -> str:
+	def processKey(self, b_word: bytes) -> "tuple[str, str]":
 		"""
 		b_word is a bytes instance
-		returns u_word_main, as str instance (utf-8 encoding).
+		returns (u_word: str, u_word_html: str)
+		u_word_html is empty unless it's different from u_word.
 		"""
-		b_word_main, strip_count = stripDollarIndexes(b_word)
+		b_word, strip_count = stripDollarIndexes(b_word)
 		if strip_count > 1:
 			log.debug(
 				f"processKey({b_word}):\n"
@@ -1163,31 +1176,36 @@ class BglReader:
 		# convert to unicode
 		if self._strict_string_conversion:
 			try:
-				u_word_main = b_word_main.decode(self.sourceEncoding)
+				u_word = b_word.decode(self.sourceEncoding)
 			except UnicodeError:
 				log.debug(
 					f"processKey({b_word}):\nconversion error:\n" + excMessage(),
 				)
-				u_word_main = b_word_main.decode(
+				u_word = b_word.decode(
 					self.sourceEncoding,
 					"ignore",
 				)
 		else:
-			u_word_main = b_word_main.decode(self.sourceEncoding, "ignore")
+			u_word = b_word.decode(self.sourceEncoding, "ignore")
 
+		u_word_html = ""
 		if self._process_html_in_key:
-			# u_word_main_orig = u_word_main
-			u_word_main = stripHtmlTags(u_word_main)
-			u_word_main = replaceHtmlEntriesInKeys(u_word_main)
-			# if(re.match(".*[&<>].*", u_word_main_orig)):
-			# 	log.debug("original text: " + u_word_main_orig + "\n" \
-			# 			  + "new      text: " + u_word_main + "\n")
-		u_word_main = removeControlChars(u_word_main)
-		u_word_main = removeNewlines(u_word_main)
-		u_word_main = u_word_main.lstrip()
+			u_word = replaceHtmlEntriesInKeys(u_word)
+			# u_word = u_word.replace("<BR>", "").replace("<BR/>", "")\
+			# 	.replace("<br>", "").replace("<br/>", "")
+			_u_word_copy = u_word
+			u_word = stripHtmlTags(u_word)
+			if u_word != _u_word_copy:
+				u_word_html = _u_word_copy
+			# if(re.match(".*[&<>].*", _u_word_copy)):
+			# 	log.debug("original text: " + _u_word_copy + "\n" \
+			# 			  + "new      text: " + u_word + "\n")
+		u_word = removeControlChars(u_word)
+		u_word = removeNewlines(u_word)
+		u_word = u_word.lstrip()
 		if self._key_rstrip_chars:
-			u_word_main = u_word_main.rstrip(self._key_rstrip_chars)
-		return u_word_main
+			u_word = u_word.rstrip(self._key_rstrip_chars)
+		return u_word, u_word_html
 
 	def processAlternativeKey(self, b_word: bytes, b_key: bytes) -> str:
 		"""
