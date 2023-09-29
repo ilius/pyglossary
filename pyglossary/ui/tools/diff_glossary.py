@@ -10,7 +10,6 @@ from subprocess import PIPE, Popen
 from typing import TYPE_CHECKING, Iterator
 
 from pyglossary.core import log
-from pyglossary.entry import Entry
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.tools.colors import (
 	green,
@@ -31,6 +30,10 @@ Glossary.init()
 
 log.setVerbosity(1)
 
+entrySep = f"\n{'_' * 40}\n\n"
+
+noInfo = os.getenv("GLOSSARY_DIFF_NO_INFO") == "1"
+
 
 def formatInfoValueDiff(diff: "Iterator[str]") -> str:
 	a = ""
@@ -48,8 +51,6 @@ def formatInfoValueDiff(diff: "Iterator[str]") -> str:
 			continue
 	return a + "\n" + b
 
-
-entrySep = f"\n{'_' * 40}\n\n"
 
 def diffGlossary(
 	filename1: str,
@@ -92,8 +93,12 @@ def diffGlossary(
 	# infoIter1 = iter(sorted(glos1.iterInfo()))
 	# infoIter2 = iter(sorted(glos2.iterInfo()))
 
-	infoIter1 = glos1.iterInfo()
-	infoIter2 = glos2.iterInfo()
+	if noInfo:
+		infoIter1 = iter([])
+		infoIter2 = iter([])
+	else:
+		infoIter1 = glos1.iterInfo()
+		infoIter2 = glos2.iterInfo()
 
 	index1 = -1
 	index2 = -1
@@ -151,10 +156,6 @@ def diffGlossary(
 
 	infoPair1 = None
 	infoPair2 = None
-
-	def newInfoEntry(pair: "tuple[str, str]") -> "EntryType":
-		key, value = pair
-		return Entry(f"Info: {key}", f"Value: {value}")
 
 	def infoStep() -> None:
 		nonlocal infoPair1, infoPair2
