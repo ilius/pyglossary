@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # mypy: ignore-errors
 
+import atexit
 import difflib
 import os
 import os.path
@@ -325,6 +326,13 @@ def gitDiffMain() -> None:
 		f"{'_' * 80}\n\n"
 		f"### File: {filename2}  ({old_hex}..{new_hex})\n"
 	)
+
+	resDir = filename2 + "_res"
+	if os.path.isdir(resDir):
+		resDirTmp = filename1 + "_res"
+		os.symlink(os.path.realpath(resDir), resDirTmp)
+		atexit.register(os.remove, resDirTmp)
+
 	diffGlossary(
 		filename1,
 		filename2,
