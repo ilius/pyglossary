@@ -1,11 +1,12 @@
 import gzip
 import tempfile
+from functools import partialmethod
 from pathlib import Path
 
-import idzip as _idzip  # noqa: F401
+import idzip as _  # noqa: F401
 from glossary_errors_test import TestGlossaryErrorsBase
 
-from pyglossary.os_utils import runDictzip
+from pyglossary.os_utils import _dictzip, _idzip
 
 TEXT = """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
@@ -17,33 +18,47 @@ culpa qui officia deserunt mollit anim id est laborum.
 """
 
 
-# TODO Test also dictzip func
 # TODO Check if dictzip in GH Action and avoid if not
-class AsciiLowerUpperTest(TestGlossaryErrorsBase):
-	def make_dz(self, path: Path) -> Path:
+class DictzipTest(TestGlossaryErrorsBase):
+	def make_dz(self, func, path: Path) -> Path:
 		"""Get path of dzipped file contains TEXT."""
 		test_file_path = Path(path)/"test_file.txt"
 		result_file_path = test_file_path.parent/(test_file_path.name + ".dz")
 		with open(test_file_path, "a") as tmp_file:
 			tmp_file.write(TEXT)
-		runDictzip(str(test_file_path))
+		func(str(test_file_path))
 		return result_file_path
 
-	def test_compressed_exists(self):
+	def is_compressed_exists(self, func):
 		with tempfile.TemporaryDirectory() as tmp_dir:
-			result_file_path = self.make_dz(tmp_dir)
+			result_file_path = self.make_dz(func, tmp_dir)
 			self.assertTrue(result_file_path.exists())
 			self.assertTrue(result_file_path.is_file())
 
-	def test_compressed_matches(self):
+	def is_compressed_matches(self, func):
 		with tempfile.TemporaryDirectory() as tmp_dir:
-			result_file_path = self.make_dz(tmp_dir)
+			result_file_path = self.make_dz(func, tmp_dir)
 			with gzip.open(result_file_path, 'r') as file:
 				result = file.read().decode()
 		self.assertEqual(result, TEXT)
 
-	def test_missing_target(self):
-		filename = "/NOT_EXISTING_PATH/file.txt"
-		expected_msg = f"[Errno 2] No such file or directory: '{filename}'"
-		runDictzip(filename)
-		self.assertLogError(expected_msg)
+	test_idzip_compressed_exists = partialmethod(is_compressed_exists, _idzip)
+	test_idzip_compressed_matches = partialmethod(is_compressed_matches, _idzip)
+
+	test_dictzip_compressed_exists = partialmethod(is_compressed_exists, _dictzip)
+	test_dictzip_compressed_matches = partialmethod(is_compressed_matches, _dictzip)
+
+
+class DictzipErrorsTest(TestGlossaryErrorsBase):
+	def tearDown(self):
+		self.mockLog.clear()
+		super().tearDown()
+
+	def on_missing_target(self, func):
+		filename = '/NOT_EXISTED_PATH/file.txt'
+		func(filename)
+		err_num = self.mockLog.printRemainingErrors()
+		self.assertEqual(err_num, 1)
+
+	test_idzip_missing_target = partialmethod(on_missing_target, func=_idzip)
+	test_dictzip_missing_target = partialmethod(on_missing_target, func=_dictzip)
