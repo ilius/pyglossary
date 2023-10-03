@@ -2,5 +2,7 @@ PyGlossary is a tool for converting dictionary files aka glossaries,
 from/to various formats used by different dictionary applications
 
 Copyleft © 2008-2023 Saeed Rasooli
-PyGlossary is licensed by the GNU General Public License
-version 3 (or later)
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
