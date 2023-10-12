@@ -15,6 +15,18 @@
 - Run `pkg install libicu`
 - Run `pip install PyICU`
 
+## Installation on Mac OS
+
+```sh
+brew install pkg-config icu4c
+export PATH="/usr/local/opt/icu4c/bin:/usr/local/opt/icu4c/sbin:$PATH"
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig"
+# ensure system clang is used for proper libstdc++
+# https://github.com/ovalhub/pyicu/issues/5#issuecomment-291631507
+unset CC CXX
+python3 -m pip install PyICU
+```
+
 ## Installation on Windows
 
 - Open https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyicu
