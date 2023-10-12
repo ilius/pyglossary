@@ -11,13 +11,14 @@ on:
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-latest
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        language: ["python"]
+        os: [ubuntu-latest]
+        # python-version: ["3.10", "3.11", "3.12"]
 
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -25,6 +26,30 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           ls -l
+      - name: Install dependencies
+        run: bash ./scripts/test-deps.sh
+      - name: Run tests
+        run: bash ./scripts/test.sh
+
+  test-mac:
+    name: Test on Mac OS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: cd and ls
+        run: |
+          cd ${{ github.workspace }}
+          ls -l
+      - name: Install Mac-specific dependencies
+        run: |
+          brew install coreutils pkg-config icu4c
+          export PATH="/usr/local/opt/icu4c/bin:/usr/local/opt/icu4c/sbin:$PATH"
+          export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig"
+          # ensure system clang is used for proper libstdc++ https://github.com/ovalhub/pyicu/issues/5#issuecomment-291631507
+          unset CC CXX
+          python3 -m pip install pyicu
+          ln -sf /usr/local/bin/python3 /usr/local/bin/python
       - name: Install dependencies
         run: bash ./scripts/test-deps.sh
       - name: Run tests
