@@ -1,5 +1,5 @@
 %global __python /usr/bin/python3
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "import sys; from distutils.sysconfig import get_python_lib; sys.stdout.write(get_python_lib())")}
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c 'import sys, sysconfig; sys.stdout.write(sysconfig.get_paths()["purelib"])')}
 
 Name:           pyglossary
 Version:        master
