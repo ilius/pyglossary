@@ -31,13 +31,13 @@ class indir:
 		create: bool = False,
 		clear: bool = False,
 	) -> None:
-		self.oldpwd: "str | None" = None
+		self.old_pwd: "str | None" = None
 		self.dir = directory
 		self.create = create
 		self.clear = clear
 
 	def __enter__(self) -> None:
-		self.oldpwd = os.getcwd()
+		self.old_pwd = os.getcwd()
 		if os.path.exists(self.dir):
 			if self.clear:
 				shutil.rmtree(self.dir)
@@ -52,9 +52,9 @@ class indir:
 		exc_val: "Exception",
 		exc_tb: "types.TracebackType",
 	) -> None:
-		if self.oldpwd:
-			os.chdir(self.oldpwd)
-		self.oldpwd = None
+		if self.old_pwd:
+			os.chdir(self.old_pwd)
+		self.old_pwd = None
 
 
 def _idzip(filename: Union[str, Path]) -> bool:
@@ -66,14 +66,15 @@ def _idzip(filename: Union[str, Path]) -> bool:
 	destination = filename.parent/(filename.name + ".dz")
 	try:
 		with open(filename, "rb") as inp_file, open(destination, "wb") as out_file:
-			inputinfo = os.fstat(inp_file.fileno())
+			inputInfo = os.fstat(inp_file.fileno())
 			log.debug("compressing %s to %s with idzip", filename, destination)
 			idzip.compressor.compress(
 				inp_file,
-				inputinfo.st_size,
+				inputInfo.st_size,
 				out_file,
 				filename.name,
-				int(inputinfo.st_mtime))
+				int(inputInfo.st_mtime),
+			)
 		filename.unlink()
 	except OSError as error:
 		log.error(str(error))
