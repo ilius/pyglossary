@@ -1,0 +1,22 @@
+steps:
+  test:
+    image: python:${TAG}-bookworm
+    when:
+      event: push
+      branch: ["master", "codeberg-ci"]
+    when:
+      event: pull_request
+      branch: main
+
+    commands:
+      - ls
+      - python -m venv venv
+      - bash -c "source venv/bin/activate"
+      - python -m pip install --upgrade pip
+      - bash scripts/test-deps.sh
+      - bash ./scripts/test.sh
+
+
+matrix:
+  TAG:
+    - 3.11
