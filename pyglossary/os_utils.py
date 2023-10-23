@@ -3,7 +3,7 @@ import os
 import shutil
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Union
+from typing import TYPE_CHECKING, Callable, Union
 
 from pyglossary import core
 
@@ -154,29 +154,3 @@ def showMemoryUsage() -> None:
 		return
 	usage = psutil.Process(os.getpid()).memory_info().rss // 1024
 	core.trace(log, f"Memory Usage: {usage:,} kB")
-
-
-def my_url_show(link: str) -> None:
-	import subprocess
-	for path in (
-		'/usr/bin/gnome-www-browser',
-		'/usr/bin/firefox',
-		'/usr/bin/iceweasel',
-		'/usr/bin/konqueror',
-	):
-		if os.path.isfile(path):
-			subprocess.call([path, link])
-			break
-
-
-# try:
-# 	from gnome import url_show
-# except:
-# 	try:
-# 		from gnomevfs import url_show
-# 	except:
-# 		url_show = my_url_show
-
-
-def click_website(widget: "Any", link: str) -> None:
-	my_url_show(link)
