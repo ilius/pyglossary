@@ -3,7 +3,7 @@ import os
 import shutil
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, Union
+from typing import TYPE_CHECKING, Callable
 
 from pyglossary import core
 
@@ -58,7 +58,7 @@ class indir:
 		self.old_pwd = None
 
 
-def _idzip(filename: Union[str, Path]) -> bool:
+def _idzip(filename: "str | Path") -> bool:
 	try:
 		import idzip
 	except ModuleNotFoundError:
