@@ -385,4 +385,4 @@ def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-# def lexTagBackslash(tr: TransformerType) -> Tuple[LexType, ErrorType]:
+# def lexTagBackslash(tr: TransformerType) -> tuple[LexType, ErrorType]:
