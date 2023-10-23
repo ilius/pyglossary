@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Union
 
@@ -124,15 +125,22 @@ def _rmtreeError(
 	log.error(exc_val)
 
 
+def _rmtree(direc: str) -> None:
+	# in Python 3.12, onexc is added and onerror is deprecated
+	# https://github.com/python/cpython/blob/main/Lib/shutil.py
+	if sys.version_info < (3, 12):
+		shutil.rmtree(direc, onerror=_rmtreeError)
+		return
+	shutil.rmtree(direc, onexc=_rmtreeError)
+
+
 def rmtree(direc: str) -> None:
 	from os.path import isdir
 	try:
 		for _ in range(2):
-			if isdir(direc):
-				shutil.rmtree(
-					direc,
-					onerror=_rmtreeError,
-				)
+			if not isdir(direc):
+				break
+			_rmtree(direc)
 	except Exception:
 		log.exception(f"error removing directory: {direc}")
 
