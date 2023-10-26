@@ -69,7 +69,7 @@ def _fast_decrypt(data, key):
 		t = (bi >> 4 | bi << 4) & 0xff
 		t = t ^ previous ^ (i & 0xff) ^ key[i % len(key)]
 		previous = bi
-		bi = t
+		b[i] = t
 	return bytes(b)
 
 
