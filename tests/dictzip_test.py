@@ -8,8 +8,6 @@ from glossary_errors_test import TestGlossaryErrorsBase
 
 from pyglossary.os_utils import _dictzip, _idzip
 
-FUNC_TYPE = Callable[[str], bool]
-
 TEXT = """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
@@ -21,14 +19,14 @@ culpa qui officia deserunt mollit anim id est laborum.
 
 
 class TestDictzipBase(TestGlossaryErrorsBase):
-	def _run(self, func: FUNC_TYPE, filename: str | Path) -> None:
+	def _run(self, func: Callable[[str], bool], filename: str | Path) -> None:
 		done = func(str(filename))
 		if not done:
 			self.skipTest(f'Missing dependency for {func.__name__}')
 
 
 class TestDictzip(TestDictzipBase):
-	def make_dz(self, func: FUNC_TYPE, path: str | Path) -> Path:
+	def make_dz(self, func: Callable[[str], bool], path: str | Path) -> Path:
 		"""Get path of dzipped file contains TEXT."""
 		test_file_path = Path(path)/"test_file.txt"
 		result_file_path = test_file_path.parent/(test_file_path.name + ".dz")
@@ -37,13 +35,13 @@ class TestDictzip(TestDictzipBase):
 		self._run(func, test_file_path)
 		return result_file_path
 
-	def is_compressed_exists(self, func: FUNC_TYPE) -> None:
+	def is_compressed_exists(self, func: Callable[[str], bool]) -> None:
 		with tempfile.TemporaryDirectory() as tmp_dir:
 			result_file_path = self.make_dz(func, tmp_dir)
 			self.assertTrue(result_file_path.exists())
 			self.assertTrue(result_file_path.is_file())
 
-	def is_compressed_matches(self, func: FUNC_TYPE) -> None:
+	def is_compressed_matches(self, func: Callable[[str], bool]) -> None:
 		with tempfile.TemporaryDirectory() as tmp_dir:
 			result_file_path = self.make_dz(func, tmp_dir)
 			with gzip.open(result_file_path, 'r') as file:
@@ -62,7 +60,7 @@ class TestDictzipErrors(TestDictzipBase):
 		self.mockLog.clear()
 		super().tearDown()
 
-	def on_missing_target(self, func: FUNC_TYPE) -> None:
+	def on_missing_target(self, func: Callable[[str], bool]) -> None:
 		filename = '/NOT_EXISTED_PATH/file.txt'
 		self._run(func, filename)
 		err_num = self.mockLog.printRemainingErrors()
