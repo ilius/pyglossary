@@ -345,26 +345,23 @@ class Writer:
 			else:
 				_ctype = "text/plain; charset=utf-8"
 
-		if not self._separate_alternates:
-			writer.add(
-				b_defi,
-				*tuple(words),
-				content_type=_ctype,
-			)
-			return
-
 		headword, *alts = words
 		writer.add(
 			b_defi,
 			headword,
 			content_type=_ctype,
 		)
-		for alt in alts:
-			writer.add(
-				b_defi,
-				f"{alt}, {headword}",
-				content_type=_ctype,
-			)
+
+		if self._separate_alternates:
+			for alt in alts:
+				writer.add(
+					b_defi,
+					f"{alt}, {headword}",
+					content_type=_ctype,
+				)
+		else:
+			for alt in alts:
+				writer.add_alias(alt, headword)
 
 	def write(self) -> "Generator[None, EntryType, None]":
 		slobWriter = self._slobWriter
