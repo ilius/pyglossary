@@ -835,14 +835,12 @@ class BrowseButton(gtk.Button):
 		fcd.destroy()
 
 	def onClick(self, widget):
-		fcd = gtk.FileChooserDialog(
+		fcd = gtk.FileChooserNative(
 			transient_for=self.get_root(),
 			action=gtk.FileChooserAction.SAVE if self.actionSave
 			else gtk.FileChooserAction.OPEN,
 			title=self.title,
 		)
-		fcd.add_button("cancel", gtk.ResponseType.CANCEL)
-		fcd.add_button("ok", gtk.ResponseType.OK)
 		fcd.connect("response", self.onResponse)
 		#fcd.connect(
 		#	"file-activated",  # FIXME: Gtk 4.0

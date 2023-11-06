@@ -788,14 +788,12 @@ class BrowseButton(gtk.Button):
 		self.connect("clicked", self.onClick)
 
 	def onClick(self, widget):
-		fcd = gtk.FileChooserDialog(
-			transient_for=self.get_toplevel(),
+		fcd = gtk.FileChooserNative(
+			transient_for=self.get_root(),
 			action=gtk.FileChooserAction.SAVE if self.actionSave
 			else gtk.FileChooserAction.OPEN,
 			title=self.title,
 		)
-		fcd.add_button(gtk.STOCK_CANCEL, gtk.ResponseType.CANCEL)
-		fcd.add_button(gtk.STOCK_OK, gtk.ResponseType.OK)
 		fcd.connect("response", lambda w, e: fcd.hide())
 		fcd.connect(
 			"file-activated",
