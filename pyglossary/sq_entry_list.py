@@ -101,6 +101,11 @@ class SqEntryList:
 		if self._sqliteSortKey is not None:
 			raise RuntimeError("Called setSortKey twice")
 
+		if namedSortKey.sqlite is None:
+			raise NotImplementedError(
+				f"sort key {namedSortKey.name!r} is not supported",
+			)
+
 		kwargs = writeOptions.copy()
 		if sortEncoding:
 			kwargs["sortEncoding"] = sortEncoding

@@ -72,6 +72,10 @@ class EntryList:
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
 	) -> None:
+		if namedSortKey.normal is None:
+			raise NotImplementedError(
+				f"sort key {namedSortKey.name!r} is not supported",
+			)
 		kwargs = writeOptions.copy()
 		if sortEncoding:
 			kwargs["sortEncoding"] = sortEncoding

@@ -152,8 +152,8 @@ def lookupSortKey(sortKeyId: str) -> "NamedSortKey | None":
 	return NamedSortKey(
 		name=f"{localeSK.name}:{localeNameFull}",
 		desc=f"{localeSK.desc}:{localeNameFull}",
-		normal=localeSK.locale(collator),
-		sqlite=localeSK.sqlite_locale(collator),
+		normal=localeSK.locale(collator) if localeSK.locale else None,
+		sqlite=localeSK.sqlite_locale(collator) if localeSK.sqlite_locale else None,
 	)
 
 
