@@ -25,6 +25,16 @@
 | source_lang      |         | str  | The language of the tokens in the dictionary index |
 | target_lang      |         | str  | The language of the dictionary entries             |
 
+### Dependencies for reading
+
+PyPI Links: [PyICU](https://pypi.org/project/PyICU)
+
+To install, run:
+
+```sh
+pip3 install PyICU
+```
+
 ### Dictionary Applications/Tools
 
 | Name & Website                                                                           | Source code                                                              | License            | Platforms | Language |

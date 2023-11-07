@@ -620,6 +620,10 @@ class QuickDic:
 
 
 class Reader:
+	depends = {
+		"icu": "PyICU",
+	}
+
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._dic = None
