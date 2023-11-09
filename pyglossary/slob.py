@@ -1090,7 +1090,7 @@ class Writer:
 		self.filename = filename
 		self.observer = observer
 		if os.path.exists(self.filename):
-			raise SystemExit('File {self.filename!r} already exists')
+			raise SystemExit(f'File {self.filename!r} already exists')
 
 		# make sure we can write
 		with fopen(self.filename, 'wb'):
