@@ -18,6 +18,7 @@ import os
 import re
 from datetime import datetime
 from io import BytesIO
+from operator import attrgetter
 from os.path import isdir, isfile, join, split, splitext
 from struct import unpack
 from typing import (
@@ -398,19 +399,22 @@ class Reader:
 
 		# 2. add alts
 		keyTextFieldOrder = self._properties.key_text_variable_fields
-		keyDataList: "list[KeyData]" = []
-		if articleAddress in self._keyTextData:
-			rawKeyDataList = self._keyTextData[articleAddress]
-			for rawKeyData in rawKeyDataList:
-				keyDataList.append(KeyData.fromRaw(rawKeyData, keyTextFieldOrder))
 
 		words = [word]
+
+		keyDataList: "list[KeyData]" = [
+			KeyData.fromRaw(rawKeyData, keyTextFieldOrder)
+			for rawKeyData in self._keyTextData.get(articleAddress, [])
+		]
 		if keyDataList:
 			keyDataList.sort(
-				key=lambda keyData: -keyData.priority,
+				key=attrgetter("priority"),
+				reverse=True,
 			)
-			for keyData in keyDataList:
-				words.append(keyData.keyword)
+			words += [
+				keyData.keyword
+				for keyData in keyDataList
+			]
 
 		defi = self._getDefi(entryElems[0], keyDataList)
 
