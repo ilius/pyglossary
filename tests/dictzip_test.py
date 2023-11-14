@@ -61,18 +61,21 @@ class TestDictzip(TestGlossaryErrorsBase):
 			result = file.read().decode()
 		self.assertEqual(result, TEXT)
 
+	def test_dictzip_missing_target(self) -> None:
+		method="idzip"
+		filename = "/NOT_EXISTED_PATH/file.txt"
+		expected = f"No such file or directory: '{filename}'"
+		runDictzip(filename, method)
+		self.skip_on_dep(method)
+		err = self.mockLog.popLog(logging.ERROR, expected, partial=True)
+		self.assertIsNotNone(err)
 
-# class TestDictzipErrors(TestDictzipBase):
-# 	def tearDown(self):
-# 		self.mockLog.clear()
-# 		super().tearDown()
-# 
-# 	def on_missing_target(self, func: Callable[[str], bool]) -> None:
-# 		filename = "/NOT_EXISTED_PATH/file.txt"
-# 		self._run(func, filename)
-# 		err_num = self.mockLog.printRemainingErrors()
-# 		self.assertEqual(err_num, 1)
-# 
-# 	# FIXME
-# 	#test_idzip_missing_target = partialmethod(on_missing_target, func=_idzip)
-# 	#test_dictzip_missing_target = partialmethod(on_missing_target, func=_dictzip)
+	def test_idzip_missing_target(self) -> None:
+		method="dictzip"
+		filename = "/NOT_EXISTED_PATH/boilerplate.txt"
+		expected = f'Cannot open "{filename}"'
+		runDictzip(filename, method)
+		self.skip_on_dep(method)
+		err = self.mockLog.popLog(logging.ERROR, expected, partial=True)
+		self.assertIsNotNone(err)
+
