@@ -100,19 +100,28 @@ def _dictzip(filename: str) -> bool:
 		log.error(f"dictzip exit {retcode}: {err_msg}")
 	return True
 
-def _nozip(filename: str) -> bool:
-	log.warning(
-		"Dictzip compression requires idzip module or dictzip utility,"
-		f" run `{core.pip} install python-idzip` to install or make sure"
-		" dictzip is in your $PATH")
-	return False
 
+def runDictzip(filename: str, method='') -> bool:
+	"""
+	Compress file into dictzip format.
 
-def runDictzip(filename: str) -> None:
-	"""Compress file into dictzip format."""
-	for fun in (_idzip, _dictzip, _nozip):
-		if fun(filename):
-			return
+	Returns True when succeed.
+	"""
+	# FIXME Shorten
+	if method == 'idzip':
+		return _idzip(filename)
+	if method == 'dictzip':
+		return _dictzip(filename)
+
+	res = _idzip(filename)
+	if not res:
+		res = _dictzip
+	if not res:
+		log.warning(
+			"Dictzip compression requires idzip module or dictzip utility,"
+			f" run `{core.pip} install python-idzip` to install or make sure"
+			" dictzip is in your $PATH")
+	return res
 
 
 def _rmtreeError(
