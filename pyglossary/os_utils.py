@@ -101,27 +101,18 @@ def _dictzip(filename: str) -> bool:
 	return True
 
 
-def runDictzip(filename: str, method='') -> bool:
-	"""
-	Compress file into dictzip format.
-
-	Returns True when succeed.
-	"""
-	# FIXME Shorten
-	if method == 'idzip':
-		return _idzip(filename)
-	if method == 'dictzip':
-		return _dictzip(filename)
-
-	res = _idzip(filename)
-	if not res:
-		res = _dictzip
+def runDictzip(filename: str | Path, method="") -> None:
+	"""Compress file into dictzip format."""
+	res = None
+	if method in ["", "idzip"]:
+		res = _idzip(filename)
+	if not res and method in ["", "dictzip"]:
+		res = _dictzip(filename)
 	if not res:
 		log.warning(
 			"Dictzip compression requires idzip module or dictzip utility,"
 			f" run `{core.pip} install python-idzip` to install or make sure"
 			" dictzip is in your $PATH")
-	return res
 
 
 def _rmtreeError(
