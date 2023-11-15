@@ -216,8 +216,9 @@ class TextGlossaryReader:
 				block = self.nextBlock()
 			except StopIteration:
 				if (
-					self._fileCount == -1 or self._fileIndex < self._fileCount - 1
-					and self.openNextFile()
+					self._fileCount == -1 or
+					self._fileIndex < self._fileCount - 1 and
+					self.openNextFile()
 				):
 					continue
 				self._wordCount = self._pos

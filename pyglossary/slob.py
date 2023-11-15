@@ -127,7 +127,6 @@ class CompressionModule(typing.Protocol):
 		raise NotImplementedError
 
 
-
 def init_compressions() -> "dict[str, Compression]":
 	def ident(x: bytes) -> bytes:
 		return x
@@ -601,7 +600,6 @@ class StructReaderWriter(StructWriter):
 		return self._reader.read_tiny_text()
 
 
-
 def set_tag_value(filename: str, name: str, value: str) -> None:
 	with fopen(filename, 'rb+') as _file:
 		_file.seek(len(MAGIC) + 16)
@@ -870,6 +868,7 @@ class BinMemWriter:
 
 
 ItemT = TypeVar("ItemT")
+
 
 class ItemList(Generic[ItemT]):
 	def __init__(

@@ -1,8 +1,7 @@
 import sys
 from os.path import dirname
 
-rootDir = dirname(dirname(dirname(dirname(__file__))))
-sys.path.insert(0, rootDir)
+sys.path.insert(0, dirname(dirname(dirname(dirname(__file__)))))  # noqa: E402
 
 from pyglossary.plugins.dsl.transform import Transformer
 

@@ -55,6 +55,7 @@ quotedTextPattern = re.compile(r'"([^"]+)"')
 
 refPattern = re.compile(r"`(\w+)'")
 
+
 class SynSet:
 	def __init__(self, line) -> None:
 		self.line = line
@@ -90,7 +91,7 @@ class SynSet:
 		pointer_count = int(p_cnt)
 		start = p_cnt_index + 1
 		return [
-			Pointer(*self.meta_parts[start + i * 4 : start + (i + 1) * 4])
+			Pointer(*self.meta_parts[start + i * 4:start + (i + 1) * 4])
 			for i in range(pointer_count)
 		]
 

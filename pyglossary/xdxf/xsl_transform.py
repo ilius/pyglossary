@@ -57,4 +57,3 @@ class XslXdxfTransformer:
 		return self.transform(
 			ET.fromstring(f"<ar>{articleInnerStr}</ar>"),
 		)
-

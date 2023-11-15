@@ -44,6 +44,7 @@ NamedSortKey = namedtuple("NamedSortKey", [
 	"sqlite",
 ])
 
+
 @dataclass
 class LocaleNamedSortKey:
 	name: str
@@ -117,6 +118,7 @@ _sortKeyByName = {
 	item.name: item for item in namedSortKeyList
 }
 
+
 def lookupSortKey(sortKeyId: str) -> "NamedSortKey | None":
 	localeName: "str | None" = None
 
@@ -155,8 +157,6 @@ def lookupSortKey(sortKeyId: str) -> "NamedSortKey | None":
 		normal=localeSK.locale(collator) if localeSK.locale else None,
 		sqlite=localeSK.sqlite_locale(collator) if localeSK.sqlite_locale else None,
 	)
-
-
 
 
 # https://en.wikipedia.org/wiki/UTF-8#Comparison_with_other_encodings

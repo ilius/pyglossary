@@ -86,7 +86,7 @@ def lexCurly(tr: TransformerType) -> tuple[LexType, ErrorType]:
 		if c == "}":
 			break
 
-	tr2 = Transformer(tr.input[start:tr.pos-1])
+	tr2 = Transformer(tr.input[start:tr.pos - 1])
 	res, err = tr2.transform()
 	if err or res is None:
 		return None, err

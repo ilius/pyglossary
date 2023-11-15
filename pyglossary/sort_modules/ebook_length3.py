@@ -24,5 +24,3 @@ def sqlite(
 		sortEncoding=sortEncoding,
 		group_by_prefix_length=3,
 	)
-
-

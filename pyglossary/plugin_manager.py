@@ -46,6 +46,7 @@ DetectedFormat = namedtuple(
 	],
 )
 
+
 class PluginManager:
 	plugins: "dict[str, PluginProp]" = {}
 	pluginByExt: "dict[str, PluginProp]" = {}

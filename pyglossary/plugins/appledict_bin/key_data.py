@@ -35,7 +35,7 @@ EXAMPLE: <d:index d:value="工夫する" d:title="工夫する"
 d:yomi="くふうする" d:anchor="xpointer(//*[@id='kufuu-suru'])" />
 EXAMPLE: <d:index d:value="'s finest" d:title="—'s finest"
 d:DCSEntryTitle="fine" d:anchor="xpointer(//*[@id='m_en_gbus0362750.070'])"/>
-    user entered "'s finest", search list we show "—'s finest",
+	user entered "'s finest", search list we show "—'s finest",
 show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
 """
 

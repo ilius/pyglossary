@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 	from .sort_keys import NamedSortKey
 
 
-
 MultiStr: "TypeAlias" = "str | list[str]"
 
 # 3 different types in order:
@@ -279,7 +278,6 @@ class GlossaryType(typing.Protocol):
 
 	def removeHtmlTagsAll(self) -> None:
 		...
-
 
 
 class GlossaryExtendedType(GlossaryType, typing.Protocol):

@@ -55,13 +55,13 @@ def decode_modified_utf8(s: bytes) -> str:
             # Two-byte codepoint.
             if s_ix >= s_len:
                 raise UnicodeDecodeError(
-                        'mutf-8',
-                        s,
-                        s_ix - 1,
-                        s_ix,
-                        '2-byte codepoint started, but input too short to'
-                        ' finish.',
-                    )
+                    'mutf-8',
+                    s,
+                    s_ix - 1,
+                    s_ix,
+                    '2-byte codepoint started, but input too short to'
+                    ' finish.',
+                )
 
             s_out.append(
                 chr(
@@ -74,13 +74,13 @@ def decode_modified_utf8(s: bytes) -> str:
             # Three-byte codepoint.
             if s_ix + 1 >= s_len:
                 raise UnicodeDecodeError(
-                        'mutf-8',
-                        s,
-                        s_ix - 1,
-                        s_ix,
-                        '3-byte or 6-byte codepoint started, but input too'
-                        ' short to finish.',
-                    )
+                    'mutf-8',
+                    s,
+                    s_ix - 1,
+                    s_ix,
+                    '3-byte or 6-byte codepoint started, but input too'
+                    ' short to finish.',
+                )
 
             b2 = s[s_ix]
             b3 = s[s_ix + 1]
@@ -89,13 +89,13 @@ def decode_modified_utf8(s: bytes) -> str:
                 # Possible six-byte codepoint.
                 if s_ix + 4 >= s_len:
                     raise UnicodeDecodeError(
-                            'mutf-8',
-                            s,
-                            s_ix - 1,
-                            s_ix,
-                            '3-byte or 6-byte codepoint started, but input too'
-                            ' short to finish.',
-                        )
+                        'mutf-8',
+                        s,
+                        s_ix - 1,
+                        s_ix,
+                        '3-byte or 6-byte codepoint started, but input too'
+                        ' short to finish.',
+                    )
 
                 b4 = s[s_ix + 2]
                 b5 = s[s_ix + 3]
@@ -106,10 +106,10 @@ def decode_modified_utf8(s: bytes) -> str:
                     s_out.append(
                         chr(
                             0x10000 + (
-                            (b2 & 0x0F) << 0x10 |
-                            (b3 & 0x3F) << 0x0A |
-                            (b5 & 0x0F) << 0x06 |
-                            (b6 & 0x3F)
+                                (b2 & 0x0F) << 0x10 |
+                                (b3 & 0x3F) << 0x0A |
+                                (b5 & 0x0F) << 0x06 |
+                                (b6 & 0x3F)
                             ),
                         ),
                     )

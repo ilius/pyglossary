@@ -44,5 +44,3 @@ def sqlite_locale(
 			lambda words: random(),
 		),
 	]
-
-

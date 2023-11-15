@@ -1455,8 +1455,8 @@ class UI(tix.Frame, UIBase):
 			log.critical("Input file path is empty!")
 			return None
 		inFormatDesc = self.formatButtonInputConvert.get()
-		#if not inFormatDesc:
-		#	log.critical("Input format is empty!");return
+		# if not inFormatDesc:
+		# 	log.critical("Input format is empty!");return
 		inFormat = pluginByDesc[inFormatDesc].name if inFormatDesc else ""
 
 		outPath = self.entryOutputConvert.get()

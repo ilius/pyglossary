@@ -9,6 +9,7 @@ def createProgressBar(title: str):
 		desc=title,
 	)
 
+
 class MyTqdm(tqdm):
 	@property
 	def format_dict(self):

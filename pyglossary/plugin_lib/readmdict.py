@@ -20,9 +20,6 @@
 # GNU General Public License for more details.
 
 import logging
-
-log = logging.getLogger(__name__)
-
 import re
 import sys
 
@@ -46,9 +43,8 @@ try:
 except ImportError:
 	xxhash = None
 
-# 2x3 compatible
-if sys.hexversion >= 0x03000000:
-	str, unicode = bytes, str
+
+log = logging.getLogger(__name__)
 
 
 def _unescape_entities(text):
@@ -75,13 +71,13 @@ def _fast_decrypt(data, key):
 
 def _salsa_decrypt(ciphertext, encrypt_key):
 	"""salsa20 (8 rounds) decryption."""
-	s20 = Salsa20(key=encrypt_key, IV=b"\x00"*8, rounds=8)
+	s20 = Salsa20(key=encrypt_key, IV=b"\x00" * 8, rounds=8)
 	return s20.encryptBytes(ciphertext)
 
 
 def _decrypt_regcode_by_userid(reg_code: bytes, userid: bytes) -> bytes:
 	userid_digest = ripemd128(userid)
-	s20 = Salsa20(key=userid_digest, IV=b"\x00"*8, rounds=8)
+	s20 = Salsa20(key=userid_digest, IV=b"\x00" * 8, rounds=8)
 	return s20.encryptBytes(reg_code)
 
 
@@ -107,7 +103,7 @@ class MDict:
 		# decrypt regcode to get the encrypted key
 		if passcode is not None:
 			regcode, userid = passcode
-			if isinstance(userid, unicode):
+			if isinstance(userid, str):
 				userid = userid.encode('utf8')
 			self._encrypted_key = _decrypt_regcode_by_userid(regcode, userid)
 		# MDict 3.0 encryption key derives from UUID if present
@@ -166,7 +162,7 @@ class MDict:
 	def _decode_block(self, block, decompressed_size):
 		# block info: compression, encryption
 		info = unpack('<L', block[:4])[0]
-		compression_method =  info & 0xf
+		compression_method = info & 0xf
 		encryption_method = (info >> 4) & 0xf
 		encryption_size = (info >> 8) & 0xff
 
@@ -254,11 +250,11 @@ class MDict:
 			# number of entries in current key block
 			num_entries += unpack(
 				self._number_format,
-				key_block_info[i:i+self._number_width],
+				key_block_info[i:i + self._number_width],
 			)[0]
 			i += self._number_width
 			# text head size
-			text_head_size = unpack(byte_format, key_block_info[i:i+byte_width])[0]
+			text_head_size = unpack(byte_format, key_block_info[i:i + byte_width])[0]
 			i += byte_width
 			# text head
 			if self._encoding != 'UTF-16':
@@ -266,7 +262,7 @@ class MDict:
 			else:
 				i += (text_head_size + text_term) * 2
 			# text tail size
-			text_tail_size = unpack(byte_format, key_block_info[i:i+byte_width])[0]
+			text_tail_size = unpack(byte_format, key_block_info[i:i + byte_width])[0]
 			i += byte_width
 			# text tail
 			if self._encoding != 'UTF-16':
@@ -276,13 +272,13 @@ class MDict:
 			# key block compressed size
 			key_block_compressed_size = unpack(
 				self._number_format,
-				key_block_info[i:i+self._number_width],
+				key_block_info[i:i + self._number_width],
 			)[0]
 			i += self._number_width
 			# key block decompressed size
 			key_block_decompressed_size = unpack(
 				self._number_format,
-				key_block_info[i:i+self._number_width],
+				key_block_info[i:i + self._number_width],
 			)[0]
 			i += self._number_width
 			key_block_info_list.append(
@@ -298,7 +294,7 @@ class MDict:
 		i = 0
 		for compressed_size, decompressed_size in key_block_info_list:
 			key_block = self._decode_block(
-				key_block_compressed[i:i+compressed_size],
+				key_block_compressed[i:i + compressed_size],
 				decompressed_size,
 			)
 			# extract one single key block into a key list
@@ -313,7 +309,7 @@ class MDict:
 			# the corresponding record's offset in record block
 			key_id = unpack(
 				self._number_format,
-				key_block[key_start_index:key_start_index+self._number_width],
+				key_block[key_start_index:key_start_index + self._number_width],
 			)[0]
 			# key text ends with '\x00'
 			if self._encoding == 'UTF-16':
@@ -324,11 +320,11 @@ class MDict:
 				width = 1
 			i = key_start_index + self._number_width
 			while i < len(key_block):
-				if key_block[i:i+width] == delimiter:
+				if key_block[i:i + width] == delimiter:
 					key_end_index = i
 					break
 				i += width
-			key_text = key_block[key_start_index+self._number_width:key_end_index]\
+			key_text = key_block[key_start_index + self._number_width:key_end_index]\
 				.decode(self._encoding, errors='ignore').encode('utf-8').strip()
 			key_start_index = key_end_index + width
 			key_list += [(key_id, key_text)]
@@ -363,10 +359,10 @@ class MDict:
 			self._encoding = encoding
 
 		# encryption flag
-		#	0x00 - no encryption, "Allow export to text" is checked in MdxBuilder 3.
-		#	0x01 - encrypt record block, "Encryption Key" is given in MdxBuilder 3.
-		#	0x02 - encrypt key info block,
-		# 			"Allow export to text" is unchecked in MdxBuilder 3.
+		# 0x00 - no encryption, "Allow export to text" is checked in MdxBuilder 3.
+		# 0x01 - encrypt record block, "Encryption Key" is given in MdxBuilder 3.
+		# 0x02 - encrypt key info block,
+		#        "Allow export to text" is unchecked in MdxBuilder 3.
 		if b'Encrypted' not in header_tag or header_tag[b'Encrypted'] == b'No':
 			self._encrypt = 0
 		elif header_tag[b'Encrypted'] == b'Yes':
@@ -375,16 +371,16 @@ class MDict:
 			self._encrypt = int(header_tag[b'Encrypted'])
 
 		# stylesheet attribute if present takes form of:
-		#	style_number # 1-255
-		#	style_begin  # or ''
-		#	style_end	 # or ''
+		#   style_number # 1-255
+		#   style_begin  # or ''
+		#   style_end	 # or ''
 		# store stylesheet in dict in the form of
 		# {'number' : ('style_begin', 'style_end')}
 		self._stylesheet = {}
 		if header_tag.get('StyleSheet'):
 			lines = header_tag['StyleSheet'].splitlines()
 			for i in range(0, len(lines), 3):
-				self._stylesheet[lines[i]] = (lines[i+1], lines[i+2])
+				self._stylesheet[lines[i]] = (lines[i + 1], lines[i + 2])
 
 		# before version 2.0, number is 4 bytes integer
 		# version 2.0 and above uses 8 bytes
@@ -588,12 +584,12 @@ class MDict:
 				if record_start - offset >= len(record_block):
 					break
 				# record end index
-				if i < len(self._key_list)-1:
-					record_end = self._key_list[i+1][0]
+				if i < len(self._key_list) - 1:
+					record_end = self._key_list[i + 1][0]
 				else:
 					record_end = len(record_block) + offset
 				i += 1
-				data = record_block[record_start-offset:record_end-offset]
+				data = record_block[record_start - offset:record_end - offset]
 				yield key_text, self._treat_record_data(data)
 			offset += len(record_block)
 			size_counter += compressed_size
@@ -640,12 +636,12 @@ class MDict:
 				if record_start - offset >= len(record_block):
 					break
 				# record end index
-				if i < len(self._key_list)-1:
-					record_end = self._key_list[i+1][0]
+				if i < len(self._key_list) - 1:
+					record_end = self._key_list[i + 1][0]
 				else:
 					record_end = len(record_block) + offset
 				i += 1
-				data = record_block[record_start-offset:record_end-offset]
+				data = record_block[record_start - offset:record_end - offset]
 				yield key_text, self._treat_record_data(data)
 			offset += len(record_block)
 			size_counter += compressed_size
@@ -692,7 +688,7 @@ class MDX(MDict):
 		fname: str,
 		encoding: str = '',
 		substyle: bool = False,
-		passcode = None,
+		passcode: "tuple[bytes, bytes] | None" = None,
 	) -> None:
 		MDict.__init__(self, fname, encoding, passcode)
 		self._substyle = substyle
@@ -746,17 +742,30 @@ if __name__ == '__main__':
 		return regcode, userid
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-x', '--extract', action="store_true",
-						help='extract mdx to source format and extract files from mdd')
-	parser.add_argument('-s', '--substyle', action="store_true",
-						help='substitute style definition if present')
-	parser.add_argument('-d', '--datafolder', default="data",
-						help='folder to extract data files from mdd')
-	parser.add_argument('-e', '--encoding', default="",
-						help='folder to extract data files from mdd')
-	parser.add_argument('-p', '--passcode', default=None, type=passcode,
-						help='register_code,email_or_deviceid')
-	parser.add_argument("filename", nargs='?', help="mdx file name")
+	parser.add_argument(
+		'-x', '--extract', action="store_true",
+		help='extract mdx to source format and extract files from mdd',
+	)
+	parser.add_argument(
+		'-s', '--substyle', action="store_true",
+		help='substitute style definition if present',
+	)
+	parser.add_argument(
+		'-d', '--datafolder', default="data",
+		help='folder to extract data files from mdd',
+	)
+	parser.add_argument(
+		'-e', '--encoding', default="",
+		help='folder to extract data files from mdd',
+	)
+	parser.add_argument(
+		'-p', '--passcode', default=None, type=passcode,
+		help='register_code,email_or_deviceid',
+	)
+	parser.add_argument(
+		"filename", nargs='?',
+		help="mdx file name",
+	)
 	args = parser.parse_args()
 
 	# use GUI to select file, default to extract

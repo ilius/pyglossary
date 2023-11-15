@@ -108,10 +108,10 @@ class AboutWidget(gtk.Box):
 		label.set_xalign(0)
 		label.set_yalign(0)
 		pack(box, label, 0, 0)
-		#if wrap:
-		#	tv.set_wrap_mode(gtk.WrapMode.WORD)
-		#if justification is not None:
-		#	tv.set_justification(justification)
+		# if wrap:
+		# 	tv.set_wrap_mode(gtk.WrapMode.WORD)
+		# if justification is not None:
+		# 	tv.set_justification(justification)
 		label.set_can_focus(False)
 		# label.set_border_width(10)
 		label.set_markup(text)

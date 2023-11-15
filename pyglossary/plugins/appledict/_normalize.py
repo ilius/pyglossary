@@ -28,6 +28,7 @@ re_whitespace = re.compile("(\t|\n|\r)")
 
 # FIXME: rename all/most functions here, add a 'fix_' prefix
 
+
 def spaces(s: str) -> str:
 	"""
 	Strip off leading and trailing whitespaces and

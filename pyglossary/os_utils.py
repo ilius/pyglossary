@@ -64,7 +64,7 @@ def _idzip(filename: "str | Path") -> bool:
 	except ModuleNotFoundError:
 		return False
 	filename = Path(filename)
-	destination = filename.parent/(filename.name + ".dz")
+	destination = filename.parent / (filename.name + ".dz")
 	try:
 		with open(filename, "rb") as inp_file, open(destination, "wb") as out_file:
 			inputInfo = os.fstat(inp_file.fileno())
@@ -98,6 +98,7 @@ def _dictzip(filename: str) -> bool:
 		out = b_out.decode("utf-8").replace('\n', ' ')
 		log.error(f"dictzip error: {out}")
 	return True
+
 
 def _nozip(filename: str) -> bool:
 	log.warning(

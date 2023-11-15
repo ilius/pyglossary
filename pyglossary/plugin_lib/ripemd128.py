@@ -15,8 +15,6 @@
 # 	digest == b"\x3f\xa9\xb5\x7f\x05\x3c\x05\x3f\xbe\x27\x35\xb2\x38\x0d\xb5\x96"
 # )
 
-
-
 import struct
 
 # follows this description: http://homes.esat.kuleuven.be/~bosselae/ripemd/rmd128.txt
@@ -72,7 +70,7 @@ def padandsplit(message: bytes):
 	message += struct.pack("<Q", origlen * 8)
 	assert len(message) % 64 == 0
 	return [
-		[struct.unpack("<L", message[i + j : i + j + 4])[0] for j in range(0, 64, 4)]
+		[struct.unpack("<L", message[i + j:i + j + 4])[0] for j in range(0, 64, 4)]
 		for i in range(0, len(message), 64)
 	]
 
@@ -86,7 +84,7 @@ def rol(s, x):
 	return (x << s | x >> (32 - s)) & 0xFFFFFFFF
 
 
-r =  [
+r = [
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 	7, 4, 13, 1, 10, 6, 15, 3, 12, 0, 9, 5, 2, 14, 11, 8,
 	3, 10, 14, 4, 9, 15, 8, 1, 2, 7, 0, 6, 13, 11, 5, 12,

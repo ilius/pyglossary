@@ -22,4 +22,4 @@ ArticleAddress = namedtuple(
 )
 
 # def __str__(self) -> str:
-#	return f"Addr[{hex(self.sectionOffset)}, {hex(self.chunkOffset)}]"
+# 	return f"Addr[{hex(self.sectionOffset)}, {hex(self.chunkOffset)}]"

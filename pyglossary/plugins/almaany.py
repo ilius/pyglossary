@@ -22,8 +22,6 @@ website = (
 )
 
 
-
-
 class Reader:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos

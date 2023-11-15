@@ -42,11 +42,11 @@ from .dependency import checkDepends
 
 gi.require_version("Gtk", "3.0")
 
-from .gtk3_utils import gdk, gtk
-from .gtk3_utils.about import AboutWidget
-from .gtk3_utils.dialog import MyDialog
-from .gtk3_utils.resize_button import ResizeButton
-from .gtk3_utils.utils import (
+from .gtk3_utils import gdk, gtk  # noqa: E402
+from .gtk3_utils.about import AboutWidget  # noqa: E402
+from .gtk3_utils.dialog import MyDialog  # noqa: E402
+from .gtk3_utils.resize_button import ResizeButton  # noqa: E402
+from .gtk3_utils.utils import (  # noqa: E402
 	HBox,
 	VBox,
 	dialog_add_button,
@@ -881,7 +881,6 @@ class SortOptionsBox(gtk.Box):
 		sortEncoding = convertOptions.get("sortEncoding", "utf-8")
 		self.encodingEntry.set_text(sortEncoding)
 
-
 	def applyChanges(self):
 		convertOptions = self.ui.convertOptions
 		sort = self.sortCheck.get_active()
@@ -1458,7 +1457,6 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		glos = Glossary(ui=self)
 		glos.config = self.config
 		glos.progressbar = self.progressbarEnable
-
 
 		for attr, value in self._glossarySetAttrs.items():
 			setattr(glos, attr, value)

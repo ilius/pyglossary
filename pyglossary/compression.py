@@ -142,9 +142,6 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 			log.error(
 				f"{e}\nFailed to compress file \"{filename}\"",
 			)
-		#else:
-		#	if error:
-		#		log.error(error)
 	else:
 		raise ValueError(f"unexpected {compression=}")
 

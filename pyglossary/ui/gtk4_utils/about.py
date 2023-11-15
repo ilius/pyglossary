@@ -42,16 +42,14 @@ class AboutTabTitleBox(gtk.Box):
 		pack(self, VBox(), expand=0)
 		self.set_size_request(60, 60)
 
-	#def do_get_preferred_height_for_width(self, size: int) -> "tuple[int, int]":
-	#	height = int(size * 1.5)
-	#	return height, height
+	# def do_get_preferred_height_for_width(self, size: int) -> "tuple[int, int]":
+	# 	height = int(size * 1.5)
+	# 	return height, height
 
 	# returns: (minimum: int, natural: int,
 	# 	minimum_baseline: int, natural_baseline: int)
-	#def do_measure(self, orientation, for_size):
-	#	return (for_size, for_size, for_size, for_size)
-
-
+	# def do_measure(self, orientation, for_size):
+	# 	return (for_size, for_size, for_size, for_size)
 
 
 class AboutWidget(gtk.Box):
@@ -109,7 +107,7 @@ class AboutWidget(gtk.Box):
 		if justification is not None:
 			tv.set_justification(justification)
 		tv.set_cursor_visible(False)
-		#tv.set_border_width(10)
+		# tv.set_border_width(10)
 		buf = tv.get_buffer()
 		# buf.insert_markup(buf.get_end_iter(), markup=text,
 		# len=len(text.encode("utf-8")))
@@ -117,7 +115,7 @@ class AboutWidget(gtk.Box):
 		tv.show()
 		swin = gtk.ScrolledWindow()
 		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
-		#swin.set_border_width(0)
+		# swin.set_border_width(0)
 		swin.set_child(tv)
 		return swin
 
@@ -128,23 +126,23 @@ class AboutWidget(gtk.Box):
 		justification: "gtk.Justification | None" = None,
 	):
 		box = VBox()
-		#box.set_border_width(10)
+		# box.set_border_width(10)
 		label = gtk.Label()
 		label.set_selectable(True)
 		label.set_xalign(0)
 		label.set_yalign(0)
 		pack(box, label, 0, 0)
-		#if wrap:
-		#	tv.set_wrap_mode(gtk.WrapMode.WORD)
-		#if justification is not None:
-		#	tv.set_justification(justification)
+		# if wrap:
+		# 	tv.set_wrap_mode(gtk.WrapMode.WORD)
+		# if justification is not None:
+		# 	tv.set_justification(justification)
 		# label.set_cursor_visible(False)
 		# label.set_border_width(10)
 		label.set_markup(text)
 		label.show()
 		swin = gtk.ScrolledWindow()
 		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
-		#swin.set_border_width(0)
+		# swin.set_border_width(0)
 		swin.set_child(box)
 		return swin
 

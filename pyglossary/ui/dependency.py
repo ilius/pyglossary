@@ -23,7 +23,6 @@
 # installed_packages = set(r.decode().split('==')[0] for r in reqs.split())
 
 
-
 def checkDepends(depends: "dict[str, str]") -> "list[str]":
 	"""Return the list of uninstalled dependencies."""
 	if not depends:

@@ -101,7 +101,7 @@ writingSystemList = [
 	),
 	WritingSystem(
 		name="Devanagari",
-		iso=[(315 , "Deva")],
+		iso=[(315, "Deva")],
 		unicode=["DEVANAGARI"],
 		titleTag="big",
 		comma=", ",

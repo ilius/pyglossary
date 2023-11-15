@@ -326,7 +326,7 @@ def read_entry_index(fp):
 	row_data = fp.read(num_rows * row_size)
 	rows = [
 		# <type>, <index>
-		struct.unpack(">bi", row_data[j : j + row_size])
+		struct.unpack(">bi", row_data[j:j + row_size])
 		for j in range(0, len(row_data), row_size)
 	]
 	return (
@@ -585,7 +585,7 @@ class QuickDic:
 				if tidx not in html_indices:
 					html_indices.append(tidx)
 			else:
-				if (ttype, tidx) not in rows[index_start + 1 :]:
+				if (ttype, tidx) not in rows[index_start + 1:]:
 					rows.append((ttype, tidx))
 					count += 1
 			index_entries.append(
@@ -667,7 +667,7 @@ class Reader:
 		recurse.append(i_entry)
 		_, _, _, _, _, _, index_entries, _, rows = index
 		token, start_index, count, _, html_indices = index_entries[i_entry]
-		block_rows = rows[start_index : start_index + count + 1]
+		block_rows = rows[start_index:start_index + count + 1]
 		assert block_rows[0][0] in (1, 3) and block_rows[0][1] == i_entry
 		e_rows = []
 		for entry_type, entry_idx in block_rows[1:]:

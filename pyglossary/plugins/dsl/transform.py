@@ -9,7 +9,6 @@ from .lex import lexRoot
 re_comment_block = re.compile(r"\{\{([^}]*)\}\}")
 
 
-
 Result = namedtuple(
 	"Result", [
 		"output",  # str,

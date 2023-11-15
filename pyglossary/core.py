@@ -28,31 +28,31 @@ if TYPE_CHECKING:
 
 
 __all__ = [
-    'StdLogHandler',
-    'TRACE',
-    'VERSION',
-    'appResDir',
-    'cacheDir',
-    'checkCreateConfDir',
-    'confDir',
-    'confJsonFile',
-    'dataDir',
-    'format_exception',
-    'getDataDir',
-    'homeDir',
-    'homePage',
-    'isDebug',
-    'log',
-    'noColor',
-    'pip',
-    'pluginsDir',
-    'rootConfJsonFile',
-    'rootDir',
-    'sysName',
-    'tmpDir',
-    'trace',
-    'uiDir',
-    'userPluginsDir',
+	'StdLogHandler',
+	'TRACE',
+	'VERSION',
+	'appResDir',
+	'cacheDir',
+	'checkCreateConfDir',
+	'confDir',
+	'confJsonFile',
+	'dataDir',
+	'format_exception',
+	'getDataDir',
+	'homeDir',
+	'homePage',
+	'isDebug',
+	'log',
+	'noColor',
+	'pip',
+	'pluginsDir',
+	'rootConfJsonFile',
+	'rootDir',
+	'sysName',
+	'tmpDir',
+	'trace',
+	'uiDir',
+	'userPluginsDir',
 ]
 
 
@@ -329,8 +329,10 @@ def getDataDir() -> str:
 logging.setLoggerClass(_MyLogger)
 log = cast(_MyLogger, logging.getLogger("pyglossary"))
 
+
 def isDebug() -> bool:
 	return log.getVerbosity() >= 4
+
 
 if os.sep == "\\":
 	def _windows_show_exception(

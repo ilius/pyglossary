@@ -14,6 +14,7 @@ __all__ = [
 	"XdxfTransformer",
 ]
 
+
 class XdxfTransformer:
 	_gram_color: str = "green"
 	_example_padding: int = 10
@@ -324,7 +325,6 @@ class XdxfTransformer:
 
 		log.warning(f"unknown tag {child.tag}")
 		self.writeChildrenOf(hf, child)
-
 
 	def writeChild(
 		self,

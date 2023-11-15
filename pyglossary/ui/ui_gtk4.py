@@ -42,9 +42,9 @@ from .dependency import checkDepends
 
 gi.require_version("Gtk", "4.0")
 
-from .gtk4_utils import gdk, gio, gtk
-from .gtk4_utils.about import AboutWidget
-from .gtk4_utils.utils import (
+from .gtk4_utils import gdk, gio, gtk  # noqa: E402
+from .gtk4_utils.about import AboutWidget  # noqa: E402
+from .gtk4_utils.utils import (  # noqa: E402
 	HBox,
 	VBox,
 	dialog_add_button,
@@ -86,8 +86,8 @@ writeDesc = [
 
 def getWorkAreaSize(w):
 	display = gdk.Display.get_default()
-	#monitor = display.get_monitor_at_surface(w.get_surface())
-	#if monitor is None:
+	# monitor = display.get_monitor_at_surface(w.get_surface())
+	# if monitor is None:
 	monitor = display.get_primary_monitor()
 	rect = monitor.get_workarea()
 	return rect.width, rect.height
@@ -599,7 +599,7 @@ class FormatOptionsDialog(gtk.Dialog):
 				item.connect("activate", self.valueItemActivate, itr)
 				item.show()
 				menu.append_item(item)
-		#etime = gtk.get_current_event_time()
+		# etime = gtk.get_current_event_time()
 		menu.popup()
 		return True
 
@@ -629,10 +629,10 @@ class FormatBox(FormatButton):
 
 		self.optionsButton = gtk.Button(label="Options")
 		# TODO: self.optionsButton.set_icon_name
-		#self.optionsButton.set_image(gtk.Image.new_from_icon_name(
-		#	"gtk-preferences",
-		#	gtk.IconSize.BUTTON,
-		#))
+		# self.optionsButton.set_image(gtk.Image.new_from_icon_name(
+		# 	"gtk-preferences",
+		# 	gtk.IconSize.BUTTON,
+		# ))
 		self.optionsButton.connect("clicked", self.optionsButtonClicked)
 
 		self.dependsButton = gtk.Button(label="Install dependencies")
@@ -816,10 +816,10 @@ class BrowseButton(gtk.Button):
 
 		self.set_label(label)
 		# TODO: self.set_icon_name
-		#self.set_image(gtk.Image.new_from_icon_name(
-		#	"document-save" if actionSave else "document-open",
-		#	gtk.IconSize.BUTTON,
-		#))
+		# self.set_image(gtk.Image.new_from_icon_name(
+		# 	"document-save" if actionSave else "document-open",
+		# 	gtk.IconSize.BUTTON,
+		# ))
 
 		self.actionSave = actionSave
 		self.setFilePathFunc = setFilePathFunc
@@ -842,10 +842,10 @@ class BrowseButton(gtk.Button):
 			title=self.title,
 		)
 		fcd.connect("response", self.onResponse)
-		#fcd.connect(
-		#	"file-activated",  # FIXME: Gtk 4.0
-		#	lambda w: fcd.response(gtk.ResponseType.OK)
-		#)
+		# fcd.connect(
+		# 	"file-activated",  # FIXME: Gtk 4.0
+		# 	lambda w: fcd.response(gtk.ResponseType.OK)
+		# )
 		fcd.present()
 
 
@@ -1129,11 +1129,11 @@ check {
 			self.styleProvider,
 			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
 		)
-		#gtk.StyleContext.add_provider_for_screen(
-		#	gdk.Screen.get_default(),
-		#	self.styleProvider,
-		#	gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
-		#)
+		# gtk.StyleContext.add_provider_for_screen(
+		# 	gdk.Screen.get_default(),
+		# 	self.styleProvider,
+		# 	gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+		# )
 		self.styleProvider.load_from_data(self.css, len(self.css.encode("utf-8")))
 		#####
 		self.assert_quit = False
@@ -1706,7 +1706,6 @@ check {
 		gtk_event_iteration_loop()
 
 
-
 class Application(gtk.Application):
 	def __init__(self) -> None:
 		gtk.Application.__init__(
@@ -1733,7 +1732,7 @@ class UI(UIBase):
 	) -> None:
 		UIBase.__init__(self)
 		self.app = Application()
-		self.win =  MainWindow(
+		self.win = MainWindow(
 			ui=self,
 			progressbar=progressbar,
 		)

@@ -35,4 +35,3 @@ def sqlite(sortEncoding: str = "utf-8", **options) \
 			sortKey,
 		),
 	]
-

@@ -29,13 +29,17 @@ try:
     from abc import ABCMeta, abstractmethod
 except ImportError:
     AbstractWidget = object
+
     def abstractmethod(fn):
         return fn
+
 else:
     AbstractWidget = ABCMeta('AbstractWidget', (object,), {})
 
+
 class UnknownLength:
-  pass
+    pass
+
 
 def format_updatable(updatable, pbar):
     if hasattr(updatable, 'update'):
@@ -102,7 +106,6 @@ class Timer(Widget):
     def format_time(seconds):
         """Formats time as the string "HH:MM:SS"."""
         return str(datetime.timedelta(seconds=int(seconds)))
-
 
     def update(self, pbar):
         """Updates the widget to show the elapsed time."""
@@ -185,7 +188,7 @@ class FileTransferSpeed(Widget):
 
     def update(self, pbar):
         """Updates the widget with the current SI prefixed speed."""
-        if pbar.seconds_elapsed < 2e-6 or pbar.currval < 2e-6: # =~ 0
+        if pbar.seconds_elapsed < 2e-6 or pbar.currval < 2e-6:  # =~ 0
             scaled = power = 0
         else:
             speed = pbar.currval / pbar.seconds_elapsed
@@ -218,6 +221,7 @@ class AnimatedMarker(Widget):
 
         self.curmark = (self.curmark + 1) % len(self.markers)
         return self.markers[self.curmark]
+
 
 # Alias for backwards compatibility
 RotatingMarker = AnimatedMarker
@@ -264,6 +268,7 @@ class FormatLabel(Timer):
     }
 
     __slots__ = ('format_string',)
+
     def __init__(self, format) -> None:
         self.format_string = format
 
@@ -274,9 +279,9 @@ class FormatLabel(Timer):
                 value = getattr(pbar, key)
 
                 if transform is None:
-                   context[name] = value
+                    context[name] = value
                 else:
-                   context[name] = transform(value)
+                    context[name] = transform(value)
             except:  # noqa: E722
                 pass  # noqa: S110
 
@@ -321,18 +326,19 @@ class Bar(WidgetHFill):
         self.fill = fill
         self.fill_left = fill_left
 
-
     def update(self, pbar, width):
         """Updates the progress bar and its subcomponents."""
-        left, marked, right = (format_updatable(i, pbar) for i in
-                               (self.left, self.marker, self.right))
+        left, marked, right = (
+            format_updatable(i, pbar)
+            for i in (self.left, self.marker, self.right)
+        )
 
         width -= len(left) + len(right)
         # Marked must *always* have length of 1
         if pbar.maxval is not UnknownLength and pbar.maxval:
-          marked *= int(pbar.currval / pbar.maxval * width)
+            marked *= int(pbar.currval / pbar.maxval * width)
         else:
-          marked = ''
+            marked = ''
 
         if self.fill_left:
             return '%s%s%s' % (left, marked.ljust(width, self.fill), right)

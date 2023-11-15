@@ -86,7 +86,7 @@ def lexTag(tr: TransformerType) -> tuple[LexType, ErrorType]:
 		tr.skipAny(" \t")
 		return lexTagAttr, None
 	if c == ']':
-		tag = tr.input[tr.start:tr.pos-1]
+		tag = tr.input[tr.start:tr.pos - 1]
 		if not tag:
 			return None, f"empty tag near pos {tr.pos}"
 		return processTag(tr, tag)
@@ -215,6 +215,7 @@ r"""
 [lang ...] |
 [com]     /
 """
+
 
 def lexRefText(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.end():

@@ -35,5 +35,3 @@ def sqlite(**options) -> "sqliteSortKeyType":
 			normal(**options),
 		),
 	]
-
-

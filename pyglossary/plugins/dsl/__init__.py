@@ -250,7 +250,7 @@ class Reader:
 
 	def sub_title_line(self, m) -> str:
 		line = m.group(0)[1:-1]
-		line = line.replace("[']", "") # FIXME
+		line = line.replace("[']", "")  # FIXME
 		line = line.replace("[/']", "")
 		return line  # noqa: RET504
 

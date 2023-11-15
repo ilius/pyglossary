@@ -98,7 +98,7 @@ class Reader:
 		redirectCount = 0
 
 		try:
-			f_namemax = os.statvfs(cacheDir).f_namemax # type: ignore
+			f_namemax = os.statvfs(cacheDir).f_namemax  # type: ignore
 		except AttributeError:
 			# FIXME
 			raise OSError("Unsupported operating system (no os.statvfs)") from None

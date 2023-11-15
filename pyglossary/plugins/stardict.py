@@ -154,15 +154,17 @@ class XdxfTransformerType(Protocol):
 
 
 class SupportsDunderLT(Protocol):
-    def __lt__(self, __other: Any) -> bool:
-        ...
+	def __lt__(self, __other: Any) -> bool:
+		...
 
 
 class SupportsDunderGT(Protocol):
-    def __gt__(self, __other: Any) -> bool:
-        ...
+	def __gt__(self, __other: Any) -> bool:
+		...
+
 
 T_SDListItem = TypeVar("T_SDListItem", contravariant=True)
+
 
 class T_SdList(Protocol[T_SDListItem]):
 	def append(self, x: T_SDListItem) -> None:
@@ -417,7 +419,7 @@ class Reader:
 				try:
 					key = b_key.decode("utf-8")
 					value = b_value.decode("utf-8", errors=self._unicode_errors)
-				except UnicodeDecodeError :
+				except UnicodeDecodeError:
 					log.error(f"ifo line is not UTF-8: {line!r}")
 					continue
 				self._glos.setInfo(key, value)

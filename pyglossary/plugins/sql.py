@@ -96,7 +96,6 @@ class Writer:
 			"\'w\' TEXT);\n",
 		)
 
-
 		if self._transaction:
 			fileObj.write("BEGIN TRANSACTION;\n")
 		fileObj.write(f"INSERT INTO dbinfo VALUES({','.join(infoValues)});\n")

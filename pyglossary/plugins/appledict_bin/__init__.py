@@ -118,8 +118,7 @@ class Reader:
 
 	def tostring(
 		self,
-		elem: "Element | HtmlComment | HtmlElement"
-			" | HtmlEntity | HtmlProcessingInstruction",
+		elem: "Element | HtmlComment | HtmlElement | HtmlEntity | HtmlProcessingInstruction",
 	) -> str:
 		from lxml.html import tostring as tostring
 
@@ -219,7 +218,6 @@ class Reader:
 
 		metadata = self.parseMetadata(infoPlistPath)
 		self.setMetadata(metadata)
-
 
 		yield from self.setKeyTextData(
 			keyTextDataPath,
@@ -503,7 +501,7 @@ class Reader:
 					chunk_section_compressed = keyTextFile.read(
 						compressedSectionByteLen - 4,
 					)
-					chunksection_bytes = decompress(chunk_section_compressed )
+					chunksection_bytes = decompress(chunk_section_compressed)
 					buff.write(chunksection_bytes)
 					fileLimitDecompressed += decompressedSectionByteLen
 					sectionOffset += max(sectionLength, compressedSectionByteLen + 4)

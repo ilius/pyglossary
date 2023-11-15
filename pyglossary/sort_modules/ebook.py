@@ -51,4 +51,3 @@ def sqlite(sortEncoding: str = "utf-8", **options) -> "sqliteSortKeyType":
 			headword,
 		),
 	]
-

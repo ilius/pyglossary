@@ -7,9 +7,6 @@ but random access is not allowed.
 # based on Andrew Kuchling's minigzip.py distributed with the zlib module
 
 import logging
-
-log = logging.getLogger('root')
-
 import builtins
 import io
 import os
@@ -21,6 +18,8 @@ import _compression
 
 __all__ = ["BadGzipFile", "GzipFile"]
 
+log = logging.getLogger('root')
+
 _FTEXT, FHCRC, FEXTRA, FNAME, FCOMMENT = 1, 2, 4, 8, 16
 
 READ, WRITE = 1, 2
@@ -28,7 +27,6 @@ READ, WRITE = 1, 2
 _COMPRESS_LEVEL_FAST = 1
 _COMPRESS_LEVEL_TRADEOFF = 6
 _COMPRESS_LEVEL_BEST = 9
-
 
 
 def write32u(output, value):
@@ -59,8 +57,9 @@ class _PaddedFile:
 
         read = self._read
         self._read = None
-        return self._buffer[read:] + \
-                self.file.read(size-self._length+read)
+        return self._buffer[read:] + self.file.read(
+            size - self._length + read,
+        )
 
     def prepend(self, prepend=b''):
         if self._read is None:
@@ -233,7 +232,7 @@ class GzipFile(_compression.BaseStream):
         if fname:
             self.fileobj.write(fname + b'\000')
 
-    def write(self,data):
+    def write(self, data):
         self._check_not_closed()
         if self.mode != WRITE:
             import errno
@@ -308,7 +307,7 @@ class GzipFile(_compression.BaseStream):
                 self.myfileobj = None
                 myfileobj.close()
 
-    def flush(self,zlib_mode=zlib.Z_SYNC_FLUSH):
+    def flush(self, zlib_mode=zlib.Z_SYNC_FLUSH):
         self._check_not_closed()
         if self.mode == WRITE:
             # Ensure the compressor's buffer is flushed
@@ -405,13 +404,13 @@ def _read_gzip_header(fp):
         # Read and discard a null-terminated string containing the filename
         while True:
             s = fp.read(1)
-            if not s or s==b'\000':
+            if not s or s == b'\000':
                 break
     if flag & FCOMMENT:
         # Read and discard a null-terminated string containing a comment
         while True:
             s = fp.read(1)
-            if not s or s==b'\000':
+            if not s or s == b'\000':
                 break
     if flag & FHCRC:
         _read_exact(fp, 2)     # Read & discard the 16-bit header CRC
@@ -481,10 +480,12 @@ class _GzipReader(_compression.DecompressReader):
             if uncompress != b"":
                 break
             if buf == b"":
-                raise EOFError("Compressed file ended before the "
-                               "end-of-stream marker was reached")
+                raise EOFError(
+                    "Compressed file ended before the "
+                    "end-of-stream marker was reached"
+                )
 
-        self._add_read_data( uncompress )
+        self._add_read_data(uncompress)
         self._pos += len(uncompress)
         return uncompress
 
@@ -499,8 +500,7 @@ class _GzipReader(_compression.DecompressReader):
         # stored is the true file size mod 2**32.
         crc32, isize = struct.unpack("<II", _read_exact(self._fp, 8))
         if crc32 != self._crc:
-            log.warning("CRC check failed %s != %s" % (hex(crc32),
-                                                             hex(self._crc)))
+            log.warning(f"CRC check failed {hex(crc32)} != {hex(self._crc)}")
         elif isize != (self._stream_size & 0xffffffff):
             raise BadGzipFile("Incorrect length of data produced")
 
@@ -516,4 +516,3 @@ class _GzipReader(_compression.DecompressReader):
     def _rewind(self):
         super()._rewind()
         self._new_member = True
-

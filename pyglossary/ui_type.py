@@ -1,6 +1,4 @@
 
-
-
 class UIType:
 	def progressInit(self, title: str) -> None:
 		raise NotImplementedError

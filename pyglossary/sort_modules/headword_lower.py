@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 
 desc = "Lowercase Headword"
 
+
 def normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
 	def sortKey(words: "list[str]") -> bytes:
 		return words[0].lower().encode(sortEncoding, errors="replace")
@@ -51,5 +52,3 @@ def sqlite_locale(
 		return cSortKey(words[0].lower())
 
 	return lambda **options: [("sortkey", "BLOB", sortKey)]
-
-

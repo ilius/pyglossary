@@ -34,6 +34,7 @@ optionsProp: "dict[str, Option]" = {
 	),
 }
 
+
 class Reader:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
@@ -112,8 +113,10 @@ class Writer:
 
 		for query in (
 			"CREATE TABLE meta ('key' TEXT PRIMARY KEY NOT NULL, 'value' TEXT);",
-			"CREATE TABLE entry ('id' INTEGER PRIMARY KEY NOT NULL, "
-				"'term' TEXT, 'article' TEXT);",
+			(
+				"CREATE TABLE entry ('id' INTEGER PRIMARY KEY NOT NULL, "
+				"'term' TEXT, 'article' TEXT);"
+			),
 			"CREATE TABLE alt ('id' INTEGER NOT NULL, 'term' TEXT);",
 			"CREATE INDEX idx_meta ON meta(key);",
 			"CREATE INDEX idx_entry_term ON entry(term COLLATE NOCASE);",
@@ -217,8 +220,8 @@ class Writer:
 			for word in term.split(" "):
 				eword = "\n" + word
 				subs.update(
-					eword[i:i+3]
-					for i in range(len(eword)-2)
+					eword[i:i + 3]
+					for i in range(len(eword) - 2)
 				)
 			for sub in subs:
 				cur.execute(

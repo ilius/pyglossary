@@ -78,10 +78,13 @@ def diffGlossary(
 			pagerCmd,
 			stdin=PIPE,
 		)
+
 		def write(msg: str):
 			proc.stdin.write(msg.encode("utf-8"))
+
 	else:
 		proc = None
+
 		def write(msg: str):
 			print(msg, end="")
 
@@ -149,11 +152,9 @@ def diffGlossary(
 		)
 		write(formatted)
 
-
 	def printChangedInfo(key: str, value1: str, value2: str) -> str:
 		valueDiff = formatInfoValueDiff(xmlDiff(value1, value2))
 		printInfo(yellow, "=== ", (key, valueDiff))
-
 
 	infoPair1 = None
 	infoPair2 = None

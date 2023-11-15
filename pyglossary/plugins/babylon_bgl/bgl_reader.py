@@ -25,6 +25,7 @@ import io
 import os
 import re
 from collections import OrderedDict as odict
+from collections import namedtuple
 from typing import TYPE_CHECKING, Iterator
 
 from pyglossary.core import log
@@ -149,14 +150,12 @@ re_charset_decode = re.compile(
 re_b_reference = re.compile(b"^[0-9a-fA-F]{4}$")
 
 
-from collections import namedtuple
-
 EntryWordData = namedtuple(
 	"EntryWordData", [
 		"pos",  # int
 		"b_word",  # bytes
 		"u_word",  # str
-		"u_word_html", # str
+		"u_word_html",  # str
 	],
 )
 

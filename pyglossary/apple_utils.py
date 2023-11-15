@@ -59,7 +59,7 @@ cssMapping: "dict[str, str]" = {
 	"-webkit-column-rule-color": "column-rule-color",  # key
 	"-webkit-column-rule-style": "column-rule-style",  # key
 	"-webkit-column-rule-width": "column-rule-width",  # key
-	"-webkit-ruby-position": "ruby-position", # key
+	"-webkit-ruby-position": "ruby-position",  # key
 
 	# not so sure about this
 	"-webkit-padding-start": "padding-inline-start",  # key
@@ -102,6 +102,7 @@ cssParamPattern = re.compile(
 	rb"(-(apple|webkit)-[a-z\-]+)",
 )
 
+
 def _subCSS(m: "re.Match") -> bytes:
 	b_key = m.group(0)
 	value = cssMapping.get(b_key.decode("ascii"))
@@ -109,6 +110,7 @@ def _subCSS(m: "re.Match") -> bytes:
 		log.warning(f"unrecognized CSS param: {b_key.decode('ascii')!r}")
 		return b_key
 	return value.encode("ascii")
+
 
 def substituteAppleCSS(css: bytes) -> bytes:
 	css = cssKeyRemovePattern.sub(b"", css)

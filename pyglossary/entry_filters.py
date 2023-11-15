@@ -197,6 +197,7 @@ class RemoveHtmlTags(EntryFilter):
 		entry.editFuncDefi(fixStr)
 		return entry
 
+
 class StripFullHtml(EntryFilter):
 	name = "strip_full_html"
 	desc = "Replace a full HTML document with it's body"
@@ -475,6 +476,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 				word = word[:37] + "..."
 			core.trace(log, f"MaxMemUsage: {usage:,}, {word=}")
 		return entry
+
 
 entryFiltersRules = [
 	(None, True, TrimWhitespaces),

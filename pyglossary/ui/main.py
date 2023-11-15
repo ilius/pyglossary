@@ -631,7 +631,6 @@ def main() -> None:
 		)
 		sys.exit(1)
 
-
 	core.checkCreateConfDir()
 
 	if sys.getdefaultencoding() != "utf-8":
@@ -682,7 +681,6 @@ def main() -> None:
 				f"must be an object/dict, not {type(newWriteOptions)}",
 			)
 
-
 	# examples for read and write options:
 	# --read-options testOption=stringValue
 	# --read-options enableFoo=True
@@ -695,7 +693,6 @@ def main() -> None:
 	# or --json-write-options flags instead, with json object as value,
 	# quoted for command line. for example:
 	# 	'--json-write-options={"delimiter": ";"}'
-
 
 	convertOptionsKeys = (
 		"direct",

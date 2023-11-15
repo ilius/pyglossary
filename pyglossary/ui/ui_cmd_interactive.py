@@ -1108,7 +1108,6 @@ class UI(ui_cmd.UI):
 		self._convertOptions = convertOptions
 		self._glossarySetAttrs = glossarySetAttrs
 
-
 		self.loadConfig()
 		self.savedConfig = dict(self.config)
 		self.config = config

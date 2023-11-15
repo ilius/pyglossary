@@ -197,7 +197,6 @@ class Reader:
 				byteProgress=(self._file.tell(), self._fileSize),
 			)
 
-
 	def close(self) -> None:
 		if self._file:
 			self._file.close()

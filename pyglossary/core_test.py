@@ -5,6 +5,7 @@ __all__ = [
 	"getMockLogger",
 ]
 
+
 class MockLogHandler(logging.Handler):
 	def __init__(self) -> None:
 		logging.Handler.__init__(self)

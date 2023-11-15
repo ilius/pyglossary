@@ -55,4 +55,3 @@ LexType = Optional[Callable[[TransformerType], tuple["LexType", ErrorType]]]
 TitleLexType = Optional[
 	Callable[[TitleTransformerType], tuple["TitleLexType", ErrorType]]
 ]
-

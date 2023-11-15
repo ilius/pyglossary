@@ -114,7 +114,6 @@ class PluginProp:
 		self._readDepends: "dict[str, str]"
 		self._writeDepends: "dict[str, str]"
 
-
 	@classmethod
 	def fromDict(
 		cls: "type",

@@ -62,6 +62,7 @@ optionsProp: "dict[str, Option]" = {
 	),
 }
 
+
 class Reader:
 	compressions = stdCompressions
 	depends = {
@@ -283,7 +284,6 @@ class Reader:
 			with hf.element("div", attrib={"class": "audio"}):
 				self.writeSoundAudio(hf, sound)
 
-
 	def writeSenseList(
 		self,
 		hf: "T_htmlfile",
@@ -368,7 +368,6 @@ class Reader:
 					"style": f"padding: {self._example_padding};",
 				}):
 					self.writeSenseExample(hf, example)
-
 
 	def writeSenseFormOf(
 		self,

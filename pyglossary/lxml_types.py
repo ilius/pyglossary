@@ -45,11 +45,13 @@ class IncrementalFileWriter(typing.Protocol):
 		doctype: "AnyStr | None" = ...,
 	) -> None:
 		...
+
 	def write_doctype(
 		self,
 		doctype: "AnyStr | None",
 	) -> None:
 		...
+
 	def write(
 		self,
 		*args: "AnyStr | Element",
@@ -58,13 +60,16 @@ class IncrementalFileWriter(typing.Protocol):
 		method: _OutputMethodArg | None = ...,
 	) -> None:
 		...
+
 	def flush(self) -> None:
 		...
+
 	def method(
 		self,
 		method: "_OutputMethodArg | None",
 	) -> ContextManager[None]:
 		raise NotImplementedError
+
 	def element(
 		self,
 		tag: _TagName,
@@ -74,6 +79,7 @@ class IncrementalFileWriter(typing.Protocol):
 		**_extra: AnyStr,
 	) -> ContextManager[None]:
 		raise NotImplementedError
+
 
 class AsyncIncrementalFileWriter(typing.Protocol):
 	async def write_declaration(
@@ -83,11 +89,13 @@ class AsyncIncrementalFileWriter(typing.Protocol):
 		doctype: "AnyStr | None" = ...,
 	) -> None:
 		...
+
 	async def write_doctype(
 		self,
 		doctype: "AnyStr | None",
 	) -> None:
 		...
+
 	async def write(
 		self,
 		*args: "AnyStr | Element | None",
@@ -96,13 +104,16 @@ class AsyncIncrementalFileWriter(typing.Protocol):
 		method: "_OutputMethodArg | None" = ...,
 	) -> None:
 		...
+
 	async def flush(self) -> None:
 		...
+
 	def method(
 		self,
 		method: "_OutputMethodArg | None",
 	) -> AsyncContextManager[None]:
 		raise NotImplementedError
+
 	def element(
 		self,
 		tag: _TagName,
@@ -113,6 +124,7 @@ class AsyncIncrementalFileWriter(typing.Protocol):
 	) -> AsyncContextManager[None]:
 		raise NotImplementedError
 
+
 class T_htmlfile(  # type: ignore # noqa: PGH003
 	IncrementalFileWriter,
 	ContextManager[IncrementalFileWriter],
@@ -120,6 +132,7 @@ class T_htmlfile(  # type: ignore # noqa: PGH003
 	# AsyncContextManager[AsyncIncrementalFileWriter],
 ):
 	pass
+
 
 # typing.AsyncContextManager
 # is generic version of contextlib.AbstractAsyncContextManager

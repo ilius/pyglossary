@@ -17,13 +17,15 @@ ignore E402 "module level import not at top of file"
 
 #ignore F403 "'from module import *' used; unable to detect undefined names"
 
-TOOL=pycodestyle
+TOOL="pycodestyle --max-line-length=100"
 if which flake8 ; then
 	TOOL=flake8
 fi
 
+# pycodestyle 
+
 #if [ -z $2 ] ; then
-$TOOL --ignore=$IGNORE "$@" | grep --color=always -P ':\d*:' 2>&1 | less -RU
+$TOOL --ignore=$IGNORE "$@" | grep -v wcwidth | sed -E 's/([0-9]+):([0-9]+)/\1  /g' | sed 's|^./||g' | less -N
 #else
 #	pycodestyle --select "$@" | grep --color=always -P ':\d*:' 2>&1
 #fi
