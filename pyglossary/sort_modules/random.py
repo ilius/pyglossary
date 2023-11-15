@@ -1,6 +1,8 @@
 from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
+	from pyglossary.icu_types import T_Collator
+
 	from .sort_keys_types import sortKeyType, sqliteSortKeyType
 
 
