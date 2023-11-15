@@ -9,6 +9,10 @@ import pathlib
 import struct
 import typing
 import zipfile
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	from typing import Literal
 
 from pyglossary.core import log
 from pyglossary.flags import NEVER
@@ -413,14 +417,15 @@ class Comparator:
 			icu.UTransDirection.FORWARD,
 		).transliterate
 
-	def compare(self, tup1: "tuple[str, str]", tup2: "tuple[str, str]") -> "0 | 1 | -1":
+	def compare(
+		self,
+		tup1: "tuple[str, str]",
+		tup2: "tuple[str, str]",
+	) -> "Literal[0] | Literal[1] | Literal[-1]":
 		# assert isinstance(tup1, tuple)
 		# assert isinstance(tup2, tuple)
 		s1, n1 = tup1
 		s2, n2 = tup2
-		return self._compare_normalized(s1, s2, n1, n2)
-
-	def _compare_normalized(self, s1, s2, n1, n2) -> "0 | 1 | -1":
 		cn = self._compare_without_dash(n1, n2)
 		if cn != 0:
 			return cn
@@ -429,7 +434,7 @@ class Comparator:
 			return cn
 		return self._comparator.compare(s1, s2)
 
-	def _compare_without_dash(self, a, b) -> "0 | 1 | -1":
+	def _compare_without_dash(self, a, b) -> "Literal[0] | Literal[1] | Literal[-1]":
 		if self.version < 7:
 			return 0
 		s1 = self._without_dash(a)
@@ -723,18 +728,18 @@ class Writer:
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._filename = None
+		self._filename = ""
 		self._dic = None
 
 	def finish(self) -> None:
-		self._filename = None
+		self._filename = ""
 		self._dic = None
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
 
 	def write(self) -> "typing.Generator[None, EntryType, None]":
-		synonyms = {}
+		synonyms: dict[str, list[str]] = {}
 		htmls = []
 		log.info("Converting individual entries ...")
 		while True:
