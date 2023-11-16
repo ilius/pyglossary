@@ -232,14 +232,18 @@ class Writer:
 		"js": "application/javascript",
 		"json": "application/json",
 		"woff": "application/font-woff",
+		"woff2": "application/font-woff2",
 		"ttf": "application/x-font-ttf",
 		"otf": "application/x-font-opentype",
 		"mp3": "audio/mpeg",
 		"ogg": "audio/ogg",
+		"spx": "audio/ogg",
+		"wav": "audio/wav",
 		"ini": "text/plain",
 		# "application/octet-stream+xapian",
 		"eot": "application/vnd.ms-fontobject",
 		"pdf": "application/pdf",
+		"mp4": "video/mp4",
 	}
 
 	def __init__(self, glos: GlossaryType) -> None:
@@ -336,6 +340,15 @@ class Writer:
 		if defiFormat == "h":
 			b_defi = b_defi.replace(b'"bword://', b'"')
 			b_defi = b_defi.replace(b"'bword://", b"'")
+			b_defi = b_defi.replace(b'''href="sound://''', b'''onclick="new Audio(this.href).play(); return false;" href="''')
+			b_defi = b_defi.replace(b"""href='sound://""", b"""onclick="new Audio(this.href).play(); return false;" href='""")
+			b_defi = b_defi.replace(b'''<img src="/''', b'''<img src="''')
+			b_defi = b_defi.replace(b"""<img src='""", b"""<img src='""")
+			b_defi = b_defi.replace(b'''<img src="file:///''', b'''<img src="''')
+			b_defi = b_defi.replace(b"""<img src='file:///""", b"""<img src='""")
+
+			# b_defi = b_defi.replace(b'''.spx">''', b'''.mp3">''')
+			# b_defi = b_defi.replace(b""".spx'>""", b""".mp3'>""")
 
 		if not _ctype:
 			if defiFormat == "h":
