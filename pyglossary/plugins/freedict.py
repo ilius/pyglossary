@@ -197,7 +197,9 @@ class Reader:
 		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
+		from lxml import etree as ET
 		quotes = []
+		sense = ET.Element(f"{tei}sense")
 		for child in elem.xpath("child::node()"):
 			if isinstance(child, str):
 				child = child.strip()
@@ -209,14 +211,22 @@ class Reader:
 			if child.__class__.__name__ == "_Comment":
 				continue
 
-			if child.tag != f"{tei}quote":
-				log.warning(
-					f"unknown tag {child.tag!r} inside translation <cit>"
-					f": {self.tostring(child)}",
-				)
+			if child.tag == f"{tei}quote":
+				quotes.append(child)
 				continue
 
-			quotes.append(child)
+			if child.tag in (f"{tei}gramGrp", f"{tei}usg", f"{tei}note"):
+				sense.append(child)
+				continue
+
+			if child.tag == f"{tei}cit":
+				# TODO
+				continue
+
+			log.warning(
+				f"unknown tag {child.tag!r} inside translation <cit>"
+				f": {self.tostring(child)}",
+			)
 
 		self.makeList(
 			hf,
@@ -224,6 +234,8 @@ class Reader:
 			self.writeQuote,
 			single_prefix="",
 		)
+		if next(sense.iterchildren(), False) is not None:
+			self.writeSense(hf, sense)
 
 	def writeDef(
 		self,
@@ -622,7 +634,11 @@ class Reader:
 
 		if tag == f"{tei}note":
 			return text
-		log.warning(f"unrecognize GramGrp child tag: {self.tostring(elem)}")
+
+		if tag == f"{tei}colloc":
+			return ""
+
+		log.warning(f"unrecognize GramGrp child tag: {elem.tag!r}: {self.tostring(elem)}")
 		return ""
 
 	def getEntryByElem(
