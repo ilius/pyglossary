@@ -258,7 +258,9 @@ class SkipDataEntry(EntryFilter):
 	desc = "Skip resources / data files"
 
 	def run(self, entry: "EntryType") -> "EntryType | None":
-		if entry.isData() and entry.b_word.endswith((b'.ogg', b'.mp3', b'.mp4', b'.wav', b'.spx', b'.mov', b'.pdf', b'.jpg', b'.jpeg' )):
+		if entry.isData() and entry.b_word.endswith(
+				(b'.ogg', b'.mp3', b'.mp4', b'.wav', b'.spx', b'.mov', b'.pdf', b'.jpg', b'.jpeg' ),
+		):
 			return None
 		return entry
 

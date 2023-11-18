@@ -57,6 +57,11 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "add version info tags to slob file"
+			},
+			"audio_goldendict": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Convert audio links for GoldenDict (desktop)"
 			}
 		},
 		"canRead": true,
@@ -69,7 +74,8 @@
 			"file_size_approx_check_num_entries": 100,
 			"separate_alternates": false,
 			"word_title": false,
-			"version_info": false
+			"version_info": false,
+			"audio_goldendict": false
 		},
 		"readDepends": {
 			"icu": "PyICU"

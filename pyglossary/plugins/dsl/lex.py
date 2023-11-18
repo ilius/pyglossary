@@ -292,7 +292,8 @@ def lexS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if ext in ("wav", "mp3", "ogg"):
 		if tr.audio:
 			tr.output += (
-				f'<a href="{fname}" style="cursor:pointer" onclick="new Audio(this.href).play(); return false;">&nbsp;&#x1F508;</a>'
+				f'<a href="{fname}" style="cursor:pointer" '
+				'onclick="new Audio(this.href).play(); return false;">&nbsp;&#x1F508;</a>'
 			)
 	elif ext in ("jpg", "jpeg", "gif", "tif", "tiff", "png", "bmp"):
 		tr.output += rf'<img align="top" src="{fname}" alt="{fname}" />'

@@ -28,6 +28,7 @@
 | separate_alternates                | `False` | bool | add alternate headwords as separate entries to slob             |
 | word_title                         | `False` | bool | add headwords title to beginning of definition                  |
 | version_info                       | `False` | bool | add version info tags to slob file                              |
+| audio_goldendict                   | `False` | bool | Convert audio links for GoldenDict (desktop)                    |
 
 ### Dependencies for reading and writing
 
