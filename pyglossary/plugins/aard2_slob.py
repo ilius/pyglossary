@@ -61,6 +61,9 @@ optionsProp: "dict[str, Option]" = {
 	"version_info": BoolOption(
 		comment="add version info tags to slob file",
 	),
+    "audio_goldendict": BoolOption(
+        comment="Convert audio links for GoldenDict (desktop)",
+    ),
 }
 
 extraDocs = [
@@ -218,6 +221,8 @@ class Writer:
 	_word_title: bool = False
 	_version_info: bool = False
 
+	_audio_goldendict: bool = False
+
 	resourceMimeTypes = {
 		"png": "image/png",
 		"jpeg": "image/jpeg",
@@ -340,15 +345,17 @@ class Writer:
 		if defiFormat == "h":
 			b_defi = b_defi.replace(b'"bword://', b'"')
 			b_defi = b_defi.replace(b"'bword://", b"'")
-			b_defi = b_defi.replace(b'''href="sound://''', b'''onclick="new Audio(this.href).play(); return false;" href="''')
-			b_defi = b_defi.replace(b"""href='sound://""", b"""onclick="new Audio(this.href).play(); return false;" href='""")
-			b_defi = b_defi.replace(b'''<img src="/''', b'''<img src="''')
-			b_defi = b_defi.replace(b"""<img src='""", b"""<img src='""")
-			b_defi = b_defi.replace(b'''<img src="file:///''', b'''<img src="''')
-			b_defi = b_defi.replace(b"""<img src='file:///""", b"""<img src='""")
 
-			# b_defi = b_defi.replace(b'''.spx">''', b'''.mp3">''')
-			# b_defi = b_defi.replace(b""".spx'>""", b""".mp3'>""")
+			if not self._audio_goldendict:
+				b_defi = b_defi.replace(b'''href="sound://''',
+					b'''onclick="new Audio(this.href).play(); return false;" href="''')
+				b_defi = b_defi.replace(b"""href='sound://""",
+					b"""onclick="new Audio(this.href).play(); return false;" href='""")
+				b_defi = b_defi.replace(b'''<img src="/''', b'''<img src="''')
+				b_defi = b_defi.replace(b"""<img src='""", b"""<img src='""")
+				b_defi = b_defi.replace(b'''<img src="file:///''', b'''<img src="''')
+				b_defi = b_defi.replace(b"""<img src='file:///""", b"""<img src='""")
+
 
 		if not _ctype:
 			if defiFormat == "h":
