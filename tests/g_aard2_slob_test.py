@@ -22,7 +22,7 @@ class TestGlossarySlob(TestGlossaryBase):
 			"100-en-fa-res.slob": "0216d006",
 			"100-en-fa-res-slob.txt": "c73100b3",
 			"100-en-fa-res-slob-sort.txt": "8253fe96",
-            "300-ru-en.txt": "77cfee2f",
+			"300-ru-en.txt": "77cfee2f",
 		})
 
 	def setUp(self):

@@ -21,12 +21,13 @@ class MockLogHandler(logging.Handler):
 		else:
 			self.recordsByLevel[level] = [record]
 
-	def popLog(self, level: int, msg: str) -> "logging.LogRecord | None":
+	def popLog(self, level: int, msg: str, partial=False) -> "logging.LogRecord | None":
 		if level not in self.recordsByLevel:
 			return None
 		records = self.recordsByLevel[level]
 		for index, record in enumerate(records):
-			if record.getMessage() == msg:
+			rec_msg = record.getMessage()
+			if msg == rec_msg or (msg in rec_msg and partial):
 				return records.pop(index)
 		return None
 

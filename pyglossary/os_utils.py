@@ -87,32 +87,34 @@ def _dictzip(filename: str) -> bool:
 	dictzipCmd = shutil.which("dictzip")
 	if not dictzipCmd:
 		return False
-	b_out, b_err = subprocess.Popen(
-		[dictzipCmd, filename],
-		stdout=subprocess.PIPE).communicate()
 	log.debug(f"dictzip command: {dictzipCmd!r}")
-	if b_err:
-		err = b_err.decode("utf-8").replace('\n', ' ')
-		log.error(f"dictzip error: {err}")
-	if b_out:
-		out = b_out.decode("utf-8").replace('\n', ' ')
-		log.error(f"dictzip error: {out}")
+	try:
+		subprocess.run(
+			[dictzipCmd, filename],
+			check=True,
+			stdout=subprocess.PIPE,
+			stderr=subprocess.STDOUT,
+		)
+	except subprocess.CalledProcessError as proc_err:
+		err_msg = proc_err.output.decode("utf-8").replace("\n", ";")
+		retcode = proc_err.returncode
+		log.error(f"dictzip exit {retcode}: {err_msg}")
 	return True
 
 
-def _nozip(filename: str) -> bool:
-	log.warning(
-		"Dictzip compression requires idzip module or dictzip utility,"
-		f" run `{core.pip} install python-idzip` to install or make sure"
-		" dictzip is in your $PATH")
-	return False
-
-
-def runDictzip(filename: str) -> None:
+def runDictzip(filename: str | Path, method="") -> None:
 	"""Compress file into dictzip format."""
-	for fun in (_idzip, _dictzip, _nozip):
-		if fun(filename):
-			return
+	res = None
+	if method in ["", "idzip"]:
+		res = _idzip(filename)
+	if not res and method in ["", "dictzip"]:
+		res = _dictzip(filename)
+	if not res:
+		log.warning(
+			"Dictzip compression requires idzip module or dictzip utility,"
+			f" run `{core.pip} install python-idzip` to install or make sure"
+			" dictzip is in your $PATH",
+		)
 
 
 def _rmtreeError(
