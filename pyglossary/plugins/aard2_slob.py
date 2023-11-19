@@ -242,7 +242,7 @@ class Writer:
 		"otf": "application/x-font-opentype",
 		"mp3": "audio/mpeg",
 		"ogg": "audio/ogg",
-		"spx": "audio/ogg",
+		"spx": "audio/x-speex",
 		"wav": "audio/wav",
 		"ini": "text/plain",
 		# "application/octet-stream+xapian",
