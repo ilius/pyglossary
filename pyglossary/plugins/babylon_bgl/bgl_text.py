@@ -256,21 +256,19 @@ def stripDollarIndexes(b_word: bytes) -> "tuple[bytes, int]":
 			# )
 			b_word_main += b_word[i:]
 			break
-		if d1 == d0 + 1:
-			"""
-			You may find keys (or alternative keys) like these:
-			sur l'arbre$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-			obscurantiste$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-			They all end on a sequence of b'$', key length including dollars
-			is always 60 chars.
-			You may find keys like these:
-			extremidade-$$$-$$$-linha
-			.FIRM$$$$$$$$$$$$$
-			etc
 
-			summary: we must remove any sequence of dollar signs longer
-			than 1 chars
-			"""
+		# You may find keys (or alternative keys) like these:
+		# sur l'arbre$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+		# obscurantiste$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+		# They all end on a sequence of b'$', key length including dollars
+		# is always 60 chars.
+		# You may find keys like these:
+		# extremidade-$$$-$$$-linha
+		# .FIRM$$$$$$$$$$$$$
+		# etc
+		# summary: we must remove any sequence of dollar signs longer
+		# than 1 chars
+		if d1 == d0 + 1:
 			# log.debug(f"stripDollarIndexes({b_word}):\nfound $$")
 			b_word_main += b_word[i:d0]
 			i = d1 + 1
@@ -279,27 +277,26 @@ def stripDollarIndexes(b_word: bytes) -> "tuple[bytes, int]":
 			if i >= len(b_word):
 				break
 			continue
+
 		if b_word[d0 + 1:d1].strip(b"0123456789"):
 			# if has at least one non-digit char
 			# log.debug(f"stripDollarIndexes({b_word}):\nnon-digit between $$")
 			b_word_main += b_word[i:d1]
 			i = d1
 			continue
+
+		# Examples:
+		# make do$4$/make /do
+		# potere$1$<BR><BR>
+		# See also <a href='file://ITAL-ENG POTERE 1249-1250.pdf'>notes...</A>
+		# volere$1$<BR><BR>
+		# See also <a href='file://ITAL-ENG VOLERE 1469-1470.pdf'>notes...</A>
+		# Ihre$1$Ihres
 		if d1 + 1 < len(b_word) and b_word[d1 + 1] != 0x20:
-			"""
-			Examples:
-		make do$4$/make /do
-		potere$1$<BR><BR>
-		See also <a href='file://ITAL-ENG POTERE 1249-1250.pdf'>notes...</A>
-		volere$1$<BR><BR>
-		See also <a href='file://ITAL-ENG VOLERE 1469-1470.pdf'>notes...</A>
-		Ihre$1$Ihres
-			"""
 			log.debug(
 				f"stripDollarIndexes({b_word!r}):\n"
 				f"second $ is followed by non-space",
 			)
-			pass
 		b_word_main += b_word[i:d0]
 		i = d1 + 1
 		strip_count += 1
