@@ -19,6 +19,7 @@
 
 import csv
 import os
+import sys
 from os.path import isdir, join
 from typing import TYPE_CHECKING, Generator, Iterable, Iterator, cast
 
@@ -119,6 +120,15 @@ class Reader:
 			log.warning("CSV Reader: file is not seekable")
 
 		self._file = TextFilePosWrapper(cfile, self._encoding)
+		maxInt = sys.maxsize
+		while True:
+			# decrease the maxInt value by factor 10 
+			# as long as the OverflowError occurs.
+			try:
+				csv.field_size_limit(maxInt)
+				break
+			except OverflowError:
+				maxInt = int(maxInt/10)
 		self._csvReader = csv.reader(
 			self._file,
 			dialect="excel",
