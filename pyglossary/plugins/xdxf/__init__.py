@@ -129,6 +129,7 @@ class Reader:
 		if self._xsl:
 			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 			self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
+			return
 
 		from pyglossary.xdxf.transform import XdxfTransformer
 		self._htmlTr = XdxfTransformer(encoding=self._encoding)
