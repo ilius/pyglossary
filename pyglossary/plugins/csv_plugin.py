@@ -19,7 +19,6 @@
 
 import csv
 import os
-import sys
 from os.path import isdir, join
 from typing import TYPE_CHECKING, Generator, Iterable, Iterator, cast
 
@@ -120,8 +119,9 @@ class Reader:
 			log.warning("CSV Reader: file is not seekable")
 
 		self._file = TextFilePosWrapper(cfile, self._encoding)
-		maxInt = 2**31-1
-		csv.field_size_limit(maxInt)
+ 
+		csv.field_size_limit(2**31-1)
+		
 		self._csvReader = csv.reader(
 			self._file,
 			dialect="excel",
