@@ -1,10 +1,10 @@
 import logging
+import sys
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 	from pyglossary.lxml_types import Element, T_htmlfile
-
 
 log = logging.getLogger("pyglossary")
 
@@ -14,13 +14,12 @@ __all__ = [
 
 
 class XdxfTransformer:
-	_gram_color: str = "green"
-	_example_padding: int = 10
-
 	def __init__(self, encoding: str = "utf-8") -> None:
 		self._encoding = encoding
+		self.logging_enabled = False
 		self._childTagWriteMapping = {
 			"br": self._write_br,
+			"u": self._write_basic_format,
 			"i": self._write_basic_format,
 			"b": self._write_basic_format,
 			"sub": self._write_basic_format,
@@ -38,6 +37,7 @@ class XdxfTransformer:
 			"iref": self._write_iref,
 			"pos": self._write_pos,
 			"abr": self._write_abr,
+			"abbr": self._write_abbr,
 			"dtrn": self._write_dtrn,
 			"co": self._write_co,
 			"c": self._write_c,
@@ -45,13 +45,11 @@ class XdxfTransformer:
 			"def": self._write_def,
 			"deftext": self._write_deftext,
 			"span": self._write_span,
-			"abbr_def": self._write_abbr_def,
 			"gr": self._write_gr,
 			"ex_orig": self._write_ex_orig,
 			"categ": self._write_categ,
 			"opt": self._write_opt,
 			"img": self._write_img,
-			"abbr": self._write_abbr,
 			"etm": self._write_etm,
 		}
 
@@ -125,11 +123,10 @@ class XdxfTransformer:
 			if not hasPrev:
 				child = child.lstrip()
 		elif child.startswith("\n"):
-			child = child.lstrip()
+			# child = child.lstrip()
 			if hasPrev:
 				addSep()
 
-		child = child.rstrip()
 		lines = [line for line in child.split("\n") if line]
 		for index, line in enumerate(lines):
 			if index > 0:
@@ -144,10 +141,7 @@ class XdxfTransformer:
 		stringSep = " "
 		with hf.element(
 			"div",
-			attrib={
-				"class": "example",
-				"style": f"padding: {self._example_padding}px 0px;",
-			},
+			attrib={"class": elem.tag},
 		):
 			for child in elem.xpath("child::node()"):
 				if isinstance(child, str):
@@ -159,13 +153,36 @@ class XdxfTransformer:
 					with hf.element("div"):
 						self._write_iref(hf, child)  # NESTED 5
 					continue
-				if child.tag in {"ex_orig", "ex_tran"}:
-					with hf.element("div"):
-						self.writeChildrenOf(hf, child, stringSep=stringSep)  # NESTED 5
+
+				if child.tag == "ex_orig":
+					with hf.element("span", attrib={"class": child.tag}):
+						self.writeChildrenOf(hf, child, stringSep=stringSep)
+					continue
+				if child.tag == "ex_tran":
+					ex_trans = elem.xpath("./ex_tran")
+					if ex_trans.index(child) == 0:
+						# when several translations, make HTML unordered list of them
+						if len(ex_trans) > 1:
+							with hf.element("ul", attrib={}):
+								for ex_tran in ex_trans:
+									with hf.element("li", attrib={}):
+										self._write_ex_transl(hf, ex_tran)
+						else:
+							self._write_ex_transl(hf, child)
 					continue
 				# log.warning(f"unknown tag {child.tag} inside <ex>")
 				self.writeChild(hf, child, elem, prev, stringSep=stringSep)
 				prev = child
+
+	def _write_ex_orig(self, hf: "T_htmlfile", child: "Element") -> None:
+		# TODO NOT REACHABLE
+		sys.exit("NOT REACHABLE")
+		with hf.element("i"):
+			self.writeChildrenOf(hf, child)
+
+	def _write_ex_transl(self, hf: "T_htmlfile", child: "Element") -> None:
+		with hf.element("span", attrib={"class": child.tag}):
+			self.writeChildrenOf(hf, child)
 
 	def _write_iref(self, hf: "T_htmlfile", child: "Element") -> None:
 		iref_url = child.attrib.get("href", "")
@@ -203,18 +220,25 @@ class XdxfTransformer:
 		hf.write(ET.Element("br"))
 
 	def _write_k(self, hf: "T_htmlfile", child: "Element") -> None:
-		with hf.element("div", attrib={"class": child.tag}):
-			# with hf.element(glos.titleTag(child.text)):
-			# ^ no glos object here!
-			with hf.element("b"):
+		self.logging_enabled = child.text == "iść"
+
+		index = child.getparent().index(child)
+		if index == 0:
+			with (hf.element("div", attrib={"class": child.tag})):
+				# with hf.element(glos.titleTag(child.text)):
+				# ^ no glos object here!
 				self.writeChildrenOf(hf, child)
+		# TODO Lenny: show other forms in a collapsible list
+		# else:
+		# 	with (hf.element("span", attrib={"class": child.tag})):
+		# 		hf.write(str(index))
+		# 		self.writeChildrenOf(hf, child)
 
 	def _write_mrkd(self, hf: "T_htmlfile", child: "Element") -> None:  # noqa: PLR6301
 		if not child.text:
 			return
 		with hf.element("span", attrib={"class": child.tag}):
-			with hf.element("b"):
-				hf.write(child.text)
+			hf.write(child.text)
 
 	def _write_kref(self, hf: "T_htmlfile", child: "Element") -> None:
 		if not child.text:
@@ -235,21 +259,24 @@ class XdxfTransformer:
 
 	def _write_pos(self, hf: "T_htmlfile", child: "Element") -> None:
 		with hf.element("span", attrib={"class": child.tag}):
-			with hf.element("font", color="green"):
-				with hf.element("i"):
-					self.writeChildrenOf(hf, child)  # NESTED 5
+			self.writeChildrenOf(hf, child)
 
 	def _write_abr(self, hf: "T_htmlfile", child: "Element") -> None:
+		with hf.element("span", attrib={"class": "abbr"}):
+			self.writeChildrenOf(hf, child)
+
+	def _write_abbr(self, hf: "T_htmlfile", child: "Element") -> None:  # noqa: PLR6301
 		with hf.element("span", attrib={"class": child.tag}):
-			with hf.element("font", color="green"):
-				with hf.element("i"):
-					self.writeChildrenOf(hf, child)  # NESTED 5
+			self.writeChildrenOf(hf, child)
 
 	def _write_dtrn(self, hf: "T_htmlfile", child: "Element") -> None:
 		self.writeChildrenOf(hf, child, sep=" ")
 
 	def _write_co(self, hf: "T_htmlfile", child: "Element") -> None:
-		self.writeChildrenOf(hf, child, sep=" ")
+		with hf.element("span", attrib={"class": child.tag}):
+			hf.write("(")
+			self.writeChildrenOf(hf, child, sep=" ")
+			hf.write(")")
 
 	def _write_basic_format(self, hf: "T_htmlfile", child: "Element") -> None:
 		with hf.element(child.tag):
@@ -273,38 +300,44 @@ class XdxfTransformer:
 			log.warning(f"rref with no text: {self.tostring(child)}")
 			return
 
-	def _write_def(self, hf: "T_htmlfile", child: "Element") -> None:
-		# TODO: create a list (ol / ul) unless it has one item only
-		# like FreeDict reader
-		with hf.element("div"):
-			self.writeChildrenOf(hf, child)
+	def _write_def(self, hf: "T_htmlfile", elem: "Element") -> None:
+		has_nested_def = False
+		has_deftext = False
+		for child in elem.iterchildren():
+			if child.tag == "def":
+				has_nested_def = True
+			if child.tag == "deftext":
+				has_deftext = True
+
+		if elem.getparent().tag == "ar":  # this is a root <def>
+			if has_nested_def:
+				with hf.element("ol"):
+					self.writeChildrenOf(hf, elem)
+			else:
+				with hf.element("div"):
+					self.writeChildrenOf(hf, elem)
+		elif has_deftext:
+			with hf.element("li"):
+				self.writeChildrenOf(hf, elem)
+		elif has_nested_def:
+			with hf.element("li"):
+				with hf.element("ol"):
+					self.writeChildrenOf(hf, elem)
+		else:
+			with hf.element("li"):
+				self.writeChildrenOf(hf, elem)
 
 	def _write_deftext(self, hf: "T_htmlfile", child: "Element") -> None:
-		self.writeChildrenOf(hf, child, stringSep=" ", sep=" ")
+		with hf.element("span", attrib={"class": child.tag}):
+			self.writeChildrenOf(hf, child, stringSep=" ", sep=" ")
 
 	def _write_span(self, hf: "T_htmlfile", child: "Element") -> None:
 		with hf.element("span"):
 			self.writeChildrenOf(hf, child)
 
-	def _write_abbr_def(self, hf: "T_htmlfile", child: "Element") -> None:
-		# _type = child.attrib.get("type", "")
-		# {"": "", "grm": "grammatical", "stl": "stylistical",
-		#  "knl": "area/field of knowledge", "aux": "subsidiary"
-		#  "oth": "others"}[_type]
-		self.writeChildrenOf(hf, child)
-
 	def _write_gr(self, hf: "T_htmlfile", child: "Element") -> None:
-		from lxml import etree as ET
-
-		with hf.element("font", color=self._gram_color):
-			hf.write(child.text or "")
-		hf.write(ET.Element("br"))
-
-	def _write_ex_orig(self, hf: "T_htmlfile", child: "Element") -> None:
-		with hf.element("i"):
+		with hf.element("div", attrib={"class": child.tag}):
 			self.writeChildrenOf(hf, child)
-
-	# def _write_ex_transl(self, hf: "T_htmlfile", child: "Element") -> None:
 
 	def _write_categ(self, hf: "T_htmlfile", child: "Element") -> None:
 		with hf.element("span", style="background-color: green;"):
@@ -319,11 +352,6 @@ class XdxfTransformer:
 	def _write_img(self, hf: "T_htmlfile", child: "Element") -> None:  # noqa: PLR6301
 		with hf.element("img", attrib=dict(child.attrib)):
 			pass
-
-	def _write_abbr(self, hf: "T_htmlfile", child: "Element") -> None:  # noqa: PLR6301
-		# FIXME: may need an space or newline before it
-		with hf.element("i"):
-			hf.write(f"{child.text}")
 
 	def _write_etm(self, hf: "T_htmlfile", child: "Element") -> None:  # noqa: PLR6301
 		# Etymology (history and origin)
@@ -364,17 +392,15 @@ class XdxfTransformer:
 		stringSep: "str | None" = None,
 	) -> None:
 		if isinstance(child, str):
-			if not child.strip():
-				return
 			self.writeString(hf, child, parent, prev, stringSep=stringSep)
-			return
-		self.writeChildElem(
-			hf=hf,
-			child=child,
-			parent=parent,
-			prev=prev,
-			stringSep=stringSep,
-		)
+		else:
+			self.writeChildElem(
+				hf=hf,
+				child=child,
+				parent=parent,
+				prev=prev,
+				stringSep=stringSep,
+			)
 
 	def shouldAddSep(  # noqa: PLR6301
 		self,
@@ -407,6 +433,24 @@ class XdxfTransformer:
 				hf.write(sep)
 			self.writeChild(hf, child, elem, prev, stringSep=stringSep)
 			prev = child
+
+	@staticmethod
+	def stringify_children(elem: "Element") -> str:
+		from itertools import chain
+
+		from lxml.etree import tostring
+		children = [chunk for chunk in chain(
+				(elem.text,),
+				chain(*((tostring(child, with_tail=False), child.tail)
+						for child in elem.getchildren())),
+				(elem.tail,)) if chunk]
+		normalized_children = ""
+		for chunk in children:
+			if isinstance(chunk, str):
+				normalized_children += chunk
+			if isinstance(chunk, bytes):
+				normalized_children += chunk.decode(encoding="utf-8")
+		return normalized_children
 
 	def transform(self, article: "Element") -> str:
 		from lxml import etree as ET

@@ -31,6 +31,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.lxml_types import Element
 
+from lxml import etree as ET
+
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
@@ -79,7 +81,6 @@ optionsProp: "dict[str, Option]" = {
 	),
 }
 
-
 """
 new format
 <xdxf ...>
@@ -110,9 +111,7 @@ old format
 </xdxf>
 """
 
-
 if TYPE_CHECKING:
-
 	class TransformerType(typing.Protocol):
 		def transform(self, article: "Element") -> str: ...
 
@@ -140,6 +139,9 @@ class Reader:
 		self._re_span_k = re.compile(
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
+		self._has_added_css: bool = False
+		self._has_added_js: bool = False
+		self._abbr_defs_js: bytes
 
 	def makeTransformer(self) -> None:
 		if self._xsl:
@@ -154,7 +156,6 @@ class Reader:
 
 	def open(self, filename: str) -> None:  # noqa: PLR0912
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
-		from lxml import etree as ET
 
 		self._filename = filename
 		if self._html:
@@ -175,12 +176,14 @@ class Reader:
 			cfile,
 			events=("end",),
 		)
+		abbr_defs = []
 		for _, _elem in context:
 			elem = cast("Element", _elem)
 			if elem.tag in {"meta_info", "ar", "k", "abr", "dtrn"}:
 				break
 			# every other tag before </meta_info> or </ar> is considered info
 			if elem.tag == "abbr_def":
+				abbr_defs.append(elem)
 				continue
 			# in case of multiple <from> or multiple <to> tags, the last one
 			# will be stored.
@@ -203,7 +206,7 @@ class Reader:
 				continue
 			key = self.infoKeyMap.get(elem.tag, elem.tag)
 			self._glos.setInfo(key, elem.text)
-
+		self._abbr_defs_js = self.generate_abbr_js(abbr_defs)
 		del context
 
 		if cfile.seekable():
@@ -220,14 +223,21 @@ class Reader:
 		return 0
 
 	def __iter__(self) -> "Iterator[EntryType]":
-		from lxml import etree as ET
-		from lxml.etree import tostring
-
 		context = ET.iterparse(  # type: ignore
 			self._file,
 			events=("end",),
 			tag="ar",
 		)
+
+		if self._has_added_css is False:
+			self._has_added_css = True
+			with open("pyglossary/xdxf/xdxf.css", "rb") as css_file:
+				yield self._glos.newDataEntry("css/xdxf.css", css_file.read())
+
+		if self._abbr_defs_js is not None and not self._has_added_js:
+			self._has_added_js = True
+			yield self._glos.newDataEntry("js/xdxf.js", self._abbr_defs_js)
+
 		for _, _article in context:
 			article = cast("Element", _article)
 			article.tail = None
@@ -238,10 +248,20 @@ class Reader:
 				if len(words) == 1:
 					defi = self._re_span_k.sub("", defi)
 			else:
-				b_defi = cast(bytes, tostring(article, encoding=self._encoding))
+				b_defi = cast(bytes, ET.tostring(article, encoding=self._encoding))
 				defi = b_defi[4:-5].decode(self._encoding).strip()
 				defiFormat = "x"
 
+			defi = f"""<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="css/xdxf.css"/>
+	</head>
+	<body>
+		{defi}
+		<script type="text/javascript" src="js/xdxf.js"></script>
+	</body>
+</html>"""
 			# log.info(f"{defi=}, {words=}")
 			yield self._glos.newEntry(
 				words,
@@ -261,12 +281,27 @@ class Reader:
 		self._file.close()
 		self._file = nullBinaryIO
 
+	def generate_abbr_js(self, abbr_defs: list["Element"]) -> bytes:
+		abbr_map_js = """const abbr_map = new Map();\n"""
+		for abbr_def in abbr_defs:
+			abbr_k_list: list[str] = []
+			abbr_v_text = ""
+			for child in abbr_def.xpath("child::node()"):
+				if child.tag == "abbr_k":
+					abbr_k_list.append(self._htmlTr.stringify_children(child))
+				if child.tag == "abbr_v":
+					abbr_v_text = self._htmlTr.stringify_children(child)
+			# TODO escape apostrophes
+			for abbr_k in abbr_k_list:
+				if len(abbr_k) > 0 and len(abbr_v_text) > 0:
+					abbr_map_js += f"abbr_map.set('{abbr_k}', '{abbr_v_text}');\n"
+		with open("pyglossary/xdxf/xdxf.js", "rb") as js_file:
+			return abbr_map_js.encode(encoding="utf-8") + js_file.read()
+
 	@staticmethod
 	def tostring(
 		elem: "Element",
 	) -> str:
-		from lxml import etree as ET
-
 		return (
 			ET.tostring(
 				elem,
