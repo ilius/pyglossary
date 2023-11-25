@@ -789,7 +789,10 @@ class BrowseButton(gtk.Button):
 
 	def onClick(self, widget):
 		fcd = gtk.FileChooserNative(
-			transient_for=self.get_root(),
+			transient_for=(
+				self.get_root() if hasattr(self, "get_root")
+				else self.get_toplevel()
+			),
 			action=gtk.FileChooserAction.SAVE if self.actionSave
 			else gtk.FileChooserAction.OPEN,
 			title=self.title,
@@ -797,9 +800,9 @@ class BrowseButton(gtk.Button):
 		fcd.connect("response", lambda w, e: fcd.hide())
 		fcd.connect(
 			"file-activated",
-			lambda w: fcd.response(gtk.ResponseType.OK),
+			lambda w: fcd.response(gtk.ResponseType.ACCEPT),
 		)
-		if fcd.run() == gtk.ResponseType.OK:
+		if fcd.run() == gtk.ResponseType.ACCEPT:
 			self.setFilePathFunc(fcd.get_filename())
 		fcd.destroy()
 
