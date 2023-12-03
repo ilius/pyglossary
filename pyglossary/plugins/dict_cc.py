@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import html
+from collections.abc import Iterator
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterator, cast
+from typing import TYPE_CHECKING, Callable, cast
 
 if TYPE_CHECKING:
 	import sqlite3

@@ -57,7 +57,8 @@ from os.path import (
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Iterable, Literal
+	from collections.abc import Iterable
+	from typing import Literal
 
 	from pyglossary.option import Option
 	from pyglossary.plugin_prop import PluginProp

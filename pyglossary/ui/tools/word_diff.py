@@ -1,7 +1,7 @@
 import difflib
 import re
 import sys
-from typing import Iterator
+from collections.abc import Iterator
 
 from pyglossary.ui.tools.colors import green, red, reset
 

@@ -1,12 +1,12 @@
 
 import typing
+from collections.abc import Iterator  # noqa: TCH003
 
 # -*- coding: utf-8 -*-
 from typing import (
 	TYPE_CHECKING,
 	Any,
 	Callable,
-	Iterator,
 )
 
 if TYPE_CHECKING:
@@ -283,7 +283,7 @@ class GlossaryType(typing.Protocol):
 class GlossaryExtendedType(GlossaryType, typing.Protocol):
 	def progressInit(
 		self,
-		*args,  # noqa: ANN
+		*args,
 	) -> None:
 		...
 

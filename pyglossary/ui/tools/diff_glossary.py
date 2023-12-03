@@ -7,8 +7,9 @@ import os
 import os.path
 import shlex
 import sys
+from collections.abc import Iterator
 from subprocess import PIPE, Popen
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.glossary_v2 import Glossary

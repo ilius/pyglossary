@@ -3,8 +3,9 @@
 
 import os
 import re
+from collections.abc import Iterator
 from os.path import join
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS

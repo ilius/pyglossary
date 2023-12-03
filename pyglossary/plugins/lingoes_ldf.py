@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from typing import Generator
+from collections.abc import Generator
 
 from pyglossary.compression import (
 	# compressionOpen,

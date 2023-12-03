@@ -5,7 +5,8 @@ from io import BytesIO, IOBase
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	from typing import Any, Callable, Iterator
+	from collections.abc import Iterator
+	from typing import Any, Callable
 
 	from pyglossary.lxml_types import Element, T_htmlfile
 

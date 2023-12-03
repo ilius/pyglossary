@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from typing import TYPE_CHECKING, Iterator
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from libzim.reader import Archive  # type: ignore

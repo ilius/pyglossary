@@ -23,9 +23,10 @@
 # SOFTWARE.
 
 import os
+from collections.abc import Generator
 from datetime import datetime
 from os.path import join
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.ebook_base import EbookWriter

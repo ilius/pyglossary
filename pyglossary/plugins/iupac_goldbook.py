@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
 
+from collections.abc import Iterator
 from io import BytesIO
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import (

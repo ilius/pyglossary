@@ -20,7 +20,11 @@
 
 import logging
 import string
-from typing import Any, Callable, Iterator
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	from collections.abc import Iterator
+	from typing import Any, Callable
 
 from . import _normalize
 

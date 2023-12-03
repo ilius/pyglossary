@@ -29,6 +29,7 @@ from abc import abstractmethod
 from bisect import bisect_left
 from builtins import open as fopen
 from collections import namedtuple
+from collections.abc import Iterator, Mapping, Sequence
 from datetime import datetime, timezone
 from functools import cache, lru_cache
 from io import BufferedIOBase, IOBase
@@ -41,9 +42,6 @@ from typing import (
 	Any,
 	Callable,
 	Generic,
-	Iterator,
-	Mapping,
-	Sequence,
 	TypeVar,
 	cast,
 )

@@ -23,7 +23,8 @@
 
 import re
 import typing
-from typing import TYPE_CHECKING, Iterator, Sequence, cast
+from collections.abc import Iterator, Sequence
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 	import io

@@ -19,7 +19,8 @@ import os
 import re
 import sys
 from collections import defaultdict
-from typing import TYPE_CHECKING, Iterator
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 

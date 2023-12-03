@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 	import io
-	from typing import Generator, Iterator
+	from collections.abc import Generator, Iterator
 
 	from lxml import builder
 

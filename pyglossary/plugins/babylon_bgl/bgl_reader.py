@@ -26,7 +26,8 @@ import os
 import re
 from collections import OrderedDict as odict
 from collections import namedtuple
-from typing import TYPE_CHECKING, Iterator
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.option import (

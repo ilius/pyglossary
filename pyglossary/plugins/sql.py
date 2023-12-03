@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from typing import TYPE_CHECKING, Generator
+from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 from pyglossary.option import (
 	BoolOption,

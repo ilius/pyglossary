@@ -16,7 +16,10 @@
 # GNU General Public License for more details.
 """Russian indexes based on pymorphy."""
 
-from typing import Sequence
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	from collections.abc import Sequence
 
 from pyglossary.core import log, pip
 

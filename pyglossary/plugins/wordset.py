@@ -1,10 +1,10 @@
 
 
 # -*- coding: utf-8 -*-
+from collections.abc import Iterator
 from json import load
 from os import listdir
 from os.path import isfile, join, splitext
-from typing import Iterator
 
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType

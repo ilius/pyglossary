@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from collections.abc import Generator, Iterator
 from typing import (
 	TYPE_CHECKING,
-	Generator,
-	Iterator,
 )
 
 if TYPE_CHECKING:

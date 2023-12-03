@@ -2,8 +2,8 @@
 
 import os
 import re
+from collections.abc import Generator, Iterator
 from os.path import isdir, splitext
-from typing import Generator, Iterator
 
 from pyglossary.core import log
 from pyglossary.flags import DEFAULT_NO

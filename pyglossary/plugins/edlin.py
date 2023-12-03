@@ -19,8 +19,8 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import os
+from collections.abc import Generator, Iterator
 from os.path import dirname, isdir, isfile, join
-from typing import Generator, Iterator
 
 from pyglossary.core import log
 from pyglossary.glossary_types import EntryType, GlossaryType

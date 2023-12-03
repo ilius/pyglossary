@@ -3,7 +3,7 @@
 # from https://github.com/maxim-saplin/pyglossary
 
 import re
-from typing import Generator
+from collections.abc import Generator
 
 from pyglossary.compression import (
 	# compressionOpen,

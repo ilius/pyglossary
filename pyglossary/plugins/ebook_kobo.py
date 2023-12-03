@@ -24,11 +24,12 @@
 
 import re
 import unicodedata
+from collections.abc import Generator
 from gzip import compress, decompress
 from operator import itemgetter
 from pathlib import Path
 from pickle import dumps, loads
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING
 
 from pyglossary import core
 from pyglossary.core import log, pip

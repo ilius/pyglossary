@@ -7,7 +7,8 @@ from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 	import io
-	from typing import Callable, Generator
+	from collections.abc import Generator
+	from typing import Callable
 
 	from .glossary_types import EntryType, GlossaryType
 

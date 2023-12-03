@@ -1,9 +1,9 @@
 # mypy: ignore-errors
 
+from collections.abc import Generator, Iterator
 from hashlib import sha1
 from os import listdir, makedirs
 from os.path import dirname, isdir, isfile, join, splitext
-from typing import Generator, Iterator
 
 from pyglossary.compression import (
 	compressionOpenFunc,

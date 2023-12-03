@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import html
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import sqlite3
+	from collections.abc import Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 

@@ -8,7 +8,7 @@ from .core import log
 
 if TYPE_CHECKING:
 	import sqlite3
-	from typing import Generator, Iterator
+	from collections.abc import Generator, Iterator
 
 	from .glossary_types import EntryType, GlossaryType
 

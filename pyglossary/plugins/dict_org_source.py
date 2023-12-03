@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Generator
+from collections.abc import Generator
 
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import BoolOption, Option

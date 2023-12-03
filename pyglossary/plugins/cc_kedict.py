@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
 
+from collections.abc import Iterator
 from io import BytesIO
 from os.path import isdir, join
-from typing import TYPE_CHECKING, Any, Callable, Iterator
+from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
 	import lxml

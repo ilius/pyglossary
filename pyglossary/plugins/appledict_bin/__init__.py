@@ -16,6 +16,7 @@
 
 import os
 import re
+from collections.abc import Iterator
 from datetime import datetime
 from io import BytesIO
 from operator import attrgetter
@@ -24,7 +25,6 @@ from struct import unpack
 from typing import (
 	TYPE_CHECKING,
 	Any,
-	Iterator,
 	cast,
 )
 

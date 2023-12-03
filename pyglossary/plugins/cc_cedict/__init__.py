@@ -1,5 +1,6 @@
 import re
-from typing import TYPE_CHECKING, Iterator
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.io_utils import nullTextIO

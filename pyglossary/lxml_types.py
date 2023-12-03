@@ -7,12 +7,16 @@
 # http://www.apache.org/licenses/
 
 import typing
+from collections.abc import Mapping  # noqa: TCH003
+from contextlib import (
+	AbstractAsyncContextManager as AsyncContextManager,
+)
+from contextlib import (
+	AbstractContextManager as ContextManager,
+)
 from typing import (
 	AnyStr,
-	AsyncContextManager,
-	ContextManager,
 	Literal,
-	Mapping,
 	TypeAlias,
 )
 

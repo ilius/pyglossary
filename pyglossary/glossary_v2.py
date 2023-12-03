@@ -76,10 +76,10 @@ from .plugin_manager import PluginManager
 from .sort_keys import defaultSortKeyName, lookupSortKey
 
 if TYPE_CHECKING:
+	from collections.abc import Iterator
 	from typing import (
 		Any,
 		Callable,
-		Iterator,
 	)
 
 	from .entry_base import MultiStr

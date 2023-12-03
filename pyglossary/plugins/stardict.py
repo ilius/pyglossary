@@ -5,6 +5,7 @@ import os
 import re
 import typing
 from collections import Counter
+from collections.abc import Generator, Iterator, Sequence
 from os.path import (
 	dirname,
 	getsize,
@@ -21,11 +22,8 @@ from typing import (
 	TYPE_CHECKING,
 	Any,
 	Callable,
-	Generator,
-	Iterator,
 	Literal,
 	Protocol,
-	Sequence,
 	TypeVar,
 )
 

@@ -8,7 +8,7 @@ from .pinyin import convert
 from .summarize import summarize
 
 if TYPE_CHECKING:
-	from typing import Sequence
+	from collections.abc import Sequence
 
 	from pyglossary.lxml_types import T_htmlfile
 

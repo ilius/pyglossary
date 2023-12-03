@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+from collections.abc import Generator, Iterator
 from os.path import isdir, isfile, join
-from typing import Generator, Iterator
 
 from pyglossary.compression import stdCompressions
 from pyglossary.core import log

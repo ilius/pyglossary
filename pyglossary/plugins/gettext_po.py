@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+from collections.abc import Generator, Iterator
 from os.path import isdir
-from typing import TYPE_CHECKING, Generator, Iterator
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType

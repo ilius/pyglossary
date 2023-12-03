@@ -21,8 +21,9 @@
 
 import os
 import sys
+from collections.abc import Mapping
 from os.path import join
-from typing import TYPE_CHECKING, Any, Mapping
+from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import dataDir, log
 from pyglossary.glossary_v2 import ConvertArgs, Glossary

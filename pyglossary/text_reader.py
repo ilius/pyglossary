@@ -6,7 +6,7 @@ from os.path import isfile
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	from typing import Generator, Iterator
+	from collections.abc import Generator, Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 

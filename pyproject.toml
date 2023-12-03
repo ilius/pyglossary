@@ -49,13 +49,13 @@ ignore = [
     "SIM105", # Use contextlib.suppress({exception}) instead of try-except-pass
     "SIM117", # Use a single with statement with multiple contexts...
     "UP009", # UTF-8 encoding declaration is unnecessary
-    "UP035", # Import from `collections.abc` instead: `Generator`
     "UP037", # Remove quotes from type annotation
     "W191", # Indentation contains tabs
     "SIM110", # Use any(...)
     "SIM115", # Use context handler for opening files
     # "SIM111", # Use all(...): warning: `SIM111` has been remapped to `SIM110`.
     # ERA, PD,
+    "TCH003", # Move standard library import `...` into a type-checking block
 ]
 
 # UP033: (Since Python 3.9) Use `@functools.cache`
@@ -90,6 +90,8 @@ fixable = [
     "UP033",
     "UP034",
     "UP039",
+    "UP035", # Import from `collections.abc` instead: `Generator|Iterator`
+    # "TCH003", Move standard library import `...` into a type-checking block
 ]
 unfixable = []
 

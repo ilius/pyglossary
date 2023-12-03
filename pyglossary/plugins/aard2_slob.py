@@ -4,9 +4,11 @@ import os
 import re
 import shutil
 from os.path import isfile, splitext
-from typing import TYPE_CHECKING, Generator, Iterator
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from collections.abc import Generator, Iterator
+
 	from pyglossary import slob
 
 from pyglossary.core import cacheDir, log, pip

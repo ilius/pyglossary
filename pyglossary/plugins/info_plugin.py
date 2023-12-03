@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from collections.abc import Generator, Iterator
 from os.path import splitext
-from typing import TYPE_CHECKING, Generator, Iterator
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.glossary_types import (

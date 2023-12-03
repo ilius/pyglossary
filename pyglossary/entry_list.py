@@ -22,7 +22,8 @@ import logging
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Any, Callable, Iterator
+	from collections.abc import Iterator
+	from typing import Any, Callable
 
 	from .glossary_types import EntryType, RawEntryType
 	from .sort_keys import NamedSortKey

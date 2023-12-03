@@ -21,8 +21,9 @@
 import html
 import html.entities
 import re
+from collections.abc import Iterator
 from os.path import dirname, isfile, join
-from typing import TYPE_CHECKING, Iterator, cast
+from typing import TYPE_CHECKING, cast
 
 from pyglossary.compression import (
 	compressionOpen,

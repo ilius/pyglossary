@@ -20,8 +20,9 @@ import gc
 import os
 import re
 import sys
+from collections.abc import Iterator
 from os.path import dirname, extsep, isfile, join, splitext
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, GlossaryType

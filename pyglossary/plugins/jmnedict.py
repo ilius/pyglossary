@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 	import io
-	from typing import Callable, Iterator
+	from collections.abc import Iterator
+	from typing import Callable
 
 	from pyglossary.lxml_types import Element, T_htmlfile
 	from pyglossary.option import Option

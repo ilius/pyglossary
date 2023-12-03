@@ -2,7 +2,8 @@
 
 import json
 import re
-from typing import Any, Generator, Sequence
+from collections.abc import Generator, Sequence
+from typing import Any
 
 from pyglossary import os_utils
 from pyglossary.glossary_types import EntryType, GlossaryType

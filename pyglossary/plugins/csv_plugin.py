@@ -19,8 +19,9 @@
 
 import csv
 import os
+from collections.abc import Generator, Iterable, Iterator
 from os.path import isdir, join
-from typing import TYPE_CHECKING, Generator, Iterable, Iterator, cast
+from typing import TYPE_CHECKING, cast
 
 from pyglossary.compression import (
 	compressionOpen,

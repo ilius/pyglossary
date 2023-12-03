@@ -23,7 +23,7 @@ import pkgutil
 import shutil
 import sys
 from os.path import basename, isdir, join
-from typing import TYPE_CHECKING, Any, Generator
+from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
@@ -45,6 +45,7 @@ from ._dict import (
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Generator
 
 sys.setrecursionlimit(10000)
 

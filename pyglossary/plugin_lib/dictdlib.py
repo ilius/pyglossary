@@ -23,10 +23,10 @@ import os
 import string
 import sys
 import typing
-from typing import Iterable
 
 if typing.TYPE_CHECKING:
 	import io
+	from collections.abc import Iterable
 
 b64_list = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 url_headword = "00-database-url"

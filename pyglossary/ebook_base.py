@@ -36,7 +36,8 @@ from pyglossary.text_utils import toBytes
 
 if TYPE_CHECKING:
 	import io
-	from typing import Any, Generator
+	from collections.abc import Generator
+	from typing import Any
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
