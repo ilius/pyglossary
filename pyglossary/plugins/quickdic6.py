@@ -698,9 +698,13 @@ class Reader:
 		self._dic = None
 
 	def __len__(self) -> int:
+		if self._dic is None:
+			return 0
 		return sum(len(p) for _, p in self._dic.pairs) + len(self._dic.htmls)
 
 	def __iter__(self) -> "typing.Iterator[EntryType]":
+		if self._dic is None:
+			raise RuntimeError("dictionary not open")
 		for idx, (_, pairs) in enumerate(self._dic.pairs):
 			syns = self._synonyms.get((0, idx), set())
 			for word, defi in pairs:
