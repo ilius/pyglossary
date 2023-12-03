@@ -141,7 +141,7 @@ class PluginManager:
 			cls.writeFormats.append(format)
 
 		if log.level <= core.TRACE:
-			prop.module  # to make sure importing works
+			prop.module  # noqa: B018, to make sure importing works
 
 	@classmethod
 	def _loadPlugin(

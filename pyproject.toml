@@ -30,9 +30,7 @@ select = [
 ]
 ignore = [
 	"PGH003", # Use specific rule codes when ignoring type issues
-    "B018", # Found useless expression. Either assign it to a variable or remove it.
     "B019", # Use of `functools.lru_cache` or `functools.cache` on methods can lead to memory leaks
-    "B028", # No explicit `stacklevel` keyword argument found. Huh???
     "D100", # Missing docstring in public module
     "D101", # Missing docstring in public class
     "D102", # Missing docstring in public method

@@ -155,7 +155,7 @@ def init_compressions() -> "dict[str, Compression]":
 	try:
 		import lzma
 	except ImportError:
-		warnings.warn('lzma is not available')
+		warnings.warn('lzma is not available', stacklevel=1)
 	else:
 		filters = [{'id': lzma.FILTER_LZMA2}]
 		compressions['lzma2'] = Compression(

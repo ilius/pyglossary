@@ -415,7 +415,7 @@ class TestGlossary(TestGlossaryBase):
 	def test_config_attr_get(self):
 		glos = self.glos = Glossary()
 		try:
-			glos.config
+			glos.config  # noqa: B018
 		except NotImplementedError:
 			pass
 		else:

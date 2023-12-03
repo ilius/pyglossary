@@ -1432,22 +1432,12 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			log.critical("Input file path is empty!")
 			return None
 		inFormat = self.convertInputFormatCombo.getActive()
-		if inFormat:
-			Glossary.plugins[inFormat].description
-		else:
-			pass
-			# log.critical("Input format is empty!");return
 
 		outPath = self.convertOutputEntry.get_text()
 		if not outPath:
 			log.critical("Output file path is empty!")
 			return None
 		outFormat = self.convertOutputFormatCombo.getActive()
-		if outFormat:
-			Glossary.plugins[outFormat].description
-		else:
-			pass
-			# log.critical("Output format is empty!");return
 
 		while gtk.events_pending():
 			gtk.main_iteration_do(False)
