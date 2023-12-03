@@ -82,7 +82,7 @@ def _idzip(filename: "str | Path") -> bool:
 	return True
 
 
-def _dictzip(filename: str) -> bool:
+def _dictzip(filename: str | Path) -> bool:
 	import subprocess
 	dictzipCmd = shutil.which("dictzip")
 	if not dictzipCmd:

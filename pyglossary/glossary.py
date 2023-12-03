@@ -36,9 +36,9 @@ class Glossary(GlossaryCommon):
 
 	def titleElement(  # noqa: ANN201
 		self,
-		hf,  # type: ignore # noqa: PGH
+		hf,  # type: ignore
 		sample: str = "",
-	):  # type: ignore # noqa: PGH
+	):  # type: ignore
 		return hf.element(self.titleTag(sample))
 
 	def read(
