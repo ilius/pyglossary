@@ -415,6 +415,8 @@ class UnescapeWordLinks(EntryFilter):
 		return self._unescape(m.group(0))
 
 	def run(self, entry: "EntryType") -> "EntryType | None":
+		if entry.isData():
+			return entry
 		entry._defi = self._pat.sub(self._sub, entry.defi)  # type: ignore
 		return entry
 
