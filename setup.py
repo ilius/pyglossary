@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 
-import typing
 
 import glob
-import sys
-import os
-from os.path import join, dirname, exists, isdir
-import re
 import logging
+import os
+import re
+from os.path import dirname, exists, isdir, join
 
-import setuptools
 from setuptools import setup
 from setuptools.command.install import install
 
@@ -32,7 +29,7 @@ class my_install(install):
 				if not isdir(self.install_scripts):
 					raise OSError(
 						"installation path already exists "
-						f"but is not a directory: {self.install_scripts}"
+						f"but is not a directory: {self.install_scripts}",
 					)
 			open(binPath, "w").write("""#!/usr/bin/env python3
 import sys
@@ -47,6 +44,9 @@ root_data_file_names = [
 	"about",
 	"license.txt",
 	"license-dialog",
+	"Dockerfile",
+	"pyglossary.pyw",
+	"pyproject.toml",
 	"help",
 	"AUTHORS",
 	"config.json",
@@ -58,19 +58,25 @@ package_data = {
 	"": root_data_file_names,
 	"plugins-meta": [
 		"index.json",
+		"tools/*",
 	],
 	"pyglossary": [
 		"*.py",
 		"xdxf.xsl",
 		"res/*",
-		"plugins/*.py",
+		"plugins/*",
 		"langs/*",
 		"plugin_lib/*.py",
 		"plugin_lib/py*/*.py",
+		"sort_modules/*.py",
 		"ui/*.py",
 		"ui/progressbar/*.py",
 		"ui/gtk3_utils/*.py",
+		"ui/gtk4_utils/*.py",
+		"ui/tools/*.py",
 		"ui/wcwidth/*.py",
+		"xdxf/xdxf.xsl",
+		"xdxf/*.py",
 	] + [
 		# safest way found so far to include every resource of plugins
 		# producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
@@ -80,7 +86,7 @@ package_data = {
 			join(dirpath, fname),
 		)
 		for top in glob.glob(
-			join(dirname(__file__), "pyglossary", "plugins")
+			join(dirname(__file__), "pyglossary", "plugins"),
 		)
 		for dirpath, _, files in os.walk(top)
 		for fname in files
@@ -89,7 +95,7 @@ package_data = {
 }
 
 
-with open("README.md", "r", encoding="utf-8") as fh:
+with open("README.md", encoding="utf-8") as fh:
 	long_description = fh.read()
 
 setup(
