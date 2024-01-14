@@ -2,6 +2,7 @@
 
 import re
 from io import BytesIO, IOBase
+from os.path import dirname, isfile, join
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
@@ -67,6 +68,8 @@ optionsProp: "dict[str, Option]" = {
 }
 
 tei = "{http://www.tei-c.org/ns/1.0}"
+ENTRY = f"{tei}entry"
+INCLUDE = "{http://www.w3.org/2001/XInclude}include"
 
 
 class Reader:
@@ -837,6 +840,7 @@ class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
+		self._dirname = ""
 		self._file: "IOBase" = nullBinaryIO
 		self._fileSize = 0
 		self._wordCount = 0
@@ -873,6 +877,7 @@ class Reader:
 			raise e
 
 		self._filename = filename
+		self._dirname = dirname(filename)
 		cfile = compressionOpen(filename, mode="rb")
 
 		if cfile.seekable():
@@ -899,6 +904,23 @@ class Reader:
 
 		cfile.close()
 
+	def loadInclude(self, elem: "Element") -> "Reader | None":
+		href = elem.attrib.get("href")
+		if not href:
+			log.error(f"empty href in {elem}")
+			return None
+		filename = join(self._dirname, href)
+		if not isfile(filename):
+			log.error(f"no such file {filename!r} from {elem}")
+			return None
+		reader = Reader(self._glos)
+		for optName in optionsProp:
+			attr = "_" + optName
+			if hasattr(self, attr):
+				setattr(reader, attr, getattr(self, attr))
+		reader.open(filename)
+		return reader
+
 	def __iter__(self) -> "Iterator[EntryType]":
 		from lxml import etree as ET
 
@@ -915,10 +937,18 @@ class Reader:
 		context = ET.iterparse(  # type: ignore # noqa: PGH003
 			self._file,
 			events=("end",),
-			tag=f"{tei}entry",
+			tag=(ENTRY, INCLUDE),
 		)
 		for _, _elem in context:
 			elem = cast("Element", _elem)
+
+			if elem.tag == INCLUDE:
+				reader = self.loadInclude(elem)
+				if reader is not None:
+					yield from reader
+					reader.close()
+				continue
+
 			yield self.getEntryByElem(elem)
 			# clean up preceding siblings to save memory
 			# this can reduce memory usage from 1 GB to ~25 MB
