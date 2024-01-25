@@ -21,8 +21,8 @@ jobs:
           ls -l
       - name: Download ruff
         run: |
-          wget -c https://github.com/astral-sh/ruff/releases/download/v0.0.290/ruff-x86_64-unknown-linux-gnu.tar.gz
-          tar -xzf ruff-x86_64-unknown-linux-gnu.tar.gz
+          wget -c https://github.com/astral-sh/ruff/releases/download/v0.1.14/ruff-0.1.14-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf ruff-*.tar.gz
           ls -l ruff
           chmod a+x ruff
       - name: Run ruff
