@@ -47,23 +47,17 @@ class TestGlossaryBase(unittest.TestCase):
 		self.dataFileCRC32 = {
 			"004-bar.txt": "6775e590",
 			"004-bar-sort.txt": "fe861123",
-
 			"006-empty.txt": "07ff224b",
 			"006-empty-filtered.txt": "2b3c1c0f",
-
 			"100-en-de-v4.txt": "d420a669",
 			"100-en-fa.txt": "f5c53133",
 			"100-ja-en.txt": "93542e89",
-
 			"100-en-de-v4-remove_font_b.txt": "a3144e2f",
-
 			"100-en-de-v4.info": "f2cfb284",
 			"100-en-fa.info": "9bddb7bb",
 			"100-en-fa-v2.info": "7c0f646b",
 			"100-ja-en.info": "8cf5403c",
-
 			"300-rand-en-fa.txt": "586617c8",
-
 			"res/stardict.png": "7e1447fa",
 			"res/test.json": "41f8cf31",
 		}
@@ -141,6 +135,7 @@ class TestGlossaryBase(unittest.TestCase):
 
 	def showGlossaryDiff(self, fpath1, fpath2) -> None:
 		from pyglossary.ui.tools.diff_glossary import diffGlossary
+
 		diffGlossary(fpath1, fpath2)
 
 	def compareTextFiles(self, fpath1, fpath2, showDiff=False):
@@ -277,27 +272,25 @@ class TestGlossary(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
-			"100-en-fa-sort.txt": "d7a82dc8",
-			"100-en-fa-sort-headword.txt": "4067a29f",
-			"100-en-fa-sort-ebook.txt": "aa620d07",
-			"100-en-fa-sort-ebook3.txt": "5a20f140",
-
-			"100-en-fa-lower.txt": "62178940",
-			"100-en-fa-remove_html_all-v3.txt": "d611c978",
-
-			"100-en-fa-rtl.txt": "25ede1e8",
-
-			"300-rand-en-fa-sort-headword-w1256.txt": "06d83bac",
-			"300-rand-en-fa-sort-headword.txt": "df0f8020",
-			"300-rand-en-fa-sort-w1256.txt": "9594aab3",
-
-			"sort-locale/092-en-fa-alphabet-sample.txt": "b4856532",
-			"sort-locale/092-en-fa-alphabet-sample-sorted-default.txt": "e7b70589",
-			"sort-locale/092-en-fa-alphabet-sample-sorted-en.txt": "3d2bdf73",
-			"sort-locale/092-en-fa-alphabet-sample-sorted-fa.txt": "245419db",
-			"sort-locale/092-en-fa-alphabet-sample-sorted-latin-fa.txt": "261c03c0",
-		})
+		self.dataFileCRC32.update(
+			{
+				"100-en-fa-sort.txt": "d7a82dc8",
+				"100-en-fa-sort-headword.txt": "4067a29f",
+				"100-en-fa-sort-ebook.txt": "aa620d07",
+				"100-en-fa-sort-ebook3.txt": "5a20f140",
+				"100-en-fa-lower.txt": "62178940",
+				"100-en-fa-remove_html_all-v3.txt": "d611c978",
+				"100-en-fa-rtl.txt": "25ede1e8",
+				"300-rand-en-fa-sort-headword-w1256.txt": "06d83bac",
+				"300-rand-en-fa-sort-headword.txt": "df0f8020",
+				"300-rand-en-fa-sort-w1256.txt": "9594aab3",
+				"sort-locale/092-en-fa-alphabet-sample.txt": "b4856532",
+				"sort-locale/092-en-fa-alphabet-sample-sorted-default.txt": "e7b70589",
+				"sort-locale/092-en-fa-alphabet-sample-sorted-en.txt": "3d2bdf73",
+				"sort-locale/092-en-fa-alphabet-sample-sorted-fa.txt": "245419db",
+				"sort-locale/092-en-fa-alphabet-sample-sorted-latin-fa.txt": "261c03c0",
+			},
+		)
 
 	def setUp(self):
 		TestGlossaryBase.setUp(self)
@@ -448,16 +441,21 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_init_infoDict(self):
 		glos = self.glos = Glossary(info={"a": "b"})
-		self.assertEqual(list(glos.iterInfo()), [('a', 'b')])
+		self.assertEqual(list(glos.iterInfo()), [("a", "b")])
 
 	def test_init_infoOrderedDict(self):
 		from collections import OrderedDict
-		glos = self.glos = Glossary(info=OrderedDict([
-			("y", "z"),
-			("a", "b"),
-			("1", "2"),
-		]))
-		self.assertEqual(list(glos.iterInfo()), [('y', 'z'), ('a', 'b'), ('1', '2')])
+
+		glos = self.glos = Glossary(
+			info=OrderedDict(
+				[
+					("y", "z"),
+					("a", "b"),
+					("1", "2"),
+				],
+			),
+		)
+		self.assertEqual(list(glos.iterInfo()), [("y", "z"), ("a", "b"), ("1", "2")])
 
 	def test_lang_1(self):
 		glos = self.glos = Glossary()
@@ -851,11 +849,13 @@ class TestGlossary(TestGlossaryBase):
 		for index, line in enumerate(words):
 			words = line.rstrip().split("|")
 			wordsList.append(words)
-			glos.addEntryObj(glos.newEntry(
-				words,
-				newDefiFunc(index),
-				defiFormat=defiFormat,
-			))
+			glos.addEntryObj(
+				glos.newEntry(
+					words,
+					newDefiFunc(index),
+					defiFormat=defiFormat,
+				),
+			)
 
 		glos.updateIter()
 		return wordsList
@@ -909,7 +909,7 @@ Japonica"""
 		glos.updateEntryFilters()
 		glos.updateIter()
 		self.assertEqual(
-			[['a'], [''], ['b'], []],
+			[["a"], [""], ["b"], []],
 			[entry.l_word for entry in glos],
 		)
 
@@ -917,10 +917,12 @@ Japonica"""
 		glos = self.glos = Glossary()
 		glos.addEntryObj(glos.newEntry(["a"], "test 1"))
 		glos.addEntryObj(glos.newEntry(["b"], "test 3"))
-		glos.addEntryObj(glos.newDataEntry(
-			"file.bin",
-			b"hello\x00world",
-		))
+		glos.addEntryObj(
+			glos.newDataEntry(
+				"file.bin",
+				b"hello\x00world",
+			),
+		)
 		glos.updateEntryFilters()
 		glos.updateIter()
 		wordListList = []
@@ -931,7 +933,7 @@ Japonica"""
 				dataEntries.append(entry)
 		self.assertEqual(
 			wordListList,
-			[['a'], ['b'], ["file.bin"]],
+			[["a"], ["b"], ["file.bin"]],
 		)
 		self.assertEqual(len(dataEntries), 1)
 		self.assertEqual(dataEntries[0].getFileName(), "file.bin")
@@ -960,16 +962,16 @@ Japonica"""
 		self.assertEqual(
 			[entry.l_word for entry in glos],
 			[
-				['Adipocere'],
-				['Caca', 'ca-ca'],
-				['Japonica'],
-				['Next friend'],
-				['Tubenose'],
-				['bitter apple'],
-				['comedic'],
-				['darkling beetle'],
-				['gid'],
-				['organosol'],
+				["Adipocere"],
+				["Caca", "ca-ca"],
+				["Japonica"],
+				["Next friend"],
+				["Tubenose"],
+				["bitter apple"],
+				["comedic"],
+				["darkling beetle"],
+				["gid"],
+				["organosol"],
 			],
 		)
 
@@ -982,8 +984,8 @@ Japonica"""
 		)
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 		glos.sortWords(sortKeyName="headword")
-		ls1 = ['آماسش', 'انگیزنده', 'بیمارانه', 'رشکمندی', 'شگفتآفرینی']
-		ls2 = ['نامبارکی', 'ناکاستنی', 'نقاهت', 'چندپاری', 'گالوانومتر']
+		ls1 = ["آماسش", "انگیزنده", "بیمارانه", "رشکمندی", "شگفتآفرینی"]
+		ls2 = ["نامبارکی", "ناکاستنی", "نقاهت", "چندپاری", "گالوانومتر"]
 		self.assertEqual(
 			[entry.s_word for entry in glos],
 			ls1 + ls2,
@@ -1001,8 +1003,8 @@ Japonica"""
 			sortKeyName="headword",
 			sortEncoding="windows-1256",
 		)
-		ls1 = ['چندپاری', 'گالوانومتر', 'آماسش', 'انگیزنده', 'بیمارانه']
-		ls2 = ['رشکمندی', 'شگفتآفرینی', 'ناکاستنی', 'نامبارکی', 'نقاهت']
+		ls1 = ["چندپاری", "گالوانومتر", "آماسش", "انگیزنده", "بیمارانه"]
+		ls2 = ["رشکمندی", "شگفتآفرینی", "ناکاستنی", "نامبارکی", "نقاهت"]
 		self.assertEqual(
 			[entry.s_word for entry in glos],
 			ls1 + ls2,
@@ -1120,6 +1122,7 @@ Japonica"""
 			sort=True,
 			sortKeyName="headword_lower:fa-u-kr-latn-arab",
 		)
+
 
 if __name__ == "__main__":
 	unittest.main()

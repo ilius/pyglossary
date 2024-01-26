@@ -15,16 +15,18 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
-			"dsl/100-RussianAmericanEnglish-ru-en.dsl": "c24491e0",
-			"dsl/100-RussianAmericanEnglish-ru-en-v3.txt": "43b6d58e",
-			"dsl/001-empty-lines-br.dsl": "6f2fca1a",
-			"dsl/001-empty-lines-br.txt": "74e578ff",
-			"dsl/002-m-tag_multiline-paragraph.dsl": "334079e3",
-			"dsl/002-m-tag_multiline-paragraph-v2.txt": "d5001afd",
-			"dsl/003-ref-target-c.dsl": "9c1396c4",
-			"dsl/003-ref-target-c.txt": "ab41cedf",
-		})
+		self.dataFileCRC32.update(
+			{
+				"dsl/100-RussianAmericanEnglish-ru-en.dsl": "c24491e0",
+				"dsl/100-RussianAmericanEnglish-ru-en-v3.txt": "43b6d58e",
+				"dsl/001-empty-lines-br.dsl": "6f2fca1a",
+				"dsl/001-empty-lines-br.txt": "74e578ff",
+				"dsl/002-m-tag_multiline-paragraph.dsl": "334079e3",
+				"dsl/002-m-tag_multiline-paragraph-v2.txt": "d5001afd",
+				"dsl/003-ref-target-c.dsl": "9c1396c4",
+				"dsl/003-ref-target-c.txt": "ab41cedf",
+			},
+		)
 
 	def convert_string_dsl_txt(
 		self,
@@ -41,22 +43,26 @@ class TestGlossaryDSL(TestGlossaryBase):
 
 		glos = self.glos = Glossary()
 		# glos.config = config
-		res = glos.convert(ConvertArgs(
-			inputFilename=dsl_fname,
-			outputFilename=txt_fname,
-			**convertArgs,
-		))
+		res = glos.convert(
+			ConvertArgs(
+				inputFilename=dsl_fname,
+				outputFilename=txt_fname,
+				**convertArgs,
+			),
+		)
 		self.assertEqual(txt_fname, res)
 
 		with open(txt_fname, encoding="utf-8") as _file:
 			txtActual = _file.read()
 
 		if removeInfo:
-			txtActual = "\n".join([
-				line
-				for line in txtActual.split("\n")
-				if line and not line.startswith("#")
-			])
+			txtActual = "\n".join(
+				[
+					line
+					for line in txtActual.split("\n")
+					if line and not line.startswith("#")
+				],
+			)
 
 		self.assertEqual(txtExpected, txtActual)
 
@@ -95,32 +101,32 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_headword_formatting_bashkir_basque(self):
 		# from Bashkir -> Basque dict (001-headword-with-formatting.dsl)
 		dsl = (
-			'{[c slategray]}{to }{[/c]}tell '
-			'{[c slategray]}smb{[/c]} how to do '
-			'{[c slategray]}smth{[/c]}\n    [m1][trn]'
-			'рассказать кому-либо, как что-либо делать[/trn][/m]'
+			"{[c slategray]}{to }{[/c]}tell "
+			"{[c slategray]}smb{[/c]} how to do "
+			"{[c slategray]}smth{[/c]}\n    [m1][trn]"
+			"рассказать кому-либо, как что-либо делать[/trn][/m]"
 		)
 		txt = (
-			'tell smb how to do smth\t'
+			"tell smb how to do smth\t"
 			'<b><font color="slategray">to </font>tell '
 			'<font color="slategray">smb</font> how to do '
 			'<font color="slategray">smth</font></b><br/>'
 			'<p style="padding-left:1em;margin:0">'
-			'рассказать кому-либо, как что-либо делать</p>'
+			"рассказать кому-либо, как что-либо делать</p>"
 		)
 		self.convert_string_dsl_txt(dsl, txt)
 
 	def test_headword_formatting_english(self):
 		dsl = (
-			'{[c slategray]}{to }{[/c]}tell'
-			' {[c violet]}smb{[/c]} {[u]}how{[/u]}'
-			' to do {[c violet]}smth{[/c]} {[sub]subscript[/sub]}\n'
-			'   [m1]1. main meaning[/m]\n'
-			'   [m2]a. first submeaning[/m]\n'
-			'   [m2]b. second submeaning[/m]\n'
+			"{[c slategray]}{to }{[/c]}tell"
+			" {[c violet]}smb{[/c]} {[u]}how{[/u]}"
+			" to do {[c violet]}smth{[/c]} {[sub]subscript[/sub]}\n"
+			"   [m1]1. main meaning[/m]\n"
+			"   [m2]a. first submeaning[/m]\n"
+			"   [m2]b. second submeaning[/m]\n"
 		)
 		txt = (
-			'tell smb how to do smth\t'
+			"tell smb how to do smth\t"
 			'<b><font color="slategray">to </font>tell'
 			' <font color="violet">smb</font> <u>how</u>'
 			' to do <font color="violet">smth</font> <sub>subscript</sub></b><br/>'
@@ -133,31 +139,31 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_headword_paran(self):
 		self.convert_string_dsl_txt(
 			"headword with (parenthesis)\n    test",
-			'headword with parenthesis|headword with\ttest',
+			"headword with parenthesis|headword with\ttest",
 		)
 
 	def test_headword_paran_2(self):
 		self.convert_string_dsl_txt(
 			"(headword with) parenthesis\n    test",
-			'headword with parenthesis|parenthesis\ttest',
+			"headword with parenthesis|parenthesis\ttest",
 		)
 
 	def test_headword_paran_escaped(self):
 		self.convert_string_dsl_txt(
 			"headword \\(with escaped parenthesis\\)\n    test",
-			'headword (with escaped parenthesis)\ttest',
+			"headword (with escaped parenthesis)\ttest",
 		)
 
 	def test_headword_paran_escaped_2(self):
 		self.convert_string_dsl_txt(
 			"headword (with escaped right \\) parenthesis)\n    test",
-			'headword with escaped right \\\\) parenthesis|headword\ttest',
+			"headword with escaped right \\\\) parenthesis|headword\ttest",
 		)
 
 	def test_headword_curly(self):
 		txt = (
-			'headword with curly brackets\t'
-			'<b>headword with <b>curly brackets</b></b><br/>test'
+			"headword with curly brackets\t"
+			"<b>headword with <b>curly brackets</b></b><br/>test"
 		)
 		self.convert_string_dsl_txt(
 			"headword with {[b]}curly brackets{[/b]}\n    test",
@@ -167,25 +173,25 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_headword_curly_escaped(self):
 		self.convert_string_dsl_txt(
 			"headword with escaped \\{\\}curly brackets\\{\n    test",
-			'headword with escaped {}curly brackets{\ttest',
+			"headword with escaped {}curly brackets{\ttest",
 		)
 
 	def test_double_brackets_1(self):
 		self.convert_string_dsl_txt(
 			"test\n    hello [[world]]",
-			'test\thello [world]',
+			"test\thello [world]",
 		)
 
 	def test_double_brackets_2(self):
 		self.convert_string_dsl_txt(
 			"test\n    hello [[",
-			'test\thello [',
+			"test\thello [",
 		)
 
 	def test_double_brackets_3(self):
 		self.convert_string_dsl_txt(
 			"test\n    hello ]]",
-			'test\thello ]',
+			"test\thello ]",
 		)
 
 	def test_ref_double_ltgt(self):
@@ -197,7 +203,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def test_ref_double_ltgt_escaped(self):
 		self.convert_string_dsl_txt(
 			"test\n    hello \\<<world\\>>",
-			'test\thello &lt;&lt;world&gt;&gt;',
+			"test\thello &lt;&lt;world&gt;&gt;",
 		)
 
 

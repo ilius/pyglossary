@@ -14,14 +14,14 @@ class TestGlossaryCSV(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
-			"100-en-de-v4.csv": "2890fb3e",
-
-			"100-en-fa.csv": "eb8b0474",
-			"100-en-fa-semicolon.csv": "b3f04599",
-
-			"100-ja-en.csv": "7af18cf3",
-		})
+		self.dataFileCRC32.update(
+			{
+				"100-en-de-v4.csv": "2890fb3e",
+				"100-en-fa.csv": "eb8b0474",
+				"100-en-fa-semicolon.csv": "b3f04599",
+				"100-ja-en.csv": "7af18cf3",
+			},
+		)
 
 	def convert_txt_csv(self, fname, fname2, **convertArgs):
 		self.convert(

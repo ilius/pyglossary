@@ -7,17 +7,17 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
-			"100-en-fa-sdt.xml": "48cb3336",
-			"100-en-fa-sdt.xml.txt": "0c9b4025",
-
-			"stardict-xdxf-2.xml": "b3285d5c",
-			"stardict-xdxf-2.xml-h.txt": "97b3a22b",
-			"stardict-xdxf-2.xml-x.txt": "de63f937",
-
-			"stardict-mixed-types-2.xml": "51d9ceb2",
-			"stardict-mixed-types-2.xml.txt": "c896cf68",
-		})
+		self.dataFileCRC32.update(
+			{
+				"100-en-fa-sdt.xml": "48cb3336",
+				"100-en-fa-sdt.xml.txt": "0c9b4025",
+				"stardict-xdxf-2.xml": "b3285d5c",
+				"stardict-xdxf-2.xml-h.txt": "97b3a22b",
+				"stardict-xdxf-2.xml-x.txt": "de63f937",
+				"stardict-mixed-types-2.xml": "51d9ceb2",
+				"stardict-mixed-types-2.xml.txt": "c896cf68",
+			},
+		)
 
 	def convert_txt_sdxml(self, fname, fname2, **convertArgs):
 		self.convert(

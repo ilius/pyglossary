@@ -41,22 +41,31 @@ class TestGlossaryErrorsBase(TestGlossaryBase):
 			)
 
 	def assertLogCritical(self, errorMsg):
-		self.assertIsNotNone(self.mockLog.popLog(
-			logging.CRITICAL,
-			errorMsg,
-		), msg=f"did not find critical log {errorMsg!r}")
+		self.assertIsNotNone(
+			self.mockLog.popLog(
+				logging.CRITICAL,
+				errorMsg,
+			),
+			msg=f"did not find critical log {errorMsg!r}",
+		)
 
 	def assertLogError(self, errorMsg):
-		self.assertIsNotNone(self.mockLog.popLog(
-			logging.ERROR,
-			errorMsg,
-		), msg=f"did not find error log {errorMsg!r}")
+		self.assertIsNotNone(
+			self.mockLog.popLog(
+				logging.ERROR,
+				errorMsg,
+			),
+			msg=f"did not find error log {errorMsg!r}",
+		)
 
 	def assertLogWarning(self, errorMsg):
-		self.assertIsNotNone(self.mockLog.popLog(
-			logging.WARNING,
-			errorMsg,
-		), msg=f"did not find warning log {errorMsg!r}")
+		self.assertIsNotNone(
+			self.mockLog.popLog(
+				logging.WARNING,
+				errorMsg,
+			),
+			msg=f"did not find warning log {errorMsg!r}",
+		)
 
 
 def osRoot():
@@ -64,10 +73,12 @@ def osRoot():
 		return "C:\\"
 	return "/"
 
+
 if os.sep == "\\":
 	osNoSuchFileOrDir = "[WinError 3] The system cannot find the path specified:"
 else:
 	osNoSuchFileOrDir = "[Errno 2] No such file or directory:"
+
 
 class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_loadPlugins_invalidDir(self):

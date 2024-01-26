@@ -83,15 +83,15 @@ class TestOptionValidateBoolNumber(unittest.TestCase):
 		self.caseOK(FileSizeOption, "123ki", 123 * 1024)
 		self.caseOK(FileSizeOption, "123Ki", 123 * 1024)
 
-		self.caseOK(FileSizeOption, "123mib", 123 * 1024 ** 2)
-		self.caseOK(FileSizeOption, "123MiB", 123 * 1024 ** 2)
-		self.caseOK(FileSizeOption, "123mi", 123 * 1024 ** 2)
-		self.caseOK(FileSizeOption, "123Mi", 123 * 1024 ** 2)
+		self.caseOK(FileSizeOption, "123mib", 123 * 1024**2)
+		self.caseOK(FileSizeOption, "123MiB", 123 * 1024**2)
+		self.caseOK(FileSizeOption, "123mi", 123 * 1024**2)
+		self.caseOK(FileSizeOption, "123Mi", 123 * 1024**2)
 
-		self.caseOK(FileSizeOption, "1.7gib", int(1.7 * 1024 ** 3))
-		self.caseOK(FileSizeOption, "1.7GiB", int(1.7 * 1024 ** 3))
-		self.caseOK(FileSizeOption, "1.7gi", int(1.7 * 1024 ** 3))
-		self.caseOK(FileSizeOption, "1.7Gi", int(1.7 * 1024 ** 3))
+		self.caseOK(FileSizeOption, "1.7gib", int(1.7 * 1024**3))
+		self.caseOK(FileSizeOption, "1.7GiB", int(1.7 * 1024**3))
+		self.caseOK(FileSizeOption, "1.7gi", int(1.7 * 1024**3))
+		self.caseOK(FileSizeOption, "1.7Gi", int(1.7 * 1024**3))
 
 	def test_file_size_failed(self):
 		self.caseFailed(FileSizeOption, "-1", None)
@@ -121,6 +121,7 @@ class TestOptionValidateStr(unittest.TestCase):
 			self.assertEqual(valueActual, raw)
 			validActual = opt.validate(valueActual)
 			self.assertEqual(validActual, valid, "validate failed")
+
 		return test
 
 	def test_1(self):
@@ -163,18 +164,18 @@ class TestOptionValidateDict(unittest.TestCase):
 
 	def test_dict_syntaxErr(self):
 		self.caseEvalFail("123abc")
-		self.caseEvalFail('{')
+		self.caseEvalFail("{")
 		self.caseEvalFail("(")
 		self.caseEvalFail('{"a": 1')
 		self.caseEvalFail('{"a": 1]')
-		self.caseEvalFail('][')
+		self.caseEvalFail("][")
 
 	def test_dict_notDict(self):
 		self.caseEvalFail("123")
 		self.caseEvalFail("[]")
 		self.caseEvalFail("[1, 2, 3]")
 		self.caseEvalFail('["a", 2, 3.5]')
-		self.caseEvalFail('{10, 20, 30}')
+		self.caseEvalFail("{10, 20, 30}")
 
 
 class TestOptionValidateList(unittest.TestCase):
@@ -201,15 +202,15 @@ class TestOptionValidateList(unittest.TestCase):
 
 	def test_list_syntaxErr(self):
 		self.caseEvalFail("123abc")
-		self.caseEvalFail('{')
+		self.caseEvalFail("{")
 		self.caseEvalFail("(")
 		self.caseEvalFail('{"a": 1')
 		self.caseEvalFail('{"a": 1]')
-		self.caseEvalFail('][')
+		self.caseEvalFail("][")
 
 	def test_list_notList(self):
 		self.caseEvalFail("123")
-		self.caseEvalFail('{10, 20, 30}')
+		self.caseEvalFail("{10, 20, 30}")
 		self.caseEvalFail('{"a": 1}')
 		self.caseEvalFail('{"a": "b", "123":456}')
 

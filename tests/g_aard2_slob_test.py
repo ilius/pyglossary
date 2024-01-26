@@ -18,12 +18,14 @@ class TestGlossarySlob(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
-			"100-en-fa-res.slob": "0216d006",
-			"100-en-fa-res-slob.txt": "c73100b3",
-			"100-en-fa-res-slob-sort.txt": "8253fe96",
-			"300-ru-en.txt": "77cfee2f",
-		})
+		self.dataFileCRC32.update(
+			{
+				"100-en-fa-res.slob": "0216d006",
+				"100-en-fa-res-slob.txt": "c73100b3",
+				"100-en-fa-res-slob-sort.txt": "8253fe96",
+				"300-ru-en.txt": "77cfee2f",
+			},
+		)
 
 	def setUp(self):
 		if skip_module:
@@ -67,7 +69,8 @@ class TestGlossarySlob(TestGlossaryBase):
 				actualSize = len(_file.read())
 			delta = actualSize - size
 			self.assertLess(
-				delta, 100,
+				delta,
+				100,
 				msg=f"size expected={size} actual={actualSize}, file {fpath}",
 			)
 

@@ -14,35 +14,41 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
+		hashDict = {
 			"appledict-bin/002-simple.txt": "32a1dbc4",
 			"appledict-bin/002-simple.txt_res/style.css": "a83210cb",
-
 			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt": "2d3844bf",
 			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt_res/style.css": "14c3cf2c",
-		})
+		}
+		self.dataFileCRC32.update(hashDict)
 
-		self.addDirCRC32("appledict-bin/002-simple.dictionary", {
-			"Contents/Info.plist": "fa73dd65",
-			"Contents/Body.data": "3c073986",
-			"Contents/DefaultStyle.css": "a83210cb",
-			"Contents/EntryID.data": "37305249",
-			"Contents/EntryID.index": "8c30a3fa",
-			"Contents/Images/_internal_dictionary.png": "da4d4eb1",
-			"Contents/KeyText.data": "aefe15e0",
-			"Contents/KeyText.index": "b723c5b2",
-			"Contents/MyDictionary.xsl": "023de1ea",
-			"Contents/MyDictionary_prefs.html": "09a9f6e9",
-		})
-		self.addDirCRC32("appledict-bin/006-en-oxfjord_v10.11_c2_t3.dictionary", {
-			"Contents/Info.plist": "328abb6f",
-			"Contents/Resources/Body.data": "03fe72e8",
-			"Contents/Resources/DefaultStyle.css": "c243b56a",
-			"Contents/Resources/EntryID.data": "d31adec1",
-			"Contents/Resources/EntryID.index": "6eea272c",
-			"Contents/Resources/KeyText.data": "d4417c62",
-			"Contents/Resources/KeyText.index": "59f9ab67",
-		})
+		self.addDirCRC32(
+			"appledict-bin/002-simple.dictionary",
+			{
+				"Contents/Info.plist": "fa73dd65",
+				"Contents/Body.data": "3c073986",
+				"Contents/DefaultStyle.css": "a83210cb",
+				"Contents/EntryID.data": "37305249",
+				"Contents/EntryID.index": "8c30a3fa",
+				"Contents/Images/_internal_dictionary.png": "da4d4eb1",
+				"Contents/KeyText.data": "aefe15e0",
+				"Contents/KeyText.index": "b723c5b2",
+				"Contents/MyDictionary.xsl": "023de1ea",
+				"Contents/MyDictionary_prefs.html": "09a9f6e9",
+			},
+		)
+		self.addDirCRC32(
+			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.dictionary",
+			{
+				"Contents/Info.plist": "328abb6f",
+				"Contents/Resources/Body.data": "03fe72e8",
+				"Contents/Resources/DefaultStyle.css": "c243b56a",
+				"Contents/Resources/EntryID.data": "d31adec1",
+				"Contents/Resources/EntryID.index": "6eea272c",
+				"Contents/Resources/KeyText.data": "d4417c62",
+				"Contents/Resources/KeyText.index": "59f9ab67",
+			},
+		)
 
 	def convert_appledict_binary_to_txt(
 		self,
@@ -106,12 +112,11 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			"Contents/MyDictionary.xsl",
 			"Contents/MyDictionary_prefs.html",
 		]
+		_internal = "Images/_internal_dictionary.png"
 		resFiles = {
-			"Images/_internal_dictionary.png":
-				"Contents/Images/_internal_dictionary.png",
+			_internal: f"Contents/{_internal}",
 		}
 		self.convert_appledict_binary_to_txt(baseName, files, resFiles=resFiles)
-
 
 	def test_appledict_binary_to_txt_1(self):
 		baseName = "006-en-oxfjord_v10.11_c2_t3"

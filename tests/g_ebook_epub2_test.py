@@ -25,12 +25,14 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
-			"100-en-fa-res.slob": "0216d006",
-			"100-en-fa-res-slob-v2.epub": "304d174d",
-			"100-en-fa-prefix3-v2.epub": "1b7244ca",
-			"300-rand-en-fa-prefix3-v2.epub": "b5dd9ec6",
-		})
+		self.dataFileCRC32.update(
+			{
+				"100-en-fa-res.slob": "0216d006",
+				"100-en-fa-res-slob-v2.epub": "304d174d",
+				"100-en-fa-prefix3-v2.epub": "1b7244ca",
+				"300-rand-en-fa-prefix3-v2.epub": "b5dd9ec6",
+			},
+		)
 
 	def setUp(self):
 		if skip_module:

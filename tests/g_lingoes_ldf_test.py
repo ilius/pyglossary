@@ -7,9 +7,11 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
-			"004-bar.ldf": "b1aa776d",
-		})
+		self.dataFileCRC32.update(
+			{
+				"004-bar.ldf": "b1aa776d",
+			},
+		)
 
 	def convert_txt_ldf(self, fname, fname2, **convertArgs):
 		self.convert(
@@ -18,7 +20,6 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 			compareText=f"{fname2}.ldf",
 			**convertArgs,
 		)
-
 
 	def convert_ldf_txt(self, fname, fname2, **convertArgs):
 		self.convert(
@@ -43,6 +44,7 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 				"input_file_size": None,
 			},
 		)
+
 
 if __name__ == "__main__":
 	unittest.main()

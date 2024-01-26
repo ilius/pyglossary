@@ -113,10 +113,7 @@ def asciiLower(c):
 
 def getRandomBytes(avgLen, sigma):
 	length = round(random.gauss(avgLen, sigma))
-	return bytes([
-		random.choice(range(256))
-		for _ in range(length)
-	])
+	return bytes([random.choice(range(256)) for _ in range(length)])
 
 
 class AsciiLowerUpperTest(unittest.TestCase):
@@ -176,10 +173,7 @@ class SortRandomTest(unittest.TestCase):
 			yield localeName
 
 	def test_sort_1(self):
-		bsList = [
-			getRandomBytes(30, 10)
-			for _ in range(100)
-		]
+		bsList = [getRandomBytes(30, 10) for _ in range(100)]
 		for _ in self.set_locale_iter():
 			self.assertEqual(
 				sorted(

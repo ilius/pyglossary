@@ -8,13 +8,15 @@ class TestGlossaryBGL(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
-			"Flavours_of_Malaysia.bgl": "46ef154b",
-			"Flavours_of_Malaysia.txt_res/icon1.ico": "76a3b4c3",
-			"Currency_In_Each_Country.bgl": "309f1b3f",
-			"Solar_Physics_Glossary.bgl": "cc8f5ca1",
-			"Farsi_Aviation_Dictionary.bgl": "efa7bee4",
-		})
+		self.dataFileCRC32.update(
+			{
+				"Flavours_of_Malaysia.bgl": "46ef154b",
+				"Flavours_of_Malaysia.txt_res/icon1.ico": "76a3b4c3",
+				"Currency_In_Each_Country.bgl": "309f1b3f",
+				"Solar_Physics_Glossary.bgl": "cc8f5ca1",
+				"Farsi_Aviation_Dictionary.bgl": "efa7bee4",
+			},
+		)
 
 	def convert_bgl_txt(
 		self,

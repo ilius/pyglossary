@@ -7,11 +7,13 @@ class TestGlossaryDictOrg(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
-			"100-en-fa.txt.dict": "02abe5dc",
-			"100-en-fa.txt.index": "b10efcb4",
-			"100-en-fa.txt.index.txt": "6c9d527c",
-		})
+		self.dataFileCRC32.update(
+			{
+				"100-en-fa.txt.dict": "02abe5dc",
+				"100-en-fa.txt.index": "b10efcb4",
+				"100-en-fa.txt.index.txt": "6c9d527c",
+			},
+		)
 
 	def convert_txt_dict_org(self, fname, fname2, **convertArgs):
 		self.convert(

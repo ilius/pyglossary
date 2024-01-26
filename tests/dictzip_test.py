@@ -20,9 +20,9 @@ MISSING_DEP_MARK = "Dictzip compression requires idzip module or dictzip utility
 class TestDictzip(TestGlossaryErrorsBase):
 	def setUp(self) -> None:
 		super().setUp()
-		self.test_file_path = Path(self.tempDir)/"test_file.txt"
+		self.test_file_path = Path(self.tempDir) / "test_file.txt"
 		filename = self.test_file_path.name + ".dz"
-		self.result_file_path = self.test_file_path.parent/filename
+		self.result_file_path = self.test_file_path.parent / filename
 		with open(self.test_file_path, "a") as tmp_file:
 			tmp_file.write(TEXT)
 
@@ -32,14 +32,14 @@ class TestDictzip(TestGlossaryErrorsBase):
 			self.skipTest(f"Missing {method} dependency")
 
 	def test_idzip_compressed_exists(self) -> None:
-		method="idzip"
+		method = "idzip"
 		runDictzip(self.test_file_path, method)
 		self.skip_on_dep(method)
 		self.assertTrue(self.result_file_path.exists())
 		self.assertTrue(self.result_file_path.is_file())
 
 	def test_idzip_compressed_matches(self) -> None:
-		method="idzip"
+		method = "idzip"
 		runDictzip(self.test_file_path, method)
 		self.skip_on_dep(method)
 		with gzip.open(self.result_file_path, "r") as file:
@@ -47,14 +47,14 @@ class TestDictzip(TestGlossaryErrorsBase):
 		self.assertEqual(result, TEXT)
 
 	def test_dictzip_compressed_exists(self) -> None:
-		method="dictzip"
+		method = "dictzip"
 		runDictzip(self.test_file_path, method)
 		self.skip_on_dep(method)
 		self.assertTrue(self.result_file_path.exists())
 		self.assertTrue(self.result_file_path.is_file())
 
 	def test_dictzip_compressed_matches(self) -> None:
-		method="dictzip"
+		method = "dictzip"
 		runDictzip(self.test_file_path, method)
 		self.skip_on_dep(method)
 		with gzip.open(self.result_file_path, "r") as file:
@@ -62,7 +62,7 @@ class TestDictzip(TestGlossaryErrorsBase):
 		self.assertEqual(result, TEXT)
 
 	def test_dictzip_missing_target(self) -> None:
-		method="idzip"
+		method = "idzip"
 		filename = "/NOT_EXISTED_PATH/file.txt"
 		expected = f"No such file or directory: '{filename}'"
 		runDictzip(filename, method)
@@ -71,11 +71,10 @@ class TestDictzip(TestGlossaryErrorsBase):
 		self.assertIsNotNone(err)
 
 	def test_idzip_missing_target(self) -> None:
-		method="dictzip"
+		method = "dictzip"
 		filename = "/NOT_EXISTED_PATH/boilerplate.txt"
 		expected = f'Cannot open "{filename}"'
 		runDictzip(filename, method)
 		self.skip_on_dep(method)
 		err = self.mockLog.popLog(logging.ERROR, expected, partial=True)
 		self.assertIsNotNone(err)
-

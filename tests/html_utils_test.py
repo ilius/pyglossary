@@ -51,6 +51,7 @@ def benchmark_main():
 	from random import choice
 
 	from english_words import english_words_set
+
 	english_words_list = list(english_words_set)
 	textList = []
 

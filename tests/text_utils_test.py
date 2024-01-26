@@ -150,13 +150,13 @@ class TestTextUtils(unittest.TestCase):
 			outOfRangeError = "argument out of range"
 
 		self.assertEqual(f(0), bytes([0, 0, 0, 0]))
-		self.assertEqual(f(0x3e8), bytes([0, 0, 0x03, 0xe8]))
-		self.assertEqual(f(0x186a0), bytes([0, 1, 0x86, 0xa0]))
-		self.assertEqual(f(0x3b9aca00), bytes([0x3b, 0x9a, 0xca, 0x00]))
-		self.assertEqual(f(0xffffffff), bytes([0xff, 0xff, 0xff, 0xff]))
+		self.assertEqual(f(0x3E8), bytes([0, 0, 0x03, 0xE8]))
+		self.assertEqual(f(0x186A0), bytes([0, 1, 0x86, 0xA0]))
+		self.assertEqual(f(0x3B9ACA00), bytes([0x3B, 0x9A, 0xCA, 0x00]))
+		self.assertEqual(f(0xFFFFFFFF), bytes([0xFF, 0xFF, 0xFF, 0xFF]))
 
 		with self.assertRaises(struct.error) as ctx:
-			f(0xffffffff + 1)
+			f(0xFFFFFFFF + 1)
 		self.assertEqual(
 			str(ctx.exception),
 			outOfRangeError,
@@ -182,25 +182,25 @@ class TestTextUtils(unittest.TestCase):
 	def test_uint32FromBytes(self):
 		f = uint32FromBytes
 		self.assertEqual(0, f(bytes([0, 0, 0, 0])))
-		self.assertEqual(0x3e8, f(bytes([0, 0, 0x03, 0xe8])))
-		self.assertEqual(0x186a0, f(bytes([0, 1, 0x86, 0xa0])))
-		self.assertEqual(0x3b9aca00, f(bytes([0x3b, 0x9a, 0xca, 0x00])))
-		self.assertEqual(0xffffffff, f(bytes([0xff, 0xff, 0xff, 0xff])))
+		self.assertEqual(0x3E8, f(bytes([0, 0, 0x03, 0xE8])))
+		self.assertEqual(0x186A0, f(bytes([0, 1, 0x86, 0xA0])))
+		self.assertEqual(0x3B9ACA00, f(bytes([0x3B, 0x9A, 0xCA, 0x00])))
+		self.assertEqual(0xFFFFFFFF, f(bytes([0xFF, 0xFF, 0xFF, 0xFF])))
 
 		with self.assertRaises(struct.error) as ctx:
-			f(bytes([0x01, 0xff, 0xff, 0xff, 0xff]))
+			f(bytes([0x01, 0xFF, 0xFF, 0xFF, 0xFF]))
 		self.assertEqual(str(ctx.exception), "unpack requires a buffer of 4 bytes")
 
 	def test_uintFromBytes(self):
 		f = uintFromBytes
 		self.assertEqual(0, f(bytes([0, 0, 0, 0])))
-		self.assertEqual(0x3e8, f(bytes([0, 0, 0x03, 0xe8])))
-		self.assertEqual(0x186a0, f(bytes([0, 1, 0x86, 0xa0])))
-		self.assertEqual(0x3b9aca00, f(bytes([0x3b, 0x9a, 0xca, 0x00])))
-		self.assertEqual(0xffffffff, f(bytes([0xff, 0xff, 0xff, 0xff])))
+		self.assertEqual(0x3E8, f(bytes([0, 0, 0x03, 0xE8])))
+		self.assertEqual(0x186A0, f(bytes([0, 1, 0x86, 0xA0])))
+		self.assertEqual(0x3B9ACA00, f(bytes([0x3B, 0x9A, 0xCA, 0x00])))
+		self.assertEqual(0xFFFFFFFF, f(bytes([0xFF, 0xFF, 0xFF, 0xFF])))
 		self.assertEqual(
-			0xffabcdef5542,
-			f(bytes([0xff, 0xab, 0xcd, 0xef, 0x55, 0x42])),
+			0xFFABCDEF5542,
+			f(bytes([0xFF, 0xAB, 0xCD, 0xEF, 0x55, 0x42])),
 		)
 
 	def test_crc32hex(self):

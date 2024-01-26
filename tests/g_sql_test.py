@@ -7,11 +7,12 @@ class TestGlossarySQL(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update({
-			"100-en-fa.txt": "f5c53133",
-			"100-en-fa.txt-v2.sql": "70cd0514",
-		})
-
+		self.dataFileCRC32.update(
+			{
+				"100-en-fa.txt": "f5c53133",
+				"100-en-fa.txt-v2.sql": "70cd0514",
+			},
+		)
 
 	def convert_txt_sql(self, fname, fname2, **convertArgs):
 		self.convert(
