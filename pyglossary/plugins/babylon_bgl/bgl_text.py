@@ -206,7 +206,10 @@ def replaceAsciiCharRefs(b_text: bytes, encoding: str) -> bytes:
 			continue
 		# reference
 		try:
-			code = int(b_part[3:-1], 16) if b_part[:3].lower() == "&#x" else int(b_part[2:-1])
+			code = (
+				int(b_part[3:-1], 16) if b_part[:3].lower() == "&#x"
+				else int(b_part[2:-1])
+			)
 			if code <= 0:
 				raise ValueError()
 		except (ValueError, OverflowError):

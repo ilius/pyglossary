@@ -126,7 +126,7 @@ exclude = [
 ]
 per-file-ignores = {}
 
-line-length = 100
+line-length = 88
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"

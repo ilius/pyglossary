@@ -642,7 +642,10 @@ class Reader:
 		if tag == f"{tei}colloc":
 			return ""
 
-		log.warning(f"unrecognize GramGrp child tag: {elem.tag!r}: {self.tostring(elem)}")
+		log.warning(
+			f"unrecognize GramGrp child tag: {elem.tag!r}"
+			f": {self.tostring(elem)}",
+		)
 		return ""
 
 	def getEntryByElem(
