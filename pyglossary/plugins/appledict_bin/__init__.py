@@ -118,7 +118,8 @@ class Reader:
 
 	def tostring(
 		self,
-		elem: "Element | HtmlComment | HtmlElement | HtmlEntity | HtmlProcessingInstruction",
+		elem: "Element | HtmlComment | HtmlElement | "
+		"HtmlEntity | HtmlProcessingInstruction",
 	) -> str:
 		from lxml.html import tostring as tostring
 
@@ -132,7 +133,7 @@ class Reader:
 		href = a.attrib.get("href", "")
 
 		if href.startswith("x-dictionary:d:"):
-			word = href[len("x-dictionary:d:"):]
+			word = href[len("x-dictionary:d:") :]
 			a.attrib["href"] = href = f"bword://{word}"
 
 		elif href.startswith("x-dictionary:r:"):
@@ -155,6 +156,7 @@ class Reader:
 
 	def open(self, filename: str) -> "Iterator[tuple[int, int]]":
 		from os.path import dirname
+
 		try:
 			from lxml import etree  # noqa: F401
 		except ModuleNotFoundError as e:
@@ -253,6 +255,7 @@ class Reader:
 		except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
 			try:
 				import plistlib
+
 				with open(infoPlistPath, "rb") as plist_file:
 					metadata = plistlib.loads(plist_file.read())
 			except Exception as e:
@@ -318,12 +321,10 @@ class Reader:
 		entryElem: "Element",
 		keyDataList: "list[KeyData]",
 	) -> str:
-
 		if not self._html:
 			# FIXME: this produces duplicate text for Idioms.dictionary, see #301
 			return "".join(
-				self.tostring(child)
-				for child in entryElem.iterdescendants()
+				self.tostring(child) for child in entryElem.iterdescendants()
 			)
 
 		entryElem.tag = "div"
@@ -331,7 +332,7 @@ class Reader:
 			# if attr == "id" or attr.endswith("title"):
 			del entryElem.attrib[attr]
 
-		for a_link in entryElem.xpath('//a'):
+		for a_link in entryElem.xpath("//a"):
 			self.fixLink(a_link)
 
 		defi = self.tostring(entryElem)
@@ -339,9 +340,9 @@ class Reader:
 
 		if self._html_full:
 			defi = (
-				f'<!DOCTYPE html><html><head>'
+				f"<!DOCTYPE html><html><head>"
 				f'<link rel="stylesheet" href="style.css">'
-				f'</head><body>{defi}</body></html>'
+				f"</head><body>{defi}</body></html>"
 			)
 
 		return defi
@@ -356,21 +357,21 @@ class Reader:
 
 		offset is usually 4 bytes integer, that contains chunk/entry byte length
 		"""
-		offset = buffer[pos:pos + 12].find(b"<d:entry")
+		offset = buffer[pos : pos + 12].find(b"<d:entry")
 		if offset == -1:
 			print(buffer[pos:])
-			raise OSError('Could not find entry tag <d:entry>')
+			raise OSError("Could not find entry tag <d:entry>")
 		if offset == 0:
 			# when no such info (offset equals 0) provided,
 			# we take all bytes till the closing tag or till section end
 			endI = buffer[pos:].find(b"</d:entry>\n")
 			chunkLen = len(buffer) - pos if endI == -1 else endI + 11
 		else:
-			bs = buffer[pos:pos + offset]
+			bs = buffer[pos : pos + offset]
 			if offset < 4:
 				bs = b"\x00" * (4 - offset) + bs
 			try:
-				chunkLen, = unpack("i", bs)
+				(chunkLen,) = unpack("i", bs)
 			except Exception as e:
 				log.error(f"{buffer[pos:pos + 100]!r}")
 				raise e from None
@@ -386,9 +387,7 @@ class Reader:
 		if entryRoot is None:
 			return None
 		namespaces: "dict[str, str]" = {
-			key: value
-			for key, value in entryRoot.nsmap.items()
-			if key and value
+			key: value for key, value in entryRoot.nsmap.items() if key and value
 		}
 		entryElems = entryRoot.xpath("/d:entry", namespaces=namespaces)
 		if not entryElems:
@@ -409,10 +408,7 @@ class Reader:
 				key=attrgetter("priority"),
 				reverse=True,
 			)
-			words += [
-				keyData.keyword
-				for keyData in keyDataList
-			]
+			words += [keyData.keyword for keyData in keyDataList]
 
 		defi = self._getDefi(entryElems[0], keyDataList)
 
@@ -457,7 +453,7 @@ class Reader:
 			if id_j < 0:
 				log.error(f"id closing not found: {entryBytes.decode(self._encoding)}")
 				continue
-			_id = entryBytes[id_i + 4: id_j].decode(self._encoding)
+			_id = entryBytes[id_i + 4 : id_j].decode(self._encoding)
 			title_i = entryBytes.find(b'd:title="')
 			if title_i < 0:
 				log.error(f"title not found: {entryBytes.decode(self._encoding)}")
@@ -468,7 +464,7 @@ class Reader:
 					f"title closing not found: {entryBytes.decode(self._encoding)}",
 				)
 				continue
-			titleById[_id] = entryBytes[title_i + 9: title_j].decode(self._encoding)
+			titleById[_id] = entryBytes[title_i + 9 : title_j].decode(self._encoding)
 
 		self._titleById = titleById
 		self._wordCount = len(titleById)
@@ -711,7 +707,7 @@ class Reader:
 				chunkLen, offset = self.getChunkLenOffset(pos, buffer)
 				articleAddress = ArticleAddress(sectionOffset, pos)
 				pos += offset
-				entryBytes = buffer[pos:pos + chunkLen]
+				entryBytes = buffer[pos : pos + chunkLen]
 
 				pos += chunkLen
 				yield entryBytes, articleAddress

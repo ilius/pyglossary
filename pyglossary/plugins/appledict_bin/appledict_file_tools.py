@@ -27,7 +27,7 @@ APPLEDICT_FILE_OFFSET = 0x40
 
 def readIntAt(buffer: "io.BufferedIOBase", address: int) -> int:
 	buffer.seek(address)
-	return unpack('i', buffer.read(4))[0]
+	return unpack("i", buffer.read(4))[0]
 
 
 def readIntPair(buffer: "io.BufferedIOBase") -> "tuple[int, int]":
@@ -39,11 +39,11 @@ def readIntPair(buffer: "io.BufferedIOBase") -> "tuple[int, int]":
 
 
 def readInt(buffer: "io.BufferedIOBase") -> int:
-	return unpack('i', buffer.read(4))[0]
+	return unpack("i", buffer.read(4))[0]
 
 
 def read_x_bytes_as_word(buffer: "io.BufferedIOBase", x: int) -> str:
-	return buffer.read(x).decode('UTF-16LE')
+	return buffer.read(x).decode("UTF-16LE")
 
 
 def read_2_bytes(buffer: "io.BufferedIOBase", address: int) -> int:
