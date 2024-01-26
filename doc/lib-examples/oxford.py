@@ -26,19 +26,21 @@ def takePhonetic_oxford_gb(glos):
 			i = defi.find(s, 2, 85)
 			if i == -1:
 				continue
-			ph = defi[:i + 1]
+			ph = defi[: i + 1]
 			break
-		ph = ph.replace(";", "\t")\
-			.replace(",", "\t")\
-			.replace("     ", "\t")\
-			.replace("    ", "\t")\
-			.replace("  ", "\t")\
-			.replace("//", "/")\
-			.replace("\t/\t", "\t")\
-			.replace("<i>US</i>\t", "\tUS: ")\
-			.replace("<i>US</i>", "\tUS: ")\
-			.replace("\t\t\t", "\t")\
+		ph = (
+			ph.replace(";", "\t")
+			.replace(",", "\t")
+			.replace("     ", "\t")
+			.replace("    ", "\t")
+			.replace("  ", "\t")
+			.replace("//", "/")
+			.replace("\t/\t", "\t")
+			.replace("<i>US</i>\t", "\tUS: ")
+			.replace("<i>US</i>", "\tUS: ")
+			.replace("\t\t\t", "\t")
 			.replace("\t\t", "\t")
+		)
 		# 	.replace("/", "")
 		# 	.replace("\\n ", "\\n")
 		# 	.replace("\\n ", "\\n")

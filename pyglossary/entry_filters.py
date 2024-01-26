@@ -11,7 +11,6 @@ from .text_utils import (
 )
 
 if TYPE_CHECKING:
-
 	from .glossary_types import Callable, EntryType, GlossaryExtendedType, GlossaryType
 
 
@@ -114,7 +113,7 @@ class LowerWord(EntryFilter):
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
-		self._re_word_ref = re.compile('href=["\'](bword://[^"\']+)["\']')
+		self._re_word_ref = re.compile("href=[\"'](bword://[^\"']+)[\"']")
 
 	def lowerWordRefs(self, defi: str) -> str:
 		return self._re_word_ref.sub(

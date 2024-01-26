@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ruff format "$@"
+git diff --name-only | xargs sed -i -E $'s|^\t+ | |g'
+ruff --fix "$@"

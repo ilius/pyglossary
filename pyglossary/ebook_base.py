@@ -332,11 +332,13 @@ class EbookWriter:
 		if not self._escape_strings:
 			return string
 
-		return string.replace("&", "&amp;")\
-			.replace('"', "&quot;")\
-			.replace("'", "&apos;")\
-			.replace(">", "&gt;")\
+		return (
+			string.replace("&", "&amp;")
+			.replace('"', "&quot;")
+			.replace("'", "&apos;")
+			.replace(">", "&gt;")
 			.replace("<", "&lt;")
+		)
 
 	def write_index(self, group_labels: "list[str]") -> None:
 		"""group_labels: a list of labels."""

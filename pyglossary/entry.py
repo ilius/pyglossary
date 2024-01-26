@@ -315,9 +315,7 @@ class Entry(BaseEntry):
 			self._word = func(self._word)
 			return
 
-		self._word = [
-			func(st) for st in self._word
-		]
+		self._word = [func(st) for st in self._word]
 
 	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
 		"""
@@ -345,9 +343,7 @@ class Entry(BaseEntry):
 			self._word = self._word.replace(source, target)
 			return
 
-		self._word = [
-			st.replace(source, target) for st in self._word
-		]
+		self._word = [st.replace(source, target) for st in self._word]
 
 	def replaceInDefi(self, source: str, target: str) -> None:
 		"""Replace string `source` with `target` in all definitions."""
@@ -369,24 +365,24 @@ class Entry(BaseEntry):
 	def stripFullHtml(self) -> "str | None":
 		"""Remove <html><head><body> tags and returns error."""
 		defi = self._defi
-		if not defi.startswith('<'):
+		if not defi.startswith("<"):
 			return None
-		if defi.startswith('<!DOCTYPE html>'):
-			defi = defi[len('<!DOCTYPE html>'):].strip()
-			if not defi.startswith('<html'):
+		if defi.startswith("<!DOCTYPE html>"):
+			defi = defi[len("<!DOCTYPE html>") :].strip()
+			if not defi.startswith("<html"):
 				return "Has <!DOCTYPE html> but no <html>"
 		else:
-			if not defi.startswith('<html>'):
+			if not defi.startswith("<html>"):
 				return None
-		i = defi.find('<body')
+		i = defi.find("<body")
 		if i == -1:
 			return "<body not found"
-		defi = defi[i + 5:]
-		i = defi.find('>')
+		defi = defi[i + 5 :]
+		i = defi.find(">")
 		if i == -1:
 			return "'>' after <body not found"
-		defi = defi[i + 1:]
-		i = defi.find('</body')
+		defi = defi[i + 1 :]
+		i = defi.find("</body")
 		if i == -1:
 			return "</body close not found"
 		defi = defi[:i]

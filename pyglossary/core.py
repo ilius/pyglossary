@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 		Callable,
 		TypeAlias,
 	)
+
 	ExcInfoType: TypeAlias = (
 		"tuple[type[BaseException], BaseException, TracebackType]"
 		" | tuple[None, None, None]"
@@ -28,31 +29,31 @@ if TYPE_CHECKING:
 
 
 __all__ = [
-	'StdLogHandler',
-	'TRACE',
-	'VERSION',
-	'appResDir',
-	'cacheDir',
-	'checkCreateConfDir',
-	'confDir',
-	'confJsonFile',
-	'dataDir',
-	'format_exception',
-	'getDataDir',
-	'homeDir',
-	'homePage',
-	'isDebug',
-	'log',
-	'noColor',
-	'pip',
-	'pluginsDir',
-	'rootConfJsonFile',
-	'rootDir',
-	'sysName',
-	'tmpDir',
-	'trace',
-	'uiDir',
-	'userPluginsDir',
+	"StdLogHandler",
+	"TRACE",
+	"VERSION",
+	"appResDir",
+	"cacheDir",
+	"checkCreateConfDir",
+	"confDir",
+	"confJsonFile",
+	"dataDir",
+	"format_exception",
+	"getDataDir",
+	"homeDir",
+	"homePage",
+	"isDebug",
+	"log",
+	"noColor",
+	"pip",
+	"pluginsDir",
+	"rootConfJsonFile",
+	"rootDir",
+	"sysName",
+	"tmpDir",
+	"trace",
+	"uiDir",
+	"userPluginsDir",
 ]
 
 
@@ -126,6 +127,7 @@ class _MyLogger(logging.Logger):
 
 	def pretty(self, data: "Any", header: str = "") -> None:
 		from pprint import pformat
+
 		self.debug(header + pformat(data))
 
 	def newFormatter(self) -> _Formatter:
@@ -160,7 +162,7 @@ def _formatVarDict(
 	for key, value in dct.items():
 		line = pre + key + " = " + repr(value)
 		if len(line) > max_width:
-			line = line[:max_width - 3] + "..."
+			line = line[: max_width - 3] + "..."
 			try:
 				value_len = len(value)
 			except TypeError:
@@ -272,9 +274,9 @@ def checkCreateConfDir() -> None:
 
 
 def _in_virtualenv() -> bool:
-	if hasattr(sys, 'real_prefix'):
+	if hasattr(sys, "real_prefix"):
 		return True
-	if hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix:
+	if hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix:
 		return True
 	return False
 
@@ -316,12 +318,13 @@ def getDataDir() -> str:
 	if isdir(_dir):
 		return _dir
 
-	if (CONDA_PREFIX := os.getenv("CONDA_PREFIX")):
+	if CONDA_PREFIX := os.getenv("CONDA_PREFIX"):
 		_dir = join(CONDA_PREFIX, "share", "pyglossary")
 		if isdir(_dir):
 			return _dir
 
 	raise OSError("failed to detect dataDir")
+
 
 # __________________________________________________________________________ #
 
@@ -335,6 +338,7 @@ def isDebug() -> bool:
 
 
 if os.sep == "\\":
+
 	def _windows_show_exception(
 		_type: "type[BaseException]",
 		exc: "BaseException",
@@ -343,6 +347,7 @@ if os.sep == "\\":
 		if not (_type and exc and tback):
 			return
 		import ctypes
+
 		msg = format_exception(
 			exc_info=(_type, exc, tback),
 			add_locals=(log.level <= logging.DEBUG),
@@ -354,6 +359,7 @@ if os.sep == "\\":
 	sys.excepthook = _windows_show_exception
 
 else:
+
 	def _unix_show_exception(
 		_type: "type[BaseException]",
 		exc: "BaseException",
@@ -361,11 +367,13 @@ else:
 	) -> None:
 		if not (_type and exc and tback):
 			return
-		log.critical(format_exception(
-			exc_info=(_type, exc, tback),
-			add_locals=(log.level <= logging.DEBUG),
-			add_globals=False,
-		))
+		log.critical(
+			format_exception(
+				exc_info=(_type, exc, tback),
+				add_locals=(log.level <= logging.DEBUG),
+				add_globals=False,
+			),
+		)
 
 	sys.excepthook = _unix_show_exception
 
@@ -376,9 +384,10 @@ sysName = platform.system().lower()
 
 # can set env var WARNINGS to:
 # "error", "ignore", "always", "default", "module", "once"
-if (WARNINGS := os.getenv("WARNINGS")):
-	if WARNINGS in ('default', 'error', 'ignore', 'always', 'module', 'once'):
+if WARNINGS := os.getenv("WARNINGS"):
+	if WARNINGS in ("default", "error", "ignore", "always", "module", "once"):
 		import warnings
+
 		warnings.filterwarnings(WARNINGS)  # type: ignore # noqa: PGH003
 	else:
 		log.error(f"invalid env var {WARNINGS = }")

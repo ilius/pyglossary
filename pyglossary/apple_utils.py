@@ -19,13 +19,11 @@ from .core import log
 # remove these keys along with their value
 cssKeyRemove = {
 	b"-webkit-text-combine",
-	# value: horizontal
-
+	# ^ value: horizontal
 	b"-apple-color-filter",
-	# value: apple-invert-lightness()
-
+	# ^ value: apple-invert-lightness()
 	b"-webkit-overflow-scrolling",
-	# controls whether or not touch devices use momentum-based scrolling
+	# ^ controls whether or not touch devices use momentum-based scrolling
 	# https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-overflow-scrolling
 	# values: touch, auto
 }
@@ -39,15 +37,12 @@ cssMapping: "dict[str, str]" = {
 	# I didn't actually find these font values:
 	"-apple-system-body": '"Helvetica Neue"',
 	"-apple-system": '"Helvetica Neue"',
-
 	"-webkit-link": "rgb(0, 0, 238)",  # value, color of <a> links
 	"-webkit-control": "normal normal normal normal 13px/normal system-ui",
 	"-webkit-mini-control": "normal normal normal normal 9px/normal system-ui",
 	"-webkit-small-control": "normal normal normal normal 11px/normal system-ui",
-
 	"-webkit-isolate": "isolate",  # value for "unicode-bidi"
 	"-webkit-isolate-override": "isolate-override",  # value for "unicode-bidi"
-
 	"-webkit-border-bottom-left-radius": "border-bottom-left-radius",  # key
 	"-webkit-border-bottom-right-radius": "border-bottom-right-radius",  # key
 	"-webkit-border-radius": "border-radius",  # key
@@ -60,10 +55,8 @@ cssMapping: "dict[str, str]" = {
 	"-webkit-column-rule-style": "column-rule-style",  # key
 	"-webkit-column-rule-width": "column-rule-width",  # key
 	"-webkit-ruby-position": "ruby-position",  # key
-
-	# not so sure about this
+	# not so sure about this:
 	"-webkit-padding-start": "padding-inline-start",  # key
-
 	"-apple-system-alternate-selected-text": "rgb(255, 255, 255)",
 	"-apple-system-blue": "rgb(0, 122, 255)",
 	"-apple-system-brown": "rgb(162, 132, 94)",

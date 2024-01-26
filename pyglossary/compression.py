@@ -17,12 +17,12 @@ stdCompressions = ("gz", "bz2", "lzma")
 log = logging.getLogger("pyglossary")
 
 __all__ = [
-	'compress',
-	'compressionOpen',
-	'compressionOpenFunc',
-	'stdCompressions',
-	'uncompress',
-	'zipFileOrDir',
+	"compress",
+	"compressionOpen",
+	"compressionOpenFunc",
+	"stdCompressions",
+	"uncompress",
+	"zipFileOrDir",
 ]
 
 
@@ -50,6 +50,7 @@ def compressionOpen(
 	**kwargs,  # noqa: ANN003
 ) -> "io.IOBase":
 	from os.path import splitext
+
 	filenameNoExt, ext = splitext(filename)
 	ext = ext.lower().lstrip(".")
 	try:
@@ -140,7 +141,7 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 			zipFileOrDir(glos, filename)
 		except Exception as e:
 			log.error(
-				f"{e}\nFailed to compress file \"{filename}\"",
+				f'{e}\nFailed to compress file "{filename}"',
 			)
 	else:
 		raise ValueError(f"unexpected {compression=}")
@@ -158,6 +159,7 @@ def uncompress(srcFilename: str, dstFilename: str, compression: str) -> None:
 	supported compressions: "gz", "bz2", "lzma".
 	"""
 	import shutil
+
 	log.info(f"Uncompressing {srcFilename!r} to {dstFilename!r}")
 
 	if compression in stdCompressions:
