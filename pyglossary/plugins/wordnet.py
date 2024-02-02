@@ -92,12 +92,12 @@ class SynSet:
 		pointer_count = int(p_cnt)
 		start = p_cnt_index + 1
 		return [
-			Pointer(*self.meta_parts[start + i * 4:start + (i + 1) * 4])
+			Pointer(*self.meta_parts[start + i * 4 : start + (i + 1) * 4])
 			for i in range(pointer_count)
 		]
 
 	def __repr__(self) -> str:
-		return "SynSet(%r)" % self.line
+		return f"SynSet({self.line:r})"
 
 
 class PointerSymbols:
@@ -179,9 +179,7 @@ class Pointer:
 
 
 class WordNet:
-	article_template = (
-		"<h1>%s</h1><span>%s</span>"
-	)
+	article_template = "<h1>%s</h1><span>%s</span>"
 	synSetTypes = {
 		"n": "n.",
 		"v": "v.",
@@ -237,18 +235,19 @@ class WordNet:
 				continue
 			synset = SynSet(line)
 			gloss_with_examples, _ = quotedTextPattern.subn(
-				lambda x: f'<cite class="ex">{x.group(1)}</cite>', synset.gloss,
+				lambda x: f'<cite class="ex">{x.group(1)}</cite>',
+				synset.gloss,
 			)
 			gloss_with_examples, _ = refPattern.subn(
-				lambda x: a(x.group(1)), gloss_with_examples,
+				lambda x: a(x.group(1)),
+				gloss_with_examples,
 			)
 
 			words = synset.words
 			for i, word in enumerate(words):
-				synonyms = [w for w in words if w != word]
+				synonyms = ", ".join(a(w) for w in words if w != word)
 				synonyms_str = (
-					'<br/><small class="co">Synonyms:</small> %s'
-					% ", ".join(a(w) for w in synonyms)
+					f'<br/><small class="co">Synonyms:</small> {synonyms}'
 					if synonyms
 					else ""
 				)
@@ -280,14 +279,17 @@ class WordNet:
 						if referenced_word not in pointers[symbol_desc]:
 							pointers[symbol_desc].append(referenced_word)
 
-				pointers_str = ""
-				for symbol_desc, referenced_words in pointers.items():
-					if referenced_words:
-						pointers_str += f'<br/><small class="co">{symbol_desc}:</small> '
-						pointers_str += ", ".join(a(w) for w in referenced_words)
+				pointers_str = "".join(
+					[
+						f'<br/><small class="co">{symbol_desc}:</small> '
+						+ ", ".join(a(w) for w in referenced_words)
+						for symbol_desc, referenced_words in pointers.items()
+						if referenced_words
+					],
+				)
 				self.collector[word].append(
 					f'<i class="pos grammar">{synSetTypes[synset.ss_type]}</i>'
-					f' {gloss_with_examples}{synonyms_str}{pointers_str}',
+					f" {gloss_with_examples}{synonyms_str}{pointers_str}",
 				)
 		sys.stdout.write("\n")
 		sys.stdout.flush()
@@ -300,9 +302,7 @@ class WordNet:
 			article_pieces_count = len(article_pieces)
 			text = None
 			if article_pieces_count > 1:
-				ol = (
-					["<ol>"] + [f"<li>{ap}</li>" for ap in article_pieces] + ["</ol>"]
-				)
+				ol = ["<ol>"] + [f"<li>{ap}</li>" for ap in article_pieces] + ["</ol>"]
 				text = article_template % (title, "".join(ol))
 			elif article_pieces_count == 1:
 				text = article_template % (title, article_pieces[0])
