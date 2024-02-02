@@ -349,7 +349,7 @@ class Writer:
 		header = (
 			'<!DOCTYPE html>\n'
 			'<html><head>'
-			f'<title>{{pageTitle}}</title>'
+			'<title>{pageTitle}</title>'
 			f'<meta charset="{encoding}">'
 			f'<style type="text/css">{style}{{customStyle}}</style>{cssLink}'
 			'</meta></head><body>\n'

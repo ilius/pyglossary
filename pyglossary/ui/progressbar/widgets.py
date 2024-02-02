@@ -126,7 +126,7 @@ class ETA(Timer):
             return 'Time: %s' % self.format_time(pbar.seconds_elapsed)
         elapsed = pbar.seconds_elapsed
         eta = elapsed * pbar.maxval / pbar.currval - elapsed
-        return 'ETA:  %s' % self.format_time(eta)
+        return f'ETA:  {self.format_time(eta)}'
 
 
 class AdaptiveETA(Timer):
@@ -172,7 +172,7 @@ class AdaptiveETA(Timer):
                                 elapsed - elapsed1)
             weight = (pbar.currval / float(pbar.maxval)) ** 0.5
             eta = (1 - weight) * eta + weight * etasamp
-        return 'ETA:  %s' % self.format_time(eta)
+        return f'ETA:  {self.format_time(eta)}'
 
 
 class FileTransferSpeed(Widget):
@@ -377,7 +377,7 @@ class BouncingBar(Bar):
         width -= len(left) + len(right)
 
         if pbar.finished:
-            return '%s%s%s' % (left, width * marker, right)
+            return f'{left}{width * marker}{right}'
 
         position = int(pbar.currval % (width * 2 - 1))
         if position > width:
@@ -389,4 +389,4 @@ class BouncingBar(Bar):
         if not self.fill_left:
             rpad, lpad = lpad, rpad
 
-        return '%s%s%s%s%s' % (left, lpad, marker, rpad, right)
+        return f'{left}{lpad}{marker}{rpad}{right}'

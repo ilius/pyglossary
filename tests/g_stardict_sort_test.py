@@ -41,7 +41,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 		)
 		self.assertLogWarning(
 			f"Ignoring user-defined sort order {sortKeyName!r}"
-			f", and using sortKey function from Stardict plugin",
+			", and using sortKey function from Stardict plugin",
 		)
 
 	def test_convert_txt_stardict_enfa_2(self):
@@ -53,7 +53,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 		)
 		self.assertLogWarning(
 			f"Ignoring user-defined sort order {sortKeyName!r}"
-			f", and using sortKey function from Stardict plugin",
+			", and using sortKey function from Stardict plugin",
 		)
 
 	def test_convert_txt_stardict_enfa_3(self):
@@ -65,7 +65,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 		)
 		self.assertLogWarning(
 			f"Ignoring user-defined sort order {sortKeyName!r}"
-			f", and using sortKey function from Stardict plugin",
+			", and using sortKey function from Stardict plugin",
 		)
 
 	def test_convert_txt_stardict_enfa_4(self):
@@ -77,7 +77,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 		)
 		self.assertLogWarning(
 			f"Ignoring user-defined sort order {sortKeyName!r}"
-			f", and using sortKey function from Stardict plugin",
+			", and using sortKey function from Stardict plugin",
 		)
 
 

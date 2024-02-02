@@ -372,7 +372,7 @@ class PluginProp:
 		if hasattr(module, "write"):
 			log.error(
 				f"plugin {format} has write function, "
-				f"must migrate to Writer class",
+				"must migrate to Writer class",
 			)
 
 		extensions = module.extensions

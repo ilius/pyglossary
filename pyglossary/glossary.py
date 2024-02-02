@@ -72,7 +72,7 @@ class Glossary(GlossaryCommon):
 		if self._readers and not direct:
 			raise ValueError(
 				f"there are already {len(self._readers)} readers"
-				f", you can not read with direct=False mode",
+				", you can not read with direct=False mode",
 			)
 
 		self._setTmpDataDir(filename)

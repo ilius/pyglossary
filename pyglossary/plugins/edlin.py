@@ -136,7 +136,7 @@ class Reader:
 				if not defi:
 					log.warning(
 						f"Edlin Reader: no definition for word {word!r}"
-						f", skipping",
+						", skipping",
 					)
 					yield None  # update progressbar
 					continue

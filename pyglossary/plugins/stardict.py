@@ -960,7 +960,7 @@ class Writer:
 			if dictMark > dictMarkMax:
 				log.error(
 					f"StarDict: {dictMark = } is too big, "
-					f"set option large_file=true",
+					"set option large_file=true",
 				)
 				break
 
@@ -1038,7 +1038,7 @@ class Writer:
 			if dictMark > dictMarkMax:
 				log.error(
 					f"StarDict: {dictMark = } is too big, "
-					f"set option large_file=true",
+					"set option large_file=true",
 				)
 				break
 
@@ -1136,7 +1136,7 @@ class Writer:
 			if dictMark > dictMarkMax:
 				log.error(
 					f"StarDict: {dictMark = } is too big, "
-					f"set option large_file=true",
+					"set option large_file=true",
 				)
 				break
 
@@ -1209,7 +1209,7 @@ class Writer:
 			if dictMark > dictMarkMax:
 				log.error(
 					f"StarDict: {dictMark = } is too big, "
-					f"set option large_file=true",
+					"set option large_file=true",
 				)
 				break
 

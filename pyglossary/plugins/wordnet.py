@@ -237,7 +237,7 @@ class WordNet:
 				continue
 			synset = SynSet(line)
 			gloss_with_examples, _ = quotedTextPattern.subn(
-				lambda x: '<cite class="ex">%s</cite>' % x.group(1), synset.gloss,
+				lambda x: f'<cite class="ex">{x.group(1)}</cite>', synset.gloss,
 			)
 			gloss_with_examples, _ = refPattern.subn(
 				lambda x: a(x.group(1)), gloss_with_examples,
@@ -283,9 +283,7 @@ class WordNet:
 				pointers_str = ""
 				for symbol_desc, referenced_words in pointers.items():
 					if referenced_words:
-						pointers_str += (
-							'<br/><small class="co">%s:</small> ' % symbol_desc
-						)
+						pointers_str += f'<br/><small class="co">{symbol_desc}:</small> '
 						pointers_str += ", ".join(a(w) for w in referenced_words)
 				self.collector[word].append(
 					f'<i class="pos grammar">{synSetTypes[synset.ss_type]}</i>'
@@ -303,7 +301,7 @@ class WordNet:
 			text = None
 			if article_pieces_count > 1:
 				ol = (
-					["<ol>"] + ["<li>%s</li>" % ap for ap in article_pieces] + ["</ol>"]
+					["<ol>"] + [f"<li>{ap}</li>" for ap in article_pieces] + ["</ol>"]
 				)
 				text = article_template % (title, "".join(ol))
 			elif article_pieces_count == 1:

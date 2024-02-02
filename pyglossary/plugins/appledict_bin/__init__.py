@@ -340,8 +340,8 @@ class Reader:
 
 		if self._html_full:
 			defi = (
-				f"<!DOCTYPE html><html><head>"
-				f'<link rel="stylesheet" href="style.css">'
+				"<!DOCTYPE html><html><head>"
+				'<link rel="stylesheet" href="style.css">'
 				f"</head><body>{defi}</body></html>"
 			)
 

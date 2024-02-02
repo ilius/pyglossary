@@ -651,17 +651,17 @@ class TestTooLongText(BaseTest):
 
 		with slob.open(self.path) as r:
 			self.assertEqual(r.tags["t2"], "t2 value")
-			self.assertFalse(tag_with_long_name[0] in r.tags)
-			self.assertTrue(tag_with_long_value[0] in r.tags)
+			self.assertNotIn(tag_with_long_name[0], r.tags)
+			self.assertIn(tag_with_long_value[0], r.tags)
 			self.assertEqual(r.tags[tag_with_long_value[0]], "")
 			d = r.as_dict()
-			self.assertTrue("a" in d)
-			self.assertTrue("b" in d)
-			self.assertFalse(long_key in d)
-			self.assertFalse(key_with_long_frag[0] in d)
-			self.assertTrue("e" in d)
-			self.assertFalse(long_alias in d)
-			self.assertFalse("g" in d)
+			self.assertIn("a", d)
+			self.assertIn("b", d)
+			self.assertNotIn(long_key, d)
+			self.assertNotIn(key_with_long_frag[0], d)
+			self.assertIn("e", d)
+			self.assertNotIn(long_alias, d)
+			self.assertNotIn("g", d)
 
 		self.assertRaises(
 			ValueError,

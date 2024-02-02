@@ -50,7 +50,7 @@ class TestGlossarySecurity(TestGlossaryErrors):
 		)
 		self.assertIsNone(res)
 		errMsg = (
-			f"[Errno 2] No such file or directory: "
+			"[Errno 2] No such file or directory: "
 			f"\"{testCacheDir}{os.sep}os.system('abcd');test.txt\""
 		)
 		errMsg = errMsg.replace("\\", "\\\\")

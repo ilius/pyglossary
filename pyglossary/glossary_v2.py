@@ -973,7 +973,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			if sort is False:
 				log.warning(
 					f"Writing {plugin.name} requires sorting"
-					f", ignoring user sort=False option",
+					", ignoring user sort=False option",
 				)
 			return True
 

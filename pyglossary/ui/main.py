@@ -664,7 +664,7 @@ def main() -> None:
 			readOptions.update(newReadOptions)
 		else:
 			log.error(
-				f"invalid value for --json-read-options, "
+				"invalid value for --json-read-options, "
 				f"must be an object/dict, not {type(newReadOptions)}",
 			)
 
@@ -677,7 +677,7 @@ def main() -> None:
 			writeOptions.update(newWriteOptions)
 		else:
 			log.error(
-				f"invalid value for --json-write-options, "
+				"invalid value for --json-write-options, "
 				f"must be an object/dict, not {type(newWriteOptions)}",
 			)
 

@@ -21,7 +21,7 @@ website = None
 optionsProp: "dict[str, Option]" = {}
 
 
-class Reader(object):
+class Reader:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
@@ -70,7 +70,7 @@ class Reader(object):
 			yield glos.newEntry(word, defi)
 
 
-class Writer(object):
+class Writer:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""

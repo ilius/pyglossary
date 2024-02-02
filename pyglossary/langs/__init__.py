@@ -23,11 +23,11 @@ class Lang:
 
 	def __repr__(self) -> str:
 		return (
-			f'Lang('
+			'Lang('
 			f'codes={self._codes!r}, '
 			f'names={self._names!r}, '
 			f'titleTag={self._titleTag!r}'
-			f')'
+			')'
 		)
 
 	def __str__(self) -> str:

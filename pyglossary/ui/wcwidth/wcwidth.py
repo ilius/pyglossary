@@ -10,7 +10,7 @@ try:from functools import lru_cache
 except ImportError:from backports.functools_lru_cache import lru_cache
 _UNICODE_CMPTABLE=None
 _PY3=sys.version_info[0]>=3
-ZERO_WIDTH_CF=set([0,847,8203,8204,8205,8206,8207,8232,8233,8234,8235,8236,8237,8238,8288,8289,8290,8291])
+ZERO_WIDTH_CF={0,847,8203,8204,8205,8206,8207,8232,8233,8234,8235,8236,8237,8238,8288,8289,8290,8291}
 def _bisearch(ucs,table):
 	'\n    Auxiliary function for binary search in interval table.\n\n    :arg int ucs: Ordinal value of unicode character.\n    :arg list table: List of starting and ending ranges of ordinal values,\n        in form of ``[(start, end), ...]``.\n    :rtype: int\n    :returns: 1 if ordinal value ucs is found within lookup table, else 0.\n    ';B=ucs;A=table;E=0;C=len(A)-1
 	if B<A[0][0]or B>A[C][1]:return 0

@@ -141,7 +141,7 @@ elif os.sep == "\\":  # Operating system is ms-windows
 else:
 	raise RuntimeError(
 		f"Unknown path separator(os.sep=={os.sep!r})"
-		f"What is your operating system?",
+		"What is your operating system?",
 	)
 
 re_charset_decode = re.compile(
@@ -593,7 +593,7 @@ class BglReader:
 				# struct.error: unpack requires a string argument of length 4
 				# FIXME
 				log.exception(
-					f"failed to read block data"
+					"failed to read block data"
 					f": numBlocks={self.numBlocks}"
 					f", length={length}"
 					f", filePos={self.file.tell()}",
@@ -846,7 +846,7 @@ class BglReader:
 		if pos + 1 > len(block.data):
 			log.error(
 				f"reading block offset={block.offset:#02x}"
-				f", reading word size: pos + 1 > len(block.data)",
+				", reading word size: pos + 1 > len(block.data)",
 			)
 			return None
 		Len = block.data[pos]
@@ -855,7 +855,7 @@ class BglReader:
 			log.error(
 				f"reading block offset={block.offset:#02x}"
 				f", block.type={block.type}"
-				f", reading word: pos + Len > len(block.data)",
+				", reading word: pos + Len > len(block.data)",
 			)
 			return None
 		b_word = block.data[pos:pos + Len]
@@ -900,7 +900,7 @@ class BglReader:
 		if pos + 2 > len(block.data):
 			log.error(
 				f"reading block offset={block.offset:#02x}"
-				f", reading defi size: pos + 2 > len(block.data)",
+				", reading defi size: pos + 2 > len(block.data)",
 			)
 			return Err
 		Len = uintFromBytes(block.data[pos:pos + 2])
@@ -909,7 +909,7 @@ class BglReader:
 			log.error(
 				f"reading block offset={block.offset:#02x}"
 				f", block.type={block.type}"
-				f", reading defi: pos + Len > len(block.data)",
+				", reading defi: pos + Len > len(block.data)",
 			)
 			return Err
 		b_defi = block.data[pos:pos + Len]
@@ -945,7 +945,7 @@ class BglReader:
 			if pos + 1 > len(block.data):
 				log.error(
 					f"reading block offset={block.offset:#02x}"
-					f", reading alt size: pos + 1 > len(block.data)",
+					", reading alt size: pos + 1 > len(block.data)",
 				)
 				return Err
 			Len = block.data[pos]
@@ -954,7 +954,7 @@ class BglReader:
 				log.error(
 					f"reading block offset={block.offset:#02x}"
 					f", block.type={block.type}"
-					f", reading alt: pos + Len > len(block.data)",
+					", reading alt: pos + Len > len(block.data)",
 				)
 				return Err
 			b_alt = block.data[pos:pos + Len]
@@ -978,7 +978,7 @@ class BglReader:
 		if pos + 5 > len(block.data):
 			log.error(
 				f"reading block offset={block.offset:#02x}"
-				f", reading word size: pos + 5 > len(block.data)",
+				", reading word size: pos + 5 > len(block.data)",
 			)
 			return Err
 		wordLen = uintFromBytes(block.data[pos:pos + 5])
@@ -987,7 +987,7 @@ class BglReader:
 			log.error(
 				f"reading block offset={block.offset:#02x}"
 				f", block.type={block.type}"
-				f", reading word: pos + wordLen > len(block.data)",
+				", reading word: pos + wordLen > len(block.data)",
 			)
 			return Err
 		b_word = block.data[pos:pos + wordLen]
@@ -999,7 +999,7 @@ class BglReader:
 		if pos + 4 > len(block.data):
 			log.error(
 				f"reading block offset={block.offset:#02x}"
-				f", reading defi size: pos + 4 > len(block.data)",
+				", reading defi size: pos + 4 > len(block.data)",
 			)
 			return Err
 		altsCount = uintFromBytes(block.data[pos:pos + 4])
@@ -1012,7 +1012,7 @@ class BglReader:
 			if pos + 4 > len(block.data):
 				log.error(
 					f"reading block offset={block.offset:#02x}"
-					f", reading alt size: pos + 4 > len(block.data)",
+					", reading alt size: pos + 4 > len(block.data)",
 				)
 				return Err
 			altLen = uintFromBytes(block.data[pos:pos + 4])
@@ -1022,14 +1022,14 @@ class BglReader:
 					# no evidence
 					log.warning(
 						f"reading block offset={block.offset:#02x}"
-						f", reading alt size: pos + altLen != len(block.data)",
+						", reading alt size: pos + altLen != len(block.data)",
 					)
 				break
 			if pos + altLen > len(block.data):
 				log.error(
 					f"reading block offset={block.offset:#02x}"
 					f", block.type={block.type}"
-					f", reading alt: pos + altLen > len(block.data)",
+					", reading alt: pos + altLen > len(block.data)",
 				)
 				return Err
 			b_alt = block.data[pos:pos + altLen]
@@ -1048,7 +1048,7 @@ class BglReader:
 			log.error(
 				f"reading block offset={block.offset:#02x}"
 				f", block.type={block.type}"
-				f", reading defi: pos + defiLen > len(block.data)",
+				", reading defi: pos + defiLen > len(block.data)",
 			)
 			return Err
 		b_defi = block.data[pos:pos + defiLen]
@@ -1091,14 +1091,14 @@ class BglReader:
 							if i_ref != len(b_refs) - 1:
 								log.debug(
 									f"decoding charset tags, b_text={b_text!r}"
-									f"\nblank <charset c=t> character"
+									"\nblank <charset c=t> character"
 									f" reference ({b_text2!r})\n",
 								)
 							continue
 						if not re_b_reference.match(b_ref):
 							log.debug(
 								f"decoding charset tags, b_text={b_text!r}"
-								f"\ninvalid <charset c=t> character"
+								"\ninvalid <charset c=t> character"
 								f" reference ({b_text2!r})\n",
 							)
 							continue
@@ -1114,7 +1114,7 @@ class BglReader:
 							log.debug(
 								f"decoding charset tags, b_text={b_text!r}"
 								f"\nfragment: {b_text2!r}"
-								f"\nconversion error:\n" + excMessage(),
+								"\nconversion error:\n" + excMessage(),
 							)
 							u_text2 = b_text2.decode(encoding, "replace")
 					else:
@@ -1130,7 +1130,7 @@ class BglReader:
 					else:
 						log.debug(
 							f"decoding charset tags, b_text={b_text!r}"
-							f"\nunbalanced </charset> tag\n",
+							"\nunbalanced </charset> tag\n",
 						)
 				else:
 					# <charset c="?">
@@ -1162,7 +1162,7 @@ class BglReader:
 		if encodings:
 			log.debug(
 				f"decoding charset tags, text={b_text}"
-				f"\nunclosed <charset...> tag\n",
+				"\nunclosed <charset...> tag\n",
 			)
 		return u_text, defaultEncodingOnly
 
@@ -1225,7 +1225,7 @@ class BglReader:
 			except UnicodeError:
 				log.debug(
 					f"processAlternativeKey({b_word})\nkey = {b_key}"
-					f":\nconversion error:\n" + excMessage(),
+					":\nconversion error:\n" + excMessage(),
 				)
 				u_word_main = b_word_main.decode(self.sourceEncoding, "ignore")
 		else:
@@ -1314,7 +1314,7 @@ class BglReader:
 			else:
 				log.debug(
 					f"processDefi({b_defi})\nb_key = {b_key}"
-					f":\ndefi field 50"
+					":\ndefi field 50"
 					f", unknown code: {fields.code_transcription_50:#02x}",
 				)
 
@@ -1332,7 +1332,7 @@ class BglReader:
 			else:
 				log.debug(
 					f"processDefi({b_defi})\nb_key = {b_key}"
-					f":\ndefi field 60"
+					":\ndefi field 60"
 					f", unknown code: {fields.code_transcription_60:#02x}",
 				)
 
@@ -1436,7 +1436,7 @@ class BglReader:
 					log.debug(
 						f"collecting definition fields, b_defi = {b_defi!r}"
 						f"\nb_key = {b_key!r}"
-						f":\nduplicate part of speech item",
+						":\nduplicate part of speech item",
 					)
 				if i + 1 >= len(b_defi):
 					log.debug(
