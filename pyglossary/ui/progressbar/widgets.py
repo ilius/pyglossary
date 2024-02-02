@@ -123,7 +123,7 @@ class ETA(Timer):
         if pbar.maxval is UnknownLength or pbar.currval == 0:
             return 'ETA:  --:--:--'
         if pbar.finished:
-            return 'Time: %s' % self.format_time(pbar.seconds_elapsed)
+            return f'Time: {self.format_time(pbar.seconds_elapsed)}'
         elapsed = pbar.seconds_elapsed
         eta = elapsed * pbar.maxval / pbar.currval - elapsed
         return f'ETA:  {self.format_time(eta)}'
@@ -162,7 +162,7 @@ class AdaptiveETA(Timer):
         if pbar.maxval is UnknownLength or pbar.currval == 0:
             return 'ETA:  --:--:--'
         if pbar.finished:
-            return 'Time: %s' % self.format_time(pbar.seconds_elapsed)
+            return f'Time: {self.format_time(pbar.seconds_elapsed)}'
         elapsed = pbar.seconds_elapsed
         currval1, elapsed1 = self._update_samples(pbar.currval, elapsed)
         eta = self._eta(pbar.maxval, pbar.currval, elapsed)
@@ -341,9 +341,9 @@ class Bar(WidgetHFill):
             marked = ''
 
         if self.fill_left:
-            return '%s%s%s' % (left, marked.ljust(width, self.fill), right)
+            return f'{left}{marked.ljust(width, self.fill)}{right}'
 
-        return '%s%s%s' % (left, marked.rjust(width, self.fill), right)
+        return f'{left}{marked.rjust(width, self.fill)}{right}'
 
 
 class ReverseBar(Bar):

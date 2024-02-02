@@ -390,7 +390,7 @@ def _read_gzip_header(fp):
         return None
 
     if magic != b'\037\213':
-        raise BadGzipFile('Not a gzipped file (%r)' % magic)
+        raise BadGzipFile(f'Not a gzipped file ({magic!r})')
 
     (method, flag, last_mtime) = struct.unpack("<BBIxx", _read_exact(fp, 8))
     if method != 8:
