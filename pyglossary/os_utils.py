@@ -118,8 +118,8 @@ def runDictzip(filename: str | Path, method="") -> None:
 
 
 def _rmtreeError(
-	func: "Callable",
-	direc: str,
+	_func: "Callable",
+	_direc: str,
 	exc_info: "tuple[type, Exception, types.TracebackType] | None",
 ) -> None:
 	if exc_info is None:

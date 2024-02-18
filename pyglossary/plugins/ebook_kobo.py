@@ -101,7 +101,7 @@ class Writer:
 	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
-	def __init__(self, glos: "GlossaryType", **kwargs) -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
 		self._words: "list[str]" = []

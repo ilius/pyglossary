@@ -215,7 +215,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 <guide></guide>
 </package>"""
 
-	def __init__(self, glos: "GlossaryType", **kwargs) -> None:
+	def __init__(self, glos: "GlossaryType") -> None:
 		import uuid
 		EbookWriter.__init__(
 			self,

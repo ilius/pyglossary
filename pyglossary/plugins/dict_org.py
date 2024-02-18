@@ -29,7 +29,7 @@ website = (
 )
 
 
-def installToDictd(filename: str, dictzip: bool, title: str = "") -> None:
+def installToDictd(filename: str, dictzip: bool) -> None:
 	"""Filename is without extension (neither .index or .dict or .dict.dz)."""
 	import shutil
 	import subprocess
@@ -147,7 +147,6 @@ class Writer:
 			installToDictd(
 				self._filename,
 				self._dictzip,
-				self._glos.getInfo("name").replace(" ", "_"),
 			)
 		self._filename = ""
 

@@ -933,7 +933,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 	def _switchToSQLite(
 		self,
 		inputFilename: str,
-		outputFormat: str,
 	) -> None:
 		from .sq_entry_list import SqEntryList
 
@@ -1037,7 +1036,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		if sqlite:
 			self._switchToSQLite(
 				inputFilename=args.inputFilename,
-				outputFormat=plugin.name,
 			)
 
 		self._data.setSortKey(

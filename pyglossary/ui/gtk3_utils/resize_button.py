@@ -31,7 +31,7 @@ class ResizeButton(gtk.EventBox):
 		self.add(self.image)
 		self.connect('button-press-event', self.buttonPress)
 
-	def buttonPress(self, obj, gevent):
+	def buttonPress(self, _obj, gevent):
 		self.win.begin_resize_drag(
 			self.edge,
 			gevent.button,

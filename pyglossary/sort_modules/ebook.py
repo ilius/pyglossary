@@ -7,7 +7,10 @@ if TYPE_CHECKING:
 desc = "E-Book (prefix length: 2)"
 
 
-def normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
+def normal(
+	sortEncoding: str = "utf-8",  # noqa: ARG001
+	**options,
+) -> "sortKeyType":
 	length = options.get("group_by_prefix_length", 2)
 
 	# FIXME: return bytes

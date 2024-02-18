@@ -100,7 +100,7 @@ def color_parse(colorStr):
 	return rgba_parse(colorStr).to_color()
 
 
-def pack(box, child, expand=False, fill=False, padding=0):
+def pack(box, child, expand=False, fill=False, padding=0):  # noqa: ARG001
 	if padding > 0:
 		print(f"pack: padding={padding} ignored")
 	if isinstance(box, gtk.Box):
@@ -119,7 +119,7 @@ def pack(box, child, expand=False, fill=False, padding=0):
 
 def dialog_add_button(
 	dialog,
-	iconName,
+	_iconName,
 	label,
 	resId,
 	onClicked=None,
@@ -130,9 +130,10 @@ def dialog_add_button(
 		use_underline=True,
 		# icon_name=iconName,
 	)
+	# fixed bug: used to ignore resId and pass gtk.ResponseType.OK
 	dialog.add_action_widget(
 		button,
-		gtk.ResponseType.OK,
+		resId,
 	)
 	if onClicked:
 		label.connect("clicked", onClicked)
@@ -147,7 +148,7 @@ def showMsg(
 	parent=None,
 	transient_for=None,
 	title="",
-	borderWidth=10,
+	borderWidth=10,  # noqa: ARG001
 	iconSize=gtk.IconSize.LARGE,
 	selectable=False,
 ):
@@ -182,7 +183,7 @@ def showMsg(
 		gtk.ResponseType.OK,
 	)
 
-	def onResponse(w, response_id):
+	def onResponse(_w, _response_id):
 		win.destroy()
 
 	win.connect("response", onResponse)

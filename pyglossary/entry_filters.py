@@ -140,7 +140,10 @@ class RemoveHtmlTagsAll(EntryFilter):
 	name = "remove_html_all"
 	desc = "Remove all HTML tags (not their contents) from definition"
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(
+		self,
+		glos: "GlossaryType",  # noqa: ARG002
+	) -> None:
 		self._p_pattern = re.compile(
 			'<p( [^<>]*?)?>(.*?)</p>',
 			re.DOTALL,
@@ -203,7 +206,7 @@ class StripFullHtml(EntryFilter):
 
 	def __init__(
 		self,
-		glos: "GlossaryType",
+		glos: "GlossaryType",  # noqa: ARG002
 		errorHandler: "Callable[[EntryType, str], None] | None",
 	) -> None:
 		self._errorHandler = errorHandler
@@ -231,7 +234,10 @@ class NormalizeHtml(EntryFilter):
 		"br", "hr",
 	)
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(
+		self,
+		glos: "GlossaryType",  # noqa: ARG002
+	) -> None:
 		log.info("Normalizing HTML tags")
 		self._pattern = re.compile(
 			"(" + "|".join(

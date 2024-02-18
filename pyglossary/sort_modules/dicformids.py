@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 desc = "DictionaryForMIDs"
 
 
-def normal(**options) -> "sortKeyType":
+def normal(**_options) -> "sortKeyType":
 	re_punc = re.compile(
 		r"""[!"$§%&/()=?´`\\{}\[\]^°+*~#'\-_.:,;<>@|]*""",
 	)

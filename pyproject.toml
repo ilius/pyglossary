@@ -20,11 +20,11 @@ select = [
     "UP", # pyupgrade
     "W", # pycodestyle Warning
     "YTT", # flake8-2020
+    "ARG", # flake8-unused-arguments: ARG001 Unused function argument
 
     # "C90", # mccabe: C901: {name} is too complex ({complexity})
     # "ANN", # flake8-annotationsq
     # "N", # pep8-naming
-    # "ARG", # flake8-unused-arguments: ARG001 Unused function argument
     # "A", # flake8-builtins
     # "S", # flake8-bandit
 ]

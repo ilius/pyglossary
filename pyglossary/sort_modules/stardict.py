@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 desc = "StarDict"
 
 
-def normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
+def normal(sortEncoding: str = "utf-8", **_options) -> "sortKeyType":
 	def sortKey(words: "list[str]") -> "tuple[bytes, bytes]":
 		b_word = words[0].encode(sortEncoding, errors="replace")
 		return (b_word.lower(), b_word)
@@ -15,7 +15,7 @@ def normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
 	return sortKey
 
 
-def sqlite(sortEncoding: str = "utf-8", **options) -> "sqliteSortKeyType":
+def sqlite(sortEncoding: str = "utf-8", **_options) -> "sqliteSortKeyType":
 	def headword_lower(words: "list[str]") -> bytes:
 		return words[0].encode(sortEncoding, errors="replace").lower()
 

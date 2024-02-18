@@ -195,7 +195,7 @@ def normalizeNewlines(u_text: str) -> str:
 	)
 
 
-def replaceAsciiCharRefs(b_text: bytes, encoding: str) -> bytes:
+def replaceAsciiCharRefs(b_text: bytes) -> bytes:
 	# &#0147;
 	# &#x010b;
 	if core.isDebug():

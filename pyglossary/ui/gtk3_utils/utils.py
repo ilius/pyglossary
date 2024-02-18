@@ -96,7 +96,7 @@ def pack(box, child, expand=False, fill=False, padding=0):
 
 def dialog_add_button(
 	dialog,
-	iconName,
+	_iconName,
 	label,
 	resId,
 	onClicked=None,

@@ -60,7 +60,7 @@ class AboutWidget(gtk.Box):
 		about: str = "",
 		authors: str = "",
 		license_text: str = "",
-		**kwargs,
+		**_kwargs,
 	) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		self.set_spacing(15)
@@ -122,8 +122,8 @@ class AboutWidget(gtk.Box):
 	def newTabLabelWidget(
 		self,
 		text: str,
-		wrap: bool = False,
-		justification: "gtk.Justification | None" = None,
+		# wrap: bool = False,
+		# justification: "gtk.Justification | None" = None,
 	):
 		box = VBox()
 		# box.set_border_width(10)

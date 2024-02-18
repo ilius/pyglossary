@@ -139,7 +139,7 @@ def jsonCodeValue(value):
 	return codeValue(json.dumps(value))
 
 
-def defaultOptionValue(name, opt, images):
+def defaultOptionValue(name, _opt, images):
 	value = ui.config[name]
 	valueMD = jsonCodeValue(value)
 

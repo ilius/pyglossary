@@ -71,10 +71,10 @@ class YamlReader(TextGlossaryReader):
 			"pref": "prefix",
 		}
 
-	def isInfoWord(self, word: str) -> bool:
+	def isInfoWord(self, _word: str) -> bool:
 		return False
 
-	def fixInfoWord(self, word: str) -> str:
+	def fixInfoWord(self, _word: str) -> str:
 		return ""
 
 	def _makeList(
@@ -106,7 +106,7 @@ class YamlReader(TextGlossaryReader):
 		self,
 		hf: "lxml.etree.htmlfile",
 		exampleDict: "dict",
-		count: int,
+		_count: int,
 	) -> None:
 		from lxml import etree as ET
 
@@ -159,7 +159,7 @@ class YamlReader(TextGlossaryReader):
 		self,
 		hf: "lxml.etree.htmlfile",
 		note: str,
-		count: int,
+		_count: int,
 	) -> None:
 		hf.write(note)
 

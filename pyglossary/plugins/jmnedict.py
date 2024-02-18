@@ -74,7 +74,7 @@ class Reader:
 		if not input_objects:
 			return
 
-		if len(input_objects) == 1:
+		if skip_single and len(input_objects) == 1:
 			hf.write(single_prefix)
 			processor(hf, input_objects[0])
 			return

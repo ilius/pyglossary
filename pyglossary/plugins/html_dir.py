@@ -122,7 +122,7 @@ class Writer:
 
 	def copyCSS(self, cssPath: str) -> None:
 		import shutil
-		shutil.copy(self._css, join(self._filename, "style.css"))
+		shutil.copy(cssPath, join(self._filename, "style.css"))
 
 	def finish(self) -> None:
 		pass

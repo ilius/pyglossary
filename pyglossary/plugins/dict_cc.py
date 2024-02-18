@@ -65,7 +65,7 @@ class Reader:
 		if not input_elements:
 			return
 
-		if len(input_elements) == 1:
+		if skip_single and len(input_elements) == 1:
 			hf.write(single_prefix)
 			processor(hf, input_elements[0])
 			return
@@ -87,7 +87,7 @@ class Reader:
 		if not groups:
 			return
 
-		if len(groups) == 1:
+		if skip_single and len(groups) == 1:
 			hf.write(single_prefix)
 			processor(hf, groups[0])
 			return

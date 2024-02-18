@@ -319,7 +319,6 @@ class Reader:
 	def _getDefi(
 		self,
 		entryElem: "Element",
-		keyDataList: "list[KeyData]",
 	) -> str:
 		if not self._html:
 			# FIXME: this produces duplicate text for Idioms.dictionary, see #301
@@ -410,7 +409,7 @@ class Reader:
 			)
 			words += [keyData.keyword for keyData in keyDataList]
 
-		defi = self._getDefi(entryElems[0], keyDataList)
+		defi = self._getDefi(entryElems[0])
 
 		return self._glos.newEntry(
 			word=words,

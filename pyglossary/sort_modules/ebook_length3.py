@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 desc = "E-Book (prefix length: 3)"
 
 
-def normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
+def normal(sortEncoding: str = "utf-8", **_options) -> "sortKeyType":
 	return ebook.normal(
 		sortEncoding=sortEncoding,
 		group_by_prefix_length=3,
@@ -18,7 +18,7 @@ def normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
 
 def sqlite(
 	sortEncoding: str = "utf-8",
-	**options,
+	**_options,
 ) -> "sqliteSortKeyType":
 	return ebook.sqlite(
 		sortEncoding=sortEncoding,

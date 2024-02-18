@@ -124,7 +124,6 @@ def abspath_or_None(path: "str | None") -> "str | None":
 
 
 def write_header(
-	glos: "GlossaryType",
 	toFile: "io.TextIOBase",
 	front_back_matter: "str | None",
 ) -> None:
@@ -288,7 +287,7 @@ class Writer:
 			os.mkdir(myResDir)
 
 		with open(filePathBase + ".xml", mode="w", encoding="utf-8") as toFile:
-			write_header(glos, toFile, front_back_matter)
+			write_header(toFile, front_back_matter)
 			while True:
 				entry = yield
 				if entry is None:

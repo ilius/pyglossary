@@ -170,7 +170,7 @@ class UI(UIBase):
 
 	def onSigInt(
 		self,
-		*args: "tuple[Any]",
+		*_args: "tuple[Any]",
 	) -> None:
 		log.info("")
 		if self._toPause:
@@ -211,7 +211,11 @@ class UI(UIBase):
 		self.pbar = createProgressBar(title)
 		self.fixLogger()
 
-	def progress(self, ratio: float, text: str = "") -> None:
+	def progress(
+		self,
+		ratio: float,
+		text: str = "",  # noqa: ARG002
+	) -> None:
 		self.pbar.update(ratio)
 
 	def progressEnd(self) -> None:
@@ -221,7 +225,7 @@ class UI(UIBase):
 
 	def reverseLoop(
 		self,
-		*args: "tuple[Any]",
+		*_args: "tuple[Any]",
 		**kwargs: "Mapping[Any]",
 	) -> None:
 		from pyglossary.reverse import reverseGlossary

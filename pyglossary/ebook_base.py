@@ -321,7 +321,7 @@ class EbookWriter:
 		self,
 		word: str,
 		defi: str,
-		variants: "list[str] | None" = None,
+		variants: "list[str] | None" = None,  # noqa: ARG002
 	) -> str:
 		return self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
 			headword=self.escape_if_needed(word),

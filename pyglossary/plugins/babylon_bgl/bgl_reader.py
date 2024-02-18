@@ -1106,7 +1106,7 @@ class BglReader:
 				else:
 					self.charReferencesStat(b_text2, encoding)
 					if encoding == "cp1252":
-						b_text2 = replaceAsciiCharRefs(b_text2, encoding)
+						b_text2 = replaceAsciiCharRefs(b_text2)
 					if self._strict_string_conversion:
 						try:
 							u_text2 = b_text2.decode(encoding)

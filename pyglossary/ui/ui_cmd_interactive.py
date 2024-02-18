@@ -119,7 +119,7 @@ def checkbox_prompt(
 	check = MiniCheckBoxPrompt(message=message, value=default)
 
 	@bindings.add(" ")
-	def space(event: "prompt_toolkit.E") -> None:
+	def space(_event: "prompt_toolkit.E") -> None:
 		check.value = not check.value
 		# cursor_pos = check.formatMessage().find("[") + 1
 		# cur_cursor_pos = session.default_buffer.cursor_position
@@ -127,7 +127,7 @@ def checkbox_prompt(
 		# session.default_buffer.cursor_position = cursor_pos
 
 	@bindings.add(Keys.Any)
-	def _(event: "prompt_toolkit.E") -> None:
+	def _(_event: "prompt_toolkit.E") -> None:
 		"""Disallow inserting other text."""
 
 	complete_message = check
@@ -211,7 +211,7 @@ back = "back"
 class MyPathCompleter(PathCompleter):
 	def __init__(
 		self,
-		reading: bool,
+		reading: bool,  # noqa: ARG002
 		fs_action_names=None,
 		**kwargs,
 	) -> None:
@@ -224,7 +224,7 @@ class MyPathCompleter(PathCompleter):
 			fs_action_names = []
 		self.fs_action_names = fs_action_names
 
-	def file_filter(self, filename: str) -> bool:
+	def file_filter(self, _filename: str) -> bool:
 		# filename is full/absolute file path
 		return True
 
@@ -328,6 +328,8 @@ class UI(ui_cmd.UI):
 		])
 
 	def fs_pwd(self, args: "list[str]"):
+		if args:
+			print(f"extra arguments: {args}")
 		print(os.getcwd())
 
 	def get_ls_l(
@@ -1089,6 +1091,8 @@ class UI(ui_cmd.UI):
 		convertOptions: "dict | None" = None,
 		glossarySetAttrs: "dict | None" = None,
 	):
+		if reverse:
+			raise NotImplementedError("Reverse is not implemented in this UI")
 		if config is None:
 			config = {}
 		if readOptions is None:

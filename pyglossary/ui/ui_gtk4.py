@@ -84,7 +84,7 @@ writeDesc = [
 ]
 
 
-def getWorkAreaSize(w):
+def getWorkAreaSize(_w):
 	display = gdk.Display.get_default()
 	# monitor = display.get_monitor_at_surface(w.get_surface())
 	# if monitor is None:
@@ -123,7 +123,7 @@ class FormatDialog(gtk.Dialog):
 		self.items = descList
 		self.activeDesc = ""
 		##
-		self.connect("response", lambda w, e: self.hide())
+		self.connect("response", lambda _w, _e: self.hide())
 		dialog_add_button(
 			self,
 			"gtk-cancel",
@@ -182,7 +182,7 @@ class FormatDialog(gtk.Dialog):
 		self.updateTree()
 		self.connect("realize", self.onRealize)
 
-	def onRealize(self, widget=None):
+	def onRealize(self, _widget=None):
 		if self.activeDesc:
 			self.treev.grab_focus()
 		else:
@@ -245,7 +245,7 @@ class FormatDialog(gtk.Dialog):
 		self.activeDesc = desc
 		self.setCursor(desc)
 
-	def rowActivated(self, treev, path, col):
+	def rowActivated(self, treev, path, _col):
 		model = treev.get_model()
 		_iter = model.get_iter(path)
 		desc = model.get_value(_iter, 0)
@@ -285,7 +285,7 @@ class FormatButton(gtk.Button):
 			self.set_label(self.noneLabel)
 		self.onChanged()
 
-	def onClick(self, button=None):
+	def onClick(self, _button=None):
 		dialog = FormatDialog(
 			descList=self.descList,
 			parent=self._parent,
@@ -327,7 +327,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		self.formatName = formatName
 		self.actionIds = set()
 		##
-		self.connect("response", lambda w, e: self.hide())
+		self.connect("response", lambda _w, _e: self.hide())
 		dialog_add_button(
 			self,
 			"gtk-cancel",
@@ -424,7 +424,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		itr = model.get_iter(path)
 		model.set_value(itr, 0, active)
 
-	def valueEdited(self, cell, path, rawValue):
+	def valueEdited(self, _cell, path, rawValue):
 		# value is column 3
 		model = self.treev.get_model()
 		itr = model.get_iter(path)
@@ -441,12 +441,12 @@ class FormatOptionsDialog(gtk.Dialog):
 		model.set_value(itr, self.valueCol, rawValue)
 		model.set_value(itr, 0, enable)
 
-	def rowActivated(self, treev, path, col):
+	def rowActivated(self, _treev, path, _col):
 		# forceMenu=True because we can not enter edit mode
 		# if double-clicked on a cell other than Value
 		return self.valueCellClicked(path, forceMenu=True)
 
-	def treeviewButtonPress(self, gesture, n_press, x, y):
+	def treeviewButtonPress(self, _gesture, _n_press, x, y):
 		# if gevent.button != 1:
 		# 	return False
 		pos_t = self.treev.get_path_at_pos(int(x), int(y))
@@ -476,7 +476,7 @@ class FormatOptionsDialog(gtk.Dialog):
 			optDesc += f" ({prop.comment})"
 		label = gtk.Label(label=f"Value for {optDesc}")
 		dialog = gtk.Dialog(transient_for=self, title="Option Value")
-		dialog.connect("response", lambda w, e: dialog.hide())
+		dialog.connect("response", lambda _w, _e: dialog.hide())
 		dialog_add_button(
 			dialog,
 			"gtk-cancel",
@@ -492,13 +492,13 @@ class FormatOptionsDialog(gtk.Dialog):
 		pack(dialog.vbox, label)
 		entry = gtk.Entry()
 		entry.set_text(currentValue)
-		entry.connect("activate", lambda w: dialog.response(gtk.ResponseType.OK))
+		entry.connect("activate", lambda _w: dialog.response(gtk.ResponseType.OK))
 		pack(dialog.vbox, entry)
 		dialog.vbox.show()
 		dialog.connect("response", self.valueCustomDialogResponse, entry)
 		dialog.present()
 
-	def valueCustomDialogResponse(self, dialog, response_id, entry):
+	def valueCustomDialogResponse(self, _dialog, response_id, entry):
 		if response_id != gtk.ResponseType.OK:
 			return
 		model = self.treev.get_model()
@@ -510,7 +510,7 @@ class FormatOptionsDialog(gtk.Dialog):
 
 	def valueItemCustomActivate(
 		self,
-		item: "gtk.MenuItem",
+		_item: "gtk.MenuItem",
 		itr: gtk.TreeIter,
 	):
 		model = self.treev.get_model()
@@ -649,7 +649,7 @@ class FormatBox(FormatButton):
 	def getActiveOptions(self):
 		raise NotImplementedError
 
-	def optionsButtonClicked(self, button):
+	def optionsButtonClicked(self, _button):
 		formatName = self.getActive()
 		options = self.getActiveOptions()
 		dialog = FormatOptionsDialog(
@@ -687,7 +687,7 @@ class FormatBox(FormatButton):
 		)
 		self.onChanged(self)
 
-	def onChanged(self, obj=None):
+	def onChanged(self, _obj=None):
 		name = self.getActive()
 		if not name:
 			self.optionsButton.set_visible(False)
@@ -834,7 +834,7 @@ class BrowseButton(gtk.Button):
 				self.setFilePathFunc(gfile.get_path())
 		fcd.destroy()
 
-	def onClick(self, widget):
+	def onClick(self, _widget):
 		fcd = gtk.FileChooserNative(
 			transient_for=self.get_root(),
 			action=gtk.FileChooserAction.SAVE if self.actionSave
@@ -898,7 +898,7 @@ class SortOptionsBox(gtk.Box):
 		###
 		self.show()
 
-	def onSortCheckToggled(self, *args):
+	def onSortCheckToggled(self, *_args):
 		sort = self.sortCheck.get_active()
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)
@@ -934,11 +934,11 @@ class SortOptionsBox(gtk.Box):
 
 
 class GeneralOptionsDialog(gtk.Dialog):
-	def onCloseRequest(self, widget):
+	def onCloseRequest(self, _widget):
 		self.hide()
 		return True
 
-	def onResponse(self, widget, event):
+	def onResponse(self, _widget, _event):
 		self.applyChanges()
 		self.hide()
 		return True
@@ -1035,7 +1035,7 @@ class GeneralOptionsButton(gtk.Button):
 		self.connect("clicked", self.onClick)
 		self.dialog = None
 
-	def onClick(self, widget):
+	def onClick(self, _widget):
 		if self.dialog is None:
 			self.dialog = GeneralOptionsDialog(self.mainWin)
 		self.dialog.present()
@@ -1494,31 +1494,31 @@ check {
 		self.destroy()
 		sys.exit(0)
 
-	def onCloseRequest(self, widget):
+	def onCloseRequest(self, _widget):
 		self.exitApp()
 
 	def onKeyPress(
 		self,
-		ckey: "gtk.EventControllerKey",
+		_ckey: "gtk.EventControllerKey",
 		keyval: int,
-		keycode: int,
-		state: "gdk.ModifierType",
+		_keycode: int,
+		_state: "gdk.ModifierType",
 	):
 		if keyval == gdk.KEY_Escape:
 			self.exitApp()
 
-	def onButtonPress(self, gesture, n_press, x, y):
+	def onButtonPress(self, gesture, _n_press, _x, _y):
 		print(f"MainWindow.onButtonPress: {gesture}")
 
-	def consoleClearButtonClicked(self, widget=None):
+	def consoleClearButtonClicked(self, _widget=None):
 		self.convertConsoleTextview.get_buffer().set_text("")
 
-	def verbosityComboChanged(self, widget=None):
+	def verbosityComboChanged(self, _widget=None):
 		verbosity = self.verbosityCombo.get_active()
 		# or int(self.verbosityCombo.get_active_text())
 		log.setVerbosity(verbosity)
 
-	def convertClicked(self, widget=None):
+	def convertClicked(self, _widget=None):
 		inPath = self.convertInputEntry.get_text()
 		if not inPath:
 			log.critical("Input file path is empty!")
@@ -1571,7 +1571,7 @@ check {
 
 		return True
 
-	def convertInputEntryChanged(self, widget=None):
+	def convertInputEntryChanged(self, _widget=None):
 		inPath = self.convertInputEntry.get_text()
 		inFormat = self.convertInputFormatCombo.getActive()
 		if inPath.startswith("file://"):
@@ -1588,7 +1588,7 @@ check {
 
 		self.status("Select output file")
 
-	def convertOutputEntryChanged(self, widget=None):
+	def convertOutputEntryChanged(self, _widget=None):
 		outPath = self.convertOutputEntry.get_text()
 		outFormat = self.convertOutputFormatCombo.getActive()
 		if not outPath:
@@ -1630,7 +1630,7 @@ check {
 		self.reverseResumeButton.set_sensitive(False)
 		self.reverseStopButton.set_sensitive(True)
 
-	def reverseStartClicked(self, widget=None):
+	def reverseStartClicked(self, _widget=None):
 		self.waitingDo(self.reverseStart)
 
 	def reversePause(self):
@@ -1641,7 +1641,7 @@ check {
 		self.reverseResumeButton.set_sensitive(True)
 		self.reverseStopButton.set_sensitive(True)
 
-	def reversePauseClicked(self, widget=None):
+	def reversePauseClicked(self, _widget=None):
 		self.waitingDo(self.reversePause)
 
 	def reverseResume(self):
@@ -1652,7 +1652,7 @@ check {
 		self.reverseResumeButton.set_sensitive(False)
 		self.reverseStopButton.set_sensitive(True)
 
-	def reverseResumeClicked(self, widget=None):
+	def reverseResumeClicked(self, _widget=None):
 		self.waitingDo(self.reverseResume)
 
 	def reverseStop(self):
@@ -1663,10 +1663,10 @@ check {
 		self.reverseResumeButton.set_sensitive(False)
 		self.reverseStopButton.set_sensitive(False)
 
-	def reverseStopClicked(self, widget=None):
+	def reverseStopClicked(self, _widget=None):
 		self.waitingDo(self.reverseStop)
 
-	def reverseInputEntryChanged(self, widget=None):
+	def reverseInputEntryChanged(self, _widget=None):
 		inPath = self.reverseInputEntry.get_text()
 		if inPath.startswith("file://"):
 			inPath = urlToPath(inPath)

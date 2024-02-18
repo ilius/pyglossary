@@ -70,7 +70,7 @@ def compressionOpen(
 	return open(filename, **kwargs)  # noqa: SIM115
 
 
-def zipFileOrDir(glos: "GlossaryType", filename: str) -> None:
+def zipFileOrDir(filename: str) -> None:
 	import shutil
 	import zipfile
 	from os.path import (
@@ -111,7 +111,7 @@ def zipFileOrDir(glos: "GlossaryType", filename: str) -> None:
 				_zipFileAdd(zf, fname)
 
 
-def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
+def compress(_glos: "GlossaryType", filename: str, compression: str) -> str:
 	"""
 	Filename is the existing file path.
 
@@ -138,7 +138,7 @@ def compress(glos: "GlossaryType", filename: str, compression: str) -> str:
 		except OSError:
 			pass
 		try:
-			zipFileOrDir(glos, filename)
+			zipFileOrDir(filename)
 		except Exception as e:
 			log.error(
 				f'{e}\nFailed to compress file "{filename}"',

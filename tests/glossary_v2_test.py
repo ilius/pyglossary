@@ -226,7 +226,7 @@ class TestGlossaryBase(unittest.TestCase):
 		self,
 		fname,  # input file with extension
 		fname2,  # output file with extension
-		testId="tmp",
+		testId="tmp",  # noqa: ARG002
 		compareText="",
 		compareBinary="",
 		sha1sum=None,
@@ -902,7 +902,7 @@ Japonica"""
 		wordsList = self.addWords(
 			glos,
 			self.tenWordsStr,
-			newDefiFunc=lambda i: str(random.randint(0, 10000)),
+			newDefiFunc=lambda _i: str(random.randint(0, 10000)),
 		)
 		self.assertEqual(wordsList, [entry.l_word for entry in glos])
 

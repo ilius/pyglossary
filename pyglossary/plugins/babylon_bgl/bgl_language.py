@@ -144,6 +144,7 @@ class BabylonLanguage:
 		self.charset = charset
 		self.encoding = encoding
 		self.code = code
+		self.code2 = code2
 
 
 languages = (

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 desc = "Headword"
 
 
-def normal(sortEncoding: str = "utf-8", **options) -> "sortKeyType":
+def normal(sortEncoding: str = "utf-8", **_options) -> "sortKeyType":
 	def sortKey(words: "list[str]") -> bytes:
 		return words[0].encode(sortEncoding, errors="replace")
 
@@ -24,10 +24,10 @@ def locale(
 	def sortKey(words: "list[str]") -> bytes:
 		return cSortKey(words[0])
 
-	return lambda **options: sortKey
+	return lambda **_options: sortKey
 
 
-def sqlite(sortEncoding: str = "utf-8", **options) -> "sqliteSortKeyType":
+def sqlite(sortEncoding: str = "utf-8", **_options) -> "sqliteSortKeyType":
 	def sortKey(words: "list[str]") -> bytes:
 		return words[0].encode(sortEncoding, errors="replace")
 
@@ -48,4 +48,4 @@ def sqlite_locale(
 	def sortKey(words: "list[str]") -> bytes:
 		return cSortKey(words[0])
 
-	return lambda **options: [("sortkey", "BLOB", sortKey)]
+	return lambda **_options: [("sortkey", "BLOB", sortKey)]

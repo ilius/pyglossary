@@ -103,7 +103,7 @@ def centerWindow(win):
 def newButton(*args, **kwargs):
 	button = tk.Button(*args, **kwargs)
 
-	def onEnter(event=None):
+	def onEnter(_event):
 		button.invoke()
 
 	button.bind("<Return>", onEnter)
@@ -114,7 +114,7 @@ def newButton(*args, **kwargs):
 def newTTKButton(*args, **kwargs):
 	button = ttk.Button(*args, **kwargs)
 
-	def onEnter(event=None):
+	def onEnter(_event):
 		button.invoke()
 
 	button.bind("<Return>", onEnter)
@@ -279,7 +279,7 @@ class ProgressBar(tix.Frame):
 		self.value = value
 		self.update(None, text)
 
-	def update(self, event=None, labelText=""):
+	def update(self, event=None, labelText=""):  # noqa: ARG002
 		# Trim the values to be between min and max
 		value = self.value
 		if value > self.max:
@@ -339,7 +339,7 @@ class FormatDialog(tix.Toplevel):
 		if title:
 			self.title(title)
 		set_window_icon(self)
-		self.bind('<Escape>', lambda e: self.destroy())
+		self.bind('<Escape>', lambda _e: self.destroy())
 
 		px, py, pw, ph = decodeGeometry(button.winfo_toplevel().geometry())
 		width = 400
@@ -436,7 +436,7 @@ class FormatDialog(tix.Toplevel):
 		if self.activeDesc in self.items:
 			self.setActiveRow(self.activeDesc)
 
-	def onEntryKeyRelease(self, event):
+	def onEntryKeyRelease(self, _event):
 		text = self.entry.get().strip()
 		if text == self.lastSearch:
 			return
@@ -462,16 +462,16 @@ class FormatDialog(tix.Toplevel):
 		self.updateTree()
 		self.lastSearch = text
 
-	def onTreeDoubleClick(self, event):
+	def onTreeDoubleClick(self, _event):
 		self.okClicked()
 
 	def cancelClicked(self):
 		self.destroy()
 
-	def onReturnPress(self, event):
+	def onReturnPress(self, _event):
 		self.okClicked()
 
-	def onDownPress(self, event):
+	def onDownPress(self, _event):
 		treev = self.treev
 		selection = treev.selection()
 		if selection:
@@ -483,7 +483,7 @@ class FormatDialog(tix.Toplevel):
 				self.setActiveRow(self.items[0])
 		treev.focus()
 
-	def onUpPress(self, event):
+	def onUpPress(self, _event):
 		treev = self.treev
 		treev.focus()
 		selection = treev.selection()
@@ -531,7 +531,7 @@ class FormatButton(tk.Button):
 		self.bind("<Return>", self.onEnter)
 		self.bind("<KP_Enter>", self.onEnter)
 
-	def onEnter(self, event=None):
+	def onEnter(self, _event=None):
 		self.invoke()
 
 	def onChange(self, desc):
@@ -566,13 +566,19 @@ class FormatOptionsDialog(tix.Toplevel):
 		"Write": Glossary.formatsWriteOptions,
 	}
 
-	def __init__(self, format, kind, values, master=None) -> None:
+	def __init__(
+		self,
+		format,
+		kind,
+		values,
+		master=None,  # noqa: ARG002
+	) -> None:
 		tix.Toplevel.__init__(self)
 		# bg="#0f0" does not work
 		self.resizable(width=True, height=True)
 		self.title(kind + " Options")
 		set_window_icon(self)
-		self.bind('<Escape>', lambda e: self.destroy())
+		self.bind('<Escape>', lambda _e: self.destroy())
 
 		self.menu = None
 		self.format = format
@@ -666,7 +672,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		dialog.resizable(width=True, height=True)
 		dialog.title(optName)
 		set_window_icon(dialog)
-		dialog.bind('<Escape>', lambda e: dialog.destroy())
+		dialog.bind('<Escape>', lambda _e: dialog.destroy())
 
 		px, py, pw, ph = decodeGeometry(treev.winfo_toplevel().geometry())
 		width = 300
@@ -689,7 +695,7 @@ class FormatOptionsDialog(tix.Toplevel):
 
 		prop = Glossary.plugins[format].optionsProp[optName]
 
-		def customOkClicked(event=None):
+		def customOkClicked(_event=None):
 			rawValue = entry.get()
 			if not prop.validateRaw(rawValue):
 				log.error(f"invalid {prop.typ} value: {optName} = {rawValue!r}")
@@ -924,7 +930,7 @@ class UI(tix.Frame, UIBase):
 		# self.progressbarEnable = progressbar
 		########
 		set_window_icon(rootWin)
-		rootWin.bind('<Escape>', lambda e: rootWin.quit())
+		rootWin.bind('<Escape>', lambda _e: rootWin.quit())
 		#########
 		# Linux: ('clam', 'alt', 'default', 'classic')
 		# Windows: ('winnative', 'clam', 'alt', 'default', 'classic', 'vista',
@@ -1308,7 +1314,7 @@ class UI(tix.Frame, UIBase):
 			return None
 		return "break"
 
-	def verbosityChanged(self, index, value, op):
+	def verbosityChanged(self, _index, _value, _op):
 		log.setVerbosity(
 			int(self.verbosityCombo.get()),
 		)
@@ -1325,7 +1331,7 @@ class UI(tix.Frame, UIBase):
 	# 		if "info" in x:
 	# 			log.debug(x)
 
-	def inputFormatChanged(self, *args):
+	def inputFormatChanged(self, *_args):
 		formatDesc = self.formatButtonInputConvert.get()
 		if not formatDesc:
 			return
@@ -1341,7 +1347,7 @@ class UI(tix.Frame, UIBase):
 		else:
 			self.readOptionsButton.grid_forget()
 
-	def outputFormatChanged(self, *args):
+	def outputFormatChanged(self, *_args):
 		formatDesc = self.formatButtonOutputConvert.get()
 		if not formatDesc:
 			return
@@ -1376,11 +1382,11 @@ class UI(tix.Frame, UIBase):
 				pathNoExt + plugin.extensionCreate,
 			)
 
-	def anyEntryChanged(self, event=None):
+	def anyEntryChanged(self, _event=None):
 		self.inputEntryChanged()
 		self.outputEntryChanged()
 
-	def inputEntryChanged(self, event=None):
+	def inputEntryChanged(self, _event=None):
 		# char = event.keysym
 		pathI = self.entryInputConvert.get()
 		if self.pathI == pathI:
@@ -1401,7 +1407,7 @@ class UI(tix.Frame, UIBase):
 						self.inputFormatChanged()
 		self.pathI = pathI
 
-	def outputEntryChanged(self, event=None):
+	def outputEntryChanged(self, _event=None):
 		pathO = self.entryOutputConvert.get()
 		if self.pathO == pathO:
 			return
@@ -1559,7 +1565,7 @@ class UI(tix.Frame, UIBase):
 		# self.pbar.update()
 		self.rootWin.update()
 
-	def console_clear(self, event=None):
+	def console_clear(self, _event=None):
 		self.console.delete("1.0", "end")
 		self.console.insert("end", "Console:\n")
 

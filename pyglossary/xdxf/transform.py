@@ -240,7 +240,7 @@ class XdxfTransformer:
 		with hf.element("font", color=color):
 			self.writeChildrenOf(hf, child)
 
-	def _write_rref(self, hf: "T_htmlfile", child: "Element") -> None:
+	def _write_rref(self, _hf: "T_htmlfile", child: "Element") -> None:
 		if not child.text:
 			log.warning(f"rref with no text: {self.tostring(child)}")
 			return
@@ -305,9 +305,9 @@ class XdxfTransformer:
 		self,
 		hf: "T_htmlfile",
 		child: "Element",
-		parent: "Element",
+		parent: "Element",  # noqa: ARG002
 		prev: "None | str | Element",
-		stringSep: "str | None" = None,
+		stringSep: "str | None" = None,  # noqa: ARG002
 	) -> None:
 		func = self._childTagWriteMapping.get(child.tag, None)
 		if func is not None:

@@ -89,10 +89,10 @@ class Reader(TextGlossaryReader):
 		TextGlossaryReader.open(self, filename)
 		self._glos.setDefaultDefiFormat("h")
 
-	def isInfoWord(self, word: str) -> bool:
+	def isInfoWord(self, _word: str) -> bool:
 		return False
 
-	def fixInfoWord(self, word: str) -> str:
+	def fixInfoWord(self, _word: str) -> str:
 		raise NotImplementedError
 
 	def fixDefi(

@@ -104,9 +104,9 @@ class StoreConstAction(argparse.Action):
 		self,
 		parser: "argparse.ArgumentParser | None" = None,
 		namespace: "argparse.Namespace | None" = None,
-		values: "list" = None,
-		option_strings: "list[str]" = None,
-		required: bool = False,
+		values: "list" = None,  # noqa: ARG002
+		option_strings: "list[str]" = None,  # noqa: ARG002
+		required: bool = False,  # noqa: ARG002
 		dest: "str | None" = None,
 	) -> "StoreConstAction":
 		if not parser:

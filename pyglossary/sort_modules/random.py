@@ -9,38 +9,38 @@ if TYPE_CHECKING:
 desc = "Random"
 
 
-def normal(**options) -> "sortKeyType":
+def normal(**_options) -> "sortKeyType":
 	from random import random
-	return lambda words: random()
+	return lambda _words: random()
 
 
 def locale(
-	collator: "T_Collator",  # noqa: F821
+	_collator: "T_Collator",  # noqa: F821
 ) -> "sortKeyType":
 	from random import random
-	return lambda **options: lambda words: random()
+	return lambda **_options: lambda _words: random()
 
 
-def sqlite(**options) -> "sqliteSortKeyType":
+def sqlite(**_options) -> "sqliteSortKeyType":
 	from random import random
 	return [
 		(
 			"random",
 			"REAL",
-			lambda words: random(),
+			lambda _words: random(),
 		),
 	]
 
 
 def sqlite_locale(
-	collator: "T_Collator",  # noqa: F821
-	**options,
+	_collator: "T_Collator",  # noqa: F821
+	**_options,
 ) -> "Callable[..., sqliteSortKeyType]":
 	from random import random
-	return lambda **options: [
+	return lambda **_opt: [
 		(
 			"random",
 			"REAL",
-			lambda words: random(),
+			lambda _words: random(),
 		),
 	]
