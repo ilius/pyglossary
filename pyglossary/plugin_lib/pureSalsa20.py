@@ -258,16 +258,16 @@ class Salsa20:
 # --------------------------------------------------------------------------
 
 
-def salsa20_wordtobyte(input, nRounds=20, checkRounds=True):
+def salsa20_wordtobyte(input_, nRounds=20, checkRounds=True):
 	"""
 	Do nRounds Salsa20 rounds on a copy of
 			input: list or tuple of 16 ints treated as little-endian unsigneds.
 	Returns a 64-byte string.
 	"""
-	assert isinstance(input, (list, tuple)) and len(input) == 16
+	assert isinstance(input_, (list, tuple)) and len(input_) == 16
 	assert not checkRounds or nRounds in (8, 12, 20)
 
-	x = list(input)
+	x = list(input_)
 
 	XOR = operator.xor
 
@@ -311,7 +311,7 @@ def salsa20_wordtobyte(input, nRounds=20, checkRounds=True):
 		x[14] = XOR(x[14], ROTATE(PLUS(x[13], x[12]), 13))
 		x[15] = XOR(x[15], ROTATE(PLUS(x[14], x[13]), 18))
 
-	for idx, item in enumerate(input):
+	for idx, item in enumerate(input_):
 		x[idx] = PLUS(x[idx], item)
 	return little16_i32.pack(*x)
 
