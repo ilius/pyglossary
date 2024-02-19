@@ -17,9 +17,9 @@ from .iter_utils import unique_everseen
 from .text_utils import joinByBar
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
 	from typing import (
 		Any,
-		Callable,
 	)
 
 	from .glossary_types import RawEntryType
@@ -216,7 +216,7 @@ class Entry(BaseEntry):
 			"x": xdxf.
 		"""
 		# memory optimization:
-		if isinstance(word, (list, tuple)):
+		if isinstance(word, list | tuple):
 			if len(word) == 1:
 				word = word[0]
 		elif not isinstance(word, str):

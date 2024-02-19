@@ -15,10 +15,10 @@ from os.path import (
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
 	from types import TracebackType
 	from typing import (
 		Any,
-		Callable,
 		TypeAlias,
 	)
 

@@ -533,7 +533,7 @@ class MDict:
 			key_block_info += t
 
 		key_block_info_list = self._decode_key_block_info(key_block_info)
-		key_block_size = sum(list(zip(*key_block_info_list))[0])
+		key_block_size = sum(list(zip(*key_block_info_list, strict=False))[0])
 
 		# read key block
 		key_block_compressed = f.read(key_block_size)

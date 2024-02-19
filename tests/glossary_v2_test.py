@@ -7,8 +7,8 @@ import tempfile
 import tracemalloc
 import unittest
 import zipfile
+from collections.abc import Callable
 from os.path import abspath, dirname, isdir, isfile, join
-from typing import Callable, Optional
 from urllib.request import urlopen
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -208,7 +208,7 @@ class TestGlossaryBase(unittest.TestCase):
 		self,
 		fpath,
 		sha1sumDict: "dict[str, str]",
-		dataReplaceFuncs: "Optional[dict[str, Callable]]" = None,
+		dataReplaceFuncs: "dict[str, Callable] | None" = None,
 	):
 		if dataReplaceFuncs is None:
 			dataReplaceFuncs = {}

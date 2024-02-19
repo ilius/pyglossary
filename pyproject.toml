@@ -1,4 +1,7 @@
 [tool.ruff]
+line-length = 88
+target-version = "py310"
+
 select = [
     "B", # flake8-bugbear
     "C4", # flake8-comprehensions
@@ -126,12 +129,9 @@ exclude = [
 ]
 per-file-ignores = {}
 
-line-length = 88
-
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-target-version = "py39"
 
 
 [tool.ruff.format]

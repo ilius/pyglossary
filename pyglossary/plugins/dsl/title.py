@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import Optional, cast
+from typing import cast
 from xml.sax.saxutils import escape
 
 from pyglossary.core import log
@@ -139,7 +139,7 @@ class TitleTransformer:
 		self.outputAlt += esc
 		self.title += esc
 
-	def transform(self) -> tuple[Optional[TitleResult], ErrorType]:
+	def transform(self) -> tuple[TitleResult | None, ErrorType]:
 		lex: LexType = lexRoot
 		tr = cast(TransformerType, self)
 		while lex is not None:

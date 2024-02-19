@@ -68,7 +68,7 @@ def colorize(
 		return
 
 	with hf.element("div", style="display: inline-block"):
-		for syllable, tone in zip(syllables, tones):
+		for syllable, tone in zip(syllables, tones, strict=False):
 			with hf.element("font", color=COLORS[tone]):
 				hf.write(syllable)
 

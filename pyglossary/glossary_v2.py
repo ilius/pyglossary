@@ -76,10 +76,9 @@ from .plugin_manager import PluginManager
 from .sort_keys import defaultSortKeyName, lookupSortKey
 
 if TYPE_CHECKING:
-	from collections.abc import Iterator
+	from collections.abc import Callable, Iterator
 	from typing import (
 		Any,
-		Callable,
 	)
 
 	from .entry_base import MultiStr
@@ -187,7 +186,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		self.clear()
 
 		if info:
-			if not isinstance(info, (dict, odict)):
+			if not isinstance(info, dict | odict):
 				raise TypeError(
 					"Glossary: `info` has invalid type"
 					", dict or OrderedDict expected",

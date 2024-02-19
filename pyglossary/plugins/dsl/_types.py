@@ -1,5 +1,5 @@
 import typing
-from typing import Callable, Optional
+from collections.abc import Callable
 
 
 class TransformerType(typing.Protocol):
@@ -47,11 +47,9 @@ class TitleTransformerType(TransformerType, typing.Protocol):
 		pass
 
 
-ErrorType = Optional[str]
+ErrorType = str | None
 
 # it is an State Function (state as in state machine)
-LexType = Optional[Callable[[TransformerType], tuple["LexType", ErrorType]]]
+LexType = Callable[[TransformerType], tuple["LexType", ErrorType]] | None
 
-TitleLexType = Optional[
-	Callable[[TitleTransformerType], tuple["TitleLexType", ErrorType]]
-]
+TitleLexType = Callable[[TitleTransformerType], tuple["TitleLexType", ErrorType]] | None

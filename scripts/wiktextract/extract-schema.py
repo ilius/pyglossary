@@ -110,7 +110,7 @@ def parseList(data: "list[Any]", path: "list[str]", node: Node):
 		if isinstance(item, list):
 			parseList(item, itemsPath, node.ListOf)
 			continue
-		if isinstance(item, (str, int, float, bool)):
+		if isinstance(item, str | int | float | bool):
 			addToValueSet(item, path)
 
 	itemTypesStr = " | ".join(sorted(itemTypes))
@@ -136,7 +136,7 @@ def parseDict(data: "dict[str, Any]", path: "list[str]", node: Node):
 		if isinstance(value, list):
 			parseList(value, path+[key], childNode)
 			continue
-		if isinstance(value, (str, int, float, bool)):
+		if isinstance(value, str | int | float | bool):
 			updateSchema(type(value).__name__, path+[key])
 			addToValueSet(value, path+[key])
 

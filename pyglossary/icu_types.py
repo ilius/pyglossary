@@ -1,5 +1,6 @@
 import typing
-from typing import AnyStr, Callable
+from collections.abc import Callable
+from typing import AnyStr
 
 
 class T_Locale(typing.Protocol):

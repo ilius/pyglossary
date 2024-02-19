@@ -1,7 +1,6 @@
 import sys
 import unittest
 from os.path import abspath, dirname
-from typing import Optional
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -136,7 +135,7 @@ class TestEntryStripFullHtml(unittest.TestCase):
 		word: str,
 		origDefi: str,
 		fixedDefi: str,
-		error: "Optional[str]" = None,
+		error: str | None = None,
 	):
 		entry = Entry(word, origDefi)
 		actualError = entry.stripFullHtml()

@@ -1,16 +1,8 @@
-import logging
-import sys
-
-skip_module = False
-if sys.version_info < (3, 10):
-	logging.getLogger("pyglossary-test").warning(
-		f"Skipping {__file__} due to old Python version (need 3.10).",
-	)
-	skip_module = True
-
 import io
+import logging
 import os
 import random
+import sys
 import tempfile
 import unicodedata
 import unittest
@@ -20,11 +12,9 @@ from typing import cast
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-if not skip_module:
-	import icu
+import icu
 
-	from pyglossary import slob
-
+from pyglossary import slob
 from pyglossary.core_test import MockLogHandler
 
 mockLog = MockLogHandler()
@@ -34,8 +24,8 @@ log.addHandler(mockLog)
 
 class BaseTest(unittest.TestCase):
 	def setUp(self):
-		if skip_module:
-			self.skipTest("module is skipped")
+		# if skip_module:
+		# 	self.skipTest("module is skipped")
 
 		self.tmpdir = tempfile.TemporaryDirectory(prefix="test")
 		self._writers = []

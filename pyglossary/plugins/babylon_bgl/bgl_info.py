@@ -21,7 +21,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import pyglossary.gregorian as gregorian
 from pyglossary.core import log

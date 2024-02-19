@@ -264,7 +264,7 @@ def salsa20_wordtobyte(input_, nRounds=20, checkRounds=True):
 			input: list or tuple of 16 ints treated as little-endian unsigneds.
 	Returns a 64-byte string.
 	"""
-	assert isinstance(input_, (list, tuple)) and len(input_) == 16
+	assert isinstance(input_, list | tuple) and len(input_) == 16
 	assert not checkRounds or nRounds in (8, 12, 20)
 
 	x = list(input_)

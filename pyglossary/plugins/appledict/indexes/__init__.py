@@ -21,8 +21,7 @@ import pkgutil
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from collections.abc import Sequence
-	from typing import Callable
+	from collections.abc import Callable, Sequence
 
 from pyglossary.core import log
 

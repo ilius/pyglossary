@@ -23,8 +23,8 @@ import string
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from collections.abc import Iterator
-	from typing import Any, Callable
+	from collections.abc import Callable, Iterator
+	from typing import Any
 
 from . import _normalize
 

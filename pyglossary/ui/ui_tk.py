@@ -21,10 +21,11 @@ import logging
 import os
 import tkinter as tk
 import traceback
+from collections.abc import Callable
 from os.path import abspath, isfile, join, splitext
 from tkinter import filedialog, tix, ttk
 from tkinter import font as tkFont
-from typing import Any, Callable, Literal
+from typing import Any, Literal
 
 from pyglossary import core
 from pyglossary.core import confDir, homeDir

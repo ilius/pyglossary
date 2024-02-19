@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-	from typing import Callable
+	from collections.abc import Callable
 
 	from .icu_types import T_Collator, T_Locale
 	from .sort_keys_type import sortKeyType, sqliteSortKeyType

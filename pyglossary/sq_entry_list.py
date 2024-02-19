@@ -24,8 +24,8 @@ from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from collections.abc import Iterable, Iterator
-	from typing import Any, Callable
+	from collections.abc import Callable, Iterable, Iterator
+	from typing import Any
 
 	from .glossary_types import EntryType, RawEntryType
 	from .sort_keys import NamedSortKey

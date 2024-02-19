@@ -1,7 +1,6 @@
 import sys
 import unittest
 from os.path import abspath, dirname
-from typing import Optional
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -18,7 +17,7 @@ from pyglossary.option import (
 
 
 class TestOptionValidateBoolNumber(unittest.TestCase):
-	def caseOK(self, cls, raw: str, value: "Optional[bool]"):
+	def caseOK(self, cls, raw: str, value: bool | None):
 		opt = cls()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertTrue(ok, "evaluate failed")
@@ -26,7 +25,7 @@ class TestOptionValidateBoolNumber(unittest.TestCase):
 		ok2 = opt.validate(valueActual)
 		self.assertEqual(ok2, True, "validate failed")
 
-	def caseFailed(self, cls, raw: str, value: "Optional[bool]"):
+	def caseFailed(self, cls, raw: str, value: bool | None):
 		opt = cls()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertFalse(ok)
@@ -142,7 +141,7 @@ class TestOptionValidateStr(unittest.TestCase):
 
 
 class TestOptionValidateDict(unittest.TestCase):
-	def caseOK(self, raw: str, value: "Optional[dict]"):
+	def caseOK(self, raw: str, value: dict | None):
 		opt = DictOption()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertTrue(ok, "evaluate failed")
@@ -179,7 +178,7 @@ class TestOptionValidateDict(unittest.TestCase):
 
 
 class TestOptionValidateList(unittest.TestCase):
-	def caseOK(self, raw: str, value: "Optional[dict]"):
+	def caseOK(self, raw: str, value: dict | None):
 		opt = ListOption()
 		valueActual, ok = opt.evaluate(raw)
 		self.assertTrue(ok, "evaluate failed")

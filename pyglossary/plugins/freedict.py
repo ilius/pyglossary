@@ -6,8 +6,8 @@ from os.path import dirname, isfile, join
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	from collections.abc import Iterator
-	from typing import Any, Callable
+	from collections.abc import Callable, Iterator
+	from typing import Any
 
 	from pyglossary.lxml_types import Element, T_htmlfile
 

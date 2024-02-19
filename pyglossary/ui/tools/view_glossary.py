@@ -4,8 +4,9 @@
 import os.path
 import shlex
 import sys
+from collections.abc import Callable
 from subprocess import PIPE, Popen
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, GlossaryType

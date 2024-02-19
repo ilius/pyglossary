@@ -23,7 +23,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import pathlib
-	from typing import Any, Callable
+	from collections.abc import Callable
+	from typing import Any
 
 	from .flags import StrWithDesc
 

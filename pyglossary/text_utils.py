@@ -21,7 +21,8 @@ import logging
 import re
 import struct
 import sys
-from typing import AnyStr, Callable
+from collections.abc import Callable
+from typing import AnyStr
 
 log = logging.getLogger("pyglossary")
 

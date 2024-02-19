@@ -1,17 +1,9 @@
-import logging
-import sys
-
-skip_module = False
-if sys.version_info < (3, 10):
-	logging.getLogger("pyglossary-test").warning(
-		f"Skipping {__file__} due to old Python version (need 3.10).",
-	)
-	skip_module = True
-
 import os
 import unittest
 
 from glossary_v2_test import TestGlossaryBase
+
+skip_module = False
 
 
 class TestGlossarySlob(TestGlossaryBase):

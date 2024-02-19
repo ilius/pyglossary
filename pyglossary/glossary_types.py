@@ -1,12 +1,14 @@
 
 import typing
-from collections.abc import Iterator  # noqa: TCH003
+from collections.abc import (
+	Callable,
+	Iterator,  # noqa: TCH003
+)
 
 # -*- coding: utf-8 -*-
 from typing import (
 	TYPE_CHECKING,
 	Any,
-	Callable,
 )
 
 if TYPE_CHECKING:
