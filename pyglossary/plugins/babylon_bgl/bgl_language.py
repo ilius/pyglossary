@@ -1,5 +1,3 @@
-
-
 # -*- coding: utf-8 -*-
 #
 # Copyright © 2008-2020 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
@@ -114,6 +112,8 @@ is cp950 I built a C++ utility that worked on the data extracted from .bgl
 dictionary. I used WideCharToMultiByte function for conversion. The C++
 utility confirmed the cp932 and cp950 encodings, I got 100% match.
 """
+
+__all__ = ["languageByCode", "BabylonLanguage"]
 
 
 class BabylonLanguage:

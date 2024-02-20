@@ -11,6 +11,7 @@ from ._types import TitleLexType as LexType
 from ._types import TitleTransformerType as TransformerType
 from .transform import Transformer
 
+__all__ = ["TitleTransformer"]
 
 def lexRoot(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	# if tr.start < tr.pos:

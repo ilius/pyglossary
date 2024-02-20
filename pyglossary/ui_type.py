@@ -1,3 +1,4 @@
+__all__ = ["UIType"]
 
 class UIType:
 	def progressInit(self, title: str) -> None:

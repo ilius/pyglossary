@@ -37,6 +37,8 @@ from .text_utils import (
 	fixUtf8,
 )
 
+__all__ = ["GlossaryInfo"]
+
 log = logging.getLogger("pyglossary")
 
 

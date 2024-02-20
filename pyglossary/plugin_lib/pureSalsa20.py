@@ -175,6 +175,8 @@
 import operator
 from struct import Struct
 
+__all__ = ["Salsa20"]
+
 little_u64 = Struct("<Q")  # little-endian 64-bit unsigned.
 # Unpacks to a tuple of one element!
 

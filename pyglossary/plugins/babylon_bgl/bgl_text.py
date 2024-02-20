@@ -26,6 +26,20 @@ from pyglossary import core
 from pyglossary.core import log
 from pyglossary.xml_utils import xml_escape
 
+__all__ = [
+	"stripHtmlTags",
+	"unknownHtmlEntries",
+	"replaceAsciiCharRefs",
+	"normalizeNewlines",
+	"stripDollarIndexes",
+	"removeControlChars",
+	"replaceHtmlEntriesInKeys",
+	"removeNewlines",
+	"replaceHtmlEntries",
+	"fixImgLinks",
+]
+
+
 u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.IGNORECASE)
 u_pat_html_entry_key = re.compile("(?:&#x|&#|&)(\\w+);", re.IGNORECASE)
 b_pat_ascii_char_ref = re.compile(b"(&#\\w+;)", re.IGNORECASE)

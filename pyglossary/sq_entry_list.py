@@ -31,6 +31,8 @@ if TYPE_CHECKING:
 	from .sort_keys import NamedSortKey
 
 
+__all__ = ["SqEntryList"]
+
 log = logging.getLogger("pyglossary")
 
 PICKLE_PROTOCOL = 4

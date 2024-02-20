@@ -19,6 +19,8 @@ from pyglossary.text_utils import (
 	unescapeNTB,
 )
 
+__all__ = ["Reader"]
+
 enable = True
 lname = "tabfile"
 format = "Tabfile"

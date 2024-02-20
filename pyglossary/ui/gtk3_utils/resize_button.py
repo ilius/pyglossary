@@ -20,6 +20,7 @@
 from . import gdk, gtk
 from .utils import imageFromFile
 
+__all__ = ["ResizeButton"]
 
 class ResizeButton(gtk.EventBox):
 	def __init__(self, win, edge=gdk.WindowEdge.SOUTH_EAST) -> None:

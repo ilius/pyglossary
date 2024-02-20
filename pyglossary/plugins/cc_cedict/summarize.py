@@ -1,6 +1,8 @@
 import re
 import string
 
+__all__ = ["summarize"]
+
 parenthetical = re.compile(r"\([^)]+?\)")
 punct_table = {ord(p): " " for p in string.punctuation if p not in "-'"}
 stops = {

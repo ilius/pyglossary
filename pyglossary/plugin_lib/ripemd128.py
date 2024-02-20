@@ -17,6 +17,8 @@
 
 import struct
 
+__all__ = ["ripemd128"]
+
 # follows this description: http://homes.esat.kuleuven.be/~bosselae/ripemd/rmd128.txt
 
 

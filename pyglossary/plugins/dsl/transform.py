@@ -6,6 +6,8 @@ from xml.sax.saxutils import escape
 from ._types import ErrorType, LexType, TransformerType
 from .lex import lexRoot
 
+__all__ = ["Transformer"]
+
 re_comment_block = re.compile(r"\{\{([^}]*)\}\}")
 
 

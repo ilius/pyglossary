@@ -4,6 +4,21 @@ import logging
 import re
 from typing import Any
 
+__all__ = [
+	"Option",
+	"optionFromDict",
+	"StrOption",
+	"FloatOption",
+	"BoolOption",
+	"IntOption",
+	"NewlineOption",
+	"FileSizeOption",
+	"DictOption",
+	"ListOption",
+	"EncodingOption",
+	"HtmlColorOption",
+]
+
 log = logging.getLogger("pyglossary")
 
 

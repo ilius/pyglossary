@@ -5,6 +5,8 @@ from collections.abc import Iterator
 
 from pyglossary.ui.tools.colors import green, red, reset
 
+__all__ = ["formatDiff", "xmlDiff"]
+
 wordRE = re.compile(r"(\W)", re.MULTILINE)
 xmlTagRE = re.compile(
 	"</?[a-z][0-9a-z]* *[^<>]*>",

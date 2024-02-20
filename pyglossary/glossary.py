@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 
 	from .glossary_types import EntryType
 
+__all__ = ["Glossary"]
 
 class Glossary(GlossaryCommon):
 	GLOSSARY_API_VERSION = "1.0"

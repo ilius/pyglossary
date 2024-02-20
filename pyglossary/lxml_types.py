@@ -22,6 +22,8 @@ from typing import (
 
 from lxml.etree import QName, _Element
 
+__all__ = ["Element", "T_htmlfile"]
+
 _TextArg: TypeAlias = "str | bytes | QName"
 _TagName: TypeAlias = _TextArg
 

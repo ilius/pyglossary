@@ -30,6 +30,8 @@ from xml.sax.saxutils import quoteattr, unescape
 
 from pyglossary.text_utils import toStr
 
+__all__ = ["prepare_content"]
+
 log = logging.getLogger("pyglossary")
 
 

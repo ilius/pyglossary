@@ -14,6 +14,17 @@ if TYPE_CHECKING:
 	from .glossary_types import Callable, EntryType, GlossaryExtendedType, GlossaryType
 
 
+__all__ = [
+	"ShowProgressBar",
+	"EntryFilterType",
+	"StripFullHtml",
+	"PreventDuplicateWords",
+	"entryFiltersRules",
+	"RemoveHtmlTagsAll",
+	"ShowMaxMemoryUsage",
+]
+
+
 log = logging.getLogger("pyglossary")
 
 

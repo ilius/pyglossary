@@ -30,6 +30,8 @@ if TYPE_CHECKING:
 
 from .entry import Entry
 
+__all__ = ["EntryList"]
+
 log = logging.getLogger("pyglossary")
 
 

@@ -16,6 +16,8 @@ import re
 
 from .core import log
 
+__all__ = ["substituteAppleCSS"]
+
 # remove these keys along with their value
 cssKeyRemove = {
 	b"-webkit-text-combine",

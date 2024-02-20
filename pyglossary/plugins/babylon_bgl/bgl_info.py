@@ -33,6 +33,8 @@ from pyglossary.text_utils import (
 from .bgl_charset import charsetByCode
 from .bgl_language import BabylonLanguage, languageByCode
 
+__all__ = ["charsetInfoDecode", "infoType3ByCode"]
+
 
 class InfoItem:
 	__slots__ = (

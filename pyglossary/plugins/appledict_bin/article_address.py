@@ -16,6 +16,8 @@
 
 from collections import namedtuple
 
+__all__ = ["ArticleAddress"]
+
 ArticleAddress = namedtuple(
 	"ArticleAddress",
 	["sectionOffset", "chunkOffset"],

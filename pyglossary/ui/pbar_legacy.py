@@ -2,6 +2,8 @@
 
 from . import progressbar as pb
 
+__all__ = ["createProgressBar"]
+
 
 def createProgressBar(title: str):
 	rot = pb.RotatingMarker()

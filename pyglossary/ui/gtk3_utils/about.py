@@ -24,6 +24,8 @@ from .utils import (
 	pack,
 )
 
+__all__ = ["AboutWidget"]
+
 
 class AboutWidget(gtk.Box):
 	def __init__(

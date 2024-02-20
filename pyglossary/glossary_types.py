@@ -18,6 +18,14 @@ if TYPE_CHECKING:
 	from .langs import Lang
 	from .sort_keys import NamedSortKey
 
+__all__ = [
+	"GlossaryType",
+	"RawEntryType",
+	"GlossaryExtendedType",
+	"EntryType",
+	"EntryListType",
+	"Callable",
+]
 
 MultiStr: "TypeAlias" = "str | list[str]"
 

@@ -18,6 +18,8 @@ from pyglossary.entry import DataEntry
 from pyglossary.entry_base import MultiStr
 from pyglossary.io_utils import nullTextIO
 
+__all__ = ["TextGlossaryReader", "TextFilePosWrapper", "nextBlockResultType"]
+
 log = logging.getLogger("pyglossary")
 
 nextBlockResultType: "typing.TypeAlias" = (

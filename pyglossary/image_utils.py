@@ -5,6 +5,8 @@ from os.path import join
 
 from pyglossary.text_utils import crc32hex
 
+__all__ = ["extractInlineHtmlImages"]
+
 log = logging.getLogger("pyglossary")
 
 re_inline_image = re.compile('src="(data:image/[^<>"]*)"')

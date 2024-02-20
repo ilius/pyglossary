@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType
 
+__all__ = ["formatEntry"]
 
 def formatEntry(entry: "EntryType") -> str:
 	words = entry.l_word

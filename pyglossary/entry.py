@@ -25,6 +25,8 @@ if TYPE_CHECKING:
 	from .glossary_types import RawEntryType
 
 
+__all__ = ["Entry", "DataEntry"]
+
 log = logging.getLogger("pyglossary")
 
 

@@ -4,6 +4,7 @@ import typing
 
 # from typing import TYPE_CHECKING
 
+__all__ = ["BaseEntry", "MultiStr"]
 
 MultiStr: "typing.TypeAlias" = "str | list[str]"
 

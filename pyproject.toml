@@ -127,12 +127,13 @@ exclude = [
     "dist",
     "venv",
 ]
-per-file-ignores = {}
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 
+[tool.ruff.per-file-ignores]
+"scripts/wiki-formats.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -224,4 +225,9 @@ ignore-paths = [
     "^pyglossary/ui/progressbar/.*",
     "^pyglossary/ui/ui_qt.py$",
     "^pyglossary/ui/wcwidth/",
+]
+
+[tool.import-analyzer]
+exclude = [
+    "pyglossary/ui/wcwidth/",
 ]

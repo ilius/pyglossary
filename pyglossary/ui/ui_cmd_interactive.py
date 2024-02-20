@@ -83,6 +83,8 @@ from pyglossary.glossary_v2 import Glossary
 from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 from pyglossary.ui import ui_cmd
 
+__all__ = ["UI"]
+
 endFormat = "\x1b[0;0;0m"
 
 

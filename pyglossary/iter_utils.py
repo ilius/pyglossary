@@ -25,6 +25,7 @@ if TYPE_CHECKING:
 	from collections.abc import Iterable, Iterator
 	from typing import Any
 
+__all__ = ["unique_everseen"]
 
 # from https://github.com/erikrose/more-itertools
 def unique_everseen(iterable: "Iterable") -> "Iterator":

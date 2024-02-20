@@ -3,6 +3,8 @@
 import logging
 import re
 
+__all__ = ["name2codepoint", "unescape_unicode"]
+
 log = logging.getLogger("pyglossary")
 
 re_entity = re.compile(

@@ -28,6 +28,8 @@ if typing.TYPE_CHECKING:
 	import io
 	from collections.abc import Iterable
 
+__all__ = ["DictDB"]
+
 b64_list = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 url_headword = "00-database-url"
 short_headword = "00-database-short"

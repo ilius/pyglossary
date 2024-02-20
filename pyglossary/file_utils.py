@@ -3,6 +3,7 @@ from itertools import (
 	takewhile,
 )
 
+__all__ = ["fileCountLines"]
 
 def fileCountLines(filename: str, newline: bytes = b"\n") -> int:
 	with open(filename, "rb") as _file:

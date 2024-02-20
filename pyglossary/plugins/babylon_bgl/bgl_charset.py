@@ -16,6 +16,7 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+__all__ = ["charsetByCode"]
 
 charsetByCode = {
 	0x41: "cp1252",  # Default, 0x41

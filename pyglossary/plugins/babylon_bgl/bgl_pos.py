@@ -20,6 +20,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+__all__ = ["partOfSpeechByCode"]
+
 partOfSpeechByCode = {
 	# Use None for codes we have not seen yet
 	# Use "" for codes we've seen but part of speech is unknown

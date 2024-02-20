@@ -36,6 +36,8 @@ from .flags import (
 )
 from .option import Option, optionFromDict
 
+__all__ = ["PluginProp"]
+
 log = logging.getLogger("pyglossary")
 
 

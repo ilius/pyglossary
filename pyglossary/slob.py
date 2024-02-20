@@ -54,6 +54,8 @@ if TYPE_CHECKING:
 
 	from .icu_types import T_Collator
 
+__all__ = ["Writer", "MIME_TEXT", "MIME_HTML", "open"]
+
 DEFAULT_COMPRESSION = 'lzma2'
 
 UTF8 = 'utf-8'

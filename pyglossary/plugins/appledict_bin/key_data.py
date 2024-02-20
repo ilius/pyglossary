@@ -14,6 +14,8 @@
 # GNU General Public License for more details.
 import typing
 
+__all__ = ["RawKeyData", "KeyData"]
+
 RawKeyData: "typing.TypeAlias" = "tuple[int, int, typing.Sequence[str]]"
 """tuple(priority, parentalControl, keyTextFields)"""
 

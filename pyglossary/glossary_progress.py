@@ -6,6 +6,7 @@ from .core import log
 if TYPE_CHECKING:
 	from .ui_type import UIType
 
+__all__ = ["GlossaryProgress"]
 
 class GlossaryProgress:
 	def __init__(

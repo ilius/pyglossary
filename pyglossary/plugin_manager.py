@@ -36,6 +36,8 @@ from .glossary_utils import (
 )
 from .plugin_prop import PluginProp
 
+__all__ = ["PluginManager"]
+
 log = logging.getLogger("pyglossary")
 
 DetectedFormat = namedtuple(

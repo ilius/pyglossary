@@ -2,6 +2,8 @@
 
 from .text_utils import replacePostSpaceChar
 
+__all__ = ["faEditStr"]
+
 
 def faEditStr(st: str) -> str:
 	return replacePostSpaceChar(

@@ -28,6 +28,8 @@ if TYPE_CHECKING:
 
 from . import _normalize
 
+__all__ = ["id_generator", "indexes_generator", "_normalize", "quote_string"]
+
 log = logging.getLogger("pyglossary")
 
 digs = string.digits + string.ascii_letters

@@ -24,6 +24,28 @@ import sys
 from collections.abc import Callable
 from typing import AnyStr
 
+__all__ = [
+	"crc32hex",
+	"escapeNTB",
+	"excMessage",
+	"fixUtf8",
+	"isASCII",
+	"joinByBar",
+	"replacePostSpaceChar",
+	"replaceStringTable",
+	"splitByBar",
+	"splitByBarUnescapeNTB",
+	"toBytes",
+	"toStr",
+	"uint32FromBytes",
+	"uint32ToBytes",
+	"uint64FromBytes",
+	"uint64ToBytes",
+	"uintFromBytes",
+	"unescapeNTB",
+	"urlToPath",
+]
+
 log = logging.getLogger("pyglossary")
 
 endFormat = "\x1b[0;0;0m"  # len=8

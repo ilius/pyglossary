@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 from .compression import compressionOpen as c_open
 from .io_utils import nullTextIO
 
+__all__ = ["writeTxt", "TextGlossaryWriter"]
+
 log = logging.getLogger("pyglossary")
 
 file_size_check_every = 100

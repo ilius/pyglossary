@@ -34,6 +34,8 @@ from .wcwidth import wcswidth
 if TYPE_CHECKING:
 	import logging
 
+__all__ = ["COMMAND", "parseFormatOptionsStr", "UI", "printHelp"]
+
 
 def wc_ljust(text: str, length: int, padding: str = ' ') -> str:
 	return text + padding * max(0, (length - wcswidth(text)))

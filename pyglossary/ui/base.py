@@ -37,6 +37,8 @@ from pyglossary.option import (
 	StrOption,
 )
 
+__all__ = ["authors", "UIBase", "fread", "licenseText", "aboutText", "logo"]
+
 
 def fread(path: str) -> str:
 	with open(path, encoding="utf-8") as fp:

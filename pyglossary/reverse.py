@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Iterable, Iterator
 if TYPE_CHECKING:
 	from .glossary_types import EntryType, GlossaryExtendedType
 
+__all__ = ["reverseGlossary"]
+
 log = logging.getLogger("pyglossary")
 
 

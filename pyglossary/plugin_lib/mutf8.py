@@ -24,6 +24,8 @@
 # The code is from https://github.com/TkTech/mutf8 (MIT License) with fixes
 # by @gentlegiantJGC (https://github.com/TkTech/mutf8/pull/7).
 
+__all__ = ["decode_modified_utf8", "encode_modified_utf8"]
+
 def decode_modified_utf8(s: bytes) -> str:
     """
     Decodes a bytestring containing modified UTF-8 as defined in section

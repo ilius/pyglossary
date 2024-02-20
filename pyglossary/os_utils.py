@@ -11,6 +11,8 @@ from pyglossary import core
 if TYPE_CHECKING:
 	import types
 
+__all__ = ["showMemoryUsage", "rmtree", "indir", "runDictzip"]
+
 log = logging.getLogger("pyglossary")
 
 

@@ -24,6 +24,8 @@ from .utils import (
 	pack,
 )
 
+__all__ = ["AboutWidget"]
+
 
 class AboutTabTitleBox(gtk.Box):
 	def __init__(self, title: str, icon: str) -> None:

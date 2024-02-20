@@ -5,6 +5,7 @@ from pyglossary.core import log
 
 from ._types import ErrorType, LexType, TransformerType
 
+__all__ = ["lexRoot"]
 
 # rename to lexText?
 def lexRoot(tr: TransformerType) -> tuple[LexType, ErrorType]:

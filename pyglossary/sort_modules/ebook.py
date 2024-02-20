@@ -4,6 +4,8 @@ if TYPE_CHECKING:
 	from .sort_keys_types import sortKeyType, sqliteSortKeyType
 
 
+__all__ = ["normal", "sqlite"]
+
 desc = "E-Book (prefix length: 2)"
 
 

@@ -20,6 +20,7 @@
 from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
 
+__all__ = ["MyDialog"]
 
 class MyDialog:
 	def startWaiting(self):

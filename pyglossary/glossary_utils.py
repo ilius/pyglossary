@@ -27,6 +27,8 @@ from .compression import (
 	stdCompressions,
 )
 
+__all__ = ["splitFilenameExt"]
+
 log = logging.getLogger("pyglossary")
 
 

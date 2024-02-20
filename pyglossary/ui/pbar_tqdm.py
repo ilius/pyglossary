@@ -2,6 +2,8 @@
 
 from tqdm import tqdm
 
+__all__ = ["createProgressBar"]
+
 
 def createProgressBar(title: str):
 	return MyTqdm(

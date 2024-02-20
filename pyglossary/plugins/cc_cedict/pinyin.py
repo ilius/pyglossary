@@ -1,6 +1,7 @@
 # coding=utf-8
 # based on https://github.com/zkoch/CEDICT_Parser
 
+__all__ = ["convert"]
 
 TONES = {
 	"a1": "ā", "a2": "á", "a3": "ǎ", "a4": "à",

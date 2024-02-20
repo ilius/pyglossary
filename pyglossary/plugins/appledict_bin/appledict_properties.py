@@ -15,6 +15,8 @@
 
 from dataclasses import dataclass
 
+__all__ = ["AppleDictProperties", "from_metadata"]
+
 
 @dataclass
 class AppleDictProperties:

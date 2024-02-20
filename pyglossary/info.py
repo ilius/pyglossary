@@ -1,3 +1,12 @@
+__all__ = [
+	"c_publisher",
+	"c_author",
+	"c_targetLang",
+	"c_sourceLang",
+	"c_name",
+	"infoKeysAliasDict",
+]
+
 c_name = "name"
 c_sourceLang = "sourceLang"
 c_targetLang = "targetLang"

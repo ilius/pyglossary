@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from struct import unpack
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-	import io
-
 # Copyright © 2023 soshial <soshial@gmail.com> (soshial)
 #
 # This program is a free software; you can redistribute it and/or modify
@@ -19,6 +13,20 @@ if TYPE_CHECKING:
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+
+from struct import unpack
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+	import io
+
+__all__ = [
+	"guessFileOffsetLimit",
+	"read_x_bytes_as_word",
+	"APPLEDICT_FILE_OFFSET",
+	"read_2_bytes_here",
+	"readInt",
+]
 
 
 APPLEDICT_FILE_OFFSET = 0x40

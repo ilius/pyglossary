@@ -1,3 +1,5 @@
+__all__ = ["yellow", "reset", "red", "green"]
+
 redCode = 1
 greenCode = 2
 yellowCode = 3

@@ -3,6 +3,15 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from typing import TypeAlias
 
+__all__ = [
+	"YesNoAlwaysNever",
+	"DEFAULT_NO",
+	"flagsByName",
+	"StrWithDesc",
+	"DEFAULT_YES",
+	"NEVER",
+	"ALWAYS",
+]
 
 flagsByName = {}
 
