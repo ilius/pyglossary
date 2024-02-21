@@ -9,10 +9,11 @@ import pathlib
 import struct
 import typing
 import zipfile
-from typing import TYPE_CHECKING
+from typing import IO, TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
-	from typing import Literal
+	from collections.abc import Callable
+	from typing import Any, Literal
 
 from pyglossary.core import log
 from pyglossary.flags import NEVER
@@ -101,65 +102,65 @@ HASH_SET_CAPACITY_FACTOR = 0.75
 """Capacity factor used to determine the hash set's capacity from its length"""
 
 
-def read_byte(fp):
+def read_byte(fp: IO[bytes]) -> int:
 	return struct.unpack(">b", fp.read(1))[0]
 
 
-def write_byte(fp, val):
+def write_byte(fp: IO[bytes], val: int) -> int:
 	return fp.write(struct.pack(">b", val))
 
 
-def read_bool(fp):
+def read_bool(fp: IO[bytes]) -> bool:
 	return bool(read_byte(fp))
 
 
-def write_bool(fp, val):
+def write_bool(fp: IO[bytes], val: int) -> int:
 	return write_byte(fp, val)
 
 
-def read_short(fp):
+def read_short(fp: IO[bytes]) -> int:
 	return struct.unpack(">h", fp.read(2))[0]
 
 
-def write_short(fp, val):
+def write_short(fp: IO[bytes], val: int) -> int:
 	return fp.write(struct.pack(">h", val))
 
 
-def read_int(fp):
+def read_int(fp: IO[bytes]) -> int:
 	return struct.unpack(">i", fp.read(4))[0]
 
 
-def write_int(fp, val):
+def write_int(fp: IO[bytes], val: int) -> int:
 	return fp.write(struct.pack(">i", val))
 
 
-def read_long(fp):
+def read_long(fp: IO[bytes]) -> int:
 	return struct.unpack(">q", fp.read(8))[0]
 
 
-def write_long(fp, val):
+def write_long(fp: IO[bytes], val: int) -> int:
 	return fp.write(struct.pack(">q", val))
 
 
-def read_float(fp):
+def read_float(fp: IO[bytes]) -> float:
 	return struct.unpack(">f", fp.read(4))[0]
 
 
-def write_float(fp, val):
+def write_float(fp: IO[bytes], val: float) -> int:
 	return fp.write(struct.pack(">f", val))
 
 
-def read_string(fp):
+def read_string(fp: IO[bytes]) -> str:
 	length = read_short(fp)
 	return mutf8.decode_modified_utf8(fp.read(length))
 
 
-def write_string(fp, val):
+def write_string(fp: IO[bytes], val: str) -> int:
 	b_string = mutf8.encode_modified_utf8(val)
 	return write_short(fp, len(b_string)) + fp.write(b_string)
 
 
-def read_hashset(fp):
+def read_hashset(fp: IO[bytes]) -> list[str]:
 	hash_set_init = fp.read(len(HASH_SET_INIT))
 	if hash_set_init == HASH_SET_INIT:
 		hash_set_init2 = fp.read(len(HASH_SET_INIT2))
@@ -172,7 +173,7 @@ def read_hashset(fp):
 	capacity_factor = read_float(fp)
 	assert capacity_factor == HASH_SET_CAPACITY_FACTOR
 	num_entries = read_int(fp)
-	data = []
+	data: list[str] = []
 	while len(data) < num_entries:
 		assert read_byte(fp) == 0x74
 		data.append(read_string(fp))
@@ -180,7 +181,11 @@ def read_hashset(fp):
 	return data
 
 
-def write_hashset(fp, data, linked_hash_set=False):
+def write_hashset(
+	fp: IO[bytes],
+	data: list[str],
+	linked_hash_set: bool = False,
+) -> int:
 	write_start_offset = fp.tell()
 	if linked_hash_set:
 		fp.write(LINKED_HASH_SET_INIT)
@@ -201,8 +206,12 @@ def write_hashset(fp, data, linked_hash_set=False):
 	write_byte(fp, 0x78)
 	return fp.tell() - write_start_offset
 
+T = TypeVar("T")
 
-def read_list(fp, fun):
+def read_list(
+	fp: IO[bytes],
+	fun: "Callable[[IO[bytes]], T]",
+) -> list[T]:
 	size = read_int(fp)
 	toc = struct.unpack(f">{size + 1}q", fp.read(8 * (size + 1)))
 	entries = []
@@ -213,7 +222,11 @@ def read_list(fp, fun):
 	return entries
 
 
-def write_list(fp, fun, entries):
+def write_list(
+	fp: IO[bytes],
+	fun: "Callable[[IO[bytes], T], Any]",
+	entries: list[T],
+) -> int:
 	write_start_offset = fp.tell()
 	size = len(entries)
 	write_int(fp, size)
@@ -229,33 +242,36 @@ def write_list(fp, fun, entries):
 	return fp.tell() - write_start_offset
 
 
-def read_entry_int(fp):
+def read_entry_int(fp: IO[bytes]) -> int:
 	return read_int(fp)
 
 
-def write_entry_int(fp, entry):
+def write_entry_int(fp: IO[bytes], entry: int) -> int:
 	return write_int(fp, entry)
 
 
-def read_entry_source(fp):
+def read_entry_source(fp: IO[bytes]) -> tuple[str, int]:
 	name = read_string(fp)
 	count = read_int(fp)
 	return name, count
 
 
-def write_entry_source(fp, entry):
+def write_entry_source(fp: IO[bytes], entry: tuple[str, int]) -> int:
 	name, count = entry
 	return write_string(fp, name) + write_int(fp, count)
 
 
-def read_entry_pairs(fp):
+def read_entry_pairs(fp: IO[bytes]) -> tuple[int, list[tuple[str, str]]]:
 	src_idx = read_short(fp)
 	count = read_int(fp)
 	pairs = [(read_string(fp), read_string(fp)) for i in range(count)]
 	return src_idx, pairs
 
 
-def write_entry_pairs(fp, entry):
+def write_entry_pairs(
+	fp: IO[bytes],
+	entry: tuple[int, list[tuple[str, str]]],
+) -> int:
 	write_start_offset = fp.tell()
 	src_idx, pairs = entry
 	write_short(fp, src_idx)
@@ -266,18 +282,18 @@ def write_entry_pairs(fp, entry):
 	return fp.tell() - write_start_offset
 
 
-def read_entry_text(fp):
+def read_entry_text(fp: IO[bytes]) -> tuple[int, str]:
 	src_idx = read_short(fp)
 	txt = read_string(fp)
 	return src_idx, txt
 
 
-def write_entry_text(fp, entry):
+def write_entry_text(fp: IO[bytes], entry: tuple[int, str]) -> int:
 	src_idx, txt = entry
 	return write_short(fp, src_idx) + write_string(fp, txt)
 
 
-def read_entry_html(fp):
+def read_entry_html(fp: IO[bytes]) -> tuple[int, str, str]:
 	src_idx = read_short(fp)
 	title = read_string(fp)
 	read_int(fp)  # len_raw
@@ -289,17 +305,17 @@ def read_entry_html(fp):
 	return src_idx, title, html
 
 
-def write_entry_html(fp, entry):
+def write_entry_html(fp: IO[bytes], entry: tuple[int, str, str]) -> int:
 	write_start_offset = fp.tell()
 	src_idx, title, html = entry
 	b_html = "".join(c if ord(c) < 128 else f"&#{ord(c)};" for c in html).encode()
-	b_compr = io.BytesIO()
-	with gzip.GzipFile(fileobj=b_compr, mode="wb") as zf:
+	ib_compr = io.BytesIO()
+	with gzip.GzipFile(fileobj=ib_compr, mode="wb") as zf:
 		# note that the compressed bytes might differ from the original Java
 		# implementation that uses GZIPOutputStream
 		zf.write(b_html)
-	b_compr.seek(0)
-	b_compr = b_compr.read()
+	ib_compr.seek(0)
+	b_compr = ib_compr.read()
 	write_short(fp, src_idx)
 	write_string(fp, title)
 	write_int(fp, len(b_html))
@@ -308,7 +324,29 @@ def write_entry_html(fp, entry):
 	return fp.tell() - write_start_offset
 
 
-def read_entry_index(fp):
+IndexEntryType = tuple[
+	str,  # token
+	int,  # start_index
+	int,  # count
+	str,  # token_norm
+	list[int],  # html_indices
+]
+
+
+EntryIndexTuple = tuple[
+	str,  # short_name
+	str,  # long_name
+	str,  # iso
+	str,  # normalizer_rules
+	bool,  # swap_flag
+	int,  # main_token_count
+	list[IndexEntryType],  # index_entries
+	list[str],  # stop_list,
+	list[tuple[int, int]],  # rows
+]
+
+
+def read_entry_index(fp: IO[bytes]) -> EntryIndexTuple:
 	short_name = read_string(fp)
 	long_name = read_string(fp)
 	iso = read_string(fp)
@@ -343,7 +381,10 @@ def read_entry_index(fp):
 	)
 
 
-def write_entry_index(fp, entry):
+def write_entry_index(
+	fp: IO[bytes],
+	entry: EntryIndexTuple,
+) -> int:
 	write_start_offset = fp.tell()
 	(
 		short_name,
@@ -378,7 +419,7 @@ def write_entry_index(fp, entry):
 	return fp.tell() - write_start_offset
 
 
-def read_entry_indexentry(fp):
+def read_entry_indexentry(fp: IO[bytes]) -> IndexEntryType:
 	token = read_string(fp)
 	start_index = read_int(fp)
 	count = read_int(fp)
@@ -388,7 +429,10 @@ def read_entry_indexentry(fp):
 	return token, start_index, count, token_norm, html_indices
 
 
-def write_entry_indexentry(fp, entry):
+def write_entry_indexentry(
+	fp: IO[bytes],
+	entry: IndexEntryType,
+) -> None:
 	token, start_index, count, token_norm, html_indices = entry
 	has_normalized = token_norm != ""
 	write_string(fp, token)
@@ -401,7 +445,7 @@ def write_entry_indexentry(fp, entry):
 
 
 class Comparator:
-	def __init__(self, locale_str: str, normalizer_rules: str, version: int):
+	def __init__(self, locale_str: str, normalizer_rules: str, version: int) -> None:
 		import icu
 
 		self.version = version
@@ -436,7 +480,11 @@ class Comparator:
 			return cn
 		return self._comparator.compare(s1, s2)
 
-	def _compare_without_dash(self, a, b) -> "Literal[0] | Literal[1] | Literal[-1]":
+	def _compare_without_dash(
+		self,
+		a: str,
+		b: str,
+	) -> "Literal[0] | Literal[1] | Literal[-1]":
 		if self.version < 7:
 			return 0
 		s1 = self._without_dash(a)
@@ -450,15 +498,15 @@ class Comparator:
 class QuickDic:
 	def __init__(
 		self,
-		name,
-		sources,
-		pairs,
-		texts,
-		htmls,
-		version=6,
-		indices=None,
-		created=None,
-	):
+		name: str,
+		sources: list[tuple[str, int]],
+		pairs: list[tuple[int, list[tuple[str, str]]]],
+		texts: list[tuple[int, str]],
+		htmls: list[tuple[int, str, str]],
+		version: int = 6,
+		indices: list[EntryIndexTuple] | None = None,
+		created: dt.datetime | None = None,
+	) -> None:
 		self.name = name
 		self.sources = sources
 		self.pairs = pairs
@@ -469,8 +517,8 @@ class QuickDic:
 		self.created = dt.datetime.now() if created is None else created
 
 	@classmethod
-	def from_path(cls, path):
-		path = pathlib.Path(path)
+	def from_path(cls: "type[QuickDic]", path_str: str) -> "QuickDic":
+		path = pathlib.Path(path_str)
 		if path.suffix != ".zip":
 			with open(path, "rb") as fp:
 				return cls.from_fp(fp)
@@ -480,7 +528,7 @@ class QuickDic:
 				return cls.from_fp(fp)
 
 	@classmethod
-	def from_fp(cls, fp):
+	def from_fp(cls: "type[QuickDic]", fp: IO[bytes]) -> "QuickDic":
 		version = read_int(fp)
 		created = dt.datetime.fromtimestamp(float(read_long(fp)) / 1000.0)
 		name = read_string(fp)
@@ -503,40 +551,40 @@ class QuickDic:
 
 	def add_index(
 		self,
-		short_name,
-		long_name,
-		iso,
-		normalizer_rules,
-		swap_flag,
-		synonyms=None,
-	):
+		short_name: str,
+		long_name: str,
+		iso: str,
+		normalizer_rules: str,
+		swap_flag: bool,
+		synonyms: dict | None = None,
+	) -> None:
 		comparator = Comparator(iso, normalizer_rules, self.version)
 
-		synonyms = {} if synonyms is None else synonyms
+		synonyms = synonyms or {}
 		n_synonyms = sum(len(v) for v in synonyms.values())
 		log.info(f"Adding an index for {iso} with {n_synonyms} synonyms ...")
 
 		# since we don't tokenize, the stop list is always empty
-		stop_list = []
+		stop_list: list[str] = []
 		if self.indices is None:
 			self.indices = []
 
 		log.info("Initialize token list ...")
-		tokens = [
+		tokens1 = [
 			(pair[1 if swap_flag else 0], 0, idx)
 			for idx, (_, pairs) in enumerate(self.pairs)
 			for pair in pairs
 		]
 		if not swap_flag:
-			tokens.extend(
+			tokens1.extend(
 				[(title, 4, idx) for idx, (_, title, _) in enumerate(self.htmls)],
 			)
-		tokens = [(t.strip(), ttype, tidx) for t, ttype, tidx in tokens]
+		tokens1 = [(t.strip(), ttype, tidx) for t, ttype, tidx in tokens1]
 
 		log.info("Normalize tokens ...")
 		tokens = [
 			(t, comparator.normalize(t), ttype, tidx)
-			for t, ttype, tidx in tokens
+			for t, ttype, tidx in tokens1
 			if t != ""
 		]
 
@@ -559,8 +607,8 @@ class QuickDic:
 		tokens.sort(key=lambda t: key_fun((t[0], t[1])))
 
 		log.info("Build mid-layer index ...")
-		rows = []
-		index_entries = []
+		rows: list[tuple[int, int]] = []
+		index_entries: list[IndexEntryType] = []
 		for token, token_norm, ttype, tidx in tokens:
 			prev_token = "" if len(index_entries) == 0 else index_entries[-1][0]
 			if prev_token == token:
@@ -607,7 +655,7 @@ class QuickDic:
 			),
 		)
 
-	def write(self, path):
+	def write(self, path: str) -> None:
 		with open(path, "wb") as fp:
 			log.info(f"Writing to {path} ...")
 			write_int(fp, self.version)
@@ -628,7 +676,7 @@ class Reader:
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._dic = None
+		self._dic: QuickDic | None = None
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
@@ -636,9 +684,10 @@ class Reader:
 		self._glos.setDefaultDefiFormat("h")
 		self._extract_synonyms_from_indices()
 
-	def _extract_synonyms_from_indices(self):
-		self._text_tokens = {}
-		self._synonyms = {}
+	def _extract_synonyms_from_indices(self) -> None:
+		self._text_tokens: dict[int, str] = {}
+		self._synonyms: dict[tuple[int, int], set[str]] = {}
+		assert self._dic is not None
 		for index in self._dic.indices:
 			_, _, _, _, swap_flag, _, index_entries, _, rows = index
 
@@ -659,8 +708,13 @@ class Reader:
 					if token_norm != "":
 						self._synonyms[entry_id].add(token_norm)
 
-	def _extract_rows_from_indexentry(self, index, i_entry, recurse=None):
-		recurse = [] if recurse is None else recurse
+	def _extract_rows_from_indexentry(
+		self,
+		index: EntryIndexTuple,
+		i_entry: int,
+		recurse: list[int] | None = None,
+	) -> list[tuple[int, int]]:
+		recurse = recurse or []
 		recurse.append(i_entry)
 		_, _, _, _, _, _, index_entries, _, rows = index
 		token, start_index, count, _, html_indices = index_entries[i_entry]
