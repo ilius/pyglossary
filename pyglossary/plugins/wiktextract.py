@@ -306,7 +306,7 @@ class Reader:
 		self,
 		hf: "T_htmlfile",
 		text: "str | None",
-	):
+	) -> None:
 		hf.write(text or "")
 
 	def writeSenseCategory(
@@ -447,7 +447,7 @@ class Reader:
 		self,
 		hf: "T_htmlfile",
 		word: str,
-	):
+	) -> None:
 		i = word.find(" [")
 		if i >= 0:
 			word = word[:i]

@@ -106,7 +106,7 @@ def _dictzip(filename: str | Path) -> bool:
 	return True
 
 
-def runDictzip(filename: str | Path, method="") -> None:
+def runDictzip(filename: str | Path, method: str = "") -> None:
 	"""Compress file into dictzip format."""
 	res = None
 	if method in ["", "idzip"]:

@@ -26,10 +26,10 @@ select = [
     "ARG", # flake8-unused-arguments: ARG001 Unused function argument
 
     # "C90", # mccabe: C901: {name} is too complex ({complexity})
-    # "ANN", # flake8-annotationsq
     # "N", # pep8-naming
     # "A", # flake8-builtins
     # "S", # flake8-bandit
+    # "ANN", # flake8-annotationsq, still gives errors for `self`
 ]
 ignore = [
 	"PGH003", # Use specific rule codes when ignoring type issues
@@ -59,6 +59,7 @@ ignore = [
     # "SIM111", # Use all(...): warning: `SIM111` has been remapped to `SIM110`.
     # ERA, PD,
     "TCH003", # Move standard library import `...` into a type-checking block
+    "ANN401", # Dynamically typed expressions (typing.Any) are disallowed in ...
 ]
 
 # UP033: (Since Python 3.9) Use `@functools.cache`
@@ -134,6 +135,16 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.per-file-ignores]
 "scripts/wiki-formats.py" = ["E501"]
+"pyglossary/io_utils.py" = ["ANN"]
+"pyglossary/plugin_lib/*.py" = ["ANN"]
+"pyglossary/plugins/babylon_bgl/bgl_reader_debug.py" = ["ANN"]
+"pyglossary/ui/*.py" = ["ANN"]
+"pyglossary/ui/*/*.py" = ["ANN"]
+"tests/*.py" = ["ANN"]
+"*_test.py" = ["ANN"]
+"scripts/*.py" = ["ANN"]
+"scripts/*/*.py" = ["ANN"]
+"doc/lib-examples/*.py" = ["ANN"]
 
 [tool.ruff.format]
 quote-style = "double"

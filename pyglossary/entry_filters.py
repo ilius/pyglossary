@@ -441,7 +441,7 @@ class UnescapeWordLinks(EntryFilter):
 		)
 		self._unescape = unescape_unicode
 
-	def _sub(self, m: "re.Match"):
+	def _sub(self, m: "re.Match") -> str:
 		return self._unescape(m.group(0))
 
 	def run(self, entry: "EntryType") -> "EntryType | None":

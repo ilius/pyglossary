@@ -37,7 +37,7 @@ class TransformerType(typing.Protocol):
 	def follows(self, st: str) -> bool:
 		pass
 
-	def skipAny(self, chars: str):
+	def skipAny(self, chars: str) -> None:
 		pass
 
 	def addText(self, st: str) -> None:

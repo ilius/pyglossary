@@ -147,7 +147,7 @@ class Writer:
 
 		con.commit()
 
-	def finish(self):
+	def finish(self) -> None:
 		if self._con is None or self._cur is None:
 			return
 
@@ -212,7 +212,7 @@ class Writer:
 			("hash", _hash.hexdigest()),
 		)
 
-	def addFuzzy(self, _id: int, terms: list[str]):
+	def addFuzzy(self, _id: int, terms: list[str]) -> None:
 		cur = self._cur
 		if cur is None:
 			raise ValueError("cur is None")

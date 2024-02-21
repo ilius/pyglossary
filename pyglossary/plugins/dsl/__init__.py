@@ -255,7 +255,7 @@ class Reader:
 		for line in self._file:
 			yield line
 
-	def sub_title_line(self, m) -> str:
+	def sub_title_line(self, m: "re.Match") -> str:
 		line = m.group(0)[1:-1]
 		line = line.replace("[']", "")  # FIXME
 		line = line.replace("[/']", "")

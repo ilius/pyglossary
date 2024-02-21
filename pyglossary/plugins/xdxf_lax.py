@@ -113,7 +113,7 @@ class Reader:
 			return index, buf[:index]
 		return -1, buf
 
-	def _readOneMetadata(self, tag: str, infoKey: str):
+	def _readOneMetadata(self, tag: str, infoKey: str) -> None:
 		from lxml.etree import XML
 
 		endTag = f"</{tag}>".encode("ascii")
@@ -132,7 +132,7 @@ class Reader:
 		if elem.text:
 			self._glos.setInfo(infoKey, elem.text)
 
-	def readMetadata(self):
+	def readMetadata(self) -> None:
 		_file = self._file
 		pos = _file.tell()
 		self._readOneMetadata("full_name", "title")

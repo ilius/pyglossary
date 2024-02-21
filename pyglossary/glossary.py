@@ -38,7 +38,7 @@ class Glossary(GlossaryCommon):
 
 	def titleElement(  # noqa: ANN201
 		self,
-		hf,  # type: ignore
+		hf,  # noqa: ANN001, type: ignore
 		sample: str = "",
 	):  # type: ignore
 		return hf.element(self.titleTag(sample))
