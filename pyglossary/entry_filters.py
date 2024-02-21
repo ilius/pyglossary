@@ -156,11 +156,11 @@ class RemoveHtmlTagsAll(EntryFilter):
 		glos: "GlossaryType",  # noqa: ARG002
 	) -> None:
 		self._p_pattern = re.compile(
-			'<p( [^<>]*?)?>(.*?)</p>',
+			"<p( [^<>]*?)?>(.*?)</p>",
 			re.DOTALL,
 		)
 		self._div_pattern = re.compile(
-			'<div( [^<>]*?)?>(.*?)</div>',
+			"<div( [^<>]*?)?>(.*?)</div>",
 			re.DOTALL,
 		)
 		self._br_pattern = re.compile(
@@ -237,12 +237,25 @@ class NormalizeHtml(EntryFilter):
 	desc = "Normalize HTML tags in definition (WIP)"
 
 	_tags = (
-		"a", "font", "i", "b", "u", "p", "sup",
-		"div", "span",
-		"table", "tr", "th", "td",
-		"ul", "ol", "li",
+		"a",
+		"font",
+		"i",
+		"b",
+		"u",
+		"p",
+		"sup",
+		"div",
+		"span",
+		"table",
+		"tr",
+		"th",
+		"td",
+		"ul",
+		"ol",
+		"li",
 		"img",
-		"br", "hr",
+		"br",
+		"hr",
 	)
 
 	def __init__(
@@ -299,6 +312,7 @@ class LanguageCleanup(EntryFilter):
 
 	def run_fa(self, entry: "EntryType") -> "EntryType | None":
 		from .persian_utils import faEditStr
+
 		entry.editFuncWord(faEditStr)
 		entry.editFuncDefi(faEditStr)
 		# RLM = "\xe2\x80\x8f"
@@ -461,10 +475,13 @@ class ShowProgressBar(EntryFilter):
 
 		if self._wordCount == -1:
 			self._wordCount = len(self.glos)
-			self._wordCountThreshold = max(1, min(
-				500,
-				self._wordCount // 200,
-			))
+			self._wordCountThreshold = max(
+				1,
+				min(
+					500,
+					self._wordCount // 200,
+				),
+			)
 
 		if self._wordCount > 1 and index % self._wordCountThreshold == 0:
 			self.glos.progress(index, self._wordCount)

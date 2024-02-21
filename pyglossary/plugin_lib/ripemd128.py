@@ -72,7 +72,7 @@ def padandsplit(message: bytes):
 	message += struct.pack("<Q", origlen * 8)
 	assert len(message) % 64 == 0
 	return [
-		[struct.unpack("<L", message[i + j:i + j + 4])[0] for j in range(0, 64, 4)]
+		[struct.unpack("<L", message[i + j : i + j + 4])[0] for j in range(0, 64, 4)]
 		for i in range(0, len(message), 64)
 	]
 

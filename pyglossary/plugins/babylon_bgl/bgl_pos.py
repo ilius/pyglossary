@@ -46,11 +46,9 @@ partOfSpeechByCode = {
 	# "ת'"
 	# adjective
 	# (full form: "ת': תואר")
-
 	# "ש"ע"
 	# noun
 	# (full form: "ש"ע: שם עצם")
-
 	0x3D: "masculine noun and adjective",
 	0x3E: "feminine noun and adjective",
 	0x3F: "masculine and feminine noun and adjective",

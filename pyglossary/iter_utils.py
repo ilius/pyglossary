@@ -27,10 +27,12 @@ if TYPE_CHECKING:
 
 __all__ = ["unique_everseen"]
 
+
 # from https://github.com/erikrose/more-itertools
 def unique_everseen(iterable: "Iterable") -> "Iterator":
 	"""List unique elements, preserving order. Remember all elements ever seen."""
 	from itertools import filterfalse
+
 	# unique_everseen('AAAABBBCCDAABBB') --> A B C D
 	seen: "set[Any]" = set()
 	seen_add = seen.add

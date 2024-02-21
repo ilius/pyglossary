@@ -103,13 +103,17 @@ class Reader:
 		filename: str,
 	) -> None:
 		from pyglossary.text_reader import TextFilePosWrapper
+
 		self._filename = filename
-		cfile = cast("io.TextIOBase", compressionOpen(
-			filename,
-			mode="rt",
-			encoding=self._encoding,
-			newline=self._newline,
-		))
+		cfile = cast(
+			"io.TextIOBase",
+			compressionOpen(
+				filename,
+				mode="rt",
+				encoding=self._encoding,
+				newline=self._newline,
+			),
+		)
 
 		if cfile.seekable():
 			cfile.seek(0, 2)
@@ -152,12 +156,12 @@ class Reader:
 
 	def __len__(self) -> int:
 		from pyglossary.file_utils import fileCountLines
+
 		if self._wordCount is None:
 			if hasattr(self._file, "compression"):
 				return 0
 			log.debug("Try not to use len(reader) as it takes extra time")
-			self._wordCount = fileCountLines(self._filename) - \
-				self._leadingLinesCount
+			self._wordCount = fileCountLines(self._filename) - self._leadingLinesCount
 		return self._wordCount + len(self._resFileNames)
 
 	def _iterRows(self) -> "Iterator[list[str]]":
@@ -190,9 +194,7 @@ class Reader:
 			word,
 			defi,
 			byteProgress=(
-				(self._file.tell(), self._fileSize)
-				if self._fileSize
-				else None
+				(self._file.tell(), self._fileSize) if self._fileSize else None
 			),
 		)
 
@@ -233,12 +235,15 @@ class Writer:
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._file = cast("io.TextIOBase", compressionOpen(
-			filename,
-			mode="wt",
-			encoding=self._encoding,
-			newline=self._newline,
-		))
+		self._file = cast(
+			"io.TextIOBase",
+			compressionOpen(
+				filename,
+				mode="wt",
+				encoding=self._encoding,
+				newline=self._newline,
+			),
+		)
 		self._resDir = resDir = filename + "_res"
 		self._csvWriter = csv.writer(
 			self._file,

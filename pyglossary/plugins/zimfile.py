@@ -49,10 +49,8 @@ class Reader:
 		"image/svg+xml",
 		"image/webp",
 		"image/x-icon",
-
 		"text/css",
 		"text/javascript",
-
 		"application/javascript",
 		"application/json",
 		"application/octet-stream",
@@ -151,7 +149,8 @@ class Reader:
 
 			if mimetype == "text/plain":
 				yield glos.newEntry(
-					word, b_content.decode("utf-8"),
+					word,
+					b_content.decode("utf-8"),
 					defiFormat="m",
 				)
 				continue

@@ -70,12 +70,13 @@ class Writer:
 
 		for key in info_keys:
 			value = glos.getInfo(key)
-			value = value\
-				.replace("\'", "\'\'")\
-				.replace("\x00", "")\
-				.replace("\r", "")\
+			value = (
+				value.replace("'", "''")
+				.replace("\x00", "")
+				.replace("\r", "")
 				.replace("\n", newline)
-			infoValues.append(f"\'{value}\'")
+			)
+			infoValues.append(f"'{value}'")
 			infoDefLine += f"{key} char({len(value)}), "
 
 		infoDefLine = infoDefLine[:-2] + ");"
@@ -104,11 +105,11 @@ class Writer:
 		if self._add_extra_info:
 			extraInfo = glos.getExtraInfos(info_keys)
 			for index, (key, value) in enumerate(extraInfo.items()):
-				key = key.replace("\'", "\'\'")
-				value = value.replace("\'", "\'\'")
+				key = key.replace("'", "''")
+				value = value.replace("'", "''")
 				fileObj.write(
 					f"INSERT INTO dbinfo_extra VALUES({index+1}, "
-					f"\'{key}\', \'{value}\');\n",
+					f"'{key}', '{value}');\n",
 				)
 
 	def _getInfoKeys(self) -> "list[str]":
@@ -135,8 +136,7 @@ class Writer:
 			raise ValueError("fileObj is None")
 
 		def fixStr(word: str) -> str:
-			return word.replace("\'", "\'\'")\
-				.replace("\r", "").replace("\n", newline)
+			return word.replace("'", "''").replace("\r", "").replace("\n", newline)
 
 		_id = 1
 		while True:
@@ -150,12 +150,12 @@ class Writer:
 			word = fixStr(words[0])
 			defi = fixStr(entry.defi)
 			fileObj.write(
-				f"INSERT INTO word VALUES({_id}, \'{word}\', \'{defi}\');\n",
+				f"INSERT INTO word VALUES({_id}, '{word}', '{defi}');\n",
 			)
 			for alt in words[1:]:
 				alt = fixStr(alt)
 				fileObj.write(
-					f"INSERT INTO alt VALUES({_id}, \'{alt}\');\n",
+					f"INSERT INTO alt VALUES({_id}, '{alt}');\n",
 				)
 			_id += 1
 

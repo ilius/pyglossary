@@ -32,6 +32,7 @@ if TYPE_CHECKING:
 
 __all__ = ["Glossary"]
 
+
 class Glossary(GlossaryCommon):
 	GLOSSARY_API_VERSION = "1.0"
 
@@ -153,17 +154,20 @@ class Glossary(GlossaryCommon):
 		infoOverride: "dict[str, str] | None" = None,
 	) -> "str | None":
 		self.progressbar = progressbar
-		return GlossaryCommon.convertV2(self, ConvertArgs(
-			inputFilename=inputFilename,
-			inputFormat=inputFormat,
-			direct=direct,
-			outputFilename=outputFilename,
-			outputFormat=outputFormat,
-			sort=sort,
-			sortKeyName=sortKeyName,
-			sortEncoding=sortEncoding,
-			readOptions=readOptions,
-			writeOptions=writeOptions,
-			sqlite=sqlite,
-			infoOverride=infoOverride,
-		))
+		return GlossaryCommon.convertV2(
+			self,
+			ConvertArgs(
+				inputFilename=inputFilename,
+				inputFormat=inputFormat,
+				direct=direct,
+				outputFilename=outputFilename,
+				outputFormat=outputFormat,
+				sort=sort,
+				sortKeyName=sortKeyName,
+				sortEncoding=sortEncoding,
+				readOptions=readOptions,
+				writeOptions=writeOptions,
+				sqlite=sqlite,
+				infoOverride=infoOverride,
+			),
+		)

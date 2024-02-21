@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 
 enable = True
 lname = "digitalnk"
-format = 'DigitalNK'
-description = 'DigitalNK (SQLite3, N-Korean)'
+format = "DigitalNK"
+description = "DigitalNK (SQLite3, N-Korean)"
 extensions = ()
 extensionCreate = ".db"
 kind = "binary"
@@ -36,6 +36,7 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
+
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
@@ -51,8 +52,7 @@ class Reader:
 		if self._cur is None:
 			raise ValueError("cur is None")
 		self._cur.execute(
-			"select word, definition from dictionary"
-			" order by word",
+			"select word, definition from dictionary order by word",
 		)
 		# iteration over self._cur stops after one entry
 		# and self._cur.fetchone() returns None

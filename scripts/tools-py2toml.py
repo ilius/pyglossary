@@ -19,9 +19,7 @@ Glossary.init(
 
 userPluginsDirPath = Path(userPluginsDir)
 plugins = [
-	p
-	for p in Glossary.plugins.values()
-	if userPluginsDirPath not in p.path.parents
+	p for p in Glossary.plugins.values() if userPluginsDirPath not in p.path.parents
 ]
 
 toolsDir = join(rootDir, "plugins-meta", "tools")

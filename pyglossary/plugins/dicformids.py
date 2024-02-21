@@ -159,17 +159,19 @@ class Writer:
 			"DictionaryForMIDs.properties",
 		)
 		with open(probsPath, mode="w", newline="\n") as fileObj:
-			fileObj.write(PROP_TEMPLATE.format(
-				name=glos.getInfo("name"),
-				author=glos.author,
-				indexFileMaxSize=self.indexFileMaxSize,
-				wordCount=self.wordCount,
-				directoryPostfix=self.directoryPostfix,
-				dicMaxSize=self.dicMaxSize + 1,
-				language2FilePostfix="fa",  # FIXME
-				sourceLang=glos.sourceLangName,
-				targetLang=glos.targetLangName,
-			))
+			fileObj.write(
+				PROP_TEMPLATE.format(
+					name=glos.getInfo("name"),
+					author=glos.author,
+					indexFileMaxSize=self.indexFileMaxSize,
+					wordCount=self.wordCount,
+					directoryPostfix=self.directoryPostfix,
+					dicMaxSize=self.dicMaxSize + 1,
+					language2FilePostfix="fa",  # FIXME
+					sourceLang=glos.sourceLangName,
+					targetLang=glos.targetLangName,
+				),
+			)
 
 	def nextIndex(self) -> None:
 		try:
@@ -199,13 +201,17 @@ class Writer:
 		def writeBucket(dicIndex: int, entryList: "list[EntryType]") -> None:
 			nonlocal dicMaxSize
 			log.debug(
-				f"{dicIndex=}, {len(entryList)=}"
-				f", {dicMaxSize=}",
+				f"{dicIndex=}, {len(entryList)=}, {dicMaxSize=}",
 			)
-			dicFp = open(join(
-				self._dirname,
-				f"directory{self.directoryPostfix}{dicIndex+1}.csv",
-			), mode="w", encoding="utf-8", newline="\n")
+			dicFp = open(
+				join(
+					self._dirname,
+					f"directory{self.directoryPostfix}{dicIndex+1}.csv",
+				),
+				mode="w",
+				encoding="utf-8",
+				newline="\n",
+			)
 			for entry in entryList:
 				word = entry.s_word
 				n_word = self.normateWord(word)
@@ -243,18 +249,21 @@ class Writer:
 		self.dicMaxSize = dicMaxSize
 		self.wordCount = wordCount
 
-		langSearchListFp = open(join(
-			self._dirname,
-			f"searchlist{self.directoryPostfix}.csv",
-		), mode="w", newline="\n", encoding="utf-8")
+		langSearchListFp = open(
+			join(
+				self._dirname,
+				f"searchlist{self.directoryPostfix}.csv",
+			),
+			mode="w",
+			newline="\n",
+			encoding="utf-8",
+		)
 
 		langSearchListFp.write(f"{indexData[0][0]}\t{self.indexIndex}\n")
 
 		for word, dicIndex, dicPos in indexData:
 			indexLine = f"{word}\t{dicIndex}-{dicPos}-B\n"
-			if (
-				self.indexFp.tell() + len(indexLine)
-			) > self.indexFileMaxSize - 10:
+			if (self.indexFp.tell() + len(indexLine)) > self.indexFileMaxSize - 10:
 				self.nextIndex()
 				langSearchListFp.write(f"{word}\t{self.indexIndex}\n")
 			self.indexFp.write(indexLine)

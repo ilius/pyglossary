@@ -125,21 +125,26 @@ class TextGlossaryWriter:
 				value = defiEscapeFunc(value)
 				if not value:
 					continue
-			_file.write(entryFmt.format(
-				word=word,
-				defi=value,
-			))
+			_file.write(
+				entryFmt.format(
+					word=word,
+					defi=value,
+				),
+			)
 
 	def _open(self, filename: str) -> "io.TextIOBase":
 		if not filename:
 			filename = self._glos.filename + self._ext
 
-		_file = self._file = cast("io.TextIOBase", c_open(
-			filename,
-			mode="wt",
-			encoding=self._encoding,
-			newline=self._newline,
-		))
+		_file = self._file = cast(
+			"io.TextIOBase",
+			c_open(
+				filename,
+				mode="wt",
+				encoding=self._encoding,
+				newline=self._newline,
+			),
+		)
 		_file.write(self._head)
 
 		if self._writeInfo:
@@ -191,8 +196,8 @@ class TextGlossaryWriter:
 			if file_size_approx > 0:
 				entryCount += 1
 				if (
-					entryCount % file_size_check_every == 0 and
-					_file.tell() >= file_size_approx
+					entryCount % file_size_check_every == 0
+					and _file.tell() >= file_size_approx
 				):
 					fileIndex += 1
 					_file = self._open(f"{self._filename}.{fileIndex}")
@@ -250,6 +255,7 @@ def writeTabfile(
 	resources: bool = True,
 ) -> "Generator[None, EntryType, None]":
 	from pyglossary.text_utils import escapeNTB
+
 	writer = TextGlossaryWriter(
 		glos,
 		entryFmt="{word}\t{defi}\n",

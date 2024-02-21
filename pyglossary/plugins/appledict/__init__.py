@@ -316,10 +316,10 @@ class Writer:
 				content = prepare_content(content_title, defi, BeautifulSoup)
 
 				toFile.write(
-					f'<d:entry id="{_id}" d:title={quoted_title}>\n' +
-					generate_indexes(long_title, alts, content, BeautifulSoup) +
-					content +
-					"\n</d:entry>\n",
+					f'<d:entry id="{_id}" d:title={quoted_title}>\n'
+					+ generate_indexes(long_title, alts, content, BeautifulSoup)
+					+ content
+					+ "\n</d:entry>\n",
 				)
 
 			toFile.write("</d:dictionary>\n")
@@ -334,19 +334,23 @@ class Writer:
 
 		with open(join(dirname, "Makefile"), mode="w", encoding="utf-8") as toFile:
 			toFile.write(
-				toStr(pkgutil.get_data(
-					__name__,
-					"templates/Makefile",
-				)).format(dict_name=fileNameBase),
+				toStr(
+					pkgutil.get_data(
+						__name__,
+						"templates/Makefile",
+					),
+				).format(dict_name=fileNameBase),
 			)
 
 		_copyright = glos.getInfo("copyright")
 		if BeautifulSoup:
 			# strip html tags
-			_copyright = str(BeautifulSoup.BeautifulSoup(
-				_copyright,
-				features="lxml",
-			).text)
+			_copyright = str(
+				BeautifulSoup.BeautifulSoup(
+					_copyright,
+					features="lxml",
+				).text,
+			)
 
 		# if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
 		# present in Info.plist, Dictionary.app will crash.
@@ -362,10 +366,12 @@ class Writer:
 			else:
 				bundle_id = glos.getInfo("CFBundleIdentifier")
 			toFile.write(
-				toStr(pkgutil.get_data(
-					__name__,
-					"templates/Info.plist",
-				)).format(
+				toStr(
+					pkgutil.get_data(
+						__name__,
+						"templates/Info.plist",
+					),
+				).format(
 					# identifier must be unique
 					CFBundleIdentifier=bundle_id,
 					CFBundleDisplayName=glos.getInfo("name"),
@@ -381,4 +387,5 @@ class Writer:
 
 		if jing:
 			from .jing import run as jing_run
+
 			jing_run(filePathBase + ".xml")

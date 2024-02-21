@@ -182,7 +182,7 @@ class DebugBglReader(BglReader):
 
 		self.metadata2 = MetaData2() if self._collect_metadata2 else None
 		if self._search_char_samples:
-			self.targetCharsArray = ([False] * 256)
+			self.targetCharsArray = [False] * 256
 		else:
 			self.targetCharsArray = None
 
@@ -262,16 +262,14 @@ class DebugBglReader(BglReader):
 		BglReader.__del__(self)
 
 	def readEntryWord(self, block, pos):
-		succeed, pos, u_word, b_word = \
-			BglReader.readEntryWord(self, block, pos)
+		succeed, pos, u_word, b_word = BglReader.readEntryWord(self, block, pos)
 		if not succeed:
 			return
 		self.rawDumpFileWriteText(f"\n\nblock type = {block.type}\nkey = ")
 		self.rawDumpFileWriteData(b_word)
 
 	def readEntryDefi(self, block, pos, b_key):
-		succeed, pos, u_defi, b_defi = \
-			BglReader.readEntryDefi(self, block, pos, b_key)
+		succeed, pos, u_defi, b_defi = BglReader.readEntryDefi(self, block, pos, b_key)
 		if not succeed:
 			return
 		self.rawDumpFileWriteText("\ndefi = ")
@@ -304,7 +302,8 @@ class DebugBglReader(BglReader):
 				continue
 			try:
 				code = (
-					int(b_part[3:-1], 16) if b_part[:3].lower() == "&#x"
+					int(b_part[3:-1], 16)
+					if b_part[:3].lower() == "&#x"
 					else int(b_part[2:-1])
 				)
 			except (ValueError, OverflowError):
@@ -357,6 +356,7 @@ class DebugBglReader(BglReader):
 
 	def dumpBlocks(self, dumpPath):
 		import pickle
+
 		self.file.seek(0)
 		metaData = MetaData()
 		metaData.numFiles = 0
@@ -418,6 +418,7 @@ class DebugBglReader(BglReader):
 
 	def dumpMetadata2(self, dumpPath):
 		import pickle
+
 		if not self.metadata2:
 			return
 		with open(dumpPath, "wb") as f:
@@ -472,11 +473,7 @@ class DebugBglReader(BglReader):
 					pass
 				else:
 					self.metadata2.defiUtf8Count += 1
-		if (
-			self.metadata2 and
-			self.metadata2.isDefiASCII and
-			not isASCII(fields.u_defi)
-		):
+		if self.metadata2 and self.metadata2.isDefiASCII and not isASCII(fields.u_defi):
 			self.metadata2.isDefiASCII = False
 
 	# search for new chars in data
@@ -489,12 +486,12 @@ class DebugBglReader(BglReader):
 		if len(offsets) == 0:
 			return
 		res = ""
-		utf8 = (encoding.lower() == "utf-8")
+		utf8 = encoding.lower() == "utf-8"
 		i = 0
 		for o in offsets:
 			j = o
 			if utf8:
-				while b_data[j] & 0xc0 == 0x80:
+				while b_data[j] & 0xC0 == 0x80:
 					j -= 1
 			res += b_data[i:j]
 			res += "!!!--+!!!"

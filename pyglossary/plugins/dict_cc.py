@@ -16,8 +16,8 @@ from pyglossary.core import log
 
 enable = True
 lname = "dict_cc"
-format = 'Dictcc'
-description = 'Dict.cc (SQLite3)'
+format = "Dictcc"
+description = "Dict.cc (SQLite3)"
 extensions = ()
 extensionCreate = ".db"
 kind = "binary"
@@ -34,12 +34,13 @@ class Reader:
 		self._clear()
 
 	def _clear(self) -> None:
-		self._filename = ''
+		self._filename = ""
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
+
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
@@ -103,6 +104,7 @@ class Reader:
 		row: "tuple[str, str]",
 	) -> None:
 		from lxml import etree as ET
+
 		trans, entry_type = row
 		if entry_type:
 			with hf.element("i"):
@@ -115,7 +117,7 @@ class Reader:
 			hf.write(repr(trans) + " ")
 		else:
 			with hf.element("big"):
-				with hf.element("a", href=f'bword://{trans}'):
+				with hf.element("a", href=f"bword://{trans}"):
 					hf.write("⏎")
 
 	def iterRows(
@@ -165,7 +167,7 @@ class Reader:
 		else:
 			log.warning(f"invalid gender {g!r}")
 			return None, headword
-		headword = headword[:i] + headword[i + 4:]
+		headword = headword[:i] + headword[i + 4 :]
 		return gender, headword
 
 	def _iterOneDirection(
@@ -185,8 +187,7 @@ class Reader:
 		):
 			headword = html.unescape(headword)
 			groups: "list[tuple[str, str]]" = [
-				(term2, entry_type)
-				for _, term2, entry_type in groupsOrig
+				(term2, entry_type) for _, term2, entry_type in groupsOrig
 			]
 			f = BytesIO()
 			gender, headword = self.parseGender(headword)

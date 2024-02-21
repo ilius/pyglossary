@@ -44,10 +44,13 @@ class Reader(TextGlossaryReader):
 	def __len__(self) -> int:
 		if self._wordCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
-			self._wordCount = fileCountLines(
-				self._filename,
-				newline=b"\n\n",
-			) - self._leadingLinesCount
+			self._wordCount = (
+				fileCountLines(
+					self._filename,
+					newline=b"\n\n",
+				)
+				- self._leadingLinesCount
+			)
 		return self._wordCount
 
 	def isInfoWord(self, word: str) -> bool:
@@ -123,6 +126,7 @@ class Writer:
 
 	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_writer import writeTxt
+
 		newline = self._newline
 		resources = self._resources
 		head = (
@@ -138,9 +142,11 @@ class Writer:
 			entryFmt="{word}\n{defi}\n\n",
 			filename=self._filename,
 			writeInfo=False,
-			defiEscapeFunc=replaceStringTable([
-				("\n", "<br/>"),
-			]),
+			defiEscapeFunc=replaceStringTable(
+				[
+					("\n", "<br/>"),
+				],
+			),
 			ext=".ldf",
 			head=head,
 			newline=newline,

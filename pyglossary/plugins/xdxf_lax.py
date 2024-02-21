@@ -68,6 +68,7 @@ optionsProp: "dict[str, Option]" = {
 
 
 if TYPE_CHECKING:
+
 	class TransformerType(typing.Protocol):
 		def transform(self, article: "Element") -> str:
 			...
@@ -208,11 +209,16 @@ class Reader:
 		elem: "Element",
 	) -> str:
 		from lxml.html import tostring
-		return tostring(
-			elem,
-			method="html",
-			pretty_print=True,
-		).decode("utf-8").strip()
+
+		return (
+			tostring(
+				elem,
+				method="html",
+				pretty_print=True,
+			)
+			.decode("utf-8")
+			.strip()
+		)
 
 	def titles(self, article: "Element") -> "list[str]":
 		"""
@@ -220,6 +226,7 @@ class Reader:
 		:return: (title (str) | None, alternative titles (set))
 		"""
 		from itertools import combinations
+
 		titles: "list[str]" = []
 		for title_element in article.findall("k"):
 			if title_element.text is None:

@@ -97,6 +97,7 @@ old format
 
 
 if TYPE_CHECKING:
+
 	class TransformerType(typing.Protocol):
 		def transform(self, article: "Element") -> str:
 			...
@@ -129,15 +130,18 @@ class Reader:
 	def makeTransformer(self) -> None:
 		if self._xsl:
 			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
+
 			self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
 			return
 
 		from pyglossary.xdxf.transform import XdxfTransformer
+
 		self._htmlTr = XdxfTransformer(encoding=self._encoding)
 
 	def open(self, filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		from lxml import etree as ET
+
 		self._filename = filename
 		if self._html:
 			self.makeTransformer()
@@ -145,10 +149,13 @@ class Reader:
 		else:
 			self._glos.setDefaultDefiFormat("x")
 
-		cfile = self._file = cast("io.IOBase", compressionOpen(
-			self._filename,
-			mode="rb",
-		))
+		cfile = self._file = cast(
+			"io.IOBase",
+			compressionOpen(
+				self._filename,
+				mode="rb",
+			),
+		)
 
 		context = ET.iterparse(  # type: ignore
 			cfile,
@@ -245,11 +252,16 @@ class Reader:
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
-		return ET.tostring(
-			elem,
-			method="html",
-			pretty_print=True,
-		).decode("utf-8").strip()
+
+		return (
+			ET.tostring(
+				elem,
+				method="html",
+				pretty_print=True,
+			)
+			.decode("utf-8")
+			.strip()
+		)
 
 	def titles(self, article: "Element") -> "list[str]":
 		"""
@@ -257,6 +269,7 @@ class Reader:
 		:return: (title (str) | None, alternative titles (set))
 		"""
 		from itertools import combinations
+
 		titles: "list[str]" = []
 		for title_element in article.findall("k"):
 			if title_element.text is None:

@@ -13,8 +13,8 @@ from pyglossary.core import log
 
 enable = True
 lname = "dict_cc_split"
-format = 'Dictcc_split'
-description = 'Dict.cc (SQLite3) - Split'
+format = "Dictcc_split"
+description = "Dict.cc (SQLite3) - Split"
 extensions = ()
 extensionCreate = ".db"
 kind = "binary"
@@ -31,12 +31,13 @@ class Reader:
 		self._clear()
 
 	def _clear(self) -> None:
-		self._filename = ''
+		self._filename = ""
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
+
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()

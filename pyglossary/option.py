@@ -338,6 +338,7 @@ class DictOption(Option):
 		raw: "str | dict",
 	) -> "tuple[dict | None, bool]":
 		import ast
+
 		if isinstance(raw, dict):
 			return raw, True
 		if raw == "":
@@ -370,6 +371,7 @@ class ListOption(Option):
 
 	def evaluate(self, raw: str) -> "tuple[list | None, bool]":
 		import ast
+
 		if raw == "":
 			return None, True  # valid
 		try:
@@ -439,6 +441,7 @@ class EncodingOption(Option):
 
 	def groupValues(self) -> "dict[str, Any] | None":
 		from collections import OrderedDict
+
 		groups: "dict[str, list[str]]" = OrderedDict()
 		others: "list[str]" = []
 		for value in self.values or []:

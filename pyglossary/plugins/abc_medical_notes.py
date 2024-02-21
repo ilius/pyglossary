@@ -11,15 +11,14 @@ if TYPE_CHECKING:
 
 enable = True
 lname = "abc_medical_notes"
-format = 'ABCMedicalNotes'
-description = 'ABC Medical Notes (SQLite3)'
+format = "ABCMedicalNotes"
+description = "ABC Medical Notes (SQLite3)"
 extensions = ()
 extensionCreate = ".db"
 kind = "binary"
 wiki = ""
 _url = (
-	"https://play.google.com/store/apps/details?id="
-	"com.pocketmednotes2014.secondapp"
+	"https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp"
 )
 website = (
 	_url,
@@ -39,6 +38,7 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
+
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()

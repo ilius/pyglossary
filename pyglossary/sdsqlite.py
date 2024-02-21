@@ -1,5 +1,3 @@
-
-
 # -*- coding: utf-8 -*-
 from os.path import isfile
 from typing import TYPE_CHECKING
@@ -24,12 +22,13 @@ class Writer:
 		self._clear()
 
 	def _clear(self) -> None:
-		self._filename = ''
+		self._filename = ""
 		self._con: "sqlite3.Connection | None"
 		self._cur: "sqlite3.Cursor | None"
 
 	def open(self, filename: str) -> None:
 		import sqlite3
+
 		if isfile(filename):
 			raise OSError(f"file {filename!r} already exists")
 		self._filename = filename
@@ -72,8 +71,12 @@ class Writer:
 				"defi, defiFormat, bindata)"
 				" values (?, ?, ?, ?, ?, ?)",
 				(
-					word, word.lower(), alts,
-					defi, defiFormat, bindata,
+					word,
+					word.lower(),
+					alts,
+					defi,
+					defiFormat,
+					bindata,
 				),
 			)
 			count += 1
@@ -102,6 +105,7 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
+
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
@@ -117,8 +121,7 @@ class Reader:
 		if self._cur is None:
 			return
 		self._cur.execute(
-			"select word, alts, defi, defiFormat from dict"
-			" order by wordlower, word",
+			"select word, alts, defi, defiFormat from dict order by wordlower, word",
 		)
 		for row in self._cur:
 			words = [row[0]] + splitByBar(row[1])

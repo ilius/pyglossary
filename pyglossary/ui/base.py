@@ -79,99 +79,127 @@ def getEntryFilterConfigPair(name: str) -> "tuple[str, Option]":
 
 
 class UIBase:
-	configDefDict = OrderedDict([
-		("log_time", BoolOption(
-			hasFlag=True,
-			comment="Show date and time in logs",
-			falseComment="Do not show date and time in logs",
-		)),
-		("cleanup", BoolOption(
-			hasFlag=True,
-			comment="Cleanup cache or temporary files after conversion",
-			falseComment="Do not cleanup cache or temporary files after conversion",
-		)),
-
-		("auto_sqlite", BoolOption(
-			hasFlag=False,
-			comment=(
-				"Auto-enable --sqlite to limit RAM usage when direct\n"
-				"mode is not possible. Can override with --no-sqlite"
+	configDefDict = OrderedDict(
+		[
+			(
+				"log_time",
+				BoolOption(
+					hasFlag=True,
+					comment="Show date and time in logs",
+					falseComment="Do not show date and time in logs",
+				),
 			),
-		)),
-		("optimize_memory", BoolOption(
-			hasFlag=True,
-			comment=(
-				"Optimize memory usage (over speed) in --indirect mode"
+			(
+				"cleanup",
+				BoolOption(
+					hasFlag=True,
+					comment="Cleanup cache or temporary files after conversion",
+					falseComment=(
+						"Do not cleanup cache or temporary files after conversion",
+					),
+				),
 			),
-		)),
-
-		("enable_alts", BoolOption(
-			hasFlag=True,
-			customFlag="alts",
-			comment="Enable alternates",
-			falseComment="Disable alternates",
-		)),
-		# FIXME: replace with "resources"
-		# 	comment="Use resources (images, audio, etc)"
-		("skip_resources", BoolOption(
-			hasFlag=True,
-			comment="Skip resources (images, audio, css, etc)",
-		)),
-		("save_info_json", BoolOption(
-			hasFlag=True,
-			customFlag="info",
-			comment="Save .info file alongside output file(s)",
-		)),
-
-		getEntryFilterConfigPair("lower"),
-		getEntryFilterConfigPair("utf8_check"),
-		getEntryFilterConfigPair("rtl"),
-		getEntryFilterConfigPair("remove_html"),
-		getEntryFilterConfigPair("remove_html_all"),
-		getEntryFilterConfigPair("normalize_html"),
-		getEntryFilterConfigPair("skip_duplicate_headword"),
-		getEntryFilterConfigPair("trim_arabic_diacritics"),
-		getEntryFilterConfigPair("unescape_word_links"),
-
-		("color.enable.cmd.unix", BoolOption(
-			hasFlag=False,
-			comment="Enable colors in Linux/Unix command line",
-		)),
-		("color.enable.cmd.windows", BoolOption(
-			hasFlag=False,
-			comment="Enable colors in Windows command line",
-		)),
-
-		("color.cmd.critical", IntOption(
-			hasFlag=False,
-			comment="Color code for critical errors in command line",
-		)),
-		("color.cmd.error", IntOption(
-			hasFlag=False,
-			comment="Color code for errors in command line",
-		)),
-		("color.cmd.warning", IntOption(
-			hasFlag=False,
-			comment="Color code for warnings in command line",
-		)),
-
-
-		# interactive command line interface
-		("cmdi.prompt.indent.str", StrOption(hasFlag=False)),
-		("cmdi.prompt.indent.color", IntOption(hasFlag=False)),
-		("cmdi.prompt.msg.color", IntOption(hasFlag=False)),
-		("cmdi.msg.color", IntOption(hasFlag=False)),
-
-
-		("ui_autoSetFormat", BoolOption(hasFlag=False)),
-
-		("reverse_matchWord", BoolOption(hasFlag=False)),
-		("reverse_showRel", StrOption(hasFlag=False)),
-		("reverse_saveStep", IntOption(hasFlag=False)),
-		("reverse_minRel", FloatOption(hasFlag=False)),
-		("reverse_maxNum", IntOption(hasFlag=False)),
-		("reverse_includeDefs", BoolOption(hasFlag=False)),
-	])
+			(
+				"auto_sqlite",
+				BoolOption(
+					hasFlag=False,
+					comment=(
+						"Auto-enable --sqlite to limit RAM usage when direct\n"
+						"mode is not possible. Can override with --no-sqlite"
+					),
+				),
+			),
+			(
+				"optimize_memory",
+				BoolOption(
+					hasFlag=True,
+					comment=("Optimize memory usage (over speed) in --indirect mode"),
+				),
+			),
+			(
+				"enable_alts",
+				BoolOption(
+					hasFlag=True,
+					customFlag="alts",
+					comment="Enable alternates",
+					falseComment="Disable alternates",
+				),
+			),
+			# FIXME: replace with "resources"
+			# 	comment="Use resources (images, audio, etc)"
+			(
+				"skip_resources",
+				BoolOption(
+					hasFlag=True,
+					comment="Skip resources (images, audio, css, etc)",
+				),
+			),
+			(
+				"save_info_json",
+				BoolOption(
+					hasFlag=True,
+					customFlag="info",
+					comment="Save .info file alongside output file(s)",
+				),
+			),
+			getEntryFilterConfigPair("lower"),
+			getEntryFilterConfigPair("utf8_check"),
+			getEntryFilterConfigPair("rtl"),
+			getEntryFilterConfigPair("remove_html"),
+			getEntryFilterConfigPair("remove_html_all"),
+			getEntryFilterConfigPair("normalize_html"),
+			getEntryFilterConfigPair("skip_duplicate_headword"),
+			getEntryFilterConfigPair("trim_arabic_diacritics"),
+			getEntryFilterConfigPair("unescape_word_links"),
+			(
+				"color.enable.cmd.unix",
+				BoolOption(
+					hasFlag=False,
+					comment="Enable colors in Linux/Unix command line",
+				),
+			),
+			(
+				"color.enable.cmd.windows",
+				BoolOption(
+					hasFlag=False,
+					comment="Enable colors in Windows command line",
+				),
+			),
+			(
+				"color.cmd.critical",
+				IntOption(
+					hasFlag=False,
+					comment="Color code for critical errors in command line",
+				),
+			),
+			(
+				"color.cmd.error",
+				IntOption(
+					hasFlag=False,
+					comment="Color code for errors in command line",
+				),
+			),
+			(
+				"color.cmd.warning",
+				IntOption(
+					hasFlag=False,
+					comment="Color code for warnings in command line",
+				),
+			),
+			# interactive command line interface
+			("cmdi.prompt.indent.str", StrOption(hasFlag=False)),
+			("cmdi.prompt.indent.color", IntOption(hasFlag=False)),
+			("cmdi.prompt.msg.color", IntOption(hasFlag=False)),
+			("cmdi.msg.color", IntOption(hasFlag=False)),
+			("ui_autoSetFormat", BoolOption(hasFlag=False)),
+			("reverse_matchWord", BoolOption(hasFlag=False)),
+			("reverse_showRel", StrOption(hasFlag=False)),
+			("reverse_saveStep", IntOption(hasFlag=False)),
+			("reverse_minRel", FloatOption(hasFlag=False)),
+			("reverse_maxNum", IntOption(hasFlag=False)),
+			("reverse_includeDefs", BoolOption(hasFlag=False)),
+		],
+	)
 
 	conflictingParams = [
 		("sqlite", "direct"),
@@ -196,6 +224,7 @@ class UIBase:
 		**options,
 	) -> None:
 		from pyglossary.json_utils import jsonToData
+
 		data = jsonToData(fread(rootConfJsonFile))
 		if user and isfile(confJsonFile):
 			try:
@@ -228,6 +257,7 @@ class UIBase:
 
 	def saveConfig(self) -> None:
 		from pyglossary.json_utils import dataToPrettyJson
+
 		config = OrderedDict()
 		for key, option in self.configDefDict.items():
 			if key not in self.config:

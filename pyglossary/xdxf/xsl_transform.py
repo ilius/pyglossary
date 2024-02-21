@@ -1,10 +1,8 @@
-
 import logging
 from os.path import join
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-
 	from lxml.etree import _XSLTResultTree
 
 	from pyglossary.lxml_types import Element
@@ -40,11 +38,16 @@ class XslXdxfTransformer:
 
 	def tostring(self, elem: "_XSLTResultTree | Element") -> str:
 		from lxml import etree as ET
-		return ET.tostring(
-			elem,
-			method="html",
-			pretty_print=True,
-		).decode("utf-8").strip()
+
+		return (
+			ET.tostring(
+				elem,
+				method="html",
+				pretty_print=True,
+			)
+			.decode("utf-8")
+			.strip()
+		)
 
 	def transform(self, article: "Element") -> str:
 		result_tree = self._transform(article)
@@ -54,6 +57,7 @@ class XslXdxfTransformer:
 
 	def transformByInnerString(self, articleInnerStr: str) -> str:
 		from lxml import etree as ET
+
 		return self.transform(
 			ET.fromstring(f"<ar>{articleInnerStr}</ar>"),
 		)

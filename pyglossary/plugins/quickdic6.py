@@ -75,23 +75,26 @@ HASH_SET_INIT2 = (
 """Second part of Java serialization of java.util.HashSet"""
 
 LINKED_HASH_SET_INIT = (
-	b"\xac\xed"  # magic
-	b"\x00\x05"  # version
-	b"\x73"  # object
-	b"\x72"  # class
-	# Java String "java.util.LinkedHashSet":
-	b"\x00\x17\x6a\x61\x76\x61\x2e\x75\x74\x69"
-	b"\x6c\x2e\x4c\x69\x6e\x6b\x65\x64"
-	b"\x48\x61\x73\x68\x53\x65\x74"
-	# serialization ID:
-	b"\xd8\x6c\xd7\x5a\x95\xdd\x2a\x1e"
-	b"\x02"  # flags
-	b"\x00\x00"  # fields count
-	b"\x78"  # blockdata end
-	b"\x72"  # superclass (java.util.HashSet)
-	b"\x00\x11\x6a\x61\x76\x61\x2e\x75\x74\x69"
-	b"\x6c\x2e\x48\x61\x73\x68\x53\x65\x74"
-) + HASH_SET_INIT2
+	(
+		b"\xac\xed"  # magic
+		b"\x00\x05"  # version
+		b"\x73"  # object
+		b"\x72"  # class
+		# Java String "java.util.LinkedHashSet":
+		b"\x00\x17\x6a\x61\x76\x61\x2e\x75\x74\x69"
+		b"\x6c\x2e\x4c\x69\x6e\x6b\x65\x64"
+		b"\x48\x61\x73\x68\x53\x65\x74"
+		# serialization ID:
+		b"\xd8\x6c\xd7\x5a\x95\xdd\x2a\x1e"
+		b"\x02"  # flags
+		b"\x00\x00"  # fields count
+		b"\x78"  # blockdata end
+		b"\x72"  # superclass (java.util.HashSet)
+		b"\x00\x11\x6a\x61\x76\x61\x2e\x75\x74\x69"
+		b"\x6c\x2e\x48\x61\x73\x68\x53\x65\x74"
+	)
+	+ HASH_SET_INIT2
+)
 """Header of Java serialization of java.util.LinkedHashSet"""
 
 HASH_SET_CAPACITY_FACTOR = 0.75
@@ -289,9 +292,7 @@ def read_entry_html(fp):
 def write_entry_html(fp, entry):
 	write_start_offset = fp.tell()
 	src_idx, title, html = entry
-	b_html = "".join(
-		c if ord(c) < 128 else f"&#{ord(c)};" for c in html
-	).encode()
+	b_html = "".join(c if ord(c) < 128 else f"&#{ord(c)};" for c in html).encode()
 	b_compr = io.BytesIO()
 	with gzip.GzipFile(fileobj=b_compr, mode="wb") as zf:
 		# note that the compressed bytes might differ from the original Java
@@ -326,7 +327,7 @@ def read_entry_index(fp):
 	row_data = fp.read(num_rows * row_size)
 	rows = [
 		# <type>, <index>
-		struct.unpack(">bi", row_data[j:j + row_size])
+		struct.unpack(">bi", row_data[j : j + row_size])
 		for j in range(0, len(row_data), row_size)
 	]
 	return (
@@ -402,6 +403,7 @@ def write_entry_indexentry(fp, entry):
 class Comparator:
 	def __init__(self, locale_str: str, normalizer_rules: str, version: int):
 		import icu
+
 		self.version = version
 		self.locale = icu.Locale(locale_str)
 		self._comparator = (
@@ -527,10 +529,7 @@ class QuickDic:
 		]
 		if not swap_flag:
 			tokens.extend(
-				[
-					(title, 4, idx)
-					for idx, (_, title, _) in enumerate(self.htmls)
-				],
+				[(title, 4, idx) for idx, (_, title, _) in enumerate(self.htmls)],
 			)
 		tokens = [(t.strip(), ttype, tidx) for t, ttype, tidx in tokens]
 
@@ -563,9 +562,7 @@ class QuickDic:
 		rows = []
 		index_entries = []
 		for token, token_norm, ttype, tidx in tokens:
-			prev_token = (
-				"" if len(index_entries) == 0 else index_entries[-1][0]
-			)
+			prev_token = "" if len(index_entries) == 0 else index_entries[-1][0]
 			if prev_token == token:
 				(
 					token,
@@ -585,7 +582,7 @@ class QuickDic:
 				if tidx not in html_indices:
 					html_indices.append(tidx)
 			else:
-				if (ttype, tidx) not in rows[index_start + 1:]:
+				if (ttype, tidx) not in rows[index_start + 1 :]:
 					rows.append((ttype, tidx))
 					count += 1
 			index_entries.append(
@@ -667,7 +664,7 @@ class Reader:
 		recurse.append(i_entry)
 		_, _, _, _, _, _, index_entries, _, rows = index
 		token, start_index, count, _, html_indices = index_entries[i_entry]
-		block_rows = rows[start_index:start_index + count + 1]
+		block_rows = rows[start_index : start_index + count + 1]
 		assert block_rows[0][0] in (1, 3) and block_rows[0][1] == i_entry
 		e_rows = []
 		for entry_type, entry_idx in block_rows[1:]:

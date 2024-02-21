@@ -172,13 +172,10 @@ def flagsInfoDecode(b_value: bytes) -> "dict[str, bool]":
 infoType3ByCode = {
 	# glossary name
 	0x01: InfoItem("title"),
-
 	# glossary author name, a list of "|"-separated values
 	0x02: InfoItem("author"),
-
 	# glossary author e-mail
 	0x03: InfoItem("email"),
-
 	0x04: InfoItem("copyright"),
 	0x07: InfoItem(
 		"sourceLang",
@@ -191,36 +188,31 @@ infoType3ByCode = {
 		attr=True,
 	),
 	0x09: InfoItem("description"),
-
 	# 0: browsing disabled, 1: browsing enabled
-	0x0a: InfoItem(
+	0x0A: InfoItem(
 		"bgl_browsingEnabled",
 		decode=lambda b_value: (b_value[0] != 0),
 	),
-
-	0x0b: InfoItem("icon1.ico"),
-
-	0x0c: InfoItem(
+	0x0B: InfoItem("icon1.ico"),
+	0x0C: InfoItem(
 		"bgl_numEntries",
 		decode=uintFromBytes,
 		attr=True,
 	),
-
 	# the value is a dict
 	0x11: InfoItem("flags", decode=flagsInfoDecode),
-
 	0x14: InfoItem("creationTime", decode=decodeBglBinTime),
-	0x1a: InfoItem(
+	0x1A: InfoItem(
 		"sourceCharset",
 		decode=charsetInfoDecode,
 		attr=True,
 	),
-	0x1b: InfoItem(
+	0x1B: InfoItem(
 		"targetCharset",
 		decode=charsetInfoDecode,
 		attr=True,
 	),
-	0x1c: InfoItem(
+	0x1C: InfoItem(
 		"bgl_firstUpdated",
 		decode=decodeBglBinTime,
 	),
@@ -231,52 +223,43 @@ infoType3ByCode = {
 	# in some cases, it's minutes after creationTime
 	# bgl_firstUpdated exists in more glossaries than lastUpdated
 	# so if lastUpdated is not there, we use bgl_firstUpdated as lastUpdated
-
 	0x20: InfoItem(
 		"bgl_caseSensitive2",
 		decode=lambda b_value: (b_value[0] == 0x31),
 		# 0x30 - case sensitive search is disabled
 		# 0x31 - case sensitive search is enabled
 	),
-
 	0x24: InfoItem("icon2.ico"),
-
-	0x2c: InfoItem(
+	0x2C: InfoItem(
 		"bgl_purchaseLicenseMsg",
 		decode=utf16InfoDecode,
 	),
-	0x2d: InfoItem(
+	0x2D: InfoItem(
 		"bgl_licenseExpiredMsg",
 		decode=utf16InfoDecode,
 	),
-	0x2e: InfoItem("bgl_purchaseAddress"),
-
+	0x2E: InfoItem("bgl_purchaseAddress"),
 	0x30: InfoItem(
 		"bgl_titleWide",
 		decode=utf16InfoDecode,
 	),
-
 	# a list of "|"-separated values
 	0x31: InfoItem(
 		"bgl_authorWide",
 		decode=utf16InfoDecode,
 	),
-
 	0x33: InfoItem(
 		"lastUpdated",
 		decode=decodeBglBinTime,
 	),
-	0x3b: InfoItem("bgl_contractions"),
-
+	0x3B: InfoItem("bgl_contractions"),
 	# contains a value like "Arial Unicode MS" or "Tahoma"
-	0x3d: InfoItem("bgl_fontName"),
-
+	0x3D: InfoItem("bgl_fontName"),
 	# value would be dict
 	0x41: InfoItem(
 		"bgl_about",
 		decode=aboutInfoDecode,
 	),
-
 	# the length of the substring match in a term
 	0x43: InfoItem(
 		"bgl_length",

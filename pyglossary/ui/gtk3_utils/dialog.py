@@ -22,6 +22,7 @@ from gi.repository import Gtk as gtk
 
 __all__ = ["MyDialog"]
 
+
 class MyDialog:
 	def startWaiting(self):
 		self.queue_draw()

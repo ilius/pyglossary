@@ -82,9 +82,7 @@ def viewGlossary(
 		if highlightEntry:
 			highlightEntry(entry)
 		entryStr = (
-			f"{yellow}#{index}{reset} " +
-			formatEntry(entry) +
-			"\n" + entrySep + "\n\n"
+			f"{yellow}#{index}{reset} " + formatEntry(entry) + "\n" + entrySep + "\n\n"
 		)
 		proc.stdin.write(entryStr.encode("utf-8"))
 		if (index + 1) % 50 == 0:

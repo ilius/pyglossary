@@ -16,7 +16,8 @@ def createProgressBar(title: str):
 		pb.AnimatedMarker(),
 		" ",
 		pb.Bar(marker="█"),
-		pb.Percentage(), " ",
+		pb.Percentage(),
+		" ",
 		pb.ETA(),
 	]
 	pbar.start(num_intervals=1000)

@@ -35,8 +35,7 @@ website = (
 	"https://www.edrdg.org/wiki/index.php/Main_Page",
 	"EDRDG Wiki",
 )
-optionsProp: "dict[str, Option]" = {
-}
+optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:
@@ -54,9 +53,9 @@ class Reader:
 		# 0.5ex ~= 0.3em, but "ex" is recommended
 	)
 
+	gikun_key = "gikun (meaning as reading) or jukujikun (special kanji reading)"
 	re_inf_mapping = {
-		"gikun (meaning as reading) or jukujikun (special kanji reading)":
-			"gikun/jukujikun",
+		gikun_key: "gikun/jukujikun",
 		"out-dated or obsolete kana usage": "obsolete",  # outdated/obsolete
 		"word containing irregular kana usage": "irregular",
 	}
@@ -131,6 +130,7 @@ class Reader:
 		entry: "Element",
 	) -> "EntryType":
 		from lxml import etree as ET
+
 		glos = self._glos
 		keywords = []
 		f = BytesIO()
@@ -226,11 +226,16 @@ class Reader:
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
-		return ET.tostring(
-			elem,
-			method="html",
-			pretty_print=True,
-		).decode("utf-8").strip()
+
+		return (
+			ET.tostring(
+				elem,
+				method="html",
+				pretty_print=True,
+			)
+			.decode("utf-8")
+			.strip()
+		)
 
 	def setCreationTime(self, header: str) -> None:
 		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)

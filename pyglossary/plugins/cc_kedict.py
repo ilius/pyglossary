@@ -232,6 +232,7 @@ class YamlReader(TextGlossaryReader):
 	) -> "tuple[str, str, None] | None":
 		from lxml import etree as ET
 		from yaml import load
+
 		try:
 			from yaml import CLoader as Loader
 		except ImportError:

@@ -1,10 +1,8 @@
-
 import logging
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-
 	from pyglossary.lxml_types import Element, T_htmlfile
 
 
@@ -59,11 +57,16 @@ class XdxfTransformer:
 
 	def tostring(self, elem: "Element") -> str:
 		from lxml import etree as ET
-		return ET.tostring(
-			elem,
-			method="html",
-			pretty_print=True,
-		).decode("utf-8").strip()
+
+		return (
+			ET.tostring(
+				elem,
+				method="html",
+				pretty_print=True,
+			)
+			.decode("utf-8")
+			.strip()
+		)
 
 	def hasPrevText(self, prev: "None | str | Element") -> bool:
 		if isinstance(prev, str):
@@ -73,8 +76,17 @@ class XdxfTransformer:
 		if prev.tag == "k":
 			return False
 		if prev.tag in (
-			"dtrn", "def", "span", "co",
-			"i", "b", "sub", "sup", "tt", "big", "small",
+			"dtrn",
+			"def",
+			"span",
+			"co",
+			"i",
+			"b",
+			"sub",
+			"sup",
+			"tt",
+			"big",
+			"small",
 		):
 			return True
 		if prev.text:
@@ -128,10 +140,13 @@ class XdxfTransformer:
 	def _write_example(self, hf: "T_htmlfile", elem: "Element") -> None:
 		prev = None
 		stringSep = " "
-		with hf.element("div", attrib={
-			"class": "example",
-			"style": f"padding: {self._example_padding}px 0px;",
-		}):
+		with hf.element(
+			"div",
+			attrib={
+				"class": "example",
+				"style": f"padding: {self._example_padding}px 0px;",
+			},
+		):
 			for child in elem.xpath("child::node()"):
 				if isinstance(child, str):
 					# if not child.strip():
@@ -154,17 +169,23 @@ class XdxfTransformer:
 		iref_url = child.attrib.get("href", "")
 		if iref_url.endswith((".mp3", ".wav", ".aac", ".ogg")):
 			#  with hf.element("audio", src=iref_url):
-			with hf.element("a", attrib={
-				"class": "iref",
-				"href": iref_url,
-			}):
+			with hf.element(
+				"a",
+				attrib={
+					"class": "iref",
+					"href": iref_url,
+				},
+			):
 				hf.write("🔊")
 			return
 
-		with hf.element("a", attrib={
-			"class": "iref",
-			"href": child.attrib.get("href", child.text or ""),
-		}):
+		with hf.element(
+			"a",
+			attrib={
+				"class": "iref",
+				"href": child.attrib.get("href", child.text or ""),
+			},
+		):
 			self.writeChildrenOf(hf, child, stringSep=" ")
 
 	def _write_blockquote(self, hf: "T_htmlfile", child: "Element") -> None:
@@ -173,6 +194,7 @@ class XdxfTransformer:
 
 	def _write_tr(self, hf: "T_htmlfile", child: "Element") -> None:
 		from lxml import etree as ET
+
 		hf.write("[")
 		self.writeChildrenOf(hf, child)
 		hf.write("]")
@@ -196,10 +218,13 @@ class XdxfTransformer:
 		if not child.text:
 			log.warning(f"kref with no text: {self.tostring(child)}")
 			return
-		with hf.element("a", attrib={
-			"class": "kref",
-			"href": f"bword://{child.attrib.get('k', child.text)}",
-		}):
+		with hf.element(
+			"a",
+			attrib={
+				"class": "kref",
+				"href": f"bword://{child.attrib.get('k', child.text)}",
+			},
+		):
 			hf.write(child.text)
 
 	def _write_sr(self, hf: "T_htmlfile", child: "Element") -> None:
@@ -232,6 +257,7 @@ class XdxfTransformer:
 
 	def _write_br(self, hf: "T_htmlfile", child: "Element") -> None:
 		from lxml import etree as ET
+
 		hf.write(ET.Element("br"))
 		self.writeChildrenOf(hf, child)
 
@@ -267,6 +293,7 @@ class XdxfTransformer:
 
 	def _write_gr(self, hf: "T_htmlfile", child: "Element") -> None:
 		from lxml import etree as ET
+
 		with hf.element("font", color=self._gram_color):
 			hf.write(child.text or "")
 		hf.write(ET.Element("br"))
@@ -383,6 +410,7 @@ class XdxfTransformer:
 
 	def transform(self, article: "Element") -> str:
 		from lxml import etree as ET
+
 		# encoding = self._encoding
 		f = BytesIO()
 		with ET.htmlfile(f, encoding="utf-8") as hf:
@@ -395,6 +423,7 @@ class XdxfTransformer:
 
 	def transformByInnerString(self, articleInnerStr: str) -> str:
 		from lxml import etree as ET
+
 		return self.transform(
 			ET.fromstring(f"<ar>{articleInnerStr}</ar>"),
 		)

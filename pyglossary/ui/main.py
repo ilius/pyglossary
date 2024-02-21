@@ -131,7 +131,7 @@ def registerConfigOption(
 		return
 	flag = option.customFlag
 	if not flag:
-		flag = key.replace('_', '-')
+		flag = key.replace("_", "-")
 
 	if option.typ != "bool":
 		parser.add_argument(
@@ -193,6 +193,7 @@ def base_ui_run(
 	glossarySetAttrs: "dict | None" = None,
 ) -> bool:
 	from pyglossary.glossary_v2 import ConvertArgs, Glossary
+
 	if reverse:
 		log.error("--reverse does not work with --ui=none")
 		return False
@@ -203,25 +204,29 @@ def base_ui_run(
 	if glossarySetAttrs:
 		for attr, value in glossarySetAttrs.items():
 			setattr(glos, attr, value)
-	glos.convert(ConvertArgs(
-		inputFilename=inputFilename,
-		outputFilename=outputFilename,
-		inputFormat=inputFormat,
-		outputFormat=outputFormat,
-		readOptions=readOptions,
-		writeOptions=writeOptions,
-		**convertOptions,
-	))
+	glos.convert(
+		ConvertArgs(
+			inputFilename=inputFilename,
+			outputFilename=outputFilename,
+			inputFormat=inputFormat,
+			outputFormat=outputFormat,
+			readOptions=readOptions,
+			writeOptions=writeOptions,
+			**convertOptions,
+		),
+	)
 	return True
 
 
 def getGitVersion(gitDir: str) -> str:
 	import subprocess
+
 	try:
 		outputB, _err = subprocess.Popen(
 			[
 				"git",
-				"--git-dir", gitDir,
+				"--git-dir",
+				gitDir,
 				"describe",
 				"--always",
 			],
@@ -236,6 +241,7 @@ def getGitVersion(gitDir: str) -> str:
 
 def getVersion() -> str:
 	from pyglossary.core import rootDir
+
 	gitDir = os.path.join(rootDir, ".git")
 	if os.path.isdir(gitDir):
 		version = getGitVersion(gitDir)
@@ -301,7 +307,7 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 				return ui_module.UI(**uiArgs).run
 		log.error(
 			"no user interface module found! "
-			f"try \"{sys.argv[0]} -h\" to see command line usage",
+			f'try "{sys.argv[0]} -h" to see command line usage',
 		)
 		sys.exit(1)
 
@@ -319,8 +325,7 @@ def main() -> None:
 	uiBase.loadConfig()
 	config = uiBase.config
 	defaultHasColor = config.get(
-		"color.enable.cmd.windows" if os.sep == "\\"
-		else "color.enable.cmd.unix",
+		"color.enable.cmd.windows" if os.sep == "\\" else "color.enable.cmd.unix",
 		True,
 	)
 

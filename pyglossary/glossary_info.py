@@ -177,6 +177,7 @@ class GlossaryInfo:
 
 	def titleTag(self, sample: str) -> str:
 		from .langs.writing_system import getWritingSystemFromText
+
 		ws = getWritingSystemFromText(sample)
 		if ws and ws.name != "Latin":
 			return ws.titleTag

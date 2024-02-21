@@ -81,6 +81,7 @@ def replaceStringTable(
 		for rpl in rplList:
 			st = st.replace(rpl[0], rpl[1])
 		return st
+
 	return replace
 
 
@@ -111,10 +112,7 @@ def splitByBarUnescapeNTB(st: str) -> "list[str]":
 	Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
 	returns a list.
 	"""
-	return [
-		unescapeNTB(part, bar=True)
-		for part in pattern_bar_sp.split(st)
-	]
+	return [unescapeNTB(part, bar=True) for part in pattern_bar_sp.split(st)]
 
 
 def escapeBar(st: str) -> str:
@@ -133,17 +131,11 @@ def splitByBar(st: str) -> "list[str]":
 	Split by "|" (and not "\\|")
 	then unescapes Baskslash (\\) and Bar (\\|) in each part.
 	"""
-	return [
-		unescapeBar(part)
-		for part in pattern_bar_sp.split(st)
-	]
+	return [unescapeBar(part) for part in pattern_bar_sp.split(st)]
 
 
 def joinByBar(parts: "list[str]") -> "str":
-	return "|".join(
-		escapeBar(part)
-		for part in parts
-	)
+	return "|".join(escapeBar(part) for part in parts)
 
 
 def unescapeBarBytes(st: bytes) -> bytes:
@@ -172,19 +164,19 @@ def formatHMS(h: int, m: int, s: int) -> str:
 
 
 def uint32ToBytes(n: int) -> bytes:
-	return struct.pack('>I', n)
+	return struct.pack(">I", n)
 
 
 def uint64ToBytes(n: int) -> bytes:
-	return struct.pack('>Q', n)
+	return struct.pack(">Q", n)
 
 
 def uint32FromBytes(bs: bytes) -> int:
-	return struct.unpack('>I', bs)[0]
+	return struct.unpack(">I", bs)[0]
 
 
 def uint64FromBytes(bs: bytes) -> int:
-	return struct.unpack('>Q', bs)[0]
+	return struct.unpack(">Q", bs)[0]
 
 
 def uintFromBytes(bs: bytes) -> int:
@@ -195,13 +187,15 @@ def uintFromBytes(bs: bytes) -> int:
 
 
 def crc32hex(bs: bytes) -> str:
-	return struct.pack('>I', binascii.crc32(bs) & 0xffffffff).hex()
+	return struct.pack(">I", binascii.crc32(bs) & 0xFFFFFFFF).hex()
+
 
 # ___________________________________________ #
 
 
 def urlToPath(url: str) -> str:
 	from urllib.parse import unquote
+
 	if not url.startswith("file://"):
 		return unquote(url)
 	path = url[7:]

@@ -1,5 +1,3 @@
-
-
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, cast
 
@@ -68,6 +66,7 @@ class Reader:
 
 	def xdxf_setup(self) -> "XdxfTransformer":
 		from pyglossary.xdxf.transform import XdxfTransformer
+
 		self._xdxfTr = tr = XdxfTransformer(encoding="utf-8")
 		return tr
 
@@ -296,11 +295,17 @@ class Writer:
 			maker.dicttype(""),
 		)
 		_file = self._file
-		_file.write(cast(bytes, ET.tostring(
-			info,
-			encoding=self._encoding,
-			pretty_print=pretty,
-		)).decode(self._encoding) + "\n")
+		_file.write(
+			cast(
+				bytes,
+				ET.tostring(
+					info,
+					encoding=self._encoding,
+					pretty_print=pretty,
+				),
+			).decode(self._encoding)
+			+ "\n",
+		)
 
 	def writeDataEntry(
 		self,
@@ -326,9 +331,11 @@ class Writer:
 		encoding = self._encoding
 		maker = builder.ElementMaker()
 
-		_file.write("""<?xml version="1.0" encoding="UTF-8" ?>
+		_file.write(
+			"""<?xml version="1.0" encoding="UTF-8" ?>
 <stardict xmlns:xi="http://www.w3.org/2003/XInclude">
-""")
+""",
+		)
 
 		self.writeInfo(maker, pretty=True)
 
@@ -346,16 +353,21 @@ class Writer:
 			)
 			for alt in entry.l_word[1:]:
 				article.append(maker.synonym(alt))
-			article.append(maker.definition(
-				ET.CDATA(entry.defi),
-				type=entry.defiFormat,
-			))
+			article.append(
+				maker.definition(
+					ET.CDATA(entry.defi),
+					type=entry.defiFormat,
+				),
+			)
 			ET.indent(article, space="")
-			articleStr = cast(bytes, ET.tostring(
-				article,
-				pretty_print=pretty,
-				encoding=encoding,
-			)).decode(encoding)
+			articleStr = cast(
+				bytes,
+				ET.tostring(
+					article,
+					pretty_print=pretty,
+					encoding=encoding,
+				),
+			).decode(encoding)
 			# for some reason, "´k" becomes " ́k" (for example)
 			# stardict-text2bin tool also does this.
 			# https://en.wiktionary.org/wiki/%CB%88#Translingual

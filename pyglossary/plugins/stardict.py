@@ -228,14 +228,9 @@ class BaseSqList:
 			("word", "TEXT"),
 		] + self.getExtraColumns()
 
-		self._columnNames = ",".join(
-			col[0] for col in columns
-		)
+		self._columnNames = ",".join(col[0] for col in columns)
 
-		colDefs = ",".join(
-			f"{col[0]} {col[1]}"
-			for col in columns
-		)
+		colDefs = ",".join(f"{col[0]} {col[1]}" for col in columns)
 		self._con.execute(
 			f"CREATE TABLE data ({colDefs})",
 		)
@@ -257,8 +252,7 @@ class BaseSqList:
 		self._len += 1
 		extraN = len(self._columns) - 1
 		self._cur.execute(
-			f"insert into data({self._columnNames})"
-			f" values (?{', ?' * extraN})",
+			f"insert into data({self._columnNames}) values (?{', ?' * extraN})",
 			[item[0].lower()] + list(item),
 		)
 		if self._len % 1000 == 0:
@@ -313,7 +307,6 @@ class Reader:
 	_unicode_errors: str = "strict"
 
 	def __init__(self, glos: GlossaryType) -> None:
-
 		self._glos = glos
 		self.clear()
 
@@ -340,8 +333,10 @@ class Reader:
 	def xdxf_setup(self) -> "XdxfTransformerType":
 		if self._xsl:
 			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
+
 			return XslXdxfTransformer(encoding="utf-8")
 		from pyglossary.xdxf.transform import XdxfTransformer
+
 		return XdxfTransformer(encoding="utf-8")
 
 	def xdxf_transform(self, text: str) -> str:
@@ -442,11 +437,13 @@ class Reader:
 		pos = 0
 
 		if self._large_file:
+
 			def getOffset() -> "tuple[int, int]":
-				return uint64FromBytes(idxBytes[pos:pos + 8]), pos + 8
+				return uint64FromBytes(idxBytes[pos : pos + 8]), pos + 8
 		else:
+
 			def getOffset() -> "tuple[int, int]":
-				return uint32FromBytes(idxBytes[pos:pos + 4]), pos + 4
+				return uint32FromBytes(idxBytes[pos : pos + 4]), pos + 4
 
 		while pos < len(idxBytes):
 			beg = pos
@@ -460,7 +457,7 @@ class Reader:
 				log.error("Index file is corrupted")
 				break
 			offset, pos = getOffset()
-			size = uint32FromBytes(idxBytes[pos:pos + 4])
+			size = uint32FromBytes(idxBytes[pos : pos + 4])
 			pos += 4
 			indexData.append((b_word, offset, size))
 
@@ -636,7 +633,7 @@ class Reader:
 
 		unicode_errors = self._unicode_errors
 
-		synBytes = b''
+		synBytes = b""
 		if isfile(self._filename + ".syn"):
 			with open(self._filename + ".syn", mode="rb") as _file:
 				synBytes = _file.read()
@@ -660,7 +657,7 @@ class Reader:
 			if pos + 4 > len(synBytes):
 				log.error("Synonym file is corrupted")
 				break
-			entryIndex = uint32FromBytes(synBytes[pos:pos + 4])
+			entryIndex = uint32FromBytes(synBytes[pos : pos + 4])
 			pos += 4
 			if entryIndex >= self._wordCount:
 				log.error(
@@ -709,11 +706,11 @@ class Reader:
 				# assert bytes([t]).isupper()
 				if i + 4 > len(b_block):
 					return None
-				size = uint32FromBytes(b_block[i:i + 4])
+				size = uint32FromBytes(b_block[i : i + 4])
 				i += 4
 				if i + size > len(b_block):
 					return None
-				res.append((b_block[i:i + size], t))
+				res.append((b_block[i : i + size], t))
 				i += size
 
 		if i >= len(b_block):
@@ -758,11 +755,11 @@ class Reader:
 				# assert bytes([t]).isupper()
 				if i + 4 > len(b_block):
 					return None
-				size = uint32FromBytes(b_block[i:i + 4])
+				size = uint32FromBytes(b_block[i : i + 4])
 				i += 4
 				if i + size > len(b_block):
 					return None
-				res.append((b_block[i:i + size], t))
+				res.append((b_block[i : i + size], t))
 				i += size
 		return res
 
@@ -792,7 +789,7 @@ class Writer:
 		self._sourceLang: "Lang | None" = None
 		self._targetLang: "Lang | None" = None
 		self._p_pattern = re.compile(
-			'<p( [^<>]*?)?>(.*?)</p>',
+			"<p( [^<>]*?)?>(.*?)</p>",
 			re.DOTALL,
 		)
 		self._br_pattern = re.compile(
@@ -848,6 +845,7 @@ class Writer:
 
 	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.os_utils import runDictzip
+
 		if self._sametypesequence:
 			if self._merge_syns:
 				yield from self.writeCompactMergeSyns(self._sametypesequence)
@@ -900,9 +898,9 @@ class Writer:
 
 	def dictMarkToBytesFunc(self) -> "tuple[Callable, int]":
 		if self._large_file:
-			return uint64ToBytes, 0xffffffffffffffff
+			return uint64ToBytes, 0xFFFFFFFFFFFFFFFF
 
-		return uint32ToBytes, 0xffffffff
+		return uint32ToBytes, 0xFFFFFFFF
 
 	def writeCompact(self, defiFormat: str) -> "Generator[None, EntryType, None]":
 		"""
@@ -948,9 +946,12 @@ class Writer:
 			dictFile.write(b_dictBlock)
 			blockLen = len(b_dictBlock)
 
-			b_idxBlock = word.encode("utf-8") + b"\x00" + \
-				dictMarkToBytes(dictMark) + \
-				uint32ToBytes(blockLen)
+			b_idxBlock = (
+				word.encode("utf-8")
+				+ b"\x00"
+				+ dictMarkToBytes(dictMark)
+				+ uint32ToBytes(blockLen)
+			)
 			idxFile.write(b_idxBlock)
 
 			dictMark += blockLen
@@ -1026,9 +1027,12 @@ class Writer:
 			dictFile.write(b_dictBlock)
 			blockLen = len(b_dictBlock)
 
-			b_idxBlock = word.encode("utf-8") + b"\x00" + \
-				dictMarkToBytes(dictMark) + \
-				uint32ToBytes(blockLen)
+			b_idxBlock = (
+				word.encode("utf-8")
+				+ b"\x00"
+				+ dictMarkToBytes(dictMark)
+				+ uint32ToBytes(blockLen)
+			)
 			idxFile.write(b_idxBlock)
 
 			dictMark += blockLen
@@ -1074,10 +1078,12 @@ class Writer:
 		log.info(f"Writing {len(altIndexList)} synonyms...")
 		t0 = now()
 		with open(self._filename + ".syn", "wb") as synFile:
-			synFile.write(b"".join(
-				b_alt + b"\x00" + uint32ToBytes(entryIndex)
-				for b_alt, entryIndex in altIndexList
-			))
+			synFile.write(
+				b"".join(
+					b_alt + b"\x00" + uint32ToBytes(entryIndex)
+					for b_alt, entryIndex in altIndexList
+				),
+			)
 		log.info(
 			f"Writing {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
 		)
@@ -1241,10 +1247,7 @@ class Writer:
 		log.info(f"Writing {len(indexList)} index entries...")
 		t0 = now()
 		with open(filename, mode="wb") as indexFile:
-			indexFile.write(b"".join(
-				key + b"\x00" + value
-				for key, value in indexList
-			))
+			indexFile.write(b"".join(key + b"\x00" + value for key, value in indexList))
 		log.info(
 			f"Writing {len(indexList)} {filename} took {now()-t0:.2f} seconds",
 		)

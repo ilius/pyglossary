@@ -57,8 +57,7 @@ website = (
 # https://help.kobo.com/hc/en-us/articles/360017640093-Add-new-dictionaries-to-your-Kobo-eReader
 
 
-optionsProp: "dict[str, Option]" = {
-}
+optionsProp: "dict[str, Option]" = {}
 
 
 # Penelope option: marisa_index_size=1000000
@@ -147,7 +146,7 @@ class Writer:
 
 		dataEntryCount = 0
 
-		htmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?><html>\n"
+		htmlHeader = '<?xml version="1.0" encoding="utf-8"?><html>\n'
 
 		groupCounter = 0
 		htmlContents = htmlHeader
@@ -190,14 +189,20 @@ class Writer:
 				headword, *variants = p_words
 				if headword != mainHeadword:
 					headword = f"{mainHeadword}, {headword}"
-				data.append((
-					prefix,
-					compress(dumps((
-						headword,
-						variants,
-						defi,
-					))),
-				))
+				data.append(
+					(
+						prefix,
+						compress(
+							dumps(
+								(
+									headword,
+									variants,
+									defi,
+								),
+							),
+						),
+					),
+				)
 			del entry
 
 		log.info("Kobo: sorting entries...")
@@ -214,11 +219,10 @@ class Writer:
 			lastPrefix = prefix
 
 			htmlVariants = "".join(
-				f'<variant name="{v.strip().lower()}"/>'
-				for v in variants
+				f'<variant name="{v.strip().lower()}"/>' for v in variants
 			)
 			body = f"<div><b>{headword}</b><var>{htmlVariants}</var><br/>{defi}</div>"
-			htmlContents += f"<w><a name=\"{headword}\" />{body}</w>\n"
+			htmlContents += f'<w><a name="{headword}" />{body}</w>\n'
 			groupCounter += 1
 		del data
 
@@ -247,6 +251,7 @@ class Writer:
 
 	def finish(self) -> None:
 		import marisa_trie
+
 		with indir(self._filename, create=False):
 			trie = marisa_trie.Trie(self._words)
 			trie.save(self.WORDS_FILE_NAME)

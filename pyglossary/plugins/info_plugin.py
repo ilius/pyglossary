@@ -131,34 +131,27 @@ class Writer:
 		info["non_lowercase_word_count"] = nonLowercaseWordCount
 		info["data_entry_count"] = data_entry_count
 		info["data_entry_extension_count"] = ", ".join(
-			f"{ext}={count}"
-			for ext, count in
-			dataEntryExtCounter.most_common()
+			f"{ext}={count}" for ext, count in dataEntryExtCounter.most_common()
 		)
 		info["defi_format"] = ", ".join(
 			f"{defiFormat}={count}"
-			for defiFormat, count in
-			sorted(defiFormatCounter.items())
+			for defiFormat, count in sorted(defiFormatCounter.items())
 		)
 		info["defi_tag"] = ", ".join(
 			f"{defiFormat}={count}"
-			for defiFormat, count in
-			allTagsCounter.most_common()
+			for defiFormat, count in allTagsCounter.most_common()
 		)
 		info["defi_first_tag"] = ", ".join(
 			f"{defiFormat}={count}"
-			for defiFormat, count in
-			firstTagCounter.most_common()
+			for defiFormat, count in firstTagCounter.most_common()
 		)
 		info["style"] = ", ".join(
 			f"{defiFormat}={count}"
-			for defiFormat, count in
-			styleByTagCounter.most_common()
+			for defiFormat, count in styleByTagCounter.most_common()
 		)
 		info["source_script"] = ", ".join(
 			f"{defiFormat}={count}"
-			for defiFormat, count in
-			sourceScriptCounter.most_common()
+			for defiFormat, count in sourceScriptCounter.most_common()
 		)
 		self._file.write(dataToPrettyJson(info) + "\n")
 

@@ -306,10 +306,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 		self._entryFilters = entryFilters
 
-		self._entryFiltersName = {
-			entryFilter.name
-			for entryFilter in entryFilters
-		}
+		self._entryFiltersName = {entryFilter.name for entryFilter in entryFilters}
 
 		self._entryFiltersAreSet = True
 
@@ -348,10 +345,12 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		name = StripFullHtml.name
 		if name in self._entryFiltersName:
 			return
-		self._entryFilters.append(StripFullHtml(
-			cast(GlossaryType, self),
-			errorHandler=errorHandler,
-		))
+		self._entryFilters.append(
+			StripFullHtml(
+				cast(GlossaryType, self),
+				errorHandler=errorHandler,
+			),
+		)
 		self._entryFiltersName.add(name)
 
 	def preventDuplicateWords(self) -> None:
@@ -449,6 +448,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		[("h", 0.91), ("m", 0.09)].
 		"""
 		from collections import Counter
+
 		readers = self._readers
 		if readers:
 			log.error("collectDefiFormat: not supported in direct mode")
@@ -478,9 +478,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		return result
 
 	def __len__(self) -> int:
-		return len(self._data) + sum(
-			len(reader) for reader in self._readers
-		)
+		return len(self._data) + sum(len(reader) for reader in self._readers)
 
 	@property
 	def config(self) -> "dict[str, Any]":
@@ -536,7 +534,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		tag = self.titleTag(sample)
 		if _class:
 			return f'<{tag} class="{_class}">{word}</{tag}><br>'
-		return f'<{tag}>{word}</{tag}><br>'
+		return f"<{tag}>{word}</{tag}><br>"
 
 	def getConfig(self, name: str, default: "str | None") -> "str | None":
 		return self._config.get(name, default)
@@ -555,15 +553,16 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		Create and return a new entry object.
 
 		defiFormat must be empty or one of these:
-			"m": plain text
-			"h": html
-			"x": xdxf
+				"m": plain text
+				"h": html
+				"x": xdxf
 		"""
 		if not defiFormat:
 			defiFormat = self._defaultDefiFormat
 
 		return Entry(
-			word, defi,
+			word,
+			defi,
 			defiFormat=defiFormat,
 			byteProgress=byteProgress,
 		)
@@ -613,6 +612,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def _setTmpDataDir(self, filename: str) -> None:
 		import uuid
+
 		# good thing about cacheDir is that we don't have to clean it up after
 		# conversion is finished.
 		# specially since dataEntry.save(...) will move the file from cacheDir
@@ -704,6 +704,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 		if compression:
 			from .compression import uncompress
+
 			uncompress(origFilename, filename, compression)
 
 		self._validateReadoptions(format, options)
@@ -910,7 +911,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			log.critical(str(e))
 			return None
 		except Exception:
-			log.exception("Exception while calling plugin\'s write function")
+			log.exception("Exception while calling plugin's write function")
 			return None
 		finally:
 			showMemoryUsage()
@@ -925,6 +926,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 	def _compressOutput(self, filename: str, compression: str) -> str:
 		from .compression import compress
+
 		return compress(
 			cast(GlossaryType, self),
 			filename,
@@ -1214,6 +1216,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		self.cleanup()
 
 		return finalOutputFile
+
 
 # ________________________________________________________________________#
 

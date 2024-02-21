@@ -114,7 +114,7 @@ def replaceHtmlEntryCB(u_match: "re.Match") -> str:
 def replaceDingbat(u_match: "re.Match") -> str:
 	r"""Replace chars \\u008c-\\u0095 with \\u2776-\\u277f."""
 	ch = u_match.group(0)
-	code = ch + 0x2776 - 0x8c
+	code = ch + 0x2776 - 0x8C
 	return chr(code)
 
 
@@ -221,7 +221,8 @@ def replaceAsciiCharRefs(b_text: bytes) -> bytes:
 		# reference
 		try:
 			code = (
-				int(b_part[3:-1], 16) if b_part[:3].lower() == "&#x"
+				int(b_part[3:-1], 16)
+				if b_part[:3].lower() == "&#x"
 				else int(b_part[2:-1])
 			)
 			if code <= 0:
@@ -295,7 +296,7 @@ def stripDollarIndexes(b_word: bytes) -> "tuple[bytes, int]":
 				break
 			continue
 
-		if b_word[d0 + 1:d1].strip(b"0123456789"):
+		if b_word[d0 + 1 : d1].strip(b"0123456789"):
 			# if has at least one non-digit char
 			# log.debug(f"stripDollarIndexes({b_word}):\nnon-digit between $$")
 			b_word_main += b_word[i:d1]

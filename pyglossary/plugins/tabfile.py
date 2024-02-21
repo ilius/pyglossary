@@ -136,6 +136,7 @@ class Writer:
 	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_utils import escapeNTB, joinByBar
 		from pyglossary.text_writer import TextGlossaryWriter
+
 		writer = TextGlossaryWriter(
 			self._glos,
 			entryFmt="{word}\t{defi}\n",

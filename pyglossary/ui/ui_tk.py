@@ -42,19 +42,12 @@ from .base import (
 
 log = logging.getLogger("pyglossary")
 
-pluginByDesc = {
-	plugin.description: plugin
-	for plugin in Glossary.plugins.values()
-}
+pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
 readDesc = [
-	plugin.description
-	for plugin in Glossary.plugins.values()
-	if plugin.canRead
+	plugin.description for plugin in Glossary.plugins.values() if plugin.canRead
 ]
 writeDesc = [
-	plugin.description
-	for plugin in Glossary.plugins.values()
-	if plugin.canWrite
+	plugin.description for plugin in Glossary.plugins.values() if plugin.canWrite
 ]
 
 
@@ -154,7 +147,7 @@ def newReadOnlyText(
 	# comment this out for older versions of Tkinter
 	widget.configure(
 		inactiveselectbackground=widget.cget("selectbackground"),
-		bg=parent.cget('bg'),
+		bg=parent.cget("bg"),
 		relief="flat",
 	)
 	return widget
@@ -340,17 +333,19 @@ class FormatDialog(tix.Toplevel):
 		if title:
 			self.title(title)
 		set_window_icon(self)
-		self.bind('<Escape>', lambda _e: self.destroy())
+		self.bind("<Escape>", lambda _e: self.destroy())
 
 		px, py, pw, ph = decodeGeometry(button.winfo_toplevel().geometry())
 		width = 400
 		height = 400
-		self.geometry(encodeGeometry(
-			px + pw // 2 - width // 2,
-			py + ph // 2 - height // 2,
-			width,
-			height,
-		))
+		self.geometry(
+			encodeGeometry(
+				px + pw // 2 - width // 2,
+				py + ph // 2 - height // 2,
+				width,
+				height,
+			),
+		)
 
 		entryBox = tk.Frame(master=self)
 		label = tk.Label(master=entryBox, text="Search: ")
@@ -579,7 +574,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		self.resizable(width=True, height=True)
 		self.title(kind + " Options")
 		set_window_icon(self)
-		self.bind('<Escape>', lambda _e: self.destroy())
+		self.bind("<Escape>", lambda _e: self.destroy())
 
 		self.menu = None
 		self.format = format
@@ -638,7 +633,7 @@ class FormatOptionsDialog(tix.Toplevel):
 			prop = self.optionsProp[optName]
 			comment = prop.longComment
 			if len(comment) > self.commentLen:
-				comment = comment[:self.commentLen] + "..."
+				comment = comment[: self.commentLen] + "..."
 			row = [
 				int(optName in values),
 				optName,
@@ -673,17 +668,19 @@ class FormatOptionsDialog(tix.Toplevel):
 		dialog.resizable(width=True, height=True)
 		dialog.title(optName)
 		set_window_icon(dialog)
-		dialog.bind('<Escape>', lambda _e: dialog.destroy())
+		dialog.bind("<Escape>", lambda _e: dialog.destroy())
 
 		px, py, pw, ph = decodeGeometry(treev.winfo_toplevel().geometry())
 		width = 300
 		height = 100
-		dialog.geometry(encodeGeometry(
-			px + pw // 2 - width // 2,
-			py + ph // 2 - height // 2,
-			width,
-			height,
-		))
+		dialog.geometry(
+			encodeGeometry(
+				px + pw // 2 - width // 2,
+				py + ph // 2 - height // 2,
+				width,
+				height,
+			),
+		)
 
 		frame = tix.Frame(master=dialog)
 
@@ -786,6 +783,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		def valueMenuItemSelectedCommand(value):
 			def callback():
 				self.valueMenuItemSelected(optName, menu, value)
+
 			return callback
 
 		if groupedValues:
@@ -904,10 +902,12 @@ class FormatOptionsButton(tk.Button):
 		# w and h are rough estimated width and height of `dialog`
 		px, py, pw, ph = decodeGeometry(self.winfo_toplevel().geometry())
 		# move dialog without changing the size
-		dialog.geometry(encodeLocation(
-			px + pw // 2 - w // 2,
-			py + ph // 2 - h // 2,
-		))
+		dialog.geometry(
+			encodeLocation(
+				px + pw // 2 - w // 2,
+				py + ph // 2 - h // 2,
+			),
+		)
 		dialog.focus()
 
 
@@ -921,7 +921,7 @@ class UI(tix.Frame, UIBase):
 		rootWin = self.rootWin = tix.Tk()
 		# a hack that hides the window until we move it to the center of screen
 		if os.sep == "\\":  # Windows
-			rootWin.attributes('-alpha', 0.0)
+			rootWin.attributes("-alpha", 0.0)
 		else:  # Linux
 			rootWin.withdraw()
 		tix.Frame.__init__(self, rootWin)
@@ -931,7 +931,7 @@ class UI(tix.Frame, UIBase):
 		# self.progressbarEnable = progressbar
 		########
 		set_window_icon(rootWin)
-		rootWin.bind('<Escape>', lambda _e: rootWin.quit())
+		rootWin.bind("<Escape>", lambda _e: rootWin.quit())
 		#########
 		# Linux: ('clam', 'alt', 'default', 'classic')
 		# Windows: ('winnative', 'clam', 'alt', 'default', 'classic', 'vista',
@@ -943,7 +943,7 @@ class UI(tix.Frame, UIBase):
 		self.pack(fill="x")
 		# rootWin.bind("<Configure>", self.resized)
 		#######################
-		defaultFont = tkFont.nametofont('TkDefaultFont')
+		defaultFont = tkFont.nametofont("TkDefaultFont")
 		if core.sysName in ("linux", "freebsd"):
 			defaultFont.configure(size=int(defaultFont.cget("size") * 1.4))
 		####
@@ -1124,14 +1124,16 @@ class UI(tix.Frame, UIBase):
 			# activebackground="#22f022",
 			borderwidth=7,
 			font=self.biggerFont,
-			padx=5, pady=5,
+			padx=5,
+			pady=5,
 		)
 		button.grid(
 			row=row,
 			column=2,
 			columnspan=3,
 			sticky=tk.W + tk.E + tk.S,
-			padx=5, pady=5,
+			padx=5,
+			pady=5,
 		)
 		# print(f"row number for Convert button: {row}")
 		######
@@ -1159,7 +1161,8 @@ class UI(tix.Frame, UIBase):
 			column=0,
 			columnspan=4,
 			sticky=tk.W + tk.E,
-			padx=5, pady=0,
+			padx=5,
+			pady=0,
 		)
 		log.addHandler(
 			TkTextLogHandler(console),
@@ -1277,7 +1280,12 @@ class UI(tix.Frame, UIBase):
 			statusBarframe,
 			comboVar,
 			log.getVerbosity(),  # default
-			0, 1, 2, 3, 4, 5,
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
 		)
 		comboVar.trace("w", self.verbosityChanged)
 		combo.pack(side="left")
@@ -1294,7 +1302,7 @@ class UI(tix.Frame, UIBase):
 		centerWindow(rootWin)
 		# show the window
 		if os.sep == "\\":  # Windows
-			rootWin.attributes('-alpha', 1.0)
+			rootWin.attributes("-alpha", 1.0)
 		else:  # Linux
 			rootWin.deiconify()
 
@@ -1343,7 +1351,8 @@ class UI(tix.Frame, UIBase):
 				row=self.inputFormatRow,
 				column=3,
 				sticky=tk.W + tk.E,
-				padx=5, pady=0,
+				padx=5,
+				pady=0,
 			)
 		else:
 			self.readOptionsButton.grid_forget()
@@ -1365,17 +1374,18 @@ class UI(tix.Frame, UIBase):
 				row=self.outputFormatRow,
 				column=3,
 				sticky=tk.W + tk.E,
-				padx=5, pady=0,
+				padx=5,
+				pady=0,
 			)
 		else:
 			self.writeOptionsButton.grid_forget()
 
 		pathI = self.entryInputConvert.get()
 		if (
-			pathI and
-			not self.entryOutputConvert.get() and
-			self.formatButtonInputConvert.get() and
-			plugin.extensionCreate
+			pathI
+			and not self.entryOutputConvert.get()
+			and self.formatButtonInputConvert.get()
+			and plugin.extensionCreate
 		):
 			pathNoExt, _ext = splitext(pathI)
 			self.entryOutputConvert.insert(
@@ -1479,15 +1489,17 @@ class UI(tix.Frame, UIBase):
 		for attr, value in self._glossarySetAttrs.items():
 			setattr(self.glos, attr, value)
 
-		finalOutputFile = self.glos.convert(ConvertArgs(
-			inPath,
-			inputFormat=inFormat,
-			outputFilename=outPath,
-			outputFormat=outFormat,
-			readOptions=self.readOptions,
-			writeOptions=self.writeOptions,
-			**self._convertOptions,
-		))
+		finalOutputFile = self.glos.convert(
+			ConvertArgs(
+				inPath,
+				inputFormat=inFormat,
+				outputFilename=outPath,
+				outputFormat=outFormat,
+				readOptions=self.readOptions,
+				writeOptions=self.writeOptions,
+				**self._convertOptions,
+			),
+		)
 		# if finalOutputFile:
 		# 	self.status("Convert finished")
 		# else:
@@ -1582,6 +1594,7 @@ class UI(tix.Frame, UIBase):
 
 if __name__ == "__main__":
 	import sys
+
 	_path = sys.argv[1] if len(sys.argv) > 1 else ""
 	_ui = UI(_path)
 	_ui.run()

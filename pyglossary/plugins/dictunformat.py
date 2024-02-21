@@ -1,5 +1,3 @@
-
-
 from pyglossary.core import log
 from pyglossary.option import EncodingOption, Option, StrOption
 from pyglossary.text_reader import TextGlossaryReader

@@ -13,6 +13,7 @@ from .transform import Transformer
 
 __all__ = ["TitleTransformer"]
 
+
 def lexRoot(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	# if tr.start < tr.pos:
 	# 	log.warning(f"incomplete buffer near pos {tr.pos}")
@@ -61,7 +62,7 @@ def lexParan(tr: TransformerType) -> tuple[LexType, ErrorType]:
 			tr.addText("\\" + tr.next())
 			continue
 
-		if c == ')':
+		if c == ")":
 			break
 		tr.addText(c)
 
@@ -87,7 +88,7 @@ def lexCurly(tr: TransformerType) -> tuple[LexType, ErrorType]:
 		if c == "}":
 			break
 
-	tr2 = Transformer(tr.input[start:tr.pos - 1])
+	tr2 = Transformer(tr.input[start : tr.pos - 1])
 	res, err = tr2.transform()
 	if err or res is None:
 		return None, err
@@ -97,7 +98,8 @@ def lexCurly(tr: TransformerType) -> tuple[LexType, ErrorType]:
 
 
 TitleResult = namedtuple(
-	"TitleResult", [
+	"TitleResult",
+	[
 		"output",  # str,
 		"outputAlt",  # str,
 	],

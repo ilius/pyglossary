@@ -20,29 +20,29 @@ Glossary.init(
 
 userPluginsDirPath = Path(userPluginsDir)
 plugins = [
-	p
-	for p in Glossary.plugins.values()
-	if userPluginsDirPath not in p.path.parents
+	p for p in Glossary.plugins.values() if userPluginsDirPath not in p.path.parents
 ]
 
 data = []
 for p in plugins:
 	canRead = p.canRead
 	canWrite = p.canWrite
-	item = odict([
-		("module", p.module.__name__),
-		("lname", p.lname),
-		("name", p.name),
-		("description", p.description),
-		("extensions", p.extensions),
-		("singleFile", p.singleFile),
-		("optionsProp", {
-			name: opt.toDict()
-			for name, opt in p.optionsProp.items()
-		}),
-		("canRead", canRead),
-		("canWrite", canWrite),
-	])
+	item = odict(
+		[
+			("module", p.module.__name__),
+			("lname", p.lname),
+			("name", p.name),
+			("description", p.description),
+			("extensions", p.extensions),
+			("singleFile", p.singleFile),
+			(
+				"optionsProp",
+				{name: opt.toDict() for name, opt in p.optionsProp.items()},
+			),
+			("canRead", canRead),
+			("canWrite", canWrite),
+		],
+	)
 	if p.sortOnWrite != DEFAULT_NO:
 		item["sortOnWrite"] = p.sortOnWrite
 	if p.sortKeyName:

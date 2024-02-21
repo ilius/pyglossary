@@ -68,7 +68,6 @@ class PluginProp:
 		"_ReaderLoaded",
 		"_Writer",
 		"_WriterLoaded",
-
 		"_moduleName",
 		"_modulePath",
 		"_enable",
@@ -164,7 +163,7 @@ class PluginProp:
 		self._moduleName = mod.__name__
 		self._modulePath = mod.__file__
 		if self._modulePath.endswith("__init__.py"):
-			self._modulePath = self._modulePath[:-len("/__init__.py")]
+			self._modulePath = self._modulePath[: -len("/__init__.py")]
 		elif self._modulePath.endswith(".py"):
 			self._modulePath = self._modulePath[:-3]
 
@@ -264,6 +263,7 @@ class PluginProp:
 	@property
 	def path(self) -> "pathlib.Path":
 		from pathlib import Path
+
 		return Path(self._modulePath)
 
 	@property
@@ -471,6 +471,7 @@ class PluginProp:
 		format: str,
 	) -> "list[str]":
 		import inspect
+
 		extraOptNames = []
 		for name, param in inspect.signature(func).parameters.items():
 			if name == "self":

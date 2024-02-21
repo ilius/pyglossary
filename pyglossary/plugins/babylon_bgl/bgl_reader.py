@@ -93,7 +93,6 @@ optionsProp: "dict[str, Option]" = {
 	"part_of_speech_color": HtmlColorOption(
 		comment="Color for Part of Speech",
 	),
-
 	"no_control_sequence_in_defi": BoolOption(
 		comment="No control sequence in definitions",
 	),
@@ -107,7 +106,6 @@ optionsProp: "dict[str, Option]" = {
 		multiline=True,
 		comment="Characters to strip from right-side of keys",
 	),
-
 	# debug read options:
 	"search_char_samples": BoolOption(
 		comment="(debug) Search character samples",
@@ -143,19 +141,19 @@ elif os.sep == "\\":  # Operating system is ms-windows
 	tmpDir = os.getenv("TEMP")
 else:
 	raise RuntimeError(
-		f"Unknown path separator(os.sep=={os.sep!r})"
-		"What is your operating system?",
+		f"Unknown path separator(os.sep=={os.sep!r}). What is your operating system?",
 	)
 
 re_charset_decode = re.compile(
-	b"(<charset\\s+c\\=[\'\"]?(\\w)[\"\"]?>|</charset>)",
+	b'(<charset\\s+c\\=[\'"]?(\\w)[""]?>|</charset>)',
 	re.IGNORECASE,
 )
 re_b_reference = re.compile(b"^[0-9a-fA-F]{4}$")
 
 
 EntryWordData = namedtuple(
-	"EntryWordData", [
+	"EntryWordData",
+	[
 		"pos",  # int
 		"b_word",  # bytes
 		"u_word",  # str
@@ -579,7 +577,7 @@ class BglReader:
 		if length == -1:
 			log.debug("readBlock: length = -1")
 			return False
-		block.type = length & 0xf
+		block.type = length & 0xF
 		length >>= 4
 		if length < 4:
 			length = self.readBytes(length + 1)
@@ -675,7 +673,7 @@ class BglReader:
 		if pos + Len > len(block.data):
 			log.warning("reading block type 2: name too long")
 			return None
-		b_name = block.data[pos:pos + Len]
+		b_name = block.data[pos : pos + Len]
 		pos += Len
 		b_data = block.data[pos:]
 		# if b_name in (b"C2EEF3F6.html", b"8EAF66FD.bmp"):
@@ -861,7 +859,7 @@ class BglReader:
 				", reading word: pos + Len > len(block.data)",
 			)
 			return None
-		b_word = block.data[pos:pos + Len]
+		b_word = block.data[pos : pos + Len]
 		u_word, u_word_html = self.processKey(b_word)
 		"""
 		Entry keys may contain html text, for example:
@@ -906,7 +904,7 @@ class BglReader:
 				", reading defi size: pos + 2 > len(block.data)",
 			)
 			return Err
-		Len = uintFromBytes(block.data[pos:pos + 2])
+		Len = uintFromBytes(block.data[pos : pos + 2])
 		pos += 2
 		if pos + Len > len(block.data):
 			log.error(
@@ -915,7 +913,7 @@ class BglReader:
 				", reading defi: pos + Len > len(block.data)",
 			)
 			return Err
-		b_defi = block.data[pos:pos + Len]
+		b_defi = block.data[pos : pos + Len]
 		u_defi = self.processDefi(b_defi, word.b_word)
 		# I was going to add this u_word_html or "formatted headword" to defi,
 		# so to lose this information, but after looking at the diff
@@ -960,7 +958,7 @@ class BglReader:
 					", reading alt: pos + Len > len(block.data)",
 				)
 				return Err
-			b_alt = block.data[pos:pos + Len]
+			b_alt = block.data[pos : pos + Len]
 			u_alt = self.processAlternativeKey(b_alt, word.b_word)
 			# Like entry key, alt is not processed as html by babylon,
 			# so do we.
@@ -984,7 +982,7 @@ class BglReader:
 				", reading word size: pos + 5 > len(block.data)",
 			)
 			return Err
-		wordLen = uintFromBytes(block.data[pos:pos + 5])
+		wordLen = uintFromBytes(block.data[pos : pos + 5])
 		pos += 5
 		if pos + wordLen > len(block.data):
 			log.error(
@@ -993,7 +991,7 @@ class BglReader:
 				", reading word: pos + wordLen > len(block.data)",
 			)
 			return Err
-		b_word = block.data[pos:pos + wordLen]
+		b_word = block.data[pos : pos + wordLen]
 		u_word, u_word_html = self.processKey(b_word)
 		pos += wordLen
 		self.wordLenMax = max(self.wordLenMax, len(u_word))
@@ -1005,7 +1003,7 @@ class BglReader:
 				", reading defi size: pos + 4 > len(block.data)",
 			)
 			return Err
-		altsCount = uintFromBytes(block.data[pos:pos + 4])
+		altsCount = uintFromBytes(block.data[pos : pos + 4])
 		pos += 4
 
 		# reading alts
@@ -1018,7 +1016,7 @@ class BglReader:
 					", reading alt size: pos + 4 > len(block.data)",
 				)
 				return Err
-			altLen = uintFromBytes(block.data[pos:pos + 4])
+			altLen = uintFromBytes(block.data[pos : pos + 4])
 			pos += 4
 			if altLen == 0:
 				if pos + altLen != len(block.data):
@@ -1035,7 +1033,7 @@ class BglReader:
 					", reading alt: pos + altLen > len(block.data)",
 				)
 				return Err
-			b_alt = block.data[pos:pos + altLen]
+			b_alt = block.data[pos : pos + altLen]
 			u_alt = self.processAlternativeKey(b_alt, b_word)
 			# Like entry key, alt is not processed as html by babylon,
 			# so do we.
@@ -1045,7 +1043,7 @@ class BglReader:
 		u_alts.discard(u_word)
 
 		# reading defi
-		defiLen = uintFromBytes(block.data[pos:pos + 4])
+		defiLen = uintFromBytes(block.data[pos : pos + 4])
 		pos += 4
 		if pos + defiLen > len(block.data):
 			log.error(
@@ -1054,7 +1052,7 @@ class BglReader:
 				", reading defi: pos + defiLen > len(block.data)",
 			)
 			return Err
-		b_defi = block.data[pos:pos + defiLen]
+		b_defi = block.data[pos : pos + defiLen]
 		u_defi = self.processDefi(b_defi, b_word)
 		self.defiMaxBytes = max(self.defiMaxBytes, len(b_defi))
 		pos += defiLen
@@ -1298,16 +1296,17 @@ class BglReader:
 				# this is not utf-16
 				# what is this?
 				pass
-			elif fields.code_transcription_50 == 0x1b:
-				fields.u_transcription_50, singleEncoding = \
-					self.decodeCharsetTags(
-						fields.b_transcription_50,
-						self.sourceEncoding,
-					)
-				fields.u_transcription_50 = \
-					replaceHtmlEntries(fields.u_transcription_50)
-				fields.u_transcription_50 = \
-					removeControlChars(fields.u_transcription_50)
+			elif fields.code_transcription_50 == 0x1B:
+				fields.u_transcription_50, singleEncoding = self.decodeCharsetTags(
+					fields.b_transcription_50,
+					self.sourceEncoding,
+				)
+				fields.u_transcription_50 = replaceHtmlEntries(
+					fields.u_transcription_50,
+				)
+				fields.u_transcription_50 = removeControlChars(
+					fields.u_transcription_50,
+				)
 			elif fields.code_transcription_50 == 0x18:
 				# incomplete text like:
 				# t c=T>02D0;</charset>g<charset c=T>0259;</charset>-
@@ -1322,16 +1321,17 @@ class BglReader:
 				)
 
 		if fields.b_transcription_60:
-			if fields.code_transcription_60 == 0x1b:
-				fields.u_transcription_60, singleEncoding = \
-					self.decodeCharsetTags(
-						fields.b_transcription_60,
-						self.sourceEncoding,
-					)
-				fields.u_transcription_60 = \
-					replaceHtmlEntries(fields.u_transcription_60)
-				fields.u_transcription_60 = \
-					removeControlChars(fields.u_transcription_60)
+			if fields.code_transcription_60 == 0x1B:
+				fields.u_transcription_60, singleEncoding = self.decodeCharsetTags(
+					fields.b_transcription_60,
+					self.sourceEncoding,
+				)
+				fields.u_transcription_60 = replaceHtmlEntries(
+					fields.u_transcription_60,
+				)
+				fields.u_transcription_60 = removeControlChars(
+					fields.u_transcription_60,
+				)
 			else:
 				log.debug(
 					f"processDefi({b_defi})\nb_key = {b_key}"
@@ -1482,7 +1482,7 @@ class BglReader:
 						f"\nb_key = {b_key!r}:\ntoo few data after \\x07",
 					)
 					return
-				fields.b_field_07 = b_defi[i + 1:i + 3]
+				fields.b_field_07 = b_defi[i + 1 : i + 3]
 				i += 3
 			elif b_defi[i] == 0x13:  # "\x13"<one byte - length><data>
 				# known values:
@@ -1510,7 +1510,7 @@ class BglReader:
 						f"b_key = {b_key!r}:\ntoo few data after \\x13",
 					)
 					return
-				fields.b_field_13 = b_defi[i:i + Len]
+				fields.b_field_13 = b_defi[i : i + Len]
 				i += Len
 			elif b_defi[i] == 0x18:
 				# \x18<one byte - title length><entry title>
@@ -1540,9 +1540,9 @@ class BglReader:
 						f"b_key = {b_key!r}:\ntitle is too long",
 					)
 					return
-				fields.b_title = b_defi[i:i + Len]
+				fields.b_title = b_defi[i : i + Len]
 				i += Len
-			elif b_defi[i] == 0x1a:  # "\x1a"<one byte - length><text>
+			elif b_defi[i] == 0x1A:  # "\x1a"<one byte - length><text>
 				# found only in Hebrew dictionaries, I do not understand.
 				if i + 1 >= len(b_defi):
 					log.debug(
@@ -1564,7 +1564,7 @@ class BglReader:
 						f"\nb_key = {b_key!r}:\ntoo few data after \\x1a",
 					)
 					return
-				fields.b_field_1a = b_defi[i:i + Len]
+				fields.b_field_1a = b_defi[i : i + Len]
 				i += Len
 			elif b_defi[i] == 0x28:  # "\x28" <two bytes - length><html text>
 				# title with transcription?
@@ -1575,7 +1575,7 @@ class BglReader:
 					)
 					return
 				i += 1
-				Len = uintFromBytes(b_defi[i:i + 2])
+				Len = uintFromBytes(b_defi[i : i + 2])
 				i += 2
 				if Len == 0:
 					log.debug(
@@ -1589,16 +1589,16 @@ class BglReader:
 						f"\nb_key = {b_key!r}:\ntoo few data after \\x28",
 					)
 					return
-				fields.b_title_trans = b_defi[i:i + Len]
+				fields.b_title_trans = b_defi[i : i + Len]
 				i += Len
-			elif 0x40 <= b_defi[i] <= 0x4f:  # [\x41-\x4f] <one byte> <text>
+			elif 0x40 <= b_defi[i] <= 0x4F:  # [\x41-\x4f] <one byte> <text>
 				# often contains digits as text:
 				# 56
 				# &#0230;lps - key Alps
 				# 48@i
 				# has no apparent influence on the article
 				code = b_defi[i]
-				Len = b_defi[i] - 0x3f
+				Len = b_defi[i] - 0x3F
 				if i + 2 + Len > len(b_defi):
 					log.debug(
 						f"collecting definition fields, b_defi = {b_defi!r}"
@@ -1606,7 +1606,7 @@ class BglReader:
 					)
 					return
 				i += 2
-				b_text = b_defi[i:i + Len]
+				b_text = b_defi[i : i + Len]
 				i += Len
 				log.debug(
 					f"unknown definition field {code:#02x}, b_text={b_text!r}",
@@ -1634,7 +1634,7 @@ class BglReader:
 						f"\nb_key = {b_key!r}:\ntoo few data after \\x50",
 					)
 					return
-				fields.b_transcription_50 = b_defi[i:i + Len]
+				fields.b_transcription_50 = b_defi[i : i + Len]
 				i += Len
 			elif b_defi[i] == 0x60:
 				# "\x60" <one byte> <two bytes - length> <text>
@@ -1646,7 +1646,7 @@ class BglReader:
 					return
 				fields.code_transcription_60 = b_defi[i + 1]
 				i += 2
-				Len = uintFromBytes(b_defi[i:i + 2])
+				Len = uintFromBytes(b_defi[i : i + 2])
 				i += 2
 				if Len == 0:
 					log.debug(
@@ -1660,7 +1660,7 @@ class BglReader:
 						f"\nb_key = {b_key!r}:\ntoo few data after \\x60",
 					)
 					return
-				fields.b_transcription_60 = b_defi[i:i + Len]
+				fields.b_transcription_60 = b_defi[i : i + Len]
 				i += Len
 			else:
 				log.debug(

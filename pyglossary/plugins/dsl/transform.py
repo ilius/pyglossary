@@ -12,7 +12,8 @@ re_comment_block = re.compile(r"\{\{([^}]*)\}\}")
 
 
 Result = namedtuple(
-	"Result", [
+	"Result",
+	[
 		"output",  # str,
 		"resFileSet",  # "set[str]",
 	],

@@ -69,13 +69,13 @@ class Writer:
 
 		def escape(st: str) -> str:
 			# remove styling from HTML tags
-			st2 = re.sub(r' style="[^"]*"', '', st)
-			st2 = re.sub(r' class="[^"]*"', '', st2)
-			st2 = re.sub(r'<font [^>]*>', '', st2)
-			st2 = re.sub(r'</font>', '', st2)
-			st2 = re.sub(r'\n', '', st2)
-			st2 = re.sub(r'<div></div>', '', st2)
-			st2 = re.sub(r'<span></span>', '', st2)
+			st2 = re.sub(r' style="[^"]*"', "", st)
+			st2 = re.sub(r' class="[^"]*"', "", st2)
+			st2 = re.sub(r"<font [^>]*>", "", st2)
+			st2 = re.sub(r"</font>", "", st2)
+			st2 = re.sub(r"\n", "", st2)
+			st2 = re.sub(r"<div></div>", "", st2)
+			st2 = re.sub(r"<span></span>", "", st2)
 			# fix russian dictionary issues,
 			# such as hyphenation in word (e.g. абб{[']}а{[/']}т)
 			st2 = re.sub(r"\{\['\]\}", "", st2)

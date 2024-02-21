@@ -1,5 +1,3 @@
-
-
 # -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright © 2012-2016 Alberto Pettarin (alberto@albertopettarin.it)
@@ -104,8 +102,7 @@ class Writer(EbookWriter):
 	</navMap>
 </ncx>"""
 
-	NCX_NAVPOINT_TEMPLATE = \
-		"""\t<navPoint id="n{index:06d}" playOrder="{index:d}">
+	NCX_NAVPOINT_TEMPLATE = """\t<navPoint id="n{index:06d}" playOrder="{index:d}">
 		<navLabel>
 			<text>{text}</text>
 		</navLabel>
@@ -157,8 +154,7 @@ p.groupDefinition {
 }
 """
 
-	GROUP_XHTML_TEMPLATE = \
-		"""<?xml version="1.0" encoding="utf-8" standalone="no"?>
+	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
 	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -176,7 +172,7 @@ p.groupDefinition {
 {group_contents}
 	</body>
 </html>"""
-	GROUP_XHTML_INDEX_LINK = "\t\t<a href=\"index.xhtml\">[ Index ]</a>"
+	GROUP_XHTML_INDEX_LINK = '\t\t<a href="index.xhtml">[ Index ]</a>'
 
 	GROUP_XHTML_WORD_DEFINITION_TEMPLATE = """\t<div class="groupEntry">
 		<h2 class="groupHeadword">{headword}</h2>
@@ -204,10 +200,11 @@ p.groupDefinition {
 	</spine>
 </package>"""
 
-	COVER_TEMPLATE = "<meta name=\"cover\" content=\"{cover}\" />"
+	COVER_TEMPLATE = '<meta name="cover" content="{cover}" />'
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		import uuid
+
 		EbookWriter.__init__(
 			self,
 			glos,
@@ -245,18 +242,22 @@ p.groupDefinition {
 		ncx_items = []
 		index = 1
 		if self._include_index_page:
-			ncx_items.append(self.NCX_NAVPOINT_TEMPLATE.format(
-				index=index,
-				text="Index",
-				src="index.xhtml",
-			))
+			ncx_items.append(
+				self.NCX_NAVPOINT_TEMPLATE.format(
+					index=index,
+					text="Index",
+					src="index.xhtml",
+				),
+			)
 			index += 1
 		for group_label in group_labels:
-			ncx_items.append(self.NCX_NAVPOINT_TEMPLATE.format(
-				index=index,
-				text=group_label,
-				src=self.get_group_xhtml_file_name_from_index(index),
-			))
+			ncx_items.append(
+				self.NCX_NAVPOINT_TEMPLATE.format(
+					index=index,
+					text=group_label,
+					src=self.get_group_xhtml_file_name_from_index(index),
+				),
+			)
 			index += 1
 		ncx_items_unicode = "\n".join(ncx_items)
 		ncx_contents = self.NCX_TEMPLATE.format(

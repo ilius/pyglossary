@@ -1,5 +1,3 @@
-
-
 # -*- coding: utf-8 -*-
 from collections.abc import Iterator
 from json import load
@@ -100,12 +98,14 @@ class Reader:
 				for word in words:
 					entryDict = data[word]
 					defi = "".join(
-						self.defiTemplate.format(**{
-							"word": word,
-							"def": meaning.get("def", ""),
-							"example": meaning.get("example", ""),
-							"speech_part": meaning.get("speech_part", ""),
-						})
+						self.defiTemplate.format(
+							**{
+								"word": word,
+								"def": meaning.get("def", ""),
+								"example": meaning.get("example", ""),
+								"speech_part": meaning.get("speech_part", ""),
+							},
+						)
 						for meaning in entryDict.get("meanings", [])
 					)
 					yield glos.newEntry(word, defi, defiFormat="h")

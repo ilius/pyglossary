@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 
 enable = True
 lname = "almaany"
-format = 'Almaany'
-description = 'Almaany.com (SQLite3)'
+format = "Almaany"
+description = "Almaany.com (SQLite3)"
 extensions = ()
 extensionCreate = ".db"
 kind = "binary"
@@ -35,6 +35,7 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
+
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
@@ -50,6 +51,7 @@ class Reader:
 		if self._cur is None:
 			raise ValueError("cur is None")
 		from pyglossary.langs.writing_system import getWritingSystemFromText
+
 		alternateDict: "dict[str, list[str]]" = {}
 		self._cur.execute("select wordkey, searchwordkey from Keys")
 		for row in self._cur.fetchall():
@@ -74,7 +76,9 @@ class Reader:
 			definition = definition.replace("|", "<br>")
 
 			if root:
-				definition += f'<br>Root: <a href="bword://{html.escape(root)}">{root}</a>'
+				definition += (
+					f'<br>Root: <a href="bword://{html.escape(root)}">{root}</a>'
+				)
 
 			ws = getWritingSystemFromText(meaning)
 			if ws and ws.direction == "rtl":

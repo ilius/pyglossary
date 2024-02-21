@@ -116,18 +116,15 @@ class SqEntryList:
 		sqliteSortKey = namedSortKey.sqlite(**kwargs)
 
 		self._sqliteSortKey = sqliteSortKey
-		self._columnNames = ",".join(
-			col[0] for col in sqliteSortKey
-		)
+		self._columnNames = ",".join(col[0] for col in sqliteSortKey)
 
 		if not self._create:
 			self._parseExistingIndex()
 			return
 
-		colDefs = ",".join([
-			f"{col[0]} {col[1]}"
-			for col in sqliteSortKey
-		] + ["pickle BLOB"])
+		colDefs = ",".join(
+			[f"{col[0]} {col[1]}" for col in sqliteSortKey] + ["pickle BLOB"],
+		)
 		self._con.execute(
 			f"CREATE TABLE data ({colDefs})",
 		)
@@ -142,9 +139,7 @@ class SqEntryList:
 		self._len += 1
 		colCount = len(self._sqliteSortKey)
 		try:
-			values = [
-				col[2](entry.l_word) for col in self._sqliteSortKey
-			]
+			values = [col[2](entry.l_word) for col in self._sqliteSortKey]
 		except Exception:
 			log.critical(f"error in _sqliteSortKey funcs for {rawEntry = }")
 			raise
@@ -177,9 +172,7 @@ class SqEntryList:
 		sortColumnNames = self._columnNames
 		self._orderBy = sortColumnNames
 		if reverse:
-			self._orderBy = ",".join(
-				f"{col[0]} DESC" for col in self._sqliteSortKey
-			)
+			self._orderBy = ",".join(f"{col[0]} DESC" for col in self._sqliteSortKey)
 		self._con.commit()
 		self._con.execute(
 			f"CREATE INDEX sortkey ON data({sortColumnNames});",
@@ -203,7 +196,7 @@ class SqEntryList:
 		if j < 0:
 			log.error(f"error parsing index {sql=}")
 			return False
-		columnNames = sql[i + 1:j]
+		columnNames = sql[i + 1 : j]
 		self._sorted = True
 		self._orderBy = columnNames
 		return True

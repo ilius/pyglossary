@@ -28,11 +28,13 @@ class JingTestError(subprocess.CalledProcessError):
 		super().__init__(returncode, cmd, output)
 
 	def __str__(self) -> str:
-		return "\n".join([
-			f"Jing check failed with exit code {self.returncode}:",
-			"-" * 80,
-			self.output,
-		])
+		return "\n".join(
+			[
+				f"Jing check failed with exit code {self.returncode}:",
+				"-" * 80,
+				self.output,
+			],
+		)
 
 
 def run(filename: str) -> None:

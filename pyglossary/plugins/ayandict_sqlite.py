@@ -40,12 +40,13 @@ class Reader:
 		self._clear()
 
 	def _clear(self) -> None:
-		self._filename = ''
+		self._filename = ""
 		self._con: "sqlite3.Connection | None" = None
 		self._cur: "sqlite3.Cursor | None" = None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
+
 		self._filename = filename
 		self._con = connect(filename)
 		self._cur = self._con.cursor()
@@ -157,6 +158,7 @@ class Writer:
 
 	def xdxf_setup(self) -> None:
 		from pyglossary.xdxf.transform import XdxfTransformer
+
 		# if self._xsl:
 		# 	self._xdxfTr = XslXdxfTransformer(encoding="utf-8")
 		# 	return

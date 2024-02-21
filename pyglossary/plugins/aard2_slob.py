@@ -23,9 +23,9 @@ from pyglossary.option import (
 
 enable = True
 lname = "aard2_slob"
-format = 'Aard2Slob'
-description = 'Aard 2 (.slob)'
-extensions = ('.slob',)
+format = "Aard2Slob"
+description = "Aard 2 (.slob)"
+extensions = (".slob",)
 extensionCreate = ".slob"
 singleFile = True
 kind = "binary"
@@ -63,9 +63,9 @@ optionsProp: "dict[str, Option]" = {
 	"version_info": BoolOption(
 		comment="add version info tags to slob file",
 	),
-    "audio_goldendict": BoolOption(
-        comment="Convert audio links for GoldenDict (desktop)",
-    ),
+	"audio_goldendict": BoolOption(
+		comment="Convert audio links for GoldenDict (desktop)",
+	),
 }
 
 extraDocs = [
@@ -86,7 +86,7 @@ class Reader:
 		self._glos = glos
 		self._clear()
 		self._re_bword = re.compile(
-			'(<a href=[^<>]+?>)',
+			"(<a href=[^<>]+?>)",
 			re.IGNORECASE,
 		)
 
@@ -106,6 +106,7 @@ class Reader:
 			e.msg += f", run `{pip} install PyICU` to install"
 			raise e
 		from pyglossary import slob
+
 		self._filename = filename
 		self._slobObj = slob.open(filename)
 		tags = dict(self._slobObj.tags.items())
@@ -168,11 +169,13 @@ class Reader:
 		st = m.group(0)
 		if "//" in st:
 			return st
-		return st.replace('href="', 'href="bword://')\
-			.replace("href='", "href='bword://")
+		return st.replace('href="', 'href="bword://').replace(
+			"href='", "href='bword://",
+		)
 
 	def __iter__(self) -> "Iterator[EntryType | None]":
 		from pyglossary.slob import MIME_HTML, MIME_TEXT
+
 		if self._slobObj is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -267,6 +270,7 @@ class Writer:
 
 	def _open(self, filename: str, namePostfix: str) -> "slob.Writer":
 		from pyglossary import slob
+
 		if isfile(filename):
 			shutil.move(filename, f"{filename}.bak")
 			log.warning(f"renamed existing {filename!r} to {filename+'.bak'!r}")
@@ -296,6 +300,7 @@ class Writer:
 
 	def finish(self) -> None:
 		from time import time
+
 		self._filename = ""
 		if self._slobWriter is None:
 			return
@@ -321,7 +326,7 @@ class Writer:
 		try:
 			key.encode(slobWriter.encoding)
 		except UnicodeEncodeError:
-			log.error(f'Failed to add, broken unicode in key: {key!a}')
+			log.error(f"Failed to add, broken unicode in key: {key!a}")
 			return
 		slobWriter.add(content, key, content_type=content_type)
 
@@ -349,15 +354,18 @@ class Writer:
 			b_defi = b_defi.replace(b"'bword://", b"'")
 
 			if not self._audio_goldendict:
-				b_defi = b_defi.replace(b'''href="sound://''',
-					b'''onclick="new Audio(this.href).play(); return false;" href="''')
-				b_defi = b_defi.replace(b"""href='sound://""",
-					b"""onclick="new Audio(this.href).play(); return false;" href='""")
-				b_defi = b_defi.replace(b'''<img src="/''', b'''<img src="''')
+				b_defi = b_defi.replace(
+					b"""href="sound://""",
+					b'''onclick="new Audio(this.href).play(); return false;" href="''',
+				)
+				b_defi = b_defi.replace(
+					b"""href='sound://""",
+					b"""onclick="new Audio(this.href).play(); return false;" href='""",
+				)
+				b_defi = b_defi.replace(b"""<img src="/""", b'''<img src="''')
 				b_defi = b_defi.replace(b"""<img src='""", b"""<img src='""")
-				b_defi = b_defi.replace(b'''<img src="file:///''', b'''<img src="''')
+				b_defi = b_defi.replace(b"""<img src="file:///""", b'''<img src="''')
 				b_defi = b_defi.replace(b"""<img src='file:///""", b"""<img src='""")
-
 
 		if not _ctype:
 			if defiFormat == "h":

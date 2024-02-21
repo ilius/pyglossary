@@ -12,6 +12,7 @@ desc = "Random"
 
 def normal(**_options) -> "sortKeyType":
 	from random import random
+
 	return lambda _words: random()
 
 
@@ -19,11 +20,13 @@ def locale(
 	_collator: "T_Collator",  # noqa: F821
 ) -> "sortKeyType":
 	from random import random
+
 	return lambda **_options: lambda _words: random()
 
 
 def sqlite(**_options) -> "sqliteSortKeyType":
 	from random import random
+
 	return [
 		(
 			"random",
@@ -38,6 +41,7 @@ def sqlite_locale(
 	**_options,
 ) -> "Callable[..., sqliteSortKeyType]":
 	from random import random
+
 	return lambda **_opt: [
 		(
 			"random",

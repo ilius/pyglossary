@@ -67,6 +67,7 @@ class Reader:
 
 	def __len__(self) -> int:
 		from pyglossary.file_utils import fileCountLines
+
 		if self._wordCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
 			self._wordCount = fileCountLines(

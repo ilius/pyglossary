@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 __all__ = ["COMMAND", "parseFormatOptionsStr", "UI", "printHelp"]
 
 
-def wc_ljust(text: str, length: int, padding: str = ' ') -> str:
+def wc_ljust(text: str, length: int, padding: str = " ") -> str:
 	return text + padding * max(0, (length - wcswidth(text)))
 
 
@@ -56,20 +56,12 @@ COMMAND = "pyglossary"
 
 
 def getColWidth(subject: str, strings: "list[str]") -> int:
-	return max(
-		len(x) for x in [subject] + strings
-	)
+	return max(len(x) for x in [subject] + strings)
 
 
 def getFormatsTable(names: "list[str]", header: str) -> str:
-	descriptions = [
-		Glossary.plugins[name].description
-		for name in names
-	]
-	extensions = [
-		" ".join(Glossary.plugins[name].extensions)
-		for name in names
-	]
+	descriptions = [Glossary.plugins[name].description for name in names]
+	extensions = [" ".join(Glossary.plugins[name].extensions) for name in names]
 
 	nameWidth = getColWidth("Name", names)
 	descriptionWidth = getColWidth("Description", descriptions)
@@ -78,24 +70,30 @@ def getFormatsTable(names: "list[str]", header: str) -> str:
 	lines = [
 		"\n",
 		startBold + header + endFormat,
-		" | ".join([
-			"Name".center(nameWidth),
-			"Description".center(descriptionWidth),
-			"Extensions".center(extensionsWidth),
-		]),
-		"-+-".join([
-			"-" * nameWidth,
-			"-" * descriptionWidth,
-			"-" * extensionsWidth,
-		]),
+		" | ".join(
+			[
+				"Name".center(nameWidth),
+				"Description".center(descriptionWidth),
+				"Extensions".center(extensionsWidth),
+			],
+		),
+		"-+-".join(
+			[
+				"-" * nameWidth,
+				"-" * descriptionWidth,
+				"-" * extensionsWidth,
+			],
+		),
 	]
 	for index, name in enumerate(names):
 		lines.append(
-			" | ".join([
-				name.ljust(nameWidth),
-				descriptions[index].ljust(descriptionWidth),
-				extensions[index].ljust(extensionsWidth),
-			]),
+			" | ".join(
+				[
+					name.ljust(nameWidth),
+					descriptions[index].ljust(descriptionWidth),
+					extensions[index].ljust(extensionsWidth),
+				],
+			),
 		)
 
 	return "\n".join(lines)
@@ -103,11 +101,14 @@ def getFormatsTable(names: "list[str]", header: str) -> str:
 
 def printHelp() -> None:
 	import string
+
 	text = fread(join(dataDir, "help"))
-	text = text.replace("<b>", startBold)\
-		.replace("<u>", startUnderline)\
-		.replace("</b>", endFormat)\
+	text = (
+		text.replace("<b>", startBold)
+		.replace("<u>", startUnderline)
+		.replace("</b>", endFormat)
 		.replace("</u>", endFormat)
+	)
 	text = string.Template(text).substitute(
 		CMD=COMMAND,
 	)
@@ -135,7 +136,7 @@ def parseFormatOptionsStr(st: str) -> "dict[str, Any] | None":
 		if not key:
 			log.critical(f"bad option syntax: {part!r}")
 			return None
-		value = part[eq + 1:].strip()
+		value = part[eq + 1 :].strip()
 		opt[key] = value
 	return opt
 
@@ -231,6 +232,7 @@ class UI(UIBase):
 		**kwargs: "Mapping[Any]",
 	) -> None:
 		from pyglossary.reverse import reverseGlossary
+
 		reverseKwArgs = {}
 		for key in (
 			"words",
@@ -254,8 +256,7 @@ class UI(UIBase):
 		for _ in reverseGlossary(self.glos, **reverseKwArgs):
 			if self._toPause:
 				log.info(
-					"Reverse is paused."
-					" Press Enter to continue, and Ctrl+C to exit",
+					"Reverse is paused. Press Enter to continue, and Ctrl+C to exit",
 				)
 				input()
 				self._toPause = False
@@ -321,6 +322,7 @@ class UI(UIBase):
 
 		if reverse:
 			import signal
+
 			signal.signal(signal.SIGINT, self.onSigInt)  # good place? FIXME
 			readOptions["direct"] = True
 			if not glos.read(
@@ -334,15 +336,17 @@ class UI(UIBase):
 			self.pbar.update_step = 0.1
 			self.reverseLoop(savePath=outputFilename)
 		else:
-			finalOutputFile = self.glos.convert(ConvertArgs(
-				inputFilename,
-				inputFormat=inputFormat,
-				outputFilename=outputFilename,
-				outputFormat=outputFormat,
-				readOptions=readOptions,
-				writeOptions=writeOptions,
-				**convertOptions,
-			))
+			finalOutputFile = self.glos.convert(
+				ConvertArgs(
+					inputFilename,
+					inputFormat=inputFormat,
+					outputFilename=outputFilename,
+					outputFormat=outputFormat,
+					readOptions=readOptions,
+					writeOptions=writeOptions,
+					**convertOptions,
+				),
+			)
 			return bool(finalOutputFile)
 
 		return True

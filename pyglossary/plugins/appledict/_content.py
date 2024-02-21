@@ -87,25 +87,28 @@ def prepare_content_without_soup(
 	body = re_div_margin_em_ex.sub(sub_div_margin_em_ex, body)
 	body = re_href.sub(href_sub, body)
 
-	body = body \
-		.replace(
+	body = (
+		body.replace(
 			'<i style="color:green">',
 			'<i class="c">',
-		) \
+		)
 		.replace(
 			'<i class="p" style="color:green">',
 			'<i class="p">',
-		) \
+		)
 		.replace(
 			'<span class="ex" style="color:steelblue">',
 			'<span class="ex">',
-		) \
+		)
 		.replace(
 			'<span class="sec ex" style="color:steelblue">',
 			'<span class="sec ex">',
-		) \
-		.replace("<u>", '<span class="u">').replace("</u>", "</span>") \
-		.replace("<s>", "<del>").replace("</s>", "</del>")
+		)
+		.replace("<u>", '<span class="u">')
+		.replace("</u>", "</span>")
+		.replace("<s>", "<del>")
+		.replace("</s>", "</del>")
+	)
 
 	# nice header to display
 	content = f"<h1>{title}</h1>{body}" if title else body
@@ -146,7 +149,7 @@ def prepare_content_with_soup(
 
 	for tag in soup(lambda x: "xhtml:" in x.name):
 		old_tag_name = tag.name
-		tag.name = old_tag_name[len("xhtml:"):]
+		tag.name = old_tag_name[len("xhtml:") :]
 		if tag.string:
 			tag.string = f"{tag.string} "
 
@@ -184,13 +187,13 @@ def prepare_content_with_soup(
 	for pos in soup.find_all("pos", onclick="toggle_infl(this)"):
 		# TODO: simplify this!
 		pos["onclick"] = (
-			r'var e = this.parentElement.parentElement.parentElement'
+			r"var e = this.parentElement.parentElement.parentElement"
 			r'.querySelector("res-g vp-gs"); style = window.'
-			r'getComputedStyle(e), display = style.getPropertyValue'
+			r"getComputedStyle(e), display = style.getPropertyValue"
 			r'("display"), "none" === e.style.display || "none" === display'
 			r' ? e.style.display = "block" : e.style.display = "none", '
-			r'this.className.match(/(?:^|\s)Clicked(?!\S)/) ? this.'
-			r'className = this.className.replace('
+			r"this.className.match(/(?:^|\s)Clicked(?!\S)/) ? this."
+			r"className = this.className.replace("
 			r'/(?:^|\s)Clicked(?!\S)/g, "") : this.setAttribute('
 			r'"class", "Clicked")'
 		)
@@ -227,7 +230,8 @@ def href_sub(x: "re.Match") -> str:
 	href = cleanup_link_target(href)
 
 	return "href=" + quoteattr(
-		"x-dictionary:d:" + unescape(
+		"x-dictionary:d:"
+		+ unescape(
 			href,
 			{"&quot;": '"'},
 		),

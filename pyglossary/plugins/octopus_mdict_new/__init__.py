@@ -81,7 +81,7 @@ class Reader:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self.clear()
-		self._re_internal_link = re.compile('href=(["\'])(entry://|[dx]:)')
+		self._re_internal_link = re.compile("href=([\"'])(entry://|[dx]:)")
 		self._re_audio_link = re.compile(
 			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>',
 		)
@@ -98,6 +98,7 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		from pyglossary.plugin_lib.readmdict import MDD, MDX
+
 		self._filename = filename
 		self._mdx = MDX(filename, self._encoding, self._substyle)
 
@@ -181,7 +182,7 @@ class Reader:
 		self._mdx = MDX(self._filename, self._encoding, self._substyle)
 
 	def fixDefi(self, defi: str) -> str:
-		defi = self._re_internal_link.sub(r'href=\1bword://', defi)
+		defi = self._re_internal_link.sub(r"href=\1bword://", defi)
 		defi = defi.replace(' src="file://', ' src=".')
 
 		if self._audio:

@@ -168,10 +168,13 @@ class EbookWriter:
 		self._filename = ""
 
 	def myOpen(self, fname: str, mode: str) -> "io.IOBase":
-		return cast("io.IOBase", open(
-			join(self._tmpDir, fname),
-			mode=mode,
-		))
+		return cast(
+			"io.IOBase",
+			open(
+				join(self._tmpDir, fname),
+				mode=mode,
+			),
+		)
 
 	def add_file(
 		self,
@@ -185,10 +188,12 @@ class EbookWriter:
 		contents = toBytes(contents)
 		with self.myOpen(file_path, "wb") as file_obj:
 			file_obj.write(contents)
-		self.files.append({
-			"path": relative_path,
-			"mode": mode,
-		})
+		self.files.append(
+			{
+				"path": relative_path,
+				"mode": mode,
+			},
+		)
 
 	def write_cover(self, cover_path: str) -> None:
 		if not cover_path:
@@ -225,11 +230,13 @@ class EbookWriter:
 		mimetype: str,
 	) -> None:
 		self.add_file(relative_path, contents)
-		self.manifest_files.append({
-			"path": relative_path,
-			"id": _id,
-			"mimetype": mimetype,
-		})
+		self.manifest_files.append(
+			{
+				"path": relative_path,
+				"id": _id,
+				"mimetype": mimetype,
+			},
+		)
 
 	def get_group_xhtml_file_name_from_index(self, index: int) -> str:
 		if index < self.GROUP_START_INDEX:
@@ -267,8 +274,7 @@ class EbookWriter:
 			group_title=group_label,
 			previous_link=previous_link,
 			index_link=(
-				self.GROUP_XHTML_INDEX_LINK
-				if self._include_index_page else ""
+				self.GROUP_XHTML_INDEX_LINK if self._include_index_page else ""
 			),
 			next_link=next_link,
 			group_contents=self.GROUP_XHTML_WORD_DEFINITION_JOINER.join(
@@ -347,10 +353,12 @@ class EbookWriter:
 			ref = self.get_group_xhtml_file_name_from_index(
 				self.GROUP_START_INDEX + label_i,
 			)
-			links.append(self.INDEX_XHTML_LINK_TEMPLATE.format(
-				ref=ref,
-				label=label,
-			))
+			links.append(
+				self.INDEX_XHTML_LINK_TEMPLATE.format(
+					ref=ref,
+					label=label,
+				),
+			)
 		links_str = self.INDEX_XHTML_LINK_JOINER.join(links)
 		title = self._glos.getInfo("name")
 		contents = self.INDEX_XHTML_TEMPLATE.format(
@@ -393,15 +401,19 @@ class EbookWriter:
 		manifest_lines = []
 		spine_lines = []
 		for mi in self.manifest_files:
-			manifest_lines.append(self.OPF_MANIFEST_ITEM_TEMPLATE.format(
-				ref=mi["id"],
-				id=mi["id"],
-				mediaType=mi["mimetype"],
-			))
+			manifest_lines.append(
+				self.OPF_MANIFEST_ITEM_TEMPLATE.format(
+					ref=mi["id"],
+					id=mi["id"],
+					mediaType=mi["mimetype"],
+				),
+			)
 			if mi["mimetype"] == "application/xhtml+xml":
-				spine_lines.append(self.OPF_SPINE_ITEMREF_TEMPLATE.format(
-					id=mi["id"],  # NESTED 4
-				))
+				spine_lines.append(
+					self.OPF_SPINE_ITEMREF_TEMPLATE.format(
+						id=mi["id"],  # NESTED 4
+					),
+				)
 
 		manifest_contents = "\n".join(manifest_lines)
 		spine_contents = "\n".join(spine_lines)

@@ -68,19 +68,12 @@ gtk.Window.set_default_icon_from_file(logo)
 
 _ = str  # later replace with translator function
 
-pluginByDesc = {
-	plugin.description: plugin
-	for plugin in Glossary.plugins.values()
-}
+pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
 readDesc = [
-	plugin.description
-	for plugin in Glossary.plugins.values()
-	if plugin.canRead
+	plugin.description for plugin in Glossary.plugins.values() if plugin.canRead
 ]
 writeDesc = [
-	plugin.description
-	for plugin in Glossary.plugins.values()
-	if plugin.canWrite
+	plugin.description for plugin in Glossary.plugins.values() if plugin.canWrite
 ]
 
 
@@ -401,15 +394,17 @@ class FormatOptionsDialog(gtk.Dialog):
 			prop = optionsProp[name]
 			comment = prop.longComment
 			if len(comment) > self.commentLen:
-				comment = comment[:self.commentLen] + "..."
+				comment = comment[: self.commentLen] + "..."
 			if prop.typ != "bool" and not prop.values:
 				comment += " (double-click to edit)"
-			treeModel.append([
-				name in optionsValues,  # enable
-				name,  # name
-				comment,  # comment
-				str(optionsValues.get(name, "")),  # value
-			])
+			treeModel.append(
+				[
+					name in optionsValues,  # enable
+					name,  # name
+					comment,  # comment
+					str(optionsValues.get(name, "")),  # value
+				],
+			)
 		############
 		pack(self.vbox, treev, 1, 1)
 		self.vbox.show_all()
@@ -593,10 +588,12 @@ class FormatBox(FormatButton):
 		self.optionsValues = {}
 
 		self.optionsButton = gtk.Button(label="Options")
-		self.optionsButton.set_image(gtk.Image.new_from_icon_name(
-			"gtk-preferences",
-			gtk.IconSize.BUTTON,
-		))
+		self.optionsButton.set_image(
+			gtk.Image.new_from_icon_name(
+				"gtk-preferences",
+				gtk.IconSize.BUTTON,
+			),
+		)
 		self.optionsButton.connect("clicked", self.optionsButtonClicked)
 
 		self.dependsButton = gtk.Button(label="Install dependencies")
@@ -636,10 +633,7 @@ class FormatBox(FormatButton):
 			print("All dependencies are stattisfied for " + formatName)
 			return
 		pkgNamesStr = " ".join(pkgNames)
-		msg = (
-			"Run the following command:\n"
-			f"{core.pip} install {pkgNamesStr}"
-		)
+		msg = f"Run the following command:\n{core.pip} install {pkgNamesStr}"
 		showInfo(
 			msg,
 			title="Dependencies for " + formatName,
@@ -755,14 +749,18 @@ class GtkTextviewLogHandler(logging.Handler):
 
 class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
 	def __init__(self, ui, textview) -> None:
-		GtkTextviewLogHandler.__init__(self, ui, {
-			"CRITICAL": textview,
-			"ERROR": textview,
-			"WARNING": textview,
-			"INFO": textview,
-			"DEBUG": textview,
-			"TRACE": textview,
-		})
+		GtkTextviewLogHandler.__init__(
+			self,
+			ui,
+			{
+				"CRITICAL": textview,
+				"ERROR": textview,
+				"WARNING": textview,
+				"INFO": textview,
+				"DEBUG": textview,
+				"TRACE": textview,
+			},
+		)
 
 
 class BrowseButton(gtk.Button):
@@ -776,10 +774,12 @@ class BrowseButton(gtk.Button):
 		gtk.Button.__init__(self)
 
 		self.set_label(label)
-		self.set_image(gtk.Image.new_from_icon_name(
-			"document-save" if actionSave else "document-open",
-			gtk.IconSize.BUTTON,
-		))
+		self.set_image(
+			gtk.Image.new_from_icon_name(
+				"document-save" if actionSave else "document-open",
+				gtk.IconSize.BUTTON,
+			),
+		)
 
 		self.actionSave = actionSave
 		self.setFilePathFunc = setFilePathFunc
@@ -790,10 +790,10 @@ class BrowseButton(gtk.Button):
 	def onClick(self, _widget):
 		fcd = gtk.FileChooserNative(
 			transient_for=(
-				self.get_root() if hasattr(self, "get_root")
-				else self.get_toplevel()
+				self.get_root() if hasattr(self, "get_root") else self.get_toplevel()
 			),
-			action=gtk.FileChooserAction.SAVE if self.actionSave
+			action=gtk.FileChooserAction.SAVE
+			if self.actionSave
 			else gtk.FileChooserAction.OPEN,
 			title=self.title,
 		)
@@ -807,13 +807,8 @@ class BrowseButton(gtk.Button):
 		fcd.destroy()
 
 
-sortKeyNameByDesc = {
-	_sk.desc: _sk.name
-	for _sk in namedSortKeyList
-}
-sortKeyNames = [
-	_sk.name for _sk in namedSortKeyList
-]
+sortKeyNameByDesc = {_sk.desc: _sk.name for _sk in namedSortKeyList}
+sortKeyNames = [_sk.name for _sk in namedSortKeyList]
 
 
 class SortOptionsBox(gtk.Box):
@@ -941,15 +936,17 @@ class GeneralOptionsDialog(gtk.Dialog):
 		pack(hbox, self.sqliteCheck, 0, 0, padding=hpad)
 		pack(self.vbox, hbox, 0, 0, padding=vpad)
 		##
-		self.configParams = OrderedDict([
-			("save_info_json", False),
-			("lower", False),
-			("skip_resources", False),
-			("rtl", False),
-			("enable_alts", True),
-			("cleanup", True),
-			("remove_html_all", True),
-		])
+		self.configParams = OrderedDict(
+			[
+				("save_info_json", False),
+				("lower", False),
+				("skip_resources", False),
+				("rtl", False),
+				("enable_alts", True),
+				("cleanup", True),
+				("remove_html_all", True),
+			],
+		)
 		self.configCheckButtons = {}
 		configDefDict = UIBase.configDefDict
 		for param in self.configParams:
@@ -1460,15 +1457,17 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		log.debug(f"config: {self.config}")
 
 		try:
-			finalOutputFile = glos.convert(ConvertArgs(
-				inPath,
-				inputFormat=inFormat,
-				outputFilename=outPath,
-				outputFormat=outFormat,
-				readOptions=readOptions,
-				writeOptions=writeOptions,
-				**self.convertOptions,
-			))
+			finalOutputFile = glos.convert(
+				ConvertArgs(
+					inPath,
+					inputFormat=inFormat,
+					outputFilename=outPath,
+					outputFormat=outFormat,
+					readOptions=readOptions,
+					writeOptions=writeOptions,
+					**self.convertOptions,
+				),
+			)
 			if finalOutputFile:
 				self.status("Convert finished")
 			return bool(finalOutputFile)
@@ -1517,7 +1516,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 				self.convertOutputFormatCombo.setActive(outFormat)
 
 		if outFormat:
-			self.status("Press \"Convert\"")
+			self.status('Press "Convert"')
 		else:
 			self.status("Select output format")
 
@@ -1582,8 +1581,8 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			self.reverseInputEntry.set_text(inPath)
 
 		if (
-			self.config["ui_autoSetFormat"] and
-			not self.reverseInputFormatCombo.getActive()
+			self.config["ui_autoSetFormat"]
+			and not self.reverseInputFormatCombo.getActive()
 		):
 			inputArgs = Glossary.detectInputFormat(inPath, quiet=True)
 			if inputArgs:

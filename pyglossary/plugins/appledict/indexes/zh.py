@@ -77,11 +77,9 @@ def pinyin_indexes(content: str) -> "set[str]":
 
 	# multiple pronunciations
 	for pinyinPart in pinyinPattern.split(pinyin):
-
 		# find all pinyin ranges, use them to rip pinyin out
 		py = [
-			r._slice(pinyinPart)
-			for r in color.ranges_of_pinyin_in_string(pinyinPart)
+			r._slice(pinyinPart) for r in color.ranges_of_pinyin_in_string(pinyinPart)
 		]
 
 		# maybe no pinyin here
@@ -93,11 +91,16 @@ def pinyin_indexes(content: str) -> "set[str]":
 
 		# pinyin with diacritics replaced by tone numbers
 		indexes.add(
-			color.utf(" ".join([
-				color.lowercase_string_by_removing_pinyin_tones(p) +
-				str(color.determine_tone(p))
-				for p in py
-			])) + ".",
+			color.utf(
+				" ".join(
+					[
+						color.lowercase_string_by_removing_pinyin_tones(p)
+						+ str(color.determine_tone(p))
+						for p in py
+					],
+				),
+			)
+			+ ".",
 		)
 	return indexes
 

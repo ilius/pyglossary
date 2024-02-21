@@ -37,12 +37,15 @@ __all__ = [
 
 defaultSortKeyName = "headword_lower"
 
-NamedSortKey = namedtuple("NamedSortKey", [
-	"name",
-	"desc",
-	"normal",
-	"sqlite",
-])
+NamedSortKey = namedtuple(
+	"NamedSortKey",
+	[
+		"name",
+		"desc",
+		"normal",
+		"sqlite",
+	],
+)
 
 
 @dataclass
@@ -114,9 +117,7 @@ namedSortKeyList = [
 	),
 ]
 
-_sortKeyByName = {
-	item.name: item for item in namedSortKeyList
-}
+_sortKeyByName = {item.name: item for item in namedSortKeyList}
 
 
 def lookupSortKey(sortKeyId: str) -> "NamedSortKey | None":
@@ -124,7 +125,7 @@ def lookupSortKey(sortKeyId: str) -> "NamedSortKey | None":
 
 	parts = sortKeyId.split(":")
 	if len(parts) == 1:
-		sortKeyName, = parts
+		(sortKeyName,) = parts
 	elif len(parts) == 2:
 		sortKeyName, localeName = parts
 	else:

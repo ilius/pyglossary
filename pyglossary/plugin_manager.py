@@ -41,7 +41,8 @@ __all__ = ["PluginManager"]
 log = logging.getLogger("pyglossary")
 
 DetectedFormat = namedtuple(
-	"DetectedFormat", [
+	"DetectedFormat",
+	[
 		"filename",  # str
 		"formatName",  # str
 		"compression",  # str
@@ -96,8 +97,7 @@ class PluginManager:
 		moduleNames = [
 			moduleName
 			for _, moduleName, _ in pkgutil.iter_modules([directory])
-			if moduleName not in cls.loadedModules and
-			moduleName != "formats_common"
+			if moduleName not in cls.loadedModules and moduleName != "formats_common"
 		]
 		moduleNames.sort()
 

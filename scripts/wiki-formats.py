@@ -53,6 +53,7 @@ hasIconSet = {
 	"zim",
 }
 
+
 def pluginIsActive(p):
 	if not p.enable:
 		return False
@@ -134,7 +135,8 @@ def writeCheck(p):
 	return "✔" if p.canWrite else ""
 
 
-template = Template("""
+template = Template(
+	"""
 |   | Description |   | Read | Write| Doc Link |
 |:-:| ----------- |:-:|:----:|:----:| -------- |
 % for p in plugins:
@@ -148,7 +150,8 @@ Legend:
 - 🔢	Binary file
 - ✔		Supported
 - ❌ 	Will not be supported
-""")
+""",
+)
 
 # wiki = module.wiki
 # wiki_md = "―"
@@ -162,11 +165,7 @@ Legend:
 
 
 userPluginsDirPath = Path(userPluginsDir)
-plugins = [
-	p
-	for p in Glossary.plugins.values()
-	if pluginIsActive(p)
-]
+plugins = [p for p in Glossary.plugins.values() if pluginIsActive(p)]
 
 text = template.render(
 	plugins=plugins,

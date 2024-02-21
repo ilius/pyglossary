@@ -1,4 +1,3 @@
-
 import json
 import logging
 from os.path import join
@@ -23,11 +22,11 @@ class Lang:
 
 	def __repr__(self) -> str:
 		return (
-			'Lang('
-			f'codes={self._codes!r}, '
-			f'names={self._names!r}, '
-			f'titleTag={self._titleTag!r}'
-			')'
+			"Lang("
+			f"codes={self._codes!r}, "
+			f"names={self._names!r}, "
+			f"titleTag={self._titleTag!r}"
+			")"
 		)
 
 	def __str__(self) -> str:
@@ -71,6 +70,7 @@ class LangDict(dict):
 
 	def load(self) -> None:
 		from time import time as now
+
 		if len(self) > 0:
 			return
 		t0 = now()
@@ -78,12 +78,14 @@ class LangDict(dict):
 		with open(filename, encoding="utf-8") as _file:
 			data = json.load(_file)
 			for row in data:
-				self._addLang(Lang(
-					codes=row["codes"],
-					names=[row["name"]] + row["alt_names"],
-					titleTag=row["title_tag"],
-					rtl=row.get("rtl", 0),
-				))
+				self._addLang(
+					Lang(
+						codes=row["codes"],
+						names=[row["name"]] + row["alt_names"],
+						titleTag=row["title_tag"],
+						rtl=row.get("rtl", 0),
+					),
+				)
 
 		log.debug(
 			f"LangDict: loaded, {len(self)} keys, "

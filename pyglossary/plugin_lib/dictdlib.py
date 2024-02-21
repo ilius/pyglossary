@@ -48,7 +48,7 @@ def b64_encode(val: int) -> str:
 	startfound = 0
 	retval = ""
 	for i in range(5, -1, -1):
-		thispart = (val >> (6 * i)) & ((2 ** 6) - 1)
+		thispart = (val >> (6 * i)) & ((2**6) - 1)
 		if (not startfound) and (not thispart):
 			# Both zero -- keep going.
 			continue
@@ -96,7 +96,7 @@ class DictDB:
 	def __init__(
 		self,
 		basename: str,
-		mode: str = 'read',
+		mode: str = "read",
 		quiet: int = 0,
 	) -> None:
 		# url = 'unknown', shortname = 'unknown',
@@ -128,7 +128,7 @@ class DictDB:
 		self.basename = basename
 
 		self.indexFilename = self.basename + ".index"
-		if mode == 'read' and os.path.isfile(self.basename + ".dict.dz"):
+		if mode == "read" and os.path.isfile(self.basename + ".dict.dz"):
 			self.useCompression = 1
 		else:
 			self.useCompression = 0
@@ -140,19 +140,19 @@ class DictDB:
 
 		self.dictFile: "io.IOBase"
 		self.indexFile: "io.IOBase"
-		if mode == 'read':
+		if mode == "read":
 			self.indexFile = open(self.indexFilename, "rb")
 			if self.useCompression:
 				self.dictFile = gzip.GzipFile(self.dictFilename, "rb")
 			else:
 				self.dictFile = open(self.dictFilename, "rb")
 			self._initIndex()
-		elif mode == 'write':
+		elif mode == "write":
 			self.indexFile = open(self.indexFilename, "wb")
 			if self.useCompression:
 				raise ValueError("'write' mode incompatible with .dz files")
 			self.dictFile = open(self.dictFilename, "wb")
-		elif mode == 'update':
+		elif mode == "update":
 			try:
 				self.indexFile = open(self.indexFilename, "r+b")
 			except OSError:
@@ -183,10 +183,12 @@ class DictDB:
 			parts = line.decode("utf-8").rstrip().split("\t")
 			if parts[0] not in self.indexEntries:
 				self.indexEntries[parts[0]] = []
-			self.indexEntries[parts[0]].append((
-				b64_decode(parts[1]),
-				b64_decode(parts[2]),
-			))
+			self.indexEntries[parts[0]].append(
+				(
+					b64_decode(parts[1]),
+					b64_decode(parts[2]),
+				),
+			)
 
 	def addIndexEntry(
 		self,
@@ -233,8 +235,9 @@ class DictDB:
 		entrylist = self.indexEntries[word]
 		for i in range(len(entrylist) - 1, -1, -1):
 			# Go backwards so the del doesn't effect the index.
-			if (start is None or start == entrylist[i][0]) and \
-				(size is None or size == entrylist[i][1]):
+			if (start is None or start == entrylist[i][0]) and (
+				size is None or size == entrylist[i][1]
+			):
 				del entrylist[i]
 				retval += 1
 		if not entrylist:  # if we emptied it, del it completely
@@ -287,7 +290,7 @@ class DictDB:
 		definition should be indexed.  This function always adds \n
 		to the end of defstr.
 		"""
-		self.dictFile.seek(0, 2)        # Seek to end of file
+		self.dictFile.seek(0, 2)  # Seek to end of file
 		start = self.dictFile.tell()
 		s_defi += "\n"
 		b_defi = s_defi.encode("utf-8")
@@ -317,7 +320,9 @@ class DictDB:
 			indexList: "list[str]" = []
 			for word, defs in self.indexEntries.items():
 				for thisdef in defs:
-					indexList.append(f"{word}\t{b64_encode(thisdef[0])}\t{b64_encode(thisdef[1])}")
+					indexList.append(
+						f"{word}\t{b64_encode(thisdef[0])}\t{b64_encode(thisdef[1])}",
+					)
 
 			self.update(" mapping")
 
@@ -354,7 +359,7 @@ class DictDB:
 		for entry in indexList:
 			self.indexFile.write(entry.encode("utf-8") + b"\n")
 
-		if self.mode == 'update':
+		if self.mode == "update":
 			# In case things were deleted
 			self.indexFile.truncate()
 

@@ -154,17 +154,12 @@ for direc in (cmdiConfDir, histDir):
 if __name__ == "__main__":
 	Glossary.init()
 
-pluginByDesc = {
-	plugin.description: plugin
-	for plugin in Glossary.plugins.values()
-}
+pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
 readFormatDescList = [
-	Glossary.plugins[_format].description
-	for _format in Glossary.readFormats
+	Glossary.plugins[_format].description for _format in Glossary.readFormats
 ]
 writeFormatDescList = [
-	Glossary.plugins[_format].description
-	for _format in Glossary.writeFormats
+	Glossary.plugins[_format].description for _format in Glossary.writeFormats
 ]
 
 convertOptionsFlags = {
@@ -259,10 +254,7 @@ class AbsolutePathHistory(FileHistory):
 	def load_history_strings(self) -> "Iterable[str]":
 		# pwd = os.getcwd()
 		pathList = FileHistory.load_history_strings(self)
-		return [
-			relpath(p)
-			for p in pathList
-		]
+		return [relpath(p) for p in pathList]
 
 	def store_string(self, string: str) -> None:
 		FileHistory.store_string(self, abspath(string))
@@ -301,33 +293,37 @@ class UI(ui_cmd.UI):
 			help="display help",
 		)
 		self.ls_usage = (
-			'Usage: !ls [--help] [-l] [FILE/DIRECTORY]...\n\n'
-			'optional arguments:\n'
-			'    --help      show this help message and exit\n'
-			'    -l, --long  use a long listing format\n'
+			"Usage: !ls [--help] [-l] [FILE/DIRECTORY]...\n\n"
+			"optional arguments:\n"
+			"    --help      show this help message and exit\n"
+			"    -l, --long  use a long listing format\n"
 		)
 
-		self._fsActions = OrderedDict([
-			("!pwd", (self.fs_pwd, "")),
-			("!ls", (self.fs_ls, self.ls_usage)),
-			("!..", (self.fs_cd_parent, "")),
-			("!cd", (self.fs_cd, "")),
-		])
-		self._finalActions = OrderedDict([
-			("formats", self.askFormats),
-			("read-options", self.askReadOptions),
-			("write-options", self.askWriteOptions),
-			("reset-read-options", self.resetReadOptions),
-			("reset-write-options", self.resetWriteOptions),
-			("config", self.askConfig),
-			("indirect", self.setIndirect),
-			("sqlite", self.setSQLite),
-			("no-progressbar", self.setNoProgressbar),
-			("sort", self.setSort),
-			("sort-key", self.setSortKey),
-			("show-options", self.showOptions),
-			("back", None),
-		])
+		self._fsActions = OrderedDict(
+			[
+				("!pwd", (self.fs_pwd, "")),
+				("!ls", (self.fs_ls, self.ls_usage)),
+				("!..", (self.fs_cd_parent, "")),
+				("!cd", (self.fs_cd, "")),
+			],
+		)
+		self._finalActions = OrderedDict(
+			[
+				("formats", self.askFormats),
+				("read-options", self.askReadOptions),
+				("write-options", self.askWriteOptions),
+				("reset-read-options", self.resetReadOptions),
+				("reset-write-options", self.resetWriteOptions),
+				("config", self.askConfig),
+				("indirect", self.setIndirect),
+				("sqlite", self.setSQLite),
+				("no-progressbar", self.setNoProgressbar),
+				("sort", self.setSort),
+				("sort-key", self.setSortKey),
+				("show-options", self.showOptions),
+				("back", None),
+			],
+		)
 
 	def fs_pwd(self, args: "list[str]"):
 		if args:
@@ -345,6 +341,7 @@ class UI(ui_cmd.UI):
 		import pwd
 		import stat
 		import time
+
 		argPath = arg
 		if parentDir:
 			argPath = join(parentDir, arg)
@@ -395,22 +392,18 @@ class UI(ui_cmd.UI):
 				continue
 
 			contents = os.listdir(arg)
-			statList = [
-				os.lstat(join(arg, _path))
-				for _path in contents
-			]
-			maxFileSize = max(
-				st.st_size
-				for st in statList
-			)
+			statList = [os.lstat(join(arg, _path)) for _path in contents]
+			maxFileSize = max(st.st_size for st in statList)
 			sizeWidth = len(str(maxFileSize))
 			for i, _path in enumerate(contents):
-				print(self.get_ls_l(
-					_path,
-					parentDir=arg,
-					st=statList[i],
-					sizeWidth=sizeWidth,
-				))
+				print(
+					self.get_ls_l(
+						_path,
+						parentDir=arg,
+						st=statList[i],
+						sizeWidth=sizeWidth,
+					),
+				)
 
 	def fs_cd_parent(self, args: "list[str]"):
 		if args:
@@ -464,6 +457,7 @@ class UI(ui_cmd.UI):
 		reading: bool,
 	):
 		from shlex import split as shlex_split
+
 		history = AbsolutePathHistory(join(histDir, histName))
 		auto_suggest = AutoSuggestFromHistory()
 		# Note: isdir and isfile funcs follow sym links, so no worry about links
@@ -474,7 +468,8 @@ class UI(ui_cmd.UI):
 		default = getattr(self, varName)
 		while True:
 			filename = self.prompt(
-				1, kind,
+				1,
+				kind,
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
@@ -538,7 +533,8 @@ class UI(ui_cmd.UI):
 		)
 		while True:
 			value = self.prompt(
-				1, "Input format",
+				1,
+				"Input format",
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
@@ -562,7 +558,8 @@ class UI(ui_cmd.UI):
 		)
 		while True:
 			value = self.prompt(
-				1, "Output format",
+				1,
+				"Output format",
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
@@ -615,7 +612,8 @@ class UI(ui_cmd.UI):
 		while True:
 			try:
 				optName = self.prompt(
-					2, "ReadOption: Name (ENTER if done)",
+					2,
+					"ReadOption: Name (ENTER if done)",
 					history=history,
 					auto_suggest=auto_suggest,
 					completer=completer,
@@ -634,7 +632,8 @@ class UI(ui_cmd.UI):
 				if option.typ == "bool":
 					try:
 						valueNew = self.checkbox_prompt(
-							3, f"ReadOption: {optName}",
+							3,
+							f"ReadOption: {optName}",
 							default=default,
 						)
 					except (KeyboardInterrupt, EOFError):
@@ -644,7 +643,8 @@ class UI(ui_cmd.UI):
 					break
 				try:
 					value = self.prompt(
-						3, f"ReadOption: {optName}",
+						3,
+						f"ReadOption: {optName}",
 						colon=" =",
 						history=FileHistory(join(histDir, f"option-value-{optName}")),
 						auto_suggest=AutoSuggestFromHistory(),
@@ -687,7 +687,8 @@ class UI(ui_cmd.UI):
 		while True:
 			try:
 				optName = self.prompt(
-					2, "WriteOption: Name (ENTER if done)",
+					2,
+					"WriteOption: Name (ENTER if done)",
 					history=history,
 					auto_suggest=auto_suggest,
 					completer=completer,
@@ -706,7 +707,8 @@ class UI(ui_cmd.UI):
 				if option.typ == "bool":
 					try:
 						valueNew = self.checkbox_prompt(
-							3, f"WriteOption: {optName}",
+							3,
+							f"WriteOption: {optName}",
 							default=default,
 						)
 					except (KeyboardInterrupt, EOFError):
@@ -716,7 +718,8 @@ class UI(ui_cmd.UI):
 					break
 				try:
 					value = self.prompt(
-						3, f"WriteOption: {optName}",
+						3,
+						f"WriteOption: {optName}",
 						colon=" =",
 						history=FileHistory(join(histDir, f"option-value-{optName}")),
 						auto_suggest=AutoSuggestFromHistory(),
@@ -751,12 +754,16 @@ class UI(ui_cmd.UI):
 	def askConfigValue(self, configKey, option):
 		default = self.config.get(configKey, "")
 		if option.typ == "bool":
-			return str(self.checkbox_prompt(
-				3, f"Config: {configKey}",
-				default=bool(default),
-			))
+			return str(
+				self.checkbox_prompt(
+					3,
+					f"Config: {configKey}",
+					default=bool(default),
+				),
+			)
 		return self.prompt(
-			3, f"Config: {configKey}",
+			3,
+			f"Config: {configKey}",
 			colon=" =",
 			history=FileHistory(join(histDir, f"config-value-{configKey}")),
 			auto_suggest=AutoSuggestFromHistory(),
@@ -778,7 +785,8 @@ class UI(ui_cmd.UI):
 		while True:
 			try:
 				configKey = self.prompt(
-					2, "Config: Key (ENTER if done)",
+					2,
+					"Config: Key (ENTER if done)",
 					history=history,
 					auto_suggest=auto_suggest,
 					completer=completer,
@@ -834,7 +842,8 @@ class UI(ui_cmd.UI):
 	def setSort(self):
 		try:
 			value = self.checkbox_prompt(
-				2, "Enable Sort",
+				2,
+				"Enable Sort",
 				default=self._convertOptions.get("sort", False),
 			)
 		except (KeyboardInterrupt, EOFError):
@@ -850,7 +859,8 @@ class UI(ui_cmd.UI):
 		)
 		default = self._convertOptions.get("sortKeyName", "")
 		sortKeyName = self.prompt(
-			2, "SortKey",
+			2,
+			"SortKey",
 			history=FileHistory(join(histDir, "sort-key")),
 			auto_suggest=AutoSuggestFromHistory(),
 			default=default,
@@ -881,7 +891,8 @@ class UI(ui_cmd.UI):
 		)
 		while True:
 			action = self.prompt(
-				1, "Select action (ENTER to convert)",
+				1,
+				"Select action (ENTER to convert)",
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
@@ -987,7 +998,7 @@ class UI(ui_cmd.UI):
 					log.error(f"config key {key} has no command line flag")
 				flag = option.customFlag
 				if not flag:
-					flag = key.replace('_', '-')
+					flag = key.replace("_", "-")
 				if option.typ == "bool":
 					if not value:
 						flag = f"no-{flag}"
@@ -1028,8 +1039,7 @@ class UI(ui_cmd.UI):
 
 		print()
 		print(
-			"If you want to repeat this conversion later, "
-			"you can use this command:",
+			"If you want to repeat this conversion later, you can use this command:",
 		)
 		# shlex.join is added in Python 3.8
 		print(shlex.join(cmd))
@@ -1127,11 +1137,14 @@ class UI(ui_cmd.UI):
 		self.main()
 
 		try:
-			while self.prompt(
-				level=1,
-				msg="Press enter to exit, 'a' to convert again",
-				default="",
-			) == "a":
+			while (
+				self.prompt(
+					level=1,
+					msg="Press enter to exit, 'a' to convert again",
+					default="",
+				)
+				== "a"
+			):
 				self.main(again=True)
 		except KeyboardInterrupt:
 			pass

@@ -66,7 +66,9 @@ def quote_string(value: str, BeautifulSoup: "Any") -> str:
 	return '"' + value.replace(">", "&gt;").replace('"', "&quot;") + '"'
 
 
-def indexes_generator(indexes_lang: str) -> """Callable[
+def indexes_generator(
+	indexes_lang: str,
+) -> """Callable[
 	[str, list[str], str, Any],
 	str,
 ]""":
@@ -75,6 +77,7 @@ def indexes_generator(indexes_lang: str) -> """Callable[
 	"""Callable[[Sequence[str], str], Sequence[str]]"""
 	if indexes_lang:
 		from . import indexes as idxs
+
 		indexer = idxs.languages.get(indexes_lang, None)
 		if not indexer:
 			keys_str = ", ".join(list(idxs.languages.keys()))
@@ -115,4 +118,5 @@ def indexes_generator(indexes_lang: str) -> """Callable[
 			quoted_idx = quote_string(idx, BeautifulSoup)
 			s += f"<d:index d:value={quoted_idx} d:title={quoted_title}/>"
 		return s
+
 	return generate_indexes

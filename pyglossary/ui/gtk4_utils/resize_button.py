@@ -27,7 +27,7 @@ class ResizeButton(gtk.Box):
 		self.win = win
 		self.edge = edge
 		###
-		self.image = imageFromFile('resize.png')
+		self.image = imageFromFile("resize.png")
 		self.append(self.image)
 		gesture = gtk.GestureClick.new()
 		gesture.connect("pressed", self.buttonPress)

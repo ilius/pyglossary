@@ -7,6 +7,7 @@ from ._types import ErrorType, LexType, TransformerType
 
 __all__ = ["lexRoot"]
 
+
 # rename to lexText?
 def lexRoot(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.start < tr.pos:
@@ -79,15 +80,15 @@ def lexTag(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.end():
 		return None, f"'[' not closed near pos {tr.pos} in lexTag"
 	c = tr.next()
-	if c == '[':
+	if c == "[":
 		tr.output += c
 		tr.resetBuf()
 		return lexRoot, None
 	if c in " \t":
 		tr.skipAny(" \t")
 		return lexTagAttr, None
-	if c == ']':
-		tag = tr.input[tr.start:tr.pos - 1]
+	if c == "]":
+		tag = tr.input[tr.start : tr.pos - 1]
 		if not tag:
 			return None, f"empty tag near pos {tr.pos}"
 		return processTag(tr, tag)
@@ -103,7 +104,7 @@ def lexTagAttr(tr: TransformerType) -> tuple[LexType, ErrorType]:
 		tr.resetBuf()
 		return lexRoot, None
 	c = tr.next()
-	if c == ']':
+	if c == "]":
 		tr.attrs[tr.attrName] = None
 		tr.move(-1)
 		return lexTag, None
@@ -172,8 +173,13 @@ def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 	elif tag == "ex":
 		tr.output += "</font></span>"
 	elif tag in (
-		"ref", "url", "s",
-		"trn", "!trn", "trs", "!trs",
+		"ref",
+		"url",
+		"s",
+		"trn",
+		"!trn",
+		"trs",
+		"!trs",
 		"lang",
 		"com",
 	):
@@ -271,7 +277,7 @@ def lexUrlText(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if "://" not in target:
 		target = "http://" + target
 
-	tr.output += f'<a href={quoteattr(target)}>{escape(text)}</a>'
+	tr.output += f"<a href={quoteattr(target)}>{escape(text)}</a>"
 	tr.resetBuf()
 	return lexRoot, None
 
@@ -294,8 +300,8 @@ def lexS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 		if tr.audio:
 			tr.output += (
 				rf'<object type="audio/x-wav" data="{fname}" '
-				"width=\"40\" height=\"40\">"
-				"<param name=\"autoplay\" value=\"false\" />"
+				'width="40" height="40">'
+				'<param name="autoplay" value="false" />'
 				"</object>"
 			)
 	elif ext in ("jpg", "jpeg", "gif", "tif", "tiff", "png", "bmp"):

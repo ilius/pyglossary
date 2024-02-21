@@ -3,7 +3,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from pyglossary.option import Option
+	from pyglossary.option import Option
 
 enable = False
 lname = "babylon_bdc"

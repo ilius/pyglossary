@@ -108,10 +108,12 @@ class Writer:
 			info = odict()
 			info["name"] = self._glos.getInfo("name")
 			info["wordCount"] = wordCount
-			for key, value in self._glos.getExtraInfos((
-				"name",
-				"wordCount",
-			)).items():
+			for key, value in self._glos.getExtraInfos(
+				(
+					"name",
+					"wordCount",
+				),
+			).items():
 				info[key] = value
 			infoFile.write(dataToPrettyJson(info))
 
@@ -163,10 +165,7 @@ class Reader:
 	) -> "Generator[None, EntryType, None]":
 		children = listdir(dpath)
 		if exclude:
-			children = [
-				name for name in children
-				if name not in exclude
-			]
+			children = [name for name in children if name not in exclude]
 		children.sort(key=self._listdirSortKey)
 		for name in children:
 			cpath = join(dpath, name)

@@ -61,7 +61,6 @@ optionsProp: "dict[str, Option]" = {
 	),
 	# "group_by_prefix_merge_min_size": IntOption(),
 	# "group_by_prefix_merge_across_first": BoolOption(),
-
 	# specific to mobi
 	"kindlegen_path": StrOption(
 		comment="Path to kindlegen executable",
@@ -217,6 +216,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		import uuid
+
 		EbookWriter.__init__(
 			self,
 			glos,
@@ -246,13 +246,13 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			iforms_list = [
 				self.GROUP_XHTML_WORD_IFORM_TEMPLATE.format(
 					inflword=variant,
-					exact_str=' exact="yes"' if self._exact else '',
+					exact_str=' exact="yes"' if self._exact else "",
 				)
 				for variant in variants
 			]
-			infl = "\n" + \
-				self.GROUP_XHTML_WORD_INFL_TEMPLATE.format(
-					iforms_str="\n".join(iforms_list))
+			infl = "\n" + self.GROUP_XHTML_WORD_INFL_TEMPLATE.format(
+				iforms_str="\n".join(iforms_list),
+			)
 
 		headword = self.escape_if_needed(word)
 
@@ -302,7 +302,6 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		).encode("utf-8")
 
 	def write_groups(self) -> "Generator[None, EntryType, None]":
-
 		def add_group(state: "GroupStateBySize") -> None:
 			if state.group_size <= 0:
 				return

@@ -135,7 +135,7 @@ class Reader:
 		return 0
 
 	def __iter__(self) -> "Iterator[EntryType]":
-		while (line := self._file.readline()):
+		while line := self._file.readline():
 			line = line.strip()
 			if not line:
 				continue
@@ -249,10 +249,13 @@ class Reader:
 				url = sound.get(f"{_format}_url")
 				if not url:
 					continue
-				with hf.element("source", attrib={
-					"src": url,
-					"type": f"audio/{_format}",
-				}):
+				with hf.element(
+					"source",
+					attrib={
+						"src": url,
+						"type": f"audio/{_format}",
+					},
+				):
 					pass
 
 	def writeSoundList(
@@ -294,7 +297,8 @@ class Reader:
 			return
 
 		self.makeList(
-			hf, senseList,
+			hf,
+			senseList,
 			self.writeSense,
 		)
 
@@ -364,10 +368,13 @@ class Reader:
 			hf.write("Examples:")
 			hf.write(ET.Element("br"))
 			for example in examples:
-				with hf.element("div", attrib={
-					"class": "example",
-					"style": f"padding: {self._example_padding};",
-				}):
+				with hf.element(
+					"div",
+					attrib={
+						"class": "example",
+						"style": f"padding: {self._example_padding};",
+					},
+				):
 					self.writeSenseExample(hf, example)
 
 	def writeSenseFormOf(
@@ -376,6 +383,7 @@ class Reader:
 		form_of: "dict[str, str]",
 	) -> None:
 		from lxml import etree as ET
+
 		# {"word": ..., "extra": ...}
 		word = form_of.get("word")
 		if not word:
@@ -445,9 +453,12 @@ class Reader:
 			word = word[:i]
 		if not word:
 			return
-		with hf.element("a", attrib={
-			"href": f"bword://{word}",
-		}):
+		with hf.element(
+			"a",
+			attrib={
+				"href": f"bword://{word}",
+			},
+		):
 			hf.write(word)
 
 	def writeSynonyms(

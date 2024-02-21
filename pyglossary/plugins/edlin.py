@@ -76,6 +76,7 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		from pyglossary.json_utils import jsonToOrderedData
+
 		if isdir(filename):
 			infoFname = join(filename, "info.json")
 		elif isfile(filename):
@@ -203,6 +204,7 @@ class Writer:
 		different hash string.
 		"""
 		from hashlib import sha1
+
 		_hash = sha1(entry.s_word.encode("utf-8")).hexdigest()[:8]  # noqa: S324
 		if _hash not in self._hashSet:
 			self._hashSet.add(_hash)
@@ -235,11 +237,15 @@ class Writer:
 				header = prevPath + " " + nextPath
 			else:
 				header = nextPath
-			toFile.write("\n".join([
-				header,
-				escapeNTB(thisEntry.s_word, bar=False),
-				thisEntry.defi,
-			]))
+			toFile.write(
+				"\n".join(
+					[
+						header,
+						escapeNTB(thisEntry.s_word, bar=False),
+						thisEntry.defi,
+					],
+				),
+			)
 
 	def write(self) -> "Generator[None, EntryType, None]":
 		from collections import OrderedDict as odict
@@ -280,12 +286,14 @@ class Writer:
 			info["wordCount"] = count
 			# info["modified"] =
 
-			for key, value in self._glos.getExtraInfos((
-				"name",
-				"root",
-				"prev_link",
-				"wordCount",
-			)).items():
+			for key, value in self._glos.getExtraInfos(
+				(
+					"name",
+					"root",
+					"prev_link",
+					"wordCount",
+				),
+			).items():
 				info[key] = value
 
 			toFile.write(dataToPrettyJson(info))

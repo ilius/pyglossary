@@ -87,6 +87,7 @@ def _idzip(filename: "str | Path") -> bool:
 
 def _dictzip(filename: str | Path) -> bool:
 	import subprocess
+
 	dictzipCmd = shutil.which("dictzip")
 	if not dictzipCmd:
 		return False
@@ -142,6 +143,7 @@ def _rmtree(direc: str) -> None:
 
 def rmtree(direc: str) -> None:
 	from os.path import isdir
+
 	try:
 		for _ in range(2):
 			if not isdir(direc):

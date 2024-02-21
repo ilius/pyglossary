@@ -42,12 +42,15 @@ class Writer:
 
 	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_writer import writeTxt
+
 		yield from writeTxt(
 			self._glos,
 			entryFmt=":{word}:{defi}\n",
 			filename=self._filename,
-			defiEscapeFunc=replaceStringTable([
-				("\r", ""),
-			]),
+			defiEscapeFunc=replaceStringTable(
+				[
+					("\r", ""),
+				],
+			),
 			ext=".dtxt",
 		)

@@ -1,4 +1,3 @@
-
 import typing
 from collections.abc import (
 	Callable,

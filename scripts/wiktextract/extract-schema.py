@@ -16,17 +16,13 @@ class Node:
 	ListOf: "Node | None" = None
 
 	def keyScoreList(self):
-		return [
-			f"{count:.1f}: {key}" for key, count in self.KeyScore.most_common()
-		]
+		return [f"{count:.1f}: {key}" for key, count in self.KeyScore.most_common()]
 
 	@property
 	def __dict__(self):
 		if self.Dict:
 			assert self.ListOf is None
-			keys = [
-				key for key, _ in self.KeyScore.most_common()
-			]
+			keys = [key for key, _ in self.KeyScore.most_common()]
 			try:
 				keys.remove("word")
 			except ValueError:
@@ -34,10 +30,7 @@ class Node:
 			else:
 				keys.insert(0, "word")
 			return {
-				"__dict__": odict(
-					(key, self.Dict[key].__dict__)
-					for key in keys
-				),
+				"__dict__": odict((key, self.Dict[key].__dict__) for key in keys),
 				# "__key_score__": self.keyScoreList(),
 			}
 
@@ -88,8 +81,7 @@ def updateSchema(_type: str, path: "list[str]"):
 	prevType = node.Type
 	if prevType and prevType != _type:
 		print(
-			f"mismatch types for path={'.'.join(path)}, "
-			f"{prevType} and {_type}",
+			f"mismatch types for path={'.'.join(path)}, {prevType} and {_type}",
 		)
 	node.Type = _type
 
@@ -114,7 +106,7 @@ def parseList(data: "list[Any]", path: "list[str]", node: Node):
 			addToValueSet(item, path)
 
 	itemTypesStr = " | ".join(sorted(itemTypes))
-	updateSchema(itemTypesStr, path+["[]"])
+	updateSchema(itemTypesStr, path + ["[]"])
 
 
 def parseDict(data: "dict[str, Any]", path: "list[str]", node: Node):
@@ -131,14 +123,14 @@ def parseDict(data: "dict[str, Any]", path: "list[str]", node: Node):
 			childNode = node.Dict[key] = Node()
 
 		if isinstance(value, dict):
-			parseDict(value, path+[key], childNode)
+			parseDict(value, path + [key], childNode)
 			continue
 		if isinstance(value, list):
-			parseList(value, path+[key], childNode)
+			parseList(value, path + [key], childNode)
 			continue
 		if isinstance(value, str | int | float | bool):
-			updateSchema(type(value).__name__, path+[key])
-			addToValueSet(value, path+[key])
+			updateSchema(type(value).__name__, path + [key])
+			addToValueSet(value, path + [key])
 
 
 jsonl_path = sys.argv[1]
@@ -169,9 +161,11 @@ commonValuesList = [
 	if len(values) < 20 and len(str(values)) < 100
 ]
 
+
 def commonValuesSortKey(item):
 	key, values = item
-	return abs(len(values)-5)
+	return abs(len(values) - 5)
+
 
 commonValuesList.sort(key=commonValuesSortKey)
 

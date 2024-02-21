@@ -14,8 +14,10 @@ from pyglossary.ui.base import UIBase
 ui = UIBase()
 ui.loadConfig(user=False)
 
-template = Template("""${entryFiltersTable}
-""")
+template = Template(
+	"""${entryFiltersTable}
+""",
+)
 
 
 def codeValue(x):
@@ -39,31 +41,14 @@ def renderCell(value):
 
 def renderTable(rows):
 	"""rows[0] must be headers."""
+	rows = [[renderCell(cell) for cell in row] for row in rows]
+	width = [max(len(row[i]) for row in rows) for i in range(len(rows[0]))]
 	rows = [
-		[
-			renderCell(cell) for cell in row
-		]
-		for row in rows
-	]
-	width = [
-		max(len(row[i]) for row in rows)
-		for i in range(len(rows[0]))
-	]
-	rows = [
-		[
-			cell.ljust(width[i], " ")
-			for i, cell in enumerate(row)
-		]
+		[cell.ljust(width[i], " ") for i, cell in enumerate(row)]
 		for rowI, row in enumerate(rows)
 	]
-	rows.insert(1, [
-		"-" * colWidth
-		for colWidth in width
-	])
-	return "\n".join([
-		"| " + " | ".join(row) + " |"
-		for row in rows
-	])
+	rows.insert(1, ["-" * colWidth for colWidth in width])
+	return "\n".join(["| " + " | ".join(row) + " |" for row in rows])
 
 
 def getCommandFlagsMD(name):
@@ -86,12 +71,15 @@ for configParam, default, filterClass in entryFiltersRules:
 
 
 entryFiltersTable = "## Entry Filters\n\n" + renderTable(
-	[(
-		"Name",
-		"Default Enabled",
-		"Command Flags",
-		"Description",
-	)] + [
+	[
+		(
+			"Name",
+			"Default Enabled",
+			"Command Flags",
+			"Description",
+		),
+	]
+	+ [
 		(
 			codeValue(filterClass.name),
 			yesNo(bool(default)),

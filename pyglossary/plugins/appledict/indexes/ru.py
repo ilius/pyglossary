@@ -28,9 +28,11 @@ from . import languages
 try:
 	import pymorphy2  # type: ignore
 except ImportError:
-	log.error(f"""module pymorphy2 is required to build extended Russian indexes.
+	log.error(
+		f"""module pymorphy2 is required to build extended Russian indexes.
 You can download it here: http://pymorphy2.readthedocs.org/en/latest/.
-Or by running: {pip} install pymorphy2""")
+Or by running: {pip} install pymorphy2""",
+	)
 	raise
 
 morphy = pymorphy2.MorphAnalyzer()
@@ -63,11 +65,9 @@ def _ru(title: str, a: "set[str]", a_norm: "set[str]") -> None:
 
 	# decline only one-word titles
 	if len(title.split()) == 1:
-
 		normal_forms = morphy.parse(title)
 
 		if len(normal_forms) > 0:
-
 			# forms of most probable match
 			normal_form = normal_forms[0]
 

@@ -111,7 +111,10 @@ def unescape(text: str) -> str:
 			except KeyError:
 				pass
 		return text  # leave as is
+
 	return htmlEntityPattern.sub(fixup, text)
+
+
 # }}}
 
 
@@ -180,12 +183,15 @@ class Reader:
 		encoding = self._encoding
 		if not encoding:
 			encoding = self.detectEncoding()
-		cfile = cast("io.TextIOBase", compressionOpen(
-			filename,
-			dz=True,
-			mode="rt",
-			encoding=encoding,
-		))
+		cfile = cast(
+			"io.TextIOBase",
+			compressionOpen(
+				filename,
+				dz=True,
+				mode="rt",
+				encoding=encoding,
+			),
+		)
 
 		if cfile.seekable():
 			cfile.seek(0, 2)
@@ -199,7 +205,7 @@ class Reader:
 
 		# read header
 		for line in self._file:
-			line = line.rstrip().lstrip('\ufeff')  # noqa: B005
+			line = line.rstrip().lstrip("\ufeff")  # noqa: B005
 			# \ufeff -> https://github.com/ilius/pyglossary/issues/306
 			if not line:
 				continue
@@ -322,8 +328,6 @@ class Reader:
 			terms,
 			defi,
 			byteProgress=(
-				(self._file.tell(), self._fileSize)
-				if self._fileSize
-				else None
+				(self._file.tell(), self._fileSize) if self._fileSize else None
 			),
 		)

@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
 
@@ -34,7 +33,6 @@ optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:
-
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
@@ -133,31 +131,43 @@ class Reader:
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
-		return ET.tostring(
-			elem,
-			method="html",
-			pretty_print=True,
-		).decode("utf-8").strip()
+
+		return (
+			ET.tostring(
+				elem,
+				method="html",
+				pretty_print=True,
+			)
+			.decode("utf-8")
+			.strip()
+		)
 
 	def innerXML(self, elem: "Element") -> str:
 		from lxml import etree as ET
-		elemName = elem.xpath('name(/*)')
-		resultStr = ''
-		for e in elem.xpath('/' + elemName + '/node()'):
+
+		elemName = elem.xpath("name(/*)")
+		resultStr = ""
+		for e in elem.xpath("/" + elemName + "/node()"):
 			if isinstance(e, str):
-				resultStr = resultStr + ''
+				resultStr = resultStr + ""
 			else:
-				resultStr = resultStr + ET.tostring(e, encoding='unicode')
+				resultStr = resultStr + ET.tostring(e, encoding="unicode")
 
 		return resultStr
 
 	def getTerm(self, termE: "Element") -> str:
 		from lxml import etree as ET
-		term = ET.tostring(
-			termE,
-			method="html",
-			pretty_print=False,
-		).decode("utf-8").strip()[6:-7].strip()
+
+		term = (
+			ET.tostring(
+				termE,
+				method="html",
+				pretty_print=False,
+			)
+			.decode("utf-8")
+			.strip()[6:-7]
+			.strip()
+		)
 		term = unescape_unicode(term)
 		term = term.replace("<i>", "").replace("</i>", "")
 		return term  # noqa: RET504

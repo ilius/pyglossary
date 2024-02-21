@@ -120,9 +120,9 @@ def diffGlossary(
 
 	def printEntry(color: str, prefix: str, index: int, entry: "EntryType") -> None:
 		formatted = (
-			f"{color}{prefix}#{index} " +
-			formatEntry(entry).replace("\n", "\n" + color) +
-			entrySep
+			f"{color}{prefix}#{index} "
+			+ formatEntry(entry).replace("\n", "\n" + color)
+			+ entrySep
 		)
 		write(formatted)
 
@@ -130,11 +130,7 @@ def diffGlossary(
 		key, value = pair
 		spaces = " " * (len(prefix) + 7)
 		valueColor = color + spaces + value.replace("\n", "\n" + spaces + color)
-		formatted = (
-			f"{color}{prefix} Info: {key}\n"
-			f"{valueColor}" +
-			entrySep
-		)
+		formatted = f"{color}{prefix} Info: {key}\n{valueColor}" + entrySep
 		write(formatted)
 
 	def printChangedEntry(entry1: "EntryType", entry2: "EntryType") -> None:
@@ -146,11 +142,7 @@ def diffGlossary(
 			ids = f"#{index1}"
 		else:
 			ids = f"A#{index1} B#{index2}"
-		formatted = (
-			f"=== {yellow}{ids}{reset} " +
-			formatEntry(entry1) +
-			entrySep
-		)
+		formatted = f"=== {yellow}{ids}{reset} " + formatEntry(entry1) + entrySep
 		write(formatted)
 
 	def printChangedInfo(key: str, value1: str, value2: str) -> str:
@@ -202,19 +194,15 @@ def diffGlossary(
 		if entry1.l_word[0] == entry2.l_word[0]:
 			firstWordLine = f">> {entry1.l_word[0]}"
 		else:
-			firstWordLine = (
-				f">> {entry1.l_word[0]} (A)\n"
-				f">> {entry2.l_word[0]} (B)"
-			)
-		entryFormatted = "\n".join([
-			firstWordLine,
-			formatDiff(altsDiff),
-			entry1.defi if showDefi else "",
-		])
-		formatted = (
-			header + entryFormatted +
-			entrySep
+			firstWordLine = f">> {entry1.l_word[0]} (A)\n>> {entry2.l_word[0]} (B)"
+		entryFormatted = "\n".join(
+			[
+				firstWordLine,
+				formatDiff(altsDiff),
+				entry1.defi if showDefi else "",
+			],
 		)
+		formatted = header + entryFormatted + entrySep
 		write(formatted)
 
 	count = 0
@@ -347,6 +335,7 @@ def gitDiffMain() -> None:
 
 def main() -> None:
 	import os
+
 	if os.getenv("GIT_DIFF_PATH_COUNTER"):
 		return gitDiffMain()
 

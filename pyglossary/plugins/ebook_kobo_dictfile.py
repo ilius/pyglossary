@@ -65,9 +65,7 @@ def fixWord(word: str) -> str:
 
 
 def escapeDefi(defi: str) -> str:
-	return defi.replace("\n@", "\n @")\
-		.replace("\n:", "\n :")\
-		.replace("\n&", "\n &")
+	return defi.replace("\n@", "\n @").replace("\n:", "\n :").replace("\n&", "\n &")
 
 
 class Reader(TextGlossaryReader):
@@ -101,12 +99,15 @@ class Reader(TextGlossaryReader):
 		html: bool,
 	) -> "tuple[str, list[tuple[str, str]] | None]":
 		import mistune
-		defi = defi.replace("\n @", "\n@")\
-			.replace("\n :", "\n:")\
-			.replace("\n &", "\n&")\
-			.replace("</p><br />", "</p>")\
-			.replace("</p><br/>", "</p>")\
+
+		defi = (
+			defi.replace("\n @", "\n@")
+			.replace("\n :", "\n:")
+			.replace("\n &", "\n&")
+			.replace("</p><br />", "</p>")
+			.replace("</p><br/>", "</p>")
 			.replace("</p></br>", "</p>")
+		)
 		defi = defi.strip()
 		if html:
 			pass

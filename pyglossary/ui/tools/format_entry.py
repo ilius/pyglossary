@@ -5,6 +5,7 @@ if TYPE_CHECKING:
 
 __all__ = ["formatEntry"]
 
+
 def formatEntry(entry: "EntryType") -> str:
 	words = entry.l_word
 	headword = ""

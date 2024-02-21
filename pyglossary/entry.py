@@ -151,26 +151,30 @@ class DataEntry(BaseEntry):
 class Entry(BaseEntry):
 	xdxfPattern = re.compile("^<k>[^<>]*</k>", re.DOTALL | re.IGNORECASE)
 	htmlPattern = re.compile(
-		".*(?:" + "|".join([
-			r"<font[ >]",
-			r"<br\s*/?\s*>",
-			r"<i[ >]",
-			r"<b[ >]",
-			r"<p[ >]",
-			r"<hr\s*/?\s*>",
-			r"<a ",  # or r"<a [^<>]*href="
-			r"<div[ >]",
-			r"<span[ >]",
-			r"<img[ >]",
-			r"<table[ >]",
-			r"<sup[ >]",
-			r"<u[ >]",
-			r"<ul[ >]",
-			r"<ol[ >]",
-			r"<li[ >]",
-			r"<h[1-6][ >]",
-			r"<audio[ >]",
-		]) + "|&[a-z]{2,8};|&#x?[0-9]{2,5};)",
+		".*(?:"
+		+ "|".join(
+			[
+				r"<font[ >]",
+				r"<br\s*/?\s*>",
+				r"<i[ >]",
+				r"<b[ >]",
+				r"<p[ >]",
+				r"<hr\s*/?\s*>",
+				r"<a ",  # or r"<a [^<>]*href="
+				r"<div[ >]",
+				r"<span[ >]",
+				r"<img[ >]",
+				r"<table[ >]",
+				r"<sup[ >]",
+				r"<u[ >]",
+				r"<ul[ >]",
+				r"<ol[ >]",
+				r"<li[ >]",
+				r"<h[1-6][ >]",
+				r"<audio[ >]",
+			],
+		)
+		+ "|&[a-z]{2,8};|&#x?[0-9]{2,5};)",
 		re.DOTALL | re.IGNORECASE,
 	)
 

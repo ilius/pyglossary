@@ -75,9 +75,9 @@ class Reader:
 		# 0.5ex ~= 0.3em, but "ex" is recommended
 	)
 
+	gikun_key = "gikun (meaning as reading) or jukujikun (special kanji reading)"
 	re_inf_mapping = {
-		"gikun (meaning as reading) or jukujikun (special kanji reading)":
-			"gikun/jukujikun",
+		gikun_key: "gikun/jukujikun",
 		"out-dated or obsolete kana usage": "obsolete",  # outdated/obsolete
 		"word containing irregular kana usage": "irregular",
 	}
@@ -124,11 +124,7 @@ class Reader:
 				hf.write(f"{desc.capitalize()}")
 			hf.write(br())
 
-		glossList = [
-			elem.text.strip()
-			for elem in sense.findall("gloss")
-			if elem.text
-		]
+		glossList = [elem.text.strip() for elem in sense.findall("gloss") if elem.text]
 		if glossList:
 			for i, gloss in enumerate(glossList):
 				if i > 0:
@@ -194,10 +190,13 @@ class Reader:
 
 		examples = sense.findall("example")
 		if examples:
-			with hf.element("div", attrib={
-				"class": "example",
-				"style": f"padding: {self._example_padding}px 0px;",
-			}):
+			with hf.element(
+				"div",
+				attrib={
+					"class": "example",
+					"style": f"padding: {self._example_padding}px 0px;",
+				},
+			):
 				hf.write("Examples:")
 				with hf.element("ul"):
 					for i, elem in enumerate(examples):
@@ -232,6 +231,7 @@ class Reader:
 		entry: "Element",
 	) -> "EntryType":
 		from lxml import etree as ET
+
 		glos = self._glos
 		keywords = []
 		f = BytesIO()
@@ -261,6 +261,7 @@ class Reader:
 					keb_display = keb_text
 					if translit:
 						import romkan  # type: ignore
+
 						t_keb = romkan.to_roma(keb_text)
 						if t_keb and t_keb.isascii():
 							keywords.append(t_keb)
@@ -289,6 +290,7 @@ class Reader:
 					reb_display = reb_text
 					if translit:
 						import romkan
+
 						t_reb = romkan.to_roma(reb.text)
 						if t_reb and t_reb.isascii():
 							keywords.append(t_reb)
@@ -351,11 +353,16 @@ class Reader:
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
-		return ET.tostring(
-			elem,
-			method="html",
-			pretty_print=True,
-		).decode("utf-8").strip()
+
+		return (
+			ET.tostring(
+				elem,
+				method="html",
+				pretty_print=True,
+			)
+			.decode("utf-8")
+			.strip()
+		)
 
 	def setCreationTime(self, header: str) -> None:
 		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)

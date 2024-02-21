@@ -92,7 +92,8 @@ class Reader:
 	xmlLang = "{http://www.w3.org/XML/1998/namespace}lang"
 
 	supportedTags = {
-		f"{tei}{tag}" for tag in (
+		f"{tei}{tag}"
+		for tag in (
 			"entry",
 			"form",  # entry.form
 			"orth",  # entry.form.orth
@@ -202,6 +203,7 @@ class Reader:
 		elem: "Element",
 	) -> None:
 		from lxml import etree as ET
+
 		quotes = []
 		sense = ET.Element(f"{tei}sense")
 		for child in elem.xpath("child::node()"):
@@ -313,6 +315,7 @@ class Reader:
 		el: "Element",
 	) -> None:
 		from lxml import etree as ET
+
 		for child in el.xpath("child::node()"):
 			if isinstance(child, str):
 				hf.write(child)
@@ -409,8 +412,18 @@ class Reader:
 				elif _type in ("pos", "gram"):
 					gramList.append(child)
 				elif _type in (
-					"sense", "stagr", "stagk", "def", "usage", "hint",
-					"status", "editor", "dom", "infl", "obj", "lbl",
+					"sense",
+					"stagr",
+					"stagk",
+					"def",
+					"usage",
+					"hint",
+					"status",
+					"editor",
+					"dom",
+					"infl",
+					"obj",
+					"lbl",
 				):
 					noteList.append(child)
 				else:
@@ -495,10 +508,13 @@ class Reader:
 					hf.write(text)
 		if exampleCits:
 			for cit in exampleCits:
-				with hf.element("div", attrib={
-					"class": "example",
-					"style": f"padding: {self._example_padding}px 0px;",
-				}):
+				with hf.element(
+					"div",
+					attrib={
+						"class": "example",
+						"style": f"padding: {self._example_padding}px 0px;",
+					},
+				):
 					for quote in cit.findall("quote", self.ns):
 						self.writeWithDirection(hf, quote, "div")
 					for cit2 in cit.findall("cit", self.ns):
@@ -592,14 +608,16 @@ class Reader:
 		if self._auto_rtl and self.getDirection(senseList[0]) == "rtl":
 			with hf.element("div", dir="rtl"):
 				self.makeList(
-					hf, senseList,
+					hf,
+					senseList,
 					self.writeSense,
 					ordered=(len(senseList) > 3),
 				)
 			return
 
 		self.makeList(
-			hf, senseList,
+			hf,
+			senseList,
 			self.writeSense,
 			# list_type="A",
 		)
@@ -643,17 +661,16 @@ class Reader:
 			return ""
 
 		log.warning(
-			f"unrecognize GramGrp child tag: {elem.tag!r}"
-			f": {self.tostring(elem)}",
+			f"unrecognize GramGrp child tag: {elem.tag!r}: {self.tostring(elem)}",
 		)
 		return ""
 
 	def getEntryByElem(
 		self,
-		entry:
-		"Element",
+		entry: "Element",
 	) -> "EntryType":
 		from lxml import etree as ET
+
 		glos = self._glos
 		keywords = []
 		f = BytesIO()
@@ -682,7 +699,7 @@ class Reader:
 		keywords += inflectedKeywords
 
 		pronList = [
-			pron.text.strip('/')
+			pron.text.strip("/")
 			for pron in entry.findall("form/pron", self.ns)
 			if pron.text
 		]
@@ -745,11 +762,16 @@ class Reader:
 
 	def tostring(self, elem: "Element") -> str:
 		from lxml import etree as ET
-		return ET.tostring(
-			elem,
-			method="html",
-			pretty_print=True,
-		).decode("utf-8").strip()
+
+		return (
+			ET.tostring(
+				elem,
+				method="html",
+				pretty_print=True,
+			)
+			.decode("utf-8")
+			.strip()
+		)
 
 	def stripParag(self, elem: "Element") -> str:
 		text = self.tostring(elem)
@@ -850,7 +872,7 @@ class Reader:
 		self._discoveredTags: "dict[str, Element]" = {}
 
 		self._p_pattern = re.compile(
-			'<p( [^<>]*?)?>(.*?)</p>',
+			"<p( [^<>]*?)?>(.*?)</p>",
 			re.DOTALL,
 		)
 		self._ref_pattern = re.compile(
@@ -930,8 +952,10 @@ class Reader:
 		if self._auto_rtl is None:
 			glos = self._glos
 			if (
-				glos.sourceLang and glos.sourceLang.rtl or
-				glos.targetLang and glos.targetLang.rtl
+				glos.sourceLang
+				and glos.sourceLang.rtl
+				or glos.targetLang
+				and glos.targetLang.rtl
 			):
 				log.info("setting auto_rtl=True")
 				self._auto_rtl = True

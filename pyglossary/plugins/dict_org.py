@@ -33,6 +33,7 @@ def installToDictd(filename: str, dictzip: bool) -> None:
 	"""Filename is without extension (neither .index or .dict or .dict.dz)."""
 	import shutil
 	import subprocess
+
 	targetDir = "/usr/share/dictd/"
 	if filename.startswith(targetDir):
 		return
@@ -73,10 +74,10 @@ class Reader:
 
 		# regular expression patterns used to prettify definition text
 		self._re_newline_in_braces = re.compile(
-			r'\{(?P<left>.*?)\n(?P<right>.*?)?\}',
+			r"\{(?P<left>.*?)\n(?P<right>.*?)?\}",
 		)
 		self._re_words_in_braces = re.compile(
-			r'\{(?P<word>.+?)\}',
+			r"\{(?P<word>.+?)\}",
 		)
 
 	def open(self, filename: str) -> None:
@@ -94,7 +95,7 @@ class Reader:
 	def prettifyDefinitionText(self, defi: str) -> str:
 		# Handle words in {}
 		# First, we remove any \n in {} pairs
-		defi = self._re_newline_in_braces.sub(r'{\g<left>\g<right>}', defi)
+		defi = self._re_newline_in_braces.sub(r"{\g<left>\g<right>}", defi)
 
 		# Then, replace any {words} into <a href="bword://words">words</a>,
 		# so it can be rendered as link correctly
@@ -118,7 +119,7 @@ class Reader:
 		for word in dictdb.getDefList():
 			b_defi = b"\n\n<hr>\n\n".join(dictdb.getDef(word))
 			try:
-				defi = b_defi.decode("utf_8", 'ignore')
+				defi = b_defi.decode("utf_8", "ignore")
 				defi = self.prettifyDefinitionText(defi)
 			except Exception as e:
 				log.error(f"{b_defi = }")
@@ -137,6 +138,7 @@ class Writer:
 
 	def finish(self) -> None:
 		from pyglossary.os_utils import runDictzip
+
 		if self._dictdb is None:
 			raise RuntimeError("self._dictdb is None")
 

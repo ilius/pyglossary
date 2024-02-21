@@ -1,4 +1,3 @@
-
 import io
 import logging
 import typing
@@ -84,11 +83,14 @@ class TextGlossaryReader:
 	def _openGen(self, filename: str) -> "Iterator[tuple[int, int]]":
 		self._fileIndex += 1
 		log.info(f"Reading file: {filename}")
-		cfile = cast("io.TextIOBase", compressionOpen(
-			filename,
-			mode="rt",
-			encoding=self._encoding,
-		))
+		cfile = cast(
+			"io.TextIOBase",
+			compressionOpen(
+				filename,
+				mode="rt",
+				encoding=self._encoding,
+			),
+		)
 
 		if not self._wordCount:
 			if cfile.seekable():
@@ -218,9 +220,9 @@ class TextGlossaryReader:
 				block = self.nextBlock()
 			except StopIteration:
 				if (
-					self._fileCount == -1 or
-					self._fileIndex < self._fileCount - 1 and
-					self.openNextFile()
+					self._fileCount == -1
+					or self._fileIndex < self._fileCount - 1
+					and self.openNextFile()
 				):
 					continue
 				self._wordCount = self._pos
