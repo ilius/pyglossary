@@ -58,7 +58,7 @@ refPattern = re.compile(r"`(\w+)'")
 
 
 class SynSet:
-	def __init__(self, line) -> None:
+	def __init__(self, line: str | bytes) -> None:
 		self.line = line
 		if isinstance(line, bytes):
 			line = line.decode("utf-8")
@@ -66,27 +66,27 @@ class SynSet:
 		self.meta_parts = meta.split()
 
 	@property
-	def offset(self):
+	def offset(self) -> int:
 		return int(self.meta_parts[0])
 
 	@property
-	def lex_filenum(self):
+	def lex_filenum(self) -> int:
 		return self.meta_parts[1]
 
 	@property
-	def ss_type(self):
+	def ss_type(self) -> str:
 		return self.meta_parts[2]
 
 	@property
-	def w_cnt(self):
+	def w_cnt(self) -> int:
 		return int(self.meta_parts[3], 16)
 
 	@property
-	def words(self):
+	def words(self) -> list[str]:
 		return [self.meta_parts[4 + 2 * i].replace("_", " ") for i in range(self.w_cnt)]
 
 	@property
-	def pointers(self):
+	def pointers(self) -> "list[Pointer]":
 		p_cnt_index = 4 + 2 * self.w_cnt
 		p_cnt = self.meta_parts[p_cnt_index]
 		pointer_count = int(p_cnt)
@@ -163,7 +163,7 @@ class PointerSymbols:
 
 
 class Pointer:
-	def __init__(self, symbol, offset, pos, source_target) -> None:
+	def __init__(self, symbol: str, offset: int, pos: int, source_target: str) -> None:
 		self.symbol = symbol
 		self.offset = int(offset)
 		self.pos = pos
@@ -195,11 +195,11 @@ class WordNet:
 		"data.verb": ["v"],
 	}
 
-	def __init__(self, wordnetdir) -> None:
+	def __init__(self, wordnetdir: str) -> None:
 		self.wordnetdir = wordnetdir
 		self.collector: "dict[str, list[str]]" = defaultdict(list)
 
-	def iterlines(self, dict_dir):
+	def iterlines(self, dict_dir: str) -> Iterator[str]:
 		for name in os.listdir(dict_dir):
 			if not name.startswith("data."):
 				continue
@@ -208,7 +208,7 @@ class WordNet:
 					if not line.startswith("  "):
 						yield line
 
-	def prepare(self):
+	def prepare(self) -> None:
 		synSetTypes = self.synSetTypes
 		file2pos = self.file2pos
 
@@ -221,7 +221,7 @@ class WordNet:
 				for key in file2pos[name]:
 					files[key] = f
 
-		def a(word):
+		def a(word: str) -> str:
 			return f'<a href="{word}">{word}</a>'
 
 		for i, line in enumerate(self.iterlines(dict_dir)):
