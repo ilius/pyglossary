@@ -404,9 +404,9 @@ class MDict:
 		if self._version >= 3:
 			return self._read_keys_v3()
 
-		# if no regcode is given, try brutal force (only for engine <= 2)
+		# if no regcode is given, try brute-force (only for engine <= 2)
 		if (self._encrypt & 0x01) and self._encrypted_key is None:
-			print("Try Brutal Force on Encrypted Key Blocks")
+			log.warning("Trying brute-force on encrypted key blocks")
 			return self._read_keys_brutal()
 
 		return self._read_keys_v1v2()
@@ -664,7 +664,7 @@ class MDD(MDict):
 	>>> len(mdd)
 	208
 	>>> for filename,content in mdd.items():
-	... print filename, content[:10].
+	... print(filename, content[:10])
 	"""
 
 	def __init__(
@@ -683,7 +683,7 @@ class MDX(MDict):
 	>>> len(mdx)
 	42481
 	>>> for key,value in mdx.items():
-	... print key, value[:10].
+	... print(key, value[:10])
 	"""
 
 	def __init__(
@@ -723,136 +723,3 @@ class MDX(MDict):
 		if self._substyle and self._stylesheet:
 			data = self._substitute_stylesheet(data)
 		return data  # noqa: RET504
-
-
-if __name__ == "__main__":
-	import argparse
-	import binascii
-	import codecs
-	import os
-	import os.path
-
-	def passcode(s):
-		try:
-			regcode, userid = s.split(",")
-		except ValueError as e:
-			raise argparse.ArgumentTypeError("Passcode must be regcode,userid") from e
-		try:
-			regcode = codecs.decode(regcode, "hex")
-		except binascii.Error as e:
-			raise argparse.ArgumentTypeError(
-				"regcode must be a 32 bytes hexadecimal string",
-			) from e
-		return regcode, userid
-
-	parser = argparse.ArgumentParser()
-	parser.add_argument(
-		"-x",
-		"--extract",
-		action="store_true",
-		help="extract mdx to source format and extract files from mdd",
-	)
-	parser.add_argument(
-		"-s",
-		"--substyle",
-		action="store_true",
-		help="substitute style definition if present",
-	)
-	parser.add_argument(
-		"-d",
-		"--datafolder",
-		default="data",
-		help="folder to extract data files from mdd",
-	)
-	parser.add_argument(
-		"-e",
-		"--encoding",
-		default="",
-		help="folder to extract data files from mdd",
-	)
-	parser.add_argument(
-		"-p",
-		"--passcode",
-		default=None,
-		type=passcode,
-		help="register_code,email_or_deviceid",
-	)
-	parser.add_argument(
-		"filename",
-		nargs="?",
-		help="mdx file name",
-	)
-	args = parser.parse_args()
-
-	# use GUI to select file, default to extract
-	if not args.filename:
-		if sys.hexversion >= 0x03000000:
-			import tkinter as tk
-			from tkinter import filedialog
-		else:
-			import tkFileDialog as filedialog
-			import Tkinter as tk
-
-		root = tk.Tk()
-		root.withdraw()
-		args.filename = filedialog.askopenfilename(parent=root)
-		args.extract = True
-
-	if not os.path.exists(args.filename):
-		print("Please specify a valid MDX/MDD file")
-
-	base, ext = os.path.splitext(args.filename)
-
-	# read mdx file
-	if ext.lower() == os.path.extsep + "mdx":
-		mdx = MDX(args.filename, args.encoding, args.substyle, args.passcode)
-		print(f"======== {args.filename} ========")
-		print(f"  Number of Entries : {len(mdx)}")
-		for key, value in mdx.header.items():
-			print(f"  {key} : {value}")
-	else:
-		mdx = None
-
-	# find companion mdd file
-	mdd_filename = "".join([base, os.path.extsep, "mdd"])
-	if os.path.exists(mdd_filename):
-		mdd = MDD(mdd_filename, args.passcode)
-		print(f"======== {args.filename} ========")
-		print(f"  Number of Entries : {len(mdd)}")
-		for key, value in mdd.header.items():
-			print(f"  {key} : {value}")
-	else:
-		mdd = None
-
-	if args.extract:
-		# write out glos
-		if mdx:
-			output_fname = "".join([base, os.path.extsep, "txt"])
-			tf = open(output_fname, "wb")
-			for key, value in mdx.items():
-				tf.write(key)
-				tf.write(b"\r\n")
-				tf.write(value)
-				if not value.endswith(b"\n"):
-					tf.write(b"\r\n")
-				tf.write(b"</>\r\n")
-			tf.close()
-			# write out style
-			if mdx.header.get("StyleSheet"):
-				style_fname = "".join([base, "_style", os.path.extsep, "txt"])
-				sf = open(style_fname, "wb")
-				sf.write(b"\r\n".join(mdx.header["StyleSheet"].splitlines()))
-				sf.close()
-		# write out optional data files
-		if mdd:
-			datafolder = os.path.join(os.path.dirname(args.filename), args.datafolder)
-			if not os.path.exists(datafolder):
-				os.makedirs(datafolder)
-			for key, value in mdd.items():
-				fname = key.decode("utf-8").replace("\\", os.path.sep)
-				dfname = datafolder + fname
-				if not os.path.exists(os.path.dirname(dfname)):
-					os.makedirs(os.path.dirname(dfname))
-				df = open(dfname, "wb")
-				df.write(value)
-				df.close()
