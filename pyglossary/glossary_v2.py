@@ -524,6 +524,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		in definition (as title), this method will return empty string
 		- depending on glossary's `sourceLang` or writing system of `word`,
 		(or sample if given) either '<b>' or '<big>' will be used.
+
 		"""
 		if self._defiHasWordTitle:
 			return ""
@@ -806,6 +807,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			encoding for sorting, default utf-8
 
 		You can pass write-options (of given format) as keyword arguments
+
 		"""
 		if type(filename) is not str:
 			raise TypeError("filename must be str")

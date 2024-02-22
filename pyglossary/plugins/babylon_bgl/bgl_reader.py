@@ -938,6 +938,7 @@ class BglReader:
 		(False, None, None) if error
 		(True, pos, u_alts) if succeed
 		u_alts is a sorted list, items are str (utf-8).
+
 		"""
 		Err = (False, None, None)
 		# use set instead of list to prevent duplicates

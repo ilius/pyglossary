@@ -136,6 +136,7 @@ def title_long(s: str) -> str:
 	Example:
 	-------
 	title_long("str[ing]") -> "string".
+
 	"""
 	return s.replace("[", "").replace("]", "")
 
@@ -147,5 +148,6 @@ def title_short(s: str) -> str:
 	Example:
 	-------
 	title_short("str[ing]") -> "str".
+
 	"""
 	return spaces(re_title_short.sub("", s))

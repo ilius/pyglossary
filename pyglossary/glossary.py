@@ -49,7 +49,7 @@ class Glossary(GlossaryCommon):
 		format: str = "",
 		direct: bool = False,
 		progressbar: bool = True,
-		**kwargs,  # noqa: ANN
+		**kwargs,  # noqa: ANN003
 	) -> bool:
 		"""
 		Read from a given glossary file.
@@ -63,6 +63,7 @@ class Glossary(GlossaryCommon):
 		progressbar (bool): enable progressbar.
 
 		read-options can be passed as additional keyword arguments
+
 		"""
 		if type(filename) is not str:
 			raise TypeError("filename must be str")
