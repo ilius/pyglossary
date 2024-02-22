@@ -17,9 +17,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from collections import namedtuple
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -37,15 +36,11 @@ __all__ = [
 
 defaultSortKeyName = "headword_lower"
 
-NamedSortKey = namedtuple(
-	"NamedSortKey",
-	[
-		"name",
-		"desc",
-		"normal",
-		"sqlite",
-	],
-)
+class NamedSortKey(NamedTuple):
+	name: str
+	desc: str
+	normal: "sortKeyType"
+	sqlite: "sqliteSortKeyType"
 
 
 @dataclass

@@ -1,5 +1,4 @@
-from collections import namedtuple
-from typing import cast
+from typing import NamedTuple, cast
 from xml.sax.saxutils import escape
 
 from pyglossary.core import log
@@ -97,13 +96,9 @@ def lexCurly(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-TitleResult = namedtuple(
-	"TitleResult",
-	[
-		"output",  # str,
-		"outputAlt",  # str,
-	],
-)
+class TitleResult(NamedTuple):
+	output: str
+	outputAlt: str
 
 
 class TitleTransformer:

@@ -13,13 +13,13 @@ __all__ = [
 ]
 
 class WritingSystem(NamedTuple):
-	name: str | None = None
-	iso: list[tuple[int, str]] = []
+	name: str
+	iso: list[tuple[int, str]] | list[tuple[int, str, str]] = []
 	unicode: list = []
 	titleTag: str = "b"
 	direction: Literal["ltr", "rtl", "ttb"] = "ltr"
 	comma: str = ", "
-	pop: int = 0  # population in millions
+	pop: int | float = 0  # population in millions
 
 # digits and FULLWIDTH DIGITs are considered neutral/ignored, not Latin
 

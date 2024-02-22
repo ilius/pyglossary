@@ -22,7 +22,7 @@ lint.select = [
     # "B", flake8-bugbear
     # "A", # flake8-builtins
     "COM", # flake8-commas
-    "CPY", # flake8-copyright
+    # "CPY", # flake8-copyright   --preview
     "C4", # flake8-comprehensions
     "DTZ", # flake8-datetimez
     "T10", # flake8-debugger
@@ -60,21 +60,22 @@ lint.select = [
     "NPY",   # NumPy-specific rules
     "AIR",   # Airflow
     "PERF",  # Perflint
-    "FURB",  # refurb
+    # "FURB",  # refurb   --preview
     "LOG",   # flake8-logging
     "RUF",   # Ruff-specific rules
 ]
 lint.ignore = [
+    "SLF", # Private member accessed
     "PYI034", # py3.11: `__iadd__` methods in classes like `SqEntryList` usually return `self` at runtime
-    "PT027", # Use `pytest.raises` instead of unittest-style `assertRaises`
+    "DTZ001", # The use of `datetime.datetime()` without `tzinfo` argument is not allowed
+    "DTZ005", # The use of `datetime.datetime.now()` without `tz` argument is not allowed
+	"PGH003", # Use specific rule codes when ignoring type issues
+
+    "PT027", # Use `pytest.raises` instead of unittest-style `assertRaises`, why?
     "PD011", # Use `.to_numpy()` instead of `.values`, WTF?
     "ICN001", # `tkinter` should be imported as `tk`, WTF?
     "RUF005", # Consider `[*_list, x]` instead of concatenation
-    "PYI024", # Use `typing.NamedTuple` instead of `collections.namedtuple`, maybe later
     "PT009", # Use a regular `assert` instead of unittest-style `assertEqual`, why?
-    "SLF", # Private member accessed
-    "DTZ001", # The use of `datetime.datetime()` without `tzinfo` argument is not allowed
-    "DTZ005", # The use of `datetime.datetime.now()` without `tz` argument is not allowed
     "PLR0911", # Too many return statements (x > 6)
     "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
     "BLE001", # Do not catch blind exception: `Exception`
@@ -83,7 +84,6 @@ lint.ignore = [
     "TRY003", # Avoid specifying long messages outside the exception class, ???
     "RUF100", # Unused `noqa` directive (non-enabled: ...)
     "FURB101", # `open` and `read` should be replaced by `Path(rootConfJsonFile).read_text()`
-	"PGH003", # Use specific rule codes when ignoring type issues
     "B019", # Use of `functools.lru_cache` or `functools.cache` on methods can lead to memory leaks
     "D100", # Missing docstring in public module
     "D101", # Missing docstring in public class

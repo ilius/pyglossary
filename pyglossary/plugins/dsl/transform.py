@@ -1,6 +1,5 @@
 import re
-from collections import namedtuple
-from typing import cast
+from typing import NamedTuple, cast
 from xml.sax.saxutils import escape
 
 from ._types import ErrorType, LexType, TransformerType
@@ -11,13 +10,9 @@ __all__ = ["Transformer"]
 re_comment_block = re.compile(r"\{\{([^}]*)\}\}")
 
 
-Result = namedtuple(
-	"Result",
-	[
-		"output",  # str,
-		"resFileSet",  # "set[str]",
-	],
-)
+class Result(NamedTuple):
+	output: str
+	resFileSet: set[str]
 
 
 # called Lexer by Rob Pike in "Lexical Scanning" video)

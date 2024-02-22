@@ -20,9 +20,8 @@
 import logging
 import os
 import sys
-from collections import namedtuple
 from os.path import isdir, join
-from typing import Any
+from typing import Any, NamedTuple
 
 from . import core
 from .core import (
@@ -40,14 +39,10 @@ __all__ = ["PluginManager"]
 
 log = logging.getLogger("pyglossary")
 
-DetectedFormat = namedtuple(
-	"DetectedFormat",
-	[
-		"filename",  # str
-		"formatName",  # str
-		"compression",  # str
-	],
-)
+class DetectedFormat(NamedTuple):
+	filename: str
+	formatName: str
+	compression: str
 
 
 class PluginManager:

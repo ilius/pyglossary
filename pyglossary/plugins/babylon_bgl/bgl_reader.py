@@ -25,9 +25,8 @@ import io
 import os
 import re
 from collections import OrderedDict as odict
-from collections import namedtuple
 from collections.abc import Iterator
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 from pyglossary.core import log
 from pyglossary.option import (
@@ -151,15 +150,11 @@ re_charset_decode = re.compile(
 re_b_reference = re.compile(b"^[0-9a-fA-F]{4}$")
 
 
-EntryWordData = namedtuple(
-	"EntryWordData",
-	[
-		"pos",  # int
-		"b_word",  # bytes
-		"u_word",  # str
-		"u_word_html",  # str
-	],
-)
+class EntryWordData(NamedTuple):
+	pos: int
+	b_word: bytes
+	u_word: str
+	u_word_html: str
 
 
 class BGLGzipFile(GzipFile):

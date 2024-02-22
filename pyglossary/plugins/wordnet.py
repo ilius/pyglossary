@@ -15,6 +15,7 @@
 #
 # This plugin is based on https://github.com/itkach/wordnet2slob
 
+import io
 import os
 import re
 import sys
@@ -70,7 +71,7 @@ class SynSet:
 		return int(self.meta_parts[0])
 
 	@property
-	def lex_filenum(self) -> int:
+	def lex_filenum(self) -> str:
 		return self.meta_parts[1]
 
 	@property
@@ -92,12 +93,12 @@ class SynSet:
 		pointer_count = int(p_cnt)
 		start = p_cnt_index + 1
 		return [
-			Pointer(*self.meta_parts[start + i * 4 : start + (i + 1) * 4])
+			Pointer(*self.meta_parts[start + i * 4 : start + (i + 1) * 4])  # type: ignore
 			for i in range(pointer_count)
 		]
 
 	def __repr__(self) -> str:
-		return f"SynSet({self.line:r})"
+		return f"SynSet({self.line!r})"
 
 
 class PointerSymbols:
@@ -163,7 +164,7 @@ class PointerSymbols:
 
 
 class Pointer:
-	def __init__(self, symbol: str, offset: int, pos: int, source_target: str) -> None:
+	def __init__(self, symbol: str, offset: str, pos: str, source_target: str) -> None:
 		self.symbol = symbol
 		self.offset = int(offset)
 		self.pos = pos
@@ -214,7 +215,7 @@ class WordNet:
 
 		dict_dir = self.wordnetdir
 
-		files = {}
+		files: dict[str, io.TextIOWrapper] = {}
 		for name in os.listdir(dict_dir):
 			if name.startswith("data.") and name in file2pos:
 				f = open(os.path.join(dict_dir, name))  # noqa: SIM115

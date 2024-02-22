@@ -28,7 +28,6 @@ import warnings
 from abc import abstractmethod
 from bisect import bisect_left
 from builtins import open as fopen
-from collections import namedtuple
 from collections.abc import Callable, Iterator, Mapping, Sequence
 from datetime import datetime, timezone
 from functools import cache, lru_cache
@@ -41,6 +40,7 @@ from typing import (
 	TYPE_CHECKING,
 	Any,
 	Generic,
+	NamedTuple,
 	TypeVar,
 	cast,
 )
@@ -60,22 +60,30 @@ DEFAULT_COMPRESSION = "lzma2"
 UTF8 = "utf-8"
 MAGIC = b"!-1SLOB\x1F"
 
-Compression = namedtuple("Compression", "compress decompress")
+class Compression(NamedTuple):
+	compress: Callable[..., bytes]  # first arg: bytes
+	decompress: Callable[[bytes], bytes]
 
-Ref = namedtuple(
-	"Ref",
-	["key", "bin_index", "item_index", "fragment"],
-)
 
-Header = namedtuple(
-	"Header",
-	"magic uuid encoding "
-	"compression tags content_types "
-	"blob_count "
-	"store_offset "
-	"refs_offset "
-	"size",
-)
+class Ref(NamedTuple):
+	key: str
+	bin_index: int
+	item_index: int
+	fragment: str
+
+
+class Header(NamedTuple):
+	magic: bytes
+	uuid: UUID
+	encoding: str
+	compression: str
+	tags: MappingProxyType[str, str]
+	content_types: Sequence[str]
+	blob_count: int
+	store_offset: int
+	refs_offset: int
+	size: int
+
 
 U_CHAR = ">B"
 U_CHAR_SIZE = calcsize(U_CHAR)
@@ -741,7 +749,7 @@ class Slob:
 		return self._header.content_types
 
 	@property
-	def tags(self) -> "dict[str, str]":
+	def tags(self) -> MappingProxyType[str, str]:
 		return self._header.tags
 
 	@property
@@ -749,7 +757,7 @@ class Slob:
 		return self._header.blob_count
 
 	@property
-	def compression(self) -> Compression:
+	def compression(self) -> str:
 		return self._header.compression
 
 	@property
@@ -759,7 +767,7 @@ class Slob:
 	def __len__(self) -> int:
 		return len(self._refs)
 
-	def __getitem__(self, i: int) -> "Any":
+	def __getitem__(self, i: int) -> Any:
 		# this is called by bisect_left
 		return self.getBlobByIndex(i)
 
@@ -987,7 +995,9 @@ class Bin(ItemList[bytes]):
 		return self.reader.read(content_len)
 
 
-StoreItem = namedtuple("StoreItem", "content_type_ids compressed_content")
+class StoreItem(NamedTuple):
+	content_type_ids: list[int]
+	compressed_content: bytes
 
 
 class Store(ItemList[StoreItem]):
@@ -1065,7 +1075,9 @@ class Store(ItemList[StoreItem]):
 		return (content_type, content)
 
 
-WriterEvent = namedtuple("WriterEvent", "name data")
+class WriterEvent(NamedTuple):
+	name: str
+	data: Any
 
 
 class KeyTooLongException(Exception):
@@ -1256,7 +1268,7 @@ class Writer:
 	def _fire_event(
 		self,
 		name: str,
-		data: "Any" = None,
+		data: Any = None,
 	) -> None:
 		if self.observer:
 			self.observer(WriterEvent(name, data))
