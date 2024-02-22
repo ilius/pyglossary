@@ -21,7 +21,7 @@ import logging
 import os
 from os.path import isfile
 from pickle import dumps, loads
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable, Iterator
@@ -29,6 +29,10 @@ if TYPE_CHECKING:
 
 	from .glossary_types import EntryType, RawEntryType
 	from .sort_keys import NamedSortKey
+
+# from typing import Self
+# typing.Self is new in Python 3.11.
+
 
 
 __all__ = ["SqEntryList"]
@@ -156,7 +160,7 @@ class SqEntryList:
 		if self._len % 1000 == 0:
 			self._con.commit()
 
-	def __iadd__(self, other: "Iterable") -> Self:
+	def __iadd__(self, other: "Iterable"):  # -> Self
 		for item in other:
 			self.append(item)
 		return self

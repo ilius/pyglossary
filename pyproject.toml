@@ -65,6 +65,7 @@ lint.select = [
     "RUF",   # Ruff-specific rules
 ]
 lint.ignore = [
+    "PYI034", # py3.11: `__iadd__` methods in classes like `SqEntryList` usually return `self` at runtime
     "PT027", # Use `pytest.raises` instead of unittest-style `assertRaises`
     "PD011", # Use `.to_numpy()` instead of `.values`, WTF?
     "ICN001", # `tkinter` should be imported as `tk`, WTF?
