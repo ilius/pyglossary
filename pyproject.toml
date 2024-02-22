@@ -24,6 +24,7 @@ lint.select = [
     "W", # pycodestyle Warning
     "YTT", # flake8-2020
     "ARG", # flake8-unused-arguments: ARG001 Unused function argument
+    # "FURB",
 
     # "C90", # mccabe: C901: {name} is too complex ({complexity})
     # "N", # pep8-naming
@@ -32,6 +33,7 @@ lint.select = [
     # "ANN", # flake8-annotationsq, still gives errors for `self`
 ]
 lint.ignore = [
+    "FURB101", # `open` and `read` should be replaced by `Path(rootConfJsonFile).read_text()`
 	"PGH003", # Use specific rule codes when ignoring type issues
     "B019", # Use of `functools.lru_cache` or `functools.cache` on methods can lead to memory leaks
     "D100", # Missing docstring in public module
@@ -137,7 +139,7 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "scripts/wiki-formats.py" = ["E501"]
 "pyglossary/io_utils.py" = ["ANN"]
 "pyglossary/plugin_lib/*.py" = ["ANN"]
-"pyglossary/plugins/babylon_bgl/bgl_reader_debug.py" = ["ANN"]
+"pyglossary/plugins/babylon_bgl/bgl_reader_debug.py" = ["ANN", "FURB"]
 "pyglossary/ui/*.py" = ["ANN"]
 "pyglossary/ui/*/*.py" = ["ANN"]
 "tests/*.py" = ["ANN"]

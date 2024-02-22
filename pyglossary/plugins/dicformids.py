@@ -206,7 +206,7 @@ class Writer:
 			dicFp = open(
 				join(
 					self._dirname,
-					f"directory{self.directoryPostfix}{dicIndex+1}.csv",
+					f"directory{self.directoryPostfix}{dicIndex + 1}.csv",
 				),
 				mode="w",
 				encoding="utf-8",

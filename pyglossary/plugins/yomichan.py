@@ -365,7 +365,7 @@ class Writer:
 					return
 
 				with open(
-					f"term_bank_{termBankIndex+1}.json",
+					f"term_bank_{termBankIndex + 1}.json",
 					mode="w",
 					encoding="utf-8",
 				) as _file:

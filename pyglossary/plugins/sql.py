@@ -108,7 +108,7 @@ class Writer:
 				key = key.replace("'", "''")
 				value = value.replace("'", "''")
 				fileObj.write(
-					f"INSERT INTO dbinfo_extra VALUES({index+1}, "
+					f"INSERT INTO dbinfo_extra VALUES({index + 1}, "
 					f"'{key}', '{value}');\n",
 				)
 

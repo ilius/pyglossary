@@ -423,8 +423,8 @@ class Writer:
 				b_size = len(text[start : m.end()].encode(encoding))
 				linksTxtFileObj.write(
 					f"{escapeNTB(target)}\t"
-					f"{len(self._filenameList)-1}\t"
-					f"{pos+b_start:x}\t"
+					f"{len(self._filenameList) - 1}\t"
+					f"{pos + b_start:x}\t"
 					f"{b_size:x}\n",
 				)
 				linksTxtFileObj.flush()

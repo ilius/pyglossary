@@ -968,7 +968,7 @@ class Writer:
 		idxFile.close()
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
-		log.info(f"Writing dict file took {now()-t0:.2f} seconds")
+		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
 
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(
@@ -1049,7 +1049,7 @@ class Writer:
 		idxFile.close()
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
-		log.info(f"Writing dict file took {now()-t0:.2f} seconds")
+		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
 		log.debug("defiFormatsCount = " + pformat(defiFormatCounter.most_common()))
 
 		self.writeSynFile(altIndexList)
@@ -1073,7 +1073,7 @@ class Writer:
 		# 0.20 seconds without key function (default sort)
 
 		log.info(
-			f"Sorting {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
+			f"Sorting {len(altIndexList)} synonyms took {now() - t0:.2f} seconds",
 		)
 		log.info(f"Writing {len(altIndexList)} synonyms...")
 		t0 = now()
@@ -1085,7 +1085,7 @@ class Writer:
 				),
 			)
 		log.info(
-			f"Writing {len(altIndexList)} synonyms took {now()-t0:.2f} seconds",
+			f"Writing {len(altIndexList)} synonyms took {now() - t0:.2f} seconds",
 		)
 
 	def writeCompactMergeSyns(
@@ -1150,7 +1150,7 @@ class Writer:
 		dictFile.close()
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
-		log.info(f"Writing dict file took {now()-t0:.2f} seconds")
+		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
 
 		self.writeIfoFile(
 			wordCount,
@@ -1223,7 +1223,7 @@ class Writer:
 		dictFile.close()
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
-		log.info(f"Writing dict file took {now()-t0:.2f} seconds")
+		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
 		log.debug("defiFormatsCount = " + pformat(defiFormatCounter.most_common()))
 
 		self.writeIfoFile(
@@ -1242,14 +1242,14 @@ class Writer:
 
 		indexList.sort()
 		log.info(
-			f"Sorting {len(indexList)} {filename} took {now()-t0:.2f} seconds",
+			f"Sorting {len(indexList)} {filename} took {now() - t0:.2f} seconds",
 		)
 		log.info(f"Writing {len(indexList)} index entries...")
 		t0 = now()
 		with open(filename, mode="wb") as indexFile:
 			indexFile.write(b"".join(key + b"\x00" + value for key, value in indexList))
 		log.info(
-			f"Writing {len(indexList)} {filename} took {now()-t0:.2f} seconds",
+			f"Writing {len(indexList)} {filename} took {now() - t0:.2f} seconds",
 		)
 		return len(indexList)
 

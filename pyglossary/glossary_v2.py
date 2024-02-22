@@ -1213,7 +1213,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			finalOutputFile = self._compressOutput(finalOutputFile, compression)
 
 		log.info(f"Writing file {finalOutputFile!r} done.")
-		log.info(f"Running time of convert: {now()-tm0:.1f} seconds")
+		log.info(f"Running time of convert: {now() - tm0:.1f} seconds")
 		showMemoryUsage()
 		self.cleanup()
 

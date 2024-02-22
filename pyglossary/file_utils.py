@@ -5,6 +5,7 @@ from itertools import (
 
 __all__ = ["fileCountLines"]
 
+
 def fileCountLines(filename: str, newline: bytes = b"\n") -> int:
 	with open(filename, "rb") as _file:
 		bufgen = takewhile(

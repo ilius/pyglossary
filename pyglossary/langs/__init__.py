@@ -89,7 +89,7 @@ class LangDict(dict):
 
 		log.debug(
 			f"LangDict: loaded, {len(self)} keys, "
-			f"took {(now() - t0)*1000:.1f} ms",
+			f"took {(now() - t0) * 1000:.1f} ms",
 		)
 
 	def __getitem__(self, key: str) -> "Lang | None":

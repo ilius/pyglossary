@@ -111,7 +111,7 @@ class Reader:
 				FILE.3.mdd
 		"""
 
-		filenameNoExt, ext = splitext(self._filename)
+		filenameNoExt, _ext = splitext(self._filename)
 		mddBase = "".join([filenameNoExt, extsep])
 		for fname in (f"{mddBase}mdd", f"{mddBase}1.mdd"):
 			if isfile(fname):

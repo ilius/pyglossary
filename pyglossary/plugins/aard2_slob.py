@@ -273,7 +273,7 @@ class Writer:
 
 		if isfile(filename):
 			shutil.move(filename, f"{filename}.bak")
-			log.warning(f"renamed existing {filename!r} to {filename+'.bak'!r}")
+			log.warning(f"renamed existing {filename!r} to {filename + '.bak'!r}")
 		self._slobWriter = slobWriter = slob.Writer(
 			filename,
 			observer=self._slobObserver,
@@ -428,7 +428,7 @@ class Writer:
 					fileIndex += 1
 					slobWriter = self._open(
 						f"{filenameNoExt}.{fileIndex}.slob",
-						f" (part {fileIndex+1})",
+						f" (part {fileIndex + 1})",
 					)
 					sumBlobSize = 0
 					entryCount = 0

@@ -248,7 +248,7 @@ def lexRefText(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if not target:
 		target = text
 
-	tr.output += f'<a href={quoteattr("bword://"+target)}>{escape(text)}</a>'
+	tr.output += f'<a href={quoteattr("bword://" + target)}>{escape(text)}</a>'
 	tr.resetBuf()
 	return lexRoot, None
 

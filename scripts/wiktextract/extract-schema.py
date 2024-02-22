@@ -163,7 +163,7 @@ commonValuesList = [
 
 
 def commonValuesSortKey(item):
-	key, values = item
+	_key, values = item
 	return abs(len(values) - 5)
 
 

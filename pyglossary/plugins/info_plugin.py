@@ -109,7 +109,7 @@ class Writer:
 						tag = tag.strip("< />").lower()
 						allTagsCounter[tag] += 1
 			elif defiFormat == "b":
-				filenameNoExt, ext = splitext(entry.s_word)
+				_filenameNoExt, ext = splitext(entry.s_word)
 				ext = ext.lstrip(".")
 				dataEntryExtCounter[ext] += 1
 

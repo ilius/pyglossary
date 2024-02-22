@@ -524,9 +524,7 @@ class BglReader:
 				continue
 				# TODO: a bool flag to add empty value infos?
 			# leave "creationTime" and "lastUpdated" as is
-			if key in {
-				"utf8Encoding",
-			}:
+			if key == "utf8Encoding":
 				key = "bgl_" + key
 			try:
 				glos.setInfo(key, s_value)
@@ -814,7 +812,7 @@ class BglReader:
 					continue
 				pos = wordData.pos
 				# defi:
-				succeed, pos, u_defi, b_defi = self.readEntryDefi(
+				succeed, pos, u_defi, _b_defi = self.readEntryDefi(
 					block,
 					pos,
 					wordData,
@@ -993,7 +991,7 @@ class BglReader:
 			)
 			return Err
 		b_word = block.data[pos : pos + wordLen]
-		u_word, u_word_html = self.processKey(b_word)
+		u_word, _u_word_html = self.processKey(b_word)
 		pos += wordLen
 		self.wordLenMax = max(self.wordLenMax, len(u_word))
 
@@ -1219,7 +1217,7 @@ class BglReader:
 		b_word is a bytes instance
 		returns u_word_main, as str instance (utf-8 encoding).
 		"""
-		b_word_main, strip_count = stripDollarIndexes(b_word)
+		b_word_main, _strip_count = stripDollarIndexes(b_word)
 		# convert to unicode
 		if self._strict_string_conversion:
 			try:
@@ -1274,7 +1272,7 @@ class BglReader:
 		fields.u_defi = fields.u_defi.strip()
 
 		if fields.b_title:
-			fields.u_title, singleEncoding = self.decodeCharsetTags(
+			fields.u_title, _singleEncoding = self.decodeCharsetTags(
 				fields.b_title,
 				self.sourceEncoding,
 			)
@@ -1283,7 +1281,7 @@ class BglReader:
 
 		if fields.b_title_trans:
 			# sourceEncoding or targetEncoding ?
-			fields.u_title_trans, singleEncoding = self.decodeCharsetTags(
+			fields.u_title_trans, _singleEncoding = self.decodeCharsetTags(
 				fields.b_title_trans,
 				self.sourceEncoding,
 			)
@@ -1298,7 +1296,7 @@ class BglReader:
 				# what is this?
 				pass
 			elif fields.code_transcription_50 == 0x1B:
-				fields.u_transcription_50, singleEncoding = self.decodeCharsetTags(
+				fields.u_transcription_50, _singleEncoding = self.decodeCharsetTags(
 					fields.b_transcription_50,
 					self.sourceEncoding,
 				)
@@ -1323,7 +1321,7 @@ class BglReader:
 
 		if fields.b_transcription_60:
 			if fields.code_transcription_60 == 0x1B:
-				fields.u_transcription_60, singleEncoding = self.decodeCharsetTags(
+				fields.u_transcription_60, _singleEncoding = self.decodeCharsetTags(
 					fields.b_transcription_60,
 					self.sourceEncoding,
 				)
@@ -1341,7 +1339,7 @@ class BglReader:
 				)
 
 		if fields.b_field_1a:
-			fields.u_field_1a, singleEncoding = self.decodeCharsetTags(
+			fields.u_field_1a, _singleEncoding = self.decodeCharsetTags(
 				fields.b_field_1a,
 				self.sourceEncoding,
 			)

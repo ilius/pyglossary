@@ -262,14 +262,14 @@ class DebugBglReader(BglReader):
 		BglReader.__del__(self)
 
 	def readEntryWord(self, block, pos):
-		succeed, pos, u_word, b_word = BglReader.readEntryWord(self, block, pos)
+		succeed, pos, _u_word, b_word = BglReader.readEntryWord(self, block, pos)
 		if not succeed:
 			return
 		self.rawDumpFileWriteText(f"\n\nblock type = {block.type}\nkey = ")
 		self.rawDumpFileWriteData(b_word)
 
 	def readEntryDefi(self, block, pos, b_key):
-		succeed, pos, u_defi, b_defi = BglReader.readEntryDefi(self, block, pos, b_key)
+		succeed, pos, _u_defi, b_defi = BglReader.readEntryDefi(self, block, pos, b_key)
 		if not succeed:
 			return
 		self.rawDumpFileWriteText("\ndefi = ")

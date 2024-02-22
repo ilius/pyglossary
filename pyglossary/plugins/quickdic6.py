@@ -206,7 +206,9 @@ def write_hashset(
 	write_byte(fp, 0x78)
 	return fp.tell() - write_start_offset
 
+
 T = TypeVar("T")
+
 
 def read_list(
 	fp: IO[bytes],
@@ -689,7 +691,7 @@ class Reader:
 		self._synonyms: dict[tuple[int, int], set[str]] = {}
 		assert self._dic is not None
 		for index in self._dic.indices:
-			_, _, _, _, swap_flag, _, index_entries, _, rows = index
+			_, _, _, _, swap_flag, _, index_entries, _, _ = index
 
 			# Note that we ignore swapped indices because pyglossary assumes
 			# uni-directional dictionaries.
