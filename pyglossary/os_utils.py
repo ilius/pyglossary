@@ -2,16 +2,13 @@ import logging
 import os
 import shutil
 import sys
+import types
 from collections.abc import Callable
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from pyglossary import core
 
-if TYPE_CHECKING:
-	import types
-
-__all__ = ["showMemoryUsage", "rmtree", "indir", "runDictzip"]
+__all__ = ["indir", "rmtree", "runDictzip", "showMemoryUsage"]
 
 log = logging.getLogger("pyglossary")
 
@@ -52,9 +49,9 @@ class indir:
 
 	def __exit__(
 		self,
-		exc_type: "type",
-		exc_val: "Exception",
-		exc_tb: "types.TracebackType",
+		exc_type: type[BaseException] | None,
+		exc_val: BaseException | None,
+		exc_tb: types.TracebackType | None,
 	) -> None:
 		if self.old_pwd:
 			os.chdir(self.old_pwd)

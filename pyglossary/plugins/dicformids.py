@@ -104,7 +104,7 @@ class Reader:
 		for _ in range(10):
 			try:
 				return next(self._tabFileReader)
-			except StopIteration:
+			except StopIteration:  # noqa: PERF203
 				self._tabFileReader.close()
 				self.nextTabFile()
 		return None
@@ -139,7 +139,7 @@ class Writer:
 		# but based on the java code, all punctuations should be removed
 		# as well, including '|'
 		self.re_punc = re.compile(
-			r"""[!"$§%&/()=?´`\\{}\[\]^°+*~#'\-_.:,;<>@|]*""",
+			r"""[!"$§%&/()=?´`\\{}\[\]^°+*~#'\-_.:,;<>@|]*""",  # noqa: RUF001
 		)
 		self.re_spaces = re.compile(" +")
 		self.re_tabs = re.compile("\t+")

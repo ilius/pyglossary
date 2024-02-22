@@ -28,10 +28,10 @@ if TYPE_CHECKING:
 	from .sort_keys_type import sortKeyType, sqliteSortKeyType
 
 __all__ = [
-	"lookupSortKey",
-	"NamedSortKey",
 	"LocaleNamedSortKey",
+	"NamedSortKey",
 	"defaultSortKeyName",
+	"lookupSortKey",
 	"namedSortKeyList",
 ]
 

@@ -24,16 +24,16 @@ from pyglossary.core import appResDir
 from . import gdk, glib, gtk
 
 __all__ = [
-	"gtk_window_iteration_loop",
-	"showInfo",
 	"HBox",
-	"set_tooltip",
-	"imageFromFile",
-	"dialog_add_button",
-	"rgba_parse",
-	"gtk_event_iteration_loop",
 	"VBox",
+	"dialog_add_button",
+	"gtk_event_iteration_loop",
+	"gtk_window_iteration_loop",
+	"imageFromFile",
 	"pack",
+	"rgba_parse",
+	"set_tooltip",
+	"showInfo",
 ]
 
 log = logging.getLogger("pyglossary")

@@ -76,11 +76,12 @@ class Reader:
 			"GROUP BY entry.id;",
 		)
 		for row in self._cur.fetchall():
-			terms = [row[0]]
+			terms = [row[0]] + [
+				alt
+				for alt in loads(row[2])
+				if alt
+			]
 			article = row[1]
-			for alt in loads(row[2]):
-				if alt:
-					terms.append(alt)
 			yield self._glos.newEntry(terms, article, defiFormat="h")
 
 	def close(self) -> None:
@@ -125,7 +126,7 @@ class Writer:
 		):
 			try:
 				con.execute(query)
-			except Exception as e:
+			except Exception as e:  # noqa: PERF203
 				log.error(f"query: {query}")
 				raise e
 

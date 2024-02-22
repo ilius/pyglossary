@@ -3,36 +3,84 @@ line-length = 88
 target-version = "py310"
 
 lint.select = [
-    "B", # flake8-bugbear
-    "C4", # flake8-comprehensions
-    "COM", # flake8-commas
-    "D", # pydocstyle
-    "E", # pycodestyle Error
-    "EXE", # flake8-executable
     "F", # Pyflakes
-    "I", # isort: unsorted-imports, missing-required-import
-    "ISC", # flake8-implicit-str-concat
-    "PGH", # pygrep-hooks
-    "PIE", # flake8-pie
-    "RET", # flake8-return
-    "SIM", # flake8-simplify
-    "T10", # flake8-debugger
-    "TCH", # flake8-type-checking, not done for plugins
-    "TID", # flake8-tidy-imports
-    "TID", # flake8-tidy-imports
-    "UP", # pyupgrade
+    "E", # pycodestyle Error
     "W", # pycodestyle Warning
-    "YTT", # flake8-2020
-    "ARG", # flake8-unused-arguments: ARG001 Unused function argument
-    # "FURB",
-
     # "C90", # mccabe: C901: {name} is too complex ({complexity})
+    "I", # isort: unsorted-imports, missing-required-import
     # "N", # pep8-naming
-    # "A", # flake8-builtins
-    # "S", # flake8-bandit
+    "D", # pydocstyle
+    "B", # flake8-bugbear
+    "UP", # pyupgrade
+    "YTT", # flake8-2020
     # "ANN", # flake8-annotationsq, still gives errors for `self`
+    # ASYNC, # flake8-async
+    "TRIO", # flake8-trio
+    # "S", # flake8-bandit
+    "BLE", # flake8-blind-except
+    # "FBT", # flake8-boolean-trap
+    # "B", flake8-bugbear
+    # "A", # flake8-builtins
+    "COM", # flake8-commas
+    "CPY", # flake8-copyright
+    "C4", # flake8-comprehensions
+    "DTZ", # flake8-datetimez
+    "T10", # flake8-debugger
+    "DJ",    # flake8-django
+    # "EM",    # flake8-errmsg, WTF?
+    "EXE",   # flake8-executable
+    "FA",    # flake8-future-annotations
+    "ISC",   # flake8-implicit-str-concat
+    "ICN",   # flake8-import-conventions
+    "G",     # flake8-logging-format
+    "INP",   # flake8-no-pep420
+    "PIE",   # flake8-pie
+    "T20",   # flake8-print
+    "PYI",   # flake8-pyi
+    "PT",    # flake8-pytest-style
+    "Q",     # flake8-quotes
+    "RSE",   # flake8-raise
+    "RET",   # flake8-return
+    "SLF",   # flake8-self
+    "SLOT",  # flake8-slots
+    "SIM",   # flake8-simplify
+    "TID",   # flake8-tidy-imports
+    "TCH",   # flake8-type-checking
+    "INT",   # flake8-gettext
+    "ARG",   # flake8-unused-arguments
+    # "PTH",   # flake8-use-pathlib
+    # "TD",    # flake8-todos
+    # "FIX",   # flake8-fixme: just shows me FIXMEs and TODOs
+    # "ERA",   # eradicate
+    "PD",    # pandas-vet
+    "PGH",   # pygrep-hooks
+    # "PL",    # Pylint
+    # "TRY",   # tryceratops, they all sound BS
+    # "FLY",   # flynt
+    "NPY",   # NumPy-specific rules
+    "AIR",   # Airflow
+    "PERF",  # Perflint
+    "FURB",  # refurb
+    "LOG",   # flake8-logging
+    "RUF",   # Ruff-specific rules
 ]
 lint.ignore = [
+    "PT027", # Use `pytest.raises` instead of unittest-style `assertRaises`
+    "PD011", # Use `.to_numpy()` instead of `.values`, WTF?
+    "ICN001", # `tkinter` should be imported as `tk`, WTF?
+    "RUF005", # Consider `[*_list, x]` instead of concatenation
+    "PYI024", # Use `typing.NamedTuple` instead of `collections.namedtuple`, maybe later
+    "PT009", # Use a regular `assert` instead of unittest-style `assertEqual`, why?
+    "SLF", # Private member accessed
+    "DTZ001", # The use of `datetime.datetime()` without `tzinfo` argument is not allowed
+    "DTZ005", # The use of `datetime.datetime.now()` without `tz` argument is not allowed
+    "PLR0911", # Too many return statements (x > 6)
+    "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
+    "BLE001", # Do not catch blind exception: `Exception`
+    "G004", # Logging statement uses f-string, WTF?
+    "TRY400", # Use `logging.exception` instead of `logging.error`
+    "TRY003", # Avoid specifying long messages outside the exception class, ???
+    "RUF100", # Unused `noqa` directive (non-enabled: ...)
     "FURB101", # `open` and `read` should be replaced by `Path(rootConfJsonFile).read_text()`
 	"PGH003", # Use specific rule codes when ignoring type issues
     "B019", # Use of `functools.lru_cache` or `functools.cache` on methods can lead to memory leaks
@@ -71,6 +119,8 @@ lint.ignore = [
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 lint.fixable = [
+    "RUF",
+    "Q",
     "UP010", # Unnecessary `__future__`"
     "SIM108", # Use ternary operator {contents} instead of if-else-block
     "C408", # Unnecessary `dict` call (rewrite as a literal)
@@ -136,17 +186,35 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 
 [tool.ruff.lint.per-file-ignores]
+"slob.py" = [
+    "PERF203", # `try`-`except` within a loop incurs performance overhead, FIXME
+]
+
+"pyglossary/html_utils.py" = ["RUF003"]
+"persian_utils.py" = ["RUF001"]
+"ru.py" = ["RUF001", "RUF003"]
+"pyglossary/plugins/dikt_json.py" = ["RUF003"]
+"pyglossary/plugin_lib/*.py" = [
+    "ANN",
+    "PT018", # Assertion should be broken down into multiple parts
+    "D",
+    "RUF015", # Prefer `next(zip(*_list, strict=False))` over single element slice
+]
 "scripts/wiki-formats.py" = ["E501"]
 "pyglossary/io_utils.py" = ["ANN"]
-"pyglossary/plugin_lib/*.py" = ["ANN"]
 "pyglossary/plugins/babylon_bgl/bgl_reader_debug.py" = ["ANN", "FURB"]
-"pyglossary/ui/*.py" = ["ANN"]
-"pyglossary/ui/*/*.py" = ["ANN"]
-"tests/*.py" = ["ANN"]
-"*_test.py" = ["ANN"]
-"scripts/*.py" = ["ANN"]
-"scripts/*/*.py" = ["ANN"]
-"doc/lib-examples/*.py" = ["ANN"]
+"pyglossary/ui/*.py" = ["ANN", "T201", "PERF203"]
+"pyglossary/ui/*/*.py" = ["ANN", "T201", "PERF203"]
+"tests/*.py" = ["ANN", "T201"]
+"*_test.py" = [
+    "ANN",
+    "T201",
+    "RUF001", # String contains ambiguous ... (ARABIC LETTER ...). Did you mean `l` ...
+]
+"test.py" = ["ANN", "T201"]
+"scripts/*.py" = ["ANN", "T201", "INP001"]
+"scripts/*/*.py" = ["ANN", "T201", "INP001"]
+"doc/lib-examples/*.py" = ["ANN", "ERA", "INP"]
 
 [tool.ruff.format]
 quote-style = "double"

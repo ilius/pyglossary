@@ -65,7 +65,7 @@ from .bgl_text import (
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
-__all__ = ["tmpDir", "Block", "optionsProp", "BGLGzipFile", "BglReader", "FileOffS"]
+__all__ = ["BGLGzipFile", "BglReader", "Block", "FileOffS", "optionsProp", "tmpDir"]
 
 
 file = io.BufferedReader

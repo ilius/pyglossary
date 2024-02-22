@@ -15,7 +15,9 @@ def formatEntry(entry: "EntryType") -> str:
 		f">> {headword}",
 	]
 	if len(words) > 1:
-		for alt in words[1:]:
-			lines.append(f"Alt: {alt}")
+		lines += [
+			f"Alt: {alt}"
+			for alt in words[1:]
+		]
 	lines.append(f"\n{entry.defi}")
 	return "\n".join(lines)

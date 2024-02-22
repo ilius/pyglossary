@@ -1,4 +1,4 @@
-__all__ = ["yellow", "reset", "red", "green"]
+__all__ = ["green", "red", "reset", "yellow"]
 
 redCode = 1
 greenCode = 2

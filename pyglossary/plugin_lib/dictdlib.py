@@ -399,4 +399,4 @@ class DictDB:
 # print("------------------------ ", __name__)
 if __name__ == "__main__":
 	db = DictDB("test")
-	print(db)
+	print(db)  # noqa: T201

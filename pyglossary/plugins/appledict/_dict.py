@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
 from . import _normalize
 
-__all__ = ["id_generator", "indexes_generator", "_normalize", "quote_string"]
+__all__ = ["_normalize", "id_generator", "indexes_generator", "quote_string"]
 
 log = logging.getLogger("pyglossary")
 

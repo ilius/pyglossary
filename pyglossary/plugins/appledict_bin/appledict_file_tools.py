@@ -21,11 +21,11 @@ if TYPE_CHECKING:
 	import io
 
 __all__ = [
-	"guessFileOffsetLimit",
-	"read_x_bytes_as_word",
 	"APPLEDICT_FILE_OFFSET",
-	"read_2_bytes_here",
+	"guessFileOffsetLimit",
 	"readInt",
+	"read_2_bytes_here",
+	"read_x_bytes_as_word",
 ]
 
 

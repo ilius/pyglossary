@@ -2,7 +2,7 @@ import typing
 from collections.abc import Callable
 from typing import AnyStr
 
-__all__ = ["T_Locale", "T_Collator"]
+__all__ = ["T_Collator", "T_Locale"]
 
 
 class T_Locale(typing.Protocol):

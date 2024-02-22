@@ -26,14 +26,14 @@ from pyglossary.core import appResDir
 from . import gdk, gtk
 
 __all__ = [
+	"HBox",
 	"VBox",
+	"dialog_add_button",
 	"imageFromFile",
 	"pack",
-	"HBox",
-	"showInfo",
-	"set_tooltip",
-	"dialog_add_button",
 	"rgba_parse",
+	"set_tooltip",
+	"showInfo",
 ]
 
 log = logging.getLogger("pyglossary")

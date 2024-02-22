@@ -43,7 +43,7 @@ try:
 except ImportError:
 	xxhash = None
 
-__all__ = ["MDX", "MDD"]
+__all__ = ["MDD", "MDX"]
 
 log = logging.getLogger(__name__)
 

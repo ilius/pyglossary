@@ -63,10 +63,10 @@ def from_metadata(metadata: dict) -> AppleDictProperties:
 		field_data["IDXDataFieldName"]
 		for field_data in key_text_data_fields.get("IDXVariableDataFields", [])
 	]
-	key_text_fixed_field = []
-	if "IDXFixedDataFields" in key_text_data_fields:
-		for fixed_field in key_text_data_fields["IDXFixedDataFields"]:
-			key_text_fixed_field.append(fixed_field["IDXDataFieldName"])
+	key_text_fixed_field = [
+		fixed_field["IDXDataFieldName"]
+		for fixed_field in key_text_data_fields.get("IDXFixedDataFields", [])
+	]
 
 	external_data_fields = key_text_data_fields.get("IDXExternalDataFields")
 	body_compression_type = body_metadata.get("HeapDataCompressionType", 0)

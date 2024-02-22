@@ -1,5 +1,5 @@
 import unicodedata
-from collections import namedtuple
+from typing import Literal, NamedTuple
 
 __all__ = [
 	"WritingSystem",
@@ -12,27 +12,14 @@ __all__ = [
 	"writingSystemList",
 ]
 
-WritingSystem = namedtuple(
-	"WritingSystem",
-	[
-		"name",
-		"iso",  # list[tuple[int, str]]
-		"unicode",
-		"titleTag",
-		"direction",  # ltr | rtl | ttb
-		"comma",
-		"pop",  # population in millions
-	],
-	defaults=(
-		None,  # name
-		[],  # iso
-		[],  # unicode
-		"b",  # titleTag
-		"ltr",  # direction
-		", ",  # comma
-		0,  # pop
-	),
-)
+class WritingSystem(NamedTuple):
+	name: str | None = None
+	iso: list[tuple[int, str]] = []
+	unicode: list = []
+	titleTag: str = "b"
+	direction: Literal["ltr", "rtl", "ttb"] = "ltr"
+	comma: str = ", "
+	pop: int = 0  # population in millions
 
 # digits and FULLWIDTH DIGITs are considered neutral/ignored, not Latin
 

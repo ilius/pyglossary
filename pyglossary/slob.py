@@ -36,7 +36,7 @@ from io import BufferedIOBase, IOBase
 from os.path import isdir
 from struct import calcsize, pack, unpack
 from threading import RLock
-from types import MappingProxyType
+from types import MappingProxyType, TracebackType
 from typing import (
 	TYPE_CHECKING,
 	Any,
@@ -50,11 +50,10 @@ import icu  # type: ignore
 from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 
 if TYPE_CHECKING:
-	from types import TracebackType
 
 	from .icu_types import T_Collator
 
-__all__ = ["Writer", "MIME_TEXT", "MIME_HTML", "open"]
+__all__ = ["MIME_HTML", "MIME_TEXT", "Writer", "open"]
 
 DEFAULT_COMPRESSION = "lzma2"
 
@@ -268,9 +267,9 @@ class MultiFileReader(BufferedIOBase):
 
 	def __exit__(
 		self,
-		exc_type: "type[BaseException] | None",
-		exc_val: "BaseException | None",
-		exc_tb: "TracebackType | None",
+		exc_type: type[BaseException] | None,
+		exc_val: BaseException | None,
+		exc_tb: TracebackType | None,
 	) -> None:
 		self.close()
 
@@ -727,9 +726,9 @@ class Slob:
 
 	def __exit__(
 		self,
-		exc_type: "type[BaseException] | None",
-		exc_val: "BaseException | None",
-		exc_tb: "TracebackType | None",
+		exc_type: type[BaseException] | None,
+		exc_val: BaseException | None,
+		exc_tb: TracebackType | None,
 	) -> None:
 		self.close()
 
@@ -1240,7 +1239,7 @@ class Writer:
 
 	def add_alias(self, key: str, target_key: str) -> None:
 		if not self.max_redirects:
-			raise NotImplementedError()
+			raise NotImplementedError
 
 		try:
 			self._split_key(key)
@@ -1510,7 +1509,7 @@ class Writer:
 
 	def size_tags(self) -> int:
 		size = 0
-		for key, _ in self.tags.items():
+		for key in self.tags:
 			size += U_CHAR_SIZE + len(key.encode(self.encoding))
 			size += 255
 		return size
@@ -1553,9 +1552,9 @@ class Writer:
 
 	def __exit__(
 		self,
-		exc_type: "type[BaseException] | None",
-		exc_val: "BaseException | None",
-		exc_tb: "TracebackType | None",
+		exc_type: type[BaseException] | None,
+		exc_val: BaseException | None,
+		exc_tb: TracebackType | None,
 	) -> None:
 		"""
 		It used to call self.finalize() here

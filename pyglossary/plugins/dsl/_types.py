@@ -2,11 +2,11 @@ import typing
 from collections.abc import Callable
 
 __all__ = [
-	"LexType",
 	"ErrorType",
+	"LexType",
 	"TitleLexType",
-	"TransformerType",
 	"TitleTransformerType",
+	"TransformerType",
 ]
 
 

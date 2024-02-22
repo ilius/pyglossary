@@ -15,13 +15,13 @@ if TYPE_CHECKING:
 
 
 __all__ = [
-	"ShowProgressBar",
 	"EntryFilterType",
-	"StripFullHtml",
 	"PreventDuplicateWords",
-	"entryFiltersRules",
 	"RemoveHtmlTagsAll",
 	"ShowMaxMemoryUsage",
+	"ShowProgressBar",
+	"StripFullHtml",
+	"entryFiltersRules",
 ]
 
 
@@ -423,7 +423,7 @@ class TrimArabicDiacritics(EntryFilter):
 		hw_t = hw_t.replace("\u0622", "\u0627").replace("\u0623", "\u0627")
 		if hw_t == hw or not hw_t:
 			return entry
-		entry._word = [hw_t] + words  # type: ignore
+		entry._word = [hw_t, *words]  # type: ignore
 		return entry
 
 

@@ -104,10 +104,10 @@ class StoreConstAction(argparse.Action):
 		self,
 		parser: "argparse.ArgumentParser | None" = None,
 		namespace: "argparse.Namespace | None" = None,
-		values: "list" = None,  # noqa: ARG002
-		option_strings: "list[str]" = None,  # noqa: ARG002
+		values: list | None = None,  # noqa: ARG002
+		option_strings: list[str] | None = None,  # noqa: ARG002
 		required: bool = False,  # noqa: ARG002
-		dest: "str | None" = None,
+		dest: str | None = None,
 	) -> "StoreConstAction":
 		if not parser:
 			return self
@@ -301,7 +301,7 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 					f"pyglossary.ui.ui_{ui_type2}",
 					fromlist=f"ui_{ui_type2}",
 				)
-			except ImportError as e:
+			except ImportError as e:  # noqa: PERF203
 				log.error(str(e))
 			else:
 				return ui_module.UI(**uiArgs).run

@@ -368,7 +368,7 @@ class Writer:
 					encoding=encoding,
 				),
 			).decode(encoding)
-			# for some reason, "´k" becomes " ́k" (for example)
+			# for some reason, "´k" becomes " ́k" (for example) # noqa: RUF003
 			# stardict-text2bin tool also does this.
 			# https://en.wiktionary.org/wiki/%CB%88#Translingual
 			self._file.write(articleStr + "\n")

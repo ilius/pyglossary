@@ -469,7 +469,7 @@ class Comparator:
 		self,
 		tup1: "tuple[str, str]",
 		tup2: "tuple[str, str]",
-	) -> "Literal[0] | Literal[1] | Literal[-1]":
+	) -> "Literal[0, 1, -1]":
 		# assert isinstance(tup1, tuple)
 		# assert isinstance(tup2, tuple)
 		s1, n1 = tup1
@@ -486,7 +486,7 @@ class Comparator:
 		self,
 		a: str,
 		b: str,
-	) -> "Literal[0] | Literal[1] | Literal[-1]":
+	) -> "Literal[0, 1, -1]":
 		if self.version < 7:
 			return 0
 		s1 = self._without_dash(a)
@@ -525,14 +525,14 @@ class QuickDic:
 			with open(path, "rb") as fp:
 				return cls.from_fp(fp)
 		with zipfile.ZipFile(path, mode="r") as zf:
-			fname = [n for n in zf.namelist() if n.endswith(".quickdic")][0]
+			fname = next(n for n in zf.namelist() if n.endswith(".quickdic"))
 			with zf.open(fname) as fp:
 				return cls.from_fp(fp)
 
 	@classmethod
 	def from_fp(cls: "type[QuickDic]", fp: IO[bytes]) -> "QuickDic":
 		version = read_int(fp)
-		created = dt.datetime.fromtimestamp(float(read_long(fp)) / 1000.0)
+		created = dt.datetime.fromtimestamp(float(read_long(fp)) / 1000.0) # noqa: DTZ006
 		name = read_string(fp)
 		sources = read_list(fp, read_entry_source)
 		pairs = read_list(fp, read_entry_pairs)
@@ -721,7 +721,8 @@ class Reader:
 		_, _, _, _, _, _, index_entries, _, rows = index
 		token, start_index, count, _, html_indices = index_entries[i_entry]
 		block_rows = rows[start_index : start_index + count + 1]
-		assert block_rows[0][0] in (1, 3) and block_rows[0][1] == i_entry
+		assert block_rows[0][0] in (1, 3)
+		assert block_rows[0][1] == i_entry
 		e_rows = []
 		for entry_type, entry_idx in block_rows[1:]:
 			if entry_type in (1, 3):

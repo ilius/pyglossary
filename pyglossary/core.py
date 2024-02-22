@@ -29,9 +29,9 @@ if TYPE_CHECKING:
 
 
 __all__ = [
-	"StdLogHandler",
 	"TRACE",
 	"VERSION",
+	"StdLogHandler",
 	"appResDir",
 	"cacheDir",
 	"checkCreateConfDir",
@@ -76,7 +76,7 @@ def trace(log: logging.Logger, msg: str) -> None:
 
 
 class _Formatter(logging.Formatter):
-	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN
+	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN101
 		logging.Formatter.__init__(self, *args, **kwargs)
 		self.fill: "Callable[[str], str] | None" = None
 
@@ -100,7 +100,7 @@ class _MyLogger(logging.Logger):
 		TRACE,
 		logging.NOTSET,
 	)
-	levelNamesCap = [
+	levelNamesCap = (
 		"Critical",
 		"Error",
 		"Warning",
@@ -108,9 +108,9 @@ class _MyLogger(logging.Logger):
 		"Debug",
 		"Trace",
 		"All",  # "Not-Set",
-	]
+	)
 
-	def __init__(self, *args) -> None:  # noqa: ANN
+	def __init__(self, *args) -> None:  # noqa: ANN101
 		logging.Logger.__init__(self, *args)
 		self._verbosity = 3
 		self._timeEnable = False
@@ -251,8 +251,8 @@ class StdLogHandler(logging.Handler):
 
 		###
 		if fp is None:
-			print(f"fp=None, levelname={record.levelname}")
-			print(msg)
+			print(f"fp=None, levelname={record.levelname}")  # noqa: T201
+			print(msg)  # noqa: T201
 			return
 		fp.write(msg + "\n")
 		fp.flush()
@@ -334,7 +334,7 @@ log = cast(_MyLogger, logging.getLogger("pyglossary"))
 
 
 def isDebug() -> bool:
-	return log.getVerbosity() >= 4
+	return log.getVerbosity() >= 4  # noqa: PLR2004
 
 
 if os.sep == "\\":

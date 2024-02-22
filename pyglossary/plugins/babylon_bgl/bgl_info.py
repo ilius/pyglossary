@@ -38,9 +38,9 @@ __all__ = ["charsetInfoDecode", "infoType3ByCode"]
 
 class InfoItem:
 	__slots__ = (
-		"name",
-		"decode",
 		"attr",
+		"decode",
+		"name",
 	)
 
 	def __init__(

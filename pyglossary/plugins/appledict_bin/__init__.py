@@ -358,7 +358,7 @@ class Reader:
 		"""
 		offset = buffer[pos : pos + 12].find(b"<d:entry")
 		if offset == -1:
-			print(buffer[pos:])
+			log.info(f"{buffer[pos:]=}")
 			raise OSError("Could not find entry tag <d:entry>")
 		if offset == 0:
 			# when no such info (offset equals 0) provided,

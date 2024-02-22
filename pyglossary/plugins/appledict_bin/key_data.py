@@ -14,7 +14,7 @@
 # GNU General Public License for more details.
 import typing
 
-__all__ = ["RawKeyData", "KeyData"]
+__all__ = ["KeyData", "RawKeyData"]
 
 RawKeyData: "typing.TypeAlias" = "tuple[int, int, typing.Sequence[str]]"
 """tuple(priority, parentalControl, keyTextFields)"""
@@ -69,12 +69,12 @@ class KeyData:
 	}
 
 	__slots__ = [
-		"priority",
-		"parentalControl",
-		"keyword",
-		"headword",
-		"entryTitle",
 		"anchor",
+		"entryTitle",
+		"headword",
+		"keyword",
+		"parentalControl",
+		"priority",
 	]
 
 	def __init__(

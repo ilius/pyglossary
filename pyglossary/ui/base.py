@@ -37,7 +37,7 @@ from pyglossary.option import (
 	StrOption,
 )
 
-__all__ = ["authors", "UIBase", "fread", "licenseText", "aboutText", "logo"]
+__all__ = ["UIBase", "aboutText", "authors", "fread", "licenseText", "logo"]
 
 
 def fread(path: str) -> str:
@@ -239,7 +239,7 @@ class UIBase:
 		for key in self.configDefDict:
 			try:
 				self.config[key] = data.pop(key)
-			except KeyError:
+			except KeyError:  # noqa: PERF203
 				pass
 		for key in data:
 			log.warning(

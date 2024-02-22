@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 	from .glossary_types import RawEntryType
 
 
-__all__ = ["Entry", "DataEntry"]
+__all__ = ["DataEntry", "Entry"]
 
 log = logging.getLogger("pyglossary")
 
@@ -33,10 +33,10 @@ log = logging.getLogger("pyglossary")
 # aka Resource
 class DataEntry(BaseEntry):
 	__slots__ = [
-		"_fname",
-		"_data",
-		"_tmpPath",
 		"_byteProgress",
+		"_data",
+		"_fname",
+		"_tmpPath",
 	]
 
 	def isData(self) -> bool:
@@ -179,10 +179,10 @@ class Entry(BaseEntry):
 	)
 
 	__slots__ = [
-		"_word",
+		"_byteProgress",
 		"_defi",
 		"_defiFormat",
-		"_byteProgress",
+		"_word",
 	]
 
 	def isData(self) -> bool:

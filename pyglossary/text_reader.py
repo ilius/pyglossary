@@ -17,7 +17,7 @@ from pyglossary.entry import DataEntry
 from pyglossary.entry_base import MultiStr
 from pyglossary.io_utils import nullTextIO
 
-__all__ = ["TextGlossaryReader", "TextFilePosWrapper", "nextBlockResultType"]
+__all__ = ["TextFilePosWrapper", "TextGlossaryReader", "nextBlockResultType"]
 
 log = logging.getLogger("pyglossary")
 
@@ -221,8 +221,8 @@ class TextGlossaryReader:
 			except StopIteration:
 				if (
 					self._fileCount == -1
-					or self._fileIndex < self._fileCount - 1
-					and self.openNextFile()
+					or (self._fileIndex < self._fileCount - 1
+					and self.openNextFile())
 				):
 					continue
 				self._wordCount = self._pos

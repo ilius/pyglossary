@@ -327,7 +327,7 @@ def build_name2codepoint_dict() -> None:
 		value = name2str[key]
 		if len(value) > 1:
 			raise ValueError(f"{value = }")
-		print(f'\t"{key}": 0x{ord(value):0>4x},  # {value}')
+		print(f'\t"{key}": 0x{ord(value):0>4x},  # {value}')  # noqa: T201
 
 
 def _sub_unescape_unicode(m: "re.Match") -> str:

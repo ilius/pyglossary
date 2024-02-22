@@ -17,7 +17,7 @@ Glossary.init()
 
 
 class MyStr(str):
-	pass
+	__slots__ = []
 
 
 class TestGlossaryErrorsBase(TestGlossaryBase):

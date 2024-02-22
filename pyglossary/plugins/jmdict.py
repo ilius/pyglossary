@@ -306,7 +306,7 @@ class Reader:
 				# and then starting over and fixing/optimizing links
 				for s_keb in kebList:
 					for s_reb in rebList:
-						keywords.append(f"{s_keb}・{s_reb}")
+						keywords.append(f"{s_keb}・{s_reb}")  # noqa: PERF401
 
 				if kebDisplayList:
 					with hf.element(glos.titleTag(kebDisplayList[0])):

@@ -136,7 +136,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		for reader in self._readers:
 			try:
 				reader.close()
-			except Exception:
+			except Exception:  # noqa: PERF203
 				log.exception("")
 
 	def clear(self) -> None:
@@ -149,7 +149,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		for reader in readers:
 			try:
 				reader.close()
-			except Exception:
+			except Exception:  # noqa: PERF203
 				log.exception("")
 		self._readers: "list[Any]" = []
 		self._defiHasWordTitle = False

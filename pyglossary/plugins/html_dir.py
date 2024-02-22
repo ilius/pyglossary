@@ -374,7 +374,7 @@ class Writer:
 			links.extend(
 				[
 					f'<a href="./{self.getNextFilename()}">&#9654;</a>',
-					'<a href="./info.html">ℹ️</a></div>',
+					'<a href="./info.html">ℹ️</a></div>',  # noqa: RUF001
 				],
 			)
 			return (

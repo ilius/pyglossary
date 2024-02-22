@@ -112,7 +112,7 @@ class Reader:
 		"""
 
 		filenameNoExt, _ext = splitext(self._filename)
-		mddBase = "".join([filenameNoExt, extsep])
+		mddBase = filenameNoExt + extsep
 		for fname in (f"{mddBase}mdd", f"{mddBase}1.mdd"):
 			if isfile(fname):
 				self._mdd.append(MDD(fname))
@@ -245,7 +245,7 @@ class Reader:
 					fname = toStr(b_fname)
 					fname = fname.replace("\\", os.sep).lstrip(os.sep)
 					yield glos.newDataEntry(fname, b_data)
-			except Exception:
+			except Exception:  # noqa: PERF203
 				log.exception(f"Error reading {mdd.filename}")
 		self._mdd = []
 

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 from .compression import compressionOpen as c_open
 from .io_utils import nullTextIO
 
-__all__ = ["writeTxt", "TextGlossaryWriter"]
+__all__ = ["TextGlossaryWriter", "writeTxt"]
 
 log = logging.getLogger("pyglossary")
 

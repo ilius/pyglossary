@@ -63,30 +63,30 @@ def sortOnWriteFromStr(sortOnWriteStr: "str | None") -> "StrWithDesc":
 
 class PluginProp:
 	__slots__ = [
-		"_mod",
 		"_Reader",
 		"_ReaderLoaded",
 		"_Writer",
 		"_WriterLoaded",
-		"_moduleName",
-		"_modulePath",
-		"_enable",
-		"_lname",
-		"_name",
-		"_description",
-		"_extensions",
-		"_extensionCreate",
-		"_singleFile",
-		"_optionsProp",
-		"_sortOnWrite",
-		"_sortKeyName",
 		"_canRead",
 		"_canWrite",
-		"_readOptions",
-		"_writeOptions",
+		"_description",
+		"_enable",
+		"_extensionCreate",
+		"_extensions",
+		"_lname",
+		"_mod",
+		"_moduleName",
+		"_modulePath",
+		"_name",
+		"_optionsProp",
 		"_readCompressions",
 		"_readDepends",
+		"_readOptions",
+		"_singleFile",
+		"_sortKeyName",
+		"_sortOnWrite",
 		"_writeDepends",
+		"_writeOptions",
 	]
 
 	def __init__(self) -> None:
@@ -299,7 +299,7 @@ class PluginProp:
 	def getOptionAttrNamesFromClass(self, rwclass: "type") -> "list[str]":
 		nameList = []
 
-		for cls in rwclass.__bases__ + (rwclass,):
+		for cls in (*rwclass.__bases__, rwclass):
 			for _name in cls.__dict__:
 				if not _name.startswith("_") or _name.startswith("__"):
 					# and _name not in ("_open",)
@@ -385,7 +385,7 @@ class PluginProp:
 				extensions = tuple(extensions)
 				log.error(msg)
 			else:
-				raise ValueError(msg)
+				raise TypeError(msg)
 
 		if not isinstance(self.readDepends, dict):
 			log.error(

@@ -85,17 +85,17 @@ class Writer:
 		if self._add_extra_info:
 			fileObj.write(
 				"CREATE TABLE dbinfo_extra ("
-				"\'id\' INTEGER PRIMARY KEY NOT NULL, "
-				"\'name\' TEXT UNIQUE, \'value\' TEXT);\n",
+				"'id' INTEGER PRIMARY KEY NOT NULL, "
+				"'name' TEXT UNIQUE, 'value' TEXT);\n",
 			)
 
 		fileObj.write(
-			"CREATE TABLE word (\'id\' INTEGER PRIMARY KEY NOT NULL, "
-			"\'w\' TEXT, \'m\' TEXT);\n",
+			"CREATE TABLE word ('id' INTEGER PRIMARY KEY NOT NULL, "
+			"'w' TEXT, 'm' TEXT);\n",
 		)
 		fileObj.write(
-			"CREATE TABLE alt (\'id\' INTEGER NOT NULL, "
-			"\'w\' TEXT);\n",
+			"CREATE TABLE alt ('id' INTEGER NOT NULL, "
+			"'w' TEXT);\n",
 		)
 
 		if self._transaction:

@@ -64,20 +64,20 @@ optionsProp: "dict[str, Option]" = {}
 
 
 def is_cyrillic_char(c: str) -> bool:
-	# U+0400 – U+04FF: Cyrillic
-	# U+0500 – U+052F: Cyrillic Supplement
+	# U+0400 - U+04FF: Cyrillic
+	# U+0500 - U+052F: Cyrillic Supplement
 	if "\u0400" <= c <= "\u052F":
 		return True
 
-	# U+2DE0 – U+2DFF: Cyrillic Extended-A
+	# U+2DE0 - U+2DFF: Cyrillic Extended-A
 	if "\u2DE0" <= c <= "\u2DFF":
 		return True
 
-	# U+A640 – U+A69F: Cyrillic Extended-B
+	# U+A640 - U+A69F: Cyrillic Extended-B
 	if "\uA640" <= c <= "\uA69F":
 		return True
 
-	# U+1C80 – U+1C8F: Cyrillic Extended-C
+	# U+1C80 - U+1C8F: Cyrillic Extended-C
 	if "\u1C80" <= c <= "\u1C8F":
 		return True
 

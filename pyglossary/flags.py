@@ -4,13 +4,13 @@ if TYPE_CHECKING:
 	from typing import TypeAlias
 
 __all__ = [
-	"YesNoAlwaysNever",
+	"ALWAYS",
 	"DEFAULT_NO",
-	"flagsByName",
-	"StrWithDesc",
 	"DEFAULT_YES",
 	"NEVER",
-	"ALWAYS",
+	"StrWithDesc",
+	"YesNoAlwaysNever",
+	"flagsByName",
 ]
 
 flagsByName = {}
@@ -18,6 +18,7 @@ flagsByName = {}
 
 class StrWithDesc(str):
 	desc: str
+	__slots__ = ["desc"]
 
 	def __new__(cls: "type", name: str, desc: str) -> "StrWithDesc":
 		s: StrWithDesc = str.__new__(cls, name)

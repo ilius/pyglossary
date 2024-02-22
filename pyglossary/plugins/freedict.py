@@ -952,10 +952,10 @@ class Reader:
 		if self._auto_rtl is None:
 			glos = self._glos
 			if (
-				glos.sourceLang
-				and glos.sourceLang.rtl
-				or glos.targetLang
-				and glos.targetLang.rtl
+				(glos.sourceLang
+				and glos.sourceLang.rtl)
+				or (glos.targetLang
+				and glos.targetLang.rtl)
 			):
 				log.info("setting auto_rtl=True")
 				self._auto_rtl = True
@@ -987,5 +987,5 @@ class Reader:
 
 		if self._discoveredTags:
 			log.info("Found unsupported tags")
-			for _, elem in self._discoveredTags.items():
+			for elem in self._discoveredTags.values():
 				log.info(f"{self.tostring(elem)}\n")

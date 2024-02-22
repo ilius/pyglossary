@@ -21,7 +21,7 @@ import logging
 import os
 from os.path import isfile
 from pickle import dumps, loads
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable, Iterator
@@ -156,7 +156,7 @@ class SqEntryList:
 		if self._len % 1000 == 0:
 			self._con.commit()
 
-	def __iadd__(self, other: "Iterable") -> "SqEntryList":
+	def __iadd__(self, other: "Iterable") -> Self:
 		for item in other:
 			self.append(item)
 		return self

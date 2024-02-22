@@ -160,7 +160,7 @@ optionsProp: "dict[str, Option]" = {
 
 
 def _isKana(char: str) -> bool:
-	assert len(char) == 1  # noqa: S101
+	assert len(char) == 1
 	val = ord(char)
 	return (
 		0x3040 <= val <= 0x309F  # Hiragana
@@ -170,7 +170,7 @@ def _isKana(char: str) -> bool:
 
 
 def _isKanji(char: str) -> bool:
-	assert len(char) == 1  # noqa: S101
+	assert len(char) == 1
 	val = ord(char)
 	return (
 		0x3400 <= val <= 0x4DBF  # CJK Unified Ideographs Extension A

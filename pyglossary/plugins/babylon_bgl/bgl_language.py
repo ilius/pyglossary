@@ -113,7 +113,7 @@ dictionary. I used WideCharToMultiByte function for conversion. The C++
 utility confirmed the cp932 and cp950 encodings, I got 100% match.
 """
 
-__all__ = ["languageByCode", "BabylonLanguage"]
+__all__ = ["BabylonLanguage", "languageByCode"]
 
 
 class BabylonLanguage:

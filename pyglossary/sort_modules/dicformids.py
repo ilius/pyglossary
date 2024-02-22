@@ -10,7 +10,7 @@ desc = "DictionaryForMIDs"
 
 def normal(**_options) -> "sortKeyType":
 	re_punc = re.compile(
-		r"""[!"$§%&/()=?´`\\{}\[\]^°+*~#'\-_.:,;<>@|]*""",
+		r"""[!"$§%&/()=?´`\\{}\[\]^°+*~#'\-_.:,;<>@|]*""",  # noqa: RUF001
 	)
 	re_spaces = re.compile(" +")
 	re_tabs = re.compile("\t+")
