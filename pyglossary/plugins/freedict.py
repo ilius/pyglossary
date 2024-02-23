@@ -29,6 +29,21 @@ from pyglossary.option import (
 	StrOption,
 )
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+]
+
 enable = True
 lname = "freedict"
 format = "FreeDict"

@@ -11,18 +11,35 @@ if TYPE_CHECKING:
 
 from pyglossary.core import log
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+]
+
 enable = True
 lname = "dict_cc_split"
 format = "Dictcc_split"
 description = "Dict.cc (SQLite3) - Split"
 extensions = ()
 extensionCreate = ".db"
+singleFile = True
 kind = "binary"
 wiki = "https://en.wikipedia.org/wiki/Dict.cc"
 website = (
 	"https://play.google.com/store/apps/details?id=cc.dict.dictcc",
 	"dict.cc dictionary - Google Play",
 )
+optionsProp = {}
 
 
 class Reader:

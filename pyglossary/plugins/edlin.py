@@ -35,6 +35,22 @@ from pyglossary.text_utils import (
 	unescapeNTB,
 )
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+	"Writer",
+]
+
 enable = True
 lname = "edlin"
 format = "Edlin"
@@ -42,6 +58,7 @@ format = "Edlin"
 description = "EDLIN"
 extensions = (".edlin",)
 extensionCreate = ".edlin/"
+singleFile = False
 kind = "directory"
 wiki = ""
 website = None

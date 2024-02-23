@@ -25,13 +25,29 @@ from pyglossary.option import (
 )
 from pyglossary.plugin_lib import mutf8
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+	"Writer",
+]
+
 enable = True
 lname = "quickdic6"
 format = "QuickDic6"
 description = "QuickDic version 6 (.quickdic)"
 extensions = (".quickdic", ".quickdic.v006.zip")
 extensionCreate = ".quickdic"
-
+singleFile = True
 sortOnWrite = NEVER
 
 kind = "binary"

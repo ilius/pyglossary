@@ -16,6 +16,22 @@ from pyglossary.option import (
 if TYPE_CHECKING:
 	import io
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+	"Writer",
+]
+
 enable = True
 lname = "gettext_po"
 format = "GettextPo"

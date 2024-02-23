@@ -9,18 +9,35 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+]
+
 enable = True
 lname = "almaany"
 format = "Almaany"
 description = "Almaany.com (SQLite3)"
 extensions = ()
 extensionCreate = ".db"
+singleFile = True
 kind = "binary"
 wiki = ""
 website = (
 	"https://play.google.com/store/apps/details?id=com.almaany.arar",
 	"Almaany.com Arabic Dictionary - Google Play",
 )
+optionsProp = {}
 
 
 class Reader:

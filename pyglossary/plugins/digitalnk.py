@@ -9,6 +9,20 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+]
 
 enable = True
 lname = "digitalnk"
@@ -16,12 +30,14 @@ format = "DigitalNK"
 description = "DigitalNK (SQLite3, N-Korean)"
 extensions = ()
 extensionCreate = ".db"
+singleFile = True
 kind = "binary"
 wiki = ""
 website = (
 	"https://github.com/digitalprk/dicrs",
 	"@digitalprk/dicrs",
 )
+optionsProp = {}
 
 
 class Reader:

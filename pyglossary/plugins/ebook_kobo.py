@@ -40,12 +40,28 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.option import Option
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Writer",
+]
+
 enable = True
 lname = "kobo"
 format = "Kobo"
 description = "Kobo E-Reader Dictionary"
 extensions = (".kobo",)
 extensionCreate = ".kobo.zip"
+singleFile = False
 kind = "package"
 sortOnWrite = NEVER
 wiki = "https://en.wikipedia.org/wiki/Kobo_eReader"

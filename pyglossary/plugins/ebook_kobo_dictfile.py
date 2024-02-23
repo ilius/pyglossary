@@ -40,12 +40,29 @@ from pyglossary.text_reader import TextGlossaryReader
 if TYPE_CHECKING:
 	import io
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+	"Writer",
+]
+
 enable = True
 lname = "kobo_dictfile"
 format = "Dictfile"
 description = "Kobo E-Reader Dictfile (.df)"
 extensions = (".df",)
 extensionCreate = ".df"
+singleFile = True
 kind = "text"
 wiki = ""
 website = (

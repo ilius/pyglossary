@@ -15,12 +15,29 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.option import Option
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+	"Writer",
+]
+
 lname = "dicformids"
 enable = True
 format = "Dicformids"
 description = "DictionaryForMIDs"
 extensions = (".mids",)
 extensionCreate = ".mids/"
+singleFile = False
 sortOnWrite = ALWAYS
 sortKeyName = "dicformids"
 sortEncoding = "utf-8"

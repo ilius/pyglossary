@@ -29,6 +29,21 @@ from pyglossary.text_utils import (
 	unescapeNTB,
 )
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Writer",
+]
+
 enable = True
 lname = "html_dir"
 format = "HtmlDir"

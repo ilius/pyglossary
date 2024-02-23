@@ -7,6 +7,22 @@ from typing import Generator, Iterator
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import Option
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+	"Writer",
+]
+
 enable = False
 lname = "testformat"
 format = "Test"

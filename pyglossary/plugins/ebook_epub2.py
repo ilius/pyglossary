@@ -17,6 +17,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 from typing import TYPE_CHECKING, Any
 
 from pyglossary.ebook_base import EbookWriter
@@ -31,12 +32,28 @@ from pyglossary.option import (
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import GlossaryType
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Writer",
+]
+
 enable = True
 lname = "epub2"
 format = "Epub2"
 description = "EPUB-2 E-Book"
 extensions = (".epub",)
 extensionCreate = ".epub"
+singleFile = True
 sortOnWrite = ALWAYS
 sortKeyName = "ebook"
 kind = "package"

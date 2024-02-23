@@ -5,6 +5,21 @@ from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import BoolOption, Option
 from pyglossary.text_utils import replaceStringTable
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Writer",
+]
+
 enable = True
 lname = "dict_org_source"
 format = "DictOrgSource"

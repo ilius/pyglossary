@@ -11,11 +11,29 @@ from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import BoolOption, Option
 from pyglossary.plugin_lib.dictdlib import DictDB
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+	"Writer",
+]
+
 enable = True
 lname = "dict_org"
 format = "DictOrg"
 description = "DICT.org file format (.index)"
 extensions = (".index",)
+extensionCreate = ""
+singleFile = False
 optionsProp: "dict[str, Option]" = {
 	"dictzip": BoolOption(comment="Compress .dict file to .dict.dz"),
 	"install": BoolOption(comment="Install dictionary to /usr/share/dictd/"),

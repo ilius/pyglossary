@@ -22,6 +22,21 @@ from pyglossary.glossary_types import (
 )
 from pyglossary.io_utils import nullBinaryIO
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+]
+
 enable = True
 lname = "jmnedict"
 format = "JMnedict"

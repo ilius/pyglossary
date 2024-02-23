@@ -47,6 +47,21 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Writer",
+]
+
 sys.setrecursionlimit(10000)
 
 enable = True
@@ -55,6 +70,7 @@ format = "AppleDict"
 description = "AppleDict Source"
 extensions = (".apple",)
 extensionCreate = ".apple/"
+singleFile = False
 kind = "directory"
 wiki = ""
 website = (

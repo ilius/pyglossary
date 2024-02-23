@@ -19,6 +19,21 @@ from pyglossary.compression import (
 from pyglossary.core import log, pip
 from pyglossary.html_utils import unescape_unicode
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+]
+
 enable = True
 lname = "iupac_goldbook"
 format = "IUPACGoldbook"

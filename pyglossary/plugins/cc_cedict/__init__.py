@@ -17,6 +17,22 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
+
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind"
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+]
+
 enable = True
 lname = "cc_cedict"
 format = "CC-CEDICT"

@@ -37,6 +37,21 @@ from pyglossary.option import (
 )
 from pyglossary.text_utils import toStr
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind"
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+]
+
 enable = True
 lname = "octopus_mdict"
 format = "OctopusMdict"

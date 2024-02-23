@@ -48,6 +48,22 @@ from pyglossary.text_utils import (
 	uint64ToBytes,
 )
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+	"Writer",
+]
+
+
 enable = True
 lname = "stardict"
 format = "Stardict"

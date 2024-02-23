@@ -9,12 +9,29 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
+
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+]
+
 enable = True
 lname = "abc_medical_notes"
 format = "ABCMedicalNotes"
 description = "ABC Medical Notes (SQLite3)"
 extensions = ()
 extensionCreate = ".db"
+singleFile = True
 kind = "binary"
 wiki = ""
 _url = (
@@ -24,6 +41,7 @@ website = (
 	_url,
 	"ABC Medical Notes 2021 - Google Play",
 )
+optionsProp = {}
 
 
 class Reader:

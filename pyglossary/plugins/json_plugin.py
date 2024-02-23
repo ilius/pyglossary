@@ -16,6 +16,21 @@ from pyglossary.option import (
 	Option,
 )
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Writer",
+]
+
 enable = True
 lname = "json"
 format = "Json"

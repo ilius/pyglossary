@@ -46,6 +46,21 @@ from .transform import Transformer
 if TYPE_CHECKING:
 	import io
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind"
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+]
+
 enable = True
 lname = "dsl"
 format = "ABBYYLingvoDSL"

@@ -43,12 +43,28 @@ from pyglossary.option import (
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Writer",
+]
+
 enable = True
 lname = "mobi"
 format = "Mobi"
 description = "Mobipocket (.mobi) E-Book"
 extensions = (".mobi",)
 extensionCreate = ".mobi"
+singleFile = False
 sortOnWrite = DEFAULT_YES
 sortKeyName = "ebook"
 kind = "package"

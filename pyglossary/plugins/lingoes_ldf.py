@@ -18,6 +18,22 @@ from pyglossary.option import (
 from pyglossary.text_reader import TextGlossaryReader, nextBlockResultType
 from pyglossary.text_utils import replaceStringTable, splitByBar
 
+__all__ = [
+	"enable",
+	"lname",
+	"format",
+	"description",
+	"extensions",
+	"extensionCreate",
+	"singleFile",
+	"kind",
+	"wiki",
+	"website",
+	"optionsProp",
+	"Reader",
+	"Writer",
+]
+
 enable = True
 lname = "lingoes_ldf"
 format = "LingoesLDF"
