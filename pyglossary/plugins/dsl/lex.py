@@ -150,8 +150,7 @@ def lexTagAttrValue(tr: TransformerType) -> tuple[LexType, ErrorType]:
 
 
 def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
-	if not tag:
-		return None, f"empty close tag {tag!r}"
+	assert tag
 	if tag == "m":
 		tr.output += "</p>"
 	elif tag == "b":
@@ -186,6 +185,7 @@ def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 		pass
 	else:
 		log.warning(f"unknown close tag {tag!r}")
+	tr.resetBuf()
 	return lexRoot, None
 
 
@@ -315,17 +315,32 @@ def lexS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
+def processTagM(tr: TransformerType, tag: str):
+	padding = "0.3"
+	if len(tag) > 1:
+		padding = tag[1:]
+		if padding == "0":
+			padding = "0.3"
+	tr.output += f'<p style="padding-left:{padding}em;margin:0">'
+
+
+def processTagC(tr: TransformerType):
+	color = "green"
+	for key, value in tr.attrs.items():
+		if value is None:
+			color = key
+			break
+	tr.output += f'<font color="{color}">'
+
+
 def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 	tr.attrName = ""
 	if not tag:
 		tr.resetBuf()
 		return lexRoot, None
+
 	if tag[0] == "/":
-		lex, err = processTagClose(tr, tag[1:])
-		if err:
-			return None, err
-		tr.resetBuf()
-		return lex, None
+		return processTagClose(tr, tag[1:])
 
 	tag = tag.split(" ")[0]
 
@@ -339,30 +354,17 @@ def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 		return lexS(tr)
 
 	if tag[0] == "m":
-		padding = "0.3"
-		if len(tag) > 1:
-			padding = tag[1:]
-			if padding == "0":
-				padding = "0.3"
-		tr.output += f'<p style="padding-left:{padding}em;margin:0">'
+		processTagM(tr, tag)
+
+	elif tag == "c":
+		processTagC(tr)
 
 	elif tag == "*":
 		tr.output += '<span class="sec">'
-
 	elif tag == "ex":
 		tr.output += f'<span class="ex"><font color="{tr.exampleColor}">'
-
-	elif tag == "c":
-		color = "green"
-		for key, value in tr.attrs.items():
-			if value is None:
-				color = key
-				break
-		tr.output += f'<font color="{color}">'
-
 	elif tag == "t":
 		tr.output += '<font face="Helvetica" class="dsl_t">'
-
 	elif tag == "p":
 		tr.output += '<i class="p"><font color="green">'
 	elif tag == "i":
