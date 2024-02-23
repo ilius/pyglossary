@@ -10,7 +10,7 @@
 | Extensions      | `.epub`                                    |
 | Read support    | No                                         |
 | Write support   | Yes                                        |
-| Single-file     | No                                         |
+| Single-file     | Yes                                        |
 | Kind            | 📦 package                                  |
 | Sort-on-write   | always                                     |
 | Sort key        | `ebook`                                    |

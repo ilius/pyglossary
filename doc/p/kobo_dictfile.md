@@ -10,7 +10,7 @@
 | Extensions      | `.df`                                                                       |
 | Read support    | Yes                                                                         |
 | Write support   | Yes                                                                         |
-| Single-file     | No                                                                          |
+| Single-file     | Yes                                                                         |
 | Kind            | 📝 text                                                                      |
 | Sort-on-write   | default_no                                                                  |
 | Sort key        | (`headword_lower`)                                                          |

@@ -10,7 +10,7 @@
 | Extensions      |                                                                                                                        |
 | Read support    | Yes                                                                                                                    |
 | Write support   | No                                                                                                                     |
-| Single-file     | No                                                                                                                     |
+| Single-file     | Yes                                                                                                                    |
 | Kind            | 🔢 binary                                                                                                               |
 | Sort-on-write   | default_no                                                                                                             |
 | Sort key        | (`headword_lower`)                                                                                                     |

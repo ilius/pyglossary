@@ -90,7 +90,7 @@
 		"name": "ABCMedicalNotes",
 		"description": "ABC Medical Notes (SQLite3)",
 		"extensions": [],
-		"singleFile": false,
+		"singleFile": true,
 		"optionsProp": {},
 		"canRead": true,
 		"canWrite": false,
@@ -102,7 +102,7 @@
 		"name": "Almaany",
 		"description": "Almaany.com (SQLite3)",
 		"extensions": [],
-		"singleFile": false,
+		"singleFile": true,
 		"optionsProp": {},
 		"canRead": true,
 		"canWrite": false,
@@ -544,7 +544,7 @@
 		"name": "Dictcc",
 		"description": "Dict.cc (SQLite3)",
 		"extensions": [],
-		"singleFile": false,
+		"singleFile": true,
 		"optionsProp": {},
 		"canRead": true,
 		"canWrite": false,
@@ -556,7 +556,7 @@
 		"name": "Dictcc_split",
 		"description": "Dict.cc (SQLite3) - Split",
 		"extensions": [],
-		"singleFile": false,
+		"singleFile": true,
 		"optionsProp": {},
 		"canRead": true,
 		"canWrite": false,
@@ -654,7 +654,7 @@
 		"name": "DigitalNK",
 		"description": "DigitalNK (SQLite3, N-Korean)",
 		"extensions": [],
-		"singleFile": false,
+		"singleFile": true,
 		"optionsProp": {},
 		"canRead": true,
 		"canWrite": false,
@@ -749,7 +749,7 @@
 		"extensions": [
 			".epub"
 		],
-		"singleFile": false,
+		"singleFile": true,
 		"optionsProp": {
 			"group_by_prefix_length": {
 				"class": "IntOption",
@@ -824,7 +824,7 @@
 		"extensions": [
 			".df"
 		],
-		"singleFile": false,
+		"singleFile": true,
 		"optionsProp": {
 			"encoding": {
 				"class": "EncodingOption",
@@ -1378,7 +1378,7 @@
 			".quickdic",
 			".quickdic.v006.zip"
 		],
-		"singleFile": false,
+		"singleFile": true,
 		"optionsProp": {
 			"normalizer_rules": {
 				"class": "StrOption",

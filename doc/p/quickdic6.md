@@ -10,7 +10,7 @@
 | Extensions      | `.quickdic`, `.quickdic.v006.zip`                                              |
 | Read support    | Yes                                                                            |
 | Write support   | Yes                                                                            |
-| Single-file     | No                                                                             |
+| Single-file     | Yes                                                                            |
 | Kind            | 🔢 binary                                                                       |
 | Sort-on-write   | never                                                                          |
 | Sort key        | (`headword_lower`)                                                             |
