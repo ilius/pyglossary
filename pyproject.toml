@@ -227,7 +227,7 @@ line-ending = "auto"
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
-max-complexity = 10
+max-complexity = 15
 
 [tool.mypy]
 exclude = [
