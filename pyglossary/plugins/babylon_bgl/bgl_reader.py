@@ -1056,6 +1056,56 @@ class BglReader:
 	def charReferencesStat(self, b_text: bytes, encoding: str) -> None:
 		pass
 
+	def decodeCharsetTagsBabylonReference(self, b_text: bytes, b_text2: bytes):
+		b_refs = b_text2.split(b";")
+		add_text = ""
+		for i_ref, b_ref in enumerate(b_refs):
+			if not b_ref:
+				if i_ref != len(b_refs) - 1:
+					log.debug(
+						f"decoding charset tags, b_text={b_text!r}"
+						"\nblank <charset c=t> character"
+						f" reference ({b_text2!r})\n",
+					)
+				continue
+			if not re_b_reference.match(b_ref):
+				log.debug(
+					f"decoding charset tags, b_text={b_text!r}"
+					"\ninvalid <charset c=t> character"
+					f" reference ({b_text2!r})\n",
+				)
+				continue
+			add_text += chr(int(b_ref, 16))
+		return add_text
+
+	def decodeCharsetTagsTextBlock(
+		self,
+		encoding: str,
+		b_text: bytes,
+		b_part: bytes,
+	) -> str:
+		b_text2 = b_part
+		if encoding == "babylon-reference":
+			return self.decodeCharsetTagsBabylonReference(b_text, b_text2)
+
+		self.charReferencesStat(b_text2, encoding)
+		if encoding == "cp1252":
+			b_text2 = replaceAsciiCharRefs(b_text2)
+		if self._strict_string_conversion:
+			try:
+				u_text2 = b_text2.decode(encoding)
+			except UnicodeError:
+				log.debug(
+					f"decoding charset tags, b_text={b_text!r}"
+					f"\nfragment: {b_text2!r}"
+					"\nconversion error:\n" + excMessage(),
+				)
+				u_text2 = b_text2.decode(encoding, "replace")
+		else:
+			u_text2 = b_text2.decode(encoding, "replace")
+
+		return u_text2
+
 	def decodeCharsetTags(
 		self,
 		b_text: bytes,
@@ -1078,46 +1128,12 @@ class BglReader:
 		for i, b_part in enumerate(b_parts):
 			if i % 3 == 0:  # text block
 				encoding = encodings[-1] if encodings else defaultEncoding
-				b_text2 = b_part
-				if encoding == "babylon-reference":
-					b_refs = b_text2.split(b";")
-					for i_ref, b_ref in enumerate(b_refs):
-						if not b_ref:
-							if i_ref != len(b_refs) - 1:
-								log.debug(
-									f"decoding charset tags, b_text={b_text!r}"
-									"\nblank <charset c=t> character"
-									f" reference ({b_text2!r})\n",
-								)
-							continue
-						if not re_b_reference.match(b_ref):
-							log.debug(
-								f"decoding charset tags, b_text={b_text!r}"
-								"\ninvalid <charset c=t> character"
-								f" reference ({b_text2!r})\n",
-							)
-							continue
-						u_text += chr(int(b_ref, 16))
-				else:
-					self.charReferencesStat(b_text2, encoding)
-					if encoding == "cp1252":
-						b_text2 = replaceAsciiCharRefs(b_text2)
-					if self._strict_string_conversion:
-						try:
-							u_text2 = b_text2.decode(encoding)
-						except UnicodeError:
-							log.debug(
-								f"decoding charset tags, b_text={b_text!r}"
-								f"\nfragment: {b_text2!r}"
-								"\nconversion error:\n" + excMessage(),
-							)
-							u_text2 = b_text2.decode(encoding, "replace")
-					else:
-						u_text2 = b_text2.decode(encoding, "replace")
-					u_text += u_text2
-					if encoding != defaultEncoding:
-						defaultEncodingOnly = False
-			elif i % 3 == 1:  # <charset...> or </charset>
+				u_text += self.decodeCharsetTagsTextBlock(encoding, b_text, b_part)
+				if encoding != defaultEncoding:
+					defaultEncodingOnly = False
+				continue
+
+			if i % 3 == 1:  # <charset...> or </charset>
 				if b_part.startswith(b"</"):
 					# </charset>
 					if encodings:
@@ -1127,33 +1143,35 @@ class BglReader:
 							f"decoding charset tags, b_text={b_text!r}"
 							"\nunbalanced </charset> tag\n",
 						)
+					continue
+
+				# <charset c="?">
+				b_type = b_parts[i + 1].lower()
+				# b_type is a bytes instance, with length 1
+				if b_type == b"t":
+					encodings.append("babylon-reference")
+				elif b_type == b"u":
+					encodings.append("utf-8")
+				elif b_type == b"k":  # noqa: SIM114
+					encodings.append(self.sourceEncoding)
+				elif b_type == b"e":
+					encodings.append(self.sourceEncoding)
+				elif b_type == b"g":
+					# gbk or gb18030 encoding
+					# (not enough data to make distinction)
+					encodings.append("gbk")
 				else:
-					# <charset c="?">
-					b_type = b_parts[i + 1].lower()
-					# b_type is a bytes instance, with length 1
-					if b_type == b"t":
-						encodings.append("babylon-reference")
-					elif b_type == b"u":
-						encodings.append("utf-8")
-					elif b_type == b"k":  # noqa: SIM114
-						encodings.append(self.sourceEncoding)
-					elif b_type == b"e":
-						encodings.append(self.sourceEncoding)
-					elif b_type == b"g":
-						# gbk or gb18030 encoding
-						# (not enough data to make distinction)
-						encodings.append("gbk")
-					else:
-						log.debug(
-							f"decoding charset tags, text = {b_text!r}"
-							f"\nunknown charset code = {ord(b_type):#02x}\n",
-						)
-						# add any encoding to prevent
-						# "unbalanced </charset> tag" error
-						encodings.append(defaultEncoding)
-			else:
-				# c attribute of charset tag if the previous tag was charset
-				pass
+					log.debug(
+						f"decoding charset tags, text = {b_text!r}"
+						f"\nunknown charset code = {ord(b_type):#02x}\n",
+					)
+					# add any encoding to prevent
+					# "unbalanced </charset> tag" error
+					encodings.append(defaultEncoding)
+				continue
+
+			# c attribute of charset tag if the previous tag was charset
+
 		if encodings:
 			log.debug(
 				f"decoding charset tags, text={b_text}"
@@ -1244,6 +1262,7 @@ class BglReader:
 		u_word_main = u_word_main.lstrip()
 		return u_word_main.rstrip(self._key_rstrip_chars)
 
+	# TODO: break it down
 	def processDefi(self, b_defi: bytes, b_key: bytes) -> str:
 		"""
 		b_defi: bytes
@@ -1401,6 +1420,7 @@ class BglReader:
 				break
 		return index
 
+	# TODO: break it down
 	def collectDefiFields(
 		self,
 		b_defi: bytes,
