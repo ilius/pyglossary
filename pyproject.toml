@@ -190,6 +190,19 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "slob.py" = [
     "PERF203", # `try`-`except` within a loop incurs performance overhead, FIXME
 ]
+"html_dir.py" = [
+    "C901", # `...` is too complex
+]
+"zimfile.py" = [
+    "C901", # `...` is too complex
+]
+"iupac_goldbook.py" = [
+    "C901", # `...` is too complex
+]
+"pyglossary/plugins/babylon_bgl/*.py" = [
+    "C901", # `...` is too complex
+]
+
 
 "pyglossary/html_utils.py" = ["RUF003"]
 "persian_utils.py" = ["RUF001"]
@@ -227,7 +240,7 @@ line-ending = "auto"
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
-max-complexity = 15
+max-complexity = 20
 
 [tool.mypy]
 exclude = [

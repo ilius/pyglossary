@@ -246,6 +246,7 @@ class WordNet:
 
 			words = synset.words
 			for i, word in enumerate(words):
+				# TODO: move this block to a func
 				synonyms = ", ".join(a(w) for w in words if w != word)
 				synonyms_str = (
 					f'<br/><small class="co">Synonyms:</small> {synonyms}'

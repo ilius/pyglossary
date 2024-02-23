@@ -104,6 +104,7 @@ class Reader:
 				with hf.element("li"):
 					processor(hf, el)
 
+	# TODO: break it down
 	def writeSense(
 		self,
 		hf: "T_htmlfile",
@@ -226,6 +227,7 @@ class Reader:
 									hf.write(br())
 									hf.write(sent)
 
+	# TODO: break it down
 	def getEntryByElem(
 		self,
 		entry: "Element",

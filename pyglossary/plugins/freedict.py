@@ -376,6 +376,7 @@ class Reader:
 	) -> None:
 		self.writeRichText(hf, note)
 
+	# TODO: break it down
 	def writeSenseSense(
 		self,
 		hf: "T_htmlfile",
