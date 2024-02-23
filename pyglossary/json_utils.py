@@ -12,7 +12,7 @@ JsonEncodable: "TypeAlias" = "dict | list"
 
 
 def dataToPrettyJson(
-	data: "JsonEncodable",
+	data: JsonEncodable,
 	ensure_ascii: bool = False,
 	sort_keys: bool = False,
 ) -> str:
@@ -24,7 +24,7 @@ def dataToPrettyJson(
 	)
 
 
-def jsonToData(st: "AnyStr") -> "JsonEncodable":
+def jsonToData(st: "AnyStr") -> JsonEncodable:
 	return json.loads(st)
 
 

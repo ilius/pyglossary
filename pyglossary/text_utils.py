@@ -71,7 +71,6 @@ pattern_n_us = re.compile(r"((?<!\\)(?:\\\\)*)\\n")
 pattern_t_us = re.compile(r"((?<!\\)(?:\\\\)*)\\t")
 pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|")
 pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|")
-b_pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|".encode("ascii"))
 
 
 def replaceStringTable(
@@ -138,26 +137,12 @@ def joinByBar(parts: "list[str]") -> "str":
 	return "|".join(escapeBar(part) for part in parts)
 
 
-def unescapeBarBytes(st: bytes) -> bytes:
-	r"""Unscapes vertical bar (\|)."""
-	# str.replace is probably faster than re.sub
-	return b_pattern_bar_us.sub(b"\\1|", st).replace(b"\\\\", b"\\")
-
-
 # return a message string describing the current exception
 def excMessage() -> str:
 	i = sys.exc_info()
 	if not i[0]:
 		return ""
 	return f"{i[0].__name__}: {i[1]}"
-
-
-def formatHMS(h: int, m: int, s: int) -> str:
-	if h == 0:
-		if m == 0:
-			return f"{s:02d}"
-		return f"{m:02d}:{s:02d}"
-	return f"{h:02d}:{m:02d}:{s:02d}"
 
 
 # ___________________________________________ #

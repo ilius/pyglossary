@@ -1,3 +1,19 @@
+import re
+
+b_pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|".encode("ascii"))
+
+__all__ = [
+    "unescapeBarBytes",
+	"chBaseIntToStr",
+    "formatHMS",
+]
+
+def unescapeBarBytes(st: bytes) -> bytes:
+	r"""Unscapes vertical bar (\|)."""
+	# str.replace is probably faster than re.sub
+	return b_pattern_bar_us.sub(b"\\1|", st).replace(b"\\\\", b"\\")
+
+
 def chBaseIntToStr(number: int, base: int) -> str:
 	"""Reverse function of int(str, base) and long(str, base)."""
 	import string
@@ -17,3 +33,11 @@ def chBaseIntToStr(number: int, base: int) -> str:
 		if number == 0:
 			return sign + result
 	return ""
+
+
+def formatHMS(h: int, m: int, s: int) -> str:
+	if h == 0:
+		if m == 0:
+			return f"{s:02d}"
+		return f"{m:02d}:{s:02d}"
+	return f"{h:02d}:{m:02d}:{s:02d}"

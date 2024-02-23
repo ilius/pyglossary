@@ -187,24 +187,6 @@ del init_compressions
 
 MIME_TEXT = "text/plain"
 MIME_HTML = "text/html"
-MIME_CSS = "text/css"
-MIME_JS = "application/javascript"
-
-MIME_TYPES = {
-	"html": MIME_HTML,
-	"txt": MIME_TEXT,
-	"js": MIME_JS,
-	"css": MIME_CSS,
-	"json": "application/json",
-	"woff": "application/font-woff",
-	"svg": "image/svg+xml",
-	"png": "image/png",
-	"jpg": "image/jpeg",
-	"jpeg": "image/jpeg",
-	"gif": "image/gif",
-	"ttf": "application/x-font-ttf",
-	"otf": "application/x-font-opentype",
-}
 
 
 class FileFormatException(Exception):
@@ -224,10 +206,6 @@ class UnknownEncoding(FileFormatException):
 
 
 class IncorrectFileSize(FileFormatException):
-	pass
-
-
-class TagNotFound(Exception):
 	pass
 
 
@@ -582,54 +560,6 @@ class StructWriter:
 		return self._file.write(data)
 
 
-class StructReaderWriter(StructWriter):
-	def __init__(
-		self,
-		_file: "io.BufferedWriter",
-		reader: "StructReader",
-		encoding: "str | None" = None,
-	) -> None:
-		super().__init__(
-			_file=_file,
-			encoding=encoding,
-		)
-		self._reader = reader
-
-	def tell(self) -> int:
-		return self._file.tell()
-
-	def write(self, data: bytes) -> int:
-		return self._file.write(data)
-
-	def read_byte(self) -> int:
-		return self._reader.read_byte()
-
-	def read_tiny_text(self) -> str:
-		return self._reader.read_tiny_text()
-
-
-def set_tag_value(filename: str, name: str, value: str) -> None:
-	with fopen(filename, "rb+") as _file:
-		_file.seek(len(MAGIC) + 16)
-		encoding = read_byte_string(_file, U_CHAR).decode(UTF8)
-		if encodings.search_function(encoding) is None:
-			raise UnknownEncoding(encoding)
-		reader = StructReaderWriter(
-			_file=_file,
-			reader=StructReader(_file, encoding=encoding),
-			encoding=encoding,
-		)
-		reader.read_tiny_text()
-		tag_count = reader.read_byte()
-		for _ in range(tag_count):
-			key = reader.read_tiny_text()
-			if key == name:
-				reader.write_tiny_text(value, editable=True)
-				return
-			reader.read_tiny_text()
-	raise TagNotFound(name)
-
-
 def read_header(_file: "MultiFileReader") -> Header:
 	_file.seek(0)
 
@@ -823,19 +753,6 @@ class Slob:
 	def close(self) -> None:
 		self._f.close()
 		self._g.close()
-
-
-def find_parts(fname: str) -> "list[str]":
-	fname = os.path.expanduser(fname)
-	dirname = os.path.dirname(fname) or os.getcwd()
-	basename = os.path.basename(fname)
-	return sorted(
-		[
-			os.path.join(dirname, name)
-			for name in os.listdir(dirname)
-			if name.startswith(basename)
-		],
-	)
 
 
 def open(*filenames: str) -> Slob:

@@ -112,11 +112,11 @@ def replaceHtmlEntryCB(u_match: "re.Match") -> str:
 	return xml_escape(u_res, quotation=False)
 
 
-def replaceDingbat(u_match: "re.Match") -> str:
-	r"""Replace chars \\u008c-\\u0095 with \\u2776-\\u277f."""
-	ch = u_match.group(0)
-	code = ch + 0x2776 - 0x8C
-	return chr(code)
+# def replaceDingbat(u_match: "re.Match") -> str:
+# 	r"""Replace chars \\u008c-\\u0095 with \\u2776-\\u277f."""
+# 	ch = u_match.group(0)
+# 	code = ch + 0x2776 - 0x8C
+# 	return chr(code)
 
 
 def escapeNewlinesCallback(u_match: "re.Match") -> str:

@@ -248,26 +248,3 @@ def writeTxt(
 	writer.finish()
 
 
-def writeTabfile(
-	glos: "GlossaryType",
-	filename: str = "",
-	encoding: str = "utf-8",
-	resources: bool = True,
-) -> "Generator[None, EntryType, None]":
-	from pyglossary.text_utils import escapeNTB
-
-	writer = TextGlossaryWriter(
-		glos,
-		entryFmt="{word}\t{defi}\n",
-		outInfoKeysAliasDict=None,
-	)
-	writer.setAttrs(
-		encoding=encoding,
-		wordEscapeFunc=escapeNTB,
-		defiEscapeFunc=escapeNTB,
-		ext=".txt",
-		resources=resources,
-	)
-	writer.open(filename)
-	yield from writer.write()
-	writer.finish()

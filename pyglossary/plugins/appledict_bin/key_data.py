@@ -49,24 +49,24 @@ class KeyData:
 	This class contains texts by which entry is searchable and other properties.
 	"""
 
-	keyword_data_id_xml = {
-		"DCSKeyword": "d:value",
-		# Search key -- if entered in search, this key will provide this definition.
-		"DCSHeadword": "d:title",
-		# Headword text that is displayed on the search result list.
-		# When the value is the same as d:value, it can be omitted.
-		# In that case, the value of the d:value is used also for the d:title.
-		"DCSAnchor": "d:anchor",
-		# Used to highlight a specific part in an entry.
-		# For example, it is used to highlight an idiomatic phrase explanation
-		# in an entry for a word.
-		"DCSYomiWord": "d:yomi",
-		# Used only in making Japanese dictionaries.
-		"DCSSortKey": "d:DCSSortKey",
-		# This value shows sorting (probably for non-english languages)
-		"DCSEntryTitle": "d:DCSEntryTitle",
-		# Headword displayed as article title
-	}
+	# keyword_data_id_xml = {
+	# 	"DCSKeyword": "d:value",
+	# 	# Search key -- if entered in search, this key will provide this definition.
+	# 	"DCSHeadword": "d:title",
+	# 	# Headword text that is displayed on the search result list.
+	# 	# When the value is the same as d:value, it can be omitted.
+	# 	# In that case, the value of the d:value is used also for the d:title.
+	# 	"DCSAnchor": "d:anchor",
+	# 	# Used to highlight a specific part in an entry.
+	# 	# For example, it is used to highlight an idiomatic phrase explanation
+	# 	# in an entry for a word.
+	# 	"DCSYomiWord": "d:yomi",
+	# 	# Used only in making Japanese dictionaries.
+	# 	"DCSSortKey": "d:DCSSortKey",
+	# 	# This value shows sorting (probably for non-english languages)
+	# 	"DCSEntryTitle": "d:DCSEntryTitle",
+	# 	# Headword displayed as article title
+	# }
 
 	__slots__ = [
 		"anchor",

@@ -32,12 +32,6 @@ __all__ = [
 APPLEDICT_FILE_OFFSET = 0x40
 # addressing of AppleDict binary files always ignores first 0x40 bytes
 
-
-def readIntAt(buffer: "io.BufferedIOBase", address: int) -> int:
-	buffer.seek(address)
-	return unpack("i", buffer.read(4))[0]
-
-
 def readIntPair(buffer: "io.BufferedIOBase") -> "tuple[int, int]":
 	# to satisfy mymy, put them in vars with declared type
 	a: int
@@ -52,11 +46,6 @@ def readInt(buffer: "io.BufferedIOBase") -> int:
 
 def read_x_bytes_as_word(buffer: "io.BufferedIOBase", x: int) -> str:
 	return buffer.read(x).decode("UTF-16LE")
-
-
-def read_2_bytes(buffer: "io.BufferedIOBase", address: int) -> int:
-	buffer.seek(address)
-	return read_2_bytes_here(buffer)
 
 
 def read_2_bytes_here(buffer: "io.BufferedIOBase") -> int:

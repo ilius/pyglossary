@@ -1,4 +1,3 @@
-import os
 import re
 from typing import TYPE_CHECKING, cast
 
@@ -14,8 +13,6 @@ if TYPE_CHECKING:
 
 
 line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
-
-script_dir = os.path.dirname(__file__)
 
 COLORS = {
 	"": "black",

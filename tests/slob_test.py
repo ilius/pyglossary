@@ -22,6 +22,58 @@ log = logging.getLogger("pyglossary")
 log.addHandler(mockLog)
 
 
+class StructReaderWriter(slob.StructWriter):
+	def __init__(
+		self,
+		_file: "io.BufferedWriter",
+		reader: "slob.StructReader",
+		encoding: "str | None" = None,
+	) -> None:
+		super().__init__(
+			_file=_file,
+			encoding=encoding,
+		)
+		self._reader = reader
+
+	def tell(self) -> int:
+		return self._file.tell()
+
+	def write(self, data: bytes) -> int:
+		return self._file.write(data)
+
+	def read_byte(self) -> int:
+		return self._reader.read_byte()
+
+	def read_tiny_text(self) -> str:
+		return self._reader.read_tiny_text()
+
+
+class TagNotFound(Exception):
+	pass
+
+
+def set_tag_value(filename: str, name: str, value: str) -> None:
+	with slob.fopen(filename, "rb+") as _file:
+		_file.seek(len(slob.MAGIC) + 16)
+		encoding = slob.read_byte_string(_file, slob.U_CHAR).decode(slob.UTF8)
+		if slob.encodings.search_function(encoding) is None:
+			raise slob.UnknownEncoding(encoding)
+		reader = StructReaderWriter(
+			_file=_file,
+			reader=slob.StructReader(_file, encoding=encoding),
+			encoding=encoding,
+		)
+		reader.read_tiny_text()
+		tag_count = reader.read_byte()
+		for _ in range(tag_count):
+			key = reader.read_tiny_text()
+			if key == name:
+				reader.write_tiny_text(value, editable=True)
+				return
+			reader.read_tiny_text()
+	raise TagNotFound(name)
+
+
 class BaseTest(unittest.TestCase):
 	def setUp(self):
 		# if skip_module:
@@ -549,18 +601,6 @@ class TestFormatErrors(BaseTest):
 		self.assertRaises(slob.IncorrectFileSize, slob.open, name)
 
 
-class TestFindParts(BaseTest):
-	def test_find_parts(self):
-		names = [
-			os.path.join(self.tmpdir.name, name) for name in ("abc-1", "abc-2", "abc-3")
-		]
-		for name in names:
-			with slob.fopen(name, "wb"):
-				pass
-		parts = slob.find_parts(os.path.join(self.tmpdir.name, "abc"))
-		self.assertEqual(names, parts)
-
-
 class TestTooLongText(BaseTest):
 	def setUp(self):
 		BaseTest.setUp(self)
@@ -655,7 +695,7 @@ class TestTooLongText(BaseTest):
 
 		self.assertRaises(
 			ValueError,
-			slob.set_tag_value,
+			set_tag_value,
 			self.path,
 			"t1",
 			"ы" * 128,
@@ -675,14 +715,14 @@ class TestEditTag(BaseTest):
 		with slob.open(self.path) as f:
 			self.assertEqual(f.tags["a"], "123456")
 			self.assertEqual(f.tags["b"], "654321")
-		slob.set_tag_value(self.path, "b", "efg")
-		slob.set_tag_value(self.path, "a", "xyz")
+		set_tag_value(self.path, "b", "efg")
+		set_tag_value(self.path, "a", "xyz")
 		with slob.open(self.path) as f:
 			self.assertEqual(f.tags["a"], "xyz")
 			self.assertEqual(f.tags["b"], "efg")
 
 	def test_edit_nonexisting_tag(self):
-		self.assertRaises(slob.TagNotFound, slob.set_tag_value, self.path, "z", "abc")
+		self.assertRaises(TagNotFound, set_tag_value, self.path, "z", "abc")
 
 
 class TestBinItemNumberLimit(BaseTest):

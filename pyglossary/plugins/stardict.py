@@ -167,16 +167,6 @@ class XdxfTransformerType(Protocol):
 		...
 
 
-class SupportsDunderLT(Protocol):
-	def __lt__(self, __other: Any) -> bool:
-		...
-
-
-class SupportsDunderGT(Protocol):
-	def __gt__(self, __other: Any) -> bool:
-		...
-
-
 T_SDListItem = TypeVar("T_SDListItem", contravariant=True)
 
 

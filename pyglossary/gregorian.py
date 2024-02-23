@@ -29,37 +29,6 @@ __all__ = ["jd_to", "to_jd"]
 name = "gregorian"
 desc = "Gregorian"
 
-monthName = (
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
-)
-
-monthNameAb = (
-	"Jan",
-	"Feb",
-	"Mar",
-	"Apr",
-	"May",
-	"Jun",
-	"Jul",
-	"Aug",
-	"Sep",
-	"Oct",
-	"Nov",
-	"Dec",
-)
-
-
 epoch = 1721426
 
 options = ()
