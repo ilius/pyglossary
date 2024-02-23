@@ -1675,7 +1675,7 @@
 			".test",
 			".tst"
 		],
-		"singleFile": false,
+		"singleFile": true,
 		"optionsProp": {},
 		"canRead": true,
 		"canWrite": true,

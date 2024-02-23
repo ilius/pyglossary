@@ -29,6 +29,7 @@ format = "Test"
 description = "Test Format File(.test)"
 extensions = (".test", ".tst")
 extensionCreate = ".test"
+singleFile = True
 kind = "text"
 wiki = ""
 website = None
