@@ -76,6 +76,23 @@ extraDocs = [
 	),
 ]
 
+t_created_at = "created.at"
+t_label = "label"
+t_created_by = "created.by"
+t_copyright = "copyright"
+t_license_name = "license.name"
+t_license_url = "license.url"
+t_uri = "uri"
+t_edition = "edition"
+
+supported_tags = {
+	t_label,
+	t_created_at,
+	t_created_by,
+	t_copyright,
+	t_uri,
+	t_edition,
+}
 
 class Reader:
 	depends = {
@@ -111,29 +128,17 @@ class Reader:
 		self._slobObj = slob.open(filename)
 		tags = dict(self._slobObj.tags.items())
 
-		try:
-			name = tags.pop("label")
-		except KeyError:
-			pass
-		else:
-			self._glos.setInfo("name", name)
+		if t_label in tags:
+			self._glos.setInfo("name", tags[t_label])
 
-		try:
-			creationTime = tags.pop("created.at")
-		except KeyError:
-			pass
-		else:
-			self._glos.setInfo("creationTime", creationTime)
+		if t_created_at in tags:
+			self._glos.setInfo("creationTime", tags[t_created_at])
 
-		try:
-			createdBy = tags.pop("created.by")
-		except KeyError:
-			pass
-		else:
-			self._glos.setInfo("author", createdBy)
+		if t_created_by in tags:
+			self._glos.setInfo("author", tags[t_created_by])
 
 		copyrightLines = []
-		for key in ("copyright", "license.name", "license.url"):
+		for key in (t_copyright, t_license_name, t_license_url):
 			try:
 				value = tags.pop(key)
 			except KeyError:
@@ -142,21 +147,15 @@ class Reader:
 		if copyrightLines:
 			self._glos.setInfo("copyright", "\n".join(copyrightLines))
 
-		try:
-			uri = tags.pop("uri")
-		except KeyError:
-			pass
-		else:
-			self._glos.setInfo("website", uri)
+		if t_uri in tags:
+			self._glos.setInfo("website", tags[t_uri])
 
-		try:
-			edition = tags.pop("edition")
-		except KeyError:
-			pass
-		else:
-			self._glos.setInfo("edition", edition)
+		if t_edition in tags:
+			self._glos.setInfo("edition", tags[t_edition])
 
 		for key, value in tags.items():
+			if key in supported_tags:
+				continue
 			self._glos.setInfo(f"slob.{key}", value)
 
 	def __len__(self) -> int:
