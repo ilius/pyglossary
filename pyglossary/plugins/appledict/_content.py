@@ -117,60 +117,26 @@ def prepare_content_without_soup(
 	return content  # noqa: RET504
 
 
-def prepare_content_with_soup(
-	title: "str | None",
-	body: str,
-	BeautifulSoup: "Any",
-) -> str:
-	soup = BeautifulSoup.BeautifulSoup(body, features="lxml")
-	# difference between "lxml" and "html.parser"
-	if soup.body:
-		soup = soup.body
+def _prepare_href(tag):
+	href = tag["href"]
+	href = cleanup_link_target(href)
 
-	for tag in soup(class_="sec"):
-		tag["class"].remove("sec")
-		if not tag["class"]:
-			del tag["class"]
-		tag["d:priority"] = "2"
-	for tag in soup(lambda x: "color:steelblue" in x.get("style", "")):
-		remove_style(tag, "color:steelblue")
-		if "ex" not in tag.get("class", []):
-			tag["class"] = tag.get("class", []) + ["ex"]
-	for tag in soup(is_green):
-		remove_style(tag, "color:green")
-		if "p" not in tag.get("class", ""):
-			tag["class"] = tag.get("class", []) + ["c"]
-	for tag in soup(True):
-		if "style" in tag.attrs:
-			m = re_margin.search(tag["style"])
-			if m:
-				remove_style(tag, m.group(0))
-				tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
+	if href.startswith("sound:"):
+		fix_sound_link(href, tag)
 
-	for tag in soup(lambda x: "xhtml:" in x.name):
-		old_tag_name = tag.name
-		tag.name = old_tag_name[len("xhtml:") :]
-		if tag.string:
-			tag.string = f"{tag.string} "
+	elif href.startswith(("phonetics", "help:phonetics")):
+		# for oxford9
+		log.debug(f"phonetics: {tag=}")
+		if tag.audio and "name" in tag.audio.attrs:
+			tag["onmousedown"] = "this.lastChild.play(); return false;"
+			src_name = tag.audio["name"].replace("#", "_")
+			tag.audio["src"] = f"{src_name}.mp3"
 
-	for tag in soup.select("[href]"):
-		href = tag["href"]
-		href = cleanup_link_target(href)
+	elif not link_is_url(href):
+		tag["href"] = f"x-dictionary:d:{href}"
 
-		if href.startswith("sound:"):
-			fix_sound_link(href, tag)
 
-		elif href.startswith(("phonetics", "help:phonetics")):
-			# for oxford9
-			log.debug(f"phonetics: {tag=}")
-			if tag.audio and "name" in tag.audio.attrs:
-				tag["onmousedown"] = "this.lastChild.play(); return false;"
-				src_name = tag.audio["name"].replace("#", "_")
-				tag.audio["src"] = f"{src_name}.mp3"
-
-		elif not link_is_url(href):
-			tag["href"] = f"x-dictionary:d:{href}"
-
+def _prepare_onclick(soup):
 	for thumb in soup.find_all("div", "pic_thumb"):
 		thumb["onclick"] = (
 			'this.setAttribute("style", "display:none"); '
@@ -197,6 +163,51 @@ def prepare_content_with_soup(
 			r'/(?:^|\s)Clicked(?!\S)/g, "") : this.setAttribute('
 			r'"class", "Clicked")'
 		)
+
+
+def prepare_content_with_soup(
+	title: "str | None",
+	body: str,
+	BeautifulSoup: "Any",
+) -> str:
+	soup = BeautifulSoup.BeautifulSoup(body, features="lxml")
+	# difference between "lxml" and "html.parser"
+	if soup.body:
+		soup = soup.body
+
+	for tag in soup(class_="sec"):
+		tag["class"].remove("sec")
+		if not tag["class"]:
+			del tag["class"]
+		tag["d:priority"] = "2"
+
+	for tag in soup(lambda x: "color:steelblue" in x.get("style", "")):
+		remove_style(tag, "color:steelblue")
+		if "ex" not in tag.get("class", []):
+			tag["class"] = tag.get("class", []) + ["ex"]
+
+	for tag in soup(is_green):
+		remove_style(tag, "color:green")
+		if "p" not in tag.get("class", ""):
+			tag["class"] = tag.get("class", []) + ["c"]
+
+	for tag in soup(True):
+		if "style" in tag.attrs:
+			m = re_margin.search(tag["style"])
+			if m:
+				remove_style(tag, m.group(0))
+				tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
+
+	for tag in soup(lambda x: "xhtml:" in x.name):
+		old_tag_name = tag.name
+		tag.name = old_tag_name[len("xhtml:") :]
+		if tag.string:
+			tag.string = f"{tag.string} "
+
+	for tag in soup.select("[href]"):
+		_prepare_href(tag)
+
+	_prepare_onclick(soup)
 
 	for tag in soup.select("[src]"):
 		src = tag["src"]
