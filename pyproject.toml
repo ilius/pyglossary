@@ -155,6 +155,7 @@ lint.unfixable = []
 # Exclude a variety of commonly ignored directories.
 exclude = [
     "setup.py",
+    "whitelist.py", # for vulture
     # "pyglossary/ui/gtk4_utils/*",
     # "pyglossary/ui/gtk3_utils/*",
     "pyglossary/plugins/babylon_bgl/bgl_gzip.py",
@@ -321,6 +322,35 @@ ignore-paths = [
     "^pyglossary/ui/ui_qt.py$",
     "^pyglossary/ui/wcwidth/",
 ]
+
+[tool.vulture]
+exclude = [
+    "build/",
+    "tests/",
+    "*_test.py",
+    "test.py",
+    "pyglossary/ui/",
+    "*_types.py",
+    "pyglossary/ui_type.py",
+    "pyglossary/reverse.py",
+    "doc/lib-examples/",
+    "pyglossary/plugin_lib/",
+    "pyglossary/text_utils_extra.py",
+]
+# ignore_decorators = ["@app.route", "@require_*"]
+ignore_names = [
+    "_*",
+    "Generator",
+    "GLOSSARY_API_VERSION",
+    #  "Iterable", "AnyStr",
+    # "RawEntryType",
+    # "EntryListType",
+]
+make_whitelist = true
+min_confidence = 60
+# paths = []
+sort_by_size = false
+verbose = false
 
 [tool.import-analyzer]
 exclude = [
