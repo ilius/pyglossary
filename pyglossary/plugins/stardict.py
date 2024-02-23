@@ -55,6 +55,7 @@ __all__ = [
 	"description",
 	"extensions",
 	"extensionCreate",
+	"singleFile",
 	"kind",
 	"wiki",
 	"website",
@@ -70,7 +71,7 @@ format = "Stardict"
 description = "StarDict (.ifo)"
 extensions = (".ifo",)
 extensionCreate = "-stardict/"
-
+singleFile = False
 sortOnWrite = ALWAYS
 sortKeyName = "stardict"
 sortEncoding = "utf-8"

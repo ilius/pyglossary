@@ -72,7 +72,7 @@ __all__ = [
 	"extensions",
 	"extensionCreate",
 	"singleFile",
-	"kind"
+	"kind",
 	"wiki",
 	"website",
 	"optionsProp",
