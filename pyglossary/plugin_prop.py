@@ -61,6 +61,10 @@ def sortOnWriteFromStr(sortOnWriteStr: "str | None") -> "StrWithDesc":
 	return flagsByName[sortOnWriteStr]
 
 
+class PluginCheckError(Exception):
+	pass
+
+
 class PluginProp:
 	__slots__ = [
 		"_Reader",
@@ -186,7 +190,7 @@ class PluginProp:
 		self._writeDepends = None
 
 		if core.isDebug():
-			self.checkModule()
+			self.checkModule(mod)
 
 		return self
 
@@ -214,6 +218,10 @@ class PluginProp:
 		except Exception:
 			log.exception(f"Error while importing plugin {moduleName}")
 			return None
+
+		# self._mod = _mod
+		if core.isDebug():
+			self.checkModule(_mod)
 
 		return _mod
 
@@ -369,18 +377,18 @@ class PluginProp:
 			self._writeDepends = getattr(self.writerClass, "depends", {})
 		return self._writeDepends
 
-	def checkModule(self) -> None:
-		module = self.module
+	def checkModule(self, module) -> None:
+		name = self.name
 
 		if hasattr(module, "write"):
 			log.error(
-				f"plugin {format} has write function, "
+				f"plugin {name!r} has write function, "
 				"must migrate to Writer class",
 			)
 
 		extensions = module.extensions
 		if not isinstance(extensions, tuple):
-			msg = f"{format} plugin: extensions must be tuple"
+			msg = f"{name} plugin: extensions must be tuple"
 			if isinstance(extensions, list):
 				extensions = tuple(extensions)
 				log.error(msg)
@@ -413,6 +421,40 @@ class PluginProp:
 			if not opt.comment:
 				log.debug(
 					f"{self.name}: please add comment for option {name}",
+				)
+
+	valid__all__ = [
+		"enable",
+		"lname",
+		"format",
+		"description",
+		"extensions",
+		"extensionCreate",
+		"singleFile",
+		"kind",
+		"wiki",
+		"website",
+		"optionsProp",
+		"Reader",
+		"Writer",
+	]
+
+	# only run this on CI to do extra validation
+	def checkModuleMore(self, module) -> None:
+		name = self.name
+		if not hasattr(module, "__all__"):
+			raise PluginCheckError(f"Please add __all__ to plugin {name!r}")
+		_all = module.__all__
+		for attr in _all:
+			if not hasattr(module, attr):
+				raise PluginCheckError(
+					f"Undefined name {attr!r} in __all__ in plugin {name!r}"
+					f": {module.__file__}",
+				)
+			if attr not in self.valid__all__:
+				raise PluginCheckError(
+					f"Unnecessary name {attr!r} in __all__ in plugin {name!r}"
+					f": {module.__file__}",
 				)
 
 	def checkReaderClass(self) -> bool:
