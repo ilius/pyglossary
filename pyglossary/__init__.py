@@ -1,4 +1,9 @@
-from .core import VERSION, log  # noqa: F401
-from .glossary import Glossary  # noqa: F401
+from .core import VERSION
+from .glossary import Glossary
 
 __version__ = VERSION
+
+__all__ = [
+    "Glossary",
+    "__version__",
+]
