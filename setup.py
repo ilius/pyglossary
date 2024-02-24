@@ -42,7 +42,7 @@ main()""")
 
 root_data_file_names = [
 	"about",
-	"license.txt",
+	"LICENSE",
 	"license-dialog",
 	"Dockerfile",
 	"pyglossary.pyw",
