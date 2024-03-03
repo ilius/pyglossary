@@ -39,6 +39,7 @@ __all__ = ["PluginManager"]
 
 log = logging.getLogger("pyglossary")
 
+
 class DetectedFormat(NamedTuple):
 	filename: str
 	formatName: str

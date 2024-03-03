@@ -27,7 +27,6 @@ class TestTextUtilsExtra(unittest.TestCase):
 		self.assertEqual(f(123, 5, 7), "123:05:07")
 		self.assertEqual(f(123, 59, 59), "123:59:59")
 
-
 	def test_unescapeBarBytes(self):
 		f = unescapeBarBytes
 		self.assertEqual(b"", f(b""))

@@ -16,19 +16,19 @@ if TYPE_CHECKING:
 	from pyglossary.option import Option
 
 __all__ = [
-	"enable",
-	"lname",
-	"format",
-	"description",
-	"extensions",
-	"extensionCreate",
-	"singleFile",
-	"kind",
-	"wiki",
-	"website",
-	"optionsProp",
 	"Reader",
 	"Writer",
+	"description",
+	"enable",
+	"extensionCreate",
+	"extensions",
+	"format",
+	"kind",
+	"lname",
+	"optionsProp",
+	"singleFile",
+	"website",
+	"wiki",
 ]
 
 lname = "dicformids"

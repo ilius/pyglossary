@@ -26,19 +26,19 @@ from pyglossary.option import (
 from pyglossary.plugin_lib import mutf8
 
 __all__ = [
-	"enable",
-	"lname",
-	"format",
-	"description",
-	"extensions",
-	"extensionCreate",
-	"singleFile",
-	"kind",
-	"wiki",
-	"website",
-	"optionsProp",
 	"Reader",
 	"Writer",
+	"description",
+	"enable",
+	"extensionCreate",
+	"extensions",
+	"format",
+	"kind",
+	"lname",
+	"optionsProp",
+	"singleFile",
+	"website",
+	"wiki",
 ]
 
 enable = True
@@ -548,7 +548,7 @@ class QuickDic:
 	@classmethod
 	def from_fp(cls: "type[QuickDic]", fp: IO[bytes]) -> "QuickDic":
 		version = read_int(fp)
-		created = dt.datetime.fromtimestamp(float(read_long(fp)) / 1000.0) # noqa: DTZ006
+		created = dt.datetime.fromtimestamp(float(read_long(fp)) / 1000.0)  # noqa: DTZ006
 		name = read_string(fp)
 		sources = read_list(fp, read_entry_source)
 		pairs = read_list(fp, read_entry_pairs)

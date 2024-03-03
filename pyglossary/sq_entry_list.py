@@ -34,7 +34,6 @@ if TYPE_CHECKING:
 # typing.Self is new in Python 3.11.
 
 
-
 __all__ = ["SqEntryList"]
 
 log = logging.getLogger("pyglossary")

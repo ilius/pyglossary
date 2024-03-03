@@ -32,6 +32,7 @@ __all__ = [
 APPLEDICT_FILE_OFFSET = 0x40
 # addressing of AppleDict binary files always ignores first 0x40 bytes
 
+
 def readIntPair(buffer: "io.BufferedIOBase") -> "tuple[int, int]":
 	# to satisfy mymy, put them in vars with declared type
 	a: int

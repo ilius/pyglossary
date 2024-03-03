@@ -6,17 +6,17 @@ if TYPE_CHECKING:
 	from pyglossary.option import Option
 
 __all__ = [
-	"enable",
-	"lname",
-	"format",
 	"description",
-	"extensions",
+	"enable",
 	"extensionCreate",
-	"singleFile",
+	"extensions",
+	"format",
 	"kind",
-	"wiki",
-	"website",
+	"lname",
 	"optionsProp",
+	"singleFile",
+	"website",
+	"wiki",
 ]
 
 enable = False

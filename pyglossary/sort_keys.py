@@ -36,6 +36,7 @@ __all__ = [
 
 defaultSortKeyName = "headword_lower"
 
+
 class NamedSortKey(NamedTuple):
 	name: str
 	desc: str

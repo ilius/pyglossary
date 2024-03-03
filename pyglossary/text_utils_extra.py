@@ -3,10 +3,11 @@ import re
 b_pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|".encode("ascii"))
 
 __all__ = [
-    "unescapeBarBytes",
 	"chBaseIntToStr",
-    "formatHMS",
+	"formatHMS",
+	"unescapeBarBytes",
 ]
+
 
 def unescapeBarBytes(st: bytes) -> bytes:
 	r"""Unscapes vertical bar (\|)."""

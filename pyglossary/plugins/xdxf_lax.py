@@ -47,18 +47,18 @@ from pyglossary.xdxf.transform import XdxfTransformer
 from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 
 __all__ = [
-	"enable",
-	"lname",
-	"format",
-	"description",
-	"extensions",
-	"extensionCreate",
-	"singleFile",
-	"kind",
-	"wiki",
-	"website",
-	"optionsProp",
 	"Reader",
+	"description",
+	"enable",
+	"extensionCreate",
+	"extensions",
+	"format",
+	"kind",
+	"lname",
+	"optionsProp",
+	"singleFile",
+	"website",
+	"wiki",
 ]
 
 enable = True

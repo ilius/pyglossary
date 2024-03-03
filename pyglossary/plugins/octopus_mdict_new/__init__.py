@@ -38,18 +38,18 @@ from pyglossary.option import (
 from pyglossary.text_utils import toStr
 
 __all__ = [
-	"enable",
-	"lname",
-	"format",
-	"description",
-	"extensions",
-	"extensionCreate",
-	"singleFile",
-	"kind",
-	"wiki",
-	"website",
-	"optionsProp",
 	"Reader",
+	"description",
+	"enable",
+	"extensionCreate",
+	"extensions",
+	"format",
+	"kind",
+	"lname",
+	"optionsProp",
+	"singleFile",
+	"website",
+	"wiki",
 ]
 
 enable = True

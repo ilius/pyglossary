@@ -12,19 +12,19 @@ from pyglossary.option import BoolOption, Option
 from pyglossary.plugin_lib.dictdlib import DictDB
 
 __all__ = [
-	"enable",
-	"lname",
-	"format",
-	"description",
-	"extensions",
-	"extensionCreate",
-	"singleFile",
-	"kind",
-	"wiki",
-	"website",
-	"optionsProp",
 	"Reader",
 	"Writer",
+	"description",
+	"enable",
+	"extensionCreate",
+	"extensions",
+	"format",
+	"kind",
+	"lname",
+	"optionsProp",
+	"singleFile",
+	"website",
+	"wiki",
 ]
 
 enable = True

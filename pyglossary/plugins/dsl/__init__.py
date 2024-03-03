@@ -47,18 +47,18 @@ if TYPE_CHECKING:
 	import io
 
 __all__ = [
-	"enable",
-	"lname",
-	"format",
-	"description",
-	"extensions",
-	"extensionCreate",
-	"singleFile",
-	"kind",
-	"wiki",
-	"website",
-	"optionsProp",
 	"Reader",
+	"description",
+	"enable",
+	"extensionCreate",
+	"extensions",
+	"format",
+	"kind",
+	"lname",
+	"optionsProp",
+	"singleFile",
+	"website",
+	"wiki",
 ]
 
 enable = True
@@ -321,7 +321,7 @@ class Reader:
 				log.error(err)
 				continue
 			if res is None:
-				log.error("res is None for line={line!r}")
+				log.error(f"res is None for line={line!r}")
 				continue
 			term = res.output.strip()
 			terms.append(term)

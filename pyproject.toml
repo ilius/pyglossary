@@ -126,7 +126,7 @@ lint.fixable = [
     "SIM108", # Use ternary operator {contents} instead of if-else-block
     "C408", # Unnecessary `dict` call (rewrite as a literal)
     "F401",
-    # "E", "F", "W",
+    "E", "F", "W",
     "RET",
     "I",
     "COM",

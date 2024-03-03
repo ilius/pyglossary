@@ -18,6 +18,7 @@ from typing import NamedTuple
 
 __all__ = ["ArticleAddress"]
 
+
 class ArticleAddress(NamedTuple):
 	sectionOffset: int
 	chunkOffset: int

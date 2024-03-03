@@ -60,6 +60,7 @@ DEFAULT_COMPRESSION = "lzma2"
 UTF8 = "utf-8"
 MAGIC = b"!-1SLOB\x1F"
 
+
 class Compression(NamedTuple):
 	compress: Callable[..., bytes]  # first arg: bytes
 	decompress: Callable[[bytes], bytes]
@@ -815,7 +816,7 @@ class ItemList(Generic[ItemT]):
 		elif isinstance(count_or_spec, int):
 			count = count_or_spec
 		else:
-			raise TypeError("invalid {count_or_spec = }")
+			raise TypeError(f"invalid {count_or_spec = }")
 		self._count: int = count
 		self.pos_offset = reader.tell()
 		self.pos_spec = pos_spec

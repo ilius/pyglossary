@@ -12,6 +12,7 @@ __all__ = [
 	"writingSystemList",
 ]
 
+
 class WritingSystem(NamedTuple):
 	name: str
 	iso: list[tuple[int, str]] | list[tuple[int, str, str]] = []
@@ -25,6 +26,7 @@ class WritingSystem(NamedTuple):
 
 # scripts are separated into multiple groups based on their popularity
 # (usage in multiple live languages, and number of native speakers)
+
 
 writingSystemList = [
 	WritingSystem(
