@@ -99,8 +99,8 @@ class Reader(TextGlossaryReader):
 		try:
 			import mistune  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install mistune` to install"
-			raise e
+			e.add_note(f"Run `{pip} install mistune` to install")
+			raise
 		TextGlossaryReader.open(self, filename)
 		self._glos.setDefaultDefiFormat("h")
 

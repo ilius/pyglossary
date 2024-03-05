@@ -414,8 +414,8 @@ class Reader:
 		try:
 			from lxml import etree as ET  # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e
+			e.add_note(f"Run `{pip} install lxml` to install")
+			raise
 
 		self._filename = filename
 		self._fileSize = os.path.getsize(filename)

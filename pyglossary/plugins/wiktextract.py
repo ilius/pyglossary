@@ -119,8 +119,8 @@ class Reader:
 		try:
 			pass
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e
+			e.add_note(f"Run `{pip} install lxml` to install")
+			raise
 
 		self._filename = filename
 		cfile = compressionOpen(filename, mode="rt", encoding="utf-8")
