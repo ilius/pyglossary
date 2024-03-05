@@ -139,8 +139,8 @@ class Reader:
 		try:
 			import icu  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install PyICU` to install"
-			raise e
+			e.add_note(f"Run `{pip} install PyICU` to install")
+			raise
 		from pyglossary import slob
 
 		self._filename = filename
@@ -308,8 +308,8 @@ class Writer:
 		try:
 			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install PyICU` to install"
-			raise e
+			e.add_note(f"Run `{pip} install PyICU` to install")
+			raise
 		if isfile(filename):
 			raise OSError(f"File '{filename}' already exists")
 		namePostfix = ""

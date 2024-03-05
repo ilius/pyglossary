@@ -255,7 +255,7 @@ class Writer:
 		try:
 			import marisa_trie  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install marisa-trie` to install"
+			e.add_note(f"Run `{pip} install marisa-trie` to install")
 			raise e
 		self._filename = filename
 

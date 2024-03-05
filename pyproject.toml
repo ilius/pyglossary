@@ -359,11 +359,11 @@ exclude = ["pyglossary/ui/wcwidth/"]
 #     "Operating System :: MacOS :: MacOS X",
 #     "Operating System :: Microsoft :: Windows",
 #     "Typing :: Typed",
-#     "Programming Language :: Python :: 3.10",
+#     "Programming Language :: Python :: 3.11",
 #     "Programming Language :: Python :: 3.11",
 #     "Programming Language :: Python :: 3.12",
 # ]
-# requires-python = ">= 3.10"
+# requires-python = ">= 3.11"
 # dependencies = ["PyICU", "lxml", "beautifulsoup4"]
 
 # [project.urls]

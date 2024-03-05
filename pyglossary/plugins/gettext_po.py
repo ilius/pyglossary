@@ -99,8 +99,8 @@ class Reader:
 		try:
 			from polib import unescape as po_unescape
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install polib` to install"
-			raise e
+			e.add_note(f"Run `{pip} install polib` to install")
+			raise
 
 		_file = self._file
 
@@ -169,8 +169,8 @@ class Writer:
 		try:
 			from polib import escape as po_escape
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install polib` to install"
-			raise e
+			e.add_note(f"Run `{pip} install polib` to install")
+			raise
 
 		_file = self._file
 
