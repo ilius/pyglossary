@@ -175,13 +175,13 @@ class Reader:
 		try:
 			from lxml import etree  # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e from None
+			e.add_note(f"Run `{pip} install lxml` to install")
+			raise
 		try:
 			import biplist  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install biplist` to install"
-			raise e from None
+			e.add_note(f"Run `{pip} install biplist` to install")
+			raise
 
 		self._defiFormat = "h" if self._html else "m"
 

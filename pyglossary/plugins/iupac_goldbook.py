@@ -75,8 +75,8 @@ class Reader:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e
+			e.add_note(f"Run `{pip} install lxml` to install")
+			raise
 
 		self._filename = filename
 		_file = compressionOpen(filename, mode="rb")

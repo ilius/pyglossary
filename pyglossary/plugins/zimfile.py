@@ -84,8 +84,8 @@ class Reader:
 		try:
 			from libzim.reader import Archive
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install libzim` to install"
-			raise e
+			e.add_note(f"Run `{pip} install libzim` to install")
+			raise
 
 		self._filename = filename
 		self._zimfile = Archive(filename)
