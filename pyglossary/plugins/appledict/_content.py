@@ -117,7 +117,7 @@ def prepare_content_without_soup(
 	return content  # noqa: RET504
 
 
-def _prepare_href(tag):
+def _prepare_href(tag) -> None:
 	href = tag["href"]
 	href = cleanup_link_target(href)
 
@@ -136,7 +136,7 @@ def _prepare_href(tag):
 		tag["href"] = f"x-dictionary:d:{href}"
 
 
-def _prepare_onclick(soup):
+def _prepare_onclick(soup) -> None:
 	for thumb in soup.find_all("div", "pic_thumb"):
 		thumb["onclick"] = (
 			'this.setAttribute("style", "display:none"); '

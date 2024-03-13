@@ -167,11 +167,11 @@ class XdxfTransformerType(Protocol):
 		...
 
 
-T_SDListItem = TypeVar("T_SDListItem", contravariant=True)
+T_SDListItem_contra = TypeVar("T_SDListItem_contra", contravariant=True)
 
 
-class T_SdList(Protocol[T_SDListItem]):
-	def append(self, x: T_SDListItem) -> None:
+class T_SdList(Protocol[T_SDListItem_contra]):
+	def append(self, x: T_SDListItem_contra) -> None:
 		...
 
 	def __len__(self) -> int:
@@ -197,7 +197,7 @@ class MemSdList:
 	def __iter__(self) -> "Iterator[Any]":
 		return iter(self._l)
 
-	def sortKey(self, item: "tuple[bytes, Any]") -> "tuple[bytes, bytes]":
+	def sortKey(self, item: "tuple[bytes, Any]") -> "tuple[bytes, bytes]":  # noqa: PLR6301
 		return (
 			item[0].lower(),
 			item[0],
@@ -246,7 +246,8 @@ class BaseSqList:
 		)
 		self._con.commit()
 
-	def getExtraColumns(self) -> "list[tuple[str, str]]":
+	@classmethod
+	def getExtraColumns(cls) -> "list[tuple[str, str]]":
 		# list[(columnName, dataType)]
 		return []
 
@@ -293,7 +294,8 @@ class BaseSqList:
 
 
 class IdxSqList(BaseSqList):
-	def getExtraColumns(self) -> "list[tuple[str, str]]":
+	@classmethod
+	def getExtraColumns(cls) -> "list[tuple[str, str]]":
 		# list[(columnName, dataType)]
 		return [
 			("idx_block", "BLOB"),
@@ -301,7 +303,8 @@ class IdxSqList(BaseSqList):
 
 
 class SynSqList(BaseSqList):
-	def getExtraColumns(self) -> "list[tuple[str, str]]":
+	@classmethod
+	def getExtraColumns(cls) -> "list[tuple[str, str]]":
 		# list[(columnName, dataType)]
 		return [
 			("entry_index", "INTEGER"),
@@ -407,7 +410,7 @@ class Reader:
 			mode="rb",
 		) as ifoFile:
 			for line in ifoFile:
-				line = line.strip()
+				line = line.strip()  # noqa: PLW2901
 				if not line:
 					continue
 				if line == b"StarDict's dict ifo file":
@@ -682,8 +685,8 @@ class Reader:
 
 		return synDict
 
+	@staticmethod
 	def parseDefiBlockCompact(
-		self,
 		b_block: bytes,
 		sametypesequence: str,
 	) -> "list[tuple[bytes, int]] | None":
@@ -733,8 +736,8 @@ class Reader:
 
 		return res
 
+	@staticmethod
 	def parseDefiBlockGeneral(
-		self,
 		b_block: bytes,
 	) -> "list[tuple[bytes, int]] | None":
 		"""
@@ -858,11 +861,10 @@ class Writer:
 				yield from self.writeCompactMergeSyns(self._sametypesequence)
 			else:
 				yield from self.writeCompact(self._sametypesequence)
+		elif self._merge_syns:
+			yield from self.writeGeneralMergeSyns()
 		else:
-			if self._merge_syns:
-				yield from self.writeGeneralMergeSyns()
-			else:
-				yield from self.writeGeneral()
+			yield from self.writeGeneral()
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
 			syn_file = f"{self._filename}.syn"
@@ -1018,7 +1020,7 @@ class Writer:
 			entry.detectDefiFormat()  # call no more than once
 			defiFormat = entry.defiFormat
 			defiFormatCounter[defiFormat] += 1
-			if defiFormat not in ("h", "m", "x"):
+			if defiFormat not in {"h", "m", "x"}:
 				log.error(f"invalid {defiFormat=}, using 'm'")
 				defiFormat = "m"
 
@@ -1199,7 +1201,7 @@ class Writer:
 			entry.detectDefiFormat()  # call no more than once
 			defiFormat = entry.defiFormat
 			defiFormatCounter[defiFormat] += 1
-			if defiFormat not in ("h", "m", "x"):
+			if defiFormat not in {"h", "m", "x"}:
 				log.error(f"invalid {defiFormat=}, using 'm'")
 				defiFormat = "m"
 
@@ -1301,13 +1303,13 @@ class Writer:
 			desc = f"Publisher: {publisher}\n{desc}"
 
 		for key in infoKeys:
-			if key in (
+			if key in {
 				"bookname",
 				"description",
-			):
+			}:
 				continue
 			value = glos.getInfo(key)
-			if value == "":
+			if not value:
 				continue
 			value = newlinesToSpace(value)
 			ifo.append((key, value))

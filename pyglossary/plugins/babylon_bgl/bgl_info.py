@@ -24,7 +24,7 @@
 from collections.abc import Callable
 from typing import Any
 
-import pyglossary.gregorian as gregorian
+from pyglossary import gregorian
 from pyglossary.core import log
 from pyglossary.text_utils import (
 	uintFromBytes,

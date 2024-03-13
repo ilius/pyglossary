@@ -155,8 +155,8 @@ class Reader:
 	}
 	gramClass = "grammar"
 
+	@staticmethod
 	def makeList(
-		self,
 		hf: "T_htmlfile",
 		input_objects: "list[Any]",
 		processor: "Callable",
@@ -184,13 +184,14 @@ class Reader:
 				with hf.element("li"):
 					processor(hf, el)
 
-	def getTitleTag(self, sample: str) -> str:
+	@staticmethod
+	def getTitleTag(sample: str) -> str:
 		ws = getWritingSystemFromText(sample)
 		if ws:
 			return ws.titleTag
 		return "b"
 
-	def writeRef(
+	def writeRef(  # noqa: PLR6301
 		self,
 		hf: "T_htmlfile",
 		ref: "Element",
@@ -223,7 +224,7 @@ class Reader:
 		sense = ET.Element(f"{tei}sense")
 		for child in elem.xpath("child::node()"):
 			if isinstance(child, str):
-				child = child.strip()
+				child = child.strip()  # noqa: PLW2901
 				if child:
 					hf.write(child)
 					log.warning("text directly inside <cit>")
@@ -236,7 +237,7 @@ class Reader:
 				quotes.append(child)
 				continue
 
-			if child.tag in (f"{tei}gramGrp", f"{tei}usg", f"{tei}note"):
+			if child.tag in {f"{tei}gramGrp", f"{tei}usg", f"{tei}note"}:
 				sense.append(child)
 				continue
 
@@ -425,9 +426,9 @@ class Reader:
 				_type = child.attrib.get("type")
 				if not _type:
 					noteList.append(child)
-				elif _type in ("pos", "gram"):
+				elif _type in {"pos", "gram"}:
 					gramList.append(child)
-				elif _type in (
+				elif _type in {
 					"sense",
 					"stagr",
 					"stagk",
@@ -440,7 +441,7 @@ class Reader:
 					"infl",
 					"obj",
 					"lbl",
-				):
+				}:
 					noteList.append(child)
 				else:
 					log.warning(f"unknown note type {_type}")
@@ -462,7 +463,7 @@ class Reader:
 				self.writeLangTag(hf, child)
 				continue
 
-			if child.tag in (f"{tei}sense", f"{tei}gramGrp"):
+			if child.tag in {f"{tei}sense", f"{tei}gramGrp"}:
 				continue
 
 			if child.tag == f"{tei}xr":
@@ -649,7 +650,7 @@ class Reader:
 			return self.posMapping.get(text.lower(), text)
 		if tag == f"{tei}gen":
 			return self.genderMapping.get(text.lower(), text)
-		if tag in (f"{tei}num", f"{tei}number"):
+		if tag in {f"{tei}num", f"{tei}number"}:
 			return self.numberMapping.get(text.lower(), text)
 		if tag == f"{tei}subc":
 			return self.subcMapping.get(text.lower(), text)
@@ -660,7 +661,7 @@ class Reader:
 					return self.posMapping.get(text.lower(), text)
 				if _type == "gen":
 					return self.genderMapping.get(text.lower(), text)
-				if _type in ("num", "number"):
+				if _type in {"num", "number"}:
 					return self.numberMapping.get(text.lower(), text)
 				if _type == "subc":
 					return self.subcMapping.get(text.lower(), text)
@@ -776,7 +777,8 @@ class Reader:
 		except Exception:
 			log.exception(f"unexpected {extent=}")
 
-	def tostring(self, elem: "Element") -> str:
+	@staticmethod
+	def tostring(elem: "Element") -> str:
 		from lxml import etree as ET
 
 		return (
@@ -801,7 +803,7 @@ class Reader:
 		lines = []
 		for elem in elems:
 			for line in self.stripParag(elem).split("\n"):
-				line = line.strip()
+				line = line.strip()  # noqa: PLW2901
 				if not line:
 					continue
 				lines.append(line)

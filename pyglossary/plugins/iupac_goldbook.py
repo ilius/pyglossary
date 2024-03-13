@@ -141,8 +141,8 @@ class Reader:
 		if accessdate:
 			self.setGlosInfo("creationTime", accessdate.text)
 
+	@staticmethod
 	def tostring(
-		self,
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -157,7 +157,8 @@ class Reader:
 			.strip()
 		)
 
-	def innerXML(self, elem: "Element") -> str:
+	@staticmethod
+	def innerXML(elem: "Element") -> str:
 		from lxml import etree as ET
 
 		elemName = elem.xpath("name(/*)")
@@ -170,7 +171,7 @@ class Reader:
 
 		return resultStr
 
-	def getTerm(self, termE: "Element") -> str:
+	def getTerm(self, termE: "Element") -> str:  # noqa: PLR6301
 		from lxml import etree as ET
 
 		term = (
@@ -200,7 +201,7 @@ class Reader:
 			events=("end",),
 			tag="entry",
 		)
-		for _, elem in context:
+		for _, elem in context:  # noqa: PLR1702
 			codeE = elem.find("./code")
 			if codeE is None:
 				continue

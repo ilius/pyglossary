@@ -69,13 +69,15 @@ class Reader(TextGlossaryReader):
 			)
 		return self._wordCount
 
-	def isInfoWord(self, word: str) -> bool:
+	@classmethod
+	def isInfoWord(cls, word: str) -> bool:
 		if isinstance(word, str):
 			return word.startswith("#")
 
 		return False
 
-	def fixInfoWord(self, word: str) -> str:
+	@classmethod
+	def fixInfoWord(cls, word: str) -> str:
 		if isinstance(word, str):
 			return word.lstrip("#").lower()
 

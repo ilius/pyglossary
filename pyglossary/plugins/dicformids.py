@@ -175,7 +175,7 @@ class Writer:
 			self._dirname,
 			"DictionaryForMIDs.properties",
 		)
-		with open(probsPath, mode="w", newline="\n") as fileObj:
+		with open(probsPath, mode="w", newline="\n", encoding="utf-8") as fileObj:
 			fileObj.write(
 				PROP_TEMPLATE.format(
 					name=glos.getInfo("name"),

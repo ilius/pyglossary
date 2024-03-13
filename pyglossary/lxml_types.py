@@ -20,7 +20,7 @@ from typing import (
 	TypeAlias,
 )
 
-from lxml.etree import QName, _Element
+from lxml.etree import QName, _Element  # noqa: PLC2701
 
 __all__ = ["Element", "T_htmlfile"]
 

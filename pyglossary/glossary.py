@@ -96,7 +96,8 @@ class Glossary(GlossaryCommon):
 	def addEntryObj(self, entry: "EntryType") -> None:
 		self._data.append(entry)
 
-	def updateIter(self) -> None:
+	@staticmethod
+	def updateIter() -> None:
 		log.warning("calling glos.updateIter() is no longer needed.")
 
 	def sortWords(

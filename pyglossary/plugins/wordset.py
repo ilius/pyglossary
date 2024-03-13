@@ -85,7 +85,8 @@ class Reader:
 	def __len__(self) -> int:
 		return 0
 
-	def fileNameSortKey(self, fname: str) -> str:
+	@staticmethod
+	def fileNameSortKey(fname: str) -> str:
 		fname = splitext(fname)[0]
 		if fname == "misc":
 			return "\x80"

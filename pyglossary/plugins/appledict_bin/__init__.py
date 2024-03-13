@@ -131,12 +131,12 @@ class Reader:
 		self._keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}
 		self._cssName = ""
 
+	@staticmethod
 	def tostring(
-		self,
 		elem: "Element | HtmlComment | HtmlElement | "
 		"HtmlEntity | HtmlProcessingInstruction",
 	) -> str:
-		from lxml.html import tostring as tostring
+		from lxml.html import tostring
 
 		return tostring(
 			cast("HtmlElement", elem),
@@ -255,7 +255,8 @@ class Reader:
 			f"number of entries: {self._wordCount}",
 		)
 
-	def parseMetadata(self, infoPlistPath: str) -> "dict[str, Any]":
+	@staticmethod
+	def parseMetadata(infoPlistPath: str) -> "dict[str, Any]":
 		import biplist
 
 		if not isfile(infoPlistPath):
@@ -361,8 +362,8 @@ class Reader:
 
 		return defi
 
+	@staticmethod
 	def getChunkLenOffset(
-		self,
 		pos: int,
 		buffer: bytes,
 	) -> "tuple[int, int]":
@@ -452,11 +453,11 @@ class Reader:
 
 	def readEntryIds(self) -> None:
 		titleById = {}
-		for entryBytes, _ in self.yieldEntryBytes(
+		for entryBytesTmp, _ in self.yieldEntryBytes(
 			self._file,
 			self._properties,
 		):
-			entryBytes = entryBytes.strip()
+			entryBytes = entryBytesTmp.strip()
 			if not entryBytes:
 				continue
 			id_i = entryBytes.find(b'id="')
@@ -642,6 +643,15 @@ class Reader:
 			data = substituteAppleCSS(data)
 		return self._glos.newDataEntry(fname, data)
 
+	def fixResFilename(self, fname: str, relPath: str):
+		if fname == self._cssName:
+			fname = "style.css"
+		if relPath:
+			fname = relPath + "/" + fname
+		if os.path == "\\":
+			fname = fname.replace("\\", "/")
+		return fname
+
 	def readResDir(
 		self,
 		dirPath: str,
@@ -666,16 +676,13 @@ class Reader:
 						relPath=join(relPath, fname),
 					)
 				continue
+
 			if not isfile(fpath):
 				continue
-			if fname == self._cssName:
-				fname = "style.css"
-			if relPath:
-				fname = relPath + "/" + fname
-			if os.path == "\\":
-				fname = fname.replace("\\", "/")
-			core.trace(log, f"Using resource {fpath!r} as {fname!r}")
-			yield self.readResFile(fname, fpath, ext)
+
+			fname2 = self.fixResFilename(fname, relPath)
+			core.trace(log, f"Using resource {fpath!r} as {fname2!r}")
+			yield self.readResFile(fname2, fpath, ext)
 
 	def __iter__(self) -> Iterator[EntryType]:
 		yield from self.readResDir(

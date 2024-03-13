@@ -187,11 +187,11 @@ class DebugBglReader(BglReader):
 			self.targetCharsArray = None
 
 		if self._raw_dump_path:
-			self.rawDumpFile = open(self._raw_dump_path, "w")
+			self.rawDumpFile = open(self._raw_dump_path, "w", encoding="utf-8")
 		if self._char_samples_path:
-			self.samplesDumpFile = open(self._char_samples_path, "w")
+			self.samplesDumpFile = open(self._char_samples_path, "w", encoding="utf-8")
 		if self._msg_log_path:
-			self.msgLogFile = open(self._msg_log_path, "w")
+			self.msgLogFile = open(self._msg_log_path, "w", encoding="utf-8")
 
 		self.charRefStatPattern = re.compile(b"(&#\\w+;)", re.IGNORECASE)
 
@@ -201,10 +201,10 @@ class DebugBglReader(BglReader):
 				log.error(f"file pointer empty: {bglFile}")
 				return False
 			buf = bglFile.read(6)
-			if len(buf) < 6 or buf[:4] not in (
+			if len(buf) < 6 or buf[:4] not in {
 				b"\x12\x34\x00\x01",
 				b"\x12\x34\x00\x02",
-			):
+			}:
 				log.error(f"invalid header: {buf[:6]!r}")
 				return False
 			self.gzipOffset = gzipOffset = uintFromBytes(buf[4:6])
@@ -376,12 +376,12 @@ class DebugBglReader(BglReader):
 				break
 			self.numBlocks += 1
 
-			if block.type in (1, 7, 10, 11, 13):
+			if block.type in {1, 7, 10, 11, 13}:
 				self.numEntries += 1
 			elif block.type == 2:  # Embedded File (mostly Image or HTML)
 				metaData.numFiles += 1
 
-			if block.type in (1, 2, 7, 10, 11, 13):
+			if block.type in {1, 2, 7, 10, 11, 13}:
 				if range_type == block.type:
 					range_count += 1
 				else:

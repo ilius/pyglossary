@@ -425,7 +425,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		if not prop.customValue:
 			return
 		enable = True
-		if rawValue == "" and prop.typ != "str":
+		if rawValue == "" and prop.typ != "str":  # noqa: PLC1901
 			enable = False
 		elif not prop.validateRaw(rawValue):
 			log.error(f"invalid {prop.typ} value: {optName} = {rawValue!r}")
@@ -513,7 +513,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		prop = self.optionsProp[optName]
 		if prop.typ == "bool":
 			rawValue = model.get_value(itr, self.valueCol)
-			if rawValue == "":
+			if rawValue == "":  # noqa: PLC1901
 				value = False
 			else:
 				value, isValid = prop.evaluate(rawValue)

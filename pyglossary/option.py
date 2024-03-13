@@ -101,7 +101,8 @@ class Option:
 			data["falseComment"] = self.falseComment
 		return data
 
-	def evaluate(self, raw: str) -> "tuple[Any, bool]":
+	@classmethod
+	def evaluate(cls, raw: str) -> "tuple[Any, bool]":
 		"""Return (value, isValid)."""
 		if raw == "None":
 			return None, True
@@ -130,7 +131,7 @@ class Option:
 			return False
 		return True
 
-	def groupValues(self) -> "dict[str, Any] | None":
+	def groupValues(self) -> "dict[str, Any] | None":  # noqa: PLR6301
 		return None
 
 
@@ -139,7 +140,7 @@ class BoolOption(Option):
 	def __init__(
 		self,
 		allowNone: bool = False,
-		**kwargs,  # noqa: ANN
+		**kwargs,  # noqa: ANN003
 	) -> None:
 		values: "list[bool | None]" = [False, True]
 		if allowNone:
@@ -150,7 +151,7 @@ class BoolOption(Option):
 			customValue=False,
 			values=values,
 			allowNone=allowNone,
-			**kwargs,  # noqa: ANN
+			**kwargs,  # noqa: ANN003
 		)
 
 	def toDict(self) -> "dict[str, Any]":
@@ -159,8 +160,9 @@ class BoolOption(Option):
 		del data["values"]
 		return data
 
+	@classmethod
 	def evaluate(
-		self,
+		cls,
 		raw: "str | bool",
 	) -> "tuple[bool | None, bool]":
 		if raw is None:
@@ -171,9 +173,9 @@ class BoolOption(Option):
 			raw = raw.lower()
 			if raw == "none":
 				return None, True
-			if raw in ("yes", "true", "1"):
+			if raw in {"yes", "true", "1"}:
 				return True, True
-			if raw in ("no", "false", "0"):
+			if raw in {"no", "false", "0"}:
 				return False, True
 		return None, False  # not valid
 
@@ -182,7 +184,7 @@ class BoolOption(Option):
 class StrOption(Option):
 	def __init__(
 		self,
-		**kwargs,  # noqa: ANN
+		**kwargs,  # noqa: ANN003
 	) -> None:
 		Option.__init__(
 			self,
@@ -201,7 +203,7 @@ class StrOption(Option):
 			return value in self.values
 		return type(value).__name__ == "str"
 
-	def groupValues(self) -> "dict[str, Any] | None":
+	def groupValues(self) -> "dict[str, Any] | None":  # noqa: PLR6301
 		return None
 
 
@@ -209,7 +211,7 @@ class StrOption(Option):
 class IntOption(Option):
 	def __init__(
 		self,
-		**kwargs,  # noqa: ANN
+		**kwargs,  # noqa: ANN003
 	) -> None:
 		Option.__init__(
 			self,
@@ -217,7 +219,8 @@ class IntOption(Option):
 			**kwargs,
 		)
 
-	def evaluate(self, raw: "str | int") -> "tuple[int | None, bool]":
+	@classmethod
+	def evaluate(cls, raw: "str | int") -> "tuple[int | None, bool]":
 		"""Return (value, isValid)."""
 		try:
 			value = int(raw)
@@ -268,15 +271,16 @@ class FileSizeOption(IntOption):
 	def typeDesc(self) -> str:
 		return ""
 
-	def evaluate(self, raw: "str | int") -> "tuple[int | None, bool]":
+	@classmethod
+	def evaluate(cls, raw: "str | int") -> "tuple[int | None, bool]":
 		if not raw:
 			return 0, True
 		factor = 1
 		if isinstance(raw, str):
-			m = re.match(self.validPattern, raw)
+			m = re.match(cls.validPattern, raw)
 			if m is not None:
 				raw, unit = m.groups()
-				factorTmp = self.factors.get(unit)
+				factorTmp = cls.factors.get(unit)
 				if factorTmp is None:
 					return None, False
 				factor = factorTmp
@@ -293,7 +297,7 @@ class FileSizeOption(IntOption):
 class FloatOption(Option):
 	def __init__(
 		self,
-		**kwargs,  # noqa: noqa: ANN
+		**kwargs,  # noqa: ANN003
 	) -> None:
 		Option.__init__(
 			self,
@@ -301,8 +305,9 @@ class FloatOption(Option):
 			**kwargs,
 		)
 
+	@classmethod
 	def evaluate(
-		self,
+		cls,
 		raw: "str | float | int",
 	) -> "tuple[float | None, bool]":
 		"""Return (value, isValid)."""
@@ -317,7 +322,7 @@ class FloatOption(Option):
 class DictOption(Option):
 	def __init__(
 		self,
-		**kwargs,  # noqa: ANN
+		**kwargs,  # noqa: ANN003
 	) -> None:
 		Option.__init__(
 			self,
@@ -333,15 +338,16 @@ class DictOption(Option):
 		del data["customValue"]
 		return data
 
+	@classmethod
 	def evaluate(
-		self,
+		cls,
 		raw: "str | dict",
 	) -> "tuple[dict | None, bool]":
 		import ast
 
 		if isinstance(raw, dict):
 			return raw, True
-		if raw == "":
+		if raw == "":  # noqa: PLC1901
 			return None, True  # valid
 		try:
 			value = ast.literal_eval(raw)
@@ -361,7 +367,7 @@ class ListOption(Option):
 			customValue=True,
 			allowNone=True,
 			multiline=True,
-			**kwargs,  # noqa: ANN
+			**kwargs,  # noqa: ANN003
 		)
 
 	def toDict(self) -> "dict[str, Any]":
@@ -369,10 +375,11 @@ class ListOption(Option):
 		del data["customValue"]
 		return data
 
-	def evaluate(self, raw: str) -> "tuple[list | None, bool]":
+	@classmethod
+	def evaluate(cls, raw: str) -> "tuple[list | None, bool]":
 		import ast
 
-		if raw == "":
+		if raw == "":  # noqa: PLC1901
 			return None, True  # valid
 		try:
 			value = ast.literal_eval(raw)
@@ -392,7 +399,7 @@ class EncodingOption(Option):
 		customValue: bool = True,
 		values: "list[str] | None" = None,
 		comment: "str | None" = None,
-		**kwargs,  # noqa: ANN
+		**kwargs,  # noqa: ANN003
 	) -> None:
 		if values is None:
 			values = [
@@ -431,7 +438,7 @@ class EncodingOption(Option):
 			customValue=customValue,
 			values=values,
 			comment=comment,
-			**kwargs,  # noqa: ANN
+			**kwargs,  # noqa: ANN003
 		)
 
 	def toDict(self) -> "dict[str, Any]":
@@ -468,7 +475,7 @@ class NewlineOption(Option):
 		customValue: bool = True,
 		values: "list[str] | None" = None,
 		comment: "str | None" = None,
-		**kwargs,  # noqa: ANN
+		**kwargs,  # noqa: ANN003
 	) -> None:
 		if values is None:
 			values = [
@@ -485,7 +492,7 @@ class NewlineOption(Option):
 			values=values,
 			multiline=True,
 			comment=comment,
-			**kwargs,  # noqa: ANN
+			**kwargs,  # noqa: ANN003
 		)
 
 
@@ -501,6 +508,6 @@ class HtmlColorOption(Option):
 			self,
 			typ="str",
 			customValue=True,
-			**kwargs,  # noqa: ANN
+			**kwargs,  # noqa: ANN003
 		)
 		# TODO: use a specific type?

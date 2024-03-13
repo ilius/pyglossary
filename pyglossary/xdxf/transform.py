@@ -55,7 +55,8 @@ class XdxfTransformer:
 			"etm": self._write_etm,
 		}
 
-	def tostring(self, elem: "Element") -> str:
+	@staticmethod
+	def tostring(elem: "Element") -> str:
 		from lxml import etree as ET
 
 		return (
@@ -68,14 +69,15 @@ class XdxfTransformer:
 			.strip()
 		)
 
-	def hasPrevText(self, prev: "None | str | Element") -> bool:
+	@staticmethod
+	def hasPrevText(prev: "None | str | Element") -> bool:
 		if isinstance(prev, str):
 			return True
 		if prev is None:
 			return False
 		if prev.tag == "k":
 			return False
-		if prev.tag in (
+		if prev.tag in {
 			"dtrn",
 			"def",
 			"span",
@@ -87,7 +89,7 @@ class XdxfTransformer:
 			"tt",
 			"big",
 			"small",
-		):
+		}:
 			return True
 		if prev.text:
 			return True
@@ -112,7 +114,7 @@ class XdxfTransformer:
 
 		hasPrev = self.hasPrevText(prev)
 		trail = False
-		if parent.tag in ("ar", "font"):
+		if parent.tag in {"ar", "font"}:
 			if child.startswith("\n"):
 				child = child.lstrip("\n")
 				if hasPrev:
@@ -157,7 +159,7 @@ class XdxfTransformer:
 					with hf.element("div"):
 						self._write_iref(hf, child)  # NESTED 5
 					continue
-				if child.tag in ("ex_orig", "ex_tran"):
+				if child.tag in {"ex_orig", "ex_tran"}:
 					with hf.element("div"):
 						self.writeChildrenOf(hf, child, stringSep=stringSep)  # NESTED 5
 					continue
@@ -207,7 +209,7 @@ class XdxfTransformer:
 			with hf.element("b"):
 				self.writeChildrenOf(hf, child)
 
-	def _write_mrkd(self, hf: "T_htmlfile", child: "Element") -> None:
+	def _write_mrkd(self, hf: "T_htmlfile", child: "Element") -> None:  # noqa: PLR6301
 		if not child.text:
 			return
 		with hf.element("span", attrib={"class": child.tag}):
@@ -308,22 +310,22 @@ class XdxfTransformer:
 		with hf.element("span", style="background-color: green;"):
 			self.writeChildrenOf(hf, child, stringSep=" ")
 
-	def _write_opt(self, hf: "T_htmlfile", child: "Element") -> None:
+	def _write_opt(self, hf: "T_htmlfile", child: "Element") -> None:  # noqa: PLR6301
 		if child.text:
 			hf.write(" (")
 			hf.write(child.text)
 			hf.write(")")
 
-	def _write_img(self, hf: "T_htmlfile", child: "Element") -> None:
+	def _write_img(self, hf: "T_htmlfile", child: "Element") -> None:  # noqa: PLR6301
 		with hf.element("img", attrib=dict(child.attrib)):
 			pass
 
-	def _write_abbr(self, hf: "T_htmlfile", child: "Element") -> None:
+	def _write_abbr(self, hf: "T_htmlfile", child: "Element") -> None:  # noqa: PLR6301
 		# FIXME: may need an space or newline before it
 		with hf.element("i"):
 			hf.write(f"{child.text}")
 
-	def _write_etm(self, hf: "T_htmlfile", child: "Element") -> None:
+	def _write_etm(self, hf: "T_htmlfile", child: "Element") -> None:  # noqa: PLR6301
 		# Etymology (history and origin)
 		# TODO: formatting?
 		hf.write(f"{child.text}")
@@ -374,7 +376,7 @@ class XdxfTransformer:
 			stringSep=stringSep,
 		)
 
-	def shouldAddSep(
+	def shouldAddSep(  # noqa: PLR6301
 		self,
 		child: "str | Element",
 		prev: "str | Element",
@@ -384,12 +386,12 @@ class XdxfTransformer:
 				return False
 			return True
 
-		if child.tag in ("sub", "sup"):
+		if child.tag in {"sub", "sup"}:
 			return False
 
 		if isinstance(prev, str):
 			pass
-		elif prev.tag in ("sub", "sup"):
+		elif prev.tag in {"sub", "sup"}:
 			return False
 
 		return True

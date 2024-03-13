@@ -155,7 +155,7 @@ def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 		tr.output += "</p>"
 	elif tag == "b":
 		tr.output += "</b>"
-	elif tag in ("u", "'"):
+	elif tag in {"u", "'"}:
 		tr.output += "</u>"
 	elif tag == "i":
 		tr.output += "</i>"
@@ -163,7 +163,7 @@ def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 		tr.output += "</sup>"
 	elif tag == "sub":
 		tr.output += "</sub>"
-	elif tag in ("c", "t"):
+	elif tag in {"c", "t"}:
 		tr.output += "</font>"
 	elif tag == "p":
 		tr.output += "</font></i>"
@@ -171,7 +171,7 @@ def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 		tr.output += "</span>"
 	elif tag == "ex":
 		tr.output += "</font></span>"
-	elif tag in (
+	elif tag in {
 		"ref",
 		"url",
 		"s",
@@ -181,7 +181,7 @@ def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 		"!trs",
 		"lang",
 		"com",
-	):
+	}:
 		pass
 	else:
 		log.warning(f"unknown close tag {tag!r}")
@@ -296,7 +296,7 @@ def lexS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 
 	_, ext = splitext(fname)
 	ext = ext.lstrip(".")
-	if ext in ("wav", "mp3"):
+	if ext in {"wav", "mp3"}:
 		if tr.audio:
 			tr.output += (
 				rf'<object type="audio/x-wav" data="{fname}" '
@@ -304,7 +304,7 @@ def lexS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 				'<param name="autoplay" value="false" />'
 				"</object>"
 			)
-	elif ext in ("jpg", "jpeg", "gif", "tif", "tiff", "png", "bmp"):
+	elif ext in {"jpg", "jpeg", "gif", "tif", "tiff", "png", "bmp"}:
 		tr.output += rf'<img align="top" src="{fname}" alt="{fname}" />'
 	else:
 		log.warning(f"unknown file extension in {fname!r}")
@@ -315,7 +315,7 @@ def lexS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def processTagM(tr: TransformerType, tag: str):
+def processTagM(tr: TransformerType, tag: str) -> None:
 	padding = "0.3"
 	if len(tag) > 1:
 		padding = tag[1:]
@@ -324,7 +324,7 @@ def processTagM(tr: TransformerType, tag: str):
 	tr.output += f'<p style="padding-left:{padding}em;margin:0">'
 
 
-def processTagC(tr: TransformerType):
+def processTagC(tr: TransformerType) -> None:
 	color = "green"
 	for key, value in tr.attrs.items():
 		if value is None:
@@ -379,14 +379,14 @@ def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 		tr.output += "<sup>"
 	elif tag == "sub":
 		tr.output += "<sub>"
-	elif tag in (
+	elif tag in {
 		"trn",
 		"!trn",
 		"trs",
 		"!trs",
 		"lang",
 		"com",
-	):
+	}:
 		pass
 	else:
 		log.warning(f"unknown tag {tag!r}")

@@ -212,7 +212,7 @@ class Reader:
 			for child in elem.getchildren():
 				if not child.text:
 					continue
-				if child.tag in ("key", "synonym"):
+				if child.tag in {"key", "synonym"}:
 					words.append(child.text)
 				elif child.tag == "definition":
 					_type = child.attrib.get("type", "")

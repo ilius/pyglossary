@@ -245,7 +245,7 @@ class Reader:
 			dirPath = dirname(self._filename)
 			for fname in os.listdir(dirPath):
 				ext = splitext(fname)[1].lower()
-				if ext in (".mdx", ".mdd"):
+				if ext in {".mdx", ".mdd"}:
 					continue
 				fpath = join(dirPath, fname)
 				if not isfile(fpath):

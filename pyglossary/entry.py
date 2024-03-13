@@ -39,7 +39,8 @@ class DataEntry(BaseEntry):
 		"_tmpPath",
 	]
 
-	def isData(self) -> bool:
+	@classmethod
+	def isData(cls) -> bool:
 		return True
 
 	def __init__(
@@ -185,7 +186,8 @@ class Entry(BaseEntry):
 		"_word",
 	]
 
-	def isData(self) -> bool:
+	@classmethod
+	def isData(cls) -> bool:
 		return False
 
 	@staticmethod
@@ -234,7 +236,7 @@ class Entry(BaseEntry):
 		elif not isinstance(defi, str):
 			raise TypeError(f"invalid defi type {type(defi)}")
 
-		if defiFormat not in ("m", "h", "x"):
+		if defiFormat not in {"m", "h", "x"}:
 			raise ValueError(f"invalid defiFormat {defiFormat!r}")
 
 		self._word = word
@@ -332,7 +334,8 @@ class Entry(BaseEntry):
 		"""
 		self._defi = func(self._defi)
 
-	def _stripTrailingBR(self, s: str) -> str:
+	@classmethod
+	def _stripTrailingBR(cls, s: str) -> str:
 		while s.endswith(("<BR>", "<br>")):
 			s = s[:-4]
 		return s
@@ -377,9 +380,8 @@ class Entry(BaseEntry):
 			defi = defi[len("<!DOCTYPE html>") :].strip()
 			if not defi.startswith("<html"):
 				return "Has <!DOCTYPE html> but no <html>"
-		else:
-			if not defi.startswith("<html>"):
-				return None
+		elif not defi.startswith("<html>"):
+			return None
 		i = defi.find("<body")
 		if i == -1:
 			return "<body not found"

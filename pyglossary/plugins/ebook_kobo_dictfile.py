@@ -104,10 +104,12 @@ class Reader(TextGlossaryReader):
 		TextGlossaryReader.open(self, filename)
 		self._glos.setDefaultDefiFormat("h")
 
-	def isInfoWord(self, _word: str) -> bool:
+	@classmethod
+	def isInfoWord(cls, _word: str) -> bool:
 		return False
 
-	def fixInfoWord(self, _word: str) -> str:
+	@classmethod
+	def fixInfoWord(cls, _word: str) -> str:
 		raise NotImplementedError
 
 	def fixDefi(
@@ -181,7 +183,8 @@ class Reader(TextGlossaryReader):
 class Writer:
 	_encoding: str = "utf-8"
 
-	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
+	@staticmethod
+	def stripFullHtmlError(entry: "EntryType", error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
 	def __init__(self, glos: GlossaryType) -> None:

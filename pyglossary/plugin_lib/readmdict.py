@@ -148,10 +148,12 @@ class MDict:
 	def _read_number(self, f):
 		return unpack(self._number_format, f.read(self._number_width))[0]
 
-	def _read_int32(self, f):
+	@staticmethod
+	def _read_int32(f):
 		return unpack(">I", f.read(4))[0]
 
-	def _parse_header(self, header):
+	@staticmethod
+	def _parse_header(header):
 		"""Extract attributes from <Dict attr="value" ... >."""
 		taglist = re.findall(rb'(\w+)="(.*?)"', header, re.DOTALL)
 		tagdict = {}
@@ -357,7 +359,7 @@ class MDict:
 			if sys.hexversion >= 0x03000000:
 				encoding = encoding.decode("utf-8")
 			# GB18030 > GBK > GB2312
-			if encoding in ("GBK", "GB2312"):
+			if encoding in {"GBK", "GB2312"}:
 				encoding = "GB18030"
 			self._encoding = encoding
 
@@ -652,7 +654,7 @@ class MDict:
 
 		f.close()
 
-	def _treat_record_data(self, data):
+	def _treat_record_data(self, data):  # noqa: PLR6301
 		return data
 
 

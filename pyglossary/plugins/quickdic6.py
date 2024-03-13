@@ -452,7 +452,7 @@ def write_entry_indexentry(
 	entry: IndexEntryType,
 ) -> None:
 	token, start_index, count, token_norm, html_indices = entry
-	has_normalized = token_norm != ""
+	has_normalized = bool(token_norm)
 	write_string(fp, token)
 	write_int(fp, start_index)
 	write_int(fp, count)
@@ -509,7 +509,8 @@ class Comparator:
 		s2 = self._without_dash(b)
 		return self._comparator.compare(s1, s2)
 
-	def _without_dash(self, a: str) -> str:
+	@staticmethod
+	def _without_dash(a: str) -> str:
 		return a.replace("-", "").replace("þ", "th").replace("Þ", "Th")
 
 
@@ -603,7 +604,7 @@ class QuickDic:
 		tokens = [
 			(t, comparator.normalize(t), ttype, tidx)
 			for t, ttype, tidx in tokens1
-			if t != ""
+			if t
 		]
 
 		if len(synonyms) > 0:
@@ -616,7 +617,7 @@ class QuickDic:
 					for t in tokens
 					if t[0] in synonyms
 					for s in synonyms[t[0]]
-					if s != ""
+					if s
 				],
 			)
 
@@ -631,26 +632,25 @@ class QuickDic:
 			prev_token = "" if len(index_entries) == 0 else index_entries[-1][0]
 			if prev_token == token:
 				(
-					token,
+					token,  # noqa: PLW2901
 					index_start,
 					count,
-					token_norm,
+					token_norm,  # noqa: PLW2901
 					html_indices,
 				) = index_entries.pop()
 			else:
 				i_entry = len(index_entries)
 				index_start = len(rows)
 				count = 0
-				token_norm = "" if token == token_norm else token_norm
+				token_norm = "" if token == token_norm else token_norm  # noqa: PLW2901
 				html_indices = []
 				rows.append((1, i_entry))
 			if ttype == 4:
 				if tidx not in html_indices:
 					html_indices.append(tidx)
-			else:
-				if (ttype, tidx) not in rows[index_start + 1 :]:
-					rows.append((ttype, tidx))
-					count += 1
+			elif (ttype, tidx) not in rows[index_start + 1 :]:
+				rows.append((ttype, tidx))
+				count += 1
 			index_entries.append(
 				(token, index_start, count, token_norm, html_indices),
 			)
@@ -723,7 +723,7 @@ class Reader:
 					if entry_id not in self._synonyms:
 						self._synonyms[entry_id] = set()
 					self._synonyms[entry_id].add(token)
-					if token_norm != "":
+					if token_norm:
 						self._synonyms[entry_id].add(token_norm)
 
 	def _extract_rows_from_indexentry(
@@ -737,11 +737,11 @@ class Reader:
 		_, _, _, _, _, _, index_entries, _, rows = index
 		token, start_index, count, _, html_indices = index_entries[i_entry]
 		block_rows = rows[start_index : start_index + count + 1]
-		assert block_rows[0][0] in (1, 3)
+		assert block_rows[0][0] in {1, 3}
 		assert block_rows[0][1] == i_entry
 		e_rows = []
 		for entry_type, entry_idx in block_rows[1:]:
-			if entry_type in (1, 3):
+			if entry_type in {1, 3}:
 				# avoid an endless recursion
 				if entry_idx not in recurse:
 					e_rows.extend(
@@ -825,7 +825,7 @@ class Writer:
 				continue
 
 			entry.detectDefiFormat()
-			if entry.defiFormat not in ("h", "m"):
+			if entry.defiFormat not in {"h", "m"}:
 				log.error(f"Unsupported defiFormat={entry.defiFormat}, assuming 'h'")
 
 			words = entry.l_word
@@ -841,17 +841,17 @@ class Writer:
 
 		log.info("Collecting meta data ...")
 		name = self._glos.getInfo("bookname")
-		if name == "":
+		if not name:
 			name = self._glos.getInfo("description")
 
 		sourceLang = (
 			self._glos.sourceLang
-			if self._source_lang == ""
+			if not self._source_lang
 			else langDict[self._source_lang]
 		)
 		targetLang = (
 			self._glos.targetLang
-			if self._target_lang == ""
+			if not self._target_lang
 			else langDict[self._target_lang]
 		)
 		if sourceLang and targetLang:
@@ -872,7 +872,7 @@ class Writer:
 		short_name = long_name = iso = sourceLang
 		normalizer_rules = (
 			self._normalizer_rules
-			if self._normalizer_rules != ""
+			if self._normalizer_rules
 			else ":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
 			if iso == "DE"
 			else ":: Any-Latin; ' ' > ; :: Lower; :: NFD;"

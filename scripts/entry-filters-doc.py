@@ -93,5 +93,9 @@ entryFiltersTable = "## Entry Filters\n\n" + renderTable(
 text = template.render(
 	entryFiltersTable=entryFiltersTable,
 )
-with open(join(rootDir, "doc", "entry-filters.md"), mode="w") as _file:
+with open(
+	join(rootDir, "doc", "entry-filters.md"),
+	mode="w",
+	encoding="utf-8",
+) as _file:
 	_file.write(text)

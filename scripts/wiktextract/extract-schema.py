@@ -137,7 +137,7 @@ jsonl_path = sys.argv[1]
 
 with open(jsonl_path, encoding="utf-8") as _file:
 	for line in _file:
-		line = line.strip()
+		line = line.strip()  # noqa: PLW2901
 		if not line:
 			continue
 		try:

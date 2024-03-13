@@ -270,10 +270,10 @@ class MultiFileReader(BufferedIOBase):
 	def closed(self) -> bool:
 		return len(self._ranges) == 0
 
-	def isatty(self) -> bool:
+	def isatty(self) -> bool:  # noqa: PLR6301
 		return False
 
-	def readable(self) -> bool:
+	def readable(self) -> bool:  # noqa: PLR6301
 		return True
 
 	def seek(
@@ -291,13 +291,13 @@ class MultiFileReader(BufferedIOBase):
 			raise ValueError(f"Invalid value for parameter whence: {whence!r}")
 		return self._offset
 
-	def seekable(self) -> bool:
+	def seekable(self) -> bool:  # noqa: PLR6301
 		return True
 
 	def tell(self) -> int:
 		return self._offset
 
-	def writable(self) -> bool:
+	def writable(self) -> bool:  # noqa: PLR6301
 		return False
 
 	def read(self, n: "int | None" = -1) -> bytes:
@@ -1104,9 +1104,9 @@ class Writer:
 
 		self._tags[name] = value
 
+	@staticmethod
 	def _split_key(
-		self,
-		key: "str | tuple[str, str]",
+		key: str | tuple[str, str],
 	) -> "tuple[str, str]":
 		if isinstance(key, str):
 			actual_key = key

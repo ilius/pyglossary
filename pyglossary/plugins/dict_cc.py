@@ -71,8 +71,8 @@ class Reader:
 		)
 		return self._cur.fetchone()[0]
 
+	@staticmethod
 	def makeList(
-		self,
 		hf: "T_htmlfile",
 		input_elements: "list[Element]",
 		processor: "Callable",
@@ -93,8 +93,8 @@ class Reader:
 				with hf.element("li"):
 					processor(hf, el)
 
+	@staticmethod
 	def makeGroupsList(
-		self,
 		hf: "T_htmlfile",
 		groups: "list[tuple[str, str]]",
 		processor: "Callable[[T_htmlfile, tuple[str, str]], None]",
@@ -115,7 +115,7 @@ class Reader:
 				with hf.element("li"):
 					processor(hf, el)
 
-	def writeSense(
+	def writeSense(  # noqa: PLR6301
 		self,
 		hf: "T_htmlfile",
 		row: "tuple[str, str]",
@@ -161,7 +161,7 @@ class Reader:
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
-	def parseGender(self, headword: str) -> "tuple[str | None, str]":
+	def parseGender(self, headword: str) -> "tuple[str | None, str]":  # noqa: PLR6301
 		# {m}	masc	masculine	German: maskulin
 		# {f}	fem 	feminine	German: feminin
 		# {n}	neut	neutral		German: neutral
@@ -198,11 +198,11 @@ class Reader:
 		from lxml import etree as ET
 
 		glos = self._glos
-		for headword, groupsOrig in groupby(
+		for headwordEscaped, groupsOrig in groupby(
 			self.iterRows(column1, column2),
 			key=itemgetter(0),
 		):
-			headword = html.unescape(headword)
+			headword = html.unescape(headwordEscaped)
 			groups: "list[tuple[str, str]]" = [
 				(term2, entry_type) for _, term2, entry_type in groupsOrig
 			]

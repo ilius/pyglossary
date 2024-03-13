@@ -211,7 +211,8 @@ class Writer:
 		self._hashSet: "set[str]" = set()
 		# self._wordCount = None
 
-	def hashToPath(self, h: str) -> str:
+	@staticmethod
+	def hashToPath(h: str) -> str:
 		return h[:2] + "/" + h[2:]
 
 	def getEntryHash(self, entry: EntryType) -> str:

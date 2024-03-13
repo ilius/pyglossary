@@ -75,8 +75,8 @@ class Reader:
 		"word containing irregular kana usage": "irregular",
 	}
 
+	@staticmethod
 	def makeList(
-		self,
 		hf: "T_htmlfile",
 		input_objects: "list[Element]",
 		processor: "Callable",
@@ -153,7 +153,7 @@ class Reader:
 		def br() -> "Element":
 			return ET.Element("br")
 
-		with ET.htmlfile(f, encoding="utf-8") as hf:
+		with ET.htmlfile(f, encoding="utf-8") as hf:  # noqa: PLR1702
 			kebList: "list[str]" = []
 			rebList: "list[tuple[str, list[str]]]" = []
 			with hf.element("div"):
@@ -236,10 +236,8 @@ class Reader:
 			byteProgress=byteProgress,
 		)
 
-	def tostring(
-		self,
-		elem: "Element",
-	) -> str:
+	@staticmethod
+	def tostring(elem: "Element") -> str:
 		from lxml import etree as ET
 
 		return (

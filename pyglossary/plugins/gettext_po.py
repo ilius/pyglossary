@@ -68,7 +68,7 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._file = open(filename)
+		self._file = open(filename, encoding="utf-8")
 		self._resDir = filename + "_res"
 		if isdir(self._resDir):
 			self._resFileNames = os.listdir(self._resDir)
@@ -106,7 +106,7 @@ class Reader:
 		msgstr = False
 		wordCount = 0
 		for line in _file:
-			line = line.strip()
+			line = line.strip()  # noqa: PLW2901
 			if not line:
 				continue
 			if line.startswith("#"):
@@ -128,11 +128,10 @@ class Reader:
 					log.error("msgid omitted!")
 				defi = po_unescape(line[7:])
 				msgstr = True
+			elif msgstr:
+				defi += po_unescape(line)
 			else:
-				if msgstr:
-					defi += po_unescape(line)
-				else:
-					word += po_unescape(line)
+				word += po_unescape(line)
 		if word:
 			yield self._glos.newEntry(word, defi)
 			wordCount += 1

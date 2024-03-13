@@ -220,7 +220,7 @@ class Reader:
 
 		# read header
 		for line in self._file:
-			line = line.rstrip().lstrip("\ufeff")  # noqa: B005
+			line = line.rstrip().lstrip("\ufeff")  # noqa: B005, PLW2901
 			# \ufeff -> https://github.com/ilius/pyglossary/issues/306
 			if not line:
 				continue
@@ -270,7 +270,8 @@ class Reader:
 		for line in self._file:
 			yield line
 
-	def sub_title_line(self, m: "re.Match") -> str:
+	@staticmethod
+	def sub_title_line(m: "re.Match") -> str:
 		line = m.group(0)[1:-1]
 		line = line.replace("[']", "")  # FIXME
 		line = line.replace("[/']", "")

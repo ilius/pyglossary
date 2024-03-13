@@ -120,11 +120,11 @@ class Writer:
 		if self._add_extra_info:
 			extraInfo = glos.getExtraInfos(info_keys)
 			for index, (key, value) in enumerate(extraInfo.items()):
-				key = key.replace("'", "''")
-				value = value.replace("'", "''")
+				key2 = key.replace("'", "''")
+				value2 = value.replace("'", "''")
 				fileObj.write(
 					f"INSERT INTO dbinfo_extra VALUES({index + 1}, "
-					f"'{key}', '{value}');\n",
+					f"'{key2}', '{value2}');\n",
 				)
 
 	def _getInfoKeys(self) -> "list[str]":
@@ -168,9 +168,8 @@ class Writer:
 				f"INSERT INTO word VALUES({_id}, '{word}', '{defi}');\n",
 			)
 			for alt in words[1:]:
-				alt = fixStr(alt)
 				fileObj.write(
-					f"INSERT INTO alt VALUES({_id}, '{alt}');\n",
+					f"INSERT INTO alt VALUES({_id}, '{fixStr(alt)}');\n",
 				)
 			_id += 1
 

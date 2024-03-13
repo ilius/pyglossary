@@ -119,11 +119,9 @@ class Writer:
 			elif defiFormat == "h":
 				match = re_possible_html.search(defi)
 				if match is not None:
-					tag = match.group().strip("< />").lower()
-					firstTagCounter[tag] += 1
+					firstTagCounter[match.group().strip("< />").lower()] += 1
 					for tag in re_possible_html.findall(defi):
-						tag = tag.strip("< />").lower()
-						allTagsCounter[tag] += 1
+						allTagsCounter[tag.strip("< />").lower()] += 1
 			elif defiFormat == "b":
 				_filenameNoExt, ext = splitext(entry.s_word)
 				ext = ext.lstrip(".")

@@ -31,6 +31,8 @@ __all__ = ["splitFilenameExt"]
 
 log = logging.getLogger("pyglossary")
 
+MAX_EXT_LEN = 4  # FIXME
+
 
 def splitFilenameExt(
 	filename: str = "",
@@ -40,13 +42,13 @@ def splitFilenameExt(
 	filenameNoExt, ext = splitext(filename)
 	ext = ext.lower()
 
-	if not ext and len(filenameNoExt) < 5:
+	if not ext and len(filenameNoExt) <= MAX_EXT_LEN:
 		filenameNoExt, ext = "", filenameNoExt
 
 	if not ext:
 		return filename, filename, "", ""
 
-	if ext[1:] in (*stdCompressions, "zip", "dz"):
+	if ext[1:] in {*stdCompressions, "zip", "dz"}:
 		compression = ext[1:]
 		filename = filenameNoExt
 		filenameNoExt, ext = splitext(filename)

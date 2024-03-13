@@ -58,8 +58,7 @@ def zh(titles: "Sequence[str]", content: str) -> "set[str]":
 		indexes.update({title, title + "。"})
 
 		# remove all non hieroglyph
-		title = nonHieroglyphPattern.sub("", title)
-		indexes.add(title)
+		indexes.add(nonHieroglyphPattern.sub("", title))
 
 	indexes.update(pinyin_indexes(content))
 

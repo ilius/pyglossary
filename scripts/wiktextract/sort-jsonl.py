@@ -10,7 +10,7 @@ from json import loads
 data: "list[tuple[str, str]]" = []
 
 for line in sys.stdin:
-	line = line.strip()
+	line = line.strip()  # noqa: PLW2901
 	if not line:
 		continue
 	row = loads(line)

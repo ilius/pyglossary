@@ -236,7 +236,7 @@ class Salsa20:
 		return little_u64.unpack(little2_i32.pack(*self.ctx[8:10]))[0]
 
 	def setRounds(self, rounds, testing=False):
-		assert testing or rounds in (8, 12, 20), "rounds must be 8, 12, 20"
+		assert testing or rounds in {8, 12, 20}, "rounds must be 8, 12, 20"
 		self.rounds = rounds
 
 	def encryptBytes(self, data: bytes) -> bytes:
@@ -267,7 +267,7 @@ def salsa20_wordtobyte(input_, nRounds=20, checkRounds=True):
 	Returns a 64-byte string.
 	"""
 	assert isinstance(input_, list | tuple) and len(input_) == 16
-	assert not checkRounds or nRounds in (8, 12, 20)
+	assert not checkRounds or nRounds in {8, 12, 20}
 
 	x = list(input_)
 

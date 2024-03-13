@@ -241,7 +241,7 @@ class StdLogHandler(logging.Handler):
 		###
 		levelname = record.levelname
 
-		fp = sys.stderr if levelname in ("CRITICAL", "ERROR") else sys.stdout
+		fp = sys.stderr if levelname in {"CRITICAL", "ERROR"} else sys.stdout
 
 		if not self.noColor and levelname in self.colorsConfig:
 			key, default = self.colorsConfig[levelname]
@@ -269,7 +269,10 @@ def checkCreateConfDir() -> None:
 		except Exception as e:
 			log.warning(f"failed to create user plugins directory: {e}")
 	if not isfile(confJsonFile):
-		with open(rootConfJsonFile) as srcF, open(confJsonFile, "w") as usrF:
+		with (
+			open(rootConfJsonFile, encoding="utf-8") as srcF,
+			open(confJsonFile, "w", encoding="utf-8") as usrF,
+		):
 			usrF.write(srcF.read())
 
 
@@ -385,7 +388,7 @@ sysName = platform.system().lower()
 # can set env var WARNINGS to:
 # "error", "ignore", "always", "default", "module", "once"
 if WARNINGS := os.getenv("WARNINGS"):
-	if WARNINGS in ("default", "error", "ignore", "always", "module", "once"):
+	if WARNINGS in {"default", "error", "ignore", "always", "module", "once"}:
 		import warnings
 
 		warnings.filterwarnings(WARNINGS)  # type: ignore # noqa: PGH003

@@ -113,7 +113,7 @@ class TextGlossaryWriter:
 			if not (key and value):
 				log.warning(f"skipping info {key=}, {value=}")
 				continue
-			key = outInfoKeysAliasDict.get(key, key)
+			key = outInfoKeysAliasDict.get(key, key)  # noqa: PLW2901
 			if not key:
 				continue
 			word = f"##{key}"
@@ -122,7 +122,7 @@ class TextGlossaryWriter:
 				if not word:
 					continue
 			if defiEscapeFunc is not None:
-				value = defiEscapeFunc(value)
+				value = defiEscapeFunc(value)  # noqa: PLW2901
 				if not value:
 					continue
 			_file.write(

@@ -194,10 +194,10 @@ class TextGlossaryReader:
 				self._fileCount = int(fileCountStr)
 				self._glos.setInfo("file_count", "")
 
+	@staticmethod
 	def _genDataEntries(
-		self,
-		resList: "list[tuple[str, str]]",
-		resPathSet: "set[str]",
+		resList: list[tuple[str, str]],
+		resPathSet: set[str],
 	) -> "Iterator[DataEntry]":
 		for relPath, fullPath in resList:
 			if relPath in resPathSet:
@@ -240,7 +240,8 @@ class TextGlossaryReader:
 	def __len__(self) -> int:
 		return self._wordCount
 
-	def isInfoWord(self, word: str) -> bool:
+	@classmethod
+	def isInfoWord(cls, word: str) -> bool:
 		raise NotImplementedError
 
 	def isInfoWords(self, arg: "str | list[str]") -> bool:
@@ -250,7 +251,8 @@ class TextGlossaryReader:
 			return self.isInfoWord(arg[0])
 		raise TypeError(f"bad argument {arg}")
 
-	def fixInfoWord(self, word: str) -> str:
+	@classmethod
+	def fixInfoWord(cls, word: str) -> str:
 		raise NotImplementedError
 
 	def nextBlock(self) -> nextBlockResultType:

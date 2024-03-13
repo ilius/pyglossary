@@ -289,7 +289,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			infl=infl,
 		)
 
-	def getLangCode(self, lang: "Lang | None") -> str:
+	@staticmethod
+	def getLangCode(lang: "Lang | None") -> str:
 		return lang.code if isinstance(lang, Lang) else ""
 
 	def get_opf_contents(

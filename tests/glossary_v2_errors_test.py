@@ -371,7 +371,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_convert_dirExists(self):
 		glos = Glossary()
 		tempFilePath = self.newTempFilePath("test_convert_dirExists")
-		with open(tempFilePath, mode="w") as _file:
+		with open(tempFilePath, mode="w", encoding="utf-8") as _file:
 			_file.write("")
 		res = glos.convert(
 			ConvertArgs(

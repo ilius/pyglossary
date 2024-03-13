@@ -258,7 +258,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			rawEntry = rawEntryArg
 		word = rawEntry[0]
 		defi = rawEntry[1].decode("utf-8")
-		if len(rawEntry) > 2:
+		if len(rawEntry) > 2:  # noqa: PLR2004
 			defiFormat = rawEntry[2]
 			if defiFormat == "b":
 				fname = word
@@ -408,7 +408,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			if entry is None:
 				continue
 			for entryFilter in self._entryFilters:
-				entry = entryFilter.run(entry)
+				entry = entryFilter.run(entry)  # noqa: PLW2901
 				if entry is None:
 					break
 			else:
@@ -655,7 +655,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 				self.progressInit("Reading metadata")
 				lastPos = -100_000
 				for pos, total in openResult:
-					if progressbar and pos - lastPos > 100_000:
+					if progressbar and pos - lastPos > 100_000:  # noqa: PLR2004
 						self.progress(pos, total, unit="bytes")
 						lastPos = pos
 				self.progressEnd()
@@ -850,8 +850,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 			with suppress(StopIteration):
 				gen.send(None)
 
+	@staticmethod
 	def _openWriter(
-		self,
 		writer: "Any",
 		filename: str,
 	) -> bool:
@@ -967,8 +967,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		self._config["enable_alts"] = True
 		self._sqlite = True
 
+	@staticmethod
 	def _checkSortFlag(
-		self,
 		plugin: "PluginProp",
 		sort: "bool | None",
 	) -> "bool | None":
@@ -1051,8 +1051,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 		return False, True
 
+	@staticmethod
 	def _checkSortKey(
-		self,
 		plugin: "PluginProp",
 		sortKeyName: "str | None",
 		sortEncoding: "str | None",
@@ -1092,10 +1092,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 		return namedSortKey, sortEncoding
 
-	def _convertValidateStrings(
-		self,
-		args: ConvertArgs,
-	) -> None:
+	@staticmethod
+	def _convertValidateStrings(args: ConvertArgs) -> None:
 		if type(args.inputFilename) is not str:
 			raise TypeError("inputFilename must be str")
 		if type(args.outputFilename) is not str:

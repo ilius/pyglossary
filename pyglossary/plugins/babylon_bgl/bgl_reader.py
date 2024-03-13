@@ -404,10 +404,10 @@ class BglReader:
 				return False
 			b_head = bglFile.read(6)
 
-		if len(b_head) < 6 or b_head[:4] not in (
+		if len(b_head) < 6 or b_head[:4] not in {
 			b"\x12\x34\x00\x01",
 			b"\x12\x34\x00\x02",
-		):
+		}:
 			log.error(f"invalid header: {b_head[:6]!r}")
 			return False
 
@@ -442,7 +442,7 @@ class BglReader:
 				continue
 			if block.type == 0:
 				self.readType0(block)
-			elif block.type in (1, 7, 10, 11, 13):
+			elif block.type in {1, 7, 10, 11, 13}:
 				self.numEntries += 1
 			elif block.type == 2:
 				self.numResources += 1
@@ -476,7 +476,7 @@ class BglReader:
 		for key, value in self.info.items():
 			if isinstance(value, bytes):
 				try:
-					value = value.decode(encoding)
+					value = value.decode(encoding)  # noqa: PLW2901
 				except Exception:
 					log.warning(f"failed to decode info value: {key} = {value}")
 				else:
@@ -520,13 +520,13 @@ class BglReader:
 				# TODO: a bool flag to add empty value infos?
 			# leave "creationTime" and "lastUpdated" as is
 			if key == "utf8Encoding":
-				key = "bgl_" + key
+				key = "bgl_" + key  # noqa: PLW2901
 			try:
 				glos.setInfo(key, s_value)
 			except Exception:
 				log.exception(f"key = {key}")
 
-	def isEndOfDictData(self) -> bool:
+	def isEndOfDictData(self) -> bool:  # noqa: PLR6301
 		"""
 		Test for end of dictionary data.
 
@@ -799,7 +799,7 @@ class BglReader:
 					u_defi,
 				)
 
-			elif block.type in (1, 7, 10, 11, 13):
+			elif block.type in {1, 7, 10, 11, 13}:
 				pos = 0
 				# word:
 				wordData = self.readEntryWord(block, pos)
@@ -1056,7 +1056,8 @@ class BglReader:
 	def charReferencesStat(self, b_text: bytes, encoding: str) -> None:
 		pass
 
-	def decodeCharsetTagsBabylonReference(self, b_text: bytes, b_text2: bytes):
+	@staticmethod
+	def decodeCharsetTagsBabylonReference(b_text: bytes, b_text2: bytes):
 		b_refs = b_text2.split(b";")
 		add_text = ""
 		for i_ref, b_ref in enumerate(b_refs):

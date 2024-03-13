@@ -75,10 +75,12 @@ class Reader(TextGlossaryReader):
 					_file.read(),
 				)
 
-	def isInfoWord(self, word: str) -> bool:
+	@classmethod
+	def isInfoWord(cls, word: str) -> bool:
 		return word.startswith("#")
 
-	def fixInfoWord(self, word: str) -> str:
+	@classmethod
+	def fixInfoWord(cls, word: str) -> str:
 		return word.lstrip("#")
 
 	def nextBlock(self) -> "tuple[str | list[str], str, None] | None":

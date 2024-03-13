@@ -108,7 +108,8 @@ class GlossaryInfo:
 				return value
 		return ""
 
-	def _getLangByStr(self, st: str) -> "Lang | None":
+	@staticmethod
+	def _getLangByStr(st: str) -> "Lang | None":
 		lang = langDict[st]
 		if lang:
 			return lang
@@ -209,13 +210,13 @@ class GlossaryInfo:
 		for part in re.split("-| to ", name):
 			# print(f"{part = }")
 			checkPart(part)
-			if len(langNames) >= 2:
+			if len(langNames) >= 2:  # noqa: PLR2004
 				break
 
-		if len(langNames) < 2:
+		if len(langNames) < 2:  # noqa: PLR2004
 			return
 
-		if len(langNames) > 2:
+		if len(langNames) > 2:  # noqa: PLR2004
 			log.info(f"detectLangsFromName: {langNames = }")
 
 		log.info(

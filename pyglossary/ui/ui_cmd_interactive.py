@@ -107,7 +107,7 @@ class MiniCheckBoxPrompt:
 		# msg = ANSI(msg)  # NOT SUPPORTED
 		return msg  # noqa: RET504
 
-	def __pt_formatted_text__(self):
+	def __pt_formatted_text__(self):  # noqa: PLW3201
 		return [("", self.formatMessage())]
 
 
@@ -221,7 +221,8 @@ class MyPathCompleter(PathCompleter):
 			fs_action_names = []
 		self.fs_action_names = fs_action_names
 
-	def file_filter(self, _filename: str) -> bool:
+	@staticmethod
+	def file_filter(_filename: str) -> bool:
 		# filename is full/absolute file path
 		return True
 
@@ -325,13 +326,14 @@ class UI(ui_cmd.UI):
 			],
 		)
 
-	def fs_pwd(self, args: "list[str]"):
+	@staticmethod
+	def fs_pwd(args: "list[str]"):
 		if args:
 			print(f"extra arguments: {args}")
 		print(os.getcwd())
 
+	@staticmethod
 	def get_ls_l(
-		self,
 		arg: str,
 		st: "os.stat_result | None" = None,
 		parentDir: str = "",
@@ -373,8 +375,8 @@ class UI(ui_cmd.UI):
 		showTitle = len(args) > 1
 		# Note: isdir and isfile funcs follow sym links, so no worry about links
 
-		for i, arg in enumerate(args):
-			if i > 0:
+		for argI, arg in enumerate(args):
+			if argI > 0:
 				print()
 
 			if not isdir(arg):
@@ -395,17 +397,18 @@ class UI(ui_cmd.UI):
 			statList = [os.lstat(join(arg, _path)) for _path in contents]
 			maxFileSize = max(st.st_size for st in statList)
 			sizeWidth = len(str(maxFileSize))
-			for i, _path in enumerate(contents):
+			for pathI, path_ in enumerate(contents):
 				print(
 					self.get_ls_l(
-						_path,
+						path_,
 						parentDir=arg,
-						st=statList[i],
+						st=statList[pathI],
 						sizeWidth=sizeWidth,
 					),
 				)
 
-	def fs_cd_parent(self, args: "list[str]"):
+	@staticmethod
+	def fs_cd_parent(args: "list[str]"):
 		if args:
 			log.error("This command does not take arguments")
 			return
@@ -413,7 +416,8 @@ class UI(ui_cmd.UI):
 		os.chdir(newDir)
 		print(f"Changed current directory to: {newDir}")
 
-	def fs_cd(self, args: "list[str]"):
+	@staticmethod
+	def fs_cd(args: "list[str]"):
 		if len(args) != 1:
 			log.error("This command takes exactly one argument")
 			return
@@ -512,7 +516,8 @@ class UI(ui_cmd.UI):
 			False,
 		)
 
-	def pluginByNameOrDesc(self, value: str) -> "PluginProp | None":
+	@staticmethod
+	def pluginByNameOrDesc(value: str) -> "PluginProp | None":
 		plugin = pluginByDesc.get(value)
 		if plugin:
 			return plugin
@@ -577,7 +582,8 @@ class UI(ui_cmd.UI):
 
 	# TODO: how to handle \r and \n in NewlineOption.values?
 
-	def getOptionValueSuggestValues(self, option: "Option"):
+	@staticmethod
+	def getOptionValueSuggestValues(option: "Option"):
 		if option.values:
 			return [str(x) for x in option.values]
 		if option.typ == "bool":
@@ -653,7 +659,7 @@ class UI(ui_cmd.UI):
 					)
 				except (KeyboardInterrupt, EOFError):
 					break
-				if value == "":
+				if value == "":  # noqa: PLC1901
 					if optName in self._readOptions:
 						print(f"Unset read-option {optName!r}")
 						del self._readOptions[optName]
@@ -728,7 +734,7 @@ class UI(ui_cmd.UI):
 					)
 				except (KeyboardInterrupt, EOFError):
 					break
-				if value == "":
+				if value == "":  # noqa: PLC1901
 					if optName in self._writeOptions:
 						print(f"Unset write-option {optName!r}")
 						del self._writeOptions[optName]
@@ -801,7 +807,7 @@ class UI(ui_cmd.UI):
 					value = self.askConfigValue(configKey, option)
 				except (KeyboardInterrupt, EOFError):
 					break
-				if value == "":
+				if value == "":  # noqa: PLC1901
 					if configKey in self.config:
 						print(f"Unset config {configKey!r}")
 						del self.config[configKey]

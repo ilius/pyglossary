@@ -178,7 +178,7 @@ class Reader:
 		)
 		for _, _elem in context:
 			elem = cast("Element", _elem)
-			if elem.tag in ("meta_info", "ar", "k", "abr", "dtrn"):
+			if elem.tag in {"meta_info", "ar", "k", "abr", "dtrn"}:
 				break
 			# every other tag before </meta_info> or </ar> is considered info
 			if elem.tag == "abbr_def":
@@ -262,8 +262,8 @@ class Reader:
 		self._file.close()
 		self._file = nullBinaryIO
 
+	@staticmethod
 	def tostring(
-		self,
 		elem: "Element",
 	) -> str:
 		from lxml import etree as ET
@@ -301,7 +301,7 @@ class Reader:
 
 		return titles
 
-	def _mktitle(
+	def _mktitle(  # noqa: PLR6301
 		self,
 		title_element: "Element",
 		include_opts: "Sequence | None" = None,

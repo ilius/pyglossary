@@ -37,5 +37,5 @@ for p in plugins:
 
 	# pprint(tools)
 
-	with open(join(toolsDir, f"{p.lname}.toml"), mode="w") as _file:
+	with open(join(toolsDir, f"{p.lname}.toml"), mode="w", encoding="utf-8") as _file:
 		toml.dump(tools, _file)

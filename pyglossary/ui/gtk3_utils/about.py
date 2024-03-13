@@ -71,8 +71,8 @@ class AboutWidget(gtk.Box):
 		self.show_all()
 
 	# <a href="...">Something</a> does not work with TextView
+	@staticmethod
 	def newTabWidgetTextView(
-		self,
 		text: str,
 		wrap: bool = False,
 		justification: "gtk.Justification | None" = None,
@@ -97,8 +97,8 @@ class AboutWidget(gtk.Box):
 		swin.add(tv)
 		return swin
 
+	@staticmethod
 	def newTabLabelWidget(
-		self,
 		text: str,
 		# wrap: bool = False,
 		# justification: "gtk.Justification | None" = None,
@@ -124,7 +124,8 @@ class AboutWidget(gtk.Box):
 		swin.add(box)
 		return swin
 
-	def newTabTitle(self, title: str, icon: str):
+	@staticmethod
+	def newTabTitle(title: str, icon: str):
 		box = gtk.Box(orientation=gtk.Orientation.VERTICAL)
 		if icon:
 			box.pack_start(imageFromFile(icon), False, False, 5)

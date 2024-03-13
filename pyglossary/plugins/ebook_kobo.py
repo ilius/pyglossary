@@ -99,7 +99,7 @@ def is_cyrillic_char(c: str) -> bool:
 
 	# U+FE2E, U+FE2F: Combining Half Marks
 	# U+1D2B, U+1D78: Phonetic Extensions
-	return c in ("\uFE2E", "\uFE2F", "\u1D2B", "\u1D78")
+	return c in {"\uFE2E", "\uFE2F", "\u1D2B", "\u1D78"}
 
 
 def fixFilename(fname: str) -> str:
@@ -113,7 +113,8 @@ class Writer:
 		"marisa_trie": "marisa-trie",
 	}
 
-	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
+	@staticmethod
+	def stripFullHtmlError(entry: "EntryType", error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
 	def __init__(self, glos: "GlossaryType") -> None:
@@ -127,7 +128,7 @@ class Writer:
 		# img tag has no closing
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
-	def get_prefix(self, word: str) -> str:
+	def get_prefix(self, word: str) -> str:  # noqa: PLR6301
 		if not word:
 			return "11"
 		wo = word[:2].strip().lower()

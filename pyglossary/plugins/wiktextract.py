@@ -18,7 +18,6 @@ from pyglossary.compression import (
 from pyglossary.core import log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.io_utils import nullBinaryIO
-from pyglossary.langs.writing_system import getWritingSystemFromText
 from pyglossary.option import (
 	BoolOption,
 	ListOption,
@@ -317,14 +316,14 @@ class Reader:
 			self.writeSense,
 		)
 
-	def writeSenseGloss(
+	def writeSenseGloss(  # noqa: PLR6301
 		self,
 		hf: "T_htmlfile",
 		text: "str | None",
 	) -> None:
 		hf.write(text or "")
 
-	def writeSenseCategory(
+	def writeSenseCategory(  # noqa: PLR6301
 		self,
 		hf: "T_htmlfile",
 		category: "dict[str, Any]",
@@ -353,7 +352,7 @@ class Reader:
 			hf.write("Categories: ")
 			self.makeList(hf, categories, self.writeSenseCategory)
 
-	def writeSenseExample(
+	def writeSenseExample(  # noqa: PLR6301
 		self,
 		hf: "T_htmlfile",
 		example: "dict[str, str]",
@@ -392,7 +391,7 @@ class Reader:
 				):
 					self.writeSenseExample(hf, example)
 
-	def writeSenseFormOf(
+	def writeSenseFormOf(  # noqa: PLR6301
 		self,
 		hf: "T_htmlfile",
 		form_of: "dict[str, str]",
@@ -458,7 +457,7 @@ class Reader:
 				with hf.element("span", style=self.topicStyle):
 					hf.write(topic)
 
-	def addWordLink(
+	def addWordLink(  # noqa: PLR6301
 		self,
 		hf: "T_htmlfile",
 		word: str,
@@ -624,8 +623,8 @@ class Reader:
 
 		hf.write(ET.Element("br"))
 
+	@staticmethod
 	def makeList(
-		self,
 		hf: "T_htmlfile",
 		input_objects: "list[Any]",
 		processor: "Callable",
@@ -652,9 +651,3 @@ class Reader:
 			for el in input_objects:
 				with hf.element("li"):
 					processor(hf, el)
-
-	def getTitleTag(self, sample: str) -> str:
-		ws = getWritingSystemFromText(sample)
-		if ws:
-			return ws.titleTag
-		return "b"

@@ -52,7 +52,7 @@ For example:
 """,
 )
 
-with open(join(rootDir, "scripts/term-colors.json")) as _file:
+with open(join(rootDir, "scripts/term-colors.json"), encoding="utf-8") as _file:
 	termColors = json.load(_file)
 
 
@@ -188,5 +188,5 @@ text += "\n"
 for image in images:
 	text += "\n" + image
 
-with open(join(rootDir, "doc", "config.rst"), mode="w") as _file:
+with open(join(rootDir, "doc", "config.rst"), mode="w", encoding="utf-8") as _file:
 	_file.write(text)

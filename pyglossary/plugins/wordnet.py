@@ -216,11 +216,12 @@ class WordNet:
 		self.wordnetdir = wordnetdir
 		self.collector: "dict[str, list[str]]" = defaultdict(list)
 
-	def iterlines(self, dict_dir: str) -> Iterator[str]:
+	@staticmethod
+	def iterlines(dict_dir: str) -> Iterator[str]:
 		for name in os.listdir(dict_dir):
 			if not name.startswith("data."):
 				continue
-			with open(os.path.join(dict_dir, name)) as f:
+			with open(os.path.join(dict_dir, name), encoding="utf-8") as f:
 				for line in f:
 					if not line.startswith("  "):
 						yield line
@@ -234,18 +235,18 @@ class WordNet:
 		files: dict[str, io.TextIOWrapper] = {}
 		for name in os.listdir(dict_dir):
 			if name.startswith("data.") and name in file2pos:
-				f = open(os.path.join(dict_dir, name))  # noqa: SIM115
+				f = open(os.path.join(dict_dir, name), encoding="utf-8")  # noqa: SIM115
 				for key in file2pos[name]:
 					files[key] = f
 
 		def a(word: str) -> str:
 			return f'<a href="{word}">{word}</a>'
 
-		for i, line in enumerate(self.iterlines(dict_dir)):
-			if i % 100 == 0 and i > 0:
+		for index, line in enumerate(self.iterlines(dict_dir)):
+			if index % 100 == 0 and index > 0:
 				sys.stdout.write(".")
 				sys.stdout.flush()
-			if i % 5000 == 0 and i > 0:
+			if index % 5000 == 0 and index > 0:
 				sys.stdout.write("\n")
 				sys.stdout.flush()
 			if not line or not line.strip():
@@ -261,7 +262,7 @@ class WordNet:
 			)
 
 			words = synset.words
-			for i, word in enumerate(words):
+			for index2, word in enumerate(words):
 				# TODO: move this block to a func
 				synonyms = ", ".join(a(w) for w in words if w != word)
 				synonyms_str = (
@@ -271,10 +272,14 @@ class WordNet:
 				)
 				pointers = defaultdict(list)
 				for pointer in synset.pointers:
-					if pointer.source and pointer.target and pointer.source - 1 != i:
+					if (
+						pointer.source and
+						pointer.target and
+						pointer.source - 1 != index2
+					):
 						continue
 					symbol = pointer.symbol
-					if symbol and symbol[:1] in (";", "-"):
+					if symbol and symbol[:1] in {";", "-"}:
 						continue
 					try:
 						symbol_desc = getattr(PointerSymbols, synset.ss_type)[symbol]

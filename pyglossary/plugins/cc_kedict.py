@@ -86,14 +86,16 @@ class YamlReader(TextGlossaryReader):
 			"pref": "prefix",
 		}
 
-	def isInfoWord(self, _word: str) -> bool:
+	@classmethod
+	def isInfoWord(cls, _word: str) -> bool:
 		return False
 
-	def fixInfoWord(self, _word: str) -> str:
+	@classmethod
+	def fixInfoWord(cls, _word: str) -> str:
 		return ""
 
+	@staticmethod
 	def _makeList(
-		self,
 		hf: "lxml.etree.htmlfile",
 		input_objects: "list[Any]",
 		processor: "Callable",
@@ -117,7 +119,7 @@ class YamlReader(TextGlossaryReader):
 				with hf.element("li"):
 					processor(hf, el, len(input_objects))
 
-	def _processExample(
+	def _processExample(  # noqa: PLR6301
 		self,
 		hf: "lxml.etree.htmlfile",
 		exampleDict: "dict",
@@ -170,7 +172,7 @@ class YamlReader(TextGlossaryReader):
 				skip_single=False,
 			)
 
-	def _processNote(
+	def _processNote(  # noqa: PLR6301
 		self,
 		hf: "lxml.etree.htmlfile",
 		note: str,

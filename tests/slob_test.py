@@ -134,10 +134,10 @@ class TestReadWrite(BaseTest):
 
 		for k, t, v in self.data:
 			if isinstance(k, str):
-				k = (k,)
+				k = (k,)  # noqa: PLW2901
 			for key in k:
 				if isinstance(key, tuple):
-					key, fragment = key
+					key, fragment = key  # noqa: PLW2901
 				else:
 					fragment = ""
 				self.all_keys.append(key)

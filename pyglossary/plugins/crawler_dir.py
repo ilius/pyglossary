@@ -68,7 +68,8 @@ class Writer:
 		if not isdir(filename):
 			makedirs(filename)
 
-	def filePathFromWord(self, b_word: bytes) -> str:
+	@staticmethod
+	def filePathFromWord(b_word: bytes) -> str:
 		bw = b_word.lower()
 		if len(bw) <= 2:
 			return bw.hex()
@@ -168,7 +169,8 @@ class Reader:
 			defi = _file.read()
 			return self._glos.newEntry(words, defi)
 
-	def _listdirSortKey(self, name: str) -> str:
+	@staticmethod
+	def _listdirSortKey(name: str) -> str:
 		name_nox, ext = splitext(name)
 		if ext == ".d":
 			return name

@@ -43,10 +43,10 @@ def isLeap(y: int) -> bool:
 
 
 def to_jd(year: int, month: int, day: int) -> int:
-	if 0 < year < 10000:  # > 1.5x faster
+	if 0 < year < 10000:  # > 1.5x faster # noqa: PLR2004
 		return datetime(year, month, day).toordinal() + 1721425
 
-	if month <= 2:
+	if month <= 2:  # noqa: PLR2004
 		tm = 0
 	elif isLeap(year):
 		tm = -1
@@ -67,7 +67,7 @@ def to_jd(year: int, month: int, day: int) -> int:
 
 def jd_to(jd: int) -> "tuple[int, int, int]":
 	ordinal = jd - 1721425
-	if 0 < ordinal < 3652060:  # > 4x faster
+	if 0 < ordinal < 3652060:  # > 4x faster  # noqa: PLR2004
 		# datetime(9999, 12, 31).toordinal() == 3652059
 		dt = datetime.fromordinal(ordinal)
 		return (dt.year, dt.month, dt.day)
@@ -82,7 +82,7 @@ def jd_to(jd: int) -> "tuple[int, int, int]":
 		cent * 100 +
 		quad * 4 +
 		yindex +
-		(cent != 4 and yindex != 4)
+		(cent != 4 and yindex != 4)  # noqa: PLR2004
 	)
 	yearday = jd - to_jd(year, 1, 1)
 

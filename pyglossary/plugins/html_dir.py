@@ -110,7 +110,8 @@ class Writer:
 	_css: str = ""
 	_word_title: bool = True
 
-	def stripFullHtmlError(self, entry: "EntryType", error: str) -> None:
+	@staticmethod
+	def stripFullHtmlError(entry: "EntryType", error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
 	def __init__(self, glos: GlossaryType) -> None:
@@ -174,7 +175,7 @@ class Writer:
 
 		fileByWord: "dict[str, list[tuple[str, int]]]" = {}
 		for line in open(join(dirn, "index.txt"), encoding="utf-8"):
-			line = line.rstrip("\n")
+			line = line.rstrip("\n")  # noqa: PLW2901
 			if not line:
 				continue
 			entryIndexStr, wordEsc, filename, _ = line.split("\t")
@@ -201,7 +202,7 @@ class Writer:
 
 		log.info("")
 		for line in open(join(dirn, "links.txt"), encoding="utf-8"):
-			line = line.rstrip("\n")
+			line = line.rstrip("\n")  # noqa: PLW2901
 			if not line:
 				continue
 			target, fileIndexStr, x_start, x_size = line.split("\t")
@@ -240,8 +241,11 @@ class Writer:
 				with open(join(dirn, f"{filename}.new"), mode="wb") as outFile:
 					for linkLine in open(join(dirn, f"links{fileIndex}"), "rb"):
 						outFile.flush()
-						linkLine = linkLine.rstrip(b"\n")
-						b_x_start, b_x_size, b_target = linkLine.split(b"\t")
+						(
+							b_x_start,
+							b_x_size,
+							b_target,
+						) = linkLine.rstrip(b"\n").split(b"\t")
 						outFile.write(
 							inFile.read(
 								int(b_x_start, 16) - inFile.tell(),
@@ -314,7 +318,8 @@ class Writer:
 				)
 			_file.write("</table></body></html>")
 
-	def _subResSrc(self, m: "re.Match") -> str:
+	@staticmethod
+	def _subResSrc(m: "re.Match") -> str:
 		url = m.group(1)
 		if "://" in url:
 			return m.group(0)

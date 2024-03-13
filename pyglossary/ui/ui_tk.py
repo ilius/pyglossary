@@ -474,9 +474,8 @@ class FormatDialog(tix.Toplevel):
 			nextDesc = treev.next(selection[0])
 			if nextDesc:
 				self.setActiveRow(nextDesc)
-		else:
-			if self.items:
-				self.setActiveRow(self.items[0])
+		elif self.items:
+			self.setActiveRow(self.items[0])
 		treev.focus()
 
 	def onUpPress(self, _event):
@@ -642,8 +641,8 @@ class FormatOptionsDialog(tix.Toplevel):
 			]
 			treev.insert("", "end", values=row, iid=optName)  # iid should be rowId
 			# adjust column's width if necessary to fit each value
-			for col_i, value in enumerate(row):
-				value = str(value)
+			for col_i, valueTmp in enumerate(row):
+				value = str(valueTmp)
 				if col_i == 3:
 					value = value.zfill(20)
 					# to reserve window width, because it's hard to resize it later
@@ -749,7 +748,7 @@ class FormatOptionsDialog(tix.Toplevel):
 			return
 		if prop.typ == "bool":
 			rawValue = treev.set(optName, self.valueCol)
-			if rawValue == "":
+			if rawValue == "":  # noqa: PLC1901
 				value = False
 			else:
 				value, isValid = prop.evaluate(rawValue)
@@ -804,8 +803,8 @@ class FormatOptionsDialog(tix.Toplevel):
 					menu.add_cascade(label=groupName, menu=subMenu)
 					maxItemW = max(maxItemW, tkFont.Font().measure(groupName))
 		else:
-			for value in propValues:
-				value = str(value)
+			for valueTmp in propValues:
+				value = str(valueTmp)
 				menu.add_command(
 					label=value,
 					command=valueMenuItemSelectedCommand(value),
@@ -944,7 +943,7 @@ class UI(tix.Frame, UIBase):
 		# rootWin.bind("<Configure>", self.resized)
 		#######################
 		defaultFont = tkFont.nametofont("TkDefaultFont")
-		if core.sysName in ("linux", "freebsd"):
+		if core.sysName in {"linux", "freebsd"}:
 			defaultFont.configure(size=int(defaultFont.cget("size") * 1.4))
 		####
 		self.biggerFont = defaultFont.copy()

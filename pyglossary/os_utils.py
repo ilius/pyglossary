@@ -106,9 +106,9 @@ def _dictzip(filename: str | Path) -> bool:
 def runDictzip(filename: str | Path, method: str = "") -> None:
 	"""Compress file into dictzip format."""
 	res = None
-	if method in ["", "idzip"]:
+	if method in {"", "idzip"}:
 		res = _idzip(filename)
-	if not res and method in ["", "dictzip"]:
+	if not res and method in {"", "dictzip"}:
 		res = _dictzip(filename)
 	if not res:
 		log.warning(

@@ -54,7 +54,7 @@ class EntryFilter:
 	def prepare(self) -> None:
 		"""Run this after glossary info is set and ready."""
 
-	def run(self, entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":  # noqa: PLR6301
 		"""
 		Return an Entry object, or None to skip.
 
@@ -69,7 +69,7 @@ class TrimWhitespaces(EntryFilter):
 	name = "trim_whitespaces"
 	desc = "Remove leading/trailing whitespaces from word(s) and definition"
 
-	def run(self, entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":  # noqa: PLR6301
 		entry.strip()
 		entry.replace("\r", "")
 		return entry
@@ -79,7 +79,7 @@ class NonEmptyWordFilter(EntryFilter):
 	name = "non_empty_word"
 	desc = "Skip entries with empty word"
 
-	def run(self, entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":  # noqa: PLR6301
 		if not entry.s_word:
 			return None
 		return entry
@@ -89,7 +89,7 @@ class NonEmptyDefiFilter(EntryFilter):
 	name = "non_empty_defi"
 	desc = "Skip entries with empty definition"
 
-	def run(self, entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":  # noqa: PLR6301
 		if not entry.defi:
 			return None
 		return entry
@@ -99,7 +99,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 	name = "remove_empty_dup_alt_words"
 	desc = "Remove empty and duplicate alternate words"
 
-	def run(self, entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":  # noqa: PLR6301
 		entry.removeEmptyAndDuplicateAltWords()
 		if not entry.l_word:
 			return None
@@ -111,7 +111,7 @@ class FixUnicode(EntryFilter):
 	desc = "Fix Unicode in word(s) and definition"
 	falseComment = "Do not fix Unicode in word(s) and definition"
 
-	def run(self, entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":  # noqa: PLR6301
 		entry.editFuncWord(fixUtf8)
 		entry.editFuncDefi(fixUtf8)
 		return entry
@@ -142,7 +142,7 @@ class RTLDefi(EntryFilter):
 	name = "rtl"
 	desc = "Make definition right-to-left"
 
-	def run(self, entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":  # noqa: PLR6301
 		entry.editFuncDefi(lambda defi: f'<div dir="rtl">{defi}</div>')
 		return entry
 
@@ -271,7 +271,8 @@ class NormalizeHtml(EntryFilter):
 			re.DOTALL | re.IGNORECASE,
 		)
 
-	def _subLower(self, m: "re.Match") -> str:
+	@staticmethod
+	def _subLower(m: "re.Match") -> str:
 		return m.group(0).lower()
 
 	def _fixDefi(self, st: str) -> str:
@@ -286,7 +287,7 @@ class SkipDataEntry(EntryFilter):
 	name = "skip_resources"
 	desc = "Skip resources / data files"
 
-	def run(self, entry: "EntryType") -> "EntryType | None":
+	def run(self, entry: "EntryType") -> "EntryType | None":  # noqa: PLR6301
 		if entry.isData():
 			return None
 		return entry
@@ -310,7 +311,7 @@ class LanguageCleanup(EntryFilter):
 			self._run_func = self.run_fa
 			log.info("Using Persian filter")
 
-	def run_fa(self, entry: "EntryType") -> "EntryType | None":
+	def run_fa(self, entry: "EntryType") -> "EntryType | None":  # noqa: PLR6301
 		from .persian_utils import faEditStr
 
 		entry.editFuncWord(faEditStr)
@@ -492,6 +493,7 @@ class ShowProgressBar(EntryFilter):
 class ShowMaxMemoryUsage(EntryFilter):
 	name = "max_memory_usage"
 	desc = "Show Max Memory Usage"
+	MAX_WORD_LEN = 30
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		import os
@@ -507,8 +509,8 @@ class ShowMaxMemoryUsage(EntryFilter):
 		if usage > self._max_mem_usage:
 			self._max_mem_usage = usage
 			word = entry.s_word
-			if len(word) > 30:
-				word = word[:37] + "..."
+			if len(word) > self.MAX_WORD_LEN:
+				word = word[:self.MAX_WORD_LEN - 3] + "..."
 			core.trace(log, f"MaxMemUsage: {usage:,}, {word=}")
 		return entry
 

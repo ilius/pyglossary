@@ -219,8 +219,8 @@ class Reader:
 			self._file.close()
 			self._file = nullBinaryIO
 
+	@staticmethod
 	def tostring(
-		self,
 		elem: "Element",
 	) -> str:
 		from lxml.html import tostring
@@ -258,7 +258,7 @@ class Reader:
 
 		return titles
 
-	def _mktitle(
+	def _mktitle(  # noqa: PLR6301
 		self,
 		title_element: "Element",
 		include_opts: "Sequence | None" = None,

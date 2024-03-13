@@ -90,7 +90,7 @@ def render_article(
 		tones.append(tone)
 
 	f = BytesIO()
-	with ET.htmlfile(f, encoding="utf-8") as hf:
+	with ET.htmlfile(f, encoding="utf-8") as hf:  # noqa: PLR1702
 		with hf.element("div", style="border: 1px solid; padding: 5px"):
 			with hf.element("div"):
 				with hf.element("big"):

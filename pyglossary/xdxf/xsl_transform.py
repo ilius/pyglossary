@@ -29,14 +29,18 @@ class XslXdxfTransformer:
 			e.msg += f", run `{core.pip} install lxml` to install"
 			raise e
 
-		with open(join(rootDir, "pyglossary", "xdxf", "xdxf.xsl")) as f:
+		with open(
+			join(rootDir, "pyglossary", "xdxf", "xdxf.xsl"),
+			encoding="utf-8",
+		) as f:
 			xslt_txt = f.read()
 
 		xslt = ET.XML(xslt_txt)
 		self._transform = ET.XSLT(xslt)
 		self._encoding = encoding
 
-	def tostring(self, elem: "_XSLTResultTree | Element") -> str:
+	@staticmethod
+	def tostring(elem: "_XSLTResultTree | Element") -> str:
 		from lxml import etree as ET
 
 		return (

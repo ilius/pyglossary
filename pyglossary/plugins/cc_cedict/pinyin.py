@@ -41,7 +41,7 @@ def convert(word: str) -> "tuple[str, str]":
 
 	if tone == "5":
 		return pinyin, tone
-	if tone not in ("1", "2", "3", "4"):
+	if tone not in {"1", "2", "3", "4"}:
 		return word, ""
 
 	for vowel in VOWELS:

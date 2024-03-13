@@ -304,7 +304,8 @@ class PluginProp:
 	def canWrite(self) -> bool:
 		return self._canWrite
 
-	def getOptionAttrNamesFromClass(self, rwclass: "type") -> "list[str]":
+	@staticmethod
+	def getOptionAttrNamesFromClass(rwclass: "type") -> "list[str]":
 		nameList = []
 
 		for cls in (*rwclass.__bases__, rwclass):
@@ -521,7 +522,7 @@ class PluginProp:
 			if str(param.default) != "<class 'inspect._empty'>":
 				extraOptNames.append(name)
 				continue
-			if name not in ("filename", "dirname"):
+			if name not in {"filename", "dirname"}:
 				extraOptNames.append(name)
 		if extraOptNames:
 			log.warning(f"{format}: {extraOptNames = }")

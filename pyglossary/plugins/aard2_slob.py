@@ -181,7 +181,8 @@ class Reader:
 			return 0
 		return len(self._slobObj)
 
-	def _href_sub(self, m: "re.Match") -> str:
+	@staticmethod
+	def _href_sub(m: "re.Match") -> str:
 		st = m.group(0)
 		if "//" in st:
 			return st
@@ -213,7 +214,7 @@ class Reader:
 			word = blob.key
 
 			ctype = blob.content_type.split(";")[0]
-			if ctype not in (MIME_HTML, MIME_TEXT):
+			if ctype not in {MIME_HTML, MIME_TEXT}:
 				log.debug(f"unknown {blob.content_type=} in {word=}")
 				word = word.removeprefix("~/")
 				yield self._glos.newDataEntry(word, blob.content)
@@ -278,8 +279,8 @@ class Writer:
 		self._resPrefix = ""
 		self._slobWriter: "slob.Writer | None" = None
 
+	@staticmethod
 	def _slobObserver(
-		self,
 		event: "slob.WriterEvent",  # noqa: F401, F821
 	) -> None:
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
@@ -357,7 +358,7 @@ class Writer:
 		entry.detectDefiFormat()
 		defiFormat = entry.defiFormat
 
-		if self._word_title and defiFormat in ("h", "m"):
+		if self._word_title and defiFormat in {"h", "m"}:
 			if defiFormat == "m":
 				defiFormat = "h"
 			title = self._glos.wordTitleStr(

@@ -54,7 +54,7 @@ lint.select = [
     # "ERA",   # eradicate
     "PD",    # pandas-vet
     "PGH",   # pygrep-hooks
-    # "PL",    # Pylint
+    "PL",    # Pylint
     # "TRY",   # tryceratops, they all sound BS
     # "FLY",   # flynt
     "NPY",   # NumPy-specific rules
@@ -71,6 +71,16 @@ lint.ignore = [
     "DTZ005", # The use of `datetime.datetime.now()` without `tz` argument is not allowed
 	"PGH003", # Use specific rule codes when ignoring type issues
 
+    "PLR0904", # Too many public methods (? > 20)
+    "PLR0912", # Too many branches
+    "PLR0913", # Too many arguments in function definition
+    "PLR0914", # Too many local variables
+    "PLR0915", # Too many statements
+    "PLR0917", # Too many positional arguments
+    "PLR2004", # Magic value used in comparison, consider replacing `...` with a constant variable
+
+    "PLC0415", # `import` should be at the top-level of a file
+    "PLW0603", # Using the global statement to update `mockLog` is discouraged
     "PT027", # Use `pytest.raises` instead of unittest-style `assertRaises`, why?
     "PD011", # Use `.to_numpy()` instead of `.values`, WTF?
     "ICN001", # `tkinter` should be imported as `tk`, WTF?
@@ -119,37 +129,25 @@ lint.ignore = [
 # since which Python is comma after **kwargs allowd?
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
-lint.fixable = [
-    "RUF",
-    "Q",
-    "UP010", # Unnecessary `__future__`"
-    "SIM108", # Use ternary operator {contents} instead of if-else-block
-    "C408", # Unnecessary `dict` call (rewrite as a literal)
-    "F401",
-    "E", "F", "W",
-    "RET",
-    "I",
-    "COM",
-    "TCH",
-    "ANN",
-    "W291",
-    "W293",
-    "D",
-    "UP004",
-    "UP006",
-    "UP008",
-    "UP015",
-    "UP024",
-    "UP028",
-    "UP030",
-    "UP031",
-    "UP032",
-    "UP033",
-    "UP034",
-    "UP039",
-    "UP035", # Import from `collections.abc` instead: `Generator|Iterator`
-    # "TCH003", Move standard library import `...` into a type-checking block
-]
+# lint.fixable = [
+#     "ANN",
+#     "C408", # Unnecessary `dict` call (rewrite as a literal)
+#     "COM",
+#     "D",
+#     "E",
+#     "F",
+#     "W",
+#     "F401",
+#     "I",
+#     "Q",
+#     "PIE790",
+#     "RET",
+#     "RUF",
+#     # "SIM",
+#     "SIM108", # Use ternary operator {contents} instead of if-else-block
+#     "TCH",
+#     "UP",
+# ]
 lint.unfixable = []
 
 # Exclude a variety of commonly ignored directories.
@@ -214,13 +212,21 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
     "PT018", # Assertion should be broken down into multiple parts
     "D",
     "RUF015", # Prefer `next(zip(*_list, strict=False))` over single element slice
+    "PLR2004", # Magic value used in comparison, consider replacing `...` with a constant variable
 ]
 "scripts/wiki-formats.py" = ["E501"]
 "pyglossary/io_utils.py" = ["ANN"]
 "pyglossary/plugins/babylon_bgl/bgl_reader_debug.py" = ["ANN", "FURB"]
 "pyglossary/ui/*.py" = ["ANN", "T201", "PERF203"]
 "pyglossary/ui/*/*.py" = ["ANN", "T201", "PERF203"]
-"tests/*.py" = ["ANN", "T201"]
+"pyglossary/ui/ui_*.py" = [
+    "PLR6301", # Method `...` could be a function, class method, or static method
+]
+"tests/*.py" = [
+    "ANN",
+    "T201",
+    "PLR6301", # Method `...` could be a function, class method, or static method
+]
 "*_test.py" = [
     "ANN",
     "T201",

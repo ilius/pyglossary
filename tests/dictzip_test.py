@@ -23,7 +23,7 @@ class TestDictzip(TestGlossaryErrorsBase):
 		self.test_file_path = Path(self.tempDir) / "test_file.txt"
 		filename = self.test_file_path.name + ".dz"
 		self.result_file_path = self.test_file_path.parent / filename
-		with open(self.test_file_path, "a") as tmp_file:
+		with open(self.test_file_path, "a", encoding="utf-8") as tmp_file:
 			tmp_file.write(TEXT)
 
 	def skip_on_dep(self, method: str) -> None:

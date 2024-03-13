@@ -85,9 +85,9 @@ def main() -> None:
 	if len(sys.argv) < 2:
 		prog_name = path.basename(sys.argv[0])
 		log.info(f"usage:\n  {prog_name} filename")
-		exit(1)
+		sys.exit(1)
 	try:
 		run(sys.argv[1])
 	except JingTestError as e:
 		log.fatal(str(e))
-		exit(e.returncode)
+		sys.exit(e.returncode)
