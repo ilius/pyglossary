@@ -22,6 +22,7 @@ class WritingSystem(NamedTuple):
 	comma: str = ", "
 	pop: int | float = 0  # population in millions
 
+
 # digits and FULLWIDTH DIGITs are considered neutral/ignored, not Latin
 
 # scripts are separated into multiple groups based on their popularity

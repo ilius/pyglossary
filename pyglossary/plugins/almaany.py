@@ -78,8 +78,7 @@ class Reader:
 				alternateDict[row[0]] = [row[1]]
 
 		self._cur.execute(
-			"select word, searchword, root, meaning from WordsTable"
-			" order by id",
+			"select word, searchword, root, meaning from WordsTable order by id",
 		)
 		# FIXME: iteration over self._cur stops after one entry
 		# and self._cur.fetchone() returns None

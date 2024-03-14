@@ -109,8 +109,7 @@ class Writer:
 			"'w' TEXT, 'm' TEXT);\n",
 		)
 		fileObj.write(
-			"CREATE TABLE alt ('id' INTEGER NOT NULL, "
-			"'w' TEXT);\n",
+			"CREATE TABLE alt ('id' INTEGER NOT NULL, 'w' TEXT);\n",
 		)
 
 		if self._transaction:

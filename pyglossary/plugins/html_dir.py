@@ -305,12 +305,11 @@ class Writer:
 			encoding=self._encoding,
 		) as _file:
 			_file.write(
-				infoHeader +
-				'<table>'
-				'<tr>'
+				infoHeader + "<table>"
+				"<tr>"
 				'<th width="%10">Key</th>'
 				'<th width="%90">Value</th>'
-				'</tr>\n',
+				"</tr>\n",
 			)
 			for key, value in glos.iterInfo():
 				_file.write(

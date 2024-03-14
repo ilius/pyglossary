@@ -90,7 +90,8 @@ optionsProp: "dict[str, Option]" = {
 	),
 }
 
-csv.field_size_limit(0x7fffffff)
+csv.field_size_limit(0x7FFFFFFF)
+
 
 class Reader:
 	compressions = stdCompressions

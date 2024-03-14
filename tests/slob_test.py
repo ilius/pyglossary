@@ -306,7 +306,7 @@ class TestFind(BaseTest):
 			"cc",
 			"Äā",
 			"ăÀ",
-			"a\u00A0a",
+			"a\u00a0a",
 			"a-a",
 			"a\u2019a",
 			"a\u2032a",

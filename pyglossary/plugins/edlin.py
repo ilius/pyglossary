@@ -153,8 +153,7 @@ class Reader:
 				defi = _file.read()
 				if not defi:
 					log.warning(
-						f"Edlin Reader: no definition for word {word!r}"
-						", skipping",
+						f"Edlin Reader: no definition for word {word!r}, skipping",
 					)
 					yield None  # update progressbar
 					continue

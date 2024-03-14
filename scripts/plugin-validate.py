@@ -22,7 +22,7 @@ plugins = [
 
 data = []
 for p in plugins:
-    module = p.module
-    # print(module.__file__)
-    p.checkModule(module)
-    p.checkModuleMore(module)
+	module = p.module
+	# print(module.__file__)
+	p.checkModule(module)
+	p.checkModuleMore(module)

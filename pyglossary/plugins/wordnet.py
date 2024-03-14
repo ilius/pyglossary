@@ -273,9 +273,9 @@ class WordNet:
 				pointers = defaultdict(list)
 				for pointer in synset.pointers:
 					if (
-						pointer.source and
-						pointer.target and
-						pointer.source - 1 != index2
+						pointer.source
+						and pointer.target
+						and pointer.source - 1 != index2
 					):
 						continue
 					symbol = pointer.symbol

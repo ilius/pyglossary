@@ -188,8 +188,7 @@ class Reader:
 			wordCount += 1
 
 		log.info(
-			"extracting links done, "
-			f"sizeof(linksDict)={sys.getsizeof(linksDict)}",
+			f"extracting links done, sizeof(linksDict)={sys.getsizeof(linksDict)}",
 		)
 		log.info(f"{wordCount = }")
 		self._linksDict = linksDict

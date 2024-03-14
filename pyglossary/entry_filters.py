@@ -191,10 +191,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 
 class RemoveHtmlTags(EntryFilter):
 	name = "remove_html"
-	desc = (
-		"Remove given comma-separated HTML tags"
-		" (not their contents) from definition"
-	)
+	desc = "Remove given comma-separated HTML tags (not their contents) from definition"
 
 	def __init__(self, glos: "GlossaryType", tagsStr: str) -> None:
 		tags = tagsStr.split(",")
@@ -264,10 +261,7 @@ class NormalizeHtml(EntryFilter):
 	) -> None:
 		log.info("Normalizing HTML tags")
 		self._pattern = re.compile(
-			"(" + "|".join(
-				fr"</?{tag}[^<>]*?>"
-				for tag in self._tags
-			) + ")",
+			"(" + "|".join(rf"</?{tag}[^<>]*?>" for tag in self._tags) + ")",
 			re.DOTALL | re.IGNORECASE,
 		)
 
@@ -510,7 +504,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 			self._max_mem_usage = usage
 			word = entry.s_word
 			if len(word) > self.MAX_WORD_LEN:
-				word = word[:self.MAX_WORD_LEN - 3] + "..."
+				word = word[: self.MAX_WORD_LEN - 3] + "..."
 			core.trace(log, f"MaxMemUsage: {usage:,}, {word=}")
 		return entry
 
@@ -529,18 +523,18 @@ entryFiltersRules = [
 	("normalize_html", False, NormalizeHtml),
 	("unescape_word_links", False, UnescapeWordLinks),
 	(None, True, LanguageCleanup),
-
+	# -------------------------------------
 	# TODO
 	# ("text_list_symbol_cleanup", False, TextListSymbolCleanup),
-
+	# -------------------------------------
 	(None, True, NonEmptyWordFilter),
 	(None, True, NonEmptyDefiFilter),
 	(None, True, RemoveEmptyAndDuplicateAltWords),
-
+	# -------------------------------------
 	# filters that are enabled by plugins using glossary methods:
 	(None, False, PreventDuplicateWords),
 	(None, False, StripFullHtml),
-
+	# -------------------------------------
 	# filters are added conditionally (other than with config or glossary methods):
 	(None, False, ShowProgressBar),
 	(None, False, ShowMaxMemoryUsage),

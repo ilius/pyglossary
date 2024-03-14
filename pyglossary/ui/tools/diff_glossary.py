@@ -312,10 +312,7 @@ def gitDiffMain() -> None:
 
 	filename1 = sys.argv[2]
 	filename2 = sys.argv[1]
-	header = (
-		f"{'_' * 80}\n\n"
-		f"### File: {filename2}  ({old_hex}..{new_hex})\n"
-	)
+	header = f"{'_' * 80}\n\n### File: {filename2}  ({old_hex}..{new_hex})\n"
 
 	resDir = filename2 + "_res"
 	if os.path.isdir(resDir):

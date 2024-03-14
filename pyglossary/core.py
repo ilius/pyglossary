@@ -444,8 +444,7 @@ elif os.sep == "\\":  # Operating system is Windows
 	pip = "pip3"
 else:
 	raise RuntimeError(
-		f"Unknown path separator(os.sep=={os.sep!r})"
-		", unknown operating system!",
+		f"Unknown path separator(os.sep=={os.sep!r}), unknown operating system!",
 	)
 
 pluginsDir = join(rootDir, "pyglossary", "plugins")

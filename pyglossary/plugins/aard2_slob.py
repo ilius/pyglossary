@@ -187,7 +187,8 @@ class Reader:
 		if "//" in st:
 			return st
 		return st.replace('href="', 'href="bword://').replace(
-			"href='", "href='bword://",
+			"href='",
+			"href='bword://",
 		)
 
 	def __iter__(self) -> "Iterator[EntryType | None]":

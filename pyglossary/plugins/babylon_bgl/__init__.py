@@ -21,18 +21,18 @@ from .bgl_reader import BglReader as Reader
 from .bgl_reader import optionsProp
 
 __all__ = [
-    "Reader",
-    "description",
-    "enable",
-    "extensionCreate",
-    "extensions",
-    "format",
-    "kind",
-    "lname",
-    "optionsProp",
-    "singleFile",
-    "website",
-    "wiki",
+	"Reader",
+	"description",
+	"enable",
+	"extensionCreate",
+	"extensions",
+	"format",
+	"kind",
+	"lname",
+	"optionsProp",
+	"singleFile",
+	"website",
+	"wiki",
 ]
 
 enable = True

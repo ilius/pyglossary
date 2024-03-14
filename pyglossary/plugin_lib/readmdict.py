@@ -83,7 +83,6 @@ def _decrypt_regcode_by_userid(reg_code: bytes, userid: bytes) -> bytes:
 
 
 class MDict:
-
 	"""
 	Base class which reads in header and key block.
 	It has no public methods and serves only as code sharing base class.
@@ -659,7 +658,6 @@ class MDict:
 
 
 class MDD(MDict):
-
 	"""
 	MDict resource file format (*.MDD) reader.
 	>>> mdd = MDD('example.mdd')
@@ -678,7 +676,6 @@ class MDD(MDict):
 
 
 class MDX(MDict):
-
 	"""
 	MDict dictionary file format (*.MDD) reader.
 	>>> mdx = MDX('example.mdx')

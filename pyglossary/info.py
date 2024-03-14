@@ -1,10 +1,10 @@
 __all__ = [
-    "c_author",
-    "c_name",
-    "c_publisher",
-    "c_sourceLang",
-    "c_targetLang",
-    "infoKeysAliasDict",
+	"c_author",
+	"c_name",
+	"c_publisher",
+	"c_sourceLang",
+	"c_targetLang",
+	"infoKeysAliasDict",
 ]
 
 c_name = "name"

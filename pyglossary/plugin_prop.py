@@ -383,8 +383,7 @@ class PluginProp:
 
 		if hasattr(module, "write"):
 			log.error(
-				f"plugin {name!r} has write function, "
-				"must migrate to Writer class",
+				f"plugin {name!r} has write function, must migrate to Writer class",
 			)
 
 		extensions = module.extensions
@@ -398,8 +397,7 @@ class PluginProp:
 
 		if not isinstance(self.readDepends, dict):
 			log.error(
-				f"invalid depends={self.readDepends}"
-				f" in {self.name!r}.Reader class",
+				f"invalid depends={self.readDepends} in {self.name!r}.Reader class",
 			)
 
 		if not isinstance(self.writeDepends, dict):
@@ -411,13 +409,10 @@ class PluginProp:
 		for name, opt in self.optionsProp.items():
 			if name.lower() != name:
 				suggestName = "".join(
-					"_" + x.lower() if x.isupper()
-					else x
-					for x in name
+					"_" + x.lower() if x.isupper() else x for x in name
 				)
 				log.debug(
-					f"{self.name}: please rename option "
-					f"{name} to {suggestName}",
+					f"{self.name}: please rename option {name} to {suggestName}",
 				)
 			if not opt.comment:
 				log.debug(

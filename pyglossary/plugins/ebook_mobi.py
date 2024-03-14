@@ -369,12 +369,10 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			kindlegen_path = shutil.which("kindlegen") or ""
 		if not kindlegen_path:
 			log.warning(
-				"Not running kindlegen, "
-				f"the raw files are located in {filename}",
+				f"Not running kindlegen, the raw files are located in {filename}",
 			)
 			log.warning(
-				"Provide KindleGen path with: "
-				"--write-options 'kindlegen_path=...'",
+				"Provide KindleGen path with: --write-options 'kindlegen_path=...'",
 			)
 			return
 

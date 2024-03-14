@@ -466,8 +466,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 				break
 
 		result = {
-			defiFormat: itemCount / count
-			for defiFormat, itemCount in counter.items()
+			defiFormat: itemCount / count for defiFormat, itemCount in counter.items()
 		}
 		for defiFormat in ("h", "m", "x"):
 			if defiFormat not in result:
@@ -641,8 +640,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
 				log.error(
-					f"Invalid read option {key!r} "
-					f"given for {format} format",
+					f"Invalid read option {key!r} given for {format} format",
 				)
 				del options[key]
 
@@ -769,8 +767,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
 				log.error(
-					f"Invalid write option {key!r}"
-					f" given for {format} format",
+					f"Invalid write option {key!r} given for {format} format",
 				)
 				del options[key]
 
@@ -961,8 +958,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 
 		if not self.alts:
 			log.warning(
-				"SQLite mode only works with enable_alts=True"
-				", force-enabling it.",
+				"SQLite mode only works with enable_alts=True, force-enabling it.",
 			)
 		self._config["enable_alts"] = True
 		self._sqlite = True
@@ -1007,8 +1003,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
 		"""
 		if args.direct and args.sqlite:
 			raise ValueError(
-				f"Conflictng arguments: direct={args.direct}, "
-				f"sqlite={args.sqlite}",
+				f"Conflictng arguments: direct={args.direct}, sqlite={args.sqlite}",
 			)
 
 		sort = self._checkSortFlag(plugin, args.sort)

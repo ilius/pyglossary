@@ -764,8 +764,7 @@ class Reader:
 		extent_elem = header.find(".//extent", self.ns)
 		if extent_elem is None:
 			log.warning(
-				"did not find 'extent' tag in metedata"
-				", progress bar will not word",
+				"did not find 'extent' tag in metedata, progress bar will not word",
 			)
 			return
 		extent = extent_elem.text or ""
@@ -969,11 +968,8 @@ class Reader:
 
 		if self._auto_rtl is None:
 			glos = self._glos
-			if (
-				(glos.sourceLang
-				and glos.sourceLang.rtl)
-				or (glos.targetLang
-				and glos.targetLang.rtl)
+			if (glos.sourceLang and glos.sourceLang.rtl) or (
+				glos.targetLang and glos.targetLang.rtl
 			):
 				log.info("setting auto_rtl=True")
 				self._auto_rtl = True

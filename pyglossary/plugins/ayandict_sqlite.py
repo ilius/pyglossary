@@ -92,11 +92,7 @@ class Reader:
 			"GROUP BY entry.id;",
 		)
 		for row in self._cur.fetchall():
-			terms = [row[0]] + [
-				alt
-				for alt in loads(row[2])
-				if alt
-			]
+			terms = [row[0]] + [alt for alt in loads(row[2]) if alt]
 			article = row[1]
 			yield self._glos.newEntry(terms, article, defiFormat="h")
 
@@ -237,13 +233,9 @@ class Writer:
 			subs: "set[str]" = set()
 			for word in term.split(" "):
 				eword = "\n" + word
-				subs.update(
-					eword[i:i + 3]
-					for i in range(len(eword) - 2)
-				)
+				subs.update(eword[i : i + 3] for i in range(len(eword) - 2))
 			for sub in subs:
 				cur.execute(
-					"INSERT INTO fuzzy3"
-					"(sub, term, id) VALUES (?, ?, ?);",
+					"INSERT INTO fuzzy3(sub, term, id) VALUES (?, ?, ?);",
 					(sub, term, _id),
 				)

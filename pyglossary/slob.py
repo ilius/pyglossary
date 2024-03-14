@@ -50,7 +50,6 @@ import icu  # type: ignore
 from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 
 if TYPE_CHECKING:
-
 	from .icu_types import T_Collator
 
 __all__ = ["MIME_HTML", "MIME_TEXT", "Writer", "open"]
@@ -58,7 +57,7 @@ __all__ = ["MIME_HTML", "MIME_TEXT", "Writer", "open"]
 DEFAULT_COMPRESSION = "lzma2"
 
 UTF8 = "utf-8"
-MAGIC = b"!-1SLOB\x1F"
+MAGIC = b"!-1SLOB\x1f"
 
 
 class Compression(NamedTuple):

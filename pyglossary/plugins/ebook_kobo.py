@@ -82,24 +82,24 @@ optionsProp: "dict[str, Option]" = {}
 def is_cyrillic_char(c: str) -> bool:
 	# U+0400 - U+04FF: Cyrillic
 	# U+0500 - U+052F: Cyrillic Supplement
-	if "\u0400" <= c <= "\u052F":
+	if "\u0400" <= c <= "\u052f":
 		return True
 
 	# U+2DE0 - U+2DFF: Cyrillic Extended-A
-	if "\u2DE0" <= c <= "\u2DFF":
+	if "\u2de0" <= c <= "\u2dff":
 		return True
 
 	# U+A640 - U+A69F: Cyrillic Extended-B
-	if "\uA640" <= c <= "\uA69F":
+	if "\ua640" <= c <= "\ua69f":
 		return True
 
 	# U+1C80 - U+1C8F: Cyrillic Extended-C
-	if "\u1C80" <= c <= "\u1C8F":
+	if "\u1c80" <= c <= "\u1c8f":
 		return True
 
 	# U+FE2E, U+FE2F: Combining Half Marks
 	# U+1D2B, U+1D78: Phonetic Extensions
-	return c in {"\uFE2E", "\uFE2F", "\u1D2B", "\u1D78"}
+	return c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
 
 
 def fixFilename(fname: str) -> str:

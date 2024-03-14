@@ -85,10 +85,7 @@ def renderTable(rows):
 				if lineI >= len(newRows):
 					newRows.append([" " * width[colI] for colI in range(colN)])
 				newRows[lineI][colI] = line.ljust(width[colI], " ")
-		lines += [
-			"| " + " | ".join(row) + " |"
-			for row in newRows
-		]
+		lines += ["| " + " | ".join(row) + " |" for row in newRows]
 		if rowI == 0:
 			lines.append(headerSep)
 		else:

@@ -1175,8 +1175,7 @@ class BglReader:
 
 		if encodings:
 			log.debug(
-				f"decoding charset tags, text={b_text}"
-				"\nunclosed <charset...> tag\n",
+				f"decoding charset tags, text={b_text}\nunclosed <charset...> tag\n",
 			)
 		return u_text, defaultEncodingOnly
 
@@ -1189,8 +1188,7 @@ class BglReader:
 		b_word, strip_count = stripDollarIndexes(b_word)
 		if strip_count > 1:
 			log.debug(
-				f"processKey({b_word}):\n"
-				f"number of dollar indexes = {strip_count}",
+				f"processKey({b_word}):\nnumber of dollar indexes = {strip_count}",
 			)
 		# convert to unicode
 		if self._strict_string_conversion:

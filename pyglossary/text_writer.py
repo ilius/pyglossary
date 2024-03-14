@@ -246,5 +246,3 @@ def writeTxt(
 	writer.open(filename)
 	yield from writer.write()
 	writer.finish()
-
-

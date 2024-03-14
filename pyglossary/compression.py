@@ -31,15 +31,19 @@ def compressionOpenFunc(c: str) -> "Callable | None":
 		return open
 	if c == "gz":
 		import gzip
+
 		return gzip.open
 	if c == "bz2":
 		import bz2
+
 		return bz2.open
 	if c == "lzma":
 		import lzma
+
 		return lzma.open
 	if c == "dz":
 		import gzip
+
 		return gzip.open
 	return None
 

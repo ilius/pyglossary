@@ -114,8 +114,7 @@ old format
 if TYPE_CHECKING:
 
 	class TransformerType(typing.Protocol):
-		def transform(self, article: "Element") -> str:
-			...
+		def transform(self, article: "Element") -> str: ...
 
 
 class Reader:

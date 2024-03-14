@@ -123,15 +123,13 @@ class EbookWriter:
 	</body>
 </html>"""
 	INDEX_XHTML_LINK_TEMPLATE = (
-		'   <span class="indexGroup">'
-		'<a href="{ref}">{label}</a></span>'
+		'   <span class="indexGroup"><a href="{ref}">{label}</a></span>'
 	)
 
 	INDEX_XHTML_LINK_JOINER = " &#8226;\n"
 
 	OPF_MANIFEST_ITEM_TEMPLATE = (
-		'  <item href="{ref}" id="{id}"'
-		' media-type="{mediaType}" />'
+		'  <item href="{ref}" id="{id}" media-type="{mediaType}" />'
 	)
 
 	OPF_SPINE_ITEMREF_TEMPLATE = '  <itemref idref="{id}" />'

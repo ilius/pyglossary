@@ -602,9 +602,7 @@ class QuickDic:
 
 		log.info("Normalize tokens ...")
 		tokens = [
-			(t, comparator.normalize(t), ttype, tidx)
-			for t, ttype, tidx in tokens1
-			if t
+			(t, comparator.normalize(t), ttype, tidx) for t, ttype, tidx in tokens1 if t
 		]
 
 		if len(synonyms) > 0:

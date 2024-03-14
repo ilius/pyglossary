@@ -49,14 +49,12 @@ class IncrementalFileWriter(typing.Protocol):
 		version: "AnyStr | None" = ...,
 		standalone: "bool | None" = ...,
 		doctype: "AnyStr | None" = ...,
-	) -> None:
-		...
+	) -> None: ...
 
 	def write_doctype(
 		self,
 		doctype: "AnyStr | None",
-	) -> None:
-		...
+	) -> None: ...
 
 	def write(
 		self,
@@ -64,11 +62,9 @@ class IncrementalFileWriter(typing.Protocol):
 		with_tail: bool = ...,
 		pretty_print: bool = ...,
 		method: _OutputMethodArg | None = ...,
-	) -> None:
-		...
+	) -> None: ...
 
-	def flush(self) -> None:
-		...
+	def flush(self) -> None: ...
 
 	def method(
 		self,
@@ -93,14 +89,12 @@ class AsyncIncrementalFileWriter(typing.Protocol):
 		version: "AnyStr | None" = ...,
 		standalone: "bool | None" = ...,
 		doctype: "AnyStr | None" = ...,
-	) -> None:
-		...
+	) -> None: ...
 
 	async def write_doctype(
 		self,
 		doctype: "AnyStr | None",
-	) -> None:
-		...
+	) -> None: ...
 
 	async def write(
 		self,
@@ -108,11 +102,9 @@ class AsyncIncrementalFileWriter(typing.Protocol):
 		with_tail: bool = ...,
 		pretty_print: bool = ...,
 		method: "_OutputMethodArg | None" = ...,
-	) -> None:
-		...
+	) -> None: ...
 
-	async def flush(self) -> None:
-		...
+	async def flush(self) -> None: ...
 
 	def method(
 		self,
