@@ -240,10 +240,9 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "tab"
-# Like Black, respect magic trailing commas.
 skip-magic-trailing-comma = false
-# Like Black, automatically detect the appropriate line ending.
-line-ending = "auto"
+line-ending = "lf"
+docstring-code-format = false
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
