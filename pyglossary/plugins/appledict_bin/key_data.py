@@ -41,7 +41,7 @@ d:DCSEntryTitle="fine" d:anchor="xpointer(//*[@id='m_en_gbus0362750.070'])"/>
 show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
 """
 
-
+# TODO: switch to dataclass
 class KeyData:
 
 	"""
@@ -77,7 +77,7 @@ class KeyData:
 		"priority",
 	]
 
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		priority: int,
 		parentalControl: int,

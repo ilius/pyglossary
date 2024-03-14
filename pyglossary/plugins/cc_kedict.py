@@ -56,7 +56,7 @@ class YamlReader(TextGlossaryReader):
 		# 0.5ex ~= 0.3em, but "ex" is recommended
 	)
 
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		glos: "GlossaryType",
 		spellKey: str = "",

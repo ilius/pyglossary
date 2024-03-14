@@ -102,7 +102,7 @@ class StoreConstAction(argparse.Action):
 		self.same_dest = same_dest
 		self.const_value = const_value
 
-	def __call__(
+	def __call__(  # noqa: PLR0913
 		self,
 		parser: "argparse.ArgumentParser | None" = None,
 		namespace: "argparse.Namespace | None" = None,
@@ -182,7 +182,7 @@ def registerConfigOption(
 	)
 
 
-def base_ui_run(
+def base_ui_run(  # noqa: PLR0913
 	inputFilename: str = "",
 	outputFilename: str = "",
 	inputFormat: str = "",

@@ -13,7 +13,7 @@ __all__ = ["TestGlossaryStarDictBase"]
 
 
 class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
-	def convert_txt_stardict(
+	def convert_txt_stardict(  # noqa: PLR0913
 		self,
 		fname,
 		fname2="",
@@ -67,7 +67,7 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 				self.downloadFile(f"{fname2}.sd/{fname2}.{ext}"),
 			)
 
-	def convert_txt_stardict_zip(
+	def convert_txt_stardict_zip(  # noqa: PLR0913
 		self,
 		fname,
 		sha1sumDict,

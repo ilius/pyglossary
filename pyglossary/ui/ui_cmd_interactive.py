@@ -1096,7 +1096,7 @@ class UI(ui_cmd.UI):
 					return succeed
 			print("Press Control + C to exit")
 
-	def run(
+	def run(  # noqa: PLR0913
 		self,
 		inputFilename: str = "",
 		outputFilename: str = "",

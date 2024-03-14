@@ -51,7 +51,7 @@ PICKLE_PROTOCOL = 4
 
 
 class SqEntryList:
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
 		entryFromRaw: "Callable[[RawEntryType], EntryType]",

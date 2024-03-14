@@ -139,7 +139,7 @@ class Glossary(GlossaryCommon):
 		self._sort = True
 		self._iter = self._loadedEntryGen()
 
-	def convert(
+	def convert(  # noqa: PLR0913
 		self,
 		inputFilename: str,
 		inputFormat: str = "",

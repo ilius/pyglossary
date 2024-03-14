@@ -224,7 +224,7 @@ class TestGlossaryBase(unittest.TestCase):
 			actualSha1 = hashlib.sha1(data).hexdigest()
 			self.assertEqual(actualSha1, expectedSha1, msg=f"file: {zfpath}")
 
-	def convert(
+	def convert(  # noqa: PLR0913
 		self,
 		fname,  # input file with extension
 		fname2,  # output file with extension

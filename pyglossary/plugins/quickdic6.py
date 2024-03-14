@@ -514,8 +514,9 @@ class Comparator:
 		return a.replace("-", "").replace("þ", "th").replace("Þ", "Th")
 
 
+# TODO: switch to dataclass
 class QuickDic:
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		name: str,
 		sources: list[tuple[str, int]],
@@ -568,15 +569,15 @@ class QuickDic:
 			created=created,
 		)
 
-	def add_index(
+	def add_index(  # noqa: PLR0913
 		self,
 		short_name: str,
 		long_name: str,
 		iso: str,
 		normalizer_rules: str,
-		swap_flag: bool,
 		synonyms: dict | None = None,
 	) -> None:
+		swap_flag = False
 		comparator = Comparator(iso, normalizer_rules, self.version)
 
 		synonyms = synonyms or {}
@@ -881,7 +882,6 @@ class Writer:
 			long_name,
 			iso,
 			normalizer_rules,
-			False,
 			synonyms=synonyms,
 		)
 

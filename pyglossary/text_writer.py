@@ -57,7 +57,8 @@ class TextGlossaryWriter:
 		self._outInfoKeysAliasDict = outInfoKeysAliasDict
 		# TODO: replace outInfoKeysAliasDict arg with a func?
 
-	def setAttrs(
+	# TODO: use @property setters
+	def setAttrs(  # noqa: PLR0913
 		self,
 		encoding: "str | None" = None,
 		newline: "str | None" = None,
@@ -210,7 +211,7 @@ class TextGlossaryWriter:
 			os.rmdir(self._resDir)
 
 
-def writeTxt(
+def writeTxt(  # noqa: PLR0913
 	glos: "GlossaryType",
 	entryFmt: str = "",  # contain {word} and {defi}
 	filename: str = "",

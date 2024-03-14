@@ -96,7 +96,7 @@ class XdxfTransformer:
 		# print(prev)
 		return False
 
-	def writeString(
+	def writeString(  # noqa: PLR0913
 		self,
 		hf: "T_htmlfile",
 		child: str,
@@ -330,7 +330,7 @@ class XdxfTransformer:
 		# TODO: formatting?
 		hf.write(f"{child.text}")
 
-	def writeChildElem(
+	def writeChildElem(  # noqa: PLR0913
 		self,
 		hf: "T_htmlfile",
 		child: "Element",
@@ -355,7 +355,7 @@ class XdxfTransformer:
 		log.warning(f"unknown tag {child.tag}")
 		self.writeChildrenOf(hf, child)
 
-	def writeChild(
+	def writeChild(  # noqa: PLR0913
 		self,
 		hf: "T_htmlfile",
 		child: "str | Element",

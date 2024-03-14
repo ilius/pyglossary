@@ -56,7 +56,7 @@ def formatInfoValueDiff(diff: "Iterator[str]") -> str:
 	return a + "\n" + b
 
 
-def diffGlossary(
+def diffGlossary(  # noqa: PLR0913
 	filename1: str,
 	filename2: str,
 	format1: "str | None" = None,

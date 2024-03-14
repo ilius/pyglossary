@@ -1361,7 +1361,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		########
 		self.status("Select input file")
 
-	def run(
+	def run(  # noqa: PLR0913
 		self,
 		inputFilename: str = "",
 		outputFilename: str = "",

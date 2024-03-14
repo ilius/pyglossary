@@ -55,7 +55,7 @@ class AboutTabTitleBox(gtk.Box):
 
 
 class AboutWidget(gtk.Box):
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		logo: str = "",
 		header: str = "",

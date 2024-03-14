@@ -121,7 +121,7 @@ def dialog_add_button(
 	return b
 
 
-def showMsg(
+def showMsg(  # noqa: PLR0913
 	msg,
 	iconName="",
 	parent=None,

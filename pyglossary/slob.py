@@ -380,7 +380,7 @@ class KeydItemDict:
 
 
 class Blob:
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		content_id: int,
 		key: str,
@@ -1018,7 +1018,7 @@ class KeyTooLongException(Exception):
 
 
 class Writer:
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		filename: str,
 		workdir: "str | None" = None,

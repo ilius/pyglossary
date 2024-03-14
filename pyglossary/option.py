@@ -42,7 +42,7 @@ class Option:
 		cls.classes[optClass.__name__] = optClass
 		return optClass
 
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		typ: str,
 		customValue: bool = False,

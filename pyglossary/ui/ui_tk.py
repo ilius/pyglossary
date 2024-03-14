@@ -209,7 +209,7 @@ class ProgressBar(tix.Frame):
 	Edited by Saeed Rasooli.
 	"""
 
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		rootWin=None,
 		orientation="horizontal",
@@ -314,7 +314,7 @@ class ProgressBar(tix.Frame):
 
 
 class FormatDialog(tix.Toplevel):
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		descList: "list[str]",
 		title: str,
@@ -1505,7 +1505,7 @@ class UI(tix.Frame, UIBase):
 		# 	self.status("Convert failed")
 		return bool(finalOutputFile)
 
-	def run(
+	def run(  # noqa: PLR0913
 		self,
 		inputFilename: str = "",
 		outputFilename: str = "",

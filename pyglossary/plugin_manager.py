@@ -259,7 +259,7 @@ class PluginManager:
 	# where the str is error
 	# and remove `quiet` argument, and local `error` function
 	@classmethod
-	def detectOutputFormat(
+	def detectOutputFormat(  # noqa: PLR0913
 		cls: "type[PluginManager]",
 		filename: str = "",
 		format: str = "",

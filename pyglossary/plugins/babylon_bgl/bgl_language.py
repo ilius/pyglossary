@@ -116,6 +116,7 @@ utility confirmed the cp932 and cp950 encodings, I got 100% match.
 __all__ = ["BabylonLanguage", "languageByCode"]
 
 
+# TODO: switch to dataclass
 class BabylonLanguage:
 
 	"""
@@ -130,7 +131,7 @@ class BabylonLanguage:
 	code - value of the type 3, code in .bgl file
 	"""
 
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		name: str,
 		charset: str,

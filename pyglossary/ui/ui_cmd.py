@@ -261,7 +261,7 @@ class UI(UIBase):
 				input()
 				self._toPause = False
 
-	def run(
+	def run(  # noqa: PLR0913
 		self,
 		inputFilename: str = "",
 		outputFilename: str = "",

@@ -624,7 +624,7 @@ class Reader:
 		hf.write(ET.Element("br"))
 
 	@staticmethod
-	def makeList(
+	def makeList(  # noqa: PLR0913
 		hf: "T_htmlfile",
 		input_objects: "list[Any]",
 		processor: "Callable",
