@@ -13,6 +13,9 @@ from pyglossary.core_test import getMockLogger
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.os_utils import rmtree
 
+__all__ = ["TestGlossaryErrorsBase"]
+
+
 Glossary.init()
 
 

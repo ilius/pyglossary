@@ -9,6 +9,8 @@ from glossary_errors_test import TestGlossaryErrorsBase
 
 from pyglossary.glossary import Glossary
 
+__all__ = ["TestGlossaryStarDictBase"]
+
 
 class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 	def convert_txt_stardict(

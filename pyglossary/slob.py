@@ -52,7 +52,21 @@ from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 if TYPE_CHECKING:
 	from .icu_types import T_Collator
 
-__all__ = ["MIME_HTML", "MIME_TEXT", "Writer", "open"]
+__all__ = [
+	"MAX_TEXT_LEN",
+	"MAX_TINY_TEXT_LEN",
+	"MIME_HTML",
+	"MIME_TEXT",
+	"MultiFileReader",
+	"UnknownEncoding",
+	"Writer",
+	"encodings",
+	"fopen",
+	"open",
+	"read_byte_string",
+	"read_header",
+	"sortkey",
+]
 
 DEFAULT_COMPRESSION = "lzma2"
 

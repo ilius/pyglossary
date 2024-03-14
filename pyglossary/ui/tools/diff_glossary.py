@@ -28,6 +28,8 @@ from pyglossary.ui.tools.word_diff import (
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType
 
+__all__ = ["diffGlossary"]
+
 Glossary.init()
 
 log.setVerbosity(1)

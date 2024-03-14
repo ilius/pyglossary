@@ -19,6 +19,8 @@ from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.os_utils import rmtree
 from pyglossary.text_utils import crc32hex
 
+__all__ = ["TestGlossaryBase", "appTmpDir", "testCacheDir"]
+
 tracemalloc.start()
 
 Glossary.init()

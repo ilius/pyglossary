@@ -19,6 +19,9 @@ from pyglossary.glossary import Glossary
 from pyglossary.os_utils import rmtree
 from pyglossary.text_utils import crc32hex
 
+__all__ = ["TestGlossaryBase", "appTmpDir"]
+
+
 tracemalloc.start()
 
 Glossary.init()

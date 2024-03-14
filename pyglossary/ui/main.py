@@ -37,6 +37,8 @@ from pyglossary.langs import langDict
 from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 from pyglossary.ui.base import UIBase
 
+__all__ = ["main"]
+
 # the first thing to do is to set up logger.
 # other modules also using logger "root", so it is essential to set it up prior
 # to importing anything else; with exception to pyglossary.core which sets up

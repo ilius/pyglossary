@@ -42,6 +42,7 @@ __all__ = [
 	"uint64FromBytes",
 	"uint64ToBytes",
 	"uintFromBytes",
+	"unescapeBar",
 	"unescapeNTB",
 	"urlToPath",
 ]
