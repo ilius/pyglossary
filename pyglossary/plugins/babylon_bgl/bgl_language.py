@@ -113,39 +113,29 @@ dictionary. I used WideCharToMultiByte function for conversion. The C++
 utility confirmed the cp932 and cp950 encodings, I got 100% match.
 """
 
+from dataclasses import dataclass
+
 __all__ = ["BabylonLanguage", "languageByCode"]
 
 
-# TODO: switch to dataclass
+@dataclass
 class BabylonLanguage:
 
 	"""
 	Babylon language properties.
 
-	name - bab:SourceLanguage, bab:TargetLanguage .gpr tags
-	(English, French, Japanese)
-	charset - bab:SourceCharset, bab:TargetCharset .gpr tags
-	(Latin, Arabic, Cyrillic)
-	encoding - Windows code page
-	(cp1250, cp1251, cp1252)
-	code - value of the type 3, code in .bgl file
+	name: bab:SourceLanguage, bab:TargetLanguage .gpr tags (English, French, Japanese)
+	charset: bab:SourceCharset, bab:TargetCharset .gpr tags (Latin, Arabic, Cyrillic)
+	encoding: Windows code page (cp1250, cp1251, cp1252)
+	code: value of the type 3, code in .bgl file
 	"""
 
-	def __init__(  # noqa: PLR0913
-		self,
-		name: str,
-		charset: str,
-		encoding: str,
-		code: int,
-		code2: str = "",
-		name2: str = "",
-	) -> None:
-		self.name = name
-		self.name2 = name2
-		self.charset = charset
-		self.encoding = encoding
-		self.code = code
-		self.code2 = code2
+	name: str
+	charset: str
+	encoding: str
+	code: int
+	code2: str = ""
+	name2: str = ""
 
 
 languages = (
