@@ -44,7 +44,7 @@ class NamedSortKey(NamedTuple):
 	sqlite: "sqliteSortKeyType"
 
 
-@dataclass
+@dataclass(slots=True)
 class LocaleNamedSortKey:
 	name: str
 	desc: str

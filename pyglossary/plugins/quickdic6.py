@@ -514,7 +514,6 @@ class Comparator:
 		return a.replace("-", "").replace("þ", "th").replace("Þ", "Th")
 
 
-# TODO: switch to dataclass
 class QuickDic:
 	def __init__(  # noqa: PLR0913
 		self,

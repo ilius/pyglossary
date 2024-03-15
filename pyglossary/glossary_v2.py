@@ -95,7 +95,7 @@ __all__ = ["ConvertArgs", "Glossary", "GlossaryCommon"]
 # ]
 
 
-@dataclass(frozen=True)
+@dataclass(slots=True, frozen=True)
 class ConvertArgs:
 	inputFilename: str
 	inputFormat: str = ""
