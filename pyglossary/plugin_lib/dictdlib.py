@@ -133,13 +133,19 @@ class DictDB:
 		else:
 			self.useCompression = 0
 
-		if self.useCompression:
-			self.dictFilename = self.basename + ".dict.dz"
-		else:
-			self.dictFilename = self.basename + ".dict"
+		self.dictFilename = self.basename + ".dict" + (
+			".dz" if self.useCompression else ""
+		)
 
 		self.dictFile: "io.IOBase"
 		self.indexFile: "io.IOBase"
+		self._open(mode)
+
+		# self.writeentry(url_headword + "\n     " + url, [url_headword])
+		# self.writeentry(short_headword + "\n     " + shortname, [short_headword])
+		# self.writeentry(info_headword + "\n" + longinfo, [info_headword])
+
+	def _open(self, mode: str) -> None:
 		if mode == "read":
 			self.indexFile = open(self.indexFilename, "rb")
 			if self.useCompression:
@@ -153,25 +159,24 @@ class DictDB:
 				raise ValueError("'write' mode incompatible with .dz files")
 			self.dictFile = open(self.dictFilename, "wb")
 		elif mode == "update":
-			try:
-				self.indexFile = open(self.indexFilename, "r+b")
-			except OSError:
-				self.indexFile = open(self.indexFilename, "w+b")
-			if self.useCompression:
-				# Open it read-only since we don't support mods.
-				self.dictFile = gzip.GzipFile(self.dictFilename, "rb")
-			else:
-				try:
-					self.dictFile = open(self.dictFilename, "r+b")
-				except OSError:
-					self.dictFile = open(self.dictFilename, "w+b")
-			self._initIndex()
+			self._openForUpdate()
 		else:
 			raise ValueError("mode must be 'read', 'write', or 'update'")
 
-		# self.writeentry(url_headword + "\n     " + url, [url_headword])
-		# self.writeentry(short_headword + "\n     " + shortname, [short_headword])
-		# self.writeentry(info_headword + "\n" + longinfo, [info_headword])
+	def _openForUpdate(self) -> None:
+		try:
+			self.indexFile = open(self.indexFilename, "r+b")
+		except OSError:
+			self.indexFile = open(self.indexFilename, "w+b")
+		if self.useCompression:
+			# Open it read-only since we don't support mods.
+			self.dictFile = gzip.GzipFile(self.dictFilename, "rb")
+		else:
+			try:
+				self.dictFile = open(self.dictFilename, "r+b")
+			except OSError:
+				self.dictFile = open(self.dictFilename, "w+b")
+		self._initIndex()
 
 	def __len__(self) -> int:
 		return len(self.indexEntries)
