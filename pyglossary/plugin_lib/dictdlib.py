@@ -133,8 +133,8 @@ class DictDB:
 		else:
 			self.useCompression = 0
 
-		self.dictFilename = self.basename + ".dict" + (
-			".dz" if self.useCompression else ""
+		self.dictFilename = (
+			self.basename + ".dict" + (".dz" if self.useCompression else "")
 		)
 
 		self.dictFile: "io.IOBase"

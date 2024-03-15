@@ -660,7 +660,7 @@ class MDict:
 class MDD(MDict):
 	"""
 	MDict resource file format (*.MDD) reader.
-	>>> mdd = MDD('example.mdd')
+	>>> mdd = MDD("example.mdd")
 	>>> len(mdd)
 	208
 	>>> for filename,content in mdd.items():
@@ -678,7 +678,7 @@ class MDD(MDict):
 class MDX(MDict):
 	"""
 	MDict dictionary file format (*.MDD) reader.
-	>>> mdx = MDX('example.mdx')
+	>>> mdx = MDX("example.mdx")
 	>>> len(mdx)
 	42481
 	>>> for key,value in mdx.items():
