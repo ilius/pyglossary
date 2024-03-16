@@ -111,7 +111,7 @@ class ConvertArgs:
 	infoOverride: "dict[str, str] | None" = None
 
 
-class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):
+class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PLR0904
 
 	"""
 	The signature of 'convert' method is different in glossary_v2.py

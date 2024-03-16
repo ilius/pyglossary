@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 __all__ = ["nullBinaryIO", "nullTextIO"]
 
 
-class _NullBinaryIO(io.BufferedIOBase):
+class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 	def __enter__(self, *args):
 		raise NotImplementedError
 
@@ -79,7 +79,7 @@ class _NullBinaryIO(io.BufferedIOBase):
 		raise NotImplementedError
 
 
-class _NullTextIO(io.TextIOBase):
+class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
 	def __enter__(self, *args):
 		raise NotImplementedError
 

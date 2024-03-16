@@ -23,7 +23,6 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import pathlib
-	from collections.abc import Callable
 	from typing import Any
 
 	from .flags import StrWithDesc
@@ -65,7 +64,7 @@ class PluginCheckError(Exception):
 	pass
 
 
-class PluginProp:
+class PluginProp:  # noqa: PLR0904
 	__slots__ = [
 		"_Reader",
 		"_ReaderLoaded",
@@ -305,7 +304,7 @@ class PluginProp:
 		return self._canWrite
 
 	@staticmethod
-	def getOptionAttrNamesFromClass(rwclass: "type") -> "list[str]":
+	def _getOptionAttrNamesFromClass(rwclass: "type") -> "list[str]":
 		nameList = []
 
 		for cls in (*rwclass.__bases__, rwclass):
@@ -321,13 +320,13 @@ class PluginProp:
 
 		return nameList
 
-	def getOptionsFromClass(self, rwclass: "type") -> "dict[str, Any]":
+	def _getOptionsFromClass(self, rwclass: "type") -> "dict[str, Any]":
 		optionsProp = self.optionsProp
 		options = odict()
 		if rwclass is None:
 			return options
 
-		for attrName in self.getOptionAttrNamesFromClass(rwclass):
+		for attrName in self._getOptionAttrNamesFromClass(rwclass):
 			name = attrName[1:]
 			default = getattr(rwclass, attrName)
 			if name not in optionsProp:
@@ -352,12 +351,12 @@ class PluginProp:
 
 	def getReadOptions(self) -> "dict[str, Any]":
 		if self._readOptions is None:
-			self._readOptions = self.getOptionsFromClass(self.readerClass)
+			self._readOptions = self._getOptionsFromClass(self.readerClass)
 		return self._readOptions
 
 	def getWriteOptions(self) -> "dict[str, Any]":
 		if self._writeOptions is None:
-			self._writeOptions = self.getOptionsFromClass(self.writerClass)
+			self._writeOptions = self._getOptionsFromClass(self.writerClass)
 		return self._writeOptions
 
 	@property
@@ -490,35 +489,35 @@ class PluginProp:
 
 		return True
 
-	def getReadExtraOptions(self) -> "list[str]":  # noqa: F811
-		cls = self.readerClass
-		if cls is None:
-			return []
-		return self.__class__.getExtraOptionsFromFunc(cls.open, self.name)
+	# def _getReadExtraOptions(self) -> "list[str]":  # noqa: F811
+	# 	cls = self.readerClass
+	# 	if cls is None:
+	# 		return []
+	# 	return self.__class__.getExtraOptionsFromFunc(cls.open, self.name)
 
-	def getWriteExtraOptions(self) -> "list[str]":  # noqa: F811
-		cls = self.writerClass
-		if cls is None:
-			return []
-		return self.__class__.getExtraOptionsFromFunc(cls.write, self.name)
+	# def _getWriteExtraOptions(self) -> "list[str]":  # noqa: F811
+	# 	cls = self.writerClass
+	# 	if cls is None:
+	# 		return []
+	# 	return self.__class__.getExtraOptionsFromFunc(cls.write, self.name)
 
-	@classmethod
-	def getExtraOptionsFromFunc(
-		cls: "type",
-		func: "Callable",
-		format: str,
-	) -> "list[str]":
-		import inspect
+	# @classmethod
+	# def getExtraOptionsFromFunc(
+	# 	cls: "type",
+	# 	func: "Callable",
+	# 	format: str,
+	# ) -> "list[str]":
+	# 	import inspect
 
-		extraOptNames = []
-		for name, param in inspect.signature(func).parameters.items():
-			if name == "self":
-				continue
-			if str(param.default) != "<class 'inspect._empty'>":
-				extraOptNames.append(name)
-				continue
-			if name not in {"filename", "dirname"}:
-				extraOptNames.append(name)
-		if extraOptNames:
-			log.warning(f"{format}: {extraOptNames = }")
-		return extraOptNames
+	# 	extraOptNames = []
+	# 	for name, param in inspect.signature(func).parameters.items():
+	# 		if name == "self":
+	# 			continue
+	# 		if str(param.default) != "<class 'inspect._empty'>":
+	# 			extraOptNames.append(name)
+	# 			continue
+	# 		if name not in {"filename", "dirname"}:
+	# 			extraOptNames.append(name)
+	# 	if extraOptNames:
+	# 		log.warning(f"{format}: {extraOptNames = }")
+	# 	return extraOptNames

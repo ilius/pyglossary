@@ -37,7 +37,7 @@ RawEntryType: "TypeAlias" = (
 )
 
 
-class EntryType(typing.Protocol):
+class EntryType(typing.Protocol):  # noqa: PLR0904
 	def __init__(self) -> None: ...
 
 	def isData(self) -> bool: ...
@@ -132,7 +132,7 @@ class EntryListType(typing.Protocol):
 	def close(self) -> None: ...
 
 
-class GlossaryType(typing.Protocol):
+class GlossaryType(typing.Protocol):  # noqa: PLR0904
 
 	"""
 	an abstract type class for Glossary class in plugins. it only

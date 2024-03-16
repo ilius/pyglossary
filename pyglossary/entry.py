@@ -31,7 +31,7 @@ log = logging.getLogger("pyglossary")
 
 
 # aka Resource
-class DataEntry(BaseEntry):
+class DataEntry(BaseEntry):  # noqa: PLR0904
 	__slots__ = [
 		"_byteProgress",
 		"_data",
