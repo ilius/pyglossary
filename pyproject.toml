@@ -3,11 +3,11 @@ line-length = 88
 target-version = "py310"
 
 lint.select = [
-    "F", # Pyflakes
-    "E", # pycodestyle Error
-    "W", # pycodestyle Warning
+    "F",   # Pyflakes
+    "E",   # pycodestyle Error
+    "W",   # pycodestyle Warning
     "C90", # mccabe: C901: {name} is too complex ({complexity})
-    "I", # isort: unsorted-imports, missing-required-import
+    "I",   # isort: unsorted-imports, missing-required-import
     # "N", # pep8-naming
     "D",   # pydocstyle
     "B",   # flake8-bugbear
@@ -181,10 +181,9 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 [tool.ruff.lint.per-file-ignores]
 "pyglossary/plugins/**/*.py" = [
     "PLR0904", # Too many public methods
-    "C90", # mccabe: C901: {name} is too complex ({complexity})
+    "C90",     # mccabe: C901: {name} is too complex ({complexity})
 ]
-"slob.py" = [
-]
+"slob.py" = []
 "html_dir.py" = [
     "C901", # `...` is too complex
 ]
@@ -218,7 +217,7 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
     "PERF203",
     "PLR0904", # Too many public methods
     "PLR6301", # Method `...` could be a function, class method, or static method
-    "C90", # mccabe: C901: {name} is too complex ({complexity})
+    "C90",     # mccabe: C901: {name} is too complex ({complexity})
 ]
 "tests/*.py" = [
     "ANN",
@@ -363,3 +362,45 @@ verbose = false
 
 [tool.import-analyzer]
 exclude = ["pyglossary/ui/wcwidth/"]
+
+
+[project]
+name = "pyglossary"
+description = "A tool for converting dictionary files aka glossaries."
+readme = "README.md"
+version = "4.6.1"
+authors = [{ name = "Saeed Rasooli", email = "saeed.gnu@gmail.com" }]
+license = { text = "GPLv3+" }
+keywords = ["dictionary", "glossary"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: Unix",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Typing :: Typed",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">= 3.10"
+dependencies = ["PyICU", "lxml", "beautifulsoup4"]
+
+[project.urls]
+"Source code" = "https://github.com/ilius/pyglossary"
+Changelog = "https://github.com/ilius/pyglossary/tree/master/doc/releases"
+"Issue tracker" = "https://github.com/ilius/pyglossary/issues"
+
+[project.optional-dependencies]
+all = [
+    # TODO
+]
+
+[build-system]
+requires = [
+    "setuptools", # min version?
+    # "setuptools_scm[toml] >= 4, <6",
+    # "setuptools_scm_git_archive",
+    # "wheel >= 0.29.0",
+]
+build-backend = 'setuptools.build_meta'
