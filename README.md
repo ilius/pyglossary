@@ -159,7 +159,7 @@ But you can explicitly determine the user interface type using `--ui`
 
 ## Installation on Windows
 
-- [Download and install Python](https://www.python.org/downloads/windows/) (3.9 or above)
+- [Download and install Python](https://www.python.org/downloads/windows/) (3.10 or above)
 - Open Start -> type Command -> right-click on Command Prompt -> Run as administrator
 - To ensure you have `pip`, run: `python -m ensurepip --upgrade`
 - To install, run: `pip install --upgrade pyglossary`
