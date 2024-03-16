@@ -6,7 +6,7 @@ lint.select = [
     "F", # Pyflakes
     "E", # pycodestyle Error
     "W", # pycodestyle Warning
-    # "C90", # mccabe: C901: {name} is too complex ({complexity})
+    "C90", # mccabe: C901: {name} is too complex ({complexity})
     "I", # isort: unsorted-imports, missing-required-import
     # "N", # pep8-naming
     "D",   # pydocstyle
@@ -181,6 +181,7 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 [tool.ruff.lint.per-file-ignores]
 "pyglossary/plugins/**/*.py" = [
     "PLR0904", # Too many public methods
+    "C90", # mccabe: C901: {name} is too complex ({complexity})
 ]
 "slob.py" = [
 ]
@@ -217,6 +218,7 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
     "PERF203",
     "PLR0904", # Too many public methods
     "PLR6301", # Method `...` could be a function, class method, or static method
+    "C90", # mccabe: C901: {name} is too complex ({complexity})
 ]
 "tests/*.py" = [
     "ANN",
@@ -248,7 +250,7 @@ exclude = [
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
-max-complexity = 20
+max-complexity = 13
 
 [tool.mypy]
 exclude = [
