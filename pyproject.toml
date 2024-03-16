@@ -48,7 +48,6 @@ lint.select = [
     "INT",  # flake8-gettext
     "ARG",  # flake8-unused-arguments
     # "PTH",   # flake8-use-pathlib
-    # "ERA",   # eradicate
     "PD",  # pandas-vet
     "PGH", # pygrep-hooks
     "PL",  # Pylint
@@ -113,7 +112,6 @@ lint.ignore = [
     "SIM110",  # Use any(...)
     "SIM115",  # Use context handler for opening files
     # "SIM111", # Use all(...): warning: `SIM111` has been remapped to `SIM110`.
-    # ERA, PD,
     "TCH003", # Move standard library import `...` into a type-checking block
     "ANN401", # Dynamically typed expressions (typing.Any) are disallowed in ...
 ]
@@ -185,7 +183,6 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
     "PLR0904", # Too many public methods
 ]
 "slob.py" = [
-    "PERF203", # `try`-`except` within a loop incurs performance overhead, FIXME
 ]
 "html_dir.py" = [
     "C901", # `...` is too complex
@@ -235,7 +232,7 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "test.py" = ["ANN", "T201"]
 "scripts/*.py" = ["ANN", "T201", "INP001"]
 "scripts/*/*.py" = ["ANN", "T201", "INP001"]
-"doc/lib-examples/*.py" = ["ANN", "ERA", "INP"]
+"doc/lib-examples/*.py" = ["ANN", "INP"]
 
 [tool.ruff.format]
 quote-style = "double"
