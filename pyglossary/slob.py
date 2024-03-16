@@ -1279,15 +1279,16 @@ class Writer:
 					while count <= self.max_redirects:
 						# is target key itself a redirect?
 						try:
-							orig_to_key = to_key
-							to_key, fragment = read_key_frag(
-								cast(Blob, next(aliases[to_key])),
-								fragment,
-							)
-							count += 1
-							keys.add(orig_to_key)
+							alias_item: Blob = next(aliases[to_key])
 						except StopIteration:
 							break
+						orig_to_key = to_key
+						to_key, fragment = read_key_frag(
+							alias_item,
+							fragment,
+						)
+						count += 1
+						keys.add(orig_to_key)
 					if count > self.max_redirects:
 						self._fire_event("too_many_redirects", from_key)
 					target_ref: Ref
