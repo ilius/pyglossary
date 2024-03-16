@@ -1011,12 +1011,6 @@ class WriterEvent(NamedTuple):
 	data: Any
 
 
-class KeyTooLongException(Exception):
-	@property
-	def key(self) -> str:
-		return self.args[0]
-
-
 class Writer:
 	def __init__(  # noqa: PLR0913
 		self,
@@ -1118,6 +1112,10 @@ class Writer:
 		self._tags[name] = value
 
 	@staticmethod
+	def key_is_too_long(actual_key, fragment) -> bool:
+		return len(actual_key) > MAX_TEXT_LEN or len(fragment) > MAX_TINY_TEXT_LEN
+
+	@staticmethod
 	def _split_key(
 		key: str | tuple[str, str],
 	) -> "tuple[str, str]":
@@ -1126,8 +1124,6 @@ class Writer:
 			fragment = ""
 		else:
 			actual_key, fragment = key
-		if len(actual_key) > MAX_TEXT_LEN or len(fragment) > MAX_TINY_TEXT_LEN:
-			raise KeyTooLongException(key)
 		return actual_key, fragment
 
 	def add(
@@ -1147,10 +1143,9 @@ class Writer:
 		actual_keys = []
 
 		for key in keys:
-			try:
-				actual_key, fragment = self._split_key(key)
-			except KeyTooLongException as e:
-				self._fire_event("key_too_long", e.key)
+			actual_key, fragment = self._split_key(key)
+			if self.key_is_too_long(actual_key, fragment):
+				self._fire_event("key_too_long", key)
 			else:
 				actual_keys.append((actual_key, fragment))
 
@@ -1183,16 +1178,11 @@ class Writer:
 	def add_alias(self, key: str, target_key: str) -> None:
 		if not self.max_redirects:
 			raise NotImplementedError
-
-		try:
-			self._split_key(key)
-		except KeyTooLongException as e:
-			self._fire_event("alias_too_long", e.key)
+		if self.key_is_too_long(*self._split_key(key)):
+			self._fire_event("alias_too_long", key)
 			return
-		try:
-			self._split_key(target_key)
-		except KeyTooLongException as e:
-			self._fire_event("alias_target_too_long", e.key)
+		if self.key_is_too_long(*self._split_key(target_key)):
+			self._fire_event("alias_target_too_long", target_key)
 			return
 		self.f_aliases.add(pickle.dumps(target_key), key)
 
