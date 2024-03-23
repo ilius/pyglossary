@@ -10,10 +10,7 @@ from pyglossary import Glossary
 
 
 def hasBar(entry):
-	for word in entry.l_word:
-		if "|" in word:
-			return True
-	return False
+	return any("|" in word for word in entry.l_word)
 
 
 Glossary.init(

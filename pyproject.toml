@@ -109,38 +109,12 @@ lint.ignore = [
     "UP009",   # UTF-8 encoding declaration is unnecessary
     "UP037",   # Remove quotes from type annotation
     "W191",    # Indentation contains tabs
-    "SIM110",  # Use any(...)
     "SIM115",  # Use context handler for opening files
-    # "SIM111", # Use all(...): warning: `SIM111` has been remapped to `SIM110`.
-    "TCH003", # Move standard library import `...` into a type-checking block
-    "ANN401", # Dynamically typed expressions (typing.Any) are disallowed in ...
+    "TCH003",  # Move standard library import `...` into a type-checking block
+    "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in ...
 ]
 
-# UP033: (Since Python 3.9) Use `@functools.cache`
-# instead of `@functools.lru_cache(maxsize=None)`
-
-# since which Python is comma after **kwargs allowd?
-
 # Allow autofix for all enabled rules (when `--fix`) is provided.
-# lint.fixable = [
-#     "ANN",
-#     "C408", # Unnecessary `dict` call (rewrite as a literal)
-#     "COM",
-#     "D",
-#     "E",
-#     "F",
-#     "W",
-#     "F401",
-#     "I",
-#     "Q",
-#     "PIE790",
-#     "RET",
-#     "RUF",
-#     # "SIM",
-#     "SIM108", # Use ternary operator {contents} instead of if-else-block
-#     "TCH",
-#     "UP",
-# ]
 lint.unfixable = []
 
 # Exclude a variety of commonly ignored directories.
