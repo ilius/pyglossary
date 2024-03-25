@@ -51,6 +51,7 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 		byteProgress: "tuple[int, int] | None" = None,
 	) -> None:
 		if data and tmpPath:
+			os.makedirs(dirname(tmpPath), mode=0o755, exist_ok=True)
 			with open(tmpPath, "wb") as toFile:
 				toFile.write(data)
 			data = b""
