@@ -338,43 +338,43 @@ verbose = false
 exclude = ["pyglossary/ui/wcwidth/"]
 
 
-[project]
-name = "pyglossary"
-description = "A tool for converting dictionary files aka glossaries."
-readme = "README.md"
-version = "4.6.1"
-authors = [{ name = "Saeed Rasooli", email = "saeed.gnu@gmail.com" }]
-license = { text = "GPLv3+" }
-keywords = ["dictionary", "glossary"]
-classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-    "Operating System :: Unix",
-    "Operating System :: MacOS :: MacOS X",
-    "Operating System :: Microsoft :: Windows",
-    "Typing :: Typed",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-]
-requires-python = ">= 3.10"
-dependencies = ["PyICU", "lxml", "beautifulsoup4"]
+# [project]
+# name = "pyglossary"
+# description = "A tool for converting dictionary files aka glossaries."
+# readme = "README.md"
+# version = "4.6.1"
+# authors = [{ name = "Saeed Rasooli", email = "saeed.gnu@gmail.com" }]
+# license = { text = "GPLv3+" }
+# keywords = ["dictionary", "glossary"]
+# classifiers = [
+#     "Development Status :: 5 - Production/Stable",
+#     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+#     "Operating System :: Unix",
+#     "Operating System :: MacOS :: MacOS X",
+#     "Operating System :: Microsoft :: Windows",
+#     "Typing :: Typed",
+#     "Programming Language :: Python :: 3.10",
+#     "Programming Language :: Python :: 3.11",
+#     "Programming Language :: Python :: 3.12",
+# ]
+# requires-python = ">= 3.10"
+# dependencies = ["PyICU", "lxml", "beautifulsoup4"]
 
-[project.urls]
-"Source code" = "https://github.com/ilius/pyglossary"
-Changelog = "https://github.com/ilius/pyglossary/tree/master/doc/releases"
-"Issue tracker" = "https://github.com/ilius/pyglossary/issues"
+# [project.urls]
+# "Source code" = "https://github.com/ilius/pyglossary"
+# Changelog = "https://github.com/ilius/pyglossary/tree/master/doc/releases"
+# "Issue tracker" = "https://github.com/ilius/pyglossary/issues"
 
-[project.optional-dependencies]
-all = [
-    # TODO
-]
+# [project.optional-dependencies]
+# all = [
+#     # TODO
+# ]
 
-[build-system]
-requires = [
-    "setuptools", # min version?
-    # "setuptools_scm[toml] >= 4, <6",
-    # "setuptools_scm_git_archive",
-    # "wheel >= 0.29.0",
-]
-build-backend = 'setuptools.build_meta'
+# [build-system]
+# requires = [
+#     "setuptools", # min version?
+#     # "setuptools_scm[toml] >= 4, <6",
+#     # "setuptools_scm_git_archive",
+#     # "wheel >= 0.29.0",
+# ]
+# build-backend = 'setuptools.build_meta'
