@@ -592,13 +592,11 @@ def read_header(_file: "MultiFileReader") -> Header:
 		raise UnknownCompression(compression)
 
 	def read_tags() -> "dict[str, str]":
-		tags: "dict[str, str]" = {}
 		count = reader.read_byte()
-		for _ in range(count):
-			key = reader.read_tiny_text()
-			value = reader.read_tiny_text()
-			tags[key] = value
-		return tags
+		return {
+			reader.read_tiny_text(): reader.read_tiny_text()
+			for _ in range(count)
+		}
 
 	tags = read_tags()
 

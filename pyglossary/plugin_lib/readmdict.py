@@ -154,11 +154,10 @@ class MDict:
 	@staticmethod
 	def _parse_header(header):
 		"""Extract attributes from <Dict attr="value" ... >."""
-		taglist = re.findall(rb'(\w+)="(.*?)"', header, re.DOTALL)
-		tagdict = {}
-		for key, value in taglist:
-			tagdict[key] = _unescape_entities(value)
-		return tagdict
+		return {
+			key: _unescape_entities(value)
+			for key, value in re.findall(rb'(\w+)="(.*?)"', header, re.DOTALL)
+		}
 
 	def _decode_block(self, block, decompressed_size):
 		# block info: compression, encryption
@@ -383,8 +382,10 @@ class MDict:
 		self._stylesheet = {}
 		if header_tag.get("StyleSheet"):
 			lines = header_tag["StyleSheet"].splitlines()
-			for i in range(0, len(lines), 3):
-				self._stylesheet[lines[i]] = (lines[i + 1], lines[i + 2])
+			self._stylesheet = {
+				lines[i]: (lines[i + 1], lines[i + 2])
+				for i in range(0, len(lines), 3)
+			}
 
 		# before version 2.0, number is 4 bytes integer
 		# version 2.0 and above uses 8 bytes
