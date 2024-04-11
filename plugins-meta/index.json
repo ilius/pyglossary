@@ -1964,10 +1964,24 @@
 			".zim"
 		],
 		"singleFile": true,
-		"optionsProp": {},
+		"optionsProp": {
+			"text_unicode_errors": {
+				"class": "UnicodeErrorsOption",
+				"type": "str",
+				"comment": "Unicode Errors for plaintext, values: `strict`, `ignore`, `replace`"
+			},
+			"html_unicode_errors": {
+				"class": "UnicodeErrorsOption",
+				"type": "str",
+				"comment": "Unicode Errors for HTML, values: `strict`, `ignore`, `replace`"
+			}
+		},
 		"canRead": true,
 		"canWrite": false,
-		"readOptions": {},
+		"readOptions": {
+			"text_unicode_errors": "strict",
+			"html_unicode_errors": "strict"
+		},
 		"readDepends": {
 			"libzim": "libzim>=1.0"
 		}

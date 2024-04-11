@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 from pyglossary.core import cacheDir, log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.option import UnicodeErrorsOption
 
 __all__ = [
 	"Reader",
@@ -40,7 +41,14 @@ website = (
 	"https://wiki.openzim.org/wiki/OpenZIM",
 	"OpenZIM",
 )
-optionsProp: "dict[str, Option]" = {}
+optionsProp: "dict[str, Option]" = {
+	"text_unicode_errors": UnicodeErrorsOption(
+		comment="Unicode Errors for plaintext, values: `strict`, `ignore`, `replace`",
+	),
+	"html_unicode_errors": UnicodeErrorsOption(
+		comment="Unicode Errors for HTML, values: `strict`, `ignore`, `replace`",
+	),
+}
 
 # https://wiki.kiwix.org/wiki/Software
 
@@ -53,6 +61,8 @@ optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:
+	_text_unicode_errors = "strict"
+	_html_unicode_errors = "strict"
 	depends = {
 		"libzim": "libzim>=1.0",
 	}
@@ -119,6 +129,9 @@ class Reader:
 
 		fileNameTooLong = []
 
+		text_unicode_errors = self._text_unicode_errors
+		html_unicode_errors = self._html_unicode_errors
+
 		for entryIndex in range(entryCount):
 			zEntry = zimfile._get_entry_by_id(entryIndex)
 			word = zEntry.title
@@ -157,7 +170,7 @@ class Reader:
 
 			if mimetype.startswith("text/html"):
 				# can be "text/html;raw=true"
-				defi = b_content.decode("utf-8")
+				defi = b_content.decode("utf-8", errors=html_unicode_errors)
 				defi = defi.replace(' src="../I/', ' src="./')
 				yield glos.newEntry(word, defi, defiFormat="h")
 				continue
@@ -165,7 +178,7 @@ class Reader:
 			if mimetype == "text/plain":
 				yield glos.newEntry(
 					word,
-					b_content.decode("utf-8"),
+					b_content.decode("utf-8", errors=text_unicode_errors),
 					defiFormat="m",
 				)
 				continue

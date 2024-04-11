@@ -495,6 +495,31 @@ class NewlineOption(Option):
 
 
 @Option.register
+class UnicodeErrorsOption(Option):
+	def __init__(
+		self,
+		comment: "str | None" = None,
+	) -> None:
+		if comment is None:
+			comment = "Unicode Errors, values: `strict`, `ignore`, `replace`"
+		Option.__init__(
+			self,
+			typ="str",
+			customValue=False,
+			values=["strict", "ignore", "replace"],
+			multiline=False,
+			comment=comment,
+		)
+
+	def toDict(self) -> "dict[str, Any]":
+		return {
+			"class": "UnicodeErrorsOption",
+			"type": "str",
+			"comment": self.comment,
+		}
+
+
+@Option.register
 class HtmlColorOption(Option):
 	def toDict(self) -> "dict[str, Any]":
 		data = Option.toDict(self)
