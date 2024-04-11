@@ -268,9 +268,7 @@ def shouldUseCMD(args: "argparse.Namespace") -> bool:
 		return True
 	if args.interactive:
 		return True
-	if args.inputFilename and args.outputFilename:
-		return True
-	return False
+	return bool(args.inputFilename and args.outputFilename)
 
 
 def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":

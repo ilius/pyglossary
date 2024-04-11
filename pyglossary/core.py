@@ -279,9 +279,7 @@ def checkCreateConfDir() -> None:
 def _in_virtualenv() -> bool:
 	if hasattr(sys, "real_prefix"):
 		return True
-	if hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix:
-		return True
-	return False
+	return hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
 
 
 def getDataDir() -> str:

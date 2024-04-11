@@ -157,9 +157,7 @@ def verifySameTypeSequence(s: str) -> bool:
 	# maybe should just check it's in ("h", "m", "x")
 	if not s.isalpha():
 		return False
-	if len(s) > 1:
-		return False
-	return True
+	return len(s) == 1
 
 
 class XdxfTransformerType(Protocol):

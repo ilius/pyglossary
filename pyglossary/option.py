@@ -127,9 +127,7 @@ class Option:
 		value, isValid = self.evaluate(raw)
 		if not isValid:
 			return False
-		if not self.validate(value):
-			return False
-		return True
+		return self.validate(value)
 
 	def groupValues(self) -> "dict[str, Any] | None":  # noqa: PLR6301
 		return None

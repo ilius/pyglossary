@@ -173,8 +173,7 @@ class Reader:
 			return defisWithFormat[0]
 
 		defiFormatSet = set()
-		for _, _type in defisWithFormat:
-			defiFormatSet.add(_type)
+		defiFormatSet.update(_type for _, _type in defisWithFormat)
 
 		if len(defiFormatSet) == 1:
 			defis = [_defi for _defi, _ in defisWithFormat]

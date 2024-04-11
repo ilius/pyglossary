@@ -82,16 +82,12 @@ class Glossary(GlossaryCommon):
 
 		self._progressbar = progressbar
 
-		ok = self._read(
+		return self._read(
 			filename=filename,
 			format=format,
 			direct=direct,
 			**kwargs,
 		)
-		if not ok:
-			return False
-
-		return True
 
 	def addEntryObj(self, entry: "EntryType") -> None:
 		self._data.append(entry)

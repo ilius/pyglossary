@@ -177,9 +177,7 @@ def pluginIsActive(p):
 		return False
 	if not (p.canRead or p.canWrite):
 		return False
-	if userPluginsDirPath in p.path.parents:
-		return False
-	return True
+	return userPluginsDirPath not in p.path.parents
 
 
 def getToolSourceLink(tool):

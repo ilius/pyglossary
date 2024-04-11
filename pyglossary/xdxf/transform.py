@@ -91,7 +91,7 @@ class XdxfTransformer:
 			"small",
 		}:
 			return True
-		if prev.text:
+		if prev.text:  # noqa: SIM103
 			return True
 		# print(prev)
 		return False
@@ -382,9 +382,7 @@ class XdxfTransformer:
 		prev: "str | Element",
 	) -> bool:
 		if isinstance(child, str):
-			if len(child) > 0 and child[0] in ".,;)":
-				return False
-			return True
+			return not (len(child) > 0 and child[0] in ".,;)")
 
 		if child.tag in {"sub", "sup"}:
 			return False
