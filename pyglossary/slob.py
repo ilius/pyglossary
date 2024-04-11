@@ -19,6 +19,7 @@
 
 import encodings
 import io
+import operator
 import os
 import pickle
 import sys
@@ -1364,7 +1365,7 @@ class Writer:
 			) -> None:
 				count = len(content_types)
 				f.write(pack(U_CHAR, count))
-				types = sorted(content_types.items(), key=lambda x: x[1])
+				types = sorted(content_types.items(), key=operator.itemgetter(1))
 				for content_type, _ in types:
 					f.write_text(content_type)
 

@@ -276,10 +276,8 @@ class ProgressBar(tix.Frame):
 	def update(self, event=None, labelText=""):  # noqa: ARG002
 		# Trim the values to be between min and max
 		value = self.value
-		if value > self.max:
-			value = self.max
-		if value < self.min:
-			value = self.min
+		value = min(value, self.max)
+		value = max(value, self.min)
 		# Adjust the rectangle
 		width = int(self.winfo_width())
 		# width = self.width

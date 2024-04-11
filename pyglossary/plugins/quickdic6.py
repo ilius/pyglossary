@@ -117,6 +117,16 @@ LINKED_HASH_SET_INIT = (
 HASH_SET_CAPACITY_FACTOR = 0.75
 """Capacity factor used to determine the hash set's capacity from its length"""
 
+default_de_normalizer_rules = (
+	":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
+)
+default_normalizer_rules = (
+	":: Any-Latin; ' ' > ; "
+	":: Lower; :: NFD; "
+	":: [:Nonspacing Mark:] Remove; "
+	":: NFC ;"
+)
+
 
 def read_byte(fp: IO[bytes]) -> int:
 	return struct.unpack(">b", fp.read(1))[0]
@@ -869,12 +879,9 @@ class Writer:
 
 		short_name = long_name = iso = sourceLang
 		normalizer_rules = (
-			self._normalizer_rules
-			if self._normalizer_rules
-			else ":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
+			self._normalizer_rules or default_de_normalizer_rules
 			if iso == "DE"
-			else ":: Any-Latin; ' ' > ; :: Lower; :: NFD;"
-			" :: [:Nonspacing Mark:] Remove; :: NFC ;"
+			else default_normalizer_rules
 		)
 		self._dic.add_index(
 			short_name,

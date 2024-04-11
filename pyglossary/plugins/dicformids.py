@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
 
+import operator
 import os
 import re
 from collections.abc import Iterator
@@ -105,7 +106,7 @@ class Reader:
 			else:
 				orderFileNames.append((num, fname))
 		orderFileNames.sort(
-			key=lambda x: x[0],
+			key=operator.itemgetter(0),
 			reverse=True,
 		)
 		self._tabFileNames = [x[1] for x in orderFileNames]

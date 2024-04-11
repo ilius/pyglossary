@@ -72,6 +72,8 @@ lint.ignore = [
     "PLR0912", # Too many branches, 38 cases
     "PLR0915", # Too many statements, 28 cases
 
+    "FURB166", # Use of `int` with explicit `base=16` after removing prefix
+    "FURB103", # `open` and `write` should be replaced by `Path(...
     "PLR2004", # Magic value used in comparison, consider replacing `...` with a constant variable
     "PLC0415", # `import` should be at the top-level of a file
     "PLW0603", # Using the global statement to update `mockLog` is discouraged
