@@ -165,9 +165,9 @@ class Reader:
 		resultStr = ""
 		for e in elem.xpath("/" + elemName + "/node()"):
 			if isinstance(e, str):
-				resultStr = resultStr + ""
+				pass  # resultStr += e
 			else:
-				resultStr = resultStr + ET.tostring(e, encoding="unicode")
+				resultStr += ET.tostring(e, encoding="unicode")
 
 		return resultStr
 

@@ -298,7 +298,7 @@ class MultiFileReader(BufferedIOBase):
 		if whence == io.SEEK_SET:
 			self._offset = offset
 		elif whence == io.SEEK_CUR:
-			self._offset = self._offset + offset
+			self._offset += offset
 		elif whence == io.SEEK_END:
 			self._offset = self.size + offset
 		else:

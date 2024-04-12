@@ -70,7 +70,7 @@ def b64_decode(text: str) -> int:
 	shiftval = 0
 	for i in range(len(text) - 1, -1, -1):
 		val = b64_list.index(text[i])
-		retval = retval | (val << shiftval)
+		retval |= val << shiftval
 		shiftval += 6
 	return retval
 
