@@ -230,7 +230,12 @@ class Reader:
 			self.processHeaderLine(line)
 
 	def detectEncoding(self) -> str:
-		for testEncoding in ("utf-8", "utf-16"):
+		for testEncoding in (
+			"utf-8",
+			"utf-16",
+			"utf-16-le",
+			"utf-16-be",
+		):
 			with compressionOpen(
 				self._filename,
 				dz=True,
@@ -240,7 +245,7 @@ class Reader:
 				try:
 					for _ in range(10):
 						fileObj.readline()
-				except UnicodeDecodeError:
+				except (UnicodeDecodeError, UnicodeError):
 					log.info(f"Encoding of DSL file is not {testEncoding}")
 					continue
 				else:
