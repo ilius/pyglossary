@@ -1305,18 +1305,21 @@ class Writer:
 				alias_writer.finalize()
 
 		with Slob(path) as resolved_aliases_reader:
-			previous_key = None
+			previous = None
+			targets = set()
+
 			for item in resolved_aliases_reader:
 				ref = pickle.loads(item.content)
-				if ref.key == previous_key:
-					continue
-				self._write_ref(
-					ref.key,
-					ref.bin_index,
-					ref.item_index,
-					ref.fragment,
-				)
-				previous_key = ref.key
+				if previous is not None and ref.key != previous.key:
+					for bin_index, item_index, fragment in targets:
+						self._write_ref(previous.key, bin_index, item_index, fragment)
+					targets.clear()
+				targets.add((ref.bin_index, ref.item_index, ref.fragment))
+				previous = ref
+
+			for bin_index, item_index, fragment in targets:
+				self._write_ref(previous.key, bin_index, item_index, fragment)
+
 		self._sort()
 		self._fire_event("end_resolve_aliases")
 

@@ -157,7 +157,9 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
     "PLR0904", # Too many public methods
     "C90",     # mccabe: C901: {name} is too complex ({complexity})
 ]
-"slob.py" = []
+"slob.py" = [
+    "C901", # `...` is too complex (14 > 13)
+]
 "html_dir.py" = [
     "C901", # `...` is too complex
 ]

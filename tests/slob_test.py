@@ -467,6 +467,7 @@ class TestAlias(BaseTest):
 			w.add(v.encode("ascii"), k)
 
 		w.add_alias("w", "u")
+		w.add_alias("small u", "u")
 		w.add_alias("y1", "y2")
 		w.add_alias("y2", "y3")
 		w.add_alias("y3", "z")
@@ -482,6 +483,10 @@ class TestAlias(BaseTest):
 
 		w.add_alias("g1", "g")
 		w.add_alias("g2", ("g1", "g-frag1"))
+
+		w.add_alias("n or p", "n")
+		w.add_alias("n or p", "p")
+
 		w.finalize()
 
 		self.assertEqual(too_many_redirects, ["l1", "l2", "l3"])
@@ -494,6 +499,7 @@ class TestAlias(BaseTest):
 				return [item.content.decode("ascii") for item in d[key]]
 
 			self.assertEqual(get("w"), ["LATIN SMALL LETTER U"])
+			self.assertEqual(get("small u"), ["LATIN SMALL LETTER U"])
 			self.assertEqual(get("y1"), ["LATIN SMALL LETTER Z"])
 			self.assertEqual(get("y2"), ["LATIN SMALL LETTER Z"])
 			self.assertEqual(get("y3"), ["LATIN SMALL LETTER Z"])
@@ -501,6 +507,8 @@ class TestAlias(BaseTest):
 			self.assertEqual(get("l1"), [])
 			self.assertEqual(get("l2"), [])
 			self.assertEqual(get("l3"), [])
+
+			self.assertEqual(len(list(d["n or p"])), 2)
 
 			item_a1 = cast(slob.Blob, next(d["a1"]))
 			self.assertEqual(item_a1.content, b"LATIN SMALL LETTER A")
