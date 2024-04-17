@@ -593,10 +593,7 @@ def read_header(_file: "MultiFileReader") -> Header:
 
 	def read_tags() -> "dict[str, str]":
 		count = reader.read_byte()
-		return {
-			reader.read_tiny_text(): reader.read_tiny_text()
-			for _ in range(count)
-		}
+		return {reader.read_tiny_text(): reader.read_tiny_text() for _ in range(count)}
 
 	tags = read_tags()
 
