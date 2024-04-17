@@ -1312,13 +1312,13 @@ class Writer:
 			for item in resolved_aliases_reader:
 				ref = pickle.loads(item.content)
 				if previous is not None and ref.key != previous.key:
-					for bin_index, item_index, fragment in targets:
+					for bin_index, item_index, fragment in sorted(targets):
 						self._write_ref(previous.key, bin_index, item_index, fragment)
 					targets.clear()
 				targets.add((ref.bin_index, ref.item_index, ref.fragment))
 				previous = ref
 
-			for bin_index, item_index, fragment in targets:
+			for bin_index, item_index, fragment in sorted(targets):
 				self._write_ref(previous.key, bin_index, item_index, fragment)
 
 		self._sort()
