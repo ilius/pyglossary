@@ -601,7 +601,8 @@ class UI(ui_cmd.UI):
 			)
 		return None
 
-	def askReadOptions(self):
+	# PLR0912 Too many branches (15 > 12)
+	def askReadOptions(self):  # noqa: PLR0912
 		options = Glossary.formatsReadOptions.get(self._inputFormat)
 		if options is None:
 			log.error(f"internal error: invalid format {self._inputFormat!r}")
@@ -676,7 +677,8 @@ class UI(ui_cmd.UI):
 				self._readOptions[optName] = valueNew
 				break
 
-	def askWriteOptions(self):
+	# PLR0912 Too many branches (15 > 12)
+	def askWriteOptions(self):  # noqa: PLR0912
 		options = Glossary.formatsWriteOptions.get(self._outputFormat)
 		if options is None:
 			log.error(f"internal error: invalid format {self._outputFormat!r}")
@@ -974,7 +976,7 @@ class UI(ui_cmd.UI):
 		self.askOutputFile()
 		self.checkOutputFormat(forceAsk=True)
 
-	def printNonInteractiveCommand(self):
+	def printNonInteractiveCommand(self):  # noqa: PLR0912
 		cmd = [
 			ui_cmd.COMMAND,
 			self._inputFilename,
@@ -1057,7 +1059,8 @@ class UI(ui_cmd.UI):
 		self.promptMsgColor = config.get("cmdi.prompt.msg.color", -1)
 		self.msgColor = config.get("cmdi.msg.color", -1)
 
-	def main(self, again=False):
+	# PLR0912 Too many branches (19 > 12)
+	def main(self, again=False):  # noqa: PLR0912
 		if again or not self._inputFilename:
 			try:
 				self.askInputFile()

@@ -393,7 +393,8 @@ class Reader:
 		self.writeRichText(hf, note)
 
 	# TODO: break it down
-	def writeSenseSense(
+	# PLR0912 Too many branches (25 > 12)
+	def writeSenseSense(  # noqa: PLR0912
 		self,
 		hf: "T_htmlfile",
 		sense: "Element",
@@ -639,7 +640,7 @@ class Reader:
 			# list_type="A",
 		)
 
-	def normalizeGramGrpChild(self, elem: "Element") -> str:
+	def normalizeGramGrpChild(self, elem: "Element") -> str:  # noqa: PLR0912
 		# child can be "pos" or "gen"
 		tag = elem.tag
 		text = elem.text

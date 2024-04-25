@@ -561,7 +561,7 @@ class Reader:
 			defis.append(_defi)
 		return "\n<hr>\n".join(defis), "h"
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":  # noqa: PLR0912
 		indexData = self._indexData
 		synDict = self._synDict
 		sametypesequence = self._sametypesequence

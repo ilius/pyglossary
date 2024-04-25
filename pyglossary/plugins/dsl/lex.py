@@ -333,7 +333,8 @@ def processTagC(tr: TransformerType) -> None:
 	tr.output += f'<font color="{color}">'
 
 
-def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
+# PLR0912 Too many branches (19 > 12)
+def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:  # noqa: PLR0912
 	tr.attrName = ""
 	if not tag:
 		tr.resetBuf()

@@ -92,7 +92,7 @@ class Reader:
 			)
 		return self._wordCount
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":  # noqa: PLR0912
 		try:
 			from polib import unescape as po_unescape
 		except ModuleNotFoundError as e:

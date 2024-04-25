@@ -152,7 +152,7 @@ class Reader:
 
 		self._htmlTr = XdxfTransformer(encoding=self._encoding)
 
-	def open(self, filename: str) -> None:
+	def open(self, filename: str) -> None:  # noqa: PLR0912
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 		from lxml import etree as ET
 

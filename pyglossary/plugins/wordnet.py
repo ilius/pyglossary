@@ -226,7 +226,8 @@ class WordNet:
 					if not line.startswith("  "):
 						yield line
 
-	def prepare(self) -> None:
+	# PLR0912 Too many branches (16 > 12)
+	def prepare(self) -> None:  # noqa: PLR0912
 		synSetTypes = self.synSetTypes
 		file2pos = self.file2pos
 

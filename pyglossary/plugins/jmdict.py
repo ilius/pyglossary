@@ -120,7 +120,8 @@ class Reader:
 					processor(hf, el)
 
 	# TODO: break it down
-	def writeSense(
+	# PLR0912 Too many branches (23 > 12)
+	def writeSense(  # noqa: PLR0912
 		self,
 		hf: "T_htmlfile",
 		sense: "Element",

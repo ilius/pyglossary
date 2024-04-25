@@ -110,7 +110,7 @@ class Reader:
 			return 0
 		return self._zimfile.entry_count
 
-	def __iter__(self) -> "Iterator[EntryType | None]":
+	def __iter__(self) -> "Iterator[EntryType | None]":  # noqa: PLR0912
 		glos = self._glos
 		zimfile = self._zimfile
 		if zimfile is None:

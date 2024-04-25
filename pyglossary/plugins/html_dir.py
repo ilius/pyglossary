@@ -165,7 +165,7 @@ class Writer:
 		)
 		return self._fileObj
 
-	def fixLinks(self, linkTargetSet: "set[str]") -> None:
+	def fixLinks(self, linkTargetSet: "set[str]") -> None:  # noqa: PLR0912
 		import gc
 
 		gc.collect()
@@ -325,7 +325,7 @@ class Writer:
 		url = "res/" + url
 		return f' src="{url}"'
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":  # noqa: PLR0912
 		encoding = self._encoding
 		resources = self._resources
 		max_file_size = self._max_file_size

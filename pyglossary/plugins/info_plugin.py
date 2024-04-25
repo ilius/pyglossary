@@ -62,7 +62,7 @@ class Writer:
 		self._file.close()
 		self._file = nullTextIO
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":  # noqa: PLR0912
 		import re
 		from collections import Counter, OrderedDict
 

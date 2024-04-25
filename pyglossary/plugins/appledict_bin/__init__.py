@@ -169,7 +169,8 @@ class Reader:
 			a.attrib["href"] = f"bword://{href}"
 		return a
 
-	def open(self, filename: str) -> "Iterator[tuple[int, int]]":
+	# TODO: PLR0912 Too many branches (17 > 12)
+	def open(self, filename: str) -> "Iterator[tuple[int, int]]":  # noqa: PLR0912
 		from os.path import dirname
 
 		try:
@@ -532,7 +533,8 @@ class Reader:
 			properties=properties,
 		)
 
-	def readKeyTextData(
+	# TODO: PLR0912 Too many branches (16 > 12)
+	def readKeyTextData(  # noqa: PLR0912
 		self,
 		buff: "io.BufferedIOBase",
 		bufferOffset: int,

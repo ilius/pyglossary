@@ -56,7 +56,7 @@ def formatInfoValueDiff(diff: "Iterator[str]") -> str:
 	return a + "\n" + b
 
 
-def diffGlossary(  # noqa: PLR0913
+def diffGlossary(  # noqa: PLR0912, PLR0913
 	filename1: str,
 	filename2: str,
 	format1: "str | None" = None,
@@ -244,7 +244,7 @@ def diffGlossary(  # noqa: PLR0913
 			sys.stdout.flush()
 		count += 1
 
-	def run():
+	def run():  # noqa: PLR0912
 		nonlocal index1, index2
 
 		while True:

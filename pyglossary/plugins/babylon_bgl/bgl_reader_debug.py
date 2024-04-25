@@ -424,7 +424,7 @@ class DebugBglReader(BglReader):
 		with open(dumpPath, "wb") as f:
 			pickle.dump(self.metadata2, f)
 
-	def processDefiStat(self, fields, defi, b_key):
+	def processDefiStat(self, fields, defi, b_key):  # noqa: PLR0912
 		BglReader.processDefiStat(self, fields, defi, b_key)
 
 		if fields.b_title:

@@ -261,7 +261,8 @@ class UI(UIBase):
 				input()
 				self._toPause = False
 
-	def run(  # noqa: PLR0913
+	# PLR0912 Too many branches (19 > 12)
+	def run(  # noqa: PLR0912, PLR0913
 		self,
 		inputFilename: str = "",
 		outputFilename: str = "",

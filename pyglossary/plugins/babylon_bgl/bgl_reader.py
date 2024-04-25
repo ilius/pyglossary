@@ -425,7 +425,8 @@ class BglReader:
 
 		return True
 
-	def readInfo(self) -> None:
+	# TODO: PLR0912 Too many branches (14 > 12)
+	def readInfo(self) -> None:  # noqa: PLR0912
 		"""
 		Read meta information about the dictionary: author, description,
 		source and target languages, etc (articles are not read).
@@ -726,7 +727,7 @@ class BglReader:
 
 		self.info[key] = value
 
-	def detectEncoding(self) -> None:
+	def detectEncoding(self) -> None:  # noqa: PLR0912
 		"""Assign self.sourceEncoding and self.targetEncoding."""
 		utf8Encoding = self.info.get("utf8Encoding", False)
 
@@ -766,7 +767,7 @@ class BglReader:
 			f", data={block.data!r}",
 		)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> "Iterator[EntryType]":  # noqa: PLR0912
 		if not self.file:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -1107,7 +1108,7 @@ class BglReader:
 
 		return u_text2
 
-	def decodeCharsetTags(
+	def decodeCharsetTags(  # noqa: PLR0912
 		self,
 		b_text: bytes,
 		defaultEncoding: str,
@@ -1262,7 +1263,8 @@ class BglReader:
 		return u_word_main.rstrip(self._key_rstrip_chars)
 
 	# TODO: break it down
-	def processDefi(self, b_defi: bytes, b_key: bytes) -> str:
+	# PLR0912 Too many branches (20 > 12)
+	def processDefi(self, b_defi: bytes, b_key: bytes) -> str:  # noqa: PLR0912
 		"""
 		b_defi: bytes
 		b_key: bytes.
@@ -1420,7 +1422,8 @@ class BglReader:
 		return index
 
 	# TODO: break it down
-	def collectDefiFields(
+	# PLR0912 Too many branches (41 > 12)
+	def collectDefiFields(  # noqa: PLR0912
 		self,
 		b_defi: bytes,
 		b_key: bytes,

@@ -318,7 +318,9 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 	return ui_module.UI(**uiArgs).run
 
 
-def main() -> None:
+# TODO: break it down
+# PLR0912 Too many branches (44 > 12)
+def main() -> None:  # noqa: PLR0912
 	global log
 
 	uiBase = UIBase()

@@ -165,7 +165,8 @@ def _prepare_onclick(soup) -> None:
 		)
 
 
-def prepare_content_with_soup(
+# TODO: PLR0912 Too many branches (18 > 12)
+def prepare_content_with_soup(  # noqa: PLR0912
 	title: "str | None",
 	body: str,
 	BeautifulSoup: "Any",

@@ -258,9 +258,11 @@ class PluginManager:
 	# return "tuple[DetectedFormat | None, str]"
 	# where the str is error
 	# and remove `quiet` argument, and local `error` function
-	# also: C901 `detectOutputFormat` is too complex (16 > 13)
+	# also:
+	# C901		`detectOutputFormat` is too complex (16 > 13)
+	# PLR0912	Too many branches (14 > 12)
 	@classmethod
-	def detectOutputFormat(  # noqa: PLR0913, C901
+	def detectOutputFormat(  # noqa: PLR0912, PLR0913, C901
 		cls: "type[PluginManager]",
 		filename: str = "",
 		format: str = "",
