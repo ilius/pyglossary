@@ -258,7 +258,7 @@ class Writer:
 		if not isdir(dirname):
 			os.mkdir(dirname)
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> "Generator[None, EntryType, None]":  # noqa: PLR0912
 		global BeautifulSoup
 		from pyglossary.xdxf.transform import XdxfTransformer
 

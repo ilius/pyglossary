@@ -683,7 +683,7 @@ class Reader:
 		)
 		return ""
 
-	def getEntryByElem(
+	def getEntryByElem(  # noqa: PLR0912
 		self,
 		entry: "Element",
 	) -> "EntryType":

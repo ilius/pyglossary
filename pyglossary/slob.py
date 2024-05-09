@@ -1238,7 +1238,7 @@ class Writer:
 		)
 		self._fire_event("end_sort")
 
-	def _resolve_aliases(self) -> None:
+	def _resolve_aliases(self) -> None:  # noqa: PLR0912
 		self._fire_event("begin_resolve_aliases")
 		self.f_aliases.finalize()
 

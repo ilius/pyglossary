@@ -245,7 +245,7 @@ class Reader:
 									hf.write(sent)
 
 	# TODO: break it down
-	def getEntryByElem(
+	def getEntryByElem(  # noqa: PLR0912
 		self,
 		entry: "Element",
 	) -> "EntryType":

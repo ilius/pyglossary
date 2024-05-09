@@ -140,7 +140,7 @@ class Reader:
 					hf.write(word)
 			hf.write(br())
 
-	def getEntryByElem(
+	def getEntryByElem(  # noqa: PLR0912
 		self,
 		entry: "Element",
 	) -> "EntryType":
