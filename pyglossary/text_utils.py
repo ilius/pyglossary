@@ -203,7 +203,7 @@ def replacePostSpaceChar(st: str, ch: str) -> str:
 
 
 def isASCII(data: str) -> bool:
-	for c in data:  # noqa: SIM111
+	for c in data:  # noqa: SIM110
 		if ord(c) >= 128:
 			return False
 	return True
