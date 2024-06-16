@@ -377,10 +377,9 @@ class Writer:
 				if front_back_matter
 				else ""
 			)
-			if glos.getInfo("CFBundleIdentifier") is None:
+			bundle_id = glos.getInfo("CFBundleIdentifier")
+			if not bundle_id:
 				bundle_id = fileNameBase.replace(" ", "")
-			else:
-				bundle_id = glos.getInfo("CFBundleIdentifier")
 			toFile.write(
 				toStr(
 					pkgutil.get_data(
