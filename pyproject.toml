@@ -201,6 +201,7 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
     "ANN",
     "T201",
     "PLR6301", # Method `...` could be a function, class method, or static method
+    "E501", # Line too long
 ]
 "*_test.py" = [
     "ANN",

@@ -17,10 +17,10 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 
 		hashDict = {
 			"appledict-src/002-no-morphology-v3.txt": "d8086fe8",
-			"appledict-src/002-no-morphology-v3/002-no-morphology-v3.css": "6818c1e5",
-			"appledict-src/002-no-morphology-v3/002-no-morphology-v3.plist": "f9f6ff31",
-			"appledict-src/002-no-morphology-v3/002-no-morphology-v3.xml": "707994d6",
-			"appledict-src/002-no-morphology-v3/Makefile": "65f736b6",
+			"appledict-src/002-no-morphology-v3a/002-no-morphology-v3a.css": "6818c1e5",
+			"appledict-src/002-no-morphology-v3a/002-no-morphology-v3a.plist": "706d1d9c",
+			"appledict-src/002-no-morphology-v3a/002-no-morphology-v3a.xml": "707994d6",
+			"appledict-src/002-no-morphology-v3a/Makefile": "ecd42350",
 		}
 		self.dataFileCRC32.update(hashDict)
 
@@ -34,15 +34,16 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 	def test_tabfile_without_morpho_to_appledict_source(self):
 		self.glos = Glossary()
 
-		baseName = "002-no-morphology-v3"
-		inputFilepath = self.downloadFile(f"appledict-src/{baseName}.txt")
-		outputDirPath = self.newTempFilePath(f"{baseName}")
+		inputName = "002-no-morphology-v3"
+		outputName = "002-no-morphology-v3a"
+		inputFilepath = self.downloadFile(f"appledict-src/{inputName}.txt")
+		outputDirPath = self.newTempFilePath(f"{outputName}")
 
 		expectedFiles = {
-			name: self.downloadFile(f"appledict-src/{baseName}/{name}")
+			name: self.downloadFile(f"appledict-src/{outputName}/{name}")
 			for name in [
-				f"{baseName}.xml",
-				f"{baseName}.css",
+				f"{outputName}.xml",
+				f"{outputName}.css",
 				"Makefile",
 			]
 		}
@@ -63,8 +64,8 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 			)
 
 		self.comparePlist(
-			join(outputDirPath, f"{baseName}.plist"),
-			self.downloadFile(f"appledict-src/{baseName}/{baseName}.plist"),
+			join(outputDirPath, f"{outputName}.plist"),
+			self.downloadFile(f"appledict-src/{outputName}/{outputName}.plist"),
 		)
 
 
