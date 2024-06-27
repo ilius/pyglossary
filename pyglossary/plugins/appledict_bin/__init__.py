@@ -602,7 +602,7 @@ class Reader:
 							f"{priorityAndParentalControl} (section: {bufferOffset:#x})"
 							", skipping KeyText.data file",
 						)
-						return {}
+						return
 					if priorityAndParentalControl >= 0x20:
 						priorityAndParentalControl -= 0x20
 					# d:parental-control="1"
@@ -613,7 +613,7 @@ class Reader:
 					log.error(
 						f"Unknown private field: {properties.key_text_fixed_fields}",
 					)
-					return {}
+					return
 
 				keyTextFields: "list[str]" = []
 				while buff.tell() < next_lexeme_offset:
