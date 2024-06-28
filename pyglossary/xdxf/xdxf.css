@@ -1,0 +1,75 @@
+div.k {
+    font-weight: 700;
+    font-size: 150%;
+}
+
+span.k {
+    font-size: 100%;
+}
+
+.gr {
+    color: green;
+}
+
+ol {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+
+ol > li > ol > li > ol {
+    list-style-type: lower-latin;
+}
+
+.ex {
+    margin: 0px 0px 0px 20px;
+    color: #888888;
+}
+
+.ex i {
+    color: red;
+}
+
+.ex_orig {
+    font-weight: 700;
+}
+
+.ex_tran {
+    /* TODO remove */
+    color: #008888;
+}
+
+.ex .mrkd {
+    text-decoration: underline;
+}
+
+.co {
+    color: #888888;
+    font-style: italic;
+}
+
+.abbr {
+    color: green;
+    font-style: italic;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+}
+
+.pos {
+    color: red;
+    font-style: italic;
+}
+
+.abbr_popup {
+  background: #feffca;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: 2px;
+  box-shadow: 2px 2px 3px rgba(0,0,0,.1),0 2px 0 rgba(255,255,255,.4) inset,0 -2px 0 rgba(242,85,0,1) inset;
+  cursor: pointer;
+  display: none;
+  font-size: 100%;
+  font-style: normal;
+  padding: .05em .6em .2em;
+  position: absolute;
+  z-index: 999;
+  margin-bottom: 100px;
+}
