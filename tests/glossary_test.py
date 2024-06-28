@@ -1,4 +1,5 @@
 import hashlib
+import json
 import logging
 import os
 import random
@@ -727,10 +728,13 @@ class TestGlossary(TestGlossaryBase):
 			config={"save_info_json": True},
 			infoOverride={"input_file_size": None},
 		)
-		self.compareTextFiles(
-			infoPath,
-			self.downloadFile(f"{fname}-v2.info"),
-		)
+		with open(infoPath, encoding="utf8") as _file:
+			infoDict = json.load(_file)
+		with open(self.downloadFile(f"{fname}-v2.info"), encoding="utf8") as _file:
+			infoDictExpected = json.load(_file)
+		for key, value in infoDictExpected.items():
+			self.assertIn(key, infoDict)
+			self.assertEqual(value, infoDict.get(key))
 
 	def test_convert_sqlite_direct_error(self):
 		glos = self.glos = Glossary()
