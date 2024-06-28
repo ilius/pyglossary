@@ -15,7 +15,7 @@ lint.select = [
     "YTT", # flake8-2020
     # "ANN", # flake8-annotationsq, still gives errors for `self`
     # "ASYNC", # flake8-async
-    "TRIO", # flake8-trio
+    "ASYNC1", # flake8-trio
     # "S", # flake8-bandit
     "BLE", # flake8-blind-except
     # "FBT", # flake8-boolean-trap

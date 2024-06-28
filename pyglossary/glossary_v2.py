@@ -831,7 +831,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			genList.append(gen)
 
 		if self._config.get("save_info_json", False):
-			infoWriter = self._createWriter("Info", {})
+			from pyglossary.info_writer import InfoWriter
+			infoWriter = InfoWriter(self)
 			filenameNoExt, _, _, _ = splitFilenameExt(filename)
 			infoWriter.open(f"{filenameNoExt}.info")
 			genList.append(infoWriter.write())
