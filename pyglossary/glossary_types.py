@@ -173,6 +173,9 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 	def tmpDataDir(self) -> str: ...
 
 	@property
+	def readOptions(self) -> dict | None: ...
+
+	@property
 	def sourceLang(self) -> "Lang | None": ...
 
 	@property

@@ -184,6 +184,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self._sqlite = False
 		self._rawEntryCompress = False
 		self._cleanupPathList: "set[str]" = set()
+		self._readOptions = None
 
 		self.clear()
 
@@ -506,6 +507,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			self._setTmpDataDir(self._filename)
 		return self._tmpDataDir
 
+	@property
+	def readOptions(self) -> dict | None:
+		return self._readOptions
+
 	def wordTitleStr(
 		self,
 		word: str,
@@ -722,6 +727,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		reader = self._createReader(format, options)
 		if not self._openReader(reader, filename):
 			return False
+
+		self._readOptions = options
 
 		self.prepareEntryFilters()
 
