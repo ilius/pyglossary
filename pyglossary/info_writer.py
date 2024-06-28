@@ -133,4 +133,5 @@ class InfoWriter:
 			f"{defiFormat}={count}"
 			for defiFormat, count in sourceScriptCounter.most_common()
 		)
+		info["read_options"] = glos.readOptions
 		self._file.write(dataToPrettyJson(info) + "\n")
