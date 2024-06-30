@@ -1,4 +1,4 @@
-FROM bitnami/minideb
+FROM bitnami/minideb:latest-amd64
 MAINTAINER Saeed Rasooli saeed.gnu@gmail.com
 LABEL Description="Dockefile to run PyGlossary inside a Debian-based Docker image"
 
