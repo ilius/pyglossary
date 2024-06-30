@@ -60,6 +60,7 @@ class Reader(TextGlossaryReader):
 		if isdir(resDir):
 			self._resDir = resDir
 			self._resFileNames = os.listdir(self._resDir)
+		return None  # noqa: B901 because of mypy
 
 	def __iter__(self) -> "Iterator[EntryType | None]":
 		yield from TextGlossaryReader.__iter__(self)

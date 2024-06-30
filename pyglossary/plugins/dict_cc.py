@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.lxml_types import Element, T_htmlfile
+	from pyglossary.option import Option
 
 
 from pyglossary.core import log
@@ -42,7 +43,7 @@ website = (
 	"https://play.google.com/store/apps/details?id=cc.dict.dictcc",
 	"dict.cc dictionary - Google Play",
 )
-optionsProp = {}
+optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:

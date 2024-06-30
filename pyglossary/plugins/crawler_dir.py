@@ -180,7 +180,7 @@ class Reader:
 		self,
 		dpath: str,
 		exclude: "set[str] | None",
-	) -> "Generator[None, EntryType, None]":
+	) -> "Generator[EntryType, None, None]":
 		children = listdir(dpath)
 		if exclude:
 			children = [name for name in children if name not in exclude]

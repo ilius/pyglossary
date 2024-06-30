@@ -184,7 +184,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self._sqlite = False
 		self._rawEntryCompress = False
 		self._cleanupPathList: "set[str]" = set()
-		self._readOptions = None
+		self._readOptions: dict[str, Any] | None = None
 
 		self.clear()
 
@@ -572,7 +572,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			byteProgress=byteProgress,
 		)
 
-	def newDataEntry(self, fname: str, data: bytes) -> "DataEntry":
+	def newDataEntry(self, fname: str, data: bytes) -> "EntryType":
 		import uuid
 
 		if self._readers:
@@ -839,7 +839,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		if self._config.get("save_info_json", False):
 			from pyglossary.info_writer import InfoWriter
-			infoWriter = InfoWriter(self)
+			infoWriter = InfoWriter(cast(GlossaryType, self))
 			filenameNoExt, _, _, _ = splitFilenameExt(filename)
 			infoWriter.open(f"{filenameNoExt}.info")
 			genList.append(infoWriter.write())

@@ -172,7 +172,7 @@ class Reader:
 		if len(defisWithFormat) == 1:
 			return defisWithFormat[0]
 
-		defiFormatSet = set()
+		defiFormatSet: set[str] = set()
 		defiFormatSet.update(_type for _, _type in defisWithFormat)
 
 		if len(defiFormatSet) == 1:

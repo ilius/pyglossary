@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 	from collections.abc import Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
-
+	from pyglossary.option import Option
 
 __all__ = [
 	"Reader",
@@ -39,7 +39,7 @@ website = (
 	_url,
 	"ABC Medical Notes 2021 - Google Play",
 )
-optionsProp = {}
+optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:

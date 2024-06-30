@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 	import sqlite3
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.option import Option
 
 from pyglossary.core import log
 
@@ -39,7 +40,7 @@ website = (
 	"https://play.google.com/store/apps/details?id=cc.dict.dictcc",
 	"dict.cc dictionary - Google Play",
 )
-optionsProp = {}
+optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:

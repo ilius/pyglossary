@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 	import sqlite3
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.option import Option
 
 __all__ = [
 	"Reader",
@@ -37,7 +38,7 @@ website = (
 	"https://github.com/digitalprk/dicrs",
 	"@digitalprk/dicrs",
 )
-optionsProp = {}
+optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:
