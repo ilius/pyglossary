@@ -156,6 +156,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		self._iter: "Iterator[EntryType] | None" = None
 		self._entryFilters: "list[EntryFilterType]" = []
+		self._entryFiltersExtra: "list[EntryFilterType]" = []
 		self._entryFiltersName: "set[str]" = set()
 		self._sort = False
 
@@ -324,6 +325,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if cls.name in self._entryFiltersName:
 			return
 		self._entryFilters.append(cls(cast(GlossaryType, self)))
+		self._entryFiltersExtra.append(cls(cast(GlossaryType, self)))
 		self._entryFiltersName.add(cls.name)
 
 	def removeHtmlTagsAll(self) -> None:
@@ -380,10 +382,15 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			yield from self._data
 			return
 
-		pbFilter = ShowProgressBar(cast(GlossaryExtendedType, self))
+		filters = self._entryFiltersExtra
+		if self.progressbar:
+			filters.append(ShowProgressBar(cast(GlossaryExtendedType, self)))
+
 		self.progressInit("Writing")
-		for entry in self._data:
-			pbFilter.run(entry)
+		for _entry in self._data:
+			entry = _entry
+			for f in filters:
+				entry = f.run(entry)
 			yield entry
 		self.progressEnd()
 
