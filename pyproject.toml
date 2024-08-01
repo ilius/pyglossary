@@ -61,6 +61,8 @@ lint.select = [
     "RUF",  # Ruff-specific rules
 ]
 lint.ignore = [
+    "COM812",
+    "ISC001",
     "SLF",    # Private member accessed
     "PYI034", # py3.11: `__iadd__` methods in classes like `SqEntryList` usually return `self` at runtime
     "DTZ001", # The use of `datetime.datetime()` without `tzinfo` argument is not allowed
