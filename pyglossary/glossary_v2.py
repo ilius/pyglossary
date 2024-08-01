@@ -369,6 +369,30 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		"""
 		self._addExtraEntryFilter(PreventDuplicateWords)
 
+	# def mergeEntriesWithSameHeadwordHTML(self):
+	# 	"""
+	# 	Merge consequtive entries that have the same word list.
+
+	# 	Currently this convert all non-html entries to html.
+
+	# 	Should be only called in writer.open.
+	# 	"""
+	# 	from pyglossary.entry_merge import mergeHtmlEntriesWithSameHeadword
+
+	# 	self._iter = mergeHtmlEntriesWithSameHeadword(self._iter)
+
+	def mergeEntriesWithSameHeadwordPlaintext(self):
+		"""
+		Merge consequtive entries that have the same word list.
+
+		Currently this assume all entries are plaintext
+
+		Should be only called in writer.open.
+		"""
+		from pyglossary.entry_merge import mergePlaintextEntriesWithSameHeadword
+
+		self._iter = mergePlaintextEntriesWithSameHeadword(self._iter)
+
 	def __str__(self) -> str:
 		return (
 			"Glossary{"

@@ -6,6 +6,7 @@ from collections.abc import Generator, Sequence
 from typing import Any
 
 from pyglossary import os_utils
+from pyglossary.flags import ALWAYS
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
@@ -36,6 +37,8 @@ description = "Yomichan (.zip)"
 extensions = (".zip",)
 extensionCreate = ".zip"
 singleFile = True
+sortOnWrite = ALWAYS
+sortKeyName = "headword"
 kind = "package"
 wiki = ""
 website = (
@@ -226,7 +229,6 @@ class Writer:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
-		glos.preventDuplicateWords()
 		# Yomichan technically supports "structured content" that renders to
 		# HTML, but it doesn't seem widely used. So here we also strip HTML
 		# formatting for simplicity.
@@ -361,6 +363,7 @@ class Writer:
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
+		self._glos.mergeEntriesWithSameHeadwordPlaintext()
 
 	def finish(self) -> None:
 		self._filename = ""
