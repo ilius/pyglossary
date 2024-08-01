@@ -839,6 +839,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		if self._config.get("save_info_json", False):
 			from pyglossary.info_writer import InfoWriter
+
 			infoWriter = InfoWriter(cast(GlossaryType, self))
 			filenameNoExt, _, _, _ = splitFilenameExt(filename)
 			infoWriter.open(f"{filenameNoExt}.info")
