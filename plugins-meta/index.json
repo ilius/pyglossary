@@ -1940,6 +1940,8 @@
 		},
 		"canRead": false,
 		"canWrite": true,
+		"sortOnWrite": "always",
+		"sortKeyName": "headword",
 		"writeOptions": {
 			"term_bank_size": 10000,
 			"term_from_headword_only": true,

@@ -12,8 +12,8 @@
 | Write support   | Yes                                                   |
 | Single-file     | Yes                                                   |
 | Kind            | 📦 package                                             |
-| Sort-on-write   | default_no                                            |
-| Sort key        | (`headword_lower`)                                    |
+| Sort-on-write   | always                                                |
+| Sort key        | `headword`                                            |
 | Wiki            | ―                                                     |
 | Website         | [foosoft.net](https://foosoft.net/projects/yomichan/) |
 
