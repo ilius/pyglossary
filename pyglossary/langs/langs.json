@@ -332,6 +332,14 @@
 		"title_tag": "b"
 	},
 	{
+		"codes": ["dyu"],
+		"name": "Dyula",
+		"alt_names": ["Jula", "Dioula", "ߖߎ߬ߟߊ߬ߞߊ߲)"],
+		"script": ["N'Ko", "Latin", "Ajami"],
+		"wiki": "https://en.wikipedia.org/wiki/Dyula_language",
+		"title_tag": "b"
+	},
+	{
 		"codes": ["dz", "dzo"],
 		"name": "Dzongkha",
 		"alt_names": ["རྫོང་ཁ་"],
