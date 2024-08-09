@@ -1788,7 +1788,7 @@
 		}
 	},
 	{
-		"module": "xdxf",
+		"module": "xdxf_css",
 		"lname": "xdxf",
 		"name": "Xdxf",
 		"description": "XDXF (.xdxf)",

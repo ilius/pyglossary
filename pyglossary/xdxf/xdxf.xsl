@@ -27,6 +27,12 @@
     </div>
   </xsl:template>
 
+  <xsl:template match="def">
+    <div class="def">
+      <xsl:apply-templates/>
+    </div>
+  </xsl:template>
+
   <xsl:template match="br">
     <br/>
   </xsl:template>
@@ -48,7 +54,7 @@
   </xsl:template>
 
   <xsl:template match="k">
-    <span class="k"><b><xsl:apply-templates/></b></span>
+    <span class="k" style="font-size: 150%"><b><xsl:apply-templates/></b></span>
   </xsl:template>
 
   <xsl:template match="sr">
@@ -56,7 +62,7 @@
   </xsl:template>
 
   <xsl:template match="ex">
-    <span class="example" style="padding: 10px 0px;"><xsl:apply-templates/></span>
+    <div class="ex" style="padding: 0px 0px 0px 32px; color: #888888;"><xsl:apply-templates/></div>
   </xsl:template>
 
   <xsl:template match="ex_orig">
