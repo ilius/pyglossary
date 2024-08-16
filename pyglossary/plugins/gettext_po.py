@@ -61,10 +61,10 @@ class Reader:
 
 	def clear(self) -> None:
 		self._filename = ""
-		self._file: "io.TextIOBase" = nullTextIO
-		self._wordCount: "int | None" = None
+		self._file: io.TextIOBase = nullTextIO
+		self._wordCount: int | None = None
 		self._resDir = ""
-		self._resFileNames: "list[str]" = []
+		self._resFileNames: list[str] = []
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
@@ -148,7 +148,7 @@ class Writer:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.TextIOBase" = nullTextIO
+		self._file: io.TextIOBase = nullTextIO
 
 	def open(self, filename: str) -> None:
 		self._filename = filename

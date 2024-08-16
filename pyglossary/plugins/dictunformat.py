@@ -82,7 +82,7 @@ class Reader(TextGlossaryReader):
 		if not self._file:
 			raise StopIteration
 		word = ""
-		defiLines: "list[str]" = []
+		defiLines: list[str] = []
 
 		while True:
 			line = self.readline()

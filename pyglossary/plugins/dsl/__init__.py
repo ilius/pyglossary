@@ -150,10 +150,10 @@ class Reader:
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._file: "io.TextIOBase" = nullTextIO
+		self._file: io.TextIOBase = nullTextIO
 		self._fileSize = 0
 		self._bufferLine = ""
-		self._resFileSet: "set[str]" = set()
+		self._resFileSet: set[str] = set()
 
 	def transform(
 		self,
@@ -283,8 +283,8 @@ class Reader:
 		return line  # noqa: RET504
 
 	def __iter__(self) -> "Iterator[EntryType]":
-		term_lines: "list[str]" = []
-		text_lines: "list[str]" = []
+		term_lines: list[str] = []
+		text_lines: list[str] = []
 		for line in self._iterLines():
 			if not line.strip():
 				continue

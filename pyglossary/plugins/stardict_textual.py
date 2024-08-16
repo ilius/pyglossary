@@ -76,9 +76,9 @@ class Reader:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.IOBase" = nullBinaryIO
+		self._file: io.IOBase = nullBinaryIO
 		self._fileSize = 0
-		self._xdxfTr: "XdxfTransformer | None" = None
+		self._xdxfTr: XdxfTransformer | None = None
 
 	def xdxf_setup(self) -> "XdxfTransformer":
 		from pyglossary.xdxf.transform import XdxfTransformer

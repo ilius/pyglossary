@@ -120,7 +120,7 @@ class Writer:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
-		self._words: "list[str]" = []
+		self._words: list[str] = []
 		self._img_pattern = re.compile(
 			'<img src="([^<>"]*?)"( [^<>]*?)?>',
 			re.DOTALL,
@@ -193,7 +193,7 @@ class Writer:
 				continue
 			l_word = entry.l_word
 			allWords += l_word
-			wordsByPrefix: "dict[str, list[str]]" = OrderedDict()
+			wordsByPrefix: dict[str, list[str]] = OrderedDict()
 			for word in l_word:
 				prefix = self.get_prefix(word)
 				if prefix in wordsByPrefix:

@@ -78,7 +78,7 @@ def trace(log: logging.Logger, msg: str) -> None:
 class _Formatter(logging.Formatter):
 	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN101
 		logging.Formatter.__init__(self, *args, **kwargs)
-		self.fill: "Callable[[str], str] | None" = None
+		self.fill: Callable[[str], str] | None = None
 
 	def formatMessage(
 		self,
@@ -213,7 +213,7 @@ class StdLogHandler(logging.Handler):
 		logging.Handler.__init__(self)
 		self.set_name("std")
 		self.noColor = noColor
-		self.config: "dict[str, Any]" = {}
+		self.config: dict[str, Any] = {}
 
 	@property
 	def endFormat(self) -> str:

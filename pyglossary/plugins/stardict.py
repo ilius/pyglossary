@@ -179,7 +179,7 @@ class T_SdList(Protocol[T_SDListItem_contra]):
 
 class MemSdList:
 	def __init__(self) -> None:
-		self._l: "list[Any]" = []
+		self._l: list[Any] = []
 
 	def append(self, x: Any) -> None:
 		self._l.append(x)
@@ -213,8 +213,8 @@ class BaseSqList:
 
 		self._filename = filename
 
-		self._con: "sqlite3.Connection | None" = connect(filename)
-		self._cur: "sqlite3.Cursor | None" = self._con.cursor()
+		self._con: sqlite3.Connection | None = connect(filename)
+		self._cur: sqlite3.Cursor | None = self._con.cursor()
 
 		if not filename:
 			raise ValueError(f"invalid {filename=}")
@@ -313,7 +313,7 @@ class Reader:
 		self._glos = glos
 		self.clear()
 
-		self._xdxfTr: "XdxfTransformerType | None" = None
+		self._xdxfTr: XdxfTransformerType | None = None
 		self._large_file = False
 
 		"""
@@ -353,14 +353,14 @@ class Reader:
 		self.clear()
 
 	def clear(self) -> None:
-		self._dictFile: "io.IOBase | None" = None
+		self._dictFile: io.IOBase | None = None
 		self._filename = ""  # base file path, no extension
-		self._indexData: "list[tuple[bytes, int, int]]" = []
-		self._synDict: "dict[int, list[str]]" = {}
+		self._indexData: list[tuple[bytes, int, int]] = []
+		self._synDict: dict[int, list[str]] = {}
 		self._sametypesequence = ""
 		self._resDir = ""
-		self._resFileNames: "list[str]" = []
-		self._wordCount: "int | None" = None
+		self._resFileNames: list[str] = []
+		self._wordCount: int | None = None
 
 	def open(self, filename: str) -> None:
 		if splitext(filename)[1].lower() == ".ifo":
@@ -602,7 +602,7 @@ class Reader:
 				log.error(f"Data file is corrupted. Word {b_word!r}")
 				continue
 
-			word: "str | list[str]"
+			word: str | list[str]
 			word = b_word.decode("utf-8", errors=unicode_errors)
 			try:
 				alts = synDict[entryIndex]
@@ -647,7 +647,7 @@ class Reader:
 			return {}
 
 		synBytesLen = len(synBytes)
-		synDict: "dict[int, list[str]]" = {}
+		synDict: dict[int, list[str]] = {}
 		pos = 0
 		while pos < synBytesLen:
 			beg = pos
@@ -789,8 +789,8 @@ class Writer:
 		self._glos = glos
 		self._filename = ""
 		self._resDir = ""
-		self._sourceLang: "Lang | None" = None
-		self._targetLang: "Lang | None" = None
+		self._sourceLang: Lang | None = None
+		self._targetLang: Lang | None = None
 		self._p_pattern = re.compile(
 			"<p( [^<>]*?)?>(.*?)</p>",
 			re.DOTALL,
@@ -994,7 +994,7 @@ class Writer:
 
 		t0 = now()
 		wordCount = 0
-		defiFormatCounter: "typing.Counter[str]" = Counter()
+		defiFormatCounter: typing.Counter[str] = Counter()
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
@@ -1175,7 +1175,7 @@ class Writer:
 
 		t0 = now()
 		wordCount = 0
-		defiFormatCounter: "typing.Counter[str]" = Counter()
+		defiFormatCounter: typing.Counter[str] = Counter()
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
@@ -1274,7 +1274,7 @@ class Writer:
 				bookname = f"{bookname} ({langs})"
 			log.info(f"bookname: {bookname}")
 
-		ifo: "list[tuple[str, str]]" = [
+		ifo: list[tuple[str, str]] = [
 			("version", "3.0.0"),
 			("bookname", bookname),
 			("wordcount", str(wordCount)),

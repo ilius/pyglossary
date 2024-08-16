@@ -56,7 +56,7 @@ class GroupState:
 	def reset(self) -> None:
 		self.first_word = ""
 		self.last_word = ""
-		self.group_contents: "list[str]" = []
+		self.group_contents: list[str] = []
 
 	def is_new(self, prefix: str) -> bool:
 		return bool(self.last_prefix) and prefix != self.last_prefix
@@ -158,9 +158,9 @@ class EbookWriter:
 
 		self._tmpDir = tempfile.mkdtemp()
 		self.cover = ""
-		self.files: "list[dict[str, Any]]" = []
-		self.manifest_files: "list[dict[str, str]]" = []
-		self._group_labels: "list[str]" = []
+		self.files: list[dict[str, Any]] = []
+		self.manifest_files: list[dict[str, str]] = []
+		self._group_labels: list[str] = []
 
 	def finish(self) -> None:
 		self._filename = ""
@@ -299,7 +299,7 @@ class EbookWriter:
 		# TODO: rtl=False option
 		# TODO: handle alternates better (now shows word1|word2... in title)
 
-		group_labels: "list[str]" = []
+		group_labels: list[str] = []
 
 		state = GroupState(self)
 		while True:

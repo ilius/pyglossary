@@ -122,7 +122,7 @@ class DictDB:
 		"""
 		self.mode = mode
 		self.quiet = quiet
-		self.indexEntries: "dict[str, list[tuple[int, int]]]" = {}
+		self.indexEntries: dict[str, list[tuple[int, int]]] = {}
 		# indexEntries[word] is a list of (start: int, size: int)
 		self.count = 0
 		self.basename = basename
@@ -137,8 +137,8 @@ class DictDB:
 			self.basename + ".dict" + (".dz" if self.useCompression else "")
 		)
 
-		self.dictFile: "io.IOBase"
-		self.indexFile: "io.IOBase"
+		self.dictFile: io.IOBase
+		self.indexFile: io.IOBase
 		self._open(mode)
 
 		# self.writeentry(url_headword + "\n     " + url, [url_headword])
@@ -322,16 +322,15 @@ class DictDB:
 		if dosort:
 			self.update("Sorting index: converting")
 
-			indexList: "list[str]" = []
-			for word, defs in self.indexEntries.items():
-				for thisdef in defs:
-					indexList.append(
-						f"{word}\t{b64_encode(thisdef[0])}\t{b64_encode(thisdef[1])}",
-					)
+			indexList = [
+				f"{word}\t{b64_encode(thisdef[0])}\t{b64_encode(thisdef[1])}"
+				for word, defs in self.indexEntries.items()
+				for thisdef in defs
+			]
 
 			self.update(" mapping")
 
-			sortmap: "dict[str, list[str]]" = {}
+			sortmap: dict[str, list[str]] = {}
 			for entry in indexList:
 				norm = sortNormalize(entry)
 				if norm in sortmap:
@@ -392,7 +391,7 @@ class DictDB:
 		matching definitions.  This is an *exact* match, not a
 		case-insensitive one.  Returns [] if word is not in the dictionary.
 		"""
-		retval: "list[bytes]" = []
+		retval: list[bytes] = []
 		if not self.hasDef(word):
 			return retval
 		for start, length in self.indexEntries[word]:

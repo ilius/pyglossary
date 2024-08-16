@@ -88,7 +88,7 @@ class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._zimfile: "Archive | None" = None
+		self._zimfile: Archive | None = None
 
 	def open(self, filename: str) -> None:
 		try:

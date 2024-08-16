@@ -264,11 +264,11 @@ class Writer:
 
 		glos = self._glos
 		clean_html = self._clean_html
-		css: "str | None" = self._css
-		xsl: "str | None" = self._xsl
+		css: str | None = self._css
+		xsl: str | None = self._xsl
 		default_prefs = self._default_prefs
-		prefs_html: "str | None" = self._prefs_html
-		front_back_matter: "str | None" = self._front_back_matter
+		prefs_html: str | None = self._prefs_html
+		front_back_matter: str | None = self._front_back_matter
 		jing = self._jing
 		indexes = self._indexes
 
@@ -325,7 +325,7 @@ class Writer:
 				_id = next(generate_id)
 				quoted_title = quote_string(long_title, BeautifulSoup)
 
-				content_title: "str | None" = long_title
+				content_title: str | None = long_title
 				if entry.defiFormat == "x":
 					defi = xdxf_to_html.transformByInnerString(defi)
 					content_title = None

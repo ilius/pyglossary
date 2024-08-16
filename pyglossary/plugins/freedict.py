@@ -175,7 +175,7 @@ class Reader:
 			processor(hf, input_objects[0])
 			return
 
-		attrib: "dict[str, str]" = {}
+		attrib: dict[str, str] = {}
 		if list_type:
 			attrib["type"] = list_type
 
@@ -197,7 +197,7 @@ class Reader:
 		ref: "Element",
 	) -> None:
 		target = ref.get("target")
-		attrib: "dict[str, str]" = {}
+		attrib: dict[str, str] = {}
 		if target:
 			if "://" in target:
 				attrib["class"] = "external"
@@ -884,10 +884,10 @@ class Reader:
 		self._glos = glos
 		self._filename = ""
 		self._dirname = ""
-		self._file: "IOBase" = nullBinaryIO
+		self._file: IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._wordCount = 0
-		self._discoveredTags: "dict[str, Element]" = {}
+		self._discoveredTags: dict[str, Element] = {}
 
 		self._p_pattern = re.compile(
 			"<p( [^<>]*?)?>(.*?)</p>",

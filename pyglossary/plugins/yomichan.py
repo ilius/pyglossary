@@ -375,7 +375,7 @@ class Writer:
 
 			entryCount = 0
 			termBankIndex = 0
-			terms: "list[list[Any]]" = []
+			terms: list[list[Any]] = []
 
 			def flushTerms() -> None:
 				nonlocal termBankIndex

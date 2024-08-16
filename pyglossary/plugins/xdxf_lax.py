@@ -105,9 +105,9 @@ class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.IOBase" = nullBinaryIO
+		self._file: io.IOBase = nullBinaryIO
 		self._encoding = "utf-8"
-		self._htmlTr: "TransformerType | None" = None
+		self._htmlTr: TransformerType | None = None
 		self._re_span_k = re.compile(
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
@@ -241,7 +241,7 @@ class Reader:
 		"""
 		from itertools import combinations
 
-		titles: "list[str]" = []
+		titles: list[str] = []
 		for title_element in article.findall("k"):
 			if title_element.text is None:
 				# TODO: look for <opt> tag?
@@ -251,7 +251,7 @@ class Reader:
 			if n_opts:
 				for j in range(n_opts + 1):
 					for comb in combinations(list(range(n_opts)), j):
-						titles.append(self._mktitle(title_element, comb))
+						titles.append(self._mktitle(title_element, comb))  # noqa: PERF401
 			else:
 				titles.append(self._mktitle(title_element))
 

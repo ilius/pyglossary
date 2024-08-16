@@ -32,7 +32,7 @@ class indir:
 		create: bool = False,
 		clear: bool = False,
 	) -> None:
-		self.old_pwd: "str | None" = None
+		self.old_pwd: str | None = None
 		self.dir = directory
 		self.create = create
 		self.clear = clear

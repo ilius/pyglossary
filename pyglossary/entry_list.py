@@ -41,10 +41,10 @@ class EntryList:
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
 		entryFromRaw: "Callable[[RawEntryType], EntryType]",
 	) -> None:
-		self._l: "list[RawEntryType]" = []
+		self._l: list[RawEntryType] = []
 		self._entryToRaw = entryToRaw
 		self._entryFromRaw = entryFromRaw
-		self._sortKey: "Callable[[RawEntryType], Any] | None" = None
+		self._sortKey: Callable[[RawEntryType], Any] | None = None
 		self._rawEntryCompress = False
 
 	@property

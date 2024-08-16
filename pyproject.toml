@@ -73,7 +73,6 @@ lint.ignore = [
     "PLR0917", # Too many positional arguments, 23 cases, --preview
     "PLR0915", # Too many statements, 28 cases
 
-    "FURB166", # Use of `int` with explicit `base=16` after removing prefix
     "FURB103", # `open` and `write` should be replaced by `Path(...
     "PLR2004", # Magic value used in comparison, consider replacing `...` with a constant variable
     "PLC0415", # `import` should be at the top-level of a file
@@ -110,7 +109,7 @@ lint.ignore = [
     "SIM105",  # Use contextlib.suppress({exception}) instead of try-except-pass
     "SIM117",  # Use a single with statement with multiple contexts...
     "UP009",   # UTF-8 encoding declaration is unnecessary
-    "UP037",   # Remove quotes from type annotation
+    # "UP037",   # Remove quotes from type annotation
     "W191",    # Indentation contains tabs
     "SIM115",  # Use context handler for opening files
     "TCH003",  # Move standard library import `...` into a type-checking block

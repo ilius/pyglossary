@@ -140,7 +140,7 @@ class BoolOption(Option):
 		allowNone: bool = False,
 		**kwargs,  # noqa: ANN003
 	) -> None:
-		values: "list[bool | None]" = [False, True]
+		values: list[bool | None] = [False, True]
 		if allowNone:
 			values.append(None)
 		Option.__init__(
@@ -447,8 +447,8 @@ class EncodingOption(Option):
 	def groupValues(self) -> "dict[str, Any] | None":
 		from collections import OrderedDict
 
-		groups: "dict[str, list[str]]" = OrderedDict()
-		others: "list[str]" = []
+		groups: dict[str, list[str]] = OrderedDict()
+		others: list[str] = []
 		for value in self.values or []:
 			cats = self.re_category.findall(value)
 			if not cats:

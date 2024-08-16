@@ -17,7 +17,7 @@ def extractInlineHtmlImages(
 	outDir: str,
 	fnamePrefix: str = "",
 ) -> "tuple[str, list[tuple[str, str]]]":
-	imageDataDict: "dict[str, bytes]" = {}
+	imageDataDict: dict[str, bytes] = {}
 
 	def subFunc(m: "re.Match[str]") -> str:
 		src = m.group(1)[len("data:image/") :]
@@ -37,7 +37,7 @@ def extractInlineHtmlImages(
 
 	defi = re_inline_image.sub(subFunc, defi)
 
-	images: "list[tuple[str, str]]" = []
+	images: list[tuple[str, str]] = []
 	for imgFname, imgData in imageDataDict.items():
 		imgPath = join(outDir, imgFname)
 		with open(imgPath, mode="wb") as _file:

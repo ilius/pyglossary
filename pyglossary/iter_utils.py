@@ -34,7 +34,7 @@ def unique_everseen(iterable: "Iterable") -> "Iterator":
 	from itertools import filterfalse
 
 	# unique_everseen('AAAABBBCCDAABBB') --> A B C D
-	seen: "set[Any]" = set()
+	seen: set[Any] = set()
 	seen_add = seen.add
 	for element in filterfalse(seen.__contains__, iterable):
 		seen_add(element)

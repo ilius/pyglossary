@@ -229,7 +229,7 @@ class Reader:
 						if not textElem.text:
 							continue
 						text = textElem.text
-						sentList: "list[str]" = []
+						sentList: list[str] = []
 						for sentElem in elem.findall("ex_sent"):
 							if not sentElem.text:
 								continue
@@ -260,10 +260,10 @@ class Reader:
 			return ET.Element("br")
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:  # noqa: PLR1702
-			kebList: "list[str]" = []
-			rebList: "list[str]" = []
-			kebDisplayList: "list[str]" = []
-			rebDisplayList: "list[tuple[str, list[str]]]" = []
+			kebList: list[str] = []
+			rebList: list[str] = []
+			kebDisplayList: list[str] = []
+			rebDisplayList: list[tuple[str, list[str]]] = []
 			with hf.element("div"):
 				for k_ele in entry.findall("k_ele"):
 					keb = k_ele.find("keb")
@@ -395,7 +395,7 @@ class Reader:
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""
-		self._file: "io.IOBase" = nullBinaryIO
+		self._file: io.IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 

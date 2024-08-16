@@ -107,7 +107,7 @@ class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "IOBase" = nullBinaryIO
+		self._file: IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._wordCount = 0
 
@@ -199,7 +199,7 @@ class Reader:
 
 				self.writeSoundList(_hf, data.get("sounds"))
 
-				pos: "str | None" = data.get("pos")
+				pos: str | None = data.get("pos")
 				if pos:
 					with hf.element("div", attrib={"class": "pos"}):
 						with hf.element("font", color=self._gram_color):
@@ -280,8 +280,8 @@ class Reader:
 		if not soundList:
 			return
 
-		pronList: "list[dict[str, Any]]" = []
-		audioList: "list[dict[str, Any]]" = []
+		pronList: list[dict[str, Any]] = []
+		audioList: list[dict[str, Any]] = []
 
 		for sound in soundList:
 			if "audio" in sound:
@@ -589,7 +589,7 @@ class Reader:
 		#   "english": "short",
 		#   "glosses": ["story, fable, play"],
 
-		glosses: "list[str] | None" = sense.get("raw_glosses")
+		glosses: list[str] | None = sense.get("raw_glosses")
 		if not glosses:
 			glosses = sense.get("glosses")
 		if glosses:
@@ -643,7 +643,7 @@ class Reader:
 			processor(hf, input_objects[0])
 			return
 
-		attrib: "dict[str, str]" = {}
+		attrib: dict[str, str] = {}
 		if list_type:
 			attrib["type"] = list_type
 

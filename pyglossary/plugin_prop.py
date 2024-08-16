@@ -93,10 +93,10 @@ class PluginProp:  # noqa: PLR0904
 	]
 
 	def __init__(self) -> None:
-		self._mod: "Any"
-		self._Reader: "Any"
+		self._mod: Any
+		self._Reader: Any
 		self._ReaderLoaded: bool
-		self._Writer: "Any"
+		self._Writer: Any
 		self._WriterLoaded: bool
 
 		self._moduleName: str
@@ -105,19 +105,19 @@ class PluginProp:  # noqa: PLR0904
 		self._lname: str
 		self._name: str
 		self._description: str
-		self._extensions: "list[str]"
+		self._extensions: list[str]
 		self._extensionCreate: str
 		self._singleFile: bool
-		self._optionsProp: "dict[str, Option]"
+		self._optionsProp: dict[str, Option]
 		self._sortOnWrite: YesNoAlwaysNever
-		self._sortKeyName: "str | None"
+		self._sortKeyName: str | None
 		self._canRead: bool
 		self._canWrite: bool
-		self._readOptions: "dict[str, Any]"
-		self._writeOptions: "dict[str, Any]"
-		self._readCompressions: "list[str]"
-		self._readDepends: "dict[str, str]"
-		self._writeDepends: "dict[str, str]"
+		self._readOptions: dict[str, Any]
+		self._writeOptions: dict[str, Any]
+		self._readCompressions: list[str]
+		self._readDepends: dict[str, str]
+		self._writeDepends: dict[str, str]
 
 	@classmethod
 	def fromDict(

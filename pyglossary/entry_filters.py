@@ -293,7 +293,7 @@ class LanguageCleanup(EntryFilter):
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
-		self._run_func: "Callable[[EntryType], EntryType | None] | None" = None
+		self._run_func: Callable[[EntryType], EntryType | None] | None = None
 
 	def prepare(self) -> None:
 		langCodes = {
@@ -362,7 +362,7 @@ class PreventDuplicateWords(EntryFilter):
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
-		self._wordSet: "set[str]" = set()
+		self._wordSet: set[str] = set()
 
 	def run(self, entry: "EntryType") -> "EntryType | None":
 		if entry.isData():
@@ -393,7 +393,7 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		EntryFilter.__init__(self, glos)
-		self._wset: "set[str]" = set()
+		self._wset: set[str] = set()
 
 	def run(self, entry: "EntryType") -> "EntryType | None":
 		word = entry.l_word[0]
@@ -452,7 +452,7 @@ class ShowProgressBar(EntryFilter):
 
 	def __init__(self, glos: "GlossaryExtendedType") -> None:
 		EntryFilter.__init__(self, glos)
-		self.glos: "GlossaryExtendedType" = glos
+		self.glos: GlossaryExtendedType = glos
 		self._wordCount = -1
 		self._wordCountThreshold = 0
 		self._lastPos = 0

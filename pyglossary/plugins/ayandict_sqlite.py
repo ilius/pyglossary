@@ -57,8 +57,8 @@ class Reader:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._con: "sqlite3.Connection | None" = None
-		self._cur: "sqlite3.Cursor | None" = None
+		self._con: sqlite3.Connection | None = None
+		self._cur: sqlite3.Cursor | None = None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
@@ -113,9 +113,9 @@ class Writer:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._con: "sqlite3.Connection | None" = None
-		self._cur: "sqlite3.Cursor | None" = None
-		self._xdxfTr: "XdxfTransformer | None" = None
+		self._con: sqlite3.Connection | None = None
+		self._cur: sqlite3.Cursor | None = None
+		self._xdxfTr: XdxfTransformer | None = None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
@@ -230,7 +230,7 @@ class Writer:
 		if cur is None:
 			raise ValueError("cur is None")
 		for term in terms:
-			subs: "set[str]" = set()
+			subs: set[str] = set()
 			for word in term.split(" "):
 				eword = "\n" + word
 				subs.update(eword[i : i + 3] for i in range(len(eword) - 2))

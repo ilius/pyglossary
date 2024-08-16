@@ -1027,8 +1027,8 @@ class UI(tix.Frame, UIBase):
 			padx=0,
 		)
 		##
-		self.readOptions: "dict[str, Any]" = {}
-		self.writeOptions: "dict[str, Any]" = {}
+		self.readOptions: dict[str, Any] = {}
+		self.writeOptions: dict[str, Any] = {}
 		##
 		self.readOptionsButton = FormatOptionsButton(
 			"Read",

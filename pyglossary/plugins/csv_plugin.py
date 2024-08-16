@@ -106,15 +106,15 @@ class Reader:
 
 	def clear(self) -> None:
 		self._filename = ""
-		self._file: "io.TextIOBase" = nullTextIO
+		self._file: io.TextIOBase = nullTextIO
 		self._fileSize = 0
 		self._leadingLinesCount = 0
-		self._wordCount: "int | None" = None
+		self._wordCount: int | None = None
 		self._pos = -1
-		self._csvReader: "Iterable[list[str]] | None" = None
+		self._csvReader: Iterable[list[str]] | None = None
 		self._resDir = ""
-		self._resFileNames: "list[str]" = []
-		self._bufferRow: "list[str] | None" = None
+		self._resFileNames: list[str] = []
+		self._bufferRow: list[str] | None = None
 
 	def open(
 		self,
@@ -193,7 +193,7 @@ class Reader:
 		if not row:
 			return None
 
-		word: "str | list[str]"
+		word: str | list[str]
 		try:
 			word = row[0]
 			defi = row[1]
@@ -249,7 +249,7 @@ class Writer:
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._file: "io.TextIOBase" = nullTextIO
+		self._file: io.TextIOBase = nullTextIO
 
 	def open(self, filename: str) -> None:
 		self._filename = filename

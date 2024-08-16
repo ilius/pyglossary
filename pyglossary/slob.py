@@ -152,7 +152,7 @@ def init_compressions() -> "dict[str, Compression]":
 	def ident(x: bytes) -> bytes:
 		return x
 
-	compressions: "dict[str, Compression]" = {
+	compressions: dict[str, Compression] = {
 		"": Compression(ident, ident),
 	}
 	for name in ("bz2", "zlib"):
@@ -231,7 +231,7 @@ def sortkey(
 ) -> "Callable":
 	# pass empty locale to use root locale
 	# if you pass no arg, it will use system locale
-	c: "T_Collator" = Collator.createInstance(Locale(""))
+	c: T_Collator = Collator.createInstance(Locale(""))
 	c.setStrength(strength)
 	c.setAttribute(
 		UCollAttribute.ALTERNATE_HANDLING,
@@ -247,7 +247,7 @@ class MultiFileReader(BufferedIOBase):
 		self,
 		*args: str,
 	) -> None:
-		filenames: "list[str]" = list(args)
+		filenames: list[str] = list(args)
 		files = []
 		ranges = []
 		offset = 0
@@ -599,7 +599,7 @@ def read_header(_file: "MultiFileReader") -> Header:
 	tags = read_tags()
 
 	def read_content_types() -> "Sequence[str]":
-		content_types: "list[str]" = []
+		content_types: list[str] = []
 		count = reader.read_byte()
 		for _ in range(count):
 			content_type = reader.read_text()
@@ -771,9 +771,9 @@ def open(*filenames: str) -> Slob:
 
 class BinMemWriter:
 	def __init__(self) -> None:
-		self.content_type_ids: "list[int]" = []
-		self.item_dir: "list[bytes]" = []
-		self.items: "list[bytes]" = []
+		self.content_type_ids: list[int] = []
+		self.item_dir: list[bytes] = []
+		self.items: list[bytes] = []
 		self.current_offset = 0
 
 	def add(self, content_type_id: int, blob_bytes: bytes) -> None:
@@ -1064,11 +1064,11 @@ class Writer:
 		self.compress = COMPRESSIONS[compression].compress
 
 		self.compression = compression
-		self.content_types: "dict[str, int]" = {}
+		self.content_types: dict[str, int] = {}
 
 		self.min_bin_size = min_bin_size
 
-		self.current_bin: "BinMemWriter | None" = None
+		self.current_bin: BinMemWriter | None = None
 
 		created_at = (
 			os.getenv("SLOB_TIMESTAMP") or datetime.now(timezone.utc).isoformat()

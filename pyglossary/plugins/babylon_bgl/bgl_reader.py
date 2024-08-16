@@ -374,7 +374,7 @@ class BglReader:
 		self.gzipOffset = None
 		# must be a in RRGGBB format
 		self.iconDataList = []
-		self.aboutBytes: "bytes | None" = None
+		self.aboutBytes: bytes | None = None
 		self.aboutExt = ""
 
 	def __len__(self) -> int:

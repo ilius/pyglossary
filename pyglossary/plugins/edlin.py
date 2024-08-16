@@ -89,7 +89,7 @@ class Reader:
 		self._wordCount = None
 		self._rootPath = None
 		self._resDir = ""
-		self._resFileNames: "list[str]" = []
+		self._resFileNames: list[str] = []
 
 	def open(self, filename: str) -> None:
 		from pyglossary.json_utils import jsonToOrderedData
@@ -207,7 +207,7 @@ class Writer:
 		self._filename = ""
 		self._resDir = ""
 		self._encoding = "utf-8"
-		self._hashSet: "set[str]" = set()
+		self._hashSet: set[str] = set()
 		# self._wordCount = None
 
 	@staticmethod

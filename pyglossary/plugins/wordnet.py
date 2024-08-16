@@ -186,7 +186,7 @@ class Pointer:
 		self.pos = pos
 		self.source_target = source_target
 		self.source = int(source_target[:2], 16)
-		self.target = int(source_target[2:], 16)
+		self.target = int(source_target[2:], 16)  # noqa: FURB166
 
 	def __repr__(self) -> str:
 		return (
@@ -214,7 +214,7 @@ class WordNet:
 
 	def __init__(self, wordnetdir: str) -> None:
 		self.wordnetdir = wordnetdir
-		self.collector: "dict[str, list[str]]" = defaultdict(list)
+		self.collector: dict[str, list[str]] = defaultdict(list)
 
 	@staticmethod
 	def iterlines(dict_dir: str) -> Iterator[str]:
@@ -339,7 +339,7 @@ class Reader:
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0
-		self.wordnet: "WordNet | None" = None
+		self.wordnet: WordNet | None = None
 
 	def __len__(self) -> int:
 		return self._wordCount

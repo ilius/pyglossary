@@ -28,7 +28,7 @@ class Transformer:
 		self.start = 0
 		self.pos = 0
 		self.output = ""
-		self.resFileSet: "set[str]" = set()
+		self.resFileSet: set[str] = set()
 
 		self.attrs: dict[str, str] = {}
 		self.attrName = ""

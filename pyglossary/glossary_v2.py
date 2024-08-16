@@ -151,13 +151,13 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				reader.close()
 			except Exception:  # noqa: PERF203
 				log.exception("")
-		self._readers: "list[Any]" = []
+		self._readers: list[Any] = []
 		self._defiHasWordTitle = False
 
-		self._iter: "Iterator[EntryType] | None" = None
-		self._entryFilters: "list[EntryFilterType]" = []
-		self._entryFiltersExtra: "list[EntryFilterType]" = []
-		self._entryFiltersName: "set[str]" = set()
+		self._iter: Iterator[EntryType] | None = None
+		self._entryFilters: list[EntryFilterType] = []
+		self._entryFiltersExtra: list[EntryFilterType] = []
+		self._entryFiltersName: set[str] = set()
 		self._sort = False
 
 		self._filename = ""
@@ -177,14 +177,14 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		"""
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
-		self._config: "dict[str, Any]" = {}
-		self._data: "EntryListType" = EntryList(
+		self._config: dict[str, Any] = {}
+		self._data: EntryListType = EntryList(
 			entryToRaw=self._entryToRaw,
 			entryFromRaw=self._entryFromRaw,
 		)
 		self._sqlite = False
 		self._rawEntryCompress = False
-		self._cleanupPathList: "set[str]" = set()
+		self._cleanupPathList: set[str] = set()
 		self._readOptions: dict[str, Any] | None = None
 
 		self.clear()
@@ -241,7 +241,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if entry.isData():
 			return self._dataEntryToRaw(cast("DataEntry", entry))
 
-		tpl: "tuple[list[str], bytes, str] | tuple[list[str], bytes]"
+		tpl: tuple[list[str], bytes, str] | tuple[list[str], bytes]
 		defiFormat = entry.defiFormat
 		if defiFormat and defiFormat != self._defaultDefiFormat:
 			tpl = (entry.l_word, entry.b_defi, defiFormat)
@@ -435,7 +435,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		gen: "Iterator[EntryType]",
 	) -> "Iterator[EntryType]":
-		entry: "EntryType | None"
+		entry: EntryType | None
 		for entry in gen:
 			if entry is None:
 				continue
@@ -486,7 +486,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			log.error("collectDefiFormat: not supported in direct mode")
 			return None
 
-		counter: "dict[str, int]" = Counter()
+		counter: dict[str, int] = Counter()
 		count = 0
 		for entry in self:
 			if entry.isData():

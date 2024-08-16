@@ -60,9 +60,9 @@ class TextGlossaryReader:
 	def __init__(self, glos: "GlossaryType", hasInfo: bool = True) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.TextIOBase" = nullTextIO
+		self._file: io.TextIOBase = nullTextIO
 		self._hasInfo = hasInfo
-		self._pendingEntries: "list[EntryType]" = []
+		self._pendingEntries: list[EntryType] = []
 		self._wordCount = 0
 		self._fileSize = 0
 		self._pos = -1
@@ -146,7 +146,7 @@ class TextGlossaryReader:
 		self._file = nullTextIO
 
 	def newEntry(self, word: MultiStr, defi: str) -> "EntryType":
-		byteProgress: "tuple[int, int] | None" = None
+		byteProgress: tuple[int, int] | None = None
 		if self._fileSize and self._file is not None:
 			byteProgress = (self._file.tell(), self._fileSize)
 		return self._glos.newEntry(
@@ -209,7 +209,7 @@ class TextGlossaryReader:
 			)
 
 	def __iter__(self) -> "Iterator[EntryType | None]":
-		resPathSet: "set[str]" = set()
+		resPathSet: set[str] = set()
 		while True:
 			self._pos += 1
 			if self._pendingEntries:

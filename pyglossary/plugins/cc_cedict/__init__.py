@@ -66,8 +66,8 @@ class Reader:
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
-		self.file: "io.TextIOBase" = nullTextIO
-		self.total_entries: "int | None" = None
+		self.file: io.TextIOBase = nullTextIO
+		self.total_entries: int | None = None
 		self.entries_left = 0
 
 	def open(self, filename: str) -> None:

@@ -15,7 +15,7 @@ class BaseEntry:
 	]
 
 	def __init__(self) -> None:
-		self._word: "str | list[str]"
+		self._word: str | list[str]
 
 	@property
 	def s_word(self) -> str:

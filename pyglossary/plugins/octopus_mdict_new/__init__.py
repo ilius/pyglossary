@@ -103,13 +103,13 @@ class Reader:
 
 	def clear(self) -> None:
 		self._filename = ""
-		self._mdx: "MDX | None" = None
-		self._mdd: "list[MDD]" = []
+		self._mdx: MDX | None = None
+		self._mdd: list[MDD] = []
 		self._wordCount = 0
 		self._dataEntryCount = 0
 
 		# dict of mainWord -> newline-separated alternatives
-		self._linksDict: "dict[str, str]" = {}
+		self._linksDict: dict[str, str] = {}
 
 	def open(self, filename: str) -> None:
 		from pyglossary.plugin_lib.readmdict import MDD, MDX
@@ -169,7 +169,7 @@ class Reader:
 			raise ValueError("mdx is None")
 
 		log.info("extracting links...")
-		linksDict: "dict[str, str]" = {}
+		linksDict: dict[str, str] = {}
 		word = ""
 		wordCount = 0
 		for b_word, b_defi in mdx.items():

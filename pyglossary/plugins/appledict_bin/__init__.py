@@ -122,13 +122,13 @@ class Reader:
 		self._glos: GlossaryType = glos
 		self._dictDirPath = ""
 		self._contentsPath = ""
-		self._file: "io.BufferedIOBase" = nullBinaryIO
+		self._file: io.BufferedIOBase = nullBinaryIO
 		self._encoding = "utf-8"
 		self._defiFormat = "m"
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
-		self._titleById: "dict[str, str]" = {}
+		self._titleById: dict[str, str] = {}
 		self._wordCount = 0
-		self._keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}
+		self._keyTextData: dict[ArticleAddress, list[RawKeyData]] = {}
 		self._cssName = ""
 
 	@staticmethod
@@ -266,7 +266,7 @@ class Reader:
 				"Please provide 'Contents/' folder of the dictionary",
 			)
 
-		metadata: "dict[str, Any]"
+		metadata: dict[str, Any]
 		try:
 			metadata = biplist.readPlist(infoPlistPath)
 		except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
@@ -402,7 +402,7 @@ class Reader:
 		entryRoot = self.convertEntryBytesToXml(entryBytes)
 		if entryRoot is None:
 			return None
-		namespaces: "dict[str, str]" = {
+		namespaces: dict[str, str] = {
 			key: value for key, value in entryRoot.nsmap.items() if key and value
 		}
 		entryElems = entryRoot.xpath("/d:entry", namespaces=namespaces)
@@ -415,7 +415,7 @@ class Reader:
 
 		words = [word]
 
-		keyDataList: "list[KeyData]" = [
+		keyDataList: list[KeyData] = [
 			KeyData.fromRaw(rawKeyData, keyTextFieldOrder)
 			for rawKeyData in self._keyTextData.get(articleAddress, [])
 		]
@@ -546,7 +546,7 @@ class Reader:
 		Sets self._keyTextData when done.
 		"""
 		buff.seek(bufferOffset)
-		keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}
+		keyTextData: dict[ArticleAddress, list[RawKeyData]] = {}
 		while bufferOffset < bufferLimit:
 			yield (bufferOffset, bufferLimit)
 			buff.seek(bufferOffset)
@@ -615,7 +615,7 @@ class Reader:
 					)
 					return
 
-				keyTextFields: "list[str]" = []
+				keyTextFields: list[str] = []
 				while buff.tell() < next_lexeme_offset:
 					word_form_len = read_2_bytes_here(buff)
 					if word_form_len == 0:

@@ -53,8 +53,8 @@ class Reader:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._con: "sqlite3.Connection | None" = None
-		self._cur: "sqlite3.Cursor | None" = None
+		self._con: sqlite3.Connection | None = None
+		self._cur: sqlite3.Cursor | None = None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
@@ -204,7 +204,7 @@ class Reader:
 			key=itemgetter(0),
 		):
 			headword = html.unescape(headwordEscaped)
-			groups: "list[tuple[str, str]]" = [
+			groups: list[tuple[str, str]] = [
 				(term2, entry_type) for _, term2, entry_type in groupsOrig
 			]
 			f = BytesIO()

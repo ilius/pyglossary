@@ -71,8 +71,8 @@ class SqEntryList:
 		self._filename = filename
 
 		self._persist = persist
-		self._con: "sqlite3.Connection | None" = sqlite3.connect(filename)
-		self._cur: "sqlite3.Cursor | None" = self._con.cursor()
+		self._con: sqlite3.Connection | None = sqlite3.connect(filename)
+		self._cur: sqlite3.Cursor | None = self._con.cursor()
 
 		if not filename:
 			raise ValueError(f"invalid {filename=}")

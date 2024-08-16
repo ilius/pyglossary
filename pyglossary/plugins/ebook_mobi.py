@@ -132,7 +132,7 @@ class GroupStateBySize:
 		self.reset()
 
 	def reset(self) -> None:
-		self.group_contents: "list[str]" = []
+		self.group_contents: list[str] = []
 		self.group_size = 0
 
 	def add(self, entry: "EntryType") -> None:

@@ -60,7 +60,7 @@ class Writer:
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.IOBase | None" = None
+		self._file: io.IOBase | None = None
 
 	def finish(self) -> None:
 		self._filename = ""

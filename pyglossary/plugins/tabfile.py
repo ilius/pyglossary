@@ -52,7 +52,7 @@ class Reader(TextGlossaryReader):
 	def __init__(self, glos: GlossaryType, hasInfo: bool = True) -> None:
 		TextGlossaryReader.__init__(self, glos, hasInfo=hasInfo)
 		self._resDir = ""
-		self._resFileNames: "list[str]" = []
+		self._resFileNames: list[str] = []
 
 	def open(self, filename: str) -> "Iterator[tuple[int, int]] | None":
 		yield from TextGlossaryReader.openGen(self, filename)
@@ -94,7 +94,7 @@ class Reader(TextGlossaryReader):
 		if not line:
 			return None
 		###
-		word: "str | list[str]"
+		word: str | list[str]
 		word, tab, defi = line.partition("\t")
 		if not tab:
 			log.warning(

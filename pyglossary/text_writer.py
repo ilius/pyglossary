@@ -43,7 +43,7 @@ class TextGlossaryWriter:
 	) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.TextIOBase" = nullTextIO
+		self._file: io.TextIOBase = nullTextIO
 		self._resDir = ""
 
 		if not entryFmt:

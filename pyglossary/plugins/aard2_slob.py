@@ -131,7 +131,7 @@ class Reader:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._slobObj: "slob.Slob | None" = None
+		self._slobObj: slob.Slob | None = None
 
 	# TODO: PLR0912 Too many branches (13 > 12)
 	def open(self, filename: str) -> None:  # noqa: PLR0912
@@ -279,7 +279,7 @@ class Writer:
 		self._glos = glos
 		self._filename = ""
 		self._resPrefix = ""
-		self._slobWriter: "slob.Writer | None" = None
+		self._slobWriter: slob.Writer | None = None
 
 	@staticmethod
 	def _slobObserver(
