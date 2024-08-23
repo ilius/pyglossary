@@ -352,21 +352,58 @@ class Reader:
 			hf.write("Categories: ")
 			self.makeList(hf, categories, self.writeSenseCategory)
 
-	def writeSenseExample(  # noqa: PLR6301
+	def writeSenseExample(  # noqa: PLR6301, PLR0912
 		self,
 		hf: "T_htmlfile",
 		example: "dict[str, str]",
 	) -> None:
 		# example keys: "text", "english", "ref", "type"
-		text = example.pop("example", "")
-		if text:
-			hf.write(text)
+		textList: list[tuple[str, str]] = []
+		_text = example.pop("example", "")
+		if _text:
+			textList.append((None, _text))
+
 		example.pop("ref", "")
 		example.pop("type", "")
-		for text in example.values():
-			if not text:
+
+		for key, value in example.items():
+			if not value:
 				continue
+			prefix = key
+			if prefix in ("text",):
+				prefix = None
+			if isinstance(value, str):
+				textList.append((prefix, value))
+			elif isinstance(value, list):
+				for item in value:
+					if isinstance(item, str):
+						textList.append((prefix, value))
+					elif isinstance(item, list):
+						textList += [
+							(prefix, item2) for item2 in item
+						]
+			else:
+				log.error(f"writeSenseExample: invalid type for {value=}")
+
+		if not textList:
+			return
+
+		def writePair(prefix: str, text: str):
+			if prefix:
+				with hf.element("b"):
+					hf.write(prefix)
+				hf.write(": ")
 			hf.write(text)
+
+		if len(textList) == 1:
+			prefix, text = textList[0]
+			writePair(prefix, text)
+			return
+
+		with hf.element("ul"):
+			for prefix, text in textList:
+				with hf.element("li"):
+					writePair(prefix, text)
 
 	def writeSenseExamples(
 		self,
