@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import collections
 from io import BytesIO, IOBase
 from json import loads as json_loads
 from typing import TYPE_CHECKING, cast
@@ -130,7 +131,7 @@ class Reader:
 			cfile.seek(0)
 			self._glos.setInfo("input_file_size", f"{self._fileSize}")
 		else:
-			log.warning("FreeDict Reader: file is not seekable")
+			self.warning("FreeDict Reader: file is not seekable")
 
 		self._glos.setDefaultDefiFormat("h")
 
@@ -138,6 +139,7 @@ class Reader:
 			self._glos.setInfo("definition_has_headwords", "True")
 
 		self._file = cfile
+		self._warnings = collections.Counter()
 
 	def close(self) -> None:
 		self._file.close()
@@ -154,6 +156,14 @@ class Reader:
 			if not line:
 				continue
 			yield self.makeEntry(json_loads(line))
+		for _msg, count in self._warnings.most_common():
+			msg = _msg
+			if count > 1:
+				msg = f"[{count} times] {msg}"
+			log.warning(msg)
+
+	def warning(self, msg):
+		self._warnings[msg] += 1
 
 	def makeEntry(self, data: "dict[str, Any]") -> "EntryType":
 		from lxml import etree as ET
@@ -176,7 +186,7 @@ class Reader:
 			if not form:
 				continue
 			if len(form) > 80:
-				log.warn(f"'form' too long: {form}")
+				self.warning(f"'form' too long: {form}")
 				continue
 			source: str = formDict.get("source", "")
 			# tags = formDict.get("tags", [])
@@ -332,7 +342,7 @@ class Reader:
 		# values for "source" (that I found): "w", "w+disamb"
 		name = category.get("name")
 		if not name:
-			log.warning(f"{category = }")
+			self.warning(f"{category = }")
 			return
 		desc = name
 		source = category.get("source")
@@ -370,7 +380,7 @@ class Reader:
 			if not value:
 				continue
 			prefix = key
-			if prefix in ("text",):
+			if prefix in ("text",):  # noqa: PLR6201, FURB171
 				prefix = None
 			if isinstance(value, str):
 				textList.append((prefix, value))
@@ -584,7 +594,7 @@ class Reader:
 			hf.write("Links: ")
 			for i, link in enumerate(linkList):
 				if len(link) != 2:
-					log.warn(f"unexpected {link =}")
+					self.warning(f"unexpected {link =}")
 					continue
 				text, ref = link
 				sq = ref.find("#")
