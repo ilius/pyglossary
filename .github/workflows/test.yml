@@ -38,5 +38,7 @@ jobs:
             lxml \
             marisa-trie \
             mistune
+      - name: Remove test cache
+        run: rm -rf /home/runner/.cache/pyglossary/test || true
       - name: Run tests
         run: bash ./scripts/test.sh
