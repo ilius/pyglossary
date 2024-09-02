@@ -215,7 +215,8 @@ class Reader:
 
 		if self._has_added_css is False:
 			self._has_added_css = True
-			with open(join(rootDir, "pyglossary", "xdxf", "xdxf.css"), "rb") as css_file:
+			cssPath = join(rootDir, "pyglossary", "xdxf", "xdxf.css")
+			with open(cssPath, "rb") as css_file:
 				yield self._glos.newDataEntry("css/xdxf.css", css_file.read())
 
 		if self._abbr_defs_js is not None and not self._has_added_js:
