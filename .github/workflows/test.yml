@@ -42,17 +42,22 @@ jobs:
         run: rm -rf /home/runner/.cache/pyglossary/test || true
       - name: Run tests
         run: |
-          set -o pipefail
+          set -x
           set +e
           export NO_CLEANUP=1
+          set -o pipefail
           bash ./scripts/test.sh 2>&1 | tee test.out
-          mkdir upload
-          cp test.out upload/
-          grep -o "'/tmp/pyglossary/[^']*'" test.out | sed "s/'//g" | xargs '-I{}' cp '{}' upload
-          ls -l upload
+          STATUS=$?
+          set +o pipefail
+          mkdir artifacts
+          cp test.out artifacts
+          grep -o "'/tmp/pyglossary/[^']*'" test.out | sed "s/'//g" | xargs '-I{}' cp '{}' artifacts
+          ls -l artifacts
+          set -e
+          exit $STATUS
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: upload
-          path: upload/
+          name: artifacts-{{ github.sha }}-py${{ matrix.python-version }}
+          path: artifacts
