@@ -131,7 +131,7 @@ class Reader:
 			cfile.seek(0)
 			self._glos.setInfo("input_file_size", f"{self._fileSize}")
 		else:
-			self.warning("FreeDict Reader: file is not seekable")
+			self.warning("Wiktextract Reader: file is not seekable")
 
 		self._glos.setDefaultDefiFormat("h")
 
