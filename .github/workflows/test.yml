@@ -41,4 +41,18 @@ jobs:
       - name: Remove test cache
         run: rm -rf /home/runner/.cache/pyglossary/test || true
       - name: Run tests
-        run: bash ./scripts/test.sh
+        run: |
+          set -o pipefail
+          set +e
+          export NO_CLEANUP=1
+          bash ./scripts/test.sh 2>&1 | tee test.out
+          mkdir upload
+          cp test.out upload/
+          grep -o "'/tmp/pyglossary/[^']*'" test.out | sed "s/'//g" | xargs '-I{}' cp '{}' upload
+          ls -l upload
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: upload
+          path: upload/
