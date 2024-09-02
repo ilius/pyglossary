@@ -1824,6 +1824,26 @@
 		]
 	},
 	{
+		"module": "xdxf_css",
+		"lname": "xdxf_css",
+		"name": "XdxfCss",
+		"description": "XDXF with CSS and JS",
+		"extensions": [],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
 		"module": "xdxf_lax",
 		"lname": "xdxf_lax",
 		"name": "XdxfLax",
