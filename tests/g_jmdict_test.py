@@ -10,7 +10,7 @@ class TestGlossaryJMdict(TestGlossaryBase):
 		self.dataFileCRC32.update(
 			{
 				"050-JMdict-English": "aec9ad8c",
-				"050-JMdict-English-v2.txt": "cc87ff65",
+				"050-JMdict-English-v3.txt": "6068b9a7",
 			},
 		)
 
@@ -23,12 +23,13 @@ class TestGlossaryJMdict(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	# for some reason, with lxml==5.3.0, for "bword://{word}", `word` is not unicode-escaped by lxml
+	# with lxml==5.3.0, for "bword://{word}", `word` is not unicode-escaped by lxml
 	# while lxml < 5.3.0 does escape these unicode characters
+	# that's why 050-JMdict-English-v2 was updated to 050-JMdict-English-v3
 	def test_convert_jmdict_txt_1(self):
 		self.convert_jmdict_txt(
 			"050-JMdict-English",
-			"050-JMdict-English-v2",
+			"050-JMdict-English-v3",
 		)
 
 

@@ -3,6 +3,6 @@ python -m pip install \
   beautifulsoup4 \
   biplist html5lib \
   python-idzip \
-  lxml \
+  lxml==5.3 \
   marisa-trie \
   mistune
