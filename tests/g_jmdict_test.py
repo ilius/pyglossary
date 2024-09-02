@@ -23,6 +23,8 @@ class TestGlossaryJMdict(TestGlossaryBase):
 			**convertArgs,
 		)
 
+	# for some reason, with lxml==5.3.0, for "bword://{word}", `word` is not unicode-escaped by lxml
+	# while lxml < 5.3.0 does escape these unicode characters
 	def test_convert_jmdict_txt_1(self):
 		self.convert_jmdict_txt(
 			"050-JMdict-English",

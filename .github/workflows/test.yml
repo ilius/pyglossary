@@ -35,7 +35,7 @@ jobs:
             beautifulsoup4 \
             biplist html5lib \
             python-idzip \
-            lxml \
+            lxml==5.2 \
             marisa-trie \
             mistune
       - name: Remove test cache
