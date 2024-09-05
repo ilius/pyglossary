@@ -25,7 +25,7 @@ class MockLogHandler(logging.Handler):
 		if level not in self.recordsByLevel:
 			return None
 		records = self.recordsByLevel[level]
-		for index, record in enumerate(records):
+		for index, record in list(enumerate(records)):
 			rec_msg = record.getMessage()
 			if msg == rec_msg or (msg in rec_msg and partial):
 				return records.pop(index)
