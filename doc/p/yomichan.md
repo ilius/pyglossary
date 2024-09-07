@@ -33,3 +33,13 @@
 | rule_vs_defi_pattern         |         | str  | When given, if any substring of an entry's definition matches this regular expression, then the term(s) created from entry are labeled as suru verb. Yomichan uses this information to match conjugated forms of words. `^` and `$` can be used to match start and end of lines, respectively. For example, setting this option to `^スル$` identifies entries where there's a line of 'スル'.                                                                                                                                                                                            |
 | rule_vk_defi_pattern         |         | str  | When given, if any substring of an entry's definition matches this regular expression, then the term(s) created from entry are labeled as kuru verb. Yomichan uses this information to match conjugated forms of words. `^` and `$` can be used to match start and end of lines, respectively. For example, setting this option to `^\(動カ変\)$` identifies entries where there's a line of '(動カ変)'.                                                                                                                                                                                    |
 | rule_adji_defi_pattern       |         | str  | When given, if any substring of an entry's definition matches this regular expression, then the term(s) created from entry are labeled as i-adjective. Yomichan uses this information to match conjugated forms of words. `^` and `$` can be used to match start and end of lines, respectively. For example, setting this option to `r'^\(形\)$'` identify entries where there's a line of '(形)'.                                                                                                                                                                                     |
+
+### Dependencies for writing
+
+PyPI Links: [beautifulsoup4](https://pypi.org/project/beautifulsoup4)
+
+To install, run
+
+```sh
+pip3 install beautifulsoup4
+```

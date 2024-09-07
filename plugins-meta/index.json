@@ -1975,6 +1975,9 @@
 			"rule_vs_defi_pattern": "",
 			"rule_vk_defi_pattern": "",
 			"rule_adji_defi_pattern": ""
+		},
+		"writeDepends": {
+			"bs4": "beautifulsoup4"
 		}
 	},
 	{
