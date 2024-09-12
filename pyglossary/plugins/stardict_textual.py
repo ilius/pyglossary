@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+from os.path import dirname, isdir, join
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
@@ -267,12 +269,14 @@ class Writer:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
+		self._resDir = ""
 
 	def open(
 		self,
 		filename: str,
 	) -> None:
 		self._filename = filename
+		self._resDir = join(dirname(self._filename), "res")
 		self._file = compressionOpen(
 			self._filename,
 			mode="w",
@@ -324,10 +328,10 @@ class Writer:
 
 	def writeDataEntry(
 		self,
-		maker: "builder.ElementMaker",
+		maker: "builder.ElementMaker",  # noqa: ARG002
 		entry: "EntryType",
 	) -> None:
-		pass
+		entry.save(self._resDir)
 		# TODO: create article tag with "definition-r" in it?
 		# or just save the file to res/ directory? or both?
 		# article = maker.article(
@@ -353,6 +357,9 @@ class Writer:
 		)
 
 		self.writeInfo(maker, pretty=True)
+
+		if not isdir(self._resDir):
+			os.mkdir(self._resDir)
 
 		pretty = True
 		while True:
@@ -389,3 +396,7 @@ class Writer:
 			self._file.write(articleStr + "\n")
 
 		_file.write("</stardict>")
+
+		if not os.listdir(self._resDir):
+			os.rmdir(self._resDir)
+
