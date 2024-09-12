@@ -5,4 +5,8 @@ myPath=$(realpath "$0")
 myDir1=$(dirname "$myPath")
 rootDir=$(dirname "$myDir1")
 
-PYTHONPATH=$rootDir python "$rootDir/pyglossary/ui/tools/diff_glossary.py" "$@"
+# There is a bug in pyenv 'python' script that splits up a (quoted) arguemnt that has spaces
+# So there is no way of passing a filename with spaces
+# That's why I changed `python` to `python3` to avoid pyenv
+
+PYTHONPATH=$rootDir python3 "$rootDir/pyglossary/ui/tools/diff_glossary.py" "$@"
