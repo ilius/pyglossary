@@ -124,8 +124,10 @@ class Reader:
 		try:
 			f_namemax = os.statvfs(cacheDir).f_namemax  # type: ignore
 		except AttributeError:
-			# FIXME
-			raise OSError("Unsupported operating system (no os.statvfs)") from None
+			log.warning("Unsupported operating system (no os.statvfs)")
+			# Windows: CreateFileA has a limit of 260 characters.
+			# CreateFileW supports names up to about 32760 characters (64kB).
+			f_namemax = 200
 
 		fileNameTooLong = []
 
