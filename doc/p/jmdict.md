@@ -1,4 +1,4 @@
-## JMDict
+## JMDict (xml)
 
 ### General Information
 
@@ -6,7 +6,7 @@
 | --------------- | ---------------------------------------------------------------- |
 | Name            | JMDict                                                           |
 | snake_case_name | jmdict                                                           |
-| Description     | JMDict                                                           |
+| Description     | JMDict (xml)                                                     |
 | Extensions      |                                                                  |
 | Read support    | Yes                                                              |
 | Write support   | No                                                               |

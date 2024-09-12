@@ -7,7 +7,6 @@
 | AppleDict Binary               | AppleDictBin    | [appledict_bin.md](./appledict_bin.md)         |
 | AyanDict SQLite                | AyanDictSQLite  | [ayandict_sqlite.md](./ayandict_sqlite.md)     |
 | Babylon (.BGL)                 | BabylonBgl      | [babylon_bgl.md](./babylon_bgl.md)             |
-| CC-CEDICT                      | CC-CEDICT       | [cc_cedict.md](./cc_cedict.md)                 |
 | cc-kedict                      | cc-kedict       | [cc_kedict.md](./cc_kedict.md)                 |
 | Crawler Directory              | CrawlerDir      | [crawler_dir.md](./crawler_dir.md)             |
 | CSV (.csv)                     | Csv             | [csv.md](./csv.md)                             |
@@ -24,13 +23,14 @@
 | Kobo E-Reader Dictionary       | Kobo            | [kobo.md](./kobo.md)                           |
 | Kobo E-Reader Dictfile (.df)   | Dictfile        | [kobo_dictfile.md](./kobo_dictfile.md)         |
 | Mobipocket (.mobi) E-Book      | Mobi            | [mobi.md](./mobi.md)                           |
+| EDICT2 (CEDICT) (.u8)          | EDICT2          | [edict2.md](./edict2.md)                       |
 | EDLIN                          | Edlin           | [edlin.md](./edlin.md)                         |
 | FreeDict (.tei)                | FreeDict        | [freedict.md](./freedict.md)                   |
 | Gettext Source (.po)           | GettextPo       | [gettext_po.md](./gettext_po.md)               |
 | HTML Directory                 | HtmlDir         | [html_dir.md](./html_dir.md)                   |
 | Glossary Info (.info)          | Info            | [info.md](./info.md)                           |
 | IUPAC goldbook (.xml)          | IUPACGoldbook   | [iupac_goldbook.md](./iupac_goldbook.md)       |
-| JMDict                         | JMDict          | [jmdict.md](./jmdict.md)                       |
+| JMDict (xml)                   | JMDict          | [jmdict.md](./jmdict.md)                       |
 | JMnedict                       | JMnedict        | [jmnedict.md](./jmnedict.md)                   |
 | JSON (.json)                   | Json            | [json.md](./json.md)                           |
 | Lingoes Source (.ldf)          | LingoesLDF      | [lingoes_ldf.md](./lingoes_ldf.md)             |

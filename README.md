@@ -43,7 +43,6 @@ Android Termux - interactive command-line interface
 | [AppleDict Binary](./doc/p/appledict_bin.md)            |  📁  |   .dictionary   |  ✔   |   ❌   |
 | [AppleDict Source](./doc/p/appledict.md)                |  📁  |                 |      |   ✔   |
 | [Babylon BGL](./doc/p/babylon_bgl.md)                   |  🔢  |      .bgl       |  ✔   |   ❌   |
-| [CC-CEDICT](./doc/p/cc_cedict.md) (Chinese)             |  📝  |                 |  ✔   |   ❌   |
 | [cc-kedict](./doc/p/cc_kedict.md) (Korean)              |  📝  |                 |  ✔   |   ❌   |
 | [CSV](./doc/p/csv.md)                                   |  📝  |      .csv       |  ✔   |   ✔   |
 | [Dict.cc](./doc/p/dict_cc.md) (SQLite3, German)         |  🔢  |       .db       |  ✔   |       |
@@ -53,6 +52,7 @@ Android Termux - interactive command-line interface
 | [DictionaryForMIDs](./doc/p/dicformids.md)              |  📁  |    (📁.mids)     |  ✔   |   ✔   |
 | [DigitalNK](./doc/p/digitalnk.md) (SQLite3, N-Korean)   |  🔢  |       .db       |  ✔   |       |
 | [DIKT JSON](./doc/p/dikt_json.md)                       |  📝  |     (.json)     |      |   ✔   |
+| [EDICT2 (CEDICT)](./doc/p/edict2.md) (Chinese)          |  📝  |     (.u8)       |  ✔   |  ❌   |
 | [EDLIN](./doc/p/edlin.md)                               |  📁  |     .edlin      |  ✔   |   ✔   |
 | [EPUB-2 E-Book](./doc/p/epub2.md)                       |  📦  |      .epub      |  ❌   |   ✔   |
 | [FreeDict](./doc/p/freedict.md)                         |  📝  |      .tei       |  ✔   |   ❌   |

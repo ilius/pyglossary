@@ -363,38 +363,6 @@
 		}
 	},
 	{
-		"module": "cc_cedict",
-		"lname": "cc_cedict",
-		"name": "CC-CEDICT",
-		"description": "CC-CEDICT",
-		"extensions": [
-			".u8"
-		],
-		"singleFile": true,
-		"optionsProp": {
-			"encoding": {
-				"class": "EncodingOption",
-				"type": "str",
-				"customValue": true,
-				"comment": "Encoding/charset"
-			},
-			"traditional_title": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "Use traditional Chinese for entry titles/keys"
-			}
-		},
-		"canRead": true,
-		"canWrite": false,
-		"readOptions": {
-			"encoding": "utf-8",
-			"traditional_title": false
-		},
-		"readDepends": {
-			"lxml": "lxml"
-		}
-	},
-	{
 		"module": "cc_kedict",
 		"lname": "cc_kedict",
 		"name": "cc-kedict",
@@ -946,6 +914,38 @@
 		}
 	},
 	{
+		"module": "edict2",
+		"lname": "edict2",
+		"name": "EDICT2",
+		"description": "EDICT2 (CEDICT) (.u8)",
+		"extensions": [
+			".u8"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Encoding/charset"
+			},
+			"traditional_title": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Use traditional Chinese for entry titles/keys"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"encoding": "utf-8",
+			"traditional_title": false
+		},
+		"readDepends": {
+			"lxml": "lxml"
+		}
+	},
+	{
 		"module": "edlin",
 		"lname": "edlin",
 		"name": "Edlin",
@@ -1181,7 +1181,7 @@
 		"module": "jmdict",
 		"lname": "jmdict",
 		"name": "JMDict",
-		"description": "JMDict",
+		"description": "JMDict (xml)",
 		"extensions": [],
 		"singleFile": true,
 		"optionsProp": {
