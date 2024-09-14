@@ -99,8 +99,7 @@ class Reader:
 		)
 
 	def open(self, filename: str) -> None:
-		if filename.endswith(".index"):
-			filename = filename[:-6]
+		filename = filename.removesuffix(".index")
 		self._filename = filename
 		self._dictdb = DictDB(filename, "read", 1)
 

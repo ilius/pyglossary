@@ -399,4 +399,3 @@ class Writer:
 
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
-

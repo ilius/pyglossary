@@ -343,11 +343,9 @@ class TextListSymbolCleanup(EntryFilter):
 		st = self.spacesNewlinePattern.sub("\n", st)
 
 		st = self.blocksNewlinePattern.sub("♦", st)
-		if st.endswith("<p"):
-			st = st[:-2]
+		st = st.removesuffix("<p")
 		st = st.strip()
-		if st.endswith(","):
-			st = st[:-1]
+		st = st.removesuffix(",")
 
 		return st  # noqa: RET504
 
