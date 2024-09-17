@@ -121,6 +121,8 @@ class Reader:
 
 		redirectCount = 0
 
+		windows = os.sep == "\\"
+
 		try:
 			f_namemax = os.statvfs(cacheDir).f_namemax  # type: ignore
 		except AttributeError:
@@ -193,9 +195,17 @@ class Reader:
 				continue
 
 			if "|" in word:
-				log.error(f"resource title: {word}")
+				log.warning(f"resource title: {word}")
+				if windows:
+					continue
 
-			yield glos.newDataEntry(word, b_content)
+			try:
+				entry = glos.newDataEntry(word, b_content)
+			except Exception as e:
+				log.error(f"error creating file: {e}")
+				continue
+			yield entry
+
 
 		log.info(f"ZIM Entry Count: {entryCount}")
 
